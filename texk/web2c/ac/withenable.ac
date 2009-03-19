@@ -1,0 +1,4 @@
+## texk/web2c/ac/withenable.ac
+## configure options and TL libraries required for web2c
+KPSE_WITH_PROG([web2c], [kpathsea zlib], , [TeX & Co.])
+m4_include(kpse_TL[texk/web2c/ac/web2c.ac])

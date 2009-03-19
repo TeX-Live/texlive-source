@@ -1,0 +1,9 @@
+AC_INIT(ps2eps, 1.61, texlive@tug.org)
+
+AC_CONFIG_FILES(Makefile)
+
+AC_PROG_INSTALL
+
+AC_PROG_CC
+
+AC_OUTPUT

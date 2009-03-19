@@ -1,0 +1,3 @@
+## texk/makeindexk/ac/withenable.ac
+## configure options and TL libraries required for makeindexk
+KPSE_WITH_PROG([makeindexk], [kpathsea])

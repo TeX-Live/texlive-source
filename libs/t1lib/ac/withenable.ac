@@ -1,0 +1,3 @@
+## libs/t1lib/ac/withenable.ac
+## configure options and TL libraries required for t1lib
+KPSE_WITH_LIB([t1lib])

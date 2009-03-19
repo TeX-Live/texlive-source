@@ -1,0 +1,166 @@
+## texk/web2c/am/web.am: Makefile fragment for normal web programs (except tangle).
+
+web_programs = bibtex dvicopy dvitomp dvitype gftodvi gftopk gftype mft \
+	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf weave
+
+if WEB
+bin_PROGRAMS += $(web_programs)
+endif WEB
+
+EXTRA_DIST += $(web_programs:=.web) $(web_programs:=.ch)
+DISTCLEANFILES += $(web_programs:=.c) $(web_programs:=.h) \
+	$(web_programs:=.p) $(web_programs:=-web2c)
+
+nodist_bibtex_SOURCES = bibtex.c bibtex.h
+bibtex.c bibtex.h: bibtex-web2c
+bibtex-web2c: $(web2c_common) $(web2c_programs) web2c/cvtbib.sed bibtex.p
+	$(web2c) bibtex
+	echo timestamp >$@
+	touch bibtex.c bibtex.h
+bibtex.p: tangle bibtex.web bibtex.ch
+	$(tangle) bibtex bibtex
+
+nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
+dvicopy.c dvicopy.h: dvicopy-web2c
+dvicopy-web2c: $(web2c_common) $(web2c_programs) dvicopy.p
+	$(web2c) dvicopy
+	echo timestamp >$@
+	touch dvicopy.c dvicopy.h
+dvicopy.p: tangle dvicopy.web dvicopy.ch
+	$(tangle) dvicopy dvicopy
+
+nodist_dvitomp_SOURCES = dvitomp.c dvitomp.h
+dvitomp.c dvitomp.h: dvitomp-web2c
+dvitomp-web2c: $(web2c_common) $(web2c_programs) dvitomp.p
+	$(web2c) dvitomp
+	echo timestamp >$@
+	touch dvitomp.c dvitomp.h
+dvitomp.p: tangle dvitomp.web dvitomp.ch
+	$(tangle) dvitomp dvitomp
+
+nodist_dvitype_SOURCES = dvitype.c dvitype.h
+dvitype.c dvitype.h: dvitype-web2c
+dvitype-web2c: $(web2c_common) $(web2c_programs) dvitype.p
+	$(web2c) dvitype
+	echo timestamp >$@
+	touch dvitype.c dvitype.h
+dvitype.p: tangle dvitype.web dvitype.ch
+	$(tangle) dvitype dvitype
+
+nodist_gftodvi_SOURCES = gftodvi.c gftodvi.h
+gftodvi.c gftodvi.h: gftodvi-web2c
+gftodvi-web2c: $(web2c_common) $(web2c_programs) gftodvi.p
+	$(web2c) gftodvi
+	echo timestamp >$@
+	touch gftodvi.c gftodvi.h
+gftodvi.p: tangle gftodvi.web gftodvi.ch
+	$(tangle) gftodvi gftodvi
+gftodvi_SOURCES = gftodmem.h
+
+nodist_gftopk_SOURCES = gftopk.c gftopk.h
+gftopk.c gftopk.h: gftopk-web2c
+gftopk-web2c: $(web2c_common) $(web2c_programs) gftopk.p
+	$(web2c) gftopk
+	echo timestamp >$@
+	touch gftopk.c gftopk.h
+gftopk.p: tangle gftopk.web gftopk.ch
+	$(tangle) gftopk gftopk
+
+nodist_gftype_SOURCES = gftype.c gftype.h
+gftype.c gftype.h: gftype-web2c
+gftype-web2c: $(web2c_common) $(web2c_programs) gftype.p
+	$(web2c) gftype
+	echo timestamp >$@
+	touch gftype.c gftype.h
+gftype.p: tangle gftype.web gftype.ch
+	$(tangle) gftype gftype
+
+nodist_mft_SOURCES = mft.c mft.h
+mft.c mft.h: mft-web2c
+mft-web2c: $(web2c_common) $(web2c_programs) mft.p
+	$(web2c) mft
+	echo timestamp >$@
+	touch mft.c mft.h
+mft.p: tangle mft.web mft.ch
+	$(tangle) mft mft
+
+nodist_patgen_SOURCES = patgen.c patgen.h
+patgen.c patgen.h: patgen-web2c
+patgen-web2c: $(web2c_common) $(web2c_programs) patgen.p
+	$(web2c) patgen
+	echo timestamp >$@
+	touch patgen.c patgen.h
+patgen.p: tangle patgen.web patgen.ch
+	$(tangle) patgen patgen
+
+nodist_pktogf_SOURCES = pktogf.c pktogf.h
+pktogf.c pktogf.h: pktogf-web2c
+pktogf-web2c: $(web2c_common) $(web2c_programs) pktogf.p
+	$(web2c) pktogf
+	echo timestamp >$@
+	touch pktogf.c pktogf.h
+pktogf.p: tangle pktogf.web pktogf.ch
+	$(tangle) pktogf pktogf
+
+nodist_pktype_SOURCES = pktype.c pktype.h
+pktype.c pktype.h: pktype-web2c
+pktype-web2c: $(web2c_common) $(web2c_programs) pktype.p
+	$(web2c) pktype
+	echo timestamp >$@
+	touch pktype.c pktype.h
+pktype.p: tangle pktype.web pktype.ch
+	$(tangle) pktype pktype
+
+nodist_pltotf_SOURCES = pltotf.c pltotf.h
+pltotf.c pltotf.h: pltotf-web2c
+pltotf-web2c: $(web2c_common) $(web2c_programs) pltotf.p
+	$(web2c) pltotf
+	echo timestamp >$@
+	touch pltotf.c pltotf.h
+pltotf.p: tangle pltotf.web pltotf.ch
+	$(tangle) pltotf pltotf
+
+nodist_pooltype_SOURCES = pooltype.c pooltype.h
+pooltype.c pooltype.h: pooltype-web2c
+pooltype-web2c: $(web2c_common) $(web2c_programs) pooltype.p
+	$(web2c) pooltype
+	echo timestamp >$@
+	touch pooltype.c pooltype.h
+pooltype.p: tangle pooltype.web pooltype.ch
+	$(tangle) pooltype pooltype
+
+nodist_tftopl_SOURCES = tftopl.c tftopl.h
+tftopl.c tftopl.h: tftopl-web2c
+tftopl-web2c: $(web2c_common) $(web2c_programs) tftopl.p
+	$(web2c) tftopl
+	echo timestamp >$@
+	touch tftopl.c tftopl.h
+tftopl.p: tangle tftopl.web tftopl.ch
+	$(tangle) tftopl tftopl
+
+nodist_vftovp_SOURCES = vftovp.c vftovp.h
+vftovp.c vftovp.h: vftovp-web2c
+vftovp-web2c: $(web2c_common) $(web2c_programs) vftovp.p
+	$(web2c) vftovp
+	echo timestamp >$@
+	touch vftovp.c vftovp.h
+vftovp.p: tangle vftovp.web vftovp.ch
+	$(tangle) vftovp vftovp
+
+nodist_vptovf_SOURCES = vptovf.c vptovf.h
+vptovf.c vptovf.h: vptovf-web2c
+vptovf-web2c: $(web2c_common) $(web2c_programs) vptovf.p
+	$(web2c) vptovf
+	echo timestamp >$@
+	touch vptovf.c vptovf.h
+vptovf.p: tangle vptovf.web vptovf.ch
+	$(tangle) vptovf vptovf
+
+nodist_weave_SOURCES = weave.c weave.h
+weave.c weave.h: weave-web2c
+weave-web2c: $(web2c_common) $(web2c_programs) weave.p
+	$(web2c) weave
+	echo timestamp >$@
+	touch weave.c weave.h
+weave.p: tangle weave.web weave.ch
+	$(tangle) weave weave

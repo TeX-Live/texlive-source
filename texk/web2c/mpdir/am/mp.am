@@ -1,0 +1,59 @@
+## texk/web2c/mpdir/am/mp.am: Makefile fragment for MetaPost.
+
+## MetaPost
+##
+if MP
+bin_PROGRAMS += mpost
+endif MP
+
+mpost_CPPFLAGS = -I$(srcdir)/mpdir
+mpost_LDADD = libmpost.a $(LDADD)
+mpost_c_h = mpini.c mp0.c mp1.c mp2.c mpcoerce.h mpd.h
+nodist_mpost_SOURCES = $(mpost_c_h) mp-pool.c mpextra.c
+$(mpost_c_h): mp-web2c
+mp-web2c: mp.p $(web2c_texmf) mpdir/mp.defines web2c/cvtmf1.sed web2c/cvtmf2.sed
+	$(web2c) mp
+	echo timestamp >$@
+	touch $(mpost_c_h)
+EXTRA_DIST += mp.web mp.ch lib/texmfmp.c mpdir/mp.defines mpdir/mplib.h
+mpextra.c: lib/texmfmp.c mpd.h
+	sed s/TEX-OR-MF-OR-MP/mp/ $(srcdir)/lib/texmfmp.c >$@
+mp.p mp.pool: mp-tangle
+mp-tangle: tangle mp.web mp.ch
+	$(tangle) mp mp
+	echo timestamp >$@
+	touch mp.p mp.pool
+mp-pool.c: mp.pool $(makecpool) mpdir/mplib.h
+	$(makecpool) mp.pool $(srcdir)/mpdir/mplib.h >$@ || rm -f $@
+DISTCLEANFILES += $(nodist_mpost_SOURCES) mp-web2c \
+	mp.p mp.pool mp-tangle
+
+## libmpost
+##
+EXTRA_LIBRARIES += libmpost.a
+
+libmpost_a_CPPFLAGS = -I$(srcdir)/mpdir
+
+libmpost_a_SOURCES = \
+	mpdir/avl.c \
+	mpdir/avl.h \
+	mpdir/avlstuff.c \
+	mpdir/avlstuff.h \
+	mpdir/mapfile.c \
+	mpdir/mpmac.h \
+	mpdir/turningnumber.c \
+	mpdir/utils.c \
+	mpdir/writeenc.c \
+	mpdir/writefont.c \
+	mpdir/writet1.c
+
+## We must create mpd.h before compiling the libmpost_a_SOURCES.
+$(libmpost_a_SOURCES): mpd.h
+
+## Eventually delete these files
+##
+EXTRA_DIST += \
+	metapost.mk \
+	mpdir/Makefile.in.orig \
+	mpdir/mpostlib.mk
+

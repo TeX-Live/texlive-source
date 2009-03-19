@@ -1,0 +1,3 @@
+## texk/musixflx/ac/withenable.ac
+## configure options and TL libraries required for musixflx
+KPSE_WITH_PROG([musixflx])

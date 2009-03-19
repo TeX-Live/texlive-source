@@ -1,0 +1,1144 @@
+# $Id$
+# @configure_input@
+# Makefile for web2c --kb@mail.tug.org. Public domain.
+version = @WEB2CVERSION@
+
+# This makefile uses static rules with many targets (to be compatible to
+# non-gnu make) and will not work correctly when parallelized.
+# So we switch off parallel makes with gnu make.
+.NOTPARALLEL:
+
+# These lines define the memory dumps that fmts/bases/mems will make and
+# install-fmts/install-bases/install-mems will install.
+# See the Formats node in doc/web2c.texi for more details.
+fmts = olatex.fmt # amstex.fmt eplain.fmt texinfo.fmt
+efmts = latex.fmt
+pdffmts = pdfolatex.fmt
+pdfefmts = pdflatex.fmt
+afmts = lamed.fmt
+ofmts = lambda.fmt
+eofmts = elambda.fmt
+bases = # no good reason to build cmmf.base.
+mems =  # mfplain.mem is probably not generally useful.
+
+# The name of the file that defines your local devices for Metafont.
+# (Only relevant during `make bases'.)  I recommend `modes.mf', which
+# defines all known modes, plus useful definitions for all fonts.  It's
+# available from ftp://ftp.tug.org/tex/modes.mf, among other places.
+localmodes = modes
+
+kpse_include ../make/paths.mk
+
+# Used for triptrap.
+DIFF = diff
+DIFFFLAGS =
+
+.SUFFIXES: # get rid of .p.o
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+
+XCPPFLAGS = $(PDFXCPPFLAGS)
+
+CXX = @CXX@
+CXXLD = $(CXX)
+cxx_link_command = $(CXXLD) -o $@ $(LDFLAGS)
+kpathsea_cxx_link = $(LIBTOOL) --mode=link $(cxx_link_command)
+
+@MAINT@ifeq ($(CC), gcc)
+@MAINT@XDEFS = -Wimplicit -Wreturn-type -Wcomment -Wformat
+@MAINT@endif
+
+# Make `#include <X11/...>' and `-lX...' work.
+# This matches xdvik.
+# wlibs is substituted by web2c's configure, LIBS by general configure
+# routines, and the others by AC_PATH_XTRA.
+# All the x_... variables will be empty if we aren't supporting X.
+x_cppflags = @X_CFLAGS@
+x_ldflags = @X_LIBS@
+x_pre_libs = @X_PRE_LIBS@
+x_extra_libs = @X_EXTRA_LIBS@
+x_tool_libs = @x_tool_libs@
+x_ext_lib = @x_ext_lib@
+wlibs = @wlibs@
+# Follow the library order used in X11R6 itself:
+#   -lXaw -lXmu -lXt -lSM -lICE -lXext -lX11 (some may not be present).
+windowlink = $(windowlib) $(x_ldflags) $(x_tool_libs) $(x_pre_libs) $(x_ext_lib) $(wlibs) $(x_extra_libs)
+
+# With --enable-ipc, TeX may need to link with -lsocket.
+socketlibs = @socketlibs@
+
+common_makeargs = $(MFLAGS) CC='$(CC)' CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' $(XMAKEARGS)
+window_makeargs = x_cppflags='$(x_cppflags)' $(common_makeargs)
+install_makeargs = $(makevars) $(common_makeargs)
+
+proglib = lib/lib.a
+windowlib = window/window.a
+
+# 
+# The sh script that does the conversion.  The "." is the directory with
+# native tools; we don't attempt cross-compiling a la luatex.  The
+# $(native) variable is used in luatex.mk.
+native = .
+web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert $(native)
+
+# We put this in the web2c directory for lack of a better place, but it
+# is separate from (and simpler than) the actual web-to-C conversion programs.
+makecpool = $(native)/web2c/makecpool
+
+# Additional dependencies:
+web2c_common = web2c/convert web2c/common.defines
+web2c_programs = web2c/fixwrites web2c/splitup web2c/web2c $(makecpool)
+web2c_texmf = $(web2c_common) $(web2c_programs) \
+              web2c/texmf.defines web2c/coerce.h
+
+# The helper programs:
+TANGLEBOOT = @TANGLEBOOT@
+CTANGLEBOOT = @CTANGLEBOOT@
+TANGLE = @TANGLE@
+CTANGLE = @CTANGLE@
+TIE = @TIE@
+
+# Calling tangle
+tangle = WEBINPUTS=.:$(srcdir) $(TANGLE)
+ctangle = $(CTANGLE)
+tie = $(TIE)
+
+# The environment for making dumps.
+# No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain
+# suitable absolute paths at this point.  Those are converted to
+# SELFAUTO* paths on installation.
+dumpenv = TEXMFCNF=../kpathsea
+
+# Unfortunately, suffix rules can't have dependencies, or multiple
+# targets, and we can't assume all makes supports pattern rules.
+#.SUFFIXES: .p .c .ch .p
+#.p.c: # really depends on $(web2c_programs), and generates .h.
+#	$(web2c) $*
+#.ch.p: # really depends on tangle; for mf/mp/tex, also generates .pool
+#	./tangle $(srcdir)/$*.web $<
+
+# These definitions have to come before the rules that expand them.
+# The *{ini,[0-2]}.c files are created by splitup, run as part of convert.
+# {mf,mp,tex}extra.c are created from lib/texmfmp.c, below.
+
+# Prevent Make from deleting the intermediate forms.
+.PRECIOUS: %.ch %.p %.c
+
+tex = tex
+mf = mf
+@MFN@mfn = mf-nowin
+#  
+default all: programs manpages doc/web2c.info @FMU@
+check: dumps
+
+bibtex: bibtex.o
+	$(kpathsea_link) bibtex.o $(LOADLIBES)
+bibtex.c bibtex.h: $(web2c_common) $(web2c_programs) web2c/cvtbib.sed bibtex.p
+	$(web2c) bibtex
+bibtex.p: tangle bibtex.web bibtex.ch
+	$(tangle) bibtex bibtex
+check: bibtex-check
+bibtex-check: bibtex
+	test -f tests/exampl.aux || \
+	  cp $(srcdir)/tests/exampl.aux tests/exampl.aux
+	TEXMFCNF=../kpathsea \
+	  BSTINPUTS=$(srcdir)/tests \
+	  BIBINPUTS=$(srcdir)/tests \
+	  ./bibtex tests/exampl
+clean:: bibtex-clean
+bibtex-clean:
+	$(LIBTOOL) --mode=clean rm -f bibtex
+	rm -f bibtex.o bibtex.c bibtex.h bibtex.p
+	rm -f tests/exampl.blg tests/exampl.bbl
+
+ctie: ctie.o
+	$(kpathsea_link) ctie.o $(LOADLIBES)
+ctie.c: ctangle ctiedir/ctie.w ctiedir/ctie-k.ch
+	CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
+clean:: ctie-clean
+ctie-clean:
+	$(LIBTOOL) --mode=clean rm -f ctie
+	rm -f ctie.o ctie.c
+
+cweave: cweave.o cweb.o
+	$(kpathsea_link) cweave.o cweb.o $(LOADLIBES)
+cweave.c: ctangle cwebdir/cweave.w cwebdir/cweav-w2c.ch
+	CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
+check: cweave-check
+cweave-check: cweave
+	CWEBINPUTS=$(srcdir)/cwebdir ./cweave common.w
+clean:: cweave-clean
+cweave-clean:
+	$(LIBTOOL) --mode=clean rm -f cweave
+	rm -f cweave.o cweave.c
+	rm -f common.tex common.scn common.idx
+
+dvicopy: dvicopy.o
+	$(kpathsea_link) dvicopy.o $(LOADLIBES)
+dvicopy.c dvicopy.h: $(web2c_common) $(web2c_programs) dvicopy.p
+	$(web2c) dvicopy
+dvicopy.p: tangle dvicopy.web dvicopy.ch
+	$(tangle) dvicopy dvicopy
+check: dvicopy-check
+dvicopy-check: dvicopy
+	TEXMFCNF=../kpathsea \
+	  ./dvicopy $(srcdir)/tests/story tests/xstory.dvi
+# Redirect stderr so the terminal output will end up in the log file.
+	(TFMFONTS=$(srcdir)/tests VFFONTS=$(srcdir)/tests ./dvicopy \
+	  <$(srcdir)/tests/pplr.dvi \
+	  >tests/xpplr.dvi) 2>&1
+clean:: dvicopy-clean
+dvicopy-clean:
+	$(LIBTOOL) --mode=clean rm -f dvicopy
+	rm -f dvicopy.o dvicopy.c dvicopy.h dvicopy.p
+	rm -f tests/xstory.dvi tests/xpplr.dvi
+
+## dvitomp is a special case
+kpse_include dvitomp.mk
+##
+
+dvitype: dvitype.o
+	$(kpathsea_link) dvitype.o $(LOADLIBES)
+dvitype.c dvitype.h: $(web2c_common) $(web2c_programs) dvitype.p
+	$(web2c) dvitype
+dvitype.p: tangle dvitype.web dvitype.ch
+	$(tangle) dvitype dvitype
+check: dvitype-check
+dvitype-check: dvitype
+	./dvitype -show-opcodes $(srcdir)/tests/story >tests/xstory.dvityp
+	./dvitype --p=\*.\*.2 $(srcdir)/tests/pagenum.dvi >tests/xpagenum.typ
+clean:: dvitype-clean
+dvitype-clean:
+	$(LIBTOOL) --mode=clean rm -f dvitype
+	rm -f dvitype.o dvitype.c dvitype.h dvitype.p
+	rm -f tests/xstory.dvityp tests/xpagenum.typ
+
+gftodvi: gftodvi.o
+	$(kpathsea_link) gftodvi.o $(LOADLIBES)
+gftodvi.c gftodvi.h: $(web2c_common) $(web2c_programs) gftodvi.p
+	$(web2c) gftodvi
+gftodvi.p: tangle gftodvi.web gftodvi.ch
+	$(tangle) gftodvi gftodvi
+check: gftodvi-check
+gftodvi-check: gftodvi
+	TFMFONTS=$(srcdir)/tests ./gftodvi -verbose \
+	  $(srcdir)/tests/cmr10.600gf
+	mv cmr10.dvi tests/xcmr10.dvi
+clean:: gftodvi-clean
+gftodvi-clean:
+	$(LIBTOOL) --mode=clean rm -f gftodvi
+	rm -f gftodvi.o gftodvi.c gftodvi.h gftodvi.p
+	rm -f tests/xcmr10.dvi
+
+gftopk: gftopk.o
+	$(kpathsea_link) gftopk.o $(LOADLIBES)
+gftopk.c gftopk.h: $(web2c_common) $(web2c_programs) gftopk.p
+	$(web2c) gftopk
+gftopk.p: tangle gftopk.web gftopk.ch
+	$(tangle) gftopk gftopk
+check: gftopk-check
+gftopk-check: gftopk
+	./gftopk -verbose $(srcdir)/tests/cmr10.600gf tests/xcmr10.pk
+	./gftopk $(srcdir)/tests/cmr10.600gf cmr10.pk && rm cmr10.pk
+clean:: gftopk-clean
+gftopk-clean:
+	$(LIBTOOL) --mode=clean rm -f gftopk
+	rm -f gftopk.o gftopk.c gftopk.h gftopk.p
+	rm -f tests/xcmr10.pk
+
+gftype: gftype.o
+	$(kpathsea_link) gftype.o $(LOADLIBES)
+gftype.c gftype.h: $(web2c_common) $(web2c_programs) gftype.p
+	$(web2c) gftype
+gftype.p: tangle gftype.web gftype.ch
+	$(tangle) gftype gftype
+check: gftype-check
+gftype-check: gftype
+	./gftype $(srcdir)/tests/cmr10.600gf >tests/xcmr10.gft1
+	./gftype -m -i $(srcdir)/tests/cmr10.600gf >tests/xcmr10.gft2
+clean:: gftype-clean
+gftype-clean:
+	$(LIBTOOL) --mode=clean rm -f gftype
+	rm -f gftype.o gftype.c gftype.h gftype.p
+	rm -f tests/xcmr10.gft1 tests/xcmr10.gft2
+
+mft: mft.o
+	$(kpathsea_link) mft.o $(LOADLIBES)
+mft.c mft.h: $(web2c_common) $(web2c_programs) mft.p
+	$(web2c) mft
+mft.p: tangle mft.web mft.ch
+	$(tangle) mft mft
+check: mft-check
+mft-check: mft
+	./mft $(srcdir)/tests/io; mv io.tex tests/io.tex
+clean:: mft-clean
+mft-clean:
+	$(LIBTOOL) --mode=clean rm -f mft
+	rm -f mft.o mft.c mft.h mft.p
+	rm -f tests/io.tex
+
+patgen: patgen.o
+	$(kpathsea_link) patgen.o $(LOADLIBES)
+patgen.c patgen.h: $(web2c_common) $(web2c_programs) patgen.p
+	$(web2c) patgen
+patgen.p: tangle patgen.web patgen.ch
+	$(tangle) patgen patgen
+check: patgen-check
+patgen-check: patgen
+	./patgen $(srcdir)/tests/dict $(srcdir)/tests/patterns tests/xpatout \
+	   $(srcdir)/tests/translate <$(srcdir)/tests/patgen.in
+clean:: patgen-clean
+patgen-clean:
+	$(LIBTOOL) --mode=clean rm -f patgen
+	rm -f patgen.o patgen.c patgen.h patgen.p
+	rm -f tests/xpatout pattmp.4
+
+pktogf: pktogf.o
+	$(kpathsea_link) pktogf.o $(LOADLIBES)
+pktogf.c pktogf.h: $(web2c_common) $(web2c_programs) pktogf.p
+	$(web2c) pktogf
+pktogf.p: tangle pktogf.web pktogf.ch
+	$(tangle) pktogf pktogf
+check: pktogf-check
+pktogf-check: pktogf
+	./pktogf -verbose $(srcdir)/tests/cmr10.pk tests/xcmr10.600gf
+	./pktogf $(srcdir)/tests/cmr10.pk && rm cmr10.gf
+clean:: pktogf-clean
+pktogf-clean:
+	$(LIBTOOL) --mode=clean rm -f pktogf
+	rm -f pktogf.o pktogf.c pktogf.h pktogf.p
+	rm -f tests/xcmr10.600gf
+
+pktype: pktype.o
+	$(kpathsea_link) pktype.o $(LOADLIBES)
+pktype.c pktype.h: $(web2c_common) $(web2c_programs) pktype.p
+	$(web2c) pktype
+pktype.p: tangle pktype.web pktype.ch
+	$(tangle) pktype pktype
+check: pktype-check
+pktype-check: pktype
+	./pktype $(srcdir)/tests/cmr10.pk >tests/xcmr10.pktyp
+clean:: pktype-clean
+pktype-clean:
+	$(LIBTOOL) --mode=clean rm -f pktype
+	rm -f pktype.o pktype.c pktype.h pktype.p
+	rm -f tests/xcmr10.pktyp
+
+pltotf: pltotf.o
+	$(kpathsea_link) pltotf.o $(LOADLIBES)
+pltotf.c pltotf.h: $(web2c_common) $(web2c_programs) pltotf.p
+	$(web2c) pltotf
+pltotf.p: tangle pltotf.web pltotf.ch
+	$(tangle) pltotf pltotf
+check: pltotf-check
+pltotf-check: pltotf
+	./pltotf -verbose $(srcdir)/tests/cmr10 tests/xcmr10
+clean:: pltotf-clean
+pltotf-clean:
+	$(LIBTOOL) --mode=clean rm -f pltotf
+	rm -f pltotf.o pltotf.c pltotf.h pltotf.p
+	rm -f tests/xcmr10.tfm
+
+pooltype: pooltype.o
+	$(kpathsea_link) pooltype.o $(LOADLIBES)
+pooltype.c pooltype.h: $(web2c_common) $(web2c_programs) pooltype.p
+	$(web2c) pooltype
+pooltype.p: tangle pooltype.web pooltype.ch
+	$(tangle) pooltype pooltype
+check: pooltype-check
+pooltype-check: tex.pool
+pooltype-check: pooltype
+	./pooltype tex.pool >tests/xtexpool.typ
+clean:: pooltype-clean
+pooltype-clean:
+	$(LIBTOOL) --mode=clean rm -f pooltype
+	rm -f pooltype.o pooltype.c pooltype.h pooltype.p
+	rm -f tests/xtexpool.typ
+
+tie: tie.o
+	$(kpathsea_link) tie.o $(LOADLIBES)
+tie.c: ctangle tiedir/tie.w tiedir/tie-w2c.ch
+	CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
+clean:: tie-clean
+tie-clean:
+	$(LIBTOOL) --mode=clean rm -f tie
+	rm -f tie.o tie.c
+
+tftopl: tftopl.o
+	$(kpathsea_link) tftopl.o $(LOADLIBES)
+tftopl.c tftopl.h: $(web2c_common) $(web2c_programs) tftopl.p
+	$(web2c) tftopl
+tftopl.p: tangle tftopl.web tftopl.ch
+	$(tangle) tftopl tftopl
+check: tftopl-check
+tftopl-check: tftopl
+	./tftopl -verbose $(srcdir)/tests/cmr10 tests/xcmr10
+clean:: tftopl-clean
+tftopl-clean:
+	$(LIBTOOL) --mode=clean rm -f tftopl
+	rm -f tftopl.o tftopl.c tftopl.h tftopl.p
+	rm -f tests/xcmr10.pl
+
+vftovp: vftovp.o
+	$(kpathsea_link) vftovp.o $(LOADLIBES)
+vftovp.c vftovp.h: $(web2c_common) $(web2c_programs) vftovp.p
+	$(web2c) vftovp
+vftovp.p: tangle vftovp.web vftovp.ch
+	$(tangle) vftovp vftovp
+check: vftovp-check
+vftovp-check: vftovp
+	TFMFONTS=$(srcdir)/tests ./vftovp -verbose $(srcdir)/tests/ptmr ptmr tests/xptmr
+clean:: vftovp-clean
+vftovp-clean:
+	$(LIBTOOL) --mode=clean rm -f vftovp
+	rm -f vftop.o vftovp.c vftovp.h vftovp.p
+	rm -f tests/xptmr.vpl
+
+vptovf: vptovf.o
+	$(kpathsea_link) vptovf.o $(LOADLIBES)
+vptovf.c vptovf.h: $(web2c_common) $(web2c_programs) vptovf.p
+	$(web2c) vptovf
+vptovf.p: tangle vptovf.web vptovf.ch
+	$(tangle) vptovf vptovf
+check: vptovf-check
+vptovf-check: vptovf
+	./vptovf $(srcdir)/tests/ptmr tests/xptmr tests/xptmr
+clean:: vptovf-clean
+vptovf-clean:
+	$(LIBTOOL) --mode=clean rm -f vptovf
+	rm -f vptovf.o vptovf.c vptovf.h vptovf.p
+	rm -f tests/xptmr.vf tests/xptmr.tfm
+
+weave: weave.o
+	$(kpathsea_link) weave.o $(LOADLIBES)
+weave.c weave.h: $(web2c_common) $(web2c_programs) weave.p
+	$(web2c) weave
+weave.p: tangle weave.web weave.ch
+	$(tangle) weave weave
+check: weave-check
+weave-check: weave
+	./weave $(srcdir)/pooltype
+clean:: weave-clean
+weave-clean:
+	$(LIBTOOL) --mode=clean rm -f weave
+	rm -f weave.o weave.c weave.h weave.p
+	rm -f pooltype.tex
+
+# 
+# Defines that are common to the texmf programs.
+
+triptrap: trip trap mptrap
+testdir = $(srcdir)/triptrap
+testenv = TEXMFCNF=$(testdir)
+dvitype_args = -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'
+
+# 
+# Metafont
+mf_c  = mfini.c mf0.c mf1.c
+mf_o  = mfini.o mf0.o mf1.o mf-pool.o mfextra.o
+mfn_o = mfini.o mf0.o mf1.o mf-pool.o mfnowin.o
+mf: $(mf_o) $(windowlib)
+	$(kpathsea_link) $(mf_o) $(windowlink) $(LOADLIBES)
+mf-nowin: $(mfn_o) window/trap.o
+	$(kpathsea_link) $(mfn_o) window/trap.o $(LOADLIBES)
+mfnowin.o: mfnowin.c
+	$(compile) -DMFNOWIN -c $< -o $@
+$(mf_c) mfcoerce.h mfd.h: mf.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed
+	$(web2c) mf
+mfextra.c: lib/texmfmp.c
+	sed s/TEX-OR-MF-OR-MP/mf/ $(srcdir)/lib/texmfmp.c >$@
+mfnowin.c: lib/texmfmp.c
+	sed s/TEX-OR-MF-OR-MP/mf/ $(srcdir)/lib/texmfmp.c >$@
+mf.p mf.pool: tangle mf.web mf-final.ch
+	$(tangle) $(srcdir)/mf.web mf-final.ch
+mf-final.ch: $(TIE) mf.web mf.ch mf-binpool.ch
+	$(TIE) -c $@ $(srcdir)/mf.web $(srcdir)/mf.ch $(srcdir)/mf-binpool.ch
+check: mf-check
+mf-check: trap mf.base
+	./mf --progname=mf '&./mf \tracingstats:=1; end.'
+	./mf --progname=mf $(srcdir)/tests/online
+	./mf --progname=mf $(srcdir)/tests/one.two
+	./mf --progname=mf $(srcdir)/tests/uno.dos
+clean:: mf-clean
+mf-clean: trap-clean
+	$(LIBTOOL) --mode=clean rm -f mf
+	$(LIBTOOL) --mode=clean rm -f mf-nowin
+	rm -f $(mf_c) mfcoerce.h mfd.h mf.p mf.pool
+	rm -f $(mf_o) mfextra.c
+	rm -f $(mfn_o) mfnowin.c
+	rm -f mf.base mf.log
+	rm -f mfput.log online.2602gf online.log one.two.log uno.log
+
+# Can't run trap and mptrap in parallel, because both write trap.{log,tfm}.
+trap: mf tftopl gftype trap-clean
+	@echo ">>> See $(testdir)/mftrap.diffs for example of acceptable diffs." >&2
+	$(LN) $(testdir)/trap.mf . # get same filename in log
+	-$(SHELL) -c '$(testenv) ./mf --progname=inimf <$(testdir)/mftrap1.in >mftrapin.fot'
+	mv trap.log mftrapin.log
+	-diff $(testdir)/mftrapin.log mftrapin.log
+	-$(SHELL) -c '$(testenv) ./mf --progname=inimf <$(testdir)/mftrap2.in >mftrap.fot'
+	mv trap.log mftrap.log
+	mv trap.tfm mftrap.tfm
+	-diff $(testdir)/mftrap.fot mftrap.fot
+	-diff $(testdir)/mftrap.log mftrap.log
+	./tftopl ./mftrap.tfm mftrap.pl
+	-diff $(testdir)/mftrap.pl mftrap.pl
+	$(SHELL) -c '$(testenv) ./gftype -m -i ./trap.72270gf >trap.typ'
+	-diff $(testdir)/trap.typ trap.typ
+
+trap-clean:
+	rm -f trap.mf trap.base
+	rm -f mftrapin.fot mftrapin.log
+	rm -f mftrap.fot mftrap.log mftrap.tfm
+	rm -f mftrap.pl trap.72270gf trap.typ
+# 
+# MetaPost
+kpse_include mpdir/mpostlib.mk
+kpse_include metapost.mk
+# 
+# TeX
+tex_c = texini.c tex0.c tex1.c tex2.c
+tex_o = texini.o tex0.o tex1.o tex2.o tex-pool.o texextra.o
+tex: $(tex_o)
+	$(kpathsea_link) $(tex_o) $(socketlibs) $(LOADLIBES)
+$(tex_c) texcoerce.h texd.h: tex.p $(web2c_texmf)
+	$(web2c) tex
+texextra.c: lib/texmfmp.c
+	sed s/TEX-OR-MF-OR-MP/tex/ $(srcdir)/lib/texmfmp.c >$@
+tex.p tex.pool: tangle tex.web tex-final.ch
+	$(tangle) $(srcdir)/tex.web tex-final.ch
+tex-final.ch: $(TIE) tex.web tex.ch tex-binpool.ch
+	$(TIE) -c $@ $(srcdir)/tex.web $(srcdir)/tex.ch $(srcdir)/tex-binpool.ch
+
+# tools to load pool for tex and mf.
+#
+tex-pool.c: tex.pool $(makecpool) tmf-pool.h
+	$(makecpool) tex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+mf-pool.c: mf.pool $(makecpool) tmf-pool.h
+	$(makecpool) mf.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+mf-pool.o: mf-pool.c tmf-pool.h mfd.h
+# we include mfd.h, so need lots more includes.
+	$(CC) $(CFLAGS) -I. -I.. -I$(srcdir) -I$(srcdir)/.. -DMETA_FONT -c -o $@ mf-pool.c
+
+check: tex-check
+tex-check: trip tex.fmt
+# Test truncation (but don't bother showing the warning msg).
+	./tex --progname=tex --output-comment="`cat $(srcdir)/PROJECTS`" \
+	    $(srcdir)/tests/hello 2>/dev/null \
+	  && ./dvitype hello.dvi | grep olaf@infovore.xs4all.nl >/dev/null
+# \openout should show up in \write's.
+	./tex --progname=tex $(srcdir)/tests/openout && grep xfoo openout.log
+# one.two.tex -> one.two.log
+	./tex --progname=tex $(srcdir)/tests/one.two && ls -l one.two.log
+# uno.dos -> uno.log
+	./tex --progname=tex $(srcdir)/tests/uno.dos && ls -l uno.log
+	./tex --progname=tex $(srcdir)/tests/just.texi && ls -l just.log
+	-./tex --progname=tex $(srcdir)/tests/batch.tex
+	./tex --progname=tex --shell $(srcdir)/tests/write18 | grep echo
+	TEXMFCNF=../kpathsea \
+	  ./tex --mltex --progname=initex --ini $(srcdir)/tests/mltextst
+	-./tex </dev/null
+	-PATH=`pwd`:$(kpathsea_dir):$(kpathsea_srcdir):$$PATH \
+	  WEB2C=$(kpathsea_srcdir) TMPDIR=.. \
+	  ./tex --progname=tex '\nonstopmode\font\foo=nonesuch\end'
+clean:: tex-clean
+tex-clean: trip-clean
+	$(LIBTOOL) --mode=clean rm -f tex
+	rm -f $(tex_o) $(tex_c) texextra.c texcoerce.h texd.h
+	rm -f tex.p tex.pool
+	rm -f tex.fmt tex.log
+	rm -f hello.dvi hello.log xfoo.out openout.log on.two.log uno.log
+	rm -f just.log batch.log write18.log mltextst.log texput.log
+	rm -f missfont.log
+	rm -rf tfm
+
+trip: dvitype pltotf tftopl tex trip-clean
+	@echo ">>> See $(testdir)/trip.diffs for example of acceptable diffs." >&2
+	./pltotf $(testdir)/trip.pl trip.tfm
+	./tftopl ./trip.tfm trip.pl
+	-diff $(testdir)/trip.pl trip.pl
+	$(LN) $(testdir)/trip.tex . # get same filename in log
+	-$(SHELL) -c '$(testenv) ./tex --progname=initex --ini <$(testdir)/trip1.in >tripin.fot'
+	mv trip.log tripin.log
+	-diff $(testdir)/tripin.log tripin.log
+# May as well test non-ini second time through.
+	-$(SHELL) -c '$(testenv) ./tex --progname=tex <$(testdir)/trip2.in >trip.fot'
+	-diff $(testdir)/trip.fot trip.fot
+# We use $(DIFF) instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+	-$(DIFF) $(DIFFFLAGS) $(testdir)/trip.log trip.log
+	$(SHELL) -c '$(testenv) ./dvitype $(dvitype_args) trip.dvi >trip.typ'
+	-$(DIFF) $(DIFFFLAGS) $(testdir)/trip.typ trip.typ
+
+trip-clean:
+	rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
+	rm -f trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
+	rm -rf tfm
+# 
+# Helper makefile fragments for pdf*tex and luatex.
+kpse_include libsluapdf.mk
+kpse_include pdftexdir/pdftexlib.mk
+kpse_include luatexdir/luatexlib.mk
+# 
+# Makefile fragments:
+kpse_include synctexdir/synctex.mk
+kpse_include etexdir/etex.mk
+kpse_include omegadir/omega.mk
+kpse_include alephdir/aleph.mk
+kpse_include pdftexdir/pdftex.mk
+kpse_include xetexdir/xetex.mk
+kpse_include luatexdir/luatex.mk
+
+# 
+# non-engine programs.
+programs = bibtex ctangle ctie cweave dvicopy dvitomp dvitype gftodvi gftopk \
+ gftype mft $(odvicopy) $(odvitype) $(otangle) patgen $(pdftosrc) \
+ pktogf pktype pltotf pooltype synctex tangle tftopl tie $(ttf2afm) \
+ vftovp vptovf weave
+
+# basic_engines are the binaries we build and install directly here in
+# the webdir/ directory.
+# include $(metapost) from metapost.mk even though it also includes
+# dvitomp.  Hopefully that doesn't hurt.
+basic_engines = $(tex) $(mf) $(mfn) $(metapost)
+
+# engines includes the ones built in subdirectories.
+engines = $(basic_engines) $(etex) \
+          $(omega) $(aleph) \
+          $(pdftex) $(pdfetex) \
+          $(xetex) $(luatex)
+
+programs: $(programs) $(engines) $(mpware_programs) \
+          $(omegafonts_programs) $(otps_programs) $(pdftosrc)
+
+# Additional dependencies for relinking.
+# Each program and engine already depends on $(web2c_programs).
+$(web2c_programs) tangleboot ctangleboot: $(kpathsea) $(proglib)
+
+# 
+# Bootstrapping tangle requires making it with itself.  We use the opportunity
+# to create an up-to-date tangleboot as well.
+tangle: tangle.o
+	$(kpathsea_link) tangle.o $(LOADLIBES)
+	$(MAKE) $(common_makeargs) tangleboot.p
+tangle.c tangle.h: tangle.p
+	$(web2c) tangle
+# tangle.p is a special case, since it is needed to compile itself.  We
+# convert and compile the (distributed) tangleboot.p to make a tangle
+# which we use to make the other programs.  We depend on tangleboot, even
+# though we might not use it.
+tangle.p: tangleboot tangle.web tangle.ch
+	WEBINPUTS=.:$(srcdir) $(TANGLEBOOT) tangle tangle
+tangle.web:
+	@echo "You seem to be missing tangle.web, perhaps because you" >&2
+	@echo "didn't retrieve web.tar.gz, only web2c.tar.gz." >&2
+	@echo "You need both." >&2
+	@echo >&2
+	@echo "web.tar.gz should be available from the" >&2
+	@echo "same place that you got web2c.tar.gz." >&2
+	@echo "In any case, you can get it from" >&2
+	@echo "ftp://ftp.tug.org/tex/web.tar.gz." >&2
+	false
+clean:: tangle-clean
+tangle-clean:
+	$(LIBTOOL) --mode=clean rm -f tangle
+	rm -f tangle.o tangle.c tangle.h tangle.p
+
+tangleboot: tangleboot.o
+	$(kpathsea_link) tangleboot.o $(LOADLIBES)
+tangleboot.c tangleboot.h: stamp-tangle $(web2c_programs) $(web2c_common)
+	$(web2c) tangleboot
+# tangleboot.p is in the distribution
+stamp-tangle: tangleboot.p
+	date >stamp-tangle
+# This is not run unless tangle.web or tangle.ch is changed.
+# Only try to run ./tangle if it actually exists, otherwise
+# just touch tangleboot.p and build tangle.
+tangleboot.p: tangle.web tangle.ch
+	if [ -r $(TANGLE) ] || [ -r $(TANGLE).exe ]; then \
+	  $(tangle) tangle tangle; \
+	  mv tangle.p tangleboot.p; \
+	elif [ -r tangleboot.p ]; then \
+	  touch tangleboot.p; \
+	else \
+	  cp $(srcdir)/tangleboot.p .; \
+	fi
+	date >stamp-tangle
+	$(MAKE) $(common_makeargs) tangle
+clean:: tangleboot-clean
+tangleboot-clean:
+	$(LIBTOOL) --mode=clean rm -f tangleboot
+	rm -f tangleboot.o tangleboot.c tangleboot.h
+
+# Bootstrapping ctangle requires making it with itself.  We use the opportunity
+# to create an up-to-date ctangleboot as well.
+ctangle: ctangle.o cweb.o
+	$(kpathsea_link) ctangle.o cweb.o $(LOADLIBES)
+	$(MAKE) $(common_makeargs) ctangleboot.c cwebboot.c
+# ctangle.c is a special case, since it is needed to compile itself.
+ctangle.c: ctangleboot cwebdir/ctangle.w cwebdir/ctang-w2c.ch
+	CWEBINPUTS=$(srcdir)/cwebdir $(CTANGLEBOOT) ctangle ctang-w2c
+cweb.c: ctangleboot cwebdir/common.w cwebdir/comm-w2c.ch
+	CWEBINPUTS=$(srcdir)/cwebdir $(CTANGLEBOOT) common comm-w2c cweb.c
+clean:: ctangle-clean
+clean:: cweb-clean
+ctangle-clean:
+	$(LIBTOOL) --mode=clean rm -f ctangle
+	rm -f ctangle.o ctangle.c
+cweb-clean:
+	rm -f cweb.o cweb.c
+
+ctangleboot: ctangleboot.o cwebboot.o
+	$(kpathsea_link) ctangleboot.o cwebboot.o $(LOADLIBES)
+# ctangleboot.c is in the distribution
+stamp-ctangle: ctangleboot.c cwebboot.c
+ctangleboot.c: cwebdir/ctangle.w cwebdir/ctang-w2c.ch
+	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
+	  CWEBINPUTS=$(srcdir)/cwebdir $(CTANGLE) ctangle ctang-w2c; \
+	  mv ctangle.c ctangleboot.c; \
+	elif [ -r ctangleboot.c ]; then \
+	  touch ctangleboot.c; \
+	else \
+	  cp $(srcdir)/ctangleboot.c .; \
+	fi
+	date >stamp-ctangle
+	$(MAKE) $(common_makeargs) ctangle
+cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
+	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
+	  CWEBINPUTS=$(srcdir)/cwebdir $(CTANGLE) common comm-w2c cweb.c; \
+	  mv cweb.c cwebboot.c; \
+	elif [ -r cwebboot.c ]; then \
+	  touch cwebboot.c; \
+	else \
+	  cp $(srcdir)/cwebboot.c .; \
+	fi
+	date >stamp-ctangle
+	$(MAKE) $(common_makeargs) ctangle
+clean:: ctangleboot-clean
+clean:: cwebboot-clean
+ctangleboot-clean:
+	$(LIBTOOL) --mode=clean rm -f ctangleboot
+	rm -f ctangleboot.o
+cwebboot-clean:
+	rm -f cwebboot.o
+
+# Even web2c itself uses the library.
+lib_sources = lib/alloca.c lib/basechsuffix.c lib/chartostring.c \
+  lib/eofeoln.c lib/fprintreal.c lib/input2int.c lib/inputint.c lib/main.c \
+  lib/openclose.c lib/printversion.c lib/uexit.c lib/usage.c lib/version.c \
+  lib/zround.c 
+$(proglib): $(lib_sources) stamp-auto
+	cd lib && $(MAKE) $(common_makeargs)
+
+# No exceptions in this library.
+window_sources = $(srcdir)/window/*.c
+$(windowlib): mfd.h $(window_sources)
+	cd window && $(MAKE) $(window_makeargs)
+window/trap.o: $(srcdir)/window/trap.c
+	cd window && $(MAKE) $(common_makeargs) trap.o
+
+# The web2c program consists of several executables.
+web2c/fixwrites: web2c/fixwrites.c web2c/kps.c
+	cd web2c && $(MAKE) $(common_makeargs) fixwrites
+web2c/splitup: web2c/splitup.c web2c/kps.c
+	cd web2c && $(MAKE) $(common_makeargs) splitup
+web2c/web2c: web2c/main.c web2c/web2c.h web2c/web2c.l web2c/web2c.y web2c/kps.c
+	cd web2c && $(MAKE) $(common_makeargs) web2c
+$(makecpool): web2c/makecpool.c
+	cd web2c && $(MAKE) $(common_makeargs) makecpool
+
+kpse_include ../make/tkpathsea.mk
+
+# 
+# Making dumps.
+all_fmts = tex.fmt $(fmts)
+all_bases = mf.base $(bases)
+all_mems = mpost.mem $(mems)
+
+# We used to build these by default, but nowadays the dumps are created
+# completely separately, e.g., at runtime by mktexfmt.  So just leave it
+# as an optional extra target.
+dumps: fmts bases mems
+fmts: $(all_fmts)
+bases: $(all_bases)
+mems: $(all_mems)
+
+tex.fmt: tex
+	$(dumpenv) $(MAKE) progname=tex files="plain.tex cmr10.tfm" prereq-check
+	$(dumpenv) ./tex --progname=tex --jobname=tex --ini \\input plain \\dump </dev/null
+
+olatex.fmt: tex
+	$(dumpenv) $(MAKE) progname=olatex files="latex.ltx" prereq-check
+	$(dumpenv) ./tex --progname=olatex --jobname=olatex --ini \\input latex.ltx </dev/null
+
+mltex.fmt: tex
+	$(dumpenv) $(MAKE) progname=mltex files="plain.tex cmr10.tfm" prereq-check
+	$(dumpenv) ./tex --mltex --progname=mltex --jobname=mltex --ini \\input plain \\dump </dev/null
+
+mf.base: mf
+	$(dumpenv) $(MAKE) progname=mf files="plain.mf cmr10.mf $(localmodes).mf" prereq-check
+	$(dumpenv) ./mf --progname=mf --jobname=mf --ini \\input plain input $(localmodes) dump </dev/null
+
+mpost.mem: mpost
+	$(dumpenv) $(MAKE) progname=mpost files=plain.mp prereq-check
+	$(dumpenv) ./mpost --progname=mpost --jobname=mpost --ini \\input plain dump </dev/null
+
+# This is meant to be called recursively, with $(files) set.
+prereq-check: $(kpathsea_dir)/kpsewhich
+	$(kpathsea_dir)/kpsewhich --progname=$(progname) $(files) >/dev/null || $(MAKE) prereq-lose >/dev/null
+
+prereq-lose:
+	@echo "You seem to be missing input files necessary to make the" >&2
+	@echo "basic formats (some or all of: $(files))." >&2
+	@echo "Perhaps you've defined the default paths incorrectly, or" >&2
+	@echo "perhaps you have environment variables set pointing" >&2
+	@echo "to an incorrect location.  See ../kpathsea/BUGS." >&2
+	@echo >&2
+	@echo "If you simply do not have the files, you can" >&2
+	@echo "retrieve a minimal set of input files from CTAN hosts." >&2
+	false
+
+$(kpathsea_dir)/kpsewhich: $(kpathsea)
+
+amstex.fmt: tex
+	$(dumpenv) ./tex --progname=amstex --jobname=amstex --ini amstex.ini </dev/null
+
+# Texinfo changes the escape character from `\' to `@'.
+texinfo.fmt: tex.fmt
+	$(dumpenv) ./tex --progname=texinfo --jobname=texinfo --ini texinfo @dump </dev/null
+
+eplain.fmt: tex.fmt
+	touch eplain.aux # Makes cross-reference warnings work right.
+	$(dumpenv) ./tex --progname=eplain --jobname=eplain --ini \&./tex eplain \\dump </dev/null
+
+# 
+install: install-exec install-data
+install-exec:: install-programs
+
+# Installation directories.
+$(bindir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+$(texpooldir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(texpooldir)
+$(mfpooldir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(mfpooldir)
+$(mppooldir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(mppooldir)
+$(fmtdir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(fmtdir)
+$(basedir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(basedir)
+$(memdir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(memdir)
+$(web2cdir)::
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(web2cdir)
+
+# Installing the binaries.  Each of the *dir/*.mk files (except etex)
+# add to this target via a dependency-only rule, to install their
+# respective engines.
+install-programs: $(programs) $(basic_engines) $(bindir)
+	for p in $(programs) $(basic_engines); do \
+	  $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+
+# We do not attempt to install any of the per-format symlinks, leaving
+# that to a separate run of texlinks.
+
+# Always do plain.*, so examples from the TeXbook (etc.) will work.
+# This target is not called, since it depends on the whole texmf tree,
+# but we leave it for posterity.
+install-fmts: install-tex-fmts
+install-tex-fmts: fmts $(fmtdir)
+	fmts="$(all_fmts)"; \
+	  for f in $$fmts; do $(INSTALL_DATA) $$f $(fmtdir)/$$f; done
+	cd $(fmtdir) && (rm -f plain.fmt; $(LN) tex.fmt plain.fmt)
+	fmts="$(fmts)"; \
+	  for f in $$fmts; do base=`basename $$f .fmt`; \
+	    (cd $(bindir) && (rm -f $$base; $(LN) tex $$base)); done
+
+install-bases: install-mf-bases
+install-mf-bases: bases $(basedir)
+	bases="$(all_bases)"; \
+	  for f in $$bases; do $(INSTALL_DATA) $$f $(basedir)/$$f; done
+	cd $(basedir) && (rm -f plain.base; $(LN) mf.base plain.base)
+	bases="$(bases)"; \
+	  for f in $$bases; do base=`basename $$f .base`;\
+	    (cd $(bindir) && (rm -f $$base; $(LN) mf $$base)); done
+
+install-mems: install-mpost-mems
+install-mpost-mems: mems $(memdir)
+	mems="$(all_mems)"; \
+	  for f in $$mems; do $(INSTALL_DATA) $$f $(memdir)/$$f; done
+	cd $(memdir) && (rm -f plain.mem; $(LN) mpost.mem plain.mem)
+	mems="$(mems)"; \
+	  for f in $$mems; do base=`basename $$f .mem`; \
+            (cd $(bindir) && (rm -f $$base; $(LN) mpost $$base)); done
+
+# Auxiliary files.
+install-data:: $(web2cdir)
+	cd doc && $(MAKE) $(install_makeargs) install-data
+	cd man && $(MAKE) $(install_makeargs) install-data
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(man1dir) $(man5dir)
+	$(INSTALL_DATA) $(srcdir)/tiedir/tie.1 $(man1dir)/tie.$(manext)
+	$(INSTALL_DATA) $(srcdir)/ctiedir/ctie.1 $(man1dir)/ctie.$(manext)
+	$(INSTALL_DATA) $(srcdir)/synctexdir/man1/synctex.1 $(man1dir)/synctex.$(manext)
+	$(INSTALL_DATA) $(srcdir)/synctexdir/man5/synctex.5 $(man5dir)/synctex.5
+
+# Dummy target.
+uninstall uninstall-exec uninstall-data:
+	@echo "*** Warning: uninstall is a dummy target in web2c/Makefile"
+
+# The distribution comes with up-to-date .info* files,
+# so this should never be used unless something goes wrong
+# with the unpacking, or you modify the manual.
+doc/web2c.info:
+	cd doc && $(MAKE) info
+info dvi:
+	cd doc && $(MAKE) $@
+
+# Manual pages
+manpages:
+	cd man && $(MAKE) all
+
+# 
+# make dist won't work for anyone but me. Sorry.
+
+@MAINT@all-dist: dist web-dist etex-dist omega-dist aleph-dist pdftex-dist libs-dist
+@MAINT@
+@MAINT@distname = web2c
+@MAINT@program_files = PROJECTS *.ac *.ch tangleboot.p
+@MAINT@# The files that omega places in the main directory.
+@MAINT@omega_files = omegamem.h {odvicopy,odvitype,otangle}.{web,ch}
+@MAINT@
+@MAINT@triptrapdiffs: triptrap/trip.diffs triptrap/mftrap.diffs triptrap/mptrap.diffs
+@MAINT@triptrap/trip.diffs: tex
+@MAINT@	$(MAKE) trip | tail +1 >triptrap/trip.diffs
+@MAINT@triptrap/mftrap.diffs: mf
+@MAINT@	$(MAKE) trap | tail +1 >triptrap/mftrap.diffs
+@MAINT@triptrap/mptrap.diffs: mpost
+@MAINT@	$(MAKE) mptrap | tail +1 >triptrap/mptrap.diffs
+@MAINT@
+@MAINT@tests/check.log: $(programs) $(engines)
+@MAINT@	$(MAKE) check | tail +1 >tests/check.log
+@MAINT@
+@MAINT@dist_subdirs = doc lib $(mpware) tests web2c window
+@MAINT@pre-dist-$(distname): depend triptrapdiffs tests/check.log tangleboot.p
+@MAINT@	cd web2c && $(MAKE) lex.yy.c y_tab.c
+@MAINT@	cd doc && $(MAKE) doc dvi
+@MAINT@
+@MAINT@post-dist-$(distname): 
+@MAINT@# Make the subdirectories.
+@MAINT@	for d in $(dist_subdirs); do \
+@MAINT@	  mkdir -p $(texk_distdir)/$(distname)/$$d; done
+@MAINT@# Link files in subdirectories.
+@MAINT@	for f in `find $(dist_subdirs)		\
+@MAINT@		       \(    -name README	\
+@MAINT@			  -o -name convert	\
+@MAINT@			  -o -name ChangeLog	\
+@MAINT@			  -o -name 'coerce.*'	\
+@MAINT@			  -o -name ref.aux	\
+@MAINT@			  -o -name ref.bbl	\
+@MAINT@			  -o -name ref.tex	\
+@MAINT@			  -o -name ref.txi	\
+@MAINT@			  -o -name texinfo.bst	\
+@MAINT@			  -o -name web2c.cps	\
+@MAINT@			  -o -name web2c.aux	\
+@MAINT@			  -o -name '*.asm'	\
+@MAINT@			  -o -name '*.[chly]'	\
+@MAINT@			  -o -name '*.defines'	\
+@MAINT@			  -o -name '*.in'	\
+@MAINT@			  -o -name '*.info*'	\
+@MAINT@	                  -o -name '*.map'	\
+@MAINT@			  -o -name '*.sed'	\
+@MAINT@			  -o -name '*.tcx'	\
+@MAINT@			  -o -name '*.texi'	\
+@MAINT@		       \) -print`; do		\
+@MAINT@	  ln $$f $(distdir)/`dirname $$f`; done
+@MAINT@# Handle the dependeny files in the subdirectories.
+@MAINT@	for d in lib $(mpware) web2c window; do \
+@MAINT@	  cp -p $$d/depend.mk $(texk_distdir)/$(distname)/$$d; done
+@MAINT@# Other subdirectories.
+@MAINT@	mkdir $(distdir)/triptrap && cd $(distdir)/triptrap && \
+@MAINT@	  for i in ../../../../triptrap/*; do \
+@MAINT@	    if test -f $$i; then ln -s $$i .; fi; done
+@MAINT@	mkdir $(distdir)/tiedir && cd $(distdir)/tiedir && \
+@MAINT@	  for i in ../../../../tiedir/*; do \
+@MAINT@	    if test -f $$i; then ln -s $$i .; fi; done
+@MAINT@	mkdir $(distdir)/ctiedir && cd $(distdir)/ctiedir && \
+@MAINT@	  for i in ../../../../ctiedir/*; do \
+@MAINT@	    if test -f $$i; then ln -s $$i .; fi; done
+@MAINT@	mkdir $(distdir)/cwebdir && cd $(distdir)/cwebdir && \
+@MAINT@	  for i in ../../../../cwebdir/*; do \
+@MAINT@	    if test -f $$i; then ln -s $$i .; fi; done
+@MAINT@	mkdir $(distdir)/cwebdir/examples && cd $(distdir)/cwebdir/examples && \
+@MAINT@	  for i in ../../../../cwebdir/examples/*; do \
+@MAINT@	    if test -f $$i; then ln -s $$i .; fi; done
+@MAINT@	mkdir $(distdir)/man && cd $(distdir)/man && \
+@MAINT@	  for i in ../../../../man/*; do \
+@MAINT@	    if test -f $$i; then ln -s $$i .; fi; done;
+@MAINT@	cd $(distdir)/man && rm -f *.1 Makefile sedscript
+@MAINT@	rm -f $(distdir)/window/x11.c
+@MAINT@	rm -f $(distdir)/tests/patgen.in
+@MAINT@	cd $(distdir)/tests && (rm just.texi; ln -s ../../../../tests/* .; rm -f x* CVS)
+@MAINT@	cd $(distdir)/tests && rm -f missfont.log ptmr.mpx io.tex exampl.b??
+@MAINT@# We supply the flex/bison output in case the user can't generate them.
+@MAINT@	cd $(distdir)/web2c; ../../../../../rename 's/$$/-dist/' lex.yy.c y_tab.[ch]
+@MAINT@# Remove cruft.
+@MAINT@	cd $(distdir); rm -f $(addsuffix .c, $(programs) tangleboot)
+@MAINT@	cd $(distdir); rm -f $(addsuffix .h, $(programs) tangleboot)
+@MAINT@	cd $(distdir); rm -f etex.ch omega.ch aleph.ch
+@MAINT@	cd $(distdir); rm -f pdftex.ch
+@MAINT@	cd $(distdir); bash -c "rm -f tests/x* tests/allbib.{bbl,blg,dvi,log}"
+@MAINT@	cd $(distdir)/tests && ln -s ../../../../tests/xampl.bib .
+@MAINT@	cd $(distdir); bash -c "rm -f $(omega_files) alephmem.h"
+@MAINT@	cd $(distdir); bash -c "rm -f cweb.c *{coerce,d}.h"
+@MAINT@	cd $(distdir); bash -c "rm -f omega*.c aleph*.c"
+@MAINT@	cd $(distdir); bash -c "rm -f tex*.c etex*.c"
+@MAINT@	cd $(distdir); bash -c "rm -f pdftex*.c"
+@MAINT@	cd $(distdir); bash -c "rm -f mf*.c mp*.c"
+@MAINT@	cd $(distdir); bash -c "rm -f macnames.c *extra.c"
+@MAINT@	touch $(distdir)/doc/*.info*
+@MAINT@
+@MAINT@web-dist:
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@	mkdir -p $(distdir)
+@MAINT@	for f in *.web; do ln $$f $(distdir); done
+@MAINT@	rm -f $(distdir)/etex.web $(distdir)/omega.web $(distdir)/aleph.web
+@MAINT@	rm -f $(distdir)/pdfetex.web
+@MAINT@	cd $(distdir); bash -c "rm -f $(omega_files)"
+@MAINT@	chmod -w $(distdir)/*
+@MAINT@	GZIP=-9 tar czf web-$(version).tar.gz $(top_distdir)
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@
+@MAINT@etex-dist: etexdir/etex.version
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@	mkdir -p $(distdir)/etexdir
+@MAINT@	cp -rp etexdir/* $(distdir)/etexdir
+@MAINT@	rm -rf $(distdir)/etexdir/CVS $(distdir)/etexdir/*/CVS
+@MAINT@	rm -f $(distdir)/etexdir/etexextra.h $(distdir)/etexdir/etex.version
+@MAINT@	GZIP=-9 tar czf web2c-$(version)-etex-`cat etexdir/etex.version`.tar.gz $(top_distdir)
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@
+@MAINT@omega-dist:
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@	mkdir -p $(distdir)/omegadir
+@MAINT@	mkdir -p $(distdir)/omegaware $(distdir)/omegafonts $(distdir)/otps
+@MAINT@	cp -p omegadir/* $(distdir)/omegadir
+@MAINT@	cd omegafonts && $(MAKE) lex.yy.c y_tab.c
+@MAINT@	for f in omegafonts/*.[chly] omegafonts/*.in; do cp -p $$f $(distdir)/omegafonts; done
+@MAINT@	cp -p omegaware/* $(distdir)/omegaware
+@MAINT@	cd otps && $(MAKE) lex.yy.c y_tab.c
+@MAINT@	for f in otps/*.[chly] otps/*.in; do cp -p $$f $(distdir)/otps; done
+@MAINT@	cp -p otps/mkocp otps/mkofm $(distdir)/otps
+@MAINT@# We supply the flex/bison output in case the user can't generate them.
+@MAINT@	cd $(distdir)/omegafonts; ../../../../../rename 's/$$/-dist/' lex.yy.c y_tab.[ch]
+@MAINT@	cd $(distdir)/otps; ../../../../../rename 's/$$/-dist/' lex.yy.c y_tab.[ch]
+@MAINT@	GZIP=-9 tar czf web2c-$(version)-omega-`cat omegadir/omega.version`.tar.gz $(top_distdir)
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@
+@MAINT@aleph-dist: alephdir/aleph.version
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@	mkdir -p $(distdir)/alephdir
+@MAINT@	cp -p alephdir/* $(distdir)/alephdir
+@MAINT@	@echo "*** Removing generated files ***"
+@MAINT@	rm -f $(distdir)/alephdir/alephextra.h
+@MAINT@	GZIP=-9 tar czf web2c-$(version)-aleph-`cat alephdir/aleph.version`.tar.gz $(top_distdir)
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@
+@MAINT@pdfetex-dist: pdfetexdir/pdfetex.version
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@	mkdir -p $(distdir)/pdfetexdir
+@MAINT@	cp -rp pdfetexdir/* $(distdir)/pdfetexdir
+@MAINT@	rm -rf $(distdir)/pdf*texdir/CVS $(distdir)/pdf*texdir/*/CVS
+@MAINT@	rm -f $(distdir)/pdf*texdir/Makefile
+@MAINT@	rm -f $(distdir)/pdf*texdir/*.[oa]
+@MAINT@	rm -f $(distdir)/pdf*texdir/*/config.*
+@MAINT@	rm -f $(distdir)/pdf*texdir/*/Makefile
+@MAINT@	rm -f $(distdir)/pdf*texdir/*/*.[oa]
+@MAINT@	rm -f $(distdir)/pdf*texdir/*/*/Makefile
+@MAINT@	rm -f $(distdir)/pdf*texdir/*/*/*.[ao]
+@MAINT@	rm -f $(distdir)/pdf*texdir/*/*/pdftoepdf.cc
+@MAINT@	rm -f $(distdir)/pdf*texdir/*/*/epdf.h
+@MAINT@	rm -f $(distdir)/pdf*texdir/pdf*texextra.h
+@MAINT@	rm -f $(distdir)/pdf*texdir/pdf*tex.version
+@MAINT@	mkdir -p $(top_distdir)/libs/xpdf
+@MAINT@	cp -rp $(top_srcdir)/../../libs/xpdf/* $(top_distdir)/libs/xpdf
+@MAINT@	rm -rf $(top_distdir)/libs/xpdf/CVS $(top_distdir)/libs/xpdf/*/CVS
+@MAINT@	rm -f $(top_distdir)/libs/xpdf/Makefile
+@MAINT@	rm -f $(top_distdir)/libs/xpdf/config.*
+@MAINT@	rm -f $(top_distdir)/libs/xpdf/aconf.h
+@MAINT@	rm -f $(top_distdir)/libs/xpdf/*/Makefile
+@MAINT@	rm -f $(top_distdir)/libs/xpdf/*/*.[oa]
+@MAINT@	rm -f $(top_distdir)/libs/xpdf/*/c-auto.h
+@MAINT@	GZIP=-9 tar czf web2c-$(version)-pdftex-`cat pdfetexdir/pdfetex.version`.tar.gz $(top_distdir)
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@
+@MAINT@libs-dist:
+@MAINT@	rm -rf $(top_distdir)
+@MAINT@	mkdir -p $(libs_distdir)/zlib
+@MAINT@	cp -rp $(top_srcdir)/../../libs/zlib/* $(libs_distdir)/zlib
+@MAINT@	mkdir -p $(libs_distdir)/libpng
+@MAINT@	cp -rp $(top_srcdir)/../../libs/libpng/* $(libs_distdir)/libpng
+@MAINT@	mkdir -p $(libs_distdir)/md5
+@MAINT@	cp -rp $(top_srcdir)/../../libs/md5/* $(libs_distdir)/md5
+@MAINT@	rm -f $(libs_distdir)/*/Makefile
+@MAINT@	rm -f $(libs_distdir)/*/config.*
+@MAINT@	rm -f $(libs_distdir)/*/c-auto.h
+@MAINT@	rm -f $(libs_distdir)/*/*.[oa]
+@MAINT@	GZIP=-9 tar czf web2c-$(version)-pdfetexlibs.tar.gz $(top_distdir)
+@MAINT@	rm -rf $(top_distdir)
+
+kpse_include ../make/dist.mk
+
+kpse_include ../make/config.mk
+
+@MAINT@$(srcdir)/configure: $(srcdir)/withenable.ac
+
+# 
+
+installcheck:
+	cd $(srcdir)/tests && bibtex allbib
+	mf '\mode:=ljfour; input logo10' && tftopl logo10.tfm >/dev/null
+	tex '\nonstopmode \tracingstats=1 \input story \bye'
+
+# 
+# Cleaning.
+all_subdirs = doc lib man $(mpware) web2c window $(omegafonts) $(otps) \
+              $(pdftexdir) $(mpostdir) $(luatexdir) 
+
+# Having a multiple-target rule with the subdir loop fails because of
+# the dependencies introduced by clean.mk.  Yet, we want the
+# dependencies here at the top level so that distclean will run the
+# clean rules, etc.  So, sigh, put the subdir loop in each target and
+# only run it if we have a Makefile.  Alternatively, we could do as
+# Automake does.
+
+mostlyclean:: tangleboot-clean ctangleboot-clean
+	test ! -r lib/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+clean::
+	test ! -r lib/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+	rm -f *.log *.fmt *.base *.mem *.fls *.ofl *.aux
+distclean::
+	test ! -r lib/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+extraclean::
+	test ! -r lib/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+maintainer-clean::
+	test ! -r lib/Makefile \
+	  || for d in $(all_subdirs); do (cd $$d && $(MAKE) $@); done
+
+kpse_include ../make/clean.mk
+
+@MAINT@depend::
+@MAINT@	for d in lib $(mpware) web2c window $(otps); do \
+@MAINT@	  (cd $$d && $(MAKE) depend); done
+
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk
+
+# 
+# Local variables:
+# page-delimiter: "^# \f"
+# End:

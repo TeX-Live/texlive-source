@@ -1,0 +1,3 @@
+## utils/pdfopen/ac/withenable.ac
+## configure options and TL libraries required for pdfopen
+KPSE_WITH_PROG([pdfopen])

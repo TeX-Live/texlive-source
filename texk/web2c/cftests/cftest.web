@@ -1,0 +1,15 @@
+% This is not a real program, only to test if tangle works.
+
+@* Introduction.
+This is just a test.
+
+@p program CF_test;
+type @<Types in the outer block@>
+
+@ @<Types...@>=
+@!seven_bits=0..127; {seven-bit numbers, a subrange of the integers}
+
+@* Main program.
+
+@p begin write_ln('This is CFtest');
+end.

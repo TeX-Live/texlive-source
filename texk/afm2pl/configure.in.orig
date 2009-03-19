@@ -1,0 +1,25 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(afm2pl.c)
+
+AC_CONFIG_HEADERS(c-auto.h:c-auto.in)
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_LN_S
+
+# If libm is present, use it.
+AC_CHECK_LIB(m, main,LIBS="$LIBS -lm")
+
+sinclude(../kpathsea/withenable.ac)
+
+dnl These tests prevent reliable cross-compilation.  Sigh.
+dnl Some special hacks are used to make cross-compilation
+dnl succeed in one special case.
+
+AC_UNSET_CC
+AC_RESET_CC
+
+KPSE_CONFIG_FILES([Makefile])
+AC_OUTPUT
+date >stamp-auto

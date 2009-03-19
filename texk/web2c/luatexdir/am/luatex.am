@@ -1,0 +1,564 @@
+## texk/web2c/luatexdir/am/luatex.am: Makefile fragment for luaTeX.
+
+## luaTeX
+##
+if LUATEX
+bin_PROGRAMS += luatex
+endif LUATEX
+
+## Force Automake to use CXXLD for linking
+nodist_EXTRA_luatex_SOURCES = dummy.cxx
+
+luatex_tangle = WEBINPUTS=$(srcdir)/luatexdir $(buildenv) $(LUATANGLE)
+
+luatex_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
+luatex_CPPFLAGS += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
+luatex_CPPFLAGS += -Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
+luatex_CPPFLAGS += -Dextra_version_info=`date +-%Y%m%d%H`
+
+luatex_ldadd = libluatex.a libff.a libluamisc.a libzzip.a liblua51.a
+luatex_ldadd += $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
+luatex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a
+
+luatex_LDADD = $(luatex_ldadd) $(LDADD) $(socketlibs)
+
+luatex_DEPENDENCIES = $(proglib) libluatex.a
+luatex_DEPENDENCIES += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(XPDF_DEPEND)
+luatex_DEPENDENCIES += $(OBSDCOMPAT_DEPEND) libmd5.a
+
+luatex_c_h = luatexini.c luatex0.c luatex1.c luatex2.c luatex3.c luatexcoerce.h luatexd.h
+nodist_luatex_SOURCES = $(luatex_c_h) luatex-pool.c luatexextra.c luatexdir/luatexextra.h
+$(luatex_c_h): luatex-web2c
+luatex-web2c: luatex.p $(web2c_texmf) luatexdir/luatex.defines
+	$(web2c) luatex
+	echo timestamp >$@
+	touch $(luatex_c_h)
+luatexextra.c: luatexd.h luatexdir/luatexextra.h lib/texmfmp.c
+	sed s/TEX-OR-MF-OR-MP/luatex/ $(srcdir)/lib/texmfmp.c >$@
+luatex_sources = luatexdir/luatex.web luatexdir/luatex.ch
+luatex.p luatex.pool: luatex-tangle
+luatex-tangle: luatangle $(luatex_sources)
+	$(luatex_tangle) --underlines luatex luatex
+	echo timestamp >$@
+	touch luatex.p luatex.pool
+luatex-pool.c: luatex.pool $(makecpool) luatexdir/ptexlib.h luatexd.h
+	$(makecpool) luatex.pool luatexdir/ptexlib.h >$@ || rm -f $@
+## Extract luatex version
+luatexdir/luatex.version: luatexdir/luatex.web
+	$(mkdir_p) luatexdir
+	grep '^@d luatex_version_string==' $(srcdir)/luatexdir/luatex.web \
+	  | sed "s/^.*=='//;s/'.*$$//" >luatexdir/luatex.version
+luatexdir/luatexextra.h: luatexdir/luatexextra.in luatexdir/luatex.version
+	sed -e s/LUATEX-VERSION/`cat luatexdir/luatex.version`/ \
+	  $(srcdir)/luatexdir/luatexextra.in >$@
+
+EXTRA_DIST += $(luatex_sources) \
+	luatexdir/luatex.defines \
+	luatexdir/luatexextra.in \
+	luatexdir/ptexlib.h
+
+DISTCLEANFILES += $(nodist_luatex_SOURCES) luatex-web2c \
+	luatex.p luatex.pool luatex-tangle luatexdir/luatex.version
+
+## luatangle
+##
+if LUATEX
+bin_PROGRAMS += luatangle
+endif LUATEX
+
+nodist_luatangle_SOURCES = luatangle.c luatangle.h
+luatangle.c luatangle.h: $(web2c_common) $(web2c_programs) luatangle.p
+	$(web2c) luatangle
+EXTRA_DIST += $(luatangle_sources)
+luatangle_sources = luatexdir/luatangle.web luatexdir/luatangle.ch
+luatangle.p: tangle $(luatangle_sources)
+	WEBINPUTS=$(srcdir)/luatexdir $(buildenv) $(TANGLE) luatangle luatangle
+DISTCLEANFILES += luatangle.c luatangle.h luatangle.p
+
+## liblua51
+##
+EXTRA_LIBRARIES += liblua51.a
+
+liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51
+if !MINGW32
+liblua51_a_CPPFLAGS += -DLUA_USE_POSIX
+endif !MINGW32
+
+liblua51_a_SOURCES = \
+	luatexdir/lua51/lapi.c \
+	luatexdir/lua51/lapi.h \
+	luatexdir/lua51/lauxlib.c \
+	luatexdir/lua51/lauxlib.h \
+	luatexdir/lua51/lbaselib.c \
+	luatexdir/lua51/lcoco.c \
+	luatexdir/lua51/lcoco.h \
+	luatexdir/lua51/lcode.c \
+	luatexdir/lua51/lcode.h \
+	luatexdir/lua51/ldblib.c \
+	luatexdir/lua51/ldebug.c \
+	luatexdir/lua51/ldebug.h \
+	luatexdir/lua51/ldo.c \
+	luatexdir/lua51/ldo.h \
+	luatexdir/lua51/ldump.c \
+	luatexdir/lua51/lfunc.c \
+	luatexdir/lua51/lfunc.h \
+	luatexdir/lua51/lgc.c \
+	luatexdir/lua51/lgc.h \
+	luatexdir/lua51/linit.c \
+	luatexdir/lua51/liolib.c \
+	luatexdir/lua51/llex.c \
+	luatexdir/lua51/llex.h \
+	luatexdir/lua51/llimits.h \
+	luatexdir/lua51/lmathlib.c \
+	luatexdir/lua51/lmem.c \
+	luatexdir/lua51/lmem.h \
+	luatexdir/lua51/loadlib.c \
+	luatexdir/lua51/lobject.c \
+	luatexdir/lua51/lobject.h \
+	luatexdir/lua51/lopcodes.c \
+	luatexdir/lua51/lopcodes.h \
+	luatexdir/lua51/loslib.c \
+	luatexdir/lua51/lparser.c \
+	luatexdir/lua51/lparser.h \
+	luatexdir/lua51/lstate.c \
+	luatexdir/lua51/lstate.h \
+	luatexdir/lua51/lstring.c \
+	luatexdir/lua51/lstring.h \
+	luatexdir/lua51/lstrlib.c \
+	luatexdir/lua51/ltable.c \
+	luatexdir/lua51/ltable.h \
+	luatexdir/lua51/ltablib.c \
+	luatexdir/lua51/ltm.c \
+	luatexdir/lua51/ltm.h \
+	luatexdir/lua51/lua.h \
+	luatexdir/lua51/luaconf.h \
+	luatexdir/lua51/lualib.h \
+	luatexdir/lua51/lundump.c \
+	luatexdir/lua51/lundump.h \
+	luatexdir/lua51/lvm.c \
+	luatexdir/lua51/lvm.h \
+	luatexdir/lua51/lzio.c \
+	luatexdir/lua51/lzio.h
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/lua51/Makefile \
+	luatexdir/lua51/lua.c \
+	luatexdir/lua51/luac.c \
+	luatexdir/lua51/print.c
+
+## zziplib
+##
+EXTRA_LIBRARIES += libzzip.a
+
+libzzip_a_DEPENDENCIES = liblua51.a
+
+libzzip_a_CPPFLAGS = \
+	$(KPSE_ZLIB_INCLUDES) \
+	-I$(top_srcdir)/luatexdir/zziplib
+
+libzzip_a_SOURCES = \
+	luatexdir/zziplib/zzip/__debug.h \
+	luatexdir/zziplib/zzip/__dirent.h \
+	luatexdir/zziplib/zzip/__fnmatch.h \
+	luatexdir/zziplib/zzip/__hints.h \
+	luatexdir/zziplib/zzip/__mmap.h \
+	luatexdir/zziplib/zzip/_config.h \
+	luatexdir/zziplib/zzip/conf.h \
+	luatexdir/zziplib/zzip/dir.c \
+	luatexdir/zziplib/zzip/err.c \
+	luatexdir/zziplib/zzip/fetch.c \
+	luatexdir/zziplib/zzip/fetch.h \
+	luatexdir/zziplib/zzip/file.c \
+	luatexdir/zziplib/zzip/file.h \
+	luatexdir/zziplib/zzip/format.h \
+	luatexdir/zziplib/zzip/info.c \
+	luatexdir/zziplib/zzip/info.h \
+	luatexdir/zziplib/zzip/lib.h \
+	luatexdir/zziplib/zzip/memdisk.c \
+	luatexdir/zziplib/zzip/memdisk.h \
+	luatexdir/zziplib/zzip/mmapped.c \
+	luatexdir/zziplib/zzip/mmapped.h \
+	luatexdir/zziplib/zzip/plugin.c \
+	luatexdir/zziplib/zzip/plugin.h \
+	luatexdir/zziplib/zzip/stdint.h \
+	luatexdir/zziplib/zzip/stat.c \
+	luatexdir/zziplib/zzip/types.h \
+	luatexdir/zziplib/zzip/write.c \
+	luatexdir/zziplib/zzip/zip.c \
+	luatexdir/zziplib/zzip/zzip.h
+
+EXTRA_DIST += \
+	luatexdir/zziplib/COPYING.LIB \
+	luatexdir/zziplib/ChangeLog \
+	luatexdir/zziplib/README \
+	luatexdir/zziplib/TODO \
+	luatexdir/zziplib/zziplib.spec
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/zziplib/Makefile.am \
+	luatexdir/zziplib/Makefile.in \
+	luatexdir/zziplib/Makefile.mk \
+	luatexdir/zziplib/SDL \
+	luatexdir/zziplib/aclocal.m4 \
+	luatexdir/zziplib/bins \
+	luatexdir/zziplib/config.h.in \
+	luatexdir/zziplib/configure \
+	luatexdir/zziplib/configure.ac \
+	luatexdir/zziplib/docs \
+	luatexdir/zziplib/m4 \
+	luatexdir/zziplib/msvc6 \
+	luatexdir/zziplib/msvc7 \
+	luatexdir/zziplib/msvc8 \
+	luatexdir/zziplib/test \
+	luatexdir/zziplib/uses \
+	luatexdir/zziplib/zzip/Makefile \
+	luatexdir/zziplib/zzip/Makefile.am \
+	luatexdir/zziplib/zzip/Makefile.in \
+	luatexdir/zziplib/zzip/_msvc.h \
+	luatexdir/zziplib/zzip/_msvc.sed \
+	luatexdir/zziplib/zzip/autoconf.h \
+	luatexdir/zziplib/zzip/fseeko.c \
+	luatexdir/zziplib/zzip/fseeko.h \
+	luatexdir/zziplib/zzip/zziplib.wpj \
+	luatexdir/zziplib/zzipback.sed \
+	luatexdir/zziplib/zzipwrap
+
+## libluamisc (luafilesystem, luamd5, luapeg, luazip, luazlib,
+## and slnunicode)
+EXTRA_LIBRARIES += libluamisc.a
+
+libluamisc_a_DEPENDENCIES = $(KPSE_ZLIB_DEPEND) libzzip.a
+
+libluamisc_a_CPPFLAGS = \
+	$(KPSE_ZLIB_INCLUDES) \
+	-I$(top_srcdir)/luatexdir/lua51 \
+	-I$(top_srcdir)/luatexdir/zziplib
+
+libluamisc_a_SOURCES = \
+	luatexdir/luafilesystem/src/lfs.c \
+	luatexdir/luafilesystem/src/lfs.h \
+	luatexdir/luamd5/md5.c \
+	luatexdir/luamd5/md5.h \
+	luatexdir/luamd5/md5lib.c \
+	luatexdir/luapeg/lpeg.c \
+	luatexdir/luazip/src/luazip.c \
+	luatexdir/luazip/src/luazip.h \
+	luatexdir/luazlib/lgzip.c \
+	luatexdir/luazlib/lzlib.c \
+	luatexdir/slnunicode/slnunico.c
+
+## Included by slnunico.c
+EXTRA_libluamisc_a_SOURCES = luatexdir/slnunicode/slnudata.c
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/luafilesystem/Makefile \
+	luatexdir/luafilesystem/config \
+	luatexdir/luafilesystem/doc \
+	luatexdir/luafilesystem/tests \
+	luatexdir/luafilesystem/vc6 \
+	luatexdir/luamd5/makefile \
+	luatexdir/luamd5/md5.html \
+	luatexdir/luamd5/md5.lua \
+	luatexdir/luamd5/md5tests.lua \
+	luatexdir/luazip/Makefile \
+	luatexdir/luazip/README \
+	luatexdir/luazip/config \
+	luatexdir/luazip/doc \
+	luatexdir/luazip/tests \
+	luatexdir/luazip/vc6 \
+	luatexdir/luazip/vc7 \
+	luatexdir/luazlib/Makefile \
+	luatexdir/luazlib/README \
+	luatexdir/luazlib/gzip.lua \
+	luatexdir/luazlib/test_gzip.lua \
+	luatexdir/luazlib/test_zlib.lua \
+	luatexdir/luazlib/zlib.lua \
+	luatexdir/slnunicode/unitest
+
+## luafontforge
+##
+EXTRA_LIBRARIES += libff.a
+
+libff_a_DEPENDENCIES = libluamisc.a
+
+libff_a_CPPFLAGS = \
+	-DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 \
+	-D_NO_PYTHON=1 -DX_DISPLAY_MISSING=1 -DNODYNAMIC=1 \
+	-D_NO_FREETYPE=1 -D_NO_LIBUNINAMESLIST=1 -UHAVE_LIBINTL_H \
+	-I$(top_srcdir)/luatexdir/lua51 \
+	-I$(top_srcdir)/luatexdir/luafontforge/fontforge/inc \
+	-I$(top_srcdir)/luatexdir/luafontforge/fontforge/fontforge
+
+libff_a_SOURCES = \
+	luatexdir/luafontforge/fontforge/Unicode/alphabet.c \
+	luatexdir/luafontforge/fontforge/Unicode/char.c \
+	luatexdir/luafontforge/fontforge/Unicode/cjk.c \
+	luatexdir/luafontforge/fontforge/Unicode/gwwiconv.c \
+	luatexdir/luafontforge/fontforge/Unicode/memory.c \
+	luatexdir/luafontforge/fontforge/Unicode/ustring.c \
+	luatexdir/luafontforge/fontforge/fontforge/autohint.c \
+	luatexdir/luafontforge/fontforge/fontforge/charview.c \
+	luatexdir/luafontforge/fontforge/fontforge/configure-pfaedit.h \
+	luatexdir/luafontforge/fontforge/fontforge/contextchain.c \
+	luatexdir/luafontforge/fontforge/fontforge/edgelist.h \
+	luatexdir/luafontforge/fontforge/fontforge/edgelist2.h \
+	luatexdir/luafontforge/fontforge/fontforge/encoding.c \
+	luatexdir/luafontforge/fontforge/fontforge/featurefile.c \
+	luatexdir/luafontforge/fontforge/fontforge/fontinfo.c \
+	luatexdir/luafontforge/fontforge/fontforge/fontview.c \
+	luatexdir/luafontforge/fontforge/fontforge/fvfonts.c \
+	luatexdir/luafontforge/fontforge/fontforge/groups.h \
+	luatexdir/luafontforge/fontforge/fontforge/kernclass.c \
+	luatexdir/luafontforge/fontforge/fontforge/lookups.c \
+	luatexdir/luafontforge/fontforge/fontforge/macbinary.c \
+	luatexdir/luafontforge/fontforge/fontforge/macenc.c \
+	luatexdir/luafontforge/fontforge/fontforge/namelist.c \
+	luatexdir/luafontforge/fontforge/fontforge/ofl.h \
+	luatexdir/luafontforge/fontforge/fontforge/parsepfa.c \
+	luatexdir/luafontforge/fontforge/fontforge/parsettf.c \
+	luatexdir/luafontforge/fontforge/fontforge/parsettfatt.c \
+	luatexdir/luafontforge/fontforge/fontforge/parsettfvar.c \
+	luatexdir/luafontforge/fontforge/fontforge/pfaedit.h \
+	luatexdir/luafontforge/fontforge/fontforge/pfaeditui.h \
+	luatexdir/luafontforge/fontforge/fontforge/plugins.h \
+	luatexdir/luafontforge/fontforge/fontforge/prefs.c \
+	luatexdir/luafontforge/fontforge/fontforge/psfont.h \
+	luatexdir/luafontforge/fontforge/fontforge/psread.c \
+	luatexdir/luafontforge/fontforge/fontforge/pua.c \
+	luatexdir/luafontforge/fontforge/fontforge/sd.h \
+	luatexdir/luafontforge/fontforge/fontforge/splinefill.c \
+	luatexdir/luafontforge/fontforge/fontforge/splinefont.h \
+	luatexdir/luafontforge/fontforge/fontforge/splineorder2.c \
+	luatexdir/luafontforge/fontforge/fontforge/splineoverlap.c \
+	luatexdir/luafontforge/fontforge/fontforge/splinerefigure.c \
+	luatexdir/luafontforge/fontforge/fontforge/splinesave.c \
+	luatexdir/luafontforge/fontforge/fontforge/splinestroke.c \
+	luatexdir/luafontforge/fontforge/fontforge/splineutil.c \
+	luatexdir/luafontforge/fontforge/fontforge/splineutil2.c \
+	luatexdir/luafontforge/fontforge/fontforge/stamp.c \
+	luatexdir/luafontforge/fontforge/fontforge/start.c \
+	luatexdir/luafontforge/fontforge/fontforge/stemdb.c \
+	luatexdir/luafontforge/fontforge/fontforge/stemdb.h \
+	luatexdir/luafontforge/fontforge/fontforge/tottf.c \
+	luatexdir/luafontforge/fontforge/fontforge/tottfgpos.c \
+	luatexdir/luafontforge/fontforge/fontforge/ttf.h \
+	luatexdir/luafontforge/fontforge/fontforge/tottfvar.c \
+	luatexdir/luafontforge/fontforge/fontforge/ttfspecial.c \
+	luatexdir/luafontforge/fontforge/fontforge/unicoderange.h \
+	luatexdir/luafontforge/fontforge/fontforge/views.h \
+	luatexdir/luafontforge/fontforge/inc/basics.h \
+	luatexdir/luafontforge/fontforge/inc/chardata.h \
+	luatexdir/luafontforge/fontforge/inc/charset.h \
+	luatexdir/luafontforge/fontforge/inc/dynamic.h \
+	luatexdir/luafontforge/fontforge/inc/fileutil.h \
+	luatexdir/luafontforge/fontforge/inc/gdraw.h \
+	luatexdir/luafontforge/fontforge/inc/gfile.h \
+	luatexdir/luafontforge/fontforge/inc/ggadget.h \
+	luatexdir/luafontforge/fontforge/inc/gicons.h \
+	luatexdir/luafontforge/fontforge/inc/gio.h \
+	luatexdir/luafontforge/fontforge/inc/gkeysym.h \
+	luatexdir/luafontforge/fontforge/inc/gprogress.h \
+	luatexdir/luafontforge/fontforge/inc/gresource.h \
+	luatexdir/luafontforge/fontforge/inc/gwidget.h \
+	luatexdir/luafontforge/fontforge/inc/gwwiconv.h \
+	luatexdir/luafontforge/fontforge/inc/intl.h \
+	luatexdir/luafontforge/fontforge/inc/ustring.h \
+	luatexdir/luafontforge/fontforge/inc/utype.h \
+	luatexdir/luafontforge/src/ffdummies.c \
+	luatexdir/luafontforge/src/luafflib.c
+
+EXTRA_DIST += \
+	luatexdir/luafontforge/ChangeLog \
+	luatexdir/luafontforge/fontforge/AUTHORS \
+	luatexdir/luafontforge/fontforge/INSTALL \
+	luatexdir/luafontforge/fontforge/LICENSE \
+	luatexdir/luafontforge/fontforge/VERSION
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/luafontforge/Makefile \
+	luatexdir/luafontforge/fontforge/Makefile \
+	luatexdir/luafontforge/fontforge/Unicode/Makefile \
+	luatexdir/luafontforge/fontforge/Unicode/descrip.mms \
+	luatexdir/luafontforge/fontforge/descrip.mms \
+	luatexdir/luafontforge/fontforge/fontforge/Makefile \
+	luatexdir/luafontforge/fontforge/fontforge/descrip.mms \
+	luatexdir/luafontforge/fontforge/fontforge/lff.opt \
+	luatexdir/luafontforge/fontforge/fontforge/scriptfuncs.h \
+	luatexdir/luafontforge/fontforge/fontforge/scripting.h \
+	luatexdir/luafontforge/fontforge/fontforge/sfd1.h \
+	luatexdir/luafontforge/fontforge/fontforge/stamper.c \
+	luatexdir/luafontforge/fontforge/fontforge/xlib.opt
+
+## libluatex
+##
+EXTRA_LIBRARIES += libluatex.a
+
+libluatex_a_DEPENDENCIES = libff.a
+
+libluatex_a_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
+libluatex_a_CPPFLAGS += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
+libluatex_a_CPPFLAGS += -Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
+libluatex_a_CPPFLAGS += -DpdfTeX
+
+libluatex_a_SOURCES = \
+	luatexdir/avl.c \
+	luatexdir/avl.h \
+	luatexdir/avlstuff.c \
+	luatexdir/avlstuff.h \
+	luatexdir/font/dofont.c  \
+	luatexdir/font/luafont.c  \
+	luatexdir/font/mapfile.c  \
+	luatexdir/font/pkin.c  \
+	luatexdir/font/sfnt.c  \
+	luatexdir/font/sfnt.h  \
+	luatexdir/font/subfont.c  \
+	luatexdir/font/texfont.c  \
+	luatexdir/font/texfont.h  \
+	luatexdir/font/tfmofm.c  \
+	luatexdir/font/tounicode.c  \
+	luatexdir/font/tt_glyf.c  \
+	luatexdir/font/tt_glyf.h  \
+	luatexdir/font/tt_table.c  \
+	luatexdir/font/tt_table.h  \
+	luatexdir/font/vfovf.c  \
+	luatexdir/font/vfpacket.c  \
+	luatexdir/font/writecff.c  \
+	luatexdir/font/writecff.h  \
+	luatexdir/font/writeenc.c  \
+	luatexdir/font/writefont.c  \
+	luatexdir/font/writet1.c  \
+	luatexdir/font/writet3.c  \
+	luatexdir/font/writettf.c  \
+	luatexdir/font/writettf.h  \
+	luatexdir/font/writetype0.c  \
+	luatexdir/font/writetype2.c  \
+	luatexdir/hyphen.h \
+	luatexdir/image/epdf.c  \
+	luatexdir/image/epdf.h  \
+	luatexdir/image/image.h  \
+	luatexdir/image/pdftoepdf.cc  \
+	luatexdir/image/writeimg.c  \
+	luatexdir/image/writejbig2.c  \
+	luatexdir/image/writejbig2.h  \
+	luatexdir/image/writejpg.c  \
+	luatexdir/image/writepng.c  \
+	luatexdir/lang/hnjalloc.c  \
+	luatexdir/lang/hnjalloc.h  \
+	luatexdir/lang/hyphen.c  \
+	luatexdir/lang/texlang.c  \
+	luatexdir/lua/lcallbacklib.c  \
+	luatexdir/lua/lfontlib.c  \
+	luatexdir/lua/limglib.c  \
+	luatexdir/lua/lkpselib.c  \
+	luatexdir/lua/llanglib.c  \
+	luatexdir/lua/llualib.c  \
+	luatexdir/lua/lmplib.c  \
+	luatexdir/lua/lnodelib.c  \
+	luatexdir/lua/loslibext.c  \
+	luatexdir/lua/lpdflib.c  \
+	luatexdir/lua/lstatslib.c  \
+	luatexdir/lua/ltexiolib.c  \
+	luatexdir/lua/ltexlib.c  \
+	luatexdir/lua/ltokenlib.c  \
+	luatexdir/lua/luainit.c  \
+	luatexdir/lua/luanode.c  \
+	luatexdir/lua/luastuff.c  \
+	luatexdir/lua/luatex.c  \
+	luatexdir/lua/luatoken.c  \
+	luatexdir/lua/texluac.c  \
+	luatexdir/luatex-api.h \
+	luatexdir/luatex.h \
+	luatexdir/managed-sa.c \
+	luatexdir/managed-sa.h \
+	luatexdir/mathcodes.c \
+	luatexdir/nodes.h \
+	luatexdir/ptexmac.h \
+	luatexdir/svnversion.h \
+	luatexdir/tex/linebreak.c  \
+	luatexdir/tex/postlinebreak.c  \
+	luatexdir/tex/texnodes.c  \
+	luatexdir/tex/texpdf.c  \
+	luatexdir/tex/textoken.c  \
+	luatexdir/textcodes.c \
+	luatexdir/tokens.h \
+	luatexdir/utils.c \
+	luatexdir/writezip.c
+
+nodist_libluatex_a_SOURCES = $(lua_mp_c_h)
+
+## We must create lua_mp_c_h before compiling the libluatex_a_SOURCES,
+## but certainly don't want to create lua_mp_c_h if luaTeX is not built.
+if LUATEX
+$(libluatex_a_SOURCES): $(lua_mp_c_h)
+endif LUATEX
+
+## These files are mutually dependent
+lua_mp_c_h = luatexdir/mp.c luatexdir/mplib.h luatexdir/mpmp.h
+lua_mp_c_h += luatexdir/mppsout.h luatexdir/psout.c
+lua_mp_web = luatexdir/lua/mp.w luatexdir/lua/psout.w
+$(lua_mp_c_h): mp-ctangle
+mp-ctangle: ctangle $(lua_mp_web) luatexd.h
+	$(mkdir_p) luatexdir
+	CWEBINPUTS=$(srcdir)/luatexdir/lua $(ctangle) mp.w
+	CWEBINPUTS=$(srcdir)/luatexdir/lua $(ctangle) psout.w
+	rm -f $(lua_mp_c_h)
+	mv mp.c mplib.h mpmp.h mppsout.h psout.c luatexdir
+	echo timestamp >$@
+	touch $(lua_mp_c_h)
+
+EXTRA_DIST += $(lua_mp_web)
+
+DISTCLEANFILES += $(lua_mp_c_h) mp-ctangle
+
+## included by luatexdir/font/writettf.c
+EXTRA_libluatex_a_SOURCES = luatexdir/font/macnames.c
+
+EXTRA_DIST += \
+	luatexdir/ChangeLog \
+	luatexdir/NEWS \
+	luatexdir/README \
+	luatexdir/change-files.txt \
+	luatexdir/font/subfont.txt
+
+## Not used (pdftosrc and ttf2afm)
+##
+EXTRA_DIST += \
+	luatexdir/pdftosrc.1 \
+	luatexdir/pdftosrc.cc \
+	luatexdir/pdftosrc.rc \
+	luatexdir/ttf2afm.c \
+	luatexdir/ttf2afm.rc
+
+## included by luatexdir/ttf2afm.c
+EXTRA_DIST += luatexdir/macnames.c
+
+## Tests
+
+dist_check_SCRIPTS += luatexdir/luatangle.test
+
+if LUATEX
+TESTS += luatexdir/luatangle.test
+endif LUATEX
+
+DISTCLEANFILES += cftest.p
+
+## Eventually delete these files
+##
+EXTRA_DIST += \
+	luatexdir/.indent.pro \
+	luatexdir/Makefile.in \
+	luatexdir/depend.mk \
+	luatexdir/font/.indent.pro  \
+	luatexdir/image/.indent.pro  \
+	luatexdir/lua/.indent.pro  \
+	luatexdir/luatex.mk \
+	luatexdir/luatexlib.mk
+

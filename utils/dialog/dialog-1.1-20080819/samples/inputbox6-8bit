@@ -1,0 +1,29 @@
+#!/bin/sh
+# $Id: inputbox6-8bit,v 1.1 2004/12/19 16:19:34 tom Exp $
+: ${DIALOG=dialog}
+
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile" 0 1 2 5 15
+
+. ./testdata-8bit
+
+$DIALOG \
+--title    `printf "$SAMPLE"` \
+--inputbox `printf "$SAMPLE"` \
+10 40 `printf "$SAMPLE"` 2>$tempfile
+
+retval=$?
+
+case $retval in
+  0)
+    echo "Input string is \"`cat $tempfile`\"";;
+  1)
+    echo "Cancel pressed.";;
+  255)
+    if test -s $tempfile ; then
+      cat $tempfile
+    else
+      echo "ESC pressed."
+    fi
+    ;;
+esac

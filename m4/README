@@ -1,0 +1,28 @@
+This directory is the central repository for Autoconf macros needed to build
+the teTeX / TeX live (TL) tree.
+
+(1) `Public' macros such as libtool.m4 used to build the libraries and
+programs in the TL subdirectories libs/*/, utils/*/, and texk/*/ that are
+owned by the TL tree (i.e., either not maintained independently or with a
+proxy Makefile.am using an unmodified source tree and bypassing the original
+build system).
+
+Note: the files libtool.m4 and ../build-aux/ltmain.sh must match.
+
+(2) `Private' macros for the TL infrastructure, used in directories owned
+by the TL tree.
+
+kpse-pkgs.m4: defines lists of subdirectories libs/LIB/, utils/PROG/, and
+	tex/PROG/ with libraries and programs that can be built as part of
+	the TL tree.
+kpse-setup.m4: macros that recurse through these lists to provide configure
+	options.  They depend on configure fragments */*/ac/withenable.ac
+	defining the dependencies between these libraries and programs.
+
+(3) `Public' macros for the TL libraries in the subdirectories libs/*/ and
+texk/kpathsea/, used to configure programs and other libraries requiring
+these TL libraries.  The macros are designed with the aim that programs
+maintained independently can be built as part of the TL tree or without TL
+(using installed versions of the required libraries), ideally using the same
+unmodified sources.
+

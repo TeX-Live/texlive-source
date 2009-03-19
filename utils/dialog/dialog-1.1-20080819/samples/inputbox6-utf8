@@ -1,0 +1,36 @@
+#!/bin/sh
+# $Id: inputbox6-utf8,v 1.2 2008/03/16 13:58:54 tom Exp $
+: ${DIALOG=dialog}
+
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile" 0 1 2 5 15
+
+case none"$LANG$LC_ALL$LC_CTYPE" in
+*UTF-8*)
+	;;
+*)
+	echo "This script must be run in a UTF-8 locale"
+	exit 1
+	;;
+esac
+
+$DIALOG \
+--title    `printf "\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86\xe3\x81\x88\xe3\x81\x8a"` \
+--inputbox `printf "\xe3\x81\x82\xe3\x81\x84\xe3\x81\x86\xe3\x81\x88\xe3\x81\x8a"` \
+10 20 "Ｄ.Ｏ.Ｇ"	 2>$tempfile
+
+retval=$?
+
+case $retval in
+  0)
+    echo "Input string is \"`cat $tempfile`\"";;
+  1)
+    echo "Cancel pressed.";;
+  255)
+    if test -s $tempfile ; then
+      cat $tempfile
+    else
+      echo "ESC pressed."
+    fi
+    ;;
+esac

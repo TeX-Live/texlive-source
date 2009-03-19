@@ -1,0 +1,4 @@
+## libs/t1lib/ac/t1lib.ac
+## define required functions and headers from system t1lib
+KPSE_CHECK_LIB([t1lib], [T1_AddFont T1_CheckForInit],
+                        [t1lib.h])

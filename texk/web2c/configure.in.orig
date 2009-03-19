@@ -1,0 +1,502 @@
+dnl Process this file with Autoconf to produce a configure script for Web2c.
+dnl
+dnl Some things are no longer configurable:
+dnl - SMALL{TeX,MF,BibTeX}: too painful to maintain the separate patch
+dnl   files, and, for TeX, texmfmem.h would have to be fixed to support
+dnl   more than 256 fonts.
+dnl - NONASCII: necessary for the character translation feature.
+dnl - REGFIX: modern compilers mostly ignore register declarations, anyway.
+dnl The code for these things remains (where applicable), so you can
+dnl get these features if you are willing to hack the sources. If not,
+dnl it'll take a good argument to convince me to invest the time to make
+dnl them configurable.
+dnl 
+dnl We don't use (for example) tex/tex.web because people who only want
+dnl to build part of the distribution may not have any given program.
+dnl Even main.c isn't guaranteed, but then nothing is, really ...
+AC_INIT(web2c/main.c)
+
+WEB2CVERSION=7.5.7
+AC_SUBST(WEB2CVERSION)
+AC_DEFINE_UNQUOTED(WEB2CVERSION," (Web2C $WEB2CVERSION)")
+
+dnl Write output here, instead of putting a zillion -D's on the command line.
+AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
+ [sed 's/^#define PACKAGE_/#define WEB2C_PACKAGE_/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h
+  date >stamp-auto])
+
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+AC_PROG_YACC
+AC_PROG_LEX
+# Work around a problem with Flex Version 2.5.31 which needs -l flag.
+# Since all recent versions of flex support -l, don't check for the
+# specific version, but check that at least "--version" is supported.
+# We also want to catch LEX=/some/where/flex, so:
+case $LEX in
+  *flex) $LEX --version >/dev/null 2>&1 && LEX="$LEX -l" ;;
+esac
+AC_PROG_RANLIB
+AC_CHECK_HEADERS(sys/time.h sys/timeb.h locale.h)
+AC_CHECK_FUNCS(strerror gettimeofday ftime mkstemp mktemp setlocale strlcat strlcpy fmax)
+
+AC_TYPE_SIGNAL
+
+pb_AC_ASM_UNDERSCORE
+
+dnl pdfTeX likes inline functions in C code.
+AC_C_INLINE
+
+dnl These are standard among *NIX systems, but not when cross-compiling
+AC_DEFUN([CF_SUBST],
+[AC_MSG_CHECKING(for $1 (symbol $2))
+AC_CACHE_VAL(cf_cv_subst_$2,[
+test -z "[$]$2" && $2=$3
+cf_cv_subst_$2=[$]$2])
+$2=${cf_cv_subst_$2}
+AC_MSG_RESULT([$]$2)
+AC_SUBST($2)
+])dnl
+CF_SUBST(loader,LD,ld)
+CF_SUBST(archiver,AR,ar)
+CF_SUBST(archiver options,ARFLAGS,rc)
+
+# Needed on A/UX 3.0. I don't want to pull in other -lposix's, though.
+# From: bernt@weinberg.pop.bio.aau.dk (Bernt Guldbrandtsen)
+if test `(uname) 2>/dev/null` = aux; then
+  AC_CHECK_LIB(posix, sigemptyset)
+fi
+
+dnl These tests prevent reliable cross-compilation.  Sigh.
+dnl Some special hacks are used to make cross-compilation
+dnl succeed in one special case.
+
+AC_UNSET_CC
+AC_C_CHAR_UNSIGNED
+AC_C_BIGENDIAN
+AC_CHECK_SIZEOF(long)
+AC_RESET_CC
+
+# --with and --enable options.
+test "x$with_x_toolkit" = xyes && with_x=yes
+test "x$with_x_toolkit" = xxt && with_x=yes
+test "x$with_x_toolkit" = xathena && with_x=yes
+test "x$with_x" = xno && with_x_toolkit=no
+
+: ${with_x=no} # tell PATH_XTRA no X by default, if not specified.
+
+sinclude(withenable.ac)
+sinclude(../kpathsea/withenable.ac)
+sinclude(../../libs/zlib/withenable.ac)
+sinclude(../../libs/libpng/withenable.ac)
+sinclude(../../libs/zlib/zlib.ac)
+sinclude(../../libs/libpng/libpng.ac)
+sinclude(../../libs/xpdf/libxpdf.ac)
+sinclude(../../libs/obsdcompat/libobsd-compat.ac)
+sinclude(../../libs/freetype2/withenable.ac)
+sinclude(../../libs/freetype2/freetype2.ac)
+sinclude(../../libs/teckit/withenable.ac)
+sinclude(../../libs/teckit/teckit.ac)
+sinclude(../../libs/icu-xetex/withenable.ac)
+sinclude(../../libs/icu-xetex/icu-xetex.ac)
+sinclude(../../libs/graphite-engine/withenable.ac)
+sinclude(../../libs/graphite-engine/graphite-engine.ac)
+
+# Whether to build mf-nowin.
+: ${with_mf_nowin=no} # Default.
+if test "x$with_mf_nowin" = xyes; then
+  MFN=
+else
+  MFN='#! '
+fi
+AC_SUBST(MFN)
+
+# For Omega.
+if test -d $srcdir/omegadir; then
+  test "${with_omega+set}" = set || with_omega=yes
+else
+  if test "x$with_omega" = xyes; then
+    AC_MSG_WARN(The Omega sources are not available.)
+  fi
+  with_omega=no
+fi
+if test "x$with_omega" = xyes; then
+  OMEGA=
+  KPSE_CONFIG_FILES([omegafonts/Makefile otps/Makefile])
+else
+  OMEGA='#! '
+fi
+AC_SUBST(OMEGA)
+
+# For Aleph
+if test -d $srcdir/alephdir && test -d $srcdir/omegadir; then
+  test "${with_aleph+set}" = set || with_aleph=yes
+else
+  if test "x$with_aleph" = xyes; then
+    AC_MSG_WARN(The Aleph sources are not available.)
+  fi
+  with_aleph=no
+fi
+if test "x$with_aleph" = xyes; then
+  ALEPH=
+else
+  ALEPH='#! '
+fi
+AC_SUBST(ALEPH)
+
+# For pdfTeX.
+if test -d $srcdir/pdftexdir; then
+  # Create build dir, if necessary.
+  test -d pdftexdir || mkdir pdftexdir
+  test "${with_pdftex+set}" = set || with_pdftex=yes
+else
+  if test "x$with_pdftex" = xyes; then
+    AC_MSG_WARN(The pdfTeX sources are not available.)
+  fi
+  with_pdftex=no
+fi
+
+# For pdfeTeX
+if test -d $srcdir/pdftexdir; then
+  test "${with_pdfetex+set}" = set || with_pdfetex=yes
+else
+  if test "x$with_pdfetex" = xyes; then
+    AC_MSG_WARN(Not all sources of pdfeTeX are available.)
+  fi
+  with_pdfetex=no
+fi
+
+# For luaTeX.
+if test -d $srcdir/luatexdir; then
+  # Create build dir, if necessary.
+  test -d luatexdir || mkdir luatexdir
+  test "${with_luatex+set}" = set || with_luatex=yes
+else
+  if test "x$with_luatex" = xyes; then
+    AC_MSG_WARN(The luaTeX sources are not available.)
+  fi
+  with_luatex=no
+fi
+
+# For XeTeX
+if test -d $srcdir/xetexdir \
+    && test -d $srcdir/etexdir; then
+  test "${with_xetex+set}" = set || with_xetex=yes
+else
+  if test "x$with_xetex" = xyes; then
+    AC_MSG_WARN(Not all sources of XeTeX are available.)
+  fi
+  with_xetex=no
+fi
+
+# Check whether C++ compiler works.  Prevent exit if it doesn't.
+if test "x$with_pdftex"  = xyes ||
+   test "x$with_luatex"  = xyes ||
+   test "x$with_pdfetex" = xyes ||
+   test "x$with_xetex"   = xyes
+then
+  # First test whether the compiler works in a subshell, and if so,
+  # do it again in the main shell so we see the result.
+(
+  AC_PROG_CXX
+) && {
+  AC_PROG_CXX
+} || {
+  test "x$with_pdftex" = xyes \
+    && AC_MSG_WARN(No C++ compiler: pdfTeX will not be compiled.)
+  test "x$with_pdfetex" = xyes \
+    && AC_MSG_WARN(No C++ compiler: pdfeTeX will not be compiled.)
+  test "x$with_luatex" = xyes \
+    && AC_MSG_WARN(No C++ compiler: luaTeX will not be compiled.)
+  test "x$with_xetex" = xyes \
+    && AC_MSG_WARN(No C++ compiler: XeTeX will not be compiled.)
+  with_pdftex=no
+  with_pdfetex=no
+  with_luatex=no
+  with_xetex=no
+  true
+}
+fi
+
+# Check if we can link the C++ runtime lib statically, if we're building
+# some binary that will need it. And, only try the magic hack, if C++ is
+# GNU C++ (i.e. if $ac_cv_prog_gxx=yes). The reason for using a static
+# C++ runtime is that binaries are more portable. That's important only
+# if you are distributing binaries, so it is disabled by default.
+# 
+flags_try1='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm -lgcc_eh -lgcc -lc -lgcc_eh -lgcc'
+flags_try2='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm -lgcc -lc -lgcc'
+CXXLDEXTRA=
+CXXHACKLINK='$(kpathsea_cxx_link)'
+CXXHACKLDLIBS='$(LOADLIBES)'
+if test "x$with_cxx_runtime_hack" = xyes &&
+   { test "x$with_pdftex"  = xyes ||
+     test "x$with_luatex"  = xyes ||
+     test "x$with_pdfetex" = xyes ||
+     test "x$with_xetex"   = xyes; }
+then
+  AC_MSG_CHECKING(for statically linking C++ runtime library)
+
+  cpp_link_hack=false
+  old_flags=$flags
+  old_ac_ext=$ac_ext
+  old_ac_link=$ac_link
+  if test "$ac_cv_prog_gxx" = yes; then
+
+    # New C++ compilers choke on <iostream.h>, thanks to the
+    # backward-incompatible standard.  At this point, our code is
+    # using the new-style <iostream>, and so our test should follow suit.
+    # 
+    ac_ext=C
+    cat > conftest.$ac_ext << EOF
+#include <iostream>
+  using namespace std;
+int main()
+{
+  cout <<"worksok\n";
+}
+EOF
+    for flags in "$flags_try1" "$flags_try2"; do
+      ac_link='${CXX-g++} -o conftest${ac_exeext} $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS $flags 1>&5'
+      if { (eval echo configure: \"$ac_link\") 1>&5; (eval $ac_link) 2>&5; } && test -s conftest${ac_exeext}; then
+        case `(./conftest; exit) 2>/dev/null` in
+          worksok)
+            cpp_link_hack=true; break;;
+        esac
+      else
+        echo "configure: failed program was:" >&5
+        cat conftest.$ac_ext >&5
+      fi
+    done
+  fi
+
+  if $cpp_link_hack; then
+    CXXLDEXTRA=$flags
+    CXXHACKLINK='$(cxx_link_command)'
+    CXXHACKLDLIBS='$(proglib) $(kpathsea_dir)/.libs/libkpathsea.a $(LIBS) $(XLOADLIBES)'
+    AC_MSG_RESULT(ok using $flags)
+  else
+    AC_MSG_RESULT(not supported)
+  fi
+
+  flags=$old_flags
+  ac_ext=$old_ac_ext
+  ac_link=$old_ac_link
+fi
+AC_SUBST(CXXLDEXTRA)
+AC_SUBST(CXXHACKLINK)
+AC_SUBST(CXXHACKLDLIBS)
+
+if test "x$with_pdftex" = xyes; then
+  PTEX=
+else
+  PTEX='#! '
+fi
+AC_SUBST(PTEX)
+
+if test "x$with_pdfetex" = xyes; then
+  PETEX=
+else
+  PETEX='#! '
+fi
+AC_SUBST(PETEX)
+
+if test "x$with_luatex" = xyes; then
+  LTEX=
+else
+  LTEX='#! '
+fi
+AC_SUBST(LTEX)
+
+if test "x$with_xetex" = xyes; then
+  XETEX=
+else
+  XETEX='#! '
+fi
+AC_SUBST(XETEX)
+
+sinclude(xetexdir/withenable.ac)
+sinclude(xetexdir/tests.ac)
+
+sinclude(xetexdir/acx_pthread.m4)
+ACX_PTHREAD
+
+# the following is for OpenBSD, where the PTHREAD_CFLAGS setting is defeated by -nodefaultlibs in the xetex link;
+# similar hackery might be needed on other systems (groan) -- JK 2007-01-07
+case "${host}" in
+*-*-*bsd*)
+  if test "x$PTHREAD_LIBS" = "x"; then
+    PTHREAD_LIBS="-lpthread"
+  fi ;;
+esac
+
+if test "x$with_xetex" = xyes; then
+  AC_HAS_CARBON
+
+  if test "x$has_carbon" = "xyes"; then
+    XETEX_MACOSX=
+    XETEX_GENERIC='#! '
+  else
+    XETEX_MACOSX='#! '
+    XETEX_GENERIC=
+
+    AC_HAS_LIBFONTCONFIG
+    if test "x$LDFONTCONFIG" = "x"; then
+      AC_MSG_ERROR([
+Cannot build XeTeX without libfontconfig.
+Use the --with-fontconfig=DIR option to specify the prefix where
+fontconfig is installed.
+      ])
+    fi
+    AC_SUBST(FONTCONFIGCPPFLAGS)
+    AC_SUBST(FONTCONFIGLDFLAGS)
+    AC_SUBST(LDFONTCONFIG)
+  fi
+  AC_SUBST(XETEX_MACOSX)
+  AC_SUBST(XETEX_GENERIC)
+
+  if test "x$with_graphite" = xno; then
+    XETEX_GRAPHITE='#! '
+  else
+    XETEX_GRAPHITE=
+  fi
+  AC_SUBST(XETEX_GRAPHITE)
+fi
+
+
+# For e-TeX, three choices: no, yes, and tex.  In the latter case, we
+# have to comment out the normal TeX build (TEX), as well as enable the
+# e-TeX build (ETEX) and the replacement of TeX with e-TeX in compatibilty
+# mode(CTEX).
+if test -d $srcdir/etexdir; then
+  # Create build dir, if necessary.
+  test -d etexdir || mkdir etexdir
+  test "${with_etex+set}" = set || with_etex=yes
+else
+  if test "x$with_etex" = xyes; then
+    AC_MSG_WARN(The e-TeX sources are not available.)
+  fi
+  with_etex=no
+fi
+if test "x$with_etex" = xyes; then
+  ETEX=
+else
+  ETEX='#! '
+fi
+AC_SUBST(ETEX)
+
+
+# --with-x* options: Distinguish no X at all, no toolkit, or toolkit.
+AC_PATH_XTRA
+if test "x$with_x" = xyes; then
+  if test -n "$x_libraries"; then
+    XLFLAG="-L$x_libraries"
+    wlibs="-lX11 $wlibs $XLFLAG"
+  else
+    wlibs="-lX11 $wlibs"
+  fi
+  if test -z "$x_ext_lib"; then # allow envvar override
+    AC_CHECK_LIB(Xext, XextCreateExtension,
+                 x_ext_lib=-lXext, :, $wlibs $X_EXTRA_LIBS $XLFLAG)
+  fi
+  if test "x$with_mf_x_toolkit" = xno; then
+    wfile=x11-Xlib.c
+  else
+    # Effectively demote --with-x-toolkit=athena to xt since 
+    # the code does not distinguish.
+    x_tool_libs="-lXt $x_tool_libs"
+    wfile=x11-Xt.c
+  fi
+  test -d window || mkdir window
+  case "$srcdir" in
+    /*) wfile=$srcdir/window/$wfile;;
+    .)  ;;
+    *)  wfile=../$srcdir/window/$wfile;;
+  esac
+  (cd window && (rm -f x11.c; $LN_S $wfile x11.c))
+  AC_DEFINE([X11WIN], 1, [Define to include X11 window in Metafont.])
+fi
+AC_SUBST(x_ext_lib)
+AC_SUBST(x_tool_libs)
+AC_SUBST(wlibs)
+
+if test "x$enable_fmtutil" = xyes; then
+  FMU='# '
+else
+  FMU=
+fi
+AC_SUBST(FMU)
+
+# Don't bother with pdflib unless pdf*TeX is requested.
+if test "$with_pdftex" = yes || \
+   test "$with_pdfetex" = yes
+then
+  KPSE_CONFIG_FILES([pdftexdir/Makefile])
+fi
+
+# Ditto luatex.
+if test "$with_luatex" = yes; then
+  KPSE_CONFIG_FILES([luatexdir/Makefile])
+fi
+
+dnl Create tests subdirectory.
+test -d tests || mkdir tests
+
+# Is libm present.  FIXME: do we need it at all?
+AC_CHECK_LIB(m, main)
+
+# For cross-compilation.  Put at the end so there is a fair chance
+# these are still visible when the configure script has finished.
+
+# The variables we need to build binaries that will run on the build
+# machine: BUILDCC, BUILDCFLAGS, BUILDCCLD.
+KPSE_CROSS_BUILD_VAR(CC, cc)
+KPSE_CROSS_BUILD_VAR(CFLAGS, $(BUILDXCFLAGS))
+KPSE_CROSS_BUILD_VAR(CPPFLAGS, $(BUILDXCPPFLAGS))
+KPSE_CROSS_BUILD_VAR(LDFLAGS, $(BUILDXLDFLAGS))
+KPSE_CROSS_BUILD_VAR(CCLD, $(BUILDCC))
+
+# And supporting programs we need to have available on the build
+# machine.
+KPSE_CROSS_PATH_PROG(TANGLEBOOT, tangle, ./tangleboot)
+KPSE_CROSS_PATH_PROG(TANGLE, tangle, ./tangle)
+KPSE_CROSS_PATH_PROG(CTANGLEBOOT, ctangle, ./ctangleboot)
+KPSE_CROSS_PATH_PROG(CTANGLE, ctangle, ./ctangle)
+KPSE_CROSS_PATH_PROG(TIE, tie, ./tie)
+if test "x$with_omega" = xyes || test "x$with_aleph" = xyes || test "x$with_xetex" = xyes; then
+KPSE_CROSS_PATH_PROG(OTANGLE, otangle, ./otangle)
+fi
+
+AH_TOP([/* c-auto.h: defines for web2c, as determined by configure.
+
+   Copyright 1994-97, 2008 Karl Berry.
+   Copyright 1997-99, 2002, 2005 Olaf Weber.
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+
+/* Guard against double inclusion. */
+#ifndef WEB2C_C_AUTO_H
+#define WEB2C_C_AUTO_H
+
+/* web2c: the version string. */
+#define WEB2CVERSION "REPLACE-WITH-WEB2CVERSION"])
+AH_BOTTOM([#endif /* !WEB2C_C_AUTO_H */])
+
+dnl Generate `Makefile's, `config.status', and our header file.
+KPSE_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile mpware/Makefile 
+          mpdir/Makefile web2c/Makefile window/Makefile])
+AC_OUTPUT

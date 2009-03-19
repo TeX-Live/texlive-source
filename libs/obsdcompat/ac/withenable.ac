@@ -1,0 +1,3 @@
+## libs/obsdcompat/ac/withenable.ac
+## configure options and TL libraries required for obsdcompat
+KPSE_WITH_LIB([obsdcompat], , [tree])

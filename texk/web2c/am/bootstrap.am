@@ -1,0 +1,110 @@
+## texk/web2c/am/bootstrap.am: Makefile fragment for tangle and ctangle.
+
+## Bootstrapping tangle requires making it with itself.  We use the opportunity
+## to create an up-to-date tangleboot as well.
+bin_PROGRAMS += tangle
+nodist_tangle_SOURCES = tangle.c tangle.h
+tangle.c tangle.h: tangle-web2c
+tangle-web2c: tangle.p
+	$(web2c) tangle
+	echo timestamp >$@
+	touch tangle.c tangle.h
+## tangle.p is a special case, since it is needed to compile itself.  We
+## convert and compile the (distributed) tangleboot.p to make a tangle
+## which we use to make the other programs.  We depend on tangleboot, even
+## though we might not use it.
+EXTRA_DIST += tangle.web tangle.ch
+tangle.p: tangleboot tangle.web tangle.ch
+	WEBINPUTS=.:$(srcdir) $(tangleboot) tangle tangle
+tangle.web:
+	@echo "You seem to be missing tangle.web, perhaps because you" >&2
+	@echo "didn't retrieve web.tar.gz, only web2c.tar.gz." >&2
+	@echo "You need both." >&2
+	@echo >&2
+	@echo "web.tar.gz should be available from the" >&2
+	@echo "same place that you got web2c.tar.gz." >&2
+	@echo "In any case, you can get it from" >&2
+	@echo "ftp://ftp.tug.org/tex/web.tar.gz." >&2
+	false
+DISTCLEANFILES += tangle.c tangle.h tangle.p tangle-web2c
+
+noinst_PROGRAMS += tangleboot
+nodist_tangleboot_SOURCES = tangleboot.c tangleboot.h
+tangleboot.c tangleboot.h: stamp-tangle $(web2c_programs) $(web2c_common)
+	$(web2c) tangleboot
+## tangleboot.p is in the distribution
+EXTRA_DIST += tangleboot.p
+stamp-tangle: tangleboot.p
+	date >stamp-tangle
+## This is not run unless tangle.web or tangle.ch is changed.
+## Only try to run ./tangle if it actually exists, otherwise
+## just touch tangleboot.p and build tangle.
+tangleboot.p: tangle.web tangle.ch
+	if [ -r $(TANGLE) ] || [ -r $(TANGLE).exe ]; then \
+	  $(tangle) tangle tangle; \
+	  mv tangle.p tangleboot.p; \
+	elif [ -r tangleboot.p ]; then \
+	  touch tangleboot.p; \
+	else \
+	  cp $(srcdir)/tangleboot.p .; \
+	fi
+	date >stamp-tangle
+	$(MAKE) $(AM_MAKEFLAGS) tangle
+DISTCLEANFILES += stamp-tangle tangleboot.c tangleboot.h
+
+## Bootstrapping ctangle requires making it with itself.  We use the opportunity
+## to create an up-to-date ctangleboot as well.
+bin_PROGRAMS += ctangle
+nodist_ctangle_SOURCES = ctangle.c cweb.c
+## ctangle.c is a special case, since it is needed to compile itself.
+## We depend on ctangleboot, even though we might not use it.
+EXTRA_DIST += cwebdir
+## We install man/cweb.man, not cwebdir/cweb.1
+## nodist_man_MANS += cwebdir/cweb.1
+ctangle.c: ctangleboot cwebdir/ctangle.w cwebdir/ctang-w2c.ch
+	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) ctangle ctang-w2c
+cweb.c: ctangleboot cwebdir/common.w cwebdir/comm-w2c.ch
+	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) common comm-w2c cweb.c
+DISTCLEANFILES += ctangle.c cweb.c
+
+noinst_PROGRAMS += ctangleboot
+nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
+## ctangleboot.c and cwebboot.c are in the distribution
+EXTRA_DIST += ctangleboot.c cwebboot.c
+stamp-ctangle: ctangleboot.c cwebboot.c
+	date >stamp-ctangle
+## This is not run unless one of the cwebdir/* files is changed.
+## Only try to run ./ctangle if it actually exists, otherwise
+## just touch ctangleboot.c and/or cwebboot.c and build ctangle.
+ctangleboot.c: cwebdir/ctangle.w cwebdir/ctang-w2c.ch
+	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
+	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) ctangle ctang-w2c; \
+	  mv ctangle.c ctangleboot.c; \
+	elif [ -r ctangleboot.c ]; then \
+	  touch ctangleboot.c; \
+	else \
+	  cp $(srcdir)/ctangleboot.c .; \
+	fi
+	date >stamp-ctangle
+	$(MAKE) $(AM_MAKEFLAGS) ctangle
+cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
+	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
+	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) common comm-w2c cweb.c; \
+	  mv cweb.c cwebboot.c; \
+	elif [ -r cwebboot.c ]; then \
+	  touch cwebboot.c; \
+	else \
+	  cp $(srcdir)/cwebboot.c .; \
+	fi
+	date >stamp-ctangle
+	$(MAKE) $(AM_MAKEFLAGS) ctangle
+DISTCLEANFILES += stamp-ctangle
+
+## Tests
+
+dist_check_SCRIPTS += tangle.test
+
+TESTS += tangle.test
+
+DISTCLEANFILES += cftest.p
+

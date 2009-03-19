@@ -1,0 +1,3 @@
+## libs/teckit/ac/teckit.ac
+## define required functions and headers from system teckit
+KPSE_CHECK_LIB([teckit], [TECkit_CreateConverter], [TECkit_Engine.h])

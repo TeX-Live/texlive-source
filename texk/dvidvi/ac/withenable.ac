@@ -1,0 +1,3 @@
+## texk/dvidvi/ac/withenable.ac
+## configure options and TL libraries required for dvidvi
+KPSE_WITH_PROG([dvidvi], [kpathsea])

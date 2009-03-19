@@ -1,0 +1,3 @@
+## libs/xpdf/ac/withenable.ac
+## configure options and TL libraries required for xpdf
+KPSE_WITH_LIB([xpdf], , [tree])

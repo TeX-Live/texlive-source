@@ -1,0 +1,3 @@
+## utils/ps2eps/ac/withenable.ac
+## configure options and TL libraries required for ps2eps
+KPSE_WITH_PROG([ps2eps])

@@ -1,0 +1,3 @@
+## texk/xdv2pdf/ac/withenable.ac
+## configure options and TL libraries required for xdv2pdf
+KPSE_WITH_PROG([xdv2pdf], [kpathsea])

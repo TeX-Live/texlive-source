@@ -1,0 +1,1 @@
+nmake CFG=DEBUG -f makefile.vc %1 %2 %3

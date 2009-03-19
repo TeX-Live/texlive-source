@@ -1,0 +1,163 @@
+## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
+
+pdftex_cppflags = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
+pdftex_cppflags += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
+pdftex_cppflags += -I$(srcdir)/pdftexdir
+
+pdftex_ldadd = libpdftex.a $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
+pdftex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a
+
+pdftex_dependencies = $(proglib)
+pdftex_dependencies += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(XPDF_DEPEND)
+pdftex_dependencies += $(OBSDCOMPAT_DEPEND) libmd5.a
+
+## pdfTeX
+##
+if PDFTEX
+bin_PROGRAMS += pdftex
+endif PDFTEX
+
+## Force Automake to use CXXLD for linking
+nodist_EXTRA_pdftex_SOURCES = dummy.cxx
+
+pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(buildenv) $(TANGLE)
+
+pdftex_CPPFLAGS = $(pdftex_cppflags)
+
+pdftex_LDADD = $(pdftex_ldadd) $(LDADD) $(socketlibs)
+
+pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
+
+pdftex_c_h = pdftexini.c pdftex0.c pdftex1.c pdftex2.c pdftex3.c pdftexcoerce.h pdftexd.h
+nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c pdftexdir/pdftexextra.h
+$(pdftex_c_h): pdftex-web2c
+pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
+	$(web2c) pdftex
+	: $(synctex_convert_pdftex)
+	echo timestamp >$@
+	touch $(pdftex_c_h)
+pdftexextra.c: pdftexd.h pdftexdir/pdftexextra.h lib/texmfmp.c pdftexd.h
+	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/lib/texmfmp.c >$@
+pdftex.p pdftex.pool: pdftex-tangle
+pdftex-tangle: tangle pdftexdir/pdftex.web pdftex.ch
+	$(pdf_tangle) pdftex pdftex
+	echo timestamp >$@
+	touch pdftex.p pdftex.pool
+pdftex-pool.c: pdftex.pool $(makecpool) pdftexdir/ptexlib.h pdftexd.h
+	$(makecpool) pdftex.pool pdftexdir/ptexlib.h >$@ || rm -f $@
+## Extract pdftex version
+pdftexdir/pdftex.version: pdftexdir/pdftex.web
+	$(mkdir_p) pdftexdir
+	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
+	  | sed "s/^.*'-//;s/'.*$$//" >pdftexdir/pdftex.version
+pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexdir/etex.version
+	sed -e s/PDFTEX-VERSION/`cat $(pdftexdir)/pdftex.version`/ \
+	    -e s/ETEX-VERSION/`cat etexdir/etex.version`/ \
+	  $(srcdir)/pdftexdir/pdftexextra.in >$@
+## Generate pdftex.ch
+pdftex.ch: $(TIE) $(pdftex_ch_srcs)
+	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
+pdftex_ch_srcs = \
+	pdftexdir/pdftex.web \
+	pdftexdir/tex.ch0 \
+	tex.ch \
+	$(pdftex_ch_synctex) \
+	pdftexdir/pdftex.ch
+##
+EXTRA_DIST += $(pdftex_ch_srcs) \
+	pdftexdir/pdftex.defines pdftexdir/pdftex.h pdftexdir/pdftexextra.in
+
+DISTCLEANFILES += $(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c \
+	pdftex.p pdftex.pool pdftex-tangle pdftexdir/pdftex.version
+
+## ttf2afm
+##
+bin_PROGRAMS += ttf2afm
+
+ttf2afm_CPPFLAGS = -I$(srcdir)/pdftexdir 
+
+ttf2afm_SOURCES = pdftexdir/ttf2afm.c
+
+## included by pdftexdir/ttf2afm.c
+EXTRA_ttf2afm_SOURCES = pdftexdir/macnames.c
+
+## pdftosrc
+##
+bin_PROGRAMS += pdftosrc
+
+## Force Automake to use CXXLD for linking
+nodist_EXTRA_pdftosrc_SOURCES = dummy.cxx
+
+pdftosrc_CPPFLAGS = $(pdftex_cppflags)
+
+pdftosrc_SOURCES = pdftexdir/pdftosrc.cc
+
+pdftosrc_LDADD = $(pdftex_ldadd) $(LDADD)
+
+pdftosrc_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
+
+## libpdftex
+##
+EXTRA_LIBRARIES += libpdftex.a
+
+libpdftex_a_CPPFLAGS = $(pdftex_cppflags)
+
+libpdftex_a_SOURCES = \
+	pdftexdir/avl.c \
+	pdftexdir/avl.h \
+	pdftexdir/avlstuff.c \
+	pdftexdir/avlstuff.h \
+	pdftexdir/epdf.c \
+	pdftexdir/epdf.h \
+	pdftexdir/image.h \
+	pdftexdir/mapfile.c \
+	pdftexdir/pdftex.h \
+	pdftexdir/pdftoepdf.cc \
+	pdftexdir/pkin.c \
+	pdftexdir/ptexlib.h \
+	pdftexdir/ptexmac.h \
+	pdftexdir/subfont.c \
+	pdftexdir/tounicode.c \
+	pdftexdir/utils.c \
+	pdftexdir/vfpacket.c \
+	pdftexdir/writeenc.c \
+	pdftexdir/writefont.c \
+	pdftexdir/writeimg.c \
+	pdftexdir/writejbig2.c \
+	pdftexdir/writejbig2.h \
+	pdftexdir/writejpg.c \
+	pdftexdir/writepng.c \
+	pdftexdir/writet1.c \
+	pdftexdir/writet3.c \
+	pdftexdir/writettf.c \
+	pdftexdir/writettf.h \
+	pdftexdir/writezip.c
+
+## We must create pdftexd.h before compiling the libpdftex_a_SOURCES,
+## but certainly don't want to create pdftexd.h if pdfTeX is not built.
+if PDFTEX
+$(libpdftex_a_SOURCES): pdftexd.h
+endif PDFTEX
+
+## included by pdftexdir/writettf.c
+EXTRA_libpdftex_a_SOURCES = pdftexdir/macnames.c
+
+EXTRA_DIST += \
+	pdftexdir/ChangeLog \
+	pdftexdir/NEWS \
+	pdftexdir/README \
+	pdftexdir/change-files.txt
+
+## Not used
+##
+EXTRA_DIST += \
+	pdftexdir/.indent.pro \
+	pdftexdir/pdftex.mak
+
+## Eventually delete these files
+##
+EXTRA_DIST += \
+	pdftexdir/Makefile.in.orig \
+	pdftexdir/pdftex.mk \
+	pdftexdir/pdftexlib.mk
+

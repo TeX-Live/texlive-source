@@ -1,0 +1,3 @@
+## libs/teckit/ac/withenable.ac
+## configure options and TL libraries required for teckit
+KPSE_WITH_LIB([teckit], [zlib])

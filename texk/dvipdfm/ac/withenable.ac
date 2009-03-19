@@ -1,0 +1,3 @@
+## texk/dvipdfm/ac/withenable.ac
+## configure options and TL libraries required for dvipdfm
+KPSE_WITH_PROG([dvipdfm], [kpathsea libpng])

@@ -1,0 +1,22 @@
+#!/bin/sh
+# $Id: tailboxbg,v 1.5 2003/08/15 19:40:37 tom Exp $
+: ${DIALOG=dialog}
+
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile" 0 1 2 5 15
+
+./killall listing
+./listing >listing.out &
+
+$DIALOG --title "TAIL BOX" \
+	--no-kill \
+        --tailboxbg listing.out 24 70 2>$tempfile
+
+# wait a while for the background process to run
+sleep 10
+
+# now kill it
+kill -3 `cat $tempfile` 2>&1 >/dev/null 2>/dev/null
+
+# ...and the process that is making the listing
+./killall listing

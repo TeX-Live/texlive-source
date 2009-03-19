@@ -1,0 +1,16 @@
+#!/bin/sh
+# $Id: pause,v 1.1 2004/12/20 00:41:12 tom Exp $
+: ${DIALOG=dialog}
+
+$DIALOG --title "PAUSE" --pause "Hi, this is a pause widget" 20 70 10
+
+retval=$?
+
+case $retval in
+  0)
+    echo "Timeout expired.";;
+  1)
+    echo "Cancel pressed.";;
+  *)
+    echo "Unexpected return code: $retval";;
+esac

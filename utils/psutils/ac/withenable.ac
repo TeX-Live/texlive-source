@@ -1,0 +1,3 @@
+## utils/psutils/ac/withenable.ac
+## configure options and TL libraries required for psutils
+KPSE_WITH_PROG([psutils])

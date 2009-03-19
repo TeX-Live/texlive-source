@@ -1,0 +1,13 @@
+if test "$needs_graphite" = no; then
+  GRAPHITECPPFLAGS=
+  LDGRAPHITE=
+  GRAPHITEDEP=
+else
+  GRAPHITECPPFLAGS='-I$(GRAPHITESRCDIR)/include'
+  LDGRAPHITE='$(GRAPHITEDIR)/src/.libs/libgraphite.a'
+  GRAPHITEDEP='$(GRAPHITEDIR)/src/.libs/libgraphite.a'
+fi
+
+AC_SUBST(GRAPHITECPPFLAGS)
+AC_SUBST(LDGRAPHITE)
+AC_SUBST(GRAPHITEDEP)

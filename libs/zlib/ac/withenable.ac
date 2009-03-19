@@ -1,0 +1,3 @@
+## libs/zlib/ac/withenable.ac
+## configure options and TL libraries required for zlib
+KPSE_WITH_LIB([zlib])

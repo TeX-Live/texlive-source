@@ -1,0 +1,111 @@
+# translation of dialog.po to Polish
+# Jaroslaw Swierczynski <swiergot@intersec.pl>, 2003
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: dialog\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-06-18 18:26-0400\n"
+"PO-Revision-Date: 2003-06-21 17:07+0200\n"
+"Last-Translator: Jaroslaw Swierczynski <swiergot@intersec.pl>\n"
+"Language-Team: Polish <po@lists.intersec.pl>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.0.1\n"
+
+#: buttons.c:385
+msgid "Yes"
+msgstr "Tak"
+
+#: buttons.c:393
+msgid "No"
+msgstr "Nie"
+
+#: buttons.c:401
+msgid "OK"
+msgstr "OK"
+
+#: buttons.c:409
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: buttons.c:417
+msgid "EXIT"
+msgstr "WYJDŹ"
+
+#: buttons.c:425
+msgid "Extra"
+msgstr "Ekstra"
+
+#: buttons.c:433
+msgid "Help"
+msgstr "Pomoc"
+
+#. Headline "Month"
+#: calendar.c:273
+msgid "Month"
+msgstr "Miesiąc"
+
+#. Headline "Year"
+#: calendar.c:293
+msgid "Year"
+msgstr "Rok"
+
+#: dialog.c:741
+msgid "Rename"
+msgstr "Zmień nazwę"
+
+#: fselect.c:550
+msgid "Directories"
+msgstr "Katalogi"
+
+#: fselect.c:551
+msgid "Files"
+msgstr "Pliki"
+
+#: mixedgauge.c:58
+msgid "Succeeded"
+msgstr ""
+
+#: mixedgauge.c:61
+#, fuzzy
+msgid "Failed"
+msgstr "Pliki"
+
+#: mixedgauge.c:64
+msgid "Passed"
+msgstr ""
+
+#: mixedgauge.c:67
+msgid "Completed"
+msgstr ""
+
+#: mixedgauge.c:70
+msgid "Checked"
+msgstr ""
+
+#: mixedgauge.c:73
+msgid "Done"
+msgstr ""
+
+#: mixedgauge.c:76
+msgid "Skipped"
+msgstr ""
+
+#: mixedgauge.c:79
+msgid "In Progress"
+msgstr ""
+
+#: mixedgauge.c:85
+msgid "N/A"
+msgstr ""
+
+#: mixedgauge.c:193
+msgid "Overall Progress"
+msgstr ""
+
+#: textbox.c:489
+#, fuzzy
+msgid "Search"
+msgstr "Search"

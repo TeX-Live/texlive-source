@@ -1,0 +1,7 @@
+
+Name: SILGraphite
+Description: Script rendering engine
+Version: ${version}
+Libs: -L${libdir} -lgraphite
+Cflags: -I${includedir}
+

@@ -1,0 +1,3 @@
+## texk/bibtex8/ac/withenable.ac
+## configure options and TL libraries required for bibtex8
+KPSE_WITH_PROG([bibtex8], [kpathsea])

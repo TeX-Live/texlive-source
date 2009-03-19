@@ -1,0 +1,79 @@
+# @configure_input@
+# Makefile for tex4ht in TeX Live.  Public domain.
+# Originally written by S. Rahtz.
+version = 1.0
+
+kpse_include ../make/paths.mk
+kpse_include ../make/common.mk
+kpse_include ../make/programs.mk
+kpse_include ../make/texi.mk
+prog_cflags = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes
+
+objects = tex4ht.o t4ht.o
+
+programs = tex4ht t4ht 
+shell_scripts = htcontext htlatex htmex httex httexi htxelatex htxetex ht
+perl_scripts = mk4ht
+
+default all: $(programs)  
+
+t4ht: $(kpathsea) t4ht.o
+	$(kpathsea_link) t4ht.o $(LOADLIBES)
+
+tex4ht: $(kpathsea) tex4ht.o
+	$(kpathsea_link) tex4ht.o $(LOADLIBES)
+
+kpse_include ../make/tkpathsea.mk
+
+install: install-exec install-data
+
+uninstall: uninstall-exec uninstall-data
+
+install-exec: all
+	$(SHELL) $(top_srcdir)/../mkinstalldirs $(bindir)
+	for p in $(programs); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+	$(INSTALL) -d "$(prefix)/texmf-dist/scripts/tex4ht"
+	for p in $(shell_scripts); do $(INSTALL_SCRIPT) $(srcdir)/$$p "$(prefix)/texmf-dist/scripts/tex4ht/$$p.sh"; done
+	for p in $(perl_scripts); do $(INSTALL_SCRIPT) $(srcdir)/$$p "$(prefix)/texmf-dist/scripts/tex4ht/$$p.pl"; done
+	if test -d "$(bindir)/../../texmf-dist/scripts/tex4ht"; then \
+	  d=../../texmf-dist/scripts/tex4ht; \
+	elif test -d "$(bindir)/../texmf-dist/scripts/tex4ht"; then \
+	  d=../texmf-dist/scripts/tex4ht; \
+	else \
+	  echo "Error: texmf-dist/scripts/tex4ht directory not found" >&2; \
+	  exit 1; \
+	fi; \
+	for p in $(shell_scripts); do rm -f $(bindir)/$$p; ln -s $$d/$$p.sh $(bindir)/$$p; done; \
+	for p in $(perl_scripts); do rm -f $(bindir)/$$p; ln -s $$d/$$p.pl $(bindir)/$$p; done
+
+uninstall-exec:
+	for p in $(programs) $(scripts); do rm -f $(bindir)/$$p; done
+
+install-data:
+
+uninstall-data:
+
+distname = tex4ht
+
+kpse_include ../make/dist.mk
+kpse_include ../make/config.mk
+kpse_include ../make/clean.mk
+distclean::
+	-rm v*.tex *.txt i*.tex *.gif *.toc *.otc *.lg *.xref *.html *.idv *.log *.aux tmp.* tex4ht.env
+
+dvi info check: 
+
+maybecheck:
+	TEXINPUTS=$(srcdir): $(SHELL) $(srcdir)/ht latex test
+
+
+tex4ht.env: tex4ht.in
+	sed -e "s;@texmf@;$(texmf);" < $(srcdir)/tex4ht.in \
+	| sed -e "s;@prefix@;$(prefix);g" \
+	| sed -e "s;@imbindir@.;;g" \
+	| sed -e "s/Mmove/Mmv/" \
+	| sed -e "s/Ccopy/Ccp/" \
+	> tex4ht.env
+
+kpse_include ../make/rdepend.mk
+kpse_include depend.mk

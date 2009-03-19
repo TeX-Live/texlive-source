@@ -1,0 +1,19 @@
+#!/bin/sh
+# $Id: progress,v 1.1 2006/01/18 23:32:18 tom Exp $
+: ${DIALOG=dialog}
+
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile" 0 1 2 5 15
+
+ls -1 >$tempfile
+(
+while true
+do
+read text
+test -z "$text" && break
+ls -ld "$text"
+sleep 1
+done <$tempfile
+) |
+
+$DIALOG --title "PROGRESS" --progressbox 20 70

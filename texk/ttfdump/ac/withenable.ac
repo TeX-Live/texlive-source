@@ -1,0 +1,3 @@
+## texk/ttfdump/ac/withenable.ac
+## configure options and TL libraries required for ttfdump
+KPSE_WITH_PROG([ttfdump], [kpathsea])

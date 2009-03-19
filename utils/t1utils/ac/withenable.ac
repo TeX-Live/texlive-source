@@ -1,0 +1,3 @@
+## utils/t1utils/ac/withenable.ac
+## configure options and TL libraries required for t1utils
+KPSE_WITH_PROG([t1utils])
