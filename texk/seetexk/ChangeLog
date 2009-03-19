@@ -1,3 +1,8 @@
+2009-02-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* error.c: Include <config.h> instead of <c-auto.h> as
+	everywhere else.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: added AC_CONFIG_HEADERS (moved

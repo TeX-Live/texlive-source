@@ -1,4 +1,4 @@
-/* synctex.h
+/* synctex-common.h
 
 This file is part of the SyncTeX package.
 

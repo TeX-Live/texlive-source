@@ -1,0 +1,43 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+AC_INIT([silgraphite for TeX live], [2.3], [tex-k@tug.org])
+AC_PREREQ([2.63])
+AC_CONFIG_SRCDIR([src/segment/GrEngine.cpp])
+AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
+
+AM_INIT_AUTOMAKE([foreign dist-bzip2 no-define])
+AM_MAINTAINER_MODE
+
+AC_CANONICAL_HOST
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_LN_S
+
+# Checks for header files.
+AC_HEADER_STDC
+
+AC_C_BIGENDIAN
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_SIZE_T
+AC_CHECK_SIZEOF([wchar_t])
+AC_SUBST([SIZEOF_WCHAR_T])
+
+AC_SEARCH_LIBS([fabsf], [m])
+AC_CHECK_FUNCS([fabsf])
+
+AM_CONDITIONAL([build], [test "x$enable_build" != xno])
+
+AC_CONFIG_FILES([Makefile])
+
+AC_OUTPUT

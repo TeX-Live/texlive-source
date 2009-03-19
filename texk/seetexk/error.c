@@ -16,7 +16,10 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/error.c,v
  */
 #include <stdio.h>
 
-#include <c-auto.h>
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "types.h"		/* for HAVE_VPRINTF */
 #include "error.h"
 
