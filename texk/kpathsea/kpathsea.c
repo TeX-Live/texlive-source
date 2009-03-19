@@ -113,6 +113,12 @@ kpathsea_finish (kpathsea kpse)
 
 #if defined (KPSE_COMPAT_API)
 
+/*
+ * FIXME: completely remove the initializer.
+ */
+
+#if 0
+
 #define NULL_FORMAT_INFO(kpse_file_format_type) { \
     NULL,  /* const_string type */ \
     NULL,  /* const_string path */ \
@@ -222,6 +228,12 @@ kpathsea_instance kpse_def_inst = {
     NULL,      /* char **saved_env */
     0          /* int saved_count */
 };
+
+#else /* zero */
+
+kpathsea_instance kpse_def_inst;
+
+#endif /* zero */
 
 kpathsea kpse_def = &kpse_def_inst;
 

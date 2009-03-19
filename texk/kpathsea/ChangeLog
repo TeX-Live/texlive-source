@@ -1,3 +1,8 @@
+2009-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpathsea.c: Do not use initializer for kpse_def_inst (FIXME:
+	to be completely removed).
+
 2009-03-17  Taco Hoekwater  <taco@luatex.org>
 
 	* types.h: Define kpse_debug_hash_lookup_int.
