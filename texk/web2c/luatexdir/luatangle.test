@@ -1,0 +1,7 @@
+#! /bin/sh
+
+TEXMFCNF=$srcdir/../kpathsea WEBINPUTS=$srcdir/cftests \
+  ./luatangle  cftest cftest || exit 1
+
+diff cftest.p $srcdir/cftests/lcftest.p || exit 1
+
