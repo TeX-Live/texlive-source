@@ -1,0 +1,5 @@
+2009-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ff-config.in: new configuration header replacing lots of
+	defines on the command line.
+	* fontforge/fontforge/configure-pfaedit.h: include ff-config.h.

@@ -150,9 +150,7 @@ EXTRA_DIST += \
 
 ## Not used
 ##
-EXTRA_DIST += \
-	pdftexdir/.indent.pro \
-	pdftexdir/pdftex.mak
+EXTRA_DIST += pdftexdir/pdftex.mak
 
 ## Eventually delete these files
 ##

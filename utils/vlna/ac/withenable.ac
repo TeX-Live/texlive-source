@@ -1,0 +1,3 @@
+## utils/vlna/ac/withenable.ac
+## configure options and TL libraries required for vlna
+KPSE_WITH_PROG([vlna])

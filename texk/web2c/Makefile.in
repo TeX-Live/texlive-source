@@ -776,9 +776,8 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/pdftex.h \
 	pdftexdir/pdftexextra.in pdftexdir/ChangeLog pdftexdir/NEWS \
 	pdftexdir/README pdftexdir/change-files.txt \
-	pdftexdir/.indent.pro pdftexdir/pdftex.mak \
-	pdftexdir/Makefile.in.orig pdftexdir/pdftex.mk \
-	pdftexdir/pdftexlib.mk $(luatex_sources) \
+	pdftexdir/pdftex.mak pdftexdir/Makefile.in.orig \
+	pdftexdir/pdftex.mk pdftexdir/pdftexlib.mk $(luatex_sources) \
 	luatexdir/luatex.defines luatexdir/luatexextra.in \
 	luatexdir/ptexlib.h $(luatangle_sources) \
 	luatexdir/lua51/Makefile luatexdir/lua51/lua.c \
