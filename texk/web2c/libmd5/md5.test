@@ -1,0 +1,4 @@
+#! /bin/sh
+
+./md5main --test || exit 1
+
