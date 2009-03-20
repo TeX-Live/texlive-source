@@ -1,0 +1,3 @@
+## libs/gd/kpse/withenable.ac
+## configure options and TL libraries required for gd
+KPSE_WITH_LIB([gd], [libpng])

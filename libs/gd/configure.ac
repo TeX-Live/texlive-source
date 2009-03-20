@@ -1,0 +1,83 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+m4_define([gd_major], [2])[]dnl
+m4_define([gd_minor], [0])[]dnl
+m4_define([gd_micro], [35])[]dnl using unmodified gd-2.0.35 source tree
+m4_define([gd_version], gd_major.gd_minor.gd_micro)[]dnl
+AC_INIT([gd for TeX Live], gd_version, [tex-k@tug.org])
+AC_PREREQ([2.63])
+AC_CONFIG_SRCDIR([gd-]gd_version[/gd.c])
+AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
+
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_MAINTAINER_MODE
+
+PNGLIB_MAJOR=gd_major()
+PNGLIB_MINOR=gd_minor()
+PNGLIB_RELEASE=gd_micro()
+AC_SUBST([PNGLIB_MAJOR])
+AC_SUBST([PNGLIB_MINOR])
+AC_SUBST([PNGLIB_RELEASE])
+
+AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_LN_S
+
+AC_CONFIG_HEADERS([config.h:config.hin])
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([errno.h limits.h stddef.h stdlib.h string.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_SEARCH_LIBS([sin], [m], , [AC_ERROR([cannot find sin])])
+
+KPSE_ZLIB_FLAGS
+KPSE_LIBPNG_FLAGS
+
+AM_CONDITIONAL([build], [test "x$enable_build" != xno])
+
+# Configure must not fail, or 'make dist' will fail as well; thus
+# don't run any tests for '--disable-build', there may be no zlib.
+if test "x$enable_build" != xno; then
+
+save_CPPFLAGS=$CPPFLAGS
+save_LIBS=$LIBS
+
+CPPFLAGS="$CPPFLAGS $ZLIB_INCLUDES"
+LIBS="$ZLIB_LIBS $LIBS"
+
+AC_CHECK_FUNC([deflate], , [AC_ERROR([zlib not found])])
+AC_CHECK_HEADERS([zlib.h], , [AC_ERROR([zlib not found])])
+AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
+
+CPPFLAGS="$CPPFLAGS $LIBPNG_INCLUDES"
+LIBS="$LIBPNG_LIBS $LIBS"
+
+AC_CHECK_FUNC([png_create_read_struct], , [AC_ERROR([libpng not found])])
+AC_CHECK_HEADERS([png.h], , [AC_ERROR([libpng not found])])
+AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have the png library.])
+
+CPPFLAGS=$save_CPPFLAGS
+LIBS=$save_LIBS
+
+fi
+
+GD_TREE=gd-[]gd_version
+AC_SUBST([GD_TREE])
+
+AC_CONFIG_FILES([Makefile])
+
+AC_OUTPUT
