@@ -21,9 +21,7 @@ KPSE_COMMON([lacheck])
 
 KPSE_PROG_LEX
 
-AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
-
-KPSE_KPATHSEA_FLAGS
+AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_FILES([Makefile])
 

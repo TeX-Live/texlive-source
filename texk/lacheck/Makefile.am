@@ -1,11 +1,6 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA -DUNIX  -DNeedFunctionPrototypes
-
-DISTCLEANFILES = detex-sed.l
-
 bin_PROGRAMS = lacheck
 
 lacheck_SOURCES = lacheck.l
@@ -31,10 +26,7 @@ EXTRA_DIST += test.tex test.out
 
 CLEANFILES += test.xout
 
-## Rebuild libkpathsea
-@KPATHSEA_RULE@
-
-## Not yet used
+## Not used
 ##
 EXTRA_DIST += lacheck.hlp make_vms.com
 

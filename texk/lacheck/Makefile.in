@@ -42,7 +42,7 @@ DIST_COMMON = $(am__configure_deps) $(dist_check_SCRIPTS) \
 	$(srcdir)/../../build-aux/ltmain.sh \
 	$(srcdir)/../../build-aux/missing \
 	$(srcdir)/../../build-aux/ylwrap $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/c-auto.in \
+	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/configure ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
@@ -50,7 +50,6 @@ DIST_COMMON = $(am__configure_deps) $(dist_check_SCRIPTS) \
 	../../build-aux/ylwrap ChangeLog lacheck.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lex.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
@@ -63,7 +62,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = c-auto.h
+CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -137,9 +136,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
-KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
-KPATHSEA_LIBS = @KPATHSEA_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
@@ -227,9 +223,6 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA -DUNIX  -DNeedFunctionPrototypes
-DISTCLEANFILES = detex-sed.l
 lacheck_SOURCES = lacheck.l
 LDADD = $(LEXLIB)
 nodist_man1_MANS = lacheck.1
@@ -237,7 +230,7 @@ EXTRA_DIST = lacheck.man test.tex test.out lacheck.hlp make_vms.com
 CLEANFILES = lacheck.1 test.xout
 dist_check_SCRIPTS = lacheck.test
 TESTS = lacheck.test
-all: c-auto.h
+all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
@@ -276,22 +269,22 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 
-c-auto.h: stamp-h1
+config.h: stamp-h1
 	@if test ! -f $@; then \
 	  rm -f stamp-h1; \
 	  $(MAKE) $(AM_MAKEFLAGS) stamp-h1; \
 	else :; fi
 
-stamp-h1: $(srcdir)/c-auto.in $(top_builddir)/config.status
+stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status c-auto.h
-$(srcdir)/c-auto.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+	cd $(top_builddir) && $(SHELL) ./config.status config.h
+$(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
 	cd $(top_srcdir) && $(AUTOHEADER)
 	rm -f stamp-h1
 	touch $@
 
 distclean-hdr:
-	-rm -f c-auto.h stamp-h1
+	-rm -f config.h stamp-h1
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -408,11 +401,11 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS:  $(HEADERS) $(SOURCES) c-auto.in $(TAGS_DEPENDENCIES) \
+TAGS:  $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS) c-auto.in $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) config.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -424,10 +417,10 @@ TAGS:  $(HEADERS) $(SOURCES) c-auto.in $(TAGS_DEPENDENCIES) \
 	    $$tags $$unique; \
 	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES) c-auto.in $(TAGS_DEPENDENCIES) \
+CTAGS:  $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	tags=; \
-	list='$(SOURCES) $(HEADERS) c-auto.in $(LISP) $(TAGS_FILES)'; \
+	list='$(SOURCES) $(HEADERS) config.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -666,7 +659,7 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(dist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-am: Makefile $(PROGRAMS) $(MANS) c-auto.h
+all-am: Makefile $(PROGRAMS) $(MANS) config.h
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -692,7 +685,6 @@ clean-generic:
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -786,8 +778,6 @@ lacheck.1: lacheck.man
 	sed -e "s!%%LACHECKREV%%!Release $(REV)!" \
 	    -e "s!%%LACHECKDATE%%!`date +%Y-%m-%d`!" \
 	    -e "s!%%LACHECKPATH%%!lacheck!" $< > $@
-
-@KPATHSEA_RULE@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
