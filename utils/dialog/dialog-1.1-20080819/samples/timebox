@@ -1,0 +1,17 @@
+#!/bin/sh
+# $Id: timebox,v 1.4 2003/10/09 22:45:06 tom Exp $
+: ${DIALOG=dialog}
+
+exec 3>&1
+USERTIME=`$DIALOG --title "TIMEBOX" --timebox "Please set the time..." 0 0 12 34 56 2>&1 1>&3`
+code=$?
+exec 3>&-
+
+case $code in
+  0)
+    echo "Time entered: $USERTIME.";;
+  1)
+    echo "Cancel pressed.";;
+  255)
+    echo "Box closed.";;
+esac

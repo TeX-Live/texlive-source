@@ -1,0 +1,22 @@
+#!/bin/sh
+# $Id: msgbox-help,v 1.1 2005/12/05 23:59:24 tom Exp $
+: ${DIALOG=dialog}
+
+$DIALOG --title "MESSAGE BOX" --clear \
+	--help-button \
+        --msgbox "Hi, this is a simple message box. You can use this to \
+                  display any message you like. The box will remain until \
+                  you press the ENTER key." 10 41
+
+case $? in
+  0)
+    echo "OK";;
+  1)
+    echo "Button 1 (Cancel) pressed.";;
+  2)
+    echo "Button 2 (Help) pressed.";;
+  3)
+    echo "Button 3 (Extra) pressed.";;
+  255)
+    echo "ESC pressed.";;
+esac

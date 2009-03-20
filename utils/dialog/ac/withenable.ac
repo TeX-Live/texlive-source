@@ -1,0 +1,3 @@
+## utils/dialog/ac/withenable.ac
+## configure options and TL libraries required for dialog
+KPSE_WITH_PROG([dialog])

@@ -1,0 +1,21 @@
+#!/bin/sh
+# $Id: gauge,v 1.4 2008/07/22 23:47:46 tom Exp $
+: ${DIALOG=dialog}
+
+PCT=10
+(
+while test $PCT != 100
+do
+cat <<EOF
+XXX
+$PCT
+The new\n\
+message ($PCT percent)
+XXX
+EOF
+PCT=`expr $PCT + 10`
+sleep 1
+done
+) |
+
+$DIALOG --title "GAUGE" --gauge "Hi, this is a gauge widget" 20 70 0

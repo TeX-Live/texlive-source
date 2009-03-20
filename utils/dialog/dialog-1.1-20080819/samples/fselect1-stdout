@@ -1,0 +1,23 @@
+#!/bin/sh
+# $Id: fselect1-stdout,v 1.1 2003/08/15 19:40:37 tom Exp $
+: ${DIALOG=dialog}
+
+FILE=$HOME
+for n in .cshrc .profile .bashrc
+do
+	if test -f $HOME/$n ; then
+		FILE=$HOME/$n
+		break
+	fi
+done
+
+FILE=`$DIALOG --stdout --title "Please choose a file" --fselect $FILE 14 48`
+
+case $? in
+	0)
+		echo "\"$FILE\" chosen";;
+	1)
+		echo "Cancel pressed.";;
+	255)
+		echo "Box closed.";;
+esac

@@ -1,0 +1,31 @@
+#!/bin/sh
+# $Id: editbox3,v 1.1 2007/09/24 00:12:24 tom Exp $
+# example with extra- and help-buttons
+: ${DIALOG=dialog}
+
+input=`tempfile 2>/dev/null` || input=/tmp/input$$
+output=`tempfile 2>/dev/null` || output=/tmp/test$$
+trap "rm -f $input $output" 0 1 2 5 15
+
+cat << EOF > $input
+EOF
+
+$DIALOG --title "EDIT BOX" \
+	--extra-button \
+	--help-button \
+	--fixed-font --editbox $input 0 0 2>$output
+
+case $? in
+  0)
+    diff -c $input $output
+    echo "OK"
+    ;;
+  1)
+    echo "Button 1 (Cancel) pressed";;
+  2)
+    echo "Button 2 (Help) pressed";;
+  3)
+    echo "Button 3 (Extra) pressed";;
+  255)
+    echo "ESC pressed.";;
+esac

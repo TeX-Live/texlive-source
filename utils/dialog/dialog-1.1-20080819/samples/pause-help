@@ -1,0 +1,24 @@
+#!/bin/sh
+# $Id: pause-help,v 1.1 2005/12/06 00:02:52 tom Exp $
+: ${DIALOG=dialog}
+
+$DIALOG --title "PAUSE" \
+	--help-button \
+	--pause "Hi, this is a pause widget" 20 70 10
+
+retval=$?
+
+case $retval in
+  0)
+    echo "Timeout expired.";;
+  1)
+    echo "Button 1 (Cancel) pressed.";;
+  2)
+    echo "Button 2 (Help) pressed.";;
+  3)
+    echo "Button 3 (Extra) pressed.";;
+  255)
+    echo "ESC pressed.";;
+  *)
+    echo "Unexpected return code: $retval";;
+esac

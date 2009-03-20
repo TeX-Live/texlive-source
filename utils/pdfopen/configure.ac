@@ -1,25 +1,24 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl this is for autoconf 2.5x
+dnl
+dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+AC_INIT([pdfopen for TeX Live], [0.51], [tex-k@tug.org])
+AC_PREREQ([2.63])
+AC_CONFIG_SRCDIR([pdfopen.c])
+AC_CONFIG_AUX_DIR([../../build-aux])
 
-AC_INIT(pdfopen, 0.5, taco@metatex.org)
-
-AC_CONFIG_AUX_DIR(config)
-
-AM_INIT_AUTOMAKE(pdfopen, 0.5)
-
-AC_CONFIG_FILES(Makefile)
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_MAINTAINER_MODE
 
 AC_PROG_CC
 
-dnl AC_PROG_INSTALL
-
-dnl Checks for header files.
-
-dnl Checks for typedefs, structures, and compiler characteristics.
-
-dnl Checks for library functions.
-
 dnl Find Xlibs.
 AC_PATH_XTRA
+
+AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

@@ -1,0 +1,51 @@
+#! /bin/sh
+# $Id: checklist-utf8,v 1.4 2007/10/21 21:46:57 tom Exp $
+: ${DIALOG=dialog}
+
+: ${DIALOG_OK=0}
+: ${DIALOG_CANCEL=1}
+: ${DIALOG_ESC=255}
+
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile" 0 1 2 5 15
+
+case none"$LANG$LC_ALL$LC_CTYPE" in
+*UTF-8*)
+	;;
+*)
+	echo "This script must be run in a UTF-8 locale"
+	exit 1
+	;;
+esac
+
+$DIALOG --backtitle "No Such Organization" \
+	--title "CHECKLIST BOX" \
+        --checklist "Hi, this is a checklist box. You can use this to \n\
+present a list of choices which can be turned on or \n\
+off. If there are more items than can fit on the \n\
+screen, the list will be scrolled. You can use the \n\
+UP/DOWN arrow keys, the first letter of the choice as a \n\
+hot key, or the number keys 1-9 to choose an option. \n\
+Press SPACE to toggle an option on/off. \n\n\
+  Which of the following are fruits?" 20 61 5 \
+	"ＡＰＰＬＥ"	 "It's an ＡＰＰＬＥ." off \
+	"ＤＯＧ"	 "No, that's not my ＤＯＧ." ON \
+	"ＯＲＡＮＧＥ"	 "Yeah, that's ＪＵＩＣＹ." off \
+	"ＣＨＩＣＫＥＮ" "Normally not a ＰＥＴ." off \
+	"ＣＡＴ"	 "No, never put a ＤＯＧ and a ＣＡＴ together!" oN \
+	"ＦＩＳＨ"	 "Cats like ＦＩＳＨ." On \
+	"ＬＥＭＯＮ"	 "You ＫＮＯＷ how it ＴＡＳＴＥＳ." on 2> $tempfile
+
+retval=$?
+
+choice=`cat $tempfile`
+case $retval in
+  $DIALOG_OK)
+    echo "'$choice' chosen.";;
+  $DIALOG_CANCEL)
+    echo "Cancel pressed.";;
+  $DIALOG_ESC)
+    echo "ESC pressed.";;
+  *)
+    echo "Unexpected return code: $retval (ok would be $DIALOG_OK)";;
+esac

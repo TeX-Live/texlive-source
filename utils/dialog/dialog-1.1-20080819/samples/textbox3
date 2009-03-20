@@ -1,0 +1,29 @@
+#!/bin/sh
+# $Id: textbox3,v 1.1 2005/12/05 22:07:56 tom Exp $
+: ${DIALOG=dialog}
+
+tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
+trap "rm -f $tempfile" 0 1 2 5 15
+
+TEXT=/usr/share/common-licenses/GPL
+test -f $TEXT || TEXT=../COPYING
+
+cat textbox.txt | expand > $tempfile
+cat $TEXT | expand >> $tempfile
+
+$DIALOG --clear --title "TEXT BOX" \
+	--extra-button \
+	--textbox "$tempfile" 22 77
+
+case $? in
+  0)
+    echo "Button 0 (OK) pressed.";;
+  1)
+    echo "Button 1 (Cancel) pressed.";;
+  2)
+    echo "Button 2 (Help) pressed.";;
+  3)
+    echo "Button 3 (Extra) pressed.";;
+  255)
+    echo "ESC pressed.";;
+esac

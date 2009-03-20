@@ -1,0 +1,52 @@
+#! /bin/bash
+# $Id: inputmenu-stdout,v 1.4 2005/02/06 22:51:23 tom Exp $
+# 2002 - written by Tobias Rittweiler <tobrit@freebits.de>
+: ${DIALOG=dialog}
+
+user="$USER"    ; uid="$UID"   ;
+gid="$GROUPS"  ; home="$HOME"  ;
+
+while [ ${returncode:-99} -ne 1 -a ${returncode:-99} -ne 250 ]; do
+       value="$("$DIALOG" --stdout --clear --ok-label "Create" \
+                          --backtitle "An Example for the use of --inputmenu:" \
+                          --inputmenu "Originally I designed --inputmenu for a \
+configuration purpose. Here is a possible piece of a configuration program.
+" 20 50 10 "Username:" "$user" "UID:" "$uid" "GID:" "$gid" "HOME:" "$home")"
+       returncode=$?
+       case $returncode in
+           1)
+               "$DIALOG"  --clear --backtitle "An Example for the use of --inputmenu:" \
+                               --yesno "Really quit?" 10 30
+               case $? in
+                       0) break;;
+                       1) returncode=99;;
+               esac
+               ;;
+           0)
+               "$DIALOG" --clear --backtitle "An Example for the use of --inputmenu:"  \
+			--msgbox "useradd \n\
+				-d $home \n\
+				-u $uid \n\
+				-g $gid \n\
+				$user" 10 40
+               ;;
+           3)
+               value="${value:8:${#value}}"
+               tag="${value%:*}"
+               item="${value#*: }"
+
+               case "$tag" in
+                       Username) user="$item";;
+                       UID) uid="$item";;
+                       GID) gid="$item";;
+                       HOME) home="$item";;
+               esac
+	       ;;
+
+       255)
+                echo "ESC pressed."
+                break
+                ;;
+
+       esac
+done
