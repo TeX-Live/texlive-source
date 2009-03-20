@@ -1,3 +1,8 @@
+2009-03-05  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* image/pdftoepdf.cc: Uninclude <config.h>, included later
+	by "epdf.h".
+
 2009-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatangle.ch: use kpse_open_file to locate input files,

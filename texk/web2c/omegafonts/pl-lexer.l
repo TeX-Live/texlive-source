@@ -29,7 +29,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #endif
 #include "parser.h"
 #include "kpathsea/types.h"
-#include "y_tab.h"
+#include "pl-parser.h"
 #include "manifests.h"
 #include "error_routines.h"
 #ifdef __cplusplus

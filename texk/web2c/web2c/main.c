@@ -15,7 +15,7 @@
    was written by Tomas Rokicki, with modifications by Tim Morgan, et al. */
 
 #include "web2c.h"
-#include "y_tab.h"
+#include "web2c-parser.h"
 
 
 /* Changing this value will probably stimulate bugs in some

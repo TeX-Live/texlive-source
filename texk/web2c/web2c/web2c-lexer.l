@@ -2,7 +2,7 @@
 /* web2c.l -- lexical analysis for Tangle output.  Public domain. */
 
 #include "web2c.h"
-#include "y_tab.h"
+#include "web2c-parser.h"
 
 /* Hack to make it possible to compile the generated code with C++
    Required if you use flex. */

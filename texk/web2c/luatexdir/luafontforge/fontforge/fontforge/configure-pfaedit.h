@@ -27,6 +27,8 @@
 #ifndef _CONFIG_FONTFORGE_H_
 #define _CONFIG_FONTFORGE_H_
 
+#include "ff-config.h"
+
 /*  !!!!!!!!!!!!!!!!! Experimental. Don't try to use it yet !!!!!!!!!!!!!!!!! */
 /* FontForge can be configured with a windowing UI based on my widgets (gdraw)*/
 /*  the gtk widget set, or finally with no windowing UI.                      */

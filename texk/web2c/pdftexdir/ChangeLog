@@ -1,3 +1,7 @@
+2009-02-18  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* pdftoepdf.cc: Uninclude <config.h>, included later by "epdf.h".
+
 2004-08-21  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* pdfetex.ch2: Adapted to e-TeX version 2.2.

@@ -30,7 +30,6 @@ $Id: pdftoepdf.cc 1129 2008-03-27 19:43:44Z hhenkel $
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
-#include <config.h>
 #include <assert.h>
 #include "Object.h"
 #include "Stream.h"

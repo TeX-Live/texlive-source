@@ -26,7 +26,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 %{
 #include "routines.h"
 #include "yystype.h"
-#include "y_tab.h"
+#include "otp-parser.h"
 #define YY_NO_UNPUT
 #define OTP_MAXCODE 0xFFFF
 int line_number = 1;

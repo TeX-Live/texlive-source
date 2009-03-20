@@ -28,7 +28,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
-#include <config.h>
 #include <assert.h>
 #include "Object.h"
 #include "Stream.h"
