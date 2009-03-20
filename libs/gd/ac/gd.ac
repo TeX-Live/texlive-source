@@ -1,3 +1,0 @@
-## libs/gd/ac/gd.ac
-## define required functions and headers from system gd
-KPSE_CHECK_LIB([gd], [gdImageCreate], [gd.h])

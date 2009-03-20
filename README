@@ -1,125 +1,52 @@
-$Id$
-Copyright 2004, 2006, 2007, 2008, 2009 TeX Users Group.
-You may freely use, modify and/or distribute this file.
+	tex-live-2009test-1.4
+	=====================
 
-For a high-level overview of building TeX Live, see
-http://tug.org/texlive/build.html.
+Purpose:
+--------
 
-To configure and make the source tree, run ./Build.
-To build (mostly) without optimization, run ./Build --debug.
-To make without configuring, run TL_CONFIGURE=true ./Build.
+Testing the mechanism to configure and buid the various TL modules
+	libs/*
+	utils/*
+	texk/*
+in a different order.  If a program or library built in module A (e.g.,
+texk/dvipng) depends on a library supplied by module B (e.g., libs/libpng or
+texk/kpathsea) then module B is built before configuring module A.
 
-(Nearly everything the Build script does can be overridden via
-environment variables; just take a look to see all the names.)
+This package demonstrates how to first configure and build each of the
+libraries in the TL tree (texk/kpathsea and libs/*), before configuring
+other libraries or programs using that library.
 
-Prerequisites:
-- GNU make.  If your GNU make is invoked by some name other than `make',
-  try setting the envvar TL_MAKE to what is needed.
+This is mainly important for modules maintained independently, outside the
+TL tree.  Such modules can be configured and built as part of the TL tree or
+independently using installed (system) versions of the required libraries. 
+Building these required libraries before configuring the module, allows to
+perform the same tests to determine features of the (uninstalled or system)
+libraries.  This should considerably reduce the work required to integrate
+new versions of such modules into the LT tree.
 
-- GNU clisp and GNU libffcall, must be present for xindy.  See more
-  details in utils/README.  (Alternative: Build --without-xindy.)
+This mechanism is intended to become part of the TL build system.  It is
+therefore important to test it now on all different build systems, instead
+of complaining later.
 
-- libfontconfig (again both headers and library) must be present for
-  XeTeX, except on MacOSX.  (Alternative: Build --without-xetex.)
+=============================
 
-- X11 headers and libraries must be present for pdfopen and xdvi.
+The tarball is available as
+	ftp://ftpth.mppmu.mpg.de/pub/peb/TL/tex-live-2009test-1.4.tar.bz2
+	ftp://ftpth.mppmu.mpg.de/pub/peb/TL/tex-live-2009test-1.4.tar.gz
 
-- Bison and Flex (or maybe equivalents) are needed for web2c.
+=============================
 
-The binaries will be left in ./inst/bin/<stdplatform>.
-For TeX Live, ignore the other files and directories that end up in ./inst.
+Some remarks:
+-------------
 
-The new binaries are not directly usable from that location.  Instead,
-copy them to Master/bin/<tlplatformname>/.
+At the moment all (sub-)packages use Automake; that's just a lot simpler,
+but translation to plain Autoconf should be straightforward.
 
-That should be it for normal builds.  Email tex-live@tug.org if problems.
+All programs use Libtool in order to properly handle (uninstalled or system)
+libtool libraries.
 
-To make a usable TeX installation, you have to have (thousands of)
-support files as well as the binaries that are built here.  The support
-files are maintained completely independently.  The best basis for
-dealing with them is the TeX Live (plain text) database,
-Master/tlpkg/texlive.tlpdb, and/or our installer.  More information is
-under Master/tlpkg.  See also http://tug.org/texlive/distro.html.
+A few libraries use Libtool but most don't.
 
-For unusual situations:
+=============================
 
-- If your C++ needs to find the standard library in, say, /usr/local/lib,
-(i.e., configure fails saying the compiler doesn't work), try:
-env LD_OPTIONS=-R/usr/local/lib ./Build
-
-- Running ./reautoconf here reruns autoconf as needed.  Use --help for more.
-
-
-Build information:
-  amd64-freebsd: built on Freebsd 7.0-RELEASE amd64,
-    --with-fontconfig=/usr/local
-
-  hppa-hpux: built on HP-UX 10.20, gcc 3.3.4
-    --with-fontconfig=/u/tiarno/fc --without-graphite  --without-luatex
-  
-  i386-darwin: MacOSX 10.4 with support for 10.3, 10.4, and 10.5
-
-  i386-linux: Debian sarge, gcc 3.3.5, libc 2.3.2, Linux 2.6.9-67.0.4.ELsmp
-    chroot /home/texlive/sarge; Build --with-xindy --with-clisp=...
-    
-  i386-solaris: Solaris 10 11/06 s10x_u3wos_10 X86
-    system gcc (GCC) 3.4.3 (csl-sol210-3_4-branch+sol_rpath)
-
-  powerpc-darwin: like i386-darwin
-  
-  powerpc-linux
-OS: gentoo GNU/Linux
-kernel 2.6.23
-gcc (GCC) 4.2.3 (Gentoo 4.2.3 p1.0)))
-bison (GNU Bison) 2.3)
-flex 2.5.35
-m4 (GNU M4) 1.4.11)
-GNU Make 3.81
-
-  sparc-solaris
-OS: Sun Solaris 8
-compiler: Sun Studio 11
-bison (GNU Bison) 2.3
-flex version 2.5.4
-GNU m4 1.4.5
-GNU Make 3.81
-  xe(la)tex and xdvipdfmx depend on fontconfig.
-  Because Solaris 8 does not include fontconfig, we used fontconfig
-  package (version 2.3.2) from http://www.blastwave.org/
-  (together with it's dependencies)
-
-  sparc-linux
-OS: Debian GNU/Linux 3.1 (Sarge), kernel 2.4.27-2-sparc64
-gcc (GCC) 3.3.5 (Debian 1:3.3.5-13)
-bison (GNU Bison) 1.875d
-flex 2.5.31
-GNU m4 1.4.2
-GNU Make 3.80
-
-  powerpc-aix
-OS: AIX 4.3
-compiler: IBM C for AIX Compiler, Version 5 (xlc)
-bison (GNU Bison) 1.34
-flex version 2.5.4
-GNU m4 1.4
-GNU Make 3.79.1
-  xe(la)tex and xdvipdfmx depend on fontconfig.
-  You can download fontconfig for AIX from
-  http://www-03.ibm.com/servers/aix/products/aixos/linux/download.html
-  ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/fontconfig/
-
-  alpha-linux
-OS: Debian GNU/Linux 4.0 (Etch), kernel 2.4.34.6
-gcc (GCCC) 4.1.2 20061115 (prerelease) (Debian 4.1.1-21)
-bison (GNU Bison) 2.3
-flex 2.5.33
-GNU M4 1.4.8
-GNU Make 3.81
-  Remarks:
-  - you have to set the ulimit high enough before compiling clisp and texlive
-      ulimit -s 16384
-    did suffice for me
-  - compiling of texk/web2c/pdftexdir/writezip.c is broken and triggers a 
-    compiler error with the above gcc. Disabling optimization -O2 using
-    Build --debug ... resolved this problem.
-
+2009-02-15	Peter Breitenlohner <peb@mppmu.mpg.de>
