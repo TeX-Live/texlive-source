@@ -38,24 +38,24 @@
 #define CFF_DEBUG     5
 #define CFF_DEBUG_STR "CFF"
 
-static unsigned long get_unsigned (FILE *stream, int n)
+static unsigned long get_unsigned (sfnt *sfont, int n)
 {
   unsigned long v = 0;
 
   while (n-- > 0)
-    v = v*0x100u + get_unsigned_byte(stream);
+    v = v*0x100u + sfnt_get_byte(sfont);
 
   return v;
 }
 
 #define get_offset(s, n) get_unsigned((s), (n))
-#define get_card8(s)     get_unsigned_byte((s))
-#define get_card16(s)    get_unsigned_pair((s))
+#define get_card8(s)     sfnt_get_byte((s))
+#define get_card16(s)    sfnt_get_ushort((s))
 
 /*
  * Read Header, Name INDEX, Top DICT INDEX, and String INDEX.
  */
-cff_font *cff_open(FILE *stream, long offset, int n)
+cff_font *cff_open(sfnt *sfont, long offset, int n)
 {
   cff_font  *cff;
   cff_index *idx;
@@ -64,7 +64,7 @@ cff_font *cff_open(FILE *stream, long offset, int n)
 
   cff->fontname = NULL;
   cff->index    = n;
-  cff->stream   = stream;
+  cff->sfont    = sfont;
   cff->offset   = offset;
   cff->filter   = 0;      /* not used */
   cff->flag     = 0;
@@ -84,10 +84,10 @@ cff_font *cff_open(FILE *stream, long offset, int n)
   cff->_string    = NULL;
 
   cff_seek_set(cff, 0);
-  cff->header.major    = get_card8(cff->stream);
-  cff->header.minor    = get_card8(cff->stream);
-  cff->header.hdr_size = get_card8(cff->stream);
-  cff->header.offsize  = get_card8(cff->stream);
+  cff->header.major    = get_card8(cff->sfont);
+  cff->header.minor    = get_card8(cff->sfont);
+  cff->header.hdr_size = get_card8(cff->sfont);
+  cff->header.offsize  = get_card8(cff->sfont);
   if (cff->header.offsize < 1 ||
       cff->header.offsize > 4)
     ERROR("invalid offsize data");
@@ -141,12 +141,12 @@ cff_font *cff_open(FILE *stream, long offset, int n)
   cff->string = cff_get_index(cff);
 
   /* offset to GSubr */
-  cff->gsubr_offset = tell_position(cff->stream) - offset;
+  cff->gsubr_offset = cff->sfont->loc - offset;
 
   /* Number of glyphs */
   offset = (long) cff_dict_get(cff->topdict, "CharStrings", 0);
   cff_seek_set(cff, offset);
-  cff->num_glyphs = get_card16(cff->stream);
+  cff->num_glyphs = get_card16(cff->sfont);
 
   /* Check for font type */
   if (cff_dict_known(cff->topdict, "ROS")) {
@@ -293,15 +293,15 @@ cff_get_index_header (cff_font *cff)
 
   idx = NEW(1, cff_index);
 
-  idx->count = count = get_card16(cff->stream);
+  idx->count = count = get_card16(cff->sfont);
   if (count > 0) {
-    idx->offsize = get_card8(cff->stream);
+    idx->offsize = get_card8(cff->sfont);
     if (idx->offsize < 1 || idx->offsize > 4)
       ERROR("invalid offsize data");
 
     idx->offset = NEW(count+1, l_offset);
     for (i=0;i<count+1;i++) {
-      (idx->offset)[i] = get_offset(cff->stream, idx->offsize);
+      (idx->offset)[i] = get_offset(cff->sfont, idx->offsize);
     }
 
     if (idx->offset[0] != 1)
@@ -326,15 +326,15 @@ cff_get_index (cff_font *cff)
 
   idx = NEW(1, cff_index);
 
-  idx->count = count = get_card16(cff->stream);
+  idx->count = count = get_card16(cff->sfont);
   if (count > 0) {
-    idx->offsize = get_card8(cff->stream);
+    idx->offsize = get_card8(cff->sfont);
     if (idx->offsize < 1 || idx->offsize > 4)
       ERROR("invalid offsize data");
 
     idx->offset = NEW(count + 1, l_offset);
     for (i = 0 ; i < count + 1; i++) {
-      idx->offset[i] = get_offset(cff->stream, idx->offsize);
+      idx->offset[i] = get_offset(cff->sfont, idx->offsize);
     }
 
     if (idx->offset[0] != 1)
@@ -345,7 +345,7 @@ cff_get_index (cff_font *cff)
     idx->data = NEW(length, card8);
     offset    = 0;
     while (length > 0) {
-      nb_read = fread(idx->data + offset, 1, length, cff->stream);
+      nb_read = sfnt_read(idx->data + offset, length, cff->sfont);
       offset += nb_read;
       length -= nb_read;
     }
@@ -626,27 +626,27 @@ long cff_read_encoding (cff_font *cff)
 
   cff_seek_set(cff, offset);
   cff->encoding = encoding = NEW(1, cff_encoding);
-  encoding->format = get_card8(cff->stream);
+  encoding->format = get_card8(cff->sfont);
   length = 1;
 
   switch (encoding->format & (~0x80)) {
   case 0:
-    encoding->num_entries = get_card8(cff->stream);
+    encoding->num_entries = get_card8(cff->sfont);
     (encoding->data).codes = NEW(encoding->num_entries, card8);
     for (i=0;i<(encoding->num_entries);i++) {
-      (encoding->data).codes[i] = get_card8(cff->stream);
+      (encoding->data).codes[i] = get_card8(cff->sfont);
     }
     length += encoding->num_entries + 1;
     break;
   case 1:
     {
       cff_range1 *ranges;
-      encoding->num_entries = get_card8(cff->stream);
+      encoding->num_entries = get_card8(cff->sfont);
       encoding->data.range1 = ranges
 	= NEW(encoding->num_entries, cff_range1);
       for (i=0;i<(encoding->num_entries);i++) {
-	ranges[i].first = get_card8(cff->stream);
-	ranges[i].n_left = get_card8(cff->stream);
+	ranges[i].first = get_card8(cff->sfont);
+	ranges[i].n_left = get_card8(cff->sfont);
       }
       length += (encoding->num_entries) * 2 + 1;
     }
@@ -660,11 +660,11 @@ long cff_read_encoding (cff_font *cff)
   /* Supplementary data */
   if ((encoding->format) & 0x80) {
     cff_map *map;
-    encoding->num_supps = get_card8(cff->stream);
+    encoding->num_supps = get_card8(cff->sfont);
     encoding->supp = map = NEW(encoding->num_supps, cff_map);
     for (i=0;i<(encoding->num_supps);i++) {
-      map[i].code = get_card8(cff->stream);
-      map[i].glyph = get_card16(cff->stream); /* SID */
+      map[i].code = get_card8(cff->sfont);
+      map[i].glyph = get_card16(cff->sfont); /* SID */
     }
     length += (encoding->num_supps) * 3 + 1;
   } else {
@@ -842,7 +842,7 @@ long cff_read_charsets (cff_font *cff)
 
   cff_seek_set(cff, offset);
   cff->charsets = charset = NEW(1, cff_charsets);
-  charset->format = get_card8(cff->stream);
+  charset->format = get_card8(cff->sfont);
   charset->num_entries = 0;
 
   count = cff->num_glyphs - 1;
@@ -855,7 +855,7 @@ long cff_read_charsets (cff_font *cff)
     charset->data.glyphs = NEW(charset->num_entries, s_SID);
     length += (charset->num_entries) * 2;
     for (i=0;i<(charset->num_entries);i++) {
-      charset->data.glyphs[i] = get_card16(cff->stream);
+      charset->data.glyphs[i] = get_card16(cff->sfont);
     }
     count = 0;
     break;
@@ -864,8 +864,8 @@ long cff_read_charsets (cff_font *cff)
       cff_range1 *ranges = NULL;
       while (count > 0 && charset->num_entries < cff->num_glyphs) {
 	ranges = RENEW(ranges, charset->num_entries + 1, cff_range1);
-	ranges[charset->num_entries].first = get_card16(cff->stream);
-	ranges[charset->num_entries].n_left = get_card8(cff->stream);
+	ranges[charset->num_entries].first = get_card16(cff->sfont);
+	ranges[charset->num_entries].n_left = get_card8(cff->sfont);
 	count -= ranges[charset->num_entries].n_left + 1; /* no-overrap */
 	charset->num_entries += 1;
 	charset->data.range1 = ranges;
@@ -878,8 +878,8 @@ long cff_read_charsets (cff_font *cff)
       cff_range2 *ranges = NULL;
       while (count > 0 && charset->num_entries < cff->num_glyphs) {
 	ranges = RENEW(ranges, charset->num_entries + 1, cff_range2);
-	ranges[charset->num_entries].first = get_card16(cff->stream);
-	ranges[charset->num_entries].n_left = get_card16(cff->stream);
+	ranges[charset->num_entries].first = get_card16(cff->sfont);
+	ranges[charset->num_entries].n_left = get_card16(cff->sfont);
 	count -= ranges[charset->num_entries].n_left + 1; /* non-overrapping */
 	charset->num_entries += 1;
       }
@@ -1172,7 +1172,7 @@ long cff_read_fdselect (cff_font *cff)
   offset = (long) cff_dict_get(cff->topdict, "FDSelect", 0);
   cff_seek_set(cff, offset);
   cff->fdselect = fdsel = NEW(1, cff_fdselect);
-  fdsel->format = get_card8(cff->stream);
+  fdsel->format = get_card8(cff->sfont);
 
   length = 1;
 
@@ -1181,22 +1181,22 @@ long cff_read_fdselect (cff_font *cff)
     fdsel->num_entries = cff->num_glyphs;
     (fdsel->data).fds = NEW(fdsel->num_entries, card8);
     for (i=0;i<(fdsel->num_entries);i++) {
-      (fdsel->data).fds[i] = get_card8(cff->stream);
+      (fdsel->data).fds[i] = get_card8(cff->sfont);
     }
     length += fdsel->num_entries;
     break;
   case 3:
     {
       cff_range3 *ranges;
-      fdsel->num_entries = get_card16(cff->stream);
+      fdsel->num_entries = get_card16(cff->sfont);
       fdsel->data.ranges = ranges = NEW(fdsel->num_entries, cff_range3);
       for (i=0;i<(fdsel->num_entries);i++) {
-	ranges[i].first = get_card16(cff->stream);
-	ranges[i].fd = get_card8(cff->stream);
+	ranges[i].first = get_card16(cff->sfont);
+	ranges[i].fd = get_card8(cff->sfont);
       }
       if (ranges[0].first != 0)
 	ERROR("Range not starting with 0.");
-      if (cff->num_glyphs != get_card16(cff->stream))
+      if (cff->num_glyphs != get_card16(cff->sfont))
 	ERROR("Sentinel value mismatched with number of glyphs.");
       length += (fdsel->num_entries) * 3 + 4;
     }
@@ -1420,7 +1420,7 @@ long cff_read_private (cff_font *cff)
 	offset = (long) cff_dict_get(cff->fdarray[i], "Private", 1);
 	cff_seek_set(cff, offset);
 	data = NEW(size, card8);
-	if (fread(data, 1, size, cff->stream) != size)
+	if (sfnt_read(data, size, cff->sfont) != size)
 	  ERROR("reading file failed");
 	(cff->private)[i] = cff_dict_unpack(data, data+size);
 	RELEASE(data);
@@ -1437,7 +1437,7 @@ long cff_read_private (cff_font *cff)
       offset = (long) cff_dict_get(cff->topdict, "Private", 1);
       cff_seek_set(cff, offset);
       data = NEW(size, card8);
-      if (fread(data, 1, size, cff->stream) != size)
+      if (sfnt_read(data, size, cff->sfont) != size)
 	ERROR("reading file failed");
       cff->private[0] = cff_dict_unpack(data, data+size);
       RELEASE(data);
@@ -1450,3 +1450,10 @@ long cff_read_private (cff_font *cff)
 
   return len;
 }
+
+#ifdef XETEX
+unsigned short* cff_get_ft_to_gid(cff_font *cff)
+{
+  return cff->ft_to_gid;
+}
+#endif

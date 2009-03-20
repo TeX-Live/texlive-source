@@ -1,0 +1,74 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+AC_INIT([xdv2pdf], [0.998], [tex-k@tug.org])
+AC_PREREQ([2.63])
+AC_CONFIG_SRCDIR([xdv2pdf.cpp])
+AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
+
+dnl Common code for all programs using libkpathsea.
+KPSE_COMMON([xdv2pdf])
+
+AC_CONFIG_HEADERS([config.h])
+
+dnl Checks for programs.
+AC_PROG_CXX
+AC_PROG_OBJC
+
+KPSE_KPATHSEA_FLAGS
+
+dnl First, check if we're configuring on Mac OS X -- can't build elsewhere
+
+KPSE_CHECK_FRAMEWORK([Carbon], [ATSUStyle style])
+KPSE_CHECK_FRAMEWORK([QuickTime], [ImageDescriptionHandle h])
+
+if test "x$kpse_cv_have_Carbon:$kpse_cv_have_QuickTime" = xyes:yes; then
+  build=yes
+else
+  AC_MSG_WARN([Carbon or QuickTime framework not found, can not build xdv2pdf.])
+  build=no
+fi
+
+if test "x$build" = xyes; then
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+AC_C_BIGENDIAN
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS([strspn system])
+AC_SEARCH_LIBS([pow], [m])
+
+save_CPPFLAGS=$CPPFLAGS
+save_LIBS=$LIBS
+
+CPPFLAGS="$CPPFLAGS $KPATHSEA_INCLUDES"
+LIBS="$KPATHSEA_LIBS $LIBS"
+
+AC_MSG_CHECKING([whether you have kpathsea headers and they know about opentype files])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
+#include <kpathsea/tex-file.h>]],
+                                [[kpse_opentype_format;]])],
+               [AC_MSG_RESULT([yes])],
+               [AC_MSG_RESULT([no])
+  build=no
+  AC_MSG_WARN([Kpathsea does not support opentype files, can not build xdv2pdf.])
+])
+
+CPPFLAGS=$save_CPPFLAGS
+LIBS=$save_LIBS
+
+fi
+
+AM_CONDITIONAL([build], [test "x$build" = xyes])
+
+AC_CONFIG_FILES([Makefile])
+
+AC_OUTPUT

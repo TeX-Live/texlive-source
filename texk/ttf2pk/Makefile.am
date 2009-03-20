@@ -1,0 +1,93 @@
+##
+ACLOCAL_AMFLAGS = -I ../../m4
+
+INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES) $(FREETYPE_INCLUDES)
+AM_CPPFLAGS = -DHAVE_LIBKPATHSEA
+
+bin_PROGRAMS = ttf2pk ttf2tfm
+
+ttf2pk_SOURCES = \
+	errormsg.c \
+	errormsg.h \
+	filesrch.c \
+	filesrch.h \
+	ligkern.c \
+	ligkern.h \
+	newobj.c \
+	newobj.h \
+	parse.c \
+	parse.h \
+	pklib.c \
+	pklib.h \
+	subfont.c \
+	subfont.h \
+	texenc.c \
+	texenc.h \
+	ttf2pk.c \
+	ttfenc.c \
+	ttfenc.h \
+	ttflib.c \
+	ttflib.h
+
+ttf2pk_DEPENDENCIES = $(KPATHSEA_DEPEND) $(FREETYPE_DEPEND)
+
+ttf2tfm_SOURCES = \
+	case.c \
+	case.h \
+	errormsg.c \
+	errormsg.h \
+	filesrch.c \
+	filesrch.h \
+	ligkern.c \
+	ligkern.h \
+	newobj.c \
+	newobj.h \
+	parse.c \
+	parse.h \
+	subfont.c \
+	subfont.h \
+	texenc.c \
+	texenc.h \
+	tfmaux.c \
+	tfmaux.h \
+	ttf2tfm.c \
+	ttf2tfm.h \
+	ttfaux.c \
+	ttfaux.h \
+	ttfenc.c \
+	ttfenc.h \
+	vplaux.c \
+	vplaux.h
+
+ttf2tfm_DEPENDENCIES = $(KPATHSEA_DEPEND) $(FREETYPE_DEPEND)
+
+LDADD = $(KPATHSEA_LIBS) $(FREETYPE_LIBS)
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+## Rebuild libttf
+@FREETYPE_RULE@
+
+dist_man1_MANS = ttf2pk.1 ttf2tfm.1
+
+## #############
+## Not yet used
+
+EXTRA_DIST = \
+	data \
+	BUGS \
+	MakeSub.in \
+	Makefile.dm \
+	dvidrv.btm \
+	dvidrv.doc \
+	emdir.c \
+	emdir.h \
+	emtexdir.c \
+	emtexdir.h \
+	ttf2pk.doc
+
+## #############
+## Eventually delete these files
+
+EXTRA_DIST += Makefile.in.orig configure.in.orig
+
