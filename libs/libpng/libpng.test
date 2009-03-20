@@ -1,0 +1,5 @@
+#! /bin/sh
+
+./pngtest $srcdir/$LIBPNG_TREE/pngtest.png \
+	|| exit 1
+

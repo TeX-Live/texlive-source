@@ -1,0 +1,3 @@
+## libs/libpng/ac/libpng.ac
+## define required functions and headers from system libpng
+KPSE_CHECK_LIB([libpng], [png_set_read_fn], [png.h])

@@ -1,0 +1,57 @@
+##
+ACLOCAL_AMFLAGS = -I ../m4
+
+SUBDIRS = dummy . $(SUBLIBS)
+DIST_SUBDIRS = dummy $(DIST_SUBLIBS)
+
+EXTRA_DIST = README.orig
+
+SUBLIBS_AUX = sublibsdir-configure sublibsdir-conf.args
+noinst_DATA = $(SUBLIBS_AUX)
+
+DISTCLEANFILES = $(noinst_DATA)
+
+all-local: sublibs
+
+.PHONY: sublibs
+## We must configure all libs subdirs since 'make dist' needs the Makefile.
+## For those not required for the current set of configure options
+## we append '--disable-build' so they can skip tests that would
+## fail because other libraries were not built.
+
+## Sequentially configure and optionally build all libs subdirs;
+## code inspired by automake's way to handle recursive targets.
+sublibs: $(noinst_DATA)
+	@failcom='exit 1'; \
+	for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=* | --[!k]*);; \
+	    *k*) failcom='fail=yes';; \
+	  esac; \
+	done; \
+	list='$(DIST_SUBLIBS)'; for sublibs in $$list; do \
+	  if test ! -f $$sublibs/Makefile; then \
+	    test -d $$sublibs || $(MKDIR_P) $$sublibs; \
+	    cmd=`cat $(SUBLIBS_AUX) | sed "s,SUBLIBSDIR,$$sublibs,g"`; \
+	    case " $(SUBLIBS) " in \
+	      *" $$sublibs "*) skip=;; \
+	      *) skip=' --disable-build';; \
+	    esac; \
+	    (cd $$sublibs && echo "=== configuring in $$sublibs (`pwd`)" && \
+	      echo "make: running $(SHELL) $$cmd$$skip" && \
+	      eval $(SHELL) $$cmd$$skip) && \
+	    if test "x$$skip" = x; then \
+	      echo "Making all in $$sublibs" && \
+	      (cd $$sublibs && $(MAKE) $(AM_MAKEFLAGS) all); \
+	    fi || eval $$failcom; \
+	  fi; \
+	done; test -z "$$fail"
+
+sublibsdir-configure:
+	@echo "make in ./dummy failed to create the file $@"
+	exit 1
+
+sublibsdir-conf.args:
+	@echo "configure in ./dummy failed to create the file $@"
+	exit 1
+

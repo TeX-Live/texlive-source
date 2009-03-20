@@ -1,0 +1,14 @@
+#! /bin/sh
+
+echo hello world | ./minigzip | ./minigzip -d || { \
+  echo '                *** minigzip test FAILED ***' 
+  exit 1
+}
+
+if ./example; then
+  echo '                *** zlib test OK ***'
+else
+  echo '                *** zlib test FAILED ***'
+  exit 1
+fi
+

@@ -17,12 +17,21 @@
 # ---------------------------------------------------------------------------
 #
 # Modified (butchered) 2006 by Martin Schröder for pdfTeX
+# Modified 2009 by Peter Breitenlohner for new TeX Live build system
 
 AC_INIT([OpenBSD-Compat],[Portable],[martin@pdftex.org])
 AC_REVISION($Revision: 1.322.2.6 $)
 AC_CONFIG_SRCDIR([openbsd-compat.h])
+AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
 
-AC_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_MAINTAINER_MODE
+
+AC_CONFIG_HEADER([obsdcompat/config.h],
+ [sed -e 's/^#define PACKAGE/#define OBSD_PACKAGE/' \
+      -e 's/^#define VERSION/#define OBSD_VERSION/' \
+    obsdcompat/config.h >obsdcompat/config.tmp && mv -f obsdcompat/config.tmp obsdcompat/config.h])
 AC_PROG_CC
 AC_CANONICAL_HOST
 AC_C_BIGENDIAN
