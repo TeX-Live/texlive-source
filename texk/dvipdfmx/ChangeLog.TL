@@ -1,4 +1,4 @@
-ChangeLog.TL: Changes for dvipdfmx (teTeX / TeX live)
+ChangeLog.TL: Changes for dvipdfmx (teTeX / TeX Live)
 =====================================================
 
 2009-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>

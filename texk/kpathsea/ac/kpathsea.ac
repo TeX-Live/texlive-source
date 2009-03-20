@@ -1,0 +1,4 @@
+## texk/kpathsea/ac/kpathsea.ac
+## define required functions and headers from system kpathsea
+KPSE_CHECK_LIB([kpathsea], [kpse_set_program_name],
+                           [kpathsea/kpathsea.h kpathsea/tex-file.h])

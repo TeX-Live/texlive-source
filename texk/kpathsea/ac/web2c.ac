@@ -1,0 +1,14 @@
+## texk/kpathsea/ac/web2c.ac
+## configure options for mktextmf-default & Co
+m4_define([kpse_mktex_opts], [dnl
+[[mktexmf],  [yes], [MF source],   [TEX_MF]],
+[[mktexpk],  [yes], [PK font],     [TEX_PK]],
+[[mktextfm], [yes], [TFM file],    [TEX_TFM]],
+[[mkocp],    [yes], [OCP file],    [OMEGA_OCP]],
+[[mkofm],    [yes], [OFM file],    [OMEGA_OFM]],
+[[mktexfmt], [no],  [format file], [TEX_FMT]],
+[[mktextex], [no],  [TeX source],  [TEX_TEX]],
+])[]dnl
+m4_foreach([Kpse_Mktex], [kpse_mktex_opts],
+           [m4_ifset([Kpse_Mktex],
+                     [KPSE_WITH_MKTEX(Kpse_Mktex)])])[]dnl
