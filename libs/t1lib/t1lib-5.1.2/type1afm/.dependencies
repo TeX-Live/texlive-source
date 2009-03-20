@@ -1,0 +1,1 @@
+type1afm.lo: type1afm.c ../lib/t1lib/t1lib.h

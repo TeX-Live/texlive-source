@@ -1,3 +1,0 @@
-## libs/freetype2/ac/withenable.ac
-## configure options and TL libraries required for freetype2
-KPSE_WITH_LIB([freetype2], [zlib], , , [both -IDIR and -IDIR/freetype2])

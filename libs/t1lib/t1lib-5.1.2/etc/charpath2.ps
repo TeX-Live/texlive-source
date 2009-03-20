@@ -1,0 +1,517 @@
+% 3.
+/xa 100 def
+/ya 100 def
+/xb 100 def
+/yb 400 def
+/xc 500 def
+/yc 750 def
+/xd 500 def
+/yd 100 def
+
+% 4.
+/xa 100 def
+/ya 300 def
+/xb 100 def
+/y5 400 def
+/xc 500 def
+/yc 300 def
+/xd 300 def
+/yd 300 def
+
+% 1.
+/xa 100 def
+/ya 100 def
+/xb 300 def
+/yb 150 def
+/xc 300 def
+/yc 500 def
+/xd 550 def
+/yd 600 def
+
+% 2.
+/xa 100 def
+/ya 100 def
+/xb 100 def
+/yb 400 def
+/xc 300 def
+/yc 550 def
+/xd 500 def
+/yd 600 def
+
+
+
+%% t1lib test
+%100 100 translate
+
+/TimesRoman findfont 25 scalefont setfont
+/line1 20 string def
+
+% t1lib test . segment 1
+/xa 139.000000 def
+/ya 118.000000 def 
+/xb 104.000000 def
+/yb 118.000000 def 
+/xc 75.000000  def
+/yc 90.000000  def 
+/xd 75.000000  def
+/yd 54.000000  def
+
+% t1lib test . segment 2
+/xa 75.000000 def
+/ya 54.000000 def 
+/xb 75.000000 def
+/yb 18.000000 def 
+/xc 104.000000  def
+/yc -9.000000  def 
+/xd 139.000000  def
+/yd -9.000000  def
+
+% t1lib test Bitstream Charter BT Roman Character R: curve ppoints 19 ... 22
+/xa 404.000000 def
+/ya 192.000000 def
+/xb 425.000000 def
+/yb 128.000000 def
+/xc 429.000000 def
+/yc  63.000000 def
+/xd 477.000000 def
+/yd  21.000000 def
+
+% test a straight line, slope 45 degrees
+/xa 100.0 def
+/ya 100.0 def
+/xb 150.0 def
+/yb 125.0001 def
+/xc 200.0 def
+/yc 150.0 def
+/xd 250.0 def
+/yd 175.0 def
+
+% t1lib test Bitstream Charter BT Roman Character R: curve ppoints 29 ... 32
+/xa 656.000000 def
+/ya 39.000000  def
+/xb 653.000000 def
+/yb 39.000000  def
+/xc 650.000000 def
+/yc 39.000000  def
+/xd 647.000000 def
+/yd 39.000000  def
+
+% t1lib test Bitstream Charter BT Roman Character R: curve ppoints 29 ... 32
+/xa 656.000000 def
+/ya 39.000000  def
+/xb 653.000000 def
+/yb 39.000000  def
+/xc 650.000000 def
+/yc 39.000000  def
+/xd 647.000000 def
+/yd 39.000000  def
+
+% t1lib test Bitstream Charter BT Roman Character R: curve ppoints 19 ... 22
+/xa 404.000000 def
+/ya 192.000000 def
+/xb 425.000000 def
+/yb 128.000000 def
+/xc 429.000000 def
+/yc  63.000000 def
+/xd 477.000000 def
+/yd  21.000000 def
+
+/xa 404.000000 def
+/ya 192.000000 def
+%/xb 424.90100 def  % critical location where tmp2 approx. equals btmp3
+/xb 424.90666 def  % critical location where tmp2 approx. equals btmp3
+/yb 128.000000 def
+/xc 429.000000 def
+/yc  63.000000 def
+/xd 477.000000 def
+/yd  21.000000 def
+
+
+/xa 305.000000 def
+/ya 652.000000 def
+/xb 395.000000 def
+/yb 652.000000 def
+/xc 507.000000 def
+/yc 648.000000 def
+/xd 507.000000 def
+/yd 503.000000 def
+
+/xa 435.000000 00 sub  def
+/ya 340.000000  def
+/xb 532.000000 00 sub  def
+/yb 364.000000  def
+/xc 610.000000 00 sub  def
+/yc 425.000000  def
+/xd 610.000000 00 sub  def
+/yd 503.000000  def
+
+/xa 458.000000 def
+/ya 357.000000 def
+/xb 555.000000 def
+/yb 376.000000 def
+/xc 624.000000 def
+/yc 440.000000 def
+/xd 624.000000 def
+/yd 514.000000 def
+
+/xa 327.000000 def
+/ya 89.000000 def
+/xb 335.000000 def
+/yb 78.000000 def
+/xc 348.000000 def
+/yc 62.000000 def
+/xd 348.000000 def
+/yd 56.000000 def
+
+
+/linewidth 30 def
+
+% compute distance from Bezier_A to Bezier_B
+/dista xb xa sub dup mul yb ya sub dup mul add sqrt def
+
+% compute distance from Bezier_C to Bezier_D
+/distd xd xc sub dup mul yd yc sub dup mul add sqrt def
+
+/diameter linewidth 2 div def
+
+% compute resulting limit values of thick curve at end points
+/dxa yb ya sub diameter mul dista div def
+/dya xb xa sub diameter mul dista div neg def
+/dxd yd yc sub diameter mul distd div def
+/dyd xd xc sub diameter mul distd div neg def
+
+% draw curve as rendered by ghostscript
+xa ya moveto
+xb yb xc yc xd yd curveto
+%linewidth 40 div setlinewidth
+linewidth setlinewidth
+0 setlinecap
+stroke 
+
+% correct right path end points
+/xar xa dxa add def
+/yar ya dya add def
+/xdr xd dxd add def
+/ydr yd dyd add def
+
+% correct left path end points
+/xal xa dxa sub def
+/yal ya dya sub def
+/xdl xd dxd sub def
+/ydl yd dyd sub def
+
+
+/x1 xa xb add 0.5 mul def
+/y1 ya yb add 0.5 mul def
+/x2 xb xc add 0.5 mul def
+/y2 yb yc add 0.5 mul def
+/x3 xc xd add 0.5 mul def
+/y3 yc yd add 0.5 mul def
+/x4 xa xb 2 mul add xc add 4 div def
+/y4 ya yb 2 mul add yc add 4 div def
+/x5 xd xc 2 mul add xb add 4 div def
+/y5 yd yc 2 mul add yb add 4 div def
+/x6 xa xb 3 mul add xc 3 mul add xd add 8 div def
+/y6 ya yb 3 mul add yc 3 mul add yd add 8 div def
+
+0 0 0 setrgbcolor
+newpath xa ya 2.0 0 360 arc closepath fill
+newpath xb yb 2.0 0 360 arc closepath fill
+newpath xc yc 2.0 0 360 arc closepath fill
+newpath xd yd 2.0 0 360 arc closepath fill
+
+1 0 0 setrgbcolor
+newpath x1 y1 2.0 0 360 arc closepath fill
+newpath x2 y2 2.0 0 360 arc closepath fill
+newpath x3 y3 2.0 0 360 arc closepath fill
+
+0 1 0 setrgbcolor
+newpath x4 y4 2.0 0 360 arc closepath fill
+newpath x5 y5 2.0 0 360 arc closepath fill
+
+0 0 1 setrgbcolor
+newpath x6 y6 2.0 0 360 arc closepath fill
+
+
+% compute right-side normal vector
+/nabs diameter x5 x4 sub dup mul y5 y4 sub dup mul add sqrt div def
+
+/nxr y5 y4 sub nabs mul def
+/nyr x4 x5 sub nabs mul def
+
+
+% calculate location and direction vectors of lines to intersect
+/bloc1x 4 nxr x6 add mul xar 2 mul sub xdr add 3 div def
+/bloc1y 4 nyr y6 add mul yar 2 mul sub ydr add 3 div def
+/bdir1x xc xd add xa sub xb sub def
+/bdir1y yc yd add ya sub yb sub def
+/bloc2x xar def
+/bloc2y yar def
+/bdir2x xb xa sub def
+/bdir2y yb ya sub def
+
+% calculate determinant and inverse
+/bdet bdir2x bdir1y mul bdir2y bdir1x mul sub def
+
+%bdet 0.0 eq
+bdet abs 0.001 le
+{
+  /xbr xb nxr add def
+  /ybr yb nyr add def
+  /bnu 0.0 def
+  /bmu 0.0 def
+}
+{
+  /binvdet 1 bdet div def
+
+  % calculate inverse of dir matrix
+  /binvdir2x bdir1y binvdet mul def
+  /binvdir2y bdir2y binvdet mul neg def
+  /binvdir1x bdir1x binvdet mul neg def
+  /binvdir1y bdir2x binvdet mul def
+
+  % calculate mu and nu value (nu actually is not required)
+  /bmu binvdir2x bloc1x bloc2x sub mul binvdir1x bloc1y bloc2y sub mul add def
+  /bnu binvdir2y bloc1x bloc2x sub mul binvdir1y bloc1y bloc2y sub mul add def
+
+  /xbr bloc2x bmu bdir2x mul add def
+  /ybr bloc2y bmu bdir2y mul add def
+}
+ifelse
+
+
+
+% calculate location and direction vectors of lines to intersect
+/cloc1x 4 nxr x6 add mul xar add xdr 2 mul sub 3 div def
+/cloc1y 4 nyr y6 add mul yar add ydr 2 mul sub 3 div def
+/cdir1x xc xd add xa sub xb sub def
+/cdir1y yc yd add ya sub yb sub def
+/cloc2x xdr def
+/cloc2y ydr def
+/cdir2x xc xd sub def
+/cdir2y yc yd sub def
+
+% calculate determinant and inverse
+/cdet cdir2x cdir1y mul cdir2y cdir1x mul sub def
+
+%cdet 0.0 eq
+cdet abs 0.001 le
+{
+  % curve is just a straight line
+  /xcr xc nxr add def
+  /ycr yc nyr add def
+  /cmu 0.0 def
+}
+{
+  /cinvdet 1 cdet div def
+
+  % calculate inverse of dir matrix
+  /cinvdir2x cdir1y cinvdet mul def
+  /cinvdir2y cdir2y cinvdet mul neg def
+  /cinvdir1x cdir1x cinvdet mul neg def
+  /cinvdir1y cdir2x cinvdet mul def
+
+  % calculate mu and nu value (mu actually is not required)
+  /cmu cinvdir2x cloc1x cloc2x sub mul cinvdir1x cloc1y cloc2y sub mul add def
+  /cnu cinvdir2y cloc1x cloc2x sub mul cinvdir1y cloc1y cloc2y sub mul add def
+
+  /xcr cloc2x cmu cdir2x mul add def
+  /ycr cloc2y cmu cdir2y mul add def
+}
+ifelse
+
+
+% Analyse coefficients and decide how to compute displacements
+bmu 0.1 le
+{
+  /xbr 8 nxr x6 add mul xar sub xdr sub 3 div xcr sub def
+  /ybr 8 nyr y6 add mul yar sub ydr sub 3 div ycr sub def
+}
+if
+
+cmu 0.1 le
+{
+  /xcr 8 nxr x6 add mul xar sub xdr sub 3 div xbr sub def
+  /ycr 8 nyr y6 add mul yar sub ydr sub 3 div ybr sub def
+}
+if
+
+
+% 
+
+
+% display debug info on page
+10 625 moveto
+(xa = ) show xa line1 cvs show 
+10 600 moveto
+(ya = ) show ya line1 cvs show 
+10 575 moveto
+(xb = ) show xb line1 cvs show 
+10 550 moveto
+(yb = ) show yb line1 cvs show 
+10 525 moveto
+(xc = ) show xc line1 cvs show 
+10 500 moveto
+(yc = ) show yc line1 cvs show 
+10 475 moveto
+(xd = ) show xd line1 cvs show 
+10 450 moveto
+(yd = ) show yd line1 cvs show 
+
+% display debug info on page
+10 425 moveto
+(xar = ) show xar line1 cvs show 
+10 400 moveto
+(yar = ) show yar line1 cvs show 
+10 375 moveto
+(xbr = ) show xbr line1 cvs show 
+10 350 moveto
+(ybr = ) show ybr line1 cvs show 
+10 325 moveto
+(xcr = ) show xcr line1 cvs show 
+10 300 moveto
+(ycr = ) show ycr line1 cvs show 
+10 275 moveto
+(xdr = ) show xdr line1 cvs show 
+10 250 moveto
+(ydr = ) show ydr line1 cvs show 
+
+10 1150 moveto
+(bdir1x = ) show bdir1x line1 cvs show 
+10 1125 moveto
+(bdir1y = ) show bdir1y line1 cvs show 
+10 1100 moveto
+(bdir2x = ) show bdir2x line1 cvs show 
+10 1075 moveto
+(bdir2y = ) show bdir2y line1 cvs show 
+10 1050 moveto
+(cdir1x = ) show cdir1x line1 cvs show 
+10 1025 moveto
+(cdir1y = ) show cdir1y line1 cvs show 
+10 1000 moveto
+(cdir2x = ) show cdir2x line1 cvs show 
+10 975 moveto
+(cdir2y = ) show cdir2y line1 cvs show 
+
+210 1150 moveto
+(bloc1x = ) show bloc1x line1 cvs show 
+210 1125 moveto
+(bloc1y = ) show bloc1y line1 cvs show 
+210 1100 moveto
+(bloc2x = ) show bloc2x line1 cvs show 
+210 1075 moveto
+(bloc2y = ) show bloc2y line1 cvs show 
+210 1050 moveto
+(cloc1x = ) show cloc1x line1 cvs show 
+210 1025 moveto
+(cloc1y = ) show cloc1y line1 cvs show 
+210 1000 moveto
+(cloc2x = ) show cloc2x line1 cvs show 
+210 975 moveto
+(cloc2y = ) show cloc2y line1 cvs show 
+
+10 925 moveto
+(bdet = ) show bdet line1 cvs show 
+10 900 moveto
+(cdet = ) show cdet line1 cvs show 
+
+10 850 moveto
+(bmu = ) show bmu line1 cvs show 
+10 825 moveto
+(cmu = ) show cmu line1 cvs show 
+10 800 moveto
+(bnu = ) show bnu line1 cvs show 
+10 775 moveto
+(cnu = ) show cnu line1 cvs show 
+
+210 850 moveto
+(nabs = ) show nabs line1 cvs show 
+210 825 moveto
+(nxr = ) show nxr line1 cvs show 
+210 800 moveto
+(nyr = ) show nyr line1 cvs show 
+
+10 700 moveto
+(P1 = \( ) show x1 line1 cvs show ( , ) show y1 line1 cvs show ( \)) show 
+10 675 moveto
+(P2 = \( ) show x2 line1 cvs show ( , ) show y2 line1 cvs show ( \)) show 
+10 650 moveto
+(P3 = \( ) show x3 line1 cvs show ( , ) show y3 line1 cvs show ( \)) show 
+
+310 700 moveto
+(P4 = \( ) show x4 line1 cvs show ( , ) show y4 line1 cvs show ( \)) show 
+310 675 moveto
+(P5 = \( ) show x5 line1 cvs show ( , ) show y5 line1 cvs show ( \)) show 
+310 650 moveto
+(P6 = \( ) show x6 line1 cvs show ( , ) show y6 line1 cvs show ( \)) show 
+
+
+% define delta values
+/dxb xbr xb sub def
+/dyb ybr yb sub def
+/dxc xcr xc sub def
+/dyc ycr yc sub def
+
+
+2 setlinewidth
+
+% show shifted line
+x4 nxr add y4 nyr add moveto
+x5 nxr add y5 nyr add lineto
+x4 nxr sub y4 nyr sub moveto
+x5 nxr sub y5 nyr sub lineto
+stroke
+
+1 0 0 setrgbcolor
+0.5 setlinewidth
+
+% stroke right curve
+xar yar moveto
+xb dxb add yb dyb add xc dxc add yc dyc add xdr ydr curveto
+stroke
+% stroke left curve
+xal yal moveto
+xb dxb sub yb dyb sub xc dxc sub yc dyc sub xdl ydl curveto
+stroke
+
+%0.2 0.5 0.8 setrgbcolor
+%newpath bloc2x bloc2y 5.0 0 360 arc closepath fill
+%bloc2x 10 bdir2x mul sub bloc2y 10 bdir2y mul sub moveto
+%bloc2x 10 bdir2x mul add bloc2y 10 bdir2y mul add lineto stroke
+
+%0.5 0.5 0.5 setrgbcolor
+%newpath bloc1x bloc1y 5.0 0 360 arc closepath fill
+%bloc1x 10 bdir1x mul sub bloc1y 10 bdir1y mul sub moveto
+%bloc1x 10 bdir1x mul add bloc1y 10 bdir1y mul add lineto stroke
+
+0 0 1 setrgbcolor
+%1 setlinewidth
+%[5 5] 0 setdash
+0.1 setlinewidth
+[1 0] 0 setdash
+xa ya moveto xb yb lineto stroke
+xd yd moveto xc yc lineto stroke
+xar yar moveto xb dxb add yb dyb add lineto stroke
+xdr ydr moveto xc dxc add yc dyc add lineto stroke
+xal yal moveto xb dxb sub yb dyb sub lineto stroke
+xdl ydl moveto xc dxc sub yc dyc sub lineto stroke
+
+%xa diameter add ya    moveto
+%xa diameter add yb diameter 2 div sub    xc diameter 2 div add yc diameter sub    xd yd diameter sub  curveto
+%stroke
+
+%xa diameter sub ya    moveto
+%xa diameter sub yb diameter 2 div add    xc diameter 2 div sub yc diameter add    xd yd diameter add  curveto
+%stroke
+
+%/TimesItalic findfont 500 scalefont setfont
+%/Hershey-Gothic-English findfont 500 scalefont setfont
+%100 400 moveto
+%(a) true charpath stroke
+%0 0 0 setrgbcolor
+%0.5 setlinewidth
+%100 400 moveto
+%(a) true charpath stroke
+%(T) show
+
+showpage 

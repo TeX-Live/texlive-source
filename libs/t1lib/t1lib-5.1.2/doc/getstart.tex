@@ -1,0 +1,489 @@
+%----------------------------------------------------------------------------
+% ----- File:        getstart.tex 
+% ----- Author:      Rainer Menzner (Rainer.Menzner@web.de)
+% ----- Date:        2005-05-18
+% ----- Description: This file is part of the t1lib-documentation.
+% ----- Copyright:   t1lib is copyrighted (c) Rainer Menzner, 1996-2005.
+%                    As of version 0.5, t1lib is distributed under the
+%                    GNU General Public Library License. The
+%                    conditions can be found in the files LICENSE and
+%                    LGPL, which should reside in the toplevel
+%                    directory of the distribution.  Please note that 
+%                    there are parts of t1lib that are subject to
+%                    other licenses:
+%                    The parseAFM-package is copyrighted by Adobe Systems
+%                    Inc.
+%                    The type1 rasterizer is copyrighted by IBM and the
+%                    X11-consortium.
+% ----- Warranties:  Of course, there's NO WARRANTY OF ANY KIND :-)
+% ----- Credits:     I want to thank IBM and the X11-consortium for making
+%                    their rasterizer freely available.
+%                    Also thanks to Piet Tutelaers for his ps2pk, from
+%                    which I took the rasterizer sources in a format
+%                    independent from X11.
+%                    Thanks to all people who make free software living!
+%----------------------------------------------------------------------------
+
+\newpage
+\section{Getting Started}
+\subsection{Building, Installing and Removing the \tonelib-Package}
+\label{compiling}%
+As of version 0.2-beta, the \verb+autoconf+-package is used to configure and
+build the library. \verb+imake+ is no longer supported. Furthermore, starting
+with version 0.8-beta GNU \verb+libtool+ is used for managing library-specific
+stuff. 
+
+Here is how to build and install \tonelib:
+\begin{enumerate}
+\item Change to \verb+T1+-directory.
+\item Run \verb+./configure+. This will check your system's setup and generate
+  the \verb+Makefile+s. By default, shared and static versions of the
+  libraries are built.
+
+  Specifying \verb+--disable-shared+ or \verb+--disable-static+ as a
+  commandline option to \verb+configure+ will suppress the generation of the
+  respective library type. Of course, these rules are superseded by the
+  capability of the system to manage those library types.
+
+  If you know shared libraries are supported on your system but
+  \verb+configure+ says that no dll can be built, some compiler option
+  may be setup incorrect. Please refer to (\ref{libtoolproblems}). 
+
+  If the X11 window system is installed on the target system \tonelib\ is
+  automatically build with special X11 support. In cases where this is
+  explicitly not desired the commandline option 
+  \verb+--without-x+ may be used to configure a library without extended X11
+  support. In this case the test program \verb+xglyph+ is also not build since
+  it needs X11.
+\item Run \verb+make+. This will build all the stuff including the
+  documentation. If you do not have \LaTeXe\, run 
+  \verb+make without_doc+. This will skip generating the documentation. 
+\item Type \verb+make install+ to install the package. You'll
+  probably need to be superuser for installing the package at the standard
+  locations. However, the files may be
+  located wherever the user wants, as long as the compiler
+  finds them at compile time. So, place them where you want. 
+
+  The following files are installed when doing a \verb+make install+:
+  \begin{itemize}
+  \item \verb+lib/libt1.a+ and/or \verb+lib/libt1.so.+{\em v}\verb+.+{\em
+      r}\verb+.+{\em p} if the system supports shared libraries. In
+    the latter case, also two symbolic links to the shared library,
+    \verb+libt1.so.+{\em v} and \verb+libt1.so+, are generated. Here,
+    {\em v} and {\em r} mean version and revision of the shared
+    library. {\em p} is the patch level. Library and links are
+    installed in the directory 
+    specified by the \verb+autoconf+-variable \verb+libdir+ which is by
+    default \verb+/usr/local/lib+.
+  \item The same as above holds for \verb+lib/libt1x.a+ or
+    \verb+lib/libt1x.so.+{\em v}\verb+.+{\em r}\verb+.+{\em p}
+    respectively, which contain the X11 interface functions. This
+    library is only installed if X11 support was possible and not
+    suppressed. 
+  \item \verb+lib/t1lib.h+ and optionally \verb+lib/t1libx.h+. They are installed
+    in the directory pointed to by the \verb+autoconf+-variable \verb+includedir+
+    which is by default\\
+    \verb+/usr/local/include+.
+  \item The test program \verb+xglyph/xglyph+. If shared libraries are
+    supported (and not suppressed by \verb+--with-static-lib+) this
+    executable is dynamically linked to \verb+libt1.so+ and
+    \verb+libt1x.so+. It is installed in the directory pointed to by
+    the \verb+autoconf+-variable \verb+bindir+ (by default
+    \verb+/usr/local/bin+).
+  \item The converter \verb+type1afm+. The same applies as above for
+    \verb+xglyph+.
+  \item A subdirectory named \verb+t1lib-+{\em v}\verb+.+{\em r} is created in
+    the directory pointed to by the \verb+autoconf+-variable \verb+datadir+ (default
+    \verb+/usr/local/share+) and a default global configuration file
+    \verb+t1lib.config+ is installed there. Note that this configuration is
+    not of any use. It has to be setup by the administrator to specify the
+    paths to the system's Type 1 fonts and AFM files as well as any
+    \tonelib\ encoding files. Notice also that the global configuration file
+    is not installed if it already exists. This is to prevent from deletion of
+    an existent setup.
+  \item A subdirectory \verb+doc+ is created in the directory where the global
+    configuration file resides (see above). The \LaTeXe-documentation
+    \verb+t1lib_doc.dvi+ as well as all needed graphics files is installed
+    there. The \LaTeXe-sources are not installed!
+  \item If you ever want to remove \tonelib\ from your system this can be
+    achieved by calling \verb+make uninstall+. This reverts all steps
+    described above. Of course, this works only if \tonelib\ has not been
+    reconfigured using different parameters since the time of install.
+  \end{itemize}
+\end{enumerate}
+
+The top level \verb+Makefile+ further supports the targets \verb+clean+ and
+\verb+distclean+. The latter is an extension of \verb+clean+ which also
+removes the makefiles as well as the log and cache files of the configuration
+process. It forces thus a new call to \verb+configure+. 
+
+A \verb+make clean+ is needed, for example, if someone experiments with static
+and shared libraries since the object files for shared libraries require the
+additional position independent code options.
+
+The directory \verb+T1/parse_afm+ is not needed at all, it is included only
+for completeness. The parts needed from this have been copied to the
+\verb+lib/t1lib+-subdirectory. 
+
+
+\subsection{Notes on Using GNU {\tt libtool}}
+\label{libtoolproblems}%
+\verb+libtool+ might get confused by heterogenous compiler setups. This is the
+case, for example, on our Solaris system where by default \verb+gcc+ is used
+in combination with the system specific linker. This configuration leads to
+\verb+libtool+ reporting that no shared library can be built which definitely
+is wrong. In most cases such problems can be solved by fiddling with the
+environment entries \verb+CC+, \verb+CFLAGS+, \verb+LD+ and \verb+LDFLAGS+.
+
+\verb+libtool+ hides the real objects in subdirectories named \verb+.libs+.
+This means, after a successful build, \verb+libt1.so+ is located in
+\verb+T1/lib/.libs+. Similarly, if shared libraries are built the executable
+\verb+T1/xglyph/xglyph+ is a simple wrapper to \verb+T1/xglyph/.libs/xglyph+. 
+
+
+\subsection{Runtime-Setup}
+\label{runtimesetup}%
+\subsubsection{Searchpath and Environment Setup}
+\verb+t1lib+ basically needs four types of files:
+\begin{itemize}
+\item \verb+.afm+-files: These contain font metric descriptions as
+  well as kerning and ligature information for a particular font.
+\item \verb+.pfa+-/\verb+.pfb+-files: These contain the character
+  outline descriptions. Type 1 font files may also lack any extension in their
+  filename. This is the habit on NeXTStep, for example.
+\item \verb+.enc+-files: These contain encoding arrays in a special but
+  simple form. They are only  needed if someone wants to load a special
+  encoding to reencode a font.
+\item A font database file. The library needs at least one font
+  database file specification. See below for a description of this
+  font database file. Optionally, multiple font database files can be
+  specified.
+\end{itemize}
+In order to tell \tonelib\ where these files are located in the
+filesystem, a configuration file usually has to be set up by the user.  
+At time of initialization (see \ref{initialization} on page
+\pageref{initialization}) the library tries to locate all data it
+needs immediately or possibly later. The
+following actions take place in order:
+\begin{enumerate}
+\item The library tries to read the variable \verb+T1LIB_CONFIG+ from
+  the program's environment.
+  The value of this variable is expected to be the
+  pathname of a configuration file for \verb+t1lib+. 
+\item If the variable \verb+T1LIB_CONFIG+ exists, the file pointed to
+  by this variable will be tried to be opened. In case no environment
+  variable exists, the library will attempt to open a file called
+  \verb+.t1librc+ in the user's home directory.
+  If this file as well does
+  not exist, the global configuration file \verb+t1lib.config+ is tried to be
+  opened.\footnote{The filenames for the user's and the global configuration
+    file as well as the name of the environment entry are default names 
+    defined in {\ttfamily lib/t1lib/t1misc.h}. They may be redefined by the
+    user at compile time if necessary.}
+  If all these attempts to open a configuration file did not
+  succeed, all searchpaths are left at defaults (\verb+.+) and the font database
+  file is  setup to be \verb+./FontDataBase+. If this file cannot be
+  opened, the call to \verb+T1_InitLib()+ returns a NULL-pointer thus
+  indicating an error condition. The program should then exit because
+  \tonelib\ would not be able to do anything without an association of font
+  IDs to font files.
+\item Assuming a configuration file has been found and opened at any of the
+  above three locations, this file
+  is parsed and all relevant information in this file is recorded.
+\item Using the paths specified in the configuration file, the
+  font database is opened and processed. The existence of every Type 1
+  file that might later be needed is ensured. The existence of the
+  corresponding AFM file is not verified during
+  initialization, because this information is not ultimatively
+  critical when generating a character bitmap.\footnote{For example, a
+    program may generate a character table of a Type 1 font without
+    having AFM information.} Aside from this, \tonelib\ can generate the
+  required part of the AFM information on the fly.
+\end{enumerate}
+
+
+\subsubsection{The {\ttfamily t1lib} Configuration File}
+\label{subsubsec:configfile}
+
+It is the purpose of the configuration file to setup search paths and font
+databases. The format of this file is quite simple and straightforward:
+\begin{itemize}
+\item Each line starting exactly with \verb+ENCODING=+ is read in. The
+  remainder of the line is expected to be a list of searchpath
+  specifications for encoding files. No white space may appear
+  between \verb+=+ and the path specification(s).
+  Multiple paths may be specified by separating
+  the single paths with colons.\footnote{A colon is the default path separator
+    on UNIX systems. For certain other Operating Systems the path separator
+    may be a semicolon.} The path specification(s) may be
+  followed by any white space characters.
+\item Each line starting exactly with \verb+AFM=+ is read in. The
+  remainder of the line is expected to be a list of searchpath
+  specifications for Adobe Font Metric files. No white space may
+  appear between \verb+=+ and the path specification(s). 
+  Multiple paths may be specified by separating 
+  the single paths with colons. The path specification(s) may be
+  followed by any white space characters.
+\item Each line starting exactly with \verb+TYPE1=+ is read in. The
+  remainder of the line is expected to be a list of searchpath
+  specifications for Type 1 font files. No white space may
+  space between \verb+=+ and the path specification(s). 
+  Multiple paths may be specified by separating
+  the single paths with colons. The path specification(s) may be
+  followed by any white space characters.
+\item Each line starting exactly with \verb+FONTDATABASE=+ must specify a
+  colon-separated list of font database filenames on the remainder of the
+  line. No white space is allowed between \verb+=+ and the path specification,
+  but trailing white space is allowed.
+\item Each line starting exactly with \verb+FONTDATABASEXLFD=+ must specify a
+  colon-separated list of font database filenames that adhere to the XLFD (X11
+  Logical Font Definition) on the remainder of the line. No white space is
+  allowed between \verb+=+ and the path specification, but trailing white
+  space is allowed.
+  
+  This keyword is not an independent key word, rather, it allows to specify a
+  special alternative type of font database---a type that usually exists as
+  part of every X11 system. Standard and XLFD font database files may be
+  specified both in one configuration file. They interact in a way, that if an
+  XLFD font database file is specified, this overwrites the default standard
+  font database setup before the configuration is read.
+\item All other lines are ignored by the library. 
+\end{itemize}
+
+A configuration file may contain multiple path declarations of one type. In this
+case, a list of path elements is built internally in the same order that the
+specifications appear in the configuration file. For example, the statement 
+\begin{verbatim}
+TYPE1=/usr/X11/fonts/Type1:/home/user/fonts/Type1
+\end{verbatim}
+is equivalent to the two statements
+\begin{verbatim}
+TYPE1=/usr/X11/fonts/Type1
+TYPE1=/home/user/fonts/Type1
+\end{verbatim}
+
+In order to specify paths that incorporate {\em unusual} characters like white
+space or the path separator, it is possible to quote the path string element
+using double quotes ``\verb+"+''. All characters after the leading quotation
+mark are verbatim read to the path until the closing quotation mark
+appears. The double quotes may also become part of a path 
+specification by using the escape sequence ``\verb+\"+''. Hence, the following
+statement specifies a correct albeit somewhat unusual search path:
+\begin{verbatim}
+TYPE1=/usr/X11/fonts/Type1:"/home/user/My \"Best\" Fonts/Type1"
+\end{verbatim}
+
+Here is an example of how a user could do the runtime setup: \\[2mm]
+{\bfseries Example}: \\
+Create a file, say, named \verb+t1.config+ with the following
+contents in your HOME-directory:
+\begin{verbatim}
+# This is a configuration file for t1lib
+  These two lines are considered to be comments
+
+FONTDATABASE=/home/user/test/myprog/FontDataBase
+ENCODING=/usr/local/lib/fonts/type1/enc:.
+AFM=/usr/local/lib/fonts/type1/afm:.
+TYPE1=/usr/local/lib/fonts/type1/outlines:.
+\end{verbatim}
+After this, make the environment variable \verb+T1LIB_CONFIG+  point
+to this file, i.e., \\
+\verb+setenv T1LIB_CONFIG ~/t1.config+\\
+ for \verb+tcsh+, or\\ 
+\verb+export T1LIB_CONFIG=~/t1.config+\\
+for \verb+bash+. Provided that the path specifications in the
+configuration file are correct, the setup is done. When setting
+\verb+T1LIB_CONFIG+ in an interactive shell as described above, the shell does
+the tilde expansion. Notice that \tonelib\ never does tilde expansion.
+
+
+\subsubsection{The Font Database File}
+\label{fontdatabase}%
+This is one more file important at startup time. I call it
+``font database file'' because it makes fonts declared in this file
+known to the library. Moreover, the association {\em declared font
+  $\Longleftrightarrow$ FontID} is done using information from this
+file. The format specification of this file is relatively free. Here are
+the exact rules:
+\begin{itemize}
+\item Line 1 contains a positive integer specifying the
+  number of fonts declared in that file. This is as in the
+  \verb+fonts.dir+ files of the X11-system.
+\item All remaining lines contain declarations of one font each. The
+  only thing taken from such a line is the last string
+  (delimited by white space) in it. It is assumed to be a
+  filename of the format {\em basename}\verb+.+{\em someextension}.
+  Furthermore, the {\em basename}-part is assumed to be the basename
+  of a fontfile name.  After such a string has been parsed, the
+  {\em extension} is cut off and replaced in turn with \verb+.pfa+ and
+  \verb+.pfb+. The initialization routine tries to open a font
+  file with one of the resulting filenames.
+
+  Since V.~0.9 the ``\verb+.+'' as well as the ``{\em someextension}'' may be
+  missing completely. Moreover, \tonelib\ looks for Type 1 Font files whose
+  name do not have any extension at all. This is due to conventions of some
+  UNIX-systems. 
+\item The remaining of the line, i.e., from beginning to the start of the
+  filename string is completely ignored and may contain some
+  information for other programs or be empty.
+\end{itemize}
+The format described above may seem to be underspecified, but it has
+been chosen to be compatible with the \verb+SciFonts+-fileformat,
+which is used during the initialization of the SciTeXt word
+processor. \\[2mm]
+{\bfseries Example 1}: A minimal font database file for 4 fonts:
+
+{\footnotesize
+\begin{verbatim}
+4
+isvl.afm
+isvli.afm
+isvd.afm
+isvdi.afm
+\end{verbatim}
+}%
+
+This file is {\em minimal}, because it contains just the information
+needed, and nothing not needed by \tonelib. 
+
+{\bfseries Example 2}: A more
+realistic example, which allows an application to match a fully
+qualified X11 fontname to a FontID in \tonelib. This is also a
+valid font database file:
+
+{\footnotesize\hfuzz=30pt\relax
+\begin{verbatim}
+4
+Souvenir   Souvenir-Light        ---   -itc-souvenir-light-r-normal--#-0-0-0-p-0-iso8859-1  isvl.afm
+"          Souvenir-LightItalic  -*-   -itc-souvenir-light-i-normal--#-0-0-0-p-0-iso8859-1  isvli.afm
+"          Souvenir-Demi         *--   -itc-souvenir-demi-r-normal--#-0-0-0-p-0-iso8859-1   isvd.afm
+"          Souvenir-DemiItalic   **-   -itc-souvenir-demi-i-normal--#-0-0-0-p-0-iso8859-1   isvdi.afm
+\end{verbatim}
+}%
+
+\subsubsection{Alternative Runtime Setups}
+The runtime setup described above is the most simple principle of
+getting started. However, there might be applications that deal with
+only one font file. A good example is the \verb+type1afm+-utility
+which is described in section \ref{type1afm}. In such situations it seems to
+be overkill to read a font database file and several load paths. For
+this reason there are alternative ways to specify what should be read
+from where. Their description is deferred to section
+\ref{initialization}.   
+
+\subsection{A Very Simple Programming Example}
+\label{programmingexample}
+The following code is a very simple programming example of how to use
+\tonelib. It even runs on an ASCII-terminal. It is provided in the
+\verb+examples+-subdirectory of the distribution as \verb+t1example1.c+.
+This program must be compiled to object format and then linked with
+the library \verb+libt1.a+ or \verb+libt1.so+, respectively. On most systems
+the commandline 
+\begin{verbatim}
+ cc -o t1example1 -I ../lib t1example1.c -L../lib -lt1 -lm
+\end{verbatim}
+should do it. For convenience reasons a \verb+Makefile.in+ is included in the
+examples directory and the stuff is built automatically. 
+
+At runtime, a
+well defined setup must be found, i.e., a configuration file with path
+definitions and a font database file. These also are located in the
+\verb+examples+ subdirectory.
+
+\begin{verbatim}
+#include <stdio.h>
+#include <stdlib.h>
+#include <t1lib.h>  /* All needed declarations */
+
+int main( void)
+{
+
+  GLYPH *glyph;
+  int i;
+  
+  /* Set our environment to an existent config file directory */
+  putenv( "T1LIB_CONFIG=./t1lib.config");
+
+  /* Pad bitmaps to 16 bits, the default being 8 bits */
+  T1_SetBitmapPad( 16);
+  
+  /* Initialize t1lib and return if error occurs. No logfile will be
+     generated */
+  if ((T1_InitLib(NO_LOGFILE)==NULL)){
+    fprintf(stderr, "Initialization of t1lib failed\n");
+    return(-1);
+  }
+
+  /* For every font in the database, generate a glyph for the string
+     "Test" at 25 bp. Use Kerning. Then dump an ASCII representation
+     of the glyph to stdout */
+  for( i=0; i<T1_Get_no_fonts(); i++){
+    glyph=T1_SetString( i, "Test", 0, 0, T1_KERNING, 25.0, NULL);
+    T1_DumpGlyph( glyph);
+  }
+
+  /* Close library and free all data */
+  T1_CloseLib();
+  
+  return( 0);
+  
+}
+\end{verbatim}
+
+We assume that in the current directory there is a file
+\verb+FontDataBase+ which declares two fonts, Souvenir Light and a bold
+italic variant and further, that these fonts and their
+AFM files can be found using the paths from the configuration
+file. 
+If the resulting program is run, it produces some output like the following on 
+\verb+stdout+: 
+\newpage
+\begin{verbatim}
+Dataformat: T1_bit=0, T1_byte=1, T1_wordsize=16, T1_pad=16
+GlyphInfo: h=18, w=44, paddedW=48
+.XXXXXXXXXXXXXX. ................ ................ 
+XXX....XX....XXX ................ ................ 
+X......XX......X ................ ........X....... 
+.......XX....... ................ ........X....... 
+.......XX....... ................ .......XX....... 
+.......XX....... ................ .......XX....... 
+.......XX....... ...XXXX.......XX XXX..XXXXXXX.... 
+.......XX....... .XX...XX.....XX. ..XX...XX....... 
+.......XX....... XX.....XX...XX.. ...X...XX....... 
+.......XX....... XX.....XX...XX.. .......XX....... 
+.......XX......X X......XX...XXX. .......XX....... 
+.......XX......X X....XXX.....XXX XXX....XX....... 
+.......XX......X XXXXXXX.......XX XXXX...XX....... 
+.......XX......X XX.............. ..XXX..XX....... 
+.......XX......X X............... ...XX..XX....... 
+.......XX....... XX......XX..X... ...XX..XX....... 
+.......XX....... XXX....X....XX.. ..XX...XX....... 
+.....XXXXXX..... ..XXXXX.......XX XXX....XXXXX.... 
+Dataformat: T1_bit=0, T1_byte=1, T1_wordsize=16, T1_pad=16
+GlyphInfo: h=18, w=51, paddedW=64
+.XXXXXXXXXXXXXXX X............... ................ ................ 
+.XXXXXXXXXXXXXXX X............... ................ ................ 
+.XX....XXXX....X X............... ...............X X............... 
+.X.....XXXX..... X............... ...............X X............... 
+......XXXXX..... ................ ..............XX X............... 
+......XXXXX..... ................ ..............XX X............... 
+......XXXX...... ....XXXXXX...... .XXXXX.....XXXXX XXX............. 
+......XXXX...... ..XXXXXXXXXX...X XXXXXXXX...XXXXX XXX............. 
+......XXXX...... .XXXX...XXXX..XX XX...XXX....XXXX ................ 
+......XXXX...... XXXX....XXXX..XX XX....XX....XXXX ................ 
+.....XXXXX...... XXXX...XXXX...XX XXXX........XXXX ................ 
+.....XXXXX.....X XXX..XXXXX.....X XXXXXX......XXXX ................ 
+.....XXXX......X XXXXXXXX........ XXXXXXXX....XXXX ................ 
+.....XXXX......X XXX............. ..XXXXXX...XXXX. ................ 
+.....XXXX......X XXX.......X..XX. ....XXXX...XXXX. ................ 
+.....XXXX....... XXXX....XXX.XXXX ....XXXX...XXXXX XX.............. 
+....XXXXXX...... XXXXXXXXXX...XXX XXXXXXX....XXXXX XX.............. 
+...XXXXXXX...... ..XXXXXX.......X XXXXX......XXXX. ................ 
+\end{verbatim}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "t1lib_doc"
+%%% TeX-master: "ut1lib"
+%%% End: 

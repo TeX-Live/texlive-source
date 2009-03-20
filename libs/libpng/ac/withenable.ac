@@ -1,3 +1,0 @@
-## libs/libpng/kpse/withenable.ac
-## configure options and TL libraries required for libpng
-KPSE_WITH_LIB([libpng], [zlib])

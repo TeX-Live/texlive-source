@@ -1,0 +1,1 @@
+xglyph.lo: xglyph.c ../lib/t1lib/t1lib.h ../lib/t1lib/t1libx.h

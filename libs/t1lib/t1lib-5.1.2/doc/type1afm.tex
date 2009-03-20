@@ -1,0 +1,53 @@
+%----------------------------------------------------------------------------
+% ----- File:        type1afm.tex 
+% ----- Author:      Rainer Menzner (Rainer.Menzner@web.de)
+% ----- Date:        2001-04-01
+% ----- Description: This file is part of the t1lib-documentation.
+% ----- Copyright:   t1lib is copyrighted (c) Rainer Menzner, 1996-2001. 
+%                    As of version 0.5, t1lib is distributed under the
+%                    GNU General Public Library Lincense. The
+%                    conditions can be found in the files LICENSE and
+%                    LGPL, which should reside in the toplevel
+%                    directory of the distribution.  Please note that 
+%                    there are parts of t1lib that are subject to
+%                    other licenses:
+%                    The parseAFM-package is copyrighted by Adobe Systems
+%                    Inc.
+%                    The type1 rasterizer is copyrighted by IBM and the
+%                    X11-consortium.
+% ----- Warranties:  Of course, there's NO WARRANTY OF ANY KIND :-)
+% ----- Credits:     I want to thank IBM and the X11-consortium for making
+%                    their rasterizer freely available.
+%                    Also thanks to Piet Tutelaers for his ps2pk, from
+%                    which I took the rasterizer sources in a format
+%                    independ from X11.
+%                    Thanks to all people who make free software living!
+%----------------------------------------------------------------------------
+
+\newpage
+\section{The Program {\ttfamily type1afm}}
+\label{type1afm}%
+\verb+type1afm+ is a simple commandline tool (about 150 lines C source
+code) that allows to generate an AFM file from a Type 1 font
+program. It is intended for people who want to use Type 1 font files
+that come without AFM files with \tonelib\ (or other software that
+requires AFM files). The syntax is \\[0.5cm]
+\verb+type1afm [-l] <fontfile1> [<fontfile2> <fontfile3> ...] +\\[0.5cm]
+For each fontfile specified on the commandline, an AFM file with the
+corresponding name is generated in the current directory.
+Most of the work is done in \tonelib-internal functions. See section
+\ref{missingafmfiles} on how AFM information is generated and written
+to files.
+
+It is usually not desireable to leave a logfile wherever the utility
+has been executed. Thus by default no logfile is generated. This
+behaviour can be changed by specifying the optional parameter
+\verb+-l+. This causes a logfile with \verb+T1LOG_DEBUG+ as loglevel
+to be written to the disk. Its name will be \verb+t1lib.log+ (see
+\ref{logfile}). 
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "t1lib_doc"
+%%% End: 

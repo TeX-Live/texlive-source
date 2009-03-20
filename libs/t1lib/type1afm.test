@@ -1,0 +1,14 @@
+#! /bin/sh
+
+rm -f l047016t.afm
+
+test -f x047016t.pfa \
+	|| cp $srcdir/l047016t.pfa x047016t.pfa \
+	|| exit 1
+
+./type1afm ./x047016t.pfa || exit 1
+
+sed x047016t.afm -e '/^Comment File creation date:/d' >l047016t.afmx \
+	&& diff l047016t.afmx $srcdir/l047016t.xafm \
+	|| exit 1
+

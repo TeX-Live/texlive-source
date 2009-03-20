@@ -1,0 +1,2059 @@
+#!/bin/sh
+# This is a shell archive (produced by GNU sharutils 4.1.6).
+# To extract the files from this archive, save it to some FILE, remove
+# everything before the `!/bin/sh' line above, then type `sh FILE'.
+#
+# Made on 1996-10-25 16:19 EDT by <rainer@mman>.
+# Source directory was `/usr/home/rainer/src/T1/parse_afm'.
+#
+# Existing files will *not* be overwritten unless `-c' is specified.
+#
+# This shar contains:
+# length mode       name
+# ------ ---------- ------------------------------------------
+#    280 -rw-r--r-- makefile
+#  43280 -rw-r--r-- parseAFM.c
+#  11502 -rw-r--r-- parseAFM.h
+#  12210 -rw-r--r-- parseAFMclient.c
+#
+save_IFS=${IFS}
+IFS="${IFS}:"
+gettext_dir=FAILED
+locale_dir=FAILED
+for dir in $PATH
+do
+  if test "$gettext_dir" = "FAILED" && test -f $dir/gettext \
+     && ($dir/gettext --version >/dev/null 2>&1)
+  then
+    set `$dir/gettext --version 2>&1`
+    if test "$3" = "GNU"
+    then
+      gettext_dir=$dir
+    fi
+  fi
+  if test "$locale_dir" = "FAILED" && test -f $dir/shar \
+     && ($dir/shar --print-text-domain-dir >/dev/null 2>&1)
+  then
+    locale_dir=`$dir/shar --print-text-domain-dir`
+  fi
+done
+IFS=$save_IFS
+if test "$locale_dir" = "FAILED" || test "$gettext_dir" = "FAILED"
+then
+  echo=echo
+else
+  TEXTDOMAINDIR=$locale_dir
+  export TEXTDOMAINDIR
+  TEXTDOMAIN=sharutils
+  export TEXTDOMAIN
+  echo="$gettext_dir/gettext --shell-script"
+fi
+touch -am 1231235999 $$.touch >/dev/null 2>&1
+if test ! -f 1231235999 && test -f $$.touch; then
+  shar_touch=touch
+else
+  shar_touch=:
+  echo
+  $echo 'WARNING: not restoring timestamps.  Consider getting and'
+  $echo "installing GNU \`touch', distributed in GNU File Utilities..."
+  echo
+fi
+rm -f 1231235999 $$.touch
+#
+if mkdir _sh00599; then
+  $echo 'x -' 'creating lock directory'
+else
+  $echo 'failed to create lock directory'
+  exit 1
+fi
+# ============= makefile ==============
+if test -f 'makefile' && test X"$1" != X"-c"; then
+  $echo 'x -' SKIPPING 'makefile' '(file already exists)'
+else
+  $echo 'x -' extracting 'makefile' '(text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'makefile' &&
+X
+parseAFM: parseAFM.o parseAFMclient.o makefile
+X	cc -g -o parseAFM parseAFM.o parseAFMclient.o -lm;\
+X	shar makefile parseAFM.c parseAFM.h parseAFMclient.c > parseAFM.shar
+X
+parseAFMclient.o: parseAFMclient.c
+X	cc -g -c parseAFMclient.c
+X
+parseAFM.o: parseAFM.c
+X	cc -g -c parseAFM.c
+X
+SHAR_EOF
+  $shar_touch -am 1018085596 'makefile' &&
+  chmod 0644 'makefile' ||
+  $echo 'restore of' 'makefile' 'failed'
+  shar_count="`wc -c < 'makefile'`"
+  test 280 -eq "$shar_count" ||
+    $echo 'makefile:' 'original size' '280,' 'current size' "$shar_count"
+fi
+# ============= parseAFM.c ==============
+if test -f 'parseAFM.c' && test X"$1" != X"-c"; then
+  $echo 'x -' SKIPPING 'parseAFM.c' '(file already exists)'
+else
+  $echo 'x -' extracting 'parseAFM.c' '(text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'parseAFM.c' &&
+/*
+X * (C) 1988, 1989, 1990 by Adobe Systems Incorporated. All rights reserved.
+X *
+X * This file may be freely copied and redistributed as long as:
+X *   1) This entire notice continues to be included in the file, 
+X *   2) If the file has been modified in any way, a notice of such
+X *      modification is conspicuously indicated.
+X *
+X * PostScript, Display PostScript, and Adobe are registered trademarks of
+X * Adobe Systems Incorporated.
+X * 
+X * ************************************************************************
+X * THE INFORMATION BELOW IS FURNISHED AS IS, IS SUBJECT TO CHANGE WITHOUT
+X * NOTICE, AND SHOULD NOT BE CONSTRUED AS A COMMITMENT BY ADOBE SYSTEMS
+X * INCORPORATED. ADOBE SYSTEMS INCORPORATED ASSUMES NO RESPONSIBILITY OR 
+X * LIABILITY FOR ANY ERRORS OR INACCURACIES, MAKES NO WARRANTY OF ANY 
+X * KIND (EXPRESS, IMPLIED OR STATUTORY) WITH RESPECT TO THIS INFORMATION, 
+X * AND EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES OF MERCHANTABILITY, 
+X * FITNESS FOR PARTICULAR PURPOSES AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
+X * ************************************************************************
+X */
+X
+/* parseAFM.c
+X * 
+X * This file is used in conjuction with the parseAFM.h header file.
+X * This file contains several procedures that are used to parse AFM
+X * files. It is intended to work with an application program that needs
+X * font metric information. The program can be used as is by making a
+X * procedure call to "parseFile" (passing in the expected parameters)
+X * and having it fill in a data structure with the data from the 
+X * AFM file, or an application developer may wish to customize this
+X * code.
+X *
+X * There is also a file, parseAFMclient.c, that is a sample application
+X * showing how to call the "parseFile" procedure and how to use the data
+X * after "parseFile" has returned.
+X *
+X * Please read the comments in parseAFM.h and parseAFMclient.c.
+X *
+X * History:
+X *	original: DSM  Thu Oct 20 17:39:59 PDT 1988
+X *  modified: DSM  Mon Jul  3 14:17:50 PDT 1989
+X *    - added 'storageProblem' return code
+X *	  - fixed bug of not allocating extra byte for string duplication
+X *    - fixed typos
+X *  modified: DSM  Tue Apr  3 11:18:34 PDT 1990
+X *    - added free(ident) at end of parseFile routine
+X *  modified: DSM  Tue Jun 19 10:16:29 PDT 1990
+X *    - changed (width == 250) to (width = 250) in initializeArray
+X */
+X
+#include <stdio.h>
+#include <errno.h>
+#include <sys/file.h>
+#include <math.h>
+#include "parseAFM.h"
+X 
+#define lineterm EOL	/* line terminating character */
+#define normalEOF 1	/* return code from parsing routines used only */
+X			/* in this module */
+#define Space "space"   /* used in string comparison to look for the width */
+X			/* of the space character to init the widths array */
+#define False "false"   /* used in string comparison to check the value of */
+X			/* boolean keys (e.g. IsFixedPitch)  */
+X
+#define MATCH(A,B)		(strncmp((A),(B), MAX_NAME) == 0)
+X
+X
+X
+/*************************** GLOBALS ***********************/
+X
+static char *ident = NULL; /* storage buffer for keywords */
+X
+X
+/* "shorts" for fast case statement 
+X * The values of each of these enumerated items correspond to an entry in the
+X * table of strings defined below. Therefore, if you add a new string as 
+X * new keyword into the keyStrings table, you must also add a corresponding
+X * parseKey AND it MUST be in the same position!
+X *
+X * IMPORTANT: since the sorting algorithm is a binary search, the strings of
+X * keywords must be placed in lexicographical order, below. [Therefore, the 
+X * enumerated items are not necessarily in lexicographical order, depending 
+X * on the name chosen. BUT, they must be placed in the same position as the 
+X * corresponding key string.] The NOPE shall remain in the last position, 
+X * since it does not correspond to any key string, and it is used in the 
+X * "recognize" procedure to calculate how many possible keys there are.
+X */
+X
+static enum parseKey {
+X  ASCENDER, CHARBBOX, CODE, COMPCHAR, CAPHEIGHT, COMMENT, 
+X  DESCENDER, ENCODINGSCHEME, ENDCHARMETRICS, ENDCOMPOSITES, 
+X  ENDFONTMETRICS, ENDKERNDATA, ENDKERNPAIRS, ENDTRACKKERN, 
+X  FAMILYNAME, FONTBBOX, FONTNAME, FULLNAME, ISFIXEDPITCH, 
+X  ITALICANGLE, KERNPAIR, KERNPAIRXAMT, LIGATURE, CHARNAME, 
+X  NOTICE, COMPCHARPIECE, STARTCHARMETRICS, STARTCOMPOSITES, 
+X  STARTFONTMETRICS, STARTKERNDATA, STARTKERNPAIRS, 
+X  STARTTRACKKERN, TRACKKERN, UNDERLINEPOSITION, 
+X  UNDERLINETHICKNESS, VERSION, XYWIDTH, XWIDTH, WEIGHT, XHEIGHT,
+X  NOPE };
+X
+/* keywords for the system:  
+X * This a table of all of the current strings that are vaild AFM keys.
+X * Each entry can be referenced by the appropriate parseKey value (an
+X * enumerated data type defined above). If you add a new keyword here, 
+X * a corresponding parseKey MUST be added to the enumerated data type
+X * defined above, AND it MUST be added in the same position as the 
+X * string is in this table.
+X *
+X * IMPORTANT: since the sorting algorithm is a binary search, the keywords
+X * must be placed in lexicographical order. And, NULL should remain at the
+X * end.
+X */
+X
+static char *keyStrings[] = {
+X  "Ascender", "B", "C", "CC", "CapHeight", "Comment",
+X  "Descender", "EncodingScheme", "EndCharMetrics", "EndComposites", 
+X  "EndFontMetrics", "EndKernData", "EndKernPairs", "EndTrackKern", 
+X  "FamilyName", "FontBBox", "FontName", "FullName", "IsFixedPitch", 
+X  "ItalicAngle", "KP", "KPX", "L", "N", 
+X  "Notice", "PCC", "StartCharMetrics", "StartComposites", 
+X  "StartFontMetrics", "StartKernData", "StartKernPairs", 
+X  "StartTrackKern", "TrackKern", "UnderlinePosition", 
+X  "UnderlineThickness", "Version", "W", "WX", "Weight", "XHeight",
+X  NULL };
+X  
+/*************************** PARSING ROUTINES **************/ 
+X  
+/*************************** token *************************/
+X
+/*  A "AFM File Conventions" tokenizer. That means that it will
+X *  return the next token delimited by white space.  See also
+X *  the `linetoken' routine, which does a similar thing but 
+X *  reads all tokens until the next end-of-line.
+X */
+X 
+static char *token(stream)
+X  FILE *stream;
+{
+X    int ch, idx;
+X
+X    /* skip over white space */
+X    while ((ch = fgetc(stream)) == ' ' || ch == lineterm || 
+X            ch == ',' || ch == '\t' || ch == ';');
+X    
+X    idx = 0;
+X    while (ch != EOF && ch != ' ' && ch != lineterm 
+X           && ch != '\t' && ch != ':' && ch != ';') 
+X    {
+X        ident[idx++] = ch;
+X        ch = fgetc(stream);
+X    } /* while */
+X
+X    if (ch == EOF && idx < 1) return ((char *)NULL);
+X    if (idx >= 1 && ch != ':' ) ungetc(ch, stream);
+X    if (idx < 1 ) ident[idx++] = ch;	/* single-character token */
+X    ident[idx] = 0;
+X    
+X    return(ident);	/* returns pointer to the token */
+X
+} /* token */
+X
+X
+/*************************** linetoken *************************/
+X
+/*  "linetoken" will get read all tokens until the EOL character from
+X *  the given stream.  This is used to get any arguments that can be
+X *  more than one word (like Comment lines and FullName).
+X */
+X
+static char *linetoken(stream)
+X  FILE *stream;
+{
+X    int ch, idx;
+X
+X    while ((ch = fgetc(stream)) == ' ' || ch == '\t' ); 
+X    
+X    idx = 0;
+X    while (ch != EOF && ch != lineterm) 
+X    {
+X        ident[idx++] = ch;
+X        ch = fgetc(stream);
+X    } /* while */
+X    
+X    ungetc(ch, stream);
+X    ident[idx] = 0;
+X
+X    return(ident);	/* returns pointer to the token */
+X
+} /* linetoken */
+X
+X
+/*************************** recognize *************************/
+X
+/*  This function tries to match a string to a known list of
+X *  valid AFM entries (check the keyStrings array above). 
+X *  "ident" contains everything from white space through the
+X *  next space, tab, or ":" character.
+X *
+X *  The algorithm is a standard Knuth binary search.
+X */
+X
+static enum parseKey recognize(ident)
+X  register char *ident;
+{
+X    int lower = 0, upper = (int) NOPE, midpoint, cmpvalue;
+X    BOOL found = FALSE;
+X
+X    while ((upper >= lower) && !found)
+X    {
+X        midpoint = (lower + upper)/2;
+X        if (keyStrings[midpoint] == NULL) break;
+X        cmpvalue = strncmp(ident, keyStrings[midpoint], MAX_NAME);
+X        if (cmpvalue == 0) found = TRUE;
+X        else if (cmpvalue < 0) upper = midpoint - 1;
+X        else lower = midpoint + 1;
+X    } /* while */
+X
+X    if (found) return (enum parseKey) midpoint;
+X    else return NOPE;
+X    
+} /* recognize */
+X
+X
+/************************* parseGlobals *****************************/
+X
+/*  This function is called by "parseFile". It will parse the AFM File
+X *  up to the "StartCharMetrics" keyword, which essentially marks the
+X *  end of the Global Font Information and the beginning of the character
+X *  metrics information. 
+X *
+X *  If the caller of "parseFile" specified that it wanted the Global
+X *  Font Information (as defined by the "AFM File Specification"
+X *  document), then that information will be stored in the returned 
+X *  data structure.
+X *
+X *  Any Global Font Information entries that are not found in a 
+X *  given file, will have the usual default initialization value
+X *  for its type (i.e. entries of type int will be 0, etc).
+X *
+X *  This function returns an error code specifying whether there was 
+X *  a premature EOF or a parsing error. This return value is used by 
+X *  parseFile to determine if there is more file to parse.
+X */
+X 
+static BOOL parseGlobals(fp, gfi)
+X  FILE *fp;
+X  register GlobalFontInfo *gfi;
+{  
+X    BOOL cont = TRUE, save = (gfi != NULL);
+X    int error = ok;
+X    register char *keyword;
+X    
+X    while (cont)
+X    {
+X        keyword = token(fp);
+X        
+X        if (keyword == NULL)
+X          /* Have reached an early and unexpected EOF. */
+X          /* Set flag and stop parsing */
+X        {
+X            error = earlyEOF;
+X            break;   /* get out of loop */
+X        }
+X        if (!save)	
+X          /* get tokens until the end of the Global Font info section */
+X          /* without saving any of the data */
+X            switch (recognize(keyword))  
+X            {				
+X                case STARTCHARMETRICS:
+X                    cont = FALSE;
+X                    break;
+X                case ENDFONTMETRICS:	
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                default:
+X                    break;
+X            } /* switch */
+X        else
+X          /* otherwise parse entire global font info section, */
+X          /* saving the data */
+X            switch(recognize(keyword))
+X            {
+X                case STARTFONTMETRICS:
+X                    keyword = token(fp);
+X                    gfi->afmVersion = (char *) malloc(strlen(keyword) + 1);
+X                    strcpy(gfi->afmVersion, keyword);
+X                    break;
+X                case COMMENT:
+X                    keyword = linetoken(fp);
+X                    break;
+X                case FONTNAME:
+X                    keyword = token(fp);
+X                    gfi->fontName = (char *) malloc(strlen(keyword) + 1);
+X                    strcpy(gfi->fontName, keyword);
+X                    break;
+X                case ENCODINGSCHEME:
+X                    keyword = token(fp);
+X                    gfi->encodingScheme = (char *) 
+X                    	malloc(strlen(keyword) + 1);
+X                    strcpy(gfi->encodingScheme, keyword);
+X                    break; 
+X                case FULLNAME:
+X                    keyword = linetoken(fp);
+X                    gfi->fullName = (char *) malloc(strlen(keyword) + 1);
+X                    strcpy(gfi->fullName, keyword);
+X                    break; 
+X                case FAMILYNAME:           
+X                   keyword = linetoken(fp);
+X                    gfi->familyName = (char *) malloc(strlen(keyword) + 1);
+X                    strcpy(gfi->familyName, keyword);
+X                    break; 
+X                case WEIGHT:
+X                    keyword = token(fp);
+X                    gfi->weight = (char *) malloc(strlen(keyword) + 1);
+X                    strcpy(gfi->weight, keyword);
+X                    break;
+X                case ITALICANGLE:
+X                    keyword = token(fp);
+X                    gfi->italicAngle = atof(keyword);
+X                    if (errno == ERANGE) error = parseError;
+X                    break;
+X                case ISFIXEDPITCH:
+X                    keyword = token(fp);
+X                    if (MATCH(keyword, False))
+X                        gfi->isFixedPitch = 0;
+X                    else 
+X                        gfi->isFixedPitch = 1;
+X                    break; 
+X	            case UNDERLINEPOSITION:
+X                    keyword = token(fp);
+X	                gfi->underlinePosition = atoi(keyword);
+X                    break; 
+X                case UNDERLINETHICKNESS:
+X                    keyword = token(fp);
+X                    gfi->underlineThickness = atoi(keyword);
+X                    break;
+X                case VERSION:
+X                    keyword = token(fp);
+X                    gfi->version = (char *) malloc(strlen(keyword) + 1);
+X                    strcpy(gfi->version, keyword);
+X                    break; 
+X                case NOTICE:
+X                    keyword = linetoken(fp);
+X                    gfi->notice = (char *) malloc(strlen(keyword) + 1);
+X                    strcpy(gfi->notice, keyword);
+X                    break; 
+X                case FONTBBOX:
+X                    keyword = token(fp);
+X                    gfi->fontBBox.llx = atoi(keyword);
+X                    keyword = token(fp);
+X                    gfi->fontBBox.lly = atoi(keyword);
+X                    keyword = token(fp);
+X                    gfi->fontBBox.urx = atoi(keyword);
+X                    keyword = token(fp);
+X                    gfi->fontBBox.ury = atoi(keyword);
+X                    break;
+X                case CAPHEIGHT:
+X                    keyword = token(fp);
+X                    gfi->capHeight = atoi(keyword);
+X                    break;
+X                case XHEIGHT:
+X                    keyword = token(fp);
+X                    gfi->xHeight = atoi(keyword);
+X                    break;
+X                case DESCENDER:
+X                    keyword = token(fp);
+X                    gfi->descender = atoi(keyword);
+X                    break;
+X                case ASCENDER:
+X                    keyword = token(fp);
+X                    gfi->ascender = atoi(keyword);
+X                    break;
+X                case STARTCHARMETRICS:
+X                    cont = FALSE;
+X                    break;
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                case NOPE:
+X                default:
+X                    error = parseError;
+X                    break;
+X            } /* switch */
+X    } /* while */
+X    
+X    return(error);
+X    
+} /* parseGlobals */    
+X
+X
+X
+/************************* initializeArray ************************/
+X
+/*  Unmapped character codes are (at Adobe Systems) assigned the
+X *  width of the space character (if one exists) else they get the
+X *  value of 250 ems. This function initializes all entries in the
+X *  char widths array to have this value. Then any mapped character 
+X *  codes will be replaced with the width of the appropriate character 
+X *  when parsing the character metric section.
+X 
+X *  This function parses the Character Metrics Section looking
+X *  for a space character (by comparing character names). If found,
+X *  the width of the space character will be used to initialize the
+X *  values in the array of character widths. 
+X *
+X *  Before returning, the position of the read/write pointer of the
+X *  file is reset to be where it was upon entering this function.
+X */
+X 
+static int initializeArray(fp, cwi)
+X  FILE *fp;
+X  register int *cwi;
+{  
+X    BOOL cont = TRUE, found = FALSE;
+X    long opos = ftell(fp);
+X    int code = 0, width = 0, i = 0, error = 0;
+X    register char *keyword;
+X  
+X    while (cont)
+X    {
+X        keyword = token(fp);
+X        if (keyword == NULL)
+X        {
+X            error = earlyEOF;
+X            break; /* get out of loop */
+X        }
+X        switch(recognize(keyword))
+X        {
+X            case COMMENT:
+X                keyword = linetoken(fp);
+X                break;
+X            case CODE:
+X                code = atoi(token(fp));
+X                break;
+X            case XWIDTH:
+X                width = atoi(token(fp));
+X                break;
+X            case CHARNAME: 
+X                keyword = token(fp);
+X                if (MATCH(keyword, Space))
+X                {    
+X                    cont = FALSE;
+X                    found = TRUE;
+X                } 
+X                break;            
+X            case ENDCHARMETRICS:
+X                cont = FALSE;
+X                break; 
+X            case ENDFONTMETRICS:
+X                cont = FALSE;
+X                error = normalEOF;
+X                break;
+X            case NOPE:
+X            default: 
+X                error = parseError;
+X                break;
+X        } /* switch */
+X    } /* while */
+X    
+X    if (!found)
+X        width = 250;
+X    
+X    for (i = 0; i < 256; ++i)
+X        cwi[i] = width;
+X    
+X    fseek(fp, opos, 0);
+X    
+X    return(error);
+X        
+} /* initializeArray */    
+X
+X
+/************************* parseCharWidths **************************/
+X
+/*  This function is called by "parseFile". It will parse the AFM File
+X *  up to the "EndCharMetrics" keyword. It will save the character 
+X *  width info (as opposed to all of the character metric information)
+X *  if requested by the caller of parseFile. Otherwise, it will just
+X *  parse through the section without saving any information.
+X *
+X *  If data is to be saved, parseCharWidths is passed in a pointer 
+X *  to an array of widths that has already been initialized by the
+X *  standard value for unmapped character codes. This function parses
+X *  the Character Metrics section only storing the width information
+X *  for the encoded characters into the array using the character code
+X *  as the index into that array.
+X *
+X *  This function returns an error code specifying whether there was 
+X *  a premature EOF or a parsing error. This return value is used by 
+X *  parseFile to determine if there is more file to parse.
+X */
+X 
+static parseCharWidths(fp, cwi)
+X  FILE *fp;
+X  register int *cwi;
+{  
+X    BOOL cont = TRUE, save = (cwi != NULL);
+X    int pos = 0, error = ok;
+X    register char *keyword;
+X    
+X    while (cont)
+X    {
+X        keyword = token(fp);
+X          /* Have reached an early and unexpected EOF. */
+X          /* Set flag and stop parsing */
+X        if (keyword == NULL)
+X        {
+X            error = earlyEOF;
+X            break; /* get out of loop */
+X        }
+X        if (!save)	
+X          /* get tokens until the end of the Char Metrics section without */
+X          /* saving any of the data*/
+X            switch (recognize(keyword))  
+X            {				
+X                case ENDCHARMETRICS:
+X                    cont = FALSE;
+X                    break; 
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                default: 
+X                    break;
+X            } /* switch */
+X        else
+X          /* otherwise parse entire char metrics section, saving */
+X          /* only the char x-width info */
+X            switch(recognize(keyword))
+X            {
+X                case COMMENT:
+X                    keyword = linetoken(fp);
+X                    break;
+X                case CODE:
+X                    keyword = token(fp);
+X                    pos = atoi(keyword);
+X                    break;
+X                case XYWIDTH:
+X                /* PROBLEM: Should be no Y-WIDTH when doing "quick & dirty" */
+X                    keyword = token(fp); keyword = token(fp); /* eat values */
+X                    error = parseError;
+X                    break;
+X                case XWIDTH:
+X                    keyword = token(fp);
+X                    if (pos >= 0) /* ignore unmapped chars */
+X                        cwi[pos] = atoi(keyword);
+X                    break;
+X                case ENDCHARMETRICS:
+X                    cont = FALSE;
+X                    break; 
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                case CHARNAME:	/* eat values (so doesn't cause parseError) */
+X                    keyword = token(fp); 
+X                    break;
+X            	case CHARBBOX: 
+X                    keyword = token(fp); keyword = token(fp);
+X                    keyword = token(fp); keyword = token(fp);
+X		    break;
+X		case LIGATURE:
+X                    keyword = token(fp); keyword = token(fp);
+X		    break;
+X                case NOPE:
+X                default: 
+X                    error = parseError;
+X                    break;
+X            } /* switch */
+X    } /* while */
+X    
+X    return(error);
+X    
+} /* parseCharWidths */    
+X
+X
+/************************* parseCharMetrics ************************/
+X
+/*  This function is called by parseFile if the caller of parseFile
+X *  requested that all character metric information be saved
+X *  (as opposed to only the character width information).
+X *
+X *  parseCharMetrics is passed in a pointer to an array of records
+X *  to hold information on a per character basis. This function
+X *  parses the Character Metrics section storing all character
+X *  metric information for the ALL characters (mapped and unmapped) 
+X *  into the array.
+X *
+X *  This function returns an error code specifying whether there was 
+X *  a premature EOF or a parsing error. This return value is used by 
+X *  parseFile to determine if there is more file to parse.
+X */
+X 
+static parseCharMetrics(fp, fi)
+X  FILE *fp;
+X  register FontInfo *fi;
+{  
+X    BOOL cont = TRUE, firstTime = TRUE;
+X    int error = ok, count = 0;
+X    register CharMetricInfo *temp = fi->cmi;
+X    register char *keyword;
+X  
+X    while (cont)
+X    {
+X        keyword = token(fp);
+X        if (keyword == NULL)
+X        {
+X            error = earlyEOF;
+X            break; /* get out of loop */
+X        }
+X        switch(recognize(keyword))
+X        {
+X            case COMMENT:
+X                keyword = linetoken(fp);
+X                break; 
+X            case CODE:
+X                if (count < fi->numOfChars)
+X                { 
+X                    if (firstTime) firstTime = FALSE;
+X                    else temp++;
+X                    temp->code = atoi(token(fp));
+X                    count++;
+X                }
+X                else
+X                {
+X                    error = parseError;
+X                    cont = FALSE;
+X                }
+X                break;
+X            case XYWIDTH:
+X                temp->wx = atoi(token(fp));
+X                temp->wy = atoi(token(fp));
+X                break;                 
+X            case XWIDTH: 
+X                temp->wx = atoi(token(fp));
+X                break;
+X            case CHARNAME: 
+X                keyword = token(fp);
+X                temp->name = (char *) malloc(strlen(keyword) + 1);
+X                strcpy(temp->name, keyword);
+X                break;            
+X            case CHARBBOX: 
+X                temp->charBBox.llx = atoi(token(fp));
+X                temp->charBBox.lly = atoi(token(fp));
+X                temp->charBBox.urx = atoi(token(fp));
+X                temp->charBBox.ury = atoi(token(fp));
+X                break;
+X            case LIGATURE: {
+X                Ligature **tail = &(temp->ligs);
+X                Ligature *node = *tail;
+X                
+X                if (*tail != NULL)
+X                {
+X                    while (node->next != NULL)
+X                        node = node->next;
+X                    tail = &(node->next); 
+X                }
+X                
+X                *tail = (Ligature *) calloc(1, sizeof(Ligature));
+X                keyword = token(fp);
+X                (*tail)->succ = (char *) malloc(strlen(keyword) + 1);
+X                strcpy((*tail)->succ, keyword);
+X                keyword = token(fp);
+X                (*tail)->lig = (char *) malloc(strlen(keyword) + 1);
+X                strcpy((*tail)->lig, keyword);
+X                break; }
+X            case ENDCHARMETRICS:
+X                cont = FALSE;;
+X                break; 
+X            case ENDFONTMETRICS: 
+X                cont = FALSE;
+X                error = normalEOF;
+X                break; 
+X            case NOPE:
+X            default:
+X                error = parseError; 
+X                break; 
+X        } /* switch */
+X    } /* while */
+X    
+X    if ((error == ok) && (count != fi->numOfChars))
+X        error = parseError;
+X    
+X    return(error);
+X    
+} /* parseCharMetrics */    
+X
+X
+X
+/************************* parseTrackKernData ***********************/
+X
+/*  This function is called by "parseFile". It will parse the AFM File 
+X *  up to the "EndTrackKern" or "EndKernData" keywords. It will save the
+X *  track kerning data if requested by the caller of parseFile.
+X *
+X *  parseTrackKernData is passed in a pointer to the FontInfo record.
+X *  If data is to be saved, the FontInfo record will already contain 
+X *  a valid pointer to storage for the track kerning data.
+X *
+X *  This function returns an error code specifying whether there was 
+X *  a premature EOF or a parsing error. This return value is used by 
+X *  parseFile to determine if there is more file to parse.
+X */
+X 
+static parseTrackKernData(fp, fi)
+X  FILE *fp;
+X  register FontInfo *fi;
+{  
+X    BOOL cont = TRUE, save = (fi->tkd != NULL);
+X    int pos = 0, error = ok, tcount = 0;
+X    register char *keyword;
+X  
+X    while (cont)
+X    {
+X        keyword = token(fp);
+X        
+X        if (keyword == NULL)
+X        {
+X            error = earlyEOF;
+X            break; /* get out of loop */
+X        }
+X        if (!save)
+X          /* get tokens until the end of the Track Kerning Data */
+X          /* section without saving any of the data */
+X            switch(recognize(keyword))
+X            {
+X                case ENDTRACKKERN:
+X                case ENDKERNDATA:
+X                    cont = FALSE;
+X                    break;
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                default:
+X                    break;
+X            } /* switch */
+X	else
+X          /* otherwise parse entire Track Kerning Data section, */
+X          /* saving the data */
+X            switch(recognize(keyword))
+X            {
+X                case COMMENT:
+X                    keyword = linetoken(fp);
+X                    break;
+X                case TRACKKERN:
+X                    if (tcount < fi->numOfTracks)
+X                    {
+X                        keyword = token(fp);
+X                        fi->tkd[pos].degree = atoi(keyword);
+X                        keyword = token(fp);
+X                        fi->tkd[pos].minPtSize = atof(keyword);
+X                        if (errno == ERANGE) error = parseError;
+X                        keyword = token(fp);
+X                        fi->tkd[pos].minKernAmt = atof(keyword);
+X                        if (errno == ERANGE) error = parseError;
+X                        keyword = token(fp);
+X                        fi->tkd[pos].maxPtSize = atof(keyword);
+X                        if (errno == ERANGE) error = parseError;
+X                        keyword = token(fp);
+X                        fi->tkd[pos++].maxKernAmt = atof(keyword);
+X                        if (errno == ERANGE) error = parseError;
+X                        tcount++;
+X                    }
+X                    else
+X                    {
+X                        error = parseError;
+X                        cont = FALSE;
+X                    }
+X                    break;
+X                case ENDTRACKKERN:
+X                case ENDKERNDATA:
+X                    cont = FALSE;
+X                    break;
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                case NOPE:
+X                default:
+X                    error = parseError;
+X                    break;
+X            } /* switch */
+X    } /* while */
+X    
+X    if (error == ok && tcount != fi->numOfTracks)
+X        error = parseError;
+X        
+X    return(error);
+X    
+} /* parseTrackKernData */    
+X
+X
+/************************* parsePairKernData ************************/
+X
+/*  This function is called by "parseFile". It will parse the AFM File 
+X *  up to the "EndKernPairs" or "EndKernData" keywords. It will save
+X *  the pair kerning data if requested by the caller of parseFile.
+X *
+X *  parsePairKernData is passed in a pointer to the FontInfo record.
+X *  If data is to be saved, the FontInfo record will already contain 
+X *  a valid pointer to storage for the pair kerning data.
+X *
+X *  This function returns an error code specifying whether there was 
+X *  a premature EOF or a parsing error. This return value is used by 
+X *  parseFile to determine if there is more file to parse.
+X */
+X 
+static parsePairKernData(fp, fi)
+X  FILE *fp;
+X  register FontInfo *fi;
+{  
+X    BOOL cont = TRUE, save = (fi->pkd != NULL);
+X    int pos = 0, error = ok, pcount = 0;
+X    register char *keyword;
+X  
+X    while (cont)
+X    {
+X        keyword = token(fp);
+X        
+X        if (keyword == NULL)
+X        {
+X            error = earlyEOF;
+X            break; /* get out of loop */
+X        }
+X        if (!save)
+X          /* get tokens until the end of the Pair Kerning Data */
+X          /* section without saving any of the data */
+X            switch(recognize(keyword))
+X            {
+X                case ENDKERNPAIRS:
+X                case ENDKERNDATA:
+X                    cont = FALSE;
+X                    break;
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                default:
+X                    break;
+X            } /* switch */
+X	else
+X          /* otherwise parse entire Pair Kerning Data section, */
+X          /* saving the data */
+X            switch(recognize(keyword))
+X            {
+X                case COMMENT:
+X                    keyword = linetoken(fp);
+X                    break;
+X                case KERNPAIR:
+X                    if (pcount < fi->numOfPairs)
+X                    {
+X                        keyword = token(fp);
+X                        fi->pkd[pos].name1 = (char *) 
+X                            malloc(strlen(keyword) + 1);
+X                        strcpy(fi->pkd[pos].name1, keyword);
+X                        keyword = token(fp);
+X                        fi->pkd[pos].name2 = (char *) 
+X                            malloc(strlen(keyword) + 1);
+X                        strcpy(fi->pkd[pos].name2, keyword);
+X                        keyword = token(fp);
+X                        fi->pkd[pos].xamt = atoi(keyword);
+X                        keyword = token(fp);
+X                        fi->pkd[pos++].yamt = atoi(keyword);
+X                        pcount++;
+X                    }
+X                    else
+X                    {
+X                        error = parseError;
+X                        cont = FALSE;
+X                    }
+X                    break;
+X                case KERNPAIRXAMT:
+X                    if (pcount < fi->numOfPairs)
+X                    {
+X                        keyword = token(fp);
+X                        fi->pkd[pos].name1 = (char *) 
+X                            malloc(strlen(keyword) + 1);
+X                        strcpy(fi->pkd[pos].name1, keyword);
+X                        keyword = token(fp);
+X                        fi->pkd[pos].name2 = (char *) 
+X                            malloc(strlen(keyword) + 1);
+X                        strcpy(fi->pkd[pos].name2, keyword);
+X                        keyword = token(fp);
+X                        fi->pkd[pos++].xamt = atoi(keyword);
+X                        pcount++;
+X                    }
+X                    else
+X                    {
+X                        error = parseError;
+X                        cont = FALSE;
+X                    }
+X                    break;
+X                case ENDKERNPAIRS:
+X                case ENDKERNDATA:
+X                    cont = FALSE;
+X                    break;
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                case NOPE:
+X                default:
+X                    error = parseError;
+X                    break;
+X            } /* switch */
+X    } /* while */
+X    
+X    if (error == ok && pcount != fi->numOfPairs)
+X        error = parseError;
+X        
+X    return(error);
+X    
+} /* parsePairKernData */    
+X
+X
+/************************* parseCompCharData **************************/
+X
+/*  This function is called by "parseFile". It will parse the AFM File 
+X *  up to the "EndComposites" keyword. It will save the composite 
+X *  character data if requested by the caller of parseFile.
+X *
+X *  parseCompCharData is passed in a pointer to the FontInfo record, and 
+X *  a boolean representing if the data should be saved.
+X *
+X *  This function will create the appropriate amount of storage for
+X *  the composite character data and store a pointer to the storage
+X *  in the FontInfo record.
+X *
+X *  This function returns an error code specifying whether there was 
+X *  a premature EOF or a parsing error. This return value is used by 
+X *  parseFile to determine if there is more file to parse.
+X */
+X 
+static parseCompCharData(fp, fi)
+X  FILE *fp;
+X  register FontInfo *fi;
+{  
+X    BOOL cont = TRUE, firstTime = TRUE, save = (fi->ccd != NULL);
+X    int pos = 0, j = 0, error = ok, ccount = 0, pcount = 0;
+X    register char *keyword;
+X  
+X    while (cont)
+X    {
+X        keyword = token(fp);
+X        if (keyword == NULL)
+X          /* Have reached an early and unexpected EOF. */
+X          /* Set flag and stop parsing */
+X        {
+X            error = earlyEOF;
+X            break; /* get out of loop */
+X        }
+X        if (ccount > fi->numOfComps)
+X        {
+X            error = parseError;
+X            break; /* get out of loop */
+X        }
+X        if (!save)
+X          /* get tokens until the end of the Composite Character info */
+X          /* section without saving any of the data */
+X            switch(recognize(keyword))
+X            {
+X                case ENDCOMPOSITES:
+X                    cont = FALSE;
+X                    break;
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                default:
+X                    break;
+X            } /* switch */
+X	else
+X          /* otherwise parse entire Composite Character info section, */
+X          /* saving the data */
+X            switch(recognize(keyword))
+X            {
+X                case COMMENT:
+X                    keyword = linetoken(fp);
+X                    break;
+X                case COMPCHAR:
+X                    if (ccount < fi->numOfComps)
+X                    {
+X                        keyword = token(fp);
+X                        if (pcount != fi->ccd[pos].numOfPieces)
+X                            error = parseError;
+X                        pcount = 0;
+X                        if (firstTime) firstTime = FALSE;
+X                        else pos++;
+X                        fi->ccd[pos].ccName = (char *) 
+X                            malloc(strlen(keyword) + 1);
+X                        strcpy(fi->ccd[pos].ccName, keyword);
+X                        keyword = token(fp);
+X                        fi->ccd[pos].numOfPieces = atoi(keyword);
+X                        fi->ccd[pos].pieces = (Pcc *)
+X                            calloc(fi->ccd[pos].numOfPieces, sizeof(Pcc));
+X                        j = 0;
+X                        ccount++;
+X                    }
+X                    else
+X                    {
+X                        error = parseError;
+X                        cont = FALSE;
+X                    }
+X                    break;
+X                case COMPCHARPIECE:
+X                    if (pcount < fi->ccd[pos].numOfPieces)
+X                    {
+X                        keyword = token(fp);
+X                        fi->ccd[pos].pieces[j].pccName = (char *) 
+X                                malloc(strlen(keyword) + 1);
+X                        strcpy(fi->ccd[pos].pieces[j].pccName, keyword);
+X                        keyword = token(fp);
+X                        fi->ccd[pos].pieces[j].deltax = atoi(keyword);
+X                        keyword = token(fp);
+X                        fi->ccd[pos].pieces[j++].deltay = atoi(keyword);
+X                        pcount++;
+X                    }
+X                    else
+X                        error = parseError;
+X                    break;
+X                case ENDCOMPOSITES:
+X                    cont = FALSE;
+X                    break;
+X                case ENDFONTMETRICS:
+X                    cont = FALSE;
+X                    error = normalEOF;
+X                    break;
+X                case NOPE:
+X                default:
+X                    error = parseError;
+X                    break;
+X            } /* switch */
+X    } /* while */
+X    
+X    if (error == ok && ccount != fi->numOfComps)
+X        error = parseError;
+X    
+X    return(error);
+X    
+} /* parseCompCharData */    
+X
+X
+X
+X
+/*************************** 'PUBLIC' FUNCTION ********************/ 
+X
+X
+/*************************** parseFile *****************************/
+X
+/*  parseFile is the only 'public' procedure available. It is called 
+X *  from an application wishing to get information from an AFM file.
+X *  The caller of this function is responsible for locating and opening
+X *  an AFM file and handling all errors associated with that task.
+X *
+X *  parseFile expects 3 parameters: a vaild file pointer, a pointer
+X *  to a (FontInfo *) variable (for which storage will be allocated and
+X *  the data requested filled in), and a mask specifying which
+X *  data from the AFM File should be saved in the FontInfo structure.
+X *
+X *  The file will be parsed and the requested data will be stored in 
+X *  a record of type FontInfo (refer to ParseAFM.h).
+X *
+X *  parseFile returns an error code as defined in parseAFM.h. 
+X *
+X *  The position of the read/write pointer associated with the file 
+X *  pointer upon return of this function is undefined.
+X */
+X
+extern int parseFile (fp, fi, flags)
+X  FILE *fp;
+X  FontInfo **fi;
+X  FLAGS flags;
+{
+X    
+X    int code = ok; 	/* return code from each of the parsing routines */
+X    int error = ok;	/* used as the return code from this function */
+X    
+X    register char *keyword; /* used to store a token */	 
+X    
+X   			      
+X    /* storage data for the global variable ident */			      
+X    ident = (char *) calloc(MAX_NAME, sizeof(char)); 
+X    if (ident == NULL) {error = storageProblem; return(error);}      
+X  
+X    (*fi) = (FontInfo *) calloc(1, sizeof(FontInfo));
+X    if ((*fi) == NULL) {error = storageProblem; return(error);}      
+X  
+X    if (flags & P_G) 
+X    {
+X        (*fi)->gfi = (GlobalFontInfo *) calloc(1, sizeof(GlobalFontInfo));
+X        if ((*fi)->gfi == NULL) {error = storageProblem; return(error);}      
+X    }
+X    
+X    /* The AFM File begins with Global Font Information. This section */
+X    /* will be parsed whether or not information should be saved. */     
+X    code = parseGlobals(fp, (*fi)->gfi); 
+X    
+X    if (code < 0) error = code;
+X    
+X    /* The Global Font Information is followed by the Character Metrics */
+X    /* section. Which procedure is used to parse this section depends on */
+X    /* how much information should be saved. If all of the metrics info */
+X    /* is wanted, parseCharMetrics is called. If only the character widths */
+X    /* is wanted, parseCharWidths is called. parseCharWidths will also */
+X    /* be called in the case that no character data is to be saved, just */
+X    /* to parse through the section. */
+X  
+X    if ((code != normalEOF) && (code != earlyEOF))
+X    {
+X        (*fi)->numOfChars = atoi(token(fp));
+X	    if (flags & (P_M ^ P_W))
+X        {
+X            (*fi)->cmi = (CharMetricInfo *) 
+X                      calloc((*fi)->numOfChars, sizeof(CharMetricInfo));
+X           if ((*fi)->cmi == NULL) {error = storageProblem; return(error);}
+X            code = parseCharMetrics(fp, *fi);             
+X        }
+X        else
+X        {
+X            if (flags & P_W)
+X            { 
+X                (*fi)->cwi = (int *) calloc(256, sizeof(int)); 
+X                if ((*fi)->cwi == NULL) 
+X                {
+X                	error = storageProblem; 
+X                	return(error);
+X                }
+X            }
+X            /* parse section regardless */
+X            code = parseCharWidths(fp, (*fi)->cwi);
+X        } /* else */
+X    } /* if */
+X    
+X    if ((error != earlyEOF) && (code < 0)) error = code;
+X    
+X    /* The remaining sections of the AFM are optional. This code will */
+X    /* look at the next keyword in the file to determine what section */
+X    /* is next, and then allocate the appropriate amount of storage */
+X    /* for the data (if the data is to be saved) and call the */
+X    /* appropriate parsing routine to parse the section. */
+X    
+X    while ((code != normalEOF) && (code != earlyEOF))
+X    {
+X        keyword = token(fp);
+X        if (keyword == NULL)
+X          /* Have reached an early and unexpected EOF. */
+X          /* Set flag and stop parsing */
+X        {
+X            code = earlyEOF;
+X            break; /* get out of loop */
+X        }
+X        switch(recognize(keyword))
+X        {
+X            case STARTKERNDATA:
+X                break;
+X            case ENDKERNDATA:
+X                break;
+X            case STARTTRACKKERN:
+X                keyword = token(fp);
+X                if (flags & P_T)
+X                {
+X                    (*fi)->numOfTracks = atoi(keyword);
+X                    (*fi)->tkd = (TrackKernData *) 
+X                        calloc((*fi)->numOfTracks, sizeof(TrackKernData));
+X                    if ((*fi)->tkd == NULL) 
+X                    {
+X                    	error = storageProblem; 
+X                    	return(error);
+X                    }
+X                } /* if */
+X                code = parseTrackKernData(fp, *fi);
+X                break;
+X            case STARTKERNPAIRS:
+X                keyword = token(fp);
+X                if (flags & P_P)
+X                {
+X                    (*fi)->numOfPairs = atoi(keyword);
+X                    (*fi)->pkd = (PairKernData *) 
+X                        calloc((*fi)->numOfPairs, sizeof(PairKernData));
+X                    if ((*fi)->pkd == NULL) 
+X                    {
+X                    	error = storageProblem; 
+X                    	return(error);
+X                    }
+X                } /* if */
+X                code = parsePairKernData(fp, *fi);
+X                break;
+X            case STARTCOMPOSITES:
+X                keyword = token(fp);
+X                if (flags & P_C)
+X                { 
+X                    (*fi)->numOfComps = atoi(keyword);
+X                    (*fi)->ccd = (CompCharData *) 
+X                        calloc((*fi)->numOfComps, sizeof(CompCharData));
+X                    if ((*fi)->ccd == NULL) 
+X                    {
+X                    	error = storageProblem; 
+X                    	return(error);
+X                    }
+X                } /* if */
+X                code = parseCompCharData(fp, *fi); 
+X                break;    
+X            case ENDFONTMETRICS:
+X                code = normalEOF;
+X                break;
+X            case NOPE:
+X            default:
+X                code = parseError;
+X                break;
+X        } /* switch */
+X        
+X        if ((error != earlyEOF) && (code < 0)) error = code;
+X        
+X    } /* while */
+X  
+X    if ((error != earlyEOF) && (code < 0)) error = code;
+X    
+X    if (ident != NULL) { free(ident); ident = NULL; }
+X        
+X    return(error);
+X  
+} /* parseFile */
+SHAR_EOF
+  $shar_touch -am 1018085596 'parseAFM.c' &&
+  chmod 0644 'parseAFM.c' ||
+  $echo 'restore of' 'parseAFM.c' 'failed'
+  shar_count="`wc -c < 'parseAFM.c'`"
+  test 43280 -eq "$shar_count" ||
+    $echo 'parseAFM.c:' 'original size' '43280,' 'current size' "$shar_count"
+fi
+# ============= parseAFM.h ==============
+if test -f 'parseAFM.h' && test X"$1" != X"-c"; then
+  $echo 'x -' SKIPPING 'parseAFM.h' '(file already exists)'
+else
+  $echo 'x -' extracting 'parseAFM.h' '(text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'parseAFM.h' &&
+/*
+X * (C) 1988, 1989 by Adobe Systems Incorporated. All rights reserved.
+X *
+X * This file may be freely copied and redistributed as long as:
+X *   1) This entire notice continues to be included in the file, 
+X *   2) If the file has been modified in any way, a notice of such
+X *      modification is conspicuously indicated.
+X *
+X * PostScript, Display PostScript, and Adobe are registered trademarks of
+X * Adobe Systems Incorporated.
+X * 
+X * ************************************************************************
+X * THE INFORMATION BELOW IS FURNISHED AS IS, IS SUBJECT TO CHANGE WITHOUT
+X * NOTICE, AND SHOULD NOT BE CONSTRUED AS A COMMITMENT BY ADOBE SYSTEMS
+X * INCORPORATED. ADOBE SYSTEMS INCORPORATED ASSUMES NO RESPONSIBILITY OR 
+X * LIABILITY FOR ANY ERRORS OR INACCURACIES, MAKES NO WARRANTY OF ANY 
+X * KIND (EXPRESS, IMPLIED OR STATUTORY) WITH RESPECT TO THIS INFORMATION, 
+X * AND EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES OF MERCHANTABILITY, 
+X * FITNESS FOR PARTICULAR PURPOSES AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
+X * ************************************************************************
+X */
+X
+/* ParseAFM.h
+X *
+X * This header file is used in conjuction with the parseAFM.c file.
+X * Together these files provide the functionality to parse Adobe Font
+X * Metrics files and store the information in predefined data structures.
+X * It is intended to work with an application program that needs font metric
+X * information. The program can be used as is by making a procedure call to 
+X * parse an AFM file and have the data stored, or an application developer
+X * may wish to customize the code. 
+X *
+X * This header file defines the data structures used as well as the key 
+X * strings that are currently recognized by this version of the AFM parser.
+X * This program is based on the document "Adobe Font Metrics Files, 
+X * Specification Version 2.0".
+X *
+X * AFM files are separated into distinct sections of different data. Because
+X * of this, the parseAFM program can parse a specified file to only save
+X * certain sections of information based on the application's needs. A record 
+X * containing the requested information will be returned to the application.
+X * 
+X * AFM files are divided into five sections of data:
+X *	1) The Global Font Information
+X *	2) The Character Metrics Information 
+X *	3) The Track Kerning Data
+X *	4) The Pair-Wise Kerning Data
+X *	5) The Composite Character Data
+X *
+X * Basically, the application can request any of these sections independent
+X * of what other sections are requested. In addition, in recognizing that
+X * many applications will want ONLY the x-width of characters and not all
+X * of the other character metrics information, there is a way to receive
+X * only the width information so as not to pay the storage cost for the 
+X * unwanted data. An application should never request both the 
+X * "quick and dirty" char metrics (widths only) and the Character Metrics 
+X * Information since the Character Metrics Information will contain all 
+X * of the character widths as well.
+X * 
+X * There is a procedure in parseAFM.c, called parseFile, that can be 
+X * called from any application wishing to get information from the AFM File.
+X * This procedure expects 3 parameters: a vaild file descriptor, a pointer
+X * to a (FontInfo *) variable (for which space will be allocated and then 
+X * will be filled in with the data requested), and a mask specifying
+X * which data from the AFM File should be saved in the FontInfo structure.
+X * 
+X * The flags that can be used to set the appropriate mask are defined below.
+X * In addition, several commonly used masks have already been defined. 
+X * 
+X * History:
+X *	original: DSM  Thu Oct 20 17:39:59 PDT 1988
+X *  modified: DSM  Mon Jul  3 14:17:50 PDT 1989
+X *    - added 'storageProblem' return code
+X *	  - fixed typos
+X */
+X
+#include <stdio.h>
+X
+X
+X
+/* your basic constants */
+#define TRUE 1
+#define FALSE 0
+#define EOL '\n'                /* end-of-line indicator */
+#define MAX_NAME 4096           /* max length for identifiers */
+#define BOOL int
+#define FLAGS int
+X
+X
+X
+/* Flags that can be AND'ed together to specify exactly what
+X * information from the AFM file should be saved.
+X */
+#define P_G	0x01	/* 0000 0001 */   /* Global Font Info      */
+#define P_W	0x02	/* 0000 0010 */   /* Character Widths ONLY */
+#define P_M	0x06	/* 0000 0110 */   /* All Char Metric Info  */
+#define P_P	0x08	/* 0000 1000 */   /* Pair Kerning Info     */
+#define P_T	0x10	/* 0001 0000 */   /* Track Kerning Info    */
+#define P_C	0x20	/* 0010 0000 */   /* Composite Char Info   */
+X
+X
+/* Commonly used flags
+X */
+#define P_GW	(P_G | P_W) 
+#define P_GM	(P_G | P_M)
+#define P_GMP	(P_G | P_M | P_P)
+#define P_GMK	(P_G | P_M | P_P | P_T) 
+#define P_ALL	(P_G | P_M | P_P | P_T | P_C)
+X
+X
+X
+/* Possible return codes from the parseFile procedure.
+X * 
+X * ok means there were no problems parsing the file.
+X *
+X * parseError means that there was some kind of parsing error, but the
+X * parser went on. This could include problems like the count for any given
+X * section does not add up to how many entries there actually were, or
+X * there was a key that was not recognized. The return record may contain
+X * vaild data or it may not. 
+X *
+X * earlyEOF means that an End of File was encountered before expected. This
+X * may mean that the AFM file had been truncated, or improperly formed.
+X * 
+X * storageProblem means that there were problems allocating storage for
+X * the data structures that would have contained the AFM data.
+X */
+#define ok 0
+#define parseError -1
+#define earlyEOF -2
+#define storageProblem -3
+X
+X
+X
+/************************* TYPES *********************************/
+/* Below are all of the data structure definitions. These structures
+X * try to map as closely as possible to grouping and naming of data 
+X * in the AFM Files.
+X */
+X
+X
+/* Bounding box definition. Used for the Font BBox as well as the 
+X * Character BBox.
+X */
+typedef struct
+{ 
+X   int llx;	/* lower left x-position  */
+X   int lly;	/* lower left y-position  */
+X   int urx;	/* upper right x-position */
+X   int ury;	/* upper right y-position */
+} BBox;
+X
+X
+/* Global Font information.
+X * The key that each field is associated with is in comments. For an 
+X * explanation about each key and its value please refer to the AFM
+X * documentation (full title & version given above). 
+X */
+typedef struct
+{  
+X   char *afmVersion;		/* key: StartFontMetrics */
+X   char *fontName;		/* key: FontName */
+X   char *fullName;		/* key: FullName */
+X   char *familyName;		/* key: FamilyName */
+X   char *weight;		/* key: Weight */
+X   float italicAngle;		/* key: ItalicAngle */
+X   BOOL isFixedPitch;		/* key: IsFixedPitch */
+X   BBox fontBBox;		/* key: FontBBox */
+X   int underlinePosition;  	/* key: UnderlinePosition */
+X   int underlineThickness; 	/* key: UnderlineThickness */
+X   char *version;		/* key: Version */
+X   char *notice;		/* key: Notice */
+X   char *encodingScheme;	/* key: EncodingScheme */
+X   int capHeight;		/* key: CapHeight */
+X   int xHeight;			/* key: XHeight */
+X   int ascender;		/* key: Ascender */
+X   int descender;		/* key: Descender */
+} GlobalFontInfo;
+X
+X
+/* Ligature definition is a linked list since any character can have
+X * any number of ligatures.
+X */
+typedef struct _t_ligature
+{
+X    char *succ, *lig;
+X    struct _t_ligature *next;
+} Ligature;
+X
+X
+/* Character Metric Information. This structure is used only if ALL 
+X * character metric information is requested. If only the character
+X * widths is requested, then only an array of the character x-widths
+X * is returned.
+X *
+X * The key that each field is associated with is in comments. For an 
+X * explanation about each key and its value please refer to the 
+X * Character Metrics section of the AFM documentation (full title
+X * & version given above). 
+X */
+typedef struct
+{
+X    int code, 		/* key: C */
+X        wx,		/* key: WX */
+X        wy;		/* together wx and wy are associated with key: W */
+X    char *name; 	/* key: N */
+X    BBox charBBox;	/* key: B */
+X    Ligature *ligs;	/* key: L (linked list; not a fixed number of Ls */
+} CharMetricInfo;
+X
+X
+/* Track kerning data structure.
+X * The fields of this record are the five values associated with every 
+X * TrackKern entry.
+X *  
+X * For an explanation about each value please refer to the 
+X * Track Kerning section of the AFM documentation (full title
+X * & version given above). 
+X */
+typedef struct 
+{
+X    int degree;  
+X    float minPtSize, 
+X          minKernAmt, 
+X          maxPtSize, 
+X          maxKernAmt;
+} TrackKernData;
+X
+X
+/* Pair Kerning data structure.
+X * The fields of this record are the four values associated with every
+X * KP entry. For KPX entries, the yamt will be zero.
+X *
+X * For an explanation about each value please refer to the 
+X * Pair Kerning section of the AFM documentation (full title
+X * & version given above). 
+X */
+typedef struct 
+{
+X    char *name1;
+X    char *name2;
+X    int xamt,
+X        yamt;
+} PairKernData;
+X
+X
+/* PCC is a piece of a composite character. This is a sub structure of a
+X * compCharData described below.
+X * These fields will be filled in with the values from the key PCC.
+X * 
+X * For an explanation about each key and its value please refer to the 
+X * Composite Character section of the AFM documentation (full title
+X * & version given above).  
+X */
+typedef struct
+{
+X    char *pccName;
+X    int deltax,
+X        deltay;
+} Pcc;
+X
+X
+/* Composite Character Information data structure. 
+X * The fields ccName and numOfPieces are filled with the values associated
+X * with the key CC. The field pieces points to an array (size = numOfPieces)
+X * of information about each of the parts of the composite character. That
+X * array is filled in with the values from the key PCC.
+X * 
+X * For an explanation about each key and its value please refer to the 
+X * Composite Character section of the AFM documentation (full title
+X * & version given above).  
+X */
+typedef struct
+{
+X    char *ccName;
+X    int numOfPieces;
+X    Pcc *pieces;
+} CompCharData;
+X
+X
+/*  FontInfo
+X *  Record type containing pointers to all of the other data
+X *  structures containing information about a font.
+X *  A a record of this type is filled with data by the
+X *  parseFile function.
+X */
+typedef struct
+{ 
+X    GlobalFontInfo *gfi;	/* ptr to a GlobalFontInfo record */
+X    int *cwi;			/* ptr to 256 element array of just char widths */ 
+X    int numOfChars;		/* number of entries in char metrics array */
+X    CharMetricInfo *cmi;	/* ptr to char metrics array */
+X    int numOfTracks;		/* number to entries in track kerning array */
+X    TrackKernData *tkd;		/* ptr to track kerning array */
+X    int numOfPairs;		/* number to entries in pair kerning array */
+X    PairKernData *pkd;		/* ptr to pair kerning array */
+X    int numOfComps;		/* number to entries in comp char array */
+X    CompCharData *ccd;		/* ptr to comp char array */
+} FontInfo;
+X
+X
+X
+/************************* PROCEDURES ****************************/
+X
+/*  Call this procedure to do the grunt work of parsing an AFM file.
+X *
+X *  "fp" should be a valid file pointer to an AFM file.
+X *
+X *  "fi" is a pointer to a pointer to a FontInfo record sturcture 
+X *  (defined above). Storage for the FontInfo structure will be
+X *  allocated in parseFile and the structure will be filled in
+X *  with the requested data from the AFM File.
+X *
+X *  "flags" is a mask with bits set representing what data should
+X *  be saved. Defined above are valid flags that can be used to set
+X *  the mask, as well as a few commonly used masks.
+X *
+X *  The possible return codes from parseFile are defined above.
+X */
+X
+extern int parseFile ( /* FILE *fp; FontInfo **fi; FLAGS flags; */ ); 
+SHAR_EOF
+  $shar_touch -am 1018085596 'parseAFM.h' &&
+  chmod 0644 'parseAFM.h' ||
+  $echo 'restore of' 'parseAFM.h' 'failed'
+  shar_count="`wc -c < 'parseAFM.h'`"
+  test 11502 -eq "$shar_count" ||
+    $echo 'parseAFM.h:' 'original size' '11502,' 'current size' "$shar_count"
+fi
+# ============= parseAFMclient.c ==============
+if test -f 'parseAFMclient.c' && test X"$1" != X"-c"; then
+  $echo 'x -' SKIPPING 'parseAFMclient.c' '(file already exists)'
+else
+  $echo 'x -' extracting 'parseAFMclient.c' '(text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'parseAFMclient.c' &&
+/*
+X * (C) 1988, 1989 by Adobe Systems Incorporated. All rights reserved.
+X *
+X * This file may be freely copied and redistributed as long as:
+X *   1) This entire notice continues to be included in the file, 
+X *   2) If the file has been modified in any way, a notice of such
+X *      modification is conspicuously indicated.
+X *
+X * PostScript, Display PostScript, and Adobe are registered trademarks of
+X * Adobe Systems Incorporated.
+X * 
+X * ************************************************************************
+X * THE INFORMATION BELOW IS FURNISHED AS IS, IS SUBJECT TO CHANGE WITHOUT
+X * NOTICE, AND SHOULD NOT BE CONSTRUED AS A COMMITMENT BY ADOBE SYSTEMS
+X * INCORPORATED. ADOBE SYSTEMS INCORPORATED ASSUMES NO RESPONSIBILITY OR 
+X * LIABILITY FOR ANY ERRORS OR INACCURACIES, MAKES NO WARRANTY OF ANY 
+X * KIND (EXPRESS, IMPLIED OR STATUTORY) WITH RESPECT TO THIS INFORMATION, 
+X * AND EXPRESSLY DISCLAIMS ANY AND ALL WARRANTIES OF MERCHANTABILITY, 
+X * FITNESS FOR PARTICULAR PURPOSES AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
+X * ************************************************************************
+X */
+X
+/*  parseAFMclient.c
+X *
+X *  This file is an example of how an application might use the provided
+X *  AFM Parser (parseAFM.c).
+X *
+X *  In a nutshell, the client of the parser (like this file) chooses
+X *  the AFM File that it wishes to have parsed, opens the file for 
+X *  reading (and does any/all error handling associated with that task),
+X *  and passes the resulting file pointer to the procedure "parseFile"
+X *  (in parseAFM.c). In addition to the file pointer, the client also
+X *  needs to pass a pointer to a FontInfo record type (for which storage
+X *  will be allocated and data filled in), and a mask representing which
+X *  sections of the AFM should be saved in the FontInfo record.
+X *
+X *  In the procedure "main", the mask is built from command line switches, 
+X *  but your application, of course, can set that mask any way you prefer.
+X *  "main" then calls the "parseFile" procedure (of parseAFM.c) to do the
+X *  grunt work, and checks the error codes upon "parseFile"'s return.
+X *
+X *  The rest of this sample application is a collection of print routines 
+X *  that show how to reference each of the sections of data and a 
+X *  "freeStorage" routine (that many unix programmers may feel they 
+X *  don't need but is included for portability to other systems that do 
+X *  need to manage storage). The print procedures are there just to
+X *  give meaning to this application, and hopefully your application
+X *  will use the data collected from the AFM file in a more useful way.
+X *  
+X * History:
+X *	original: DSM  Thu Oct 20 17:39:59 PDT 1988
+X *  modified: DSM  Mon Jul  3 14:17:50 PDT 1989
+X *    - added 'storageProblem' check in main
+X */
+X
+#include <stdio.h>
+#include "parseAFM.h"
+X
+X
+/*************************** GLOBALS ***************************/
+FontInfo *fi;
+FLAGS myflags = 0;
+X  
+X
+/*************************** printGlobals **********************/
+X
+printGlobals()
+{
+X    printf("\nThis AFM is of Version %s\n", fi->gfi->afmVersion);
+X    printf("The font name is %s\n", fi->gfi->fontName);
+X    printf("The full name is %s\n", fi->gfi->fullName);
+X    printf("The family name is %s\n", fi->gfi->familyName);
+X    printf("The weight is %s\n", fi->gfi->weight);
+X    printf("Italic Angle is %3.1f\n", fi->gfi->italicAngle);
+X    if (fi->gfi->isFixedPitch)
+X        printf("This font IS fixed-pitch\n");
+X    else
+X        printf("This font is NOT fixed-pitch\n");
+X    printf("Underline position is %d\n", fi->gfi->underlinePosition);
+X    printf("Underline thickness is %d\n", fi->gfi->underlineThickness);
+X    printf("Version is %s\n", fi->gfi->version);
+X    printf("FontBBox is [%d, %d, %d, %d]\n", 
+X        fi->gfi->fontBBox.llx, fi->gfi->fontBBox.lly, 
+X        fi->gfi->fontBBox.urx, fi->gfi->fontBBox.ury);
+X    printf("%s\n", fi->gfi->notice);
+X    printf("Encoding Scheme is %s\n", fi->gfi->encodingScheme);
+X    printf("CapHeight is %d\n", fi->gfi->capHeight);
+X    printf("XHeight is %d\n", fi->gfi->xHeight);
+X    printf("Descender is %d\n", fi->gfi->descender);
+X    printf("Ascender is %d\n\n", fi->gfi->ascender);
+X    
+} /* printGlobals */
+X
+X
+/*************************** printCharWidths *********************/
+printCharWidths()
+{
+X    int i = 0;
+X    printf("Here come some character widths ...\n");
+X    for (i = 0; i < 256; ++i)
+X        printf("  code: %3d   width: %4d\n", i, fi->cwi[i]);
+X    printf("\n");
+X 
+} /* printCharWidths */
+X
+X
+/*************************** printAllCharMetrics *****************/
+printAllCharMetrics()
+{
+X    int i = 0;
+X    CharMetricInfo *temp = fi->cmi;
+X    Ligature *node = temp->ligs;
+X  
+X    printf("Here come some character metrics ...\n");
+X    for (i = 0; i < fi->numOfChars; ++i)
+X    {
+X        printf(
+X          "  code: %3d   x-width: %4d   y-width: %4d   name: %-12s   bbox: [%d, %d, %d, %d]\n",
+X            temp->code, temp->wx, temp->wy, temp->name, temp->charBBox.llx, 
+X            temp->charBBox.lly, temp->charBBox.urx, temp->charBBox.ury);
+X        for (node = temp->ligs; node != NULL; node = node->next)
+X        {
+X            printf("      Ligatures:  successor: %s  ligature: %s\n", 
+X                node->succ, node->lig);
+X        }
+X        temp++;
+X    } /* for */
+X    printf("\n");
+X
+} /* printAllCharMetrics */
+X
+X
+/*************************** printKernPairData ******************/
+printKernPairData()
+{
+X    int i = 0;
+X    PairKernData *pkd = fi->pkd;
+X    
+X    if (fi->numOfPairs != 0)
+X    {
+X        printf("Here comes the pair kerning data ...\n");
+X        for (i = 0; i < fi->numOfPairs; ++i)
+X        printf(
+X          "  char 1: %-12s   char 2: %-12s   x-amount: %d    y-amount: %d\n", 
+X            pkd[i].name1, pkd[i].name2, pkd[i].xamt, pkd[i].yamt);
+X    }
+X    else printf("There isn't any pair kerning data.\n");
+X    printf("\n");
+X    
+} /* printKernPairData */
+X
+X
+/*************************** printKernTrackData *******************/
+printKernTrackData()
+{
+X    int i = 0;
+X    TrackKernData *tkd = fi->tkd;
+X    
+X    if (fi->numOfTracks != 0)
+X    {
+X        printf("Here comes the track kerning data ...\n");
+X        for (i = 0; i < fi->numOfTracks; ++i)
+X            printf(
+X              "  degree: %d   min-pt: %5.2f   min-kern: %5.2f   max-pt: %5.2f   max-kern: %5.2f\n", 
+X                tkd[i].degree, tkd[i].minPtSize, tkd[i].minKernAmt, 
+X                tkd[i].maxPtSize, tkd[i].maxKernAmt);
+X    }
+X    else printf("There isn't any track kerning data.\n");
+X    printf("\n");
+X    
+} /* printKernTrackData */
+X
+X
+/*************************** printCompCharData ********************/
+printCompCharData()
+{
+X    int i = 0, j = 0;
+X    CompCharData *ccd = fi->ccd;
+X    
+X    if (fi->numOfComps != 0)
+X    {
+X        printf("Here comes the composite character data ...\n");
+X        for (i = 0; i < fi->numOfComps; ++i)
+X        {
+X            printf("  comp char: %-12s   pieces: %d\n", 
+X                ccd[i].ccName, ccd[i].numOfPieces);
+X            for (j = 0; j < ccd[i].numOfPieces; ++j)
+X                printf(
+X                  "      Part # %d   Name: %-12s   Delta X: %d Delta Y: %d\n", 
+X                    (j + 1), ccd[i].pieces[j].pccName, 
+X                    ccd[i].pieces[j].deltax, ccd[i].pieces[j].deltay);
+X        }
+X    }
+X    else printf("There aren't any composites characters. \n");
+X    printf("\n");
+X    
+} /* printCompCharData */
+X
+X
+X
+/*************************** freeStorage ***********************/
+X
+freeStorage()
+{
+X    if (fi != NULL)
+X    {
+X        if (fi->gfi != NULL)
+X        { 
+X            free(fi->gfi->afmVersion); fi->gfi->afmVersion = NULL;
+X            free(fi->gfi->fontName); fi->gfi->fontName = NULL;
+X            free(fi->gfi->fullName); fi->gfi->fullName = NULL;
+X            free(fi->gfi->familyName); fi->gfi->familyName = NULL;
+X            free(fi->gfi->weight); fi->gfi->weight = NULL;
+X            free(fi->gfi->version); fi->gfi->version = NULL;
+X            free(fi->gfi->notice); fi->gfi->notice = NULL;
+X            free(fi->gfi->encodingScheme); fi->gfi->encodingScheme = NULL;
+X            free(fi->gfi); fi->gfi = NULL;
+X        }
+X  
+X        if (fi->cwi != NULL)
+X        { free(fi->cwi); fi->cwi = NULL; }
+X
+X        if (fi->cmi != NULL)
+X        { 
+X            int i = 0;
+X            CharMetricInfo *temp = fi->cmi;
+X            Ligature *node = temp->ligs;
+X            
+X            for (i = 0; i < fi->numOfChars; ++i)
+X            {
+X                for (node = temp->ligs; node != NULL; node = node->next)
+X                {
+X                    free(node->succ); node->succ = NULL;
+X                    free(node->lig); node->lig = NULL;
+X                }
+X                
+X                free(temp->name); temp->name = NULL;
+X                temp++;
+X            }
+X            
+X            free(fi->cmi); fi->cmi = NULL;
+X        }
+X
+X        if (fi->tkd != NULL)
+X        { free(fi->tkd); fi->tkd = NULL; }
+X  
+X        if (fi->pkd != NULL)
+X        { 
+X            free(fi->pkd->name1); fi->pkd->name1 = NULL;
+X            free(fi->pkd->name2); fi->pkd->name2 = NULL;
+X            free(fi->pkd); fi->pkd = NULL;
+X        }
+X
+X        if (fi->ccd != NULL)
+X        { 
+X            int i = 0, j = 0;
+X    	    CompCharData *ccd = fi->ccd;
+X    	    
+X    	    for (i = 0; i < fi->numOfComps; ++i)
+X    	    {
+X    	        for (j = 0; j < ccd[i].numOfPieces; ++j)
+X    	        {
+X    	            free(ccd[i].pieces[j].pccName); 
+X    	            ccd[i].pieces[j].pccName = NULL;
+X    	        }
+X    	        
+X    	        free(ccd[i].ccName); ccd[i].ccName = NULL;
+X    	    }
+X    
+X            free(fi->ccd); fi->ccd = NULL;
+X        }
+X        
+X        free(fi);
+X
+X    } /* if */ 
+X  
+} /* freeStorage */
+X
+X
+/*************************** printValues **************************/
+X
+printValues()
+{
+X    if ((myflags & P_G) && (fi->gfi != NULL)) printGlobals();
+X    if ((myflags & (P_M ^ P_W)) && (fi->cmi != NULL)) printAllCharMetrics();
+X    else if ((myflags & P_W) && (fi->cwi != NULL)) printCharWidths();
+X    if ((myflags & P_P) && (fi->pkd != NULL)) printKernPairData();
+X    if ((myflags & P_T) && (fi->tkd != NULL)) printKernTrackData(); 
+X    if ((myflags & P_C) && (fi->ccd != NULL)) printCompCharData();
+X    
+} /* printValues */
+X
+X
+X
+/*************************** main *********************************/
+X
+main (argc, argv) 
+X  int argc; 
+X  char **argv;
+{
+X    char *filename, *prog = *argv;
+X    FILE *fp;
+X    
+X    ++argv; --argc;
+X    while (argc > 0 && **argv == '-')
+X        {
+X        switch ((*argv)[1])
+X            {
+X            case 'g':   /* save Globals */
+X                myflags |= P_G; 
+X                break;
+X            case 'w':   /* save Char Widths */
+X                myflags |= P_W; 
+X                break;
+X	   		case 'm':   /* save All Char Metrics */
+X	        	myflags |= P_M; 
+X	        	break;
+X            case 'p':   /* save Kern Pair Data */
+X                myflags |= P_P; 
+X                break;
+X            case 't':   /* save Kern Track Data */
+X                myflags |= P_T; 
+X                break;
+X	    	case 'c':   /* save Comp Char Data */
+X	       	 	myflags |= P_C; 
+X	       		break;
+X            default: 
+X                printf("    usage: parseAFM [-g] [-w] [-p] [-t] [-c] [AFM File]\nOR: usage: parseAFM [-g] [-m] [-p] [-t] [-c] [AFM File]\n");
+X                exit(0);
+X            }
+X        ++argv; --argc;
+X        }
+X    
+X    if (!argc)
+X    {
+X        printf("    usage: parseAFM [-g] [-w] [-p] [-t] [-c] [AFM File]\nOR: usage: parseAFM [-g] [-m] [-p] [-t] [-c] [AFM File]\n");
+X        exit(0);
+X    }
+X    else 
+X        filename = *argv;
+X
+X    if (!filename[0]) 
+X    {
+X	printf ("*** ERROR: can't open. filename is missing.\n",
+X		filename );
+X	return 0;
+X    }
+X       
+X    fp = fopen(filename, "r" );
+X    if (fp == NULL) 
+X    {
+X	printf ("*** ERROR: can't find: %s\n", filename );
+X        exit(1);
+X    }
+X    
+X    switch (parseFile(fp, &fi, myflags))
+X    {
+X        case parseError:
+X            printf("*** ERROR: problem in parsing the AFM File.\n");
+X        case ok:
+X            fclose(fp);
+X            printValues();
+X            freeStorage();
+X            break;
+X        case earlyEOF:
+X            printf("The AFM File ended prematurely.\n");
+X            break;
+X        case storageProblem:
+X            printf("*** ERROR: problem allocating storage.\n");
+X            break;
+X        default:
+X            break;
+X    }
+X    
+} /* main */
+SHAR_EOF
+  $shar_touch -am 1018085596 'parseAFMclient.c' &&
+  chmod 0644 'parseAFMclient.c' ||
+  $echo 'restore of' 'parseAFMclient.c' 'failed'
+  shar_count="`wc -c < 'parseAFMclient.c'`"
+  test 12210 -eq "$shar_count" ||
+    $echo 'parseAFMclient.c:' 'original size' '12210,' 'current size' "$shar_count"
+fi
+rm -fr _sh00599
+exit 0

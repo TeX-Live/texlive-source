@@ -1,0 +1,217 @@
+%----------------------------------------------------------------------------
+% ----- File:        intro.tex 
+% ----- Author:      Rainer Menzner (Rainer.Menzner@web.de)
+% ----- Date:        2001-06-03
+% ----- Description: This file is part of the t1lib-documentation.
+% ----- Copyright:   t1lib is copyrighted (c) Rainer Menzner, 1996-2001.
+%                    As of version 0.5, t1lib is distributed under the
+%                    GNU General Public Library License. The
+%                    conditions can be found in the files LICENSE and
+%                    LGPL, which should reside in the toplevel
+%                    directory of the distribution.  Please note that 
+%                    there are parts of t1lib that are subject to
+%                    other licenses:
+%                    The parseAFM-package is copyrighted by Adobe Systems
+%                    Inc.
+%                    The type1 rasterizer is copyrighted by IBM and the
+%                    X11-consortium.
+% ----- Warranties:  Of course, there's NO WARRANTY OF ANY KIND :-)
+% ----- Credits:     I want to thank IBM and the X11-consortium for making
+%                    their rasterizer freely available.
+%                    Also thanks to Piet Tutelaers for his ps2pk, from
+%                    which I took the rasterizer sources in a format
+%                    independent from X11.
+%                    Thanks to all people who make free software living!
+%----------------------------------------------------------------------------
+
+\newpage
+\section{Introduction}
+\subsection{What Does \tonelib\ Do?}
+\tonelib\ is a library written in the C programming language 
+allowing a programmer to generate bitmaps from Adobe (TM) Type 1 fonts
+quite easily. These bitmaps are returned in a data structure
+with type {\ttfamily GLYPH}. This special
+{\ttfamily GLYPH}-type is also used in the X11 window system to
+describe character bitmaps. It contains the bitmap data as well as
+some metric information. But \tonelib\ is in itself entirely independent
+of the X11-system or any other graphical user interface.
+
+Given that the X11-system is probably the most frequently used
+window system in the UNIX-world, and furthermore assuming that most
+graphical applications run under window systems, it appears that
+\tonelib\ implements functionality already provided by the
+graphical user interface,
+the X11-system. Thus the question arises: Why not use X11 directly for
+rastering characters? Well, the answer is quite simple; the X11 Font
+machinery appears to be too {\em static} in order to use it for
+certain purposes. Moreover X11-calculations and positioning of
+characters are based on bitmap
+dimensions and are thus subject to error accumulation.
+
+Here is a list of features which are supported in the current release
+of \tonelib.
+\begin{itemize}
+\item Rasterizing is done as characters get requested. The X11-server,
+  in contrast,
+  rasters a font completely at a given size
+  when it is loaded. {\em Rastering on demand} saves time when the
+  font is loaded the first time and saves memory since often only the
+  alphabetic letters and a few other characters are needed.
+\item The encoding mechanism of PostScript is fully supported. The
+  user may use the fonts' internal or some other encoding.
+  Additional encoding files can be loaded at runtime and fonts can be
+  reencoded at runtime. The syntax of encoding files is
+  straight-forward and simple.
+\item The library makes use of Adobe Font Metric data in the form of
+  AFM files. This may seem a disadvantage, but in order
+  to make decent typesetting possible, some more information than that
+  contained in Type 1 font files is needed. Besides, Adobe makes
+  these AFM files freely available on their ftp-server for all
+  registered Type 1 fonts.
+\item In case AFM files are missing, \tonelib\ is able to generate
+  metrics information in charspace accuracy by rastering each
+  character at 1000~bp.
+\item In addition to generation of character bitmaps, there is a way
+  to directly raster strings of any length in a given font. 
+  The space-width may explicitly be corrected by the user. This
+  may be needed by word processing applications.
+\item Strings may be rastered 
+  optionally using pairwise kerning information from
+  the AFM file. Kerning is an important feature of good
+  quality typesetting.
+  Kerning information can also be requested by the user without
+  rasterization. 
+\item Ligature information is made available to the user in an
+  efficient way. Use of Ligatures is another characteristic of good
+  typesetting. As to my 
+  knowledge, only \TeX\ and all related macro-packages are able to
+  handle ligatures in a natural and efficient way. 
+\item Rotation and arbitrary transformation on the fly is supported. 
+\item \tonelib\ supports antialiasing. In this case, a pixel is
+  represented as a byte, word or double word. Antialiasing is
+  implemented by subsampling with factor 2 or 4 alternatively.
+  If you use the X11-interface introduced in \tonelib\ V.\ 0.3-beta, 
+  even colored antialiasing between any pair of colors is provided in a
+  completely transparent way.
+\item In addition to transformation on the fly, two transformation
+  types---{\em slanting} and {\em extending}---are possible on the fontlevel
+  including bitmap caching. Horizontal expansion of fonts is fully supported
+  and since version 0.3-beta also {\em slanting} of fonts is nearly fully
+  supported.  For restrictions and drawbacks of slanting fonts see
+  \ref{transformations} on page \pageref{transformations}.
+\item Paths, the library searches for the different needed file types
+  are specified at runtime by means of a
+  configuration file. They may thus be changed without needing to
+  recompile the application. For example, the directories of the
+  X11-system's Type 1 font files may be specified there in order to use
+  these fonts with the library. A user may have his own configuration file and
+  as a fallback/default there is a system wide configuration file. This should
+  be setup when the library is installed.
+\item Since of version 0.3-beta a special set of functions is provided which
+  implements a more comfortable X11-interface. This is due to the fact that
+  X11 is the only standard window system in the UNIX world. However, as before
+  \tonelib\ may be compiled and used without even having X11 installed.
+\item Some decorations like {\em underlining} are supported by simply setting
+  a flag for the rastering functions.
+\item {\em Right To Left} typesetting is supported.
+\item Font subsetting is easily achieved using a high level function. This
+  makes it easier for application to efficiently export Postscript files.
+\item Composite character information can be retrieved. Moreover, \tonelib\
+  transparently handles and realizes composite character definitions from AFM
+  files.
+\end{itemize}
+There are also some problems and features not yet
+implemented, but likely to be implemented in the future.
+The main problem up to now is:
+\begin{itemize}
+\item The font cache isn't a font cache really. At this time all
+  bitmaps are saved by always allocating more memory from the
+  system. No automatic removal of bitmaps no longer needed is 
+  done. However, the user has the possibility of explicitly
+  removing data, if he thinks it is not needed anymore.
+\end{itemize}
+
+\subsection{Copyrights and Credits}
+There are some copyrights on parts of the library and there are some
+programmers (or corporations) which I want to give credit. 
+The library uses:
+\begin{itemize}
+\item[--] all internal parts of the X11-rasterizer donated to
+  the X11-project by IBM. This rasterizer does the {\em real} hard
+  work of scan-conversion.
+\item[--] the modifications to the rasterizer done by Piet
+  Tutelaers in his ps2pk-package. The main purpose was decoupling the 
+  sources from the X11-system sources.
+\item[--] the \verb+parse_AFM+ software which was made freely available
+  by Adobe. This is used to parse the AFM files (what
+  a surprise) and to generate the data structures the information is
+  saved in.
+\end{itemize}
+
+Raph Levien (\verb+raph@acm.org+) contributed an algorithm for 
+sampling down non-antialiased bitmaps to antialiased bitmaps in a very
+efficient manor. This makes antialiasing a lot faster.
+
+Fred L.\ Drake, Jr. (\verb+fdrake@acm.org+) wrote a Python interface to
+\tonelib, which is distributed with \tonelib. This wrapper is called
+\verb+t1python+ and allows Python-programmers to use Type 1 fonts. I
+can not tell anything more on this topic since I do not know the
+Python language. All questions concerning the Python interface should
+thus be addressed to Fred L.\ Drake, Jr.
+
+Evgeny Stambulchik (\verb+fnevgeny@plasma-gate.weizmann.ac.il+), maintainer of
+the \verb+grace+-project---a descendent of \verb+xmgr+, never gets tired of
+finding and reporting (and fixing) bugs in \tonelib. Other members of this
+project spent time in porting \tonelib\ to further systems:
+\begin{itemize}
+\item Ed Vigmond (\verb+vigmonde@IGB.UMontreal.CA+): IRIX-port,
+\item John Hasstedt (\verb+John.Hasstedt@sunysb.edu+): VMS-port,
+\item Alexander Mai (\verb+st002279@hrzpub.tu-darmstadt.de+): OS/2-port.
+\end{itemize}
+
+Hirotsugo Kakugawa (\verb+h.kakugawa@computer.org+) added support for GNU
+\verb+libtool+ to \tonelib.
+
+David Huggins-Daines (\verb+bn711@freenet.carleton.ca+) spent effort in
+finding memory leaks and maintains a Debian-package of \tonelib.
+
+
+\begin{center}
+  \Large Thanks to all these people \\
+  and to all those contributors not mentioned here! 
+\end{center}
+
+\subsection{Motivation}
+The idea of writing this library was due to the SciTeXt-project which
+was founded in 1996. They needed a font raster system with some more
+functionality than X11 provided. You may find that some things (for
+example the format of the font database file) is really closely
+related to SciTeXt. In February '{}97 the SciTeXt developers decided to
+migrate from C to Java and did not need a font rasterizer any more. Since I
+thought there could be other applications for this library I continued the
+work on it and voila. 
+
+I have removed the history description which followed at this place in some
+previous versions. The history can be roughly viewed in the file \verb+Changes+
+which is located in the toplevel directory of the distribution.
+
+
+\subsection{How to Reach the Author/How to Get \tonelib}
+If you have questions, comments or bug reports, you can reach me by
+eMail. The address is 
+\begin{center}
+\verb+Rainer.Menzner@web.de+
+\end{center}
+If you have bug-reports, it would be best if you could reproduce the error
+using the test program \verb+xglyph+ (see \ref{xglyph}). 
+
+\tonelib\ is available by anonymous ftp as\\[5mm]
+\verb+ftp://sunsite.unc.edu/pub/Linux/libs/graphics/t1lib-+$x.y[.z]$\verb+.tar.gz+
+\\[5mm]
+Here, $x.y.z$ is the version identifier and the brackets around $z$ indicate
+that this entry is optional.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "t1lib_doc"
+%%% End: 

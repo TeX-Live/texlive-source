@@ -1,0 +1,108 @@
+# Makefile.in
+# 
+# This file is part of the t1lib-package! See documentation and Readme files
+# of the t1lib-package for copyright restrictions.
+#
+# Targets provided: 
+#                      all (default)
+#                      install
+#                      uninstall
+#                      clean
+#                      pdf (this is internally used only because it
+#                           interferes with the all-target) 
+#                      ps  (now=all-target)
+#
+# Author:              Rainer Menzner (Rainer.Menzner@web.de)
+# Date:                04/06/1997
+# Last modified:       2004-12-12
+#
+
+SHELL     = /bin/sh
+CC        = @CC@
+CPP       = @CPP@
+CFLAGS    = @CFLAGS@
+OPTIONS   = @OPTIONS@
+X_LIBS    = @X_LIBS@
+TOPSRC    = @top_srcdir@
+XPM_LIB   = -lXpm
+XLIB      = @X_PRE_LIBS@ -lXext -lX11 @X_EXTRA_LIBS@
+LDFLAGS   = @LDFLAGS@
+LDLIBS    = @LDLIBS@
+AR        = ar rc
+RANLIB    = @RANLIB@
+RM        = rm -f
+X_CFLAGS  = @X_CFLAGS@
+YACC      = @YACC@
+LEX       = @LEX@
+LEXLIB    = @LEXLIB@
+ALLCFLAGS = $(CFLAGS) $(X_CFLAGS)
+SUBMAKE   = $(MAKE) 'CC=$(CC)' 'CFLAGS=$(ALLCFLAGS)' 'OPTIONS=$(OPTIONS)'
+@SET_MAKE@
+
+INSTALL         = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA    = @INSTALL_DATA@
+MKINSTALLDIRS   = @top_srcdir@/ac-tools/mkinstalldirs
+prefix          = @prefix@
+exec_prefix     = @exec_prefix@
+includedir      = @includedir@
+bindir          = @bindir@
+datadir         = @datadir@
+libdir          = @libdir@
+mandir          = @mandir@/man1
+manext          = .1
+no_x            = @no_x@
+
+
+# targets to build 
+
+
+all: t1lib_doc.ps
+
+
+t1lib_doc.dvi: t1lib_doc.tex intro.tex getstart.tex xglyph.tex ut1lib.tex xinterface.tex internals.tex type1afm.tex
+	latex t1lib_doc.tex
+	makeindex t1lib_doc
+	latex t1lib_doc.tex
+	latex t1lib_doc.tex
+
+
+.PHONY: clean
+
+
+ps: t1lib_doc.ps
+
+
+t1lib_doc.ps: t1lib_doc.dvi
+	      dvips -o t1lib_doc.ps t1lib_doc
+
+
+pdf: t1lib_doc.tex intro.tex getstart.tex xglyph.tex ut1lib.tex xinterface.tex internals.tex type1afm.tex
+	pdflatex t1lib_doc.tex
+	makeindex t1lib_doc
+	pdflatex t1lib_doc.tex
+	pdflatex t1lib_doc.tex
+
+
+clean: dummy
+	$(RM) \#*\# *~ *.log *.aux *.bak *.dvi *.toc *.ilg *.idx *.ind *.out t1lib_doc.ps
+
+
+install: dummy
+	if (test -f t1lib_doc.ps) \
+	then \
+	  $(MKINSTALLDIRS) $(DESTDIR)@T1LIB_DATA_DIR@/doc; \
+	  $(INSTALL_DATA) t1lib_doc.ps $(DESTDIR)@T1LIB_DATA_DIR@/doc; \
+	fi;
+	if (test -f t1lib_doc.pdf) \
+	then \
+	  $(MKINSTALLDIRS) $(DESTDIR)@T1LIB_DATA_DIR@/doc; \
+	  $(INSTALL_DATA) t1lib_doc.pdf $(DESTDIR)@T1LIB_DATA_DIR@/doc; \
+	fi;
+
+
+uninstall: dummy
+	$(RM) -R $(DESTDIR)@T1LIB_DATA_DIR@/doc
+
+
+dummy:

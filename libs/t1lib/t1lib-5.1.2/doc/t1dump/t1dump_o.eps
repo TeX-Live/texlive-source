@@ -1,0 +1,747 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Creator: t1lib (edited manually by RMz, 2003-03-01)
+%%Title: Type1Char Character Dump
+%%Pages: 1
+%%PageOrder: Ascend
+%%BoundingBox: 0 0 280 400
+%%EndComments
+%!
+/T1LibDict 100 dict def 
+T1LibDict begin
+% Setup the size from the type1 module
+/t1SetupSize {
+  /size exch def
+} def
+
+% Prepare the page. Compute scales and fill the charspace unit square
+% background
+/t1PreparePage {
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %
+  % Start of Customizable Section
+  %
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  % Setup a standard linewidth
+  /t1dumpstdlinewidth 1.0 def
+  % Setup a scale for drawing direction arrows
+  /arrowscale 1.2 def
+
+  % Should we draw the device pixel grid? (1=yes, otherwise no)
+  /t1drawgrid 0 def
+  % Should we draw stems? (1=yes, otherwise no)
+  /t1drawstems 0 def
+  % Should we draw alignment zones? (1=yes, otherwise no)
+  /t1drawzones 0 def
+  % Should we fill the charspace unit square? (1=yes, otherwise no)
+  /t1fillunitsquare 0 def
+  % Should we fill the device page? (1=yes, otherwise no)
+  /t1fillpage 0 def
+  % Should we show path segment On-Curve points? (1=yes, otherwise no)
+  /t1showoncurvepoints 0 def
+  % Should we show path segment Off Curve points? (1=yes, otherwise no)
+  /t1showoffcurvepoints 0 def
+  % Should we show Bezier tangets and their defining points? (1=yes, otherwise no)
+  /t1showbeziertangents 0 def
+
+  % Define a few colors
+  /t1linecolor         { 0.0 0.0 0.0 } def
+  /t1hlinecolor        { 1.0 0.0 0.0 } def
+  /t1slinecolor        { 1.0 1.0 1.0 } def
+  /t1movecolor         { 0.0 0.0 0.0 } def
+  /t1hmovecolor        { 1.0 0.0 0.0 } def
+  /t1smovecolor        { 0.0 0.0 0.0 } def
+  /t1curvecolor        { 0.0 0.0 0.0 } def
+  /t1hcurvecolor       { 1.0 0.0 0.0 } def
+  /t1scurvecolor       { 0.0 0.0 0.0 } def
+  /t1sprolongatecolor  { 1.0 0.0 1.0 } def
+  /t1stemcolor         { 0.0 0.0 1.0 } def
+  /t1alignedstemcolor  { 1.0 0.0 1.0 } def
+  /t1bottomzonecolor   { 1.0 1.0 0.0 } def
+  /t1topzonecolor      { 1.0 1.0 0.0 } def
+  /t1arrowcolor        { 0.0 0.0 0.0 } def
+  /t1harrowcolor       { 1.0 0.0 0.0 } def
+  /t1sarrowcolor       { 0.0 0.0 0.0 } def
+  /t1sbwcolor          { 0.0 0.0 0.0 } def
+  /t1closepathcolor    { 0.0 0.0 0.0 } def
+  /t1hclosepathcolor   { 1.0 0.0 0.0 } def
+  /t1sclosepathcolor   { 0.0 0.0 1.0 } def
+  /t1pagecolor         { 0.7 0.7 0.7 } def
+  /t1unitsquarecolor   { 0.4 0.4 0.4 } def
+  /t1gridcolor         { 0.0 0.0 0.0 } def
+
+  % Line scale relative to the standard linewidth
+  /t1linescale 0.4 def
+  /t1hlinescale 0.4 def
+  /t1slinescale 0.4 def
+  /t1movescale 0.1 def
+  /t1hmovescale 0.4 def
+  /t1smovescale 0.1 def
+  /t1curvescale 0.4 def
+  /t1hcurvescale 0.4 def
+  /t1scurvescale 0.4 def
+  /t1curvetangentscale 0.5 def
+  /t1sprolongatescale 0.4 def
+  /t1stemscale 0.5 def
+  /t1alignedstemscale 0.5 def
+  /t1bottomzonescale 0.5 def
+  /t1topzonescale 0.5 def
+  /t1closepathscale 0.4 def
+  /t1hclosepathscale 0.4 def
+  /t1sclosepathscale 0.4 def
+  /t1gridscale 0.5 def
+
+  % Line dash specifications (stems and zones are not configurable!) 
+  /t1linedash { [4 4] 0 } def
+  /t1hlinedash { [] 0 } def
+  /t1slinedash { [] 0 } def
+  /t1movedash { [2 2] 0 } def
+  /t1hmovedash { [2 2] 0 } def
+  /t1smovedash { [2 2] 0 } def
+  /t1curvedash { [4 4] 0 } def
+  /t1hcurvedash { [] 0 } def
+  /t1scurvedash { [] 0 } def
+  /t1sprolongatedash { [1 1] 0 }def
+  /t1closepathdash { [] 0 } def
+  /t1hclosepathdash { [] 0 } def
+  /t1sclosepathdash { [] 0 } def
+  /t1griddash { [3 3] 0 } def
+
+  % Define a clipping rectangle ROI (in charspace coordinates)
+  /t1ROIxmin 0 def
+  /t1ROIxmax 400 def
+  /t1ROIymin -50 def
+  /t1ROIymax 700 def
+
+  % Device values (in bp). These must match the Bounding Box Statement!
+  /xmindev 0 neg def
+  /xmaxdev 280 def
+  /ymindev 0 neg def
+  /ymaxdev 400 def
+  /dxdev 1 def
+  /dydev 1 def
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %
+  % End of Customizable Section
+  %
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  % logical pixel values
+  /xminpixel t1ROIxmin 1000.0 div size mul def
+  /xmaxpixel t1ROIxmax 1000.0 div size mul def
+  /yminpixel t1ROIymin 1000.0 div size mul def
+  /ymaxpixel t1ROIymax 1000.0 div size mul def
+  /dxpixel 1 def
+  /dypixel 1 def
+
+  % compute scales and set minimum scale
+  /scalex xmaxdev xmindev sub xmaxpixel xminpixel sub div def
+  /scaley ymaxdev ymindev sub ymaxpixel yminpixel sub div def
+  scalex scaley gt { /scale scaley def } { /scale scalex def } ifelse
+
+  % Fill device page
+  xmindev ymindev moveto
+  xmaxdev 0 rlineto
+  0 ymaxdev rlineto
+  xmaxdev neg 0 rlineto
+  0 ymaxdev neg rlineto
+  closepath
+  clip
+  t1fillpage 1 eq
+  {
+    t1pagecolor setrgbcolor
+    fill
+  } if
+
+  % reassign device values
+  /xmindev xminpixel scale mul def
+  /xmaxdev xmaxpixel scale mul def
+  /ymindev yminpixel scale mul def
+  /ymaxdev ymaxpixel scale mul def
+  /dxdev   dxpixel   scale mul def
+  /dydev   dypixel   scale mul def
+
+  % translate coordinate system 
+  xminpixel scale mul neg yminpixel scale mul neg translate
+  
+  % Fill unit square of charspace coordinate system 
+  t1fillunitsquare 1 eq
+  {
+    t1unitsquarecolor setrgbcolor
+    0 0 moveto
+    size scale mul 0 rlineto
+    0 size scale mul rlineto
+    size scale mul neg 0 rlineto
+    0 size scale mul neg rlineto
+    closepath fill
+  } if
+} def
+
+/t1FinishPage {
+  t1drawgrid 1 eq
+  {
+    t1gridcolor setrgbcolor
+    t1gridscale setlinewidth
+    t1griddash setdash
+    % draw grid and align to the point (0,0)
+    0 dxdev xmaxdev {
+      /xval exch def
+      xval ymindev moveto
+      xval ymaxdev lineto
+      stroke
+    } for
+    0 dxdev neg xmindev {
+      /xval exch def
+      xval ymindev moveto
+      xval ymaxdev lineto
+      stroke
+    } for
+    0 dydev ymaxdev {
+      /yval exch def
+      xmindev yval moveto
+      xmaxdev yval lineto
+      stroke
+    } for
+    0 dydev neg ymindev {
+      /yval exch def
+      xmindev yval moveto
+      xmaxdev yval lineto
+      stroke
+    } for
+  } if
+} def
+
+% Define three arrow routines available for later providing the output with directions
+/t1arrowhead {
+  /tmpy exch def
+  /tmpx exch def
+  gsave
+  t1arrowcolor setrgbcolor
+  currx curry translate
+  tmpy tmpx atan rotate
+  newpath
+  0 0 moveto
+  0 2 arrowscale t1dumpstdlinewidth neg mul mul rlineto
+  6 arrowscale t1dumpstdlinewidth mul mul 2 arrowscale t1dumpstdlinewidth mul mul rlineto
+  6 arrowscale t1dumpstdlinewidth mul mul neg 2 arrowscale t1dumpstdlinewidth mul mul rlineto
+  closepath
+  fill
+  grestore
+  tmpx
+  tmpy
+} def
+/t1harrowhead {
+  /tmpy exch def
+  /tmpx exch def
+  gsave
+  t1harrowcolor setrgbcolor
+  currhx currhy translate
+  tmpy tmpx atan rotate
+  newpath
+  0 0 moveto
+  0 2 arrowscale currentlinewidth neg mul mul rlineto
+  6 arrowscale currentlinewidth mul mul 2 arrowscale currentlinewidth mul mul rlineto
+  6 arrowscale currentlinewidth mul mul neg 2 arrowscale currentlinewidth mul mul rlineto
+  closepath
+  fill
+  grestore
+  tmpx
+  tmpy
+} def
+/t1sarrowhead {
+  /tmpy exch def
+  /tmpx exch def
+  gsave
+  t1sarrowcolor setrgbcolor
+  currsx currsy translate
+  tmpy tmpx atan rotate
+  newpath
+  0 0 moveto
+  0 2 arrowscale t1dumpstdlinewidth neg mul mul rlineto
+  6 arrowscale t1dumpstdlinewidth mul mul 2 arrowscale t1dumpstdlinewidth mul mul rlineto
+  6 arrowscale t1dumpstdlinewidth mul mul neg 2 arrowscale t1dumpstdlinewidth mul mul rlineto
+  closepath
+  fill
+  grestore
+  tmpx
+  tmpy
+} def
+
+/t1rlineto {
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1linecolor setrgbcolor
+  t1linedash setdash
+  t1linescale t1dumpstdlinewidth mul setlinewidth
+  t1showoncurvepoints 1 eq
+  {
+    newpath currx x2 add curry y2 add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  currx curry moveto
+  x2 y2 rlineto
+  stroke
+  /currx currx x2 add def
+  /curry curry y2 add def
+} def
+
+/t1srlineto {
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1slinecolor setrgbcolor
+  t1slinedash setdash
+  t1slinescale t1dumpstdlinewidth mul setlinewidth
+  t1showoncurvepoints 1 eq
+  {
+    newpath currsx x2 add currsy y2 add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  currsx currsy moveto
+  x2 y2 rlineto
+  stroke
+  /currsx currsx x2 add def
+  /currsy currsy y2 add def
+} def
+
+/t1sprolongate {
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1sprolongatecolor setrgbcolor
+  t1sprolongatedash setdash
+  t1sprolongatescale t1dumpstdlinewidth mul setlinewidth
+  t1showoncurvepoints 1 eq
+  {
+    newpath currsx x2 add currsy y2 add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  currsx currsy moveto
+  x2 y2 rlineto
+  stroke
+  /currsx currsx x2 add def
+  /currsy currsy y2 add def
+} def
+
+/t1hintedrlineto {
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1hlinecolor setrgbcolor
+  t1hlinedash setdash
+  t1hlinescale t1dumpstdlinewidth mul setlinewidth
+  t1showoncurvepoints 1 eq
+  {
+    newpath currhx x2 add currhy y2 add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  currhx currhy moveto
+  x2 y2 rlineto
+  stroke
+  /currhx currhx x2 add def
+  /currhy currhy y2 add def
+} def
+
+/t1rmoveto {
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1movecolor setrgbcolor
+  t1movedash setdash
+  t1movescale t1dumpstdlinewidth mul setlinewidth
+  t1showoncurvepoints 1 eq
+  {
+    newpath currx x2 add curry y2 add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  currx curry moveto
+  x2 y2 rlineto
+  stroke
+  /currx currx x2 add def
+  /curry curry y2 add def
+  /startx currx def
+  /starty curry def
+} def
+
+/t1srmoveto {
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1smovecolor setrgbcolor
+  t1smovedash setdash
+  t1smovescale t1dumpstdlinewidth mul setlinewidth
+  t1showoncurvepoints 1 eq
+  {
+    newpath currsx x2 add currsy y2 add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  currsx currsy moveto
+  x2 y2 rlineto
+  stroke
+  /currsx currsx x2 add def
+  /currsy currsy y2 add def
+  /startsx currsx def
+  /startsy currsy def
+} def
+
+/t1hintedrmoveto {
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1hmovecolor setrgbcolor
+  t1hmovedash setdash
+  t1hmovescale t1dumpstdlinewidth mul setlinewidth
+  t1showoncurvepoints 1 eq
+  {
+    newpath currhx x2 add currhy y2 add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  currhx currhy moveto
+  x2 y2 rlineto
+  stroke
+  /currhx currhx x2 add def
+  /currhy currhy y2 add def
+  /starthx currhx def
+  /starthy currhy def
+} def
+
+/t1rrcurveto {
+  /y4 exch scale mul def
+  /x4 exch scale mul def
+  /y3 exch scale mul def
+  /x3 exch scale mul def
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1curvecolor setrgbcolor
+  t1curvedash setdash
+  t1curvescale t1dumpstdlinewidth mul setlinewidth
+  t1showoffcurvepoints 1 eq
+  {
+
+    newpath currx x2  add curry y2 add 1.0 currentlinewidth mul 0 360 arc closepath fill
+    newpath currx x2 x3 add add curry y2 y3 add add 1.0 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  t1showoncurvepoints 1 eq
+  {
+    newpath currx x2 x3 x4 add add add curry y2 y3 y4 add add add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  t1showbeziertangents 1 eq
+  {
+    [2 2] 0 setdash
+    t1curvetangentscale currentlinewidth mul setlinewidth
+    currx curry moveto
+    currx x2 add curry y2 add lineto
+    stroke
+    currx x2 x3 add add curry y2 y3 add add moveto
+    currx x2 x3 x4 add add add curry y2 y3 y4 add add add lineto
+    stroke
+  } if
+  t1curvedash setdash
+  t1curvescale t1dumpstdlinewidth mul setlinewidth
+  currx curry moveto
+  x2 y2  x2 x3 add y2 y3 add  x2 x3 x4 add add y2 y3 y4 add add  rcurveto
+  stroke
+  /currx currx x2 x3 x4 add add add def
+  /curry curry y2 y3 y4 add add add def
+} def
+
+/t1srrcurveto {
+  /y4 exch scale mul def
+  /x4 exch scale mul def
+  /y3 exch scale mul def
+  /x3 exch scale mul def
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1scurvecolor setrgbcolor
+  t1scurvedash setdash
+  t1scurvescale t1dumpstdlinewidth mul setlinewidth
+  t1showoffcurvepoints 1 eq
+  {
+    newpath currsx x2  add currsy y2 add 1.0 currentlinewidth mul 0 360 arc closepath fill
+    newpath currsx x2 x3 add add currsy y2 y3 add add 1.0 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  t1showoncurvepoints 1 eq
+  {
+    newpath currsx x2 x3 x4 add add add currsy y2 y3 y4 add add add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  t1showbeziertangents 1 eq
+  {
+    [2 2] 0 setdash
+    t1curvetangentscale currentlinewidth mul setlinewidth
+    currsx currsy moveto
+    currsx x2 add currsy y2 add lineto
+    stroke
+    currsx x2 x3 add add currsy y2 y3 add add moveto
+    currsx x2 x3 x4 add add add currsy y2 y3 y4 add add add lineto
+    stroke
+  } if
+  t1scurvedash setdash
+  t1scurvescale t1dumpstdlinewidth mul setlinewidth
+  currsx currsy moveto
+  x2 y2  x2 x3 add y2 y3 add  x2 x3 x4 add add y2 y3 y4 add add  rcurveto
+  stroke
+  /currsx currsx x2 x3 x4 add add add def
+  /currsy currsy y2 y3 y4 add add add def
+} def
+
+/t1hintedrrcurveto {
+  /y4 exch scale mul def
+  /x4 exch scale mul def
+  /y3 exch scale mul def
+  /x3 exch scale mul def
+  /y2 exch scale mul def
+  /x2 exch scale mul def
+  t1hcurvecolor setrgbcolor
+  t1hcurvedash setdash
+  t1hcurvescale t1dumpstdlinewidth mul setlinewidth
+  t1showoncurvepoints 1 eq
+  {
+    newpath currhx x2  add currhy y2 add 1.0 currentlinewidth mul 0 360 arc closepath fill
+    newpath currhx x2 x3 add add currhy y2 y3 add add 1.0 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  t1showoncurvepoints 1 eq
+  {
+    newpath currhx x2 x3 x4 add add add currhy y2 y3 y4 add add add 1.5 currentlinewidth mul 0 360 arc closepath fill
+  } if
+  t1showbeziertangents 1 eq
+  {
+    [2 2] 0 setdash
+    t1curvetangentscale currentlinewidth mul setlinewidth
+    currhx currhy moveto
+    currhx x2 add currhy y2 add lineto
+    stroke
+    currhx x2 x3 add add currhy y2 y3 add add moveto
+    currhx x2 x3 x4 add add add currhy y2 y3 y4 add add add lineto
+    stroke
+  } if
+  t1hcurvedash setdash
+  t1hcurvescale t1dumpstdlinewidth mul setlinewidth
+  currhx currhy moveto
+  x2 y2  x2 x3 add y2 y3 add  x2 x3 x4 add add y2 y3 y4 add add  rcurveto
+  stroke
+  /currhx currhx x2 x3 x4 add add add def
+  /currhy currhy y2 y3 y4 add add add def
+} def
+
+/t1sbw {
+  /wy exch scale mul def
+  /wx exch scale mul def
+  /sby exch scale mul def
+  /sbx exch scale mul def
+  t1sbwcolor setrgbcolor
+  newpath sbx sby 3 0 360 arc closepath fill
+  newpath wx  wy  3 0 360 arc closepath fill
+  /currx  sbx def
+  /curry  sby def
+  /currhx sbx def
+  /currhy sby def
+  /currsx sbx def
+  /currsy sby def
+} def
+
+/t1closepath {
+  t1closepathdash setdash
+  t1closepathscale t1dumpstdlinewidth mul setlinewidth
+  t1closepathcolor setrgbcolor
+  currx curry moveto
+  startx starty lineto
+  stroke
+} def
+
+/t1sclosepath {
+  t1sclosepathdash setdash
+  t1sclosepathscale t1dumpstdlinewidth mul setlinewidth
+  t1sclosepathcolor setrgbcolor
+  currsx currsy moveto
+  startsx startsy lineto
+  stroke
+} def
+
+/t1hintedclosepath {
+  t1hclosepathdash setdash
+  t1hclosepathscale t1dumpstdlinewidth mul setlinewidth
+  t1hclosepathcolor setrgbcolor
+  currhx currhy moveto
+  starthx starthy lineto
+  stroke
+} def
+
+/t1vstem {
+  t1drawstems 1 eq
+  {
+    /stemwidth exch scale mul def
+    /stemstart exch scale mul def
+    t1stemscale t1dumpstdlinewidth mul setlinewidth
+    t1stemcolor setrgbcolor
+    [] 0 setdash
+    stemstart ymindev moveto
+    stemstart ymaxdev lineto
+    stroke
+    [2 2] 0 setdash
+    stemwidth stemstart add ymindev moveto
+    stemwidth stemstart add ymaxdev lineto
+    stroke
+  } if
+} def
+
+/t1alignedvstem {
+  t1drawstems 1 eq
+  {
+    /stemwidth exch scale mul def
+    /stemstart exch scale mul def
+    t1alignedstemscale t1dumpstdlinewidth mul setlinewidth
+    t1alignedstemcolor setrgbcolor
+    [] 0 setdash
+    stemstart ymindev moveto
+    stemstart ymaxdev lineto
+    stroke
+    [2 2] 0 setdash
+    stemwidth stemstart add ymindev moveto
+    stemwidth stemstart add ymaxdev lineto
+    stroke
+  } if
+} def
+
+/t1hstem {
+  t1drawstems 1 eq
+  {
+    /stemwidth exch scale mul def
+    /stemstart exch scale mul def
+    t1stemscale t1dumpstdlinewidth mul setlinewidth
+    t1stemcolor setrgbcolor
+    [] 0 setdash
+    xmindev stemstart moveto
+    xmaxdev stemstart lineto
+    stroke
+    [2 2] 0 setdash
+    xmindev stemwidth stemstart add moveto
+    xmaxdev stemwidth stemstart add lineto
+    stroke
+  } if
+} def
+
+/t1alignedhstem {
+  t1drawstems 1 eq
+  {
+    /stemwidth exch scale mul def
+    /stemstart exch scale mul def
+    t1alignedstemscale t1dumpstdlinewidth mul setlinewidth
+    t1alignedstemcolor setrgbcolor
+    [] 0 setdash
+    xmindev stemstart moveto
+    xmaxdev stemstart lineto
+    stroke
+    [2 2] 0 setdash
+    xmindev stemwidth stemstart add moveto
+    xmaxdev stemwidth stemstart add lineto
+    stroke
+  } if
+} def
+
+/t1bottomzone {
+  t1drawzones 1 eq
+  {
+    /bottom exch scale mul def
+    /top    exch scale mul def
+    t1bottomzonescale t1dumpstdlinewidth mul setlinewidth
+    t1bottomzonecolor setrgbcolor
+    [] 0 setdash
+    xmindev bottom moveto
+    xmaxdev bottom lineto
+    stroke
+    [2 2] 0 setdash
+    xmindev top moveto
+    xmaxdev top lineto
+    stroke
+  } if
+} def
+
+/t1topzone {
+  t1drawzones 1 eq
+  {
+    /bottom exch scale mul def
+    /top    exch scale mul def
+    t1topzonescale t1dumpstdlinewidth mul setlinewidth
+    t1topzonecolor setrgbcolor
+    [2 2] 0 setdash
+    xmindev bottom moveto
+    xmaxdev bottom lineto
+    stroke
+    [] 0 setdash
+    xmindev top moveto
+    xmaxdev top lineto
+    stroke
+  } if
+} def
+
+end
+
+% Next follows drawing code from charstring commands:
+T1LibDict begin
+
+gsave
+20.000001 t1SetupSize
+t1PreparePage
+-0.439758 0.000000 t1bottomzone
+13.652496 14.092255 t1topzone
+8.615265 8.955078 t1topzone
+13.312683 13.532562 t1topzone
+-4.117737 -3.877869 t1bottomzone
+0.559692 0.000000 0.559692 0.000000 t1sbw
+9.005051 4.277649 t1srmoveto
+0.000000 2.635088  -2.059844 2.192259 -2.507646 0.000000 t1srrcurveto
+-2.589196 0.000000 t1sarrowhead -1.998282 -2.253895 0.000000 -2.573452 t1srrcurveto
+0.000000 -2.662721  2.147325 -1.984725 2.420165 0.000000 t1srrcurveto
+2.501468 0.000000 t1sarrowhead 2.086011 2.026044 0.000000 2.621402 t1srrcurveto
+t1sclosepath
+-0.299835 0.000000 t1srmoveto
+0.000000 -2.455808  -1.951770 -1.891803 -2.335873 0.000000 t1srrcurveto
+-2.257264 0.000000 t1sarrowhead -2.010390 1.853166 0.000000 2.494445 t1srrcurveto
+0.000000 2.423801  1.879586 2.103710 2.408057 0.000000 t1srrcurveto
+2.329696 0.000000 t1sarrowhead 1.937959 -2.045412 0.000000 -2.482100 t1srrcurveto
+t1sclosepath
+0.149918 -0.000000 t1srmoveto
+-4.417572 -3.847885 t1srmoveto
+-0.808825 0.000000 -0.829075 0.393694 -0.511556 0.871540 t1srrcurveto
+-0.129291 -0.075888 t1sprolongate
+0.130347 0.074061 t1sprolongate
+-0.475605 0.837065 t1sarrowhead -0.004550 1.172020 0.000000 0.735306 t1srrcurveto
+0.000000 0.791693  0.003844 1.036104 0.457587 0.838909 t1srrcurveto
+-0.131612 0.071788 t1sprolongate
+0.129291 -0.075888 t1sprolongate
+0.510742 0.870153 t1sarrowhead 0.888167 0.395081 0.750547 0.000000 t1srrcurveto
+0.828025 0.000000  0.810390 -0.413156 0.492055 -0.813783 t1srrcurveto
+0.493212 -0.815696 t1sarrowhead 0.004874 -1.109989 0.000000 -0.775217 t1srrcurveto
+0.000000 -0.730684  -0.003321 -1.039578 -0.420610 -0.841221 t1srrcurveto
+-0.000299 -0.000599 t1sprolongate
+-0.000294 -0.000601 t1sprolongate
+-0.415892 -0.850688 t1sarrowhead -0.828838 -0.544427 -0.939312 0.000000 t1srrcurveto
+t1sclosepath
+-0.000000 -0.299835 t1srmoveto
+1.059589 0.000000 0.930195 0.614936 0.463625 0.948323 t1srrcurveto
+-0.134684 0.065845 t1sprolongate
+0.134090 -0.067045 t1sprolongate
+0.458906 0.917812 t1sarrowhead -0.003321 1.119235 0.000000 0.708525 t1srrcurveto
+0.000000 0.743948  0.004874 1.208737 -0.546217 0.903359 t1srrcurveto
+-0.547374 0.905273 t1sarrowhead -0.908665 0.466361 -0.931008 0.000000 t1srrcurveto
+-0.848574 0.000000  -0.990800 -0.444457 -0.568665 -0.968836 t1srrcurveto
+-0.001193 -0.002032 t1sprolongate
+-0.001128 -0.002068 t1sprolongate
+-0.501886 -0.920124 t1sarrowhead 0.003844 -1.122710 0.000000 -0.767450 t1srrcurveto
+0.000000 -0.703903  -0.004550 -1.266640 0.523846 -0.921968 t1srrcurveto
+0.000521 -0.000918 t1sprolongate
+0.000534 -0.000910 t1sprolongate
+0.567850 -0.967449 t1sarrowhead 0.929958 -0.445844 0.910231 0.000000 t1srrcurveto
+t1sclosepath
+0.000000 0.149918 t1srmoveto
+t1FinishPage
+0.559692 0.000000 0.559692 0.000000 t1sbw
+8.855133 4.277649 t1rmoveto
+0.000000 2.558594 t1arrowhead -1.998901 2.118835 -2.418671 0.000000 t1rrcurveto
+-2.498627 0.000000 -1.938934 -2.178802 0.000000 -2.498627 t1rrcurveto
+0.000000 -2.578583 t1arrowhead 2.078857 -1.918945 2.338715 0.000000 t1rrcurveto
+2.418671 0.000000 2.018890 1.958923 0.000000 2.538605 t1rrcurveto
+t1closepath
+-4.417572 -3.997803  t1rmoveto
+-0.859528 0.000000 t1arrowhead -0.879517 0.419769 -0.539703 0.919495 t1rrcurveto
+-0.499725 0.879517  0.000000 1.219330 0.000000 0.719604 t1rrcurveto
+0.000000 0.779572 t1arrowhead 0.000000 1.079407 0.479736 0.879517 t1rrcurveto
+0.539703 0.919495  0.939484 0.419769 0.799561 0.000000 t1rrcurveto
+0.879517 0.000000 t1arrowhead 0.859528 -0.439758 0.519714 -0.859528 t1rrcurveto
+0.519714 -0.859528  0.000000 -1.159363 0.000000 -0.759583 t1rrcurveto
+0.000000 -0.719604 t1arrowhead 0.000000 -1.079407 -0.439758 -0.879517 t1rrcurveto
+-0.439758 -0.899506  -0.879517 -0.579681 -0.999451 0.000000 t1rrcurveto
+t1closepath
+t1FinishPage
+grestore
+
+end

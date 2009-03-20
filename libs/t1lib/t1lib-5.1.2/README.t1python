@@ -1,0 +1,18 @@
+
+                                  About t1python
+				  --------------
+
+t1python is a wrapper in the Python language, written by Fred L. Drake, Jr
+(fdrake@acm.org), which makes most functionality of t1lib available from
+within Python script programs. Further information about this package is
+available at
+
+http://www.python.org/sigs/image-sig/t1lib/
+
+As opposed to some earlier versions t1python is not included in the current
+version of t1lib. This is due to time constraints of Fred and myself. Users
+interested in t1python should watch the URL above for getting information
+about newer versions of t1python.
+
+                            
+-Rainer

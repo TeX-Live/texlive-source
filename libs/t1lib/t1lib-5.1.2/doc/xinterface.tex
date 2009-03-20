@@ -1,0 +1,294 @@
+%----------------------------------------------------------------------------
+% ----- File:        xinterface.tex 
+% ----- Author:      Rainer Menzner (Rainer.Menzner@web.de)
+% ----- Date:        2003-01-04
+% ----- Description: This file is part of the t1lib-documentation.
+% ----- Copyright:   t1lib is copyrighted (c) Rainer Menzner, 1996-2003. 
+%                    As of version 0.5, t1lib is distributed under the
+%                    GNU General Public Library Lincense. The
+%                    conditions can be found in the files LICENSE and
+%                    LGPL, which should reside in the toplevel
+%                    directory of the distribution.  Please note that 
+%                    there are parts of t1lib that are subject to
+%                    other licenses:
+%                    The parseAFM-package is copyrighted by Adobe Systems
+%                    Inc.
+%                    The type1 rasterizer is copyrighted by IBM and the
+%                    X11-consortium.
+% ----- Warranties:  Of course, there's NO WARRANTY OF ANY KIND :-)
+% ----- Credits:     I want to thank IBM and the X11-consortium for making
+%                    their rasterizer freely available.
+%                    Also thanks to Piet Tutelaers for his ps2pk, from
+%                    which I took the rasterizer sources in a format
+%                    independ from X11.
+%                    Thanks to all people who make free software living!
+%----------------------------------------------------------------------------
+
+\newpage
+\section{The X11-Interface}
+\label{x11interface}
+As of V.\ 0.3-beta \tonelib\ incorporates some special functions that can make
+life easier for X11 programmers. Prior to further discussions it should be
+noted that these functions, which itself use functions \verb+Xlib+ are
+fully optional so that \tonelib\ can still be compiled and used on systems
+without X11. 
+
+\subsection{Why a Special X11-Interface?}
+Although it initially was an explicit goal to make the library independent of
+X11, there are some strong arguments voting for a subset of functions adapted
+to X11 features. Here are some of them.
+\begin{itemize}
+\item X11 can be considered a standard under UNIX and graphical applications
+  under UNIX would to a high probability rely on X11. For this reason it would
+  not degrade portability much when using X11 features.
+\item The standard rastering functions of \tonelib\ strictly use the principle
+  of {\em generating bitmaps}. The rastering functions return bitmaps of a
+  specific size with reference point at upper left corner and additional
+  geometric information to tell the user how to position the bitmap correctly
+  with respect to the current point. A more natural approach would be to have
+  functions that draw on some existent {\em area} at a position and
+  orientation to be specified with the logical origin of the text taken into
+  account.
+\item The standard functions do not deal with color at all. This is especially
+  complicated in the case of antialiased fonts. If some application wanted to
+  use an existent (already cached) font, all characters would have to be
+  removed from memory and recreated using the new color values.
+\item In case of antialiasing the user has to make a decision on the depth of
+  the bitmaps. But what if an X-application uses drawables of different depths?
+  Such configurations could raise the programming effort up infinity (well,
+  alomst). 
+\item The standard functions cache their bitmaps locally, i.e., on the machine
+  where the X11-client runs. Every characters bitmap has thus to be 
+  transferred to the X11 server again and again. This might cause an
+  performance degradation, especially if the client runs on a remote machine
+  with a slow or heavy-loaded network connection.
+\end{itemize}
+Taken these arguments into account I decided to create an additional
+``special'' set of functions that allow uncomplicated usage under the X11
+window system, similar to the \verb+Xlib+-function \verb+X11DrawText()+. 
+The approach used in V.~0.3-beta has been a quite elegant solution
+to the problems considered above. Unfortunately, it has been too slow to be
+usable in practice. Furthermore, caching in the X11-server produced some
+overhead and difficulties. According to my experiences server caching would
+only be advantageous for very large characters such as 500 bp and more. As a
+consequence, the X11 interface is redesigned and reduced to a {\em simple
+  wrapper} which deals with all but the last of the above items, from
+\tonelib\ V.~0.4-beta up.
+
+
+\subsection{Initialization of the X11-Interface}
+There are a few things \tonelib\ must know in order to be able to do its job
+properly. These parameters are defined by a functioncall to
+\precorr
+\begin{verbatim}
+int T1_SetX11Params( Display *display, Visual *visual,
+                     unsigned int depth, Colormap colormap)
+\end{verbatim}\index{\verb+T1_SetX11Params()+}\postcorr
+\verb+display+ is the pointer to the structure of the display the application
+is connected to. It is once specified here because this avoids the need of
+repeatedly having to specify this pointer. 
+
+\verb+visual+ is the pointer to the structure of the visual on which 
+\tonelib\ should create
+the XImages that will be transferred to the X server when using antialiasing. In
+most cases it should be safe to specify \verb+DefaultVisual(...)+.
+
+The \verb+depth+-argument specifies the depth that \tonelib\ will use when
+creating antialiased pixmaps. It is thus identical to the value \verb+bpp+
+supplied to \verb+T1_AASetBitsPerPixel()+ (see \ref{antialiasing}).
+The depth must be one of the depth supported by
+the visual as specified above.
+
+\verb+colormap+ is the specification of an X11 colomap. It is needed because
+\tonelib\ might need to allocate some more colors for antialiasing
+purposes. The same colormap that the application uses should be specified
+here. If the application uses no special color handling,
+\verb+DefaultColormap(...)+ is probably the right value.
+
+As mentioned before, the X11 rastering functions put the characters with their
+origin at the specified point. This behavior, being the default, can be
+switched by calling 
+\precorr
+\begin{verbatim}
+ void T1_LogicalPositionX( int pos_switch)
+\end{verbatim}\index{\verb+T1_LogicalPositionX()+}\postcorr
+Specifying \verb+pos_switch+=0 has the effect that in subsequent calls to X11
+rastering functions the result will be placed with the upper left corner at
+the specified position. The default behavior can be restored by calling this
+function again with some non-zero value.
+
+\subsection{Rastering Functions}
+In analogy to the standard rastering functions the \tonelib\ X11 interface
+provides six functions for generating character and string bitmaps, rectangles
+as well as their antialiased equivalents:
+\precorr
+\begin{verbatim}
+ GLYPH *T1_SetCharX( Drawable d, GC gc, int mode, int x, int y,
+                     int FontID, char charcode,
+                     float size, T1_TMATRIX *transform)
+\end{verbatim}\index{\verb+T1_SetCharX()+}\postcorr
+\precorr
+\begin{verbatim}
+ GLYPH *T1_SetStringX( Drawable d, GC gc, int mode, int x, int y,
+                       int FontID, char *string, int len,
+                       long spaceoff, int modflag,
+                       float size, T1_TMATRIX *transform)
+\end{verbatim}\index{\verb+T1_SetStringX()+}\postcorr
+\precorr 
+\begin{verbatim}
+ GLYPH *T1_SetRectX( Drawable d, GC gc, int mode, int x_dest, int y_dest,
+                     int FontID, float size,
+                     float width, float height,
+                     T1_TMATRIX *transform)
+\end{verbatim}\index{\verb+T1_SetRectX()+}\postcorr
+\precorr
+\begin{verbatim}
+ GLYPH *T1_AASetCharX( Drawable d, GC gc, int mode, int x, int y,
+                       int FontID, char charcode,
+                       float size, T1_TMATRIX *transform)
+\end{verbatim}\index{\verb+T1_AASetCharX()+}\postcorr
+\precorr
+\begin{verbatim}
+ GLYPH *T1_AASetStringX( Drawable d, GC gc, int mode, int x, int y,
+                         int FontID, char *string, int len,
+                         long spaceoff, int modflag,
+                         float size, T1_TMATRIX *transform)
+\end{verbatim}\index{\verb+T1_AASetStringX()+}\postcorr
+\precorr 
+\begin{verbatim}
+ GLYPH *T1_AASetRectX( Drawable d, GC gc, int mode, int x_dest, int y_dest,
+                       int FontID, float size,
+                       float width, float height,
+                       T1_TMATRIX *transform)
+\end{verbatim}\index{\verb+T1_AASetRectX()+}\postcorr
+
+
+Instead of explaining everything in detail, we will discuss only those items
+that are different from the standard rastering. For discussion of the
+parameters \verb+FontID+, \verb+charcode+, \verb+string+, \verb+len+,
+\verb+spaceoff+, \verb+modflag+, \verb+size+ and \verb+transform+ see
+\ref{generatingbitmaps}. 
+
+The \verb+drawable+ parameter specifies the X11 drawable into which the text
+will be drawn. It may be either a pixmap or a window.
+
+\verb+gc+ is the graphics context in which the operation should take
+place. Obviously, the most importamt components of the graphics context are the
+current foreground and background color. \tonelib\ uses these colors to draw
+the text/background. 
+
+The value of \verb+mode+ determines whether {\em opaque} or {\em transparent}
+mode is used. In opaque mode all pixels including background pixels are
+drawn. This means the whole area of the bounding box of the character/string
+is painted. In transparent mode, only non-background pixels are drawn so that
+underlying graphics are minimum affected. One could imagine that as drawing the
+text on a transparent slide and overlay the result with the existent
+graphics. Using transparent mode should be somewhat slower, especially for the
+antialiasing functions since the information which pixels are background and
+which not has to be generated first. Moreover, the clipmask of the current
+graphics context is modified when drawing text in transparent mode.
+
+\verb+x+ and \verb+y+ define the position coordinates where the origin of the
+text will be located in the drawable. \tonelib\ does no checking of this
+position so that bad positioned text might not appear at all in the drawable
+without getting an error---it is simply clipped to the limits of the
+drawable. 
+
+The non-antialiasing functions will take the fore- and background color from 
+the specified graphics context. 
+The antialiasing rastering functions work a little different. They also
+respect the current foreground and background color. The ``graylevel'' colors
+are computed on the fly and allocated in the colormap specified by the user in
+the call to \verb+T1_SetX11Params()+. The term graylevel has been quoted since
+these are in fact no graylevels at all. They are just discrete colors from a
+smooth bleed between the foreground and the background color. The colors are
+computed the following according to the following scheme: 
+\begin{enumerate}
+\item The current foreground and background color are split into their
+  respective RGB components, lets call them $f_R$, $f_G$, $f_B$, $b_R$, $b_G$
+  and $b_B$.
+\item Intermediate values are computed between each pair of color components
+  $f_R$--$b_R$, $f_G$--$b_G$ and $f_B$--$b_B$ by making a linear
+  interpolation. 
+\item For each newly created RGB-triple (currently 3) a pixel color is
+  allocated in the colormap specified by the user in a way that the pixel
+  colors match the theoretical values best.
+\end{enumerate}
+
+A general comment on antialiasing: If using transparent mode antialiasing
+may produce the opposite effect of what is wanted, depending on the color of
+the underlying graphics. You can use the program \verb+xglyph+ to check the
+effect: Start \verb+xglyph+ and prior to doing anything else click on button
+\fbox{AAStringX}. The resulting glyph is antialiased against the background
+color white but the real background due to transparency is quite different
+from white. Consequently the glyph seems to be surrounded by a thin light gray
+border.
+
+
+\subsection{Creating XPM-Files from \tonelib-Glyphs}
+\label{xpmfiles}
+The creation XPM files is not supported directly in \tonelib. Rather, there is
+a utility function which prepares what is necessary and leaves the creation of
+the Pixmap file to the one and only authority, to the Pixmap library. The
+required function is:
+\precorr
+\begin{verbatim}
+ XImage *T1_XImageFromGlyph( GLYPH *glyph)
+\end{verbatim}\index{\verb+T1_XImageFromGlyph()+}\postcorr
+It creates an X11 image from a valid \tonelib-glyph of arbitrary depth,
+padding and antialiasing configuration and returns the pointer to the newly
+created structure. This image can later be dumped into an XPM file using the
+XPM library function \verb+XpmWriteFileFromImage()+. The following code
+fragment shows how easy this really is. It assumes that the program containing
+that code is additionally linked with the XPM library.
+\begin{verbatim}
+ .
+ .
+ .
+ ximage=T1_XImageFromGlyph( glyph);   /* generate ximage containg the glyph */
+ /* write pixmap file */
+ XpmWriteFileFromImage( display, "glyphtest.xpm", ximage, NULL, NULL); 
+ ximage->data=NULL;
+ XDestroyImage( ximage);
+ .
+ .
+ .
+\end{verbatim}
+As already shown in this example code, the user has to take care for that
+\verb+XDestroyImage()+ does not free the glyph's bitmap. This achieved by
+setting \verb+ximage->data+ to \verb+NULL+.
+
+Having an XPM file from a \tonelib-glyph it should easily be possible to
+create graphic files of arbitrary formats, e.g., by using \verb+xv+.
+
+\subsection{Limits of the X11 Interface}
+A few words about what the X11 interface can do and cannot do are appropriate,
+I think. Except for that a few global variables of \tonelib\ are accessible,
+the whole code of the X11 interface could as well be part of an application
+instead of being part of \tonelib. In other words, \tonelib\ is not able to do
+anything an application program could not do. This applies especially to
+performance improvements. Unfortunately---but consequently, the X11 rastering
+functions are not faster than the standard rastering functions.
+
+To come to a conclusion, this is what the X rastering functions offer to the
+user: 
+\begin{itemize}
+\item Save the user entirely from thinking about color.
+\item Offers a set functions comparable to \verb+XDrawText()+.
+\item Frees the user from having to think about transparency and opacity.
+\item Implements antialiasing between any given pair of foreground/background
+  colours.
+\end{itemize}
+And here is what they not provide:
+\begin{itemize}
+\item Functions that perform as if the rasterizer would be part of the X
+  server.
+\end{itemize}
+That's life, folks.
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "t1lib_doc"
+%%% End: 

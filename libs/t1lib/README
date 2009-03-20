@@ -1,0 +1,17 @@
+	Building t1lib-5.1.2 as part of the TL tree
+	=============================================
+
+This directory libs/t1lib/ uses a proxy Makefile.am to build the t1lib library
+from the unmodified(*) source tree in libs/t1lib/t1lib-x.y.z/, bypassing
+the original build system.
+
+As far as applicable, the tests in libs/t1lib-x.y.z/configure.in have been
+copied to libs/t1lib/configure.ac.
+
+-----------------------------
+
+(*) almost unmodified,  the file lib/t1lib/t1lib.h has been removed!
+
+=============================
+
+2009-02-05	Peter Breitenlohner <peb@mppmu.mpg.de>

@@ -1,0 +1,490 @@
+%----------------------------------------------------------------------------
+% ----- File:        xglyph.tex 
+% ----- Author:      Rainer Menzner (Rainer.Menzner@web.de)
+% ----- Date:        2003-01-04
+% ----- Description: This file is part of the t1lib-documentation.
+% ----- Copyright:   t1lib is copyrighted (c) Rainer Menzner, 1996-2002. 
+%                    As of version 0.5, t1lib is distributed under the
+%                    GNU General Public Library License. The
+%                    conditions can be found in the files LICENSE and
+%                    LGPL, which should reside in the toplevel
+%                    directory of the distribution.  Please note that 
+%                    there are parts of t1lib that are subject to
+%                    other licenses:
+%                    The parseAFM-package is copyrighted by Adobe Systems
+%                    Inc.
+%                    The type1 rasterizer is copyrighted by IBM and the
+%                    X11-consortium.
+% ----- Warranties:  Of course, there's NO WARRANTY OF ANY KIND :-)
+% ----- Credits:     I want to thank IBM and the X11-consortium for making
+%                    their rasterizer freely available.
+%                    Also thanks to Piet Tutelaers for his ps2pk, from
+%                    which I took the rasterizer sources in a format
+%                    independent from X11.
+%                    Thanks to all people who make free software living!
+%----------------------------------------------------------------------------
+
+\newpage
+\section{The Program {\ttfamily xglyph}}
+\label{xglyph}%
+\verb+xglyph+ is a tool which makes most of the functionality of 
+\tonelib\ visible to the user without the need of having to write an
+own program and without the need of having to understand most of the
+library 
+before. This program---as the name indicates---needs X11. It is thus only
+build if X11 is installed on the target system and if  X11 support has not
+explicitly been disabled. All
+necessary resources are set internally to default values so that the
+program can be run out of the box without any installation. 
+
+In case the user did not already create a custom configuration file and an
+associated font database file, the program should be started from the
+subdirectory \verb+xglyph+ of the distribution. When starting, \verb+xglyph+
+checks for the environment entry \verb+T1LIB_CONFIG+ and if it does not exist
+it adds the association \verb+T1LIB_CONFIG=./t1lib.config+ to the
+environment. In other words it expects a valid configuration file in the
+current directory.
+
+There are several widgets which may be categorized into 5 types.
+
+\subsection{Common Parameter Dialogs and Toggle Buttons}
+These buttons modify the internal state of the program by setting some global
+variables. These variables affect the execution of all rastering functions in
+contrast to the buttons described in the next subsection which only take
+influence on the X11 rastering functions. When changing
+one of the following parameters nothing seems to happen at first. All
+actions are deferred to the time when an action button is
+clicked. Here is a list of the dialogs and toggles:
+\begin{itemize}
+\item \fbox{{\bfseries FontID}}\\
+  This dialog allows to specify the font ID that will be used when
+  the next action takes place. The allowed IDs range from 0 to $n-1$,
+  where $n$ is the number of fonts declared in the font database
+  file. If using the default configuration file together with the
+  default font database file, 8 fonts are declared. If an invalid ID
+  is specified, the next action generates an error message.
+\item \fbox{{\bfseries Font-Size}}\\
+  Here, the size of the font is specified. The value is interpreted in
+  bigpoints, the default PostScript unit. If the size specified is
+  invalid, an appropriate error message is generated at the time of
+  the next action.
+\item \fbox{{\bfseries Slant-Factor}}\\
+  A slant factor $s$ may be specified. It is interpreted the following
+  way. A point described by the coordinate-pair $(x,y)$ is transformed
+  to the point with the coordinates $(x+sy,y)$. For instance,
+  specifying a slant factor $s=1$ will generate a font slanted by
+  $45^\circ$. Since version 0.3-beta slanted are nearly fully supported.
+  For a discussion of the remaining problems see
+  \ref{transformations} on page
+  \pageref{transformations}. 
+\item \fbox{{\bfseries Extension-Factor}}\\
+  Horizontal extension of a font may be realized using this
+  dialog. The default value is 1 which means the characters are
+  presented at their natural width. Specification of an invalid value
+  will generate an error message at the time of the next action.
+\item \fbox{{\bfseries Transformation-Matrix}}\\
+  This dialog gives complete Control over the transformation matrix that will
+  be used in consequent rasterizations. The values have to be specified
+  separated by commas. A specified rotation is still applied after this
+  matrix.  
+\item \fbox{{\bfseries Res [DPI]}}\\
+  The resolution of the output device (screen) may be specified in
+  this dialog. Using the default value of 72 dpi means one bp in size
+  corresponds to exactly one device pixel. 
+\item \fbox{{\bfseries S-Width}}\\
+  This dialog field allows to setup the penwidth used for stroking
+  characters. If this field is zero, which is the default, the characters are
+  filled, unless, the font under consideration is a stroked font, that is, it
+  has \verb+PaintType = 1+. 
+\item \fbox{{\bfseries Encoding-File}}\\
+  The name of an encoding file may be specified. Included in the
+  distribution is only one file, \verb+IsoLatin1.enc+. It contains the
+  standard X11 encoding in a format acceptable by \tonelib. If no name
+  is given here, or the file with the name given here cannot not be
+  parsed as an encoding file, the encoding is switched back to the fonts
+  internal encoding. Again, this is done at the time of the next
+  action. 
+\item \fbox{{\bfseries Angle}}\\
+  The angle at which the next character or string is rastered is
+  specified here. There are no restrictions concerning the angle. Rotation is
+  applied after setting the transformation matrix (see above).
+\item \fbox{{\bfseries Space-Off}}\\
+  The value specified here represents an offset added to the
+  spacewidth when rastering the next string. For this, it is
+  interpreted in PostScript charspace units and thus subject to
+  scaling. 
+\item \fbox{{\bfseries Character}}\\
+  A number between 0 and 255 inclusive should be specified here. It is
+  used as the index into the current encoding vector when rasterizing
+  a character. This gives the user access to all currently encoded
+  characters, regardless of the current X11 keyboard mapping. If an
+  index is given whose encoding entry would produce no black pixels,
+  an error message is generated at the next character-rastering
+  time. The default value is 65, which corresponds 
+  to the character ``A'' in most encoding vectors.
+\item \fbox{{\bfseries Test-String}}\\
+  In this dialog, a complete string may be specified. It will be
+  rastered when the next string-rastering button is pressed. It can be
+  of arbitrary length (well, almost). If this field is left empty, the
+  standard string ``Test'' will be used for rastering.
+\item \fbox{{\bfseries Kerning}}\\
+  This is a toggle button. Its state determines whether pairwise
+  kerning information from the AFM file will be used to correct the
+  horizontal spacing during string rastering or not. A typical example
+  is the word ``Test''; enabling kerning should---at least in
+  fonts of good quality---move the ``T'' and the ``e'' significantly
+  closer together.
+\item \fbox{{\bfseries Ligature}}\\
+  This is a toggle button. Its state specifies whether the
+  string is checked for ligatures prior to rastering it. 
+  Suitable character sequences are replaced with the corresponding
+  ligature. For a good example, you should switch to
+  font ID 4 and type in the string \verb+--difficult---+. If ligature
+  detection is switched on, the two hyphens should be converted to an
+  en-dash ``--'', the three hyphens should be converted to an em-dash
+  ``---'' and the character series ``\verb+ffi+'' should be replaced
+  with the ligature ``ffi'', rather than to be displayed as ``f{}f{}i''.
+\item \fbox{$|\longrightarrow$} / \fbox{$\longleftarrow|$}  This button allows
+  to change the writing direction that \tonelib\ will use in subsequent calls
+  to the string rastering functions, the default being {\em Left To Right} as
+  used in most European languages. This item is simply meant to demonstrate the
+  capabilities of \tonelib. The package does not come with fonts that are
+  intended to be used for {\em Right To Left} typesetting.
+\item \fbox{{\bfseries Underline}}\\
+  This toggle button determines whether strings are underlined or not. 
+\item \fbox{{\bfseries Overline}}\\
+  Same as above for overlining.
+\item \fbox{{\bfseries Overstrike}}\\
+  Same as above for overstriking.
+\item \fbox{{\bfseries AA-Low}}/\fbox{{\bfseries AA-High}}\\
+  This button allows to select the subsampling factor for antialiasing in
+  subsequent rastering operations. {\em AA-Low} means subsampling by factor 2
+  which gives 5 gray values including black and white, whereas {\em AA-High}
+  means subsampling by 4 which yields 17 gray values including black and
+  white.  
+\end{itemize}
+Notice that, aside from the latter, the toggle buttons only affect the string
+rastering functions.  
+
+\subsection{Buttons that Influence the X11 Rastering Functions}
+The X11 rastering functions introduced in version 0.3-beta provide a
+considerably higher level of abstraction than the standard rastering
+functions. To show the effect in \verb+xglyph+, a few additional buttons are
+provided.  
+\begin{itemize}
+\item \fbox{{\bfseries Transparent}}/\fbox{{\bfseries Opaque}}\\ 
+  This button allows to switch between transparent and opaque mode in the X11
+  rastering functions. In transparent mode, only non-background pixels are
+  drawn and all other pixels are left untouched. In opaque mode the entire
+  area that the bitmap will require is first filled with the background color
+  and then the bitmap is placed on this area.
+\item \fbox{{\bfseries Foreground}}\\
+  This is a label field with six color fields to the right and one color field
+  to the left. Clicking on one of the color fields located on the right side
+  will set the foreground color to the respective value (white, black, gray,
+  red, green or blue). The color field on the left side always shows the
+  current color selection. 
+\item \fbox{{\bfseries Background}}\\
+  This also is a label field with six color fields to the right and one color
+  field to the left. It works in analogy to the above and sets the current
+  background color. Note that in order make the background color active, the
+  drawing mode must be set to ``opaque''.
+\end{itemize}
+
+\subsection{Buttons that Generate Actions}
+There are 10 buttons generating actions visible to the user. 
+\begin{itemize}
+\item \fbox{{\bfseries Char}}\\
+  This button generates a bitmap of the character specified in the
+  \fbox{{\bfseries Character}}-dialog box. All parameters changed
+  earlier become effective at this time. The resulting bitmap is then
+  shown in the output window of \verb+xglyph+. Some information about
+  the generated bitmap and elapsed 
+  time etc.\ is given in the message window. If an error occurred,
+  the old contents of the output window are kept and a message is given
+  to the user. 
+\item \fbox{{\bfseries String}}\\
+  This button generates a bitmap of the string specified in the
+  \fbox{{\bfseries Test-String}}-dialog box. In addition to rastering
+  characters, kerning and ligature settings may now take influence on
+  the result of the operation (see \ref{fonts}). If no error occurs,
+  the bitmap is shown in the output window and additional information is
+  shown in the message area. Otherwise, an appropriate error message is
+  given.
+\item \fbox{{\bfseries AAChar}}
+\item \fbox{{\bfseries AAString}}\\
+  Both of these buttons do exactly the same as their non-antialiased
+  counterparts. The only difference consists in the generation of an
+  antialiased bitmap. The result is not a bitmap in fact.
+  There are at least 8 bits per pixel and at most 32 bits per
+  pixel in the resulting glyph. This depends on the depth of the
+  X11-visual you use when starting xglyph. The result may consume
+  quite a bit of memory
+  if a {\ttfamily TrueColor} or {\tt DirectColor} visual is
+  active.
+\item \fbox{{\bfseries CharX}}
+\item \fbox{{\bfseries StringX}}
+\item \fbox{{\bfseries AACharX}}
+\item \fbox{{\bfseries AAStringX}}\\
+  These functions basically do the same as the counterparts lacking the ``X''
+  in the name. But internally the X11 rastering functions are called to
+  produce the output bitmap/pixmap. As a consequence the current foreground
+  color, background color and drawing mode are taken into account. For a more
+  complete discussion of the X11 rastering functions see \ref{x11interface} on
+  page \pageref{x11interface}. 
+\item \fbox{{\bfseries Font Table}}\\
+  A character table of size $16 \times 16$ is shown in the output
+  window. Each cell contains an antialiased representation of the character
+  indexed by the field number. The function \verb+T1_AASetCharX()+ is
+  used for drawing these characters. Current foreground and background colors
+  are respected as well as are most other parameters accepted by the character
+  rastering functions. Only the angle specification
+  is ignored since I assume that it is not very useful to have an overview
+  over a font at any angle different from 0. Notice that the default size
+  (100) is probably too large to make the output window fit on the screen. No
+  care is taken about this. The recommended size for viewing a font's
+  character map is
+  between 20 and 30 points at 72 dpi resolution.  
+\item \fbox{{\bfseries About}}\\
+  Shows an `about' message 
+  telling you that you are using \verb+xglyph+ and \tonelib\ in the current
+  version.
+\item \fbox{{\bfseries Exit Program}}\\
+  This button does what it says and exits the program.
+\end{itemize}
+
+\subsection{The Message Window}
+This area is located below the dialog box for the test
+string. Information potentially useful to the user is given here.
+There should be nothing needed to be said about the info---it is
+self-explaining. 
+But two things should be noted:
+\begin{itemize}
+\item The elapsed time that is displayed is exactly the time spent in
+  the respective rastering function. There might
+  have been other actions in force which might make the user believe the
+  time value given as being incorrect.\footnote{For example, there might have
+  been size-dependent data to be deleted and recreated, or an encoding
+  file might have needed
+  to be loaded before rastering.} Moreover, the transfer to the
+  X-server may become significant if 32 bits per pixel are used, the
+  image is large and
+  the program is running on a remote machine.
+\item The message \verb+t1lib: Couldn't generate Bitmap, T1_errno=...!+ simply
+  tells the user that no bitmap could be generated. There may be
+  several reasons. E.g., the \verb+FontID+-value given might have been
+  out of range. Another possibility is that you have specified a
+  character index which has no encoded character associated. The value of
+  \verb+T1_errno+ might give a hint of what the problem was.
+\end{itemize}
+If a character map is displayed, the message window is giving no
+information apart from the font name and the final value of
+\verb+T1_errno+ because there have been executed
+up to 256 rastering operation and it would be impossible to keep track
+of all single operations.
+
+\subsection{The Output Window}
+The output window shows the output of the rastering operations. Its type is
+different for the standard and the X11 rastering functions.  For the standard
+rastering functions, it is always adapted to the size of the glyph which is
+displayed plus a margin of 5 pixels on each side. For this reason, leading and
+trailing white space is not shown in the output window, it only shows up in
+the glyph's metrics in the message windows. 
+
+The X11 rastering functions
+generate an output window of constant size (\hbox{600 $\times $ 400} pixels)
+with a logical origin in its center. This center is marked by a cross-hair of
+color cyan. The glyph is placed with respect to this origin. If it is too
+large to fit, the glyph simply is clipped. A second cross-hair is shown at the
+place where the origin of the next glyph would be located in color magenta.
+
+If a character map of a font is displayed, the output window contains
+a map of $16\times 16$ cells whose size depends on the metrics of the
+font that is displayed.
+
+
+\subsection{{\tt xglyph} Commandline Parameters}
+The syntax of the \verb+xglyph+ commandline is 
+\begin{verbatim}
+ xglyph [options] [fontfile1 [fontfile2 [...]]]
+\end{verbatim}
+If no options and no font files are specified on the commandline \verb+xglyph+
+reads the fonts from the font database file. The details depend on which
+configuration file is found and on this file's contents. If at least one font
+file is specified on the commandline, the font database---being existent and
+accessible or not---is ignored and the database is built using the fonts from
+the commandline. \verb+fontfile1+ is assigned the font ID 0, \verb+fontfile2+
+is assigned the ID 1 and so forth. Files that cannot be opened for some reason
+are simply skipped. 
+
+\verb+xglyph+ also recognizes a few options. Notice that these options are not
+intended for an average user. Rather, they provide a means of (a) controlling
+debugging output from the rasterizer, (b) controlling generation and verbosity
+of the \tonelib-logfile, (c) disabling certain features of the rasterizer and
+(d) checking some \tonelib\ functions which otherwise would not be required
+because of the limited functionality of \verb+xglyph+.
+
+All commandline arguments that start with ``\verb+--+'' are considered to be
+options to \verb+xglyph+. The following is a complete list of valid options
+and a brief description of their effect:
+\begin{itemize}
+\item\verb+--help+: Display the commandline syntax of \verb+xglyph+ as well as
+  a brief list of the available options for an average user and exit.
+\item\verb+--Help+: Display the commandline syntax of \verb+xglyph+ as well as
+  a brief list of all available options.
+\item\verb+--noGrid+: The cross-hairs marking start and end position of a
+  glyph in the output of one of the X11 rastering functions will be
+  suppressed. This might be useful at small sizes because the grid overwrites
+  the glyphs' pixels.
+\item\verb+--setPad+: The padding value \verb+xglyph+ should use can be
+  specified here. This has to be followed by either ``8'', ``16'' or ``32'',
+  separated by a space. Notice that the value ``32'' might be rejected as
+  described in \ref{queryconfiguration}. The value actually used can be found
+  by writing a logfile and examining this after a session.
+\item\verb+--logError+:
+\item\verb+--logWarning+:
+\item\verb+--logStatistic+:
+\item\verb+--logDebug+: These options firstly instruct \verb+xglyph+ to create
+  a \tonelib\ logfile and secondly set the loglevel to the respective value
+  (see \ref{logfile}). Without specifying one of these options, no logfile
+  will be generated.
+\item\verb+--ignoreForceBold+: Instructs the rasterizer to ignore a {\tt
+    ForceBold} hint in the Type 1 font file.   
+\item\verb+--ignoreFamilyAlignment+: Instructs the rasterizer always to
+  compute font level alignment according to \verb+BlueValues+ and
+  \verb+OtherBlues+, even if \verb+FamilyBlues+ and \\
+  \verb+FamilyOtherBlues+
+  exist and all conditions for substitution are fulfilled for that combination
+  of font and size.
+\item\verb+--ignoreHinting+: Instructs the rasterizer to omit hinting completely.
+\item\verb+--ignoreAFM+: The use of AFM information is ignored, no matter
+  whether it could be accessed via an appropriate AFM file or
+  self-generated. When using this option the string functions would not
+  work. It may, however, be useful because self-generation of AFM data fails
+  as soon as at least one character of all defined characters can not be
+  processed and thus, the font will refuse to load. Using this option,
+  consequently, one has access to all character that are processible, e.g.,
+  for generating a font table.
+  characters that can be rasterized 
+\item\verb+--debugLine+:
+\item\verb+--debugRegion+:
+\item\verb+--debugPath+:
+\item\verb+--debugFont+:
+\item\verb+--debugHint+: All these instruct the rasterizer to write particular
+  debug messages from intermediate steps of rasterization to the terminal. In
+  order to understand and interprete them, a thorough understanding of the
+  Type 1 font format specification and this special rasterizer implementation
+  is crucial.
+\item\verb+--checkPerformance+: This option affects the X11 string rastering
+  functions. An additional output window is created and the output of
+  before-mentioned functions is directly written into this window. Note that
+  this window is not managed as might be expected. Text is only drawn at the
+  visible parts and after partially or completely hiding and again
+  raising the respective areas are lost. This mechanism should simply give an
+  idea of how fast the X11 rastering function work, admittedly a critical
+  topic in \tonelib.
+\item\verb+--checkCopyFont+: This option is used to check the proper
+  functioning of the \verb+T1_CopyFont()+ function. It copies all fonts from
+  the database to new logical fonts and slants these fonts by 0.3. Finally an
+  additional fontfile is added to the database. For each step the new font ID
+  is printed to the terminal and the initial and final number of fonts are
+  printed. 
+\item\verb+--checkConcatGlyphs+: This option affects the buttons \fbox{\bf
+    String} and \fbox{\bf AAString}. The requested string glyph is generated
+  twice, first time using the current value of font ID and second time using
+  this 
+  values plus 1. Both resulting glyphs are concatenated and the result is
+  shown in the output window. 
+\item\verb+--checkConcatOutlines+: This option, too, affects the standard
+  string rastering functions. The current test string will be fetched as an
+  outline using the current font ID. The result is then concatenated with a
+  horizontal movement of 1000 charspace unit which is followed by the
+  identical string using a font ID advanced by 1. The result of the
+  concatenated outlines is then filled and converted to a \tonelib-glyph. 
+  For details on outline handling and what it is meant for see \ref{outlines}.
+  
+  When \verb+--checkConcatGlyphs+ and \verb+--checkConcatOutlines+ both are
+  specified on commandline, the \verb+--checkConcatGlyphs+ is respected.
+\item\verb+--checkBadCharHandling+: This option provides a means of
+  examining the effects of problematic/bad characters on string handling in
+  \tonelib with \verb+xglyph+. It affects only the \fbox{\bf String} button.
+  The character to be specified in the test character field is inserted in
+  the middle of the test string. This enables the user to insert arbitrary
+  character codes in the middle of a test string and to watch the effect in
+  \verb+T1_SetString()+. For example, starting \verb+xglyph+ with this
+  option exclusively and immediately clicking \fbox{\bf String} will show
+  the string {\em TeAt} in the output window because the character `s' has
+  been overwritten by character $65_{10}$ (`A'), the default test character.
+\item\verb+--checkDefaultEncoding+: This option proves that the default
+  encoding feature works correct. If set, all fonts should be encoded in
+  IsoLatin1 encoding immediately after startup and without any slow down at
+  startup. 
+\item\verb+--checkSmartAntialiasing+: Enables smart antialiasing as described
+  in \ref{antialiasing}. The effect is that \tonelib\ will determine the
+  antialiasing level by itself.  For sizes below 20~bp, $4\times$ antialiasing
+  will be used and up to 60~bp $2\times$ antialiasing is used. For size of
+  60~bp and larger a ``bytemap'' is created which in fact consists only of
+  pure background and foreground pixels. When this options has been
+  specified, toggling the antialiasing level has no effect.
+\item\verb+--checkAACaching+: This option enables caching of antialiased
+  character glyphs. For a discussion of this issue see \ref{aacaching}. The
+  string rastering functions are not affected by this option.
+\item \verb+--checkSetRect+: This option allows to check the rectangle drawing
+  functions of \tonelib. If specified, the character drawing buttons will
+  produce an em unit square of the current font instead of the expected
+  character.  
+\item \verb+--cacheStrokedGlyphs+: If this option is specified, \verb+xglyph+
+  will cache stroked glyphs whereas filled ones are not cached.
+\end{itemize}
+For those who are wondering about special X11 options like ``\verb+-display+'',
+\verb+xglyph+ does not support these. The widgets are built straight ahead and
+the layout is fixed. \verb+xglyph+ is meant to be a tool for testing some of
+the functionalities of \tonelib\ and nothing more. Of course, a display other
+than \verb+localhost:0.0+ may be specified by environment variable
+\verb+DISPLAY+. 
+
+
+\subsection{Fonts Included in the \tonelib-Package}
+\label{fonts}%
+Included in the \tonelib-package are 8 fonts of two families which
+are freely available. 
+\begin{enumerate}
+\item The CharterBT-fonts in Roman, Italic, Bold and BoldItalic
+  variants. These are good quality fonts containing kerning
+  information. Notable kerning pairs are ``T''--``e'', ``A''--``V''
+  and ``A''--``T''.
+\item The ComputerModern-fonts by Donald E.~Knuth in the variants
+  Roman, Italic, BoldExtended and BoldExtendedItalic. In addition to
+  kerning information, there are many ligatures in these
+  fonts. Most people will know about the present ligatures from using
+  \TeX, the typesetting system. Notable examples are: 
+  \verb+--+ $\rightarrow$ ``--'', 
+  \verb+---+ $\rightarrow$ ``---'', 
+    \verb+fi+ $\rightarrow$ ``fi'' and
+  \verb+ffi+ $\rightarrow$ ``ffi''. 
+  These fonts have the disadvantage that no ordinary space character
+  is included, only a visible space. \TeX\ itself does not need a
+  dedicated space character. 
+\end{enumerate}
+Note that working with ligatures requires the ligatures to be
+encoded at the positions they are expected. Thus, if you reencode one of the
+dc-fonts with the IsoLatin1-encoding funny effects may occur.
+
+\subsection{Some General Remarks on {\tt xglyph}}
+The program \verb+xglyph+ is just intended to check whether \tonelib\ works on
+a particular system. It is written straight forward and does not care much on
+performance and such. Especially, it is not a typical application for a
+rasterizer library. The bitmaps are generated and then the output window is
+adapted to the size of the bitmap/pixmap generated by the rastering
+function. This contradicts the X11 principle of ``drawing into a drawable''
+and requires some overhead if one wants a fitted output window. In that sense,
+the performance of the X11 rastering functions is not directly comparable to
+the performance of the standard rastering functions. This should always be
+kept in mind.
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "t1lib_doc"
+%%% End: 

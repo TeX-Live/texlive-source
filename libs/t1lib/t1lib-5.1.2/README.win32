@@ -1,0 +1,6 @@
+The directory win32 contains some files for compiling  t1lib under MS Visual
+C++ 6.0. They are contributed by Nakano Hideo  (hideo@mb.infoeddy.ne.jp).  
+
+I can't tell anything about this and add it to the sources for convenience.
+
+                                             (RMz, 2000-03-20)

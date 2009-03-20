@@ -1,0 +1,9 @@
+Dear Folks,
+
+this directory contains the shell-archive with the parseAFM-package by
+Adobe Systems Inc. The shell archive is only located here for
+completeness. The files used by the t1-library (parseAFM.c,
+parseAFM.h) have been extracted and copied to the t1lib-subdirectory.
+Thus, no make is done in this directory.
+
+			                       (08/11/1996, RMz) 

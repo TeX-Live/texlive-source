@@ -1,0 +1,166 @@
+# Makefile.in
+# 
+# This file is part of the t1lib-package! See documentation and Readme files
+# of the t1lib-package for copyright restrictions.
+#
+# Targets provided: 
+#                      all (default)
+#                      install
+#                      uninstall
+#                      without_doc
+#                      clean
+#                      distclean
+#                      t1python-all
+#                      t1python-clean
+#
+# Author:              Rainer Menzner (Rainer.Menzner@web.de)
+# Date:                04/06/1997
+# Last modified:       2005-05-01
+#
+
+SHELL     = /bin/sh
+CC        = @CC@
+CPP       = @CPP@
+CFLAGS    = @CFLAGS@
+OPTIONS   = @OPTIONS@
+X_LIBS    = @X_LIBS@
+TOPSRC    = @top_srcdir@
+XPM_LIB   = -lXpm
+XLIB      = @X_PRE_LIBS@ -lXext -lX11 @X_EXTRA_LIBS@
+LDFLAGS   = @LDFLAGS@
+LDLIBS    = @LDLIBS@
+AR        = ar rc
+RANLIB    = @RANLIB@
+RM        = rm -f
+X_CFLAGS  = @X_CFLAGS@
+YACC      = @YACC@
+LEX       = @LEX@
+LEXLIB    = @LEXLIB@
+ALLCFLAGS = $(CFLAGS) $(X_CFLAGS)
+SUBMAKE   = $(MAKE) 'CC=$(CC)' 'CFLAGS=$(ALLCFLAGS)' 'OPTIONS=$(OPTIONS)'
+@SET_MAKE@
+
+INSTALL         = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA    = @INSTALL_DATA@
+MKINSTALLDIRS   = @top_srcdir@/ac-tools/mkinstalldirs
+prefix          = @prefix@
+exec_prefix     = @exec_prefix@
+includedir      = @includedir@
+bindir          = @bindir@
+datadir         = @datadir@
+libdir          = @libdir@
+mandir          = @mandir@/man1
+manext          = .1
+no_x            = @no_x@
+
+t1lib_version     = @T1LIB_VERSION@
+t1lib_revision    = @T1LIB_REVISION@
+t1lib_patchlevel  = @T1LIB_PATCHLEVEL@
+
+# Main target to build
+
+MAIN_TARGET        = @MAIN_TARGET@
+COMMONSUBDIRS      = lib \
+		     type1afm \
+		     examples
+DOCSUBDIRS         = doc
+
+
+
+# Drop xglyph from targets if we do not have X11
+XSUBDIRS = @XSUBDIRS@
+
+
+ALLSUBDIRS           = $(COMMONSUBDIRS) $(XSUBDIRS)
+
+DUMMYSUBDIRS = XXXX
+
+all:            $(DUMMYSUBDIRS) $(DOCSUBDIRS) 
+
+
+without_doc:    $(DUMMYSUBDIRS)
+
+
+# warning the following target does only work with gcc and is no
+# official target. It generates .dependencies files and changes 
+# the suffixes from .o to .lo.
+dependencies: dummy
+	for i in $(ALLSUBDIRS); do \
+	  (cd $$i; make dependencies ) || exit 1; \
+	done
+
+
+
+$(DOCSUBDIRS): dummy
+	for i in $(DOCSUBDIRS); do \
+	  (cd $$i; $(SUBMAKE) ) || exit 1; \
+	done
+
+
+$(DUMMYSUBDIRS):        dummy
+	for i in $(ALLSUBDIRS); do \
+	  (cd $$i; $(SUBMAKE) ) || exit 1; \
+	done
+
+
+install: dummy
+	for i in $(ALLSUBDIRS) $(DOCSUBDIRS); do \
+	  (cd $$i; $(MAKE) install) || exit 1; \
+	done
+
+
+uninstall: dummy
+	for i in $(ALLSUBDIRS) $(DOCSUBDIRS); do \
+	  (cd $$i; $(MAKE) uninstall) || exit 1; \
+	done
+	$(RM) -Rf $(datadir)/t1lib-$(t1lib_version).$(t1lib_revision)
+
+
+.PHONY: uninstall
+
+
+.PHONY: install
+
+
+.PHONY: clean
+
+
+clean: dummy
+	for i in $(ALLSUBDIRS); do \
+	  (cd $$i; $(MAKE) clean) || exit 1; \
+	done
+	for i in $(DOCSUBDIRS); do \
+	  (cd $$i; $(MAKE) clean) || exit 1; \
+	done
+
+
+# In order not to delete the t1python Makefile, we have to remove the
+# Makefile's one at a time:
+distclean: clean
+	$(RM) *~
+	$(RM) config.cache config.log config.status 
+	$(RM) Makefile
+	$(RM) lib/Makefile
+	$(RM) lib/type1/Makefile
+	$(RM) lib/t1lib/Makefile
+	$(RM) lib/t1lib/sysconf.h
+	$(RM) type1afm/Makefile
+	$(RM) examples/Makefile
+	$(RM) xglyph/Makefile
+	$(RM) doc/Makefile
+	$(RM) libtool
+
+
+# The following two targets are for building and cleaning the python-
+# interface contributed by Fred L. Drake, Jr. They are completely 
+# independent from the other t1lib-targets. 
+t1python-all:
+	(cd t1python; $(MAKE); $(MAKE))
+
+
+t1python-clean:
+	(cd t1python; $(MAKE) clean)
+
+
+dummy:

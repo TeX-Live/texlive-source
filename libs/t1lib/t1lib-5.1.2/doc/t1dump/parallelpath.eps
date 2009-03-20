@@ -1,0 +1,327 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Creator: (Created manually by RMz, 2003-01-15. Illustration of t1lib parallel path construction)
+%%Title: Parallel Path Construction
+%%Pages: 1
+%%PageOrder: Ascend
+%%BoundingBox: 0 0 600 500
+%%EndComments
+%
+% 3.
+
+gsave
+
+/xa 100 def
+/ya 100 def
+/xb 100 def
+/yb 400 def
+/xc 500 def
+/yc 750 def
+/xd 500 def
+/yd 100 def
+
+% 4.
+/xa 100 def
+/ya 300 def
+/xb 100 def
+/y5 400 def
+/xc 500 def
+/yc 300 def
+/xd 300 def
+/yd 300 def
+
+
+% 2.
+/xa 100 def
+/ya 100 def
+/xb 100 def
+/yb 400 def
+/xc 300 def
+/yc 550 def
+/xd 500 def
+/yd 600 def
+
+% 1.
+/xa 55 def
+/ya 40 def
+/xb 120 def
+/yb 200 def
+/xc 300 def
+/yc 400 def
+/xd 550 def
+/yd 445 def
+
+/TimesRoman findfont 25 scalefont setfont
+/line1 20 string def
+
+
+
+
+
+/linewidth 100 def
+
+% compute distance from Bezier_A to Bezier_B
+/dista xb xa sub dup mul yb ya sub dup mul add sqrt def
+
+% compute distance from Bezier_C to Bezier_D
+/distd xd xc sub dup mul yd yc sub dup mul add sqrt def
+
+/diameter linewidth 2 div def
+
+% compute resulting limit values of thick curve at end points
+/dxa yb ya sub diameter mul dista div def
+/dya xb xa sub diameter mul dista div neg def
+/dxd yd yc sub diameter mul distd div def
+/dyd xd xc sub diameter mul distd div neg def
+
+% draw curve as rendered by ghostscript
+0.9 0.9 0.9 setrgbcolor
+xa ya moveto
+xb yb xc yc xd yd curveto
+%linewidth 40 div setlinewidth
+linewidth setlinewidth
+0 setlinecap
+stroke 
+
+0.0 0.0 0.0 setrgbcolor
+xa ya moveto
+xb yb xc yc xd yd curveto
+1 setlinewidth
+0 setlinecap
+[4 4] 0 setdash
+stroke 
+
+
+% reset dash
+[] 0 setdash
+
+% correct right path end points
+/xar xa dxa add def
+/yar ya dya add def
+/xdr xd dxd add def
+/ydr yd dyd add def
+
+% correct left path end points
+/xal xa dxa sub def
+/yal ya dya sub def
+/xdl xd dxd sub def
+/ydl yd dyd sub def
+
+
+/x1 xa xb add 0.5 mul def
+/y1 ya yb add 0.5 mul def
+/x2 xb xc add 0.5 mul def
+/y2 yb yc add 0.5 mul def
+/x3 xc xd add 0.5 mul def
+/y3 yc yd add 0.5 mul def
+/x4 xa xb 2 mul add xc add 4 div def
+/y4 ya yb 2 mul add yc add 4 div def
+/x5 xd xc 2 mul add xb add 4 div def
+/y5 yd yc 2 mul add yb add 4 div def
+/x6 xa xb 3 mul add xc 3 mul add xd add 8 div def
+/y6 ya yb 3 mul add yc 3 mul add yd add 8 div def
+
+0 0 0 setrgbcolor
+newpath xa ya 4.0 0 360 arc closepath fill
+newpath xb yb 4.0 0 360 arc closepath fill
+newpath xc yc 4.0 0 360 arc closepath fill
+newpath xd yd 4.0 0 360 arc closepath fill
+
+0 0 0 setrgbcolor
+newpath x1 y1 3.0 0 360 arc closepath fill
+newpath x2 y2 3.0 0 360 arc closepath fill
+newpath x3 y3 3.0 0 360 arc closepath fill
+
+0 0 0 setrgbcolor
+newpath x4 y4 2.0 0 360 arc closepath fill
+newpath x5 y5 2.0 0 360 arc closepath fill
+
+0 0 0 setrgbcolor
+newpath x6 y6 4.0 0 360 arc closepath stroke
+
+
+% compute right-side normal vector
+/nabs diameter x5 x4 sub dup mul y5 y4 sub dup mul add sqrt div def
+
+/nxr y5 y4 sub nabs mul def
+/nyr x4 x5 sub nabs mul def
+
+0 0 0 setrgbcolor
+newpath x6 nxr add y6 nyr add 4.0 0 360 arc closepath stroke
+newpath x6 nxr sub y6 nyr sub 4.0 0 360 arc closepath stroke
+
+% calculate location and direction vectors of lines to intersect
+/bloc1x 4 nxr x6 add mul xar 2 mul sub xdr add 3 div def
+/bloc1y 4 nyr y6 add mul yar 2 mul sub ydr add 3 div def
+/bdir1x xc xd add xa sub xb sub def
+/bdir1y yc yd add ya sub yb sub def
+/bloc2x xar def
+/bloc2y yar def
+/bdir2x xb xa sub def
+/bdir2y yb ya sub def
+
+% calculate determinant and inverse
+/bdet bdir2x bdir1y mul bdir2y bdir1x mul sub def
+
+%bdet 0.0 eq
+bdet abs 0.001 le
+{
+  /xbr xb nxr add def
+  /ybr yb nyr add def
+  /bnu 0.0 def
+  /bmu 0.0 def
+}
+{
+  /binvdet 1 bdet div def
+
+  % calculate inverse of dir matrix
+  /binvdir2x bdir1y binvdet mul def
+  /binvdir2y bdir2y binvdet mul neg def
+  /binvdir1x bdir1x binvdet mul neg def
+  /binvdir1y bdir2x binvdet mul def
+
+  % calculate mu and nu value (nu actually is not required)
+  /bmu binvdir2x bloc1x bloc2x sub mul binvdir1x bloc1y bloc2y sub mul add def
+  /bnu binvdir2y bloc1x bloc2x sub mul binvdir1y bloc1y bloc2y sub mul add def
+
+  /xbr bloc2x bmu bdir2x mul add def
+  /ybr bloc2y bmu bdir2y mul add def
+}
+ifelse
+
+
+
+% calculate location and direction vectors of lines to intersect
+/cloc1x 4 nxr x6 add mul xar add xdr 2 mul sub 3 div def
+/cloc1y 4 nyr y6 add mul yar add ydr 2 mul sub 3 div def
+/cdir1x xc xd add xa sub xb sub def
+/cdir1y yc yd add ya sub yb sub def
+/cloc2x xdr def
+/cloc2y ydr def
+/cdir2x xc xd sub def
+/cdir2y yc yd sub def
+
+% calculate determinant and inverse
+/cdet cdir2x cdir1y mul cdir2y cdir1x mul sub def
+
+%cdet 0.0 eq
+cdet abs 0.001 le
+{
+  % curve is just a straight line
+  /xcr xc nxr add def
+  /ycr yc nyr add def
+  /cmu 0.0 def
+}
+{
+  /cinvdet 1 cdet div def
+
+  % calculate inverse of dir matrix
+  /cinvdir2x cdir1y cinvdet mul def
+  /cinvdir2y cdir2y cinvdet mul neg def
+  /cinvdir1x cdir1x cinvdet mul neg def
+  /cinvdir1y cdir2x cinvdet mul def
+
+  % calculate mu and nu value (mu actually is not required)
+  /cmu cinvdir2x cloc1x cloc2x sub mul cinvdir1x cloc1y cloc2y sub mul add def
+  /cnu cinvdir2y cloc1x cloc2x sub mul cinvdir1y cloc1y cloc2y sub mul add def
+
+  /xcr cloc2x cmu cdir2x mul add def
+  /ycr cloc2y cmu cdir2y mul add def
+}
+ifelse
+
+
+% Analyse coefficients and decide how to compute displacements
+bmu 0.1 le
+{
+  /xbr 8 nxr x6 add mul xar sub xdr sub 3 div xcr sub def
+  /ybr 8 nyr y6 add mul yar sub ydr sub 3 div ycr sub def
+}
+if
+
+cmu 0.1 le
+{
+  /xcr 8 nxr x6 add mul xar sub xdr sub 3 div xbr sub def
+  /ycr 8 nyr y6 add mul yar sub ydr sub 3 div ybr sub def
+}
+if
+
+
+% define delta values
+/dxb xbr xb sub def
+/dyb ybr yb sub def
+/dxc xcr xc sub def
+/dyc ycr yc sub def
+
+
+0.5 setlinewidth
+
+% show tangent at t=0.5 and their shifted counterparts
+[32 32] 0 setdash
+x4 y4 moveto
+x5 y5 lineto
+stroke
+x4 nxr add y4 nyr add moveto
+x5 nxr add y5 nyr add lineto
+x4 nxr sub y4 nyr sub moveto
+x5 nxr sub y5 nyr sub lineto
+stroke
+[] 0 setdash
+
+0 0 0 setrgbcolor
+1 setlinewidth
+
+% stroke right curve
+xar yar moveto
+xb dxb add yb dyb add xc dxc add yc dyc add xdr ydr curveto
+stroke
+% stroke left curve
+xal yal moveto
+xb dxb sub yb dyb sub xc dxc sub yc dyc sub xdl ydl curveto
+stroke
+
+%0.2 0.5 0.8 setrgbcolor
+%newpath bloc2x bloc2y 5.0 0 360 arc closepath fill
+%bloc2x 10 bdir2x mul sub bloc2y 10 bdir2y mul sub moveto
+%bloc2x 10 bdir2x mul add bloc2y 10 bdir2y mul add lineto stroke
+
+%0.5 0.5 0.5 setrgbcolor
+%newpath bloc1x bloc1y 5.0 0 360 arc closepath fill
+%bloc1x 10 bdir1x mul sub bloc1y 10 bdir1y mul sub moveto
+%bloc1x 10 bdir1x mul add bloc1y 10 bdir1y mul add lineto stroke
+
+
+% draw tangents
+0 0 0 setrgbcolor
+%1 setlinewidth
+%[5 5] 0 setdash
+0.5 setlinewidth
+[4 4] 0 setdash
+xa ya moveto xb yb lineto stroke
+xd yd moveto xc yc lineto stroke
+[] 0 setdash
+xar yar moveto xb dxb add yb dyb add lineto stroke
+xdr ydr moveto xc dxc add yc dyc add lineto stroke
+xal yal moveto xb dxb sub yb dyb sub lineto stroke
+xdl ydl moveto xc dxc sub yc dyc sub lineto stroke
+
+% draw auxiliary lines
+[8 8] 0 setdash
+xb yb moveto xc yc lineto stroke
+[16 16] 0 setdash
+x1 y1 moveto x2 y2 lineto stroke
+x2 y2 moveto x3 y3 lineto stroke
+
+
+% draw resulting points
+0 0 0 setrgbcolor
+newpath xar yar 4.0 0 360 arc closepath fill
+newpath xb dxb add yb dyb add 4.0 0 360 arc closepath fill
+newpath xc dxc add yc dyc add 4.0 0 360 arc closepath fill
+newpath xdr ydr 4.0 0 360 arc closepath fill
+newpath xal yal 4.0 0 360 arc closepath fill
+newpath xb dxb sub yb dyb sub 4.0 0 360 arc closepath fill
+newpath xc dxc sub yc dyc sub 4.0 0 360 arc closepath fill
+newpath xdl ydl 4.0 0 360 arc closepath fill
+
+
+grestore

@@ -1,0 +1,98 @@
+%----------------------------------------------------------------------------
+% ----- File:        t1lib_doc.tex 
+% ----- Author:      Rainer Menzner (Rainer.Menzner@web.de)
+% ----- Date:        2005-05-18
+% ----- Description: This file is part of the t1lib-documentation.
+% ----- Copyright:   t1lib is copyrighted (c) Rainer Menzner, 1996-2005. 
+%                    As of version 0.5, t1lib is distributed under the
+%                    GNU General Public Library Lincense. The
+%                    conditions can be found in the files LICENSE and
+%                    LGPL, which should reside in the toplevel
+%                    directory of the distribution.  Please note that 
+%                    there are parts of t1lib that are subject to
+%                    other licenses:
+%                    The parseAFM-package is copyrighted by Adobe Systems
+%                    Inc.
+%                    The type1 rasterizer is copyrighted by IBM and the
+%                    X11-consortium.
+% ----- Warranties:  Of course, there's NO WARRANTY OF ANY KIND :-)
+% ----- Credits:     I want to thank IBM and the X11-consortium for making
+%                    their rasterizer freely available.
+%                    Also thanks to Piet Tutelaers for his ps2pk, from
+%                    which I took the rasterizer sources in a format
+%                    independ from X11.
+%                    Thanks to all people who make free software living!
+%----------------------------------------------------------------------------
+\documentclass[11pt,a4paper]{article}
+\usepackage[english]{babel}
+\usepackage{makeidx}
+\topmargin-1cm
+\oddsidemargin0cm
+\textwidth16cm
+\textheight24cm
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Added by NGUYEN-DAI Quy and edited by RMz)
+%%
+%% - Adapted to recent TeX developments according to suggestions 
+%%   of Reinhard Kotucha, a well-known TeX-Guru (2004-11-27, RMz) 
+%%   
+\ifx\pdfoutput\undefined\chardef\pdfoutput=0 \fi
+\ifcase\pdfoutput
+  \usepackage{graphicx}
+\or
+  \usepackage{graphicx}
+  \usepackage[a4paper,pageanchor,hyperfigures,breaklinks,%
+              colorlinks,citecolor=blue,urlcolor=red,linkcolor=magenta]{hyperref}
+  \pdfcompresslevel=9
+\fi
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%--- Some definitions
+\def\tonelib{{\mdseries\ttfamily t1lib}}\relax
+\def\libversion{5.1.0}\relax
+\def\libdate{Mai, 18, 2005}\relax
+\def\precorr{\par\vbox\bgroup}\relax
+\def\postcorr{\unskip\vskip-2mm\hrule
+\vbox to 0pt{\kern-17.7pt\parskip0pt\noindent\llap{\fbox{$\mathcal{F}()\Rightarrow$}\kern0pt}\vss}
+\vskip3mm\egroup\noindent}\relax
+\makeindex
+%
+%- hyphenation exceptions:
+\hyphenation{bit-maps bit-map}
+%
+\begin{document}
+\thispagestyle{empty}
+\begin{center}
+\leavevmode
+\vskip2cm
+{\Huge\bfseries T1Lib}\\[5mm]
+
+{\Large\sl Version \libversion\ --  \libdate}\\[2.5cm]
+
+{\LARGE\bf A Library for Generating}\\[5mm]
+{\LARGE\bf Character Bitmaps from}\\[5mm]
+{\LARGE\bf Adobe Type 1 Fonts}\\[2cm]
+{\Large\sc Rainer Menzner}\\[2mm]
+\end{center}
+\newpage
+\tableofcontents
+%-- Introduction
+\input intro.tex
+%-- Getting started
+\input getstart.tex
+%-- Program xglyph
+\input xglyph.tex
+%-- Program type1afm
+\input type1afm.tex
+%-- Using t1lib
+\input ut1lib.tex
+%-- X11-Interface
+\input xinterface.tex
+%-- Internals
+\input internals.tex
+%-- Print an alphabetically sorted function index
+\def\indexname{Function Index\addcontentsline{toc}{section}{\hskip1emFunction Index}}%
+\printindex
+\end{document}
