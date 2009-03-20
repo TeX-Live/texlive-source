@@ -22,8 +22,8 @@
 #include "newobj.h"
 #include "ttf2tfm.h"
 
-#include "extend/ftxpost.h"
-#include "extend/ftxopen.h"
+#include "ftxpost.h"
+#include "ftxopen.h"
 
 
 #define Macintosh_platform 1

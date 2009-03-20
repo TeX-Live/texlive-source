@@ -13,9 +13,9 @@
 #include <stdlib.h>
 
 #include "freetype.h"
-#include "extend/ftxkern.h"     /* we are in the FreeType package tree */
-#include "extend/ftxpost.h"
-#include "extend/ftxopen.h"
+#include "ftxkern.h"     /* we use installed FreeType package headers */
+#include "ftxpost.h"
+#include "ftxopen.h"
 
 #include "ttf2tfm.h"
 #include "newobj.h"

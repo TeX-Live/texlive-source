@@ -1,11 +1,7 @@
-/* c-auto.in.  Generated from configure.in by autoheader.  */
+/* c-auto.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
-
-/* Define to 1 if getcwd is implemented using fork or vfork. Let me know if
-   you have to add this by hand because configure failed to detect it. */
-#undef GETCWD_FORKS
 
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
@@ -18,14 +14,6 @@
 
 /* Define to 1 if you have the `bzero' function. */
 #undef HAVE_BZERO
-
-/* Define to 1 if you have the declaration of `putenv', and to 0 if you don't.
-   */
-#undef HAVE_DECL_PUTENV
-
-/* Define to 1 if you have the declaration of `strstr', and to 0 if you don't.
-   */
-#undef HAVE_DECL_STRSTR
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
@@ -51,9 +39,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the `m' library (-lm). */
-#undef HAVE_LIBM
 
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
@@ -136,33 +121,12 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you want to run mkocp if OCP file missing, and to 0 if you
-   don't. */
-#undef MAKE_OMEGA_OCP_BY_DEFAULT
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
 
-/* Define to 1 if you want to run mkofm if OFM file missing, and to 0 if you
-   don't. */
-#undef MAKE_OMEGA_OFM_BY_DEFAULT
-
-/* Define to 1 if you want to run mktexfmt if format file missing, and to 0 if
-   you don't. */
-#undef MAKE_TEX_FMT_BY_DEFAULT
-
-/* Define to 1 if you want to run mktexmf if MF source missing, and to 0 if
-   you don't. */
-#undef MAKE_TEX_MF_BY_DEFAULT
-
-/* Define to 1 if you want to run mktexpk if PK font missing, and to 0 if you
-   don't. */
-#undef MAKE_TEX_PK_BY_DEFAULT
-
-/* Define to 1 if you want to run mktextex if TeX source missing, and to 0 if
-   you don't. */
-#undef MAKE_TEX_TEX_BY_DEFAULT
-
-/* Define to 1 if you want to run mktextfm if TFM file missing, and to 0 if
-   you don't. */
-#undef MAKE_TEX_TFM_BY_DEFAULT
+/* Name of package */
+#undef PACKAGE
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -185,6 +149,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Version number of package */
+#undef VERSION
+
 /* Number of bits in a file offset, on hosts where this is settable. */
 #undef _FILE_OFFSET_BITS
 
@@ -196,3 +163,9 @@
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif

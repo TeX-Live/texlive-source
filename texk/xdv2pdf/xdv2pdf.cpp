@@ -62,7 +62,7 @@ authorization from SIL International.
 #define MAC_OS_X_VERSION_MIN_REQUIRED	MAC_OS_X_VERSION_10_4
 #endif
 
-#include "c-auto.h"
+#include "config.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 #include <QuickTime/QuickTime.h>
