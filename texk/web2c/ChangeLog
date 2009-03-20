@@ -1202,7 +1202,7 @@ x2008-05-31  Karl Berry  <karl@tug.org>
 	(gftopk-clean): Remove gftopk.h.
 	(programs): Add $(pdftosrc).
 
-	* fmtutil.in: Remove mfw rule (sync with teTeX/TeX live).
+	* fmtutil.in: Remove mfw rule (sync with teTeX/TeX Live).
 
 	* withenable.ac: New option: --enable-fmtutil.
 

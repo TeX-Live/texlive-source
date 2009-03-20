@@ -31,14 +31,6 @@ along with this program; if not, see <http://www.gnu.org/licenses/.  */
 /* The stuff from the path searching library.  */
 #include <kpathsea/config.h>
 #include <web2c/c-auto.h>
-
-/* However, inline is a keyword in C++, and should never be #define'd.
-   Apparently Autoconf does not know this, at least the ancient version
-   we are stuck with.  (Even though the Autoconf *test* is #ifdef'd.)  */
-#ifdef __cplusplus
-#undef inline
-#endif
-
 #include <kpathsea/c-vararg.h>
 
 /* How to open a binary file.  */
@@ -124,4 +116,4 @@ extern void uexit P1H(int status);
 extern void usage P1H(const_string progname);
 extern void usagehelp P2H(const_string *message, const_string bug_email);
 
-#endif /* not CONFIG_H */
+#endif /* not WEB2C_CONFIG_H */
