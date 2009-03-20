@@ -1,0 +1,157 @@
+##
+ACLOCAL_AMFLAGS = -I ../../m4
+
+SUBDIRS = squeeze
+
+INCLUDES = $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes -DSHIFTLOWCHARS
+
+bin_PROGRAMS = afm2tfm dvips
+
+afm2tfm_SOURCES = afm2tfm.c
+
+afm2tfm_DEPENDENCIES = $(KPATHSEA_DEPEND)
+
+dvips_SOURCES = \
+	bbox.c \
+	color.c \
+	config.h \
+	debug.h \
+	dopage.c \
+	dosection.c \
+	dospecial.c \
+	download.c \
+	dpicheck.c \
+	drawPS.c \
+	dviinput.c \
+	dvips.c \
+	dvips.h \
+	emspecial.c \
+	finclude.c \
+	fontdef.c \
+	header.c \
+	hps.c \
+	loadfont.c \
+	output.c \
+	papersiz.c \
+	paths.h \
+	pprescan.c \
+	prescan.c \
+	protos.h \
+	ptexmac.h \
+	repack.c \
+	resident.c \
+	scalewidth.c \
+	scanpage.c \
+	search.c \
+	skippage.c \
+	t1part.c \
+	t1part.h \
+	tfmload.c \
+	unpack.c \
+	virtualfont.c \
+	writet1.c
+
+dvips_DEPENDENCIES = $(KPATHSEA_DEPEND)
+
+LDADD = $(KPATHSEA_LIBS)
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+
+dist_man1_MANS = afm2tfm.1 dvips.1
+
+info_TEXINFOS = dvips.texi
+dvips_TEXINFOS = contrib/config.proto dvips.help
+
+DISTCLEANFILES = $(DVIS) $(PSS)
+
+prolog_DATA = $(prologues)
+
+dist_prologues = \
+	color.lpro \
+	crop.lpro \
+	finclude.lpro \
+	hps.lpro \
+	special.lpro \
+	tex.lpro \
+	texps.lpro
+
+prologdir = ${prefix}/texmf/dvips/base
+
+prologues = $(dist_prologues:.lpro=.pro) texc.pro
+
+texc.lpro: texc.script tex.lpro
+	$(SHELL) $(srcdir)/texc.script $(srcdir)/tex.lpro $@
+
+SUFFIXES = .pro .lpro
+
+## The `t[mp]-' business is so that we don't create an empty .pro file,
+## if running squeeze fails for some reason.  A dependency on squeeze
+## fails here, so we include it below.
+.lpro.pro:
+	squeeze/squeeze <$< >t-$@ && mv t-$@ $@
+
+$(prologues): squeeze/squeeze$(EXEEXT)
+
+squeeze/squeeze$(EXEEXT):
+	cd squeeze && $(MAKE) $(AM_MAKEFLAGS)
+
+EXTRA_DIST = $(dist_prologues) texc.script
+
+CLEANFILES = $(prologues) texc.lpro
+
+install-data-hook:
+	cd $(DESTDIR)$(man1dir) && \
+	  rm -f odvips.1 && $(LN_S) dvips.1 odvips.1
+
+install-exec-hook:
+	cd $(DESTDIR)$(bindir) && \
+	  rm -f odvips && $(LN_S) dvips odvips
+
+uninstall-hook:
+	rm -f $(DESTDIR)$(man1dir)/odvips.1
+	rm -f $(DESTDIR)$(bindir)/odvips
+
+## Not yet used
+##
+
+EXTRA_DIST += \
+	INSTALLATION \
+	atari \
+	cmfonts.map \
+	config.ps \
+	contrib/PSTricks \
+	contrib/afm-extra \
+	contrib/colorsep.lpro \
+	contrib/configs \
+	contrib/crop.lpr \
+	contrib/latex209 \
+	contrib/volker \
+	contrib/whichinpath \
+	cyrfonts.map \
+	eufonts.map \
+	flib.c \
+	hps \
+	lafonts.map \
+	makefont.c \
+	mtest.ps \
+	mvs \
+	pc \
+	psfonts.map \
+	reencode \
+	test.ps \
+	testdata \
+	tex \
+	vmcms \
+	vms
+
+## Eventually delete these files
+##
+
+EXTRA_DIST += \
+	Makefile.in.orig \
+	configure.in.orig \
+	depend.make \
+	depend.mk
+

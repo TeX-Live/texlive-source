@@ -1,0 +1,32 @@
+##
+ACLOCAL_AMFLAGS = -I ../../m4
+
+INCLUDES = $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = -DKPATHSEA -DUNIX -DNeedFunctionPrototypes
+## We don't use libkpathsea, so don't overload fopen and stuff.
+AM_CPPFLAGS += -DNO_DEBUG
+
+bin_PROGRAMS = dvidvi
+
+dvidvi_SOURCES = dvidvi.c
+
+dist_man1_MANS = dvidvi.1
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+
+## Not used
+##
+EXTRA_DIST = \
+	a5bookle.bat \
+	a5bookle.com \
+	a5bookle.hlp \
+	a5test.tex \
+	build.com \
+	doubside.bat \
+	doubside.com \
+	doubside.hlp \
+	dvidvi.kohm-patch \
+	dvisamp.tex \
+	read.me
+

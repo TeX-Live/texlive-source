@@ -1,0 +1,85 @@
+##
+ACLOCAL_AMFLAGS = -I ../../m4
+
+INCLUDES = $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = -DKPATHSEA
+
+noinst_LIBRARIES = libdvilj.a
+
+libdvilj_a_SOURCES = tfm.c
+
+libdvilj_a_DEPENDENCIES = $(KPATHSEA_DEPEND)
+
+dist_bin_SCRIPTS = dvihp
+
+bin_PROGRAMS = dvilj dvilj2p dvilj4 dvilj4l
+
+dvilj_CPPFLAGS = -DKPATHSEA -DLJ
+
+dvilj_SOURCES = \
+	commands.h \
+	config.h \
+	dvi2xx.c \
+	dvi2xx.h
+
+dvilj2p_CPPFLAGS = -DKPATHSEA -DLJ2P
+
+dvilj2p_SOURCES = \
+	commands.h \
+	config.h \
+	dvi2xx.c \
+	dvi2xx.h
+
+dvilj4_CPPFLAGS = -DKPATHSEA -DLJ4
+
+dvilj4_SOURCES = \
+	commands.h \
+	config.h \
+	dvi2xx.c \
+	dvi2xx.h
+
+dvilj4l_CPPFLAGS = -DKPATHSEA -DLJ4 -DLJ4L
+
+dvilj4l_SOURCES = \
+	commands.h \
+	config.h \
+	dvi2xx.c \
+	dvi2xx.h
+
+LDADD = libdvilj.a $(KPATHSEA_LIBS)	
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+
+dist_man1_MANS = dvihp.man dvilj.man
+
+man1_links = dvilj2p.1 dvilj4.1 dvilj4l.1 dvilj6.1
+
+install-exec-hook:
+	cd $(DESTDIR)$(bindir) && \
+	  rm -f dvilj6$(EXEEXT) && \
+	  $(LN_S) dvilj4$(EXEEXT) dvilj6$(EXEEXT)
+
+install-data-hook:
+	cd $(DESTDIR)$(man1dir) && \
+	  for f in $(man1_links); do rm -f $$f; $(LN_S) dvilj.1 $$f; done
+
+uninstall-hook:
+	rm -f $(DESTDIR)$(bindir)/dvilj6$(EXEEXT)
+	for f in $(man1_links); do rm -f $(DESTDIR)$(man1dir)/$$f; done
+
+VERSION = `grep 'define VERSION' $(srcdir)/dvi2xx.c | sed -e 's/^.*version //' -e 's/).*//'`
+dvilj.man: dvilj.pod dvi2xx.c
+	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
+dvilj.ps: dvilj.man
+	man -t -l $< >$@
+
+EXTRA_DIST = dvilj.pod
+
+DISTCLEANFILES = dvilj.ps libdvilj.a
+
+## Eventually delete these files
+##
+
+EXTRA_DIST += Makefile.in.orig configure.in.orig
+

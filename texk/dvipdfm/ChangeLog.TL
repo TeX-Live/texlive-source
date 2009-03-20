@@ -1,4 +1,4 @@
-ChangeLog.TL: Changes for dvipdfm (teTeX / TeX live)
+ChangeLog.TL: Changes for dvipdfm (teTeX / TeX Live)
 ====================================================
 
 2008-05-23  Karl Berry  <karl@tug.org>
