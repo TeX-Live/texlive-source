@@ -1,0 +1,7 @@
+#! /bin/sh
+
+./lacheck $srcdir/test.tex | \
+	sed -e "s!$srcdir/test.tex!test.tex!g" >test.xout || exit 1
+
+diff $srcdir/test.out test.xout || exit 1
+
