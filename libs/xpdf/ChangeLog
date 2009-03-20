@@ -1,0 +1,10 @@
+2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in, fofi/Makefile.in, goo/Makefile.in,
+	xpdf/Makefile.in: Add @configure_input@ lines.
+	* acinclude.m4 (new): Renamed from aclocal.m4,
+	replaced AC_DEFUN(FOO,...) by AC_DEFUN([FOO],...).
+	* aclocal.m4 (new): Generated (aclocal -I ../../texk/m4).
+	* configure: Regenerated (autoconf).
+

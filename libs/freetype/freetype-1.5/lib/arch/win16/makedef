@@ -1,0 +1,28 @@
+# makedef
+#
+# This shell script creates a .DEF file necessary for building as DLL
+# on the Windows 16-bit platform.
+
+echo "\
+; This file is part of the FreeType project.
+; Automatically generated, but you can customize to fit your needs.
+; However, changes will be erased if not made in \`makedef'...
+;
+; This definition file to be used to built the library as DLL
+; has been generated automatically with the script \`makedef' on
+; `date +%Y-%m-%d`.
+
+LIBRARY ft15_16
+DESCRIPTION 'FreeType 1.5 16-bit DLL © 1996-2002 Turner, Wilhelm, Lemberg'
+EXETYPE WINDOWS
+CODE PRELOAD MOVEABLE DISCARDABLE
+DATA PRELOAD MOVEABLE SINGLE
+EXPORTS
+" > ttf.def
+
+(cd ../..
+ sed -n -e "/^ *FT_EXPORT_DE/!d ; n ; s/(.*$//" \
+   -e "s/;$//" -e "s/ const / /" -e "s/ *TT_[a-zA-Z_\*]* //" \
+   -e "s/ *//g" -e "s/^\(.*\)/    _\1/" -e "p" *.h extend/*.h) >> ttf.def
+
+# eof

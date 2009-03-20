@@ -1,0 +1,61 @@
+This directory contains several extensions to the core engine.
+
+An extension is a separately  compilable unit which can be linked by
+a client application to add new functionalities to the engine.
+
+There  are two  kinds  of extensions:  an  `API extension'  provides
+clients with new APIs to  access internal engine structures or data,
+while an  `engine extension' implements  new TrueType data  or table
+management.
+
+This directory contains the following:
+
+  ftxcmap:  An API extension to iterate over cmaps.
+
+  ftxgasp:  A simple API extension which returns the TrueType `gasp'
+            table to client applications, when found in a font file.
+            Though this table is  always loaded by the engine, there
+            is no function in the core API to access it.  The reason
+            is simple:  to demonstrate  a simple API  extension with
+            `ftxgasp'!
+
+  ftxkern:  This engine  extension is  used to access  kerning data,
+            when available in a  font file.  Note that it implements
+            on-the-fly  loading and  retrieving  of kerning  tables.
+            However, it  doesn't interpret or process  the data, and
+            client  applications  should  use  it according  to  the
+            TrueType specification.
+
+  ftxpost:  An engine  extension to load the  PostScript glyph names
+            of the  `post' table.   See the `ftzoom'  program for an
+            example how to use it.
+
+  ftxwidth: A simple  extension used to load the  widths and heights
+            of  a given  range of  glyphs  in a  face.  Results  are
+            expressed in  unscaled font units.  This  is required by
+            the  latest version of  the FreeType/2  DLL to  speed up
+            font loading in the  GRE (the OS/2 GRaphics Engine).  It
+            can be used by other applications though...
+
+  ftxerr18: This extension  simply converts a  TrueType engine error
+            code into  a corresponding string  describing the error.
+            It is  useful if you intend  to write a  package for end
+            users and  want to  give them not  `Error code  135' but
+            `OS/2  table   missing'.   See  docs/errstr.txt   for  a
+            description  how to use  it (really  simple!).  ftxerr18
+            supports localization  of error strings  (that is: error
+            strings  are  automatically  translated  into  supported
+            languages)  using  gettext().   See docs/i18n.txt  about
+            using gettext.
+
+  ftxsbit:  Embedded bitmap  support.  This is an engine  extension.
+            See e.g. the `ftstrtto' program for its usage.
+
+  ftxopen,
+  ftxgsub,
+  ftxgpos,
+  ftxgdef:  This is  experimental stuff  for TrueType Open  support!
+            Please ignore it or help debugging :-)
+
+
+--- END ---

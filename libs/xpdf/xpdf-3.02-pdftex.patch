@@ -1,0 +1,1043 @@
+diff -ur xpdf-3.02.orig/goo/GString.cc xpdf-3.02/goo/GString.cc
+--- xpdf-3.02.orig/goo/GString.cc	2007-02-27 23:05:51.000000000 +0100
++++ xpdf-3.02/goo/GString.cc	2008-05-08 15:40:41.000000000 +0200
+@@ -8,6 +8,47 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: GString.cc 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r196 | oneiros | 2007-07-11 13:56:21 +0200 (Mi, 11 Jul 2007) | 2 lines
++*
++* Merge r195 (compilation problems on IRIX) into stable
++*
++* ------------------------------------------------------------------------
++* r194 | oneiros | 2007-07-10 19:47:01 +0200 (Di, 10 Jul 2007) | 2 lines
++*
++* Merge r193 (compilation problems on IRIX) into stable
++*
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++*
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++*
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++*
++* 1.30.1
++*
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++*
++* released v1.11b
++*
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++*
++* Moved sources to src
++*
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++*
++* 1.11a
++*------------------------------------------------------------------------ */
++
+ #include <aconf.h>
+ 
+ #ifdef USE_GCC_PRAGMAS
+@@ -528,7 +569,7 @@
+   if ((neg = x < 0)) {
+     x = -x;
+   }
+-  x = floor(x * pow(10, prec) + 0.5);
++  x = floor(x * pow(10.0, prec) + 0.5);
+   i = bufSize;
+   started = !trim;
+   for (j = 0; j < prec && i > 1; ++j) {
+diff -ur xpdf-3.02.orig/goo/gfile.cc xpdf-3.02/goo/gfile.cc
+--- xpdf-3.02.orig/goo/gfile.cc	2009-03-06 11:40:39.000000000 +0100
++++ xpdf-3.02/goo/gfile.cc	2009-03-06 11:54:23.000000000 +0100
+@@ -8,6 +8,42 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: gfile.cc 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r50 | ms | 2006-02-16 13:00:00 +0100 (Do, 16 Feb 2006) | 2 lines
++* 
++* 1.30.6
++* 
++* ------------------------------------------------------------------------
++* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
++* 
++* 1.20a
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #include <aconf.h>
+ 
+ #ifdef WIN32
+@@ -440,6 +476,7 @@
+ #endif
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ GBool openTempFile(GString **name, FILE **f, char *mode, char *ext) {
+ #if defined(WIN32)
+   //---------- Win32 ----------
+@@ -548,6 +585,7 @@
+   return gTrue;
+ #endif
+ }
++#endif
+ 
+ GBool executeCommand(char *cmd) {
+ #ifdef VMS
+diff -ur xpdf-3.02.orig/xpdf/Decrypt.h xpdf-3.02/xpdf/Decrypt.h
+--- xpdf-3.02.orig/xpdf/Decrypt.h	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/Decrypt.h	2008-05-08 15:40:41.000000000 +0200
+@@ -6,6 +6,42 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: Decrypt.h 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r320 | oneiros | 2007-12-18 13:40:01 +0100 (Di, 18 Dez 2007) | 2 lines
++* 
++* Import libpng 1.2.24 into stable
++* 
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++* 
++* 1.30.1
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #ifndef DECRYPT_H
+ #define DECRYPT_H
+ 
+@@ -73,7 +109,7 @@
+ 		CryptAlgorithm algoA, int keyLength,
+ 		int objNum, int objGen);
+   virtual ~DecryptStream();
+-  virtual StreamKind getKind() { return strWeird; }
++  virtual StreamKind getKind() { return strCrypt; }
+   virtual void reset();
+   virtual int getChar();
+   virtual int lookChar();
+diff -ur xpdf-3.02.orig/xpdf/GlobalParams.cc xpdf-3.02/xpdf/GlobalParams.cc
+--- xpdf-3.02.orig/xpdf/GlobalParams.cc	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/GlobalParams.cc	2008-05-08 15:40:41.000000000 +0200
+@@ -6,6 +6,42 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: GlobalParams.cc 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++* 
++* 1.30.1
++* 
++* ------------------------------------------------------------------------
++* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
++* 
++* 1.20a
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #include <aconf.h>
+ 
+ #ifdef USE_GCC_PRAGMAS
+@@ -422,6 +458,7 @@
+   }
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ //------------------------------------------------------------------------
+ // KeyBinding
+ //------------------------------------------------------------------------
+@@ -454,6 +491,7 @@
+ KeyBinding::~KeyBinding() {
+   deleteGList(cmds, GString);
+ }
++#endif
+ 
+ #ifdef ENABLE_PLUGINS
+ //------------------------------------------------------------------------
+@@ -601,6 +639,138 @@
+ // parsing
+ //------------------------------------------------------------------------
+ 
++GlobalParams::GlobalParams() {
++  UnicodeMap *map;
++  int i;
++
++#if MULTITHREADED
++  gInitMutex(&mutex);
++  gInitMutex(&unicodeMapCacheMutex);
++  gInitMutex(&cMapCacheMutex);
++#endif
++
++  initBuiltinFontTables();
++
++  // scan the encoding in reverse because we want the lowest-numbered
++  // index for each char name ('space' is encoded twice)
++  macRomanReverseMap = new NameToCharCode();
++  for (i = 255; i >= 0; --i) {
++    if (macRomanEncoding[i]) {
++      macRomanReverseMap->add(macRomanEncoding[i], (CharCode)i);
++    }
++  }
++
++#ifdef WIN32
++  // baseDir will be set by a call to setBaseDir
++  baseDir = new GString();
++#else
++  baseDir = appendToPath(getHomeDir(), ".xpdf");
++#endif
++  nameToUnicode = new NameToCharCode();
++  cidToUnicodes = new GHash(gTrue);
++  unicodeToUnicodes = new GHash(gTrue);
++  residentUnicodeMaps = new GHash();
++  unicodeMaps = new GHash(gTrue);
++  cMapDirs = new GHash(gTrue);
++  toUnicodeDirs = new GList();
++  displayFonts = new GHash();
++  displayCIDFonts = new GHash();
++  displayNamedCIDFonts = new GHash();
++#if HAVE_PAPER_H
++  char *paperName;
++  const struct paper *paperType;
++  paperinit();
++  if ((paperName = systempapername())) {
++    paperType = paperinfo(paperName);
++    psPaperWidth = (int)paperpswidth(paperType);
++    psPaperHeight = (int)paperpsheight(paperType);
++  } else {
++    error(-1, "No paper information available - using defaults");
++    psPaperWidth = defPaperWidth;
++    psPaperHeight = defPaperHeight;
++  }
++  paperdone();
++#else
++  psPaperWidth = defPaperWidth;
++  psPaperHeight = defPaperHeight;
++#endif
++  psImageableLLX = psImageableLLY = 0;
++  psImageableURX = psPaperWidth;
++  psImageableURY = psPaperHeight;
++  psCrop = gTrue;
++  psExpandSmaller = gFalse;
++  psShrinkLarger = gTrue;
++  psCenter = gTrue;
++  psDuplex = gFalse;
++  psLevel = psLevel2;
++  psFile = NULL;
++  psFonts = new GHash();
++  psNamedFonts16 = new GList();
++  psFonts16 = new GList();
++  psEmbedType1 = gTrue;
++  psEmbedTrueType = gTrue;
++  psEmbedCIDPostScript = gTrue;
++  psEmbedCIDTrueType = gTrue;
++  psOPI = gFalse;
++  psASCIIHex = gFalse;
++  textEncoding = new GString("Latin1");
++#if defined(WIN32)
++  textEOL = eolDOS;
++#elif defined(MACOS)
++  textEOL = eolMac;
++#else
++  textEOL = eolUnix;
++#endif
++  textPageBreaks = gTrue;
++  textKeepTinyChars = gFalse;
++  fontDirs = new GList();
++  initialZoom = new GString("125");
++  continuousView = gFalse;
++  enableT1lib = gTrue;
++  enableFreeType = gTrue;
++  antialias = gTrue;
++  urlCommand = NULL;
++  movieCommand = NULL;
++  mapNumericCharNames = gTrue;
++  printCommands = gFalse;
++  errQuiet = gFalse;
++
++  cidToUnicodeCache = new CharCodeToUnicodeCache(cidToUnicodeCacheSize);
++  unicodeToUnicodeCache =
++      new CharCodeToUnicodeCache(unicodeToUnicodeCacheSize);
++  unicodeMapCache = new UnicodeMapCache();
++  cMapCache = new CMapCache();
++
++#ifdef ENABLE_PLUGINS
++  plugins = new GList();
++  securityHandlers = new GList();
++#endif
++
++  // set up the initial nameToUnicode table
++  for (i = 0; nameToUnicodeTab[i].name; ++i) {
++    nameToUnicode->add(nameToUnicodeTab[i].name, nameToUnicodeTab[i].u);
++  }
++
++  // set up the residentUnicodeMaps table
++  map = new UnicodeMap("Latin1", gFalse,
++		       latin1UnicodeMapRanges, latin1UnicodeMapLen);
++  residentUnicodeMaps->add(map->getEncodingName(), map);
++  map = new UnicodeMap("ASCII7", gFalse,
++		       ascii7UnicodeMapRanges, ascii7UnicodeMapLen);
++  residentUnicodeMaps->add(map->getEncodingName(), map);
++  map = new UnicodeMap("Symbol", gFalse,
++		       symbolUnicodeMapRanges, symbolUnicodeMapLen);
++  residentUnicodeMaps->add(map->getEncodingName(), map);
++  map = new UnicodeMap("ZapfDingbats", gFalse, zapfDingbatsUnicodeMapRanges,
++		       zapfDingbatsUnicodeMapLen);
++  residentUnicodeMaps->add(map->getEncodingName(), map);
++  map = new UnicodeMap("UTF-8", gTrue, &mapUTF8);
++  residentUnicodeMaps->add(map->getEncodingName(), map);
++  map = new UnicodeMap("UCS-2", gTrue, &mapUCS2);
++  residentUnicodeMaps->add(map->getEncodingName(), map);
++
++}
++
+ GlobalParams::GlobalParams(char *cfgFileName) {
+   UnicodeMap *map;
+   GString *fileName;
+@@ -706,7 +876,9 @@
+   movieCommand = NULL;
+   mapNumericCharNames = gTrue;
+   mapUnknownCharNames = gFalse;
++#ifndef PDF_PARSER_ONLY
+   createDefaultKeyBindings();
++#endif
+   printCommands = gFalse;
+   errQuiet = gFalse;
+ 
+@@ -781,12 +953,15 @@
+     }
+   }
+   if (f) {
++#ifndef PDF_PARSER_ONLY
+     parseFile(fileName, f);
++#endif
+     delete fileName;
+     fclose(f);
+   }
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ void GlobalParams::createDefaultKeyBindings() {
+   keyBindings = new GList();
+ 
+@@ -1113,6 +1288,7 @@
+ 
+   deleteGList(tokens, GString);
+ }
++#endif
+ 
+ void GlobalParams::parseNameToUnicode(GList *tokens, GString *fileName,
+ 					 int line) {
+@@ -1457,6 +1633,7 @@
+   }
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ void GlobalParams::parseBind(GList *tokens, GString *fileName, int line) {
+   KeyBinding *binding;
+   GList *cmds;
+@@ -1642,6 +1819,7 @@
+ 
+   return gTrue;
+ }
++#endif
+ 
+ void GlobalParams::parseCommand(char *cmdName, GString **val,
+ 				GList *tokens, GString *fileName, int line) {
+@@ -1785,7 +1963,9 @@
+   if (movieCommand) {
+     delete movieCommand;
+   }
++#ifndef PDF_PARSER_ONLY
+   deleteGList(keyBindings, KeyBinding);
++#endif
+ 
+   cMapDirs->startIter(&iter);
+   while (cMapDirs->getNext(&iter, &key, (void **)&list)) {
+@@ -2436,6 +2616,7 @@
+   return map;
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ GList *GlobalParams::getKeyBinding(int code, int mods, int context) {
+   KeyBinding *binding;
+   GList *cmds;
+@@ -2461,6 +2642,7 @@
+   unlockGlobalParams;
+   return cmds;
+ }
++#endif
+ 
+ GBool GlobalParams::getPrintCommands() {
+   GBool p;
+diff -ur xpdf-3.02.orig/xpdf/GlobalParams.h xpdf-3.02/xpdf/GlobalParams.h
+--- xpdf-3.02.orig/xpdf/GlobalParams.h	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/GlobalParams.h	2008-05-08 15:40:41.000000000 +0200
+@@ -6,6 +6,42 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: GlobalParams.h 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++* 
++* 1.30.1
++* 
++* ------------------------------------------------------------------------
++* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
++* 
++* 1.20a
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #ifndef GLOBALPARAMS_H
+ #define GLOBALPARAMS_H
+ 
+@@ -123,6 +159,7 @@
+ 
+ //------------------------------------------------------------------------
+ 
++#ifndef PDF_PARSER_ONLY
+ class KeyBinding {
+ public:
+ 
+@@ -186,6 +223,7 @@
+ #define xpdfKeyContextMainWin     (2 << 6)
+ #define xpdfKeyContextScrLockOn   (1 << 8)
+ #define xpdfKeyContextScrLockOff  (2 << 8)
++#endif
+ 
+ //------------------------------------------------------------------------
+ 
+@@ -196,12 +234,17 @@
+   // file.
+   GlobalParams(char *cfgFileName);
+ 
++  // Initialize it without reading the config
++  GlobalParams();
++
+   ~GlobalParams();
+ 
+   void setBaseDir(char *dir);
+   void setupBaseFonts(char *dir);
+ 
++#ifndef PDF_PARSER_ONLY
+   void parseLine(char *buf, GString *fileName, int line);
++#endif
+ 
+   //----- accessors
+ 
+@@ -256,7 +299,9 @@
+   GString *getMovieCommand() { return movieCommand; }
+   GBool getMapNumericCharNames();
+   GBool getMapUnknownCharNames();
++#ifndef PDF_PARSER_ONLY
+   GList *getKeyBinding(int code, int mods, int context);
++#endif
+   GBool getPrintCommands();
+   GBool getErrQuiet();
+ 
+@@ -315,7 +360,9 @@
+ 
+ private:
+ 
++#ifndef PDF_PARSER_ONLY
+   void createDefaultKeyBindings();
++#endif
+   void parseFile(GString *fileName, FILE *f);
+   void parseNameToUnicode(GList *tokens, GString *fileName, int line);
+   void parseCIDToUnicode(GList *tokens, GString *fileName, int line);
+@@ -338,12 +385,14 @@
+   void parseFontDir(GList *tokens, GString *fileName, int line);
+   void parseInitialZoom(GList *tokens, GString *fileName, int line);
+   void parseScreenType(GList *tokens, GString *fileName, int line);
++#ifndef PDF_PARSER_ONLY
+   void parseBind(GList *tokens, GString *fileName, int line);
+   void parseUnbind(GList *tokens, GString *fileName, int line);
+   GBool parseKey(GString *modKeyStr, GString *contextStr,
+ 		 int *code, int *mods, int *context,
+ 		 char *cmdName,
+ 		 GList *tokens, GString *fileName, int line);
++#endif
+   void parseCommand(char *cmdName, GString **val,
+ 		    GList *tokens, GString *fileName, int line);
+   void parseYesNo(char *cmdName, GBool *flag,
+@@ -438,7 +487,9 @@
+   GString *movieCommand;	// command executed for movie annotations
+   GBool mapNumericCharNames;	// map numeric char names (from font subsets)?
+   GBool mapUnknownCharNames;	// map unknown char names?
++#ifndef PDF_PARSER_ONLY
+   GList *keyBindings;		// key & mouse button bindings [KeyBinding]
++#endif
+   GBool printCommands;		// print the drawing commands
+   GBool errQuiet;		// suppress error messages?
+ 
+diff -ur xpdf-3.02.orig/xpdf/PDFDoc.h xpdf-3.02/xpdf/PDFDoc.h
+--- xpdf-3.02.orig/xpdf/PDFDoc.h	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/PDFDoc.h	2008-07-17 02:29:04.000000000 +0200
+@@ -171,13 +171,15 @@
+   double pdfVersion;
+   XRef *xref;
+   Catalog *catalog;
++  GBool ok;
++  int errCode;
++/* Keep the size of the structure the same whether DISABLE_OUTLINE or
++   not, and put it last to try to find errors more quickly.  */
+ #ifndef DISABLE_OUTLINE
+   Outline *outline;
++#else
++  void *dummy;
+ #endif
+-
+-
+-  GBool ok;
+-  int errCode;
+ };
+ 
+ #endif
+diff -ur xpdf-3.02.orig/xpdf/Page.h xpdf-3.02/xpdf/Page.h
+--- xpdf-3.02.orig/xpdf/Page.h	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/Page.h	2008-05-08 15:40:41.000000000 +0200
+@@ -6,6 +6,42 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: Page.h 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++* 
++* 1.30.1
++* 
++* ------------------------------------------------------------------------
++* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
++* 
++* 1.20a
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #ifndef PAGE_H
+ #define PAGE_H
+ 
+@@ -170,9 +206,11 @@
+ 
+   void processLinks(OutputDev *out, Catalog *catalog);
+ 
++#ifndef PDF_PARSER_ONLY
+   // Get the page's default CTM.
+   void getDefaultCTM(double *ctm, double hDPI, double vDPI,
+ 		     int rotate, GBool useMediaBox, GBool upsideDown);
++#endif
+ 
+ private:
+ 
+diff -ur xpdf-3.02.orig/xpdf/Stream.h xpdf-3.02/xpdf/Stream.h
+--- xpdf-3.02.orig/xpdf/Stream.h	2009-03-06 11:40:18.000000000 +0100
++++ xpdf-3.02/xpdf/Stream.h	2008-05-08 15:40:41.000000000 +0200
+@@ -6,6 +6,58 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: Stream.h 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r320 | oneiros | 2007-12-18 13:40:01 +0100 (Di, 18 Dez 2007) | 2 lines
++* 
++* Import libpng 1.2.24 into stable
++* 
++* ------------------------------------------------------------------------
++* r268 | oneiros | 2007-11-11 22:45:02 +0100 (So, 11 Nov 2007) | 3 lines
++* 
++* Merge xpdf 3.02pl2
++* svn merge -r215:266 http://scm.foundry.supelec.fr/svn/pdftex/vendor/xpdf/current .
++* 
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r48 | ms | 2005-12-04 13:00:00 +0100 (So, 04 Dez 2005) | 2 lines
++* 
++* 1.30.5
++* 
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++* 
++* 1.30.1
++* 
++* ------------------------------------------------------------------------
++* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
++* 
++* 1.20a
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #ifndef STREAM_H
+ #define STREAM_H
+ 
+@@ -34,6 +86,7 @@
+   strFlate,
+   strJBIG2,
+   strJPX,
++  strCrypt,
+   strWeird			// internal-use stream types
+ };
+ 
+diff -ur xpdf-3.02.orig/xpdf/XRef.cc xpdf-3.02/xpdf/XRef.cc
+--- xpdf-3.02.orig/xpdf/XRef.cc	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/XRef.cc	2008-05-08 15:40:41.000000000 +0200
+@@ -6,6 +6,57 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: XRef.cc 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r77 | ms | 2007-01-01 13:01:00 +0100 (Mo, 01 Jan 2007) | 2 lines
++* 
++* 1.40.0
++* 
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++* 
++* 1.30.1
++* 
++* ------------------------------------------------------------------------
++* r24 | ms | 2005-02-04 13:01:00 +0100 (Fr, 04 Feb 2005) | 2 lines
++* 
++* 1.21a
++* 
++* ------------------------------------------------------------------------
++* r21 | ms | 2004-12-22 13:01:00 +0100 (Mi, 22 Dez 2004) | 2 lines
++* 
++* 1.20b
++* 
++* ------------------------------------------------------------------------
++* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
++* 
++* 1.20a
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #include <aconf.h>
+ 
+ #ifdef USE_GCC_PRAGMAS
+@@ -45,34 +96,9 @@
+ // ObjectStream
+ //------------------------------------------------------------------------
+ 
+-class ObjectStream {
+-public:
+-
+-  // Create an object stream, using object number <objStrNum>,
+-  // generation 0.
+-  ObjectStream(XRef *xref, int objStrNumA);
+-
+-  ~ObjectStream();
+-
+-  // Return the object number of this object stream.
+-  int getObjStrNum() { return objStrNum; }
+-
+-  // Get the <objIdx>th object from this stream, which should be
+-  // object number <objNum>, generation 0.
+-  Object *getObject(int objIdx, int objNum, Object *obj);
+-
+-private:
+-
+-  int objStrNum;		// object number of the object stream
+-  int nObjects;			// number of objects in the stream
+-  Object *objs;			// the objects (length = nObjects)
+-  int *objNums;			// the object numbers (length = nObjects)
+-};
+-
+ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
+   Stream *str;
+   Parser *parser;
+-  int *offsets;
+   Object objStr, obj1, obj2;
+   int first, i;
+ 
+@@ -80,6 +106,7 @@
+   nObjects = 0;
+   objs = NULL;
+   objNums = NULL;
++  offsets = NULL;
+ 
+   if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
+     goto err1;
+@@ -100,6 +127,7 @@
+     goto err1;
+   }
+   first = obj1.getInt();
++  firstOffset = objStr.getStream()->getBaseStream()->getStart() + first;
+   obj1.free();
+   if (first < 0) {
+     goto err1;
+@@ -121,7 +149,7 @@
+       obj1.free();
+       obj2.free();
+       delete parser;
+-      gfree(offsets);
++//       gfree(offsets);
+       goto err1;
+     }
+     objNums[i] = obj1.getInt();
+@@ -131,7 +159,7 @@
+     if (objNums[i] < 0 || offsets[i] < 0 ||
+ 	(i > 0 && offsets[i] < offsets[i-1])) {
+       delete parser;
+-      gfree(offsets);
++//       gfree(offsets);
+       goto err1;
+     }
+   }
+@@ -160,7 +188,7 @@
+     delete parser;
+   }
+ 
+-  gfree(offsets);
++//   gfree(offsets);
+ 
+  err1:
+   objStr.free();
+@@ -177,6 +205,7 @@
+     delete[] objs;
+   }
+   gfree(objNums);
++  gfree(offsets);
+ }
+ 
+ Object *ObjectStream::getObject(int objIdx, int objNum, Object *obj) {
+diff -ur xpdf-3.02.orig/xpdf/XRef.h xpdf-3.02/xpdf/XRef.h
+--- xpdf-3.02.orig/xpdf/XRef.h	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/XRef.h	2008-05-08 15:40:41.000000000 +0200
+@@ -6,6 +6,45 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: XRef.h 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r77 | ms | 2007-01-01 13:01:00 +0100 (Mo, 01 Jan 2007) | 2 lines
++* 
++* 1.40.0
++* 
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++* 
++* 1.30.1
++* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
++* 
++* 1.20a
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #ifndef XREF_H
+ #define XREF_H
+ 
+@@ -21,7 +60,36 @@
+ class Dict;
+ class Stream;
+ class Parser;
+-class ObjectStream;
++
++class ObjectStream {
++public:
++
++  // Create an object stream, using object number <objStrNum>,
++  // generation 0.
++  ObjectStream(XRef *xref, int objStrNumA);
++
++  ~ObjectStream();
++
++  // Return the object number of this object stream.
++  int getObjStrNum() { return objStrNum; }
++
++  // Get the <objIdx>th object from this stream, which should be
++  // object number <objNum>, generation 0.
++  Object *getObject(int objIdx, int objNum, Object *obj);
++
++  int *getOffsets() { return offsets; }
++  Guint getFirstOffset() { return firstOffset; }
++
++private:
++
++  int objStrNum;		// object number of the object stream
++  int nObjects;			// number of objects in the stream
++  Object *objs;			// the objects (length = nObjects)
++  int *objNums;			// the object numbers (length = nObjects)
++  int *offsets;			// the object offsets (length = nObjects)
++  Guint firstOffset;
++};
++
+ 
+ //------------------------------------------------------------------------
+ // XRef
+@@ -96,6 +164,7 @@
+   int getSize() { return size; }
+   XRefEntry *getEntry(int i) { return &entries[i]; }
+   Object *getTrailerDict() { return &trailerDict; }
++  ObjectStream *getObjStr() { return objStr; }
+ 
+ private:
+ 
+diff -ur xpdf-3.02.orig/xpdf/config.h xpdf-3.02/xpdf/config.h
+--- xpdf-3.02.orig/xpdf/config.h	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/config.h	2008-05-08 15:40:41.000000000 +0200
+@@ -6,6 +6,58 @@
+ //
+ //========================================================================
+ 
++/* ------------------------------------------------------------------------
++* Changed by Martin Schröder <martin@pdftex.org>
++* $Id: config.h 421 2008-04-26 21:59:55Z oneiros $
++* Changelog:
++* ------------------------------------------------------------------------
++* r268 | oneiros | 2007-11-11 22:45:02 +0100 (So, 11 Nov 2007) | 3 lines
++* 
++* Merge xpdf 3.02pl2
++* svn merge -r215:266 http://scm.foundry.supelec.fr/svn/pdftex/vendor/xpdf/current .
++* 
++* ------------------------------------------------------------------------
++* r215 | oneiros | 2007-07-31 18:32:04 +0200 (Di, 31 Jul 2007) | 2 lines
++* 
++* Merge changes from trunk into stable: 203-207,213-214
++* 
++* ------------------------------------------------------------------------
++* r151 | ms | 2007-06-25 18:53:17 +0200 (Mo, 25 Jun 2007) | 3 lines
++* 
++* Merging xpdf 3.02 from HEAD into stable
++* svn merge -r149:150 --dry-run svn+ssh://svn/srv/svn/repos/pdftex/trunk/source/src/libs/xpdf .
++* 
++* ------------------------------------------------------------------------
++* r86 | ms | 2007-01-31 13:01:00 +0100 (Mi, 31 Jan 2007) | 2 lines
++* 
++* 1.40.2
++* 
++* ------------------------------------------------------------------------
++* r38 | ms | 2005-08-21 14:00:00 +0200 (So, 21 Aug 2005) | 2 lines
++* 
++* 1.30.1
++* 
++* ------------------------------------------------------------------------
++* r11 | ms | 2004-09-06 14:01:00 +0200 (Mo, 06 Sep 2004) | 2 lines
++* 
++* 1.20a
++* 
++* ------------------------------------------------------------------------
++* r6 | ms | 2003-10-06 14:01:00 +0200 (Mo, 06 Okt 2003) | 2 lines
++* 
++* released v1.11b
++* 
++* ------------------------------------------------------------------------
++* r4 | ms | 2003-10-05 14:00:00 +0200 (So, 05 Okt 2003) | 2 lines
++* 
++* Moved sources to src
++* 
++* ------------------------------------------------------------------------
++* r1 | ms | 2003-08-02 14:00:00 +0200 (Sa, 02 Aug 2003) | 1 line
++* 
++* 1.11a
++* ------------------------------------------------------------------------ */
++
+ #ifndef CONFIG_H
+ #define CONFIG_H
+ 
+@@ -14,7 +66,7 @@
+ //------------------------------------------------------------------------
+ 
+ // xpdf version
+-#define xpdfVersion          "3.02"
++#define xpdfVersion          "3.02pl2"
+ #define xpdfVersionNum       3.02
+ #define xpdfMajorVersion     3
+ #define xpdfMinorVersion     2

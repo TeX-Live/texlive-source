@@ -1,0 +1,10 @@
+In previous releases of Freetype v.1.x, this directory hold a Pascal
+version of the FreeType library. Since it has proven to be difficult
+to keep the Pascal version in sync with the C version, we decided to
+split the  two projects, making  the Pascal version  of the Freetype
+1.5 library available separately.
+
+If  you  are   interested  in  the  Pascal  version,   please  visit
+http://www.freetype.org for more information.
+
+--- end of pascal/README ---

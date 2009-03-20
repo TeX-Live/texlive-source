@@ -1,0 +1,11 @@
+diff -ur xpdf-3.02.orig/goo/gfile.cc xpdf-3.02/goo/gfile.cc
+--- xpdf-3.02.orig/goo/gfile.cc	2007-02-27 23:05:51.000000000 +0100
++++ xpdf-3.02/goo/gfile.cc	2009-03-05 23:36:46.000000000 +0100
+@@ -20,6 +20,7 @@
+ #    include <sys/stat.h>
+ #    include <fcntl.h>
+ #  endif
++#  include <time.h>
+ #  include <limits.h>
+ #  include <string.h>
+ #  if !defined(VMS) && !defined(ACORN) && !defined(MACOS)

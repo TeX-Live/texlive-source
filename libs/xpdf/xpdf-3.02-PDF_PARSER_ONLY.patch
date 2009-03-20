@@ -1,0 +1,16 @@
+diff -ur xpdf-3.02.orig/xpdf/Page.cc xpdf-3.02/xpdf/Page.cc
+--- xpdf-3.02.orig/xpdf/Page.cc	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/Page.cc	2009-02-08 03:15:12.000000000 +0100
+@@ -420,6 +420,7 @@
+   delete links;
+ }
+ 
++#ifndef PDF_PARSER_ONLY
+ void Page::getDefaultCTM(double *ctm, double hDPI, double vDPI,
+ 			 int rotate, GBool useMediaBox, GBool upsideDown) {
+   GfxState *state;
+@@ -439,3 +440,4 @@
+   }
+   delete state;
+ }
++#endif

@@ -1,0 +1,349 @@
+               The FreeType Windows Compilation HowTo
+
+Contents
+
+Introduction
+I.   Building the library
+  1. Quick Compilation
+  2. Manual compilation
+  3. Building a DLL
+  4. Notes
+II.  Building other parts of the package
+  1. Test programs
+  2. Other contributions
+III. Special issues of 16-bit Windows
+
+
+
+Introduction
+============
+
+This file  describes the  compilation of the  FreeType package  on a
+Windows  system.    It  comes  with  Makefiles   for  the  following
+compilers:
+
+  - gcc/CygWin32 and gcc/MinGW32 with GNU make (32 bit)
+
+  - cl with nmake (16-bit and 32-bit Microsoft C and Visual C++)
+
+  - bcc with  make (16-bit  and 32-bit Borland C++  and also Borland
+    C++ builder)
+
+Throughout this file, we use  `winXX' if it applies indifferently to
+both 16-bit and  32-bit versions.  You should replace  it with win16
+resp. win32, as applicable.
+
+NOTE:
+
+  You are  advised to jump  to section II.1  if you want to  run the
+  FreeType test/demo programs as quick as possible.
+
+
+
+I. Building the library
+=======================
+
+
+1. Quick Compilation
+--------------------
+
+  The easiest way to compile the  library on Windows is to go to the
+  directory `freetype/lib'.  Then type, depending on your compiler:
+
+    gcc:         make  -f arch/win32/Makefile.gcc
+
+    cl:          nmake /f arch\win16\Makefile.MS  (for C/C++ 7)
+    cl:          nmake /f arch\win16\Makefile.VC  (for VC++ 16bit)
+    cl:          nmake /f arch\win32\Makefile.CL  (for VC++ 32bit)
+
+    bcc:         make  -farch/win16/Makefile.BC
+    bcc32:       make  -farch/win32/Makefile.BC
+
+  This should  build the  `libttf.a' or `libttf.lib'  library files.
+  Of course, this assumes that your compiler is regularly installed.
+
+  You can also use the following targets:
+
+    depend    - (for  gcc  only)  Creates  a  file  that  lists  the
+                dependancies. Useful for the developper.
+
+    clean     - Cleans all intermediate  object files created during
+                compilation.  Keeps  all library and  executables in
+                place.
+
+    distclean - Cleans everything,  leaving the directories  as they
+                were before the compilation.
+
+    debug     - Makes  a development version  of the  library.  Only
+                useful for FreeType developers and hackers.
+
+    Note that you  can also select to use  the `debugging' flags for
+    your compiler  (instead of  the `optimizing' ones),  by defining
+    the `DEBUG' symbol, like in
+
+      nmake /f arch\win32\Makefile.CL DEBUG=1
+      make -farch/winXX/Makefile.BC /DDEBUG
+      etc.
+
+    Doing so  will automatically select the debug  target instead of
+    the normal mode.
+
+    For 16-bit compilers, you can  also try to define the `BIGFONTS'
+    symbol, enabling the use of the `huge pointers' needed to handle
+    some big fonts.  More on this at the end of this file.
+
+  Another way to compile the library is to use the IDE provided with
+  the following compilers:  Borland C++ 4.x/5.0, Visual C++ 4.0, and
+  Visual Studio.   The project/workspace  files can be  found in the
+  `freetype/lib/arch/win32' directory:
+
+    freetype.ide      for Borland C++ 4.0, 4.5, and 5.0
+
+    freetype.dsp      project and workspace files for
+    freetype.dsw      Visual Studio
+    ft_dll.dsp        (a.k.a. Visual C++ 5, 6, and 7)
+
+    freetype.mdp      project and makefile files for
+    freetype.mak      Visual C++ 4.0
+
+  They generate a static library, which contain the core engine as a
+  single object file, as well as all standard extensions.
+
+  Notes:
+
+  - You  may need to  update the  include paths  in the  Borland C++
+    workspace  settings.  The  current  one looks  in the  directory
+    "C:\Program Files\Borland\BC 5.0\Include" for include files.
+
+  - Take  care that some  compilers may  overwrite these  files when
+    generating  the  library  (e.g.   Borland C++  creates  its  own
+    `freetype.dsw'  file, which  isn't a  Visual C++  project during
+    compilation).
+
+    This  is only  important  if you  try  to compile  the lib  with
+    several compilers.
+
+  We gladly accept project files for other compilers.
+
+
+2. Manual compilation
+---------------------
+
+  Here  are explained  the steps  that are  required to  compile the
+  FreeType _library_ (and only this one) by hand.
+
+  Unlike previous  versions, FreeType 1.1 and above  can be compiled
+  in two modes, called `debug mode' and `single object mode'.
+
+  Debug mode is simply the normal way of compiling C programs, i.e.,
+  each  `*.c' file  is compiled  into an  individual  `*.obj' object
+  file, and all  of them are linked together  into an archive (i.e.,
+  `*.lib' library).
+
+  Single object mode is slightly different: All C files are included
+  in a single source during compilation, resulting in a single final
+  object  file for  the core  library.   This has  the advantage  of
+  letting  optimizing compilers  do  more global  work,  as well  as
+  getting rid of all external  which are used solely for the purpose
+  of components interfacing.
+
+  In both  modes, you  need to include  the following paths  to your
+  makefile/command line:
+
+    the location of all `tt*.[hc]' files
+    the location of system-specific files
+
+  For  example,  if  you   are  compiling  from  the  `freetype/lib'
+  directory, you can type for debug mode something like
+
+    gcc -c -I. -Iarch/win32 tt*.c
+
+  to  compile all required  files into  object ones.   Then assemble
+  them in a library with `ar', `lib', or `tlib'.
+
+  In single  object mode,  you only need  to compile the  file named
+  `freetype.c' which is  located in `freetype/lib/arch/winXX'.  From
+  the same directory as before, one would type
+
+      gcc -c -I. -Iarch/win32 arch/win32/freetype.c
+
+  You    can    also    compile    the   extensions    located    in
+  `freetype/lib/extend' separately  from the base  engine.  You will
+  need to include  the same paths as before, though;  be sure to add
+  the path to the `extend' directory, like in
+
+      gcc -c -I. -Iarch/win32 -Iextend extend/*.c
+
+
+3. Building a DLL
+-----------------
+
+  The easiest way to  build the library as a DLL is  also to use the
+  Makefiles we  provide!  Go  to the directory  `freetype/lib', then
+  type, depending on your compiler:
+
+    gcc:         (not yet supported)
+
+    cl:          nmake /f arch\win16\Makefile.VC DLL=1 dll   (16bit)
+    cl:          nmake /f arch\win32\Makefile.CL DLL=1 dll   (32bit)
+
+    bcc:         make  -farch/win16/Makefile.BC -DDLL dll
+    bcc32:       make  -farch/win32/Makefile.BC -DDLL dll
+
+  This should build `ft15_XX.dll'  (`15' for versions 1.5.*, `XX' is
+  either 16 or 32), and the `libttf.lib' library file.
+
+  You can also use the following target:
+
+    install - Install the DLL `ft15_XX.dll' to your system directory
+              (`C:\WINDOWS'  by  default).   You  can  override  the
+              directory by specifying the name of the directory:
+
+      make -farch/winXX/Makefile.BC /DINSTALL_DIR=C:\TESTDLL install
+      nmake /f arch\win32\Makefile.CL INSTALL_DIR=D:\WINNT install
+
+    Note that you  can also select to use  the `debugging' flags for
+    your compiler  (instead of  the `optimizing' ones),  by defining
+    the `DEBUG' symbol, like in
+
+      nmake /f arch\win16\Makefile.VC DEBUG=1 DLL=1 dll
+      make -farch/winXX/Makefile.BC /DDEBUG /DDLL dll
+      etc.
+
+  Another way  to build to DLL with  Visual C++ is to  use a special
+  Makefile that does exactly that, without relying on any settings.
+
+  With VC++  6.0, just  type while in  the `freetype/lib/arch/win32'
+  directory:
+
+    nmake /f makefile.vc
+
+  on the command line.
+
+  For other versions, modify the $(TOOLS32) variable to point to the
+  directory  where  the  build  tools  are.   No  need  to  set  any
+  environment variables.
+
+
+4. Notes
+--------
+
+  `char' is always `signed char' in the sources!
+
+  `ttconfig.h'  relies heavily  on  a file  called `ft_conf.h'  that
+  contains information  related to  the target platform,  located in
+  the  `freetype/lib/arch/winXX/'   directory.   Depending  on  your
+  compiler, you may need to slightly edit it.
+
+  We use  gcc as  our reference compiler  for warnings.   This means
+  that we use  the `-ansi -pedantic -Wall' flags and  try to get rid
+  of warnings in this situation.   If you are compiling with another
+  compiler, you  may encounter warnings, not errors.   Note that the
+  Borland  compilers seem  to  produce lots  of irrelevant  warnings
+  (like `potential loss of precision').
+
+
+
+II. Building other parts of the package
+=======================================
+
+
+1. Test programs
+----------------
+
+  All test  programs are located  in `freetype/test'.  Most  of them
+  use a  tiny graphics  sub-system which is  simply used  to display
+  bitmaps  and  pixmaps on  a  variety  of  platforms.  The  Windows
+  version is  a very  basic one that  only displays a  small graphic
+  windows  in addition  to the  console where  the flow  of messages
+  still goes.
+
+  To compile them, you must  be in the `freetype/test' directory and
+  invoke the makefile in arch/winXX.  For example:
+
+    nmake -f arch\os2\Makefile.VC
+
+  NOTE 1:
+
+    This will automatically invoke the library makefile for you!
+
+  NOTE 2:
+
+    For now, the  graphical test programs only run  on the following
+    platforms: Unix, OS/2, Dos, Amiga, and Windows.
+
+    The library,  being pure  ANSI-C, can be  used on any  system to
+    generate bitmaps and pixmaps.
+
+
+2. Other contributions
+----------------------
+
+  You may find  some other contributions to the  FreeType project in
+  the `freetype/contrib'  directory.  Each of  these programs should
+  have  its  own Makefiles  and  documentations.   Also check  their
+  licenses, as  the programs  are not necessarily  distributed under
+  the FreeType one.
+
+  Most of these contributions are targeted to Unix.  You are invited
+  to port them to Windows, and then contribute your improvements.
+
+
+
+III. Special issues of 16-bit Windows
+=====================================
+
+  As usual, 16-bit Windows have some limitations.
+
+  First, and mainly, only the  large model is usable.  The small and
+  medium models are  not usable, because the library  uses more than
+  64kByte of data; and the  compact model is unusable as well, since
+  the code of the library itself is slightly less than 64kByte, thus
+  leaving very  small place  for the real  work.  The net  effect of
+  that limitation  is that performances are not  very impressive, to
+  say  the least  (32-bit DOS  extenders perform  usually three-time
+  faster).
+
+  Even  with the  large model,  the rasterizer  is still  limited in
+  size, particularly with pixmaps  (that is, with anti-aliasing gray
+  levels).
+
+  The test programs rely on  a tiny graphical driver that mimics the
+  ones  available on  other platforms.   It has  some peculiarities.
+  First, as the test programs  need a `console', the programs should
+  linked with some emulation  of that concept.  We used successfully
+  Borland EasyWin  and Microsoft  QuickWin for this  purpose.  Then,
+  the  graphics window  that displays  the bitmaps  incur  the usual
+  64kByte limit: The size of  the window is quite tiny, particularly
+  when displaying  `gray-level' bitmaps  (the size is  then 320x200,
+  but contrary to full-screen  MS-DOS the pixels are not magnified).
+  Ultimately, no efforts have been  done to accomodate the colors of
+  the screen: As a result, displaying gray bitmaps in 256-color mode
+  uses only 4 levels of gray (instead of 5 rendered by the library).
+
+  Another annoying limitation exists with some East Asian fonts that
+  have  16,383  glyphs  or   more,  since  an  internal  table  then
+  overflows.   We  tried  to  overcome this  using  so-called  `huge
+  pointers', but then good support for these in the run-time library
+  is needed.   To enable huge pointers, try  defining the `BIGFONTS'
+  symbol with the makefile, like
+
+    nmake /f arch\win16\makefile.VC BIGFONTS=1
+    make -farch/win16/makefile.BC /DBIGFONTS
+    etc.
+
+  The makefiles for both Microsoft and Borland compilers depend on a
+  special  file, arch/winXX/depend.win,  which  is built  by a  Unix
+  script  named  `makedep'.  You  may  consider  editing  it if  you
+  heavily modify the source files; or better yet, re-run the script,
+  using  any  clone  of the  Bourne  shell,  sed,  and gcc,  the GNU
+  compiler, with
+
+    arch/winXX/makedep
+
+  in both the `lib' and the `test' directories.
+
+
+Good luck!
+
+--- end of windows.txt ---

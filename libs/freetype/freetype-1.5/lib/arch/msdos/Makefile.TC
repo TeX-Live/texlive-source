@@ -1,0 +1,127 @@
+# This file is part of the FreeType project.
+#
+# It builds the library for Turbo C for MS-DOS, large model.
+# Due to size constraints, it does not try to pack all modules into one
+# (`single-object mode').
+#
+# You will need Borland MAKE.
+# Tested with Turbo C v.1.5, v.2.0,  Turbo C++ v.1.0, v.3.0.
+# Turbo C v.1.0 (May '87) is too old (lack of structure assignment)
+#   to compile FreeType.  Update your compiler. ;-)
+# See below for notes regarding the various versions.
+#
+# Use this file while in the lib directory with the following statement:
+#
+#   make -farch/msdos/Makefile.TC
+#
+#
+# A debug version can be obtained (except for TC1.5, see below) with
+#
+#   make -DDEBUG -farch/msdos/Makefile.TC
+#
+# The main difference is with the compiler options, because due to size
+# constraints, all sources are always compiled separately.
+#
+#
+# Copyright 1996-2001 by
+# David Turner, Robert Wilhelm, and Werner Lemberg.
+#
+# This file is part of the FreeType project, and may only be used, modified,
+# and distributed under the terms of the FreeType project license,
+# LICENSE.TXT.  By continuing to use, modify, or distribute this file you
+# indicate that you have read the license and understand and accept it
+# fully.
+#
+#
+# Various notes about specific versions...
+#
+# The lack of space in the command line prevents us to turn off the
+# -w-use warning (when TCC.CFG file had enable it).
+#
+# NOTE: Turbo C++ v. 3.0
+#
+#   The Makefile.TC for this version is common with the older versions.
+#   Alternatively, you can consider using Makefile.BC instead, changing
+#   the name of the compiler from BCC to TCC!
+#
+# NOTE 2: Turbo C++ v. 1.0
+#
+#   Unlike v.3.0, the version of make shipped with this version is not able
+#   to cater with some of the possibilities used in Makefile.BC, for example
+#   the inline construction of the `option' file, with the && command.
+#   So you should stick with this one.
+#
+# NOTE 3: Turbo C v. 1.5
+#
+#   You will need to replace the -v option in CFLAGS by -y.
+
+ARCH = arch\msdos
+FT_MAKEFILE = $(ARCH)\Makefile.TC
+
+CC = tcc
+LIB = tlib /c
+
+!if ! $d(DEBUG)
+CFLAGS = -ml -A -a -G -w-stu -w-par -w-rch -w-aus -w-stv -w-cln -w-sig -I$(ARCH);.;extend
+!else
+# For Turbo C v.1.5, you'll need to replace the -v option below by -y.
+CFLAGS = -y -N -ml -A -w-stu -w-par -w-rch -w-aus -w-stv -w-cln -w-sig -I$(ARCH);.;extend
+!endif
+# The lack of space in the command line prevents us to turn off the
+# -w-use warning (when the TCC.CFG file had enable it).
+
+
+TTFILE = .\ttfile.obj
+TTMEMORY = .\ttmemory.obj
+TTMUTEX = .\ttmutex.obj
+
+PORT = $(TTFILE) $(TTMEMORY) $(TTMUTEX)
+
+OBJS_X = extend\ftxgasp.obj extend\ftxkern.obj  extend\ftxpost.obj \
+         extend\ftxcmap.obj extend\ftxwidth.obj extend\ftxerr18.obj \
+         extend\ftxsbit.obj extend\ftxopen.obj  extend\ftxgsub.obj \
+         extend\ftxgpos.obj extend\ftxgdef.obj
+# the line below does not work with these old versions of make...
+# OBJS_X = $(SRC_X:.c=.obj)
+
+OBJS_M = ttapi.obj     ttcache.obj   ttcalc.obj   ttcmap.obj  ttdebug.obj \
+         ttgload.obj   ttinterp.obj  ttload.obj   ttobjs.obj  \
+         ttraster.obj  ttextend.obj  $(PORT)      $(OBJS_X)
+# OBJS_M = $(SRC_M:.c=.obj) $(OBJS_X)
+
+# Not used here because the compiler runs out of memory...
+OBJ_S = $(ARCH)\freetype.obj
+OBJS_S = $(OBJ_S) $(OBJS_X)
+
+
+# Since these Borland's make are very primitive, we include each .obj
+# in the library as soon as it is compiled. Better schemes are used
+# in the other Makefile's, please give them a look.
+
+.c.obj:
+	$(CC) $(CFLAGS) -c -o$* $<
+	$(LIB) libttf +-$*.obj
+
+
+
+!if !$d(DEBUG)
+# Skipped if DEBUG build (but with the `release' compiler options);
+#  it does not change anything, since we always build in multiple parts.
+all: $(OBJS_M)
+
+!endif
+
+debug: $(OBJS_M)
+
+clean:
+	-del *.obj
+	-del extend\*.obj
+	-del $(ARCH)\*.obj
+	-del libttf.bak
+
+distclean: clean
+	-del libttf.lib
+
+!include "$(ARCH)\depend.dos"
+
+# end of Makefile

@@ -1,0 +1,3 @@
+## libs/freetype/ac/withenable.ac
+## configure options and TL libraries required for freetype
+KPSE_WITH_LIB([freetype])
