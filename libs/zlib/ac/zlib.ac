@@ -1,3 +1,0 @@
-## libs/zlib/ac/zlib.ac
-## define required functions and headers from system zlib
-KPSE_CHECK_LIB([zlib], [inflate], [zlib.h])
