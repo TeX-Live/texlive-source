@@ -33,7 +33,7 @@ Cmap::Cmap(const String &s, ErrorHandler *errh)
     : _str(s)
 {
     _str.align(4);
-    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
 }
 
 int
@@ -120,29 +120,29 @@ int
 Cmap::check_table(int t, ErrorHandler *errh) const
 {
     if (!errh)
-	errh = ErrorHandler::ignore_handler();
+	errh = ErrorHandler::silent_handler();
     if (_error < 0 || t < 0 || t >= _ntables)
 	return errh->error("no such table");
     if (_table_error[t] > -2)
 	return _table_error[t];
     _table_error[t] = -1;
-    
+
     const uint8_t *data = _str.udata();
     uint32_t offset = ULONG_AT(data + HEADER_SIZE + t * ENCODING_SIZE + 4);
     uint32_t left = _str.length() - offset;
     data += offset;
     int format = USHORT_AT(data);
     uint32_t length = 0;	// value not used
-    
+
     switch (format) {
-	
+
       case F_BYTE:
 	if (left < 4
 	    || (length = USHORT_AT(data + 2)) > left
 	    || length != 259)
 	    return errh->error("bad table %d length (format %d)", t, format);
 	break;
-	
+
       case F_HIBYTE:
 	if (left < 4
 	    || (length = USHORT_AT(data + 2)) > left
@@ -163,7 +163,7 @@ Cmap::check_table(int t, ErrorHandler *errh) const
 		    return errh->error("bad table %d subheader %d length (format 2)", t, hi_byte);
 	    }
 	break;
-	
+
       case F_SEGMENTED: {
 	  if (left < 4
 	      || (length = USHORT_AT(data + 2)) > left
@@ -205,7 +205,7 @@ Cmap::check_table(int t, ErrorHandler *errh) const
 	      return errh->error("bad table %d incorrect final endCode (format 4)", t);
 	  break;
       }
-	
+
       case F_TRIMMED: {
 	  if (left < 4
 	      || (length = USHORT_AT(data + 2)) > left
@@ -241,7 +241,7 @@ Cmap::check_table(int t, ErrorHandler *errh) const
       case F_TRIMMED32:
       default:
 	return errh->error("bad table %d unsupported format %d", t, format);
-	
+
     }
 
     _table_error[t] = 0;
@@ -253,18 +253,18 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
 {
     if (check_table(t, errh) < 0)
 	return 0;
-    
+
     const uint8_t *data = _str.udata();
     data += ULONG_AT(data + HEADER_SIZE + t * ENCODING_SIZE + 4);
-    
+
     switch (USHORT_AT(data)) {
-	
+
     case F_BYTE:
 	if (uni < 256)
 	    return data[6 + uni];
 	else
 	    return 0;
-	
+
     case F_HIBYTE: {
 	if (uni >= 65536)
 	    return 0;
@@ -285,7 +285,7 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
 	    return 0;
 	return (answer + idDelta) & 65535;
     }
-	
+
     case F_SEGMENTED: {
 	if (uni >= 65536)
 	    return 0;
@@ -323,7 +323,7 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
 	    return 0;
 	return USHORT_AT(data + 10 + ((uni - firstCode) << 1));
     }
-	
+
     case F_SEGMENTED32: {
 	uint32_t nGroups = ULONG_AT(data + 12);
 	uint32_t l = 0, r = nGroups - 1;
@@ -341,7 +341,7 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
 	}
 	return 0;
     }
-	
+
     default:
 	return 0;
 
@@ -353,12 +353,12 @@ Cmap::dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler *errh) const
 {
     if (check_table(t, errh) < 0)
 	return;
-    
+
     const uint8_t *data = _str.udata();
     data += ULONG_AT(data + HEADER_SIZE + t * ENCODING_SIZE + 4);
-    
+
     switch (USHORT_AT(data)) {
-	
+
     case F_BYTE:
 	g2c.resize(256, 0);
 	for (int c = 0; c < 256; c++)
@@ -366,7 +366,7 @@ Cmap::dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler *errh) const
 		if (!g2c[g])
 		    g2c[g] = c;
 	break;
-	
+
     case F_HIBYTE:
 	assert(USHORT_AT(data + 6) == 0);
 	for (int hi_byte = 0; hi_byte < 256; hi_byte++) {
@@ -385,11 +385,11 @@ Cmap::dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler *errh) const
 		    if (g >= g2c.size())
 			g2c.resize(g + 1, 0);
 		    if (!g2c[g])
-			g2c[g] = (hi_byte << 8 + firstCode + i);
+			g2c[g] = (hi_byte << 8) + firstCode + i;
 		}
 	}
 	break;
-	
+
     case F_SEGMENTED: {
 	int segCountX2 = USHORT_AT(data + 6);
 	const uint8_t *endCounts = data + 14;
@@ -436,7 +436,7 @@ Cmap::dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler *errh) const
 	    }
 	break;
     }
-	
+
     case F_SEGMENTED32: {
 	uint32_t nGroups = ULONG_AT(data + 12);
 	const uint8_t *groups = data + 16;
@@ -452,7 +452,7 @@ Cmap::dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler *errh) const
 	}
 	break;
     }
-	
+
     default:
 	break;
 

@@ -26,7 +26,7 @@ class Charstring { public:
     virtual ~Charstring();
 
     virtual bool process(CharstringInterp &) const = 0;
-    
+
     enum Commands {
 	cError		= 0,
 	cHstem		= 1,
@@ -57,7 +57,7 @@ class Charstring { public:
 	cCallgsubr	= 29,
 	cVhcurveto	= 30,
 	cHvcurveto	= 31,
-    
+
 	cEscapeDelta	= 32,
 	cDotsection	= 32 + 0,
 	cVstem3		= 32 + 1,
@@ -121,60 +121,60 @@ class Charstring { public:
 
     static String command_name(int);
     static const char * const command_names[];
-    
+
     static const char * const standard_encoding[256];
-    
+
 };
 
 
 class Type1Charstring : public Charstring { public:
-    
+
     Type1Charstring()				{ }
     inline Type1Charstring(const String &);	// unencrypted
     Type1Charstring(int lenIV, const String &);	// encrypted
     // default copy constructor
     // default destructor
     // default assignment operator
-  
+
     inline const uint8_t *data() const;
     int length() const				{ return _s.length(); }
     operator bool() const			{ return _s.length() != 0; }
-    
+
     inline const String &data_string() const;
     inline String substring(int pos, int len) const;
     int first_caret_after(int pos) const;
-    
+
     inline void assign(const String &);
     void prepend(const Type1Charstring &);
     void assign_substring(int pos, int len, const String &);
-    
+
     bool process(CharstringInterp &) const;
 
   private:
 
     mutable String _s;
     mutable int _key;
-  
+
     void decrypt() const;
-    
+
 };
 
 
 class Type2Charstring : public Charstring { public:
-  
+
     Type2Charstring()				{ }
     inline Type2Charstring(const String &);
     // default copy constructor
     // default destructor
     // default assignment operator
-    
+
     inline const uint8_t *data() const;
     int length() const				{ return _s.length(); }
-    
+
     bool process(CharstringInterp &) const;
 
   private:
-  
+
     String _s;
 
 };
@@ -185,10 +185,10 @@ struct CharstringContext {
     CharstringContext(const CharstringProgram *program_, const Charstring *cs_) : program(program_), cs(cs_) { }
 
     operator bool() const			{ return cs != 0; }
-    
+
     const CharstringProgram *program;
     const Charstring *cs;
-    
+
 };
 
 
@@ -205,11 +205,11 @@ class CharstringProgram { public:
     virtual const CharstringProgram *child_program(int) const;
     bool parent_program() const			{ return _parent_program; }
     void set_parent_program(bool pp)		{ _parent_program = pp; }
-    
+
     virtual int nsubrs() const			{ return 0; }
     virtual Charstring *subr(int) const		{ return 0; }
     virtual int subr_bias() const		{ return 0; }
-    
+
     virtual int ngsubrs() const			{ return 0; }
     virtual Charstring *gsubr(int) const	{ return 0; }
     virtual int gsubr_bias() const		{ return 0; }
@@ -217,7 +217,7 @@ class CharstringProgram { public:
     inline int nxsubrs(bool g) const;
     inline Charstring *xsubr(bool g, int) const;
     inline int xsubr_bias(bool g) const;
-    
+
     virtual int nglyphs() const			{ return 0; }
     virtual PermString glyph_name(int) const	{ return PermString();}
     virtual void glyph_names(Vector<PermString> &) const;
@@ -239,7 +239,7 @@ class CharstringProgram { public:
   private:
 
     bool _parent_program;
-    
+
 };
 
 

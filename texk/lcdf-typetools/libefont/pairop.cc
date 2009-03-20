@@ -56,10 +56,10 @@ PairProgram::add_kern(GlyphIndex left, GlyphIndex right, int ki)
   int newopi = _op.size();
   _op.push_back(newop);
   _left_map[left] = newopi;
-  
+
   //PairOpIndex duplicate = map[newop];
   //map.add(newop, newopi);
-  
+
   return false;
 }
 
@@ -72,10 +72,10 @@ PairProgram::add_lig(GlyphIndex left, GlyphIndex right, GlyphIndex result,
   int newopi = _op.size();
   _op.push_back(newop);
   _left_map[left] = newopi;
-  
+
   //PairOpIndex duplicate = map[newop];
   //map.add(newop, newopi);
-  
+
   return false;
 }
 
@@ -84,9 +84,9 @@ void
 PairProgram::unreverse()
 {
   if (!_reversed) return;
-  
+
   _left_map.assign(_left_map.size(), -1);
-  
+
   for (PairOpIndex opi = _op.size() - 1; opi >= 0; opi--) {
     PairOp &o = _op[opi];
     PairOpIndex l = o.left();
@@ -102,7 +102,7 @@ void
 PairProgram::optimize()
 {
   /*  PairOpIndex opi;
-  
+
       // Get rid of 0-valued kerns.
       for (opi = 0; opi < opcount(); opi++) {
       PairOp &o = op(opi);
@@ -131,7 +131,7 @@ PairProgram::print() const
     if (glyphblock[gi] != -1)
       printf("%s->B%d ", glyph(gi).name().c_str(), glyphblock[gi]);
   printf("\n");
-  
+
   for (int i = 0; i < blocks.size(); i++) {
     printf("B%-2d:  ", i);
     PairOpBlock &opb = *blocks[i];

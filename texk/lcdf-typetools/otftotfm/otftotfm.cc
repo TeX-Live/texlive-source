@@ -1,6 +1,6 @@
 /* otftotfm.cc -- driver for translating OpenType fonts to TeX metrics
  *
- * Copyright (c) 2003-2008 Eddie Kohler
+ * Copyright (c) 2003-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -134,7 +134,7 @@ using namespace Efont;
 #define CHAR_OPTTYPE		(Clp_ValFirstUser)
 
 static Clp_Option options[] = {
-    
+
     { "script", 's', SCRIPT_OPT, Clp_ValString, 0 },
     { "feature", 'f', FEATURE_OPT, Clp_ValString, 0 },
     { "letter-feature", 0, LETTER_FEATURE_OPT, Clp_ValString, 0 },
@@ -182,12 +182,12 @@ static Clp_Option options[] = {
     { "no-updmap", 0, NO_UPDMAP_OPT, 0, 0 },
     { "map-file", 0, MAP_FILE_OPT, Clp_ValString, Clp_Negate },
     { "output-encoding", 0, OUTPUT_ENCODING_OPT, Clp_ValString, Clp_Optional },
-    
+
     { "automatic", 'a', AUTOMATIC_OPT, 0, Clp_Negate },
     { "name", 'n', FONT_NAME_OPT, Clp_ValString, 0 },
     { "vendor", 'v', VENDOR_OPT, Clp_ValString, 0 },
     { "typeface", 0, TYPEFACE_OPT, Clp_ValString, 0 },
-    
+
     { "encoding-directory", 0, ENCODING_DIR_OPT, Clp_ValString, 0 },
     { "pl-directory", 0, PL_DIR_OPT, Clp_ValString, 0 },
     { "tfm-directory", 0, TFM_DIR_OPT, Clp_ValString, 0 },
@@ -211,7 +211,7 @@ static Clp_Option options[] = {
     { "qf", 0, QUERY_FEATURES_OPT, 0, 0 },
     { "query-scripts", 0, QUERY_SCRIPTS_OPT, 0, 0 },
     { "qs", 0, QUERY_SCRIPTS_OPT, 0, 0 },
-    
+
 };
 
 static const char * const default_ligkerns = "\
@@ -229,7 +229,6 @@ struct BaseEncoding {
 };
 
 static const char *program_name;
-static String::Initializer initializer;
 static String current_time;
 static StringAccum invocation;
 
@@ -277,7 +276,7 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
     if (!error_message)
 	errh->message("Usage: %s [OPTION]... FONT", program_name);
     else
-	errh->verror(ErrorHandler::ERR_ERROR, String(), error_message, val);
+	errh->vxmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(1);
 }
@@ -285,24 +284,25 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
 void
 usage()
 {
-    printf("\
-'Otftotfm' generates TeX font metrics files from an OpenType font (PostScript\n\
+    FileErrorHandler uerrh(stdout);
+    uerrh.message("\
+%<Otftotfm%> generates TeX font metrics files from an OpenType font (PostScript\n\
 flavor only), including ligatures, kerns, and some positionings. Supply\n\
-'-s SCRIPT[.LANG]' options to specify a language system, '-f FEAT' options to\n\
-turn on optional OpenType features, and a '-e ENC' option to specify a base\n\
+%<-s SCRIPT[.LANG]%> options to specify a language system, %<-f FEAT%> options to\n\
+turn on optional OpenType features, and a %<-e ENC%> option to specify a base\n\
 encoding. Output files are written to the current directory (but see\n\
-'--automatic' and the 'directory' options).\n\
+%<--automatic%> and the %<directory%> options).\n\
 \n\
 Usage: %s [-a] [OPTIONS] OTFFILE FONTNAME\n\n",
 	   program_name);
-    printf("\
+    uerrh.message("\
 Font feature and transformation options:\n\
   -s, --script=SCRIPT[.LANG]   Use features for script SCRIPT[.LANG] [latn].\n\
   -f, --feature=FEAT           Activate feature FEAT.\n\
   --lf, --letter-feature=FEAT  Activate feature FEAT for letters.\n\
       --subs-filter=PAT        Substitute only characters matching PAT.\n\
       --include-subs=PAT       Same, but cumulative.\n\
-      --exclude-subs=PAT       Don't substitute characters matching PAT.\n\
+      --exclude-subs=PAT       Don%,t substitute characters matching PAT.\n\
       --clear-subs             Clear included/excluded substitutions.\n\
   -E, --extend=F               Widen characters by a factor of F.\n\
   -S, --slant=AMT              Oblique characters by AMT, generally <<1.\n\
@@ -312,7 +312,7 @@ Font feature and transformation options:\n\
       --space-factor=F         Scale wordspace by a factor of F.\n\
       --design-size=SIZE       Set font design size to SIZE.\n\
 \n");
-    printf("\
+    uerrh.message("\
 Encoding options:\n\
   -e, --encoding=FILE          Use DVIPS encoding FILE as a base encoding.\n\
       --boundary-char=CHAR     Set the boundary character to CHAR.\n\
@@ -325,14 +325,14 @@ Encoding options:\n\
       --ligkern=COMMAND        Add a ligature or kern.\n\
       --position=COMMAND       Add a POSITION command.\n\
       --unicoding=COMMAND      Add a UNICODING command.\n\
-      --no-encoding-commands   Ignore encoding file's LIGKERN/UNICODINGs.\n\
-      --no-default-ligkern     Don't include default LIGKERNs.\n\
+      --no-encoding-commands   Ignore encoding file%,s LIGKERN/UNICODINGs.\n\
+      --no-default-ligkern     Don%,t include default LIGKERNs.\n\
       --coding-scheme=SCHEME   Set the output coding scheme to SCHEME.\n\
       --warn-missing           Warn about characters not supported by font.\n\
       --literal-encoding=FILE  Use DVIPS encoding FILE verbatim.\n\
       --base-encodings=FILE    Output can refer to base fonts named in FILE.\n\
 \n");
-    printf("\
+    uerrh.message("\
 Automatic mode options:\n\
   -a, --automatic              Install in a TeX Directory Structure.\n\
   -v, --vendor=NAME            Set font vendor for TDS [lcdftools].\n\
@@ -350,7 +350,7 @@ Output options:\n\
       --no-map                 Do not generate a psfonts.map line.\n\
       --output-encoding[=FILE] Only generate an encoding file.\n\
 \n");
-    printf("\
+    uerrh.message("\
 File location options:\n\
       --tfm-directory=DIR      Put TFM files in DIR [.|automatic].\n\
       --pl-directory=DIR       Put PL files in DIR [.|automatic].\n\
@@ -373,7 +373,7 @@ Other options:\n\
   -q, --quiet                  Do not generate any error messages.\n\
       --version                Print version number and exit.\n\
 \n\
-Report bugs to <kohler@cs.ucla.edu>.\n");
+Report bugs to <ekohler@gmail.com>.\n");
 }
 
 #ifndef WIN32
@@ -442,7 +442,7 @@ get_design_size(const FontInfo &finfo)
 	if (!gpos_table)
 	    throw OpenType::Error();
 
-	ErrorHandler *errh = ErrorHandler::ignore_handler();
+	ErrorHandler *errh = ErrorHandler::silent_handler();
 	OpenType::Gpos gpos(gpos_table, errh);
 
 	// extract 'size' feature(s)
@@ -469,7 +469,7 @@ get_design_size(const FontInfo &finfo)
 
 	// return a number in 'pt', not 'bp'
 	return result * 72.27 / 72.;
-	
+
     } catch (OpenType::Error) {
 	return 10.0;
     }
@@ -554,7 +554,7 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
     if (design_size <= 0)
 	design_size = get_design_size(finfo);
     max_printed_real = 0;
-    
+
     fprintf(f, "(DESIGNSIZE R %.1f)\n"
 	    "(DESIGNUNITS R %d.0)\n"
 	    "(COMMENT DESIGNSIZE (1 em) IS IN POINTS)\n"
@@ -569,7 +569,7 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
 	font_xform.shear(slant);
     int bounds[4], width;
     double du = (design_units == metrics.units_per_em() ? 1. : design_units / (double) metrics.units_per_em());
-    
+
     double actual_slant = font_slant(finfo);
     if (actual_slant)
 	fprintf(f, "   (SLANT R %g)\n", actual_slant);
@@ -593,7 +593,7 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
     int xheight = font_x_height(finfo, font_xform);
     if (xheight < 1000)
 	fprint_real(f, "   (XHEIGHT", xheight, du);
-    
+
     fprint_real(f, "   (QUAD", 1000, du);
     fprintf(f, "   )\n");
 
@@ -637,7 +637,7 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
     } else
 	for (int i = 0; i < metrics.n_mapped_fonts(); i++)
 	    font_mapping.push_back(i);
-    
+
     // figure out the proper names and numbers for glyphs
     Vector<String> glyph_ids;
     Vector<String> glyph_comments(257, String());
@@ -668,7 +668,7 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
 		glyph_ids.push_back("D " + String(i));
 
 	    glyph_comments[i] = glyph_base_comments[i] = glyph_comment;
-	    
+
 	} else if (i < 256)
 	    glyph_ids.push_back("D " + String(i));
     }
@@ -713,12 +713,12 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
 	    }
 	}
     fprintf(f, "   )\n");
-    
+
     // CHARACTERs
     Vector<Setting> settings;
     StringAccum sa;
     Vector<Point> push_stack;
-    
+
     for (int i = 0; i < 256; i++)
 	if (metrics.setting(i, settings)) {
 	    fprintf(f, "(CHARACTER %s%s\n", glyph_ids[i].c_str(), glyph_comments[i].c_str());
@@ -731,7 +731,7 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
 	    const CharstringProgram *program = finfo.program();
 	    for (const Setting *s = settings.begin(); s < settings.end(); s++)
 		switch (s->op) {
-		    
+
 		  case Setting::SHOW:
 		    if (vpl || program == finfo.program())
 			boundser.char_bounds(program->glyph_context(s->y));
@@ -805,9 +805,9 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
 			  sa << "      (SPECIAL " << s->s << ")\n";
 		      break;
 		  }
-		    
+
 		}
-	    
+
 	    assert(push_stack.size() == 0);
 
 	    // output information
@@ -826,14 +826,14 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
 
     // at last, close the file
     fclose(f);
-    
+
     // Did we print a number too big for TeX to handle?  If so, try again.
     if (max_printed_real >= 2047) {
 	if (metrics.design_units() <= 1)
 	    errh->fatal("This font appears to be broken.  It has characters so big that the PL format\ncannot represent them.");
 	metrics.set_design_units(metrics.design_units() > 200 ? metrics.design_units() - 250 : 1);
 	if (verbose)
-	    errh->message("the font's metrics overflow the limits of PL files\n(reducing DESIGNUNITS to %d and trying again)", metrics.design_units());
+	    errh->message("the font%,s metrics overflow the limits of PL files\n(reducing DESIGNUNITS to %d and trying again)", metrics.design_units());
 	output_pl(metrics, ps_name, boundary_char, finfo, vpl, filename, errh);
     }
 }
@@ -856,7 +856,7 @@ find_lookups(const OpenType::ScriptList& scripts, const OpenType::FeatureList& f
     for (int i = 0; i < interesting_scripts.size(); i += 2) {
 	OpenType::Tag script = interesting_scripts[i];
 	OpenType::Tag langsys = interesting_scripts[i+1];
-	
+
 	// collect features applying to this script
 	scripts.features(script, langsys, required, fids, errh);
 
@@ -872,7 +872,7 @@ find_lookups(const OpenType::ScriptList& scripts, const OpenType::FeatureList& f
 	    for (int k = 0; k < lookupids.size(); k++) {
 		int l = lookupids[k];
 		if (l < 0 || l >= lookups.size())
-		    errh->error("lookup for '%s' feature out of range", OpenType::Tag::langsys_text(script, langsys).c_str());
+		    errh->error("lookup for %<%s%> feature out of range", OpenType::Tag::langsys_text(script, langsys).c_str());
 		else {
 		    lookups[l].used = true;
 		    lookups[l].features.push_back(ftag);
@@ -889,7 +889,7 @@ find_lookups(const OpenType::ScriptList& scripts, const OpenType::FeatureList& f
 	    l->filter = feature_filters[l->features[0]];
 	    for (OpenType::Tag* ft = l->features.begin() + 1; ft < l->features.end(); ft++)
 		if (!l->filter->check_eq(*feature_filters[*ft])) {
-		    errh->error("'%s' and '%s' features share a lookup, but have different filters", l->features[0].text().c_str(), ft->text().c_str());
+		    errh->error("%<%s%> and %<%s%> features share a lookup, but have different filters", l->features[0].text().c_str(), ft->text().c_str());
 		    break;
 		}
 	}
@@ -907,7 +907,7 @@ write_encoding_file(String &filename, const String &encoding_name,
 	return ok_retval;
     } else if (verbose)
 	errh->message((ok_retval ? "creating encoding file %s" : "updating encoding file %s"), filename.c_str());
-    
+
     int fd = open(filename.c_str(), O_RDWR | O_CREAT, 0666);
     if (fd < 0)
 	return errh->error("%s: %s", filename.c_str(), strerror(errno));
@@ -961,7 +961,7 @@ write_encoding_file(String &filename, const String &encoding_name,
 	    contents << old_encodings.substring(pos1, pos2 - pos1);
 	pos1 = pos2;
     }
-    
+
     // rewind file
 #ifdef HAVE_FTRUNCATE
     rewind(f);
@@ -992,7 +992,7 @@ output_encoding(const Metrics &metrics,
     Vector<Metrics::Glyph> glyphs;
     if (!metrics.base_glyphs(glyphs, 256))
 	return false;
-    
+
     StringAccum sa;
     for (int i = 0; i < 256; i++) {
 	if ((i & 0xF) == 0)
@@ -1035,10 +1035,10 @@ output_encoding(const Metrics &metrics,
 %%" << out_encoding_name << "\n";
     contents << "% Encoding created by otftotfm" << current_time << "\n\
 % Command line follows encoding\n";
-    
+
     // the encoding itself
     contents << '/' << out_encoding_name << " [\n" << sa << "] def\n";
-    
+
     // write banner -- unfortunately this takes some doing
     String banner = String("Command line: '") + String(invocation.data(), invocation.length()) + String("'");
     char *buf = banner.mutable_data();
@@ -1063,7 +1063,7 @@ output_encoding(const Metrics &metrics,
 	contents << "% " << banner.substring(0, last_pos) << '\n';
 	banner = banner.substring(last_pos + 1);
     }
-    
+
     // open encoding file
     if (out_encoding_file == "-")
 	fwrite(contents.data(), 1, contents.length(), stdout);
@@ -1096,12 +1096,12 @@ output_tfm(Metrics &metrics, const String &ps_name, int boundary_char,
 	command << "vptovf " << shell_quote(pl_filename) << ' ' << shell_quote(vf_filename) << ' ' << shell_quote(tfm_filename) << " >&2";
     else
 	command << "pltotf " << shell_quote(pl_filename) << ' ' << shell_quote(tfm_filename) << " >&2";
-    
+
     int status = mysystem(command.c_str(), errh);
 
     if (!no_create)
 	unlink(pl_filename.c_str());
-    
+
     if (status != 0)
 	errh->fatal("%s execution failed", (vpl ? "vptovf" : "pltotf"));
     else {
@@ -1127,7 +1127,7 @@ output_metrics(Metrics &metrics, const String &ps_name, int boundary_char,
 	else if (output_flags & G_METRICS)
 	    errh->warning("features require virtual fonts");
     }
-    
+
     // output virtual metrics
     if (!(output_flags & G_VMETRICS))
 	/* do nothing */;
@@ -1136,10 +1136,10 @@ output_metrics(Metrics &metrics, const String &ps_name, int boundary_char,
 	    // erase old virtual font
 	    String vf = getodir(O_VF, errh) + "/" + font_name + ".vf";
 	    if (no_create)
-		errh->message("would remove potential VF file '%s'", vf.c_str());
+		errh->message("would remove potential VF file %<%s%>", vf.c_str());
 	    else {
 		if (verbose)
-		    errh->message("removing potential VF file '%s'", vf.c_str());
+		    errh->message("removing potential VF file %<%s%>", vf.c_str());
 		if (unlink(vf.c_str()) < 0 && errno != ENOENT)
 		    errh->error("removing %s: %s", vf.c_str(), strerror(errno));
 	    }
@@ -1160,7 +1160,7 @@ output_metrics(Metrics &metrics, const String &ps_name, int boundary_char,
     metrics.make_base(257);
     if (!metrics.need_base())
 	return;
-    
+
     // output metrics
     double save_minimum_kern = minimum_kern;
     if (need_virtual)
@@ -1293,7 +1293,7 @@ do_gsub(Metrics& metrics, const OpenType::Font& otf, DvipsEncoding& dvipsenc, bo
 	    OpenType::Tag feature = (lookups[i].features.size() == 1 ? lookups[i].features[0] : OpenType::Tag());
 	    if (feature == OpenType::Tag("fina") || feature == OpenType::Tag("fin2") || feature == OpenType::Tag("fin3")) {
 		if (dvipsenc.boundary_char() < 0)
-		    errh->warning("'-ffina' requires a boundary character\n(The input encoding didn't specify a boundary character, but\nI need one to implement '-ffina' features correctly.  Try\nthe '--boundary-char' option.)");
+		    errh->warning("%<-ffina%> requires a boundary character\n(The input encoding didn%,t specify a boundary character, but\nI need one to implement %<-ffina%> features correctly.  Try\nthe %<--boundary-char%> option.)");
 		else {
 		    int bg = metrics.boundary_glyph();
 		    for (int j = 0; j < subs.size(); j++)
@@ -1322,7 +1322,7 @@ do_gsub(Metrics& metrics, const OpenType::Font& otf, DvipsEncoding& dvipsenc, bo
 	altselector_features.swap(interesting_features);
 	altselector_feature_filters.swap(feature_filters);
 	Vector<Lookup> alt_lookups(gsub.nlookups(), Lookup());
-	find_lookups(gsub.script_list(), gsub.feature_list(), alt_lookups, ErrorHandler::ignore_handler());
+	find_lookups(gsub.script_list(), gsub.feature_list(), alt_lookups, ErrorHandler::silent_handler());
 	Vector<OpenType::Substitution> alt_subs;
 	for (int i = 0; i < alt_lookups.size(); i++)
 	    if (alt_lookups[i].used) {
@@ -1371,15 +1371,15 @@ do_math_spacing(Metrics &metrics, const FontInfo &finfo,
     int x_height = font_x_height(finfo, font_xform);
     double slant = font_slant(finfo);
     int boundary_char = dvipsenc.boundary_char();
-    
+
     int bounds[4], width;
-    
+
     for (int code = 0; code < metrics.encoding_size(); code++)
 	if (metrics.was_base_glyph(code) && code != boundary_char
 	    && char_bounds(bounds, width, finfo, font_xform, code)) {
 	    int left_sb = (bounds[0] < 0 ? -bounds[0] : 0);
 	    metrics.add_single_positioning(code, left_sb, 0, left_sb);
-	    
+
 	    if (skew_char >= 0 && code < 256) {
 		double virtual_height = (bounds[3] > x_height ? bounds[3] :x_height) - 0.5 * x_height;
 		int right_sb = (bounds[2] > width ? bounds[2] - width : 0);
@@ -1399,7 +1399,7 @@ do_file(const String &otf_filename, const OpenType::Font &otf,
 	return;
     if (!finfo.cff)
 	errh->warning("TrueType-flavored font support is experimental");
-    
+
     // save glyph names
     Vector<PermString> glyph_names;
     finfo.glyph_names(glyph_names);
@@ -1439,26 +1439,26 @@ do_file(const String &otf_filename, const OpenType::Font &otf,
     } catch (OpenType::BlankTable) {
 	// nada
     } catch (OpenType::Error e) {
-	errh->warning("GSUB '%s' error, continuing", e.description.c_str());
+	errh->warning("GSUB %<%s%> error, continuing", e.description.c_str());
     }
-    
+
     // apply LIGKERN ligature commands to the result
     dvipsenc.apply_ligkern_lig(metrics, errh);
 
     // test fake ligature mechanism
     //metrics.add_threeligature('T', 'h', 'e', '0');
-    
+
     // reencode characters to fit within 8 bytes (+ 1 for the boundary)
     if (!dvipsenc_literal)
 	metrics.shrink_encoding(257, dvipsenc_in, errh);
-    
+
     // apply activated GPOS features
     try {
 	do_gpos(metrics, otf, feature_usage, errh);
     } catch (OpenType::BlankTable) {
 	// nada
     } catch (OpenType::Error e) {
-	errh->warning("GPOS '%s' error, continuing", e.description.c_str());
+	errh->warning("GPOS %<%s%> error, continuing", e.description.c_str());
     }
 
     // apply LIGKERN kerning and POS positioning commands to the result
@@ -1524,7 +1524,7 @@ do_file(const String &otf_filename, const OpenType::Font &otf,
 	    if (feature_usage[interesting_features[i].value()])
 		font_name += String("--F") + interesting_features[i].text();
     }
-    
+
     // output encoding
     if (dvipsenc_literal) {
 	out_encoding_name = dvipsenc_in.name();
@@ -1543,7 +1543,7 @@ do_file(const String &otf_filename, const OpenType::Font &otf,
 	errh->warning("assuming --no-type1 since this font is TrueType-flavored");
 	output_flags &= ~G_TYPE1;
     }
-    
+
     // output
     ::otf_filename = otf_filename;
     output_metrics(metrics, finfo.postscript_name(), dvipsenc.boundary_char(),
@@ -1623,7 +1623,7 @@ parse_base_encodings(const String &filename, ErrorHandler *errh)
 	    else if (String path = locate_encoding(efile, errh))
 		be->encoding.parse(path, true, true, &lerrh);
 	    else
-		lerrh.error("encoding '%s' not found", efile.c_str());
+		lerrh.error("encoding %<%s%> not found", efile.c_str());
 	    if (lerrh.nerrors() == before)
 		base_encodings.push_back(be);
 	    else
@@ -1645,7 +1645,6 @@ main(int argc, char *argv[])
 #ifndef WIN32
     handle_sigchld();
 #endif
-    String::static_initialize();
     Clp_Parser *clp =
 	Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
     Clp_AddType(clp, CHAR_OPTTYPE, 0, clp_parse_char, 0);
@@ -1662,7 +1661,7 @@ main(int argc, char *argv[])
 #endif
     for (int i = 0; i < argc; i++)
 	invocation << (i ? " " : "") << argv[i];
-    
+
     ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr, String(program_name) + ": "));
     const char *input_file = 0;
     Vector<String> glyphlist_files;
@@ -1678,7 +1677,7 @@ main(int argc, char *argv[])
     GlyphFilter current_substitution_filter;
     GlyphFilter current_alternate_filter;
     GlyphFilter* current_filter_ptr = &null_filter;
-    
+
     while (1) {
 	int opt = Clp_Next(clp);
 	switch (opt) {
@@ -1707,7 +1706,7 @@ main(int argc, char *argv[])
 	      if (!t.valid())
 		  usage_error(errh, "bad feature tag");
 	      else if (feature_filters[t])
-		  usage_error(errh, "feature '%s' included twice", t.text().c_str());
+		  usage_error(errh, "feature %<%s%> included twice", t.text().c_str());
 	      else {
 		  if (!current_filter_ptr)
 		      current_filter_ptr = new GlyphFilter(current_substitution_filter + current_alternate_filter);
@@ -1716,19 +1715,19 @@ main(int argc, char *argv[])
 	      }
 	      break;
 	  }
-      
+
 	  case LETTER_FEATURE_OPT: {
 	      OpenType::Tag t(clp->vstr);
 	      if (!t.valid())
 		  usage_error(errh, "bad feature tag");
 	      else if (feature_filters[t])
-		  usage_error(errh, "feature '%s' included twice", t.text().c_str());
+		  usage_error(errh, "feature %<%s%> included twice", t.text().c_str());
 	      else {
 		  interesting_features.push_back(t);
 		  GlyphFilter* gf = new GlyphFilter;
 		  gf->add_substitution_filter("<Letter>", false, errh);
 		  *gf += current_alternate_filter;
-		  feature_filters.insert(t, gf); 
+		  feature_filters.insert(t, gf);
 	      }
 	      break;
 	  }
@@ -1746,7 +1745,7 @@ main(int argc, char *argv[])
 	    current_substitution_filter = null_filter;
 	    current_filter_ptr = 0;
 	    break;
-	    
+
 	  case ENCODING_OPT:
 	    if (encoding_file)
 		usage_error(errh, "encoding specified twice");
@@ -1763,7 +1762,7 @@ main(int argc, char *argv[])
 	  case BASE_ENCODINGS_OPT:
 	    base_encoding_files.push_back(clp->vstr);
 	    break;
-	    
+
 	  case EXTEND_OPT:
 	    if (extend)
 		usage_error(errh, "extend value specified twice");
@@ -1796,7 +1795,7 @@ main(int argc, char *argv[])
 		skew_char = clp->val.i;
 	    }
 	    break;
-	    
+
 	  case DESIGN_SIZE_OPT:
 	    if (design_size > 0)
 		usage_error(errh, "design size value specified twice");
@@ -1838,7 +1837,7 @@ main(int argc, char *argv[])
 	      if (!t.valid())
 		  usage_error(errh, "bad feature tag");
 	      else if (altselector_feature_filters[t])
-		  usage_error(errh, "altselector feature '%s' included twice", t.text().c_str());
+		  usage_error(errh, "altselector feature %<%s%> included twice", t.text().c_str());
 	      else {
 		  if (!current_filter_ptr)
 		      current_filter_ptr = new GlyphFilter(current_substitution_filter + current_alternate_filter);
@@ -1861,11 +1860,11 @@ main(int argc, char *argv[])
 	    current_alternate_filter = null_filter;
 	    current_filter_ptr = 0;
 	    break;
-	    
+
 	  case UNICODING_OPT:
 	    unicoding.push_back(clp->vstr);
 	    break;
-	    
+
 	  case CODINGSCHEME_OPT:
 	    if (codingscheme)
 		usage_error(errh, "coding scheme specified twice");
@@ -1915,7 +1914,7 @@ main(int argc, char *argv[])
 	  case MINIMUM_KERN_OPT:
 	    minimum_kern = clp->val.d;
 	    break;
-	    
+
 	  case MAP_FILE_OPT:
 	    if (clp->negated)
 		output_flags &= ~G_PSFONTSMAP;
@@ -1925,7 +1924,7 @@ main(int argc, char *argv[])
 		    usage_error(errh, "map file specified twice");
 	    }
 	    break;
-	    
+
 	  case PL_OPT:
 	    output_flags = (output_flags & ~G_BINARY) | G_ASCII;
 	    break;
@@ -1933,7 +1932,7 @@ main(int argc, char *argv[])
 	  case TFM_OPT:
 	    output_flags = (output_flags & ~G_ASCII) | G_BINARY;
 	    break;
-	    
+
 	  case ENCODING_DIR_OPT:
 	  case TFM_DIR_OPT:
 	  case PL_DIR_OPT:
@@ -1944,7 +1943,7 @@ main(int argc, char *argv[])
 	    if (!setodir(opt - DIR_OPTS, clp->vstr))
 		usage_error(errh, "%s directory specified twice", odirname(opt - DIR_OPTS));
 	    break;
-	    
+
 	  case FONT_NAME_OPT:
 	  font_name:
 	    if (font_name)
@@ -1955,15 +1954,15 @@ main(int argc, char *argv[])
 	  case GLYPHLIST_OPT:
 	    glyphlist_files.push_back(clp->vstr);
 	    break;
-	    
+
 	  case QUERY_FEATURES_OPT:
-	    usage_error(errh, "run 'otfinfo --query-features' instead");
+	    usage_error(errh, "run %<otfinfo --query-features%> instead");
 	    break;
 
 	  case QUERY_SCRIPTS_OPT:
-	    usage_error(errh, "run 'otfinfo --query-scripts' instead");
+	    usage_error(errh, "run %<otfinfo --query-scripts%> instead");
 	    break;
-	    
+
 	  case QUIET_OPT:
 	    if (clp->negated)
 		errh = ErrorHandler::default_handler();
@@ -1995,13 +1994,13 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otftotfm (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2002-2008 Eddie Kohler\n\
+	    printf("Copyright (C) 2002-2009 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
 	    exit(0);
 	    break;
-      
+
 	  case HELP_OPT:
 	    usage();
 	    exit(0);
@@ -2018,27 +2017,31 @@ particular purpose.\n");
 
 	  case Clp_Done:
 	    goto done;
-      
+
 	  case Clp_BadOption:
 	    usage_error(errh, 0);
 	    break;
 
 	  default:
 	    break;
-      
+
 	}
     }
-    
+
   done:
+    // check for odd option combinations
+    if (warn_missing && !(output_flags & G_VMETRICS))
+	errh->warning("%<--warn-missing%> has no effect with %<--no-virtual%>");
+
     // set up file names
     if (!input_file)
 	usage_error(errh, "no font filename provided");
     if (!encoding_file) {
 	errh->warning("no encoding provided");
-	errh->message("(Use '-e ENCODING' to choose an encoding. '-e texnansx' often works,\nor say '-e -' to turn off this warning.)");
+	errh->message("(Use %<-e ENCODING%> to choose an encoding. %<-e texnansx%> often works,\nor say %<-e -%> to turn off this warning.)");
     } else if (encoding_file == "-")
 	encoding_file = "";
-    
+
     // set up feature filters
     if (!altselector_features.size()) {
 	if (!current_filter_ptr)
@@ -2091,7 +2094,7 @@ particular purpose.\n");
 #endif
 		glyphlist_files.push_back(SHAREDIR "/texglyphlist.txt");
 	}
-	
+
 	// read glyphlist
 	for (String *g = glyphlist_files.begin(); g < glyphlist_files.end(); g++)
 	    if (String s = read_file(*g, errh, true))
@@ -2107,7 +2110,7 @@ particular purpose.\n");
 	    if (String path = locate_encoding(encoding_file, errh))
 		dvipsenc.parse(path, no_ecommand, no_ecommand, errh);
 	    else
-		errh->fatal("encoding '%s' not found", encoding_file.c_str());
+		errh->fatal("encoding %<%s%> not found", encoding_file.c_str());
 	} else {
 	    // use encoding from font
 	    Cff cff(otf.table("CFF"), &bail_errh);
@@ -2123,8 +2126,8 @@ particular purpose.\n");
 
 	// apply default ligkern commands
 	if (default_ligkern)
-	    dvipsenc.parse_ligkern(default_ligkerns, 0, ErrorHandler::ignore_handler());
-    
+	    dvipsenc.parse_ligkern(default_ligkerns, 0, ErrorHandler::silent_handler());
+
 	// apply command-line ligkern commands and coding scheme
 	cerrh.set_landmark("--ligkern command");
 	for (int i = 0; i < ligkern.size(); i++)
@@ -2141,10 +2144,10 @@ particular purpose.\n");
 	    dvipsenc.set_warn_missing(warn_missing);
 
 	do_file(input_file, otf, dvipsenc, literal_encoding, errh);
-	
+
     } catch (OpenType::Error e) {
-	errh->error("unhandled exception '%s'", e.description.c_str());
+	errh->error("unhandled exception %<%s%>", e.description.c_str());
     }
-    
+
     return (errh->nerrors() == 0 ? 0 : 1);
 }

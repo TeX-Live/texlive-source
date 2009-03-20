@@ -18,7 +18,7 @@
 #endif
 #include <efont/psres.hh>
 #include <lcdf/slurper.hh>
-/* Get the correct functions for directory searching */ 
+/* Get the correct functions for directory searching */
 #if HAVE_DIRENT_H
 # include <dirent.h>
 # define DIR_NAMLEN(dirent) strlen((dirent)->d_name)
@@ -37,9 +37,6 @@
 #endif
 #include <string.h>
 namespace Efont {
-
-static String::Initializer initializer;
-static String empty_string;
 
 PsresDatabase::PsresDatabase()
   : _section_map(0)
@@ -72,18 +69,18 @@ static bool
 read_psres_line(Slurper &slurper, int *equals_pos)
 {
   if (equals_pos) *equals_pos = -1;
-  
+
   char *s = slurper.next_line();
   if (!s) return false;
-  
+
   bool is_terminator = s[0] == '.';
   unsigned len, pos = 0, last_escape = ~0;
   bool found_eq = false;
-  
+
   while (true) {
     len = slurper.cur_line_length();
     if (len == 0) break;
-    
+
     // process backslash escapes
     for (; pos < len - 1; pos++) {
       if (s[pos] == '\\') {
@@ -100,17 +97,17 @@ read_psres_line(Slurper &slurper, int *equals_pos)
 	goto done;
       }
     }
-    
+
     // stop processing if not a continuation line
     if (pos == len || s[pos] != '\\') break;
 
     slurper.shorten_line(pos);
     s = slurper.append_next_line();
   }
-  
+
   if (pos < len && !found_eq && s[pos] == '=' && equals_pos)
     *equals_pos = pos;
-  
+
  done:
   // eat trailing whitespace, except for the space in `\ ' if it ends the line
   // -- unless the `\' is the second `\' in a `\\'!
@@ -143,10 +140,10 @@ PsresDatabaseSection::add_psres_file_section
 {
   int equals_pos;
   bool first_line = true;
-  
+
   while (read_psres_line(slurper, &equals_pos)) {
     char *s = slurper.cur_line();
-    
+
     // check for a directory line
     if (first_line) {
       first_line = false;
@@ -156,27 +153,27 @@ PsresDatabaseSection::add_psres_file_section
 	continue;
       }
     }
-    
+
     if (equals_pos < 0) {
       // report error?
       continue;
     }
-    
+
     // get the key
     unsigned len = psres_escape(s, equals_pos);
     PermString key = PermString(s, len);
     int index = _map[key];
     if (!override && index > 0)
       continue;
-    
+
     // double equals means absolute pathname
     if (s[equals_pos + 1] == '=')
       equals_pos++;
-    
+
     // get the value. Don't escape it yet
     len = slurper.cur_line_length() - (equals_pos + 1);
     String value = String(s + equals_pos + 1, len);
-    
+
     // stick key and value into our data structure
     if (index == 0) {
       index = _directories.size();
@@ -212,28 +209,28 @@ PsresDatabase::add_one_psres_file(Slurper &slurper, bool override)
 {
   if (!read_psres_line(slurper, 0))
     return /* error */ false;
-  
+
   char *s = slurper.cur_line();
   unsigned len = slurper.cur_line_length();
   if (len < 12 || memcmp(s, "PS-Resources", 12) != 0)
     return /* error */ false;
-  
+
   bool exclusive = (len >= 22 && memcmp(s+12, "-Exclusive", 10) == 0);
-  
+
   // skip list of sections
   while (read_psres_line(slurper, 0))
     /* nada */;
-  
+
   // now, read each section
   PermString directory = slurper.filename().directory();
-  
+
   while (read_psres_line(slurper, 0)) {
     s = slurper.cur_line();
     len = psres_escape(s, slurper.cur_line_length());
     PsresDatabaseSection *section = force_section(PermString(s, len));
     section->add_psres_file_section(slurper, directory, override);
   }
-  
+
   return exclusive;
 }
 
@@ -252,7 +249,7 @@ PsresDatabase::add_psres_directory(PermString directory)
 {
   DIR *dir = opendir(directory.c_str());
   if (!dir) return;
-  
+
   while (struct dirent *dirent = readdir(dir)) {
     int len = DIR_NAMLEN(dirent);
     if (len > 4 && dirent->d_name[0] != '.'
@@ -262,7 +259,7 @@ PsresDatabase::add_psres_directory(PermString directory)
       add_psres_file(fn, false);
     }
   }
-  
+
   closedir(dir);
 }
 
@@ -307,18 +304,18 @@ PsresDatabase::add_psres_path(const char *path, const char *default_path,
     path = default_path;
     default_path = 0;
   }
-  
+
   if (override && _sections.size() > 1) {
     PsresDatabase new_db;
     new_db.add_psres_path(path, default_path, false);
     add_database(&new_db, true);
     return;
   }
-  
+
   while (*path) {
     const char *epath = path;
     while (*epath && *epath != ':') epath++;
-    
+
     PermString directory(path, epath - path);
     Filename filename(directory, "PSres.upr");
     if (epath == path) {
@@ -326,7 +323,7 @@ PsresDatabase::add_psres_path(const char *path, const char *default_path,
       default_path = 0;	// don't use default path twice
     } else if (!filename.readable() || !add_psres_file(filename, false))
       add_psres_directory(directory);
-    
+
     path = (*epath ? epath+1 : epath);
   }
 }
@@ -392,21 +389,21 @@ PsresDatabaseSection::filename_value(PermString key)
 const String &
 PsresDatabase::value(PermString sec, PermString key) const
 {
-  PsresDatabaseSection *s = section(sec);
-  if (s)
-    return s->value(key);
-  else
-    return empty_string;
+    PsresDatabaseSection *s = section(sec);
+    if (s)
+	return s->value(key);
+    else
+	return String::make_empty();
 }
 
 const String &
 PsresDatabase::unescaped_value(PermString sec, PermString key) const
 {
-  PsresDatabaseSection *s = section(sec);
-  if (s)
-    return s->unescaped_value(key);
-  else
-    return empty_string;
+    PsresDatabaseSection *s = section(sec);
+    if (s)
+	return s->unescaped_value(key);
+    else
+	return String::make_empty();
 }
 
 Filename

@@ -1,6 +1,6 @@
 /* main.cc -- driver for mmafm program
  *
- * Copyright (c) 1997-2006 Eddie Kohler
+ * Copyright (c) 1997-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -114,7 +114,7 @@ apply_precision(Metrics *m, int precision)
 {
   if (precision < 0)
     return;
-  
+
   double multiplier = 1, divider = 1;
   for (int i = 0; i < precision; i++)
     multiplier *= 10, divider /= 10;
@@ -151,7 +151,7 @@ read_file(const char *fn, MetricsFinder *finder)
 {
   Filename filename;
   FILE *file;
-  
+
   if (strcmp(fn, "-") == 0) {
     filename = Filename("<stdin>");
     file = stdin;
@@ -160,7 +160,7 @@ read_file(const char *fn, MetricsFinder *finder)
     file = filename.open_read();
   }
   int save_errno = errno;
-  
+
   if (!file) {
     // look for a font by name
     AmfmMetrics *new_amfm = finder->find_amfm(fn, errh);
@@ -170,7 +170,7 @@ read_file(const char *fn, MetricsFinder *finder)
     }
     if (finder->find_metrics(fn, errh))
       return;
-    
+
     // check for instance name. don't use InstanceMetricsFinder.
     const char *underscore = strchr(fn, '_');
     if (underscore)
@@ -178,7 +178,7 @@ read_file(const char *fn, MetricsFinder *finder)
     if (!new_amfm)
       errh->fatal("%s: %s", fn, strerror(save_errno));
     set_amfm(new_amfm);
-    
+
     int i = 0;
     while (underscore[0] == '_' && underscore[1]) {
       double x = strtod(underscore + 1, const_cast<char **>(&underscore));
@@ -187,7 +187,7 @@ read_file(const char *fn, MetricsFinder *finder)
     }
     return;
   }
-  
+
   Slurper slurper(filename, file);
   bool is_afm = false;
   if (file != stdin) {
@@ -195,7 +195,7 @@ read_file(const char *fn, MetricsFinder *finder)
     if (first_line)
       is_afm = strncmp(first_line, "StartFontMetrics", 16) == 0;
   }
-  
+
   if (is_afm) {
     Metrics *afm = AfmReader::read(slurper, errh);
     if (afm)
@@ -213,7 +213,7 @@ usage_error(const char *error_message, ...)
   if (!error_message)
     errh->message("Usage: %s [OPTION | FONT]...", program_name);
   else
-    errh->verror(ErrorHandler::ERR_ERROR, String(), error_message, val);
+    errh->vxmessage(ErrorHandler::e_error, error_message, val);
   errh->message("Type %s --help for more information.", program_name);
   exit(1);
 }
@@ -221,8 +221,9 @@ usage_error(const char *error_message, ...)
 static void
 usage()
 {
-  printf("\
-'Mmafm' creates an AFM font metrics file for a multiple master font by\n\
+    FileErrorHandler uerrh(stdout);
+    uerrh.message("\
+%<Mmafm%> creates an AFM font metrics file for a multiple master font by\n\
 interpolating at a point you specify and writes it to the standard output.\n\
 \n\
 Usage: %s [OPTION | FONT]...\n\
@@ -245,7 +246,7 @@ Interpolation settings:\n\
   -p, --precision=N             Allow N digits of fraction (default 3).\n\
   -k, --min-kern=N              Remove kerns smaller than N (default 2).\n\
 \n\
-Report bugs to <kohler@cs.ucla.edu>.\n", program_name);
+Report bugs to <ekohler@gmail.com>.\n", program_name);
 }
 
 
@@ -253,41 +254,41 @@ int
 main(int argc, char *argv[])
 {
   MetricsFinder *finder = new CacheMetricsFinder;
-  
+
   PsresDatabase *psres = new PsresDatabase;
   psres->add_psres_path(getenv("PSRESOURCEPATH"), 0, false);
   PsresMetricsFinder *psres_finder = new PsresMetricsFinder(psres);
   finder->add_finder(psres_finder);
-  
+
   Clp_Parser *clp =
     Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
   program_name = Clp_ProgramName(clp);
 
   errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr, String(program_name) + ": "));
-  
+
   FILE *output_file = 0;
   int precision = 3;
   double kern_precision = 2.0;
   while (1) {
     int opt = Clp_Next(clp);
     switch (opt) {
-      
+
      case WEIGHT_OPT:
       set_design("Weight", clp->val.d);
       break;
-      
+
      case WIDTH_OPT:
       set_design("Width", clp->val.d);
       break;
-      
+
      case OPSIZE_OPT:
       set_design("OpticalSize", clp->val.d);
       break;
-      
+
      case STYLE_OPT:
       set_design("Style", clp->val.d);
       break;
-      
+
      case N1_OPT:
      case N2_OPT:
      case N3_OPT:
@@ -298,11 +299,11 @@ main(int argc, char *argv[])
      case PRECISION_OPT:
       precision = clp->val.i;
       break;
-      
+
      case KERN_PREC_OPT:
       kern_precision = clp->val.d;
       break;
-      
+
      case OUTPUT_OPT:
       if (output_file) errh->fatal("output file already specified");
       if (strcmp(clp->vstr, "-") == 0)
@@ -313,44 +314,44 @@ main(int argc, char *argv[])
 	    errh->fatal("%s: %s", clp->vstr, strerror(errno));
       }
       break;
-      
+
      case HELP_OPT:
       usage();
       exit(0);
       break;
-      
+
      case VERSION_OPT:
       printf("mmafm (LCDF typetools) %s\n", VERSION);
-      printf("Copyright (C) 1997-2006 Eddie Kohler\n\
+      printf("Copyright (C) 1997-2009 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
       exit(0);
       break;
-      
+
      case Clp_NotOption:
       read_file(clp->vstr, finder);
       break;
-      
+
      case Clp_Done:
       goto done;
-      
+
      case Clp_BadOption:
       usage_error(0);
       break;
-      
+
     }
   }
-  
+
  done:
   if (!amfm) usage_error("missing font argument");
-  
+
   MultipleMasterSpace *mmspace = amfm->mmspace();
 #if MMAFM_RUN_MMPFB
   if (!mmspace->check_intermediate()) {
     char *buf = new char[amfm->font_name().length() + 30];
     sprintf(buf, "mmpfb -q --amcp-info '%s'", amfm->font_name().c_str());
-    
+
     FILE *f = popen(buf, "r");
     if (f) {
       Filename fake("<mmpfb output>");
@@ -358,47 +359,47 @@ particular purpose.\n");
       AmfmReader::add_amcp_file(slurpy, amfm, errh);
       pclose(f);
     }
-    
+
     delete[] buf;
   }
 #endif
-  
+
   Vector<double> design = mmspace->default_design_vector();
   for (int i = 0; i < values.size(); i++)
     if (ax_names[i])
       mmspace->set_design(design, ax_names[i], values[i], errh);
     else
       mmspace->set_design(design, ax_nums[i], values[i], errh);
-  
+
   Vector<double> weight;
   if (!mmspace->design_to_weight(design, weight, errh)) {
     if (!mmspace->check_intermediate()) {
-      errh->message("(I can't interpolate font programs with intermediate masters on my own.");
+      errh->message("(I can%,t interpolate font programs with intermediate masters on my own.");
 #if MMAFM_RUN_MMPFB
-      errh->message("I tried to run `mmpfb --amcp-info %s', but it didn't work.", amfm->font_name().c_str());
+      errh->message("I tried to run %<mmpfb --amcp-info %s%>, but it didn't work.", amfm->font_name().c_str());
       errh->message("Maybe your PSRESOURCEPATH environment variable is not set?");
 #endif
       errh->fatal("See the manual page for more information.)");
     } else
-      errh->fatal("can't create weight vector");
+      errh->fatal("can%,t create weight vector");
   }
-  
+
   // Need to check for case when all design coordinates are unspecified. The
   // AMFM file contains a default WeightVector, but often NOT a default
   // DesignVector; we don't want to generate a file with a FontName like
   // `MyriadMM_-9.79797979e97_-9.79797979e97_' because the DesignVector
   // components are unknown.
   if (!KNOWN(design[0]))
-    errh->fatal("must specify %s's %s coordinate", amfm->font_name().c_str(),
+    errh->fatal("must specify %s%,s %s coordinate", amfm->font_name().c_str(),
 		mmspace->axis_type(0).c_str());
-  
+
   Metrics *m = amfm->interpolate(design, weight, errh);
   if (m) {
-    
+
     // Add a comment identifying this as interpolated by mmafm
     if (MetricsXt *xt = m->find_xt("AFM")) {
       AfmMetricsXt *afm_xt = (AfmMetricsXt *)xt;
-      
+
 #if HAVE_CTIME
       time_t cur_time = time(0);
       char *time_str = ctime(&cur_time);
@@ -410,7 +411,7 @@ particular purpose.\n");
       char *buf = new char[strlen(VERSION) + 100];
       sprintf(buf, "Interpolated by mmafm-%s.", VERSION);
 #endif
-      
+
       afm_xt->opening_comments.push_back(buf);
       afm_xt->opening_comments.push_back("Mmafm is free software.  See <http://www.lcdf.org/type/>.");
       delete[] buf;
@@ -421,12 +422,12 @@ particular purpose.\n");
       apply_precision(m, precision);
     if (kern_precision > 0)
       apply_kern_precision(m, kern_precision);
-    
+
     // write the output file
     if (!output_file)
       output_file = stdout;
     AfmWriter::write(m, output_file);
-    
+
     return 0;
   } else
     return 1;

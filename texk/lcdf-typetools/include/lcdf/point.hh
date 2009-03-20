@@ -4,7 +4,7 @@
 #include <math.h>
 
 struct Point {
-  
+
     double x;
     double y;
 
@@ -24,7 +24,7 @@ struct Point {
     inline double angle() const throw ();
 
     void shift(double dx, double dy)	{ x += dx; y += dy; }
-    
+
     inline Point shifted(double dx, double dy) const throw ();
     Point rotated(double) const throw ();
     inline Point normal() const throw ();
@@ -45,7 +45,7 @@ struct Point {
 
     // bool operator==(const Point &, const Point &);
     // bool operator!=(const Point &, const Point &);
-  
+
 };
 
 inline double

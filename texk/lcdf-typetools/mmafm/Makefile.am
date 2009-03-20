@@ -1,6 +1,4 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = foreign
-
 bin_PROGRAMS = mmafm
 man_MANS = mmafm.1
 

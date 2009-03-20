@@ -1,6 +1,6 @@
 /* automatic.{cc,hh} -- code for automatic mode and interfacing with kpathsea
  *
- * Copyright (c) 2003-2006 Eddie Kohler
+ * Copyright (c) 2003-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,20 +20,20 @@
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
-#ifdef HAVE_UNISTD_H
+#if HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 #include <sys/stat.h>
 #include <sys/types.h>
-#ifdef HAVE_SYS_TIME_H
+#if HAVE_SYS_TIME_H
 # include <sys/time.h>
 #endif
-#ifdef HAVE_SYS_WAIT_H
+#if HAVE_SYS_WAIT_H
 # include <sys/wait.h>
 #endif
 #include <lcdf/error.hh>
 #include <lcdf/straccum.hh>
-#ifdef HAVE_FCNTL_H
+#if HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
 #include <algorithm>
@@ -46,7 +46,6 @@
 enum { T1DOTLESSJ_EXIT_J_NODOT = 2 };
 #endif
 
-static String::Initializer initializer;
 static String odir[NUMODIR];
 static String typeface;
 static String vendor;
@@ -103,7 +102,7 @@ look_for_writable_texdir(const char *path_variable, bool create)
 	else if (create && errno != EACCES && mkdir(texdir.c_str(), 0777) >= 0)
 	    // create file if it doesn't exist already
 	    writable_texdir = texdir;
-    }   
+    }
     if (writable_texdir && writable_texdir.back() != '/')
 	writable_texdir += "/";
 }
@@ -120,7 +119,7 @@ find_writable_texdir(ErrorHandler *errh, const char *)
 	errh->warning("no writable directory found in $TEXMFVAR or $TEXMF");
 	errh->message("(You probably need to set your TEXMF environment variable; see\n\
 the manual for more information. The current TEXMF path is\n\
-'%s'.)", kpsei_string(kpsei_path_expand("$TEXMF")).c_str());
+%<%s%>.)", kpsei_string(kpsei_path_expand("$TEXMF")).c_str());
     }
     writable_texdir_tried = true;
 }
@@ -159,18 +158,18 @@ String
 getodir(int o, ErrorHandler *errh)
 {
     assert(o >= 0 && o < NUMODIR);
-    
+
     if (!odir[o] && automatic && odir_info[o].envvar)
 	odir[o] = getenv(odir_info[o].envvar);
-    
-#ifdef HAVE_KPATHSEA
+
+#if HAVE_KPATHSEA
     if (!odir[o] && automatic && !writable_texdir_tried)
 	find_writable_texdir(errh, odir_info[o].name);
 
     if (!odir[o] && automatic && writable_texdir) {
 	String suffix = odir_info[o].texdir;
-	
-	// May need to behave differently on TDS 1.1 rather than TDS 1.0. 
+
+	// May need to behave differently on TDS 1.1 rather than TDS 1.0.
 	if (suffix[0] == '#') {
 	    // check type of TDS
 	    if (tds_1_1 < 0) {
@@ -185,14 +184,14 @@ getodir(int o, ErrorHandler *errh)
 	    else
 		suffix = suffix.substring(suffix.begin() + 1, std::find(suffix.begin() + 1, suffix.end(), '#'));
 	}
-	
+
 	String dir = writable_texdir + suffix;
 
 	if (dir.back() == '%')
 	    dir = dir.substring(0, -1) + get_vendor() + "/" + get_typeface();
 	else if (dir.back() == '@')
 	    dir = dir.substring(0, -1) + get_vendor();
-	
+
 	// create parent directories as appropriate
 	int slash = writable_texdir.length() - 1;
 	while (access(dir.c_str(), F_OK) < 0 && slash < dir.length()) {
@@ -211,18 +210,24 @@ getodir(int o, ErrorHandler *errh)
     }
   kpathsea_done:
 #endif
-    
+
     if (!odir[o]) {
-	if (automatic)
-	    errh->warning("%s not specified, placing %s files in '.'", odir_info[o].envvar, odir_info[o].name);
+	if (automatic) {
+	    errh->warning("%s not specified, placing %s files in %<.%>", odir_info[o].envvar, odir_info[o].name);
+#if !HAVE_KPATHSEA
+	    static int kpathsea_warning = 0;
+	    if (++kpathsea_warning == 1)
+		errh->message("(This version of otftotfm lacks $TEXMF directory support.)");
+#endif
+	}
 	odir[o] = ".";
     }
-    
+
     while (odir[o].length() && odir[o].back() == '/')
 	odir[o] = odir[o].substring(0, -1);
-    
+
     if (verbose)
-	errh->message("placing %s files in '%s'", odir_info[o].name, odir[o].c_str());
+	errh->message("placing %s files in %<%s%>", odir_info[o].name, odir[o].c_str());
     return odir[o];
 }
 
@@ -286,7 +291,7 @@ update_odir(int o, String file, ErrorHandler *errh)
 	return;
     } else if (verbose)
 	errh->message("updating %sls-R for %s/%s", writable_texdir.c_str(), directory.c_str(), file.c_str());
-    
+
     // try to update ls-R ourselves, rather than running mktexupd --
     // mktexupd's runtime is painful: a half second to update a file
     String ls_r = writable_texdir + "ls-R";
@@ -311,11 +316,11 @@ update_odir(int o, String file, ErrorHandler *errh)
 	    String command = mktexupd + " " + shell_quote(writable_texdir + directory) + " " + shell_quote(file);
 	    int retval = system(command.c_str());
 	    if (retval == 127)
-		errh->error("could not run '%s'", command.c_str());
+		errh->error("could not run %<%s%>", command.c_str());
 	    else if (retval < 0)
-		errh->error("could not run '%s': %s", command.c_str(), strerror(errno));
+		errh->error("could not run %<%s%>: %s", command.c_str(), strerror(errno));
 	    else if (retval != 0)
-		errh->error("'%s' failed", command.c_str());
+		errh->error("%<%s%> failed", command.c_str());
 	}
     }
 #else
@@ -345,9 +350,14 @@ installed_type1(const String &otf_filename, const String &ps_fontname, bool allo
 	String file, path;
 	if ((file = ps_fontname + ".pfb", path = kpsei_string(kpsei_find_file(file.c_str(), KPSEI_FMT_TYPE1)))
 	    || (file = ps_fontname + ".pfa", path = kpsei_string(kpsei_find_file(file.c_str(), KPSEI_FMT_TYPE1)))) {
-	    if (verbose)
-		errh->message("Type 1 file %s found with kpathsea at %s", file.c_str(), path.c_str());
-	    return path;
+	    if (path == "./" + file || path == file) {
+		if (verbose)
+		    errh->message("ignoring Type 1 file %s found with kpathsea in %<.%>", path.c_str());
+	    } else {
+		if (verbose)
+		    errh->message("Type 1 file %s found with kpathsea at %s", file.c_str(), path.c_str());
+		return path;
+	    }
 	}
 # if HAVE_AUTO_CFFTOT1
     }
@@ -363,18 +373,18 @@ installed_type1(const String &otf_filename, const String &ps_fontname, bool allo
 	String command = "cfftot1 " + shell_quote(otf_filename) + " -n " + shell_quote(ps_fontname) + " " + shell_quote(pfb_filename);
 	int retval = mysystem(command.c_str(), errh);
 	if (retval == 127)
-	    errh->error("could not run '%s'", command.c_str());
+	    errh->error("could not run %<%s%>", command.c_str());
 	else if (retval < 0)
-	    errh->error("could not run '%s': %s", command.c_str(), strerror(errno));
+	    errh->error("could not run %<%s%>: %s", command.c_str(), strerror(errno));
 	else if (retval != 0)
-	    errh->error("'%s' failed", command.c_str());
+	    errh->error("%<%s%> failed", command.c_str());
 	if (retval == 0) {
 	    update_odir(O_TYPE1, pfb_filename, errh);
 	    return pfb_filename;
 	}
     }
 #endif
-    
+
     return String();
 }
 
@@ -385,9 +395,9 @@ installed_type1_dotlessj(const String &otf_filename, const String &ps_fontname, 
 	return String();
     if (verbose)
 	errh->message("searching for dotless-j font for %s", ps_fontname.c_str());
-    
+
     String j_ps_fontname = ps_fontname + "LCDFJ";
-    
+
 #if HAVE_KPATHSEA
 # if HAVE_AUTO_T1DOTLESSJ
     if (!(force && allow_generate && getodir(O_TYPE1, errh))) {
@@ -396,9 +406,15 @@ installed_type1_dotlessj(const String &otf_filename, const String &ps_fontname, 
 	String file, path;
 	if ((file = j_ps_fontname + ".pfb", path = kpsei_string(kpsei_find_file(file.c_str(), KPSEI_FMT_TYPE1)))
 	    || (file = j_ps_fontname + ".pfa", path = kpsei_string(kpsei_find_file(file.c_str(), KPSEI_FMT_TYPE1)))) {
-	    if (verbose)
-		errh->message("Type 1 file %s found with kpathsea at %s", file.c_str(), path.c_str());
-	    return path;
+	    // ignore versions in the current directory
+	    if (path == "./" + file || path == file) {
+		if (verbose)
+		    errh->message("ignoring Type 1 file %s found with kpathsea in %<.%>", path.c_str());
+	    } else {
+		if (verbose)
+		    errh->message("Type 1 file %s found with kpathsea at %s", file.c_str(), path.c_str());
+		return path;
+	    }
 	}
 # if HAVE_AUTO_T1DOTLESSJ
     }
@@ -415,13 +431,13 @@ installed_type1_dotlessj(const String &otf_filename, const String &ps_fontname, 
 	    String command = "t1dotlessj " + shell_quote(base_filename) + " -n " + shell_quote(j_ps_fontname) + " " + shell_quote(pfb_filename);
 	    int retval = mysystem(command.c_str(), errh);
 	    if (retval == 127)
-		errh->warning("could not run '%s'", command.c_str());
+		errh->warning("could not run %<%s%>", command.c_str());
 	    else if (retval < 0)
-		errh->warning("could not run '%s': %s", command.c_str(), strerror(errno));
+		errh->warning("could not run %<%s%>: %s", command.c_str(), strerror(errno));
 	    else if (WEXITSTATUS(retval) == T1DOTLESSJ_EXIT_J_NODOT)
 		return String("\0", 1);
 	    else if (retval != 0)
-		errh->warning("'%s' failed (%d)", command.c_str(), retval);
+		errh->warning("%<%s%> failed (%d)", command.c_str(), retval);
 	    if (retval == 0) {
 		update_odir(O_TYPE1, pfb_filename, errh);
 		return pfb_filename;
@@ -438,36 +454,50 @@ String
 installed_truetype(const String &otf_filename, bool allow_generate, ErrorHandler *errh)
 {
     String file = pathname_filename(otf_filename);
-    
+
 #if HAVE_KPATHSEA
-    if (String path = kpsei_string(kpsei_find_file(file.c_str(), KPSEI_FMT_TRUETYPE))) {
-	if (verbose)
-	    errh->message("TrueType file %s found with kpathsea at %s", file.c_str(), path.c_str());
-	return path;
+    if (!(force && allow_generate && otf_filename && otf_filename != "-" && getodir(O_TRUETYPE, errh))) {
+	if (String path = kpsei_string(kpsei_find_file(file.c_str(), KPSEI_FMT_TRUETYPE))) {
+	    if (path == "./" + file || path == file) {
+		if (verbose)
+		    errh->message("ignoring TrueType file %s found with kpathsea in %<.%>", path.c_str());
+	    } else {
+		if (verbose)
+		    errh->message("TrueType file %s found with kpathsea at %s", file.c_str(), path.c_str());
+		return path;
+	    }
+	}
     }
 #endif
 
-#if HAVE_AUTO_CFFTOT1
-    // if not found, and can generate on the fly, run cfftot1
+    // perhaps generate type 42 in the future, for now just copy
     if (allow_generate && otf_filename && otf_filename != "-" && getodir(O_TRUETYPE, errh)) {
 	String ttf_filename = odir[O_TRUETYPE] + "/" + file;
-	if (ttf_filename.find_left('\'') >= 0 || ttf_filename.find_left('\'') >= 0)
+	if (ttf_filename.find_left('\'') >= 0 || ttf_filename.find_left('\"') >= 0)
 	    return String();
-	String command = "cp " + shell_quote(otf_filename) + " " + shell_quote(ttf_filename);
-	int retval = mysystem(command.c_str(), errh);
-	if (retval == 127)
-	    errh->error("could not run '%s'", command.c_str());
-	else if (retval < 0)
-	    errh->error("could not run '%s': %s", command.c_str(), strerror(errno));
-	else if (retval != 0)
-	    errh->error("'%s' failed", command.c_str());
+
+	int retval;
+	if (!same_filename(otf_filename, ttf_filename)) {
+	    String command = "cp " + shell_quote(otf_filename) + " " + shell_quote(ttf_filename);
+	    retval = mysystem(command.c_str(), errh);
+	    if (retval == 127)
+		errh->error("could not run %<%s%>", command.c_str());
+	    else if (retval < 0)
+		errh->error("could not run %<%s%>: %s", command.c_str(), strerror(errno));
+	    else if (retval != 0)
+		errh->error("%<%s%> failed", command.c_str());
+	} else {
+	    if (verbose)
+		errh->message("TrueType file %s already located in output directory", otf_filename.c_str());
+	    retval = 0;
+	}
+
 	if (retval == 0) {
 	    update_odir(O_TRUETYPE, ttf_filename, errh);
 	    return ttf_filename;
 	}
     }
-#endif
-    
+
     return String();
 }
 
@@ -488,7 +518,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 	    return 0;
 	} else if (verbose)
 	    errh->message("updating %s for %s", map_file.c_str(), String(fontname).c_str());
-	
+
 	int fd = open(map_file.c_str(), O_RDWR | O_CREAT, 0666);
 	if (fd < 0)
 	    return errh->error("%s: %s", map_file.c_str(), strerror(errno));
@@ -564,12 +594,12 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 		errh->message("%s unchanged", map_file.c_str());
 	    return 0;
 	}
-	
+
 	// add our text
 	text += mapline;
 
 	// rewind file
-#ifdef HAVE_FTRUNCATE
+#if HAVE_FTRUNCATE
 	rewind(f);
 	ftruncate(fd, 0);
 #else
@@ -579,7 +609,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 
 	// write data
 	fwrite(text.data(), 1, text.length(), f);
-	
+
 	fclose(f);
 
 	// inform about the new file if necessary
@@ -596,7 +626,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 	    // want to run 'updmap' from its directory, can't use system()
 	    if (verbose)
 		errh->message("running %s", updmap_file.c_str());
-	    
+
 	    pid_t child = fork();
 	    if (child < 0)
 		errh->fatal("%s during fork", strerror(errno));
@@ -608,7 +638,7 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 		    errh->fatal("%s: %s during exec", updmap_file.c_str(), strerror(errno));
 		exit(1);	// should never get here
 	    }
-	    
+
 # if HAVE_WAITPID
 	    // wait for updmap to finish
 	    int status;
@@ -643,15 +673,15 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 		command += " >/dev/null 2>&1";
 	    int retval = mysystem(command.c_str(), errh);
 	    if (retval == 127)
-		errh->warning("could not run '%s'", command.c_str());
+		errh->warning("could not run %<%s%>", command.c_str());
 	    else if (retval < 0)
-		errh->warning("could not run '%s': %s", command.c_str(), strerror(errno));
+		errh->warning("could not run %<%s%>: %s", command.c_str(), strerror(errno));
 	    else if (retval != 0)
-		errh->warning("'%s' exited with status %d;\nrun it manually to check for errors", command.c_str(), WEXITSTATUS(retval));
+		errh->warning("%<%s%> exited with status %d;\nrun it manually to check for errors", command.c_str(), WEXITSTATUS(retval));
 	    goto ran_updmap;
 	}
 # endif
-	
+
 	if (verbose)
 	    errh->message("not running updmap");
 
@@ -667,7 +697,7 @@ locate_encoding(String encfile, ErrorHandler *errh, bool literal)
 {
     if (!encfile || encfile == "-")
 	return encfile;
-    
+
     if (!literal) {
 	int slash = encfile.find_right('/');
 	int dot = encfile.find_left('.', slash >= 0 ? slash : 0);
@@ -675,7 +705,7 @@ locate_encoding(String encfile, ErrorHandler *errh, bool literal)
 	    if (String file = locate_encoding(encfile + ".enc", errh, true))
 		return file;
     }
-    
+
 #if HAVE_KPATHSEA
     if (String file = kpsei_string(kpsei_find_file(encfile.c_str(), KPSEI_FMT_ENCODING))) {
 	if (verbose)

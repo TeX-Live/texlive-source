@@ -1,91 +1,18 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(NEWS)
-AM_INIT_AUTOMAKE(lcdf-typetools, 2.69)
+AC_INIT([LCDF typetools], [2.76-rc1], [tex-k@tug.org])
+AC_PREREQ([2.63])
+AC_CONFIG_SRCDIR([NEWS])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([m4])
+
+dnl Common code for all programs using libkpathsea.
+KPSE_COMMON([lcdf-typetools], [check-news])
+
 AM_CONFIG_HEADER(config.h)
-AM_MAINTAINER_MODE
 
-AC_PROG_MAKE_SET
-
-AC_PROG_CC
-AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_CXXCPP
 if test -n "$GCC" ; then CC="$CC -W -Wall" ; CXX="$CXX -W -Wall" ; fi
-
-dnl AN_MAKEVAR([AR], [AC_PROG_AR])
-dnl AN_PROGRAM([ar], [AC_PROG_AR])
-dnl AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
-dnl AC_PROG_AR
-
-AC_PROG_RANLIB
-
-
-dnl Available from the GNU Autoconf Macro Archive at:
-dnl http://www.gnu.org/software/ac-archive/htmldoc/ac_cxx_template_objs.html
-dnl
-AC_DEFUN([AC_CXX_TEMPLATE_OBJS],
-[AC_CACHE_CHECK(where template objects are stored, ac_cv_cxx_templobjs,
- [ ac_cv_cxx_templobjs='unknown'
-   if test "$GXX" = yes; then
-     ac_cv_cxx_templobjs='nowhere'
-   else
-     case $CXX in
-       CC|*/CC)
-        cat > conftest.cc <<EOF
-template<class T> class A { public : A () {} };
-template<class T> void f (const A<T>&) {}
-main()
-{ A<double> d;
-  A<int> i;
-  f (d);
-  f (i);
-  return 0;
-}
-EOF
-        if test "$ac_cv_cxx_templobjs" = 'unknown' ; then
-          if test -d Templates.DB ; then
-            rm -fr Templates.DB
-          fi
-          if $CXX $CXXFLAGS -ptr. -c conftest.cc 1> /dev/null 2>&1; then
-            if test -d Templates.DB ; then
-#             this should be Sun CC <= 4.2
-              CXXFLAGS="$CXXFLAGS -ptr."
-              if test x"$LIBTOOL" = x ; then
-                ac_cv_cxx_templobjs='Templates.DB/*.o'
-              else
-                ac_cv_cxx_templobjs='Templates.DB/*.lo'
-              fi
-              rm -fr Templates.DB
-            fi
-          fi
-        fi
-        if test "$ac_cv_cxx_templobjs" = 'unknown' ; then
-          if test -d SunWS_cache ; then
-            rm -fr SunWS_cache
-          fi
-          if $CXX $CXXFLAGS -c conftest.cc 1> /dev/null 2>&1; then
-            if test -d SunWS_cache ; then
-#             this should be Sun WorkShop C++ compiler 5.x
-#             or Sun Forte C++ compiler >= 6.x
-              if test x"$LIBTOOL" = x ; then
-                ac_cv_cxx_templobjs='SunWS_cache/*/*.o'
-              else
-                ac_cv_cxx_templobjs='SunWS_cache/*/*.lo'
-              fi
-              rm -fr SunWS_cache
-            fi
-          fi
-        fi
-        rm -f conftest* ;;
-     esac
-   fi
-   case "x$ac_cv_cxx_templobjs" in
-     xunknown|xnowhere)
-     TEMPLATE_OBJS="" ;;
-     *)
-     TEMPLATE_OBJS="$ac_cv_cxx_templobjs" ;;
-   esac
-   AC_SUBST(TEMPLATE_OBJS)])])
 
 AC_CXX_TEMPLATE_OBJS
 
@@ -98,115 +25,67 @@ AC_HEADER_DIRENT
 
 
 dnl
-dnl select programs to be compiled
+dnl select programs to be compiled, otftotfm auto-options
 dnl
 
-AC_ARG_ENABLE(cfftot1, [  --disable-cfftot1       do not build the cfftot1 program], :, enable_cfftot1=yes)
-AC_ARG_ENABLE(mmafm, [  --disable-mmafm         do not build the mmafm program], :, enable_mmafm=yes)
-AC_ARG_ENABLE(mmpfb, [  --disable-mmpfb         do not build the mmpfb program], :, enable_mmpfb=yes)
-AC_ARG_ENABLE(otfinfo, [  --disable-otfinfo       do not build the otfinfo program], :, enable_otfinfo=yes)
-AC_ARG_ENABLE(otftotfm, [  --disable-otftotfm      do not build the otftotfm program], :, enable_otftotfm=yes)
-AC_ARG_ENABLE(t1lint, [  --disable-t1dotlessj    do not build the t1dotlessj program], :, enable_t1dotlessj=yes)
-AC_ARG_ENABLE(t1lint, [  --disable-t1lint        do not build the t1lint program], :, enable_t1lint=yes)
-AC_ARG_ENABLE(t1reencode, [  --disable-t1reencode    do not build the t1reencode program], :, enable_t1reencode=yes)
-AC_ARG_ENABLE(t1testpage, [  --disable-t1testpage    do not build the t1testpage program], :, enable_t1testpage=yes)
-AC_ARG_ENABLE(ttftotype42, [  --disable-ttftotype42   do not build the ttftotype42 program], :, enable_ttftotype42=yes)
-
-SELECTED_SUBDIRS=''
-for i in cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1reencode t1testpage ttftotype42; do
-    y=`eval 'echo $enable_'"$i"`
-    if test "x$y" != xno; then SELECTED_SUBDIRS="$SELECTED_SUBDIRS $i"; fi
-done
+m4_include([ac/lcdf-typetools.ac])
+SELECTED_SUBDIRS='liblcdf libefont'
+AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
+           [test "x$enable_[]Kpse_Prog" = xno || SELECTED_SUBDIRS="$SELECTED_SUBDIRS Kpse_Prog"
+])
 AC_SUBST(SELECTED_SUBDIRS)
 
+AC_FOREACH([Kpse_Opt], kpse_otftotfm_auto_opts,
+           [AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
+                  [AC_DEFINE([HAVE_AUTO_]AS_TR_CPP(Kpse_Opt), 1,
+                             [Define to run ]Kpse_Opt[from otftotfm.])])])
 
 dnl
-dnl kpathsea, auto-cfftot1
+dnl kpathsea
 dnl
 
 AC_ARG_ENABLE(tetex-build, [  --enable-tetex-build    build as part of a teTeX installation], :, enable_tetex_build=no)
-AC_ARG_WITH(kpathsea, [  --with-kpathsea=PREFIX  Kpathsea is installed (under PREFIX)],
-  [kpathsea=$withval], [kpathsea=])
 
-if test "x$kpathsea" = xno; then
-    KPSEINTERFACE_O=
-    LIBKPATHSEA=
-else
-    if test "x$enable_tetex_build" = xyes; then
-	if test ! -d $srcdir/../../texk/kpathsea; then
-	    AC_MSG_ERROR([
+dnl FIXME:
+test -d $srcdir/../kpathsea && enable_tetex_build=yes
+
+AC_ARG_WITH([kpathsea],
+            [AS_HELP_STRING([--without-kpathsea],
+                            [build otftotfm without kpathsea])])
+  KPSE_KPATHSEA_FLAGS
+
+save_CPPFLAGS=$CPPFLAGS
+save_LIBS=$LIBS
+
+CPPFLAGS="$CPPFLAGS $KPATHSEA_INCLUDES"
+LIBS="$KPATHSEA_LIBS $LIBS"
+
+if test "x$with_kpathsea" != xno; then
+  AC_MSG_CHECKING([for kpathsea headers and library])
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
+                                  [[kpse_tfm_format;]])],
+                 [AC_MSG_RESULT([yes])
+                  AC_CHECK_DECLS([kpse_opentype_format], , ,
+                                 [#include <kpathsea/kpathsea.h>])],
+                 [AC_MSG_RESULT([no])
+                  with_kpathsea=no])
+
+  if test "x$with_kpathsea" = xno; then
+  AC_MSG_ERROR([
 =========================================
 
-You specified --enable-tetex-build, but I can't find the kpathsea
-directory.  I expected it to be in $srcdir/../../texk/kpathsea.
+I can't find the kpathsea header and/or library files. Tell me where to look
+using the --with-kpathsea-includes=DIR option (header files under
+DIR/kpathsea) and --with-kpathsea-libdir=DIR option (library under DIR), or
+disable support using --without-kpathsea.
 
 =========================================])
-	fi
-	CPPFLAGS="$CPPFLAGS -I\$(top_builddir)/../../texk -I\$(top_srcdir)/../../texk"
-	LDFLAGS="$LDFLAGS -L\$(top_builddir)/../../texk/kpathsea/.libs"
-        AC_MSG_NOTICE([tetex build of lcdf-typetools, CPPFLAGS now: $CPPFLAGS])
-    elif test "x$kpathsea" != x -a "x$kpathsea" != xyes; then
-	CPPFLAGS="$CPPFLAGS -I$kpathsea/include"
-	LDFLAGS="$LDFLAGS -L$kpathsea/lib"
-    else
-	kpathsea=yes
-    fi
-
-    dnl check for kpathsea/kpathsea.h
-    if test "x$enable_tetex_build" = xyes; then
-	kpse_header=yes
-    else
-	AC_CHECK_HEADER(kpathsea/kpathsea.h, [kpse_header=yes], [kpse_header=no])
-    fi
-
-    dnl if not found and kpathsea prefix not set, check /usr/local
-    if test "x$kpse_header" != xyes -a "x$kpathsea" = xyes -a -r /usr/local/include/kpathsea/tex-file.h; then
-	CPPFLAGS="$CPPFLAGS -I/usr/local/include"
-	LDFLAGS="$LDFLAGS -L/usr/local/lib"
-	AC_CHECK_HEADER(kpathsea/tex-file.h, [kpse_header=yes], [kpse_header=no])
-    fi
-
-    dnl check for -lkpathsea
-    if test "x$enable_tetex_build" = xyes; then
-	kpse_library=yes
-    else
-	AC_CHECK_LIB(kpathsea, kpse_set_program_name, [kpse_library=yes], [kpse_library=no])
-    fi
-
-    dnl bail out if not found
-    if test "x$kpse_header" != xyes -o "x$kpse_library" != xyes; then
-	AC_MSG_ERROR([
-=========================================
-
-I can't find the kpathsea library and/or header files. Tell me where to look
-using the --with-kpathsea=PREFIX option (header files should be under
-PREFIX/include/kpathsea, and library under PREFIX/lib), or disable support
-using --without-kpathsea.
-
-=========================================])
-    fi
-
-    dnl OK, found
-    AC_DEFINE(HAVE_KPATHSEA, 1, [Define if you want to use kpathsea.])
-    KPSEINTERFACE_O='kpseinterface.$(OBJEXT)'
-    if test "x$enable_tetex_build" = xyes; then
-	LIBKPATHSEA='$(top_builddir)/../../texk/kpathsea/.libs/libkpathsea.a'
-	LIBKPATHSEA_DEP="$LIBKPATHSEA"
-    else
-	LIBKPATHSEA='-lkpathsea'
-	LIBKPATHSEA_DEP=''
-    fi
-
-    dnl does it have opentype support?
-    if test "x$enable_tetex_build" = xyes; then
-	AC_DEFINE(HAVE_DECL_KPSE_OPENTYPE_FORMAT)
-    else
-	AC_CHECK_DECLS(kpse_opentype_format, :, :, [#include <kpathsea/kpathsea.h>])
-    fi
+  fi
 fi
-AC_SUBST([KPSEINTERFACE_O])
-AC_SUBST([LIBKPATHSEA])
-AC_SUBST([LIBKPATHSEA_DEP])
+AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
+
+CPPFLAGS=$save_CPPFLAGS
+LIBS=$save_LIBS
 
 AC_ARG_ENABLE(selfauto-set, [  --disable-selfauto-set  disable setting SELFAUTO variables from kpsewhich], :, enable_selfauto_set=yes)
 
@@ -231,20 +110,6 @@ Either supply the correct PREFIX to --with-kpathsea, or supply
     AC_DEFINE_UNQUOTED(SELFAUTOPARENT, "$SELFAUTOPARENT", [kpsewhich's $SELFAUTOPARENT variable])
 fi
 
-AC_ARG_ENABLE(auto-cfftot1, [  --disable-auto-cfftot1  disable running cfftot1 from otftotfm], :, enable_auto_cfftot1=yes)
-AC_ARG_ENABLE(auto-t1dotlessj, [  --disable-auto-t1dotlessj disable running t1dotlessj from otftotfm], :, enable_auto_t1dotlessj=yes)
-AC_ARG_ENABLE(auto-updmap, [  --disable-auto-updmap     disable running updmap from otftotfm], :, enable_auto_updmap=yes)
-
-if test "x$enable_auto_cfftot1" = xyes; then
-    AC_DEFINE(HAVE_AUTO_CFFTOT1, 1, [Define to run cfftot1 automatically from otftotfm.])
-fi
-if test "x$enable_auto_t1dotlessj" = xyes; then
-    AC_DEFINE(HAVE_AUTO_T1DOTLESSJ, 1, [Define to run t1dotlessj automatically from otftotfm.])
-fi
-if test "x$enable_auto_updmap" = xyes; then
-    AC_DEFINE(HAVE_AUTO_UPDMAP, 1, [Define to run system updmap automatically from otftotfm.])
-fi
-
 
 dnl
 dnl <new> and/or <new.h>
@@ -260,7 +125,7 @@ AC_CACHE_CHECK([whether <new> works], ac_cv_good_new_hdr,
 if test "$ac_cv_good_new_hdr" = yes; then
    AC_DEFINE(HAVE_NEW_HDR, 1, [Define if <new> exists and works.])
 fi
-AC_CHECK_HEADERS(new.h)
+AC_CHECK_HEADERS([new.h unistd.h])
 
 
 dnl
@@ -269,8 +134,7 @@ dnl headers such as unistd.h
 dnl
 
 AC_LANG_C
-FIXLIBC_O=''
-AC_CHECK_FUNCS(strerror, :, FIXLIBC_O='fixlibc.o')
+AC_CHECK_FUNCS([strdup strerror])
 
 AC_CACHE_CHECK(whether strtod works, ac_cv_working_strtod,
 [AC_TRY_RUN([#include <stdio.h>
@@ -283,7 +147,6 @@ int main(int c, char **v) {
 }], ac_cv_working_strtod=yes, ac_cv_working_strtod=no,
 ac_cv_working_strtod=yes)])
 if test $ac_cv_working_strtod = no; then 
-    FIXLIBC_O='fixlibc.o'
     AC_DEFINE(BROKEN_STRTOD, 1, [Define if strtod is broken.])
 fi
 
@@ -291,8 +154,6 @@ AC_CHECK_FUNCS(strtoul ctime mkstemp ftruncate sigaction waitpid)
 AC_CHECK_FUNC(floor, :, [AC_CHECK_LIB(m, floor)])
 AC_CHECK_FUNC(fabs, :, [AC_CHECK_LIB(m, fabs)])
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/wait.h)
-
-AC_SUBST(FIXLIBC_O)
 
 
 dnl
@@ -451,8 +312,6 @@ double good_strtod(const char *nptr, char **endptr);
 
 #ifdef __cplusplus
 }
-/* Get rid of a possible inline macro under C++. */
-# define inline inline
 #endif
 
 #endif /* LCDF_TYPETOOLS_CONFIG_H */])
@@ -481,4 +340,8 @@ dnl
 dnl Output
 dnl
 
-AC_OUTPUT(Makefile liblcdf/Makefile libefont/Makefile cfftot1/Makefile mmafm/Makefile mmpfb/Makefile otfinfo/Makefile otftotfm/Makefile t1dotlessj/Makefile t1lint/Makefile t1reencode/Makefile t1testpage/Makefile ttftotype42/Makefile)
+AC_CONFIG_FILES([Makefile liblcdf/Makefile libefont/Makefile])
+AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
+           [AC_CONFIG_FILES(Kpse_Prog[/Makefile])])
+
+AC_OUTPUT

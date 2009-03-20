@@ -40,14 +40,14 @@ MyFont::kill_def(Type1Definition *t1d, int whichd)
 {
   if (!t1d)
     return;
-  
+
   if (whichd < 0)
     for (whichd = dFont; whichd < dLast; whichd = (Dict)(whichd + 1))
       if (dict(whichd, t1d->name()) == t1d)
 	break;
   if (whichd < 0 || whichd >= dLast || dict(whichd, t1d->name()) != t1d)
     return;
-  
+
   int icount = nitems();
   for (int i = first_dict_item(whichd); i < icount; i++)
     if (item(i) == t1d) {
@@ -60,7 +60,7 @@ MyFont::kill_def(Type1Definition *t1d, int whichd)
       set_dict(whichd, name, 0);
       return;
     }
-  
+
   assert(0);
 }
 
@@ -80,30 +80,30 @@ MyFont::set_design_vector(MultipleMasterSpace *mmspace, const Vector<double> &de
 	    t1d->set_numvec(norm_design);
 	kill_def(t1d, dFont);
     }
-  
+
     if (!mmspace->design_to_weight(design, _weight_vector, errh))
 	return false;
-  
+
     // Need to check for case when all design coordinates are unspecified. The
     // font file contains a default WeightVector, but possibly NOT a default
     // DesignVector; we don't want to generate a FontName like
     // `MyriadMM_-9.79797979e97_-9.79797979e97_' because the DesignVector
     // components are unknown.
     if (!KNOWN(design[0])) {
-	errh->error("must specify %s's %s coordinate", font_name().c_str(),
+	errh->error("must specify %s%,s %s coordinate", font_name().c_str(),
 		    mmspace->axis_type(0).c_str());
 	return false;
     }
-  
+
     t1d = dict("WeightVector");
     if (t1d) {
 	t1d->set_numvec(_weight_vector);
 	kill_def(t1d, dFont);
     }
-  
+
     int naxes = design.size();
     _nmasters = _weight_vector.size();
-  
+
     PermString name;
     t1d = dict("FontName");
     if (t1d && t1d->value_name(name)) {
@@ -129,13 +129,13 @@ MyFont::set_design_vector(MultipleMasterSpace *mmspace, const Vector<double> &de
 	}
 	t1d->set_string(sa.c_str());
     }
-    
+
     // save UniqueID, then kill its definition
     int uniqueid;
     t1d = dict("UniqueID");
     bool have_uniqueid = (t1d && t1d->value_int(uniqueid));
-    kill_def(t1d, dFont);  
-    
+    kill_def(t1d, dFont);
+
     // prepare XUID
     t1d = dict("XUID");
     NumVector xuid;
@@ -156,7 +156,7 @@ MyFont::set_design_vector(MultipleMasterSpace *mmspace, const Vector<double> &de
 	    xuid.push_back((int)(design[a] * 100));
 	t1d->set_numvec(xuid);
     }
-  
+
     return true;
 }
 
@@ -166,7 +166,7 @@ MyFont::interpolate_dict_int(PermString name, Dict the_dict, ErrorHandler *errh)
     Type1Definition *def = dict(the_dict, name);
     Type1Definition *blend_def = dict(the_dict + dBlend, name);
     NumVector blend;
-  
+
     if (def && blend_def && blend_def->value_numvec(blend)) {
 	int n = _nmasters;
 	double val = 0;
@@ -186,7 +186,7 @@ MyFont::interpolate_dict_num(PermString name, Dict the_dict, bool force_integer)
     Type1Definition *def = dict(the_dict, name);
     Type1Definition *blend_def = dict(the_dict + dBlend, name);
     NumVector blend;
-  
+
     if (def && blend_def && blend_def->value_numvec(blend)) {
 	int n = _nmasters;
 	double val = 0;
@@ -209,7 +209,7 @@ MyFont::interpolate_dict_numvec(PermString name, Dict the_dict, int round_mode, 
     Type1Definition *def = dict(the_dict, name);
     Type1Definition *blend_def = dict(the_dict + dBlend, name);
     Vector<NumVector> blend;
-  
+
     if (def && blend_def && blend_def->value_numvec_vec(blend)) {
 	int n = blend.size();
 	NumVector val;
@@ -235,7 +235,7 @@ MyFont::interpolate_dicts(bool force_integer, ErrorHandler *errh)
   // of integers. Round its elements away from zero (this is what the
   // Acrobat distiller seems to do).
   interpolate_dict_numvec("FontBBox", dFont, 2, true);
-  
+
   interpolate_dict_numvec("BlueValues", dPrivate, force_integer);
   interpolate_dict_numvec("OtherBlues", dPrivate, force_integer);
   interpolate_dict_numvec("FamilyBlues", dPrivate, force_integer);
@@ -244,11 +244,11 @@ MyFont::interpolate_dicts(bool force_integer, ErrorHandler *errh)
   interpolate_dict_numvec("StdVW", dPrivate);
   interpolate_dict_numvec("StemSnapH", dPrivate);
   interpolate_dict_numvec("StemSnapV", dPrivate);
-  
+
   interpolate_dict_num("BlueScale", dPrivate);
   interpolate_dict_num("BlueShift", dPrivate, force_integer);
   interpolate_dict_int("BlueFuzz", dPrivate, errh);
-  
+
   {
     Type1Definition *def = p_dict("ForceBold");
     Type1Definition *blend_def = bp_dict("ForceBold");
@@ -272,18 +272,18 @@ MyFont::interpolate_dicts(bool force_integer, ErrorHandler *errh)
 
   if (Type1Definition *def = bp_dict("BuildCharArray"))
     kill_def(def, dBlendPrivate);
-  
+
   for (DictHashMap::const_iterator i = dict_begin(dBlend); i; i++) {
       PermString name = i.key();
       if (i.value() && name != "Private" && name != "FontInfo"
 	  && name != "ConvertDesignVector" && name != "NormalizeDesignVector")
-	  errh->warning("didn't interpolate %s in Blend", name.c_str());
+	  errh->warning("didn%,t interpolate %s in Blend", name.c_str());
   }
 
   for (DictHashMap::const_iterator i = dict_begin(dBlendPrivate); i; i++)
       if (i.value() && i.key() != "Erode")
-	  errh->warning("didn't interpolate %s in BlendPrivate", i.key().c_str());
-  
+	  errh->warning("didn%,t interpolate %s in BlendPrivate", i.key().c_str());
+
   kill_def(p_dict("NDV"), dPrivate);
   kill_def(p_dict("CDV"), dPrivate);
   kill_def(p_dict("UniqueID"), dPrivate);

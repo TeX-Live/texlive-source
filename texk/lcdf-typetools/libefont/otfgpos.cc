@@ -225,13 +225,13 @@ GposPair::unparse(Vector<Positioning> &v) const
 	int recsize = f2_pos + GposValue::size(format2);
 	ClassDef class1(_d.offset_subtable(8));
 	ClassDef class2(_d.offset_subtable(10));
-	Coverage coverage = this->coverage(); 
+	Coverage coverage = this->coverage();
 	int nclass1 = _d.u16(12);
 	int nclass2 = _d.u16(14);
 	int offset = F2_HEADERSIZE;
 	for (int c1 = 0; c1 < nclass1; c1++)
 	    for (int c2 = 0; c2 < nclass2; c2++, offset += recsize) {
-		Position p1(format1, _d.subtable(offset)); 
+		Position p1(format1, _d.subtable(offset));
 		Position p2(format2, _d.subtable(offset + f2_pos));
 		if (p1 || p2) {
 		    for (ClassDef::class_iterator c1i = class1.begin(c1, coverage); c1i; c1i++)

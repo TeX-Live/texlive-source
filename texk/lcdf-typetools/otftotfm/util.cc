@@ -44,17 +44,17 @@ read_file(String filename, ErrorHandler *errh, bool warning)
 	_setmode(_fileno(f), _O_BINARY);
 #endif
     } else if (!(f = fopen(filename.c_str(), "rb"))) {
-	errh->verror_text((warning ? errh->ERR_WARNING : errh->ERR_ERROR), filename, strerror(errno));
+	errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
 	return String();
     }
-    
+
     StringAccum sa;
     while (!feof(f)) {
 	if (char *x = sa.reserve(8192)) {
 	    int amt = fread(x, 1, 8192, f);
 	    sa.forward(amt);
 	} else {
-	    errh->verror_text((warning ? errh->ERR_WARNING : errh->ERR_ERROR), filename, "Out of memory!");
+	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
 	    break;
 	}
     }
@@ -67,7 +67,7 @@ String
 printable_filename(const String &s)
 {
     if (!s || s == "-")
-	return String::stable_string("<stdin>");
+	return String::make_stable("<stdin>");
     else
 	return s;
 }
@@ -82,6 +82,23 @@ pathname_filename(const String &path)
 	return path;
 }
 
+static String
+simplify_filename(String x)
+{
+    while (x.substring(0, 2) == "./")
+	x = x.substring(2);
+    int pos;
+    while ((pos = x.find_left("/./")) >= 0)
+	x = x.substring(0, pos) + x.substring(pos + 2);
+    return x;
+}
+
+bool
+same_filename(const String &a, const String &b)
+{
+    return simplify_filename(a) == simplify_filename(b);
+}
+
 String
 shell_quote(const String &str)
 {
@@ -89,7 +106,7 @@ shell_quote(const String &str)
     return str;			// XXX
 #else
     if (!str)
-	return String::stable_string("''");
+	return String::make_stable("''");
 
     const char *begin = str.begin();
     const char *end = str.end();
@@ -130,7 +147,7 @@ temporary_file(String &filename, ErrorHandler *errh)
 {
     if (no_create)
 	return 0;		// random number suffices
-    
+
 #ifdef HAVE_MKSTEMP
     const char *tmpdir = getenv("TMPDIR");
     if (tmpdir)
@@ -144,7 +161,7 @@ temporary_file(String &filename, ErrorHandler *errh)
     }
     int fd = mkstemp(filename.mutable_c_str());
     if (fd < 0)
-	errh->error("temporary file '%s': %s", filename.c_str(), strerror(errno));
+	errh->error("temporary file %<%s%>: %s", filename.c_str(), strerror(errno));
     return fd;
 #else  // !HAVE_MKSTEMP
     for (int tries = 0; tries < 5; tries++) {
@@ -158,7 +175,7 @@ temporary_file(String &filename, ErrorHandler *errh)
 	if (fd >= 0)
 	    return fd;
     }
-    return errh->error("temporary file '%s': %s", filename.c_str(), strerror(errno));
+    return errh->error("temporary file %<%s%>: %s", filename.c_str(), strerror(errno));
 #endif
 }
 
@@ -206,11 +223,11 @@ shell_command_output(String cmdline, const String &input, ErrorHandler *errh, bo
     fwrite(input.data(), 1, input.length(), f);
     fflush(f);
     rewind(f);
-  
+
     String new_cmdline = cmdline + " 0<&" + String(fileno(f));
     FILE *p = popen(new_cmdline.c_str(), "r");
     if (!p)
-	errh->fatal("'%s': %s", cmdline.c_str(), strerror(errno));
+	errh->fatal("%<%s%>: %s", cmdline.c_str(), strerror(errno));
 
     StringAccum sa;
     while (!feof(p) && !ferror(p) && sa.length() < 200000) {
@@ -218,10 +235,10 @@ shell_command_output(String cmdline, const String &input, ErrorHandler *errh, bo
 	if (x > 0)
 	    sa.forward(x);
 	else if (x < 0 && errno != EAGAIN)
-	    errh->error("'%s': %s", cmdline.c_str(), strerror(errno));
+	    errh->error("%<%s%>: %s", cmdline.c_str(), strerror(errno));
     }
     if (!feof(p) && !ferror(p))
-	errh->warning("'%s' output too long, truncated", cmdline.c_str());
+	errh->warning("%<%s%> output too long, truncated", cmdline.c_str());
 
     fclose(f);
     pclose(p);

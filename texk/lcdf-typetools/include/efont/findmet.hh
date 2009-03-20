@@ -31,7 +31,7 @@ class MetricsFinder { public:
     virtual void record(AmfmMetrics *);
 
   private:
-  
+
     MetricsFinder *_next;
     MetricsFinder *_prev;
 
@@ -50,7 +50,7 @@ class CacheMetricsFinder: public MetricsFinder { public:
 
     CacheMetricsFinder();
     ~CacheMetricsFinder();
-  
+
     Metrics *find_metrics_x(PermString, MetricsFinder *, ErrorHandler *);
     AmfmMetrics *find_amfm_x(PermString, MetricsFinder *, ErrorHandler *);
     void record(Metrics *, PermString);
@@ -59,55 +59,55 @@ class CacheMetricsFinder: public MetricsFinder { public:
     void clear();
 
   private:
-  
+
     HashMap<PermString, int> _metrics_map;
     Vector<Metrics *> _metrics;
     HashMap<PermString, int> _amfm_map;
     Vector<AmfmMetrics *> _amfm;
-    
+
 };
 
 
 class InstanceMetricsFinder: public MetricsFinder { public:
-  
+
     InstanceMetricsFinder(bool call_mmpfb = true);
-  
+
     Metrics *find_metrics_x(PermString, MetricsFinder *, ErrorHandler *);
-  
+
   private:
 
     bool _call_mmpfb;
-  
+
     Metrics *find_metrics_instance(PermString, MetricsFinder *, ErrorHandler *);
-  
+
 };
 
 
 class PsresMetricsFinder: public MetricsFinder { public:
 
     PsresMetricsFinder(PsresDatabase *);
-  
+
     Metrics *find_metrics_x(PermString, MetricsFinder *, ErrorHandler *);
     AmfmMetrics *find_amfm_x(PermString, MetricsFinder *, ErrorHandler *);
-  
+
   private:
-  
+
     PsresDatabase *_psres;
-  
+
 };
 
 
 class DirectoryMetricsFinder: public MetricsFinder { public:
-  
+
     DirectoryMetricsFinder(PermString);
-  
+
     Metrics *find_metrics_x(PermString, MetricsFinder *, ErrorHandler *);
     AmfmMetrics *find_amfm_x(PermString, MetricsFinder *, ErrorHandler *);
-  
+
   private:
-  
+
     PermString _directory;
-  
+
 };
 
 }

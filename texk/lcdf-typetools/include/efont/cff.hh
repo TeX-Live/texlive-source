@@ -40,7 +40,7 @@ class Cff { public:
 
     int ngsubrs() const			{ return _gsubrs_index.nitems(); }
     Charstring *gsubr(int i);
-    
+
     enum DictOperator {
 	oVersion = 0, oNotice = 1, oFullName = 2, oFamilyName = 3,
 	oWeight = 4, oFontBBox = 5, oBlueValues = 6, oOtherBlues = 7,
@@ -79,7 +79,7 @@ class Cff { public:
 	IndexIterator(const uint8_t *, int, int, ErrorHandler * = 0, const char *index_name = "INDEX");
 
 	int error() const	{ return (_offsize < 0 ? _offsize : 0); }
-    
+
 	bool live() const	{ return _offset < _last_offset; }
 	operator bool() const	{ return live(); }
 	int nitems() const;
@@ -90,18 +90,18 @@ class Cff { public:
 
 	void operator++()	{ _offset += _offsize; }
 	void operator++(int)	{ ++(*this); }
-	
+
       private:
-    
+
 	const uint8_t *_contents;
 	const uint8_t *_offset;
 	const uint8_t *_last_offset;
 	int _offsize;
 
 	inline uint32_t offset_at(const uint8_t *) const;
-    
+
     };
-    
+
   private:
 
     String _data_string;
@@ -109,7 +109,7 @@ class Cff { public:
     int _len;
 
     int _error;
-    
+
     Vector<PermString> _name_index;
 
     IndexIterator _top_dict_index;
@@ -126,7 +126,7 @@ class Cff { public:
     int font_offset(PermString, int &, int &) const;
 
     enum { HEADER_SIZE = 4 };
-    
+
 };
 
 
@@ -135,7 +135,7 @@ class Cff::Dict { public:
     Dict();
     Dict(Cff *, int pos, int dict_len, ErrorHandler * = 0, const char *dict_name = "DICT");
     int assign(Cff *, int pos, int dict_len, ErrorHandler * = 0, const char *dict_name = "DICT");
-    
+
     bool ok() const			{ return _error >= 0; }
     int error() const			{ return _error; }
 
@@ -170,13 +170,13 @@ class Cff::Charset { public:
     void assign(const Cff *, int pos, int nglyphs, int max_sid, ErrorHandler * = 0);
 
     int error() const			{ return _error; }
-    
+
     int nglyphs() const			{ return _sids.size(); }
     int nsids() const			{ return _gids.size(); }
-    
+
     inline int gid_to_sid(int gid) const;
     inline int sid_to_gid(int sid) const;
-    
+
   private:
 
     Vector<int> _sids;
@@ -185,7 +185,7 @@ class Cff::Charset { public:
 
     void assign(const int *, int, int);
     int parse(const Cff *, int pos, int nglyphs, int max_sid, ErrorHandler *);
-    
+
 };
 
 class Cff::FDSelect { public:
@@ -195,10 +195,10 @@ class Cff::FDSelect { public:
     void assign(const Cff *, int pos, int nglyphs, ErrorHandler * = 0);
 
     int error() const			{ return _error; }
-    
+
     int nglyphs() const			{ return _nglyphs; }
     inline int gid_to_fd(int gid) const;
-    
+
   private:
 
     const uint8_t *_fds;
@@ -209,7 +209,7 @@ class Cff::FDSelect { public:
     FDSelect(const FDSelect &);
     FDSelect &operator=(const FDSelect &);
     int parse(const Cff *, int pos, int nglyphs, ErrorHandler *);
-    
+
 };
 
 
@@ -233,9 +233,9 @@ class Cff::FontParent : public CharstringProgram { public:
 
     FontParent(const FontParent &);
     FontParent &operator=(const FontParent &);
-    
+
     Charstring *charstring(const IndexIterator &, int) const;
-    
+
     friend class Cff::Font;
     friend class Cff::CIDFont;
     friend class Cff::ChildFont;
@@ -263,7 +263,7 @@ class Cff::CIDFont : public Cff::FontParent { public:
     bool dict_value(DictOperator, double *) const;
     bool dict_xvalue(DictOperator, double, double *) const;
     bool dict_value(DictOperator, Vector<double> &) const;
-    
+
   private:
 
     PermString _font_name;
@@ -280,7 +280,7 @@ class Cff::CIDFont : public Cff::FontParent { public:
     Cff::FDSelect _fdselect;
 
     const Dict &dict_of(DictOperator) const;
-    
+
 };
 
 class Cff::ChildFont : public Cff::FontParent { public:
@@ -293,9 +293,9 @@ class Cff::ChildFont : public Cff::FontParent { public:
 
     PermString font_name() const	{ return _parent->font_name(); }
     void font_matrix(double m[6]) const	{ _parent->font_matrix(m); }
-    
+
     inline bool cid() const;
-    
+
     int nsubrs_x() const		{ return _subrs_index.nitems(); }
     int nsubrs() const			{ return nsubrs_x(); }
     Charstring *subr(int) const;
@@ -308,7 +308,7 @@ class Cff::ChildFont : public Cff::FontParent { public:
     Charstring *glyph(PermString n) const { return _parent->glyph(n); }
 
     double global_width_x(bool) const;
-    
+
   private:
 
     Cff::CIDFont *_parent;
@@ -328,7 +328,7 @@ class Cff::ChildFont : public Cff::FontParent { public:
     Charstring *charstring(const IndexIterator &, int) const;
 
     friend class Cff::Font;
-    
+
 };
 
 class Cff::Font : public Cff::ChildFont { public:
@@ -354,7 +354,7 @@ class Cff::Font : public Cff::ChildFont { public:
     inline bool dict_value(DictOperator, double *) const;
     inline bool dict_value(DictOperator, Vector<double> &) const;
     const Dict &top_dict() const	{ return _top_dict; }
-    
+
   private:
 
     PermString _font_name;
@@ -372,7 +372,7 @@ class Cff::Font : public Cff::ChildFont { public:
     int assign_standard_encoding(const int *standard_encoding);
 
     inline const Dict &dict_of(DictOperator) const;
-    
+
 };
 
 

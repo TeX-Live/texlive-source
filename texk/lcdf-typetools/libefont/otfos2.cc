@@ -27,7 +27,7 @@ namespace Efont { namespace OpenType {
 Os2::Os2(const Data &data, ErrorHandler *errh)
     : _data(data)
 {
-    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
     if (_error < 0)
 	_data = Data();
 }

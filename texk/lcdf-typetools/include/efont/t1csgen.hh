@@ -13,7 +13,8 @@ class Type1CharstringGen { public:
     int precision() const		{ return _precision; }
 
     void clear();
-    char *data() const			{ return _ncs.data(); }
+    char *data()			{ return _ncs.data(); }
+    const char *data() const		{ return _ncs.data(); }
     int length() const			{ return _ncs.length(); }
 
     void gen_number(double, int kind = 0);
@@ -30,19 +31,19 @@ class Type1CharstringGen { public:
     void output(Type1Charstring &);
 
     static String callsubr_string(int subr);
-    
+
   private:
-    
+
     StringAccum _ncs;
     int _precision;
     double _f_precision;
-    
+
     Point _true;
     Point _false;
 
     enum State { S_INITIAL, S_GEN };
     State _state;
-    
+
 };
 
 class Type1CharstringGenInterp : public CharstringInterp { public:
@@ -52,13 +53,13 @@ class Type1CharstringGenInterp : public CharstringInterp { public:
     int precision() const		{ return _csgen.precision(); }
     void set_direct_hint_replacement(bool dhr)	{ _direct_hr = dhr; }
     void set_hint_replacement_storage(Type1Font *);
-    
+
     int nhints() const			{ return _stem_hstem.size(); }
     double max_flex_height() const	{ return _max_flex_height; }
     bool bad_flex() const		{ return _bad_flex; }
 
     const Type1CharstringGen &csgen() const	{ return _csgen; }
-    
+
     void act_width(int, const Point &);
     void act_seac(int, double, double, double, int, int);
 
@@ -73,7 +74,7 @@ class Type1CharstringGenInterp : public CharstringInterp { public:
 
     void intermediate_output(Type1Charstring &out);
     void run(const CharstringContext &g, Type1Charstring &out);
-    
+
   private:
 
     // output
@@ -105,7 +106,7 @@ class Type1CharstringGenInterp : public CharstringInterp { public:
     void gen_sbw(bool hints_follow);
     String gen_hints(const unsigned char *, int) const;
     void swap_stem_hints();
-    
+
 };
 
 inline String Type1CharstringGen::take_string()

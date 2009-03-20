@@ -36,7 +36,7 @@ class Os2 { public:
     int _error;
 
     int parse_header(ErrorHandler *);
-    
+
 };
 
 

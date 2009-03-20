@@ -49,11 +49,11 @@ CharstringChecker::stem(double y, double dy, const char *cmd_name)
 	dy = -dy;
     }
     if (dy < 0.5)
-	_errh->warning("small delta-%s in `%s' (%g)", dimen_name, cmd_name, dy);
+	_errh->warning("small delta-%s in %<%s%> (%g)", dimen_name, cmd_name, dy);
     for (int i = 0; i < hints.size(); i += 2)
 	if ((hints[i] >= y && hints[i+1] <= y)
 	    || (hints[i] >= y+dy && hints[i+1] <= y+dy))
-	    _errh->warning("overlapping `%s' hints", cmd_name);
+	    _errh->warning("overlapping %<%s%> hints", cmd_name);
     hints.push_back(y);
     hints.push_back(y+dy);
 }
@@ -65,7 +65,7 @@ CharstringChecker::check_stem3(const char *cmd_name)
     Vector<double> &hints = (is_v ? _h_vstem : _h_hstem);
     Vector<double> &old_hints = (is_v ? _h_vstem3 : _h_hstem3);
     assert(hints.size() == 6);
-  
+
     // sort hints
     int i0, i1, i2;
     if (hints[0] > hints[2])
@@ -78,24 +78,24 @@ CharstringChecker::check_stem3(const char *cmd_name)
 	i2 = i1, i1 = 4;
     else
 	i2 = 4;
-  
+
     // check constraints. count "almost equal" as equal
     double stemw1 = hints[i0+1] - hints[i0];
     double stemw2 = hints[i2+1] - hints[i2];
     if ((int)(1024*(stemw1 - stemw2) + .5) != 0)
-	_errh->error("bad `%s': extreme stem widths unequal (%g, %g)", cmd_name, stemw1, stemw2);
-    
+	_errh->error("bad %<%s%>: extreme stem widths unequal (%g, %g)", cmd_name, stemw1, stemw2);
+
     double c0 = (hints[i0] + hints[i0+1])/2;
     double c1 = (hints[i1] + hints[i1+1])/2;
     double c2 = (hints[i2] + hints[i2+1])/2;
     if ((int)(1024*((c1 - c0) - (c2 - c1)) + .5) != 0)
-	_errh->error("bad `%s': stem gaps unequal (%g, %g)", cmd_name, c1-c0, c2-c1);
-  
+	_errh->error("bad %<%s%>: stem gaps unequal (%g, %g)", cmd_name, c1-c0, c2-c1);
+
     // compare to old hints
     if (old_hints.size()) {
 	for (int i = 0; i < old_hints.size(); i++)
 	    if (hints[i] != old_hints[i]) {
-		_errh->warning("`%s' conflicts with old `%s'", cmd_name, cmd_name);
+		_errh->warning("%<%s%> conflicts with old %<%s%>", cmd_name, cmd_name);
 		break;
 	    }
     }
@@ -140,15 +140,15 @@ CharstringChecker::callothersubr()
   int othersubrnum = (int)top(0);
   int n = (int)top(1);
   int i;
-  
+
   pop(2);
   if (othersubrnum < 0 || size() < n) return false;
-  
+
   if (!_started && (othersubrnum < 14 || othersubrnum > 18))
-    _errh->warning("first command not `hsbw' or `sbw'");
-  
+    _errh->warning("first command not %<hsbw%> or %<sbw%>");
+
   switch (othersubrnum) {
-    
+
    case 0:			// Flex
     if (n != 3) {
       _errh->error("wrong number of arguments to Flex");
@@ -174,7 +174,7 @@ CharstringChecker::callothersubr()
     ps_push(top(1));
     _flex = false;
     break;
-    
+
    case 1:			// Flex
     if (n != 0) {
       _errh->error("wrong number of arguments to Flex");
@@ -187,7 +187,7 @@ CharstringChecker::callothersubr()
     _just_flexed = true;
     //_flex_connect = _connect;
     break;
-    
+
    case 2:			// Flex
     if (n != 0) {
       _errh->error("wrong number of arguments to Flex");
@@ -201,7 +201,7 @@ CharstringChecker::callothersubr()
     ps_push(_cp.y);
     _just_flexed = true;
     break;
-    
+
    case 3:			// hint replacement
     if (n != 1) {
       _errh->error("wrong number of arguments to hint replacement");
@@ -212,24 +212,24 @@ CharstringChecker::callothersubr()
     _h_hstem.clear();
     _h_vstem.clear();
     break;
-    
+
    case 14:
    case 15:
    case 16:
    case 17:
    case 18:
     return mm_command(othersubrnum, n);
-    
+
    default:			// unknown
    unknown:
-    _errh->warning("unknown callothersubr `%d'", othersubrnum);
+    _errh->warning("unknown callothersubr %<%d%>", othersubrnum);
     ps_clear();
     for (i = 0; i < n; i++)
       ps_push(top(i));
     break;
-    
+
   }
-  
+
   pop(n);
   return true;
 }
@@ -253,115 +253,115 @@ CharstringChecker::type1_command(int cmd)
 
   if (cmd != Cs::cHsbw && cmd != Cs::cSbw) {
     if (!_started)
-      _errh->warning("first command not `hsbw' or `sbw'");
+      _errh->warning("first command not %<hsbw%> or %<sbw%>");
   } else {
     if (_started)
-      _errh->error("duplicate `hsbw' or `sbw'");
+      _errh->error("duplicate %<hsbw%> or %<sbw%>");
   }
   _started = true;
-  
+
   switch (cmd) {
-    
+
    case Cs::cHsbw:
     CHECK_STACK(2);
     moveto(at(0), 0, false);
     clear();
     break;
-    
+
    case Cs::cSbw:
     CHECK_STACK(4);
     moveto(at(0), at(1), false);
     clear();
     break;
-    
+
    case Cs::cClosepath:
     _cp_exists = false;
     clear();
     break;
-    
+
    case Cs::cHlineto:
     CHECK_STACK_CP(1);
     rlineto(at(0), 0);
     clear();
     break;
-    
+
    case Cs::cHmoveto:
     CHECK_STACK(1);
     rmoveto(at(0), 0);
     clear();
     break;
-    
+
    case Cs::cHvcurveto:
     CHECK_STACK_CP(4);
     rrcurveto(at(0), 0, at(1), at(2), 0, at(3));
     clear();
     break;
-    
+
    case Cs::cRlineto:
     CHECK_STACK_CP(2);
     rlineto(at(0), at(1));
     clear();
     break;
-    
+
    case Cs::cRmoveto:
     CHECK_STACK(2);
     rmoveto(at(0), at(1));
     clear();
     break;
-    
+
    case Cs::cRrcurveto:
     CHECK_STACK_CP(6);
     rrcurveto(at(0), at(1), at(2), at(3), at(4), at(5));
     clear();
     break;
-    
+
    case Cs::cVhcurveto:
     CHECK_STACK_CP(4);
     rrcurveto(0, at(0), at(1), at(2), at(3), 0);
     clear();
     break;
-    
+
    case Cs::cVlineto:
     CHECK_STACK_CP(1);
     rlineto(0, at(0));
     clear();
     break;
-    
+
    case Cs::cVmoveto:
     CHECK_STACK(1);
     rmoveto(0, at(0));
     clear();
     break;
-    
+
    case Cs::cHstem:
     CHECK_STACK(2);
     if (_hstem3 && !_hstem)
-      _errh->error("charstring has both `hstem' and `hstem3'");
+      _errh->error("charstring has both %<hstem%> and %<hstem3%>");
     _hstem = true;
     stem(at(0), at(1), "hstem");
     clear();
     break;
-    
+
    case Cs::cVstem:
     CHECK_STACK(2);
     if (_vstem3 && !_vstem)
-      _errh->error("charstring has both `vstem' and `vstem3'");
+      _errh->error("charstring has both %<vstem%> and %<vstem3%>");
     _vstem = true;
     stem(at(0), at(1), "vstem");
     clear();
     break;
-    
+
    case Cs::cEndchar:
     set_done();
     return false;
-    
+
    case Cs::cDotsection:
     break;
-    
+
    case Cs::cVstem3:
     CHECK_STACK(6);
     if (_vstem && !_vstem3)
-      _errh->error("charstring has both `vstem' and `vstem3'");
+      _errh->error("charstring has both %<vstem%> and %<vstem3%>");
     _vstem3 = true;
     _h_vstem.clear();
     stem(at(0), at(1), "vstem3");
@@ -370,11 +370,11 @@ CharstringChecker::type1_command(int cmd)
     check_stem3("vstem3");
     clear();
     break;
-    
+
    case Cs::cHstem3:
     CHECK_STACK(6);
     if (_hstem && !_hstem3)
-      _errh->error("charstring has both `hstem' and `hstem3'");
+      _errh->error("charstring has both %<hstem%> and %<hstem3%>");
     _hstem3 = true;
     _h_hstem.clear();
     stem(at(0), at(1), "hstem3");
@@ -383,7 +383,7 @@ CharstringChecker::type1_command(int cmd)
     check_stem3("hstem3");
     clear();
     break;
-    
+
    case Cs::cSeac: {
      CHECK_STACK(5);
 #if 0
@@ -392,16 +392,16 @@ CharstringChecker::type1_command(int cmd)
      double ady = at(2);
      int bchar = (int)at(3);
      int achar = (int)at(4);
-     
+
      double ax = adx - asb + _sidebearing.x;
      double ay = ady + _sidebearing.y;
-     
+
      Point real_sidebearing = _sidebearing;
      Point real_char_width = _char_width;
      Point original_origin = _origin;
-     
+
      Type1Encoding *adobe = Type1Encoding::standard_encoding();
-     if (!adobe) 
+     if (!adobe)
        return error(errInternal, cmd);
      Type1Charstring *t1cs = get_glyph((*adobe)[achar]);
      if (!t1cs) ERROR(errGlyph);
@@ -410,7 +410,7 @@ CharstringChecker::type1_command(int cmd)
      t1cs->run(*this);
      _origin = original_origin;
      if (error()) return false;
-     
+
      t1cs = get_glyph((*adobe)[bchar]);
      if (!t1cs) ERROR(errGlyph);
      init();
@@ -420,25 +420,25 @@ CharstringChecker::type1_command(int cmd)
 #endif
      return false;
    }
-    
+
    case Cs::cSetcurrentpoint:
     CHECK_STACK(2);
     _cp = Point(at(0), at(1));
     _cp_exists = true;
     clear();
     break;
-    
+
    case Cs::cPut:
    case Cs::cGet:
    case Cs::cStore:
    case Cs::cLoad:
     return vector_command(cmd);
-    
+
    default:
     return arith_command(cmd);
-    
+
   }
-  
+
   return true;
 }
 
@@ -457,6 +457,6 @@ CharstringChecker::check(const CharstringContext &g, ErrorHandler *errh)
     _h_vstem3.clear();
 
     CharstringInterp::interpret(g);
-  
+
     return errh->nerrors() == old_errors;
 }

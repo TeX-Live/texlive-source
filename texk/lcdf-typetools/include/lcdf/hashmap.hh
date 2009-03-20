@@ -5,11 +5,11 @@
 // K AND V REQUIREMENTS:
 //
 //		K::K()
-// 		K::operator bool() const
+//		K::operator bool() const
 //			Must have (bool)(K()) == false
 //			and no k with (bool)k == false is stored.
 // K &		K::operator=(const K &)
-// 		k1 == k2
+//		k1 == k2
 // unsigned	hashcode(const K &)
 //			If hashcode(k1) != hashcode(k2), then k1 != k2.
 //
@@ -45,7 +45,7 @@ hashcode(unsigned long ul)
 
 template <class K, class V>
 class HashMap { public:
-    
+
     HashMap();
     explicit HashMap(const V &);
     HashMap(const HashMap<K, V> &);
@@ -105,13 +105,13 @@ template <class K, class V>
 class _HashMap_const_iterator { public:
     typedef _HashMap_const_iterator const_iterator;
     typedef typename HashMap<K, V>::Pair Pair;
-    
+
     operator bool() const		{ return _pos < _hm->_capacity; }
     bool operator!() const		{ return _pos >= _hm->_capacity; }
-    
+
     void operator++(int);
     void operator++()			{ (*this)++; }
-    
+
     const K &key() const		{ return _hm->_e[_pos].key; }
     const V &value() const		{ return _hm->_e[_pos].value; }
     const Pair &pair() const		{ return _hm->_e[_pos]; }
@@ -130,7 +130,7 @@ class _HashMap_const_iterator { public:
 template <class K, class V>
 class _HashMap_iterator : public _HashMap_const_iterator<K, V> { public:
     typedef _HashMap_iterator iterator;
-    
+
     V &value() const		{ return this->_hm->_e[this->_pos].value; }
 
   private:

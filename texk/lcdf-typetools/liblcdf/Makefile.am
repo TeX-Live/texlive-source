@@ -1,12 +1,11 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = foreign
-
 noinst_LIBRARIES = liblcdf.a
 
 liblcdf_a_SOURCES = bezier.cc \
 	clp.c \
 	error.cc \
 	filename.cc \
+	fixlibc.c \
 	globmatch.cc \
 	landmark.cc \
 	md5.c \
@@ -19,13 +18,10 @@ liblcdf_a_SOURCES = bezier.cc \
 	transform.cc \
 	vectorv.cc
 
-liblcdf_a_DEPENDENCIES = @FIXLIBC_O@
-liblcdf_a_LIBADD = @FIXLIBC_O@ @TEMPLATE_OBJS@
+liblcdf_a_LIBADD = @TEMPLATE_OBJS@
 CLEANFILES = @TEMPLATE_OBJS@
 
 INCLUDES = -I$(top_srcdir)/include
-
-EXTRA_DIST = fixlibc.c
 
 srclinks:
 	test -d $(top_srcdir)/include || mkdir $(top_srcdir)/include

@@ -1,8 +1,10 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = foreign check-news
+ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = liblcdf libefont @SELECTED_SUBDIRS@
-DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1reencode t1testpage ttftotype42
+DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
+
+SUBDIRS = $(SELECTED_SUBDIRS)
+DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 
 pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
 
@@ -62,7 +64,7 @@ EXTRA_DIST = \
 liblcdf libefont:
 	cd $@ && $(MAKE)
 libefont: liblcdf
-cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1reencode t1testpage ttftotype42: liblcdf libefont
+cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42: liblcdf libefont
 	cd $@ && $(MAKE)
 
 srclinks:
@@ -74,4 +76,14 @@ versionize:
 	perl -pi -e 's/^(\U$(PACKAGE)\E) [\d.ab]+$$/$$1 $(VERSION)/;' $(top_srcdir)/README
 	perl -pi -e 's/^Version: [\d.ab]+$$/Version: $(VERSION)/;' $(top_srcdir)/lcdf-typetools.spec
 
-.PHONY: srclinks rpm liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1reencode t1testpage ttftotype42
+.PHONY: srclinks rpm liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
+
+## Required for integration into TeX Live build system
+##
+EXTRA_DIST += ac/withenable.ac
+
+## Eventually delete these files
+##
+
+EXTRA_DIST += Makefile.am.orig configure.ac.orig
+

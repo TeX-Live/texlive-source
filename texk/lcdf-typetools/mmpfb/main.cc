@@ -1,6 +1,6 @@
 /* main.cc -- driver for mmpfb program
  *
- * Copyright (c) 1997-2006 Eddie Kohler
+ * Copyright (c) 1997-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -98,7 +98,7 @@ usage_error(const char *error_message, ...)
   if (!error_message)
     errh->message("Usage: %s [OPTION]... FONT", program_name);
   else
-    errh->verror(ErrorHandler::ERR_ERROR, String(), error_message, val);
+    errh->vxmessage(ErrorHandler::e_error, error_message, val);
   errh->message("Type %s --help for more information.", program_name);
   exit(1);
 }
@@ -106,8 +106,9 @@ usage_error(const char *error_message, ...)
 void
 usage()
 {
-  printf("\
-'Mmpfb' creates a single-master PostScript Type 1 font by interpolating a\n\
+    FileErrorHandler uerrh(stdout);
+    uerrh.message("\
+%<Mmpfb%> creates a single-master PostScript Type 1 font by interpolating a\n\
 multiple master font at a point you specify. The resulting font does not\n\
 contain multiple master extensions. It is written to the standard output.\n\
 \n\
@@ -124,7 +125,7 @@ General options:\n\
   -o, --output=FILE            Write output to FILE.\n\
   -p, --precision=N            Set precision to N (larger means more precise).\n\
       --subrs=N                Limit output font to at most N subroutines.\n\
-      --no-minimize            Do not replace original font's PostScript code.\n\
+      --no-minimize            Do not replace original font%,s PostScript code.\n\
   -h, --help                   Print this message and exit.\n\
   -q, --quiet                  Do not generate any error messages.\n\
   -v, --version                Print version number and exit.\n\
@@ -136,7 +137,7 @@ Interpolation settings:\n\
       --style=N                Set style axis to N.\n\
   --1=N, --2=N, --3=N, --4=N   Set first (second, third, fourth) axis to N.\n\
 \n\
-Report bugs to <kohler@cs.ucla.edu>.\n", program_name);
+Report bugs to <ekohler@gmail.com>.\n", program_name);
 }
 
 
@@ -168,7 +169,7 @@ do_file(const char *filename, PsresDatabase *psres)
 #endif
   } else
     f = fopen(filename, "rb");
-  
+
   if (!f) {
     // check for PostScript or instance name
     Filename fn = psres->filename_value("FontOutline", filename);
@@ -185,10 +186,10 @@ do_file(const char *filename, PsresDatabase *psres)
     }
     f = fn.open_read();
   }
-  
+
   if (!f)
     errh->fatal("%s: %s", filename, strerror(errno));
-  
+
   Type1Reader *reader;
   int c = getc(f);
   ungetc(c, f);
@@ -198,14 +199,14 @@ do_file(const char *filename, PsresDatabase *psres)
     reader = new Type1PFBReader(f);
   else
     reader = new Type1PFAReader(f);
-  
+
   font = new MyFont(*reader);
   delete reader;
   if (!font->ok())
       errh->fatal("%s: invalid font", filename);
   else if (font->nglyphs() == 0)
       errh->fatal("%s: font contains no characters", filename);
-  
+
   mmspace = font->create_mmspace(errh);
   if (!mmspace)
     errh->fatal("%s: not a multiple master font", filename);
@@ -257,11 +258,11 @@ main(int argc, char *argv[])
 {
   PsresDatabase *psres = new PsresDatabase;
   psres->add_psres_path(getenv("PSRESOURCEPATH"), 0, false);
-  
+
   Clp_Parser *clp =
     Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
   program_name = Clp_ProgramName(clp);
-  
+
   bool write_pfb = true;
   bool amcp_info = false;
   bool minimize = true;
@@ -270,42 +271,42 @@ main(int argc, char *argv[])
   FILE *outfile = 0;
   ::errh =
       ErrorHandler::static_initialize(new FileErrorHandler(stderr, String(program_name) + ": "));
-  
+
   while (1) {
     int opt = Clp_Next(clp);
     switch (opt) {
-      
+
      case WEIGHT_OPT:
       set_design("Weight", clp->val.d);
       break;
-      
+
      case WIDTH_OPT:
       set_design("Width", clp->val.d);
       break;
-      
+
      case OPSIZE_OPT:
       set_design("OpticalSize", clp->val.d);
       break;
-       
+
      case STYLE_OPT:
       set_design("Style", clp->val.d);
       break;
-      
+
      case N1_OPT:
      case N2_OPT:
      case N3_OPT:
      case N4_OPT:
       set_design(opt - N1_OPT, clp->val.d);
       break;
-      
+
      case AMCP_INFO_OPT:
       amcp_info = true;
       break;
-      
+
      case PFA_OPT:
       write_pfb = false;
       break;
-      
+
      case PFB_OPT:
       write_pfb = true;
       break;
@@ -329,11 +330,11 @@ main(int argc, char *argv[])
       else
 	subr_count = clp->val.i;
       break;
-      
+
       case MINIMIZE_OPT:
 	minimize = !clp->negated;
 	break;
-      
+
      case QUIET_OPT:
        if (clp->negated)
 	   errh = ErrorHandler::default_handler();
@@ -351,64 +352,64 @@ main(int argc, char *argv[])
 	    errh->fatal("%s: %s", clp->vstr, strerror(errno));
       }
       break;
-      
+
      case VERSION_OPT:
       printf("mmpfb (LCDF typetools) %s\n", VERSION);
-      printf("Copyright (C) 1997-2006 Eddie Kohler\n\
+      printf("Copyright (C) 1997-2009 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
       exit(0);
       break;
-      
+
      case HELP_OPT:
       usage();
       exit(0);
       break;
-      
+
      case Clp_NotOption:
       do_file(clp->vstr, psres);
       break;
-      
+
      case Clp_Done:
       if (!font)
 	  usage_error("missing font argument");
       goto done;
-      
+
      case Clp_BadOption:
       usage_error(0);
       break;
-      
+
      default:
       break;
-      
+
     }
   }
-  
+
  done:
   if (outfile == 0)
       outfile = stdout;
-  
+
   if (amcp_info) {
     print_amcp_info(mmspace, outfile);
     exit(0);
   }
-  
+
   Vector<double> design = mmspace->empty_design_vector();
   for (int i = 0; i < values.size(); i++)
     if (ax_names[i])
       mmspace->set_design(design, ax_names[i], values[i], errh);
     else
       mmspace->set_design(design, ax_nums[i], values[i], errh);
-  
+
   Vector<double> default_design = mmspace->default_design_vector();
   for (int i = 0; i < mmspace->naxes(); i++)
     if (!KNOWN(design[i]) && KNOWN(default_design[i])) {
-      errh->warning("using default value %g for %s's %s", default_design[i],
+      errh->warning("using default value %g for %s%,s %s", default_design[i],
 		    font->font_name().c_str(), mmspace->axis_type(i).c_str());
       design[i] = default_design[i];
     }
-  
+
   if (!font->set_design_vector(mmspace, design, errh))
     exit(1);
 
@@ -428,7 +429,7 @@ particular purpose.\n");
       delete font;
   } else
       t1font = font;
-  
+
   { // Add an identifying comment.
 #if HAVE_CTIME
     time_t cur_time = time(0);
@@ -446,7 +447,7 @@ particular purpose.\n");
     t1font->add_header_comment("%% Mmpfb is free software.  See <http://www.lcdf.org/type/>.");
     delete[] buf;
   }
-  
+
   if (write_pfb) {
 #if defined(_MSDOS) || defined(_WIN32)
     _setmode(_fileno(outfile), _O_BINARY);
@@ -457,6 +458,6 @@ particular purpose.\n");
     Type1PFAWriter w(outfile);
     t1font->write(w);
   }
-  
+
   return 0;
 }

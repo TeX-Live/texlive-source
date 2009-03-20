@@ -4,83 +4,405 @@
 #include <string.h>
 #include <assert.h>
 #include <lcdf/string.hh>
-#ifdef HAVE_PERMSTRING
+#if HAVE_PERMSTRING
 # include <lcdf/permstr.hh>
 #endif
-template<class T> class Vector;
+#if __GNUC__ > 4
+# define LCDF_SNPRINTF_ATTR __attribute__((__format__(__printf__, 3, 4)))
+#else
+# define LCDF_SNPRINTF_ATTR /* nothing */
+#endif
+template<typename T> class Vector;
+
+/** @file <lcdf/straccum.hh>
+    @brief Click's StringAccum class, used to construct Strings efficiently from pieces.
+*/
 
 class StringAccum { public:
-  
-    StringAccum()			: _s(0), _len(0), _cap(0) { }
-    explicit inline StringAccum(int);
-    explicit StringAccum(const char *);
-    explicit StringAccum(const String &);
-#ifdef HAVE_PERMSTRING
-    explicit StringAccum(PermString);
-#endif
-    ~StringAccum()			{ if (_cap >= 0) delete[] _s; }
 
-    char *data() const			{ return (char *)_s; }
-    int length() const			{ return _len; }
+    /** @brief Construct an empty StringAccum (with length 0). */
+    StringAccum()
+	: _s(0), _len(0), _cap(0) {
+    }
 
-    operator bool() const		{ return _len != 0; }
-    bool operator!() const		{ return _len == 0; }
+    /** @brief Construct a StringAccum with room for at least @a capacity
+     * characters.
+     * @param capacity initial capacity
+     *
+     * If @a capacity <= 0, the StringAccum is created empty.  If @a capacity
+     * is too large (so that @a capacity bytes of memory can't be allocated),
+     * the StringAccum is created as out-of-memory. */
+    explicit inline StringAccum(int capacity);
 
-    bool out_of_memory() const		{ return _cap < 0; }
-  
+    /** @brief Construct a StringAccum containing the characters in @a s. */
+    explicit inline StringAccum(const char *s, int len = -1)
+	: _s(0), _len(0), _cap(0) {
+	append(s, len);
+    }
+
+    /** @brief Construct a StringAccum containing the characters in @a str. */
+    StringAccum(const String &str)
+	: _s(0), _len(0), _cap(0) {
+	append(str.begin(), str.end());
+    }
+
+    /** @brief Construct a StringAccum containing a copy of @a x. */
+    StringAccum(const StringAccum &x)
+	: _s(0), _len(0), _cap(0) {
+	append(x.data(), x.length());
+    }
+
+    /** @brief Destroy a StringAccum, freeing its memory. */
+    ~StringAccum() {
+	if (_cap >= 0)
+	    delete[] _s;
+    }
+
+
+    /** @brief Return the contents of the StringAccum.
+     * @return The StringAccum's contents.
+     *
+     * The return value is null if the StringAccum is empty or out-of-memory.
+     * The returned data() value points to writable memory (unless the
+     * StringAccum itself is const). */
+    inline const char *data() const {
+	return reinterpret_cast<const char *>(_s);
+    }
+
+    /** @overload */
+    inline char *data() {
+	return reinterpret_cast<char *>(_s);
+    }
+
+    /** @brief Return the length of the StringAccum. */
+    int length() const {
+	return _len;
+    }
+
+    /** @brief Return the StringAccum's current capacity.
+     *
+     * The capacity is the maximum length the StringAccum can hold without
+     * incurring a memory allocation.  Returns -1 for out-of-memory
+     * StringAccums. */
+    int capacity() const {
+	return _cap;
+    }
+
+
+    typedef const char *const_iterator;
+    typedef char *iterator;
+
+    /** @brief Return an iterator for the first character in the StringAccum.
+     *
+     * StringAccum iterators are simply pointers into string data, so they are
+     * quite efficient.  @sa StringAccum::data */
+    inline const_iterator begin() const {
+	return reinterpret_cast<char *>(_s);
+    }
+
+    /** @overload */
+    inline iterator begin() {
+	return reinterpret_cast<char *>(_s);
+    }
+
+    /** @brief Return an iterator for the end of the StringAccum.
+     *
+     * The return value points one character beyond the last character in the
+     * StringAccum. */
+    inline StringAccum::const_iterator end() const {
+	return reinterpret_cast<char *>(_s + _len);
+    }
+
+    /** @overload */
+    inline iterator end() {
+	return reinterpret_cast<char *>(_s + _len);
+    }
+
+
+    typedef int (StringAccum::*unspecified_bool_type)() const;
+
+    /** @brief Return true iff the StringAccum contains characters.
+     *
+     * Returns false for empty and out-of-memory StringAccums. */
+    operator unspecified_bool_type() const {
+	return _len != 0 ? &StringAccum::capacity : 0;
+    }
+
+    /** @brief Return true iff the StringAccum does not contain characters.
+     *
+     * Returns true for empty and out-of-memory StringAccums. */
+    bool operator!() const {
+	return _len == 0;
+    }
+
+    /** @brief Return true iff the StringAccum is out-of-memory. */
+    bool out_of_memory() const {
+	return _cap < 0;
+    }
+
+
+    /** @brief Null-terminate this StringAccum and return its data.
+     *
+     * Note that the null character does not contribute to the StringAccum's
+     * length(), and later append() and similar operations can overwrite it.
+     * If appending the null character fails, the StringAccum becomes
+     * out-of-memory and the returned value is a null string. */
     const char *c_str();
-  
-    char operator[](int i) const{ assert(i>=0&&i<_len); return (char)_s[i]; }
-    char &operator[](int i)	{ assert(i>=0&&i<_len); return (char &)_s[i]; }
-    char back() const		{ assert(_len>0); return (char)_s[_len-1]; }
-    char &back()		{ assert(_len>0); return (char &)_s[_len-1]; }
 
-    inline void clear();
-  
-    inline char *extend(int, int = 0);
-  
-    inline void append(char);
-    inline void append(unsigned char);
-    inline void append_utf8(uint32_t);
-    inline void append(const char *, int);
-    inline void append(const char *begin, const char *end);
-    inline void append(const unsigned char *, int);
+
+    /** @brief Return the <a>i</a>th character in the string.
+     * @param i character index
+     * @pre 0 <= @a i < length() */
+    char operator[](int i) const {
+	assert(i>=0 && i<_len);
+	return static_cast<char>(_s[i]);
+    }
+
+    /** @brief Return a reference to the <a>i</a>th character in the string.
+     * @param i character index
+     * @pre 0 <= @a i < length() */
+    char &operator[](int i) {
+	assert(i>=0 && i<_len);
+	return reinterpret_cast<char &>(_s[i]);
+    }
+
+    /** @brief Return the first character in the string.
+     * @pre length() > 0 */
+    char front() const {
+	assert(_len > 0);
+	return static_cast<char>(_s[0]);
+    }
+
+    /** @brief Return a reference to the first character in the string.
+     * @pre length() > 0 */
+    char &front() {
+	assert(_len > 0);
+	return reinterpret_cast<char &>(_s[0]);
+    }
+
+    /** @brief Return the last character in the string.
+     * @pre length() > 0 */
+    char back() const {
+	assert(_len > 0);
+	return static_cast<char>(_s[_len - 1]);
+    }
+
+    /** @brief Return a reference to the last character in the string.
+     * @pre length() > 0 */
+    char &back() {
+	assert(_len > 0);
+	return reinterpret_cast<char &>(_s[_len - 1]);
+    }
+
+
+    /** @brief Clear the StringAccum's comments.
+     *
+     * All characters in the StringAccum are erased.  Also resets the
+     * StringAccum's out-of-memory status. */
+    inline void clear() {
+	if (_cap < 0)
+	    _cap = 0, _s = 0;
+	_len = 0;
+    }
+
+
+    /** @brief Reserve space for at least @a n characters.
+     * @return a pointer to at least @a n characters, or null if allocation
+     * fails
+     * @pre @a n >= 0
+     *
+     * reserve() does not change the string's length(), only its capacity().
+     * In a frequent usage pattern, code calls reserve(), passing an upper
+     * bound on the characters that could be written by a series of
+     * operations.  After writing into the returned buffer, adjust_length() is
+     * called to account for the number of characters actually written. */
+    inline char *reserve(int n) {
+	assert(n >= 0);
+	if (_len + n <= _cap || grow(_len + n))
+	    return (char *)(_s + _len);
+	else
+	    return 0;
+    }
+
+    /** @brief Set the StringAccum's length to @a len.
+     * @param len new length in characters
+     * @pre 0 <= @a len <= capacity()
+     * @sa adjust_length */
+    inline void set_length(int len) {
+	assert(len >= 0 && _len <= _cap);
+	_len = len;
+    }
+
+    /** @brief Adjust the StringAccum's length.
+     * @param delta  length adjustment
+     * @pre If @a delta > 0, then length() + @a delta <= capacity().
+     *      If @a delta < 0, then length() + delta >= 0.
+     *
+     * The StringAccum's length after adjust_length(@a delta) equals its old
+     * length plus @a delta.  Generally adjust_length() is used after a call
+     * to reserve().  @sa set_length */
+    inline void adjust_length(int delta) {
+	assert(_len + delta >= 0 && _len + delta <= _cap);
+	_len += delta;
+    }
+
+    /** @brief Reserve space and adjust length in one operation.
+     * @param nadjust number of characters to reserve and adjust length
+     * @param nreserve additional characters to reserve
+     * @pre @a nadjust >= 0 and @a nreserve >= 0
+     *
+     * This operation combines the effects of reserve(@a nadjust + @a
+     * nreserve) and adjust_length(@a nadjust).  Returns the result of the
+     * reserve() call. */
+    inline char *extend(int nadjust, int nreserve = 0) {
+	assert(nadjust >= 0 && nreserve >= 0);
+	char *c = reserve(nadjust + nreserve);
+	if (c)
+	    _len += nadjust;
+	return c;
+    }
+
+
+    /** @brief Remove characters from the end of the StringAccum.
+     * @param n number of characters to remove
+     * @pre @a n >= 0 and @a n <= length()
+     *
+     * Same as adjust_length(-@a n). */
+    inline void pop_back(int n = 1) {
+	assert(n >= 0 && _len >= n);
+	_len -= n;
+    }
+
+
+
+    /** @brief Append character @a c to the StringAccum.
+     * @param c character to append */
+    inline void append(char c) {
+	if (_len < _cap || grow(_len))
+	    _s[_len++] = c;
+    }
+    /** @overload */
+    inline void append(unsigned char c) {
+	append(static_cast<char>(c));
+    }
+
+    /** @brief Append @a len copies of character @a c to the StringAccum. */
+    void append_fill(int c, int len);
+
+    /** @brief Append the UTF-8 encoding of Unicode character @a ch. */
+    inline void append_utf8(unsigned ch) {
+	if (ch < 0x80)
+	    append((unsigned char) ch);
+	else
+	    append_utf8_hard(ch);
+    }
+
+    /** @brief Append the first @a len characters of @a s to this StringAccum.
+     * @param s data to append
+     * @param len length of data
+     *
+     * If @a len < 0, treats @a s as a null-terminated C string. */
+    inline void append(const char *s, int len) {
+	if (len < 0)
+	    len = strlen(s);
+	if (len == 0 && s == String::out_of_memory_data())
+	    assign_out_of_memory();
+	append_data(s, len);
+    }
+    /** @overload */
+    inline void append(const unsigned char *s, int len) {
+	append(reinterpret_cast<const char *>(s), len);
+    }
+
+    /** @brief Append the data from @a begin to @a end to the end of this
+     * StringAccum.
+     *
+     * Does nothing if @a begin >= @a end. */
+    inline void append(const char *begin, const char *end) {
+	if (begin < end)
+	    append_data(begin, end - begin);
+	else if (begin == String::out_of_memory_data())
+	    assign_out_of_memory();
+    }
 
     // word joining
-    void append_break_lines(const String& text, int linelen, const String& leftmargin = String());
+    void append_break_lines(const String &text, int linelen, const String &leftmargin = String());
 
-    inline char *reserve(int);
-    void set_length(int l)	{ assert(l>=0 && _len<=_cap);	_len = l; }
-    void forward(int n)		{ assert(n>=0 && _len+n<=_cap);	_len += n; }
-    void pop_back(int n = 1)	{ assert(n>=0 && _len>=n);	_len -= n; }
+    /** @brief Append result of snprintf() to this StringAccum.
+     * @param n maximum number of characters to print
+     * @param format format argument to snprintf()
+     *
+     * The terminating null character is not appended to the string.
+     *
+     * @note The safe vsnprintf() variant is called if it exists.  It does in
+     * the Linux kernel, and on modern Unix variants.  However, if it does not
+     * exist on your machine, then this function is actually unsafe, and you
+     * should make sure that the printf() invocation represented by your
+     * arguments will never write more than @a n characters, not including the
+     * terminating null. */
+    StringAccum &snprintf(int n, const char *format, ...) LCDF_SNPRINTF_ATTR;
 
-    StringAccum &snprintf(int, const char *, ...);
 
-    inline unsigned char *take_bytes();	// returns array allocated by new[]
+    /** @brief Return a String object with this StringAccum's contents.
+     *
+     * This operation donates the StringAccum's memory to the returned String.
+     * After a call to take_string(), the StringAccum object becomes empty,
+     * and any future append() operations may cause memory allocations.  If
+     * the StringAccum is out-of-memory, the returned String is also
+     * out-of-memory, but the StringAccum's out-of-memory state is reset. */
     String take_string();
 
+
+    /** @brief Assign this StringAccum to @a x. */
+    StringAccum &operator=(const StringAccum &x) {
+	if (&x != this) {
+	    if (out_of_memory())
+		_s = 0, _cap = 0;
+	    _len = 0;
+	    append(x.data(), x.length());
+	}
+	return *this;
+    }
+
+    /** @brief Swap this StringAccum's contents with @a x. */
+    void swap(StringAccum &x);
+
     // see also operator<< declarations below
-  
+
+    void forward(int n) {
+	assert(n>=0 && _len+n<=_cap);
+	_len += n;
+    }
+
   private:
-  
+
     unsigned char *_s;
     int _len;
     int _cap;
-  
-    void make_out_of_memory();
-    inline void safe_append(const char *, int);
+
     bool grow(int);
-    inline void erase();
-    void append_utf8_hard(uint32_t);
+    void assign_out_of_memory();
+    inline void append_safe_data(const char *s, int len) {
+	if (char *x = extend(len))
+	    memcpy(x, s, len);
+    }
+    void append_unsafe_data(const char *s, int len);
+    inline void append_data(const char *s, int len) {
+	const char *my_s = reinterpret_cast<char *>(_s);
+	if (!(s >= my_s && s + len <= my_s + _len)
+	    || len == 0 || _len + len <= _cap)
+	    append_safe_data(s, len);
+	else
+	    append_unsafe_data(s, len);
+    }
+    void append_utf8_hard(unsigned ch);
 
-    StringAccum(const StringAccum &);
-    StringAccum &operator=(const StringAccum &);
 
-    friend StringAccum &operator<<(StringAccum &, const char *);
-#ifdef HAVE_PERMSTRING
-    friend StringAccum &operator<<(StringAccum &, PermString);
+    friend StringAccum &operator<<(StringAccum &sa, const char *s);
+#if HAVE_PERMSTRING
+    friend StringAccum &operator<<(StringAccum &sa, PermString s);
 #endif
-  
+
 };
 
 inline StringAccum &operator<<(StringAccum &, char);
@@ -103,112 +425,23 @@ StringAccum &operator<<(StringAccum &, double);
 
 
 inline
-StringAccum::StringAccum(int cap)
-  : _s(new unsigned char[cap]), _len(0), _cap(cap)
+StringAccum::StringAccum(int capacity)
+    : _len(0)
 {
-    assert(cap > 0);
-    if (!_s)
-	_cap = -1;
+    assert(capacity >= 0);
+    if (capacity) {
+	_s = new unsigned char[capacity];
+	_cap = (_s ? capacity : -1);
+    } else {
+	_s = 0;
+	_cap = 0;
+    }
 }
 
-inline void
-StringAccum::append(unsigned char c)
-{
-    if (_len < _cap || grow(_len))
-	_s[_len++] = c;
-}
-
-inline void
-StringAccum::append(char c)
-{
-    append(static_cast<unsigned char>(c));
-}
-
-inline void
-StringAccum::append_utf8(uint32_t ch)
-{
-    if (ch < 0x80)
-	append((unsigned char) ch);
-    else
-	append_utf8_hard(ch);
-}
-
-inline char *
-StringAccum::reserve(int hm)
-{
-    assert(hm >= 0);
-    if (_len + hm <= _cap || grow(_len + hm))
-	return (char *)(_s + _len);
-    else
-	return 0;
-}
-
-inline char *
-StringAccum::extend(int amt, int extra)
-{
-    assert(extra >= 0);
-    char *c = reserve(amt + extra);
-    if (c)
-	_len += amt;
-    return c;
-}
-
-inline void
-StringAccum::safe_append(const char *s, int len)
-{
-    if (char *x = extend(len))
-	memcpy(x, s, len);
-}
-
-inline void
-StringAccum::append(const char *s, int len)
-{
-    if (len < 0)
-	len = strlen(s);
-    else if (len == 0 && s == String::out_of_memory_data())
-	make_out_of_memory();
-    safe_append(s, len);
-}
-
-inline void
-StringAccum::append(const unsigned char *s, int len)
-{
-    append(reinterpret_cast<const char *>(s), len);
-}
-
-inline void
-StringAccum::append(const char *begin, const char *end)
-{
-    if (begin < end)
-	safe_append(begin, end - begin);
-    else if (begin == String::out_of_memory_data())
-	make_out_of_memory();
-}
-
-inline void
-StringAccum::erase()
-{
-    _s = 0;
-    _len = 0;
-    _cap = 0;
-}
-
-inline unsigned char *
-StringAccum::take_bytes()
-{
-    unsigned char *str = _s;
-    erase();
-    return str;
-}
-
-inline void
-StringAccum::clear()
-{
-    if (_cap < 0)
-	_cap = 0, _s = 0;
-    _len = 0;
-}
-
+/** @relates StringAccum
+    @brief Append character @a c to StringAccum @a sa.
+    @return @a sa
+    @note Same as @a sa.append(@a c). */
 inline StringAccum &
 operator<<(StringAccum &sa, char c)
 {
@@ -216,6 +449,10 @@ operator<<(StringAccum &sa, char c)
     return sa;
 }
 
+/** @relates StringAccum
+    @brief Append character @a c to StringAccum @a sa.
+    @return @a sa
+    @note Same as @a sa.append(@a c). */
 inline StringAccum &
 operator<<(StringAccum &sa, unsigned char c)
 {
@@ -223,47 +460,69 @@ operator<<(StringAccum &sa, unsigned char c)
     return sa;
 }
 
+/** @relates StringAccum
+    @brief Append null-terminated C string @a cstr to StringAccum @a sa.
+    @return @a sa
+    @note Same as @a sa.append(@a cstr, -1). */
 inline StringAccum &
-operator<<(StringAccum &sa, const char *s)
+operator<<(StringAccum &sa, const char *cstr)
 {
-    sa.safe_append(s, strlen(s));
+    sa.append(cstr, -1);
     return sa;
 }
 
+/** @relates StringAccum
+    @brief Append "true" or "false" to @a sa, depending on @a b.
+    @return @a sa */
 inline StringAccum &
 operator<<(StringAccum &sa, bool b)
 {
     return sa << (b ? "true" : "false");
 }
 
+/** @relates StringAccum
+    @brief Append decimal representation of @a i to @a sa.
+    @return @a sa */
 inline StringAccum &
 operator<<(StringAccum &sa, short i)
 {
     return sa << static_cast<long>(i);
 }
 
+/** @relates StringAccum
+    @brief Append decimal representation of @a u to @a sa.
+    @return @a sa */
 inline StringAccum &
 operator<<(StringAccum &sa, unsigned short u)
 {
     return sa << static_cast<unsigned long>(u);
 }
 
+/** @relates StringAccum
+    @brief Append decimal representation of @a i to @a sa.
+    @return @a sa */
 inline StringAccum &
 operator<<(StringAccum &sa, int i)
 {
     return sa << static_cast<long>(i);
 }
 
+/** @relates StringAccum
+    @brief Append decimal representation of @a u to @a sa.
+    @return @a sa */
 inline StringAccum &
 operator<<(StringAccum &sa, unsigned u)
 {
     return sa << static_cast<unsigned long>(u);
 }
 
+/** @relates StringAccum
+    @brief Append the contents of @a str to @a sa.
+    @return @a sa */
 inline StringAccum &
-operator<<(StringAccum &sa, const String &s)
+operator<<(StringAccum &sa, const String &str)
 {
-    sa.append(s.data(), s.length());
+    sa.append(str.begin(), str.end());
     return sa;
 }
 
@@ -271,7 +530,7 @@ operator<<(StringAccum &sa, const String &s)
 inline StringAccum &
 operator<<(StringAccum &sa, PermString s)
 {
-    sa.safe_append(s.c_str(), s.length());
+    sa.append_safe_data(s.c_str(), s.length());
     return sa;
 }
 #endif
@@ -279,7 +538,7 @@ operator<<(StringAccum &sa, PermString s)
 inline StringAccum &
 operator<<(StringAccum &sa, const StringAccum &sb)
 {
-    sa.append(sb.data(), sb.length());
+    sa.append(sb.begin(), sb.end());
     return sa;
 }
 
@@ -295,4 +554,5 @@ operator!=(StringAccum &sa, const char *s)
     return strcmp(sa.c_str(), s) != 0;
 }
 
+#undef LCDF_SNPRINTF_ATTR
 #endif

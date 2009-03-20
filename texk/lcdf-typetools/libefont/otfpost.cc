@@ -103,7 +103,7 @@ Post::Post(const String &s, ErrorHandler *errh)
     : _str(s), _version(0)
 {
     _str.align_long();
-    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
 }
 
 int
@@ -124,7 +124,7 @@ Post::parse_header(ErrorHandler *errh)
     if (HEADER_SIZE > len)
 	return errh->error("OTF post too small for header"), -EFAULT;
     _version = USHORT_AT(data);	// ignore minor version number
-    				// except that version 2.5 isn't compatible
+				// except that version 2.5 isn't compatible
     if (_version < 1 || _version > 3
 	|| (_version == 2 && USHORT_AT(data + 2) == 0x5000))
 	return errh->error("bad post version number"), -ERANGE;

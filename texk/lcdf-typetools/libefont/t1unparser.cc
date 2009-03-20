@@ -78,7 +78,7 @@ CharstringUnparser::type2_command(int cmd, const unsigned char *data, int *left)
 	_start_of_line = false;
     } else
 	_sa << ' ';
-    
+
     if (cmd >= 0 && cmd <= Cs::cLastCommand)
 	_sa << Cs::command_names[cmd];
     else
@@ -90,7 +90,7 @@ CharstringUnparser::type2_command(int cmd, const unsigned char *data, int *left)
 	CharstringInterp::type2_command(cmd, data, left);
 	break;
     }
-    
+
     if (_one_command_per_line) {
 	_sa << '\n';
 	_start_of_line = true;

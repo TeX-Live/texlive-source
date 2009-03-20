@@ -1,6 +1,6 @@
 /* cfftot1.cc -- driver for translating CFF fonts to Type 1 fonts
  *
- * Copyright (c) 2002-2006 Eddie Kohler
+ * Copyright (c) 2002-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -71,7 +71,7 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
     if (!error_message)
 	errh->message("Usage: %s [OPTIONS] [FONTFILE [OUTPUTFILE]]", program_name);
     else
-	errh->verror(ErrorHandler::ERR_ERROR, String(), error_message, val);
+	errh->vxmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(1);
 }
@@ -79,8 +79,9 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
 void
 usage()
 {
-    printf("\
-'Cfftot1' translates a PostScript font from the Compact Font Format (CFF) to\n\
+    FileErrorHandler uerrh(stdout);
+    uerrh.message("\
+%<Cfftot1%> translates a PostScript font from the Compact Font Format (CFF) to\n\
 the usual Type 1 format. The input file should be either a raw CFF font or a\n\
 PostScript-flavored OpenType font. The result, which is usually written to the\n\
 standard output, is written in PFB or PFA format.\n\
@@ -96,7 +97,7 @@ Options:\n\
   -h, --help                   Print this message and exit.\n\
   -v, --version                Print version number and exit.\n\
 \n\
-Report bugs to <kohler@cs.ucla.edu>.\n", program_name);
+Report bugs to <ekohler@gmail.com>.\n", program_name);
 }
 
 
@@ -114,12 +115,12 @@ do_file(const char *infn, const char *outfn, PermString name, ErrorHandler *errh
 #endif
     } else if (!(f = fopen(infn, "rb")))
 	errh->fatal("%s: %s", infn, strerror(errno));
-  
+
     int c = getc(f);
     ungetc(c, f);
 
     Cff::Font *font = 0;
-    
+
     if (c == EOF)
 	errh->fatal("%s: empty file", infn);
     if (c == 1 || c == 'O') {
@@ -146,7 +147,7 @@ do_file(const char *infn, const char *outfn, PermString name, ErrorHandler *errh
 
     if (errh->nerrors() > 0)
 	return;
-    
+
     Type1Font *font1 = create_type1_font(font, errh);
 
     if (!outfn || strcmp(outfn, "-") == 0) {
@@ -176,12 +177,12 @@ main(int argc, char *argv[])
     Clp_Parser *clp =
 	Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
     program_name = Clp_ProgramName(clp);
-  
+
     ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr, String(program_name) + ": "));
     const char *input_file = 0;
     const char *output_file = 0;
     const char *font_name = 0;
-  
+
     while (1) {
 	int opt = Clp_Next(clp);
 	switch (opt) {
@@ -189,7 +190,7 @@ main(int argc, char *argv[])
 	  case PFA_OPT:
 	    binary = false;
 	    break;
-      
+
 	  case PFB_OPT:
 	    binary = true;
 	    break;
@@ -199,23 +200,23 @@ main(int argc, char *argv[])
 		usage_error(errh, "font name specified twice");
 	    font_name = clp->vstr;
 	    break;
-	    
+
 	  case QUIET_OPT:
 	    if (clp->negated)
 		errh = ErrorHandler::default_handler();
 	    else
 		errh = new SilentErrorHandler;
 	    break;
-      
+
 	  case VERSION_OPT:
 	    printf("cfftot1 (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2002-2006 Eddie Kohler\n\
+	    printf("Copyright (C) 2002-2009 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
 	    exit(0);
 	    break;
-      
+
 	  case HELP_OPT:
 	    usage();
 	    exit(0);
@@ -236,22 +237,22 @@ particular purpose.\n");
 	    else
 		input_file = clp->vstr;
 	    break;
-      
+
 	  case Clp_Done:
 	    goto done;
-      
+
 	  case Clp_BadOption:
 	    usage_error(errh, 0);
 	    break;
-      
+
 	  default:
 	    break;
-      
+
 	}
     }
-  
+
   done:
     do_file(input_file, output_file, font_name, errh);
-    
+
     return (errh->nerrors() == 0 ? 0 : 1);
 }

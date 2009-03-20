@@ -97,7 +97,7 @@ void
 GlyphFilter::add_pattern(const String& pattern, int ptype, ErrorHandler* errh)
 {
     _sorted = false;
-    
+
     const char* begin = pattern.begin();
     const char* end = pattern.end();
     while (begin < end && isspace((unsigned char) *begin))
@@ -122,7 +122,7 @@ GlyphFilter::add_pattern(const String& pattern, int ptype, ErrorHandler* errh)
 	    if (UnicodeProperty::parse_property(pattern.substring(begin + 1, word - 1), p.u.uniprop.value, p.u.uniprop.mask))
 		_patterns.push_back(p);
 	    else if (errh)
-		errh->error("unknown Unicode property '%s'", pattern.c_str());
+		errh->error("unknown Unicode property %<%s%>", pattern.c_str());
 	    goto next_clause;
 	}
 
@@ -149,7 +149,7 @@ GlyphFilter::add_pattern(const String& pattern, int ptype, ErrorHandler* errh)
 	p.data = D_NAME;
 	p.pattern = pattern.substring(begin, word);
 	_patterns.push_back(p);
-	
+
 	// move to next clause
       next_clause:
 	for (begin = word; begin < end && isspace((unsigned char) *begin); begin++)

@@ -26,7 +26,7 @@ class Name { public:
 		    E_MS_UNICODE_BMP = 1, E_MAC_ROMAN = 0,
 		    L_MS_ENGLISH_AMERICAN = 0x409 };
     enum { HEADER_SIZE = 6, NAMEREC_SIZE = 12 };
-    
+
     typedef uint8_t namerecord_t[NAMEREC_SIZE];
     typedef const namerecord_t *const_iterator;
 
@@ -34,7 +34,7 @@ class Name { public:
     inline static int platform(const namerecord_t &);
     inline static int encoding(const namerecord_t &);
     inline static int language(const namerecord_t &);
-    
+
     inline const_iterator begin() const;
     inline const_iterator end() const;
     String name(const_iterator) const;
@@ -43,14 +43,14 @@ class Name { public:
 
     // check version string for backwards compatibility
     bool version_chaincontext_reverse_backtrack() const;
-    
+
     struct PlatformPred {
 	inline PlatformPred(int nameid, int platform = -1, int encoding = -1, int language = -1);
 	inline bool operator()(const namerecord_t &) const;
       private:
 	int _nameid, _platform, _encoding, _language;
     };
-    
+
     struct EnglishPlatformPred {
 	EnglishPlatformPred(int nameid)	: _nameid(nameid) { }
 	inline bool operator()(const namerecord_t &) const;
@@ -64,7 +64,7 @@ class Name { public:
     int _error;
 
     int parse_header(ErrorHandler *);
-    
+
 };
 
 

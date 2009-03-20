@@ -2,7 +2,7 @@
 
 /* t1item.{cc,hh} -- items in a Type 1 font
  *
- * Copyright (c) 1998-2006 Eddie Kohler
+ * Copyright (c) 1998-2008 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -91,7 +91,7 @@ Type1Definition::slurp_string(StringAccum &accum, int pos, Type1Reader *reader)
 {
     int paren_level = 0;
     char *s = accum.data() + pos;
-  
+
     do {
 	switch (*s++) {
 	  case '(': paren_level++; break;
@@ -107,7 +107,7 @@ Type1Definition::slurp_string(StringAccum &accum, int pos, Type1Reader *reader)
 	    break;
 	}
     } while (paren_level);
-  
+
     return s - accum.data();
 }
 
@@ -117,7 +117,7 @@ Type1Definition::slurp_proc(StringAccum &accum, int pos, Type1Reader *reader)
     int paren_level = 0;
     int brace_level = 0;
     char *s = accum.data() + pos;
-  
+
     do {
 	switch (*s++) {
 	  case '{': if (!paren_level) brace_level++; break;
@@ -140,7 +140,7 @@ Type1Definition::slurp_proc(StringAccum &accum, int pos, Type1Reader *reader)
 	    break;
 	}
     } while (brace_level);
-  
+
     return s - accum.data();
 }
 
@@ -155,7 +155,7 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
 	return 0;
     s++;
     int name_start_pos = s - accum.data();
-  
+
     // find NAME LENGTH
     while (!isspace((unsigned char) *s) && *s != '[' && *s != '{' && *s != '('
 	   && *s != ']' && *s != '}' && *s != ')' && *s)
@@ -163,22 +163,22 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
     if (!*s)
 	return 0;
     int name_end_pos = s - accum.data();
-  
+
     while (isspace((unsigned char) *s))
 	s++;
     int val_pos = s - accum.data();
     int val_end_pos = -1;
     bool check_def = false;
-  
+
     if (*s == '}' || *s == ']' || *s == ')' || *s == 0)
 	return 0;
-  
+
     else if (*s == '(')
 	val_end_pos = slurp_string(accum, val_pos, reader);
-  
+
     else if (*s == '{')
 	val_end_pos = slurp_proc(accum, val_pos, reader);
-  
+
     else if (*s == '[') {
 	int brack_level = 0;
 	do {
@@ -189,14 +189,14 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
 	    }
 	} while (brack_level);
 	val_end_pos = s - accum.data();
-    
+
     } else {
 	while (!isspace((unsigned char) *s) && *s)
 	    s++;
 	val_end_pos = s - accum.data();
 	if (!force_definition) check_def = true;
     }
-  
+
     if (val_end_pos < 0)
 	return 0;
     s = accum.data() + val_end_pos;
@@ -205,7 +205,7 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
     if (check_def && (s[0] != 'd' || s[1] != 'e' || s[2] != 'f'))
 	if (strncmp(s, "dict def", 8) != 0)
 	    return 0;
-  
+
     PermString name(accum.data()+name_start_pos, name_end_pos - name_start_pos);
     PermString def(s, accum.length() - (s - accum.data()));
     String value = String(accum.data() + val_pos, val_end_pos - val_pos);
@@ -400,7 +400,7 @@ Type1Definition::value_normalize(Vector<NumVector> &in,
 	    Vector<NumVector> sub;
 	    if (!strtonumvec_vec(s, &s, sub))
 		return false;
-      
+
 	    NumVector subin;
 	    NumVector subout;
 	    for (int i = 0; i < sub.size(); i++)
@@ -665,18 +665,18 @@ Type1Subr::make(const char *s_in, int s_len, int cs_pos, int cs_len, int lenIV)
        A valid subroutine string is one of the following:
        /[char_name] ### charstring_start ........
        dup [subrno] ### charstring_start .... */
-  
+
     const char *s = s_in;
     PermString name;
     int subrno = 0;
-  
+
     // Force literal spaces rather than isspace().
     if (*s == '/') {
 	const char *nstart = ++s;
 	while (!isspace((unsigned char) *s) && *s)
 	    s++;
 	name = PermString(nstart, s - nstart);
-    
+
     } else {
 	// dup [subrno] ...
 	s += 3;
@@ -684,7 +684,7 @@ Type1Subr::make(const char *s_in, int s_len, int cs_pos, int cs_len, int lenIV)
 	    s++;
 	subrno = strtol(s, (char **)&s, 10);
     }
-  
+
     s = s_in + cs_pos;
 
     // Lazily decrypt the charstring.
@@ -710,23 +710,23 @@ Type1Subr::gen(Type1Writer &w)
 {
     int len = _cs.length();
     const unsigned char *data = _cs.data();
-  
+
     if (is_subr())
 	w << "dup " << _subrno << ' ' << len + w.lenIV() << w.charstring_start();
     else
 	w << '/' << _name << ' ' << len + w.lenIV() << w.charstring_start();
-  
+
     if (w.lenIV() < 0) {
 	// lenIV < 0 means charstrings are unencrypted
 	w.print((const char *)data, len);
-    
+
     } else {
 	// PERFORMANCE NOTE: Putting the charstring in a buffer of known length
 	// and printing that buffer rather than one char at a time is an OK
 	// optimization. (around 10%)
 	unsigned char *buf = new unsigned char[len + w.lenIV()];
 	unsigned char *t = buf;
-    
+
 	int r = t1R_cs;
 	for (int i = 0; i < w.lenIV(); i++) {
 	    unsigned char c = (unsigned char)(r >> 8);
@@ -738,11 +738,11 @@ Type1Subr::gen(Type1Writer &w)
 	    *t++ = c;
 	    r = ((c + r) * t1C1 + t1C2) & 0xFFFF;
 	}
-    
+
 	w.print((char *)buf, len + w.lenIV());
 	delete[] buf;
     }
-  
+
     w << _definer << '\n';
 }
 
@@ -771,13 +771,13 @@ void
 Type1SubrGroupItem::gen(Type1Writer &w)
 {
     Type1Font *font = _font;
-  
+
     int pos = _value.find_left(_is_subrs ? " array" : " dict");
     if (pos >= 1 && isdigit((unsigned char) _value[pos - 1])) {
 	int numpos = pos - 1;
 	while (numpos >= 1 && isdigit((unsigned char) _value[numpos - 1]))
 	    numpos--;
-    
+
 	int n;
 	if (_is_subrs) {
 	    n = font->nsubrs();
@@ -789,9 +789,9 @@ Type1SubrGroupItem::gen(Type1Writer &w)
 	w << _value.substring(0, numpos) << n << _value.substring(pos);
     } else
 	w << _value;
-  
+
     w << '\n';
-  
+
     if (_is_subrs) {
 	int count = font->nsubrs();
 	for (int i = 0; i < count; i++)

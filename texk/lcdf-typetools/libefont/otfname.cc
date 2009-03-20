@@ -76,7 +76,7 @@ Name::Name(const String &s, ErrorHandler *errh)
     : _str(s)
 {
     _str.align(2);
-    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
 }
 
 int

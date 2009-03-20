@@ -31,7 +31,7 @@ class Post { public:
 
     enum { HEADER_SIZE = 32, N_MAC_GLYPHS = 258 };
     int parse_header(ErrorHandler *);
-    
+
 };
 
 inline int

@@ -469,7 +469,7 @@ Substitution::out_alter(const Substitution &o, int pos) throw ()
     int in_ng = o.in_nglyphs();
     if (pos + in_ng > ng || out_ng == 0)
 	return false;
-    
+
     // check that input substitution actually matches us
     for (int i = 0; i < in_ng; i++)
 	if (!o.in_matches(i, g[pos+i]))
@@ -484,7 +484,7 @@ Substitution::out_alter(const Substitution &o, int pos) throw ()
     for (int i = pos + in_ng; i < ng; i++)
 	new_g.push_back(g[i]);
     assign(_out, _out_is, new_g.size(), &new_g[0]);
-    
+
     return true;
 }
 
@@ -587,7 +587,7 @@ Gsub::Gsub(const Data &d, const Font *otf, ErrorHandler *errh) throw (Error)
     // Check for "correct" chaining context rules, as suggested by Adobe's
     // OpenType FDK
     try {
-	Name nametable(otf->table("name"), ErrorHandler::ignore_handler());
+	Name nametable(otf->table("name"), ErrorHandler::silent_handler());
 	_chaincontext_reverse_backtrack = nametable.version_chaincontext_reverse_backtrack();
     } catch (Error) {
     }
@@ -1082,7 +1082,7 @@ GsubChainContext::unparse(const Gsub &gsub, Vector<Substitution> &v) const
 {
     if (_d.u16(0) != 3)
 	return false;
-    
+
     int nbacktrack = _d.u16(2);
     int input_offset = F3_HSIZE + nbacktrack*2;
     int ninput = _d.u16(input_offset);
@@ -1102,7 +1102,7 @@ GsubChainContext::unparse(const Gsub &gsub, Vector<Substitution> &v) const
     }
     for (int i = 0; i < nlookahead; i++)
 	lookaheadc.push_back(Coverage(_d.offset_subtable(lookahead_offset + F3_LOOKAHEAD_HSIZE + i*2)));
-    
+
     Vector<Coverage::iterator> backtracki;
     Vector<Coverage::iterator> lookaheadi;
     for (int i = 0; i < nbacktrack; i++)
@@ -1111,7 +1111,7 @@ GsubChainContext::unparse(const Gsub &gsub, Vector<Substitution> &v) const
 	lookaheadi.push_back(lookaheadc[i].begin());
 
     bool any = false;
-    
+
     while (1) {
 
 	// run GsubContext
@@ -1124,7 +1124,7 @@ GsubChainContext::unparse(const Gsub &gsub, Vector<Substitution> &v) const
 	    right_begin[i] = *lookaheadi[i];
 
 	any |= GsubContext::f3_unparse(_d, ninput, input_offset + F3_INPUT_HSIZE, nsubst, subst_offset + F3_SUBST_HSIZE, gsub, v, s);
-	
+
 	// step iterators
 	for (int i = nlookahead - 1; i >= 0; i--) {
 	    lookaheadi[i]++;

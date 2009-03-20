@@ -1,6 +1,6 @@
 /* t1testpage.cc -- driver for generating Type 1 fonts' test pages
  *
- * Copyright (c) 1999-2007 Eddie Kohler
+ * Copyright (c) 1999-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -74,7 +74,7 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
     if (!error_message)
 	errh->message("Usage: %s [OPTION]... FONT", program_name);
     else
-	errh->verror(ErrorHandler::ERR_ERROR, String(), error_message, val);
+	errh->vxmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(1);
 }
@@ -82,15 +82,16 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
 void
 usage()
 {
-    printf("\
-'T1testpage' creates a PostScript proof document for the specified Type 1\n\
+    FileErrorHandler uerrh(stdout);
+    uerrh.message("\
+%<T1testpage%> creates a PostScript proof document for the specified Type 1\n\
 font file and writes it to the standard output. The proof shows every\n\
 glyph in the font, including its glyph name and encoding.\n\
 \n\
-Usage: %s [OPTION]... [FONT]\n\
+Usage: %s [OPTION]... [FONT...]\n\
 \n\
-FONT is the name of a PFA or PFB font file. If omitted, t1testpage will read\n\
-a font file from the standard input.\n\
+Each FONT is the name of a PFA or PFB font file. If omitted, t1testpage will\n\
+read a font file from the standard input.\n\
 \n\
 Options:\n\
   -g, --glyph=GLYPH            Limit output to one or more GLYPHs.\n\
@@ -99,15 +100,58 @@ Options:\n\
   -h, --help                   Print this message and exit.\n\
       --version                Print version number and exit.\n\
 \n\
-Report bugs to <kohler@cs.ucla.edu>.\n", program_name);
+Report bugs to <ekohler@gmail.com>.\n", program_name);
+}
+
+
+// OUTPUTTER
+
+namespace {
+
+class Testpager { public:
+    Testpager(FILE *f)
+	: _f(f), _pageno(1) {
+    }
+    virtual ~Testpager() {
+	fclose(_f);
+    }
+    virtual void prolog(const Vector<Type1Font *> &fonts) = 0;
+    void newpage() {
+	fprintf(_f, "%%%%Page: %d %d\n", _pageno, _pageno);
+	++_pageno;
+    }
+    virtual void font(Type1Font *font, const Vector<PermString>& glyph_names) = 0;
+    virtual void epilog() {
+	fprintf(_f, "%%%%EOF\n");
+	fclose(_f);
+    }
+  protected:
+    FILE *_f;
+    int _pageno;
+};
+
+class GridTestpager : public Testpager { public:
+    GridTestpager(FILE *f)
+	: Testpager(f) {
+    }
+    void prolog(const Vector<Type1Font *> &fonts);
+    void font(Type1Font *font, const Vector<PermString>& glyph_names);
+};
+
+class SmokeTestpager : public Testpager { public:
+    SmokeTestpager(FILE *f)
+	: Testpager(f) {
+    }
+    void prolog(const Vector<Type1Font *> &fonts);
+    void font(Type1Font *font, const Vector<PermString>& glyph_names);
+};
+
 }
 
 
 // MAIN
 
-static Type1Font *font;
-
-static void
+static Type1Font *
 do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
 {
     FILE *f;
@@ -119,16 +163,16 @@ do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
 #endif
     } else
 	f = fopen(filename, "rb");
-  
+
     if (!f) {
 	// check for PostScript name
 	Filename fn = psres->filename_value("FontOutline", filename);
 	f = fn.open_read();
     }
-  
+
     if (!f)
 	errh->fatal("%s: %s", filename, strerror(errno));
-  
+
     Type1Reader *reader;
     int c = getc(f);
     ungetc(c, f);
@@ -138,20 +182,23 @@ do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
 	reader = new Type1PFBReader(f);
     else
 	reader = new Type1PFAReader(f);
-  
-    font = new Type1Font(*reader);
+
+    Type1Font *font = new Type1Font(*reader);
 
     delete reader;
+    return font;
 }
 
-
-static void
-output_testpage(FILE* outf, Type1Font* font, const Vector<PermString>& glyph_names)
+void
+GridTestpager::prolog(const Vector<Type1Font *> &fonts)
 {
-    fprintf(outf, "%%!PS-Adobe-3.0\n%%%%LanguageLevel: 2\n%%%%BeginProlog\n");
-    fprintf(outf, "/magicstr 1 string def\n\
+    fprintf(_f, "%%!PS-Adobe-3.0\n\
+%%%%LanguageLevel: 2\n\
+%%%%DocumentMedia: Plain 612 792 white ( )\n\
+%%%%BeginProlog\n");
+    fprintf(_f, "/magicstr 1 string def\n\
 /magicbox { %% row col char name encoding  magicbox  -\n\
-  5 3 roll 54 mul 36 add exch 54 mul neg 702 add moveto currentpoint\n\
+  5 3 roll 54 mul 36 add exch 54 mul neg 682 add moveto currentpoint\n\
   .8 setgray 54 0 rlineto 0 54 rlineto -54 0 rlineto closepath stroke\n\
   0 setgray moveto\n\
   gsave /Helvetica 7 selectfont 3 1.5 rmoveto show grestore\n\
@@ -159,66 +206,83 @@ output_testpage(FILE* outf, Type1Font* font, const Vector<PermString>& glyph_nam
   magicstr 0 3 -1 roll put\n\
   magicstr stringwidth pop 54 sub -2 div 16 rmoveto magicstr show\n\
 } bind def\n");
-    Type1PFAWriter w(outf);
-    font->write(w);
-    fprintf(outf, "%%%%EndProlog\n");
+    Type1PFAWriter w(_f);
+    for (Vector<Type1Font *>::const_iterator it = fonts.begin();
+	 it != fonts.end(); ++it)
+	(*it)->write(w);
+    fprintf(_f, "%%%%EndProlog\n");
+}
 
+void
+GridTestpager::font(Type1Font* font, const Vector<PermString>& glyph_names)
+{
     HashMap<PermString, int> encodings(-1);
     if (Type1Encoding *encoding = font->type1_encoding())
 	for (int i = 255; i >= 0; i--)
 	    if (encoding->elt(i))
 		encodings.insert(encoding->elt(i), i);
-    
+
     int per_row = 10;
     int nrows = 13;
     int per_page = nrows * per_row;
-  
-    int page = 0;
-    for (int gi = 0; gi < glyph_names.size(); gi++) {
-    
+
+    int page = 0, gi = -1;
+    for (Vector<PermString>::const_iterator it = glyph_names.begin();
+	 it != glyph_names.end(); ++it) {
+	// allow font that doesn't have all glyphs
+	if (!font->glyph(*it))
+	    continue;
+
+	++gi;
 	if (gi % per_page == 0) {
 	    if (page)
-		fprintf(outf, "showpage restore\n");
-	    page++;
-	    fprintf(outf, "%%%%Page: %d %d\nsave\n", page, page);
+		fprintf(_f, "showpage restore\n");
+	    ++page;
+	    newpage();
+	    fprintf(_f, "save\n");
 	    // make new font
-	    fprintf(outf, "/%s findfont dup length dict begin\n\
+	    fprintf(_f, "/%s findfont dup length dict begin\n\
  { 1 index /FID ne {def} {pop pop} ifelse } forall\n /Encoding [",
 		    font->font_name().c_str());
-	    for (int i = gi; i < gi + per_page && i < glyph_names.size(); i++) {
-		fprintf(outf, " /%s", glyph_names[i].c_str());
-		if (i % 10 == 9) fprintf(outf, "\n");
-	    }
-	    fprintf(outf, " ] def\n currentdict end /X exch definefont pop\n\
-/X 24 selectfont\n");
+	    int gx = 0;
+	    for (Vector<PermString>::const_iterator xit = it;
+		 xit != glyph_names.end() && gx < per_page; ++xit)
+		if (font->glyph(*xit)) {
+		    ++gx;
+		    fprintf(_f, " /%s", xit->c_str());
+		    if (gx % 10 == 9)
+			fprintf(_f, "\n");
+		}
+	    fprintf(_f, " ] def\n currentdict end /X exch definefont pop\n\
+/Helvetica-Bold 16 selectfont 36 742 moveto (%s) show\n\
+/X 24 selectfont\n", font->font_name().c_str());
 	}
-	
+
 	int row = (gi % per_page) / per_row;
 	int col = gi % per_row;
 
-	fprintf(outf, "%d %d %d (%s)", row, col, gi % per_page, glyph_names[gi].c_str());
-	if (encodings[glyph_names[gi]] >= 0) {
-	    int e = encodings[glyph_names[gi]];
+	fprintf(_f, "%d %d %d (%s)", row, col, gi % per_page, it->c_str());
+	if (encodings[*it] >= 0) {
+	    int e = encodings[*it];
 	    if (e == '\\')
-		fprintf(outf, " ('\\\\\\\\')");
+		fprintf(_f, " ('\\\\\\\\')");
 	    else if (e == '\'')
-		fprintf(outf, " ('\\\\'')");
+		fprintf(_f, " ('\\\\'')");
 	    else if (e == '(' || e == ')')
-		fprintf(outf, " ('\\%c')", e);
+		fprintf(_f, " ('\\%c')", e);
 	    else if (e >= 32 && e < 127)
-		fprintf(outf, " ('%c')", e);
+		fprintf(_f, " ('%c')", e);
 	    else
-		fprintf(outf, " ('\\\\%03o')", e);
+		fprintf(_f, " ('\\\\%03o')", e);
 	} else
-	    fprintf(outf, " ()");
-	fprintf(outf, " magicbox\n");
+	    fprintf(_f, " ()");
+	fprintf(_f, " magicbox\n");
     }
 
     if (page)
-	fprintf(outf, "showpage restore\n");
-    fprintf(outf, "%%%%EOF\n");
-    fclose(outf);
-}    
+	fprintf(_f, "showpage restore\n");
+}
+
 
 
 /*****
@@ -234,14 +298,14 @@ operator<<(StringAccum& sa, const Point& p)
 class Smoker : public CharstringInterp { public:
 
     Smoker(const Transform&);
-    
+
     void act_line(int, const Point &, const Point &);
     void act_curve(int, const Point &, const Point &, const Point &, const Point &);
     void act_closepath(int);
 
     String char_postscript()		{ return _char_sa.take_string(); }
     String points_postscript()		{ return _points_sa.take_string(); }
-    
+
     bool run(const CharstringContext&);
 
   private:
@@ -252,7 +316,7 @@ class Smoker : public CharstringInterp { public:
     Point _char_cp;
 
     inline void maybe_move(const Point&);
-    
+
 };
 
 Smoker::Smoker(const Transform& xform)
@@ -325,7 +389,7 @@ bounds2xform(CharstringBounds& bounds, bool expand = false)
     }
     bounds.act_line(0, Point(0, 0), bounds.width());
     bounds.act_line(0, Point(0, 0), Point(1, 1));
-    
+
     double true_width = std::max(bounds.bb_right(), 0.) - std::min(bounds.bb_left(), 0.);
     double true_height = std::max(bounds.bb_top(), 0.) - std::min(bounds.bb_bottom(), 0.);
     double x_scale = (RIGHT_BOUND - LEFT_BOUND) / true_width;
@@ -344,11 +408,11 @@ static const char* const bounds_glyphs[] = {
     "A", "Eacute", "Ecircumflex", "l", "g", "p", "q", "j", "J", "emdash", 0
 };
 
-static void
-output_smoke(FILE* outf, Type1Font* font, const Vector<PermString>& glyph_names)
+void
+SmokeTestpager::prolog(const Vector<Type1Font *> &)
 {
-    fprintf(outf, "%%!PS-Adobe-3.0\n%%%%LanguageLevel: 2\n%%%%BeginProlog\n");
-    fprintf(outf, "/pA { %% x y  pA  -\n\
+    fprintf(_f, "%%!PS-Adobe-3.0\n%%%%LanguageLevel: 2\n%%%%BeginProlog\n");
+    fprintf(_f, "/pA { %% x y  pA  -\n\
   moveto\n\
   -2 -2 rmoveto 4 0 rlineto 0 4 rlineto -4 0 rlineto closepath\n\
   gsave 1 setgray stroke grestore 0 setgray fill\n\
@@ -358,10 +422,12 @@ output_smoke(FILE* outf, Type1Font* font, const Vector<PermString>& glyph_names)
   gsave 1 setgray stroke grestore 0.1 setgray fill\n\
 } bind def\n\
 ");
-    //Type1PFAWriter w(outf);
-    //font->write(w);
-    fprintf(outf, "%%%%EndProlog\n");
+    fprintf(_f, "%%%%EndProlog\n");
+}
 
+void
+SmokeTestpager::font(Type1Font* font, const Vector<PermString>& glyph_names)
+{
     HashMap<PermString, int> encodings(-1);
     if (Type1Encoding *encoding = font->type1_encoding())
 	for (int i = 255; i >= 0; i--)
@@ -376,9 +442,14 @@ output_smoke(FILE* outf, Type1Font* font, const Vector<PermString>& glyph_names)
 	for (int gi = 0; gi < glyph_names.size(); gi++)
 	    bounds.char_bounds(font->glyph_context(glyph_names[gi]), false);
     Transform font_xform = bounds2xform(bounds, true);
-    
+
     for (int gi = 0; gi < glyph_names.size(); gi++) {
-	fprintf(outf, "%%%%Page: %d %d\nsave\n", gi + 1, gi + 1);
+	// allow font that doesn't have all glyphs
+	if (!font->glyph(glyph_names[gi]))
+	    continue;
+
+	newpage();
+	fprintf(_f, "save\n");
 
 	CharstringContext cc = font->glyph_context(glyph_names[gi]);
 	bounds.clear();
@@ -398,17 +469,14 @@ output_smoke(FILE* outf, Type1Font* font, const Vector<PermString>& glyph_names)
 
 	Smoker smoker(xform);
 	smoker.run(font->glyph_context(glyph_names[gi]));
-	fprintf(outf, "%g %g moveto 0 %g rlineto %g %g moveto 0 %g rlineto %g %g moveto %g 0 rlineto 0 setgray stroke\n",
+	fprintf(_f, "%g %g moveto 0 %g rlineto %g %g moveto 0 %g rlineto %g %g moveto %g 0 rlineto 0 setgray stroke\n",
 		(Point(0, 0) * xform).x, BOTTOM_BOUND - 36, TOP_BOUND - BOTTOM_BOUND + 72,
 		(bounds.width() * xform).x, BOTTOM_BOUND - 36, TOP_BOUND - BOTTOM_BOUND + 72,
 		LEFT_BOUND - 36, (Point(0, 0) * xform).y, RIGHT_BOUND - LEFT_BOUND + 72);
-	
-	fprintf(outf, "%s\n0.5 setgray fill\n\n1 setlinewidth\n%s\nshowpage\nrestore\n", smoker.char_postscript().c_str(), smoker.points_postscript().c_str());
-    }
 
-    fprintf(outf, "%%%%EOF\n");
-    fclose(outf);
-}    
+	fprintf(_f, "%s\n0.5 setgray fill\n\n1 setlinewidth\n%s\nshowpage\nrestore\n", smoker.char_postscript().c_str(), smoker.points_postscript().c_str());
+    }
+}
 
 
 /*****
@@ -420,7 +488,7 @@ click_strcmp(PermString a, PermString b)
 {
     const char *ad = a.c_str(), *ae = a.c_str() + a.length();
     const char *bd = b.c_str(), *be = b.c_str() + b.length();
-    
+
     while (ad < ae && bd < be) {
 	if (isdigit((unsigned char) *ad) && isdigit((unsigned char) *bd)) {
 	    // compare the two numbers, but don't treat them as numbers in
@@ -520,16 +588,17 @@ main(int argc, char *argv[])
 {
     PsresDatabase *psres = new PsresDatabase;
     psres->add_psres_path(getenv("PSRESOURCEPATH"), 0, false);
-  
+
     Clp_Parser *clp =
 	Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
     program_name = Clp_ProgramName(clp);
-  
+
     ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr));
     const char *output_file = 0;
     Vector<String> glyph_patterns;
     bool smoke = false;
-  
+    Vector<Type1Font *> fonts;
+
     while (1) {
 	int opt = Clp_Next(clp);
 	switch (opt) {
@@ -551,50 +620,48 @@ main(int argc, char *argv[])
 	  case SMOKE_OPT:
 	    smoke = !clp->negated;
 	    break;
-	    
+
 	  case OUTPUT_OPT:
 	    if (output_file)
 		errh->fatal("output file already specified");
 	    output_file = clp->vstr;
 	    break;
-      
+
 	  case VERSION_OPT:
 	    printf("t1testpage (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 1999-2006 Eddie Kohler\n\
+	    printf("Copyright (C) 1999-2009 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
 	    exit(0);
 	    break;
-      
+
 	  case HELP_OPT:
 	    usage();
 	    exit(0);
 	    break;
-      
+
 	  case Clp_NotOption:
-	    if (font)
-		errh->fatal("font already specified");
-	    do_file(clp->vstr, psres, errh);
+	    fonts.push_back(do_file(clp->vstr, psres, errh));
 	    break;
-      
+
 	  case Clp_Done:
 	    goto done;
-      
+
 	  case Clp_BadOption:
 	    usage_error(errh, 0);
 	    break;
-      
+
 	  default:
 	    break;
-      
+
 	}
     }
-  
+
   done:
-    if (!font)
-	do_file(0, psres, errh);
-  
+    if (!fonts.size())
+	fonts.push_back(do_file(0, psres, errh));
+
     FILE *outf;
     if (!output_file || strcmp(output_file, "-") == 0)
 	outf = stdout;
@@ -648,18 +715,36 @@ particular purpose.\n");
     glyph_order.insert("space", gindex++);
 
     // Get glyph names.
+    HashMap<PermString, int> glyph_hash(0);
+    for (Vector<Type1Font *>::iterator it = fonts.begin(); it != fonts.end();
+	 ++it)
+	for (int i = 0; i < (*it)->nglyphs(); i++) {
+	    if (glyph_matches((*it)->glyph_name(i),
+			      glyph_patterns.begin(), glyph_patterns.end()))
+		glyph_hash.insert((*it)->glyph_name(i), 1);
+	}
+
     Vector<PermString> glyph_names;
-    for (int i = 0; i < font->nglyphs(); i++)
-	if (glyph_matches(font->glyph_name(i), glyph_patterns.begin(), glyph_patterns.end()))
-	    glyph_names.push_back(font->glyph_name(i));
+    for (HashMap<PermString, int>::iterator it = glyph_hash.begin();
+	 it != glyph_hash.end(); ++it)
+	glyph_names.push_back(it.key());
     if (glyph_names.size() == 0)
 	errh->fatal("no glyphs to print");
     qsort(glyph_names.begin(), glyph_names.size(), sizeof(PermString), glyphcompare);
 
+    // outputs
+    Testpager *tp;
     if (smoke)
-	output_smoke(outf, font, glyph_names);
+	tp = new SmokeTestpager(outf);
     else
-	output_testpage(outf, font, glyph_names);
-  
+	tp = new GridTestpager(outf);
+
+    tp->prolog(fonts);
+    for (Vector<Type1Font *>::iterator it = fonts.begin(); it != fonts.end();
+	 ++it)
+	tp->font(*it, glyph_names);
+    tp->epilog();
+
+    delete tp;
     exit(0);
 }

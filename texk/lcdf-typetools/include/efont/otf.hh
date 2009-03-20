@@ -10,7 +10,7 @@ class Name;
 typedef int Glyph;			// 16-bit integer
 
 class Tag { public:
-    
+
     Tag()				: _tag(0U) { }
     explicit Tag(uint32_t tag)		: _tag(tag) { }
     Tag(const char*);
@@ -20,9 +20,9 @@ class Tag { public:
     bool null() const			{ return _tag == 0; }
     operator bool() const		{ return _tag != 0; }
     bool valid() const;
-    
+
     uint32_t value() const		{ return _tag; }
-    
+
     String text() const;
     static String langsys_text(Tag script, Tag langsys = Tag());
 
@@ -31,7 +31,7 @@ class Tag { public:
     const char* script_description() const;
     const char* language_description() const;
     const char* feature_description() const;
-    
+
   private:
 
     uint32_t _tag;
@@ -59,7 +59,7 @@ class Font { public:
     static uint32_t checksum(const uint8_t *, const uint8_t *);
     static uint32_t checksum(const String &);
     static Font make(bool truetype, const Vector<Tag>& tags, const Vector<String>& data);
-    
+
     enum { HEADER_SIZE = 12, TABLE_DIR_ENTRY_SIZE = 16 };
 
   private:
@@ -68,7 +68,7 @@ class Font { public:
     int _error;
 
     int parse_header(ErrorHandler*);
-    
+
 };
 
 class ScriptList { public:
@@ -82,20 +82,20 @@ class ScriptList { public:
 
     int language_systems(Vector<Tag>& scripts, Vector<Tag>& langsys, ErrorHandler* = 0) const;
     int features(Tag script, Tag langsys, int& required_fid, Vector<int>& fids, ErrorHandler* = 0, bool clear_fids = true) const;
-    
+
   private:
 
     enum { SCRIPTLIST_HEADERSIZE = 2, SCRIPT_RECSIZE = 6,
 	   SCRIPT_HEADERSIZE = 4, LANGSYS_RECSIZE = 6,
 	   LANGSYS_HEADERSIZE = 6, FEATURE_RECSIZE = 2 };
-    
+
     String _str;
 
     int check_header(ErrorHandler*);
     int script_offset(Tag) const;
     int check_script(Tag, int, ErrorHandler*) const;
     int langsys_offset(Tag, Tag, ErrorHandler* = 0) const;
-    
+
 };
 
 class FeatureList { public:
@@ -125,13 +125,13 @@ class FeatureList { public:
 
     enum { FEATURELIST_HEADERSIZE = 2, FEATURE_RECSIZE = 6,
 	   FEATURE_HEADERSIZE = 4, LOOKUPLIST_RECSIZE = 2 };
-    
+
     String _str;
 
     int check_header(ErrorHandler*);
     int script_offset(Tag) const;
     int langsys_offset(Tag, Tag, ErrorHandler* = 0) const;
-    
+
 };
 
 class Coverage { public:
@@ -149,7 +149,7 @@ class Coverage { public:
 
     void unparse(StringAccum&) const throw ();
     String unparse() const throw ();
-    
+
     class iterator { public:
 	iterator()			: _pos(0), _value(0) { }
 	// private constructor
@@ -157,11 +157,11 @@ class Coverage { public:
 
 	bool ok() const			{ return _pos < _str.length(); }
 	operator bool() const		{ return ok(); }
-	
+
 	Glyph operator*() const		{ return _value; }
 	Glyph value() const		{ return _value; }
 	int coverage_index() const;
-	
+
 	void operator++(int);
 	void operator++()		{ (*this)++; }
 	bool forward_to(Glyph);
@@ -173,7 +173,7 @@ class Coverage { public:
 	bool operator>(const iterator& o) { return _value > o._value; }
 	bool operator==(const iterator& o) { return _value == o._value; }
 	bool operator!=(const iterator& o) { return _value != o._value; }
-	
+
       private:
 	String _str;
 	int _pos;
@@ -181,20 +181,20 @@ class Coverage { public:
 	friend class Coverage;
 	iterator(const String&, int);
     };
-    
+
     iterator begin() const		{ return iterator(_str, 0); }
     iterator end() const		{ return iterator(_str, _str.length()); }
     Glyph operator[](int) const throw ();
-    
+
     enum { T_LIST = 1, T_RANGES = 2,
 	   HEADERSIZE = 4, LIST_RECSIZE = 2, RANGES_RECSIZE = 6 };
-    
+
   private:
 
     String _str;
 
     int check(ErrorHandler*);
-    
+
 };
 
 Coverage operator&(const Coverage&, const Coverage&);
@@ -216,9 +216,9 @@ class GlyphSet { public:
     int change(Glyph, bool);
     void insert(Glyph g)		{ change(g, true); }
     void remove(Glyph g)		{ change(g, false); }
-    
+
     GlyphSet& operator=(const GlyphSet&);
-    
+
   private:
 
     enum { GLYPHBITS = 16, SHIFT = 8,
@@ -244,18 +244,18 @@ class ClassDef { public:
 
     void unparse(StringAccum&) const throw ();
     String unparse() const throw ();
-        
+
     class class_iterator { public:
 	// private constructor
 	// default destructor
 
 	bool ok() const			{ return _pos < _str.length(); }
 	operator bool() const		{ return ok(); }
-	
+
 	Glyph operator*() const		{ return *_coviter; }
 	Glyph value() const		{ return *_coviter; }
 	int class_value() const		{ return _class; }
-	
+
 	void operator++(int);
 	void operator++()		{ (*this)++; }
 
@@ -266,7 +266,7 @@ class ClassDef { public:
 	bool operator>(const class_iterator& o) { return _coviter > o._coviter; }
 	bool operator==(const class_iterator& o) { return _coviter == o._coviter; }
 	bool operator!=(const class_iterator& o) { return _coviter != o._coviter; }
-	
+
       private:
 	String _str;
 	int _pos;
@@ -286,7 +286,7 @@ class ClassDef { public:
     enum { T_LIST = 1, T_RANGES = 2,
 	   LIST_HEADERSIZE = 6, LIST_RECSIZE = 2,
 	   RANGES_HEADERSIZE = 4, RANGES_RECSIZE = 6 };
-    
+
   private:
 
     String _str;

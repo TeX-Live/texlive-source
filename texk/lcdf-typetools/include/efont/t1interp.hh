@@ -16,10 +16,10 @@ class CharstringInterp { public:
     int error_data() const			{ return _error_data; }
     static String error_string(int error, int error_data);
     inline String error_string() const;
-    
+
     bool careful() const			{ return _careful; }
     void set_careful(bool c)			{ _careful = c; }
-    
+
     bool done() const				{ return _done; }
     void set_done()				{ _done = true; }
 
@@ -37,7 +37,7 @@ class CharstringInterp { public:
     void ps_clear()				{ _ps_sp = 0; }
 
     int subr_depth() const			{ return _subr_depth; }
-    
+
     inline double &vec(Vector<double> *, int);
     const Vector<double> &weight_vector() const	{ return _weight_vector; }
     Vector<double> *scratch_vector()		{ return &_scratch_vector; }
@@ -68,7 +68,7 @@ class CharstringInterp { public:
     const Point &left_sidebearing() const	{ return _lsb; }
     const Point &currentpoint() const		{ return _cp; }
     void set_state_path()			{ _state = S_PATH; }
-    
+
     virtual bool callothersubr_command(int, int);
     virtual bool type1_command(int);
     virtual bool type2_command(int, const uint8_t *, int *);
@@ -92,7 +92,7 @@ class CharstringInterp { public:
     virtual void act_hintmask(int cmd, const uint8_t *data, int nhints);
 
     typedef Charstring Cs;
-    
+
     enum Errors {
 	errOK		= 0,
 	errInternal	= -1,
@@ -118,9 +118,9 @@ class CharstringInterp { public:
 
     enum { STACK_SIZE = 48, PS_STACK_SIZE = 24, MAX_SUBR_DEPTH = 10,
 	   SCRATCH_SIZE = 32 };
-    
+
   private:
-  
+
     int _error;
     int _error_data;
     bool _done;
@@ -150,14 +150,14 @@ class CharstringInterp { public:
 
     // for processing Type 2 charstrings
     int _t2nhints;
-    
+
     static double double_for_error;
 
     void initialize();
-    
+
     inline void ensure_weight_vector();
     void fetch_weight_vector();
-    
+
     bool roll_command();
     int type2_handle_width(int, bool);
 
@@ -165,7 +165,7 @@ class CharstringInterp { public:
     inline void actp_rlineto(int, double, double);
     void actp_rrcurveto(int, double, double, double, double, double, double);
     void actp_rrflex(int, double, double, double, double, double, double, double, double, double, double, double, double, double);
-    
+
 };
 
 

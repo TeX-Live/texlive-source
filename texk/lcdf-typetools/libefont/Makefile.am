@@ -1,6 +1,4 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = foreign
-
 noinst_LIBRARIES = libefont.a
 
 libefont_a_SOURCES = \

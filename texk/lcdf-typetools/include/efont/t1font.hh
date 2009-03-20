@@ -21,12 +21,12 @@ class Type1Font : public CharstringProgram { public:
     ~Type1Font();
 
     int read(Type1Reader &);
-    
+
     bool ok() const;
-  
+
     inline PermString font_name() const;
     void font_matrix(double[6]) const;
-  
+
     int nitems() const			{ return _items.size(); }
     Type1Item *item(int i) const	{ return _items[i]; }
     void add_item(Type1Item *it)	{ _items.push_back(it); }
@@ -47,11 +47,11 @@ class Type1Font : public CharstringProgram { public:
     bool remove_subr(int);
     void fill_in_subrs();
     void renumber_subrs(const Vector<int> &); // dangerous!
-    
+
     Type1Subr *glyph_x(int i) const	{ return _glyphs[i]; }
 
     Type1Encoding *type1_encoding() const { return _encoding; }
-    
+
     // note: the order is relevant
     enum Dict {
 	dFont = 0,		dF = dFont,
@@ -62,7 +62,7 @@ class Type1Font : public CharstringProgram { public:
 	dBlendPrivate = dB+dP,	dBP = dBlendPrivate,
 	dLast
     };
-  
+
     Type1Definition *dict(int d, PermString s) const { return _dict[d][s]; }
     Type1Definition *dict(PermString s) const	{ return _dict[dF][s]; }
     Type1Definition *p_dict(PermString s) const	{ return _dict[dP][s]; }
@@ -77,14 +77,14 @@ class Type1Font : public CharstringProgram { public:
 
     Type1Definition *ensure(Dict, PermString);
     void add_header_comment(const String &);
-  
+
     MultipleMasterSpace *create_mmspace(ErrorHandler * = 0) const;
     MultipleMasterSpace *mmspace() const;
 
     void undo_synthetic();
 
     void set_charstring_definer(PermString d)	{ _charstring_definer = d; }
-    
+
     void write(Type1Writer &);
 
     // font skeletons
@@ -95,36 +95,36 @@ class Type1Font : public CharstringProgram { public:
     void skeleton_fontdict_end();
     void skeleton_private_end();
     void skeleton_common_subrs();
-  
+
     // for experts only
     void set_item(int, Type1Item *);
     inline void set_dict(int dict, PermString, Type1Definition *);
     void uncache_defs();
 
   private:
-  
+
     mutable bool _cached_defs;
     bool _built;
     mutable PermString _font_name;
-  
+
     Vector<Type1Item *> _items;
-  
+
     HashMap<PermString, Type1Definition *> *_dict;
     int _index[dLast];
     int _dict_deltas[dLast];
-  
+
     Vector<Type1Subr *> _subrs;
     Vector<Type1Subr *> _glyphs;
     HashMap<PermString, int> _glyph_map;
-  
+
     PermString _charstring_definer;
     Type1Encoding *_encoding;
-  
+
     mutable bool _cached_mmspace;
     mutable MultipleMasterSpace *_mmspace;
 
     Type1IncludedFont *_synthetic_item;
-  
+
     Type1Font(PermString);
     Type1Font(const Type1Font &);
     Type1Font &operator=(const Type1Font &);

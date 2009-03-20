@@ -1,6 +1,6 @@
 /* maket1font.{cc,hh} -- translate CFF fonts to Type 1 fonts
  *
- * Copyright (c) 2002-2006 Eddie Kohler
+ * Copyright (c) 2002-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -36,7 +36,7 @@ class MakeType1CharstringInterp : public Type1CharstringGenInterp { public:
     ~MakeType1CharstringInterp();
 
     Type1Font *output() const			{ return _output; }
-    
+
     void run(const CharstringProgram *, Type1Font *, PermString glyph_definer, ErrorHandler *);
     void run(const CharstringContext &, Type1Charstring &, ErrorHandler *);
 
@@ -45,7 +45,7 @@ class MakeType1CharstringInterp : public Type1CharstringGenInterp { public:
     String landmark() const;
 
     class Subr;
-    
+
   private:
 
     // output
@@ -64,7 +64,7 @@ class MakeType1CharstringInterp : public Type1CharstringGenInterp { public:
 
     Subr *csr_subr(CsRef, bool force) const;
     Type1Charstring *csr_charstring(CsRef) const;
-    
+
 };
 
 class MakeType1CharstringInterp::Subr { public:
@@ -77,7 +77,7 @@ class MakeType1CharstringInterp::Subr { public:
 
     //String name(const MakeType1CharstringInterp *) const;
     Type1Charstring *charstring(const MakeType1CharstringInterp *) const;
-    
+
     int ncalls() const			{ return _calls.size(); }
     Subr *call(int i) const		{ return _calls[i]; }
     bool has_call(Subr *) const;
@@ -93,7 +93,7 @@ class MakeType1CharstringInterp::Subr { public:
 
     int ncallers() const		{ return _callers.size(); }
     const Caller &caller(int i) const	{ return _callers[i]; }
-    
+
     void add_call(Subr *s)		{ _calls.push_back(s); }
     void add_caller(Subr *, int, int);
 
@@ -103,9 +103,9 @@ class MakeType1CharstringInterp::Subr { public:
     void transfer_nested_calls(int pos, int length, Subr *new_caller) const;
     void change_callers(Subr *, int pos, int length, int new_length);
     bool unify(MakeType1CharstringInterp *);
-    
+
     void caller_data(bool assign, MakeType1CharstringInterp *mcsi);
-    
+
   private:
 
     CsRef _csr;
@@ -118,7 +118,7 @@ class MakeType1CharstringInterp::Subr { public:
     static int max_stamp;
 
     friend class MakeType1CharstringInterp;
-    
+
 };
 
 int MakeType1CharstringInterp::Subr::max_stamp = 1;
@@ -182,7 +182,7 @@ MakeType1CharstringInterp::csr_subr(CsRef csr, bool force) const
 	vp = &_glyphs;
     else
 	return 0;
-    
+
     int n = (csr & CSR_NUM);
     if (n >= vp->size())
 	return 0;
@@ -303,7 +303,7 @@ MakeType1CharstringInterp::Subr::unify(MakeType1CharstringInterp *mcsi)
 	    _callers.pop_back();
 	    i--;
 	}
-    
+
     if (!_callers.size())
 	return false;
     assert(!_calls.size());	// because this hasn't been unified yet
@@ -338,10 +338,10 @@ MakeType1CharstringInterp::Subr::unify(MakeType1CharstringInterp *mcsi)
     // Mark it as having called any subroutines contained completely within itself.
     // How to do this?  Look at one caller, and go over all its calls.
     _callers[0].subr->transfer_nested_calls(_callers[0].pos, _callers[0].len, this);
-    
+
     // adapt callers
     String callsubr_string = Type1CharstringGen::callsubr_string(_output_subrno);
-    
+
     for (int i = 0; i < _callers.size(); i++)
 	// 13.Jun.2003 - must check whether _callers[i].subr exists: if we
 	// called a subroutine more than once, change_callers() might have
@@ -369,7 +369,7 @@ bool
 MakeType1CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left)
 {
     switch (cmd) {
-    
+
       case Cs::cCallsubr:
       case Cs::cCallgsubr:
 	if (subr_depth() < MAX_SUBR_DEPTH && size() == 1) {
@@ -381,7 +381,7 @@ MakeType1CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left
 		_cur_subr->add_call(callee);
 
 	    int left = csgen().length();
-	    
+
 	    bool more = callxsubr_command(g);
 
 	    int right = csgen().length();
@@ -396,7 +396,7 @@ MakeType1CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left
       normal:
       default:
 	return CharstringInterp::type2_command(cmd, data, left);
-    
+
     }
 }
 
@@ -407,7 +407,7 @@ MakeType1CharstringInterp::run(const CharstringContext &g, Type1Charstring &out,
 
     if (Type1CharstringGenInterp::bad_flex() && !_flex_message) {
 	errh->lwarning(landmark(), "complex flex hint replaced with curves");
-	errh->message("(This Type 2 format font contains flex hints prohibited by Type 1.\nI've safely replaced them with ordinary curves.)");
+	errh->message("(This Type 2 format font contains flex hints prohibited by Type 1.\nI%,ve safely replaced them with ordinary curves.)");
 	_flex_message = true;
     }
 }
@@ -486,7 +486,7 @@ create_type1_font(Cff::Font *font, ErrorHandler *errh)
     Type1Font *output = Type1Font::skeleton_make(font->font_name(), version);
     output->skeleton_comments_end();
     StringAccum sa;
-    
+
     // FontInfo dictionary
     if (version)
 	output->add_definition(Type1Font::dFI, Type1Definition::make_string("version", version, "readonly def"));
@@ -507,7 +507,7 @@ create_type1_font(Cff::Font *font, ErrorHandler *errh)
     add_number_def(output, Type1Font::dFI, "UnderlinePosition", font, Cff::oUnderlinePosition);
     add_number_def(output, Type1Font::dFI, "UnderlineThickness", font, Cff::oUnderlineThickness);
     output->skeleton_fontinfo_end();
-    
+
     // Encoding, other font dictionary entries
     output->add_item(font->type1_encoding_copy());
     font->dict_value(Cff::oPaintType, &v);
@@ -562,7 +562,7 @@ create_type1_font(Cff::Font *font, ErrorHandler *errh)
     // add glyphs
     MakeType1CharstringInterp maker(5);
     maker.run(font, output, " |-", errh);
-    
+
     return output;
 }
 

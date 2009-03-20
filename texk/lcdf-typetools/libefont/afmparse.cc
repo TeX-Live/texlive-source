@@ -115,7 +115,7 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 {
     const unsigned char *format = (const unsigned char *)formatsigned;
     unsigned char *str = _pos;
-  
+
     // Oftentimes, we'll get a keyword first. So handle that simple case
     // with a tight loop for (possibly) better performance and slightly different
     // semantics. (A keyword that comes first in the format must be followed
@@ -132,23 +132,23 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 	    FAIL("keyword mismatch");
 	}
     }
-  
+
     int fplus, fslash;
     _fail_field = 0;
     _message = PermString();
-  
+
     while (1) {
-    
+
 	switch (*format) {
-      
+
 	    /* - - - - - - - - percent specifications - - - - - - - */
 	  case '%':
 	    fplus = fslash = 0;
 	    _fail_field++;
-      
+
 	  percentspec:
 	    switch (*++format) {
-	
+
 		// FLAGS
 	      case '+':
 		fplus++;
@@ -156,14 +156,14 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 	      case '/':
 		fslash++;
 		goto percentspec;
-	
+
 	      case '%':
 		goto matchchar;
-	
+
 	      case 'b':
 	      case 's': {
 		  int len;
-	   
+
 		  if (fplus)
 		      len = strlen((char *)str);
 		  else if (fslash) {
@@ -177,13 +177,13 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 		      if (len == 0)
 			  FAIL("should be a string");
 		  }
-	   
+
 		  PermString s = PermString((char *)str, len);
 		  str += len;
-	   
+
 		  // Now we have the string. What to do with it? Depends on format.
 		  if (*format == 'b') {
-	     
+
 		      bool *bstore = va_arg(valist, bool *);
 		      if (s == "true") {
 			  if (bstore) *bstore = 1;
@@ -191,14 +191,14 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 			  if (bstore) *bstore = 0;
 		      } else
 			  FAIL("should be `true' or `false'");
-	     
+
 		  } else {
 		      PermString *sstore = va_arg(valist, PermString *);
 		      if (sstore) *sstore = s;
 		  }
 		  break;
 	      }
-	 
+
 	      case '(': {
 		  if (*str++ != '(') FAIL("should be a parenthesized string");
 		  unsigned char *last = str;
@@ -209,36 +209,36 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 		      last++;
 		  }
 		  if (paren_level >= 0) FAIL("had unbalanced parentheses");
-	   
+
 		  PermString *sstore = va_arg(valist, PermString *);
 		  if (sstore) *sstore = PermString((char *)str, last - str - 1);
 		  str = last;
 		  break;
 	      }
-	 
+
 	      case 'd':
 	      case 'i': {
 		  union { unsigned char *uc; char *c; } new_str;
 		  int v = strtol((char *)str, &new_str.c, 10);
 		  if (new_str.uc == str) FAIL("should be an integer");
-	   
+
 		  str = new_str.uc;
 		  int *istore = va_arg(valist, int *);
 		  if (istore) *istore = v;
 		  break;
 	      }
-       
+
 	      case 'x': {
 		  union { unsigned char *uc; char *c; } new_str;
 		  int v = strtol((char *)str, &new_str.c, 16);
 		  if (new_str.uc == str) FAIL("should be a hex integer");
-	   
+
 		  str = new_str.uc;
 		  int *istore = va_arg(valist, int *);
 		  if (istore) *istore = v;
 		  break;
 	      }
-	 
+
 	      case 'e':
 	      case 'f':
 	      case 'g': {
@@ -246,22 +246,22 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 		  double v = strtonumber((char *)str, &new_str.c);
 		  if (v < MIN_KNOWN_DOUBLE) v = MIN_KNOWN_DOUBLE;
 		  if (new_str.uc == str) FAIL("should be a real number");
-	   
+
 		  str = new_str.uc;
 		  double *dstore = va_arg(valist, double *);
 		  if (dstore) *dstore = v;
 		  break;
 	      }
-	 
+
 	      case '<': {
 		  unsigned char *endbrack =
 		      (unsigned char *)strchr((char *)str, '>');
 		  int n = (endbrack ? endbrack - (str + 1) : 0);
 		  if (!endbrack || n % 2 != 0)
 		      FAIL("should be hex values in <angle brackets>");
-		  String s = String::garbage_string(n/2);
+		  String s = String::make_garbage(n/2);
 		  unsigned char *data = s.mutable_udata();
-	   
+
 		  str++;
 		  while (*str != '>') {
 		      if (isxdigit(str[0]) && isxdigit(str[1])) {
@@ -271,7 +271,7 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 			  FAIL("had non-hex digits in the angle brackets");
 		  }
 		  str++;
-	   
+
 		  if (String *datastore = va_arg(valist, String *))
 		      *datastore = s;
 		  break;
@@ -280,33 +280,33 @@ AfmParser::vis(const char *formatsigned, va_list valist)
 	      default:
 		assert(0 /* internal error: bad % */);
 		FAIL("");
-	
+
 	    }
 	    break;
 	    /* - - - - - - - - end percent specifications - - - - - - - */
-      
+
 	  case ' ':
 	    if (!isspace(*str))
 		FAIL("should be followed by whitespace");
 	    /* FALLTHRU */
-      
+
 	  case '-':
 	    while (isspace(*str)) str++;
 	    break;
-      
+
 	  case 0:
 	    // always eat space at end of format
 	    while (isspace(*str)) str++;
 	    return str;
-      
+
 	  default:
 	  matchchar:
 	    if (*str++ != *format)
 		FAIL(permprintf("- expected `%c'", *format));
 	    break;
-      
+
 	}
-    
+
 	format++;
     }
 }

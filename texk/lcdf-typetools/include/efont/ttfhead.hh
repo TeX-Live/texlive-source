@@ -23,7 +23,7 @@ class Head { public:
     int _error;
 
     int parse_header(ErrorHandler *);
-    
+
 };
 
 

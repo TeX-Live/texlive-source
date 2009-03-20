@@ -32,7 +32,7 @@ class Metrics { public:
     ~Metrics();
 
     void check() const;
-    
+
     Glyph boundary_glyph() const	{ return _boundary_glyph; }
     Glyph emptyslot_glyph() const	{ return _emptyslot_glyph; }
 
@@ -64,7 +64,7 @@ class Metrics { public:
 
     void add_altselector_code(Code, int altselector_type);
     bool altselectors() const		{ return _altselectors.size() > 0; }
-    
+
     inline bool was_base_glyph(Code) const;
     inline Code base_code(Code) const;
     inline Glyph base_glyph(Code) const;
@@ -75,11 +75,11 @@ class Metrics { public:
     void add_kern(Code in1, Code in2, int kern);
     void set_kern(Code in1, Code in2, int kern);
     void add_single_positioning(Code, int pdx, int pdy, int adx);
-    
+
     enum { CODE_ALL = 0x7FFFFFFF };
     void remove_ligatures(Code in1, Code in2);
     int reencode_right_ligkern(Code old_in2, Code new_in2);
-    
+
     int apply(const Vector<Substitution>&, bool allow_single, int lookup, const GlyphFilter&, const Vector<PermString>& glyph_names);
     void apply_alternates(const Vector<Substitution>&, int lookup, const GlyphFilter&, const Vector<PermString>& glyph_names);
     int apply(const Vector<Positioning>&);
@@ -116,14 +116,14 @@ class Metrics { public:
 	PermString name;
 	Vector<Setting> setting;
     };
-    
+
     struct Ligature3 {
 	Code in1;
 	Code in2;
 	Code out;
 	Ligature3(Code in1_, Code in2_, Code out_) : in1(in1_), in2(in2_), out(out_) { }
     };
-    
+
   private:
 
     struct Char {
@@ -142,7 +142,7 @@ class Metrics { public:
 	enum { BUILT = 1, INTERMEDIATE = 2, CONTEXT_ONLY = 4, LIVE = 8,
 	       BASE_LIVE = 16, BASE_REP = 32 };
 	int flags;
-	
+
 	Char()				: virtual_char(0) { clear(); }
 	void clear();
 	void swap(Char &);
@@ -169,7 +169,7 @@ class Metrics { public:
 
     Vector<const Efont::CharstringProgram *> _mapped_fonts;
     Vector<String> _mapped_font_names;
-    
+
     Metrics(const Metrics &);	// does not exist
     Metrics &operator=(const Metrics &); // does not exist
 

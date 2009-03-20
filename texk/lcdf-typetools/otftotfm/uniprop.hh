@@ -15,7 +15,7 @@ class UnicodeProperty { public:
 	P_TMASK = 0370,
 	P_MAX = 0377
     };
-    
+
     static int property(uint32_t uni);
     static const char* property_name(int p);
     static bool parse_property(const String&, int& prop, int& prop_mask);
@@ -26,9 +26,9 @@ class UnicodeProperty { public:
     static const unsigned char property_pages[];
     static const unsigned int property_offsets[];
     static const int nproperty_offsets;
-    
+
     static inline const unsigned int* find_offset(uint32_t uni);
-    
+
 };
 
 #endif

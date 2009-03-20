@@ -18,12 +18,12 @@ class Vector { public:
   typedef const T& const_reference;
   typedef T* pointer;
   typedef const T* const_pointer;
-  
+
   typedef int size_type;
-  
+
   typedef T* iterator;
   typedef const T* const_iterator;
-  
+
   explicit Vector()		: _l(0), _n(0), _capacity(0) { }
   explicit Vector(size_type n, const T &e) : _l(0), _n(0), _capacity(0) { resize(n, e); }
   // template <class In> ...
@@ -33,7 +33,7 @@ class Vector { public:
   Vector<T>& operator=(const Vector<T>&);
   Vector<T>& assign(size_type n, const T& e = T());
   // template <class In> ...
-  
+
   // iterators
   iterator begin()			{ return _l; }
   const_iterator begin() const		{ return _l; }
@@ -66,9 +66,9 @@ class Vector { public:
   iterator erase(iterator, iterator);
   void swap(Vector<T> &);
   void clear()				{ erase(begin(), end()); }
-  
+
  private:
-  
+
   T *_l;
   size_type _n;
   size_type _capacity;
@@ -112,7 +112,7 @@ class Vector<void*> { public:
   typedef void* const* const_pointer;
 
   typedef int size_type;
-  
+
   typedef void** iterator;
   typedef void* const* const_iterator;
 
@@ -120,10 +120,10 @@ class Vector<void*> { public:
   explicit Vector(size_type n, void* e)	: _l(0), _n(0), _capacity(0) { resize(n, e); }
   Vector(const Vector<void*> &);
   ~Vector();
-  
+
   Vector<void*> &operator=(const Vector<void*> &);
   Vector<void*> &assign(size_type n, void* e = 0);
-  
+
   // iterators
   iterator begin()			{ return _l; }
   const_iterator begin() const		{ return _l; }
@@ -158,7 +158,7 @@ class Vector<void*> { public:
   void clear()				{ _n = 0; }
 
  private:
-  
+
   void **_l;
   size_type _n;
   size_type _capacity;
@@ -181,7 +181,7 @@ Vector<void*>::pop_back()
   --_n;
 }
 
-inline Vector<void*>::iterator 
+inline Vector<void*>::iterator
 Vector<void*>::erase(Vector<void*>::iterator e)
 {
   return (e < end() ? erase(e, e + 1) : e);
@@ -190,9 +190,9 @@ Vector<void*>::erase(Vector<void*>::iterator e)
 
 template <class T>
 class Vector<T*>: private Vector<void*> {
-  
+
   typedef Vector<void*> Base;
-  
+
  public:
 
   typedef T* value_type;
@@ -202,20 +202,20 @@ class Vector<T*>: private Vector<void*> {
   typedef T* const* const_pointer;
 
   typedef int size_type;
-  
+
   typedef T** iterator;
   typedef T* const* const_iterator;
-  
+
   explicit Vector()			: Base() { }
   explicit Vector(size_type n, T* e)	: Base(n, (void *)e) { }
   Vector(const Vector<T *> &o)		: Base(o) { }
   ~Vector()				{ }
 
   Vector<T *> &operator=(const Vector<T *> &o)
-  		{ Base::operator=(o); return *this; }
+		{ Base::operator=(o); return *this; }
   Vector<T *> &assign(size_type n, T *e = 0)
-  		{ Base::assign(n, (void *)e); return *this; }
-  
+		{ Base::assign(n, (void *)e); return *this; }
+
   // iterators
   const_iterator begin() const	{ return (const_iterator)(Base::begin()); }
   iterator begin()		{ return (iterator)(Base::begin()); }
@@ -240,7 +240,7 @@ class Vector<T*>: private Vector<void*> {
   T* back() const		{ return (T*)(Base::back()); }
   T*& at_u(size_type i)		{ return (T*&)(Base::at_u(i)); }
   T* at_u(size_type i) const	{ return (T*)(Base::at_u(i)); }
-  
+
   // modifiers
   void push_back(T* e)		{ Base::push_back((void*)e); }
   void pop_back()		{ Base::pop_back(); }
@@ -248,7 +248,7 @@ class Vector<T*>: private Vector<void*> {
   iterator erase(iterator i, iterator j) { return Base::erase((void**)i, (void**)j); }
   void swap(Vector<T *> &o)	{ Base::swap(o); }
   void clear()			{ Base::clear(); }
-    
+
 };
 
 #include <lcdf/vector.cc>	// necessary to support GCC 3.3

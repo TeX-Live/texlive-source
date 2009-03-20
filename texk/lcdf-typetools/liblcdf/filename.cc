@@ -69,7 +69,7 @@ Filename::Filename(const String &dir, const String &name)
 	_dir += name.substring(0, slash + 1);
 	_name = name.substring(slash + 1);
     }
-  
+
     _path = _dir + _name;
 }
 

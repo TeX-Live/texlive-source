@@ -6,11 +6,11 @@
 #include <string.h>
 
 class Bezier { public:
-  
+
     Bezier()				: _bb(-1) { }
     inline Bezier(Point p[4]) throw ();
     inline Bezier(const Point &, const Point &, const Point &, const Point &) throw ();
-  
+
     const Point *points() const		{ return _p; }
     const Point &point(int i) const	{ assert(i>=0&&i<4); return _p[i]; }
     Point &mpoint(int i)		{ assert(i>=0&&i<4); _bb = -1; return _p[i]; }
@@ -30,22 +30,22 @@ class Bezier { public:
     inline double bb_right_x() const throw ();
     inline double bb_top_x() const throw ();
     inline double bb_bottom_x() const throw ();
-    
+
     void halve(Bezier &, Bezier &) const throw ();
 
     inline void segmentize(Vector<Point> &) const;
     void segmentize(Vector<Point> &, bool) const;
-  
+
     static void fit(const Vector<Point> &, double, Vector<Bezier> &);
-    
+
   private:
-  
+
     Point _p[4];
     mutable int _bb;
 
     void make_bb() const throw ();
     inline void ensure_bb() const throw ();
-  
+
     double hit_recurse(const Point &, double, double, double, double, double) const throw ();
 
 };

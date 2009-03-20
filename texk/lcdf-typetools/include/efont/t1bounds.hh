@@ -35,7 +35,7 @@ class CharstringBounds : public CharstringInterp { public:
 
     static bool bounds(const CharstringContext&, int bounds[4], int& width);
     static bool bounds(const Transform&, const CharstringContext&, int bounds[4], int& width);
-        
+
   private:
 
     Point _lb;
@@ -46,13 +46,13 @@ class CharstringBounds : public CharstringInterp { public:
     const CharstringProgram* _last_xf_program;
 
     void set_xf(const CharstringProgram*);
-    
+
     inline void xf_mark(const Point&);
     void xf_mark(const Bezier&);
 
     inline bool xf_inside(const Point&) const;
     inline bool xf_controls_inside(const Bezier&) const;
-    
+
 };
 
 inline void CharstringBounds::xf_mark(const Point& p)

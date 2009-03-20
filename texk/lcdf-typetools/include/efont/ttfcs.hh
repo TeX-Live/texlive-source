@@ -12,12 +12,12 @@ class TrueTypeBoundsCharstringProgram : public CharstringProgram { public:
     ~TrueTypeBoundsCharstringProgram();
 
     int units_per_em() const;
-    
+
     int nglyphs() const;
     Charstring *glyph(int gi) const;
     PermString glyph_name(int gi) const;
     void glyph_names(Vector<PermString> &) const;
-    
+
   private:
 
     const OpenType::Font *_otf;
@@ -33,7 +33,7 @@ class TrueTypeBoundsCharstringProgram : public CharstringProgram { public:
     mutable bool _got_glyph_names;
     mutable Vector<uint32_t> _unicodes;
     mutable bool _got_unicodes;
-    
+
 };
 
 }

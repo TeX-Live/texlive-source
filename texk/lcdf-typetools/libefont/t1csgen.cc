@@ -2,7 +2,7 @@
 
 /* t1csgen.{cc,hh} -- Type 1 charstring generation
  *
- * Copyright (c) 1998-2007 Eddie Kohler
+ * Copyright (c) 1998-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -37,10 +37,10 @@ static const char * const command_desc[] = {
 
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0,
-  
+
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0,
-  
+
     0, 0, 0, 0, 0,
     "XY", 0, 0, 0, 0
 };
@@ -166,11 +166,10 @@ void
 Type1CharstringGen::gen_moveto(const Point &p, bool closepath, bool always)
 {
     // make sure we generate some moveto on the first command
-    
-    double dx = p.x - _false.x;
-    double dy = p.y - _false.y;
-    int big_dx = (int)floor(dx * _f_precision + 0.50001);
-    int big_dy = (int)floor(dy * _f_precision + 0.50001);
+
+    Point d = p - _true;
+    int big_dx = (int)floor(d.x * _f_precision + 0.50001);
+    int big_dy = (int)floor(d.y * _f_precision + 0.50001);
 
     if (big_dx == 0 && big_dy == 0 && _state != S_INITIAL && !always)
 	/* do nothing */;
@@ -178,20 +177,19 @@ Type1CharstringGen::gen_moveto(const Point &p, bool closepath, bool always)
 	if (closepath)
 	    gen_command(Charstring::cClosepath);
 	if (big_dy == 0) {
-	    gen_number(dx, 'x');
+	    gen_number(d.x, 'x');
 	    gen_command(Charstring::cHmoveto);
 	} else if (big_dx == 0) {
-	    gen_number(dy, 'y');
+	    gen_number(d.y, 'y');
 	    gen_command(Charstring::cVmoveto);
 	} else {
-	    gen_number(dx, 'x');
-	    gen_number(dy, 'y');
+	    gen_number(d.x, 'x');
+	    gen_number(d.y, 'y');
 	    gen_command(Charstring::cRmoveto);
 	}
     }
 
-    _true.x = p.x;
-    _true.y = p.y;
+    _true = p;
 }
 
 void
@@ -346,16 +344,16 @@ Type1CharstringGenInterp::act_hintmask(int cmd, const unsigned char *data, int n
 {
     if (cmd == Cs::cCntrmask || nhints > Type1CharstringGenInterp::nhints())
 	return;
-    
+
     String data_holder;
     if (!data) {
-	data_holder = String::fill_string('\377', ((nhints - 1) >> 3) + 1);
+	data_holder = String::make_fill('\377', ((nhints - 1) >> 3) + 1);
 	data = data_holder.udata();
     }
 
     String hints = gen_hints(data, nhints);
     _in_hr = false;
-    
+
     if (_state == S_INITIAL || _direct_hr) {
 	_last_hints = hints;
 	if (_state == S_INITIAL)
@@ -372,7 +370,7 @@ Type1CharstringGenInterp::act_hintmask(int cmd, const unsigned char *data, int n
 		    subrno = i;
 		    break;
 		}
-	
+
 	if (subrno < 0 && _hr_storage->set_subr(nsubrs, Type1Charstring(hints)))
 	    subrno = nsubrs;
 
@@ -451,7 +449,7 @@ Type1CharstringGenInterp::act_flex(int cmd, const Point &p0, const Point &p1, co
     // 1. Outer endpoints must have same x (or y) coordinate
     bool v_ok = (p0.x == p7.x);
     bool h_ok = (p0.y == p7.y);
-    
+
     // 2. Join point and its neighboring controls must be at an extreme
     if (v_ok && p2.x == p3_4.x && p3_4.x == p5.x) {
 	double distance = fabs(p3_4.x - p0.x);
@@ -553,16 +551,16 @@ Type1CharstringGenInterp::run(const CharstringContext &g, Type1Charstring &out)
     swap_stem_hints();
     _state = S_INITIAL;
     _in_hr = false;
-    
+
     CharstringInterp::interpret(g);
-    
+
     if (_state == S_INITIAL)
 	gen_sbw(false);
     else if (_in_hr)
 	act_hintmask(Cs::cEndchar, 0, nhints());
     if (_state != S_SEAC)
 	_csgen.gen_command(Cs::cEndchar);
-    
+
     _csgen.output(out);
 }
 

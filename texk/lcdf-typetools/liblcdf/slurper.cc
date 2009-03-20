@@ -58,7 +58,7 @@ Slurper::grow_buffer()
     _len -= _pos;
     _pos = 0;
   }
-  
+
   // Grow the buffer if necessary.
   if (_len >= _cap) {
     unsigned char *new_data = new unsigned char[ 2 * _cap ];
@@ -75,7 +75,7 @@ inline int
 Slurper::more_data()
 {
   grow_buffer();
-  
+
   // Read new data into the buffer.
   int amount = fread(_data + _len, 1, _cap - _len, _f);
   _len += amount;
@@ -89,7 +89,7 @@ Slurper::get_line_at(unsigned pos)
     for (; pos < _len; pos++)
       if (_data[pos] == '\n' || _data[pos] == '\r')
 	goto line_ends_at_pos;
-    
+
     // no line end? look for more data. save and reset `pos', since _pos
     // may change.
     int offset = pos - _pos;
@@ -100,12 +100,12 @@ Slurper::get_line_at(unsigned pos)
       goto line_ends_at_pos;
     }
   }
-  
+
  line_ends_at_pos:
-  
+
   // PRECONDITION: the line starts at _pos and ends at pos.
   unsigned next_pos;
-  
+
   // Find beginning of next line. 3 cases:
   // 1. line ends in \r\n	-> _pos = pos + 2;
   // 2. line ends in \r OR \n	-> _pos = pos + 1;
@@ -118,10 +118,10 @@ Slurper::get_line_at(unsigned pos)
     next_pos = pos;
     // if already at EOF, don't increment the line number
     if (pos == _pos) _lineno--;
-    
+
   } else if (_data[pos] == '\n')
     next_pos = pos + 1;
-  
+
   else {
     assert(_data[pos] == '\r');
     // If `\r' is last char in buffer, `\n' might be next char. Must read more
@@ -138,12 +138,12 @@ Slurper::get_line_at(unsigned pos)
     else
       next_pos = pos + 1;
   }
-  
+
   _line = _data + _pos;
   _line_len = pos - _pos;
   _data[pos] = 0;
   _pos = next_pos;
-  _lineno++;  
+  _lineno++;
   return (char *)_line;
 }
 
@@ -180,7 +180,7 @@ Slurper::append_next_line()
     _pos -= delta;
     _len -= delta;
   }
-  
+
   unsigned append_at = _pos;
   _pos = _line - _data;
   return get_line_at(append_at);

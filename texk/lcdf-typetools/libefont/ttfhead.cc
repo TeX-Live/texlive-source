@@ -29,30 +29,30 @@ namespace Efont { namespace OpenType {
 Head::Head(const String &s, ErrorHandler *errh)
     : _d(s)
 {
-    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
 }
 
 int
 Head::parse_header(ErrorHandler *errh)
 {
     // HEAD format:
-    // 0	Fixed  		Table version number  	0x00010000 (ver. 1.0)
-    // 4	Fixed 		fontRevision
-    // 8	ULONG 		checkSumAdjustment
-    // 12	ULONG 		magicNumber 		Set to 0x5F0F3CF5
-    // 16	USHORT 		flags
-    // 18	USHORT 		unitsPerEm
-    // 20	LONGDATETIME 	created
-    // 28	LONGDATETIME 	modified
-    // 36	USHORT	 	xMin
-    // 38	SHORT	 	yMin
-    // 40	SHORT	 	xMax
-    // 42	SHORT	 	yMax
-    // 44	USHORT	 	macStyle
-    // 46	USHORT	 	lowestRecPPEM
-    // 48	SHORT	 	fontDirectionHint
-    // 50	SHORT	 	indexToLocFormat
-    // 52	SHORT	 	glyphDataFormat
+    // 0	Fixed		Table version number  	0x00010000 (ver. 1.0)
+    // 4	Fixed		fontRevision
+    // 8	ULONG		checkSumAdjustment
+    // 12	ULONG		magicNumber 		Set to 0x5F0F3CF5
+    // 16	USHORT		flags
+    // 18	USHORT		unitsPerEm
+    // 20	LONGDATETIME	created
+    // 28	LONGDATETIME	modified
+    // 36	USHORT		xMin
+    // 38	SHORT		yMin
+    // 40	SHORT		xMax
+    // 42	SHORT		yMax
+    // 44	USHORT		macStyle
+    // 46	USHORT		lowestRecPPEM
+    // 48	SHORT		fontDirectionHint
+    // 50	SHORT		indexToLocFormat
+    // 52	SHORT		glyphDataFormat
     int len = _d.length();
     const uint8_t *data = _d.udata();
     if (len == 0)

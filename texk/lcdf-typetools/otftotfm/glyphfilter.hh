@@ -12,13 +12,13 @@ class GlyphFilter { public:
 
     inline bool allow_substitution(Efont::OpenType::Glyph glyph, const Vector<PermString>& glyph_names, uint32_t unicode) const;
     inline bool allow_alternate(Efont::OpenType::Glyph glyph, const Vector<PermString>& glyph_names, uint32_t unicode) const;
-    
+
     void add_substitution_filter(const String&, bool is_exclude, ErrorHandler*);
     void add_alternate_filter(const String&, bool is_exclude, ErrorHandler*);
 
     friend bool operator==(const GlyphFilter&, const GlyphFilter&);
     inline bool check_eq(GlyphFilter&);	// may alter both GlyphFilters
-    
+
     GlyphFilter& operator+=(const GlyphFilter&);
 
     void unparse(StringAccum&) const;
@@ -53,7 +53,7 @@ class GlyphFilter { public:
     bool allow(Efont::OpenType::Glyph glyph, const Vector<PermString>& glyph_names, uint32_t unicode, int ptype) const;
     void add_pattern(const String&, int ptype, ErrorHandler*);
     void sort();
-    
+
 };
 
 inline bool

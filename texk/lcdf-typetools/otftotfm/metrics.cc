@@ -608,12 +608,12 @@ Metrics::apply_ligature(const Vector<Code> &in, const Substitution *s, int looku
 	if (_encoding[l->out].flags & Char::BUILT)
 	    old_out = l->out;
     }
-    
+
     // make the final ligature
     add_ligature(cin1, cin2, cout);
 
     //fprintf(stderr, "%s : %d/%s %d/%s => %d/%s [was %d/%s]\n", s->unparse().c_str(), cin1, code_str(cin1), cin2, code_str(cin2), cout, code_str(cout), old_out, code_str(old_out));
-    
+
     // if appropriate, swap old ligatures to point to the new result
     if (old_out >= 0)
 	for (Char *ch = _encoding.begin(); ch != _encoding.end(); ch++)
@@ -629,7 +629,7 @@ Metrics::apply(const Vector<Substitution>& sv, bool allow_single, int lookup, co
     ChangedContext ctx(_encoding.size());
 
     // XXX does not handle multiply-encoded glyphs
-    
+
     // loop over substitutions
     int failures = 0;
     for (const Substitution *s = sv.begin(); s != sv.end(); s++) {
@@ -645,7 +645,7 @@ Metrics::apply(const Vector<Substitution>& sv, bool allow_single, int lookup, co
 	    // check if substitution of this code allowed
 	    if (!glyph_filter.allow_substitution(s->in_glyph(), glyph_names, unicode(cin)))
 		continue;
-	    
+
 	    // look for an allowed alternate
 	    Glyph out = -1;
 	    for (int i = 0; out < 0 && i < s->out_nglyphs(); i++)
@@ -706,7 +706,7 @@ Metrics::apply(const Vector<Substitution>& sv, bool allow_single, int lookup, co
 
 	    // actually apply ligature
 	    apply_ligature(in, s, lookup);
-	    
+
 	} else
 	    failures++;
     }
@@ -788,7 +788,7 @@ Metrics::apply(const Vector<Positioning>& pv)
     Vector<int *> pair_changed(_encoding.size(), 0);
 
     // XXX does not handle multiply-encoded glyphs
-    
+
     // loop over substitutions
     int success = 0;
     for (const Positioning *p = pv.begin(); p != pv.end(); p++)
@@ -826,7 +826,7 @@ operator<(const Metrics::Ligature3 &l1, const Metrics::Ligature3 &l2)
     if (l1.out == l2.in1 || l1.out == l2.in2)
 	return true;
     else
-	return l1.in1 < l2.in1 
+	return l1.in1 < l2.in1
 	    || (l1.in1 == l2.in1 && (l1.in2 < l2.in2
 				     || (l1.in2 == l2.in2 && l1.out < l2.out)));
 }
@@ -854,7 +854,7 @@ Metrics::mark_liveness(int size, const Vector<Ligature3> *all_ligs)
 	all_ligatures(my_ligs);
 	all_ligs = &my_ligs;
     }
-    
+
     /* Characters below 'size' are in both virtual and base encodings. */
     for (Char *ch = _encoding.begin(); ch < _encoding.begin() + size; ch++)
 	if (ch->visible())
@@ -885,7 +885,7 @@ Metrics::mark_liveness(int size, const Vector<Ligature3> *all_ligs)
 	}
     if (changed)
 	goto redo_live_reachable;
-    
+
     /* Characters reachable from live settings are base-live. */
     for (Char *ch = _encoding.begin(); ch != _encoding.end(); ch++)
 	if (ch->flag(Char::LIVE))
@@ -957,7 +957,7 @@ Metrics::cut_encoding(int size)
 	    // 21.Feb.2007: Character isn't live any more.
 	    ch->flags &= ~(Char::BASE_LIVE | Char::LIVE);
 	}
-    
+
     /* Maybe we don't need to do anything else. */
     if (_encoding.size() <= size) {
 	_encoding.resize(size, Char());
@@ -967,7 +967,7 @@ Metrics::cut_encoding(int size)
     /* Need liveness markings. */
     if (!_liveness_marked)
 	mark_liveness(size);
-    
+
     /* Characters below 'size' are 'good'.
        Characters above 'size' are not 'good'. */
     Vector<int> good(_encoding.size(), 1);
@@ -1002,7 +1002,7 @@ Metrics::cut_encoding(int size)
 	_encoding[c].ligatures.clear();
 	_encoding[c].kerns.clear();
     }
-    
+
     /* Remove ligatures and kerns that point beyond 'size', except for valid
        context ligatures. Also remove ligatures that have non-live
        components. */
@@ -1100,7 +1100,7 @@ Metrics::shrink_encoding(int size, const DvipsEncoding &dvipsenc, ErrorHandler *
     /* Need liveness markings. */
     if (!_liveness_marked)
 	mark_liveness(size, &all_ligs);
-    
+
     /* Score characters by importance. Importance relates first to Unicode
        values, and then recursively to the importances of characters that form
        a ligature. */
@@ -1189,7 +1189,7 @@ Metrics::shrink_encoding(int size, const DvipsEncoding &dvipsenc, ErrorHandler *
        encoding, then those encoded by the input encoding (but that character
        wasn't available). */
     Vector<Code> empty_codes;
-    for (int want_encoded = 0; want_encoded < 2; want_encoded++) 
+    for (int want_encoded = 0; want_encoded < 2; want_encoded++)
 	for (Code c = 0; c < size; c++)
 	    if (_encoding[c].base_code < 0
 		&& dvipsenc.encoded(c) == (bool) want_encoded)
@@ -1205,7 +1205,7 @@ Metrics::shrink_encoding(int size, const DvipsEncoding &dvipsenc, ErrorHandler *
 	int needs = (_encoding[slot->old_code].visible_base() ? 1 : 0)
 	    + (_encoding[slot->old_code].flag(Char::LIVE) ? 2 : 0);
 	assert(needs > 0);
-	
+
 	Code dest = -1;
 	for (Code *h = empty_codes.begin(); h < empty_codes.end() && dest < 0; h++) {
 	    int haves = (_encoding[*h].base_code < 0 ? 1 : 0)
@@ -1247,7 +1247,7 @@ Metrics::shrink_encoding(int size, const DvipsEncoding &dvipsenc, ErrorHandler *
 	sa.pop_back();
 	errh->lwarning(" ", (unencoded.size() == 1 ? "not enough room in encoding, ignoring %d glyph" : "not enough room in encoding, ignoring %d glyphs"), unencoded.size());
 	errh->lmessage(" ", "(\
-This encoding doesn't have room for all the glyphs used by the\n\
+This encoding doesn%,t have room for all the glyphs used by the\n\
 font, so these have been left out:\n%s.\n\
 To select specific glyphs, add them to the input encoding.)", sa.c_str());
     }
@@ -1319,10 +1319,10 @@ bool
 Metrics::setting(Code code, Vector<Setting> &v, SettingMode sm) const
 {
     extern int letterspace;
-    
+
     if (!(sm & SET_KEEP))
 	v.clear();
-    
+
     if (!valid_code(code) || _encoding[code].glyph == 0)
 	return false;
 
@@ -1331,10 +1331,10 @@ Metrics::setting(Code code, Vector<Setting> &v, SettingMode sm) const
     if (const VirtualChar *vc = ch.virtual_char) {
 	bool good = true;
 	int font_number = 0;
-	
+
 	if (ch.pdx != 0 || ch.pdy != 0)
 	    v.push_back(Setting(Setting::MOVE, ch.pdx, ch.pdy));
-	
+
 	for (const Setting *s = vc->setting.begin(); s != vc->setting.end(); s++)
 	    switch (s->op) {
 	      case Setting::MOVE:
@@ -1374,17 +1374,17 @@ Metrics::setting(Code code, Vector<Setting> &v, SettingMode sm) const
 	if (ch.pdy != 0 || ch.adx - ch.pdx != 0)
 	    v.push_back(Setting(Setting::MOVE, ch.adx - ch.pdx, -ch.pdy));
 	return good;
-	
+
     } else if (ch.base_code >= 0) {
 	if (ch.pdx != 0 || ch.pdy != 0)
 	    v.push_back(Setting(Setting::MOVE, ch.pdx, ch.pdy));
-	
+
 	v.push_back(Setting(Setting::SHOW, ch.base_code, ch.glyph));
-	
+
 	if (ch.pdy != 0 || ch.adx - ch.pdx != 0)
 	    v.push_back(Setting(Setting::MOVE, ch.adx - ch.pdx, -ch.pdy));
 	return true;
-	
+
     } else
 	return false;
 }
@@ -1424,7 +1424,7 @@ Metrics::kerns(Code in1, Vector<Code> &in2, Vector<int> &kern) const
 {
     in2.clear();
     kern.clear();
-    
+
     const Char &in1ch = _encoding[in1];
     for (const Kern *k = in1ch.kerns.begin(); k != in1ch.kerns.end(); k++)
 	if (k->kern != 0) {

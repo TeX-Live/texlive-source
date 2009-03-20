@@ -56,7 +56,7 @@ HashMap<K, V>::operator=(const HashMap<K, V> &o)
     _grow_limit = o._grow_limit;
     _n = o._n;
     _default_value = o._default_value;
-  
+
     Pair *new_e = new Pair[_capacity];
     for (int i = 0; i < _capacity; i++)
 	new_e[i] = o._e[i];
@@ -87,7 +87,7 @@ HashMap<K, V>::increase(int min_size)
     _e = ne;
     _capacity = ncap;
     _grow_limit = ((3 * _capacity) >> 2) - 1;
-    
+
     Pair *otrav = oe;
     for (int i = 0; i < ocap; i++, otrav++)
 	if (otrav->key) {

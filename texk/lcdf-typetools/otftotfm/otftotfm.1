@@ -1,5 +1,5 @@
 '\"t
-.ds V 2.69
+.ds V 2.75
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -109,7 +109,9 @@ installations, you may first need to copy the system's
 file to
 .I $HOME/texmf/web2c
 and run
-.M mktexlsr 1 .)
+.M mktexlsr 1 .
+On newer TeXLive installations, you may need to set the TEXMFVAR environment
+variable.)
 You can then run "\fBotftotfm\fR
 .B \-a
 .IR fontfile
@@ -498,25 +500,23 @@ and 255. The default is taken from the encoding.
 .Sp
 .TP 5
 .BI \-\-altselector\-char= char
-Set the font's alternate-selector character to
+Set the font's alternate selector character to
 .IR char ,
-which should either be a single non-digit character, or a number between \-1
-and 255.  Use an alternate selector if you want to choose between different
-versions of a character from within a TeX file.  For instance, say that your
-font provides three versions of "A".  If you want to access them all, pick a
-character to be your alternate selector -- say "*".  Then give 
-.B otftotfm
-the \&'\-\-altselector\-char="*"'
-option.  In TeX, "A" will produce the normal version, "A*" will produce the
-first alternate, and "A**" will produce the second alternate.  Furthermore,
-"s*t" will activate any discretionary "s_t" ligature in the font.
+which should either be a single non-digit character, or a number between
+\&\-1 and 255.  Alternate selectors let TeX authors explicitly choose
+between versions of a character.  For instance, the
+\&'\-\-altselector\-char="*"' option turns the "*" character into a special
+switch that cycles between alternates.  For instance, the TeX input "A"
+would produce the normal version of the "A" Unicode character, "A*" would
+produce the first alternate, "A**" would produce the second alternate, and
+so forth.  Furthermore, "s*t" will activate any discretionary "s_t"
+ligature in the font.
 .Sp
 The
 .B \-\-altselector\-char
 mechanism uses the features specified by
 .BR \-\-altselector\-feature
-options.  You don't need to turn on those features if you use
-.BR \-\-altselector .
+options.
 .Sp
 The alternate-selector character may also be specified in the encoding; see
 ENCODINGS, below.  See Sivan Toledo's article cited in the SEE ALSO section
@@ -819,6 +819,8 @@ Do not generate a font map line for the font.
 .BI \-\-encoding\-directory= dir
 .TP 5
 .BI \-\-type1\-directory= dir
+.TP 5
+.BI \-\-truetype\-directory= dir
 Set the directory used for various output types.  Each directory may be set
 by an environment variable, and defaults to a TDS directory in automatic
 mode, or to "." otherwise.  Environment variable names and default TDS
@@ -917,28 +919,32 @@ semicolons.  For example,
 .nf
     % UNICODING pi1 =: uni03D6 ;
 .fi
-tells otftotfm that the character "/pi1" encodes as U+03D6 GREEK PI SYMBOL,
+encodes the character "/pi1" as U+03D6 GREEK PI SYMBOL,
 and
 .nf
     % UNICODING Delta =: uni0394 uni2206 ;
 .fi
-tells it that U+0394 GREEK CAPITAL LETTER DELTA should be preferred to
-U+2206 INCREMENT as an encoding for "/Delta".  You can also supply regular
+makes U+0394 GREEK CAPITAL LETTER DELTA preferred to
+U+2206 INCREMENT as an encoding for "/Delta".  You can also supply
 glyph names:
 .nf
     % UNICODING Delta =: Deltagreek Delta ;
 .fi
-Supply zero choices to remove a glyph from the input encoding.  For
-instance:
+A mapping with no Unicode values removes that glyph from the input
+encoding.  For instance, this erases any f-ligature characters from the
+encoding:
 .nf
     % UNICODING ff =: ; fi =: ; fl =: ; ffi =: ; ffl =: ;
 .fi
-The f-ligatures will be added back to the encoding, preferably at their
-original locations, if some font feature requires them.  Finally, map a
-glyph to \&'emptyslot' if you don't want
+The slots are available for
+.BR otftfm 's
+own use, for example for other characters required by the font.  (If the
+f-ligatures themselves are required by the font, for instance by a \&'liga'
+feature, then they will be stored into their old slots when possible.)  Map
+a glyph to \&'emptyslot' if you don't want
 .B otftotfm
-to use the slot for a ligature character.  For example, this will leave the
-\&'ff' slot unused if the font has no \&'ff' glyph:
+to use the slot.  For example, this will leave the \&'ff' slot unused if
+the font has no \&'ff' glyph:
 .nf
     % UNICODING ff =: ff emptyslot ;
 .fi
@@ -1484,6 +1490,17 @@ features, or by using an encoding with more empty slots, such as the 7t.enc
 encoding distributed with 
 .BR otftotfm .
 '
+.TP 5
+The \&'\fB\-a\fR' option did not install my font correctly.
+'
+Try again with the \&'\fB\-\-verbose\fR' option, which causes
+.BR otftotfm
+to explain its behavior.  Note that by default,
+.BR otftotfm
+will not re-install files already present in your system's TeX search paths
+(in the current directory, for instance).  Use \&'\fB\-\-force\fR' to
+override this behavior.
+'
 .SH "FREQUENTLY ASKED QUESTIONS"
 .TP 5
 How can I get a small-caps "SS" in place of the German sharp-S?
@@ -1530,7 +1547,6 @@ How can I get lining figures (that is, normal line-height digits) with small cap
 Many fonts use old-style figures by default with small caps. Since the
 default is not specified, it's wise to explicitly supply \&'\fB\-f\fRlnum' or
 \&'\fB-f\fRonum'.
-
 '
 .SH "BUGS"
 .\" .LP
@@ -1590,7 +1606,7 @@ used to translate glyph names to Unicode code points.
 http://partners.adobe.com/public/developer/opentype/index_glyph.html
 '
 .SH AUTHOR
-Eddie Kohler (kohler@cs.ucla.edu)
+Eddie Kohler (ekohler@gmail.com)
 .PP
 Thanks to Karl Berry, Marco Kuhlmann, Adam Lindsay, Bruce D'Arcus, Thomas
 Esser, Claire Connelly, Nelson H.F. Beebe, and Ryuji Suzuki for

@@ -97,7 +97,7 @@ MultipleMasterSpace::error(ErrorHandler *errh, const char *s, ...) const
 	assert(strlen(s) < 800);
 	sprintf(buf, (s[0] == ' ' ? "%.200s%s" : "%.200s: %s"),
 		_font_name.c_str(), s);
-	errh->verror(ErrorHandler::ERR_ERROR, String(), buf, val);
+	errh->vxmessage(ErrorHandler::e_error, buf, val);
 	va_end(val);
     }
     return false;
@@ -109,44 +109,44 @@ MultipleMasterSpace::check(ErrorHandler *errh)
 {
     if (_ok)
 	return true;
-  
+
     if (_nmasters <= 0 || _nmasters > 16)
 	return error(errh, "number of masters must be between 1 and 16");
     if (_naxes <= 0 || _naxes > 4)
 	return error(errh, "number of axes must be between 1 and 4");
-  
+
     if (_master_positions.size() != _nmasters)
 	return error(errh, "bad BlendDesignPositions");
     for (int i = 0; i < _nmasters; i++)
 	if (_master_positions[i].size() != _naxes)
 	    return error(errh, "inconsistent BlendDesignPositions");
-  
+
     if (_normalize_in.size() != _naxes || _normalize_out.size() != _naxes)
 	return error(errh, "bad BlendDesignMap");
     for (int i = 0; i < _naxes; i++)
 	if (_normalize_in[i].size() != _normalize_out[i].size())
 	    return error(errh, "bad BlendDesignMap");
-  
+
     if (!_axis_types.size())
 	_axis_types.assign(_naxes, PermString());
     if (_axis_types.size() != _naxes)
 	return error(errh, "bad BlendAxisTypes");
-  
+
     if (!_axis_labels.size())
 	_axis_labels.assign(_naxes, PermString());
     if (_axis_labels.size() != _naxes)
 	return error(errh, "bad axis labels");
-  
+
     if (!_default_design_vector.size())
 	_default_design_vector.assign(_naxes, UNKDOUBLE);
     if (_default_design_vector.size() != _naxes)
 	return error(errh, "inconsistent design vector");
-  
+
     if (!_default_weight_vector.size())
 	_default_weight_vector.assign(_nmasters, UNKDOUBLE);
     if (_default_weight_vector.size() != _nmasters)
 	return error(errh, "inconsistent weight vector");
-  
+
     _ok = true;
     return true;
 }
@@ -156,7 +156,7 @@ MultipleMasterSpace::check_intermediate(ErrorHandler *errh)
 {
     if (!_ok || _cdv)
 	return true;
-  
+
     for (int a = 0; a < _naxes; a++)
 	for (int m = 0; m < _nmasters; m++)
 	    if (_master_positions[m][a] != 0 && _master_positions[m][a] != 1) {
@@ -204,7 +204,7 @@ MultipleMasterSpace::set_design(NumVector &design_vector, int ax, double value,
 {
     if (ax < 0 || ax >= _naxes)
 	return error(errh, " has only %d axes", _naxes);
-  
+
     if (value < axis_low(ax)) {
 	value = axis_low(ax);
 	if (errh)
@@ -217,7 +217,7 @@ MultipleMasterSpace::set_design(NumVector &design_vector, int ax, double value,
 	    errh->warning("lowering %s's %s to %g", _font_name.c_str(),
 			  _axis_types[ax].c_str(), value);
     }
-  
+
     design_vector[ax] = value;
     return true;
 }
@@ -239,29 +239,29 @@ MultipleMasterSpace::normalize_vector(ErrorHandler *errh) const
 {
     NumVector &design = *_design_vector;
     NumVector &norm_design = *_norm_design_vector;
-  
+
     for (int a = 0; a < _naxes; a++)
 	if (!KNOWN(design[a])) {
 	    if (errh)
 		errh->error("must specify %s's %s coordinate", _font_name.c_str(), _axis_types[a].c_str());
 	    return false;
 	}
-  
+
     // Move to normalized design coordinates.
     norm_design.assign(_naxes, UNKDOUBLE);
-  
+
     if (_ndv) {
 	CharstringInterp ai;
 	if (!ai.interpret(this, &_ndv))
 	    return error(errh, "%s in NDV program", ai.error_string().c_str());
-    
+
     } else
 	for (int a = 0; a < _naxes; a++) {
 	    double d = design[a];
 	    double nd = UNKDOUBLE;
 	    const Vector<double> &norm_in = _normalize_in[a];
 	    const Vector<double> &norm_out = _normalize_out[a];
-      
+
 	    if (d < norm_in[0])
 		nd = norm_out[0];
 	    for (int i = 1; i < norm_in.size(); i++)
@@ -274,15 +274,15 @@ MultipleMasterSpace::normalize_vector(ErrorHandler *errh) const
 		}
 	    if (d >= norm_in.back())
 		nd = norm_out.back();
-      
+
 	  done:
 	    norm_design[a] = nd;
 	}
-  
+
     for (int a = 0; a < _naxes; a++)
 	if (!KNOWN(norm_design[a]))
 	    return error(errh, "bad normalization");
-  
+
     return true;
 }
 
@@ -292,14 +292,14 @@ MultipleMasterSpace::convert_vector(ErrorHandler *errh) const
 {
     NumVector &norm_design = *_norm_design_vector;
     NumVector &weight = *_weight_vector;
-  
+
     weight.assign(_nmasters, 1);
-  
+
     if (_cdv) {
 	CharstringInterp ai;
 	if (!ai.interpret(this, &_cdv))
 	    return error(errh, "%s in CDV program", ai.error_string().c_str());
-    
+
     } else
 	for (int a = 0; a < _naxes; a++)
 	    for (int m = 0; m < _nmasters; m++) {
@@ -310,7 +310,7 @@ MultipleMasterSpace::convert_vector(ErrorHandler *errh) const
 		else
 		    return error(errh, " requires intermediate master conversion programs");
 	    }
-  
+
     return true;
 }
 
@@ -322,14 +322,14 @@ MultipleMasterSpace::design_to_norm_design(const NumVector &design_in,
 {
     NumVector design(design_in);
     NumVector weight;
-  
+
     _design_vector = &design;
     _norm_design_vector = &norm_design;
     _weight_vector = &weight;
     if (!normalize_vector(errh))
 	return false;
     _design_vector = _norm_design_vector = _weight_vector = 0;
-  
+
     return true;
 }
 
@@ -339,12 +339,12 @@ MultipleMasterSpace::design_to_weight(const NumVector &design_in, NumVector &wei
 {
     NumVector design(design_in);
     NumVector norm_design;
-  
+
     bool dirty = false;
     for (int i = 0; i < _naxes; i++)
 	if (design[i] != _default_design_vector[i])
 	    dirty = true;
-  
+
     if (dirty) {
 	_design_vector = &design;
 	_norm_design_vector = &norm_design;
@@ -356,7 +356,7 @@ MultipleMasterSpace::design_to_weight(const NumVector &design_in, NumVector &wei
 	_design_vector = _norm_design_vector = _weight_vector = 0;
     } else
 	weight = _default_weight_vector;
-  
+
     double sum = 0;
     for (int m = 0; m < _nmasters; m++)
 	sum += weight[m];
@@ -371,7 +371,7 @@ MultipleMasterSpace::design_to_weight(const NumVector &design_in, NumVector &wei
 	sum += weight[m];
     }
     weight[_nmasters - 1] = 1 - sum;
-    
+
     return true;
 }
 

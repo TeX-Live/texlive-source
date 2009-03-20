@@ -36,15 +36,15 @@ class DvipsEncoding { public:
     int parse_unicoding(const String &unicoding_text, int override, ErrorHandler *);
 
     bool file_had_ligkern() const		{ return _file_had_ligkern; }
-    
+
     // also modifies 'this':
     void make_metrics(Metrics &, const FontInfo &, Secondary *, bool literal, ErrorHandler *);
     void make_base_mappings(Vector<int> &mappings, const FontInfo &);
-    
+
     void apply_ligkern_lig(Metrics &, ErrorHandler *) const;
     void apply_ligkern_kern(Metrics &, ErrorHandler *) const;
     void apply_position(Metrics &, ErrorHandler *) const;
-    
+
     enum { JT_KERN = 32, JT_LIG = 64, JT_ADDLIG = 128, JT_LIGALL = 199,
 	   JL_LIG = JT_LIG | JT_ADDLIG, JL_CLIG = JL_LIG | 1,
 	   JL_CLIG_S = JL_LIG | 2, JL_LIGC = JL_LIG | 3,
@@ -52,7 +52,7 @@ class DvipsEncoding { public:
 	   JL_CLIGC_S = JL_LIG | 6, JL_CLIGC_SS = JL_LIG | 7,
 	   JT_NOLIGKERN = JT_KERN | JT_LIG,
 	   J_ALL = 0x7FFFFFFF }; // also see nokern_names in dvipsencoding.cc
-    
+
   private:
 
     struct Ligature {
@@ -73,6 +73,7 @@ class DvipsEncoding { public:
 
     String _name;
     String _filename;
+    String _printable_filename;
     String _coding_scheme;
     String _initial_comment;
     String _final_text;
@@ -95,9 +96,10 @@ class DvipsEncoding { public:
     int parse_words(const String &, int override, int wt, ErrorHandler *);
     void bad_codepoint(int, Metrics &, Vector<String> &);
     bool x_unicodes(PermString chname, Vector<uint32_t> &unicodes) const;
-    
+    String landmark(int line) const;
+
     static PermString dot_notdef;
-    
+
     friend inline bool operator==(const Ligature&, const Ligature&);
 
 };

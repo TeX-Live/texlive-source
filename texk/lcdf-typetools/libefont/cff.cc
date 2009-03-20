@@ -332,7 +332,7 @@ default_dict()
     static Cff *cff;
     static Cff::Font *cfffont;
     if (!cfffont) {
-	cff = new Cff(String::stable_string((const char *) default_dict_cff_data, sizeof(default_dict_cff_data)), ErrorHandler::default_handler());
+	cff = new Cff(String::make_stable((const char *) default_dict_cff_data, sizeof(default_dict_cff_data)), ErrorHandler::default_handler());
 	cfffont = (Cff::Font *) cff->font();
     }
     return cfffont->top_dict();
@@ -349,7 +349,7 @@ Cff::Cff(const String &s, ErrorHandler *errh)
     static_assert((sizeof(standard_strings) / sizeof(standard_strings[0])) == NSTANDARD_STRINGS);
     static_assert((sizeof(standard_encoding) / sizeof(standard_encoding[0])) == 256);
     static_assert((sizeof(expert_encoding) / sizeof(expert_encoding[0])) == 256);
-    _error = parse_header(errh ? errh : ErrorHandler::ignore_handler());
+    _error = parse_header(errh ? errh : ErrorHandler::silent_handler());
 }
 
 Cff::~Cff()
@@ -417,7 +417,7 @@ Cff::parse_header(ErrorHandler *errh)
     if (_gsubrs_index.error() < 0)
 	return _gsubrs_index.error();
     _gsubrs_cs.assign(ngsubrs(), 0);
-    
+
     return 0;
 }
 
@@ -426,7 +426,7 @@ Cff::sid(PermString s)
 {
     if (!s)			// XXX?
 	return -1;
-    
+
     // check standard strings
     if (standard_permstrings_map["a"] < 0)
 	for (int i = 0; i < NSTANDARD_STRINGS; i++) {
@@ -519,7 +519,7 @@ Cff::FontParent *
 Cff::font(PermString font_name, ErrorHandler *errh)
 {
     if (!errh)
-	errh = ErrorHandler::ignore_handler();
+	errh = ErrorHandler::silent_handler();
 
     if (!ok())
 	return errh->error("invalid CFF"), (FontParent *) 0;
@@ -590,10 +590,10 @@ void
 Cff::Charset::assign(const Cff *cff, int pos, int nglyphs, int max_sid, ErrorHandler *errh)
 {
     if (!errh)
-	errh = ErrorHandler::ignore_handler();
-    
+	errh = ErrorHandler::silent_handler();
+
     _sids.reserve(nglyphs);
-    
+
     if (pos == 0)
 	assign(iso_adobe_charset, sizeof(iso_adobe_charset) / sizeof(int), nglyphs);
     else if (pos == 1)
@@ -629,7 +629,7 @@ Cff::Charset::parse(const Cff *cff, int pos, int nglyphs, int max_sid, ErrorHand
 {
     const uint8_t *data = cff->data();
     int len = cff->length();
-    
+
     if (pos + 1 > len)
 	return errh->error("charset position out of range"), -EFAULT;
 
@@ -647,7 +647,7 @@ Cff::Charset::parse(const Cff *cff, int pos, int nglyphs, int max_sid, ErrorHand
 		actual_max_sid = sid;
 	    _sids.push_back(sid);
 	}
-	
+
     } else if (format == 1) {
 	const uint8_t *p = data + pos + 1;
 	for (; _sids.size() < nglyphs; p += 3) {
@@ -673,7 +673,7 @@ Cff::Charset::parse(const Cff *cff, int pos, int nglyphs, int max_sid, ErrorHand
 	    for (int i = 0; i <= n; i++)
 		_sids.push_back(sid + i);
 	}
-	
+
     } else
 	return errh->error("unknown charset format %d", format), -EINVAL;
 
@@ -693,7 +693,7 @@ void
 Cff::FDSelect::assign(const Cff *cff, int pos, int nglyphs, ErrorHandler *errh)
 {
     if (!errh)
-	errh = ErrorHandler::ignore_handler();
+	errh = ErrorHandler::silent_handler();
     if (_my_fds)
 	delete[] _fds;
     _fds = 0;
@@ -713,7 +713,7 @@ Cff::FDSelect::parse(const Cff *cff, int pos, int nglyphs, ErrorHandler *errh)
 {
     const uint8_t *data = cff->data();
     int len = cff->length();
-    
+
     if (pos + 1 > len)
 	return errh->error("FDSelect position out of range"), -EFAULT;
 
@@ -724,7 +724,7 @@ Cff::FDSelect::parse(const Cff *cff, int pos, int nglyphs, ErrorHandler *errh)
 	_fds = data + pos + 1;
 	_my_fds = false;
 	return 0;
-	
+
     } else if (format == 3) {
 	int nranges = (data[pos+1] << 8) | data[pos+2];
 	if (pos + 3 + 3*nranges + 2 > len)
@@ -734,7 +734,7 @@ Cff::FDSelect::parse(const Cff *cff, int pos, int nglyphs, ErrorHandler *errh)
 	int last_glyph = (p[3*nranges] << 8) | p[3*nranges + 1];
 	if (p[0] || p[1] || last_glyph != nglyphs)
 	    return errh->error("FDSelect [format 3] bad values"), -EINVAL;
-	
+
 	_fds = new uint8_t[nglyphs];
 	_my_fds = true;
 	int curglyph = 0;
@@ -746,7 +746,7 @@ Cff::FDSelect::parse(const Cff *cff, int pos, int nglyphs, ErrorHandler *errh)
 	    curglyph = nextglyph;
 	}
 	return 0;
-	
+
     } else
 	return errh->error("unknown charset format %d", format), -EINVAL;
 }
@@ -760,8 +760,8 @@ Cff::IndexIterator::IndexIterator(const uint8_t *data, int pos, int len, ErrorHa
     : _contents(0), _offset(0), _last_offset(0)
 {
     if (!errh)
-	errh = ErrorHandler::ignore_handler();
-    
+	errh = ErrorHandler::silent_handler();
+
     // check header
     int nitems = 0;
     if (POS_GT(pos + 2, len)) {
@@ -846,17 +846,17 @@ Cff::Dict::assign(Cff *cff, int pos, int dict_len, ErrorHandler *errh, const cha
     _operators.clear();
     _pointers.clear();
     _operands.clear();
-    
+
     if (!errh)
-	errh = ErrorHandler::ignore_handler();
-    
+	errh = ErrorHandler::silent_handler();
+
     const uint8_t *data = cff->data() + pos;
     const uint8_t *end_data = data + dict_len;
-    
+
     _pointers.push_back(0);
     while (data < end_data)
 	switch (data[0]) {
-	    
+
 	  case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
 	  case 8: case 9: case 10: case 11: case 13: case 14: case 15:
 	  case 16: case 17: case 18: case 19: case 20: case 21:
@@ -864,12 +864,12 @@ Cff::Dict::assign(Cff *cff, int pos, int dict_len, ErrorHandler *errh, const cha
 	    _pointers.push_back(_operands.size());
 	    data++;
 	    break;
-	    
+
 	  case 22: case 23: case 24: case 25: case 26: case 27: case 31:
 	  case 255:		// reserved
 	    errh->error("%s: reserved operator %d", dict_name, data[0]);
 	    return (_error = -ERANGE);
-	    
+
 	  case 12:
 	    if (data + 1 >= end_data)
 		goto runoff;
@@ -943,7 +943,7 @@ Cff::Dict::assign(Cff *cff, int pos, int dict_len, ErrorHandler *errh, const cha
 	      data++;
 	      break;
 	  }
-	    
+
 	  case 247: case 248: case 249: case 250: {
 	      if (data + 1 >= end_data)
 		  goto runoff;
@@ -952,7 +952,7 @@ Cff::Dict::assign(Cff *cff, int pos, int dict_len, ErrorHandler *errh, const cha
 	      data += 2;
 	      break;
 	  }
-	    
+
 	  case 251: case 252: case 253: case 254: {
 	      if (data + 1 >= end_data)
 		  goto runoff;
@@ -980,7 +980,7 @@ Cff::Dict::assign(Cff *cff, int pos, int dict_len, ErrorHandler *errh, const cha
   runoff:
     errh->error("%s: runoff end of DICT", dict_name);
     return (_error = -EFAULT);
-    
+
   invalid:
     return (_error = -EINVAL);
 }
@@ -989,12 +989,12 @@ int
 Cff::Dict::check(bool is_private, ErrorHandler *errh, const char *dict_name) const
 {
     if (!errh)
-	errh = ErrorHandler::ignore_handler();
+	errh = ErrorHandler::silent_handler();
     int before_nerrors = errh->nerrors();
 
     // keep track of operator reuse
     Vector<int> operators_used;
-    
+
     for (int i = 0; i < _operators.size(); i++) {
 	int arity = _pointers[i+1] - _pointers[i];
 	double num = (arity == 0 ? 0 : _operands[_pointers[i]]);
@@ -1008,22 +1008,22 @@ Cff::Dict::check(bool is_private, ErrorHandler *errh, const char *dict_name) con
 	if (operators_used[op] && (type & tTypeMask) != tNone)
 	    errh->error("%s: operator '%s' specified twice", dict_name, operator_names[op]);
 	operators_used[op]++;
-	
+
 	// check data
 	switch (type & tTypeMask) {
-	    
+
 	  case tNone:
 	    if (op >= 32)
 		errh->warning("%s: unknown operator '12 %d'", dict_name, op - 32);
 	    else
 		errh->warning("%s: unknown operator '%d'", dict_name, op);
 	    continue;
-	    
+
 	  case tSID:
 	    if (arity != 1 || num != truncnum || num < 0 || num > _cff->max_sid())
 		goto bad_data;
 	    break;
-	    
+
 	  case tFontNumber:
 	    if (arity != 1 || num != truncnum || num < 0 || num >= _cff->nfonts())
 		goto bad_data;
@@ -1035,17 +1035,17 @@ Cff::Dict::check(bool is_private, ErrorHandler *errh, const char *dict_name) con
 	    else if (num != 0 && num != 1)
 		errh->warning("%s: data for Boolean operator '%s' not 0 or 1", dict_name, operator_names[op]);
 	    break;
-	    
+
 	  case tNumber:
 	    if (arity != 1)
 		goto bad_data;
 	    break;
-	    
+
 	  case tOffset:
 	    if (arity != 1 || num != truncnum || num < 0 || num >= _cff->length())
 		goto bad_data;
 	    break;
-	    
+
 	  case tLocalOffset:
 	    if (arity != 1 || num != truncnum || _pos + num < 0 || _pos + num >= _cff->length())
 		goto bad_data;
@@ -1059,7 +1059,7 @@ Cff::Dict::check(bool is_private, ErrorHandler *errh, const char *dict_name) con
 		  goto bad_data;
 	      break;
 	  }
-	    
+
 	  case tArray2: case tArray3: case tArray4:
 	  case tArray5: case tArray6:
 	    if (arity != (type & tTypeMask) - tArray2 + 2)
@@ -1068,13 +1068,13 @@ Cff::Dict::check(bool is_private, ErrorHandler *errh, const char *dict_name) con
 
 	  case tArray:
 	    break;
-	    
+
 	}
 
 	// check dict location
 	if (((type & tPrivate) != 0) != is_private)
 	    errh->warning("%s: operator '%s' in wrong DICT", dict_name, operator_names[op]);
-	
+
 	continue;
 
       bad_data:
@@ -1198,7 +1198,7 @@ handle_private(Cff *cff, const Cff::Dict &top_dict, Cff::Dict &private_dict,
     subrs_cs.assign(subrs_index.nitems(), 0);
     return 0;
 }
-	       
+
 
 Cff::FontParent::FontParent(Cff *cff)
     : _cff(cff), _error(-1)
@@ -1285,7 +1285,7 @@ Cff::Font::parse_encoding(int pos, ErrorHandler *errh)
     _encoding_pos = pos;
     for (int i = 0; i < 256; i++)
 	_encoding[i] = 0;
-    
+
     // check for standard encodings
     if (pos == 0)
 	return assign_standard_encoding(standard_encoding);
@@ -1314,7 +1314,7 @@ Cff::Font::parse_encoding(int pos, ErrorHandler *errh)
 		retval = 1;
 	    _encoding[e] = g;
 	}
-	
+
     } else if (format == 1) {
 	endpos = pos + 2 + data[pos + 1] * 2;
 	if (endpos > len)
@@ -1336,7 +1336,7 @@ Cff::Font::parse_encoding(int pos, ErrorHandler *errh)
 
     if (g > _charset.nglyphs())
 	return errh->error("Encoding glyph %d out of range", g), -EINVAL;
-    
+
     // check supplements
     if (supplemented) {
 	if (endpos + data[endpos] * 3 > len)
@@ -1414,7 +1414,7 @@ Cff::Font::glyph(PermString name) const
 	return 0;
     if (!_charstrings_cs[gid])
 	_charstrings_cs[gid] = charstring(_charstrings_index, gid);
-    return _charstrings_cs[gid];	
+    return _charstrings_cs[gid];
 }
 
 int
@@ -1471,7 +1471,7 @@ Cff::CIDFont::CIDFont(Cff *cff, PermString font_name, const Dict &top_dict, Erro
     : FontParent(cff), _font_name(font_name), _top_dict(top_dict)
 {
     assert(_top_dict.has_first(oROS));
-    
+
     // parse top DICT
     _error = -EINVAL;
     if (_top_dict.check(false, errh, "Top DICT") < 0)
@@ -1488,7 +1488,7 @@ Cff::CIDFont::CIDFont(Cff *cff, PermString font_name, const Dict &top_dict, Erro
 	errh->error("unknown CharString type %d", _charstring_type);
 	return;
     }
-    
+
     int charstrings_offset = 0;
     _top_dict.value(oCharStrings, &charstrings_offset);
     _charstrings_index = Cff::IndexIterator(cff->data(), charstrings_offset, cff->length(), errh, "CharStrings INDEX");
@@ -1618,7 +1618,7 @@ Cff::ChildFont::ChildFont(Cff *cff, Cff::CIDFont *parent, int charstring_type, c
     : FontParent(cff), _parent(parent), _top_dict(top_dict)
 {
     if (!errh)
-	errh = ErrorHandler::ignore_handler();
+	errh = ErrorHandler::silent_handler();
 
     if (!cff->ok() || !_top_dict.ok()) {
 	errh->error("invalid CFF");
@@ -1633,7 +1633,7 @@ Cff::ChildFont::ChildFont(Cff *cff, Cff::CIDFont *parent, int charstring_type, c
 	errh->error("unknown CharString type %d", _charstring_type);
 	return;
     }
-    
+
     // extract information from Private DICT
     if (_top_dict.has(oPrivate)
 	&& (_error = handle_private(cff, _top_dict, _private_dict, _default_width_x, _nominal_width_x, _subrs_index, _subrs_cs, errh)) < 0)

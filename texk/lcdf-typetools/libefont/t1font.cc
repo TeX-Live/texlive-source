@@ -2,7 +2,7 @@
 
 /* t1font.{cc,hh} -- Type 1 font
  *
- * Copyright (c) 1998-2006 Eddie Kohler
+ * Copyright (c) 1998-2008 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -123,20 +123,20 @@ Type1Font::read(Type1Reader &reader)
     int lenIV = 4;
     Type1SubrGroupItem *cur_group = 0;
     int cur_group_count = 0;
-  
+
     StringAccum accum;
     while (reader.next_line(accum)) {
-    
+
 	// check for NULL STRING
 	int x_length = accum.length();
 	if (!x_length)
 	    continue;
 	const char *x = accum.c_str(); // ensure we don't run off the string
-    
+
 	// check for CHARSTRINGS
 	if (reader.was_charstring()) {
 	    Type1Subr *fcs = Type1Subr::make(x, x_length, reader.charstring_start(), reader.charstring_length(), lenIV);
-      
+
 	    if (fcs->is_subr()) {
 		if (fcs->subrno() >= _subrs.size())
 		    _subrs.resize(fcs->subrno() + 30, (Type1Subr *)0);
@@ -151,7 +151,7 @@ Type1Font::read(Type1Reader &reader)
 		    }
 		    have_subrs = true;
 		}
-	
+
 	    } else {
 		add_glyph(fcs);
 		if (!have_charstrings && _items.size()) {
@@ -165,17 +165,17 @@ Type1Font::read(Type1Reader &reader)
 		    have_charstrings = true;
 		}
 	    }
-      
+
 	    accum.clear();
 	    continue;
 	}
-    
+
 	// check for COMMENTS
 	if (x[0] == '%') {
 	    add_item(new Type1CopyItem(accum.take_string()));
 	    continue;
 	}
-    
+
 	// check for CHARSTRING START
 	// 5/29/1999: beware of charstring start-like things that don't have
 	// `readstring' in them!
@@ -195,14 +195,14 @@ Type1Font::read(Type1Reader &reader)
 		continue;
 	    }
 	}
-    
+
 	// check for ENCODING
 	if (!_encoding && strncmp(x, "/Encoding ", 10) == 0) {
 	    read_encoding(reader, x + 10);
 	    accum.clear();
 	    continue;
 	}
-    
+
 	// check for a DEFINITION
 	if (x[0] == '/') {
 	  definition_succeed:
@@ -221,9 +221,9 @@ Type1Font::read(Type1Reader &reader)
 	    if (y[0] == '/')
 		goto definition_succeed;
 	}
-    
+
       definition_fail:
-    
+
 	// check for ZEROS special case
 	if (eexec_state == 2) {
 	    // In eexec_state 2 (right after turning off eexec), the opening
@@ -232,7 +232,7 @@ Type1Font::read(Type1Reader &reader)
 	    int zeros = 0;
 	    while (x[zeros] == 0 && x_length > 0)
 		zeros++, x_length--;
-	    add_item(new Type1CopyItem(String::fill_string('0', zeros * 2 + x_length)));
+	    add_item(new Type1CopyItem(String::make_fill('0', zeros * 2 + x_length)));
 	    eexec_state = 3;
 	    accum.clear();
 	    continue;
@@ -311,6 +311,18 @@ Type1Font::ok() const
     return font_name() && _glyphs.size() > 0;
 }
 
+static char *skip_comment_space(char *s)
+{
+    while (1) {
+	if (isspace((unsigned char) *s))
+	    ++s;
+	else if (*s == '%') {
+	    for (++s; *s != '\r' && *s != '\n' && *s != '\0'; ++s)
+		/* nada */;
+	} else
+	    return s;
+    }
+}
 
 void
 Type1Font::read_encoding(Type1Reader &reader, const char *first_line)
@@ -323,18 +335,18 @@ Type1Font::read_encoding(Type1Reader &reader, const char *first_line)
     }
 
     add_type1_encoding(new Type1Encoding);
-  
+
     bool got_any = false;
     StringAccum accum;
-    
+
     while (reader.next_line(accum)) {
-    
+
 	// check for NULL STRING
 	if (!accum.length())
 	    continue;
 	accum.append('\0');		// ensure we don't run off the string
 	char *pos = accum.data();
-    
+
 	// skip to first `dup' token
 	if (!got_any) {
 	    if (!(pos = strstr(pos, "dup"))) {
@@ -342,31 +354,39 @@ Type1Font::read_encoding(Type1Reader &reader, const char *first_line)
 		goto check_done;
 	    }
 	}
-    
+
 	// parse as many `dup INDEX */CHARNAME put' as there are in the line
 	while (1) {
 	    // skip spaces, look for `dup '
 	    while (isspace((unsigned char) pos[0]))
-		pos++;
+		++pos;
+	    if (pos[0] == '%')
+		pos = skip_comment_space(pos);
 	    if (pos[0] != 'd' || pos[1] != 'u' || pos[2] != 'p' || !isspace((unsigned char) pos[3]))
 		break;
-      
+
 	    // look for `INDEX */'
 	    char *scan;
 	    int char_value = strtol(pos + 4, &scan, 10);
-	    while (scan[0] == ' ') scan++;
+	    if (scan[0] == '#' && char_value > 0 && char_value < 37
+		&& isalnum((unsigned char) scan[1]))
+		char_value = strtol(scan + 1, &scan, char_value);
+	    while (isspace((unsigned char) scan[0]))
+		scan++;
 	    if (char_value < 0 || char_value >= 256 || scan[0] != '/')
 		break;
-      
+
 	    // look for `CHARNAME put'
 	    scan++;
 	    char *name_pos = scan;
-	    while (scan[0] != ' ' && scan[0]) scan++;
+	    while (!isspace((unsigned char) scan[0]) && scan[0] != '\0')
+		++scan;
 	    char *name_end = scan;
-	    while (scan[0] == ' ') scan++;
+	    while (isspace((unsigned char) scan[0]))
+		++scan;
 	    if (scan[0] != 'p' || scan[1] != 'u' || scan[2] != 't')
 		break;
-      
+
 	    _encoding->put(char_value, PermString(name_pos, name_end - name_pos));
 	    got_any = true;
 	    pos = scan + 3;
@@ -482,10 +502,10 @@ Type1Font::undo_synthetic()
     // A synthetic font doesn't share arbitrary code with its base font; it
     // shares just the CharStrings dictionary, according to Adobe Type 1 Font
     // Format. We take advantage of this.
-  
+
     if (!_synthetic_item)
 	return;
-  
+
     int mod_ii;
     for (mod_ii = nitems() - 1; mod_ii >= 0; mod_ii--)
 	if (_items[mod_ii] == _synthetic_item)
@@ -515,7 +535,7 @@ Type1Font::undo_synthetic()
 	}
 
     assert(oth_glyphs != 0);
-  
+
     for (int i = nitems() - 1; i >= 0; i--)
 	if (Type1SubrGroupItem *subr_grp = _items[i]->cast_subr_group()) {
 	    assert(subr_grp->is_subrs());
@@ -588,7 +608,7 @@ Type1Font::set_subr(int e, const Type1Charstring &t1cs, PermString definer)
 	    return false;
 	definer = pattern_subr->definer();
     }
-    
+
     delete _subrs[e];
     _subrs[e] = Type1Subr::make_subr(e, t1cs, definer);
     return true;
@@ -611,7 +631,7 @@ Type1Font::fill_in_subrs()
 	_subrs.pop_back();
     for (int i = 0; i < _subrs.size(); i++)
 	if (!_subrs[i])
-	    set_subr(i, Type1Charstring(String::stable_string("\013", 1)));
+	    set_subr(i, Type1Charstring(String::make_stable("\013", 1)));
 }
 
 void
@@ -639,16 +659,16 @@ Type1Font::shift_indices(int move_index, int delta)
 	_items.resize(_items.size() + delta, (Type1Item *)0);
 	memmove(&_items[move_index + delta], &_items[move_index],
 		sizeof(Type1Item *) * (_items.size() - move_index - delta));
-    
+
 	for (int i = dFont; i < dLast; i++)
 	    if (_index[i] > move_index)
 		_index[i] += delta;
-    
+
     } else {
 	memmove(&_items[move_index], &_items[move_index - delta],
 		sizeof(Type1Item *) * (_items.size() - (move_index - delta)));
 	_items.resize(_items.size() + delta);
-    
+
 	for (int i = dFont; i < dLast; i++)
 	    if (_index[i] >= move_index) {
 		if (_index[i] < move_index - delta)
@@ -776,15 +796,15 @@ Type1Font::write(Type1Writer &w)
 	lenIV_def->value_int(lenIV);
     w.set_charstring_start(_charstring_definer);
     w.set_lenIV(lenIV);
-  
+
     // change dict sizes
     for (int i = dF; i < dLast; i++)
 	set_dict_size(i, _dict[i].size() + _dict_deltas[i]);
     // XXX what if dict had nothing, but now has something?
-  
+
     for (int i = 0; i < _items.size(); i++)
 	_items[i]->gen(w);
-  
+
     w.flush();
 }
 
@@ -818,7 +838,7 @@ Type1Font::create_mmspace(ErrorHandler *errh) const
     t1d = fi_dict("BlendDesignPositions");
     if (!t1d || !t1d->value_numvec_vec(master_positions))
 	return 0;
-  
+
     int nmasters = master_positions.size();
     if (nmasters <= 0) {
 	errh->error("bad BlendDesignPositions");
@@ -827,18 +847,18 @@ Type1Font::create_mmspace(ErrorHandler *errh) const
     int naxes = master_positions[0].size();
     _mmspace = new MultipleMasterSpace(font_name(), naxes, nmasters);
     _mmspace->set_master_positions(master_positions);
-  
+
     Vector< Vector<double> > normalize_in, normalize_out;
     t1d = fi_dict("BlendDesignMap");
     if (t1d && t1d->value_normalize(normalize_in, normalize_out))
 	_mmspace->set_normalize(normalize_in, normalize_out);
-  
+
     Vector<PermString> axis_types;
     t1d = fi_dict("BlendAxisTypes");
     if (t1d && t1d->value_namevec(axis_types) && axis_types.size() == naxes)
 	for (int a = 0; a < naxes; a++)
 	    _mmspace->set_axis_type(a, axis_types[a]);
-  
+
     int ndv, cdv;
     Type1Charstring *cs;
     t1d = p_dict("NDV");
@@ -847,17 +867,17 @@ Type1Font::create_mmspace(ErrorHandler *errh) const
     t1d = p_dict("CDV");
     if (t1d && t1d->value_int(cdv) && (cs = subr(cdv)))
 	_mmspace->set_cdv(*cs);
-  
+
     Vector<double> design_vector;
     t1d = dict("DesignVector");
     if (t1d && t1d->value_numvec(design_vector))
 	_mmspace->set_design_vector(design_vector);
-  
+
     Vector<double> weight_vector;
     t1d = dict("WeightVector");
     if (t1d && t1d->value_numvec(weight_vector))
 	_mmspace->set_weight_vector(weight_vector);
-  
+
     if (!_mmspace->check(errh)) {
 	delete _mmspace;
 	_mmspace = 0;

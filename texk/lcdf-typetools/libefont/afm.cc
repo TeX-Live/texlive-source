@@ -29,7 +29,7 @@ AfmReader::AfmReader(AfmParser &parser, Metrics *afm, AfmMetricsXt *afm_xt,
     : _afm(afm), _afm_xt(afm_xt), _l(parser),
       _composite_warned(false), _metrics_sets_warned(false), _y_width_warned(0)
 {
-    _errh = errh ? errh : ErrorHandler::ignore_handler();
+    _errh = errh ? errh : ErrorHandler::silent_handler();
 }
 
 Metrics *
@@ -38,12 +38,12 @@ AfmReader::read(Slurper &slurp, ErrorHandler *errh)
     AfmParser p(slurp);
     if (!p.ok())
 	return 0;
-  
+
     Metrics *afm = new Metrics;
     AfmMetricsXt *afm_xt = new AfmMetricsXt;
     afm->add_xt(afm_xt);
     AfmReader reader(p, afm, afm_xt, errh);
-  
+
     if (!reader.read()) {
 	delete afm;
 	return 0;
@@ -64,7 +64,7 @@ AfmReader::lwarning(const char *format, ...) const
 {
     va_list val;
     va_start(val, format);
-    _errh->verror(ErrorHandler::ERR_WARNING, _l.landmark(), format, val);
+    _errh->vxmessage(_l.landmark(), ErrorHandler::e_warning, format, val);
     va_end(val);
 }
 
@@ -73,7 +73,7 @@ AfmReader::lerror(const char *format, ...) const
 {
     va_list val;
     va_start(val, format);
-    _errh->verror(ErrorHandler::ERR_ERROR, _l.landmark(), format, val);
+    _errh->vxmessage(_l.landmark(), ErrorHandler::e_error, format, val);
     va_end(val);
 }
 
@@ -136,7 +136,7 @@ AfmReader::read()
 {
     AfmParser &l = _l;
     assert(_afm && _afm_xt);
-  
+
     // First, read all opening comments into an array so we can print them out
     // later.
     PermString comment;
@@ -150,22 +150,22 @@ AfmReader::read()
 	    break;
 	}
     }
-  
+
     _afm->set_scale(1000);
     unsigned invalid_lines = 0;
     PermString s;
     bool isbasefont;
     int metrics_sets;
     int direction;
-  
+
     while (l.next_line())
 	switch (l.first()) {
-      
+
 	  case 'A':
 	    if (l.isall("Ascender %g", &fd( fdAscender )))
 		break;
 	    goto invalid;
-      
+
 	  case 'C':
 	    if (l.isall("Characters %d", (int *)0))
 		break;
@@ -178,12 +178,12 @@ AfmReader::read()
 	    if (l.isall("Comment %+s", (PermString *) 0))
 		break;
 	    goto invalid;
-      
+
 	  case 'D':
 	    if (l.isall("Descender %g", &fd( fdDescender )))
 		break;
 	    goto invalid;
-      
+
 	  case 'E':
 	    if (l.isall("EncodingScheme %+s", &_afm_xt->encoding_scheme))
 		break;
@@ -196,7 +196,7 @@ AfmReader::read()
 		break;
 	    }
 	    goto invalid;
-      
+
 	  case 'F':
 	    if (l.isall("FontName %+s", &s)) {
 		_afm->set_font_name(s);
@@ -215,7 +215,7 @@ AfmReader::read()
 			&fd( fdFontBBurx ), &fd( fdFontBBury )))
 		break;
 	    goto invalid;
-      
+
 	  case 'I':
 	    if (l.isall("ItalicAngle %g", &fd( fdItalicAngle )))
 		break;
@@ -231,7 +231,7 @@ AfmReader::read()
 	    if (l.isall("IsFixedPitch %b", (bool *)0))
 		break;
 	    goto invalid;
-      
+
 	  case 'M':
 	    if (l.isall("MappingScheme %d", (int *)0)) {
 		composite_warning();
@@ -243,12 +243,12 @@ AfmReader::read()
 		break;
 	    }
 	    goto invalid;
-      
+
 	  case 'N':
 	    if (l.isall("Notice %+s", &_afm_xt->notice))
 		break;
 	    goto invalid;
-      
+
 	  case 'S':
 	    if (l.isall("StartDirection %d", &direction)) {
 		if (direction != 0)
@@ -274,14 +274,14 @@ AfmReader::read()
 	    if (l.isall("StartFontMetrics %g", (double *)0))
 		break;
 	    goto invalid;
-      
+
 	  case 'U':
 	    if (l.isall("UnderlinePosition %g", &fd( fdUnderlinePosition )))
 		break;
 	    if (l.isall("UnderlineThickness %g", &fd( fdUnderlineThickness )))
 		break;
 	    goto invalid;
-      
+
 	  case 'V':
 	    if (l.isall("Version %+s", &s)) {
 		_afm->set_version(s);
@@ -292,26 +292,26 @@ AfmReader::read()
 		break;
 	    }
 	    goto invalid;
-      
+
 	  case 'W':
 	    if (l.isall("Weight %+s", &s)) {
 		_afm->set_weight(s);
 		break;
 	    }
 	    goto invalid;
-      
+
 	  case 'X':
 	    if (l.isall("XHeight %g", &fd( fdXHeight )))
 		break;
 	    goto invalid;
-      
+
 	  default:
 	  invalid:
 	    invalid_lines++;
 	    no_match_warning();
-      
+
 	}
-  
+
   done:
     if (invalid_lines >= l.lineno() - 10)
 	return false;
@@ -332,33 +332,33 @@ AfmReader::read_char_metric_data() const
     double bllx = UNKDOUBLE, blly = 0, burx = 0, bury = 0;
     PermString n;
     PermString ligright, ligresult;
-  
+
     AfmParser &l = _l;
-  
+
     l.is("C %d ; WX %g ; N %/s ; B %g %g %g %g ;",
 	 &c, &wx, &n, &bllx, &blly, &burx, &bury);
-  
+
     while (l.left()) {
-    
+
 	switch (l.first()) {
-      
+
 	  case 'B':
 	    if (l.is("B %g %g %g %g", &bllx, &blly, &burx, &bury))
 		break;
 	    goto invalid;
-      
+
 	  case 'C':
 	    if (l.is("C %d", &c))
 		break;
 	    if (l.is("CH <%x>", &c))
 		break;
 	    goto invalid;
-      
+
 	  case 'E':
 	    if (l.isall("EndCharMetrics"))
 		return;
 	    goto invalid;
-      
+
 	  case 'L':
 	    if (l.is("L %/s %/s", &ligright, &ligresult)) {
 		if (!n)
@@ -371,12 +371,12 @@ AfmReader::read_char_metric_data() const
 		break;
 	    }
 	    goto invalid;
-      
+
 	  case 'N':
 	    if (l.is("N %/s", &n))
 		break;
 	    goto invalid;
-      
+
 	  case 'W':
 	    if (l.is("WX %g", &wx) ||
 		l.is("W0X %g", &wx))
@@ -394,34 +394,34 @@ AfmReader::read_char_metric_data() const
 		break;
 	    }
 	    goto invalid;
-      
+
 	  default:
 	  invalid:
 	    // always warn about unknown directives here!
 	    no_match_warning("character metrics");
 	    l.skip_until(';');
 	    break;
-      
+
 	}
-    
+
 	l.is(";"); // get rid of any possible semicolon
     }
-  
+
     // create the character
     if (!n)
 	lwarning("character without a name ignored");
     else {
 	if (_afm->find(n) != -1)
 	    lwarning("character %s defined twice", n.c_str());
-    
+
 	GlyphIndex gi = _afm->add_glyph(n);
-    
+
 	_afm->wd(gi) = wx;
 	_afm->lf(gi) = bllx;
 	_afm->rt(gi) = burx;
 	_afm->tp(gi) = bury;
 	_afm->bt(gi) = blly;
-    
+
 	if (c != -1)
 	    _afm->set_code(gi, c);
     }
@@ -432,33 +432,33 @@ void
 AfmReader::read_char_metrics() const
 {
     assert(!ligature_left.size());
-  
+
     while (_l.next_line())
 	// Grok the whole line. Are we on a character metric data line?
 	switch (_l.first()) {
-      
+
 	  case 'C':
-	    if (isspace(_l[1]) || _l[1] == 'H' && isspace(_l[2])) {
+	    if (isspace(_l[1]) || (_l[1] == 'H' && isspace(_l[2]))) {
 		read_char_metric_data();
 		break;
 	    }
 	    if (_l.is("Comment"))
 		break;
 	    goto invalid;
-      
+
 	  case 'E':
 	    if (_l.isall("EndCharMetrics"))
 		goto end_char_metrics;
 	    goto invalid;
-      
+
 	  default:
 	  invalid:
 	    no_match_warning();
-      
+
 	}
-  
+
   end_char_metrics:
-  
+
     for (int i = 0; i < ligature_left.size(); i++) {
 	GlyphIndex leftgi = find_err(ligature_left[i], "ligature");
 	GlyphIndex rightgi = find_err(ligature_right[i], "ligature");
@@ -479,19 +479,19 @@ AfmReader::read_kerns() const
     double kx;
     PermString left, right;
     GlyphIndex leftgi, rightgi;
-  
+
     AfmParser &l = _l;
     // AFM files have reversed pair programs when read.
     _afm->pair_program()->set_reversed(true);
-  
+
     while (l.next_line())
 	switch (l.first()) {
-      
+
 	  case 'C':
 	    if (l.is("Comment"))
 		break;
 	    goto invalid;
-      
+
 	  case 'E':
 	    if (l.isall("EndKernPairs"))
 		break;
@@ -500,7 +500,7 @@ AfmReader::read_kerns() const
 	    if (l.isall("EndTrackKern"))
 		break;
 	    goto invalid;
-      
+
 	  case 'K':
 	    if (l.isall("KPX %/s %/s %g", &left, &right, &kx)) {
 		goto validkern;
@@ -519,7 +519,7 @@ AfmReader::read_kerns() const
 		break;
 	    }
 	    goto invalid;
-      
+
 	  validkern:
 	    leftgi = find_err(left, "kern");
 	    rightgi = find_err(right, "kern");
@@ -529,7 +529,7 @@ AfmReader::read_kerns() const
 		if (_afm->add_kern(leftgi, rightgi, _afm->add_kv(kx)))
 		    lwarning("duplicate kern; first pair ignored");
 	    break;
-      
+
 	  case 'S':
 	    if (l.isall("StartKernPairs %d", (int *)0) ||
 		l.isall("StartKernPairs0 %d", (int *)0))
@@ -541,18 +541,18 @@ AfmReader::read_kerns() const
 	    if (l.isall("StartTrackKern %d", (int *)0))
 		break;
 	    goto invalid;
-      
+
 	  case 'T':
 	    if (l.isall("TrackKern %g %g %g %g %g", (double *)0, (double *)0,
 			(double *)0, (double *)0, (double *)0))
 		break; // FIXME: implement TrackKern
 	    goto invalid;
-      
+
 	  default:
 	  invalid:
 	    no_match_warning();
 	    break;
-      
+
 	}
 }
 
@@ -562,24 +562,24 @@ AfmReader::read_composites() const
 {
     while (_l.next_line())
 	switch (_l.first()) {
-      
+
 	  case 'C':
 	    if (_l.is("Comment"))
 		break;
 	    if (_l.is("CC"))
 		break;
 	    goto invalid;
-      
+
 	  case 'E':
 	    if (_l.isall("EndComposites"))
 		return;
 	    goto invalid;
-      
+
 	  default:
 	  invalid:
 	    no_match_warning();
 	    break;
-      
+
 	}
 }
 

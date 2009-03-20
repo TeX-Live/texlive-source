@@ -17,15 +17,15 @@ class Gpos { public:
 
     int nlookups() const;
     GposLookup lookup(unsigned) const;
-    
+
     enum { HEADERSIZE = 10 };
-    
+
   private:
 
     ScriptList _script_list;
     FeatureList _feature_list;
     Data _lookup_list;
-    
+
 };
 
 class GposLookup { public:
@@ -109,7 +109,7 @@ class Positioning { public:
 
     // single positioning
     inline Positioning(const Position &);
-    
+
     // pair positioning
     inline Positioning(const Position &, const Position &);
 
@@ -127,15 +127,15 @@ class Positioning { public:
     Glyph left_glyph() const		{ return _left.g; }
     const Position &right() const	{ return _right; }
     Glyph right_glyph() const		{ return _right.g; }
-    
+
     void unparse(StringAccum &, const Vector<PermString> * = 0) const;
     String unparse(const Vector<PermString> * = 0) const;
-    
+
   private:
 
     Position _left;
     Position _right;
-    
+
 };
 
 inline int GposValue::size(uint16_t format)

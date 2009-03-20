@@ -60,14 +60,14 @@ Vector<void*>::reserve(int want)
 	want = (_capacity > 0 ? _capacity * 2 : 4);
     if (want <= _capacity)
 	return true;
-  
+
     void **new_l = new void*[want];
     if (!new_l)
 	return false;
-  
+
     memcpy(new_l, _l, sizeof(void*) * _n);
     delete[] _l;
-  
+
     _l = new_l;
     _capacity = want;
     return true;

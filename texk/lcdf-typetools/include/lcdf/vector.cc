@@ -85,17 +85,17 @@ Vector<T>::reserve(int want)
 	want = _capacity > 0 ? _capacity * 2 : 4;
     if (want <= _capacity)
 	return true;
-  
+
     T *new_l = (T *)new unsigned char[sizeof(T) * want];
     if (!new_l)
 	return false;
-  
+
     for (int i = 0; i < _n; i++) {
 	new(velt(new_l, i)) T(_l[i]);
 	_l[i].~T();
     }
     delete[] (unsigned char *)_l;
-  
+
     _l = new_l;
     _capacity = want;
     return true;

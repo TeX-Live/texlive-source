@@ -110,7 +110,7 @@ FontInfo::FontInfo(const Efont::OpenType::Font *otf_, ErrorHandler *errh)
 	if (_nglyphs < 0 && post->ok())
 	    _nglyphs = post->nglyphs();
     }
-    
+
     name = new Efont::OpenType::Name(otf->table("name"), errh);
 }
 
@@ -261,7 +261,7 @@ T1Secondary::char_setting(Vector<Setting> &v, Metrics &metrics, int uni, ...)
 	kerntype = Setting::KERNX;
 	uni = va_arg(val, int);
     }
-    
+
     for (; uni; uni = va_arg(val, int)) {
 	int code = metrics.unicode_encoding(uni);
 	if (code < 0) {
@@ -325,14 +325,14 @@ T1Secondary::dotlessj_font(Metrics &metrics, ErrorHandler *errh, Glyph &dj_glyph
     for (int i = 0; i < metrics.n_mapped_fonts(); i++)
 	if (metrics.mapped_font_name(i) == dj_name)
 	    return i;
-    
+
     if (String filename = installed_type1_dotlessj(_otf_file_name, _finfo.cff->font_name(), (output_flags & G_DOTLESSJ), errh)) {
 
 	// check for special case: "\0" means the font's "j" is already
 	// dotless
 	if (filename == String("\0", 1))
 	    return J_NODOT;
-	
+
 	// open dotless-j font file
 	FILE *f = fopen(filename.c_str(), "rb");
 	if (!f) {
@@ -348,9 +348,9 @@ T1Secondary::dotlessj_font(Metrics &metrics, ErrorHandler *errh, Glyph &dj_glyph
 	    reader = new Efont::Type1PFBReader(f);
 	else
 	    reader = new Efont::Type1PFAReader(f);
-  	Efont::Type1Font *font = new Efont::Type1Font(*reader);
+	Efont::Type1Font *font = new Efont::Type1Font(*reader);
 	delete reader;
-	
+
 	if (!font->ok()) {
 	    errh->error("%s: no glyphs in dotless-J font", filename.c_str());
 	    delete font;
@@ -362,12 +362,12 @@ T1Secondary::dotlessj_font(Metrics &metrics, ErrorHandler *errh, Glyph &dj_glyph
 	font->glyph_names(glyph_names);
 	Vector<PermString>::iterator g = std::find(glyph_names.begin(), glyph_names.end(), "uni0237");
 	if (g == glyph_names.end()) {
-	    errh->error("%s: dotless-J font has no 'uni0237' glyph", filename.c_str());
+	    errh->error("%s: dotless-J font has no %<uni0237%> glyph", filename.c_str());
 	    delete font;
 	    return -1;
 	}
 	dj_glyph = g - glyph_names.begin();
-	
+
 	// create metrics for dotless-J
 	if (install_metrics) {
 	    Metrics dj_metrics(font, 256);
@@ -375,11 +375,11 @@ T1Secondary::dotlessj_font(Metrics &metrics, ErrorHandler *errh, Glyph &dj_glyph
 	    ::dotlessj_file_name = filename;
 	    output_metrics(dj_metrics, font->font_name(), -1, _finfo, String(), String(), dj_name, dotlessj_dvips_include, errh);
 	} else if (verbose)
-	    errh->message("using '%s' for dotless-J font metrics", dj_name.c_str());
-	
+	    errh->message("using %<%s%> for dotless-J font metrics", dj_name.c_str());
+
 	// add font to metrics
 	return metrics.add_mapped_font(font, dj_name);
-	
+
     } else
 	return -1;
 }
@@ -390,9 +390,9 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
     Transform xform;
     int vsize = v.size();
     extern int letterspace;
-    
+
     switch (uni) {
-	
+
       case U_CWM:
       case U_ALTSELECTOR:
 	v.push_back(Setting(Setting::RULE, 0, _xheight));
@@ -506,7 +506,7 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 	    return 1;
 	}
 	break;
-	
+
       case U_BARDBL:
 	if (char_setting(v, metrics, '|', 0)) {
 	    if (!_finfo.is_fixed_pitch()) {
@@ -543,7 +543,7 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 	    return 1;
 	}
 	break;
-	
+
       case U_THREEQUARTERSEMDASH:
 	if (char_setting(v, metrics, U_ENDASH, 0)) {
 	    if (!_finfo.is_fixed_pitch()) {
@@ -554,13 +554,13 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 	    return 1;
 	}
 	break;
-	
+
       case U_CENTIGRADE:
         // TODO: set italic correction to that of a 'C'
 	if (char_setting(v, metrics, U_USE_KERNX, U_DEGREE, 'C', 0))
 	    return 1;
 	break;
-	
+
       case U_INTERROBANG: {
 	  double exclam_offset =
 	      (char_one_bound(_finfo, xform, 4, true, 0, '?', 0)
@@ -612,7 +612,7 @@ T1Secondary::setting(uint32_t uni, Vector<Setting> &v, Metrics &metrics, ErrorHa
 	  }
 	  break;
       }
-	
+
     }
 
     // didn't find a good setting, restore v to pristine state

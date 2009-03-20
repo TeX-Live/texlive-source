@@ -67,7 +67,7 @@ glob_match(const String& str, const String& pattern)
 		      p++;
 		  if (p >= plen) // not a character class at all
 		      goto ordinary;
-	 
+
 		  // parse character class
 		  bool in = false;
 		  for (int i = first; i < p && !in; i++) {
@@ -95,7 +95,7 @@ glob_match(const String& str, const String& pattern)
 		spos++;
 		ppos++;
 		break;
-	
+
 	    }
 
       done:

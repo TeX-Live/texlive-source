@@ -147,22 +147,22 @@ CharstringInterp::vector_command(int cmd)
     CharstringProgram::VectorType which_vector;
     int vectoroff, offset, num, i;
     Vector<double> *v = 0;
-  
+
     switch (cmd) {
-    
+
       case Cs::cPut:
 	CHECK_STACK(2);
 	offset = (int)top(0);
 	vec(&_scratch_vector, offset) = top(1);
 	pop(2);
 	break;
-    
+
       case Cs::cGet:
 	CHECK_STACK(1);
 	offset = (int)top();
 	top() = vec(&_scratch_vector, offset);
 	break;
-    
+
       case Cs::cStore:
 	CHECK_STACK(4);
 	which_vector = (CharstringProgram::VectorType)((int)top(3));
@@ -176,7 +176,7 @@ CharstringInterp::vector_command(int cmd)
 	v = _program->mm_vector(which_vector, true);
 	if (!v)
 	    return error(errVector, cmd);
-    
+
 	for (i = 0; i < num; i++, offset++, vectoroff++)
 	    vec(v, vectoroff) = vec(&_scratch_vector, offset);
 	// erase our weight vector if the global weight vector has changed
@@ -199,16 +199,16 @@ CharstringInterp::vector_command(int cmd)
 	    v = &_weight_vector;
 	if (!v)
 	    return error(errVector, cmd);
-    
+
 	for (i = 0; i < num; i++, offset++)
 	    vec(&_scratch_vector, offset) = vec(v, i);
 	break;
-    
+
       default:
 	return error(errUnimplemented, cmd);
-    
+
     }
-  
+
     return true;
 }
 
@@ -222,10 +222,10 @@ CharstringInterp::blend_command()
     ensure_weight_vector();
     if (!_weight_vector.size())
 	return error(errVector, cmd);
-  
+
     int nmasters = _weight_vector.size();
     CHECK_STACK(nargs * nmasters);
- 
+
     int base = _sp - nargs * nmasters;
     int off = base + nargs;
     for (int j = 0; j < nargs; j++) {
@@ -233,7 +233,7 @@ CharstringInterp::blend_command()
 	for (int i = 1; i < nmasters; i++, off++)
 	    val += _weight_vector.at_u(i) * _s[off];
     }
- 
+
     pop(nargs * (nmasters - 1));
     return true;
 }
@@ -248,18 +248,18 @@ CharstringInterp::roll_command()
     if (n <= 0)
 	return error(errValue, cmd);
     CHECK_STACK(n);
-  
+
     int base = _sp - n;
     while (amount < 0)
 	amount += n;
-  
+
     int i;
     double copy_stack[STACK_SIZE];
     for (i = 0; i < n; i++)
 	copy_stack[i] = _s[ base + (i+amount) % n ];
     for (i = 0; i < n; i++)
 	_s[base + i] = copy_stack[i];
-  
+
     return true;
 }
 
@@ -268,41 +268,41 @@ CharstringInterp::arith_command(int cmd)
 {
     int i;
     double d;
-  
+
     switch (cmd) {
-    
+
       case Cs::cBlend:
 	return blend_command();
-    
+
       case Cs::cAbs:
 	CHECK_STACK(1);
 	if (top() < 0)
 	    top() = -top();
 	break;
-    
+
       case Cs::cAdd:
 	CHECK_STACK(1);
 	d = pop();
 	top() += d;
 	break;
-    
+
       case Cs::cSub:
 	CHECK_STACK(1);
 	d = pop();
 	top() -= d;
 	break;
-    
+
       case Cs::cDiv:
 	CHECK_STACK(2);
 	d = pop();
 	top() /= d;
 	break;
-    
+
       case Cs::cNeg:
 	CHECK_STACK(1);
 	top() = -top();
 	break;
-    
+
       case Cs::cRandom: {
 	  double d;
 	  do {
@@ -311,32 +311,32 @@ CharstringInterp::arith_command(int cmd)
 	  push(d);
 	  break;
       }
-    
+
       case Cs::cMul:
 	CHECK_STACK(2);
 	d = pop();
 	top() *= d;
 	break;
-    
+
       case Cs::cSqrt:
 	CHECK_STACK(1);
 	if (top() < 0)
 	    return error(errValue, cmd);
 	top() = sqrt(top());
 	break;
-    
+
       case Cs::cDrop:
 	CHECK_STACK(1);
 	pop();
 	break;
-    
+
       case Cs::cExch:
 	CHECK_STACK(2);
 	d = top(0);
 	top(0) = top(1);
 	top(1) = d;
 	break;
-    
+
       case Cs::cIndex:
 	CHECK_STACK(1);
 	i = (int)top();
@@ -345,62 +345,62 @@ CharstringInterp::arith_command(int cmd)
 	CHECK_STACK(i + 2);
 	top() = top(i+1);
 	break;
-    
+
       case Cs::cRoll:
 	return roll_command();
-    
+
       case Cs::cDup:
 	CHECK_STACK(1);
 	push(top());
 	break;
-    
+
       case Cs::cAnd:
 	CHECK_STACK(2);
 	d = pop();
 	top() = (top() != 0) && (d != 0);
 	break;
-    
+
       case Cs::cOr:
 	CHECK_STACK(2);
 	d = pop();
 	top() = (top() != 0) || (d != 0);
 	break;
-    
+
       case Cs::cNot:
 	CHECK_STACK(1);
 	top() = (top() == 0);
 	break;
-    
+
       case Cs::cEq:
 	CHECK_STACK(2);
 	d = pop();
 	top() = (top() == d);
 	break;
-    
+
       case Cs::cIfelse:
 	CHECK_STACK(4);
 	if (top(1) > top(0))
 	    top(3) = top(2);
 	pop(3);
 	break;
-    
+
       case Cs::cPop:
 	if (ps_size() < 1)
 	    return error(errUnderflow, cmd);
 	push(ps_pop());
 	break;
-    
+
       case 15:
 	// this command is found with no explanation in JansonText-Roman
 	CHECK_STACK(2);
 	pop(2);
 	return true;
-    
+
       default:
 	return error(errUnimplemented, cmd);
-    
+
     }
-  
+
     return true;
 }
 
@@ -456,7 +456,7 @@ CharstringInterp::mm_command(int command, int on_stack)
     ensure_weight_vector();
     if (!_weight_vector.size())
 	return error(errVector, command);
-  
+
     int nargs;
     switch (command) {
       case Cs::othcMM1: nargs = 1; break;
@@ -466,21 +466,21 @@ CharstringInterp::mm_command(int command, int on_stack)
       case Cs::othcMM6: nargs = 6; break;
       default: return error(errInternal, command);
     }
-  
+
     int nmasters = _weight_vector.size();
     if (size() < nargs * nmasters
 	|| on_stack != nargs * nmasters)
 	return error(errMultipleMaster, command);
-  
+
     int base = size() - on_stack;
-  
+
     int off = base + nargs;
     for (int j = 0; j < nargs; j++) {
 	double &val = at(base + j);
 	for (int i = 1; i < nmasters; i++, off++)
 	    val += _weight_vector.at_u(i) * at(off);
     }
-  
+
     for (int i = nargs - 1; i >= 0; i--)
 	ps_push(at(base + i));
 
@@ -514,7 +514,7 @@ CharstringInterp::itc_command(int command, int on_stack)
 	  vec(&_scratch_vector, offset) = at(base);
 	  break;
       }
-   
+
       case Cs::othcITC_get: {
 	  if (on_stack != 1)
 	      return error(errOthersubr, command);
@@ -522,35 +522,35 @@ CharstringInterp::itc_command(int command, int on_stack)
 	  ps_push(vec(&_scratch_vector, offset));
 	  break;
       }
-   
+
       case Cs::othcITC_add: {
 	  if (on_stack != 2)
 	      return error(errOthersubr, command);
 	  ps_push(at(base) + at(base+1));
 	  break;
       }
-	
+
       case Cs::othcITC_sub: {
 	  if (on_stack != 2)
 	      return error(errOthersubr, command);
 	  ps_push(at(base) - at(base+1));
 	  break;
       }
-   
+
       case Cs::othcITC_mul: {
 	  if (on_stack != 2)
 	      return error(errOthersubr, command);
 	  ps_push(at(base) * at(base+1));
 	  break;
       }
-   
+
       case Cs::othcITC_div: {
 	  if (on_stack != 2)
 	      return error(errOthersubr, command);
 	  ps_push(at(base) / at(base+1));
 	  break;
       }
-   
+
       case Cs::othcITC_ifelse: {
 	  if (on_stack != 4)
 	      return error(errOthersubr, command);
@@ -560,12 +560,12 @@ CharstringInterp::itc_command(int command, int on_stack)
 	      ps_push(at(base+1));
 	  break;
       }
-   
+
       default:
 	return error(errOthersubr, command);
 
     }
-  
+
     pop(on_stack);
     return true;
 }
@@ -613,7 +613,7 @@ bool
 CharstringInterp::callothersubr_command(int othersubrnum, int n)
 {
     switch (othersubrnum) {
-	
+
       case Cs::othcFlexend:
 	if (n != 3)
 	    goto unknown;
@@ -631,7 +631,7 @@ CharstringInterp::callothersubr_command(int othersubrnum, int n)
 	_flex = false;
 	_state = S_PATH;
 	break;
-	
+
       case Cs::othcFlexbegin:
 	if (n != 0)
 	    goto unknown;
@@ -652,14 +652,14 @@ CharstringInterp::callothersubr_command(int othersubrnum, int n)
 	ps_push(_cp.x);
 	ps_push(_cp.y);
 	break;
-    
+
       case Cs::othcReplacehints:
 	if (n != 1)
 	    goto unknown;
 	ps_clear();
 	ps_push(top());
 	break;
-    
+
       case Cs::othcMM1:
       case Cs::othcMM2:
       case Cs::othcMM3:
@@ -678,16 +678,16 @@ CharstringInterp::callothersubr_command(int othersubrnum, int n)
       case Cs::othcITC_ifelse:
       case Cs::othcITC_random:
 	return itc_command(othersubrnum, n);
-    
+
       default:			// unknown
       unknown:
 	ps_clear();
 	for (int i = 0; i < n; i++)
 	    ps_push(top(i));
 	break;
-    
+
     }
-  
+
     pop(n);
     return true;
 }
@@ -696,7 +696,7 @@ bool
 CharstringInterp::type1_command(int cmd)
 {
     switch (cmd) {
-    
+
       case Cs::cReturn:
 	return false;
 
@@ -729,7 +729,7 @@ CharstringInterp::type1_command(int cmd)
 		_state = S_SBW;
 	}
 	break;
-	
+
       case Cs::cSeac:
 	CHECK_STACK(5);
 	if (_state > S_SBW)
@@ -740,7 +740,7 @@ CharstringInterp::type1_command(int cmd)
 
       case Cs::cCallsubr:
 	return callsubr_command();
-    
+
       case Cs::cCallothersubr: {
 	  CHECK_STACK(2);
 	  int othersubrnum = (int)top(0);
@@ -750,13 +750,13 @@ CharstringInterp::type1_command(int cmd)
 	      return error(errOthersubr, cmd);
 	  return callothersubr_command(othersubrnum, n);
       }
-    
+
       case Cs::cPut:
       case Cs::cGet:
       case Cs::cStore:
       case Cs::cLoad:
 	return vector_command(cmd);
-    
+
       case Cs::cBlend:
       case Cs::cAbs:
       case Cs::cAdd:
@@ -784,13 +784,13 @@ CharstringInterp::type1_command(int cmd)
 	CHECK_PATH_START();
 	actp_rlineto(cmd, at(0), 0);
 	break;
-	
+
       case Cs::cHmoveto:
 	CHECK_STACK(1);
 	CHECK_PATH_END();
 	actp_rmoveto(cmd, at(0), 0);
 	break;
-	
+
       case Cs::cHvcurveto:
 	CHECK_STACK(4);
 	CHECK_PATH_START();
@@ -864,16 +864,16 @@ CharstringInterp::type1_command(int cmd)
       case Cs::cClosepath:
 	CHECK_PATH_END();
 	break;
-	
+
       case Cs::cEndchar:
 	CHECK_PATH_END();
 	set_done();
 	return false;
-    
+
       case Cs::cError:
       default:
 	return error(errUnimplemented, cmd);
-    
+
     }
 
     clear();
@@ -904,7 +904,7 @@ CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left)
 #ifdef DEBUG_TYPE2
     fprintf(stderr, "%s [%d/%d]\n", Charstring::command_name(cmd).c_str(), _t2nhints, size());
 #endif
-    
+
     switch (cmd) {
 
       case Cs::cHstem:
@@ -1005,7 +1005,7 @@ CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left)
 	for (; bottom + 1 < size(); bottom += 2)
 	    actp_rlineto(cmd, at(bottom), at(bottom + 1));
 	break;
-	
+
       case Cs::cHlineto:
 	CHECK_STACK(1);
 	CHECK_STATE();
@@ -1016,7 +1016,7 @@ CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left)
 		actp_rlineto(cmd, 0, at(bottom++));
 	}
 	break;
-	
+
       case Cs::cVlineto:
 	CHECK_STACK(1);
 	CHECK_STATE();
@@ -1188,7 +1188,7 @@ CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left)
 	  bottom += 11;
 #endif
       }
-	
+
       case Cs::cEndchar:
 	if (_state <= S_SEAC)
 	    bottom = type2_handle_width(cmd, size() > 0 && size() != 4);
@@ -1198,7 +1198,7 @@ CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left)
 	set_done();
 	clear();
 	return false;
-    
+
       case Cs::cReturn:
 	return false;
 
@@ -1207,13 +1207,13 @@ CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left)
 
       case Cs::cCallgsubr:
 	return callgsubr_command();
-    
+
       case Cs::cPut:
       case Cs::cGet:
       case Cs::cStore:
       case Cs::cLoad:
 	return vector_command(cmd);
-    
+
       case Cs::cBlend:
       case Cs::cAbs:
       case Cs::cAdd:
@@ -1242,14 +1242,14 @@ CharstringInterp::type2_command(int cmd, const uint8_t *data, int *left)
       case Cs::cError:
       default:
 	return error(errUnimplemented, cmd);
-    
+
     }
 
 #if DEBUG_TYPE2
     if (bottom != size())
 	fprintf(stderr, "[left %d on stack] ", size() - bottom);
 #endif
-    
+
     clear();
     return error() >= 0;
 }
@@ -1294,11 +1294,11 @@ CharstringInterp::act_seac(int cmd, double asb, double adx, double ady, int bcha
 	error(errGlyph, cmd);
 	return;
     }
-    
+
     Point apos = Point(adx + _lsb.x - asb, ady + _lsb.y);
     Point save_lsb = _lsb;
     Point save_seac_origin = _seac_origin;
-    
+
     CharstringInterp::initialize();
     _seac_origin = apos;
     _state = S_SEAC;

@@ -32,7 +32,7 @@ TrueTypeBoundsCharstringProgram::TrueTypeBoundsCharstringProgram(const OpenType:
     OpenType::Data maxp(otf->table("maxp"));
     if (maxp.length() >= 6)
 	_nglyphs = maxp.u16(4);
-    
+
     OpenType::Head head(otf->table("head"), 0);
     if (head.ok()) {
 	_loca_long = head.index_to_loc_format() != 0;
@@ -47,23 +47,23 @@ TrueTypeBoundsCharstringProgram::TrueTypeBoundsCharstringProgram(const OpenType:
     // horizontal metrics
     OpenType::Data hhea(_otf->table("hhea"));
     // HHEA format:
-    // 0	Fixed  	Table version number  	0x00010000 for version 1.0.
-    // 4	FWORD 	Ascender
-    // 6	FWORD 	Descender
-    // 8	FWORD 	LineGap
-    // 10	UFWORD 	advanceWidthMax
-    // 12	FWORD 	minLeftSideBearing
-    // 14	FWORD 	minRightSideBearing
-    // 16	FWORD 	xMaxExtent
-    // 18	SHORT 	caretSlopeRise
-    // 20	SHORT 	caretSlopeRun
-    // 22	SHORT 	caretOffset
-    // 24	SHORT 	(reserved)
-    // 26	SHORT 	(reserved)
-    // 28	SHORT 	(reserved)
-    // 30	SHORT 	(reserved)
-    // 32	SHORT 	metricDataFormat
-    // 34	USHORT 	numberOfHMetrics
+    // 0	Fixed	Table version number  	0x00010000 for version 1.0.
+    // 4	FWORD	Ascender
+    // 6	FWORD	Descender
+    // 8	FWORD	LineGap
+    // 10	UFWORD	advanceWidthMax
+    // 12	FWORD	minLeftSideBearing
+    // 14	FWORD	minRightSideBearing
+    // 16	FWORD	xMaxExtent
+    // 18	SHORT	caretSlopeRise
+    // 20	SHORT	caretSlopeRun
+    // 22	SHORT	caretOffset
+    // 24	SHORT	(reserved)
+    // 26	SHORT	(reserved)
+    // 28	SHORT	(reserved)
+    // 30	SHORT	(reserved)
+    // 32	SHORT	metricDataFormat
+    // 34	USHORT	numberOfHMetrics
     if (hhea.length() >= 36
 	&& hhea.u32(0) == 0x10000)
 	_nhmtx = hhea.u16(34);
@@ -95,7 +95,7 @@ TrueTypeBoundsCharstringProgram::glyph_name(int gi) const
     // generate glyph names based on what pdftex can understand
     if (gi == 0)
 	return PermString(".notdef");
-    
+
     // try 'post' table glyph names
     if (!_got_glyph_names) {
 	OpenType::Post post(_otf->table("post"));

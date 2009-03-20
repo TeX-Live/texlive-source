@@ -205,15 +205,15 @@ InstanceMetricsFinder::find_metrics_instance(PermString name,
     const char *underscore = strchr(name.c_str(), '_');
     PermString amfm_name =
 	PermString(name.c_str(), underscore - name.c_str());
-  
+
     AmfmMetrics *amfm = finder->find_amfm(amfm_name, errh);
     if (!amfm) return 0;
-  
+
     MultipleMasterSpace *mmspace = amfm->mmspace();
     if (!mmspace->check_intermediate() && _call_mmpfb) {
 	char *buf = new char[amfm->font_name().length() + 30];
 	sprintf(buf, "mmpfb -q --amcp-info '%s'", amfm->font_name().c_str());
-    
+
 	FILE *f = popen(buf, "r");
 	if (f) {
 	    Filename fake("<mmpfb output>");
@@ -221,10 +221,10 @@ InstanceMetricsFinder::find_metrics_instance(PermString name,
 	    AmfmReader::add_amcp_file(slurpy, amfm, errh);
 	    pclose(f);
 	}
-    
+
 	delete[] buf;
     }
-  
+
     Vector<double> design = mmspace->default_design_vector();
     int i = 0;
     while (underscore[0] == '_' && underscore[1]) {
@@ -232,7 +232,7 @@ InstanceMetricsFinder::find_metrics_instance(PermString name,
 	mmspace->set_design(design, i, x, errh);
 	i++;
     }
-  
+
     Vector<double> weight;
     if (!mmspace->design_to_weight(design, weight, errh))
 	return 0;

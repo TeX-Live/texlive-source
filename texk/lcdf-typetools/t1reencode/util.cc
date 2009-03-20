@@ -38,17 +38,17 @@ read_file(String filename, ErrorHandler *errh, bool warning)
 	_setmode(_fileno(f), _O_BINARY);
 #endif
     } else if (!(f = fopen(filename.c_str(), "rb"))) {
-	errh->verror_text((warning ? errh->ERR_WARNING : errh->ERR_ERROR), filename, strerror(errno));
+	errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
 	return String();
     }
-    
+
     StringAccum sa;
     while (!feof(f)) {
 	if (char *x = sa.reserve(8192)) {
 	    int amt = fread(x, 1, 8192, f);
 	    sa.forward(amt);
 	} else {
-	    errh->verror_text((warning ? errh->ERR_WARNING : errh->ERR_ERROR), filename, "Out of memory!");
+	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
 	    break;
 	}
     }
@@ -61,7 +61,7 @@ String
 printable_filename(const String &s)
 {
     if (!s || s == "-")
-	return String::stable_string("<stdin>");
+	return String::make_stable("<stdin>");
     else
 	return s;
 }

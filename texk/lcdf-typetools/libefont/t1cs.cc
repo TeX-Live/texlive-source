@@ -24,22 +24,22 @@ namespace Efont {
 const char * const Charstring::command_names[] = {
     "error", "hstem", "UNKNOWN_2", "vstem", "vmoveto",
     "rlineto", "hlineto", "vlineto", "rrcurveto", "closepath",
-  
+
     "callsubr", "return", "escape", "hsbw", "endchar",
     "UNKNOWN_15", "blend", "UNKNOWN_17", "hstemhm", "hintmask",
-  
+
     "cntrmask", "rmoveto", "hmoveto", "vstemhm", "rcurveline",
     "rlinecurve", "vvcurveto", "hhcurveto", "shortint", "callgsubr",
-  
+
     "vhcurveto", "hvcurveto", "dotsection", "vstem3", "hstem3",
     "and", "or", "not", "seac", "sbw",
-  
+
     "store", "abs", "add", "sub", "div",
     "load", "neg", "eq", "callothersubr", "pop",
-  
+
     "drop", "UNKNOWN_12_19", "put", "get", "ifelse",
     "random", "mul", "UNKNOWN_12_25", "sqrt", "dup",
-  
+
     "exch", "index", "roll", "UNKNOWN_12_31", "UNKNOWN_12_32",
     "setcurrentpoint", "hflex", "flex", "hflex1", "flex1"
 };
@@ -154,11 +154,11 @@ Type1Charstring::process(CharstringInterp &interp) const
     while (left > 0) {
 	bool more;
 	int ahead;
-    
+
 	if (*data >= 32 && *data <= 246) {		// push small number
 	    more = interp.number(data[0] - 139);
 	    ahead = 1;
-      
+
 	} else if (*data < 32) {			// a command
 	    if (*data == cEscape) {
 		if (left < 2)
@@ -175,21 +175,21 @@ Type1Charstring::process(CharstringInterp &interp) const
 		more = interp.type1_command(data[0]);
 		ahead = 1;
 	    }
-    
+
 	} else if (*data >= 247 && *data <= 250) {	// push medium number
 	    if (left < 2)
 		goto runoff_error;
 	    int val = + ((data[0] - 247) << 8) + 108 + data[1];
 	    more = interp.number(val);
 	    ahead = 2;
-    
+
 	} else if (*data >= 251 && *data <= 254) {	// push negative medium number
 	    if (left < 2)
 		goto runoff_error;
 	    int val = - ((data[0] - 251) << 8) - 108 - data[1];
 	    more = interp.number(val);
 	    ahead = 2;
-      
+
 	} else {					// 255: push huge number
 	    if (left < 5)
 		goto runoff_error;
@@ -197,14 +197,14 @@ Type1Charstring::process(CharstringInterp &interp) const
 	    more = interp.number(val);
 	    ahead = 5;
 	}
-    
+
 	if (!more)
 	    return interp.error() == CharstringInterp::errOK;
-    
+
 	data += ahead;
 	left -= ahead;
     }
-  
+
   runoff_error:
     interp.error(CharstringInterp::errRunoff);
     return false;
@@ -261,15 +261,15 @@ Type2Charstring::process(CharstringInterp &interp) const
 {
     const uint8_t *data = Type2Charstring::data();
     int left = _s.length();
-  
+
     while (left > 0) {
 	bool more;
 	int ahead;
-    
+
 	if (*data >= 32 && *data <= 246) {		// push small number
 	    more = interp.number(data[0] - 139);
 	    ahead = 1;
-	    
+
 	} else if (*data < 32) {			// a command
 	    if (*data == cEscape) {
 		if (left < 2)
@@ -297,14 +297,14 @@ Type2Charstring::process(CharstringInterp &interp) const
 	    int val = + ((data[0] - 247) << 8) + 108 + data[1];
 	    more = interp.number(val);
 	    ahead = 2;
-    
+
 	} else if (*data >= 251 && *data <= 254) {	// push negative medium number
 	    if (left < 2)
 		goto runoff_error;
 	    int val = - ((data[0] - 251) << 8) - 108 - data[1];
 	    more = interp.number(val);
 	    ahead = 2;
-      
+
 	} else {					// 255: push huge number
 	    if (left < 5)
 		goto runoff_error;
@@ -319,7 +319,7 @@ Type2Charstring::process(CharstringInterp &interp) const
 	data += ahead;
 	left -= ahead;
     }
-  
+
   runoff_error:
     interp.error(CharstringInterp::errRunoff);
     return false;

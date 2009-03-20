@@ -29,14 +29,14 @@ class Cmap { public:
 	   HIBYTE_SUBHEADERS = 524 };
     enum Format { F_BYTE = 0, F_HIBYTE = 2, F_SEGMENTED = 4, F_TRIMMED = 6,
 		  F_HIBYTE32 = 8, F_TRIMMED32 = 10, F_SEGMENTED32 = 12 };
-    
+
     int parse_header(ErrorHandler *);
     int first_unicode_table() const	{ return _first_unicode_table; }
     int first_table(int platform, int encoding) const;
     int check_table(int t, ErrorHandler * = 0) const;
     Glyph map_table(int t, uint32_t, ErrorHandler * = 0) const;
     void dump_table(int t, Vector<uint32_t> &g2c, ErrorHandler * = 0) const;
-    
+
 };
 
 

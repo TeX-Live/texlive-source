@@ -235,23 +235,23 @@ generate_bezier(const Point *d, int nd, const Vector<double> &parameters,
 	a0[i] = left_tangent * B1(parameters[i]);
 	a1[i] = right_tangent * B2(parameters[i]);
     }
-    
+
     double c[2][2], x[2];
     c[0][0] = c[0][1] = c[1][0] = c[1][1] = x[0] = x[1] = 0.0;
-  
+
     int last = nd - 1;
     for (int i = 0; i < nd; i++) {
 	c[0][0] += Point::dot(a0[i], a0[i]);
 	c[0][1] += Point::dot(a0[i], a1[i]);
 	c[1][1] += Point::dot(a1[i], a1[i]);
-    
+
 	Point tmp = d[i] - (d[0] * (B0(parameters[i]) + B1(parameters[i]))
 			    + d[last] * (B2(parameters[i]) + B3(parameters[i])));
 	x[0] += Point::dot(a0[i], tmp);
 	x[1] += Point::dot(a1[i], tmp);
     }
     c[1][0] = c[0][1];
-    
+
     // compute determinants
     double det_c0_c1 = c[0][0]*c[1][1] - c[1][0]*c[0][1];
     double det_c0_x = c[0][0]*x[1] - c[0][1]*x[0];
@@ -277,7 +277,7 @@ static double
 newton_raphson_root_find(const Bezier &b, const Point &p, double u)
 {
     const Point *b_pts = b.points();
-  
+
     Point b_det[3];
     for (int i = 0; i < 3; i++)
 	b_det[i] = (b_pts[i+1] - b_pts[i]) * 3;
@@ -334,12 +334,12 @@ fit0(const Point *d, int nd, Point left_tangent, Point right_tangent,
 				d[1]));
 	return;
     }
-    
+
     // Parameterize points and attempt to fit curve
     Vector<double> parameters;
     chord_length_parameterize(d, nd, parameters);
     Bezier b = generate_bezier(d, nd, parameters, left_tangent, right_tangent);
-    
+
     // find max error
     int split_point;
     double max_error = compute_max_error(d, nd, b, parameters, &split_point);
@@ -347,7 +347,7 @@ fit0(const Point *d, int nd, Point left_tangent, Point right_tangent,
 	result.push_back(b);
 	return;
     }
-  
+
     // if error not too large, try iteration and reparameterization
     if (max_error < error*error)
 	for (int i = 0; i < 4; i++) {
@@ -359,7 +359,7 @@ fit0(const Point *d, int nd, Point left_tangent, Point right_tangent,
 		return;
 	    }
 	}
-    
+
     // fitting failed -- split at max error point and fit again
     Point center_tangent = ((d[split_point-1] - d[split_point+1])/2).normal();
     fit0(d, split_point+1, left_tangent, center_tangent, error, result);

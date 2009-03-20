@@ -1,6 +1,6 @@
 /* t1reencode.cc -- driver for reencoding Type 1 fonts
  *
- * Copyright (c) 2005-2006 Eddie Kohler
+ * Copyright (c) 2005-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -64,7 +64,6 @@ const Clp_Option options[] = {
 
 static const char *program_name;
 static PermString::Initializer initializer;
-static String::Initializer initializer2;
 static HashMap<PermString, int> glyph_order(-1);
 static String encoding_name;
 
@@ -636,7 +635,7 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
     if (!error_message)
 	errh->message("Usage: %s [OPTION]... FONT", program_name);
     else
-	errh->verror(ErrorHandler::ERR_ERROR, String(), error_message, val);
+	errh->vxmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(1);
 }
@@ -644,8 +643,9 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
 void
 usage()
 {
-    printf("\
-'T1reencode' changes a Type 1 font's embedded encoding and writes the\n\
+    FileErrorHandler uerrh(stdout);
+    uerrh.message("\
+%<T1reencode%> changes a Type 1 font%,s embedded encoding and writes the\n\
 reencoded font to the standard output.\n\
 \n\
 Usage: %s [OPTION]... [FONTFILE [OUTPUTFILE]]\n\
@@ -653,15 +653,15 @@ Usage: %s [OPTION]... [FONTFILE [OUTPUTFILE]]\n\
 Options:\n\
   -e, --encoding=FILE          Read the encoding from FILE (in DVIPS format).\n\
   -E, --encoding-text=ENC      The ENC argument is the encoding text.\n\
-  -n, --name=NAME              Set output font's PostScript name.\n\
-  -N, --full-name=NAME         Set output font's full name.\n\
+  -n, --name=NAME              Set output font%,s PostScript name.\n\
+  -N, --full-name=NAME         Set output font%,s full name.\n\
   -a, --pfa                    Output PFA font.\n\
   -b, --pfb                    Output PFB font.  This is the default.\n\
   -o, --output=FILE            Write output to FILE instead of standard out.\n\
   -h, --help                   Print this message and exit.\n\
       --version                Print version number and exit.\n\
 \n\
-Report bugs to <kohler@cs.ucla.edu>.\n", program_name);
+Report bugs to <ekohler@gmail.com>.\n", program_name);
 }
 
 
@@ -672,7 +672,7 @@ kill_def(Type1Font* font, Type1Definition *t1d, int whichd)
 {
     if (!t1d || font->dict(whichd, t1d->name()) != t1d)
 	return;
-  
+
     int icount = font->nitems();
     for (int i = font->first_dict_item(whichd); i < icount; i++)
 	if (font->item(i) == t1d) {
@@ -685,7 +685,7 @@ kill_def(Type1Font* font, Type1Definition *t1d, int whichd)
 	    font->set_dict(whichd, name, 0);
 	    return;
 	}
-  
+
     assert(0);
 }
 
@@ -699,14 +699,14 @@ adjust_font_definitions(Type1Font* font, Type1Encoding* encoding, String new_nam
     MD5_CONTEXT md5;
     md5_init(&md5);
     md5_update(&md5, (const unsigned char*) etext.data(), etext.length() - 1);
-    
+
     // save UniqueID, then kill its definition
     int uniqueid;
     Type1Definition *t1d = font->dict("UniqueID");
     bool have_uniqueid = (t1d && t1d->value_int(uniqueid));
     kill_def(font, t1d, Type1Font::dFont);
     kill_def(font, font->p_dict("UniqueID"), Type1Font::dPrivate);
-    
+
     // prepare XUID
     t1d = font->dict("XUID");
     Vector<double> xuid;
@@ -725,7 +725,7 @@ adjust_font_definitions(Type1Font* font, Type1Encoding* encoding, String new_nam
 	uint8_t digest[MD5_DIGEST_SIZE + 2]; // leave 2 bytes of space
 	md5_final((unsigned char *) digest, &md5);
 	digest[MD5_DIGEST_SIZE] = digest[MD5_DIGEST_SIZE + 1] = 0;
-	
+
 	// append digest to XUID; each element must be less than 2^24
 	for (int i = 0; i < MD5_DIGEST_SIZE; i += 3)
 	    xuid.push_back((digest[i] << 16) | (digest[i+1] << 8) | digest[i+2]);
@@ -738,7 +738,7 @@ adjust_font_definitions(Type1Font* font, Type1Encoding* encoding, String new_nam
 	md5_final_text(text_digest, &md5);
 	encoding_name = "AutoEnc_" + String(text_digest);
     }
-    
+
     t1d = font->dict("FontName");
     PermString name;
     if (t1d && t1d->value_name(name)) {
@@ -766,7 +766,7 @@ adjust_font_definitions(Type1Font* font, Type1Encoding* encoding, String new_nam
 	sa << "%% Created by t1reencode-" VERSION " on " << time_str;
 	sa.pop_back();
 #else
-	sa << "%% Created by t1reencode-" VERSION "."; 
+	sa << "%% Created by t1reencode-" VERSION ".";
 #endif
 
 	font->add_header_comment(sa.take_string().c_str());
@@ -792,7 +792,7 @@ tokenize(const String &s, int &pos_in, int &line)
 		line++;
 	    pos++;
 	}
-	
+
 	if (pos >= len) {
 	    pos_in = len;
 	    return String();
@@ -835,7 +835,7 @@ tokenize(const String &s, int &pos_in, int &line)
 static String
 landmark(const String &filename, int line)
 {
-    return filename + String::stable_string(":", 1) + String(line);
+    return filename + String::make_stable(":", 1) + String(line);
 }
 
 Type1Encoding *
@@ -890,16 +890,16 @@ do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
 #endif
     } else
 	f = fopen(filename, "rb");
-    
+
     if (!f) {
 	// check for PostScript name
 	Filename fn = psres->filename_value("FontOutline", filename);
 	f = fn.open_read();
     }
-  
+
     if (!f)
 	errh->fatal("%s: %s", filename, strerror(errno));
-  
+
     Type1Reader *reader;
     int c = getc(f);
     ungetc(c, f);
@@ -909,7 +909,7 @@ do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
 	reader = new Type1PFBReader(f);
     else
 	reader = new Type1PFAReader(f);
-  
+
     Type1Font *font = new Type1Font(*reader);
     if (!font->ok())
 	errh->fatal("%s: no glyphs in font", filename);
@@ -923,11 +923,11 @@ main(int argc, char *argv[])
 {
     PsresDatabase *psres = new PsresDatabase;
     psres->add_psres_path(getenv("PSRESOURCEPATH"), 0, false);
-  
+
     Clp_Parser *clp =
 	Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
     program_name = Clp_ProgramName(clp);
-  
+
     ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr));
     const char *input_file = 0;
     const char *output_file = 0;
@@ -937,7 +937,7 @@ main(int argc, char *argv[])
     const char *new_full_name = 0;
     bool binary = true;
     Vector<String> glyph_patterns;
-  
+
     while (1) {
 	int opt = Clp_Next(clp);
 	switch (opt) {
@@ -965,7 +965,7 @@ main(int argc, char *argv[])
 		errh->fatal("full name already specified");
 	    new_full_name = clp->vstr;
 	    break;
-	    
+
 	  case OUTPUT_OPT:
 	    if (output_file)
 		errh->fatal("output file already specified");
@@ -979,21 +979,21 @@ main(int argc, char *argv[])
 	  case PFB_OPT:
 	    binary = true;
 	    break;
-      
+
 	  case VERSION_OPT:
 	    printf("t1reencode (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 1999-2006 Eddie Kohler\n\
+	    printf("Copyright (C) 1999-2009 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
 	    exit(0);
 	    break;
-      
+
 	  case HELP_OPT:
 	    usage();
 	    exit(0);
 	    break;
-      
+
 	  case Clp_NotOption:
 	    if (input_file && output_file)
 		errh->fatal("too many arguments");
@@ -1002,20 +1002,20 @@ particular purpose.\n");
 	    else
 		input_file = clp->vstr;
 	    break;
-      
+
 	  case Clp_Done:
 	    goto done;
-      
+
 	  case Clp_BadOption:
 	    usage_error(errh, 0);
 	    break;
-      
+
 	  default:
 	    break;
-      
+
 	}
     }
-  
+
   done:
     // read the font
     Type1Font *font = do_file(input_file, psres, errh);
@@ -1024,59 +1024,59 @@ particular purpose.\n");
 
     // read the encoding
     if (!encoding_file && !encoding_text)
-	errh->fatal("missing '-e ENCODING' argument");
+	errh->fatal("missing %<-e ENCODING%> argument");
     Type1Encoding *t1e = 0;
-    if (encoding_file == "StandardEncoding") {
+    if (strcmp(encoding_file, "StandardEncoding") == 0) {
 	t1e = Type1Encoding::standard_encoding();
 	encoding_name = encoding_file;
     } else {
 	String text;
 	if (strcmp(encoding_file, "ISOLatin1Encoding") == 0
 	    || strcmp(encoding_file, "ISO_8859_1_Encoding") == 0)
-	    text = String::stable_string(ISOLatin1Encoding);
+	    text = String::make_stable(ISOLatin1Encoding);
 	else if (strcmp(encoding_file, "ISOLatin2Encoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_2_Encoding") == 0)
-	    text = String::stable_string(ISOLatin2Encoding);
+	    text = String::make_stable(ISOLatin2Encoding);
 	else if (strcmp(encoding_file, "ISOLatin3Encoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_3_Encoding") == 0)
-	    text = String::stable_string(ISOLatin3Encoding);
+	    text = String::make_stable(ISOLatin3Encoding);
 	else if (strcmp(encoding_file, "ISOLatin4Encoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_4_Encoding") == 0)
-	    text = String::stable_string(ISOLatin4Encoding);
+	    text = String::make_stable(ISOLatin4Encoding);
 	else if (strcmp(encoding_file, "ISOCyrillicEncoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_5_Encoding") == 0)
-	    text = String::stable_string(ISOCyrillicEncoding);
+	    text = String::make_stable(ISOCyrillicEncoding);
 	else if (strcmp(encoding_file, "ISOGreekEncoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_7_Encoding") == 0)
-	    text = String::stable_string(ISOGreekEncoding);
+	    text = String::make_stable(ISOGreekEncoding);
 	else if (strcmp(encoding_file, "ISO_8859_9_Encoding") == 0
 		 || strcmp(encoding_file, "ISOLatin5Encoding") == 0)
-	    text = String::stable_string(ISOLatin5Encoding);
+	    text = String::make_stable(ISOLatin5Encoding);
 	else if (strcmp(encoding_file, "ISOLatin6Encoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_10_Encoding") == 0)
-	    text = String::stable_string(ISOLatin6Encoding);
+	    text = String::make_stable(ISOLatin6Encoding);
 	else if (strcmp(encoding_file, "ISOThaiEncoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_11_Encoding") == 0)
-	    text = String::stable_string(ISOThaiEncoding);
+	    text = String::make_stable(ISOThaiEncoding);
 	else if (strcmp(encoding_file, "ISOLatin7Encoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_13_Encoding") == 0)
-	    text = String::stable_string(ISOLatin7Encoding);
+	    text = String::make_stable(ISOLatin7Encoding);
 	else if (strcmp(encoding_file, "ISOLatin8Encoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_14_Encoding") == 0)
-	    text = String::stable_string(ISOLatin8Encoding);
+	    text = String::make_stable(ISOLatin8Encoding);
 	else if (strcmp(encoding_file, "ISOLatin9Encoding") == 0
 		 || strcmp(encoding_file, "ISO_8859_15_Encoding") == 0)
-	    text = String::stable_string(ISOLatin9Encoding);
+	    text = String::make_stable(ISOLatin9Encoding);
 	else if (strcmp(encoding_file, "KOI8REncoding") == 0)
-	    text = String::stable_string(KOI8REncoding);
+	    text = String::make_stable(KOI8REncoding);
 	else if (strcmp(encoding_file, "ExpertEncoding") == 0)
-	    text = String::stable_string(ExpertEncoding);
+	    text = String::make_stable(ExpertEncoding);
 	else if (strcmp(encoding_file, "ExpertSubsetEncoding") == 0)
-	    text = String::stable_string(ExpertSubsetEncoding);
+	    text = String::make_stable(ExpertSubsetEncoding);
 	else if (strcmp(encoding_file, "SymbolEncoding") == 0)
-	    text = String::stable_string(SymbolEncoding);
+	    text = String::make_stable(SymbolEncoding);
 	else if (encoding_text)
-	    text = String::stable_string(encoding_text), encoding_file = "<argument>";
+	    text = String::make_stable(encoding_text), encoding_file = "<argument>";
 	else if ((text = read_file(encoding_file, errh)), errh->nerrors() > 0)
 	    exit(1);
 	if (!(t1e = parse_encoding(text, encoding_file, errh)))
@@ -1108,6 +1108,6 @@ particular purpose.\n");
 	Type1PFAWriter w(outf);
 	font->write(w);
     }
-    
+
     return (errh->nerrors() == 0 ? 0 : 1);
 }

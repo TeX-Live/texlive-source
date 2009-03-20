@@ -119,7 +119,7 @@ transform(MD5_CONTEXT *ctx, const unsigned char *data)
 
 #define OP(a, b, c, d, s, T)				\
 	do {						\
-		a += FF (b, c, d) + (*cwp++) + T; 	\
+		a += FF (b, c, d) + (*cwp++) + T;	\
 		a = rol(a, s);				\
 		a += b;					\
 	} while (0)
@@ -153,7 +153,7 @@ transform(MD5_CONTEXT *ctx, const unsigned char *data)
 	do {							\
 		a += f (b, c, d) + correct_words[k] + T;	\
 		a = rol(a, s);					\
-		a += b; 					\
+		a += b;					\
 	} while (0)
 
 	/* Round 2.  */

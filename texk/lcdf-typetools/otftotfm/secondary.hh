@@ -8,29 +8,29 @@ struct Setting;
 namespace Efont { class TrueTypeBoundsCharstringProgram; }
 
 struct FontInfo {
-    
+
     const Efont::OpenType::Font *otf;
     const Efont::OpenType::Cmap *cmap;
-    
+
     Efont::Cff *cff_file;
     const Efont::Cff::Font *cff;
-    
+
     const Efont::OpenType::Post *post;
     const Efont::OpenType::Name *name;
-    
+
     FontInfo(const Efont::OpenType::Font *otf, ErrorHandler *);
     ~FontInfo();
 
     bool ok() const;
-    
+
     int nglyphs() const			{ return _nglyphs; }
     bool glyph_names(Vector<PermString> &) const;
     int glyphid(PermString) const;
     const Efont::CharstringProgram *program() const;
-    
+
     bool is_fixed_pitch() const;
     double italic_angle() const;
-    
+
     String family_name() const;
     String postscript_name() const;
 

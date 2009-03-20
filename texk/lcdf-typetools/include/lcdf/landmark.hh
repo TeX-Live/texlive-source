@@ -15,17 +15,17 @@ class Landmark { public:
 
     const String &file() const		{ return _file; }
     unsigned line() const		{ return _line; }
-  
+
     Landmark next_line() const;
     Landmark whole_file() const		{ return Landmark(_file); }
-  
+
     operator String() const;
-  
+
   private:
-  
+
     String _file;
     unsigned _line;
-  
+
 };
 
 Landmark operator+(const Landmark &, int);

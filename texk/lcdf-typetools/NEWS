@@ -1,5 +1,55 @@
 LCDF Typetools NEWS
 
+Version 2.76-rc1   2.Mar.2009
+
+* Adapt to new TeX Live build scheme.
+
+
+Version 2.75   22.Feb.2009
+
+* Report a helpful warning if automatic mode is specified to a version
+  without kpathsea support.  Question from Keith Briggs.
+
+
+Version 2.74   16.Feb.2009
+
+* Correctly detect <unistd.h>.  Problem reported by C.M. Connelly.
+
+
+Version 2.73   15.Feb.2009
+
+* cfftot1 bug fix: Avoid introducing stray "rmoveto" commands and attendant
+  visual artifacts into the output.  The problem was caused by some
+  coordinate system confusion.  Reported by John Owens, who had tried to
+  convert Inconsolata.
+
+
+Version 2.72   27.Oct.2008
+
+* t1rawafm: Add missing newlines; thanks, Michael Zedler.
+
+* otftotfm: Understand "UniXXXX" glyph names.  They're not standard, but
+  it's pretty obvious what they imply.  Reported by Vasile Gaburici.
+
+
+Version 2.71   8.Aug.2008
+
+* otftotfm: Correctly install TrueType files when --force.  Reported by
+  Vasile Gaburici.
+
+
+Version 2.70   8.Aug.2008
+
+* Add new t1rawafm program, which generates a "raw" (kernless and
+  ligatureless) AFM file given a font file (PFB/PFA).
+
+* otftotfm: When installing, --automatic ignores files existing in the
+  current directory.  Confusion reported by Vasile Gaburici.
+
+* Type 1 parsing: Parse fonts with rare encoding formats, such as bases
+  other than 10.
+
+
 Version 2.69   5.May.2008
 
 * Mini portability fix for problem reported by Vladimir Volovich.

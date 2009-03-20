@@ -25,7 +25,7 @@ class CharstringUnparser : public CharstringInterp { public:
 
     static String unparse(const Charstring *);
     static String unparse(const Charstring &);
-  
+
   private:
 
     String _indent;

@@ -1,6 +1,6 @@
 /* otfinfo.cc -- driver for reporting information about OpenType fonts
  *
- * Copyright (c) 2003-2006 Eddie Kohler
+ * Copyright (c) 2003-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -56,7 +56,7 @@ using namespace Efont;
 #define INFO_OPT		328
 
 const Clp_Option options[] = {
-    
+
     { "script", 0, SCRIPT_OPT, Clp_ValString, 0 },
     { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
     { "verbose", 'V', VERBOSE_OPT, 0, Clp_Negate },
@@ -71,12 +71,11 @@ const Clp_Option options[] = {
     { "tables", 't', TABLES_OPT, 0, 0 },
     { "help", 'h', HELP_OPT, 0, 0 },
     { "version", 0, VERSION_OPT, 0, 0 },
-    
+
 };
 
 
 static const char *program_name;
-static String::Initializer initializer;
 
 static Efont::OpenType::Tag script, langsys;
 
@@ -92,7 +91,7 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
     if (!error_message)
 	errh->message("Usage: %s [OPTION]... FONT", program_name);
     else
-	errh->verror(ErrorHandler::ERR_ERROR, String(), error_message, val);
+	errh->vxmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(1);
 }
@@ -100,23 +99,24 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
 void
 usage()
 {
-    printf("\
-'Otfinfo' reports information about an OpenType font to standard output.\n\
+    FileErrorHandler uerrh(stdout);
+    uerrh.message("\
+%<Otfinfo%> reports information about an OpenType font to standard output.\n\
 Options specify what information to print.\n\
 \n\
 Usage: %s [-sfzpg] [OTFFILES...]\n\n",
 	   program_name);
-    printf("\
+    uerrh.message("\
 Query options:\n\
-  -s, --scripts                Report font's supported scripts.\n\
-  -f, --features               Report font's GSUB/GPOS features.\n\
-  -z, --optical-size           Report font's optical size information.\n\
-  -p, --postscript-name        Report font's PostScript name.\n\
-  -a, --family                 Report font's family name.\n\
-  -v, --font-version           Report font's version information.\n\
-  -i, --info                   Report font's names and designer/vendor info.\n\
-  -g, --glyphs                 Report font's glyph names.\n\
-  -t, --tables                 Report font's OpenType tables.\n\
+  -s, --scripts                Report font%,s supported scripts.\n\
+  -f, --features               Report font%,s GSUB/GPOS features.\n\
+  -z, --optical-size           Report font%,s optical size information.\n\
+  -p, --postscript-name        Report font%,s PostScript name.\n\
+  -a, --family                 Report font%,s family name.\n\
+  -v, --font-version           Report font%,s version information.\n\
+  -i, --info                   Report font%,s names and designer/vendor info.\n\
+  -g, --glyphs                 Report font%,s glyph names.\n\
+  -t, --tables                 Report font%,s OpenType tables.\n\
 \n\
 Other options:\n\
       --script=SCRIPT[.LANG]   Set script used for --features [latn].\n\
@@ -125,7 +125,7 @@ Other options:\n\
   -q, --quiet                  Do not generate any error messages.\n\
       --version                Print version number and exit.\n\
 \n\
-Report bugs to <kohler@cs.ucla.edu>.\n");
+Report bugs to <ekohler@gmail.com>.\n");
 }
 
 String
@@ -140,17 +140,17 @@ read_file(String filename, ErrorHandler *errh, bool warning = false)
 	_setmode(_fileno(f), _O_BINARY);
 #endif
     } else if (!(f = fopen(filename.c_str(), "rb"))) {
-	errh->verror_text((warning ? errh->ERR_WARNING : errh->ERR_ERROR), filename, strerror(errno));
+	errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
 	return String();
     }
-    
+
     StringAccum sa;
     while (!feof(f)) {
 	if (char *x = sa.reserve(8192)) {
 	    int amt = fread(x, 1, 8192, f);
 	    sa.forward(amt);
 	} else {
-	    errh->verror_text((warning ? errh->ERR_WARNING : errh->ERR_ERROR), filename, "Out of memory!");
+	    errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), "Out of memory!");
 	    break;
 	}
     }
@@ -163,7 +163,7 @@ String
 printable_filename(const String &s)
 {
     if (!s || s == "-")
-	return String::stable_string("<stdin>");
+	return String::make_stable("<stdin>");
     else
 	return s;
 }
@@ -284,9 +284,9 @@ do_query_optical_size(const OpenType::Font &otf, ErrorHandler *errh, ErrorHandle
 	    if (String n = name.english_name(size_data.u16(4)))
 		sa << ", subfamily name " << n;
 	}
-	
+
 	result_errh->message("%s", sa.c_str());
-	
+
     } catch (OpenType::Error) {
 	if (errh->nerrors() == before_nerrors)
 	    result_errh->message("no optical size information");
@@ -393,7 +393,7 @@ do_info(const OpenType::Font &otf, ErrorHandler *errh, ErrorHandler *result_errh
 	}
     }
 
-    if (errh->nerrors() == before_nerrors) 
+    if (errh->nerrors() == before_nerrors)
 	result_errh->message("%s", (sa ? sa.c_str() : "no name information"));
 }
 
@@ -448,15 +448,14 @@ do_tables(const OpenType::Font &otf, ErrorHandler *errh, ErrorHandler *result_er
 int
 main(int argc, char *argv[])
 {
-    String::static_initialize();
     Clp_Parser *clp =
 	Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
     program_name = Clp_ProgramName(clp);
-    
+
     ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr, String(program_name) + ": "));
     Vector<const char *> input_files;
     int query = 0;
-  
+
     while (1) {
 	int opt = Clp_Next(clp);
 	switch (opt) {
@@ -480,7 +479,7 @@ main(int argc, char *argv[])
 		  usage_error(errh, "bad script tag");
 	      break;
 	  }
-	    
+
 	  case QUERY_SCRIPTS_OPT:
 	  case QUERY_FEATURES_OPT:
 	  case QUERY_OPTICAL_SIZE_OPT:
@@ -508,13 +507,13 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otfinfo (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2003-2006 Eddie Kohler\n\
+	    printf("Copyright (C) 2003-2009 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
 	    exit(0);
 	    break;
-      
+
 	  case HELP_OPT:
 	    usage();
 	    exit(0);
@@ -526,17 +525,17 @@ particular purpose.\n");
 
 	  case Clp_Done:
 	    goto done;
-      
+
 	  case Clp_BadOption:
 	    usage_error(errh, 0);
 	    break;
 
 	  default:
 	    break;
-      
+
 	}
     }
-    
+
   done:
     if (!query)
 	usage_error(errh, "supply exactly one query option");
@@ -579,6 +578,6 @@ particular purpose.\n");
 	else if (query == INFO_OPT)
 	    do_info(otf, &cerrh, result_errh);
     }
-    
+
     return (errh->nerrors() == 0 ? 0 : 1);
 }

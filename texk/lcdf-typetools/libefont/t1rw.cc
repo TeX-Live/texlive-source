@@ -128,13 +128,13 @@ Type1Reader::ascii_eexec_get()
     int d1 = get_base();
     while (isspace(d1))
 	d1 = get_base();
-  
+
     int d2 = get_base();
     while (isspace(d2))
 	d2 = get_base();
     if (d2 < 0)
 	return -1;
-  
+
     return eexec((xvalue[d1] << 4) | (xvalue[d2]));
 }
 
@@ -144,11 +144,11 @@ Type1Reader::get()
 {
     if (!_eexec)
 	return get_base();
-  
+
     else if (_binary_eexec) {
 	int c = get_base();
 	return c < 0 ? c : eexec(c);
-    
+
     } else
 	return ascii_eexec_get();
 }
@@ -164,13 +164,13 @@ Type1Reader::start_eexec(int initial_ascii)
     int c = _ungot < 0 ? get_base() : _ungot;
     initial_ascii--;
     _ungot = -1;
-  
+
     /* Strictly speaking, I should look for whitespace even in binary sections
        of PFB fonts; but it turns out some PFBs would be unreadable with that
        pedantic rule. */
     while (isspace(c) && (initial_ascii >= 0 || !preserve_whitespace()))
 	c = get_base(), initial_ascii--;
-  
+
     /* Differentiate between ASCII eexec and binary eexec. */
     int rand_bytes[4];
     _binary_eexec = false;
@@ -181,7 +181,7 @@ Type1Reader::start_eexec(int initial_ascii)
 	if (!isxdigit(c))
 	    _binary_eexec = true;
     }
-  
+
     _r = t1R_ee;
     if (_binary_eexec)
 	for (int i = 0; i < 4; i++)
@@ -202,18 +202,18 @@ Type1Reader::test_charstring(StringAccum &str)
 {
     /* PERFORMANCE NOTE: This function is definitely a bottleneck. Making it
        more efficient cut time by about 40%. */
-  
+
     if (!_charstring_definer)
 	return false;
     if (_charstring_len >= 0)
 	return str.length() <= _charstring_start + _charstring_len;
-  
+
     str.append('\0');		// protect against running off end of string
     char *s = str.data();
     char *start;
     while (*s == ' ')
 	s++;
-  
+
     if (s[0] == '/')
 	s++;
     else if (s[0] == 'd' && s[1] == 'u' && s[2] == 'p' && isspace((unsigned char) s[3])) {
@@ -236,12 +236,12 @@ Type1Reader::test_charstring(StringAccum &str)
 	s++;
     if (strncmp(s, _charstring_definer.c_str(), _charstring_definer.length()) != 0)
 	goto not_charstring;
-  
+
     _charstring_len = strtol(start, 0, 10);
     _charstring_start = (s - str.data()) + _charstring_definer.length();
     str.pop_back();
     return str.length() <= _charstring_start + _charstring_len;
-  
+
   not_charstring:
     str.pop_back();
     return false;
@@ -258,7 +258,7 @@ Type1Reader::next_line(StringAccum &s)
 {
     if (_len < 0)
 	return false;
-    
+
     // Can't be a charstring if incoming accumulator has nonzero length.
     _charstring_start = 0;
     _charstring_len = (s.length() > 0 ? 0 : -1);
@@ -268,7 +268,7 @@ Type1Reader::next_line(StringAccum &s)
 
     for (int c = first_char; c >= 0; c = get())
 	switch (c) {
-      
+
 	  case '\n':
 	    if (test_charstring(s))
 		goto normal;
@@ -276,7 +276,7 @@ Type1Reader::next_line(StringAccum &s)
 		_crlf = 0;
 		goto done;
 	    }
-      
+
 	  case '\r':
 	    // check for \r\n (counts as only one line ending)
 	    if (test_charstring(s))
@@ -287,14 +287,14 @@ Type1Reader::next_line(StringAccum &s)
 	    else
 		_crlf = 2;
 	    goto done;
-      
+
 	  normal:
 	  default:
 	    s.append((char)c);
 	    break;
-      
+
 	}
-  
+
   done:
     return true;
 }
@@ -359,25 +359,25 @@ Type1PFBReader::more_data(unsigned char *data, int len)
 	int c = getc(_f);
 	if (c != 128)
 	    return -1;
-    
+
 	c = getc(_f);
 	if (c == 3 || c < 1 || c > 3)
 	    return -1;
 	_binary = (c == 2);
-    
+
 	_left = getc(_f);
 	_left |= getc(_f) << 8;
 	_left |= getc(_f) << 16;
 	_left |= getc(_f) << 24;
     }
-  
+
     if (_left < 0)
 	return -1;
-  
+
     if (len > _left)
 	len = _left;
     _left -= len;
-  
+
     return fread(data, 1, len, _f);
 }
 

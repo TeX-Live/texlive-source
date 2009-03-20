@@ -20,14 +20,14 @@ class Gsub { public:
     GsubLookup lookup(unsigned) const;
 
     enum { HEADERSIZE = 10 };
-    
+
   private:
 
     ScriptList _script_list;
     FeatureList _feature_list;
     Data _lookup_list;
     bool _chaincontext_reverse_backtrack;
-    
+
 };
 
 class GsubLookup { public:
@@ -117,20 +117,20 @@ class Substitution { public:
 
     // single substitution
     Substitution(Glyph in, Glyph out);
-    
+
     // multiple substitution
     Substitution(Glyph in, const Vector<Glyph> &out, bool is_alternate = false);
-    
+
     // ligature substitution
     Substitution(Glyph in1, Glyph in2, Glyph out);
     Substitution(const Vector<Glyph> &in, Glyph out);
     Substitution(int nin, const Glyph *in, Glyph out);
-    
+
     // space
     Substitution(int nleft, int nin, int nout, int nright);
-    
+
     ~Substitution();
-    
+
     Substitution &operator=(const Substitution &);
 
     bool context_in(const Coverage &) const;
@@ -154,22 +154,22 @@ class Substitution { public:
     inline int left_nglyphs() const;
     inline Glyph *left_glyphptr();
     inline const Glyph *left_glyphptr() const;
-    
+
     inline Glyph in_glyph() const;
     inline Glyph in_glyph(int pos) const;
     inline bool in_glyphs(Vector<Glyph> &) const;
     inline int in_nglyphs() const;
     inline Glyph *in_glyphptr();
     inline const Glyph *in_glyphptr() const;
-    
+
     inline bool in_matches(int pos, Glyph) const;
-    
+
     inline Glyph out_glyph() const;
     inline Glyph out_glyph(int pos) const;
     inline bool out_glyphs(Vector<Glyph> &) const;
     inline Glyph *out_glyphptr();
     inline const Glyph *out_glyphptr() const;
-    
+
     inline int out_nglyphs() const;
     inline Glyph right_glyph() const;
     inline Glyph *right_glyphptr();
@@ -177,7 +177,7 @@ class Substitution { public:
 
     bool all_in_glyphs(Vector<Glyph> &) const;
     bool all_out_glyphs(Vector<Glyph> &) const;
-    
+
     // alter
     void add_outer_left(Glyph);
     void remove_outer_left();
@@ -188,7 +188,7 @@ class Substitution { public:
 
     void unparse(StringAccum &, const Vector<PermString> * = &debug_glyph_names) const;
     String unparse(const Vector<PermString> * = &debug_glyph_names) const;
-    
+
   private:
 
     enum { T_NONE = 0, T_GLYPH, T_GLYPHS, T_COVERAGE };
@@ -229,7 +229,7 @@ class Substitution { public:
     static bool matches(const Substitute &, uint8_t, int pos, Glyph) throw ();
 
     static void unparse_glyphids(StringAccum &, const Substitute &, uint8_t, const Vector<PermString> *) throw ();
-    
+
 };
 
 inline Substitution::Substitution()

@@ -31,7 +31,7 @@ minimize(Type1Font *font)
     for (int i = 0; i < font->nsubrs(); i++)
 	if (Type1Subr *s = font->subr_x(i))
 	    output->set_subr(s->subrno(), s->t1cs(), s->definer());
-    
+
     // CharStrings
     for (int i = 0; i < font->nglyphs(); i++)
 	if (Type1Subr *g = font->glyph_x(i))

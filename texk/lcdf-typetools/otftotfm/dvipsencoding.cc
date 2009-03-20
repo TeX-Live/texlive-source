@@ -26,7 +26,6 @@
 #include <algorithm>
 #include "util.hh"
 
-static String::Initializer initializer;
 enum { GLYPHLIST_MORE = 0x40000000,
        U_EMPTYSLOT = 0xD801, U_ALTSELECTOR = 0xD802 };
 static HashMap<String, int> glyphlist(-1);
@@ -86,10 +85,10 @@ DvipsEncoding::add_glyphlist(String text)
 
 void
 DvipsEncoding::glyphname_unicode(String gn, Vector<int> &unis, bool *more)
-{    
+{
     if (more)
 	*more = false;
-    
+
     // first, drop all characters to the right of the first dot
     String::iterator dot = std::find(gn.begin(), gn.end(), '.');
     if (dot < gn.end())
@@ -110,7 +109,10 @@ DvipsEncoding::glyphname_unicode(String gn, Vector<int> &unis, bool *more)
 		*more = true;
 	} else if (component.length() >= 7
 		   && (component.length() % 4) == 3
-		   && memcmp(component.data(), "uni", 3) == 0) {
+		   && (memcmp(component.data(), "uni", 3) == 0
+		       // 16.Aug.2008: Some texnansx.enc have incorrect "Uni"
+		       // prefix, but we might as well understand it.
+		       || memcmp(component.data(), "Uni", 3) == 0)) {
 	    int old_size = unis.size();
 	    for (const char* s = component.begin() + 3; s < component.end(); s += 4)
 		if (parse_unicode_number(s, s + 4, -1, uval))
@@ -189,7 +191,7 @@ tokenize(const String &s, int &pos_in, int &line)
 		line++;
 	    pos++;
 	}
-	
+
 	if (pos >= len) {
 	    pos_in = len;
 	    return String();
@@ -244,7 +246,7 @@ comment_tokenize(const String &s, int &pos_in, int &line)
 		line++;
 	    pos++;
 	}
-	
+
 	if (pos >= len) {
 	    pos_in = len;
 	    return String();
@@ -372,9 +374,9 @@ DvipsEncoding::parse_ligkern_words(Vector<String> &v, int override, ErrorHandler
 		    encode(l, v[2]);
 		return 0;
 	    } else
-		return errh->error("encoding value '%d' out of range", l);
+		return errh->error("encoding value %<%d%> out of range", l);
 	}
-	
+
 	// kern operation
 	if (v[1].length() >= 3 && v[1][0] == '{' && v[1].back() == '}') {
 	    String middle = v[1].substring(1, v[1].length() - 2);
@@ -390,12 +392,12 @@ DvipsEncoding::parse_ligkern_words(Vector<String> &v, int override, ErrorHandler
       found_kernop:
 	int av = (v[0] == "*" ? J_ALL : encoding_of(v[0]));
 	if (av < 0)
-	    return errh->warning("'%s' has no encoding, ignoring '%s'", v[0].c_str(), v[1].c_str());
+	    return errh->warning("%<%s%> has no encoding, ignoring %<%s%>", v[0].c_str(), v[1].c_str());
 	int bv = (v[2] == "*" ? J_ALL : encoding_of(v[2]));
 	if (bv < 0)
-	    return errh->warning("'%s' has no encoding, ignoring '%s'", v[2].c_str(), v[1].c_str());
+	    return errh->warning("%<%s%> has no encoding, ignoring %<%s%>", v[2].c_str(), v[1].c_str());
 	if ((op & JT_KERN) && l && (av == J_ALL || bv == J_ALL))
-	    return errh->warning("'%s %s %s' illegal, only {0} works with *", v[0].c_str(), v[1].c_str(), v[2].c_str());
+	    return errh->warning("%<%s %s %s%> illegal, only {0} works with *", v[0].c_str(), v[1].c_str(), v[2].c_str());
 	Ligature lig = { av, bv, op, l, 0 };
 	add_ligkern(lig, override);
 	return 0;
@@ -403,17 +405,17 @@ DvipsEncoding::parse_ligkern_words(Vector<String> &v, int override, ErrorHandler
     } else if (v.size() == 4 && ((op = find_ligkern_op(v[2])) & JT_ADDLIG)) {
 	int av = encoding_of(v[0], override > 0);
 	if (av < 0)
-	    return (override > 0 ? errh->warning("'%s' has no encoding, ignoring ligature", v[0].c_str()) : -1);
+	    return (override > 0 ? errh->warning("%<%s%> has no encoding, ignoring ligature", v[0].c_str()) : -1);
 	int bv = encoding_of(v[1], override > 0);
 	if (bv < 0)
-	    return (override > 0 ? errh->warning("'%s' has no encoding, ignoring ligature", v[1].c_str()) : -1);
+	    return (override > 0 ? errh->warning("%<%s%> has no encoding, ignoring ligature", v[1].c_str()) : -1);
 	int cv = encoding_of(v[3], override > 0);
 	if (cv < 0)
-	    return (override > 0 ? errh->warning("'%s' has no encoding, ignoring ligature", v[3].c_str()) : -1);
+	    return (override > 0 ? errh->warning("%<%s%> has no encoding, ignoring ligature", v[3].c_str()) : -1);
 	Ligature lig = { av, bv, op, 0, cv };
 	add_ligkern(lig, override);
 	return 0;
-	
+
     } else
 	return -EPARSE;
 }
@@ -426,8 +428,8 @@ DvipsEncoding::parse_position_words(Vector<String> &v, int override, ErrorHandle
 
     int c = encoding_of(v[0]);
     if (c < 0)
-	return (override > 0 ? errh->warning("'%s' has no encoding, ignoring positioning", v[0].c_str()) : -1);
-    
+	return (override > 0 ? errh->warning("%<%s%> has no encoding, ignoring positioning", v[0].c_str()) : -1);
+
     char *endptr;
     int pdx, pdy, adx;
     if (!v[1] || !v[2] || !v[3]
@@ -452,10 +454,10 @@ DvipsEncoding::parse_unicoding_words(Vector<String> &v, int override, ErrorHandl
     if (v.size() < 2 || (v[1] != "=" && v[1] != "=:" && v[1] != ":="))
 	return -EPARSE;
     else if (v[0] == "||" || (av = encoding_of(v[0])) < 0)
-	return errh->warning("'%s' has no encoding, ignoring UNICODING", v[0].c_str());
+	return errh->warning("%<%s%> has no encoding, ignoring UNICODING", v[0].c_str());
 
     int original_size = _unicoding.size();
-    
+
     if (v.size() == 2 || (v.size() == 3 && v[2] == dot_notdef))
 	/* no warnings to delete a glyph */;
     else {
@@ -463,9 +465,9 @@ DvipsEncoding::parse_unicoding_words(Vector<String> &v, int override, ErrorHandl
 	    bool more;		// some care to get all possibilities
 	    int uni = glyphname_unicode(v[i], &more);
 	    if (uni < 0) {
-		errh->warning("can't map '%s' to Unicode", v[i].c_str());
+		errh->warning("can't map %<%s%> to Unicode", v[i].c_str());
 		if (i == 2)
-		    errh->warning("target '%s' will be deleted from encoding", v[0].c_str());
+		    errh->warning("target %<%s%> will be deleted from encoding", v[0].c_str());
 	    } else {
 		_unicoding.push_back(uni);
 		while (more) {
@@ -476,7 +478,7 @@ DvipsEncoding::parse_unicoding_words(Vector<String> &v, int override, ErrorHandl
 	    }
 	}
     }
-    
+
     _unicoding.push_back(-1);
     if (override > 0 || _unicoding_map[v[0]] < 0)
 	_unicoding_map.insert(v[0], original_size);
@@ -515,7 +517,7 @@ DvipsEncoding::parse_word_group(Vector<String> &words, int override, int wt, Err
 	    }
 	    if ((this->*method)(rewords, override, errh) == -EPARSE)
 		errh->error("parse error in %s", word_types[wt].name);
-		
+
 	}
 	words.clear();
     }
@@ -543,10 +545,12 @@ DvipsEncoding::parse_words(const String &s, int override, int wt, ErrorHandler *
     return 0;
 }
 
-static String
-landmark(const String &filename, int line)
+String
+DvipsEncoding::landmark(int line) const
 {
-    return filename + String::stable_string(":", 1) + String(line);
+    StringAccum sa;
+    sa << _printable_filename << ':' << line;
+    return sa.take_string();
 }
 
 static String
@@ -573,19 +577,19 @@ DvipsEncoding::parse(String filename, bool ignore_ligkern, bool ignore_other, Er
     if (errh->nerrors() != before)
 	return -1;
     _filename = filename;
+    _printable_filename = printable_filename(filename);
     _file_had_ligkern = false;
-    filename = printable_filename(filename);
     int pos = 0, line = 1;
 
     // parse text
     String token = tokenize(s, pos, line);
     if (!token || token[0] != '/')
-	return errh->lerror(landmark(filename, line), "parse error, expected name");
+	return errh->lerror(landmark(line), "parse error, expected name");
     _name = token.substring(1);
     _initial_comment = s.substring(0, pos - token.length());
 
     if (tokenize(s, pos, line) != "[")
-	return errh->lerror(landmark(filename, line), "parse error, expected [");
+	return errh->lerror(landmark(line), "parse error, expected [");
 
     while ((token = tokenize(s, pos, line)) && token[0] == '/')
 	_e.push_back(token.substring(1));
@@ -601,40 +605,40 @@ DvipsEncoding::parse(String filename, bool ignore_ligkern, bool ignore_other, Er
 	    && memcmp(token.data(), "LIGKERN", 7) == 0
 	    && isspace((unsigned char) token[7])
 	    && !ignore_ligkern) {
-	    lerrh.set_landmark(landmark(filename, line));
+	    lerrh.set_landmark(landmark(line));
 	    parse_words(token.substring(8), 1, WT_LIGKERN, &lerrh);
-	    
+
 	} else if (token.length() >= 9
 		   && memcmp(token.data(), "LIGKERNX", 8) == 0
 		   && isspace((unsigned char) token[8])
 		   && !ignore_ligkern) {
-	    lerrh.set_landmark(landmark(filename, line));
+	    lerrh.set_landmark(landmark(line));
 	    parse_words(token.substring(9), 1, WT_LIGKERN, &lerrh);
-	    
+
 	} else if (token.length() >= 10
 		   && memcmp(token.data(), "UNICODING", 9) == 0
 		   && isspace((unsigned char) token[9])
 		   && !ignore_other) {
-	    lerrh.set_landmark(landmark(filename, line));
+	    lerrh.set_landmark(landmark(line));
 	    parse_words(token.substring(10), 1, WT_UNICODING, &lerrh);
-	    
+
 	} else if (token.length() >= 9
 		   && memcmp(token.data(), "POSITION", 8) == 0
 		   && isspace((unsigned char) token[8])
 		   && !ignore_other) {
-	    lerrh.set_landmark(landmark(filename, line));
+	    lerrh.set_landmark(landmark(line));
 	    parse_words(token.substring(9), 1, WT_POSITION, &lerrh);
-	    
+
 	} else if (token.length() >= 13
 		   && memcmp(token.data(), "CODINGSCHEME", 12) == 0
 		   && isspace((unsigned char) token[12])
 		   && !ignore_other) {
 	    _coding_scheme = trim_space(token, 13);
 	    if (_coding_scheme.length() > 39)
-		lerrh.lwarning(landmark(filename, line), "only first 39 chars of CODINGSCHEME are significant");
+		lerrh.lwarning(landmark(line), "only first 39 chars of CODINGSCHEME are significant");
 	    if (std::find(_coding_scheme.begin(), _coding_scheme.end(), '(') < _coding_scheme.end()
 		|| std::find(_coding_scheme.begin(), _coding_scheme.end(), ')') < _coding_scheme.end()) {
-		lerrh.lerror(landmark(filename, line), "CODINGSCHEME cannot contain parentheses");
+		lerrh.lerror(landmark(line), "CODINGSCHEME cannot contain parentheses");
 		_coding_scheme = String();
 	    }
 
@@ -648,7 +652,7 @@ DvipsEncoding::parse(String filename, bool ignore_ligkern, bool ignore_other, Er
 	    else if (value == "0" || value == "no" || value == "false")
 		_warn_missing = false;
 	    else
-		lerrh.lerror(landmark(filename, line), "WARNMISSING command not understood");
+		lerrh.lerror(landmark(line), "WARNMISSING command not understood");
 	}
 
     return 0;
@@ -774,7 +778,7 @@ DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *
 	// do not use a Unicode-mapped glyph if literal
 	if (literal)
 	    glyph = named_glyph;
-	
+
 	// If we found a glyph, maybe use its named_glyph variant.
 	if (glyph > 0 && named_glyph > 0
 	    && std::find(chname.begin(), chname.end(), '.') < chname.end())
@@ -790,7 +794,7 @@ DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *
 	// skip already-encoded characters and .notdef
 	if (literal || metrics.glyph(code) > 0 || _e[code] == dot_notdef)
 	    continue;
-	
+
 	PermString chname = _e[code];
 
 	// find all Unicodes
@@ -837,7 +841,7 @@ DvipsEncoding::make_metrics(Metrics &metrics, const FontInfo &finfo, Secondary *
 	    bad_codepoint(code, metrics, unencoded);
 
     if (unencoded.size() == 1) {
-	errh->warning("'%s' glyph not found in font", unencoded[0].c_str());
+	errh->warning("%<%s%> glyph not found in font", unencoded[0].c_str());
 	errh->message("(This glyph will appear as a blot and cause warnings if used.)");
     } else if (unencoded.size() > 1) {
 	std::sort(unencoded.begin(), unencoded.end());
@@ -895,7 +899,7 @@ DvipsEncoding::apply_ligkern_lig(Metrics &metrics, ErrorHandler *errh) const
 	else {
 	    static int complex_join_warning = 0;
 	    if (!complex_join_warning) {
-		errh->warning("complex LIGKERN ligature removed (I only support '=:', '=:|', and '|=:')");
+		errh->warning("complex LIGKERN ligature removed (I only support %<=:%>, %<=:|%>, and %<|=:%>)");
 		complex_join_warning = 1;
 	    }
 	}
