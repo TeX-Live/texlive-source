@@ -1,8 +1,0 @@
-/* Define if you have <ncurses/curses.h> */
-#undef HAVE_NCURSES_CURSES_H
-
-/* Define if you have <ncurses.h> */
-#undef HAVE_NCURSES_H
-
-/* Define if you have the strcasecmp function */
-#undef HAVE_STRCASECMP
