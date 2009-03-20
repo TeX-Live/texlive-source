@@ -1,0 +1,5 @@
+This directory libs/dummy does not build or install anything.  Its purpose
+is to record the command line used to invoke libs/dummy/configure from
+libs/configure.  This information is then used by libs/Makefile to invoke
+libs/*/configure in the remaining subdirectories without the need to adjust
+any absolute or relative paths.

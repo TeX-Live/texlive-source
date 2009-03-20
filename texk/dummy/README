@@ -1,0 +1,5 @@
+This directory texk/dummy does not build or install anything.  Its purpose
+is to record the command line used to invoke texk/dummy/configure from
+texk/configure.  This information is then used by texk/Makefile to invoke
+texk/*/configure in the remaining subdirectories without the need to adjust
+any absolute or relative paths.

@@ -3,26 +3,13 @@
 
 : ${srcdir=.}
 
-usage="Usage: $0 TOOLDIR BASEFILE
+usage="Usage: $0 BASE
 
-TOOLDIR is the root of a tree for native tools; when not cross-compiling,
-this is just the present web2c directory.
-
-BASEFILE is the root part of the file to be converted; it is extended
-native=$1
-shift
-
-with .p to make the name of the (input) Pascal file, and extended with
-.c and .h to make the name of the main (output) C files.  Additional
-files BASEini.c, BASEd.h, BASEcoerce.h are created for the larger program.
+BASE is the root part of the file to be converted; it is extended with
+.p to make the name of the (input) Pascal file, and extended with .c and
+.h to make the name of the main (output) C files.  Additional files
+BASEini.c, BASEd.h, BASEcoerce.h are created for the larger programs.
 "
-
-native=$1
-shift
-if test ! -d "$native"; then
-  echo "$0: native argument not a directory: $native" >&2
-  exit 1
-fi
 
 basefile=
 while test $# -gt 0; do
@@ -72,7 +59,7 @@ case $basefile in
     web2c_options="-m -c${basefile}coerce"
     hfile=texmfmp.h
     midcmd="| sed -f $srcdir/web2c/cvtmf2.sed"
-    postcmd="| $native/web2c/splitup $splitup_options $basefile"
+    postcmd="| ./web2c/splitup $splitup_options $basefile"
     cfile=${basefile}1.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
@@ -89,7 +76,7 @@ ${basefile}coerce.h"
     web2c_options="-m -c${basefile}coerce"
     hfile=texmfmp.h
     midcmd="| sed -f $srcdir/web2c/cvtmf2.sed"
-    postcmd="| $native/web2c/splitup $splitup_options $basefile"
+    postcmd="| ./web2c/splitup $splitup_options $basefile"
     cfile=${basefile}2.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
@@ -105,7 +92,7 @@ ${basefile}coerce.h"
     web2c_options="-t -c${basefile}coerce"
     hfile=texmfmp.h
     fixwrites_options=-t
-    postcmd="| $native/web2c/splitup $splitup_options ${basefile}"
+    postcmd="| ./web2c/splitup $splitup_options ${basefile}"
     cfile=${basefile}2.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
@@ -122,7 +109,7 @@ ${basefile}coerce.h"
     hfile=texmfmp.h
     fixwrites_options=-t
     splitup_options="-i -l 13500"
-    postcmd="| $native/web2c/splitup $splitup_options ${basefile}"
+    postcmd="| ./web2c/splitup $splitup_options ${basefile}"
     cfile=${basefile}2.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
@@ -134,9 +121,9 @@ esac
 #set -x
 eval "cat $srcdir/web2c/common.defines $more_defines $pascalfile \
   $precmd \
-  | $native/web2c/web2c -h$hfile $web2c_options \
+  | ./web2c/web2c -h$hfile $web2c_options \
   $midcmd \
-  | $native/web2c/fixwrites $fixwrites_options $basefile \
+  | ./web2c/fixwrites $fixwrites_options $basefile \
   $postcmd \
   $output"
 

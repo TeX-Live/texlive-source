@@ -1,5 +1,5 @@
 This directory is the central repository for Autoconf macros needed to build
-the teTeX / TeX live (TL) tree.
+the teTeX / TeX Live (TL) tree.
 
 (1) `Public' macros such as libtool.m4 used to build the libraries and
 programs in the TL subdirectories libs/*/, utils/*/, and texk/*/ that are
