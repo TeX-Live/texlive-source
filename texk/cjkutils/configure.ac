@@ -1,0 +1,67 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+AC_INIT([CJK utils for TeX Live], [4.7.0], [tex-k@tug.org])
+AC_PREREQ([2.63])
+AC_CONFIG_SRCDIR([hbf2gf/hbf.h])
+AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
+
+dnl Common code for all programs using libkpathsea.
+KPSE_COMMON([cjkutils])
+
+AC_CONFIG_HEADERS([hbf2gf/c-auto.h:hbf2gf/c-auto.in])
+
+dnl get Compiler flags right.
+if test "x$CC" = xgcc; then
+	XX_CFLAGS="-Wall"
+else
+	case "$host" in
+  		alpha-dec-osf*)
+        	XX_CFLAGS="-std1 -O2 -g3"
+       		;;
+  		*)
+          	XX_CFLAGS=
+       		;;
+	esac
+fi
+AC_SUBST([XX_CFLAGS])
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_STRUCT_TM
+
+dnl Checks for library functions.
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS([strdup strstr strtol strtoul])
+
+dnl we need this for hbf.c
+if test "x$ac_cv_func_strdup" = xno; then
+  XX_CPPFLAGS=-DNO_STRDUP
+fi
+AC_SUBST([XX_CPPFLAGS])
+
+KPSE_KPATHSEA_FLAGS
+
+dnl Rebuilding hbf2gf.c, hbf2gf.tex, and hbf2gf.tex requires ctangle, cweave, and tex
+do_cweb=$enable_maintainer_mode
+if test x"$do_cweb" = xyes; then
+  AC_CHECK_PROGS([CTANGLE], [ctangle], [none])
+  AC_CHECK_PROGS([CWEAVE], [cweave], [none])
+  AC_CHECK_PROGS([TEX], [tex], [none])
+  case :$CTANGLE:$CWEAVE:$TEX: in
+  *:none:*)
+    AC_MSG_WARN([Will not run cweb -- requires ctangle, cweave, and tex.])
+    do_cweb=no
+  ;;
+  esac
+fi
+AM_CONDITIONAL([do_cweb], [test "x$do_cweb" = xyes])
+
+AC_CONFIG_FILES([Makefile conv/Makefile hbf2gf/Makefile scripts/Makefile])
+
+AC_OUTPUT

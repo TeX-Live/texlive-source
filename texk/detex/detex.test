@@ -1,0 +1,16 @@
+#! /bin/sh
+
+echo '#' >texmf.cnf
+
+./detex $srcdir/test.tex >test.out \
+	&& diff test.out $srcdir/test.lout \
+	|| exit 1
+
+./detex -l $srcdir/test.tex >test.out \
+	&& diff test.out $srcdir/test.lout \
+	|| exit 1
+
+./detex -t $srcdir/test.tex >test.out \
+	&& diff test.out $srcdir/test.tout \
+	|| exit 1
+

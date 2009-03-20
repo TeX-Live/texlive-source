@@ -1,0 +1,56 @@
+\I\X66:Check for environment variables\X
+\U65.
+\I\X8:Check other arguments\X
+\U4.
+\I\X61:Get code range\X
+\U55.
+\I\X63:Get sub code range\X
+\U55.
+\I\X2, 15, 19, 27, 38, 49, 53, 58, 60, 62, 70, 73, 76:Global variables\X
+\U4.
+\I\X56:Handle extension\X
+\U55.
+\I\X10, 69:Include files\X
+\U4.
+\I\X78:Initialize \TeX\ file searching\X
+\U4.
+\I\X28:Initialize variables\X
+\U4.
+\I\X57:Necessary parameters\X
+\U55.
+\I\X59:Optional parameters\X
+\U55.
+\I\X23:Post section\X
+\U21.
+\I\X24:Postpost section\X
+\U21.
+\I\X6:Print help information\X
+\U7.
+\I\X5:Print version\X
+\U7.
+\I\X44:Process rest of line\X
+\U42.
+\I\X33:Produce a temporary row\X
+\U32.
+\I\X11, 13, 16, 20, 25, 29, 36, 39, 41, 45, 47, 50, 54, 64, 67, 71, 74,
+79:Prototypes\X
+\U4.
+\I\X34:Scale X from \PB{\\{temp\_pixelrow}[\,]} into \PB{\\{new\_pixelrow}[\,]}
+and write it into \PB{\\{out\_char}[\,]}\X
+\U31.
+\I\X32:Scale Y from \PB{\\{pixelrow}[\,]} into \PB{\\{temp\_pixelrow}[\,]}\X
+\U31.
+\I\X31:Scale row by row\X
+\U30.
+\I\X7:Scan options\X
+\U4.
+\I\X43:Search blank lines\X
+\U42.
+\I\X22:Special section\X
+\U21.
+\I\X18:Write character\X
+\U17.
+\I\X9:Write files\X
+\U4.
+\I\X35:Write out a row\X
+\U34.
