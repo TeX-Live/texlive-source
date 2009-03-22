@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texindy,v 1.5 2006/07/30 10:30:42 jschrod Exp $
+# $Id: texindy,v 1.8 2009/03/22 11:08:18 jschrod Exp $
 #------------------------------------------------------------
 # (history at end)
 
@@ -70,7 +70,7 @@ output usage message with options explanation.
 
 Don't output progress messages. Output only error messages.
 
-=item C<--version> / B<-v>
+=item C<--verbose> / B<-v>
 
 Output verbose progress messages.
 
@@ -296,7 +296,7 @@ use strict;
 
 BEGIN {
     use vars qw($Revision $VERSION);
-    q$Revision: 1.5 $ =~ /: (\d+)\.(\d+)/ ;	# q wg. Emacs indent!
+    q$Revision: 1.8 $ =~ /: (\d+)\.(\d+)/ ;	# q wg. Emacs indent!
     my ($major, $minor) = ($1, $2);
     $VERSION = "$major." . ($minor<10 ? '0' : '') . $minor;
 }
@@ -379,27 +379,28 @@ output_version()  if $output_version;	# will not return
 usage()  if ( ! $stdin && @ARGV == 0 );	# brain damaged, but like makeindex
 
 
-# Reconstruct xindy options, and eventually switch to it.
+# Construct xindy options, and eventually switch to it.
 
-unshift (@ARGV, '-q')  if $quiet;
-unshift (@ARGV, '-v')  if $verbose;
-unshift (@ARGV, map { ('-d', $_) } @debug)  if @debug;
-unshift (@ARGV, '-o', $outfile)  if $outfile;
-unshift (@ARGV, '-t', $logfile)  if $logfile;
-unshift (@ARGV, '-L', $language);
-unshift (@ARGV, '-C', $codepage)  if $codepage;
-unshift (@ARGV, '-M', "tex/inputenc/$codepage")  if $codepage;
-unshift (@ARGV, map { ('-M', $_) } ($ENV{TEXINDY_AUTO_MODULE} || 'texindy',
-				    @modules));
-unshift (@ARGV, '-I', $input_markup);
+my @opt;
+push (@opt, '-q')  if $quiet;
+push (@opt, '-v')  if $verbose;
+push (@opt, map { ('-d', $_) } @debug)  if @debug;
+push (@opt, '-o', $outfile)  if $outfile;
+push (@opt, '-t', $logfile)  if $logfile;
+push (@opt, '-L', $language);
+push (@opt, '-C', $codepage)  if $codepage;
+push (@opt, '-M', "tex/inputenc/$codepage")  if $codepage;
+push (@opt, map { ('-M', $_) } ($ENV{TEXINDY_AUTO_MODULE} || 'texindy',
+				@modules));
+push (@opt, '-I', $input_markup);
 
-print "Calling xindy as: $xindy @ARGV\n"  if (grep /^script$/, @debug);
+print "Calling xindy as: $cmd_dir/xindy @opt @ARGV\n"  if (grep /^script$/, @debug);
 
 if ($xindy =~ m,\.bat$,) {
-  system($xindy, @ARGV);
+  system($xindy, @opt, @ARGV);
   exit $? if $? != -1;
 } else {
-  exec $xindy, @ARGV;
+  exec $xindy, @opt, @ARGV;
 }
 die "$cmd: could not execute $xindy: $!\n";
 
@@ -522,6 +523,16 @@ sub output_xindy_release () {
 #======================================================================
 #
 # $Log: texindy,v $
+# Revision 1.8  2009/03/22 11:08:18  jschrod
+#     man page: --v is --verbose, not --version.
+#
+# Revision 1.7  2009/03/21 16:32:06  jschrod
+#     Inputenc merge rules must be loaded before other texindy modules;
+# otherwise inputenc markup would be discarded by tex.xdy.
+#
+# Revision 1.6  2008/02/17 14:55:32  jschrod
+#     Use exitcode 0 when usage is explicitly demanded with --help et.al.
+#
 # Revision 1.5  2006/07/30 10:30:42  jschrod
 #     Check if an exec() error happened and output an error message.
 # (Ticket 1230801)
