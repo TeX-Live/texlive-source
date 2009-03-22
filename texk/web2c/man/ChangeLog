@@ -1,3 +1,8 @@
+2009-03-22  Karl Berry  <karl@tug.org>
+
+	* etex.man: missed WB definition, no such thing as elatex,
+	modify attribution per Phil Taylor.
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in: Add @configure_input@ line.
