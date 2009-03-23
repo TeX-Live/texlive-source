@@ -215,6 +215,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
 	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
 	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
@@ -406,8 +409,8 @@ uninstall-am:
 .MAKE: install-am install-strip
 
 .PHONY: all all-am am--refresh check check-am clean clean-generic \
-	clean-local dist dist-all dist-bzip2 dist-gzip dist-lzma \
-	dist-shar dist-tarZ dist-zip distcheck distclean \
+	clean-local dist dist-all dist-bzip2 dist-gzip dist-hook \
+	dist-lzma dist-shar dist-tarZ dist-zip distcheck distclean \
 	distclean-generic distcleancheck distdir distuninstallcheck \
 	dvi dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
@@ -418,6 +421,9 @@ uninstall-am:
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am uninstall uninstall-am
 
+
+dist-hook:
+	rm -rf `find $(distdir)/$(FREETYPE_TREE) -name .svn`
 
 ft-build/Makefile:
 	rm -rf ft-build

@@ -294,6 +294,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 	-find $(distdir) -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
 	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
 	  ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
@@ -492,8 +495,8 @@ uninstall-man: uninstall-man1
 .MAKE: install-am install-strip
 
 .PHONY: all all-am am--refresh check check-am clean clean-binPROGRAMS \
-	clean-generic dist dist-all dist-bzip2 dist-gzip dist-lzma \
-	dist-shar dist-tarZ dist-zip distcheck distclean \
+	clean-generic dist dist-all dist-bzip2 dist-gzip dist-hook \
+	dist-lzma dist-shar dist-tarZ dist-zip distcheck distclean \
 	distclean-compile distclean-generic distclean-local \
 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
 	html-am info info-am install install-am install-binPROGRAMS \
@@ -507,6 +510,9 @@ uninstall-man: uninstall-man1
 	uninstall uninstall-am uninstall-binPROGRAMS uninstall-man \
 	uninstall-man1
 
+
+dist-hook:
+	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
 
 @build_TRUE@$(DIALOG_BUILD)/dialog$(EXEEXT):
 @build_TRUE@	cd $(DIALOG_BUILD) && $(MAKE) $(AM_MAKEFLAGS) all
