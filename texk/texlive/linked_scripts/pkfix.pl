@@ -1,11 +1,11 @@
 eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $argv:q'
-  if 0;
+    if 0;
 use strict;
 $^W=1; # turn warning on
 #
 # pkfix.pl
 #
-# Copyright (C) 2001, 2005 Heiko Oberdiek.
+# Copyright (C) 2001, 2005, 2007, 2009 Heiko Oberdiek.
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
@@ -25,10 +25,10 @@ $^W=1; # turn warning on
 my $file        = "pkfix.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $project     = lc($program);
-my $version     = "1.3";
-my $date        = "2005/02/25";
+my $version     = "1.5";
+my $date        = "2009/03/18";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2001, 2005 by $author.";
+my $copyright   = "Copyright (c) 2001, 2005, 2007, 2009 by $author.";
 #
 # Reqirements: Perl5, dvips
 # History:
@@ -73,8 +73,11 @@ my $copyright   = "Copyright (c) 2001, 2005 by $author.";
 #   2005/02/25 v1.3:
 #     * Bug fix: Detection of "@fedspecial end" improved.
 #     * Bug fix: Typo corrected (PRT -> $PRT).
+#   2007/11/07 v1.4:
+#     * Deprecation warning of perl 5.8.8 fixed.
+#   2009/03/18 v1.5:
+#     * Patch to support dvips 5.399 (submitted by Melissa O'Neill).
 #
-
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
 
@@ -143,22 +146,22 @@ END_OF_USAGE
 
 ### environment variable PKFIX
 if ($ENV{$envvar}) {
-  unshift(@ARGV, split(/\s+/, $ENV{$envvar}));
+    unshift(@ARGV, split(/\s+/, $ENV{$envvar}));
 }
 
 ### process options
 my @OrgArgv = @ARGV;
 use Getopt::Long;
 GetOptions(
-  "help!",
-  "quiet!",
-  "debug!",
-  "verbose!",
-  "clean!",
-  "usetex!",
-  "tex=s",
-  "dvips=s",
-  "options=s"
+    "help!",
+    "quiet!",
+    "debug!",
+    "verbose!",
+    "clean!",
+    "usetex!",
+    "tex=s",
+    "dvips=s",
+    "options=s"
 ) or die $usage;
 !$::opt_help or die $usage;
 @ARGV < 3 or die "$usage$Error Too many files!\n";
@@ -184,7 +187,7 @@ print $PRT "*** input file: `$infile'\n" if $::opt_verbose;
 print $PRT "*** output file: `$outfile'\n" if $::opt_verbose;
 
 if ($::opt_debug) {
-  print $PRT <<"END_DEB";
+    print $PRT <<"END_DEB";
 *** OSNAME: $^O
 *** PERL_VERSION: $]
 *** ARGV: @OrgArgv
@@ -257,6 +260,12 @@ open(OUT, ">$outfile") or die "$Error Cannot write `$outfile'!\n";
 #   %%BeginProcSet: {file name}.enc 0 0
 #   ...
 #   %%EndProcSet
+#
+# Melissa O'Neill reported small variations for dvips 5.399:
+#   TeXDict begin \d+ \d+ \d+
+# and
+#   \d+ \d+ \d+ \(\d+\) @start
+#
 ###################################
 
 my $x_comment_resolution = 0;
@@ -271,264 +280,267 @@ my %font_count = ();
 my %font_entry = ();
 
 sub init {
-  $x_comment_resolution = 0;
-  $y_comment_resolution = 0;
-  $x_resolution = 0;
-  $y_resolution = 0;
-  $start_string = "";
-  $texps_found = 0;
-  @font_list = ();
-  %font_txt = ();
-  %font_count = ();
-  %font_entry = ();
+    $x_comment_resolution = 0;
+    $y_comment_resolution = 0;
+    $x_resolution = 0;
+    $y_resolution = 0;
+    $start_string = "";
+    $texps_found = 0;
+    @font_list = ();
+    %font_txt = ();
+    %font_count = ();
+    %font_entry = ();
 }
 
 init();
 
 while (<IN>) {
 
-  if (/^%%Creator: (dvips\S*) (\S+)\s/) {
-    print $PRT "*** %%Creator: $1 $2\n" if $::opt_debug;
-    my $foundversion = $2;
-    if ($foundversion =~ /(\d+\.\d+)/) {
-      $foundversion = $1;
-      # 5.62 is ok, 5.58 does not produce font comments
-      if ($foundversion <= 5.58) {
-        print $PRT "$Warning dvips version $1 does not generate " .
-          "the required font comments!\n";
-      }
-    }
-  }
-
-  if (/^%%BeginProcSet:\s*(.+)\.enc/) {
-    $encoding_files{$1} = "";
-  }
-
-  if (/^%DVIPSParameters:.*dpi=([\dx]+)/) {
-    print OUT;
-    my $str = $1;
-    $x_comment_resolution = 0;
-    $y_comment_resolution = 0;
-    if ($str =~ /^(\d+)x(\d+)$/) {
-      $x_comment_resolution = $1;
-      $y_comment_resolution = $2;
-    }
-    if ($str =~ /^(\d+)$/) {
-      $x_comment_resolution = $1;
-      $y_comment_resolution = $1;
-    }
-    print $PRT "*** %DVIPSParameters: dpi=$str " .
-          "(x=$x_comment_resolution, y=$y_comment_resolution)\n"
-      if $::opt_debug;
-    $x_comment_resolution > 0 && $y_comment_resolution > 0 or
-      die "$Error Wrong resolution value " .
-          "($x_comment_resolution x $y_comment_resolution)!\n";
-    next;
-  }
-
-  if (/^%%BeginProcSet: texps.pro/) {
-    $texps_found = 1;
-    print $PRT "*** texps.pro found\n" if $::opt_debug;
-  }
-
-  if (/^TeXDict begin \@defspecial/) {
-    my $saved = $_;
-    print $PRT "*** \@defspecial found.\n" if $::opt_debug;
-    $start_string = $_;
-    while (<IN>) {
-      $start_string .= $_;
-      if (/^\@fedspecial end/) {
-        s/^\@fedspecial end\s*(\S)/$1/;
-        last;
-      }
-    }
-  }
-  elsif (/^TeXDict begin \d+ \d+ \d+ \d+ \d+/) {
-    print $PRT "*** TeXDict begin <5 nums> found.\n" if $::opt_debug;
-    $start_string = $_;
-  }
-  if ($start_string ne "") {
-    # look for @start
-    unless (/\@start/) {
-      while (<IN>) {
-        $start_string .= $_;
-        last if /\@start/;
-      }
+    if (/^%%Creator: (dvips\S*) (\S+)\s/) {
+        print $PRT "*** %%Creator: $1 $2\n" if $::opt_debug;
+        my $foundversion = $2;
+        if ($foundversion =~ /(\d+\.\d+)/) {
+            $foundversion = $1;
+            # 5.62 is ok, 5.58 does not produce font comments
+            if ($foundversion <= 5.58) {
+                print $PRT "$Warning dvips version $1 does not generate " .
+                           "the required font comments!\n";
+            }
+        }
     }
 
-    # divide post part
-    $start_string =~ /^([\s\S]*\@start)\s*([\s\S]*)$/ or
-      die "$Error Parse error (\@start)!\n";
-    $start_string = "$1\n";
-    $post_string = $2;
-    $post_string =~ s/\s*$//;
-    $post_string .= "\n" unless $post_string eq "";
-
-    $start_string =~
-      /\d+\s+\d+\s+\d+\s+(\d+)\s+(\d+)\s+\((.*)\)\s+\@start/ or
-      die "$Error Parse error (\@start parameters)!\n";
-
-    $blocks_found++;
-    print $PRT "*** dvi file: $3\n" if $::opt_debug;
-
-    # get and check resolution values
-    $x_resolution = $1;
-    $y_resolution = $2;
-    print $PRT "*** resolution: $x_resolution x $y_resolution\n"
-      if $::opt_debug;
-    $x_comment_resolution > 0 or
-      die "$Error Missing comment `%DVIPSParameters'!\n";
-    $x_resolution == $x_comment_resolution &&
-    $y_resolution == $y_comment_resolution or
-      die "$Error Resolution values in comment and PostScript " .
-          "does not match!\n";
-    # setting dvips resolution option(s)
-    if ($x_resolution == $y_resolution) {
-      $dvips_resolution = "-D $x_resolution";
-    }
-    else {
-      $dvips_resolution = "-X $x_resolution -Y $y_resolution";
+    if (/^%%BeginProcSet:\s*(.+)\.enc/) {
+        $encoding_files{$1} = "";
     }
 
-    while (<IN>) {
-      if (/^%%EndProlog/) {
-        print OUT $encoding_string;
-        $texps_data > 0 or die "$Error File `texps.pro' not found!\n";
-        print OUT $texps_string unless $texps_found;
-        foreach (@font_list) {
-          my $fontname = $_;
-          print $PRT "*** Adding font `$fontname'\n"
+    if (/^%DVIPSParameters:.*dpi=([\dx]+)/) {
+        print OUT;
+        my $str = $1;
+        $x_comment_resolution = 0;
+        $y_comment_resolution = 0;
+        if ($str =~ /^(\d+)x(\d+)$/) {
+            $x_comment_resolution = $1;
+            $y_comment_resolution = $2;
+        }
+        if ($str =~ /^(\d+)$/) {
+            $x_comment_resolution = $1;
+            $y_comment_resolution = $1;
+        }
+        print $PRT "*** %DVIPSParameters: dpi=$str " .
+                   "(x=$x_comment_resolution, y=$y_comment_resolution)\n"
             if $::opt_debug;
-          my ($dummy1, $dummy2, $err);
-          if ($font_count{$fontname} > 1) {
-            $fonts_merged++;
-            print $PRT "*** Merging font `$fontname' ($font_count{$fontname}).\n"
-              unless $::opt_quiet;
-            ($dummy1, $font_txt{$fontname}, $dummy2, $err) =
-              get_font($font_entry{$fontname});
-            $err == 0 or die "$Error Cannot merge font `$fontname'!\n";
-          }
-          print OUT $font_txt{$fontname};
-        }
-        print OUT $start_string,
-                  $post_string,
-                  $_;
-        print $PRT "*** %%EndProlog\n" if $::opt_debug;
-        init();
-        last;
-      }
+        $x_comment_resolution > 0 && $y_comment_resolution > 0 or
+            die "$Error Wrong resolution value " .
+                "($x_comment_resolution x $y_comment_resolution)!\n";
+        next;
+    }
 
-      if (/^%DVIPSBitmapFont: (\S+) (\S+) ([\d.]+) (\d+)/) {
-        my $bitmap_string = $_;
-        my $dvips_fontname = $1;
-        my $fontname = $2;
-        my $entry = "\\Font\{$1\}\{$2\}\{$3\}\{";
-        print $PRT "*** Font $1: $2 at $3pt, $4 chars\n" if $::opt_verbose;
-        my $line = "";
-        my $num = -1;
-        my $chars = $4;
-        my $count = 0;
+    if (/^%%BeginProcSet: texps.pro/) {
+        $texps_found = 1;
+        print $PRT "*** texps.pro found\n" if $::opt_debug;
+    }
+
+    if (/^TeXDict begin \@defspecial/) {
+        my $saved = $_;
+        print $PRT "*** \@defspecial found.\n" if $::opt_debug;
+        $start_string = $_;
         while (<IN>) {
-          $bitmap_string .= $_;
-          last if /^%EndDVIPSBitmapFont/;
-          s/\r$//; # remove \r of possible DOS line ending
-          chomp;
-          $line .= " " . $_;
+            $start_string .= $_;
+            if (/^\@fedspecial end/) {
+                s/^\@fedspecial end\s*(\S)/$1/;
+                last;
+            }
         }
-        $line =~ s/<[0-9A-F ]*>/ /g;
-
-        print $PRT "*** <Font> $line\n" if $::opt_debug;
-
-        while ($line =~ /\s(\d+)\s+D(.*)/) {
-          $num = $1;
-          $count++;
-          $entry .= "$num,";
-          $line = $2;
-          while ($line =~ /^[\s\d\[]*I(.*)/) {
-            $num++;
-            $count++;
-            $entry .= "$num,";
-            $line = $1;
-          }
+    }
+    elsif (/^TeXDict begin \d+ \d+ \d+ \d+ \d+/) {
+        print $PRT "*** TeXDict begin <5 nums> found.\n" if $::opt_debug;
+        $start_string = $_;
+    }
+    elsif (/^TeXDict begin \d+ \d+ \d+/) { # dvips 5.399
+        print $PRT "*** TeXDict begin <3 nums> found.\n" if $::opt_debug;
+        $start_string = $_;
+    }
+    if ($start_string ne "") {
+        # look for @start
+        unless (/\@start/) {
+            while (<IN>) {
+                $start_string .= $_;
+                last if /\@start/;
+            }
         }
-        $chars == $count or
-          die "$Error Parse error, $count chars of $chars found " .
-            "($fontname)!\n";
 
-        $entry =~ s/,$//;
-        $entry .= "\}";
+        # divide post part
+        $start_string =~ /^([\s\S]*\@start)\s*([\s\S]*)$/ or
+            die "$Error Parse error (\@start)!\n";
+        $start_string = "$1\n";
+        $post_string = $2;
+        $post_string =~ s/\s*$//;
+        $post_string .= "\n" unless $post_string eq "";
 
-        print $PRT "*** Font conversion of `$fontname' started.\n"
-            if $::opt_verbose;
-        my ($newfontname, $font_part, $start_part, $err) = get_font($entry);
-        if ($err == 0) {
-          print $PRT "*** Font conversion: `$fontname' -> `$newfontname'.\n"
-              unless $::opt_quiet;
-          if (defined($font_count{$newfontname})) {
-            $font_count{$newfontname}++;
-            $font_entry{$newfontname} .= "\n$entry";
-          }
-          else {
-            push @font_list, $newfontname;
-            $font_txt{$newfontname} = $font_part;
-            $font_count{$newfontname} = 1;
-            $font_entry{$newfontname} = $entry;
-          }
-          $start_part =~ s/\/Fa/\/$dvips_fontname/;
-          $start_string .= $start_part;
-          $fonts_converted++;
+        $start_string =~
+            /\d+\s+\d+\s+\d+\s+(\d+)\s+(\d+)\s+\((.*)\)\s+\@start/ or
+            /\d+\s+(\d+)\s+(\d+)\s+\@start/ or # dvips 5.399
+            die "$Error Parse error (\@start parameters)!\n";
+
+        $blocks_found++;
+        print $PRT "*** dvi file: $3\n" if $::opt_debug and defined $3;
+
+        # get and check resolution values
+        $x_resolution = $1;
+        $y_resolution = $2;
+        print $PRT "*** resolution: $x_resolution x $y_resolution\n"
+            if $::opt_debug;
+        $x_comment_resolution > 0 or
+            die "$Error Missing comment `%DVIPSParameters'!\n";
+        $x_resolution == $x_comment_resolution &&
+        $y_resolution == $y_comment_resolution or
+            die "$Error Resolution values in comment and PostScript " .
+                "does not match!\n";
+        # setting dvips resolution option(s)
+        if ($x_resolution == $y_resolution) {
+            $dvips_resolution = "-D $x_resolution";
         }
         else {
-          print $PRT "!!! Failed font conversion of `$fontname'!\n";
-          $start_string .= $bitmap_string;
-          $fonts_misses++;
+            $dvips_resolution = "-X $x_resolution -Y $y_resolution";
         }
 
+        while (<IN>) {
+            if (/^%%EndProlog/) {
+                print OUT $encoding_string;
+                $texps_data > 0 or die "$Error File `texps.pro' not found!\n";
+                print OUT $texps_string unless $texps_found;
+                foreach (@font_list) {
+                    my $fontname = $_;
+                    print $PRT "*** Adding font `$fontname'\n"
+                        if $::opt_debug;
+                    my ($dummy1, $dummy2, $err);
+                    if ($font_count{$fontname} > 1) {
+                        $fonts_merged++;
+                        print $PRT "*** Merging font `$fontname' ($font_count{$fontname}).\n"
+                            unless $::opt_quiet;
+                        ($dummy1, $font_txt{$fontname}, $dummy2, $err) =
+                            get_font($font_entry{$fontname});
+                        $err == 0 or die "$Error Cannot merge font `$fontname'!\n";
+                    }
+                    print OUT $font_txt{$fontname};
+                }
+                print OUT $start_string,
+                          $post_string,
+                          $_;
+                print $PRT "*** %%EndProlog\n" if $::opt_debug;
+                init();
+                last;
+            }
+
+            if (/^%DVIPSBitmapFont: (\S+) (\S+) ([\d.]+) (\d+)/) {
+                my $bitmap_string = $_;
+                my $dvips_fontname = $1;
+                my $fontname = $2;
+                my $entry = "\\Font\{$1\}\{$2\}\{$3\}\{";
+                print $PRT "*** Font $1: $2 at $3pt, $4 chars\n" if $::opt_verbose;
+                my $line = "";
+                my $num = -1;
+                my $chars = $4;
+                my $count = 0;
+                while (<IN>) {
+                    $bitmap_string .= $_;
+                    last if /^%EndDVIPSBitmapFont/;
+                    s/\r$//; # remove \r of possible DOS line ending
+                    chomp;
+                    $line .= " " . $_;
+                }
+                $line =~ s/<[0-9A-F ]*>/ /g;
+
+                print $PRT "*** <Font> $line\n" if $::opt_debug;
+
+                while ($line =~ /\s(\d+)\s+D(.*)/) {
+                    $num = $1;
+                    $count++;
+                    $entry .= "$num,";
+                    $line = $2;
+                    while ($line =~ /^[\s\d\[]*I(.*)/) {
+                        $num++;
+                        $count++;
+                        $entry .= "$num,";
+                        $line = $1;
+                    }
+                }
+                $chars == $count or
+                    die "$Error Parse error, $count chars of $chars found " .
+                        "($fontname)!\n";
+
+                $entry =~ s/,$//;
+                $entry .= "\}";
+
+                print $PRT "*** Font conversion of `$fontname' started.\n"
+                    if $::opt_verbose;
+                my ($newfontname, $font_part, $start_part, $err) = get_font($entry);
+                if ($err == 0) {
+                    print $PRT "*** Font conversion: `$fontname' -> `$newfontname'.\n"
+                        unless $::opt_quiet;
+                    if (defined($font_count{$newfontname})) {
+                        $font_count{$newfontname}++;
+                        $font_entry{$newfontname} .= "\n$entry";
+                    }
+                    else {
+                        push @font_list, $newfontname;
+                        $font_txt{$newfontname} = $font_part;
+                        $font_count{$newfontname} = 1;
+                        $font_entry{$newfontname} = $entry;
+                    }
+                    $start_part =~ s/\/Fa/\/$dvips_fontname/;
+                    $start_string .= $start_part;
+                    $fonts_converted++;
+                }
+                else {
+                    print $PRT "!!! Failed font conversion of `$fontname'!\n";
+                    $start_string .= $bitmap_string;
+                    $fonts_misses++;
+                }
+
+                next;
+            }
+
+            $post_string .= $_;
+        }
         next;
-      }
-
-      $post_string .= $_;
     }
-    next;
-  }
 
-  print OUT;
+    print OUT;
 }
 
 close(IN);
 close(OUT);
 
 if ($::opt_clean) {
-  print $PRT "*** clear temp files\n" if $::opt_verbose;
-  foreach (@cleanlist) {
-    unlink;
-  }
+    print $PRT "*** clear temp files\n" if $::opt_verbose;
+    map {unlink} @cleanlist;
 }
 
 if (!$::opt_quiet) {
-  if ($blocks_found > 1) {
-    print $PRT "==> $blocks_found blocks.\n";
-  }
-  if ($fonts_misses) {
-    print $PRT "==> $fonts_misses font conversion",
-          (($fonts_misses > 1) ? "s" : ""),
-          " failed.\n";
-  }
-  if ($fonts_converted) {
-    print $PRT "==> ",
-          (($fonts_converted > 0) ? $fonts_converted : "No"),
-          " converted font",
-          (($fonts_converted > 1) ? "s" : ""),
-          ".\n";
-    if ($fonts_merged) {
-      print $PRT "==> $fonts_merged merged font",
-            (($fonts_merged > 1) ? "s" : ""),
-            ".\n";
+    if ($blocks_found > 1) {
+        print $PRT "==> $blocks_found blocks.\n";
     }
-  }
-  else {
-    print $PRT "==> no fonts converted\n";
-  }
+    if ($fonts_misses) {
+        print $PRT "==> $fonts_misses font conversion",
+              (($fonts_misses > 1) ? "s" : ""),
+              " failed.\n";
+    }
+    if ($fonts_converted) {
+        print $PRT "==> ",
+              (($fonts_converted > 0) ? $fonts_converted : "No"),
+              " converted font",
+              (($fonts_converted > 1) ? "s" : ""),
+              ".\n";
+        if ($fonts_merged) {
+            print $PRT "==> $fonts_merged merged font",
+                  (($fonts_merged > 1) ? "s" : ""),
+                  ".\n";
+        }
+    }
+    else {
+        print $PRT "==> no fonts converted\n";
+    }
 }
 
 
@@ -539,19 +551,19 @@ if (!$::opt_quiet) {
 #         $start: font definition after @start
 #         $err:   error indication
 sub get_font {
-  my $entry = shift;
-  my $name = "";
-  my $font = "";
-  my $start = "";
-  my $err = 0;
-  my @err = ("", "", "", 1);
-  local *OUT;
-  local *IN;
+    my $entry = shift;
+    my $name = "";
+    my $font = "";
+    my $start = "";
+    my $err = 0;
+    my @err = ("", "", "", 1);
+    local *OUT;
+    local *IN;
 
-  if ($::opt_usetex) {
-    ### write temp tex file
-    open(OUT, ">$texfile") or die "$Error Cannot write `$texfile'!\n";
-    print OUT <<'TEX_HEADER';
+    if ($::opt_usetex) {
+        ### write temp tex file
+        open(OUT, ">$texfile") or die "$Error Cannot write `$texfile'!\n";
+        print OUT <<'TEX_HEADER';
 \nonstopmode
 \nopagenumbers
 \def\Font#1#2#3#4{%
@@ -575,286 +587,286 @@ sub get_font {
 \noindent
 TEX_HEADER
 
-    print OUT "$entry\n\\bye\n";
-    close(OUT);
+        print OUT "$entry\n\\bye\n";
+        close(OUT);
 
-    ### run tex
+        ### run tex
+        {
+            print $PRT "*** run TeX\n" if $::opt_verbose;
+
+            my $cmd = "$::opt_tex $tempfile";
+            print $PRT ">>> $cmd\n" if $::opt_verbose;
+            my @capture = `$cmd`;
+            if (!@capture) {
+                print $PRT "$Warning Cannot execute TeX!\n";
+                return @err;
+            }
+            if ($::opt_verbose) {
+                print $PRT @capture;
+            }
+            else {
+                foreach (@capture) {
+                    print $PRT if /^!\s/;
+                }
+            }
+            if ($?) {
+                my $exitvalue = $?;
+                if ($exitvalue > 255) {
+                    $exitvalue >>= 8;
+                    print $PRT "$Warning Closing TeX (exit status: $exitvalue)!\n";
+                    return @err;
+                }
+                print $PRT "$Warning Closing TeX ($exitvalue)!\n";
+                return @err;
+            }
+        }
+    }
+    else {
+        # write dvi directly
+
+        # DVI format description: dvitype.web
+        my $DVI_pre = 247;
+        my $DVI_id_byte = 2;
+        my $DVI_num = 25400000;
+        my $DVI_den = 473628672; # 7227 * 2^16
+        my $DVI_mag = 1000;
+        my @t = localtime(time);
+        my $DVI_comment = "$program $version output "
+                . sprintf("%04d/%02d/%02d %02d:%02d:%02d",
+                ($t[5] + 1900), ($t[4] + 1), $t[3], $t[2], $t[1], $t[0]);
+        my $DVI_comment_len = length($DVI_comment);
+        my $DVI_bop = 139;
+        my $DVI_eop = 140;
+        my $DVI_fontdef1 = 243;
+        my $DVI_fontdef2 = 244;
+        my $DVI_fontdef4 = 246;
+        my $DVI_design_size = 10; # an arbitrary value
+        # A wrong value will trigger a dvips warning
+        # (it can be seen in verbose mode):
+        #   dvips: Design size mismatch in [...].tfm
+        # But other consequences could not be noticed.
+        # Thus a TFM lookup will be saved.
+        my $DVI_checksum = 0; # because of unknown checksum
+        my $DVI_fnt_num_0 = 171;
+        my $DVI_fnt1 = 235;
+        my $DVI_fnt2 = 236;
+        my $DVI_fnt4 = 238;
+        my $DVI_set1 = 128;
+        my $DVI_push = 141;
+        my $DVI_pop = 142;
+        my $DVI_post = 248;
+        my $DVI_u = 67108864; # 1024 pt, an arbitrary value
+        my $DVI_l = 67108864; # 1024 pt, an arbitrary value
+        my $DVI_post_post = 249;
+        my $DVI_trailing = 223;
+
+        open(OUT, ">$dvifile") or die "$Error Cannot write `$dvifile'!\n";
+        binmode(OUT);
+
+        # Preamble (pre)
+        print OUT pack("C2N3Ca$DVI_comment_len",
+            $DVI_pre, $DVI_id_byte, $DVI_num, $DVI_den, $DVI_mag,
+            $DVI_comment_len, $DVI_comment);
+        # Begin of page (bop)
+        my $pos_bop = tell(OUT);
+        print OUT pack("CN1x[N9]l", $DVI_bop, 1, -1);
+
+        my $font_defs = "";
+        my $font_num = 0;
+        foreach(split("\n", $entry)) {
+            my $font_def = "";
+            /\\Font\{[^}]*\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}/ or
+                die "!!! Error: Internal parsing error!\n";
+            my $font_name = $1;
+            my $font_name_len = length($font_name);
+            my $font_size = $2;
+            my $font_chars = $3;
+
+            # define font
+            if ($font_num < 256) {
+                $font_def = pack("CC", $DVI_fontdef1, $font_num);
+            }
+            # The other cases are very unlikely, especially there are
+            # more than one font in the merging case only.
+            elsif ($font_num < 65536) {
+                $font_def = pack("Cn", $DVI_fontdef2, $font_num);
+            }
+            else {
+                $font_def = pack("CN", $DVI_fontdef4, $font_num);
+            }
+            $font_def .= pack("x[N]N2xCa$font_name_len",
+                    ($font_size * 65536), $DVI_design_size,
+                    $font_name_len, $font_name);
+            print OUT $font_def;
+            $font_defs .= $font_def;
+
+            # use font
+            my $fnt_num;
+            if ($font_num < 64) {
+                $fnt_num = pack("C", $DVI_fnt_num_0 + $font_num);
+            }
+            # Other cases are unlikely, see above.
+            elsif ($font_num < 256) {
+                $fnt_num = pack("CC", $DVI_fnt1, $font_num);
+            }
+            elsif ($font_num < 65536) {
+                $fnt_num = pack("Cn", $DVI_fnt2, $font_num);
+            }
+            else {
+                $fnt_num = pack("CN", $DVI_fnt4, $font_num);
+            }
+            print OUT $fnt_num;
+
+            # print characters
+            print OUT pack("C", $DVI_push);
+            foreach (split(",", $font_chars)) {
+                if ($_ < 128) {
+                    print OUT pack("C", $_);
+                }
+                else {
+                    print OUT pack("CC", $DVI_set1, $_);
+                }
+            }
+            print OUT pack("C", $DVI_pop);
+
+            $font_num++;
+        }
+
+        print OUT pack("C", $DVI_eop);
+
+        # Begin of postamble (post)
+        my $pos_post = tell(OUT);
+        print OUT pack("CN6n2",
+                $DVI_post, $pos_bop, $DVI_num, $DVI_den, $DVI_mag,
+                $DVI_l, $DVI_u, 1, 1);
+        print OUT $font_defs;
+        # End of postamble (post_post)
+        print OUT pack("CNC5",
+                $DVI_post_post, $pos_post, $DVI_id_byte,
+                $DVI_trailing, $DVI_trailing, $DVI_trailing, $DVI_trailing);
+        my $t_num = (4 - (tell(OUT) % 4)) % 4;
+        print OUT pack("C", $DVI_trailing) x $t_num;
+        close(OUT);
+    }
+
+    ### run dvips
     {
-      print $PRT "*** run TeX\n" if $::opt_verbose;
+        print $PRT "*** run dvips\n" if $::opt_verbose;
 
-      my $cmd = "$::opt_tex $tempfile";
-      print $PRT ">>> $cmd\n" if $::opt_verbose;
-      my @capture = `$cmd`;
-      if (!defined(@capture)) {
-        print $PRT "$Warning Cannot execute TeX!\n";
+        my $cmd = "$::opt_dvips $::opt_options $dvips_resolution $tempfile";
+        print $PRT ">>> $cmd\n" if $::opt_verbose;
+        # dvips writes on stderr :-(
+        my @capture = `$cmd$err_redirect`;
+        if ($::opt_verbose) {
+            print $PRT @capture;
+        }
+        if ($?) {
+            my $exitvalue = $?;
+            if ($exitvalue > 255) {
+                $exitvalue >>= 8;
+                print $PRT "$Warning Closing dvips (exit status: $exitvalue)!\n";
+                return @err;
+            }
+            print $PRT "$Warning Closing dvips ($exitvalue)!\n";
+            return @err;
+        }
+    }
+
+    ### get font and start part
+    open(IN, $psfile) or die "$Error Cannot open `$psfile'!\n";
+
+    while (<IN>) {
+        ### get possible encoding files
+        if (/^%%BeginProcSet:\s*(.+)\.enc/) {
+            my $encoding_file = $1;
+            print $PRT "*** encoding file `$encoding_file.enc' found.\n"
+                if $::opt_debug;
+            next if defined($encoding_files{$encoding_file});
+            $encoding_files{$encoding_file} = "";
+            $encoding_string .= $_;
+            while (<IN>) {
+              $encoding_string .= $_;
+              last if /^%%EndProcSet/;
+            }
+            next;
+        }
+
+        ### get texps.pro if get_texps_pro() has failed
+        if ($texps_data == 0 && /^%%BeginProcSet: texps.pro/) {
+            $texps_string = $_;
+            while (<IN>) {
+              $texps_string .= $_;
+              last if /^%%EndProcSet/;
+            }
+            $texps_data = 1;
+            print $PRT "*** texps.pro extracted.\n" if $::opt_debug;
+            next;
+        }
+
+        if (/^%%BeginFont:\s*(\S+)/) {
+            $name = $1;
+            $font .= $_;
+            while (<IN>) {
+                $font .= $_;
+                last if /^%%EndFont/;
+            }
+            next;
+        }
+        if (/^\@start/) {
+            s/^\@start\s*//;
+            $start .= $_;
+            while (<IN>) {
+                last if /^%%EndProlog/;
+                $start .= $_;
+            }
+            if (($start =~ s/\s*end\s*$/\n/) != 1) {
+              $err = 1;
+              print $PRT "$Warning Parse error, `end' not found!\n";
+            }
+            print $PRT "*** start: $start" if $::opt_debug;
+            last;
+        }
+    }
+    close(IN);
+
+    if ($font eq "") {
+        print $PRT "$Warning `%%BeginFont' not found!\n";
         return @err;
-      }
-      if ($::opt_verbose) {
-        print $PRT @capture;
-      }
-      else {
-        foreach (@capture) {
-          print $PRT if /^!\s/;
-        }
-      }
-      if ($?) {
-        my $exitvalue = $?;
-        if ($exitvalue > 255) {
-          $exitvalue >>= 8;
-          print $PRT "$Warning Closing TeX (exit status: $exitvalue)!\n";
-          return @err;
-        }
-        print $PRT "$Warning Closing TeX ($exitvalue)!\n";
-        return @err;
-      }
     }
-  }
-  else {
-    # write dvi directly
-
-    # DVI format description: dvitype.web
-    my $DVI_pre = 247;
-    my $DVI_id_byte = 2;
-    my $DVI_num = 25400000;
-    my $DVI_den = 473628672; # 7227 * 2^16
-    my $DVI_mag = 1000;
-    my @t = localtime(time);
-    my $DVI_comment = "$program $version output "
-        . sprintf("%04d/%02d/%02d %02d:%02d:%02d",
-            ($t[5] + 1900), ($t[4] + 1), $t[3], $t[2], $t[1], $t[0]);
-    my $DVI_comment_len = length($DVI_comment);
-    my $DVI_bop = 139;
-    my $DVI_eop = 140;
-    my $DVI_fontdef1 = 243;
-    my $DVI_fontdef2 = 244;
-    my $DVI_fontdef4 = 246;
-    my $DVI_design_size = 10; # an arbitrary value
-    # A wrong value will trigger a dvips warning
-    # (it can be seen in verbose mode):
-    #   dvips: Design size mismatch in [...].tfm
-    # But other consequences could not be noticed.
-    # Thus a TFM lookup will be saved.
-    my $DVI_checksum = 0; # because of unknown checksum
-    my $DVI_fnt_num_0 = 171;
-    my $DVI_fnt1 = 235;
-    my $DVI_fnt2 = 236;
-    my $DVI_fnt4 = 238;
-    my $DVI_set1 = 128;
-    my $DVI_push = 141;
-    my $DVI_pop = 142;
-    my $DVI_post = 248;
-    my $DVI_u = 67108864; # 1024 pt, an arbitrary value
-    my $DVI_l = 67108864; # 1024 pt, an arbitrary value
-    my $DVI_post_post = 249;
-    my $DVI_trailing = 223;
-
-    open(OUT, ">$dvifile") or die "$Error Cannot write `$dvifile'!\n";
-    binmode(OUT);
-
-    # Preamble (pre)
-    print OUT pack("C2N3Ca$DVI_comment_len",
-        $DVI_pre, $DVI_id_byte, $DVI_num, $DVI_den, $DVI_mag,
-        $DVI_comment_len, $DVI_comment);
-    # Begin of page (bop)
-    my $pos_bop = tell(OUT);
-    print OUT pack("CN1x[N9]l", $DVI_bop, 1, -1);
-
-    my $font_defs = "";
-    my $font_num = 0;
-    foreach(split("\n", $entry)) {
-      my $font_def = "";
-      /\\Font\{[^}]*\}\{([^}]*)\}\{([^}]*)\}\{([^}]*)\}/ or
-          die "!!! Error: Internal parsing error!\n";
-      my $font_name = $1;
-      my $font_name_len = length($font_name);
-      my $font_size = $2;
-      my $font_chars = $3;
-
-      # define font
-      if ($font_num < 256) {
-        $font_def = pack("CC", $DVI_fontdef1, $font_num);
-      }
-      # The other cases are very unlikely, especially there are
-      # more than one font in the merging case only.
-      elsif ($font_num < 65536) {
-        $font_def = pack("Cn", $DVI_fontdef2, $font_num);
-      }
-      else {
-        $font_def = pack("CN", $DVI_fontdef4, $font_num);
-      }
-      $font_def .= pack("x[N]N2xCa$font_name_len",
-          ($font_size * 65536), $DVI_design_size,
-          $font_name_len, $font_name);
-      print OUT $font_def;
-      $font_defs .= $font_def;
-
-      # use font
-      my $fnt_num;
-      if ($font_num < 64) {
-        $fnt_num = pack("C", $DVI_fnt_num_0 + $font_num);
-      }
-      # Other cases are unlikely, see above.
-      elsif ($font_num < 256) {
-        $fnt_num = pack("CC", $DVI_fnt1, $font_num);
-      }
-      elsif ($font_num < 65536) {
-        $fnt_num = pack("Cn", $DVI_fnt2, $font_num);
-      }
-      else {
-        $fnt_num = pack("CN", $DVI_fnt4, $font_num);
-      }
-      print OUT $fnt_num;
-
-      # print characters
-      print OUT pack("C", $DVI_push);
-      foreach (split(",", $font_chars)) {
-        if ($_ < 128) {
-          print OUT pack("C", $_);
-        }
-        else {
-          print OUT pack("CC", $DVI_set1, $_);
-        }
-      }
-      print OUT pack("C", $DVI_pop);
-
-      $font_num++;
-    }
-
-    print OUT pack("C", $DVI_eop);
-
-    # Begin of postamble (post)
-    my $pos_post = tell(OUT);
-    print OUT pack("CN6n2",
-        $DVI_post, $pos_bop, $DVI_num, $DVI_den, $DVI_mag,
-        $DVI_l, $DVI_u, 1, 1);
-    print OUT $font_defs;
-    # End of postamble (post_post)
-    print OUT pack("CNC5",
-        $DVI_post_post, $pos_post, $DVI_id_byte,
-        $DVI_trailing, $DVI_trailing, $DVI_trailing, $DVI_trailing);
-    my $t_num = (4 - (tell(OUT) % 4)) % 4;
-    print OUT pack("C", $DVI_trailing) x $t_num;
-    close(OUT);
-  }
-
-  ### run dvips
-  {
-    print $PRT "*** run dvips\n" if $::opt_verbose;
-
-    my $cmd = "$::opt_dvips $::opt_options $dvips_resolution $tempfile";
-    print $PRT ">>> $cmd\n" if $::opt_verbose;
-    # dvips writes on stderr :-(
-    my @capture = `$cmd$err_redirect`;
-    if ($::opt_verbose) {
-      print $PRT @capture;
-    }
-    if ($?) {
-      my $exitvalue = $?;
-      if ($exitvalue > 255) {
-        $exitvalue >>= 8;
-        print $PRT "$Warning Closing dvips (exit status: $exitvalue)!\n";
-        return @err;
-      }
-      print $PRT "$Warning Closing dvips ($exitvalue)!\n";
-      return @err;
-    }
-  }
-
-  ### get font and start part
-  open(IN, $psfile) or die "$Error Cannot open `$psfile'!\n";
-
-  while (<IN>) {
-    ### get possible encoding files
-    if (/^%%BeginProcSet:\s*(.+)\.enc/) {
-        my $encoding_file = $1;
-        print $PRT "*** encoding file `$encoding_file.enc' found.\n"
-            if $::opt_debug;
-        next if defined($encoding_files{$encoding_file});
-        $encoding_files{$encoding_file} = "";
-        $encoding_string .= $_;
-        while (<IN>) {
-          $encoding_string .= $_;
-          last if /^%%EndProcSet/;
-        }
-        next;
-    }
-
-    ### get texps.pro if get_texps_pro() has failed
-    if ($texps_data == 0 && /^%%BeginProcSet: texps.pro/) {
-      $texps_string = $_;
-      while (<IN>) {
-        $texps_string .= $_;
-        last if /^%%EndProcSet/;
-      }
-      $texps_data = 1;
-      print $PRT "*** texps.pro extracted.\n" if $::opt_debug;
-      next;
-    }
-
-    if (/^%%BeginFont:\s*(\S+)/) {
-      $name = $1;
-      $font .= $_;
-      while (<IN>) {
-        $font .= $_;
-        last if /^%%EndFont/;
-      }
-      next;
-    }
-    if (/^\@start/) {
-      s/^\@start\s*//;
-      $start .= $_;
-      while (<IN>) {
-        last if /^%%EndProlog/;
-        $start .= $_;
-      }
-      if (($start =~ s/\s*end\s*$/\n/) != 1) {
-        $err = 1;
-        print $PRT "$Warning Parse error, `end' not found!\n";
-      }
-      print $PRT "*** start: $start" if $::opt_debug;
-      last;
-    }
-  }
-  close(IN);
-
-  if ($font eq "") {
-    print $PRT "$Warning `%%BeginFont' not found!\n";
-    return @err;
-  }
-  return ($name, $font, $start, $err);
+    return ($name, $font, $start, $err);
 }
 
 
 # get_texps_pro
 # return: string with content of texps.pro
 sub get_texps_pro {
-  $texps_data = 0;
-  # get file name
-  my $backupWarn = $^W;
-  $^W = 0;
-  my $file = `$::opt_kpsewhich $texpsfile`;
-  $^W = $backupWarn;
-  if (!defined($file) or $file eq "") {
-    print $PRT "$Warning: Cannot find `$texpsfile' with kpsewhich!\n"
-      if $::opt_debug;
-    return "";
-  }
-  chomp $file;
-  print $PRT "*** texps.pro: $file\n" if $::opt_debug;
+    $texps_data = 0;
+    # get file name
+    my $backupWarn = $^W;
+    $^W = 0;
+    my $file = `$::opt_kpsewhich $texpsfile`;
+    $^W = $backupWarn;
+    if (!defined($file) or $file eq "") {
+        print $PRT "$Warning: Cannot find `$texpsfile' with kpsewhich!\n"
+            if $::opt_debug;
+        return "";
+    }
+    chomp $file;
+    print $PRT "*** texps.pro: $file\n" if $::opt_debug;
 
-  # read file
-  local *IN;
-  open(IN, $file) or die "$Error: Cannot open `$file'!\n";
-  my @lines = <IN>;
-  @lines > 0 or die "$Error: Empty file `$file'!\n";
-  chomp $lines[@lines-1];
-  my $str = "%%BeginProcSet: texps.pro\n";
-  $"="";
-  $str .= "@lines\n";
-  $"=" ";
-  $str .= "%%EndProcSet\n";
-  $texps_data = 1;
-  return $str;
+    # read file
+    local *IN;
+    open(IN, $file) or die "$Error: Cannot open `$file'!\n";
+    my @lines = <IN>;
+    @lines > 0 or die "$Error: Empty file `$file'!\n";
+    chomp $lines[@lines-1];
+    my $str = "%%BeginProcSet: texps.pro\n";
+    $"="";
+    $str .= "@lines\n";
+    $"=" ";
+    $str .= "%%EndProcSet\n";
+    $texps_data = 1;
+    return $str;
 }
 
 __END__
