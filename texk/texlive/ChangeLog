@@ -1,3 +1,7 @@
+2009-03-24  Karl Berry  <karl@tug.org>
+
+	* Makefile.in (LINKED_SCRIPTS): add svn-multi.pl.
+
 2009-03-23  Karl Berry  <karl@tug.org>
 
 	* Makefile.in (LINKED_SCRIPTS): add purifyeps, pkfix-helper,
