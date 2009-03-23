@@ -15,6 +15,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## Thus nodist_* for all files in $(LIBPNG_TREE).
 EXTRA_DIST = $(LIBPNG_TREE)
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(LIBPNG_TREE) -name .svn`
+
 INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = $(LIBPNG_DEFINES)
 

@@ -15,6 +15,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## Thus nodist_* for all files in $(GD_TREE).
 EXTRA_DIST = $(GD_TREE)
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(GD_TREE) -name .svn`
+
 INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 
 if build

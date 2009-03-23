@@ -6,6 +6,10 @@ DIST_SUBDIRS = dummy $(DIST_SUBTEXK)
 
 EXTRA_DIST = README.orig
 
+## just in case a subdirectory has added directories
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
 SUBTEXK_AUX = subtexkdir-configure subtexkdir-conf.args
 noinst_DATA = $(SUBTEXK_AUX)
 

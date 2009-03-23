@@ -59,13 +59,15 @@ LDADD = libttf.a
 
 nodist_man1_MANS = docs/ttfdump.1
 
-## #############
 ## Not yet used
-
+##
 EXTRA_DIST += ILX NOTE README.bg5
 
-## #############
-## Eventually delete these files
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
 
+## Eventually delete these files
+##
 EXTRA_DIST += Makefile.in.orig configure.in.orig
 

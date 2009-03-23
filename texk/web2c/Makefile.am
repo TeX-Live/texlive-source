@@ -26,6 +26,10 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h
 DISTCLEANFILES = $(EXTRA_LIBRARIES)
 CLEANFILES =
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+
 ## The sh script that does the conversion.
 web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert
 

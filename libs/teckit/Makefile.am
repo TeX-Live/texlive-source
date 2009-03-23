@@ -76,6 +76,10 @@ EXTRA_DIST += \
 	source/version_defs.h \
 	test
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
 ## Eventually delete these files
 ##
 EXTRA_DIST += Makefile.am.orig configure.ac.orig

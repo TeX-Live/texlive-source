@@ -18,6 +18,10 @@ EXTRA_DIST = \
 	style_ie.css \
 	style_plain.css
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+
 ## Eventually delete these files
 ##
 EXTRA_DIST += Makefile.am.orig configure.in.orig

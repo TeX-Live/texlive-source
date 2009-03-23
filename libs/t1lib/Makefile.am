@@ -15,6 +15,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## Thus nodist_* for all files in $(T1LIB_TREE).
 EXTRA_DIST = $(T1LIB_TREE)
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(T1LIB_TREE) -name .svn`
+
 INCLUDES = -Ilib -I$(top_srcdir)/$(T1LIB_TREE)
 AM_CPPFLAGS = $(T1LIB_DEFINES)
 AM_CPPFLAGS += -DT1LIB_IDENT=\"@T1LIB_VERSIONSTRING@\"

@@ -24,6 +24,10 @@ program_transform_name = 's,^,tc,'
 ## Thus nodist_* for all files in $(DIALOG_TREE).
 EXTRA_DIST = $(DIALOG_TREE)
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+
 if build
 
 nodist_man1_MANS = $(DIALOG_TREE)/dialog.1

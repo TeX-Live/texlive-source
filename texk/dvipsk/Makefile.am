@@ -115,7 +115,6 @@ uninstall-hook:
 
 ## Not yet used
 ##
-
 EXTRA_DIST += \
 	INSTALLATION \
 	atari \
@@ -145,6 +144,10 @@ EXTRA_DIST += \
 	tex \
 	vmcms \
 	vms
+
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
 
 ## Eventually delete these files
 ##

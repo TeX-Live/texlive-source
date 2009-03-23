@@ -26,6 +26,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## Thus nodist_* for all files in $(XPDF_TREE).
 EXTRA_DIST = $(XPDF_TREE)
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(XPDF_TREE) -name .svn`
+
 SUBDIRS = goo fofi xpdf
 
 GOO_SRC = $(top_srcdir)/$(XPDF_TREE)/goo

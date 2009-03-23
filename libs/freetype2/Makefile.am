@@ -14,6 +14,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## DISTFILES contains a directory and files in that directory.
 EXTRA_DIST = $(FREETYPE_TREE)
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(FREETYPE_TREE) -name .svn`
+
 if build
 
 noinst_DATA = libfreetype.a

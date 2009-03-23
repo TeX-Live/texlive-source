@@ -47,6 +47,10 @@ EXTRA_DIST = \
 	test \
 	uninstalled-top.pc.in
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+
 libgraphite_a_SOURCES = \
 	src/font/FileFont.cpp \
 	src/font/Font.cpp \
@@ -97,8 +101,6 @@ libgraphite_a_SOURCES = \
 	src/segment/TestPasses.cpp \
 	src/segment/TransductionLog.cpp \
 	src/segment/resource.h
-
-## included from
 
 ## Not used
 ##

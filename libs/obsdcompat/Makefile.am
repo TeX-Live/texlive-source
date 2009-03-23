@@ -22,8 +22,7 @@ libopenbsd_compat_a_SOURCES = \
 	includes.h \
 	openbsd-compat.h
 
-## ######
 ## Eventually delete these files
-
+##
 EXTRA_DIST = libobsd-compat.ac
 

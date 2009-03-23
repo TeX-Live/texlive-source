@@ -70,9 +70,8 @@ LDADD = $(KPATHSEA_LIBS) $(FREETYPE_LIBS)
 
 dist_man1_MANS = ttf2pk.1 ttf2tfm.1
 
-## #############
 ## Not yet used
-
+##
 EXTRA_DIST = \
 	data \
 	BUGS \
@@ -86,8 +85,11 @@ EXTRA_DIST = \
 	emtexdir.h \
 	ttf2pk.doc
 
-## #############
-## Eventually delete these files
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
 
+## Eventually delete these files
+##
 EXTRA_DIST += Makefile.in.orig configure.in.orig
 

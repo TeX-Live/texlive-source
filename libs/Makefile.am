@@ -6,6 +6,10 @@ DIST_SUBDIRS = dummy $(DIST_SUBLIBS)
 
 EXTRA_DIST = README.orig
 
+## just in case a subdirectory has added directories
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
 SUBLIBS_AUX = sublibsdir-configure sublibsdir-conf.args
 noinst_DATA = $(SUBLIBS_AUX)
 

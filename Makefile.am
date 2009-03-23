@@ -11,6 +11,10 @@ EXTRA_DIST = \
 	build-aux/README.TL \
 	m4/README
 
+## just in case a subdirectory has added directories
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
 if build_kpathsea
 SUBDIRS = texk/kpathsea
 else !build_kpathsea

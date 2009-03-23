@@ -57,8 +57,6 @@ pstops_SOURCES = \
 	psutil.c \
 	psutil.h
 
-## dist_man1_MANS = detex.man
-
 EXTRA_DIST = \
 	LICENSE
 
