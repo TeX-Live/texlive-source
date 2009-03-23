@@ -35,6 +35,7 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/ppower4/ppower4.texlua \
   texmf-dist/scripts/pdfcrop/pdfcrop.pl \
   texmf-dist/scripts/perltex/perltex.pl \
+  texmf-dist/scripts/pkfix-helper/pkfix-helper \
   texmf-dist/scripts/ppower4/pdfthumb.texlua \
   texmf-dist/scripts/ppower4/ppower4.texlua \
   texmf-dist/scripts/pst-pdf/ps4pdf \
