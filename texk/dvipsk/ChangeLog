@@ -1,3 +1,10 @@
+2009-03-24  Karl Berry  <karl@tug.org>
+
+	* writet1.c (t1_flush_cs): t1_lenIV >= 0, not
+	t1_lenIV > 0, to fix subset problems on Macs.  Found by Melissa
+	O'Neill.  Reported on ntg-pdftex@ntg.nl and pdftex@tug.org,
+	21 March, 2009 13:45:12.
+
 2009-02-16  Karl Berry  <karl@tug.org>
 
 	* dvips.texi (Config file paper sizes): document.

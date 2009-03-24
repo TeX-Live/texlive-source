@@ -1,27 +1,19 @@
 /*
-Copyright (c) 1996-2005 Han The Thanh, <thanh@pdftex.org>
+$Id$
+Copyright 1996-2005, 2009 Han The Thanh, <thanh@pdftex.org>
 
-This file is part of pdfTeX.
-
-pdfTeX is free software; you can redistribute it and/or modify
+This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
+This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/writet1.c#24 $
-*/
-
-static const char perforce_id[] = 
-    "$Id: //depot/Build/source.development/TeX/texk/web2c/pdftexdir/writet1.c#24 $";
+along with this program.  If not, see  <http://www.gnu.org/licenses/>.  */
 
 #ifdef pdfTeX /* writet1 used with pdfTeX */
 #include "ptexlib.h"           
@@ -1546,7 +1538,7 @@ static void t1_flush_cs(boolean is_subr)
         cr = 4330;
         cs_len = 0;
         return_cs = xtalloc(t1_lenIV + 1, byte);
-        if (t1_lenIV > 0) {
+        if (t1_lenIV >= 0) {
             for (cs_len = 0, r = return_cs; cs_len < t1_lenIV; cs_len++, r++)
                 *r = cencrypt(0x00, &cr);
             *r = cencrypt(CS_RETURN, &cr);
