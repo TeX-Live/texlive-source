@@ -33,6 +33,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvipng$(EXEEXT)
+@have_t1_TRUE@am__append_1 = t1.c
+@have_ft2_TRUE@am__append_2 = ft.c sfd.c
+@have_ft2_or_t1_TRUE@am__append_3 = enc.c fontmap.c tfm.c
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	$(srcdir)/../../build-aux/config.guess \
@@ -72,10 +75,18 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am__dvipng_SOURCES_DIST = color.c commands.h draw.c dvi.c dvipng.c \
+	dvipng.h font.c misc.c papersiz.c pk.c ppagelist.c set.c \
+	special.c vf.c t1.c ft.c sfd.c enc.c fontmap.c tfm.c
+@have_t1_TRUE@am__objects_1 = t1.$(OBJEXT)
+@have_ft2_TRUE@am__objects_2 = ft.$(OBJEXT) sfd.$(OBJEXT)
+@have_ft2_or_t1_TRUE@am__objects_3 = enc.$(OBJEXT) fontmap.$(OBJEXT) \
+@have_ft2_or_t1_TRUE@	tfm.$(OBJEXT)
 am_dvipng_OBJECTS = color.$(OBJEXT) draw.$(OBJEXT) dvi.$(OBJEXT) \
 	dvipng.$(OBJEXT) font.$(OBJEXT) misc.$(OBJEXT) \
 	papersiz.$(OBJEXT) pk.$(OBJEXT) ppagelist.$(OBJEXT) \
-	set.$(OBJEXT) special.$(OBJEXT) vf.$(OBJEXT)
+	set.$(OBJEXT) special.$(OBJEXT) vf.$(OBJEXT) $(am__objects_1) \
+	$(am__objects_2) $(am__objects_3)
 dvipng_OBJECTS = $(am_dvipng_OBJECTS)
 dvipng_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
@@ -92,7 +103,7 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(dvipng_SOURCES)
-DIST_SOURCES = $(dvipng_SOURCES)
+DIST_SOURCES = $(am__dvipng_SOURCES_DIST)
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man1_MANS)
@@ -268,39 +279,30 @@ top_srcdir = @top_srcdir@
 #  All settings here are our fault, don't blame the dvipng maintainer for it.
 #
 #************************************************************************
-ACLOCAL_AMFLAGS = -I ../../m4
+ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 INCLUDES = $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(GD_INCLUDES) \
 	$(T1LIB_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = 
-dvipng_SOURCES = \
-	color.c \
-	commands.h \
-	draw.c \
-	dvi.c \
-	dvipng.c \
-	dvipng.h \
-	font.c \
-	misc.c \
-	papersiz.c \
-	pk.c \
-	ppagelist.c \
-	set.c \
-	special.c \
-	vf.c
-
+dvipng_SOURCES = color.c commands.h draw.c dvi.c dvipng.c dvipng.h \
+	font.c misc.c papersiz.c pk.c ppagelist.c set.c special.c vf.c \
+	$(am__append_1) $(am__append_2) $(am__append_3)
 dvipng_DEPENDENCIES = $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) \
 	$(GD_DEPEND) $(T1LIB_DEPEND) $(LIBPNG_DEPEND) $(ZLIB_DEPEND)
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(GD_LIBS) $(T1LIB_LIBS) \
 	$(LIBPNG_LIBS) $(ZLIB_LIBS)
 dist_man1_MANS = dvipng.1
 EXTRA_DIST = ChangeLog.0 ChangeLog.TL RELEASE dvipng.dvi dvipng.help \
-	dvipng.info dvipng.texi enc.c fontmap.c ft.c install.texi \
-	macros.texi miktex.h miktex.mak readme.texi sfd.c t1.c \
-	test_dvipng.tex tfm.c dvipng.dvi.orig dvipng.help.orig \
-	dvipng.info.orig Makefile.in-$(DVIPNG_VERSION) \
-	aclocal.m4-$(DVIPNG_VERSION) config.h.in-$(DVIPNG_VERSION) \
+	dvipng.info dvipng.texi install.texi macros.texi miktex.h \
+	miktex.mak readme.texi test_dvipng.tex dvipng.dvi.orig \
+	dvipng.help.orig dvipng.info.orig \
+	Makefile.in-$(DVIPNG_VERSION) aclocal.m4-$(DVIPNG_VERSION) \
+	color.c-$(DVIPNG_VERSION) config.h.in-$(DVIPNG_VERSION) \
 	configure-$(DVIPNG_VERSION) configure.ac-$(DVIPNG_VERSION) \
-	special.c-$(DVIPNG_VERSION) m4/gs-device.m4 m4/makeinfo.m4 \
+	dvipng.h-$(DVIPNG_VERSION) fontmap.c-$(DVIPNG_VERSION) \
+	ft.c-$(DVIPNG_VERSION) misc.c-$(DVIPNG_VERSION) \
+	pk.c-$(DVIPNG_VERSION) set.c-$(DVIPNG_VERSION) \
+	special.c-$(DVIPNG_VERSION) t1.c-$(DVIPNG_VERSION) \
+	tfm.c-$(DVIPNG_VERSION) m4/gs-device.m4 m4/makeinfo.m4 \
 	Makefile.in.orig acinclude.m4.orig configure.ac.orig \
 	Makefile.am.demo Makefile.in.work configure.ac.demo \
 	configure.ac.work
@@ -401,13 +403,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/draw.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvipng.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/enc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/font.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fontmap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ft.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/misc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/papersiz.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ppagelist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/set.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/special.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tfm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vf.Po@am__quote@
 
 .c.o:
@@ -682,6 +690,9 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+@have_gif_FALSE@install-exec-hook:
+@have_gif_FALSE@install-data-hook:
+@have_gif_FALSE@uninstall-hook:
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
@@ -704,10 +715,14 @@ info: info-am
 info-am:
 
 install-data-am: install-man
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
 install-dvi: install-dvi-am
 
 install-exec-am: install-binPROGRAMS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 
 install-html: install-html-am
 
@@ -742,10 +757,13 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-man
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 
 uninstall-man: uninstall-man1
 
-.MAKE: install-am install-strip
+.MAKE: install-am install-data-am install-exec-am install-strip \
+	uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-binPROGRAMS clean-generic clean-libtool ctags dist \
@@ -754,15 +772,16 @@ uninstall-man: uninstall-man1
 	distclean-generic distclean-hdr distclean-libtool \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-man \
+	install-binPROGRAMS install-data install-data-am \
+	install-data-hook install-dvi install-dvi-am install-exec \
+	install-exec-am install-exec-hook install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-hook uninstall-man \
 	uninstall-man1
 
 
@@ -772,6 +791,15 @@ uninstall-man: uninstall-man1
 @T1LIB_RULE@
 @LIBPNG_RULE@
 @ZLIB_RULE@
+
+@have_gif_TRUE@install-exec-hook:
+@have_gif_TRUE@	cd $(DESTDIR)/$(bindir) && rm -f dvigif && $(LN_S) dvipng dvigif
+
+@have_gif_TRUE@install-data-hook:
+@have_gif_TRUE@	cd $(DESTDIR)/$(man1dir) && rm -f dvigif.1 && $(LN_S) dvipng.1 dvigif.1
+
+@have_gif_TRUE@uninstall-hook:
+@have_gif_TRUE@	rm -f $(DESTDIR)/$(bindir)/dvigif $(DESTDIR)/$(man1dir)/dvigif.1
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

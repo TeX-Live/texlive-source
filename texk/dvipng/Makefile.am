@@ -26,7 +26,7 @@
 #
 #************************************************************************
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
+ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
 INCLUDES = $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(GD_INCLUDES)
 INCLUDES +=  $(T1LIB_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
@@ -50,6 +50,18 @@ dvipng_SOURCES = \
 	special.c \
 	vf.c
 
+if have_t1
+dvipng_SOURCES += t1.c
+endif have_t1
+
+if have_ft2
+dvipng_SOURCES += ft.c sfd.c
+endif have_ft2
+
+if have_ft2_or_t1
+dvipng_SOURCES += enc.c fontmap.c tfm.c
+endif have_ft2_or_t1
+
 dvipng_DEPENDENCIES = $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) $(GD_DEPEND)
 dvipng_DEPENDENCIES += $(T1LIB_DEPEND) $(LIBPNG_DEPEND) $(ZLIB_DEPEND)
 
@@ -71,6 +83,19 @@ LDADD += $(T1LIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 
 dist_man1_MANS = dvipng.1
 
+if have_gif
+
+install-exec-hook:
+	cd $(DESTDIR)/$(bindir) && rm -f dvigif && $(LN_S) dvipng dvigif
+
+install-data-hook:
+	cd $(DESTDIR)/$(man1dir) && rm -f dvigif.1 && $(LN_S) dvipng.1 dvigif.1
+
+uninstall-hook:
+	rm -f $(DESTDIR)/$(bindir)/dvigif $(DESTDIR)/$(man1dir)/dvigif.1
+
+endif have_gif
+
 ## Not yet used
 ##
 EXTRA_DIST = \
@@ -81,18 +106,12 @@ EXTRA_DIST = \
 	dvipng.help \
 	dvipng.info \
 	dvipng.texi \
-	enc.c \
-	fontmap.c \
-	ft.c \
 	install.texi \
 	macros.texi \
 	miktex.h \
 	miktex.mak \
 	readme.texi \
-	sfd.c \
-	t1.c \
-	test_dvipng.tex \
-	tfm.c
+	test_dvipng.tex
 
 EXTRA_DIST += \
 	dvipng.dvi.orig \
@@ -104,10 +123,19 @@ EXTRA_DIST += \
 EXTRA_DIST += \
 	Makefile.in-$(DVIPNG_VERSION) \
 	aclocal.m4-$(DVIPNG_VERSION) \
+	color.c-$(DVIPNG_VERSION) \
 	config.h.in-$(DVIPNG_VERSION) \
 	configure-$(DVIPNG_VERSION) \
 	configure.ac-$(DVIPNG_VERSION) \
-	special.c-$(DVIPNG_VERSION)
+	dvipng.h-$(DVIPNG_VERSION) \
+	fontmap.c-$(DVIPNG_VERSION) \
+	ft.c-$(DVIPNG_VERSION) \
+	misc.c-$(DVIPNG_VERSION) \
+	pk.c-$(DVIPNG_VERSION) \
+	set.c-$(DVIPNG_VERSION) \
+	special.c-$(DVIPNG_VERSION) \
+	t1.c-$(DVIPNG_VERSION) \
+	tfm.c-$(DVIPNG_VERSION)
 
 ## Eventually use these macro files
 ##

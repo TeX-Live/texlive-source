@@ -1,5 +1,15 @@
 	Changes for teTeX / TeX Live.
 
+2009-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* color.c-1.12, dvipng.h-1.12, fontmap.c-1.12,
+	ft.c-1.12, misc.c-1.12, pk.c-1.12, set.c-1.12,
+	t1.c-1.12, tfm.c-1.12 (all new): Original files.
+
+	* color.c, dvipng.h, fontmap.c, ft.c, misc.c, pk.c, set.c,
+	t1.c, tfm.c: "#if HAVE_ALLOCA_H" => "#ifdef HAVE_ALLOCA_H"
+	and similar, to avoid preprocessor warnings.
+
 2009-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.12 from savannah.nongnu.org.

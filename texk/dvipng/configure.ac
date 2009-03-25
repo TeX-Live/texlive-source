@@ -62,6 +62,8 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
+AC_TYPE_INT64_T
+AC_TYPE_UINT64_T
 
 dnl Checks for library functions.
 AC_FUNC_ALLOCA
@@ -78,6 +80,10 @@ KPSE_LIBPNG_FLAGS
 KPSE_T1LIB_FLAGS
 KPSE_GD_FLAGS
 KPSE_FREETYPE2_FLAGS
+
+dnl We have to check properties of libraries, either installed (system)
+dnl libraries or unistalled (possibly libtool) ones from the TL tree.
+dnl Thus we can not use, e.g., AC_CHECK_LIB(LIB,FUNCTION)
 
 dnl Checks for more libraries.
 KPSE_ADD_FLAGS([zlib])
@@ -104,12 +110,27 @@ AC_CHECK_FUNC([kpse_set_progname],
                          [Define to 1 if you have the `kpathsea' library (-lkpathsea).])],
               [AC_MSG_ERROR([cannot find/use libkpathsea])])
 
+dnl We need enc, cmap, and sfd formats.
+dnl Introduced together with opentype format (Dec 2003).
+KPSE_CHECK_KPSE_FORMAT([opentype],
+                       [AC_DEFINE([HAVE_KPSE_ENC_FORMATS], 1,
+                                  [Define to 1 if your kpathsea has kpse_enc_format.])])
+
 KPSE_ADD_FLAGS([t1lib])
-dnl AC_CHECK_FUNC([T1_InitLib],
-dnl               [AC_DEFINE([HAVE_LIBT1], 1,
-dnl                          [Define to 1 if you have the `t1' library (-lt1).])])
+AC_CHECK_FUNC([T1_InitLib],
+              [have_ft2_or_t1=yes
+               AC_DEFINE([HAVE_LIBT1], 1,
+                         [Define to 1 if you have the `t1' library (-lt1).])],
+              [have_ft2_or_t1=no])
+AM_CONDITIONAL([have_t1], [test "x$ac_cv_func_T1_InitLib" = xyes])
 
 KPSE_ADD_FLAGS([freetype2])
+AC_CHECK_FUNC([FT_Init_FreeType],
+              [have_ft2_or_t1=yes
+               AC_DEFINE([HAVE_FT2], 1,
+                         [Define to 1 if you have freetype2.])])
+AM_CONDITIONAL([have_ft2], [test "x$ac_cv_func_FT_Init_FreeType" = xyes])
+AM_CONDITIONAL([have_ft2_or_t1], [test "x$have_ft2_or_t1" = xyes])
 
 dnl Checks for more header files.
 AC_CHECK_HEADERS([gd.h png.h kpathsea/kpathsea.h], ,
@@ -119,7 +140,14 @@ AC_CHECK_HEADERS([t1lib.h])
 dnl Checks for library functions.
 AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImageCreateFromPngPtr gdImageGif FT_Library_Version])
 
+AM_CONDITIONAL([have_gif], [test "x$ac_cv_func_gdImageGif" = xyes])
+
 KPSE_RESTORE_FLAGS
+
+dnl These are still missing:
+dnl HAVE_FTIME
+dnl HAVE_GETTIMEOFDAY
+dnl HAVE_KPSE_ENC_FORMATS
 
 DVIPNG_VERSION=dvipng_version
 AC_SUBST([DVIPNG_VERSION])
@@ -142,9 +170,9 @@ AC_MSG_RESULT([
    Your gd is new enough (>=2.0.28) to
      enable gif inclusion and output 
      (dvigif):                              $ac_cv_func_gdImageGif
-   FreeType font rendering available:       $ac_have_freetype2
-   Support for subfonts (CJK-LaTeX):        $ac_have_freetype2
-   T1lib font rendering available:          $ac_cv_lib_t1_T1_InitLib
+   FreeType font rendering available:       $ac_cv_func_FT_Init_FreeType
+   Support for subfonts (CJK-LaTeX):        $ac_cv_func_FT_Init_FreeType
+   T1lib font rendering available:          $ac_cv_func_T1_InitLib
 ])
 
 AC_CONFIG_HEADER([config.h])

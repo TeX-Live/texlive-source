@@ -195,7 +195,7 @@ bool DecodeArgs(int argc, char ** argv)
 	}
 	break ;
       case 't':       /* specify paper format, only for cropmarks */
-#ifdef HAVE_GDIMAGECREATETRUECOLOR
+#if HAVE_GDIMAGECREATETRUECOLOR
 	/* Truecolor */
 	if (strncmp(p,"ruecolor",8)==0) { 
 	  if (p[8] != '0') {
