@@ -1,9 +1,9 @@
-ChangeLog: Changes for xdvik (teTeX / TeX live)
+ChangeLog: Changes for xdvik (teTeX / TeX Live)
 ===============================================
 
 2008-07-01
 	Imported ftp://tug.org/tex/xdvik-22.84.14.tar.gz and
-	adapted to new TeX live build system (autoconf-2.59+).
+	adapted to new TeX Live build system (autoconf-2.59+).
 
 	* Makefile.in.orig, acconfig.h.orig, aclocal.m4.orig,
 	configure.in.orig, depend.mk.orig, gui/Makefile.in.orig,
