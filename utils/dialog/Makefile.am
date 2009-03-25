@@ -26,7 +26,7 @@ EXTRA_DIST = $(DIALOG_TREE)
 
 ## in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir)/$(DIALOG_TREE) -name .svn`
 
 if build
 

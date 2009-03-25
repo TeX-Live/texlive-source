@@ -512,7 +512,7 @@ uninstall-man: uninstall-man1
 
 
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir)/$(DIALOG_TREE) -name .svn`
 
 @build_TRUE@$(DIALOG_BUILD)/dialog$(EXEEXT):
 @build_TRUE@	cd $(DIALOG_BUILD) && $(MAKE) $(AM_MAKEFLAGS) all

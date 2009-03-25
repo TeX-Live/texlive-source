@@ -41,11 +41,13 @@ subdir = otftotfm
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_template_objs.m4 \
-	$(top_srcdir)/m4/kpse-common.m4 \
-	$(top_srcdir)/m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/libtool.m4 \
+	$(top_srcdir)/../../m4/ltoptions.m4 \
+	$(top_srcdir)/../../m4/ltsugar.m4 \
+	$(top_srcdir)/../../m4/ltversion.m4 \
+	$(top_srcdir)/../../m4/lt~obsolete.m4 \
 	$(top_srcdir)/ac/lcdf-typetools.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -69,7 +71,7 @@ otftotfm_OBJECTS = $(am_otftotfm_OBJECTS)
 am__DEPENDENCIES_1 =
 @have_kpathsea_TRUE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
-depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
+depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)

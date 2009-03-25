@@ -67,6 +67,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-pkgs.m4 \
 	$(top_srcdir)/../texk/dviljk/ac/withenable.ac \
 	$(top_srcdir)/../texk/dvipdfm/ac/withenable.ac \
 	$(top_srcdir)/../texk/dvipdfmx/ac/withenable.ac \
+	$(top_srcdir)/../texk/dvipng/ac/withenable.ac \
 	$(top_srcdir)/../texk/dvipos/ac/withenable.ac \
 	$(top_srcdir)/../texk/dvipsk/ac/withenable.ac \
 	$(top_srcdir)/../texk/gsftopk/ac/withenable.ac \
@@ -81,6 +82,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-pkgs.m4 \
 	$(top_srcdir)/../texk/ttf2pk/ac/withenable.ac \
 	$(top_srcdir)/../texk/ttfdump/ac/withenable.ac \
 	$(top_srcdir)/../texk/xdv2pdf/ac/withenable.ac \
+	$(top_srcdir)/../texk/xdvik/ac/withenable.ac \
 	$(top_srcdir)/../texk/xdvipdfmx/ac/withenable.ac \
 	$(top_srcdir)/../texk/kpathsea/ac/withenable.ac \
 	$(top_srcdir)/../texk/kpathsea/ac/web2c.ac \

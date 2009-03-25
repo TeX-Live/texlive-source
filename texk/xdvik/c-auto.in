@@ -1,147 +1,75 @@
-/* c-auto.in.  Generated from configure.in by autoheader.  */
+/* c-auto.in.  Generated from configure.ac by autoheader.  */
 
-/* Define to use A4 as the default paper size. */
-#undef A4
+/* Define to 1 if the `closedir' function returns void instead of `int'. */
+#undef CLOSEDIR_VOID
 
-/* Define if building universal (internal helper macro) */
-#undef AC_APPLE_UNIVERSAL_BUILD
+/* Define to 1 if you have the <assert.h> header file. */
+#undef HAVE_ASSERT_H
 
-/* Define to the length (in bytes) of type BMTYPE. */
-#undef BMBYTES
+/* Define to 1 if you have the `bcmp' function. */
+#undef HAVE_BCMP
 
-/* Define to determine the integer type to be used in bitmaps. The type used
-   will be "unsigned BMTYPE". */
-#undef BMTYPE
+/* Define to 1 if you have the `bcopy' function. */
+#undef HAVE_BCOPY
 
-/* Define to enable support for color specials. */
-#undef COLOR
+/* Define to 1 if you have the `bzero' function. */
+#undef HAVE_BZERO
 
-/* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
-   systems. This function is required for `alloca.c' support on those systems.
+/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
-#undef CRAY_STACKSEG_END
+#undef HAVE_DIRENT_H
 
-/* Define to 1 if using `alloca.c'. */
-#undef C_ALLOCA
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
 
-/* Define to point to the default command to use for printing (optional). */
-#undef DEFAULT_DVIPS_PATH
+/* Define to 1 if you have the <float.h> header file. */
+#undef HAVE_FLOAT_H
 
-/* Define to point to the default command to use for printing (optional). */
-#undef DEFAULT_PS2PDF_PATH
-
-/* Define if you are using Linux 2.1.xxx -- 2.2.8, or if you find it
-   necessary. */
-#undef FLAKY_SIGPOLL
-
-/* Define to enable greyscale anti-aliasing for shrunken bitmaps. */
-#undef GREY
-
-/* Define to 1 if you have `alloca', as a function or macro. */
-#undef HAVE_ALLOCA
-
-/* Define to 1 if you have <alloca.h> and it should be used (not on Ultrix).
-   */
-#undef HAVE_ALLOCA_H
-
-/* Define if your C compiler can do string concatenation */
-#undef HAVE_CC_CONCAT
-
-/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-#undef HAVE_DOPRNT
-
-/* Define to 1 if you have the `fchdir' function. */
-#undef HAVE_FCHDIR
-
-/* Define to 1 if you have the `fork' function. */
-#undef HAVE_FORK
-
-/* Define to 1 if you have the `ftruncate' function. */
-#undef HAVE_FTRUNCATE
+/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
+#undef HAVE_FSEEKO
 
 /* Define to 1 if you have the `getcwd' function. */
 #undef HAVE_GETCWD
 
-/* Define to 1 if you have the `getpwnam' function. */
-#undef HAVE_GETPWNAM
+/* Define to 1 if you have the `getwd' function. */
+#undef HAVE_GETWD
 
-/* Define to 1 if you have the `getpwuid' function. */
-#undef HAVE_GETPWUID
-
-/* Define to 1 if you have the `getuid' function. */
-#undef HAVE_GETUID
-
-/* Define if your system allows setsid() within vfork(). */
-#undef HAVE_GOOD_SETSID_VFORK
-
-/* Define if the vsnprintf function works. */
-#undef HAVE_GOOD_VSNPRINTF
-
-/* Define to 1 if you have the `iconv' function. */
-#undef HAVE_ICONV
-
-/* Define to 1 if you have the <iconv.h> header file. */
-#undef HAVE_ICONV_H
-
-/* Define to 1 if you have the <ieeefp.h> header file. */
-#undef HAVE_IEEEFP_H
+/* Define to 1 if you have the `index' function. */
+#undef HAVE_INDEX
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `isinf' function. */
-#undef HAVE_ISINF
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
 
-/* Define to 1 if you have the <langinfo.h> header file. */
-#undef HAVE_LANGINFO_H
-
-/* Define to 1 if you have the `m' library (-lm). */
-#undef HAVE_LIBM
-
-/* Define to 1 if you have the `lstat' function. */
-#undef HAVE_LSTAT
+/* Define to 1 if you have the `memcmp' function. */
+#undef HAVE_MEMCMP
 
 /* Define to 1 if you have the `memcpy' function. */
 #undef HAVE_MEMCPY
 
-/* Define if the memicmp() function is in <string.h> */
-#undef HAVE_MEMICMP
-
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define to 1 if you have the `mkstemp' function. */
-#undef HAVE_MKSTEMP
+/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
+#undef HAVE_NDIR_H
 
-/* Define to 1 if you have the <netdb.h> header file. */
-#undef HAVE_NETDB_H
+/* Define to 1 if you are using GNU libc or otherwise have global variables
+   `program_invocation_name' and `program_invocation_short_name'. */
+#undef HAVE_PROGRAM_INVOCATION_NAME
 
-/* Define to 1 if you have the `nl_langinfo' function. */
-#undef HAVE_NL_LANGINFO
+/* Define to 1 if your compiler understands prototypes. */
+#undef HAVE_PROTOTYPES
 
-/* Define if you have an old version of the Xaw library */
-#undef HAVE_OLD_XAW
+/* Define to 1 if you have the `putenv' function. */
+#undef HAVE_PUTENV
 
-/* Define if your system has <poll.h> and poll(). */
-#undef HAVE_POLL
+/* Define to 1 if you have the <pwd.h> header file. */
+#undef HAVE_PWD_H
 
-/* Define to 1 if you have the `realpath' function. */
-#undef HAVE_REALPATH
-
-/* Define to 1 if you have the <regex.h> header file. */
-#undef HAVE_REGEX_H
-
-/* Define to 1 if you have the <select.h> header file. */
-#undef HAVE_SELECT_H
-
-/* Define to 1 if you have the `setenv' function. */
-#undef HAVE_SETENV
-
-/* Define to 1 if you have the `sigaction' function. */
-#undef HAVE_SIGACTION
-
-/* Define to 1 if you have the `snprintf' function. */
-#undef HAVE_SNPRINTF
+/* Define to 1 if you have the `rindex' function. */
+#undef HAVE_RINDEX
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -149,17 +77,11 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
+/* Define to 1 if you have the `strcasecmp' function. */
+#undef HAVE_STRCASECMP
+
 /* Define to 1 if you have the `strchr' function. */
 #undef HAVE_STRCHR
-
-/* Define if your system has STREAMS (and if X uses it). */
-#undef HAVE_STREAMS
-
-/* Define to 1 if you have the `strerror' function. */
-#undef HAVE_STRERROR
-
-/* Define to 1 if cpp supports the ANSI # stringizing operator. */
-#undef HAVE_STRINGIZE
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -167,17 +89,28 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the <sys/bsdtypes.h> header file. */
-#undef HAVE_SYS_BSDTYPES_H
+/* Define to 1 if you have the `strrchr' function. */
+#undef HAVE_STRRCHR
 
-/* Define to 1 if you have the <sys/fcntl.h> header file. */
-#undef HAVE_SYS_FCNTL_H
+/* Define to 1 if you have the `strstr' function. */
+#undef HAVE_STRSTR
+
+/* Define to 1 if you have the `strtol' function. */
+#undef HAVE_STRTOL
+
+/* Define to 1 if `st_mtim' is member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_MTIM
+
+/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
+   */
+#undef HAVE_SYS_DIR_H
+
+/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
+   */
+#undef HAVE_SYS_NDIR_H
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
-
-/* Define to 1 if you have the <sys/select.h> header file. */
-#undef HAVE_SYS_SELECT_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
@@ -185,75 +118,15 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
-#undef HAVE_SYS_WAIT_H
-
-/* Define to 1 if you have the `ulltostr' function. */
-#undef HAVE_ULLTOSTR
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have the `vfork' function. */
-#undef HAVE_VFORK
-
-/* Define to 1 if you have the <vfork.h> header file. */
-#undef HAVE_VFORK_H
-
-/* Define to 1 if you have the `vprintf' function. */
-#undef HAVE_VPRINTF
-
-/* Define to 1 if you have the `vsnprintf' function. */
-#undef HAVE_VSNPRINTF
-
-/* Define to 1 if you have the `waitpid' function. */
-#undef HAVE_WAITPID
-
-/* Define to 1 if `fork' works. */
-#undef HAVE_WORKING_FORK
-
-/* Define if the CODESET argument to nl_langinfo works. */
-#undef HAVE_WORKING_NL_LANGINFO_CODESET
-
-/* Define to 1 if `vfork' works. */
-#undef HAVE_WORKING_VFORK
-
-/* Define to 1 if you have the <X11/Intrinsic.h> header file. */
-#undef HAVE_X11_INTRINSIC_H
-
-/* Define to 1 if you have the <X11/Xmu/Editres.h> header file. */
-#undef HAVE_X11_XMU_EDITRES_H
-
-/* Define to 1 if you have the <X11/Xmu/Xmu.h> header file. */
-#undef HAVE_X11_XMU_XMU_H
-
-/* Define to 1 if you have the <X11/Xosdefs.h> header file. */
-#undef HAVE_X11_XOSDEFS_H
-
-/* Define if you have the <X11/xpm.h> header file. */
-#undef HAVE_X11_XPM_H
-
-/* Define to 1 if you have the <Xm/XpmP.h> header file. */
-#undef HAVE_XM_XPMP_H
-
-/* Define if you have the <xpm.h> header file (not in X11, e.g. Solaris 5.8).
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
-#undef HAVE_XPM_H
+#undef LT_OBJDIR
 
-/* Define the type of the iconv input string (char ** or const char **) */
-#undef ICONV_CHAR_PPTR_TYPE
-
-/* Define to compile in t1lib (libtool) */
-#undef LDT1LIB
-
-/* Define if your system allows multiple definitions of functions. */
-#undef LD_ALLOWS_MULTIPLE_DEFINITIONS
-
-/* Define to use ImageMagick */
-#undef MAGICK
-
-/* Define to use the Motif toolkit. */
-#undef MOTIF
+/* Name of package */
+#undef PACKAGE
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -270,64 +143,26 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define as the return type of signal handlers (`int' or `void'). */
-#undef RETSIGTYPE
-
-/* If using the C implementation of alloca, define if you know the
-   direction of stack growth for your system; otherwise it will be
-   automatically deduced at runtime.
-	STACK_DIRECTION > 0 => grows toward higher addresses
-	STACK_DIRECTION < 0 => grows toward lower addresses
-	STACK_DIRECTION = 0 => direction of growth unknown */
-#undef STACK_DIRECTION
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* Define if you are using SunOS 4.x. */
-#undef SUNOS4
+/* Version number of package */
+#undef VERSION
 
-/* Define to compile in t1lib */
-#undef T1LIB
+/* Number of bits in a file offset, on hosts where this is settable. */
+#undef _FILE_OFFSET_BITS
 
-/* Define to enable gf format files (in addition to pk format). */
-#undef USE_GF
+/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
+#undef _LARGEFILE_SOURCE
 
-/* Define to use Xaw panner. */
-#undef USE_XAW_PANNER
-
-/* Define if you want to use the Xpm library */
-#undef USE_XPM
-
-/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
-   significant byte first (like Motorola and SPARC, unlike Intel). */
-#if defined AC_APPLE_UNIVERSAL_BUILD
-# if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
-# endif
-#else
-# ifndef WORDS_BIGENDIAN
-#  undef WORDS_BIGENDIAN
-# endif
-#endif
-
-/* Define to use the Xaw toolkit. */
-#undef XAW
-
-/* Define to 1 if the X Window System is missing or not being used. */
-#undef X_DISPLAY_MISSING
+/* Define for large files, on AIX-style hosts. */
+#undef _LARGE_FILES
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
-/* Define to `int' if <sys/types.h> does not define. */
-#undef pid_t
-
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-#undef size_t
-
-/* Define to `unsigned long' if <sys/types.h> does not define. */
-#undef uint32_t
-
-/* Define as `fork' if `vfork' does not work. */
-#undef vfork
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif

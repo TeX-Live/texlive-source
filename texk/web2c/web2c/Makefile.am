@@ -43,8 +43,7 @@ splitup_SOURCES = \
 makecpool_SOURCES = \
 	makecpool.c
 
-## ######
 ## Obsolete ??
-
+##
 EXTRA_DIST = convert.bat
 

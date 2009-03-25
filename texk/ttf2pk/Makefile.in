@@ -765,7 +765,7 @@ uninstall-man: uninstall-man1
 @FREETYPE_RULE@
 
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

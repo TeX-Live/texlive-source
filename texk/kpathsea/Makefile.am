@@ -257,13 +257,11 @@ uninstall-hook:
 	  else :; fi; \
 	done
 
-######## 
-## Not yet used
-
+## Not used
+##
 EXTRA_DIST += mktex.cnf
 
-## ######
 ## Eventually delete these files
-
+##
 EXTRA_DIST += Makefile.in.orig common.ac.orig
 

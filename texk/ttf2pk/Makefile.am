@@ -87,7 +87,7 @@ EXTRA_DIST = \
 
 ## in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 
 ## Eventually delete these files
 ##

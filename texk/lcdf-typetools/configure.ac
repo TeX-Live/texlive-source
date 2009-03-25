@@ -1,9 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([LCDF typetools], [2.76-rc1], [tex-k@tug.org])
+dnl Adapted for TeX Live.
+AC_INIT([LCDF typetools], [2.75], [tex-k@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([NEWS])
-AC_CONFIG_AUX_DIR([build-aux])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([lcdf-typetools], [check-news])
@@ -52,13 +53,10 @@ test -d $srcdir/../kpathsea && enable_tetex_build=yes
 AC_ARG_WITH([kpathsea],
             [AS_HELP_STRING([--without-kpathsea],
                             [build otftotfm without kpathsea])])
-  KPSE_KPATHSEA_FLAGS
 
-save_CPPFLAGS=$CPPFLAGS
-save_LIBS=$LIBS
+KPSE_KPATHSEA_FLAGS
 
-CPPFLAGS="$CPPFLAGS $KPATHSEA_INCLUDES"
-LIBS="$KPATHSEA_LIBS $LIBS"
+KPSE_ADD_FLAGS([kpathsea])
 
 if test "x$with_kpathsea" != xno; then
   AC_MSG_CHECKING([for kpathsea headers and library])
@@ -84,8 +82,7 @@ disable support using --without-kpathsea.
 fi
 AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
 
-CPPFLAGS=$save_CPPFLAGS
-LIBS=$save_LIBS
+KPSE_RESTORE_FLAGS
 
 AC_ARG_ENABLE(selfauto-set, [  --disable-selfauto-set  disable setting SELFAUTO variables from kpsewhich], :, enable_selfauto_set=yes)
 

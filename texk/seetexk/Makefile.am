@@ -26,10 +26,10 @@ libtex_a_SOURCES = \
 
 bin_PROGRAMS = dvibook dviconcat dviselect dvitodvi
 
-dvibook_DEPENDENCIES = $(KPATHSEA_DEPEND)
-dviconcat_DEPENDENCIES = $(KPATHSEA_DEPEND)
-dviselect_DEPENDENCIES = $(KPATHSEA_DEPEND)
-dvitodvi_DEPENDENCIES = $(KPATHSEA_DEPEND)
+dvibook_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)
+dviconcat_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)
+dviselect_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)
+dvitodvi_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)
 
 LDADD = libtex.a $(KPATHSEA_LIBS)
 

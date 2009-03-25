@@ -53,16 +53,11 @@ AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 # don't run any tests for '--disable-build', there may be no zlib.
 if test "x$enable_build" != xno; then
 
-save_CPPFLAGS=$CPPFLAGS
-save_LIBS=$LIBS
-
-CPPFLAGS="$CPPFLAGS $ZLIB_INCLUDES"
-LIBS="$ZLIB_LIBS $LIBS"
+KPSE_ADD_FLAGS([zlib])
 
 AC_CHECK_FUNC([zlibVersion], , [AC_ERROR([zlib not found])])
 
-CPPFLAGS=$save_CPPFLAGS
-LIBS=$save_LIBS
+KPSE_RESTORE_FLAGS
 
 fi
 

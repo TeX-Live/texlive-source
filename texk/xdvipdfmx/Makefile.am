@@ -1,5 +1,5 @@
 ##
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
+ACLOCAL_AMFLAGS = -I ../../m4
 
 if build
 SUBDIRS = src
@@ -12,7 +12,6 @@ EXTRA_DIST = \
 	data \
 	doc \
 	index.html \
-	m4/cho-kpse.m4 \
 	style_base.css \
 	style_dflt.css \
 	style_ie.css \
@@ -20,7 +19,7 @@ EXTRA_DIST = \
 
 ## in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 
 ## Eventually delete these files
 ##

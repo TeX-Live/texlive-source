@@ -541,7 +541,7 @@ EXTRA_DIST += \
 EXTRA_DIST += luatexdir/macnames.c
 
 ## Tests
-
+##
 dist_check_SCRIPTS += luatexdir/luatangle.test
 
 if LUATEX
@@ -552,13 +552,5 @@ DISTCLEANFILES += cftest.p
 
 ## Eventually delete these files
 ##
-EXTRA_DIST += \
-	luatexdir/.indent.pro \
-	luatexdir/Makefile.in \
-	luatexdir/depend.mk \
-	luatexdir/font/.indent.pro  \
-	luatexdir/image/.indent.pro  \
-	luatexdir/lua/.indent.pro  \
-	luatexdir/luatex.mk \
-	luatexdir/luatexlib.mk
+EXTRA_DIST += luatexdir/Makefile.in luatexdir/luatex.mk luatexdir/luatexlib.mk
 

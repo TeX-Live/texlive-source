@@ -53,30 +53,27 @@ AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 # don't run any tests for '--disable-build', there may be no zlib.
 if test "x$enable_build" != xno; then
 
-save_CPPFLAGS=$CPPFLAGS
-save_LIBS=$LIBS
-
-CPPFLAGS="$CPPFLAGS $ZLIB_INCLUDES"
-LIBS="$ZLIB_LIBS $LIBS"
+KPSE_ADD_FLAGS([zlib])
 
 AC_CHECK_FUNC([deflate], , [AC_ERROR([zlib not found])])
 AC_CHECK_HEADERS([zlib.h], , [AC_ERROR([zlib not found])])
 AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
 
-CPPFLAGS="$CPPFLAGS $LIBPNG_INCLUDES"
-LIBS="$LIBPNG_LIBS $LIBS"
+KPSE_ADD_FLAGS([libpng])
 
 AC_CHECK_FUNC([png_create_read_struct], , [AC_ERROR([libpng not found])])
 AC_CHECK_HEADERS([png.h], , [AC_ERROR([libpng not found])])
 AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have the png library.])
 
-CPPFLAGS=$save_CPPFLAGS
-LIBS=$save_LIBS
+KPSE_RESTORE_FLAGS
 
 fi
 
 GD_TREE=gd-[]gd_version
 AC_SUBST([GD_TREE])
+
+dnl Use $GD_TREE to exclude $GD_TREE/gd.h from DIST_COMMON
+AC_CONFIG_LINKS([gd.h:$GD_TREE/gd.h])
 
 AC_CONFIG_FILES([Makefile])
 

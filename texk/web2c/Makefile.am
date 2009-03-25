@@ -28,7 +28,7 @@ CLEANFILES =
 
 ## in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 
 ## The sh script that does the conversion.
 web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert

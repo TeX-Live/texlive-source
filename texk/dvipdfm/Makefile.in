@@ -51,7 +51,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_bin_SCRIPTS) \
 	../../build-aux/ylwrap AUTHORS COPYING ChangeLog INSTALL NEWS \
 	TODO
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/maw-time.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/cho-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
@@ -61,7 +61,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/maw-time.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
 	$(top_srcdir)/../../m4/ltversion.m4 \
 	$(top_srcdir)/../../m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/../../m4/maw-time.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -253,7 +253,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
+ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
 dvipdfm_SOURCES = colors.h colorsp.c colorsp.h dvi.c dvi.h dvicodes.h \

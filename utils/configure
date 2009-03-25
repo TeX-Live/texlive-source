@@ -718,6 +718,7 @@ enable_dvidvi
 enable_dviljk
 enable_dvipdfm
 enable_dvipdfmx
+enable_dvipng
 enable_dvipos
 enable_dvipsk
 enable_gsftopk
@@ -743,6 +744,7 @@ enable_tex4htk
 enable_ttf2pk
 enable_ttfdump
 enable_xdv2pdf
+enable_xdvik
 enable_xdvipdfmx
 with_system_kpathsea
 with_kpathsea_includes
@@ -1460,6 +1462,7 @@ Optional Features:
   --disable-dviljk        do not build the dviljk package
   --disable-dvipdfm       do not build the dvipdfm package
   --disable-dvipdfmx      do not build the dvipdfmx package
+  --disable-dvipng        do not build the dvipng package
   --disable-dvipos        do not build the dvipos package
   --disable-dvipsk        do not build the dvipsk package
   --disable-gsftopk       do not build the gsftopk package
@@ -1488,6 +1491,7 @@ Optional Features:
   --disable-ttf2pk        do not build the ttf2pk package
   --disable-ttfdump       do not build the ttfdump package
   --disable-xdv2pdf       do not build the xdv2pdf package
+  --disable-xdvik         do not build the xdvik package
   --disable-xdvipdfmx     do not build the xdvipdfmx package
   --disable-mktexmf-default   do not run mktexmf if MF source missing
   --disable-mktexpk-default   do not run mktexpk if PK font missing
@@ -2549,6 +2553,28 @@ test "x$enable_dvipdfmx" = xno || {
 }
 
 
+## texk/dvipng/ac/withenable.ac
+## configure options and TL libraries required for dvipng
+# Check whether --enable-dvipng was given.
+if test "${enable_dvipng+set}" = set; then
+  enableval=$enable_dvipng;
+fi
+case $enable_dvipng in #(
+  yes|no);; #(
+  *) { $as_echo "$as_me:$LINENO: Assuming \`--enable-dvipng'" >&5
+$as_echo "$as_me: Assuming \`--enable-dvipng'" >&6;}
+     enable_dvipng=yes
+     ac_configure_args="$ac_configure_args '--enable-dvipng'";;
+esac
+
+test "x$enable_dvipng" = xno || {
+  need_kpathsea=yes
+  need_freetype2=yes
+  need_gd=yes
+  need_t1lib=yes
+}
+
+
 ## texk/dvipos/ac/withenable.ac
 ## configure options and TL libraries required for dvipos
 # Check whether --enable-dvipos was given.
@@ -2851,6 +2877,26 @@ esac
 
 test "x$enable_xdv2pdf" = xno || {
   need_kpathsea=yes
+}
+
+
+## texk/xdvik/ac/withenable.ac
+## configure options and TL libraries required for xdvik
+# Check whether --enable-xdvik was given.
+if test "${enable_xdvik+set}" = set; then
+  enableval=$enable_xdvik;
+fi
+case $enable_xdvik in #(
+  yes|no);; #(
+  *) { $as_echo "$as_me:$LINENO: Assuming \`--enable-xdvik'" >&5
+$as_echo "$as_me: Assuming \`--enable-xdvik'" >&6;}
+     enable_xdvik=yes
+     ac_configure_args="$ac_configure_args '--enable-xdvik'";;
+esac
+
+test "x$enable_xdvik" = xno || {
+  need_kpathsea=yes
+  need_t1lib=yes
 }
 
 

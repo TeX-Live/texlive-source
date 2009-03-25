@@ -82,6 +82,7 @@ dvidvi
 dviljk
 dvipdfm
 dvipdfmx
+dvipng
 dvipos
 dvipsk
 gsftopk
@@ -95,6 +96,7 @@ tex4htk
 ttf2pk
 ttfdump
 xdv2pdf
+xdvik
 xdvipdfmx
 tetex
 ])]) # KPSE_TEXK_PKGS

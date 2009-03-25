@@ -291,8 +291,6 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = . doc man
-
-######## 
 EXTRA_DIST = BUGS HIER PROJECTS README.CONFIGURE putenv.c strcasecmp.c \
 	strtol.c strstr.c mktex.cnf Makefile.in.orig common.ac.orig
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..

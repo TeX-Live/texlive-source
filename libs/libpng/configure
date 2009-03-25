@@ -5136,11 +5136,12 @@ fi
 # don't run any tests for '--disable-build', there may be no zlib.
 if test "x$enable_build" != xno; then
 
-save_CPPFLAGS=$CPPFLAGS
-save_LIBS=$LIBS
+kpse_save_CPPFLAGS=$CPPFLAGS
+kpse_save_LIBS=$LIBS
 
 CPPFLAGS="$CPPFLAGS $ZLIB_INCLUDES"
 LIBS="$ZLIB_LIBS $LIBS"
+
 
 { $as_echo "$as_me:$LINENO: checking for zlibVersion" >&5
 $as_echo_n "checking for zlibVersion... " >&6; }
@@ -5236,8 +5237,9 @@ $as_echo "$as_me: error: zlib not found" >&2;}
 fi
 
 
-CPPFLAGS=$save_CPPFLAGS
-LIBS=$save_LIBS
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
 
 fi
 

@@ -19,7 +19,7 @@ AC_DEFUN([KPSE_GD_FLAGS],
 _KPSE_LIB_FLAGS([gd], [gd],
                  [$1],
                  [-IBLD/libs/gd], [BLD/libs/gd/libgd.a], [],
-                 [], [${top_builddir}/../../libs/libpng/gd.h])[]dnl
+                 [], [${top_builddir}/../../libs/gd/gd.h])[]dnl
 ]) # KPSE_GD_FLAGS
 
 # KPSE_GD_SYSTEM_FLAGS

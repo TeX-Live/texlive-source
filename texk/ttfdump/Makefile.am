@@ -7,6 +7,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## DISTFILES contains a directory and files in that directory.
 EXTRA_DIST = docs include libttf src
 
+## in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
 INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES)
 
 noinst_LIBRARIES = libttf.a
@@ -62,10 +66,6 @@ nodist_man1_MANS = docs/ttfdump.1
 ## Not yet used
 ##
 EXTRA_DIST += ILX NOTE README.bg5
-
-## in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
 
 ## Eventually delete these files
 ##

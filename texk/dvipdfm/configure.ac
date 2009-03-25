@@ -40,90 +40,45 @@ KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 
-save_CPPFLAGS=$CPPFLAGS
-save_LIBS=$LIBS
+KPSE_ADD_FLAGS([kpathsea])
 
-CPPFLAGS="$CPPFLAGS $KPATHSEA_INCLUDES"
-LIBS="$KPATHSEA_LIBS $LIBS"
-
-AC_MSG_CHECKING([whether you have kpathsea headers and they know about the required file formats])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
-#include <kpathsea/tex-file.h>]],
-                                [[kpse_tex_ps_header_format; kpse_type1_format; kpse_vf_format;]])],
-               [AC_MSG_RESULT([yes])
-                AC_DEFINE([HAVE_KPATHSEA], 1,
-                          [Define if you have kpathsea.])
-                AC_DEFINE([HAVE_KPSE_FORMATS], 1,
-                          [Define if kpathsea supports type1 and vf formats.])],
-               [AC_MSG_RESULT([no])
-                AC_MSG_ERROR([PS_HEADER and/or VF formats not found in Kpathsea header files.
+dnl Check for required file formats.
+dnl We need tex-ps_header, type1, and vf;
+dnl of these type1 was introduced last (Feb 1996).
+KPSE_CHECK_KPSE_FORMAT([type1], ,
+                       [AC_MSG_ERROR([Required file formats not found in Kpathsea header files.
 
 This version of dvipdfm requires that kpathsea and its headers be available.
 If you are sure they are installed and in a standard place, maybe you need a
 newer version of kpathsea?  You also might try setting the environment
 variable CPPFLAGS (or CFLAGS) with -I pointing to the directory containing
-the file "kpathsea/tex-file.h"
+the file "kpathsea/kpathsea.h"
 
 ])])
 
-AC_MSG_CHECKING([whether your kpathsea supports Omega OFM file formats])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
-#include <kpathsea/tex-file.h>]],
-                                [[kpse_ofm_format;]])],
-               [AC_MSG_RESULT([yes])
-                AC_DEFINE([HAVE_OMEGA_FORMATS], 1,
-                          [Define if kpathsea understands Omega (OFM/OVF) formats.])],
-               [AC_MSG_RESULT([no])])
+dnl Check for ofm format.
+KPSE_CHECK_KPSE_FORMAT([ofm],
+                       [AC_DEFINE([HAVE_OMEGA_FORMATS], 1,
+                                  [Define if kpathsea understands Omega (OFM/OVF) formats.])])
 
-AC_MSG_CHECKING([whether your kpathsea supports Truetype (TTF) file formats])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
-#include <kpathsea/tex-file.h>]],
-                                [[kpse_truetype_format;]])],
-               [have_ttf=yes
-                AC_DEFINE([HAVE_TTF_FORMATS], 1,
-                          [Define if kpathsea understands TrueType (TTF) formats.])],
-               [have_ttf=no])
-AC_MSG_RESULT([$have_ttf])
-AM_CONDITIONAL([HAVE_TTF], [test "x$have_ttf" = xyes])
+dnl Check for truetype format.
+KPSE_CHECK_KPSE_FORMAT([truetype],
+                       [AC_DEFINE([HAVE_TTF_FORMATS], 1,
+                                  [Define if kpathsea understands TrueType (TTF) formats.])])
+AM_CONDITIONAL([HAVE_TTF], [test "x$kpse_cv_have_truetype_format" = xyes])
 
-AC_MSG_CHECKING([whether your kpathsea has xbasename])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
-#include <kpathsea/lib.h>]],
-                                [[xbasename;]])],
-               [AC_MSG_RESULT([yes])
-                AC_DEFINE([HAVE_XBASENAME], 1,
-                          [Define if you have xbasename() in your libkpathsea instead of basename().])],
-               [AC_MSG_RESULT([no])])
+dnl Check for xbasename.
+KPSE_CHECK_XBASENAME([AC_DEFINE([HAVE_XBASENAME], 1,
+                                [Define if you have xbasename() in your libkpathsea
+                                 instead of basename().])])
 
-CPPFLAGS="$save_CPPFLAGS $ZLIB_INCLUDES"
-LIBS="$ZLIB_LIBS $save_LIBS"
+KPSE_ADD_FLAGS([zlib])
+CHO_CHECK_ZLIB
 
-AC_MSG_CHECKING([for zlib header files and library])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <zlib.h>]],
-                                [[z_stream p;]])],
-               [AC_MSG_RESULT([yes])
-                AC_CHECK_FUNCS([compress],
-                               [AC_DEFINE([HAVE_ZLIB], 1,
-                                          [Define if you have zlib and its headers.])
-                                AC_CHECK_FUNCS([compress2],
-                                               [AC_DEFINE([HAVE_ZLIB_COMPRESS2], 1,
-                                                          [Define if your zlib has the compress2 function.])])])],
-               [AC_MSG_RESULT([no])])
+KPSE_ADD_FLAGS([libpng])
+CHO_CHECK_LIBPNG
 
-CPPFLAGS="$CPPFLAGS $LIBPNG_INCLUDES"
-LIBS="$LIBPNG_LIBS $LIBS"
-
-AC_MSG_CHECKING([for png header files and library])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <png.h>]],
-                                [[png_infop p;]])],
-               [AC_MSG_RESULT([yes])
-                AC_CHECK_FUNCS([png_get_image_width],
-                               [AC_DEFINE([HAVE_LIBPNG], 1,
-                                          [Define if you have libpng and its headers.])])],
-               [AC_MSG_RESULT([no])])
-
-CPPFLAGS=$save_CPPFLAGS
-LIBS=$save_LIBS
+KPSE_RESTORE_FLAGS
 
 AC_CONFIG_FILES([Makefile])
 

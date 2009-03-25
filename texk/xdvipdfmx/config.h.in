@@ -6,8 +6,8 @@
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
 
-/* Define if you have Mac OS X ApplicationServices */
-#undef HAVE_APP_SERVICES
+/* Define to 1 if you have the Mac OS X ApplicationServices framework. */
+#undef HAVE_APPLICATIONSERVICES
 
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H

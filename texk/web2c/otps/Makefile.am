@@ -36,13 +36,11 @@ outocp_SOURCES = \
 
 outocp_LDADD = $(proglib) $(KPATHSEA_LIBS)
 
-## ######
-## Not yet used
-
+## Not used
+##
 EXTRA_DIST = bugs.txt
 
-## ######
 ## Eventually delete these files
-
+##
 EXTRA_DIST += \
 	Makefile.in.orig

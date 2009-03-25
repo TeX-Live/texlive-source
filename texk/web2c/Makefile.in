@@ -837,19 +837,17 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	luatexdir/font/subfont.txt luatexdir/pdftosrc.1 \
 	luatexdir/pdftosrc.cc luatexdir/pdftosrc.rc \
 	luatexdir/ttf2afm.c luatexdir/ttf2afm.rc luatexdir/macnames.c \
-	luatexdir/.indent.pro luatexdir/Makefile.in \
-	luatexdir/depend.mk luatexdir/font/.indent.pro \
-	luatexdir/image/.indent.pro luatexdir/lua/.indent.pro \
-	luatexdir/luatex.mk luatexdir/luatexlib.mk \
-	xetexdir/FontTableCache.cpp xetexdir/FontTableCache.h \
-	xetexdir/MathTable.h xetexdir/XeTeXFontInst.cpp \
-	xetexdir/XeTeXFontInst.h xetexdir/XeTeXFontInst_FT2.cpp \
-	xetexdir/XeTeXFontInst_FT2.h xetexdir/XeTeXFontInst_Mac.cpp \
-	xetexdir/XeTeXFontInst_Mac.h xetexdir/XeTeXFontMgr.cpp \
-	xetexdir/XeTeXFontMgr.h xetexdir/XeTeXFontMgr_FC.cpp \
-	xetexdir/XeTeXFontMgr_FC.h xetexdir/XeTeXFontMgr_Mac.h \
-	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/XeTeXGrLayout.cpp \
-	xetexdir/XeTeXGrLayout.h xetexdir/XeTeXLayoutInterface.cpp \
+	luatexdir/Makefile.in luatexdir/luatex.mk \
+	luatexdir/luatexlib.mk xetexdir/FontTableCache.cpp \
+	xetexdir/FontTableCache.h xetexdir/MathTable.h \
+	xetexdir/XeTeXFontInst.cpp xetexdir/XeTeXFontInst.h \
+	xetexdir/XeTeXFontInst_FT2.cpp xetexdir/XeTeXFontInst_FT2.h \
+	xetexdir/XeTeXFontInst_Mac.cpp xetexdir/XeTeXFontInst_Mac.h \
+	xetexdir/XeTeXFontMgr.cpp xetexdir/XeTeXFontMgr.h \
+	xetexdir/XeTeXFontMgr_FC.cpp xetexdir/XeTeXFontMgr_FC.h \
+	xetexdir/XeTeXFontMgr_Mac.h xetexdir/XeTeXFontMgr_Mac.mm \
+	xetexdir/XeTeXGrLayout.cpp xetexdir/XeTeXGrLayout.h \
+	xetexdir/XeTeXLayoutInterface.cpp \
 	xetexdir/XeTeXLayoutInterface.h \
 	xetexdir/XeTeXOTLayoutEngine.cpp \
 	xetexdir/XeTeXOTLayoutEngine.h xetexdir/XeTeXOTMath.cpp \
@@ -6377,7 +6375,7 @@ uninstall-man: uninstall-man1 uninstall-man5
 
 
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 
 $(proglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
 	cd lib && $(MAKE) $(AM_MAKEFLAGS)

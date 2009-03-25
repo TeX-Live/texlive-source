@@ -19951,26 +19951,28 @@ if test "$ac_res" != no; then
 fi
 
 
-save_CPPFLAGS=$CPPFLAGS
-save_LIBS=$LIBS
+kpse_save_CPPFLAGS=$CPPFLAGS
+kpse_save_LIBS=$LIBS
 
 CPPFLAGS="$CPPFLAGS $KPATHSEA_INCLUDES"
 LIBS="$KPATHSEA_LIBS $LIBS"
 
-{ $as_echo "$as_me:$LINENO: checking whether you have kpathsea headers and they know about opentype files" >&5
-$as_echo_n "checking whether you have kpathsea headers and they know about opentype files... " >&6; }
-cat >conftest.$ac_ext <<_ACEOF
+{ $as_echo "$as_me:$LINENO: checking whether kpathsea declares the kpse_opentype_format" >&5
+$as_echo_n "checking whether kpathsea declares the kpse_opentype_format... " >&6; }
+if test "${kpse_cv_have_opentype_format+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <stdio.h>
-#include <kpathsea/tex-file.h>
+#include <kpathsea/kpathsea.h>
 int
 main ()
 {
-kpse_opentype_format;
+kpse_opentype_format
   ;
   return 0;
 }
@@ -19996,26 +19998,31 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  { $as_echo "$as_me:$LINENO: result: yes" >&5
-$as_echo "yes" >&6; }
+  kpse_cv_have_opentype_format=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	{ $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
-  build=no
-  { $as_echo "$as_me:$LINENO: WARNING: Kpathsea does not support opentype files, can not build xdv2pdf." >&5
-$as_echo "$as_me: WARNING: Kpathsea does not support opentype files, can not build xdv2pdf." >&2;}
-
+	kpse_cv_have_opentype_format=no
 fi
 
 rm -rf conftest.dSYM
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_have_opentype_format" >&5
+$as_echo "$kpse_cv_have_opentype_format" >&6; }
+if test "x$kpse_cv_have_opentype_format" = xyes; then
+  :
+else
+  build=no
+{ $as_echo "$as_me:$LINENO: WARNING: Kpathsea does not support opentype files, can not build xdv2pdf." >&5
+$as_echo "$as_me: WARNING: Kpathsea does not support opentype files, can not build xdv2pdf." >&2;}
+fi
 
-CPPFLAGS=$save_CPPFLAGS
-LIBS=$save_LIBS
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
 
 fi
 

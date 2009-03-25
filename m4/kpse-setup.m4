@@ -9,7 +9,7 @@
 
 # KPSE_SETUP(TOP-LEVEL)
 # ---------------------
-# Initialize path prefix kpse_TL to top-level teTeX / TeX live (TL) directory.
+# Initialize path prefix kpse_TL to top-level teTeX / TeX Live (TL) directory.
 # Sinclude all withenable.ac files providing:
 #   configure options --with-system-LIB, --with-LIB-includes, and --with-LIB-libdir
 #     for libraries

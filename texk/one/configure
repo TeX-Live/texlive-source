@@ -11333,9 +11333,9 @@ else
   GD_DEPEND=`echo 'BLD/libs/gd/libgd.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    GD_RULE='# Rebuild libgd
-$(GD_DEPEND): ${top_builddir}/../../libs/libpng/gd.h
+$(GD_DEPEND): ${top_builddir}/../../libs/gd/gd.h
 	cd ${top_builddir}/../../libs/gd && $(MAKE) $(AM_MAKEFLAGS)
-${top_builddir}/../../libs/libpng/gd.h:
+${top_builddir}/../../libs/gd/gd.h:
 	cd ${top_builddir}/../../libs/gd && $(MAKE) $(AM_MAKEFLAGS)'
 fi
 

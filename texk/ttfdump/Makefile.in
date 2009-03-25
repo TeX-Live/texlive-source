@@ -1212,10 +1212,10 @@ uninstall-man: uninstall-man1
 	uninstall-man uninstall-man1
 
 
-@KPATHSEA_RULE@
-
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
+
+@KPATHSEA_RULE@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -233,3 +233,29 @@ if test "$kb_cv_var_program_inv_name" = yes; then
              `program_invocation_name' and `program_invocation_short_name'.])
 fi
 ]) # KPSE_COMMON
+
+# KPSE_SAVE_FLAGS
+# ---------------
+# Save values of CPPFLAGS and LIBS.
+AC_DEFUN([KPSE_SAVE_FLAGS],
+[kpse_save_CPPFLAGS=$CPPFLAGS
+kpse_save_LIBS=$LIBS
+]) # KPSE_SAVE_FLAGS
+
+# KPSE_RESTORE_FLAGS
+# ------------------
+# Restore values of CPPFLAGS and LIBS.
+AC_DEFUN([KPSE_RESTORE_FLAGS],
+[AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+]) # KPSE_RESTORE_FLAGS
+
+# KPSE_ADD_FLAGS(LIBDIR)
+# ----------------------
+# Add flags for LIBDIR to values of CPPFLAGS and LIBS.
+AC_DEFUN([KPSE_ADD_FLAGS],
+[AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
+CPPFLAGS="$CPPFLAGS $[]AS_TR_CPP($1)_INCLUDES"
+LIBS="$[]AS_TR_CPP($1)_LIBS $LIBS"
+]) # KPSE_ADD_FLAGS

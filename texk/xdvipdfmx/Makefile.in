@@ -46,19 +46,20 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/ylwrap AUTHORS COPYING ChangeLog INSTALL NEWS \
 	TODO
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/cho-libs.m4 \
-	$(top_srcdir)/m4/jfk-macos.m4 $(top_srcdir)/m4/maw-time.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/cho-kpse.m4 \
+	$(top_srcdir)/../../m4/cho-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
 	$(top_srcdir)/../../m4/ltversion.m4 \
 	$(top_srcdir)/../../m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/../../m4/maw-time.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -214,11 +215,11 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
+ACLOCAL_AMFLAGS = -I ../../m4
 @build_TRUE@SUBDIRS = src
 EXTRA_DIST = BUGS ChangeLog.TL contrib data doc index.html \
-	m4/cho-kpse.m4 style_base.css style_dflt.css style_ie.css \
-	style_plain.css Makefile.am.orig configure.in.orig
+	style_base.css style_dflt.css style_ie.css style_plain.css \
+	Makefile.am.orig configure.in.orig
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -672,7 +673,7 @@ uninstall-am:
 
 
 dist-hook:
-	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

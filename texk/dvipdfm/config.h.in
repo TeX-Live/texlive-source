@@ -46,12 +46,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define if you have kpathsea. */
-#undef HAVE_KPATHSEA
-
-/* Define if kpathsea supports type1 and vf formats. */
-#undef HAVE_KPSE_FORMATS
-
 /* Define if you have libpng and its headers. */
 #undef HAVE_LIBPNG
 

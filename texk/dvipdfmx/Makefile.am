@@ -1,9 +1,9 @@
 ##
-ACLOCAL_AMFLAGS = -I ../../m4 -I m4
+ACLOCAL_AMFLAGS = -I ../../m4
 
 SUBDIRS = data src
 
-EXTRA_DIST = ChangeLog.TL m4/cho-kpse.m4
+EXTRA_DIST = ChangeLog.TL
 
 ## Eventually delete these files
 ##

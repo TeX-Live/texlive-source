@@ -46,24 +46,12 @@ dnl Checks for library functions.
 AC_CHECK_FUNCS([strspn system])
 AC_SEARCH_LIBS([pow], [m])
 
-save_CPPFLAGS=$CPPFLAGS
-save_LIBS=$LIBS
-
-CPPFLAGS="$CPPFLAGS $KPATHSEA_INCLUDES"
-LIBS="$KPATHSEA_LIBS $LIBS"
-
-AC_MSG_CHECKING([whether you have kpathsea headers and they know about opentype files])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
-#include <kpathsea/tex-file.h>]],
-                                [[kpse_opentype_format;]])],
-               [AC_MSG_RESULT([yes])],
-               [AC_MSG_RESULT([no])
-  build=no
-  AC_MSG_WARN([Kpathsea does not support opentype files, can not build xdv2pdf.])
-])
-
-CPPFLAGS=$save_CPPFLAGS
-LIBS=$save_LIBS
+dnl Check that Kpathsea supports the opentype file format.
+KPSE_ADD_FLAGS([kpathsea])
+KPSE_CHECK_KPSE_FORMAT([opentype], ,
+                       [build=no
+AC_MSG_WARN([Kpathsea does not support opentype files, can not build xdv2pdf.])])
+KPSE_RESTORE_FLAGS
 
 fi
 
