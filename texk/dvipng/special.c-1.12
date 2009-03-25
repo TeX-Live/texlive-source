@@ -18,7 +18,7 @@
   License along with this program. If not, see
   <http://www.gnu.org/licenses/>.
 
-  Copyright (C) 2002-2008 Jan-Åke Larsson
+  Copyright (C) 2002-2009 Jan-Åke Larsson
 
 ************************************************************************/
 
@@ -288,6 +288,9 @@ rescale(gdImagePtr psimage, int pngwidth, int pngheight)
 		 pngwidth,pngheight));
 #ifdef HAVE_GDIMAGECREATETRUECOLOR
     scaledimage=gdImageCreateTrueColor(pngwidth,pngheight);
+    /* Copy with overwrite, remember that this is the rescaled source
+       image. The real target has alpha blending on. */
+    gdImageAlphaBlending(scaledimage,0);
     gdImageCopyResampled(scaledimage,psimage,0,0,0,0,
 			 pngwidth,pngheight,
 			 gdImageSX(psimage),gdImageSY(psimage));
@@ -306,18 +309,25 @@ void newpsheader(char* special) {
   struct pscode* tmp;
   char* txt;
 
-  if (strncmp(special,"! /pgfH",7)==0) {
-    SetSpecial("header=tex.pro",0,0);
-    SetSpecial("header=special.pro",0,0);
-    SetSpecial("! TeXDict begin",0,0);
+  if (psheaderp==NULL && strcmp(special,"header=tex.pro")!=0) {
+    newpsheader("header=tex.pro");
+    newpsheader("header=color.pro");
+    newpsheader("header=special.pro");
   }
+  if (strcmp(special+strlen(special)-4,".xcp")==0
+      && strncmp(special,"header=",7)==0) 
+    InitXColorPrologue(special+7);
+  if (strncmp(special,"! /pgfH",7)==0)
+    newpsheader("! TeXDict begin");
   if (psheaderp==NULL) {
     if ((tmp=psheaderp=malloc(sizeof(struct pscode)))==NULL)
       Fatal("cannot allocate space for PostScript header struct");
   } else {
-    tmp=psheaderp;
     /* No duplicates. This still misses pre=..., because we still
        change that. To be fixed */
+    tmp=psheaderp;
+    if (strcmp(tmp->special,special)==0)
+      return;
     while(tmp->next!=NULL) {
       tmp=tmp->next;
       if (strcmp(tmp->special,special)==0)

@@ -1,4 +1,16 @@
-	Changes for teTeX / TeX live.
+	Changes for teTeX / TeX Live.
+
+2009-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.12 from savannah.nongnu.org.
+	* *-1.11 (removed), *-1.12 (new): Original files.
+
+	* Makefile.am, configure.ac: New TeX Live build system.
+
+	From Vladimir Volovich  <vvv@vsu.ru>
+	* special.c-1.12 (new): Original file from release 1.12.
+	* special.c: portability fix - put variable declarations
+	at the beginning of the block.
 
 2008-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -24,7 +36,7 @@
 
 	* acinclude.m4 (new): M4 macros extracted from aclocal.m4-1.10.
 
-	* Makefile.in, configure.ac: Adapted for TeX live.
+	* Makefile.in, configure.ac: Adapted for TeX Live.
 
 	* aclocal.m4, config.h.in, configure: Regenerated.
 

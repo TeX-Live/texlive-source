@@ -1,3 +1,45 @@
+2009-02-23  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* Release 1.12
+
+2009-02-23  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* INSTALL, README, install.texi, readme.texi, special.c: Correct
+	date for copyright
+
+	* RELEASE, configure.ac, dvipng.1, dvipng.texi: Prepare for 1.12 
+
+2009-01-23  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Keep transparent background in rescaled included
+	bitmaps
+
+2008-06-04  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Add the color PostScript prologue
+
+2008-06-03  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* dvipng.h, special.c: Support xcolor PostScript prologue
+
+	* color.c: Support x11nam.def, fix handling of xcolor
+	multiple-model color values, and xcolor PostScript prologue
+
+2008-06-02  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* special.c: Some (most?) literal PostScript specials seem to
+	depend on tex.pro and possibly special.pro, always load these
+
+	* configure.ac: Fix gs checks
+
+	* misc.c: Correct last mmap element
+
+2008-05-27  Jan-Ake Larsson  <jalar@mai.liu.se>
+
+	* readme.texi: Mention new color models in xcolor
+
+	* color.c: Adjust for new version of xcolor, mainly color prefixes
+
 2008-05-14  Jan-Ake Larsson  <jalar@mai.liu.se>
 
 	* Release 1.11

@@ -408,7 +408,7 @@ void StoreColorStack(struct page_list *tpagep);
 void ReadColorStack(struct page_list *tpagep);
 void StoreBackgroundColor(struct page_list *tpagep);
 void ClearColorNames(void);
-
+void InitXColorPrologue(char* prologuename);
 
 /**********************************************************************/
 /*************************  Global Variables  *************************/

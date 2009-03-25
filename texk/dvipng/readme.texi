@@ -127,13 +127,16 @@ This program is released under the GNU Lesser General Public License
 version 3, see the COPYING file in the dvipng distribution or
 @url{http://www.gnu.org/licenses/}.
 
-Copyright @copyright{} 2002-2008 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2009 Jan-@AA{}ke Larsson
 
 @section Todo
 
 @itemize @bullet
 @item
 Use gs interpreter library for speed and possibly for functionality.
+
+@item
+Add more color models for xcolor compatibility
 
 @item
 Fix T1lib and PK rendering so it is on par with Freetype.

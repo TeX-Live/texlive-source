@@ -199,5 +199,5 @@ This program is released under the GNU Lesser General Public License
 version 3, see the COPYING file in the dvipng distribution or
 @url{http://www.gnu.org/licenses/}.
 
-Copyright @copyright{} 2002-2008 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2009 Jan-@AA{}ke Larsson
 @end ifset
