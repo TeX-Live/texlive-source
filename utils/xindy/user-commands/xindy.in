@@ -656,7 +656,7 @@ sub xindy_expression () {
 	    if ( $2 && -d "$ld/$1" ) { # $2 is not set if the regex didn't match
 		$language = $1;
 		$variant = "$2-"  unless ( $2 eq 'iso' );
-		$variant eq 'din'  and  $variant = 'din5007';
+		$variant eq 'din-'  and  $variant = 'din5007-';
 	    }
 	}
 	# Let's guess the codepage. We take any that starts with
