@@ -820,6 +820,8 @@ KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
 KPATHSEA_INCLUDES
+INSTALL_INFO
+AM_MAKEINFOFLAGS
 POW_LIB
 LIBOBJS
 ALLOCA
@@ -942,6 +944,9 @@ enable_dependency_tracking
 with_gnu_ld
 enable_libtool_lock
 enable_largefile
+enable_debug
+enable_timing
+with_gs
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
@@ -1610,6 +1615,8 @@ Optional Features:
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --disable-largefile     omit support for large files
+  --disable-debug         Compile without debug (-d) option
+  --enable-timing         Output execution time of dvipng
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1617,6 +1624,7 @@ Optional Packages:
   --with-pic              try to use only PIC/non-PIC objects [default=use
                           both]
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
+  --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
   --with-system-kpathsea  use installed kpathsea headers and library
   --with-kpathsea-includes=DIR
                           kpathsea headers installed in DIR
@@ -4235,13 +4243,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4238: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4246: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4241: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4249: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4244: output\"" >&5)
+  (eval echo "\"\$as_me:4252: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5447,7 +5455,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5450 "configure"' > conftest.$ac_ext
+  echo '#line 5458 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7494,11 +7502,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7497: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7505: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7501: \$? = $ac_status" >&5
+   echo "$as_me:7509: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7833,11 +7841,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7836: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7844: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7840: \$? = $ac_status" >&5
+   echo "$as_me:7848: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7938,11 +7946,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7941: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7949: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7945: \$? = $ac_status" >&5
+   echo "$as_me:7953: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7993,11 +8001,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7996: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8004: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8000: \$? = $ac_status" >&5
+   echo "$as_me:8008: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10793,7 +10801,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10796 "configure"
+#line 10804 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10889,7 +10897,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10892 "configure"
+#line 10900 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12893,6 +12901,43 @@ _ACEOF
 
 fi
 
+
+## texk/dvipng/ac/dvipng.ac
+## configure options for dvipng
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then
+  enableval=$enable_debug;
+fi
+
+# Check whether --enable-timing was given.
+if test "${enable_timing+set}" = set; then
+  enableval=$enable_timing;
+fi
+
+
+# Check whether --with-gs was given.
+if test "${with_gs+set}" = set; then
+  withval=$with_gs;
+fi
+
+
+
+if test "x$enable_debug" != xno; then
+  enable_debug=yes
+
+cat >>confdefs.h <<\_ACEOF
+#define DEBUG 1
+_ACEOF
+
+fi
+
+if test "x$enable_timing" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define TIMING 1
+_ACEOF
+
+fi
 
 
 cat >>confdefs.h <<_ACEOF
@@ -16407,6 +16452,215 @@ fi
 done
 
 
+if test "x$enable_timing" = xyes; then
+
+
+for ac_func in ftime gettimeofday
+do
+as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+{ $as_echo "$as_me:$LINENO: checking for $ac_func" >&5
+$as_echo_n "checking for $ac_func... " >&6; }
+if { as_var=$as_ac_var; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $ac_func innocuous_$ac_func
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $ac_func
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_$ac_func || defined __stub___$ac_func
+choke me
+#endif
+
+int
+main ()
+{
+return $ac_func ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  eval "$as_ac_var=yes"
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	eval "$as_ac_var=no"
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+ac_res=`eval 'as_val=${'$as_ac_var'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+as_val=`eval 'as_val=${'$as_ac_var'}
+		 $as_echo "$as_val"'`
+   if test "x$as_val" = x""yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+fi
+
+# Extract the first word of "makeinfo", so it can be a program name with args.
+set dummy makeinfo; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_path_MAKEINFO+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  case $MAKEINFO in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_MAKEINFO="$MAKEINFO" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_MAKEINFO="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_MAKEINFO" && ac_cv_path_MAKEINFO=":"
+  ;;
+esac
+fi
+MAKEINFO=$ac_cv_path_MAKEINFO
+if test -n "$MAKEINFO"; then
+  { $as_echo "$as_me:$LINENO: result: $MAKEINFO" >&5
+$as_echo "$MAKEINFO" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+for ac_macro in acronym env option; do
+    if test -n "$MAKEINFO" -a "$MAKEINFO" != ":"; then
+  { $as_echo "$as_me:$LINENO: checking if $MAKEINFO understands @$ac_macro{}" >&5
+$as_echo_n "checking if $MAKEINFO understands @$ac_macro{}... " >&6; }
+  echo \\\\input texinfo > conftest.texi
+  echo @$ac_macro{test} >> conftest.texi
+  if $MAKEINFO conftest.texi > /dev/null 2> /dev/null; then
+    { $as_echo "$as_me:$LINENO: result: yes" >&5
+$as_echo "yes" >&6; }
+      else
+    { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+    AM_MAKEINFOFLAGS="-D no-$ac_macro $AM_MAKEINFOFLAGS"
+
+  fi
+  rm -f conftest.texi conftest.info
+fi
+
+done
+
+
+# Extract the first word of "install-info", so it can be a program name with args.
+set dummy install-info; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_path_INSTALL_INFO+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  case $INSTALL_INFO in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_INSTALL_INFO="$INSTALL_INFO" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH /usr/sbin /sbin
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_INSTALL_INFO="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_INSTALL_INFO" && ac_cv_path_INSTALL_INFO=":"
+  ;;
+esac
+fi
+INSTALL_INFO=$ac_cv_path_INSTALL_INFO
+if test -n "$INSTALL_INFO"; then
+  { $as_echo "$as_me:$LINENO: result: $INSTALL_INFO" >&5
+$as_echo "$INSTALL_INFO" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+
 ## _KPSE_INIT: Initialize TL infrastructure
 kpse_BLD=`(cd "./../../." && pwd)`
 kpse_SRC=`(cd "$srcdir/../../." && pwd)`
@@ -19060,7 +19314,6 @@ fi
 
 CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
-
 
 
 DVIPNG_VERSION=1.12

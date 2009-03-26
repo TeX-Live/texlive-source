@@ -4,18 +4,6 @@
 AC_INIT([dvipng], [1.12], [dvipng@nongnu.org])
 AC_CONFIG_SRCDIR([dvipng.c])
 
-AC_ARG_ENABLE(debug, 
-  AC_HELP_STRING([--disable-debug],[Compile without debug (-d) option]), 
-    [ if test "$enableval" = yes ; then
-      AC_DEFINE(DEBUG, 1, [Define as 1 to get the debug (-d) option.])
-      fi ],	
-    [ enable_debug="yes";
-      AC_DEFINE(DEBUG, 1, [Define as 1 to get the debug (-d) option.])])
-AC_ARG_ENABLE(timing, 
-  AC_HELP_STRING([--enable-timing],[Output execution time of dvipng]), 
-   [ if test "$enableval" = yes ; then
-     AC_DEFINE(TIMING, 1, [Define as 1 to get execution time output.])
-     fi ])
 
 # Checks for programs.
 AC_SET_MAKE
@@ -46,14 +34,7 @@ AC_ARG_WITH(gs,
 
 # Checks for library functions.
 
-if test "$enable_timing" = "yes"; then
-  AC_CHECK_FUNCS([ftime gettimeofday])
-fi
-
 # Documentation-related checks
-AC_PATH_PROG(MAKEINFO, makeinfo, :)
-MAKEINFO_CHECK_MACROS(acronym env option)
-AC_PATH_PROG(INSTALL_INFO, install-info, :, $PATH /usr/sbin /sbin)
 
 # SELFAUTO
 AC_ARG_ENABLE(selfauto-set, 

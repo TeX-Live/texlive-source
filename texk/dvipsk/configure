@@ -16954,7 +16954,7 @@ $as_echo "$as_me: error: write failure creating $CONFIG_STATUS" >&2;}
 
 if test "x$cross_compiling" = xyes; then
   cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$build_alias' \
+ ac_configure_args="$ac_configure_args --host='$build' \
  CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
  CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"
 fi

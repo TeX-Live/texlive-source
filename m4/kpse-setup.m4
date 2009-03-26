@@ -16,7 +16,9 @@
 #   configure option --without-PKG for programs
 #   library dependencies for programs and libraries
 AC_DEFUN([KPSE_SETUP],
-[m4_define([kpse_TL], [$1])
+[m4_define([kpse_TL], [$1])[]dnl
+m4_define([kpse_indent_26], [28])[]dnl
+m4_define([kpse_indent_28], [30])[]dnl
 KPSE_WEB2C_PREPARE
 m4_sinclude(kpse_TL[ac/withenable.ac])
 m4_sinclude(kpse_TL[utils/ac/withenable.ac])

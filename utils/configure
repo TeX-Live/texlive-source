@@ -719,6 +719,9 @@ enable_dviljk
 enable_dvipdfm
 enable_dvipdfmx
 enable_dvipng
+enable_debug
+enable_timing
+with_gs
 enable_dvipos
 enable_dvipsk
 enable_gsftopk
@@ -1426,10 +1429,11 @@ Optional Features:
   --disable-tpic2pdftex   do not build the tpic2pdftex package
   --disable-vlna          do not build the vlna package
   --disable-web2c         do not build the web2c (TeX & Co.) package
-  --enable-auto-core      cause TeX&MF to dump core, given a certain filename
-  --disable-dump-share    make fmt/base/mem files architecture-dependent
-  --enable-fmtutil        use fmtutil for build dumps
-  --enable-ipc            enable TeX's --ipc option, i.e., pipe to a program
+  --enable-auto-core        cause TeX&MF to dump core, given a certain
+                            filename
+  --disable-dump-share      make fmt/base/mem files architecture-dependent
+  --enable-fmtutil          use fmtutil for build dumps
+  --enable-ipc              enable TeX's --ipc option, i.e., pipe to a program
   --disable-tex               do not compile and install TeX
   --enable-etex               compile and install e-TeX
   --enable-omega              compile and install Omega
@@ -1437,19 +1441,18 @@ Optional Features:
   --disable-pdftex            do not compile and install pdfTeX
   --disable-luatex            do not compile and install luaTeX
   --enable-xetex              compile and install XeTeX
-  --disable-mf            do not build METAFONT
+  --disable-mf              do not build METAFONT
   --enable-mf-nowin           build a separate non-windows-capable METAFONT
   --enable-epsfwin            include EPSF pseudo window support
   --enable-hp2627win          include HP 2627 window support
   --enable-mftalkwin          include mftalk (generic server) window support
   --enable-nextwin            include NeXT window support
   --enable-regiswin           include Regis window support
-  --enable-suntoolswin        include old Suntools (this is not X) window
-                              support
+  --enable-suntoolswin        include old Suntools (not X) window support
   --enable-tektronixwin       include Tektronix window support
   --enable-unitermwin         include Uniterm window support
-  --disable-mp            do not build METAPOST
-  --disable-web-progs     do not build WEB programs bibtex ... weave
+  --disable-mp              do not build METAPOST
+  --disable-web-progs       do not build WEB programs bibtex ... weave
   --enable-one            build the one (testing) package
   --disable-afm2pl        do not build the afm2pl package
   --disable-bibtex8       do not build the bibtex8 package
@@ -1463,6 +1466,8 @@ Optional Features:
   --disable-dvipdfm       do not build the dvipdfm package
   --disable-dvipdfmx      do not build the dvipdfmx package
   --disable-dvipng        do not build the dvipng package
+  --disable-debug           Compile without debug (-d) option
+  --enable-timing           Output execution time of dvipng
   --disable-dvipos        do not build the dvipos package
   --disable-dvipsk        do not build the dvipsk package
   --disable-gsftopk       do not build the gsftopk package
@@ -1508,6 +1513,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
   --with-mf-x-toolkit     Use X toolkit for METAFONT
+  --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
   --with-system-kpathsea  use installed kpathsea headers and library
   --with-kpathsea-includes=DIR
                           kpathsea headers installed in DIR
@@ -2027,7 +2033,6 @@ fi
 ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
 ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
 ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
-
 
 
 
@@ -2574,6 +2579,25 @@ test "x$enable_dvipng" = xno || {
   need_t1lib=yes
 }
 
+## texk/dvipng/ac/dvipng.ac
+## configure options for dvipng
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then
+  enableval=$enable_debug;
+fi
+
+# Check whether --enable-timing was given.
+if test "${enable_timing+set}" = set; then
+  enableval=$enable_timing;
+fi
+
+
+# Check whether --with-gs was given.
+if test "${with_gs+set}" = set; then
+  withval=$with_gs;
+fi
+
+
 
 ## texk/dvipos/ac/withenable.ac
 ## configure options and TL libraries required for dvipos
@@ -2670,7 +2694,7 @@ test "x$enable_lcdf_typetools" = xno || {
 }
 
 ## texk/lcdf-typetools/ac/lcdf-typetools.ac
-## configure options for lcdf-typetools.ac
+## configure options for lcdf-typetools
 # Check whether --enable-cfftot1 was given.
 if test "${enable_cfftot1+set}" = set; then
   enableval=$enable_cfftot1;

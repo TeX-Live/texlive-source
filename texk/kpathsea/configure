@@ -1566,13 +1566,14 @@ Optional Features:
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --disable-largefile     omit support for large files
-  --disable-mktexmf-default   do not run mktexmf if MF source missing
-  --disable-mktexpk-default   do not run mktexpk if PK font missing
-  --disable-mktextfm-default  do not run mktextfm if TFM file missing
-  --disable-mkocp-default     do not run mkocp if OCP file missing
-  --disable-mkofm-default     do not run mkofm if OFM file missing
-  --enable-mktexfmt-default   run mktexfmt if format file missing
-  --enable-mktextex-default   run mktextex if TeX source missing
+  --disable-mktexmf-default do not run mktexmf if MF source missing
+  --disable-mktexpk-default do not run mktexpk if PK font missing
+  --disable-mktextfm-default
+                            do not run mktextfm if TFM file missing
+  --disable-mkocp-default   do not run mkocp if OCP file missing
+  --disable-mkofm-default   do not run mkofm if OFM file missing
+  --enable-mktexfmt-default run mktexfmt if format file missing
+  --enable-mktextex-default run mktextex if TeX source missing
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -4181,13 +4182,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4184: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4185: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4187: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4188: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4190: output\"" >&5)
+  (eval echo "\"\$as_me:4191: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5393,7 +5394,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5396 "configure"' > conftest.$ac_ext
+  echo '#line 5397 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7440,11 +7441,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7443: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7444: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7447: \$? = $ac_status" >&5
+   echo "$as_me:7448: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7779,11 +7780,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7782: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7783: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7786: \$? = $ac_status" >&5
+   echo "$as_me:7787: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7884,11 +7885,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7887: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7888: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7891: \$? = $ac_status" >&5
+   echo "$as_me:7892: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7939,11 +7940,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7942: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7943: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7946: \$? = $ac_status" >&5
+   echo "$as_me:7947: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10739,7 +10740,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10742 "configure"
+#line 10743 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10835,7 +10836,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10838 "configure"
+#line 10839 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H

@@ -20,7 +20,7 @@ m4_define([KPSE_WITH_MKTEX],
                AS_HELP_STRING([--]m4_if($2, [yes], [dis], [en])[able-$1-default],
                               m4_if($2, [yes],
                                     [do not ])[run $1 if $3 missing],
-                              [30]))[]dnl
+                              kpse_indent_28))[]dnl
 AS_CASE([$enable_$1_default], [yes|no], ,
                             [enable_$1_default=$2])[]dnl
 ]) # KPSE_WITH_MKTEX
@@ -44,7 +44,7 @@ m4_define([KPSE_WITH_XTEX],
                AS_HELP_STRING([--]m4_if($2, [yes], [dis], [en])[able-$1],
                               m4_if($2, [yes],
                                     [do not ])[compile and install $4],
-                              [30]))[]dnl
+                              kpse_indent_28))[]dnl
 AS_CASE([$enable_$1], [yes|no], ,
                     [enable_$1=$2])[]dnl
 m4_ifval([$5], [
@@ -69,7 +69,7 @@ m4_define([KPSE_WITH_MFWIN],
 [AC_ARG_ENABLE([$1win],
                AS_HELP_STRING([--enable-$1win],
                               [include $3 window support],
-                              [30]))[]dnl
+                              kpse_indent_28))[]dnl
 ]) # KPSE_WITH_MFWIN
 
 # KPSE_MFWIN_DEFINE(WINDOW, DEFINE, TEXT)

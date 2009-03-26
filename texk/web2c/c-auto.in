@@ -229,7 +229,7 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* metafont: Define to include old Suntools (this is not X) window support. */
+/* metafont: Define to include old Suntools (not X) window support. */
 #undef SUNWIN
 
 /* metafont: Define to include Tektronix window support. */

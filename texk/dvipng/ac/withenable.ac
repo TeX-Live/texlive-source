@@ -1,3 +1,4 @@
 ## texk/dvipng/ac/withenable.ac
 ## configure options and TL libraries required for dvipng
 KPSE_WITH_PROG([dvipng], [kpathsea freetype2 gd t1lib])
+m4_include(kpse_TL[texk/dvipng/ac/dvipng.ac])

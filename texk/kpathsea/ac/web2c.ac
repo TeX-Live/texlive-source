@@ -1,5 +1,6 @@
 ## texk/kpathsea/ac/web2c.ac
 ## configure options for mktextmf-default & Co
+m4_define_default([kpse_indent_28], [28])[]dnl
 m4_define([kpse_mktex_opts], [dnl
 [[mktexmf],  [yes], [MF source],   [TEX_MF]],
 [[mktexpk],  [yes], [PK font],     [TEX_PK]],

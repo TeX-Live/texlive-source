@@ -81,7 +81,32 @@ LDADD += $(T1LIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 ## Rebuild libz
 @ZLIB_RULE@
 
+info_TEXINFOS = dvipng.texi
+dvipng_TEXINFOS = readme.texi install.texi macros.texi dvipng.help
+
 dist_man1_MANS = dvipng.1
+dvipng.1: dvipng.texi readme.texi
+	$(srcdir)/texi2pod.pl -D man $(srcdir)/dvipng.texi | \
+	sed -es/@//g -es/previewlatex/preview-latex/g -es/{}//g > dvipng.pod
+	pod2man --center="User commands" --release="$(PACKAGE_STRING)" \
+		dvipng.pod > dvipng.1
+	rm dvipng.pod
+
+## Make sure INSTALL and README exist
+##
+EXTRA_DIST = ChangeLog.0 ChangeLog.TL INSTALL README RELEASE
+
+INSTALL: install.texi
+	-$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
+	  -D rawfile --no-headers --no-validate --no-number-sections \
+	  -o $@ $<
+
+README: readme.texi
+	-$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
+	  -D rawfile --no-headers --no-validate --no-number-sections \
+	  -o $@ $<
+
+dist_noinst_SCRIPTS = texi2pod.pl
 
 if have_gif
 
@@ -98,25 +123,11 @@ endif have_gif
 
 ## Not yet used
 ##
-EXTRA_DIST = \
-	ChangeLog.0 \
-	ChangeLog.TL \
-	RELEASE \
-	dvipng.dvi \
-	dvipng.help \
-	dvipng.info \
-	dvipng.texi \
-	install.texi \
-	macros.texi \
-	miktex.h \
-	miktex.mak \
-	readme.texi \
-	test_dvipng.tex
+EXTRA_DIST += test_dvipng.tex
 
-EXTRA_DIST += \
-	dvipng.dvi.orig \
-	dvipng.help.orig \
-	dvipng.info.orig
+## Not used
+##
+EXTRA_DIST += miktex.h miktex.mak
 
 ## Original files from dvipng-$(DVIPNG_VERSION)
 ##
@@ -139,7 +150,7 @@ EXTRA_DIST += \
 
 ## Eventually use these macro files
 ##
-EXTRA_DIST += m4/gs-device.m4 m4/makeinfo.m4
+EXTRA_DIST += m4/gs-device.m4
 
 ## Eventually delete these files
 ##

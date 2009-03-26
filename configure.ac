@@ -94,7 +94,9 @@ AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 AS_IF([test "x$cross_compiling" = xyes],
-      [msg_compiling="cross-compiling on $build"],
+      [AS_IF([test "x$build" = x],
+             [AC_MSG_ERROR([when cross-compiling you must specify both --host and --build.])])
+       msg_compiling="cross-compiling on $build"],
       [msg_compiling="compiling"])
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE_STRING:

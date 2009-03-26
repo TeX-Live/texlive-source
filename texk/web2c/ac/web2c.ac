@@ -1,21 +1,27 @@
 ## texk/web2c/ac/web2c.ac
 ## configure options for TeX and MF
+m4_define_default([kpse_indent_26], [26])[]dnl
+m4_define_default([kpse_indent_28], [28])[]dnl
 AC_ARG_WITH([editor],
             [AS_HELP_STRING([--with-editor=CMD],
                             [invoke CMD from the `e' option @<:@vi +%d %s@:>@])])[]dnl
 AC_ARG_ENABLE([auto-core],
               [AS_HELP_STRING([--enable-auto-core],
-                              [cause TeX&MF to dump core, given a certain filename])])[]dnl
+                              [cause TeX&MF to dump core, given a certain filename],
+                              kpse_indent_26)])[]dnl
 AC_ARG_ENABLE([dump-share],
               [AS_HELP_STRING([--disable-dump-share],
-                              [make fmt/base/mem files architecture-dependent])])[]dnl
+                              [make fmt/base/mem files architecture-dependent],
+                              kpse_indent_26)])[]dnl
 AC_ARG_ENABLE([fmtutil],
               [AS_HELP_STRING([--enable-fmtutil],
-                              [use fmtutil for build dumps])])[]dnl
+                              [use fmtutil for build dumps],
+                              kpse_indent_26)])[]dnl
 ## configure options for TeX
 AC_ARG_ENABLE([ipc],
               [AS_HELP_STRING([--enable-ipc],
-                              [enable TeX's --ipc option, i.e., pipe to a program])])[]dnl
+                              [enable TeX's --ipc option, i.e., pipe to a program],
+                              kpse_indent_26)])[]dnl
 m4_define([kpse_tex_progs], [dnl
 [[tex],    [yes], [no],  [TeX],    []],
 [[etex],   [no],  [yes], [e-TeX],  []],
@@ -31,11 +37,12 @@ m4_foreach([Kpse_Prog], [kpse_tex_progs],
 ## configure options for MF
 AC_ARG_ENABLE([mf],
               [AS_HELP_STRING([--disable-mf],
-                              [do not build METAFONT])])[]dnl
+                              [do not build METAFONT],
+                              kpse_indent_26)])[]dnl
 AC_ARG_ENABLE([mf-nowin],
               [AS_HELP_STRING([--enable-mf-nowin],
                               [build a separate non-windows-capable METAFONT],
-                              [30])])[]dnl
+                              kpse_indent_28)])[]dnl
 AC_ARG_WITH([mf-x-toolkit],
             [AS_HELP_STRING([--with-mf-x-toolkit],
                             [Use X toolkit for METAFONT])])[]dnl
@@ -45,7 +52,7 @@ m4_define([kpse_mf_win], [dnl
 [[mftalk],    [MFTALK],    [mftalk (generic server)]],
 [[next],      [NEXT],      [NeXT]],
 [[regis],     [REGIS],     [Regis]],
-[[suntools],  [SUN],       [old Suntools (this is not X)]],
+[[suntools],  [SUN],       [old Suntools (not X)]],
 [[tektronix], [TEKTRONIX], [Tektronix]],
 [[uniterm],   [UNITERM],   [Uniterm]],
 ])[]dnl
@@ -55,8 +62,10 @@ m4_foreach([Kpse_Win], [kpse_mf_win],
 ## configure options for MP
 AC_ARG_ENABLE([mp],
               [AS_HELP_STRING([--disable-mp],
-                              [do not build METAPOST])])[]dnl
+                              [do not build METAPOST],
+                              kpse_indent_26)])[]dnl
 ## configure options for WEB programs
 AC_ARG_ENABLE([web-progs],
               [AS_HELP_STRING([--disable-web-progs],
-                              [do not build WEB programs bibtex ... weave])])[]dnl
+                              [do not build WEB programs bibtex ... weave],
+                              kpse_indent_26)])[]dnl

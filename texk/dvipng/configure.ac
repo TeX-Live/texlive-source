@@ -43,6 +43,17 @@ AC_CONFIG_MACRO_DIR([../../m4])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([dvipng])
 
+m4_include([ac/dvipng.ac])
+
+if test "x$enable_debug" != xno; then
+  enable_debug=yes
+  AC_DEFINE([DEBUG], 1, [Define as 1 to get the debug (-d) option.])
+fi
+
+if test "x$enable_timing" = xyes; then
+  AC_DEFINE([TIMING], 1, [Define as 1 to get execution time output.])
+fi
+
 dnl Checks for programs.
 dnl FIXME
 AC_DEFINE_UNQUOTED([GS_PATH], ["gs"], [Define as the path to GhostScript.])
@@ -74,6 +85,15 @@ AC_FUNC_STRTOD
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([dup2 memset munmap pow putenv strchr strrchr strtol strstr])
 
+if test "x$enable_timing" = xyes; then
+  AC_CHECK_FUNCS([ftime gettimeofday])
+fi
+
+dnl Documentation-related checks.
+AC_PATH_PROG([MAKEINFO], [makeinfo], [:])
+MAKEINFO_CHECK_MACROS([acronym env option])
+AC_PATH_PROG([INSTALL_INFO], [install-info], [:], [$PATH /usr/sbin /sbin])
+
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
@@ -83,7 +103,7 @@ KPSE_FREETYPE2_FLAGS
 
 dnl We have to check properties of libraries, either installed (system)
 dnl libraries or unistalled (possibly libtool) ones from the TL tree.
-dnl Thus we can not use, e.g., AC_CHECK_LIB(LIB,FUNCTION)
+dnl Thus we can not use, e.g., AC_CHECK_LIB(LIB, FUNCTION)
 
 dnl Checks for more libraries.
 KPSE_ADD_FLAGS([zlib])
@@ -143,11 +163,6 @@ AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImag
 AM_CONDITIONAL([have_gif], [test "x$ac_cv_func_gdImageGif" = xyes])
 
 KPSE_RESTORE_FLAGS
-
-dnl These are still missing:
-dnl HAVE_FTIME
-dnl HAVE_GETTIMEOFDAY
-dnl HAVE_KPSE_ENC_FORMATS
 
 DVIPNG_VERSION=dvipng_version
 AC_SUBST([DVIPNG_VERSION])

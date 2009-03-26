@@ -11,6 +11,9 @@
 /* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
 
+/* Define as 1 to get the debug (-d) option. */
+#undef DEBUG
+
 /* Define as the path to GhostScript. */
 #undef GS_PATH
 
@@ -61,6 +64,9 @@
 /* Define to 1 if you have freetype2. */
 #undef HAVE_FT2
 
+/* Define to 1 if you have the `ftime' function. */
+#undef HAVE_FTIME
+
 /* Define to 1 if you have the `FT_Library_Version' function. */
 #undef HAVE_FT_LIBRARY_VERSION
 
@@ -87,6 +93,9 @@
 
 /* Define to 1 if you have the `getpagesize' function. */
 #undef HAVE_GETPAGESIZE
+
+/* Define to 1 if you have the `gettimeofday' function. */
+#undef HAVE_GETTIMEOFDAY
 
 /* Define to 1 if you have the `getwd' function. */
 #undef HAVE_GETWD
@@ -283,6 +292,9 @@
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME
+
+/* Define as 1 to get execution time output. */
+#undef TIMING
 
 /* Version number of package */
 #undef VERSION
