@@ -421,8 +421,8 @@ kpsereadlink_SOURCES = readlink.c
 kpsewhich_LDADD = libkpathsea.la
 web2cdir = ${prefix}/texmf/web2c
 dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
-dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 dist_web2c_DATA = mktex.opt mktexdir.opt mktexnam.opt
+dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 dist_noinst_DATA = texmf.cnf
 all: $(BUILT_SOURCES) c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -1467,6 +1467,8 @@ install-data-am: install-dist_web2cDATA install-dist_web2cSCRIPTS \
 install-dvi: install-dvi-recursive
 
 install-exec-am: install-binPROGRAMS install-libLTLIBRARIES
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 
 install-html: install-html-recursive
 
@@ -1507,7 +1509,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
-	install-data-am install-strip uninstall-am
+	install-data-am install-exec-am install-strip uninstall-am
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-am clean clean-binPROGRAMS \
@@ -1520,9 +1522,9 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-data-hook install-dist_web2cDATA \
 	install-dist_web2cSCRIPTS install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-kpseincludeHEADERS \
-	install-libLTLIBRARIES install-man \
+	install-exec install-exec-am install-exec-hook install-html \
+	install-html-am install-info install-info-am \
+	install-kpseincludeHEADERS install-libLTLIBRARIES install-man \
 	install-nodist_kpseincludeHEADERS install-pdf install-pdf-am \
 	install-ps install-ps-am install-strip installcheck \
 	installcheck-am installdirs installdirs-am maintainer-clean \
@@ -1572,14 +1574,16 @@ stamp-paths: texmf.cnf
 	rm -f paths.tmp
 	date >stamp-paths
 
-install-data-hook:
+install-exec-hook:
 	@for f in $(dist_noinst_SCRIPTS); do \
-	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
-	    echo " $(INSTALL_SCRIPT) '$(srcdir)/$$f' '$(DESTDIR)$(web2cdir)/$$f'"; \
-	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(web2cdir)/$$f"; \
+	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
+	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
+	    echo " $(INSTALL_SCRIPT) '$(srcdir)/$$f' '$(DESTDIR)$(bindir)/$$f'"; \
+	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
 	  else :; fi; \
 	done
+
+install-data-hook:
 	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
 	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
@@ -1589,7 +1593,14 @@ install-data-hook:
 	done
 
 uninstall-hook:
-	@for f in $(dist_noinst_SCRIPTS) $(dist_noinst_DATA); do \
+	@for f in $(dist_noinst_SCRIPTS); do \
+	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
+	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
+	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	  else :; fi; \
+	done
+	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
 	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
 	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \

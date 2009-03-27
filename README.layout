@@ -1,0 +1,77 @@
+	Layout of the teTeX / TeX Live (TL) build system
+	================================================
+
+The TL 2009 build system has been completely restructured, using Autoconf,
+Automake, and Libtool.  The main purpose was to configure and build each
+library before configuring any module (program or other library) depending
+on that library.  This allows to check for properties and features of a
+library built as part of the TL tree in much the same as for an installed
+(system) version of that library.
+
+This should simplify upgrading of modules maintained independently and/or
+integrating new modules into the TL build system.
+
+1. Layout of directories
+========================
+
+1.1. Overall layout
+-------------------
+
+libs/*/*		various libraries
+texk/kpathsea/*		the Kpathsea library
+
+texk/*/*		programs (mostly using Kpathsea)
+utils/*/*		utility programs (not using Kpathsea)
+
+texk/am/*		Makefile.am fragments
+texk/web2c/am/*		  for the Kpathsea library
+texk/web2c/*/am/*	  and the Web2C programs
+
+libs/Lib/*		library Lib (zlib, libpng, t1lib, etc.)
+texk/Prog/*		program package Prog (web2c, afm2pl, bibtex8, etc.)
+utils/Util/*		utility program package Util (dialog, pdfopen, ps2eps, etc.)
+
+libs/dummy/*		dummy modules
+texk/dummy/*		  used to configure
+utils/dummy/*		  the real modules
+
+ac/*			various configure.ac fragments (configure options)
+*/ac/*			  for the whole TL tree
+*/*/ac/*		  or for a particular component
+
+build-aux/*		auxiliary build scripts (config.guess etc.)
+
+m4/kpse-pkgs.m4		Autoconf macros defining the lists of Lib, Prog, and Util
+			  modules and handling loops over these lists
+m4/*			other Autoconf macros
+
+1.2. A library `Lib'
+--------------------
+
+libs/Lib/ac/withenable.ac	defines libraries required by Lib
+libs/Lib/ac/Lib.ac		defines basic tests for a system version of Lib
+m4/kpse-Lib-flags.m4		defines Autoconf macros for configure options
+				  as well as KPSE_LIB_FLAGS, to be used in configure.ac
+                                  files and defining Make variables
+
+Several libraries use an unmodified source tree supplemented by a proxy
+build system (bypassing that of the source tree, e.g.,
+
+libs/zlib/zlib-1.2.3/*		(almost) unmodified source tree
+libs/zlib/Makefile.am		proxy Makefile.am
+libs/zlib/configure.ac		  and configure.ac
+
+1.3. A program `Prog'
+---------------------
+
+texk/Prog/ac/withenable.ac	defines libraries required by Prog, provides the
+				  configure option --disable-Prog
+texk/Prog/ac/Prog.ac		defines Prog specific configure option that should
+				  be seen at the top-level
+
+1.4. A utility program `Util'
+-----------------------------
+
+utils/Util/ac/withenable.ac	defines libraries required by Util, provides the
+				  configure option --disable-Util
+

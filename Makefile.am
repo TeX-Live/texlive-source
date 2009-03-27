@@ -7,6 +7,7 @@ DISTCHECK_CONFIGURE_FLAGS = -C
 EXTRA_DIST = \
 	Build \
 	README.cross \
+	README.layout \
 	README.orig \
 	build-aux/README.TL \
 	m4/README

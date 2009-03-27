@@ -140,3 +140,13 @@ AC_DEFUN([KPSE_CHECK_LIB],
 fi
 ]) # KPSE_CHECK_LIB
 
+# KPSE_CHECK_LIBXX(LIB, REQUIRED-FUNCTION..., REQUIRED-HEADER...)
+# -------------------------------------------------------------
+# As above, but for C++.
+AC_DEFUN([KPSE_CHECK_LIBXX],
+[AC_REQUIRE([AC_PROG_CXX])[]dnl
+AC_LANG_PUSH([C++])[]dnl
+KPSE_CHECK_LIB($@)[]dnl
+AC_LANG_POP([C++])[]dnl
+]) # KPSE_CHECK_LIBXX
+

@@ -1,3 +1,25 @@
 	Cross compiling
 	===============
 
+In order to build the TL libraries and programs for a HOST system, e.g.,
+i386-pc-mingw32 on a (different) BUILD system, e.g, x86_64-linux-gnu specify
+the configure options
+	--host=i386-pc-mingw32 --build=x86_64-linux-gnu
+
+You may need `cross' tools properly installed as, e.g., i386-pc-mingw32-cc
+in your PATH.  Configure arguments such as CFLAGS=...  refer to this cross
+compiler.
+
+If necessary, you can specify a compiler and flags for the few auxiliary C
+programs required for the build process as configure arguments
+	BUILDCC=...
+	BUILDCPPFLAGS=...
+	BUILDCFLAGS=...
+	BUILDLDFLAGS=...
+
+Build the Web2C programs requires installed versions of tangle, ctangle, and
+tie (and possibly otangle and/or luatangle).
+
+At the moment a cross compilation of xetex is not possible, because the
+icu-xetex library does not support cross compilation.
+

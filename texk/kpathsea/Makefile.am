@@ -224,22 +224,22 @@ web2cdir = ${prefix}/texmf/web2c
 
 dist_web2c_SCRIPTS = mktexdir mktexnam mktexupd
 
-dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
-
 dist_web2c_DATA = mktex.opt mktexdir.opt mktexnam.opt
+
+dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 
 dist_noinst_DATA = texmf.cnf
 
-## Must install the `dist_noinst_SCRIPTS' by `install-data-hook' because
-## Automake installs the scripts (and thus creates `web2cdir') by `install-data'.
-install-data-hook:
+install-exec-hook:
 	@for f in $(dist_noinst_SCRIPTS); do \
-	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
-	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
-	    echo " $(INSTALL_SCRIPT) '$(srcdir)/$$f' '$(DESTDIR)$(web2cdir)/$$f'"; \
-	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(web2cdir)/$$f"; \
+	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
+	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
+	    echo " $(INSTALL_SCRIPT) '$(srcdir)/$$f' '$(DESTDIR)$(bindir)/$$f'"; \
+	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
 	  else :; fi; \
 	done
+
+install-data-hook:
 	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
 	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
@@ -249,7 +249,14 @@ install-data-hook:
 	done
 
 uninstall-hook:
-	@for f in $(dist_noinst_SCRIPTS) $(dist_noinst_DATA); do \
+	@for f in $(dist_noinst_SCRIPTS); do \
+	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
+	      || test ! -r "$(DESTDIR)$(bindir)/$$f"; then \
+	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	  else :; fi; \
+	done
+	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \
 	      || test ! -r "$(DESTDIR)$(web2cdir)/$$f"; then \
 	    echo " rm -f '$(DESTDIR)$(web2cdir)/$$f'"; \
