@@ -1,8 +1,28 @@
-/* $Id: texpdf.c 1158 2008-04-14 08:13:06Z oneiros $ */
+/* texpdf.c
+   
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+
+   This file is part of LuaTeX.
+
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
+
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "luatex-api.h"
 #include <ptexlib.h>
 #include <ctype.h>
+
+static const char _svn_version[] =
+    "$Id: texpdf.c 1436 2008-07-17 09:27:08Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/texpdf.c $";
 
 #define number_chars 1114112
 #define string_offset 2097152
@@ -85,13 +105,13 @@ void pdf_print(str_number s)
 
 /* print out a integer to PDF buffer */
 
-void pdf_print_int(integer n)
+void pdf_print_int(longinteger n)
 {
     register integer k = 0;     /*  current digit; we assume that $|n|<10^{23}$ */
     if (n < 0) {
         pdf_out('-');
         if (n < -0x7FFFFFFF) {  /* need to negate |n| more carefully */
-            register integer m;
+            register longinteger m;
             k++;
             m = -1 - n;
             n = m / 10;

@@ -155,9 +155,9 @@ static int io_open (lua_State *L) {
 }
 
 static int io_open_ro (lua_State *L) {
+  FILE **pf;
   const char *filename = luaL_checkstring(L, 1);
   const char *mode = luaL_optstring(L, 2, "r");
-  FILE **pf;
   if ((strcmp(mode,"r")!= 0)&&(strcmp(mode,"rb")!=0))
 	return pushresult(L, 0, filename);
   pf = newfile(L);
@@ -354,6 +354,31 @@ static int read_chars (lua_State *L, FILE *f, size_t n) {
   return (n == 0 || lua_strlen(L, -1) > 0);
 }
 
+static int read_all (lua_State *L, FILE *f) {
+  /* attempt to speed up reading whole files */
+  size_t rlen;  /* how much to read */
+  size_t nr;    /* number of chars actually read */
+  size_t old;   /* old file location */
+  char *p;
+  old = ftell(f);
+  if(old > 0 && 
+     (fseek(f,0,SEEK_END)>=0) && 
+     ((rlen = ftell(f)) >0 ) &&
+     rlen < 1000*1000*100 ) { /* 100 MB */
+    fseek(f,old,SEEK_SET);
+    p = malloc(rlen);
+    if (p != NULL) {
+      nr = fread(p, sizeof(char), rlen, f);
+      lua_pushlstring(L,p,nr);
+      free(p);
+      return 1;
+    }
+  } 
+  if (old>0)
+    fseek(f,old,SEEK_SET);
+  return read_chars(L,f, ~((size_t)0));
+}
+
 
 static int g_read (lua_State *L, FILE *f, int first) {
   int nargs = lua_gettop(L) - 1;
@@ -383,7 +408,7 @@ static int g_read (lua_State *L, FILE *f, int first) {
             success = new_read_line(L, f);
             break;
           case 'a':  /* file */
-            read_chars(L, f, ~((size_t)0));  /* read MAX_SIZE_T chars */
+            read_all(L, f); 
             success = 1; /* always success */
             break;
           default:

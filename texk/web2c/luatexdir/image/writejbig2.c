@@ -1,21 +1,24 @@
+/* writejbig2.c
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+
+   This file is part of LuaTeX.
+
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
+
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+
 /***********************************************************************
-Copyright (c) 2002-2006 Han The Thanh, <thanh@pdftex.org>
-
-This file is part of pdfTeX.
-
-pdfTeX is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free
-Software Foundation; either version 2 of the License, or (at your option)
-any later version.
-
-pdfTeX is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-for more details.
-
-You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 59
-Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 This is experimental JBIG2 image support to pdfTeX. JBIG2 image decoding
 is part of Adobe PDF-1.4, and requires Acroread 5.0 or later.
@@ -75,10 +78,13 @@ object exists, reference it. Else create fresh one.
 
 09 Dec. 2002: JBIG2 seg. page numbers > 0 are now set to 1, see PDF Ref.
 
-$Id: writejbig2.c 1127 2008-03-25 21:32:54Z hhenkel $
 ***********************************************************************/
 
 #include "writejbig2.h"
+
+static const char _svn_version[] =
+    "$Id: writejbig2.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/writejbig2.c $";
+
 #undef DEBUG
 
 /**********************************************************************/
@@ -292,7 +298,7 @@ void readfilehdr(FILEINFO * fip)
     fip->sequentialaccess = (fip->filehdrflags & 0x01) ? true : false;
     if (fip->sequentialaccess) {        /* Annex D.1 vs. Annex D.2 */
         xfseek(fip->file, 0, SEEK_END, fip->filepath);
-        fip->filesize = xftell(fip->file, fip->filepath);
+        fip->filesize = (long) xftello(fip->file, fip->filepath);
         xfseek(fip->file, 9, SEEK_SET, fip->filepath);
     }
     /* Annex D.4.3 Number of pages */
@@ -363,7 +369,7 @@ boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
         sip->segpage = ygetc(fip->file);
     /* 7.2.7 Segment data length */
     sip->segdatalen = read4bytes(fip->file);
-    sip->hdrend = xftell(fip->file, fip->filepath);
+    sip->hdrend = (long) xftello(fip->file, fip->filepath);
     /* ---- at end of segment header ---- */
     return true;
 }
@@ -583,7 +589,7 @@ void rd_jbig2_info(FILEINFO * fip)
         sip->dataend = sip->datastart + sip->segdatalen;
         if (!fip->sequentialaccess
             && (sip->pageinfoflag || sip->endofstripeflag))
-            xfseek(fip->file, sip->datastart, SEEK_SET, fip->filepath);
+            xfseeko(fip->file, sip->datastart, SEEK_SET, fip->filepath);
         seekdist = sip->segdatalen;
         /* 7.4.8 Page information segment syntax */
         if (sip->pageinfoflag) {
@@ -603,11 +609,11 @@ void rd_jbig2_info(FILEINFO * fip)
         }
         if (!fip->sequentialaccess
             && (sip->pageinfoflag || sip->endofstripeflag))
-            xfseek(fip->file, sip->hdrend, SEEK_SET, fip->filepath);
+            xfseeko(fip->file, sip->hdrend, SEEK_SET, fip->filepath);
         if (!fip->sequentialaccess)
             streampos += sip->segdatalen;
         if (fip->sequentialaccess)
-            xfseek(fip->file, seekdist, SEEK_CUR, fip->filepath);
+            xfseeko(fip->file, seekdist, SEEK_CUR, fip->filepath);
         if (sip->endofpageflag && currentpage && (pip->stripinginfo >> 15))
             pip->height = pip->stripedheight;
     }
@@ -655,10 +661,10 @@ void wr_jbig2(FILEINFO * fip, unsigned long page)
     for (slip = pip->segments.first; slip != NULL; slip = slip->next) { /* loop over page segments */
         sip = slip->d;
         if (sip->isrefered || page > 0) {
-            xfseek(fip->file, sip->hdrstart, SEEK_SET, fip->filepath);
+            xfseeko(fip->file, sip->hdrstart, SEEK_SET, fip->filepath);
             /* mark refered-to page 0 segments, change segpages > 1 to 1 */
             writeseghdr(fip, sip);
-            xfseek(fip->file, sip->datastart, SEEK_SET, fip->filepath);
+            xfseeko(fip->file, sip->datastart, SEEK_SET, fip->filepath);
             for (i = sip->datastart; i < sip->dataend; i++)
                 pdfout(ygetc(fip->file));
         }
@@ -675,7 +681,7 @@ void read_jbig2_info(image_dict * idict)
     PAGEINFO *pip;
     void **aa;
     assert(idict != NULL);
-    img_type(idict) = IMAGE_TYPE_JBIG2;
+    img_type(idict) = IMG_TYPE_JBIG2;
     if (img_pagenum(idict) < 1)
         pdftex_fail
             ("read_jbig2_info(): page %d not in JBIG2 image file; page must be > 0",

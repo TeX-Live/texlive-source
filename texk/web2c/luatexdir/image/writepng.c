@@ -1,28 +1,31 @@
-/*
-Copyright (c) 1996-2004 Han The Thanh, <thanh@pdftex.org>
+/* writepng.c
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-$Id: writepng.c 1101 2008-03-09 16:12:15Z hhenkel $
-*/
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include <assert.h>
 #include "ptexlib.h"
 #include "image.h"
+
+static const char _svn_version[] =
+    "$Id: writepng.c 2029 2009-03-14 19:10:25Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/writepng.c $";
+
+static int transparent_page_group = -1;
 
 void close_and_cleanup_png(image_dict * idict)
 {
@@ -44,7 +47,7 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
     png_structp png_p;
     png_infop info_p;
     assert(idict != NULL);
-    assert(img_type(idict) == IMAGE_TYPE_PNG);
+    assert(img_type(idict) == IMG_TYPE_PNG);
     img_totalpages(idict) = 1;
     img_pagenum(idict) = 1;
     img_xres(idict) = img_yres(idict) = 0;
@@ -120,7 +123,7 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
 
 #define write_gray_pixel_8(r)                   \
     if (j % 2 == 0)  pdf_buf[pdf_ptr++] = *r++; \
-    else  	     smask[smask_ptr++] = *r++
+    else             smask[smask_ptr++] = *r++
 
 
 #define write_rgb_pixel_16(r)                                  \
@@ -139,27 +142,27 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
     r = row;                                             \
     k = info_p->rowbytes;                                \
     while(k > 0) {                                       \
-	l = (k > pdf_buf_size)? pdf_buf_size : k;        \
-		pdfroom(l);                              \
-		for (j = 0; j < l; j++) {                \
-		  outmac;	                         \
-		}                                        \
-		k -= l;                                  \
-	    }                                            \
+        l = (k > pdf_buf_size)? pdf_buf_size : k;        \
+                pdfroom(l);                              \
+                for (j = 0; j < l; j++) {                \
+                  outmac;                                \
+                }                                        \
+                k -= l;                                  \
+            }                                            \
         }
 
 #define write_interlaced(outmac)                         \
   for (i = 0; (unsigned) i < (int)info_p->height; i++) { \
             row = rows[i];                               \
-	    k = info_p->rowbytes;                        \
-	    while(k > 0) {                               \
-		l = (k > pdf_buf_size)? pdf_buf_size : k;\
-		pdfroom(l);                              \
-		for (j = 0; j < l; j++) {                \
-		  outmac;           	                 \
-		}                                        \
-		k -= l;                                  \
-	    }                                            \
+            k = info_p->rowbytes;                        \
+            while(k > 0) {                               \
+                l = (k > pdf_buf_size)? pdf_buf_size : k;\
+                pdfroom(l);                              \
+                for (j = 0; j < l; j++) {                \
+                  outmac;                                \
+                }                                        \
+                k -= l;                                  \
+            }                                            \
             xfree(rows[i]);                              \
         }
 
@@ -389,7 +392,7 @@ void write_png_rgb_alpha(image_dict * idict)
         bitdepth = (int) info_p->bit_depth;
         pdf_begin_dict(smask_objnum, 0);
         pdf_puts("/Type /XObject\n/Subtype /Image\n");
-        if (img_attr(idict) != NULL)
+        if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
             pdf_printf("%s\n", img_attr(idict));
         pdf_printf("/Width %i\n/Height %i\n/BitsPerComponent %i\n",
                    (int) info_p->width,
@@ -460,14 +463,15 @@ void copy_png(image_dict * idict)
                 pdftex_fail("writepng: fseek in PNG file failed");
         }
     } while (endflag == false);
-    pdf_printf("/Length %d\n", streamlength);
-    pdf_printf("/Filter /FlateDecode\n");
-    pdf_printf("/DecodeParms << ");
-    pdf_printf("/Colors %d ", info_p->color_type == 2 ? 3 : 1);
-    pdf_printf("/Columns %d ", (int) info_p->width);
-    pdf_printf("/BitsPerComponent %i ", (int) info_p->bit_depth);
-    pdf_printf("/Predictor %d ", 10);   /* actual predictor defined on line basis */
-    pdf_printf(">>\n>>\nstream\n");
+    pdf_printf("/Length %d\n"
+               "/Filter/FlateDecode\n"
+               "/DecodeParms<<"
+               "/Colors %d"
+               "/Columns %d"
+               "/BitsPerComponent %i"
+               "/Predictor 10>>\n>>\nstream\n", streamlength,
+               info_p->color_type == 2 ? 3 : 1,
+               (int) info_p->width, info_p->bit_depth);
     /* 2nd pass to copy data */
     endflag = false;
     if (fseek(fp, 8, SEEK_SET) != 0)
@@ -516,6 +520,8 @@ void reopen_png(image_dict * idict)
         pdftex_fail("writepng: image dimensions have changed");
 }
 
+static boolean last_png_needs_page_group;
+
 void write_png(image_dict * idict)
 {
     double gamma, checked_gamma;
@@ -524,6 +530,7 @@ void write_png(image_dict * idict)
     png_structp png_p;
     png_infop info_p;
     assert(idict != NULL);
+    last_png_needs_page_group = false;
     if (img_file(idict) == NULL)
         reopen_png(idict);
     assert(img_png_ptr(idict) != NULL);
@@ -616,18 +623,20 @@ void write_png(image_dict * idict)
             write_png_gray(idict);
             break;
         case PNG_COLOR_TYPE_GRAY_ALPHA:
-            if (fixed_pdf_minor_version >= 4)
+            if (fixed_pdf_minor_version >= 4) {
                 write_png_gray_alpha(idict);
-            else
+                last_png_needs_page_group = true;
+            } else
                 write_png_gray(idict);
             break;
         case PNG_COLOR_TYPE_RGB:
             write_png_rgb(idict);
             break;
         case PNG_COLOR_TYPE_RGB_ALPHA:
-            if (fixed_pdf_minor_version >= 4)
+            if (fixed_pdf_minor_version >= 4) {
                 write_png_rgb_alpha(idict);
-            else
+                last_png_needs_page_group = true;
+            } else
                 write_png_rgb(idict);
             break;
         default:
@@ -637,4 +646,28 @@ void write_png(image_dict * idict)
     }
     pdf_flush();
     close_and_cleanup_png(idict);
+}
+
+
+
+static boolean transparent_page_group_was_written = false;
+
+/* Called after the xobject generated by write_png has been finished; used to
+ * write out additional objects */
+void write_additional_png_objects(void)
+{
+    return;                     /* this interferes with current macro-based usage and cannot be configured */
+    if (last_png_needs_page_group) {
+        if (!transparent_page_group_was_written && transparent_page_group > 1) {
+            /* create new group object */
+            transparent_page_group_was_written = true;
+            pdf_begin_obj(transparent_page_group, 2);
+            if (get_pdf_compress_level() == 0) {
+                pdf_puts("%PTEX Group needed for transparent pngs\n");
+            }
+            pdf_puts
+                ("<</Type/Group /S/Transparency /CS/DeviceRGB /I true /K true>>\n");
+            pdf_end_obj();
+        }
+    }
 }

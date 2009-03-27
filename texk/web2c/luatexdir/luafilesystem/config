@@ -1,20 +1,24 @@
 # Installation directories
+
+# Default installation prefix
+PREFIX=/usr/local
+
 # System's libraries directory (where binary libraries are installed)
-LUA_LIBDIR= /usr/local/lib/lua/5.0
+LUA_LIBDIR= $(PREFIX)/lib/lua/5.1
+
 # Lua includes directory
-LUA_INC= /usr/local/include
+LUA_INC= $(PREFIX)/include
 
 # OS dependent
 LIB_OPTION= -shared #for Linux
 #LIB_OPTION= -bundle -undefined dynamic_lookup #for MacOS X
 
 LIBNAME= $T.so.$V
-COMPAT_DIR= ../compat/src
 
 # Compilation directives
-WARN= -O2 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings
-INCS= -I$(LUA_INC) -I$(COMPAT_DIR)
+WARN= -O2 -Wall -fPIC -W -Waggregate-return -Wcast-align -Wmissing-prototypes -Wnested-externs -Wshadow -Wwrite-strings -pedantic
+INCS= -I$(LUA_INC)
 CFLAGS= $(WARN) $(INCS)
 CC= gcc
 
-# $Id: config,v 1.14 2005/06/24 01:49:16 tomas Exp $
+# $Id: config,v 1.21 2007/10/27 22:42:32 carregal Exp $

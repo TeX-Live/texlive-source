@@ -1,8 +1,27 @@
-/* $Id: lpdflib.c 1154 2008-04-13 22:36:03Z oneiros $ */
+/* lpdflib.c
+   
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+
+   This file is part of LuaTeX.
+
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
+
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "luatex-api.h"
 #include <ptexlib.h>
 
+static const char _svn_version[] =
+    "$Id: lpdflib.c 2072 2009-03-21 08:50:20Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/lpdflib.c $";
 
 static int findcurv(lua_State * L)
 {
@@ -19,7 +38,6 @@ static int findcurh(lua_State * L)
     lua_pushnumber(L, j);
     return 1;
 }
-
 
 typedef enum { set_origin, direct_page, direct_always } pdf_lit_mode;
 
@@ -57,13 +75,15 @@ int luapdfprint(lua_State * L)
             lua_error(L);
         }
     }
+    check_pdfminorversion();
     switch (literal_mode) {
     case (set_origin):
-        pdf_end_text();
-        pdf_set_origin(cur_h, cur_v);
+        pdf_goto_pagemode();
+        pos = synch_p_with_c(cur);
+        pdf_set_pos(pos.h, pos.v);
         break;
     case (direct_page):
-        pdf_end_text();
+        pdf_goto_pagemode();
         break;
     case (direct_always):
         pdf_end_string_nl();
@@ -80,15 +100,25 @@ int luapdfprint(lua_State * L)
     return 0;
 }
 
+/* DANGER! this should go into some header file */
 #define obj_type_others 0
 
 static int l_immediateobj(lua_State * L)
 {
+    unsigned i;
+    size_t len;
+    const char *st;
     if (!lua_isstring(L, -1))
         luaL_error(L, "pdf.immediateobj needs string value");
     pdf_create_obj(obj_type_others, 0);
     pdf_begin_obj(obj_ptr, 1);
-    pdf_printf("%s\n", lua_tostring(L, -1));
+    st = lua_tolstring(L, -1, &len);
+    for (i = 0; i < len; i++) {
+        if (i % 16 == 0)
+            pdfroom(16);
+        pdf_buf[pdf_ptr++] = st[i];
+    }
+    pdf_puts("\n");
     pdf_end_obj();
     lua_pop(L, 1);
     lua_pushinteger(L, obj_ptr);

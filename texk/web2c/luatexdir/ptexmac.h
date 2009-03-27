@@ -1,24 +1,24 @@
-/*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+/* ptexmac.h
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-$Id$
-*/
+/* $Id$ */
 
 #ifndef PDFTEXMAC
 #  define PDFTEXMAC
@@ -80,12 +80,12 @@ $Id$
 #  define pdftex_debug    tex_printf
 
 extern void check_buffer_overflow(int wsize);
-extern void check_pool_overflow (int wsize);
+extern void check_pool_overflow(int wsize);
 
-#  define check_buf(size, buf_size)										\
-  if ((unsigned)(size) > (unsigned)(buf_size))							\
-	pdftex_fail("buffer overflow: %d > %d at file %s, line %d",			\
-				(int)(size), (int)(buf_size), __FILE__,  __LINE__ )
+#  define check_buf(size, buf_size)                                     \
+  if ((unsigned)(size) > (unsigned)(buf_size))                          \
+    pdftex_fail("buffer overflow: %d > %d at file %s, line %d",         \
+                (int)(size), (int)(buf_size), __FILE__,  __LINE__ )
 
 #  define append_char_to_buf(c, p, buf, buf_size) do {       \
     if (c == 9)                                            \
@@ -125,10 +125,10 @@ extern void check_pool_overflow (int wsize);
         T##_array = xtalloc(T##_limit, T##_entry);          \
         T##_ptr = T##_array;                                \
     }                                                       \
-    else if ((unsigned)(T##_ptr - T##_array + (n)) > T##_limit) {       \
+    else if ((unsigned)(T##_ptr - T##_array + (n)) > (unsigned)(T##_limit)) { \
         last_ptr_index = T##_ptr - T##_array;               \
         T##_limit *= 2;                                     \
-        if ((unsigned)(T##_ptr - T##_array + (n)) > T##_limit)          \
+        if ((unsigned)(T##_ptr - T##_array + (n)) > (unsigned)(T##_limit)) \
             T##_limit = T##_ptr - T##_array + (n);          \
         xretalloc(T##_array, T##_limit, T##_entry);         \
         T##_ptr = T##_array + last_ptr_index;               \

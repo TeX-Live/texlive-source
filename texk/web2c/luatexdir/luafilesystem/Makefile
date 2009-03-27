@@ -1,28 +1,22 @@
-# $Id: Makefile,v 1.26 2005/06/27 17:06:01 tomas Exp $
+# $Id: Makefile,v 1.34 2008/05/07 19:06:37 carregal Exp $
 
 T= lfs
-V= 1.2
+
 CONFIG= ./config
 
 include $(CONFIG)
 
-COMPAT_O= $(COMPAT_DIR)/compat-5.1.o
 SRCS= src/$T.c
-OBJS= src/$T.o $(COMPAT_O)
+OBJS= src/$T.o
 
+lib: src/lfs.so
 
-lib: src/$(LIBNAME)
+src/lfs.so: $(OBJS)
+	export MACOSX_DEPLOYMENT_TARGET="10.3"; $(CC) $(CFLAGS) $(LIB_OPTION) -o src/lfs.so $(OBJS)
 
-src/$(LIBNAME): $(OBJS)
-	export MACOSX_DEPLOYMENT_TARGET="10.3"; $(CC) $(CFLAGS) $(LIB_OPTION) -o src/$(LIBNAME) $(OBJS)
-
-$(COMPAT_O): $(COMPAT_DIR)/compat-5.1.c
-	$(CC) -c $(CFLAGS) -o $@ $(COMPAT_DIR)/compat-5.1.c
-
-install: src/$(LIBNAME)
+install:
 	mkdir -p $(LUA_LIBDIR)
-	cp src/$(LIBNAME) $(LUA_LIBDIR)
-	cd $(LUA_LIBDIR); ln -f -s $(LIBNAME) $T.so
+	cp src/lfs.so $(LUA_LIBDIR)
 
 clean:
-	rm -f src/$(LIBNAME) $(OBJS) $(COMPAT_O)
+	rm -f src/lfs.so $(OBJS)

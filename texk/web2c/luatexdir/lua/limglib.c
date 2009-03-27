@@ -1,4 +1,21 @@
-/* $Id: limglib.c 1098 2008-03-09 10:28:19Z hhenkel $ */
+/* limglib.c
+   
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+
+   This file is part of LuaTeX.
+
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
+
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include <stdio.h>
 #include <string.h>
@@ -9,16 +26,18 @@
 #include "../image/image.h"
 #include "../luatex-api.h"
 
+static const char _svn_version[] =
+    "$Id: limglib.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/limglib.c $";
+
 /**********************************************************************/
 
 #ifdef DEBUG
-static void stackDump(lua_State * L, char *s)
+void stackDump(lua_State * L, char *s)
 {
-    int i;
-    int top = lua_gettop(L);
+    int i, t, top = lua_gettop(L);
     printf("\n=== stackDump <%s>: ", s);
-    for (i = 1; i <= top; i++) {        /* repeat for each level */
-        int t = lua_type(L, i);
+    for (i = top; i >= 1; i--) {        /* repeat for each level */
+        t = lua_type(L, i);
         printf("%d: ", i);
         switch (t) {
         case LUA_TSTRING:      /* strings */
@@ -42,10 +61,10 @@ static void stackDump(lua_State * L, char *s)
 
 /**********************************************************************/
 
-typedef enum { P__ZERO, P_ATTR, P_COLORDEPTH, P_COLORSPACE, P_DEPTH, P_FILENAME,
-    P_FILEPATH, P_HEIGHT, P_IMAGETYPE, P_INDEX, P_OBJNUM, P_PAGE, P_PAGEBOX,
-    P_TOTALPAGES, P_TRANSFORM, P_WIDTH, P_XRES, P_XSIZE, P_YRES, P_YSIZE,
-    P__SENTINEL
+typedef enum { P__ZERO, P_ATTR, P_BBOX, P_COLORDEPTH, P_COLORSPACE, P_DEPTH,
+    P_FILENAME, P_FILEPATH, P_HEIGHT, P_IMAGETYPE, P_INDEX, P_OBJNUM,
+    P_PAGE, P_PAGEBOX, P_TOTALPAGES, P_ROTATION, P_STREAM, P_TRANSFORM,
+    P_WIDTH, P_XRES, P_XSIZE, P_YRES, P_YSIZE, P__SENTINEL
 } parm_idx;
 
 typedef struct {
@@ -53,9 +72,10 @@ typedef struct {
     parm_idx idx;               /* index within img_parms array */
 } parm_struct;
 
-parm_struct img_parms[] = {
+const parm_struct img_parms[] = {
     {NULL, P__ZERO},            /* dummy; lua indices run from 1 */
     {"attr", P_ATTR},
+    {"bbox", P_BBOX},
     {"colordepth", P_COLORDEPTH},
     {"colorspace", P_COLORSPACE},
     {"depth", P_DEPTH},
@@ -68,6 +88,8 @@ parm_struct img_parms[] = {
     {"page", P_PAGE},
     {"pagebox", P_PAGEBOX},
     {"pages", P_TOTALPAGES},
+    {"rotation", P_ROTATION},
+    {"stream", P_STREAM},
     {"transform", P_TRANSFORM},
     {"width", P_WIDTH},
     {"xres", P_XRES},
@@ -77,8 +99,9 @@ parm_struct img_parms[] = {
     {NULL, P__SENTINEL}
 };
 
-#define imgtype_max 4
-const char *imgtype_s[] = { "none", "pdf", "png", "jpg", "jbig2", NULL };
+#define imgtype_max 5
+const char *imgtype_s[] =
+    { "none", "pdf", "png", "jpg", "jbig2", "stream", NULL };
 
 #define pagebox_max 5
 const char *pdfboxspec_s[] =
@@ -94,7 +117,7 @@ static void image_to_lua(lua_State * L, image * a)
     lua_pushvalue(L, -1);       /* k k u ... */
     lua_gettable(L, LUA_ENVIRONINDEX);  /* i? k u ... */
     if (!lua_isnumber(L, -1))   /* !i k u ... */
-        luaL_error(L, "image_to_lua not a valid image key: %s",
+        luaL_error(L, "image_to_lua(): %s is not a valid image key",
                    lua_tostring(L, -2));
     i = lua_tointeger(L, -1);   /* i k u ... */
     lua_pop(L, 2);              /* u ... */
@@ -148,17 +171,26 @@ static void image_to_lua(lua_State * L, image * a)
     case P_TOTALPAGES:
         lua_pushinteger(L, img_totalpages(d));
         break;
-    case P_XSIZE:
-        lua_pushinteger(L, img_xsize(d));
+    case P_XSIZE:              /* Modify by /Rotate only for output */
+        if ((img_rotation(d) & 1) == 0)
+            lua_pushinteger(L, img_xsize(d));
+        else
+            lua_pushinteger(L, img_ysize(d));
         break;
-    case P_YSIZE:
-        lua_pushinteger(L, img_ysize(d));
+    case P_YSIZE:              /* Modify by /Rotate only for output */
+        if ((img_rotation(d) & 1) == 0)
+            lua_pushinteger(L, img_ysize(d));
+        else
+            lua_pushinteger(L, img_xsize(d));
         break;
     case P_XRES:
         lua_pushinteger(L, img_xres(d));
         break;
     case P_YRES:
         lua_pushinteger(L, img_yres(d));
+        break;
+    case P_ROTATION:
+        lua_pushinteger(L, img_rotation(d));
         break;
     case P_COLORSPACE:
         if (img_colorspace(d) == 0)
@@ -175,7 +207,7 @@ static void image_to_lua(lua_State * L, image * a)
     case P_IMAGETYPE:
         j = img_type(d);
         if (j >= 0 && j <= imgtype_max) {
-            if (j == IMAGE_TYPE_NONE)
+            if (j == IMG_TYPE_NONE)
                 lua_pushnil(L);
             else
                 lua_pushstring(L, imgtype_s[j]);
@@ -192,6 +224,27 @@ static void image_to_lua(lua_State * L, image * a)
         } else
             assert(0);
         break;
+    case P_BBOX:
+        if (!img_is_bbox(d)) {
+            img_bbox(d)[0] = img_xorig(d);
+            img_bbox(d)[1] = img_yorig(d);
+            img_bbox(d)[2] = img_xorig(d) + img_xsize(d);
+            img_bbox(d)[3] = img_yorig(d) + img_ysize(d);
+        }
+        lua_newtable(L);
+        lua_pushinteger(L, 1);
+        lua_pushinteger(L, img_bbox(d)[0]);
+        lua_settable(L, -3);
+        lua_pushinteger(L, 2);
+        lua_pushinteger(L, img_bbox(d)[1]);
+        lua_settable(L, -3);
+        lua_pushinteger(L, 3);
+        lua_pushinteger(L, img_bbox(d)[2]);
+        lua_settable(L, -3);
+        lua_pushinteger(L, 4);
+        lua_pushinteger(L, img_bbox(d)[3]);
+        lua_settable(L, -3);
+        break;
     case P_OBJNUM:
         if (img_objnum(d) == 0)
             lua_pushnil(L);
@@ -203,6 +256,14 @@ static void image_to_lua(lua_State * L, image * a)
             lua_pushnil(L);
         else
             lua_pushinteger(L, img_index(d));
+        break;
+    case P_STREAM:
+        if (img_type(d) != IMG_TYPE_PDFSTREAM || img_pdfstream_ptr(d) == NULL
+            || img_pdfstream_stream(d) == NULL
+            || strlen(img_pdfstream_stream(d)) == 0)
+            lua_pushnil(L);
+        else
+            lua_pushstring(L, img_pdfstream_stream(d));
         break;
     default:
         assert(0);
@@ -217,7 +278,7 @@ static void lua_to_image(lua_State * L, image * a)
     lua_pushvalue(L, -2);       /* k v k t ... */
     lua_gettable(L, LUA_ENVIRONINDEX);  /* i? v k t ... */
     if (!lua_isnumber(L, -1))   /* !i v k t ... */
-        luaL_error(L, "lua_to_image not a valid image key: %s",
+        luaL_error(L, "lua_to_image(): %s is not a valid image key",
                    lua_tostring(L, -3));
     i = lua_tointeger(L, -1);   /* i v k t ... */
     lua_pop(L, 1);              /* v k t ... */
@@ -277,6 +338,8 @@ static void lua_to_image(lua_State * L, image * a)
     case P_FILENAME:
         if (img_state(d) >= DICT_FILESCANNED)
             luaL_error(L, "image.filename is now read-only");
+        if (img_type(d) == IMG_TYPE_PDFSTREAM)
+            luaL_error(L, "image.filename can't be used with image.stream");
         if (lua_isstring(L, -1)) {
             if (img_filename(d) != NULL)
                 xfree(img_filename(d));
@@ -331,12 +394,49 @@ static void lua_to_image(lua_State * L, image * a)
         else
             luaL_error(L, "image.pagebox needs string or nil value");
         break;
+    case P_BBOX:
+        if (img_state(d) >= DICT_FILESCANNED)
+            luaL_error(L, "image.bbox is now read-only");
+        if (!lua_istable(L, -1))
+            luaL_error(L, "image.bbox needs table value");
+        if (lua_objlen(L, -1) != 4)
+            luaL_error(L, "image.bbox table must have exactly 4 elements");
+        for (i = 1; i <= 4; i++) {      /* v k t ... */
+            lua_pushinteger(L, i);      /* idx v k t ... */
+            lua_gettable(L, -2);        /* int v k t ... */
+            if (lua_type(L, -1) == LUA_TNUMBER)
+                img_bbox(d)[i - 1] = lua_tointeger(L, -1);
+            else if (lua_type(L, -1) == LUA_TSTRING)
+                img_bbox(d)[i - 1] =
+                    dimen_to_number(L, (char *) lua_tostring(L, -1));
+            else
+                luaL_error(L,
+                           "image.bbox table needs integer value or dimension string elements");
+            lua_pop(L, 1);      /* v k t ... */
+        }
+        img_set_bbox(d);
+        img_unset_scaled(a);
+        break;
+    case P_STREAM:
+        if (img_filename(d) != NULL)
+            luaL_error(L, "image.stream can't be used with image.filename");
+        if (img_state(d) >= DICT_FILESCANNED)
+            luaL_error(L, "image.stream is now read-only");
+        if (img_pdfstream_ptr(d) == NULL)
+            new_img_pdfstream_struct(d);
+        if (img_pdfstream_stream(d) != NULL)
+            xfree(img_pdfstream_stream(d));
+        img_pdfstream_stream(d) = xstrdup(lua_tostring(L, -1));
+        img_type(d) = IMG_TYPE_PDFSTREAM;
+        img_unset_scaled(a);
+        break;
     case P_FILEPATH:
     case P_TOTALPAGES:
     case P_XSIZE:
     case P_YSIZE:
     case P_XRES:
     case P_YRES:
+    case P_ROTATION:
     case P_IMAGETYPE:
     case P_OBJNUM:
     case P_INDEX:
@@ -389,24 +489,24 @@ void copy_image(lua_State * L, lua_Number scale)
 
 /**********************************************************************/
 
-static int l_new_image(lua_State * L)
+int l_new_image(lua_State * L)
 {
     image *a, **aa;
     image_dict **add;
     if (lua_gettop(L) > 1)
         luaL_error(L, "img.new() needs maximum 1 argument");
-    if (lua_gettop(L) == 1 && !lua_istable(L, 1))
+    if (lua_gettop(L) == 1 && !lua_istable(L, -1))
         luaL_error(L, "img.new() needs table as optional argument");    /* (t) */
     aa = (image **) lua_newuserdata(L, sizeof(image *));        /* i (t) */
     luaL_getmetatable(L, TYPE_IMG);     /* m i (t) */
     lua_setmetatable(L, -2);    /* i (t) */
     a = *aa = new_image();
-    add = (image_dict **) lua_newuserdata(L, sizeof(image_dict *));        /* ad i (t) */
+    add = (image_dict **) lua_newuserdata(L, sizeof(image_dict *));     /* ad i (t) */
     luaL_getmetatable(L, TYPE_IMG_DICT);        /* m ad i (t) */
     lua_setmetatable(L, -2);    /* ad i (t) */
     img_dict(a) = *add = new_image_dict();
     img_dictref(a) = luaL_ref(L, LUA_GLOBALSINDEX);     /* i (t) */
-    if (lua_gettop(L) != 1) {   /* i t, else just i */
+    if (lua_gettop(L) == 2) {   /* i t, else just i */
         lua_insert(L, -2);      /* t i */
         lua_pushnil(L);         /* n t i (1st key for iterator) */
         while (lua_next(L, -2) != 0) {  /* v k t i */
@@ -423,40 +523,62 @@ static int l_copy_image(lua_State * L)
     if (lua_gettop(L) != 1)
         luaL_error(L, "img.copy() needs exactly 1 argument");
     if (lua_istable(L, 1))
-        l_new_image(L);         /* image --- if everything worked well */
+        (void) l_new_image(L);  /* image --- if everything worked well */
     else
-        copy_image(L, 1.0);     /* image */
+        (void) copy_image(L, 1.0);      /* image */
     return 1;                   /* image */
+}
+
+static void read_scale_img(lua_State * L, image * a)
+{
+    image_dict *ad;
+    assert(a != NULL);
+    ad = img_dict(a);
+    assert(ad != NULL);
+    if (img_state(ad) == DICT_NEW) {
+        if (img_type(ad) == IMG_TYPE_PDFSTREAM)
+            check_pdfstream_dict(ad);
+        else {
+            /* check_pdfminorversion() should not be here, as it belongs 
+             * to the output functions, and it is too early here to start
+             * already the PDF file only for image file scanning; but 
+             * it's needed as several fixed_* parameters are used early,
+             * e. g. by read_png_info(). */
+            check_pdfminorversion();
+            read_img(ad, get_pdf_minor_version(),
+                     get_pdf_inclusion_errorlevel());
+            img_unset_scaled(a);
+        }
+    }
+    fix_image_size(L, a);
 }
 
 static int l_scan_image(lua_State * L)
 {
     image *a, **aa;
-    image_dict *ad;
     if (lua_gettop(L) != 1)
         luaL_error(L, "img.scan() needs exactly 1 argument");
     if (lua_istable(L, 1))
-        l_new_image(L);         /* image --- if everything worked well */
+        (void) l_new_image(L);  /* image --- if everything worked well */
     aa = (image **) luaL_checkudata(L, 1, TYPE_IMG);    /* image */
     a = *aa;
-    ad = img_dict(a);
-    if (img_state(ad) == DICT_NEW) {
-        read_img(ad, get_pdf_minor_version(), get_pdf_inclusion_errorlevel());
-        img_unset_scaled(a);
-    }
-    fix_image_size(L, a);
+    check_pdfoutput(maketexstring("img.scan()"), true);
+    flush_str(last_tex_string);
+    read_scale_img(L, a);
     return 1;                   /* image */
 }
 
-/* these should go into some header file... */
-#define obj_type_ximage 8
+/* DANGER! these should go into some header file... */
+#define obj_type_ximage 7
 #define obj_aux(a)      obj_tab[a].int4 /* auxiliary pointer */
 #define obj_data_ptr    obj_aux /* pointer to |pdf_mem| */
 
 static halfword img_to_node(image * a, integer ref)
 {
-    image_dict *ad = img_dict(a);
+    image_dict *ad;
     halfword n;
+    assert(a != NULL);
+    ad = img_dict(a);
     assert(ad != NULL);
     assert(img_objnum(ad) != 0);
     n = new_node(whatsit_node, pdf_refximage_node);
@@ -467,44 +589,47 @@ static halfword img_to_node(image * a, integer ref)
     return n;
 }
 
-typedef enum { WR_WRITE, WR_IMMEDIATEWRITE, WR_NODE } wrtype_e;
+typedef enum { WR_WRITE, WR_IMMEDIATEWRITE, WR_NODE, WR_VF_IMG } wrtype_e;
 const char *wrtype_s[] =
-    { "img.write()", "img.immediatewrite()", "img.node()" };
+    { "img.write()", "img.immediatewrite()", "img.node()", "write vf image" };
 
 extern void lua_nodelib_push_fast(lua_State * L, halfword n);
+
+static void setup_image(lua_State * L, image * a, wrtype_e writetype)
+{
+    image_dict *ad;
+    assert(a != NULL);
+    ad = img_dict(a);
+    check_pdfoutput(maketexstring(wrtype_s[writetype]), true);
+    flush_str(last_tex_string);
+    read_scale_img(L, a);
+    if (img_arrayidx(a) == -1)
+        img_arrayidx(a) = img_to_array(a);      /* now a is read-only */
+    if (img_objnum(ad) == 0) {  /* latest needed just before out_img() */
+        pdf_ximage_count++;
+        pdf_create_obj(obj_type_ximage, pdf_ximage_count);
+        img_objnum(ad) = obj_ptr;
+        img_index(ad) = pdf_ximage_count;
+        obj_data_ptr(obj_ptr) = img_arrayidx(a);
+    }
+}
 
 static void write_image_or_node(lua_State * L, wrtype_e writetype)
 {
     image *a, **aa;
     image_dict *ad;
     halfword n;
-    integer ref;
     if (lua_gettop(L) != 1)
         luaL_error(L, "%s needs exactly 1 argument", wrtype_s[writetype]);
     if (lua_istable(L, 1))
-        l_new_image(L);         /* image --- if everything worked well */
+        (void) l_new_image(L);  /* image --- if everything worked well */
     aa = (image **) luaL_checkudata(L, 1, TYPE_IMG);    /* image */
     a = *aa;
     ad = img_dict(a);
-    assert(ad != NULL);
-    if (img_state(ad) == DICT_NEW) {
-        read_img(ad, get_pdf_minor_version(), get_pdf_inclusion_errorlevel());
-        img_unset_scaled(a);
-    }
-    fix_image_size(L, a);
-    check_pdfoutput(maketexstring(wrtype_s[writetype]), true);
-    flush_str(last_tex_string);
-    ref = img_to_array(a);
-    if (img_objnum(ad) == 0) {  /* not strictly needed here, could be delayed until out_image() */
-        pdf_ximage_count++;
-        pdf_create_obj(obj_type_ximage, pdf_ximage_count);
-        img_objnum(ad) = obj_ptr;
-        img_index(ad) = pdf_ximage_count;
-        obj_data_ptr(obj_ptr) = ref;
-    }
+    setup_image(L, a, writetype);
     switch (writetype) {
     case WR_WRITE:
-        n = img_to_node(a, ref);
+        n = img_to_node(a, img_arrayidx(a));
         new_tail_append(n);
         break;                  /* image */
     case WR_IMMEDIATEWRITE:
@@ -514,7 +639,7 @@ static void write_image_or_node(lua_State * L, wrtype_e writetype)
         break;                  /* image */
     case WR_NODE:              /* image */
         lua_pop(L, 1);          /* - */
-        n = img_to_node(a, ref);
+        n = img_to_node(a, img_arrayidx(a));
         lua_nodelib_push_fast(L, n);
         break;                  /* node */
     default:
@@ -522,7 +647,6 @@ static void write_image_or_node(lua_State * L, wrtype_e writetype)
     }
     if (img_state(ad) < DICT_REFERED)
         img_state(ad) = DICT_REFERED;
-    img_set_refered(a);         /* now image may not be freed by gc */
 }
 
 static int l_write_image(lua_State * L)
@@ -545,7 +669,7 @@ static int l_image_node(lua_State * L)
 
 static int l_image_keys(lua_State * L)
 {
-    parm_struct *p = img_parms + 1;
+    const parm_struct *p = img_parms + 1;
     if (lua_gettop(L) != 0)
         luaL_error(L, "img.keys() goes without argument");
     lua_newtable(L);            /* t */
@@ -601,6 +725,21 @@ static const struct luaL_Reg imglib[] = {
 };
 
 /**********************************************************************/
+
+void vf_out_image(unsigned i)
+{
+    image *a, **aa;
+    lua_State *L = Luas;     /* ... */
+    lua_rawgeti(L, LUA_GLOBALSINDEX, i);        /* image ... */
+    aa = (image **) luaL_checkudata(L, -1, TYPE_IMG);
+    a = *aa;
+    setup_image(L, a, WR_VF_IMG);       /* image ... */
+    assert(img_is_refered(a));
+    output_image(img_arrayidx(a));
+    lua_pop(L, 1);              /* ... */
+}
+
+/**********************************************************************/
 /* Metamethods for image */
 
 static int m_img_get(lua_State * L)
@@ -635,8 +774,10 @@ static int m_img_mul(lua_State * L)
 
 static int m_img_print(lua_State * L)
 {
-    image **aa = (image **) luaL_checkudata(L, 1, TYPE_IMG);
-    image_dict *d = img_dict(*aa);
+    image **aa;
+    image_dict *d;
+    aa = (image **) luaL_checkudata(L, 1, TYPE_IMG);
+    d = img_dict(*aa);
     if (img_pagename(d) != NULL && strlen(img_pagename(d)) != 0)
         lua_pushfstring(L, "<img{filename=\"%s\", page=\"%s\"}>",
                         img_filename(d), img_pagename(d));
@@ -692,7 +833,7 @@ static const struct luaL_Reg img_dict_m[] = {
 
 /**********************************************************************/
 
-void preset_environment(lua_State * L, parm_struct * p)
+void preset_environment(lua_State * L, const parm_struct * p)
 {
     int i;
     lua_newtable(L);            /* t */

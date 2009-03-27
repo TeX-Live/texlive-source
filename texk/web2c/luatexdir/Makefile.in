@@ -1,4 +1,5 @@
 # Makefile for luatex.
+# Public domain.
 # $Id$
 
 kpse_include ../make/common.mk
@@ -8,7 +9,14 @@ kpse_include ../make/library.mk
 kpathsea_srcdir_parent = $(srcdir)/../..
 kpathsea_dir_parent = ../..
 
-ALL_CXXFLAGS = @CXXFLAGS@ @DEFS@ $(XXCFLAGS) -I. -I$(srcdir) -I$(kpathsea_dir_parent) -I$(kpathsea_srcdir_parent) @LIBXPDFCPPFLAGS@ -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) -I$(LIBOBSDCOMPATFSRCDIR)/.. -I$(LIBPNGSRCDIR) -I$(ZLIBSRCDIR)
+ALL_CXXFLAGS = @CXXFLAGS@ @DEFS@ $(XXCFLAGS) \
+  -I. -I$(srcdir) \
+  -I$(kpathsea_dir_parent) -I$(kpathsea_srcdir_parent) \
+  @LIBXPDFCPPFLAGS@ \
+  -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. \
+  -I$(LIBOBSDCOMPATFSRCDIR) -I$(LIBOBSDCOMPATFSRCDIR)/.. \
+  -I$(LIBPNGSRCDIR) -I$(ZLIBSRCDIR) \
+  -DPDF_PARSER_ONLY -DDISABLE_OUTLINE -I../../../../src/libs/obsdcompat
 CXX = @CXX@
 
 CTANGLE = ../ctangle
@@ -32,18 +40,16 @@ LIBMD5DIR=../../../libs/md5
 LIBMD5SRCDIR=$(srcdir)/$(LIBMD5DIR)
 
 LIBOBSDCOMPATDIR=../../../libs/obsdcompat
-LIBOBSDCOMPATFSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
+LIBOBSDCOMPATSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
 
 XCPPFLAGS=-I.. -I$(srcdir)/.. -I../.. -I$(srcdir)/../.. -I$(LIBMD5DIR) \
   -I$(LIBMD5SRCDIR) @LIBPNGCPPFLAGS@ @ZLIBCPPFLAGS@ \
   -I$(LIBXPDFDIR) -I$(LIBXPDFDIR)/.. -I$(LIBXPDFSRCDIR) -I$(LIBXPDFSRCDIR)/.. \
-  -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) \
-  -I$(LIBOBSDCOMPATFSRCDIR)/.. -DpdfTeX
+  -I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATSRCDIR) \
+  -I$(LIBOBSDCOMPATSRCDIR)/.. -DpdfTeX
 
 
 OBJS = \
-avl.o \
-avlstuff.o \
 font/mapfile.o \
 font/pkin.o \
 font/subfont.o \
@@ -90,47 +96,51 @@ lua/luatoken.o \
 lua/luanode.o \
 lua/llanglib.o \
 lua/limglib.o \
-lua/mp.o \
-lua/psout.o \
-lua/lmplib.o \
 lang/hnjalloc.o \
 lang/hyphen.o \
 lang/texlang.o \
+pdf/pdfpage.o \
+pdf/pagetree.o \
 tex/linebreak.o \
 tex/postlinebreak.o \
 tex/texnodes.o \
 tex/textoken.o \
 tex/texpdf.o \
+tex/math.o \
+tex/mlist.o \
+tex/primitive.o \
+tex/texdeffont.o \
+tex/filename.o \
 managed-sa.o \
 mathcodes.o \
 textcodes.o \
-utils.o \
-writezip.o
+utils/avl.o \
+utils/avlstuff.o \
+utils/utils.o \
+utils/writezip.o \
+utils/synctex.o
 
-all: libpdf.a $(makecpool)
+all: libpdf.a makecpool
 
-libpdf.a: lua/mp.c lua/psout.c $(OBJS)
+libpdf.a: $(OBJS)
 	rm -f $@
 	$(AR) $(ARFLAGS) $@  $(OBJS)
 	$(RANLIB) $@
 
-lua/mp.c: lua/mp.w
-	$(CTANGLE) $(srcdir)/lua/mp.w - lua/mp.c
-
-lua/psout.c: lua/psout.w
-	$(CTANGLE) $(srcdir)/lua/psout.w - lua/psout.c
+makecpool: makecpool.o
+	$(link_command) makecpool.o
 
 kpse_include ../make/clean.mk
 
 clean::
-	rm -f libpdf.a ttf2afm pdftosrc
+	rm -f libpdf.a 
 
 depend:
 	rm -f $(OBJS) $(srcdir)/depend.mk
 	for a in $(OBJS);  do 	                                       \
 		env XXCFLAGS="-MM -MT \$$@" XCFLAGS="-MM -MT \$$@" $(MAKE) -k $$a;                 \
 		touch $$a;                                                 \
-		grep -a -v "^$(CC)\|$(CXX)\|$(AR)\|make\|klibtool" $$a |   \
+		grep -a -v "^$(CC)\|$(CXX)\|$(AR)\|make" $$a |   \
 		sed 's: [^ ]*/\.\./libs/[^ ]*::g' >> $(srcdir)/depend.mk;  \
 	done;                                                          \
 	rm -f $(OBJS)

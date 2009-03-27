@@ -1,10 +1,11 @@
-#!/usr/local/bin/lua50
+#!/usr/local/bin/lua5.1
 
 local tmp = "/tmp"
 local sep = "/"
 local upper = ".."
 
 require"lfs"
+print (lfs._VERSION)
 
 function attrdir (path)
 	for file in lfs.dir(path) do
@@ -33,8 +34,17 @@ assert (lfs.currentdir() == current, "error trying to change directories")
 assert (lfs.chdir ("this couldn't be an actual directory") == nil, "could change to a non-existent directory")
 
 -- Changing creating and removing directories
-local tmpdir = tmp..sep.."lfs_tmp_dir"
+local tmpdir = current..sep.."lfs_tmp_dir"
 local tmpfile = tmpdir..sep.."tmp_file"
+-- Test for existence of a previous lfs_tmp_dir
+-- that may have resulted from an interrupted test execution and remove it
+if lfs.chdir (tmpdir) then
+    assert (lfs.chdir (upper), "could not change to upper directory")
+    assert (os.remove (tmpfile), "could not remove file from previous test")    
+    assert (lfs.rmdir (tmpdir), "could not remove directory from previous test")
+end
+
+-- tries to create a directory
 assert (lfs.mkdir (tmpdir), "could not make a new directory")
 local attrib, errmsg = lfs.attributes (tmpdir)
 if not attrib then
@@ -44,19 +54,42 @@ local f = io.open(tmpfile, "w")
 f:close()
 
 -- Change access time
-assert (lfs.touch (tmpfile, 86401))
+local testdate = os.time({ year = 2007, day = 10, month = 2, hour=0})
+assert (lfs.touch (tmpfile, testdate))
 local new_att = assert (lfs.attributes (tmpfile))
-assert (new_att.access == 86401, "could not set access time")
-assert (new_att.modification == 86401, "could not set modification time")
+assert (new_att.access == testdate, "could not set access time")
+assert (new_att.modification == testdate, "could not set modification time")
 
 -- Change access and modification time
-assert (lfs.touch (tmpfile, 86403, 86402))
-local new_att = assert (lfs.attributes (tmpfile))
-assert (new_att.access == 86403, "could not set access time")
-assert (new_att.modification == 86402, "could not set modification time")
+local testdate1 = os.time({ year = 2007, day = 10, month = 2, hour=0})
+local testdate2 = os.time({ year = 2007, day = 11, month = 2, hour=0})
 
+assert (lfs.touch (tmpfile, testdate2, testdate1))
+local new_att = assert (lfs.attributes (tmpfile))
+assert (new_att.access == testdate2, "could not set access time")
+assert (new_att.modification == testdate1, "could not set modification time")
+
+local res, err = lfs.symlinkattributes(tmpfile)
+if err ~= "symlinkattributes not supported on this platform" then
+    -- Checking symbolic link information (does not work in Windows)
+    assert (os.execute ("ln -s "..tmpfile.." _a_link_for_test_"))
+    assert (lfs.attributes"_a_link_for_test_".mode == "file")
+    assert (lfs.symlinkattributes"_a_link_for_test_".mode == "link")
+    assert (os.remove"_a_link_for_test_")
+end
+
+if lfs.setmode then
+    -- Checking text/binary modes (works only in Windows)
+    local f = io.open(tmpfile, "w")
+    local result, mode = lfs.setmode(f, "binary")
+    assert((result and mode == "text") or (not result and mode == "setmode not supported on this platform"))
+    result, mode = lfs.setmode(f, "text")
+    assert((result and mode == "binary") or (not result and mode == "setmode not supported on this platform"))
+    f:close()
+end
+    
 -- Restore access time to current value
-assert (lfs.touch (tmpfile))
+assert (lfs.touch (tmpfile, attrib.access, attrib.modification))
 new_att = assert (lfs.attributes (tmpfile))
 assert (new_att.access == attrib.access)
 assert (new_att.modification == attrib.modification)

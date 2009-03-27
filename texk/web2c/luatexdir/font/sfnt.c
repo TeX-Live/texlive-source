@@ -1,114 +1,110 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/sfnt.c,v 1.12 2004/09/11 14:50:29 hirata Exp $
+/* sfnt.c
     
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+   Copyright 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+   the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
-    
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-    
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-*/
+   This file is part of LuaTeX.
+
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
+
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 /* Based on dvipdfmx-0.13.2c */
 
 #if  HAVE_CONFIG_H
-#include "config.h"
-#endif /* HAVE_CONFIG_H_ */
+#  include "config.h"
+#endif                          /* HAVE_CONFIG_H_ */
 
 #include <string.h>
 
 #ifndef pdfTeX
-#include "system.h"
+#  include "system.h"
 
-#include "error.h"
-#include "mem.h"
-#include "mfileio.h"
+#  include "error.h"
+#  include "mem.h"
+#  include "mfileio.h"
 #else
-extern void pdftex_fail (const char *fmt, ...); /* utils.c */
+#  include "ptexlib.h"
 #endif
 
 #include "sfnt.h"
 
+static const char _svn_version[] =
+    "$Id: sfnt.c 1592 2008-11-28 13:23:51Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/sfnt.c $";
+
 #ifdef XETEX
-UNSIGNED_BYTE
-ft_unsigned_byte(sfnt* f)
+UNSIGNED_BYTE ft_unsigned_byte(sfnt * f)
 {
-  unsigned char byte;
-  unsigned long length = 1;
-  
-  if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, &byte, &length) != 0)
-    TT_ERROR("sfnt: Freetype failure...");
-  f->loc += 1;
+    unsigned char byte;
+    unsigned long length = 1;
 
-  return byte;
+    if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, &byte, &length) != 0)
+        TT_ERROR("sfnt: Freetype failure...");
+    f->loc += 1;
+
+    return byte;
 }
 
-SIGNED_BYTE
-ft_signed_byte(sfnt* f)
+SIGNED_BYTE ft_signed_byte(sfnt * f)
 {
-  int b = ft_unsigned_byte(f);
-  if (b >= 0x80)
-    b -= 0x100;
-  return (SIGNED_BYTE)b;
+    int b = ft_unsigned_byte(f);
+    if (b >= 0x80)
+        b -= 0x100;
+    return (SIGNED_BYTE) b;
 }
 
-UNSIGNED_PAIR
-ft_unsigned_pair(sfnt* f)
+UNSIGNED_PAIR ft_unsigned_pair(sfnt * f)
 {
-  unsigned char buf[2];
-  unsigned long length = 2;
-  
-  if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
-    TT_ERROR("sfnt: Freetype failure...");
-  f->loc += 2;
+    unsigned char buf[2];
+    unsigned long length = 2;
 
-  return (UNSIGNED_PAIR)((unsigned)buf[0] << 8) + buf[1];
+    if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
+        TT_ERROR("sfnt: Freetype failure...");
+    f->loc += 2;
+
+    return (UNSIGNED_PAIR) ((unsigned) buf[0] << 8) + buf[1];
 }
 
-SIGNED_PAIR
-ft_signed_pair(sfnt* f)
+SIGNED_PAIR ft_signed_pair(sfnt * f)
 {
-  int p = ft_unsigned_pair(f);
-  if (p >= 0x8000U)
-    p -= 0x10000U;
-    
-  return (SIGNED_PAIR)p;
+    int p = ft_unsigned_pair(f);
+    if (p >= 0x8000U)
+        p -= 0x10000U;
+
+    return (SIGNED_PAIR) p;
 }
 
-UNSIGNED_QUAD
-ft_unsigned_quad(sfnt* f)
+UNSIGNED_QUAD ft_unsigned_quad(sfnt * f)
 {
-  unsigned char buf[4];
-  unsigned long length = 4;
+    unsigned char buf[4];
+    unsigned long length = 4;
 
-  if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
-    TT_ERROR("sfnt: Freetype failure...");
-  f->loc += 4;
+    if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
+        TT_ERROR("sfnt: Freetype failure...");
+    f->loc += 4;
 
-  return ((unsigned long)buf[0] << 24) + ((unsigned long)buf[1] << 16)
-       + ((unsigned long)buf[2] << 8) + (unsigned long)buf[3];
+    return ((unsigned long) buf[0] << 24) + ((unsigned long) buf[1] << 16)
+        + ((unsigned long) buf[2] << 8) + (unsigned long) buf[3];
 }
 
-unsigned long
-ft_read(unsigned char* buf, unsigned long len, sfnt* f)
+unsigned long ft_read(unsigned char *buf, unsigned long len, sfnt * f)
 {
-  unsigned long length = len;
-  if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
-    TT_ERROR("sfnt: Freetype failure...");
-  f->loc += len;
+    unsigned long length = len;
+    if (FT_Load_Sfnt_Table(f->ft_face, 0, f->loc, buf, &length) != 0)
+        TT_ERROR("sfnt: Freetype failure...");
+    f->loc += len;
 
-  return length;
+    return length;
 }
 #endif
 
@@ -122,398 +118,381 @@ ft_read(unsigned char* buf, unsigned long len, sfnt* f)
  *  `ttcf': TrueType Collection
 */
 #define SFNT_TRUETYPE   0x00010000UL
-#define SFNT_MAC_TRUE	0x74727565UL
+#define SFNT_MAC_TRUE 0x74727565UL
 #define SFNT_OPENTYPE   0x00010000UL
 #define SFNT_POSTSCRIPT 0x4f54544fUL
 #define SFNT_TTC        0x74746366UL
 
 #ifdef XETEX
-sfnt *
-sfnt_open (FT_Face face, int accept_types)
+sfnt *sfnt_open(FT_Face face, int accept_types)
 {
-  sfnt  *sfont;
-  ULONG  type;
-  
-  if (!face || !FT_IS_SFNT(face))
-    return NULL;
-  
-  sfont = NEW(1, sfnt);
-  sfont->ft_face = face;
-  sfont->loc = 0;
-  sfont->type = 0;
-  
-  type = sfnt_get_ulong(sfont);
-  
-  if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
-    sfont->type = SFNT_TYPE_TRUETYPE;
-  } else if (type == SFNT_OPENTYPE) {
-    sfont->type = SFNT_TYPE_OPENTYPE;
-  } else if (type == SFNT_POSTSCRIPT) { 
-    sfont->type = SFNT_TYPE_POSTSCRIPT;
-  } else if (type == SFNT_TTC) {
-    sfont->type = SFNT_TYPE_TTC;
-  }
+    sfnt *sfont;
+    ULONG type;
 
-  if ((sfont->type & accept_types) == 0) {
-    RELEASE(sfont);
-    return NULL;
-  }
+    if (!face || !FT_IS_SFNT(face))
+        return NULL;
 
-  sfont->loc = 0;
-  
-  sfont->directory = NULL;
+    sfont = NEW(1, sfnt);
+    sfont->ft_face = face;
+    sfont->loc = 0;
+    sfont->type = 0;
 
-  return sfont;
-}
-#else /* not XETEX */
-#ifdef pdfTeX
-sfnt *
-sfnt_open (unsigned char *buffer, integer buflen)
-{
-  sfnt  *sfont;
-  ULONG  type;
+    type = sfnt_get_ulong(sfont);
 
-  sfont = xmalloc(sizeof(sfnt));
-  sfont->loc = 0;
-  sfont->buffer = buffer;
-  sfont->buflen = buflen;
-
-  type = sfnt_get_ulong(sfont);
-
-  if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
-    sfont->type = SFNT_TYPE_TRUETYPE;
-  } else if (type == SFNT_OPENTYPE) {
-    sfont->type = SFNT_TYPE_OPENTYPE;
-  } else if (type == SFNT_POSTSCRIPT) { 
-    sfont->type = SFNT_TYPE_POSTSCRIPT;
-  } else if (type == SFNT_TTC) {
-    sfont->type = SFNT_TYPE_TTC;
-  }
-
-  sfont->loc=0;
-  sfont->directory = NULL;
-  return sfont;
-}
-#else
-sfnt *
-sfnt_open (FILE *fp)
-{
-  sfnt  *sfont;
-  ULONG  type;
-
-  ASSERT(fp);
-
-  rewind(fp);
-
-  sfont = NEW(1, sfnt);
-
-  sfont->stream = fp;
-
-  type = sfnt_get_ulong(sfont);
-
-  if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
-    sfont->type = SFNT_TYPE_TRUETYPE;
-  } else if (type == SFNT_OPENTYPE) {
-    sfont->type = SFNT_TYPE_OPENTYPE;
-  } else if (type == SFNT_POSTSCRIPT) { 
-    sfont->type = SFNT_TYPE_POSTSCRIPT;
-  } else if (type == SFNT_TTC) {
-    sfont->type = SFNT_TYPE_TTC;
-  }
-
-  rewind(sfont->stream);
-
-  sfont->directory = NULL;
-
-  return sfont;
-}
-#endif
-#endif
-
-static void
-release_directory (struct sfnt_table_directory *td)
-{
-  long i;
-
-  if (td) {
-    if (td->tables) {
-      for (i = 0; i < td->num_tables; i++) {
-	if (td->tables[i].data)
-	  RELEASE(td->tables[i].data);
-      }
-      RELEASE(td->tables);
+    if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
+        sfont->type = SFNT_TYPE_TRUETYPE;
+    } else if (type == SFNT_OPENTYPE) {
+        sfont->type = SFNT_TYPE_OPENTYPE;
+    } else if (type == SFNT_POSTSCRIPT) {
+        sfont->type = SFNT_TYPE_POSTSCRIPT;
+    } else if (type == SFNT_TTC) {
+        sfont->type = SFNT_TYPE_TTC;
     }
-    if (td->flags)
-      RELEASE(td->flags);
-    RELEASE(td);
-  }
 
-  return;
+    if ((sfont->type & accept_types) == 0) {
+        RELEASE(sfont);
+        return NULL;
+    }
+
+    sfont->loc = 0;
+
+    sfont->directory = NULL;
+
+    return sfont;
+}
+#else                           /* not XETEX */
+#  ifdef pdfTeX
+sfnt *sfnt_open(unsigned char *buffer, integer buflen)
+{
+    sfnt *sfont;
+    ULONG type;
+
+    sfont = xmalloc(sizeof(sfnt));
+    sfont->loc = 0;
+    sfont->buffer = buffer;
+    sfont->buflen = buflen;
+
+    type = sfnt_get_ulong(sfont);
+
+    if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
+        sfont->type = SFNT_TYPE_TRUETYPE;
+    } else if (type == SFNT_OPENTYPE) {
+        sfont->type = SFNT_TYPE_OPENTYPE;
+    } else if (type == SFNT_POSTSCRIPT) {
+        sfont->type = SFNT_TYPE_POSTSCRIPT;
+    } else if (type == SFNT_TTC) {
+        sfont->type = SFNT_TYPE_TTC;
+    }
+
+    sfont->loc = 0;
+    sfont->directory = NULL;
+    return sfont;
+}
+#  else
+sfnt *sfnt_open(FILE * fp)
+{
+    sfnt *sfont;
+    ULONG type;
+
+    ASSERT(fp);
+
+    rewind(fp);
+
+    sfont = NEW(1, sfnt);
+
+    sfont->stream = fp;
+
+    type = sfnt_get_ulong(sfont);
+
+    if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
+        sfont->type = SFNT_TYPE_TRUETYPE;
+    } else if (type == SFNT_OPENTYPE) {
+        sfont->type = SFNT_TYPE_OPENTYPE;
+    } else if (type == SFNT_POSTSCRIPT) {
+        sfont->type = SFNT_TYPE_POSTSCRIPT;
+    } else if (type == SFNT_TTC) {
+        sfont->type = SFNT_TYPE_TTC;
+    }
+
+    rewind(sfont->stream);
+
+    sfont->directory = NULL;
+
+    return sfont;
+}
+#  endif
+#endif
+
+static void release_directory(struct sfnt_table_directory *td)
+{
+    long i;
+
+    if (td) {
+        if (td->tables) {
+            for (i = 0; i < td->num_tables; i++) {
+                if (td->tables[i].data)
+                    RELEASE(td->tables[i].data);
+            }
+            RELEASE(td->tables);
+        }
+        if (td->flags)
+            RELEASE(td->flags);
+        RELEASE(td);
+    }
+
+    return;
 }
 
-void
-sfnt_close (sfnt *sfont)
+void sfnt_close(sfnt * sfont)
 {
 
-  if (sfont) {
-    if (sfont->directory)
-      release_directory(sfont->directory);
-    RELEASE(sfont);
-  }
+    if (sfont) {
+        if (sfont->directory)
+            release_directory(sfont->directory);
+        RELEASE(sfont);
+    }
 
-  return;
+    return;
 }
 
-int
-put_big_endian (void *s, LONG q, int n)
+int put_big_endian(void *s, LONG q, int n)
 {
-  int   i;
-  char *p;
+    int i;
+    char *p;
 
-  p = (char *) s;
-  for (i = n - 1; i >= 0; i--) {
-    p[i] = (char) (q & 0xff);
-    q >>= 8;
-  }
+    p = (char *) s;
+    for (i = n - 1; i >= 0; i--) {
+        p[i] = (char) (q & 0xff);
+        q >>= 8;
+    }
 
-  return n;
+    return n;
 }
 
 /* Convert four-byte number to big endianess
  * in a machine independent way.
  */
-static void
-convert_tag (char *tag, unsigned long u_tag)
+static void convert_tag(char *tag, unsigned long u_tag)
 {
-  int i;
+    int i;
 
-  for (i = 3; i >= 0; i--) {
-    tag[i] = (char) (u_tag % 256);
-    u_tag /= 256;
-  }
+    for (i = 3; i >= 0; i--) {
+        tag[i] = (char) (u_tag % 256);
+        u_tag /= 256;
+    }
 
-  return;
+    return;
 }
 
 /*
  * Computes the max power of 2 <= n
  */
-static unsigned
-max2floor (unsigned n)
+static unsigned max2floor(unsigned n)
 {
-  int val = 1;
+    int val = 1;
 
-  while (n > 1) {
-    n   /= 2;
-    val *= 2;
-  }
+    while (n > 1) {
+        n /= 2;
+        val *= 2;
+    }
 
-  return val;
+    return val;
 }
 
 /*
  * Computes the log2 of the max power of 2 <= n
  */
-static unsigned
-log2floor (unsigned n)
+static unsigned log2floor(unsigned n)
 {
-  unsigned val = 0;
+    unsigned val = 0;
 
-  while (n > 1) {
-    n /= 2;
-    val++;
-  }
+    while (n > 1) {
+        n /= 2;
+        val++;
+    }
 
-  return val;
+    return val;
 }
 
-static ULONG
-sfnt_calc_checksum(void *data, ULONG length)
+static ULONG sfnt_calc_checksum(void *data, ULONG length)
 {
-  ULONG  chksum = 0;
-  BYTE  *p, *endptr;
-  int    count  = 0;
+    ULONG chksum = 0;
+    BYTE *p, *endptr;
+    int count = 0;
 
-  p      = (BYTE *) data;
-  endptr = p + length;
-  while (p < endptr) {
-    chksum += (p[0] << (8 * ( 3 - count)));
-    count   = ((count + 1) & 3);
-    p++;
-  }
+    p = (BYTE *) data;
+    endptr = p + length;
+    while (p < endptr) {
+        chksum += (p[0] << (8 * (3 - count)));
+        count = ((count + 1) & 3);
+        p++;
+    }
 
-  return chksum;
+    return chksum;
 }
 
-static int
-find_table_index (struct sfnt_table_directory *td, const char *tag)
+static int find_table_index(struct sfnt_table_directory *td, const char *tag)
 {
-  int  idx;
+    int idx;
 
-  if (!td)
+    if (!td)
+        return -1;
+
+    for (idx = 0; idx < td->num_tables; idx++) {
+        if (!memcmp(td->tables[idx].tag, tag, 4))
+            return idx;
+    }
+
     return -1;
-
-  for (idx = 0; idx < td->num_tables; idx++) {
-    if (!memcmp(td->tables[idx].tag, tag, 4))
-      return idx;
-  }
-
-  return -1;
 }
 
-void
-sfnt_set_table (sfnt *sfont, const char *tag, void *data, ULONG length)
+void sfnt_set_table(sfnt * sfont, const char *tag, void *data, ULONG length)
 {
-  struct sfnt_table_directory *td;
-  int    idx;
+    struct sfnt_table_directory *td;
+    int idx;
 
-  ASSERT(sfont);
+    ASSERT(sfont);
 
-  td  = sfont->directory;
-  idx = find_table_index(td, tag);
+    td = sfont->directory;
+    idx = find_table_index(td, tag);
 
-  if (idx < 0) {
-    idx = td->num_tables;
-    td->num_tables++;
-    td->tables = RENEW(td->tables, td->num_tables, struct sfnt_table);
-    memcpy(td->tables[idx].tag, tag, 4);
-  }
+    if (idx < 0) {
+        idx = td->num_tables;
+        td->num_tables++;
+        td->tables = RENEW(td->tables, td->num_tables, struct sfnt_table);
+        memcpy(td->tables[idx].tag, tag, 4);
+    }
 
-  td->tables[idx].check_sum = sfnt_calc_checksum(data, length);
-  td->tables[idx].offset    = 0L;
-  td->tables[idx].length    = length;
-  td->tables[idx].data      = data;
+    td->tables[idx].check_sum = sfnt_calc_checksum(data, length);
+    td->tables[idx].offset = 0L;
+    td->tables[idx].length = length;
+    td->tables[idx].data = data;
 
-  return;
+    return;
 }
 
-ULONG
-sfnt_find_table_len (sfnt *sfont, const char *tag)
+ULONG sfnt_find_table_len(sfnt * sfont, const char *tag)
 {
-  ULONG  length;
-  struct sfnt_table_directory *td;
-  int    idx;
+    ULONG length;
+    struct sfnt_table_directory *td;
+    int idx;
 
-  ASSERT(sfont && tag);
+    ASSERT(sfont && tag);
 
-  td  = sfont->directory;
-  idx = find_table_index(td, tag);
-  if (idx < 0)
-    length = 0;
-  else {
-    length = td->tables[idx].length;
-  }
+    td = sfont->directory;
+    idx = find_table_index(td, tag);
+    if (idx < 0)
+        length = 0;
+    else {
+        length = td->tables[idx].length;
+    }
 
-  return length;
+    return length;
 }
 
-ULONG
-sfnt_find_table_pos (sfnt *sfont, const char *tag) 
+ULONG sfnt_find_table_pos(sfnt * sfont, const char *tag)
 {
-  ULONG  offset;
-  struct sfnt_table_directory *td;
-  int    idx;
+    ULONG offset;
+    struct sfnt_table_directory *td;
+    int idx;
 
-  ASSERT(sfont && tag);
+    ASSERT(sfont && tag);
 
-  td  = sfont->directory;
-  idx = find_table_index(td, tag);
-  if (idx < 0)
-    offset = 0;
-  else {
-    offset = td->tables[idx].offset;
-  }
+    td = sfont->directory;
+    idx = find_table_index(td, tag);
+    if (idx < 0)
+        offset = 0;
+    else {
+        offset = td->tables[idx].offset;
+    }
 
-  return offset;
+    return offset;
 }
 
-ULONG
-sfnt_locate_table (sfnt *sfont, const char *tag)
+ULONG sfnt_locate_table(sfnt * sfont, const char *tag)
 {
-  ULONG offset;
+    ULONG offset;
 
-  ASSERT(sfont && tag);
+    ASSERT(sfont && tag);
 
-  offset = sfnt_find_table_pos(sfont, tag);
-  if (offset == 0)
-    TT_ERROR("sfnt: table not found...");
+    offset = sfnt_find_table_pos(sfont, tag);
+    if (offset == 0)
+        TT_ERROR("sfnt: table not found...");
 
-  sfnt_seek_set(sfont, offset);
+    sfnt_seek_set(sfont, offset);
 
-  return offset;
+    return offset;
 }
 
-int
-sfnt_read_table_directory (sfnt *sfont, ULONG offset)
+int sfnt_read_table_directory(sfnt * sfont, ULONG offset)
 {
-  struct sfnt_table_directory *td;
-  unsigned long i, u_tag;
+    struct sfnt_table_directory *td;
+    unsigned long i, u_tag;
 
-  ASSERT(sfont);
+    ASSERT(sfont);
 
-  if (sfont->directory)
-    release_directory(sfont->directory);    
-  sfont->directory = td = NEW (1, struct sfnt_table_directory);
+    if (sfont->directory)
+        release_directory(sfont->directory);
+    sfont->directory = td = NEW(1, struct sfnt_table_directory);
 
 #ifdef XETEX
-  ASSERT(sfont->ft_face);
+    ASSERT(sfont->ft_face);
 #elif defined(pdfTeX)
-  ASSERT(sfont->buffer);
+    ASSERT(sfont->buffer);
 #else
-  ASSERT(sfont->stream);
+    ASSERT(sfont->stream);
 #endif
 
-  sfnt_seek_set(sfont, offset);
+    sfnt_seek_set(sfont, offset);
 
-  td->version      = sfnt_get_ulong(sfont);
-  td->num_tables   = sfnt_get_ushort(sfont);
-  td->search_range = sfnt_get_ushort(sfont);
-  td->entry_selector = sfnt_get_ushort(sfont);
-  td->range_shift    = sfnt_get_ushort(sfont);
+    td->version = sfnt_get_ulong(sfont);
+    td->num_tables = sfnt_get_ushort(sfont);
+    td->search_range = sfnt_get_ushort(sfont);
+    td->entry_selector = sfnt_get_ushort(sfont);
+    td->range_shift = sfnt_get_ushort(sfont);
 
-  td->flags  = NEW(td->num_tables, char);
-  td->tables = NEW(td->num_tables, struct sfnt_table);
+    td->flags = NEW(td->num_tables, char);
+    td->tables = NEW(td->num_tables, struct sfnt_table);
 
-  for (i = 0; i < td->num_tables; i++) {
-    u_tag = sfnt_get_ulong(sfont);
+    for (i = 0; i < td->num_tables; i++) {
+        u_tag = sfnt_get_ulong(sfont);
 
-    convert_tag(td->tables[i].tag, u_tag);
-    td->tables[i].check_sum = sfnt_get_ulong(sfont);
-    td->tables[i].offset    = sfnt_get_ulong(sfont);
-    td->tables[i].length    = sfnt_get_ulong(sfont);
-    td->tables[i].data      = NULL;
+        convert_tag(td->tables[i].tag, u_tag);
+        td->tables[i].check_sum = sfnt_get_ulong(sfont);
+        td->tables[i].offset = sfnt_get_ulong(sfont);
+        td->tables[i].length = sfnt_get_ulong(sfont);
+        td->tables[i].data = NULL;
 
-    td->flags[i] = 0;
-  }
+        td->flags[i] = 0;
+    }
 
-  td->num_kept_tables = 0;
+    td->num_kept_tables = 0;
 
-  return 0;
+    return 0;
 }
 
-int
-sfnt_require_table (sfnt *sfont, const char *tag, int must_exist)
+int sfnt_require_table(sfnt * sfont, const char *tag, int must_exist)
 {
-  struct sfnt_table_directory *td;
-  int    idx;
+    struct sfnt_table_directory *td;
+    int idx;
 
-  ASSERT(sfont && sfont->directory);
+    ASSERT(sfont && sfont->directory);
 
-  td  = sfont->directory;
-  idx = find_table_index(td, tag);
-  if (idx < 0) {
-    if (must_exist)
-      return -1;
-  } else {
-    td->flags[idx] |= SFNT_TABLE_REQUIRED;
-    td->num_kept_tables++;
-  }
+    td = sfont->directory;
+    idx = find_table_index(td, tag);
+    if (idx < 0) {
+        if (must_exist)
+            return -1;
+    } else {
+        td->flags[idx] |= SFNT_TABLE_REQUIRED;
+        td->num_kept_tables++;
+    }
 
-  return 0;
+    return 0;
 }
 
 #ifndef pdfTeX
-#include "pdfobj.h"
+#  include "pdfobj.h"
 #endif
 
 /* 
@@ -528,120 +507,115 @@ sfnt_require_table (sfnt *sfont, const char *tag, int must_exist)
  */
 
 #ifdef pdfTeX
-extern pdf_obj *pdf_new_stream(void);
-extern void pdf_add_stream(pdf_obj *, unsigned char *, long);
-extern void pdf_release_obj(pdf_obj *);
-#undef MIN
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#define STREAM_COMPRESS 
+#  include "luatexfont.h"
+#  undef MIN
+#  define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#  define STREAM_COMPRESS
 #endif
 
-static unsigned char wbuf[1024], padbytes[4] = {0, 0, 0, 0};
+static unsigned char wbuf[1024], padbytes[4] = { 0, 0, 0, 0 };
 
-pdf_obj *
-sfnt_create_FontFile_stream (sfnt *sfont)
+pdf_obj *sfnt_create_FontFile_stream(sfnt * sfont)
 {
-  pdf_obj *stream;
+    pdf_obj *stream;
 #ifndef pdfTeX
-  pdf_obj *stream_dict;
+    pdf_obj *stream_dict;
 #endif
-  struct sfnt_table_directory *td;
-  long     offset, nb_read, length;
-  int      i, sr;
-  char    *p;
+    struct sfnt_table_directory *td;
+    long offset, nb_read, length;
+    int i, sr;
+    char *p;
 
-  ASSERT(sfont && sfont->directory);
+    ASSERT(sfont && sfont->directory);
 
-  stream = pdf_new_stream(STREAM_COMPRESS);
+    stream = pdf_new_stream(STREAM_COMPRESS);
 
-  td  = sfont->directory;
+    td = sfont->directory;
 
-  /* Header */
-  p  = (char *) wbuf;
-  p += sfnt_put_ulong (p, td->version);
-  p += sfnt_put_ushort(p, td->num_kept_tables);
-  sr = max2floor(td->num_kept_tables) * 16;
-  p += sfnt_put_ushort(p, sr);
-  p += sfnt_put_ushort(p, log2floor(td->num_kept_tables));
-  p += sfnt_put_ushort(p, td->num_kept_tables * 16 - sr);
+    /* Header */
+    p = (char *) wbuf;
+    p += sfnt_put_ulong(p, td->version);
+    p += sfnt_put_ushort(p, td->num_kept_tables);
+    sr = max2floor(td->num_kept_tables) * 16;
+    p += sfnt_put_ushort(p, sr);
+    p += sfnt_put_ushort(p, log2floor(td->num_kept_tables));
+    p += sfnt_put_ushort(p, td->num_kept_tables * 16 - sr);
 
-  pdf_add_stream(stream, wbuf, 12);
+    pdf_add_stream(stream, wbuf, 12);
 
-  /*
-   * Compute start of actual tables (after headers).
-   */
-  offset = 12 + 16 * td->num_kept_tables;
-  for (i = 0; i < td->num_tables; i++) {
-    /* This table must exist in FontFile */
-    if (td->flags[i] & SFNT_TABLE_REQUIRED) {
-      if ((offset % 4) != 0) {
-	offset += 4 - (offset % 4);
-      }
+    /*
+     * Compute start of actual tables (after headers).
+     */
+    offset = 12 + 16 * td->num_kept_tables;
+    for (i = 0; i < td->num_tables; i++) {
+        /* This table must exist in FontFile */
+        if (td->flags[i] & SFNT_TABLE_REQUIRED) {
+            if ((offset % 4) != 0) {
+                offset += 4 - (offset % 4);
+            }
 
-      p = (char *) wbuf;
-      memcpy(p, td->tables[i].tag, 4);
-      p += 4;
-      p += sfnt_put_ulong(p, td->tables[i].check_sum);
-      p += sfnt_put_ulong(p, offset);
-      p += sfnt_put_ulong(p, td->tables[i].length);
-      pdf_add_stream(stream, wbuf, 16);
+            p = (char *) wbuf;
+            memcpy(p, td->tables[i].tag, 4);
+            p += 4;
+            p += sfnt_put_ulong(p, td->tables[i].check_sum);
+            p += sfnt_put_ulong(p, offset);
+            p += sfnt_put_ulong(p, td->tables[i].length);
+            pdf_add_stream(stream, wbuf, 16);
 
-      offset += td->tables[i].length;
+            offset += td->tables[i].length;
+        }
     }
-  }
 
-  offset = 12 + 16 * td->num_kept_tables;
-  for (i = 0; i < td->num_tables; i++) {
-    if (td->flags[i] & SFNT_TABLE_REQUIRED) {
-      if ((offset % 4) != 0) {
-	length  = 4 - (offset % 4);
-	pdf_add_stream(stream, padbytes, length);
-	offset += length;
-      }
-      if (!td->tables[i].data) {
+    offset = 12 + 16 * td->num_kept_tables;
+    for (i = 0; i < td->num_tables; i++) {
+        if (td->flags[i] & SFNT_TABLE_REQUIRED) {
+            if ((offset % 4) != 0) {
+                length = 4 - (offset % 4);
+                pdf_add_stream(stream, padbytes, length);
+                offset += length;
+            }
+            if (!td->tables[i].data) {
 #ifdef XETEX
-	if (!sfont->ft_face)
+                if (!sfont->ft_face)
 #elif defined(pdfTeX)
-        if (!sfont->buffer)
+                if (!sfont->buffer)
 #else
-	if (!sfont->stream)
+                if (!sfont->stream)
 #endif
-	{
-	  pdf_release_obj(stream);
-	  TT_ERROR("Font file not opened or already closed...");
-	  return NULL;
-	}
+                {
+                    pdf_release_obj(stream);
+                    TT_ERROR("Font file not opened or already closed...");
+                    return NULL;
+                }
 
-	length = td->tables[i].length;
-	sfnt_seek_set(sfont, td->tables[i].offset); 
-	while (length > 0) {
-	  nb_read = sfnt_read(wbuf, MIN(length, 1024), sfont);
-	  if (nb_read < 0) {
-	    pdf_release_obj(stream);
-	    TT_ERROR("Reading file failed...");
-	    return NULL;
-	  } else if (nb_read > 0) {
-	    pdf_add_stream(stream, wbuf, nb_read);
-	  }
-	  length -= nb_read;
-	}
-      } else {
-	pdf_add_stream(stream,
-		       (unsigned char *)td->tables[i].data, 
-		       td->tables[i].length);
-	RELEASE(td->tables[i].data);
-	td->tables[i].data = NULL;
-      }
-      /* Set offset for next table */
-      offset += td->tables[i].length;
+                length = td->tables[i].length;
+                sfnt_seek_set(sfont, td->tables[i].offset);
+                while (length > 0) {
+                    nb_read = sfnt_read(wbuf, MIN(length, 1024), sfont);
+                    if (nb_read < 0) {
+                        pdf_release_obj(stream);
+                        TT_ERROR("Reading file failed...");
+                        return NULL;
+                    } else if (nb_read > 0) {
+                        pdf_add_stream(stream, wbuf, nb_read);
+                    }
+                    length -= nb_read;
+                }
+            } else {
+                pdf_add_stream(stream,
+                               (unsigned char *) td->tables[i].data,
+                               td->tables[i].length);
+                RELEASE(td->tables[i].data);
+                td->tables[i].data = NULL;
+            }
+            /* Set offset for next table */
+            offset += td->tables[i].length;
+        }
     }
-  }
 
 #ifndef pdfTeX
-  stream_dict = pdf_stream_dict(stream);
-  pdf_add_dict(stream_dict,
-	       pdf_new_name("Length1"),
-	       pdf_new_number(offset));
+    stream_dict = pdf_stream_dict(stream);
+    pdf_add_dict(stream_dict, pdf_new_name("Length1"), pdf_new_number(offset));
 #endif
-  return stream;
+    return stream;
 }

@@ -1,8 +1,28 @@
-/* $Id: linebreak.c 1168 2008-04-15 13:43:34Z taco $ */
+/* linebreak.c
+   
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+
+   This file is part of LuaTeX.
+
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
+
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "luatex-api.h"
 #include <ptexlib.h>
 #include "nodes.h"
+
+static const char _svn_version[] =
+    "$Id: linebreak.c 2086 2009-03-22 15:32:08Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/linebreak.c $";
 
 /* Glue nodes in a horizontal list that is being paragraphed are not supposed to
    include ``infinite'' shrinkability; that is why the algorithm maintains
@@ -407,18 +427,11 @@ want to do this without the overhead of |for| loops. The |do_all_six|
 macro makes such six-tuples convenient.
 */
 
-#define save_active_width(a) prev_active_width[(a)] = active_width[(a)]
-#define restore_active_width(a) active_width[(a)] = prev_active_width[(a)]
-
 static scaled active_width[10] = { 0 }; /*distance from first active node to~|cur_p| */
 static scaled background[10] = { 0 };   /*length of an ``empty'' line */
 static scaled break_width[10] = { 0 };  /*length being computed after current break */
 
 static boolean auto_breaking;   /*make |auto_breaking| accessible out of |line_break| */
-static boolean try_prev_break;  /*force break at the previous legal breakpoint? */
-static halfword prev_legal;     /*the previous legal breakpoint */
-static halfword rejected_cur_p; /*the last |cur_p| that has been rejected */
-static boolean before_rejected_cur_p;   /*|cur_p| is still before |rejected_cur_p|? */
 
 /* Let's state the principles of the delta nodes more precisely and concisely,
    so that the following programs will be less obscure. For each legal
@@ -900,7 +913,7 @@ print_feasible_break(halfword cur_p, pointer r, halfword b, integer pi,
 #define set_break_width_to_background(a) break_width[a]=background[(a)]
 
 #define convert_to_break_width(a)  \
-  varmem[(prev_r+(a))].cint -= (cur_active_width[(a)]+break_width[(a)])
+  varmem[(prev_r+(a))].cint = varmem[(prev_r+(a))].cint-cur_active_width[(a)]+break_width[(a)]
 
 #define store_break_width(a)      active_width[(a)]=break_width[(a)]
 
@@ -918,8 +931,6 @@ print_feasible_break(halfword cur_p, pointer r, halfword b, integer pi,
 
 #define total_font_stretch cur_active_width[8]
 #define total_font_shrink cur_active_width[9]
-
-#define max_dimen 07777777777   /* $2^{30}-1$ */
 
 #define left_side 0
 #define right_side 1
@@ -1141,11 +1152,12 @@ ext_try_break(integer pi,
            then |goto continue| if a line from |r| to |cur_p| is infeasible,
            otherwise record a new feasible break@>; */
         artificial_demerits = false;
-        shortfall = line_width - cur_active_width[1]
-            - ((break_node(r) == null)
-               ? init_internal_left_box_width
-               : passive_last_left_box_width(break_node(r)))
-            - internal_right_box_width;
+        shortfall = line_width - cur_active_width[1];
+        if (break_node(r) == null)
+            shortfall -= init_internal_left_box_width;
+        else
+            shortfall -= passive_last_left_box_width(break_node(r));
+        shortfall -= internal_right_box_width;
         if (pdf_protrude_chars > 1) {
             halfword l, o;
             l = (break_node(r) == null) ? first_p : cur_break(break_node(r));
@@ -1505,7 +1517,8 @@ ext_do_line_break(boolean d,
                   halfword widow_penalties_ptr,
                   int display_widow_penalty,
                   int widow_penalty,
-                  int broken_penalty, halfword final_par_glue)
+                  int broken_penalty,
+                  halfword final_par_glue, halfword pdf_ignored_dimen)
 {
     /* DONE,DONE1,DONE2,DONE3,DONE4,DONE5,CONTINUE; */
     halfword cur_p, q, r, s;    /* miscellaneous nodes of temporary interest */
@@ -1549,7 +1562,8 @@ ext_do_line_break(boolean d,
         }
     } else {
         last_special_line = vinfo(par_shape_ptr + 1) - 1;
-        second_indent = varmem[(par_shape_ptr + (2 * last_special_line))].cint;
+        second_indent =
+            varmem[(par_shape_ptr + 2 * (last_special_line + 1))].cint;
         second_width =
             varmem[(par_shape_ptr + 2 * (last_special_line + 1) + 1)].cint;
     }
@@ -1647,9 +1661,10 @@ ext_do_line_break(boolean d,
         /* /Create an active breakpoint representing the beginning of the paragraph */
         auto_breaking = true;
         cur_p = vlink(temp_head);
-        assert(alink(cur_p) == temp_head);
         /* LOCAL: Initialize with first |local_paragraph| node */
-        if ((type(cur_p) == whatsit_node) && (subtype(cur_p) == local_par_node)) {
+        if ((cur_p != null) && (type(cur_p) == whatsit_node)
+            && (subtype(cur_p) == local_par_node)) {
+            assert(alink(cur_p) == temp_head);
             internal_pen_inter = local_pen_inter(cur_p);
             internal_pen_broken = local_pen_broken(cur_p);
             init_internal_left_box = local_box_left(cur_p);
@@ -1670,10 +1685,6 @@ ext_do_line_break(boolean d,
         }
         /* /LOCAL: Initialize with first |local_paragraph| node */
         set_prev_char_p(null);
-        prev_legal = null;
-        rejected_cur_p = null;
-        try_prev_break = false;
-        before_rejected_cur_p = false;
         first_p = cur_p;
         /* to access the first node of paragraph as the first active node
            has |break_node=null| */
@@ -2156,7 +2167,8 @@ ext_post_line_break(d,
                     best_bet,
                     last_special_line,
                     second_width,
-                    second_indent, first_width, first_indent, best_line);
+                    second_indent, first_width, first_indent, best_line,
+                    pdf_ignored_dimen);
   /* /Break the paragraph at the chosen... */
   /* Clean up the memory by removing the break nodes; */
 clean_up_the_memory();

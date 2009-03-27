@@ -1,31 +1,31 @@
-/*
-Copyright (c) 1996-2002 Han The Thanh, <thanh@pdftex.org>
+/* epdf.c
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-$Id: epdf.c 1012 2008-02-14 00:00:57Z oneiros $
-*/
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "ptexlib.h"
-
 
 #include <kpathsea/c-vararg.h>
 #include <kpathsea/c-proto.h>
 #include <string.h>
+
+static const char _svn_version[] =
+    "$Id: epdf.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/epdf.c $";
 
 extern void epdf_check_mem(void);
 extern void register_fd_entry(fd_entry *);
@@ -37,7 +37,7 @@ int is_subsetable(fm_entry * fm)
     return is_subsetted(fm);
 }
 
-fd_entry *epdf_create_fontdescriptor(fm_entry * fm)
+fd_entry *epdf_create_fontdescriptor(fm_entry * fm, int stemV)
 {
     fd_entry *fd;
     if ((fd = lookup_fd_entry(fm->ff_name, fm->slant, fm->extend)) == NULL) {
@@ -48,7 +48,9 @@ fd_entry *epdf_create_fontdescriptor(fm_entry * fm)
         fd->fd_objnum = pdf_new_objnum();
         assert(fm->ps_name != NULL);
         fd->fontname = xstrdup(fm->ps_name);    /* just fallback */
-        /* preset_fontmetrics (fo->fd, f); */
+        // stemV must be copied
+        fd->font_dim[STEMV_CODE].val = stemV;
+        fd->font_dim[STEMV_CODE].set = true;
         fd->gl_tree = avl_create(comp_string_entry, NULL, &avl_xallocator);
         assert(fd->gl_tree != NULL);
     }

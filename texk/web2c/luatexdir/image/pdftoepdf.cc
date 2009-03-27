@@ -1,24 +1,22 @@
-/*
-Copyright 1996-2006 Han The Thanh, <thanh@pdftex.org>
+/* pdftoepdf.cc
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-$Id: pdftoepdf.cc 1129 2008-03-27 19:43:44Z hhenkel $
-*/
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include <stdlib.h>
 #include <math.h>
@@ -46,23 +44,13 @@ $Id: pdftoepdf.cc 1129 2008-03-27 19:43:44Z hhenkel $
 
 #include "epdf.h"
 
+static const char _svn_version[] =
+    "$Id: pdftoepdf.cc 1539 2008-10-06 09:52:07Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/pdftoepdf.cc $";
+
 #define one_hundred_bp  6578176 /* 7227 * 65536 / 72 */
 
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.
-
-// Used flags below:
-//   PDFTEX_COPY_PAGEGROUP
-//     If pdfTeX should copy a page group (a new feature in PDF 1.4 for
-//     transparency) of an included file. The current support for this is
-//     most likely broken. pdfTeX will at least give a warning if this flag
-//     is not set. Surprisingly Acrobat and Jaws display files without a
-//     page group correctly, so it might be safe to not set the flag.
-//     See also PDFTEX_COPY_PAGEGROUP_NOFAIL.
-//   PDFTEX_COPY_PAGEGROUP_NOFAIL
-//     If set to false, pdfTeX will treat a page group in an included file
-//     as an error and abort gracefully. This is only evaluated if
-//     PDFTEX_COPY_PAGEGROUP is set.
 
 // The prefix "PTEX" for the PDF keys is special to pdfTeX;
 // this has been registered with Adobe by Hans Hagen.
@@ -75,6 +63,7 @@ $Id: pdftoepdf.cc 1129 2008-03-27 19:43:44Z hhenkel $
 // and &obj to get a pointer to the object.
 // It is no longer necessary to call Object::free explicitely.
 
+/* *INDENT-OFF* */
 class PdfObject {
   public:
     PdfObject() {               // nothing
@@ -94,6 +83,7 @@ class PdfObject {
   public:
     Object iObject;
 };
+/* *INDENT-ON* */
 
 // When copying the Resources of the selected page, all objects are copied
 // recusively top-down. Indirect objects however are not fetched during
@@ -123,6 +113,8 @@ static XRef *xref = NULL;
 static InObj *inObjList = NULL;
 static UsedEncoding *encodingList;
 static GBool isInit = gFalse;
+static bool groupIsIndirect;
+static PdfObject lastGroup;
 
 //**********************************************************************
 // Maintain AVL tree of open embedded PDF files
@@ -290,10 +282,25 @@ static void copyName(char *s)
     pdf_puts("/");
     for (; *s != 0; s++) {
         if (isdigit(*s) || isupper(*s) || islower(*s) || *s == '_' ||
-            *s == '.' || *s == '-')
+            *s == '.' || *s == '-' || *s == '+')
             pdfout(*s);
         else
             pdf_printf("#%.2X", *s & 0xFF);
+    }
+}
+
+static int getNewObjectNumber(Ref ref)
+{
+    InObj *p;
+    if (inObjList == 0) {
+        pdftex_fail("No objects copied yet");
+    } else {
+        for (p = inObjList; p != 0; p = p->next) {
+            if (p->ref.num == ref.num && p->ref.gen == ref.gen) {
+                return p->num;
+            }
+        }
+        pdftex_fail("Object not yet copied: %i %i", ref.num, ref.gen);
     }
 }
 
@@ -347,9 +354,10 @@ static void copyStream(Stream * str)
 {
     int c;
     str->reset();
-    while ((c = str->getChar()) != EOF)
+    while ((c = str->getChar()) != EOF) {
         pdfout(c);
-    pdf_last_byte = pdf_buf[pdf_ptr - 1];
+        pdf_last_byte = c;
+    }
 }
 
 static void copyProcSet(Object * obj)
@@ -376,7 +384,7 @@ static void copyProcSet(Object * obj)
 static void copyFont(char *tag, Object * fontRef)
 {
     PdfObject fontdict, subtype, basefont, fontdescRef, fontdesc, charset,
-        fontfile, ffsubtype;
+        fontfile, ffsubtype, stemV;
     GfxFont *gfont;
     fd_entry *fd;
     fm_entry *fontmap;
@@ -392,7 +400,7 @@ static void copyFont(char *tag, Object * fontRef)
     }
     // Only handle included Type1 (and Type1C) fonts; anything else will be copied.
     // Type1C fonts are replaced by Type1 fonts, if REPLACE_TYPE1C is true.
-    if (fixed_replace_font && fontRef->fetch(xref, &fontdict)->isDict()
+    if (!fixed_inclusion_copy_font && fontRef->fetch(xref, &fontdict)->isDict()
         && fontdict->dictLookup("Subtype", &subtype)->isName()
         && !strcmp(subtype->getName(), "Type1")
         && fontdict->dictLookup("BaseFont", &basefont)->isName()
@@ -405,7 +413,9 @@ static void copyFont(char *tag, Object * fontRef)
                                                      &ffsubtype)->isName()
                 && !strcmp(ffsubtype->getName(), "Type1C")))
         && (fontmap = lookup_fontmap(basefont->getName())) != NULL) {
-        fd = epdf_create_fontdescriptor(fontmap);
+        // copy the value of /StemV
+        fontdesc->dictLookup("StemV", &stemV);
+        fd = epdf_create_fontdescriptor(fontmap, stemV->getInt());
         if (fontdesc->dictLookup("CharSet", &charset) &&
             charset->isString() && is_subsetable(fontmap))
             epdf_mark_glyphs(fd, charset->getString()->getCString());
@@ -579,16 +589,16 @@ static void copyObject(Object * obj)
         copyDict(&obj1);
         pdf_puts(">>\n");
         pdf_puts("stream\n");
-        copyStream(obj->getStream()->getBaseStream());
+        copyStream(obj->getStream()->getUndecodedStream());
         if (pdf_last_byte != '\n')
             pdf_puts("\n");
         pdf_puts("endstream");  // can't simply write pdf_end_stream()
     } else if (obj->isRef()) {
         ref = obj->getRef();
         if (ref.num == 0) {
-            pdftex_warn
-                ("PDF inclusion: reference to invalid object was replaced by <null>");
-            pdf_puts("null");
+            pdftex_fail
+                ("PDF inclusion: reference to invalid object"
+                 " (is the included pdf broken?)");
         } else
             pdf_printf("%d 0 R", addOther(ref));
     } else {
@@ -633,8 +643,9 @@ static void writeEncodings()
     for (r = encodingList; r != NULL; r = r->next) {
         for (i = 0; i < 256; i++) {
             if (r->font->isCIDFont()) {
-                pdftex_warn
-                    ("PDF inclusion: CID font included, encoding maybe wrong");
+                pdftex_fail
+                    ("PDF inclusion: CID fonts are not supported"
+                     " (try to disable font replacement to fix this)");
             }
             if ((s = ((Gfx8BitFont *) r->font)->getCharName(i)) != NULL)
                 glyphNames[i] = s;
@@ -684,10 +695,9 @@ read_pdf_info(image_dict * idict, integer minor_pdf_version_wanted,
     Page *page;
     int rotate;
     PDFRectangle *pagebox;
-    float pdf_version_found, pdf_version_wanted, pdf_width, pdf_height,
-        pdf_xorig, pdf_yorig;
+    float pdf_version_found, pdf_version_wanted, xsize, ysize, xorig, yorig;
     assert(idict != NULL);
-    assert(img_type(idict) == IMAGE_TYPE_PDF);
+    assert(img_type(idict) == IMG_TYPE_PDF);
     // initialize
     if (isInit == gFalse) {
         globalParams = new GlobalParams();
@@ -733,49 +743,75 @@ read_pdf_info(image_dict * idict, integer minor_pdf_version_wanted,
             pdftex_fail("PDF inclusion: required page <%i> does not exist",
                         (int) img_pagenum(idict));
     }
+    pdf_doc->xref = pdf_doc->doc->getXRef();
     // get the required page
     page = pdf_doc->doc->getCatalog()->getPage(img_pagenum(idict));
 
     // get the pagebox (media, crop...) to use.
     pagebox = get_pagebox(page, img_pagebox(idict));
     if (pagebox->x2 > pagebox->x1) {
-        pdf_xorig = pagebox->x1;
-        pdf_width = pagebox->x2 - pagebox->x1;
+        xorig = pagebox->x1;
+        xsize = pagebox->x2 - pagebox->x1;
     } else {
-        pdf_xorig = pagebox->x2;
-        pdf_width = pagebox->x1 - pagebox->x2;
+        xorig = pagebox->x2;
+        xsize = pagebox->x1 - pagebox->x2;
     }
     if (pagebox->y2 > pagebox->y1) {
-        pdf_yorig = pagebox->y1;
-        pdf_height = pagebox->y2 - pagebox->y1;
+        yorig = pagebox->y1;
+        ysize = pagebox->y2 - pagebox->y1;
     } else {
-        pdf_yorig = pagebox->y2;
-        pdf_height = pagebox->y1 - pagebox->y2;
+        yorig = pagebox->y2;
+        ysize = pagebox->y1 - pagebox->y2;
+    }
+    // The following 4 parameters are raw. Do _not_ modify by /Rotate!
+    img_xsize(idict) = bp2int(xsize);
+    img_ysize(idict) = bp2int(ysize);
+    img_xorig(idict) = bp2int(xorig);
+    img_yorig(idict) = bp2int(yorig);
+
+    // Handle /Rotate parameter. Only multiples of 90 deg. are allowed
+    // (PDF Ref. v1.3, p. 78).
+    rotate = page->getRotate();
+    switch (((rotate % 360) + 360) % 360) {     // handles also neg. angles
+    case 0:
+        img_rotation(idict) = 0;
+        break;
+    case 90:
+        img_rotation(idict) = 3;        // PDF counts clockwise!
+        break;
+    case 180:
+        img_rotation(idict) = 2;
+        break;
+    case 270:
+        img_rotation(idict) = 1;
+        break;
+    default:
+        pdftex_warn
+            ("PDF inclusion: "
+             "/Rotate parameter in PDF file not multiple of 90 degrees.");
+    }
+    if (page->getGroup() != NULL) {
+        initDictFromDict(lastGroup, page->getGroup());
+        if (lastGroup->dictGetLength() > 0) {
+            groupIsIndirect = lastGroup->isRef();
+            if (groupIsIndirect) {
+                // FIXME: Here we already copy the object. It would be
+                // better to do this only after write_epdf, otherwise we
+                // may copy ununsed /Group objects
+                copyObject(&lastGroup);
+                epdf_lastGroupObjectNum =
+                    getNewObjectNumber(lastGroup->getRef());
+            } else {
+                // make the group an indirect object; copying is done later
+                // by write_additional_epdf_objects after write_epdf
+                epdf_lastGroupObjectNum = pdf_new_objnum();
+            }
+            pdf_puts("\n");
+        }
+    } else {
+        epdf_lastGroupObjectNum = 0;
     }
 
-    rotate = page->getRotate();
-    // handle page rotation and adjust dimens as needed
-    if (rotate != 0) {
-        // handle only the simple case: multiple of 90s.
-        // these are the only values allowed according to the
-        // reference (v1.3, p. 78).
-        // 180 needs no special treatment here
-        register float f;
-        switch (rotate % 360) {
-        case 90:
-        case 270:
-            f = pdf_height;
-            pdf_height = pdf_width;
-            pdf_width = f;
-            break;
-        default:;
-        }
-    }
-    pdf_doc->xref = pdf_doc->doc->getXRef();
-    img_xsize(idict) = bp2int(pdf_width);
-    img_ysize(idict) = bp2int(pdf_height);
-    img_xorig(idict) = bp2int(pdf_xorig);
-    img_yorig(idict) = bp2int(pdf_yorig);
 }
 
 // Writes the current epf_doc.
@@ -786,22 +822,19 @@ static void write_epdf1(image_dict * idict)
 {
     Page *page;
     PdfObject contents, obj1, obj2;
-    PdfObject group, metadata, pieceinfo, separationInfo;
+    PdfObject metadata, pieceinfo, separationInfo;
     Object info;
     char *key;
     char s[256];
     int i, l;
-    int rotate;
-    double scale[6] = { 0, 0, 0, 0, 0, 0 };
-    bool writematrix = false;
     PdfDocument *pdf_doc = (PdfDocument *) findPdfDocument(img_filepath(idict));
     assert(pdf_doc != NULL);
     xref = pdf_doc->xref;
     inObjList = pdf_doc->inObjList;
     encodingList = NULL;
     page = pdf_doc->doc->getCatalog()->getPage(img_pagenum(idict));
-    rotate = page->getRotate();
     PDFRectangle *pagebox;
+    float bbox[4];
     // write the Page header
     pdf_puts("/Type /XObject\n/Subtype /Form\n");
     if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
@@ -819,73 +852,35 @@ static void write_epdf1(image_dict * idict)
         pdf_printf("/%s.InfoDict ", pdfkeyprefix);
         pdf_printf("%d 0 R\n", addOther(info.getRef()));
     }
-    // get the pagebox (media, crop...) to use.
-    pagebox = get_pagebox(page, img_pagebox(idict));
-
-    // handle page rotation
-    if (rotate != 0) {
-        // this handles only the simple case: multiple of 90s but these
-        // are the only values allowed according to the reference
-        // (v1.3, p. 78).
-        // the image is rotated around its center.
-        // the /Rotate key is clockwise while the matrix is
-        // counterclockwise :-%
-        tex_printf(", page is rotated %d degrees", rotate);
-        switch (rotate % 360) {
-        case 90:
-            scale[1] = -1;
-            scale[2] = 1;
-            scale[4] = pagebox->x1 - pagebox->y1;
-            scale[5] = pagebox->y1 + pagebox->x2;
-            writematrix = true;
-            break;
-        case 180:
-            scale[0] = scale[3] = -1;
-            scale[4] = pagebox->x1 + pagebox->x2;
-            scale[5] = pagebox->y1 + pagebox->y2;
-            writematrix = true;
-            break;              // width and height are exchanged
-        case 270:
-            scale[1] = 1;
-            scale[2] = -1;
-            scale[4] = pagebox->x1 + pagebox->y2;
-            scale[5] = pagebox->y1 - pagebox->x1;
-            writematrix = true;
-            break;
-        default:;
-        }
-        if (writematrix) {      // The matrix is only written if the image is rotated.
-            sprintf(s, "/Matrix [%.8f %.8f %.8f %.8f %.8f %.8f]\n",
-                    scale[0], scale[1], scale[2], scale[3], scale[4], scale[5]);
-            pdf_printf(stripzeros(s));
-        }
+    if (img_is_bbox(idict)) {
+        bbox[0] = int2bp(img_bbox(idict)[0]);
+        bbox[1] = int2bp(img_bbox(idict)[1]);
+        bbox[2] = int2bp(img_bbox(idict)[2]);
+        bbox[3] = int2bp(img_bbox(idict)[3]);
+    } else {
+        // get the pagebox (media, crop...) to use.
+        pagebox = get_pagebox(page, img_pagebox(idict));
+        bbox[0] = pagebox->x1;
+        bbox[1] = pagebox->y1;
+        bbox[2] = pagebox->x2;
+        bbox[3] = pagebox->y2;
     }
-
-    sprintf(s, "/BBox [%.8f %.8f %.8f %.8f]\n",
-            pagebox->x1, pagebox->y1, pagebox->x2, pagebox->y2);
-    pdf_printf(stripzeros(s));
+    sprintf(s, "/BBox [%.8f %.8f %.8f %.8f]\n", bbox[0], bbox[1], bbox[2],
+            bbox[3]);
+    pdf_puts(stripzeros(s));
+    // The /Matrix calculation is replaced by transforms in out_img().
 
     // write the page Group if it's there
-    if (page->getGroup() != NULL) {
-#if PDFTEX_COPY_PAGEGROUP
-#  if PDFTEX_COPY_PAGEGROUP_NOFAIL
-        // FIXME: This will most likely produce incorrect PDFs :-(
-        initDictFromDict(group, page->getGroup());
-        if (group->dictGetLength() > 0) {
+    if (epdf_lastGroupObjectNum > 0) {
+      if (page->getGroup() != NULL) {
+        initDictFromDict(lastGroup, page->getGroup());
+        if (lastGroup->dictGetLength() > 0) {
             pdf_puts("/Group ");
-            copyObject(&group);
+            groupIsIndirect = lastGroup->isRef();
+            pdf_printf("%d 0 R", epdf_lastGroupObjectNum);
             pdf_puts("\n");
         }
-#  else
-        // FIXME: currently we don't know how to handle Page Groups so we abort gracefully :-(
-        pdftex_fail
-            ("PDF inclusion: Page Group detected which luatex can't handle. Sorry.");
-#  endif
-#else
-        // FIXME: currently we don't know how to handle Page Groups so we at least give a warning :-(
-        pdftex_warn
-            ("PDF inclusion: Page Group detected which luatex can't handle. Ignoring it.");
-#endif
+      }  
     }
     // write the page Metadata if it's there
     if (page->getMetadata() != NULL) {
@@ -903,6 +898,11 @@ static void write_epdf1(image_dict * idict)
             pdf_puts("\n");
         }
     }
+    // copy LastModified (needed when PieceInfo is there)
+    if (page->getLastModified() != NULL) {
+        pdf_printf("/LastModified (%s)\n",
+                   page->getLastModified()->getCString());
+    }
     // write the page SeparationInfo if it's there
     if (page->getSeparationInfo() != NULL) {
         initDictFromDict(separationInfo, page->getSeparationInfo());
@@ -915,13 +915,10 @@ static void write_epdf1(image_dict * idict)
     // write the Resources dictionary
     if (page->getResourceDict() == NULL) {
         // Resources can be missing (files without them have been spotted
-        // in the wild). This violates the PDF Ref., which claims they are
-        // required, but all RIPs accept them.
-        // We "replace" them with empty /Resources, although in form xobjects
-        // /Resources are not required.
+        // in the wild); in which case the /Resouces of the /Page will be used.
+        // "This practice is not recommended".
         pdftex_warn
-            ("PDF inclusion: no /Resources detected. Replacing with empty /Resources.");
-        pdf_puts("/Resources <<>>\n");
+            ("PDF inclusion: /Resources missing. 'This practice is not recommended' (PDF Ref)");
     } else {
         initDictFromDict(obj1, page->getResourceDict());
         page->getResourceDict()->incRef();
@@ -944,9 +941,36 @@ static void write_epdf1(image_dict * idict)
     // write the page contents
     page->getContents(&contents);
     if (contents->isStream()) {
-        initDictFromDict(obj1, contents->streamGetDict());
-        contents->streamGetDict()->incRef();
-        copyDict(&obj1);
+        // Variant A: get stream and recompress under control
+        // of \pdfcompresslevel
+        //
+        // pdfbeginstream();
+        // copyStream(contents->getStream());
+        // pdfendstream();
+
+        // Variant B: copy stream without recompressing
+        //
+        contents->streamGetDict()->lookup("F", &obj1);
+        if (!obj1->isNull()) {
+            pdftex_fail("PDF inclusion: Unsupported external stream");
+        }
+        contents->streamGetDict()->lookup("Length", &obj1);
+        assert(!obj1->isNull());
+        pdf_puts("/Length ");
+        copyObject(&obj1);
+        pdf_puts("\n");
+        contents->streamGetDict()->lookup("Filter", &obj1);
+        if (!obj1->isNull()) {
+            pdf_puts("/Filter ");
+            copyObject(&obj1);
+            pdf_puts("\n");
+            contents->streamGetDict()->lookup("DecodeParms", &obj1);
+            if (!obj1->isNull()) {
+                pdf_puts("/DecodeParms ");
+                copyObject(&obj1);
+                pdf_puts("\n");
+            }
+        }
         pdf_puts(">>\nstream\n");
         copyStream(contents->getStream()->getBaseStream());
         pdf_end_stream();
@@ -1012,4 +1036,15 @@ void epdf_check_mem()
     if (isInit == gTrue)
         delete globalParams;
     isInit = gFalse;
+}
+
+// Called after the xobject generated by write_epdf has been finished; used to
+// write out objects that have been made indirect
+void write_additional_epdf_objects(void)
+{
+    if ((epdf_lastGroupObjectNum > 0) && !groupIsIndirect) {
+        zpdf_begin_obj(epdf_lastGroupObjectNum, 2);
+        copyObject(&lastGroup);
+        pdf_end_obj();
+    }
 }

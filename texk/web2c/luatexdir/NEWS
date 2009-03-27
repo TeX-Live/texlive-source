@@ -1,537 +1,2385 @@
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060811 was released on 2006-08-11
----------------------------------------------------------------
-- renamed primitives: 
-    \primitive -> \pdfprimitive
-    \ifprimitive -> \ifpdfprimitive
-    \ifabsdim -> \ifpdfabsdim
-    \ifabsnum -> \ifpdfabsnum
-- new version of \primitive/\ifprimitive (but see above)
-- new dimen: \pdfpxdimen
-- support for jbig2 files
-- new library: obsdcompat, which has improved string functions and allows the
-  use of __attribute__
-- update libpng to 1.2.12
-- added JFIF detection patch to writejpg.c (was bug 548)
-- bugfix: truetype OS/2 v3 fonts (594)
-- bugfix: file with only \immediate\pdfobj stream results in garbage (505)
-- bugfix: invalid pdf created if font name contains space (509)
+==============================================================
+Luatex beta-0.36.0 was released 20090323
+==============================================================
 
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060725 was released on 2006-07-25
----------------------------------------------------------------
-- added patches by Christian Schenk forwarded by Hartmut
-- added patch 421 (popen) from Taco
-- added lots of (void) to writettf* and ttf2afm to silence the compiler
-- removed some unused variables from tounicode.c
-- add new code by Thanh (patch 580)
-- added security patch for xpdf :-(
-- added JFIF detection patch to writejpg.c (bug 548)
+* The included fontforge code is stripped considerably, and
+  the lua table to access the code is renamed to 'fontloader'.
+  The old name ('fontforge') will remain present for a while,
+  but will eventually go away.
 
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060213 was released on 2006-02-13
----------------------------------------------------------------
-- pdftex.web has been improved a bit
-- new patch:
-  - 473 \ifabsnum and \ifabsdim
-- the manual has been updated a bit and is again included
+* New lua functions: tex.primitives(), tex.extraprimitives, 
+  tex.enableprimitives().  This is a prelude to a big change
+  in the next beta: iniluatex will from now on start up with
+  only the TeX82 primitives and \directlua, everything else
+  has to be bootstrapped via tex.enableprimitives().
+  See the manual for more details.
 
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060125 was released on 2006-01-25
----------------------------------------------------------------
-- pdfTeX now includes pdfeTeX, i.e. there is no way to make a binary without
-  eTeX support. Also the sources of TeX, eTeX and pdfTeX have been merged into
-  one file pdftex.web
-- most pdfTeX change files are gone; only one file (pdftex.ch) remains.
-- improved patches:
-  - 393 Ensure newline before endstream
+* Support for multiple lua states has been removed, and at the
+  same time support for adding name ids to lua chunks has been
+  added.  See the manual for more details.
 
----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-beta-20060117 was released on 2006-01-17
----------------------------------------------------------------
-- pdfTeX is now pdfeTeX, i.e. there is no way to make a binary without eTeX
-  support. Also the sources of TeX, eTeX and pdfTeX have been merged into one
-  file pdfetex.web
-- strip trailing zeros in fractions of reals written
-- removed patch 467 \ifindef
-- improved logging of objstreams
+* More changes to the PDF backend to make it support non-latin
+  directions (form and image placement, vertical typesetting,
+  synctex).
 
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20060111 was released on 2006-01-11
-----------------------------------------------------------------
-- new patches:
-  - 466 \primitive and \ifprimitive
-  - 467 \ifinedef
-- improved patches:
-  - 393 Ensure newline before endstream
-- pdfTeX now sets /ModDate and /Trapped by default (the values can be
-  overridden with /pdfinfo)
-- more fixes to remove warnings from -Wall
+* The kpathsea library is updated. Highlights: cleaner build 
+  process (thanks to Peter Breitenlohner), cleaner mingw32 
+  (cross)compilation support, and a new reentrant API.
 
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20060106 was released on 2006-01-06
-----------------------------------------------------------------
-- many small fixes to remove warnings from -Wall
-- removed some unused variables
-- really fix bug 444
-- add some GCC extensions and use *nprintf instead of *printf where possible
-- fixed a unicode bug in ttf2afm
-  
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20051226 was released on 2005-12-26
-----------------------------------------------------------------
-- improved patches:
-  - 453	Object Streams for PDF-1.5
-  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
-    been set by the format file or by the user
-  - 432	Rules in a PDF qQ group
-- some fixes for Thanhs patch
-- some improvements from -Wall
-- .indent.pro for indent
+* Some possible endless loops within extended delimiters in
+  math mode are now trapped.
 
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20051221 was released on 2005-12-21
-----------------------------------------------------------------
-- has a large patch from Thanh
-- pdflastlink has been fixed
-- remove generated pdf in case of fatal error
+* Movements inside VF font characters were considerably off 
+  due to a wrong conversion routine.
 
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20051208 was released on 2005-12-08
-----------------------------------------------------------------
-- improved patches:
-  - 386	grow obj_tab and dest_names arrays dynamically
-  - 453	Object Streams for PDF-1.5
-  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
-    been set by the format file or by the user
-- write out PDF statistics later to make them correct
-- makefile target pdfetex-all.pdf for a huge file
+* Error handling for \outer has been reinstated, but can be
+  suppressed via the new primitive \suppressoutererror.
 
-----------------------------------------------------------------
-pdfTeX 3.141592-1.40.0-alpha-20051205 was released on 2005-12-05
-----------------------------------------------------------------
-- has these patches:
-  - 386	grow obj_tab and dest_names arrays dynamically
-  - 416	new primitive pdflastlink
-  - 427	Character positioning patch
-  - 432	Rules in a PDF qQ group
-  - 434	Remove queued map item handling
-  - 438	\pdfsavepos in DVI mode
-  - 443	512 zeros in Type1 fonts not copied anymore
-  - 447	Don't write /Encoding for non-reencoded fonts
-  - 453	Object Streams for PDF-1.5
-  - take PK resolution from "pk_dpi" parameter in  texmf.cnf, if it has not
-    been set by the format file or by the user
+* The new primitives: \suppresslongerror and \suppressifcsnameerror
+  that can be used to suppress errors for \par in non-long macros 
+  and for non-expandable objects inside \ifcsname ... \endcsname, 
+  respectively.
 
--------------------------------------------------
-pdfTeX 3.141592-1.30.6 was released on 2006-02-16
--------------------------------------------------
-- bugfix: updated xpdf to 3.01pl2
+* New lua function: node.vpack() via a patch from Khaled Hosny
+  that also improves error handling in node.hpack().
 
--------------------------------------------------
-pdfTeX 3.141592-1.30.5 was released on 2005-12-04
--------------------------------------------------
-- bugfix: \pdfximage prints the file name twice (bug 441)
-- bugfix: buffer overflow with \pdfmatch (bug 444)
-- bugfix: updated xpdf to 3.01pl1
+* Fix the typo that caused \charic (instead of \charit)
+  to be defined as a primitive.
 
--------------------------------------------------
-pdfTeX 3.141592-1.30.4 was released on 2005-10-17
--------------------------------------------------
-- bugfix: whitespaces in filenames didn't work on Unix anymore (bug 377)
-- bugfix: two \immediates cancel themselves (bug 437)
-- bugfix: wrong file name in error messages of image inclusion (bug 435)
+* Suppression of hyphenation via \hyphenchar\font=-1 now works
+  again.
 
--------------------------------------------------
-pdfTeX 3.141592-1.30.3 was released on 2005-09-04
--------------------------------------------------
-- bugfix: \write18
+* The lua functions tex.print(), tex.sprint(), tex.write() now
+  accept an array of strings as well as vararg list of strings
+  to print.
 
--------------------------------------------------
-pdfTeX 3.141592-1.30.2 was released on 2005-08-25
--------------------------------------------------
-- fixed some build problems and minor bugs introduced in 1.30.1
+* A change to be build process: luatex.p is no longer split 
+  int smaller pieces before running the C compiler.
 
--------------------------------------------------
-pdfTeX 3.141592-1.30.1 was released on 2005-08-21
--------------------------------------------------
-- the eTeX extensions can now be enabled with the cmdline switch -etex
-- pdfTeX uses xpdf 3.01
+* Melissa O'Neill contributed a bugfix to the Type1 font 
+  subsetting code.
 
--------------------------------------------------
-pdfTeX 3.141592-1.30.0 was released on 2005-08-01
--------------------------------------------------
-- pdfxtex (introduced with 1.20a) is gone; all extensions are now in pdf(e)tex.
-- Some primitives have been renamed; the old names will still work, but are
-  deprecated and some give a warning that they are obsolete:
-    \pdfoptionpdfminorversion         -> \pdfminorversion
-    \pdfoptionalwaysusepdfpagebox     -> \pdfforcepagebox
-    \pdfoptionpdfinclusionerrorlevel  -> \pdfinclusionerrorlevel
-- pdftex knows two new units:
-  - new Didot (1nd=0.375mm)
-  - new Cicero (1nc=12nd)
-- New primitives: 
-  - Inclusion of pngs has been greatly improved: It now does
-    - alpha channel and transparency (only if %!PDF >=1.4)
-    - 16-bit colour (only if %!PDF >=1.5); this must be enabled by setting
-      \pdfimagehicolor to 1.
-    - gamma correction; this must be enabled by setting \pdfimageapplygamma to
-      1. The device gamma is taken from \pdfgamma. If no embedded value can be
-      found in the png image, then the value of \pdfimagegamma is used instead.
-    - fast direct embedding of png streams, if their structure allows this; the
-      automatic fall-back is to decompress and re-compress as before.
-  - pdfTeX now has an interface to the precise system time (if available) as an
-    aid in benchmarking TeX macro code. 
-    - \pdfelapsedtime is a read-only integer that (initially) returns the
-      amount of time passed since the start of this run. This amount is given
-      in `scaled seconds': the value 65536 counts as one second. If more time
-      has passed than 32767 seconds, (2^31)-1 will be returned.
-    - \pdfresettimer updates the internal timer, such that subsequent calls to
-      \pdfelapsedtime will restart from 0.
-  - pdfTeX can now generate random numbers:
-    - \pdfuniformdeviate <count> generates a uniformly distributed random
-      integer value between 0 (inclusive) and <count> (exclusive).
-    - \pdfnormaldeviate expands to a random integer value with a mean of 0 and
-      a unit of 65536. 
-    - \pdfrandomseed allows access to the current seed value.
-    - \pdfsetrandomseed <count> sets the random seed to a specific value.
-  - \pdfnoligatures\f disables ligatures for the loaded font \f.
-  - Escaping strings:
-    - \pdfescapestring{<a>} escapes the string <a> so that it can be used as
-      PDF string.
-    - \pdfescapename{<a>} escapes the string <a> so that it can be used as PDF
-      name.
-    - \pdfescapehex{<a>} converts the string <a> to uppercase hexadecimal
-      representation.
-    - \pdfunescapehex{<b>} reverses the effect of \pdfescapehex
-  - \pdfcreationdate expands to the date string that pdfTeX uses in the info
-    dict as default.
-  - \pdffilemoddate{<file>} expands to the modification date of <file> in the
-    same format as \pdfcreationdate (PDF date format).
-  - \pdffilesize{<file>} expands to the size of <file> as string.
-  - \pdfmdfivesum{<abc>} or \pdfmdfivesum file {<file>} calculates the md5
-    sum (of a string or a file) and converts it to uppercase hexadecimal format
-    (same as \pdfescapehex).
-  - \pdffiledump [offset <int>] [length <int>] <general text>
-    Expands to a hex dump of the file given in <general text>, starting at
-    given offset or 0 with given length.
-  - \pdfshellescape is a read-only integer that is 1 if \write18 is enabled, 0
-    otherwise.
-  - \pdfxformname <object number>, which expands to the number in the
-    corresponding form XObject name.
-  - \leftmarginkern <box number> and \rightmarginkern <box number> tell the
-    margin kern at the left and right side of the horizontal list stored in box
-    <box number>.
-  - \pdfpkmode is a token register that sets the MF mode for pixel font
-    generation. The contents of this register is dumped into the format, so one
-    can (optionally) preset it e.g. in part of pdftexconfig.tex.
-  - \pdftracingfonts: An integer variable controlling the tracing of font
-    expansion. It is zero by default; then we get a log (with fontexpansion)
-    like this
-    ...\tenrm t
-    ...\tenrm (+20) e
-    Without font expansion, this default should be compatible with TeX's
-    original log output.
-    If \pdftracingfonts is set to 1 (or greater), we get a more verbose log:
-    ...\xivtt (cmtt10@14.0pt) t
-    ...\xivtt (cmtt10+20@14.0pt) e
-    See also bug 304.
-- New experimental primitives:
-  - \pdfmatch [icase] [subcount <number>}] {<pattern>}{<string>}
-    Implements pattern matching using the POSIX regex.
-    It returns the same values as \pdfstrcmp, but with the following semantics: 
-      -1: error case (invalid pattern, ...)
-       0: no match
-       1: match found
-    Options:
-    * icase: case insensitive matching
-    * subcount: it sets the table size for found subpatterns.
-      A number "-1" resets the table size to the start default.
-  - \pdflastmatch <number>
-    The result of \pdfmatch is stored in an array. The entry "0" contains the
-    match, the following entries submatches. The positions of the matches are
-    also available. They are encoded:
-      <position> "->" <match string>
-    The position "-1" with an empty string indicates that this entry is not
-    set.
-  - \pdfstrcmp{<a>}{<b>} compares two strings and returns the strings "0" if
-    <a> equals <b>, "-1" if <a> is less than <b>, "1" if <a> is greater than
-    <b>
-- The primitive \pdfmovechars has been removed (bug 294)
-- Bugfixes:
-  - empty strings are not supressed anymore (bug 335)
-  - \unhboxing and character protusion didn't work well together (bug 292)
-  - --jobname didn't work if there was no filename at all (bug 302)
-  - Some problem with fonts on solaris (bug 315)
-  - Dangling font objects with non-replacable fonts (bug 311).
-  - \pdfxform didn't work with box>255 (bug 310)
-  - cmap: unicode ???? is mapped to multiple glyphs (bug 306).
-- pdfTeX uses zlib 1.2.3
+* A bunch of smaller bugfixes and cleanups (as usual).
 
-------------------------------------------------
-pdfTeX 3.141592-1.21a was released on 2005-02-04
-------------------------------------------------
-- ttf2afm 1.0:
-    - added support for refering to glyphs via unicode in encoding files (ie 'uniXXX')
-    - added some more info to the AFM output
-    - some minor bug fixes
-    - a short documentation available
-- pdftex now understand forms 'uniXXXX' in encoding files (only makes sense
-  with TrueType fonts)
-- added subset tag for TrueType fonts
-- PDF strings are now printed as following:
-    (This is a string) -> (This is a string)
-    This is a string -> (This is a string)
-    <a1b245c1a2...> -> <a1b245c1a2...>
-- check for double newline char to get rid of empty lines in PDF output
-- Fixed a bug in the scanning of map lines introduced in the fix of bug #242 in
-  1.20b.
-- Fixed three problems in xpdf; xpdf is now 3.00pl3
-- \ifeof18 is a simple method to test if \write18 is enabled.
-- a few extensions in pdfxtex:
-    - \pdflastximagecolordepth returns the last color depth
-    - \pdfximage supports a keyword "colorspace" following an object number
-      representing a ColorSpace object
-    - \pdfstrcmp compares two strings
-    - \pdfescapestring/\pdflastescapedstring provide a way to escape string
-    - \pdffirstlineheight/\pdflastlinedepth/\pdfeachlineheight/\pdfeachlinedepth
-      allow fixing line dimen
-    - patches from Taco
-        - px dimen unit
-        - tagcode patch
-        - quitvmode patch
+==============================================================
+Luatex beta-0.35.0 was released 20090224
+==============================================================
 
-------------------------------------------------
-pdfTeX 3.141592-1.20b was released on 2004-12-22
-------------------------------------------------
-- Fixed some minor bugs, mostly with hz
-- The info line "output format initialized to PDF/DVI" isn't shown anymore, as
-  this info wasn't reliable (bug 112).
-- Now the PDF-related statistics (PDF objects...) in the .log file is only
-  shown in PDF output mode. It start with a line "PDF statistics:".
-- \pdfimageresolution is not limited to 2400 [dpi] anymore, can now be between
-  0 and 65535 [dpi].
-- pdfTeX uses xpdf 3.00pl2
-- pdfTeX uses libpng 1.2.8, which fixes some png-related bugs.
+* The math handling portions of LuaTeX are converted to C code,
+  and extended to support Unicode math. There are a great many
+  related changes, see the new Math chapter in the manual for 
+  details.
 
-------------------------------------------------
-pdfTeX 3.141592-1.20a was released on 2004-09-06
-------------------------------------------------
-- There is a new program pdfxtex, which contains experimental features which
-  might end up in pdftex in the future.
-- Most distributions now use eTeX as the default engine, so when you call
-  pdftex you will get pdfeTeX. Most distributions now also use pdfTeX as the
-  default engine, so when you call latex you will get pdfeTeX running LaTeX.:-)
-- We are setting up pdfTeX as a project at sarovar
-  (http://sarovar.org/projects/pdftex/). Please report bugs etc. through the
-  site.
-- Support for the file pdftex.cfg is gone completely. All parameters that had
-  previously been set by it can be set through primitives; their values are
-  dumped to the format file.
-- The searchpath for encoding and mapfiles has been changed.
-  See http://tug.org/pipermail/tex-live/2004-January/004734.html and
-  http://tug.org/pipermail/tex-live/2004-January/004791.html
-- eTeX is now version 2.2, incorporating the last changes to TeX (3.141592).
-- New options for \pdfmapfile:
-  General functionality: Map items (map files, new: also single map lines; see
-  \pdfmapline) are put in list of pending map items. During the next shipout,
-  pending map items are sequentially scanned for their map entries, and an
-  internal map entry database is updated, using the modes below. Then the list
-  of pending map items is cleared. Map entries of fonts already in use are left
-  untouched. New: All \pdfmapfile and \pdfmapline commands can also be given
-  after shipout of the first page.
-  - \pdfmapfile {foo.map} clears the list of pending map items and starts a new
-    list with the only pending file foo.map. When the map entry lines of
-    foo.map are scanned, duplicate map entries are ignored and a warning is
-    issued. This is the old behaviour.
-  - \pdfmapfile {+foo.map} puts foo.map in the list of pending map items. When
-    the map entry lines of foo.map are scanned, duplicate map entries are
-    ignored and a warning is issued.
-  - \pdfmapfile {=foo.map} puts foo.map in the list of pending map items. When
-    foo.map is scanned, matching map entries in database are replaced by new
-    entries from foo.map.
-  - \pdfmapfile {-foo.map} puts foo.map in the list of pending map items. When
-    foo.map is scanned, matching map entries are deleted from database.
-  - \pdfmapfile {} clears the list of pending map items. It does not affect map
-    entries already registered into the database. This is the old behaviour.
-- New command \pdfmapline {line}. It's like \pdfmapfile but here you can set
-  single map lines like in the map files directly. The modifiers (+-=) have the
-  same effect as with \pdfmapfile.
-- Simplified the handling of the 14 Type 1 "standard fonts" (Times,
-  Helvetica...): They are now more or less handled like any other Type 1 font.
-  See http://www.ntg.nl/pipermail/ntg-pdftex/2004-July/000648.html
-- hz: So far the font expansion feature required that the user must be able to
-  create expanded tfms (eg cmr10+10.tfm). Now font expansion can be used
-  without creating these tfms.
-  See http://www.ntg.nl/pipermail/ntg-pdftex/2004-May/000504.html
-- hz: Changed \pdffontexpand primitive --> the expand factor is now fixed to
-  1000 and the argument is ignored. This will lead to spurious texts of "1000"
-  in your output if you compile old documents.
-- New command \pdftexbanner which returns a string with the full banner of the
-  current binary (e.g. "This is pdfTeX, Version 3.141592-1.20a (Web2C 7.5.3)
-  kpathsea version 3.5.3")
-- The PTEX.FullBanner key is now inserted in the document info dict instead of
-  the catalog. Newer versions of Acrobat display it.
-- Now includes support for encTeX.
-- Extended \pdfannot to use reserveobjnum/useobjnum 
-  See http://www.ntg.nl/pipermail/ntg-pdftex/2004-March/000424.html
-- Bugfix: pdfTeX would read an .xpdfrc when including pdfs.
-  See http://tug.org/pipermail/pdftex/2004-March/004835.html
-- Bugfix: The strings in /ID would sometimes be empty.
-- Bugfix: Even when mapfiles or encodings or PostScript font files were
-  missing, pdfTeX still produced a (most often corrupt) pdf. Now it aborts with
-  an error in these cases.
-- numerous small bugfixes.
-- pdfTeX now uses the GNU libavl from Ben Pfaff for managing of fontmap
-  entries.
-- pdfTeX uses zlib 1.2.1
-- pdfTeX uses xpdf 3.00
-- pdfTeX uses libpng 1.2.7
-  
-------------------------------------------------
-pdfTeX 3.141592-1.11b was released on 2003-10-06
-------------------------------------------------
-- Bugfix: The handling of /Rotate produced displaced images when /Rotate was 90
-  or 270.
+* A nasty bug in the paragraph breaking routine was fixed.
+  (All lines except the first one were believed to be wider then
+  they really were. This affected which nodes were considered 
+  as active breakpoints) 
 
-------------------------------------------------
-pdfTeX 3.141592-1.11a was released on 2003-08-02
-------------------------------------------------
-- New command \pdftrailer analogue to \pdfcatalog whose argument ends up in the
-  trailer dictionary.
-- The behaviour when an included pdf has a newer version than the one specified
-  with \pdfoptionpdfminorversion can be controlled by the new internal integer
-  \pdfoptionpdfinclusionerrorlevel: If it's 0, pdfTeX gives only a warning; if
-  it's 1, it raises an error. 
-    This can also be set in pdftex.cfg with pdf_inclusion_errorlevel
-- The syntax for outlines has been extended to allow attributes:
-  <outline spec> --> <attr spec> <action spec> [count <number>] <general text>
-  See http://www.ntg.nl/pipermail/ntg-pdftex/2003-June/000165.html
-- The syntax of \pdfobj has been extended:
-  \pdfobj <object type spec>                              (h, v, m)
-  <object type spec> --> reserveobjnum
-                       | [useobjnum <number>] [<attr spec>] [stream [<attr spec>]] <object contents>
-  <object contents> --> <file spec>
-                      | <general text>
-  When the optional keyword `reserveobjnum' and `useobjnum' is not given, the
-  behaviour is unchanged. 
-  See also http://tug.org/mailman/htdig/pdftex/2003-March/003814.html
-- Bugfix: /CreationDate didn't care for the timezone and could be fooled.
-  See http://www.ntg.nl/pipermail/ntg-pdftex/2003-July/000223.html
-- Bugfix: The translation of 8-bit characters in included pdfs that had their
-  eighth bit set sometimes got wrong because of a missing typecast.
-  See http://www.ntg.nl/pipermail/ntg-pdftex/2003-July/000216.html
-- Bugfix: pdfTeX -ini would crash with a minimal file because it didn't read
-  it's config and so didn't know anything about fonts.
-  See http://tug.org/pipermail/pdftex/2003-July/004262.html
-- Bugfix: \pdfstartlink would produce spurious /NewWindow entries. Also the
-  syntax of <action spec> and <goto-action spec> has been cleaned up.
-  See http://www.ntg.nl/pipermail/ntg-pdftex/2003-June/000167.html 
-- Bugfix: \pdffontattr was not used for T3 fonts.
-  See http://tug.org/pipermail/pdftex/2003-June/004127.html
-- Bugfix: The cropbox of an included pdf would sometimes not be used.
-  See http://tug.org/pipermail/pdftex/2003-May/004037.html
-- pdfTeX uses xpdf 2.02
+* Various changes to the PDF backend to make it support non-latin
+  directions.
 
-------------------------------------------------
-pdfTeX 3.141592-1.10b was released on 2003-02-26
-------------------------------------------------
-- The numbers in transformation matrices are allways written with maximum
-  precision (see http://tug.org/pipermail/pdftex/2003-February/003596.html).
-- Incorporated the new version of TeX: 3.141592
-- Bugfix: Numbers in pdfs would sometimes be just a wee bit of (changed
-  implementation of pdftoepdf.convertNumToPDF).
-- Bugfix: When setting the /Producer, /Creator or /CreationDate keys with
-  /pdfinfo pdfTeX would also insert default values which caused duplicate keys
-  in the info dict (see
-  http://tug.org/pipermail/pdftex/2003-February/003524.html).
-- The reading of mapfiles is much faster (see
-  http://tug.org/pipermail/pdftex/2002-July/002843.html).
-- Bugfix: AR5 had problems with the CTM when displaying in "fit visible" mode
-  (see http://tug.org/pipermail/pdftex/2002-May/002688.html).
-- Bugfix: str_in_str had wrong indices (see
-  http://tug.org/pipermail/pdftex/2002-March/002367.html).
-- Bugfix: decimal_digits defaulted to 0, which caused problems with included
-  images when including pdfs (see
-  http://tug.org/pipermail/pdftex/2003-February/003518.html). 
-  It now defaults to 4.
-- Bugfix: the type of included images was decided based only on the extensions;
-  now pdfTeX looks for magic bytes at the start of files (see
-  http://tug.org/pipermail/pdftex/2003-February/003519.html)
+* Fixed the behaviour of the page offsets. Placement of the output 
+  on the physical page should now work correctly in all directions, 
+  both in DVI and PDF.
+  There now are \pageleftoffset and \pagetopoffset primitives,
+  as well as 
 
------------------------------------------------
-pdfTeX 3.14159-1.10a was released on 2003-01-16
------------------------------------------------
-- pdfTeX is now able to produce pdf1.4 (which is also the default) and has
-  almost complete support for including pdf1.4 files:
-  - Additional attributes like MetaData are copied from included pdfs.
-  - Currently the Page Group attribute (see sections 7.3.6 and 7.5.5 of the pdf
-    1.4 reference) of included pdfs is NOT copied (as we don't know how to
-    handle this when imposing pdfs). 
-      This means including pdfs with transparency features will work as long as
-    the included pdf doesn't use Page Groups; if it does, the result might not
-    be what is expected (One application known to use Page Groups is Adobe
-    Illustrator v9++). The distributed pdfTeX binaries will give a warning
-    about any occurance of a Page Group in an included pdf and ignore the Page
-    Group (thus producing syntactically correct pdfs but probably not the
-    intended output).  
-      Acrobat 5++ and newer versions of Jaws display files without Page Groups
-    correctly, so this might not really be a problem.  
-      See pdftoepdf.cc for preprocessor flags which allow this behaviour to be
-    changed (copying the Page Group (most likely producing incorrect pdf) or
-    treating Page Groups as errors).
-- The new primitive \pdfoptionpdfminorversion sets the pdf version of the
-  generated file and the latest allowed pdf version of included pdfs:
-        \pdfoptionpdfminorversion=3
-  tells pdfTeX to set the pdf version to 1.3 and allows only included pdfs with
-  versions <= 1.3 . 
-    The default for \pdfoptionpdfminorversion is 4 for pdf 1.4
-    This must appear before any data is written to the generated pdf file, so
-  you should put it at the very start of your files.
-    This can also be set in pdftex.cfg with pdf_minorversion
-- It is now possible to specify the pdf page box to use when including pdfs.
-  The syntax has been extended:
-    \pdfximage [<image attr spec>] <general text>           (h, v, m)
-    <image attr spec> --> [<rule spec>] [<attr spec>] [<page spec>] [<pdf box spec>]
-    <pdf box spec> --> mediabox|cropbox|bleedbox|trimbox|artbox
-  The default is cropbox (which defaults to mediabox), to be compatible with
-  previous versions of pdfTeX.
-    The page box specified at \pdfximage can be globally overridden with the
-  config parameter always_use_pdfpagebox and the command
-  \pdfoptionalwaysusepdfpagebox <integer>, where 0 is the default (use whatever
-  is specified with \pdfximage), 1 is media, 2 is crop, 3 is bleed, 4 is trim
-  and 5 is artbox. This can only be set once per object, i.e. the value used at
-  \pdfximage is remembered.
-    See the pdf reference for an explanation of the boxes.
-- The support for the inclusion of jpeg images has been extended to allow the
-  inclusion of JPEG/Exif files which are produced by digital photo cameras
-  (thanks to Hartmut Henkel).
-- The support for the inclusion of tif images has been removed as it was of
-  limited use (it worked only for gray-scale and rgb images) and produced wrong
-  results (all other images types where treated as rgb images). 
-  Tif images can be converted on *nix on-the-fly to pngs with the help of
-  ImageMagick, epstopdf.sty or pdftex.def v0.4 or newer, and this rule:
-    \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `basename #1 .tif`.png}
-- The extensions for pdf encryption have been removed, since they make the
-  pdfTeX code overly complex. Those needing pdf encryption are encouraged to
-  produce a standalone program for encrypting pdfs.
-- pdfTeX now writes a usage statistic about the pdfTeX specific memory to the
-  log.
-- numerous bugfixes, most of them in the inclusion of pdfs.
-- pdfTeX uses xpdf 2.01
-- pdfTeX uses libpng 1.2.5
+* fontforge.apply_featurefile() was broken since 0.31.0
 
----------------------------------------------------------------------
-pdfTeX 3.14159-1.00a-pretest-20011127-ojmw was released on 2002-01-29
----------------------------------------------------------------------
+* The lua profiler library is added.
 
-----------------------------------------------------------------
-pdfTeX 3.14159-1.00a-pretest-20010806 was released on 2001-08-06
-----------------------------------------------------------------
+* The included lua filesystem library is now 1.4.1.
 
-----------------------------------------------------------------
-pdfTeX 3.14159-1.00a-pretest-20010804 was released on 2001-08-04
-----------------------------------------------------------------
+* Reading of pk files fixed.
 
-$Id$
-// vim: tw=79:ts=2:expandtab:autoindent
+* An optional space afer a <direction specifier> for \textdir c.s.
+  is ignored from  now on.
+
+* \bodydir and \pagedir can now be (re)set even after the first 
+  page has been output.
+
+* The new callback mlist_to_hlist can be used to intercept the 
+  normal conversion of math lists to horizontal lists.
+
+* The programs ttf2afm and pdftosrc are removed from the luatex
+  distribution (these belong to pdftex).
+
+* fontforge.open() now uses much less memory when opening large
+  (CJK) fonts.
+
+* The included libpng is now 1.2.35.
+
+* Quite a lot of smaller bugfixes and cleanups (as usual).
+
+
+==============================================================
+Luatex beta-0.31.3 was released 20081229
+==============================================================
+
+This release has a bunch of updates from the development trunk
+(#1657-1670,1677,1678,1680,1685,1687).
+
+  * Closing of files opened by \externalocp.
+
+  * Fix for a locale-related bug that make PDF generation fail
+    with a "Parsing CFF Dict failed" message when including 
+    opentype fonts.
+ 
+  * The included metapost is now version 1.102.
+
+  * PDF rules in vertical modes in RL direction where output
+    in the wrong direction
+
+  * Fix for a crash on Apple fonts that contain a 'bsln' table.
+
+  * The handling of the second argument to fontforge.open() was
+    broken
+
+  * The included libpng is now 1.2.34
+
+  * Handling of ttc files on Windows was broken
+
+
+==============================================================
+Luatex beta-0.31.2 was released 20081209
+==============================================================
+
+Besides fixing building issues, this release has
+
+  * A small fix for a crash that could happen when using
+    external OCPs.
+
+  * A fix in the format of fontforge.to_table output.
+    (In 0.31.1 <font>.lookups was near-empty; the lookups
+    were accidentally output as part of the gpos table).
+
+==============================================================
+Luatex beta-0.31.1 was released 20081209
+==============================================================
+
+fixed a bunch of compilation errors on various platforms, but 
+with no other visible changes.
+
+
+==============================================================
+Luatex beta-0.31.0 was released 20081205
+==============================================================
+
+This is just an intermediate release so that some testing can be
+done on the updated fontforge embedding.
+
+* There are new fields being generated by fontforge.to_table(),
+  and one or two old ones have been removed. These fields are /
+  will be documented in the manual, but very briefly:
+
+  - MATH table and associated information are now exported
+    (the main reason for the new fontforge code)
+  - Baseline data is now exported
+    (perhaps usable in lua code)
+  - Multiple Master / Glyph variation data is now exported
+    (but useless, for now)
+  - Mac Feature (AAT) information is now exported
+    (perhaps usable in lua code)
+  - If (lookup) names were saved via the PfED table, these
+    will the exported instead of the default, generated names.
+    (as requested by Yannis)
+
+* dfont is now treated as an archive format just like ttc
+  when it comes to fontforge.info(). NOTE: that does not mean you
+  can actually use them, because the  backend doesn't know
+  yet how to embed dfont fonts in the PDF, that is on the
+  TODO list for the next big beta (0.40.0).
+
+* The executables are a lot larger than before. That is because
+  much more of fontforge is included than before. Likely this
+  will stay this way, because this makes upgrading the ff code
+  much easier, and it means that luatex/FF potentially
+  understands more font formats (after upgrading the backend,
+  of course)
+
+
+==============================================================
+Luatex beta-0.30.3 was released 20081128
+==============================================================
+
+This release fixes a really big bug, a few smaller ones,
+and has updates of png and mplib:
+
+* All hyphenation patterns that were anchored at the start or
+  end of a word were ignored in luatex versions 0.25.X and 0.30.X
+  (and possibly even earlier).
+
+* Repeated use of \language=-1 could result in "There is not room
+  for another language".
+
+* The lua true coroutines patch (Coco) is now disabled on OpenBSD
+  running on non-intel platforms.
+
+* The lua socket library is patched so that it will now compile on
+  OpenSolaris.
+
+* Luatex now has libpng 1.2.33 and mplib 1.100
+
+==============================================================
+Luatex beta-0.30.2 was released 20081020
+==============================================================
+
+* The Lua coco change from 0.30.1 is reverted as it gave
+  trouble on MacOSX. Lua coco on non-intel OpenBSD platforms
+  is now explicitly turned off.
+
+* The lua file reading speedup in 0.30.1 broke reading of
+  files larger than 100MB.
+
+* Reading of font-related files was broken when there was a find
+  callback, but no read callback.
+
+* The texmf.cnf array size setup values were ignored whenever
+  --lua was given on the commandline (instead of only when
+  texconfig.kpse_init is set to false).
+
+* glyphs with negative widths resulted in incorrect horizontal
+  placement (overlapping) of the string in the output PDF.
+
+* Using \latelua could sometimes result in an invalid output PDF,
+  and the argument token list was expanded too early
+
+* There was a read buffer overrun in the mapfile parser
+
+* There are two new variables in the status table:
+  status.callbacks and status.indirect_callbacks (execution counts).
+
+==============================================================
+Luatex beta-0.30.1 was released 20081009
+==============================================================
+
+* Invalid return values from the linebreak_filter callback
+  are now handled gracefully (was crashing)
+* a preinstalled ctangle is no longer needed except when
+  cross-compiling
+* In 0.30.0, the .notdef fix was incorrectly applied to
+  truetype / opentype fonts.
+* A bunch of all memory leaks is fixed
+* In lua, f:read('*a') now uses signicantly less memory
+* The number of \catcodetables is now limited to 64KB
+  (for speed reasons)
+* Luatex could crash if there were PDF images with and
+  without page /Group included on the same page
+* Lua coco now always uses setjmp (for OpenBSD compatibility)
+* The embedded mplib is updated to the latest svn version
+* # marks (characters with catcode 6) are no longer doubled
+  inside \directlua
+* Handling the nul character (U+0000) with catcode 13
+  (active) was broken
+* Luatex could crash on win32 with an access violation
+  because there was one predefined language too few
+  (the one matching \language=-1) 
+
+==============================================================
+Luatex beta-0.30.0 was released 20080930
+==============================================================
+
+New features:
+
+* Readable \tex internal params that are counts, attrs, or dimens are
+  now returned as numbers instead of strings, and skips as node objects.
+  Read-write access to tex's skip registers added: tex.skip[0] etc.
+* new callback: 'linebreak_callback' to replace the internal paragraph
+  breaking code
+* the tex table now supports more readable 'convert' values:
+  tex.fontname, tex.pdffontname, tex.pdffontobjnum, tex.pdffontsize,
+  tex.uniformdeviate, tex.number, tex.romannumeral, tex.pdfpageref,
+  tex.pdfxformname  (each takes a number as argument)
+* new readable parameter: tex.fontidentifier(number) returns the
+  \csname associated with that font id
+* luatex now outputs \FONT<nr> instead of \^^@ in Overfull/Underfull
+  messages if the font's id text is zero (like for expanded fonts) (#77)
+ * luatex --version is split into --version and --credits
+* There is now (again) an svn revision number in luatex --version (#91)
+* Add support for more read-only internal access from lua:
+  tex.lastpenalty, tex.lastkern, tex.lastskip, tex.lastnodetype,
+  tex.inputlineno, tex.badness, tex.pdftexversion, tex.pdflastobj,
+  tex.pdflastxform, tex.pdflastximage, tex.pdflastximagepages,
+  tex.pdflastannot, tex.pdflastxpos, tex.pdflastypos, tex.pdfrandomseed,
+  tex.pdflastlink, tex.luatexversion, tex.Alephversion,
+  tex.Omegaversion, tex.Alephminorversion, tex.Omegaminorversion,
+  tex.eTeXminorversion, tex.eTeXversion, tex.currentgrouplevel,
+  tex.currentgrouptype, tex.currentiflevel, tex.currentiftype,
+  tex.currentifbranch, tex.pdflastximagecolordepth (#81)
+* the old --src-specials are replaced by --synctex (#63)
+* the \expanded primitive is backported from pdftex 1.50 (#43)
+* luatex now comes with libpng 1.2.32
+* experimental: tex.definefont(string, number) associates a
+  csname string with a font id number
+
+Bugs fixed compared to 0.29.0:
+
+* dashes were exported wrongly by MPlib
+* multi-item \discretionaries were broken in various ways (#78, mailinglist)
+* read_font_info was sometimes called recursively from lua-loaded
+  virtual fonts
+* do_vf was sometimes called on lua-loaded fonts that where
+  already known to be virtual
+* trailing junk in tfm files is now ignored (needed for ecrm fonts)
+* pdf_ignored_dimen was initialized too late, breaking \prevdepth
+  handling and causing output lines to overlap eachother (#72)
+* pdf.immediateobj() had a printf-related bug
+* the fontname terminal logging is fixed for strange font file names
+* lua tex array assignments now listen to the globaldefs setting
+  (tex.count[0] etc) (#92,partial)
+* \parshape was broken (#70)
+* there is no longer a ".tex" extension forced on very input file (#74)
+* eof() for mapfiles was true one byte too soon (#76)
+* out of range \lefthyphenmin and \righthyphenmin settings now actually
+  disable hyphenation (#90)
+* tex.unset_attribute() looked too far ahead when a to-be-unset
+  attribute id not only did not exist in the node, but was also
+  higher than the highest set attribute on the node. (#65)
+* the parameters attr and page_name of read_image() were swapped
+  (this broke \pdfimage with attributes)
+* tex filenames with spaces in them on the command line are now
+  allowed again (#30)
+* sometimes pfb fonts were included multiple times without valid
+  reason (#29)
+* some parts of the pdftex 1.40.9 PNG transparancy hack were still
+  present and caused transparant png handling to fail
+* \localinterlinepenalty and \localbrokenpenalty were broken
+* special case catcode tables are now handled better (#23)
+* the handling of missing .notdef charstrings in old pfb fonts
+  is fixed (#27)
+
+==============================================================
+Luatex beta-0.29.0 was released 20080718
+==============================================================
+
+
+New features:
+
+* The embedded pdftex is now 1.40.9 (forthcoming) except for the
+   following:
+   - the png transparancy fix is skipped because it is in conflict
+     with a macro-based solution offered by context mkiv.
+   - LFS (PDF files > 2GiB) is not working yet.
+   - Synctex is still missing
+
+* libpng, xpdf, and zlib are updated to their pdftex 1.0.9 levels
+
+* MPlib is updated to 1.090
+
+* The syntax of buildpage_filter is changed to avoid confusion
+   (and crashes). See the manual for the new calling convention.
+
+Bugs fixed compared to 0.28.0:
+
+* The previous bugfix for \languages skipping numbers was wrong.
+
+* Various compile-time warnings are suppressed
+
+* \pdfsetmatrix was broken
+
+* \pdfsave and \pdfrestore were broken
+
+* Valid user_defined whatsits nevertheless were generating errors.
+
+
+==============================================================
+Luatex beta-0.28.0 was released 20080630
+==============================================================
+
+There is one new feature:
+
+There is now experimental support for non-trivial discretionaries
+following explicit hyphens. In analogy to \prehyphenchar and
+\posthyphenchar, there are two new parameters \preexhyphenchar en
+\postexhyphenchar. Both new parameters default to zero (nothing).
+When set to a nonzero value, the parameter is added to either the
+pre- or post- break text. Note that this is *in addition to* the
+hyphen already in the input. Testing and comments are very welcome.
+
+Here is a short example (no idea what is says):
+
+   \pdfoutput=1
+   \hsize=2in
+   \postexhyphenchar=`-
+   Seria bom se eu
+   pudesse t\^e-lo mantido como amigo, mas por
+   mais bem-intencionado que eu fosse, n\~ao
+   foi possivel
+   \bye
+
+
+
+Bugs fixed compared to 0.27.0:
+
+* Words that started off with a character with a zero \lccode
+   were never hyphenated at all.
+
+* There was a bug in the new active characters code that prevented
+   the latex format from being built (with Invalid character error).
+
+* There is a temporary fix for the sometimes appearing "Font has a
+   bad FontBB" message from Acrobat.
+
+* \leaders did not actually stretch enough (the last bit of glue
+   that has to line up the line endings was never output to the PDF).
+
+* Bad paragraph-related callbacks could result in luatex crashing.
+
+* The pre_linebreak and post_linebreak filters were never called
+   when \output was active (this was a leftover of a superceded
+   optimization).
+
+* 'skipping' language codes when setting up \patterns c.s. did not
+   work (it used the next empty slot instead of the actual value of
+   \language).
+
+* Using multiple 'attr' keywords on box items could cause random
+   crashes.
+
+* Calling lang.hyphenate() with one argument (without specifying a
+    tail node) could crash.
+
+* The luatex pdf banner and version reporting is cleaned up a bit.
+
+* Conflicting patterns inside \patterns now give an error:
+     ! Conflicting pattern ignored.
+   (duplicate identical patterns are ignored without error).
+
+==============================================================
+Luatex beta-0.27.0 was released 20080624
+==============================================================
+
+Bugs fixed compared to 0.25.3:
+
+* Unicode reencoding support for non-standard (i.e. older)
+   Type1 fonts is now somewhat less broken than it was (#25)
+
+* .vf fonts using specials crashed luatex
+
+* luatex would crash on --\par (#33)
+
+* An attempt is made to get a sane default value for StemV in
+   the created pdf (#32)
+
+* We can now guarantee that %PDF-1.* header is printed before
+   the first pdf.print() output
+
+* lang.hyphenate() was broken
+
+* insert_before(a,a,b) was broken (#37)
+
+* argv[0] is now cleaned up before being used as a default for
+   mem_name and prog_name (#28).
+
+* luatex would crash on loading extended fonts (fonts loaded
+   via lua callbacks) from a format file.
+
+* The fix for pdftex bug #799 is backported from pdftex 1.40.4.
+
+* slnunicode had a bug in the unicode.utf8.gmatch iterator.
+
+* Queries of nonexisting fontdimens could cause a crash.
+
+* luatex would crash on {\textdir TLT\pardir TLT x\break\par }
+
+* Fixed wrong placement of lines in mixed-direction paragraphs
+   that could happen in some situations.
+
+Other news:
+* Luatex now includes luasocket (#35)
+   See http://www.tecgraf.puc-rio.br/~diego/professional/luasocket/
+   for usage.
+   There is a new commandline option: --nosocket to disable this,
+   and that is also implied by --safer.
+
+   NOTE to the binary builders: there are some unfixed configure
+   problems when you need to add a specific library to get socket
+   support on your platform. You probably will have to edit the
+   generated Makefile by hand (search for 'socketlib').
+
+* There is ongoing development to the 'img' and 'mplib' libraries.
+   See the reference manual for details.
+
+* The 'character commands' in virtual fonts now support image
+   inclusion. See the reference manual for details.
+
+* Lua error messages now include the call stack.
+
+* \directlua and \latelua have been extended to accept a 'name'
+   keyword. The argument is a token list that is used as the lua
+   name of this chunk in lua error messages and call stack prints.
+   (#42)
+
+* The lua chunk names can be interfaced via a new virtual
+   table called lua.instancename, the values in that function as
+   defaults in the absence of 'name' keywords.
+
+* The 2-plane limit on active character range is removed (#12).
+
+* Subsetted TTF fonts in the PDF now retain the cmap table.
+
+* There is a new Lua variable os.selfdir. This contains the
+   full absolute pathname of the directory that the executable
+   resides in (with symlinks resolved)
+
+* There is a new function os.uname() this returns a lua
+   table containing various platform information items.
+
+* The node library now uses text strings for direction specifiers
+   instead of numbers. See the reference manual for details.
+
+* The 'E' (edit) as error response functionality is now a noop.
+
+* Adding luatex 0.25.3 to texlive resulted in a few minor backports,
+   in particular: Support for mktexfmt is added, and luatangle now
+   identifies itself as such (instead of calling itself otangle).
+
+* We fixed a whole series of portability problems (but
+   we probably introduced new problems as well).
+
+* Most (all?) files now have a corrected Copyright header,
+   and link in $Id$ and  $URL$ into the object file.
+
+* Some unnecessary files were removed from the distribution.
+
+==============================================================
+Luatex beta-0.25.3 was released 20080418
+==============================================================
+
+Bugs fixed:
+* Pdftex bug no. 936 (sarovar) regarding vertical
+  positioning of embedded PDF files if depth parameter is given.
+* Luatex gave bogus lua return values for the tex.wd/hd/dp
+  values of void boxes
+* A few bugfixes in mplib (square pens caused hangs, elliptical
+  pens caused confused output)
+* Hyphenation of uppercase words (\uchyph) was broken
+* Output image placements corrected for all 8 transform cases
+  also when artbox etc. is used
+* There were missing maketexstring() calls in error messages
+* Math display contents were sometimes prematurely freed during
+  the placement of the equation number
+* Setting \language=-1 could cause crashes due to an array
+  index going out-of-bounds
+
+Other news:
+* build.sh.ppc is added to the source distribution. This is a
+  script that crosscompiles osx ppc binaries from osx intel
+* tex.box[<chardef name>] is now supported (but still experimental)
+* a bunch of compiler warnings are removed
+* The fontforge library now dump AAT feature tags as and
+  "<id,flags>" string
+* The new function font.nextid() predicts the next assigned font id
+* Some source code changes are backported from texlive 
+
+==============================================================
+Luatex beta-0.25.2 was released 20080410
+==============================================================
+
+* Updated to MPlib 0.40
+* Bugfixes and cleanup in the lua img table code
+* Fix \pdflastximagepages bug from pdftex
+* Fix for very large tex.print strings
+* Update to Lpeg 0.8.1
+* &D Bugfix for Type1 fonts when out-of-range characters
+  are marked as 'used'
+
+==============================================================
+Luatex beta-0.25.1 was released 20080321
+==============================================================
+
+* Updated to MPlib 0.30 (that is now becoming usable)
+* The build requirement for a pre-installed ctangle is gone
+  (thanks to Martin)
+
+==============================================================
+Luatex beta-0.25.0 was released 20080311
+==============================================================
+
+New:
+
+* mplib library:
+   This version features an embedded MP interpreter whose output
+   can be directly accessed from lua code (mplib), without calls
+   to an external "mpost" command. Of course it has bugs and
+   limitations (makempx does not work, for example) but keep in
+   mind that it is only an initial attempt.
+   See the manual for more details.
+* img library:
+   ** img.immediatewrite() is added
+   ** images now accept a 'transform' key
+   ** widths etc. can now be given as width="100mm"
+
+Fixed:
+
+* \parshape handling was completely broken since 0.20.0+
+* when \pdfprotrudechars was in effect, an assertion failure
+   could happen when embedded \hboxes in the paragraph appeared
+   at the end of a line.
+* import of otf fonts with contextual lookups has been debugged,
+   thanks to a patch by GW himself.
+* compiling with gcc 4.2.3 is now supported
+* if you want to build from source, you need a pre-installed ctangle.
+
+
+==============================================================
+Luatex beta-0.22.1 was released 20080227
+==============================================================
+
+* The macnames.c source file for building ttf2afm is restored.
+* "make depend" in luatexdir now works again
+* luatex sometimes crashed because it attempted to expand an
+  already expanded font
+* luatex aborted when --progname was given but no format name.
+  It now sets the format name to the given progname in that case
+* sometimes paragraphs with near-empty lines could cause a crash
+* img.supportedtypes() had a bug causing it to crash
+* img.supportedtypes() has been renamed to img.types for consistency
+* img.boxes() added, returns strings representing bounding boxes
+* img.node() added, returns a whatsit node cf. \pdfrefximage
+* node.write() now accepts multiple arguments
+* the program_name_set switch was not set automatically from C,
+  causing errors unless lua code called kpse.set_program_name()
+  explicitly
+* kpse.set_program_name() can now be called more than once
+  in a single run.
+* os.spawn{...} and os.exec{...} could cause crashes because of
+  a memory allocation error
+
+==============================================================
+Luatex beta-0.22.0 was released 20080215
+==============================================================
+
+* We now have an official bug tracker: http://tracker.luatex.org
+* A new lua library (img) is added that allows a direct
+   interface to the image handling of luatex. You can use this
+   to include images from lua code instead of via the more
+   traditional \pdfximage cs. See the manual.
+* An optional equal sign after \{pre,post}hyphenchar is now
+   allowed.
+* os.exec() has been extended, and os.spawn() added. These
+   functions have support for quoted strings, and they
+   also accept a table with preseparated command arguments.
+* New string constants os.type and os.name are provided.
+* node.last_node() is added. This pops and returns the last
+   node from luatex's 'current list'
+* node.write() is added. This appends a node to the end of
+   luatex's 'current list' (experimental).
+* The strict check on unicode compliance in pattern files
+   is dropped. Patterns files still have to be in proper UTF-8
+   encoding, but the error for non-Unicode character values
+   (like 0 - 31 and 127 - 159) is dropped.
+* \pdfadjustinterwordglue, \prependkern, \appendkern
+   and associated \XXXXcode arrays are gone.
+* The rest of the pdftex font arrays are now merged into
+   the new luatex font data structure. This means that you
+   can now set up font expansion from lua code, and that a few
+   font-related limits are gone.
+* The 'top_skip' field in 'insert' nodes is renamed to 'spec',
+   for improved consistency.
+* kpse.show_path() added. This behaves just like
+   $ kpsewhich --show-path
+* The unicode.utf8 functions now also accept values in the range
+   1.114.112 - 1.114.367 that is used by LUATEX for raw byte output.
+
+What's been fixed:
+
+* Better node memory (de)allocation error tracking and messages
+* Compilation on MacOSX 10.5 was broken
+* There was a bug in node.insert_after
+* Use of \{pre,post}hyphenchar was broken
+* lfs.permissions was leaking memory
+* Some warning and error messages are improved a bit
+* A set of bugs in character protrusion, this seems to be working
+   ok now.
+* Also, a set of bugs in font expansion. This now works in most
+   cases but is not quite bugfree yet (problematic files for testing
+   are welcomed).
+* The functions in the kpse library would crash luatex if
+   kpse.set_program_name() was not yet called. gives an error now.
+* Alignments with spanned columns could cause crashes
+* A patch is added for problems with filename parsing on the
+   "first input line" (by Jonathan Kew)
+* The hpack_filter and vpack_filter were only called for lists longer
+   than one node.
+* Luatex is now more forgiving about font subsets being smaller
+   than their expected size (issues a warning instead of aborts now)
+* A "double-free ignored" error for paragraphs with lines starting
+   with discarded items was fixed.
+
+==============================================================
+Luatex beta-0.20.2 was released 20071217
+==============================================================
+
+* some portability fixes to the build scripts
+* a fix for multi-\span in alignments causing unbreakable
+   loops
+* manual improvements from Jonathan Sauer
+* fix for undefined csnames in \directlua if
+   web2c's hash_extra is nonzero
+* fix for LR text inside of a RL document
+* fix for open_read_file callback not being called
+   unless find_read_file was also registered
+* removed the ocp status message when \ocps are not
+   actually used
+* "unicodeenc" in the fontforge to_table renamed to
+   "unicode" for improved consistency
+
+==============================================================
+Luatex beta-0.20.1 was released 20071207
+==============================================================
+
+* texlua was broken on Solaris because the some C header
+   files were loaded in the wrong order.
+* os.tmpdir() now accepts an argument, making it easier
+   to use. It now generates more unique filenames when
+   it is called repeatedly in one run.
+* The --luaconly commandline switch is now documented
+   in the --help text.
+* The new extended hyphenation exceptions were severely
+   broken.
+* \pdfprotrudechars could cause luatex to abort with an
+   assertion failure.
+* There was a bug in the  \span code that could cause endless
+   loops.
+* The simple forms of \leaders were messed up on windows
+   because a variable was not properly initialized.
+* Non-grouped \textdir commands created invalid output.
+* e-TeX's pseudo files were not closed properly in ini mode.
+* The luatex.web now weaves properly again.
+* I made some small improvements to the manual.
+
+==============================================================
+Luatex beta-0.20.0 was released 20071205
+==============================================================
+
+News compared to the last beta (0.11.2) is as follows:
+
+* Completely overhauled hyphenation and ligkern application,
+  including the addition of a new "lang" table in lua to
+  interface to the language parameters, some extra functions
+  in the "node" table, and a few extra callbacks ("hyphenate",
+  "ligaturing", "kerning", "post_linebreak_filter").
+
+  There is a new chapter in the manual to document all the
+  changes to the hyphenation and line breaking algorithms,
+  it is simply too much to list here.
+
+* the interface of the pre_linebreak_filter,hpack_filter,
+  vpack_filter, and pre_output_filter has changed slightly.
+
+* boxes can now get explicit attributes different from the
+  currently active set, using a syntax like
+
+  \hbox attr2=12 attr3=-1 to 12pt {Hi!}
+
+* lpeg is now at version 0.7
+
+* a whole series of exotic bugs and compiler warnings are
+  fixed, mostly thanks to the watchful eye of Fabrice.
+
+* texio.print now accepts multiple strings as arguments.
+
+* the lua functions os.sleep(), os.times(), os.gettimeofday()
+  and os.tmpdir() have been added.
+
+* lua now comes with the coroutine (coco) patches from the
+  luajit project applied.
+
+* the banner line no longer claims to be TeX.
+
+* a bunch of bugs reported on the mailing list have been
+  fixed (I hope all of them).
+
+* (internal) we found lots of small ways to speed up lua
+  node processing.
+
+* (internal) the node (de)allocation functions have been
+  rewritten, so that absolutely all nodes now have a type,
+  even the ones with variable sizes. 
+
+
+==============================================================
+Luatex snapshot-20071029 was released 20071029
+==============================================================
+
+* Completely overhauled hyphenation and ligkern application.
+
+  There is a new chapter in the manual to document all the
+  changes to the hyphenation and line breaking algorithms,
+  it is simply too much to list here.
+
+* the interface of the pre_linebreak_filter,hpack_filter,
+  vpack_filter, and pre_output_filter has changed slightly.
+
+* lpeg is now at version 0.7
+
+* a whole series of exotic bugs and compiler warnings are
+  fixed thanks to the watchful eye of Fabrice.
+
+* texio.print now accepts multiple strings as arguments.
+
+* The lua function os.sleep() is added 
+
+==============================================================
+Luatex beta-0.11.2 was released 20070918
+==============================================================
+
+* Pdf inclusion and subsetting of CID-based opentype fonts
+  now works as it should.
+
+==============================================================
+Luatex beta-0.11.1 was released 20070918
+==============================================================
+
+A quick list of what is new and fixed since beta 0.10.2:
+
+New:
+* pfb+afm fonts can now be used in 'wide' (encodingbytes=2) mode
+* searching in PDFS using 'wide' fonts now works reasonably well
+  (based on the tounicode feature)
+* related to that, tounicode information can now be passed
+  on inside the font metrics table
+* font subsetting is now supported for CID-based OpenType fonts
+  (however, there is a known bug with KpozMinProVI-Regular.otf)
+* fontforge's warning and error messages are now intercepted
+  and passed on to the lua code as a second return value of
+  the fontforge.open() function
+* the new primitive \suppressfontnotfounderror can suppress
+  the TeX error for "Font not found"
+* The lua function font.current can now be used to set TeX's
+  current font
+
+Fixes:
+* set_attribute(-1) is now the same as unset_attribute()
+* OpenType lookups with glyph classes would crash luatex
+* luazlib would not compile on debian (fix from Norbert)
+* CID-based fonts would crash luatex
+* Bare CFF should be read in binary mode (fix from Akira)
+* VF processing did not process packets containing zero bytes properly
+* the truetype collection (.ttc) handling is fixed, so that all
+  of the fonts inside a collection can now be used reliably
+* application segfaults and stack overflows are intercepted
+  so that luatex can quit a bit more gracefully
+* an assertion failuer on systems with signed chars (linux-powerpc)
+  is fixed
+* a crash on AMD64 linux was fixed
+* the lua "pdf" table code was wrong
+* \ifcsname did not work properly for UTF-8 characters
+* Use of the math-related functions using make_fraction (like \atop)
+  caused a crash
+* \handling of \if\noexpand was wrong
+* applied a patch that cleans up XForm and page calculations
+* "autoconf" support from zziplib is stripped 
+
+==============================================================
+Luatex beta-0.10.2 was released 20070814
+==============================================================
+
+Bugs fixed:
+
+* the primitive \span was completely broken
+* \pdfexpandfont (font expansion) misbehaved if it was used more
+   than once
+* virtual fonts: sometimes they used the wrong internal font id,
+   loading vf fonts via fonts.read_vf() was impossible, and sometimes
+   virtual fonts created segfaults
+* while dumping formats, the last font parameter for each font was not
+   dumped at all
+* zziplib was always compiled with pre-installed zlib headers, instead
+   of the ones in the build tree
+* lua 5.1.2 has trouble quoting ^Z characters etc, the tentative patch
+   for lua 5.2 from Luiz fixes that, hopefully
+* fontforge.font('font.pfb') now properly parses AFM boundingboxes
+* non-existing files in the argument for fontforge.open() or
+   fontforge.info() could cause segfaults, now it generates an error
+   instead
+* fontforge.open() did not return character widths for vertical fonts
+   as it should
+* on Windows, fontforge believed that ttc files (TrueType Collections)
+   were actually directories. ttc processing is still not 100% correct,
+   but it is getting better
+* the build system used explicit 'make' sometimes
+* the auto-growing string pool was not used everywhere
+* there were some typos in the documentation parts of the pascal web
+* use of \parshape could easily exhaust all available memory
+
+
+New features:
+
+* support for applying Adobe Feature files (.fea) and Adobe Font
+   Metrics (.afm) is added to the fontforge library
+* fontforge.info() will now return an array of tables for the contents
+   for ttc files
+* support for a 'texluac' personality was added, to replace the 'luac'
+   command from the official Lua distribution
+
+==============================================================
+Luatex beta-0.10.1 was released 20070719
+==============================================================
+
+This was a hotfix because beta-0.10.0 was completely broken.
+
+==============================================================
+Luatex beta-0.10.0 was released 20070718
+==============================================================
+
+The latest version of the manual is included in the package, and I
+am not going to repeat all of that. There were some minor changes
+compared to the previous snapshot, but mostly just bugfixes and
+documentation improvements.
+
+==============================================================
+Luatex snapshot-20070626 was released 20070626
+==============================================================
+
+* Integrated the lua library lzlib, this defines tables with
+   bindings for zlib (including eazy-to-use gzip support)
+* Updated to slnunicode version 1.1
+* Some small cleanups in the sparse array handling
+* Moved the raw byte support out of the valid unicode range
+* Fixed a bug in the OFM font reader
+* Removed the pdftex snap nodes (and associated primitives)
+
+
+==============================================================
+Luatex snapshot-20070622 was released 20070622
+==============================================================
+
+Not a lot of news, but it fixes a few important bugs in the lua 
+node processing. Also a few utility functions are added:
+
+* tex.round()
+   rounds and bounds checks a lua number to make sure it is
+   a valid tex integer.
+* tex.scale()
+   multiplies a number (or the numeric values in a table)
+   with a fixed quantity, and calls tex.round() on the result.
+* node.has_field()
+   Test if a node has a specified field name
+* node.remove()
+   removes a node from a nodelist, while keeping the list intact
+* node.insert_before()
+   inserts a new node into a nodelist, just before a specified
+   location node
+* node.insert_before()
+   inserts a new node into a nodelist, just after a specified
+   location node
+* node.hpack()
+   packages a nodelist into a hlist node
+
+
+==============================================================
+Luatex snapshot-20070619 was released 20070619
+==============================================================
+
+* The lua node processing interface is completely reworked.
+   It is now completely based on userdata, and uses a new lua table
+   called 'node' to hold the methods. More detailed information
+   is in the manual (of course).
+
+* There is a fifth node processing callback:
+      pre_output_filter
+   this is executed just before the packaging of \box 255.
+
+* The hpack_filter and pre_linebreak_filter callbacks now
+   receive an extra argument indicating the number of top-level
+   glyphs in the node list.
+
+* Virtual fonts can now contain a 'node' key in the glyph
+   commands: the value should be a hlist node (i.e.: a horizontal
+   box), and that will then be output for each character access
+   in that font.
+
+* A new set of registers is added, called \attribute. These are
+   values that will be automatically attached to nodes created in
+   their scope. More information in the manual.
+
+* Direct read/write access to TeX's box registers is addded to
+   the lua 'tex' table.
+
+* TeX's main memory now grows dynamically, and the (de)allocation
+   routines have been rewritten completely.
+
+* The 'kpse' table is extended with extra interface functions, to
+   allow texlua to be used as a scripting engine.
+
+* The \pdftexversion command now returns 200, not 140.
+
+* The displayed banner and --version screens are cleaned up.
+
+* The format file is now RLE compressed. Not as small as before,
+   but unpacking is much faster.
+
+
+==============================================================
+Luatex snapshot-20070426 was released 20070426
+==============================================================
+
+This past month I have been busy with nodes and lists of nodes,
+so the big new feature in this release is that there are four
+callbacks that operate on node lists:
+
+  buildpage_filter
+  pre_linebreak_filter
+  hpack_filter
+  vpack_filter
+
+The preliminary documentation for these is in the manual, but the basic
+idea is that you can filter a node list just before LuaTeX starts doing
+something with it (like line breaking). This functionality is not stable
+yet: the node presentation of the various node types is pretty much OK
+now, but keep in mind the following:
+
+  * math noads and math typesetting are not handled at all (yet)
+  * not all hpacks and vpacks are intercepted (yet)
+  * the nested node list handling will probably change
+  * A conversion tool for nodes to/from dictionaries is planned,
+    but not done yet
+
+The other changes in this snapshot are various bugfixes (for builds
+on various platforms as well as font issues) and speedups (in the 
+execution of callbacks and the creation of lua font representations).
+
+
+==============================================================
+Luatex snapshot-20070322 was released 20070322
+==============================================================
+
+* I have changed the token_filter callback quite rigorously,
+   mostly because of speed issues. The raw speed of trivial
+   lua token handling is now only about 20 times slower than
+   the native handling. Not bad at all, considering it has to move
+   between interpreted and compiled code for each and every
+   token. If you do not run the token filter inside \output,
+   the effective run speed difference should not be much more
+   than a factor 1.5.
+
+   Two big differences: you have to call token.get_next()
+   yourself, and the token table is now a three-item array
+   instead of a five-key hash. The minimal example changes to
+
+   \directlua0{
+     callback.register('token_filter', function ()
+       return token.get_next()
+       end)
+   }
+
+   more details are in the manual.
+
+* I've fixed a few bugs in the handling of Opentype TTF, and added
+   a new key in the font definition table:
+
+      f.encodingbytes = (1|2)
+
+   The default is 2 for opentype and truetype format, 1 otherwise.
+   Later on, it will become possible to have a type1 font in 2-byte
+   (CID) encoding or a truetype font in traditional encoding (1-byte),
+   but I have not covered all cases yet.
+
+
+
+==============================================================
+Luatex snapshot-20070309 was released 20070309
+==============================================================
+
+* The OCP debug information is removed again.
+
+* There is a new callback that I am quite excited about myself:
+   'token_filter'.
+
+
+A bit of text from the reference manual:
+--------------------
+This callback allows you to change the modify any lexical token that
+enters the \type{main_control} function before \LUATEX\ executes the
+associated command.
+
+Note: not all tokens can be intercepted yet, only those that are `seen'
+by \LUATEX's main control function.  Supplemental tokens like the bodies
+of macro definitions and the right-hand side of register assignments
+are not seen. For now, this is intentional.
+
+\startfunctioncall
+      function (table <token>)
+         return table <token>
+      end
+\stopfunctioncall
+
+Calling convention for this callback is bit more complicated then for
+most other callbacks.  Initially, lua function will be called with the
+next token from \type{get_next()} as argument, represented as a small
+lua table.  The function should either return a lua table representing
+a valid to-be-processed token, or something else like nil or an empty
+table.
+
+If your lua function does not return a table representing a valid
+token, it will be immediately called again with yet another token
+from \type{get_next()} as argument, until it eventually does return
+a useful token.
+
+But if the function does return a usable token, then that token will
+be processed by \LUATEX. Afterwards, the function will be called
+again, but now without an argument. This is repeated until it stops
+returning tokens.  Then processing reverts back to the other branch.
+
+The point behind that roundabout calling convention is that it
+allows the lua function to buffer tokens for various uses. That in
+turn makes it possible to do some really advanced things like
+replacing OTPs.
+
+Now about that table. The table that the function will receive
+contains four fields:
+
+\starttabulate[|l|i|p|]
+\NC Key     \NC  type    \NC                Explanation \NC\FR
+\NC cmd     \NC  string \NC A representation of  \LUATEX's internal
+                             command code\NC\NR
+\NC chr     \NC  number \NC The command code modifier\NC\NR
+\NC cs      \NC  string \NC If the token came from a csname, this
+                             is  that csname\NC\NR
+\NC mod     \NC character \NC A single character string representing
+the current processing mode. One of {\bf v}ertical, {\bf h}orizontal,
+display {\bf m}ath, {\bf n}o, internal {\bf V}ertical, 
+            restricted {\bf H}orizontal, or inline {\bf M}ath mode.\NC\LR
+\stoptabulate
+
+If you modify the table before returning it, then it is wise to return 
+either a (\type{cmd}, \type{chr}) pair, or a \type{cs} string.  That is
+because if both options are present, the pair has precedence and the
+string is ignored. On the return table, {\bf mod} is ignored always.
+--------------
+
+I have no long example code yet and it is not as complete as one
+would want it to be because it is not intercepting everything that
+comes in, only the bits that are triggered by the main control
+loop.
+
+I decided to do a fast snapshot release for two reasons:
+
+* It is one of the easier extensions to get started with if you want
+   to learn a bit about lua programming
+
+* I would welcome feedback on the token interface, because it will
+   be needed in other places as well, soon. I am still not sure
+   whether converting the command to/from strings is worth it, for
+   example. And maybe it would be less confusing if you could return
+   a list of tokens instead of being called repeatedly?
+
+Here is the trivial example to get you started:
+
+    \directlua0{
+      callback.register('token_filter', function (t) return t end)
+    }
+
+
+==============================================================
+Luatex snapshot-20070307 was released 20070307
+==============================================================
+
+
+* Non-CID PostScript-based Opentype fonts are now combined over
+   the entire document, and properly subsetted. The code is
+   borrowed from xdvipdfmx with some minor adjustments
+
+   Adding support for CID-keyed OpenType fonts would not be hard
+   but at the moment I lack example input (and incentive).
+
+* A small extension to the virtual fonts structure: you can use
+
+     f.fonts[1] = { 'id' = 38}
+
+   to do a backreference to a previously defined font. This saves quite
+   a few computations
+
+* There was a bug in the handling of \leaders in the output whereby
+   it's width was taken to be twice what it should be while writing
+   to the PDF, fixed now.
+
+* The font inclusion code is cleaned up a bit by Hartmut.
+
+* Some compilation problems were fixed.
+
+* There is (quite a bit of) debugging information printed out when
+   OTPs are in use, because I am tracking down a bug reported by Idris.
+
+   The input of each and every OTP step is shown on the terminal in
+   a line line this:
+
+     [57902][1568][58423][1568][58408][1568][58921]
+
+   those are the decimal values of ocp i/o characters. If you don't
+   need them, don't worry about it.
+
+==============================================================
+Luatex snapshot-20070302 was released 20070302
+==============================================================
+
+* The 'snapshot version' banner is now calculated dynamically
+  at build time. This aids in figuring out what binary people
+  are actually running, but it can possibly break the build on
+  systems that do not have a `date` command.
+
+* The do_vf() function that checks for virtual font existance
+  is now run immediately after the font definition instead of
+  being postponed until characters are output.
+
+* The 'define_font' callback interface has changed a little.
+  It is now:
+    retval = function (name,size,fontid)
+
+  where fontid is the internal font number of the font that
+  is currently being defined, and retval can be either a table
+  (as before) or a different, previously defined fontid. This is
+  useful if a previous definition can be reused instead of
+  creating a whole new font structure.
+
+* The internal font data structure has been redone. Glyph index
+  inside a font is now handled by a sparse array, so that use
+  of e.g. 0xFB01 (fi-ligature) no longer creates a 64000+ entries
+  character array.
+
+* The internal cache-ing of font metric information is turned
+  off completely, because it was based on the assumption that
+  name + size were a unique identifier for a font. This can no
+  longer be guaranteed.
+
+* word boundary processing now works OK again, thanks to the
+  introduction of two virtual characters in the font table
+  definition. Besides the normal numeric entries in the
+  f.characters table, there can now also be two string keys:
+  "left_boundary" and "right_boundary". The  ligatures and kerns
+  of the 'left_boundary' character are used for the pre-word
+  boundary processing, ligatures and kerns between characters
+  and 'right_boundary' are used for the post-word processing.
+
+* Lua font table references are no longer cached by the
+  executable ,in order to preserve memory. (the only downside
+  is that font.fonts[] access is now slower because of the need
+  to recreate the lua table).
+
+* There are other some small changes to the font table formats.
+  Please see the manual for details.
+
+* A 'real' font can now still have virtual characters if they
+  are loaded via lua. Just set the 'commands' section and/or
+  the 'fonts' array to your liking, and it should work out.
+
+  If you have created no 'fonts' array at all, then the default
+  font (indentifier '1')  is the current font, so that you
+  can create virtual duplicates of already existing characters.
+
+  Note: this does not work the other way. There can not be
+  'real' characters in a virtual font!
+
+* Truetype-based opentype fonts no longer require Acrobat 7
+  t(hey are now written out as if they are normal truetype).
+
+* A lua init script can now set 'texconfig.formatname' and/or
+  'texconfig.jobname'. If ther is no file or format specified
+  on the commandline, then, if, one of those keys is present,
+  that key will be used instead of simply quitting with an
+  error.
+
+* Placement of boxes and rules in right-to-left mode is debugged,
+  and now seems to work ok.
+
+* Virtual font loading is debugged.
+
+* Some memory leaks are resolved
+
+* HZ font expansion should work ok again, but is not tested.
+
+* a few of the warning during opentype loading have been removed
+  because the problems are rather harmless and turned out to be
+  triggered by almost every font.
+
+
+==============================================================
+Luatex snapshot-20070218 was released 20070218
+==============================================================
+
+* The pdftex stuff is now updated to 1.40.3
+  (and on top of that, it still has those extra patches announced in
+  snapshot 20070202)
+
+* The virtual font parser is debugged and now appears rather stable.
+
+* There is one extra virtual command:
+
+    "commands" = {
+       {"slot", 1, 97}, -- place character 97 'a' in local font 1.
+     }
+
+  This is just a shortcut for {"font",1}, {"char", 97}
+
+* Some small memory leaks have been fixed. Luatex does not leak big
+  time, but I'd like to get back to valgrind reporting '0 out of 0',
+  instead of the current 800 bytes or so (that is a slow process).
+
+* You can read a truetype or opentype font from within lua code
+  using font.read_ttf() or font.read_otf(), respectively.
+
+  This feature uses a fair bit of the fontforge code, making the
+  binary rather a bit larger than before. Just so you know.
+
+  Apple (AAT, as well as encoding) support is still largely missing,
+  and bitmap-only and old Multiple-Master truetype fonts are not
+  supported at all (and never will be).
+
+  The output format is (shadily) documented in the reference manual.
+  At the moment, it very closely resembles the internal font stucture
+  that is used by fontforge.
+
+* LuaTeX can now write wide OpenType fonts to the PDF file.
+
+  There is no subsetting support yet, and a ToUnicode CMap is also
+  still missing, but nevertheless it is already somewhat useful. The
+  rule is very simple: if a font uses code points above 255, then it
+  is considered to be a `wide' font, and it will be written out as
+  a Type0 CID-keyed font to the PDF.
+
+  Caveat: Getting suitable metrics into LuaTeX can be a bit of problem
+  right now, because font.read_otf() does not produce anything that
+  can be fed back into define_font without extra processing.  Hans has
+  some experimental Lua code for ConTeXt (of course :-)) and that is
+  how I know it works.  You can expect a nicer interface soon,
+  hopefully next week, in the form of a simplistic table conversion
+  routine.
+
+* I have started work on supporting Aleph's bidi typesetting in PDF
+  mode as well, simple text seems to be largely ok. More complicated
+  documents will no doubt still show some bugs, but fixing those will
+  be easy (once they are discovered). Exactly what happens with specials
+  is not yet investigated.
+
+* Omega's (16-bit) wide virtual fonts now work OK in PDF mode. This
+  means that many Aleph files can now be run in PDF mode directly.
+  (the documents that use UTF-8 input encoding)
+
+
+==============================================================
+Luatex snapshot-20070202 was released 20070202
+==============================================================
+
+
+* The pdftex stuff is now updated to 1.40.2, and on top of that, it has
+
+   - an extra patch from Han The Thanh that adds a primitive to control
+     the merging of fonts from external pdf images (\pdfreplacefonts),
+     and a bugfix for virtual font handling.
+
+   - an extra patch by Hartmut Henkel that removes a number of malloc()s
+     and free()s from the calls to the compression library, thereby
+     making luatex run a bit faster.
+
+* luatex now happily accepts the following low-level syntax:
+	
+    \font\myfont = <general text> <at specifier>
+
+   It feeds the <general text> to either kpathsea or a lua script for
+   further processing after stripping the braces.
+
+   In itself, this is not all that useful, but the reason for this
+   syntax extension is that it paves the road for a macro package
+   to do something like this:
+
+    \font\myfont = {font="Times New Roman", color="\darkred",
+                    encoding="ec", features="liga", size=10bp}
+
+   without having to resort to system-specific quoting mechanisms.
+   Macro (and other) expansion takes inside the braced argument.
+
+   (I am considering adding this extension to \input as well).
+
+* It is now possible to define a font into the font.fonts[]
+   directly from lua, but becayse use is limited, I am only
+   mentioning it to be complete.
+	
+   Syntax:	
+	<number> id = font.define(<table> font)
+
+* There is a (not very reliable yet) virtual font parser accessible
+   from lua.
+
+   Syntax:
+	<table> vfdata = font.read_vf(<string> name, <number> size)
+
+   The interpreter tries to give a reasonable representation of a
+   virtual font file (the .vf file). Besides a few simple top-level
+   items:
+
+     designsize  -- in scaled points
+     size        -- also in sp
+     name        -- the file name
+     checksum    -- the vf checksum
+     header      -- the header comment  (if any)
+
+   it also has a top-level array 'fonts' wherein each item is a mini-
+   array describing one of te mapped fonts. An example makes this
+   easy to understand
+
+    "fonts" = { {"ptmr8a",655360}, {"psyr", 600000} }
+
+   says that the first referenced font (index 1) in this virtual font
+   is ptrmr8a.tfm loaded at 10pt,  and the second is psyr.tfm loaded
+   at a little over 9pt. These index numbers are used by the character
+   command definitions that follow.
+
+   At top level, there is a 'characters' array, just as for a normal
+   font, except that each item has only two keys:
+
+     "width"    -- the tfm width (as stored in the .vf)
+     "commands" -- an array of virtual font commands for a character.
+
+   each of the items in the 'commands' array is itself a tiny hash.
+
+   Each of those mini-hashes represents a single character packet
+   command. Here is a 'commands' entry that contains every possible
+   one at least once:
+
+     "commands" = {
+        {"push"},                     -- remember where we are
+        {"right", 5000},              -- move right 0.08pt
+        {"font", 1},                  -- select the fonts[1] entry
+        {"setchar", 97},              -- place character 97 'a'
+        {"pop"},                      -- go all the way back
+        {"down", -200000},            -- move *up* about 3pt
+        {"special", "pdf: 1 0 0 rg"}  -- switch to red color
+        {"rule", 500000, 20000}       -- draw a bar
+        {'special',"pdf: 0 g"}        -- back to black
+      }
+
+
+* But the big news is that you can now define your own virtual fonts
+   on the fly, by adding a few statements to the table returned to
+   the 'define_font' callback.
+
+   There are a few requirements:
+
+   - The table has to have a top-level key 'type', and it's value
+     must be 'virtual'.
+
+     The presence of this key with the specific value 'virtual'
+     will trigger handling of the rest of the special virtual font
+     fields in the table, but the mere existance of 'type' is
+     enough to prevent luatex from looking for a virtual font
+     on its own.
+
+     Therefore, this also works 'in reverse': if you are absolutely
+     certain that a font is not a virtual font, assigning the value
+     'base' or 'real' to 'type' will inhibit tex from looking for a
+     virtual font file, thereby saving you a disk search.
+
+   - There must be a top-level 'fonts' array, as explained above.
+     Any fonts that are not yet known to luatex at that moment,
+     will be loaded automatically (Warning: do not ever use a font
+     in 'fonts' with the same name you will return in the table you
+     are defining right now!).
+
+   - Each and every character in the fonts needs to have a 'commands'
+     key, as explained above.
+
+   The main point behind these restrictions is that a font is
+   *either* a base font *or* a virtual font. It cannot be both
+   at the same time.
+
+
+==============================================================
+Luatex snapshot-20070126 was released 20070126
+==============================================================
+
+
+* Underscores in pascal identifiers are now retained.
+
+   This took quite a bit of work. The web2c conversion tools
+   needed only small adjustments, but most of the existing C
+   code depended on the removal of the underscores. I had to
+   go through changing many lines. 99% of all identifiers are
+   now written the same on the pascal side as on the C side.
+   This makes writing interface code quite a bit less confusing.
+
+   Not everything is completely clean yet, because I did
+   not want to change the web2c-specific C files. I often
+   took the other approach and removed the underscores
+   from the web2c options (like 'parsefirstlinep') in the
+   change file instead. Ugly, but predictable.
+
+   There is about a dozen or so of #defines left, that map
+	memoryword -> memory_word
+         strpool    -> str_pool
+   etc.
+
+* The virtual font parsing and interpreting is now done in C.
+   (this is because it needs to be interfaced with the lua-based
+   font loader)
+
+* I am in the process of merging: the VF stuff; the TFM stuff;
+   the lua font loading; and the pdftex font backend into one
+   interface, so there were some smallish changes relating to
+   that as well. Nothing worth mentioning just yet except that
+   luatex now will read "ovf" files as well as "vf" files.
+
+* There are a few really small bugfixes for bug reports I received
+  on this list and by email.
+
+==============================================================
+Luatex snapshot-20070119 was released 20070119
+==============================================================
+
+The largest new bit is the existence of a font.fonts array, that you
+can use to query/adjust the internal defined tex fonts. See the manual
+for more details.
+
+Two small new lua extensions are added as well:
+
+   * os.setenv() -- to change the environment
+   * os.exec()   -- a non-returning os.execute()
+
+And a bit of cleanup in the commandline processing.
+
+
+==============================================================
+Luatex snapshot-20070117 was released 20070117
+==============================================================
+
+* the pdftex core is updated to 1.40.1, and web2c to 7.5.6
+
+* the pdftex-specific documentation is removed
+
+* lua lpeg library updated to 0.4
+   ( http://www.inf.puc-rio.br/~roberto/lpeg.html )
+
+* the C part of the lua md5 library is added to the binary
+   ( http://www.inf.puc-rio.br/~roberto/md5/md5-5/md5.html )
+
+* --luaonly now puts the script itself at arg[0], and
+   preceding commandline items in the negative indices
+   (instead of starting the count at zero).
+   This new approach is compatible with the standalone lua
+   interpreter.
+
+
+==============================================================
+Luatex snapshot-20070107 was released 20070107
+==============================================================
+
+Hot on the heels of 20070105, a new snapshot. It turns out
+that using the callback to define a font broke all ligatures.
+This snapshot fixes that, and it has a few minor updates to
+the manual. Next shapshot will be after the inclusion of
+pdftex 1.40.1. 
+
+==============================================================
+Luatex snapshot-20070105 was released 20070105
+==============================================================
+
+ * the calculations that converted lua strings into tex units
+   were horrendously wrong, this was discovered by Pawel.
+
+ * io.lines() was still using the old, line ending sensitive,
+   code from the lua core distribution
+
+ * The main font memory is allocated as needed^(1) instead of
+   statically pre-allocated.
+
+ * ligatures and kerns are separated completely from each other,
+   so use of \noligatures no longer inhibits kerning as well
+
+ * Metrics can be loaded using a callback: 'define_font'.
+   The value returned should be a lua table representing a tfm
+   file.
+
+ * there is a new lua table: font. It has one function:   
+   font.read_tfm() that returns a table reprentation of the tfm
+   contents, for use with the above mentioned callback
+
+ * I dropped suppport for "Level 1" OFM files. I would like
+   to have a try at those extended font files, but I lack
+   examples (fonts nor documents). I am not even sure such
+   fonts have ever existed in the 'real world'.
+
+
+
+==============================================================
+Luatex snapshot-20061208 was released 20061208
+==============================================================
+
+* There is a new switch: --safer. This disables a number of lua
+   functions that are more or less dangerous (a detailed list is
+   in the manual)
+
+* Two longstanding bugs have been fixed: \latelua works once
+   again (patch by Hartmut) and a bug that caused mysterious crashes
+   turned out to be a problem inside the paragraph builder
+   (reconstitution of ligatures)
+
+* Six new string iterators have been added to the string library:
+      string.characters        (one 1-letter string)
+      string.bytes             (one byte)
+      string.characterpairs    (two 1-letter strings)
+      string.bytepairs         (two bytes)
+      string.utfcharacters     (a one-character utf-8 string)
+      string.utfvalues         (a unicode code point number)
+
+* The top 256 values of the unicode range (starting at hex
+   value "10FF00) are now reserved for byte output. Characters
+   in that range will be written by luatex after substracting
+   that offset. The net result is that \char"10FFA9 is written
+   as byte value hex A9 = decimal 169 = copyright sign in latin1
+
+   This trick allows byte-oriented output to \pdfliterals and
+   \specials, but should be considered very experimental.
+
+* There is a new callback called 'process_input_buffer' that can
+    be used to mutate the line buffer just before LuaTeX actually
+    starts looking at it.
+
+* The statistics table now has readable items
+	statistics.inputid
+	statistics.lasterrorstring
+    that represent TeX's current input id and the last error string
+
+* The show_error_hook callback no longer receives any arguments
+* There is a new switch: --safer. This disables a number of lua
+   functions that are more or less dangerous (a detailed list is
+   in the manual)
+
+* Two longstanding bugs have been fixed: \latelua works once
+   again (patch by Hartmut) and a bug that caused mysterious crashes
+   turned out to be a problem inside the paragraph builder
+   (reconstitution of ligatures)
+
+* Six new string iterators have been added to the string library:
+      string.characters        (one 1-letter string)
+      string.bytes             (one byte)
+      string.characterpairs    (two 1-letter strings)
+      string.bytepairs         (two bytes)
+      string.utfcharacters     (a one-character utf-8 string)
+      string.utfvalues         (a unicode code point number)
+
+* The top 256 values of the unicode range (starting at hex
+   value "10FF00) are now reserved for byte output. Characters
+   in that range will be written by luatex after substracting
+   that offset. The net result is that \char"10FFA9 is written
+   as byte value hex A9 = decimal 169 = copyright sign in latin1
+
+   This trick allows byte-oriented output to \pdfliterals and
+   \specials, but should be considered very experimental.
+
+* There is a new callback called 'process_input_buffer' that can
+    be used to mutate the line buffer just before LuaTeX actually
+    starts looking at it.
+
+* The statistics table now has readable items
+	statistics.inputid
+	statistics.lasterrorstring
+    that represent TeX's current input id and the last error string
+
+* The show_error_hook callback no longer receives any arguments
+
+* The statistics table now has readable items
+	statistics.luabytecodes
+	statistics.luastates
+	statistics.luabytecode_bytes
+	statistics.luastate_bytes
+   for memory statistics reporting
+
+
+* The statistics table now has readable items
+	statistics.luabytecodes
+	statistics.luastates
+	statistics.luabytecode_bytes
+	statistics.luastate_bytes
+   for memory statistics reporting
+
+
+==============================================================
+Luatex snapshot-20061204 was released 20061204
+==============================================================
+
+* The LuaTeX interpreter can now be run as a standalone lua script
+  processor, by using a commandline like this:
+
+    luatex --luaonly=luatools.lua
+
+* Luafilesystem (http://www.keplerproject.org/luafilesystem/ ) is
+  included.
+
+* There are a total of eight new file discovery callbacks:
+    find_vf_file
+    find_ocp_file
+    find_map_file
+    find_enc_file
+    find_sfd_file
+    find_pk_file
+    find_data_file
+    find_opentype_file
+  this enhances the orthogonality of the callback system, nothing
+  fundamental is changed.
+
+* There is a new callback called 'process_input_buffer' that can
+  be used to mutate the line buffer just before LuaTeX actually
+  starts looking at it.
+
+* The 'reader' and 'close' functions from 'open_read_file' now
+  receive the table they are defined in as a function argument,
+  that can be used as a per file localized data store.
+
+* Updated the Lua to the latest 5.1.1, with all known bug patches
+  from the website applied as well
+
+* Runtime autoloading of lua .so files is now off on all platforms.
+
+* The statistics table now has readable items
+    statistics.filename
+    statistics.linenumber
+  that represent TeX's current file name and line number
+
+* The support for user-defined type3 font .pgc files and the
+  associated 'read_miscfonts_file' callback has been removed.
+  (nobody used it anyway)
+
+* General cleanups to the source tree and build process. 
+
+==============================================================
+Luatex snapshot-20061023 was released 20061023
+==============================================================
+
+* there was a missing callback: find_font_file
+* program_invocation_name was not set
+* buf_size could not be more that 300k
+
+
+==============================================================
+Luatex snapshot-20061013 was released 20061013
+==============================================================
+
+Last friday I uploaded a new snapshot and today I finally
+finished updating the manual to go with it. The changes all
+relate to startup, file i/o, and callbacks. The main achievement
+is: you can now run luatex without it *ever* initializing kpathsea.
+
+Because I am lazy, I have checked in the pdf of the manual
+as well, so that I can say: Please look at
+
+  https://foundry.supelec.fr/plugins/scmsvn/viewcvs.php/manual/
+    /luatexref-t.pdf?root=luatex&rev=148&view=log
+
+for all the details.  :-) 
+
+==============================================================
+Luatex snapshot-20061002 was released 20061002
+==============================================================
+
+
+* Some infrastructure changes:
+
+  libs/slnunicode-0.9.1/ renamed to libs/slnunicode/
+  libs/zziplib added
+  libs/luazip added
+
+  (zziplib is using a different version of autofoo. I know I have
+  messed up something in the build process, but the bit we need
+  compiles ok so I've postponed attempting to fix it)
+
+* The callback logic has changed quite a bit.
+
+  - all callbacks are now only possible in lua state 0.
+
+  - The callback 'input_line' has disappeared, and is replaced by
+    'open_read_file'. One of the return values of that callback
+    is a table that defines a 'reader' function for line reading.
+
+    See the manual for further information on this.
+
+  - There are some new callbacks for the reading of various binary
+    files. The current ones are:
+
+    "read_ocp_file", "read_vf_file", "read_data_file", "read_font_file",
+    "read_map_file".
+
+    The rest of the file types will follow soon (fonts, enc files, and
+    images).
+
+  - There are also some new callbacks that 'find' a file's pathname:
+
+    "find_truetype_file", "find_type1_file", "find_image_file"
+
+    here too, more will follow later.
+
+  - the functions from io. that were copied to texio have been removed
+    again. The new callbacks do not pass file pointers around, so
+    they ere not longer needed
+
+  - the 'open_write_file' is temporarily unavailable
+
+* startup.lua is now always loaded into lua state 0
+
+* The luazip library from kepler is linked in, so there the table 'zip'
+  is accessible from all lua states. 
+
+==============================================================
+Luatex snapshot-20060922 was released 20060922
+==============================================================
+
+* The texio table has gained a new function:
+
+     tex_file = texio.open(filename)
+
+   returns a file handle of a type that luatex can use
+   internally (the return of io.open is unusable in callbacks
+   because it will be garbage-collected at a random time)
+
+
+* In related news, there are two new callbacks you can define:
+	
+	callback.register('open_read_file', f)
+	callback.register('open_write_file', f)
+
+   where your function should have the following conventions:
+
+   function f (number id_number, string asked_name)
+      return boolean success, string actual_name, tex_file filep
+   end
+
+   id_number:   zero for the log or \input files  or TeX's \read
+                number incremented by one (\read0 becomes 1).
+   asked_name:  the user-supplied filename
+
+   success:     return false for error, true otherwise.
+
+   The remaining two items are only looked at if you return true:
+
+   actual_name:  the true filename used (with extension!)
+   filep:        a file object opened though texio.open()
+
+
+* The tex.print function has an extra optional parameter:
+
+       tex.print(ctt_id n, strings ...)
+
+   This prints the strings using the catcode regime defined by
+   \catcodetable n (assuming n is valid, see below)
+
+* The new function tex.sprint has the same lua conventions as
+   tex.print, but behaces slightly different on the tex side:
+
+   ** tex does not switch to the 'new_line' state (this implies
+      that leading spaces are not ignored)
+   ** no \endlinechars are inserted
+   ** trailing spaces are not removed from the argument
+
+* Catcode tables are a completely new feature, that allows
+   you to switch the current catcode regime in one simple
+   statement:
+
+   \catcodetable <count>
+
+      Switches to the use of a different set of catcodes (table),
+      that is stored under the number <count>. Such a table has to
+      be previously created using one of the two command below, or
+      the number 0 (which is pre-inititialized)
+
+      This command obeys normal grouping rules.
+
+   \initcatcodetable <count>
+
+      creates a new, global, independent catcode table with catcodes
+      matching the code that are predefined by initex (tex -ini).
+
+     This allocation is global
+
+   \savecatcodetable <count>
+
+      copies the current set of catcodes to a new, global, table
+      with id number <count>. The definitions in this new table
+      are all treated as if they were made in the outermost level.
+
+     This allocation is global
+
+   At the end of each grouping level, items within all existing
+   catcodetables are restored, regardless of which one is the
+   currently active table.
+
+   Catcode table numbers cannot be larger than 0xFFFFFFF (228-1)
+
+* There is a new lua table: lua. It contains three read-only
+   items:
+
+     lua.id          -- the id number of the instance
+     lua.version     -- a luatex version identifier string
+     lua.startupfile -- the full filename (+path) of startup.lua
+
+   and it also contains a read/write array:
+
+     lua.bytecode[]  -- lua executable bytecode
+
+   This array can be used to save and restore lua functions
+   across lua states. The accepted values are for assignments
+   are functions and nil. Likewise, the retrieved value is
+   either a function or nil.
+
+   The contents of the lua.bytecode array is stored inside the
+   format file, so it can also be used to preload lua code.
+
+
+* The format files are quire a bit smaller than before
+
+
+==============================================================
+Luatex snapshot-20060915 was released 20060915
+==============================================================
+
+* There is a new TEX primitive: \formatname. It is similar
+  to \jobname (read-only). In initex, the expansion is empty,
+  otherwise the expansion is the same as the \jobname from
+  the initex run.
+
+* the lua "tex" table has been expanded with a few of the 'convert'
+  codes (read-only). The supported ones at this moment are:
+
+  tex.eTeXVersion
+  tex.OmegaVersion
+  tex.AlephVersion
+  tex.pdftexrevision
+  tex.pdftexbanner
+  tex.pdfnormaldeviate
+  tex.jobname
+  tex.formatname
+  tex.eTeXrevision
+  tex.Omegarevision
+  tex.Alephrevision
+
+  This list looks haphazard,  but it really is not. These are
+  all the cases of the 'convert' internal command that do not
+  require an argument.
+
+* The metatables of the subtables like tex.dimen[] etc. are now
+  adjustable from lua (not that I recommend doing that;-)).
+
+* On the lua side, there is a new global value: "luaid"
+  It holds the internal id number of this \directlua instance.
+
+* There is a new lua table, "callback", that has the single function
+  "callback.register", used to register callbacks.   This replaces
+  the previous concoction (see my message about snapshot 20060901).
+  Syntax is :
+
+  callback.register(<callback name>,function (f) ... end)
+
+  where the <callback name> is for the moment, either "input_line"
+  or "show_error_hook".
+
+  This function internalizes the callback function in such a way
+  that you no longer have to worry about \luacallback (which has
+  been removed), nor does it matter if you redefine a function
+  accidentally.
+
+ The internal testing for callback presence is also quite a bit
+ faster, thanks to this change. Callback assignments are global
+ and the "input_line" always takes effect starting on the next
+ input line to be read from an actual file.
+
+
+* \detokenizedlua has been removed. It is functionally replaced by
+  the new function call tex.write("").
+
+  Each argument to each call of tex.write () counts as an input
+  line, but:
+  ** all catcodes on that line are either 'space' (for " ") or
+     'character' for all others.
+  ** there is no \newlinechar appended.
+
+* The implementation of tex.print() has changed as well:
+
+  ** the very last tex.print() line from a \directlua
+     will no longer have a trailing \newlinechar
+     (this is very convenient when \directlua is used
+     within an \edef)
+  ** tex.print() is quite a lot faster than before, and the total amount
+     of returnable text from a \directlua is now only limited by
+     available system RAM. However, each separate tex.print ()
+     argument has to fit in TeX's input buffer.
+
+* The new primitive \luastartup can be set inside the format file
+  to specify the lua instance number in which a possible runtime
+  startup.lua script is executed (initex always uses 0)
+
+* There is a new primitive \scantextokens. Differences with
+  eTeX's \scantokens are:
+
+  ** the last line (usually only) from \scantextokens
+     does not have a \newlinechar
+
+  ** \scantextokens never raises an eof error.
+
+  This means things like
+
+  \edef\testone
+        {\scantextokens{\ifnum1=1 true}\else false\fi}
+
+  are legal input (but potentially dangerous!).
+
+* If you say
+     local d  = tex.dimen["unknowndimen"]
+  'd' will now become "nil" instead of raising an error
+
+   However,
+     tex.dimen["unknowndimen"] = d
+   is still (and probably will remain) illegal 
+
+==============================================================
+Luatex snapshot-20060908 was released 20060908
+==============================================================
+
+* BIG CHANGE: \directlua now runs \scantokens internally.
+
+  There is no longer a need to call scantokens yourself, the
+  tex.print() output is now fed straight into a pseudo file.
+  This is quite a bit faster as well as easier to use, but
+  just in case you want it, the old behaviour is still present,
+  under the new name
+
+    \detokenizedlua
+
+
+* The texio library now has its own (partial) set of I/O commands,
+  so that the standard lua io library is back to the distributed
+  state (no more patched garbage collector)
+
+  Note: This is really a very small change (it should not have any
+  impact on wellbehaved input files), but I attempt to be complete
+  in these notes, since there is no official documentation yet.
+
+
+* There is a new standard library available: kpse
+
+  The most important function in that library is find_file:
+
+    string = kpse.find_file(string filename
+                            [,string type]
+                            [,boolean mustexist])
+
+  both "type" and "mustexist" are optional, so the function
+  has from one upto three arguments.
+
+  "type" is like the '-format' argument of kpsewhich. You can
+     run 'kpsewich -h'  for a list. The default type is "tex".
+
+  "mustexist" is like '-must-exist', and the default  is false.
+     If you specify "true" (or a nonzero integer), then the kpse
+     library will search the disk as well as the ls-R databases
+
+  The new library also has three other functions that map
+  straight to kpsewhich commandline options:
+
+    string = kpse.expand_path(string)
+    string = kpse.expand_var(string)
+    string = kpse.expand_braces(string)
+
+* There is a second callback possibility:
+
+    texio.show_error_hook(string message,
+                          string|number indicator,
+                          number lineno)
+
+  This command is run from inside the TeX error function, and the
+  idea is to allow you to do some extra reporting on top of what
+  TeX already does (none of the normal actions are removed).
+
+  "message" is the formal error message tex has given to the
+     user (the line after the "! ")
+  "indicator" is either a filename (when it is a string) or a
+     location indicator (a number) that can means lots of different
+     things like a token list id or a \read number.
+  "lineno"  is the current line number
+
+  This is an investigative item only, comments are welcome but do
+  not take the syntax seriously.
+
+  The final goal IMO is the total replacement of TeX's error
+  handling routines, but that needs lots of adjustments
+  in the web source because TeX deals with errors in a somewhat
+  haphazard fashion (it needs unification first). The current
+  hook is only for 'testing the water'.
+
+* It is now possible to use named items in the
+
+    tex.count[]
+    tex.dimen[]
+    tex.toks[]
+
+  subtables, so you can have
+
+    tex.count.scratchcounter = 0
+        local enormous = tex.dimen["maxdimen"]
+
+  Luatex looks up the value for you on the fly. You have to use a
+  valid \countdef (or \dimendef, or \toksdef), anything else will
+  generate an error.
+
+  In a normal TeX file, you don't do \dimen\maxdimen, but the
+  lua syntax seems to be a bit cleaner to me. The intention is
+  to evntually also allow \chardefs and macros that expand
+  into a number (todo)
+
+
+* The tex table has also been extended with a large list of internal
+  parameters (partially read/write). It is possible to access
+  about every primitive that you can use after \the *and* is a
+  single token. So there is
+
+       integer   = tex.tracingcommands (\the\tracingcommands)
+       integer   = tex.prevgraf        (\the\prevgraf)
+       string    = tex.output          (\the\output)
+
+  etc. for all of the internal parameters, but not the items
+  that need extra arguments (like \the\scriptfont )
+
+  The subset comprising simple integer and dimension registers
+  are writable as well as readable (stuff like \tracingcommands
+  and \parindent).
+
+  The fact that both lists are still quite limited is a result of
+  the very different types of things that can occur after \the and
+  also on the LHS of an assignment. The remaining primitives will
+  be filled in when there is a real need or implementation becomes
+  simple, whichever comes first.
+
+
+
+==============================================================
+Luatex snapshot-20060901 was released 20060901
+==============================================================
+
+All changes are related to lua this time, and most are quite unstable
+/ experimental. But first the things that are stabel/fixed bugs:
+
+* A VF loading bug that turned up in some of Hans' fonts
+  has been fixed
+
+* A small series of bounds checking fixes to \ocplist has been
+  added to prevent the system from crashing due to array indexes
+  running out of bounds.
+
+* The Lua file searching paths are now fixed. The search path for lua
+  script files now contains the following items (tried in order)
+  1. the local directory:
+       ./?.lua
+    (for document-specific files)
+  2. the items from the expansion of kpathsea's $TEXMFSCRIPTS variable,
+    but only the parts containing 'lua' as a subpath:
+       $TEXMFSCRIPTS<lua>/?.lua
+       $TEXMFSCRIPTS<lua>/?/init.lua
+     (for format-specific files)
+  3. the $SELFAUTOPARENT sibling directory named 'lib'.
+       $SELFAUTOPARENT/lib/lua/5.1/?.lua
+       $SELFAUTOPARENT/lib/lua/5.1/?/init.lua
+     (for files that are not related to tex)
+
+  The search path for dynamic libraries has only
+  1. the local directory:
+       ./?.so
+    (for document-specific files)
+  2. and the $SELFAUTOPARENT sibling directory named 'lib'.
+       $SELFAUTOPARENT/lib/lua/5.1/?.so
+
+  (of course the extension is .dll on windows, but .dlls do not
+   work at the moment so it will not do you much good)
+
+* There are two functions available within a new table called
+  texio:
+    texio.write (luastring)
+    texio.write_nl (luastring)
+  both write the luastring to the same location(s) TeX writes
+  its stuff. So if \batchmode is on, it writes only to the
+  log, inside a \write, it prints to the current write file,
+  etc.
+
+  A read|write interface to TeX's "file selector" will
+  follow shortly.
+
+* At startup, luatex searches for a script named
+    startup.lua
+  in the path list I explained above. If such a file exists, it is
+  loaded.
+
+  This happens right before the first input file needs to be opened
+  (that is after format loading, but before any \everyjob tokens).
+
+  From within the script, you can check the value of
+
+    tex.formatname
+
+  that is the 'format identification' as used by TEX. When the variable
+  is equal to nil, luatex in in 'initex' mode, otherwise it will be
+  something like: " (format=plain 2006.9.1)"
+
+
+Now for the experimental portion: callbacks. Here is what I have done
+so far:
+
+* The main reason for wanting startup.lua is file (input) re-encoding.
+  For this purpose, it is now possible to set up a callback for
+  luatex to execute.
+
+  If you attach a Lua function to
+
+    texio.input_line
+
+  then from the next input line onwards, luatex will run that
+  function whenever it needs a new input line from a text file.
+
+  Your function will receive a file handle as argument, and
+  should return either a string or nil (with nil signalling that
+  the end of file has occurred).
+
+  The trivial case is simply this:
+
+    function reader (f)
+        return f:read()
+    end
+    texio.input_line = reader
+
+
+  Warning: The implementation is not totally finished yet. For the
+  moment the file handle ("f" in the example) is a normal lua file,
+  with a simple but important restriction: you cannot alter its value.
+  You cannot f:close() it, or assign it a different value. luatex
+  will eventually close the file itself.
+
+  The restriction is a side-effect of a synchronisation problem with
+  the lua garbage collector. Because of this, it also was necessary
+  to turn off the automatic file closing code for normal lua io
+  files (In other words: you have to close yourself all the files
+  you opened yourself, and you should not close any files you did
+  not open yourself).
+
+  In the near future, "f" will become a special 'texio' file object
+  and the needed functionality from the normal io library will be
+  reimplemented. Along with that change, there will also be a callback
+  to open (i.e. find) files, and a simple interface to the compiled-in
+  kpathsea to use within that callback. 
+
+
+==============================================================
+Luatex snapshot-20060825 was released 20060825
+==============================================================
+
+The main change in this snapshot is that it uses far less memory.
+luatex -ini on my linux machine went from 326Mb (last week) to
+93Mb (now), and "texexec luatex" now ends at 184Mb instead of
+over 1/2Gb.
+
+This is achieved by two big changes:
+
+* The \mathcode, \delcode, \catcode, \sfcode, \lccode and \uccode
+   tables are now sparse arrays that are implemented in C. They
+   are no longer part of the TeX "equivalence table" and because
+   each had 1.1 million entries with a few memory words each, this
+   makes a major difference.
+
+   See mathcodes.c and textcodes.c if you are interested in the
+   gory details, but be warned: the code is still extremely
+   rough and ugly. In particular, the dump and undump routines
+   are far from optimal, resulting in somewhat larger format files
+   than before (approx 1.3Mb larger with unicode-letters loaded,
+   10k without); and the assignments do not show up when using
+   the etex tracing routines \tracingassigns and \tracingrestores
+   (code simply not written yet)
+
+* Single-character commands are no longer "special" internally,
+   they are stored in the hash just like the multiletter csnames.
+
+
+==============================================================
+Luatex snapshot-20060818 was released 20060818
+==============================================================
+
+The snapshot is up to par with Aleph-RC4 (from texlive devel)
+and the latest pdftex beta (even newer than 20060811). However,
+there are some differences, to summarize:
+
+* There is no pool file (all strings are embedded)
+
+* -8bit and -translate-file are silently ignored
+
+* There is no mltex nor enctex (conflicts with aleph)
+
+* The tex functionality is always present and enabled
+  (but see below about TeXXeT), so the asterisk or
+  -etex switch for initex is not needed
+
+* "plus 1 filllllllll" does not generate any errors from TeX
+
+* TeXXeT (from eTeX) is not present, so the primives
+    \TeXXeTstate
+    \beginR
+    \beginL
+    \endR
+    \endL
+  are missing
+
+* The experimental pdftex regex match operations are removed,
+  because that feature does not make much sense when lua is
+  available so the primitives
+        \pdfmatch
+    \pdflastmatch
+  are missing
+
+* The input translations from Aleph are not implemented, the
+  16 related primitives are all missing
+     \DefaultInputMode
+     \noDefaultInputMode
+     \noInputMode
+     \InputMode
+     \DefaultOutputMode
+     \noDefaultOutputMode
+     \noOutputMode
+     \OutputMode
+     \DefaultInputTranslation
+     \noDefaultInputTranslation
+     \noInputTranslation
+     \InputTranslation
+     \DefaultOutputTranslation
+     \noDefaultOutputTranslation
+     \noOutputTranslation
+     \OutputTranslation
+  All file IO assumes UTF-8, except that all the low-ascii
+  controls except TAB, CR en LF are written to the terminal
+  using ^^  notation (even these are binary in the log file).
+
+* Input characters can use the full range of Unicode,
+  but it probably only makes sense to use values above
+  the base plane for \mathcode and \catcode assignments,
+  since the fonts as well as the hyphenation patterns
+  are strictly 16-bit still.
+
+* The primitives
+     \pdfpagewidth and \pagewidth,
+     \pdfpageheight and \pageheight,
+     \fontcharwd and \charwd,
+     \fontcharht and \charht,
+     \fontchardp and \chardp,
+     \fontcharic and \charic,
+  are all aliases of eachother.
+
+* The new primitive
+     \clearmarks<number>
+  clears a marks class completely.
+
+* The experimental pdftex primitives
+     \pdfprimitive
+     \ifpdfprimitive
+     \ifpdfabsnum
+     \ifpdfabsdim
+  and provided without the extra 'pdf' prefix, so they are
+  simply called
+     \primitive
+     \ifprimitive
+     \ifabsnum
+     \ifabsdim
+  instead.
+
+* I probably forgot to mention some things :-) 

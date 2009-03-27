@@ -3,6 +3,16 @@
 ** Copyright (C) 2004-2007 Mike Pall. See copyright notice in lcoco.c
 */
 
+#if defined(__OpenBSD__)
+#if defined(__i386) || defined(__i386__)
+#else
+#undef COCO_DISABLE
+#define COCO_DISABLE
+#define lcoco_h
+#endif
+#endif
+
+
 #ifndef lcoco_h
 #define lcoco_h
 

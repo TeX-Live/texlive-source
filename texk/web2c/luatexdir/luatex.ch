@@ -1,3 +1,24 @@
+%  luatex.ch
+%  
+%  Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+%
+%  This file is part of LuaTeX.
+%
+%  LuaTeX is free software; you can redistribute it and/or modify it under
+%  the terms of the GNU General Public License as published by the Free
+%  Software Foundation; either version 2 of the License, or (at your
+%  option) any later version.
+%
+%  LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+%  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+%  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+%  License for more details.
+%
+%  You should have received a copy of the GNU General Public License along
+%  with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+%
+% $Id$
+%
 @x
   \def\?##1]{\hbox to 1in{\hfil##1.\ }}
   }
@@ -8,11 +29,11 @@
 @z
 
 @x
-@d banner==luaTeX_banner
+@d banner==LuaTeX_banner
 @y
-@d luaTeXk_banner=='This is luaTeXk, Version ',luatex_version_string
+@d luaTeXk_banner=='This is LuaTeXk, Version ',luatex_version_string
 @#
-@d banner==luaTeX_banner
+@d banner==LuaTeX_banner
 @d banner_k==luaTeXk_banner
 @z
 
@@ -20,6 +41,7 @@
 Actually the heading shown here is not quite normal: The |program| line
 does not mention any |output| file, because \ph\ would ask the \TeX\ user
 to specify a file name if |output| were specified here.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 @y
 @z
@@ -129,7 +151,7 @@ versions of the program.
 {Larger values than 65536 cause the arrays consume much more memory.}
 
 @<Constants...@>=
-@!hash_offset=514; {smallest index in hash array, i.e., |hash_base| }
+@!hash_offset=0; {smallest index in hash array, i.e., |hash_base| }
   {Use |hash_offset=0| for compilers which cannot decrement pointers.}
 @!engine_name='luatex'; {the name of this engine}
 @#
@@ -182,20 +204,6 @@ versions of the program.
 
 @!inf_expand_depth = 100;
 @!sup_expand_depth = 1000000;
-@z
-
-@x
-@d font_base=0 {smallest internal font number; must not be less
-  than |min_quarterword|}
-@d hash_size=2100 {maximum number of control sequences; it should be at most
-  about |(fix_mem_max-fix_mem_min)/10|}
-@d hash_prime=1777 {a prime number equal to about 85\pct! of |hash_size|}
-@y
-@d font_base=0 {smallest internal font number; must not be less
-  than |min_quarterword|}
-@d hash_size=65536 {maximum number of control sequences; it should be at most
-  about |(mem_max-mem_min)/10|}
-@d hash_prime=55711 {a prime number equal to about 85\pct! of |hash_size|}
 @z
 
 @x
@@ -279,6 +287,7 @@ end;
 
 @x
 @ Files can be closed with the \ph\ routine `|close(f)|', which
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 should be used when all input or output with respect to |f| has been completed.
 This makes |f| available to be opened again, if desired; and if |f| was used for
@@ -391,21 +400,12 @@ tini@/
 @!filelineerrorstylep:cinttype; {format messages as file:line:error}
 @!haltonerrorp:cinttype; {stop at first error}
 @!quoted_filename:boolean; {current filename is quoted}
-{Variables for source specials}
-@!srcspecialsp : boolean;{Whether |src_specials| are enabled at all}
-@!insertsrcspecialauto : boolean;
-@!insertsrcspecialeverypar : boolean;
-@!insertsrcspecialeveryparend : boolean;
-@!insertsrcspecialeverycr : boolean;
-@!insertsrcspecialeverymath : boolean;
-@!insertsrcspecialeveryhbox : boolean;
-@!insertsrcspecialeveryvbox : boolean;
-@!insertsrcspecialeverydisplay : boolean;
 @z
 
 @x
 @ Here is how to open the terminal files
 in \ph. The `\.{/I}' switch suppresses the first |get|.
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d t_open_in==reset(term_in,'TTY:','/O/I') {open the terminal for text input}
@@ -420,6 +420,7 @@ any command line arguments the user has provided.  It's defined in C.
 
 @x
 these operations can be specified in \ph:
+@:PASCAL H}{\ph@>
 @^system dependencies@>
 
 @d update_terminal == break(term_out) {empty the terminal output buffer}
@@ -574,47 +575,6 @@ end;
 @z
 
 @x
-line ready to be edited. But such an extension requires some system
-wizardry, so the present implementation simply types out the name of the
-file that should be
-edited and the relevant line number.
-@^system dependencies@>
-
-There is a secret `\.D' option available when the debugging routines haven't
-been commented~out.
-@^debugging@>
-@y
-line ready to be edited.
-We do this by calling the external procedure |calledit| with a pointer to
-the filename, its length, and the line number.
-However, here we just set up the variables that will be used as arguments,
-since we don't want to do the switch-to-editor until after TeX has closed
-its files.
-@^system dependencies@>
-
-There is a secret `\.D' option available when the debugging routines haven't
-been commented~out.
-@^debugging@>
-@d edit_file==input_stack[base_ptr]
-@z
-
-@x
-"E": if base_ptr>0 then
-  begin print_nl("You want to edit file ");
-@.You want to edit file x@>
-  slow_print(input_stack[base_ptr].name_field);
-  print(" at line "); print_int(line);
-  interaction:=scroll_mode; jump_out;
-@y
-"E": if base_ptr>0 then
-    begin edit_name_start:=str_start_macro(edit_file.name_field);
-    edit_name_length:=str_start_macro(edit_file.name_field+1) -
-                      str_start_macro(edit_file.name_field);
-    edit_line:=line;
-    jump_out;
-@z
-
-@x
 |remainder|, holds the remainder after a division.
 
 @<Glob...@>=
@@ -687,18 +647,6 @@ So they have been simplified here in the obvious way.
 @z
 
 @x
-  if abs(vmem(p+glue_offset).int)<@'4000000 then print("?.?")
-  else if abs(g)>float_constant(20000) then
-@y
-  { The Unix |pc| folks removed this restriction with a remark that
-    invalid bit patterns were vanishingly improbable, so we follow
-    their example without really understanding it.
-  |if abs(vmem(p+glue_offset).int)<@'4000000 then print('?.?')|
-  |else| }
-  if fabs(g)>float_constant(20000) then
-@z
-
-@x
 begin if m>0 then
   case m div (max_command+1) of
   0:print("vertical");
@@ -751,10 +699,8 @@ end;
 @z
 
 @x
-local_par:=null; local_par_bool:=false;
 @<Start a new current page@>;
 @y
-local_par:=null; local_par_bool:=false;
 @/{The following piece of code is a copy of module 991:}
 page_contents:=empty; page_tail:=page_head; {|link(page_head):=null;|}@/
 last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
@@ -771,20 +717,10 @@ page_depth:=0; page_max_depth:=0;
 @z
 
 @x
-@d frozen_null_font=frozen_control_sequence+12
-  {permanent `\.{\\nullfont}'}
-@y
-@d frozen_special=frozen_control_sequence+12
-  {permanent `\.{\\special}'}
-@d frozen_null_font=frozen_control_sequence+13
-  {permanent `\.{\\nullfont}'}
-@z
-
-@x
-for k:=active_base to undefined_control_sequence-1 do
+for k:=null_cs to undefined_control_sequence-1 do
   eqtb[k]:=eqtb[undefined_control_sequence];
 @y
-for k:=active_base to eqtb_top do
+for k:=null_cs to eqtb_top do
   eqtb[k]:=eqtb[undefined_control_sequence];
 @z
 
@@ -823,7 +759,7 @@ else if (n<glue_base) or ((n>eqtb_size)and(n<=eqtb_top)) then
 @z
 
 @x
-@!eqtb:array[active_base..eqtb_size] of memory_word;
+@!eqtb:array[null_cs..eqtb_size] of memory_word;
 @y
 @!zeqtb:^memory_word;
 @z
@@ -853,32 +789,6 @@ hash_used:=frozen_control_sequence; {nothing is used}
 @y
 hash_used:=frozen_control_sequence; {nothing is used}
 hash_high:=0;
-@z
-
-@x
-@ @<Insert a new control...@>=
-begin if text(p)>0 then
-  begin repeat if hash_is_full then overflow("hash size",hash_size);
-@:TeX capacity exceeded hash size}{\quad hash size@>
-  decr(hash_used);
-  until text(hash_used)=0; {search for an empty location in |hash|}
-  next(p):=hash_used; p:=hash_used;
-  end;
-@y
-@ @<Insert a new control...@>=
-begin if text(p)>0 then
-  begin if hash_high<hash_extra then
-      begin incr(hash_high);
-      next(p):=hash_high+eqtb_size; p:=hash_high+eqtb_size;
-      end
-    else begin
-      repeat if hash_is_full then overflow("hash size",hash_size+hash_extra);
-@:TeX capacity exceeded hash size}{\quad hash size@>
-      decr(hash_used);
-      until text(hash_used)=0; {search for an empty location in |hash|}
-    next(p):=hash_used; p:=hash_used;
-    end;
-  end;
 @z
 
 @x
@@ -1026,203 +936,6 @@ In C, the default paths are specified separately.
 @z
 
 @x
-begin area_delimiter:=0; ext_delimiter:=0;
-@y
-begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false;
-@z
-
-@x
-begin if c=" " then more_name:=false
-@y
-begin if (c=" ") and stop_at_space and (not quoted_filename) then
-  more_name:=false
-else  if c="""" then begin
-  quoted_filename:=not quoted_filename;
-  more_name:=true;
-  end
-@z
-
-@x
-  if (c=">")or(c=":") then
-@y
-  if ISDIRSEP(c) then
-@z
-
-@x
-  else if (c=".")and(ext_delimiter=0) then ext_delimiter:=cur_length;
-@y
-  else if c="." then ext_delimiter:=cur_length;
-@z
-
-@x
-@ The third.
-@^system dependencies@>
-
-@p procedure end_name;
-@y
-@ The third.
-@^system dependencies@>
-If a string is already in the string pool, the function
-|slow_make_string| does not create a new string but returns this string
-number, thus saving string space.  Because of this new property of the
-returned string number it is not possible to apply |flush_string| to
-these strings.
-
-@p procedure end_name;
-var temp_str: str_number; {result of file name cache lookups}
-@!j,@!s,@!t: pool_pointer; {running indices}
-@!must_quote:boolean; {whether we need to quote a string}
-@z
-
-@x
-@:TeX capacity exceeded number of strings}{\quad number of strings@>
-@y
-@:TeX capacity exceeded number of strings}{\quad number of strings@>
-str_room(6); {Room for quotes, if needed.}
-{add quotes if needed}
-if area_delimiter<>0 then begin
-  {maybe quote |cur_area|}
-  must_quote:=false;
-  s:=str_start_macro(str_ptr);
-  t:=str_start_macro(str_ptr)+area_delimiter;
-  j:=s;
-  while (not must_quote) and (j<t) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-    end;
-  if must_quote then begin
-    for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
-    str_pool[t+1]:="""";
-    for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
-    str_pool[s]:="""";
-    if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
-    area_delimiter:=area_delimiter+2;
-    pool_ptr:=pool_ptr+2;
-    end;
-  end;
-{maybe quote |cur_name|}
-s:=str_start_macro(str_ptr)+area_delimiter;
-if ext_delimiter=0 then t:=pool_ptr else t:=str_start_macro(str_ptr)+ext_delimiter-1;
-must_quote:=false;
-j:=s;
-while (not must_quote) and (j<t) do begin
-  must_quote:=str_pool[j]=" "; incr(j);
-  end;
-if must_quote then begin
-  for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
-  str_pool[t+1]:="""";
-  for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
-  str_pool[s]:="""";
-  if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
-  pool_ptr:=pool_ptr+2;
-  end;
-if ext_delimiter<>0 then begin
-  {maybe quote |cur_ext|}
-  s:=str_start_macro(str_ptr)+ext_delimiter-1;
-  t:=pool_ptr;
-  must_quote:=false;
-  j:=s;
-  while (not must_quote) and (j<t) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-    end;
-  if must_quote then begin
-    str_pool[t+1]:="""";
-    for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
-    str_pool[s]:="""";
-    pool_ptr:=pool_ptr+2;
-    end;
-  end;
-@z
-
-@x
-  str_start_macro(str_ptr+1):=str_start_macro(str_ptr)+area_delimiter; incr(str_ptr);
-  end;
-if ext_delimiter=0 then
-  begin cur_ext:=""; cur_name:=make_string;
-@y
-  str_start_macro(str_ptr+1):=str_start_macro(str_ptr)+area_delimiter; incr(str_ptr);
-  temp_str:=search_string(cur_area);
-  if temp_str>0 then
-    begin cur_area:=temp_str;
-    decr(str_ptr);  {no |flush_string|, |pool_ptr| will be wrong!}
-    for j:=str_start_macro(str_ptr+1) to pool_ptr-1 do
-      begin str_pool[j-area_delimiter]:=str_pool[j];
-      end;
-    pool_ptr:=pool_ptr-area_delimiter; {update |pool_ptr|}
-    end;
-  end;
-if ext_delimiter=0 then
-  begin cur_ext:=""; cur_name:=slow_make_string;
-@z
-
-@x
-else  begin cur_name:=str_ptr;
-  str_start_macro(str_ptr+1):=str_start_macro(str_ptr)+ext_delimiter-area_delimiter-1;
-  incr(str_ptr); cur_ext:=make_string;
-@y
-else  begin cur_name:=str_ptr;
-  str_start_macro(str_ptr+1):=str_start_macro(str_ptr)+ext_delimiter-area_delimiter-1;
-  incr(str_ptr); cur_ext:=make_string;
-  decr(str_ptr); {undo extension string to look at name part}
-  temp_str:=search_string(cur_name);
-  if temp_str>0 then
-    begin cur_name:=temp_str;
-    decr(str_ptr);  {no |flush_string|, |pool_ptr| will be wrong!}
-    for j:=str_start_macro(str_ptr+1) to pool_ptr-1 do
-      begin str_pool[j-ext_delimiter+area_delimiter+1]:=str_pool[j];
-      end;
-    pool_ptr:=pool_ptr-ext_delimiter+area_delimiter+1;  {update |pool_ptr|}
-    end;
-  cur_ext:=slow_make_string;  {remake extension string}
-@z
-
-@x
-begin slow_print(a); slow_print(n); slow_print(e);
-@y
-var must_quote: boolean; {whether to quote the filename}
-@!j:pool_pointer; {index into |str_pool|}
-begin
-must_quote:=false;
-if a<>0 then begin
-  j:=str_start_macro(a);
-  while (not must_quote) and (j<str_start_macro(a+1)) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-if n<>0 then begin
-  j:=str_start_macro(n);
-  while (not must_quote) and (j<str_start_macro(n+1)) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-if e<>0 then begin
-  j:=str_start_macro(e);
-  while (not must_quote) and (j<str_start_macro(e+1)) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-{FIXME: Alternative is to assume that any filename that has to be quoted has
- at least one quoted component...if we pick this, a number of insertions
- of |print_file_name| should go away.
-|must_quote|:=((|a|<>0)and(|str_pool|[|str_start|[|a|]]=""""))or
-              ((|n|<>0)and(|str_pool|[|str_start|[|n|]]=""""))or
-              ((|e|<>0)and(|str_pool|[|str_start|[|e|]]=""""));}
-if must_quote then print_char("""");
-if a<>0 then
-  for j:=str_start_macro(a) to str_start_macro(a+1)-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if n<>0 then
-  for j:=str_start_macro(n) to str_start_macro(n+1)-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if e<>0 then
-  for j:=str_start_macro(e) to str_start_macro(e+1)-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if must_quote then print_char("""");
-@z
-
-@x
 @d append_to_name(#)==begin c:=#; incr(k);
   if k<=file_name_size then nameoffile[k]:=xchr[c];
   end
@@ -1319,78 +1032,6 @@ nameoffile[namelength+1]:=0;
 @z
 
 @x
-@p function make_name_string:str_number;
-var k:1..file_name_size; {index into |nameoffile|}
-begin if (pool_ptr+namelength>pool_size)or(str_ptr=max_strings)or
- (cur_length>0) then
-  make_name_string:="?"
-else  begin for k:=1 to namelength do append_char(nameoffile[k]);
-  make_name_string:=make_string;
-  end;
-@y
-@p function make_name_string:str_number;
-var k:1..file_name_size; {index into |nameoffile|}
-save_area_delimiter, save_ext_delimiter: pool_pointer;
-save_name_in_progress, save_stop_at_space: boolean;
-begin if (pool_ptr+namelength>pool_size)or(str_ptr=max_strings)or
- (cur_length>0) then
-  make_name_string:="?"
-else  begin for k:=1 to namelength do append_char(nameoffile[k]);
-  make_name_string:=make_string;
-  {At this point we also set |cur_name|, |cur_ext|, and |cur_area| to
-   match the contents of |nameoffile|.}
-  save_area_delimiter:=area_delimiter; 
-  save_ext_delimiter:=ext_delimiter;
-  save_name_in_progress:=name_in_progress; 
-  save_stop_at_space:=stop_at_space;
-  name_in_progress:=true;
-  begin_name;
-  stop_at_space:=false;
-  k:=1;
-  while (k<=namelength)and(more_name(nameoffile[k])) do
-    incr(k);
-  stop_at_space:=save_stop_at_space;
-  end_name;
-  name_in_progress:=save_name_in_progress;
-  area_delimiter:=save_area_delimiter; 
-  ext_delimiter:=save_ext_delimiter;
-  end;
-@z
-
-@x
-  if not more_name(cur_chr) then goto done;
-@y
-  {If |cur_chr| is a space and we're not scanning a token list, check
-   whether we're at the end of the buffer. Otherwise we end up adding
-   spurious spaces to file names in some cases.}
-  if (cur_chr=" ") and (state<>token_list) and (loc>limit) then goto done;
-  if not more_name(cur_chr) then goto done;
-@z
-
-@x
-var k:0..buf_size; {index into |buffer|}
-@y
-var k:0..buf_size; {index into |buffer|}
-@!saved_cur_name:str_number; {to catch empty terminal input}
-@z
-
-@x
-if e=".tex" then show_context;
-@y
-if (e=".tex") or (e="") then show_context;
-@z
-
-@x
-clear_terminal; prompt_input(": "); @<Scan file name in the buffer@>;
-if cur_ext="" then cur_ext:=e;
-@y
-saved_cur_name:=cur_name;
-clear_terminal; prompt_input(": "); @<Scan file name in the buffer@>;
-if cur_ext="" then cur_ext:=e;
-if length(cur_name)=0 then cur_name:=saved_cur_name;
-@z
-
-@x
 @d ensure_dvi_open==if output_file_name=0 then
 @y
 @d log_name == texmf_log_name
@@ -1409,14 +1050,14 @@ if job_name=0 then job_name:="texput";
 @y
 if job_name=0 then job_name:=getjobname("texput");
 @.texput@>
-pack_job_name(".fls");
+pack_job_name('.fls');
 recorder_change_filename(stringcast(nameoffile+1));
 @z
 
 @x
 begin wlog(banner);
 @y
-begin if srcspecialsp or filelineerrorstylep or parsefirstlinep
+begin if filelineerrorstylep or parsefirstlinep
 then
   wlog(banner_k)
 else
@@ -1447,10 +1088,6 @@ if shellenabledp then begin
   end;
   wlog('\write18 enabled.')
   end;
-if srcspecialsp then begin
-  wlog_cr;
-  wlog(' Source specials enabled.')
-  end;
 if filelineerrorstylep then begin
   wlog_cr;
   wlog(' file:line:error style messages enabled.')
@@ -1463,9 +1100,9 @@ end
 @z
 
 @x
-  prompt_file_name("input file name",".tex");
+  prompt_file_name('input file name','.tex');
 @y
-  prompt_file_name("input file name","");
+  prompt_file_name('input file name','');
 @z
 
 @x
@@ -1613,9 +1250,6 @@ endifn ('IPC')
 continue: adjust_space_factor;@/
 @y
 @<Append character |cur_chr|...@>=
-if ((head=tail) and (mode>0)) then begin
-  if (insertsrcspecialauto) then append_src_special;
-end;
 continue: adjust_space_factor;@/
 @z
 
@@ -1635,7 +1269,6 @@ if indented then begin
   p:=new_null_box; box_dir(p):=par_direction;
   width(p):=par_indent;@+
   tail_append(p);
-  if (insertsrcspecialeverypar) then insert_src_special;@+
 @z
 
 @x
@@ -1657,29 +1290,10 @@ end;
 @z
 
 @x
-if every_math<>null then begin_token_list(every_math,every_math_text);
-@y
-if (insertsrcspecialeverymath) then insert_src_special;
-if every_math<>null then begin_token_list(every_math,every_math_text);
-@z
-
-@x
-  if every_vbox<>null then begin_token_list(every_vbox,every_vbox_text);
-@y
-  if (insertsrcspecialeveryvbox) then insert_src_special;
-  if every_vbox<>null then begin_token_list(every_vbox,every_vbox_text);
-@z
-
-@x
 if (cur_cs=0)or(cur_cs>frozen_control_sequence) then
 @y
 if (cur_cs=0)or(cur_cs>eqtb_top)or
   ((cur_cs>frozen_control_sequence)and(cur_cs<=eqtb_size)) then
-@z
-
-@x
-@!flushable_string:str_number; {string not yet referenced}
-@y
 @z
 
 @x
@@ -1774,7 +1388,7 @@ if x<>@$ then goto bad_fmt; {check that strings are the same}
 @y
 @+Init
 libcfree(str_pool); libcfree(str_start);
-libcfree(yhash); libcfree(zeqtb); libcfree(fixmem); libcfree(varmem);
+libcfree(yhash); libcfree(zeqtb); libcfree(fixmem); libcfree(varmemcast(varmem));
 @+Tini
 undump_int(x);
 format_debug('format magic number')(x);
@@ -2065,8 +1679,8 @@ print(" (format="); print(job_name); print_char(" ");
 @d setup_bound_var(#)==bound_default:=#; setup_bound_var_end
 @d setup_bound_var_end(#)==bound_name:=#; setup_bound_var_end_end
 @d setup_bound_var_end_end(#)==if luainit>0 then begin
-	get_lua_number('texconfig',bound_name,addressof(#));
-	if #=0 then #:=bound_default;
+       get_lua_number('texconfig',bound_name,addressof(#));
+       if #=0 then #:=bound_default;
     end
   else
     setupboundvariable(addressof(#), bound_name, bound_default);
@@ -2201,7 +1815,7 @@ end {|main_body|};
 @x
   wterm(banner);
 @y
-  if srcspecialsp or filelineerrorstylep or parsefirstlinep then
+  if filelineerrorstylep or parsefirstlinep then
     wterm(banner_k)
   else
     wterm(banner);
@@ -2221,9 +1835,6 @@ end {|main_body|};
       wterm('restricted ');
     end;
     wterm_ln('\write18 enabled.');
-  end;
-  if srcspecialsp then begin
-    wterm_ln(' Source specials enabled.')
   end;
   if filelineerrorstylep then begin
     wterm_ln(' file:line:error style messages enabled.')
@@ -2301,13 +1912,6 @@ tini@/
 @z
 
 @x
-primitive("special",extension,special_node);@/
-@y
-primitive("special",extension,special_node);@/
-text(frozen_special):="special"; eqtb[frozen_special]:=eqtb[cur_val];@/
-@z
-
-@x
   else if cur_val>15 then cur_val:=16;
 @y
   else if (cur_val>15) and (cur_val <> 18) then cur_val:=16;
@@ -2350,7 +1954,7 @@ if j=18 then
     str_room(1); append_char(0); {Append a null byte to the expansion.}
     clobbered:=false;
     for d:=0 to cur_length-1 do {Convert to external character set.}
-      begin
+      begin 
         str_pool[str_start_macro(str_ptr)+d]:=xchr[str_pool[str_start_macro(str_ptr)+d]];
         if (str_pool[str_start_macro(str_ptr)+d]=null_code)
            and (d<cur_length-1) then clobbered:=true;
@@ -2588,44 +2192,6 @@ exit:end;
 @x
 @* \[55] Index.
 @y
-
-@ @<Declare action procedures for use by |main_control|@>=
-
-procedure insert_src_special;
-var toklist, p, q,r : pointer;
-begin
-  if (source_filename_stack[in_open] > 0 and isnewsource (source_filename_stack[in_open]
-, line)) then begin
-    toklist := get_avail;
-    p := toklist;
-    info(p) := cs_token_flag+frozen_special;
-    r := get_avail; link(p):=r; p := link(p);
-    info(p) := left_brace_token+"{";
-    q := str_toks (makesrcspecial (source_filename_stack[in_open], line));
-    link(p) := link(temp_token_head);
-    p := q;
-    r := get_avail; link(p):=r; p := link(p);
-    info(p) := right_brace_token+"}";
-    ins_list (toklist);
-    remembersourceinfo (source_filename_stack[in_open], line);
-  end;
-end;
-
-procedure append_src_special;
-var q : pointer;
-begin
-  if (source_filename_stack[in_open] > 0 and isnewsource (source_filename_stack[in_open]
-, line)) then begin
-    new_whatsit (special_node);
-    write_stream(tail) := 0;
-    q:=get_avail; def_ref := q;
-    token_ref_count(def_ref) := null;
-    q := str_toks (makesrcspecial (source_filename_stack[in_open], line));
-    link(def_ref) := link(temp_head);
-    write_tokens(tail) := def_ref;
-    remembersourceinfo (source_filename_stack[in_open], line);
-  end;
-end;
 
 @ This function used to be in pdftex, but is useful in tex too.
 

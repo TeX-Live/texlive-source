@@ -24,6 +24,16 @@
 */
 
 /* Coco -- True C coroutines for Lua. http://luajit.org/coco.html */
+
+#if defined(__OpenBSD__)
+#if defined(__i386) || defined(__i386__)
+#else
+#undef COCO_DISABLE
+#define COCO_DISABLE
+# warning COCO: not supported on this platform (non-intel OpenBSD)
+#endif
+#endif
+
 #ifndef COCO_DISABLE
 
 #define lcoco_c

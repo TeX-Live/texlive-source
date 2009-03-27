@@ -1,8 +1,8 @@
 /*
 ** LuaFileSystem
-** Copyright Kepler Project 2004-2006 (http://www.keplerproject.org/luafilesystem)
+** Copyright Kepler Project 2003 (http://www.keplerproject.org/luafilesystem)
 **
-** $Id: lfs.h,v 1.3 2006/03/10 23:37:32 carregal Exp $
+** $Id: lfs.h,v 1.5 2008/02/19 20:08:23 mascarenhas Exp $
 */
 
 /* Define 'chdir' for systems that do not implement it */
@@ -12,5 +12,6 @@
 #else
 #define chdir_error	strerror(errno)
 #endif
+
 
 int luaopen_lfs (lua_State *L);

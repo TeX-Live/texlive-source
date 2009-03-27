@@ -1,26 +1,28 @@
-{
-Copyright (c) 1996-2006, 2008 Han The Thanh, Taco Hoekwater
+{  luatex.defines
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of luaTeX.
+   This file is part of LuaTeX.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. }
 
-$Id$
-}
+{ $Id$ }
 
-{ luatex.defines: additions for luaTeX }
+{ luatex.defines: additions for LuaTeX }
+
+@define function simple_advance_width(); 
 
 @define function new_node();
 @define function new_glyph_node;
@@ -61,7 +63,6 @@ $Id$
 @define function make_lang_data();
 @define procedure ext_do_line_break();
 @define procedure initialize_active;
-@define var active_node_size;
 @define var prev_char_p;
 @define function cur_break();
 @define function break_node();
@@ -75,10 +76,16 @@ $Id$
 @define procedure dump_language_data;
 @define procedure undump_language_data;
 @define function insert_discretionary();
+@define function compound_word_break();
 @define procedure set_pre_hyphen_char();
 @define procedure set_post_hyphen_char();
+@define procedure set_pre_exhyphen_char();
+@define procedure set_post_exhyphen_char();
 @define function get_pre_hyphen_char();
 @define function get_post_hyphen_char();
+@define function get_pre_exhyphen_char();
+@define function get_post_exhyphen_char();
+
 
 { macros from luatex.h }
 @define function pdf_char_marked();
@@ -91,15 +98,13 @@ $Id$
 @define procedure luacall();
 @define procedure luatokencall();
 @define procedure closelua();
+@define function get_lua_name();
 
-@define function  luacstring_input;
-@define function  luacstring_penultimate;
-@define function  luacstring_detokenized;
-@define function  luacstring_cattable;
-@define function  luacstring_defaultcattable;
-@define function  luacstring_simple;
+{ for virtual file input }
+
 @define procedure luacstring_close();
 @define procedure luacstring_start();
+@define var DEFAULT_CAT_TABLE;
 
 { for callbacks }
 
@@ -146,11 +151,13 @@ $Id$
 @define var define_font_callback;
 @define var token_filter_callback;
 @define var pre_linebreak_filter_callback;
+@define var linebreak_filter_callback;
 @define var post_linebreak_filter_callback;
 @define var buildpage_filter_callback;
 @define var hyphenate_callback;
 
 @define function lua_hyphenate_callback();
+@define function lua_linebreak_callback();
 
 @define procedure get_saved_lua_boolean();
 @define procedure get_saved_lua_number();
@@ -167,16 +174,39 @@ $Id$
 
 { bits for extended char code access }
 
+@define const tex_mathcode    ;
+@define const aleph_mathcode  ;
+@define const xetex_mathcode   ;
+@define const xetexnum_mathcode;
+
+@define type mathcodeval;
+@define @field origin_value;
+@define @field class_value;
+@define @field family_value;
+@define @field character_value;
+
+@define type delcodeval;
+@define @field small_family_value;
+@define @field small_character_value;
+@define @field large_family_value;
+@define @field large_character_value;
+
 @define function get_math_code();
+@define function get_math_code_num();
 @define procedure set_math_code();
-@define function get_del_code_a();
-@define function get_del_code_b();
+@define function get_del_code();
 @define procedure set_del_code();
+@define procedure show_mathcode_value();
+
+@define function scan_mathchar();
+@define function scan_delimiter_as_mathchar();
+@define function mathchar_from_integer();
 
 @define procedure unsave_math_codes ();
 @define procedure initialize_math_codes;
 @define procedure dump_math_codes;
 @define procedure undump_math_codes;
+@define procedure free_math_codes;
 
 @define function get_lc_code();
 @define procedure set_lc_code();
@@ -197,6 +227,7 @@ $Id$
 @define procedure unsave_cat_codes ();
 @define procedure unsave_text_codes ();
 @define procedure initializetextcodes;
+@define procedure free_text_codes;
 @define procedure dumptextcodes;
 @define procedure undumptextcodes;
 
@@ -209,6 +240,8 @@ $Id$
 @define procedure flush_loggable_info;
 
 @define var extra_version_info;
+@define var SVN_REV;
+@define procedure do_write_wterm();
 
 { bits and pieces from aleph }
 
@@ -226,6 +259,8 @@ $Id$
 @define procedure dump_ocp_table ();
 @define procedure undump_ocp_table ();
 @define procedure run_external_ocp ();
+
+@define function  copy_font_info();
 
 { 'texfont' library definitions }
 
@@ -404,6 +439,13 @@ $Id$
 
 @define procedure writefontstuff;
 
+{functions from filename.c }
+@define procedure pack_job_name();
+@define procedure prompt_file_name();
+@define procedure scan_file_name;
+@define function make_name_string;
+@define procedure print_file_name();
+
 { functions from utils.c }
 @define procedure escapehex();
 @define procedure escapename();
@@ -445,6 +487,9 @@ $Id$
 @define function getlly;
 @define function geturx;
 @define function getury;
+@define function pdf_do_page_divert();
+@define procedure pdf_do_page_undivert();
+@define function output_pages_tree;
 
 {functions from texpdf.c }
 
@@ -457,6 +502,9 @@ $Id$
 {functions from textoken.c }
 
 @define function get_next;
+@define function scan_keyword();
+@define procedure scan_direction;
+@define function active_to_cs();
 
 { functions from vfpacket.c }
 @define function new_vf_packet();
@@ -471,10 +519,13 @@ $Id$
 @define function check_image_b();
 @define function check_image_c();
 @define function check_image_i();
+@define function epdf_xsize();
+@define function epdf_ysize();
 @define function epdf_orig_x();
 @define function epdf_orig_y();
 @define function image_pages();
 @define function image_colordepth();
+@define function image_groupref();
 @define function image_index();
 @define function image_width();
 @define function image_height();
@@ -482,6 +533,7 @@ $Id$
 @define function image_objnum();
 @define function image_imgnum();
 @define function is_pdf_image();
+@define function is_png_image();
 @define function read_image();
 @define function new_image_entry;
 @define procedure update_image_procset();
@@ -491,8 +543,20 @@ $Id$
 @define procedure set_image_index();
 @define procedure out_image();
 
+@define procedure dumpimagemeta;
+@define procedure undumpimagemeta();
+
 { functions from limglib.c }
-@define procedure lua_setximage();
+
+{ functions from pdfpage.c }
+@define procedure pdf_place_rule();
+@define procedure pdf_place_glyph();
+@define procedure pdf_place_form();
+@define procedure pdf_goto_pagemode;
+@define procedure pdf_page_init;
+@define procedure pdf_set_pos();
+@define procedure pdf_end_string_nl;
+@define procedure pdf_print_charwidth();
 
 { functions from writet3.c }
 @define function get_pk_char_width();
@@ -506,6 +570,9 @@ $Id$
 
 { functions from tounicode.c }
 @define procedure def_tounicode();
+
+{ functions from luatex.web }
+@define function auto_expand_vf();
 
 { end of luatex.defines }
 
@@ -556,3 +623,276 @@ $Id$
 @define procedure write_ln ();
 
 @define procedure recorder_change_filename ();
+
+{ functions from the synctex controller in synctex.c }
+
+@define procedure synctex_init_command;
+@define procedure synctex_start_input;
+@define procedure synctex_terminate();
+@define procedure synctex_sheet();
+@define procedure synctex_teehs;
+@define procedure synctex_vlist();
+@define procedure synctex_tsilv();
+@define procedure synctex_void_vlist();
+@define procedure synctex_hlist();
+@define procedure synctex_tsilh();
+@define procedure synctex_void_hlist();
+@define procedure synctex_math();
+@define procedure synctex_kern();
+@define procedure synctex_char();
+@define procedure synctex_node();
+@define procedure synctex_current;
+@define procedure synctex_horizontal_rule_or_glue();
+
+{math stuff}
+
+@define procedure initialize_math;
+@define procedure show_math_node();
+@define procedure print_math_comp();
+@define procedure print_limit_switch();
+@define procedure print_style();
+
+@define procedure scan_extdef_math_code();
+@define procedure scan_extdef_del_code();
+
+@define function fam_fnt();
+@define procedure def_fam_fnt();
+@define procedure dump_math_data;
+@define procedure undump_math_data;
+@define procedure unsave_math_data();
+
+@define const fence_noad;
+@define const ord_noad;
+@define const op_noad;
+@define const bin_noad;
+@define const rel_noad;
+@define const open_noad;
+@define const close_noad;
+@define const punct_noad;
+@define const inner_noad;
+@define const limits;
+@define const no_limits;
+@define const under_noad;
+@define const over_noad;
+@define const accent_noad;
+@define const vcenter_noad;
+
+@define const left_noad_side   ;
+@define const middle_noad_side ;
+@define const right_noad_side  ;
+
+@define procedure print_size();
+@define procedure finish_display_alignment();
+@define function new_sub_box();
+@define function math_vcenter_group();
+@define procedure close_math_group();
+@define procedure set_math_char();
+@define function new_style();
+@define const display_style;
+@define const text_style;
+@define const script_style;
+@define const script_script_style;
+@define const cramped_display_style;
+@define const cramped_text_style;
+@define const cramped_script_style;
+@define const cramped_script_script_style;
+
+@define procedure def_math_param();
+@define procedure print_math_param();
+@define function get_math_param();
+@define procedure math_char_in_text();
+
+
+@define const math_param_quad;
+@define const math_param_axis;
+@define const math_param_operator_size;
+@define const math_param_overbar_kern;
+@define const math_param_overbar_rule;
+@define const math_param_overbar_vgap;
+@define const math_param_underbar_kern;
+@define const math_param_underbar_rule;
+@define const math_param_underbar_vgap;
+@define const math_param_radical_kern;
+@define const math_param_radical_rule;
+@define const math_param_radical_vgap;
+@define const math_param_radical_degree_before;
+@define const math_param_radical_degree_after;
+@define const math_param_radical_degree_raise;
+@define const math_param_stack_vgap;
+@define const math_param_stack_num_up;
+@define const math_param_stack_denom_down;
+@define const math_param_fraction_rule;
+@define const math_param_fraction_num_vgap;
+@define const math_param_fraction_num_up;
+@define const math_param_fraction_denom_vgap;
+@define const math_param_fraction_denom_down;
+@define const math_param_fraction_del_size;
+@define const math_param_limit_above_vgap;
+@define const math_param_limit_above_bgap;
+@define const math_param_limit_above_kern;
+@define const math_param_limit_below_vgap;
+@define const math_param_limit_below_bgap;
+@define const math_param_limit_below_kern;
+@define const math_param_under_delimiter_vgap;
+@define const math_param_under_delimiter_bgap;
+@define const math_param_over_delimiter_vgap;
+@define const math_param_over_delimiter_bgap;
+@define const math_param_sub_shift_drop;
+@define const math_param_sup_shift_drop;
+@define const math_param_sub_shift_down;
+@define const math_param_sub_sup_shift_down;
+@define const math_param_sub_top_max;
+@define const math_param_sup_shift_up;
+@define const math_param_sup_bottom_min;
+@define const math_param_sup_sub_bottom_max;
+@define const math_param_subsup_vgap;
+@define const math_param_space_after_script;
+@define const math_param_connector_overlap_min;
+@define const math_param_first_mu_glue;
+@define const math_param_ord_ord_spacing;
+@define const math_param_ord_op_spacing;
+@define const math_param_ord_bin_spacing;
+@define const math_param_ord_rel_spacing;
+@define const math_param_ord_open_spacing;
+@define const math_param_ord_close_spacing;
+@define const math_param_ord_punct_spacing;
+@define const math_param_ord_inner_spacing;
+@define const math_param_op_ord_spacing;
+@define const math_param_op_op_spacing;
+@define const math_param_op_bin_spacing;
+@define const math_param_op_rel_spacing;
+@define const math_param_op_open_spacing;
+@define const math_param_op_close_spacing;
+@define const math_param_op_punct_spacing;
+@define const math_param_op_inner_spacing;
+@define const math_param_bin_ord_spacing;
+@define const math_param_bin_op_spacing;
+@define const math_param_bin_bin_spacing;
+@define const math_param_bin_rel_spacing;
+@define const math_param_bin_open_spacing;
+@define const math_param_bin_close_spacing;
+@define const math_param_bin_punct_spacing;
+@define const math_param_bin_inner_spacing;
+@define const math_param_rel_ord_spacing;
+@define const math_param_rel_op_spacing;
+@define const math_param_rel_bin_spacing;
+@define const math_param_rel_rel_spacing;
+@define const math_param_rel_open_spacing;
+@define const math_param_rel_close_spacing;
+@define const math_param_rel_punct_spacing;
+@define const math_param_rel_inner_spacing;
+@define const math_param_open_ord_spacing;
+@define const math_param_open_op_spacing;
+@define const math_param_open_bin_spacing;
+@define const math_param_open_rel_spacing;
+@define const math_param_open_open_spacing;
+@define const math_param_open_close_spacing;
+@define const math_param_open_punct_spacing;
+@define const math_param_open_inner_spacing;
+@define const math_param_close_ord_spacing;
+@define const math_param_close_op_spacing;
+@define const math_param_close_bin_spacing;
+@define const math_param_close_rel_spacing;
+@define const math_param_close_open_spacing;
+@define const math_param_close_close_spacing;
+@define const math_param_close_punct_spacing;
+@define const math_param_close_inner_spacing;
+@define const math_param_punct_ord_spacing;
+@define const math_param_punct_op_spacing;
+@define const math_param_punct_bin_spacing;
+@define const math_param_punct_rel_spacing;
+@define const math_param_punct_open_spacing;
+@define const math_param_punct_close_spacing;
+@define const math_param_punct_punct_spacing;
+@define const math_param_punct_inner_spacing;
+@define const math_param_inner_ord_spacing;
+@define const math_param_inner_op_spacing;
+@define const math_param_inner_bin_spacing;
+@define const math_param_inner_rel_spacing;
+@define const math_param_inner_open_spacing;
+@define const math_param_inner_close_spacing;
+@define const math_param_inner_punct_spacing;
+@define const math_param_inner_inner_spacing;
+
+
+@define const hlist_node;
+@define const vlist_node;
+@define const rule_node;
+@define const ins_node;
+@define const mark_node;
+@define const adjust_node;
+@define const disc_node;
+@define const whatsit_node;
+@define const math_node;
+@define const glue_node;
+@define const kern_node;
+@define const penalty_node;
+@define const unset_node;
+@define const margin_kern_node;
+@define const glyph_node;
+@define const align_record_node;
+@define const inserting_node;
+@define const split_up_node;
+@define const expr_node;
+@define const span_node;
+@define const action_node;
+@define const glue_spec_node;
+@define const temp_node;
+@define const align_stack_node;
+@define const movement_node;
+@define const if_node;
+@define const shape_node;
+
+@define const write_node_size;
+@define const open_node_size;
+
+@define procedure print_short_node_contents();
+@define procedure show_node_list();
+
+@define const zero_glue ;
+@define const sfi_glue ;
+@define const fil_glue ;
+@define const fill_glue ;
+@define const ss_glue ;
+@define const fil_neg_glue ;
+@define const page_ins_head ;
+@define const contrib_head ;
+@define const page_head ;
+@define const temp_head ;
+@define const hold_head ;
+@define const adjust_head ;
+@define const pre_adjust_head ;
+@define const align_head ;
+@define const end_span ;
+
+
+@define const tex_command;
+@define const etex_command;
+@define const aleph_command;
+@define const pdftex_command;
+@define const luatex_command;
+
+@define procedure primitive_tex();
+@define procedure primitive_etex();
+@define procedure primitive_aleph();
+@define procedure primitive_omega();
+@define procedure primitive_pdftex();
+@define procedure primitive_luatex();
+@define procedure primitive_core();
+@define procedure print_cmd_chr();
+
+@define procedure init_primitives;
+@define procedure ini_init_primitives;
+@define procedure dump_primitives;
+@define procedure undump_primitives;
+@define function compute_pool_hash();
+
+@define const undefined_primitive;
+@define const hash_prime;
+
+@define function get_prim_eq_type();
+@define function get_prim_equiv();
+@define function prim_lookup();
+@define function id_lookup();
+
+@define procedure tex_def_font();

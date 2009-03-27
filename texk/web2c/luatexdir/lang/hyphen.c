@@ -53,6 +53,9 @@
 #include "hnjalloc.h"
 #include "hyphen.h"
 
+static const char _svn_version[] =
+    "$Id: hyphen.c 1696 2008-12-28 21:02:34Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lang/texlang.c $";
+
 /* SHOULD BE MOVED TO SEPARATE LIBRARY */
 static unsigned char * hnj_strdup(
   const unsigned char *s
@@ -283,7 +286,15 @@ static void hyppat_insert(
   i = hnj_string_hash (key) % HASH_SIZE;
   for (e = hashtab->entries[i]; e; e=e->next) {
     if (strcmp((char*)e->key,(char*)key)==0) {
-      if (e->u.hyppat) hnj_free(e->u.hyppat);
+      if (e->u.hyppat) {
+        if (hyppat && strcmp((char*)e->u.hyppat,(char*)hyppat)!=0) {
+          int s = maketexstring("Conflicting pattern ignored");
+          do_print_err(s);
+          error();
+          flush_str(s);
+        }
+        hnj_free(e->u.hyppat);
+      }
       e->u.hyppat = hyppat;
       hnj_free(key);
       return;
@@ -418,7 +429,7 @@ static const unsigned char* next_pattern(
   size_t* length,
   const unsigned char **buf
 ) {
-  const unsigned char *rover = *buf, *here;
+  const unsigned char *here, *rover = *buf;
   while (*rover && isspace(*rover)) rover++;
   here = rover;
   while (*rover) {
@@ -598,10 +609,10 @@ void hnj_hyphen_load(
 
   const unsigned char* format;
   const unsigned char* begin = f;
+  unsigned char *pat;
+  char *org;
   while((format = next_pattern(&l,&f))!=NULL) {
     int i,j,e;
-    unsigned char *pat;
-    char *org;
     /*
     printf("%s\n",format);
     char* repl = strnchr(format, '/',l);
@@ -630,10 +641,11 @@ void hnj_hyphen_load(
       if (is_utf8_follow(format[i])) e++;
     }
     /* l-e   => number of _characters_ not _bytes_*/
+    /* l-j   => number of pattern bytes */
     /* l-e-j => number of pattern characters*/
     pat = (unsigned char*) malloc(1+l-j);
     org = (         char*) malloc(2+l-e-j);
-    /* remove hyphenation encoders (digits) from pat*/
+			 /* remove hyphenation encoders (digits) from pat*/
     org[0] = '0';
     for (i=0,j=0,e=0; (unsigned)i<l; i++) {
       unsigned char c = format[i];
@@ -659,15 +671,15 @@ void hnj_hyphen_load(
     for (l=1; l<=wordsize; l++) {
       if (is_utf8_follow(word[l])) continue; /* Do not clip an utf8 sequence*/
       for (j=1; j<=l; j++) {
-        int i = l-j;
         char *subpat_pat;
+        int i = l-j;
         if (is_utf8_follow(word[i])) continue; /* Do not start halfway an utf8 sequence*/
         if ((subpat_pat = hyppat_lookup(dict->patterns,word+i,j))!=NULL) {
           char* newpat_pat;
           if ((newpat_pat = hyppat_lookup(dict->merged,word,l))==NULL) {
+            char *neworg;
             unsigned char *newword=(unsigned char*)malloc(l+1);
             int e=0;
-            char *neworg;
             strncpy((char*)newword, (char*)word,l); newword[l]=0;
             for (i=0; i<l; i++) if (is_utf8_follow(newword[i])) e++;
             neworg = malloc(l+2-e);
@@ -700,7 +712,8 @@ void hnj_hyphen_load(
       last_state = state_num;
       ch = word[j];
       if (ch>=0x80) {
-        int i=1, m;
+        int m;
+		int i=1;
         while (is_utf8_follow(word[j-i])) i++;
         ch = word[j-i] & mask[i];
         m = j-i;
@@ -757,14 +770,14 @@ void hnj_hyphen_hyphenate(
   halfword right,
   lang_variables *lan
 ) {
+  int char_num;
+  halfword here;
+  int state = 0;
   /* +2 for dots at each end, +1 for points /outside/ characters*/
   int ext_word_len = length+2;
   int hyphen_len   = ext_word_len+1;
   /*char *hyphens = hnj_malloc((hyphen_len*2)+1); */ /* LATER */
   char *hyphens = hnj_malloc(hyphen_len+1);
-  int char_num;
-  int state = 0;
-  halfword here;
 
   /* Add a '.' to beginning and end to facilitate matching*/
   set_vlink(begin_point,first);
@@ -780,18 +793,21 @@ void hnj_hyphen_hyphenate(
   hyphens[hyphen_len] = 0;
 
   /* now, run the finite state machine */
-  for (char_num=0, here=begin_point; here!=end_point; here=get_vlink(here)) {
+  for (char_num=0, here=begin_point; here!=get_vlink(end_point); here=get_vlink(here)) {
 
-    int ch = get_lc_code(get_character(here));
-
+    int ch;
+    if (here == begin_point || here == end_point)
+      ch='.';
+    else
+      ch = get_lc_code(get_character(here));
     while (state!=-1) {
 	  /*   printf("%*s%s%c",char_num-strlen(get_state_str(state)),"",get_state_str(state),(char)ch);*/
       HyphenState *hstate = &dict->states[state];
       int k;
       for (k = 0; k < hstate->num_trans; k++) {
         if (hstate->trans[k].uni_ch == ch) {
-	  char *match;
-          state = hstate->trans[k].new_state;
+          char *match;
+		  state = hstate->trans[k].new_state;
 		  /*       printf(" state %d\n",state);*/
           match = dict->states[state].match;
           if (match) {

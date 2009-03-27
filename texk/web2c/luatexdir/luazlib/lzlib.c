@@ -195,7 +195,7 @@ static int lzlib_inflate(lua_State *L)
 static int lzstream_decompress(lua_State *L)
 {
     z_stream *s = lzstream_check(L, 1, LZINFLATE);
-    s->next_in = (char*)luaL_checkstring(L, 2);
+    s->next_in = (Bytef*)luaL_checkstring(L, 2);
     s->avail_in = lua_strlen(L, 2);
 
     {
@@ -204,7 +204,7 @@ static int lzstream_decompress(lua_State *L)
         luaL_buffinit(L, &b);
 
         do {
-            s->next_out = luaL_prepbuffer(&b);
+            s->next_out = (Bytef*)luaL_prepbuffer(&b);
             s->avail_out = LUAL_BUFFERSIZE;
 
             /* munch some more */
@@ -231,7 +231,7 @@ static int lzstream_decompress(lua_State *L)
 static int lzstream_compress(lua_State *L)
 {
     z_stream *s = lzstream_check(L, 1, LZDEFLATE);
-    s->next_in = (char*)luaL_checkstring(L, 2);
+    s->next_in = (Bytef*)luaL_checkstring(L, 2);
     s->avail_in = lua_strlen(L, 2);
 
     {
@@ -240,7 +240,7 @@ static int lzstream_compress(lua_State *L)
         luaL_buffinit(L, &b);
 
         do {
-            s->next_out = luaL_prepbuffer(&b);
+            s->next_out = (Bytef*)luaL_prepbuffer(&b);
             s->avail_out = LUAL_BUFFERSIZE;
 
             /* bake some more */
@@ -273,7 +273,7 @@ static int lzstream_flush(lua_State *L)
         return 1;
     }
 
-    s->next_in = "";
+    s->next_in = (Bytef*)"";
     s->avail_in = 0;
 
     {
@@ -282,7 +282,7 @@ static int lzstream_flush(lua_State *L)
         luaL_buffinit(L, &b);
 
         do {
-            s->next_out = luaL_prepbuffer(&b);
+            s->next_out = (Bytef*)luaL_prepbuffer(&b);
             s->avail_out = LUAL_BUFFERSIZE;
 
             r = deflate(s, Z_FINISH);
@@ -349,7 +349,7 @@ static int lzlib_adler32(lua_State *L)
         const char* buf = luaL_checkstring(L, 2);
         int len = lua_strlen(L, 2);
 
-        lua_pushnumber(L, adler32(adler, buf, len));
+        lua_pushnumber(L, adler32(adler, (const Bytef*)buf, len));
     }
     return 1;
 }
@@ -369,7 +369,7 @@ static int lzlib_crc32(lua_State *L)
         const char* buf = luaL_checkstring(L, 2);
         int len = lua_strlen(L, 2);
 
-        lua_pushnumber(L, crc32(crc, buf, len));
+        lua_pushnumber(L, crc32(crc, (const Bytef*)buf, len));
     }
     return 1;
 }
@@ -409,12 +409,12 @@ static int lzlib_compress(lua_State *L)
         return 2;
     }
 
-    zs.next_in = (char*)next_in;
+    zs.next_in = (Bytef*)next_in;
     zs.avail_in = avail_in;
 
     for(;;)
     {
-        zs.next_out = luaL_prepbuffer(&b);
+        zs.next_out = (Bytef*)luaL_prepbuffer(&b);
         zs.avail_out = LUAL_BUFFERSIZE;
 
         /* munch some more */
@@ -453,6 +453,7 @@ static int lzlib_decompress(lua_State *L)
     luaL_Buffer b;
     luaL_buffinit(L, &b);
 
+
     zs.zalloc = Z_NULL;
     zs.zfree = Z_NULL;
 
@@ -470,12 +471,12 @@ static int lzlib_decompress(lua_State *L)
         return 2;
     }
 
-    zs.next_in = (char*)next_in;
+    zs.next_in = (Bytef*)next_in;
     zs.avail_in = avail_in;
 
     for(;;)
     {
-        zs.next_out = luaL_prepbuffer(&b);
+        zs.next_out = (Bytef*)luaL_prepbuffer(&b);
         zs.avail_out = LUAL_BUFFERSIZE;
 
         /* bake some more */

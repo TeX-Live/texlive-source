@@ -221,7 +221,7 @@ AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
 AS_IF([test "x$enable_luatex" = xyes],
-[AC_CONFIG_HEADERS([ff-config.h:luatexdir/luafontforge/ff-config.in])
+[AC_CONFIG_HEADERS([ff-config.h:luatexdir/luafontloader/ff-config.in])
 AC_CHECK_HEADERS([langinfo_h])
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT

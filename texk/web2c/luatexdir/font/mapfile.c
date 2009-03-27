@@ -1,25 +1,22 @@
-/*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+/* mapfile.c
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-$Id: mapfile.c 1013 2008-02-14 00:09:02Z oneiros $
-
-*/
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include <math.h>
 #include "ptexlib.h"
@@ -27,6 +24,9 @@ $Id: mapfile.c 1013 2008-02-14 00:09:02Z oneiros $
 #include <kpathsea/c-memstr.h>
 #include <string.h>
 #include "luatex-api.h"
+
+static const char _svn_version[] =
+    "$Id: mapfile.c 1870 2009-02-19 10:03:13Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/mapfile.c $";
 
 #define FM_BUF_SIZE     1024
 
@@ -37,12 +37,12 @@ static integer fm_size = 0;
 static integer fm_curbyte = 0;
 
 #define fm_open()       \
-    open_input (&fm_file, kpse_fontmap_format, FOPEN_RBIN_MODE)
+    (fm_file = fopen((char *) nameoffile + 1, FOPEN_RBIN_MODE))
 #define fm_read_file()  \
     readbinfile(fm_file,&fm_buffer,&fm_size)
 #define fm_close()      xfclose(fm_file, cur_file_name)
 #define fm_getchar()    fm_buffer[fm_curbyte++]
-#define fm_eof()        (fm_curbyte>=fm_size)
+#define fm_eof()        (fm_curbyte>fm_size)
 
 typedef enum { FM_DUPIGNORE, FM_REPLACE, FM_DELETE } updatemode;
 typedef enum { MAPFILE, MAPLINE } maptype;
@@ -79,7 +79,7 @@ fm_entry *new_fm_entry(void)
     fm->tfm_name = NULL;
     fm->sfd_name = NULL;
     fm->ps_name = NULL;
-    fm->fd_flags = 4;
+    fm->fd_flags = FD_FLAGS_NOT_SET_IN_MAPLINE;
     fm->ff_name = NULL;
     fm->encname = NULL;
     fm->type = 0;
@@ -102,23 +102,23 @@ void delete_fm_entry(fm_entry * fm)
     xfree(fm);
 }
 
-static ff_entry *new_ff_entry (void)
+static ff_entry *new_ff_entry(void)
 {
     ff_entry *ff;
-    ff = xtalloc (1, ff_entry);
+    ff = xtalloc(1, ff_entry);
     ff->ff_name = NULL;
     ff->ff_path = NULL;
     return ff;
 }
 
-static void delete_ff_entry (ff_entry * ff)
+static void delete_ff_entry(ff_entry * ff)
 {
-    xfree (ff->ff_name);
-    xfree (ff->ff_path);
-    xfree (ff);
+    xfree(ff->ff_name);
+    xfree(ff->ff_path);
+    xfree(ff);
 }
 
-static fm_entry *dummy_fm_entry ()
+static fm_entry *dummy_fm_entry()
 {
     static const fm_entry const_fm_entry;
     return (fm_entry *) & const_fm_entry;
@@ -133,10 +133,10 @@ struct avl_table *encname_tree = NULL;
 
 /* AVL sort fm_entry into tfm_tree by tfm_name */
 
-static int comp_fm_entry_tfm (const void *pa, const void *pb, void *p)
+static int comp_fm_entry_tfm(const void *pa, const void *pb, void *p)
 {
-    return strcmp (((const fm_entry *) pa)->tfm_name,
-                   ((const fm_entry *) pb)->tfm_name);
+    return strcmp(((const fm_entry *) pa)->tfm_name,
+                  ((const fm_entry *) pb)->tfm_name);
 }
 
 /* AVL sort fm_entry into ps_tree by ps_name, slant, and extend */
@@ -155,13 +155,13 @@ static int comp_fm_entry_ps(const void *pa, const void *pb, void *p)
 
 /* AVL sort ff_entry into ff_tree by ff_name */
 
-static int comp_ff_entry (const void *pa, const void *pb, void *p)
+static int comp_ff_entry(const void *pa, const void *pb, void *p)
 {
-    return strcmp (((const ff_entry *) pa)->ff_name,
-                   ((const ff_entry *) pb)->ff_name);
+    return strcmp(((const ff_entry *) pa)->ff_name,
+                  ((const ff_entry *) pb)->ff_name);
 }
 
-static void create_avl_trees ()
+static void create_avl_trees()
 {
     assert(tfm_tree == NULL);
     tfm_tree = avl_create(comp_fm_entry_tfm, NULL, &avl_xallocator);
@@ -354,9 +354,9 @@ int check_fm_entry(fm_entry * fm, boolean warn)
 }
 
 /**********************************************************************/
-/* returns true if s is one of the 14 std. font names; speed-trimmed. */
+/* returns the font number if s is one of the 14 std. font names, -1 otherwise; speed-trimmed. */
 
-boolean check_std_t1font(char *s)
+int check_std_t1font(char *s)
 {
     static const char *std_t1font_names[] = {
         "Courier",              /* 0:7 */
@@ -378,10 +378,12 @@ boolean check_std_t1font(char *s)
         { -1, -1, -1, -1, -1, -1, 8, 0, -1, 4, 10, 9, -1, -1, 5, 2, 12, 6, -1,
         3, -1, 7
     };
-    const size_t n = strlen(s);
+    size_t n;
     int k = -1;
+    assert(s != NULL);
+    n = strlen(s);
     if (n > 21)
-        return false;
+        return -1;
     if (n == 12) {              /* three names have length 12 */
         switch (*s) {
         case 'C':
@@ -394,14 +396,15 @@ boolean check_std_t1font(char *s)
             k = 13;             /* ZapfDingbats */
             break;
         default:
-            return false;
+            return -1;
         }
     } else
         k = index[n];
     if (k > -1 && !strcmp(std_t1font_names[k], s))
-        return true;
-    return false;
+        return k;
+    return -1;
 };
+
 
 /**********************************************************************/
 
@@ -415,11 +418,17 @@ static void fm_scan_line()
     switch (mitem->type) {
     case MAPFILE:
         p = fm_line;
-        do {
-	  c = fm_getchar();
-	  append_char_to_buf(c, p, fm_line, FM_BUF_SIZE);
+        while (!fm_eof()) {
+            if (fm_curbyte == fm_size) {
+                fm_curbyte++;
+                c = 10;
+            } else {
+                c = fm_getchar();
+            }
+            append_char_to_buf(c, p, fm_line, FM_BUF_SIZE);
+            if (c == 10)
+                break;
         }
-        while (c != 10 && !fm_eof());
         *(--p) = '\0';
         r = fm_line;
         break;
@@ -532,9 +541,9 @@ static void fm_scan_line()
         }
     }
   done:
-    if (fm->ps_name != NULL && check_std_t1font(fm->ps_name))
+    if (fm->ps_name != NULL && (check_std_t1font(fm->ps_name) >= 0))
         set_std_t1font(fm);
-    if (is_fontfile(fm)) {
+    if (is_fontfile(fm) && strlen(fm_fontfile(fm)) > 3) {
         if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".ttf") == 0)
             set_truetype(fm);
         else if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".otf") == 0)
@@ -560,83 +569,95 @@ static void fm_scan_line()
 
 /**********************************************************************/
 
-void fm_read_info ()
+void fm_read_info()
 {
     int callback_id;
     int file_opened = 0;
-	char *ftemp = NULL;
+    char *ftemp = NULL;
     if (tfm_tree == NULL)
-        create_avl_trees ();
+        create_avl_trees();
     if (mitem->line == NULL)    /* nothing to do */
         return;
     mitem->lineno = 1;
     switch (mitem->type) {
     case MAPFILE:
-        set_cur_file_name (mitem->line);
-		if (fm_buffer!=NULL) {
-		  xfree(fm_buffer);
-		  fm_buffer=NULL;
-		}
-		fm_curbyte=0;
-		fm_size=0;
-		callback_id=callback_defined(find_map_file_callback);
-		if (callback_id>0) {
-		  if(run_callback(callback_id,"S->S",(char *)(nameoffile+1),&ftemp)) {
-			if(ftemp!=NULL&&strlen(ftemp)) {
-			  free(nameoffile);
-			  namelength = strlen(ftemp);
-			  nameoffile = xmalloc(namelength+2);
-			  strcpy((char *)(nameoffile+1),ftemp);
-			  free(ftemp);
-			}			
-		  }
-		}
-		callback_id=callback_defined(read_map_file_callback);
-		if (callback_id>0) {
-		  if(run_callback(callback_id,"S->bSd",(char *)(nameoffile+1),
-						 &file_opened, &fm_buffer,&fm_size)) {
-			if(file_opened) {
-			  if (fm_size>0) {
-				cur_file_name = (char *) nameoffile + 1;
-				if (tracefilenames)
-				  tex_printf ("{%s", cur_file_name);
-				while (!fm_eof ()) {
-				  fm_scan_line ();
-				  mitem->lineno++;
-				}
-				if (tracefilenames)
-				  tex_printf ("}");
-				fm_file = NULL;
-			  }
-			} else {
-			  pdftex_warn ("cannot open font map file");
-			}
-		  } else {
-			pdftex_warn ("cannot open font map file");
-		  }
-		} else {
-		  if (!fm_open ()) {
-			pdftex_warn ("cannot open font map file");
-		  } else {
-			fm_read_file();
-			cur_file_name = (char *) nameoffile + 1;
-			tex_printf ("{%s", cur_file_name);
-			while (!fm_eof ()) {
-			  fm_scan_line ();
-			  mitem->lineno++;
-			}
-			fm_close ();
-			tex_printf ("}");
-			fm_file = NULL;
-		  }
-		}
-		break;
+        set_cur_file_name(mitem->line);
+        if (fm_buffer != NULL) {
+            xfree(fm_buffer);
+            fm_buffer = NULL;
+        }
+        fm_curbyte = 0;
+        fm_size = 0;
+        callback_id = callback_defined(find_map_file_callback);
+        if (callback_id > 0) {
+            if (run_callback
+                (callback_id, "S->S", (char *) (nameoffile + 1), &ftemp)) {
+                if (ftemp != NULL && strlen(ftemp)) {
+                    free(nameoffile);
+                    namelength = strlen(ftemp);
+                    nameoffile = xmalloc(namelength + 2);
+                    strcpy((char *) (nameoffile + 1), ftemp);
+                    free(ftemp);
+                }
+            }
+        } else {
+            ftemp =
+                kpse_find_file((char *) (nameoffile + 1), kpse_fontmap_format,
+                               0);
+            if (ftemp != NULL) {
+                free(nameoffile);
+                namelength = strlen(ftemp);
+                nameoffile = xmalloc(namelength + 2);
+                strcpy((char *) (nameoffile + 1), ftemp);
+                free(ftemp);
+            }
+        }
+        callback_id = callback_defined(read_map_file_callback);
+        if (callback_id > 0) {
+            if (run_callback(callback_id, "S->bSd", (char *) (nameoffile + 1),
+                             &file_opened, &fm_buffer, &fm_size)) {
+                if (file_opened) {
+                    if (fm_size > 0) {
+                        cur_file_name = (char *) nameoffile + 1;
+                        if (tracefilenames)
+                            tex_printf("{%s", cur_file_name);
+                        while (!fm_eof()) {
+                            fm_scan_line();
+                            mitem->lineno++;
+                        }
+                        if (tracefilenames)
+                            tex_printf("}");
+                        fm_file = NULL;
+                    }
+                } else {
+                    pdftex_warn("cannot open font map file");
+                }
+            } else {
+                pdftex_warn("cannot open font map file");
+            }
+        } else {
+            if (!fm_open()) {
+                pdftex_warn("cannot open font map file");
+            } else {
+                fm_read_file();
+                cur_file_name = (char *) nameoffile + 1;
+                tex_printf("{%s", cur_file_name);
+                while (!fm_eof()) {
+                    fm_scan_line();
+                    mitem->lineno++;
+                }
+                fm_close();
+                tex_printf("}");
+                fm_file = NULL;
+            }
+        }
+        break;
     case MAPLINE:
-	  cur_file_name = NULL;   /* makes pdftex_warn() shorter */
-	  fm_scan_line ();
-	  break;
+        cur_file_name = NULL;   /* makes pdftex_warn() shorter */
+        fm_scan_line();
+        break;
     default:
-	  assert (0);
+        assert(0);
     }
     mitem->line = NULL;         /* done with this line */
     cur_file_name = NULL;
@@ -667,10 +688,10 @@ static fm_entry_ptr fmlookup(internalfontnumber f)
 
 boolean hasfmentry(internalfontnumber f)
 {
-  if (font_map(f) == NULL)
-	set_font_map(f, (fm_entry_ptr) fmlookup(f));
-  assert(font_map(f) != NULL);
-  return font_map(f) != (fm_entry_ptr) dummy_fm_entry();
+    if (font_map(f) == NULL)
+        set_font_map(f, (fm_entry_ptr) fmlookup(f));
+    assert(font_map(f) != NULL);
+    return font_map(f) != (fm_entry_ptr) dummy_fm_entry();
 }
 
 /* check whether a map entry is valid for font replacement */
@@ -859,7 +880,7 @@ void pdf_init_map_file(string map_name)
     mitem = xtalloc(1, mapitem);
     mitem->mode = FM_DUPIGNORE;
     mitem->type = MAPFILE;
-    mitem->line = xstrdup(map_name);
+    mitem->line = map_name;
 }
 
 
@@ -881,7 +902,7 @@ ff_entry *check_ff_exist(char *ff_name, boolean is_tt)
     ff_entry tmp;
     void **aa;
     int callback_id;
-	char *filepath=NULL;
+    char *filepath = NULL;
 
     assert(ff_name != NULL);
     tmp.ff_name = ff_name;
@@ -890,27 +911,26 @@ ff_entry *check_ff_exist(char *ff_name, boolean is_tt)
         ff = new_ff_entry();
         ff->ff_name = xstrdup(ff_name);
         if (is_tt) {
-           callback_id=callback_defined(find_truetype_file_callback);
-           if (callback_id>0) {
-             run_callback(callback_id,"S->S",ff_name,&filepath);
-                 if (filepath && strlen(filepath)==0)
-                       filepath=NULL;
-             ff->ff_path = filepath;
-           } else {
-             ff->ff_path = kpse_find_file (ff_name, kpse_truetype_format, 0);
-           }
-		}
-		else {
-		  callback_id=callback_defined(find_type1_file_callback);
-		  if (callback_id>0) {
-			run_callback(callback_id,"S->S",ff_name,&filepath);
-			if (filepath && strlen(filepath)==0)
-			  filepath=NULL;
-			ff->ff_path = filepath;
-		  } else {
-			ff->ff_path = kpse_find_file (ff_name, kpse_type1_format, 0);
-		  }
-		}
+            callback_id = callback_defined(find_truetype_file_callback);
+            if (callback_id > 0) {
+                run_callback(callback_id, "S->S", ff_name, &filepath);
+                if (filepath && strlen(filepath) == 0)
+                    filepath = NULL;
+                ff->ff_path = filepath;
+            } else {
+                ff->ff_path = kpse_find_file(ff_name, kpse_truetype_format, 0);
+            }
+        } else {
+            callback_id = callback_defined(find_type1_file_callback);
+            if (callback_id > 0) {
+                run_callback(callback_id, "S->S", ff_name, &filepath);
+                if (filepath && strlen(filepath) == 0)
+                    filepath = NULL;
+                ff->ff_path = filepath;
+            } else {
+                ff->ff_path = kpse_find_file(ff_name, kpse_type1_format, 0);
+            }
+        }
         aa = avl_probe(ff_tree, ff);
         assert(aa != NULL);
     }

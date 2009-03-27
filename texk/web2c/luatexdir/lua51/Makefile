@@ -7,8 +7,7 @@
 # Your platform. See PLATS for possible values.
 PLAT= none
 
-CC= gcc
-CFLAGS= -g -O2 -Wall $(XCFLAGS) $(MYCFLAGS) $(COCOFLAGS)
+LOCALCFLAGS= $(MYCFLAGS) $(COCOCFLAGS)
 AR= ar rcu
 RANLIB= ranlib
 RM= rm -f
@@ -77,12 +76,14 @@ clean:
 	$(RM) $(ALL_T) $(ALL_O)
 
 depend:
-	@$(CC) $(CFLAGS) -MM l*.c print.c
+	@$(CC) $(LOCALCFLAGS) $(CFLAGS) $(XCFLAGS) -MM l*.c print.c
 
 echo:
 	@echo "PLAT = $(PLAT)"
 	@echo "CC = $(CC)"
+	@echo "LOCALCFLAGS = $(LOCALCFLAGS)"
 	@echo "CFLAGS = $(CFLAGS)"
+	@echo "XCFLAGS = $(XCFLAGS)"
 	@echo "AR = $(AR)"
 	@echo "RANLIB = $(RANLIB)"
 	@echo "RM = $(RM)"
@@ -96,7 +97,7 @@ none:
 	@echo "Please choose a platform: $(PLATS)"
 
 aix:
-	$(MAKE) a CC="xlc" CFLAGS="-O2 -DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-ldl" MYLDFLAGS="-brtl -bexpall"
+	$(MAKE) a CC="xlc" LOCALCFLAGS="-O2 -DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-ldl" MYLDFLAGS="-brtl -bexpall"
 
 ansi:
 	$(MAKE) a MYCFLAGS=-DLUA_ANSI
@@ -130,6 +131,10 @@ posix:
 
 solaris:
 	$(MAKE) a MYCFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-ldl"
+
+.c.o:
+	$(CC) $(LOCALCFLAGS) $(CFLAGS) $(XCFLAGS) -c $<
+
 
 # list targets that do not create files (but not all makes understand .PHONY)
 .PHONY: all $(PLATS) default o a clean depend echo none

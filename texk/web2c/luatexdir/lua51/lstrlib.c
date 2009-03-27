@@ -584,8 +584,8 @@ static int characters_aux (lua_State *L) {
   size_t ls;
   char b[2];
   const char *s = lua_tolstring(L, lua_upvalueindex(1), &ls);
-  int ind       = lua_tointeger(L, lua_upvalueindex(2));
-  if (ind<ls) {
+  int ind  = lua_tointeger(L, lua_upvalueindex(2));
+  if (ind<(int)ls) {
     lua_pushinteger(L, (ind+1));  /* iterator */
 	lua_replace(L, lua_upvalueindex(2));
 	b[0] = *(s+ind); b[1] = 0;
@@ -621,12 +621,12 @@ static int utfcharacters_aux (lua_State *L) {
   int j;
   const char *s = lua_tolstring(L, lua_upvalueindex(1), &ls);
   int       ind = lua_tointeger(L, lua_upvalueindex(2));
-  if (ind>=ls) return 0; /* end of string */
+  if (ind>=(int)ls) return 0; /* end of string */
   c = (unsigned) s[ind];
   for (j=0;j<4;j++) {
     if ((c&mask[j])==mequ[j]) {
       int k;
-      if (ind+1+j>ls) return utf_failed(L,ls); /* will not fit */
+      if (ind+1+j>(int)ls) return utf_failed(L,ls); /* will not fit */
       for (k=1; k<=j; k++) {
         c = (unsigned) s[ind+k];
         if ((c&0xC0)!=0x80) return utf_failed(L,ind+k); /* bad follow */
@@ -661,12 +661,12 @@ static int utfvalues_aux (lua_State *L) {
   const char *s = lua_tolstring(L, lua_upvalueindex(1), &ls);
   int ind       = lua_tointeger(L, lua_upvalueindex(2));
 
-  if (ind<ls) {
+  if (ind<(int)ls) {
 	i = *(s+ind);
 	if (i<0x80) {
 	  v = i;
 	} else if (i>=0xF0) {
-	  if ((ind+3)<ls && ((unsigned)*(s+ind+1))>=0x80 
+	  if ((ind+3)<(int)ls && ((unsigned)*(s+ind+1))>=0x80 
 		  && ((unsigned)*(s+ind+2))>=0x80 && ((unsigned)*(s+ind+3))>=0x80) {
 		numbytes  = 4;
 		j = ((unsigned)*(s+ind+1))-128;
@@ -675,7 +675,7 @@ static int utfvalues_aux (lua_State *L) {
 		v = (((((i-0xF0)*64) + j)*64) + k)*64 + l;
 	  }
 	} else if (i>=0xE0) {
-	  if ((ind+2)<ls && ((unsigned)*(s+ind+1))>=0x80 && ((unsigned)*(s+ind+2))>=0x80) {
+	  if ((ind+2)<(int)ls && ((unsigned)*(s+ind+1))>=0x80 && ((unsigned)*(s+ind+2))>=0x80) {
 		numbytes  = 3;
 		j = ((unsigned)*(s+ind+1))-128;
 		k = ((unsigned)*(s+ind+2))-128;
@@ -683,7 +683,7 @@ static int utfvalues_aux (lua_State *L) {
 	  }
 
 	} else if (i>=0xC0) {
-	  if ((ind+1)<ls && ((unsigned)*(s+ind+1))>=0x80) {
+	  if ((ind+1)<(int)ls && ((unsigned)*(s+ind+1))>=0x80) {
 		numbytes  = 2;
 		j = ((unsigned)*(s+ind+1))-128;
 		v = ((i-0xC0)*64) + j;
@@ -713,8 +713,8 @@ static int characterpairs_aux (lua_State *L) {
   char b[2];
   const char *s = lua_tolstring(L, lua_upvalueindex(1), &ls);
   int ind       = lua_tointeger(L, lua_upvalueindex(2));
-  if (ind<ls) {
-	if (ind+1<ls) {
+  if (ind<(int)ls) {
+	if (ind+1<(int)ls) {
 	  lua_pushinteger(L, (ind+2));  /* iterator */
 	} else {
 	  lua_pushinteger(L, (ind+1));  /* iterator */
@@ -722,7 +722,7 @@ static int characterpairs_aux (lua_State *L) {
 	lua_replace(L, lua_upvalueindex(2));
 	b[0] = *(s+ind); b[1] = 0;
 	lua_pushlstring(L, b, 1);
-	if (ind+1<ls) {
+	if (ind+1<(int)ls) {
 	  b[0] = *(s+ind+1); 
 	  lua_pushlstring(L, b, 1);
 	} else {
@@ -747,7 +747,7 @@ static int bytes_aux (lua_State *L) {
   unsigned char i;
   const char *s = lua_tolstring(L, lua_upvalueindex(1), &ls);
   int ind       = lua_tointeger(L, lua_upvalueindex(2));
-  if (ind<ls) {
+  if (ind<(int)ls) {
     lua_pushinteger(L, (ind+1));  /* iterator */
 	lua_replace(L, lua_upvalueindex(2));
 	i = (unsigned char)*(s+ind);
@@ -770,8 +770,8 @@ static int bytepairs_aux (lua_State *L) {
   unsigned char i;
   const char *s = lua_tolstring(L, lua_upvalueindex(1), &ls);
   int ind       = lua_tointeger(L, lua_upvalueindex(2));
-  if (ind<ls) {
-	if (ind+1<ls) {
+  if (ind<(int)ls) {
+	if (ind+1<(int)ls) {
 	  lua_pushinteger(L, (ind+2));  /* iterator */
 	} else {
 	  lua_pushinteger(L, (ind+1));  /* iterator */
@@ -779,7 +779,7 @@ static int bytepairs_aux (lua_State *L) {
 	lua_replace(L, lua_upvalueindex(2));
 	i = (unsigned char)*(s+ind);
 	lua_pushinteger(L, i);     /* byte one */
-	if (ind+1<ls) {
+	if (ind+1<(int)ls) {
 	  i = (unsigned char)*(s+ind+1);
 	  lua_pushinteger(L, i);     /* byte two */
 	} else {

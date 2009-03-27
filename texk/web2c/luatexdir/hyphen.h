@@ -34,27 +34,28 @@
  *
  */
 #ifndef __HYPHEN_H__
-#define __HYPHEN_H__
+#  define __HYPHEN_H__
 
-#ifdef __cplusplus
+#  ifdef __cplusplus
 extern "C" {
-#endif /* __cplusplus */
+#  endif                        /* __cplusplus */
 
-typedef struct _HyphenDict HyphenDict;
+    typedef struct _HyphenDict HyphenDict;
 
-#include "ptexlib.h"
-#include "nodes.h"
+#  include "ptexlib.h"
+#  include "nodes.h"
 
-HyphenDict* hnj_hyphen_new();
-void hnj_hyphen_load(HyphenDict*dict, const unsigned char *fn);
-void hnj_hyphen_free (HyphenDict *dict);
-void hnj_hyphen_clear (HyphenDict *dict);
-void hnj_hyphen_hyphenate (HyphenDict *dict, halfword first, halfword last, int size, halfword left, halfword right, lang_variables*lan);
-unsigned char* hnj_serialize(HyphenDict*);
-void hnj_free_serialize(unsigned char*);
+    HyphenDict *hnj_hyphen_new();
+    void hnj_hyphen_load(HyphenDict * dict, const unsigned char *fn);
+    void hnj_hyphen_free(HyphenDict * dict);
+    void hnj_hyphen_clear(HyphenDict * dict);
+    void hnj_hyphen_hyphenate(HyphenDict * dict, halfword first, halfword last,
+                              int size, halfword left, halfword right,
+                              lang_variables * lan);
+    unsigned char *hnj_serialize(HyphenDict *);
+    void hnj_free_serialize(unsigned char *);
 
-#ifdef __cplusplus
+#  ifdef __cplusplus
 }
-#endif /* __cplusplus */
-
-#endif /* __HYPHEN_H__ */
+#  endif                        /* __cplusplus */
+#endif                          /* __HYPHEN_H__ */

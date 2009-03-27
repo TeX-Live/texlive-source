@@ -1,26 +1,27 @@
-/*
-Copyright (c) 1996-2005 Han The Thanh, <thanh@pdftex.org>
+/* writeenc.c
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-$Id: writeenc.c 1013 2008-02-14 00:09:02Z oneiros $
-*/
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "ptexlib.h"
+
+static const char _svn_version[] =
+    "$Id: writeenc.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/writeenc.c $";
 
 /**********************************************************************/
 /* All encoding entries go into AVL tree for fast search by name. */
@@ -93,7 +94,7 @@ void epdf_write_enc(char **glyph_names, integer fe_objnum)
     assert(fe_objnum != 0);
     pdf_begin_dict(fe_objnum, 1);
     pdf_puts("/Type /Encoding\n");
-    pdf_printf("/Differences [");
+    pdf_puts("/Differences [");
     for (i = 0, i_old = -2; i < 256; i++)
         if (glyph_names[i] != notdef) {
             if (i == i_old + 1) /* no gap */
@@ -119,7 +120,7 @@ void write_enc(char **glyph_names, struct avl_table *tx_tree, integer fe_objnum)
     assert(fe_objnum != 0);
     pdf_begin_dict(fe_objnum, 1);
     pdf_puts("/Type /Encoding\n");
-    pdf_printf("/Differences [");
+    pdf_puts("/Differences [");
     avl_t_init(&t, tx_tree);
     for (i_old = -2, p = (int *) avl_t_first(&t, tx_tree); p != NULL;
          p = (int *) avl_t_next(&t)) {

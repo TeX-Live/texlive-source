@@ -1,24 +1,24 @@
-/*
-Copyright (c) 1996-2006 Han The Thanh, <thanh@pdftex.org>
+/* epdf.h
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-$Id: epdf.h 1125 2008-03-25 19:36:52Z hhenkel $
-*/
+/* $Id: epdf.h 2073 2009-03-21 10:06:50Z hhenkel $ */
 
 extern "C" {
 
@@ -45,12 +45,13 @@ extern "C" {
 #include <web2c/luatexdir/ptexmac.h>
 #include "openbsd-compat.h"
 #include "image.h"
-#include "../avlstuff.h"
+#include "../utils/avlstuff.h"
 
 /* #-define pdfbufsize      pdfbufmax */
 
     extern integer epdf_page_box;
     extern void *epdf_xref;
+    extern integer epdf_lastGroupObjectNum;
 
     extern integer pdf_box_spec_media;
     extern integer pdf_box_spec_crop;
@@ -58,14 +59,15 @@ extern "C" {
     extern integer pdf_box_spec_trim;
     extern integer pdf_box_spec_art;
 
-    extern integer pdf_stream_length;
-    extern integer pdf_ptr;
+    extern longinteger pdf_stream_length;
+    extern longinteger pdf_ptr;
     extern integer pool_ptr;
     typedef unsigned char eight_bits;
     extern eight_bits *pdf_buf;
     extern integer pdf_buf_size;
     extern integer pdf_os_mode;
     extern eight_bits pdf_last_byte;
+    extern integer fixed_inclusion_copy_font;
 
     extern char notdef[];
 
@@ -94,6 +96,7 @@ extern "C" {
     __attribute__ ((format(printf, 1, 2)))
     extern void tex_printf(const char *, ...);
     extern void write_epdf(image_dict *);
+    extern void write_additional_epdf_objects(void);
     extern void zpdf_begin_dict(integer, bool);
     extern void zpdf_begin_obj(integer, bool);
     extern void zpdf_create_obj(integer, integer);
@@ -102,7 +105,7 @@ extern "C" {
 
 /* epdf.c */
     extern void epdf_mark_glyphs(struct fd_entry *, char *);
-    extern struct fd_entry *epdf_create_fontdescriptor(struct fm_entry *);
+    extern struct fd_entry *epdf_create_fontdescriptor(struct fm_entry *, int);
     extern int get_fd_objnum(struct fd_entry *);
     extern int get_fn_objnum(struct fd_entry *);
 

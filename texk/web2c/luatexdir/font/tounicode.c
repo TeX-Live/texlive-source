@@ -1,24 +1,26 @@
-/*
-Copyright (c) 2006 Han The Thanh, <thanh@pdftex.org>
+/* tounicode.c
+   Copyright 2006 Han The Thanh, <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "ptexlib.h"
+
+static const char _svn_version[] =
+    "$Id: tounicode.c 2029 2009-03-14 19:10:25Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/tounicode.c $";
 
 #define isXdigit(c) (isdigit(c) || ('A' <= (c) && (c) <= 'F'))
 #define UNI_UNDEF          -1
@@ -289,17 +291,17 @@ static void set_glyph_unicode(char *s, glyph_unicode_entry * gp)
     }
 }
 
-static void set_cid_glyph_unicode(long index, glyph_unicode_entry * gp, 
-								  internal_font_number f) {
-  char *s;
-  if (font_tounicode(f)) {
-	if ((s = get_charinfo_tounicode(char_info(f,index)))!=NULL) {
+static void set_cid_glyph_unicode(long index, glyph_unicode_entry * gp,
+                                  internal_font_number f)
+{
+    char *s;
+    if (font_tounicode(f) &&
+        (s = get_charinfo_tounicode(char_info(f, index))) != NULL) {
         gp->code = UNI_EXTRA_STRING;
         gp->unicode_seq = xstrdup(s);
-	}
-  } else {
-	gp->code = index; /* fallback */
-  }
+    } else {
+        gp->code = index;       /* fallback */
+    }
 }
 
 
@@ -314,7 +316,7 @@ integer write_tounicode(char **glyph_names, char *name)
     int bfchar_count, bfrange_count, subrange_count;
     assert(strlen(name) + strlen(builtin_suffix) < SMALL_BUF_SIZE);
     if (glyph_unicode_tree == NULL) {
-        pdftex_warn("no GlyphToUnicode entry has been inserted yet!");
+        /*pdftex_warn("no GlyphToUnicode entry has been inserted yet!"); */
         fixed_gen_tounicode = 0;
         return 0;
     }
@@ -451,19 +453,21 @@ integer write_tounicode(char **glyph_names, char *name)
     return objnum;
 }
 
-integer write_cid_tounicode(fo_entry * fo, internalfontnumber f) {
+integer write_cid_tounicode(fo_entry * fo, internalfontnumber f)
+{
 
     int range_size[65537];
     glyph_unicode_entry gtab[65537];
     integer objnum;
     int i, j, k;
     int bfchar_count, bfrange_count, subrange_count;
-	char *buf;
+    char *buf;
 
-	assert(fo->fd->fontname);
-	buf = xmalloc(strlen(fo->fd->fontname)+8);
-	sprintf(buf,"%s-%s",(fo->fd->subset_tag!=NULL ? fo->fd->subset_tag : "UCS"),
-			            fo->fd->fontname);
+    assert(fo->fd->fontname);
+    buf = xmalloc(strlen(fo->fd->fontname) + 8);
+    sprintf(buf, "%s-%s",
+            (fo->fd->subset_tag != NULL ? fo->fd->subset_tag : "UCS"),
+            fo->fd->fontname);
 
     objnum = pdf_new_objnum();
     pdf_begin_dict(objnum, 0);
@@ -486,25 +490,25 @@ integer write_cid_tounicode(fo_entry * fo, internalfontnumber f) {
                "/CMapName /TeX-Identity-%s def\n"
                "/CMapType 2 def\n"
                "1 begincodespacerange\n"
-               "<0000> <FFFF>\n" 
+               "<0000> <FFFF>\n"
                "endcodespacerange\n", buf, buf, buf, buf, buf);
-	xfree(buf);
+    xfree(buf);
     /* set up gtab */
     for (i = 0; i < 65537; ++i) {
         gtab[i].code = UNI_UNDEF;
     }
-	for (k = 1; k <= max_font_id(); k++) {
-	  if (k == f || -f == pdf_font_num(k)) { 
-		for (i = font_bc(k); i <= font_ec(k); i++) {
-		  if (char_exists(k,i) && char_used(k,i)) {
-			j = char_index(k,i);
-			if (gtab[j].code == UNI_UNDEF) {
-			  set_cid_glyph_unicode(i, &gtab[j], f);
-			}
-		  }
-		}
-	  }
-	}
+    for (k = 1; k <= max_font_id(); k++) {
+        if (k == f || -f == pdf_font_num(k)) {
+            for (i = font_bc(k); i <= font_ec(k); i++) {
+                if (char_exists(k, i) && char_used(k, i)) {
+                    j = char_index(k, i);
+                    if (gtab[j].code == UNI_UNDEF) {
+                        set_cid_glyph_unicode(i, &gtab[j], f);
+                    }
+                }
+            }
+        }
+    }
 
     /* set range_size */
     for (i = 0; i < 65536;) {
@@ -522,7 +526,7 @@ integer write_cid_tounicode(fo_entry * fo, internalfontnumber f) {
             /* at this point i is the last entry of the subrange */
             i++;                /* move i to the next entry */
             range_size[j] = i - j;
-		}
+        }
     }
 
     /* calculate bfrange_count and bfchar_count */

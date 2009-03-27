@@ -1,10 +1,75 @@
-/* $Id: texnodes.c 1168 2008-04-15 13:43:34Z taco $ */
+/* texnodes.c
+   
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+
+   This file is part of LuaTeX.
+
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
+
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
+
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "luatex-api.h"
 #include <ptexlib.h>
 #include "nodes.h"
+#include "commands.h"
 
-#define MAX_CHAIN_SIZE 12
+#include "tokens.h"
+#undef name
+
+#define nDEBUG
+
+static const char _svn_version[] =
+    "$Id: texnodes.c 2029 2009-03-14 19:10:25Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/texnodes.c $";
+
+#define append_char(A) str_pool[pool_ptr++]=(A)
+#define cur_length (pool_ptr - str_start_macro(str_ptr))
+#define flush_char() pool_ptr--
+
+#define stretching 1
+#define shrinking 2
+
+#define adjust_pre subtype
+
+typedef enum {
+    pdf_dest_xyz = 0,
+    pdf_dest_fit,
+    pdf_dest_fith,
+    pdf_dest_fitv,
+    pdf_dest_fitb,
+    pdf_dest_fitbh,
+    pdf_dest_fitbv,
+    pdf_dest_fitr,
+} pdf_destination_types;
+
+
+typedef enum {
+    set_origin = 0,
+    direct_page,
+    direct_always,
+} ctm_transform_modes;
+
+
+#define obj_aux(A)              obj_tab[(A)].int4
+#define obj_data_ptr            obj_aux
+#define obj_obj_data(A)         pdf_mem[obj_data_ptr((A)) + 0]
+#define obj_obj_is_stream(A)    pdf_mem[obj_data_ptr((A)) + 1]
+#define obj_obj_stream_attr(A)  pdf_mem[obj_data_ptr((A)) + 2]
+#define obj_obj_is_file(A)      pdf_mem[obj_data_ptr((A)) + 3]
+#define obj_xform_width(A)      pdf_mem[obj_data_ptr((A)) + 0]
+#define obj_xform_height(A)     pdf_mem[obj_data_ptr((A)) + 1]
+#define obj_xform_depth(A)      pdf_mem[obj_data_ptr((A)) + 2]
+
+
+#define MAX_CHAIN_SIZE 13
 
 volatile memory_word *varmem = NULL;
 
@@ -60,24 +125,33 @@ char *node_fields_glyph[] =
     { "attr", "char", "font", "lang", "left", "right", "uchyph",
     "components", "xoffset", "yoffset", NULL
 };
-char *node_fields_style[] = { NULL };
-char *node_fields_choice[] = { NULL };
-char *node_fields_ord[] = { NULL };
-char *node_fields_op[] = { NULL };
-char *node_fields_bin[] = { NULL };
-char *node_fields_rel[] = { NULL };
-char *node_fields_open[] = { NULL };
-char *node_fields_close[] = { NULL };
-char *node_fields_punct[] = { NULL };
-char *node_fields_inner[] = { NULL };
-char *node_fields_radical[] = { NULL };
-char *node_fields_fraction[] = { NULL };
-char *node_fields_under[] = { NULL };
-char *node_fields_over[] = { NULL };
-char *node_fields_accent[] = { NULL };
-char *node_fields_vcenter[] = { NULL };
-char *node_fields_left[] = { NULL };
-char *node_fields_right[] = { NULL };
+char *node_fields_style[] = { "attr", "style", NULL };
+char *node_fields_choice[] =
+    { "attr", "display", "text", "script", "scriptscript", NULL };
+char *node_fields_ord[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_op[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_bin[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_rel[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_open[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_close[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_punct[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_inner[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_under[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_over[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_vcenter[] = { "attr", "nucleus", "sub", "sup", NULL };
+char *node_fields_radical[] =
+    { "attr", "nucleus", "sub", "sup", "left", "degree", NULL };
+char *node_fields_fraction[] =
+    { "attr", "width", "num", "denom", "left", "right", NULL };
+char *node_fields_accent[] =
+    { "attr", "nucleus", "sub", "sup", "accent", "bot_accent", NULL };
+char *node_fields_fence[] = { "attr", "delim", NULL };
+char *node_fields_math_char[] = { "attr", "fam", "char", NULL };
+char *node_fields_sub_box[] = { "attr", "list", NULL };
+char *node_fields_sub_mlist[] = { "attr", "list", NULL };
+char *node_fields_math_text_char[] = { "attr", "fam", "char", NULL };
+char *node_fields_delim[] =
+    { "attr", "small_fam", "small_char", "large_fam", "large_char", NULL };
 
 char *node_fields_inserting[] =
     { "height", "last_ins_ptr", "best_ins_ptr", NULL };
@@ -133,7 +207,7 @@ char *node_fields_whatsit_pdf_start_thread[] =
 };
 char *node_fields_whatsit_pdf_end_thread[] = { "attr", NULL };
 char *node_fields_whatsit_pdf_save_pos[] = { "attr", NULL };
-char *node_fields_whatsit_late_lua[] = { "attr", "reg", "data", NULL };
+char *node_fields_whatsit_late_lua[] = { "attr", "reg", "data", "name", NULL };
 char *node_fields_whatsit_close_lua[] = { "attr", "reg", NULL };
 char *node_fields_whatsit_pdf_colorstack[] =
     { "attr", "stack", "cmd", "data", NULL };
@@ -175,18 +249,23 @@ node_info node_data[] = {
     {over_noad, noad_size, node_fields_over, "over"},
     {accent_noad, accent_noad_size, node_fields_accent, "accent"},
     {vcenter_noad, noad_size, node_fields_vcenter, "vcenter"},
-    {left_noad, noad_size, node_fields_left, "left"},
-    {right_noad, noad_size, node_fields_right, "right"},
+    {fence_noad, fence_noad_size, node_fields_fence, "fence"},
+    {math_char_node, math_kernel_node_size, node_fields_math_char, "math_char"},
+    {sub_box_node, math_kernel_node_size, node_fields_sub_box, "sub_box"},
+    {sub_mlist_node, math_kernel_node_size, node_fields_sub_mlist, "sub_mlist"},
+    {math_text_char_node, math_kernel_node_size, node_fields_math_text_char,
+     "math_text_char"},
+    {delim_node, math_shield_node_size, node_fields_delim, "delim"},
     {margin_kern_node, margin_kern_node_size, node_fields_margin_kern,
      "margin_kern"},
-    {glyph_node, glyph_node_size, node_fields_glyph, "glyph"},  /* 33 */
+    {glyph_node, glyph_node_size, node_fields_glyph, "glyph"},
     {align_record_node, box_node_size, NULL, "align_record"},
     {pseudo_file_node, pseudo_file_node_size, NULL, "pseudo_file"},
     {pseudo_line_node, variable_node_size, NULL, "pseudo_line"},
     {inserting_node, page_ins_node_size, node_fields_inserting, "page_insert"},
     {split_up_node, page_ins_node_size, node_fields_splitup, "split_insert"},
     {expr_node, expr_node_size, NULL, "expr_stack"},
-    {nesting_node, nesting_node_size, NULL, "nested_list"},     /* 40 */
+    {nesting_node, nesting_node_size, NULL, "nested_list"},
     {span_node, span_node_size, NULL, "span"},
     {attribute_node, attribute_node_size, node_fields_attribute, "attribute"},
     {glue_spec_node, glue_spec_size, node_fields_glue_spec, "glue_spec"},
@@ -197,7 +276,7 @@ node_info node_data[] = {
     {align_stack_node, align_stack_node_size, NULL, "align_stack"},
     {movement_node, movement_node_size, NULL, "movement_stack"},
     {if_node, if_node_size, NULL, "if_stack"},
-    {unhyphenated_node, active_node_size, NULL, "unhyphenated"},        /* 50 */
+    {unhyphenated_node, active_node_size, NULL, "unhyphenated"},
     {hyphenated_node, active_node_size, NULL, "hyphenated"},
     {delta_node, delta_node_size, NULL, "delta"},
     {passive_node, passive_node_size, NULL, "passive"},
@@ -256,7 +335,8 @@ node_info whatsit_node_data[] = {
     {fake_node, fake_node_size, NULL, fake_node_name},
     {fake_node, fake_node_size, NULL, fake_node_name},
     {fake_node, fake_node_size, NULL, fake_node_name},
-    {late_lua_node, write_node_size, node_fields_whatsit_late_lua, "late_lua"},
+    {late_lua_node, late_lua_node_size, node_fields_whatsit_late_lua,
+     "late_lua"},
     {close_lua_node, write_node_size, node_fields_whatsit_close_lua,
      "close_lua"},
     {fake_node, fake_node_size, NULL, fake_node_name},
@@ -278,9 +358,6 @@ node_info whatsit_node_data[] = {
 
 #define last_whatsit_node user_defined_node
 
-#define  get_node_size(i,j) (i!=whatsit_node ? node_data[i].size : whatsit_node_data[j].size)
-#define  get_node_name(i,j) (i!=whatsit_node ? node_data[i].name : whatsit_node_data[j].name)
-
 halfword new_node(int i, int j)
 {
     register int s;
@@ -296,10 +373,6 @@ halfword new_node(int i, int j)
     switch (i) {
     case glyph_node:
         init_lang_data(n);
-        break;
-    case glue_node:
-    case kern_node:
-    case glue_spec_node:
         break;
     case hlist_node:
     case vlist_node:
@@ -345,11 +418,44 @@ halfword new_node(int i, int j)
     default:
         break;
     }
+    /* handle synctex extension */
+    switch (i) {
+    case math_node:
+        synctex_tag_math(n) = cur_input.synctex_tag_field;
+        synctex_line_math(n) = line;
+        break;
+    case glue_node:
+        synctex_tag_glue(n) = cur_input.synctex_tag_field;
+        synctex_line_glue(n) = line;
+        break;
+    case kern_node:
+        /* synctex ignores implicit kerns */
+        if (j != 0) {
+            synctex_tag_kern(n) = cur_input.synctex_tag_field;
+            synctex_line_kern(n) = line;
+        }
+        break;
+    case hlist_node:
+    case vlist_node:
+    case unset_node:
+        synctex_tag_box(n) = cur_input.synctex_tag_field;
+        synctex_line_box(n) = line;
+        break;
+    case rule_node:
+        synctex_tag_rule(n) = cur_input.synctex_tag_field;
+        synctex_line_rule(n) = line;
+        break;
+    }
+    /* take care of attributes */
     if (nodetype_has_attributes(i)) {
         build_attribute_list(n);
     }
     type(n) = i;
     subtype(n) = j;
+#ifdef DEBUG
+    fprintf(stderr, "Alloc-ing %s node %d\n",
+            get_node_name(type(n), subtype(n)), (int) n);
+#endif
     return n;
 }
 
@@ -382,7 +488,7 @@ halfword new_glyph_node(void)
 
 halfword copy_node_list(halfword p)
 {
-    halfword q;                 /* previous position in new list */
+    halfword q = null;          /* previous position in new list */
     halfword h = null;          /* head of the list */
     copy_error_seen = 0;
     while (p != null) {
@@ -410,14 +516,29 @@ halfword copy_node(const halfword p)
     }
     i = get_node_size(type(p), subtype(p));
     r = get_node(i);
+
     (void) memcpy((void *) (varmem + r), (void *) (varmem + p),
                   (sizeof(memory_word) * i));
+
+    /* handle synctex extension */
+    switch (type(p)) {
+    case math_node:
+        synctex_tag_math(r) = cur_input.synctex_tag_field;
+        synctex_line_math(r) = line;
+        break;
+    case kern_node:
+        synctex_tag_kern(r) = cur_input.synctex_tag_field;
+        synctex_line_kern(r) = line;
+        break;
+    }
 
     if (nodetype_has_attributes(type(p))) {
         add_node_attr_ref(node_attr(p));
         alink(r) = null;        /* needs checking */
     }
     vlink(r) = null;
+
+
     switch (type(p)) {
     case glyph_node:
         s = copy_node_list(lig_ptr(p));
@@ -479,6 +600,74 @@ halfword copy_node(const halfword p)
         s = copy_node_list(adjust_ptr(p));
         adjust_ptr(r) = s;
         break;
+
+    case choice_node:
+        s = copy_node_list(display_mlist(p));
+        display_mlist(r) = s;
+        s = copy_node_list(text_mlist(p));
+        text_mlist(r) = s;
+        s = copy_node_list(script_mlist(p));
+        script_mlist(r) = s;
+        s = copy_node_list(script_script_mlist(p));
+        script_script_mlist(r) = s;
+        break;
+    case ord_noad:
+    case op_noad:
+    case bin_noad:
+    case rel_noad:
+    case open_noad:
+    case close_noad:
+    case punct_noad:
+    case inner_noad:
+    case over_noad:
+    case under_noad:
+    case vcenter_noad:
+    case radical_noad:
+    case accent_noad:
+        s = copy_node_list(nucleus(p));
+        nucleus(r) = s;
+        s = copy_node_list(subscr(p));
+        subscr(r) = s;
+        s = copy_node_list(supscr(p));
+        supscr(r) = s;
+        if (type(p) == accent_noad) {
+            s = copy_node_list(accent_chr(p));
+            accent_chr(r) = s;
+            s = copy_node_list(bot_accent_chr(p));
+            bot_accent_chr(r) = s;
+        } else if (type(p) == radical_noad) {
+            s = copy_node(left_delimiter(p));
+            left_delimiter(r) = s;
+            s = copy_node_list(degree(p));
+            degree(r) = s;
+        }
+        break;
+    case fence_noad:
+        s = copy_node(delimiter(p));
+        delimiter(r) = s;
+        break;
+        /* 
+           case style_node:
+           case delim_node:
+           case math_char_node:
+           case math_text_char_node:
+           break;
+         */
+    case sub_box_node:
+    case sub_mlist_node:
+        s = copy_node_list(math_list(p));
+        math_list(r) = s;
+        break;
+    case fraction_noad:
+        s = copy_node_list(numerator(p));
+        numerator(r) = s;
+        s = copy_node_list(denominator(p));
+        denominator(r) = s;
+        s = copy_node(left_delimiter(p));
+        left_delimiter(r) = s;
+        s = copy_node(right_delimiter(p));
+        right_delimiter(r) = s;
+        break;
     case glue_spec_node:
         glue_ref_count(r) = null;
         break;
@@ -502,6 +691,8 @@ halfword copy_node(const halfword p)
             add_token_ref(pdf_setmatrix_data(p));
             break;
         case late_lua_node:
+            if (late_lua_name(p) > 0)
+                add_token_ref(late_lua_name(p));
             add_token_ref(late_lua_data(p));
             break;
         case pdf_annot_node:
@@ -531,6 +722,9 @@ halfword copy_node(const halfword p)
             case 't':
                 add_token_ref(user_node_value(p));
                 break;
+            case 's':
+                /* |add_string_ref(user_node_value(p));| *//* if this was mpost .. */
+                break;
             case 'n':
                 s = copy_node_list(user_node_value(p));
                 user_node_value(r) = s;
@@ -549,7 +743,9 @@ int valid_node(halfword p)
 {
     if (p > my_prealloc) {
         if (p < var_mem_max) {
+#ifndef NDEBUG
             if (varmem_sizes[p] > 0)
+#endif
                 return 1;
         }
     } else {
@@ -560,16 +756,15 @@ int valid_node(halfword p)
 
 static void do_free_error(halfword p)
 {
+    halfword r;
     char errstr[255] = { 0 };
-    char *errhlp[] =
-        {
-"When I tried to free the node mentioned in the error message, it turned",
+    char *errhlp[] = {
+        "When I tried to free the node mentioned in the error message, it turned",
         "out it was not (or no longer) actually in use.",
         "Errors such as these are often caused by Lua node list alteration,",
         "but could also point to a bug in the executable. It should be safe to continue.",
         NULL
     };
-    halfword r;
 
     check_node_mem();
     if (free_error_seen)
@@ -586,6 +781,7 @@ static void do_free_error(halfword p)
                  get_node_name(type(p), subtype(p)), (int) p);
     }
     tex_error(errstr, errhlp);
+#ifndef NDEBUG
     for (r = my_prealloc + 1; r < var_mem_max; r++) {
         if (vlink(r) == p) {
             halfword s = r;
@@ -646,16 +842,19 @@ static void do_free_error(halfword p)
             }
         }
     }
+#endif
 }
 
 int free_error(halfword p)
 {
     assert(p > my_prealloc);
     assert(p < var_mem_max);
+#ifndef NDEBUG
     if (varmem_sizes[p] == 0) {
         do_free_error(p);
         return 1;               /* double free */
     }
+#endif
     return 0;
 }
 
@@ -663,9 +862,8 @@ int free_error(halfword p)
 static void do_copy_error(halfword p)
 {
     char errstr[255] = { 0 };
-    char *errhlp[] =
-        {
-"When I tried to copy the node mentioned in the error message, it turned",
+    char *errhlp[] = {
+        "When I tried to copy the node mentioned in the error message, it turned",
         "out it was not (or no longer) actually in use.",
         "Errors such as these are often caused by Lua node list alteration,",
         "but could also point to a bug in the executable. It should be safe to continue.",
@@ -692,10 +890,12 @@ int copy_error(halfword p)
 {
     assert(p >= 0);
     assert(p < var_mem_max);
+#ifndef NDEBUG
     if (p > my_prealloc && varmem_sizes[p] == 0) {
         do_copy_error(p);
         return 1;               /* copy free node */
     }
+#endif
     return 0;
 }
 
@@ -707,6 +907,10 @@ void flush_node(halfword p)
     if (p == null)              /* legal, but no-op */
         return;
 
+#ifdef DEBUG
+    fprintf(stderr, "Free-ing %s node %d\n", get_node_name(type(p), subtype(p)),
+            (int) p);
+#endif
     if (free_error(p))
         return;
 
@@ -769,6 +973,8 @@ void flush_node(halfword p)
             delete_token_ref(pdf_setmatrix_data(p));
             break;
         case late_lua_node:
+            if (late_lua_name(p) > 0)
+                delete_token_ref(late_lua_name(p));
             delete_token_ref(late_lua_data(p));
             break;
         case pdf_annot_node:
@@ -809,8 +1015,22 @@ void flush_node(halfword p)
             case 'n':
                 flush_node_list(user_node_value(p));
                 break;
+            case 's':
+                /* |delete_string_ref(user_node_value(p));| *//* if this was mpost .. */
+                break;
+            case 'd':
+                break;
             default:
-                tconfusion("extuser");
+                {
+                    char *hlp[] = {
+                        "The type of the value in a user defined whatsit node should be one",
+                        "of 'a' (attribute list), 'd' (number), 'n' (node list), 's' (string),",
+                        "or 't' (tokenlist). Yours has an unknown type, and therefore I don't",
+                        "know how to free the node's value. A memory leak may result.",
+                        NULL
+                    };
+                    tex_error("Unidentified user defined whatsit", hlp);
+                }
                 break;
             }
             break;
@@ -839,7 +1059,7 @@ void flush_node(halfword p)
     case adjust_node:
         flush_node_list(adjust_ptr(p));
         break;
-    case style_node:
+    case style_node:           /* nothing to do */
         break;
     case choice_node:
         flush_node_list(display_mlist(p));
@@ -855,28 +1075,38 @@ void flush_node(halfword p)
     case close_noad:
     case punct_noad:
     case inner_noad:
-    case radical_noad:
     case over_noad:
     case under_noad:
     case vcenter_noad:
+    case radical_noad:
     case accent_noad:
-
-        /*
-         * if (math_type(nucleus(p))>=sub_box)
-         *  flush_node_list(vinfo(nucleus(p)));
-         * if (math_type(supscr(p))>=sub_box)
-         *  flush_node_list(vinfo(supscr(p)));
-         * if (math_type(subscr(p))>=sub_box)
-         *  flush_node_list(vinfo(subscr(p)));
-         */
-
+        flush_node_list(nucleus(p));
+        flush_node_list(subscr(p));
+        flush_node_list(supscr(p));
+        if (type(p) == accent_noad) {
+            flush_node_list(accent_chr(p));
+            flush_node_list(bot_accent_chr(p));
+        } else if (type(p) == radical_noad) {
+            flush_node(left_delimiter(p));
+            flush_node_list(degree(p));
+        }
         break;
-    case left_noad:
-    case right_noad:
+    case fence_noad:
+        flush_node(delimiter(p));
+        break;
+    case delim_node:           /* nothing to do */
+    case math_char_node:
+    case math_text_char_node:
+        break;
+    case sub_box_node:
+    case sub_mlist_node:
+        flush_node_list(math_list(p));
         break;
     case fraction_noad:
-        flush_node_list(vinfo(numerator(p)));
-        flush_node_list(vinfo(denominator(p)));
+        flush_node_list(numerator(p));
+        flush_node_list(denominator(p));
+        flush_node(left_delimiter(p));
+        flush_node(right_delimiter(p));
         break;
     case pseudo_file_node:
         flush_node_list(pseudo_lines(p));
@@ -929,18 +1159,18 @@ void flush_node_list(halfword pp)
 
 static int test_count = 1;
 
-#define dorangetest(a,b,c)  do {					\
+#define dorangetest(a,b,c)  do {                                        \
     if (!(b>=0 && b<c)) {                                               \
       fprintf(stdout,"For node p:=%d, 0<=%d<%d (l.%d,r.%d)\n",          \
               (int)a, (int)b, (int)c, __LINE__,test_count);             \
-      tconfusion("dorangetest");					\
+      tconfusion("dorangetest");                                        \
     } } while (0)
 
-#define dotest(a,b,c) do {						\
+#define dotest(a,b,c) do {                                              \
     if (b!=c) {                                                         \
       fprintf(stdout,"For node p:=%d, %d==%d (l.%d,r.%d)\n",            \
               (int)a, (int)b, (int)c, __LINE__,test_count);             \
-      tconfusion("dotest");						\
+      tconfusion("dotest");                                             \
     } } while (0)
 
 #define check_action_ref(a)     { dorangetest(p,a,var_mem_max); }
@@ -985,6 +1215,8 @@ void check_node(halfword p)
             check_token_ref(pdf_setmatrix_data(p));
             break;
         case late_lua_node:
+            if (late_lua_name(p) > 0)
+                check_token_ref(late_lua_name(p));
             check_token_ref(late_lua_data(p));
             break;
         case pdf_annot_node:
@@ -1016,6 +1248,9 @@ void check_node(halfword p)
                 break;
             case 'n':
                 dorangetest(p, user_node_value(p), var_mem_max);
+                break;
+            case 's':
+            case 'd':
                 break;
             default:
                 tconfusion("extuser");
@@ -1066,15 +1301,11 @@ void check_node(halfword p)
         dorangetest(p, script_script_mlist(p), var_mem_max);
         break;
     case fraction_noad:
-        dorangetest(p, vinfo(numerator(p)), var_mem_max);
-        dorangetest(p, vinfo(denominator(p)), var_mem_max);
+        dorangetest(p, numerator(p), var_mem_max);
+        dorangetest(p, denominator(p), var_mem_max);
+        dorangetest(p, left_delimiter(p), var_mem_max);
+        dorangetest(p, right_delimiter(p), var_mem_max);
         break;
-    case rule_node:
-    case kern_node:
-    case math_node:
-    case penalty_node:
-    case mark_node:
-    case style_node:
     case ord_noad:
     case op_noad:
     case bin_noad:
@@ -1083,13 +1314,36 @@ void check_node(halfword p)
     case close_noad:
     case punct_noad:
     case inner_noad:
-    case radical_noad:
     case over_noad:
     case under_noad:
     case vcenter_noad:
+        dorangetest(p, nucleus(p), var_mem_max);
+        dorangetest(p, subscr(p), var_mem_max);
+        dorangetest(p, supscr(p), var_mem_max);
+        break;
+    case radical_noad:
+        dorangetest(p, nucleus(p), var_mem_max);
+        dorangetest(p, subscr(p), var_mem_max);
+        dorangetest(p, supscr(p), var_mem_max);
+        dorangetest(p, degree(p), var_mem_max);
+        dorangetest(p, left_delimiter(p), var_mem_max);
+        break;
     case accent_noad:
-    case left_noad:
-    case right_noad:
+        dorangetest(p, nucleus(p), var_mem_max);
+        dorangetest(p, subscr(p), var_mem_max);
+        dorangetest(p, supscr(p), var_mem_max);
+        dorangetest(p, accent_chr(p), var_mem_max);
+        dorangetest(p, bot_accent_chr(p), var_mem_max);
+        break;
+    case fence_noad:
+        dorangetest(p, delimiter(p), var_mem_max);
+        break;
+    case rule_node:
+    case kern_node:
+    case math_node:
+    case penalty_node:
+    case mark_node:
+    case style_node:
     case attribute_list_node:
     case attribute_node:
     case glue_spec_node:
@@ -1165,12 +1419,13 @@ void check_node_mem(void)
 {
     int i;
     check_static_node_mem();
-
+#ifndef NDEBUG
     for (i = (my_prealloc + 1); i < var_mem_max; i++) {
         if (varmem_sizes[i] > 0) {
             check_node(i);
         }
     }
+#endif
     test_count++;
 }
 
@@ -1214,7 +1469,7 @@ void print_free_chain(int c)
     halfword p = free_chain[c];
     fprintf(stdout, "\nfree chain[%d] =\n  ", c);
     while (p != null) {
-	  fprintf(stdout, "%d,", (int)p);
+        fprintf(stdout, "%d,", (int) p);
         p = vlink(p);
     }
     fprintf(stdout, "null;\n");
@@ -1265,9 +1520,9 @@ void free_node_chain(halfword q, integer s)
 }
 
 
-void init_node_mem(halfword prealloced, halfword t)
+void init_node_mem(halfword t)
 {
-    my_prealloc = prealloced;
+    my_prealloc = var_mem_stat_max;
     assert(whatsit_node_data[user_defined_node].id == user_defined_node);
     assert(node_data[passive_node].id == passive_node);
 
@@ -1285,10 +1540,112 @@ void init_node_mem(halfword prealloced, halfword t)
     memset((void *) varmem_sizes, 0, sizeof(char) * t);
 #endif
     var_mem_max = t;
-    rover = prealloced + 1;
+    rover = var_mem_stat_max + 1;
     vlink(rover) = rover;
     node_size(rover) = (t - rover);
     var_used = 0;
+    /* initialize static glue specs */
+    glue_ref_count(zero_glue) = null + 1;
+    width(zero_glue) = 0;
+    type(zero_glue) = glue_spec_node;
+    vlink(zero_glue) = null;
+    stretch(zero_glue) = 0;
+    stretch_order(zero_glue) = normal;
+    shrink(zero_glue) = 0;
+    shrink_order(zero_glue) = normal;
+    glue_ref_count(sfi_glue) = null + 1;
+    width(sfi_glue) = 0;
+    type(sfi_glue) = glue_spec_node;
+    vlink(sfi_glue) = null;
+    stretch(sfi_glue) = 0;
+    stretch_order(sfi_glue) = sfi;
+    shrink(sfi_glue) = 0;
+    shrink_order(sfi_glue) = normal;
+    glue_ref_count(fil_glue) = null + 1;
+    width(fil_glue) = 0;
+    type(fil_glue) = glue_spec_node;
+    vlink(fil_glue) = null;
+    stretch(fil_glue) = unity;
+    stretch_order(fil_glue) = fil;
+    shrink(fil_glue) = 0;
+    shrink_order(fil_glue) = normal;
+    glue_ref_count(fill_glue) = null + 1;
+    width(fill_glue) = 0;
+    type(fill_glue) = glue_spec_node;
+    vlink(fill_glue) = null;
+    stretch(fill_glue) = unity;
+    stretch_order(fill_glue) = fill;
+    shrink(fill_glue) = 0;
+    shrink_order(fill_glue) = normal;
+    glue_ref_count(ss_glue) = null + 1;
+    width(ss_glue) = 0;
+    type(ss_glue) = glue_spec_node;
+    vlink(ss_glue) = null;
+    stretch(ss_glue) = unity;
+    stretch_order(ss_glue) = fil;
+    shrink(ss_glue) = unity;
+    shrink_order(ss_glue) = fil;
+    glue_ref_count(fil_neg_glue) = null + 1;
+    width(fil_neg_glue) = 0;
+    type(fil_neg_glue) = glue_spec_node;
+    vlink(fil_neg_glue) = null;
+    stretch(fil_neg_glue) = -unity;
+    stretch_order(fil_neg_glue) = fil;
+    shrink(fil_neg_glue) = 0;
+    shrink_order(fil_neg_glue) = normal;
+    /* initialize node list heads */
+    vinfo(page_ins_head) = 0;
+    vlink(page_ins_head) = null;
+    alink(page_ins_head) = null;
+    vinfo(contrib_head) = 0;
+    vlink(contrib_head) = null;
+    alink(contrib_head) = null;
+    vinfo(page_head) = 0;
+    vlink(page_head) = null;
+    alink(page_head) = null;
+    vinfo(temp_head) = 0;
+    vlink(temp_head) = null;
+    alink(temp_head) = null;
+    vinfo(hold_head) = 0;
+    vlink(hold_head) = null;
+    alink(hold_head) = null;
+    vinfo(adjust_head) = 0;
+    vlink(adjust_head) = null;
+    alink(adjust_head) = null;
+    vinfo(pre_adjust_head) = 0;
+    vlink(pre_adjust_head) = null;
+    alink(pre_adjust_head) = null;
+    vinfo(active) = 0;
+    vlink(active) = null;
+    alink(active) = null;
+    vinfo(align_head) = 0;
+    vlink(align_head) = null;
+    alink(align_head) = null;
+    vinfo(end_span) = 0;
+    vlink(end_span) = null;
+    alink(end_span) = null;
+    type(begin_point) = glyph_node;
+    subtype(begin_point) = 0;
+    vlink(begin_point) = null;
+    vinfo(begin_point + 1) = null;
+    alink(begin_point) = null;
+    font(begin_point) = 0;
+    character(begin_point) = '.';
+    vinfo(begin_point + 3) = 0;
+    vlink(begin_point + 3) = 0;
+    vinfo(begin_point + 4) = 0;
+    vlink(begin_point + 4) = 0;
+    type(end_point) = glyph_node;
+    subtype(end_point) = 0;
+    vlink(end_point) = null;
+    vinfo(end_point + 1) = null;
+    alink(end_point) = null;
+    font(end_point) = 0;
+    character(end_point) = '.';
+    vinfo(end_point + 3) = 0;
+    vlink(end_point + 3) = 0;
+    vinfo(end_point + 4) = 0;
+    vlink(end_point + 4) = 0;
 }
 
 void dump_node_mem(void)
@@ -1448,6 +1805,7 @@ char *sprint_node_mem_usage(void)
     int i, b;
 
     char *s, *ss;
+#ifndef NDEBUG
     char msg[256];
     int node_counts[last_normal_node + last_whatsit_node + 2] = { 0 };
 
@@ -1471,12 +1829,17 @@ char *sprint_node_mem_usage(void)
             snprintf(msg, 255, "%s%d %s", (b ? ", " : ""), (int) node_counts[i],
                      get_node_name((i > last_normal_node ? whatsit_node : i),
                                    j));
-            ss = concat(s, msg);
+            ss = xmalloc(strlen(s) + strlen(msg) + 1);
+            strcpy(ss, s);
+            strcat(ss, msg);
             free(s);
             s = ss;
             b = 1;
         }
     }
+#else
+    s = strdup("");
+#endif
     return s;
 }
 
@@ -1484,6 +1847,7 @@ halfword list_node_mem_usage(void)
 {
     halfword i, j;
     halfword p = null, q = null;
+#ifndef NDEBUG
     char *saved_varmem_sizes = xmallocarray(char, var_mem_max);
     memcpy(saved_varmem_sizes, varmem_sizes, var_mem_max);
     for (i = my_prealloc + 1; i < (var_mem_max - 1); i++) {
@@ -1498,17 +1862,17 @@ halfword list_node_mem_usage(void)
         }
     }
     free(saved_varmem_sizes);
+#endif
     return q;
 }
 
-void print_node_mem_stats(int num, int online)
+void print_node_mem_stats(int tracingstats, int tracingonline)
 {
     int i, b;
     halfword j;
     char msg[256];
     char *s;
     integer free_chain_counts[MAX_CHAIN_SIZE] = { 0 };
-
     snprintf(msg, 255, "node memory in use: %d words out of %d",
              (int) (var_used + my_prealloc), (int) var_mem_max);
     tprint_nl(msg);
@@ -1680,7 +2044,7 @@ halfword do_set_attribute(halfword p, int i, int val)
         vlink(q) = p;
         return q;
     }
-
+    q = p;
     assert(vlink(p) != null);
     while (vlink(p) != null) {
         int t = attribute_id(vlink(p));
@@ -1774,11 +2138,15 @@ int unset_attribute(halfword n, int i, int val)
         t = attribute_id(vlink(p));
         if (t > i)
             return -1;
-        if (t == i)
+        if (t == i) {
+            p = vlink(p);
             break;
+        }
         j++;
         p = vlink(p);
     }
+    if (attribute_id(p) != i)
+        return -1;
     /* if we are still here, the attribute exists */
     p = node_attr(n);
     if (attr_list_ref(p) != 1) {
@@ -1824,4 +2192,739 @@ int has_attribute(halfword n, int i, int val)
         p = vlink(p);
     }
     return -1;
+}
+
+void print_short_node_contents(halfword p)
+{
+    switch (type(p)) {
+    case hlist_node:
+    case vlist_node:
+    case ins_node:
+    case whatsit_node:
+    case mark_node:
+    case adjust_node:
+    case unset_node:
+        print_char('[');
+        print_char(']');
+        break;
+    case rule_node:
+        print_char('|');
+        break;
+    case glue_node:
+        if (glue_ptr(p) != zero_glue)
+            print_char(' ');
+        break;
+    case math_node:
+        print_char('$');
+        break;
+    case disc_node:
+        short_display(vlink(pre_break(p)));
+        short_display(vlink(post_break(p)));
+        break;
+    default:
+        assert(1);
+        break;
+    }
+}
+
+
+void show_pdftex_whatsit_rule_spec(integer p)
+{
+    tprint("(");
+    print_rule_dimen(pdf_height(p));
+    print_char('+');
+    print_rule_dimen(pdf_depth(p));
+    tprint(")x");
+    print_rule_dimen(pdf_width(p));
+}
+
+
+/*
+Each new type of node that appears in our data structure must be capable
+of being displayed, copied, destroyed, and so on. The routines that we
+need for write-oriented whatsits are somewhat like those for mark nodes;
+other extensions might, of course, involve more subtlety here.
+*/
+
+
+void print_write_whatsit(char *s, pointer p)
+{
+    tprint_esc(s);
+    if (write_stream(p) < 16)
+        print_int(write_stream(p));
+    else if (write_stream(p) == 16)
+        print_char('*');
+    else
+        print_char('-');
+}
+
+
+void show_whatsit_node(integer p)
+{
+    switch (subtype(p)) {
+    case open_node:
+        print_write_whatsit("openout", p);
+        print_char('=');
+        print_file_name(open_name(p), open_area(p), open_ext(p));
+        break;
+    case write_node:
+        print_write_whatsit("write", p);
+        print_mark(write_tokens(p));
+        break;
+    case close_node:
+        print_write_whatsit("closeout", p);
+        break;
+    case special_node:
+        tprint_esc("special");
+        print_mark(write_tokens(p));
+        break;
+    case dir_node:
+        if (dir_dir(p) < 0) {
+            tprint_esc("enddir");
+            print_char(' ');
+            print_dir(dir_dir(p) + 64);
+        } else {
+            tprint_esc("begindir");
+            print_char(' ');
+            print_dir(dir_dir(p));
+        }
+    case local_par_node:
+        tprint_esc("whatsit");
+        append_char('.');
+        print_ln();
+        print_current_string();
+        tprint_esc("localinterlinepenalty");
+        print_char('=');
+        print_int(local_pen_inter(p));
+        print_ln();
+        print_current_string();
+        tprint_esc("localbrokenpenalty");
+        print_char('=');
+        print_int(local_pen_broken(p));
+        print_ln();
+        print_current_string();
+        tprint_esc("localleftbox");
+        if (local_box_left(p) == null) {
+            tprint("=null");
+        } else {
+            append_char('.');
+            show_node_list(local_box_left(p));
+            decr(pool_ptr);
+        }
+        print_ln();
+        print_current_string();
+        tprint_esc("localrightbox");
+        if (local_box_right(p) == null) {
+            tprint("=null");
+        } else {
+            append_char('.');
+            show_node_list(local_box_right(p));
+            decr(pool_ptr);
+        }
+        decr(pool_ptr);
+        break;
+    case pdf_literal_node:
+        tprint_esc("pdfliteral");
+        switch (pdf_literal_mode(p)) {
+        case set_origin:
+            break;
+        case direct_page:
+            tprint(" page");
+            break;
+        case direct_always:
+            tprint(" direct");
+            break;
+        default:
+            tconfusion("literal2");
+            break;
+        }
+        print_mark(pdf_literal_data(p));
+        break;
+    case pdf_colorstack_node:
+        tprint_esc("pdfcolorstack ");
+        print_int(pdf_colorstack_stack(p));
+        switch (pdf_colorstack_cmd(p)) {
+        case colorstack_set:
+            tprint(" set ");
+            break;
+        case colorstack_push:
+            tprint(" push ");
+            break;
+        case colorstack_pop:
+            tprint(" pop");
+            break;
+        case colorstack_current:
+            tprint(" current");
+            break;
+        default:
+            tconfusion("pdfcolorstack");
+            break;
+        }
+        if (pdf_colorstack_cmd(p) <= colorstack_data)
+            print_mark(pdf_colorstack_data(p));
+        break;
+    case pdf_setmatrix_node:
+        tprint_esc("pdfsetmatrix");
+        print_mark(pdf_setmatrix_data(p));
+        break;
+    case pdf_save_node:
+        tprint_esc("pdfsave");
+        break;
+    case pdf_restore_node:
+        tprint_esc("pdfrestore");
+        break;
+    case cancel_boundary_node:
+        tprint_esc("noboundary");
+        break;
+    case late_lua_node:
+        tprint_esc("latelua");
+        print_int(late_lua_reg(p));
+        print_mark(late_lua_data(p));
+        break;
+    case close_lua_node:
+        tprint_esc("closelua");
+        print_int(late_lua_reg(p));
+        break;
+    case pdf_refobj_node:
+        tprint_esc("pdfrefobj");
+        if (obj_obj_is_stream(pdf_obj_objnum(p)) > 0) {
+            if (obj_obj_stream_attr(pdf_obj_objnum(p)) != null) {
+                tprint(" attr");
+                print_mark(obj_obj_stream_attr(pdf_obj_objnum(p)));
+            }
+            tprint(" stream");
+        }
+        if (obj_obj_is_file(pdf_obj_objnum(p)) > 0)
+            tprint(" file");
+        print_mark(obj_obj_data(pdf_obj_objnum(p)));
+        break;
+    case pdf_refxform_node:
+        tprint_esc("pdfrefxform");
+        print_char('(');
+        print_scaled(obj_xform_height(pdf_xform_objnum(p)));
+        print_char('+');
+        print_scaled(obj_xform_depth(pdf_xform_objnum(p)));
+        tprint(")x");
+        print_scaled(obj_xform_width(pdf_xform_objnum(p)));
+        break;
+    case pdf_refximage_node:
+        tprint_esc("pdfrefximage");
+        tprint("(");
+        print_scaled(pdf_height(p));
+        print_char('+');
+        print_scaled(pdf_depth(p));
+        tprint(")x");
+        print_scaled(pdf_width(p));
+        break;
+    case pdf_annot_node:
+        tprint_esc("pdfannot");
+        show_pdftex_whatsit_rule_spec(p);
+        print_mark(pdf_annot_data(p));
+        break;
+    case pdf_start_link_node:
+        tprint_esc("pdfstartlink");
+        show_pdftex_whatsit_rule_spec(p);
+        if (pdf_link_attr(p) != null) {
+            tprint(" attr");
+            print_mark(pdf_link_attr(p));
+        }
+        tprint(" action");
+        if (pdf_action_type(pdf_link_action(p)) == pdf_action_user) {
+            tprint(" user");
+            print_mark(pdf_action_tokens(pdf_link_action(p)));
+            return;
+        }
+        if (pdf_action_file(pdf_link_action(p)) != null) {
+            tprint(" file");
+            print_mark(pdf_action_file(pdf_link_action(p)));
+        }
+        switch (pdf_action_type(pdf_link_action(p))) {
+        case pdf_action_goto:
+            if (pdf_action_named_id(pdf_link_action(p)) > 0) {
+                tprint(" goto name");
+                print_mark(pdf_action_id(pdf_link_action(p)));
+            } else {
+                tprint(" goto num");
+                print_int(pdf_action_id(pdf_link_action(p)));
+            }
+            break;
+        case pdf_action_page:
+            tprint(" page");
+            print_int(pdf_action_id(pdf_link_action(p)));
+            print_mark(pdf_action_tokens(pdf_link_action(p)));
+            break;
+        case pdf_action_thread:
+            if (pdf_action_named_id(pdf_link_action(p)) > 0) {
+                tprint(" thread name");
+                print_mark(pdf_action_id(pdf_link_action(p)));
+            } else {
+                tprint(" thread num");
+                print_int(pdf_action_id(pdf_link_action(p)));
+            }
+            break;
+        default:
+            pdf_error(maketexstring("displaying"),
+                      maketexstring("unknown action type"));
+            break;
+        }
+        break;
+    case pdf_end_link_node:
+        tprint_esc("pdfendlink");
+        break;
+    case pdf_dest_node:
+        tprint_esc("pdfdest");
+        if (pdf_dest_named_id(p) > 0) {
+            tprint(" name");
+            print_mark(pdf_dest_id(p));
+        } else {
+            tprint(" num");
+            print_int(pdf_dest_id(p));
+        }
+        print_char(' ');
+        switch (pdf_dest_type(p)) {
+        case pdf_dest_xyz:
+            tprint("xyz");
+            if (pdf_dest_xyz_zoom(p) != null) {
+                tprint(" zoom");
+                print_int(pdf_dest_xyz_zoom(p));
+            }
+            break;
+        case pdf_dest_fitbh:
+            tprint("fitbh");
+            break;
+        case pdf_dest_fitbv:
+            tprint("fitbv");
+            break;
+        case pdf_dest_fitb:
+            tprint("fitb");
+            break;
+        case pdf_dest_fith:
+            tprint("fith");
+            break;
+        case pdf_dest_fitv:
+            tprint("fitv");
+            break;
+        case pdf_dest_fitr:
+            tprint("fitr");
+            show_pdftex_whatsit_rule_spec(p);
+            break;
+        case pdf_dest_fit:
+            tprint("fit");
+            break;
+        default:
+            tprint("unknown!");
+            break;
+        }
+        break;
+    case pdf_thread_node:
+    case pdf_start_thread_node:
+        if (subtype(p) == pdf_thread_node)
+            tprint_esc("pdfthread");
+        else
+            tprint_esc("pdfstartthread");
+        tprint("(");
+        print_rule_dimen(pdf_height(p));
+        print_char('+');
+        print_rule_dimen(pdf_depth(p));
+        tprint(")x");
+        print_rule_dimen(pdf_width(p));
+        if (pdf_thread_attr(p) != null) {
+            tprint(" attr");
+            print_mark(pdf_thread_attr(p));
+        }
+        if (pdf_thread_named_id(p) > 0) {
+            tprint(" name");
+            print_mark(pdf_thread_id(p));
+        } else {
+            tprint(" num");
+            print_int(pdf_thread_id(p));
+        }
+        break;
+    case pdf_end_thread_node:
+        tprint_esc("pdfendthread");
+        break;
+    case pdf_save_pos_node:
+        tprint_esc("pdfsavepos");
+        break;
+    case user_defined_node:
+        tprint_esc("whatsit");
+        print_int(user_node_id(p));
+        print_char('=');
+        switch (user_node_type(p)) {
+        case 'a':
+            tprint("<>");
+            break;
+        case 'n':
+            tprint("[");
+            show_node_list(user_node_value(p));
+            tprint("]");
+            break;
+        case 's':
+            print_char('"');
+            print(user_node_value(p));
+            print_char('"');
+            break;
+        case 't':
+            print_mark(user_node_value(p));
+            break;
+        default:               /* only 'd' */
+            print_int(user_node_value(p));
+            break;
+        }
+        break;
+    default:
+        tprint("whatsit?");
+        break;
+    }
+}
+
+
+/*
+  Now we are ready for |show_node_list| itself. This procedure has been
+  written to be ``extra robust'' in the sense that it should not crash or get
+  into a loop even if the data structures have been messed up by bugs in
+  the rest of the program. You can safely call its parent routine
+  |show_box(p)| for arbitrary values of |p| when you are debugging \TeX.
+  However, in the presence of bad data, the procedure may
+  fetch a |memory_word| whose variant is different from the way it was stored;
+  for example, it might try to read |mem[p].hh| when |mem[p]|
+  contains a scaled integer, if |p| is a pointer that has been
+  clobbered or chosen at random.
+*/
+
+/* |str_room| need not be checked; see |show_box|  */
+
+/* Recursive calls on |show_node_list| therefore use the following pattern: */
+
+#define node_list_display(A) do {               \
+    append_char('.');                           \
+    show_node_list(A);                          \
+    flush_char();                               \
+} while (0)
+
+void show_node_list(integer p)
+{                               /* prints a node list symbolically */
+    integer n;                  /* the number of items already printed at this level */
+    real g;                     /* a glue ratio, as a floating point number */
+    if (cur_length > depth_threshold) {
+        if (p > null)
+            tprint(" []");      /* indicate that there's been some truncation */
+        return;
+    }
+    n = 0;
+    while (p != null) {
+        print_ln();
+        print_current_string(); /* display the nesting history */
+        if (int_par(param_tracing_online_code) < -2)
+            print_int(p);
+        incr(n);
+        if (n > breadth_max) {  /* time to stop */
+            tprint("etc.");
+            return;
+        }
+        /* @<Display node |p|@> */
+        if (is_char_node(p)) {
+            print_font_and_char(p);
+            if (is_ligature(p)) {
+                /* @<Display ligature |p|@>; */
+                tprint(" (ligature ");
+                if (is_leftboundary(p))
+                    print_char('|');
+                font_in_short_display = font(p);
+                short_display(lig_ptr(p));
+                if (is_rightboundary(p))
+                    print_char('|');
+                print_char(')');
+            }
+        } else {
+            switch (type(p)) {
+            case hlist_node:
+            case vlist_node:
+            case unset_node:
+                /* @<Display box |p|@>; */
+                if (type(p) == hlist_node)
+                    tprint_esc("h");
+                else if (type(p) == vlist_node)
+                    tprint_esc("v");
+                else
+                    tprint_esc("unset");
+                tprint("box(");
+                print_scaled(height(p));
+                print_char('+');
+                print_scaled(depth(p));
+                tprint(")x");
+                print_scaled(width(p));
+                if (type(p) == unset_node) {
+                    /* @<Display special fields of the unset node |p|@>; */
+                    if (span_count(p) != min_quarterword) {
+                        tprint(" (");
+                        print_int(span_count(p) + 1);
+                        tprint(" columns)");
+                    }
+                    if (glue_stretch(p) != 0) {
+                        tprint(", stretch ");
+                        print_glue(glue_stretch(p), glue_order(p), 0);
+                    }
+                    if (glue_shrink(p) != 0) {
+                        tprint(", shrink ");
+                        print_glue(glue_shrink(p), glue_sign(p), 0);
+                    }
+                } else {
+                    /*<Display the value of |glue_set(p)|@> */
+                    /* The code will have to change in this place if |glue_ratio| is
+                       a structured type instead of an ordinary |real|. Note that this routine
+                       should avoid arithmetic errors even if the |glue_set| field holds an
+                       arbitrary random value. The following code assumes that a properly
+                       formed nonzero |real| number has absolute value $2^{20}$ or more when
+                       it is regarded as an integer; this precaution was adequate to prevent
+                       floating point underflow on the author's computer.
+                     */
+
+                    g = (real) (glue_set(p));
+                    if ((g != 0.0) && (glue_sign(p) != normal)) {
+                        tprint(", glue set ");
+                        if (glue_sign(p) == shrinking)
+                            tprint("- ");
+                        if (g > 20000.0 || g < -20000.0) {
+                            if (g > 0.0)
+                                print_char('>');
+                            else
+                                tprint("< -");
+                            print_glue(20000 * unity, glue_order(p), 0);
+                        } else {
+                            print_glue(round(unity * g), glue_order(p), 0);
+                        }
+                    }
+
+                    if (shift_amount(p) != 0) {
+                        tprint(", shifted ");
+                        print_scaled(shift_amount(p));
+                    }
+                    tprint(", direction ");
+                    print_dir(box_dir(p));
+                }
+                node_list_display(list_ptr(p)); /* recursive call */
+                break;
+            case rule_node:
+                /* @<Display rule |p|@>; */
+                tprint_esc("rule(");
+                print_rule_dimen(height(p));
+                print_char('+');
+                print_rule_dimen(depth(p));
+                tprint(")x");
+                print_rule_dimen(width(p));
+                break;
+            case ins_node:
+                /* @<Display insertion |p|@>; */
+                tprint_esc("insert");
+                print_int(subtype(p));
+                tprint(", natural size ");
+                print_scaled(height(p));
+                tprint("; split(");
+                print_spec(split_top_ptr(p), 0);
+                print_char(',');
+                print_scaled(depth(p));
+                tprint("); float cost ");
+                print_int(float_cost(p));
+                node_list_display(ins_ptr(p));  /* recursive call */
+                break;
+            case whatsit_node:
+                show_whatsit_node(p);
+                break;
+            case glue_node:
+                /* @<Display glue |p|@>; */
+                if (subtype(p) >= a_leaders) {
+                    /* @<Display leaders |p|@>; */
+                    tprint_esc("");
+                    if (subtype(p) == c_leaders)
+                        print_char('c');
+                    else if (subtype(p) == x_leaders)
+                        print_char('x');
+                    tprint("leaders ");
+                    print_spec(glue_ptr(p), 0);
+                    node_list_display(leader_ptr(p));   /* recursive call */
+                } else {
+                    tprint_esc("glue");
+                    if (subtype(p) != normal) {
+                        print_char('(');
+                        if (subtype(p) < cond_math_glue)
+                            print_skip_param(subtype(p) - 1);
+                        else if (subtype(p) == cond_math_glue)
+                            tprint_esc("nonscript");
+                        else
+                            tprint_esc("mskip");
+                        print_char(')');
+                    }
+                    if (subtype(p) != cond_math_glue) {
+                        print_char(' ');
+                        if (subtype(p) < cond_math_glue)
+                            print_spec(glue_ptr(p), 0);
+                        else
+                            print_spec(glue_ptr(p), maketexstring("mu"));
+                    }
+                }
+                break;
+            case margin_kern_node:
+                tprint_esc("kern");
+                print_scaled(width(p));
+                if (subtype(p) == left_side)
+                    tprint(" (left margin)");
+                else
+                    tprint(" (right margin)");
+                break;
+            case kern_node:
+                /* @<Display kern |p|@>; */
+                /*  An ``explicit'' kern value is indicated implicitly by an explicit space. */
+                if (subtype(p) != mu_glue) {
+                    tprint_esc("kern");
+                    if (subtype(p) != normal)
+                        print_char(' ');
+                    print_scaled(width(p));
+                    if (subtype(p) == acc_kern)
+                        tprint(" (for accent)");
+                } else {
+                    tprint_esc("mkern");
+                    print_scaled(width(p));
+                    tprint("mu");
+                }
+                break;
+            case math_node:
+                /* @<Display math node |p|@>; */
+                tprint_esc("math");
+                if (subtype(p) == before)
+                    tprint("on");
+                else
+                    tprint("off");
+                if (width(p) != 0) {
+                    tprint(", surrounded ");
+                    print_scaled(width(p));
+                }
+                break;
+            case penalty_node:
+                /* @<Display penalty |p|@>; */
+                tprint_esc("penalty ");
+                print_int(penalty(p));
+                break;
+            case disc_node:
+                /* @<Display discretionary |p|@>; */
+                /* The |post_break| list of a discretionary node is indicated by a prefixed
+                   `\.{\char'174}' instead of the `\..' before the |pre_break| list. */
+                tprint_esc("discretionary");
+                if (vlink(no_break(p)) != null) {
+                    tprint(" replacing ");
+                    node_list_display(vlink(no_break(p)));
+                }
+                node_list_display(vlink(pre_break(p))); /* recursive call */
+                append_char('|');
+                show_node_list(vlink(post_break(p)));
+                flush_char();   /* recursive call */
+                break;
+            case mark_node:
+                /* @<Display mark |p|@>; */
+                tprint_esc("mark");
+                if (mark_class(p) != 0) {
+                    print_char('s');
+                    print_int(mark_class(p));
+                }
+                print_mark(mark_ptr(p));
+                break;
+            case adjust_node:
+                /* @<Display adjustment |p|@>; */
+                tprint_esc("vadjust");
+                if (adjust_pre(p) != 0)
+                    tprint(" pre ");
+                node_list_display(adjust_ptr(p));       /* recursive call */
+                break;
+            default:
+                show_math_node(p);
+                break;
+            }
+        }
+        p = vlink(p);
+    }
+}
+
+/* This routine finds the 'base' width of a horizontal box, using the same logic
+  that \TeX82 used for \.{\\predisplaywidth} */
+
+pointer actual_box_width(pointer r, scaled base_width)
+{
+    scaled w;                   /* calculated |size| */
+    pointer p;                  /* current node when calculating |pre_display_size| */
+    pointer q;                  /* glue specification when calculating |pre_display_size| */
+    internal_font_number f;     /* font in current |char_node| */
+    scaled d;                   /* increment to |v| */
+    scaled v;                   /* |w| plus possible glue amount */
+    w = -max_dimen;
+    v = shift_amount(r) + base_width;
+    p = list_ptr(r);
+    while (p != null) {
+        if (is_char_node(p)) {
+            f = font(p);
+            d = glyph_width(p);
+            goto found;
+        }
+        switch (type(p)) {
+        case hlist_node:
+        case vlist_node:
+        case rule_node:
+            d = width(p);
+            goto found;
+            break;
+        case margin_kern_node:
+            d = width(p);
+            break;
+        case kern_node:
+            d = width(p);
+            break;
+        case math_node:
+            d = surround(p);
+            break;
+        case glue_node:
+            /* We need to be careful that |w|, |v|, and |d| do not depend on any |glue_set|
+               values, since such values are subject to system-dependent rounding.
+               System-dependent numbers are not allowed to infiltrate parameters like
+               |pre_display_size|, since \TeX82 is supposed to make the same decisions on all
+               machines.
+             */
+            q = glue_ptr(p);
+            d = width(q);
+            if (glue_sign(r) == stretching) {
+                if ((glue_order(r) == stretch_order(q))
+                    && (stretch(q) != 0))
+                    v = max_dimen;
+            } else if (glue_sign(r) == shrinking) {
+                if ((glue_order(r) == shrink_order(q))
+                    && (shrink(q) != 0))
+                    v = max_dimen;
+            }
+            if (subtype(p) >= a_leaders)
+                goto found;
+            break;
+        case whatsit_node:
+            if ((subtype(p) == pdf_refxform_node)
+                || (subtype(p) == pdf_refximage_node))
+                d = pdf_width(p);
+            else
+                d = 0;
+            break;
+        default:
+            d = 0;
+            break;
+        }
+        if (v < max_dimen)
+            v = v + d;
+        goto not_found;
+      found:
+        if (v < max_dimen) {
+            v = v + d;
+            w = v;
+        } else {
+            w = max_dimen;
+            break;
+        }
+      not_found:
+        p = vlink(p);
+    }
+    return w;
 }

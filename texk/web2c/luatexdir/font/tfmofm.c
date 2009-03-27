@@ -1,34 +1,34 @@
-/*
-Copyright (c) 1996-2006 Taco Hoekwater <taco@luatex.org>
+/* tfmofm.c
+   
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of LuaTeX.
+   This file is part of LuaTeX.
 
-LuaTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-LuaTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with LuaTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-$Id: tfmofm.c 1013 2008-02-14 00:09:02Z oneiros $
-*/
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "ptexlib.h"
-
 #include "luatex-api.h"
+#include "luatexfont.h"
+
+static const char _svn_version[] =
+    "$Id: tfmofm.c 2086 2009-03-22 15:32:08Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/tfmofm.c $";
 
 /* Here are some macros that help process ligatures and kerns */
 
 #define lig_kern_start(f,c)   char_remainder(f,c)
-#define stop_flag 128 /* value indicating `\.{STOP}' in a lig/kern program */
-#define kern_flag 128 /* op code for a kern step */
+#define stop_flag 128           /* value indicating `\.{STOP}' in a lig/kern program */
+#define kern_flag 128           /* op code for a kern step */
 
 #define skip_byte(z)         lig_kerns[z].b0
 #define next_char(z)         lig_kerns[z].b1
@@ -205,7 +205,7 @@ character does not exist in the font, since a character is valid if and
 only if it lies between |bc| and |ec| and has a nonzero |width_index|.
 */
 
-                                                 /*
+/*
 @ \TeX\ checks the information of a \.{TFM} file for validity as the
 file is being read in, so that no further checks will be needed when
 typesetting is going on. The somewhat tedious subroutine that does this
@@ -361,53 +361,54 @@ additional parameter information, which is explained later.
 
 */
 
-#define tfm_abort { font_tables[f]->_font_name = NULL; 			\
-                    font_tables[f]->_font_area = NULL; 			\
-                    xfree(tfm_buffer); xfree(kerns);			\
-		    xfree(widths);  xfree(heights);  xfree(depths);     \
-		    xfree(italics);  xfree(extens);  xfree(lig_kerns);	\
-		    xfree(xligs);  xfree(xkerns);						\
-			return 0; }
+#define tfm_abort { font_tables[f]->_font_name = NULL;      \
+                    font_tables[f]->_font_area = NULL;      \
+                    xfree(tfm_buffer); xfree(kerns);      \
+        xfree(widths);  xfree(heights);  xfree(depths);     \
+        xfree(italics);  xfree(extens);  xfree(lig_kerns);  \
+        xfree(xligs);  xfree(xkerns);           \
+      return 0; }
 
-#define tfm_success { xfree(tfm_buffer); xfree(kerns); 			 \
-         	      xfree(widths);  xfree(heights);  xfree(depths);    \
-		      xfree(italics);  xfree(extens);  xfree(lig_kerns); \
-		      xfree(xligs);  xfree(xkerns); return 1; }
+#define tfm_success { xfree(tfm_buffer); xfree(kerns);       \
+                xfree(widths);  xfree(heights);  xfree(depths);    \
+          xfree(italics);  xfree(extens);  xfree(lig_kerns); \
+          xfree(xligs);  xfree(xkerns); return 1; }
 
 
 int
-open_tfm_file(char *nom, char *aire, unsigned char **tfm_buf, integer *tfm_siz) {
-  boolean res; /* was the callback successful? */
-  boolean opened; /* was |tfm_file| successfully opened?*/
-  integer callback_id;
-  FILE *tfm_file;
-  /* packfilename(nom,aire,getnullstr()); */
-  if(nameoffile != NULL)
-    xfree(nameoffile);
-  nameoffile = malloc(strlen(nom)+2);
-  strcpy(stringcast(nameoffile+1),nom);
-  namelength = strlen(nom);
-  callback_id=callback_defined(read_font_file_callback);
-  if (callback_id>0) {
-        res = run_callback(callback_id,"S->bSd",stringcast(nameoffile+1),
-                                          &opened, tfm_buf, tfm_siz);
-        if (res && opened && (*tfm_siz>0)) {
-          return 1;
-	}
+open_tfm_file(char *nom, char *aire, unsigned char **tfm_buf, integer * tfm_siz)
+{
+    boolean res;                /* was the callback successful? */
+    boolean opened;             /* was |tfm_file| successfully opened? */
+    integer callback_id;
+    FILE *tfm_file;
+    /* packfilename(nom,aire,getnullstr()); */
+    if (nameoffile != NULL)
+        xfree(nameoffile);
+    nameoffile = malloc(strlen(nom) + 2);
+    strcpy(stringcast(nameoffile + 1), nom);
+    namelength = strlen(nom);
+    callback_id = callback_defined(read_font_file_callback);
+    if (callback_id > 0) {
+        res = run_callback(callback_id, "S->bSd", stringcast(nameoffile + 1),
+                           &opened, tfm_buf, tfm_siz);
+        if (res && opened && (*tfm_siz > 0)) {
+            return 1;
+        }
         if (!opened)
-          return -1;
-  } else {
-    if (ofm_open_in(tfm_file)) {
-      res = read_tfm_file(tfm_file,tfm_buf,tfm_siz);
-      b_close(tfm_file);
-      if (res) {
-	return 1;
-      }
+            return -1;
     } else {
-      return -1;
+        if (ofm_open_in(tfm_file)) {
+            res = read_tfm_file(tfm_file, tfm_buf, tfm_siz);
+            b_close(tfm_file);
+            if (res) {
+                return 1;
+            }
+        } else {
+            return -1;
+        }
     }
-  }
-  return 0;
+    return 0;
 }
 
 
@@ -441,47 +442,47 @@ open_tfm_file(char *nom, char *aire, unsigned char **tfm_buf, integer *tfm_siz) 
     a=(a*256)+tfm_buffer[++tfm_byte]; }
 
 #define store_four_bytes(z)                                             \
-  { a=tfm_buffer[++tfm_byte];						\
-    a=(a*256)+tfm_buffer[++tfm_byte];					\
-    a=(a*256)+tfm_buffer[++tfm_byte];					\
-    a=(a*256)+tfm_buffer[++tfm_byte];					\
+  { a=tfm_buffer[++tfm_byte];           \
+    a=(a*256)+tfm_buffer[++tfm_byte];         \
+    a=(a*256)+tfm_buffer[++tfm_byte];         \
+    a=(a*256)+tfm_buffer[++tfm_byte];         \
     z = a; }
 
 #define store_char_info(z)                                              \
   { if (font_level!=-1) {                                               \
-      fget; read_sixteen_unsigned(a);					\
-      ci._width_index=a;						\
-      fget; read_sixteen_unsigned(b);					\
-      ci._height_index=b>>8;						\
-      ci._depth_index=b%256;						\
-      fget; read_sixteen_unsigned(c);					\
-      ci._italic_index=c>>8;						\
-      ci._tag=c%4;							\
-      fget; read_sixteen_unsigned(d);					\
-      ci._remainder=d;							\
+      fget; read_sixteen_unsigned(a);         \
+      ci._width_index=a;            \
+      fget; read_sixteen_unsigned(b);         \
+      ci._height_index=b>>8;            \
+      ci._depth_index=b%256;            \
+      fget; read_sixteen_unsigned(c);         \
+      ci._italic_index=c>>8;            \
+      ci._tag=c%4;              \
+      fget; read_sixteen_unsigned(d);         \
+      ci._remainder=d;              \
     } else {                                                            \
-      a=tfm_buffer[++tfm_byte];						\
-      ci._width_index=a;						\
-      b=tfm_buffer[++tfm_byte];						\
-      ci._height_index=b>>4;						\
-      ci._depth_index=b%16;						\
-      c=tfm_buffer[++tfm_byte];						\
-      ci._italic_index=c>>2;						\
-      ci._tag=c%4;							\
-      d=tfm_buffer[++tfm_byte];						\
-      ci._remainder=d;							\
+      a=tfm_buffer[++tfm_byte];           \
+      ci._width_index=a;            \
+      b=tfm_buffer[++tfm_byte];           \
+      ci._height_index=b>>4;            \
+      ci._depth_index=b%16;           \
+      c=tfm_buffer[++tfm_byte];           \
+      ci._italic_index=c>>2;            \
+      ci._tag=c%4;              \
+      d=tfm_buffer[++tfm_byte];           \
+      ci._remainder=d;              \
     } }
 
-#define read_four_quarters(q)						\
+#define read_four_quarters(q)           \
   { if (font_level!=-1) {                                               \
-      fget; read_sixteen_unsigned(a); q.b0=a;				\
-      fget; read_sixteen_unsigned(b); q.b1=b;				\
-      fget; read_sixteen_unsigned(c); q.b2=c;				\
-      fget; read_sixteen_unsigned(d); q.b3=d;				\
+      fget; read_sixteen_unsigned(a); q.b0=a;       \
+      fget; read_sixteen_unsigned(b); q.b1=b;       \
+      fget; read_sixteen_unsigned(c); q.b2=c;       \
+      fget; read_sixteen_unsigned(d); q.b3=d;       \
     } else {                                                            \
-      a=tfm_buffer[++tfm_byte]; q.b0=a;					\
-      b=tfm_buffer[++tfm_byte]; q.b1=b;					\
-      c=tfm_buffer[++tfm_byte]; q.b2=c;					\
+      a=tfm_buffer[++tfm_byte]; q.b0=a;         \
+      b=tfm_buffer[++tfm_byte]; q.b1=b;         \
+      c=tfm_buffer[++tfm_byte]; q.b2=c;         \
       d=tfm_buffer[++tfm_byte]; q.b3=d;                                \
     } }
 
@@ -507,499 +508,565 @@ open_tfm_file(char *nom, char *aire, unsigned char **tfm_buf, integer *tfm_siz) 
    of \TeX\ between computers.
 */
 
-#define store_scaled(zz)						\
+#define store_scaled(zz)            \
   { fget; a=fbyte; fget; b=fbyte;                                       \
     fget; c=fbyte; fget; d=fbyte;                                       \
     sw=(((((d*z)>>8)+(c*z))>>8)+(b*z)) / beta;                          \
-    if (a==0) { zz=sw; } else if (a==255) { zz=sw-alpha; } else tfm_abort;	\
+    if (a==0) { zz=sw; } else if (a==255) { zz=sw-alpha; } else tfm_abort;  \
   }
 
 #define  check_existence(z)                                             \
   { check_byte_range(z);                                                \
-    if (!char_exists(f,z)) tfm_abort;					\
+    if (!char_exists(f,z)) tfm_abort;         \
   }
 
 typedef struct tfmcharacterinfo {
-  integer _kern_index;  
-  integer _lig_index;   
-  integer _width_index; 
-  integer _height_index;
-  integer _depth_index; 
-  integer _italic_index;
-  integer _remainder;   
-  unsigned char _tag ;           
+    integer _kern_index;
+    integer _lig_index;
+    integer _width_index;
+    integer _height_index;
+    integer _depth_index;
+    integer _italic_index;
+    integer _remainder;
+    unsigned char _tag;
 } tfmcharacterinfo;
 
-extern charinfo *copy_charinfo(charinfo *ci);
+int read_tfm_info(internalfontnumber f, char *cnom, char *caire, scaled s)
+{
+    integer k;                  /* index into |font_info| */
+    halfword lf, lh, bc, ec, nw, nh, nd, ni, nl, nk, ne, np, slh;       /* sizes of subfiles */
+    scaled *widths, *heights, *depths, *italics, *kerns;
+    halfword font_dir;
+    integer a, b, c, d;         /* byte variables */
+    integer i;                  /* counter */
+    integer font_level, header_length;
+    integer nco, ncw, npc, nlw, neew;
+    tfmcharacterinfo ci;
+    charinfo *co;
+    four_quarters qw;
+    four_quarters *lig_kerns, *extens;
+    scaled sw;                  /* accumulators */
+    integer bch_label;          /* left boundary start location, or infinity */
+    int bchar;                  /* :0..too_big_char; *//* right boundary character, or |too_big_char| */
+    integer first_two;
+    scaled z;                   /* the design size or the ``at'' size */
+    integer alpha;
+    char beta;                  /* :1..16 */
+    integer *xligs, *xkerns;    /* aux. for ligkern processing */
+    liginfo *cligs;
+    kerninfo *ckerns;
+    int fligs, fkerns;
+    char *tmpnam;
+    integer tfm_byte = 0;       /* index into |tfm_buffer| */
+    integer saved_tfm_byte = 0; /* saved index into |tfm_buffer| */
+    unsigned char *tfm_buffer = NULL;   /* byte buffer for tfm files */
+    integer tfm_size = 0;       /* total size of the tfm file */
 
-int 
-read_tfm_info(internalfontnumber f, char *cnom, char *caire, scaled s) {
-  integer k; /* index into |font_info| */
-  halfword lf,lh,bc,ec,nw,nh,nd,ni,nl,nk,ne,np,slh;  /* sizes of subfiles */
-  scaled *widths, *heights, *depths, *italics, *kerns;
-  halfword font_dir;
-  integer a,b,c,d; /* byte variables */
-  integer i; /* counter */
-  integer font_level,header_length;
-  integer nco,ncw,npc,nlw,neew;
-  tfmcharacterinfo ci;
-  charinfo *co;
-  four_quarters qw; 
-  four_quarters *lig_kerns, *extens;
-  scaled sw; /* accumulators */
-  integer bch_label; /* left boundary start location, or infinity */
-  int bchar; /* :0..too_big_char; */ /* right boundary character, or |too_big_char| */
-  integer first_two;
-  scaled z; /* the design size or the ``at'' size */
-  integer alpha; 
-  char beta; /* :1..16*/
-  integer *xligs, *xkerns; /* aux. for ligkern processing */
-  liginfo *cligs;
-  kerninfo *ckerns;
-  int fligs, fkerns;
-  char *tmpnam;
-  integer tfm_byte = 0; /* index into |tfm_buffer| */
-  integer saved_tfm_byte = 0; /* saved index into |tfm_buffer| */
-  unsigned char *tfm_buffer = NULL; /* byte buffer for tfm files */
-  integer tfm_size = 0; /* total size of the tfm file */
-  
-  widths=NULL;
-  heights=NULL;
-  depths = NULL;
-  italics = NULL;
-  kerns = NULL;
-  lig_kerns = NULL;
-  extens = NULL;
-  xkerns = NULL;
-  ckerns = NULL;
-  xligs = NULL;
-  cligs = NULL;
+    widths = NULL;
+    heights = NULL;
+    depths = NULL;
+    italics = NULL;
+    kerns = NULL;
+    lig_kerns = NULL;
+    extens = NULL;
+    xkerns = NULL;
+    ckerns = NULL;
+    xligs = NULL;
+    cligs = NULL;
 
-  font_dir = 0;
+    font_dir = 0;
 
-  memset(&ci,0,sizeof(tfmcharacterinfo));
+    memset(&ci, 0, sizeof(tfmcharacterinfo));
 
-  if(open_tfm_file(cnom,caire,&tfm_buffer,&tfm_size)!=1)
-     tfm_abort;
+    if (open_tfm_file(cnom, caire, &tfm_buffer, &tfm_size) != 1)
+        tfm_abort;
 
-  /* cnom can be an absolute filename, xbasename() fixes that. */
+    /* cnom can be an absolute filename, xbasename() fixes that. */
 
-  tmpnam=strdup(xbasename(cnom));
-  if (strcmp(tmpnam+strlen(tmpnam)-4,".tfm")==0) {
-    *(tmpnam+strlen(tmpnam)-4) =0;
-  }
-  set_font_name(f,tmpnam);
-  set_font_area(f,xstrdup(caire)); /* perhaps it leaks, but it doesnt crash  */
+    tmpnam = strdup(xbasename(cnom));
+    if (strcmp(tmpnam + strlen(tmpnam) - 4, ".tfm") == 0) {
+        *(tmpnam + strlen(tmpnam) - 4) = 0;
+    }
+    set_font_name(f, tmpnam);
+    set_font_area(f, NULL);
 
-  /* @<Read the {\.{TFM}} size fields@>; */
-  nco=0; ncw=0; npc=0;
-  read_sixteen(first_two);
-  if (first_two!=0) {
-    font_level=-1;
-    lf=first_two;
-    fget; read_sixteen(lh);
-    fget; read_sixteen(bc);
-    fget; read_sixteen(ec);
-    if ((bc>ec+1)||(ec>255))  tfm_abort;
-    if (bc>255) { /* |bc=256| and |ec=255| */
-      bc=1; ec=0;
+    /* @<Read the {\.{TFM}} size fields@>; */
+    nco = 0;
+    ncw = 0;
+    npc = 0;
+    read_sixteen(first_two);
+    if (first_two != 0) {
+        font_level = -1;
+        lf = first_two;
+        fget;
+        read_sixteen(lh);
+        fget;
+        read_sixteen(bc);
+        fget;
+        read_sixteen(ec);
+        if ((bc > ec + 1) || (ec > 255))
+            tfm_abort;
+        if (bc > 255) {         /* |bc=256| and |ec=255| */
+            bc = 1;
+            ec = 0;
+        };
+        fget;
+        read_sixteen(nw);
+        fget;
+        read_sixteen(nh);
+        fget;
+        read_sixteen(nd);
+        fget;
+        read_sixteen(ni);
+        fget;
+        read_sixteen(nl);
+        fget;
+        read_sixteen(nk);
+        fget;
+        read_sixteen(ne);
+        fget;
+        read_sixteen(np);
+        header_length = 6;
+        ncw = (ec - bc + 1);
+        nlw = nl;
+        neew = ne;
+    } else {
+        fget;
+        read_sixteen(font_level);
+        if (font_level != 0)
+            tfm_abort;
+        read_thirtytwo(lf);
+        read_thirtytwo(lh);
+        read_thirtytwo(bc);
+        read_thirtytwo(ec);
+        if ((bc > ec + 1) || (ec > 65535))
+            tfm_abort;
+        if (bc > 65535) {       /* |bc=65536| and |ec=65535| */
+            bc = 1;
+            ec = 0;
+        };
+        read_thirtytwo(nw);
+        read_thirtytwo(nh);
+        read_thirtytwo(nd);
+        read_thirtytwo(ni);
+        read_thirtytwo(nl);
+        read_thirtytwo(nk);
+        read_thirtytwo(ne);
+        read_thirtytwo(np);
+        read_thirtytwo(font_dir);       /* junk */
+        nlw = 2 * nl;
+        neew = 2 * ne;
+        header_length = 14;
+        ncw = 2 * (ec - bc + 1);
     };
-    fget; read_sixteen(nw);
-    fget; read_sixteen(nh);
-    fget; read_sixteen(nd);
-    fget; read_sixteen(ni);
-    fget; read_sixteen(nl);
-    fget; read_sixteen(nk);
-    fget; read_sixteen(ne);
-    fget; read_sixteen(np);
-    header_length=6;
-    ncw=(ec-bc+1);
-    nlw=nl;
-    neew=ne;
-  } else {
-    fget; read_sixteen(font_level);
-    if (font_level!=0) tfm_abort;
-    read_thirtytwo(lf);
-    read_thirtytwo(lh);
-    read_thirtytwo(bc);
-    read_thirtytwo(ec);
-    if ((bc>ec+1)||(ec>65535))  tfm_abort;
-    if (bc>65535) { /* |bc=65536| and |ec=65535| */
-      bc=1; ec=0;
+    if (lf !=
+        (header_length + lh + ncw + nw + nh + nd + ni + nlw + nk + neew + np))
+        tfm_abort;
+    if ((nw == 0) || (nh == 0) || (nd == 0) || (ni == 0))
+        tfm_abort;
+
+    /* 
+       We check to see that the \.{TFM} file doesn't end prematurely; but
+       no error message is given for files having more than |lf| words.
+     */
+    if (lf * 4 > tfm_size)
+        tfm_abort;
+
+    /* @<Use size fields to allocate font information@>; */
+
+    set_font_natural_dir(f, font_dir);
+    set_font_bc(f, bc);
+    set_font_ec(f, ec);
+
+    /* read the arrays first */
+    widths = xmalloc(nw * sizeof(scaled));
+    heights = xmalloc(nh * sizeof(scaled));
+    depths = xmalloc(nd * sizeof(scaled));
+    italics = xmalloc(ni * sizeof(scaled));
+    extens = xmalloc(ne * sizeof(four_quarters));
+    lig_kerns = xmalloc(nl * sizeof(four_quarters));
+    kerns = xmalloc(nk * sizeof(scaled));
+
+    /* @<Read the {\.{TFM}} header@>; */
+
+    /* Only the first two words of the header are needed by \TeX82. */
+    slh = lh;
+    if (lh < 2)
+        tfm_abort;
+    store_four_bytes(font_checksum(f));
+    fget;
+    read_sixteen(z);            /* this rejects a negative design size */
+    fget;
+    z = z * 256 + fbyte;
+    fget;
+    z = (z * 16) + (fbyte >> 4);
+    if (z < unity)
+        tfm_abort;
+    while (lh > 2) {
+        fget;
+        fget;
+        fget;
+        fget;
+        lh--;                   /* ignore the rest of the header */
     };
-    read_thirtytwo(nw);
-    read_thirtytwo(nh);
-    read_thirtytwo(nd);
-    read_thirtytwo(ni);
-    read_thirtytwo(nl);
-    read_thirtytwo(nk);
-    read_thirtytwo(ne);
-    read_thirtytwo(np);
-    read_thirtytwo(font_dir); /* junk */
-    nlw=2*nl;
-    neew=2*ne;
-    header_length=14;
-    ncw=2*(ec-bc+1);
-  };
-  if (lf!=(header_length+lh+ncw+nw+nh+nd+ni+nlw+nk+neew+np)) tfm_abort;
 
-  /* @<Use size fields to allocate font information@>; */
+    /* read the arrays before the character info */
 
-  set_font_natural_dir(f,font_dir);
-  set_font_bc(f,bc); 
-  set_font_ec(f,ec); 
+    set_font_dsize(f, z);
+    if (s != -1000) {
+        z = (s >= 0 ? s : xn_over_d(z, -s, 1000));
+    }
+    set_font_size(f, z);
 
-  /* read the arrays first */
-  widths    = xmalloc(nw*sizeof(scaled));
-  heights   = xmalloc(nh*sizeof(scaled));
-  depths    = xmalloc(nd*sizeof(scaled));
-  italics   = xmalloc(ni*sizeof(scaled));
-  extens    = xmalloc(ne*sizeof(four_quarters));
-  lig_kerns = xmalloc(nl*sizeof(four_quarters));
-  kerns     = xmalloc(nk*sizeof(scaled));
+    if (np > 7)
+        set_font_params(f, np);
 
-  /* @<Read the {\.{TFM}} header@>; */
+    saved_tfm_byte = tfm_byte;
+    tfm_byte = (header_length + slh + ncw) * 4 - 1;
 
-  /* Only the first two words of the header are needed by \TeX82. */
-  slh = lh;
-  if (lh<2) 
-    tfm_abort;
-  store_four_bytes(font_checksum(f));
-  fget; read_sixteen(z); /* this rejects a negative design size */
-  fget; z=z*256+fbyte; fget; z=(z*16)+(fbyte>>4);
-  if (z<unity) tfm_abort;
-  while (lh>2) {
-    fget;fget;fget;fget;
-    lh--; /* ignore the rest of the header */
-  };
+    /* @<Replace |z| by $|z|^\prime$ and compute $\alpha,\beta$@>; */
 
-  /* read the arrays before the character info */
+    alpha = 16;
+    while (z >= 040000000) {
+        z = z >> 1;
+        alpha = alpha + alpha;
+    };
+    beta = 256 / alpha;
+    alpha = alpha * z;
 
-  set_font_dsize(f,z);
-  if (s!=-1000) {
-    z = (s>=0 ? s : xn_over_d(z,-s,1000));
-  }
-  set_font_size(f,z);
+    /* @<Read box dimensions@>; */
 
-  if (np>7)
-    set_font_params(f,np);
+    for (k = 0; k < nw; k++) {
+        store_scaled(sw);
+        widths[k] = sw;
+    }
+    if (widths[0] != 0)         /* \\{width}[0] must be zero */
+        tfm_abort;
+    for (k = 0; k < nh; k++) {
+        store_scaled(sw);
+        heights[k] = sw;
+    }
+    if (heights[0] != 0)
+        tfm_abort;              /* \\{height}[0] must be zero */
+    for (k = 0; k < nd; k++) {
+        store_scaled(sw);
+        depths[k] = sw;
+    }
+    if (depths[0] != 0)
+        tfm_abort;              /* \\{depth}[0] must be zero */
+    for (k = 0; k < ni; k++) {
+        store_scaled(sw);
+        italics[k] = sw;
+    }
+    if (italics[0] != 0)
+        tfm_abort;              /* \\{italic}[0] must be zero */
 
-  saved_tfm_byte = tfm_byte;
-  tfm_byte = (header_length+slh+ncw)*4 - 1;
 
-  /* @<Replace |z| by $|z|^\prime$ and compute $\alpha,\beta$@>; */
+    /* @<Read ligature/kern program@>; */
 
-  alpha=16;
-  while (z>=040000000) {
-    z=z>>1; alpha=alpha+alpha;
-  };
-  beta=256/alpha; alpha=alpha*z;
+    bch_label = nl;             /* infinity */
+    bchar = 65536;
+    if (nl > 0) {
+        for (k = 0; k < nl; k++) {
+            read_four_quarters(qw);
+            lig_kerns[k] = qw;
+            if (a > 128) {
+                if (256 * c + d >= nl)
+                    tfm_abort;
+                if (a == 255 && k == 0)
+                    bchar = b;
+            } else {
+                /* if (b!=bchar) check_existence(b); */
+                if (c < 128) {
+                    /* check_existence(d); *//* check ligature */
+                } else if (256 * (c - 128) + d >= nk) {
+                    tfm_abort;  /* check kern */
+                }
+                if ((a < 128) && (k - 0 + a + 1 >= nl))
+                    tfm_abort;
+            };
+        };
+        if (a == 255)
+            bch_label = 256 * c + d;
+    };
 
-  /* @<Read box dimensions@>; */
+    /* the actual kerns */
+    for (k = 0; k < nk; k++) {
+        store_scaled(sw);
+        kerns[k] = sw;
+    }
 
-  for (k=0;k<nw;k++) { 
-    store_scaled(sw); widths[k] = sw;  
-  }
-  if (widths[0]!=0) /* \\{width}[0] must be zero */
-    tfm_abort; 
-  for (k=0;k<nh;k++) {
-    store_scaled(sw); heights[k] = sw;  
-  }
-  if (heights[0]!=0) 
-    tfm_abort; /* \\{height}[0] must be zero */
-  for (k=0;k<nd;k++) { 
-    store_scaled(sw); depths[k] = sw;  
-  }
-  if (depths[0]!=0)  
-    tfm_abort; /* \\{depth}[0] must be zero */
-  for (k=0;k<ni;k++) { 
-    store_scaled(sw); italics[k] = sw;  
-  }
-  if (italics[0]!=0) 
-    tfm_abort; /* \\{italic}[0] must be zero */
-  
+    /* @<Read extensible character recipes@>; */
+    for (k = 0; k < ne; k++) {
+        read_four_quarters(qw);
+        extens[k] = qw;
+    }
 
-  /* @<Read ligature/kern program@>; */
-  
-  bch_label=nl; /* infinity*/ 
-  bchar=65536;
-  if (nl>0) {
-    for (k=0;k<nl;k++) { 
-      read_four_quarters(qw);
-      lig_kerns[k] = qw;
-      if (a>128) { 
-        if (256*c+d>=nl)  tfm_abort;
-        if (a==255 && k==0) bchar=b;
-      } else { 
-        /* if (b!=bchar) check_existence(b); */
-        if (c<128) { 
-          /* check_existence(d); */ /* check ligature */
-        } else if (256*(c-128)+d>=nk) {
-          tfm_abort; /* check kern */
+    /* @<Read font parameters@>; */
+
+    if (np > 7) {
+        set_font_params(f, np);
+    }
+    for (k = 1; k <= np; k++) {
+        if (k == 1) {           /* the |slant| parameter is a pure number */
+            fget;
+            sw = fbyte;
+            if (sw > 127)
+                sw = sw - 256;
+            fget;
+            sw = sw * 256 + fbyte;
+            fget;
+            sw = sw * 256 + fbyte;
+            fget;
+            sw = (sw * 16) + (fbyte >> 4);
+            set_font_param(f, k, sw);
+        } else {
+            store_scaled(font_param(f, k));
         }
-        if ((a<128) && (k-0+a+1>=nl)) tfm_abort;
-      };
+    }
+
+    tfm_byte = saved_tfm_byte;
+
+    /* fix up the left boundary character */
+    fligs = 0;
+    fkerns = 0;
+    if (bch_label != nl) {
+        k = bch_label;
+        /*
+           if (skip_byte(k) > stop_flag)
+           k = lig_kern_restart(k);
+         */
+        while (1) {
+            if (skip_byte(k) <= stop_flag) {
+                if (op_byte(k) >= kern_flag) {  /* kern */
+                    fkerns++;
+                } else {        /* lig */
+                    fligs++;
+                }
+            }
+            if (skip_byte(k) == 0) {
+                k++;
+            } else {
+                if (skip_byte(k) >= stop_flag)
+                    break;
+                k += skip_byte(k) + 1;
+            }
+        }
+    }
+    if (fkerns > 0 || fligs > 0) {
+        if (fligs > 0)
+            cligs = xcalloc((fligs + 1), sizeof(liginfo));
+        if (fkerns > 0)
+            ckerns = xcalloc((fkerns + 1), sizeof(kerninfo));
+        fligs = 0;
+        fkerns = 0;
+        k = bch_label;
+        /*
+           if (skip_byte(k) > stop_flag)
+           k = lig_kern_restart(k);
+         */
+        while (1) {
+            if (skip_byte(k) <= stop_flag) {
+                if (op_byte(k) >= kern_flag) {  /* kern */
+                    set_kern_item(ckerns[fkerns], next_char(k),
+                                  kerns[256 * (op_byte(k) - 128) +
+                                        rem_byte(k)]);
+                    fkerns++;
+                } else {        /* lig */
+                    set_ligature_item(cligs[fligs], (op_byte(k) * 2 + 1),
+                                      next_char(k), rem_byte(k));
+                    fligs++;
+                }
+            }
+            if (skip_byte(k) == 0) {
+                k++;
+            } else {
+                if (skip_byte(k) >= stop_flag)
+                    break;
+                k += skip_byte(k) + 1;
+            }
+        }
+        if (fkerns > 0 || fligs > 0) {
+            co = get_charinfo(f, left_boundarychar);
+            if (fkerns > 0) {
+                set_kern_item(ckerns[fkerns], end_kern, 0);
+                fkerns++;
+                set_charinfo_kerns(co, ckerns);
+            }
+            if (fligs > 0) {
+                set_ligature_item(cligs[fligs], 0, end_ligature, 0);
+                fligs++;
+                set_charinfo_ligatures(co, cligs);
+            }
+            set_charinfo_remainder(co, 0);
+        }
+    }
+
+    /* @<Read character data@>; */
+    for (k = bc; k <= ec; k++) {
+        store_char_info(k);
+        if (ci._width_index == 0)
+            continue;
+        if (ci._width_index >= nw || ci._height_index >= nh ||
+            ci._depth_index >= nd || ci._italic_index >= ni)
+            tfm_abort;
+        d = ci._remainder;
+        switch (ci._tag) {
+        case lig_tag:
+            if (d >= nl)
+                tfm_abort;
+            break;
+        case ext_tag:
+            if (d >= ne)
+                tfm_abort;
+            break;
+        case list_tag:
+            /* We want to make sure that there is no cycle of characters linked together
+               by |list_tag| entries, since such a cycle would get \TeX\ into an endless
+               loop. If such a cycle exists, the routine here detects it when processing
+               the largest character code in the cycle.
+             */
+            check_byte_range(d);
+            while (d < k) {     /* current_character == k */
+                if (char_tag(f, d) != list_tag)
+                    goto NOT_FOUND;     /* not a cycle */
+                d = char_remainder(f, d);       /* next character on the list */
+            };
+            if (d == k)
+                tfm_abort;      /* yes, there's a cycle */
+          NOT_FOUND:
+            break;
+        }
+        /* put it in the actual font */
+        co = get_charinfo(f, k);
+        set_charinfo_index(co, k);
+        set_charinfo_tag(co, ci._tag);
+        if (ci._tag == ext_tag) {
+            set_charinfo_extensible(co, extens[ci._remainder].b0,       /* top */
+                                    extens[ci._remainder].b2,   /* bot */
+                                    extens[ci._remainder].b1,   /* mid */
+                                    extens[ci._remainder].b3);  /* rep */
+            set_charinfo_remainder(co, 0);
+        } else {
+            set_charinfo_remainder(co, ci._remainder);
+        }
+        set_charinfo_width(co, widths[ci._width_index]);
+        set_charinfo_height(co, heights[ci._height_index]);
+        set_charinfo_depth(co, depths[ci._depth_index]);
+        set_charinfo_italic(co, italics[ci._italic_index]);
     };
-    if (a==255) bch_label=256*c+d;
-  };
 
-  /* the actual kerns */
-  for (k=0;k<nk;k++) {
-    store_scaled(sw);  kerns[k] = sw;
-  }
+    /* first pass: count ligs and kerns */
 
-  /* @<Read extensible character recipes@>; */
-  for (k=0;k<ne;k++) {
-    read_four_quarters(qw);  extens[k] = qw;
-  }
+    xligs = xcalloc((ec + 1), sizeof(integer));
+    xkerns = xcalloc((ec + 1), sizeof(integer));
 
-  /* @<Read font parameters@>; */
-
-  if (np>7) {
-    set_font_params(f,np);
-  }
-  for (k=1;k<=np;k++) {
-    if (k==1) { /* the |slant| parameter is a pure number */
-      fget; sw=fbyte; 
-      if (sw>127) sw=sw-256;
-      fget; sw=sw*256+fbyte;
-      fget; sw=sw*256+fbyte;
-      fget; sw=(sw*16)+(fbyte>>4);
-      set_font_param(f,k,sw);
-    } else {
-      store_scaled(font_param(f,k));
+    for (i = bc; i <= ec; i++) {
+        if (char_tag(f, i) == lig_tag) {
+            k = lig_kern_start(f, i);
+            if (skip_byte(k) > stop_flag)
+                k = lig_kern_restart(k);
+            /* now k is the start index */
+            while (1) {
+                if (skip_byte(k) <= stop_flag) {
+                    if (op_byte(k) >= kern_flag) {      /* kern */
+                        xkerns[i]++;
+                        if (next_char(k) == bchar)
+                            xkerns[i]++;
+                    } else {    /* lig */
+                        xligs[i]++;
+                        if (next_char(k) == bchar)
+                            xligs[i]++;
+                    }
+                }
+                if (skip_byte(k) == 0) {
+                    k++;
+                } else {
+                    if (skip_byte(k) >= stop_flag)
+                        break;
+                    k += skip_byte(k) + 1;
+                }
+            }
+        }
     }
-  }
 
-  /* 
-     We check to see that the \.{TFM} file doesn't end prematurely; but
-     no error message is given for files having more than |lf| words.
-  */
+    cligs = NULL;
+    ckerns = NULL;
 
-  if (tfm_byte<tfm_size-1) tfm_abort;
-
-  tfm_byte = saved_tfm_byte ;
-
-  /* fix up the left boundary character */
-  fligs = 0;
-  fkerns = 0;
-  if (bch_label != nl ) {
-    k = bch_label;
-    /*
-    if (skip_byte(k) > stop_flag)
-      k = lig_kern_restart(k);
-    */
-    while (1) {
-      if (skip_byte(k) <= stop_flag) {
-	if(op_byte(k) >= kern_flag) {	 /* kern */
-	  fkerns++;
-	} else {  /* lig */
-	  fligs++;
-	}
-      }
-      if (skip_byte(k) == 0) {
-	k++;
-      } else {
-	if (skip_byte(k) >= stop_flag) 
-	  break;
-	k += skip_byte(k) + 1;
-      }
+    for (i = bc; i <= ec; i++) {
+        fligs = 0;
+        fkerns = 0;
+        if (char_tag(f, i) == lig_tag) {
+            k = lig_kern_start(f, i);
+            if (skip_byte(k) > stop_flag)
+                k = lig_kern_restart(k);
+            /* now k is the start index */
+            if (xligs[i] > 0)
+                cligs = xcalloc((xligs[i] + 1), sizeof(liginfo));
+            if (xkerns[i] > 0)
+                ckerns = xcalloc((xkerns[i] + 1), sizeof(kerninfo));
+            while (1) {
+                if (skip_byte(k) <= stop_flag) {
+                    if (op_byte(k) >= kern_flag) {      /* kern */
+                        if (next_char(k) == bchar) {
+                            set_kern_item(ckerns[fkerns], right_boundarychar,
+                                          kerns[256 * (op_byte(k) - 128) +
+                                                rem_byte(k)]);
+                            fkerns++;
+                        }
+                        set_kern_item(ckerns[fkerns], next_char(k),
+                                      kerns[256 * (op_byte(k) - 128) +
+                                            rem_byte(k)]);
+                        fkerns++;
+                    } else {    /* lig */
+                        if (next_char(k) == bchar) {
+                            set_ligature_item(cligs[fligs],
+                                              (op_byte(k) * 2 + 1),
+                                              right_boundarychar, rem_byte(k));
+                            fligs++;
+                        }
+                        set_ligature_item(cligs[fligs], (op_byte(k) * 2 + 1),
+                                          next_char(k), rem_byte(k));
+                        fligs++;
+                    }
+                }
+                if (skip_byte(k) == 0) {
+                    k++;
+                } else {
+                    if (skip_byte(k) >= stop_flag)
+                        break;
+                    k += skip_byte(k) + 1;
+                }
+            }
+            if (fkerns > 0 || fligs > 0) {
+                co = get_charinfo(f, i);
+                if (fkerns > 0) {
+                    set_kern_item(ckerns[fkerns], end_kern, 0);
+                    fkerns++;
+                    set_charinfo_kerns(co, ckerns);
+                }
+                if (fligs > 0) {
+                    set_ligature_item(cligs[fligs], 0, end_ligature, 0);
+                    fligs++;
+                    set_charinfo_ligatures(co, cligs);
+                }
+                set_charinfo_remainder(co, 0);
+            }
+        }
     }
-  }
-  if (fkerns >0 || fligs > 0) {
-    if (fligs>0)	cligs  = xcalloc((fligs+1),sizeof(liginfo));
-    if (fkerns>0)	ckerns = xcalloc((fkerns+1),sizeof(kerninfo));
-    fligs = 0;
-    fkerns = 0;
-    k = bch_label;
-    /*
-    if (skip_byte(k) > stop_flag)
-      k = lig_kern_restart(k);
-    */
-    while (1) {
-      if (skip_byte(k) <= stop_flag) {
-	if(op_byte(k) >= kern_flag) {  /* kern */
-	  set_kern_item(ckerns[fkerns],next_char(k),kerns[256*(op_byte(k)-128)+rem_byte(k)]);
-	  fkerns++;
-	} else {  /* lig */
-	  set_ligature_item(cligs[fligs],(op_byte(k)*2+1),next_char(k),rem_byte(k));
-	  fligs++;
-	}
-      }
-      if (skip_byte(k) == 0) {
-	k++;
-      } else {
-	if (skip_byte(k) >= stop_flag) 
-	  break;
-	k += skip_byte(k) + 1;
-      }
+
+
+    /* @<Make final adjustments and |goto done|@> */
+
+    /* Now to wrap it up, we have checked all the necessary things about the \.{TFM}
+       file, and all we need to do is put the finishing touches on the data for
+       the new font.
+     */
+
+    if (bchar != 65536) {
+        co = copy_charinfo(char_info(f, bchar));
+        set_right_boundary(f, co);
     }
-    if (fkerns>0 || fligs>0){
-      co = get_charinfo(f,left_boundarychar);
-      if (fkerns>0) {
-	set_kern_item(ckerns[fkerns],end_kern,0);
-	fkerns++;
-	set_charinfo_kerns(co,ckerns);
-      }
-      if (fligs>0){
-	set_ligature_item(cligs[fligs],0,end_ligature,0);
-	fligs++;
-	set_charinfo_ligatures(co,cligs);
-      }
-      set_charinfo_remainder(co,0); 
-    }
-  }
 
-  /* @<Read character data@>; */
-  for (k=bc;k<=ec;k++) {
-    store_char_info(k);
-    if (ci._width_index==0)
-      continue;
-    if (ci._width_index>=nw||ci._height_index>=nh||
-		ci._depth_index>=nd||ci._italic_index>=ni) tfm_abort;
-    d = ci._remainder;
-    switch (ci._tag) {
-    case lig_tag: if (d>=nl) tfm_abort; break;
-    case ext_tag: if (d>=ne) tfm_abort; break;
-    case list_tag: 
-      /* We want to make sure that there is no cycle of characters linked together
-         by |list_tag| entries, since such a cycle would get \TeX\ into an endless
-         loop. If such a cycle exists, the routine here detects it when processing
-         the largest character code in the cycle.
-      */
-      check_byte_range(d);
-      while (d<k) {   /* current_character == k */
-	if (char_tag(f,d)!=list_tag) 
-	  goto NOT_FOUND; /* not a cycle */
-	d=char_remainder(f,d); /* next character on the list */
-      };
-      if (d==k) tfm_abort; /* yes, there's a cycle */
-    NOT_FOUND:
-      break;
-    }
-    /* put it in the actual font */
-    co = get_charinfo(f,k);
-    set_charinfo_index     (co,k);
-    set_charinfo_tag       (co,ci._tag);
-    if (ci._tag == ext_tag) {
-      set_charinfo_extensible(co,
-			      extens[ci._remainder].b0, /* top */
-			      extens[ci._remainder].b2, /* bot */
-			      extens[ci._remainder].b1, /* mid */
-			      extens[ci._remainder].b3); /* rep */
-      set_charinfo_remainder (co,0);
-    } else {
-      set_charinfo_remainder (co,ci._remainder);
-    }
-    set_charinfo_width     (co,widths[ci._width_index]);
-    set_charinfo_height    (co,heights[ci._height_index]);
-    set_charinfo_depth     (co,depths[ci._depth_index]);
-    set_charinfo_italic    (co,italics[ci._italic_index]);
-  };
-  
-  /* first pass: count ligs and kerns */
-  
-  xligs  = xcalloc((ec+1),sizeof(integer));
-  xkerns = xcalloc((ec+1),sizeof(integer));
-
-  for (i=bc;i<=ec;i++) {
-    if (char_tag(f,i) == lig_tag) {
-      k = lig_kern_start(f,i);
-      if (skip_byte(k) > stop_flag)
-	k = lig_kern_restart(k);
-      /* now k is the start index */
-      while (1) {
-	if (skip_byte(k) <= stop_flag) {
-	  if(op_byte(k) >= kern_flag) {	 /* kern */
-	    xkerns[i]++;
-	    if (next_char(k) == bchar)
-	      xkerns[i]++;
-	  } else {  /* lig */
-	    xligs[i]++;
-	    if (next_char(k) == bchar)
-	      xligs[i]++;
-	  }
-	}
-	if (skip_byte(k) == 0) {
-	  k++;
-	} else {
-	  if (skip_byte(k) >= stop_flag) 
-	    break;
-	  k += skip_byte(k) + 1;
-	}
-      }
-    }
-  }
- 
-  cligs = NULL;
-  ckerns = NULL;
-
-  for (i=bc;i<=ec;i++) {
-    fligs = 0;
-    fkerns = 0;
-    if (char_tag(f,i) == lig_tag) {
-      k = lig_kern_start(f,i);
-      if (skip_byte(k) > stop_flag)
-	k = lig_kern_restart(k);
-      /* now k is the start index */
-      if (xligs[i]>0)	cligs  = xcalloc((xligs[i]+1),sizeof(liginfo));
-      if (xkerns[i]>0)	ckerns = xcalloc((xkerns[i]+1),sizeof(kerninfo));
-      while (1) {
-	if (skip_byte(k) <= stop_flag) {
-	  if(op_byte(k) >= kern_flag) {  /* kern */
-	    if (next_char(k) == bchar) {
-	      set_kern_item(ckerns[fkerns],right_boundarychar,kerns[256*(op_byte(k)-128)+rem_byte(k)]);
-	      fkerns++;
-	    }
-	    set_kern_item(ckerns[fkerns],next_char(k),kerns[256*(op_byte(k)-128)+rem_byte(k)]);
-	    fkerns++;
-	  } else {  /* lig */
-	    if (next_char(k) == bchar) {
-	      set_ligature_item(cligs[fligs],(op_byte(k)*2+1),right_boundarychar,rem_byte(k));
-	      fligs++;
-	    }
-	    set_ligature_item(cligs[fligs],(op_byte(k)*2+1),next_char(k),rem_byte(k));
-	    fligs++;
-	  }
-	}
-	if (skip_byte(k) == 0) {
-	  k++;
-	} else {
-	  if (skip_byte(k) >= stop_flag) 
-	    break;
-	  k += skip_byte(k) + 1;
-	}
-      }
-      if (fkerns>0 || fligs>0){
-	co = get_charinfo(f,i);
-	if (fkerns>0) {
-	  set_kern_item(ckerns[fkerns],end_kern,0);
-	  fkerns++;
-	  set_charinfo_kerns(co,ckerns);
-	}
-	if (fligs>0){
-	  set_ligature_item(cligs[fligs],0,end_ligature,0);
-	  fligs++;
-	  set_charinfo_ligatures(co,cligs);
-	}
-	set_charinfo_remainder(co,0); 
-      }
-    }
-  }
-
-
-  /* @<Make final adjustments and |goto done|@> */
-
-  /* Now to wrap it up, we have checked all the necessary things about the \.{TFM}
-     file, and all we need to do is put the finishing touches on the data for
-     the new font.
-  */
-
-  if (bchar!= 65536) {
-    co = copy_charinfo(char_info(f,bchar));
-    set_right_boundary(f,co);
-  }
-
-  tfm_success;
+    tfm_success;
 }
-

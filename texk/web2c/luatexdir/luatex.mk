@@ -1,6 +1,7 @@
 # Makefile fragment for pdfeTeX and web2c. --infovore@xs4all.nl. Public domain.
 # This fragment contains the parts of the makefile that are most likely to
-# differ between releases of pdfeTeX.
+# differ between releases of luatex
+# $Id$
 
 # We build luatex
 luatex = @LTEX@ luatex
@@ -19,11 +20,12 @@ LIBXPDFSRCDIR=$(srcdir)/$(LIBXPDFDIR)
 LIBOBSDCOMPATDIR=../../libs/obsdcompat
 LIBOBSDCOMPATFSRCDIR=$(srcdir)/$(LIBOBSDCOMPATDIR)
 
-XCPPFLAGS=-I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) -I$(LIBOBSDCOMPATFSRCDIR)/..  -I$(ZLIBSRCDIR) -I$(LIBPNGSRCDIR) -I$(LIBXPDFSRCDIR) -Dextra_version_info=`date +-%Y%m%d%H`
+SVN_REV := $(shell $(srcdir)/$(luatexdir)/get_svnversion.sh $(srcdir))
+
+XCPPFLAGS=-I$(LIBOBSDCOMPATDIR) -I$(LIBOBSDCOMPATDIR)/.. -I$(LIBOBSDCOMPATFSRCDIR) -I$(LIBOBSDCOMPATFSRCDIR)/..  -I$(ZLIBSRCDIR) -I$(LIBPNGSRCDIR) -I$(LIBXPDFSRCDIR) -Dextra_version_info=`date +-%Y%m%d%H` -DSVN_REV=\"$(SVN_REV)\"
 
 Makefile: $(srcdir)/$(luatexdir)/luatex.mk
 
-# luatex_bin = luatex ttf2afm pdftosrc
 luatex_bin = luatex
 linux_build_dir = $(HOME)/luatex/build/linux/texk/web2c
 
@@ -36,24 +38,25 @@ $(luatexdir)/luatex.version: $(srcdir)/$(luatexdir)/luatex.web
 	  >$(luatexdir)/luatex.version
 
 # The C sources.
-luatex_c = luatexini.c luatex0.c luatex1.c luatex2.c luatex3.c
-luatex_o = luatexini.o luatex0.o luatex1.o luatex2.o luatex3.o luatexextra.o loadpool.o
+luatex_c = luatexini.c luatex0.c
+luatex_o = luatexini.o luatex0.o luatexextra.o luatex-pool.o $(luatex_o-with_synctex)
 
 # Making luatex
 luatex: luatexd.h $(luatex_o) $(luatexextra_o) $(luatexlibsdep)
-	@CXXHACKLINK@ $(luatex_o) $(luatexextra_o) $(luatexlibs) $(socketlibs) @CXXHACKLDLIBS@ @CXXLDEXTRA@
+	@CXXHACKLINK@ $(luatex_o) $(luatexextra_o) $(luatexlibs) $(socketlibs) @SOCKETHACK@ @CXXHACKLDLIBS@ @CXXLDEXTRA@
 
 # C file dependencies.
 $(luatex_c) luatexcoerce.h luatexd.h: luatex.p $(web2c_texmf) $(srcdir)/$(luatexdir)/luatex.defines $(srcdir)/$(luatexdir)/luatex.h
 	$(web2c) luatex
-luatexextra.c: $(luatexdir)/luatexextra.h lib/texmfmp.c
+#    $(luatexd.h-with_synctex)
+luatexextra.c: luatexd.h $(luatexdir)/luatexextra.h lib/texmfmp.c
 	test -d $(luatexdir) || mkdir $(luatexdir)
 	sed s/TEX-OR-MF-OR-MP/luatex/ $(srcdir)/lib/texmfmp.c >$@
 $(luatexdir)/luatexextra.h: $(luatexdir)/luatexextra.in $(luatexdir)/luatex.version
 	test -d $(luatexdir) || mkdir $(luatexdir)
 	sed -e s/LUATEX-VERSION/`cat $(luatexdir)/luatex.version`/ \
 	  $(srcdir)/$(luatexdir)/luatexextra.in >$@
-loadpool.c: luatex.pool $(makecpool)
+luatex-pool.c: luatex.pool
 	$(makecpool) luatex.pool luatexdir/ptexlib.h >$@ || rm -f $@
 
 # luatangle we need a private version of tangle
@@ -83,8 +86,8 @@ luatex.p luatex.pool: luatangle $(srcdir)/$(luatexdir)/luatex.web $(srcdir)/$(lu
 # for developing only
 #luatex-org.web: $(TIE) $(luatex_ch_srcs_org)
 #	$(TIE) -m $@ $(luatex_ch_srcs_org)
-#luatex-all.web: $(TIE) $(srcdir)/$(luatexdir)/luatex.web luatex.ch
-#	$(TIE) -m $@ $(srcdir)/$(luatexdir)/luatex.web luatex.ch
+luatex-all.web: $(TIE) $(srcdir)/$(luatexdir)/luatex.web $(srcdir)/$(luatexdir)/luatex.ch
+	$(TIE) -m $@ $(srcdir)/$(luatexdir)/luatex.web $(srcdir)/$(luatexdir)/luatex.ch
 #luatex-all.tex: luatex-all.web
 #	$(WEAVE) luatex-all.web
 #	echo -e '1s/ webmac/ pdfwebmac/\nw\nq' | ed $@ >/dev/null 2>&1
@@ -123,8 +126,6 @@ install-luatex: install-luatex-exec
 install-programs: @LTEX@ install-luatex-exec
 install-luatex-exec: $(luatex) $(bindir)
 	for p in luatex; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
-	cd $(DESTDIR)$(bindir) && rm -f texlua && $(LN) luatex texlua
-	cd $(DESTDIR)$(bindir) && rm -f texluac && $(LN) luatex texluac
 
 # 
 # luatex binaries archive

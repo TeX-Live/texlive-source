@@ -1,0 +1,67 @@
+#ifndef _FF_CONFIG_H
+# define _FF_CONFIG_H	1
+#define LUA_FF_LIB 1
+#undef HAVE_DLFCN_H
+#define _NO_PYTHON 1
+#undef HAVE_ICONV_H
+#undef HAVE_STDINT_H
+#undef HAVE_LANGINFO_H
+#undef HAVE_PTHREAD_H
+/* #undef HAVE_LIBINTL_H */
+#undef HAVE_IEEEFP_H
+#undef FREETYPE_HAS_DEBUGGER
+/* #undef HAVE_LONG_DOUBLE */ /* don't do this */
+/* #undef _HAS_LONGLONG */  /* don't do this */
+#undef _STATIC_LIBINTL
+#undef _STATIC_LIBUNGIF
+#undef _STATIC_LIBPNG
+#undef _STATIC_LIBPNG12
+#undef _STATIC_LIBTIFF
+#undef _STATIC_LIBJPEG
+#undef _STATIC_LIBSPIRO
+#undef _STATIC_LIBXML2
+#undef _STATIC_LIBFREETYPE
+#undef _STATIC_LIBUNINAMESLIST
+#undef _STATIC_LIBCAIRO
+#define _NO_LIBUNINAMESLIST 1
+#undef SHAREDIR
+#undef LIBDIR
+#undef PREFIX
+#undef _CursorsMustBe16x16
+#undef _Keyboard
+#undef __Mac
+#undef _BrokenBitmapImages
+#undef _ModKeysAutoRepeat
+#undef __CygWin
+#define _NO_XINPUT 1
+/* #undef FONTFORGE_CONFIG_CAPSLOCK_FOR_ALT */
+/* #undef FONTFORGE_CONFIG_SHOW_RAW_POINTS */
+/* #undef FONTFORGE_CONFIG_TYPE3 */
+/* #undef FONTFORGE_CONFIG_DEVICETABLES */
+/* #undef FONTFORGE_CONFIG_USE_DOUBLE */
+/* #undef FONTFORGE_CONFIG_USE_LONGDOUBLE */
+/* #undef FONTFORGE_CONFIG_PASTEAFTER */
+/* #undef FONTFORGE_CONFIG_GB12345 */
+/* #undef FONTFORGE_CONFIG_TILEPATH */
+#define _NO_FFSCRIPT 1
+#undef _NO_TZSET
+#define _NO_FREETYPE 1
+#define _NO_LIBXML 1
+#define _NO_LIBUNGIF 1
+#define _NO_LIBPNG 1
+#undef _LIBPNG12
+#define _NO_LIBJPEG 1
+#define _NO_LIBTIFF 1
+#define _NO_LIBSPIRO 1
+#define NODYNAMIC 1
+#define NOPLUGIN 1
+#undef FREETYPE_HAS_DEBUGGER
+#undef _NO_SNPRINTF
+#define _NO_XKB 1
+#define X_DISPLAY_MISSING 1
+#undef PYTHON_LIB_NAME
+#define _NO_LIBCAIRO 1
+#define _NO_LIBPANGO 1
+#undef WORDS_BIGENDIAN
+
+#endif

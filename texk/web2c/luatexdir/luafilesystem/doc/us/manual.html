@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<title>LuaFileSystem</title>
     <link rel="stylesheet" href="http://www.keplerproject.org/doc.css" type="text/css"/>
@@ -37,6 +37,7 @@
 		<li><strong>Manual</strong>
 			<ul>
 				<li><a href="manual.html#introduction">Introduction</a></li>
+				<li><a href="manual.html#building">Building</a></li>
 				<li><a href="manual.html#installation">Installation</a></li>
 				<li><a href="manual.html#reference">Reference</a></li>
 			</ul>
@@ -63,20 +64,32 @@ systems offered by the standard Lua distribution.</p>
 <p>LuaFileSystem offers a portable way to access
 the underlying directory structure and file attributes.</p>
 
+<h2><a name="building"></a>Building</h2>
+
+<p>
+LuaFileSystem should be built with Lua 5.1 so the language library
+and header files for the target version must be installed properly.
+</p>
+
+<p>
+LuaFileSystem offers a Makefile and a separate configuration file,
+<code>config</code>,
+which should be edited to suit your installation before running
+<code>make</code>.
+The file has some definitions like paths to the external libraries,
+compiler options and the like.
+</p>
+
 <h2><a name="installation"></a>Installation</h2>
 
-<p>LuaFileSystem follows the
-<a href="http://www.keplerproject.org/compat/">package model</a>
-for Lua 5.1, therefore it should be "installed". Refer to
-<a href="http://www.keplerproject.org/compat/manual.html#configuration">
-Compat-5.1 configuration</a> section about how to install the compiled
-binary properly.
-The compiled binary should be copied to a directory in your
-<code>LUA_CPATH</code>.</p>
+<p>The easiest way to install LuaFileSystem is to use LuaRocks:</p>
 
-<p>Windows users can use the binary version of LuaFileSystem
-(<code>lfs.dll</code>) available at
-<a href="http://luaforge.net/projects/luafilesystem/files">LuaForge</a>.</p>
+<pre class="example">
+luarocks install luafilesystem
+</pre>
+
+<p>If you prefer to install LuaFileSystem manually, the compiled binary should be copied to a directory in your
+<a href="http://www.lua.org/manual/5.1/manual.html#pdf-package.cpath">C path</a>.</p>
 
 <h2><a name="reference"></a>Reference</h2>
 
@@ -96,7 +109,7 @@ LuaFileSystem offers the following functions:
     The attributes are described as follows;
     attribute <code>mode</code> is a string, all the others are numbers,
     and the time related attributes use the same time reference of
-    <a href="http://www.lua.org/manual/5.0/manual.html#5.7"><code>os.time</code></a>: 
+    <a href="http://www.lua.org/manual/5.1/manual.html#pdf-os.time"><code>os.time</code></a>: 
         <dl>
         <dt><strong><code>dev</code></strong></dt>
         <dd>on Unix systems, this represents the device that the inode resides on. On Windows systems,
@@ -142,6 +155,12 @@ LuaFileSystem offers the following functions:
         <dt><strong><code>blksize</code></strong></dt>
 		<dd>optimal file system I/O blocksize; (Unix only)</dd>
 	    </dl>
+    This function uses <code>stat</code> internally thus if the given
+    <code>filepath</code> is a symbolic link, it is followed (if it points to
+    another link the chain is followed recursively) and the information
+    is about the file it refers to.
+    To obtain information about the link itself, see function
+    <a href="#symlinkattributes">lfs.symlinkattributes</a>.
 	</dd>
 
     <dt><a name="chdir"></a><strong><code>lfs.chdir (path)</code></strong></dt>
@@ -157,8 +176,8 @@ LuaFileSystem offers the following functions:
     <dt><a name="dir"></a><strong><code>lfs.dir (path)</code></strong></dt>
     <dd>
     Lua iterator over the entries of a given directory.
-    Each time the iterator is called it returns a string with an entry of the
-    directory; <code>nil</code> is returned when there is no more entries.
+    Each time the iterator is called it returns a directory entry's name as a string, or
+    <code>nil</code> if there are no more entries.
     Raises an error if <code>path</code> is not a directory.
     </dd>
     
@@ -185,14 +204,27 @@ LuaFileSystem offers the following functions:
     <dd>Removes an existing directory. The argument is the name of the directory.<br />
     Returns <code>true</code> if the operation was successful;
     in case of error, it returns <code>nil</code> plus an error string.</dd>
+
+    <dt><a name="setmode"></a><strong><code>lfs.setmode (file, mode)</code></strong></dt>
+    <dd>Sets the writing mode for a file. The mode string can be either <code>binary</code> or <code>text</code>.
+    Returns the previous mode string for the file. This function is only available in Windows, so you may want to make sure that
+    <code>lfs.setmode</code> exists before using it.
+    </dd>
     
+    <dt><a name="symlinkattributes"></a><strong><code>lfs.symlinkattributes (filepath [, aname])</code></strong></dt>
+    <dd>Identical to <a href="#attributes">lfs.attributes</a> except that
+    it obtains information about the link itself (not the file it refers to).
+    This function is not available in Windows so you may want to make sure that
+    <code>lfs.symlinkattributes</code> exists before using it.
+    </dd>
+
     <dt><a name="touch"></a><strong><code>lfs.touch (filepath [, atime [, mtime]])</code></strong></dt>
     <dd>Set access and modification times of a file. This function is
     a bind to <code>utime</code> function. The first argument is the
     filename, the second argument (<code>atime</code>) is the access time,
     and the third argument (<code>mtime</code>) is the modification time.
     Both times are provided in seconds (which should be generated with
-    Lua standard function <code>os.date</code>).
+    Lua standard function <code>os.time</code>).
     If the modification time is omitted, the access time provided is used;
     if both times are omitted, the current time is used.<br />
     Returns <code>true</code> if the operation was successful;
@@ -215,9 +247,8 @@ LuaFileSystem offers the following functions:
 </div> <!-- id="main" -->
 
 <div id="about">
-	<p><a href="http://validator.w3.org/check?uri=referer">
-    <img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
-	<p><small>$Id: manual.html,v 1.30.2.1 2006/03/15 20:30:53 carregal Exp $</small></p>
+	<p><a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0!</a></p>
+	<p><small>$Id: manual.html,v 1.42 2008/03/24 18:17:59 carregal Exp $</small></p>
 </div> <!-- id="about" -->
 
 </div> <!-- id="container" -->

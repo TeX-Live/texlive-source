@@ -1,24 +1,22 @@
-/*
-Copyright (c) 1996-2002 Han The Thanh, <thanh@pdftex.org>
+/* pkin.c
+   
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
-This file is part of pdfTeX.
+   This file is part of LuaTeX.
 
-pdfTeX is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-pdfTeX is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-You should have received a copy of the GNU General Public License
-along with pdfTeX; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-$Id: pkin.c 1013 2008-02-14 00:09:02Z oneiros $
-*/
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 /*
  * NAME
@@ -44,25 +42,21 @@ $Id: pkin.c 1013 2008-02-14 00:09:02Z oneiros $
  */
 
 #include "ptexlib.h"
+#include "luatexfont.h"
+
+static const char _svn_version[] =
+    "$Id: pkin.c 1712 2009-01-02 10:54:55Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/pkin.c $";
 
 /*
  *   Now we have some routines to get stuff from the pk file.  pkbyte returns
  *   the next byte from the pk file.
  */
 
-
-/*
-static FILE *pkfile ;
-*/
-
-extern FILE *t3_file;
-#define pkfile t3_file
-
 static shalfword pkbyte(void)
 {
     register shalfword i;
-
-    if ((i = xgetc(pkfile)) == EOF)
+    i = t3_getchar();
+    if (t3_eof())
         pdftex_fail("unexpected eof in pk file");
     return (i);
 }
