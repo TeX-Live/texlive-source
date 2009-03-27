@@ -1,3 +1,10 @@
+2009-03-27  Taco Hoekwater <taco@luatex.org>
+
+	* texmfmp.c (parse_options): add #ifndef luaTeX guard for 
+	--src-specials, because luaTeX does not implement it.
+	(parse_src_specials_option): add #ifndef luaTeX guard for
+	 the same reason.
+
 2009-03-02  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (long_options): make -enable-write18 and -disable-write18
