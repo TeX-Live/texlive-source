@@ -1,3 +1,8 @@
+2009-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert (splitup_options for luatex)): avoid to split the C
+	code (from Taco).
+
 2009-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* splitup.c: avoid using program_invocation_name (from Taco).

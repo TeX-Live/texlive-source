@@ -1,3 +1,8 @@
+2009-03-27  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* am/luatex.am (luatex_c_h): avoid to split the C code
+	(from Taco).
+
 2009-03-27  Taco Hoekwater <taco@luatex.org>
 
 	* luatexdir: import of the current state of luatex, 0.37.0. 

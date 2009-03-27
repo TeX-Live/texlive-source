@@ -26,7 +26,7 @@ luatex_DEPENDENCIES = $(proglib) libluatex.a
 luatex_DEPENDENCIES += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(XPDF_DEPEND)
 luatex_DEPENDENCIES += $(OBSDCOMPAT_DEPEND) libmd5.a
 
-luatex_c_h = luatexini.c luatex0.c luatex1.c luatex2.c luatex3.c luatexcoerce.h luatexd.h
+luatex_c_h = luatexini.c luatex0.c luatexcoerce.h luatexd.h
 nodist_luatex_SOURCES = $(luatex_c_h) luatex-pool.c luatexextra.c luatexdir/luatexextra.h
 $(luatex_c_h): luatex-web2c
 luatex-web2c: luatex.p $(web2c_texmf) luatexdir/luatex.defines

@@ -108,9 +108,9 @@ ${basefile}coerce.h"
     web2c_options="-t -c${basefile}coerce"
     hfile=texmfmp.h
     fixwrites_options=-t
-    splitup_options="-i -l 13500"
+    splitup_options="-i -l 65000"
     postcmd="| ./web2c/splitup $splitup_options ${basefile}"
-    cfile=${basefile}2.c # last output file, or thereabouts
+    cfile=${basefile}0.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
                  ${basefile}coerce.h"
