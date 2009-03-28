@@ -117,6 +117,11 @@ extern boolean open_out_or_pipe P2H(FILE **, const_string fopen_mode);
 extern void close_file_or_pipe P1H(FILE *);
 #endif
 
+/* Executing shell commands.  */
+void mk_shellcmdlist (char *);
+void init_shell_escape (void);
+int shell_cmd_is_allowed (char **cmd, char **safecmd, char **cmdname);
+
 /* All but the Omega family use this. */
 #if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
 extern void readtcxfile P1H(void);

@@ -1,3 +1,7 @@
+2009-03-28  Karl Berry  <karl@tug.org>
+
+	* texmfmp.h: shell escape declarations.
+
 2009-03-27 Taco Hoekwater <taco@luatex.org>
 
 	* configure.ac: With the new luatex, what used to be 
