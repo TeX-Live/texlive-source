@@ -154,7 +154,7 @@
 
 static char **cmdlist = NULL;
 
-static void 
+void 
 mk_shellcmdlist (char *v)
 {
   char **p;
@@ -281,7 +281,7 @@ free_shellcmdlist (void)
    should get executed.  And we set CMDNAME to its first word; this is
    what is checked against the shell_escape_commands list.  */
 
-static int
+int
 shell_cmd_is_allowed (char **cmd, char **safecmd, char **cmdname)
 {
   char **p;
