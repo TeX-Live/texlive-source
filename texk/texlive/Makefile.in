@@ -42,6 +42,7 @@ LINKED_SCRIPTS = \
   texmf-dist/scripts/pst-pdf/ps4pdf \
   texmf-dist/scripts/pst2pdf/pst2pdf.pl \
   texmf-dist/scripts/purifyeps/purifyeps \
+  texmf-dist/scripts/splitindex/splitindex.pl \
   texmf-dist/scripts/svn-multi/svn-multi.pl \
   texmf-dist/scripts/texcount/TeXcount.pl \
   texmf-dist/scripts/texloganalyser/texloganalyser \
