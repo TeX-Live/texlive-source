@@ -8,7 +8,7 @@
 # E-mail: martin@scharrer-online.de
 # WWW: http://www.scharrer-online.de/latex/svn-multi/
 #
-# $Id: svn-multi-pl.dtx 591 2009-03-19 18:08:07Z martin $
+# $Id: svn-multi-pl.dtx 692 2009-03-27 21:38:45Z martin $
 #
 # This program works only in combination with the LaTeX package 'svn-multi' and
 # generates .svx files with '\svnidlong' macros holding Subversion keywords for
@@ -57,7 +57,7 @@ use warnings;
 use File::Basename;
 my $VERSION = "0.2";
 my ($REV,$DATE) =
-  (split ' ','$Id: svn-multi-pl.dtx 591 2009-03-19 18:08:07Z martin $')[2,3];
+  (split ' ','$Id: svn-multi-pl.dtx 692 2009-03-27 21:38:45Z martin $')[2,3];
 
 my $dollar  = '$';
 my @PATH;
