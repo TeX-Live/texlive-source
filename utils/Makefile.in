@@ -30,8 +30,12 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = @build@
+host_triplet = @host@
 subdir = .
 DIST_COMMON = README $(am__configure_deps) \
+	$(srcdir)/../build-aux/config.guess \
+	$(srcdir)/../build-aux/config.sub \
 	$(srcdir)/../build-aux/install-sh \
 	$(srcdir)/../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
@@ -40,7 +44,9 @@ DIST_COMMON = README $(am__configure_deps) \
 	../build-aux/ltmain.sh ../build-aux/missing \
 	../build-aux/texinfo.tex ../build-aux/ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-pkgs.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cxx-hack.m4 \
+	$(top_srcdir)/../m4/kpse-options.m4 \
+	$(top_srcdir)/../m4/kpse-pkgs.m4 \
 	$(top_srcdir)/../m4/kpse-setup.m4 \
 	$(top_srcdir)/../m4/kpse-web2c.m4 \
 	$(top_srcdir)/../ac/withenable.ac \
@@ -173,14 +179,22 @@ am__leading_dot = @am__leading_dot@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@

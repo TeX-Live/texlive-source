@@ -49,7 +49,7 @@ tangleboot.p: tangle.web tangle.ch
 	  cp $(srcdir)/tangleboot.p .; \
 	fi
 	date >stamp-tangle
-	$(MAKE) $(AM_MAKEFLAGS) tangle
+	$(MAKE) $(AM_MAKEFLAGS) tangle$(EXEEXT)
 DISTCLEANFILES += stamp-tangle tangleboot.c tangleboot.h
 
 ## Bootstrapping ctangle requires making it with itself.  We use the opportunity
@@ -86,7 +86,7 @@ ctangleboot.c: cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	  cp $(srcdir)/ctangleboot.c .; \
 	fi
 	date >stamp-ctangle
-	$(MAKE) $(AM_MAKEFLAGS) ctangle
+	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
 cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
 	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) common comm-w2c cweb.c; \
@@ -97,7 +97,7 @@ cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	  cp $(srcdir)/cwebboot.c .; \
 	fi
 	date >stamp-ctangle
-	$(MAKE) $(AM_MAKEFLAGS) ctangle
+	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
 DISTCLEANFILES += stamp-ctangle
 
 ## Tests

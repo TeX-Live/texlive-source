@@ -26,13 +26,11 @@ mpto_SOURCES = mpto.c
 
 newer_SOURCES = newer.c
 
-## ######
 ## Obsolete ?
-
+##
 EXTRA_DIST = makempx.in
 
-## ######
 ## Evetually delete these files
-
+##
 EXTRA_DIST += Makefile.in.orig
 

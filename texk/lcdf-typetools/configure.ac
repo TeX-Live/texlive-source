@@ -17,6 +17,8 @@ if test -n "$GCC" ; then CC="$CC -W -Wall" ; CXX="$CXX -W -Wall" ; fi
 
 AC_CXX_TEMPLATE_OBJS
 
+KPSE_CXX_HACK
+
 
 dnl
 dnl directory searching

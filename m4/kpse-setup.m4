@@ -19,6 +19,12 @@ AC_DEFUN([KPSE_SETUP],
 [m4_define([kpse_TL], [$1])[]dnl
 m4_define([kpse_indent_26], [28])[]dnl
 m4_define([kpse_indent_28], [30])[]dnl
+AC_ARG_ENABLE([all-pkgs],
+              AS_HELP_STRING([--disable-all-pkgs],
+                             [do not build packages unless explicitly enabled]))[]dnl
+test "x$enable_all_pkgs" = xno || enable_all_pkgs=yes
+KPSE_ENABLE_CXX_HACK
+KPSE_OPTIONS
 KPSE_WEB2C_PREPARE
 m4_sinclude(kpse_TL[ac/withenable.ac])
 m4_sinclude(kpse_TL[utils/ac/withenable.ac])
@@ -46,9 +52,9 @@ AC_ARG_ENABLE([$1],
                                                                       [($4) ])[package]))[]dnl
 case $enable_[]AS_TR_SH($1) in #(
   yes|no);; #(
-  *) AC_MSG_NOTICE([Assuming `--]m4_if(Kpse_with, [no], [dis], [en])[able-$1'])
-     enable_[]AS_TR_SH($1)=Kpse_with
-     ac_configure_args="$ac_configure_args '--[]m4_if(Kpse_with, [no], [dis], [en])able-$1'";;
+  *) enable_[]AS_TR_SH($1)=m4_if(Kpse_with, [yes], [$enable_all_pkgs], [no])
+     AC_MSG_NOTICE([Assuming `--enable-$1=$enable_]AS_TR_SH($1)['])
+     ac_configure_args="$ac_configure_args '--enable-$1=$enable_[]AS_TR_SH($1)'";;
 esac
 m4_popdef([Kpse_with])[]dnl
 m4_ifval([$2], [

@@ -75,3 +75,43 @@ texk/Prog/ac/Prog.ac		defines Prog specific configure option that should
 utils/Util/ac/withenable.ac	defines libraries required by Util, provides the
 				  configure option --disable-Util
 
+2. Running `configure'
+======================
+
+Running configure for the top-level directory will in addition configure the
+directories texk/kpathsea/, libs/, libs/dummy/, utils/, utils/dummy, texk/,
+and texk/dummy/.  This will determine the programs to be built (utils/Util/
+and texk/Prog) and libraries from the TL tree (texk/kpathsea/ and libs/Lib)
+required by these programs.
+
+3. Running `make'
+=================
+
+Running make in the top-level directory will recurse into the directories
+texk/kpathsea/, libs/, utils/, and texk/.
+
+3.1. Running `make' in libs/
+----------------------------
+
+First, for each subdirectory libs/Lib not yet configured, this runs
+`configure' and if required `make all' in that directory.  Then this
+recurses into all required subdirectories for the selected make target:
+`default' or `all' to (re-)build, `check' to run tests, `install' etc.
+
+3.2. Running `make' in utils/ and texk/
+---------------------------------------
+
+Quite similarly, for each subdirectory utils/Util and texk/Prog not yet
+configured, this first runs `configure' and if required `make all' in that
+directory.  Subsequently, this recurses into all required subdirectories to
+(re-)build, run tests, install, etc.
+
+3.3 Comment
+-----------
+
+The process described above configures all directories, even for libraries
+or programs not to be built.  This is necessary for make targets such as
+`dist' or `distcheck' that have to recurse into all subdirectories, whereas
+targets such as `all', `check', or `install' only recurse into the required
+subdirectories.
+

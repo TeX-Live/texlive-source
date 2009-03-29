@@ -1,5 +1,5 @@
 ## texk/am/man.am: Makefile fragment for kpathsea and web2c manual pages.
-## requires $(man_sources), $(EXTRA_DIST), and $(DISTCLEANFILES)
+## requires $(man_sources)
 ## requires $(KPATHSEA_PATHS_H) giving the directory of kpathsea/paths.h
 
 SUFFIXES = .1 .man .ps .dvi
@@ -43,8 +43,6 @@ DVIS = $(man_files:.1=.dvi)
 	$(DITROFF) -Tps -man $< >$@
 PSS = $(man_files:.1=.ps)
 
-EXTRA_DIST += $(man_sources)
-
-DISTCLEANFILES += sedscript $(man_files) $(DVIS) $(PSS)
+DISTCLEANFILES = sedscript $(man_files) $(DVIS) $(PSS)
 
 ## end of texk/am/man.am

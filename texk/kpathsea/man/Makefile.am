@@ -9,8 +9,8 @@ man_sources = \
 	mktexpk.man \
 	mktextfm.man
 
-EXTRA_DIST =
-DISTCLEANFILES =
+EXTRA_DIST = $(man_sources)
+
 KPATHSEA_PATHS_H = ${top_builddir}/..
 
 include $(top_srcdir)/../am/man.am

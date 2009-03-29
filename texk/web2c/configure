@@ -880,6 +880,9 @@ TEX_TRUE
 socketlibs
 FMU_FALSE
 FMU_TRUE
+CXX_HACK_LIBS
+CXX_HACK_DEPS
+CXXLD
 CXXCPP
 am__fastdepCXX_FALSE
 am__fastdepCXX_TRUE
@@ -1007,6 +1010,7 @@ enable_dependency_tracking
 with_gnu_ld
 enable_libtool_lock
 enable_largefile
+enable_cxx_runtime_hack
 with_editor
 enable_auto_core
 enable_dump_share
@@ -1703,6 +1707,7 @@ Optional Features:
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --disable-largefile     omit support for large files
+  --enable-cxx-runtime-hack  link C++ runtime statically
   --enable-auto-core      cause TeX&MF to dump core, given a certain filename
   --disable-dump-share    make fmt/base/mem files architecture-dependent
   --enable-fmtutil        use fmtutil for build dumps
@@ -4358,13 +4363,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4361: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4366: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4364: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4369: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4367: output\"" >&5)
+  (eval echo "\"\$as_me:4372: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5570,7 +5575,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5573 "configure"' > conftest.$ac_ext
+  echo '#line 5578 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7617,11 +7622,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7620: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7625: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7624: \$? = $ac_status" >&5
+   echo "$as_me:7629: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7956,11 +7961,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7959: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7964: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7963: \$? = $ac_status" >&5
+   echo "$as_me:7968: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8061,11 +8066,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8064: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8069: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8068: \$? = $ac_status" >&5
+   echo "$as_me:8073: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8116,11 +8121,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8119: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8124: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8123: \$? = $ac_status" >&5
+   echo "$as_me:8128: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10916,7 +10921,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10919 "configure"
+#line 10924 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11012,7 +11017,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11015 "configure"
+#line 11020 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13012,241 +13017,6 @@ if test "$kb_cv_var_program_inv_name" = yes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_PROGRAM_INVOCATION_NAME 1
-_ACEOF
-
-fi
-
-
-## texk/web2c/ac/web2c.ac
-## configure options for TeX and MF
-
-# Check whether --with-editor was given.
-if test "${with_editor+set}" = set; then
-  withval=$with_editor;
-fi
-# Check whether --enable-auto-core was given.
-if test "${enable_auto_core+set}" = set; then
-  enableval=$enable_auto_core;
-fi
-# Check whether --enable-dump-share was given.
-if test "${enable_dump_share+set}" = set; then
-  enableval=$enable_dump_share;
-fi
-# Check whether --enable-fmtutil was given.
-if test "${enable_fmtutil+set}" = set; then
-  enableval=$enable_fmtutil;
-fi
-## configure options for TeX
-# Check whether --enable-ipc was given.
-if test "${enable_ipc+set}" = set; then
-  enableval=$enable_ipc;
-fi
-# Check whether --enable-tex was given.
-if test "${enable_tex+set}" = set; then
-  enableval=$enable_tex;
-fi
-case $enable_tex in
-  yes|no) : ;;
-  *) enable_tex=yes ;;
-esac
-# Check whether --enable-etex was given.
-if test "${enable_etex+set}" = set; then
-  enableval=$enable_etex;
-fi
-case $enable_etex in
-  yes|no) : ;;
-  *) enable_etex=no ;;
-esac
-# Check whether --enable-omega was given.
-if test "${enable_omega+set}" = set; then
-  enableval=$enable_omega;
-fi
-case $enable_omega in
-  yes|no) : ;;
-  *) enable_omega=no ;;
-esac
-# Check whether --enable-aleph was given.
-if test "${enable_aleph+set}" = set; then
-  enableval=$enable_aleph;
-fi
-case $enable_aleph in
-  yes|no) : ;;
-  *) enable_aleph=yes ;;
-esac
-# Check whether --enable-pdftex was given.
-if test "${enable_pdftex+set}" = set; then
-  enableval=$enable_pdftex;
-fi
-case $enable_pdftex in
-  yes|no) : ;;
-  *) enable_pdftex=yes ;;
-esac
-
-test "x$enable_pdftex" = xno || {
-  need_xpdf=yes
-  need_libpng=yes
-  need_obsdcompat=yes
-}
-# Check whether --enable-luatex was given.
-if test "${enable_luatex+set}" = set; then
-  enableval=$enable_luatex;
-fi
-case $enable_luatex in
-  yes|no) : ;;
-  *) enable_luatex=yes ;;
-esac
-
-test "x$enable_luatex" = xno || {
-  need_xpdf=yes
-  need_libpng=yes
-  need_obsdcompat=yes
-}
-# Check whether --enable-xetex was given.
-if test "${enable_xetex+set}" = set; then
-  enableval=$enable_xetex;
-fi
-case $enable_xetex in
-  yes|no) : ;;
-  *) enable_xetex=no ;;
-esac
-
-test "x$enable_xetex" = xno || {
-  need_xpdf=yes
-  need_libpng=yes
-  need_freetype2=yes
-}
-## configure options for MF
-# Check whether --enable-mf was given.
-if test "${enable_mf+set}" = set; then
-  enableval=$enable_mf;
-fi
-# Check whether --enable-mf-nowin was given.
-if test "${enable_mf_nowin+set}" = set; then
-  enableval=$enable_mf_nowin;
-fi
-
-# Check whether --with-mf-x-toolkit was given.
-if test "${with_mf_x_toolkit+set}" = set; then
-  withval=$with_mf_x_toolkit;
-fi
-# Check whether --enable-epsfwin was given.
-if test "${enable_epsfwin+set}" = set; then
-  enableval=$enable_epsfwin;
-fi
-# Check whether --enable-hp2627win was given.
-if test "${enable_hp2627win+set}" = set; then
-  enableval=$enable_hp2627win;
-fi
-# Check whether --enable-mftalkwin was given.
-if test "${enable_mftalkwin+set}" = set; then
-  enableval=$enable_mftalkwin;
-fi
-# Check whether --enable-nextwin was given.
-if test "${enable_nextwin+set}" = set; then
-  enableval=$enable_nextwin;
-fi
-# Check whether --enable-regiswin was given.
-if test "${enable_regiswin+set}" = set; then
-  enableval=$enable_regiswin;
-fi
-# Check whether --enable-suntoolswin was given.
-if test "${enable_suntoolswin+set}" = set; then
-  enableval=$enable_suntoolswin;
-fi
-# Check whether --enable-tektronixwin was given.
-if test "${enable_tektronixwin+set}" = set; then
-  enableval=$enable_tektronixwin;
-fi
-# Check whether --enable-unitermwin was given.
-if test "${enable_unitermwin+set}" = set; then
-  enableval=$enable_unitermwin;
-fi
-## configure options for MP
-# Check whether --enable-mp was given.
-if test "${enable_mp+set}" = set; then
-  enableval=$enable_mp;
-fi
-## configure options for WEB programs
-# Check whether --enable-web-progs was given.
-if test "${enable_web_progs+set}" = set; then
-  enableval=$enable_web_progs;
-fi
-
-
-{ $as_echo "$as_me:$LINENO: checking whether gcc asm needs underscore" >&5
-$as_echo_n "checking whether gcc asm needs underscore... " >&6; }
-if test "${pb_cv_asm_underscore+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-
-# Some versions of GCC asm for i386 need an underscore prepended to
-# external symbols. Figure out if this is so.
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-extern char val ;
-extern void sub () ;
-#if defined (__i386__) && defined (__GNUC__)
-asm("        .align 4\n"
-".globl sub\n"
-"sub:\n"
-"        movb \$1,val\n"
-"        ret\n");
-#else
-void sub () { val = 1; }
-#endif /* assembler */
-char val ;
-int
-main ()
-{
-sub (); return 0;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-  pb_cv_asm_underscore=no
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	pb_cv_asm_underscore=yes
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-fi
-{ $as_echo "$as_me:$LINENO: result: $pb_cv_asm_underscore" >&5
-$as_echo "$pb_cv_asm_underscore" >&6; }
-if test "x$pb_cv_asm_underscore" = xyes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define ASM_NEEDS_UNDERSCORE 1
 _ACEOF
 
 fi
@@ -16263,11 +16033,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16266: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16036: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16270: \$? = $ac_status" >&5
+   echo "$as_me:16040: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16362,11 +16132,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16365: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16135: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16369: \$? = $ac_status" >&5
+   echo "$as_me:16139: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16414,11 +16184,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16417: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16187: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16421: \$? = $ac_status" >&5
+   echo "$as_me:16191: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17379,6 +17149,507 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+# Check whether --enable-cxx-runtime-hack was given.
+if test "${enable_cxx_runtime_hack+set}" = set; then
+  enableval=$enable_cxx_runtime_hack;
+fi
+
+
+cpp_link_hack=false
+if test "x$GXX" = xyes && test "x$enable_cxx_runtime_hack" = xyes; then
+
+ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+
+for ac_header in iostream
+do
+as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  { $as_echo "$as_me:$LINENO: checking for $ac_header" >&5
+$as_echo_n "checking for $ac_header... " >&6; }
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+fi
+ac_res=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+else
+  # Is the header compilable?
+{ $as_echo "$as_me:$LINENO: checking $ac_header usability" >&5
+$as_echo_n "checking $ac_header usability... " >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <$ac_header>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_header_compiler=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_header_compiler=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+$as_echo "$ac_header_compiler" >&6; }
+
+# Is the header present?
+{ $as_echo "$as_me:$LINENO: checking $ac_header presence" >&5
+$as_echo_n "checking $ac_header presence... " >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <$ac_header>
+_ACEOF
+if { (ac_try="$ac_cpp conftest.$ac_ext"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null && {
+	 test -z "$ac_cxx_preproc_warn_flag$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       }; then
+  ac_header_preproc=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+
+rm -f conftest.err conftest.$ac_ext
+{ $as_echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+$as_echo "$ac_header_preproc" >&6; }
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_cxx_preproc_warn_flag in
+  yes:no: )
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
+$as_echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the compiler's result" >&5
+$as_echo "$as_me: WARNING: $ac_header: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
+$as_echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header:     check for missing prerequisite headers?" >&5
+$as_echo "$as_me: WARNING: $ac_header:     check for missing prerequisite headers?" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: see the Autoconf documentation" >&5
+$as_echo "$as_me: WARNING: $ac_header: see the Autoconf documentation" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&5
+$as_echo "$as_me: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+$as_echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: in the future, the compiler will take precedence" >&5
+$as_echo "$as_me: WARNING: $ac_header: in the future, the compiler will take precedence" >&2;}
+    ( cat <<\_ASBOX
+## ---------------------------- ##
+## Report this to tex-k@tug.org ##
+## ---------------------------- ##
+_ASBOX
+     ) | sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+{ $as_echo "$as_me:$LINENO: checking for $ac_header" >&5
+$as_echo_n "checking for $ac_header... " >&6; }
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+else
+  eval "$as_ac_Header=\$ac_header_preproc"
+fi
+ac_res=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+
+fi
+as_val=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+   if test "x$as_val" = x""yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+{ $as_echo "$as_me:$LINENO: checking for statically linking C++ runtime library" >&5
+$as_echo_n "checking for statically linking C++ runtime library... " >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#ifdef HAVE_IOSTREAM
+#include <iostream>
+using namespace std;
+#else
+#include <iostream.h>
+#endif
+int
+main ()
+{
+cout <<"worksok\n";
+  ;
+  return 0;
+}
+_ACEOF
+flags_try0='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm'
+flags_try1='-lgcc_eh -lgcc -lc -lgcc_eh -lgcc'
+flags_try2='-lgcc -lc -lgcc'
+kpse_save_LIBS=$LIBS
+for flags in "$flags_try1" "$flags_try2"; do
+  LIBS="$kpse_save_LIBS $flags_try0 $flags"
+  rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  case `(./conftest$ac_exeext; exit) 2>/dev/null` in
+       worksok)
+         cpp_link_hack=true; break;;
+     esac
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext
+done
+LIBS=$kpse_save_LIBS
+
+if $cpp_link_hack; then
+  CXX_HACK_LIBS="$flags_try0 $flags"
+  { $as_echo "$as_me:$LINENO: result: ok using $CXX_HACK_LIBS" >&5
+$as_echo "ok using $CXX_HACK_LIBS" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: not supported" >&5
+$as_echo "not supported" >&6; }
+fi
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+fi
+if $cpp_link_hack; then
+  CXXLD='$(top_builddir)/CXXLD.sh'
+  CXX_HACK_DEPS=$CXXLD
+  cxxld_sh="#! ${CONFIG_SHELL-/bin/sh}
+# CXXLD.sh.  Generated by configure.
+set -- $CXX \"\$@\" $CXX_HACK_LIBS
+echo \"\$0:\" \"\$@\"
+exec \"\$@\""
+  ac_config_files="$ac_config_files CXXLD.sh:Makefile.in"
+
+else
+  CXXLD='$(CXX)'
+fi
+
+
+
+
+
+
+## texk/web2c/ac/web2c.ac
+## configure options for TeX and MF
+
+# Check whether --with-editor was given.
+if test "${with_editor+set}" = set; then
+  withval=$with_editor;
+fi
+# Check whether --enable-auto-core was given.
+if test "${enable_auto_core+set}" = set; then
+  enableval=$enable_auto_core;
+fi
+# Check whether --enable-dump-share was given.
+if test "${enable_dump_share+set}" = set; then
+  enableval=$enable_dump_share;
+fi
+# Check whether --enable-fmtutil was given.
+if test "${enable_fmtutil+set}" = set; then
+  enableval=$enable_fmtutil;
+fi
+## configure options for TeX
+# Check whether --enable-ipc was given.
+if test "${enable_ipc+set}" = set; then
+  enableval=$enable_ipc;
+fi
+# Check whether --enable-tex was given.
+if test "${enable_tex+set}" = set; then
+  enableval=$enable_tex;
+fi
+case $enable_tex in
+  yes|no) : ;;
+  *) enable_tex=yes ;;
+esac
+# Check whether --enable-etex was given.
+if test "${enable_etex+set}" = set; then
+  enableval=$enable_etex;
+fi
+case $enable_etex in
+  yes|no) : ;;
+  *) enable_etex=no ;;
+esac
+# Check whether --enable-omega was given.
+if test "${enable_omega+set}" = set; then
+  enableval=$enable_omega;
+fi
+case $enable_omega in
+  yes|no) : ;;
+  *) enable_omega=no ;;
+esac
+# Check whether --enable-aleph was given.
+if test "${enable_aleph+set}" = set; then
+  enableval=$enable_aleph;
+fi
+case $enable_aleph in
+  yes|no) : ;;
+  *) enable_aleph=yes ;;
+esac
+# Check whether --enable-pdftex was given.
+if test "${enable_pdftex+set}" = set; then
+  enableval=$enable_pdftex;
+fi
+case $enable_pdftex in
+  yes|no) : ;;
+  *) enable_pdftex=yes ;;
+esac
+
+test "x$enable_pdftex" = xno || {
+  need_xpdf=yes
+  need_libpng=yes
+  need_obsdcompat=yes
+}
+# Check whether --enable-luatex was given.
+if test "${enable_luatex+set}" = set; then
+  enableval=$enable_luatex;
+fi
+case $enable_luatex in
+  yes|no) : ;;
+  *) enable_luatex=yes ;;
+esac
+
+test "x$enable_luatex" = xno || {
+  need_xpdf=yes
+  need_libpng=yes
+  need_obsdcompat=yes
+}
+# Check whether --enable-xetex was given.
+if test "${enable_xetex+set}" = set; then
+  enableval=$enable_xetex;
+fi
+case $enable_xetex in
+  yes|no) : ;;
+  *) enable_xetex=no ;;
+esac
+
+test "x$enable_xetex" = xno || {
+  need_xpdf=yes
+  need_libpng=yes
+  need_freetype2=yes
+}
+## configure options for MF
+# Check whether --enable-mf was given.
+if test "${enable_mf+set}" = set; then
+  enableval=$enable_mf;
+fi
+# Check whether --enable-mf-nowin was given.
+if test "${enable_mf_nowin+set}" = set; then
+  enableval=$enable_mf_nowin;
+fi
+
+# Check whether --with-mf-x-toolkit was given.
+if test "${with_mf_x_toolkit+set}" = set; then
+  withval=$with_mf_x_toolkit;
+fi
+# Check whether --enable-epsfwin was given.
+if test "${enable_epsfwin+set}" = set; then
+  enableval=$enable_epsfwin;
+fi
+# Check whether --enable-hp2627win was given.
+if test "${enable_hp2627win+set}" = set; then
+  enableval=$enable_hp2627win;
+fi
+# Check whether --enable-mftalkwin was given.
+if test "${enable_mftalkwin+set}" = set; then
+  enableval=$enable_mftalkwin;
+fi
+# Check whether --enable-nextwin was given.
+if test "${enable_nextwin+set}" = set; then
+  enableval=$enable_nextwin;
+fi
+# Check whether --enable-regiswin was given.
+if test "${enable_regiswin+set}" = set; then
+  enableval=$enable_regiswin;
+fi
+# Check whether --enable-suntoolswin was given.
+if test "${enable_suntoolswin+set}" = set; then
+  enableval=$enable_suntoolswin;
+fi
+# Check whether --enable-tektronixwin was given.
+if test "${enable_tektronixwin+set}" = set; then
+  enableval=$enable_tektronixwin;
+fi
+# Check whether --enable-unitermwin was given.
+if test "${enable_unitermwin+set}" = set; then
+  enableval=$enable_unitermwin;
+fi
+## configure options for MP
+# Check whether --enable-mp was given.
+if test "${enable_mp+set}" = set; then
+  enableval=$enable_mp;
+fi
+## configure options for WEB programs
+# Check whether --enable-web-progs was given.
+if test "${enable_web_progs+set}" = set; then
+  enableval=$enable_web_progs;
+fi
+
+
+{ $as_echo "$as_me:$LINENO: checking whether gcc asm needs underscore" >&5
+$as_echo_n "checking whether gcc asm needs underscore... " >&6; }
+if test "${pb_cv_asm_underscore+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+
+# Some versions of GCC asm for i386 need an underscore prepended to
+# external symbols. Figure out if this is so.
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+extern char val ;
+extern void sub () ;
+#if defined (__i386__) && defined (__GNUC__)
+asm("        .align 4\n"
+".globl sub\n"
+"sub:\n"
+"        movb \$1,val\n"
+"        ret\n");
+#else
+void sub () { val = 1; }
+#endif /* assembler */
+char val ;
+int
+main ()
+{
+sub (); return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  pb_cv_asm_underscore=no
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	pb_cv_asm_underscore=yes
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:$LINENO: result: $pb_cv_asm_underscore" >&5
+$as_echo "$pb_cv_asm_underscore" >&6; }
+if test "x$pb_cv_asm_underscore" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define ASM_NEEDS_UNDERSCORE 1
+_ACEOF
+
+fi
+
 
 case $with_editor in
   ''|yes|no) with_editor='vi +%d %s' ;;
@@ -17417,37 +17688,23 @@ else
 fi
 
 
-if test "x$enable_ipc" = xyes; then
-
 # -lsocket is needed on Solaris, at least.  Maybe -lnsl on SCO, too?
 # See ac_path_xtra.
-{ $as_echo "$as_me:$LINENO: checking for connect" >&5
-$as_echo_n "checking for connect... " >&6; }
-if test "${ac_cv_func_connect+set}" = set; then
+if test "x$enable_ipc:$enable_luatex" != xno:no; then
+
+kpse_save_LIBS=$LIBS
+{ $as_echo "$as_me:$LINENO: checking for library containing connect" >&5
+$as_echo_n "checking for library containing connect... " >&6; }
+if test "${ac_cv_search_connect+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-  cat >conftest.$ac_ext <<_ACEOF
+  ac_func_search_save_LIBS=$LIBS
+cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-/* Define connect to an innocuous variant, in case <limits.h> declares connect.
-   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
-#define connect innocuous_connect
-
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char connect (); below.
-    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
-    <limits.h> exists even on freestanding compilers.  */
-
-#ifdef __STDC__
-# include <limits.h>
-#else
-# include <assert.h>
-#endif
-
-#undef connect
 
 /* Override any GCC internal prototype to avoid an error.
    Use char because int might match the return type of a GCC
@@ -17456,13 +17713,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 extern "C"
 #endif
 char connect ();
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined __stub_connect || defined __stub___connect
-choke me
-#endif
-
 int
 main ()
 {
@@ -17471,7 +17721,14 @@ return connect ();
   return 0;
 }
 _ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
+for ac_lib in '' socket nsl wsock32; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  rm -f conftest.$ac_objext conftest$ac_exeext
 if { (ac_try="$ac_link"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
@@ -17492,167 +17749,52 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  ac_cv_func_connect=yes
+  ac_cv_search_connect=$ac_res
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_func_connect=no
+
 fi
 
 rm -rf conftest.dSYM
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
+      conftest$ac_exeext
+  if test "${ac_cv_search_connect+set}" = set; then
+  break
 fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_func_connect" >&5
-$as_echo "$ac_cv_func_connect" >&6; }
-if test "x$ac_cv_func_connect" = x""yes; then
+done
+if test "${ac_cv_search_connect+set}" = set; then
   :
 else
-  { $as_echo "$as_me:$LINENO: checking for connect in -lsocket" >&5
-$as_echo_n "checking for connect in -lsocket... " >&6; }
-if test "${ac_cv_lib_socket_connect+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lsocket  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
+  ac_cv_search_connect=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_search_connect" >&5
+$as_echo "$ac_cv_search_connect" >&6; }
+ac_res=$ac_cv_search_connect
+if test "$ac_res" != no; then
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char connect ();
-int
-main ()
-{
-return connect ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-  ac_cv_lib_socket_connect=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_cv_lib_socket_connect=no
 fi
 
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_socket_connect" >&5
-$as_echo "$ac_cv_lib_socket_connect" >&6; }
-if test "x$ac_cv_lib_socket_connect" = x""yes; then
-  socketlibs="-lsocket"
-else
-  { $as_echo "$as_me:$LINENO: checking for connect in -lnsl" >&5
-$as_echo_n "checking for connect in -lnsl... " >&6; }
-if test "${ac_cv_lib_nsl_connect+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lnsl  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char connect ();
-int
-main ()
-{
-return connect ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-  ac_cv_lib_nsl_connect=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_cv_lib_nsl_connect=no
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_nsl_connect" >&5
-$as_echo "$ac_cv_lib_nsl_connect" >&6; }
-if test "x$ac_cv_lib_nsl_connect" = x""yes; then
-  socketlibs="-lnsl"
+LIBS=$kpse_save_LIBS
+case $ac_cv_search_connect in
+  "none required") : ;;
+  no) if test "x$enable_luatex" = xyes; then
+  { { $as_echo "$as_me:$LINENO: error: Sorry, no socket library: can not build luaTeX" >&5
+$as_echo "$as_me: error: Sorry, no socket library: can not build luaTeX" >&2;}
+   { (exit 1); exit 1; }; }
 else
   { $as_echo "$as_me:$LINENO: WARNING: no socket library: disabling ipc" >&5
 $as_echo "$as_me: WARNING: no socket library: disabling ipc" >&2;}
-                                           enable_ipc=no
+                                   enable_ipc=no
 fi
-
-fi
-
-fi
+ ;;
+  *) socketlibs="-l$ac_cv_search_connect" ;;
+esac
 
 if test "x$enable_ipc" = xyes; then
 
@@ -22490,7 +22632,7 @@ fi
 
 
 if test "x$enable_luatex" = xyes; then
-  ac_config_headers="$ac_config_headers ff-config.h:luatexdir/luafontforge/ff-config.in"
+  ac_config_headers="$ac_config_headers ff-config.h:luatexdir/luafontloader/ff-config.in"
 
 
 for ac_header in langinfo_h
@@ -24478,6 +24620,7 @@ fi
 ac_aux_dir='$ac_aux_dir'
 
 
+cxxld_sh='$cxxld_sh'
 
 _ACEOF
 
@@ -24489,8 +24632,9 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
+    "CXXLD.sh") CONFIG_FILES="$CONFIG_FILES CXXLD.sh:Makefile.in" ;;
     "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
-    "ff-config.h") CONFIG_HEADERS="$CONFIG_HEADERS ff-config.h:luatexdir/luafontforge/ff-config.in" ;;
+    "ff-config.h") CONFIG_HEADERS="$CONFIG_HEADERS ff-config.h:luatexdir/luafontloader/ff-config.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
@@ -26088,6 +26232,7 @@ compiler_lib_search_path=$lt_compiler_lib_search_path_CXX
 _LT_EOF
 
  ;;
+    "CXXLD.sh":F) echo "$cxxld_sh" >CXXLD.sh; chmod +x CXXLD.sh ;;
     "c-auto.h":H) sed -e 's/^#define PACKAGE/#define WEB2C_PACKAGE/' \
       -e 's/^#define VERSION/#define WEB2C_VERSION/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h ;;
 

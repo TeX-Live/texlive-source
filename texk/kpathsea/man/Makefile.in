@@ -179,7 +179,6 @@ man_sources = \
 	mktextfm.man
 
 EXTRA_DIST = $(man_sources)
-DISTCLEANFILES = sedscript $(man_files) $(DVIS) $(PSS)
 KPATHSEA_PATHS_H = ${top_builddir}/..
 SUFFIXES = .1 .man .ps .dvi
 man_files = $(man_sources:.man=.1)
@@ -187,6 +186,7 @@ nodist_man1_MANS = $(man_files)
 DITROFF = groff
 DVIS = $(man_files:.1=.dvi)
 PSS = $(man_files:.1=.ps)
+DISTCLEANFILES = sedscript $(man_files) $(DVIS) $(PSS)
 all: all-am
 
 .SUFFIXES:

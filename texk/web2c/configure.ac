@@ -36,13 +36,15 @@ AC_DEFINE_UNQUOTED([WEB2CVERSION], [" (Web2C $WEB2CVERSION)"])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([web2c programs])
+
+AC_PROG_CXX
+KPSE_CXX_HACK
+
 dnl Include additional code for web2c.
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
 
 KPSE_ASM_UNDERSCORE
-
-AC_PROG_CXX
 
 AS_CASE([$with_editor], [''|yes|no], [with_editor='vi +%d %s'])
 AC_DEFINE_UNQUOTED([EDITOR], ["$with_editor"],
@@ -59,16 +61,19 @@ AS_IF([test "x$enable_dump_share" = xno],
 
 AM_CONDITIONAL([FMU], [test "x$enable_fmtutil" = xyes])
 
-AS_IF([test "x$enable_ipc" = xyes], [
 # -lsocket is needed on Solaris, at least.  Maybe -lnsl on SCO, too?
 # See ac_path_xtra.
-AC_CHECK_FUNC([connect], ,
-              [AC_CHECK_LIB([socket], [connect],
-                            [socketlibs="-lsocket"],
-                            [AC_CHECK_LIB([nsl], [connect],
-                                          [socketlibs="-lnsl"],
-                                          [AC_MSG_WARN([no socket library: disabling ipc])
-                                           enable_ipc=no])])])
+AS_IF([test "x$enable_ipc:$enable_luatex" != xno:no], [
+kpse_save_LIBS=$LIBS
+AC_SEARCH_LIBS([connect], [socket nsl wsock32])
+LIBS=$kpse_save_LIBS
+AS_CASE([$ac_cv_search_connect],
+        ["none required"], [],
+        [no], [AS_IF([test "x$enable_luatex" = xyes],
+                     [AC_MSG_ERROR([Sorry, no socket library: can not build luaTeX])],
+                     [AC_MSG_WARN([no socket library: disabling ipc])
+                                   enable_ipc=no])],
+        [socketlibs="-l$ac_cv_search_connect"])
 AS_IF([test "x$enable_ipc" = xyes],
       [AC_DEFINE([IPC], 1, [tex: Define to enable --ipc.])])
 ])
