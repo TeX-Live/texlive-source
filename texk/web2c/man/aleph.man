@@ -1,0 +1,282 @@
+.TH ALEPH 1 "27 December 1997" "Web2C @VERSION@"
+.\"=====================================================================
+.if n .ds MF Metafont
+.if t .ds MF M\s-2ETAFONT\s0
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP for troff
+.el .ds OX TeX for nroff
+.\" the same but obliqued
+.\" BX definition must follow TX so BX can use TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if n .ds BX BibTeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.if t .ds AX \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(TX
+.if n .ds AX AmSTeX
+.if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
+.if n .ds AY AmSLaTeX
+.\"=====================================================================
+.SH NAME
+aleph, inialeph, viraleph \- extended unicode TeX
+.SH SYNOPSIS
+.B aleph
+.RI [ options ]
+[\fB&\fR \fIformat\fR ]
+[ \fIfile\fR | \fB\e\fR \fIcommands\fR ]
+.\"=====================================================================
+.SH DESCRIPTION
+Run the Aleph typesetter on
+.IR file ,
+usually creating
+.IR file.dvi .
+If the file argument has no extension, ".tex" will be appended to it. 
+Instead of a filename, a set of Aleph commands can be given, the first
+of which must start with a backslash.
+With a 
+.BI & format
+argument Aleph uses a different set of precompiled commands,
+contained in
+.IR format.fmt ;
+it is usually better to use the
+.B -fmt
+.I format
+option instead.
+.PP
+Aleph is a version of the \*(TX program modified for multilingual
+typesetting.  It uses unicode, and has additional primitives for
+(among other things) bidirectional typesetting.
+.PP
+The
+.B inialeph
+and
+.B viraleph
+commands are Aleph's analogues to the
+.B initex
+and
+.B virtex
+commands.  In this installation, they are symlinks to the
+.B aleph
+executable.
+.PP
+Aleph's command line options are similar to those of \*(TX.
+.PP
+Aleph is experimental software.
+.\"=====================================================================
+.SH OPTIONS
+This version of Aleph understands the following command line options.
+.TP
+.BI --oft \ format
+.rb
+Use
+.I format
+as the name of the format to be used, instead of the name by which
+Aleph was called or a
+.I %&
+line.
+.TP
+.B -halt-on-error
+.rb
+Exit with an error code when an error is encountered during processing.
+.TP
+.B --help
+.rb
+Print help message and exit.
+.TP
+.B --ini
+.rb
+Be
+.BR inialeph ,
+for dumping formats; this is implicitly true if the program is called
+as
+.BR inialeph .
+.TP
+.BI --interaction \ mode
+.rb
+Sets the interaction mode.  The mode can be one of
+.IR batchmode ,
+.IR nonstopmode ,
+.IR scrollmode ,
+and
+.IR errorstopmode .
+The meaning of these modes is the same as that of the corresponding
+\ecommands.
+.TP
+.B --ipc
+.rb
+Send DVI output to a socket as well as the usual output file.  Whether
+this option is available is the choice of the installer.
+.TP
+.B --ipc-start
+.rb
+As
+.BR --ipc ,
+and starts the server at the other end as well.  Whether this option
+is available is the choice of the installer.
+.TP
+.BI --kpathsea-debug \ bitmask
+.rb
+Sets path searching debugging flags according to the bitmask.  See the
+.I Kpathsea
+manual for details.
+.TP
+.BI --maketex \ fmt
+.rb
+Enable
+.RI mktex fmt ,
+where
+.I fmt
+must be one of
+.I tex
+or
+.IR tfm .
+.TP
+.BI --no-maketex \ fmt
+.rb
+Disable
+.RI mktex fmt ,
+where
+.I fmt
+must be one of
+.I tex
+or
+.IR tfm .
+.TP
+.BI --output-comment \ string
+.rb
+Use
+.I string
+for the DVI file comment instead of the date.
+.TP
+.BI -output-directory \ directory
+.rb Write output files in
+.I directory
+instead of the current directory.  Look up input files in
+.I directory
+first, the along the normal search path.
+.TP
+.B --parse-first-line
+.rb
+If the first line of the main input file begins with
+.I %&
+parse it to look for a dump name.
+.TP
+.BI --progname \ name
+.rb
+Pretend to be program
+.IR name .
+This affects both the format used and the search paths.
+.TP
+.B --recorder
+.rb
+Enable the filename recorder.  This leaves a trace of the files opened
+for input and output in a file with extension
+.IR .ofl .
+(This option is always on.)
+.TP
+.B --shell-escape
+.rb
+Enable the
+.BI \ewrite18{ command }
+construct.  The
+.I command
+can be any Bourne shell command.  This construct is normally
+disallowed for security reasons.
+.TP
+.B --version
+.rb
+Print version information and exit.
+.\"=====================================================================
+.SH ENVIRONMENT
+See the Kpathsearch library documentation (the `Path specifications'
+node) for precise details of how the environment variables are used.
+The
+.B kpsewhich
+utility can be used to query the values of the variables.
+.PP
+One caveat: In most Aleph formats, you cannot use ~ in a filename you
+give directly to Aleph, because ~ is an active character, and hence is
+expanded, not taken as part of the filename.  Other programs, such as
+\*(MF, do not have this problem.
+.PP
+.TP
+TEXMFOUTPUT
+Normally, Aleph puts its output files in the current directory.  If
+any output file cannot be opened there, it tries to open it in the
+directory specified in the environment variable TEXMFOUTPUT.
+There is no default value for that variable.  For example, if you say
+.I tex paper
+and the current directory is not writable, if TEXMFOUTPUT has
+the value
+.IR /tmp ,
+Aleph attempts to create
+.I /tmp/paper.log
+(and
+.IR /tmp/paper.dvi ,
+if any output is produced.)
+.TP
+TEXINPUTS
+Search path for
+.I \einput
+and
+.I \eopenin
+files.
+This should probably start with ``.'', so
+that user files are found before system files.  An empty path
+component will be replaced with the paths defined in the
+.I texmf.cnf
+file.  For example, set TEXINPUTS to ".:/home/usr/tex:" to prepend the
+current direcory and ``/home/user/tex'' to the standard search path.
+.TP
+TEXEDIT
+Command template for switching to editor.  The default, usually
+.BR vi ,
+is set when Aleph is compiled.
+.\"=====================================================================
+.SH FILES
+The location of the files mentioned below varies from system to
+system.  Use the
+.B kpsewhich
+utility to find their locations.
+.TP
+.I aleph.pool
+Encoded text of Aleph's messages.
+.TP
+.I *.oft
+Predigested Aleph format (.\|oft) files.
+.br
+.\"=====================================================================
+.SH NOTES
+This manual page is not meant to be exhaustive.  The complete
+documentation for this version of Aleph can be found in the info
+manual
+.IR "Web2C: A TeX implementation" .
+.\"=====================================================================
+.SH BUGS
+This version of Aleph implements a number of optional extensions.
+In fact, many of these extensions conflict to a greater or lesser
+extent with the definition of Aleph.  When such extensions are
+enabled, the banner printed when Aleph starts is changed to print
+.B Alephk
+instead of
+.BR Aleph .
+.PP
+This version of Aleph fails to trap arithmetic overflow when
+dimensions are added or subtracted.  Cases where this occurs are rare,
+but when it does the generated
+.I DVI
+file will be invalid.
+.PP
+Aleph is experimental software, and if you are an active user it is
+strongly recommended that you subscribe to the Omega mailing list.
+Visit the Omega website
+.B http://omega.cse.unsw.edu.au
+for information on how to subscribe.
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR tex (1),
+.BR mf (1)
+.\"=====================================================================
+.SH AUTHORS
+The primary authors of Aleph are John Plaice and Yannis Haralambous.
