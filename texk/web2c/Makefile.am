@@ -14,6 +14,7 @@ SUBDIRS += otps
 proglib = lib/lib.a
 
 ## Below we will add to these
+EXTRA_PROGRAMS =
 bin_PROGRAMS =
 noinst_PROGRAMS =
 dist_man_MANS =

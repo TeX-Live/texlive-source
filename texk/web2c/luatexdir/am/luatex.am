@@ -5,6 +5,7 @@
 if LUATEX
 bin_PROGRAMS += luatex
 endif LUATEX
+EXTRA_PROGRAMS += luatex
 
 ## Force Automake to use CXXLD for linking
 nodist_EXTRA_luatex_SOURCES = dummy.cxx
@@ -65,6 +66,7 @@ DISTCLEANFILES += $(nodist_luatex_SOURCES) luatex-web2c \
 if LUATEX
 bin_PROGRAMS += luatangle
 endif LUATEX
+EXTRA_PROGRAMS += luatangle
 
 nodist_luatangle_SOURCES = luatangle.c luatangle.h
 luatangle.c luatangle.h: $(web2c_common) $(web2c_programs) luatangle.p
@@ -74,6 +76,11 @@ luatangle_sources = luatexdir/luatangle.web luatexdir/luatangle.ch
 luatangle.p: tangle $(luatangle_sources)
 	WEBINPUTS=$(srcdir)/luatexdir $(buildenv) $(TANGLE) luatangle luatangle
 DISTCLEANFILES += luatangle.c luatangle.h luatangle.p
+if HAVE_EXEEXT
+luatangle: luatangle$(EXEEXT)
+	echo timestamp >$@
+CLEANFILES += luatangle
+endif HAVE_EXEEXT
 
 ## liblua51
 ##

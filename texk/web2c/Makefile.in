@@ -33,12 +33,16 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @OMFONTS_TRUE@am__append_1 = omegafonts
-bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_2) \
-	ctie$(EXEEXT) cweave$(EXEEXT) tie$(EXEEXT) $(am__EXEEXT_3) \
-	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
-	$(am__EXEEXT_7) $(am__EXEEXT_8) ttf2afm$(EXEEXT) \
-	pdftosrc$(EXEEXT) $(am__EXEEXT_9) $(am__EXEEXT_11) \
-	$(am__EXEEXT_13) $(am__EXEEXT_14) synctex$(EXEEXT)
+EXTRA_PROGRAMS = $(am__EXEEXT_1) tex$(EXEEXT) mf$(EXEEXT) \
+	mf-nowin$(EXEEXT) mpost$(EXEEXT) etex$(EXEEXT) pdftex$(EXEEXT) \
+	luatex$(EXEEXT) luatangle$(EXEEXT) $(am__EXEEXT_4) \
+	aleph$(EXEEXT)
+bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_5) \
+	ctie$(EXEEXT) cweave$(EXEEXT) tie$(EXEEXT) $(am__EXEEXT_6) \
+	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9) \
+	$(am__EXEEXT_10) $(am__EXEEXT_11) ttf2afm$(EXEEXT) \
+	pdftosrc$(EXEEXT) $(am__EXEEXT_12) $(am__EXEEXT_13) \
+	$(am__EXEEXT_14) $(am__EXEEXT_15) synctex$(EXEEXT)
 noinst_PROGRAMS = tangleboot$(EXEEXT) ctangleboot$(EXEEXT)
 check_PROGRAMS = md5main$(EXEEXT)
 DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
@@ -64,32 +68,34 @@ DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap AUTHORS \
 	ChangeLog INSTALL NEWS
-@WEB_TRUE@am__append_2 = $(web_programs)
-@TEX_TRUE@am__append_3 = tex
-@MF_TRUE@am__append_4 = mf
-@MFN_TRUE@am__append_5 = mf-nowin
-@MP_TRUE@am__append_6 = mpost
-@ETEX_TRUE@am__append_7 = etex
-@PDFTEX_TRUE@am__append_8 = pdftex
-@LUATEX_TRUE@am__append_9 = luatex luatangle
-@MINGW32_FALSE@am__append_10 = -DLUA_USE_POSIX
-@LUATEX_TRUE@am__append_11 = luatexdir/luatangle.test
-@OTANGLE_TRUE@am__append_12 = $(omegaware_tools)
-@OMFONTS_FALSE@@OTANGLE_TRUE@am__append_13 = $(omegaware_font_tools)
-@OTANGLE_TRUE@am__append_14 = omegaware/otangle.test
-@ALEPH_TRUE@am__append_15 = aleph
-@TEX_SYNCTEX_TRUE@am__append_16 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
-@TEX_SYNCTEX_TRUE@am__append_17 = $(ZLIB_LIBS)
-@TEX_SYNCTEX_TRUE@am__append_18 = \
+@HAVE_EXEEXT_TRUE@am__append_2 = tangle tangleboot ctangle ctangleboot \
+@HAVE_EXEEXT_TRUE@	luatangle otangle
+@WEB_TRUE@am__append_3 = $(web_programs)
+@TEX_TRUE@am__append_4 = tex
+@MF_TRUE@am__append_5 = mf
+@MFN_TRUE@@MF_TRUE@am__append_6 = mf-nowin
+@MP_TRUE@am__append_7 = mpost
+@ETEX_TRUE@am__append_8 = etex
+@PDFTEX_TRUE@am__append_9 = pdftex
+@LUATEX_TRUE@am__append_10 = luatex luatangle
+@MINGW32_FALSE@am__append_11 = -DLUA_USE_POSIX
+@LUATEX_TRUE@am__append_12 = luatexdir/luatangle.test
+@OTANGLE_TRUE@am__append_13 = $(omegaware_tools)
+@OMFONTS_FALSE@@OTANGLE_TRUE@am__append_14 = $(omegaware_font_tools)
+@OTANGLE_TRUE@am__append_15 = omegaware/otangle.test
+@ALEPH_TRUE@am__append_16 = aleph
+@TEX_SYNCTEX_TRUE@am__append_17 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
+@TEX_SYNCTEX_TRUE@am__append_18 = $(ZLIB_LIBS)
+@TEX_SYNCTEX_TRUE@am__append_19 = \
 @TEX_SYNCTEX_TRUE@	synctex.c
 
-@ETEX_SYNCTEX_TRUE@am__append_19 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
-@ETEX_SYNCTEX_TRUE@am__append_20 = $(ZLIB_LIBS)
-@ETEX_SYNCTEX_TRUE@am__append_21 = \
+@ETEX_SYNCTEX_TRUE@am__append_20 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
+@ETEX_SYNCTEX_TRUE@am__append_21 = $(ZLIB_LIBS)
+@ETEX_SYNCTEX_TRUE@am__append_22 = \
 @ETEX_SYNCTEX_TRUE@	synctex-e.c
 
-@PDFTEX_SYNCTEX_TRUE@am__append_22 = -I$(srcdir)/synctexdir
-@PDFTEX_SYNCTEX_TRUE@am__append_23 = \
+@PDFTEX_SYNCTEX_TRUE@am__append_23 = -I$(srcdir)/synctexdir
+@PDFTEX_SYNCTEX_TRUE@am__append_24 = \
 @PDFTEX_SYNCTEX_TRUE@	synctex-pdf.c
 
 subdir = .
@@ -291,20 +297,21 @@ am__EXEEXT_1 = bibtex$(EXEEXT) dvicopy$(EXEEXT) dvitomp$(EXEEXT) \
 	gftype$(EXEEXT) mft$(EXEEXT) patgen$(EXEEXT) pktogf$(EXEEXT) \
 	pktype$(EXEEXT) pltotf$(EXEEXT) pooltype$(EXEEXT) \
 	tftopl$(EXEEXT) vftovp$(EXEEXT) vptovf$(EXEEXT) weave$(EXEEXT)
-@WEB_TRUE@am__EXEEXT_2 = $(am__EXEEXT_1)
-@TEX_TRUE@am__EXEEXT_3 = tex$(EXEEXT)
-@MF_TRUE@am__EXEEXT_4 = mf$(EXEEXT)
-@MFN_TRUE@am__EXEEXT_5 = mf-nowin$(EXEEXT)
-@MP_TRUE@am__EXEEXT_6 = mpost$(EXEEXT)
-@ETEX_TRUE@am__EXEEXT_7 = etex$(EXEEXT)
-@PDFTEX_TRUE@am__EXEEXT_8 = pdftex$(EXEEXT)
-@LUATEX_TRUE@am__EXEEXT_9 = luatex$(EXEEXT) luatangle$(EXEEXT)
-am__EXEEXT_10 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT)
-@OTANGLE_TRUE@am__EXEEXT_11 = $(am__EXEEXT_10)
-am__EXEEXT_12 = ofm2opl$(EXEEXT) opl2ofm$(EXEEXT) ovf2ovp$(EXEEXT) \
+am__EXEEXT_2 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT)
+am__EXEEXT_3 = ofm2opl$(EXEEXT) opl2ofm$(EXEEXT) ovf2ovp$(EXEEXT) \
 	ovp2ovf$(EXEEXT)
-@OMFONTS_FALSE@@OTANGLE_TRUE@am__EXEEXT_13 = $(am__EXEEXT_12)
-@ALEPH_TRUE@am__EXEEXT_14 = aleph$(EXEEXT)
+am__EXEEXT_4 = $(am__EXEEXT_2) $(am__EXEEXT_3)
+@WEB_TRUE@am__EXEEXT_5 = $(am__EXEEXT_1)
+@TEX_TRUE@am__EXEEXT_6 = tex$(EXEEXT)
+@MF_TRUE@am__EXEEXT_7 = mf$(EXEEXT)
+@MFN_TRUE@@MF_TRUE@am__EXEEXT_8 = mf-nowin$(EXEEXT)
+@MP_TRUE@am__EXEEXT_9 = mpost$(EXEEXT)
+@ETEX_TRUE@am__EXEEXT_10 = etex$(EXEEXT)
+@PDFTEX_TRUE@am__EXEEXT_11 = pdftex$(EXEEXT)
+@LUATEX_TRUE@am__EXEEXT_12 = luatex$(EXEEXT) luatangle$(EXEEXT)
+@OTANGLE_TRUE@am__EXEEXT_13 = $(am__EXEEXT_2)
+@OMFONTS_FALSE@@OTANGLE_TRUE@am__EXEEXT_14 = $(am__EXEEXT_3)
+@ALEPH_TRUE@am__EXEEXT_15 = aleph$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(man5dir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -780,7 +787,7 @@ dist_man_MANS = synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 nodist_man_MANS = ctiedir/ctie.1 tiedir/tie.1
 dist_check_SCRIPTS = tangle.test luatexdir/luatangle.test \
 	omegaware/otangle.test libmd5/md5.test
-TESTS = tangle.test tiedir/tie.test $(am__append_11) $(am__append_14) \
+TESTS = tangle.test tiedir/tie.test $(am__append_12) $(am__append_15) \
 	libmd5/md5.test
 EXTRA_LIBRARIES = libmf.a libmpost.a libpdftex.a liblua51.a libzzip.a \
 	libluasocket.a libluamisc.a libff.a libluatex.a libmd5.a
@@ -987,7 +994,7 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
 	cftest.p $(nodist_aleph_SOURCES) aleph.web aleph.ch \
 	aleph-web2c aleph.p aleph.pool aleph-tangle
-CLEANFILES = 
+CLEANFILES = $(am__append_2)
 web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert
 makecpool = ./web2c/makecpool
 web2c_common = web2c/convert web2c/common.defines
@@ -1032,10 +1039,10 @@ nodist_weave_SOURCES = weave.c weave.h
 nodist_ctie_SOURCES = ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
 nodist_tie_SOURCES = tie.c
-tex_CPPFLAGS = $(am__append_16)
-tex_LDADD = $(LDADD) $(socketlibs) $(am__append_17)
+tex_CPPFLAGS = $(am__append_17)
+tex_LDADD = $(LDADD) $(socketlibs) $(am__append_18)
 tex_c_h = texini.c tex0.c tex1.c tex2.c texcoerce.h texd.h
-nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c $(am__append_18)
+nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c $(am__append_19)
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
@@ -1071,11 +1078,11 @@ libmpost_a_SOURCES = \
 	mpdir/writefont.c \
 	mpdir/writet1.c
 
-etex_CPPFLAGS = $(am__append_19)
-etex_LDADD = $(LDADD) $(socketlibs) $(am__append_20)
+etex_CPPFLAGS = $(am__append_20)
+etex_LDADD = $(LDADD) $(socketlibs) $(am__append_21)
 etex_c_h = etexini.c etex0.c etex1.c etex2.c etexcoerce.h etexd.h
 nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexextra.c \
-	etexdir/etexextra.h $(am__append_21)
+	etexdir/etexextra.h $(am__append_22)
 etex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -1098,12 +1105,12 @@ pdftex_dependencies = $(proglib) $(LIBPNG_DEPEND) $(ZLIB_DEPEND) \
 	$(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libmd5.a
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(buildenv) $(TANGLE)
-pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_22)
+pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_23)
 pdftex_LDADD = $(pdftex_ldadd) $(LDADD) $(socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 pdftex_c_h = pdftexini.c pdftex0.c pdftex1.c pdftex2.c pdftex3.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c \
-	pdftexdir/pdftexextra.h $(am__append_23)
+	pdftexdir/pdftexextra.h $(am__append_24)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
@@ -1170,7 +1177,7 @@ nodist_luatex_SOURCES = $(luatex_c_h) luatex-pool.c luatexextra.c luatexdir/luat
 luatex_sources = luatexdir/luatex.web luatexdir/luatex.ch
 nodist_luatangle_SOURCES = luatangle.c luatangle.h
 luatangle_sources = luatexdir/luatangle.web luatexdir/luatangle.ch
-liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51 $(am__append_10)
+liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51 $(am__append_11)
 liblua51_a_SOURCES = \
 	luatexdir/lua51/lapi.c \
 	luatexdir/lua51/lapi.h \
@@ -1833,12 +1840,12 @@ aleph$(EXEEXT): $(aleph_OBJECTS) $(aleph_DEPENDENCIES)
 bibtex$(EXEEXT): $(bibtex_OBJECTS) $(bibtex_DEPENDENCIES) 
 	@rm -f bibtex$(EXEEXT)
 	$(LINK) $(bibtex_OBJECTS) $(bibtex_LDADD) $(LIBS)
-ctangle$(EXEEXT): $(ctangle_OBJECTS) $(ctangle_DEPENDENCIES) 
-	@rm -f ctangle$(EXEEXT)
-	$(LINK) $(ctangle_OBJECTS) $(ctangle_LDADD) $(LIBS)
-ctangleboot$(EXEEXT): $(ctangleboot_OBJECTS) $(ctangleboot_DEPENDENCIES) 
-	@rm -f ctangleboot$(EXEEXT)
-	$(LINK) $(ctangleboot_OBJECTS) $(ctangleboot_LDADD) $(LIBS)
+@HAVE_EXEEXT_FALSE@ctangle$(EXEEXT): $(ctangle_OBJECTS) $(ctangle_DEPENDENCIES) 
+@HAVE_EXEEXT_FALSE@	@rm -f ctangle$(EXEEXT)
+@HAVE_EXEEXT_FALSE@	$(LINK) $(ctangle_OBJECTS) $(ctangle_LDADD) $(LIBS)
+@HAVE_EXEEXT_FALSE@ctangleboot$(EXEEXT): $(ctangleboot_OBJECTS) $(ctangleboot_DEPENDENCIES) 
+@HAVE_EXEEXT_FALSE@	@rm -f ctangleboot$(EXEEXT)
+@HAVE_EXEEXT_FALSE@	$(LINK) $(ctangleboot_OBJECTS) $(ctangleboot_LDADD) $(LIBS)
 ctie$(EXEEXT): $(ctie_OBJECTS) $(ctie_DEPENDENCIES) 
 	@rm -f ctie$(EXEEXT)
 	$(LINK) $(ctie_OBJECTS) $(ctie_LDADD) $(LIBS)
@@ -1866,9 +1873,9 @@ gftopk$(EXEEXT): $(gftopk_OBJECTS) $(gftopk_DEPENDENCIES)
 gftype$(EXEEXT): $(gftype_OBJECTS) $(gftype_DEPENDENCIES) 
 	@rm -f gftype$(EXEEXT)
 	$(LINK) $(gftype_OBJECTS) $(gftype_LDADD) $(LIBS)
-luatangle$(EXEEXT): $(luatangle_OBJECTS) $(luatangle_DEPENDENCIES) 
-	@rm -f luatangle$(EXEEXT)
-	$(LINK) $(luatangle_OBJECTS) $(luatangle_LDADD) $(LIBS)
+@HAVE_EXEEXT_FALSE@luatangle$(EXEEXT): $(luatangle_OBJECTS) $(luatangle_DEPENDENCIES) 
+@HAVE_EXEEXT_FALSE@	@rm -f luatangle$(EXEEXT)
+@HAVE_EXEEXT_FALSE@	$(LINK) $(luatangle_OBJECTS) $(luatangle_LDADD) $(LIBS)
 luatex$(EXEEXT): $(luatex_OBJECTS) $(luatex_DEPENDENCIES) 
 	@rm -f luatex$(EXEEXT)
 	$(CXXLINK) $(luatex_OBJECTS) $(luatex_LDADD) $(LIBS)
@@ -1899,9 +1906,9 @@ ofm2opl$(EXEEXT): $(ofm2opl_OBJECTS) $(ofm2opl_DEPENDENCIES)
 opl2ofm$(EXEEXT): $(opl2ofm_OBJECTS) $(opl2ofm_DEPENDENCIES) 
 	@rm -f opl2ofm$(EXEEXT)
 	$(LINK) $(opl2ofm_OBJECTS) $(opl2ofm_LDADD) $(LIBS)
-otangle$(EXEEXT): $(otangle_OBJECTS) $(otangle_DEPENDENCIES) 
-	@rm -f otangle$(EXEEXT)
-	$(LINK) $(otangle_OBJECTS) $(otangle_LDADD) $(LIBS)
+@HAVE_EXEEXT_FALSE@otangle$(EXEEXT): $(otangle_OBJECTS) $(otangle_DEPENDENCIES) 
+@HAVE_EXEEXT_FALSE@	@rm -f otangle$(EXEEXT)
+@HAVE_EXEEXT_FALSE@	$(LINK) $(otangle_OBJECTS) $(otangle_LDADD) $(LIBS)
 ovf2ovp$(EXEEXT): $(ovf2ovp_OBJECTS) $(ovf2ovp_DEPENDENCIES) 
 	@rm -f ovf2ovp$(EXEEXT)
 	$(LINK) $(ovf2ovp_OBJECTS) $(ovf2ovp_LDADD) $(LIBS)
@@ -1932,12 +1939,12 @@ pooltype$(EXEEXT): $(pooltype_OBJECTS) $(pooltype_DEPENDENCIES)
 synctex$(EXEEXT): $(synctex_OBJECTS) $(synctex_DEPENDENCIES) 
 	@rm -f synctex$(EXEEXT)
 	$(LINK) $(synctex_OBJECTS) $(synctex_LDADD) $(LIBS)
-tangle$(EXEEXT): $(tangle_OBJECTS) $(tangle_DEPENDENCIES) 
-	@rm -f tangle$(EXEEXT)
-	$(LINK) $(tangle_OBJECTS) $(tangle_LDADD) $(LIBS)
-tangleboot$(EXEEXT): $(tangleboot_OBJECTS) $(tangleboot_DEPENDENCIES) 
-	@rm -f tangleboot$(EXEEXT)
-	$(LINK) $(tangleboot_OBJECTS) $(tangleboot_LDADD) $(LIBS)
+@HAVE_EXEEXT_FALSE@tangle$(EXEEXT): $(tangle_OBJECTS) $(tangle_DEPENDENCIES) 
+@HAVE_EXEEXT_FALSE@	@rm -f tangle$(EXEEXT)
+@HAVE_EXEEXT_FALSE@	$(LINK) $(tangle_OBJECTS) $(tangle_LDADD) $(LIBS)
+@HAVE_EXEEXT_FALSE@tangleboot$(EXEEXT): $(tangleboot_OBJECTS) $(tangleboot_DEPENDENCIES) 
+@HAVE_EXEEXT_FALSE@	@rm -f tangleboot$(EXEEXT)
+@HAVE_EXEEXT_FALSE@	$(LINK) $(tangleboot_OBJECTS) $(tangleboot_LDADD) $(LIBS)
 tex$(EXEEXT): $(tex_OBJECTS) $(tex_DEPENDENCIES) 
 	@rm -f tex$(EXEEXT)
 	$(LINK) $(tex_OBJECTS) $(tex_LDADD) $(LIBS)
@@ -7024,6 +7031,8 @@ tangle.web:
 	@echo "In any case, you can get it from" >&2
 	@echo "ftp://ftp.tug.org/tex/web.tar.gz." >&2
 	false
+@HAVE_EXEEXT_TRUE@tangle: tangle$(EXEEXT)
+@HAVE_EXEEXT_TRUE@	echo timestamp >$@
 tangleboot.c tangleboot.h: stamp-tangle $(web2c_programs) $(web2c_common)
 	$(web2c) tangleboot
 stamp-tangle: tangleboot.p
@@ -7039,10 +7048,14 @@ tangleboot.p: tangle.web tangle.ch
 	fi
 	date >stamp-tangle
 	$(MAKE) $(AM_MAKEFLAGS) tangle$(EXEEXT)
+@HAVE_EXEEXT_TRUE@tangleboot: tangleboot$(EXEEXT)
+@HAVE_EXEEXT_TRUE@	echo timestamp >$@
 ctangle.c: ctangleboot cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) ctangle ctang-w2c
 cweb.c: ctangleboot cwebdir/common.w cwebdir/comm-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) common comm-w2c cweb.c
+@HAVE_EXEEXT_TRUE@ctangle: ctangle$(EXEEXT)
+@HAVE_EXEEXT_TRUE@	echo timestamp >$@
 stamp-ctangle: ctangleboot.c cwebboot.c
 	date >stamp-ctangle
 ctangleboot.c: cwebdir/ctangle.w cwebdir/ctang-w2c.ch
@@ -7067,6 +7080,8 @@ cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	fi
 	date >stamp-ctangle
 	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
+@HAVE_EXEEXT_TRUE@ctangleboot: ctangleboot$(EXEEXT)
+@HAVE_EXEEXT_TRUE@	echo timestamp >$@
 bibtex.c bibtex.h: bibtex-web2c
 bibtex-web2c: $(web2c_common) $(web2c_programs) web2c/cvtbib.sed bibtex.p
 	$(web2c) bibtex
@@ -7321,6 +7336,8 @@ luatangle.c luatangle.h: $(web2c_common) $(web2c_programs) luatangle.p
 	$(web2c) luatangle
 luatangle.p: tangle $(luatangle_sources)
 	WEBINPUTS=$(srcdir)/luatexdir $(buildenv) $(TANGLE) luatangle luatangle
+@HAVE_EXEEXT_TRUE@luatangle: luatangle$(EXEEXT)
+@HAVE_EXEEXT_TRUE@	echo timestamp >$@
 
 @LUATEX_TRUE@$(libluatex_a_SOURCES): $(lua_mp_c_h)
 $(lua_mp_c_h): mp-ctangle
@@ -7369,6 +7386,8 @@ otangle-web2c: $(web2c_common) $(web2c_programs) otangle.p
 	touch otangle.c otangle.h
 otangle.p: tangle $(otangle_sources)
 	$(ow_tangle) otangle otangle
+@HAVE_EXEEXT_TRUE@otangle: otangle$(EXEEXT)
+@HAVE_EXEEXT_TRUE@	echo timestamp >$@
 ovf2ovp.c ovf2ovp.h: ovf2ovp-web2c
 ovf2ovp-web2c: $(web2c_common) $(web2c_programs) ovf2ovp.p
 	$(web2c) ovf2ovp

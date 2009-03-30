@@ -5,6 +5,7 @@
 if ALEPH
 bin_PROGRAMS += aleph
 endif ALEPH
+EXTRA_PROGRAMS += aleph
 
 ## With --enable-ipc, Aleph may need to link with -lsocket.
 aleph_LDADD = $(LDADD) $(socketlibs)

@@ -10,6 +10,7 @@ if !OMFONTS
 bin_PROGRAMS += $(omegaware_font_tools)
 endif !OMFONTS
 endif OTANGLE
+EXTRA_PROGRAMS += $(omegaware_programs)
 
 EXTRA_DIST += omegaware/ChangeLog
 DISTCLEANFILES += $(omegaware_programs:=.c) $(omegaware_programs:=.h) \
@@ -71,6 +72,11 @@ EXTRA_DIST += $(otangle_sources)
 otangle_sources = omegaware/otangle.web omegaware/otangle.ch
 otangle.p: tangle $(otangle_sources)
 	$(ow_tangle) otangle otangle
+if HAVE_EXEEXT
+otangle: otangle$(EXEEXT)
+	echo timestamp >$@
+CLEANFILES += otangle
+endif HAVE_EXEEXT
 
 nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
 ovf2ovp.c ovf2ovp.h: ovf2ovp-web2c

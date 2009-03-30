@@ -5,6 +5,7 @@
 if MP
 bin_PROGRAMS += mpost
 endif MP
+EXTRA_PROGRAMS += mpost
 
 mpost_CPPFLAGS = -I$(srcdir)/mpdir
 mpost_LDADD = libmpost.a $(LDADD)

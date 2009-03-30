@@ -27,6 +27,11 @@ tangle.web:
 	@echo "ftp://ftp.tug.org/tex/web.tar.gz." >&2
 	false
 DISTCLEANFILES += tangle.c tangle.h tangle.p tangle-web2c
+if HAVE_EXEEXT
+tangle: tangle$(EXEEXT)
+	echo timestamp >$@
+CLEANFILES += tangle
+endif HAVE_EXEEXT
 
 noinst_PROGRAMS += tangleboot
 nodist_tangleboot_SOURCES = tangleboot.c tangleboot.h
@@ -51,6 +56,11 @@ tangleboot.p: tangle.web tangle.ch
 	date >stamp-tangle
 	$(MAKE) $(AM_MAKEFLAGS) tangle$(EXEEXT)
 DISTCLEANFILES += stamp-tangle tangleboot.c tangleboot.h
+if HAVE_EXEEXT
+tangleboot: tangleboot$(EXEEXT)
+	echo timestamp >$@
+CLEANFILES += tangleboot
+endif HAVE_EXEEXT
 
 ## Bootstrapping ctangle requires making it with itself.  We use the opportunity
 ## to create an up-to-date ctangleboot as well.
@@ -66,6 +76,11 @@ ctangle.c: ctangleboot cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 cweb.c: ctangleboot cwebdir/common.w cwebdir/comm-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) common comm-w2c cweb.c
 DISTCLEANFILES += ctangle.c cweb.c
+if HAVE_EXEEXT
+ctangle: ctangle$(EXEEXT)
+	echo timestamp >$@
+CLEANFILES += ctangle
+endif HAVE_EXEEXT
 
 noinst_PROGRAMS += ctangleboot
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
@@ -99,6 +114,11 @@ cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	date >stamp-ctangle
 	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
 DISTCLEANFILES += stamp-ctangle
+if HAVE_EXEEXT
+ctangleboot: ctangleboot$(EXEEXT)
+	echo timestamp >$@
+CLEANFILES += ctangleboot
+endif HAVE_EXEEXT
 
 ## Tests
 

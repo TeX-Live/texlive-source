@@ -61,6 +61,12 @@ AS_IF([test "x$enable_dump_share" = xno],
 
 AM_CONDITIONAL([FMU], [test "x$enable_fmtutil" = xyes])
 
+AM_CONDITIONAL([HAVE_EXEEXT], [test "x$(EXEEXT)" != x ])
+
+KPSE_CHECK_WIN32
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
+AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
+
 # -lsocket is needed on Solaris, at least.  Maybe -lnsl on SCO, too?
 # See ac_path_xtra.
 AS_IF([test "x$enable_ipc:$enable_luatex" != xno:no], [
@@ -221,10 +227,6 @@ AH_TOP([/* c-auto.h: defines for web2c, as determined by configure.
 /* web2c: the version string. */
 #define WEB2CVERSION "REPLACE-WITH-WEB2CVERSION"])
 AH_BOTTOM([#endif /* !WEB2C_C_AUTO_H */])
-
-KPSE_CHECK_WIN32
-AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
-AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
 AS_IF([test "x$enable_luatex" = xyes],
 [AC_CONFIG_HEADERS([ff-config.h:luatexdir/luafontloader/ff-config.in])

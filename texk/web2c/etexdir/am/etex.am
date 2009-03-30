@@ -5,6 +5,7 @@
 if ETEX
 bin_PROGRAMS += etex
 endif ETEX
+EXTRA_PROGRAMS += etex
 
 etex_CPPFLAGS =
 

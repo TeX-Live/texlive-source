@@ -6,6 +6,7 @@ web_programs = bibtex dvicopy dvitomp dvitype gftodvi gftopk gftype mft \
 if WEB
 bin_PROGRAMS += $(web_programs)
 endif WEB
+EXTRA_PROGRAMS += $(web_programs)
 
 EXTRA_DIST += $(web_programs:=.web) $(web_programs:=.ch)
 DISTCLEANFILES += $(web_programs:=.c) $(web_programs:=.h) \

@@ -16,6 +16,7 @@ pdftex_dependencies += $(OBSDCOMPAT_DEPEND) libmd5.a
 if PDFTEX
 bin_PROGRAMS += pdftex
 endif PDFTEX
+EXTRA_PROGRAMS += pdftex
 
 ## Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx

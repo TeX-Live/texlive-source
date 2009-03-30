@@ -14,6 +14,7 @@ EXTRA_DIST += \
 if TEX
 bin_PROGRAMS += tex
 endif TEX
+EXTRA_PROGRAMS += tex
 
 tex_CPPFLAGS =
 
@@ -55,13 +56,16 @@ DISTCLEANFILES += $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
 ##
 if MF
 bin_PROGRAMS += mf
+if MFN
+bin_PROGRAMS += mf-nowin
+endif MFN
 endif MF
+EXTRA_PROGRAMS += mf mf-nowin
 
 nodist_mf_SOURCES = mfextra.c
 mf_CPPFLAGS = $(X_CFLAGS)
 mf_LDADD = libmf.a $(LDADD) $(windowlib) $(mf_x_libs)
 if MFN
-bin_PROGRAMS += mf-nowin
 nodist_mf_nowin_SOURCES = mfextra.c
 mf_nowin_CPPFLAGS = $(X_CFLAGS) -DMFNOWIN
 mf_nowin_LDADD = libmf.a $(LDADD) $(windowlib)
