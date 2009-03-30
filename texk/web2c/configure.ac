@@ -79,13 +79,13 @@ AS_IF([test "x$enable_ipc" = xyes],
 ])
 AC_SUBST([socketlibs])
 
-dnl Generate *TEX, OMEGA, and ALEPH conditionals.
+dnl Generate *TEX and ALEPH conditionals.
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
            [m4_ifset([Kpse_Prog],
                      [KPSE_XTEX_COND(Kpse_Prog)])])[]dnl
 dnl Disable SyncTeX support for TeX.
 AM_CONDITIONAL([TEX_SYNCTEX], [false])[]dnl
-AS_IF([test "x$enable_omega:$enable_aleph:$enable_xetex" = xno:no:no],
+AS_IF([test "x$enable_aleph:$enable_xetex" = xno:no],
       [enable_otangle=no],
       [enable_otangle=yes])
 AM_CONDITIONAL([OTANGLE],
@@ -173,6 +173,7 @@ if test `(uname) 2>/dev/null` = aux; then
 fi
 
 AC_CHECK_SIZEOF([int])
+AC_CHECK_SIZEOF([long])
 AC_CHECK_FUNCS([strerror])
 AC_CHECK_HEADERS([errno.h])
 

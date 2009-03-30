@@ -58,12 +58,6 @@ typedef void* voidpointer;
 #elif defined (XeTeX)
 #define TEXMFPOOLNAME "xetex.pool"
 #define TEXMFENGINENAME "xetex"
-#elif defined (Omega)
-#define TEXMFPOOLNAME "omega.pool"
-#define TEXMFENGINENAME "omega"
-#elif defined (eOmega)
-#define TEXMFPOOLNAME "eomega.pool"
-#define TEXMFENGINENAME "eomega"
 #elif defined (Aleph)
 #define TEXMFPOOLNAME "aleph.pool"
 #define TEXMFENGINENAME "aleph"
@@ -123,7 +117,7 @@ void init_shell_escape (void);
 int shell_cmd_is_allowed (char **cmd, char **safecmd, char **cmdname);
 
 /* All but the Omega family use this. */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Aleph)
 extern void readtcxfile P1H(void);
 extern string translate_filename;
 #define translatefilename translate_filename

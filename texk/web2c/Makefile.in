@@ -38,8 +38,7 @@ bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_2) \
 	$(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
 	$(am__EXEEXT_7) $(am__EXEEXT_8) ttf2afm$(EXEEXT) \
 	pdftosrc$(EXEEXT) $(am__EXEEXT_9) $(am__EXEEXT_11) \
-	$(am__EXEEXT_13) $(am__EXEEXT_14) $(am__EXEEXT_15) \
-	synctex$(EXEEXT)
+	$(am__EXEEXT_13) $(am__EXEEXT_14) synctex$(EXEEXT)
 noinst_PROGRAMS = tangleboot$(EXEEXT) ctangleboot$(EXEEXT)
 check_PROGRAMS = md5main$(EXEEXT)
 DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
@@ -54,7 +53,6 @@ DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
 	$(srcdir)/am/texmf.am $(srcdir)/am/web.am $(srcdir)/c-auto.in \
 	$(srcdir)/etexdir/am/etex.am $(srcdir)/libmd5/am/md5.am \
 	$(srcdir)/luatexdir/am/luatex.am $(srcdir)/mpdir/am/mp.am \
-	$(srcdir)/omegadir/am/omega.am \
 	$(srcdir)/omegaware/am/omegaware.am \
 	$(srcdir)/pdftexdir/am/pdftex.am \
 	$(srcdir)/synctexdir/am/synctex.am \
@@ -78,20 +76,19 @@ DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
 @OTANGLE_TRUE@am__append_12 = $(omegaware_tools)
 @OMFONTS_FALSE@@OTANGLE_TRUE@am__append_13 = $(omegaware_font_tools)
 @OTANGLE_TRUE@am__append_14 = omegaware/otangle.test
-@OMEGA_TRUE@am__append_15 = omega
-@ALEPH_TRUE@am__append_16 = aleph
-@TEX_SYNCTEX_TRUE@am__append_17 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
-@TEX_SYNCTEX_TRUE@am__append_18 = $(ZLIB_LIBS)
-@TEX_SYNCTEX_TRUE@am__append_19 = \
+@ALEPH_TRUE@am__append_15 = aleph
+@TEX_SYNCTEX_TRUE@am__append_16 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
+@TEX_SYNCTEX_TRUE@am__append_17 = $(ZLIB_LIBS)
+@TEX_SYNCTEX_TRUE@am__append_18 = \
 @TEX_SYNCTEX_TRUE@	synctex.c
 
-@ETEX_SYNCTEX_TRUE@am__append_20 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
-@ETEX_SYNCTEX_TRUE@am__append_21 = $(ZLIB_LIBS)
-@ETEX_SYNCTEX_TRUE@am__append_22 = \
+@ETEX_SYNCTEX_TRUE@am__append_19 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
+@ETEX_SYNCTEX_TRUE@am__append_20 = $(ZLIB_LIBS)
+@ETEX_SYNCTEX_TRUE@am__append_21 = \
 @ETEX_SYNCTEX_TRUE@	synctex-e.c
 
-@PDFTEX_SYNCTEX_TRUE@am__append_23 = -I$(srcdir)/synctexdir
-@PDFTEX_SYNCTEX_TRUE@am__append_24 = \
+@PDFTEX_SYNCTEX_TRUE@am__append_22 = -I$(srcdir)/synctexdir
+@PDFTEX_SYNCTEX_TRUE@am__append_23 = \
 @PDFTEX_SYNCTEX_TRUE@	synctex-pdf.c
 
 subdir = .
@@ -257,14 +254,13 @@ am__objects_2 = libmf_a-mfini.$(OBJEXT) libmf_a-mf0.$(OBJEXT) \
 	libmf_a-mf1.$(OBJEXT)
 nodist_libmf_a_OBJECTS = $(am__objects_2) libmf_a-mf-pool.$(OBJEXT)
 libmf_a_OBJECTS = $(nodist_libmf_a_OBJECTS)
-libmpost_a_AR = $(AR) $(ARFLAGS)
-libmpost_a_LIBADD =
-am_libmpost_a_OBJECTS = libmpost_a-avl.$(OBJEXT) \
-	libmpost_a-avlstuff.$(OBJEXT) libmpost_a-mapfile.$(OBJEXT) \
-	libmpost_a-turningnumber.$(OBJEXT) libmpost_a-utils.$(OBJEXT) \
-	libmpost_a-writeenc.$(OBJEXT) libmpost_a-writefont.$(OBJEXT) \
-	libmpost_a-writet1.$(OBJEXT)
-libmpost_a_OBJECTS = $(am_libmpost_a_OBJECTS)
+libmp_a_AR = $(AR) $(ARFLAGS)
+libmp_a_LIBADD =
+am_libmp_a_OBJECTS = libmp_a-avl.$(OBJEXT) libmp_a-avlstuff.$(OBJEXT) \
+	libmp_a-mapfile.$(OBJEXT) libmp_a-turningnumber.$(OBJEXT) \
+	libmp_a-utils.$(OBJEXT) libmp_a-writeenc.$(OBJEXT) \
+	libmp_a-writefont.$(OBJEXT) libmp_a-writet1.$(OBJEXT)
+libmp_a_OBJECTS = $(am_libmp_a_OBJECTS)
 libpdftex_a_AR = $(AR) $(ARFLAGS)
 libpdftex_a_LIBADD =
 am_libpdftex_a_OBJECTS = libpdftex_a-avl.$(OBJEXT) \
@@ -306,8 +302,7 @@ am__EXEEXT_10 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT)
 am__EXEEXT_12 = ofm2opl$(EXEEXT) opl2ofm$(EXEEXT) ovf2ovp$(EXEEXT) \
 	ovp2ovf$(EXEEXT)
 @OMFONTS_FALSE@@OTANGLE_TRUE@am__EXEEXT_13 = $(am__EXEEXT_12)
-@OMEGA_TRUE@am__EXEEXT_14 = omega$(EXEEXT)
-@ALEPH_TRUE@am__EXEEXT_15 = aleph$(EXEEXT)
+@ALEPH_TRUE@am__EXEEXT_14 = aleph$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(man5dir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
@@ -414,7 +409,7 @@ am__objects_7 = mpost-mpini.$(OBJEXT) mpost-mp0.$(OBJEXT) \
 nodist_mpost_OBJECTS = $(am__objects_7) mpost-mp-pool.$(OBJEXT) \
 	mpost-mpextra.$(OBJEXT)
 mpost_OBJECTS = $(nodist_mpost_OBJECTS)
-mpost_DEPENDENCIES = libmpost.a $(am__DEPENDENCIES_2)
+mpost_DEPENDENCIES = libmp.a $(am__DEPENDENCIES_2)
 nodist_odvicopy_OBJECTS = odvicopy.$(OBJEXT)
 odvicopy_OBJECTS = $(nodist_odvicopy_OBJECTS)
 odvicopy_LDADD = $(LDADD)
@@ -427,14 +422,6 @@ nodist_ofm2opl_OBJECTS = ofm2opl.$(OBJEXT)
 ofm2opl_OBJECTS = $(nodist_ofm2opl_OBJECTS)
 ofm2opl_LDADD = $(LDADD)
 ofm2opl_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am_omega_OBJECTS = omega-omega.$(OBJEXT) omega-omegabis.$(OBJEXT)
-am__objects_8 = omega-omegaini.$(OBJEXT) omega-omega0.$(OBJEXT) \
-	omega-omega1.$(OBJEXT) omega-omega2.$(OBJEXT) \
-	omega-omega3.$(OBJEXT)
-nodist_omega_OBJECTS = $(am__objects_8) omega-omega-pool.$(OBJEXT) \
-	omega-omegaextra.$(OBJEXT)
-omega_OBJECTS = $(am_omega_OBJECTS) $(nodist_omega_OBJECTS)
-omega_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
 nodist_opl2ofm_OBJECTS = opl2ofm.$(OBJEXT)
 opl2ofm_OBJECTS = $(nodist_opl2ofm_OBJECTS)
 opl2ofm_LDADD = $(LDADD)
@@ -458,12 +445,12 @@ patgen_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am__dist_pdftex_SOURCES_DIST = synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-pdftex.h
 dist_pdftex_OBJECTS =
-am__objects_9 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT) \
+am__objects_8 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT) \
 	pdftex-pdftex1.$(OBJEXT) pdftex-pdftex2.$(OBJEXT) \
 	pdftex-pdftex3.$(OBJEXT)
-@PDFTEX_SYNCTEX_TRUE@am__objects_10 = pdftex-synctex-pdf.$(OBJEXT)
-nodist_pdftex_OBJECTS = $(am__objects_9) pdftex-pdftex-pool.$(OBJEXT) \
-	pdftex-pdftexextra.$(OBJEXT) $(am__objects_10)
+@PDFTEX_SYNCTEX_TRUE@am__objects_9 = pdftex-synctex-pdf.$(OBJEXT)
+nodist_pdftex_OBJECTS = $(am__objects_8) pdftex-pdftex-pool.$(OBJEXT) \
+	pdftex-pdftexextra.$(OBJEXT) $(am__objects_9)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
 am__DEPENDENCIES_6 = libpdftex.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -500,11 +487,11 @@ tangleboot_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am__dist_tex_SOURCES_DIST = synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-tex.h
 dist_tex_OBJECTS =
-am__objects_11 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT) \
+am__objects_10 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT) \
 	tex-tex1.$(OBJEXT) tex-tex2.$(OBJEXT)
-@TEX_SYNCTEX_TRUE@am__objects_12 = tex-synctex.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_11) tex-tex-pool.$(OBJEXT) \
-	tex-texextra.$(OBJEXT) $(am__objects_12)
+@TEX_SYNCTEX_TRUE@am__objects_11 = tex-synctex.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_10) tex-tex-pool.$(OBJEXT) \
+	tex-texextra.$(OBJEXT) $(am__objects_11)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_7 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -558,7 +545,7 @@ SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(libluasocket_a_SOURCES) $(libluatex_a_SOURCES) \
 	$(EXTRA_libluatex_a_SOURCES) $(nodist_libluatex_a_SOURCES) \
 	$(libmd5_a_SOURCES) $(nodist_libmf_a_SOURCES) \
-	$(libmpost_a_SOURCES) $(libpdftex_a_SOURCES) \
+	$(libmp_a_SOURCES) $(libpdftex_a_SOURCES) \
 	$(EXTRA_libpdftex_a_SOURCES) $(libzzip_a_SOURCES) \
 	$(aleph_SOURCES) $(nodist_aleph_SOURCES) \
 	$(nodist_bibtex_SOURCES) $(nodist_ctangle_SOURCES) \
@@ -573,7 +560,6 @@ SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(nodist_mf_nowin_SOURCES) $(nodist_mft_SOURCES) \
 	$(nodist_mpost_SOURCES) $(nodist_odvicopy_SOURCES) \
 	$(nodist_odvitype_SOURCES) $(nodist_ofm2opl_SOURCES) \
-	$(omega_SOURCES) $(nodist_omega_SOURCES) \
 	$(nodist_opl2ofm_SOURCES) $(nodist_otangle_SOURCES) \
 	$(nodist_ovf2ovp_SOURCES) $(nodist_ovp2ovf_SOURCES) \
 	$(nodist_patgen_SOURCES) $(dist_pdftex_SOURCES) \
@@ -591,10 +577,10 @@ DIST_SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(libluamisc_a_SOURCES) $(EXTRA_libluamisc_a_SOURCES) \
 	$(libluasocket_a_SOURCES) $(libluatex_a_SOURCES) \
 	$(EXTRA_libluatex_a_SOURCES) $(libmd5_a_SOURCES) \
-	$(libmpost_a_SOURCES) $(libpdftex_a_SOURCES) \
+	$(libmp_a_SOURCES) $(libpdftex_a_SOURCES) \
 	$(EXTRA_libpdftex_a_SOURCES) $(libzzip_a_SOURCES) \
 	$(aleph_SOURCES) $(am__dist_etex_SOURCES_DIST) \
-	$(gftodvi_SOURCES) $(md5main_SOURCES) $(omega_SOURCES) \
+	$(gftodvi_SOURCES) $(md5main_SOURCES) \
 	$(am__dist_pdftex_SOURCES_DIST) $(pdftosrc_SOURCES) \
 	$(synctex_SOURCES) $(am__dist_tex_SOURCES_DIST) \
 	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES)
@@ -794,7 +780,7 @@ dist_check_SCRIPTS = tangle.test luatexdir/luatangle.test \
 	omegaware/otangle.test libmd5/md5.test
 TESTS = tangle.test tiedir/tie.test $(am__append_11) $(am__append_14) \
 	libmd5/md5.test
-EXTRA_LIBRARIES = libmf.a libmpost.a libpdftex.a liblua51.a libzzip.a \
+EXTRA_LIBRARIES = libmf.a libmp.a libpdftex.a liblua51.a libzzip.a \
 	libluasocket.a libluamisc.a libff.a libluatex.a libmd5.a
 EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	tangle.ch tangleboot.p cwebdir ctangleboot.c cwebboot.c \
@@ -960,10 +946,7 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	xetexdir/withenable.ac xetexdir/xetex.mk omegaware/ChangeLog \
 	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
 	$(opl2ofm_sources) $(otangle_sources) $(ovf2ovp_sources) \
-	$(ovp2ovf_sources) $(omega_web_srcs) $(omega_ch_srcs) \
-	lib/texmfmp.c omegadir/ChangeLog omegadir/README \
-	omegadir/omega.defines omegadir/omega.version \
-	omegadir/omega.mk $(aleph_web_srcs) $(aleph_ch_srcs) \
+	$(ovp2ovf_sources) $(aleph_web_srcs) $(aleph_ch_srcs) \
 	lib/texmfmp.c alephdir/ChangeLog alephdir/Makefile \
 	alephdir/aleph.defines alephdir/aleph.version \
 	alephdir/eomega.ech alephdir/etex.ch alephdir/omega.ch0 \
@@ -980,8 +963,8 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	synctexdir/synctex-e-rec.ch1 synctexdir/synctex-pdf-rec.ch2 \
 	synctexdir/synctex-xe-mem.ch2 synctexdir/synctex-xe-rec.ch2 \
 	synctexdir/synctex-xe-rec.ch3 synctexdir/synctex-xetex.h \
-	synctexdir/am/synctex.mk synctexdir/synctex.mk fmtutil.in \
-	Makefile.in.orig configure.in.orig
+	synctexdir/synctex.mk fmtutil.in Makefile.in.orig \
+	configure.in.orig
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c stamp-tangle tangleboot.c tangleboot.h ctangle.c \
 	cweb.c stamp-ctangle cftest.p $(web_programs:=.c) \
@@ -1000,10 +983,8 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	luatangle.p $(lua_mp_c_h) mp-ctangle cftest.p \
 	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
 	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
-	cftest.p $(nodist_omega_SOURCES) omega.web omega.ch \
-	omega-web2c omega.p omega.pool omega-tangle \
-	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
-	aleph.pool aleph-tangle
+	cftest.p $(nodist_aleph_SOURCES) aleph.web aleph.ch \
+	aleph-web2c aleph.p aleph.pool aleph-tangle
 CLEANFILES = 
 web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert
 makecpool = ./web2c/makecpool
@@ -1049,10 +1030,10 @@ nodist_weave_SOURCES = weave.c weave.h
 nodist_ctie_SOURCES = ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
 nodist_tie_SOURCES = tie.c
-tex_CPPFLAGS = $(am__append_17)
-tex_LDADD = $(LDADD) $(socketlibs) $(am__append_18)
+tex_CPPFLAGS = $(am__append_16)
+tex_LDADD = $(LDADD) $(socketlibs) $(am__append_17)
 tex_c_h = texini.c tex0.c tex1.c tex2.c texcoerce.h texd.h
-nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c $(am__append_19)
+nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c $(am__append_18)
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
@@ -1071,11 +1052,11 @@ mf_c_h = mfini.c mf0.c mf1.c mfcoerce.h mfd.h
 nodist_libmf_a_SOURCES = $(mf_c_h) mf-pool.c
 libmf_a_CPPFLAGS = -DMETA_FONT
 mpost_CPPFLAGS = -I$(srcdir)/mpdir
-mpost_LDADD = libmpost.a $(LDADD)
+mpost_LDADD = libmp.a $(LDADD)
 mpost_c_h = mpini.c mp0.c mp1.c mp2.c mpcoerce.h mpd.h
 nodist_mpost_SOURCES = $(mpost_c_h) mp-pool.c mpextra.c
-libmpost_a_CPPFLAGS = -I$(srcdir)/mpdir
-libmpost_a_SOURCES = \
+libmp_a_CPPFLAGS = -I$(srcdir)/mpdir
+libmp_a_SOURCES = \
 	mpdir/avl.c \
 	mpdir/avl.h \
 	mpdir/avlstuff.c \
@@ -1088,11 +1069,11 @@ libmpost_a_SOURCES = \
 	mpdir/writefont.c \
 	mpdir/writet1.c
 
-etex_CPPFLAGS = $(am__append_20)
-etex_LDADD = $(LDADD) $(socketlibs) $(am__append_21)
+etex_CPPFLAGS = $(am__append_19)
+etex_LDADD = $(LDADD) $(socketlibs) $(am__append_20)
 etex_c_h = etexini.c etex0.c etex1.c etex2.c etexcoerce.h etexd.h
 nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexextra.c \
-	etexdir/etexextra.h $(am__append_22)
+	etexdir/etexextra.h $(am__append_21)
 etex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -1115,12 +1096,12 @@ pdftex_dependencies = $(proglib) $(LIBPNG_DEPEND) $(ZLIB_DEPEND) \
 	$(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libmd5.a
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(buildenv) $(TANGLE)
-pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_23)
+pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_22)
 pdftex_LDADD = $(pdftex_ldadd) $(LDADD) $(socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 pdftex_c_h = pdftexini.c pdftex0.c pdftex1.c pdftex2.c pdftex3.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c \
-	pdftexdir/pdftexextra.h $(am__append_24)
+	pdftexdir/pdftexextra.h $(am__append_23)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
@@ -1584,48 +1565,6 @@ nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
 ovf2ovp_sources = omegaware/ovf2ovp.web omegaware/ovf2ovp.ch
 nodist_ovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
 ovp2ovf_sources = omegaware/ovp2ovf.web omegaware/ovp2ovf.ch
-omega_LDADD = $(LDADD) $(socketlibs)
-omega_CPPFLAGS = -I$(srcdir)/omegadir $(AM_CPPFLAGS)
-omega_c_h = omegaini.c omega0.c omega1.c omega2.c omega3.c omegacoerce.h omegad.h
-nodist_omega_SOURCES = $(omega_c_h) omega-pool.c omegaextra.c
-omega_SOURCES = \
-	omegadir/omega.c \
-	omegadir/omegabis.c \
-	omegadir/omegaextra.h \
-	omegadir/omegamem.h \
-	omegadir/omega-pool.h
-
-omega_web_srcs = \
-	tex.web \
-	omegadir/omnode.ch \
-	omegadir/om16bit.ch \
-	omegadir/omstr.ch \
-	omegadir/omfont.ch \
-	omegadir/omchar.ch \
-	omegadir/omfi.ch \
-	omegadir/ompar.ch \
-	omegadir/omocp.ch \
-	omegadir/omfilter.ch \
-	omegadir/omtrans.ch \
-	omegadir/omdir.ch \
-	omegadir/omcprt.ch \
-	omegadir/omxml.ch
-
-omega_ch_srcs = \
-	omegadir/comnode.ch \
-	omegadir/com16bit.ch \
-	omegadir/comstr.ch \
-	omegadir/comfont.ch \
-	omegadir/comchar.ch \
-	omegadir/comfi.ch \
-	omegadir/compar.ch \
-	omegadir/comocp.ch \
-	omegadir/comfilter.ch \
-	omegadir/comtrans.ch \
-	omegadir/comdir.ch \
-	omegadir/comxml.ch \
-	omegadir/comsrcspec.ch
-
 aleph_LDADD = $(LDADD) $(socketlibs)
 aleph_CPPFLAGS = -I$(srcdir)/alephdir $(AM_CPPFLAGS)
 aleph_c_h = alephini.c aleph0.c aleph1.c aleph2.c aleph3.c alephcoerce.h alephd.h
@@ -1747,7 +1686,7 @@ all: c-auto.h ff-config.h
 .SUFFIXES: .c .cc .cxx .lo .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mpdir/am/mp.am $(srcdir)/etexdir/am/etex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/omegadir/am/omega.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mpdir/am/mp.am $(srcdir)/etexdir/am/etex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1832,10 +1771,10 @@ libmf.a: $(libmf_a_OBJECTS) $(libmf_a_DEPENDENCIES)
 	-rm -f libmf.a
 	$(libmf_a_AR) libmf.a $(libmf_a_OBJECTS) $(libmf_a_LIBADD)
 	$(RANLIB) libmf.a
-libmpost.a: $(libmpost_a_OBJECTS) $(libmpost_a_DEPENDENCIES) 
-	-rm -f libmpost.a
-	$(libmpost_a_AR) libmpost.a $(libmpost_a_OBJECTS) $(libmpost_a_LIBADD)
-	$(RANLIB) libmpost.a
+libmp.a: $(libmp_a_OBJECTS) $(libmp_a_DEPENDENCIES) 
+	-rm -f libmp.a
+	$(libmp_a_AR) libmp.a $(libmp_a_OBJECTS) $(libmp_a_LIBADD)
+	$(RANLIB) libmp.a
 libpdftex.a: $(libpdftex_a_OBJECTS) $(libpdftex_a_DEPENDENCIES) 
 	-rm -f libpdftex.a
 	$(libpdftex_a_AR) libpdftex.a $(libpdftex_a_OBJECTS) $(libpdftex_a_LIBADD)
@@ -1955,9 +1894,6 @@ odvitype$(EXEEXT): $(odvitype_OBJECTS) $(odvitype_DEPENDENCIES)
 ofm2opl$(EXEEXT): $(ofm2opl_OBJECTS) $(ofm2opl_DEPENDENCIES) 
 	@rm -f ofm2opl$(EXEEXT)
 	$(LINK) $(ofm2opl_OBJECTS) $(ofm2opl_LDADD) $(LIBS)
-omega$(EXEEXT): $(omega_OBJECTS) $(omega_DEPENDENCIES) 
-	@rm -f omega$(EXEEXT)
-	$(LINK) $(omega_OBJECTS) $(omega_LDADD) $(LIBS)
 opl2ofm$(EXEEXT): $(opl2ofm_OBJECTS) $(opl2ofm_DEPENDENCIES) 
 	@rm -f opl2ofm$(EXEEXT)
 	$(LINK) $(opl2ofm_OBJECTS) $(opl2ofm_LDADD) $(LIBS)
@@ -2254,14 +2190,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmf_a-mf0.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmf_a-mf1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmf_a-mfini.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmpost_a-avl.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmpost_a-avlstuff.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmpost_a-mapfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmpost_a-turningnumber.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmpost_a-utils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmpost_a-writeenc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmpost_a-writefont.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmpost_a-writet1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmp_a-avl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmp_a-avlstuff.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmp_a-mapfile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmp_a-turningnumber.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmp_a-utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmp_a-writeenc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmp_a-writefont.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmp_a-writet1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpdftex_a-avl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpdftex_a-avlstuff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libpdftex_a-epdf.Po@am__quote@
@@ -2313,15 +2249,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/odvicopy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/odvitype.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ofm2opl.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omega-pool.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omega.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omega0.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omega1.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omega2.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omega3.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omegabis.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omegaextra.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/omega-omegaini.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/opl2ofm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otangle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ovf2ovp.Po@am__quote@
@@ -5126,117 +5053,117 @@ libmf_a-mf-pool.obj: mf-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmf_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmf_a-mf-pool.obj `if test -f 'mf-pool.c'; then $(CYGPATH_W) 'mf-pool.c'; else $(CYGPATH_W) '$(srcdir)/mf-pool.c'; fi`
 
-libmpost_a-avl.o: mpdir/avl.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-avl.o -MD -MP -MF $(DEPDIR)/libmpost_a-avl.Tpo -c -o libmpost_a-avl.o `test -f 'mpdir/avl.c' || echo '$(srcdir)/'`mpdir/avl.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-avl.Tpo $(DEPDIR)/libmpost_a-avl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/avl.c' object='libmpost_a-avl.o' libtool=no @AMDEPBACKSLASH@
+libmp_a-avl.o: mpdir/avl.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-avl.o -MD -MP -MF $(DEPDIR)/libmp_a-avl.Tpo -c -o libmp_a-avl.o `test -f 'mpdir/avl.c' || echo '$(srcdir)/'`mpdir/avl.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-avl.Tpo $(DEPDIR)/libmp_a-avl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/avl.c' object='libmp_a-avl.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-avl.o `test -f 'mpdir/avl.c' || echo '$(srcdir)/'`mpdir/avl.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-avl.o `test -f 'mpdir/avl.c' || echo '$(srcdir)/'`mpdir/avl.c
 
-libmpost_a-avl.obj: mpdir/avl.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-avl.obj -MD -MP -MF $(DEPDIR)/libmpost_a-avl.Tpo -c -o libmpost_a-avl.obj `if test -f 'mpdir/avl.c'; then $(CYGPATH_W) 'mpdir/avl.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/avl.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-avl.Tpo $(DEPDIR)/libmpost_a-avl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/avl.c' object='libmpost_a-avl.obj' libtool=no @AMDEPBACKSLASH@
+libmp_a-avl.obj: mpdir/avl.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-avl.obj -MD -MP -MF $(DEPDIR)/libmp_a-avl.Tpo -c -o libmp_a-avl.obj `if test -f 'mpdir/avl.c'; then $(CYGPATH_W) 'mpdir/avl.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/avl.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-avl.Tpo $(DEPDIR)/libmp_a-avl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/avl.c' object='libmp_a-avl.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-avl.obj `if test -f 'mpdir/avl.c'; then $(CYGPATH_W) 'mpdir/avl.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/avl.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-avl.obj `if test -f 'mpdir/avl.c'; then $(CYGPATH_W) 'mpdir/avl.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/avl.c'; fi`
 
-libmpost_a-avlstuff.o: mpdir/avlstuff.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-avlstuff.o -MD -MP -MF $(DEPDIR)/libmpost_a-avlstuff.Tpo -c -o libmpost_a-avlstuff.o `test -f 'mpdir/avlstuff.c' || echo '$(srcdir)/'`mpdir/avlstuff.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-avlstuff.Tpo $(DEPDIR)/libmpost_a-avlstuff.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/avlstuff.c' object='libmpost_a-avlstuff.o' libtool=no @AMDEPBACKSLASH@
+libmp_a-avlstuff.o: mpdir/avlstuff.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-avlstuff.o -MD -MP -MF $(DEPDIR)/libmp_a-avlstuff.Tpo -c -o libmp_a-avlstuff.o `test -f 'mpdir/avlstuff.c' || echo '$(srcdir)/'`mpdir/avlstuff.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-avlstuff.Tpo $(DEPDIR)/libmp_a-avlstuff.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/avlstuff.c' object='libmp_a-avlstuff.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-avlstuff.o `test -f 'mpdir/avlstuff.c' || echo '$(srcdir)/'`mpdir/avlstuff.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-avlstuff.o `test -f 'mpdir/avlstuff.c' || echo '$(srcdir)/'`mpdir/avlstuff.c
 
-libmpost_a-avlstuff.obj: mpdir/avlstuff.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-avlstuff.obj -MD -MP -MF $(DEPDIR)/libmpost_a-avlstuff.Tpo -c -o libmpost_a-avlstuff.obj `if test -f 'mpdir/avlstuff.c'; then $(CYGPATH_W) 'mpdir/avlstuff.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/avlstuff.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-avlstuff.Tpo $(DEPDIR)/libmpost_a-avlstuff.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/avlstuff.c' object='libmpost_a-avlstuff.obj' libtool=no @AMDEPBACKSLASH@
+libmp_a-avlstuff.obj: mpdir/avlstuff.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-avlstuff.obj -MD -MP -MF $(DEPDIR)/libmp_a-avlstuff.Tpo -c -o libmp_a-avlstuff.obj `if test -f 'mpdir/avlstuff.c'; then $(CYGPATH_W) 'mpdir/avlstuff.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/avlstuff.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-avlstuff.Tpo $(DEPDIR)/libmp_a-avlstuff.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/avlstuff.c' object='libmp_a-avlstuff.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-avlstuff.obj `if test -f 'mpdir/avlstuff.c'; then $(CYGPATH_W) 'mpdir/avlstuff.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/avlstuff.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-avlstuff.obj `if test -f 'mpdir/avlstuff.c'; then $(CYGPATH_W) 'mpdir/avlstuff.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/avlstuff.c'; fi`
 
-libmpost_a-mapfile.o: mpdir/mapfile.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-mapfile.o -MD -MP -MF $(DEPDIR)/libmpost_a-mapfile.Tpo -c -o libmpost_a-mapfile.o `test -f 'mpdir/mapfile.c' || echo '$(srcdir)/'`mpdir/mapfile.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-mapfile.Tpo $(DEPDIR)/libmpost_a-mapfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/mapfile.c' object='libmpost_a-mapfile.o' libtool=no @AMDEPBACKSLASH@
+libmp_a-mapfile.o: mpdir/mapfile.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-mapfile.o -MD -MP -MF $(DEPDIR)/libmp_a-mapfile.Tpo -c -o libmp_a-mapfile.o `test -f 'mpdir/mapfile.c' || echo '$(srcdir)/'`mpdir/mapfile.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-mapfile.Tpo $(DEPDIR)/libmp_a-mapfile.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/mapfile.c' object='libmp_a-mapfile.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-mapfile.o `test -f 'mpdir/mapfile.c' || echo '$(srcdir)/'`mpdir/mapfile.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-mapfile.o `test -f 'mpdir/mapfile.c' || echo '$(srcdir)/'`mpdir/mapfile.c
 
-libmpost_a-mapfile.obj: mpdir/mapfile.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-mapfile.obj -MD -MP -MF $(DEPDIR)/libmpost_a-mapfile.Tpo -c -o libmpost_a-mapfile.obj `if test -f 'mpdir/mapfile.c'; then $(CYGPATH_W) 'mpdir/mapfile.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/mapfile.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-mapfile.Tpo $(DEPDIR)/libmpost_a-mapfile.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/mapfile.c' object='libmpost_a-mapfile.obj' libtool=no @AMDEPBACKSLASH@
+libmp_a-mapfile.obj: mpdir/mapfile.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-mapfile.obj -MD -MP -MF $(DEPDIR)/libmp_a-mapfile.Tpo -c -o libmp_a-mapfile.obj `if test -f 'mpdir/mapfile.c'; then $(CYGPATH_W) 'mpdir/mapfile.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/mapfile.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-mapfile.Tpo $(DEPDIR)/libmp_a-mapfile.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/mapfile.c' object='libmp_a-mapfile.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-mapfile.obj `if test -f 'mpdir/mapfile.c'; then $(CYGPATH_W) 'mpdir/mapfile.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/mapfile.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-mapfile.obj `if test -f 'mpdir/mapfile.c'; then $(CYGPATH_W) 'mpdir/mapfile.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/mapfile.c'; fi`
 
-libmpost_a-turningnumber.o: mpdir/turningnumber.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-turningnumber.o -MD -MP -MF $(DEPDIR)/libmpost_a-turningnumber.Tpo -c -o libmpost_a-turningnumber.o `test -f 'mpdir/turningnumber.c' || echo '$(srcdir)/'`mpdir/turningnumber.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-turningnumber.Tpo $(DEPDIR)/libmpost_a-turningnumber.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/turningnumber.c' object='libmpost_a-turningnumber.o' libtool=no @AMDEPBACKSLASH@
+libmp_a-turningnumber.o: mpdir/turningnumber.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-turningnumber.o -MD -MP -MF $(DEPDIR)/libmp_a-turningnumber.Tpo -c -o libmp_a-turningnumber.o `test -f 'mpdir/turningnumber.c' || echo '$(srcdir)/'`mpdir/turningnumber.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-turningnumber.Tpo $(DEPDIR)/libmp_a-turningnumber.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/turningnumber.c' object='libmp_a-turningnumber.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-turningnumber.o `test -f 'mpdir/turningnumber.c' || echo '$(srcdir)/'`mpdir/turningnumber.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-turningnumber.o `test -f 'mpdir/turningnumber.c' || echo '$(srcdir)/'`mpdir/turningnumber.c
 
-libmpost_a-turningnumber.obj: mpdir/turningnumber.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-turningnumber.obj -MD -MP -MF $(DEPDIR)/libmpost_a-turningnumber.Tpo -c -o libmpost_a-turningnumber.obj `if test -f 'mpdir/turningnumber.c'; then $(CYGPATH_W) 'mpdir/turningnumber.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/turningnumber.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-turningnumber.Tpo $(DEPDIR)/libmpost_a-turningnumber.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/turningnumber.c' object='libmpost_a-turningnumber.obj' libtool=no @AMDEPBACKSLASH@
+libmp_a-turningnumber.obj: mpdir/turningnumber.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-turningnumber.obj -MD -MP -MF $(DEPDIR)/libmp_a-turningnumber.Tpo -c -o libmp_a-turningnumber.obj `if test -f 'mpdir/turningnumber.c'; then $(CYGPATH_W) 'mpdir/turningnumber.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/turningnumber.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-turningnumber.Tpo $(DEPDIR)/libmp_a-turningnumber.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/turningnumber.c' object='libmp_a-turningnumber.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-turningnumber.obj `if test -f 'mpdir/turningnumber.c'; then $(CYGPATH_W) 'mpdir/turningnumber.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/turningnumber.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-turningnumber.obj `if test -f 'mpdir/turningnumber.c'; then $(CYGPATH_W) 'mpdir/turningnumber.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/turningnumber.c'; fi`
 
-libmpost_a-utils.o: mpdir/utils.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-utils.o -MD -MP -MF $(DEPDIR)/libmpost_a-utils.Tpo -c -o libmpost_a-utils.o `test -f 'mpdir/utils.c' || echo '$(srcdir)/'`mpdir/utils.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-utils.Tpo $(DEPDIR)/libmpost_a-utils.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/utils.c' object='libmpost_a-utils.o' libtool=no @AMDEPBACKSLASH@
+libmp_a-utils.o: mpdir/utils.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-utils.o -MD -MP -MF $(DEPDIR)/libmp_a-utils.Tpo -c -o libmp_a-utils.o `test -f 'mpdir/utils.c' || echo '$(srcdir)/'`mpdir/utils.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-utils.Tpo $(DEPDIR)/libmp_a-utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/utils.c' object='libmp_a-utils.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-utils.o `test -f 'mpdir/utils.c' || echo '$(srcdir)/'`mpdir/utils.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-utils.o `test -f 'mpdir/utils.c' || echo '$(srcdir)/'`mpdir/utils.c
 
-libmpost_a-utils.obj: mpdir/utils.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-utils.obj -MD -MP -MF $(DEPDIR)/libmpost_a-utils.Tpo -c -o libmpost_a-utils.obj `if test -f 'mpdir/utils.c'; then $(CYGPATH_W) 'mpdir/utils.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/utils.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-utils.Tpo $(DEPDIR)/libmpost_a-utils.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/utils.c' object='libmpost_a-utils.obj' libtool=no @AMDEPBACKSLASH@
+libmp_a-utils.obj: mpdir/utils.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-utils.obj -MD -MP -MF $(DEPDIR)/libmp_a-utils.Tpo -c -o libmp_a-utils.obj `if test -f 'mpdir/utils.c'; then $(CYGPATH_W) 'mpdir/utils.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/utils.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-utils.Tpo $(DEPDIR)/libmp_a-utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/utils.c' object='libmp_a-utils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-utils.obj `if test -f 'mpdir/utils.c'; then $(CYGPATH_W) 'mpdir/utils.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/utils.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-utils.obj `if test -f 'mpdir/utils.c'; then $(CYGPATH_W) 'mpdir/utils.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/utils.c'; fi`
 
-libmpost_a-writeenc.o: mpdir/writeenc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-writeenc.o -MD -MP -MF $(DEPDIR)/libmpost_a-writeenc.Tpo -c -o libmpost_a-writeenc.o `test -f 'mpdir/writeenc.c' || echo '$(srcdir)/'`mpdir/writeenc.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-writeenc.Tpo $(DEPDIR)/libmpost_a-writeenc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writeenc.c' object='libmpost_a-writeenc.o' libtool=no @AMDEPBACKSLASH@
+libmp_a-writeenc.o: mpdir/writeenc.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-writeenc.o -MD -MP -MF $(DEPDIR)/libmp_a-writeenc.Tpo -c -o libmp_a-writeenc.o `test -f 'mpdir/writeenc.c' || echo '$(srcdir)/'`mpdir/writeenc.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-writeenc.Tpo $(DEPDIR)/libmp_a-writeenc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writeenc.c' object='libmp_a-writeenc.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-writeenc.o `test -f 'mpdir/writeenc.c' || echo '$(srcdir)/'`mpdir/writeenc.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-writeenc.o `test -f 'mpdir/writeenc.c' || echo '$(srcdir)/'`mpdir/writeenc.c
 
-libmpost_a-writeenc.obj: mpdir/writeenc.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-writeenc.obj -MD -MP -MF $(DEPDIR)/libmpost_a-writeenc.Tpo -c -o libmpost_a-writeenc.obj `if test -f 'mpdir/writeenc.c'; then $(CYGPATH_W) 'mpdir/writeenc.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writeenc.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-writeenc.Tpo $(DEPDIR)/libmpost_a-writeenc.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writeenc.c' object='libmpost_a-writeenc.obj' libtool=no @AMDEPBACKSLASH@
+libmp_a-writeenc.obj: mpdir/writeenc.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-writeenc.obj -MD -MP -MF $(DEPDIR)/libmp_a-writeenc.Tpo -c -o libmp_a-writeenc.obj `if test -f 'mpdir/writeenc.c'; then $(CYGPATH_W) 'mpdir/writeenc.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writeenc.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-writeenc.Tpo $(DEPDIR)/libmp_a-writeenc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writeenc.c' object='libmp_a-writeenc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-writeenc.obj `if test -f 'mpdir/writeenc.c'; then $(CYGPATH_W) 'mpdir/writeenc.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writeenc.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-writeenc.obj `if test -f 'mpdir/writeenc.c'; then $(CYGPATH_W) 'mpdir/writeenc.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writeenc.c'; fi`
 
-libmpost_a-writefont.o: mpdir/writefont.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-writefont.o -MD -MP -MF $(DEPDIR)/libmpost_a-writefont.Tpo -c -o libmpost_a-writefont.o `test -f 'mpdir/writefont.c' || echo '$(srcdir)/'`mpdir/writefont.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-writefont.Tpo $(DEPDIR)/libmpost_a-writefont.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writefont.c' object='libmpost_a-writefont.o' libtool=no @AMDEPBACKSLASH@
+libmp_a-writefont.o: mpdir/writefont.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-writefont.o -MD -MP -MF $(DEPDIR)/libmp_a-writefont.Tpo -c -o libmp_a-writefont.o `test -f 'mpdir/writefont.c' || echo '$(srcdir)/'`mpdir/writefont.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-writefont.Tpo $(DEPDIR)/libmp_a-writefont.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writefont.c' object='libmp_a-writefont.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-writefont.o `test -f 'mpdir/writefont.c' || echo '$(srcdir)/'`mpdir/writefont.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-writefont.o `test -f 'mpdir/writefont.c' || echo '$(srcdir)/'`mpdir/writefont.c
 
-libmpost_a-writefont.obj: mpdir/writefont.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-writefont.obj -MD -MP -MF $(DEPDIR)/libmpost_a-writefont.Tpo -c -o libmpost_a-writefont.obj `if test -f 'mpdir/writefont.c'; then $(CYGPATH_W) 'mpdir/writefont.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writefont.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-writefont.Tpo $(DEPDIR)/libmpost_a-writefont.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writefont.c' object='libmpost_a-writefont.obj' libtool=no @AMDEPBACKSLASH@
+libmp_a-writefont.obj: mpdir/writefont.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-writefont.obj -MD -MP -MF $(DEPDIR)/libmp_a-writefont.Tpo -c -o libmp_a-writefont.obj `if test -f 'mpdir/writefont.c'; then $(CYGPATH_W) 'mpdir/writefont.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writefont.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-writefont.Tpo $(DEPDIR)/libmp_a-writefont.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writefont.c' object='libmp_a-writefont.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-writefont.obj `if test -f 'mpdir/writefont.c'; then $(CYGPATH_W) 'mpdir/writefont.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writefont.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-writefont.obj `if test -f 'mpdir/writefont.c'; then $(CYGPATH_W) 'mpdir/writefont.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writefont.c'; fi`
 
-libmpost_a-writet1.o: mpdir/writet1.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-writet1.o -MD -MP -MF $(DEPDIR)/libmpost_a-writet1.Tpo -c -o libmpost_a-writet1.o `test -f 'mpdir/writet1.c' || echo '$(srcdir)/'`mpdir/writet1.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-writet1.Tpo $(DEPDIR)/libmpost_a-writet1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writet1.c' object='libmpost_a-writet1.o' libtool=no @AMDEPBACKSLASH@
+libmp_a-writet1.o: mpdir/writet1.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-writet1.o -MD -MP -MF $(DEPDIR)/libmp_a-writet1.Tpo -c -o libmp_a-writet1.o `test -f 'mpdir/writet1.c' || echo '$(srcdir)/'`mpdir/writet1.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-writet1.Tpo $(DEPDIR)/libmp_a-writet1.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writet1.c' object='libmp_a-writet1.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-writet1.o `test -f 'mpdir/writet1.c' || echo '$(srcdir)/'`mpdir/writet1.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-writet1.o `test -f 'mpdir/writet1.c' || echo '$(srcdir)/'`mpdir/writet1.c
 
-libmpost_a-writet1.obj: mpdir/writet1.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmpost_a-writet1.obj -MD -MP -MF $(DEPDIR)/libmpost_a-writet1.Tpo -c -o libmpost_a-writet1.obj `if test -f 'mpdir/writet1.c'; then $(CYGPATH_W) 'mpdir/writet1.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writet1.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmpost_a-writet1.Tpo $(DEPDIR)/libmpost_a-writet1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writet1.c' object='libmpost_a-writet1.obj' libtool=no @AMDEPBACKSLASH@
+libmp_a-writet1.obj: mpdir/writet1.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmp_a-writet1.obj -MD -MP -MF $(DEPDIR)/libmp_a-writet1.Tpo -c -o libmp_a-writet1.obj `if test -f 'mpdir/writet1.c'; then $(CYGPATH_W) 'mpdir/writet1.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writet1.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libmp_a-writet1.Tpo $(DEPDIR)/libmp_a-writet1.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpdir/writet1.c' object='libmp_a-writet1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmpost_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmpost_a-writet1.obj `if test -f 'mpdir/writet1.c'; then $(CYGPATH_W) 'mpdir/writet1.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writet1.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmp_a-writet1.obj `if test -f 'mpdir/writet1.c'; then $(CYGPATH_W) 'mpdir/writet1.c'; else $(CYGPATH_W) '$(srcdir)/mpdir/writet1.c'; fi`
 
 libpdftex_a-avl.o: pdftexdir/avl.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libpdftex_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libpdftex_a-avl.o -MD -MP -MF $(DEPDIR)/libpdftex_a-avl.Tpo -c -o libpdftex_a-avl.o `test -f 'pdftexdir/avl.c' || echo '$(srcdir)/'`pdftexdir/avl.c
@@ -6077,132 +6004,6 @@ mpost-mpextra.obj: mpextra.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mpextra.c' object='mpost-mpextra.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mpost-mpextra.obj `if test -f 'mpextra.c'; then $(CYGPATH_W) 'mpextra.c'; else $(CYGPATH_W) '$(srcdir)/mpextra.c'; fi`
-
-omega-omega.o: omegadir/omega.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega.o -MD -MP -MF $(DEPDIR)/omega-omega.Tpo -c -o omega-omega.o `test -f 'omegadir/omega.c' || echo '$(srcdir)/'`omegadir/omega.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega.Tpo $(DEPDIR)/omega-omega.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omegadir/omega.c' object='omega-omega.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega.o `test -f 'omegadir/omega.c' || echo '$(srcdir)/'`omegadir/omega.c
-
-omega-omega.obj: omegadir/omega.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega.obj -MD -MP -MF $(DEPDIR)/omega-omega.Tpo -c -o omega-omega.obj `if test -f 'omegadir/omega.c'; then $(CYGPATH_W) 'omegadir/omega.c'; else $(CYGPATH_W) '$(srcdir)/omegadir/omega.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega.Tpo $(DEPDIR)/omega-omega.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omegadir/omega.c' object='omega-omega.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega.obj `if test -f 'omegadir/omega.c'; then $(CYGPATH_W) 'omegadir/omega.c'; else $(CYGPATH_W) '$(srcdir)/omegadir/omega.c'; fi`
-
-omega-omegabis.o: omegadir/omegabis.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omegabis.o -MD -MP -MF $(DEPDIR)/omega-omegabis.Tpo -c -o omega-omegabis.o `test -f 'omegadir/omegabis.c' || echo '$(srcdir)/'`omegadir/omegabis.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omegabis.Tpo $(DEPDIR)/omega-omegabis.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omegadir/omegabis.c' object='omega-omegabis.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omegabis.o `test -f 'omegadir/omegabis.c' || echo '$(srcdir)/'`omegadir/omegabis.c
-
-omega-omegabis.obj: omegadir/omegabis.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omegabis.obj -MD -MP -MF $(DEPDIR)/omega-omegabis.Tpo -c -o omega-omegabis.obj `if test -f 'omegadir/omegabis.c'; then $(CYGPATH_W) 'omegadir/omegabis.c'; else $(CYGPATH_W) '$(srcdir)/omegadir/omegabis.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omegabis.Tpo $(DEPDIR)/omega-omegabis.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omegadir/omegabis.c' object='omega-omegabis.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omegabis.obj `if test -f 'omegadir/omegabis.c'; then $(CYGPATH_W) 'omegadir/omegabis.c'; else $(CYGPATH_W) '$(srcdir)/omegadir/omegabis.c'; fi`
-
-omega-omegaini.o: omegaini.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omegaini.o -MD -MP -MF $(DEPDIR)/omega-omegaini.Tpo -c -o omega-omegaini.o `test -f 'omegaini.c' || echo '$(srcdir)/'`omegaini.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omegaini.Tpo $(DEPDIR)/omega-omegaini.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omegaini.c' object='omega-omegaini.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omegaini.o `test -f 'omegaini.c' || echo '$(srcdir)/'`omegaini.c
-
-omega-omegaini.obj: omegaini.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omegaini.obj -MD -MP -MF $(DEPDIR)/omega-omegaini.Tpo -c -o omega-omegaini.obj `if test -f 'omegaini.c'; then $(CYGPATH_W) 'omegaini.c'; else $(CYGPATH_W) '$(srcdir)/omegaini.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omegaini.Tpo $(DEPDIR)/omega-omegaini.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omegaini.c' object='omega-omegaini.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omegaini.obj `if test -f 'omegaini.c'; then $(CYGPATH_W) 'omegaini.c'; else $(CYGPATH_W) '$(srcdir)/omegaini.c'; fi`
-
-omega-omega0.o: omega0.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega0.o -MD -MP -MF $(DEPDIR)/omega-omega0.Tpo -c -o omega-omega0.o `test -f 'omega0.c' || echo '$(srcdir)/'`omega0.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega0.Tpo $(DEPDIR)/omega-omega0.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega0.c' object='omega-omega0.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega0.o `test -f 'omega0.c' || echo '$(srcdir)/'`omega0.c
-
-omega-omega0.obj: omega0.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega0.obj -MD -MP -MF $(DEPDIR)/omega-omega0.Tpo -c -o omega-omega0.obj `if test -f 'omega0.c'; then $(CYGPATH_W) 'omega0.c'; else $(CYGPATH_W) '$(srcdir)/omega0.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega0.Tpo $(DEPDIR)/omega-omega0.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega0.c' object='omega-omega0.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega0.obj `if test -f 'omega0.c'; then $(CYGPATH_W) 'omega0.c'; else $(CYGPATH_W) '$(srcdir)/omega0.c'; fi`
-
-omega-omega1.o: omega1.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega1.o -MD -MP -MF $(DEPDIR)/omega-omega1.Tpo -c -o omega-omega1.o `test -f 'omega1.c' || echo '$(srcdir)/'`omega1.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega1.Tpo $(DEPDIR)/omega-omega1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega1.c' object='omega-omega1.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega1.o `test -f 'omega1.c' || echo '$(srcdir)/'`omega1.c
-
-omega-omega1.obj: omega1.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega1.obj -MD -MP -MF $(DEPDIR)/omega-omega1.Tpo -c -o omega-omega1.obj `if test -f 'omega1.c'; then $(CYGPATH_W) 'omega1.c'; else $(CYGPATH_W) '$(srcdir)/omega1.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega1.Tpo $(DEPDIR)/omega-omega1.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega1.c' object='omega-omega1.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega1.obj `if test -f 'omega1.c'; then $(CYGPATH_W) 'omega1.c'; else $(CYGPATH_W) '$(srcdir)/omega1.c'; fi`
-
-omega-omega2.o: omega2.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega2.o -MD -MP -MF $(DEPDIR)/omega-omega2.Tpo -c -o omega-omega2.o `test -f 'omega2.c' || echo '$(srcdir)/'`omega2.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega2.Tpo $(DEPDIR)/omega-omega2.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega2.c' object='omega-omega2.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega2.o `test -f 'omega2.c' || echo '$(srcdir)/'`omega2.c
-
-omega-omega2.obj: omega2.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega2.obj -MD -MP -MF $(DEPDIR)/omega-omega2.Tpo -c -o omega-omega2.obj `if test -f 'omega2.c'; then $(CYGPATH_W) 'omega2.c'; else $(CYGPATH_W) '$(srcdir)/omega2.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega2.Tpo $(DEPDIR)/omega-omega2.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega2.c' object='omega-omega2.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega2.obj `if test -f 'omega2.c'; then $(CYGPATH_W) 'omega2.c'; else $(CYGPATH_W) '$(srcdir)/omega2.c'; fi`
-
-omega-omega3.o: omega3.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega3.o -MD -MP -MF $(DEPDIR)/omega-omega3.Tpo -c -o omega-omega3.o `test -f 'omega3.c' || echo '$(srcdir)/'`omega3.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega3.Tpo $(DEPDIR)/omega-omega3.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega3.c' object='omega-omega3.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega3.o `test -f 'omega3.c' || echo '$(srcdir)/'`omega3.c
-
-omega-omega3.obj: omega3.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega3.obj -MD -MP -MF $(DEPDIR)/omega-omega3.Tpo -c -o omega-omega3.obj `if test -f 'omega3.c'; then $(CYGPATH_W) 'omega3.c'; else $(CYGPATH_W) '$(srcdir)/omega3.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega3.Tpo $(DEPDIR)/omega-omega3.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega3.c' object='omega-omega3.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega3.obj `if test -f 'omega3.c'; then $(CYGPATH_W) 'omega3.c'; else $(CYGPATH_W) '$(srcdir)/omega3.c'; fi`
-
-omega-omega-pool.o: omega-pool.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega-pool.o -MD -MP -MF $(DEPDIR)/omega-omega-pool.Tpo -c -o omega-omega-pool.o `test -f 'omega-pool.c' || echo '$(srcdir)/'`omega-pool.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega-pool.Tpo $(DEPDIR)/omega-omega-pool.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega-pool.c' object='omega-omega-pool.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega-pool.o `test -f 'omega-pool.c' || echo '$(srcdir)/'`omega-pool.c
-
-omega-omega-pool.obj: omega-pool.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omega-pool.obj -MD -MP -MF $(DEPDIR)/omega-omega-pool.Tpo -c -o omega-omega-pool.obj `if test -f 'omega-pool.c'; then $(CYGPATH_W) 'omega-pool.c'; else $(CYGPATH_W) '$(srcdir)/omega-pool.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omega-pool.Tpo $(DEPDIR)/omega-omega-pool.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omega-pool.c' object='omega-omega-pool.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omega-pool.obj `if test -f 'omega-pool.c'; then $(CYGPATH_W) 'omega-pool.c'; else $(CYGPATH_W) '$(srcdir)/omega-pool.c'; fi`
-
-omega-omegaextra.o: omegaextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omegaextra.o -MD -MP -MF $(DEPDIR)/omega-omegaextra.Tpo -c -o omega-omegaextra.o `test -f 'omegaextra.c' || echo '$(srcdir)/'`omegaextra.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omegaextra.Tpo $(DEPDIR)/omega-omegaextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omegaextra.c' object='omega-omegaextra.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omegaextra.o `test -f 'omegaextra.c' || echo '$(srcdir)/'`omegaextra.c
-
-omega-omegaextra.obj: omegaextra.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT omega-omegaextra.obj -MD -MP -MF $(DEPDIR)/omega-omegaextra.Tpo -c -o omega-omegaextra.obj `if test -f 'omegaextra.c'; then $(CYGPATH_W) 'omegaextra.c'; else $(CYGPATH_W) '$(srcdir)/omegaextra.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/omega-omegaextra.Tpo $(DEPDIR)/omega-omegaextra.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='omegaextra.c' object='omega-omegaextra.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(omega_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o omega-omegaextra.obj `if test -f 'omegaextra.c'; then $(CYGPATH_W) 'omegaextra.c'; else $(CYGPATH_W) '$(srcdir)/omegaextra.c'; fi`
 
 pdftex-pdftexini.o: pdftexini.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pdftex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pdftex-pdftexini.o -MD -MP -MF $(DEPDIR)/pdftex-pdftexini.Tpo -c -o pdftex-pdftexini.o `test -f 'pdftexini.c' || echo '$(srcdir)/'`pdftexini.c
@@ -7439,7 +7240,7 @@ mp-tangle: tangle mp.web mp.ch
 mp-pool.c: mp.pool $(makecpool) mpdir/mplib.h
 	$(makecpool) mp.pool $(srcdir)/mpdir/mplib.h >$@ || rm -f $@
 
-$(libmpost_a_SOURCES): mpd.h
+$(libmp_a_SOURCES): mpd.h
 $(etex_c_h): etex-web2c
 etex-web2c: etex.p $(web2c_texmf)
 	$(web2c) etex
@@ -7580,25 +7381,6 @@ ovp2ovf-web2c: $(web2c_common) $(web2c_programs) ovp2ovf.p
 	touch ovp2ovf.c ovp2ovf.h
 ovp2ovf.p: tangle $(ovp2ovf_sources)
 	$(ow_tangle) ovp2ovf ovp2ovf
-@OMEGA_TRUE@$(omega_SOURCES): omegad.h
-$(omega_c_h): omega-web2c
-omega-web2c: omega.p $(web2c_texmf) omegadir/omega.defines
-	$(web2c) omega
-	echo timestamp >$@
-	touch $(omega_c_h)
-omegaextra.c: lib/texmfmp.c omegad.h
-	sed s/TEX-OR-MF-OR-MP/omega/ $(srcdir)/lib/texmfmp.c >$@
-omega.p omega.pool: omega-tangle
-omega-tangle: otangle omega.web omega.ch
-	$(otangle) omega omega
-	echo timestamp >$@
-	touch omega.p omega.pool
-omega-pool.c: omega.pool $(makecpool) omegadir/omega-pool.h
-	$(makecpool) omega.pool $(srcdir)/omegadir/omega-pool.h >$@ || rm -f $@
-omega.web: $(TIE) $(omega_web_srcs)
-	$(tie) -m omega.web $(omega_web_srcs)
-omega.ch: $(TIE) omega.web $(omega_ch_srcs)
-	$(tie) -c omega.ch omega.web $(omega_ch_srcs)
 @ALEPH_TRUE@$(aleph_SOURCES): alephd.h
 $(aleph_c_h): aleph-web2c
 aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines

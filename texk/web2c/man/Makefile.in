@@ -41,8 +41,7 @@ host_triplet = @host@
 @LUATEX_TRUE@am__append_8 = 
 @XETEX_TRUE@am__append_9 = 
 @OTANGLE_TRUE@am__append_10 = 
-@OMEGA_TRUE@am__append_11 = omega.man
-@ALEPH_TRUE@am__append_12 = 
+@ALEPH_TRUE@am__append_11 = aleph.man
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/../am/man.am ChangeLog
 subdir = man
@@ -239,11 +238,10 @@ man_sources = $(bootstrap_man_sources) $(am__append_1) \
 	$(mpware_man_sources) $(am__append_2) $(am__append_3) \
 	$(am__append_4) $(am__append_5) $(am__append_6) \
 	$(am__append_7) $(am__append_8) $(am__append_9) \
-	$(am__append_10) $(am__append_11) $(am__append_12) \
-	$(misc_man_sources)
+	$(am__append_10) $(am__append_11) $(misc_man_sources)
 EXTRA_DIST = $(bootstrap_man_sources) $(web_man_sources) \
 	$(mpware_man_sources) tex.man mf.man mpost.man etex.man \
-	$(pdeftex_man_sources) omega.man $(misc_man_sources) \
+	$(pdeftex_man_sources) aleph.man $(misc_man_sources) \
 	amslatex.min initex.min lamstex.min pdftexman.m4 slitex.min \
 	spell.add virtex.min
 bootstrap_man_sources = cweb.man tangle.man

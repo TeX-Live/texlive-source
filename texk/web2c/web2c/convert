@@ -83,7 +83,7 @@ ${basefile}coerce.h"
 ${basefile}coerce.h"
     ;;
 
-  tex|eomega|etex|pdftex|pdfetex|omega|aleph|xetex)
+  tex|etex|pdftex|aleph|xetex)
     more_defines="$srcdir/web2c/texmf.defines $srcdir/synctexdir/synctex.defines"
     prog_defines="$srcdir/${basefile}dir/$basefile.defines"
     if test -f $prog_defines; then
@@ -146,7 +146,7 @@ case $basefile in
     sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <bibtex.h >xbibtex.h
     mv xbibtex.h bibtex.h
     ;;
-  tex|eomega|etex|luatex|pdftex|pdfetex|omega|aleph|mf|mp|xetex)
+  tex|etex|luatex|pdftex|aleph|mf|mp|xetex)
     sleep 2 # so timestamps are definitely later, to avoid make weirdness
     cat ${basefile}coerce.h $srcdir/web2c/coerce.h >x${basefile}coerce.h
     mv x${basefile}coerce.h ${basefile}coerce.h

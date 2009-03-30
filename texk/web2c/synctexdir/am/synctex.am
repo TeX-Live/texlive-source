@@ -168,5 +168,5 @@ EXTRA_DIST += \
 
 ## Eventually delete these files
 ##
-EXTRA_DIST += synctexdir/am/synctex.mk synctexdir/synctex.mk
+EXTRA_DIST += synctexdir/synctex.mk
 

@@ -48,10 +48,6 @@
 #include <pdftexdir/ptexlib.h>
 #elif defined (luaTeX)
 #include <luatexdir/luatexextra.h>
-#elif defined (Omega)
-#include <omegadir/omegaextra.h>
-#elif defined (eOmega)
-#include <eomegadir/eomegaextra.h>
 #elif defined (Aleph)
 #include <alephdir/alephextra.h>
 #else
@@ -553,14 +549,14 @@ static void parse_options P2H(int, string *);
 /* Try to figure out if we have been given a filename. */
 static string get_input_file_name P1H(void);
 
-#if defined(Omega) || defined(eOmega) || defined(Aleph)
+#if defined(Aleph)
 /* Declare this for Omega family, so they can parse the -8bit option,
  * even though it is a no-op for them.
  */
 static int eightbitp;
-#endif /* Omega || eOmega || Aleph */
+#endif /* Aleph */
 
-#if defined(pdfTeX) || defined(pdfeTeX) || defined(luaTeX)
+#if defined(pdfTeX) || defined(luaTeX)
 char *ptexbanner;
 #endif
 
@@ -631,8 +627,8 @@ maininit P2C(int, ac, string *, av)
 # define SYNCTEX_NO_OPTION INT_MAX
   synctexoption = SYNCTEX_NO_OPTION;
 #else
-# /* Omit warning for Omega and non-TeX.  */
-# if defined(TeX) && !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+# /* Omit warning for Aleph and non-TeX.  */
+# if defined(TeX) && !defined(Aleph)
 #  warning SyncTeX: -synctex command line option NOT available
 # endif
 #endif
@@ -700,10 +696,10 @@ maininit P2C(int, ac, string *, av)
       iniversion = true;
     } else if (FILESTRCASEEQ (kpse_program_name, "virtex")) {
       virversion = true;
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
+#if !defined(Aleph) && !defined(luaTeX)
     } else if (FILESTRCASEEQ (kpse_program_name, "mltex")) {
       mltexp = true;
-#endif /* !Omega && !eOmega && !Aleph && !luaTeX */
+#endif /* !Aleph && !luaTeX */
 #endif /* TeX */
     }
 
@@ -717,7 +713,7 @@ maininit P2C(int, ac, string *, av)
 #ifdef TeX
   /* Sanity check: -mltex, -enc, -etex only work in combination with -ini. */
   if (!iniversion) {
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
+#if !defined(Aleph) && !defined(luaTeX)
     if (mltexp) {
       fprintf(stderr, "-mltex only works with -ini\n");
     }
@@ -770,16 +766,16 @@ maininit P2C(int, ac, string *, av)
                             kpse_src_compile);
 #endif /* MP */
 #ifdef TeX
-#if defined(Omega) || defined (eOmega) || defined (Aleph)
+#if defined (Aleph)
   kpse_set_program_enabled (kpse_ocp_format, MAKE_OMEGA_OCP_BY_DEFAULT,
                             kpse_src_compile);
   kpse_set_program_enabled (kpse_ofm_format, MAKE_OMEGA_OFM_BY_DEFAULT,
                             kpse_src_compile);
   kpse_set_program_enabled (kpse_tfm_format, false, kpse_src_compile);
-#else /* !Omega && !eOmega && !Aleph */
+#else /* !Aleph */
   kpse_set_program_enabled (kpse_tfm_format, MAKE_TEX_TFM_BY_DEFAULT,
                             kpse_src_compile);
-#endif /* !Omega && !eOmega  && !Aleph */
+#endif /* !Aleph */
   kpse_set_program_enabled (kpse_tex_format, MAKE_TEX_TEX_BY_DEFAULT,
                             kpse_src_compile);
   kpse_set_program_enabled (kpse_fmt_format, MAKE_TEX_FMT_BY_DEFAULT,
@@ -871,7 +867,7 @@ topenin P1H(void)
       }
 #else
       char *ptr = &(argv[i][0]);
-      /* Don't use strcat, since in Omega the buffer elements aren't
+      /* Don't use strcat, since in Aleph the buffer elements aren't
          single bytes.  */
       while (*ptr) {
         buffer[k++] = *(ptr++);
@@ -896,7 +892,7 @@ topenin P1H(void)
 
   /* One more time, this time converting to TeX's internal character
      representation.  */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX) && !defined(luaTeX)
+#if !defined(Aleph) && !defined(XeTeX) && !defined(luaTeX)
   for (i = first; i < last; i++)
     buffer[i] = xord[buffer[i]];
 #endif
@@ -1046,7 +1042,7 @@ ipc_snd P3C(int, n,  int, is_eof,  char *, data)
 
 /* This routine notifies the server if there is an eof, or the filename
    if a new DVI file is starting.  This is the routine called by TeX.
-   Omega defines str_start(#) as str_start_ar[# - too_big_char], with
+   Aleph defines str_start(#) as str_start_ar[# - too_big_char], with
    too_big_char = biggest_char + 1 = 65536 (omstr.ch).*/
 
 void
@@ -1061,14 +1057,14 @@ ipcpage P1C(int, is_eof)
     string cwd = xgetcwd ();
     
     ipc_open_out ();
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Aleph)
     len = strstart[outputfilename + 1] - strstart[outputfilename];
 #else
     len = strstartar[outputfilename + 1 - 65536L] -
             strstartar[outputfilename - 65536L];
 #endif
     name = (string)xmalloc (len + 1);
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Aleph)
     strncpy (name, (string)&strpool[strstart[outputfilename]], len);
 #else
     {
@@ -1096,8 +1092,8 @@ ipcpage P1C(int, is_eof)
 #endif /* TeX && IPC */
 
 #if defined (TeX) || defined (MF) || defined (MP)
-  /* TCX and Omega get along like sparks and gunpowder. */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(XeTeX) && !defined(luaTeX) 
+  /* TCX and Aleph&Co get along like sparks and gunpowder. */
+#if !defined(Aleph) && !defined(XeTeX) && !defined(luaTeX) 
 
 /* Return the next number following START, setting POST to the following
    character, as in strtol.  Issue a warning and return -1 if no number
@@ -1198,7 +1194,7 @@ readtcxfile P1H(void)
     WARNING1 ("Could not open char translation file `%s'", orig_filename);
   }
 }
-#endif /* !Omega && !eOmega && !Aleph && !XeTeX */
+#endif /* !Aleph && !XeTeX && !luaTeX */
 #endif /* TeX || MF || MP [character translation] */
 
 #ifdef XeTeX /* XeTeX handles this differently, and allows odd quotes within names */
@@ -1337,12 +1333,12 @@ static struct option long_options[]
       { "ipc",                       0, &ipcon, 1 },
       { "ipc-start",                 0, &ipcon, 2 },
 #endif /* IPC */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
+#if !defined(Aleph) && !defined(luaTeX)
       { "mltex",                     0, &mltexp, 1 },
 #if !defined(XeTeX)
       { "enc",                       0, &enctexp, 1 },
 #endif /* !XeTeX */
-#endif /* !Omega && !eOmega && !Aleph */
+#endif /* !Aleph && !luaTeX */
 #if defined (eTeX) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX) || defined(luaTeX)
       { "etex",                      0, &etexp, 1 },
 #endif /* eTeX || pdfTeX || Aleph */
@@ -1519,10 +1515,10 @@ parse_options P2C(int, argc,  string *, argv)
       translate_filename = optarg;
     } else if (ARGUMENT_IS ("default-translate-file")) {
       default_translate_filename = optarg;
-#if defined(Omega) || defined(eOmega) || defined(Aleph)
+#if defined(Aleph)
     } else if (ARGUMENT_IS ("8bit")) {
       /* FIXME: print snippy message? Possibly also for above? */
-#endif /* !Omega && !eOmega && !Aleph */
+#endif /* !Aleph */
 #endif /* TeX || MF || MP */
 
 #if defined (TeX) || defined (MF)
@@ -1822,7 +1818,7 @@ boolean openoutnameok P1C(const_string, fname)
    closed using pclose().
 */
 
-#if defined(pdfTeX) || defined(pdfeTeX) || defined(luaTeX)
+#if defined(pdfTeX) || defined(luaTeX)
 
 static FILE *pipes [] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,
                          NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
@@ -1842,7 +1838,7 @@ open_in_or_pipe P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
       *f_ptr = NULL;
       fname = (string)xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
-#if !defined(pdfTeX) && !defined(pdfeTeX)
+#if !defined(pdfTeX)
       if (fullnameoffile)
          free (fullnameoffile);
       fullnameoffile = xstrdup (fname);
@@ -2099,7 +2095,7 @@ input_line P1C(FILE *, f)
     --last;
 
   /* Don't bother using xord if we don't need to.  */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
+#if !defined(Aleph) && !defined(luaTeX)
   for (i = first; i <= last; i++)
      buffer[i] = xord[buffer[i]];
 #endif
@@ -2517,13 +2513,13 @@ gettexstring P1C(strnumber, s)
 {
   poolpointer len;
   string name;
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Aleph)
   len = strstart[s + 1] - strstart[s];
 #else
   len = strstartar[s + 1 - 65536L] - strstartar[s - 65536L];
 #endif
   name = (string)xmalloc (len + 1);
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph)
+#if !defined(Aleph)
   strncpy (name, (string)&strpool[strstart[s]], len);
 #else
   {

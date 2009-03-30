@@ -123,9 +123,6 @@ include $(srcdir)/xetexdir/am/xetex.am
 ## omegaware web programs
 include $(srcdir)/omegaware/am/omegaware.am
 
-## Omega
-include $(srcdir)/omegadir/am/omega.am
-
 ## Aleph
 include $(srcdir)/alephdir/am/aleph.am
 
@@ -135,7 +132,7 @@ include $(srcdir)/synctexdir/am/synctex.am
 ## libmd5
 include $(srcdir)/libmd5/am/md5.am
 
-## Not yet used
+## Not used
 ##
 EXTRA_DIST += fmtutil.in
 

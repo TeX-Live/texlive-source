@@ -11,7 +11,7 @@ compilers.
 To define a new symbol (e.g., a function) to be used in the change
 files, it's necessary to add it to texmf.defines (if it's only used in
 TeX/MF/MP) or common.defines (otherwise) here, as well as making the
-actual definition.  New functions in the libraryshould be declared
+actual definition.  New functions in the library should be declared
 somewhere, probably cpascal.h.  Of course no underscores are allowed,
 since tangle removes them.
 

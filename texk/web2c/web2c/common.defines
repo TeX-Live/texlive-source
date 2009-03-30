@@ -64,7 +64,6 @@
 @define const DVICOPYHELP;
 @define const DVITOMPHELP;
 @define const DVITYPEHELP;
-@define const EOMEGAHELP;
 @define const ETEXHELP;
 @define const GFTODVIHELP;
 @define const GFTOPKHELP;
@@ -75,14 +74,12 @@
 @define const ODVICOPYHELP;
 @define const ODVITYPEHELP;
 @define const OFM2OPLHELP;
-@define const OMEGAHELP;
 @define const OPL2OFMHELP;
 @define const OTANGLEHELP;
 @define const OVP2OVFHELP;
 @define const OVF2OVPHELP;
 @define const PATGENHELP;
 @define const PDFTEXHELP;
-@define const PDFETEXHELP;
 @define const PKTOGFHELP;
 @define const PKTYPEHELP;
 @define const PLTOTFHELP;

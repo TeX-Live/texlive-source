@@ -17,8 +17,8 @@ programs required for the build process as configure arguments
 	BUILDCFLAGS=...
 	BUILDLDFLAGS=...
 
-Build the Web2C programs requires installed versions of tangle, ctangle, and
-tie (and possibly otangle and/or luatangle).
+Building the Web2C programs requires installed versions of tangle, ctangle,
+and tie (and possibly otangle and/or luatangle).
 
 At the moment a cross compilation of xetex is not possible, because the
 icu-xetex library does not support cross compilation.

@@ -1,3 +1,7 @@
+2009-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: remove all references to Omega, eOmega, and pdfeTeX.
+
 2009-03-28  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (mk_shellcmdlist, shell_cmd_is_allowed): not static,

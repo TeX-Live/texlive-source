@@ -1,3 +1,8 @@
+2009-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* omega.man (removed): Omega has been removed. Copied to ...
+	* aleph.man (new): ... here and changed "Omega" => "Aleph".
+
 2009-03-22  Karl Berry  <karl@tug.org>
 
 	* etex.man: missed WB definition, no such thing as elatex,

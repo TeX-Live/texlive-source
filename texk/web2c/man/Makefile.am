@@ -56,14 +56,10 @@ if OTANGLE
 man_sources +=
 endif OTANGLE
 
-if OMEGA
-man_sources += omega.man
-endif OMEGA
-EXTRA_DIST += omega.man
-
 if ALEPH
-man_sources +=
+man_sources += aleph.man
 endif ALEPH
+EXTRA_DIST += aleph.man
 
 man_sources += $(misc_man_sources)
 EXTRA_DIST += $(misc_man_sources)

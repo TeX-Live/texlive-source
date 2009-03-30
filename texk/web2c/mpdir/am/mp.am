@@ -7,7 +7,7 @@ bin_PROGRAMS += mpost
 endif MP
 
 mpost_CPPFLAGS = -I$(srcdir)/mpdir
-mpost_LDADD = libmpost.a $(LDADD)
+mpost_LDADD = libmp.a $(LDADD)
 mpost_c_h = mpini.c mp0.c mp1.c mp2.c mpcoerce.h mpd.h
 nodist_mpost_SOURCES = $(mpost_c_h) mp-pool.c mpextra.c
 $(mpost_c_h): mp-web2c
@@ -28,13 +28,13 @@ mp-pool.c: mp.pool $(makecpool) mpdir/mplib.h
 DISTCLEANFILES += $(nodist_mpost_SOURCES) mp-web2c \
 	mp.p mp.pool mp-tangle
 
-## libmpost
+## libmp
 ##
-EXTRA_LIBRARIES += libmpost.a
+EXTRA_LIBRARIES += libmp.a
 
-libmpost_a_CPPFLAGS = -I$(srcdir)/mpdir
+libmp_a_CPPFLAGS = -I$(srcdir)/mpdir
 
-libmpost_a_SOURCES = \
+libmp_a_SOURCES = \
 	mpdir/avl.c \
 	mpdir/avl.h \
 	mpdir/avlstuff.c \
@@ -47,8 +47,8 @@ libmpost_a_SOURCES = \
 	mpdir/writefont.c \
 	mpdir/writet1.c
 
-## We must create mpd.h before compiling the libmpost_a_SOURCES.
-$(libmpost_a_SOURCES): mpd.h
+## We must create mpd.h before compiling the libmp_a_SOURCES.
+$(libmp_a_SOURCES): mpd.h
 
 ## Eventually delete these files
 ##

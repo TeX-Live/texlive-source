@@ -163,7 +163,7 @@ bare P2C(string, cp,  char, c)
 
 
 /* xchr[...] is supposed to be replaced by Xchr(...)  when characters
-   take more than a single octet each, as is the case in Omega.  Now
+   take more than a single octet each, as is the case in Aleph.  Now
    there are several occurrences of xchr[...[...]...], which are
    translated into Xchr(...[...)...], and the compiler dies on syntax
    errors.  Ensures that it is the matching bracket that is replaced,

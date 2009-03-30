@@ -43,7 +43,7 @@
    twohalves.u:    B1    B0  JNK1  JNK2
    fourquarters:   B3    B2    B1    B0
    
-   In Omega, quarterwords are two octets, so the picture becomes simpler:
+   In Aleph, quarterwords are two octets, so the picture becomes simpler:
    
    BigEndian:
    twohalves.v:  RH_MM RH_ML RH_LM RH_LL LH_MM LH_ML LH_LM LH_LL
@@ -62,8 +62,8 @@
    include it from the change file instead.
 */
 
-/* Omega is sufficiently different to separate the definition. */
-#if !defined(Omega) && !defined(eOmega) && !defined(Aleph) && !defined(luaTeX)
+/* Aleph is sufficiently different to separate the definition. */
+#if !defined(Aleph) && !defined(luaTeX)
 
 typedef union
 {
@@ -181,7 +181,7 @@ typedef union
 #define qqqq v.QQQQ
 #endif
 
-#else /* Omega || eOmega || Aleph */
+#else /* Aleph || luaTeX */
 
 typedef union
 {
@@ -257,7 +257,7 @@ typedef union
 
 #define gr gg.GLUE
 
-#endif /* Omega || eOmega || Aleph || luaTeX */
+#endif /* Aleph || luaTeX */
 
 #if defined(luaTeX)
 #define memory_word memoryword

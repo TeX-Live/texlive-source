@@ -2,8 +2,8 @@
 % By Tim Morgan, UC Irvine ICS Department, and many others.
 %
 % Be very careful when making changes to this file, as it is used to
-% generate TeX, e-TeX, and pdf[ex]TeX, and most changes require similar
-% changes to be made to the Omega sources.
+% generate TeX, e-TeX, and pdfTeX, and most changes require similar
+% changes to be made to the Aleph sources.
 %
 % (05/28/86) ETM Started with TeX 2.0
 % (06/03/87) ETM Brought up to TeX 2.2

@@ -1,3 +1,10 @@
+2009-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: remove Omega.
+
+	* tex.ch, texmfmem.h, texmfmp-help.h, texmfmp.h: remove all
+	references to Omega, eOmega, and pdfeTeX.
+
 2009-03-28  Karl Berry  <karl@tug.org>
 
 	* texmfmp.h: shell escape declarations.

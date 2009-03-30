@@ -699,7 +699,6 @@ enable_fmtutil
 enable_ipc
 enable_tex
 enable_etex
-enable_omega
 enable_aleph
 enable_pdftex
 enable_luatex
@@ -1478,7 +1477,6 @@ Optional Features:
   --enable-ipc              enable TeX's --ipc option, i.e., pipe to a program
   --disable-tex               do not compile and install TeX
   --enable-etex               compile and install e-TeX
-  --enable-omega              compile and install Omega
   --disable-aleph             do not compile and install Aleph
   --disable-pdftex            do not compile and install pdfTeX
   --disable-luatex            do not compile and install luaTeX
@@ -2361,14 +2359,6 @@ fi
 case $enable_etex in
   yes|no) : ;;
   *) enable_etex=no ;;
-esac
-# Check whether --enable-omega was given.
-if test "${enable_omega+set}" = set; then
-  enableval=$enable_omega;
-fi
-case $enable_omega in
-  yes|no) : ;;
-  *) enable_omega=no ;;
 esac
 # Check whether --enable-aleph was given.
 if test "${enable_aleph+set}" = set; then
