@@ -105,8 +105,11 @@ include $(srcdir)/am/cweb.am
 ## TeX and MF
 include $(srcdir)/am/texmf.am
 
-## MetaPost
+## old MetaPost
 include $(srcdir)/mpdir/am/mp.am
+
+## new MetaPost, also used for by luaTeX
+include $(srcdir)/mplibdir/am/mplib.am
 
 ## e-TeX
 include $(srcdir)/etexdir/am/etex.am
