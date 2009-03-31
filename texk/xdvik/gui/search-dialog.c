@@ -927,7 +927,7 @@ create_search_window(struct search_settings *settings)
 						  NULL);
 	if (resource.search_history_size < 10) {
 	    /* usually the dropdown list shows 10 entries */
-	    XtVaSetValues(searchbox_input, XmNvisibleItemCount, resource.search_history_size);
+	    XtVaSetValues(searchbox_input, XmNvisibleItemCount, resource.search_history_size, NULL);
 	}
 	    
 	/* free Motif strings */

@@ -135,13 +135,13 @@ struct mailcap_map {
 };
 
 static struct mailcap_map default_mailcap[] = {
-    {"audio/*", "showaudio %s", NULL, False, False},
-    {"image/*", "xv %s", NULL, False, False},
-    {"video/mpeg", "mpeg_play %s", NULL, False, False},
-    {"application/pdf", "acroread %s", NULL, False, False},
-    {"text/html", "netscape-raise  -remote 'openURL(%s,new-window)'", NULL, False, False},
-    {"application/postscript", "ghostview %s", NULL, False, False},
-    {"application/x-dvi", "xdvi %s", NULL, False, False},
+    {"audio/*", "showaudio %s", NULL, False, "%s"},
+    {"image/*", "xv %s", NULL, False, "%s"},
+    {"video/mpeg", "mpeg_play %s", NULL, False, "%s"},
+    {"application/pdf", "acroread %s", NULL, False, "%s"},
+    {"text/html", "netscape-raise  -remote 'openURL(%s,new-window)'", NULL, False, "%s"},
+    {"application/postscript", "ghostview %s", NULL, False, "%s"},
+    {"application/x-dvi", "xdvi %s", NULL, False, "%s"},
 };
 
 static struct mime_map *m_mimemap = NULL;
@@ -543,10 +543,18 @@ figure_viewer(const char *content_type, const char **format_string, Boolean *nee
 {
     int i;
 
-    /* special case so that xdvizilla isn't used, which would be
-       too dangerous since xdvizilla tries to unlink the DVI file by default.
+    /* Hardwire xdvi for this MIME type so that xdvizilla isn't used,
+       which would be too dangerous since xdvizilla tries to unlink
+       the DVI file by default.  There might be other DVI viewers, but
+       since the user invoking this from xdvi anyway ...
+       
        FIXME: A better way would be to always copy the original file, like
        e.g. Acroread does it; see comment in launch_program(), hypertex.c.
+
+       Furthermore, xdvizilla has been retired in the meantime.
+    */
+    /* FIXME: why do we actually need format_string - why not sprintf()
+       directly into the target?
     */
     if (strcmp(content_type, "application/x-dvi") == 0) {
 	*format_string = "%s";

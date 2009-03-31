@@ -126,7 +126,7 @@ scroll_page_if_needed(int x_min, int x_max, int y_min, int y_max)
 	XtVaGetValues(globals.widgets.y_bar, XmNvalue, &test_scroll, NULL);
 	(void)set_bar_value(globals.widgets.y_bar, test_scroll + need_v_scroll, (int)(globals.page.h - mane.height));
 #else
-	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer)need_v_scroll);
+	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, cast_int_to_XtPointer(need_v_scroll));
 #endif
     }
 
@@ -136,7 +136,7 @@ scroll_page_if_needed(int x_min, int x_max, int y_min, int y_max)
 	XtVaGetValues(globals.widgets.x_bar, XmNvalue, &test_scroll, NULL);
 	(void)set_bar_value(globals.widgets.x_bar, test_scroll + need_h_scroll, (int)(globals.page.w - mane.width));
 #else
-	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer)need_h_scroll);
+	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, cast_int_to_XtPointer(need_h_scroll));
 #endif
     }
 
@@ -1258,4 +1258,9 @@ Boolean window_is_mapped(Window w, Display *dpy)
 {
     XWindowAttributes xwa;
     return XGetWindowAttributes(dpy, w, &xwa) && xwa.map_state == IsViewable;
+}
+
+XtPointer cast_int_to_XtPointer(int i)
+{
+    return (XtPointer)(ptrdiff_t)i;
 }

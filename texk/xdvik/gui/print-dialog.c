@@ -395,7 +395,7 @@ text_print_vs_save_callback(Widget widget, XtPointer closure, XEvent *ev, Boolea
 	XmToggleButtonGadgetSetState(radio_printer, widget == to_printer, True);
 	XmToggleButtonGadgetSetState(radio_file, widget != to_printer, True);
 #else
-	XawToggleSetCurrent(radio_printer, widget == to_printer ? (XtPointer)TO_PRINTER : (XtPointer)TO_FILE);
+	XawToggleSetCurrent(radio_printer, widget == to_printer ? cast_int_to_XtPointer(TO_PRINTER) : cast_int_to_XtPointer(TO_FILE));
 #endif
     }
 }
@@ -421,7 +421,7 @@ text_page_range_callback(Widget widget, XtPointer closure, XEvent *ev, Boolean *
 	XmToggleButtonGadgetSetState(radio_selected, False, True);
 	XmToggleButtonGadgetSetState(radio_range, True, True);
 #else
-	XawToggleSetCurrent(radio_all, (XtPointer)PAGE_RANGE);
+	XawToggleSetCurrent(radio_all, cast_int_to_XtPointer(PAGE_RANGE));
 #endif
     }
 }
@@ -1729,10 +1729,10 @@ xaw_create_dialog(struct save_or_print_info *info)
     XSetWMProtocols(XtDisplay(info->shell), XtWindow(info->shell), &WM_DELETE_WINDOW, 1);
 	    
     if (pageinfo_have_marked_pages()) {
-	XawToggleSetCurrent(print_or_save_range_all_radio, (XtPointer)PAGE_MARKED);
+	XawToggleSetCurrent(print_or_save_range_all_radio, cast_int_to_XtPointer(PAGE_MARKED));
     }
     else if (info->page_selection == PAGE_MARKED) {
-	XawToggleSetCurrent(print_or_save_range_all_radio, (XtPointer)PAGE_ALL);
+	XawToggleSetCurrent(print_or_save_range_all_radio, cast_int_to_XtPointer(PAGE_ALL));
     }
 #undef HORIZONTAL_RESIZING_NO
 #undef HORIZONTAL_RESIZING_YES
@@ -2350,7 +2350,7 @@ notify_dialog(Widget w, pageRadioT *value_bak)
 	    XtVaSetValues(radio_marked, XmNsensitive, True, NULL);
 	    XmProcessTraversal(radio_marked, XmTRAVERSE_CURRENT);
 #else
-	    XawToggleSetCurrent(radio_all, (XtPointer)PAGE_MARKED);
+	    XawToggleSetCurrent(radio_all, cast_int_to_XtPointer(PAGE_MARKED));
 	    XtVaSetValues(radio_marked, XtNsensitive, True, NULL);
 #endif
 	}

@@ -178,13 +178,7 @@ fork_dvips(char **argv, struct save_or_print_info *info, childProcT proc)
     print_child.pid = fork();
     if (print_child.pid == 0) {	/* if child */
 	/* change into dir of DVI file so that included image files etc. are found */
-	chdir(globals.dvi_file.dirname);
-
-	if (globals.debug & DBG_FILES) {
-	    char path[MAXPATHLEN];
-	    getcwd(path, MAXPATHLEN);
-	    /* fprintf(stderr, "Directory of running `%s': `%s'\n", argv[0], path); */
-	}
+	(void)chdir(globals.dvi_file.dirname);
 
 	/* make the input file pointer the STDIN of the dvips process */
 	if (info->page_selection == PAGE_MARKED) { /* printing selected pages from temporary file */

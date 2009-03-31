@@ -216,7 +216,7 @@ filehist_menu_add_entry(const char *filename)
 	if (num_children + 1 < 10) {
 	    XtVaSetValues(w, XmNmnemonic, buf[0], NULL);
 	}
-	XtAddCallback(w, XmNactivateCallback, filehist_select_cb, (XtPointer)(num_children + 1));
+	XtAddCallback(w, XmNactivateCallback, filehist_select_cb, cast_int_to_XtPointer(num_children + 1));
 
 	update_menu_labels(menu);
 	
@@ -248,7 +248,7 @@ filehist_submenu(int idx, const char *filename, int pageno, void *data)
     if (idx + 1 < 10) {
 	XtVaSetValues(w, XmNmnemonic, buf[0], NULL);
     }
-    XtAddCallback(w, XmNactivateCallback, filehist_select_cb, (XtPointer)idx);
+    XtAddCallback(w, XmNactivateCallback, filehist_select_cb, cast_int_to_XtPointer(idx));
 }
 
 

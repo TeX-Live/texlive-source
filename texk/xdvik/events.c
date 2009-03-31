@@ -704,14 +704,14 @@ home(wide_bool scrl)
 
 	if (coord > resource.sidemargin_int / mane.shrinkfactor)
 	    coord = resource.sidemargin_int / mane.shrinkfactor;
-	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer) (m_window_x + coord));
+	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, cast_int_to_XtPointer(m_window_x + coord));
     }
     if (globals.widgets.y_bar != NULL) {
 	int coord = (globals.page.h - mane.height) / 2;
 
 	if (coord > resource.topmargin_int / mane.shrinkfactor)
 	    coord = resource.topmargin_int / mane.shrinkfactor;
-	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer) (m_window_y + coord));
+	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, cast_int_to_XtPointer(m_window_y + coord));
     }
 # endif /* MOTIF */
     if (!scrl) {
@@ -754,10 +754,10 @@ home_bottom(wide_bool scrl)
 
 	if (coord > resource.sidemargin_int / mane.shrinkfactor)
 	    coord = resource.sidemargin_int / mane.shrinkfactor;
-	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer) (m_window_x + coord));
+	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, cast_int_to_XtPointer(m_window_x + coord));
     }
     if (globals.widgets.y_bar != NULL)
-	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer)(m_window_y + (globals.page.h - mane.height)));
+	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, cast_int_to_XtPointer(m_window_y + (globals.page.h - mane.height)));
 #endif /* MOTIF */
     XMapWindow(DISP, mane.win);
     /* Wait for the server to catch up---this eliminates flicker. */
@@ -862,7 +862,7 @@ get_geom(void)
 	    curr_scroll = d - m_window_x;
 	    if (m_x_scroll > curr_scroll) {
 		TRACE_GUI((stderr, "======== diff: %d", m_x_scroll - curr_scroll));
-		XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer)(m_x_scroll - curr_scroll));
+		XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, cast_int_to_XtPointer(m_x_scroll - curr_scroll));
 	    }
 #endif
 	}
@@ -875,7 +875,7 @@ get_geom(void)
 	    curr_scroll = d - m_window_y;
 	    if (m_y_scroll > curr_scroll) {
 		TRACE_GUI((stderr, "======== diff: %d", m_y_scroll - curr_scroll));
-		XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer)(m_y_scroll - curr_scroll));
+		XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, cast_int_to_XtPointer(m_y_scroll - curr_scroll));
 	    }
 #endif
 	}
@@ -1882,9 +1882,9 @@ Act_center(Widget w, XEvent *event,
     y = event->xkey.y - mane.height / 2;
     /* The clip widget gives a more exact value. */
     if (globals.widgets.x_bar != NULL)
-	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer) x);
+	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, cast_int_to_XtPointer(x));
     if (globals.widgets.y_bar != NULL)
-	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer) y);
+	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, cast_int_to_XtPointer(y));
     XWarpPointer(DISP, None, None, 0, 0, 0, 0, -x, -y);
 #endif
 #ifdef USE_PANNER
@@ -1993,8 +1993,8 @@ Act_left(Widget w, XEvent *event,
 #else
     if (globals.widgets.x_bar != NULL)
 	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc,
-			(XtPointer) (*num_params == 0 ? (-2 * (int)mane.width / 3)
-				     : (int)(-my_atof(*params) * mane.width)));
+			cast_int_to_XtPointer(*num_params == 0 ? (-2 * (int)mane.width / 3)
+					      : (int)(-my_atof(*params) * mane.width)));
     else {
 	xdvi_bell();
 /* 	statusline_info(STATUS_SHORT, "Horizontal scrolling not possible"); */
@@ -2029,8 +2029,8 @@ Act_right(Widget w, XEvent *event,
 #else
     if (globals.widgets.x_bar != NULL)
 	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc,
-			(XtPointer) (*num_params == 0 ? (2 * (int)mane.width / 3)
-				     : (int)(my_atof(*params) * mane.width)));
+			cast_int_to_XtPointer(*num_params == 0 ? (2 * (int)mane.width / 3)
+					      : (int)(my_atof(*params) * mane.width)));
     else {
 	xdvi_bell();
 /* 	statusline_info(STATUS_SHORT, "Horizontal scrolling not possible"); */
@@ -2063,8 +2063,8 @@ Act_up(Widget w, XEvent *event,
 #else
     if (globals.widgets.y_bar != NULL)
 	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
-			(XtPointer) (*num_params == 0 ? (-2 * (int)mane.height / 3)
-				     : (int)(-my_atof(*params) * mane.height)));
+			cast_int_to_XtPointer(*num_params == 0 ? (-2 * (int)mane.height / 3)
+					      : (int)(-my_atof(*params) * mane.height)));
     else {
 	xdvi_bell();
 /* 	statusline_info(STATUS_SHORT, "Vertical scrolling not possible"); */
@@ -2097,8 +2097,8 @@ Act_down(Widget w, XEvent *event,
 #else
     if (globals.widgets.y_bar != NULL)
 	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
-			(XtPointer) (*num_params == 0 ? (2 * (int)mane.height / 3)
-				     : (int)(my_atof(*params) * mane.height)));
+			cast_int_to_XtPointer(*num_params == 0 ? (2 * (int)mane.height / 3)
+					      : (int)(my_atof(*params) * mane.height)));
     else {
 	xdvi_bell();
 /* 	statusline_info(STATUS_SHORT, "Vertical scrolling not possible"); */
@@ -2137,9 +2137,9 @@ Act_down_or_next(Widget w, XEvent *event,
 	get_xy();
 	if (m_window_y > (int)mane.height - (int)globals.page.h) {
 	    XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
-			    (XtPointer) (*num_params ==
-					 0 ? (2 * (int)mane.height / 3)
-					 : (int)(my_atof(*params) * mane.height)));
+			    cast_int_to_XtPointer(*num_params ==
+						  0 ? (2 * (int)mane.height / 3)
+						  : (int)(my_atof(*params) * mane.height)));
 	    return;
 	}
     }
@@ -2188,9 +2188,9 @@ Act_up_or_previous(Widget w, XEvent *event,
 	get_xy();
 	if (m_window_y < 0) {
 	    XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
-			    (XtPointer) (*num_params ==
-					 0 ? (-2 * (int)mane.height / 3)
-					 : (int)(-my_atof(*params) * mane.height)));
+			    cast_int_to_XtPointer(*num_params ==
+						  0 ? (-2 * (int)mane.height / 3)
+						  : (int)(-my_atof(*params) * mane.height)));
 	    return;
 	}
     }
@@ -2353,7 +2353,7 @@ Act_mouse_modes(Widget w, XEvent *event,
 	    XDVI_WARNING((stderr, "Only %d parameters in X resource 'mouse-modes', should be %d",
 			  *num_params, resource.mouse_mode + 1));
 	    for (k = 0; k < *num_params; k++) {
-		XDVI_WARNING((stderr, "Param %d: `%s'", k + 1, params[k]));
+		XDVI_WARNING((stderr, "Param %d: `%s'", (int)(k + 1), params[k]));
 	    }
 	    return;
 	}
@@ -2362,9 +2362,9 @@ Act_mouse_modes(Widget w, XEvent *event,
 
     my_action = compile_action(params[mode_idx]);
     for (i = 0, ap = my_action; ap; ap = ap->next, i++) {
+	TRACE_EVENTS((stderr, "Action %d for mode %lu: '%s', %d args |%s| maps to proc |%p|",
+		      i, (unsigned long)mode_idx, ap->command, ap->num_params, ap->param, ap->proc));
 	String args[1];
-	TRACE_EVENTS((stderr, "Action %d for mode %d: '%s', %d args |%s| maps to proc |%p|",
-		      i, mode_idx, ap->command, ap->num_params, ap->param, ap->proc));
 	args[0] = ap->param;
 
 	/* now call the action proc directly */
@@ -2635,7 +2635,7 @@ static void h_restore_scroll_position(int orig_pos,
 	XtVaGetValues(globals.widgets.clip_widget, XtNx, get_pos, NULL);
 	curr_pos = -((*get_pos) - m_window_x);
 	if (curr_pos - orig_pos > 0) {
-	    XtCallCallbacks(scrollbar, XtNscrollProc, (XtPointer)(curr_pos - orig_pos));
+	    XtCallCallbacks(scrollbar, XtNscrollProc, cast_int_to_XtPointer(curr_pos - orig_pos));
 	}
 #endif /* MOTIF */
     }
@@ -3434,7 +3434,7 @@ drag_motion(XEvent * event)
 #else
 	if (globals.widgets.x_bar != NULL) {
 	    XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc,
-			    (XtPointer) (drag_last_x - event->xbutton.x_root));
+			    cast_int_to_XtPointer(drag_last_x - event->xbutton.x_root));
 	}
 #endif
 	drag_last_x = event->xbutton.x_root;
@@ -3448,7 +3448,7 @@ drag_motion(XEvent * event)
 #else
 	if (globals.widgets.y_bar != NULL) {
 	    XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
-			    (XtPointer) (drag_last_y - event->xbutton.y_root));
+			    cast_int_to_XtPointer(drag_last_y - event->xbutton.y_root));
 	}
 #endif
 	drag_last_y = event->xbutton.y_root;
@@ -3496,7 +3496,7 @@ Act_wheel(Widget w, XEvent *event,
     set_bar_value(globals.widgets.y_bar, dist - m_window_y, (int)(globals.page.h - mane.height));
 #else
     if (globals.widgets.y_bar != NULL)
-	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer) dist);
+	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, cast_int_to_XtPointer(dist));
 #endif
 
     wheel_button = event->xbutton.button;
@@ -5048,7 +5048,7 @@ read_events(unsigned int ret_mask)
 	    get_geom();
 
 	if (event.xany.window == magnifier.win && event.type == Expose) {
-	    handle_expose((Widget) NULL, (XtPointer) &magnifier, &event,
+	    handle_expose((Widget) NULL, (XtPointer)&magnifier, &event,
 			  (Boolean *) NULL);
 	    continue;
 	}

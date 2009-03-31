@@ -374,7 +374,7 @@ read_PK_index(struct font *fontp, wide_bool hushcs)
 	   than a short forward seek. Totally non-intuitive.  */
 	if (bytes_left > 0 && bytes_left < SHORTSEEK) {
 	    char *dummy = xmalloc(bytes_left);
-	    fread(dummy, 1, bytes_left, fontp->file);
+	    (void)fread(dummy, 1, bytes_left, fontp->file);
 	    free(dummy);
 	}
 	else

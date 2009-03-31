@@ -2075,7 +2075,7 @@ Moves to the page with the given number. If no page number is given, xdvi jumps 
 .br
 If the option/resource
 .B useTeXpages
-is active, the numbers correspond the the actual page numbers in the TeX file;
+is active, the numbers correspond to the actual page numbers in the TeX file;
 otherwise, absolute page numbers (starting from 1) are used. In the latter case,
 the page numbers can be changed with the
 .RB ` P '
@@ -3111,7 +3111,7 @@ containing hyphens that are wrapped after the hyphen, and that replacing the
 newlines affects the interpretation of regular expressions as follows:
 The \fI.\fR pattern will also match newlines, and \fI^\fR and \fI$\fR won't match
 begin and end of lines any more. (Since currently there is no option for turning
-off the greediness of \fI*\fR and \fI+\fR, turing on this option will usually
+off the greediness of \fI*\fR and \fI+\fR, turning on this option will usually
 result in matches that are longer than desired.)
 .RE
 .PP

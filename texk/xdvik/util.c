@@ -581,7 +581,7 @@ my_realpath(const char *path, char *resolved)
 	(void)fchdir(fd);
 	close(fd);
 #else
-	chdir(cwd);
+	(void)chdir(cwd);
 #endif
 	return resolved;
     }
@@ -591,7 +591,7 @@ my_realpath(const char *path, char *resolved)
     (void)fchdir(fd);
     close(fd);
 #else
-    chdir(cwd);
+    (void)chdir(cwd);
 #endif
     return NULL;
 }
@@ -1466,7 +1466,7 @@ find_file(const char *filename, struct stat *statbuf, kpse_file_format_type path
 		    (void)fchdir(fd);
 		    close(fd);
 #else
-		    chdir(cwd);
+		    (void)chdir(cwd);
 #endif
 		    if (tmp[0] == '/') { /* is it an absolute path? */
 			pathname = xstrdup(tmp);

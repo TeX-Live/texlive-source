@@ -8,6 +8,7 @@ static const char base_key_translations[] =
    (i.e. `alt ctrl' before `ctrl' before unmodified)
    `:' at start of description means that case matters
 */
+    "<Key>0:		digit(0)\n"
     "<Key>1:		digit(1)\n"
     "<Key>2:		digit(2)\n"
     "<Key>3:		digit(3)\n"

@@ -153,10 +153,12 @@ destroy_dialog_cb(Widget w, XtPointer client_data, XtPointer call_data)
 	/* Need to unselect the `Other...' entry from the list; to do this,
 	   we select the index from XmNuserData if it's >= 0, or the first item. */
 	int idx;
+	XtPointer p;
 	XtVaGetValues(browser_combo,
 		      XmNlist, &browser_list_w,
-		      XmNuserData, &idx,
+		      XmNuserData, &p,
 		      NULL);
+	idx = (int)p;
 	if (browser_list_w == 0)
 	    XDVI_ERROR((stderr, "couldn't get list component of combo box!\n"));
 	else {
@@ -460,7 +462,7 @@ h_selector(const char *prompt_name,
 #if USE_COMBOBOX
 	/* update the currently selected value */
 	XtVaGetValues(w, XmNselectedPosition, &i, NULL);
-	XtVaSetValues(w, XmNuserData, i, NULL);
+	XtVaSetValues(w, XmNuserData, cast_int_to_XtPointer(i), NULL);
 #endif
     }
 #if USE_COMBOBOX
@@ -750,7 +752,7 @@ h_create_command(const char *name,
 				 XmNitems, str_list,
 				 XmNitemCount, num,
 				 XmNvisibleItemCount, num > 10 ? 10 : num,
-				 XmNuserData, curr_index,
+				 XmNuserData, cast_int_to_XtPointer(curr_index),
 				 XmNarrowSize, Xdvi_COMBO_BOX_ARROW_SIZE,
 				 NULL);
     if (top != NULL) /* FIXME: This assumes we only have 2 items ... */

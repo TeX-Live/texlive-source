@@ -141,4 +141,6 @@ extern Boolean clip_region_to_rect(XRectangle *rect);
 
 extern Boolean window_is_mapped(Window w, Display *dpy);
 
+extern XtPointer cast_int_to_XtPointer(int x);
+
 #endif

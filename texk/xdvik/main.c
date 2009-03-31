@@ -21,6 +21,15 @@
 #include "t1lib.h"
 #endif /* T1LIB */
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#ifndef XDVI_KPSE_PROG_NAME
+#define XDVI_KPSE_PROG_NAME xdvi
+#endif
+static const char *xdvi_kpse_prog_name = TOSTRING(XDVI_KPSE_PROG_NAME);
+#undef STRINGIFY
+#undef TOSTRING
+
 static char XtRBool3[] = "Bool3";	/* resource for Bool3 */
 
 /* get these before setting `application_resources' */
@@ -1162,9 +1171,10 @@ main(int argc, char **argv)
 	fprintf(stderr, "KPATHSEA_DEBUG = %d\n", kpathsea_debug);
 
     kpse_init_prog("XDVI", resource.pixels_per_inch, resource.mfmode, resource.alt_font);
-    
-    kpse_set_program_name(argv[0], "xdvi");
 
+    TRACE_FILES((stderr, "Initializing kpathsearch with program name '%s'",
+		 xdvi_kpse_prog_name));
+    kpse_set_program_name(argv[0], xdvi_kpse_prog_name);
     
     if (globals.debug & DBG_EXPAND) {
 	const char *texmfcnf = kpse_path_expand("$TEXMFCNF");

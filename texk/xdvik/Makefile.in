@@ -43,7 +43,7 @@ DIST_COMMON = $(am__configure_deps) \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap INSTALL
+	../../build-aux/ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
@@ -246,10 +246,13 @@ EXTRA_DIST = BUGS CHANGES ChangeLog.TL FAQ LESSTIF-BUGS README.t1fonts \
 	translations.h util.c util.h version.h vf.c x_util.c x_util.h \
 	xdvi-config.h xdvi-debug.h xdvi-search.el xdvi-sh.in xdvi.1.in \
 	xdvi.c xdvi.h xdvi.icon xdvizilla xdvizilla.1 xserver-info.c \
-	xserver-info.h Makefile.in-$(XDVIK_VERSION) \
-	acconfig.h-$(XDVIK_VERSION) acinclude.m4-$(XDVIK_VERSION) \
-	aclocal.m4-$(XDVIK_VERSION) configure.in-$(XDVIK_VERSION) \
-	kpathsea.ac-$(XDVIK_VERSION) withenable.ac-$(XDVIK_VERSION) \
+	xserver-info.h Makefile.in-22.84.14 acconfig.h-22.84.14 \
+	acinclude.m4-22.84.14 aclocal.m4-22.84.14 \
+	configure.in-22.84.14 kpathsea.ac-22.84.14 \
+	withenable.ac-22.84.14 Makefile.in-22.84.15 \
+	acconfig.h-22.84.15 aclocal.m4-22.84.15 configure.in-22.84.15 \
+	gui/Makefile.in-22.84.15 kpathsea.ac-22.84.15 \
+	tests/Makefile.in-22.84.15 withenable.ac-22.84.15 \
 	Makefile.in.orig configure.in.orig gui/Makefile.in.orig \
 	kpathsea.ac.orig tests/Makefile.in.orig withenable.ac.orig
 all: c-auto.h

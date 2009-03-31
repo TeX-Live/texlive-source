@@ -235,21 +235,24 @@ static XtActionsRec popdown_actions[] = {
 static void
 ok_action(Widget w, XtPointer client_data, XtPointer call_data)
 {
-    int idx = -1;
+    XtPointer p;
+    ptrdiff_t idx = -1;
     
     UNUSED(call_data);
     
 #if MOTIF
     UNUSED(client_data);
-    XtVaGetValues(w, XmNuserData, &idx, NULL);
+    XtVaGetValues(w, XmNuserData, &p, NULL);
+    idx = (ptrdiff_t)p;
     ASSERT(idx >= 0, "Couldn't get idx from XmNuserData!");
 #else
+    UNUSED(p);
     UNUSED(w);
-    idx = (int)client_data;
+    idx = (ptrdiff_t)client_data;
 #endif
     
 #if DEBUG
-    fprintf(stderr, "quit_action called for popup %d\n", idx);
+    fprintf(stderr, "ok_action called for popup %ld\n", idx);
 #endif
     ASSERT(idx >= 0 && idx < MAX_POPUPS, "Invalid widget index in ok_action()");
 
@@ -308,7 +311,8 @@ help_action(Widget w, XtPointer client_data, XtPointer call_data)
 static void
 cancel_action(Widget w, XtPointer client_data, XtPointer call_data)
 {
-    int idx = -1;
+    XtPointer p;
+    ptrdiff_t idx = -1;
     
     UNUSED(call_data);
 
@@ -319,16 +323,19 @@ cancel_action(Widget w, XtPointer client_data, XtPointer call_data)
 	/* invoked by the WM, get the messagebox child */
 	Widget child;
 	if (get_widget_by_name(&child, w, Xdvi_MESSAGE_DIALOG_NAME, True)) {
-	    XtVaGetValues(child, XmNuserData, &idx, NULL);
+	    XtVaGetValues(child, XmNuserData, &p, NULL);
+	    idx = (ptrdiff_t)p;
 	}
     }
     else {
-	XtVaGetValues(w, XmNuserData, &idx, NULL);
+	XtVaGetValues(w, XmNuserData, &p, NULL);
+	idx = (ptrdiff_t)p;
     }
     ASSERT(idx >= 0, "Couldn't get idx from XmNuserData!");
 #else
+    UNUSED(p);
     UNUSED(w);
-    idx = (int)client_data;
+    idx = (ptrdiff_t)client_data;
 #endif
     ASSERT(idx >= 0 && idx < MAX_POPUPS, "Invalid widget index in cancel_action()");
 
@@ -358,13 +365,15 @@ cancel_action(Widget w, XtPointer client_data, XtPointer call_data)
 static void
 not_ok_action(Widget w, XtPointer client_data, XtPointer call_data)
 {
-    /* Note: unmanage the parent of the button */
-    int idx = -1;
+    /* Note: unmanages the parent of the button */
+    XtPointer p;
+    ptrdiff_t idx = -1;
 
     UNUSED(client_data);
 
     UNUSED(call_data);
-    XtVaGetValues(w, XmNuserData, &idx, NULL);
+    XtVaGetValues(w, XmNuserData, &p, NULL);
+    idx = (ptrdiff_t)p;
     ASSERT(idx >= 0, "Couldn't get idx from XmNuserData!");
     ASSERT(idx >= 0 && idx < MAX_POPUPS, "Invalid widget index in ok_action()");
 
@@ -499,7 +508,7 @@ create_dialogs(popupMessageSizeHintT size,
 				  XmNdialogType, XmDIALOG_WARNING, /* default */
 				  XmNtraversalOn, True,
 				  XmNhighlightOnEnter, True,
-				  XmNuserData, cnt,
+				  XmNuserData, cast_int_to_XtPointer(cnt),
 				  XmNtranslations, XtParseTranslationTable(translations_str),
 				  NULL);
     free(translations_str);
@@ -617,7 +626,7 @@ create_dialogs(popupMessageSizeHintT size,
     XtOverrideTranslations(new_message_text, key_translations);
     
     XtInstallAllAccelerators(new_message_box, new_message_ok);
-    XtAddCallback(new_message_ok, XtNcallback, ok_action, (XtPointer)cnt);
+    XtAddCallback(new_message_ok, XtNcallback, ok_action, cast_int_to_XtPointer(cnt));
 
     /* we create additional buttons in any case,
        to make the sizing more consistent */
@@ -659,7 +668,7 @@ create_dialogs(popupMessageSizeHintT size,
     }
 
     if (cancel_button != NULL) {
-	XtAddCallback(new_message_not_ok, XtNcallback, cancel_action, (XtPointer)cnt);
+	XtAddCallback(new_message_not_ok, XtNcallback, cancel_action, cast_int_to_XtPointer(cnt));
     }
     else {
 	XtUnmanageChild(new_message_not_ok);

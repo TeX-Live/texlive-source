@@ -131,10 +131,10 @@ static XtResource resources[] = {
      XtRString, "fixed"},
     {XmNwaitPeriod, XmCWaitPeriod,
      XtRInt, sizeof(int), offset(tip.waitPeriod),
-     XtRImmediate, (XtPointer) 800},
+     XtRImmediate, (XtPointer)(ptrdiff_t)800},
     {XmNcancelWaitPeriod, XmCCancelWaitPeriod,
      XtRInt, sizeof(int), offset(tip.cwp),
-     XtRImmediate, (XtPointer) 250},
+     XtRImmediate, (XtPointer)(ptrdiff_t)250},
 };
 #undef offset
 

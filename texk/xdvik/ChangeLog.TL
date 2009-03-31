@@ -1,6 +1,10 @@
 ChangeLog: Changes for xdvik (teTeX / TeX Live)
 ===============================================
 
+2009-03-31
+	Imported ftp://tug.org/tex/xdvik-22.84.15.tar.gz and
+	adapted to new TeX Live build system (Automake & Co.).
+
 2008-07-01
 	Imported ftp://tug.org/tex/xdvik-22.84.14.tar.gz and
 	adapted to new TeX Live build system (autoconf-2.59+).

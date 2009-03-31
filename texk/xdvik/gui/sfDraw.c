@@ -30,6 +30,7 @@
 #include "kpathsea/config.h"
 #include "kpathsea/c-stat.h"
 #include "xdvi.h"
+#include "x_util.h"
 
 #include "sfDraw.h"
 #include "sfDir.h"
@@ -427,11 +428,11 @@ SFscrollTimer(XtPointer p, XtIntervalId *id)
 {
     SFDir *dir;
     int save;
-    int n;
+    ptrdiff_t n;
 
     UNUSED(id);
     
-    n = (int)p;
+    n = (ptrdiff_t)p;
 
     fprintf(stderr, "SFscrollTimer called!\n");
     
@@ -462,7 +463,7 @@ SFscrollTimer(XtPointer p, XtIntervalId *id)
     if (SFbuttonPressed) {
 	SFscrollTimerId = XtAppAddTimeOut(SFapp,
 					  SFscrollTimerInterval(),
-					  SFscrollTimer, (XtPointer) n);
+					  SFscrollTimer, (XtPointer)n);
     }
 }
 
@@ -501,7 +502,7 @@ SFnewInvertEntry(int n, XMotionEvent *event)
 		SFscrollTimerAdded = 1;
 		SFscrollTimerId = XtAppAddTimeOut(SFapp,
 						  SFscrollTimerInterval(),
-						  SFscrollTimer, (XtPointer) n);
+						  SFscrollTimer, cast_int_to_XtPointer(n));
 	    }
 	}
 

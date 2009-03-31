@@ -253,9 +253,9 @@ panner_cb(Widget widget, XtPointer closure, XtPointer report_ptr)
 
     fprintf(stderr, "panner moved: %d, %d\n", report->slider_x, report->slider_y);
     if (globals.widgets.x_bar != NULL)
-	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, (XtPointer)(x - orig_x));
+	XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc, cast_int_to_XtPointer(x - orig_x));
     if (globals.widgets.y_bar != NULL)
-	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, (XtPointer)(y - orig_y));
+	XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc, cast_int_to_XtPointer(y - orig_y));
     orig_x = x;
     orig_y = y;
 }

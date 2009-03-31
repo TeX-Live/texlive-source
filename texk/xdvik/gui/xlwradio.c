@@ -163,7 +163,7 @@ static XtActionsRec actionsList[] =
 
 static XtResource resources[] = {
     {XtNisRadio,  XtCIsRadio, XtRBoolean, sizeof(Boolean),
-     offset(isRadio), XtRImmediate, (XtPointer)True },
+     offset(isRadio), XtRImmediate, (XtPointer)(ptrdiff_t)True },
 };
 #undef offset
 
