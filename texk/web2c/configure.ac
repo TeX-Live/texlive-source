@@ -67,30 +67,24 @@ KPSE_CHECK_WIN32
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
-# -lsocket is needed on Solaris, at least.  Maybe -lnsl on SCO, too?
-# See ac_path_xtra.
-AS_IF([test "x$enable_ipc:$enable_luatex" != xno:no], [
-kpse_save_LIBS=$LIBS
-AC_SEARCH_LIBS([connect], [socket nsl wsock32])
-LIBS=$kpse_save_LIBS
-AS_CASE([$ac_cv_search_connect],
-        ["none required"], [],
-        [no], [AS_IF([test "x$enable_luatex" = xyes],
-                     [AC_MSG_ERROR([Sorry, no socket library: can not build luaTeX])],
-                     [AC_MSG_WARN([no socket library: disabling ipc])
-                                   enable_ipc=no])],
-        [socketlibs="-l$ac_cv_search_connect"])
+KPSE_CHECK_SOCKET_LIBS
+AS_IF([test "x$enable_ipc:$enable_luatex" != xno:no],
+      [AS_CASE([$ac_cv_search_connect],
+               ["none required"], [],
+               [no], [AS_IF([test "x$enable_luatex" = xyes],
+                            [AC_MSG_ERROR([Sorry, no socket library: can not build luaTeX])],
+                            [AC_MSG_WARN([no socket library: disabling ipc])
+                                          enable_ipc=no])],
+               [socketlibs="-l$ac_cv_search_connect"])])
 AS_IF([test "x$enable_ipc" = xyes],
       [AC_DEFINE([IPC], 1, [tex: Define to enable --ipc.])])
-])
 AC_SUBST([socketlibs])
 
 dnl Generate *TEX and ALEPH conditionals.
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
            [m4_ifset([Kpse_Prog],
                      [KPSE_XTEX_COND(Kpse_Prog)])])[]dnl
-dnl Disable SyncTeX support for TeX.
-AM_CONDITIONAL([TEX_SYNCTEX], [false])[]dnl
+
 AS_IF([test "x$enable_aleph:$enable_xetex" = xno:no],
       [enable_otangle=no],
       [enable_otangle=yes])
@@ -180,8 +174,8 @@ fi
 
 AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([long])
-AC_CHECK_FUNCS([strerror])
-AC_CHECK_HEADERS([errno.h])
+AC_CHECK_FUNCS([access atoi strerror])
+AC_CHECK_HEADERS([errno.h sys/timeb.h sys/wait.h])
 
 dnl FIXME: needed for libpdf -> xpdf ?
 AC_CHECK_HEADERS([time.h])
@@ -228,9 +222,11 @@ AH_TOP([/* c-auto.h: defines for web2c, as determined by configure.
 #define WEB2CVERSION "REPLACE-WITH-WEB2CVERSION"])
 AH_BOTTOM([#endif /* !WEB2C_C_AUTO_H */])
 
+dnl FIXME: luaTeX requires <unistd.h>, access, and atoi
+dnl
 AS_IF([test "x$enable_luatex" = xyes],
 [AC_CONFIG_HEADERS([ff-config.h:luatexdir/luafontloader/ff-config.in])
-AC_CHECK_HEADERS([langinfo_h])
+AC_CHECK_HEADERS([langinfo.h])
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT
 ])

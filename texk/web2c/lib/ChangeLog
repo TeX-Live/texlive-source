@@ -7,7 +7,7 @@
 	* texmfmp.c (mk_shellcmdlist, shell_cmd_is_allowed): not static,
 	so luatex can access.  From Taco.
 
-2009-03-27  Taco Hoekwater <taco@luatex.org>
+2009-03-27  Taco Hoekwater  <taco@luatex.org>
 
 	* texmfmp.c (parse_options): add #ifndef luaTeX guard for 
 	--src-specials, because luaTeX does not implement it.

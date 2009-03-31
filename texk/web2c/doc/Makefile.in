@@ -43,6 +43,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-asm.m4 \
 	$(top_srcdir)/../../m4/kpse-lex.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-obsdcompat-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-web2c.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-xpdf-flags.m4 \

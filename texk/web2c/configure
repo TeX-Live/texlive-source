@@ -17812,12 +17812,10 @@ else
 fi
 
 
-# -lsocket is needed on Solaris, at least.  Maybe -lnsl on SCO, too?
-# See ac_path_xtra.
-if test "x$enable_ipc:$enable_luatex" != xno:no; then
 
-kpse_save_LIBS=$LIBS
-{ $as_echo "$as_me:$LINENO: checking for library containing connect" >&5
+if test "x$kpse_cv_have_win32" = xno; then
+  kpse_save_LIBS=$LIBS
+       { $as_echo "$as_me:$LINENO: checking for library containing connect" >&5
 $as_echo_n "checking for library containing connect... " >&6; }
 if test "${ac_cv_search_connect+set}" = set; then
   $as_echo_n "(cached) " >&6
@@ -17845,7 +17843,7 @@ return connect ();
   return 0;
 }
 _ACEOF
-for ac_lib in '' socket nsl wsock32; do
+for ac_lib in '' socket nsl; do
   if test -z "$ac_lib"; then
     ac_res="none required"
   else
@@ -17904,8 +17902,78 @@ if test "$ac_res" != no; then
 
 fi
 
-LIBS=$kpse_save_LIBS
-case $ac_cv_search_connect in
+       LIBS=$kpse_save_LIBS
+else
+  { $as_echo "$as_me:$LINENO: checking for main in -lwsock32" >&5
+$as_echo_n "checking for main in -lwsock32... " >&6; }
+if test "${ac_cv_lib_wsock32_main+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lwsock32  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  ac_cv_lib_wsock32_main=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_wsock32_main=no
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_wsock32_main" >&5
+$as_echo "$ac_cv_lib_wsock32_main" >&6; }
+if test "x$ac_cv_lib_wsock32_main" = x""yes; then
+  ac_cv_search_connect=wsock32
+else
+  ac_cv_search_connect=no
+fi
+
+fi
+
+
+if test "x$enable_ipc:$enable_luatex" != xno:no; then
+  case $ac_cv_search_connect in
   "none required") : ;;
   no) if test "x$enable_luatex" = xyes; then
   { { $as_echo "$as_me:$LINENO: error: Sorry, no socket library: can not build luaTeX" >&5
@@ -17914,20 +17982,19 @@ $as_echo "$as_me: error: Sorry, no socket library: can not build luaTeX" >&2;}
 else
   { $as_echo "$as_me:$LINENO: WARNING: no socket library: disabling ipc" >&5
 $as_echo "$as_me: WARNING: no socket library: disabling ipc" >&2;}
-                                   enable_ipc=no
+                                          enable_ipc=no
 fi
  ;;
   *) socketlibs="-l$ac_cv_search_connect" ;;
 esac
+
+fi
 
 if test "x$enable_ipc" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define IPC 1
 _ACEOF
-
-fi
-
 
 fi
 
@@ -18017,13 +18084,7 @@ else
   XETEX_SYNCTEX_TRUE='#'
   XETEX_SYNCTEX_FALSE=
 fi
- if false; then
-  TEX_SYNCTEX_TRUE=
-  TEX_SYNCTEX_FALSE='#'
-else
-  TEX_SYNCTEX_TRUE='#'
-  TEX_SYNCTEX_FALSE=
-fi
+
 if test "x$enable_aleph:$enable_xetex" = xno:no; then
   enable_otangle=no
 else
@@ -20722,7 +20783,9 @@ _ACEOF
 
 
 
-for ac_func in strerror
+
+
+for ac_func in access atoi strerror
 do
 as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 { $as_echo "$as_me:$LINENO: checking for $ac_func" >&5
@@ -20823,7 +20886,9 @@ fi
 done
 
 
-for ac_header in errno.h
+
+
+for ac_header in errno.h sys/timeb.h sys/wait.h
 do
 as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
@@ -22991,7 +23056,7 @@ if test "x$enable_luatex" = xyes; then
   ac_config_headers="$ac_config_headers ff-config.h:luatexdir/luafontloader/ff-config.in"
 
 
-for ac_header in langinfo_h
+for ac_header in langinfo.h
 do
 as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
@@ -24059,13 +24124,6 @@ if test -z "${XETEX_SYNCTEX_TRUE}" && test -z "${XETEX_SYNCTEX_FALSE}"; then
   { { $as_echo "$as_me:$LINENO: error: conditional \"XETEX_SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 $as_echo "$as_me: error: conditional \"XETEX_SYNCTEX\" was never defined.
-Usually this means the macro was only invoked conditionally." >&2;}
-   { (exit 1); exit 1; }; }
-fi
-if test -z "${TEX_SYNCTEX_TRUE}" && test -z "${TEX_SYNCTEX_FALSE}"; then
-  { { $as_echo "$as_me:$LINENO: error: conditional \"TEX_SYNCTEX\" was never defined.
-Usually this means the macro was only invoked conditionally." >&5
-$as_echo "$as_me: error: conditional \"TEX_SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi

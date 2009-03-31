@@ -828,7 +828,8 @@ ttfdump
 xdv2pdf
 xdvik
 xdvipdfmx
-tetex'
+tetex
+texlive'
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -3087,6 +3088,7 @@ test "x$enable_xdvipdfmx" = xno || {
 
 
 
+
 ## texk/kpathsea/ac/withenable.ac
 ## configure options and TL libraries required for kpathsea
 
@@ -4332,6 +4334,16 @@ if test -x $srcdir/tetex/configure; then
   DIST_SUBTEXK="$DIST_SUBTEXK tetex"
   if false; then
     subdirs="$subdirs tetex"
+
+  fi
+fi
+
+
+if test -x $srcdir/texlive/configure; then
+  test "x$enable_texlive" = xno || SUBTEXK="$SUBTEXK texlive"
+  DIST_SUBTEXK="$DIST_SUBTEXK texlive"
+  if false; then
+    subdirs="$subdirs texlive"
 
   fi
 fi

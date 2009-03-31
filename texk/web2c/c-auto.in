@@ -40,8 +40,14 @@
 /* web2c: Define to enable HackyInputFileNameForCoreDump.tex. */
 #undef FUNNY_CORE_DUMP
 
+/* Define to 1 if you have the `access' function. */
+#undef HAVE_ACCESS
+
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
+
+/* Define to 1 if you have the `atoi' function. */
+#undef HAVE_ATOI
 
 /* Define to 1 if you have the `bcmp' function. */
 #undef HAVE_BCMP
@@ -83,7 +89,7 @@
 /* Define to 1 if you have the <iostream> header file. */
 #undef HAVE_IOSTREAM
 
-/* Define to 1 if you have the <langinfo_h> header file. */
+/* Define to 1 if you have the <langinfo.h> header file. */
 #undef HAVE_LANGINFO_H
 
 /* Define to 1 if you have the `posix' library (-lposix). */
@@ -173,8 +179,14 @@
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
+/* Define to 1 if you have the <sys/timeb.h> header file. */
+#undef HAVE_SYS_TIMEB_H
+
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <sys/wait.h> header file. */
+#undef HAVE_SYS_WAIT_H
 
 /* Define to 1 if you have the <time.h> header file. */
 #undef HAVE_TIME_H
