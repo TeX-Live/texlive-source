@@ -20,7 +20,7 @@ EXTRA_DIST += mp.web mp.ch lib/texmfmp.c mpdir/mp.defines mpdir/mplib.h
 mpextra.c: lib/texmfmp.c mpd.h
 	sed s/TEX-OR-MF-OR-MP/mp/ $(srcdir)/lib/texmfmp.c >$@
 mp.p mp.pool: mp-tangle
-mp-tangle: tangle mp.web mp.ch
+mp-tangle: tangle$(EXEEXT) mp.web mp.ch
 	$(tangle) mp mp
 	echo timestamp >$@
 	touch mp.p mp.pool
@@ -48,8 +48,8 @@ libmpost_a_SOURCES = \
 	mpdir/writefont.c \
 	mpdir/writet1.c
 
-## We must create mpd.h before compiling the libmpost_a_SOURCES.
-$(libmpost_a_SOURCES): mpd.h
+## We must create mpd.h before building the libmpost_a_OBJECTS.
+$(libmpost_a_OBJECTS): mpd.h
 
 ## Eventually delete these files
 ##

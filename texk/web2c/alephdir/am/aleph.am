@@ -19,11 +19,10 @@ aleph_SOURCES = \
 	alephdir/alephextra.h \
 	alephdir/alephmem.h \
 	alephdir/aleph-pool.h
-## We must create alephd.h before compiling the aleph_SOURCES,
-## but certainly don't want to create alephd.h if Aleph is not built.
-if ALEPH
-$(aleph_SOURCES): alephd.h
-endif ALEPH
+
+## We must create alephd.h before building the aleph_OBJECTS.
+$(aleph_OBJECTS): alephd.h
+
 $(aleph_c_h): aleph-web2c
 aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines
 	$(web2c) aleph
@@ -32,7 +31,7 @@ aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines
 alephextra.c: lib/texmfmp.c alephdir/alephextra.h alephd.h
 	sed s/TEX-OR-MF-OR-MP/aleph/ $(srcdir)/lib/texmfmp.c >$@
 aleph.p aleph.pool: aleph-tangle
-aleph-tangle: otangle aleph.web aleph.ch
+aleph-tangle: otangle$(EXEEXT) aleph.web aleph.ch
 	$(otangle) aleph aleph
 	echo timestamp >$@
 	touch aleph.p aleph.pool

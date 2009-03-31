@@ -38,7 +38,7 @@ luatexextra.c: luatexd.h luatexdir/luatexextra.h lib/texmfmp.c
 	sed s/TEX-OR-MF-OR-MP/luatex/ $(srcdir)/lib/texmfmp.c >$@
 luatex_sources = luatexdir/luatex.web luatexdir/luatex.ch
 luatex.p luatex.pool: luatex-tangle
-luatex-tangle: luatangle $(luatex_sources)
+luatex-tangle: luatangle$(EXEEXT) $(luatex_sources)
 	$(luatex_tangle) --underlines luatex luatex
 	echo timestamp >$@
 	touch luatex.p luatex.pool
@@ -73,14 +73,9 @@ luatangle.c luatangle.h: $(web2c_common) $(web2c_programs) luatangle.p
 	$(web2c) luatangle
 EXTRA_DIST += $(luatangle_sources)
 luatangle_sources = luatexdir/luatangle.web luatexdir/luatangle.ch
-luatangle.p: tangle $(luatangle_sources)
+luatangle.p: tangle$(EXEEXT) $(luatangle_sources)
 	WEBINPUTS=$(srcdir)/luatexdir $(buildenv) $(TANGLE) luatangle luatangle
 DISTCLEANFILES += luatangle.c luatangle.h luatangle.p
-if HAVE_EXEEXT
-luatangle: luatangle$(EXEEXT)
-	echo timestamp >$@
-CLEANFILES += luatangle
-endif HAVE_EXEEXT
 
 ## liblua51
 ##
@@ -669,11 +664,8 @@ libluatex_a_SOURCES = \
 
 nodist_libluatex_a_SOURCES = $(lua_mp_c_h)
 
-## We must create lua_mp_c_h before compiling the libluatex_a_SOURCES,
-## but certainly don't want to create lua_mp_c_h if luaTeX is not built.
-if LUATEX
-$(libluatex_a_SOURCES): $(lua_mp_c_h)
-endif LUATEX
+## We must create lua_mp_c_h before building the libluatex_a_SOURCES.
+$(libluatex_a_OBJECTS): $(lua_mp_c_h)
 
 ## These files are mutually dependent
 lua_mp_c_h =  luatexdir/mp.c luatexdir/mplib.h luatexdir/mpmp.h
@@ -683,7 +675,7 @@ lua_mp_web =  luatexdir/mp/avl.h luatexdir/mp/avl.c luatexdir/mp/mp.w luatexdir/
 lua_mp_web += luatexdir/mp/memio.w luatexdir/mp/tfmin.w
 libluatex_a_CPPFLAGS += -I$(srcdir)/luatexdir/mp
 $(lua_mp_c_h): mp-ctangle
-mp-ctangle: ctangle $(lua_mp_web) luatexd.h
+mp-ctangle: ctangle$(EXEEXT) $(lua_mp_web) luatexd.h
 	$(mkdir_p) luatexdir
 	CWEBINPUTS=$(srcdir)/luatexdir/mp $(ctangle) mp.w
 	CWEBINPUTS=$(srcdir)/luatexdir/mp $(ctangle) psout.w

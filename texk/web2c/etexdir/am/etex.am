@@ -23,7 +23,7 @@ etex-web2c: etex.p $(web2c_texmf)
 etexextra.c: etexdir/etexextra.h lib/texmfmp.c etexd.h
 	sed s/TEX-OR-MF-OR-MP/etex/ $(srcdir)/lib/texmfmp.c >$@
 etex.p etex.pool: etex-tangle
-etex-tangle: tangle etex.web etex.ch
+etex-tangle: tangle$(EXEEXT) etex.web etex.ch
 	$(tangle) etex etex
 	echo timestamp >$@
 	touch etex.p etex.pool

@@ -14,7 +14,7 @@ tangle-web2c: tangle.p
 ## which we use to make the other programs.  We depend on tangleboot, even
 ## though we might not use it.
 EXTRA_DIST += tangle.web tangle.ch
-tangle.p: tangleboot tangle.web tangle.ch
+tangle.p: tangleboot$(EXEEXT) tangle.web tangle.ch
 	WEBINPUTS=.:$(srcdir) $(tangleboot) tangle tangle
 tangle.web:
 	@echo "You seem to be missing tangle.web, perhaps because you" >&2
@@ -27,11 +27,6 @@ tangle.web:
 	@echo "ftp://ftp.tug.org/tex/web.tar.gz." >&2
 	false
 DISTCLEANFILES += tangle.c tangle.h tangle.p tangle-web2c
-if HAVE_EXEEXT
-tangle: tangle$(EXEEXT)
-	echo timestamp >$@
-CLEANFILES += tangle
-endif HAVE_EXEEXT
 
 noinst_PROGRAMS += tangleboot
 nodist_tangleboot_SOURCES = tangleboot.c tangleboot.h
@@ -56,11 +51,6 @@ tangleboot.p: tangle.web tangle.ch
 	date >stamp-tangle
 	$(MAKE) $(AM_MAKEFLAGS) tangle$(EXEEXT)
 DISTCLEANFILES += stamp-tangle tangleboot.c tangleboot.h
-if HAVE_EXEEXT
-tangleboot: tangleboot$(EXEEXT)
-	echo timestamp >$@
-CLEANFILES += tangleboot
-endif HAVE_EXEEXT
 
 ## Bootstrapping ctangle requires making it with itself.  We use the opportunity
 ## to create an up-to-date ctangleboot as well.
@@ -71,16 +61,11 @@ nodist_ctangle_SOURCES = ctangle.c cweb.c
 EXTRA_DIST += cwebdir
 ## We install man/cweb.man, not cwebdir/cweb.1
 ## nodist_man_MANS += cwebdir/cweb.1
-ctangle.c: ctangleboot cwebdir/ctangle.w cwebdir/ctang-w2c.ch
+ctangle.c: ctangleboot$(EXEEXT) cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) ctangle ctang-w2c
-cweb.c: ctangleboot cwebdir/common.w cwebdir/comm-w2c.ch
+cweb.c: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) common comm-w2c cweb.c
 DISTCLEANFILES += ctangle.c cweb.c
-if HAVE_EXEEXT
-ctangle: ctangle$(EXEEXT)
-	echo timestamp >$@
-CLEANFILES += ctangle
-endif HAVE_EXEEXT
 
 noinst_PROGRAMS += ctangleboot
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
@@ -114,14 +99,9 @@ cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	date >stamp-ctangle
 	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
 DISTCLEANFILES += stamp-ctangle
-if HAVE_EXEEXT
-ctangleboot: ctangleboot$(EXEEXT)
-	echo timestamp >$@
-CLEANFILES += ctangleboot
-endif HAVE_EXEEXT
 
 ## Tests
-
+##
 dist_check_SCRIPTS += tangle.test
 
 TESTS += tangle.test
