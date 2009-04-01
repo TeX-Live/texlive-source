@@ -7051,7 +7051,7 @@ cweb.c: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) common comm-w2c cweb.c
 stamp-ctangle: ctangleboot.c cwebboot.c
 	date >stamp-ctangle
-ctangleboot.c: cwebdir/ctangle.w cwebdir/ctang-w2c.ch
+ctangleboot.c: cwebboot.c cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
 	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) ctangle ctang-w2c; \
 	  mv ctangle.c ctangleboot.c; \
@@ -7071,8 +7071,6 @@ cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	else \
 	  cp $(srcdir)/cwebboot.c .; \
 	fi
-	date >stamp-ctangle
-	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
 bibtex.c bibtex.h: bibtex-web2c
 bibtex-web2c: $(web2c_common) $(web2c_programs) web2c/cvtbib.sed bibtex.p
 	$(web2c) bibtex

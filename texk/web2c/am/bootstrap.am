@@ -1,7 +1,7 @@
 ## texk/web2c/am/bootstrap.am: Makefile fragment for tangle and ctangle.
 
 ## Bootstrapping tangle requires making it with itself.  We use the opportunity
-## to create an up-to-date tangleboot as well.
+## to create an up-to-date tangleboot.p as well.
 bin_PROGRAMS += tangle
 nodist_tangle_SOURCES = tangle.c tangle.h
 tangle.c tangle.h: tangle-web2c
@@ -53,7 +53,7 @@ tangleboot.p: tangle.web tangle.ch
 DISTCLEANFILES += stamp-tangle tangleboot.c tangleboot.h
 
 ## Bootstrapping ctangle requires making it with itself.  We use the opportunity
-## to create an up-to-date ctangleboot as well.
+## to create an up-to-date ctangleboot.c and cwebboot.c as well.
 bin_PROGRAMS += ctangle
 nodist_ctangle_SOURCES = ctangle.c cweb.c
 ## ctangle.c is a special case, since it is needed to compile itself.
@@ -76,7 +76,8 @@ stamp-ctangle: ctangleboot.c cwebboot.c
 ## This is not run unless one of the cwebdir/* files is changed.
 ## Only try to run ./ctangle if it actually exists, otherwise
 ## just touch ctangleboot.c and/or cwebboot.c and build ctangle.
-ctangleboot.c: cwebdir/ctangle.w cwebdir/ctang-w2c.ch
+## We must serialize this.
+ctangleboot.c: cwebboot.c cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
 	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) ctangle ctang-w2c; \
 	  mv ctangle.c ctangleboot.c; \
@@ -96,8 +97,6 @@ cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	else \
 	  cp $(srcdir)/cwebboot.c .; \
 	fi
-	date >stamp-ctangle
-	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
 DISTCLEANFILES += stamp-ctangle
 
 ## Tests

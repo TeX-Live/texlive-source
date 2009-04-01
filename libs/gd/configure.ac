@@ -72,9 +72,6 @@ fi
 GD_TREE=gd-[]gd_version
 AC_SUBST([GD_TREE])
 
-dnl Use $GD_TREE to exclude $GD_TREE/gd.h from DIST_COMMON
-AC_CONFIG_LINKS([gd.h:$GD_TREE/gd.h])
-
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT
