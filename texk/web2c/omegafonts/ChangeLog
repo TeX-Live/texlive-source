@@ -1,4 +1,9 @@
-2009-04-01  Taco Hoekwater <taco@luatex.org>
+2009-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pl-lexer.l: Add #ifdef __MINGW32__ to source file.
+	* pl-lexer.c: Regenerated.
+
+2009-04-01  Taco Hoekwater  <taco@luatex.org>
 
 	* pl-lexer.c: Add #ifdef __MINGW32__ to support compilation
 	using the mingw32 cross-compiler.
