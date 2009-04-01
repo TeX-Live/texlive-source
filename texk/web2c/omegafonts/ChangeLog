@@ -1,3 +1,8 @@
+2009-04-01  Taco Hoekwater <taco@luatex.org>
+
+	* pl-lexer.c: Add #ifdef __MINGW32__ to support compilation
+	using the mingw32 cross-compiler.
+
 2008-03-13  Karl Berry  <karl@tug.org>
 
 	* font_routines.c (font_no_incr): change test to avoid reported
