@@ -36,8 +36,6 @@ Used with permission.
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include "kpathsea/c-auto.h"
-#include "kpathsea/c-memstr.h"
 
 #ifndef EXIT_SUCCESS
 #define EXIT_SUCCESS 0

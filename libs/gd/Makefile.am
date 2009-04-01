@@ -82,7 +82,7 @@ libgd_a_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 @LIBPNG_RULE@
 
 stamp-gd:
-	@for file in $(built_sources); do \
+	@for file in $(BUILT_SOURCES); do \
 	  test -f $$file || { \
 	    echo "$(LN_S) $(srcdir)/$(GD_TREE)/$$file $$file"; \
 	    $(LN_S) $(srcdir)/$(GD_TREE)/$$file $$file; } || exit 1; \

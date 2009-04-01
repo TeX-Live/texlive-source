@@ -5,6 +5,11 @@ ChangeLog: Changes for xdvik (teTeX / TeX Live)
 	Imported ftp://tug.org/tex/xdvik-22.84.15.tar.gz and
 	adapted to new TeX Live build system (Automake & Co.).
 
+	* squeeze.c (removed): File moved ...
+	* squeeze/squeeze.c (new): ... to here. Don't include
+	any system dependent kpathsea headers, such that squeeze/
+	can be configured separately for the build system.
+
 2008-07-01
 	Imported ftp://tug.org/tex/xdvik-22.84.14.tar.gz and
 	adapted to new TeX Live build system (autoconf-2.59+).

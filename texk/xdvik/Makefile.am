@@ -1,9 +1,22 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+SUBDIRS = squeeze
+
+BUILT_SOURCES = psheader.c
+
+psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
+	squeeze/squeeze $(srcdir)/psheader.txt $@
+
+squeeze/squeeze$(EXEEXT):
+	cd squeeze && $(MAKE) $(AM_MAKEFLAGS)
+
+EXTRA_DIST = psheader.txt
+CLEANFILES = psheader.c
+
 ## Not yet used
 ##
-EXTRA_DIST = \
+EXTRA_DIST += \
 	BUGS \
 	CHANGES \
 	ChangeLog.TL \
@@ -142,7 +155,6 @@ EXTRA_DIST = \
 	psdps.h \
 	psgs.c \
 	psgs.h \
-	psheader.txt \
 	psnews.c \
 	psnews.h \
 	read-mapfile.c \
@@ -151,7 +163,6 @@ EXTRA_DIST = \
 	search-internal.h \
 	special.c \
 	special.h \
-	squeeze.c \
 	string-utils.c \
 	string-utils.h \
 	string_list.c \
