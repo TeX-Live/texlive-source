@@ -51,12 +51,12 @@ AC_PATH_XTRA
 AC_PROG_CXX
 
 if test "x$mandir" = 'x${datarootdir}/man'; then
-  mandir='${prefix}/doc/man'
+  mandir='${prefix}/texmf/doc/man'
   ac_configure_args="$ac_configure_args '--mandir=$mandir'"  
 fi
 
 if test "x$infodir" = 'x${datarootdir}/info'; then
-  infodir='${prefix}/doc/info'
+  infodir='${prefix}/texmf/doc/info'
   ac_configure_args="$ac_configure_args '--infodir=$infodir'"  
 fi
 

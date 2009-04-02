@@ -169,7 +169,7 @@ EXTRA_DIST = amstex amstex.bat blue.bat cont-cz.bat cont-de \
 	csplaini.bat csplaink.bat einitex elatex elatex.bat eplain \
 	eplain.bat evirtex giftopng hugelatex hugelatex.bat hugetex \
 	hugetex.bat inimf inimpost iniomega initex jadetex jadetex.bat \
-	lambda lamstex.bat latex lollipop.bat mex \mex.bat mex-pl.bat \
+	lambda lamstex.bat latex lollipop.bat mex mex.bat mex-pl.bat \
 	mllatex mllatex.bat mltex mltex.bat mptopdf nts pdfcslatex \
 	pdfcslatex.bat pdfcslatexd.bat pdfcslatexi.bat pdfcslatexk.bat \
 	pdfcsplain pdfcsplain.bat pdfcsplaind.bat pdfcsplaini.bat \

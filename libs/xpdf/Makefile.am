@@ -115,3 +115,7 @@ EXTRA_DIST += xpdf-3.02-pdftex.patch
 
 EXTRA_DIST += xpdf-3.02-time_h.patch
 
+## Patch required for some mingw32
+
+EXTRA_DIST += xpdf-3.02-mingw32.patch
+

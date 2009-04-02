@@ -39,7 +39,7 @@ EXTRA_DIST = \
 	lambda lamstex.bat \
 	latex \
 	lollipop.bat \
-	mex \mex.bat \
+	mex mex.bat \
 	mex-pl.bat \
 	mllatex mllatex.bat \
 	mltex mltex.bat \

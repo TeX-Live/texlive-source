@@ -9,11 +9,10 @@ Please inform me of any failures!
 
 The new build system is nearly complete, except for the directories
 
-	texk/texlive
 	texk/xdvik
 	texk/web2c/xetexdir
 	utils/xindy
 
 and a few features not yet available.
 
-Peter Breitenlohner	2009-03-30	14:00 UTC
+Peter Breitenlohner	2009-04-02	14:00 UTC

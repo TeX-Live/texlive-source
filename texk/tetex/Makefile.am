@@ -110,6 +110,7 @@ install-data-hook:
 	  && rm -f allec.1 ctangle.1 cweave.1 fmtutil-sys.1 kpsexpand.1 \
 	    kpsepath.1 lambda.1 mf-nowin.1 mktexfmt.1 odvicopy.1 \
 	    odvitype.1 pdflatex.1 texconfig-sys.1 texhash.1 updmap-sys.1 \
+	  && $(LN_S) aleph.1 lambda.1 \
 	  && $(LN_S) allcm.1 allec.1 \
 	  && $(LN_S) cweb.1 ctangle.1 \
 	  && $(LN_S) cweb.1 cweave.1 \
@@ -121,7 +122,6 @@ install-data-hook:
 	  && $(LN_S) kpsetool.1 kpsepath.1 \
 	  && $(LN_S) mf.1 mf-nowin.1 \
 	  && $(LN_S) mktexlsr.1 texhash.1  \
-	  && $(LN_S) omega.1 lambda.1 \
 	  && $(LN_S) pdftex.1 pdflatex.1 \
 	  && $(LN_S) texconfig.1 texconfig-sys.1 \
 	  && $(LN_S) updmap.1 updmap-sys.1
