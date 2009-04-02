@@ -1,0 +1,14 @@
+diff -ur xpdf-3.02.orig/xpdf/GlobalParams.cc xpdf-3.02/xpdf/GlobalParams.cc
+--- xpdf-3.02.orig/xpdf/GlobalParams.cc	2009-03-20 08:45:16.000000000 +0100
++++ xpdf-3.02/xpdf/GlobalParams.cc	2009-04-02 10:22:18.000000000 +0200
+@@ -44,6 +44,10 @@
+ 
+ #include <aconf.h>
+ 
++#ifdef __MINGW32__
++#undef WIN32
++#endif
++
+ #ifdef USE_GCC_PRAGMAS
+ #pragma implementation
+ #endif

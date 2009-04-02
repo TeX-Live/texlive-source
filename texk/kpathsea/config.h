@@ -73,7 +73,21 @@
 #define KPATHSEA 34
 #endif
 
+#ifdef __MINGW32__
+/* In mingw32, the eof() function is part of the !_NO_OLDNAMES section
+   of <io.h>, that is read in automatically via <unistd.h>. We cannot
+   allow that because web2c/lib/eofeoln.c defines a private,
+   incompatible function named eof().
+   But many of the other things defined via !_NO_OLDNAMES are needed,
+   so #define _NO_OLDNAMES cannot be used. So, temporarily define eof
+   as a macro.
+*/
+#define eof saved_eof
 #include <kpathsea/c-std.h>    /* <stdio.h>, <math.h>, etc.  */
+#undef eof
+#else
+#include <kpathsea/c-std.h>    /* <stdio.h>, <math.h>, etc.  */
+#endif
 
 #include <kpathsea/c-proto.h>  /* Macros to discard or keep prototypes.  */
 

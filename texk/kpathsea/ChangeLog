@@ -1,3 +1,10 @@
+2009-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* config.h: For __MINGW32__ temporarily define eof as macro
+	while including <unistd.h>.
+
+	From Taco Hoekwater <taco@elvenkind.com>.
+
 2009-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpathsea.c: Do not use initializer for kpse_def_inst (FIXME:

@@ -44,6 +44,10 @@
 
 #include <aconf.h>
 
+#ifdef __MINGW32__
+#undef WIN32
+#endif
+
 #ifdef USE_GCC_PRAGMAS
 #pragma implementation
 #endif

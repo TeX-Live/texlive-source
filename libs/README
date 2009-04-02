@@ -31,6 +31,8 @@ Libraries we compile for TeX Live.
     xpdf/xpdf-3.02-pdftex.patch
   Applied patch for djgpp:
     xpdf/xpdf-3.02-time_h.patch
+  Applied patch for mingw32:
+    xpdf/xpdf-3.02-mingw32.patch
 
 ==> zlib <==
   Original sources from:

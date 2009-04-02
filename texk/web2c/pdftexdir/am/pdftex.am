@@ -52,7 +52,7 @@ pdftexdir/pdftex.version: pdftexdir/pdftex.web
 	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-//;s/'.*$$//" >pdftexdir/pdftex.version
 pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexdir/etex.version
-	sed -e s/PDFTEX-VERSION/`cat $(pdftexdir)/pdftex.version`/ \
+	sed -e s/PDFTEX-VERSION/`cat pdftexdir/pdftex.version`/ \
 	    -e s/ETEX-VERSION/`cat etexdir/etex.version`/ \
 	  $(srcdir)/pdftexdir/pdftexextra.in >$@
 ## Generate pdftex.ch

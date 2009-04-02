@@ -14,6 +14,28 @@ squeeze/squeeze$(EXEEXT):
 EXTRA_DIST = psheader.txt
 CLEANFILES = psheader.c
 
+xdvidir = ${prefix}/texmf/xdvi
+dist_xdvi_DATA = texmf/XDvi
+
+pixmapdir = ${prefix}/texmf/xdvi/pixmap
+dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
+
+dist_noinst_DATA = texmf/xdvi.cfg
+
+install-data-hook:
+	@if grep "original xdvi.cfg --" "$(DESTDIR)$(xdvidir)/xdvi.cfg" >/dev/null 2>&1 \
+	    || test ! -r "$(DESTDIR)$(xdvidir)/xdvi.cfg"; then \
+	  echo " $(INSTALL_DATA) '$(srcdir)/texmf/xdvi.cfg' '$(DESTDIR)$(xdvidir)/xdvi.cfg'"; \
+	  $(INSTALL_DATA) "$(srcdir)/texmf/xdvi.cfg" "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
+	else :; fi
+
+uninstall-hook:
+	@if grep "original xdvi.cfg --" "$(DESTDIR)$(xdvidir)/xdvi.cfg" >/dev/null 2>&1 \
+	    || test ! -r "$(DESTDIR)$(xdvidir)/xdvi.cfg"; then \
+	  echo " rm -f '$(DESTDIR)$(xdvidir)/xdvi.cfg'"; \
+	  rm -f "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
+	else :; fi
+
 ## Not yet used
 ##
 EXTRA_DIST += \
@@ -143,8 +165,6 @@ EXTRA_DIST += \
 	pixmaps/magglass_mask.xbm \
 	pixmaps/time16.xbm \
 	pixmaps/time16_mask.xbm \
-	pixmaps/toolbar.xpm \
-	pixmaps/toolbar2.xpm \
 	pixmaps/xdvi16x16.xpm \
 	pixmaps/xdvi32x32.xpm \
 	pixmaps/xdvi48x48.xpm \
@@ -178,8 +198,6 @@ EXTRA_DIST += \
 	tests/test_string_list.c \
 	tests/test_string_utils.c \
 	tests/test_util.c \
-	texmf/XDvi \
-	texmf/xdvi.cfg \
 	texmf-alt/README \
 	texmf-alt/charter2.map \
 	texmf-alt/lucida.map \

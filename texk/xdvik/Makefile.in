@@ -13,6 +13,7 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -32,7 +33,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = .
-DIST_COMMON = $(am__configure_deps) \
+DIST_COMMON = $(am__configure_deps) $(dist_noinst_DATA) \
+	$(dist_pixmap_DATA) $(dist_xdvi_DATA) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/install-sh \
@@ -70,6 +72,16 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	install-pdf-recursive install-ps-recursive install-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+am__installdirs = "$(DESTDIR)$(pixmapdir)" "$(DESTDIR)$(xdvidir)"
+dist_pixmapDATA_INSTALL = $(INSTALL_DATA)
+dist_xdviDATA_INSTALL = $(INSTALL_DATA)
+DATA = $(dist_noinst_DATA) $(dist_pixmap_DATA) $(dist_xdvi_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
@@ -243,8 +255,7 @@ EXTRA_DIST = psheader.txt BUGS CHANGES ChangeLog.TL FAQ LESSTIF-BUGS \
 	pixmaps/fist.xbm pixmaps/fist_mask.xbm pixmaps/hand.xbm \
 	pixmaps/hand_mask.xbm pixmaps/magglass.xbm \
 	pixmaps/magglass_mask.xbm pixmaps/time16.xbm \
-	pixmaps/time16_mask.xbm pixmaps/toolbar.xpm \
-	pixmaps/toolbar2.xpm pixmaps/xdvi16x16.xpm \
+	pixmaps/time16_mask.xbm pixmaps/xdvi16x16.xpm \
 	pixmaps/xdvi32x32.xpm pixmaps/xdvi48x48.xpm pk.c \
 	print-internal.c print-internal.h psdps.c psdps.h psgs.c \
 	psgs.h psnews.c psnews.h read-mapfile.c read-mapfile.h \
@@ -253,9 +264,9 @@ EXTRA_DIST = psheader.txt BUGS CHANGES ChangeLog.TL FAQ LESSTIF-BUGS \
 	t1mapper t1mapper.1 tests/Makefile.in tests/README \
 	tests/run_tests.c tests/run_tests.h tests/test1.c \
 	tests/test_dl_list.c tests/test_string_list.c \
-	tests/test_string_utils.c tests/test_util.c texmf/XDvi \
-	texmf/xdvi.cfg texmf-alt/README texmf-alt/charter2.map \
-	texmf-alt/lucida.map texmf-alt/marvosym.map texmf-alt/xdvi.cfg \
+	tests/test_string_utils.c tests/test_util.c texmf-alt/README \
+	texmf-alt/charter2.map texmf-alt/lucida.map \
+	texmf-alt/marvosym.map texmf-alt/xdvi.cfg \
 	texmf-alt/xdvifont.map texmf-alt/xypic.map tfmload.c tfmload.h \
 	translations.h util.c util.h version.h vf.c x_util.c x_util.h \
 	xdvi-config.h xdvi-debug.h xdvi-search.el xdvi-sh.in xdvi.1.in \
@@ -270,6 +281,11 @@ EXTRA_DIST = psheader.txt BUGS CHANGES ChangeLog.TL FAQ LESSTIF-BUGS \
 	Makefile.in.orig configure.in.orig gui/Makefile.in.orig \
 	kpathsea.ac.orig tests/Makefile.in.orig withenable.ac.orig
 CLEANFILES = psheader.c
+xdvidir = ${prefix}/texmf/xdvi
+dist_xdvi_DATA = texmf/XDvi
+pixmapdir = ${prefix}/texmf/xdvi/pixmap
+dist_pixmap_DATA = pixmaps/toolbar.xpm pixmaps/toolbar2.xpm
+dist_noinst_DATA = texmf/xdvi.cfg
 all: $(BUILT_SOURCES) c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -333,6 +349,40 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
+install-dist_pixmapDATA: $(dist_pixmap_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(pixmapdir)" || $(MKDIR_P) "$(DESTDIR)$(pixmapdir)"
+	@list='$(dist_pixmap_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(dist_pixmapDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(pixmapdir)/$$f'"; \
+	  $(dist_pixmapDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(pixmapdir)/$$f"; \
+	done
+
+uninstall-dist_pixmapDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_pixmap_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(pixmapdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(pixmapdir)/$$f"; \
+	done
+install-dist_xdviDATA: $(dist_xdvi_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(xdvidir)" || $(MKDIR_P) "$(DESTDIR)$(xdvidir)"
+	@list='$(dist_xdvi_DATA)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  f=$(am__strip_dir) \
+	  echo " $(dist_xdviDATA_INSTALL) '$$d$$p' '$(DESTDIR)$(xdvidir)/$$f'"; \
+	  $(dist_xdviDATA_INSTALL) "$$d$$p" "$(DESTDIR)$(xdvidir)/$$f"; \
+	done
+
+uninstall-dist_xdviDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_xdvi_DATA)'; for p in $$list; do \
+	  f=$(am__strip_dir) \
+	  echo " rm -f '$(DESTDIR)$(xdvidir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(xdvidir)/$$f"; \
+	done
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -615,9 +665,12 @@ distcleancheck: distclean
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile c-auto.h
+all-am: Makefile $(DATA) c-auto.h
 installdirs: installdirs-recursive
 installdirs-am:
+	for dir in "$(DESTDIR)$(pixmapdir)" "$(DESTDIR)$(xdvidir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) install-recursive
 install-exec: install-exec-recursive
@@ -665,7 +718,9 @@ info: info-recursive
 
 info-am:
 
-install-data-am:
+install-data-am: install-dist_pixmapDATA install-dist_xdviDATA
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
 install-dvi: install-dvi-recursive
 
@@ -701,10 +756,12 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-dist_pixmapDATA uninstall-dist_xdviDATA
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
-	install-strip
+	install-data-am install-strip uninstall-am
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-am clean clean-generic \
@@ -713,14 +770,17 @@ uninstall-am:
 	distclean distclean-generic distclean-hdr distclean-libtool \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-recursive uninstall uninstall-am
+	install-data install-data-am install-data-hook \
+	install-dist_pixmapDATA install-dist_xdviDATA install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am \
+	uninstall-dist_pixmapDATA uninstall-dist_xdviDATA \
+	uninstall-hook
 
 
 psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
@@ -728,6 +788,20 @@ psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
 
 squeeze/squeeze$(EXEEXT):
 	cd squeeze && $(MAKE) $(AM_MAKEFLAGS)
+
+install-data-hook:
+	@if grep "original xdvi.cfg --" "$(DESTDIR)$(xdvidir)/xdvi.cfg" >/dev/null 2>&1 \
+	    || test ! -r "$(DESTDIR)$(xdvidir)/xdvi.cfg"; then \
+	  echo " $(INSTALL_DATA) '$(srcdir)/texmf/xdvi.cfg' '$(DESTDIR)$(xdvidir)/xdvi.cfg'"; \
+	  $(INSTALL_DATA) "$(srcdir)/texmf/xdvi.cfg" "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
+	else :; fi
+
+uninstall-hook:
+	@if grep "original xdvi.cfg --" "$(DESTDIR)$(xdvidir)/xdvi.cfg" >/dev/null 2>&1 \
+	    || test ! -r "$(DESTDIR)$(xdvidir)/xdvi.cfg"; then \
+	  echo " rm -f '$(DESTDIR)$(xdvidir)/xdvi.cfg'"; \
+	  rm -f "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
+	else :; fi
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
