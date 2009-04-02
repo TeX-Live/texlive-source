@@ -146,7 +146,6 @@ EXTRA_DIST += \
 	doc/TETEXDOC.tex \
 	fontinst.bat \
 	pdfetex-pl.pool \
-	texdoc.man \
 	updmap.pl \
 	win32/epstopdf.c \
 	win32/epstopdf.txt

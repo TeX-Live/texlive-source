@@ -71,7 +71,6 @@ EXTRA_DIST = \
 	platex platex.bat \
 	platex-pl.bat \
 	startex startex.bat \
-	texdoc.man \
 	texinfo texinfo.bat \
 	texsis texsis.bat \
 	text1 text1.bat \
