@@ -20031,6 +20031,16 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+if test "x$mandir" = 'x${datarootdir}/man'; then
+  mandir='${prefix}/doc/man'
+  ac_configure_args="$ac_configure_args '--mandir=$mandir'"
+fi
+
+if test "x$infodir" = 'x${datarootdir}/info'; then
+  infodir='${prefix}/doc/info'
+  ac_configure_args="$ac_configure_args '--infodir=$infodir'"
+fi
+
 if test "x$enable_web2c" = xyes && test "x$with_system_kpathsea" = xyes; then
   if test "x$with_kpathsea_includes" = x; then
     list="/usr/include /usr/local/include"

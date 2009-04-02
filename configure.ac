@@ -50,6 +50,16 @@ AC_PATH_XTRA
 
 AC_PROG_CXX
 
+if test "x$mandir" = 'x${datarootdir}/man'; then
+  mandir='${prefix}/doc/man'
+  ac_configure_args="$ac_configure_args '--mandir=$mandir'"  
+fi
+
+if test "x$infodir" = 'x${datarootdir}/info'; then
+  infodir='${prefix}/doc/info'
+  ac_configure_args="$ac_configure_args '--infodir=$infodir'"  
+fi
+
 dnl Although quite unusual, it is possible to build Web2C (TeX & Co)
 dnl using installed (system) kpathsea headers and library.
 dnl In that case we need the location of <kpathsea/paths.h>.
