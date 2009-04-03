@@ -18,13 +18,13 @@ with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+#include <aconf.h>
 #include <stdlib.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <aconf.h>
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>

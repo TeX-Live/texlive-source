@@ -23,7 +23,11 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #  include <stdio.h>
 #endif
 #include <sys/types.h>
+#ifdef WIN32
+#define EX_SOFTWARE EXIT_FAILURE
+#else
 #include <sysexits.h>
+#endif
 #include <regex.h>
 #include <kpathsea/c-proto.h>
 #include <kpathsea/c-stat.h>

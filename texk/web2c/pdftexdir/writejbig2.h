@@ -23,10 +23,10 @@ is part of Adobe PDF-1.4, and requires Acroread 5.0 or later.
 $Id$
 ***********************************************************************/
 
+#include "ptexlib.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include "ptexlib.h"
 #include "ptexmac.h"
 #include "image.h"
 

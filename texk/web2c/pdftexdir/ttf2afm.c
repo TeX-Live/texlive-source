@@ -728,7 +728,7 @@ void print_glyph_name(FILE * f, long glyph_index, int convention)
                             u->code);
                 }
                 ttf_warn
-                    ("glyph %li have multiple encodings (the first one being used): %s",
+                    ("glyph %li has multiple encodings (the first one being used): %s",
                      glyph_index, buf);
             }
         }

@@ -765,6 +765,8 @@ static void t1_scan_param(void)
         return;
     if (t1_prefix(lenIV)) {
         t1_lenIV = t1_scan_num(t1_line_array + strlen(lenIV), 0);
+        if (t1_lenIV < 0)
+            pdftex_fail("negative value of lenIV is not supported");
         return;
     }
     t1_scan_keys();
@@ -1119,10 +1121,44 @@ static void cs_fail(const char *cs_name, int subr, const char *fmt, ...)
         pdftex_fail("CharString (/%s): %s", cs_name, buf);
 }
 
+/* fix a return-less subr by appending CS_RETURN */
+static void append_cs_return(cs_entry *ptr)
+{
+    unsigned short cr;
+    int i, k;
+    byte *p, *q, *data, *new_data;
+    assert(ptr != NULL && ptr->valid && ptr->used);
+
+    /* decrypt the cs data to t1_buf_array, append CS_RETURN */
+    p = t1_buf_array;
+    data = ptr->data + 4;
+    cr = 4330;
+    for (i = 0; i < ptr->cslen; i++)
+        *p++ = cs_getchar();
+    *p = CS_RETURN;
+
+    /* encrypt the new cs data to new_data */
+    new_data = xtalloc(ptr->len + 1, byte);
+    memcpy(new_data, ptr->data, 4);
+    p = new_data + 4;
+    q = t1_buf_array;
+    cr = 4330;
+    for (i = 0; i < ptr->cslen + 1; i++)
+        *p++ = cencrypt(*q++, &cr);
+    memcpy(p, ptr->data + 4 + ptr->cslen, ptr->len - ptr->cslen - 4);
+
+    /* update *ptr */
+    xfree(ptr->data);
+    ptr->data = new_data;
+    ptr->len++;
+    ptr->cslen++;
+}
+
 static void cs_mark(const char *cs_name, int subr)
 {
     byte *data;
     int i, b, cs_len;
+    int last_cmd = 0;
     integer a, a1, a2;
     unsigned short cr;
     static integer lastargOtherSubr3 = 3;       /* the argument of last call to
@@ -1207,6 +1243,7 @@ static void cs_mark(const char *cs_name, int subr)
                             "more arguments on stack (%i) than required (%i)",
                             (int) (stack_ptr - cc_stack), (int) cc->nargs);
             }
+            last_cmd = b;
             switch (cc - cc_tab) {
             case CS_CALLSUBR:
                 a1 = cc_get(-1);
@@ -1246,6 +1283,12 @@ static void cs_mark(const char *cs_name, int subr)
                     cc_clear();
             }
         }
+    }
+    if (cs_name == NULL && last_cmd != CS_RETURN) {
+        pdftex_warn("last command in subr `%i' is not a RETURN; " 
+                    "I will add it now but please consider fixing the font", 
+                    (int) subr);
+        append_cs_return(ptr);
     }
     return;
   cs_error:                    /* an error occured during parsing */
@@ -1491,14 +1534,12 @@ static void t1_flush_cs(boolean is_subr)
     if (is_subr) {
         cr = 4330;
         cs_len = 0;
+        /* at this point we have t1_lenIV >= 0; 
+         * a negative value would be caught in t1_scan_param() */
         return_cs = xtalloc(t1_lenIV + 1, byte);
-        if (t1_lenIV > 0) {
-            for (cs_len = 0, r = return_cs; cs_len < t1_lenIV; cs_len++, r++)
-                *r = cencrypt(0x00, &cr);
-            *r = cencrypt(CS_RETURN, &cr);
-        } else {
-            *return_cs = CS_RETURN;
-        }
+        for (cs_len = 0, r = return_cs; cs_len < t1_lenIV; cs_len++, r++)
+            *r = cencrypt(0x00, &cr);
+        *r = cencrypt(CS_RETURN, &cr);
         cs_len++;
     }
 

@@ -15959,19 +15959,19 @@ begin
     pdf_end_text;
     pdf_print_ln("q");
     if h <= one_bp then begin
-        pdf_set_origin_temp(cur_h, cur_v - (h + 1)/2);
+        pdf_set_origin_temp(x, y - (h + 1)/2);
         pdf_print("[]0 d 0 J ");
         pdf_print_bp(h); pdf_print(" w 0 0 m ");
         pdf_print_bp(w); pdf_print_ln(" 0 l S");
     end
     else if w <= one_bp then begin
-        pdf_set_origin_temp(cur_h + (w + 1)/2, cur_v);
+        pdf_set_origin_temp(x + (w + 1)/2, y);
         pdf_print("[]0 d 0 J ");
         pdf_print_bp(w); pdf_print(" w 0 0 m 0 ");
         pdf_print_bp(h); pdf_print_ln(" l S");
     end
     else begin
-        pdf_set_origin_temp(cur_h, cur_v);
+        pdf_set_origin_temp(x, y);
         pdf_print("0 0 ");
         pdf_print_bp(w); pdf_out(" ");
         pdf_print_bp(h); pdf_print_ln(" re f");
@@ -34766,7 +34766,7 @@ pdf_annot_node: begin
     print_mark(pdf_annot_data(p));
 end;
 pdf_start_link_node: begin
-    print_esc("pdflink");
+    print_esc("pdfstartlink");
     @<Display <rule spec> for whatsit node created by \pdfTeX@>;
     if pdf_link_attr(p) <> null then begin
         print(" attr");
@@ -35525,7 +35525,7 @@ nesting level.
 
 @ @<Types...@>=
 @!pdf_link_stack_record = record
-    nesting_level: small_number;
+    nesting_level: integer;
     link_node: pointer; {holds a copy of the corresponding |pdf_start_link_node|}
     ref_link_node: pointer; {points to original |pdf_start_link_node|, or a
                              copy of |link_node| created by |append_link| in
