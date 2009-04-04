@@ -1,3 +1,12 @@
+2009-04-04  Karl Berry  <karl@tug.org>
+
+	* writet1.c (append_cs_return): new fn.
+	(cs_mark): check for missing return in subr.
+	(t1_flush_cs): repair missing return.
+	(t1_scan_param): check for negative lenIV.
+	These changes from Thanh, following more investigation by Melissa,
+	ChoF, and Thanh.
+
 2009-03-24  Karl Berry  <karl@tug.org>
 
 	* writet1.c (t1_flush_cs): t1_lenIV >= 0, not
