@@ -1,3 +1,9 @@
+2009-04-05  Taco Hoekwater  <taco@elvenkind.com>
+
+	* doc/kpathsea.texi,
+	* doc/bugs.texi: updates for new reentrant API, mostly for
+	kpse->debug replacing the global kpathsea_debug.
+
 2009-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* config.h: For __MINGW32__ temporarily define eof as macro

@@ -2,14 +2,14 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 3.5.7
-@set month-year July 2008
+@set version 5.0.0
+@set month-year April 2009
 
 @copying
 This file documents the Kpathsea library for path searching.
 
 Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007, 2008 Karl Berry & Olaf Weber.
+2004, 2005, 2007, 2008, 2009 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -30,7 +30,7 @@ permission notice identical to this one.
 Permission is granted to copy and distribute translations of this manual
 into another language, under the above conditions for modified versions,
 except that this permission notice may be stated in a translation
-approved by the Free Software Foundation.
+approved by the TeX Users Group.
 @end copying
 
 @c Define new indices for commands, filenames, and options.
@@ -67,6 +67,7 @@ approved by the Free Software Foundation.
 @subtitle @value{month-year}
 @author Karl Berry (@email{kb@@mail.tug.org})
 @author Olaf Weber (@email{infovore@@xs4all.nl})
+@author Taco Hoekwater (@email{taco@@luatex.org})
 
 @page
 @vskip 0pt plus 1filll
@@ -148,21 +149,10 @@ the source to your program, although we hope you will.  See the files
 @cindex @TeX{} Users Group
 If you know enough about @TeX{} to be reading this manual, then you (or
 your institution) should consider joining the @TeX{} Users Group (if
-you're already a member, great!).  TUG produces the periodical
+you're already a member, thanks!).  TUG produces the periodical
 @cite{TUGboat}, sponsors an annual meeting and publishes the
 proceedings, and arranges courses on @TeX{} for all levels of users
-throughout the world.  Anyway, here is the address:
-
-@flindex tug@@tug.org
-@display
-@TeX{} Users Group
-P.O. Box 2311
-Portland OR 97208-2311
-USA
-phone: +1 503 223-9994
-fax:   +1 503 223-3960
-email: @email{tug@@tug.org}
-@end display
+throughout the world.  See @url{http://tug.org} for information.
 
 @menu
 * History::
@@ -1943,8 +1933,8 @@ which *already* have an extension.  A name without an extension (e.g.,
 @samp{tex story}) will always have an extension added first.
 
 @flindex tex-file.c
-@findex kpse_find_file
-This algorithm is implemented in the routine @code{kpse_find_file} in
+@findex kpathsea_find_file
+This algorithm is implemented in the routine @code{kpathsea_find_file} in
 @file{kpathsea/tex-file.c}.  You can watch it in action with the
 debugging options (@pxref{Debugging}).
 
@@ -1980,8 +1970,8 @@ last-resort font (typically @samp{cmr10}).
 @end enumerate
 
 @flindex tex-glyph.c
-@findex kpse_find_glyph_format
-This is implemented in @code{kpse_find_glyph_format} in
+@findex kpathsea_find_glyph
+This is implemented in @code{kpathsea_find_glyph} in
 @file{kpathsea/tex-glyph.c}.
 
 @menu
@@ -2124,11 +2114,10 @@ variable @code{default_texsizes}).  You can set this list to be empty if
 you prefer to find fonts at their stated size or not at all.
 
 @flindex cmr10@r{, as fallback font}
-@vindex kpse_fallback_font
+@findex kpathsea_init_prog
 Finally, if the font cannot be found even at the fallback resolutions,
 Kpathsea looks for a fallback font, typically @file{cmr10}.  Programs
-must enable this feature by assigning to the global variable
-@code{kpse_fallback_font} or calling @code{kpse_init_prog}
+must enable this feature by  calling @code{kpathsea_init_prog}
 (@pxref{Calling sequence}); the default is no fallback font.
 
 
@@ -2199,15 +2188,25 @@ This chapter is for programmers who wish to use Kpathsea.
 @cindex programming overview
 @cindex overview of programming with Kpathsea
 
-Aside from this manual, your best source of information is the source to
-the programs I've modified to use Kpathsea (@pxref{Introduction}).  Of
-those, Dviljk is probably the simplest, and hence a good place to start.
-Xdvik adds VF support and the complication of X resources.  Dvipsk adds
-the complication of its own config files.  Web2c is source code I also
-maintain, so it uses Kpathsea rather straightforwardly, but is of course
-complicated by the Web to C translation.  Finally, Kpsewhich is a small
-utility program whose sole purpose is to exercise the main
+Aside from this manual, your best source of information is the source
+to the programs that use Kpathsea (@pxref{Introduction}).  Of those,
+Dviljk is probably the simplest, and hence a good place to start.
+Xdvik adds VF support and the complication of X resources.  Dvipsk
+adds the complication of its own config files.  Web2c is source code I
+also maintain, so it uses Kpathsea rather straightforwardly, but is of
+course complicated by the Web to C translation.  Finally, Kpsewhich is
+a small utility program whose sole purpose is to exercise the main
 path-searching functionality.
+
+@cindex re-entrant API
+@cindex API, re-entrant
+When looking at these program sources, you should know that previous
+versions of the library had a different programming interface, to
+support re-entrancy.  In that interface the library function names
+were prefixed with @code{kpse_} instead of @code{kpathsea_}, and they
+did not need an instance variable as first argument.  This change was
+made in 2009.  Some of the programs mentioned above may still be using
+the previous interface.
 
 @flindex pathsearch.h
 @flindex tex-file.h
@@ -2257,25 +2256,32 @@ The typical way to use Kpathsea in your program goes something like this:
 @enumerate
 
 @item
-@findex kpse_set_program_name
+@findex kpathsea_new
+Call @code{kpathsea_new} to create a new library instance. This variable
+must be passed as the first argument to all the following library functions.
+The rest of this manual will be using @code{kpse} as a placeholder for
+the name of this variable.
+
+@item
+@findex kpathsea_set_program_name
 @vindex argv[0]
-Call @code{kpse_set_program_name} with @code{argv[0]} as the first
-argument; the second argument is a string or @code{NULL}.  The second
+Call @code{kpathsea_set_program_name} with @code{argv[0]} as the second
+argument; the third argument is a string or @code{NULL}.  The third
 argument is used by Kpathsea as the program name for the
 @code{.@var{program}} feature of config files (@pxref{Config files}).
-If the second argument is @code{NULL}, the value of the first argument
+If the third argument is @code{NULL}, the value of the second argument
 is used.  This function must be called before any other use of the
 Kpathsea library.
 
-@vindex program_invocation_name
-@vindex program_invocation_short_name
-@vindex kpse_program_name
+@vindex kpse->invocation_name
+@vindex kpse->invocation_short_name
+@vindex kpse->program_name
 @cindex error message macros
-@code{kpse_set_program_name} always sets the global variables
-@code{program_invocation_name} and @code{program_invocation_short_name}.
+@code{kpathsea_set_program_name} always sets the variables
+@code{kpse->invocation_name} and @code{kpse->invocation_short_name}.
 These variables are used in the error message macros defined in
-@file{kpathsea/lib.h}.  It sets the global variable
-@code{kpse_program_name} to the program name it uses.
+@file{kpathsea/lib.h}.  It sets the variable
+@code{kpse->program_name} to the program name it uses.
 
 @vindex KPATHSEA_DEBUG
 It also initializes debugging options based on the environment
@@ -2286,7 +2292,7 @@ variable @code{KPATHSEA_DEBUG} (if that is set).
 @cindex SELFAUTOPARENT
 @cindex symlinks, resolving
 @cindex expanding symlinks
-Finally, it sets the variables @code{SELFAUTOLOC}, @code{SELFAUTODIR}
+Finally, it sets the environment variables @code{SELFAUTOLOC}, @code{SELFAUTODIR}
 and @code{SELFAUTOPARENT} to the location, parent and grandparent
 directory of the executable, removing @file{.} and @file{..} path
 elements and resolving symbolic links.  These are used in the default
@@ -2295,40 +2301,30 @@ can use @samp{kpsewhich --expand-var=\$SELFAUTOLOC}, etc., to see the
 values.
 
 @item
-@findex kpse_set_progname
-@vindex argv[0]
-The @code{kpse_set_progname} is deprecated.  A call to
-@code{kpse_set_progname} with @code{argv[0]} is equivalent to a call of
-@code{kpse_set_program_name} with first argument @code{argv[0]} and
-second argument @code{NULL}.  The function is deprecated because it
-cannot ensure that the @code{.@var{program}} feature of config files
-will always work (@pxref{Config files}).
-
-@item
-@vindex kpathsea_debug @r{variable}
+@vindex kpse->debug @r{variable}
 @cindex debugging options, in Kpathsea-using program
 Set debugging options. @xref{Debugging}.  If your program doesn't have a
 debugging option already, you can define one and set
-@code{kpathsea_debug} to the number that the user supplies (as in Dviljk
+@code{kpse->debug} to the number that the user supplies (as in Dviljk
 and Web2c), or you can just omit this altogether (people can always set
 @code{KPATHSEA_DEBUG}).  If you do have runtime debugging already, you
 need to merge Kpathsea's options with yours (as in Dvipsk and Xdvik).
 
 @item
-@vindex client_path @r{in @code{kpse_format_info}}
-@vindex kpse_format_info
+@vindex client_path @r{in @code{kpse->format_info}}
+@vindex kpse->format_info
 @flindex resident.c
 @cindex config files, for Kpathsea-using programs
 If your program has its own configuration files that can define search
 paths, you should assign those paths to the @code{client_path} member in
-the appropriate element of the @code{kpse_format_info} array.  (This
+the appropriate element of the @code{kpse->format_info} array.  (This
 array is indexed by file type; see @file{tex-file.h}.)  See
 @file{resident.c} in Dvipsk for an example.
 
 @item
-@findex kpse_init_prog
+@findex kpathsea_init_prog
 @flindex proginit.h
-Call @code{kpse_init_prog} (see @file{proginit.c}). It's useful for the
+Call @code{kpathsea_init_prog} (see @file{proginit.c}). It's useful for the
 DVI drivers, at least, but for other programs it may be simpler to
 extract the parts of it that actually apply.  This does not initialize
 any paths, it just looks for (and sets) certain environment variables
@@ -2337,32 +2333,36 @@ the first call to find a file of that type; this eliminates much useless
 work, e.g., initializing the Bib@TeX{} search paths in a DVI driver.)
 
 @item
-@findex kpse_find_*
-@findex kpse_find_file
+@findex kpathsea_find_file
 The routine to actually find a file of type @var{format} is
-@code{kpse_find_@var{format}}, defined in @file{tex-file.h}. These are
-macros that expand to a call to @file{kpse_find_file}.  You can call,
-say, @code{kpse_find_tfm} after doing only the first of the
+@file{kpathsea_find_file}.  You can call 
+@code{kpathsea_find_file} after doing only the first and second of the
 initialization steps above---Kpathsea automatically reads the
 @file{texmf.cnf} generic config files, looks for environment variables,
 and does expansions at the first lookup.
 
 @item
-To find PK and/or GF bitmap fonts, the routines are @code{kpse_find_pk},
-@code{kpse_find_gf} and @code{kpse_find_glyph}, defined in
-@file{tex-glyph.h}. These return a structure in addition to the
+To find PK and/or GF bitmap fonts, the routine 
+is @code{kpathsea_find_glyph}, defined in
+@file{tex-glyph.h}. This returns a structure in addition to the
 resultant filename, because fonts can be found in so many ways. See the
 documentation in the source.
 
 @item
-@findex kpse_open_file
+@findex kpathsea_open_file
 To actually open a file, not just return a filename, call
-@code{kpse_open_file}.  This function takes the name to look up and a
+@code{kpathsea_open_file}.  This function takes the name to look up and a
 Kpathsea file format as arguments, and returns the usual @code{FILE *}.
 It always assumes the file must exist, and thus will search the disk if
 necessary (unless the search path specified @samp{!!}, etc.).  In other
 words, if you are looking up a VF or some other file that need not
 exist, don't use this.
+
+@item
+@findex kpathsea_finish
+To close the kpathsea library instance you are using, call
+@code{kpathsea_finish}.  This function closes any open log files and 
+frees the memory used by the instance.
 
 @end enumerate
 
@@ -2407,7 +2407,7 @@ That is to say, the name of the variable is constructed by converting
 the name of the program to upper case, and appending @code{INPUTS}.
 
 The only difference between these two formats is whether
-@code{kpse_open_file} will open the files it finds in text or binary
+@code{kpathsea_open_file} will open the files it finds in text or binary
 mode.
 
 
@@ -2421,27 +2421,27 @@ You can (and probably should) use the same @code{texmf.cnf}
 configuration file that Kpathsea uses for your program.  This helps
 installers by keeping all configuration in one place.
 
-@findex kpse_var_value
+@findex kpathsae_var_value
 @flindex variable.h
 @vindex shell_escape@r{, example for code}
 To retrieve a value @var{var} from config files, the best way is to call
-@code{kpse_var_value} on the string @code{@var{var}}.  This will look
+@code{kpathsea_var_value} on the string @code{@var{var}}.  This will look
 first for an environment variable @var{var}, then a config file value.
 The result will be the value found or @samp{NULL}.  This function is
 declared in @file{kpathsea/variable.h}.  For an example, see the
 @code{shell_escape} code in @file{web2c/lib/texmfmp.c}.
 
 The routine to do variable expansion in the context of a search path (as
-opposed to simply retrieving a value) is @code{kpse_var_expand}, also
+opposed to simply retrieving a value) is @code{kpathsea_var_expand}, also
 declared in @file{kpathsea/variable.h}.  It's generally only necessary
 to set the search path structure components as explained in the previous
 section, rather than using this yourself.
 
-@findex kpse_cnf_get
+@findex kpathsea_cnf_get
 @flindex cnf.h
 If for some reason you want to retrieve a value @emph{only} from a
 config file, not automatically looking for a corresponding environment
-variable, call @code{kpse_cnf_get} (declared in @file{kpathsea/cnf.h})
+variable, call @code{kpathsea_cnf_get} (declared in @file{kpathsea/cnf.h})
 with the string @var{var}.
 
 No initialization calls are needed.

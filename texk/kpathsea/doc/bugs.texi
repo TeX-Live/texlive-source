@@ -13,10 +13,10 @@
 (A copy of this chapter is in the file @file{kpathsea/BUGS}.)
 @end ifset
 
-@flindex tex-k@@mail.tug.org @r{(bug address)}
+@flindex tex-k@@tug.org @r{(bug address)}
 @cindex bug address
 If you have problems or suggestions, please report them to
-@email{tex-k@@mail.tug.org} using the bug checklist below.
+@email{tex-k@@tug.org} using the bug checklist below.
 
 Please report bugs in the documentation; not only factual errors or
 inconsistent behavior, but unclear or incomplete explanations, typos,
@@ -41,7 +41,7 @@ Before reporting a bug, please check below to be sure it isn't already
 known (@pxref{Common problems}).
 
 Bug reports should be sent via electronic mail to
-@email{tex-k@@mail.tug.org}.
+@email{tex-k@@tug.org}.
 
 The general principle is that a good bug report includes all the
 information necessary for reproduction.  Therefore, to enable
@@ -139,9 +139,9 @@ diagnosing, or fixing the bug.
 @cindex announcement mailing list
 
 Web2c and Kpathsea in general are discussed on the mailing list
-@email{tex-k@@mail.tug.org}.
-@flindex tex-k-request@@mail.tug.org
-To join, email @email{tex-k-request@@mail.tug.org} with a line
+@email{tex-k@@tug.org}.
+@flindex tex-k-request@@tug.org
+To join, email @email{tex-k-request@@tug.org} with a line
 consisting of
 
 @example
@@ -160,12 +160,6 @@ read some of the archives from @url{ftp://ftp.tug.org/mail/archives/tex-k/}.
 Be aware that large data files are sometimes included in bug reports.
 If this is a problem for you, do not join the list.
 
-@flindex tex-archive@@math.utah.edu
-@cindex announcement mailing list
-If you only want announcements of new releases, not bug reports and
-discussion, join @email{tex-archive@@math.utah.edu} (via mail to
-@email{tex-archive-request@@math.utah.edu}).
-
 @cindex @TeX{} help mailing list
 @cindex La@TeX{} help mailing list
 @cindex Usenet @TeX{} newsgroup
@@ -173,10 +167,11 @@ discussion, join @email{tex-archive@@math.utah.edu} (via mail to
 @cindex help, mailing list for general @TeX{}
 @flindex info-tex@@shsu.edu
 @flindex comp.text.tex
-If you are looking for general @TeX{} help, such as how to use La@TeX{},
-please use the mailing list @email{info-tex@@shsu.edu} mailing list,
-which is gatewayed to the @samp{comp.text.tex} Usenet newsgroup (or post
-to the newsgroup; the gateway is bidirectional).
+If you are looking for general @TeX{} help, such as how to use
+@LaTeX{}, please use the mailing list @email{texhax@@tug.org} mailing
+list (@url{http://lists.tug.org/texhax}) which is gatewayed to the
+@samp{comp.text.tex} Usenet newsgroup (or post to the newsgroup; the
+gateway is bidirectional).
 
 
 @node Debugging
@@ -186,7 +181,7 @@ to the newsgroup; the gateway is bidirectional).
 @cindex runtime debugging
 @cindex options for debugging
 
-@vindex kpathsea_debug
+@vindex kpse->debug
 @flindex debug.h
 Kpathsea provides a number of runtime debugging options, detailed below
 by their names and corresponding numeric values.  When the files you
@@ -201,10 +196,10 @@ first, for maximal output.  Dvipsk and Xdvik have additional
 program-specific debugging options as well.
 
 @vindex KPATHSEA_DEBUG
-@vindex kpathsea_debug
+@vindex kpse->debug
 You can also set the environment variable @code{KPATHSEA_DEBUG}; in this
 case, you should use the numbers below.  If you run the program under a
-debugger and set the variable @code{kpathsea_debug}, also use the numbers
+debugger and set the instance variable @code{kpse->debug}, also use the numbers
 below.
 
 @kindex -1 @r{debugging value}
