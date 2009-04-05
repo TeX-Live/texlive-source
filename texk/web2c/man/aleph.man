@@ -1,4 +1,4 @@
-.TH ALEPH 1 "27 December 1997" "Web2C @VERSION@"
+.TH ALEPH 1 "5 April 2009" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -19,7 +19,7 @@
 .if n .ds AY AmSLaTeX
 .\"=====================================================================
 .SH NAME
-aleph, inialeph, viraleph \- extended unicode TeX
+aleph \- extended unicode TeX
 .SH SYNOPSIS
 .B aleph
 .RI [ options ]
@@ -65,16 +65,8 @@ Aleph's command line options are similar to those of \*(TX.
 Aleph is experimental software.
 .\"=====================================================================
 .SH OPTIONS
-This version of Aleph understands the following command line options.
-.TP
-.BI --oft \ format
-.rb
-Use
-.I format
-as the name of the format to be used, instead of the name by which
-Aleph was called or a
-.I %&
-line.
+Run aleph --help to see the complete list of options; this is not
+exhaustive.
 .TP
 .B -halt-on-error
 .rb
@@ -86,10 +78,8 @@ Print help message and exit.
 .TP
 .B --ini
 .rb
-Be
-.BR inialeph ,
-for dumping formats; this is implicitly true if the program is called
-as
+Be `initial' Aleph for dumping formats; this is implicitly true if the
+program is called as
 .BR inialeph .
 .TP
 .BI --interaction \ mode
@@ -181,8 +171,8 @@ Enable the
 .BI \ewrite18{ command }
 construct.  The
 .I command
-can be any Bourne shell command.  This construct is normally
-disallowed for security reasons.
+can be any Bourne shell command.  By default, this construct is 
+enabled in a restricted mode, for security reasons.
 .TP
 .B --version
 .rb
@@ -234,24 +224,12 @@ Command template for switching to editor.  The default, usually
 .BR vi ,
 is set when Aleph is compiled.
 .\"=====================================================================
-.SH FILES
-The location of the files mentioned below varies from system to
-system.  Use the
-.B kpsewhich
-utility to find their locations.
-.TP
-.I aleph.pool
-Encoded text of Aleph's messages.
-.TP
-.I *.oft
-Predigested Aleph format (.\|oft) files.
-.br
-.\"=====================================================================
 .SH NOTES
 This manual page is not meant to be exhaustive.  The complete
 documentation for this version of Aleph can be found in the info
 manual
 .IR "Web2C: A TeX implementation" .
+See http://tug/org/web2c.
 .\"=====================================================================
 .SH BUGS
 This version of Aleph implements a number of optional extensions.
@@ -267,12 +245,6 @@ dimensions are added or subtracted.  Cases where this occurs are rare,
 but when it does the generated
 .I DVI
 file will be invalid.
-.PP
-Aleph is experimental software, and if you are an active user it is
-strongly recommended that you subscribe to the Omega mailing list.
-Visit the Omega website
-.B http://omega.cse.unsw.edu.au
-for information on how to subscribe.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR tex (1),
@@ -280,3 +252,4 @@ for information on how to subscribe.
 .\"=====================================================================
 .SH AUTHORS
 The primary authors of Aleph are John Plaice and Yannis Haralambous.
+It is currently maintained (for severe bug fixes only) by Taco Hoekwater.
