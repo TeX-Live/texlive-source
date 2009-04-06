@@ -45,9 +45,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "png.h"
 #include "xpdf/config.h"        /* just to get the xpdf version */
 
-static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/utils.c $";
-
 #define check_nprintf(size_get, size_want) \
     if ((unsigned)(size_get) >= (unsigned)(size_want)) \
         pdftex_fail ("snprintf failed: file %s, line %d", __FILE__, __LINE__);

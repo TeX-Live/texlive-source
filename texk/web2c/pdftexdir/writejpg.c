@@ -21,9 +21,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "ptexlib.h"
 #include "image.h"
 
-static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writejpg.c $";
-
 #define JPG_GRAY  1             /* Gray color space, use /DeviceGray  */
 #define JPG_RGB   3             /* RGB color space, use /DeviceRGB    */
 #define JPG_CMYK  4             /* CMYK color space, use /DeviceCMYK  */

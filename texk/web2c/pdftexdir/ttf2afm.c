@@ -36,9 +36,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <pdftexdir/writettf.h>
 #include <string.h>
 
-static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/ttf2afm.c $";
-
 /* constants used for print_glyph */
 #define AS_NAME         0
 #define AS_INDEX        1

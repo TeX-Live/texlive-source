@@ -18,9 +18,6 @@ with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-static const char _svn__version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/macnames.c $";
-
 const char notdef[] = ".notdef";
 
 const char *mac_glyph_names[] = {

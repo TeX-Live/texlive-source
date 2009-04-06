@@ -20,9 +20,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 #include "ptexlib.h"
 
-static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writefont.c $";
-
 /**********************************************************************/
 
 struct avl_table *fo_tree = NULL;       /* tree of font dictionaries */

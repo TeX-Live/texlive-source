@@ -23,9 +23,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <kpathsea/c-proto.h>
 #include <string.h>
 
-static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/epdf.c $";
-
 extern void epdf_check_mem(void);
 extern void register_fd_entry(fd_entry *);
 

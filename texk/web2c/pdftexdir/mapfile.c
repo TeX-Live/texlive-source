@@ -24,9 +24,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <kpathsea/c-memstr.h>
 #include <string.h>
 
-static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/mapfile.c $";
-
 #define FM_BUF_SIZE     1024
 
 static FILE *fm_file;

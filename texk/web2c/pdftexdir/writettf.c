@@ -22,9 +22,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "writettf.h"
 #include <string.h>
 
-static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/writettf.c $";
-
 #define DEFAULT_NTABS       14
 #define NEW_CMAP_SIZE       2
 

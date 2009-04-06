@@ -43,9 +43,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 #include "ptexlib.h"
 
-static const char _svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/pdftex/branches/stable/source/src/texk/web2c/pdftexdir/pkin.c $";
-
 /*
  *   Now we have some routines to get stuff from the pk file.  pkbyte returns
  *   the next byte from the pk file.

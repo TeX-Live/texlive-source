@@ -17,8 +17,6 @@
 % pdfTeX; if not, write to the Free Software Foundation, Inc., 51 Franklin
 % Street, Fifth Floor, Boston, MA 02110-1301 USA.
 %
-% $Id$
-%
 @x [0.0] l.83 - WEAVE: we want the whole file
   \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}
   }
