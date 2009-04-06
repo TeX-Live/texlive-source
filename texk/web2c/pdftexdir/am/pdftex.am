@@ -134,17 +134,32 @@ libpdftex_a_SOURCES = \
 	pdftexdir/writettf.h \
 	pdftexdir/writezip.c
 
+if MINGW32
+libpdftex_a_SOURCES += \
+	pdftexdir/regex/regex.c \
+	pdftexdir/regex/regex.h
+endif MINGW32
+
 ## We must create pdftexd.h before building the libpdftex_a_OBJECTS.
 $(libpdftex_a_OBJECTS): pdftexd.h
 
 ## included by pdftexdir/writettf.c
 EXTRA_libpdftex_a_SOURCES = pdftexdir/macnames.c
 
+## included by pdftexdir/regex/regex.c
+EXTRA_libpdftex_a_SOURCES += \
+	pdftexdir/regex/regcomp.c \
+	pdftexdir/regex/regex_internal.c \
+	pdftexdir/regex/regex_internal.h \
+	pdftexdir/regex/regexec.c
+
 EXTRA_DIST += \
 	pdftexdir/ChangeLog \
 	pdftexdir/NEWS \
 	pdftexdir/README \
-	pdftexdir/change-files.txt
+	pdftexdir/change-files.txt \
+	pdftexdir/regex/COPYING.LIB \
+	pdftexdir/regex/README
 
 ## Not used
 ##

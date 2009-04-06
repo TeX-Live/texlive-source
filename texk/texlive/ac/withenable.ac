@@ -1,0 +1,3 @@
+## texk/texlive/ac/withenable.ac
+## configure options and TL libraries required for texlive
+KPSE_WITH_PROG([texlive], , , [TeX Live scripts])

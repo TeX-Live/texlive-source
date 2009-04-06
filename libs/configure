@@ -759,6 +759,8 @@ enable_ttfdump
 enable_xdv2pdf
 enable_xdvik
 enable_xdvipdfmx
+enable_tetex
+enable_texlive
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
@@ -1518,6 +1520,8 @@ Optional Features:
   --disable-xdv2pdf       do not build the xdv2pdf package
   --disable-xdvik         do not build the xdvik package
   --disable-xdvipdfmx     do not build the xdvipdfmx package
+  --disable-tetex         do not build the tetex (teTeX scripts) package
+  --disable-texlive       do not build the texlive (TeX Live scripts) package
   --disable-mktexmf-default   do not run mktexmf if MF source missing
   --disable-mktexpk-default   do not run mktexpk if PK font missing
   --disable-mktextfm-default  do not run mktextfm if TFM file missing
@@ -3065,6 +3069,34 @@ test "x$enable_xdvipdfmx" = xno || {
 }
 
 
+## texk/tetex/ac/withenable.ac
+## configure options and TL libraries required for tetex
+# Check whether --enable-tetex was given.
+if test "${enable_tetex+set}" = set; then
+  enableval=$enable_tetex;
+fi
+case $enable_tetex in #(
+  yes|no);; #(
+  *) enable_tetex=$enable_all_pkgs
+     { $as_echo "$as_me:$LINENO: Assuming \`--enable-tetex=$enable_tetex'" >&5
+$as_echo "$as_me: Assuming \`--enable-tetex=$enable_tetex'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-tetex=$enable_tetex'";;
+esac
+
+
+## texk/texlive/ac/withenable.ac
+## configure options and TL libraries required for texlive
+# Check whether --enable-texlive was given.
+if test "${enable_texlive+set}" = set; then
+  enableval=$enable_texlive;
+fi
+case $enable_texlive in #(
+  yes|no);; #(
+  *) enable_texlive=$enable_all_pkgs
+     { $as_echo "$as_me:$LINENO: Assuming \`--enable-texlive=$enable_texlive'" >&5
+$as_echo "$as_me: Assuming \`--enable-texlive=$enable_texlive'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-texlive=$enable_texlive'";;
+esac
 
 
 

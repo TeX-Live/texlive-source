@@ -178,9 +178,9 @@ EXTRA_DIST = amstex amstex.bat blue.bat cont-cz.bat cont-de \
 	pdfmex-pl.bat pdfplatex pdfplatex-pl.bat pdftexinfo \
 	pdftexinfo.bat pdfvirtex pdfxmltex physe physe.bat phyzzx \
 	phyzzx.bat platex platex.bat platex-pl.bat startex startex.bat \
-	texdoc.man texinfo texinfo.bat texsis texsis.bat text1 \
-	text1.bat tl-w32-starter.bat tl-w32-wrapper.texlua virmf \
-	virmpost viromega virtex xeinitex xelatex xevirtex xmltex \
+	texinfo texinfo.bat texsis texsis.bat text1 text1.bat \
+	tl-w32-starter.bat tl-w32-wrapper.texlua virmf virmpost \
+	viromega virtex xeinitex xelatex xevirtex xmltex \
 	Makefile.in.orig configure.in.orig c-auto.in
 all: all-recursive
 

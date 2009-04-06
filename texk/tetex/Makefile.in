@@ -263,8 +263,8 @@ web2cdir = ${prefix}/texmf/web2c
 dist_web2c_DATA = fmtutil.cnf
 EXTRA_DIST = README.a2ping README.texdoctk doc/Makefile \
 	doc/TETEXDOC.bib doc/TETEXDOC.tex fontinst.bat pdfetex-pl.pool \
-	texdoc.man updmap.pl win32/epstopdf.c win32/epstopdf.txt \
-	Makefile.in.orig configure.in.orig
+	updmap.pl win32/epstopdf.c win32/epstopdf.txt Makefile.in.orig \
+	configure.in.orig
 
 # 
 # This target is invoked by the top-level make,

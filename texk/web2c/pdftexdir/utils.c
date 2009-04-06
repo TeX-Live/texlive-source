@@ -28,7 +28,11 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #else
 #include <sysexits.h>
 #endif
+#ifdef __MINGW32__
+#include <regex/regex.h>
+#else
 #include <regex.h>
+#endif
 #include <kpathsea/c-proto.h>
 #include <kpathsea/c-stat.h>
 #include <kpathsea/c-fopen.h>

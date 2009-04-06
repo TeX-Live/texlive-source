@@ -6,7 +6,19 @@ DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
 SUBDIRS = $(SELECTED_SUBDIRS)
 DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 
+if tetex_build
+
+glyphlistdir = ${prefix}/texmf-dist/fonts/map/glyphlist
+glyphlist_DATA = glyphlist.txt texglyphlist.txt
+
+encdir = ${prefix}/texmf-dist/fonts/enc/dvips/base
+enc_DATA = 7t.enc
+
+else !tetex_build
+
 pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
+
+endif !tetex_build
 
 EXTRA_DIST = \
 	ONEWS \
