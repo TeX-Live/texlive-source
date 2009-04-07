@@ -758,6 +758,7 @@ enable_ttf2pk
 enable_ttfdump
 enable_xdv2pdf
 enable_xdvik
+with_xdvi_x_toolkit
 enable_xdvipdfmx
 enable_tetex
 enable_texlive
@@ -1538,6 +1539,9 @@ Optional Packages:
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
   --with-mf-x-toolkit     Use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
+  --with-xdvi-x-toolkit=KIT
+                          Use toolkit KIT (motif/xaw/xaw3d/neXtaw) for xdvi
+                          [default: Motif if available, else Xaw]
   --with-system-kpathsea  use installed kpathsea headers and library
   --with-kpathsea-includes=DIR
                           kpathsea headers installed in DIR
@@ -3046,6 +3050,15 @@ test "x$enable_xdvik" = xno || {
   need_kpathsea=yes
   need_t1lib=yes
 }
+
+## texk/xdvik/ac/xdvik.ac
+## configure options for xdvik
+
+# Check whether --with-xdvi-x-toolkit was given.
+if test "${with_xdvi_x_toolkit+set}" = set; then
+  withval=$with_xdvi_x_toolkit;
+fi
+
 
 
 ## texk/xdvipdfmx/ac/withenable.ac

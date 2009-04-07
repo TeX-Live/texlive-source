@@ -95,6 +95,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/texk/ttfdump/ac/withenable.ac \
 	$(top_srcdir)/texk/xdv2pdf/ac/withenable.ac \
 	$(top_srcdir)/texk/xdvik/ac/withenable.ac \
+	$(top_srcdir)/texk/xdvik/ac/xdvik.ac \
 	$(top_srcdir)/texk/xdvipdfmx/ac/withenable.ac \
 	$(top_srcdir)/texk/tetex/ac/withenable.ac \
 	$(top_srcdir)/texk/texlive/ac/withenable.ac \

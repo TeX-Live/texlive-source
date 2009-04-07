@@ -1,0 +1,6 @@
+## texk/xdvik/ac/xdvik.ac
+## configure options for xdvik
+AC_ARG_WITH([xdvi-x-toolkit],
+            AS_HELP_STRING([--with-xdvi-x-toolkit=KIT],
+                           [Use toolkit KIT (motif/xaw/xaw3d/neXtaw) for xdvi
+                           @<:@default: Motif if available, else Xaw@:>@]))

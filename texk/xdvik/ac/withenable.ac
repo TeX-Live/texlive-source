@@ -1,3 +1,4 @@
 ## texk/xdvik/ac/withenable.ac
 ## configure options and TL libraries required for xdvik
 KPSE_WITH_PROG([xdvik], [kpathsea t1lib])
+m4_include(kpse_TL[texk/xdvik/ac/xdvik.ac])

@@ -1,9 +1,101 @@
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
+ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
 SUBDIRS = squeeze
 
-BUILT_SOURCES = psheader.c
+INCLUDES = $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES) -I$(srcdir)/gui $(PS_DEF)
+
+## building without t1lib not supported
+INCLUDES += -DT1LIB
+
+## building without GREY or COLOR not supported
+INCLUDES += -DGREY -DCOLOR
+
+## For testing: either noinst_LIBRARIES or EXTRA_LIBRARIES!
+noinst_LIBRARIES = libxdvi.a
+## EXTRA_LIBRARIES = libxdvi.a
+
+libxdvi_a_SOURCES = \
+	alloc-debug.h \
+	browser.c \
+	browser.h \
+	c-openmx.h \
+	dl_list.c \
+	dl_list.h \
+	dvi-draw.c \
+	dvi-draw.h \
+	dvi-init.c \
+	dvi-init.h \
+	dvi.h \
+	dvisel.c \
+	dvisel.h \
+	encodings.c \
+	encodings.h \
+	events.c \
+	events.h \
+	exit-handlers.c \
+	exit-handlers.h \
+	filehist.c \
+	filehist.h \
+	font-open.c \
+	font-open.h \
+	gf.c \
+	hypertex.c \
+	hypertex.h \
+	image-magick.c \
+	image-magick.h \
+	main.c \
+	mime.c \
+	mime.h \
+	my-snprintf.c \
+	my-snprintf.h \
+	my-vsnprintf.c \
+	my-vsnprintf.h \
+	pagehist.c \
+	pagehist.h \
+	pk.c \
+	print-internal.c \
+	print-internal.h \
+	psdps.c \
+	psdps.h \
+	psgs.c \
+	psgs.h \
+	psnews.c \
+	psnews.h \
+	read-mapfile.c \
+	read-mapfile.h \
+	search-internal.c \
+	search-internal.h \
+	special.c \
+	special.h \
+	string-utils.c \
+	string-utils.h \
+	string_list.c \
+	string_list.h \
+	tfmload.c \
+	tfmload.h \
+	translations.h \
+	util.c \
+	util.h \
+	version.h \
+	vf.c \
+	x_util.c \
+	x_util.h \
+	xdvi.c \
+	xdvi.h \
+	xserver-info.c \
+	xserver-info.h
+
+## dvips_DEPENDENCIES = $(KPATHSEA_DEPEND)
+
+## LDADD = $(KPATHSEA_LIBS)
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+## Rebuild libt1
+@T1LIB_RULE@
+
+nodist_libxdvi_a_SOURCES = psheader.c
 
 psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
 	squeeze/squeeze $(srcdir)/psheader.txt $@
@@ -46,30 +138,6 @@ EXTRA_DIST += \
 	LESSTIF-BUGS \
 	README.t1fonts \
 	README.t1mapper \
-	alloc-debug.h \
-	browser.c \
-	browser.h \
-	c-openmx.h \
-	dl_list.c \
-	dl_list.h \
-	dvi-draw.c \
-	dvi-draw.h \
-	dvi-init.c \
-	dvi-init.h \
-	dvi.h \
-	dvisel.c \
-	dvisel.h \
-	encodings.c \
-	encodings.h \
-	events.c \
-	events.h \
-	exit-handlers.c \
-	exit-handlers.h \
-	filehist.c \
-	filehist.h \
-	font-open.c \
-	font-open.h \
-	gf.c \
 	gui/Makefile.in \
 	gui/Panner.c \
 	gui/Panner.h \
@@ -137,20 +205,8 @@ EXTRA_DIST += \
 	gui/xm_prefs_scroll.h \
 	gui/xm_toolbar.c \
 	gui/xm_toolbar.h \
-	hypertex.c \
-	hypertex.h \
-	image-magick.c \
-	image-magick.h \
-	main.c \
-	mime.c \
-	mime.h \
+	m4/acinclude.m4 \
 	mksedscript \
-	my-snprintf.c \
-	my-snprintf.h \
-	my-vsnprintf.c \
-	my-vsnprintf.h \
-	pagehist.c \
-	pagehist.h \
 	pixmaps/drag_horiz.xbm \
 	pixmaps/drag_horiz_mask.xbm \
 	pixmaps/drag_omni.xbm \
@@ -168,25 +224,6 @@ EXTRA_DIST += \
 	pixmaps/xdvi16x16.xpm \
 	pixmaps/xdvi32x32.xpm \
 	pixmaps/xdvi48x48.xpm \
-	pk.c \
-	print-internal.c \
-	print-internal.h \
-	psdps.c \
-	psdps.h \
-	psgs.c \
-	psgs.h \
-	psnews.c \
-	psnews.h \
-	read-mapfile.c \
-	read-mapfile.h \
-	search-internal.c \
-	search-internal.h \
-	special.c \
-	special.h \
-	string-utils.c \
-	string-utils.h \
-	string_list.c \
-	string_list.h \
 	t1mapper \
 	t1mapper.1 \
 	tests/Makefile.in \
@@ -205,27 +242,14 @@ EXTRA_DIST += \
 	texmf-alt/xdvi.cfg \
 	texmf-alt/xdvifont.map \
 	texmf-alt/xypic.map \
-	tfmload.c \
-	tfmload.h \
-	translations.h \
-	util.c \
-	util.h \
-	version.h \
-	vf.c \
-	x_util.c \
-	x_util.h \
 	xdvi-config.h \
 	xdvi-debug.h \
 	xdvi-search.el \
 	xdvi-sh.in \
 	xdvi.1.in \
-	xdvi.c \
-	xdvi.h \
 	xdvi.icon \
 	xdvizilla \
-	xdvizilla.1 \
-	xserver-info.c \
-	xserver-info.h
+	xdvizilla.1
 
 ## Original files from xdvik-22.84.14
 ##
@@ -254,7 +278,9 @@ EXTRA_DIST += \
 ##
 EXTRA_DIST += \
 	Makefile.in.orig \
+	Makefile.in.work \
 	configure.in.orig \
+	configure.in.work \
 	gui/Makefile.in.orig \
 	kpathsea.ac.orig \
 	tests/Makefile.in.orig \
