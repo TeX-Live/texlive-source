@@ -1,5 +1,8 @@
 /* c-auto.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to use A4 as the default paper size. */
+#undef A4
+
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
@@ -12,6 +15,9 @@
 
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
+
+/* Define to enable support for color specials. */
+#undef COLOR
 
 /* Define to one of `_getb67', `GETB67', `getb67' for Cray-2 and Cray-YMP
    systems. This function is required for `alloca.c' support on those systems.
@@ -30,6 +36,9 @@
 /* Define if you are using Linux 2.1.xxx -- 2.2.8, or if you find it
    necessary. */
 #undef FLAKY_SIGPOLL
+
+/* Define to enable greyscale anti-aliasing for shrunken bitmaps. */
+#undef GREY
 
 /* Define to 1 if you have `alloca', as a function or macro. */
 #undef HAVE_ALLOCA
@@ -143,6 +152,9 @@
 
 /* Define to 1 if you have the `nl_langinfo' function. */
 #undef HAVE_NL_LANGINFO
+
+/* Define if you have an old version of the Xaw library */
+#undef HAVE_OLD_XAW
 
 /* Define if your system has <poll.h> and poll(). */
 #undef HAVE_POLL
@@ -273,8 +285,33 @@
 /* Define to 1 if `fork' works. */
 #undef HAVE_WORKING_FORK
 
+/* Define if the CODESET argument to nl_langinfo works. */
+#undef HAVE_WORKING_NL_LANGINFO_CODESET
+
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
+
+/* Define to 1 if you have the <X11/Intrinsic.h> header file. */
+#undef HAVE_X11_INTRINSIC_H
+
+/* Define to 1 if you have the <X11/Xmu/Editres.h> header file. */
+#undef HAVE_X11_XMU_EDITRES_H
+
+/* Define to 1 if you have the <X11/Xmu/Xmu.h> header file. */
+#undef HAVE_X11_XMU_XMU_H
+
+/* Define to 1 if you have the <X11/Xosdefs.h> header file. */
+#undef HAVE_X11_XOSDEFS_H
+
+/* Define if you have the <X11/xpm.h> header file. */
+#undef HAVE_X11_XPM_H
+
+/* Define to 1 if you have the <Xm/XpmP.h> header file. */
+#undef HAVE_XM_XPMP_H
+
+/* Define if you have the <xpm.h> header file (not in X11, e.g. Solaris 5.8).
+   */
+#undef HAVE_XPM_H
 
 /* Define the type of the iconv input string (char ** or const char **) */
 #undef ICONV_CHAR_PPTR_TYPE
@@ -285,6 +322,9 @@
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #undef LT_OBJDIR
+
+/* Define to use the Motif toolkit. */
+#undef MOTIF
 
 /* Name of package */
 #undef PACKAGE
@@ -321,6 +361,15 @@
 /* Define if you are using SunOS 4.x. */
 #undef SUNOS4
 
+/* Define to compile in t1lib. */
+#undef T1LIB
+
+/* Define to use Xaw panner. */
+#undef USE_XAW_PANNER
+
+/* Define if you want to use the Xpm library */
+#undef USE_XPM
+
 /* Version number of package */
 #undef VERSION
 
@@ -335,6 +384,9 @@
 #  undef WORDS_BIGENDIAN
 # endif
 #endif
+
+/* Define to use the Xaw toolkit. */
+#undef XAW
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING

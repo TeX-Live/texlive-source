@@ -1,21 +1,20 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
-SUBDIRS = squeeze
+SUBDIRS = squeeze gui
 
-INCLUDES = $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES) -I$(srcdir)/gui $(PS_DEF)
+INCLUDES = -I$(srcdir)/gui
+INCLUDES += $(PS_DEF)
+INCLUDES += $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES)
+INCLUDES += $(X_CFLAGS)
 
-## building without t1lib not supported
-INCLUDES += -DT1LIB
+bin_SCRIPTS = xdvi
 
-## building without GREY or COLOR not supported
-INCLUDES += -DGREY -DCOLOR
+bin_PROGRAMS = xdvi-bin
 
-## For testing: either noinst_LIBRARIES or EXTRA_LIBRARIES!
-noinst_LIBRARIES = libxdvi.a
-## EXTRA_LIBRARIES = libxdvi.a
+nodist_xdvi_bin_SOURCES = psheader.c
 
-libxdvi_a_SOURCES = \
+xdvi_bin_SOURCES = \
 	alloc-debug.h \
 	browser.c \
 	browser.h \
@@ -81,21 +80,39 @@ libxdvi_a_SOURCES = \
 	vf.c \
 	x_util.c \
 	x_util.h \
+	xdvi-config.h \
+	xdvi-debug.h \
 	xdvi.c \
 	xdvi.h \
 	xserver-info.c \
 	xserver-info.h
 
-## dvips_DEPENDENCIES = $(KPATHSEA_DEPEND)
+xdvi_bin_DEPENDENCIES = gui/libgui.a $(KPATHSEA_DEPEND) $(T1LIB_DEPEND)
 
-## LDADD = $(KPATHSEA_LIBS)
+# Make `#include <X11/...>' and `-lX...' work.
+# This matches web2c (needed only for Metafont).
+## x_cppflags=@X_CFLAGS@ @iconv_includes@
+## x_ldflags=@X_LIBS@ @x_linker_options@ @iconv_libpath@
+## x_extra_libs=@X_EXTRA_LIBS@ @iconv_libs@
+
+# Follow the library order used in X11R6 itself.
+# It seems that on Cygwin, libXaw needs _XpmReadFileToPixmap, so we put
+# x_xpm_libs after the tool_libs -- but before -lX11, since on MacOSX it
+# uses XGrabServer and XUngrabServer, which would otherwise be
+# unresolved with static libraries.
+# Xmu needs to come before Xt and after the toolkit libs.
+xdvi_x_libs = $(X_LIBS) $(x_tool_libs) $(x_xmu_lib) -lXt $(X_PRE_LIBS)
+xdvi_x_libs += $(x_ext_lib) $(x_xpm_libs) -lX11 $(X_EXTRA_LIBS)
+
+LDADD = gui/libgui.a $(KPATHSEA_LIBS) $(T1LIB_LIBS) $(xdvi_x_libs)
+
+gui/libgui.a:
+	cd gui && $(MAKE) $(AM_MAKEFLAGS) libgui.a
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 ## Rebuild libt1
 @T1LIB_RULE@
-
-nodist_libxdvi_a_SOURCES = psheader.c
 
 psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
 	squeeze/squeeze $(srcdir)/psheader.txt $@
@@ -138,73 +155,6 @@ EXTRA_DIST += \
 	LESSTIF-BUGS \
 	README.t1fonts \
 	README.t1mapper \
-	gui/Makefile.in \
-	gui/Panner.c \
-	gui/Panner.h \
-	gui/PannerP.h \
-	gui/Tip.c \
-	gui/Tip.h \
-	gui/TipP.h \
-	gui/help-window.c \
-	gui/help-window.h \
-	gui/mag.c \
-	gui/mag.h \
-	gui/menu.c \
-	gui/menu.h \
-	gui/message-window.c \
-	gui/message-window.h \
-	gui/pagesel.c \
-	gui/pagesel.h \
-	gui/print-dialog.c \
-	gui/print-dialog.h \
-	gui/print-log.c \
-	gui/print-log.h \
-	gui/search-dialog.c \
-	gui/search-dialog.h \
-	gui/selection.c \
-	gui/selection.h \
-	gui/sfDir.c \
-	gui/sfDir.h \
-	gui/sfDraw.c \
-	gui/sfDraw.h \
-	gui/sfPath.c \
-	gui/sfPath.h \
-	gui/sfSelFile.c \
-	gui/sfSelFile.h \
-	gui/sfinternal.h \
-	gui/statusline.c \
-	gui/statusline.h \
-	gui/topic-window.c \
-	gui/topic-window.h \
-	gui/xaw_bitmaps.c \
-	gui/xaw_bitmaps.h \
-	gui/xaw_menu.c \
-	gui/xaw_menu.h \
-	gui/xicon.c \
-	gui/xicon.h \
-	gui/xlwradio.c \
-	gui/xlwradio.h \
-	gui/xlwradioP.h \
-	gui/xm_colorsel.c \
-	gui/xm_colorsel.h \
-	gui/xm_filesel.c \
-	gui/xm_menu.c \
-	gui/xm_menu.h \
-	gui/xm_prefs.c \
-	gui/xm_prefs.h \
-	gui/xm_prefsP.h \
-	gui/xm_prefs_appearance.c \
-	gui/xm_prefs_appearance.h \
-	gui/xm_prefs_fonts.c \
-	gui/xm_prefs_fonts.h \
-	gui/xm_prefs_helpers.c \
-	gui/xm_prefs_helpers.h \
-	gui/xm_prefs_page.c \
-	gui/xm_prefs_page.h \
-	gui/xm_prefs_scroll.c \
-	gui/xm_prefs_scroll.h \
-	gui/xm_toolbar.c \
-	gui/xm_toolbar.h \
 	m4/acinclude.m4 \
 	mksedscript \
 	pixmaps/drag_horiz.xbm \
@@ -242,10 +192,7 @@ EXTRA_DIST += \
 	texmf-alt/xdvi.cfg \
 	texmf-alt/xdvifont.map \
 	texmf-alt/xypic.map \
-	xdvi-config.h \
-	xdvi-debug.h \
 	xdvi-search.el \
-	xdvi-sh.in \
 	xdvi.1.in \
 	xdvi.icon \
 	xdvizilla \
@@ -284,5 +231,6 @@ EXTRA_DIST += \
 	gui/Makefile.in.orig \
 	kpathsea.ac.orig \
 	tests/Makefile.in.orig \
-	withenable.ac.orig
+	withenable.ac.orig \
+	withenable.ac.work
 
