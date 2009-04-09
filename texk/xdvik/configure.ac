@@ -18,13 +18,14 @@ KPSE_COMMON([xdvik])
 
 m4_include([ac/xdvik.ac])
 AS_CASE([$with_xdvi_x_toolkit],
-        [next | nextaw | neXtaw], [val=neXtaw],
-        [xaw3d], [val=xaw3d],
-        ["" | x | xa | xaw], [val=xaw],
-        [y | ye | yes], [val=yes],
+        [next | nextaw | neXtaw],      [val=neXtaw],
+        [xaw3d],                       [val=xaw3d],
+        ["" | x | xa | xaw],           [val=xaw],
+        [y | ye | yes],                [val=yes],
         [m | mo | mot | moti | motif], [val=motif],
-        [AC_MSG_WARN([unknown --with-xdvi-x-toolkit argument `$with_xdvi_x_toolkit'; using xaw.])
-         val=xaw])
+                                       [AC_MSG_WARN([unknown --with-xdvi-x-toolkit argument 
+                                                     `$with_xdvi_x_toolkit'; using xaw.])
+                                        val=xaw])
 with_xdvi_x_toolkit=$val
 
 AC_ARG_WITH([ps],
@@ -32,11 +33,11 @@ AC_ARG_WITH([ps],
                            [Use PostScript (PS=no/yes/gs/dps/news, default gs)]))
 AS_CASE([$with_ps],
         ["" | yes | gs], [PS_DEF=-DPS_GS],
-        [no], [PS_DEF=],
-        [dps], [PS_DEF=-DPS_DPS],
-        [news], [PS_DEF=-DPS_NEWS],
-        [AC_MSG_WARN([unknown--with-ps argument `$with_ps'; using gs.])
-         PS_DEF=-DPS_GS])
+        [no],            [PS_DEF=],
+        [dps],           [PS_DEF=-DPS_DPS],
+        [news],          [PS_DEF=-DPS_NEWS],
+                         [AC_MSG_WARN([unknown--with-ps argument `$with_ps'; using gs.])
+                          PS_DEF=-DPS_GS])
 AC_SUBST([PS_DEF])
 
 dnl Required, not optional.

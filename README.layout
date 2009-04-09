@@ -5,8 +5,8 @@ The TL 2009 build system has been completely restructured, using Autoconf,
 Automake, and Libtool.  The main purpose was to configure and build each
 library before configuring any module (program or other library) depending
 on that library.  This allows to check for properties and features of a
-library built as part of the TL tree in much the same as for an installed
-(system) version of that library.
+library built as part of the TL tree in much the same way as for an
+installed (system) version of that library.
 
 This should simplify upgrading of modules maintained independently and/or
 integrating new modules into the TL build system.
@@ -55,7 +55,7 @@ m4/kpse-Lib-flags.m4		defines Autoconf macros for configure options
                                   files and defining Make variables
 
 Several libraries use an unmodified source tree supplemented by a proxy
-build system (bypassing that of the source tree, e.g.,
+build system (bypassing that of the source tree), e.g.,
 
 libs/zlib/zlib-1.2.3/*		(almost) unmodified source tree
 libs/zlib/Makefile.am		proxy Makefile.am
