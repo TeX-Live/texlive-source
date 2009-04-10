@@ -25,6 +25,9 @@ nobase_dist_scriptx_SCRIPTS = \
 
 scriptdir = ${prefix}/texmf-dist/scripts
 nobase_dist_script_SCRIPTS = \
+	accfonts/mkt1font \
+	accfonts/vpl2ovp \
+	accfonts/vpl2vpl \
 	bengali/ebong.py \
 	context/lua/luatools.lua \
 	context/lua/mtxrun.lua \
