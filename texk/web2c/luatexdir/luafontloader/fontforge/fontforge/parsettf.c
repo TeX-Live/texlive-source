@@ -33,6 +33,9 @@
 #include <gwidget.h>
 #include "ttf.h"
 
+#undef getsid
+#define getsid FFgetsid
+
 #ifdef LUA_FF_LIB
 SplineFont *_SFReadTTFInfo(FILE *ttf, int flags,enum openflags openflags, char *filename,struct fontdict *fd);
 void THPatchSplineChar(SplineChar *sc);
