@@ -1,0 +1,658 @@
+#!/usr/bin/perl
+
+=pod
+
+=head1 NAME
+
+ot2kpx - extract kerning information from an OpenType font
+
+=head1 SYNOPSIS
+
+ot2kpx I<font>
+
+=head1 DESCRIPTION
+
+In many OpenType fonts, most kerning data is stored in the `GPOS' table rather
+than in the `kern' table. B<ot2kpx> extracts the kerning data from both tables
+and prints it (in F<afm> format) to C<stdout>.
+
+=head1 RESTRICTIONS
+
+=over 2
+
+=item B<->
+
+B<ot2kpx> prints data from all features named `kern', regardless of script
+and language. Maybe it would be better to let the user choose a script
+and language (defaulting to `latn' and `DFLT') and print only the kerning
+data from features associated with these values.
+
+=item B<->
+
+B<ot2kpx> uses only the XAdvance data associated with the first glyph in any
+kerning pair; all other data in the ValueRecords is ignored. I'm not sure 
+whether this is The Right Thing to Do; however, almost always there is
+no other data, so this approach gives correct results (in fact, the only
+font I know of that does contain data other than XAdvance is Linotype
+Palatino; this also contains XAdvDevice data, which is used (according to 
+the OpenType specification) to I<`define subtle, device-dependent adjustments
+at specific font sizes or device resolutions'>. Since there is no way to
+express such adjustments in F<afm> format, ignoring them seems to be the
+only option.)
+
+=back
+
+=head1 SEE ALSO
+
+F<afm2afm>, F<autoinst>, F<cmap2enc>, F<font2afm>, F<pfm2kpx>.
+
+=head1 AUTHOR
+
+Marc Penninga <marc@penninga.info>
+
+=head1 HISTORY
+
+=over 12
+
+=item I<2005-01-10>
+
+First version
+
+=item I<2005-02-18>
+
+Rewrote some of the code
+
+=item I<2005-03-08>
+
+Input files searched via B<kpsewhich> (where available)
+
+=item I<2005-03-15>
+
+Input files searched using B<kpsewhich> or B<findtexmf>
+
+=item I<2005-03-21>
+
+Test if GPOS table is present before trying to read it
+
+=item I<2005-04-29>
+
+Improved the documentation
+
+=item I<2005-05-25>
+
+Changed warning that's given when the font contains no GPOS table, to an
+informational message.
+
+=item I<2005-07-29>
+
+A few updates to the documentation
+
+=back
+
+=cut
+
+##############################################################################
+
+use integer;
+use warnings; no warnings qw(uninitialized);
+
+@StandardStrings = qw(
+
+    .notdef space exclam quotedbl
+    numbersign dollar percent ampersand
+    quoteright parenleft parenright asterisk
+    plus comma hyphen period
+
+    slash zero one two
+    three four five six
+    seven eight nine colon
+    semicolon less equal greater
+
+    question at A B
+    C D E F
+    G H I J
+    K L M N
+
+    O P Q R
+    S T U V
+    W X Y Z
+    bracketleft backslash bracketright asciicircum
+
+    underscore quoteleft a b
+    c d e f
+    g h i j
+    k l m n
+
+    o p q r
+    s t u v
+    w x y z
+    braceleft bar braceright asciitilde
+
+    exclamdown cent sterling fraction
+    yen florin section currency
+    quotesingle quotedblleft guillemotleft guilsinglleft
+    guilsinglright fi fl endash
+
+    dagger daggerdbl periodcentered paragraph
+    bullet quotesinglbase quotedblbase quotedblright
+    guillemotright ellipsis perthousand questiondown
+    grave acute circumflex tilde
+
+    macron breve dotaccent dieresis
+    ring cedilla hungarumlaut ogonek
+    caron emdash AE ordfeminine
+    Lslash Oslash OE ordmasculine
+
+    ae dotlessi lslash oslash
+    oe germandbls onesuperior logicalnot
+    mu trademark Eth onehalf
+    plusminus Thorn onequarter divide
+
+    brokenbar degree thorn threequarters
+    twosuperior registered minus eth
+    multiply threesuperior copyright Aacute
+    Acircumflex Adieresis Agrave Aring
+
+    Atilde Ccedilla Eacute Ecircumflex
+    Edieresis Egrave Iacute Icircumflex
+    Idieresis Igrave Ntilde Oacute
+    Ocircumflex Odieresis Ograve Otilde
+
+    Scaron Uacute Ucircumflex Udieresis
+    Ugrave Yacute Ydieresis Zcaron
+    aacute acircumflex adieresis agrave
+    aring atilde ccedilla eacute
+
+    ecircumflex edieresis egrave iacute
+    icircumflex idieresis igrave ntilde
+    oacute ocircumflex odieresis ograve
+    otilde scaron uacute ucircumflex
+
+    udieresis ugrave yacute ydieresis
+    zcaron exclamsmall Hungarumlautsmall dollaroldstyle
+    dollarsuperior ampersandsmall Acutesmall parenleftsuperior
+    parenrightsuperior twodotenleader onedotenleader zerooldstyle
+
+    oneoldstyle twooldstyle threeoldstyle fouroldstyle
+    fiveoldstyle sixoldstyle sevenoldstyle eightoldstyle
+    nineoldstyle commasuperior threequartersemdash periodsuperior
+    questionsmall asuperior bsuperior centsuperior
+
+    dsuperior esuperior isuperior lsuperior
+    msuperior nsuperior osuperior rsuperior
+    ssuperior tsuperior ff ffi
+    ffl parenleftinferior parenrightinferior Circumflexsmall
+
+    hyphensuperior Gravesmall Asmall Bsmall
+    Csmall Dsmall Esmall Fsmall
+    Gsmall Hsmall Ismall Jsmall
+    Ksmall Lsmall Msmall Nsmall
+
+    Osmall Psmall Qsmall Rsmall
+    Ssmall Tsmall Usmall Vsmall
+    Wsmall Xsmall Ysmall Zsmall
+    colonmonetary onefitted rupiah Tildesmall
+
+    exclamdownsmall centoldstyle Lslashsmall Scaronsmall
+    Zcaronsmall Dieresissmall Brevesmall Caronsmall
+    Dotaccentsmall Macronsmall figuredash hypheninferior
+    Ogoneksmall Ringsmall Cedillasmall questiondownsmall
+
+    oneeighth threeeighths fiveeighths seveneighths
+    onethird twothirds zerosuperior foursuperior
+    fivesuperior sixsuperior sevensuperior eightsuperior
+    ninesuperior zeroinferior oneinferior twoinferior
+
+    threeinferior fourinferior fiveinferior sixinferior
+    seveninferior eightinferior nineinferior centinferior
+    dollarinferior periodinferior commainferior Agravesmall
+    Aacutesmall Acircumflexsmall Atildesmall Adieresissmall
+
+    Aringsmall AEsmall Ccedillasmall Egravesmall
+    Eacutesmall Ecircumflexsmall Edieresissmall Igravesmall
+    Iacutesmall Icircumflexsmall Idieresissmall Ethsmall
+    Ntildesmall Ogravesmall Oacutesmall Ocircumflexsmall
+
+    Otildesmall Odieresissmall OEsmall Oslashsmall
+    Ugravesmall Uacutesmall Ucircumflexsmall Udieresissmall
+    Yacutesmall Thornsmall Ydieresissmall 001.000
+    001.001 001.002 001.003 Black
+
+    Bold Book Light Medium
+    Regular Roman Semibold
+);
+
+sub getu($) {
+    my $arg = shift;
+    my $n = length $arg;
+    my $r = 0;
+    
+    for my $i (0 .. $n - 1) {
+        $r = ($r << 8) + unpack("C", substr($arg, $i, 1));
+    }
+    
+    return $r;
+}
+
+sub gets16($) {
+    my $v = getu $_[0];
+    if ($v > 0x7FFF) {
+        $v -= 0x10000;
+    }
+
+    return $v;
+}
+
+sub getnum($) {
+    my $i;
+    my $r = 0;
+
+    if (${$_[0]}[0] == 28) {
+        shift(@{$_[0]});
+        for $i (0, 1) {
+            $r = ($r << 8) | shift(@{$_[0]});
+        }
+    } 
+    elsif (${$_[0]}[0] == 29) {
+        shift(@{$_[0]});
+        for $i (0 .. 3) {
+            $r = ($r << 8) | shift(@{$_[0]});
+        }
+    } 
+    elsif (${$_[0]}[0] == 30) {
+	shift @{$_[0]};
+    	$nibbles = "";
+	$nibbles .= sprintf("%02x", shift @{$_[0]}) until $nibbles =~ /f/;
+	$nibbles =~ tr/abef/.E-/d;
+	$nibbles =~ s/c/E-/g;
+    	$r = eval $nibbles;
+    } 
+    elsif (${$_[0]}[0] >= 251) {
+        $r = -256 * (shift(@{$_[0]}) - 251) - shift(@{$_[0]}) - 108;
+    } 
+    elsif (${$_[0]}[0] >= 247) {
+        $r =  256 * (shift(@{$_[0]}) - 247) + shift(@{$_[0]}) + 108;
+    } 
+    else {
+        $r = shift(@{$_[0]}) - 139;
+    }
+
+    return $r;
+}
+
+sub getidx($) {
+    my $n  = getu(substr $_[0], 0, 2);
+    my $sz = getu(substr $_[0], 2, 1);
+    my(@r, @off, @d, $i);
+    for $i (0 .. $n) {
+        $off[$i] = getu(substr $_[0], 3 + $i * $sz, $sz);
+    }
+    for $i (0 .. $n - 1) {
+        $d[$i] = substr $_[0], 2 + ($n + 1) * $sz + $off[$i], 
+	    	$off[$i + 1] - $off[$i];
+    }
+
+    return substr($_[0], 2 + ($n + 1) * $sz + $off[$n]), @d;
+}
+
+sub getcov($) {
+    my $Coverage = shift;
+    my $CoverageFormat = getu(substr $Coverage, 0, 2);
+    my @r = ();
+    if ($CoverageFormat == 1) {
+    	my $GlyphCount = getu(substr $Coverage, 2, 2);
+	for my $i (0 .. $GlyphCount - 1) {
+	    push @r, getu(substr $Coverage, 4 + 2 * $i, 2);
+	}
+    } 
+    elsif ($CoverageFormat == 2) {
+    	my $RangeCount = getu(substr $Coverage, 2, 2);
+	for my $i (0 .. $RangeCount - 1) {
+	    my $RangeRecord = substr $Coverage, 4 + 6 * $i, 6;
+	    my $Start = getu(substr $RangeRecord, 0, 2);
+	    my $End = getu(substr $RangeRecord, 2, 2);
+	    for my $j ($Start .. $End) {
+	    	push @r, $j;
+	    }
+	}
+    } 
+    else {
+    	warn "Warning: unknown CoverageFormat `$CoverageFormat'\n";
+    }
+    return @r;
+}
+
+sub getclass($) {
+    my @c = (0) * $NumGlyphs;
+    my $ClassFormat = getu(substr $_[0], 0, 2);
+    my($i, $j);
+
+    if ($ClassFormat == 1) {
+	my $StartGlyph = getu(substr $_[0], 2, 2);
+	my $GlyphCount = getu(substr $_[0], 4, 2);
+
+	for $i (0 .. $GlyphCount - 1) {
+	    $c[$i + $StartGlyph] = getu(substr $_[0], 6 + 2 * $i, 2);
+	}
+    } 
+    elsif ($ClassFormat == 2) {
+	my $ClassRangeCount = getu(substr $_[0], 2, 2);
+
+	for $i (0 .. $ClassRangeCount - 1) {
+	    my $ClassRangeRecord = substr $_[0], 4 + 6 * $i, 6;
+	    my $Start = getu(substr $ClassRangeRecord, 0, 2);
+	    my $End   = getu(substr $ClassRangeRecord, 2, 2);
+	    my $Class = getu(substr $ClassRangeRecord, 4, 2);
+
+	    for $j ($Start .. $End) {
+        	$c[$j] = $Class;
+	    }
+	}
+    } 
+    else {
+	warn "Warning: unknown ClassFormat `$ClassFormat'\n";
+    }
+
+    return @c;
+}
+
+##############################################################################
+
+use integer;
+use warnings; no warnings qw(uninitialized);
+
+$0 =~ s!.*/!!;
+die "Usage: $0 fontfile\n" if @ARGV != 1;
+
+if ((chop($fn = `kpsewhich $ARGV[0] 2>&1`) and -e $fn) or
+    (chop($fn = `findtexmf $ARGV[0] 2>&1`) and -e $fn)) 
+{
+    open FONT, "<$fn" or die "Error: can't open `$fn' - $!\n";
+} 
+else {
+    open FONT, "<$ARGV[0]" or 
+	    die "Error: can't open `$ARGV[0]' - $!\n";
+}
+binmode FONT;
+{
+    local $/;
+    $FONT = <FONT>;
+}
+
+$NumTables = getu(substr $FONT, 4, 2);
+for ($i = 0; $i < $NumTables; $i++) {
+$Record = substr $FONT, 12 + 16 * $i, 16;
+    ($Name = substr $Record, 0, 4) =~ s/\s//g;
+    $Offset = getu(substr $Record, 8, 4);
+    $Length = getu(substr $Record, 12, 4);
+    $Table{$Name} = substr $FONT, $Offset, $Length;
+}
+
+$UnitsPerEM = getu(substr $Table{head}, 18, 2);
+$NumGlyphs = getu(substr $Table{maxp}, 4, 2);
+
+if (exists $Table{GPOS}) {
+    $FeatureList = substr $Table{GPOS}, getu(substr $Table{GPOS}, 6, 2);
+    $FeatureCount = getu(substr $FeatureList, 0, 2);
+    for $i (0 .. $FeatureCount - 1) {
+	$FeatureTag = substr $FeatureList, 2 + 6 * $i, 4;
+	$Feature = getu(substr $FeatureList, 6 + 6 * $i, 2);
+	$LookupCount = getu(substr $FeatureList, $Feature + 2, 2);
+	for $j (0 .. $LookupCount - 1) {
+	    push @{$LookupListIndex{$FeatureTag}}, 
+	    	    getu(substr $FeatureList, $Feature + 4 + 2 * $j, 2);
+	}
+    }
+    $LookupList = substr $Table{GPOS}, getu(substr $Table{GPOS}, 8, 2);
+    $LookupCount = getu(substr $LookupList, 0, 2);
+    for $i (0 .. $LookupCount - 1) {
+	$Lookup[$i] = substr $LookupList, 
+	    	getu(substr $LookupList, 2 + 2 * $i, 2);
+    }
+    for $j (@{$LookupListIndex{kern}}) {
+	$LookupTable = $Lookup[$j];
+	$LookupType = getu(substr $LookupTable, 0, 2);
+	$SubTableCount = getu(substr $LookupTable, 4, 2);
+	if ($LookupType != 2) {
+	    warn "Warning: wrong LookupType `$LookupType', table skipped\n";
+	    next;
+	}
+	for $k (0 .. $SubTableCount - 1) {
+    	    $SubTable = substr $LookupTable, 
+	    	    getu(substr $LookupTable, 6 + 2 * $k, 2);
+	    $PosFormat = getu(substr $SubTable, 0, 2);
+	    if ($PosFormat == 1) {
+		$Coverage = substr $SubTable, getu(substr $SubTable, 2, 2);
+		@Coverage = getcov($Coverage);
+        	$ValueFormat1 = getu(substr $SubTable, 4, 2);
+        	$ValueFormat2 = getu(substr $SubTable, 6, 2);
+
+        	if (!($ValueFormat1 & 0x04) || $ValueFormat2 != 0) {
+        	    warn "Warning: ValueFormat `($ValueFormat1, " . 
+		    	 "$ValueFormat2)' not implemented\n";
+        	    next;
+        	}
+        	$PairValueRecordSize = 4;
+        	$ValueOffset = 2;
+		if ($ValueFormat1 & 0x01) {
+	    	    $PairValueRecordSize += 2;
+		    $ValueOffset += 2;
+		}
+		if ($ValueFormat1 & 0x02) {
+	    	    $PairValueRecordSize += 2;
+		    $ValueOffset += 2;
+		}
+		if ($ValueFormat1 & 0x08) {$PairValueRecordSize += 2}
+		if ($ValueFormat1 & 0x10) {$PairValueRecordSize += 2}
+		if ($ValueFormat1 & 0x20) {$PairValueRecordSize += 2}
+		if ($ValueFormat1 & 0x40) {$PairValueRecordSize += 2}
+		if ($ValueFormat1 & 0x80) {$PairValueRecordSize += 2}
+
+		$GlyphCount = @Coverage;
+		$PairSetCount = getu(substr $SubTable, 8, 2);
+		if ($GlyphCount != $PairSetCount) {
+	    	    warn "ERROR: GlyphCount not equal to PairSetCount\n";
+		    next;
+		}
+		for $l (0 .. $#Coverage) {
+	    	    $left = $Coverage[$l];
+	    	    $PairSet = substr $SubTable, 
+		    	    getu(substr $SubTable, 10 + 2 * $l, 2);
+		    $PairValueCount = getu(substr $PairSet, 0, 2);
+
+		    for $r (0 .. $PairValueCount - 1) {
+			$PairValueRecord = substr $PairSet, 
+		    		2 + $r * $PairValueRecordSize, 
+				$PairValueRecordSize;
+			$right = getu(substr $PairValueRecord, 0, 2);
+			$Value = getu(substr $PairValueRecord, $ValueOffset, 2);
+			$KPX{$left}{$right} ||= $Value * 1000 / $UnitsPerEM;
+		    }
+		}
+	    } 
+	    elsif ($PosFormat == 2) {
+		$Coverage = substr $SubTable, getu(substr $SubTable, 2, 2);
+		@Coverage = getcov($Coverage);
+
+		$ValueFormat1 = getu(substr $SubTable, 4, 2);
+		$ValueFormat2 = getu(substr $SubTable, 6, 2);
+
+        	if (!($ValueFormat1 & 0x04) || $ValueFormat2 != 0) {
+        	    warn "Warning: ValueFormat `($ValueFormat1, " . 
+		    	 "$ValueFormat2)' not implemented\n";
+        	    next;
+        	}
+        	$Class2RecordSize = 2;
+        	$ValueOffset = 0;
+		if ($ValueFormat1 & 0x01) {
+	    	    $Class2RecordSize += 2;
+		    $ValueOffset += 2;
+		}
+		if ($ValueFormat1 & 0x02) {
+	    	    $Class2RecordSize += 2;
+		    $ValueOffset += 2;
+		}
+		if ($ValueFormat1 & 0x08) {$Class2RecordSize += 2}
+		if ($ValueFormat1 & 0x10) {$Class2RecordSize += 2}
+		if ($ValueFormat1 & 0x20) {$Class2RecordSize += 2}
+		if ($ValueFormat1 & 0x40) {$Class2RecordSize += 2}
+		if ($ValueFormat1 & 0x80) {$Class2RecordSize += 2}
+
+		$ClassDef1 = getu(substr $SubTable, 8, 2);
+		$ClassDef2 = getu(substr $SubTable, 10, 2);
+		$Class1Count = getu(substr $SubTable, 12, 2);
+		$Class2Count = getu(substr $SubTable, 14, 2);
+		@Class1 = getclass(substr $SubTable, $ClassDef1);
+		@Class2 = getclass(substr $SubTable, $ClassDef2);
+
+		for $l (0 .. $Class1Count - 1) {
+        	    $Class1RecordSize = $Class2Count * $Class2RecordSize;
+        	    $Class1Record = substr $SubTable, 
+		    	    16 + $Class1RecordSize * $l, 
+		    	    $Class1RecordSize;
+
+    	    	    for $m (0 .. $Class2Count - 1) {
+                	$ValueRecord = substr $Class1Record, 
+		    		$Class2RecordSize * $m, $Class2RecordSize;
+                	$Value[$l][$m] = 
+				gets16(substr $ValueRecord, $ValueOffset, 2);
+        	    }
+		}
+
+    		for $m (@Coverage) {
+		    for $n (0 .. $NumGlyphs - 1) {
+			if ($Value = $Value[$Class1[$m]][$Class2[$n]]) {
+                            $KPX{$m}{$n} ||= $Value * 1000 / $UnitsPerEM;
+			}
+		    }
+        	}
+	    } 
+	    else {
+        	warn "Warning: unknown PosFormat `$PosFormat'\n";
+        	next;
+	    }
+	}
+    }
+} 
+
+
+if (exists $Table{kern}) {
+    $nTables = getu(substr $Table{kern}, 2, 2);
+    $startSubTable = 4;
+    for $i (0 .. $nTables - 1) {
+    	$length = getu(substr $Table{kern}, $startSubTable + 2, 2);
+	$coverage = getu(substr $Table{kern}, $startSubTable + 4, 2);
+	if ($coverage != 0x01) {
+	    warn "Warning: format of `kern' table not supported\n";
+	    $startSubTable += $length;
+	    next;
+	}
+	$nPairs = getu(substr $Table{kern}, $startSubTable + 6, 2);
+	for $j (0 .. $nPairs - 1) {
+	    $kernRecord = substr $Table{kern}, $startSubTable + 14 + 6 * $j, 6;
+	    $left = getu(substr $kernRecord, 0, 2);
+	    $right = getu(substr $kernRecord, 2, 2);
+	    $value = gets16(substr $kernRecord, 4, 2);
+	    $KPX{$left}{$right} ||= $value * 1000 / $UnitsPerEM;
+	}
+	$startSubTable += $length;
+    }
+}
+
+
+if (exists $Table{CFF}) {
+    $HdrSize = getu(substr $Table{CFF}, 2, 1);
+    ($CFF, undef) = getidx substr($Table{CFF}, $HdrSize);
+    ($CFF, @TopDict) = getidx $CFF;
+    @TopDict = map ord, split(//, $TopDict[0]);
+    while (@TopDict) {
+	if ($TopDict[0] > 21) {
+	    push @Operands, getnum(\@TopDict);
+	} 
+	elsif ($TopDict[0] == 12) {
+	    $Operator = shift(@TopDict) . " " . shift(@TopDict);
+	    ($TopDict{$Operator} = join " ", @Operands) =~ s/^\s*//;
+	    @Operands = undef;
+	} 
+	else {
+	    $Operator = shift(@TopDict);
+	    ($TopDict{$Operator} = join " ", @Operands) =~ s/^\s*//;
+	    @Operands = undef;
+	}
+    }
+    ($CFF, @Strings) = getidx $CFF;
+    unshift @Strings, @StandardStrings;
+    if ($NumGlyphs != getu(substr $Table{CFF}, $TopDict{17}, 2)) {
+    	die "Error: NumGlyphs in `maxp' different from `CFF'\n";
+    }
+    if ($TopDict{15} == 0) {
+	for $i (0 .. 228) {$glyphName[$i] = $Strings[$i]}
+    } 
+    elsif ($TopDict{15} == 1) {
+	warn "Warning: predefined CharSet `Expert' not implemented\n";
+    } 
+    elsif ($TopDict{15} == 2) {
+	warn "Warning: predefined CharSet `ExpertSubset' not implemented\n";
+    } 
+    else {
+	$Charset = substr $Table{CFF}, $TopDict{15};
+	$Format  = getu(substr $Charset, 0, 1);
+	if ($Format == 0) {
+	    $glyphName[0] = $Strings[0];
+	    for $j (1 .. $NumGlyphs - 1) {
+        	$glyphName[$j] = $Strings[getu(substr $Charset, 1 + 2 * $j,2)];
+	    }
+	} 
+	elsif ($Format == 1) {
+	    $i = 0;
+	    $glyphName[$i++] = $Strings[0];
+	    for ($j = 0; $i < $NumGlyphs; $j++) {
+        	$first = getu(substr $Charset, 1 + 3 * $j, 2);
+        	$nLeft = getu(substr $Charset, 3 + 3 * $j, 1);
+        	for $k (0 .. $nLeft) {
+        	    $glyphName[$i++] = $Strings[$first + $k];
+        	}
+	    }
+	} 
+	elsif ($Format == 2) {
+	    $i = 0;
+	    $glyphName[$i++] = $Strings[0];
+	    for ($j = 0; $i < $NumGlyphs; $j++) {
+        	$first = getu(substr $Charset, 1 + 4 * $j, 2);
+        	$nLeft = getu(substr $Charset, 3 + 4 * $j, 2);
+        	for $k (0 .. $nLeft) {
+        	    $glyphName[$i++] = $Strings[$first + $k];
+        	}
+	    }
+	} 
+	else {die "Error: unknown CharsetFormat `$Format'\n"}
+    }
+} 
+else {
+    for $i (0 .. 0xFF) {
+	$glyphName[$i] = sprintf "index0x%02X", $i;
+    }
+    for $i (0x100 .. $NumGlyphs - 1) {
+	$glyphName[$i] = sprintf "index0x%04X", $i;
+    }
+}
+
+for $i (0 .. $NumGlyphs - 1) {
+    for $j (0 .. $NumGlyphs - 1) {
+	if ($Value = $KPX{$i}{$j}) {
+	    push @KPX, sprintf("KPX %s %s %d\n", 
+	    	    $glyphName[$i], $glyphName[$j], 
+	    	    $Value > 0x7FFF ? $Value - 0x10000 : $Value);
+	}
+    }
+}
+
+$KPX = @KPX;
+print <<EOF;
+StartKernData
+StartKernPairs $KPX
+ @{KPX}EndKernPairs
+EndKernData
+EOF
+
+__END__

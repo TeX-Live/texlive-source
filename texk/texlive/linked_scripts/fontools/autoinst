@@ -1,0 +1,1714 @@
+#!/usr/bin/perl
+
+=begin COPYRIGHT -------------------------------------------------------------
+
+    Copyright (c) 2005-2009 Marc Penninga.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of version 2 of the GNU General Public License 
+    as published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to 
+        Free Software Foundation, Inc., 
+        59 Temple Place, 
+        Suite 330, 
+        Boston, MA 02111-1307, 
+        USA
+
+=end -------------------------------------------------------------------------
+
+=cut
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+
+
+my $USAGE =<<'END_USAGE';
+
+'autoinst' is a wrapper around Eddie Kohler's TypeTools
+(http://www.lcdf.org/type/), for installing OpenType fonts in LaTeX.
+
+Usage: autoinst [options] font[s]
+
+Possible options:
+    --encoding=ENC[,ENC]    Use ENC as text encoding(s) (default: LY1)
+    
+    --(no)ts1               Toggle creation of TS1 fonts
+    --(no)smallcaps         Toggle creation of smallcaps shape 
+    --(no)swash             Toggle creation of swash shape 
+    --(no)titling           Toggle creation of titling shape 
+    --(no)superiors         Toggle creation of fonts with superior characters 
+    --(no)inferiors         Toggle creation of fonts with inferior characters 
+    --(no)ornaments         Toggle creation of ornament fonts 
+    --(no)fractions         Toggle creation of fonts with digits for fractions
+
+    --sanserif              Install font as sanserif font
+    --typewriter            Install font as typewriter font
+    --manual                Manual mode (see documentation)
+    --extra="TEXT"          Add TEXT to the command line for 'otftotfm'
+
+    --help                  Print this text
+    --verbose               Make some noise
+
+    font[s]                 The fonts (either .otf or .ttf) to install.
+    
+Please report any bugs or suggestions to <marc@penninga.info>.
+END_USAGE
+
+
+=begin Comment ---------------------------------------------------------------
+
+    The next three tables map the names of weights, widths and shapes 
+    to NFSS codes. New entries can be added without problems, 
+    as long as the name is in all lowercase.
+    The 'book' and 'regular' weights and the 'regular' width are mapped 
+    to an empty string rather than 'm', because the 'm' disappears when 
+    weight and width are combined into the NFSS series (unless both are
+    'regular', but we deal with that case later on).
+    The 'oblique' (aka 'slanted') shape is mapped to 'it' to make things
+    easier for ourselves. This means the program will fail for font 
+    families that have both italic and oblique shapes, but I doubt
+    whether these exist (apart from Computer Modern, of course).
+    
+=end
+
+=cut
+
+my %FD_WEIGHT = (
+    thin       => 't',
+    ultralight => 'ul',
+    extralight => 'el',
+    light      => 'l',
+    book       => '',
+    regular    => '',
+    medium     => 'mb',
+    demibold   => 'db',
+    semibold   => 'sb',
+    bold       => 'b',
+    extrabold  => 'eb',
+    black      => 'a',      # Not 'k': that means 'book' in fontname
+    extrablack => 'ea',
+    heavy      => 'h',
+    ultra      => 'ub',
+    ultrabold  => 'ub',
+    ultrablack => 'ua',
+);
+
+my %FD_WIDTH = (
+    ultracondensed => 'uc',
+    extracondensed => 'ec',
+    condensed      => 'c',
+    semicondensed  => 'sc',
+    regular        => '',
+    semiextended   => 'sx',
+    extended       => 'x',
+);
+
+my %FD_SHAPE = (
+    roman   => 'n',
+    italic  => 'it',
+    oblique => 'it',
+    slanted => 'it',
+    romani  => 'n',
+    romanii => 'it',    # Map one of Silentium Pro's two roman shapes to 'it'
+);
+
+=begin Comment ---------------------------------------------------------------
+
+    The following tables are used for deciding which font families and shapes 
+    to generate. Each hash governs one of these aspects:
+    - 'figure style' (lining, oldstyle, tabular, proportional, superior,
+        inferior etc.); each of these will become a separate font family.
+    - 'variant' shape (normal, small caps, swash, titling or textcomp).
+    
+
+    Each key in the %FIGURE_STYLE hash names a figure style; the corresponding
+    value is an anonymous hash with four key/value pairs:
+        reqd    A list of required OpenType features; 
+                this style is built if the font supports at least one
+                of these features.
+        nice    A list of optional OpenType features;
+                these are used if the font supports them, but don't
+                prevent this style from being built when missing.
+        extra   Extra options passed to otftotfm when creating this style.
+        shape   An anonymous array of 'variant' shapes to build with
+                this figure style.
+                
+    Ornaments are treated as a separate 'figure style'. 
+    This may seem a bit funny, but is actually the easiest way to do it.
+    
+                
+    Each key in the %SHAPE hash names a 'variant' shape; the corresponding
+    value is (again) an anonymous hash with several key/value pairs:
+        code    An anonymous hash with two possible keys:
+                'n'  -> the NFSS code to use for this variant shape
+                        if the basic shape is upright;
+                'it' -> the NFSS code to use for this variant shape
+                        if the basic shape is italic, slanted or oblique;
+                If the 'n' ('it') entry is missing, the upright (italic)
+                version of this variant shape will not be built.
+        reqd    A list of required OpenType features; 
+                this shape is built if the font supports at least one
+                of these features.
+        nice    A list of optional OpenType features;
+                these are used if the font supports them, but don't
+                prevent this shape from being built when missing.
+        extra   Extra options passed to otftotfm when creating this shape.
+        name    A string added to the name of the generated font, 
+                to make it unique.
+        
+=end
+
+=cut
+
+my %FIGURE_STYLE = (
+    TLF => {
+        reqd   => [],
+        nice   => ['lnum', 'tnum'],
+        extra  => '',
+        shapes => ['normal', 'smallcaps', 'swash', 'titling', 'textcomp'],
+    },
+    LF => {
+        reqd   => ['pnum'],
+        nice   => ['lnum'],
+        extra  => '',
+        shapes => ['normal', 'smallcaps', 'swash', 'titling', 'textcomp'],
+    },
+    TOsF => {
+        reqd   => ['onum'],
+        nice   => ['tnum'],
+        extra  => '',
+        shapes => ['normal', 'smallcaps', 'swash', 'textcomp'],
+    },
+    OsF => {
+        reqd   => ['onum','pnum'],
+        nice   => [],
+        extra  => '',
+        shapes => ['normal', 'smallcaps', 'swash', 'textcomp'],
+    },
+    Sup => {
+        reqd   => ['sups'],
+        nice   => [],
+        extra  => '--ligkern="* {KL} *"',
+        shapes => ['normal'],
+    },
+    Inf => {
+        reqd   => ['sinf'],
+        nice   => [],
+        extra  => '--ligkern="* {KL} *"',
+        shapes => ['normal'],
+    },
+    Numr => {
+        reqd   => ['numr'],
+        nice   => [],
+        extra  => '--ligkern="* {KL} *"',
+        shapes => ['normal'],
+    },
+    Dnom => {
+        reqd   => ['dnom'],
+        nice   => [],
+        extra  => '--ligkern="* {KL} *"',
+        shapes => ['normal'],
+    },
+    Orn => {
+        reqd   => ['ornm'],
+        nice   => [],
+        extra  => '--ligkern="* {KL} *"',
+        shapes => ['normal'],
+    },
+);
+
+my %SHAPE = (
+    normal => {
+        code  => {n => 'n', it => 'it'},
+        reqd  => [],
+        nice  => ['kern', 'liga'],
+        extra => '',
+        name  => '',
+    },
+    smallcaps => {
+        code  => {n => 'sc', it => 'scit'},
+        reqd  => ['smcp'],
+        nice  => ['kern', 'liga'],
+        extra => '--unicoding="germandbls =: SSsmall"',
+        name  => 'sc',
+    },
+    swash => {
+        code  => {n => 'nw', it => 'sw'},
+        reqd  => ['swsh', 'dlig'],
+        nice  => ['kern', 'liga'],
+        extra => '--include-alternates="*.swash" -faalt',
+        name  => 'swash',
+    },
+    titling => {
+        code  => {n => 'tl', it => 'tlit'},
+        reqd  => ['titl', 'case', 'cpsp'],
+        nice  => ['kern', 'liga'],
+        extra => '',
+        name  => 'titling',
+    },
+    textcomp => {
+        code  => {n => 'n', it => 'it'},
+        reqd  => [],
+        nice  => ['onum'],
+        extra => '',
+        name  => '',
+    },
+);
+
+
+# The official names
+my %CODING_SCHEME = (
+    fontools_ly1 => 'TEX TYPEWRITER AND WINDOWS ANSI',
+    fontools_t1  => 'EXTENDED TEX FONT ENCODING - LATIN',
+    fontools_ot1 => 'TEX TEXT',
+    fontools_ts1 => 'TEX TEXT COMPANION SYMBOLS 1---TS1',
+);
+
+# Default values for the command line arguments
+%ARGV = (
+    encoding    => 'LY1',
+    textcomp    => '2',     # 0 = no, 1 = yes, 2 = (enc eq 'T1' ? yes : no)
+    manual      => '0',     # 0 = no, 1 = yes
+    verbose     => '0',     # 0 = no, 1 = yes
+    extra       => '',
+    nfss        => 'rm',
+    smallcaps   => '1',     # 0 = no, 1 = yes
+    swash       => '1',     # 0 = no, 1 = yes
+    titling     => '0',     # 0 = no, 1 = yes
+    superiors   => '1',     # 0 = no, 1 = yes
+    inferiors   => '0',     # 0 = no, 1 = yes
+    ornaments   => '1',     # 0 = no, 1 = yes
+    fractions   => '0',     # 0 = no, 1 = yes
+);
+
+my @time = localtime;
+my $date = sprintf "%04d/%02d/%02d", $time[5] + 1900, $time[4] + 1, $time[3];
+
+
+#   -----------------------  subroutine definitions  -----------------------
+
+
+sub main {
+    parse_options();
+    
+    my (%already_seen, %commands, @fd_data, $err_msg);
+    
+    FONTFILE:
+    for my $filename (@ARGV) {
+        my %fontinfo = read_font_info($filename);
+        my $unique 
+            = join ',', @fontinfo{qw(family width weight shape min max)};
+        if (    $already_seen{$unique}
+            and $already_seen{$unique} ne $filename) {
+            $err_msg .= <<"END_PARSE_ERROR";
+
+ERROR: I've parsed both '$already_seen{$unique}'
+                    and '$filename' as
+         
+         Family      $fontinfo{family}
+         Width       $fontinfo{width}
+         Weight      $fontinfo{weight}
+         Shape       $fontinfo{shape}
+         Size        $fontinfo{min}-$fontinfo{max}
+END_PARSE_ERROR
+        }
+        else {
+            $already_seen{$unique} = $filename;
+        }
+        
+        FIGURE_STYLE:
+        for my $figure_style (keys %FIGURE_STYLE) {
+            
+            # Does the font support this figure style?
+            if (    @{$FIGURE_STYLE{$figure_style}{reqd}}
+                and not grep { exists $fontinfo{features}{$_} }
+                             @{$FIGURE_STYLE{$figure_style}{reqd}} ) {
+                next FIGURE_STYLE;
+            }
+            
+            # If so, create all corresponding shapes
+            my $basic = $FD_SHAPE{$fontinfo{shape}};
+            
+            SHAPE:
+            for my $shape (@{$FIGURE_STYLE{$figure_style}{shapes}}) {
+                next SHAPE if not exists $SHAPE{$shape};
+                next SHAPE if not exists $SHAPE{$shape}{code}{$basic};
+                
+                # Does the font support this shape?
+                if (    @{$SHAPE{$shape}{reqd}}
+                    and not grep { exists $fontinfo{features}{$_} }
+                                 @{$SHAPE{$shape}{reqd}}) {
+                    next SHAPE;
+                }
+                
+                # Decide which features to use
+                my @features = grep { exists $fontinfo{features}{$_} }
+                                    (
+                                        @{$FIGURE_STYLE{$figure_style}{reqd}},
+                                        @{$FIGURE_STYLE{$figure_style}{nice}},
+                                        @{$SHAPE{$shape}{reqd}},
+                                        @{$SHAPE{$shape}{nice}},
+                                    );
+                                    
+                # Remove duplicate features
+                my %tmp_features;
+                for my $f (@features) {
+                    $tmp_features{$f} = 1;
+                }
+                if ($tmp_features{onum} && $tmp_features{lnum}) { 
+                    delete $tmp_features{lnum};
+                }
+                @features = keys %tmp_features;
+                                    
+                # Figure out the name and NFSS code for the encodings
+                my @encodings;
+                if ($shape eq 'textcomp') {
+                    @encodings = (['fontools_ts1', 'ts1']);
+                }
+                elsif ($figure_style eq 'Orn') {
+                    @encodings = ([make_ornament_encoding(%fontinfo), 'u']);
+                }
+                else {
+                    @encodings = map { [lc $_, lc $_] } @{$ARGV{encoding}};
+                }
+
+                ENCODING:                
+                for my $enc_ref (@encodings) {
+                    my ($enc_name, $enc_code) = @{$enc_ref};
+                    $enc_name =~ s/\A (ly1|ot1|t1) \z/fontools_$1/xms;
+                    
+                    # Create unique name for this font
+                    my $fontname = join '-',
+                                        $fontinfo{name},
+                                        lc $figure_style,
+                                        $SHAPE{$shape}{name},
+                                        $enc_code,
+                                        ;
+                    $fontname =~ s/[-]{2,}/-/xmsg;
+                                        
+                    # Create the command line for otftotfm
+                    my $command 
+                        = join ' ',
+                               'otftotfm',
+                               "--encoding=$enc_name",
+                               ($ARGV{manual} ? '--pl' : '--automatic'),
+                               "--map-file=$fontinfo{family}.map --no-updmap",
+                               ($filename =~ m/[.]ttf\z/xms 
+                                    ? '--no-type1' 
+                                    : ''),
+                               ($CODING_SCHEME{$enc_name} 
+                                    ? "--coding-scheme="
+                                      . "\"$CODING_SCHEME{$enc_name}\""
+                                    : ''),
+                               (map { "--feature=$_" } @features),
+                               $FIGURE_STYLE{$figure_style}{extra},
+                               $SHAPE{$shape}{extra},
+                               $ARGV{extra},
+                               '"' . $filename . '"',
+                               $fontname,
+                               ;
+                    
+                    # Save the command and the necessary data for .fd files
+                    push @{$commands{$fontinfo{family}}}, $command;
+                    push @fd_data,
+                         join '|',
+                              $fontinfo{family},
+                              uc $enc_code,
+                              $figure_style,
+                              $FD_WEIGHT{$fontinfo{weight}}
+                                  . $FD_WIDTH{$fontinfo{width}} 
+                                  || 'm',
+                              $SHAPE{$shape}{code}{$basic},
+                              sprintf("%04.1f",$fontinfo{min}),
+                              sprintf("%04.1f",$fontinfo{max}),
+                              $fontname,
+                              ;
+                         
+                    if ($ARGV{verbose}) {
+                        printf "    %-42s  %4s/%s-%s/%s/%s\n",
+                               $fontname,
+                               uc $enc_code,
+                               $fontinfo{family},
+                               $figure_style,
+                               $FD_WEIGHT{$fontinfo{weight}}
+                                   .$FD_WIDTH{$fontinfo{width}} 
+                                   || 'm',
+                               $SHAPE{$shape}{code}{$basic},
+                               ;
+                    }
+                }
+            }
+        }
+    }
+
+    # If parsing failed, flush STDOUT, print the error messages and die
+    if (defined $err_msg) {
+        close STDOUT;
+        die $err_msg . <<'END_GENERAL_PARSE_ERROR';
+        
+
+I suspect your font family contains some unusual weights or widths.
+You might try adding missing widths and weights to the tables
+'%FD_WIDTH' and '%FD_WEIGHT' at the beginning of the source code;
+otherwise, please send a bug report to <marc@penninga.info>.
+END_GENERAL_PARSE_ERROR
+    }
+    
+    @fd_data = sort @fd_data;
+    
+    for my $fd_line (@fd_data) {
+        my @fd_line  = split /[|]/, $fd_line;
+        $fd_line[5] += 0;
+        $fd_line[6] += 0;
+        $fd_line     = \@fd_line;
+    }
+    
+    # Adjust size ranges
+    $fd_data[0][5] = '';
+    for my $i (0 .. $#fd_data - 1) {
+        if (grep { $fd_data[$i][$_] ne $fd_data[$i + 1][$_] } 0 .. 4) {
+            $fd_data[$i][6] = $fd_data[$i + 1][5] = '';
+        }
+        else {
+            $fd_data[$i][6] = $fd_data[$i + 1][5];
+        }
+    }
+    $fd_data[-1][6] = '';
+    
+    # Generate .fd files
+    my @fd_prev = ('') x 8;
+    my $FD;
+    for my $fd_line_ref (@fd_data) {
+        my @fd_line = @{$fd_line_ref};
+        
+        write_style_file($fd_line[0], @fd_data) if $fd_line[0] ne $fd_prev[0];
+        
+        if (grep { $fd_line[$_] ne $fd_prev[$_] } 0 .. 2) {
+            end_fd_file($FD) if $fd_prev[0];
+            $FD = start_fd_file(@fd_line[0 .. 2]);
+        }
+        
+        if (grep { $fd_line[$_] ne $fd_prev[$_] } 0 .. 4) {
+            # Start new fontshape
+            if (not grep { $fd_line[$_] ne $fd_prev[$_] } 0 .. 2) {
+                print {$FD} "}{}\n\n";
+            }
+            printf {$FD} "\\DeclareFontShape{%s}{%s-%s}{%s}{%s}{\n", 
+                         @fd_line[1, 0, 2, 3, 4];
+        }
+        
+        # Write fontshape entry
+        printf {$FD} "        %s \\%s\@\@scale %s\n",
+                     sprintf("%5s-%-5s", '<' . $fd_line[5], $fd_line[6] . '>'),
+                     $fd_line[0],
+                     $fd_line[7],
+                     ;
+                     
+        @fd_prev = @fd_line;
+    }
+    
+    end_fd_file($FD) if $fd_prev[0];
+
+    # Remove the --no-updmap option from the last command for each family
+    map { $_->[-1] =~ s/--no-updmap//xms } values %commands;
+    
+    # Print or execute the generated commands
+    if ($ARGV{manual}) {
+        while (my ($fam, $cmds_ref) = each %commands) {
+            open my $BAT, '>', "$fam.bat"
+                or die "ERROR: can't create '$fam.bat' - $!";
+            map { print {$BAT} "$_\n" } @{$cmds_ref};
+            close $BAT;
+        }
+    }
+    else {
+        for my $cmds_ref (values %commands) {
+            for my $cmd (@{$cmds_ref}) {
+                print "$cmd\n";
+                system $cmd and warn <<'END_OTFTOTFM_WARNING';
+
+WARNING: 'otftotfm' finished with a non-zero return code;
+         I'm afraid something went wrong!
+         
+END_OTFTOTFM_WARNING
+            }
+        }
+    }
+}
+
+#   ------------------------------------------------------------------------
+
+sub parse_options {
+    my $cmdline = "$0 " . join ' ', @ARGV;
+    
+    GetOptions(
+        'help'       =>  sub { print $USAGE; exit },
+        'encoding=s' => \$ARGV{encoding}, 
+        'ts1!'       => \$ARGV{textcomp},
+        'manual'     => \$ARGV{manual}, 
+        'verbose'    => \$ARGV{verbose},
+        'extra=s'    => \$ARGV{extra},
+        'sanserif'   =>  sub { $ARGV{nfss} = 'sf' },
+        'typewriter' =>  sub { $ARGV{nfss} = 'tt' },
+        'smallcaps!' => \$ARGV{smallcaps},
+        'swash!'     => \$ARGV{swash},
+        'titling!'   => \$ARGV{titling},
+        'superiors!' => \$ARGV{superiors},
+        'inferiors!' => \$ARGV{inferiors},
+        'ornaments!' => \$ARGV{ornaments},
+        'fractions!' => \$ARGV{fractions},
+    )
+    or die "$USAGE";
+
+    die "$USAGE" unless @ARGV;
+
+    if (!$ARGV{smallcaps}) { delete $SHAPE{smallcaps} }
+    if (!$ARGV{swash}    ) { delete $SHAPE{swash}     }
+    if (!$ARGV{titling}  ) { delete $SHAPE{titling}   }
+
+    if (!$ARGV{superiors}) { delete $FIGURE_STYLE{Sup} }
+    if (!$ARGV{inferiors}) { delete $FIGURE_STYLE{Inf} }
+    if (!$ARGV{ornaments}) { delete $FIGURE_STYLE{Orn} }
+    if (!$ARGV{fractions}) { delete @FIGURE_STYLE{qw(Numr Dnom)} }
+    
+    $ARGV{encoding} =~ s/\s+//xmsg;
+    my @textencodings = grep { $_ ne 'TS1' }
+                             map { uc } 
+                                 split /,/, $ARGV{encoding};
+    $ARGV{encoding} = \@textencodings;
+
+    # TS1-encoded fonts are generated if:
+    # - text encoding is T1 and the user didn't turn off TS1, or
+    # - the user explicitly asked for TS1
+    if (
+        !(   (grep { $_ eq 'T1' } @{$ARGV{encoding}} and $ARGV{textcomp})
+          or $ARGV{textcomp} == 1
+         )) {
+        delete $SHAPE{textcomp};
+    }
+    
+    if ($ARGV{verbose}) {
+        print <<"END_ARGUMENTS";
+
+$cmdline
+
+        
+I'm using the following options:
+
+    encoding(s):        @{[ join ', ', @{$ARGV{encoding}} ]}
+    NFSS:               $ARGV{nfss} @{[ $ARGV{nfss} eq 'rm' ? '(serif)'
+                                      : $ARGV{nfss} eq 'sf' ? '(sanserif)'
+                                      : $ARGV{nfss} eq 'tt' ? '(typewriter)'
+                                      :                       '(unknown)'
+                                    ]} 
+
+    (no)ts1:            @{[ $SHAPE{textcomp} ? 'ts1'       : 'nots1'       ]}
+    (no)smallcaps:      @{[ $ARGV{smallcaps} ? 'smallcaps' : 'nosmallcaps' ]}
+    (no)swash:          @{[ $ARGV{swash}     ? 'swash'     : 'noswash'     ]}
+    (no)titling:        @{[ $ARGV{titling}   ? 'titling'   : 'notitling'   ]}
+    (no)superiors:      @{[ $ARGV{superiors} ? 'superiors' : 'nosuperiors' ]}
+    (no)inferiors:      @{[ $ARGV{inferiors} ? 'inferiors' : 'noinferiors' ]}
+    (no)ornaments:      @{[ $ARGV{ornaments} ? 'ornaments' : 'noornaments' ]}
+    (no)fractions:      @{[ $ARGV{fractions} ? 'fractions' : 'nofractions' ]}
+
+    extra:              @{[ $ARGV{extra} || 'empty' ]}
+
+    auto/manual:        @{[ $ARGV{manual}  ? 'manual'  : 'automatic' ]}
+    verbosity:          @{[ $ARGV{verbose} ? 'verbose' : 'silent'    ]}
+
+END_ARGUMENTS
+    }
+}
+
+#   ------------------------------------------------------------------------
+
+sub read_font_info {
+    my ($fontfile) = @_;
+    
+    my %info = ();
+
+    # Read some general info about the font    
+    open my $OTFINFO, '-|', "otfinfo --info \"$fontfile\""
+        or die "ERROR: 'otfinfo --info \"$fontfile\"' failed";
+        
+    LINE:
+    for my $line (<$OTFINFO>) {
+        my ($key, $val) = $line =~ m/([^:]+) :\s* ([^\n]+)/xms
+            or next LINE;
+        $val =~ s/[^-\w]//xmsg;
+        $info{$key} = $val;
+    }
+    close $OTFINFO;
+
+    if ($info{Family} =~ m/\A (.+ (?: OT | Pro))/xms) {
+        $info{Family} =  $1;
+    }
+    
+    $info{'Full name'} =~ s/$info{Family}//xmsg;
+    $info{'Full name'} =  lc $info{'Full name'};
+    $info{Family}      =~ s/\A (?: Adobe | ITC ) | LT | MT//xmsg;
+    
+    # Set default
+    my %fontinfo = (
+        filename => $fontfile,
+        name     => $info{'PostScript name'},
+        family   => $info{Family},
+        width    => 'regular',
+        weight   => 'regular',
+        shape    => 'roman',
+        min      => 0,
+        max      => 0,
+        features => {},
+    );
+    
+    # Try to match width, weight and (basic) shape
+    WIDTH:
+    for my $width (map { quotemeta } 
+                        reverse sort 
+                                { length($a) <=> length($b) || $a cmp $b } 
+                                 keys %FD_WIDTH) 
+    {
+        if ($info{'Full name'} =~ s/$width//xmsi) {
+            $fontinfo{width} = $width;
+            last WIDTH;
+        }
+    }
+    
+    WEIGHT:
+    for my $weight (map { quotemeta } 
+                         reverse sort 
+                                 { length($a) <=> length($b) || $a cmp $b } 
+                                  keys %FD_WEIGHT) 
+    {
+        if ($info{'Full name'} =~ s/$weight//xmsi) {
+            $fontinfo{weight} = $weight;
+            last WEIGHT;
+        }
+    }
+    SHAPE:
+    for my $shape (map { quotemeta } 
+                        reverse sort 
+                                { length($a) <=> length($b) || $a cmp $b } 
+                                 keys %FD_SHAPE) 
+    {
+        if ($info{'Full name'} =~ s/$shape//xmsi) {
+            $fontinfo{shape} = $shape;
+            last SHAPE;
+        }
+    }
+    
+    # Read optical size info
+    open $OTFINFO, '-|',"otfinfo --optical-size \"$fontfile\""
+        or die "ERROR: 'otfinfo --optical-size \"$fontfile\"' failed";
+    if (my ($fm, $to) 
+        = <$OTFINFO> =~ m/
+                            [(]
+                                ( [\d.]+ ) \s* pt, \s*
+                                ( [\d.]+ ) \s* pt  \s*
+                            []]
+                         /xms) {
+        # Work around some known bugs
+        if ($fontinfo{name} eq 'GaramondPremrPro-It'
+            && $fm == 6
+            && $to == 8.9) {
+            @fontinfo{qw(min max)} = (8.9, 14.9);
+        }
+        elsif ($fontinfo{family} eq 'KeplerStd'
+            && $info{Subfamily} =~ m/Caption/xms
+            && $fm == 8.9
+            && $to == 13.9) {
+            @fontinfo{qw(min max)} = (6, 8.9);
+        }
+        elsif ($fontinfo{family} eq 'KeplerStd'
+            && $info{Subfamily} =~ m/Subhead/xms
+            && $fm == 8.9
+            && $to == 13.9) {
+            @fontinfo{qw(min max)} = (13.9, 23);
+        }
+        elsif ($fontinfo{family} eq 'KeplerStd'
+            && $info{Subfamily} =~ m/Display/xms
+            && $fm == 8.9
+            && $to == 13.9) {
+            @fontinfo{qw(min max)} = (23, 72);
+        }
+        else {
+            @fontinfo{qw(min max)} = ($fm, $to);
+        }
+    }
+    close $OTFINFO;
+    
+    # See what features this font provides
+    open $OTFINFO, '-|',"otfinfo --features \"$fontfile\""
+        or die "ERROR: 'otfinfo --features \"$fontfile\"' failed";
+    for my $line (<$OTFINFO>) {
+        if ($line =~ m/\A (\w{4}) \s+/xms) {
+            $fontinfo{features}{$1} = 1;
+        }
+    }
+    close $OTFINFO;
+    
+    if ($ARGV{verbose}) {
+        print <<"END_FONT_INFO";
+
+$fontfile:
+    Family      $fontinfo{family}
+    Width       $fontinfo{width}
+    Weight      $fontinfo{weight}
+    Shape       $fontinfo{shape}
+    Size        @{[ $fontinfo{min} || '']}-@{[ $fontinfo{max} || '' ]}
+END_FONT_INFO
+        
+        my @features = sort keys %{$fontinfo{features}};
+        my $prefix   = '    Features    ';
+        while (@features) {
+            print $prefix, join(' ', splice @features, 0, 10), "\n";
+            $prefix = ' ' x length $prefix;
+        }
+        print "\n";
+    }
+    
+    return %fontinfo;
+}
+
+
+=begin Comment ---------------------------------------------------------------
+
+    Ornament glyph names vary across fonts, so we generate font-specific 
+    encoding vectors. 
+    This is skipped if a file `<family>_orn.enc' is found in the current 
+    directory, so the user can provide her own vector if she wants to.
+
+=end
+
+=cut
+
+sub make_ornament_encoding {
+    my (%fontinfo) = @_;
+
+    my $fontfile = $fontinfo{filename};
+    my $enc_name = $fontinfo{family} . '_orn';
+    
+    if (not -e "$enc_name.enc") {
+
+        # Default ornament names: 'orn.' plus three digits
+        my @encoding = map { sprintf "orn.%03d", $_ } 1 .. 256;
+        
+        open my $OTFINFO, '-|', "otfinfo --glyphs \"$fontfile\""
+            or die "ERROR: 'otfinfo --glyphs \"$fontfile\"' failed";
+        chop(my @glyphnames = <$OTFINFO>);
+        close $OTFINFO;
+
+        # Test for some known alternative names (probably not exhaustive)
+        my @ornaments 
+            = sort grep { m/\A (?:orn|u2022[.]|word[.]|hand|bullet[.]) | [.]orn \z/xms }
+                        @glyphnames;
+                        
+        if (@ornaments > 256) {
+            @encoding = @ornaments[0 .. 255];
+        }
+        else {
+            @encoding[0 .. $#ornaments] = @ornaments;
+        }
+
+        open my $ORNAMENTS, '>', "$enc_name.enc"
+            or die "ERROR: can't create '$enc_name.enc' - $!";
+            
+        print {$ORNAMENTS} "/$fontinfo{family}OrnamentEncoding [\n";
+        map { print {$ORNAMENTS} "    /$_\n" } @encoding;
+        print {$ORNAMENTS} "] def\n";
+        close $ORNAMENTS;
+    }
+    
+    return $enc_name;
+}
+
+#   ------------------------------------------------------------------------
+
+sub write_style_file {
+    my ($family, @fd_data) = @_;
+    
+    my (%seen_enc, %seen_style, %seen_series);
+    
+    LINE:
+    for my $line_ref (@fd_data) {
+        my ($fam, $enc, $style, $series) = @{$line_ref}[0 .. 3];
+        next LINE if $fam ne $family;
+        $seen_enc{$enc}       = 1;
+        $seen_style{$style}   = 1;
+        $seen_series{$series} = 1;
+    }
+    
+    open my $STYLE, '>', "$family.sty"
+        or die "ERROR: can't create '$family.sty' - $!";
+    print {$STYLE} <<"END_STY_HEADER";
+%%Generayed by autoinst on $date
+%%
+\\NeedsTeXFormat{LaTeX2e}
+\\ProvidesPackage{$family}
+    [$date (autoinst)  Style file for $family.]
+    
+END_STY_HEADER
+    
+    my $textenc = join ',', grep { $_ ne 'OT1' } @{$ARGV{encoding}};
+                       
+    print {$STYLE} "\\RequirePackage[$textenc]{fontenc}\n" if $textenc;
+    print {$STYLE} "\\RequirePackage{textcomp}\n" if $seen_enc{TS1};
+    
+    print {$STYLE} <<'END_STY_FONTAXES';
+\IfFileExists{fontaxes.sty}{
+    \RequirePackage{fontaxes}
+    \providecommand{\tldefault}{tl}
+    \DeclareRobustCommand\tlshape{\not@math@alphabet\tlshape\relax
+        \fontsecondaryshape\tldefault\selectfont}
+    \DeclareTextFontCommand{\texttl}{\tlshape}
+    \let\texttitling\texttl
+    \fa@naming@exception{shape}{{n}{tl}}{tl}
+    \fa@naming@exception{shape}{{it}{tl}}{tlit}
+    
+    \DeclareRobustCommand\swshape{\not@math@alphabet\swshape\relax
+        \fontprimaryshape\itdefault\fontsecondaryshape\swdefault\selectfont}
+    \fa@naming@exception{shape}{{n}{sw}}{nw}
+    \fa@naming@exception{shape}{{it}{sw}}{sw}
+    
+    \fa@naming@exception{figures}{{superior}{proportional}}{Sup}
+    \fa@naming@exception{figures}{{superior}{tabular}}{Sup}
+    \def\sufigures{\@nomath\sufigures
+        \fontfigurestyle{superior}\selectfont}
+    \DeclareTextFontCommand{\textsu}{\sufigures}
+    \let\textsuperior\textsu
+    
+    \fa@naming@exception{figures}{{inferior}{proportional}}{Inf}
+    \fa@naming@exception{figures}{{inferior}{tabular}}{Inf}
+    \def\infigures{\@nomath\infigures
+        \fontfigurestyle{inferior}\selectfont}
+    \DeclareTextFontCommand{\textin}{\infigures}
+    \let\textinferior\textin
+    
+    \fa@naming@exception{figures}{{ornament}{proportional}}{Orn}
+    \fa@naming@exception{figures}{{ornament}{tabular}}{Orn}
+    \def\ornaments{\@nomath\ornaments
+        \fontencoding{U}\fontfigurestyle{ornament}\selectfont}
+    \DeclareTextFontCommand{\textornaments}{\ornaments}
+    \providecommand{\ornament}[1]{\textornaments{\char##1}}
+    
+    \fa@naming@exception{figures}{{numerators}{proportional}}{Numr}
+    \fa@naming@exception{figures}{{numerators}{tabular}}{Numr}
+
+    \fa@naming@exception{figures}{{denominators}{proportional}}{Dnom}
+    \fa@naming@exception{figures}{{denominators}{tabular}}{Dnom}
+}{}
+
+END_STY_FONTAXES
+
+    print {$STYLE} <<"END_STY_XKEYVAL";
+\\IfFileExists{xkeyval.sty}{
+    \\newcommand*{\\$family\@scale}{1}
+    \\RequirePackage{xkeyval}
+    \\DeclareOptionX{scaled}{\\renewcommand*{\\$family\@scale}{##1}}
+}{
+    \\let\\DeclareOptionX\\DeclareOption
+    \\let\\ExecuteOptionsX\\ExecuteOptions
+    \\let\\ProcessOptionsX\\ProcessOptions
+}
+
+END_STY_XKEYVAL
+    
+    if ($seen_style{LF} or $seen_style{TLF}) {
+        print {$STYLE} 
+            "\\DeclareOptionX{lining}{\\edef\\$family\@figurestyle{LF}}\n";
+    }
+    if ($seen_style{OsF} or $seen_style{TOsF}) {
+        print {$STYLE} 
+            "\\DeclareOptionX{oldstyle}{\\edef\\$family\@figurestyle{OsF}}\n";
+    }
+    if ($seen_style{TLF} or $seen_style{TOsF}) {
+        print {$STYLE} 
+            "\\DeclareOptionX{tabular}{\\edef\\$family\@figurealign{T}}\n";
+    }
+    if ($seen_style{LF} or $seen_style{OsF}) {
+        print {$STYLE} 
+            "\\DeclareOptionX{proportional}{\\edef\\$family\@figurealign{}}\n";
+    }
+    
+    my $defaults
+        = $seen_style{OsF}  ? 'oldstyle,proportional'
+        : $seen_style{TOsF} ? 'oldstyle,tabular'
+        : $seen_style{LF}   ? 'lining,proportional'
+        : $seen_style{TLF}  ? 'lining,tabular'
+        :                     die "ERROR: encountered un unknown bug";
+    
+    my $default_bold;
+    for my $series (
+            qw(ultrablack ultrabold heavy extrablack black 
+                extrabold demibold semibold bold)) {
+        if ($seen_series{$FD_WEIGHT{$series}}) {
+            printf {$STYLE}
+                "\\DeclareOptionX{%s}{\\renewcommand*{\\bfdefault}{%s}}\n",
+                $series, $FD_WEIGHT{$series};
+            $default_bold = $series;
+        }
+    }
+    $defaults .= ",$default_bold" if $default_bold;
+    
+    my $default_regular;
+    for my $series (
+            qw(light medium regular)) {
+        if ($seen_series{$FD_WEIGHT{$series} || 'm'}) {
+            printf {$STYLE}
+                "\\DeclareOptionX{%s}{\\renewcommand*{\\mddefault}{%s}}\n",
+                $series, $FD_WEIGHT{$series} || 'm';
+            $default_regular = $series;
+        }
+    }
+    $defaults .= ",$default_regular" if $default_regular;
+    
+    print {$STYLE} <<"END_STYLE_REST";
+\\ExecuteOptionsX{$defaults}
+\\ProcessOptionsX\\relax
+
+\\renewcommand*
+    {\\$ARGV{nfss}default}
+    {$family-\\$family\@figurealign\\$family\@figurestyle}
+\\renewcommand*{\\familydefault}{\\$ARGV{nfss}default}
+
+\\endinput
+END_STYLE_REST
+
+    close $STYLE;
+}
+
+#   ------------------------------------------------------------------------
+
+sub start_fd_file {
+    my ($fam, $enc, $fig) = @_;
+    
+    open my $FD, '>', "$enc$fam-$fig.fd"
+        or die "ERROR: can't create '$enc$fam-$fig.fd' - $!";
+        
+    print {$FD} <<"END_FD_HEADER";
+%%Generated by autoinst on $date
+%%
+\\ProvidesFile{$enc$fam-$fig.fd}
+    [$date (autoinst)  Font definitions for $enc/$fam-$fig.]
+
+\\expandafter\\ifx\\csname $fam\@scale\\endcsname\\relax
+    \\let\\$fam\@\@scale\\\@empty
+\\else
+    \\edef\\$fam\@\@scale{s*[\\csname $fam\@scale\\endcsname]}%
+\\fi
+    
+\\DeclareFontFamily{$enc}{$fam-$fig}{}
+
+END_FD_HEADER
+
+    return $FD;
+}
+
+#   ------------------------------------------------------------------------
+
+sub end_fd_file {
+    my ($FD) = @_;
+    
+    print {$FD} "}{}\n\n\\endinput\n";
+    close $FD;
+}    
+
+
+main()
+
+
+__END__
+
+
+    pod2man --center="fontools" --date=`date +"%Y-%m-%d"` \
+            --release="fontools" --section=1 autoinst autoinst.1
+            
+    man -t ./autoinst.1 | ps2pdf - autoinst.pdf
+
+
+=pod
+
+=head1 NAME
+
+autoinst - wrapper script around the F<LCDF TypeTools>, 
+for installing OpenType fonts in LaTeX.
+
+
+=head1 SYNOPSIS
+
+autoinst [options] I<fontfile> [I<fontfile> ...]
+
+
+=head1 DESCRIPTION
+
+Eddie Kohler's F<TypeTools>, especially F<otftotfm>, are great tools for 
+installing OpenType fonts for use with LaTeX, but their use (even in 
+automatic mode) is quite complicated because it needs lots of long 
+command lines and doesn't generate the F<fd> and F<sty> files LaTeX needs. 
+B<autoinst> simplifies the font installation 
+process by generating and executing all commands for F<otftotfm> 
+and by creating all necessary F<fd> and F<sty> files. All the user then needs
+to do is move these files to a suitable location 
+(C<< $LOCALTEXMF/tex/latex/<Supplier>/<FontFamily>/ >> being the
+canonical choice) and update TeX's filename database.
+
+Given a family of font files (in either F<.ttf> or F<.otf> format), 
+B<autoinst> will create several LaTeX font families:
+
+=over 2
+
+=over 2
+
+=item B<->
+
+Four text families (with lining and oldstyle figures, in tabular and 
+proportional variants), each with the following shapes:
+
+=over 2
+
+=over 4
+
+=item I<n>
+
+Roman text
+
+=item I<sc>
+
+Small caps
+
+=item I<nw>
+
+`Upright swash'; usually normal text with some extra `oldstyle' ligatures, 
+such as ct, sp and st.
+
+=item I<tl>
+
+Titling shape. Meant for all-caps text only (even though it sometimes contains 
+lowercase glyphs as well), where letterspacing and the positioning of 
+punctuation characters have been adjusted to suit all-caps text. 
+This shape is generated only for the families with lining figures.
+
+=item I<it>
+
+Italic or oblique text
+
+=item I<scit>
+
+Italic small caps
+
+=item I<sw>
+
+Swash
+
+=item I<tlit>
+
+Italic titling
+
+=back
+
+=back
+
+=item B<->
+
+For each text family: a family of TS1-encoded symbol fonts, 
+in roman and italic shapes.
+
+=item B<->
+
+Four families with superiors, inferiors, numerators and denominators,
+in roman and italic shapes.
+
+=item B<->
+
+An ornament family, in roman and italic shapes.
+
+=back
+
+=back
+
+Of course, if the font doesn't contain oldstyle figures, small caps etc.,
+the corresponding shapes or families are not created; 
+furthermore, the creation of most families and shapes can be controlled by 
+command-line options (see below).
+
+The generated font families are named I<< <FontFamily>-<Suffix> >>, 
+where I<< <Suffix> >> is one of
+
+=over 8
+
+=item I<LF>
+
+proportional (i.e., figures have varying widths) lining figures
+
+=item I<TLF>
+
+tabular (i.e., all figures have the same width) lining figures
+
+=item I<OsF>
+
+proportional oldstyle figures
+
+=item I<TOsF>
+
+tabular oldstyle figures
+
+=item I<Sup>
+
+superior characters (many fonts only have an incomplete set
+of superiors: figures, some punctuation and the letters 
+I<abdeilmnorst>; normal forms will be used for the other characters)
+
+=item I<Inf>
+
+inferior characters; usually only figures and punctuation, 
+normal forms for the other characters
+
+=item I<Orn>
+
+ornaments
+
+=item I<Numr>
+
+numerators
+
+=item I<Dnom>
+
+denominators
+
+=back
+
+The generated fonts are named I<< <FontFile>-<suffix>-<shape>-<enc> >>,
+where I<< <FontFile> >> is the name of the OpenType file, I<< <suffix> >> 
+is the same as above (but in lowercase), I<< <shape> >> is either empty, 
+`sc', `swash' or `titling', and I<< <enc> >> is the encoding.
+A typical name in this scheme is F<MinionPro-Regular-osf-sc-ly1>.
+
+
+=head2 On the choice of text encoding
+
+By default, all text families use the LY1 encoding. This has been chosen 
+over T1 (Cork) because many OpenType fonts contain additional ligatures 
+such as fj and Th, and LY1 has a number of empty slots to accommodate these.
+
+A different encoding can be selected using the B< --encoding> 
+command line option (see below).
+
+
+=head2 Using the fonts with LaTeX
+
+B<autoinst> generates a style file for using the font in LaTeX documents, 
+named `<I<FontFamily>>.sty'. This style file also takes care of loading the 
+F<fontenc> and F<textcomp> packages, if necessary.
+To use the font, simply put C<\usepackage{MinionPro}> 
+(or whatever the font is called) in the preamble of your document.
+
+This style file defines a number of options:
+
+=over 4
+
+=item I<lining, oldstyle, tabular, proportional>
+
+Choose which figures will be used for the text fonts. 
+The defaults are `oldstyle' and `proportional' (if available).
+
+=item I<ultrablack, ultrabold, heavy, extrablack, black, extrabold,
+    demibold, semibold, bold>
+
+Choose the weight that LaTeX will use for the `bold' weight 
+(i.e., the value of C<\bfdefault>).
+
+=item I<light, medium, regular>
+
+Choose the weight that LaTeX will use for the `regular' weight 
+(i.e., the value of C<\mddefault>).
+
+
+=item I<< scaled=<scale> >>
+
+Scale the font by a factor of I<< <scale> >>. 
+For example: to increase the size of the font by 5%, use the command
+C<\usepackage[scaled=1.05]{MyriadPro}>.
+
+This option is only available when the F<xkeyval> package is found
+in your TeX installation.
+
+=back
+
+The style file will also try to load the F<fontaxes> package (part of 
+the MinionPro for LaTeX project), which gives easy access to various font 
+shapes and styles. This package can be downloaded from the project's homepage
+(F<http://developer.berlios.de/projects/minionpro>) or directly through 
+the CVS web interface 
+(F<http://cvs.berlios.de/cgi-bin/viewcvs.cgi/minionpro/MinionPro/tex/>),
+and is also available from CTAN as part of the archive F<base-v2.zip>
+(F<http://www.ctan.org/tex-archive/fonts/minionpro/base-v2.zip>).
+
+Using the machinery set up by F<fontaxes>, the generated style file
+also defines a few commands (which take the text to be typeset as argument) 
+and declarations (which don't take arguments, but affect all text up to 
+the end of the current group) of its own:
+
+
+    DECLARATION     COMMAND         SHORT FORM OF COMMAND
+    
+    \tlshape        \texttitling    \texttl
+    \sufigures      \textsuperior   \textsu 
+    \infigures      \textinferior   \textin 
+    
+
+In addition, the C<\swshape> and C<\textsw> commands are redefined to place
+swash on the secondary shape axis (F<fontaxes> places it on the primary 
+shape axis); this allows the use of `upright swash'. 
+Just saying C<\swshape> will still give normal (italic) swash, 
+but C<\swshape\upshape> results in upright swash.
+
+Note that there is no separate command for accessing the italic titling shape;
+but these commands behave properly when nested, so C<\tlshape\itshape> gives
+italic titling.
+There are also no commands for accessing the numerator and denominator
+fonts; these can be selected using F<fontaxes>' low-level commands, 
+e.g., C<\fontfigurestyle{numerator}\selectfont>.
+
+The style file also provides a command C<<< \ornament{I<< <number> >>} >>>, 
+where C<<< I<< <number> >> >>> is a number from 0 to the total number of 
+ornaments minus one. Ornaments are always typeset using the current family, 
+series and shape. A list of all ornaments in a font can be created by
+running LaTeX on the file F<nfssfont.tex> (part of a standard 
+LaTeX installation) and specifying the ornament font 
+(e.g., I<MinionPro-Regular-orn-u>).
+
+This whole machinery builds on F<fontaxes>; if that package cannot be found,
+the style file doesn't provide high-level access to the more `exotic' 
+font shapes and styles. In that case, you're limited to using the lower-level 
+commands from standard NFSS, or even plain TeX's C<\font> primitive
+(and it's called `primitive' for a reason!)
+
+
+=head2 Using multiple font families in one document
+
+If you want to use several font families in one document, make sure
+all fonts were installed using the same version of B<autoinst>.
+B<autoinst> has seen some non-backward-compatible changes in the past,
+and F<.sty> and F<.fd> files that were generated by different versions 
+of B<autoinst> may not be able to coexist peacefully.
+
+
+=head2 NFSS codes
+
+In NFSS, weight and width are concatenated into a single `series' attribute.
+(I<Note:> versions of B<autoinst> before 2007-07-27 erroneously formed
+the series as `width plus weight' instead of the reverse.)
+B<autoinst> maps widths, weights and shapes to NFSS codes using 
+the following tables. These are based on the tables in Lehman's 
+F<Font Installation Guide>, but some changes had to be made to avoid 
+name clashes for font families with many different widths and weights
+(such as Helvetica Neue). 
+
+
+    WEIGHT                              WIDTH                               
+    
+    Thin           t                    Ultra Condensed    uc               
+    Ultra Light    ul                   Extra Condensed    ec               
+    Extra Light    el                   Condensed          c                
+    Light          l                    Semicondensed      sc               
+    Book                 [1]            Regular                  [1]        
+    Regular              [1]            Semiextended       sx               
+    Medium         mb                   Extended           x                
+    Demibold       db                                                       
+    Semibold       sb                                                       
+    Bold           b                            
+    Extra Bold     eb                   SHAPES                              
+    Black          a                                                        
+    Extra Black    ea                   Roman              n                
+    Heavy          h                    Italic             it               
+    Ultra          ub                   Oblique            it    [2]                                    
+    Ultra Bold     ub                   RomanI             n     [3]           
+    Ultra Black    ua                   RomanII            it    [3]        
+
+
+=over 4
+
+=item [1]
+
+When I<both> weight and width are empty, the `series' attribute becomes `m'.
+
+=item [2]
+
+Mapping the `Oblique' shape to `it' instead of the canonical `sl' simplifies
+B<autoinst>. Since font families with both `Italic' and `Oblique' shapes 
+probably do not exist (apart from Computer Modern), 
+this shouldn't cause problems in real life.
+
+=item [3]
+
+To the best of my knowledge, the only font family that has two `Roman' shapes 
+is Silentium; since this has no `Italic' shape, 
+the `it' code is (ab)used for the `RomanII' shape.
+
+=back
+    
+
+=head2 A note for MikTeX users
+
+Calling F<otftotfm> with the B< --automatic> option (as B<autoinst> does by
+default) requires a TeX-installation that uses the F<kpathsea> library; with 
+TeX-installations that implement their own directory searching 
+(such as MiKTeX) F<otftotfm> might complain that it 
+cannot find a writable F<texmf> directory and leave all generated F<tfm>, 
+F<vf>, F<enc> and F<map> files in the current working directory. 
+In that case, you need to move these to their correct destinations. 
+You also need to tell the dvi-driver (F<dvips>, F<dvipdfm>, F<pdfTeX> etc.)
+about the new font map files; this usually means editing some 
+configuration file.
+
+Furthermore, some OpenType fonts lead to F<pl> and F<vpl> files that are too 
+big for MiKTeX's F<pltotf> and F<vptovf>; the versions that come with TeXLive 
+(F<http://tug.org/ftp/texlive/Contents/live/bin/win32/>) don't have this 
+problem.
+
+
+=head1 COMMAND-LINE OPTIONS
+
+=over 4
+
+=item B< --encoding>=I<encoding[,encoding]>
+
+Use the encoding I<encoding> for the text fonts. The default is `LY1'. 
+A file named `<I<encoding>>.enc' (in all I<lowercase>) should be somewhere 
+where F<otftotfm> can find it. Suitable encoding files 
+for LY1, OT1 and T1/TS1 come with I<fontools>. (Note that these files are
+called I<fontools_xxx.enc> to avoid name clashes with other packages; 
+the `fontools_' prefix doesn't need to be specified.)
+
+Multiple text encodings can be specified as well: C< --encoding=OT1,T1,LY1>. 
+The encodings are passed to F<fontenc> in the order specified, 
+so the last one will be the default text encoding.
+
+=item B< --sanserif>
+
+Install the font as a sanserif font, accessed via C<\sffamily> and C<\textsf>. 
+Note that the generated style file redefines C<\familydefault>, 
+so including it will make this font the default text font.
+
+=item B< --typewriter>
+
+Install the font as a typewriter font, accessed via C<\ttfamily> and 
+C<\texttt>. 
+Note that the generated style file redefines C<\familydefault>, 
+so including it will make this font the default text font.
+
+=item B< --ts1>
+
+=item B< --nots1>
+
+Turn the creation of TS1-encoded fonts on or off. The default is B< --ts1> 
+if the text encodings (see I< --encoding> above) include T1, 
+B< --nots1> otherwise.
+
+=item B< --smallcaps>
+
+=item B< --nosmallcaps>
+
+Turn the creation of small caps fonts on or off. The default is 
+B< --smallcaps>.
+
+=item B< --swash>
+
+=item B< --noswash>
+
+Turn the creation of swash fonts on or off. The default is B< --swash>.
+
+=item B< --titling>
+
+=item B< --notitling>
+
+Turn the creation of titling fonts on or off. The default is B< --notitling>.
+
+=item B< --superiors>
+
+=item B< --nosuperiors>
+
+Turn the creation of fonts with superior characters on or off. 
+The default is B< --superiors>.
+
+=item B< --inferiors>
+
+=item B< --noinferiors>
+
+Turn the creation of fonts with inferior figures on or off. 
+The default is B< --noinferiors>.
+
+=item B< --fractions>
+
+=item B< --nofractions>
+
+Turn the creation of fonts with numerators and denominators on or off. 
+The default is B< --nofractions>.
+
+=item B< --ornaments>
+
+=item B< --noornaments>
+
+Turn the creation of ornament fonts on or off. The default is B< --ornaments>.
+
+=item B< --manual>
+
+Manual mode. By default, B<autoinst> immediately executes all F<otftotfm> 
+command lines it generates; with the B< --manual> option, these commands are 
+instead written to a batch command file (named `<I<font>>.bat', to make things
+easier for our friends on Windows). Also, the generated F<otftotfm> command 
+lines specify the I< --pl> option and leave out the I< --automatic> option; 
+this causes human readable (and editable) F<pl> and F<vpl> files to be created 
+instead of the default F<tfm> and F<vf> files.
+
+=item B< --verbose>
+
+Verbose mode; print detailed info about what B<autoinst> thinks it's doing.
+
+=item B< --extra>=I<text>
+
+Pass I<text> as options to I<otftotfm>. To prevent I<text> from accidentily 
+being interpreted as options to B<autoinst>, it should be properly quoted.
+
+=back
+
+
+=head1 SEE ALSO
+
+Eddie Kohler's TypeTools (F<http://www.lcdf.org/type>).
+
+Perl is usually pre-installed on Linux and Unix systems;
+for Windows, good (and free) Perl implementations are 
+Strawberry Perl (F<http://strawberryperl.com>) and
+ActivePerl (available from F<http://www.activestate.com>); 
+
+John Owens' F<otfinst> (F<http://www.ece.ucdavis.edu/~jowens/code/otfinst/>;
+also available from CTAN) is another wrapper around F<otftotfm>, 
+and may work for you when B<autoinst> doesn't.
+
+Ready-made support files for MinionPro, providing more options and features
+than B<autoinst> ever will (including math), are available from 
+F<http://developer.berlios.de/projects/minionpro/>.
+
+XeTeX (F<http://scripts.sil.org/xetex>) is a TeX extension that can use 
+any font installed in the operating system (including both flavours of
+OpenType fonts) without additional support files.
+It also isn't hindered by standard TeX's limitation to 8-bit fonts,
+so it is especially well suited to fonts with many ligatures and 
+alternate glyphs, such as Bickham, Poetica and Zapfino.
+
+
+=head1 AUTHOR
+
+Marc Penninga <marc@penninga.info>
+
+When sending a bug report, please give as much relevant information as 
+possible; this usually includes (but may not be limited to) the output from 
+running B<autoinst> with the B< --verbose> option. 
+Please make sure that this output includes all error messages (if any);
+this can be done using the command
+
+    autoinst I<(... all options and files ...)>  >autoinst.log 2>&1
+
+
+=head1 COPYRIGHT
+
+Copyright (c) 2005-2009 Marc Penninga. 
+
+
+=head1 LICENSE
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of version 2 of the GNU General Public License 
+as published by the Free Software Foundation.
+
+A copy of the GNU General Public License is included with the I<fontools> 
+collection; see the file F<GPLv2.txt>.
+
+
+=head1 DISCLAIMER
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+
+
+=head1 RECENT CHANGES
+
+(See the source code for the full story.)
+
+=over 12
+
+=item I<2009-04-09>
+
+Prefixed the filenames of  the included encoding files with
+`fontools_', to prevent name clashes with other packages.
+
+=item I<2009-04-06>
+
+A small patch to the make_ornament_encoding subroutine;
+it now also recognises the I<bullet.xxx> ornament glyphs 
+in Adobe's Kepler Pro.
+
+
+=begin Really_old_history
+
+
+=item I<2007-08-07>
+
+Fixed a small bug with filename quoting on Windows.
+
+=item I<2007-07-31>
+
+Changed the tables that map weights and widths to NFSS codes:
+in some extended families (Helvetica Neue), different combinations of 
+weight and width were mapped to the same `series'.
+Added a work-around for incorrect size info in some Kepler fonts.
+Fixed a small bug in the generated commands for otftotfm 
+(sometimes, the I< --onum> feature was included twice). 
+Added encoding file for OT1 to the I<fontools> collection.
+
+=item I<2007-07-27>
+
+Two bugfixes: a closing brace was missing in the generated style file, 
+and the NFSS series was formed as `width plus weight' instead of the reverse.
+
+=item I<2007-06-10>
+
+Bugfix: silently replacing \DeclareOption, \ProcessOptions and
+\ExecuteOptions with their counterparts from the xkeyval package
+caused problems for some other packages.
+
+=item I<2007-06-04>
+
+Added the F< --no-updmap> option to all generated commands for F<otftotfm>
+(except the last); this should yield a significant speed-up for large
+families (suggested by Steven E. Harris).
+Tweaked the font info parsing to work around a bug in the naming of
+some FontFont fonts, where every font is in a family of its own.
+Added the `scaled' option (including the loading of F<xkeyval>) 
+to the generated style file.
+Extended the output of the F< --verbose> option.
+
+=item I<2007-02-08>
+
+Yet Another Complete Rewrite. 
+The code is now much more readable and more flexible; 
+the program can now handle fonts from different families,
+as well as multiple text encodings. 
+Rewrote the font info parsing code to work for Arno Pro.
+
+=item I<2006-10-11>
+
+The program determines the fonts' weights, widths and shapes by parsing
+the output from F<otfinfo --info> instead of the font filename. 
+This should make B<autoinst> work for non-Adobe fonts. 
+Filenames with spaces now work as well.
+
+=item I<2006-08-31>
+
+Made the generated style files try to include `fontaxes.sty';
+changed the names of the generated fonts and families 
+(to make the previous change possible);
+added command line options for most font styles and shapes;
+tweaked the filename parsing code for Cronos Pro and Gill Sans Pro;
+added runtime generation of encoding vectors for ornament fonts
+(because GaramondPremier's ornament names differ from other fonts);
+changed the NFSS-code for italic small caps and titling to `scit' and `tlit'
+(to work with F<fontaxes>); 
+and edited (and hopefully improved) the documentation.
+
+=item I<2005-10-03>
+
+When creating LY1, T1, OT1 or TS1 encoded fonts, the I< --coding-scheme> 
+option is added to the commands for F<otftotfm>; this should make the 
+generated F<pl> and F<vpl> files acceptable to I<fontinst>.
+Also elaborated the documentation somewhat and fixed a small bug.
+
+=item I<2005-09-22>
+
+Added check to see if filename parsing succeeded; 
+updated the filename parsing code to cater for GaramondPremier, Silentium 
+and some non-Adobe fonts;
+added the B< --sanserif> and B< --typewriter> options and hacked the
+style files to support using several different font families in one document.
+
+=item I<2005-09-12>
+
+Cleaned up the code (it now runs under the F<strict> and F<warnings> pragmas);
+fixed a (rather obscure) bug that occurred when creating TS1-encoded 
+fonts for families with multiple optical masters and oldstyle figures;
+added the I<medium, semibold> etc. options to the style file;
+and improved the layout of the generated files.
+
+=item I<2005-08-11>
+
+The generated commands weren't actually executed, only printed....
+Also added a small hack to cater for fonts 
+(such as some recent versions of MinionPro) 
+that contain swash characters but don't provide a `swsh' feature.
+
+=item I<2005-08-10>
+
+Dropped the `fontname' scheme in favor of a more verbose naming scheme,
+since many filenames were still more than eight characters long anyway. 
+Added F<nfssext.sty>-like commands to the generated style file.
+Changed the default encoding to LY1 and added the `inferior' shape.
+
+=item I<2005-08-01>
+
+Rewrote (and hopefully improved) the user interface; 
+changed the program to by default execute the generated F<otftotfm> command 
+lines rather than writing them to a file; 
+added automatic determination of the `fontname' code for the font family; 
+changed the NFSS code for italic small caps to `si'; added titling shapes; 
+changed the generated style 
+file to include an interface for the ornaments and to load Lehman's NFSS 
+extensions F<nfssext.sty> if this is installed; corrected the `fontname' codes 
+for OT1, T1, LY1 and user-specific encodings; extended the output generated by
+the B< --verbose> option; and rewrote and extended the documentation.
+
+=item I<2005-06-16>
+
+Did some more finetuning to the filename-parsing code.
+
+=item I<2005-05-31>
+
+Generate correct fontname for OT1-encoded fonts.
+
+=item I<2005-05-18>
+
+Tried to make the filename-parsing code a bit more robust by adding several
+weights and widths; changed the error that's displayed when filename parsing
+fails; commented the code.
+
+=item I<2005-04-29>
+
+Rewrote large parts of the code (yes it I<was> even worse).
+
+=item I<2005-04-18>
+
+Changed default text-encoding to T1, added TS1.
+
+=item I<2005-03-29>
+
+Added support for font families with multiple widths.
+
+=item I<2005-03-15>
+
+First version.
+
+=back
+
+=end Really_old_history

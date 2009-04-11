@@ -1,0 +1,216 @@
+#!/usr/bin/perl
+
+use Getopt::Std;
+use integer;
+use warnings; no warnings qw(uninitialized);
+
+getopts "e:o:", \%options;
+
+$0 =~ s!.*/!!;
+die "Usage: $0 -e encoding [-o output] afmfile\n" if
+    	@ARGV != 1 or !$options{e};
+
+if ($options{o} and -e $options{o}) {
+    die "$0: output file exists\n";
+}
+
+if ((chop($fn = `kpsewhich $ARGV[0] 2>&1`) and -e $fn) or
+    (chop($fn = `findtexmf $ARGV[0] 2>&1`) and -e $fn)) 
+{
+    open AFM, "<$fn" or die "Error: can't open `$fn' - $!\n";
+} 
+else {
+    open AFM, "<$ARGV[0]" or 
+	    die "Error: can't open `$ARGV[0]' - $!\n";
+}
+{
+    local $/;
+    $_ = <AFM>;
+}
+
+$Time = localtime;
+$FontInfo = /(.*)StartCharMetrics/s ? $1 : "";
+$FontInfo =~ s/(?<=Comment ).*?$/Reencoded at $Time by $0 from $ARGV[0]/m;
+$FontInfo =~ s/(?<=ItalicAngle )([\d.]+)/{$1 >= 32768 ? $1 - 65536 : $1}/me;
+$FontInfo =~ s/\r+\n/\n/g;
+if ($FontInfo =~ /FontName\s+([\w-]+)/) {$FontName = $1}
+else {warn "Warning: no FontName found in file `$ARGV[0]'\n"}
+
+for (/(WX.*?$)/gm) {/N\s+([\w.]+)/ and $WX{$1} = $_}
+for (/(KPX.*?$)/gm) {/\s+([\w.]+)\s+([\w.]+)\s+(-?\d+)/ and $KPX{$1}{$2} = $3}
+
+if ((chop($fn = `kpsewhich $options{e} 2>&1`) and -e $fn) or
+    (chop($fn = `findtexmf $options{e} 2>&1`) and -e $fn)) 
+{
+    open ENC, "<$fn" or die "Error: can't open `$fn' - $!\n";
+} 
+else {
+    open ENC, "<$options{e}" or 
+	    die "Error: can't open `$options{e}' - $!\n";
+}
+chop(@lines = <ENC>);
+map s!%.*!!, @lines;
+$_ = join "", @lines;
+($n, $_) = m!/([\w-]+) \s* \[(.*)\] \s+ def!x;
+@vector = m!([\w.]+)!g;
+
+for $i (0 .. $#vector) {
+    next if $vector[$i] eq ".notdef";
+    if ($WX{$vector[$i]} =~ /WX\s+(-?\d+).*?N\s+([\w.]+).*?B\s+(.*?)\s+;/) {
+	($WX, $N, $B) = ($1, $2, $3);
+        push @WX, "C $i ; WX $WX ; N $N ; B $B ;\n";
+    }
+    for $j (0 .. $#vector) {
+    	next if $vector[$j] eq ".notdef";
+        next unless $KPX{$vector[$i]}{$vector[$j]};
+	push @KPX, 
+		 "KPX $vector[$i] $vector[$j] $KPX{$vector[$i]}{$vector[$j]}\n";
+    }
+}
+
+if ($options{o}) {
+    ($e = $options{e}) =~ s!.*/!!;
+    ($f = $ARGV[0])    =~ s!.*/|\.afm!!g;
+    ($o = $options{o}) =~ s!.*/|\.afm!!g;
+    
+    $x = "pfb";
+    for (qw(pfb pfa ttf otf)) {
+    	if (-e "$f.$_" or
+	   (chop($fn = `kpsewhich "$f.$_" 2>&1`) and -e $fn) or
+	   (chop($fn = `findtexmf "$f.$_" 2>&1`) and -e $fn)) 
+	{
+	    $x = $_;
+	    last;
+	}
+    }
+    print qq($o $FontName <$f.$x <[$e "$n ReEncodeFont"\n);
+    
+    if (open OUT, ">$options{o}") {
+	select OUT;
+    }
+    else {
+    	warn "Warning: can't create `$options{o}' - $!\n",
+	     "         printing to <STDOUT> instead\n";
+    }
+}
+
+$WX = @WX;
+$KPX = @KPX;
+print <<EOF;
+$FontInfo
+StartCharMetrics $WX
+ @{WX}EndCharMetrics
+
+StartKernData
+StartKernPairs $KPX
+ @{KPX}EndKernPairs
+EndKernData
+EndFontMetrics
+EOF
+
+__END__
+
+=pod
+
+=head1 NAME
+
+afm2afm - reencode an F<afm> file
+
+=head1 SYNOPSIS
+
+afm2afm B<-e> I<encoding> [B<-o> I<output>] I<afmfile>
+
+=head1 DESCRIPTION
+
+This program reencodes an F<afm> file. It's mainly intended to be used with
+F<afm> files that were extracted from TrueType or OpenType fonts, since these 
+are often too big to be handled with tools like F<fontinst> (Adobe's 
+CaflischScriptPro-Regular font, for example, contains 1289 glyphs and
+278678 kerning pairs, leading to an F<afm> file of nearly 9MB).
+
+Glyphs that are absent from the chosen encoding aren't written to the output,
+which yields much smaller output files.
+
+The program also generates an entry for a F<dvips>-style map file.
+
+=head1 OPTIONS
+
+Option names were chosen to match those of F<ttf2afm>.
+
+=over 4
+
+=item B<-e> I<encoding>
+
+Reencode using the encoding given in file I<encoding>.
+
+=item B<-o> I<output>
+
+Write the reencoded F<afm> to file I<output> instead of C<stdout>. 
+The mapfile entry will still be written to C<stdout>.
+
+=back
+
+=head1 FILES
+
+All input files are searched using B<kpsewhich> or B<findtexmf> when these 
+commands are available; otherwise only the current working directory 
+is searched.
+
+=head1 SEE ALSO
+
+F<autoinst>, F<cmap2enc>, F<font2afm>, F<ot2kpx>, F<pfm2kpx>.
+
+=head1 AUTHOR
+
+Marc Penninga <marc@penninga.info>
+
+=head1 HISTORY
+
+=over 12
+
+=item I<2005-01-10>
+
+First version
+
+=item I<2005-01-25>
+
+Added printing of mapfile entry
+
+=item I<2005-02-18>
+
+Rewrote some of the code
+
+=item I<2005-03-08>
+
+Input files searched via B<kpsewhich> (where available)
+
+=item I<2005-03-15>
+
+Input files searched using B<kpsewhich> or B<findtexmf> (if available)
+
+=item I<2005-04-15>
+
+Updated creation of mapfile entry; look for font file to deduce the correct 
+font file format (pfb, pfa, ttf). If no font file is found, 
+pfb is assumed.
+
+=item I<2005-04-20>
+
+Program quits if the specified output file exists
+
+=item I<2005-04-29>
+
+Improved the documentation
+
+=item I<2005-07-29>
+
+Some updates to the documentation
+
+=item I<2006-01-12>
+
+A few minor changes to the code
+
+=back
+
+=cut
+

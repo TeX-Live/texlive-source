@@ -55,6 +55,13 @@ nobase_dist_script_SCRIPTS = \
 	dviasm/dviasm.py \
 	epspdf/epspdf \
 	epspdf/epspdftk \
+	fontools/afm2afm \
+	fontools/autoinst \
+	fontools/cmap2enc \
+	fontools/font2afm \
+	fontools/ot2kpx \
+	fontools/pfm2kpx \
+	fontools/showglyphs \
 	fragmaster/fragmaster.pl \
 	glossaries/makeglossaries \
 	latex2man/latex2man \
