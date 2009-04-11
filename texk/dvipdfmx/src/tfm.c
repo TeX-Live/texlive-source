@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tfm.c,v 1.22 2007/11/17 18:08:58 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tfm.c,v 1.23 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1058,6 +1058,7 @@ tfm_get_width (int font_id, SIGNED_QUAD ch)
   return ((double) tfm_get_fw_width(font_id, ch)/FWBASE);
 }
 
+#if 0
 double
 tfm_get_height (int font_id, SIGNED_QUAD ch)
 {
@@ -1069,6 +1070,7 @@ tfm_get_depth (int font_id, SIGNED_QUAD ch)
 {
   return ((double) tfm_get_fw_depth(font_id, ch)/FWBASE);
 }
+#endif
 
 /* tfm_string_xxx() do not work for OFM... */
 fixword
@@ -1160,6 +1162,7 @@ tfm_get_design_size (int font_id)
   return (double) (fms[font_id].designsize)/FWBASE*(72.0/72.27);
 }
 
+#if 0
 char *
 tfm_get_codingscheme (int font_id)
 {
@@ -1184,6 +1187,7 @@ tfm_is_vert (int font_id)
   return 0;
 }
 #endif /* !WITHOUT_ASCII_PTEX */
+#endif
 
 int
 tfm_exists (const char *tfm_name)

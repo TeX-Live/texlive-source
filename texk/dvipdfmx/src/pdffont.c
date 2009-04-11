@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdffont.c,v 1.23 2008/05/18 14:49:20 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdffont.c,v 1.24 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -365,6 +365,7 @@ pdf_get_font_subtype (int font_id)
   return font->subtype;
 }
 
+#if 0
 char *
 pdf_get_font_fontname (int font_id)
 {
@@ -376,6 +377,7 @@ pdf_get_font_fontname (int font_id)
 
   return font->fontname;
 }
+#endif
 
 int
 pdf_get_font_encoding (int font_id)
@@ -889,6 +891,7 @@ pdf_font_get_flag (pdf_font *font, int mask)
   return ((font->flags & mask) ? 1 : 0);
 }
 
+#if 0
 int
 pdf_font_get_flags (pdf_font *font)
 {
@@ -896,6 +899,7 @@ pdf_font_get_flags (pdf_font *font)
 
   return font->flags;
 }
+#endif
 
 double
 pdf_font_get_param (pdf_font *font, int param_type)

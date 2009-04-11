@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff.c,v 1.15 2004/09/11 14:50:28 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff.c,v 1.16 2008/10/13 19:42:48 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -553,11 +553,13 @@ void cff_update_string (cff_font *cff)
   cff->_string = NULL;
 }
 
-s_SID cff_add_string (cff_font *cff, char *str)
+s_SID cff_add_string (cff_font *cff, const char *str, int unique)
+/* Setting unique == 1 eliminates redundant or predefined strings. */
 {
   card16 idx;
   cff_index *strings;
   l_offset offset, size;
+  long len = strlen(str);
 
   if (cff == NULL)
     ERROR("CFF font not opened.");
@@ -566,28 +568,29 @@ s_SID cff_add_string (cff_font *cff, char *str)
     cff->_string = cff_new_index(0);
   strings = cff->_string;
 
-  for (idx = 0; idx < strings->count; idx++) {
-    size   = strings->offset[idx+1] - strings->offset[idx];
-    offset = strings->offset[idx];
-    if (size == strlen(str) &&
-	!memcmp(strings->data+offset-1, str, strlen(str)))
-      return (idx + CFF_STDSTR_MAX);
+  if (unique) {
+    /* TODO: do binary search to speed things up */
+    for (idx = 0; idx < CFF_STDSTR_MAX; idx++) {
+      if (cff_stdstr[idx] && !strcmp(cff_stdstr[idx], str))
+	return idx;
+    }
+    for (idx = 0; idx < strings->count; idx++) {
+      size   = strings->offset[idx+1] - strings->offset[idx];
+      offset = strings->offset[idx];
+      if (size == len && !memcmp(strings->data+offset-1, str, len))
+	return (idx + CFF_STDSTR_MAX);
+    }
   }
 
-  for (idx = 0; idx < CFF_STDSTR_MAX; idx++) {
-    if (cff_stdstr[idx] &&
-	!strcmp(cff_stdstr[idx], str))
-      return idx;
-  }
   offset = (strings->count > 0) ? strings->offset[strings->count] : 1;
   strings->offset = RENEW(strings->offset, strings->count+2, l_offset);
   if (strings->count == 0)
     strings->offset[0] = 1;
   idx = strings->count;
   strings->count += 1;
-  strings->offset[strings->count] = offset + strlen(str);
-  strings->data = RENEW(strings->data, offset+strlen(str)-1, card8);
-  memcpy(strings->data+offset-1, str, strlen(str));
+  strings->offset[strings->count] = offset + len;
+  strings->data = RENEW(strings->data, offset+len-1, card8);
+  memcpy(strings->data+offset-1, str, len);
 
   return (idx + CFF_STDSTR_MAX);
 }

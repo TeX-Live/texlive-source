@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.41 2008/06/05 06:27:42 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mpost.c,v 1.42 2008/12/11 16:03:04 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1213,7 +1213,8 @@ do_operator (const char *token, double x_user, double y_user)
       pdf_color_cmykcolor(&color,
 			  values[0], values[1],
 			  values[2], values[3]);
-      pdf_dev_set_color(&color);
+      pdf_dev_set_strokingcolor(&color);
+      pdf_dev_set_nonstrokingcolor(&color);
     }
     break;
   case SETGRAY:
@@ -1221,7 +1222,8 @@ do_operator (const char *token, double x_user, double y_user)
     error = pop_get_numbers(values, 1);
     if (!error) {
       pdf_color_graycolor(&color, values[0]);
-      pdf_dev_set_color(&color);
+      pdf_dev_set_strokingcolor(&color);
+      pdf_dev_set_nonstrokingcolor(&color);
     }
     break;
   case SETRGBCOLOR:
@@ -1229,7 +1231,8 @@ do_operator (const char *token, double x_user, double y_user)
     if (!error) {
       pdf_color_rgbcolor(&color,
 			 values[0], values[1], values[2]);
-      pdf_dev_set_color(&color);
+      pdf_dev_set_strokingcolor(&color);
+      pdf_dev_set_nonstrokingcolor(&color);
     }
     break;
 

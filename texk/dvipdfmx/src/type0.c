@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type0.c,v 1.23 2005/06/27 09:04:53 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type0.c,v 1.24 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -288,6 +288,7 @@ Type0Font_get_wmode (Type0Font *font)
   return font->wmode;
 }
 
+#if 0
 char *
 Type0Font_get_encoding (Type0Font *font)
 {
@@ -295,6 +296,7 @@ Type0Font_get_encoding (Type0Font *font)
 
   return font->encoding;
 }
+#endif
 
 char *
 Type0Font_get_usedchars (Type0Font *font)

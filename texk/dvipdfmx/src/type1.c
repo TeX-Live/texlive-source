@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.43 2008/05/18 17:05:56 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.45 2008/10/13 19:42:48 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -631,7 +631,7 @@ pdf_font_load_type1 (pdf_font *font)
 	  break;
       }
 
-      sid = cff_add_string(cffont, glyph); /* FIXME */
+      sid = cff_add_string(cffont, glyph, 1); /* FIXME */
       if (duplicate < code) { /* found duplicates */
 	cffont->encoding->supp[cffont->encoding->num_supps].code  = duplicate;
 	cffont->encoding->supp[cffont->encoding->num_supps].glyph = sid;
@@ -670,10 +670,10 @@ pdf_font_load_type1 (pdf_font *font)
    * The Type 1 seac operator may add another glyph but the glyph name of
    * those glyphs are contained in standard string. The String Index will
    * not be modified after here.
+   * BUT: We cannot update the String Index yet because then we wouldn't be
+   * able to find the GIDs of the base and accent characters (unless they
+   * have been used already).
    */
-  cff_dict_update  (cffont->topdict,    cffont);
-  cff_dict_update  (cffont->private[0], cffont);
-  cff_update_string(cffont);
 
   {
     cff_index *cstring;
@@ -771,6 +771,11 @@ pdf_font_load_type1 (pdf_font *font)
   }
   if (verbose > 2)
     MESG("]");
+
+  /* Now we can update the String Index */
+  cff_dict_update  (cffont->topdict,    cffont);
+  cff_dict_update  (cffont->private[0], cffont);
+  cff_update_string(cffont);
 
   add_metrics(font, cffont, enc_vec, widths, num_glyphs);
 

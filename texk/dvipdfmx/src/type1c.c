@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.26 2008/05/18 17:05:56 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.29 2008/10/13 19:42:48 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -389,7 +389,7 @@ pdf_font_load_type1c (pdf_font *font)
   }
 
   /* New CharStrings INDEX */
-  charstrings       = cff_new_index(256);
+  charstrings       = cff_new_index(257);   /* 256 + 1 for ".notdef" glyph */
   max_len           = 2 * CS_STR_LEN_MAX;
   charstrings->data = NEW(max_len, card8);
   charstring_len    = 0;
@@ -465,7 +465,12 @@ pdf_font_load_type1c (pdf_font *font)
      *  cff_add_string(cff, ...) -> cff_string_add(string, ...).
      */
     sid_orig = cff_get_sid   (cffont, enc_vec[code]);
-    sid      = cff_add_string(cffont, enc_vec[code]);
+    sid      = sid_orig < CFF_STDSTR_MAX ?
+                 sid_orig : cff_add_string(cffont, enc_vec[code], 0);
+    /*
+     * We use "unique = 0" because duplicate strings are impossible
+     * at this stage unless the original font already had duplicates.
+     */
 
     /*
      * Check if multiply-encoded glyph.
@@ -696,6 +701,9 @@ pdf_font_load_type1c (pdf_font *font)
 
   /* Copyright and Trademark Notice ommited. */
 
+  /* Handle Widths in fontdict. */
+  add_SimpleMetrics(font, cffont, widths, num_glyphs);
+
   /* Close font */
   cff_close (cffont);
   sfnt_close(sfont);
@@ -705,9 +713,6 @@ pdf_font_load_type1c (pdf_font *font)
   if (verbose > 1) {
     MESG("[%u/%u glyphs][%ld bytes]", num_glyphs, cs_count, offset);
   }
-
-  /* Handle Widths in fontdict. */
-  add_SimpleMetrics(font, cffont, widths, num_glyphs);
 
   /*
    * CharSet might be recommended for subsetted font, but it is meaningful

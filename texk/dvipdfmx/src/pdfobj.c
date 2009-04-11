@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.59 2008/06/07 09:54:38 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.63 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -583,7 +583,7 @@ void pdf_out_white (FILE *file)
 
 #define INVALIDOBJ(o)  ((o) == NULL || (o)->type <= 0 || (o)->type > PDF_INDIRECT)
 
-pdf_obj *
+static pdf_obj *
 pdf_new_obj(int type)
 {
   pdf_obj *result;
@@ -624,6 +624,21 @@ pdf_label_obj (pdf_obj *object)
     object->label      = next_label++;
     object->generation = 0;
   }
+}
+
+/*
+ * Transfer the label assigned to the object src to the object dst.
+ * The object dst must not yet have been labeled.
+ */
+void
+pdf_transfer_label (pdf_obj *dst, pdf_obj *src)
+{
+  ASSERT(dst && !dst->label && src);
+
+  dst->label      = src->label;
+  dst->generation = src->generation;
+  src->label      = 0;
+  src->generation = 0;
 }
 
 /*
@@ -734,6 +749,7 @@ write_boolean (pdf_boolean *data, FILE *file)
   }
 }
 
+#if 0
 void
 pdf_set_boolean (pdf_obj *object, char value)
 {
@@ -744,6 +760,7 @@ pdf_set_boolean (pdf_obj *object, char value)
   data = object->data;
   data->value = value;
 }
+#endif
 
 char
 pdf_boolean_value (pdf_obj *object)
@@ -1063,6 +1080,7 @@ release_name (pdf_name *data)
   RELEASE(data);
 }
 
+#if 0
 void
 pdf_set_name (pdf_obj *object, const char *name)
 {
@@ -1084,6 +1102,7 @@ pdf_set_name (pdf_obj *object, const char *name)
     data->name = NULL;
   }
 }
+#endif
 
 char *
 pdf_name_value (pdf_obj *object)
@@ -1208,6 +1227,7 @@ pdf_add_array (pdf_obj *array, pdf_obj *object)
   return;
 }
 
+#if 0
 void
 pdf_put_array (pdf_obj *array, unsigned idx, pdf_obj *object)
 {
@@ -1260,6 +1280,7 @@ pdf_shift_array (pdf_obj *array)
 
   return result;
 }
+#endif
 
 /* Prepend an object to an array */
 void
@@ -1281,6 +1302,7 @@ pdf_unshift_array (pdf_obj *array, pdf_obj *object)
   data->size++;
 }
 
+#if 0
 pdf_obj *
 pdf_pop_array (pdf_obj *array)
 {
@@ -1299,6 +1321,7 @@ pdf_pop_array (pdf_obj *array)
 
   return result;
 }
+#endif
 
 
 static void
@@ -1389,6 +1412,7 @@ pdf_add_dict (pdf_obj *dict, pdf_obj *key, pdf_obj *value)
   return 0;
 }
 
+#if 0
 void
 pdf_put_dict (pdf_obj *dict, const char *key, pdf_obj *value)
 {
@@ -1431,6 +1455,7 @@ pdf_put_dict (pdf_obj *dict, const char *key, pdf_obj *value)
     data->value = value;
   }
 }
+#endif
 
 /* pdf_merge_dict makes a link for each item in dict2 before stealing it */
 void
@@ -1867,6 +1892,7 @@ pdf_stream_uncompress (pdf_obj *src) {
   return dst;
 }
 
+#if 0
 void
 pdf_stream_set_flags (pdf_obj *stream, int flags)
 {
@@ -1889,6 +1915,7 @@ pdf_stream_get_flags (pdf_obj *stream)
 
   return data->_flags;
 }
+#endif
 
 static void
 pdf_write_obj (pdf_obj *object, FILE *file)
@@ -2086,102 +2113,6 @@ pdf_release_obj (pdf_obj *object)
     object->data = NULL;
     RELEASE(object);
   }
-}
-
-/* Copy object data without changing object label. */
-void
-pdf_copy_object (pdf_obj *dst, pdf_obj *src)
-{
-  if (!dst || !src)
-    return;
-
-  switch (dst->type) {
-  case PDF_BOOLEAN:  release_boolean(dst->data);  break;
-  case PDF_NULL:     release_null(dst->data);     break;
-  case PDF_NUMBER:   release_number(dst->data);   break;
-  case PDF_STRING:   release_string(dst->data);   break;
-  case PDF_NAME:     release_name(dst->data);     break;
-  case PDF_ARRAY:    release_array(dst->data);    break;
-  case PDF_DICT:     release_dict(dst->data);     break;
-  case PDF_STREAM:   release_stream(dst->data);   break;
-  case PDF_INDIRECT: release_indirect(dst->data); break;
-  }
-
-  dst->type = src->type;
-  switch (src->type) {
-  case PDF_BOOLEAN:
-    dst->data = NEW(1, pdf_boolean);
-    pdf_set_boolean(dst, pdf_boolean_value(src));
-    break;
-  case PDF_NULL:
-    dst->data = NULL;
-    break;
-  case PDF_NUMBER:
-    dst->data = NEW(1, pdf_number);
-    pdf_set_number(dst, pdf_number_value(src));
-    break;
-  case PDF_STRING:
-    dst->data = NEW(1, pdf_string);
-    pdf_set_string(dst,
-		   pdf_string_value(src),
-		   pdf_string_length(src));
-    break;
-  case PDF_NAME:
-    dst->data = NEW(1, pdf_name);
-    pdf_set_name(dst, pdf_name_value(src));
-    break;
-  case PDF_ARRAY:
-    {
-      pdf_array *data;
-      unsigned long i;
-
-      dst->data = data = NEW(1, pdf_array);
-      data->size = 0;
-      data->max  = 0;
-      data->values = NULL;
-      for (i = 0; i < pdf_array_length(src); i++) {
-	pdf_add_array(dst, pdf_link_obj(pdf_get_array(src, i)));
-      }
-    }
-    break;
-  case PDF_DICT:
-    {
-      pdf_dict *data;
-
-      dst->data = data = NEW(1, pdf_dict);
-      data->key   = NULL;
-      data->value = NULL;
-      data->next  = NULL;
-      pdf_merge_dict(dst, src);
-    }
-    break;
-  case PDF_STREAM:
-    {
-      pdf_stream *data;
-
-      dst->data = data = NEW(1, pdf_stream);
-      data->dict = pdf_new_dict();
-      data->_flags = ((pdf_stream *)src->data)->_flags;
-      data->stream_length = 0;
-      data->max_length    = 0;
-
-      pdf_add_stream(dst, pdf_stream_dataptr(src), pdf_stream_length(src));
-      pdf_merge_dict(data->dict, pdf_stream_dict(src));
-    }
-    break;
-  case PDF_INDIRECT:
-    {
-      pdf_indirect *data;
-
-      dst->data = data = NEW(1, pdf_indirect);
-      data->pf     = ((pdf_indirect *) (src->data))->pf;
-      data->label  = ((pdf_indirect *) (src->data))->label;
-      data->generation = ((pdf_indirect *) (src->data))->generation;
-    }
-    break;
-  }
-
-  return;
 }
 
 static int
@@ -2551,18 +2482,22 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
 pdf_obj *
 pdf_deref_obj (pdf_obj *obj)
 {
+  int count = PDF_OBJ_MAX_DEPTH;
+
   if (obj)
     obj = pdf_link_obj(obj);
 
-  while (PDF_OBJ_INDIRECTTYPE(obj)) {
+  while (PDF_OBJ_INDIRECTTYPE(obj) && --count) {
     pdf_file *pf = OBJ_FILE(obj);
     unsigned long  obj_num = OBJ_NUM(obj);
     unsigned short obj_gen = OBJ_GEN(obj);
-    if (!pf)
-      ERROR("Tried to deref a non-file object");
+    ASSERT(pf);
     pdf_release_obj(obj);
-    obj = pdf_get_object(pf, obj_num, obj_gen);    
+    obj = pdf_get_object(pf, obj_num, obj_gen);
   }
+
+  if (!count)
+    ERROR("Loop in object hierarchy detected. Broken PDF file?");
 
   if (PDF_OBJ_NULLTYPE(obj)) {
     pdf_release_obj(obj);
@@ -3014,6 +2949,8 @@ import_dict (pdf_obj *key, pdf_obj *value, void *pdata)
   return 0;
 }
 
+static pdf_obj loop_marker = { PDF_OBJ_INVALID, 0, 0, 0, 0, NULL };
+
 static pdf_obj *
 pdf_import_indirect (pdf_obj *object)
 {
@@ -3031,15 +2968,16 @@ pdf_import_indirect (pdf_obj *object)
   }
 
   if ((ref = pf->xref_table[obj_num].indirect)) {
+    if (ref == &loop_marker)
+      ERROR("Loop in object hierarchy detected. Broken PDF file?");
     return  pdf_link_obj(ref);
   } else {
     pdf_obj *obj, *tmp;
 
     obj = pdf_get_object(pf, obj_num, obj_gen);
-    if (!obj) {
-      WARN("Could not read object: %lu %u", obj_num, obj_gen);
-      return NULL;
-    }
+
+    /* We mark the reference to be able to detect loops */
+    pf->xref_table[obj_num].indirect = &loop_marker;
 
     tmp = pdf_import_object(obj);
     
@@ -3125,25 +3063,17 @@ pdf_import_object (pdf_obj *object)
 }
 
 
+/* returns 0 if indirect references point to the same object */
 int
 pdf_compare_reference (pdf_obj *ref1, pdf_obj *ref2)
 {
   pdf_indirect *data1, *data2;
 
-  if (!PDF_OBJ_INDIRECTTYPE(ref1) ||
-      !PDF_OBJ_INDIRECTTYPE(ref2)) {
-    ERROR("Not indirect reference...");
-  }
+  ASSERT(PDF_OBJ_INDIRECTTYPE(ref1) && PDF_OBJ_INDIRECTTYPE(ref2));
 
   data1 = (pdf_indirect *) ref1->data;
   data2 = (pdf_indirect *) ref2->data;
 
-  if (data1->pf != data2->pf)
-    return (int) (data1->pf - data2->pf);
-  if (data1->label != data2->label)
-    return (int) (data1->label - data2->label);
-  if (data1->generation != data2->generation)
-    return (int) (data1->generation - data2->generation);
-
-  return 0;
+  return data1->pf != data2->pf || data1->label != data2->label
+    || data1->generation != data2->generation;
 }

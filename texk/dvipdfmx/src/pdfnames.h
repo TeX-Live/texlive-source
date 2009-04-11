@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfnames.h,v 1.1 2004/09/02 12:23:07 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfnames.h,v 1.2 2008/11/03 22:49:29 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -45,7 +45,9 @@ extern int      pdf_names_close_object     (struct ht_table *names,
 					    const void *key, int keylen);
 
 /* Really create name tree... */
-extern pdf_obj *pdf_names_create_tree      (struct ht_table *names);
+extern pdf_obj *pdf_names_create_tree      (struct ht_table *names,
+					    long *count,
+					    struct ht_table *filter);
 
 extern char    *printable_key (const char *key, int keylen);
 

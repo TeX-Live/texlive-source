@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.h,v 1.12 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.h,v 1.14 2008/12/11 16:03:05 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -71,7 +71,9 @@ extern int    pdf_dev_setlinejoin   (int     style);
 extern int    pdf_dev_setdash       (int     count,
                                      double *pattern,
                                      double  offset);
+#if 0
 extern int    pdf_dev_setflat       (int     flatness);
+#endif
 
 /* Path Construction */
 extern int    pdf_dev_moveto        (double x , double y);
@@ -101,10 +103,12 @@ extern int    pdf_dev_clip          (void);
 extern int    pdf_dev_eoclip        (void);
 
 
+#if 0
 extern int    pdf_dev_rectstroke    (double x, double y,
                                      double w, double h,
                                      const pdf_tmatrix *M  /* optional */
                                     );
+#endif
 extern int    pdf_dev_rectfill      (double x, double y, double w, double h);
 extern int    pdf_dev_rectclip      (double x, double y, double w, double h);
  
@@ -120,7 +124,9 @@ extern int    pdf_dev_concat        (const pdf_tmatrix *M);
 extern void   pdf_dev_dtransform    (pdf_coord *p, const pdf_tmatrix *M);
 extern void   pdf_dev_idtransform   (pdf_coord *p, const pdf_tmatrix *M);
 extern void   pdf_dev_transform     (pdf_coord *p, const pdf_tmatrix *M);
+#if 0
 extern void   pdf_dev_itransform    (pdf_coord *p, const pdf_tmatrix *M);
+#endif
 
 extern int    pdf_dev_gsave         (void);
 extern int    pdf_dev_grestore      (void);
@@ -153,7 +159,9 @@ extern int    pdf_dev_current_depth (void);
 extern void   pdf_dev_grestore_to   (int depth);
 #define pdf_dev_grestoreall() pdf_dev_grestore_to(0);
 
-extern int    pdf_dev_currentcolor  (pdf_color *color, int is_fill);
-extern int    pdf_dev_setcolor      (const pdf_color *color, int is_fill);
+extern void   pdf_dev_set_color     (const pdf_color *color, char mask, int force);
+#define pdf_dev_set_strokingcolor(c)     pdf_dev_set_color(c,    0, 0);
+#define pdf_dev_set_nonstrokingcolor(c)  pdf_dev_set_color(c, 0x20, 0);
+extern void   pdf_dev_reset_color   (int force);
 
 #endif /* _PDF_DRAW_H_ */

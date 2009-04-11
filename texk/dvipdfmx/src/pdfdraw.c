@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.15 2008/05/22 11:03:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.18 2008/12/11 16:03:05 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -138,6 +138,7 @@ pdf_coord__transform (pdf_coord *p, const pdf_tmatrix *M)
   return 0;
 }
 
+#if 0
 static /* __inline__ */ int
 pdf_coord__itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
@@ -155,6 +156,7 @@ pdf_coord__itransform (pdf_coord *p, const pdf_tmatrix *M)
 
   return 0;
 }
+#endif
 
 static /* __inline__ */ int
 pdf_coord__dtransform (pdf_coord *p, const pdf_tmatrix *M)
@@ -999,8 +1001,8 @@ init_a_gstate (pdf_gstate *gs)
 
   pdf_setmatrix(&gs->matrix, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
-  pdf_color_graycolor(&gs->strokecolor, 0.0);
-  pdf_color_graycolor(&gs->fillcolor, 0.0);
+  pdf_color_black(&gs->strokecolor);
+  pdf_color_black(&gs->fillcolor);
 
   gs->linedash.num_dash = 0;
   gs->linedash.offset   = 0;
@@ -1098,15 +1100,11 @@ int
 pdf_dev_gsave (void)
 {
   pdf_gstate *gs0, *gs1;
-  pdf_color  *sc, *fc;
 
   gs0 = m_stack_top(&gs_stack);
   gs1 = NEW(1, pdf_gstate);
   init_a_gstate(gs1);
   copy_a_gstate(gs1, gs0);
-  pdf_color_get_current(&sc, &fc);
-  pdf_color_copycolor(&gs1->strokecolor, sc);
-  pdf_color_copycolor(&gs1->fillcolor, fc);
   m_stack_push(&gs_stack, gs1);
 
   pdf_doc_add_page_content(" q", 2);
@@ -1245,6 +1243,61 @@ pdf_dev_currentcolor (pdf_color *color, int is_fill)
 }
 #endif /* 0 */
 
+/*
+ * mask == 0 means stroking color, mask == 0x20 nonstroking color
+ *
+ * force == 1 means that operators will be generated even if
+ *   the color is the same as the current graphics state color
+ */
+void
+pdf_dev_set_color (const pdf_color *color, char mask, int force)
+{
+  int len;
+
+  pdf_gstate *gs  = m_stack_top(&gs_stack);
+  pdf_color *current = mask ? &gs->fillcolor : &gs->strokecolor;
+
+  ASSERT(pdf_color_is_valid(color));
+
+  if (!(pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE) &&
+	(force || pdf_color_compare(color, current))))
+    /* If "color" is already the current color, then do nothing
+     * unless a color operator is forced
+     */
+    return;
+
+  graphics_mode();
+  len = pdf_color_to_string(color, fmt_buf);
+  fmt_buf[len++] = ' ';
+  switch (pdf_color_type(color)) {
+  case  PDF_COLORSPACE_TYPE_RGB:
+    fmt_buf[len++] = 'R' | mask;
+    fmt_buf[len++] = 'G' | mask;
+    break;
+  case  PDF_COLORSPACE_TYPE_CMYK:
+    fmt_buf[len++] = 'K' | mask;
+    break;
+  case  PDF_COLORSPACE_TYPE_GRAY:
+    fmt_buf[len++] = 'G' | mask;
+    break;
+  default: /* already verified the given color */
+    break;
+  }
+  pdf_doc_add_page_content(fmt_buf, len);
+
+  pdf_color_copycolor(current, color);
+}
+
+void
+pdf_dev_reset_color (int force)
+{
+  pdf_color *sc, *fc;
+
+  pdf_color_get_current(&sc, &fc);
+  pdf_dev_set_color(sc,    0, force);
+  pdf_dev_set_color(fc, 0x20, force);
+}
+
 int
 pdf_dev_concat (const pdf_tmatrix *M)
 {
@@ -1253,7 +1306,7 @@ pdf_dev_concat (const pdf_tmatrix *M)
   pdf_path    *cpa = &gs->path;
   pdf_coord   *cpt = &gs->cp;
   pdf_tmatrix *CTM = &gs->matrix;
-  pdf_tmatrix  W;
+  pdf_tmatrix  W   = {0, 0, 0, 0, 0, 0};  /* Init to avoid compiler warning */
   char        *buf = FORMAT_BUFF_PTR(NULL);
   int          len = 0;
 
@@ -1396,6 +1449,7 @@ pdf_dev_setdash (int count, double *pattern, double offset)
   return 0;
 }
 
+#if 0
 int
 pdf_dev_setflat (int flatness)
 {
@@ -1415,7 +1469,8 @@ pdf_dev_setflat (int flatness)
 
   return 0;
 }
-    
+#endif
+
 /* ZSYUEDVEDEOF */
 int
 pdf_dev_clip (void)
@@ -1619,6 +1674,7 @@ pdf_dev_transform (pdf_coord *p, const pdf_tmatrix *M)
   return;
 }
 
+#if 0
 void
 pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
@@ -1632,6 +1688,7 @@ pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 
   return;
 }
+#endif
 
 int
 pdf_dev_arc  (double c_x , double c_y, double r,
@@ -1704,6 +1761,7 @@ pdf_dev_bspline (double x0, double y0,
 }
 
 
+#if 0
 int
 pdf_dev_rectstroke (double x, double y,
                     double w, double h,
@@ -1719,6 +1777,7 @@ pdf_dev_rectstroke (double x, double y,
 
   return  pdf_dev__rectshape(NULL, &r, M, 'S');
 }
+#endif
 
 int
 pdf_dev_rectfill  (double x, double y,

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.38 2008/05/17 04:18:47 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cidtype0.c,v 1.39 2008/10/13 19:42:48 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -983,7 +983,7 @@ CIDFont_type0_t1cdofont (CIDFont *font)
   cffont->fdarray[0] = cff_new_dict();
   cff_dict_add(cffont->fdarray[0], "FontName", 1);
   cff_dict_set(cffont->fdarray[0], "FontName", 0,
-	       (double) cff_add_string(cffont, font->fontname + 7)); /* FIXME: Skip XXXXXX+ */
+	       (double) cff_add_string(cffont, font->fontname + 7, 1)); /* FIXME: Skip XXXXXX+ */
   cff_dict_add(cffont->fdarray[0], "Private", 2);
   cff_dict_set(cffont->fdarray[0], "Private", 0, 0.0);
   cff_dict_set(cffont->fdarray[0], "Private", 0, 0.0);
@@ -1062,8 +1062,8 @@ CIDFont_type0_t1cdofont (CIDFont *font)
     cff_dict_remove((cffont->private)[0], "Subrs"); /* no Subrs */
   }
 
-  cff_add_string(cffont, (char *)"Adobe");
-  cff_add_string(cffont, (char *)"Identity");
+  cff_add_string(cffont, "Adobe", 1);
+  cff_add_string(cffont, "Identity", 1);
 
   cff_dict_update(cffont->topdict, cffont);
   cff_dict_update(cffont->private[0], cffont);
@@ -1921,7 +1921,7 @@ CIDFont_type0_t1dofont (CIDFont *font)
   cffont->fdarray[0] = cff_new_dict();
   cff_dict_add(cffont->fdarray[0], "FontName", 1);
   cff_dict_set(cffont->fdarray[0], "FontName", 0,
-	       (double) cff_add_string(cffont, font->fontname + 7)); /* FIXME: Skip XXXXXX+ */
+	       (double) cff_add_string(cffont, font->fontname + 7, 1)); /* FIXME: Skip XXXXXX+ */
   cff_dict_add(cffont->fdarray[0], "Private", 2);
   cff_dict_set(cffont->fdarray[0], "Private", 0, 0.0);
   cff_dict_set(cffont->fdarray[0], "Private", 0, 0.0);
@@ -1998,8 +1998,8 @@ CIDFont_type0_t1dofont (CIDFont *font)
 
   RELEASE(CIDToGIDMap);
 
-  cff_add_string(cffont, (char *)"Adobe");
-  cff_add_string(cffont, (char *)"Identity");
+  cff_add_string(cffont, "Adobe", 1);
+  cff_add_string(cffont, "Identity", 1);
 
   cff_dict_update(cffont->topdict, cffont);
   cff_dict_update(cffont->private[0], cffont);

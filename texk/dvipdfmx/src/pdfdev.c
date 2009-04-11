@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.66 2008/06/05 06:27:42 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.70 2008/12/11 16:03:04 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -142,30 +142,57 @@ p_itoa (long value, char *buf)
 static int
 p_dtoa (double value, int prec, char *buf)
 {
-  int    n;
-  char  *p, *q;
+  const long p[10] = { 1, 10, 100, 1000, 10000,
+		       100000, 1000000, 10000000, 100000000, 1000000000 };
+  long i, f;
+  char *c = buf;
+  int n;
 
-  n = sprintf(buf, "%.*f", prec, value);
-  /* find decimal-point */
-  for (p = buf + n - 1; p > buf && *p != '.'; p--);
-  if (p > buf) {
-    /* chop trailing zeros */
-    for (q = buf + n - 1; q > p && *q == '0'; q--) {
-      *q = '\0'; n--;
-    }
-    /* If a decimal point appears, at least one digit appears
-     * before it.
-     */
-    if (q == p) {
-      *q = '\0'; n--;
-    }
-  }
-  /* -0 --> 0 */
-  if (n == 2 && buf[0] == '-' && buf[1] == '0') {
-    buf[0] = '0'; buf[1] = '\0'; n = 1;
+  if (value < 0) {
+    value = -value;
+    *c++ = '-';
+    n = 1;
+  } else
+    n = 0;
+
+  i = (long) value;
+  f = (long) ((value-i)*p[prec] + 0.5);
+
+  if (f == p[prec]) {
+    f = 0;
+    i++;
   }
 
-  return  n;
+  if (i) {
+    int m = p_itoa(i, c);
+    c += m;
+    n += m;
+  } else if (!f) {
+    *(c = buf) = '0';
+    n = 1;
+  }
+
+  if (f) {
+    int j = prec;
+
+    *c++ = '.';
+
+    while (j--) {
+      c[j] = (f % 10) + '0';
+      f /= 10;
+    }
+    c += prec-1;
+    n += 1+prec;
+
+    while (*c == '0') {
+      c--;
+      n--;
+    }
+  }
+
+  *(++c) = 0;
+
+  return n;
 }
 
 static int
@@ -824,6 +851,7 @@ dev_set_font (int font_id)
 
 /* Access text state parameters.
  */
+#if 0
 int
 pdf_dev_currentfont (void)
 {
@@ -842,6 +870,7 @@ pdf_dev_get_font_ptsize (int font_id)
 
   return 1.0;
 }
+#endif
 
 int
 pdf_dev_get_font_wmode (int font_id)
@@ -1207,148 +1236,7 @@ pdf_dev_reset_fonts (void)
   text_state.is_mb         = 0;
 }
 
-void
-pdf_dev_reset_color(void)
-{
-  pdf_color *sc, *fc;
-
-  if (pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
-    pdf_color_get_current(&sc, &fc);
-    pdf_dev_set_strokingcolor(sc);
-    pdf_dev_set_nonstrokingcolor(fc);
-  }
-  return;
-}
-
-static int
-color_to_string (pdf_color *color, char *buffer)
-{
-  int i, len = 0;
-
-  for (i = 0; i < color->num_components; i++) {
-    len += sprintf(format_buffer+len, " %g", ROUND(color->values[i], 0.001));
-  }
-  return len;
-}
-
-void
-pdf_dev_set_color (pdf_color *color)
-{
-  int len;
-
-  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
-    WARN("Ignore color option was set. Just ignore.");
-    return;
-  } else if (!(color && pdf_color_is_valid(color))) {
-    WARN("No valid color is specified. Just ignore.");
-    return;
-  }
-
-  graphics_mode();
-  len = color_to_string(color, format_buffer);
-  format_buffer[len++] = ' ';
-  switch (color->num_components) {
-  case  3:
-    format_buffer[len++] = 'R';
-    format_buffer[len++] = 'G';
-    break;
-  case  4:
-    format_buffer[len++] = 'K';
-    break;
-  case  1:
-    format_buffer[len++] = 'G';
-    break;
-  default: /* already verified the given color */
-    break;
-  }
-  strncpy(format_buffer+len, format_buffer, len);
-  len = len << 1;
-  switch (color->num_components) {
-  case  3:
-    format_buffer[len-2] = 'r';
-    format_buffer[len-1] = 'g';
-    break;
-  case  4:
-    format_buffer[len-1] = 'k';
-    break;
-  case  1:
-    format_buffer[len-1] = 'g';
-  break;
-  default: /* already verified the given color */
-    break;
-  }
-  pdf_doc_add_page_content(format_buffer, len);
-  return;
-}
-
-void
-pdf_dev_set_strokingcolor (pdf_color *color)
-{
-  int len;
-
-  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
-    WARN("Ignore color option was set. Just ignore.");
-    return;
-  } else if (!(color && pdf_color_is_valid(color))) {
-    WARN("No valid color is specified. Just ignore.");
-    return;
-  }
-
-  graphics_mode();
-  len = color_to_string(color, format_buffer);
-  format_buffer[len++] = ' ';
-  switch (color->num_components) {
-  case  3:
-    format_buffer[len++] = 'R';
-    format_buffer[len++] = 'G';
-    break;
-  case  4:
-    format_buffer[len++] = 'K';
-    break;
-  case  1:
-    format_buffer[len++] = 'G';
-    break;
-  default: /* already verified the given color */
-    break;
-  }
-  pdf_doc_add_page_content(format_buffer, len);
-  return;
-}
-
-void
-pdf_dev_set_nonstrokingcolor (pdf_color *color)
-{
-  int len;
-
-  if (!pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE)) {
-    WARN("Ignore color option was set. Just ignore.");
-    return;
-  } else if (!(color && pdf_color_is_valid(color))) {
-    WARN("No valid color is specified. Just ignore.");
-    return;
-  }
-
-  graphics_mode();
-  len = color_to_string(color, format_buffer);
-  format_buffer[len++] = ' ';
-  switch (color->num_components) {
-  case  3:
-    format_buffer[len++] = 'r';
-    format_buffer[len++] = 'g';
-    break;
-  case  4:
-    format_buffer[len++] = 'k';
-    break;
-  case  1:
-    format_buffer[len++] = 'g';
-    break;
-  default: /* already verified the given color */
-    break;
-  }
-  pdf_doc_add_page_content(format_buffer, len);
-  return;
-}
-
+#if 0
 /* Not working */
 void
 pdf_dev_set_origin (double phys_x, double phys_y)
@@ -1363,6 +1251,7 @@ pdf_dev_set_origin (double phys_x, double phys_y)
 
   pdf_dev_concat(&M1);
 }
+#endif
 
 void
 pdf_dev_bop (const pdf_tmatrix *M)
@@ -1375,7 +1264,7 @@ pdf_dev_bop (const pdf_tmatrix *M)
   pdf_dev_concat(M);
 
   pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
+  pdf_dev_reset_color(0);
 }
 
 void
@@ -1807,7 +1696,7 @@ pdf_dev_put_image (int             id,
                    double          ref_y)
 {
   char        *res_name;
-  pdf_tmatrix  M;
+  pdf_tmatrix  M, M1;
   pdf_rect     r;
   int          len = 0;
 
@@ -1829,9 +1718,8 @@ pdf_dev_put_image (int             id,
   graphics_mode();
   pdf_dev_gsave();
 
-  pdf_dev_concat(&M);
-
-  pdf_ximage_scale_image(id, &M, &r, p);
+  pdf_ximage_scale_image(id, &M1, &r, p);
+  pdf_concatmatrix(&M, &M1);
   pdf_dev_concat(&M);
 
   /* Clip */

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/numbers.h,v 1.9 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/numbers.h,v 1.10 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -35,7 +35,9 @@ typedef long UNSIGNED_TRIPLE, SIGNED_TRIPLE, SIGNED_QUAD;
 typedef unsigned long UNSIGNED_QUAD;
 
 extern UNSIGNED_BYTE get_unsigned_byte (FILE *);
+#if 0
 extern UNSIGNED_BYTE sget_unsigned_byte (char *);
+#endif
 extern SIGNED_BYTE get_signed_byte (FILE *);
 extern UNSIGNED_PAIR get_unsigned_pair (FILE *);
 extern UNSIGNED_PAIR sget_unsigned_pair (unsigned char *);
@@ -48,7 +50,9 @@ extern UNSIGNED_QUAD get_unsigned_quad (FILE *);
 typedef signed long fixword;
 
 extern SIGNED_QUAD sqxfw (SIGNED_QUAD sq, fixword fw);
+#if 0
 extern SIGNED_QUAD axboverc (SIGNED_QUAD n1, SIGNED_QUAD n2, SIGNED_QUAD divide);
+#endif
 
 #ifndef MAX
 #  define MAX(a,b) ((a)>(b)?(a):(b))

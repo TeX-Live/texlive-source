@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.h,v 1.23 2008/06/05 06:27:42 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.h,v 1.25 2008/12/11 16:03:05 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -158,14 +158,18 @@ extern int    pdf_dev_setfont     (const char *font_name, spt_t ptsize);
 /* The following two routines are NOT WORKING.
  * Dvipdfmx doesn't manage gstate well..
  */
+#if 0
 /* pdf_dev_translate() or pdf_dev_concat() should be used. */
 extern void   pdf_dev_set_origin (double orig_x, double orig_y);
+#endif
 /* Always returns 1.0, please rename this. */
 extern double pdf_dev_scale      (void);
 
 /* Access text state parameters. */
+#if 0
 extern int    pdf_dev_currentfont     (void); /* returns font_id */
 extern double pdf_dev_get_font_ptsize (int font_id);
+#endif
 extern int    pdf_dev_get_font_wmode  (int font_id); /* ps: special support want this (pTeX). */
 
 /* Text composition (direction) mode
@@ -200,15 +204,10 @@ extern void   pdf_dev_set_param (int param_type, int value);
  * For pdf_doc, pdf_draw and others.
  */
 
-/* Force reselecting font and color:
+/* Force reselecting font:
  * XFrom (content grabbing) and Metapost support want them.
  */
 extern void   pdf_dev_reset_fonts (void);
-extern void   pdf_dev_reset_color (void);
-
-extern void   pdf_dev_set_color            (pdf_color *color);
-extern void   pdf_dev_set_strokingcolor    (pdf_color *color);
-extern void   pdf_dev_set_nonstrokingcolor (pdf_color *color);
 
 /* Initialization of transformation matrix with M and others.
  * They are called within pdf_doc_begin_page() and pdf_doc_end_page().

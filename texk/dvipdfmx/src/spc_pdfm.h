@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.h,v 1.1 2004/09/11 14:50:29 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.h,v 1.2 2008/11/30 21:17:58 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -27,8 +27,6 @@
 
 #include "specials.h"
 
-extern int  spc_pdfm_at_begin_page     (void);
-extern int  spc_pdfm_at_end_page       (void);
 extern int  spc_pdfm_at_begin_document (void);
 extern int  spc_pdfm_at_end_document   (void);
 

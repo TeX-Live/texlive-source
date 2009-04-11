@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.64 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.68 2009/01/15 21:46:08 chofchof Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -68,6 +68,7 @@ static long opt_flags = 0;
 #define OPT_TPIC_TRANSPARENT_FILL (1 << 1)
 #define OPT_CIDFONT_FIXEDPITCH    (1 << 2)
 #define OPT_FONTMAP_FIRST_MATCH   (1 << 3)
+#define OPT_PDFDOC_NO_DEST_REMOVE (1 << 4)
 
 static char   ignore_colors = 0;
 static double annot_grow    = 0.0;
@@ -126,7 +127,7 @@ usage (void)
 {
   fprintf (stdout, "\nThis is %s-%s by the DVIPDFMx project team,\n", PACKAGE, VERSION);
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
-  fprintf (stdout, "\nCopyright (C) 2002-2008 by the DVIPDFMx project team\n");
+  fprintf (stdout, "\nCopyright (C) 2002-2009 by the DVIPDFMx project team\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
   fprintf (stdout, "the Free Software Foundation; either version 2 of the License, or\n");
@@ -156,6 +157,7 @@ usage (void)
   fprintf (stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
   fprintf (stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
   fprintf (stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
+  fprintf (stdout, "\t\t  0x0010 Do not remove unused PDF destinations.\n");
   fprintf (stdout, "\t\tPositive values are always ORed with previously given flags.\n");
   fprintf (stdout, "\t\tAnd negative values replace old values.\n");
   fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
@@ -316,14 +318,16 @@ select_pages (const char *pagespec)
 static void
 set_verbose (int argc, char *argv[])
 {
-  while (argc > 0 && *argv[0] == '-') {
-    char *flag;
+  while (argc > 0) {
+    if(*argv[0] == '-') {
+      char *flag;
 
-    for (flag = argv[0] + 1; *flag != 0; flag++) {
-      if (*flag == 'q')
-        really_quiet = 1;
-      if (*flag == 'v')
-        verbose++;
+      for (flag = argv[0] + 1; *flag != 0; flag++) {
+        if (*flag == 'q')
+          really_quiet = 1;
+        if (*flag == 'v')
+          verbose++;
+      }
     }
     POP_ARG();
   }
@@ -859,7 +863,8 @@ main (int argc, char *argv[])
    * bookmark_open: Miximal depth of open bookmarks.
    */
   pdf_open_document(pdf_filename, do_encryption,
-                    paper_width, paper_height, annot_grow, bookmark_open);
+                    paper_width, paper_height, annot_grow, bookmark_open,
+		    !(opt_flags & OPT_PDFDOC_NO_DEST_REMOVE));
 
   /* Ignore_colors placed here since
    * they are considered as device's capacity.

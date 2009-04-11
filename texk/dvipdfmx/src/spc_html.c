@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.8 2008/05/29 13:43:51 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_html.c,v 1.9 2008/11/30 21:31:24 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -574,7 +574,7 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
   double         alpha = 1.0; /* meaning fully opaque */
 #endif /* ENABLE_HTML_SVG_OPACITY */
 #ifdef  ENABLE_HTML_SVG_TRANSFORM
-  pdf_tmatrix    M;
+  pdf_tmatrix    M, M1;
 
   pdf_setmatrix(&M, 1.0, 0.0, 0.0, 1.0, spe->x_user, spe->y_user);
 #endif /* ENABLE_HTML_SVG_TRANSFORM */
@@ -670,9 +670,8 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
       }
 #endif /* ENABLE_HTML_SVG_OPACITY */
 
-      pdf_dev_concat(&M);
-
-      pdf_ximage_scale_image(id, &M, &r, &ti);
+      pdf_ximage_scale_image(id, &M1, &r, &ti);
+      pdf_concatmatrix(&M, &M1);
       pdf_dev_concat(&M);
 
       pdf_dev_rectclip(r.llx, r.lly, r.urx - r.llx, r.ury - r.lly);

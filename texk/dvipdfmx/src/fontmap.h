@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.h,v 1.22 2008/05/18 08:09:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.h,v 1.23 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -75,7 +75,9 @@ typedef struct fontmap_rec {
 extern void         pdf_fontmap_set_verbose   (void);
 
 extern void         pdf_init_fontmaps         (void);
+#if 0
 extern void         pdf_clear_fontmaps        (void);
+#endif
 extern void         pdf_close_fontmaps        (void);
 
 extern void         pdf_init_fontmap_record   (fontmap_rec *mrec);

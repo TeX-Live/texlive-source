@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pst_obj.h,v 1.3 2004/03/14 04:23:04 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pst_obj.h,v 1.4 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -33,7 +33,9 @@ extern pst_obj *pst_parse_name   (unsigned char **inbuf, unsigned char *inbufend
 extern pst_obj *pst_parse_number (unsigned char **inbuf, unsigned char *inbufend);
 extern pst_obj *pst_parse_string (unsigned char **inbuf, unsigned char *inbufend);
 
+#if 0
 extern int   pst_name_is_valid (const char *name);
 extern char *pst_name_encode   (const char *name);
+#endif
 
 #endif /* _PST_OBJ_H_ */

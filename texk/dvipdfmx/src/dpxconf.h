@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxconf.h,v 1.1 2005/07/20 10:41:54 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxconf.h,v 1.2 2008/11/30 21:12:27 matthias Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -55,6 +55,8 @@ extern const struct paper *paperinfo (const char *ppformat);
 #define systempapersizefile()  NULL
 #endif /* HAVE_LIBPAPER */
 
+#if 0
 extern void dumppaperinfo (void);
+#endif
 
 #endif /* _DPXCONF_H_ */

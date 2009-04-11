@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.38 2006/12/06 12:50:40 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.39 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -483,11 +483,13 @@ dvi_do_special (const void *buffer, UNSIGNED_QUAD size)
   return;
 }
 
+#if 0
 double
 dvi_unit_size (void)
 {
   return dvi2pts;
 }
+#endif
 
 
 int

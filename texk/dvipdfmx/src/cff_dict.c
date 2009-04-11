@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.c,v 1.16 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff_dict.c,v 1.17 2008/10/13 19:42:48 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -698,14 +698,14 @@ void cff_dict_update (cff_dict *dict, cff_font *cff)
       id = (dict->entries)[i].id;
       if (dict_operator[id].argtype == CFF_TYPE_SID) {
 	str = cff_get_string(cff, (dict->entries)[i].values[0]);
-	(dict->entries)[i].values[0] = cff_add_string(cff, str);
+	(dict->entries)[i].values[0] = cff_add_string(cff, str, 1);
 	RELEASE(str);
       } else if (dict_operator[id].argtype == CFF_TYPE_ROS) {
 	str = cff_get_string(cff, (dict->entries)[i].values[0]);
-	(dict->entries)[i].values[0] = cff_add_string(cff, str);
+	(dict->entries)[i].values[0] = cff_add_string(cff, str, 1);
 	RELEASE(str);
 	str = cff_get_string(cff, (dict->entries)[i].values[1]);
-	(dict->entries)[i].values[1] = cff_add_string(cff, str);
+	(dict->entries)[i].values[1] = cff_add_string(cff, str, 1);
 	RELEASE(str);
       }
     }

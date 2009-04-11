@@ -1,7 +1,5 @@
-##
-ACLOCAL_AMFLAGS = -I ../../m4
-
 SUBDIRS = data src
+ACLOCAL_AMFLAGS = -I ../../m4
 
 EXTRA_DIST = ChangeLog.TL
 

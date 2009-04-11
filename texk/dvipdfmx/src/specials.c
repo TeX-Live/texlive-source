@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.10 2008/05/24 08:37:49 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.12 2009/01/15 21:04:38 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -389,26 +389,26 @@ static struct {
   {"pdf:",
    spc_pdfm_at_begin_document,
    spc_pdfm_at_end_document,
-   spc_pdfm_at_begin_page,
-   spc_pdfm_at_end_page,
+   NULL,
+   NULL,
    spc_pdfm_check_special,
    spc_pdfm_setup_handler
   },
 
   {"ps:",
-   spc_dvips_at_begin_document,
-   spc_dvips_at_end_document,
-   spc_dvips_at_begin_page,
+   NULL,
+   NULL,
+   NULL,
    spc_dvips_at_end_page,
    spc_dvips_check_special,
    spc_dvips_setup_handler
   },
 
   {"color",
-   spc_color_at_begin_document,
-   spc_color_at_end_document,
-   spc_color_at_begin_page,
-   spc_color_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_color_check_special,
    spc_color_setup_handler
   },
@@ -432,10 +432,10 @@ static struct {
   },
 
   {"unknown",
-   spc_misc_at_begin_document,
-   spc_misc_at_end_document,
-   spc_misc_at_begin_page,
-   spc_misc_at_end_page,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
    spc_misc_check_special,
    spc_misc_setup_handler
   },

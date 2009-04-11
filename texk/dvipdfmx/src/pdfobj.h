@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.28 2008/06/07 09:54:38 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.31 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -44,6 +44,9 @@
 
 #define STREAM_COMPRESS (1 << 0)
 
+/* A deeper object hierarchy will be considered as (illegal) loop. */
+#define PDF_OBJ_MAX_DEPTH  30
+
 typedef struct pdf_obj  pdf_obj;
 typedef struct pdf_file pdf_file;
 
@@ -58,7 +61,6 @@ extern void     pdf_out_flush     (void);
 extern void     pdf_set_version   (unsigned version);
 extern unsigned pdf_get_version   (void);
 
-extern pdf_obj *pdf_new_obj     (int type);
 extern void     pdf_release_obj (pdf_obj *object);
 extern int      pdf_obj_typeof  (pdf_obj *object);
 
@@ -77,11 +79,14 @@ extern int      pdf_obj_typeof  (pdf_obj *object);
 
 extern pdf_obj *pdf_ref_obj        (pdf_obj *object);
 extern pdf_obj *pdf_link_obj       (pdf_obj *object);
+extern void     pdf_transfer_label (pdf_obj *dst, pdf_obj *src);
 
 extern pdf_obj *pdf_new_null       (void);
 
 extern pdf_obj *pdf_new_boolean    (char value);
+#if 0
 extern void     pdf_set_boolean    (pdf_obj *object, char value);
+#endif
 extern char     pdf_boolean_value  (pdf_obj *object);
 
 extern pdf_obj *pdf_new_number     (double value);
@@ -95,7 +100,9 @@ extern unsigned  pdf_string_length (pdf_obj *object);
 
 /* Name does not include the / */
 extern pdf_obj *pdf_new_name   (const char *name);
+#if 0
 extern void     pdf_set_name   (pdf_obj *object, const char *name);
+#endif
 extern char    *pdf_name_value (pdf_obj *object);
 
 extern pdf_obj *pdf_new_array     (void);
@@ -105,13 +112,17 @@ extern pdf_obj *pdf_new_array     (void);
  * pdf_put_dict(dict, key, value)
  */
 extern void     pdf_add_array     (pdf_obj *array, pdf_obj *object);
+#if 0
 extern void     pdf_put_array     (pdf_obj *array, unsigned idx, pdf_obj *object);
+#endif
 extern pdf_obj *pdf_get_array     (pdf_obj *array, long idx);
 extern unsigned pdf_array_length  (pdf_obj *array);
 
 extern void     pdf_unshift_array (pdf_obj *array, pdf_obj *object);
+#if 0
 extern pdf_obj *pdf_shift_array   (pdf_obj *array);
 extern pdf_obj *pdf_pop_array     (pdf_obj *array);
+#endif
 
 extern pdf_obj *pdf_new_dict    (void);
 extern void     pdf_remove_dict (pdf_obj *dict,  const char *key);
@@ -127,7 +138,9 @@ extern pdf_obj *pdf_dict_keys   (pdf_obj *dict);
  * already removed that.
  */
 extern int      pdf_add_dict     (pdf_obj *dict, pdf_obj *key,    pdf_obj *value); 
-extern void     pdf_put_dict     (pdf_obj *dict, const char *key, pdf_obj *value); 
+#if 0
+extern void     pdf_put_dict     (pdf_obj *dict, const char *key, pdf_obj *value);
+#endif
 
 /* Apply proc(key, value, pdata) for each key-value pairs in dict, stop if proc()
  * returned non-zero value (and that value is returned). PDF object is passed for
@@ -149,8 +162,10 @@ extern int         pdf_add_stream_flate  (pdf_obj *stream,
 extern int         pdf_concat_stream     (pdf_obj *dst, pdf_obj *src);
 extern pdf_obj    *pdf_stream_dict       (pdf_obj *stream);
 extern long        pdf_stream_length     (pdf_obj *stream);
+#if 0
 extern void        pdf_stream_set_flags  (pdf_obj *stream, int flags);
 extern int         pdf_stream_get_flags  (pdf_obj *stream);
+#endif
 extern const void *pdf_stream_dataptr    (pdf_obj *stream);
 
 #if 0
@@ -183,6 +198,5 @@ extern pdf_obj *pdf_import_object (pdf_obj *object);
 extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *s, int len);
 
 extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned long label, unsigned short generation);
-extern void     pdf_copy_object   (pdf_obj *dst, pdf_obj *src);
 
 #endif  /* _PDFOBJ_H_ */

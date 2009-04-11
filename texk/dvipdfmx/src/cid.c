@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.31 2008/05/17 04:18:47 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cid.c,v 1.32 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -113,11 +113,13 @@ CIDFont_set_verbose (void)
   __verbose++;
 }
 
+#if 0
 int
 CIDFont_require_version (void)
 {
   return PDF_CID_SUPPORT_MIN;
 }
+#endif
 
 CIDFont *
 CIDFont_new (void)

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfresource.h,v 1.6 2004/09/05 13:30:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfresource.h,v 1.7 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -35,9 +35,13 @@ extern void     pdf_close_resources (void);
 extern long     pdf_defineresource (const char *category,
 				    const char *resname,  pdf_obj *object, int flags);
 extern long     pdf_findresource   (const char *category, const char *resname);
+#if 0
 extern int      pdf_resource_exist (const char *category, const char *resname);
+#endif
 
 extern pdf_obj *pdf_get_resource_reference (long res_id);
+#if 0
 extern pdf_obj *pdf_get_resource           (long res_id);
+#endif
 
 #endif /* _PDF_RESOURCE_H_ */

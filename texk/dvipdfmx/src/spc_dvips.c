@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_dvips.c,v 1.11 2008/05/29 13:43:51 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_dvips.c,v 1.12 2008/11/30 21:17:58 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -293,27 +293,9 @@ static struct spc_handler dvips_handlers[] = {
 };
 
 int
-spc_dvips_at_begin_page (void)
-{
-  return  0;
-}
-
-int
 spc_dvips_at_end_page (void)
 {
   mps_eop_cleanup();
-  return  0;
-}
-
-int
-spc_dvips_at_begin_document (void)
-{
-  return  0;
-}
-
-int
-spc_dvips_at_end_document (void)
-{
   return  0;
 }
 

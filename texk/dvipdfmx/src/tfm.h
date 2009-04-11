@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tfm.h,v 1.11 2004/09/11 14:50:29 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tfm.h,v 1.12 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -33,8 +33,10 @@ extern int  tfm_open (const char * tex_name, int must_exist);
 extern void tfm_close_all (void);
 
 extern double tfm_get_width  (int font_id, SIGNED_QUAD ch);
+#if 0
 extern double tfm_get_height (int font_id, SIGNED_QUAD ch);
 extern double tfm_get_depth  (int font_id, SIGNED_QUAD ch);
+#endif
 
 extern fixword tfm_get_fw_width  (int font_id, SIGNED_QUAD ch);
 extern fixword tfm_get_fw_height (int font_id, SIGNED_QUAD ch);
@@ -48,9 +50,10 @@ extern double tfm_get_space (int font_id);
 
 /* From TFM header */
 extern double tfm_get_design_size  (int font_id);
+#if 0
 extern char  *tfm_get_codingscheme (int font_id);
-
 extern int tfm_is_vert (int font_id);
+#endif
 
 extern int tfm_exists  (const char *tfm_name);
 

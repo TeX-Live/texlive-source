@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.h,v 1.7 2007/02/14 05:56:43 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.h,v 1.8 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -175,7 +175,9 @@ extern char  *tt_pack_maxp_table (struct tt_maxp_table *table);
 extern struct tt_maxp_table *tt_read_maxp_table (sfnt *sfont);
 
 /* vhea */
+#if 0
 extern char  *tt_pack_vhea_table (struct tt_vhea_table *table);
+#endif
 extern struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont);
 
 /* VORG */

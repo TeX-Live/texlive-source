@@ -44,7 +44,7 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
 	../../build-aux/ylwrap AUTHORS COPYING ChangeLog INSTALL NEWS \
-	TODO
+	TODO compile depcomp install-sh missing mkinstalldirs
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/cho-kpse.m4 \
 	$(top_srcdir)/../../m4/cho-libs.m4 \
@@ -210,8 +210,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = data src
+ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = ChangeLog.TL Makefile.am.orig configure.in.orig
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

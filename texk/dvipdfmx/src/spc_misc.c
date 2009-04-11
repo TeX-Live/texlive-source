@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_misc.c,v 1.8 2008/05/29 13:43:51 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_misc.c,v 1.9 2008/11/30 21:17:58 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -48,29 +48,6 @@
 
 #include "spc_util.h"
 #include "spc_misc.h"
-
-int
-spc_misc_at_begin_page (void)
-{
-  return 0;
-}
-
-int spc_misc_at_end_page (void)
-{
-  return 0;
-}
-
-int
-spc_misc_at_begin_document (void)
-{
-  return 0;
-}
-
-int
-spc_misc_at_end_document (void)
-{
-  return 0;
-}
 
 static int
 spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)

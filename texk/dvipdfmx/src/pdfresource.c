@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfresource.c,v 1.8 2004/09/05 13:30:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfresource.c,v 1.9 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -256,6 +256,7 @@ pdf_defineresource (const char *category,
   return (long) ((cat_id << 16)|(res_id));
 }
 
+#if 0
 int
 pdf_resource_exist (const char *category, const char *resname)
 {
@@ -281,6 +282,7 @@ pdf_resource_exist (const char *category, const char *resname)
 
   return 0;
 }
+#endif
 
 long
 pdf_findresource (const char *category, const char *resname)
@@ -342,6 +344,7 @@ pdf_get_resource_reference (long rc_id)
   return pdf_link_obj(res->reference);
 }
 
+#if 0
 pdf_obj *
 pdf_get_resource (long rc_id)
 {
@@ -371,3 +374,4 @@ pdf_get_resource (long rc_id)
 
   return res->object;
 }
+#endif

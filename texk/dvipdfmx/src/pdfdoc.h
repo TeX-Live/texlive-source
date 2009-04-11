@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.24 2008/06/05 06:27:42 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.28 2008/11/30 21:12:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -35,7 +35,8 @@ extern void     pdf_doc_set_verbose (void);
 extern void     pdf_open_document  (const char *filename,
 				    int do_encryption,
 				    double media_width, double media_height,
-				    double annot_grow_amount, int bookmark_open_depth);
+				    double annot_grow_amount, int bookmark_open_depth,
+				    int check_gotos);
 extern void     pdf_close_document (void);
 
 
@@ -54,6 +55,11 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_docinfo()   pdf_doc_get_dictionary("Info")
 #define pdf_doc_names()     pdf_doc_get_dictionary("Names")
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
+
+extern pdf_obj *pdf_doc_get_page (pdf_obj *trailer,
+				  long *page_p, long *count_p,
+				  pdf_rect *bbox, pdf_obj **resources_p,
+				  pdf_obj **markinfo_p);
 
 extern long     pdf_doc_current_page_number    (void);
 extern pdf_obj *pdf_doc_current_page_resources (void);
@@ -85,7 +91,9 @@ extern void     pdf_doc_add_page_resource (const char *category,
 
 /* Article thread */
 extern void     pdf_doc_begin_article (const char *article_id, pdf_obj *info);
+#if 0
 extern void     pdf_doc_end_article   (const char *article_id);  /* Do nothing... */
+#endif
 extern void     pdf_doc_make_article  (const char *article_id,
 				       const char **bead_order, int num_beads);
 extern void     pdf_doc_add_bead      (const char *article_id,
@@ -120,11 +128,13 @@ extern void     pdf_doc_expand_box  (const pdf_rect *rect);
 /* Manual thumbnail */
 extern void     pdf_doc_enable_manual_thumbnails (void);
 
+#if 0
 /* PageLabels - */
 extern void     pdf_doc_set_pagelabel (long  page_start,
                                        const char *type,
                                        const void *prefix, int pfrx_len,
                                        long  counter_start);
+#endif
 
 /* Similar to bop_content */
 #include "pdfcolor.h"

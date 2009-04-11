@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_tpic.c,v 1.3 2005/10/14 04:55:00 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_tpic.c,v 1.5 2008/11/30 21:39:19 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -170,7 +170,6 @@ set_linestyle (double pn, double da)
   } else {
     pdf_dev_setlinecap(0);
   }
-  pdf_doc_add_page_content(" 0 G", 4);
 
   return  0;
 }
@@ -193,14 +192,53 @@ set_fillstyle (double g, double a, int f_ais)
       pdf_release_obj(dict);
     }
     len += sprintf(buf + len, " /%s gs", resname);
-  }
-  len += sprintf(buf + len, " %.2f g", g);
 
-  pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);
+  }
+
+  {
+    pdf_color *sc, *fc, new_fc;
+
+    pdf_color_get_current (&sc, &fc); /* get stroking and fill colors */
+    pdf_color_brighten_color(&new_fc, fc, g);
+    pdf_dev_set_nonstrokingcolor(&new_fc);
+  }
 
   return  0;
 }
 
+static void
+set_styles (struct spc_tpic_ *tp,
+	    const pdf_coord  *c,
+	    int               f_fs,
+	    int               f_vp,
+	    double            pn,
+	    double            da) {
+  pdf_tmatrix M;
+
+  pdf_setmatrix (&M, 1.0, 0.0, 0.0, -1.0, c->x, c->y);
+  pdf_dev_concat(&M);
+
+  if (f_vp)
+    set_linestyle(pn, da);
+
+  if (f_fs) {
+    double g, a;
+    int f_ais;
+
+    if (tp->mode.fill == TPIC_MODE__FILL_SOLID || !tp->fill_color) {
+      g = 1.0 - tp->fill_color;
+      a = 0.0;
+    } else {
+      g = 0.0;
+      a = tp->fill_color;
+    }
+
+    f_ais = (tp->mode.fill == TPIC_MODE__FILL_SHAPE) ? 1 : 0;
+
+    set_fillstyle(g, a, f_ais);
+  }
+}
 
 static void
 showpath (int f_vp, int f_fs) /* visible_path, fill_shape */
@@ -235,45 +273,18 @@ tpic__polyline (struct spc_tpic_ *tp,
                 int               f_vp,
                 double            da)
 {
-  pdf_tmatrix  M;
   double       pn    = tp->pen_size;
   int          f_fs  = tp->fill_shape;
-  int          f_ais = 0;
-  double       g     = 0.5;
-  double       a     = 0.0;
   int          i, error = 0;
 
   /* Shading is applied only to closed path. */
   f_fs  = CLOSED_PATH(tp) ? f_fs : 0;
   f_vp  = (pn > 0.0) ? f_vp : 0;
-  f_ais = (tp->mode.fill == TPIC_MODE__FILL_SHAPE) ? 1 : 0;
-  switch (tp->mode.fill) {
-  case TPIC_MODE__FILL_SOLID:
-    g   = 1.0 - tp->fill_color;
-    a   = 0.0;
-    break;
-  case TPIC_MODE__FILL_SHAPE:
-  case TPIC_MODE__FILL_OPACITY:
-    if (tp->fill_color > 0.0) {
-      a = tp->fill_color;
-      g = 0.0;
-    } else {
-      a = 0.0;
-      g = 1.0;
-    }
-    break;
-  }
 
   if (f_vp || f_fs) {
     pdf_dev_gsave();
 
-    pdf_setmatrix (&M, 1.0, 0.0, 0.0, -1.0, c->x, c->y);
-    pdf_dev_concat(&M);
-
-    if (f_vp)
-      set_linestyle(pn, da);
-    if (f_fs)
-      set_fillstyle(g, a, f_ais);
+    set_styles(tp, c, f_fs, f_vp, pn, da);
 
     pdf_dev_moveto(tp->points[0].x, tp->points[0].y);
     for (i = 0; i < tp->num_points; i++)
@@ -316,44 +327,17 @@ tpic__spline (struct spc_tpic_ *tp,
               double            da)
 {
   double       v[6];
-  pdf_tmatrix  M;
   double       pn    = tp->pen_size;
   int          f_fs  = tp->fill_shape;
-  int          f_ais = 0;
-  double       g     = 0.5;
-  double       a     = 0.0;
   int          i, error = 0;
 
   f_fs  = CLOSED_PATH(tp) ? f_fs : 0;
   f_vp  = (pn > 0.0) ? f_vp : 0;
-  f_ais = (tp->mode.fill == TPIC_MODE__FILL_SHAPE) ? 1 : 0;
-  switch (tp->mode.fill) {
-  case TPIC_MODE__FILL_SOLID:
-    g   = 1.0 - tp->fill_color;
-    a   = 0.0;
-    break;
-  case TPIC_MODE__FILL_SHAPE:
-  case TPIC_MODE__FILL_OPACITY:
-    if (tp->fill_color > 0.0) {
-      a = tp->fill_color;
-      g = 0.0;
-    } else {
-      a = 0.0;
-      g = 1.0;
-    }
-    break;
-  }
 
-  if ( f_vp || f_fs ) {
+  if (f_vp || f_fs) {
     pdf_dev_gsave();
 
-    pdf_setmatrix (&M, 1.0, 0.0, 0.0, -1.0, c->x, c->y);
-    pdf_dev_concat(&M);
-
-    if (f_vp)
-      set_linestyle(pn, da);
-    if (f_fs)
-      set_fillstyle(g, a, f_ais);
+    set_styles(tp, c, f_fs, f_vp, pn, da);
 
     pdf_dev_moveto(tp->points[0].x, tp->points[0].y);
 
@@ -388,43 +372,16 @@ tpic__arc (struct spc_tpic_ *tp,
            double            da,
            double           *v /* 6 numbers */ )
 {
-  pdf_tmatrix  M;
   double       pn    = tp->pen_size;
   int          f_fs  = tp->fill_shape;
-  int          f_ais = 0;
-  double       g     = 0.5;
-  double       a     = 0.0;
 
   f_fs  = (round(fabs(v[4] - v[5]) + 0.5) >= 360) ? f_fs : 0;
   f_vp  = (pn > 0.0) ? f_vp : 0;
-  f_ais = (tp->mode.fill == TPIC_MODE__FILL_SHAPE) ? 1 : 0;
-  switch (tp->mode.fill) {
-  case TPIC_MODE__FILL_SOLID:
-    g   = 1.0 - tp->fill_color;
-    a   = 0.0;
-    break;
-  case TPIC_MODE__FILL_SHAPE:
-  case TPIC_MODE__FILL_OPACITY:
-    if (tp->fill_color > 0.0) {
-      a = tp->fill_color;
-      g = 0.0;
-    } else {
-      a = 0.0;
-      g = 1.0;
-    }
-    break;
-  }
 
-  if ( f_vp || f_fs ) {
+  if (f_vp || f_fs) {
     pdf_dev_gsave();
 
-    pdf_setmatrix (&M, 1.0, 0.0, 0.0, -1.0, c->x, c->y);
-    pdf_dev_concat(&M);
-
-    if (f_vp)
-      set_linestyle(pn, da);
-    if (f_fs)
-      set_fillstyle(g, a, f_ais);
+    set_styles(tp, c, f_fs, f_vp, pn, da);
 
     pdf_dev_arcx(v[0], v[1], v[2], v[3], v[4], v[5], +1, 0.0);
 
@@ -727,8 +684,14 @@ spc_handler_tpic_sh (struct spc_env *spe,
   skip_blank(&ap->curptr, ap->endptr);
   q = parse_float_decimal(&ap->curptr, ap->endptr);
   if (q) {
-    tp->fill_color = atof(q);
+    double g = atof(q);
     RELEASE(q);
+    if (g >= 0.0 && g <= 1.0)
+      tp->fill_color = g;
+    else {
+      WARN("Invalid fill color specified: %g\n", g);
+      return -1;
+    }      
   }
 
   return  0;

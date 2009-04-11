@@ -1,7 +1,134 @@
-$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.213 2008/06/07 09:59:38 chofchof Exp $
+$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.234 2009/01/15 21:09:29 chofchof Exp $
 
 ChangeLog: Changes for DVIPDFMx
 ===============================
+
+2009-01-15  Jin-Hwan Cho
+
+	* specials.c:
+          Apply Jonathan Kew's fix reported on August 7, 2008.
+	  (Sorry that it was too late!)
+
+2008-12-11  Matthias Franz
+
+	* xbb.c:
+          Fixed an off-by-one and an off-by-two error in the generation
+          of output file names for extractbb.
+          (Debian bug #506329, reported by G\'abor Braun.)
+
+	* mpost.c, pdfcolor.c, pdfcolor.h, pdfdev.c, pdfdev.h, pdfdoc.c, pdfdraw.c, pdfdraw.h, spc_color.c, spc_pdfm.c:
+          Polished the code for color support. PDF color operators will
+          not be generated any more if old and new color coincide.
+
+2008-11-30  Matthias Franz
+
+	* spc_tpic.c:
+          Polished code.
+
+	* pdfdev.c, spc_html.c:
+          Concatenated transformation matrices for images.
+
+	* data/dvipdfmx.cfg, dvipdfmx.c, pdfdoc.c:
+          Fixed two problems with removal of PDF destinations: Non-link
+          annotations produced a warning, and broken links were not
+          detected if no valid destination existed.
+          Removing unused destinations is now default behaviour and can
+          be prevented by using the flag "-C 0x10". Since the feature
+          is still new, this flag is set in dvipdfmx.cfg.
+
+	* spc_color.c, spc_color.h, spc_dvips.c, spc_dvips.h, spc_misc.c, spc_misc.h, spc_pdfm.c, spc_pdfm.h, specials.c:
+          Removed unnecessary (no-op) handlers for specials.
+
+	* cid.c, cid.h, dpxconf.c, dpxconf.h, dvi.c, dvi.h, fontmap.c, fontmap.h, numbers.c, numbers.h, pdfcolor.c, pdfcolor.h, pdfdev.c, pdfdev.h, pdfdoc.c, pdfdoc.h, pdfdraw.c, pdfdraw.h, pdffont.c, pdffont.h, pdfobj.c, pdfobj.h, pdfresource.c, pdfresource.h, pst_obj.c, pst_obj.h, tfm.c, tfm.h, tt_table.c, tt_table.h, type0.c, type0.h:
+          Commented out unused functions.
+
+2008-11-08  Matthias Franz
+
+	* pdfcolor.c, pdfcolor.h, spc_tpic.c:
+          Made tpic specials respect color settings. Before, they
+          always used black for drawing commands.
+          (Debian bug #485567, reported by Daniel Skorka.)
+
+2008-11-03  Matthias Franz
+
+	* dpxutil.c, dvipdfmx.c, mem.c, pdfdoc.c, pdfdoc.h, pdfnames.c, pdfnames.h:
+          Remove unused PDF destinations.  (Packages like hyperref
+          create destinations regardless of whether they are used
+          or not.)  This option is currently turned off by default;
+          it can be enabled with "-C 0x10".
+
+	* dvipdfmx.c:
+          Improved parsing of "-v" command line option; contributed
+          by Akira Kakuto. Note that there are still problems if an
+          argument to an option (or the name of the DVI file) starts
+          with a minus sign
+
+	* pkfont.c:
+          Corrected bounding box computation for PK fonts. Before,
+          it was always [0, 0, 0, 0].  Also removed a redundant call
+          to pdf_encoding_add_usedchars.
+
+2008-10-13  Matthias Franz
+
+	* cff.c, cff.h, cff_dict.c, cidtype0.c, pdfdev.c, t1_load.c, type1.c, type1c.c:
+          Various speed improvements:
+          cff.c: cff_add_string now has an option to avoid checking for
+          duplicate strings.
+          pdfdev.c: p_dtoa does not call library functions any more.
+          t1_load.c: t1_decrypt is not called for each byte seperately
+          any more. (Well, this does not make a big difference.)
+
+2008-09-29  Matthias Franz
+
+	* epdf.c, pdfdoc.c, pdfdoc.h, pdfobj.c, pdfobj.h, xbb.c:
+          Made PDF parsing more robust. In particular, we can now
+          detect (illegal) loops in a PDF document hierarchy.
+          Also, much of the PDF parsing code in epdf.c and xbb.c has
+          been combined to the function pdf_doc_get_page in pdfdoc.c.
+          Loops in PDF page trees are detected as well.
+          Moreover, the various bounding boxes of a page are now
+          handled correctly: MediaBox and CropBox are inherited,
+          but not the others.
+
+2008-08-31  Matthias Franz
+
+	* type1.c:
+          Fixed a bug when processing "seac" operators in Type 1
+          fonts.  If the base or accent char were not used otherwise,
+          an "Invalid SID" error could occur.
+
+2008-08-05  Matthias Franz
+
+	* type1c.c:
+          Fixed a buffer overflow when using 256 glyphs of a CFF font
+          (plus ".notdef").
+
+2008-08-04  Matthias Franz
+
+	* type1c.c:
+          Fixed a segfault when processing CFF fonts.
+
+2008-07-16  Matthias Franz
+
+	* pdfnames.c, pdfobj.c, pdfobj.h:
+          Replaced pdf_copy_object by the (almost) equivalent,
+          but simpler function pdf_transfer_label. Simplified
+          pdf_compare_reference.
+
+	* pdfnames.c:
+          Reintroduced warning about duplicate object keys.
+
+2008-06-20  Jin-Hwan Cho
+
+	* spc_pdfm.c:
+          Fixed a bug on beads with nonzero depth; reported by
+          Alexander Grahn.
+
+2008-06-13  Jin-Hwan Cho
+
+	* spc_pdfm.c:
+          Fixed a bug on annotations with nonzero depth; reported by
+          Alexander Grahn.
 
 2008-06-07  Jin-Hwan Cho
 

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.43 2008/06/20 23:18:45 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.45 2008/12/11 16:03:05 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -201,18 +201,6 @@ spc_pdfm_at_end_document (void)
 {
   struct spc_pdf_ *sd = &_pdf_stat;
   return  spc_handler_pdfm__clean(NULL, NULL, sd);
-}
-
-int
-spc_pdfm_at_begin_page (void)
-{
-  return  0;
-}
-
-int
-spc_pdfm_at_end_page (void)
-{
-  return  0;
 }
 
 
@@ -576,7 +564,7 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   } else {
     rect.llx = cp.x;
     rect.lly = cp.y - spe->mag * ti.depth;
-    rect.urx = rect.llx + spe->mag * ti.width;
+    rect.urx = cp.x + spe->mag * ti.width;
     rect.ury = cp.y + spe->mag * ti.height;
   }
 
@@ -668,15 +656,16 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
   if (error)
     spc_warn(spe, "Invalid color specification?");
   else {
-    pdf_color_push(&sc, &fc); /* save currentcolor */
-    pdf_dev_set_strokingcolor(&sc);
-    pdf_dev_set_nonstrokingcolor(&fc);
+    pdf_color_push(&sc, &fc);
   }
 
   return  error;
 }
 
-/* Different than "color rgb 1 0 0" ? */
+/*
+ * This special changes the current color without clearing the color stack.
+ * It therefore differs from "color rgb 1 0 0".
+ */
 static int
 spc_handler_pdfm_scolor (struct spc_env *spe, struct spc_arg *ap)
 {
@@ -695,9 +684,7 @@ spc_handler_pdfm_scolor (struct spc_env *spe, struct spc_arg *ap)
   if (error)
     spc_warn(spe, "Invalid color specification?");
   else {
-    pdf_color_set_default(&fc); /* ????? */
-    pdf_dev_set_strokingcolor(&sc);
-    pdf_dev_set_nonstrokingcolor(&fc);
+    pdf_color_set(&sc, &fc);
   }
 
   return  error;
@@ -740,13 +727,13 @@ spc_handler_pdfm_etrans (struct spc_env *spe, struct spc_arg *args)
 
   /*
    * Unfortunately, the following line is necessary in case
-   * of a font or color change inside of the save/restore pair.
+   * of a color change inside of the save/restore pair.
+   * (Font changes are automatically corrected by pdf_dev_grestore().)
    * Anything that was done there must be redone, so in effect,
    * we make no assumptions about what fonts. We act like we are
    * starting a new page.
    */
-  pdf_dev_reset_fonts();
-  pdf_dev_reset_color();
+  pdf_dev_reset_color(0);
 
   return  0;
 }
@@ -1335,6 +1322,8 @@ spc_handler_pdfm_econtent (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_dev_pop_coord();
   pdf_dev_grestore();
+  pdf_dev_reset_color(0);
+
   return  0;
 }
 

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type0.h,v 1.12 2004/09/05 13:30:06 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type0.h,v 1.13 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -33,7 +33,9 @@ typedef struct Type0Font Type0Font;
 extern void       Type0Font_set_verbose (void);
 
 extern int        Type0Font_get_wmode     (Type0Font *font);
+#if 0
 extern char      *Type0Font_get_encoding  (Type0Font *font);
+#endif
 extern char      *Type0Font_get_usedchars (Type0Font *font);
 
 extern pdf_obj   *Type0Font_get_resource  (Type0Font *font);

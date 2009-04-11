@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfnames.c,v 1.3 2008/06/18 15:11:45 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfnames.c,v 1.5 2008/11/03 22:49:29 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -170,13 +170,13 @@ pdf_names_add_object (struct ht_table *names,
   } else {
     if (value->reserve) {
       /* null object is used for undefined objects */
-      pdf_copy_object(value->object, object);
-      pdf_release_obj(object); /* PLEASE FIX THIS!!! */
+      pdf_transfer_label(object, value->object);
+      pdf_release_obj(value->object);
+      value->object = object;
     } else {
       if (value->object || value->object_ref) {
-        if (pdf_obj_get_verbose()) {
-	  WARN("Object reference with key \"%s\" is in use.", printable_key(key, keylen));
-        }
+	WARN("Object reference with key \"%s\" is in use.",
+	     printable_key(key, keylen));
 	pdf_release_obj(object);
 	return -1;
       } else {
@@ -415,7 +415,8 @@ build_name_tree (struct named_object *first, long num_leaves, int is_root)
 }
 
 static struct named_object *
-flat_table (struct ht_table *ht_tab, long *num_entries)
+flat_table (struct ht_table *ht_tab, long *num_entries,
+	    struct ht_table *filter)
 {
   struct named_object *objects;
   struct ht_iter       iter;
@@ -423,16 +424,19 @@ flat_table (struct ht_table *ht_tab, long *num_entries)
 
   ASSERT(ht_tab);
 
-  *num_entries = count = ht_tab->count;
-  objects = NEW(count, struct named_object);
+  objects = NEW(ht_tab->count, struct named_object);
+  count = 0;
   if (ht_set_iter(ht_tab, &iter) >= 0) {
     do {
       char  *key;
       int    keylen;
       struct obj_data *value;
 
-      count--;
       key   = ht_iter_getkey(&iter, &keylen);
+
+      if (filter && !ht_lookup_table(filter, key, keylen))
+	continue; 
+
       value = ht_iter_getval(&iter);
       if (value->reserve) {
 	WARN("Named object \"%s\" not defined!!!",
@@ -457,30 +461,31 @@ flat_table (struct ht_table *ht_tab, long *num_entries)
 	objects[count].keylen = keylen;
 	objects[count].value  = pdf_new_null();
       }
-    } while (ht_iter_next(&iter) >= 0 && count > 0);
+
+      count++;
+    } while (ht_iter_next(&iter) >= 0);
     ht_clear_iter(&iter);
   }
+
+  *num_entries = count;
+  objects = RENEW(objects, count, struct named_object);
 
   return objects;
 }
 
 pdf_obj *
-pdf_names_create_tree (struct ht_table *names)
+pdf_names_create_tree (struct ht_table *names, long *count,
+		       struct ht_table *filter)
 {
   pdf_obj *name_tree;
   struct   named_object *flat;
-  long     count;
 
-  flat = flat_table(names, &count);
+  flat = flat_table(names, count, filter);
   if (!flat)
     name_tree = NULL;
   else {
-    if (count < 1)
-      name_tree = NULL;
-    else {
-      qsort(flat, count, sizeof(struct named_object), cmp_key);
-      name_tree = build_name_tree(flat, count, 1);
-    }
+    qsort(flat, *count, sizeof(struct named_object), cmp_key);
+    name_tree = build_name_tree(flat, *count, 1);
     RELEASE(flat);
   }
 

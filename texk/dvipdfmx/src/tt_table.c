@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.9 2008/05/08 10:32:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.10 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -216,6 +216,7 @@ tt_read_hhea_table (sfnt *sfont)
 }
 
 /* vhea */
+#if 0
 char *
 tt_pack_vhea_table (struct tt_vhea_table *table)
 {
@@ -242,6 +243,7 @@ tt_pack_vhea_table (struct tt_vhea_table *table)
 
   return data;
 }
+#endif
 
 struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont)
 {

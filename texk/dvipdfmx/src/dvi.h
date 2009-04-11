@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.h,v 1.13 2006/12/06 12:50:40 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.h,v 1.14 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -37,7 +37,9 @@ extern double dvi_init  (const char *dvi_filename, double mag);
 extern void   dvi_close (void);  /* Closes data structures created by dvi_open */
 
 extern double      dvi_tell_mag  (void);
+#if 0
 extern double      dvi_unit_size (void);
+#endif
 extern double      dvi_dev_xpos  (void);
 extern double      dvi_dev_ypos  (void);
 extern unsigned    dvi_npages    (void);

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.40 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.41 2008/11/30 21:12:27 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1111,12 +1111,14 @@ pdf_close_fontmaps (void)
   release_sfd_record();
 }
 
+#if 0
 void
 pdf_clear_fontmaps (void)
 {
   pdf_close_fontmaps();
   pdf_init_fontmaps();
 }
+#endif
 
 /* CIDFont options
  *
