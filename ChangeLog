@@ -1,3 +1,8 @@
+2009-04-11  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (world): do the run-texlinks target in texk/tetex
+	to make the per-format links to binaries.
+
 2009-03-14  Karl Berry  <karl@tug.org>
 
 	* Build: include timestamps in output.
