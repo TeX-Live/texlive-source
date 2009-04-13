@@ -1,5 +1,5 @@
 '\"t
-.ds V 2.75
+.ds V 2.78
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -7,7 +7,7 @@
 .if n .sp
 .if t .sp 0.4
 ..
-.de BUP
+.de Bp
 .IP \(bu 3n
 ..
 .TH OTFTOTFM 1 "LCDF Typetools" "Version \*V"
@@ -1186,17 +1186,17 @@ options, and their
 and
 .B \-\-*\-filter
 variants, accept the following types of pattern.
-.BUP
+.Bp
 Glyph names.  Example: "Aacute".  For PostScript-flavored fonts, use
 .M otfinfo 1 's
 .B \-g
 option to see a font's glyph names, and "\fBcfftot1\fR \fIfont\fR.otf |
 \fBt1testpage\fR" to generate a PostScript file showing each glyph.
-.BUP
+.Bp
 Glyph name patterns using the shell-style glob-matching rules: "*" matches
 any number of characters, "?" matches any single character, and "[...]"
 matches any character in a set.  Example: "*.end".
-.BUP
+.Bp
 Unicode category properties in angle brackets.  Examples: "<Letter>",
 "<UppercaseLetter>", "<Lu>".  The complete list of both short and long
 names: Letter/L, UppercaseLetter/Lu, LowercaseLetter/Ll,
@@ -1210,7 +1210,7 @@ EnclosingMark/Me, NonspacingMark/Mn; Separator/Z, SpaceSeparator/Zs,
 LineSeparator/Zl, ParagraphSeparator/Zp; Other/C, Surrogate/Cs, Format/Cf,
 Control/Cc, PrivateUse/Co, Unassigned/Cn.  Category values current as of
 Unicode 4.0.
-.BUP
+.Bp
 Unicode ranges.  Example: "U+007f-U+008C".
 .PP
 The "!" prefix negates a pattern, and you can separate multiple patterns by

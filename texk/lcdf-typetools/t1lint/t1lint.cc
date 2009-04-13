@@ -293,7 +293,8 @@ check_stems(Type1Font *font, ErrorHandler *errh)
 // MAIN
 
 static void
-do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
+do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh,
+	ErrorHandler *err_errh)
 {
   FILE *f;
   if (strcmp(filename, "-") == 0) {
@@ -312,13 +313,13 @@ do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
   }
 
   if (!f)
-    errh->fatal("%s: %s", filename, strerror(errno));
+    err_errh->fatal("%s: %s", filename, strerror(errno));
 
   Type1Reader *reader;
   int c = getc(f);
   ungetc(c, f);
   if (c == EOF)
-    errh->fatal("%s: empty file", filename);
+    err_errh->fatal("%s: empty file", filename);
   if (c == 128)
     reader = new Type1PFBReader(f);
   else
@@ -368,6 +369,15 @@ do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
 	  (&cerrh, "While interpreting %<%s%>:", font->glyph_name(i).c_str());
       cc.check(font->glyph_context(i), &derrh);
     }
+
+    int ns = font->nsubrs();
+    CharstringSubrChecker csc(weight_vector);
+    for (int i = 0; i < ns; ++i)
+	if (Type1Charstring *cs = font->subr(i)) {
+	    ContextErrorHandler derrh(&cerrh, "While interpreting subr %d:", i);
+	    CharstringContext cctx(font, cs);
+	    csc.check(cctx, &derrh);
+	}
   }
 
   delete font;
@@ -384,7 +394,9 @@ main(int argc, char *argv[])
     Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
   program_name = Clp_ProgramName(clp);
 
-  ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr));
+  ErrorHandler *err_errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr));
+  ErrorHandler *out_errh = new FileErrorHandler(stdout);
+  ErrorHandler *errh = out_errh;
   int nfiles = 0;
 
   while (1) {
@@ -393,7 +405,7 @@ main(int argc, char *argv[])
 
      case QUIET_OPT:
        if (clp->negated)
-	   errh = ErrorHandler::default_handler();
+	   errh = out_errh;
        else
 	   errh = new SilentErrorHandler;
        break;
@@ -413,7 +425,7 @@ particular purpose.\n");
       break;
 
      case Clp_NotOption:
-      do_file(clp->vstr, psres, errh);
+      do_file(clp->vstr, psres, errh, err_errh);
       nfiles++;
       break;
 
@@ -421,7 +433,7 @@ particular purpose.\n");
       goto done;
 
      case Clp_BadOption:
-      usage_error(errh, 0);
+      usage_error(err_errh, 0);
       break;
 
      default:
@@ -432,7 +444,7 @@ particular purpose.\n");
 
  done:
   if (nfiles == 0)
-      do_file("-", psres, errh);
+      do_file("-", psres, errh, err_errh);
 
   return (errh->nerrors() == 0 ? 0 : 1);
 }

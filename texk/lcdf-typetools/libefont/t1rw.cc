@@ -554,8 +554,10 @@ Type1PFAWriter::print0(const unsigned char *c, int l)
 		_hex_line = 0;
 	    }
 	}
-    } else
-	fwrite(c, 1, l, _f);
+    } else {
+	ssize_t result = fwrite(c, 1, l, _f);
+	(void) result;
+    }
 }
 
 
@@ -587,7 +589,8 @@ Type1PFBWriter::flush()
 	fputc((l >> 8) & 0xFF, _f);
 	fputc((l >> 16) & 0xFF, _f);
 	fputc((l >> 24) & 0xFF, _f);
-	fwrite(_save.data(), 1, _save.length(), _f);
+	ssize_t result = fwrite(_save.data(), 1, _save.length(), _f);
+	(void) result;
 	_save.clear();
     }
 }

@@ -44,6 +44,9 @@ class Type1CharstringGen { public:
     enum State { S_INITIAL, S_GEN };
     State _state;
 
+    void gen_rational(int big_val, int divisor);
+    bool gen_stem3_stack(CharstringInterp &interp);
+
 };
 
 class Type1CharstringGenInterp : public CharstringInterp { public:

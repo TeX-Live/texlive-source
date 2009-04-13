@@ -27,4 +27,9 @@ bool parse_unicode_number(const char*, const char*, int require_prefix, uint32_t
 #define WEXITSTATUS(es) (es)
 #endif
 
+template <typename T>
+void ignore_result(T result) {
+    (void) result;
+}
+
 #endif

@@ -965,13 +965,15 @@ write_encoding_file(String &filename, const String &encoding_name,
     // rewind file
 #ifdef HAVE_FTRUNCATE
     rewind(f);
-    ftruncate(fd, 0);
-#else
-    fclose(f);
-    f = fopen(filename.c_str(), "w");
+    if (ftruncate(fd, 0) < 0)
 #endif
+    {
+	fclose(f);
+	f = fopen(filename.c_str(), "w");
+	fd = fileno(f);
+    }
 
-    fwrite(contents.data(), 1, contents.length(), f);
+    ignore_result(fwrite(contents.data(), 1, contents.length(), f));
 
     fclose(f);
 
@@ -1066,7 +1068,7 @@ output_encoding(const Metrics &metrics,
 
     // open encoding file
     if (out_encoding_file == "-")
-	fwrite(contents.data(), 1, contents.length(), stdout);
+	ignore_result(fwrite(contents.data(), 1, contents.length(), stdout));
     else if (write_encoding_file(out_encoding_file, out_encoding_name, contents, errh) == 1)
 	update_odir(O_ENCODING, out_encoding_file, errh);
     return true;

@@ -294,13 +294,13 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
 	const uint8_t *startCounts = endCounts + (segCount << 1) + 2;
 	const uint8_t *idDeltas = startCounts + (segCount << 1);
 	const uint8_t *idRangeOffsets = idDeltas + (segCount << 1);
-	int l = 0, r = segCount - 1;
-	while (l <= r) {
-	    int m = (l + r) / 2;
+	int l = 0, r = segCount;
+	while (l < r) {
+	    int m = l + (r - l) / 2;
 	    uint32_t endCount = USHORT_AT(endCounts + (m << 1));
 	    uint32_t startCount = USHORT_AT(startCounts + (m << 1));
 	    if (uni < startCount)
-		r = m - 1;
+		r = m;
 	    else if (uni <= endCount) {
 		int idDelta = SHORT_AT(idDeltas + (m << 1));
 		int idRangeOffset = USHORT_AT(idRangeOffsets + (m << 1));
@@ -326,14 +326,14 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
 
     case F_SEGMENTED32: {
 	uint32_t nGroups = ULONG_AT(data + 12);
-	uint32_t l = 0, r = nGroups - 1;
+	uint32_t l = 0, r = nGroups;
 	const uint8_t *groups = data + 16;
-	while (l <= r) {
-	    uint32_t m = (l + r) / 2;
+	while (l < r) {
+	    uint32_t m = l + (r - l) / 2;
 	    uint32_t startCharCode = ULONG_AT(groups + m * 12);
 	    uint32_t endCharCode = ULONG_AT(groups + m * 12 + 4);
 	    if (uni < startCharCode)
-		r = m - 1;
+		r = m;
 	    else if (uni <= endCharCode)
 		return ULONG_AT(groups + m * 12 + 8) + uni - startCharCode;
 	    else

@@ -65,30 +65,10 @@ Type1CharstringGen::clear()
 
 
 void
-Type1CharstringGen::gen_number(double float_val, int kind)
+Type1CharstringGen::gen_rational(int big_val, int divisor)
 {
-    switch (kind) {
-      case 'x':
-	_true.x += float_val;
-	float_val = _true.x - _false.x;
-	break;
-      case 'y':
-	_true.y += float_val;
-	float_val = _true.y - _false.y;
-	break;
-      case 'X':
-	_true.x = float_val;
-	break;
-      case 'Y':
-	_true.y = float_val;
-	break;
-    }
-
-    // 30.Jul.2003 - Avoid rounding differences between platforms with the
-    // extra 0.00001.
-    int big_val = (int)floor(float_val * _f_precision + 0.50001);
-    int frac = big_val % _precision;
-    int val = (frac == 0 ? big_val / _precision : big_val);
+    int frac = big_val % divisor;
+    int val = (frac == 0 ? big_val / divisor : big_val);
 
     if (val >= -107 && val <= 107)
 	_ncs.append((char)(val + 139));
@@ -112,10 +92,37 @@ Type1CharstringGen::gen_number(double float_val, int kind)
     }
 
     if (frac != 0) {
-	_ncs.append((char)(_precision + 139));
+	_ncs.append((char)(divisor + 139));
 	_ncs.append((char)Charstring::cEscape);
 	_ncs.append((char)(Charstring::cDiv - Charstring::cEscapeDelta));
     }
+}
+
+void
+Type1CharstringGen::gen_number(double float_val, int kind)
+{
+    switch (kind) {
+      case 'x':
+	_true.x += float_val;
+	float_val = _true.x - _false.x;
+	break;
+      case 'y':
+	_true.y += float_val;
+	float_val = _true.y - _false.y;
+	break;
+      case 'X':
+	_true.x = float_val;
+	break;
+      case 'Y':
+	_true.y = float_val;
+	break;
+    }
+
+    // 30.Jul.2003 - Avoid rounding differences between platforms with the
+    // extra 0.00001.
+    int big_val = (int)floor(float_val * _f_precision + 0.50001);
+
+    gen_rational(big_val, _precision);
 
     float_val = big_val / _f_precision;
     switch (kind) {
@@ -150,10 +157,69 @@ Type1CharstringGen::gen_command(int command)
     }
 }
 
+bool
+Type1CharstringGen::gen_stem3_stack(CharstringInterp &interp)
+{
+    // special handling to ensure rounding doesn't generate an invalid stem3
+    // hint
+    if (interp.size() < 6)
+	return false;
+
+    // sort hints
+    int i0, i1, i2;
+    if (interp.at(0) > interp.at(2))
+	i0 = 2, i1 = 0;
+    else
+	i0 = 0, i1 = 2;
+    if (interp.at(4) < interp.at(i0))
+	i2 = i1, i1 = i0, i0 = 4;
+    else if (interp.at(4) < interp.at(i1))
+	i2 = i1, i1 = 4;
+    else
+	i2 = 4;
+
+    // check constraints. count "almost equal" as equal
+    double stemw0 = interp.at(i0+1), stemw2 = interp.at(i2+1);
+    if ((int)(1024*(stemw0 - stemw2) + .5) != 0)
+	return false;
+
+    double c0 = interp.at(i0) + interp.at(i0+1)/2;
+    double c1 = interp.at(i1) + interp.at(i1+1)/2;
+    double c2 = interp.at(i2) + interp.at(i2+1)/2;
+    if ((int)(1024*((c1 - c0) - (c2 - c1)) + .5) != 0)
+	return false;
+
+    // if all constraints are satisfied now, make sure they are also satisfied
+    // after rounding
+    int big_v0 = (int)floor(interp.at(i0) * _f_precision + 0.50001);
+    int big_v2 = (int)floor(interp.at(i2) * _f_precision + 0.50001);
+    int big_stemw0 = (int)floor(stemw0 * _f_precision + 0.50001);
+    int big_stemw1 = (int)floor(interp.at(i1+1) * _f_precision + 0.50001);
+
+    int big_v1_times2 = big_v0 + big_v2 + big_stemw0 - big_stemw1;
+
+    gen_rational(big_v0, _precision);
+    gen_rational(big_stemw0, _precision);
+    if (big_v1_times2 % 2)
+	gen_rational(big_v1_times2, 2 * _precision);
+    else
+	gen_rational(big_v1_times2 / 2, _precision);
+    gen_rational(big_stemw1, _precision);
+    gen_rational(big_v2, _precision);
+    gen_rational(big_stemw0, _precision);
+
+    interp.clear();
+    return true;
+}
+
 void
 Type1CharstringGen::gen_stack(CharstringInterp &interp, int for_cmd)
 {
     const char *str = ((unsigned)for_cmd <= Charstring::cLastCommand ? command_desc[for_cmd] : (const char *)0);
+    if ((for_cmd == Charstring::cHstem3 || for_cmd == Charstring::cVstem3)
+	&& gen_stem3_stack(interp))
+	return;
+
     int i;
     for (i = 0; str && *str && i < interp.size(); i++, str++)
 	gen_number(interp.at(i), *str);

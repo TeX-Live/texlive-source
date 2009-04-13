@@ -5,6 +5,33 @@ Version 2.76-rc1   2.Mar.2009
 * Adapt to new TeX Live build scheme.
 
 
+Version 2.78   6.Apr.2009
+
+* t1lint: Report warnings when a font charstring command has too many
+  arguments.  Requested by Han The Thanh.
+
+
+Version 2.77   6.Apr.2009
+
+* Font library changes: correctly implement binary search in a couple
+  places -- unexpected sizes could lead to overflow and bad behavior.
+  Reported by Mark DeVries for ttftotype42 and CharisSILR.
+
+
+Version 2.76   27.Mar.2009
+
+* mmpfb: Ensure all output subroutines end in the "return" command; some
+  type 1 processors treat a subroutine ending in "endchar" as an error.
+  Reported by Melissa O'Neill.
+
+* mmpfb, cfftot1: Ensure that stem3 hints (hstem3, vstem3) meet the
+  necessary constraints, even despite rounding.
+
+* t1lint: Add checks for some more problems, such as subroutines that do
+  not end in "return."  Reported/requested by Melissa O'Neill and Han The
+  Thanh.
+
+
 Version 2.75   22.Feb.2009
 
 * Report a helpful warning if automatic mode is specified to a version

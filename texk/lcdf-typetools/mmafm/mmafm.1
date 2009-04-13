@@ -1,20 +1,17 @@
 .\" -*-nroff-*-
-.ds V 2.75
+.ds V 2.78
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
 .ds E " \-\- 
 .if t .ds E \(em
-.de OP
+.de Op
 .BR "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
 ..
-.de OA
-.IR "\fB\\$1\& \|\fI\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
-..
-.de OY
+.de Oy
 .BI "\\$1\fR=" "\\$2\fR, " "\\$3\& " "\\$4" "\\$5" "\\$6"
 ..
-.de OL
+.de Ol
 .BI "\\$1\fR=" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
 ..
 .de Sp
@@ -104,28 +101,28 @@ for more information.
 Long options may be abbreviated to their unique prefixes.
 '
 .TP 5
-.OY \-\-output file \-o file
+.Oy \-\-output file \-o file
 Send output to
 .I file
 instead of standard output.
 '
 .TP
-.OY \-\-weight N \-w N
+.Oy \-\-weight N \-w N
 Set the weight axis to 
 .IR N .
 '
 .TP
-.OY \-\-width N \-W N
+.Oy \-\-width N \-W N
 Set the width axis to 
 .IR N .
 '
 .TP
-.OY \-\-optical\-size N \-O N
+.Oy \-\-optical\-size N \-O N
 Set the optical size axis to 
 .IR N .
 '
 .TP
-.OL \-\-style N
+.Ol \-\-style N
 Set the style axis to 
 .IR N .
 .TP
@@ -134,14 +131,14 @@ Set the first (second, third, fourth) axis to
 .IR N .
 '
 .TP
-.OY \-\-precision N \-p N
+.Oy \-\-precision N \-p N
 Round output numbers so they have at most
 .I N
 digits after the decimal point. Smaller numbers are less precise; `\fB\-p
 \fR0' rounds all numbers to integers. The default precision is 3.
 '
 .TP
-.OY \-\-min\-kern N \-k N
+.Oy \-\-min\-kern N \-k N
 Only output kerning pairs whose absolute value is
 .IR N
 or larger. Smaller minimum kerns make kerning more precise and the output
@@ -155,7 +152,7 @@ can choke on AFM files that include fractional numbers. Therefore, if you
 have trouble with an AFM file, try rerunning
 .B mmafm
 with the
-.OP \-\-precision=0
+.Op \-\-precision=0
 option.
 '
 .SH SEE ALSO
@@ -177,5 +174,5 @@ http://www.lcdf.org/type/
 AMFM and AFM files for Adobe Type Library fonts are also available at that
 URL.
 .PP
-Thanks to Melissa O'Neill <oneill@cs.sfu.ca> for suggestions and patient
+Thanks to Melissa O'Neill for suggestions and patient
 debugging.

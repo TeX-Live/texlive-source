@@ -220,7 +220,7 @@ shell_command_output(String cmdline, const String &input, ErrorHandler *errh, bo
     FILE *f = tmpfile();
     if (!f)
 	errh->fatal("cannot create temporary file: %s", strerror(errno));
-    fwrite(input.data(), 1, input.length(), f);
+    ignore_result(fwrite(input.data(), 1, input.length(), f));
     fflush(f);
     rewind(f);
 

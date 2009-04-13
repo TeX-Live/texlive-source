@@ -1,6 +1,6 @@
 /* t1rewrit.cc -- routines for multiple- to single-master charstring conversion
  *
- * Copyright (c) 1997-2006 Eddie Kohler
+ * Copyright (c) 1997-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -513,12 +513,13 @@ class Type1BadCallRemover: public CharstringInterp { public:
 
     bool type1_command(int);
 
-    bool run(Type1Charstring &);
+    bool run(Type1Charstring &, bool is_subr);
 
   private:
 
     Type1CharstringGen _gen;
     Type1MMRemover *_remover;
+    bool _is_subr;
 
 };
 
@@ -548,14 +549,15 @@ Type1BadCallRemover::type1_command(int cmd)
       default:
 	_gen.gen_stack(*this, 0);
 	_gen.gen_command(cmd);
-	return (cmd != Cs::cEndchar && cmd != Cs::cReturn);
+	return (cmd != Cs::cEndchar || _is_subr) && cmd != Cs::cReturn;
 
     }
 }
 
 bool
-Type1BadCallRemover::run(Type1Charstring &cs)
+Type1BadCallRemover::run(Type1Charstring &cs, bool is_subr)
 {
+    _is_subr = is_subr;
     _gen.clear();
     CharstringInterp::interpret(_remover->program(), &cs);
     _gen.output(cs);
@@ -700,10 +702,10 @@ Type1MMRemover::run()
     Type1BadCallRemover bcr(this);
     for (int i = 0; i < _font->nglyphs(); i++)
 	if (Type1Subr *g = _font->glyph_x(i))
-	    bcr.run(g->t1cs());
+	    bcr.run(g->t1cs(), false);
     for (int subrno = 4; subrno < _nsubrs; subrno++)
 	if (Type1Charstring *cs = _font->subr(subrno))
-	    bcr.run(*cs);
+	    bcr.run(*cs, true);
 
     // report warnings
     if (bad_glyphs.size()) {

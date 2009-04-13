@@ -601,14 +601,16 @@ update_autofont_map(const String &fontname, String mapline, ErrorHandler *errh)
 	// rewind file
 #if HAVE_FTRUNCATE
 	rewind(f);
-	ftruncate(fd, 0);
-#else
-	fclose(f);
-	f = fopen(map_file.c_str(), "w");
+	if (ftruncate(fd, 0) < 0)
 #endif
+	{
+	    fclose(f);
+	    f = fopen(map_file.c_str(), "w");
+	    fd = fileno(f);
+	}
 
 	// write data
-	fwrite(text.data(), 1, text.length(), f);
+	ignore_result(fwrite(text.data(), 1, text.length(), f));
 
 	fclose(f);
 

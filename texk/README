@@ -46,18 +46,20 @@ dvidvi - ?
 
 dviljk - maintained here, by Joachim Schrod
 
-dvipdfm 0.13.2d - ok 12apr09
+dvipdfm - ok 12apr09
   http://gaspra.kettering.edu/dvipdfm/dvipdfm-0.13.2d.tar.gz
   ftp://ftp.kettering.edu/pub/outgoing/mwicks/dvipdfm/dvipdfm-0.13.2d.tar.gz
   (until dvipdfmx is a 100% replacement we cannot drop it.)
 
-dvipdfmx 20080607 - ok 12apr09
+dvipdfmx - ok 12apr09
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20090115.tar.gz
   dvipdfmx@project.ktug.or.kr (ChoF, Hirata, Matthias)
 
-dvipng 1.11 - ok 15may08
-  http://www.ctan.org/tex-archive/dviware/dvipng/
+dvipng - ok 12apr09
+  http://www.ctan.org/tex-archive/dviware/dvipng/ (but maybe stale)
+  http://savannah.nongnu.org/files/?group=dvipng
+  http://mirror.cinquix.com/pub/savannah/dvipng/dvipng-1.12.tar.gz
 
 dvipos - ?
 
@@ -71,8 +73,9 @@ kpathsea - maintained here by Karl Berry, Akira Kakuto, ...
 
 lacheck - ?
 
-lcdf-typetools - needs update
-  http://www.lcdf.org/type/lcdf-typetools-2.75.tar.gz
+lcdf-typetools - ok 13apr09
+  http://www.lcdf.org/type/
+  http://www.lcdf.org/type/lcdf-typetools-2.78.tar.gz
 
 m4 - maintained here, part of our build
 
@@ -102,7 +105,7 @@ web2c - maintained here by Karl Berry et al. - core web2c, plain tex, omega.
 
 xdv2pdf - Jonathan Kew
 
-xdvik 22.84.14 - ok 01jul08
+xdvik 22.84.15 - ok 13apr09
   ftp://tug.org/tex/
 
 xdvipdfmx - Jonathan Kew

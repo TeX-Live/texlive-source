@@ -2,7 +2,7 @@
 
 /* t1font.{cc,hh} -- Type 1 font
  *
- * Copyright (c) 1998-2008 Eddie Kohler
+ * Copyright (c) 1998-2009 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -109,8 +109,13 @@ Type1Font::add_type1_encoding(Type1Encoding *e)
 void
 Type1Font::add_glyph(Type1Subr *s)
 {
-    _glyphs.push_back(s);
-    _glyph_map.insert(s->name(), _glyphs.size() - 1);
+    int &g = _glyph_map.find_force(s->name(), _glyphs.size());
+    if (g == _glyphs.size())
+	_glyphs.push_back(s);
+    else {
+	delete _glyphs[g];
+	_glyphs[g] = s;
+    }
 }
 
 int
@@ -140,6 +145,8 @@ Type1Font::read(Type1Reader &reader)
 	    if (fcs->is_subr()) {
 		if (fcs->subrno() >= _subrs.size())
 		    _subrs.resize(fcs->subrno() + 30, (Type1Subr *)0);
+		if (_subrs[fcs->subrno()]) // hybrid font program
+		    delete _subrs[fcs->subrno()];
 		_subrs[fcs->subrno()] = fcs;
 		if (!have_subrs && _items.size()) {
 		    if (Type1CopyItem *item = _items.back()->cast_copy()) {

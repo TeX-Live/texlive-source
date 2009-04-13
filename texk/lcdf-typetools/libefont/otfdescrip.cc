@@ -577,15 +577,15 @@ static const char *
 find_description(uint32_t tag, const Mapping *maps, int n)
 {
     // should use STL...
-    int l = 0, r = n - 1;
-    while (l <= r) {
-	int m = (l + r) / 2;
+    int l = 0, r = n;
+    while (l < r) {
+	int m = l + (r - l) / 2;
 	if (maps[m].tag < tag)
 	    l = m + 1;
 	else if (maps[m].tag == tag)
 	    return maps[m].description;
 	else
-	    r = m - 1;
+	    r = m;
     }
     return 0;
 }

@@ -336,14 +336,13 @@ const uint8_t *
 Tag::table_entry(const uint8_t *table, int n, int entry_size) const
 {
     assert(((uintptr_t)table & 1) == 0);
-    int l = 0;
-    int r = n - 1;
-    while (l <= r) {
-	int m = (l + r) / 2;
+    int l = 0, r = n;
+    while (l < r) {
+	int m = l + (r - l) / 2;
 	const uint8_t *entry = table + m * entry_size;
 	uint32_t m_tag = ULONG_AT2(entry);
 	if (_tag < m_tag)
-	    r = m - 1;
+	    r = m;
 	else if (_tag == m_tag)
 	    return entry;
 	else
@@ -838,13 +837,13 @@ Coverage::coverage_index(Glyph g) const throw ()
     const uint8_t *data = _str.udata();
     int count = USHORT_AT(data + 2);
     if (data[1] == T_LIST) {
-	int l = 0, r = count - 1;
+	int l = 0, r = count;
 	data += HEADERSIZE;
-	while (l <= r) {
-	    int m = (l + r) >> 1;
+	while (l < r) {
+	    int m = l + (r - l) / 2;
 	    int mval = USHORT_AT(data + m * LIST_RECSIZE);
 	    if (g < mval)
-		r = m - 1;
+		r = m;
 	    else if (g == mval)
 		return m;
 	    else
@@ -852,13 +851,13 @@ Coverage::coverage_index(Glyph g) const throw ()
 	}
 	return -1;
     } else if (data[1] == T_RANGES) {
-	int l = 0, r = count - 1;
+	int l = 0, r = count;
 	data += HEADERSIZE;
-	while (l <= r) {
-	    int m = (l + r) >> 1;
+	while (l < r) {
+	    int m = l + (r - l) / 2;
 	    const uint8_t *rec = data + m * RANGES_RECSIZE;
 	    if (g < USHORT_AT(rec))
-		r = m - 1;
+		r = m;
 	    else if (g <= USHORT_AT(rec + 2))
 		return USHORT_AT(rec + 4) + g - USHORT_AT(rec);
 	    else
@@ -880,14 +879,14 @@ Coverage::operator[](int cindex) const throw ()
     if (data[1] == T_LIST)
 	return (cindex < count ? USHORT_AT(data + cindex * LIST_RECSIZE) : 0);
     else if (data[1] == T_RANGES) {
-	int l = 0, r = count - 1;
+	int l = 0, r = count;
 	data += HEADERSIZE;
-	while (l <= r) {
-	    int m = (l + r) >> 1;
+	while (l < r) {
+	    int m = l + (r - l) / 2;
 	    const uint8_t *rec = data + m * RANGES_RECSIZE;
 	    int start_cindex = USHORT_AT(rec + 4);
 	    if (cindex < start_cindex)
-		r = m - 1;
+		r = m;
 	    else if (cindex < start_cindex + USHORT_AT(rec + 2) - USHORT_AT(rec))
 		return USHORT_AT(rec) + cindex - start_cindex;
 	    else
@@ -1045,15 +1044,15 @@ Coverage::iterator::forward_to(Glyph find)
 
 	// otherwise, binary search over remaining area
 	int l = ((_pos - HEADERSIZE) / LIST_RECSIZE) + 1;
-	int r = (_str.length() - HEADERSIZE) / LIST_RECSIZE - 1;
+	int r = (_str.length() - HEADERSIZE) / LIST_RECSIZE;
 	data += HEADERSIZE;
-	while (l <= r) {
-	    int m = (l + r) >> 1;
+	while (l < r) {
+	    int m = l + (r - l) / 2;
 	    Glyph g = USHORT_AT(data + m * LIST_RECSIZE);
 	    if (find < g)
-		r = m - 1;
+		r = m;
 	    else if (find == g)
-		l = m, r = m - 1;
+		l = r = m;
 	    else
 		l = m + 1;
 	}
@@ -1076,12 +1075,12 @@ Coverage::iterator::forward_to(Glyph find)
 
 	// otherwise, binary search over remaining area
 	int l = ((_pos - HEADERSIZE) / RANGES_RECSIZE) + 1;
-	int r = (_str.length() - HEADERSIZE) / RANGES_RECSIZE - 1;
+	int r = (_str.length() - HEADERSIZE) / RANGES_RECSIZE;
 	data += HEADERSIZE;
-	while (l <= r) {
-	    int m = (l + r) >> 1;
+	while (l < r) {
+	    int m = l + (r - l) / 2;
 	    if (find < USHORT_AT(data + m * RANGES_RECSIZE))
-		r = m - 1;
+		r = m;
 	    else if (find <= USHORT_AT(data + m * RANGES_RECSIZE + 2)) {
 		_pos = HEADERSIZE + m * RANGES_RECSIZE;
 		_value = find;
@@ -1218,13 +1217,13 @@ ClassDef::lookup(Glyph g) const throw ()
 	else
 	    return USHORT_AT(data + LIST_HEADERSIZE + (g - start) * LIST_RECSIZE);
     } else if (coverageFormat == T_RANGES) {
-	int l = 0, r = USHORT_AT(data + 2) - 1;
+	int l = 0, r = USHORT_AT(data + 2);
 	data += RANGES_HEADERSIZE;
-	while (l <= r) {
-	    int m = (l + r) >> 1;
+	while (l < r) {
+	    int m = l + (r - l) / 2;
 	    const uint8_t *rec = data + m * RANGES_RECSIZE;
 	    if (g < USHORT_AT(rec))
-		r = m - 1;
+		r = m;
 	    else if (g <= USHORT_AT(rec + 2))
 		return USHORT_AT(rec + 4);
 	    else
