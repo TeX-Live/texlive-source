@@ -17,7 +17,7 @@ use strict;
 
 # Define some global variables.
 my $progname = basename $0;        # Name of this program
-our $VERSION = "1.0";              # Version number of this program
+our $VERSION = "1.1";              # Version number of this program
 my %name2chars;        # Map from a font name to a character list
 my $GS = $ENV{"GS"} || "gs";       # Name of the Ghostscript interpreter
 my $TFTOPL = $ENV{"TFTOPL"} || "tftopl";    # Name of the TFM to PL converter
@@ -42,6 +42,7 @@ my @extra_tfms;                    # Extra TFM files to use
 my $sample_file_ps;                # Name of a PostScript file of font samples to write
 my $sample_file_tex;               # Name of a TeX file of font samples to write
 my $single_font_use = 0;           # 1=one use per font; 0=allow repetitions
+my $samples_per_page = 25;         # Number of font samples to print per page
 
 ###########################################################################
 
@@ -251,13 +252,14 @@ sub unique_items (@)
 Getopt::Long::Configure ("bundling");
 GetOptions ("h|help"       => \$wanthelp,
             "v|verbose+"   => \$verbose,
-	    "V|version"    => \$wantversion,
+            "V|version"    => \$wantversion,
             "q|quiet"      => sub {$verbose=0},
             "f|force=s"    => \@forced_fonts,
             "i|include=s"  => \@extra_tfms,
             "x|exclude=s"  => \@exclude_res,
             "t|tex=s"      => \$sample_file_tex,
             "p|ps=s"       => \$sample_file_ps,
+            "s|spp=i"      => \$samples_per_page,
             "1|no-repeats" => \$single_font_use) || pod2usage(2);
 if ($wantversion) {
     print "pkfix-helper $VERSION\n";
@@ -265,12 +267,13 @@ if ($wantversion) {
 }
 if ($wanthelp) {
     pod2usage (-verbose => $verbose,
-	       -exitval => "NOEXIT");
+               -exitval => "NOEXIT");
     print "Report bugs to scott+pkfh\@pakin.org.\n" if $verbose == 1;
     exit 0;
 }
 my $infilename = $#ARGV>=0 ? $ARGV[0] : "-";
 my $outfilename = $#ARGV>=1 ? $ARGV[1] : "-";
+die "${progname}: Samples per page must be at least 1 ($samples_per_page was specified)\n" if $samples_per_page < 1;
 
 # Convert any user-specified TFMs to the appropriate internal format.
 foreach my $tfm (@extra_tfms) {
@@ -684,6 +687,13 @@ TeXDict begin
     0 -24 rmoveto
 } def
 
+\% Define a transformation matrix for dvips bitmapped fonts.  We _could_
+\% do this dynamically but there seems to be a bug in GhostView (v3.6.1)
+\% or GhostScript (ESP v7.07.1) that causes the page layout to change
+\% with rescaling.  To avoid problems we simply hardwire the scaling
+\% factor.
+/bitmap-font-transform [$dvips_xscale 0.0 0.0 $dvips_yscale 0 0] def
+
 end
 \%\%EndProcSet
 SHOWFONTNAME
@@ -699,13 +709,6 @@ SHOWFONTNAME
 TeXDict begin
 1 0 bop
 
-\% Define a transformation matrix for dvips bitmapped fonts.  We _could_
-\% do this dynamically but there seems to be a bug in GhostView (v3.6.1)
-\% or GhostScript (ESP v7.07.1) that causes the page layout to change
-\% with rescaling.  To avoid problems we simply hardwire the scaling
-\% factor.
-/bitmap-font-transform [$dvips_xscale 0.0 0.0 $dvips_yscale 0 0] def
-
 \% Display a page title.
 0 0 moveto
 initmatrix
@@ -719,10 +722,26 @@ grestore
 \% of characters utilized from the font.
 PAGEHEADER
 ;
+    my $pageno = 1;
     foreach my $fontnum (0 .. $#sortedfontnames) {
         my $fontname = $sortedfontnames[$fontnum];
         my $samplestring = join("", psify @{$name2chars{$fontname}});
         $displaycode .= "/$fontname ($samplestring) print-font-sample\n";
+        if ($fontnum % $samples_per_page == $samples_per_page-1
+            && $fontnum != $#sortedfontnames) {
+            # Insert a page break after every $samples_per_page font samples.
+            $pageno++;
+            $displaycode .= <<"PAGETRANSITION";
+eop
+end
+\%\%Page: $pageno $pageno
+TeXDict begin
+$pageno @{[$pageno-1]} bop
+0 0 moveto
+initmatrix
+PAGETRANSITION
+;
+        }
     }
     $displaycode .= "eop\nend\n";
     if ($sample_ps !~ s/\%\%Page:.*(\%\%Trailer)/$displaycode$1/s) {
@@ -807,10 +826,12 @@ TEX_BOILERPLATE
 
     # Output samples of each font in turn.
     print SAMPLE_TEX "\n\% Output font samples.\n";
+    my $firstfontnum = 0;
     foreach my $fontnum (0 .. $#sortedfontnames) {
+        # Output a single font sample.
         my $fontname = $sortedfontnames[$fontnum];
         my $samplestring = texify @{$name2chars{$fontname}};
-        my $yoffset = $fontnum*$yinc + $init_yinc;
+        my $yoffset = ($fontnum-$firstfontnum)*$yinc + $init_yinc;
         printf SAMPLE_TEX "\\put(0, %d){\\timesbXII %s:}%%\n", $yoffset, $fontname;
         my $tfm = $fontmatch{$fontname}->{"tfm"};
         my $scale = $fontmatch{$fontname}->{"scale"};
@@ -818,6 +839,12 @@ TEX_BOILERPLATE
         printf SAMPLE_TEX "\\font\\somefont=%s%s\\somefont\n",
         $tfm, $scale==1.0 ? "" : sprintf(" at %.5gbp", $scale*$size);
         printf SAMPLE_TEX "\\put(%d, %d){%s}%%\n", $xinc, $yoffset, $samplestring;
+
+        if ($fontnum % $samples_per_page == $samples_per_page-1) {
+            # Insert a page break after every $samples_per_page font samples.
+            print SAMPLE_TEX "\\vskip 0pt plus 1fill\\eject\n";
+            $firstfontnum = $fontnum;
+        }
     }
 
     # Complete the TeX file.
@@ -846,6 +873,7 @@ pkfix-helper
 [B<--exclude>=I<regexp>]
 [B<--quiet>]
 [B<--no-repeats>]
+[B<--spp>=I<number>]
 [I<input.ps> [I<output.ps>]]
 
 
@@ -994,6 +1022,12 @@ for fatal error messages.
 Prevent B<pkfix-helper> from associating the same I<fontspec> with
 more than one B<dvips> font name.
 
+=item B<-s>, B<--spp>
+
+Specify the number of font samples per page to print to the files
+indicated using the B<--ps> and B<--tex> options.  The default
+S<value, 25,> should work well in most circumstances.
+
 =back
 
 
@@ -1092,7 +1126,7 @@ sheets:
 After running the preceding commands, F<oldfonts.ps> shows samples of
 the fonts in F<oldfile.ps> and F<newfonts.ps> shows samples of the
 replacement fonts that B<pkfix-helper> used to produce
-F<pkfix-oldfile.ps>.  Print F<oldfonts.ps> and <newfonts.ps> and
+F<pkfix-oldfile.ps>.  Print F<oldfonts.ps> and F<newfonts.ps> and
 compare them carefully for incorrect fonts and sizes.
 
 Suppose that the choice of C<cmbx12 @ 1.2X> for font C<Ff> looks
@@ -1122,16 +1156,16 @@ Let's try scaling up F<cmb10.tfm> instead:
     Finding character widths ... done.
     Reading TFM files ... done (103 TFMs in 193 scaling variations).
     Matching fonts:
-	Processing Fi ... done (cmr10 @ 1X, mismatch=0.11683).
-	Processing Fa ... done (cmti10 @ 1X, mismatch=0.08892).
-	Processing Fb ... done (cmr8 @ 1X, mismatch=0.07133).
-	Processing Ff ... done (cmb10 @ 1.5708X, mismatch=0.00035).
-	Processing Fh ... done (cmtt10 @ 1X, mismatch=0.06895).
-	Processing Fd ... done (cmmi10 @ 1X, mismatch=0.03966).
-	Processing Fj ... done (cmbx12 @ 1X, mismatch=0.03972).
-	Processing Fe ... done (cmbx10 @ 1X, mismatch=0.00762).
-	Processing Fg ... done (cmsy10 @ 1X, mismatch=0.00875).
-	Processing Fc ... done (cmr6 @ 1X, mismatch=0.00284).
+        Processing Fi ... done (cmr10 @ 1X, mismatch=0.11683).
+        Processing Fa ... done (cmti10 @ 1X, mismatch=0.08892).
+        Processing Fb ... done (cmr8 @ 1X, mismatch=0.07133).
+        Processing Ff ... done (cmb10 @ 1.5708X, mismatch=0.00035).
+        Processing Fh ... done (cmtt10 @ 1X, mismatch=0.06895).
+        Processing Fd ... done (cmmi10 @ 1X, mismatch=0.03966).
+        Processing Fj ... done (cmbx12 @ 1X, mismatch=0.03972).
+        Processing Fe ... done (cmbx10 @ 1X, mismatch=0.00762).
+        Processing Fg ... done (cmsy10 @ 1X, mismatch=0.00875).
+        Processing Fc ... done (cmr6 @ 1X, mismatch=0.00284).
 
 The match has definitely improved, although S<15.708 pt.> is certainly
 an odd size for a font.  Then again, many documents I<do> use
