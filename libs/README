@@ -1,24 +1,21 @@
+$Id$
 Public domain.  Originally created by Karl Berry, 2005.
 
 Libraries we compile for TeX Live.
 
-==> freetype2 <==
-  Original sources from:
-    http://savannah.nongnu.org/download/freetype/freetype-2.3.8.tar.bz2
+freetype2:
+  http://savannah.nongnu.org/download/freetype/freetype-2.3.9.tar.bz2
 
-==> gd <==
-  Original sources from:
-    http://www.libgd.org/releases/gd-2.0.35.tar.bz2
+gd:
+  http://www.libgd.org/releases/gd-2.0.35.tar.bz2
 
-==> libpng <==
-  Original sources from:
-    ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng-1.2.35.tar.bz2
+libpng:
+  ftp://ftp.simplesystems.org/pub/libpng/png/src/libpng-1.2.35.tar.bz2
 
-==> t1lib <==
-  Original sources from:
-    ftp://sunsite.unc.edu/pub/Linux/libs/graphics/t1lib-5.1.2.tar.gz
+t1lib:
+  ftp://sunsite.unc.edu/pub/Linux/libs/graphics/t1lib-5.1.2.tar.gz
 
-==> xpdf <==
+xpdf:
   Original sources from:
     http://www.foolabs.com/xpdf/xpdf-3.02.tar.gz
     ftp://ftp.foolabs.com/pub/xpdf/xpdf-3.02.tar.gz
@@ -34,9 +31,8 @@ Libraries we compile for TeX Live.
   Applied patch for mingw32:
     xpdf/xpdf-3.02-mingw32.patch
 
-==> zlib <==
-  Original sources from:
-    http://www.zlib.net/zlib-1.2.3.tar.bz2
+zlib:
+  http://www.zlib.net/zlib-1.2.3.tar.bz2
 
 ====================
 
