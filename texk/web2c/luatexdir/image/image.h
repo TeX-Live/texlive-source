@@ -18,12 +18,12 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: image.h 1407 2008-07-15 10:49:28Z taco $ */
+/* $Id: image.h 2307 2009-04-16 17:37:31Z taco $ */
 
 #ifndef IMAGE_H
 #  define IMAGE_H
 
-#  include <../libpng/png.h>
+#  include <png.h>
 
 #  define JPG_UINT16      unsigned int
 #  define JPG_UINT32      unsigned long

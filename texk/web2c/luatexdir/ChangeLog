@@ -1,5 +1,9 @@
 2009-04-16  Taco Hoekwater <taco@luatex.org>
 
+	* image/image.h: remove the trick that forced a local png.h
+
+2009-04-16  Taco Hoekwater <taco@luatex.org>
+
 	* luatexdir: import of the current state of luatex, 0.39.0. 
 	This affects many files in subdirectories.
 
