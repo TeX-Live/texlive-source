@@ -112,9 +112,10 @@ extern void close_file_or_pipe P1H(FILE *);
 #endif
 
 /* Executing shell commands.  */
-void mk_shellcmdlist (char *);
-void init_shell_escape (void);
-int shell_cmd_is_allowed (char **cmd, char **safecmd, char **cmdname);
+extern void mk_shellcmdlist (char *);
+extern void init_shell_escape (void);
+extern int shell_cmd_is_allowed (char **cmd, char **safecmd, char **cmdname);
+extern int runsystem (char *cmd);
 
 /* All but the Omega family use this. */
 #if !defined(Aleph)

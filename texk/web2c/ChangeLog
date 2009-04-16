@@ -1,3 +1,7 @@
+2009-04-17  Karl Berry  <karl@tug.org>
+
+	* texmfmp.h (runsystem): declare.
+
 2009-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: remove Omega.
