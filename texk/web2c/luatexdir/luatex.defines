@@ -37,6 +37,7 @@
 @define procedure add_node_attr_ref();
 @define procedure replace_attribute_list();
 @define procedure update_attribute_cache;
+@define const UNUSED_ATTRIBUTE;
 
 @define function new_span_node();
 
@@ -76,6 +77,7 @@
 @define procedure dump_language_data;
 @define procedure undump_language_data;
 @define function insert_discretionary();
+@define const select_disc;
 @define function compound_word_break();
 @define procedure set_pre_hyphen_char();
 @define procedure set_post_hyphen_char();
@@ -172,6 +174,10 @@
 @define function lua_hpack_filter();
 @define function lua_vpack_filter();
 
+@define procedure check_texconfig_init;
+
+@define procedure lua_pdf_literal();
+
 { bits for extended char code access }
 
 @define const tex_mathcode    ;
@@ -201,6 +207,10 @@
 @define function scan_mathchar();
 @define function scan_delimiter_as_mathchar();
 @define function mathchar_from_integer();
+
+@define procedure init_math_fields;
+@define procedure setup_math_style;
+@define procedure print_math_style;
 
 @define procedure unsave_math_codes ();
 @define procedure initialize_math_codes;
@@ -240,8 +250,7 @@
 @define procedure flush_loggable_info;
 
 @define var extra_version_info;
-@define var SVN_REV;
-@define procedure do_write_wterm();
+@define procedure write_svnversion();
 
 { bits and pieces from aleph }
 
@@ -648,9 +657,6 @@
 
 @define procedure initialize_math;
 @define procedure show_math_node();
-@define procedure print_math_comp();
-@define procedure print_limit_switch();
-@define procedure print_style();
 
 @define procedure scan_extdef_math_code();
 @define procedure scan_extdef_del_code();
@@ -661,19 +667,18 @@
 @define procedure undump_math_data;
 @define procedure unsave_math_data();
 
-@define const fence_noad;
-@define const ord_noad;
-@define const op_noad;
-@define const bin_noad;
-@define const rel_noad;
-@define const open_noad;
-@define const close_noad;
-@define const punct_noad;
-@define const inner_noad;
-@define const limits;
-@define const no_limits;
-@define const under_noad;
-@define const over_noad;
+@define const ord_noad_type;
+@define const op_noad_type_normal;
+@define const op_noad_type_limits;
+@define const op_noad_type_no_limits;
+@define const bin_noad_type;
+@define const rel_noad_type;
+@define const open_noad_type;
+@define const close_noad_type;
+@define const punct_noad_type;
+@define const inner_noad_type;
+@define const under_noad_type;
+@define const over_noad_type;
 @define const accent_noad;
 @define const vcenter_noad;
 
@@ -681,7 +686,6 @@
 @define const middle_noad_side ;
 @define const right_noad_side  ;
 
-@define procedure print_size();
 @define procedure finish_display_alignment();
 @define function new_sub_box();
 @define function math_vcenter_group();

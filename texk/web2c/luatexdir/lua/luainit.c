@@ -25,7 +25,7 @@
 #include <luatexdir/luatexextra.h>
 
 static const char _svn_version[] =
-    "$Id: luainit.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/luainit.c $";
+    "$Id: luainit.c 2288 2009-04-14 22:56:09Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luainit.c $";
 
 /* TH: TODO
  *
@@ -43,6 +43,9 @@ static const char _svn_version[] =
  *   SELFAUTOLOC  SELFAUTODIR  SELFAUTOPARENT  progname
  *
  */
+extern void mk_shellcmdlist(char *v);
+extern int shell_cmd_is_allowed(char **cmd, char **safecmd, char **cmdname);
+extern void init_shell_escape(void);
 
 extern string normalize_quotes(const_string name, const_string mesg);
 
@@ -172,6 +175,11 @@ static struct option long_options[]
 {"output-format", 1, 0, 0},
 {"shell-escape", 0, &shellenabledp, 1},
 {"no-shell-escape", 0, &shellenabledp, -1},
+{"shell-escape", 0, &shellenabledp, 1},
+{"no-shell-escape", 0, &shellenabledp, -1},
+{"enable-write18", 0, &shellenabledp, 1},
+{"disable-write18", 0, &shellenabledp, -1},
+{"shell-restricted", 0, 0, 0},
 {"debug-format", 0, &debug_format_file, 1},
 {"file-line-error-style", 0, &filelineerrorstylep, 1},
 {"no-file-line-error-style", 0, &filelineerrorstylep, -1},
@@ -242,6 +250,10 @@ static void parse_options(int argc, char **argv)
                 strncpy(output_comment, optarg, 255);
                 output_comment[255] = 0;
             }
+
+        } else if (ARGUMENT_IS("shell-restricted")) {
+            shellenabledp = 1;
+            restrictedshell = 1;
 
         } else if (ARGUMENT_IS("output-format")) {
             pdf_output_option = 1;
@@ -314,7 +326,7 @@ static void parse_options(int argc, char **argv)
                  "lua       by Roberto Ierusalimschy, Waldemar Celes,\n" 
                  "             Luiz Henrique de Figueiredo\n" 
                  "metapost  by John Hobby, Taco Hoekwater and friends.\n" 
-                 "xpdf      by Derek Noonberg (partial)\n" 
+                 "xpdf      by Derek Noonburg (partial)\n" 
                  "fontforge by George Williams (partial)\n\n" 
                  "Some extensions to lua and additional lua libraries are used, as well as\n" 
                  "libraries for graphic inclusion. More details can be found in the source.\n" 
@@ -444,6 +456,7 @@ void init_kpse(void)
                              kpse_src_compile);
 
     kpse_set_program_name(argv[0], user_progname);
+    init_shell_escape();        /* set up 'restrictedshell' */
     program_name_set = 1;
 }
 
@@ -504,6 +517,8 @@ void lua_initialize(int ac, char **av)
 
     /* parse commandline */
     parse_options(ac, av);
+    if (lua_only)
+        shellenabledp = true;
 
     /* make sure that the locale is 'sane' (for lua) */
     putenv("LC_CTYPE=C");
@@ -515,7 +530,7 @@ void lua_initialize(int ac, char **av)
 
     luainterpreter();
 
-    prepare_cmdline(Luas, argv, argc, lua_offset);   /* collect arguments */
+    prepare_cmdline(Luas, argv, argc, lua_offset);      /* collect arguments */
 
     if (startup_filename != NULL) {
         given_file = xstrdup(startup_filename);
@@ -577,7 +592,28 @@ void lua_initialize(int ac, char **av)
         haltonerrorp = false;
         get_lua_boolean("texconfig", "halt_on_error", &haltonerrorp);
 
+        /* restrictedshell */
+        char *v1 = NULL;
+        get_lua_string("texconfig", "shell_escape", &v1);
+        if (v1) {
+            if (*v1 == 't' || *v1 == 'y' || *v1 == '1') {
+                shellenabledp = 1;
+            } else if (*v1 == 'p') {
+                shellenabledp = 1;
+                restrictedshell = 1;
+            }
+        }
+        /* If shell escapes are restricted, get allowed cmds from cnf.  */
+        if (shellenabledp && restrictedshell == 1) {
+            v1 = NULL;
+            get_lua_string("texconfig", "shell_escape_commands", &v1);
+            if (v1) {
+                mk_shellcmdlist(v1);
+            }
+        }
+
         fix_dumpname();
+
     } else {
         if (luainit) {
             if (given_file) {
@@ -594,5 +630,41 @@ void lua_initialize(int ac, char **av)
             init_kpse();
             fix_dumpname();
         }
+    }
+}
+
+void
+check_texconfig_init (void) {
+    if (Luas!=NULL) {
+        lua_getglobal(Luas, "texconfig");
+        if (lua_istable(Luas, -1)) {
+            lua_getfield(Luas, -1, "init");
+            if (lua_isfunction(Luas, -1)) {
+                int i = lua_pcall(Luas, 0, 0, 0);
+                if (i != 0) {
+                    /* Can't be more precise here, called before TeX initialization  */
+                    fprintf(stderr, "This went wrong: %s\n", lua_tostring(Luas, -1));
+                    error();
+                }
+            }
+        }
+    }
+}
+
+void write_svnversion(char *v) 
+{       
+    char *a_head, *n;
+    char *a = strdup(v);
+    int l = strlen("$Id: luatex.web ");
+    if (a != NULL) {
+        a_head = a;
+	if (strlen(a)>l)
+	    a+=l;
+	n = a;
+	while (*n!='\0' && *n!=' ')
+	    n++;
+	*n = '\0';
+	fprintf(stdout, " luatex.web v%s",  a);
+	free (a_head);
     }
 }

@@ -1,5 +1,5 @@
 /*
-** Copyright (C) 2004-2007 Mike Pall. All rights reserved.
+** Copyright (C) 2004-2008 Mike Pall. All rights reserved.
 **
 ** Permission is hereby granted, free of charge, to any person obtaining
 ** a copy of this software and associated documentation files (the
@@ -144,6 +144,52 @@ static inline void coco_switch(coco_ctx from, coco_ctx to)
   coco->arg0 = (size_t)(a0);
 #define COCO_STATE_HEAD		size_t arg0;
 
+#elif defined(__x86_64__)
+
+void coco_wrap_main(void);
+__asm__ (
+"\t.text\n"
+#ifdef __MACH__
+"\t.private_extern _coco_wrap_main\n"
+"_coco_wrap_main:\n"
+#else
+".local coco_wrap_main\n"
+"\t.type coco_wrap_main, @function\n"
+"coco_wrap_main:\n"
+#endif
+"\tmovq %r12, %rax\n"
+"\tmovq %r13, %rdi\n"
+"\tjmpq *%rax\n"
+);
+
+typedef void *coco_ctx[8];  /* rip, rsp, rbp, rbx, r12, r13, r14, r15 */
+static inline void coco_switch(coco_ctx from, coco_ctx to)
+{
+  __asm__ __volatile__ (
+    "leaq 1f(%%rip), %%rax\n\t"
+    "movq %%rax, (%0)\n\t" "movq %%rsp, 8(%0)\n\t" "movq %%rbp, 16(%0)\n\t"
+    "movq %%rbx, 24(%0)\n\t" "movq %%r12, 32(%0)\n\t" "movq %%r13, 40(%0)\n\t"
+    "movq %%r14, 48(%0)\n\t" "movq %%r15, 56(%0)\n\t"
+    "movq 56(%1), %%r15\n\t" "movq 48(%1), %%r14\n\t" "movq 40(%1), %%r13\n\t"
+    "movq 32(%1), %%r12\n\t" "movq 24(%1), %%rbx\n\t" "movq 16(%1), %%rbp\n\t"
+    "movq 8(%1), %%rsp\n\t" "jmpq *(%1)\n" "1:\n"
+    : "+S" (from), "+D" (to) :
+    : "rax", "rcx", "rdx", "r8", "r9", "r10", "r11", "memory", "cc");
+}
+
+#define COCO_CTX		coco_ctx
+#define COCO_SWITCH(from, to)	coco_switch(from, to);
+#define COCO_MAKECTX(coco, buf, func, stack, a0) \
+  buf[0] = (void *)(coco_wrap_main); \
+  buf[1] = (void *)(stack); \
+  buf[2] = (void *)0; \
+  buf[3] = (void *)0; \
+  buf[4] = (void *)(func); \
+  buf[5] = (void *)(a0); \
+  buf[6] = (void *)0; \
+  buf[7] = (void *)0; \
+  stack[0] = 0xdeadc0c0deadc0c0;  /* Dummy return address. */ \
+
 #elif __mips && _MIPS_SIM == _MIPS_SIM_ABI32 && !defined(__mips_eabi)
 
 /* No way to avoid the function prologue with inline assembler. So use this: */
@@ -233,7 +279,7 @@ typedef void *coco_ctx[2];  /* ra, sp */
   buf[4] = (int)(stack); \
   buf[3] = 0; \
   COCO_SETJMP_X86(coco, stack, a0)
-#elif defined(__MACH__) && defined(_BSD_I386_SETJMP_H_)	/* x86-macosx */
+#elif defined(__MACH__) && defined(_BSD_I386_SETJMP_H)	/* x86-macosx */
 #define COCO_PATCHCTX(coco, buf, func, stack, a0) \
   buf[12] = (int)(func); \
   buf[9] = (int)(stack); \
@@ -248,14 +294,7 @@ typedef void *coco_ctx[2];  /* ra, sp */
 #define COCO_MAIN_PARAM \
   int _a, int _b, int _c, int _d, int _e, int _f, lua_State *L
 
-#if __GLIBC__ == 2 && defined(JB_RSP)		/* x64-linux-glibc2 */
-#define COCO_PATCHCTX(coco, buf, func, stack, a0) \
-  buf->__jmpbuf[JB_PC] = (long)(func); \
-  buf->__jmpbuf[JB_RSP] = (long)(stack); \
-  buf->__jmpbuf[JB_RBP] = 0; \
-  stack[0] = 0xdeadc0c0;  /* Dummy return address. */ \
-  coco->arg0 = (size_t)(a0);
-#elif defined(__solaris__) && _JBLEN == 8		/* x64-solaris */
+#if defined(__solaris__) && _JBLEN == 8			/* x64-solaris */
 #define COCO_PATCHCTX(coco, buf, func, stack, a0) \
   buf[7] = (long)(func); \
   buf[6] = (long)(stack); \

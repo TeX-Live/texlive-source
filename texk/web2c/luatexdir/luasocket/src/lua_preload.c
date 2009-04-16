@@ -13,61 +13,17 @@
 #include "mime_lua.c"
 
 
-void luatex_socketlua_open (lua_State *L) {
-  lua_getglobal(L, "package");
-  lua_getfield(L, -1, "loaded");
-  if (!lua_istable(L,-1)) {
-    lua_newtable(L);
-    lua_setfield(L, -2, "loaded");
-    lua_getfield(L, -1, "loaded");
-  }
-   if(!luatex_socket_lua_open(L)) {
-    lua_setfield(L, -2, "socket");    
-  } else {
+void
+luatex_socketlua_open (lua_State *L) {
+  if(luatex_socket_lua_open(L) ||
+     luatex_ltn12_lua_open(L) ||
+     luatex_mime_lua_open(L) ||
+     luatex_url_lua_open(L) ||
+     luatex_tp_lua_open(L) ||
+     luatex_smtp_lua_open(L) ||
+     luatex_http_lua_open(L) ||
+     luatex_ftp_lua_open(L)) {
     fprintf(stderr,"FATAL error while preloading lua modules");
     exit(1);
   }
-  if(!luatex_ltn12_lua_open(L)) {
-    lua_setfield(L, -2, "ltn12");    
-  } else {
-    fprintf(stderr,"FATAL error while preloading lua modules");
-    exit(1);
-  }
-  if(!luatex_mime_lua_open(L)) {
-    lua_setfield(L, -2, "mime");    
-  } else {
-    fprintf(stderr,"FATAL error while preloading lua modules");
-    exit(1);
-  }
-  if(!luatex_url_lua_open(L)) {
-    lua_setfield(L, -2, "socket.url");    
-  } else {
-    fprintf(stderr,"FATAL error while preloading lua modules");
-    exit(1);
-  }
-  if(!luatex_tp_lua_open(L)) {
-    lua_setfield(L, -2, "socket.tp");    
-  } else {
-    fprintf(stderr,"FATAL error while preloading lua modules");
-    exit(1);
-  }
-  if(!luatex_smtp_lua_open(L)) {
-    lua_setfield(L, -2, "socket.smtp");    
-  } else {
-    fprintf(stderr,"FATAL error while preloading lua modules");
-    exit(1);
-  }
-  if(!luatex_http_lua_open(L)) {
-    lua_setfield(L, -2, "socket.http");    
-  } else {
-    fprintf(stderr,"FATAL error while preloading lua modules");
-    exit(1);
-  }
-  if(!luatex_ftp_lua_open(L)) {
-    lua_setfield(L, -2, "socket.ftp");    
-  } else {
-    fprintf(stderr,"FATAL error while preloading lua modules");
-    exit(1);
-  }
-  lua_pop(L,2);
 }

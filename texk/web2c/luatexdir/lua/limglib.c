@@ -27,7 +27,7 @@
 #include "../luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: limglib.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/limglib.c $";
+    "$Id: limglib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/limglib.c $";
 
 /**********************************************************************/
 
@@ -729,7 +729,7 @@ static const struct luaL_Reg imglib[] = {
 void vf_out_image(unsigned i)
 {
     image *a, **aa;
-    lua_State *L = Luas;     /* ... */
+    lua_State *L = Luas;        /* ... */
     lua_rawgeti(L, LUA_GLOBALSINDEX, i);        /* image ... */
     aa = (image **) luaL_checkudata(L, -1, TYPE_IMG);
     a = *aa;

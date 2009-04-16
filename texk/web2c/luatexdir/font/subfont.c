@@ -22,7 +22,7 @@
 #include <string.h>
 
 static const char _svn_version[] =
-    "$Id: subfont.c 1783 2009-01-18 12:51:01Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/subfont.c $";
+    "$Id: subfont.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/subfont.c $";
 
 static struct avl_table *sfd_tree = NULL;
 

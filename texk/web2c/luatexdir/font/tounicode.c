@@ -20,7 +20,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: tounicode.c 2029 2009-03-14 19:10:25Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/tounicode.c $";
+    "$Id: tounicode.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/tounicode.c $";
 
 #define isXdigit(c) (isdigit(c) || ('A' <= (c) && (c) <= 'F'))
 #define UNI_UNDEF          -1

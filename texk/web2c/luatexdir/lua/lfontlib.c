@@ -22,7 +22,14 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: lfontlib.c 1226 2008-05-02 16:11:02Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/lfontlib.c $";
+    "$Id: lfontlib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lfontlib.c $";
+
+#define TIMERS 0
+
+#if TIMERS
+#  include <sys/time.h>
+#endif
+
 
 /* this function is in vfovf.c for the moment */
 extern int make_vf_table(lua_State * L, char *name, scaled s);
@@ -188,10 +195,27 @@ static int setfont(lua_State * L)
 static int deffont(lua_State * L)
 {
     int i;
+#if TIMERS
+    struct timeval tva;
+    struct timeval tvb;
+    double tvdiff;
+#endif
     luaL_checktype(L, -1, LUA_TTABLE);
-
     i = new_font();
+#if TIMERS
+    gettimeofday(&tva, NULL);
+#endif
     if (font_from_lua(L, i)) {
+#if TIMERS
+        gettimeofday(&tvb, NULL);
+        tvdiff = tvb.tv_sec * 1000000.0;
+        tvdiff += (double) tvb.tv_usec;
+        tvdiff -= (tva.tv_sec * 1000000.0);
+        tvdiff -= (double) tva.tv_usec;
+        tvdiff /= 1000000;
+        fprintf(stdout, "font.define(%s,%i): %f seconds\n",
+                font_fullname(i),i, tvdiff);
+#endif
         lua_pushnumber(L, i);
         return 1;
     } else {

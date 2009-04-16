@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: textoken.c 2086 2009-03-22 15:32:08Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/textoken.c $";
+    "$Id: textoken.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/textoken.c $";
 
 #define skipping 1              /* |scanner_status| when passing conditional text */
 #define defining 2              /* |scanner_status| when reading a macro definition */
@@ -216,6 +216,7 @@ boolean scan_keyword(char *s)
     pointer p;                  /* tail of the backup list */
     pointer q;                  /* new node being added to the token list via |store_new_token| */
     char *k;                    /* index into |str_pool| */
+    pointer save_cur_cs = cur_cs;    
     if (strlen(s) == 1) {
         /* @<Get the next non-blank non-call token@>; */
         do {
@@ -224,6 +225,7 @@ boolean scan_keyword(char *s)
         if ((cur_cs == 0) && ((cur_chr == *s) || (cur_chr == *s - 'a' + 'A'))) {
             return true;
         } else {
+	    cur_cs = save_cur_cs;
             back_input();
             return false;
         }
@@ -247,6 +249,7 @@ boolean scan_keyword(char *s)
                 } else {
                     back_input();
                 }
+		cur_cs = save_cur_cs;
                 return false;
             }
         }
@@ -503,7 +506,7 @@ void check_outer_validity(void)
             }
             snprintf(errmsg, 255,
                      "Incomplete %s; all text was ignored after line %d",
-                     cmd_chr_to_string(if_test_cmd, cur_if), skip_line);
+                     cmd_chr_to_string(if_test_cmd, cur_if), (int) skip_line);
             /* @.Incomplete \\if...@> */
             cur_tok = cs_token_flag + frozen_fi;
             /* back up one inserted token and call |error| */
@@ -1158,7 +1161,7 @@ void get_token_lua(void)
 {
     register int callback_id;
     callback_id = callback_defined(token_filter_callback);
-    if (callback_id != 0) {
+    if (callback_id > 0) {
         while (state == token_list && loc == null && index != v_template)
             end_token_list();
         /* there is some stuff we don't want to see inside the callback */

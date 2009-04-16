@@ -21,7 +21,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: writeenc.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/writeenc.c $";
+    "$Id: writeenc.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writeenc.c $";
 
 /**********************************************************************/
 /* All encoding entries go into AVL tree for fast search by name. */

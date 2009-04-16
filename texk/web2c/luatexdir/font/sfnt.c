@@ -40,7 +40,7 @@
 #include "sfnt.h"
 
 static const char _svn_version[] =
-    "$Id: sfnt.c 1592 2008-11-28 13:23:51Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/sfnt.c $";
+    "$Id: sfnt.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/sfnt.c $";
 
 #ifdef XETEX
 UNSIGNED_BYTE ft_unsigned_byte(sfnt * f)

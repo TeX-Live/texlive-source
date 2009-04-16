@@ -25,7 +25,7 @@
 #include "tokens.h"
 
 static const char _svn_version[] =
-    "$Id: primitive.c 2086 2009-03-22 15:32:08Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/primitive.c $";
+    "$Id: primitive.c 2297 2009-04-15 20:16:38Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/primitive.c $";
 
 /* as usual, the file starts with a bunch of #defines that mimic pascal @ds */
 
@@ -341,7 +341,7 @@ primitive(str_number ss, quarterword c, halfword o, halfword off,
         s = ss;
     }
     char *thes = makecstring(s);
-    if (true || cmd_origin == tex_command || cmd_origin == core_command) {
+    if (cmd_origin == tex_command || cmd_origin == core_command) {
         primitive_def(thes, strlen(thes), c, o);
     }
     prim_val = prim_lookup(s);
@@ -542,15 +542,6 @@ void print_cmd_chr(quarterword cmd, halfword chr_code)
             tprint_esc("unless");
         prim_cmd_chr(cmd, (chr_code % unless_code));
         break;
-    case math_comp_cmd:
-        print_math_comp(chr_code);
-        break;
-    case limit_switch_cmd:
-        print_limit_switch(chr_code);
-        break;
-    case math_style_cmd:
-        print_style(chr_code);
-        break;
     case char_given_cmd:
         tprint_esc("char");
         print_hex(chr_code);
@@ -566,12 +557,6 @@ void print_cmd_chr(quarterword cmd, halfword chr_code)
     case xmath_given_cmd:
         tprint_esc("Umathchar");
         show_mathcode_value(mathchar_from_integer(chr_code, xetex_mathcode));
-        break;
-    case def_family_cmd:
-        print_size(chr_code);
-        break;
-    case set_math_param_cmd:
-        print_math_param(chr_code);
         break;
     case set_font_cmd:
         tprint("select font ");

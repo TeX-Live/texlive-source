@@ -45,7 +45,7 @@
 #include "epdf.h"
 
 static const char _svn_version[] =
-    "$Id: pdftoepdf.cc 1539 2008-10-06 09:52:07Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/pdftoepdf.cc $";
+    "$Id: pdftoepdf.cc 2195 2009-03-31 14:09:50Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
 
 #define one_hundred_bp  6578176 /* 7227 * 65536 / 72 */
 
@@ -872,15 +872,15 @@ static void write_epdf1(image_dict * idict)
 
     // write the page Group if it's there
     if (epdf_lastGroupObjectNum > 0) {
-      if (page->getGroup() != NULL) {
-        initDictFromDict(lastGroup, page->getGroup());
-        if (lastGroup->dictGetLength() > 0) {
-            pdf_puts("/Group ");
-            groupIsIndirect = lastGroup->isRef();
-            pdf_printf("%d 0 R", epdf_lastGroupObjectNum);
-            pdf_puts("\n");
+        if (page->getGroup() != NULL) {
+            initDictFromDict(lastGroup, page->getGroup());
+            if (lastGroup->dictGetLength() > 0) {
+                pdf_puts("/Group ");
+                groupIsIndirect = lastGroup->isRef();
+                pdf_printf("%d 0 R", (int) epdf_lastGroupObjectNum);
+                pdf_puts("\n");
+            }
         }
-      }  
     }
     // write the page Metadata if it's there
     if (page->getMetadata() != NULL) {

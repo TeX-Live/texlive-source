@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texmath.h 1893 2009-02-23 11:30:05Z taco $ */
+/* $Id: texmath.h 2280 2009-04-14 09:49:01Z taco $ */
 
 #ifndef TEXMATH_H
 #  define TEXMATH_H 1
@@ -28,10 +28,6 @@
 extern pointer new_noad(void);
 
 extern void show_math_node(halfword);
-extern void print_math_comp(halfword);
-extern void print_limit_switch(halfword);
-extern void print_style(halfword);
-extern void print_size(halfword);
 extern void flush_math(void);
 extern void math_left_brace(void);
 extern void finish_display_alignment(halfword, halfword, memory_word);
@@ -39,12 +35,25 @@ extern halfword new_sub_box(halfword);
 
 #  define math_reset(p) do { if (p!=null) flush_node(p); p = null; } while (0)
 
-#  define scripts_allowed(A) ((type((A))>=ord_noad)&&(type((A))<fence_noad))
+#  define scripts_allowed(A) ((type((A))>=simple_noad)&&(type((A))<fence_noad))
 
 #  define default_code 010000000000     /* denotes |default_rule_thickness| */
 
-#  define limits 1              /* |subtype| of |op_noad| whose scripts are to be above, below */
-#  define no_limits 2           /* |subtype| of |op_noad| whose scripts are to be normal */
+typedef enum {
+  ord_noad_type = 0,
+  op_noad_type_normal,
+  op_noad_type_limits,
+  op_noad_type_no_limits,
+  bin_noad_type,
+  rel_noad_type,
+  open_noad_type,
+  close_noad_type,
+  punct_noad_type,
+  inner_noad_type,
+  under_noad_type,
+  over_noad_type,
+  vcenter_noad_type,
+} noad_types;
 
 extern void initialize_math(void);
 extern void initialize_math_spacing(void);
@@ -112,8 +121,12 @@ extern const char *math_style_names[];
 #  define sup_style(A) 2*((A)/4)+script_style+((A)%2)   /* smaller */
 #  define num_style(A) (A)+2-2*((A)/6)  /* smaller unless already script-script */
 #  define denom_style(A) 2*((A)/2)+cramped+2-2*((A)/6)  /* smaller, cramped */
+#  define sup_sup_style(A) sup_style(sup_style((A)))   /* smaller */
 
 void mlist_to_hlist(void);
+
+void setup_math_style (void);
+void print_math_style (void);
 
 #  define text_size 0
 #  define script_size 1
@@ -122,6 +135,12 @@ void mlist_to_hlist(void);
 #  define math_direction int_par(param_math_direction_code)
 
 #  define dir_math_save cur_list.math_field
+#  define m_style cur_list.math_style_field
+#  define init_math_fields() do {               \
+        dir_math_save=false;                    \
+        m_style=-1;                             \
+    } while (0)
+
 
 #  define null_font 0
 #  define min_quarterword 0
@@ -241,9 +260,10 @@ typedef enum {
     math_param_last
 } math_parameters;
 
+extern const char *math_param_names[];
+
 #  define math_param_first_mu_glue math_param_ord_ord_spacing
 
-extern void print_math_param(int param_code);
 extern void def_math_param(int param_code, int style_code, scaled value,
                            int lvl);
 extern scaled get_math_param(int param_code, int style_code);
@@ -307,9 +327,11 @@ typedef enum {
     RadicalKernAfterDegree,
     RadicalDegreeBottomRaisePercent,
     MinConnectorOverlap,
+    SubscriptShiftDownWithSuperscript,
+    MATH_param_last,
 } MATH_param_codes;
 
-#  define MATH_param_max MinConnectorOverlap
+#  define MATH_param_max MATH_param_last
 
 extern const char *MATH_param_names[];
 

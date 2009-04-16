@@ -17,8 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pagetree.c 2031 2009-03-16 10:30:47Z taco $ */
-
 #include "ptexlib.h"
 
 #include "openbsd-compat.h"
@@ -33,7 +31,9 @@
 #  define EX_SOFTWARE 70
 #endif
 
-static const char __svn_version[] = "$Id: pagetree.c 2031 2009-03-16 10:30:47Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/pdf/pagetree.c $";
+static const char __svn_version[] =
+    "$Id: pagetree.c 2143 2009-03-28 10:28:15Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pagetree.c $";
 
 /**********************************************************************/
 /* Page diversions */

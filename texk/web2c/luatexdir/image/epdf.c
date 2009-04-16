@@ -25,7 +25,7 @@
 #include <string.h>
 
 static const char _svn_version[] =
-    "$Id: epdf.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/epdf.c $";
+    "$Id: epdf.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/epdf.c $";
 
 extern void epdf_check_mem(void);
 extern void register_fd_entry(fd_entry *);

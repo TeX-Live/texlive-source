@@ -21,7 +21,7 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: ltexiolib.c 2027 2009-03-14 18:47:32Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/ltexiolib.c $";
+    "$Id: ltexiolib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexiolib.c $";
 
 typedef void (*texio_printer) (strnumber s);
 

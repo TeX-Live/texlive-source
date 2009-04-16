@@ -33,9 +33,6 @@
 #include <gwidget.h>
 #include "ttf.h"
 
-#undef getsid
-#define getsid FFgetsid
-
 #ifdef LUA_FF_LIB
 SplineFont *_SFReadTTFInfo(FILE *ttf, int flags,enum openflags openflags, char *filename,struct fontdict *fd);
 void THPatchSplineChar(SplineChar *sc);
@@ -3269,7 +3266,7 @@ return( NULL );
 return( dicts );
 }
 
-static const char *getsid(int sid,char **strings,int scnt,struct ttfinfo *info) {
+static const char *FFgetsid(int sid,char **strings,int scnt,struct ttfinfo *info) {
     if ( sid==-1 )
 return( NULL );
     else if ( sid<nStdStrings )
@@ -3345,7 +3342,7 @@ return;						/* Use cids instead */
 	    for ( i=0; i<cnt; ++i ) {
 		dupenc = getc(ttf);
 		sid = getushort(ttf);
-		name = getsid(sid,strings,scnt,info);
+		name = FFgetsid(sid,strings,scnt,info);
 		if ( name==NULL )	/* Table is erroneous */
 	    break;
 		for ( j=0; j<info->glyph_cnt; ++j )
@@ -3601,7 +3598,7 @@ static SplineFont *cffsffillup(struct topdicts *subdict, char **strings,
     int emsize;
     static int nameless;
 
-    sf->fontname = utf8_verify_copy(getsid(subdict->sid_fontname,strings,scnt,info));
+    sf->fontname = utf8_verify_copy(FFgetsid(subdict->sid_fontname,strings,scnt,info));
     if ( sf->fontname==NULL ) {
 	char buffer[40];
 	sprintf(buffer,"UntitledSubFont_%d", ++nameless );
@@ -3615,13 +3612,13 @@ static SplineFont *cffsffillup(struct topdicts *subdict, char **strings,
     sf->ascent = .8*emsize;
     sf->descent = emsize - sf->ascent;
     if ( subdict->copyright!=-1 )
-	sf->copyright = utf8_verify_copy(getsid(subdict->copyright,strings,scnt,info));
+	sf->copyright = utf8_verify_copy(FFgetsid(subdict->copyright,strings,scnt,info));
     else
-	sf->copyright = utf8_verify_copy(getsid(subdict->notice,strings,scnt,info));
-    sf->familyname = utf8_verify_copy(getsid(subdict->familyname,strings,scnt,info));
-    sf->fullname = utf8_verify_copy(getsid(subdict->fullname,strings,scnt,info));
-    sf->weight = utf8_verify_copy(getsid(subdict->weight,strings,scnt,info));
-    sf->version = utf8_verify_copy(getsid(subdict->version,strings,scnt,info));
+	sf->copyright = utf8_verify_copy(FFgetsid(subdict->notice,strings,scnt,info));
+    sf->familyname = utf8_verify_copy(FFgetsid(subdict->familyname,strings,scnt,info));
+    sf->fullname = utf8_verify_copy(FFgetsid(subdict->fullname,strings,scnt,info));
+    sf->weight = utf8_verify_copy(FFgetsid(subdict->weight,strings,scnt,info));
+    sf->version = utf8_verify_copy(FFgetsid(subdict->version,strings,scnt,info));
     sf->italicangle = subdict->italicangle;
     sf->upos = subdict->underlinepos;
     sf->uwidth = subdict->underlinewidth;
@@ -3656,24 +3653,24 @@ static void cffinfofillup(struct ttfinfo *info, struct topdicts *dict,
     if ( dict->copyright!=-1 || dict->notice!=-1 )
 	free( info->copyright );
     if ( dict->copyright!=-1 )
-	info->copyright = utf8_verify_copy(getsid(dict->copyright,strings,scnt,info));
+	info->copyright = utf8_verify_copy(FFgetsid(dict->copyright,strings,scnt,info));
     else if ( dict->notice!=-1 )
-	info->copyright = utf8_verify_copy(getsid(dict->notice,strings,scnt,info));
+	info->copyright = utf8_verify_copy(FFgetsid(dict->notice,strings,scnt,info));
     if ( dict->familyname!=-1 ) {
 	free(info->familyname);
-	info->familyname = utf8_verify_copy(getsid(dict->familyname,strings,scnt,info));
+	info->familyname = utf8_verify_copy(FFgetsid(dict->familyname,strings,scnt,info));
     }
     if ( dict->fullname!=-1 ) {
 	free(info->fullname);
-	info->fullname = utf8_verify_copy(getsid(dict->fullname,strings,scnt,info));
+	info->fullname = utf8_verify_copy(FFgetsid(dict->fullname,strings,scnt,info));
     }
     if ( dict->weight!=-1 ) {
 	free(info->weight);
-	info->weight = utf8_verify_copy(getsid(dict->weight,strings,scnt,info));
+	info->weight = utf8_verify_copy(FFgetsid(dict->weight,strings,scnt,info));
     }
     if ( dict->version!=-1 ) {
 	free(info->version);
-	info->version = utf8_verify_copy(getsid(dict->version,strings,scnt,info));
+	info->version = utf8_verify_copy(FFgetsid(dict->version,strings,scnt,info));
     }
     if ( dict->fontname!=NULL ) {
 	free(info->fontname);
@@ -3692,8 +3689,8 @@ static void cffinfofillup(struct ttfinfo *info, struct topdicts *dict,
 	cffprivatefillup(info->private,dict);
     }
     if ( dict->ros_registry!=-1 ) {
-	info->cidregistry = copy(getsid(dict->ros_registry,strings,scnt,info));
-	info->ordering = copy(getsid(dict->ros_ordering,strings,scnt,info));
+	info->cidregistry = copy(FFgetsid(dict->ros_registry,strings,scnt,info));
+	info->ordering = copy(FFgetsid(dict->ros_ordering,strings,scnt,info));
 	info->supplement = dict->ros_supplement;
 	info->cidfontversion = dict->cidfontversion;
     }
@@ -3727,7 +3724,7 @@ static void cfffigure(struct ttfinfo *info, struct topdicts *dict,
     for ( i=0; i<info->glyph_cnt; ++i ) {
 	info->chars[i] = PSCharStringToSplines(
 		dict->glyphs.values[i], dict->glyphs.lens[i],&pscontext,
-		subrs,gsubrs,getsid(dict->charset[i],strings,scnt,info));
+		subrs,gsubrs,FFgetsid(dict->charset[i],strings,scnt,info));
 	info->chars[i]->vwidth = info->emsize;
 	if ( cstype==2 ) {
 	    if ( info->chars[i]->width == (int16) 0x8000 )

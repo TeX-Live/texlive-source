@@ -27,7 +27,7 @@
 #include "hyphen.h"
 
 static const char _svn_version[] =
-    "$Id: texlang.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lang/texlang.c $";
+    "$Id: texlang.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lang/texlang.c $";
 
 /* functions from the fontforge unicode library */
 
@@ -839,7 +839,7 @@ void hnj_hyphenation(halfword head, halfword tail)
         wordstart = r;
         assert(is_simple_character(wordstart));
         hyf_font = font(wordstart);
-        if (hyphen_char(hyf_font)<0) /* for backward compat */
+        if (hyphen_char(hyf_font) < 0)  /* for backward compat */
             hyf_font = 0;
         clang = char_lang(wordstart);
         lhmin = char_lhmin(wordstart);
@@ -927,7 +927,7 @@ void new_hyphenation(halfword head, halfword tail)
             return;
         }
         lua_pop(L, 1);
-    } else {
+    } else if (callback_id == 0) {
         hnj_hyphenation(head, tail);
     }
 }
@@ -946,7 +946,7 @@ void new_hyphenation(halfword head, halfword tail)
 void dump_one_language(int i)
 {
     char *s = NULL;
-    unsigned x = 0;
+    integer x = 0;
     struct tex_language *lang;
     lang = tex_languages[i];
     dump_int(lang->id);
@@ -973,7 +973,7 @@ void dump_one_language(int i)
 
 void dump_language_data(void)
 {
-    int i;
+    integer i;
     dump_int(next_lang_id);
     for (i = 0; i < next_lang_id; i++) {
         if (tex_languages[i]) {
@@ -989,7 +989,7 @@ void dump_language_data(void)
 void undump_one_language(int i)
 {
     char *s = NULL;
-    unsigned x = 0;
+    integer x = 0;
     struct tex_language *lang = get_language(i);
     undump_int(x);
     lang->id = x;
@@ -1021,7 +1021,7 @@ void undump_one_language(int i)
 
 void undump_language_data(void)
 {
-    unsigned i, x, numlangs;
+    integer i, x, numlangs;
     undump_int(numlangs);
     next_lang_id = numlangs;
     for (i = 0; i < numlangs; i++) {

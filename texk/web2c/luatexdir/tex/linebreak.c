@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: linebreak.c 2086 2009-03-22 15:32:08Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/linebreak.c $";
+    "$Id: linebreak.c 2294 2009-04-15 19:40:11Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/linebreak.c $";
 
 /* Glue nodes in a horizontal list that is being paragraphed are not supposed to
    include ``infinite'' shrinkability; that is why the algorithm maintains
@@ -257,40 +257,6 @@ boolean check_expand_pars(internal_font_number f)
 
 #define left_pw(a) char_pw((a), left_side)
 #define right_pw(a) char_pw((a), right_side)
-
-#if 0
-/* returns the total width of character protrusion of a line;
-  |cur_break(break_node(q))| and |p| is the leftmost resp. rightmost
-  node in the horizontal list representing the actual line */
-
-scaled total_pw(halfword first_p, halfword q, halfword p)
-{
-    halfword l, r;
-    l = (break_node(q) == null) ? first_p : cur_break(break_node(q));
-    assert(vlink(alink(p)) == p);
-    r = alink(r);
-    /* let's look at the right margin first */
-    if ((p != null) && (type(p) == disc_node) && (vlink(pre_break(p)) != null)) {
-        /* a |disc_node| with non-empty |pre_break|, protrude the last char of |pre_break| */
-        r = vlink(pre_break(p));
-        while (vlink(r) != null)
-            r = vlink(r);
-    } else {
-        r = find_protchar_right(l, r);
-    }
-    /* now the left margin */
-    if ((l != null) && (type(l) == disc_node)) {
-        if (vlink(post_break(l)) != null) {
-            l = vlink(post_break(l));   /* protrude the first char */
-            goto DONE;
-        }
-    }
-    l = find_protchar_left(l, true);
-  DONE:
-    return (left_pw(l) + right_pw(r));
-}
-#endif
-
 
 /* When looking for optimal line breaks, \TeX\ creates a ``break node'' for
    each break that is {\sl feasible}, in the sense that there is a way to end
@@ -576,8 +542,6 @@ static integer line_diff;       /*the difference between the current line number
 
 #define store_background(a) {active_width[a]=background[a];}
 
-#define act_width active_width[1]       /*length from first active node to current node */
-
 #define kern_break() {  \
     if ((!is_char_node(vlink(cur_p))) && auto_breaking)  \
       if (type(vlink(cur_p))==glue_node)  \
@@ -586,8 +550,8 @@ static integer line_diff;       /*the difference between the current line number
                       tracing_paragraphs, pdf_protrude_chars,  \
                       line_penalty, last_line_fit,  \
                       double_hyphen_demerits,  final_hyphen_demerits,first_p,cur_p);  \
-    if (type(cur_p)!=math_node) act_width+=width(cur_p);  \
-    else                        act_width+=surround(cur_p);  \
+    if (type(cur_p)!=math_node) active_width[1]+=width(cur_p);  \
+    else                        active_width[1]+=surround(cur_p);  \
   }
 
 #define clean_up_the_memory() {  \
@@ -632,6 +596,109 @@ static scaled best_pl_glue[4];  /*corresponding glue stretch or shrink */
 #define add_kern_stretch(a,b) a += kern_stretch((b))
 #define sub_kern_shrink(a,b)  a -= kern_shrink((b))
 #define sub_kern_stretch(a,b) a -= kern_stretch((b))
+
+
+/* This function is used to add the width of a list of nodes
+ * (from a discretionary) to one of the width arrays.
+ */
+
+/* Replacement texts and discretionary texts are supposed to contain
+ * only character nodes, kern nodes, and box or rule nodes. 
+ */
+
+void add_to_widths(halfword s,integer line_break_dir,integer pdf_adjust_spacing, scaled *widths)
+{
+    while (s != null) {
+        if (is_char_node(s)) {
+            if (is_rotated(line_break_dir)) {
+                widths[1] += glyph_height(s) + glyph_depth(s);
+            } else {
+                widths[1] += glyph_width(s);
+            }
+            if ((pdf_adjust_spacing > 1) && check_expand_pars(font(s))) {
+                set_prev_char_p(s);
+                add_char_stretch(widths[8], s);
+                add_char_shrink(widths[9], s);
+            };
+        } else {
+            switch (type(s)) {
+            case hlist_node:
+            case vlist_node:
+                if (!(dir_orthogonal(dir_primary[box_dir(s)],
+                                     dir_primary[line_break_dir])))
+                    widths[1] += width(s);
+                else
+                    widths[1] += (depth(s) + height(s));
+                break;
+            case kern_node:
+                if ((pdf_adjust_spacing > 1) && (subtype(s) == normal)) {
+                    add_kern_stretch(widths[8], s);
+                    add_kern_shrink(widths[9], s);
+                }
+                /* fall through */
+            case rule_node:
+                widths[1] += width(s);
+                break;
+            case disc_node: /* TH temp */
+                break;
+            default:
+                tconfusion("add_disc_widths");
+            }
+        }
+        s = vlink(s);
+    }
+}
+
+/* This function is used to substract the width of a list of nodes
+ * (from a discretionary) from one of the width arrays. 
+ * It is used only once, but deserves it own function because of orthogonality 
+ * with the |add_to_widths| function.
+ */
+
+void sub_from_widths(halfword s,integer line_break_dir,integer pdf_adjust_spacing, scaled *widths)
+{
+    while (s != null) {
+        /* @<Subtract the width of node |s| from |break_width|@>; */
+        if (is_char_node(s)) {
+            if (is_rotated(line_break_dir)) {
+                widths[1] -= (glyph_height(s) + glyph_depth(s));
+            } else {
+                widths[1] -= glyph_width(s);
+            }
+            if ((pdf_adjust_spacing > 1) && check_expand_pars(font(s))) {
+                set_prev_char_p(s);
+                sub_char_stretch(widths[8], s);
+                sub_char_shrink(widths[9], s);
+            }
+        } else {
+            switch (type(s)) {
+            case hlist_node:
+            case vlist_node:
+                if (!(dir_orthogonal(dir_primary[box_dir(s)],
+                                     dir_primary[line_break_dir])))
+                    widths[1] -= width(s);
+                else
+                    widths[1] -= (depth(s) + height(s));
+                break;
+            case kern_node:
+                if ((pdf_adjust_spacing > 1) && (subtype(s) == normal)) {
+                    sub_kern_stretch(widths[8], s);
+                    sub_kern_shrink(widths[9], s);
+                }
+                /* fall through */
+            case rule_node:
+                widths[1] -= width(s);
+                break;
+            case disc_node: /* TH temp */
+                break;
+            default:
+                tconfusion("sub_disc_widths");
+                break;
+            }
+        }
+        s = vlink(s);
+    }
+}
 
 
 /* When we insert a new active node for a break at |cur_p|, suppose this
@@ -696,93 +763,8 @@ compute_break_width(int break_type, int pdf_adjust_spacing, halfword p
            path, as we are talking about the breaking on _this_ position.
          */
 
-        halfword v;
-        for (v = vlink_no_break(p); v != null; v = vlink(v)) {
-            /* @<Subtract the width of node |v| from |break_width|@>; */
-            /* Replacement texts and discretionary texts are supposed to contain
-               only character nodes, kern nodes, and box or rule nodes. */
-            if (is_char_node(v)) {
-                if (is_rotated(line_break_dir)) {
-                    break_width[1] -= (glyph_height(v) + glyph_depth(v));
-                } else {
-                    break_width[1] -= glyph_width(v);
-                }
-                if ((pdf_adjust_spacing > 1) && check_expand_pars(font(v))) {
-                    set_prev_char_p(v);
-                    sub_char_stretch(break_width[8], v);
-                    sub_char_shrink(break_width[9], v);
-                }
-            } else {
-                switch (type(v)) {
-                case hlist_node:
-                case vlist_node:
-                    if (!(dir_orthogonal(dir_primary[box_dir(v)],
-                                         dir_primary[line_break_dir])))
-                        break_width[1] -= width(v);
-                    else
-                        break_width[1] -= (depth(v) + height(v));
-                    break;
-                case kern_node:
-                    if ((pdf_adjust_spacing > 1) && (subtype(v) == normal)) {
-                        sub_kern_stretch(break_width[8], v);
-                        sub_kern_shrink(break_width[9], v);
-                    }
-                    /* fall through */
-                case rule_node:
-                    break_width[1] -= width(v);
-                    break;
-                case disc_node:
-                    assert(vlink(v) == null);   /* discs are _always_ last */
-                    v = no_break(v);
-                    break;
-                default:
-                    tconfusion("disc1");
-                    break;
-                }
-            }
-        }
-
-        for (v = vlink_post_break(p); v != null; v = vlink(v)) {
-            /* @<Add the width of node |v| to |break_width|@>; */
-            if (is_char_node(v)) {
-                if (is_rotated(line_break_dir))
-                    break_width[1] += (glyph_height(v) + glyph_depth(v));
-                else
-                    break_width[1] += glyph_width(v);
-                if ((pdf_adjust_spacing > 1) && check_expand_pars(font(v))) {
-                    set_prev_char_p(v);
-                    add_char_stretch(break_width[8], v);
-                    add_char_shrink(break_width[9], v);
-                }
-            } else {
-                switch (type(v)) {
-                case hlist_node:
-                case vlist_node:
-                    if (!(dir_orthogonal(dir_primary[box_dir(v)],
-                                         dir_primary[line_break_dir])))
-                        break_width[1] += width(v);
-                    else
-                        break_width[1] += (depth(v) + height(v));
-                    break;
-                case kern_node:
-                    if ((pdf_adjust_spacing > 1) && (subtype(v) == normal)) {
-                        add_kern_stretch(break_width[8], v);
-                        add_kern_shrink(break_width[9], v);
-                    }
-                    /* fall through */
-                case rule_node:
-                    break_width[1] += width(v);
-                    break;
-                case disc_node:
-                    assert(vlink(v) == null);
-                    v = no_break(v);
-                    break;
-                default:
-                    tconfusion("disc2");
-                }
-            }
-        }
-
+        sub_from_widths(vlink_no_break(p), line_break_dir, pdf_adjust_spacing, break_width);
+        add_to_widths (vlink_post_break(p), line_break_dir, pdf_adjust_spacing, break_width);
         do_one_seven_eight(add_disc_width_to_break_width);
         if (vlink_post_break(p) == null) {
             s = vlink(p);       /* no post_break: 'skip' any 'whitespace' following */
@@ -1167,6 +1149,14 @@ ext_try_break(integer pi,
                 o = alink(cur_p);
                 assert(vlink(o) == cur_p);
             }
+            /* MAGIC: the disc could be a SELECT subtype, to we might need
+             * to get the last character as 'pre_break' from either the
+             * pre_break list (if the previous INIT disc was taken), or the
+             * no_break (sic) list (if the previous INIT disc was not taken)
+             * BUT:
+             * the last characters (hyphenation character) if these two list
+             * should always be the same anyway, so we just look at pre_break.
+             */
             /* let's look at the right margin first */
             if ((cur_p != null) && (type(cur_p) == disc_node)
                 && (vlink_pre_break(cur_p) != null)) {
@@ -1482,7 +1472,6 @@ ext_try_break(integer pi,
     }
 }
 
-
 void
 ext_do_line_break(boolean d,
                   int pretolerance,
@@ -1698,7 +1687,7 @@ ext_do_line_break(boolean d,
                    `\.{\\parfillskip}' glue appears at the end of each paragraph; it is therefore
                    unnecessary to check if |vlink(cur_p)=null| when |cur_p| is a character node.
                  */
-                act_width += (is_rotated(line_break_dir))
+                active_width[1] += (is_rotated(line_break_dir))
                     ? (glyph_height(cur_p) + glyph_depth(cur_p))
                     : glyph_width(cur_p);
                 if ((pdf_adjust_spacing > 1) && check_expand_pars(font(cur_p))) {
@@ -1718,21 +1707,21 @@ ext_do_line_break(boolean d,
             /* Determine legal breaks: As we move through the hlist, we need to keep
                the |active_width| array up to date, so that the badness of individual
                lines is readily calculated by |try_break|. It is convenient to use the
-               short name |act_width| for the component of active width that represents
+               short name |active_width[1]| for the component of active width that represents
                real width as opposed to glue. */
 
             switch (type(cur_p)) {
 
             case hlist_node:
             case vlist_node:
-                act_width +=
+                active_width[1] +=
                     (dir_orthogonal
                      (dir_primary[box_dir(cur_p)], dir_primary[line_break_dir]))
                     ? (depth(cur_p) + height(cur_p))
                     : width(cur_p);
                 break;
             case rule_node:
-                act_width += width(cur_p);
+                active_width[1] += width(cur_p);
                 break;
             case whatsit_node:
                 /* @<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>; */
@@ -1748,7 +1737,7 @@ ext_do_line_break(boolean d,
                 case dir_node: /* @<DIR: Adjust the dir stack for the |line_break| routine@>; */
                     if (dir_dir(cur_p) >= 0) {
                         line_break_dir = dir_dir(cur_p);
-                        push_dir_node(cur_p);
+                        push_dir_node(cur_p); /* adds to dir_ptr */
                     } else {
                         pop_dir_node();
                         if (dir_ptr != null)
@@ -1757,7 +1746,7 @@ ext_do_line_break(boolean d,
                     break;
                 case pdf_refxform_node:
                 case pdf_refximage_node:
-                    act_width += pdf_width(cur_p);
+                    active_width[1] += pdf_width(cur_p);
                 }
                 /* / Advance \(p)past a whatsit node in the \(l)|line_break| loop/; */
                 break;
@@ -1787,7 +1776,7 @@ ext_do_line_break(boolean d,
                 /* *INDENT-ON* */
                 check_shrinkage(glue_ptr(cur_p));
                 q = glue_ptr(cur_p);
-                act_width += width(q);
+                active_width[1] += width(q);
                 active_width[2 + stretch_order(q)] += stretch(q);
                 active_width[7] += shrink(q);
                 break;
@@ -1795,7 +1784,7 @@ ext_do_line_break(boolean d,
                 if (subtype(cur_p) == explicit) {
                     kern_break();
                 } else {
-                    act_width += width(cur_p);
+                    active_width[1] += width(cur_p);
                     if ((pdf_adjust_spacing > 1) && (subtype(cur_p) == normal)) {
                         add_kern_stretch(active_width[8], cur_p);
                         add_kern_shrink(active_width[9], cur_p);
@@ -1803,6 +1792,8 @@ ext_do_line_break(boolean d,
                 }
                 break;
             case disc_node:
+                /* select_discs are handled by the leading init_disc */
+                if (subtype(cur_p)==select_disc) break;
                 /* @<Try to break after a discretionary fragment, then |goto done5|@>; */
                 /* The following code knows that discretionary texts contain
                    only character nodes, kern nodes, box nodes, and rule
@@ -1821,54 +1812,7 @@ ext_do_line_break(boolean d,
                                       last_line_fit, double_hyphen_demerits,
                                       final_hyphen_demerits, first_p, cur_p);
                     } else {
-                        do {
-                            /* @<Add the width of node |s| to |disc_width|@>; */
-                            if (is_char_node(s)) {
-                                if (is_rotated(line_break_dir)) {
-                                    disc_width[1] +=
-                                        (glyph_height(s) + glyph_depth(s));
-                                } else {
-                                    disc_width[1] += glyph_width(s);
-                                }
-                                if ((pdf_adjust_spacing > 1)
-                                    && check_expand_pars(font(s))) {
-                                    set_prev_char_p(s);
-                                    add_char_stretch(disc_width[8], s);
-                                    add_char_shrink(disc_width[9], s);
-                                }
-                            } else {
-                                switch (type(s)) {
-                                case hlist_node:
-                                case vlist_node:
-                                    if (!
-                                        (dir_orthogonal
-                                         (dir_primary[box_dir(s)],
-                                          dir_primary[line_break_dir]))) {
-                                        disc_width[1] += width(s);
-                                    } else {
-                                        disc_width[1] += (depth(s) + height(s));
-                                    }
-                                    break;
-                                case kern_node:
-                                    if ((pdf_adjust_spacing > 1)
-                                        && (subtype(s) == normal)) {
-                                        add_kern_stretch(disc_width[8], s);
-                                        add_kern_shrink(disc_width[9], s);
-                                    }
-                                    /* fall through */
-                                case rule_node:
-                                    disc_width[1] += width(s);
-                                    break;
-                                case disc_node:
-                                    tconfusion("pre_break_disc");
-                                    break;
-                                default:
-                                    tconfusion("disc3");
-                                }
-                            }
-                            /* /Add the width of node |s| to |disc_width| */
-                            s = vlink(s);
-                        } while (s != null);
+                        add_to_widths(s,line_break_dir,pdf_adjust_spacing, disc_width);
                         do_one_seven_eight(add_disc_width_to_active_width);
                         ext_try_break(actual_penalty, hyphenated_node,
                                       pdf_adjust_spacing, par_shape_ptr,
@@ -1876,157 +1820,76 @@ ext_do_line_break(boolean d,
                                       pdf_protrude_chars, line_penalty,
                                       last_line_fit, double_hyphen_demerits,
                                       final_hyphen_demerits, first_p, cur_p);
+                        if (subtype(cur_p)==init_disc) {
+                            /* we should at two break points after the one we
+                             * added above: 
+                             * 1 which does a possible break in INIT's post_break
+                             * 2 which means the no_break actually was broken
+                             *   just a character later */
+                            /* do the select-0 case 'f-f-i' */
+                            assert(type(vlink(cur_p))==disc_node &&
+                                   subtype(vlink(cur_p))==select_disc);
+                            s = vlink_pre_break(vlink(cur_p));
+                            add_to_widths(s,line_break_dir,pdf_adjust_spacing, disc_width);
+                            ext_try_break(actual_penalty, hyphenated_node,
+                                          pdf_adjust_spacing, par_shape_ptr,
+                                          adj_demerits, tracing_paragraphs,
+                                          pdf_protrude_chars, line_penalty,
+                                          last_line_fit, double_hyphen_demerits,
+                                          final_hyphen_demerits, first_p,
+                                          vlink(cur_p));                            
+#if 0			    
+                            /* TODO this does not work */
+                            /* go back to the starting situation */
+                            do_one_seven_eight(sub_disc_width_from_active_width);
+                            do_one_seven_eight(reset_disc_width);
+                            /* add select no_break to active_width */
+                            s = vlink_no_break(vlink(cur_p));
+                            add_to_widths(s,line_break_dir,pdf_adjust_spacing, disc_width);
+                            ext_try_break(actual_penalty, hyphenated_node,
+                                          pdf_adjust_spacing, par_shape_ptr,
+                                          adj_demerits, tracing_paragraphs,
+                                          pdf_protrude_chars, line_penalty,
+                                          last_line_fit, double_hyphen_demerits,
+                                          final_hyphen_demerits, first_p,
+                                          vlink(cur_p));
+#endif
+                        }
                         do_one_seven_eight(sub_disc_width_from_active_width);
                     }
-#define FOO 1
-#if FOO
-#  if 0
-                    if (vlink(cur_p) != null)
-                        nest_stack[nest_index++] = vlink(cur_p);
-                    cur_p = no_break(cur_p);
-#  else
-                    s = vlink_no_break(cur_p);
-                    while (s != null) {
-                        /* @<Add the width of node |s| to |act_width|@>; */
-                        if (is_char_node(s)) {
-                            if (is_rotated(line_break_dir)) {
-                                act_width += glyph_height(s) + glyph_depth(s);
-                            } else {
-                                act_width += glyph_width(s);
-                            }
-                            if ((pdf_adjust_spacing > 1)
-                                && check_expand_pars(font(s))) {
-                                set_prev_char_p(s);
-                                add_char_stretch(active_width[8], s);
-                                add_char_shrink(active_width[9], s);
-                            };
-                        } else {
-                            switch (type(s)) {
-                            case hlist_node:
-                            case vlist_node:
-                                if (!(dir_orthogonal(dir_primary[box_dir(s)],
-                                                     dir_primary
-                                                     [line_break_dir])))
-                                    act_width += width(s);
-                                else
-                                    act_width += (depth(s) + height(s));
-                                break;
-                            case kern_node:
-                                if ((pdf_adjust_spacing > 1)
-                                    && (subtype(s) == normal)) {
-                                    add_kern_stretch(active_width[8], s);
-                                    add_kern_shrink(active_width[9], s);
-                                }
-                                /* fall through */
-                            case rule_node:
-                                act_width += width(s);
-                                break;
-                            case disc_node:
-                                /* what now */
-                                assert(vlink(s) == null);       /* discs are _always_ last */
-                                /* NB: temporary solution: not good, but not bad either */
-                                s = no_break(s);
-                                break;
-                            default:
-                                tconfusion("disc5");
-                            }
-                        }
-                        /* /Add the width of node |s| to |act_width|; */
-                        s = vlink(s);
-                    }
-#  endif
-                } else {        /* first pass, just take the no_break path */
-#else                           /* FOO */
                 }
-#endif                          /* FOO */
-#if 0
-                if (vlink_no_break(cur_p) != null) {
-                    if (vlink(cur_p) != null)
-                        nest_stack[nest_index++] = vlink(cur_p);
-                    /*          fprintf(stderr,"Node Push %d [%d]->[%d] / [%d]\n",(nest_index-1),(int)cur_p,(int)vlink(cur_p),(int)vlink_no_break(cur_p)); */
-                    cur_p = no_break(cur_p);
-                }
-#else
                 s = vlink_no_break(cur_p);
-                while (s != null) {
-                    /* @<Add the width of node |s| to |act_width|@>; */
-                    if (is_char_node(s)) {
-                        if (is_rotated(line_break_dir)) {
-                            act_width += glyph_height(s) + glyph_depth(s);
-                        } else {
-                            act_width += glyph_width(s);
-                        }
-                        if ((pdf_adjust_spacing > 1)
-                            && check_expand_pars(font(s))) {
-                            set_prev_char_p(s);
-                            add_char_stretch(active_width[8], s);
-                            add_char_shrink(active_width[9], s);
-                        };
-                    } else {
-                        switch (type(s)) {
-                        case hlist_node:
-                        case vlist_node:
-                            if (!(dir_orthogonal(dir_primary[box_dir(s)],
-                                                 dir_primary[line_break_dir])))
-                                act_width += width(s);
-                            else
-                                act_width += (depth(s) + height(s));
-                            break;
-                        case kern_node:
-                            if ((pdf_adjust_spacing > 1)
-                                && (subtype(s) == normal)) {
-                                add_kern_stretch(active_width[8], s);
-                                add_kern_shrink(active_width[9], s);
-                            }
-                            /* fall through */
-                        case rule_node:
-                            act_width += width(s);
-                            break;
-                        case disc_node:
-                            assert(vlink(s) == null);   /* discs are _always_ last */
-                            s = no_break(s);
-                            break;
-                        default:
-                            tconfusion("disc4");
-                        }
-                    }
-                    /* /Add the width of node |s| to |act_width|; */
-                    s = vlink(s);
-                }
-#endif
-#if FOO
+                add_to_widths(s,line_break_dir,pdf_adjust_spacing,active_width);
+            break;
+            case math_node:
+                auto_breaking = (subtype(cur_p) == after);
+                kern_break();
+                break;
+            case penalty_node:
+                ext_try_break(penalty(cur_p), unhyphenated_node, pdf_adjust_spacing,
+                              par_shape_ptr, adj_demerits, tracing_paragraphs,
+                              pdf_protrude_chars, line_penalty, last_line_fit,
+                              double_hyphen_demerits, final_hyphen_demerits,
+                              first_p, cur_p);
+                break;
+            case mark_node:
+            case ins_node:
+            case adjust_node:
+                break;
+            case glue_spec_node:
+                fprintf(stdout, "\nfound a glue_spec in a paragraph!");
+                break;
+            default:
+                fprintf(stdout, "\ntype=%d", type(cur_p));
+                tconfusion("paragraph");
             }
-#endif                          /* FOO */
-            break;
-case math_node:
-            auto_breaking = (subtype(cur_p) == after);
-            kern_break();
-            break;
-case penalty_node:
-            ext_try_break(penalty(cur_p), unhyphenated_node, pdf_adjust_spacing,
-                          par_shape_ptr, adj_demerits, tracing_paragraphs,
-                          pdf_protrude_chars, line_penalty, last_line_fit,
-                          double_hyphen_demerits, final_hyphen_demerits,
-                          first_p, cur_p);
-            break;
-case mark_node:
-case ins_node:
-case adjust_node:
-            break;
-case glue_spec_node:
-            fprintf(stdout, "\nfound a glue_spec in a paragraph!");
-            break;
-default:
-            fprintf(stdout, "\ntype=%d", type(cur_p));
-            tconfusion("paragraph");
+            cur_p = vlink(cur_p);
+            while (cur_p == null && nest_index > 0) {
+                cur_p = nest_stack[--nest_index];
+                /*        fprintf(stderr,"Node Pop  %d [%d]\n",nest_index,(int)cur_p); */
+            }
         }
-        cur_p = vlink(cur_p);
-        while (cur_p == null && nest_index > 0) {
-            cur_p = nest_stack[--nest_index];
-            /*        fprintf(stderr,"Node Pop  %d [%d]\n",nest_index,(int)cur_p); */
-        }
-    }
-    if (cur_p == null) {
+        if (cur_p == null) {
         /* Try the final line break at the end of the paragraph,
            and |goto done| if the desired breakpoints have been found */
 
@@ -2041,139 +1904,139 @@ default:
            help determine what is best.
          */
 
-        ext_try_break(eject_penalty, hyphenated_node, pdf_adjust_spacing,
-                      par_shape_ptr, adj_demerits, tracing_paragraphs,
-                      pdf_protrude_chars, line_penalty, last_line_fit,
-                      double_hyphen_demerits, final_hyphen_demerits, first_p,
-                      cur_p);
-        if (vlink(active) != active) {
+            ext_try_break(eject_penalty, hyphenated_node, pdf_adjust_spacing,
+                          par_shape_ptr, adj_demerits, tracing_paragraphs,
+                          pdf_protrude_chars, line_penalty, last_line_fit,
+                          double_hyphen_demerits, final_hyphen_demerits, first_p,
+                          cur_p);
+            if (vlink(active) != active) {
             /* @<Find an active node with fewest demerits@>; */
-            r = vlink(active);
-            fewest_demerits = awful_bad;
-            do {
-                if (type(r) != delta_node) {
-                    if (total_demerits(r) < fewest_demerits) {
+                r = vlink(active);
+                fewest_demerits = awful_bad;
+                do {
+                    if (type(r) != delta_node) {
+                        if (total_demerits(r) < fewest_demerits) {
                         fewest_demerits = total_demerits(r);
                         best_bet = r;
+                        }
                     }
-                }
-                r = vlink(r);
-            } while (r != active);
-            best_line = line_number(best_bet);
-
-            /* /Find an active node with fewest demerits; */
-            if (looseness == 0)
-                goto DONE;
-            /*@<Find the best active node for the desired looseness@>; */
-
-            /* The adjustment for a desired looseness is a slightly more complicated
-               version of the loop just considered. Note that if a paragraph is broken
-               into segments by displayed equations, each segment will be subject to the
-               looseness calculation, independently of the other segments.
-             */
-            r = vlink(active);
-            actual_looseness = 0;
-            do {
-                if (type(r) != delta_node) {
-                    line_diff = line_number(r) - best_line;
-                    if (((line_diff < actual_looseness)
-                         && (looseness <= line_diff))
-                        || ((line_diff > actual_looseness)
-                            && (looseness >= line_diff))) {
-                        best_bet = r;
-                        actual_looseness = line_diff;
-                        fewest_demerits = total_demerits(r);
-                    } else if ((line_diff == actual_looseness) &&
-                               (total_demerits(r) < fewest_demerits)) {
-                        best_bet = r;
-                        fewest_demerits = total_demerits(r);
+                    r = vlink(r);
+                } while (r != active);
+                best_line = line_number(best_bet);
+                
+                /* /Find an active node with fewest demerits; */
+                if (looseness == 0)
+                    goto DONE;
+                /*@<Find the best active node for the desired looseness@>; */
+                
+                /* The adjustment for a desired looseness is a slightly more complicated
+                   version of the loop just considered. Note that if a paragraph is broken
+                   into segments by displayed equations, each segment will be subject to the
+                   looseness calculation, independently of the other segments.
+                */
+                r = vlink(active);
+                actual_looseness = 0;
+                do {
+                    if (type(r) != delta_node) {
+                        line_diff = line_number(r) - best_line;
+                        if (((line_diff < actual_looseness)
+                             && (looseness <= line_diff))
+                            || ((line_diff > actual_looseness)
+                                && (looseness >= line_diff))) {
+                            best_bet = r;
+                            actual_looseness = line_diff;
+                            fewest_demerits = total_demerits(r);
+                        } else if ((line_diff == actual_looseness) &&
+                                   (total_demerits(r) < fewest_demerits)) {
+                            best_bet = r;
+                            fewest_demerits = total_demerits(r);
+                        }
                     }
-                }
-                r = vlink(r);
-            } while (r != active);
-            best_line = line_number(best_bet);
-
-            /* /Find the best active node for the desired looseness; */
-            if ((actual_looseness == looseness) || final_pass)
-                goto DONE;
+                    r = vlink(r);
+                } while (r != active);
+                best_line = line_number(best_bet);
+                
+                /* /Find the best active node for the desired looseness; */
+                if ((actual_looseness == looseness) || final_pass)
+                    goto DONE;
+            }
+        }
+        
+        /* Clean up the memory by removing the break nodes; */
+        clean_up_the_memory();
+        /* /Clean up the memory by removing the break nodes; */
+        
+        if (!second_pass) {
+            if (tracing_paragraphs > 0)
+                tprint_nl("@secondpass");
+            threshold = tolerance;
+            second_pass = true;
+            final_pass = (emergency_stretch <= 0);
+        } else {                    /* if at first you do not succeed, \dots */
+            if (tracing_paragraphs > 0)
+                tprint_nl("@emergencypass");
+            background[2] += emergency_stretch;
+            final_pass = true;
         }
     }
-
-    /* Clean up the memory by removing the break nodes; */
-    clean_up_the_memory();
-    /* /Clean up the memory by removing the break nodes; */
-
-    if (!second_pass) {
-        if (tracing_paragraphs > 0)
-            tprint_nl("@secondpass");
-        threshold = tolerance;
-        second_pass = true;
-        final_pass = (emergency_stretch <= 0);
-    } else {                    /* if at first you do not succeed, \dots */
-        if (tracing_paragraphs > 0)
-            tprint_nl("@emergencypass");
-        background[2] += emergency_stretch;
-        final_pass = true;
-    }
-}
-
+    
 DONE:
-if (tracing_paragraphs > 0) {
-    end_diagnostic(true);
-    normalize_selector();
-}
-if (do_last_line_fit) {
+    if (tracing_paragraphs > 0) {
+        end_diagnostic(true);
+        normalize_selector();
+    }
+    if (do_last_line_fit) {
     /* Adjust \(t)the final line of the paragraph; */
     /* Here we either reset |do_last_line_fit| or adjust the |par_fill_skip| glue.
      */
-    if (active_short(best_bet) == 0) {
-        do_last_line_fit = false;
-    } else {
-        q = new_spec(glue_ptr(last_line_fill));
-        delete_glue_ref(glue_ptr(last_line_fill));
-        width(q) += (active_short(best_bet) - active_glue(best_bet));
-        stretch(q) = 0;
-        glue_ptr(last_line_fill) = q;
+        if (active_short(best_bet) == 0) {
+            do_last_line_fit = false;
+        } else {
+            q = new_spec(glue_ptr(last_line_fill));
+            delete_glue_ref(glue_ptr(last_line_fill));
+            width(q) += (active_short(best_bet) - active_glue(best_bet));
+            stretch(q) = 0;
+            glue_ptr(last_line_fill) = q;
+        }
     }
-    /* /Adjust \(t)the final line of the paragraph; */
-}
-
-  /* @<Break the paragraph at the chosen...@>; */
-  /* Once the best sequence of breakpoints has been found (hurray), we call on the
-     procedure |post_line_break| to finish the remainder of the work.
-     (By introducing this subprocedure, we are able to keep |line_break|
-     from getting extremely long.)
-   */
-ext_post_line_break(d,
-                    right_skip,
-                    left_skip,
-                    pdf_protrude_chars,
-                    par_shape_ptr,
-                    pdf_adjust_spacing,
-                    pdf_each_line_height,
-                    pdf_each_line_depth,
-                    pdf_first_line_height,
-                    pdf_last_line_depth,
-                    inter_line_penalties_ptr,
-                    inter_line_penalty,
-                    club_penalty,
-                    club_penalties_ptr,
-                    display_widow_penalties_ptr,
-                    widow_penalties_ptr,
-                    display_widow_penalty,
-                    widow_penalty,
-                    broken_penalty,
-                    final_par_glue,
-                    best_bet,
-                    last_special_line,
-                    second_width,
-                    second_indent, first_width, first_indent, best_line,
-                    pdf_ignored_dimen);
-  /* /Break the paragraph at the chosen... */
-  /* Clean up the memory by removing the break nodes; */
-clean_up_the_memory();
-  /*
-     flush_node_list(dir_ptr);
-     dir_ptr=null;
-   */
+    
+    /* @<Break the paragraph at the chosen...@>; */
+    /* Once the best sequence of breakpoints has been found (hurray), we call on the
+       procedure |post_line_break| to finish the remainder of the work.
+       (By introducing this subprocedure, we are able to keep |line_break|
+       from getting extremely long.)
+    */
+    
+    /* first thing |ext_post_line_break| does is reset |dir_ptr| */
+    flush_node_list(dir_ptr);
+    dir_ptr=null;
+   
+    ext_post_line_break(d,
+                        right_skip,
+                        left_skip,
+                        pdf_protrude_chars,
+                        par_shape_ptr,
+                        pdf_adjust_spacing,
+                        pdf_each_line_height,
+                        pdf_each_line_depth,
+                        pdf_first_line_height,
+                        pdf_last_line_depth,
+                        inter_line_penalties_ptr,
+                        inter_line_penalty,
+                        club_penalty,
+                        club_penalties_ptr,
+                        display_widow_penalties_ptr,
+                        widow_penalties_ptr,
+                        display_widow_penalty,
+                        widow_penalty,
+                        broken_penalty,
+                        final_par_glue,
+                        best_bet,
+                        last_special_line,
+                        second_width,
+                        second_indent, first_width, first_indent, best_line,
+                        pdf_ignored_dimen);
+    /* /Break the paragraph at the chosen... */
+    /* Clean up the memory by removing the break nodes; */
+    clean_up_the_memory();
 }

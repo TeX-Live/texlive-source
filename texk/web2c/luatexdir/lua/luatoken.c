@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: luatoken.c 2079 2009-03-22 10:15:03Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/luatoken.c $";
+    "$Id: luatoken.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luatoken.c $";
 
 command_item command_names[] = {
     {"relax", relax_cmd, NULL},
@@ -94,6 +94,8 @@ command_item command_names[] = {
     {"ex_space", ex_space_cmd, NULL},
     {"no_boundary", no_boundary_cmd, NULL},
     {"radical", radical_cmd, NULL},
+    {"super_sub_script", super_sub_script_cmd, NULL},
+    {"math_shift_cs", math_shift_cs_cmd, NULL},
     {"end_cs_name", end_cs_name_cmd, NULL},
     {"char_ghost", char_ghost_cmd, NULL},
     {"assign_local_box", assign_local_box_cmd, NULL},

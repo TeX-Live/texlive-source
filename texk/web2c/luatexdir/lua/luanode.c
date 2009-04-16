@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: luanode.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/luanode.c $";
+    "$Id: luanode.c 2284 2009-04-14 12:58:45Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luanode.c $";
 
 #undef link                     /* defined by cpascal.h */
 #define info(a)    fixmem[(a)].hhlh
@@ -61,7 +61,10 @@ void lua_node_filter_s(int filterid, char *extrainfo)
 {
     lua_State *L = Luas;
     int s_top = lua_gettop(L);
-    if (!get_callback(L, callback_defined(filterid))) {
+    int callback_id = callback_defined(filterid);
+    if (callback_id<=0) 
+      return;
+    if (!get_callback(L, callback_id)) {
         lua_settop(L, s_top);
         return;
     }
@@ -85,7 +88,7 @@ lua_node_filter(int filterid, int xextrainfo, halfword head_node,
     lua_State *L = Luas;
     char *extrainfo = group_code_names[xextrainfo];
     int callback_id = callback_defined(filterid);
-    if (head_node == null || vlink(head_node) == null || callback_id == 0)
+    if (head_node == null || vlink(head_node) == null || callback_id <= 0)
         return;
     if (!get_callback(L, callback_id)) {
         lua_pop(L, 2);
@@ -131,7 +134,7 @@ lua_linebreak_callback(int is_broken, halfword head_node, halfword * new_head)
     int ret = 0;                /* failure */
     lua_State *L = Luas;
     int callback_id = callback_defined(linebreak_filter_callback);
-    if (head_node == null || vlink(head_node) == null || callback_id == 0)
+    if (head_node == null || vlink(head_node) == null || callback_id <= 0)
         return ret;
     if (!get_callback(L, callback_id)) {
         lua_pop(L, 2);
@@ -164,7 +167,7 @@ lua_hpack_filter(halfword head_node, scaled size, int pack_type, int extrainfo)
     halfword ret;
     lua_State *L = Luas;
     int callback_id = callback_defined(hpack_filter_callback);
-    if (head_node == null || callback_id == 0)
+    if (head_node == null || callback_id <= 0)
         return head_node;
     if (!get_callback(L, callback_id)) {
         lua_pop(L, 2);
@@ -210,7 +213,7 @@ lua_vpack_filter(halfword head_node, scaled size, int pack_type, scaled maxd,
     } else {
         callback_id = callback_defined(vpack_filter_callback);
     }
-    if (callback_id == 0) {
+    if (callback_id <= 0) {
         return head_node;
     }
     if (!get_callback(L, callback_id)) {
@@ -263,3 +266,69 @@ int visible_last_node_type(int n)
         return -1;              /* this is not right, probably dir nodes! */
     return last_known_node + 1;
 }
+
+void
+lua_pdf_literal (int i)
+{
+  char *s = NULL;
+  size_t l = 0;
+  lua_rawgeti(Luas, LUA_REGISTRYINDEX, i);
+  s = (char *)lua_tolstring(Luas,-1,&l);
+  while (l--) {
+    pdf_room(1);
+    pdf_buf[pdf_ptr++] = *s++;
+  }
+  pdf_buf[pdf_ptr++] = 10; /* pdf_print_nl */
+  lua_pop(Luas,1);
+}
+
+void
+copy_pdf_literal (pointer r, pointer p)
+{
+  pdf_literal_type(r) = pdf_literal_type(p);
+  pdf_literal_mode(r) = pdf_literal_mode(p);
+  if (pdf_literal_type(p)==normal) {
+    pdf_literal_data(r) = pdf_literal_data(p);
+    add_token_ref(pdf_literal_data(p));
+  } else {
+    lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
+    pdf_literal_data(r) = luaL_ref(Luas, LUA_REGISTRYINDEX);
+  }
+}
+
+
+void
+free_pdf_literal (pointer p)
+{
+  if (pdf_literal_type(p)==normal) {
+    delete_token_ref(pdf_literal_data(p));
+  } else {
+    luaL_unref(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
+  }
+}
+
+void
+show_pdf_literal (pointer p)
+{
+    tprint_esc("pdfliteral");
+    switch (pdf_literal_mode(p)) {
+    case set_origin:
+        break;
+    case direct_page:
+        tprint(" page");
+	break;
+    case direct_always:
+        tprint(" direct");
+	break;
+    default:
+        tconfusion("literal2");
+	break;
+    }
+    if (pdf_literal_type(p)==normal) {
+        print_mark(pdf_literal_data(p));
+    } else {
+        lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
+	tprint((char *)lua_tostring(Luas,-1));
+	lua_pop(Luas,1);
+    }
+}           

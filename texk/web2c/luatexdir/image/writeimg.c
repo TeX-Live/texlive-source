@@ -29,7 +29,7 @@
 #include <../lua51/lauxlib.h>
 
 static const char _svn_version[] =
-    "$Id: writeimg.c 2019 2009-03-14 00:15:58Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/writeimg.c $";
+    "$Id: writeimg.c 2019 2009-03-14 00:15:58Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writeimg.c $";
 
 extern void pdf_print_real(integer m, integer d);
 

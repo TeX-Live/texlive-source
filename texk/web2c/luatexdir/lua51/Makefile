@@ -7,11 +7,12 @@
 # Your platform. See PLATS for possible values.
 PLAT= none
 
-LOCALCFLAGS= $(MYCFLAGS) $(COCOCFLAGS)
+CC= gcc
+CFLAGS= -O2 -Wall $(MYCFLAGS) $(COCOCFLAGS)
 AR= ar rcu
 RANLIB= ranlib
 RM= rm -f
-LIBS= $(XLDFLAGS) -lm $(MYLIBS)
+LIBS= -lm $(MYLIBS)
 
 MYCFLAGS=
 MYLDFLAGS=
@@ -28,10 +29,9 @@ COCOCFLAGS=
 #COCOCFLAGS= -DCOCO_DISABLE
 # -- Coco =========
 
-
 # == END OF USER SETTINGS. NO NEED TO CHANGE ANYTHING BELOW THIS LINE =========
 
-PLATS= aix ansi bsd generic linux macosx mingw posix solaris
+PLATS= aix ansi bsd freebsd generic linux macosx mingw posix solaris
 
 # ++ Coco =========
 COCO_O= lcoco.o
@@ -76,14 +76,12 @@ clean:
 	$(RM) $(ALL_T) $(ALL_O)
 
 depend:
-	@$(CC) $(LOCALCFLAGS) $(CFLAGS) $(XCFLAGS) -MM l*.c print.c
+	@$(CC) $(CFLAGS) -MM l*.c print.c
 
 echo:
 	@echo "PLAT = $(PLAT)"
 	@echo "CC = $(CC)"
-	@echo "LOCALCFLAGS = $(LOCALCFLAGS)"
 	@echo "CFLAGS = $(CFLAGS)"
-	@echo "XCFLAGS = $(XCFLAGS)"
 	@echo "AR = $(AR)"
 	@echo "RANLIB = $(RANLIB)"
 	@echo "RM = $(RM)"
@@ -94,47 +92,43 @@ echo:
 # convenience targets for popular platforms
 
 none:
-	@echo "Please choose a platform: $(PLATS)"
+	@echo "Please choose a platform:"
+	@echo "   $(PLATS)"
 
 aix:
-	$(MAKE) a CC="xlc" LOCALCFLAGS="-O2 -DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-ldl" MYLDFLAGS="-brtl -bexpall"
+	$(MAKE) all CC="xlc" CFLAGS="-O2 -DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-ldl" MYLDFLAGS="-brtl -bexpall"
 
 ansi:
-	$(MAKE) a MYCFLAGS=-DLUA_ANSI
+	$(MAKE) all MYCFLAGS=-DLUA_ANSI
 
 bsd:
-	$(MAKE) a MYCFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-Wl,-E"
+	$(MAKE) all MYCFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-Wl,-E"
+
+freebsd:
+	$(MAKE) all MYCFLAGS="-DLUA_USE_LINUX" MYLIBS="-Wl,-E -lreadline"
 
 generic:
-	$(MAKE) a MYCFLAGS=
+	$(MAKE) all MYCFLAGS=
 
 linux:
-	$(MAKE) a MYCFLAGS=-DLUA_USE_LINUX MYLIBS="-Wl,-E -ldl -lreadline -lhistory -lncurses"
+	$(MAKE) all MYCFLAGS=-DLUA_USE_LINUX MYLIBS="-Wl,-E -ldl -lreadline -lhistory -lncurses"
 
 macosx:
-	$(MAKE) a MYCFLAGS=-DLUA_USE_MACOSX
-# use this on Mac OS X 10.4
-#	$(MAKE) a MYCFLAGS="-DLUA_USE_MACOSX -DLUA_USE_READLINE" MYLIBS="-lreadline"
+	$(MAKE) all MYCFLAGS=-DLUA_USE_LINUX MYLIBS="-lreadline"
+# use this on Mac OS X 10.3-
+#	$(MAKE) all MYCFLAGS=-DLUA_USE_MACOSX
 
 mingw:
 	$(MAKE) "LUA_A=lua51.dll" "LUA_T=lua.exe" \
 	"AR=$(CC) -shared -o" "RANLIB=strip --strip-unneeded" \
 	"MYCFLAGS=-DLUA_BUILD_AS_DLL" "MYLIBS=" "MYLDFLAGS=-s" lua.exe
-
-mingwcross: 
-	$(MAKE) "LUA_A=liblua.a" "LUA_T=lua.exe" \
-	MYCFLAGS= MYLIBS= lua.exe
-
+	$(MAKE) "LUAC_T=luac.exe" luac.exe
 
 posix:
-	$(MAKE) a MYCFLAGS=-DLUA_USE_POSIX
+	$(MAKE) all MYCFLAGS=-DLUA_USE_POSIX
 
 solaris:
-	$(MAKE) a MYCFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-ldl"
-
-.c.o:
-	$(CC) $(LOCALCFLAGS) $(CFLAGS) $(XCFLAGS) -c $<
-
+	$(MAKE) all MYCFLAGS="-DLUA_USE_POSIX -DLUA_USE_DLOPEN" MYLIBS="-ldl"
 
 # list targets that do not create files (but not all makes understand .PHONY)
 .PHONY: all $(PLATS) default o a clean depend echo none
@@ -171,8 +165,7 @@ llex.o: llex.c lua.h luaconf.h ldo.h lobject.h llimits.h lstate.h ltm.h \
 lmathlib.o: lmathlib.c lua.h luaconf.h lauxlib.h lualib.h
 lmem.o: lmem.c lua.h luaconf.h ldebug.h lstate.h lobject.h llimits.h \
   ltm.h lzio.h lmem.h lcoco.h ldo.h
-loadlib.o: loadlib.c lauxlib.h lua.h luaconf.h lobject.h llimits.h \
-  lualib.h
+loadlib.o: loadlib.c lua.h luaconf.h lauxlib.h lualib.h
 lobject.o: lobject.c lua.h luaconf.h ldo.h lobject.h llimits.h lstate.h \
   ltm.h lzio.h lmem.h lcoco.h lstring.h lgc.h lvm.h
 lopcodes.o: lopcodes.c lopcodes.h llimits.h lua.h luaconf.h

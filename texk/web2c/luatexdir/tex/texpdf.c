@@ -22,7 +22,7 @@
 #include <ctype.h>
 
 static const char _svn_version[] =
-    "$Id: texpdf.c 1436 2008-07-17 09:27:08Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/texpdf.c $";
+    "$Id: texpdf.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texpdf.c $";
 
 #define number_chars 1114112
 #define string_offset 2097152
@@ -34,17 +34,6 @@ static const char _svn_version[] =
 /* output a byte to PDF buffer without checking of overflow */
 
 #define pdf_quick_out(a)  pdf_buf[pdf_ptr++] = a
-
-/* make sure that there are at least |n| bytes free in PDF buffer */
-
-#define pdf_room(a) do {                                        \
-    if ((pdf_os_mode) && ((a) + pdf_ptr > pdf_buf_size))        \
-      pdf_os_get_os_buf(a);                                     \
-    else if ((!pdf_os_mode) && ((a) > pdf_buf_size) )           \
-      overflow(maketexstring("PDF output buffer"), pdf_op_buf_size);            \
-    else if ((!pdf_os_mode) && ((a) + pdf_ptr > pdf_buf_size))  \
-      pdf_flush();                                              \
-  } while (0)
 
 /* do the same as |pdf_quick_out| and flush the PDF buffer if necessary  */
 

@@ -26,7 +26,7 @@
 extern void rawset_sa_item(sa_tree head, integer n, integer v);
 
 static const char __svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/mathcodes.c $";
+    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/mathcodes.c $";
 
 /* math codes */
 
@@ -35,8 +35,8 @@ static sa_tree mathcode_head = NULL;
 #define MATHCODEHEAP 8
 
 static mathcodeval *mathcode_heap = NULL;
-static int mathcode_heapsize = MATHCODEHEAP;
-static int mathcode_heapptr = 0;
+static integer mathcode_heapsize = MATHCODEHEAP;
+static integer mathcode_heapptr = 0;
 
 /* the 0xFFFFFFFF is a flag value */
 #define MATHCODESTACK 8
@@ -49,8 +49,8 @@ static sa_tree delcode_head = NULL;
 #define DELCODEHEAP 8
 
 static delcodeval *delcode_heap = NULL;
-static int delcode_heapsize = DELCODEHEAP;
-static int delcode_heapptr = 0;
+static integer delcode_heapsize = DELCODEHEAP;
+static integer delcode_heapptr = 0;
 
 #define DELCODESTACK 4
 #define DELCODEDEFAULT 0xFFFFFFFF
@@ -222,7 +222,7 @@ void initializemathcode(void)
 
 void dumpmathcode(void)
 {
-    int k;
+    integer k;
     mathcodeval d;
     dump_sa_tree(mathcode_head);
     dump_int(mathcode_heapsize);
@@ -238,17 +238,21 @@ void dumpmathcode(void)
 
 void undumpmathcode(void)
 {
-    int k;
+    integer k, x;
     mathcodeval d;
     mathcode_head = undump_sa_tree();
     undump_int(mathcode_heapsize);
     undump_int(mathcode_heapptr);
     mathcode_heap = Mxmalloc_array(mathcodeval, mathcode_heapsize);
     for (k = 0; k < mathcode_heapptr; k++) {
-        undump_int(d.origin_value);
-        undump_int(d.class_value);
-        undump_int(d.family_value);
-        undump_int(d.character_value);
+        undump_int(x);
+        d.origin_value = x;
+        undump_int(x);
+        d.class_value = x;
+        undump_int(x);
+        d.family_value = x;
+        undump_int(x);
+        d.character_value = x;
         mathcode_heap[k] = d;
     }
     d.origin_value = 0;
@@ -394,7 +398,7 @@ void initializedelcode(void)
 
 void dumpdelcode(void)
 {
-    int k;
+    integer k;
     delcodeval d;
     dump_sa_tree(delcode_head);
     dump_int(delcode_heapsize);
@@ -412,7 +416,7 @@ void dumpdelcode(void)
 
 void undumpdelcode(void)
 {
-    int k;
+    integer k;
     delcodeval d;
     delcode_head = undump_sa_tree();
     undump_int(delcode_heapsize);

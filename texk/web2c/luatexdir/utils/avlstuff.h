@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License along
 with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-$Id: avlstuff.h 2073 2009-03-21 10:06:50Z hhenkel $
+$Id: avlstuff.h 2271 2009-04-12 23:42:21Z oneiros $
 */
 
 #include "avl.h"

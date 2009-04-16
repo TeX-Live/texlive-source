@@ -83,7 +83,7 @@ object exists, reference it. Else create fresh one.
 #include "writejbig2.h"
 
 static const char _svn_version[] =
-    "$Id: writejbig2.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/writejbig2.c $";
+    "$Id: writejbig2.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejbig2.c $";
 
 #undef DEBUG
 

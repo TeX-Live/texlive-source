@@ -1,4 +1,164 @@
 ==============================================================
+Luatex beta-0.39.0 was released 20090415
+==============================================================
+
+* iniluatex will from now on start up with only the TeX82 primitives
+  and \directlua, everything else has to be bootstrapped via 
+  tex.enableprimitives(). This change was planned for 0.40.0,
+  but *now* is the time to test it.
+  
+* A bugfix for \primitive in various expandable contexts,
+  and \primitive now generates an error message when the 
+  argument is not actually a primitive's name.
+
+* There was a bug found in the math accent handling.
+
+* Large math operators are now treated like extensible characters
+  in the sense that they can be composed of segments.
+
+* The extra assign- and restore tracing information from eTeX
+  had a massive bug because of a dangling else in the pascal web.
+  As a side-effect of fixing this bugs, all such potential errors
+  in the pascal web have been fixed (for now).
+
+* The math parameters can now be set and queried from lua code
+  via the new tex.setmath() and tex.getmath() functions.
+
+* Reflection in a \hbox was broken.
+
+* There was a leak of direction nodes in the paragraph builder.
+
+* The font backend now does a small peek to differentiate 
+  truetype and postscript style opentype fonts. This fixes
+  the "Can't find CFF table" bug for otf's with truetype outlines.
+
+* Parameters and registers can now also be assinged to globally
+  from lua (see the manual for details).
+
+* It is now possible to query the current math style while a 
+  formula is still being constructed by using the new read-only
+  value \mathstyle. Associated is the new command \Ustack that
+  is to be used as a prefix for {.. \over ..} and friends. 
+  See the manual for more information.
+
+* The embedded MPLib is brought up to date with the current
+  metapost repository (version 1.110 and a few small patches).
+  
+* Luatex can now handle two breakpoints inside a single ligature
+  (like for the functional word of-f-ice). The solution is not
+  perfect yet, but the chance of missed hyphenation points in 
+  actual documents should now be negligible.
+
+* Some speedups in the font loading code, and in the handling of 
+  pdf_literal nodes that are set from within Lua code.
+
+* Some source code and manual cleanup, as usual.
+
+==============================================================
+Luatex beta-0.38.0 was released 20090410
+==============================================================
+
+* tex.enableprimitives() had a bug were previously defined (but
+  currently undefined) control sequences prevented the creation 
+  of the new csname.
+
+* The special calling format callback.register('name', false)
+  not only disables the callback, but also the builtin code it 
+  is supposed to replace. 
+
+* Empty \localleftbox and \localrightbox -es are now suppressed.
+
+* Support for <f>.MathConstants.SubscriptShiftDownWithSuperscript
+  was added, to solve the lack of "sub2" in OpenType math.
+
+* Luatex now supports horizontal super- and subscript placement
+  corrections via the OpenType MATH mathkern table. See the
+  manual for details.
+
+* node.write() no longer copies its argument node list before 
+  appending it.
+
+* There are six new primitives that are verbose forms 
+  of one and two byte special tokens:
+  \Usuperscript \Usubscript 
+  \Ustartmath \Ustopmath 
+  \Ustartdisplaymath \Ustopdisplaymath
+
+* The attribute node leaks in math mode and alignmetns have been 
+  fixed.
+
+* The 11 simple math noads are now combined into a single "noad"
+  node type.
+
+* Static linking against libstdc++ is working once again.
+
+* There is a small fix in the keyword scanner to solve the
+  problem of 'Runaway ... while scanning ???' that could happen
+  for some primitives.
+
+* Lua now also has the "architecture independent bytecode"
+  patch applied.
+
+* Lua is updated to version 5.1.4 with coco patches 1.1.5, and 
+  lpeg is now 0.9. 
+
+* Some TRT/TLT backend bugs are fixed.
+
+* Various manual updates.
+
+==============================================================
+Luatex beta-0.37.0 was released 20090331
+==============================================================
+
+* Luatex now implements shell_escape = 'p', a new feature
+  in web2c that intends to make \write18 more secure. As 
+  a side-effect, if luatex is used for typesetting, it will 
+  now also apply shell_escape = 'p' and shell_escape = 'f'
+  to the lua functions io.popen(), os.execute(), os.exec(), 
+  and os.spawn().
+  Nothing has changed for the case where luatex is used as 
+  a script interpreter.
+
+* Attributes can now have negative values. The special value
+  for 'unset' is lowered to -0x7FFFFFFF (it used to be -1).
+
+* The lua 'kpse' library now has an object-oriented interface 
+  as companion to the procedural interface. This is useful for
+  e.g. controlling the discovery of mplib files.
+
+* The new internal integer parameter \outputbox allows setting
+  of the output box number (default: 255, max: 65535)
+
+* The new primitives \Udelimiterunder and \Udelimiterover 
+  complete the set of 'StretchStacks' for OpenType Math.
+
+* Fixed a bug in font string conversions on the Macintosh that 
+  resulted in warnings about 'unaligned pointers being freed'.
+
+* Khaled Hosny spotted a bunch of manual errors.
+
+* There was bug in the width of math_accent objects when 
+  there were super- or subscripts attached to the accentee.
+
+* In PDF mode, TRT \leaders were bugged.
+
+* The source tree now uses the new texlive build system that 
+  Peter Breitenlohner created. 
+
+* There is now a single build.sh instead of four separate
+  ones. It has a few options:
+      --make      : only make, no make distclean; configure
+      --parallel  : make -j 2 -l 3.0
+      --nostrip   : do not strip binary
+      --mingw     : crosscompile for mingw32 from i386-linux
+      --ppc       : crosscompile for ppc osx on intel osx
+
+  Note: --parallel still sometimes causes crashes due to
+  timing errors, so use that option with care.
+
+* Many compiler warnings have been removed (but not all yet).
+
+==============================================================
 Luatex beta-0.36.0 was released 20090323
 ==============================================================
 
@@ -538,7 +698,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL$ into the object file.
+   and link in $Id$ and  $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

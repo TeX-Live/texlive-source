@@ -22,7 +22,7 @@
 #include "luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: dofont.c 2086 2009-03-22 15:32:08Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/dofont.c $";
+    "$Id: dofont.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/dofont.c $";
 
 #define TIMERS 0
 
@@ -121,7 +121,7 @@ do_define_font(integer f, char *cnom, char *caire, scaled s,
                 return 0;
             }
         }
-    } else {
+    } else if (callback_id==0) {
         res = read_tfm_info(f, cnom, caire, s);
         if (res) {
             set_hyphen_char(f, get_default_hyphen_char());

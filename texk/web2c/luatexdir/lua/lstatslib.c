@@ -22,7 +22,7 @@
 
 
 static const char _svn_version[] =
-    "$Id: lstatslib.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/lstatslib.c $";
+    "$Id: lstatslib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lstatslib.c $";
 
 typedef struct statistic {
     const char *name;
@@ -57,10 +57,14 @@ char *getlasterror(void)
     return makecstring(last_error);
 }
 
+char *luatexrevision(void)
+{
+    return makecstring(get_luatexrevision());
+}
 
 extern int luabytecode_max;
 extern int luabytecode_bytes;
-static int luastate_max = 1; /* fixed value */
+static int luastate_max = 1;    /* fixed value */
 extern int luastate_bytes;
 extern int callback_count;
 extern int saved_callback_count;
@@ -75,6 +79,9 @@ static struct statistic stats[] = {
     {"log_name", 's', &texmf_log_name}, /* weird */
     {"banner", 'S', &getbanner},
     {"pdftex_banner", 's', &pdftex_banner},
+    {"luatex_version", 'G', &get_luatexversion},
+    {"luatex_revision", 'S', &luatexrevision},
+    {"ini_version", 'b', &ini_version},
     /*
      * mem stat 
      */
@@ -182,7 +189,10 @@ static int do_getstat(lua_State * L, int i)
         lua_pushboolean(L, g());
         break;
     case 'n':
-        lua_nodelib_push_fast(L, *(halfword *) (stats[i].value));
+        if (*(halfword *) (stats[i].value)!=0)
+          lua_nodelib_push_fast(L, *(halfword *) (stats[i].value));
+        else
+          lua_pushnil(L);
         break;
     case 'b':
         lua_pushboolean(L, *(integer *) (stats[i].value));

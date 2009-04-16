@@ -26,7 +26,8 @@
 #include "luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: mapfile.c 1870 2009-02-19 10:03:13Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/mapfile.c $";
+    "$Id: mapfile.c 2271 2009-04-12 23:42:21Z oneiros $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/mapfile.c $";
 
 #define FM_BUF_SIZE     1024
 

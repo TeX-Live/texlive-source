@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: commands.h 2094 2009-03-23 14:13:54Z taco $ */
+/* $Id: commands.h 2280 2009-04-14 09:49:01Z taco $ */
 
 
 typedef enum {
@@ -98,6 +98,8 @@ typedef enum {
     ex_space_cmd,               /* explicit space ( \.{\\\ } ) */
     no_boundary_cmd,            /* suppress boundary ligatures ( \.{\\noboundary} ) */
     radical_cmd,                /* square root and similar signs ( \.{\\radical} ) */
+    super_sub_script_cmd,       /* explicit super- or subscript */
+    math_shift_cs_cmd,          /* start- and endmath */
     end_cs_name_cmd,            /* end control sequence ( \.{\\endcsname} ) */
     char_ghost_cmd,             /* \.{\\ghostleft}, \.{\\ghostright} character for kerning */
     assign_local_box_cmd,       /* box for guillemets \.{\\localleftbox} or \.{\\localrightbox} */
@@ -233,6 +235,7 @@ typedef enum {
     convert_pdf_colorstack_init_code,   /* command code for \.{\\pdfcolorstackinit} */
     convert_luatex_revision_code,       /* command code for \.{\\luatexrevision} */
     convert_luatex_date_code,   /* command code for \.{\\luatexdate} */
+    convert_math_style_code,      /* command code for \.{\\mathstyle} */
     convert_expanded_code,      /* command code for \.{\\expanded} */
     convert_job_name_code,      /* command code for \.{\\jobname} */
 #define  convert_pdftex_convert_codes convert_job_name_code     /* end of \pdfTeX's command codes */

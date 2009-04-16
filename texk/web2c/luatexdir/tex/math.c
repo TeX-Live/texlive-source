@@ -27,7 +27,7 @@
 #include "tokens.h"
 
 static const char _svn_version[] =
-    "$Id: math.c 2099 2009-03-24 10:35:01Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/math.c $";
+    "$Id: math.c 2280 2009-04-14 09:49:01Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/math.c $";
 
 #define mode          cur_list.mode_field
 #define head          cur_list.head_field
@@ -69,7 +69,7 @@ extern void rawset_sa_item(sa_tree hed, integer n, integer v);
     tex_error(A,B);                             \
   } while (0)
 
-int scan_math(pointer);
+int scan_math(pointer, int);
 pointer fin_mlist(pointer);
 
 #define pre_display_size dimen_par(param_pre_display_size_code)
@@ -210,7 +210,7 @@ void def_fam_fnt(integer fam_id, integer size_id, integer f, integer lvl)
         begin_diagnostic();
         tprint("{assigning");
         print_char(' ');
-        print_size(size_id);
+        print_cmd_chr(def_family_cmd,size_id);
         print_int(fam_id);
         print_char('=');
         print_font_identifier(fam_fnt(fam_id, size_id));
@@ -237,7 +237,7 @@ void unsave_math_fam_data(integer gl)
                 begin_diagnostic();
                 tprint("{restoring");
                 print_char(' ');
-                print_size(size_id);
+		print_cmd_chr(def_family_cmd,size_id);
                 print_int(fam_id);
                 print_char('=');
                 print_font_identifier(fam_fnt(fam_id, size_id));
@@ -253,131 +253,10 @@ void unsave_math_fam_data(integer gl)
 
 /* and parameters */
 
-static char *math_param_names[] = {
-    "Umathquad",
-    "Umathaxis",
-    "Umathoperatorsize",
-    "Umathoverbarkern",
-    "Umathoverbarrule",
-    "Umathoverbarvgap",
-    "Umathunderbarkern",
-    "Umathunderbarrule",
-    "Umathunderbarvgap",
-    "Umathradicalkern",
-    "Umathradicalrule",
-    "Umathradicalvgap",
-    "Umathradicaldegreebefore",
-    "Umathradicaldegreeafter",
-    "Umathradicaldegreeraise",
-    "Umathstackvgap",
-    "Umathstacknumup",
-    "Umathstackdenomdown",
-    "Umathfractionrule",
-    "Umathfractionnumvgap",
-    "Umathfractionnumup",
-    "Umathfractiondenomvgap",
-    "Umathfractiondenomdown",
-    "Umathfractiondelsize",
-    "Umathlimitabovevgap",
-    "Umathlimitabovebgap",
-    "Umathlimitabovekern",
-    "Umathlimitdownvgap",
-    "Umathlimitdownbgap",
-    "Umathlimitdownkern",
-    "Umathunderdelimitervgap",
-    "Umathunderdelimiterbgap",
-    "Umathoverdelimitervgap",
-    "Umathoverdelimiterbgap",
-    "Umathsubshiftdrop",
-    "Umathsupshiftdrop",
-    "Umathsubshiftdown",
-    "Umathsubsupshiftdown",
-    "Umathsubtopmax",
-    "Umathsupshiftup",
-    "Umathsupbottommin",
-    "Umathsupsubbottommax",
-    "Umathsubsupvgap",
-    "Umathspaceafterscript",
-    "Umathconnectoroverlapmin",
-    "Umathordordspacing",
-    "Umathordopspacing",
-    "Umathordbinspacing",
-    "Umathordrelspacing",
-    "Umathordopenspacing",
-    "Umathordclosespacing",
-    "Umathordpunctspacing",
-    "Umathordinnerspacing",
-    "Umathopordspacing",
-    "Umathopopspacing",
-    "Umathopbinspacing",
-    "Umathoprelspacing",
-    "Umathopopenspacing",
-    "Umathopclosespacing",
-    "Umathoppunctspacing",
-    "Umathopinnerspacing",
-    "Umathbinordspacing",
-    "Umathbinopspacing",
-    "Umathbinbinspacing",
-    "Umathbinrelspacing",
-    "Umathbinopenspacing",
-    "Umathbinclosespacing",
-    "Umathbinpunctspacing",
-    "Umathbininnerspacing",
-    "Umathrelordspacing",
-    "Umathrelopspacing",
-    "Umathrelbinspacing",
-    "Umathrelrelspacing",
-    "Umathrelopenspacing",
-    "Umathrelclosespacing",
-    "Umathrelpunctspacing",
-    "Umathrelinnerspacing",
-    "Umathopenordspacing",
-    "Umathopenopspacing",
-    "Umathopenbinspacing",
-    "Umathopenrelspacing",
-    "Umathopenopenspacing",
-    "Umathopenclosespacing",
-    "Umathopenpunctspacing",
-    "Umathopeninnerspacing",
-    "Umathcloseordspacing",
-    "Umathcloseopspacing",
-    "Umathclosebinspacing",
-    "Umathcloserelspacing",
-    "Umathcloseopenspacing",
-    "Umathcloseclosespacing",
-    "Umathclosepunctspacing",
-    "Umathcloseinnerspacing",
-    "Umathpunctordspacing",
-    "Umathpunctopspacing",
-    "Umathpunctbinspacing",
-    "Umathpunctrelspacing",
-    "Umathpunctopenspacing",
-    "Umathpunctclosespacing",
-    "Umathpunctpunctspacing",
-    "Umathpunctinnerspacing",
-    "Umathinnerordspacing",
-    "Umathinneropspacing",
-    "Umathinnerbinspacing",
-    "Umathinnerrelspacing",
-    "Umathinneropenspacing",
-    "Umathinnerclosespacing",
-    "Umathinnerpunctspacing",
-    "Umathinnerinnerspacing",
-    NULL
-};
-
 #define MATHPARAMSTACK  8
 #define MATHPARAMDEFAULT undefined_math_parameter
 
 static sa_tree math_param_head = NULL;
-
-void print_math_param(int param_code)
-{
-    if (param_code >= 0 && param_code < math_param_last)
-        tprint_esc(math_param_names[param_code]);
-    else
-        tprint("Unknown math parameter code!");
-}
 
 void def_math_param(int param_id, int style_id, scaled value, int lvl)
 {
@@ -387,8 +266,8 @@ void def_math_param(int param_id, int style_id, scaled value, int lvl)
         begin_diagnostic();
         tprint("{assigning");
         print_char(' ');
-        print_math_param(param_id);
-        print_style(style_id);
+	print_cmd_chr(set_math_param_cmd,param_id);
+        print_cmd_chr(math_style_cmd,style_id);
         print_char('=');
         print_int(value);
         print_char('}');
@@ -421,8 +300,8 @@ void unsave_math_param_data(integer gl)
                 begin_diagnostic();
                 tprint("{restoring");
                 print_char(' ');
-                print_math_param(param_id);
-                print_style(style_id);
+		print_cmd_chr(set_math_param_cmd,param_id);
+                print_cmd_chr(math_style_cmd,style_id);
                 print_char('=');
                 print_int(get_math_param(param_id, style_id));
                 print_char('}');
@@ -524,7 +403,7 @@ be placed at the left and right of the fraction. In this way, a
 pointer new_noad(void)
 {
     pointer p;
-    p = new_node(ord_noad, normal);
+    p = new_node(simple_noad, ord_noad_type);
     /* all noad fields are zero after this */
     return p;
 }
@@ -576,15 +455,52 @@ i.e., a smaller style has a larger numerical value.
 @:TeXbook}{\sl The \TeX book@>
 */
 
-const char *math_style_names[] = { "display", "crampeddisplay",
+const char *math_style_names[] = { 
+    "display", "crampeddisplay",
     "text", "crampedtext",
     "script", "crampedscript",
     "scriptscript", "crampedscriptscript",
     NULL
 };
 
+const char *math_param_names[] = {
+    "quad", "axis", "operatorsize",
+    "overbarkern", "overbarrule", "overbarvgap",
+    "underbarkern","underbarrule", "underbarvgap",
+    "radicalkern", "radicalrule", "radicalvgap",
+    "radicaldegreebefore", "radicaldegreeafter", "radicaldegreeraise",
+    "stackvgap", "stacknumup", "stackdenomdown",
+    "fractionrule", "fractionnumvgap", "fractionnumup",
+    "fractiondenomvgap","fractiondenomdown", "fractiondelsize",
+    "limitabovevgap", "limitabovebgap", "limitabovekern",
+    "limitdownvgap", "limitdownbgap", "limitdownkern",
+    "underdelimitervgap", "underdelimiterbgap",
+    "overdelimitervgap", "overdelimiterbgap",
+    "subshiftdrop", "supshiftdrop", "subshiftdown",
+    "subsupshiftdown","subtopmax", "supshiftup",
+    "supbottommin", "supsubbottommax", "subsupvgap",
+    "spaceafterscript", "connectoroverlapmin",
+    "ordordspacing", "ordopspacing","ordbinspacing","ordrelspacing",
+    "ordopenspacing","ordclosespacing", "ordpunctspacing","ordinnerspacing",
+    "opordspacing", "opopspacing", "opbinspacing", "oprelspacing",
+    "opopenspacing", "opclosespacing", "oppunctspacing", "opinnerspacing",
+    "binordspacing", "binopspacing", "binbinspacing", "binrelspacing",
+    "binopenspacing", "binclosespacing", "binpunctspacing", "bininnerspacing",
+    "relordspacing", "relopspacing", "relbinspacing", "relrelspacing",
+    "relopenspacing", "relclosespacing", "relpunctspacing", "relinnerspacing",
+    "openordspacing", "openopspacing", "openbinspacing", "openrelspacing",
+    "openopenspacing", "openclosespacing", "openpunctspacing", "openinnerspacing",
+    "closeordspacing", "closeopspacing", "closebinspacing", "closerelspacing",
+    "closeopenspacing", "closeclosespacing", "closepunctspacing", "closeinnerspacing",
+    "punctordspacing", "punctopspacing", "punctbinspacing", "punctrelspacing",
+    "punctopenspacing", "punctclosespacing", "punctpunctspacing", "punctinnerspacing",
+    "innerordspacing", "inneropspacing", "innerbinspacing", "innerrelspacing",
+    "inneropenspacing", "innerclosespacing", "innerpunctspacing", "innerinnerspacing",
+    NULL };
+
 pointer new_style(small_number s)
 {                               /* create a style node */
+    m_style = s;
     return new_node(style_node, s);
 }
 
@@ -625,7 +541,7 @@ void show_math_node(pointer p)
 {
     switch (type(p)) {
     case style_node:
-        print_style(subtype(p));
+	print_cmd_chr(math_style_cmd,subtype(p));
         break;
     case choice_node:
         tprint_esc("mathchoice");
@@ -642,18 +558,8 @@ void show_math_node(pointer p)
         show_node_list(script_script_mlist(p));
         flush_char;
         break;
-    case ord_noad:
-    case op_noad:
-    case bin_noad:
-    case rel_noad:
-    case open_noad:
-    case close_noad:
-    case punct_noad:
-    case inner_noad:
+    case simple_noad:
     case radical_noad:
-    case over_noad:
-    case under_noad:
-    case vcenter_noad:
     case accent_noad:
         display_normal_noad(p);
         break;
@@ -747,56 +653,54 @@ void print_subsidiary_data(pointer p, ASCII_code c)
     }
 }
 
-void print_style(integer c)
-{
-    if (c <= cramped_script_script_style) {
-        tprint_esc((char *) math_style_names[c]);
-        tprint("style");
-    } else {
-        tprint("Unknown style!");
-    }
-}
-
-
 void display_normal_noad(pointer p)
 {
     switch (type(p)) {
-    case ord_noad:
-        tprint_esc("mathord");
-        break;
-    case op_noad:
-        tprint_esc("mathop");
-        if (subtype(p) == limits)
-            tprint_esc("limits");
-        else if (subtype(p) == no_limits)
-            tprint_esc("nolimits");
-        break;
-    case bin_noad:
-        tprint_esc("mathbin");
-        break;
-    case rel_noad:
-        tprint_esc("mathrel");
-        break;
-    case open_noad:
-        tprint_esc("mathopen");
-        break;
-    case close_noad:
-        tprint_esc("mathclose");
-        break;
-    case punct_noad:
-        tprint_esc("mathpunct");
-        break;
-    case inner_noad:
-        tprint_esc("mathinner");
-        break;
-    case over_noad:
-        tprint_esc("overline");
-        break;
-    case under_noad:
-        tprint_esc("underline");
-        break;
-    case vcenter_noad:
-        tprint_esc("vcenter");
+    case simple_noad:
+        switch (subtype(p)) {
+        case ord_noad_type: 
+            tprint_esc("mathord"); 
+            break;
+        case op_noad_type_normal: 
+        case op_noad_type_limits: 
+        case op_noad_type_no_limits: 
+            tprint_esc("mathop");
+            if (subtype(p) == op_noad_type_limits)
+                tprint_esc("limits");
+            else if (subtype(p) == op_noad_type_no_limits)
+                tprint_esc("nolimits");
+            break;
+        case bin_noad_type:
+            tprint_esc("mathbin");
+            break;
+        case rel_noad_type:
+            tprint_esc("mathrel");
+            break;
+        case open_noad_type:
+            tprint_esc("mathopen");
+            break;
+        case close_noad_type:
+            tprint_esc("mathclose");
+            break;
+        case punct_noad_type:
+            tprint_esc("mathpunct");
+            break;
+        case inner_noad_type:
+            tprint_esc("mathinner");
+            break;
+        case over_noad_type:
+            tprint_esc("overline");
+            break;
+        case under_noad_type:
+            tprint_esc("underline");
+            break;
+        case vcenter_noad_type:
+            tprint_esc("vcenter");
+            break;
+        default:
+            tprint("<unknown noad type!>");
+            break;
+        }
         break;
     case radical_noad:
         if (subtype(p) == 7)
@@ -875,55 +779,6 @@ void display_fraction_noad(pointer p)
     print_subsidiary_data(denominator(p), '/');
 }
 
-/* This function is for |print_cmd_chr| only */
-
-void print_math_comp(halfword chr_code)
-{
-    switch (chr_code) {
-    case ord_noad:
-        tprint_esc("mathord");
-        break;
-    case op_noad:
-        tprint_esc("mathop");
-        break;
-    case bin_noad:
-        tprint_esc("mathbin");
-        break;
-    case rel_noad:
-        tprint_esc("mathrel");
-        break;
-    case open_noad:
-        tprint_esc("mathopen");
-        break;
-    case close_noad:
-        tprint_esc("mathclose");
-        break;
-    case punct_noad:
-        tprint_esc("mathpunct");
-        break;
-    case inner_noad:
-        tprint_esc("mathinner");
-        break;
-    case under_noad:
-        tprint_esc("underline");
-        break;
-    default:
-        tprint_esc("overline");
-        break;
-    }
-}
-
-void print_limit_switch(halfword chr_code)
-{
-    if (chr_code == limits)
-        tprint_esc("limits");
-    else if (chr_code == no_limits)
-        tprint_esc("nolimits");
-    else
-        tprint_esc("displaylimits");
-}
-
-
 /*
 The routines that \TeX\ uses to create mlists are similar to those we have
 just seen for the generation of hlists and vlists. But it is necessary to
@@ -947,19 +802,20 @@ void new_save_level_math(group_code c)
     eq_word_define(static_int_base + param_level_local_dir_code, cur_level);
 }
 
-void push_math(group_code c)
+void push_math(group_code c, int mstyle)
 {
     if (math_direction != text_direction)
         dir_math_save = true;
     push_nest();
     mode = -mmode;
     incompleat_noad = null;
+    m_style = mstyle;
     new_save_level_math(c);
 }
 
 void enter_ordinary_math(void)
 {
-    push_math(math_shift_group);
+    push_math(math_shift_group, text_style);
     eq_word_define(static_int_base + param_cur_fam_code, -1);
     if (every_math != null)
         begin_token_list(every_math, every_math_text);
@@ -975,12 +831,20 @@ called for.
 
 void init_math(void)
 {
-    get_token();                /* |get_x_token| would fail on \.{\\ifmmode}\thinspace! */
-    if ((cur_cmd == math_shift_cmd) && (mode > 0)) {
+    if ( cur_cmd == math_shift_cmd ) {
+        get_token();                /* |get_x_token| would fail on \.{\\ifmmode}\thinspace! */
+        if ((cur_cmd == math_shift_cmd) && (mode > 0)) {
+            enter_display_math();
+        } else {
+            back_input();
+            enter_ordinary_math();
+        }
+    } else if (cur_cmd==math_shift_cs_cmd && cur_chr == display_style ) {
         enter_display_math();
-    } else {
-        back_input();
+    } else if (cur_cmd==math_shift_cs_cmd && cur_chr == text_style ) {
         enter_ordinary_math();
+    } else {
+        you_cant(); 
     }
 }
 
@@ -1027,7 +891,7 @@ void math_left_brace(void)
     q = new_node(math_char_node, 0);
     nucleus(tail) = q;
     back_input();
-    (void) scan_math(nucleus(tail));
+    (void) scan_math(nucleus(tail), m_style);
 }
 
 /*
@@ -1078,7 +942,7 @@ void enter_display_math(void)
         l = varmem[p].cint;
     }
 
-    push_math(math_shift_group);
+    push_math(math_shift_group, display_style);
     mode = mmode;
     eq_word_define(static_int_base + param_cur_fam_code, -1);
     eq_word_define(static_dimen_base + param_pre_display_size_code, w);
@@ -1339,7 +1203,7 @@ that subformula into a given word of |mem|.
 #define get_next_nb_nr() do { get_x_token(); } while (cur_cmd==spacer_cmd||cur_cmd==relax_cmd)
 
 
-int scan_math(pointer p)
+int scan_math(pointer p, int mstyle)
 {
     /* label restart,reswitch,exit; */
     mathcodeval mval;
@@ -1406,7 +1270,7 @@ int scan_math(pointer p)
         scan_left_brace();
         saved(0) = p;
         incr(save_ptr);
-        push_math(math_group);
+        push_math(math_group, mstyle);
         return 1;
     }
     type(p) = math_char_node;
@@ -1446,9 +1310,17 @@ void set_math_char(mathcodeval mval)
         if (mval.class_value == var_code) {
             if (fam_in_range)
                 math_fam(nucleus(p)) = cur_fam;
-            type(p) = ord_noad;
+            subtype(p) = ord_noad_type;
         } else {
-            type(p) = ord_noad + mval.class_value;
+          switch (mval.class_value) {
+          case 0: subtype(p) = ord_noad_type; break;
+          case 1: subtype(p) = op_noad_type_normal; break;
+          case 2: subtype(p) = bin_noad_type; break;
+          case 3: subtype(p) = rel_noad_type; break;
+          case 4: subtype(p) = open_noad_type; break;
+          case 5: subtype(p) = close_noad_type; break;
+          case 6: subtype(p) = inner_noad_type; break;
+          }
         }
         vlink(tail) = p;
         tail = p;
@@ -1486,10 +1358,13 @@ void math_math_comp(void)
 {
     pointer q;
     tail_append(new_noad());
-    type(tail) = cur_chr;
+    subtype(tail) = cur_chr;
     q = new_node(math_char_node, 0);
     nucleus(tail) = q;
-    (void) scan_math(nucleus(tail));
+    if (cur_chr==over_noad_type)
+        (void) scan_math(nucleus(tail), cramped_style(m_style));
+    else
+        (void) scan_math(nucleus(tail), m_style);
 }
 
 
@@ -1500,7 +1375,7 @@ void math_limit_switch(void)
         NULL
     };
     if (head != tail) {
-        if (type(tail) == op_noad) {
+        if (type(tail) == simple_noad) {
             subtype(tail) = cur_chr;
             return;
         }
@@ -1602,18 +1477,21 @@ void math_radical(void)
     else
         tconfusion("math_radical");
     if (chr_code == 3) {
+      /* the trick with the |vlink(q)| is used by |scan_math| 
+         to decide whether it needs to go on */
         q = new_node(math_char_node, 0);
         vlink(q) = tail;
         degree(tail) = q;
-        if (!scan_math(degree(tail))) {
+        if (!scan_math(degree(tail), sup_sup_style(m_style))) {
+            vlink(degree(tail)) = null;
             q = new_node(math_char_node, 0);
             nucleus(tail) = q;
-            (void) scan_math(nucleus(tail));
+            (void) scan_math(nucleus(tail), cramped_style(m_style));
         }
     } else {
         q = new_node(math_char_node, 0);
         nucleus(tail) = q;
-        (void) scan_math(nucleus(tail));
+        (void) scan_math(nucleus(tail), cramped_style(m_style));
     }
 }
 
@@ -1633,7 +1511,7 @@ void math_ac(void)
         };
         tex_error("Please use \\mathaccent for accents in math mode", hlp);
     }
-    tail_append(new_node(accent_noad, normal));
+    tail_append(new_node(accent_noad, 0));
     if (cur_chr == 0) {         /* \mathaccent */
         t = scan_mathchar(tex_mathcode);
     } else if (cur_chr == 1) {  /* \omathaccent */
@@ -1668,14 +1546,14 @@ void math_ac(void)
     }
     q = new_node(math_char_node, 0);
     nucleus(tail) = q;
-    (void) scan_math(nucleus(tail));
+    (void) scan_math(nucleus(tail), cramped_style(m_style));
 }
 
 pointer math_vcenter_group(pointer p)
 {
     pointer q, r;
     q = new_noad();
-    type(q) = vcenter_noad;
+    subtype(q) = vcenter_noad_type;
     r = new_node(sub_box_node, 0);
     nucleus(q) = r;
     math_list(nucleus(q)) = p;
@@ -1692,12 +1570,14 @@ void append_choices(void)
     tail_append(new_choice());
     incr(save_ptr);
     saved(-1) = 0;
-    push_math(math_choice_group);
+    push_math(math_choice_group, display_style);
     scan_left_brace();
 }
 void build_choices(void)
 {
     pointer p;                  /* the current mlist */
+    int prev_style;
+    prev_style = m_style;
     unsave_math();
     p = fin_mlist(null);
     switch (saved(-1)) {
@@ -1717,7 +1597,7 @@ void build_choices(void)
         break;
     }                           /* there are no other cases */
     incr(saved(-1));
-    push_math(math_choice_group);
+    push_math(math_choice_group, (prev_style+2));
     scan_left_brace();
 }
 
@@ -1734,7 +1614,8 @@ void sub_sup(void)
         q = new_node(sub_mlist_node, 0);
         nucleus(tail) = q;
     }
-    if (cur_cmd == sup_mark_cmd) {
+    if (cur_cmd == sup_mark_cmd || 
+        cur_chr == sup_mark_cmd ) { /* super_sub_script */
         if (supscr(tail) != null) {
             char *hlp[] = {
                 "I treat `x^1^2' essentially like `x^1{}^2'.", NULL
@@ -1746,8 +1627,9 @@ void sub_sup(void)
         }
         q = new_node(math_char_node, 0);
         supscr(tail) = q;
-        (void) scan_math(supscr(tail));
-    } else {
+        (void) scan_math(supscr(tail), sup_style(m_style));
+    } else if (cur_cmd == sub_mark_cmd || 
+               cur_chr == sub_mark_cmd ) {
         if (subscr(tail) != null) {
             char *hlp[] = {
                 "I treat `x_1_2' essentially like `x_1{}_2'.", NULL
@@ -1759,7 +1641,7 @@ void sub_sup(void)
         }
         q = new_node(math_char_node, 0);
         subscr(tail) = q;
-        (void) scan_math(subscr(tail));
+        (void) scan_math(subscr(tail), sub_style(m_style));
     }
 }
 
@@ -1793,11 +1675,12 @@ void math_fraction(void)
             scan_normal_dimen();
         tex_error("Ambiguous; you need another { and }", hlp);
     } else {
-        incompleat_noad = new_node(fraction_noad, normal);
+        incompleat_noad = new_node(fraction_noad, 0);
         numerator(incompleat_noad) = new_node(sub_mlist_node, 0);
         math_list(numerator(incompleat_noad)) = vlink(head);
         vlink(head) = null;
         tail = head;
+        m_style = cramped_style(m_style);
 
         if (c >= delimited_code) {
             q = new_node(delim_node, 0);
@@ -1872,6 +1755,7 @@ surround an accent that is the nucleus of an Ord atom.
 void close_math_group(pointer p)
 {
     pointer q;
+    int old_style = m_style;
     unsave_math();
 
     decr(save_ptr);
@@ -1880,7 +1764,7 @@ void close_math_group(pointer p)
     math_list(saved(0)) = p;
     if (p != null) {
         if (vlink(p) == null) {
-            if (type(p) == ord_noad) {
+            if (type(p) == simple_noad && subtype(p) == ord_noad_type ) {
                 if (subscr(p) == null && supscr(p) == null) {
                     type(saved(0)) = type(nucleus(p));
                     if (type(nucleus(p)) == math_char_node) {
@@ -1890,16 +1774,14 @@ void close_math_group(pointer p)
                         math_list(saved(0)) = math_list(nucleus(p));
                         math_list(nucleus(p)) = null;
                     }
+                    delete_attribute_ref(node_attr(saved(0))); 
                     node_attr(saved(0)) = node_attr(nucleus(p));
                     node_attr(nucleus(p)) = null;
                     flush_node(p);
                 }
-            }
-        } else {
-            if (type(p) == accent_noad) {
-                if (saved(0) == nucleus(tail)) {
-                    /* todo: check this branch */
-                    if (type(tail) == ord_noad) {
+	    } else if (type(p) == accent_noad) {
+	        if (saved(0) == nucleus(tail)) {
+		    if (type(tail) == simple_noad && subtype(tail) == ord_noad_type) {
                         q = head;
                         while (vlink(q) != tail)
                             q = vlink(q);
@@ -1907,6 +1789,7 @@ void close_math_group(pointer p)
                         nucleus(tail) = null;
                         subscr(tail) = null;
                         supscr(tail) = null;
+                        delete_attribute_ref(node_attr(p)); 
                         node_attr(p) = node_attr(tail);
                         node_attr(tail) = null;
                         flush_node(tail);
@@ -1922,7 +1805,7 @@ void close_math_group(pointer p)
         nucleus(vlink(saved(0))) = q;
         vlink(saved(0)) = null;
         saved(0) = q;
-        (void) scan_math(saved(0));
+        (void) scan_math(saved(0), old_style);
         /* restart */
     }
 }
@@ -1974,13 +1857,13 @@ void math_left_right(void)
             unsave_math();
         }
         if (t != right_noad_side) {
-            push_math(math_left_group);
+            push_math(math_left_group, cur_style);
             vlink(head) = q;
             tail = p;
             delim_ptr = p;
         } else {
             tail_append(new_noad());
-            type(tail) = inner_noad;
+            subtype(tail) = inner_noad_type;
             r = new_node(sub_mlist_node, 0);
             nucleus(tail) = r;
             math_list(nucleus(tail)) = q;
@@ -2006,6 +1889,30 @@ static void check_second_math_shift(void)
     }
 }
 
+static void check_display_math_end(void)
+{
+    if (cur_chr != cramped_display_style) {
+        char *hlp[] = {
+            "I shall assume that you typed that.",
+            NULL
+        };
+        tex_error("Display math should end with \\Ustopdisplaymath", hlp);
+    }
+}
+
+static void check_inline_math_end(void)
+{
+    if (cur_chr != cramped_text_style) {
+        char *hlp[] = {
+            "I shall assume that you typed that.",
+            NULL
+        };
+        tex_error("Inline math should end with \\Ustopmath", hlp);
+    }
+}
+
+
+
 void finish_displayed_math(boolean l, boolean danger, pointer a);
 
 void after_math(void)
@@ -2018,8 +1925,16 @@ void after_math(void)
     danger = check_necessary_fonts();
     m = mode;
     p = fin_mlist(null);        /* this pops the nest */
+    if (cur_cmd == math_shift_cs_cmd &&
+        (cur_chr == text_style || cur_chr == display_style)) {
+      you_cant();
+    }
     if (mode == -m) {           /* end of equation number */
-        check_second_math_shift();
+        if (cur_cmd == math_shift_cmd ) {
+            check_second_math_shift();
+        } else {
+            check_display_math_end();
+        }
         run_mlist_to_hlist(p, text_style, false);
         a = hpack(vlink(temp_head), 0, additional);
         unsave_math();
@@ -2037,6 +1952,9 @@ void after_math(void)
            `\.{\$\$...\$\$}', since `\.{\\abovedisplayskip}' inside a display affects the
            space above that display.
          */
+        if (cur_cmd == math_shift_cs_cmd) {
+            check_inline_math_end();
+        }
         tail_append(new_math(math_surround, before));
         if (dir_math_save) {
             tail_append(new_dir(math_direction));
@@ -2053,8 +1971,13 @@ void after_math(void)
         space_factor = 1000;
         unsave_math();
     } else {
-        if (a == null)
-            check_second_math_shift();
+        if (a == null) {
+          if (cur_cmd == math_shift_cmd) {
+                check_second_math_shift();
+            } else {
+                check_display_math_end();
+            }
+        } 
         run_mlist_to_hlist(p, display_style, false);
         finish_displayed_math(l, danger, a);
     }
@@ -2252,4 +2175,24 @@ void finish_display_alignment(pointer p, pointer q, memory_word aux_save)
     tail_append(new_param_glue(param_below_display_skip_code));
     prev_depth = aux_save.cint;
     resume_after_display();
+}
+
+/* Interface to \.{\\Umath} and \.{\\mathstyle} */
+
+void setup_math_style (void)
+{
+    pointer q;
+    tail_append(new_noad());
+    q = new_node(math_char_node, 0);
+    nucleus(tail) = q;
+    (void) scan_math(nucleus(tail), num_style(m_style));
+}
+
+
+void print_math_style (void)
+{
+    if (abs(mode)==mmode)
+        print_int(m_style);
+    else
+        print_int(-1);
 }

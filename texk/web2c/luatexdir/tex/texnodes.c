@@ -25,10 +25,10 @@
 #include "tokens.h"
 #undef name
 
-#define nDEBUG
+#define noDEBUG
 
 static const char _svn_version[] =
-    "$Id: texnodes.c 2029 2009-03-14 19:10:25Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/texnodes.c $";
+    "$Id: texnodes.c 2273 2009-04-13 09:52:04Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.c $";
 
 #define append_char(A) str_pool[pool_ptr++]=(A)
 #define cur_length (pool_ptr - str_start_macro(str_ptr))
@@ -49,13 +49,6 @@ typedef enum {
     pdf_dest_fitbv,
     pdf_dest_fitr,
 } pdf_destination_types;
-
-
-typedef enum {
-    set_origin = 0,
-    direct_page,
-    direct_always,
-} ctm_transform_modes;
 
 
 #define obj_aux(A)              obj_tab[(A)].int4
@@ -82,7 +75,7 @@ halfword rover = 0;
 
 halfword free_chain[MAX_CHAIN_SIZE] = { null };
 
-static int my_prealloc = 0;
+static integer my_prealloc = 0;
 
 int fix_node_lists = 1;
 
@@ -235,20 +228,20 @@ node_info node_data[] = {
     {unset_node, box_node_size, node_fields_unset, "unset"},
     {style_node, style_node_size, node_fields_style, "style"},
     {choice_node, style_node_size, node_fields_choice, "choice"},
-    {ord_noad, noad_size, node_fields_ord, "ord"},
-    {op_noad, noad_size, node_fields_op, "op"},
-    {bin_noad, noad_size, node_fields_bin, "bin"},
-    {rel_noad, noad_size, node_fields_rel, "rel"},
-    {open_noad, noad_size, node_fields_open, "open"},
-    {close_noad, noad_size, node_fields_close, "close"},
-    {punct_noad, noad_size, node_fields_punct, "punct"},
-    {inner_noad, noad_size, node_fields_inner, "inner"},
+    {simple_noad, noad_size, node_fields_ord, "noad"},
+    {old_op_noad, noad_size, node_fields_op, "op"},
+    {old_bin_noad, noad_size, node_fields_bin, "bin"},
+    {old_rel_noad, noad_size, node_fields_rel, "rel"},
+    {old_open_noad, noad_size, node_fields_open, "open"},
+    {old_close_noad, noad_size, node_fields_close, "close"},
+    {old_punct_noad, noad_size, node_fields_punct, "punct"},
+    {old_inner_noad, noad_size, node_fields_inner, "inner"},
     {radical_noad, radical_noad_size, node_fields_radical, "radical"},
     {fraction_noad, fraction_noad_size, node_fields_fraction, "fraction"},
-    {under_noad, noad_size, node_fields_under, "under"},
-    {over_noad, noad_size, node_fields_over, "over"},
+    {old_under_noad, noad_size, node_fields_under, "under"},
+    {old_over_noad, noad_size, node_fields_over, "over"},
     {accent_noad, accent_noad_size, node_fields_accent, "accent"},
-    {vcenter_noad, noad_size, node_fields_vcenter, "vcenter"},
+    {old_vcenter_noad, noad_size, node_fields_vcenter, "vcenter"},
     {fence_noad, fence_noad_size, node_fields_fence, "fence"},
     {math_char_node, math_kernel_node_size, node_fields_math_char, "math_char"},
     {sub_box_node, math_kernel_node_size, node_fields_sub_box, "sub_box"},
@@ -611,17 +604,7 @@ halfword copy_node(const halfword p)
         s = copy_node_list(script_script_mlist(p));
         script_script_mlist(r) = s;
         break;
-    case ord_noad:
-    case op_noad:
-    case bin_noad:
-    case rel_noad:
-    case open_noad:
-    case close_noad:
-    case punct_noad:
-    case inner_noad:
-    case over_noad:
-    case under_noad:
-    case vcenter_noad:
+    case simple_noad:
     case radical_noad:
     case accent_noad:
         s = copy_node_list(nucleus(p));
@@ -681,7 +664,7 @@ halfword copy_node(const halfword p)
             add_token_ref(write_tokens(p));
             break;
         case pdf_literal_node:
-            add_token_ref(pdf_literal_data(p));
+    	    copy_pdf_literal(r,p);
             break;
         case pdf_colorstack_node:
             if (pdf_colorstack_cmd(p) <= colorstack_data)
@@ -736,6 +719,10 @@ halfword copy_node(const halfword p)
         }
         break;
     }
+#ifdef DEBUG
+    fprintf(stderr, "Alloc-ing %s node %d (copy of %d)\n",
+            get_node_name(type(r), subtype(r)), (int) r, (int) p);
+#endif
     return r;
 }
 
@@ -963,7 +950,7 @@ void flush_node(halfword p)
             delete_token_ref(write_tokens(p));
             break;
         case pdf_literal_node:
-            delete_token_ref(pdf_literal_data(p));
+     	    free_pdf_literal(p);
             break;
         case pdf_colorstack_node:
             if (pdf_colorstack_cmd(p) <= colorstack_data)
@@ -1067,17 +1054,7 @@ void flush_node(halfword p)
         flush_node_list(script_mlist(p));
         flush_node_list(script_script_mlist(p));
         break;
-    case ord_noad:
-    case op_noad:
-    case bin_noad:
-    case rel_noad:
-    case open_noad:
-    case close_noad:
-    case punct_noad:
-    case inner_noad:
-    case over_noad:
-    case under_noad:
-    case vcenter_noad:
+    case simple_noad:
     case radical_noad:
     case accent_noad:
         flush_node_list(nucleus(p));
@@ -1205,7 +1182,8 @@ void check_node(halfword p)
             check_token_ref(write_tokens(p));
             break;
         case pdf_literal_node:
-            check_token_ref(pdf_literal_data(p));
+   	    if (pdf_literal_type(p)==normal)
+                check_token_ref(pdf_literal_data(p));
             break;
         case pdf_colorstack_node:
             if (pdf_colorstack_cmd(p) <= colorstack_data)
@@ -1306,17 +1284,7 @@ void check_node(halfword p)
         dorangetest(p, left_delimiter(p), var_mem_max);
         dorangetest(p, right_delimiter(p), var_mem_max);
         break;
-    case ord_noad:
-    case op_noad:
-    case bin_noad:
-    case rel_noad:
-    case open_noad:
-    case close_noad:
-    case punct_noad:
-    case inner_noad:
-    case over_noad:
-    case under_noad:
-    case vcenter_noad:
+    case simple_noad:
         dorangetest(p, nucleus(p), var_mem_max);
         dorangetest(p, subscr(p), var_mem_max);
         dorangetest(p, supscr(p), var_mem_max);
@@ -1665,7 +1633,7 @@ void dump_node_mem(void)
 
 void undump_node_mem(void)
 {
-    int x;
+    integer x;
     undump_int(x);
     undump_int(rover);
     var_mem_max = (x < 100000 ? 100000 : x);
@@ -1988,7 +1956,7 @@ void update_attribute_cache(void)
     p = attr_list_cache;
     for (i = 0; i <= max_used_attr; i++) {
         register int v = get_attribute(i);
-        if (v >= 0) {
+        if (v > UNUSED_ATTRIBUTE) {
             register halfword r = new_attribute_node(i, v);
             vlink(p) = r;
             p = r;
@@ -2011,6 +1979,9 @@ void build_attribute_list(halfword b)
         }
         attr_list_ref(attr_list_cache)++;
         node_attr(b) = attr_list_cache;
+#ifdef DEBUG
+        fprintf(stderr, "Added attrlist (%d) to node %d (count=%d)\n", node_attr(b), b, attr_list_ref(attr_list_cache)) ;
+#endif
     }
 }
 
@@ -2019,6 +1990,9 @@ void delete_attribute_ref(halfword b)
     if (b != null) {
         assert(type(b) == attribute_list_node);
         attr_list_ref(b)--;
+#ifdef DEBUG
+        fprintf(stderr, "Removed attrlistref (%d) (count=%d)\n", b, attr_list_ref(b)) ;
+#endif
         if (attr_list_ref(b) == 0) {
             if (b == attr_list_cache)
                 attr_list_cache = cache_disabled;
@@ -2132,12 +2106,12 @@ int unset_attribute(halfword n, int i, int val)
         return null;
     p = node_attr(n);
     if (p == null)
-        return -1;
+        return UNUSED_ATTRIBUTE;
     assert(vlink(p) != null);
     while (vlink(p) != null) {
         t = attribute_id(vlink(p));
         if (t > i)
-            return -1;
+            return UNUSED_ATTRIBUTE;
         if (t == i) {
             p = vlink(p);
             break;
@@ -2146,7 +2120,7 @@ int unset_attribute(halfword n, int i, int val)
         p = vlink(p);
     }
     if (attribute_id(p) != i)
-        return -1;
+        return UNUSED_ATTRIBUTE;
     /* if we are still here, the attribute exists */
     p = node_attr(n);
     if (attr_list_ref(p) != 1) {
@@ -2165,8 +2139,8 @@ int unset_attribute(halfword n, int i, int val)
     while (j-- > 0)
         p = vlink(p);
     t = attribute_value(p);
-    if (val == -1 || t == val) {
-        attribute_value(p) = -1;
+    if (val == UNUSED_ATTRIBUTE || t == val) {
+        attribute_value(p) = UNUSED_ATTRIBUTE;
     }
     return t;
 }
@@ -2175,23 +2149,23 @@ int has_attribute(halfword n, int i, int val)
 {
     register halfword p;
     if (!nodetype_has_attributes(type(n)))
-        return -1;
+        return UNUSED_ATTRIBUTE;
     p = node_attr(n);
     if (p == null || vlink(p) == null)
-        return -1;
+        return UNUSED_ATTRIBUTE;
     p = vlink(p);
     while (p != null) {
         if (attribute_id(p) == i) {
             int ret = attribute_value(p);
-            if (val == -1 || val == ret)
+            if (val == UNUSED_ATTRIBUTE || val == ret)
                 return ret;
-            return -1;
+            return UNUSED_ATTRIBUTE;
         } else if (attribute_id(p) > i) {
-            return -1;
+            return UNUSED_ATTRIBUTE;
         }
         p = vlink(p);
     }
-    return -1;
+    return UNUSED_ATTRIBUTE;
 }
 
 void print_short_node_contents(halfword p)
@@ -2324,21 +2298,7 @@ void show_whatsit_node(integer p)
         decr(pool_ptr);
         break;
     case pdf_literal_node:
-        tprint_esc("pdfliteral");
-        switch (pdf_literal_mode(p)) {
-        case set_origin:
-            break;
-        case direct_page:
-            tprint(" page");
-            break;
-        case direct_always:
-            tprint(" direct");
-            break;
-        default:
-            tconfusion("literal2");
-            break;
-        }
-        print_mark(pdf_literal_data(p));
+        show_pdf_literal(p);
         break;
     case pdf_colorstack_node:
         tprint_esc("pdfcolorstack ");

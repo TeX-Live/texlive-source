@@ -35,7 +35,7 @@
 #include "luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: texfont.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/texfont.c $";
+    "$Id: texfont.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/texfont.c $";
 
 #define proper_char_index(c) (c<=font_ec(f) && c>=font_bc(f))
 #define dxfree(a,b) { xfree(a); a = b ; }
@@ -129,6 +129,7 @@ integer new_font(void)
     ci = xcalloc(1, sizeof(charinfo));
     set_charinfo_name(ci, xstrdup(".notdef"));
     font_tables[id]->charinfo = ci;
+    font_tables[id]->charinfo_size = 1;
     font_tables[id]->charinfo_cache = NULL;
 
     return id;
@@ -147,13 +148,15 @@ charinfo *get_charinfo(internal_font_number f, integer c)
     if (proper_char_index(c)) {
         glyph = get_sa_item(Characters(f), c);
         if (!glyph) {
-            /* this could be optimized using controlled growth */
-            font_bytes += sizeof(charinfo);
+
             glyph = ++font_tables[f]->charinfo_count;
-            do_realloc(font_tables[f]->charinfo, (glyph + 1), charinfo);
-            memset(&(font_tables[f]->charinfo[glyph]), 0, sizeof(charinfo));
+            if (glyph>=font_tables[f]->charinfo_size) {
+                font_bytes += (16*sizeof(charinfo));
+                do_realloc(font_tables[f]->charinfo, (glyph + 16), charinfo);
+                memset(&(font_tables[f]->charinfo[glyph]), 0, (16*sizeof(charinfo)));
+                font_tables[f]->charinfo_size += 16;                
+            }
             font_tables[f]->charinfo[glyph].ef = 1000;  /* init */
-            font_tables[f]->charinfo_size = glyph;
             set_sa_item(font_tables[f]->characters, c, glyph, 1);       /* 1= global */
         }
         return &(font_tables[f]->charinfo[glyph]);
@@ -256,6 +259,53 @@ charinfo *copy_charinfo(charinfo * ci)
         set_charinfo_hor_variants(co,
                                   copy_variants(get_charinfo_hor_variants(ci)));
     }
+    /* TODO: copy mathkerns */
+    x = ci->top_left_math_kerns;
+    co->top_left_math_kerns = x;
+    if (x > 0) {
+        co->top_left_math_kern_array = xmalloc(2 * sizeof(scaled) * x);
+        for (k = 0; k < co->top_left_math_kerns; k++) {
+            co->top_left_math_kern_array[(2 * k)] =
+                ci->top_left_math_kern_array[(2 * k)];
+            co->top_left_math_kern_array[(2 * k) + 1] =
+                ci->top_left_math_kern_array[(2 * k) + 1];
+        }
+    }
+    x = ci->top_right_math_kerns;
+    co->top_right_math_kerns = x;
+    if (x > 0) {
+        co->top_right_math_kern_array = xmalloc(2 * sizeof(scaled) * x);
+        for (k = 0; k < co->top_right_math_kerns; k++) {
+            co->top_right_math_kern_array[(2 * k)] =
+                ci->top_right_math_kern_array[(2 * k)];
+            co->top_right_math_kern_array[(2 * k) + 1] =
+                ci->top_right_math_kern_array[(2 * k) + 1];
+        }
+    }
+    x = ci->bottom_right_math_kerns;
+    co->bottom_right_math_kerns = x;
+    if (x > 0) {
+        co->bottom_right_math_kern_array = xmalloc(2 * sizeof(scaled) * x);
+        for (k = 0; k < co->bottom_right_math_kerns; k++) {
+            co->bottom_right_math_kern_array[(2 * k)] =
+                ci->bottom_right_math_kern_array[(2 * k)];
+            co->bottom_right_math_kern_array[(2 * k) + 1] =
+                ci->bottom_right_math_kern_array[(2 * k) + 1];
+        }
+    }
+    x = ci->bottom_left_math_kerns;
+    co->bottom_left_math_kerns = x;
+    if (x > 0) {
+        co->bottom_left_math_kern_array = xmalloc(2 * sizeof(scaled) * x);
+        for (k = 0; k < co->bottom_left_math_kerns; k++) {
+            co->bottom_left_math_kern_array[(2 * k)] =
+                ci->bottom_left_math_kern_array[(2 * k)];
+            co->bottom_left_math_kern_array[(2 * k) + 1] =
+                ci->bottom_left_math_kern_array[(2 * k) + 1];
+        }
+    }
+
+
     return co;
 }
 
@@ -365,7 +415,7 @@ void dump_variant(extinfo * ext)
 
 extinfo *undump_variant(void)
 {
-    int x;
+    integer x;
     extinfo *ext;
     undump_int(x);
     if (x == 0)
@@ -569,6 +619,136 @@ void set_charinfo_hor_variants(charinfo * ci, extinfo * ext)
     ci->hor_variants = ext;
 
 }
+
+int get_charinfo_math_kerns(charinfo * ci, int id)
+{
+
+    int k = 0;                  /* all callers check for result>0 */
+    if (id == top_left_kern) {
+        k = ci->top_left_math_kerns;
+    } else if (id == bottom_left_kern) {
+        k = ci->bottom_left_math_kerns;
+    } else if (id == bottom_right_kern) {
+        k = ci->bottom_right_math_kerns;
+    } else if (id == top_right_kern) {
+        k = ci->top_right_math_kerns;
+    } else {
+        tconfusion("get_charinfo_math_kerns");
+    }
+    return k;
+}
+
+void add_charinfo_math_kern(charinfo * ci, int id, scaled ht, scaled krn)
+{
+    int k;
+    if (id == top_left_kern) {
+        k = ci->top_left_math_kerns;
+        do_realloc(ci->top_left_math_kern_array, ((k + 1) * 2), sizeof(scaled));
+        ci->top_left_math_kern_array[(2 * (k))] = ht;
+        ci->top_left_math_kern_array[((2 * (k)) + 1)] = krn;
+        ci->top_left_math_kerns++;
+    } else if (id == bottom_left_kern) {
+        k = ci->bottom_left_math_kerns;
+        do_realloc(ci->bottom_left_math_kern_array, ((k + 1) * 2),
+                   sizeof(scaled));
+        ci->bottom_left_math_kern_array[(2 * (k))] = ht;
+        ci->bottom_left_math_kern_array[(2 * (k)) + 1] = krn;
+        ci->bottom_left_math_kerns++;
+    } else if (id == bottom_right_kern) {
+        k = ci->bottom_right_math_kerns;
+        do_realloc(ci->bottom_right_math_kern_array, ((k + 1) * 2),
+                   sizeof(scaled));
+        ci->bottom_right_math_kern_array[(2 * (k))] = ht;
+        ci->bottom_right_math_kern_array[(2 * (k)) + 1] = krn;
+        ci->bottom_right_math_kerns++;
+    } else if (id == top_right_kern) {
+        k = ci->top_right_math_kerns;
+        do_realloc(ci->top_right_math_kern_array, ((k + 1) * 2),
+                   sizeof(scaled));
+        ci->top_right_math_kern_array[(2 * (k))] = ht;
+        ci->top_right_math_kern_array[(2 * (k)) + 1] = krn;
+        ci->top_right_math_kerns++;
+    } else {
+        tconfusion("add_charinfo_math_kern");
+    }
+}
+
+
+static void dump_math_kerns(charinfo * ci)
+{
+    integer k, l;
+    l = ci->top_left_math_kerns;
+    dump_int(l);
+    for (k = 0; k < l; k++) {
+        dump_int(ci->top_left_math_kern_array[(2 * k)]);
+        dump_int(ci->top_left_math_kern_array[(2 * k) + 1]);
+    }
+    l = ci->bottom_left_math_kerns;
+    dump_int(l);
+    for (k = 0; k < l; k++) {
+        dump_int(ci->bottom_left_math_kern_array[(2 * k)]);
+        dump_int(ci->bottom_left_math_kern_array[(2 * k) + 1]);
+    }
+    l = ci->bottom_right_math_kerns;
+    dump_int(l);
+    for (k = 0; k < l; k++) {
+        dump_int(ci->bottom_right_math_kern_array[(2 * k)]);
+        dump_int(ci->bottom_right_math_kern_array[(2 * k) + 1]);
+    }
+    l = ci->top_right_math_kerns;
+    dump_int(l);
+    for (k = 0; k < l; k++) {
+        dump_int(ci->bottom_left_math_kern_array[(2 * k)]);
+        dump_int(ci->bottom_left_math_kern_array[(2 * k) + 1]);
+    }
+}
+
+static void undump_math_kerns(charinfo * ci)
+{
+    int k;
+    integer x;
+    undump_int(x);
+    ci->top_left_math_kerns = (int) x;
+    if (x > 0)
+        ci->top_left_math_kern_array = xmalloc(2 * sizeof(scaled) * x);
+    for (k = 0; k < ci->top_left_math_kerns; k++) {
+        undump_int(x);
+        ci->top_left_math_kern_array[(2 * k)] = (scaled) x;
+        undump_int(x);
+        ci->top_left_math_kern_array[(2 * k) + 1] = (scaled) x;
+    }
+    undump_int(x);
+    ci->bottom_left_math_kerns = (int) x;
+    if (x > 0)
+        ci->bottom_left_math_kern_array = xmalloc(2 * sizeof(scaled) * x);
+    for (k = 0; k < ci->bottom_left_math_kerns; k++) {
+        undump_int(x);
+        ci->bottom_left_math_kern_array[(2 * k)] = (scaled) x;
+        undump_int(x);
+        ci->bottom_left_math_kern_array[(2 * k) + 1] = (scaled) x;
+    }
+    undump_int(x);
+    ci->bottom_right_math_kerns = (int) x;
+    if (x > 0)
+        ci->bottom_right_math_kern_array = xmalloc(2 * sizeof(scaled) * x);
+    for (k = 0; k < ci->bottom_right_math_kerns; k++) {
+        undump_int(x);
+        ci->bottom_right_math_kern_array[(2 * k)] = (scaled) x;
+        undump_int(x);
+        ci->bottom_right_math_kern_array[(2 * k) + 1] = (scaled) x;
+    }
+    undump_int(x);
+    ci->top_right_math_kerns = (int) x;
+    if (x > 0)
+        ci->top_right_math_kern_array = xmalloc(2 * sizeof(scaled) * x);
+    for (k = 0; k < ci->top_right_math_kerns; k++) {
+        undump_int(x);
+        ci->top_right_math_kern_array[(2 * k)] = (scaled) x;
+        undump_int(x);
+        ci->top_right_math_kern_array[(2 * k) + 1] = (scaled) x;
+    }
+}
+
 
 /* In TeX, extensibles were fairly simple things. 
    This function squeezes a TFM extensible into the vertical extender structures.
@@ -1041,7 +1221,9 @@ boolean font_shareable(internal_font_number f, internal_font_number k)
         }
     } else {
         if ((font_filename(k) != NULL && font_filename(f) != NULL &&
-             strcmp(font_filename(k), font_filename(f)) == 0)
+             strcmp(font_filename(k), font_filename(f)) == 0 &&
+             font_fullname(k) != NULL && font_fullname(f) != NULL &&
+             strcmp(font_fullname(k), font_fullname(f)) == 0)
             || (pdf_font_auto_expand(f)
                 && (pdf_font_blink(f) != 0)     /* 0 = nullfont */
                 &&same_font_name(k, pdf_font_blink(f)))) {
@@ -1244,7 +1426,7 @@ scaled get_kern(internal_font_number f, integer lc, integer rc)
 void dump_charinfo(int f, int c)
 {
     charinfo *co;
-    int x;
+    integer x;
     liginfo *lig;
     kerninfo *kern;
     dump_int(c);
@@ -1301,15 +1483,53 @@ void dump_charinfo(int f, int c)
         dump_charinfo_variants(get_charinfo_vert_variants(co));
         dump_charinfo_variants(get_charinfo_hor_variants(co));
     }
+    dump_math_kerns(co);
+}
+
+void dump_font_entry(texfont * f)
+{
+    dump_int(f->_font_size);
+    dump_int(f->_font_dsize);
+    dump_int(f->_font_cidversion);
+    dump_int(f->_font_cidsupplement);
+    dump_int(f->_font_ec);
+    dump_int(f->_font_checksum);
+    dump_int(f->_font_used);
+    dump_int(f->_font_touched);
+    dump_int(f->_font_cache_id);
+    dump_int(f->_font_encodingbytes);
+    dump_int(f->_font_slant);
+    dump_int(f->_font_extend);
+    dump_int(f->_font_tounicode);
+    dump_int(f->_font_type);
+    dump_int(f->_font_format);
+    dump_int(f->_font_embedding);
+    dump_int(f->_font_bc);
+    dump_int(f->_hyphen_char);
+    dump_int(f->_skew_char);
+    dump_int(f->_font_natural_dir);
+    dump_int(f->_font_params);
+    dump_int(f->_font_math_params);
+    dump_int(f->ligatures_disabled);
+    dump_int(f->_pdf_font_num);
+    dump_int(f->_pdf_font_size);
+    dump_int(f->_pdf_font_blink);
+    dump_int(f->_pdf_font_elink);
+    dump_int(f->_pdf_font_expand_ratio);
+    dump_int(f->_pdf_font_shrink);
+    dump_int(f->_pdf_font_stretch);
+    dump_int(f->_pdf_font_step);
+    dump_int(f->_pdf_font_auto_expand);
+    dump_int(f->_pdf_font_attr);
 }
 
 void dump_font(int f)
 {
-    int i, x;
+    integer i, x;
 
     set_font_used(f, 0);
     font_tables[f]->charinfo_cache = NULL;
-    dump_things(*(font_tables[f]), 1);
+    dump_font_entry(font_tables[f]);
     dump_string(font_name(f));
     dump_string(font_area(f));
     dump_string(font_filename(f));
@@ -1346,7 +1566,7 @@ void dump_font(int f)
 int undump_charinfo(int f)
 {
     charinfo *co;
-    int x, i;
+    integer x, i;
     char *s = NULL;
     liginfo *lig = NULL;
     kerninfo *kern = NULL;
@@ -1427,6 +1647,7 @@ int undump_charinfo(int f)
         set_charinfo_vert_variants(co, undump_charinfo_variants());
         set_charinfo_hor_variants(co, undump_charinfo_variants());
     }
+    undump_math_kerns(co);
     return i;
 }
 
@@ -1437,25 +1658,59 @@ int undump_charinfo(int f)
     a(f,s); }
 
 
+void undump_font_entry(texfont * f)
+{
+    integer x = 0;
+    /* *INDENT-OFF* */  
+    undump_int(x); f->_font_size = x;
+    undump_int(x); f->_font_dsize = x;
+    undump_int(x); f->_font_cidversion = x;
+    undump_int(x); f->_font_cidsupplement = x;
+    undump_int(x); f->_font_ec = x;
+    undump_int(x); f->_font_checksum = x;
+    undump_int(x); f->_font_used = x;
+    undump_int(x); f->_font_touched = x;
+    undump_int(x); f->_font_cache_id = x;
+    undump_int(x); f->_font_encodingbytes = x;
+    undump_int(x); f->_font_slant = x;
+    undump_int(x); f->_font_extend = x;
+    undump_int(x); f->_font_tounicode = x;
+    undump_int(x); f->_font_type = x;
+    undump_int(x); f->_font_format = x;
+    undump_int(x); f->_font_embedding = x;
+    undump_int(x); f->_font_bc = x;
+    undump_int(x); f->_hyphen_char = x;
+    undump_int(x); f->_skew_char = x;
+    undump_int(x); f->_font_natural_dir = x;
+    undump_int(x); f->_font_params = x;
+    undump_int(x); f->_font_math_params = x;
+    undump_int(x); f->ligatures_disabled = x;
+    undump_int(x); f->_pdf_font_num = x;
+    undump_int(x); f->_pdf_font_size = x;
+    undump_int(x); f->_pdf_font_blink = x;
+    undump_int(x); f->_pdf_font_elink = x;
+    undump_int(x); f->_pdf_font_expand_ratio = x;
+    undump_int(x); f->_pdf_font_shrink = x;
+    undump_int(x); f->_pdf_font_stretch = x;
+    undump_int(x); f->_pdf_font_step = x;
+    undump_int(x); f->_pdf_font_auto_expand = x;
+    undump_int(x); f->_pdf_font_attr = x;
+    /* *INDENT-ON* */  
+}
+
+
+
 void undump_font(int f)
 {
-    int x, i;
+    integer x, i;
     texfont *tt;
     charinfo *ci;
     char *s;
     grow_font_table(f);
-    font_tables[f] = NULL;
-    font_bytes += sizeof(texfont);
     tt = xmalloc(sizeof(texfont));
-    undump_things(*tt, 1);
-    /* these |char *| need resetting */
-    tt->_font_name = NULL;
-    tt->_font_area = NULL;
-    tt->_font_filename = NULL;
-    tt->_font_fullname = NULL;
-    tt->_font_encodingname = NULL;
-    tt->_font_cidregistry = NULL;
-    tt->_font_cidordering = NULL;
+    memset(tt, 0, sizeof(texfont));
+    font_bytes += sizeof(texfont);
+    undump_font_entry(tt);
     font_tables[f] = tt;
 
     undump_font_string(set_font_name);
@@ -1476,23 +1731,16 @@ void undump_font(int f)
         font_bytes += i;
         math_param_base(f) = xmalloc(i);
         undump_things(*math_param_base(f), (font_math_params(f) + 1));
-    } else {
-        math_param_base(f) = NULL;
     }
 
-    font_tables[f]->_left_boundary = NULL;
     undump_int(x);
     if (x) {
         i = undump_charinfo(f);
-    }
-    /* left boundary */
-    font_tables[f]->_right_boundary = NULL;
+    }                           /* left boundary */
     undump_int(x);
     if (x) {
         i = undump_charinfo(f);
-    }
-
-    /* right boundary */
+    }                           /* right boundary */
     font_tables[f]->characters = new_sa_tree(1, 0);     /* stack size 1, default item value 0 */
     ci = xcalloc(1, sizeof(charinfo));
     set_charinfo_name(ci, xstrdup(".notdef"));

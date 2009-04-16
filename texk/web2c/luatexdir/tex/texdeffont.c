@@ -25,7 +25,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: texdeffont.c 2086 2009-03-22 15:32:08Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/tex/texdeffont.c $";
+    "$Id: texdeffont.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texdeffont.c $";
 
 #define text(a) hash[(a)].rh    /* string number for control sequence name */
 #define null_cs 1               /* equivalent of \.{\\csname\\endcsname} */
@@ -157,7 +157,8 @@ void tex_def_font(small_number a)
             char err[256];
             char *errhelp[] =
                 { "The magnification ratio must be between 1 and 32768.",
-      NULL };
+                NULL
+            };
             snprintf(err, 255,
                      "Illegal magnification has been changed to 1000 (%d)",
                      (int) cur_val);

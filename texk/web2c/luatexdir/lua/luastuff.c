@@ -21,7 +21,7 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: luastuff.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/luastuff.c $";
+    "$Id: luastuff.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luastuff.c $";
 
 lua_State *Luas = NULL;
 
@@ -71,7 +71,7 @@ const char *getS(lua_State * L, void *ud, size_t * size)
 void *my_luaalloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
     void *ret = NULL;
-    (void)ud; /* for -Wunused */
+    (void) ud;                  /* for -Wunused */
     if (nsize == 0)
         free(ptr);
     else
@@ -88,6 +88,34 @@ static int my_luapanic(lua_State * L)
     return 0;
 }
 
+static const luaL_Reg lualibs[] = {
+    {"", luaopen_base},
+    {"package", luaopen_package},
+    {"table", luaopen_table},
+    {"io", luaopen_io},
+    {"os", luaopen_os},
+    {"string", luaopen_string},
+    {"math", luaopen_math},
+    {"debug", luaopen_debug},
+    {"unicode", luaopen_unicode},
+    {"zip", luaopen_zip},
+    {"lpeg", luaopen_lpeg},
+    {"md5", luaopen_md5},
+    {"lfs", luaopen_lfs},
+    {"profiler", luaopen_profiler},
+    {NULL, NULL}
+};
+
+
+static void do_openlibs(lua_State * L)
+{
+    const luaL_Reg *lib = lualibs;
+    for (; lib->func; lib++) {
+        lua_pushcfunction(L, lib->func);
+        lua_pushstring(L, lib->name);
+        lua_call(L, 1, 0);
+    }
+}
 
 void luainterpreter(void)
 {
@@ -99,7 +127,7 @@ void luainterpreter(void)
     }
     lua_atpanic(L, &my_luapanic);
 
-    luaL_openlibs(L);
+    do_openlibs(L);             /* does all the 'simple' libraries */
 
     open_oslibext(L, safer_option);
 
@@ -107,16 +135,6 @@ void luainterpreter(void)
     lua_pushstring(L, "");
     lua_setfield(L, -2, "cpath");
     lua_pop(L, 1);              /* pop the table */
-
-    /*luaopen_unicode(L); */
-    lua_pushcfunction(L, luaopen_unicode);
-    lua_pushstring(L, "unicode");
-    lua_call(L, 1, 0);
-
-    /*luaopen_zip(L); */
-    lua_pushcfunction(L, luaopen_zip);
-    lua_pushstring(L, "zip");
-    lua_call(L, 1, 0);
 
     /* luasockets */
     /* socket and mime are a bit tricky to open because
@@ -145,53 +163,33 @@ void luainterpreter(void)
 
         luatex_socketlua_open(L);       /* preload the pure lua modules */
     }
-
-    /*luaopen_lpeg(L); */
-    lua_pushcfunction(L, luaopen_lpeg);
-    lua_pushstring(L, "lpeg");
-    lua_call(L, 1, 0);
-
-    /*luaopen_md5(L); */
-    lua_pushcfunction(L, luaopen_md5);
-    lua_pushstring(L, "md5");
-    lua_call(L, 1, 0);
-
-    /*luaopen_lfs(L); */
-    lua_pushcfunction(L, luaopen_lfs);
-    lua_pushstring(L, "lfs");
-    lua_call(L, 1, 0);
-
     /* zlib. slightly odd calling convention */
     luaopen_zlib(L);
     lua_setglobal(L, "zlib");
     luaopen_gzip(L);
-    /* fontforge */
-    luaopen_ff(L);
-    /* profiler, from kepler */
-    luaopen_profiler(L);
 
+    /* our own libraries */
+    luaopen_ff(L);
     luaopen_pdf(L);
     luaopen_tex(L);
     luaopen_token(L);
     luaopen_node(L);
     luaopen_texio(L);
     luaopen_kpse(L);
-
     luaopen_callback(L);
-    lua_createtable(L, 0, 0);
-    lua_setglobal(L, "texconfig");
-
     luaopen_lua(L, startup_filename);
     luaopen_stats(L);
     luaopen_font(L);
     luaopen_lang(L);
+    luaopen_mplib(L);
 
     /* luaopen_img(L); */
     lua_pushcfunction(L, luaopen_img);
     lua_pushstring(L, "img");
     lua_call(L, 1, 0);
 
-    luaopen_mplib(L);
+    lua_createtable(L, 0, 0);
+    lua_setglobal(L, "texconfig");
 
     if (safer_option) {
         /* disable some stuff if --safer */
@@ -295,27 +293,27 @@ void luacall(int p, int nameptr)
     if (ls.size > 0) {
         if (nameptr > 0) {
             lua_id = tokenlist_to_cstring(nameptr, 1, &l);
-        } else if (nameptr<0) {
-            char *tmp = get_lua_name((nameptr+65536));
-            if (tmp!=NULL) 
+        } else if (nameptr < 0) {
+            char *tmp = get_lua_name((nameptr + 65536));
+            if (tmp != NULL)
                 lua_id = xstrdup(tmp);
             else
                 lua_id = xstrdup("\\latelua ");
         } else {
             lua_id = xmalloc(20);
-            snprintf((char *) lua_id, 20, "\\latelua ") ;
+            snprintf((char *) lua_id, 20, "\\latelua ");
         }
 
         i = lua_load(Luas, getS, &ls, lua_id);
         if (i != 0) {
             Luas = luatex_error(Luas, (i == LUA_ERRSYNTAX ? 0 : 1));
         } else {
-            int base = lua_gettop(Luas);     /* function index */
+            int base = lua_gettop(Luas);        /* function index */
             lua_checkstack(Luas, 1);
-            lua_pushcfunction(Luas, lua_traceback);  /* push traceback function */
-            lua_insert(Luas, base);  /* put it under chunk  */
+            lua_pushcfunction(Luas, lua_traceback);     /* push traceback function */
+            lua_insert(Luas, base);     /* put it under chunk  */
             i = lua_pcall(Luas, 0, 0, base);
-            lua_remove(Luas, base);  /* remove traceback function */
+            lua_remove(Luas, base);     /* remove traceback function */
             if (i != 0) {
                 lua_gc(Luas, LUA_GCCOLLECT, 0);
                 Luas = luatex_error(Luas, (i == LUA_ERRRUN ? 0 : 1));
@@ -332,7 +330,7 @@ void luatokencall(int p, int nameptr)
     int i, l;
     char *s = NULL;
     char *lua_id;
-    assert (Luas);
+    assert(Luas);
     l = 0;
     lua_active++;
     s = tokenlist_to_cstring(p, 1, &l);
@@ -341,9 +339,9 @@ void luatokencall(int p, int nameptr)
     if (ls.size > 0) {
         if (nameptr > 0) {
             lua_id = tokenlist_to_cstring(nameptr, 1, &l);
-        } else if (nameptr<0) {
-            char *tmp = get_lua_name((nameptr+65536));
-            if (tmp!=NULL) 
+        } else if (nameptr < 0) {
+            char *tmp = get_lua_name((nameptr + 65536));
+            if (tmp != NULL)
                 lua_id = xstrdup(tmp);
             else
                 lua_id = xstrdup("\\directlua ");
@@ -355,12 +353,12 @@ void luatokencall(int p, int nameptr)
         if (i != 0) {
             Luas = luatex_error(Luas, (i == LUA_ERRSYNTAX ? 0 : 1));
         } else {
-            int base = lua_gettop(Luas);     /* function index */
+            int base = lua_gettop(Luas);        /* function index */
             lua_checkstack(Luas, 1);
-            lua_pushcfunction(Luas, lua_traceback);  /* push traceback function */
-            lua_insert(Luas, base);  /* put it under chunk  */
+            lua_pushcfunction(Luas, lua_traceback);     /* push traceback function */
+            lua_insert(Luas, base);     /* put it under chunk  */
             i = lua_pcall(Luas, 0, 0, base);
-            lua_remove(Luas, base);  /* remove traceback function */
+            lua_remove(Luas, base);     /* remove traceback function */
             if (i != 0) {
                 lua_gc(Luas, LUA_GCCOLLECT, 0);
                 Luas = luatex_error(Luas, (i == LUA_ERRRUN ? 0 : 1));

@@ -23,7 +23,7 @@
 #include "image.h"
 
 static const char _svn_version[] =
-    "$Id: writepng.c 2029 2009-03-14 19:10:25Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/image/writepng.c $";
+    "$Id: writepng.c 2029 2009-03-14 19:10:25Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writepng.c $";
 
 static int transparent_page_group = -1;
 

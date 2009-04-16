@@ -25,7 +25,7 @@
 #include <kpathsea/readable.h>
 
 static const char _svn_version[] =
-    "$Id: lkpselib.c 2093 2009-03-23 11:44:13Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/lkpselib.c $";
+    "$Id: lkpselib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lkpselib.c $";
 
 static const int filetypes[] = {
     kpse_gf_format,
@@ -197,7 +197,7 @@ static int lua_kpathsea_find_file(lua_State * L)
     int i;
     int ftype = kpse_tex_format;
     int mexist = 0;
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     char *st = (char *) luaL_checkstring(L, 2);
     i = lua_gettop(L);
     while (i > 2) {
@@ -240,10 +240,10 @@ static int show_path(lua_State * L)
 
 static int lua_kpathsea_show_path(lua_State * L)
 {
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     int op = luaL_checkoption(L, -1, "tex", filetypenames);
     int user_format = filetypes[op];
-    if (!(*kp)->format_info[user_format].type)    /* needed if arg was numeric */
+    if (!(*kp)->format_info[user_format].type)  /* needed if arg was numeric */
         kpathsea_init_format(*kp, user_format);
     lua_pushstring(L, (*kp)->format_info[user_format].path);
     return 1;
@@ -259,7 +259,7 @@ static int expand_path(lua_State * L)
 
 static int lua_kpathsea_expand_path(lua_State * L)
 {
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *st = luaL_checkstring(L, 2);
     lua_pushstring(L, kpathsea_path_expand(*kp, st));
     return 1;
@@ -275,7 +275,7 @@ static int expand_braces(lua_State * L)
 
 static int lua_kpathsea_expand_braces(lua_State * L)
 {
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *st = luaL_checkstring(L, 2);
     lua_pushstring(L, kpathsea_brace_expand(*kp, st));
     return 1;
@@ -292,7 +292,7 @@ static int expand_var(lua_State * L)
 
 static int lua_kpathsea_expand_var(lua_State * L)
 {
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *st = luaL_checkstring(L, 2);
     lua_pushstring(L, kpathsea_var_expand(*kp, st));
     return 1;
@@ -309,7 +309,7 @@ static int var_value(lua_State * L)
 
 static int lua_kpathsea_var_value(lua_State * L)
 {
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *st = luaL_checkstring(L, 2);
     lua_pushstring(L, kpathsea_var_value(*kp, st));
     return 1;
@@ -358,12 +358,12 @@ static int init_prog(lua_State * L)
 
 static int lua_kpathsea_init_prog(lua_State * L)
 {
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *prefix = luaL_checkstring(L, 2);
     unsigned dpi = luaL_checkinteger(L, 3);
     const char *mode = luaL_checkstring(L, 4);
     const char *fallback = luaL_optstring(L, 5, NULL);
-    kpathsea_init_prog(*kp,prefix, dpi, mode, fallback);
+    kpathsea_init_prog(*kp, prefix, dpi, mode, fallback);
     return 0;
 }
 
@@ -377,16 +377,16 @@ static int readable_file(lua_State * L)
 
 static int lua_kpathsea_readable_file(lua_State * L)
 {
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *name = luaL_checkstring(L, 2);
-    lua_pushstring(L, (char *) kpathsea_readable_file(*kp,name));
+    lua_pushstring(L, (char *) kpathsea_readable_file(*kp, name));
     return 1;
 }
 
 
 static int lua_kpathsea_finish(lua_State * L)
 {
-    kpathsea *kp = (kpathsea *)luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     kpathsea_finish(*kp);
     return 0;
 }
@@ -395,41 +395,41 @@ static int lua_kpathsea_new(lua_State * L)
 {
     kpathsea kpse = NULL;
     kpathsea *kp = NULL;
-    char *argv = (char *)luaL_checkstring(L,1);
-    char *liar = (char *)luaL_optstring(L,2,argv);
+    char *argv = (char *) luaL_checkstring(L, 1);
+    char *liar = (char *) luaL_optstring(L, 2, argv);
     kpse = kpathsea_new();
     kpathsea_set_program_name(kpse, argv, liar);
-    kp = (kpathsea *)lua_newuserdata(L, sizeof(kpathsea *));
+    kp = (kpathsea *) lua_newuserdata(L, sizeof(kpathsea *));
     *kp = kpse;
     luaL_getmetatable(L, KPATHSEA_METATABLE);
-    lua_setmetatable(L, -2);    
+    lua_setmetatable(L, -2);
     return 1;
 }
 
 static const struct luaL_reg kpselib_m[] = {
-    {"__gc",          lua_kpathsea_finish        },
-    {"init_prog",     lua_kpathsea_init_prog     },
-    {"readable_file", lua_kpathsea_readable_file },
-    {"find_file",     lua_kpathsea_find_file     },
-    {"expand_path",   lua_kpathsea_expand_path   },
-    {"expand_var",    lua_kpathsea_expand_var    },
-    {"expand_braces", lua_kpathsea_expand_braces },
-    {"var_value",     lua_kpathsea_var_value     },
-    {"show_path",     lua_kpathsea_show_path     },
+    {"__gc", lua_kpathsea_finish},
+    {"init_prog", lua_kpathsea_init_prog},
+    {"readable_file", lua_kpathsea_readable_file},
+    {"find_file", lua_kpathsea_find_file},
+    {"expand_path", lua_kpathsea_expand_path},
+    {"expand_var", lua_kpathsea_expand_var},
+    {"expand_braces", lua_kpathsea_expand_braces},
+    {"var_value", lua_kpathsea_var_value},
+    {"show_path", lua_kpathsea_show_path},
     {NULL, NULL}                /* sentinel */
 };
 
 static const struct luaL_reg kpselib_l[] = {
-    {"new",              lua_kpathsea_new },
-    {"set_program_name", set_program_name },
-    {"init_prog",        init_prog        },
-    {"readable_file",    readable_file    },
-    {"find_file",        find_file        },
-    {"expand_path",      expand_path      },
-    {"expand_var",       expand_var       },
-    {"expand_braces",    expand_braces    },
-    {"var_value",        var_value        },
-    {"show_path",        show_path        },
+    {"new", lua_kpathsea_new},
+    {"set_program_name", set_program_name},
+    {"init_prog", init_prog},
+    {"readable_file", readable_file},
+    {"find_file", find_file},
+    {"expand_path", expand_path},
+    {"expand_var", expand_var},
+    {"expand_braces", expand_braces},
+    {"var_value", var_value},
+    {"show_path", show_path},
     {NULL, NULL}                /* sentinel */
 };
 
@@ -437,7 +437,7 @@ int luaopen_kpse(lua_State * L)
 {
     luaL_newmetatable(L, KPATHSEA_METATABLE);
     lua_pushvalue(L, -1);
-    lua_setfield(L, -2,"__index");
+    lua_setfield(L, -2, "__index");
     luaL_register(L, NULL, kpselib_m);
     luaL_register(L, "kpse", kpselib_l);
     return 1;

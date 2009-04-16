@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfont.h 2057 2009-03-19 15:45:47Z taco $ */
+/* $Id: texfont.h 2271 2009-04-12 23:42:21Z oneiros $ */
 
 /* Here we have the interface to LuaTeX's font system, as seen from the
    main pascal program. There is a companion list in luatex.defines to
@@ -75,6 +75,14 @@ typedef struct charinfo {
     char *tounicode;            /* unicode equivalent */
     extinfo *hor_variants;      /* horizontal variants */
     extinfo *vert_variants;     /* vertical variants */
+    int top_left_math_kerns;
+    int top_right_math_kerns;
+    int bottom_right_math_kerns;
+    int bottom_left_math_kerns;
+    scaled *top_left_math_kern_array; 
+    scaled *top_right_math_kern_array; 
+    scaled *bottom_right_math_kern_array; 
+    scaled *bottom_left_math_kern_array; 
 } charinfo;
 
 
@@ -394,10 +402,16 @@ typedef enum {
 
 /* now for characters  */
 
+typedef enum {
+    top_right_kern = 1,
+    bottom_right_kern = 2,
+    bottom_left_kern = 3,
+    top_left_kern = 4 
+} font_math_kern_codes;
+
 extern charinfo *get_charinfo(internal_font_number f, integer c);
 extern integer char_exists(internal_font_number f, integer c);
 extern charinfo *char_info(internal_font_number f, integer c);
-
 
 extern void set_charinfo_width(charinfo * ci, scaled val);
 extern void set_charinfo_height(charinfo * ci, scaled val);
@@ -418,6 +432,9 @@ extern void set_charinfo_extensible(charinfo * ci, int a, int b, int c, int d);
 extern void set_charinfo_ef(charinfo * ci, scaled val);
 extern void set_charinfo_lp(charinfo * ci, scaled val);
 extern void set_charinfo_rp(charinfo * ci, scaled val);
+
+extern void add_charinfo_math_kern(charinfo *ci, int type, scaled ht, scaled krn);
+extern int  get_charinfo_math_kerns(charinfo * ci, int id);
 
 #  define set_char_used(f,a,b)  do {                            \
         if (char_exists(f,a))                                   \

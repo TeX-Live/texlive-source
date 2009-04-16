@@ -25,7 +25,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: lnodelib.c 2027 2009-03-14 18:47:32Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/lnodelib.c $";
+    "$Id: lnodelib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
 #define init_luaS_index(a) do {                                         \
     lua_pushliteral(L,#a);                                              \
@@ -450,7 +450,7 @@ static int lua_nodelib_append(lua_State * L)
     j = lua_gettop(L);
     for (i = 1; i <= j; i++) {
         n = check_isnode(L, i);
-        m = copy_node_list(*n);
+        m = *n;
         new_tail_append(m);
         while (vlink(m) != null) {
             m = vlink(m);
@@ -786,8 +786,8 @@ static int lua_nodelib_has_attribute(lua_State * L)
     n = check_isnode(L, 1);
     if (n != NULL) {
         i = lua_tointeger(L, 2);
-        val = luaL_optinteger(L, 3, -1);
-        if ((val = has_attribute(*n, i, val)) >= 0) {
+        val = luaL_optinteger(L, 3, UNUSED_ATTRIBUTE);
+        if ((val = has_attribute(*n, i, val)) > UNUSED_ATTRIBUTE) {
             lua_pushnumber(L, val);
             return 1;
         }
@@ -804,7 +804,7 @@ static int lua_nodelib_set_attribute(lua_State * L)
         i = lua_tointeger(L, 2);
         val = lua_tointeger(L, 3);
         n = check_isnode(L, 1);
-        if (val < 0) {
+        if (val == UNUSED_ATTRIBUTE) {
             (void) unset_attribute(*n, i, val);
         } else {
             set_attribute(*n, i, val);
@@ -823,10 +823,10 @@ static int lua_nodelib_unset_attribute(lua_State * L)
     int i, val, ret;
     if (lua_gettop(L) <= 3) {
         i = luaL_checknumber(L, 2);
-        val = luaL_optnumber(L, 3, -1);
+        val = luaL_optnumber(L, 3, UNUSED_ATTRIBUTE);
         n = check_isnode(L, 1);
         ret = unset_attribute(*n, i, val);
-        if (ret >= 0) {
+        if (ret > UNUSED_ATTRIBUTE) {
             lua_pushnumber(L, ret);
         } else {
             lua_pushnil(L);
@@ -1093,7 +1093,11 @@ static void lua_nodelib_getfield_whatsit(lua_State * L, int n, int field)
                 lua_pushnumber(L, pdf_literal_mode(n));
                 break;
             case 5:
-                tokenlist_to_luastring(L, pdf_literal_data(n));
+  	        if (pdf_literal_type(n)==lua_refid_literal) {
+		  lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf_literal_data(n));
+	        } else {
+		  tokenlist_to_luastring(L, pdf_literal_data(n));
+		}
                 break;
             default:
                 lua_pushnil(L);
@@ -1680,17 +1684,7 @@ static int lua_nodelib_getfield(lua_State * L)
             lua_pushnil(L);
         }
         break;
-    case ord_noad:
-    case op_noad:
-    case bin_noad:
-    case rel_noad:
-    case open_noad:
-    case close_noad:
-    case punct_noad:
-    case inner_noad:
-    case under_noad:
-    case over_noad:
-    case vcenter_noad:
+    case simple_noad:
         switch (field) {
         case 2:
             lua_pushnumber(L, subtype(n));
@@ -2169,8 +2163,14 @@ static int lua_nodelib_setfield_whatsit(lua_State * L, int n, int field)
             pdf_literal_mode(n) = lua_tointeger(L, 3);
             break;
         case 5:
-            pdf_literal_data(n) = nodelib_gettoks(L, 3);
-            break;
+            if (ini_version) {
+                pdf_literal_data(n) = nodelib_gettoks(L, 3);
+            } else {
+                lua_pushvalue(L,3);
+                pdf_literal_data(n) = luaL_ref(L,LUA_REGISTRYINDEX);
+	        pdf_literal_type(n) = lua_refid_literal; 
+            }
+	    break;
         default:
             return nodelib_cantset(L, field, n);
         }
@@ -2786,17 +2786,7 @@ static int lua_nodelib_setfield(lua_State * L)
                 return nodelib_cantset(L, field, n);
             }
             break;
-        case ord_noad:
-        case op_noad:
-        case bin_noad:
-        case rel_noad:
-        case open_noad:
-        case close_noad:
-        case punct_noad:
-        case inner_noad:
-        case under_noad:
-        case over_noad:
-        case vcenter_noad:
+        case simple_noad:
             switch (field) {
             case 2:
                 subtype(n) = lua_tointeger(L, 3);

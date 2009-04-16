@@ -22,7 +22,7 @@
 #include "writecff.h"
 
 static const char _svn_version[] =
-    "$Id: writecff.c 1592 2008-11-28 13:23:51Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/writecff.c $";
+    "$Id: writecff.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writecff.c $";
 
 #define get_offset(s,n) get_unsigned(s, (n))
 #define get_card8(a)  a->stream[a->offset++]

@@ -25,7 +25,7 @@
 #include "commands.h"
 
 static const char __svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/textcodes.c $";
+    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/textcodes.c $";
 
 #define LCCODESTACK  8
 #define LCCODEDEFAULT 0
@@ -138,7 +138,7 @@ static void undumpsfcodes(void)
 
 
 static sa_tree *catcode_heads = NULL;
-static int catcode_max = 0;
+static integer catcode_max = 0;
 static unsigned char *catcode_valid = NULL;
 
 #define CATCODE_MAX 65535
@@ -216,7 +216,7 @@ static void dumpcatcodes(void)
 
 static void undumpcatcodes(void)
 {
-    int total, h, k;
+    integer total, k, x;
     xfree(catcode_heads);
     xfree(catcode_valid);
     catcode_heads = Mxmalloc_array(sa_tree, (CATCODE_MAX + 1));
@@ -226,9 +226,9 @@ static void undumpcatcodes(void)
     undump_int(catcode_max);
     undump_int(total);
     for (k = 0; k < total; k++) {
-        undump_int(h);
-        catcode_heads[h] = undump_sa_tree();
-        catcode_valid[h] = 1;
+        undump_int(x);
+        catcode_heads[x] = undump_sa_tree();
+        catcode_valid[x] = 1;
     }
 }
 

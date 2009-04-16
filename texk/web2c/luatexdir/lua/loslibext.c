@@ -25,13 +25,15 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: loslibext.c 1594 2008-11-28 13:32:48Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/loslibext.c $";
+    "$Id: loslibext.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/loslibext.c $";
 
 #if defined(_WIN32) || defined(WIN32) || defined(__NT__)
-#define MKDIR(a,b) mkdir(a)
+#  define MKDIR(a,b) mkdir(a)
 #else
-#define MKDIR(a,b) mkdir(a,b)
+#  define MKDIR(a,b) mkdir(a,b)
 #endif
+
+extern int shell_cmd_is_allowed(char **cmd, char **safecmd, char **cmdname);
 
 /* An attempt to figure out the basic platform, does not
   care about niceties like version numbers yet,
@@ -351,12 +353,19 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
 
 static int os_exec(lua_State * L)
 {
-    char *maincmd, *runcmd;
+    int allow = 0;
+    char *maincmd = NULL, *runcmd = NULL;
+    char *safecmd = NULL, *cmdname = NULL;
     char **cmdline = NULL;
 
     if (lua_gettop(L) != 1) {
         lua_pushnil(L);
         lua_pushliteral(L, "invalid arguments passed");
+        return 2;
+    }
+    if (shellenabledp <= 0) {
+        lua_pushnil(L);
+        lua_pushliteral(L, "All command execution disabled.");
         return 2;
     }
     if (lua_type(L, 1) == LUA_TSTRING) {
@@ -366,17 +375,47 @@ static int os_exec(lua_State * L)
     } else if (lua_type(L, 1) == LUA_TTABLE) {
         cmdline = do_flatten_command(L, &runcmd);
     }
-    if (cmdline != NULL) {
+    /* If restrictedshell == 0, any command is allowed. */
+    /* this is a little different from \write18/ os.execute processing
+     * because it does not test for commands with fixed arguments,
+     * but I am not so eager to attempt to fix that. Just document
+     * that os.exec() checks only the command name.
+     */
+    if (restrictedshell == 0)
+        allow = 1;
+    else
+        allow = shell_cmd_is_allowed(&runcmd, &safecmd, &cmdname);
+
+    if (allow > 0 && cmdline != NULL && runcmd != NULL) {
 #if defined(WIN32) && DONT_REALLY_EXIT
-        exec_command(runcmd, cmdline, environ);
+        if (allow == 2)
+            exec_command(safecmd, cmdline, environ);
+        else
+            exec_command(runcmd, cmdline, environ);
 #else
-        if (exec_command(runcmd, cmdline, environ) == -1) {
-            lua_pushnil(L);
-            lua_pushfstring(L, "%s: %s", runcmd, strerror(errno));
-            lua_pushnumber(L, errno);
-            return 3;
+        {
+            int r;
+            if (allow == 2)
+                r = exec_command(safecmd, cmdline, environ);
+            else
+                r = exec_command(runcmd, cmdline, environ);
+            if (r == -1) {
+                lua_pushnil(L);
+                lua_pushfstring(L, "%s: %s", runcmd, strerror(errno));
+                lua_pushnumber(L, errno);
+                return 3;
+            }
         }
 #endif
+    }
+    if (safecmd)
+        free(safecmd);
+    if (cmdname)
+        free(cmdname);
+    if (allow == 0) {
+        lua_pushnil(L);
+        lua_pushliteral(L, "Command execution disabled via shell_escape='p'");
+        return 2;
     }
     lua_pushnil(L);
     lua_pushliteral(L, "invalid command line passed");
@@ -384,15 +423,17 @@ static int os_exec(lua_State * L)
 }
 
 #define do_error_return(A,B) do {                                       \
-    lua_pushnil(L);                                                                     \
-    lua_pushfstring(L,"%s: %s",runcmd,(A));                     \
-    lua_pushnumber(L, B);                                                       \
-    return 3;                                                                           \
-  } while (0)
+        lua_pushnil(L);                                                 \
+        lua_pushfstring(L,"%s: %s",runcmd,(A));                         \
+        lua_pushnumber(L, B);                                           \
+        return 3;                                                       \
+    } while (0)
 
 static int os_spawn(lua_State * L)
 {
-    char *maincmd, *runcmd;
+    int allow = 0;
+    char *maincmd = NULL, *runcmd = NULL;
+    char *safecmd = NULL, *cmdname = NULL;
     char **cmdline = NULL;
     int i;
 
@@ -401,6 +442,11 @@ static int os_spawn(lua_State * L)
         lua_pushliteral(L, "invalid arguments passed");
         return 2;
     }
+    if (shellenabledp <= 0) {
+        lua_pushnil(L);
+        lua_pushliteral(L, "All command execution disabled.");
+        return 2;
+    }
     if (lua_type(L, 1) == LUA_TSTRING) {
         maincmd = (char *) lua_tostring(L, 1);
         cmdline = do_split_command(maincmd);
@@ -408,8 +454,25 @@ static int os_spawn(lua_State * L)
     } else if (lua_type(L, 1) == LUA_TTABLE) {
         cmdline = do_flatten_command(L, &runcmd);
     }
-    if (cmdline != NULL) {
-        i = spawn_command(runcmd, cmdline, environ);
+    /* If restrictedshell == 0, any command is allowed. */
+    /* this is a little different from \write18/ os.execute processing
+     * because it does not test for commands with fixed arguments,
+     * but I am not so eager to attempt to fix that. Just document
+     * that os.exec() checks only the command name.
+     */
+    if (restrictedshell == 0)
+        allow = 1;
+    else
+        allow = shell_cmd_is_allowed(&runcmd, &safecmd, &cmdname);
+    if (allow > 0 && cmdline != NULL && runcmd != NULL) {
+        if (allow == 2)
+            i = spawn_command(safecmd, cmdline, environ);
+        else
+            i = spawn_command(runcmd, cmdline, environ);
+        if (safecmd)
+            free(safecmd);
+        if (cmdname)
+            free(cmdname);
         if (i == 0) {
             lua_pushnumber(L, i);
             return 1;
@@ -436,6 +499,15 @@ static int os_spawn(lua_State * L)
             lua_pushnumber(L, i);
             return 1;
         }
+    }
+    if (safecmd)
+        free(safecmd);
+    if (cmdname)
+        free(cmdname);
+    if (allow == 0) {
+        lua_pushnil(L);
+        lua_pushliteral(L, "Command execution disabled via shell_escape='p'");
+        return 2;
     }
     lua_pushnil(L);
     lua_pushliteral(L, "invalid command line passed");
@@ -808,6 +880,46 @@ static int os_tmpdir(lua_State * L)
 }
 
 
+static int os_execute(lua_State * L)
+{
+    int allow = 0;
+    int ret = 1;
+    char *safecmd = NULL;
+    char *cmdname = NULL;
+    char *cmd = (char *) luaL_optstring(L, 1, NULL);
+
+    if (shellenabledp <= 0) {
+        lua_pushnil(L);
+        lua_pushstring(L, "All command execution disabled.");
+        return 2;
+    }
+    /* If restrictedshell == 0, any command is allowed. */
+    if (restrictedshell == 0)
+        allow = 1;
+    else
+        allow = shell_cmd_is_allowed(&cmd, &safecmd, &cmdname);
+
+    if (allow == 1) {
+        lua_pushinteger(L, system(cmd));
+    } else if (allow == 2) {
+        lua_pushinteger(L, system(safecmd));
+    } else {
+        lua_pushnil(L);
+        ret = 2;
+        if (allow == 0)
+            lua_pushstring(L,
+                           "Command execution disabled via shell_escape='p'");
+        else                    /* allow == -1 */
+            lua_pushstring(L, "Quoting error in system command line.");
+    }
+    if (safecmd)
+        free(safecmd);
+    if (cmdname)
+        free(cmdname);
+    return ret;
+}
+
+
 void open_oslibext(lua_State * L, int safer_option)
 {
 
@@ -816,40 +928,32 @@ void open_oslibext(lua_State * L, int safer_option)
     lua_getglobal(L, "os");
     lua_pushcfunction(L, ex_sleep);
     lua_setfield(L, -2, "sleep");
-    lua_getglobal(L, "os");
     lua_pushliteral(L, OS_PLATTYPE);
     lua_setfield(L, -2, "type");
-    lua_getglobal(L, "os");
     lua_pushliteral(L, OS_PLATNAME);
     lua_setfield(L, -2, "name");
-    lua_getglobal(L, "os");
     lua_pushcfunction(L, ex_uname);
     lua_setfield(L, -2, "uname");
 #if (! defined (WIN32))  && (! defined (__SUNOS__))
-    lua_getglobal(L, "os");
     lua_pushcfunction(L, os_times);
     lua_setfield(L, -2, "times");
 #endif
 #if ! defined (__SUNOS__)
-    lua_getglobal(L, "os");
     lua_pushcfunction(L, os_gettimeofday);
     lua_setfield(L, -2, "gettimeofday");
 #endif
+
     if (!safer_option) {
-        lua_getglobal(L, "os");
         lua_pushcfunction(L, os_setenv);
         lua_setfield(L, -2, "setenv");
-        lua_getglobal(L, "os");
         lua_pushcfunction(L, os_exec);
         lua_setfield(L, -2, "exec");
-        lua_getglobal(L, "os");
         lua_pushcfunction(L, os_spawn);
         lua_setfield(L, -2, "spawn");
-        lua_getglobal(L, "os");
+        lua_pushcfunction(L, os_execute);
+        lua_setfield(L, -2, "execute");
         lua_pushcfunction(L, os_tmpdir);
         lua_setfield(L, -2, "tmpdir");
-
     }
-
-
+    lua_pop(L, 1);              /* pop the table */
 }

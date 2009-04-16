@@ -22,7 +22,7 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: tfmofm.c 2086 2009-03-22 15:32:08Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/font/tfmofm.c $";
+    "$Id: tfmofm.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/tfmofm.c $";
 
 /* Here are some macros that help process ligatures and kerns */
 

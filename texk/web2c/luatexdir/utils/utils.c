@@ -43,7 +43,7 @@
 #include "xpdf/config.h"        /* just to get the xpdf version */
 
 static const char __svn_version[] =
-    "$Id: utils.c 2085 2009-03-22 15:21:50Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/utils/utils.c $";
+    "$Id: utils.c 2195 2009-03-31 14:09:50Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/utils.c $";
 
 #define check_nprintf(size_get, size_want) \
     if ((unsigned)(size_get) >= (unsigned)(size_want)) \
@@ -1477,7 +1477,8 @@ void checkpdfrestore(scaledpos pos)
     diff.h = pos.h - pos_stack[pos_stack_used].pos.h;
     diff.v = pos.v - pos_stack[pos_stack_used].pos.v;
     if (diff.h != 0 || diff.v != 0) {
-        pdftex_warn("Misplaced \\pdfrestore by (%dsp, %dsp)", diff.h, diff.v);
+        pdftex_warn("Misplaced \\pdfrestore by (%dsp, %dsp)", (int) diff.h,
+                    (int) diff.v);
     }
     if (page_mode) {
         matrix_stack_used = pos_stack[pos_stack_used].matrix_stack;

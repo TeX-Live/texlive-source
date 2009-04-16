@@ -21,7 +21,7 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: lpdflib.c 2072 2009-03-21 08:50:20Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/lpdflib.c $";
+    "$Id: lpdflib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lpdflib.c $";
 
 static int findcurv(lua_State * L)
 {
@@ -39,15 +39,13 @@ static int findcurh(lua_State * L)
     return 1;
 }
 
-typedef enum { set_origin, direct_page, direct_always } pdf_lit_mode;
-
 int luapdfprint(lua_State * L)
 {
     int n;
     unsigned i;
     size_t len;
     const char *outputstr, *st;
-    pdf_lit_mode literal_mode;
+    ctm_transform_modes literal_mode;
     n = lua_gettop(L);
     if (!lua_isstring(L, -1)) {
         lua_pushstring(L, "no string to print");

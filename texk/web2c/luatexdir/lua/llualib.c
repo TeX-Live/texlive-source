@@ -21,7 +21,7 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: llualib.c 2064 2009-03-20 13:13:14Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/llualib.c $";
+    "$Id: llualib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/llualib.c $";
 
 #define LOAD_BUF_SIZE 256
 #define UINT_MAX32 0xFFFFFFFF
@@ -35,17 +35,16 @@ typedef struct {
 
 static bytecode *lua_bytecode_registers = NULL;
 
-int luabytecode_max = -1;
+integer luabytecode_max = -1;
 unsigned int luabytecode_bytes = 0;
 
-char *luanames[65536] = {NULL};
+char *luanames[65536] = { NULL };
 
 extern char *luanames[];
 
-char *
-get_lua_name  (int i) 
+char *get_lua_name(int i)
 {
-    if (i<0 || i>65535) 
+    if (i < 0 || i > 65535)
         return NULL;
     return luanames[i];
 }
@@ -53,7 +52,7 @@ get_lua_name  (int i)
 void dump_luac_registers(void)
 {
     integer x;
-    int k, n;
+    integer k, n;
     bytecode b;
     dump_int(luabytecode_max);
     if (lua_bytecode_registers != NULL) {
@@ -74,12 +73,12 @@ void dump_luac_registers(void)
     }
     for (k = 0; k < 65536; k++) {
         char *a = luanames[k];
-        if (a!=NULL) {
-            x = strlen(a)+1; 
-            dump_int(x); 
+        if (a != NULL) {
+            x = strlen(a) + 1;
+            dump_int(x);
             dump_things(*a, x);
         } else {
-            x = 0; 
+            x = 0;
             dump_int(x);
         }
     }
@@ -88,7 +87,7 @@ void dump_luac_registers(void)
 void undump_luac_registers(void)
 {
     integer x;
-    int k, n;
+    integer k, n;
     unsigned int i;
     bytecode b;
     undump_int(luabytecode_max);
@@ -107,7 +106,8 @@ void undump_luac_registers(void)
         undump_int(n);
         for (i = 0; i < (unsigned) n; i++) {
             undump_int(k);
-            undump_int(b.size);
+            undump_int(x);
+            b.size = x;
             b.buf = xmalloc(b.size);
             luabytecode_bytes += b.size;
             memset(b.buf, 0, b.size);
@@ -162,7 +162,7 @@ static int bytecode_register_shadow_get(lua_State * L, int k)
 int writer(lua_State * L, const void *b, size_t size, void *B)
 {
     bytecode *buf = (bytecode *) B;
-    (void)L; /* for -Wunused */
+    (void) L;                   /* for -Wunused */
     if ((int) (buf->size + size) > buf->alloc) {
         buf->buf = xrealloc(buf->buf, buf->alloc + size + LOAD_BUF_SIZE);
         buf->alloc = buf->alloc + size + LOAD_BUF_SIZE;
@@ -176,7 +176,7 @@ int writer(lua_State * L, const void *b, size_t size, void *B)
 const char *reader(lua_State * L, void *ud, size_t * size)
 {
     bytecode *buf = (bytecode *) ud;
-    (void)L; /* for -Wunused */
+    (void) L;                   /* for -Wunused */
     if (buf->done == buf->size) {
         *size = 0;
         buf->done = 0;
@@ -269,9 +269,9 @@ int set_luaname(lua_State * L)
 {
     int k;
     char *s;
-    if (lua_gettop(L)==3) {
+    if (lua_gettop(L) == 3) {
         k = (int) luaL_checkinteger(L, 2);
-        if (k>65535 || k<0) {
+        if (k > 65535 || k < 0) {
             /* error */
         } else {
             if (luanames[k] != NULL) {
@@ -279,8 +279,8 @@ int set_luaname(lua_State * L)
                 luanames[k] = NULL;
             }
             if (lua_isstring(L, 3)) {
-                s = (char *) lua_tostring(L,3);
-                if (s!=NULL) 
+                s = (char *) lua_tostring(L, 3);
+                if (s != NULL)
                     luanames[k] = xstrdup(s);
             }
         }
@@ -292,13 +292,13 @@ int get_luaname(lua_State * L)
 {
     int k;
     k = (int) luaL_checkinteger(L, 2);
-    if (k>65535 || k<0) {
+    if (k > 65535 || k < 0) {
         /* error */
         lua_pushnil(L);
     } else {
-        if (luanames[k]!=NULL)
+        if (luanames[k] != NULL)
             lua_pushstring(L, luanames[k]);
-        else 
+        else
             lua_pushnil(L);
     }
     return 1;
