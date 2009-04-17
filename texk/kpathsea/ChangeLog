@@ -1,3 +1,8 @@
+2009-04-18  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape_commands): add fc-match, request
+	from Elie Roux, 17 Apr 2009 17:22:55.
+
 2009-04-05  Taco Hoekwater  <taco@elvenkind.com>
 
 	* doc/kpathsea.texi,
