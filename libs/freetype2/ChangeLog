@@ -1,0 +1,5 @@
+2009-04-17  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (ft-build/Makefile): use --without-zlib instead
+	of --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE), due to bizarre
+	"file is not of required architecture" warning from MacOSX ld.

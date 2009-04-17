@@ -31,9 +31,17 @@ ft-build/Makefile:
 	  $(abs_srcdir)/$(FREETYPE_TREE)/configure \
 	    $(config_args) --disable-shared \
 	    --with-old-mac-fonts \
-	    --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE) \
+	    --without-zlib \
 	    --prefix=$(abs_builddir)/ft-install \
 	    --includedir=$(abs_builddir)
+
+# On MacOSX, using our zlib from TL results in a .a that is unusable; ld
+# warns "file is not of required architecture", and does not read it.
+# There is no apparent reason for this.  Using --without-zlib evidently
+# causes freetype2 to use its internal zlib, so no functionality should
+# be lost, even though it is not the cleanest solution.
+#	    --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE) \
+#
 
 ## Unfortunately the FreeType build system installs the headers after the library;
 ## get our dependencies right we wait for a second and then touch the library.

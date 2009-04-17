@@ -38,7 +38,7 @@ DIST_COMMON = $(am__configure_deps) \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
@@ -432,9 +432,17 @@ ft-build/Makefile:
 	  $(abs_srcdir)/$(FREETYPE_TREE)/configure \
 	    $(config_args) --disable-shared \
 	    --with-old-mac-fonts \
-	    --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE) \
+	    --without-zlib \
 	    --prefix=$(abs_builddir)/ft-install \
 	    --includedir=$(abs_builddir)
+
+# On MacOSX, using our zlib from TL results in a .a that is unusable; ld
+# warns "file is not of required architecture", and does not read it.
+# There is no apparent reason for this.  Using --without-zlib evidently
+# causes freetype2 to use its internal zlib, so no functionality should
+# be lost, even though it is not the cleanest solution.
+#	    --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE) \
+#
 
 libfreetype.a: ft-build/Makefile $(ZLIB_DEPEND)
 	rm -rf ft-install
