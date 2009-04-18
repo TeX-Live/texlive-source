@@ -1,3 +1,7 @@
+2009-04-18  Karl Berry  <karl@tug.org>
+
+	* Makefile.am: also make and install all the scripts and man pages.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: update (AC_SET_MAKE -> AC_PROG_MAKE_SET).

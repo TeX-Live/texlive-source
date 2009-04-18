@@ -1,10 +1,36 @@
 ##
 OS = UNIX
 PAPER = a4
+CHMOD = chmod
+BINMODE = +x
 
 AM_CPPFLAGS = -DUNIX -DPAPER=\"$(PAPER)\"
 
 bin_PROGRAMS = epsffit psbook psnup psresize psselect pstops
+bin_SCRIPTS = getafm showchar \
+              extractres fixdlsrps fixfmps fixmacps fixpsditps fixpspps \
+	      fixscribeps fixtpps fixwfwps fixwpps fixwwps includeres psmerge
+CLEANFILES = $(bin_SCRIPTS)
+
+PERL = /usr/bin/env perl
+MAKETEXT = $(PERL) $(srcdir)/maketext
+
+man1_MANS = epsffit.1 psbook.1 psnup.1 psresize.1 psselect.1 pstops.1 \
+            getafm.1 \
+	    extractres.1 fixdlsrps.man fixfmps.man fixmacps.man \
+	    fixpsditps.man fixpspps.man fixscribeps.man fixtpps.man \
+            fixwfwps.man fixwpps.man fixwwps.man includeres.man psmerge.man
+dist_man_MANS = $(man1_MANS)
+
+%: %.pl
+	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $< >$@
+
+%: %.sh
+	cp $< $@
+	$(CHMOD) $(BINMODE) $@
+
+%.1: %.man
+	$(MAKETEXT) PAPER=$(PAPER) "MAN=$(man1_MANS)" $< >$@
 
 epsffit_SOURCES = \
 	config.h \
@@ -57,8 +83,28 @@ pstops_SOURCES = \
 	psutil.c \
 	psutil.h
 
+## 
 EXTRA_DIST = \
 	LICENSE
+
+# scripts.
+EXTRA_DIST += \
+	getafm.sh \
+	showchar.sh \
+	extractres.pl \
+	fixdlsrps.pl \
+	fixfmps.pl \
+	fixmacps.pl \
+	fixpsditps.pl \
+	fixpspps.pl \
+	fixscribeps.pl \
+	fixtpps.pl \
+	fixwfwps.pl \
+	fixwpps.pl \
+	fixwwps.pl \
+	includeres.pl \
+	psmerge.pl \
+#
 
 ## Not used
 ##
@@ -71,46 +117,11 @@ EXTRA_DIST += \
 	Makefile.unix \
 	Makefile.wat \
 	descrip.mms \
-	epsffit.man \
-	extractres.man \
-	extractres.pl \
-	fixdlsrps.man \
-	fixdlsrps.pl \
-	fixfmps.man \
-	fixfmps.pl \
-	fixmacps.man \
-	fixmacps.pl \
-	fixpsditps.man \
-	fixpsditps.pl \
-	fixpspps.man \
-	fixpspps.pl \
-	fixscribeps.man \
-	fixscribeps.pl \
-	fixtpps.man \
-	fixtpps.pl \
-	fixwfwps.man \
-	fixwfwps.pl \
-	fixwpps.man \
-	fixwpps.pl \
-	fixwwps.man \
-	fixwwps.pl \
-	getafm.man \
-	getafm.sh \
-	includeres.man \
-	includeres.pl \
 	maketext \
 	md68_0.ps \
 	md71_0.ps \
-	psbook.man \
-	psnup.man \
-	psmerge.man \
-	psmerge.pl \
-	psresize.man \
-	psselect.man \
-	pstops.man \
-	showchar.sh
+#
 
 ## Eventually delete these files
 ##
 EXTRA_DIST += Makefile.in.orig configure.in.orig
-
