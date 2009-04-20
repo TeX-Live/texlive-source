@@ -1,4 +1,0 @@
-## texk/one/ac/withenable.ac
-## configure options and TL libraries required for one
-dnl KPSE_WITH_PROG([one], [freetype2 gd], , [testing])
-KPSE_WITH_PROG([one], [freetype2 t1lib gd teckit graphite], [without], [testing])
