@@ -1,0 +1,33 @@
+## texk/web2c/luatexdir/am/luatangle.am: Makefile fragment for luatangle.
+
+## luatangle
+##
+if LUATEX
+bin_PROGRAMS += luatangle
+endif LUATEX
+EXTRA_PROGRAMS += luatangle
+
+nodist_luatangle_SOURCES = luatangle.c luatangle.h
+luatangle.c luatangle.h: luatangle-web2c
+luatangle-web2c: $(web2c_common) $(web2c_programs) luatangle.p
+	$(web2c) luatangle
+	echo timestamp >$@
+	touch luatangle.c luatangle.h
+
+EXTRA_DIST += $(luatangle_sources)
+
+luatangle_sources = luatexdir/luatangle.web luatexdir/luatangle.ch
+luatangle.p: tangle$(EXEEXT) $(luatangle_sources)
+	WEBINPUTS=$(srcdir)/luatexdir $(buildenv) $(TANGLE) luatangle luatangle
+
+DISTCLEANFILES += luatangle.c luatangle.h luatangle-web2c luatangle.p
+
+## Tests
+##
+dist_check_SCRIPTS += luatexdir/luatangle.test
+
+if LUATEX
+TESTS += luatexdir/luatangle.test
+endif LUATEX
+
+DISTCLEANFILES += cftest.p

@@ -2,19 +2,22 @@
 
 ## metapost
 ##
+if MP
 bin_PROGRAMS += newmpost
-
+endif MP
 EXTRA_PROGRAMS += newmpost
 
 EXTRA_LIBRARIES += libmplib.a
 
-newmpost_c_h = mpost.c mpxout.c
+newmpost_c_h = mpost.c mpxout.c mpxout.h
 newmpost_web = mplibdir/mpost.w mplibdir/mpxout.w
 
-newmpost_CPPFLAGS = -I. -I$(srcdir)/mplibdir
+EXTRA_DIST += $(newmpost_web)
+
+newmpost_CPPFLAGS = -I$(srcdir)/mplibdir
 newmpost_DEPENDENCIES = libmplib.a
 newmpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm
-newmpost_SOURCES = $(newmpost_c_h)
+nodist_newmpost_SOURCES = $(newmpost_c_h)
 
 $(newmpost_c_h): mpost-ctangle libmplib.a
 mpost-ctangle: ctangle$(EXEEXT) $(newmpost_web)
@@ -26,13 +29,17 @@ mpost-ctangle: ctangle$(EXEEXT) $(newmpost_web)
 DISTCLEANFILES += $(newmpost_c_h) mpost-ctangle
 
 ## These files are mutually dependent
-libmplib_c_h =  mp.c mplib.h mpmp.h mppsout.h psout.c mplibps.h svgout.c memio.c tfmin.c
+libmplib_c_h =  mp.c mplib.h mpmp.h
+libmplib_c_h += mppsout.h psout.c mplibps.h
+libmplib_c_h += mplibsvg.h mpsvgout.h svgout.c
+libmplib_c_h += memio.c tfmin.c
 libmplib_true_c = mplibdir/avl.h mplibdir/avl.c 
 libmplib_web = $(libmplib_true_c) mplibdir/mp.w mplibdir/psout.w
 libmplib_web += mplibdir/svgout.w mplibdir/memio.w mplibdir/tfmin.w
 
-libmplib_a_CPPFLAGS = -I. -I$(srcdir)/mplibdir
-libmplib_a_SOURCES = $(libmplib_c_h) $(libmplib_true_c)
+libmplib_a_CPPFLAGS = -I$(srcdir)/mplibdir
+nodist_libmplib_a_SOURCES = $(libmplib_c_h)
+libmplib_a_SOURCES = $(libmplib_true_c)
 
 $(libmplib_c_h): mplib-ctangle  $(libmplib_true_c)
 mplib-ctangle: ctangle$(EXEEXT) $(libmplib_web)
@@ -48,7 +55,6 @@ EXTRA_DIST += $(libmplib_web)
 
 DISTCLEANFILES += $(libmplib_c_h) mplib-ctangle
 
-# only used by luatex, perhaps should not be mentioned here
+## only used by luatex, perhaps should not be mentioned here
 EXTRA_DIST += mplibdir/lmplib.c
-
 

@@ -66,7 +66,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/texk/ac/withenable.ac \
 	$(top_srcdir)/texk/web2c/ac/withenable.ac \
 	$(top_srcdir)/texk/web2c/ac/web2c.ac \
-	$(top_srcdir)/texk/one/ac/withenable.ac \
 	$(top_srcdir)/texk/afm2pl/ac/withenable.ac \
 	$(top_srcdir)/texk/bibtex8/ac/withenable.ac \
 	$(top_srcdir)/texk/cjkutils/ac/withenable.ac \
@@ -102,6 +101,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/texk/kpathsea/ac/withenable.ac \
 	$(top_srcdir)/texk/kpathsea/ac/web2c.ac \
 	$(top_srcdir)/libs/ac/withenable.ac \
+	$(top_srcdir)/libs/icu/ac/withenable.ac \
 	$(top_srcdir)/libs/teckit/ac/withenable.ac \
 	$(top_srcdir)/libs/graphite/ac/withenable.ac \
 	$(top_srcdir)/libs/xpdf/ac/withenable.ac \
@@ -724,13 +724,8 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 world: install-strip
-#
-# run texlinks here since the binaries won't be there 
-# at install-data, and fmtutil.cnf won't be there at install-exec,
-# and there is no hook or -local for install.
 	echo "top-level make $@: running texlinks ..."
-	cd texk/tetex && $(MAKE) run-texlinks
-#
+	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 	@echo "make $@ done."
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

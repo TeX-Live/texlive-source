@@ -259,3 +259,19 @@ AC_DEFUN([KPSE_ADD_FLAGS],
 CPPFLAGS="$CPPFLAGS $[]AS_TR_CPP($1)_INCLUDES"
 LIBS="$[]AS_TR_CPP($1)_LIBS $LIBS"
 ]) # KPSE_ADD_FLAGS
+
+# KPSE_MSG_ERROR(PACKAGE, ERROR, [EXIT-STATUS = 1])
+# -------------------------------------------------
+# Same as AC_MSG_ERROR(ERROR, EXIT-STATUS), except when building this
+# package PACKAGE has been disabled.
+#
+# The new (2009) TL build system requires all directories to be configured
+# for the benefit of 'dist*' Make targets.  When building PACKAGE has been
+# disabled, configuring that package must not fail because building required
+# libraries from the TL tree has been disabled as a consequence.
+AC_DEFUN([KPSE_MSG_ERROR],
+[AS_IF([test "x$enable_build" = xno],
+       [AC_MSG_WARN([building $1 has been disabled and would fail because
+$2])],
+       [AC_MSG_ERROR([$2], m4_default([$3], 1))])
+]) # KPSE_MSG_ERROR

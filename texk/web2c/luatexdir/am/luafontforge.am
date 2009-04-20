@@ -1,0 +1,141 @@
+## texk/web2c/luatexdir/am/luafontforge.am: Makefile fragment for libff.
+
+## luafontforge
+##
+EXTRA_LIBRARIES += libff.a
+
+libff_a_DEPENDENCIES = libluamisc.a
+
+$(libff_a_OBJECTS): libluamisc.a
+
+libff_a_CPPFLAGS = \
+	-DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 \
+	-D_NO_PYTHON=1 -DX_DISPLAY_MISSING=1 -DNODYNAMIC=1 \
+	-D_NO_FREETYPE=1 -D_NO_LIBUNINAMESLIST=1 -UHAVE_LIBINTL_H \
+	-I$(top_srcdir)/luatexdir/lua51 \
+	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/inc \
+	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/fontforge
+
+libff_a_SOURCES = \
+	luatexdir/luafontloader/fontforge/Unicode/ArabicForms.c \
+	luatexdir/luafontloader/fontforge/Unicode/alphabet.c \
+	luatexdir/luafontloader/fontforge/Unicode/backtrns.c \
+	luatexdir/luafontloader/fontforge/Unicode/char.c \
+	luatexdir/luafontloader/fontforge/Unicode/cjk.c \
+	luatexdir/luafontloader/fontforge/Unicode/combiners.h \
+	luatexdir/luafontloader/fontforge/Unicode/dump.c \
+	luatexdir/luafontloader/fontforge/Unicode/gwwiconv.c \
+	luatexdir/luafontloader/fontforge/Unicode/memory.c \
+	luatexdir/luafontloader/fontforge/Unicode/ucharmap.c \
+	luatexdir/luafontloader/fontforge/Unicode/unialt.c \
+	luatexdir/luafontloader/fontforge/Unicode/ustring.c \
+	luatexdir/luafontloader/fontforge/Unicode/utype.c \
+	luatexdir/luafontloader/fontforge/fontforge/PfEd.h \
+	luatexdir/luafontloader/fontforge/fontforge/autohint.c \
+	luatexdir/luafontloader/fontforge/fontforge/baseviews.h \
+	luatexdir/luafontloader/fontforge/fontforge/clipnoui.c \
+	luatexdir/luafontloader/fontforge/fontforge/configure-pfaedit.h \
+	luatexdir/luafontloader/fontforge/fontforge/cvundoes.c \
+	luatexdir/luafontloader/fontforge/fontforge/dumppfa.c \
+	luatexdir/luafontloader/fontforge/fontforge/edgelist.h \
+	luatexdir/luafontloader/fontforge/fontforge/edgelist2.h \
+	luatexdir/luafontloader/fontforge/fontforge/encoding.c \
+	luatexdir/luafontloader/fontforge/fontforge/encoding.h \
+	luatexdir/luafontloader/fontforge/fontforge/featurefile.c \
+	luatexdir/luafontloader/fontforge/fontforge/fontforgevw.h \
+	luatexdir/luafontloader/fontforge/fontforge/fontviewbase.c \
+	luatexdir/luafontloader/fontforge/fontforge/fvcomposit.c \
+	luatexdir/luafontloader/fontforge/fontforge/fvfonts.c \
+	luatexdir/luafontloader/fontforge/fontforge/libffstamp.h \
+	luatexdir/luafontloader/fontforge/fontforge/libstamp.pre \
+	luatexdir/luafontloader/fontforge/fontforge/lookups.c \
+	luatexdir/luafontloader/fontforge/fontforge/lookups.h \
+	luatexdir/luafontloader/fontforge/fontforge/macbinary.c \
+	luatexdir/luafontloader/fontforge/fontforge/macenc.c \
+	luatexdir/luafontloader/fontforge/fontforge/mathconstants.c \
+	luatexdir/luafontloader/fontforge/fontforge/mm.c \
+	luatexdir/luafontloader/fontforge/fontforge/mm.h \
+	luatexdir/luafontloader/fontforge/fontforge/namelist.c \
+	luatexdir/luafontloader/fontforge/fontforge/noprefs.c \
+	luatexdir/luafontloader/fontforge/fontforge/nouiutil.c \
+	luatexdir/luafontloader/fontforge/fontforge/parsepfa.c \
+	luatexdir/luafontloader/fontforge/fontforge/parsettf.c \
+	luatexdir/luafontloader/fontforge/fontforge/parsettfatt.c \
+	luatexdir/luafontloader/fontforge/fontforge/parsettfvar.c \
+	luatexdir/luafontloader/fontforge/fontforge/pfaedit.h \
+	luatexdir/luafontloader/fontforge/fontforge/plugins.h \
+	luatexdir/luafontloader/fontforge/fontforge/psfont.h \
+	luatexdir/luafontloader/fontforge/fontforge/psread.c \
+	luatexdir/luafontloader/fontforge/fontforge/pua.c \
+	luatexdir/luafontloader/fontforge/fontforge/python.c \
+	luatexdir/luafontloader/fontforge/fontforge/scripting.h \
+	luatexdir/luafontloader/fontforge/fontforge/sd.h \
+	luatexdir/luafontloader/fontforge/fontforge/sfd1.c \
+	luatexdir/luafontloader/fontforge/fontforge/sfd1.h \
+	luatexdir/luafontloader/fontforge/fontforge/splinechar.c \
+	luatexdir/luafontloader/fontforge/fontforge/splinefill.c \
+	luatexdir/luafontloader/fontforge/fontforge/splinefont.c \
+	luatexdir/luafontloader/fontforge/fontforge/splinefont.h \
+	luatexdir/luafontloader/fontforge/fontforge/splineorder2.c \
+	luatexdir/luafontloader/fontforge/fontforge/splineoverlap.c \
+	luatexdir/luafontloader/fontforge/fontforge/splinerefigure.c \
+	luatexdir/luafontloader/fontforge/fontforge/splinesave.c \
+	luatexdir/luafontloader/fontforge/fontforge/splinesaveafm.c \
+	luatexdir/luafontloader/fontforge/fontforge/splinestroke.c \
+	luatexdir/luafontloader/fontforge/fontforge/splineutil.c \
+	luatexdir/luafontloader/fontforge/fontforge/splineutil2.c \
+	luatexdir/luafontloader/fontforge/fontforge/start.c \
+	luatexdir/luafontloader/fontforge/fontforge/stemdb.c \
+	luatexdir/luafontloader/fontforge/fontforge/stemdb.h \
+	luatexdir/luafontloader/fontforge/fontforge/tottf.c \
+	luatexdir/luafontloader/fontforge/fontforge/tottfaat.c \
+	luatexdir/luafontloader/fontforge/fontforge/tottfgpos.c \
+	luatexdir/luafontloader/fontforge/fontforge/ttf.h \
+	luatexdir/luafontloader/fontforge/fontforge/ttfspecial.c \
+	luatexdir/luafontloader/fontforge/fontforge/uiinterface.h \
+	luatexdir/luafontloader/fontforge/fontforge/unicoderange.h \
+	luatexdir/luafontloader/fontforge/fontforge/views.h \
+	luatexdir/luafontloader/fontforge/gutils/fsys.c \
+	luatexdir/luafontloader/fontforge/gutils/gwwintl.c \
+	luatexdir/luafontloader/fontforge/inc/basics.h \
+	luatexdir/luafontloader/fontforge/inc/chardata.h \
+	luatexdir/luafontloader/fontforge/inc/charset.h \
+	luatexdir/luafontloader/fontforge/inc/dynamic.h \
+	luatexdir/luafontloader/fontforge/inc/fileutil.h \
+	luatexdir/luafontloader/fontforge/inc/gdraw.h \
+	luatexdir/luafontloader/fontforge/inc/gfile.h \
+	luatexdir/luafontloader/fontforge/inc/ggadget.h \
+	luatexdir/luafontloader/fontforge/inc/gicons.h \
+	luatexdir/luafontloader/fontforge/inc/gimage.h \
+	luatexdir/luafontloader/fontforge/inc/gio.h \
+	luatexdir/luafontloader/fontforge/inc/gkeysym.h \
+	luatexdir/luafontloader/fontforge/inc/gprogress.h \
+	luatexdir/luafontloader/fontforge/inc/gresource.h \
+	luatexdir/luafontloader/fontforge/inc/gwidget.h \
+	luatexdir/luafontloader/fontforge/inc/gwwiconv.h \
+	luatexdir/luafontloader/fontforge/inc/intl.h \
+	luatexdir/luafontloader/fontforge/inc/ustring.h \
+	luatexdir/luafontloader/fontforge/inc/utype.h \
+	luatexdir/luafontloader/src/ffdummies.c \
+	luatexdir/luafontloader/src/luafflib.c
+
+EXTRA_DIST += \
+	luatexdir/luafontloader/ChangeLog \
+	luatexdir/luafontloader/fontforge/AUTHORS \
+	luatexdir/luafontloader/fontforge/INSTALL \
+	luatexdir/luafontloader/fontforge/LICENSE \
+	luatexdir/luafontloader/fontforge/VERSION
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/luafontloader/fontforge/Makefile.in \
+	luatexdir/luafontloader/fontforge/Unicode/Makefile.in \
+	luatexdir/luafontloader/fontforge/configure-options \
+	luatexdir/luafontloader/fontforge/configure.in \
+	luatexdir/luafontloader/fontforge/fontforge/Makefile.in \
+	luatexdir/luafontloader/fontforge/gdraw/Makefile.in \
+	luatexdir/luafontloader/fontforge/gutils/Makefile.in \
+	luatexdir/luafontloader/fontforge/inc/config.h.in \
+	luatexdir/luafontloader/fontforge/plugins/Makefile.in
+

@@ -1,3 +1,6 @@
+Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
+
 	Layout of the teTeX / TeX Live (TL) build system
 	================================================
 
@@ -17,8 +20,8 @@ integrating new modules into the TL build system.
 1.1. Overall layout
 -------------------
 
-libs/*/*		various libraries
 texk/kpathsea/*		the Kpathsea library
+libs/*/*		various other libraries
 
 texk/*/*		programs (mostly using Kpathsea)
 utils/*/*		utility programs (not using Kpathsea)
@@ -54,8 +57,8 @@ m4/kpse-Lib-flags.m4		defines Autoconf macros for configure options
 				  as well as KPSE_LIB_FLAGS, to be used in configure.ac
                                   files and defining Make variables
 
-Several libraries use an unmodified source tree supplemented by a proxy
-build system (bypassing that of the source tree), e.g.,
+Several libraries use an (almost) unmodified source tree supplemented by a
+proxy build system (bypassing that of the source tree), e.g.,
 
 libs/zlib/zlib-1.2.3/*		(almost) unmodified source tree
 libs/zlib/Makefile.am		proxy Makefile.am
@@ -66,8 +69,8 @@ libs/zlib/configure.ac		  and configure.ac
 
 texk/Prog/ac/withenable.ac	defines libraries required by Prog, provides the
 				  configure option --disable-Prog
-texk/Prog/ac/Prog.ac		defines Prog specific configure option that should
-				  be seen at the top-level
+texk/Prog/ac/Prog.ac		optionally defines Prog specific configure option
+				  that should be seen at the top-level
 
 1.4. A utility program `Util'
 -----------------------------
@@ -78,16 +81,16 @@ utils/Util/ac/withenable.ac	defines libraries required by Util, provides the
 2. Running `configure'
 ======================
 
-Running configure for the top-level directory will in addition configure the
-directories texk/kpathsea/, libs/, libs/dummy/, utils/, utils/dummy, texk/,
-and texk/dummy/.  This will determine the programs to be built (utils/Util/
-and texk/Prog) and libraries from the TL tree (texk/kpathsea/ and libs/Lib)
-required by these programs.
+Running 'configure' for the top-level directory will in addition configure
+the directories texk/kpathsea/, libs/, libs/dummy/, utils/, utils/dummy,
+texk/, and texk/dummy/.  This will determine the programs (utils/Util/ and
+texk/Prog) to be built and libraries from the TL tree (texk/kpathsea/ and
+libs/Lib) required by these programs.
 
 3. Running `make'
 =================
 
-Running make in the top-level directory will recurse into the directories
+Running 'make' in the top-level directory will recurse into the directories
 texk/kpathsea/, libs/, utils/, and texk/.
 
 3.1. Running `make' in libs/
@@ -95,7 +98,7 @@ texk/kpathsea/, libs/, utils/, and texk/.
 
 First, for each subdirectory libs/Lib not yet configured, this runs
 `configure' and if required `make all' in that directory.  Then this
-recurses into all required subdirectories for the selected make target:
+recurses into all required subdirectories for the selected Make target:
 `default' or `all' to (re-)build, `check' to run tests, `install' etc.
 
 3.2. Running `make' in utils/ and texk/
@@ -106,12 +109,138 @@ configured, this first runs `configure' and if required `make all' in that
 directory.  Subsequently, this recurses into all required subdirectories to
 (re-)build, run tests, install, etc.
 
-3.3 Comment
------------
+3.3 Parallel builds
+-------------------
+
+The TL build system allows for parallel builds ('make -j n' with n>1),
+carefully formulating Make rules when a tool (such as 'tangle' or 'convert')
+creates several output files.  This can considerably speed up a TL build on
+multi core systems.  I usually use 'make -j 4 -l 8.0'; please report any
+failures.
+
+3.4 Using a Configure Cache File
+--------------------------------
+
+Further speed up of a TL build can be achieved by using a configure cache
+file, e.g., running 'configure -C' at the top-level.  This should work after
+some initial problem have been fixed; please report any failures.
+
+3.5 Comments
+------------
+
+3.5.1 Comment 1
+---------------
+
+After successfully running 'make' from the top-level, as second 'make'
+should not have to rebuild anything.
+
+When configure scripts have been modified, it may take several iterations of
+'make' (only in in tekx/web2c/) until everything has stabilized.  This is a
+problem that still needs investigation, but I believe that after the first
+iteration everything is up to date, except for some bad timestamps.
+
+3.5.2 Comment 2
+---------------
+
+If running 'make' from the top-level fails in a subdirectory libs/*/,
+utils/*/, or /texk/*/ you can remove that directory from the build tree,
+fix the problem, and once again run 'make' from the top-level.
+
+3.5.3 Comment 3
+---------------
+
+The build system allows to successfully run 'make dist' and 'make distcheck'
+(at least on my {i686,x86_64}-linux-gnu systems), producing tarballs
+tex-live-2009-MM-DD.tar.{bz2,gz} from which everything can be (re-)built;
+please keep it that way!
+
+3.5.4 Comment 4
+---------------
 
 The process described above configures all directories, even for libraries
-or programs not to be built.  This is necessary for make targets such as
+and programs not to be built.  This is necessary for Make targets such as
 `dist' or `distcheck' that have to recurse into all subdirectories, whereas
-targets such as `all', `check', or `install' only recurse into the required
-subdirectories.
+normal targets such as `all', `check', or `install' only recurse into the
+required subdirectories.
+
+As a side effect, if building in utils/Util/ or texk/Prog/ has been
+disabled, the Makefile in that directory still contains all the rules to
+build everything.  Thus running 'make' and 'make install' in that
+subdirectory will build and install everything, unless some configure tests
+have failed because required libraries from the TL tree where missing when
+that subdirectory has been configured.
+
+Similarly, when, e.g., building e-TeX has been disabled (as by default), you
+can run 'make etex' (or 'make etex.exe') in the subdirectory texk/web2c/ to
+build e-TeX (although there is no simple way to have e-TeX installed).
+
+4. Extending the TL build system
+================================
+
+4.1 Adding a new program directory
+----------------------------------
+
+To add a new program directory utils/Util (not using Kpathsea) or texk/Prog
+(possibly using Kpathsea) you first have to add the directory Util to the M4
+list kpse_utils_pkgs or Prog to the M4 list kpse_texk_pkgs defined in
+m4/kpse-pkgs.m4.  In addition you must create a configure.ac fragment
+utils/Util/ac/witheanble.ac or texk/Prog/ac/witheanble.ac defining any
+required libraries from the TL tree and whether this new program is to be
+built by default (in the absence of the corresponding '--enable-Util/Prog'
+or '--disable-Util/Prog' configure options).  If a program texk/Prog
+requires specific configure options to be seen at the top-level, they should
+be defined in an additional configure.ac fragment texk/Prog/ac/Prog.ac
+included from texk/Prog/ac/withenable.ac and texk/Prog/configure.ac (as,
+e.g., for texk/web2c/ and texk/xdvik/).
+
+4.2 Adding a new library directory
+----------------------------------
+
+To add a new library directory libs/Lib you first have to add the directory
+Lib to the M4 list kpse_libs_pkgs defined in m4/kpse-pkgs.m4.  In addition
+you must create a configure.ac fragment libs/Lib/ac/witheanble.ac defining
+any required libraries from the TL tree and whether an installed (system)
+version of this library can be used.  If that is the case, another
+configure.ac fragment libs/Lib/ac/Lib.ac must define (AC_CHECK_FUNCS and
+AC_CHECK_HEADERS) tests for a system version to be acceptable.  Finally you
+must create a file m4/kpse-Lib-flags.m4 defining the M4 macro KPSE_LIB_FLAGS
+(where 'LIB' is a sanitized uppercase version of 'Lib') setting up the Make
+variables LIB_INCLUDES, LIB_LIBS, and LIB_DEPEND with the required values
+for CPPFLAGS, LDADD, and dependencies, as well as LIB_RULE with a
+(multiline) Make rule to rebuild that library when necessary.
+
+If a system version of the library can be used, another M4 macro
+KPSE_LIB_SYSTEM_FLAGS in m4/kpse-Lib-flags.m4 must define values for
+LIB_INCLUDES and LIB_LIBS, depending on values for the configure options
+'--with-Lib-includes' and/or '--with-Lib-libdir', and you must add the line
+'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])' to the definition of the M4 macro
+KPSE_ALL_SYSTEM_FLAGS in m4/kpse-pkgs.m4.
+
+5. Updating the TL build system
+===============================
+
+When anything in the TL build system (configure.ac and Makefile.am files
+with their fragments or M4 macros in m4/) has been modified you have to
+rebuild the coresponding configure, Makefile.in, and config.h or c-auto,h
+files.
+
+This is most easily done automatically using maintainer-mode.  Due to some
+dependencies known to Makefile but not recognized by Aclocal it may,
+however, happen that Aclocal is run again and agin, keeping the aclocal.m4
+files unmodified.  This can be fixed by
+	touch {,libs/texk/,utils/}aclocal.m4
+from the top-level.
+
+The files in the SVN repository are all up to date, but some of them may be
+rebuilt when using maintainer-mode due to their relative timestamps.  This
+will eventually be fixed, once everything has stabilized.
+
+Alternatively, you can run the 'reautoconf' script from the top-level (yet
+to be done).
+
+The 'config.guess', 'config.sub', etc. files for most packages are now kept
+centrally in build-aux/.  There are, however, independent copies in, e.g.,
+libs/freetype/freetype-1.5/, libs/freetype2/freetype-2.3.8/builds/unix/, and
+similar places that might need updating (not done automatically by the
+'reautoconf' script).
 

@@ -13,12 +13,12 @@
 # Sinclude all withenable.ac files providing:
 #   configure options --with-system-LIB, --with-LIB-includes, and --with-LIB-libdir
 #     for libraries
-#   configure option --without-PKG for programs
+#   configure option --disable-PKG or --enable-PKG for programs
+#   additional program specific configure options (if any)
 #   library dependencies for programs and libraries
 AC_DEFUN([KPSE_SETUP],
 [m4_define([kpse_TL], [$1])[]dnl
 m4_define([kpse_indent_26], [28])[]dnl
-m4_define([kpse_indent_28], [30])[]dnl
 AC_ARG_ENABLE([all-pkgs],
               AS_HELP_STRING([--disable-all-pkgs],
                              [do not build packages unless explicitly enabled]))[]dnl

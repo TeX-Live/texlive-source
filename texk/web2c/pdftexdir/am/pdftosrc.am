@@ -1,0 +1,16 @@
+## texk/web2c/pdftexdir/am/pdftosrc.am: Makefile fragment for pdftosrc.
+
+## pdftosrc
+##
+bin_PROGRAMS += pdftosrc
+
+## Force Automake to use CXXLD for linking
+nodist_EXTRA_pdftosrc_SOURCES = dummy.cxx
+
+pdftosrc_CPPFLAGS = $(pdftex_cppflags)
+
+pdftosrc_SOURCES = pdftexdir/pdftosrc.cc
+
+pdftosrc_LDADD = $(pdftex_ldadd) $(LDADD)
+
+pdftosrc_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a

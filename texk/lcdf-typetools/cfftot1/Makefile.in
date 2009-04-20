@@ -317,11 +317,11 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-man1: $(man1_MANS) $(man_MANS)
+install-man1: $(man_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
-	@list='$(man1_MANS) $(dist_man1_MANS) $(nodist_man1_MANS)'; \
-	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
+	@list=''; \
+	l2='$(man_MANS)'; \
 	for i in $$l2; do \
 	  case "$$i" in \
 	    *.1*) list="$$list $$i" ;; \
@@ -343,8 +343,8 @@ install-man1: $(man1_MANS) $(man_MANS)
 	done
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(man1_MANS) $(dist_man1_MANS) $(nodist_man1_MANS)'; \
-	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
+	@list=''; \
+	l2='$(man_MANS)'; \
 	for i in $$l2; do \
 	  case "$$i" in \
 	    *.1*) list="$$list $$i" ;; \

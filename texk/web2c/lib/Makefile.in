@@ -40,11 +40,17 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-asm.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cross.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
+	$(top_srcdir)/../../m4/kpse-fontconfig-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-graphite-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lex.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
 	$(top_srcdir)/../../m4/kpse-obsdcompat-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
+	$(top_srcdir)/../../m4/kpse-teckit-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-web2c.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-xpdf-flags.m4 \
@@ -119,7 +125,18 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FONTCONFIG_INCLUDES = @FONTCONFIG_INCLUDES@
+FONTCONFIG_LIBS = @FONTCONFIG_LIBS@
+FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
+FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
+FREETYPE2_LIBS = @FREETYPE2_LIBS@
+GRAPHITE_DEPEND = @GRAPHITE_DEPEND@
+GRAPHITE_INCLUDES = @GRAPHITE_INCLUDES@
+GRAPHITE_LIBS = @GRAPHITE_LIBS@
 GREP = @GREP@
+ICU_DEPEND = @ICU_DEPEND@
+ICU_INCLUDES = @ICU_INCLUDES@
+ICU_LIBS = @ICU_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -171,6 +188,9 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 TANGLE = @TANGLE@
 TANGLEBOOT = @TANGLEBOOT@
+TECKIT_DEPEND = @TECKIT_DEPEND@
+TECKIT_INCLUDES = @TECKIT_INCLUDES@
+TECKIT_LIBS = @TECKIT_LIBS@
 TIE = @TIE@
 VERSION = @VERSION@
 WEB2CVERSION = @WEB2CVERSION@
@@ -220,11 +240,13 @@ htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
+ipc_socketlibs = @ipc_socketlibs@
 libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 lt_ECHO = @lt_ECHO@
+lua_socketlibs = @lua_socketlibs@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -234,7 +256,6 @@ program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-socketlibs = @socketlibs@
 srcdir = @srcdir@
 subdirs = @subdirs@
 sysconfdir = @sysconfdir@

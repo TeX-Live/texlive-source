@@ -24,11 +24,11 @@ SUBDIRS += libs utils texk
 
 ## This is the default target for the Build script in TeX Live.
 world: install-strip
-#
-# run texlinks here since the binaries won't be there 
-# at install-data, and fmtutil.cnf won't be there at install-exec,
-# and there is no hook or -local for install.
+##
+## run texlinks here since the binaries won't be there 
+## at install-data, and fmtutil.cnf won't be there at install-exec,
+## and there is no hook or -local for install.
 	echo "top-level make $@: running texlinks ..."
-	cd texk/tetex && $(MAKE) run-texlinks
-#
+	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
+##
 	@echo "make $@ done."

@@ -66,17 +66,32 @@ AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
 KPSE_CHECK_SOCKET_LIBS
-AS_IF([test "x$enable_ipc:$enable_luatex" != xno:no],
+AS_IF([test "x$enable_luatex:$enable_ipc" != xno:no],
       [AS_CASE([$ac_cv_search_connect],
                ["none required"], [],
                [no], [AS_IF([test "x$enable_luatex" = xyes],
-                            [AC_MSG_ERROR([Sorry, no socket library: can not build luaTeX])],
+                            [AC_MSG_WARN([Sorry, no socket library: can not build luaTeX])
+                             enable_luatex=no])
+                      AS_IF([test "x$enable_ipc" = xyes],
                             [AC_MSG_WARN([no socket library: disabling ipc])
-                                          enable_ipc=no])],
+                             enable_ipc=no])],
                [socketlibs="-l$ac_cv_search_connect"])])
+AS_IF([test "x$enable_luatex" = xyes],
+      [lua_socketlibs=$socketlibs])
 AS_IF([test "x$enable_ipc" = xyes],
-      [AC_DEFINE([IPC], 1, [tex: Define to enable --ipc.])])
-AC_SUBST([socketlibs])
+      [ipc_socketlibs=$socketlibs
+       AC_DEFINE([IPC], 1, [tex: Define to enable --ipc.])])
+AC_SUBST([lua_socketlibs])
+AC_SUBST([ipc_socketlibs])
+
+KPSE_CHECK_FRAMEWORK([Carbon], [ATSUStyle style])
+AS_IF([test "x$kpse_cv_have_Carbon" = xno],
+      [KPSE_FONTCONFIG_FLAGS
+       AS_IF([test "x$enable_xetex:$kpse_cv_have_fontconfig" = xyes:no],
+             [AC_MSG_WARN([Sorry, can not build XeTeX without fontconfig])
+              enable_xetex=no])])
+AM_CONDITIONAL([XETEX_MACOSX], [test "x$kpse_cv_have_Carbon" = xyes])
+AM_CONDITIONAL([XETEX_GRAPHITE], [test "x$with_graphite" != xno])
 
 dnl Generate *TEX and ALEPH conditionals.
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
@@ -190,6 +205,10 @@ KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_XPDF_FLAGS
+KPSE_GRAPHITE_FLAGS
+KPSE_FREETYPE2_FLAGS
+KPSE_TECKIT_FLAGS
+KPSE_ICU_FLAGS
 KPSE_OBSDCOMPAT_FLAGS
 
 dnl Write output here, instead of putting a zillion -D's on the command line.

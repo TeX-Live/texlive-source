@@ -20,6 +20,7 @@
 # Each library must precede required other libraries (if any).
 AC_DEFUN([KPSE_LIBS_PKGS],
 [m4_define([kpse_libs_pkgs], [
+icu
 teckit
 graphite
 xpdf
@@ -70,7 +71,6 @@ vlna
 AC_DEFUN([KPSE_TEXK_PKGS],
 [m4_define([kpse_texk_pkgs], [
 web2c
-one
 afm2pl
 bibtex8
 cjkutils

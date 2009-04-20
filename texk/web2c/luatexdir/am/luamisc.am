@@ -1,0 +1,74 @@
+## texk/web2c/luatexdir/am/luamisc.am: Makefile fragment for libluamisc
+## (luafilesystem, luamd5, luapeg, luazip, luazlib, luaprofiler, and slnunicode)
+
+## libluamisc (luafilesystem, luamd5, luapeg, luazip, luazlib, luaprofiler,
+## and slnunicode)
+EXTRA_LIBRARIES += libluamisc.a
+
+libluamisc_a_DEPENDENCIES = libluasocket.a
+
+$(libluamisc_a_OBJECTS): libluasocket.a
+
+libluamisc_a_CPPFLAGS = \
+	$(ZLIB_INCLUDES) \
+	-I$(top_srcdir)/luatexdir/lua51 \
+	-I$(top_srcdir)/luatexdir/zziplib
+
+libluamisc_a_SOURCES = \
+	luatexdir/luafilesystem/src/lfs.c \
+	luatexdir/luafilesystem/src/lfs.h \
+	luatexdir/luamd5/md5.c \
+	luatexdir/luamd5/md5.h \
+	luatexdir/luamd5/md5lib.c \
+	luatexdir/luapeg/lpeg.c \
+	luatexdir/luaprofiler/clocks.c \
+	luatexdir/luaprofiler/clocks.h \
+	luatexdir/luaprofiler/core_profiler.c \
+	luatexdir/luaprofiler/core_profiler.h \
+	luatexdir/luaprofiler/function_meter.c \
+	luatexdir/luaprofiler/function_meter.h \
+	luatexdir/luaprofiler/luaprofiler.h \
+	luatexdir/luaprofiler/stack.c \
+	luatexdir/luaprofiler/stack.h \
+	luatexdir/luaprofiler/lua50_profiler.c \
+	luatexdir/luazip/src/luazip.c \
+	luatexdir/luazip/src/luazip.h \
+	luatexdir/luazlib/lgzip.c \
+	luatexdir/luazlib/lzlib.c \
+	luatexdir/slnunicode/slnunico.c
+
+## Included by slnunico.c
+EXTRA_libluamisc_a_SOURCES = luatexdir/slnunicode/slnudata.c
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/luafilesystem/Makefile \
+	luatexdir/luafilesystem/Makefile.win \
+	luatexdir/luafilesystem/README \
+	luatexdir/luafilesystem/config \
+	luatexdir/luafilesystem/config.win \
+	luatexdir/luafilesystem/doc \
+	luatexdir/luafilesystem/src/lfs.def \
+	luatexdir/luafilesystem/tests \
+	luatexdir/luafilesystem/vc6 \
+	luatexdir/luamd5/makefile \
+	luatexdir/luamd5/md5.html \
+	luatexdir/luamd5/md5.lua \
+	luatexdir/luamd5/md5tests.lua \
+	luatexdir/luaprofiler/Makefile \
+	luatexdir/luazip/Makefile \
+	luatexdir/luazip/README \
+	luatexdir/luazip/config \
+	luatexdir/luazip/doc \
+	luatexdir/luazip/tests \
+	luatexdir/luazip/vc6 \
+	luatexdir/luazip/vc7 \
+	luatexdir/luazlib/Makefile \
+	luatexdir/luazlib/README \
+	luatexdir/luazlib/gzip.lua \
+	luatexdir/luazlib/test_gzip.lua \
+	luatexdir/luazlib/test_zlib.lua \
+	luatexdir/luazlib/zlib.lua \
+	luatexdir/slnunicode/unitest
+

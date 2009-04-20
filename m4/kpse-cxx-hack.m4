@@ -29,7 +29,6 @@ AC_DEFUN([KPSE_ENABLE_CXX_HACK],
 AC_DEFUN([KPSE_CXX_HACK],
 [AC_REQUIRE([AC_PROG_CXX])[]dnl
 AC_REQUIRE([KPSE_ENABLE_CXX_HACK])[]dnl
-cpp_link_hack=false
 if test "x$GXX:$enable_cxx_runtime_hack" = xyes:yes; then
   _KPSE_CXX_HACK
 fi

@@ -1,0 +1,83 @@
+## texk/web2c/luatexdir/am/libzzip.am: Makefile fragment for libzzip.
+
+## zziplib
+##
+EXTRA_LIBRARIES += libzzip.a
+
+libzzip_a_DEPENDENCIES = liblua51.a
+
+$(libzzip_a_OBJECTS): liblua51.a
+
+libzzip_a_CPPFLAGS = \
+	$(ZLIB_INCLUDES) \
+	-I$(top_srcdir)/luatexdir/zziplib
+
+libzzip_a_SOURCES = \
+	luatexdir/zziplib/zzip/__debug.h \
+	luatexdir/zziplib/zzip/__dirent.h \
+	luatexdir/zziplib/zzip/__fnmatch.h \
+	luatexdir/zziplib/zzip/__hints.h \
+	luatexdir/zziplib/zzip/__mmap.h \
+	luatexdir/zziplib/zzip/_config.h \
+	luatexdir/zziplib/zzip/conf.h \
+	luatexdir/zziplib/zzip/dir.c \
+	luatexdir/zziplib/zzip/err.c \
+	luatexdir/zziplib/zzip/fetch.c \
+	luatexdir/zziplib/zzip/fetch.h \
+	luatexdir/zziplib/zzip/file.c \
+	luatexdir/zziplib/zzip/file.h \
+	luatexdir/zziplib/zzip/format.h \
+	luatexdir/zziplib/zzip/info.c \
+	luatexdir/zziplib/zzip/info.h \
+	luatexdir/zziplib/zzip/lib.h \
+	luatexdir/zziplib/zzip/memdisk.c \
+	luatexdir/zziplib/zzip/memdisk.h \
+	luatexdir/zziplib/zzip/mmapped.c \
+	luatexdir/zziplib/zzip/mmapped.h \
+	luatexdir/zziplib/zzip/plugin.c \
+	luatexdir/zziplib/zzip/plugin.h \
+	luatexdir/zziplib/zzip/stdint.h \
+	luatexdir/zziplib/zzip/stat.c \
+	luatexdir/zziplib/zzip/types.h \
+	luatexdir/zziplib/zzip/write.c \
+	luatexdir/zziplib/zzip/zip.c \
+	luatexdir/zziplib/zzip/zzip.h
+
+EXTRA_DIST += \
+	luatexdir/zziplib/COPYING.LIB \
+	luatexdir/zziplib/ChangeLog \
+	luatexdir/zziplib/README \
+	luatexdir/zziplib/TODO \
+	luatexdir/zziplib/zziplib.spec
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/zziplib/Makefile.am \
+	luatexdir/zziplib/Makefile.in \
+	luatexdir/zziplib/Makefile.mk \
+	luatexdir/zziplib/SDL \
+	luatexdir/zziplib/aclocal.m4 \
+	luatexdir/zziplib/bins \
+	luatexdir/zziplib/config.h.in \
+	luatexdir/zziplib/configure \
+	luatexdir/zziplib/configure.ac \
+	luatexdir/zziplib/docs \
+	luatexdir/zziplib/m4 \
+	luatexdir/zziplib/msvc6 \
+	luatexdir/zziplib/msvc7 \
+	luatexdir/zziplib/msvc8 \
+	luatexdir/zziplib/test \
+	luatexdir/zziplib/uses \
+	luatexdir/zziplib/zzip/Makefile \
+	luatexdir/zziplib/zzip/Makefile.am \
+	luatexdir/zziplib/zzip/Makefile.in \
+	luatexdir/zziplib/zzip/_msvc.h \
+	luatexdir/zziplib/zzip/_msvc.sed \
+	luatexdir/zziplib/zzip/autoconf.h \
+	luatexdir/zziplib/zzip/fseeko.c \
+	luatexdir/zziplib/zzip/fseeko.h \
+	luatexdir/zziplib/zzip/zziplib.wpj \
+	luatexdir/zziplib/zzipback.sed \
+	luatexdir/zziplib/zzipwrap
+

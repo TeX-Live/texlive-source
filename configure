@@ -949,7 +949,6 @@ enable_tektronixwin
 enable_unitermwin
 enable_mp
 enable_web_progs
-enable_one
 enable_afm2pl
 enable_bibtex8
 enable_cjkutils
@@ -1705,25 +1704,24 @@ Optional Features:
   --disable-dump-share      make fmt/base/mem files architecture-dependent
   --enable-fmtutil          use fmtutil for build dumps
   --enable-ipc              enable TeX's --ipc option, i.e., pipe to a program
-  --disable-tex               do not compile and install TeX
-  --enable-etex               compile and install e-TeX
-  --disable-aleph             do not compile and install Aleph
-  --disable-pdftex            do not compile and install pdfTeX
-  --disable-luatex            do not compile and install luaTeX
-  --enable-xetex              compile and install XeTeX
+  --disable-tex             do not compile and install TeX
+  --enable-etex             compile and install e-TeX
+  --disable-aleph           do not compile and install Aleph
+  --disable-pdftex          do not compile and install pdfTeX
+  --disable-luatex          do not compile and install luaTeX
+  --disable-xetex           do not compile and install XeTeX
   --disable-mf              do not build METAFONT
-  --enable-mf-nowin           build a separate non-windows-capable METAFONT
-  --enable-epsfwin            include EPSF pseudo window support
-  --enable-hp2627win          include HP 2627 window support
-  --enable-mftalkwin          include mftalk (generic server) window support
-  --enable-nextwin            include NeXT window support
-  --enable-regiswin           include Regis window support
-  --enable-suntoolswin        include old Suntools (not X) window support
-  --enable-tektronixwin       include Tektronix window support
-  --enable-unitermwin         include Uniterm window support
+  --enable-mf-nowin         build a separate non-windows-capable METAFONT
+  --enable-epsfwin          include EPSF pseudo window support
+  --enable-hp2627win        include HP 2627 window support
+  --enable-mftalkwin        include mftalk (generic server) window support
+  --enable-nextwin          include NeXT window support
+  --enable-regiswin         include Regis window support
+  --enable-suntoolswin      include old Suntools (not X) window support
+  --enable-tektronixwin     include Tektronix window support
+  --enable-unitermwin       include Uniterm window support
   --disable-mp              do not build METAPOST
   --disable-web-progs       do not build WEB programs bibtex ... weave
-  --enable-one            build the one (testing) package
   --disable-afm2pl        do not build the afm2pl package
   --disable-bibtex8       do not build the bibtex8 package
   --disable-cjkutils      do not build the cjkutils package
@@ -1770,13 +1768,14 @@ Optional Features:
   --disable-xdvipdfmx     do not build the xdvipdfmx package
   --disable-tetex         do not build the tetex (teTeX scripts) package
   --disable-texlive       do not build the texlive (TeX Live scripts) package
-  --disable-mktexmf-default   do not run mktexmf if MF source missing
-  --disable-mktexpk-default   do not run mktexpk if PK font missing
-  --disable-mktextfm-default  do not run mktextfm if TFM file missing
-  --disable-mkocp-default     do not run mkocp if OCP file missing
-  --disable-mkofm-default     do not run mkofm if OFM file missing
-  --enable-mktexfmt-default   run mktexfmt if format file missing
-  --enable-mktextex-default   run mktextex if TeX source missing
+  --disable-mktexmf-default do not run mktexmf if MF source missing
+  --disable-mktexpk-default do not run mktexpk if PK font missing
+  --disable-mktextfm-default
+                            do not run mktextfm if TFM file missing
+  --disable-mkocp-default   do not run mkocp if OCP file missing
+  --disable-mkofm-default   do not run mkofm if OFM file missing
+  --enable-mktexfmt-default run mktexfmt if format file missing
+  --enable-mktextex-default run mktextex if TeX source missing
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
   --enable-shared[=PKGS]  build shared libraries [default=yes]
@@ -2565,7 +2564,7 @@ esac
 
 ## texk/ac/withenable.ac
 
-## texk/web2c/ac/withenable.ac
+## texk/web2c/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options and TL libraries required for web2c
 # Check whether --enable-web2c was given.
 if test "${enable_web2c+set}" = set; then
@@ -2584,7 +2583,7 @@ test "x$enable_web2c" = xno || {
   need_zlib=yes
 }
 
-## texk/web2c/ac/web2c.ac
+## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options for TeX and MF
 
 # Check whether --with-editor was given.
@@ -2641,7 +2640,7 @@ case $enable_pdftex in
   *) enable_pdftex=yes ;;
 esac
 
-test "x$enable_pdftex" = xno || {
+test "x$enable_web2c:$enable_pdftex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
   need_obsdcompat=yes
@@ -2655,7 +2654,7 @@ case $enable_luatex in
   *) enable_luatex=yes ;;
 esac
 
-test "x$enable_luatex" = xno || {
+test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
   need_obsdcompat=yes
@@ -2666,13 +2665,16 @@ if test "${enable_xetex+set}" = set; then
 fi
 case $enable_xetex in
   yes|no) : ;;
-  *) enable_xetex=no ;;
+  *) enable_xetex=yes ;;
 esac
 
-test "x$enable_xetex" = xno || {
+test "x$enable_web2c:$enable_xetex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
   need_freetype2=yes
+  need_icu=yes
+  need_teckit=yes
+  need_graphite=yes
 }
 ## configure options for MF
 # Check whether --enable-mf was given.
@@ -2730,29 +2732,6 @@ fi
 if test "${enable_web_progs+set}" = set; then
   enableval=$enable_web_progs;
 fi
-
-
-## texk/one/ac/withenable.ac
-## configure options and TL libraries required for one
-# Check whether --enable-one was given.
-if test "${enable_one+set}" = set; then
-  enableval=$enable_one;
-fi
-case $enable_one in #(
-  yes|no);; #(
-  *) enable_one=no
-     { $as_echo "$as_me:$LINENO: Assuming \`--enable-one=$enable_one'" >&5
-$as_echo "$as_me: Assuming \`--enable-one=$enable_one'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-one=$enable_one'";;
-esac
-
-test "x$enable_one" = xno || {
-  need_freetype2=yes
-  need_t1lib=yes
-  need_gd=yes
-  need_teckit=yes
-  need_graphite=yes
-}
 
 
 ## texk/afm2pl/ac/withenable.ac
@@ -3389,7 +3368,7 @@ esac
 
 
 
-## texk/kpathsea/ac/withenable.ac
+## texk/kpathsea/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
 ## configure options and TL libraries required for kpathsea
 
 # Check whether --with-system-kpathsea was given.
@@ -3429,7 +3408,7 @@ $as_echo "$as_me: Using \`kpathsea' headers and library from TL tree" >&6;}
   fi
 fi
 
-## texk/kpathsea/ac/web2c.ac
+## texk/kpathsea/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
 ## configure options for mktextmf-default & Co
 # Check whether --enable-mktexmf-default was given.
 if test "${enable_mktexmf_default+set}" = set; then
@@ -3490,6 +3469,10 @@ esac
 
 
 ## libs/ac/withenable.ac
+
+## libs/icu/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/icu/
+## configure options and TL libraries required for icu (modified for XeTeX)
+
 
 ## libs/teckit/ac/withenable.ac
 ## configure options and TL libraries required for teckit
@@ -5909,13 +5892,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:5912: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:5895: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5915: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:5898: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5918: output\"" >&5)
+  (eval echo "\"\$as_me:5901: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -7121,7 +7104,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7124 "configure"' > conftest.$ac_ext
+  echo '#line 7107 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9168,11 +9151,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9171: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9154: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9175: \$? = $ac_status" >&5
+   echo "$as_me:9158: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9507,11 +9490,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9510: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9493: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9514: \$? = $ac_status" >&5
+   echo "$as_me:9497: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9612,11 +9595,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9615: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9598: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9619: \$? = $ac_status" >&5
+   echo "$as_me:9602: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9667,11 +9650,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9670: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9653: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9674: \$? = $ac_status" >&5
+   echo "$as_me:9657: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12467,7 +12450,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12470 "configure"
+#line 12453 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12563,7 +12546,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12566 "configure"
+#line 12549 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -18959,11 +18942,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18962: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18945: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18966: \$? = $ac_status" >&5
+   echo "$as_me:18949: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -19058,11 +19041,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19061: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19044: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:19065: \$? = $ac_status" >&5
+   echo "$as_me:19048: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -19110,11 +19093,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19113: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19096: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:19117: \$? = $ac_status" >&5
+   echo "$as_me:19100: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -22325,7 +22308,7 @@ done
 fi
 
 
-## texk/kpathsea/ac/kpathsea.ac
+## texk/kpathsea/ac/kpathsea.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
 ## define required functions and headers from system kpathsea
 if test "x$need_kpathsea:$with_system_kpathsea" = 'xyes:yes'; then
   { $as_echo "$as_me:$LINENO: checking requested system \`kpathsea' library..." >&5

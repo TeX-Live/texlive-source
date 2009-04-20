@@ -1,0 +1,12 @@
+## texk/web2c/pdftexdir/am/ttf2afm.am: Makefile fragment for ttf2afm.
+
+## ttf2afm
+##
+bin_PROGRAMS += ttf2afm
+
+ttf2afm_CPPFLAGS = -I$(srcdir)/pdftexdir 
+
+ttf2afm_SOURCES = pdftexdir/ttf2afm.c
+
+## included by pdftexdir/ttf2afm.c
+EXTRA_ttf2afm_SOURCES = pdftexdir/macnames.c

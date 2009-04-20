@@ -10,6 +10,8 @@
 
 # KPSE_CHECK_FRAMEWORK(FRAMEWORK, BODY)
 # -------------------------------------
+# Check for mthe Mac OS X framework FRAMEWORK (using BODY) and if found,
+# set kpse_cv_have_FRAMEWORK to yes and define HAVE_FRAMEWORK.
 AC_DEFUN([KPSE_CHECK_FRAMEWORK],
 [AC_CACHE_CHECK([for Mac OS X $1 framework],
                 [kpse_cv_have_$1],

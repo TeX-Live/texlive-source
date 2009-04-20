@@ -34,7 +34,7 @@ POST_UNINSTALL = :
 bin_PROGRAMS = epsffit$(EXEEXT) psbook$(EXEEXT) psnup$(EXEEXT) \
 	psresize$(EXEEXT) psselect$(EXEEXT) pstops$(EXEEXT)
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
+DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
@@ -53,7 +53,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_CLEAN_FILES = patchlev.h
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(manmdir)"
+	"$(DESTDIR)$(man1dir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_epsffit_OBJECTS = epsffit.$(OBJEXT) pserror.$(OBJEXT)
@@ -79,8 +79,8 @@ am_pstops_OBJECTS = pserror.$(OBJEXT) psspec.$(OBJEXT) \
 	pstops.$(OBJEXT) psutil.$(OBJEXT)
 pstops_OBJECTS = $(am_pstops_OBJECTS)
 pstops_LDADD = $(LDADD)
-binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
-SCRIPTS = $(bin_SCRIPTS)
+nodist_binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+SCRIPTS = $(nodist_bin_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -93,9 +93,8 @@ SOURCES = $(epsffit_SOURCES) $(psbook_SOURCES) $(psnup_SOURCES) \
 DIST_SOURCES = $(epsffit_SOURCES) $(psbook_SOURCES) $(psnup_SOURCES) \
 	$(psresize_SOURCES) $(psselect_SOURCES) $(pstops_SOURCES)
 man1dir = $(mandir)/man1
-manmdir = $(mandir)/manm
 NROFF = nroff
-MANS = $(dist_man_MANS) $(man1_MANS)
+MANS = $(dist_man1_MANS) $(nodist_man1_MANS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -194,23 +193,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 OS = UNIX
 PAPER = a4
-CHMOD = chmod
-BINMODE = +x
 AM_CPPFLAGS = -DUNIX -DPAPER=\"$(PAPER)\"
-bin_SCRIPTS = getafm showchar \
-              extractres fixdlsrps fixfmps fixmacps fixpsditps fixpspps \
-	      fixscribeps fixtpps fixwfwps fixwpps fixwwps includeres psmerge
-
-CLEANFILES = $(bin_SCRIPTS)
-PERL = /usr/bin/env perl
-MAKETEXT = $(PERL) $(srcdir)/maketext
-man1_MANS = epsffit.1 psbook.1 psnup.1 psresize.1 psselect.1 pstops.1 \
-            getafm.1 \
-	    extractres.1 fixdlsrps.man fixfmps.man fixmacps.man \
-	    fixpsditps.man fixpspps.man fixscribeps.man fixtpps.man \
-            fixwfwps.man fixwpps.man fixwwps.man includeres.man psmerge.man
-
-dist_man_MANS = $(man1_MANS)
 epsffit_SOURCES = \
 	config.h \
 	epsffit.c \
@@ -262,15 +245,43 @@ pstops_SOURCES = \
 	psutil.c \
 	psutil.h
 
-
-# scripts.
-EXTRA_DIST = LICENSE getafm.sh showchar.sh extractres.pl fixdlsrps.pl \
-	fixfmps.pl fixmacps.pl fixpsditps.pl fixpspps.pl \
-	fixscribeps.pl fixtpps.pl fixwfwps.pl fixwpps.pl fixwwps.pl \
-	includeres.pl psmerge.pl Makefile.bcc Makefile.msc Makefile.nt \
-	Makefile.os2 Makefile.sc Makefile.unix Makefile.wat \
-	descrip.mms maketext md68_0.ps md71_0.ps Makefile.in.orig \
+EXTRA_DIST = LICENSE $(perl_scripts:=.pl) $(shell_scripts:=.sh) \
+	$(nodist_man1_MANS:.1=.man) maketext Makefile.bcc Makefile.msc \
+	Makefile.nt Makefile.os2 Makefile.sc Makefile.unix \
+	Makefile.wat descrip.mms md68_0.ps md71_0.ps Makefile.in.orig \
 	configure.in.orig
+perl_scripts = extractres fixdlsrps fixfmps fixmacps fixpsditps fixpspps \
+	fixscribeps fixtpps fixwfwps fixwpps fixwwps includeres psmerge
+
+shell_scripts = getafm showchar
+nodist_bin_SCRIPTS = $(perl_scripts)
+dist_man1_MANS = \
+	fixdlsrps.man \
+	fixfmps.man \
+	fixmacps.man \
+	fixpsditps.man \
+	fixpspps.man \
+	fixscribeps.man \
+	fixtpps.man \
+	fixwfwps.man \
+	fixwpps.man \
+	fixwwps.man \
+	getafm.man \
+	includeres.man \
+	psmerge.man
+
+nodist_man1_MANS = \
+	epsffit.1\
+	extractres.1 \
+	psbook.1 \
+	psnup.1 \
+	psresize.1 \
+	psselect.1 \
+	pstops.1
+
+CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_man1_MANS)
+PERL = /usr/bin/env perl
+MAKETEXT = $(PERL) $(srcdir)/maketext
 all: all-am
 
 .SUFFIXES:
@@ -351,21 +362,21 @@ psselect$(EXEEXT): $(psselect_OBJECTS) $(psselect_DEPENDENCIES)
 pstops$(EXEEXT): $(pstops_OBJECTS) $(pstops_DEPENDENCIES) 
 	@rm -f pstops$(EXEEXT)
 	$(LINK) $(pstops_OBJECTS) $(pstops_LDADD) $(LIBS)
-install-binSCRIPTS: $(bin_SCRIPTS)
+install-nodist_binSCRIPTS: $(nodist_bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	@list='$(nodist_bin_SCRIPTS)'; for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  if test -f $$d$$p; then \
 	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
-	    echo " $(binSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	    $(binSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(bindir)/$$f"; \
+	    echo " $(nodist_binSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(bindir)/$$f'"; \
+	    $(nodist_binSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(bindir)/$$f"; \
 	  else :; fi; \
 	done
 
-uninstall-binSCRIPTS:
+uninstall-nodist_binSCRIPTS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	@list='$(nodist_bin_SCRIPTS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
 	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
@@ -400,16 +411,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-install-man1: $(man1_MANS) $(man_MANS)
+install-man1: $(dist_man1_MANS) $(nodist_man1_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
-	@list='$(man1_MANS) $(dist_man1_MANS) $(nodist_man1_MANS)'; \
-	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
-	for i in $$l2; do \
-	  case "$$i" in \
-	    *.1*) list="$$list $$i" ;; \
-	  esac; \
-	done; \
+	@list='$(dist_man1_MANS) $(nodist_man1_MANS)'; \
 	for i in $$list; do \
 	  if test -f $$i; then file=$$i; \
 	  else file=$(srcdir)/$$i; fi; \
@@ -426,13 +431,7 @@ install-man1: $(man1_MANS) $(man_MANS)
 	done
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list='$(man1_MANS) $(dist_man1_MANS) $(nodist_man1_MANS)'; \
-	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
-	for i in $$l2; do \
-	  case "$$i" in \
-	    *.1*) list="$$list $$i" ;; \
-	  esac; \
-	done; \
+	@list='$(dist_man1_MANS) $(nodist_man1_MANS)'; \
 	for i in $$list; do \
 	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
 	  case "$$ext" in \
@@ -444,51 +443,6 @@ uninstall-man1:
 	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
 	  echo " rm -f '$(DESTDIR)$(man1dir)/$$inst'"; \
 	  rm -f "$(DESTDIR)$(man1dir)/$$inst"; \
-	done
-install-manm: $(manm_MANS) $(man_MANS)
-	@$(NORMAL_INSTALL)
-	test -z "$(manmdir)" || $(MKDIR_P) "$(DESTDIR)$(manmdir)"
-	@list='$(manm_MANS) $(dist_manm_MANS) $(nodist_manm_MANS)'; \
-	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
-	for i in $$l2; do \
-	  case "$$i" in \
-	    *.m*) list="$$list $$i" ;; \
-	  esac; \
-	done; \
-	for i in $$list; do \
-	  if test -f $$i; then file=$$i; \
-	  else file=$(srcdir)/$$i; fi; \
-	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
-	  case "$$ext" in \
-	    m*) ;; \
-	    *) ext='m' ;; \
-	  esac; \
-	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
-	  inst=`echo $$inst | sed -e 's/^.*\///'`; \
-	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
-	  echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(manmdir)/$$inst'"; \
-	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(manmdir)/$$inst"; \
-	done
-uninstall-manm:
-	@$(NORMAL_UNINSTALL)
-	@list='$(manm_MANS) $(dist_manm_MANS) $(nodist_manm_MANS)'; \
-	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
-	for i in $$l2; do \
-	  case "$$i" in \
-	    *.m*) list="$$list $$i" ;; \
-	  esac; \
-	done; \
-	for i in $$list; do \
-	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
-	  case "$$ext" in \
-	    m*) ;; \
-	    *) ext='m' ;; \
-	  esac; \
-	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
-	  inst=`echo $$inst | sed -e 's/^.*\///'`; \
-	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
-	  echo " rm -f '$(DESTDIR)$(manmdir)/$$inst'"; \
-	  rm -f "$(DESTDIR)$(manmdir)/$$inst"; \
 	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -673,7 +627,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(manmdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -726,13 +680,15 @@ install-data-am: install-man
 
 install-dvi: install-dvi-am
 
-install-exec-am: install-binPROGRAMS install-binSCRIPTS
+install-exec-am: install-binPROGRAMS install-nodist_binSCRIPTS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 
 install-html: install-html-am
 
 install-info: install-info-am
 
-install-man: install-man1 install-manm
+install-man: install-man1
 
 install-pdf: install-pdf-am
 
@@ -759,11 +715,14 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS uninstall-man
+uninstall-am: uninstall-binPROGRAMS uninstall-man \
+	uninstall-nodist_binSCRIPTS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 
-uninstall-man: uninstall-man1 uninstall-manm
+uninstall-man: uninstall-man1
 
-.MAKE: install-am install-strip
+.MAKE: install-am install-exec-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-binPROGRAMS clean-generic ctags dist dist-all dist-bzip2 \
@@ -771,24 +730,32 @@ uninstall-man: uninstall-man1 uninstall-manm
 	distclean distclean-compile distclean-generic distclean-tags \
 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
 	html-am info info-am install install-am install-binPROGRAMS \
-	install-binSCRIPTS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-exec-hook install-html \
 	install-html-am install-info install-info-am install-man \
-	install-man1 install-manm install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-man1 install-nodist_binSCRIPTS install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-binSCRIPTS \
-	uninstall-man uninstall-man1 uninstall-manm
+	uninstall-am uninstall-binPROGRAMS uninstall-hook \
+	uninstall-man uninstall-man1 uninstall-nodist_binSCRIPTS
 
+
+install-exec-hook:
+	@for f in $(shell_scripts); do \
+	  echo "$(INSTALL_SCRIPT) '$(srcdir)/$$f.sh' '$(DESTDIR)$(bindir)/$$f'"; \
+	  $(INSTALL_SCRIPT) "$(srcdir)/$$f.sh" "$(DESTDIR)$(bindir)/$$f"; \
+	done
+
+uninstall-hook:
+	@for f in $(shell_scripts); do \
+	  echo "rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	done
 
 %: %.pl
 	$(MAKETEXT) OS=$(OS) PERL="$(PERL)" $< >$@
-
-%: %.sh
-	cp $< $@
-	$(CHMOD) $(BINMODE) $@
 
 %.1: %.man
 	$(MAKETEXT) PAPER=$(PAPER) "MAN=$(man1_MANS)" $< >$@

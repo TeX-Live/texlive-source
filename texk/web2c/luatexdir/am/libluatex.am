@@ -1,0 +1,135 @@
+## texk/web2c/luatexdir/am/libluatex.am: Makefile fragment for libluatex.
+
+## libluatex
+##
+EXTRA_LIBRARIES += libluatex.a
+
+libluatex_a_DEPENDENCIES = libff.a
+
+$(libluatex_a_OBJECTS): libff.a $(luatex_c_h)
+
+libluatex_a_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
+libluatex_a_CPPFLAGS += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
+libluatex_a_CPPFLAGS += -Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
+libluatex_a_CPPFLAGS += -DpdfTeX
+
+libluatex_a_SOURCES = \
+	luatexdir/commands.h \
+	luatexdir/font/dofont.c \
+	luatexdir/font/luatexfont.h \
+	luatexdir/font/luafont.c \
+	luatexdir/font/mapfile.c \
+	luatexdir/font/mapfile.h \
+	luatexdir/font/pkin.c \
+	luatexdir/font/sfnt.c \
+	luatexdir/font/sfnt.h \
+	luatexdir/font/subfont.c \
+	luatexdir/font/texfont.c \
+	luatexdir/font/texfont.h \
+	luatexdir/font/tfmofm.c \
+	luatexdir/font/tounicode.c \
+	luatexdir/font/tt_glyf.c \
+	luatexdir/font/tt_glyf.h \
+	luatexdir/font/tt_table.c \
+	luatexdir/font/tt_table.h \
+	luatexdir/font/vfovf.c \
+	luatexdir/font/vfpacket.c \
+	luatexdir/font/writecff.c \
+	luatexdir/font/writecff.h \
+	luatexdir/font/writeenc.c \
+	luatexdir/font/writefont.c \
+	luatexdir/font/writet1.c \
+	luatexdir/font/writet3.c \
+	luatexdir/font/writettf.c \
+	luatexdir/font/writettf.h \
+	luatexdir/font/writetype0.c \
+	luatexdir/font/writetype2.c \
+	luatexdir/get_svnversion.sh \
+	luatexdir/hyphen.h \
+	luatexdir/image/epdf.c \
+	luatexdir/image/epdf.h \
+	luatexdir/image/image.h \
+	luatexdir/image/pdftoepdf.cc \
+	luatexdir/image/writeimg.c \
+	luatexdir/image/writejbig2.c \
+	luatexdir/image/writejbig2.h \
+	luatexdir/image/writejpg.c \
+	luatexdir/image/writepng.c \
+	luatexdir/lang/hnjalloc.c \
+	luatexdir/lang/hnjalloc.h \
+	luatexdir/lang/hyphen.c \
+	luatexdir/lang/texlang.c \
+	luatexdir/lua/lcallbacklib.c \
+	luatexdir/lua/lfontlib.c \
+	luatexdir/lua/limglib.c \
+	luatexdir/lua/lkpselib.c \
+	luatexdir/lua/llanglib.c \
+	luatexdir/lua/llualib.c \
+	luatexdir/lua/lnodelib.c \
+	luatexdir/lua/loslibext.c \
+	luatexdir/lua/liolib.c \
+	luatexdir/lua/lpdflib.c \
+	luatexdir/lua/lstatslib.c \
+	luatexdir/lua/ltexiolib.c \
+	luatexdir/lua/ltexlib.c \
+	luatexdir/lua/ltokenlib.c \
+	luatexdir/lua/luainit.c \
+	luatexdir/lua/luanode.c \
+	luatexdir/lua/luastuff.c \
+	luatexdir/lua/luatex.c \
+	luatexdir/lua/luatoken.c \
+	luatexdir/lua/texluac.c \
+	luatexdir/luatex-api.h \
+	luatexdir/luatex.h \
+	luatexdir/makecpool.c \
+	luatexdir/managed-sa.c \
+	luatexdir/managed-sa.h \
+	luatexdir/mathcodes.c \
+	luatexdir/nodes.h \
+	luatexdir/pdf/pagetree.c \
+	luatexdir/pdf/pagetree.h \
+	luatexdir/pdf/pdfpage.c \
+	luatexdir/pdf/pdfpage.h \
+	luatexdir/primitive.h \
+	luatexdir/ptexmac.h \
+	luatexdir/tex/filename.c \
+	luatexdir/tex/linebreak.c \
+	luatexdir/tex/math.c \
+	luatexdir/tex/mlist.c \
+	luatexdir/tex/postlinebreak.c \
+	luatexdir/tex/primitive.c \
+	luatexdir/tex/texdeffont.c \
+	luatexdir/tex/texnodes.c \
+	luatexdir/tex/texpdf.c \
+	luatexdir/tex/textoken.c \
+	luatexdir/texmath.h \
+	luatexdir/textcodes.c \
+	luatexdir/tokens.h \
+	luatexdir/utils/avl.c \
+	luatexdir/utils/avl.h \
+	luatexdir/utils/avlstuff.c \
+	luatexdir/utils/avlstuff.h \
+	luatexdir/utils/synctex.h \
+	luatexdir/utils/synctex.c \
+	luatexdir/utils/utils.c \
+	luatexdir/utils/writezip.c \
+	mplibdir/lmplib.c
+
+## included by luatexdir/font/writettf.c
+EXTRA_libluatex_a_SOURCES = luatexdir/font/macnames.c
+
+$(libluatex_a_OBJECTS): libff.a
+
+EXTRA_DIST += \
+	luatexdir/ChangeLog \
+	luatexdir/NEWS \
+	luatexdir/README \
+	luatexdir/change-files.txt \
+	luatexdir/font/subfont.txt
+
+## Eventually delete these files
+##
+EXTRA_DIST += \
+	luatexdir/Makefile.in \
+	luatexdir/luatex.mk \
+	luatexdir/luatexlib.mk

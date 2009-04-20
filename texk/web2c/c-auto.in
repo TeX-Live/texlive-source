@@ -58,6 +58,9 @@
 /* Define to 1 if you have the `bzero' function. */
 #undef HAVE_BZERO
 
+/* Define to 1 if you have the Mac OS X Carbon framework. */
+#undef HAVE_CARBON
+
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H
@@ -91,6 +94,9 @@
 
 /* Define to 1 if you have the <langinfo.h> header file. */
 #undef HAVE_LANGINFO_H
+
+/* Define if you have libfontconfig. */
+#undef HAVE_LIBFONTCONFIG
 
 /* Define to 1 if you have the `posix' library (-lposix). */
 #undef HAVE_LIBPOSIX

@@ -1,0 +1,75 @@
+## texk/web2c/luatexdir/am/liblua51.am: Makefile fragment for liblua51.
+
+## liblua51
+##
+EXTRA_LIBRARIES += liblua51.a
+
+liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51
+if !MINGW32
+liblua51_a_CPPFLAGS += -DLUA_USE_POSIX
+endif !MINGW32
+
+liblua51_a_SOURCES = \
+	luatexdir/lua51/lapi.c \
+	luatexdir/lua51/lapi.h \
+	luatexdir/lua51/lauxlib.c \
+	luatexdir/lua51/lauxlib.h \
+	luatexdir/lua51/lbaselib.c \
+	luatexdir/lua51/lcoco.c \
+	luatexdir/lua51/lcoco.h \
+	luatexdir/lua51/lcode.c \
+	luatexdir/lua51/lcode.h \
+	luatexdir/lua51/ldblib.c \
+	luatexdir/lua51/ldebug.c \
+	luatexdir/lua51/ldebug.h \
+	luatexdir/lua51/ldo.c \
+	luatexdir/lua51/ldo.h \
+	luatexdir/lua51/ldump.c \
+	luatexdir/lua51/lfunc.c \
+	luatexdir/lua51/lfunc.h \
+	luatexdir/lua51/lgc.c \
+	luatexdir/lua51/lgc.h \
+	luatexdir/lua51/linit.c \
+	luatexdir/lua51/llex.c \
+	luatexdir/lua51/llex.h \
+	luatexdir/lua51/llimits.h \
+	luatexdir/lua51/lmathlib.c \
+	luatexdir/lua51/lmem.c \
+	luatexdir/lua51/lmem.h \
+	luatexdir/lua51/loadlib.c \
+	luatexdir/lua51/lobject.c \
+	luatexdir/lua51/lobject.h \
+	luatexdir/lua51/lopcodes.c \
+	luatexdir/lua51/lopcodes.h \
+	luatexdir/lua51/loslib.c \
+	luatexdir/lua51/lparser.c \
+	luatexdir/lua51/lparser.h \
+	luatexdir/lua51/lstate.c \
+	luatexdir/lua51/lstate.h \
+	luatexdir/lua51/lstring.c \
+	luatexdir/lua51/lstring.h \
+	luatexdir/lua51/lstrlib.c \
+	luatexdir/lua51/ltable.c \
+	luatexdir/lua51/ltable.h \
+	luatexdir/lua51/ltablib.c \
+	luatexdir/lua51/ltm.c \
+	luatexdir/lua51/ltm.h \
+	luatexdir/lua51/lua.h \
+	luatexdir/lua51/luaconf.h \
+	luatexdir/lua51/lualib.h \
+	luatexdir/lua51/lundump.c \
+	luatexdir/lua51/lundump.h \
+	luatexdir/lua51/lvm.c \
+	luatexdir/lua51/lvm.h \
+	luatexdir/lua51/lzio.c \
+	luatexdir/lua51/lzio.h
+
+## Not used
+##
+EXTRA_DIST += \
+	luatexdir/lua51/Makefile \
+	luatexdir/lua51/liolib.c \
+	luatexdir/lua51/lua.c \
+	luatexdir/lua51/luac.c \
+	luatexdir/lua51/print.c
+
