@@ -1,6 +1,6 @@
 package xtpipes;
 /*
-FileInfo.java (2008-01-26-00:38)
+FileInfo.java (2009-01-27-22:19)
 */
 import java.io.File;
 import java.io.PrintWriter;

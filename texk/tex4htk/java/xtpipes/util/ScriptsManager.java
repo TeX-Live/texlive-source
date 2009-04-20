@@ -1,16 +1,14 @@
-// 2008-01-26-00:38
+// 2009-01-27-22:19
 package xtpipes.util;
-import java.util.ArrayList;
-import java.util.HashSet;
-import xtpipes.XtpipesUni;
-
-
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.*;
 import java.io.*;
 import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Stack;
+import java.util.ArrayList;
+import java.util.HashSet;
+import xtpipes.XtpipesUni;
 
 public class ScriptsManager extends DefaultHandler {
      boolean inBody = false;
@@ -25,7 +23,8 @@ Stack<Integer> nsStack = new Stack<Integer>();
      String code="", match = null;
      Stack<Object[]> stack = new Stack<Object[]>();
    public ScriptsManager( PrintWriter out,
-                          HashMap<String,Object> scripts, Method method,
+                          HashMap<String,Object> scripts,
+                          Method method,
                           PrintWriter log, boolean trace ){
      this.out = out;
      this.log = (log==null)? new PrintWriter( System.err ) : log;
@@ -128,7 +127,8 @@ for(int i=nsName.size(); i>top; ){
   nsValue.remove(i);
 }
 
-     int m = s.indexOf('>');
+     if( !s.equals("") ){
+       int m = s.indexOf('>');
 char [] attrs = s.substring(0,m).toCharArray();
 int result = qName.length()+1,
     mark = result,
@@ -137,7 +137,6 @@ int result = qName.length()+1,
 ;
 char delimiter = ' ';
 String name="";
-
 for(int i=result; i<m; i++ ){
   attrs[result++] = attrs[i];
   switch( control ){
@@ -147,7 +146,7 @@ for(int i=result; i<m; i++ ){
    control = 13
 ;
 }
-      break; }
+  break; }
     case 13
 : { if( (attrs[i] == '"') || (attrs[i] == '\'') ){
    delimiter = attrs[i];
@@ -155,7 +154,7 @@ for(int i=result; i<m; i++ ){
 ;
    from = result;
 }
-     break; }
+ break; }
     case 14
 : { if( attrs[i] == delimiter ){
    if( name.startsWith("xmlns")
@@ -177,9 +176,11 @@ for(int k=nsName.size(); k>0; ){
 }
  break; }
 } }
-s =  (new String(attrs,0,result)) + s.substring(m);
+s =  (new String(attrs,0, Math.min(result,attrs.length)))
+          + s.substring(m);
 
-     add( s );
+       add( s );
+     }
    } else { int top = ((Integer) nsStack.pop()) . intValue();
 for(int i=nsName.size(); i>top; ){
   i--;
@@ -189,7 +190,7 @@ for(int i=nsName.size(); i>top; ){
  }
 }
 
-   void add(String s){
+   protected void add(String s){
       if( savemode ){ code+=s; }
       else { out.print(s); }
 }  }

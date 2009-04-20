@@ -1,7 +1,7 @@
 package tex4ht;
 /**********************************************************/ 
-/* OomFilterImpl.java                     2008-02-20-10:22 */
-/* Copyright (C) 2006--2008    Eitan M. Gurari            */
+/* OomFilterImpl.java                     2009-03-11-03:09 */
+/* Copyright (C) 2006--2009    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */

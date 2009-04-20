@@ -1,6 +1,6 @@
 package xtpipes;
 /*
-Xtpipes.java (2008-01-26-00:38)
+Xtpipes.java (2009-01-27-22:19)
 */
 // import xtpipes.util.InputObject;
 // import xtpipes.util.FileInfo;
@@ -20,25 +20,6 @@ import java.net.URL;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
-class XtpipesPrintWriter extends PrintWriter {
-   public XtpipesPrintWriter() {
-     super(System.out, true);
-   }
-   public XtpipesPrintWriter (PrintStream ps, boolean b){
-     super(ps, b);
-   }
-   public XtpipesPrintWriter (OutputStream ps, boolean b){
-     super(ps, b);
-   }
-   public XtpipesPrintWriter (FileWriter fw){
-     super(fw);
-   }
-   public void print(String str) {
-     super.print( XtpipesUni.toUni(str, "") );
-   }
-   public void println(String str) {
-     super.println( XtpipesUni.toUni(str, "") );
-}  }
 
 public class Xtpipes {
    private static HashMap <String,Object> map;
@@ -111,6 +92,60 @@ rootName = null;
 trace = false;
 
   outPrintWriter = new XtpipesPrintWriter( out, true );
+  logWriter = (log==null)? (new PrintWriter( System.err )) : log;
+  mainMethod(args);
+  outPrintWriter.flush();
+}
+
+   public static void xtpipes(String [] args,
+                           OutputStreamWriter out,
+                           PrintWriter log)
+                                                throws Exception {
+  map = new HashMap  <String,Object> ();
+needScript = true;
+returnDom = false;
+result = null;
+inFile = null;
+inData = null;
+exceptionErrs = false;
+messages = false;
+outFileName = null;
+outPrintWriter = null;
+scriptFile = null;
+i_scriptDir = null;
+scriptMap = null;
+saxReaderStack = new Stack <XMLReader> ();
+rootName = null;
+trace = false;
+
+  outPrintWriter = new XtpipesPrintWriter( out );
+  logWriter = (log==null)? (new PrintWriter( System.err )) : log;
+  mainMethod(args);
+  outPrintWriter.flush();
+}
+
+   public static void xtpipes(String [] args,
+                           XtpipesPrintWriter out,
+                           PrintWriter log)
+                                                throws Exception {
+  map = new HashMap  <String,Object> ();
+needScript = true;
+returnDom = false;
+result = null;
+inFile = null;
+inData = null;
+exceptionErrs = false;
+messages = false;
+outFileName = null;
+outPrintWriter = null;
+scriptFile = null;
+i_scriptDir = null;
+scriptMap = null;
+saxReaderStack = new Stack <XMLReader> ();
+rootName = null;
+trace = false;
+
+  outPrintWriter = out;
   logWriter = (log==null)? (new PrintWriter( System.err )) : log;
   mainMethod(args);
   outPrintWriter.flush();
@@ -247,7 +282,7 @@ public static Document getDOM(String s, String args[], PrintWriter log)
    private static void mainMethod(String args[]) throws Exception {
   try{
     String xtpipes_call =
-     "   xtpipes (2008-01-26-00:38)"
+     "   xtpipes (2009-01-27-22:19)"
    + "\n   Command line options: "
    + "\n     java xtpipes [-trace] [-help] [-m] [-E] [-s script_file]"
    +                                               " [-S script_map]"
@@ -267,7 +302,7 @@ else if( args[n].charAt(0)!='-' ){ inFile = args[n]; }
 else if( args[n].equals("-m") ){
   messages = true;
   logWriter.println(
-     "xtpipes (2008-01-26-00:38)"
+     "xtpipes (2009-01-27-22:19)"
      + "\n java.version: "    + System.getProperty("java.version")
      + "\n java.class.path: " + System.getProperty("java.class.path")
      + "\n os.name: "         + System.getProperty("os.name")
@@ -1293,8 +1328,9 @@ if( Xtpipes.ml2xml != null ){
 } catch ( java.lang.reflect.InvocationTargetException e ){
    instructionErr( node, errMsg + ": " + e.getCause(), 23 );
 } catch ( Exception e ){
-// e.printStackTrace();
-   instructionErr( node, errMsg + e.toString(), 29 );
+   Xtpipes.logWriter.flush();
+   e.printStackTrace();
+   instructionErr( node, errMsg + ": " + e.toString(), 29 );
 }
 
       } else {

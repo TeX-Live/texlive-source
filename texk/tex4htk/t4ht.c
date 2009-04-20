@@ -1,7 +1,7 @@
 
 /**********************************************************/
-/* t4ht.c                                2008-02-25-18:56 */
-/* Copyright (C) 1998--2008    Eitan M. Gurari            */
+/* t4ht.c                                2009-01-31-07:34 */
+/* Copyright (C) 1998--2009    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
@@ -1049,7 +1049,7 @@ static void err_i
 #undef SEP
 #endif
 {  (IGNORED) fprintf(stderr,"--- error --- ");
-   (IGNORED) fprintf(stderr, warn_err_mssg[n]);
+   (IGNORED) fprintf(stderr, "%s", warn_err_mssg[n]);
    exit(EXIT_FAILURE);
 }
 
@@ -1070,7 +1070,7 @@ static void err_arg
 #undef SEP
 #endif
 {  (IGNORED) fprintf(stderr,"--- error --- ");
-   (IGNORED) fprintf(stderr, warn_err_mssg[n]);
+   (IGNORED) fprintf(stderr, "%s", warn_err_mssg[n]);
    exit(EXIT_FAILURE);
 }
 
@@ -1458,15 +1458,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2008-02-25-18:56 %s)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2009-01-31-07:34 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2008-02-25-18:56)\n");
+   (IGNORED) printf("t4ht.c (2009-01-31-07:34)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("t4ht.c (2008-02-25-18:56 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("t4ht.c (2009-01-31-07:34 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("t4ht.c (2008-02-25-18:56 kpathsea)\n");
+   (IGNORED) printf("t4ht.c (2009-01-31-07:34 kpathsea)\n");
 #endif
 #endif
 
@@ -2804,7 +2804,7 @@ if( (second < 98) || (second > 102) ){
    (IGNORED) fprintf(css_file, "font-size:%d%c;", second, '%');
 }
 if( font_sty  ) {
-   (IGNORED) fprintf(css_file, font_sty->body);
+   (IGNORED) fprintf(css_file, "%s", font_sty->body);
 }
 (IGNORED) fprintf(css_file, "}\n");
 
@@ -2823,7 +2823,7 @@ if( !eq_str(match[4],"100") ){
 }
 (IGNORED) fprintf(css_file, "{");
 if( font_sty  ) {
-   (IGNORED) fprintf(css_file, font_sty->body);
+   (IGNORED) fprintf(css_file, "%s", font_sty->body);
 }
 (IGNORED) fprintf(css_file, "}}\n");
 
@@ -2846,7 +2846,7 @@ if( (second < 98) || (second > 102) ){
    (IGNORED) fprintf(css_file, "font-size:%d%c;", second, '%');
 }
 if( font_sty  ) {
-   (IGNORED) fprintf(css_file, font_sty->body);
+   (IGNORED) fprintf(css_file, "%s", font_sty->body);
 }
 (IGNORED) fprintf(css_file, "}\n");
 

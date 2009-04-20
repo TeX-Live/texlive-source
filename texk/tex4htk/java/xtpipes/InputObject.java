@@ -1,6 +1,6 @@
 package xtpipes;
 /*
-InputObject.java (2008-01-26-00:38)
+InputObject.java (2009-01-27-22:19)
 */
 import java.io.PrintWriter;
 import java.net.URL;
@@ -113,7 +113,7 @@ public InputObject( byte [] bytes, PrintWriter log ){
    public void buildProfile( boolean trace ){
    if( trace ){
       log.println(
-         "xtpipes (2008-01-26-00:38)"
+         "xtpipes (2009-01-27-22:19)"
          + "\n   java.version: "    + System.getProperty("java.version")
          + "\n   java.class.path: " + System.getProperty("java.class.path")
          + "\n   os.name: "         + System.getProperty("os.name")

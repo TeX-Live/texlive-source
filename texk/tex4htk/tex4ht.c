@@ -1,7 +1,7 @@
 
 /**********************************************************/
-/* tex4ht.c                              2007-11-07-16:08 */
-/* Copyright (C) 1996--2007    Eitan M. Gurari            */
+/* tex4ht.c                              2009-01-31-07:33 */
+/* Copyright (C) 1996--2009    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
@@ -1051,7 +1051,7 @@ static U_CHAR *warn_err_mssg[]={
 "   [-t<tfm-font-dir>]\n"
 "   [-u10]               base 10 for unicode characters\n"
 "   [-utf8]              utf-8 encoding for unicode characters\n"
-"   [-v<idv version>]    replacement forthe given dvi version\n"
+"   [-v<idv version>]    replacement for the given dvi version\n"
 "   [-xs]           ms-dos file names for automatically generated gifs\n"
 
 ,                            
@@ -1628,11 +1628,11 @@ if( span_on && in_span_ch ){
 if( no_root_file ){  open_o_file(); }
 
 
-       (IGNORED) fprintf(cur_o_file, end_span[0]);
+       (IGNORED) fprintf(cur_o_file, "%s", end_span[0]);
 }  }
 
 
-   (IGNORED) fprintf(cur_o_file, t_accent_fifth);
+   (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
 needs_accented_sym--;
 
@@ -1662,11 +1662,11 @@ if( span_on && in_span_ch ){
 if( no_root_file ){  open_o_file(); }
 
 
-       (IGNORED) fprintf(cur_o_file, end_span[0]);
+       (IGNORED) fprintf(cur_o_file, "%s", end_span[0]);
 }  }
 
 
-   (IGNORED) fprintf(cur_o_file, t_accent_fifth);
+   (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
 needs_accented_sym--;
 
@@ -1810,11 +1810,11 @@ if( span_on && in_span_ch ){
 if( no_root_file ){  open_o_file(); }
 
 
-       (IGNORED) fprintf(cur_o_file, end_span[0]);
+       (IGNORED) fprintf(cur_o_file, "%s", end_span[0]);
 }  }
 
 
-   (IGNORED) fprintf(cur_o_file, t_accent_fifth);
+   (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
 needs_accented_sym--;
 
@@ -2979,7 +2979,7 @@ if( ( name == new_font_name ) && (n == 19) && (ch=='.') ){
       if( i != bound ){
          
 (IGNORED) fprintf(stderr,"--- warning --- ");
-(IGNORED) fprintf(stderr,warn_err_mssg[22]
+(IGNORED) fprintf(stderr, warn_err_mssg[22]
 
 , new_font_name, i, bound); show_err_context();
          diff = diff * 1000 + i - bound;    }
@@ -4573,11 +4573,11 @@ if( span_on && in_span_ch ){
 if( no_root_file ){  open_o_file(); }
 
 
-       (IGNORED) fprintf(cur_o_file, end_span[0]);
+       (IGNORED) fprintf(cur_o_file, "%s", end_span[0]);
 }  }
 
 
-   (IGNORED) fprintf(cur_o_file, t_accent_fifth);
+   (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
 needs_accented_sym--;
 
@@ -4597,7 +4597,7 @@ if( no_root_file ){  open_o_file(); }
 
 
        if( span_open[0] )  if( *span_open[0] )
-           (IGNORED) fprintf(cur_o_file, span_open[0]);
+           (IGNORED) fprintf(cur_o_file, "%s", span_open[0]);
        if( span_name[0] )  if( *span_name[0] )
            (IGNORED) fprintf(cur_o_file,
                span_name[0], font_tbl[cur_fnt].family_name);
@@ -4609,7 +4609,7 @@ if( no_root_file ){  open_o_file(); }
            (IGNORED) fprintf(cur_o_file,
                        span_mag[0], font_tbl[cur_fnt].mag);
        if( span_ch[0] )  if( *span_ch[0] )
-           (IGNORED) fprintf(cur_o_file, span_ch[0]);
+           (IGNORED) fprintf(cur_o_file, "%s", span_ch[0]);
     }
     start_span = FALSE;
   }
@@ -5335,7 +5335,7 @@ if( end_span[gif_flag] )
 }
 
 if( a_accent_template && needs_accented_sym ){
-   (IGNORED) fprintf(cur_o_file, a_accent_fifth);
+   (IGNORED) fprintf(cur_o_file, "%s", a_accent_fifth);
 }
 
 
@@ -5395,11 +5395,11 @@ if( span_on && in_span_ch ){
 if( no_root_file ){  open_o_file(); }
 
 
-       (IGNORED) fprintf(cur_o_file, end_span[0]);
+       (IGNORED) fprintf(cur_o_file, "%s", end_span[0]);
 }  }
 
 
-   (IGNORED) fprintf(cur_o_file, t_accent_fifth);
+   (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
 needs_accented_sym--;
 
@@ -5657,7 +5657,7 @@ static  void warn_i
 #undef SEP
 #endif
 {  (IGNORED) fprintf(stderr,"--- warning --- ");
-   (IGNORED) fprintf(stderr,warn_err_mssg[n]);
+   (IGNORED) fprintf(stderr, "%s", warn_err_mssg[n]);
    show_err_context();
 }
 
@@ -5773,7 +5773,7 @@ static void err_i
 #undef SEP
 #endif
 {  (IGNORED) fprintf(stderr,"--- error --- ");
-   (IGNORED) fprintf(stderr, warn_err_mssg[n]);
+   (IGNORED) fprintf(stderr, "%s", warn_err_mssg[n]);
    show_err_context();
    exit(EXIT_FAILURE);
 }
@@ -5931,15 +5931,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2007-11-07-16:08 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2009-01-31-07:33 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2007-11-07-16:08)\n");
+   (IGNORED) printf("tex4ht.c (2009-01-31-07:33)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2007-11-07-16:08 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2009-01-31-07:33 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2007-11-07-16:08 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2009-01-31-07:33 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){
@@ -6295,7 +6295,7 @@ if( (dvi_file = fopen(job_name, READ_BIN_FLAGS)) == NULL )
        break;
    } }
    if( (dvi_file = fopen(job_name, READ_BIN_FLAGS)) == NULL ){
-      warn_i(9);  bad_in_file(job_name);
+      warn_i_str(1, job_name); bad_in_file(job_name);
 }  }
 
  }
@@ -8762,7 +8762,7 @@ else if ( in_span_ch ){
 if( no_root_file ){  open_o_file(); }
 
 
-       (IGNORED) fprintf(cur_o_file, end_span[0]);
+       (IGNORED) fprintf(cur_o_file, "%s", end_span[0]);
     }
 } }
 
@@ -8772,7 +8772,7 @@ if( in_accenting ){
   
                                                long int width;
 if( i_accent_template ){
-  (IGNORED) fprintf(cur_o_file, i_accent_second); }
+  (IGNORED) fprintf(cur_o_file, "%s", i_accent_second); }
 needs_end_accent = (needs_accent_sym == 2 * TRUE);
 if( needs_end_accent && t_accent_template )
 {  
@@ -8825,7 +8825,7 @@ needs_accent_sym && (ch < 128)
          m_accent_fourth);
     }
     if( i_accent_template ){
-      (IGNORED) fprintf(cur_o_file, i_accent_first); }
+      (IGNORED) fprintf(cur_o_file, "%s", i_accent_first); }
     in_accenting = TRUE;
   }
 }
@@ -9149,11 +9149,11 @@ if( span_on && in_span_ch ){
 if( no_root_file ){  open_o_file(); }
 
 
-       (IGNORED) fprintf(cur_o_file, end_span[0]);
+       (IGNORED) fprintf(cur_o_file, "%s", end_span[0]);
 }  }
 
 
-   (IGNORED) fprintf(cur_o_file, t_accent_fifth);
+   (IGNORED) fprintf(cur_o_file, "%s", t_accent_fifth);
    needs_end_accent = FALSE; 
 needs_accented_sym--;
 
@@ -10397,7 +10397,7 @@ case 'D': {  dim = pos_y_C * (max_pos_y - min_pos_y) + pos_y_D;
     }
     p++;
     if( dim_on ){    (IGNORED) fprintf(cur_o_file, p, dim);  }
-    else        {    (IGNORED) fprintf(cur_o_file, p); }
+    else        {    (IGNORED) fprintf(cur_o_file, "%s", p); }
     while( * (p++) );
   }
 }
@@ -12232,7 +12232,7 @@ if( errCode > 0 ){
 
 {                                               int   ch, i, mag;
                                                 U_CHAR  str[256];
-   (IGNORED) fprintf(log_file, begin_char_gif);
+   (IGNORED) fprintf(log_file, "%s", begin_char_gif);
    dvi_flag = TRUE;
    for( cur_fnt = font_tbl_size; cur_fnt--; ){
       

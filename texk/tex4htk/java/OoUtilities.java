@@ -1,7 +1,7 @@
 package tex4ht;
 /**********************************************************/ 
-/* OoUtilities.java                      2008-02-20-10:22 */
-/* Copyright (C) 2006--2008    Eitan M. Gurari            */
+/* OoUtilities.java                      2009-03-11-03:09 */
+/* Copyright (C) 2006--2009    Eitan M. Gurari            */
 /*                                                        */
 /* This work may be distributed and/or modified under the */
 /* conditions of the LaTeX Project Public License, either */
@@ -132,24 +132,26 @@ if( remove ){
 }
 
   public static void table(Node dom) {
-      Node mtr, mtd, d;
+      Node tblRow, tblCell, d;
 //      int cols = 0;
    Node node = dom.getFirstChild();
    
-   mtr = node.getLastChild();
-while( (mtr != null)
-       && (mtr.getNodeType() == Node.TEXT_NODE)
-       && mtr.getNodeValue().trim().equals("")             ){
-   node.removeChild(mtr);
-   mtr = node.getLastChild();
+   tblRow = node.getLastChild();
+while( (tblRow != null)
+//       && (tblRow.getNodeType() == Node.TEXT_NODE)
+//       && tblRow.getNodeValue().trim().equals("")
+       && tblRow.getTextContent().trim().equals("")
+){
+   node.removeChild(tblRow);
+   tblRow = node.getLastChild();
 }
 
-   if( (mtr != null) && (mtr.getPreviousSibling() != null) ){
+   if( (tblRow != null) && (tblRow.getPreviousSibling() != null) ){
      boolean bool = false;
-if( mtr.getNodeName().equals("table:table-row")
-    && mtr.hasAttributes()
+if( tblRow.getNodeName().equals("table:table-row")
+    && tblRow.hasAttributes()
 ){
-   NamedNodeMap attributes = mtr.getAttributes();
+   NamedNodeMap attributes = tblRow.getAttributes();
    Node styleAttr = attributes.getNamedItem( "table:style-name" );
    String style = (styleAttr==null)? null
                                    : styleAttr.getNodeValue();
@@ -162,60 +164,91 @@ if( mtr.getNodeName().equals("table:table-row")
 }  }
 
      if( !bool ){
-        mtd = mtr.getFirstChild();
-while( mtd != null){
-  d = mtd.getNextSibling();
-  if( justSpace(mtd) ){  mtr.removeChild(mtd);  }
-  mtd = d;
+        tblCell = tblRow.getFirstChild();
+while( tblCell != null){
+  d = tblCell.getNextSibling();
+  if( justSpace(tblCell) ){  tblRow.removeChild(tblCell);  }
+  tblCell = d;
 }
 
         
-        mtd = mtr.getFirstChild();
-        if( (mtd != null)
-            && (mtd.getNextSibling() == null)
-            && justSpace(mtd)
+        tblCell = tblRow.getFirstChild();
+        if( (tblCell != null)
+            && (tblCell.getNextSibling() == null)
+            && justSpace(tblCell)
         ){
-          node.removeChild(mtr);
+          node.removeChild(tblRow);
    } }  }
    int n = 0;
-mtr = node.getFirstChild();
-while( mtr != null ){
+tblRow = node.getFirstChild();
+while( tblRow != null ){
    if(
-       (mtr.getNodeType() == Node.ELEMENT_NODE)
+       (tblRow.getNodeType() == Node.ELEMENT_NODE)
      &&
-        mtr.getNodeName().equals("table:table-row")
+        tblRow.getNodeName().equals("table:table-row")
    ){
       int m = 0;
-mtd = mtr.getFirstChild();
-while( mtd != null ){
+tblCell = tblRow.getFirstChild();
+while( tblCell != null ){
    if(
-       (mtd.getNodeType() == Node.ELEMENT_NODE)
+       (tblCell.getNodeType() == Node.ELEMENT_NODE)
      &&
-        mtd.getNodeName().equals("table:table-cell")
+        tblCell.getNodeName().equals("table:table-cell")
    ){
       m++;
+      Node child = tblCell.getLastChild();
+while( child != null ){
+   Node prevChild = child.getPreviousSibling();
+   if(
+       (child.getNodeType() == Node.ELEMENT_NODE)
+     &&
+        child.getNodeName().equals("text:p")
+   ){
+     Node sibling = child.getPreviousSibling();
+     while( (sibling != null)
+            &&
+            (sibling.getNodeType() != Node.ELEMENT_NODE)
+     ){
+       sibling = sibling.getPreviousSibling();
+     }
+     if( sibling == null ){
+       sibling = child.getNextSibling();
+       while( (sibling != null)
+              &&
+              (sibling.getNodeType() != Node.ELEMENT_NODE)
+       ){
+          sibling = sibling.getNextSibling();
+     } }
+     if( (sibling != null)
+         && child.getTextContent().trim().equals("")
+     ){
+         tblCell.removeChild(child);
+   } }
+   child = prevChild;
+}
+
    }
-   mtd = mtd.getNextSibling();
+   tblCell = tblCell.getNextSibling();
 }
 
       if( m > n ){ n = m; }
    }
-   mtr = mtr.getNextSibling();
+   tblRow = tblRow.getNextSibling();
 }
 
-   mtr = node.getFirstChild();
-while( mtr != null ){
-   d = mtr.getNextSibling();
+   tblRow = node.getFirstChild();
+while( tblRow != null ){
+   d = tblRow.getNextSibling();
    if(
-       (mtr.getNodeType() == Node.ELEMENT_NODE)
+       (tblRow.getNodeType() == Node.ELEMENT_NODE)
      &&
-        mtr.getNodeName().equals("table:table-column")
+        tblRow.getNodeName().equals("table:table-column")
    ){
       n--;
       if( n < 0 ){
-        mtr.getParentNode().removeChild(mtr);
+        tblRow.getParentNode().removeChild(tblRow);
   }  }
-  mtr = d;
+  tblRow = d;
 }
 
 }
