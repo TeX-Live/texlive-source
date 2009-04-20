@@ -1,3 +1,8 @@
+2009-04-20  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (EXTRA_DIST): avoid trailing \, to appease automake
+	complaints and bugs.
+
 2009-04-18  Karl Berry  <karl@tug.org>
 
 	* Makefile.am: also make and install all the scripts and man pages.

@@ -103,8 +103,7 @@ EXTRA_DIST += \
 	fixwpps.pl \
 	fixwwps.pl \
 	includeres.pl \
-	psmerge.pl \
-#
+	psmerge.pl
 
 ## Not used
 ##
@@ -119,8 +118,7 @@ EXTRA_DIST += \
 	descrip.mms \
 	maketext \
 	md68_0.ps \
-	md71_0.ps \
-#
+	md71_0.ps
 
 ## Eventually delete these files
 ##

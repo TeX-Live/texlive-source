@@ -264,10 +264,13 @@ pstops_SOURCES = \
 
 
 # scripts.
-#
-
-#
-EXTRA_DIST = LICENSE Makefile.in.orig configure.in.orig
+EXTRA_DIST = LICENSE getafm.sh showchar.sh extractres.pl fixdlsrps.pl \
+	fixfmps.pl fixmacps.pl fixpsditps.pl fixpspps.pl \
+	fixscribeps.pl fixtpps.pl fixwfwps.pl fixwpps.pl fixwwps.pl \
+	includeres.pl psmerge.pl Makefile.bcc Makefile.msc Makefile.nt \
+	Makefile.os2 Makefile.sc Makefile.unix Makefile.wat \
+	descrip.mms maketext md68_0.ps md71_0.ps Makefile.in.orig \
+	configure.in.orig
 all: all-am
 
 .SUFFIXES:
