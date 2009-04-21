@@ -117,8 +117,11 @@ include $(srcdir)/am/texmf.am
 ## old MetaPost
 include $(srcdir)/mpdir/am/mp.am
 
-## new MetaPost, also used for by luaTeX
+## MetaPost
 include $(srcdir)/mplibdir/am/mplib.am
+
+## libmplib, used by MetaPost and luaTeX
+include $(srcdir)/mplibdir/am/libmplib.am
 
 ## e-TeX
 include $(srcdir)/etexdir/am/etex.am

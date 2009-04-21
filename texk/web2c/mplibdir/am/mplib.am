@@ -1,60 +1,37 @@
 ## texk/web2c/mplibdir/am/mplib.am: Makefile fragment for MetaPost.
 
-## metapost
+## MetaPost
 ##
 if MP
-bin_PROGRAMS += newmpost
+bin_PROGRAMS += mpost
 endif MP
-EXTRA_PROGRAMS += newmpost
+EXTRA_PROGRAMS += mpost
 
-EXTRA_LIBRARIES += libmplib.a
+mp_ctangle = CWEBINPUTS=$(srcdir)/mplibdir $(ctangle)
 
-newmpost_c_h = mpost.c mpxout.c mpxout.h
-newmpost_web = mplibdir/mpost.w mplibdir/mpxout.w
+mpost_CPPFLAGS = -I$(srcdir)/mplibdir
+mpost_DEPENDENCIES = libmplib.a
+mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm
 
-EXTRA_DIST += $(newmpost_web)
+## MetaPost C sources
+nodist_mpost_SOURCES = mpost.c $(mpxout_c_h)
+mpxout_c_h = mpxout.c mpxout.h
 
-newmpost_CPPFLAGS = -I$(srcdir)/mplibdir
-newmpost_DEPENDENCIES = libmplib.a
-newmpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm
-nodist_newmpost_SOURCES = $(newmpost_c_h)
+mpost.c: ctangle$(EXEEXT) mplibdir/mpost.w
+	$(mp_ctangle) mpost.w
 
-$(newmpost_c_h): mpost-ctangle libmplib.a
-mpost-ctangle: ctangle$(EXEEXT) $(newmpost_web)
-	CWEBINPUTS=$(srcdir)/mplibdir $(ctangle) mpost.w
-	CWEBINPUTS=$(srcdir)/mplibdir $(ctangle) mpxout.w
+$(mpxout_c_h): mpxout-ctangle
+mpxout-ctangle: ctangle$(EXEEXT) mplibdir/mpxout.w
+	$(mp_ctangle) mpxout.w
 	echo timestamp >$@
-	touch $(newmpost_c_h)
+	touch $(mpxout_c_h)
 
-DISTCLEANFILES += $(newmpost_c_h) mpost-ctangle
+## MetaPost CWeb sources
+mpost_web = mplibdir/mpost.w mplibdir/mpxout.w
 
-## These files are mutually dependent
-libmplib_c_h =  mp.c mplib.h mpmp.h
-libmplib_c_h += mppsout.h psout.c mplibps.h
-libmplib_c_h += mplibsvg.h mpsvgout.h svgout.c
-libmplib_c_h += memio.c tfmin.c
-libmplib_true_c = mplibdir/avl.h mplibdir/avl.c 
-libmplib_web = $(libmplib_true_c) mplibdir/mp.w mplibdir/psout.w
-libmplib_web += mplibdir/svgout.w mplibdir/memio.w mplibdir/tfmin.w
+$(mpost_OBJECTS): $(nodist_mpost_SOURCES) libmplib.a
 
-libmplib_a_CPPFLAGS = -I$(srcdir)/mplibdir
-nodist_libmplib_a_SOURCES = $(libmplib_c_h)
-libmplib_a_SOURCES = $(libmplib_true_c)
+EXTRA_DIST += $(mpost_web)
 
-$(libmplib_c_h): mplib-ctangle  $(libmplib_true_c)
-mplib-ctangle: ctangle$(EXEEXT) $(libmplib_web)
-	CWEBINPUTS=$(srcdir)/mplibdir $(ctangle) mp.w
-	CWEBINPUTS=$(srcdir)/mplibdir $(ctangle) psout.w
-	CWEBINPUTS=$(srcdir)/mplibdir $(ctangle) svgout.w
-	CWEBINPUTS=$(srcdir)/mplibdir $(ctangle) tfmin.w
-	CWEBINPUTS=$(srcdir)/mplibdir $(ctangle) memio.w
-	echo timestamp >$@
-	touch $(libmplib_c_h)
-
-EXTRA_DIST += $(libmplib_web)
-
-DISTCLEANFILES += $(libmplib_c_h) mplib-ctangle
-
-## only used by luatex, perhaps should not be mentioned here
-EXTRA_DIST += mplibdir/lmplib.c
+DISTCLEANFILES += $(nodist_mpost_SOURCES) mpxout-ctangle
 
