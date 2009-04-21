@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -63,7 +64,8 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = c-auto.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
+	"$(DESTDIR)$(tex4htdir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_t4ht_OBJECTS = t4ht.$(OBJEXT)
@@ -73,6 +75,9 @@ am__DEPENDENCIES_1 =
 am_tex4ht_OBJECTS = tex4ht.$(OBJEXT)
 tex4ht_OBJECTS = $(am_tex4ht_OBJECTS)
 tex4ht_LDADD = $(LDADD)
+binSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+tex4htSCRIPT_INSTALL = $(INSTALL_SCRIPT)
+SCRIPTS = $(bin_SCRIPTS) $(tex4ht_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -211,8 +216,6 @@ sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-tex4htdir = @tex4htdir@
-tex4htrel = @tex4htrel@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
@@ -242,8 +245,11 @@ EXTRA_DIST = $(perl_scripts) $(shell_scripts) dbcontext dblatex \
 	uxhcontext uxhlatex uxhmex uxhtex uxhtexi uxhxelatex uxhxetex \
 	wcontext wlatex wmex wtex wtexi wxelatex wxetex xhcontext \
 	xhlatex xhmcontext xhmex xhmlatex xhmmex xhmtex xhmtexi \
-	xhmxelatex xhmxetex xhtex xhtexi xhxelatex xhxetex xv4ht.java \
-	Makefile.in.orig configure.in.orig
+	xhmxelatex xhmxetex xhtex xhtexi xhxelatex xhxetex xv4ht.java
+tex4ht_subdir = texmf-dist/scripts/tex4ht
+tex4htdir = ${prefix}/$(tex4ht_subdir)
+tex4ht_SCRIPTS = 
+bin_SCRIPTS = 
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -333,6 +339,44 @@ t4ht$(EXEEXT): $(t4ht_OBJECTS) $(t4ht_DEPENDENCIES)
 tex4ht$(EXEEXT): $(tex4ht_OBJECTS) $(tex4ht_DEPENDENCIES) 
 	@rm -f tex4ht$(EXEEXT)
 	$(LINK) $(tex4ht_OBJECTS) $(tex4ht_LDADD) $(LIBS)
+install-binSCRIPTS: $(bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
+	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f $$d$$p; then \
+	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	    echo " $(binSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(bindir)/$$f'"; \
+	    $(binSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(bindir)/$$f"; \
+	  else :; fi; \
+	done
+
+uninstall-binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_SCRIPTS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	  echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	done
+install-tex4htSCRIPTS: $(tex4ht_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	test -z "$(tex4htdir)" || $(MKDIR_P) "$(DESTDIR)$(tex4htdir)"
+	@list='$(tex4ht_SCRIPTS)'; for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f $$d$$p; then \
+	    f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	    echo " $(tex4htSCRIPT_INSTALL) '$$d$$p' '$(DESTDIR)$(tex4htdir)/$$f'"; \
+	    $(tex4htSCRIPT_INSTALL) "$$d$$p" "$(DESTDIR)$(tex4htdir)/$$f"; \
+	  else :; fi; \
+	done
+
+uninstall-tex4htSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(tex4ht_SCRIPTS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's|^.*/||;$(transform)'`; \
+	  echo " rm -f '$(DESTDIR)$(tex4htdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(tex4htdir)/$$f"; \
+	done
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -556,9 +600,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) c-auto.h
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) c-auto.h
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(tex4htdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -606,13 +650,13 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-tex4htSCRIPTS
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 
 install-dvi: install-dvi-am
 
-install-exec-am: install-binPROGRAMS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+install-exec-am: install-binPROGRAMS install-binSCRIPTS
 
 install-html: install-html-am
 
@@ -646,11 +690,12 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
+	uninstall-tex4htSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 
-.MAKE: install-am install-exec-am install-strip uninstall-am
+.MAKE: install-am install-data-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-binPROGRAMS clean-generic clean-libtool ctags dist \
@@ -659,21 +704,22 @@ uninstall-am: uninstall-binPROGRAMS
 	distclean-generic distclean-hdr distclean-libtool \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-exec-hook \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-hook
+	install-binPROGRAMS install-binSCRIPTS install-data \
+	install-data-am install-data-hook install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	install-tex4htSCRIPTS installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-binSCRIPTS uninstall-hook \
+	uninstall-tex4htSCRIPTS
 
 
 @KPATHSEA_RULE@
 
-install-exec-hook:
-	$(mkdir_p) "$(DESTDIR)$(tex4htdir)" "$(DESTDIR)$(bindir)"
+install-data-hook:
 	@for p in $(perl_scripts); do \
 	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.pl'"; \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.pl"; \
@@ -682,24 +728,35 @@ install-exec-hook:
 	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.sh'"; \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.sh"; \
 	done
+	case "$(bindir)" in \
+	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
+	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
+	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
+	     exit 1;; \
+	esac
+
+.PHONY: install-links
+install-links:
 	@cd $(DESTDIR)$(bindir) && \
 	  for p in $(perl_scripts); do \
-	    echo "$(LN_S) $(tex4htrel)/$$p.pl $$p"; \
-	    rm -f $$p; $(LN_S) $(tex4htrel)/$$p.pl $$p; \
-	  done; \
+	    rm -f $$p; \
+	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.pl'"; \
+	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p; \
+	  done && \
 	  for p in $(shell_scripts); do \
-	    echo "$(LN_S) $(tex4htrel)/$$p.sh $$p"; \
-	    rm -f $$p; $(LN_S) $(tex4htrel)/$$p.sh $$p; \
+	    rm -f $$p; \
+	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.sh'"; \
+	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p; \
 	  done
 
 uninstall-hook:
-	@for p in $(perl_scripts) $(shell_scripts); do \
-	  echo "rm -f '$(DESTDIR)$(bindir)/$$p'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
-	done
 	@for p in $(perl_scripts:=.pl) $(shell_scripts:=.sh); do \
 	  echo "rm -f '$(DESTDIR)$(tex4htdir)/$$p'"; \
 	  rm -f "$(DESTDIR)$(tex4htdir)/$$p"; \
+	done
+	@for p in $(perl_scripts) $(shell_scripts); do \
+	  echo "rm -f '$(DESTDIR)$(bindir)/$$p'"; \
+	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
 	done
 
 dist-hook:

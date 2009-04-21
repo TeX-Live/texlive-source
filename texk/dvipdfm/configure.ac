@@ -46,7 +46,8 @@ dnl Check for required file formats.
 dnl We need tex-ps_header, type1, and vf;
 dnl of these type1 was introduced last (Feb 1996).
 KPSE_CHECK_KPSE_FORMAT([type1], ,
-                       [AC_MSG_ERROR([Required file formats not found in Kpathsea header files.
+                       [KPSE_MSG_ERROR([dvipdfm],
+                                       [Required file formats not found in Kpathsea header files.
 
 This version of dvipdfm requires that kpathsea and its headers be available.
 If you are sure they are installed and in a standard place, maybe you need a

@@ -263,15 +263,7 @@ web2cdir = ${prefix}/texmf/web2c
 dist_web2c_DATA = fmtutil.cnf
 EXTRA_DIST = README.a2ping README.texdoctk doc/Makefile \
 	doc/TETEXDOC.bib doc/TETEXDOC.tex fontinst.bat pdfetex-pl.pool \
-	updmap.pl win32/epstopdf.c win32/epstopdf.txt Makefile.in.orig \
-	configure.in.orig
-
-# 
-# This target is invoked by the top-level make,
-# to create the per-format engine symlinks in $(bindir),
-# after everything else is installed.  We explicitly specify the
-# fmtutil.cnf file to use for the sake of distro builds.  Also, that way
-# we don't have to run mktexlsr also.
+	updmap.pl win32/epstopdf.c win32/epstopdf.txt
 run_texlinks = $(bindir)/texlinks -f $(web2cdir)/fmtutil.cnf
 all: all-am
 
@@ -754,6 +746,7 @@ install-exec-hook:
 	  && $(LN_S) allcm allec \
 	  && $(LN_S) fmtutil mktexfmt \
 	  && $(LN_S) kpsetool kpsexpand \
+	  && $(LN_S) kpsetool kpsepath \
 	  && $(LN_S) mktexlsr texhash
 
 install-data-hook:
@@ -784,13 +777,6 @@ uninstall-hook:
 	  && rm -f allec.1 ctangle.1 cweave.1 fmtutil-sys.1 kpsexpand.1 \
 	    kpsepath.1 lambda.1 mf-nowin.1 mktexfmt.1 odvicopy.1 \
 	    odvitype.1 pdflatex.1 texconfig-sys.1 texhash.1 updmap-sys.1
-
-#################
-
-# Auxiliary files.
-extra-install-data::
-	$(SHELL) $(top_srcdir)/../mkinstalldirs $(texpooldir) $(texmf)/doc/tetex
-	$(SHELL) $(top_srcdir)/../mkinstalldirs $(texmf)/texconfig $(texmf)/texconfig/g $(texmf)/texconfig/v $(texmf)/texconfig/x
 run-texlinks:
 	PATH="$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

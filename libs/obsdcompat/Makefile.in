@@ -208,7 +208,6 @@ libopenbsd_compat_a_SOURCES = \
 	includes.h \
 	openbsd-compat.h
 
-EXTRA_DIST = libobsd-compat.ac
 all: all-am
 
 .SUFFIXES:

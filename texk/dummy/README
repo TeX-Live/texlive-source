@@ -1,3 +1,6 @@
+Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
+
 This directory texk/dummy does not build or install anything.  Its purpose
 is to record the command line used to invoke texk/dummy/configure from
 texk/configure.  This information is then used by texk/Makefile to invoke

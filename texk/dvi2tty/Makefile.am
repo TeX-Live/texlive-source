@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/dvi2tty/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -24,9 +28,8 @@ dvi2tty_DEPENDENCIES = $(KPATHSEA_DEPEND)
 
 dist_man1_MANS = dvi2tty.1
 
-## ##################
-## Not yet used
-
+## Not used
+##
 EXTRA_DIST = \
 	DVI.format \
 	MANIFEST \

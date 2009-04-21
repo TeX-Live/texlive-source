@@ -17325,7 +17325,6 @@ if test "${enable_cxx_runtime_hack+set}" = set; then
 fi
 
 
-cpp_link_hack=false
 if test "x$GXX:$enable_cxx_runtime_hack" = xyes:yes; then
 
 ac_ext=cpp
@@ -17857,7 +17856,7 @@ fi
 
 
 
-## texk/lcdf-typetools/ac/lcdf-typetools.ac
+## texk/lcdf-typetools/ac/lcdf-typetools.ac: configure.ac fragment for the TeX Live subdirectory texk/lcdf-typetools/
 ## configure options for lcdf-typetools
 # Check whether --enable-cfftot1 was given.
 if test "${enable_cfftot1+set}" = set; then
@@ -19717,6 +19716,28 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 
   if test "x$with_kpathsea" = xno; then
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building lcdf-typetools has been disabled and would fail because
+
+=========================================
+
+I can't find the kpathsea header and/or library files. Tell me where to look
+using the --with-kpathsea-includes=DIR option (header files under
+DIR/kpathsea) and --with-kpathsea-libdir=DIR option (library under DIR), or
+disable support using --without-kpathsea.
+
+=========================================" >&5
+$as_echo "$as_me: WARNING: building lcdf-typetools has been disabled and would fail because
+
+=========================================
+
+I can't find the kpathsea header and/or library files. Tell me where to look
+using the --with-kpathsea-includes=DIR option (header files under
+DIR/kpathsea) and --with-kpathsea-libdir=DIR option (library under DIR), or
+disable support using --without-kpathsea.
+
+=========================================" >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error:
 =========================================
 
@@ -19736,6 +19757,9 @@ disable support using --without-kpathsea.
 
 =========================================" >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
   fi
 fi
  if test "x$with_kpathsea" != xno; then
@@ -22824,7 +22848,23 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     fi
 fi
 if test $ac_ntoh_defined = no; then
-    { { $as_echo "$as_me:$LINENO: error:
+    if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building lcdf-typetools has been disabled and would fail because
+
+=========================================
+
+Cannot find a definition for ntohs and/or ntohl!
+
+=========================================" >&5
+$as_echo "$as_me: WARNING: building lcdf-typetools has been disabled and would fail because
+
+=========================================
+
+Cannot find a definition for ntohs and/or ntohl!
+
+=========================================" >&2;}
+else
+  { { $as_echo "$as_me:$LINENO: error:
 =========================================
 
 Cannot find a definition for ntohs and/or ntohl!
@@ -22837,6 +22877,9 @@ Cannot find a definition for ntohs and/or ntohl!
 
 =========================================" >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 fi
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'

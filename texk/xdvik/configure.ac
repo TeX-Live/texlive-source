@@ -16,6 +16,8 @@ AC_CONFIG_MACRO_DIR([../../m4])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([xdvik])
 
+AC_SEARCH_LIBS([pow], [m])
+
 m4_include([ac/xdvik.ac])
 AS_CASE([$with_xdvi_x_toolkit],
         [next | nextaw | neXtaw],      [val=neXtaw],
@@ -80,13 +82,6 @@ AS_IF([test "x$enable_a4" = xno],
       [AC_MSG_NOTICE([Disabled a4/cm, using letter/in instead])],
       [AC_DEFINE([A4], 1, [Define to use A4 as the default paper size.])])
 
-AC_ARG_ENABLE([magick],
-              AS_HELP_STRING([--enable-magick],
-                             [Use ImageMagick to load/render image files.
-                              EXPERIMENTAL - DO NOT USE!]))
-
-AC_PROG_CXX
-
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
 AC_FUNC_FORK
@@ -122,7 +117,6 @@ XDVI_LINKER_MULTIPLE_DEFNS
 
 AC_CHECK_HEADERS([stdint.h inttypes.h])
 AC_TYPE_UINT32_T
-dnl PB: rewrite Autoconf 2.13 style AC_CHECK_TYPE([ptrdiff_t], [long])
 AC_CHECK_TYPE([ptrdiff_t], [],
               [AC_DEFINE_UNQUOTED([ptrdiff_t], [long],
                                   [Define to `long' if <sys/types.h> does not define.])])
@@ -149,6 +143,34 @@ AC_CHECK_HEADERS([X11/Xmu/Editres.h X11/Xmu/Xmu.h],
 AC_SUBST([x_xmu_lib])
 CPPFLAGS=$xdvi_save_CPPFLAGS
 
+AC_ARG_ENABLE([magick],
+              AS_HELP_STRING([--enable-magick],
+                             [Use ImageMagick to load/render image files.
+                              EXPERIMENTAL - DO NOT USE!]))
+if test "x$enable_magick" = xyes; then
+  AC_MSG_CHECKING([for ImageMagick version])
+  if MAGICK_VER=`Magick-config --version 2>/dev/null`; then
+    AC_MSG_RESULT([$MAGICK_VER])
+    set dummy `echo $MAGICK_VER | sed -e 's/\./ /g'`
+    MAGICK_VER_MAJOR=$2
+    MAGICK_VER_MINOR=$3
+    if expr $MAGICK_VER_MAJOR \> 4 >/dev/null && \
+      (expr $MAGICK_VER_MAJOR \> 5 >/dev/null || \
+	expr $MAGICK_VER_MINOR \> 2 >/dev/null); then
+      MAGICK_CPP="-DMAGICK_VER_MAJOR=$MAGICK_VER_MAJOR -DMAGICK_VER_MINOR=$MAGICK_VER_MINOR `Magick-config --cppflags`"
+      MAGICK_LD="`Magick-config --libs` `Magick-config --ldflags`"
+      AC_MSG_NOTICE([ImageMagick support enabled])
+      X_CFLAGS="$X_CFLAGS $MAGICK_CPP"
+      X_EXTRA_LIBS="$X_EXTRA_LIBS $MAGICK_LD"
+      AC_DEFINE([MAGICK], 1, [Define to use ImageMagick])
+    else
+      AC_MSG_NOTICE([ImageMagick version too old - disabled])
+    fi
+  else
+    AC_MSG_RESULT([cannot run 'Magick-config' - ImageMagick support disabled])
+  fi
+fi
+
 dnl check for Xaw version
 XDVI_OLD_XAW
 
@@ -165,7 +187,26 @@ AS_IF([test "x$xdvi_cv_nl_langinfo_codeset" = xyes],
 
 dnl #######
 
-dnl First, check for libXp and libXext
+dnl First, check for libXp and libXext.
+dnl We certainly don't want to include the now defunct libXp unless necessay,
+dnl this would just perpetuate the need to keep libXp.so around.  Moreover,
+dnl for ELF shared libraries, the need for libXp is probably encoded into
+dnl libXm.so and/or libXaw.so and need not to be specified explicitly.
+dnl
+AS_IF([test -n "$x_libraries"],
+      [XLFLAG="-L$x_libraries"],
+      [XLFLAG=])
+if test -z "$x_ext_lib"; then # allow envvar override
+  AC_CHECK_LIB([Xp], [XpQueryVersion],
+               [x_ext_lib_with_Xp='-lXp -lXext'],
+               [:],
+               [-lXext -lX11 $X_EXTRA_LIBS $XLFLAG])
+  AC_CHECK_LIB([Xext], [XextCreateExtension],
+               [x_ext_lib='-lXext'],
+               [:],
+               [-lX11 $X_EXTRA_LIBS $XLFLAG])
+fi
+AC_SUBST([x_ext_lib])
 
 dnl #######
 
@@ -193,9 +234,14 @@ AC_SUBST([final_exec_name])
 
 dnl #######
 
+dnl AC_SUBST(x_tool_libs) ??
+
+dnl #######
+
+dnl Only relevant if AC_CHECK_FUNCS([... iconv ...]) above failed
 AC_ARG_WITH([iconv-libdir],
-[  --with-iconv-libdir=DIR
-                          Specify the location of iconv library (librecode.so)],
+            AS_HELP_STRING([--with-iconv-libdir=DIR],
+                           [Specify the location of iconv library (librecode.so)]),
 [if test XXX"$withval" != "XXX"; then
     iconv_libpath="-L$withval"
     iconv_libs="-lrecode"
@@ -206,19 +252,20 @@ fi], [
 dnl On non-Linux systems, -liconv is needed. Check for both iconv_open and libiconv_open.
 iconv_libpath=
 iconv_libs=	
-AC_CHECK_LIB(iconv, iconv_open, iconv_libs=-liconv,
-		    AC_CHECK_LIB(iconv, libiconv_open, iconv_libs=-liconv,iconv_libs=,)
-		    ,)     
-])
-if test XXX"$iconv_libs" != "XXX"; then
+AC_CHECK_LIB([iconv], [iconv_open],
+             [iconv_libs=-liconv],
+             [AC_CHECK_LIB([iconv], [libiconv_open],
+                           [iconv_libs=-liconv],
+                           [iconv_libs=])])])
+if test "x$iconv_libs" != x; then
    AC_DEFINE([HAVE_ICONV], 1, [Define if you have the iconv function.])
 fi    	
 AC_SUBST([iconv_libpath])
 AC_SUBST([iconv_libs])
 
 AC_ARG_WITH([iconv-include],
-[  --with-iconv-include=DIR
-                          Specify the location of iconv header (iconv.h)],
+            AS_HELP_STRING([--with-iconv-include=DIR],
+                           [Specify the location of iconv header (iconv.h)]),
 [if test XXX"$withval" != "XXX"; then
     iconv_includes="-I$withval"
 fi],[
@@ -230,31 +277,72 @@ XDVI_ICONV_CHAR_PPTR_TYPE
 
 dnl #######
 
-AC_SEARCH_LIBS([pow], [m])
+dnl $program_transform_name replacement
+
+dnl #######
+
+dnl If we're on Solaris and we want DPS, then add the extra compilation stuff
+dnl to get it.
+if echo "$PS_DEF" | grep PS_DPS >/dev/null; then
+   if test "`(uname) 2>/dev/null`" = SunOS \
+      && uname -r | grep '^5' >/dev/null; then
+    AC_MSG_NOTICE([adding DPS includes and libraries for Solaris])
+    X_CFLAGS="$X_CFLAGS -I/usr/openwin/include/X11"
+    X_LIBS="$X_LIBS -R/usr/openwin/lib /usr/openwin/lib/libdps.so $ac_sunmath"
+    AC_CHECK_LIB([sunmath], [isinf], 
+                 [X_LIBS="$X_LIBS -lsunmath"])
+    dnl We only need isinf and ieeefp.h to work around a Solaris bug in
+    dnl -ldps; see psdps.c.  isinf is in -lsunmath.
+    AC_CHECK_FUNCS([isinf])
+    AC_CHECK_HEADERS([ieeefp.h])
+  else
+    dnl SunOS 4.x is simpler.
+    AC_MSG_NOTICE([adding DPS libraries for SunOS 4.x])
+    X_LIBS="$X_LIBS -ldps"
+  fi
+elif echo "$PS_DEF" | grep PS_NEWS >/dev/null; then
+    AC_MSG_NOTICE([adding NeWS libraries])
+    X_LIBS="$X_LIBS -lxview -lcps -lolgx -lxvps"
+fi
 
 KPSE_KPATHSEA_FLAGS
 KPSE_T1LIB_FLAGS
 
-XDVI_ARG_STRING([default-dvips-path],
-[  --with-default-dvips-path=CMD
-                          Use CMD as default DVI to PS converter],
-[DEFAULT_DVIPS_PATH], ["dvips"],
-[Define to point to the default command to use for printing (optional).])
+KPSE_ADD_FLAGS([kpathsea])
 
-XDVI_ARG_STRING([default-ps2pdf-path],
-[  --with-default-ps2pdf-path=CMD
-                          Use CMD as default PS to PDF converter],
-[DEFAULT_PS2PDF_PATH], ["ps2pdf"],
-[Define to point to the default command to use for printing (optional).])
+KPSE_CHECK_KPSE_FORMAT([enc], ,
+                       [KPSE_MSG_ERROR([xdvik],
+                                       [your kpathsea has no kpse_enc_format.])])
 
-dnl #######
+KPSE_RESTORE_FLAGS
+
+AC_ARG_WITH([default-dvips-path],
+            AS_HELP_STRING([--with-default-dvips-path=CMD],
+                           [Use CMD as default DVI to PS converter]), ,
+            [with_default_dvips_path="dvips"])
+AC_DEFINE_UNQUOTED([DEFAULT_DVIPS_PATH], ["$with_default_dvips_path"],
+                   [Define to point to the default command to use for printing (optional).])
+
+AC_ARG_WITH([default-ps2pdf-path],
+            AS_HELP_STRING([--with-default-ps2pdf-path=CMD],
+                           [Use CMD as default PS to PDF converter]), ,
+            [with_default_ps2pdf_path="ps2pdf"])
+AC_DEFINE_UNQUOTED([DEFAULT_PS2PDF_PATH], ["$with_default_ps2pdf_path"],
+                   [Define to point to the default command to use for printing (optional).])
+
+dnl ImageMagick support (requires at the moment MAGICK_DEF from the environment)
+PS_DEF="$PS_DEF $MAGICK_DEF"
+if echo "$PS_DEF" | grep MAGICK >/dev/null; then
+    AC_MSG_NOTICE([adding ImageMagick libraries])
+    X_EXTRA_LIBS="$X_EXTRA_LIBS `Magick-config --libs`"
+fi
 
 XDVIK_VERSION=xdvik_version
 AC_SUBST([XDVIK_VERSION])
 
 AC_CONFIG_SUBDIRS([squeeze])
 
-AC_CONFIG_FILES([Makefile gui/Makefile])
+AC_CONFIG_FILES([Makefile gui/Makefile tests/Makefile])
 
 AC_CONFIG_FILES([xdvi:xdvi-sh.in], [chmod +x xdvi])
 

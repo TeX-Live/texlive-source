@@ -160,11 +160,45 @@ EXTRA_DIST += \
 
 ## SyncTeX infrastructure: XeTeX
 
+if XETEX_SYNCTEX
+
+xetex_CPPFLAGS += -I$(srcdir)/synctexdir
+
+xetex_ch_synctex = \
+	synctexdir/synctex-mem.ch0 \
+	synctexdir/synctex-e-mem.ch0 \
+	synctexdir/synctex-e-mem.ch1 \
+	synctexdir/synctex-xe-mem.ch2 \
+	synctexdir/synctex-rec.ch0 \
+	synctexdir/synctex-e-rec.ch0 \
+	synctexdir/synctex-xe-rec.ch2
+
+xetex_post_ch_synctex = \
+	synctexdir/synctex-xe-rec.ch3
+
+dist_xetex_SOURCES = \
+	synctexdir/synctex.h \
+	synctexdir/synctex-common.h \
+	synctexdir/synctex-xetex.h
+
+nodist_xetex_SOURCES += \
+	synctex-xe.c
+
+synctex_convert_xetex = && $(SHELL) $(srcdir)/synctexdir/synctex-convert.sh xetex
+
+else !XETEX_SYNCTEX
+
+synctex_convert_xetex = && echo "warning: SyncTeX for e-TeX is NOT enabled"
+
+endif !XETEX_SYNCTEX
+
+synctex-xe.c: xetexd.h synctexdir/synctex.c $(dist_xetex_SOURCES)
+	sed s/TEX-OR-MF-OR-MP/xetex/ $(srcdir)/synctexdir/synctex.c >$@
+
 EXTRA_DIST += \
 	synctexdir/synctex-xe-mem.ch2 \
 	synctexdir/synctex-xe-rec.ch2 \
-	synctexdir/synctex-xe-rec.ch3 \
-	synctexdir/synctex-xetex.h
+	synctexdir/synctex-xe-rec.ch3
 
 ## Eventually delete these files
 ##

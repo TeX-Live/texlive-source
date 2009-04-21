@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/tex4htk/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -24,8 +28,14 @@ shell_scripts = ht htcontext htlatex htmex httex httexi htxelatex htxetex
 
 EXTRA_DIST = $(perl_scripts) $(shell_scripts)
 
-install-exec-hook:
-	$(mkdir_p) "$(DESTDIR)$(tex4htdir)" "$(DESTDIR)$(bindir)"
+## Make sure $(tex4htdir) exists
+##
+tex4ht_subdir = texmf-dist/scripts/tex4ht
+tex4htdir = ${prefix}/$(tex4ht_subdir)
+tex4ht_SCRIPTS =
+
+## We support both multiplatform and non-multiplatform builds.
+install-data-hook:
 	@for p in $(perl_scripts); do \
 	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.pl'"; \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.pl"; \
@@ -34,24 +44,40 @@ install-exec-hook:
 	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.sh'"; \
 	  $(INSTALL_SCRIPT) $(srcdir)/$$p "$(DESTDIR)$(tex4htdir)/$$p.sh"; \
 	done
+	case "$(bindir)" in \
+	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
+	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
+	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
+	     exit 1;; \
+	esac
+
+## Make sure $(bindir) exists
+##
+bin_SCRIPTS =
+
+## Link to the basename, removing the extension,
+.PHONY: install-links
+install-links:
 	@cd $(DESTDIR)$(bindir) && \
 	  for p in $(perl_scripts); do \
-	    echo "$(LN_S) $(tex4htrel)/$$p.pl $$p"; \
-	    rm -f $$p; $(LN_S) $(tex4htrel)/$$p.pl $$p; \
-	  done; \
+	    rm -f $$p; \
+	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.pl'"; \
+	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p; \
+	  done && \
 	  for p in $(shell_scripts); do \
-	    echo "$(LN_S) $(tex4htrel)/$$p.sh $$p"; \
-	    rm -f $$p; $(LN_S) $(tex4htrel)/$$p.sh $$p; \
+	    rm -f $$p; \
+	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.sh'"; \
+	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p; \
 	  done
 
 uninstall-hook:
-	@for p in $(perl_scripts) $(shell_scripts); do \
-	  echo "rm -f '$(DESTDIR)$(bindir)/$$p'"; \
-	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
-	done
 	@for p in $(perl_scripts:=.pl) $(shell_scripts:=.sh); do \
 	  echo "rm -f '$(DESTDIR)$(tex4htdir)/$$p'"; \
 	  rm -f "$(DESTDIR)$(tex4htdir)/$$p"; \
+	done
+	@for p in $(perl_scripts) $(shell_scripts); do \
+	  echo "rm -f '$(DESTDIR)$(bindir)/$$p'"; \
+	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
 	done
 
 ## Not used
@@ -174,8 +200,4 @@ EXTRA_DIST += \
 ## in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
 

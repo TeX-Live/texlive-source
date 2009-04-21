@@ -1,12 +1,16 @@
+## Makefile.am for the TeX Live subdirectory texk/xdvik/gui/
 ##
-INCLUDES = -I$(top_srcdir)
-INCLUDES += $(PS_DEF)
-INCLUDES += $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES)
-INCLUDES += $(X_CFLAGS)
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+include ../common.am
+
+INCLUDES = -I$(top_srcdir) $(common_includes)
 
 noinst_LIBRARIES = libgui.a
 
 libgui_a_SOURCES = \
+	../print-internal.c \
 	Panner.c \
 	Panner.h \
 	PannerP.h \

@@ -190,9 +190,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(GD_TREE) Makefile.in.orig configure.in.orig
+EXTRA_DIST = $(GD_TREE)
 INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 @build_TRUE@noinst_LIBRARIES = libgd.a
+EXTRA_LIBRARIES = libgd.a
 nodist_libgd_a_SOURCES = \
 	$(GD_TREE)/gd.c \
 	$(GD_TREE)/gd_gd.c \
@@ -238,7 +239,6 @@ BUILT_SOURCES = \
 	jisx0208.h \
 	wbmp.h
 
-libgd_a_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -1037,10 +1037,12 @@ uninstall-am:
 dist-hook:
 	rm -rf `find $(distdir)/$(GD_TREE) -name .svn`
 
-$(BUILT_SOURCES): stamp-gd
+$(libgd_a_OBJECTS): $(BUILT_SOURCES) $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 
 @ZLIB_RULE@
 @LIBPNG_RULE@
+
+$(BUILT_SOURCES): stamp-gd
 
 stamp-gd:
 	@for file in $(BUILT_SOURCES); do \

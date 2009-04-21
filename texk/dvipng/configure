@@ -12902,7 +12902,7 @@ _ACEOF
 fi
 
 
-## texk/dvipng/ac/dvipng.ac
+## texk/dvipng/ac/dvipng.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
 ## configure options for dvipng
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then
@@ -18391,9 +18391,18 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 else
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building dvipng has been disabled and would fail because
+cannot find/use libpng" >&5
+$as_echo "$as_me: WARNING: building dvipng has been disabled and would fail because
+cannot find/use libpng" >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error: cannot find/use libpng" >&5
 $as_echo "$as_me: error: cannot find/use libpng" >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 fi
 
 
@@ -18492,11 +18501,22 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 else
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building dvipng has been disabled and would fail because
+cannot find/use libgd
+This drawing library can be downloaded at http://www.boutell.com/gd" >&5
+$as_echo "$as_me: WARNING: building dvipng has been disabled and would fail because
+cannot find/use libgd
+This drawing library can be downloaded at http://www.boutell.com/gd" >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error: cannot find/use libgd
 This drawing library can be downloaded at http://www.boutell.com/gd" >&5
 $as_echo "$as_me: error: cannot find/use libgd
 This drawing library can be downloaded at http://www.boutell.com/gd" >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 fi
 
 
@@ -18595,9 +18615,18 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 else
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building dvipng has been disabled and would fail because
+cannot find/use libkpathsea" >&5
+$as_echo "$as_me: WARNING: building dvipng has been disabled and would fail because
+cannot find/use libkpathsea" >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error: cannot find/use libkpathsea" >&5
 $as_echo "$as_me: error: cannot find/use libkpathsea" >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 fi
 
 
@@ -19037,9 +19066,18 @@ as_val=`eval 'as_val=${'$as_ac_Header'}
 _ACEOF
 
 else
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building dvipng has been disabled and would fail because
+cannot find/use $ac_header" >&5
+$as_echo "$as_me: WARNING: building dvipng has been disabled and would fail because
+cannot find/use $ac_header" >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error: cannot find/use $ac_header" >&5
 $as_echo "$as_me: error: cannot find/use $ac_header" >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 fi
 
 done

@@ -1,5 +1,12 @@
 2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* configure.in (removed): moved ...
+	* configure.ac (new): ... to here and adapted for TeX Live:
+	axiliary files in ../../build-aux, added AM_MAINTAINER_MODE,
+	modernized Autoconf idioms.
+
+2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* Autoreconfed.
 
  Version 2.01 is a bugfix release, containing two changes in

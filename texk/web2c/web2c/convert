@@ -148,8 +148,8 @@ case $basefile in
     ;;
   tex|etex|luatex|pdftex|aleph|mf|mp|xetex)
     sleep 2 # so timestamps are definitely later, to avoid make weirdness
-    cat ${basefile}coerce.h $srcdir/web2c/coerce.h >x${basefile}coerce.h
-    mv x${basefile}coerce.h ${basefile}coerce.h
+    cat ${basefile}coerce.h $srcdir/web2c/coerce.h >${basefile}coerce.hx
+    mv ${basefile}coerce.hx ${basefile}coerce.h
     touch ${basefile}d.h
     ;;
 esac

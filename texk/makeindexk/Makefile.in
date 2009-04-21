@@ -239,8 +239,7 @@ makeindex_SOURCES = \
 makeindex_DEPENDENCIES = $(KPATHSEA_DEPEND)
 LDADD = $(KPATHSEA_LIBS)	
 dist_man1_MANS = makeindex.1 mkindex.1
-EXTRA_DIST = ACK CONTRIB FILES NOTES PORTING Makefile.in.orig \
-	configure.in.orig
+EXTRA_DIST = ACK CONTRIB FILES NOTES PORTING
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

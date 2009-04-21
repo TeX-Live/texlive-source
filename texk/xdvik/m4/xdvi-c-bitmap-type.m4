@@ -1,31 +1,29 @@
 dnl ### Determine integer type to use for bitmaps
 
+
+# XDVI_C_BITMAP_TYPE
+# ------------------
+# Determine integer type to use for bitmaps.
+# Uses AC_CHECK_SIZEOF(TYPE) and thus works when cross compiling.
 AC_DEFUN([XDVI_C_BITMAP_TYPE],
-[AC_MSG_CHECKING(for integer type to use in bitmaps)
-AC_CACHE_VAL(xdvi_cv_bitmap_type,
-[AC_TRY_RUN(
-[#include <stdio.h>
-main()
-{
-  FILE *f=fopen("conftestval", "w");
-  if (!f) exit(1);
-  if ((sizeof(unsigned long) == 4 || sizeof(unsigned long) == 2)
-    && sizeof(unsigned long) != sizeof(unsigned int))
-      fprintf(f, "BMTYPE=long BMBYTES=%d\n", sizeof(unsigned long));
-  if (sizeof(unsigned int) == 4 || sizeof(unsigned int) == 2)
-    fprintf(f, "BMTYPE=int BMBYTES=%d\n", sizeof(unsigned int));
-  else if (sizeof(unsigned short) == 4 || sizeof(unsigned short) == 2)
-    fprintf(f, "BMTYPE=short BMBYTES=%d\n", sizeof(unsigned short));
-  else fprintf(f, "BMTYPE=char BMBYTES=%d\n", sizeof(unsigned char));
-  exit(0);
-}],
-xdvi_cv_bitmap_type="`cat conftestval`",
-AC_MSG_ERROR(could not determine integer type for bitmap))])
+[AC_CHECK_SIZEOF([unsigned long])[]dnl
+ AC_CHECK_SIZEOF([unsigned int])[]dnl
+ AC_CHECK_SIZEOF([unsigned short])[]dnl
+ AC_CHECK_SIZEOF([unsigned char])[]dnl
+AC_MSG_CHECKING([for integer type to use in bitmaps])
+AC_CACHE_VAL([xdvi_cv_bitmap_type],
+[AS_IF([(test $ac_cv_sizeof_unsigned_long = 4 || test $ac_cv_sizeof_unsigned_long = 2) \
+        && test $ac_cv_sizeof_unsigned_long != $ac_cv_sizeof_unsigned_int],
+         [xdvi_cv_bitmap_type="BMTYPE=long BMBYTES=$ac_cv_sizeof_unsigned_long"],
+       [test $ac_cv_sizeof_unsigned_int = 4 || test $ac_cv_sizeof_unsigned_int = 2],
+         [xdvi_cv_bitmap_type="BMTYPE=int BMBYTES=$ac_cv_sizeof_unsigned_int"],
+       [test $ac_cv_sizeof_unsigned_short = 4 || test $ac_cv_sizeof_unsigned_short = 2],
+         [xdvi_cv_bitmap_type="BMTYPE=short BMBYTES=$ac_cv_sizeof_unsigned_short"],
+         [xdvi_cv_bitmap_type="BMTYPE=char BMBYTES=$ac_cv_sizeof_unsigned_cher"])])
 eval "$xdvi_cv_bitmap_type"
 AC_DEFINE_UNQUOTED([BMTYPE], [$BMTYPE],
                    [Define to determine the integer type to be used in bitmaps.
                     The type used will be "unsigned BMTYPE".])
 AC_DEFINE_UNQUOTED([BMBYTES], [$BMBYTES], [Define to the length (in bytes) of type BMTYPE.])
-AC_MSG_RESULT([unsigned $BMTYPE, size = $BMBYTES])])
-
-
+AC_MSG_RESULT([unsigned $BMTYPE, size = $BMBYTES])
+]) # XDVI_C_BITMAP_TYPE

@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/ttf2pk/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -70,7 +74,7 @@ LDADD = $(KPATHSEA_LIBS) $(FREETYPE_LIBS)
 
 dist_man1_MANS = ttf2pk.1 ttf2tfm.1
 
-## Not yet used
+## Not used
 ##
 EXTRA_DIST = \
 	data \
@@ -88,8 +92,4 @@ EXTRA_DIST = \
 ## in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
 

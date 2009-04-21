@@ -1,3 +1,9 @@
+2009-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert: use ${basefile}coerce.hx, not x${basefile}coerce.h
+	as temp file name such that coverting etex does not destroy
+	xetexcoerce.h.
+
 2009-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines, convert, fixwrites.c, splitup.c: remove all

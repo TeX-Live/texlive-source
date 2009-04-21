@@ -719,6 +719,7 @@ and
 .BR Monochrome .
 The default is
 .BR Color .
+#endif
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BR \-h , " \-help" , " \--help"
@@ -763,17 +764,6 @@ Causes
 to suppress warnings about checksum mismatches between the
 .I dvi
 file and the font file.
-.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-#ifkpathsea
-.TP
-.B \-warnspecials
-.RB ( .warnSpecials )
-Causes
-.B xdvi
-to print warnings about
-.B \especial
-strings that it cannot process to stderr. These warnings are suppressed by default.
-#endif
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .B \-hushstdout
@@ -1688,9 +1678,9 @@ the value should be either a valid X color name or a hexadecimal color string.
 .RB ( .warnSpecials )
 Causes
 .B xdvi
-to issue warnings about
+to print warnings about
 .B \especial
-strings that it cannot process.
+strings that it cannot process to stderr. These warnings are suppressed by default.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP
 .BI \-watchfile " n"
@@ -2393,7 +2383,7 @@ option.
 .RB [ source-what-special() ]
 Display information about the source special next to the mouse cursor in the
 statusline. This is the same special that would be found by
-.I source-special() ,
+.IR source-special() ,
 but without invoking the editor. For debugging purposes.
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .TP

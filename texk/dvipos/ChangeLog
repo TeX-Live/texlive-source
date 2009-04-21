@@ -1,3 +1,7 @@
+2009-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipos.1 (BUGS): added a missing "\fB=\fP".
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: added AC_CONFIG_HEADERS (moved

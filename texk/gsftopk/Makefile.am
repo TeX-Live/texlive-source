@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/gsftopk/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -32,8 +36,4 @@ sedscript: mksedscript Makefile
 DISTCLEANFILES = gsftopk.1 sedscript
 
 EXTRA_DIST = gsftopk1.sed mksedscript
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
 

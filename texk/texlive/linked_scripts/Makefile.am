@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ## TeX Live's extra scripts.
 
@@ -123,21 +127,21 @@ install-links:
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf/scripts/$$s $$target; \
-	  done; \
+	  done && \
 	  for s in $(nobase_dist_script_SCRIPTS); do \
 	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	    target=$$target; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target; \
-	  done; \
-	  rm -rf getnonfreefonts-sys; \
-	  echo "creating link 'getnonfreefonts-sys' -> 'getnonfreefonts'"; \
-	  $(LN_S) getnonfreefonts getnonfreefonts-sys; \
+	  done && \
+	  rm -rf getnonfreefonts-sys && \
+	  echo "creating link 'getnonfreefonts-sys' -> 'getnonfreefonts'" && \
+	  $(LN_S) getnonfreefonts getnonfreefonts-sys && \
 ## man dir link for those mans which can use it.
-	  rm -f man; \
-	  echo "creating link 'man' -> '$(REL)/texmf/doc/man'"; \
-	  ln -s $(REL)/texmf/doc/man man || :
+	  rm -f man && \
+	  echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
+	  (ln -s $(REL)/texmf/doc/man man || :)
 
 uninstall-hook:
 	@for s in $(nobase_dist_scriptx_SCRIPTS) $(nobase_dist_script_SCRIPTS); do \

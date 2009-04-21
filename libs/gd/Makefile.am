@@ -22,10 +22,9 @@ dist-hook:
 INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 
 if build
-
 noinst_LIBRARIES=libgd.a
-
 endif build
+EXTRA_LIBRARIES=libgd.a
 
 nodist_libgd_a_SOURCES = \
 	$(GD_TREE)/gd.c \
@@ -72,14 +71,14 @@ BUILT_SOURCES = \
 	jisx0208.h \
 	wbmp.h
 
-$(BUILT_SOURCES): stamp-gd
-
-libgd_a_DEPENDENCIES = $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
+$(libgd_a_OBJECTS): $(BUILT_SOURCES) $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 
 ## Rebuild zlib
 @ZLIB_RULE@
 ## Rebuild libpng
 @LIBPNG_RULE@
+
+$(BUILT_SOURCES): stamp-gd
 
 stamp-gd:
 	@for file in $(BUILT_SOURCES); do \
@@ -91,8 +90,4 @@ stamp-gd:
 
 distclean-local:
 	rm -f stamp-gd $(BUILT_SOURCES)
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
 

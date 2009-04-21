@@ -1,16 +1,27 @@
-ChangeLog: Changes for xdvik (teTeX / TeX Live)
-===============================================
+ChangeLog.TL: Changes for xdvik (teTeX / TeX Live)
+==================================================
 
-2009-03-31
+2009-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* CHANGES: fixed version/relase-date such that mksedscript can
+	extract them.
+
+	* xdvi.1.in (warnspecials): fixed duplicate entry, removing
+	an #ifkpathsea without matching #endif.
+
+2009-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Imported ftp://tug.org/tex/xdvik-22.84.15.tar.gz and
 	adapted to new TeX Live build system (Automake & Co.).
+	Renamed original files XXX -> XXX-22.84.15.
 
 	* squeeze.c (removed): File moved ...
 	* squeeze/squeeze.c (new): ... to here. Don't include
 	any system dependent kpathsea headers, such that squeeze/
 	can be configured separately for the build system.
 
-2008-07-01
+2008-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Imported ftp://tug.org/tex/xdvik-22.84.14.tar.gz and
 	adapted to new TeX Live build system (autoconf-2.59+).
 
@@ -47,6 +58,7 @@ ChangeLog: Changes for xdvik (teTeX / TeX Live)
 	* aclocal.m4, c-auto.in, configure: Regenerated.
 
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* acinclude.m4: added quotes to DEFUN's first args, added
 	AC_DEFINES's third arg to provide autoheader templates ...
 	* configure.in, withenable.ac: added AC_DEFINES's third arg to provide
@@ -54,6 +66,7 @@ ChangeLog: Changes for xdvik (teTeX / TeX Live)
 	* acconfig.h: ... removed.
 
 2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Convert from autoconf-2.13 to autoconf-2.59+:
 	* configure.in (AC_PREREQ): Require autoconf-2.59.
 	* Makefile.in, gui/Makefile.in: Add @configure_input@ lines.

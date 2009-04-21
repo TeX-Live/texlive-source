@@ -1,3 +1,7 @@
-## libs/teckit/ac/teckit.ac
+## libs/teckit/ac/teckit.ac: configure.ac fragment for the TeX Live subdirectory libs/teckit/
+dnl
+dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
 ## define required functions and headers from system teckit
 KPSE_CHECK_LIB([teckit], [TECkit_CreateConverter], [TECkit_Engine.h])

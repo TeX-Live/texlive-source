@@ -190,9 +190,7 @@ EXTRA_DIST = $(ZLIB_TREE)
 INCLUDES = -I$(top_srcdir)/$(ZLIB_TREE)
 AM_CPPFLAGS = $(ZLIB_DEFINES)
 @build_TRUE@noinst_LIBRARIES = libz.a
-@build_TRUE@BUILT_SOURCES = zconf.h
-@build_TRUE@dist_check_SCRIPTS = zlib.test
-@build_TRUE@TESTS = zlib.test
+EXTRA_LIBRARIES = libz.a
 nodist_libz_a_SOURCES = \
 	$(ZLIB_TREE)/adler32.c \
 	$(ZLIB_TREE)/compress.c \
@@ -215,12 +213,14 @@ nodist_libz_a_SOURCES = \
 	$(ZLIB_TREE)/zutil.h \
 	$(ZLIB_TREE)/zutil.c
 
+@build_TRUE@dist_check_SCRIPTS = zlib.test
+@build_TRUE@TESTS = zlib.test
 LDADD = libz.a
 nodist_example_SOURCES = $(ZLIB_TREE)/example.c
 nodist_minigzip_SOURCES = $(ZLIB_TREE)/minigzip.c
 DISTCLEANFILES = zconf.h
 CLEANFILES = foo.gz foo_gz
-all: $(BUILT_SOURCES) config.h
+all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
@@ -794,12 +794,10 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS) \
 	  $(dist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) check-am
+check: check-am
 all-am: Makefile $(LIBRARIES) config.h
 installdirs:
-install: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) install-am
+install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -825,7 +823,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-checkPROGRAMS clean-generic clean-noinstLIBRARIES \
@@ -908,6 +905,8 @@ uninstall-am:
 
 dist-hook:
 	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+
+$(libz_a_OBJECTS): zconf.h
 
 zconf.h: $(ZLIB_TREE)/zconf.in.h Makefile
 	sed < $< '/HAVE_UNISTD_H/s%^#if [01]%#if $(WITH_UNISTD)%' >$@

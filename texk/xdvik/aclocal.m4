@@ -904,7 +904,6 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
-m4_include([m4/xdvi-arg-string.m4])
 m4_include([m4/xdvi-c-bitmap-type.m4])
 m4_include([m4/xdvi-cc-concat.m4])
 m4_include([m4/xdvi-find-motif.m4])

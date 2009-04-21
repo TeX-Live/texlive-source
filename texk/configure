@@ -774,6 +774,7 @@ enable_mktextex_default
 with_system_teckit
 with_teckit_includes
 with_teckit_libdir
+with_graphite
 with_system_graphite
 with_graphite_includes
 with_graphite_libdir
@@ -1571,6 +1572,7 @@ Optional Packages:
                           teckit headers installed in DIR
   --with-teckit-libdir=DIR
                           teckit library installed in DIR
+  --without-graphite      build XeTeX without graphite support
   --with-system-graphite  use installed graphite headers and library
   --with-graphite-includes=DIR
                           graphite headers installed in DIR
@@ -2196,11 +2198,11 @@ if test "x$enable_multiplatform" = xyes; then
 fi
 
 
-## ac/withenable.ac
+## ac/withenable.ac: configure.ac fragment for the TeX Live top-level
 
-## utils/ac/withenable.ac
+## utils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/
 
-## utils/dialog/ac/withenable.ac
+## utils/dialog/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/dialog/
 ## configure options and TL libraries required for dialog
 # Check whether --enable-dialog was given.
 if test "${enable_dialog+set}" = set; then
@@ -2215,7 +2217,7 @@ $as_echo "$as_me: Assuming \`--enable-dialog=$enable_dialog'" >&6;}
 esac
 
 
-## utils/pdfopen/ac/withenable.ac
+## utils/pdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/pdfopen/
 ## configure options and TL libraries required for pdfopen
 # Check whether --enable-pdfopen was given.
 if test "${enable_pdfopen+set}" = set; then
@@ -2230,7 +2232,7 @@ $as_echo "$as_me: Assuming \`--enable-pdfopen=$enable_pdfopen'" >&6;}
 esac
 
 
-## utils/ps2eps/ac/withenable.ac
+## utils/ps2eps/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/ps2eps/
 ## configure options and TL libraries required for ps2eps
 # Check whether --enable-ps2eps was given.
 if test "${enable_ps2eps+set}" = set; then
@@ -2245,7 +2247,7 @@ $as_echo "$as_me: Assuming \`--enable-ps2eps=$enable_ps2eps'" >&6;}
 esac
 
 
-## utils/psutils/ac/withenable.ac
+## utils/psutils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/psutils/
 ## configure options and TL libraries required for psutils
 # Check whether --enable-psutils was given.
 if test "${enable_psutils+set}" = set; then
@@ -2260,7 +2262,7 @@ $as_echo "$as_me: Assuming \`--enable-psutils=$enable_psutils'" >&6;}
 esac
 
 
-## utils/t1utils/ac/withenable.ac
+## utils/t1utils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/t1utils/
 ## configure options and TL libraries required for t1utils
 # Check whether --enable-t1utils was given.
 if test "${enable_t1utils+set}" = set; then
@@ -2275,7 +2277,7 @@ $as_echo "$as_me: Assuming \`--enable-t1utils=$enable_t1utils'" >&6;}
 esac
 
 
-## utils/tpic2pdftex/ac/withenable.ac
+## utils/tpic2pdftex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/tpic2pdftex/
 ## configure options and TL libraries required for tpic2pdftex
 # Check whether --enable-tpic2pdftex was given.
 if test "${enable_tpic2pdftex+set}" = set; then
@@ -2290,7 +2292,7 @@ $as_echo "$as_me: Assuming \`--enable-tpic2pdftex=$enable_tpic2pdftex'" >&6;}
 esac
 
 
-## utils/vlna/ac/withenable.ac
+## utils/vlna/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/vlna/
 ## configure options and TL libraries required for vlna
 # Check whether --enable-vlna was given.
 if test "${enable_vlna+set}" = set; then
@@ -2306,7 +2308,7 @@ esac
 
 
 
-## texk/ac/withenable.ac
+## texk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/
 
 ## texk/web2c/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options and TL libraries required for web2c
@@ -2478,7 +2480,7 @@ if test "${enable_web_progs+set}" = set; then
 fi
 
 
-## texk/afm2pl/ac/withenable.ac
+## texk/afm2pl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/afm2pl/
 ## configure options and TL libraries required for afm2pl
 # Check whether --enable-afm2pl was given.
 if test "${enable_afm2pl+set}" = set; then
@@ -2497,7 +2499,7 @@ test "x$enable_afm2pl" = xno || {
 }
 
 
-## texk/bibtex8/ac/withenable.ac
+## texk/bibtex8/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtex8/
 ## configure options and TL libraries required for bibtex8
 # Check whether --enable-bibtex8 was given.
 if test "${enable_bibtex8+set}" = set; then
@@ -2516,7 +2518,7 @@ test "x$enable_bibtex8" = xno || {
 }
 
 
-## texk/cjkutils/ac/withenable.ac
+## texk/cjkutils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/cjkutils/
 ## configure options and TL libraries required for cjkutils
 # Check whether --enable-cjkutils was given.
 if test "${enable_cjkutils+set}" = set; then
@@ -2535,7 +2537,7 @@ test "x$enable_cjkutils" = xno || {
 }
 
 
-## texk/detex/ac/withenable.ac
+## texk/detex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/detex/
 ## configure options and TL libraries required for detex
 # Check whether --enable-detex was given.
 if test "${enable_detex+set}" = set; then
@@ -2554,7 +2556,7 @@ test "x$enable_detex" = xno || {
 }
 
 
-## texk/devnag/ac/withenable.ac
+## texk/devnag/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/devnag/
 ## configure options and TL libraries required for devnag
 # Check whether --enable-devnag was given.
 if test "${enable_devnag+set}" = set; then
@@ -2569,7 +2571,7 @@ $as_echo "$as_me: Assuming \`--enable-devnag=$enable_devnag'" >&6;}
 esac
 
 
-## texk/dtl/ac/withenable.ac
+## texk/dtl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dtl/
 ## configure options and TL libraries required for dtl
 # Check whether --enable-dtl was given.
 if test "${enable_dtl+set}" = set; then
@@ -2588,7 +2590,7 @@ test "x$enable_dtl" = xno || {
 }
 
 
-## texk/dvi2tty/ac/withenable.ac
+## texk/dvi2tty/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvi2tty/
 ## configure options and TL libraries required for dvi2tty
 # Check whether --enable-dvi2tty was given.
 if test "${enable_dvi2tty+set}" = set; then
@@ -2607,7 +2609,7 @@ test "x$enable_dvi2tty" = xno || {
 }
 
 
-## texk/dvidvi/ac/withenable.ac
+## texk/dvidvi/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvidvi/
 ## configure options and TL libraries required for dvidvi
 # Check whether --enable-dvidvi was given.
 if test "${enable_dvidvi+set}" = set; then
@@ -2626,7 +2628,7 @@ test "x$enable_dvidvi" = xno || {
 }
 
 
-## texk/dviljk/ac/withenable.ac
+## texk/dviljk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dviljk/
 ## configure options and TL libraries required for dviljk
 # Check whether --enable-dviljk was given.
 if test "${enable_dviljk+set}" = set; then
@@ -2645,7 +2647,7 @@ test "x$enable_dviljk" = xno || {
 }
 
 
-## texk/dvipdfm/ac/withenable.ac
+## texk/dvipdfm/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdfm/
 ## configure options and TL libraries required for dvipdfm
 # Check whether --enable-dvipdfm was given.
 if test "${enable_dvipdfm+set}" = set; then
@@ -2665,7 +2667,7 @@ test "x$enable_dvipdfm" = xno || {
 }
 
 
-## texk/dvipdfmx/ac/withenable.ac
+## texk/dvipdfmx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdfmx/
 ## configure options and TL libraries required for dvipdfmx
 # Check whether --enable-dvipdfmx was given.
 if test "${enable_dvipdfmx+set}" = set; then
@@ -2685,7 +2687,7 @@ test "x$enable_dvipdfmx" = xno || {
 }
 
 
-## texk/dvipng/ac/withenable.ac
+## texk/dvipng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
 ## configure options and TL libraries required for dvipng
 # Check whether --enable-dvipng was given.
 if test "${enable_dvipng+set}" = set; then
@@ -2706,7 +2708,7 @@ test "x$enable_dvipng" = xno || {
   need_t1lib=yes
 }
 
-## texk/dvipng/ac/dvipng.ac
+## texk/dvipng/ac/dvipng.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
 ## configure options for dvipng
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then
@@ -2726,7 +2728,7 @@ fi
 
 
 
-## texk/dvipos/ac/withenable.ac
+## texk/dvipos/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipos/
 ## configure options and TL libraries required for dvipos
 # Check whether --enable-dvipos was given.
 if test "${enable_dvipos+set}" = set; then
@@ -2745,7 +2747,7 @@ test "x$enable_dvipos" = xno || {
 }
 
 
-## texk/dvipsk/ac/withenable.ac
+## texk/dvipsk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipsk/
 ## configure options and TL libraries required for dvipsk
 # Check whether --enable-dvipsk was given.
 if test "${enable_dvipsk+set}" = set; then
@@ -2764,7 +2766,7 @@ test "x$enable_dvipsk" = xno || {
 }
 
 
-## texk/gsftopk/ac/withenable.ac
+## texk/gsftopk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/gsftopk/
 ## configure options and TL libraries required for gsftopk
 # Check whether --enable-gsftopk was given.
 if test "${enable_gsftopk+set}" = set; then
@@ -2783,7 +2785,7 @@ test "x$enable_gsftopk" = xno || {
 }
 
 
-## texk/lacheck/ac/withenable.ac
+## texk/lacheck/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/lacheck/
 ## configure options and TL libraries required for lacheck
 # Check whether --enable-lacheck was given.
 if test "${enable_lacheck+set}" = set; then
@@ -2802,7 +2804,7 @@ test "x$enable_lacheck" = xno || {
 }
 
 
-## texk/lcdf-typetools/ac/withenable.ac
+## texk/lcdf-typetools/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/lcdf-typetools/
 ## configure options and TL libraries required for lcdf-typetools
 # Check whether --enable-lcdf-typetools was given.
 if test "${enable_lcdf_typetools+set}" = set; then
@@ -2820,7 +2822,7 @@ test "x$enable_lcdf_typetools" = xno || {
   need_kpathsea=yes
 }
 
-## texk/lcdf-typetools/ac/lcdf-typetools.ac
+## texk/lcdf-typetools/ac/lcdf-typetools.ac: configure.ac fragment for the TeX Live subdirectory texk/lcdf-typetools/
 ## configure options for lcdf-typetools
 # Check whether --enable-cfftot1 was given.
 if test "${enable_cfftot1+set}" = set; then
@@ -2882,7 +2884,7 @@ fi
 
 
 
-## texk/makeindexk/ac/withenable.ac
+## texk/makeindexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/makeindexk/
 ## configure options and TL libraries required for makeindexk
 # Check whether --enable-makeindexk was given.
 if test "${enable_makeindexk+set}" = set; then
@@ -2901,7 +2903,7 @@ test "x$enable_makeindexk" = xno || {
 }
 
 
-## texk/musixflx/ac/withenable.ac
+## texk/musixflx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/musixflx/
 ## configure options and TL libraries required for musixflx
 # Check whether --enable-musixflx was given.
 if test "${enable_musixflx+set}" = set; then
@@ -2916,7 +2918,7 @@ $as_echo "$as_me: Assuming \`--enable-musixflx=$enable_musixflx'" >&6;}
 esac
 
 
-## texk/ps2pkm/ac/withenable.ac
+## texk/ps2pkm/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ps2pkm/
 ## configure options and TL libraries required for ps2pkm
 # Check whether --enable-ps2pkm was given.
 if test "${enable_ps2pkm+set}" = set; then
@@ -2935,7 +2937,7 @@ test "x$enable_ps2pkm" = xno || {
 }
 
 
-## texk/seetexk/ac/withenable.ac
+## texk/seetexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/seetexk/
 ## configure options and TL libraries required for seetexk
 # Check whether --enable-seetexk was given.
 if test "${enable_seetexk+set}" = set; then
@@ -2954,7 +2956,7 @@ test "x$enable_seetexk" = xno || {
 }
 
 
-## texk/tex4htk/ac/withenable.ac
+## texk/tex4htk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/tex4htk/
 ## configure options and TL libraries required for tex4htk
 # Check whether --enable-tex4htk was given.
 if test "${enable_tex4htk+set}" = set; then
@@ -2973,7 +2975,7 @@ test "x$enable_tex4htk" = xno || {
 }
 
 
-## texk/ttf2pk/ac/withenable.ac
+## texk/ttf2pk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttf2pk/
 ## configure options and TL libraries required for ttf2pk
 # Check whether --enable-ttf2pk was given.
 if test "${enable_ttf2pk+set}" = set; then
@@ -2993,7 +2995,7 @@ test "x$enable_ttf2pk" = xno || {
 }
 
 
-## texk/ttfdump/ac/withenable.ac
+## texk/ttfdump/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttfdump/
 ## configure options and TL libraries required for ttfdump
 # Check whether --enable-ttfdump was given.
 if test "${enable_ttfdump+set}" = set; then
@@ -3012,7 +3014,7 @@ test "x$enable_ttfdump" = xno || {
 }
 
 
-## texk/xdv2pdf/ac/withenable.ac
+## texk/xdv2pdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdv2pdf/
 ## configure options and TL libraries required for xdv2pdf
 # Check whether --enable-xdv2pdf was given.
 if test "${enable_xdv2pdf+set}" = set; then
@@ -3031,7 +3033,7 @@ test "x$enable_xdv2pdf" = xno || {
 }
 
 
-## texk/xdvik/ac/withenable.ac
+## texk/xdvik/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 ## configure options and TL libraries required for xdvik
 # Check whether --enable-xdvik was given.
 if test "${enable_xdvik+set}" = set; then
@@ -3050,7 +3052,7 @@ test "x$enable_xdvik" = xno || {
   need_t1lib=yes
 }
 
-## texk/xdvik/ac/xdvik.ac
+## texk/xdvik/ac/xdvik.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 ## configure options for xdvik
 
 # Check whether --with-xdvi-x-toolkit was given.
@@ -3060,7 +3062,7 @@ fi
 
 
 
-## texk/xdvipdfmx/ac/withenable.ac
+## texk/xdvipdfmx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvipdfmx/
 ## configure options and TL libraries required for xdvipdfmx
 # Check whether --enable-xdvipdfmx was given.
 if test "${enable_xdvipdfmx+set}" = set; then
@@ -3081,7 +3083,7 @@ test "x$enable_xdvipdfmx" = xno || {
 }
 
 
-## texk/tetex/ac/withenable.ac
+## texk/tetex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/tetex/
 ## configure options and TL libraries required for tetex
 # Check whether --enable-tetex was given.
 if test "${enable_tetex+set}" = set; then
@@ -3096,7 +3098,7 @@ $as_echo "$as_me: Assuming \`--enable-tetex=$enable_tetex'" >&6;}
 esac
 
 
-## texk/texlive/ac/withenable.ac
+## texk/texlive/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
 ## configure options and TL libraries required for texlive
 # Check whether --enable-texlive was given.
 if test "${enable_texlive+set}" = set; then
@@ -3202,13 +3204,13 @@ case $enable_mktextex_default in
 esac
 
 
-## libs/ac/withenable.ac
+## libs/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/
 
 ## libs/icu/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/icu/
 ## configure options and TL libraries required for icu (modified for XeTeX)
 
 
-## libs/teckit/ac/withenable.ac
+## libs/teckit/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/teckit/
 ## configure options and TL libraries required for teckit
 
 # Check whether --with-system-teckit was given.
@@ -3255,7 +3257,15 @@ test "x$need_teckit" = xyes && {
 }
 
 
-## libs/graphite/ac/withenable.ac
+## libs/graphite/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/graphite/
+## XeTeX can be built without graphite support
+
+# Check whether --with-graphite was given.
+if test "${with_graphite+set}" = set; then
+  withval=$with_graphite;
+fi
+
+test "x$with_graphite" = xno && need_graphite=no
 ## configure options and TL libraries required for graphite
 
 # Check whether --with-system-graphite was given.
@@ -3286,11 +3296,11 @@ $as_echo "$as_me: Assuming installed \`graphite' headers and library" >&6;}
 fi
 
 
-## libs/xpdf/ac/withenable.ac
+## libs/xpdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 ## configure options and TL libraries required for xpdf
 
 
-## libs/gd/kpse/withenable.ac
+## libs/gd/kpse/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
 ## configure options and TL libraries required for gd
 
 # Check whether --with-system-gd was given.
@@ -3337,7 +3347,7 @@ test "x$need_gd" = xyes && {
 }
 
 
-## libs/freetype2/ac/withenable.ac
+## libs/freetype2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype2/
 ## configure options and TL libraries required for freetype2
 
 # Check whether --with-system-freetype2 was given.
@@ -3384,7 +3394,7 @@ test "x$need_freetype2" = xyes && {
 }
 
 
-## libs/freetype/ac/withenable.ac
+## libs/freetype/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/
 ## configure options and TL libraries required for freetype
 
 # Check whether --with-system-freetype was given.
@@ -3415,7 +3425,7 @@ $as_echo "$as_me: Assuming installed \`freetype' headers and library" >&6;}
 fi
 
 
-## libs/t1lib/ac/withenable.ac
+## libs/t1lib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/t1lib/
 ## configure options and TL libraries required for t1lib
 
 # Check whether --with-system-t1lib was given.
@@ -3446,11 +3456,11 @@ $as_echo "$as_me: Assuming installed \`t1lib' headers and library" >&6;}
 fi
 
 
-## libs/obsdcompat/ac/withenable.ac
+## libs/obsdcompat/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/obsdcompat/
 ## configure options and TL libraries required for obsdcompat
 
 
-## libs/libpng/kpse/withenable.ac
+## libs/libpng/kpse/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
 ## configure options and TL libraries required for libpng
 
 # Check whether --with-system-libpng was given.
@@ -3497,7 +3507,7 @@ test "x$need_libpng" = xyes && {
 }
 
 
-## libs/zlib/ac/withenable.ac
+## libs/zlib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/zlib/
 ## configure options and TL libraries required for zlib
 
 # Check whether --with-system-zlib was given.

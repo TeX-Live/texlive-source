@@ -29,10 +29,9 @@ AM_CFLAGS = $(T1LIB_CFLAGS)
 LDADD = libt1.a
 
 if build
-
 noinst_LIBRARIES = libt1.a
-
 endif build
+EXTRA_LIBRARIES = libt1.a
 
 nodist_libt1_a_SOURCES = $(lib_t1lib_sources) $(lib_type1_sources)
 
@@ -71,12 +70,9 @@ lib_type1_sources = \
 	$(T1LIB_TREE)/lib/type1/util.c
 
 if build
-
 check_PROGRAMS = type1afm
 dist_check_SCRIPTS = type1afm.test
-
 TESTS = type1afm.test
-
 endif build
 
 nodist_type1afm_SOURCES = $(T1LIB_TREE)/type1afm/type1afm.c

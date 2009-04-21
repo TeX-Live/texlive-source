@@ -48,57 +48,5 @@ AC_SUBST(final_exec_name)
 dnl OBSOLETE?? AC_SUBST(exec_link)
 AC_SUBST(wrapper_script)
 
-dnl
-dnl Tests for different application setup features follow.
-dnl
-
-dnl For --with-ps.
-test -z "$PS_DEF" && PS_DEF=-DPS_GS
-test "$PS_DEF" = no && PS_DEF=
-AC_SUBST(PS_DEF)dnl
-dnl
-dnl If we're on Solaris and we want DPS, then add the extra compilation stuff
-dnl to get it.
-if echo "$PS_DEF" | grep PS_DPS >/dev/null; then
-   if test "`(uname) 2>/dev/null`" = SunOS \
-      && uname -r | grep '^5' >/dev/null; then
-    AC_MSG_RESULT(adding DPS includes and libraries for Solaris)
-    X_CFLAGS="$X_CFLAGS -I/usr/openwin/include/X11"
-    AC_CHECK_LIB(sunmath, isinf, ac_sunmath=-lsunmath, ac_sunmath="")
-    X_LIBS="$X_LIBS -R/usr/openwin/lib /usr/openwin/lib/libdps.so $ac_sunmath"
-    dnl We only need isinf and ieeefp.h to work around a Solaris bug in
-    dnl -ldps; see psdps.c.  isinf is in -lsunmath.
-    AC_CHECK_FUNCS(isinf)
-    AC_CHECK_HEADERS(ieeefp.h)
-  else
-    dnl SunOS 4.x is simpler.
-    AC_MSG_RESULT(adding DPS includes and libraries for SunOS 4.x)
-    X_LIBS="$X_LIBS -ldps"
-  fi
-elif echo "$PS_DEF" | grep PS_NEWS >/dev/null; then
-    AC_MSG_RESULT(adding NeWS libraries)
-    X_LIBS="$X_LIBS -lxview -lcps -lolgx -lxvps"
-fi
-
 dnl ##########
 
-dnl ImageMagick support
-PS_DEF="$PS_DEF $MAGICK_DEF"
-if echo "$PS_DEF" | grep MAGICK >/dev/null; then
-    AC_MSG_RESULT(adding ImageMagick libraries)
-    X_EXTRA_LIBS="$X_EXTRA_LIBS `Magick-config --libs`"
-fi
-
-
-# If you're cross-compiling, these macros set up the variables in
-# ../make/cross.mk: BUILDCC, BUILDCFLAGS, BUILDCCLD etc.  These are
-# near the end so people have some chance of seeing them.
-KPSE_CROSS_BUILD_VAR(CC, cc)
-KPSE_CROSS_BUILD_VAR(CFLAGS, $(BUILDXCFLAGS))
-KPSE_CROSS_BUILD_VAR(CPPFLAGS, $(BUILDXCPPFLAGS))
-KPSE_CROSS_BUILD_VAR(LDFLAGS, $(BUILDXLDFLAGS))
-KPSE_CROSS_BUILD_VAR(CCLD, $(BUILDCC))
-
-KPSE_CONFIG_FILES([Makefile gui/Makefile tests/Makefile])
-AC_CONFIG_FILES([xdvi-sh])
-AC_OUTPUT

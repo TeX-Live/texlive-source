@@ -1,3 +1,7 @@
-## libs/libpng/kpse/withenable.ac
+## libs/libpng/kpse/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
+dnl
+dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
 ## configure options and TL libraries required for libpng
 KPSE_WITH_LIB([libpng], [zlib])

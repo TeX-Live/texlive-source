@@ -212,6 +212,7 @@ nobase_dist_script_SCRIPTS = \
 	splitindex/perl/splitindex.pl \
 	svn-multi/svn-multi.pl \
 	texcount/TeXcount.pl \
+	texdirflatten/texdirflatten \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
 	vpe/vpe.pl
@@ -476,20 +477,20 @@ install-links:
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf/scripts/$$s $$target; \
-	  done; \
+	  done && \
 	  for s in $(nobase_dist_script_SCRIPTS); do \
 	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 	    target=$$target; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target; \
-	  done; \
-	  rm -rf getnonfreefonts-sys; \
-	  echo "creating link 'getnonfreefonts-sys' -> 'getnonfreefonts'"; \
-	  $(LN_S) getnonfreefonts getnonfreefonts-sys; \
-	  rm -f man; \
-	  echo "creating link 'man' -> '$(REL)/texmf/doc/man'"; \
-	  ln -s $(REL)/texmf/doc/man man || :
+	  done && \
+	  rm -rf getnonfreefonts-sys && \
+	  echo "creating link 'getnonfreefonts-sys' -> 'getnonfreefonts'" && \
+	  $(LN_S) getnonfreefonts getnonfreefonts-sys && \
+	  rm -f man && \
+	  echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
+	  (ln -s $(REL)/texmf/doc/man man || :)
 
 uninstall-hook:
 	@for s in $(nobase_dist_scriptx_SCRIPTS) $(nobase_dist_script_SCRIPTS); do \

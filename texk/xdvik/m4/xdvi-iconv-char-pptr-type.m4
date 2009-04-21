@@ -1,24 +1,21 @@
-dnl ### Check whether iconv takes a 'const char **' or a 'char **' input argument.
-dnl ### According to IEEE 1003.1, `char **' is correct, but e.g. librecode
-dnl ### uses `const char **'.
-dnl ### We use C++'s built-in function overloading to distinguish between the two.
+# XDVI_ICONV_CHAR_PPTR_TYPE
+# -------------------------
+# Check whether iconv takes a 'const char **' or a 'char **' input argument.
+# According to IEEE 1003.1, `char **' is correct, but e.g. librecode
+# uses `const char **'.
+# Inspired by Autoconf's AC_FUNC_SELECT_ARGTYPES we do this without the need
+# to run a test program or to use C++.
 AC_DEFUN([XDVI_ICONV_CHAR_PPTR_TYPE],
-[
-AC_LANG_SAVE AC_LANG_CPLUSPLUS
-# AC_LANG_PUSH(C++) # in newer autoconf
-#
-xdvi_iconv_save_libs="$LIBS"
-xdvi_iconv_save_cxxflags="$CXXFLAGS"
-xdvi_iconv_save_ldflags="$LDFLAGS"
-#
-LIBS="$LIBS $iconv_libs"
-CXXFLAGS="$CXXFLAGS $iconv_includes"
-LDFLAGS="$LDFLAGS $iconv_libpath"
-#
-AC_MSG_CHECKING([for iconv input type])
-AC_CACHE_VAL(xdvi_cv_iconv_char_pptr_type,
-[AC_TRY_RUN(
-[
+[AC_CACHE_CHECK([for iconv input type],
+                [xdvi_cv_iconv_char_pptr_type],
+                [
+  xdvi_iconv_save_cppflags=$CPPFLAGS
+  xdvi_iconv_save_libs=$LIBS
+  CPPFLAGS="$CPPFLAGS $iconv_includes"
+  LIBS="$LIBS $iconv_libpath $iconv_libs"
+  AC_COMPILE_IFELSE(
+    [AC_LANG_PROGRAM(
+      [[
 /* iconv() definitions may differ depending on following macros ... */
 #ifdef __hpux
 /* On HP-UX 10.10 B and 20.10, compiling with _XOPEN_SOURCE + ..._EXTENDED
@@ -36,64 +33,12 @@ AC_CACHE_VAL(xdvi_cv_iconv_char_pptr_type,
 #endif
 
 #include <iconv.h>
-    
-    // Define two iconv_adapter() functions, one with a const char **, the other with
-    // a char ** argument. The compiler will figure out which one to use, and we can
-    // check the exit value to see which it was.
-    // Idea taken from http://gcc.gnu.org/ml/libstdc++/2000-11/msg00127.html
-
-    typedef const char ** ConstCharPtrT;
-    typedef char ** CharPtrT;
-
-    inline int
-    iconv_adapter(size_t(*iconv_func)(iconv_t, ConstCharPtrT, size_t *, char**, size_t*),
-                  iconv_t cd, char **inbuf, size_t *inbytesleft,
-                  char **outbuf, size_t *outbytesleft)
-    {
-        return 1; // 1 = false = const char **
-    }
-    
-    
-    inline int
-    iconv_adapter(size_t(*iconv_func)(iconv_t, CharPtrT, size_t *, char**, size_t*),
-                  iconv_t cd, char **inbuf, size_t *inbytesleft,
-                  char **outbuf, size_t *outbytesleft)
-    {
-        return 0; // 0 = true = char **
-    }
-    
-    
-    int main(void)
-    {
-        iconv_t testconv = (iconv_t)-1;
-        char *ptr1 = 0;
-        char *ptr2 = 0;
-        size_t len1 = 0;
-        size_t len2 = 0;
-        
-        return iconv_adapter(iconv, testconv,
-    			    (char**)&ptr1, &len1,
-    		  	    (char**)&ptr2, &len2);
-    }
-],
-[xdvi_cv_iconv_char_pptr_type="char_pptr"],
-[xdvi_cv_iconv_char_pptr_type="const_char_pptr"],
-# `correct' default for cross-compiling ...
-[xdvi_cv_iconv_char_pptr_type="char_pptr"])])
-#
-LIBS="$xdvi_iconv_save_libs"
-CXXFLAGS="$xdvi_iconv_save_cxxflags"
-LDFLAGS="$xdvi_iconv_save_ldflags"
-#
-if test $xdvi_cv_iconv_char_pptr_type = "const_char_pptr"; then
-  AC_DEFINE([ICONV_CHAR_PPTR_TYPE], [const char **],
-            [Define the type of the iconv input string (char ** or const char **)])
-  AC_MSG_RESULT([const char **])
-else
-  AC_DEFINE([ICONV_CHAR_PPTR_TYPE], [char **])
-  AC_MSG_RESULT([char **])
-fi
-AC_LANG_RESTORE]
-#AC_LANG_POP(C++) # in newer autoconf
-)
-
+      ]],
+      [[extern size_t iconv(iconv_t, char **, size_t *, char**, size_t*);]])],
+    [xdvi_cv_iconv_char_pptr_type='char **'],
+    [xdvi_cv_iconv_char_pptr_type='const char **'])
+  CPPFLAGS=$xdvi_iconv_save_cppflags
+  LIBS=$xdvi_iconv_save_libs])
+AC_DEFINE_UNQUOTED([ICONV_CHAR_PPTR_TYPE], [$xdvi_cv_iconv_char_pptr_type],
+                   [Define the type of the iconv input string (char ** or const char **)])
+]) # XDVI_ICONV_CHAR_PPTR_TYPE

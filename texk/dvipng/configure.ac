@@ -115,20 +115,20 @@ KPSE_ADD_FLAGS([libpng])
 AC_CHECK_FUNC([png_read_image],
               [AC_DEFINE([HAVE_LIBPNG], 1,
                          [Define to 1 if you have the `png' library (-lpng).])],
-              [AC_MSG_ERROR([cannot find/use libpng])])
+              [KPSE_MSG_ERROR([dvipng], [cannot find/use libpng])])
 
 KPSE_ADD_FLAGS([gd])
 AC_CHECK_FUNC([gdImageCreate],
               [AC_DEFINE([HAVE_LIBGD], 1,
                          [Define to 1 if you have the `gd' library (-lgd).])],
-              [AC_MSG_ERROR([cannot find/use libgd
+              [KPSE_MSG_ERROR([dvipng], [cannot find/use libgd
 This drawing library can be downloaded at http://www.boutell.com/gd])])
 
 KPSE_ADD_FLAGS([kpathsea])
 AC_CHECK_FUNC([kpse_set_progname],
               [AC_DEFINE([HAVE_LIBKPATHSEA], 1,
                          [Define to 1 if you have the `kpathsea' library (-lkpathsea).])],
-              [AC_MSG_ERROR([cannot find/use libkpathsea])])
+              [KPSE_MSG_ERROR([dvipng], [cannot find/use libkpathsea])])
 
 dnl We need enc, cmap, and sfd formats.
 dnl Introduced together with opentype format (Dec 2003).
@@ -154,7 +154,7 @@ AM_CONDITIONAL([have_ft2_or_t1], [test "x$have_ft2_or_t1" = xyes])
 
 dnl Checks for more header files.
 AC_CHECK_HEADERS([gd.h png.h kpathsea/kpathsea.h], ,
-                 [AC_MSG_ERROR([cannot find/use $ac_header])])
+                 [KPSE_MSG_ERROR([dvipng], [cannot find/use $ac_header])])
 AC_CHECK_HEADERS([t1lib.h])
 
 dnl Checks for library functions.

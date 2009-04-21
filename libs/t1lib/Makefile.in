@@ -202,6 +202,7 @@ AM_CPPFLAGS = $(T1LIB_DEFINES) -DT1LIB_IDENT=\"@T1LIB_VERSIONSTRING@\" \
 AM_CFLAGS = $(T1LIB_CFLAGS)
 LDADD = libt1.a
 @build_TRUE@noinst_LIBRARIES = libt1.a
+EXTRA_LIBRARIES = libt1.a
 nodist_libt1_a_SOURCES = $(lib_t1lib_sources) $(lib_type1_sources)
 lib_t1lib_sources = \
 	$(T1LIB_TREE)/lib/t1lib/parseAFM.c \

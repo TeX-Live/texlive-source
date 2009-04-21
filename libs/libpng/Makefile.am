@@ -23,17 +23,9 @@ INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = $(LIBPNG_DEFINES)
 
 if build
-
 noinst_LIBRARIES=libpng.a
-
-TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
-
-check_PROGRAMS = pngtest
-dist_check_SCRIPTS = libpng.test
-
 endif build
-
-TESTS = libpng.test
+EXTRA_LIBRARIES=libpng.a
 
 nodist_libpng_a_SOURCES = \
 	$(LIBPNG_TREE)/png.c \
@@ -52,10 +44,17 @@ nodist_libpng_a_SOURCES = \
 	$(LIBPNG_TREE)/pngerror.c \
 	$(LIBPNG_TREE)/pngpread.c
 
-libpng_a_DEPENDENCIES = $(ZLIB_DEPEND)
+$(libpng_a_OBJECTS): $(ZLIB_DEPEND)
 
 ## Rebuild zlib
 @ZLIB_RULE@
+
+if build
+TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
+TESTS = libpng.test
+check_PROGRAMS = pngtest
+dist_check_SCRIPTS = libpng.test
+endif build
 
 CLEANFILES = pngout.png
 

@@ -237,8 +237,7 @@ dist_gsftopkpsheader_DATA = render.ps
 gsftopkpsheaderdir = ${prefix}/texmf/dvips/gsftopk
 nodist_man1_MANS = gsftopk.1
 DISTCLEANFILES = gsftopk.1 sedscript
-EXTRA_DIST = gsftopk1.sed mksedscript Makefile.in.orig \
-	configure.in.orig
+EXTRA_DIST = gsftopk1.sed mksedscript
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

@@ -1,3 +1,7 @@
-## texk/afm2pl/ac/withenable.ac
+## texk/afm2pl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/afm2pl/
+dnl
+dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
 ## configure options and TL libraries required for afm2pl
 KPSE_WITH_PROG([afm2pl], [kpathsea])

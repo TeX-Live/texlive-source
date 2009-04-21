@@ -300,14 +300,47 @@ ps2pk_SOURCES = \
 ps2pk_DEPENDENCIES = $(KPATHSEA_DEPEND)
 LDADD = $(KPATHSEA_LIBS)	
 dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
-EXTRA_DIST = CHANGES.type1 INSTALLATION README.14m README.type1 \
-	Xstuff.h basename.c blues.h cluts.h digit.h ffilest.h \
-	flisearch.c font.h fontfile.h fontmisc.h fonts.h fontstruct.h \
-	fontxlfd.h fsmasks.h hdigit.h pictures.h pktest.c protos.h \
-	psearch.c psearch.h sexpr.c strexpr.c strexpr.h strokes.h \
-	t1hdigit.h t1imager.h t1intf.h t1stdio.h t1test.c texfiles.c \
-	texfiles.h tokst.h trig.h types.h usenet Makefile.in.orig \
-	configure.in.orig
+EXTRA_DIST = \
+	CHANGES.type1 \
+	INSTALLATION \
+	README.14m \
+	README.type1 \
+	Xstuff.h \
+	basename.c \
+	blues.h \
+	cluts.h \
+	digit.h \
+	ffilest.h \
+	flisearch.c \
+	font.h \
+	fontfile.h \
+	fontmisc.h \
+	fonts.h \
+	fontstruct.h \
+	fontxlfd.h \
+	fsmasks.h \
+	hdigit.h \
+	pictures.h \
+	pktest.c \
+	protos.h \
+	psearch.c \
+	psearch.h \
+	sexpr.c \
+	strexpr.c \
+	strexpr.h \
+	strokes.h \
+	t1hdigit.h \
+	t1imager.h \
+	t1intf.h \
+	t1stdio.h \
+	t1test.c \
+	texfiles.c \
+	texfiles.h \
+	tokst.h \
+	trig.h \
+	types.h \
+	usenet
+
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

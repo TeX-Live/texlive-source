@@ -19,9 +19,7 @@ dist-hook:
 	rm -rf `find $(distdir)/$(FREETYPE_TREE) -name .svn`
 
 if build
-
 noinst_DATA = libttf.a
-
 endif build
 
 ft-build/Makefile:
@@ -34,7 +32,7 @@ ft-build/Makefile:
 	    --includedir=$(abs_builddir)
 
 ## Unfortunately the FreeType build system installs the headers after the library;
-## get our dependencies right we wait for a second and then touch the library.
+## to get our dependencies right we wait for a second and then touch the library.
 libttf.a: ft-build/Makefile
 	rm -rf ft-install
 	cd ft-build/lib \

@@ -32,11 +32,11 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+DIST_COMMON = $(srcdir)/../common.am $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 subdir = gui
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/xdvi-arg-string.m4 \
-	$(top_srcdir)/m4/xdvi-c-bitmap-type.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/xdvi-c-bitmap-type.m4 \
 	$(top_srcdir)/m4/xdvi-cc-concat.m4 \
 	$(top_srcdir)/m4/xdvi-find-motif.m4 \
 	$(top_srcdir)/m4/xdvi-find-xpm.m4 \
@@ -68,9 +68,9 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libgui_a_AR = $(AR) $(ARFLAGS)
 libgui_a_LIBADD =
-am_libgui_a_OBJECTS = Panner.$(OBJEXT) Tip.$(OBJEXT) \
-	help-window.$(OBJEXT) mag.$(OBJEXT) menu.$(OBJEXT) \
-	message-window.$(OBJEXT) pagesel.$(OBJEXT) \
+am_libgui_a_OBJECTS = print-internal.$(OBJEXT) Panner.$(OBJEXT) \
+	Tip.$(OBJEXT) help-window.$(OBJEXT) mag.$(OBJEXT) \
+	menu.$(OBJEXT) message-window.$(OBJEXT) pagesel.$(OBJEXT) \
 	print-dialog.$(OBJEXT) print-log.$(OBJEXT) \
 	search-dialog.$(OBJEXT) selection.$(OBJEXT) sfDir.$(OBJEXT) \
 	sfDraw.$(OBJEXT) sfPath.$(OBJEXT) sfSelFile.$(OBJEXT) \
@@ -112,10 +112,6 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -181,7 +177,6 @@ abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -234,14 +229,25 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+x_ext_lib = @x_ext_lib@
 x_linker_options = @x_linker_options@
 x_tool_libs = @x_tool_libs@
 x_xmu_lib = @x_xmu_lib@
 x_xpm_libs = @x_xpm_libs@
-INCLUDES = -I$(top_srcdir) $(PS_DEF) $(KPATHSEA_INCLUDES) \
-	$(T1LIB_INCLUDES) $(X_CFLAGS)
+x_cppflags = $(X_CFLAGS) $(iconv_includes)
+common_includes = $(PS_DEF) $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES) $(x_cppflags)
+x_ldflags = $(X_LIBS) $(x_linker_options) $(iconv_libpath)
+x_extra_libs = $(X_EXTRA_LIBS) $(iconv_libs)
+xdvi_x_libs = $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt \
+	$(X_PRE_LIBS) $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
+common_ldadd = $(KPATHSEA_LIBS) $(T1LIB_LIBS) $(xdvi_x_libs)
+common_dependencies = $(KPATHSEA_DEPEND) $(T1LIB_DEPEND)
+libxdvi_dependencies = ${top_srcdir}/*.[ch] ${top_builddir}/psheader.c
+libgui_dependencies = ${top_srcdir}/*.h ${top_srcdir}/print-internal.c ${top_srcdir}/gui/*.[ch]
+INCLUDES = -I$(top_srcdir) $(common_includes)
 noinst_LIBRARIES = libgui.a
 libgui_a_SOURCES = \
+	../print-internal.c \
 	Panner.c \
 	Panner.h \
 	PannerP.h \
@@ -313,7 +319,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../common.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -364,6 +370,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message-window.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pagesel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print-dialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print-internal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/print-log.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/search-dialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/selection.Po@am__quote@
@@ -408,6 +415,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+print-internal.o: ../print-internal.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT print-internal.o -MD -MP -MF $(DEPDIR)/print-internal.Tpo -c -o print-internal.o `test -f '../print-internal.c' || echo '$(srcdir)/'`../print-internal.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/print-internal.Tpo $(DEPDIR)/print-internal.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../print-internal.c' object='print-internal.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o print-internal.o `test -f '../print-internal.c' || echo '$(srcdir)/'`../print-internal.c
+
+print-internal.obj: ../print-internal.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT print-internal.obj -MD -MP -MF $(DEPDIR)/print-internal.Tpo -c -o print-internal.obj `if test -f '../print-internal.c'; then $(CYGPATH_W) '../print-internal.c'; else $(CYGPATH_W) '$(srcdir)/../print-internal.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/print-internal.Tpo $(DEPDIR)/print-internal.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='../print-internal.c' object='print-internal.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o print-internal.obj `if test -f '../print-internal.c'; then $(CYGPATH_W) '../print-internal.c'; else $(CYGPATH_W) '$(srcdir)/../print-internal.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -590,6 +611,9 @@ uninstall-am:
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
+
+@KPATHSEA_RULE@
+@T1LIB_RULE@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

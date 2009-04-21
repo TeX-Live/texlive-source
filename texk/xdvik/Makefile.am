@@ -1,118 +1,105 @@
+## Makefile.am for the TeX Live subdirectory texk/xdvik/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
-SUBDIRS = squeeze gui
+SUBDIRS = squeeze gui . tests
 
-INCLUDES = -I$(srcdir)/gui
-INCLUDES += $(PS_DEF)
-INCLUDES += $(KPATHSEA_INCLUDES) $(T1LIB_INCLUDES)
-INCLUDES += $(X_CFLAGS)
+include common.am
+
+INCLUDES = -I$(srcdir)/gui $(common_includes)
+
+noinst_HEADERS = \
+	alloc-debug.h \
+	browser.h \
+	c-openmx.h \
+	dl_list.h \
+	dvi-draw.h \
+	dvi-init.h \
+	dvi.h \
+	dvisel.h \
+	encodings.h \
+	events.h \
+	exit-handlers.h \
+	filehist.h \
+	font-open.h \
+	hypertex.h \
+	image-magick.h \
+	mime.h \
+	my-snprintf.h \
+	my-vsnprintf.h \
+	pagehist.h \
+	print-internal.h \
+	psdps.h \
+	psgs.h \
+	psnews.h \
+	read-mapfile.h \
+	search-internal.h \
+	special.h \
+	string-utils.h \
+	string_list.h \
+	tfmload.h \
+	translations.h \
+	util.h \
+	version.h \
+	x_util.h \
+	xdvi-config.h \
+	xdvi-debug.h \
+	xdvi.h \
+	xserver-info.h
+
+noinst_LIBRARIES = libxdvi.a
+
+nodist_libxdvi_a_SOURCES = psheader.c
+
+libxdvi_a_SOURCES = \
+	browser.c \
+	dl_list.c \
+	dvi-draw.c \
+	dvi-init.c \
+	dvisel.c \
+	encodings.c \
+	events.c \
+	exit-handlers.c \
+	filehist.c \
+	font-open.c \
+	gf.c \
+	hypertex.c \
+	image-magick.c \
+	mime.c \
+	my-snprintf.c \
+	my-vsnprintf.c \
+	pagehist.c \
+	pk.c \
+	psdps.c \
+	psgs.c \
+	psnews.c \
+	read-mapfile.c \
+	search-internal.c \
+	special.c \
+	string-utils.c \
+	string_list.c \
+	tfmload.c \
+	util.c \
+	vf.c \
+	x_util.c \
+	xdvi.c \
+	xserver-info.c
 
 bin_SCRIPTS = xdvi
 
 bin_PROGRAMS = xdvi-bin
 
-nodist_xdvi_bin_SOURCES = psheader.c
+xdvi_bin_SOURCES = main.c
 
-xdvi_bin_SOURCES = \
-	alloc-debug.h \
-	browser.c \
-	browser.h \
-	c-openmx.h \
-	dl_list.c \
-	dl_list.h \
-	dvi-draw.c \
-	dvi-draw.h \
-	dvi-init.c \
-	dvi-init.h \
-	dvi.h \
-	dvisel.c \
-	dvisel.h \
-	encodings.c \
-	encodings.h \
-	events.c \
-	events.h \
-	exit-handlers.c \
-	exit-handlers.h \
-	filehist.c \
-	filehist.h \
-	font-open.c \
-	font-open.h \
-	gf.c \
-	hypertex.c \
-	hypertex.h \
-	image-magick.c \
-	image-magick.h \
-	main.c \
-	mime.c \
-	mime.h \
-	my-snprintf.c \
-	my-snprintf.h \
-	my-vsnprintf.c \
-	my-vsnprintf.h \
-	pagehist.c \
-	pagehist.h \
-	pk.c \
-	print-internal.c \
-	print-internal.h \
-	psdps.c \
-	psdps.h \
-	psgs.c \
-	psgs.h \
-	psnews.c \
-	psnews.h \
-	read-mapfile.c \
-	read-mapfile.h \
-	search-internal.c \
-	search-internal.h \
-	special.c \
-	special.h \
-	string-utils.c \
-	string-utils.h \
-	string_list.c \
-	string_list.h \
-	tfmload.c \
-	tfmload.h \
-	translations.h \
-	util.c \
-	util.h \
-	version.h \
-	vf.c \
-	x_util.c \
-	x_util.h \
-	xdvi-config.h \
-	xdvi-debug.h \
-	xdvi.c \
-	xdvi.h \
-	xserver-info.c \
-	xserver-info.h
+xdvi_bin_DEPENDENCIES = libxdvi.a gui/libgui.a libxdvi.a $(common_dependencies)
 
-xdvi_bin_DEPENDENCIES = gui/libgui.a $(KPATHSEA_DEPEND) $(T1LIB_DEPEND)
+LDADD = libxdvi.a gui/libgui.a $(common_ldadd)
 
-# Make `#include <X11/...>' and `-lX...' work.
-# This matches web2c (needed only for Metafont).
-## x_cppflags=@X_CFLAGS@ @iconv_includes@
-## x_ldflags=@X_LIBS@ @x_linker_options@ @iconv_libpath@
-## x_extra_libs=@X_EXTRA_LIBS@ @iconv_libs@
-
-# Follow the library order used in X11R6 itself.
-# It seems that on Cygwin, libXaw needs _XpmReadFileToPixmap, so we put
-# x_xpm_libs after the tool_libs -- but before -lX11, since on MacOSX it
-# uses XGrabServer and XUngrabServer, which would otherwise be
-# unresolved with static libraries.
-# Xmu needs to come before Xt and after the toolkit libs.
-xdvi_x_libs = $(X_LIBS) $(x_tool_libs) $(x_xmu_lib) -lXt $(X_PRE_LIBS)
-xdvi_x_libs += $(x_ext_lib) $(x_xpm_libs) -lX11 $(X_EXTRA_LIBS)
-
-LDADD = gui/libgui.a $(KPATHSEA_LIBS) $(T1LIB_LIBS) $(xdvi_x_libs)
-
-gui/libgui.a:
+gui/libgui.a: $(libgui_dependencies)
 	cd gui && $(MAKE) $(AM_MAKEFLAGS) libgui.a
-
-## Rebuild libkpathsea
-@KPATHSEA_RULE@
-## Rebuild libt1
-@T1LIB_RULE@
 
 psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
 	squeeze/squeeze $(srcdir)/psheader.txt $@
@@ -122,6 +109,17 @@ squeeze/squeeze$(EXEEXT):
 
 EXTRA_DIST = psheader.txt
 CLEANFILES = psheader.c
+
+nodist_man1_MANS = xdvi.1
+
+xdvi.1: xdvi.1.in sedscript
+	sed -f sedscript <$(srcdir)/xdvi.1.in >$@
+
+sedscript: mksedscript CHANGES Makefile c-auto.h
+	$(SHELL) $(srcdir)/mksedscript $(srcdir) $(DEFS) $(PS_DEF) >$@
+
+EXTRA_DIST += mksedscript xdvi.1.in
+CLEANFILES += sedscript xdvi.1
 
 xdvidir = ${prefix}/texmf/xdvi
 dist_xdvi_DATA = texmf/XDvi
@@ -156,7 +154,6 @@ EXTRA_DIST += \
 	README.t1fonts \
 	README.t1mapper \
 	m4/acinclude.m4 \
-	mksedscript \
 	pixmaps/drag_horiz.xbm \
 	pixmaps/drag_horiz_mask.xbm \
 	pixmaps/drag_omni.xbm \
@@ -176,15 +173,6 @@ EXTRA_DIST += \
 	pixmaps/xdvi48x48.xpm \
 	t1mapper \
 	t1mapper.1 \
-	tests/Makefile.in \
-	tests/README \
-	tests/run_tests.c \
-	tests/run_tests.h \
-	tests/test1.c \
-	tests/test_dl_list.c \
-	tests/test_string_list.c \
-	tests/test_string_utils.c \
-	tests/test_util.c \
 	texmf-alt/README \
 	texmf-alt/charter2.map \
 	texmf-alt/lucida.map \
@@ -193,7 +181,6 @@ EXTRA_DIST += \
 	texmf-alt/xdvifont.map \
 	texmf-alt/xypic.map \
 	xdvi-search.el \
-	xdvi.1.in \
 	xdvi.icon \
 	xdvizilla \
 	xdvizilla.1
@@ -224,13 +211,6 @@ EXTRA_DIST += \
 ## Eventually delete these files
 ##
 EXTRA_DIST += \
-	Makefile.in.orig \
 	Makefile.in.work \
-	configure.in.orig \
-	configure.in.work \
-	gui/Makefile.in.orig \
-	kpathsea.ac.orig \
-	tests/Makefile.in.orig \
-	withenable.ac.orig \
-	withenable.ac.work
+	configure.in.work
 

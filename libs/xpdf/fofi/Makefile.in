@@ -298,15 +298,6 @@ uninstall-am:
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am uninstall uninstall-am
 
-
-# Makefile.am fragment to create header symlinks.
-#
-#   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-#
-#   This file is free software; the copyright holder
-#   gives unlimited permission to copy and/or distribute it,
-#   with or without modifications, as long as this notice is preserved.
-#
 all-local:
 	@for file in $(SRCDIR)/*.h; do \
 	  inst=`echo $$file | sed -e 's/^.*\///'`; \

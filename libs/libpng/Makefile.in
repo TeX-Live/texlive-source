@@ -194,9 +194,7 @@ EXTRA_DIST = $(LIBPNG_TREE)
 INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = $(LIBPNG_DEFINES)
 @build_TRUE@noinst_LIBRARIES = libpng.a
-@build_TRUE@TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
-@build_TRUE@dist_check_SCRIPTS = libpng.test
-TESTS = libpng.test
+EXTRA_LIBRARIES = libpng.a
 nodist_libpng_a_SOURCES = \
 	$(LIBPNG_TREE)/png.c \
 	$(LIBPNG_TREE)/pngset.c \
@@ -214,7 +212,9 @@ nodist_libpng_a_SOURCES = \
 	$(LIBPNG_TREE)/pngerror.c \
 	$(LIBPNG_TREE)/pngpread.c
 
-libpng_a_DEPENDENCIES = $(ZLIB_DEPEND)
+@build_TRUE@TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
+@build_TRUE@TESTS = libpng.test
+@build_TRUE@dist_check_SCRIPTS = libpng.test
 CLEANFILES = pngout.png
 nodist_pngtest_SOURCES = $(LIBPNG_TREE)/pngtest.c
 pngtest_LDADD = libpng.a $(ZLIB_LIBS)
@@ -929,6 +929,8 @@ uninstall-am:
 
 dist-hook:
 	rm -rf `find $(distdir)/$(LIBPNG_TREE) -name .svn`
+
+$(libpng_a_OBJECTS): $(ZLIB_DEPEND)
 
 @ZLIB_RULE@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

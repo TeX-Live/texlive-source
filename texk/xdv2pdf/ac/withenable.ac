@@ -1,3 +1,7 @@
-## texk/xdv2pdf/ac/withenable.ac
+## texk/xdv2pdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdv2pdf/
+dnl
+dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
 ## configure options and TL libraries required for xdv2pdf
 KPSE_WITH_PROG([xdv2pdf], [kpathsea])

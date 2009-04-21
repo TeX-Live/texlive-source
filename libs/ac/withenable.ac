@@ -1,1 +1,4 @@
-## libs/ac/withenable.ac
+## libs/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/
+dnl
+dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.

@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/makeindexk/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -30,9 +34,4 @@ LDADD = $(KPATHSEA_LIBS)
 dist_man1_MANS = makeindex.1 mkindex.1
 
 EXTRA_DIST = ACK CONTRIB FILES NOTES PORTING
-
-## Eventually delete these files
-##
-
-EXTRA_DIST += Makefile.in.orig configure.in.orig
 

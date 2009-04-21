@@ -286,9 +286,19 @@ ttf2tfm_SOURCES = \
 ttf2tfm_DEPENDENCIES = $(KPATHSEA_DEPEND) $(FREETYPE_DEPEND)
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE_LIBS)
 dist_man1_MANS = ttf2pk.1 ttf2tfm.1
-EXTRA_DIST = data BUGS MakeSub.in Makefile.dm dvidrv.btm dvidrv.doc \
-	emdir.c emdir.h emtexdir.c emtexdir.h ttf2pk.doc \
-	Makefile.in.orig configure.in.orig
+EXTRA_DIST = \
+	data \
+	BUGS \
+	MakeSub.in \
+	Makefile.dm \
+	dvidrv.btm \
+	dvidrv.doc \
+	emdir.c \
+	emdir.h \
+	emtexdir.c \
+	emtexdir.h \
+	ttf2pk.doc
+
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

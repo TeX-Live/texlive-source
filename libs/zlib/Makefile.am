@@ -23,17 +23,9 @@ INCLUDES = -I$(top_srcdir)/$(ZLIB_TREE)
 AM_CPPFLAGS = $(ZLIB_DEFINES)
 
 if build
-
 noinst_LIBRARIES = libz.a
-
-BUILT_SOURCES = zconf.h
-
-check_PROGRAMS = example minigzip
-dist_check_SCRIPTS = zlib.test
-
-TESTS = zlib.test
-
 endif build
+EXTRA_LIBRARIES = libz.a
 
 nodist_libz_a_SOURCES = \
 	$(ZLIB_TREE)/adler32.c \
@@ -56,6 +48,14 @@ nodist_libz_a_SOURCES = \
 	$(ZLIB_TREE)/uncompr.c \
 	$(ZLIB_TREE)/zutil.h \
 	$(ZLIB_TREE)/zutil.c
+
+$(libz_a_OBJECTS): zconf.h
+
+if build
+check_PROGRAMS = example minigzip
+dist_check_SCRIPTS = zlib.test
+TESTS = zlib.test
+endif build
 
 LDADD = libz.a
 

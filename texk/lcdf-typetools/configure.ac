@@ -73,7 +73,7 @@ if test "x$with_kpathsea" != xno; then
                   with_kpathsea=no])
 
   if test "x$with_kpathsea" = xno; then
-  AC_MSG_ERROR([
+  KPSE_MSG_ERROR([lcdf-typetools], [
 =========================================
 
 I can't find the kpathsea header and/or library files. Tell me where to look
@@ -245,7 +245,7 @@ ac_ntoh_defined=yes],
     fi
 fi
 if test $ac_ntoh_defined = no; then
-    AC_MSG_ERROR([
+    KPSE_MSG_ERROR([lcdf-typetools], [
 =========================================
 
 Cannot find a definition for ntohs and/or ntohl!

@@ -221,8 +221,11 @@ afm2pl_SOURCES = afm2pl.c
 afm2pl_DEPENDENCIES = $(KPATHSEA_DEPEND)
 LDADD = $(KPATHSEA_LIBS)	
 dist_man1_MANS = afm2pl.1
-EXTRA_DIST = afm2pl.html afm2pl.txt afm2pl.xml c-auto.in \
-	Makefile.in.orig configure.in.orig
+EXTRA_DIST = \
+	afm2pl.html \
+	afm2pl.txt \
+	afm2pl.xml
+
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

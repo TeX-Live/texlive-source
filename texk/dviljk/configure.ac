@@ -18,7 +18,7 @@ KPSE_COMMON([dviljk], [no-define])
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
 AC_C_CHAR_UNSIGNED
-AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF([long])
 AC_CHECK_FUNCS([rmdir unlink mkdtemp mktemp])
 
 KPSE_KPATHSEA_FLAGS

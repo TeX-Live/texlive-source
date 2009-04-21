@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory libs/teckit/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -5,9 +9,9 @@ INCLUDES = -I$(top_srcdir)/source/Public-headers $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DNDEBUG
 
 if build
-EXTRA_LIBRARIES = libTECkit_Compiler.a
 noinst_LIBRARIES = libTECkit.a
 endif
+EXTRA_LIBRARIES = libTECkit_Compiler.a libTECkit.a
 
 libTECkit_Compiler_a_SOURCES = \
 	source/Compiler.cpp \
@@ -80,7 +84,7 @@ EXTRA_DIST += \
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-## Eventually delete these files
+## Original files
 ##
 EXTRA_DIST += Makefile.am.orig configure.ac.orig
 

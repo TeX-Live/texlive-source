@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/tetex/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -103,6 +107,7 @@ install-exec-hook:
 	  && $(LN_S) allcm allec \
 	  && $(LN_S) fmtutil mktexfmt \
 	  && $(LN_S) kpsetool kpsexpand \
+	  && $(LN_S) kpsetool kpsepath \
 	  && $(LN_S) mktexlsr texhash
 
 install-data-hook:
@@ -138,7 +143,7 @@ EXTRA_DIST = \
 	README.a2ping \
 	README.texdoctk
 
-## Not yet used
+## Not used
 ##
 EXTRA_DIST += \
 	doc/Makefile \
@@ -150,23 +155,12 @@ EXTRA_DIST += \
 	win32/epstopdf.c \
 	win32/epstopdf.txt
 
-## Evenyually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
-
-#################
-
-# Auxiliary files.
-extra-install-data::
-	$(SHELL) $(top_srcdir)/../mkinstalldirs $(texpooldir) $(texmf)/doc/tetex
-	$(SHELL) $(top_srcdir)/../mkinstalldirs $(texmf)/texconfig $(texmf)/texconfig/g $(texmf)/texconfig/v $(texmf)/texconfig/x
-
-# 
-# This target is invoked by the top-level make,
-# to create the per-format engine symlinks in $(bindir),
-# after everything else is installed.  We explicitly specify the
-# fmtutil.cnf file to use for the sake of distro builds.  Also, that way
-# we don't have to run mktexlsr also.
+## 
+## This target is invoked by the top-level make,
+## to create the per-format engine symlinks in $(bindir),
+## after everything else is installed.  We explicitly specify the
+## fmtutil.cnf file to use for the sake of distro builds.  Also, that way
+## we don't have to run mktexlsr also.
 run_texlinks = $(bindir)/texlinks -f $(web2cdir)/fmtutil.cnf
 run-texlinks:
 	PATH="$(bindir):$(PATH)"; export PATH; $(run_texlinks)

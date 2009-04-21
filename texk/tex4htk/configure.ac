@@ -21,17 +21,6 @@ AC_CHECK_SIZEOF([int])
 
 KPSE_KPATHSEA_FLAGS
 
-tex4ht_subdir='texmf-dist/scripts/tex4ht'
-tex4htdir="\${prefix}/$tex4ht_subdir"
-AC_SUBST([tex4htdir])
-dnl This is not quite right, should actually be decided by 'make install'
-if test "x$bindir" = 'x${exec_prefix}/bin'; then
-  tex4htrel="../$tex4ht_subdir"
-else
-  tex4htrel="../../$tex4ht_subdir"
-fi
-AC_SUBST([tex4htrel])
-
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

@@ -19,7 +19,7 @@ EXTRA_PROGRAMS += tex
 tex_CPPFLAGS =
 
 ## With --enable-ipc, TeX may need to link with -lsocket.
-tex_LDADD = $(LDADD) $(socketlibs)
+tex_LDADD = $(LDADD) $(ipc_socketlibs)
 
 tex_c_h = texini.c tex0.c tex1.c tex2.c texcoerce.h texd.h
 nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c
