@@ -76,12 +76,10 @@ AS_IF([test "x$enable_luatex:$enable_ipc" != xno:no],
                             [AC_MSG_WARN([no socket library: disabling ipc])
                              enable_ipc=no])],
                [socketlibs="-l$ac_cv_search_connect"])])
-AS_IF([test "x$enable_luatex" = xyes],
-      [lua_socketlibs=$socketlibs])
 AS_IF([test "x$enable_ipc" = xyes],
       [ipc_socketlibs=$socketlibs
        AC_DEFINE([IPC], 1, [tex: Define to enable --ipc.])])
-AC_SUBST([lua_socketlibs])
+AC_SUBST([socketlibs])
 AC_SUBST([ipc_socketlibs])
 
 KPSE_CHECK_FRAMEWORK([Carbon], [ATSUStyle style])

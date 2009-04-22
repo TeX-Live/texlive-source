@@ -892,7 +892,7 @@ XETEX_MACOSX_TRUE
 FONTCONFIG_LIBS
 FONTCONFIG_INCLUDES
 ipc_socketlibs
-lua_socketlibs
+socketlibs
 MINGW32_FALSE
 MINGW32_TRUE
 WIN32_FALSE
@@ -18030,10 +18030,6 @@ fi
   *) socketlibs="-l$ac_cv_search_connect" ;;
 esac
 
-fi
-
-if test "x$enable_luatex" = xyes; then
-  lua_socketlibs=$socketlibs
 fi
 
 if test "x$enable_ipc" = xyes; then
