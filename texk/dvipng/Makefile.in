@@ -329,9 +329,10 @@ EXTRA_DIST = ChangeLog.0 ChangeLog.TL INSTALL README RELEASE \
 	ft.c-$(DVIPNG_VERSION) misc.c-$(DVIPNG_VERSION) \
 	pk.c-$(DVIPNG_VERSION) set.c-$(DVIPNG_VERSION) \
 	special.c-$(DVIPNG_VERSION) t1.c-$(DVIPNG_VERSION) \
-	tfm.c-$(DVIPNG_VERSION) m4/gs-device.m4 Makefile.in.orig \
-	acinclude.m4.orig configure.ac.orig Makefile.am.demo \
-	Makefile.in.work configure.ac.demo configure.ac.work
+	tfm.c-$(DVIPNG_VERSION) m4/gs-device.m4 fontmap.c.temp \
+	Makefile.in.orig acinclude.m4.orig configure.ac.orig \
+	Makefile.am.demo Makefile.in.work configure.ac.demo \
+	configure.ac.work
 dist_noinst_SCRIPTS = texi2pod.pl
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

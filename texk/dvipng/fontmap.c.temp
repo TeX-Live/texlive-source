@@ -316,7 +316,6 @@ struct psfontmap* FindPSFontMap(char* fontname)
     }
 #endif
   }
-#ifdef HAVE_FT2
   if(entry==NULL) {
     struct psfontmap* entry_subfont=NULL;
     entry=psfontmap;
@@ -332,7 +331,6 @@ struct psfontmap* FindPSFontMap(char* fontname)
       }
     }
   }
-#endif
   if (entry!=NULL && entry->psfile==NULL) 
     ReadPSFontMap(entry);
   if (entry!=NULL && entry->encname!=NULL && entry->encoding==NULL) 
