@@ -40,9 +40,7 @@ DIST_COMMON = $(am__configure_deps) \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -97,10 +95,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-ZLIB_DEPEND = @ZLIB_DEPEND@
-ZLIB_FLAGS_FOR_FREETYPE = @ZLIB_FLAGS_FOR_FREETYPE@
-ZLIB_INCLUDES = @ZLIB_INCLUDES@
-ZLIB_LIBS = @ZLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -422,6 +416,7 @@ uninstall-am:
 	pdf-am ps ps-am uninstall uninstall-am
 
 
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(FREETYPE_TREE) -name .svn`
 
@@ -434,6 +429,7 @@ ft-build/Makefile:
 	    --with-old-mac-fonts \
 	    --without-zlib \
 	    --prefix=$(abs_builddir)/ft-install \
+	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)
 
 # On MacOSX, using our zlib from TL results in a .a that is unusable; ld
@@ -443,21 +439,20 @@ ft-build/Makefile:
 # be lost, even though it is not the cleanest solution.
 #	    --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE) \
 #
-
+# Unfortunately the FreeType build system installs the headers after the library;
+# to get our dependencies right we wait for a second and then touch the library.
 libfreetype.a: ft-build/Makefile $(ZLIB_DEPEND)
 	rm -rf ft-install
 	cd ft-build \
 	  && $(MAKE) $(AM_MAKEFLAGS) \
 	  && $(MAKE) $(AM_MAKEFLAGS) install
-	mv ft-install/lib/libfreetype.a .
+	ft-install/bin/freetype-config --cflags >ft-includes
+	ft-install/bin/freetype-config --libs >ft-libs
 	sleep 1
-	touch libfreetype.a
-	rm -rf ft-install
-
-@ZLIB_RULE@
+	@for f in libfreetype.*; do touch $$f; done
 
 clean-local:
-	rm -rf libfreetype.a ft2build.h freetype2 ft-build ft-install
+	rm -rf freetype* ft2build.h ft-* libfreetype.* pkgconfig
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

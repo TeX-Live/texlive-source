@@ -14,7 +14,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## DISTFILES contains a directory and files in that directory.
 EXTRA_DIST = $(FREETYPE_TREE)
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(FREETYPE_TREE) -name .svn`
 
@@ -31,8 +31,8 @@ ft-build/Makefile:
 	    --prefix=$(abs_builddir)/ft-install \
 	    --includedir=$(abs_builddir)
 
-## Unfortunately the FreeType build system installs the headers after the library;
-## to get our dependencies right we wait for a second and then touch the library.
+# Unfortunately the FreeType build system installs the headers after the library;
+# to get our dependencies right we wait for a second and then touch the library.
 libttf.a: ft-build/Makefile
 	rm -rf ft-install
 	cd ft-build/lib \
@@ -41,7 +41,6 @@ libttf.a: ft-build/Makefile
 	mv ft-install/lib/libttf.a .
 	sleep 1
 	touch libttf.a
-	rm -rf ft-install
 
 clean-local:
 	rm -rf libttf.a freetype ft-build ft-install

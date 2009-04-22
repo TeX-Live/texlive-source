@@ -782,8 +782,6 @@ with_system_gd
 with_gd_includes
 with_gd_libdir
 with_system_freetype2
-with_freetype2_includes
-with_freetype2_libdir
 with_system_freetype
 with_freetype_includes
 with_freetype_libdir
@@ -1582,11 +1580,7 @@ Optional Packages:
   --with-gd-includes=DIR  gd headers installed in DIR
   --with-gd-libdir=DIR    gd library installed in DIR
   --with-system-freetype2 use installed freetype2 headers and library
-  --with-freetype2-includes=DIR
-                          freetype2 headers installed in DIR (both -IDIR and
-                          -IDIR/freetype2)
-  --with-freetype2-libdir=DIR
-                          freetype2 library installed in DIR
+                          (requires freetype-config)
   --with-system-freetype  use installed freetype headers and library
   --with-freetype-includes=DIR
                           freetype headers installed in DIR
@@ -3354,16 +3348,6 @@ test "x$need_gd" = xyes && {
 if test "${with_system_freetype2+set}" = set; then
   withval=$with_system_freetype2;
 fi
-
-# Check whether --with-freetype2-includes was given.
-if test "${with_freetype2_includes+set}" = set; then
-  withval=$with_freetype2_includes;
-fi
-
-# Check whether --with-freetype2-libdir was given.
-if test "${with_freetype2_libdir+set}" = set; then
-  withval=$with_freetype2_libdir;
-fi
 if test "x$with_system_freetype2" = x; then
   if test -f $srcdir/../libs/freetype2/configure; then
     { $as_echo "$as_me:$LINENO: Assuming \`freetype2' headers and library from TL tree" >&5
@@ -3376,22 +3360,6 @@ $as_echo "$as_me: Assuming installed \`freetype2' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-freetype2=$with_system_freetype2'"
 fi
-if test "x$with_system_freetype2" = xyes; then
-  if test "x$with_system_zlib" = x; then
-    { $as_echo "$as_me:$LINENO:   ->  installed \`zlib' headers and library" >&5
-$as_echo "$as_me:   ->  installed \`zlib' headers and library" >&6;}
-    with_system_zlib=yes
-    ac_configure_args="$ac_configure_args '--with-system-zlib'"
-  elif test "x$with_system_zlib" != xyes; then
-    { { $as_echo "$as_me:$LINENO: error: Sorry, \`--with-system-freetype2' requires \`--with-system-zlib'" >&5
-$as_echo "$as_me: error: Sorry, \`--with-system-freetype2' requires \`--with-system-zlib'" >&2;}
-   { (exit 1); exit 1; }; }
-  fi
-fi
-
-test "x$need_freetype2" = xyes && {
-  need_zlib=yes
-}
 
 
 ## libs/freetype/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/

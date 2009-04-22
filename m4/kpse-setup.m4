@@ -41,7 +41,7 @@ KPSE_FOR_PKGS([libs], [m4_sinclude(kpse_TL[libs/]Kpse_Pkg[/ac/withenable.ac])])
 # Provide the configure option --enable-PROG if the option `without' is
 # specified, or -disable-PROG otherwise.
 # Define the list of libraries required from the TL tree (if any).
-# Options: 
+# Options:
 #          without - do not build by default
 AC_DEFUN([KPSE_WITH_PROG],
 [m4_pushdef([Kpse_with], m4_if(m4_index([ $3 ], [ without ]), [-1], [yes], [no]))[]dnl
@@ -67,11 +67,13 @@ AC_FOREACH([Kpse_Lib], [$2], [  need_[]AS_TR_SH(Kpse_Lib)=yes
 # KPSE_WITH_LIB(LIB, REQUIRED-LIBS, OPTIONS, [COMMENT-SYS],
                 [COMMENT-INC], [COMMENT-LIB])
 # ---------------------------------------------------------
-# Unless the option `tree' is specified, provide the configure options
-# --with-system-LIB, --with-LIB-includes, and --with-LIB-libdir.
+# Unless the option `tree' is specified, provide the configure option.
+# --with-system-LIB; in addition provide --with-LIB-includes, and
+# --with-LIB-libdir unless the option `nodirs' is specified.
 # Define the list of libraries required from the TL tree (if any).
-# Options: 
+# Options:
 #          tree - only use library from the TL tree
+#          nodirs - prevent --with-LIB-*=DIR configure options
 # The last three arguments are optional additions to the help texts.
 #
 # At the top-level we build a (reversed) list of potential system libraries.
@@ -80,12 +82,14 @@ AC_DEFUN([KPSE_WITH_LIB],
 [AC_ARG_WITH([system-$1],
              [AS_HELP_STRING([--with-system-$1],
                              [use installed $1 headers and library]m4_ifval([$4], [ ($4)]))])[]dnl
-AC_ARG_WITH([$1-includes],
-            [AS_HELP_STRING([--with-$1-includes=DIR],
-                            [$1 headers installed in DIR]m4_ifval([$5], [ ($5)]))])[]dnl
+m4_if(m4_index([ $3 ], [ nodirs ]), [-1],
+[AC_ARG_WITH([$1-includes],
+             [AS_HELP_STRING([--with-$1-includes=DIR],
+                             [$1 headers installed in DIR]m4_ifval([$5], [ ($5)]))])[]dnl
 AC_ARG_WITH([$1-libdir],
             [AS_HELP_STRING([--with-$1-libdir=DIR],
                             [$1 library installed in DIR]m4_ifval([$6], [ ($6)]))])[]dnl
+])[]dnl m4_if
 if test "x$with_system_[]AS_TR_SH($1)" = x; then
   if test -f $srcdir/kpse_TL[]m4_if([$1], [kpathsea], [texk], [libs])/$1/configure; then
     AC_MSG_NOTICE([Assuming `$1' headers and library from TL tree])

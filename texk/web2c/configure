@@ -813,6 +813,7 @@ FREETYPE2_RULE
 FREETYPE2_DEPEND
 FREETYPE2_LIBS
 FREETYPE2_INCLUDES
+FT2_CONFIG
 GRAPHITE_RULE
 GRAPHITE_DEPEND
 GRAPHITE_LIBS
@@ -4406,13 +4407,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4409: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4410: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4412: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4413: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4415: output\"" >&5)
+  (eval echo "\"\$as_me:4416: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5618,7 +5619,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5621 "configure"' > conftest.$ac_ext
+  echo '#line 5622 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7665,11 +7666,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7668: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7669: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7672: \$? = $ac_status" >&5
+   echo "$as_me:7673: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8004,11 +8005,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8007: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8008: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8011: \$? = $ac_status" >&5
+   echo "$as_me:8012: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8109,11 +8110,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8112: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8113: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8116: \$? = $ac_status" >&5
+   echo "$as_me:8117: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8164,11 +8165,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8167: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8168: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8171: \$? = $ac_status" >&5
+   echo "$as_me:8172: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10964,7 +10965,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10967 "configure"
+#line 10968 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11060,7 +11061,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11063 "configure"
+#line 11064 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16076,11 +16077,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16079: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16080: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16083: \$? = $ac_status" >&5
+   echo "$as_me:16084: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16175,11 +16176,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16178: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16179: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16182: \$? = $ac_status" >&5
+   echo "$as_me:16183: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16227,11 +16228,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16230: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16231: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16234: \$? = $ac_status" >&5
+   echo "$as_me:16235: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -23505,6 +23506,98 @@ $(GRAPHITE_DEPEND):
 	cd ${top_builddir}/../../libs/graphite && $(MAKE) $(AM_MAKEFLAGS)'
 fi
 
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}freetype-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}freetype-config; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_FT2_CONFIG+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$FT2_CONFIG"; then
+  ac_cv_prog_FT2_CONFIG="$FT2_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_FT2_CONFIG="${ac_tool_prefix}freetype-config"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+FT2_CONFIG=$ac_cv_prog_FT2_CONFIG
+if test -n "$FT2_CONFIG"; then
+  { $as_echo "$as_me:$LINENO: result: $FT2_CONFIG" >&5
+$as_echo "$FT2_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_FT2_CONFIG"; then
+  ac_ct_FT2_CONFIG=$FT2_CONFIG
+  # Extract the first word of "freetype-config", so it can be a program name with args.
+set dummy freetype-config; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ac_ct_FT2_CONFIG+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_FT2_CONFIG"; then
+  ac_cv_prog_ac_ct_FT2_CONFIG="$ac_ct_FT2_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_FT2_CONFIG="freetype-config"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_FT2_CONFIG=$ac_cv_prog_ac_ct_FT2_CONFIG
+if test -n "$ac_ct_FT2_CONFIG"; then
+  { $as_echo "$as_me:$LINENO: result: $ac_ct_FT2_CONFIG" >&5
+$as_echo "$ac_ct_FT2_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_FT2_CONFIG" = x; then
+    FT2_CONFIG=":"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:$LINENO: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    FT2_CONFIG=$ac_ct_FT2_CONFIG
+  fi
+else
+  FT2_CONFIG="$ac_cv_prog_FT2_CONFIG"
+fi
+
 ## _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags
 
 # Check whether --with-system-freetype2 was given.
@@ -23522,15 +23615,16 @@ if test "${with_freetype2_libdir+set}" = set; then
   withval=$with_freetype2_libdir;
 fi
 if test "x$with_system_freetype2" = xyes; then
-  if test "x$with_freetype2_includes" != x && test "x$with_freetype2_includes" != xyes; then
-  FREETYPE2_INCLUDES="-I$with_freetype2_includes/freetype2 -I$with_freetype2_includes"
-fi
-FREETYPE2_LIBS="-lfreetype"
-if test "x$with_freetype2_libdir" != x && test "x$with_freetype2_libdir" != xyes; then
-  FREETYPE2_LIBS="-L$with_freetype2_libdir $FREETYPE2_LIBS"
+  if test -n `$FT2_CONFIG --ftversion 2>/dev/null`; then
+  FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
+  FREETYPE2_LIBS=`$FT2_CONFIG --libs`
+else
+  { { $as_echo "$as_me:$LINENO: error: Can not use installed freetype2 headers and library" >&5
+$as_echo "$as_me: error: Can not use installed freetype2 headers and library" >&2;}
+   { (exit 1); exit 1; }; }
 fi
 else
-  FREETYPE2_INCLUDES=`echo '-IBLD/libs/freetype2/freetype2 -IBLD/libs/freetype2' | sed \
+  FREETYPE2_INCLUDES=`echo 'cat BLD/libs/freetype2/ft-' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   FREETYPE2_LIBS=`echo 'BLD/libs/freetype2/libfreetype.a' | sed \
@@ -23542,6 +23636,10 @@ $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/ft2build.h
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS)
 ${top_builddir}/../../libs/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS)'
+fi
+if test "x$with_system_freetype2" = xno; then
+  FREETYPE2_LIBS='`'"$FREETYPE2_INCLUDES"'libs`'
+  FREETYPE2_INCLUDES='`'"$FREETYPE2_INCLUDES"'includes`'
 fi
 
 ## _KPSE_LIB_FLAGS: Setup teckit (-lTECkit) flags

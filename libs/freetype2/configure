@@ -607,11 +607,6 @@ FREETYPE_TREE
 config_args
 build_FALSE
 build_TRUE
-ZLIB_FLAGS_FOR_FREETYPE
-ZLIB_RULE
-ZLIB_DEPEND
-ZLIB_LIBS
-ZLIB_INCLUDES
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
@@ -679,9 +674,6 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
-with_system_zlib
-with_zlib_includes
-with_zlib_libdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1315,14 +1307,6 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
-
-Optional Packages:
-  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
-  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-system-zlib      use installed zlib headers and library
-  --with-zlib-includes=DIR
-                          zlib headers installed in DIR
-  --with-zlib-libdir=DIR  zlib library installed in DIR
 
 Report bugs to <tex-k@tug.org>.
 _ACEOF
@@ -2284,55 +2268,6 @@ fi
 
   MAINT=$MAINTAINER_MODE_TRUE
 
-
-
-## _KPSE_INIT: Initialize TL infrastructure
-kpse_BLD=`(cd "./../../." && pwd)`
-kpse_SRC=`(cd "$srcdir/../../." && pwd)`
-
-## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
-
-# Check whether --with-system-zlib was given.
-if test "${with_system_zlib+set}" = set; then
-  withval=$with_system_zlib;
-fi
-
-# Check whether --with-zlib-includes was given.
-if test "${with_zlib_includes+set}" = set; then
-  withval=$with_zlib_includes;
-fi
-
-# Check whether --with-zlib-libdir was given.
-if test "${with_zlib_libdir+set}" = set; then
-  withval=$with_zlib_libdir;
-fi
-if test "x$with_system_zlib" = xyes; then
-  if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
-  ZLIB_INCLUDES="-I$with_zlib_includes"
-fi
-ZLIB_LIBS="-lz"
-if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
-  ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
-fi
-else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib' | sed \
-    -e "s,SRC/,$kpse_SRC/,g" \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`
-  ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
-   ZLIB_RULE='# Rebuild libz
-$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h
-	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS)
-${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h:
-	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS)'
-fi
-
-
-ZLIB_FLAGS_FOR_FREETYPE="LIBZ='$ZLIB_LIBS'"
-test -n "$ZLIB_INCLUDES" && \
-  ZLIB_FLAGS_FOR_FREETYPE="CPPFLAGS='$ZLIB_INCLUDES' $ZLIB_FLAGS_FOR_FREETYPE"
 
 
  if test "x$enable_build" != xno; then

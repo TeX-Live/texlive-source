@@ -823,6 +823,7 @@ FONTCONFIG_LIBS = @FONTCONFIG_LIBS@
 FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
 FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
 FREETYPE2_LIBS = @FREETYPE2_LIBS@
+FT2_CONFIG = @FT2_CONFIG@
 GRAPHITE_DEPEND = @GRAPHITE_DEPEND@
 GRAPHITE_INCLUDES = @GRAPHITE_INCLUDES@
 GRAPHITE_LIBS = @GRAPHITE_LIBS@
@@ -981,9 +982,9 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	tmf-pool.h mf.web mf-binpool.ch mf.ch mftalk.h lib/texmfmp.c \
 	tmf-pool.h mp.web mp.ch lib/texmfmp.c mpdir/mp.defines \
 	mpdir/mplib.h metapost.mk mpdir/Makefile.in.orig \
-	mpdir/mpostlib.mk $(mpost_web) $(libmplib_web) \
-	mplibdir/lmplib.c $(etex_web_srcs) $(etex_ch_srcs) \
-	etexdir/etexextra.in lib/texmfmp.c tmf-pool.h \
+	mpdir/mpostlib.mk mplibdir/ChangeLog $(mpost_web) \
+	$(libmplib_web) mplibdir/lmplib.c $(etex_web_srcs) \
+	$(etex_ch_srcs) etexdir/etexextra.in lib/texmfmp.c tmf-pool.h \
 	etexdir/ChangeLog etexdir/INSTALL etexdir/README \
 	etexdir/etex_gen.tex etexdir/etex.mak etexdir/etex.mk \
 	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/pdftex.h \
@@ -1655,11 +1656,15 @@ libluatex_a_SOURCES = \
 	luatexdir/image/epdf.h \
 	luatexdir/image/image.h \
 	luatexdir/image/pdftoepdf.cc \
+	luatexdir/image/pdftoepdf.h \
 	luatexdir/image/writeimg.c \
+	luatexdir/image/writeimg.h \
 	luatexdir/image/writejbig2.c \
 	luatexdir/image/writejbig2.h \
 	luatexdir/image/writejpg.c \
+	luatexdir/image/writejpg.h \
 	luatexdir/image/writepng.c \
+	luatexdir/image/writepng.h \
 	luatexdir/lang/hnjalloc.c \
 	luatexdir/lang/hnjalloc.h \
 	luatexdir/lang/hyphen.c \
@@ -1717,6 +1722,7 @@ libluatex_a_SOURCES = \
 	luatexdir/utils/synctex.h \
 	luatexdir/utils/synctex.c \
 	luatexdir/utils/utils.c \
+	luatexdir/utils/utils.h \
 	luatexdir/utils/writezip.c \
 	mplibdir/lmplib.c
 

@@ -14,7 +14,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## DISTFILES contains a directory and files in that directory.
 EXTRA_DIST = $(FREETYPE_TREE)
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(FREETYPE_TREE) -name .svn`
 
@@ -31,6 +31,7 @@ ft-build/Makefile:
 	    --with-old-mac-fonts \
 	    --without-zlib \
 	    --prefix=$(abs_builddir)/ft-install \
+	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)
 
 # On MacOSX, using our zlib from TL results in a .a that is unusable; ld
@@ -40,22 +41,18 @@ ft-build/Makefile:
 # be lost, even though it is not the cleanest solution.
 #	    --with-zlib $(ZLIB_FLAGS_FOR_FREETYPE) \
 #
-
-## Unfortunately the FreeType build system installs the headers after the library;
-## get our dependencies right we wait for a second and then touch the library.
+# Unfortunately the FreeType build system installs the headers after the library;
+# to get our dependencies right we wait for a second and then touch the library.
 libfreetype.a: ft-build/Makefile $(ZLIB_DEPEND)
 	rm -rf ft-install
 	cd ft-build \
 	  && $(MAKE) $(AM_MAKEFLAGS) \
 	  && $(MAKE) $(AM_MAKEFLAGS) install
-	mv ft-install/lib/libfreetype.a .
+	ft-install/bin/freetype-config --cflags >ft-includes
+	ft-install/bin/freetype-config --libs >ft-libs
 	sleep 1
-	touch libfreetype.a
-	rm -rf ft-install
-
-## Rebuild zlib
-@ZLIB_RULE@
+	@for f in libfreetype.*; do touch $$f; done
 
 clean-local:
-	rm -rf libfreetype.a ft2build.h freetype2 ft-build ft-install
+	rm -rf freetype* ft2build.h ft-* libfreetype.* pkgconfig
 
