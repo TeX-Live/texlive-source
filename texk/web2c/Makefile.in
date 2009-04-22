@@ -8230,7 +8230,7 @@ $(libluamisc_a_OBJECTS): libluasocket.a
 
 $(libff_a_OBJECTS): libluamisc.a
 
-$(libluatex_a_OBJECTS): libff.a $(luatex_c_h)
+$(libluatex_a_OBJECTS): libff.a $(nodist_luatex_SOURCES)
 
 $(libluatex_a_OBJECTS): libff.a
 
