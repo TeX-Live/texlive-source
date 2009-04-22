@@ -352,6 +352,7 @@ dump_int(mp->max_internal);
 dump_int(mp->int_ptr);
 for (k=1;k<= mp->int_ptr;k++ ) { 
   dump_int(mp->internal[k]); 
+  dump_int(mp->int_type[k]); 
   dump_string(mp->int_name[k]);
 }
 dump_int(mp->start_sym); 
@@ -366,6 +367,7 @@ if (x>mp->max_internal) mp_grow_internals(mp,x);
 undump_int(mp->int_ptr);
 for (k=1;k<= mp->int_ptr;k++) { 
   undump_int(mp->internal[k]);
+  undump_int(mp->int_type[k]); 
   undump_string(mp->int_name[k]);
 }
 undump(0,frozen_inaccessible,mp->start_sym);

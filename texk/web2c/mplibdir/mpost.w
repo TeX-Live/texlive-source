@@ -1,4 +1,4 @@
-% $Id: mpost.w 892 2009-04-14 14:28:42Z taco $
+% $Id: mpost.w 941 2009-04-19 13:13:56Z taco $
 %
 % Copyright 2008 Taco Hoekwater.
 %
@@ -22,7 +22,7 @@
 \def\[#1]{#1.}
 \pdfoutput=1
 
-@* \[1] Metapost executable.
+@*\MP\ executable.
 
 Now that all of \MP\ is a library, a separate program is needed to 
 have our customary command-line interface. 
@@ -242,8 +242,9 @@ void recorder_start(char *jobname) {
   return  kpse_find_file (nam, fmt, req);
 }
 
-@ Invoke makempx (or troffmpx) to make sure there is an up-to-date
-   .mpx file for a given .mp file.  (Original from John Hobby 3/14/90) 
+@ Invoke {\tt makempx} (or {\tt troffmpx}) to make sure there is an
+   up-to-date {\tt .mpx} file for a given {\tt .mp} file.  (Original
+   from John Hobby 3/14/90)
 
 @d default_args " --parse-first-line --interaction=nonstopmode"
 @d TEX     "tex"
@@ -471,6 +472,87 @@ static char *mpost_find_file(MP mp, const char *fname, const char *fmode, int ft
 if (!nokpse)
   options->find_file = mpost_find_file;
 
+@ The |mpost| program supports setting of internal values
+via a |-s| commandline switch. Since this switch is repeatable,
+a structure is needed to store the found values in, which is a
+simple linked list. 
+
+@c
+typedef struct set_list_item {
+   int isstring;
+   char *name;
+   char *value;
+   struct set_list_item *next;
+} set_list_item ;
+
+@ Here is the global value that is the head of the list of |-s| options.
+@c
+struct set_list_item *set_list = NULL;
+
+@ And |internal_set_option| is the routine that fills in the linked 
+list. The argument it receives starts at the first letter of the
+internal, and should contain an internal name, an equals sign,
+and the value (possibly in quotes) without any intervening spaces.
+
+Double quotes around the right hand side are needed to make sure that 
+the right hand side is treated as a string assignment by MPlib later. 
+These outer double quote characters are stripped, but no other string 
+processing takes place. 
+
+As a special hidden feature, a missing right hand side is treated as if it
+was the integer value |1|. 
+
+@c
+void internal_set_option(const char *opt) {
+   struct set_list_item *itm;
+   char *s, *v;
+   int isstring = 0;
+   s = xstrdup(opt) ;
+   v = strstr(s,"=") ;
+   if (v==NULL) {
+     v="1";
+   } else {
+     *v='\0'; /* terminates |s| */
+     v++;
+     if (*v && *v=='"') { 
+       isstring=1;
+       v++;
+       *(v+strlen(v)-1)= '\0';
+     }
+   }
+   if (s && v && strlen(s)>0) {
+     if (set_list == NULL) {
+       set_list = xmalloc(sizeof(struct set_list_item));
+       itm = set_list;
+     } else {
+       itm = set_list;
+       while (itm->next != NULL)
+         itm = itm->next;
+       itm->next = xmalloc(sizeof(struct set_list_item));
+       itm = itm->next;
+     }
+     itm->name = s;
+     itm->value = v;
+     itm->isstring = isstring;
+     itm->next = NULL;
+   }
+}
+
+@ After the initialization stage is done, the next function
+runs thourgh the list of options and feeds them to the MPlib
+function |mp_set_internal|.
+
+@c
+void run_set_list (MP mp) {
+  struct set_list_item *itm;
+  itm = set_list;
+  while (itm!=NULL) {
+    mp_set_internal(mp,itm->name,itm->value, itm->isstring);
+    itm = itm->next;
+  }
+}
+   
+
 @ @c 
 static void *mpost_open_file(MP mp, const char *fname, const char *fmode, int ftype)  {
   char realmode[3];
@@ -507,7 +589,7 @@ if (!nokpse)
   options->open_file = mpost_open_file;
 
 
-@ At the moment, the command line is very simple.
+@ Parsing the commandline options.
 
 @d option_is(A) ((strncmp(argv[a],"--" A, strlen(A)+2)==0) || 
        (strncmp(argv[a],"-" A, strlen(A)+1)==0))
@@ -526,6 +608,20 @@ if (!nokpse)
     }
     if (option_is("ini")) {
       ini_version_test = true;
+    } else if (option_is("s")) {
+	char *s_head = argv[a]; 
+        while (*s_head!='s') s_head++;
+        s_head++;
+        if (!*s_head) {
+	  if (((a+1)<argc) && (*(argv[(a+1)])!='-')) {
+            internal_set_option(argv[++a]);
+          } else {
+            fprintf(stdout,"fatal error: %s: missing -s argument\n", argv[0]);
+            exit(EXIT_FAILURE);
+          }
+        } else {
+          internal_set_option(s_head);
+        }
     } else if (option_is("debug")) {
       debug = 1;
     } else if (option_is ("kpathsea-debug")) {
@@ -572,7 +668,11 @@ if (!nokpse)
     } else if (option_is("dvitomp")) {
       dvitomp_only = 1;
     } else if (option_is("help")) {
-      @<Show help and exit@>;
+      if (dvitomp_only) {
+        @<Show short help and exit@>;
+      } else {
+        @<Show help and exit@>;
+      }
     } else if (option_is("version")) {
       @<Show version and exit@>;
     } else if (option_is("8bit") ||
@@ -595,6 +695,40 @@ if (!nokpse)
 }
 
 @ 
+@<Read and set dvitomp command line options@>=
+{
+  char *mpost_optarg;
+  boolean ini_version_test = false;
+  while (++a<argc) {
+    mpost_optarg = strstr(argv[a],"=") ;
+    if (mpost_optarg!=NULL) {
+      mpost_optarg++;
+      if (*mpost_optarg == '\0')  mpost_optarg=NULL;
+    }
+    if (option_is("debug")) {
+      debug = 1;
+    } else if (option_is ("kpathsea-debug")) {
+      if (mpost_optarg!=NULL)
+        kpathsea_debug |= atoi (mpost_optarg);
+    } else if (option_is ("progname")) {
+      user_progname = mpost_optarg;
+    } else if (option_is("no-kpathsea")) {
+      nokpse=true;
+    } else if (option_is("help")) {
+      @<Show short help and exit@>;
+    } else if (option_is("version")) {
+      @<Show version and exit@>;
+    } else if (option_is("")) {
+      fprintf(stdout,"fatal error: %s: unknown option %s\n", argv[0], argv[a]);
+      exit(EXIT_FAILURE);
+    } else {
+      break;
+    }
+  }
+  options->ini_version = (int)ini_version_test;
+}
+
+@ 
 @<Show help...@>=
 {
 fprintf(stdout,
@@ -606,7 +740,8 @@ fprintf(stdout,
 "  MPNAME.tfm), where NNN are the character numbers generated.\n"
 "  Any remaining COMMANDS are processed as MetaPost input,\n"
 "  after MPNAME is read.\n\n"
-"  With a --dvitomp argument, MetaPost acts as DVI-to-MPX converter only.\n\n");
+"  With a --dvitomp argument, MetaPost acts as DVI-to-MPX converter only.\n"
+"  Call MetaPost with --dvitomp --help for option explanations.\n\n");
 fprintf(stdout,
 "  -ini                      be inimpost, for dumping mem files\n"
 "  -interaction=STRING       set interaction mode (STRING=batchmode/nonstopmode/\n"
@@ -622,6 +757,29 @@ fprintf(stdout,
 "  -mem=MEMNAME or &MEMNAME  use MEMNAME instead of program name or a %%& line\n"
 "  -recorder                 enable filename recorder\n"
 "  -troff                    set prologues:=1 and assume TEXPROGRAM is really troff\n"
+"  -sINTERNAL=\"STRING\"       set internal INTERNAL to the string value STRING\n"
+"  -sINTERNAL=NUMBER         set internal INTERNAL to the integer value NUMBER\n"
+"  -help                     display this help and exit\n"
+"  -version                  output version information and exit\n"
+"\n"
+"Email bug reports to mp-implementors@@tug.org.\n"
+"\n");
+  exit(EXIT_SUCCESS);
+}
+
+@ 
+@<Show short help...@>=
+{
+fprintf(stdout,
+"\n"
+"Usage: dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
+"       mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
+"\n"
+"  Convert a TeX DVI file to a MetaPost MPX file.\n\n");
+fprintf(stdout,
+"  -progname=STRING          set program name to STRING\n"
+"  -kpathsea-debug=NUMBER    set path searching debugging flags according to\n"
+"                            the bits of NUMBER\n"
 "  -help                     display this help and exit\n"
 "  -version                  output version information and exit\n"
 "\n"
@@ -634,9 +792,11 @@ fprintf(stdout,
 @<Show version...@>=
 {
   char *s = mp_metapost_version();
+if (dvitomp_only)
+  fprintf(stdout, "\n" "dvitomp %s\n", s);
+else
+  fprintf(stdout, "\n" "MetaPost %s\n", s);
 fprintf(stdout, 
-"\n"
-"MetaPost %s\n"
 "Copyright 2008 AT&T Bell Laboratories.\n"
 "There is NO warranty.  Redistribution of this software is\n"
 "covered by the terms of both the MetaPost copyright and\n"
@@ -645,7 +805,7 @@ fprintf(stdout,
 "named COPYING, COPYING.LESSER and the MetaPost source.\n"
 "Primary author of MetaPost: John Hobby.\n"
 "Current maintainer of MetaPost: Taco Hoekwater.\n"
-"\n", s);
+"\n");
   mpost_xfree(s);
   exit(EXIT_SUCCESS);
 }
@@ -878,11 +1038,16 @@ int main (int argc, char **argv) { /* |start_here| */
   struct MP_options * options; /* instance options */
   int a=0; /* argc counter */
   boolean nokpse = false; /* switch to {\it not} enable kpse */
-  char *user_progname = NULL; /* If the user overrides argv[0] with -progname.  */
+  char *user_progname = NULL; /* If the user overrides |argv[0]| with {\tt -progname}.  */
   options = mp_options();
   options->ini_version       = (int)false;
   options->print_found_names = (int)true;
-  @<Read and set command line options@>;
+  if (strstr(argv[0], "dvitomp") != NULL) {
+    dvitomp_only=1;
+    @<Read and set dvitomp command line options@>;
+  } else {
+    @<Read and set command line options@>;
+  }
   if (dvitomp_only) {
     char *mpx = NULL, *dvi = NULL;
     if (a==argc) {
@@ -893,9 +1058,13 @@ int main (int argc, char **argv) { /* |start_here| */
         mpx = argv[a++];
       }
     }
-    if (!nokpse)
-      kpse_set_program_name("dvitomp", user_progname);  
-    exit (mpost_run_dvitomp(dvi, mpx));
+    if (dvi == NULL) {
+      @<Show short help and exit@>;
+    } else {
+      if (!nokpse)
+        kpse_set_program_name("dvitomp", user_progname);  
+      exit (mpost_run_dvitomp(dvi, mpx));
+    }
   }
 
   @= /*@@-nullpass@@*/ @> 
@@ -932,6 +1101,9 @@ int main (int argc, char **argv) { /* |start_here| */
   history = mp_status(mp);
   if (history!=0)
 	exit(history);
+  if (set_list!=NULL) {
+    run_set_list(mp);
+  }
   history = mp_run(mp);
   (void)mp_finish(mp);
   exit(history);

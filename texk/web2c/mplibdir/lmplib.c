@@ -35,6 +35,7 @@
 
 #include "mplib.h"
 #include "mplibps.h"
+#include "mplibsvg.h"
 
    /*@unused@*/ static const char _svn_version[] =
     "$Id: lmplib.c 1364 2008-07-04 16:09:46Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lua/lmplib.c $";
@@ -576,6 +577,21 @@ static int mplib_fig_postscript(lua_State * L)
     int prologues = (int)luaL_optnumber(L, 2, (lua_Number)-1);
     int procset = (int)luaL_optnumber(L, 3, (lua_Number)-1);
     if (mp_ps_ship_out(*hh, prologues, procset) 
+        && (res = mp_rundata((*hh)->parent))
+        && (res->ps_out.size != 0)) {
+        lua_pushstring(L, res->ps_out.data);
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int mplib_fig_svg(lua_State * L)
+{
+    mp_run_data *res;
+    struct mp_edge_object **hh = is_fig(L, 1);
+    int prologues = (int)luaL_optnumber(L, 2, (lua_Number)-1);
+    if (mp_svg_ship_out(*hh, prologues) 
         && (res = mp_rundata((*hh)->parent))
         && (res->ps_out.size != 0)) {
         lua_pushstring(L, res->ps_out.data);
@@ -1176,6 +1192,7 @@ static const struct luaL_reg mplib_fig_meta[] = {
     {"copy_objects", mplib_fig_copy_body},
     {"filename",     mplib_fig_filename},
     {"postscript",   mplib_fig_postscript},
+    {"svg",          mplib_fig_svg},
     {"boundingbox",  mplib_fig_bb},
     {"width",        mplib_fig_width},
     {"height",       mplib_fig_height},

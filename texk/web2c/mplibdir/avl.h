@@ -16,7 +16,6 @@
 #define avl_tree mp_avl_tree
 #define avl_entry mp_avl_entry
 #define avl_find mp_avl_find
-#define avl_probe mp_avl_probe
 #define avl_create mp_avl_create
 #define avl_destroy mp_avl_destroy
 

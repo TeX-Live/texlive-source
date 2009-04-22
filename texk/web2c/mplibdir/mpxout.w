@@ -1,4 +1,4 @@
-% $Id: mpxout.w 892 2009-04-14 14:28:42Z taco $
+% $Id: mpxout.w 973 2009-04-21 15:28:57Z taco $
 %
 % Copyright 2008 Taco Hoekwater.
 %
@@ -108,7 +108,6 @@ in order to prevent name clashes.
 #define PI  3.14159265358979323846
 #endif
 #include "avl.h"
-extern void *avl_probe (avl_tree t, void *p);
 #include "mpxout.h"
 @h
 
@@ -259,6 +258,8 @@ jmp_buf jump_buf;
 static void mpx_abort(MPX mpx, char *msg, ...) {
   va_list ap;
   va_start(ap, msg);
+  fprintf(stderr, "fatal: ");
+  (void)vfprintf(stderr, msg, ap);
   mpx_printf(mpx, "fatal", msg, ap);
   va_end(ap);
   mpx->history=mpx_fatal_error;
@@ -1204,6 +1205,11 @@ for (k=1;k<=3+lh;k++) {
     else 
       mpx->tfm_check_sum=(((mpx->b0-256)*(int)(256)+mpx->b1)*256+mpx->b2)*256+mpx->b3;
   }
+  if ( k==5 ) {
+    if (mpx->mode == mpx_troff_mode) {
+      mpx->font_design_size[f]=(((mpx->b0*(int)(256)+mpx->b1)*256+mpx->b2)*256+mpx->b3)/(65536.0*16);
+    }
+  }
 }
 
 @ @<Store character-width indices...@>=
@@ -1655,9 +1661,10 @@ static void mpx_finish_last_char (MPX mpx) {
       } else {
         mpx_end_char_string(mpx,47);
       }
-      fprintf(mpx->mpxfile, ")infont n%d", mpx->font_num[mpx->str_f]);
+      fprintf(mpx->mpxfile, "), _n%d", mpx->str_f);
+      fprintf(mpx->mpxfile, ",%.5f,%.4f,%.4f)", (m*1.00375), (x/100.0), y);
       mpx_slant_and_ht(mpx);
-      fprintf(mpx->mpxfile, ",%.5f,%.4f,%.4f);\n", (m*1.00375), x, y);
+      fprintf(mpx->mpxfile, ";\n");
     }
     mpx->str_f=-1;
   }
@@ -2558,7 +2565,7 @@ typedef struct {
 @ @c
 static int mpx_comp_name (void *p, const void *pa, const void *pb) {
     (void)p;
-    return strcmp (((const avl_entry *) pa)->name,
+    return strcmp  (((const avl_entry *) pa)->name,
                    ((const avl_entry *) pb)->name);
 }
 static void *destroy_avl_entry (void *pa) {
@@ -2598,12 +2605,12 @@ calls where needed, but it is wise to have a wrapper around |avl_probe|
 to check for memory errors.
 
 @c
-static avl_entry * mpx_avl_probe(MPX mpx, avl_tree tab, avl_entry *p) {
-    avl_entry *r  = (avl_entry *)avl_probe(tab,p);
-    if (r==NULL)
-      mpx_abort(mpx,"Memory allocation failure");
-    return r;
-
+static void mpx_avl_probe(MPX mpx, avl_tree tab, avl_entry *p) {
+    avl_entry *r  = (avl_entry *)avl_find(p, tab);
+    if (r==NULL) {
+      if (avl_ins (p, tab, avl_false)<0)
+        mpx_abort(mpx,"Memory allocation failure");
+    }
 }
 
 
@@ -2744,25 +2751,28 @@ static void mpx_read_fmap(MPX mpx, char *dbase) {
     while ((buf = mpx_getline(mpx,fin)) != NULL) {
 	  if (mpx->nfonts == (max_fnums+1))
 	    mpx_abort(mpx,"Need to increase max_fnums");
-       nam = buf;    
-       while (*buf && *buf != '\t')
-         buf++;
+      nam = buf;    
+      while (*buf && *buf != '\t')
+        buf++;
+      if (nam==buf)
+        continue;
       tmp = xmalloc(sizeof(avl_entry),1);
-      tmp->name = nam;
+      tmp->name = xmalloc (1,(buf-nam)+1);
+      strncpy(tmp->name,nam,(buf-nam));
+      tmp->name[(buf-nam)] = '\0';
       tmp->num = (int)mpx->nfonts++;
-      (void)mpx_avl_probe (mpx,mpx->trfonts, tmp) ;
+      assert(avl_ins (tmp, mpx->trfonts, avl_false) > 0);
       if (*buf) {
-        *buf = 0; buf++;
-	    do buf++; while (*buf == '\t');
-        while (*buf && *buf != '\t'); buf++; /* skip over psname */
-        do buf++;  while (*buf == '\t');
+        buf++;
+	    while (*buf == '\t') buf++;
+        while (*buf && *buf != '\t') buf++; /* skip over psname */
+        while (*buf == '\t') buf++;
         if (*buf)
           nam = buf;
-        while (*buf); buf++; 
+        while (*buf) buf++; 
       }
       mpx->font_name[tmp->num] = xstrdup(nam);
 	  mpx->font_num[tmp->num] = -1;	/* indicate font is not mounted */
-	  mpx->nfonts++;
     }
     mpx_fclose(mpx,fin);
 }
@@ -2919,8 +2929,11 @@ static int mpx_scan_desc_line(MPX mpx, int f, char *lin) {
     t = lin;
     while (*lin != ' ' && *lin != '\t' && *lin != '\0')
 	  lin++;
+    if (lin==t)
+      return 1;
     s = xmalloc((size_t)(lin-t+1),1);
     strncpy(s,t,(size_t)(lin-t));
+    *(s+(lin-t)) = '\0';
     while (*lin == ' ' || *lin == '\t')
 	  lin++;
     if (*lin == '"') {
@@ -2928,7 +2941,7 @@ static int mpx_scan_desc_line(MPX mpx, int f, char *lin) {
         tmp = xmalloc(sizeof(avl_entry),1);
         tmp->name = s ;
         tmp->num = lastcode;
-        (void)mpx_avl_probe (mpx, mpx->charcodes[f],tmp);
+        mpx_avl_probe (mpx, mpx->charcodes[f],tmp);
       }
     } else {
 	  (void) mpx_get_float_map(mpx,lin);
@@ -2940,7 +2953,7 @@ static int mpx_scan_desc_line(MPX mpx, int f, char *lin) {
         tmp = xmalloc(sizeof(avl_entry),1);
         tmp->name = s ;
         tmp->num = lastcode;
-        (void)mpx_avl_probe (mpx, mpx->charcodes[f],tmp);
+        mpx_avl_probe (mpx, mpx->charcodes[f],tmp);
       }
     }
     return 1;
@@ -3002,6 +3015,7 @@ static void mpx_slant_and_ht(MPX mpx);
 @ @c
 static void mpx_slant_and_ht(MPX mpx) {
  int i = 0;
+  fprintf(mpx->mpxfile, "(");
  if (mpx->Xslant != 0.0) {
 	fprintf(mpx->mpxfile, " slanted%.5f", mpx->Xslant);
 	i++;
@@ -3010,8 +3024,7 @@ static void mpx_slant_and_ht(MPX mpx) {
 	fprintf(mpx->mpxfile, " yscaled%.4f", mpx->Xheight / mpx->cursize);
 	i++;
   }
-  if (i > 0)
-	fprintf(mpx->mpxfile, "\n ");
+  fprintf(mpx->mpxfile, ")");
 }
 
 
@@ -3024,7 +3037,7 @@ static void mpx_set_num_char(MPX mpx, int f, int c) {
 
     hh = (float)mpx->h;
     vv = (float)mpx->v;
-    for (i = mpx->shiftbase[f]; mpx->shiftchar[i] >= 0; i++)
+    for (i = mpx->shiftbase[f]; mpx->shiftchar[i] >= 0 && i < SHIFTS; i++)
 	if (mpx->shiftchar[i] == c) {
 	    hh += (mpx->cursize / mpx->unit) * mpx->shifth[i];
 	    vv += (mpx->cursize / mpx->unit) * mpx->shiftv[i];
@@ -3184,17 +3197,22 @@ OUT_LABEL:
     sp = xmalloc(sizeof(spec_entry),1);
     sp->name = cname;
     sp->mac = NULL;
-    sp  = (spec_entry *)avl_probe(mpx->spec_tab,sp);
-    if (sp==NULL)
-      mpx_abort(mpx,"Memory allocation failure");
+    {
+      spec_entry *r  = (spec_entry *)avl_find(sp, mpx->spec_tab);
+      if (r==NULL) {
+        if (avl_ins (sp, mpx->spec_tab, avl_false)<0)
+          mpx_abort(mpx,"Memory allocation failure");
+      }
+    }
 	if (sp->mac == NULL) {
       sp->mac = mpx_copy_spec_char(mpx, cname);	/* this won't be NULL */
     }
-	fprintf(mpx->mpxfile, "_s(%s(n%d)", sp->mac, mpx->font_num[f]);
-	mpx_slant_and_ht(mpx);
-	fprintf(mpx->mpxfile, ",%.5f,%.4f,%.4f);\n",
+	fprintf(mpx->mpxfile, "_s(%s(_n%d)", sp->mac,f);
+	fprintf(mpx->mpxfile, ",%.5f,%.4f,%.4f)",
 		(mpx->cursize/mpx->font_design_size[f])*1.00375, 
-         (double)(mpx->h*mpx->unit), YCORR-mpx->v*mpx->unit);
+         (double)((mpx->h*mpx->unit)/100.0), YCORR-mpx->v*mpx->unit);
+	mpx_slant_and_ht(mpx);
+	fprintf(mpx->mpxfile, ";\n");
   }
 }
 
@@ -3213,7 +3231,7 @@ static void mpx_do_font_def(MPX mpx, int n, char *nam) {
   if (p==NULL)
     mpx_abort(mpx, "Font %s was not in map file", nam);
   f = p->num;
-  if ( mpx->info_base[f]==max_widths ) {
+  if ( mpx->charcodes[f] == NULL) {
     mpx_read_fontdesc(mpx, nam);
     mpx->cur_name = xstrdup(mpx->font_name[f]);
     if (! mpx_open_tfm_file(mpx) )
@@ -3699,13 +3717,13 @@ static int mpx_do_page (MPX mpx, FILE *trf) {
 static int mpx_dmp(MPX mpx, char *infile) {
     int more;
     FILE *trf = mpx_xfopen(mpx,infile, "r");
-    mpx_open_mpxfile(mpx);
-    if (mpx->banner != NULL)
-      fprintf (mpx->mpxfile,"%s\n",mpx->banner);
     mpx_read_desc(mpx);
     mpx_read_fmap(mpx,dbname);
     if (!mpx->gflag)
 	  mpx_read_char_adj(mpx,adjname);
+    mpx_open_mpxfile(mpx);
+    if (mpx->banner != NULL)
+      fprintf (mpx->mpxfile,"%s\n",mpx->banner);
     if (mpx_do_page(mpx, trf)) {
 	  do {
         @<Do initialization required before starting a new page@>;
@@ -3716,7 +3734,6 @@ static int mpx_dmp(MPX mpx, char *infile) {
 	  } while (more);
     }
     mpx_fclose(mpx,trf);
-    mpx_fclose(mpx,mpx->mpxfile);
     if ( mpx->history<=mpx_cksum_trouble )
       return 0;
     else 
@@ -4245,6 +4262,7 @@ that to the command line.
 
   /* split the command in bits */
   cmdbitlength = split_pipes(mpx->maincmd, cmdbits);
+  cmdline = NULL;
 
   for (i = 0; i < cmdbitlength; i++) {
     if (cmdline!=NULL) free(cmdline);
@@ -4263,11 +4281,11 @@ that to the command line.
         cur_in = tmp_b;
         cur_out = tmp_a;
 	  }
-      strcpy(infile,cur_in);
     }
   }
-  if (tmp_a!=infile) { remove(tmp_a); }
-  if (tmp_b!=infile) { remove(tmp_b); }
+  if (tmp_a!=cur_out) { remove(tmp_a); }
+  if (tmp_b!=cur_out) { remove(tmp_b); }
+  strcpy(infile,cur_out);
 }
 
 @ If MPX file is up-to-date or if MP file does not exist, do nothing. 
