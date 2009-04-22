@@ -22,7 +22,8 @@
 #include "writecff.h"
 
 static const char _svn_version[] =
-    "$Id: writecff.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writecff.c $";
+    "$Id: writecff.c 2331 2009-04-18 16:39:50Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writecff.c $";
 
 #define get_offset(s,n) get_unsigned(s, (n))
 #define get_card8(a)  a->stream[a->offset++]
@@ -46,8 +47,8 @@ static unsigned long get_unsigned(cff_font * cff, int n)
 }
 
 #define CFF_ERROR pdftex_fail
+#undef WARN
 #define WARN pdftex_warn
-
 
 const char *const cff_stdstr[CFF_STDSTR_MAX] = {
     ".notdef", "space", "exclam", "quotedbl", "numbersign",

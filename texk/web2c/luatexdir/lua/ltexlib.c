@@ -24,7 +24,7 @@
 #include "tokens.h"
 
 static const char _svn_version[] =
-    "$Id: ltexlib.c 2282 2009-04-14 11:00:47Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
+    "$Id: ltexlib.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
 
 extern halfword *check_isnode(lua_State * L, int ud);
 extern void lua_nodelib_push_fast(lua_State * L, halfword n);
@@ -521,7 +521,7 @@ static int settoks (lua_State * L)
 static int gettoks(lua_State * L)
 {
     integer k;
-    strnumber t;
+    str_number t;
     k = get_item_index (L, lua_gettop(L), get_toks_base());
     check_index_range(k,"gettoks");
     t = get_tex_toks_register(k);

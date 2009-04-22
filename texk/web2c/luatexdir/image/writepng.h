@@ -1,6 +1,7 @@
-/* pagetree.h
+/* writepng.h
 
-   Copyright 2009 Taco Hoekwater <taco@luatex.org>
+   Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,13 +18,15 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pagetree.h 2325 2009-04-18 11:24:38Z hhenkel $ */
+/* $Id: writepng.h 2327 2009-04-18 12:47:21Z hhenkel $ */
 
-#ifndef PAGETREE_H
-#  define PAGETREE_H
+#ifndef WRITEPNG_H
+#  define WRITEPNG_H
 
-integer output_pages_tree();
-integer pdf_do_page_divert(integer, integer);
-void pdf_do_page_undivert(integer, integer);
+#  include "image.h"
 
-#endif
+void read_png_info(image_dict *, img_readtype_e);
+void write_additional_png_objects(void);
+void write_png(image_dict *);
+
+#endif                          /* WRITEPNG_H */

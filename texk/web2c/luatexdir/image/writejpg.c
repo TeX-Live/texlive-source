@@ -1,7 +1,7 @@
 /* writejpg.c
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -23,11 +23,12 @@
 #include "image.h"
 
 static const char _svn_version[] =
-    "$Id: writejpg.c 1224 2008-05-02 15:26:27Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejpg.c $";
+    "$Id: writejpg.c 2320 2009-04-18 08:52:30Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejpg.c $";
 
-#define JPG_GRAY  1             /* Gray color space, use /DeviceGray  */
-#define JPG_RGB   3             /* RGB color space, use /DeviceRGB    */
-#define JPG_CMYK  4             /* CMYK color space, use /DeviceCMYK  */
+#define JPG_GRAY  1             /* Gray color space, use /DeviceGray    */
+#define JPG_RGB   3             /* RGB color space, use /DeviceRGB      */
+#define JPG_CMYK  4             /* CMYK color space, use /DeviceCMYK    */
 
 typedef enum {                  /* JPEG marker codes                    */
     M_SOF0 = 0xc0,              /* baseline DCT                         */
@@ -102,7 +103,7 @@ static JPG_UINT16 read2bytes(FILE * f)
     return (c << 8) + xgetc(f);
 }
 
-void close_and_cleanup_jpg(image_dict * idict)
+static void close_and_cleanup_jpg(image_dict * idict)
 {
     assert(idict != NULL);
     assert(img_file(idict) != NULL);

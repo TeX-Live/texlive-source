@@ -25,7 +25,7 @@
 #include <luatexdir/luatexextra.h>
 
 static const char _svn_version[] =
-    "$Id: luainit.c 2288 2009-04-14 22:56:09Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luainit.c $";
+    "$Id: luainit.c 2330 2009-04-18 16:21:21Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luainit.c $";
 
 /* TH: TODO
  *
@@ -438,20 +438,16 @@ void init_kpse(void)
     if (!user_progname) {
         if (ini_version) {
             user_progname = input_name;
-        } else {
-            if (!startup_filename) {
-                if (!dump_name) {
-                    dump_name = cleaned_invocation_name(argv[0]);
-                    user_progname = dump_name;
-                }
+            if (!user_progname) {
+                user_progname = cleaned_invocation_name(argv[0]);
             }
+        } else {
+            if (!dump_name) {
+                dump_name = cleaned_invocation_name(argv[0]);
+            }
+            user_progname = dump_name;
         }
     }
-    if (!user_progname) {
-        fprintf(stdout, "kpathsea mode needs a --progname or --fmt switch\n");
-        exit(1);
-    }
-
     kpse_set_program_enabled(kpse_fmt_format, MAKE_TEX_FMT_BY_DEFAULT,
                              kpse_src_compile);
 
@@ -506,7 +502,6 @@ void lua_initialize(int ac, char **av)
     interactionoption = 4;
     dump_name = NULL;
 
-#warning SyncTeX: -synctex command line option available
     /* 0 means "disable Synchronize TeXnology".
      * synctexoption is a *.web variable.
      * We initialize it to a weird value to catch the -synctex command line flag
@@ -655,16 +650,16 @@ void write_svnversion(char *v)
 {       
     char *a_head, *n;
     char *a = strdup(v);
-    int l = strlen("$Id: luatex.web ");
+    size_t l = strlen("$Id: luatex.web ");
     if (a != NULL) {
         a_head = a;
-	if (strlen(a)>l)
-	    a+=l;
-	n = a;
-	while (*n!='\0' && *n!=' ')
-	    n++;
-	*n = '\0';
-	fprintf(stdout, " luatex.web v%s",  a);
-	free (a_head);
+        if (strlen(a)>l)
+            a+=l;
+        n = a;
+        while (*n!='\0' && *n!=' ')
+            n++;
+        *n = '\0';
+        fprintf(stdout, " luatex.web >= v%s",  a);
+        free (a_head);
     }
 }

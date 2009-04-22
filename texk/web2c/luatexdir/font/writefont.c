@@ -22,11 +22,26 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: writefont.c 2274 2009-04-13 12:10:20Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writefont.c $";
+    "$Id: writefont.c 2331 2009-04-18 16:39:50Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writefont.c $";
 
 void write_cid_fontdictionary(fo_entry * fo, internalfontnumber f);
 void create_cid_fontdictionary(fm_entry * fm, integer font_objnum,
                                internalfontnumber f);
+
+const key_entry font_key[FONT_KEYS_NUM] = {
+    {"Ascent", "Ascender", 1}
+    , {"CapHeight", "CapHeight", 1}
+    , {"Descent", "Descender", 1}
+    , {"ItalicAngle", "ItalicAngle", 1}
+    , {"StemV", "StdVW", 1}
+    , {"XHeight", "XHeight", 1}
+    , {"FontBBox", "FontBBox", 1}
+    , {"", "", 0}
+    , {"", "", 0}
+    , {"", "", 0}
+    , {"FontName", "FontName", 1}
+};
 
 /**********************************************************************/
 
@@ -35,6 +50,7 @@ struct avl_table *fd_tree = NULL;       /* tree of font descriptor objects */
 
 static int comp_fo_entry(const void *pa, const void *pb, void *p)
 {
+    (void) p;
     return strcmp(((const fo_entry *) pa)->fm->tfm_name,
                   ((const fo_entry *) pb)->fm->tfm_name);
 }
@@ -43,6 +59,7 @@ static int comp_fd_entry(const void *pa, const void *pb, void *p)
 {
     int i;
     const fd_entry *p1 = (const fd_entry *) pa, *p2 = (const fd_entry *) pb;
+    (void) p;
     assert(p1->fm != NULL && is_fontfile(p1->fm) &&
            p2->fm != NULL && is_fontfile(p2->fm));
     if ((i = strcmp(p1->fm->ff_name, p2->fm->ff_name)) != 0)
@@ -260,6 +277,24 @@ void create_fontdescriptor(fo_entry * fo, internalfontnumber f)
     fo->fd->fm = fo->fm;        /* map entry needed by TrueType writing */
     fo->fd->gl_tree = avl_create(comp_string_entry, NULL, &avl_xallocator);
     assert(fo->fd->gl_tree != NULL);
+}
+
+integer get_fd_objnum(fd_entry * fd)
+{
+    assert(fd->fd_objnum != 0);
+    return fd->fd_objnum;
+}
+
+integer get_fn_objnum(fd_entry * fd)
+{
+    if (fd->fn_objnum == 0)
+        fd->fn_objnum = pdf_new_objnum();
+    return fd->fn_objnum;
+}
+
+void embed_whole_font(fd_entry * fd)
+{
+    fd->all_glyphs = true;
 }
 
 /**********************************************************************/
@@ -713,18 +748,18 @@ void create_fontdictionary(fm_entry * fm, integer font_objnum,
 
 /**********************************************************************/
 
-static int has_ttf_outlines(fm_entry *fm) 
+static int has_ttf_outlines(fm_entry * fm)
 {
-    FILE *f = fopen(fm->ff_name,"rb");
-    if (f!=NULL) {
+    FILE *f = fopen(fm->ff_name, "rb");
+    if (f != NULL) {
         int ch1 = getc(f);
         int ch2 = getc(f);
         int ch3 = getc(f);
         int ch4 = getc(f);
-        fclose (f);
-	if (ch1=='O' && ch2=='T' && ch3=='T' && ch4=='O') 
-  	    return 0;
-	return 1;
+        fclose(f);
+        if (ch1 == 'O' && ch2 == 'T' && ch3 == 'T' && ch4 == 'O')
+            return 0;
+        return 1;
     }
     return 0;
 }
@@ -759,7 +794,7 @@ void do_pdf_font(integer font_objnum, internalfontnumber f)
                 set_truetype(fm);
             } else {
                 set_opentype(fm);
-	    }
+            }
             break;
         case truetype_format:
             set_truetype(fm);
@@ -807,6 +842,7 @@ void do_pdf_font(integer font_objnum, internalfontnumber f)
 int comp_glw_entry(const void *pa, const void *pb, void *p)
 {
     unsigned short i, j;
+    (void) p;
     i = (*(glw_entry *) pa).id;
     j = (*(glw_entry *) pb).id;
     cmp_return(i, j);

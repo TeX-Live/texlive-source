@@ -22,7 +22,7 @@
 #include "luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: dofont.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/dofont.c $";
+    "$Id: dofont.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/dofont.c $";
 
 #define TIMERS 0
 
@@ -51,8 +51,7 @@ static char *font_error_message(pointer u, char *nom, scaled s)
 }
 
 static int
-do_define_font(integer f, char *cnom, char *caire, scaled s,
-               integer natural_dir)
+do_define_font(integer f, char *cnom, scaled s, integer natural_dir)
 {
 
     boolean res;                /* was the callback successful? */
@@ -68,12 +67,7 @@ do_define_font(integer f, char *cnom, char *caire, scaled s,
 
     callback_id = callback_defined(define_font_callback);
     if (callback_id > 0) {
-        if (caire == NULL || strlen(caire) == 0) {
-            cnam = xstrdup(cnom);
-        } else {
-            cnam = xmalloc(strlen(cnom) + strlen(caire) + 2);
-            sprintf(cnam, "%s/%s", caire, cnom);
-        }
+        cnam = xstrdup(cnom);
 #if TIMERS
         gettimeofday(&tva, NULL);
 #endif
@@ -122,7 +116,7 @@ do_define_font(integer f, char *cnom, char *caire, scaled s,
             }
         }
     } else if (callback_id==0) {
-        res = read_tfm_info(f, cnom, caire, s);
+        res = read_tfm_info(f, cnom, s);
         if (res) {
             set_hyphen_char(f, get_default_hyphen_char());
             set_skew_char(f, get_default_skew_char());
@@ -141,7 +135,7 @@ do_define_font(integer f, char *cnom, char *caire, scaled s,
 
 }
 
-int read_font_info(pointer u, strnumber nom, scaled s, integer natural_dir)
+int read_font_info(pointer u, str_number nom, scaled s, integer natural_dir)
 {
     integer f;
     char *cnom;
@@ -149,7 +143,7 @@ int read_font_info(pointer u, strnumber nom, scaled s, integer natural_dir)
     cnom = xstrdup(makecstring(nom));
 
     f = new_font();
-    if ((f = do_define_font(f, cnom, NULL, s, natural_dir))) {
+    if ((f = do_define_font(f, cnom, s, natural_dir))) {
         free(cnom);
         return f;
     } else {
@@ -174,11 +168,11 @@ int read_font_info(pointer u, strnumber nom, scaled s, integer natural_dir)
    the |font_tables| array, and we could attempt to reuse those
 */
 
-int find_font_id(char *nom, char *aire, scaled s)
+int find_font_id(char *nom, scaled s)
 {
     integer f;
     f = new_font();
-    if ((f = do_define_font(f, nom, aire, s, -1))) {
+    if ((f = do_define_font(f, nom, s, -1))) {
         return f;
     } else {
         return 0;

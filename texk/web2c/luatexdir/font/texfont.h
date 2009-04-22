@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfont.h 2271 2009-04-12 23:42:21Z oneiros $ */
+/* $Id: texfont.h 2331 2009-04-18 16:39:50Z hhenkel $ */
 
 /* Here we have the interface to LuaTeX's font system, as seen from the
    main pascal program. There is a companion list in luatex.defines to
@@ -28,7 +28,7 @@
 */
 
 #ifndef TEXFONT_H
-#  define TEXFONT_H 1
+#  define TEXFONT_H
 
 #  include "luatexdir/managed-sa.h"
 
@@ -79,10 +79,10 @@ typedef struct charinfo {
     int top_right_math_kerns;
     int bottom_right_math_kerns;
     int bottom_left_math_kerns;
-    scaled *top_left_math_kern_array; 
-    scaled *top_right_math_kern_array; 
-    scaled *bottom_right_math_kern_array; 
-    scaled *bottom_left_math_kern_array; 
+    scaled *top_left_math_kern_array;
+    scaled *top_right_math_kern_array;
+    scaled *bottom_right_math_kern_array;
+    scaled *bottom_left_math_kern_array;
 } charinfo;
 
 
@@ -221,14 +221,14 @@ extern char *font_embedding_strings[];
 #  define set_font_name(f,b)        font_name(f) = b
 #  define tex_font_name(a)          maketexstring(font_name(a))
 
-boolean cmp_font_name(integer, strnumber);
+boolean cmp_font_name(integer, str_number);
 
 #  define font_area(a)              font_tables[a]->_font_area
 #  define get_font_area(a)          (unsigned char *)font_area(a)
 #  define set_font_area(f,b)        font_area(f) = b
 #  define tex_font_area(a)          maketexstring(font_area(a))
 
-boolean cmp_font_area(integer, strnumber);
+boolean cmp_font_area(integer, str_number);
 
 #  define font_reassign(a,b)            { if (a!=NULL) free(a); a = b; }
 
@@ -406,7 +406,7 @@ typedef enum {
     top_right_kern = 1,
     bottom_right_kern = 2,
     bottom_left_kern = 3,
-    top_left_kern = 4 
+    top_left_kern = 4
 } font_math_kern_codes;
 
 extern charinfo *get_charinfo(internal_font_number f, integer c);
@@ -433,8 +433,9 @@ extern void set_charinfo_ef(charinfo * ci, scaled val);
 extern void set_charinfo_lp(charinfo * ci, scaled val);
 extern void set_charinfo_rp(charinfo * ci, scaled val);
 
-extern void add_charinfo_math_kern(charinfo *ci, int type, scaled ht, scaled krn);
-extern int  get_charinfo_math_kerns(charinfo * ci, int id);
+extern void add_charinfo_math_kern(charinfo * ci, int type, scaled ht,
+                                   scaled krn);
+extern int get_charinfo_math_kerns(charinfo * ci, int id);
 
 #  define set_char_used(f,a,b)  do {                            \
         if (char_exists(f,a))                                   \
@@ -568,13 +569,13 @@ extern void set_lp_code(internal_font_number f, integer c, integer i);
 extern void set_rp_code(internal_font_number f, integer c, integer i);
 extern void set_ef_code(internal_font_number f, integer c, integer i);
 
-int read_tfm_info(internal_font_number f, char *nom, char *aire, scaled s);
+int read_tfm_info(internal_font_number f, char *nom, scaled s);
 
 
 /* from dofont.c */
 
-extern int read_font_info(pointer u, strnumber nom, scaled s, integer ndir);
-extern int find_font_id(char *nom, char *aire, scaled s);
+extern int read_font_info(pointer u, str_number nom, scaled s, integer ndir);
+extern int find_font_id(char *nom, scaled s);
 
 /* for and from vfpacket.c */
 
@@ -599,4 +600,6 @@ extern scaled sqxfw(scaled sq, integer fw);
 extern void do_vf_packet(internal_font_number vf_f, integer c);
 extern int vf_packet_bytes(charinfo * co);
 
-#endif
+charinfo *copy_charinfo(charinfo * ci);
+
+#endif                          /* TEXFONT_H */

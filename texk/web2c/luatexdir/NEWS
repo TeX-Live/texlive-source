@@ -1,4 +1,27 @@
 ==============================================================
+Luatex beta-0.40.0 was released 20090422
+==============================================================
+
+* The embedded MPlib is updated to version 1.200.
+
+* Texlua would crash if run font.read_tfm() was used.
+
+* Luatex would crash on empty \patterns.
+
+* Lots of small C code cleanups.
+
+* \textdir inside a \hbox dir *** was wrong earlier.
+
+* 0.39.0 introduced a bug that would make luatex crash whenever
+  font expansion was used.
+
+* Font tables returned by define_font can now have a key named
+  'cache' that controls the internal lua font table caching.
+
+* There is no longer a need for an explicit --progname if there
+  is no input file given.
+
+==============================================================
 Luatex beta-0.39.0 was released 20090415
 ==============================================================
 

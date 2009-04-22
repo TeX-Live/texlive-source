@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: mlist.c 2280 2009-04-14 09:49:01Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.c $";
+    "$Id: mlist.c 2323 2009-04-18 09:53:47Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.c $";
 
 #define delimiter_factor     int_par(param_delimiter_factor_code)
 #define delimiter_shortfall  dimen_par(param_delimiter_shortfall_code)
@@ -34,6 +34,11 @@ static const char _svn_version[] =
 #define script_space         dimen_par(param_script_space_code)
 #define disable_lig          int_par(param_disable_lig_code)
 #define disable_kern         int_par(param_disable_kern_code)
+
+#define level_one 1
+#define thin_mu_skip param_thin_mu_skip_code
+#define med_mu_skip param_med_mu_skip_code
+#define thick_mu_skip param_thick_mu_skip_code
 
 #define nDEBUG
 
@@ -223,6 +228,19 @@ static scaled math_axis(int b)
     }
     return a;
 }
+
+static scaled get_math_quad_size(int b)
+{
+    int var;
+    if (b == script_size)
+        var = script_style;
+    else if (b == script_script_size)
+        var = script_script_style;
+    else
+        var = text_style;    
+    return get_math_param(math_param_quad, var);
+}
+
 
 static scaled minimum_operator_size(int var)
 {
@@ -1018,6 +1036,25 @@ void fixup_math_parameters(integer fam_id, integer size_id, integer f,
         DEFINE_DMATH_PARAMETERS(math_param_sup_sub_bottom_max, size_id,
                                 (abs(math_x_height(size_id) * 4) / 5), lvl);
 
+        /* The display-size radical_vgap is done twice because it needs 
+           values from both the sy and the ex font. */
+	DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
+				(default_rule_thickness(size_id) +
+				 (abs(math_x_height(size_id)) / 4)), lvl);
+
+	DEFINE_MATH_PARAMETERS(math_param_radical_degree_raise, size_id,
+			       60, lvl);
+	DEFINE_DMATH_PARAMETERS(math_param_radical_degree_raise, size_id, 
+				60, lvl);
+        DEFINE_MATH_PARAMETERS(math_param_radical_degree_before, size_id,
+                               xn_over_d(get_math_quad_size(size_id), 5, 18), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_radical_degree_before, size_id,
+				xn_over_d(get_math_quad_size(size_id), 5, 18), lvl);
+	DEFINE_MATH_PARAMETERS(math_param_radical_degree_after,size_id,
+			       (-xn_over_d(get_math_quad_size(size_id), 10, 18)), lvl);
+	DEFINE_DMATH_PARAMETERS(math_param_radical_degree_after,size_id,
+				(-xn_over_d(get_math_quad_size(size_id), 10, 18)), lvl);
+
     } else if (fam_id == 3 && is_old_mathfont(f, total_mathex_params)) {
         /* fix old-style |ex| parameters */
         DEFINE_MATH_PARAMETERS(math_param_overbar_kern, size_id,
@@ -1048,8 +1085,7 @@ void fixup_math_parameters(integer fam_id, integer size_id, integer f,
                                default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_kern, size_id,
                                 default_rule_thickness(size_id), lvl);
-        /* The display-size radical_vgap is done in |finalize_math_pamaters| because it needs values from both the
-           sy and the ex font. */
+
         DEFINE_MATH_PARAMETERS(math_param_radical_vgap, size_id,
                                (default_rule_thickness(size_id) +
                                 (abs(default_rule_thickness(size_id)) / 4)),
@@ -1124,7 +1160,11 @@ void fixup_math_parameters(integer fam_id, integer size_id, integer f,
         DEFINE_DMATH_PARAMETERS(math_param_over_delimiter_bgap, size_id,
                                 big_op_spacing3(size_id), lvl);
 
-
+        /* The display-size radical_vgap is done twice because it needs 
+           values from both the sy and the ex font. */
+	DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
+				(default_rule_thickness(size_id) +
+				 (abs(math_x_height(size_id)) / 4)), lvl);
     }
 }
 
@@ -1136,97 +1176,21 @@ void finalize_math_parameters(void)
     if (get_math_param(math_param_space_after_script, display_style) ==
         undefined_math_parameter) {
         def_math_param(math_param_space_after_script, display_style,
-                       script_space, cur_level);
-        def_math_param(math_param_space_after_script, text_style, script_space,
-                       cur_level);
+                       script_space, level_one);
+        def_math_param(math_param_space_after_script, text_style,
+		       script_space, level_one);
         def_math_param(math_param_space_after_script, script_style,
-                       script_space, cur_level);
+                       script_space, level_one);
         def_math_param(math_param_space_after_script, script_script_style,
-                       script_space, cur_level);
+                       script_space, level_one);
         def_math_param(math_param_space_after_script, cramped_display_style,
-                       script_space, cur_level);
+                       script_space, level_one);
         def_math_param(math_param_space_after_script, cramped_text_style,
-                       script_space, cur_level);
+                       script_space, level_one);
         def_math_param(math_param_space_after_script, cramped_script_style,
-                       script_space, cur_level);
+                       script_space, level_one);
         def_math_param(math_param_space_after_script,
-                       cramped_script_script_style, script_space, cur_level);
-    }
-    if (get_math_param(math_param_radical_vgap, display_style) ==
-        undefined_math_parameter) {
-        def_math_param(math_param_radical_vgap, display_style,
-                       (default_rule_thickness(text_size) +
-                        (abs(math_x_height(text_size)) / 4)), cur_level);
-        def_math_param(math_param_radical_vgap, cramped_display_style,
-                       (default_rule_thickness(text_size) +
-                        (abs(math_x_height(text_size)) / 4)), cur_level);
-    }
-    if (get_math_param(math_param_radical_degree_raise, display_style) ==
-        undefined_math_parameter) {
-        DEFINE_MATH_PARAMETERS(math_param_radical_degree_raise,
-                               script_script_size, 60, cur_level);
-        DEFINE_MATH_PARAMETERS(math_param_radical_degree_raise, script_size, 60,
-                               cur_level);
-        DEFINE_MATH_PARAMETERS(math_param_radical_degree_raise, text_size, 60,
-                               cur_level);
-        DEFINE_DMATH_PARAMETERS(math_param_radical_degree_raise, text_size, 60,
-                                cur_level);
-    }
-    if (get_math_param(math_param_radical_degree_before, display_style) ==
-        undefined_math_parameter) {
-        def_math_param(math_param_radical_degree_before,
-                       cramped_script_script_style,
-                       xn_over_d(get_math_quad(cramped_script_script_style), 5,
-                                 18), cur_level);
-        def_math_param(math_param_radical_degree_before, script_script_style,
-                       xn_over_d(get_math_quad(script_script_style), 5, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_before, cramped_script_style,
-                       xn_over_d(get_math_quad(cramped_script_style), 5, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_before, script_style,
-                       xn_over_d(get_math_quad(script_style), 5, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_before, cramped_text_style,
-                       xn_over_d(get_math_quad(cramped_text_style), 5, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_before, text_style,
-                       xn_over_d(get_math_quad(text_style), 5, 18), cur_level);
-        def_math_param(math_param_radical_degree_before, cramped_display_style,
-                       xn_over_d(get_math_quad(cramped_display_style), 5, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_before, display_style,
-                       xn_over_d(get_math_quad(display_style), 5, 18),
-                       cur_level);
-    }
-
-    if (get_math_param(math_param_radical_degree_after, display_style) ==
-        undefined_math_parameter) {
-        def_math_param(math_param_radical_degree_after,
-                       cramped_script_script_style,
-                       -xn_over_d(get_math_quad(cramped_script_script_style),
-                                  10, 18), cur_level);
-        def_math_param(math_param_radical_degree_after, script_script_style,
-                       -xn_over_d(get_math_quad(script_script_style), 10, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_after, cramped_script_style,
-                       -xn_over_d(get_math_quad(cramped_script_style), 10, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_after, script_style,
-                       -xn_over_d(get_math_quad(script_style), 10, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_after, cramped_text_style,
-                       -xn_over_d(get_math_quad(cramped_text_style), 10, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_after, text_style,
-                       -xn_over_d(get_math_quad(text_style), 10, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_after, cramped_display_style,
-                       -xn_over_d(get_math_quad(cramped_display_style), 10, 18),
-                       cur_level);
-        def_math_param(math_param_radical_degree_after, display_style,
-                       -xn_over_d(get_math_quad(display_style), 10, 18),
-                       cur_level);
+                       cramped_script_script_style, script_space, level_one);
     }
     int_par(param_tracing_assigns_code) = saved_trace;
 
@@ -3419,12 +3383,6 @@ small_number make_left_right(pointer q, integer style, scaled max_d,
     else
         return close_noad_type;
 }
-
-
-#define level_one 1
-#define thin_mu_skip param_thin_mu_skip_code
-#define med_mu_skip param_med_mu_skip_code
-#define thick_mu_skip param_thick_mu_skip_code
 
 
 #define TEXT_STYLES(A,B) do {					\

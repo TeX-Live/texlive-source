@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: textoken.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/textoken.c $";
+    "$Id: textoken.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/textoken.c $";
 
 #define skipping 1              /* |scanner_status| when passing conditional text */
 #define defining 2              /* |scanner_status| when reading a macro definition */
@@ -383,7 +383,7 @@ char *cs_to_string(pointer p)
 char *cmd_chr_to_string(int cmd, int chr)
 {
     char *s;
-    strnumber str;
+    str_number str;
     int sel = selector;
     selector = new_string;
     print_cmd_chr(cmd, chr);

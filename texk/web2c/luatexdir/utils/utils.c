@@ -43,14 +43,15 @@
 #include "xpdf/config.h"        /* just to get the xpdf version */
 
 static const char __svn_version[] =
-    "$Id: utils.c 2195 2009-03-31 14:09:50Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/utils.c $";
+    "$Id: utils.c 2329 2009-04-18 14:25:30Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/utils.c $";
 
 #define check_nprintf(size_get, size_want) \
     if ((unsigned)(size_get) >= (unsigned)(size_want)) \
         pdftex_fail ("snprintf failed: file %s, line %d", __FILE__, __LINE__);
 
 char *cur_file_name = NULL;
-strnumber last_tex_string;
+str_number last_tex_string;
 static char print_buf[PRINTF_BUF_SIZE];
 static char *jobname_cstr = NULL;
 static char *job_id_string = NULL;
@@ -176,14 +177,14 @@ void pdf_printf(const char *fmt, ...)
     va_end(args);
 }
 
-strnumber maketexstring(const char *s)
+str_number maketexstring(const char *s)
 {
     if (s == NULL || *s == 0)
         return get_nullstr();
     return maketexlstring(s, strlen(s));
 }
 
-strnumber maketexlstring(const char *s, size_t l)
+str_number maketexlstring(const char *s, size_t l)
 {
     if (s == NULL || l == 0)
         return get_nullstr();
@@ -297,7 +298,7 @@ void pdftex_warn(const char *fmt, ...)
 
 void tex_error(char *msg, char **hlp)
 {
-    strnumber aa = 0, bb = 0, cc = 0, dd = 0, ee = 0;
+    str_number aa = 0, bb = 0, cc = 0, dd = 0, ee = 0;
     int k = 0;
     if (hlp != NULL) {
         while (hlp[k] != NULL)
@@ -471,7 +472,7 @@ void make_pdftex_banner(void)
     pdftexbanner_init = true;
 }
 
-strnumber get_resname_prefix(void)
+str_number get_resname_prefix(void)
 {
 /*     static char name_str[] = */
 /* "!\"$&'*+,-.0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\" */
@@ -540,7 +541,7 @@ scaled ext_xn_over_d(scaled x, scaled n, scaled d)
         r += 0.5;
     else
         r -= 0.5;
-    if (r >= (double) maxinteger || r <= -(double) maxinteger)
+    if (r >= (double) max_integer || r <= -(double) max_integer)
         pdftex_warn("arithmetic: number too big");
     return (scaled) r;
 }
@@ -813,6 +814,7 @@ void unescapehex(poolpointer in)
  * hexadecimal encoded;
  * sizeof(out) should be at least lin*2+1.
  */
+
 static void convertStringToHexString(const char *in, char *out, int lin)
 {
     int i, j, k;
@@ -859,7 +861,7 @@ static void convertStringToHexString(const char *in, char *out, int lin)
   scanning the info dict is also difficult, we start with a simpler
   implementation using just the first two items.
  */
-void print_ID(strnumber filename)
+void print_ID(str_number filename)
 {
     time_t t;
     size_t size;
@@ -1034,7 +1036,7 @@ void getcreationdate()
     That means, file names that are legal on some operation systems
     cannot any more be used since pdfTeX version 1.30.4.
 */
-char *makecfilename(strnumber s)
+char *makecfilename(str_number s)
 {
     char *name = makecstring(s);
     char *p = name;
@@ -1258,7 +1260,7 @@ int newcolorstack(integer s, integer literal_mode, boolean page_start)
 #define get_colstack(n) (&colstacks[n])
 
 /* Puts a string on top of the string pool and updates pool_ptr. */
-void put_cstring_on_str_pool(poolpointer start, char *str)
+static void put_cstring_on_str_pool(poolpointer start, char *str)
 {
     size_t len;
 
@@ -1363,7 +1365,7 @@ integer colorstackpop(int colstack_no)
     return colstack->literal_mode;
 }
 
-void colorstackpagestart()
+static void colorstackpagestart()
 {
     int i, j;
     colstack_type *colstack;

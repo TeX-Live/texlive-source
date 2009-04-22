@@ -22,7 +22,7 @@
 
 
 static const char _svn_version[] =
-    "$Id: lstatslib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lstatslib.c $";
+    "$Id: lstatslib.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lstatslib.c $";
 
 typedef struct statistic {
     const char *name;
@@ -219,6 +219,7 @@ static int getstats(lua_State * L)
 
 static int setstats(lua_State * L)
 {
+    (void)L;
     return 0;
 }
 

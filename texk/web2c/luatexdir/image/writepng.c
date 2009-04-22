@@ -1,7 +1,7 @@
 /* writepng.c
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -23,11 +23,12 @@
 #include "image.h"
 
 static const char _svn_version[] =
-    "$Id: writepng.c 2029 2009-03-14 19:10:25Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writepng.c $";
+    "$Id: writepng.c 2317 2009-04-18 00:12:18Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writepng.c $";
 
 static int transparent_page_group = -1;
 
-void close_and_cleanup_png(image_dict * idict)
+static void close_and_cleanup_png(image_dict * idict)
 {
     assert(idict != NULL);
     assert(img_file(idict) != NULL);
@@ -125,7 +126,6 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
     if (j % 2 == 0)  pdf_buf[pdf_ptr++] = *r++; \
     else             smask[smask_ptr++] = *r++
 
-
 #define write_rgb_pixel_16(r)                                  \
     if (!(j % 8 == 6||j % 8 == 7)) pdf_buf[pdf_ptr++]  = *r++; \
     else                           smask[smask_ptr++] = *r++
@@ -137,7 +137,7 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
 #define write_simple_pixel(r)    pdf_buf[pdf_ptr++] = *r++
 
 #define write_noninterlaced(outmac)                      \
-  for (i = 0; (unsigned) i < (int)info_p->height; i++) { \
+    for (i = 0; i < (int)info_p->height; i++) {          \
     png_read_row(png_p, row, NULL);                      \
     r = row;                                             \
     k = info_p->rowbytes;                                \
@@ -152,7 +152,7 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
         }
 
 #define write_interlaced(outmac)                         \
-  for (i = 0; (unsigned) i < (int)info_p->height; i++) { \
+    for (i = 0; i < (int)info_p->height; i++) {          \
             row = rows[i];                               \
             k = info_p->rowbytes;                        \
             while(k > 0) {                               \
@@ -166,7 +166,7 @@ void read_png_info(image_dict * idict, img_readtype_e readtype)
             xfree(rows[i]);                              \
         }
 
-void write_png_palette(image_dict * idict)
+static void write_png_palette(image_dict * idict)
 {
     int i, j, k, l;
     png_structp png_p = img_png_png_ptr(idict);
@@ -211,7 +211,7 @@ void write_png_palette(image_dict * idict)
     }
 }
 
-void write_png_gray(image_dict * idict)
+static void write_png_gray(image_dict * idict)
 {
     int i, j, k, l;
     png_structp png_p = img_png_png_ptr(idict);
@@ -241,7 +241,7 @@ void write_png_gray(image_dict * idict)
     pdf_end_stream();
 }
 
-void write_png_gray_alpha(image_dict * idict)
+static void write_png_gray_alpha(image_dict * idict)
 {
     int i, j, k, l;
     png_structp png_p = img_png_png_ptr(idict);
@@ -310,7 +310,7 @@ void write_png_gray_alpha(image_dict * idict)
     xfree(smask);
 }
 
-void write_png_rgb(image_dict * idict)
+static void write_png_rgb(image_dict * idict)
 {
     int i, j, k, l;
     png_structp png_p = img_png_png_ptr(idict);
@@ -340,7 +340,7 @@ void write_png_rgb(image_dict * idict)
     pdf_end_stream();
 }
 
-void write_png_rgb_alpha(image_dict * idict)
+static void write_png_rgb_alpha(image_dict * idict)
 {
     int i, j, k, l;
     png_structp png_p = img_png_png_ptr(idict);
@@ -413,11 +413,11 @@ void write_png_rgb_alpha(image_dict * idict)
 
 /**********************************************************************/
 /*
- * The |copy_png| function is from Hartmut Henkel. The goal is to use 
+ * The |copy_png| function is from Hartmut Henkel. The goal is to use
  * pdf's native FlateDecode support if that is possible.
  *
  * Only a subset of the png files allows this, but when possible it
- * greatly improves inclusion speed. 
+ * greatly improves inclusion speed.
  *
  * Code cheerfully gleaned from Thomas Merz' PDFlib,
  * file p_png.c "SPNG - Simple PNG"
@@ -434,7 +434,7 @@ static int spng_getint(FILE * fp)
 #define SPNG_CHUNK_IDAT 0x49444154
 #define SPNG_CHUNK_IEND 0x49454E44
 
-void copy_png(image_dict * idict)
+static void copy_png(image_dict * idict)
 {
     png_structp png_p;
     png_infop info_p;
@@ -507,7 +507,7 @@ void copy_png(image_dict * idict)
     } while (endflag == false);
 }
 
-void reopen_png(image_dict * idict)
+static void reopen_png(image_dict * idict)
 {
     integer width, height, xres, yres;
     width = img_xsize(idict);   /* do consistency check */
@@ -554,7 +554,7 @@ void write_png(image_dict * idict)
                 (fixed_gamma / 1000.0) * (1000.0 / fixed_image_gamma);
         }
     }
-    /* the switching between |info_p| and |png_p| queries has been trial and error. 
+    /* the switching between |info_p| and |png_p| queries has been trial and error.
      */
     if (fixed_pdf_minor_version > 1 && info_p->interlace_type == PNG_INTERLACE_NONE && (png_p->transformations == 0 || png_p->transformations == 0x2000)        /* gamma */
         &&!(png_p->color_type == PNG_COLOR_TYPE_GRAY_ALPHA ||
@@ -648,12 +648,11 @@ void write_png(image_dict * idict)
     close_and_cleanup_png(idict);
 }
 
-
-
 static boolean transparent_page_group_was_written = false;
 
 /* Called after the xobject generated by write_png has been finished; used to
  * write out additional objects */
+
 void write_additional_png_objects(void)
 {
     return;                     /* this interferes with current macro-based usage and cannot be configured */

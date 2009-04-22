@@ -249,9 +249,9 @@ known as `\eTeX'.
 @d pdftex_revision=="0" { \.{\\pdftexrevision} }
 @d pdftex_version_string=='-2.00.0' {current \pdfTeX\ version}
 @#
-@d luatex_version==39 { \.{\\luatexversion} }
+@d luatex_version==40 { \.{\\luatexversion} }
 @d luatex_revision=="0" { \.{\\luatexrevision} }
-@d luatex_version_string=='snapshot-0.39.0' {current \LuaTeX\ version}
+@d luatex_version_string=='beta-0.40.0' {current \LuaTeX\ version}
 @d luatex_date_info==-extra_version_info { the compile date is negated }
 @d luatex_svnversion=='$Id$'
    {for long --version information, as proposed by Peter M\"unster}
@@ -2933,7 +2933,7 @@ This section is (almost) straight from MetaPost. I had to change
 the types (use |integer| instead of |fraction|), but that should
 not have any influence on the actual calculations (the original
 comments refer to quantities like |fraction_four| ($2^{30}$), and
-that is the same as the numeric representation of |maxdimen|).
+that is the same as the numeric representation of |max_dimen|).
 
 I've copied the low-level variables and routines that are needed, but
 only those (e.g. |m_log|), not the accompanying ones like |m_exp|. Most
@@ -17048,7 +17048,6 @@ dvi_ptr,dir_ptr,dir_tmp:pointer;
 @!lx:scaled; {extra space between leader boxes}
 @!outer_doing_leaders:boolean; {were we doing leaders?}
 @!edge:scaled; {right edge of sub-box or leader space}
-@!border:scaled; {right edge of sub-box or leader space}
 @!prev_p:pointer; {one step behind |p|}
 @!glue_temp:real; {glue value before rounding}
 @!cur_glue:real; {glue seen so far}
@@ -26144,7 +26143,7 @@ if log_opened then
     pool_size-init_pool_ptr:1);@/
   wlog_ln(' ',var_mem_max:1,',',fix_mem_max:1,@|
     ' words of node,token memory allocated');@/
-  print_node_mem_stats(tracing_stats, tracing_online);
+  print_node_mem_stats;
   wlog_ln(' ',cs_count:1,' multiletter control sequences out of ',
     hash_size:1);@/
   wlog(' ',max_font_id,' font');

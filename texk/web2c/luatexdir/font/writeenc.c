@@ -21,7 +21,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: writeenc.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writeenc.c $";
+    "$Id: writeenc.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writeenc.c $";
 
 /**********************************************************************/
 /* All encoding entries go into AVL tree for fast search by name. */
@@ -32,6 +32,7 @@ struct avl_table *fe_tree = NULL;
 
 static int comp_fe_entry(const void *pa, const void *pb, void *p)
 {
+    (void)p;
     return strcmp(((const fe_entry *) pa)->name, ((const fe_entry *) pb)->name);
 }
 
@@ -164,6 +165,7 @@ static void destroy_fe_entry(void *pa, void *pb)
 {
     fe_entry *p;
     int i;
+    (void)pb;
     p = (fe_entry *) pa;
     xfree(p->name);
     if (p->glyph_names != NULL)

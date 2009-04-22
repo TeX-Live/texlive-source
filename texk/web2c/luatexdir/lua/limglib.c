@@ -23,11 +23,11 @@
 #include <../lua51/lua.h>
 #include <../lua51/lauxlib.h>
 #include <ptexlib.h>
-#include "../image/image.h"
 #include "../luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: limglib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/limglib.c $";
+    "$Id: limglib.c 2329 2009-04-18 14:25:30Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/limglib.c $";
 
 /**********************************************************************/
 
@@ -567,11 +567,6 @@ static int l_scan_image(lua_State * L)
     read_scale_img(L, a);
     return 1;                   /* image */
 }
-
-/* DANGER! these should go into some header file... */
-#define obj_type_ximage 7
-#define obj_aux(a)      obj_tab[a].int4 /* auxiliary pointer */
-#define obj_data_ptr    obj_aux /* pointer to |pdf_mem| */
 
 static halfword img_to_node(image * a, integer ref)
 {

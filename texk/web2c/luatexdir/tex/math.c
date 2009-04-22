@@ -27,7 +27,8 @@
 #include "tokens.h"
 
 static const char _svn_version[] =
-    "$Id: math.c 2280 2009-04-14 09:49:01Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/math.c $";
+    "$Id: math.c 2314 2009-04-17 20:57:48Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/math.c $";
 
 #define mode          cur_list.mode_field
 #define head          cur_list.head_field
@@ -53,7 +54,7 @@ static const char _svn_version[] =
 #define mmode (hmode+max_command_cmd+1)
 
 #define cur_fam int_par(param_cur_fam_code)
-#define text_direction zeqtb[param_text_direction_code].cint
+#define text_direction zeqtb[static_int_base + param_text_direction_code].cint
 
 #define scan_normal_dimen() scan_dimen(false,false,false)
 

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 static const char __svn_version[] =
-    "$Id: makecpool.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/makecpool.c $";
+    "$Id: makecpool.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/makecpool.c $";
 
 int main(int argc, char *argv[])
 {
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     printf("  NULL };\n"
            "int loadpoolstrings (integer spare_size) {\n"
            "  const char *s;\n"
-           "  strnumber g=0;\n"
+           "  str_number g=0;\n"
            "  int i=0,j=0;\n"
            "  while ((s = poolfilearr[j++])) {\n"
            "    int l = strlen (s);\n"

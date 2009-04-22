@@ -32,7 +32,7 @@
 #endif
 
 static const char __svn_version[] =
-    "$Id: pagetree.c 2143 2009-03-28 10:28:15Z hhenkel $ "
+    "$Id: pagetree.c 2306 2009-04-16 15:01:45Z taco $ "
     "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pagetree.c $";
 
 /**********************************************************************/
@@ -62,6 +62,7 @@ typedef struct divert_list_entry_ {
 
 static int comp_divert_list_entry(const void *pa, const void *pb, void *p)
 {
+    (void)p;
     if (((const divert_list_entry *) pa)->divnum >
         ((const divert_list_entry *) pb)->divnum)
         return 1;

@@ -21,7 +21,7 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: luastuff.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luastuff.c $";
+    "$Id: luastuff.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luastuff.c $";
 
 lua_State *Luas = NULL;
 
@@ -381,7 +381,7 @@ void luatex_load_init(int s, LoadS * ls)
 lua_State *luatex_error(lua_State * L, int is_fatal)
 {
 
-    strnumber s;
+    str_number s;
     const char *luaerr;
     size_t len = 0;
     char *err = NULL;

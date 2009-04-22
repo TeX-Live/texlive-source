@@ -1,7 +1,7 @@
 /* writejbig2.h
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,136 +18,15 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/***********************************************************************
-This is experimental JBIG2 image support to pdfTeX. JBIG2 image decoding
-is part of Adobe PDF-1.4, and requires Acroread 5.0 or later.
+/* $Id: writejbig2.h 2327 2009-04-18 12:47:21Z hhenkel $ */
 
-$Id: writejbig2.h 1224 2008-05-02 15:26:27Z oneiros $
-***********************************************************************/
+#ifndef WRITEJBIG2_H
+#  define WRITEJBIG2_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include "ptexlib.h"
-#include "ptexmac.h"
-#include "image.h"
+#  include "image.h"
 
-/* 7.3 Segment types */
-#define M_SymbolDictionary 0
-#define M_IntermediateTextRegion 4
-#define M_ImmediateTextRegion 6
-#define M_ImmediateLosslessTextRegion 7
-#define M_PatternDictionary 16
-#define M_IntermediateHalftoneRegion 20
-#define M_ImmediateHalftoneRegion 22
-#define M_ImmediateLosslessHalftoneRegion 23
-#define M_IntermediateGenericRegion 36
-#define M_ImmediateGenericRegion 38
-#define M_ImmediateLosslessGenericRegion 39
-#define M_IntermediateGenericRefinementRegion 40
-#define M_ImmediateGenericRefinementRegion 42
-#define M_ImmediateLosslessGenericRefinementRegion 43
-#define M_PageInformation 48
-#define M_EndOfPage 49
-#define M_EndOfStripe 50
-#define M_EndOfFile 51
-#define M_Profiles 52
-#define M_Tables 53
-#define M_Extension 62
-
-/**********************************************************************/
-
-typedef enum { INITIAL, HAVEINFO, WRITEPDF } PHASE;
-
-typedef struct _LITEM {
-    struct _LITEM *prev;
-    struct _LITEM *next;
-    void *d;                    /* data */
-} LITEM;
-
-typedef struct _LIST {
-    LITEM *first;
-    LITEM *last;
-    struct avl_table *tree;
-} LIST;
-
-typedef struct _SEGINFO {
-    unsigned long segnum;
-    boolean isrefered;
-    boolean refers;
-    unsigned int seghdrflags;   /* set by readseghdr() */
-    boolean pageassocsizeflag;  /* set by readseghdr() */
-    unsigned int reftosegcount; /* set by readseghdr() */
-    unsigned int countofrefered;        /* set by readseghdr() */
-    unsigned int fieldlen;      /* set by readseghdr() */
-    unsigned int segnumwidth;   /* set by readseghdr() */
-    long segpage;               /* set by readseghdr() */
-    unsigned long segdatalen;   /* set by readseghdr() */
-    unsigned long hdrstart;     /* set by readseghdr() */
-    unsigned long hdrend;       /* set by readseghdr() */
-    unsigned long datastart;
-    unsigned long dataend;
-    boolean endofstripeflag;    /* set by checkseghdrflags() */
-    boolean endofpageflag;      /* set by checkseghdrflags() */
-    boolean pageinfoflag;       /* set by checkseghdrflags() */
-    boolean endoffileflag;      /* set by checkseghdrflags() */
-} SEGINFO;
-
-typedef struct _PAGEINFO {
-    LIST segments;              /* segments associated with page */
-    unsigned long pagenum;
-    unsigned int width;
-    unsigned int height;
-    unsigned int xres;
-    unsigned int yres;
-    unsigned int pagesegmentflags;
-    unsigned int stripinginfo;
-    unsigned int stripedheight;
-} PAGEINFO;
-
-typedef struct _FILEINFO {
-    FILE *file;
-    char *filepath;
-    long filesize;
-    LIST pages;                 /* not including page0 */
-    LIST page0;
-    unsigned int filehdrflags;  /* set by readfilehdr() */
-    boolean sequentialaccess;   /* set by readfilehdr() */
-    unsigned long numofpages;   /* set by readfilehdr() */
-    unsigned long streamstart;  /* set by get_jbig2_info() */
-    unsigned long pdfpage0objnum;
-    PHASE phase;
-} FILEINFO;
-
-/**********************************************************************/
-
-static int comp_file_entry(const void *, const void *, void *);
-static int comp_page_entry(const void *, const void *, void *);
-static int comp_segment_entry(const void *, const void *, void *);
-int ygetc(FILE *);
-FILEINFO *new_fileinfo();
-PAGEINFO *new_pageinfo();
-void initseginfo(SEGINFO *);
-void initlinkedlist(LIST *);
-LIST *litem_append(LIST *);
-void pages_maketree(LIST *);
-void segments_maketree(LIST *);
-PAGEINFO *find_pageinfo(LIST *, unsigned long);
-SEGINFO *find_seginfo(LIST *, unsigned long);
-unsigned int read2bytes(FILE *);
-unsigned long read4bytes(FILE *);
-unsigned long getstreamlen(LITEM *, boolean);
-void readfilehdr(FILEINFO *);
-boolean readseghdr(FILEINFO *, SEGINFO *);
-void writeseghdr(FILEINFO *, SEGINFO *);
-void checkseghdr(FILEINFO *, SEGINFO *);
-void checkseghdrflags(SEGINFO * sip);
-void markpage0seg(FILEINFO *, unsigned long);
-unsigned long findstreamstart(FILEINFO *);
-void rd_jbig2_info(FILEINFO *);
-void wr_jbig2(FILEINFO *, unsigned long);
+void flush_jbig2_page0_objects();
 void read_jbig2_info(image_dict *);
 void write_jbig2(image_dict *);
-void flushjbig2page0objects();
 
-/**********************************************************************/
+#endif                          /* WRITEJBIG"_H */

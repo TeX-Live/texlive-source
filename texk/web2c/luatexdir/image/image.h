@@ -1,7 +1,7 @@
 /* image.h
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: image.h 2307 2009-04-16 17:37:31Z taco $ */
+/* $Id: image.h 2336 2009-04-19 08:38:24Z hhenkel $ */
 
 #ifndef IMAGE_H
 #  define IMAGE_H
@@ -39,8 +39,6 @@ extern integer zround(double);  /* from zround.c */
 
 #  define TYPE_IMG        "image"
 #  define TYPE_IMG_DICT   "image-dict"
-
-#  define scaled          integer
 
 /**********************************************************************/
 
@@ -199,44 +197,4 @@ typedef struct {
 #  define is_ht_running(N)      (img_height(N) == null_flag)
 #  define is_dp_running(N)      (img_depth(N) == null_flag)
 
-/**********************************************************************/
-
-/* writeimg.c */
-
-void new_img_pdfstream_struct(image_dict *);
-void check_pdfstream_dict(image_dict *);
-void write_pdfstream(image_dict *);
-image *new_image();
-image_dict *new_image_dict();
-void init_image(image *);
-void init_image_dict(image_dict *);
-void scale_img(image *);
-integer img_to_array(image *);
-void delete_image(image *);
-void free_image_dict(image_dict * p);
-void read_img(image_dict *, integer, integer);
-
-/* writepng.c */
-
-#  ifndef boolean               /* TODO: from where to get the original definition? */
-#    define boolean int
-#  endif
-
-void read_png_info(image_dict *, img_readtype_e);
-void read_jpg_info(image_dict *, img_readtype_e);
-void read_jbig2_info(image_dict *);
-void read_pdf_info(image_dict *, integer, integer);
-void write_img(image_dict *);
-void write_png(image_dict *);
-void write_jpg(image_dict *);
-void write_jbig2(image_dict *);
-void write_epdf(image_dict *);
-
-extern void write_additional_epdf_objects(void);
-extern void write_additional_png_objects(void);
-
-/* pdftoepdf.cc */
-
-void unrefPdfDocument(char *);
-
-#endif
+#endif                          /* IMAGE_H */

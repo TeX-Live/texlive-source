@@ -29,3 +29,4 @@ int  lprofP_callhookOUT(lprofP_STATE* S);
 /* returns true if the file could be opened */
 lprofP_STATE* lprofP_init_core_profiler(const char *_out_filename, int isto_printheader, float _function_call_time);
 
+void lprofP_close_core_profiler(lprofP_STATE* S);

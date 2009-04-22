@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: lfontlib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lfontlib.c $";
+    "$Id: lfontlib.c 2347 2009-04-22 11:51:15Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lfontlib.c $";
 
 #define TIMERS 0
 
@@ -33,6 +33,14 @@ static const char _svn_version[] =
 
 /* this function is in vfovf.c for the moment */
 extern int make_vf_table(lua_State * L, char *name, scaled s);
+
+static int get_fontid (void)
+{
+  if (font_tables==NULL || font_tables[0]==NULL) {
+    create_null_font();
+  }
+  return new_font();
+}
 
 static int font_read_tfm(lua_State * L)
 {
@@ -45,8 +53,8 @@ static int font_read_tfm(lua_State * L)
         if (lua_isnumber(L, 2)) {
             s = (integer) lua_tonumber(L, 2);
             if (strlen(cnom)) {
-                f = new_font();
-                if (read_tfm_info(f, cnom, "", s)) {
+                f = get_fontid();
+                if (read_tfm_info(f, cnom, s)) {
                     k = font_to_lua(L, f);
                     delete_font(f);
                     return k;
@@ -201,7 +209,7 @@ static int deffont(lua_State * L)
     double tvdiff;
 #endif
     luaL_checktype(L, -1, LUA_TTABLE);
-    i = new_font();
+    i = get_fontid();
 #if TIMERS
     gettimeofday(&tva, NULL);
 #endif
@@ -230,7 +238,7 @@ static int deffont(lua_State * L)
 /* this returns the expected (!) next fontid. */
 static int nextfontid(lua_State * L)
 {
-    int i = new_font();
+    int i = get_fontid();
     lua_pushnumber(L, i);
     delete_font(i);
     return 1;

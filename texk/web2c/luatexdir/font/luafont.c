@@ -23,11 +23,9 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: luafont.c 2293 2009-04-15 16:55:18Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/luafont.c $";
+    "$Id: luafont.c 2312 2009-04-17 15:43:13Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/luafont.c $";
 
 #define noVERBOSE
-
-#define SAVE_REF 1
 
 char *font_type_strings[] = { "unknown", "virtual", "real", NULL };
 char *font_format_strings[] =
@@ -380,7 +378,7 @@ int font_to_lua(lua_State * L, int f)
 {
     int k;
     charinfo *co;
-    if (font_cache_id(f)) {
+    if (font_cache_id(f)>0) {
         /* fetch the table from the registry if  it was 
            saved there by font_from_lua() */
         lua_rawgeti(L, LUA_REGISTRYINDEX, font_cache_id(f));
@@ -510,6 +508,13 @@ int font_to_lua(lua_State * L, int f)
         }
     }
     lua_setfield(L, -2, "characters");
+
+    if (font_cache_id(f)==0) { /* renew */
+        integer r;
+        lua_pushvalue(L,-1);
+        r = luaL_ref(Luas, LUA_REGISTRYINDEX);  /* pops the table */
+        set_font_cache_id(f, r);
+    }
     return 1;
 }
 
@@ -1428,6 +1433,18 @@ int font_from_lua(lua_State * L, int f)
     int ec;                     /* last char index */
     char *s;
     integer *l_fonts = NULL;
+    integer save_ref = 1; /* unneeded, really */
+
+    /* will we save a cache of the luat table? */
+    s = string_field(L, "cache", "yes");
+    if (strcmp(s,"yes")==0)
+        save_ref=1;
+    else if (strcmp(s,"no")==0)
+        save_ref=-1;
+    else if (strcmp(s,"renew")==0)
+        save_ref=0;
+    free(s);
+        
     /* the table is at stack index -1 */
 
     if (luaS_width_index == 0)
@@ -1541,7 +1558,7 @@ int font_from_lua(lua_State * L, int f)
                 if (strcmp(font_name(f), s) == 0)
                     l_fonts[i] = f;
                 else
-                    l_fonts[i] = find_font_id(s, "", t);
+                    l_fonts[i] = find_font_id(s, t);
                 lua_settop(L, s_top);
             } else {
                 pdftex_fail("Invalid local font in font %s!\n", font_name(f));
@@ -1647,12 +1664,13 @@ int font_from_lua(lua_State * L, int f)
                         font_name(f));
         }
 
-#if SAVE_REF
-        r = luaL_ref(Luas, LUA_REGISTRYINDEX);  /* pops the table */
-        set_font_cache_id(f, r);
-#else
-        lua_pop(Luas, 1);
-#endif
+        if (save_ref>0) {
+            r = luaL_ref(Luas, LUA_REGISTRYINDEX);  /* pops the table */
+            set_font_cache_id(f, r);
+        } else {
+            lua_pop(Luas, 1);
+            set_font_cache_id(f, save_ref);
+        }
     } else {                    /* jikes, no characters */
         pdftex_warn("lua-loaded font [%d] (%s) has no character table!", f,
                     font_name(f));
@@ -1853,18 +1871,6 @@ static halfword handle_lig_nest(halfword root, halfword cur)
     return root;
 }
 
-
-static void print_disc(halfword cur)
-{
-    halfword n;
-    fprintf (stdout, "cur(%d,%d) {", cur, subtype(cur));
-    n = vlink_pre_break(cur); show_node_list(n);
-    fprintf (stdout, "}{");
-    n = vlink_post_break(cur); show_node_list(n);
-    fprintf (stdout, "}{");
-    n = vlink_no_break(cur); show_node_list(n);
-    fprintf (stdout, "}\n");
-}
 
 static halfword handle_lig_word(halfword cur)
 {

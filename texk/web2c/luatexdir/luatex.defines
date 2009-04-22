@@ -50,7 +50,7 @@
 @define function varmemcast();
 @define type void;
 @define procedure init_node_mem();
-@define procedure print_node_mem_stats();
+@define procedure print_node_mem_stats;
 @define procedure dump_node_mem;
 @define procedure undump_node_mem;
 @define function visible_last_node_type();
@@ -455,7 +455,7 @@
 @define function make_name_string;
 @define procedure print_file_name();
 
-{ functions from utils.c }
+{ functions from utils/utils.c }
 @define procedure escapehex();
 @define procedure escapename();
 @define procedure escapestring();
@@ -496,9 +496,21 @@
 @define function getlly;
 @define function geturx;
 @define function getury;
+
+{functions from pdf/pagetree.c }
 @define function pdf_do_page_divert();
 @define procedure pdf_do_page_undivert();
 @define function output_pages_tree;
+
+{ functions from pdf/pdfpage.c }
+@define procedure pdf_place_rule();
+@define procedure pdf_place_glyph();
+@define procedure pdf_place_form();
+@define procedure pdf_goto_pagemode;
+@define procedure pdf_page_init;
+@define procedure pdf_set_pos();
+@define procedure pdf_end_string_nl;
+@define procedure pdf_print_charwidth();
 
 {functions from texpdf.c }
 
@@ -524,7 +536,7 @@
 { functions from writefont.c }
 @define procedure do_pdf_font();
 
-{ functions from writeimg.c }
+{ functions from image/writeimg.c }
 @define function check_image_b();
 @define function check_image_c();
 @define function check_image_i();
@@ -534,38 +546,24 @@
 @define function epdf_orig_y();
 @define function image_pages();
 @define function image_colordepth();
-@define function image_groupref();
 @define function image_index();
 @define function image_width();
 @define function image_height();
 @define function image_depth();
 @define function image_objnum();
-@define function image_imgnum();
 @define function is_pdf_image();
 @define function is_png_image();
 @define function read_image();
-@define function new_image_entry;
 @define procedure update_image_procset();
 @define procedure write_image();
 @define procedure scale_image();
 @define procedure set_image_dimensions();
-@define procedure set_image_index();
 @define procedure out_image();
 
 @define procedure dumpimagemeta;
 @define procedure undumpimagemeta();
 
-{ functions from limglib.c }
-
-{ functions from pdfpage.c }
-@define procedure pdf_place_rule();
-@define procedure pdf_place_glyph();
-@define procedure pdf_place_form();
-@define procedure pdf_goto_pagemode;
-@define procedure pdf_page_init;
-@define procedure pdf_set_pos();
-@define procedure pdf_end_string_nl;
-@define procedure pdf_print_charwidth();
+{ functions from lua/limglib.c }
 
 { functions from writet3.c }
 @define function get_pk_char_width();

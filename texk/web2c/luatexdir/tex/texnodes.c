@@ -28,7 +28,7 @@
 #define noDEBUG
 
 static const char _svn_version[] =
-    "$Id: texnodes.c 2273 2009-04-13 09:52:04Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.c $";
+    "$Id: texnodes.c 2329 2009-04-18 14:25:30Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.c $";
 
 #define append_char(A) str_pool[pool_ptr++]=(A)
 #define cur_length (pool_ptr - str_start_macro(str_ptr))
@@ -51,8 +51,6 @@ typedef enum {
 } pdf_destination_types;
 
 
-#define obj_aux(A)              obj_tab[(A)].int4
-#define obj_data_ptr            obj_aux
 #define obj_obj_data(A)         pdf_mem[obj_data_ptr((A)) + 0]
 #define obj_obj_is_stream(A)    pdf_mem[obj_data_ptr((A)) + 1]
 #define obj_obj_stream_attr(A)  pdf_mem[obj_data_ptr((A)) + 2]
@@ -1834,7 +1832,7 @@ halfword list_node_mem_usage(void)
     return q;
 }
 
-void print_node_mem_stats(int tracingstats, int tracingonline)
+void print_node_mem_stats(void)
 {
     int i, b;
     halfword j;

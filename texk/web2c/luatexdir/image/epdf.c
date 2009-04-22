@@ -1,7 +1,7 @@
 /* epdf.c
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -25,17 +25,8 @@
 #include <string.h>
 
 static const char _svn_version[] =
-    "$Id: epdf.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/epdf.c $";
-
-extern void epdf_check_mem(void);
-extern void register_fd_entry(fd_entry *);
-
-
-int is_subsetable(fm_entry * fm)
-{
-    assert(is_included(fm));
-    return is_subsetted(fm);
-}
+    "$Id: epdf.c 2331 2009-04-18 16:39:50Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/epdf.c $";
 
 fd_entry *epdf_create_fontdescriptor(fm_entry * fm, int stemV)
 {
@@ -55,19 +46,6 @@ fd_entry *epdf_create_fontdescriptor(fm_entry * fm, int stemV)
         assert(fd->gl_tree != NULL);
     }
     return fd;
-}
-
-integer get_fd_objnum(fd_entry * fd)
-{
-    assert(fd->fd_objnum != 0);
-    return fd->fd_objnum;
-}
-
-integer get_fn_objnum(fd_entry * fd)
-{
-    if (fd->fn_objnum == 0)
-        fd->fn_objnum = pdf_new_objnum();
-    return fd->fn_objnum;
 }
 
 /***********************************************************************
@@ -96,11 +74,6 @@ void epdf_mark_glyphs(fd_entry * fd, char *charset)
             assert(aa != NULL);
         }
     }
-}
-
-void embed_whole_font(fd_entry * fd)
-{
-    fd->all_glyphs = true;
 }
 
 void epdf_free(void)

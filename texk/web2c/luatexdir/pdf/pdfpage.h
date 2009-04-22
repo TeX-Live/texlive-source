@@ -17,11 +17,10 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfpage.h 2267 2009-04-12 18:23:21Z oneiros $ */
+/* $Id: pdfpage.h 2336 2009-04-19 08:38:24Z hhenkel $ */
 
 #ifndef PDFPAGE_H
 #  define PDFPAGE_H
-/**********************************************************************/
 
 typedef struct {
     long m;                     /* mantissa (significand) */
@@ -66,6 +65,8 @@ typedef struct {
     pos_mode mode;              /* current positioning mode */
 } pdfstructure;
 
+extern pdfstructure *pstruct;
+
 /**********************************************************************/
 
 boolean calc_pdfpos(pdfstructure * p, scaledpos * pos);
@@ -81,5 +82,4 @@ void pdf_set_pos(scaled h, scaled v);
 void pos_finish(pdfstructure * p);
 void print_pdffloat(pdffloat * f);
 
-/**********************************************************************/
 #endif

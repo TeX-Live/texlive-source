@@ -122,8 +122,10 @@ int lprofP_callhookOUT(lprofP_STATE* S) {
 lprofP_STATE* lprofP_init_core_profiler(const char *_out_filename, int isto_printheader, float _function_call_time) {
   lprofP_STATE* S;
   char auxs[256];
+#ifdef WIN32
   char *s;
   char *randstr;
+#endif
   const char *out_filename;
 
   function_call_time = _function_call_time;
@@ -131,6 +133,7 @@ lprofP_STATE* lprofP_init_core_profiler(const char *_out_filename, int isto_prin
         
   /* the random string to build the logname is extracted */
   /* from 'tmpnam()' (the '/tmp/' part is deleted)     */
+#ifdef WIN32
   randstr = tmpnam(NULL);
   for (s = strtok(randstr, "/\\"); s; s = strtok(NULL, "/\\")) {
     randstr = s;
@@ -141,6 +144,10 @@ lprofP_STATE* lprofP_init_core_profiler(const char *_out_filename, int isto_prin
 
   sprintf(auxs, out_filename, randstr);
   outf = fopen(auxs, "a");
+#else
+  sprintf(auxs,"lprof_XXXXXX");
+  outf = fdopen(mkstemp(auxs), "a");
+#endif
   if (!outf) {
     return 0;
   }

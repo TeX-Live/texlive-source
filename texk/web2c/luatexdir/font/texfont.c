@@ -35,7 +35,7 @@
 #include "luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: texfont.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/texfont.c $";
+    "$Id: texfont.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/texfont.c $";
 
 #define proper_char_index(c) (c<=font_ec(f) && c>=font_bc(f))
 #define dxfree(a,b) { xfree(a); a = b ; }
@@ -135,10 +135,6 @@ integer new_font(void)
     return id;
 }
 
-#define Charinfo_count(a) font_tables[a]->charinfo_count
-#define Charinfo_size(a) font_tables[a]->charinfo_size
-#define Characters(a) font_tables[a]->characters
-
 #define find_charinfo_id(f,c) get_sa_item(font_tables[f]->characters,c)
 
 charinfo *get_charinfo(internal_font_number f, integer c)
@@ -146,11 +142,11 @@ charinfo *get_charinfo(internal_font_number f, integer c)
     sa_tree_item glyph;
     charinfo *ci;
     if (proper_char_index(c)) {
-        glyph = get_sa_item(Characters(f), c);
+        glyph = get_sa_item(font_tables[f]->characters, c);
         if (!glyph) {
 
             glyph = ++font_tables[f]->charinfo_count;
-            if (glyph>=font_tables[f]->charinfo_size) {
+            if (glyph>=(unsigned)font_tables[f]->charinfo_size) {
                 font_bytes += (16*sizeof(charinfo));
                 do_realloc(font_tables[f]->charinfo, (glyph + 16), charinfo);
                 memset(&(font_tables[f]->charinfo[glyph]), 0, (16*sizeof(charinfo)));
@@ -182,7 +178,7 @@ void set_charinfo(internal_font_number f, integer c, charinfo * ci)
 {
     sa_tree_item glyph;
     if (proper_char_index(c)) {
-        glyph = get_sa_item(Characters(f), c);
+      glyph = get_sa_item(font_tables[f]->characters, c);
         if (glyph) {
             font_tables[f]->charinfo[glyph] = *ci;
         } else {
@@ -1074,11 +1070,11 @@ integer copy_font(integer f)
         memcpy(math_param_base(k), math_param_base(f), i);
     }
 
-    i = sizeof(charinfo) * (Charinfo_size(f) + 1);
+    i = sizeof(charinfo) * (font_tables[f]->charinfo_size + 1);
     font_bytes += i;
     font_tables[k]->charinfo = xmalloc(i);
     memset(font_tables[k]->charinfo, 0, i);
-    for (i = 0; i <= Charinfo_size(k); i++) {
+    for (i = 0; i < font_tables[k]->charinfo_size; i++) {
         ci = copy_charinfo(&font_tables[f]->charinfo[i]);
         font_tables[k]->charinfo[i] = *ci;
     }
@@ -1158,7 +1154,7 @@ boolean is_valid_font(integer id)
 }
 
 /* return 1 == identical */
-boolean cmp_font_name(integer id, strnumber t)
+boolean cmp_font_name(integer id, str_number t)
 {
     char *tid, *tt;
     if (!is_valid_font(id))
@@ -1172,7 +1168,7 @@ boolean cmp_font_name(integer id, strnumber t)
     return 1;
 }
 
-boolean cmp_font_area(integer id, strnumber t)
+boolean cmp_font_area(integer id, str_number t)
 {
     char *tt = NULL;
     char *tid = font_area(id);

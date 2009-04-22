@@ -22,7 +22,7 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: tfmofm.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/tfmofm.c $";
+    "$Id: tfmofm.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/tfmofm.c $";
 
 /* Here are some macros that help process ligatures and kerns */
 
@@ -376,7 +376,7 @@ additional parameter information, which is explained later.
 
 
 int
-open_tfm_file(char *nom, char *aire, unsigned char **tfm_buf, integer * tfm_siz)
+open_tfm_file(char *nom, unsigned char **tfm_buf, integer * tfm_siz)
 {
     boolean res;                /* was the callback successful? */
     boolean opened;             /* was |tfm_file| successfully opened? */
@@ -531,7 +531,7 @@ typedef struct tfmcharacterinfo {
     unsigned char _tag;
 } tfmcharacterinfo;
 
-int read_tfm_info(internalfontnumber f, char *cnom, char *caire, scaled s)
+int read_tfm_info(internalfontnumber f, char *cnom, scaled s)
 {
     integer k;                  /* index into |font_info| */
     halfword lf, lh, bc, ec, nw, nh, nd, ni, nl, nk, ne, np, slh;       /* sizes of subfiles */
@@ -578,7 +578,7 @@ int read_tfm_info(internalfontnumber f, char *cnom, char *caire, scaled s)
 
     memset(&ci, 0, sizeof(tfmcharacterinfo));
 
-    if (open_tfm_file(cnom, caire, &tfm_buffer, &tfm_size) != 1)
+    if (open_tfm_file(cnom, &tfm_buffer, &tfm_size) != 1)
         tfm_abort;
 
     /* cnom can be an absolute filename, xbasename() fixes that. */

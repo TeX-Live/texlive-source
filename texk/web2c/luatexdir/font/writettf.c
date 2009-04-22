@@ -23,7 +23,7 @@
 #include <string.h>
 
 static const char _svn_version[] =
-    "$Id: writettf.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writettf.c $";
+    "$Id: writettf.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writettf.c $";
 
 #define DEFAULT_NTABS       14
 #define NEW_CMAP_SIZE       2
@@ -130,6 +130,7 @@ ttf_cmap_entry *new_ttf_cmap_entry(void)
 static void destroy_ttf_cmap_entry(void *pa, void *pb)
 {
     ttf_cmap_entry *p;
+    (void)pb;
     p = (ttf_cmap_entry *) pa;
     xfree(p->ttf_name);
     xfree(p->table);
@@ -147,6 +148,7 @@ static int comp_ttf_cmap_entry(const void *pa, const void *pb, void *p)
     const ttf_cmap_entry *p1 = (const ttf_cmap_entry *) pa,
         *p2 = (const ttf_cmap_entry *) pb;
     int i;
+    (void)p;
     assert(p1->ttf_name != NULL && p2->ttf_name != NULL);
     if ((i = strcmp(p1->ttf_name, p2->ttf_name)) != 0)
         return i;
@@ -1421,6 +1423,7 @@ void do_writeotf(fd_entry * fd)
 {
     long i;
     dirtab_entry *tab;
+    (void)fd;
     dir_tab = NULL;
     glyph_tab = NULL;
     if (tracefilenames)

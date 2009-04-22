@@ -1,27 +1,36 @@
-/*
-Copyright (c) 2004-2007 Han The Thanh, <thanh@pdftex.org>
+/* avlstuff.h
 
-This file is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by Free
-Software Foundation; either version 2 of the License, or (at your option)
-any later version.
+   Copyright (c) 2004-2007 Han The Thanh, <thanh@pdftex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
-This file is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
-for more details.
+   This file is part of LuaTeX.
 
-You should have received a copy of the GNU General Public License along
-with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
-Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+   LuaTeX is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your
+   option) any later version.
 
-$Id: avlstuff.h 2271 2009-04-12 23:42:21Z oneiros $
-*/
+   LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+   License for more details.
 
-#include "avl.h"
+   You should have received a copy of the GNU General Public License along
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* memory management functions for avl */
+/* $Id: avlstuff.h 2328 2009-04-18 12:50:26Z hhenkel $ */
+
+#ifndef AVLSTUFF_H
+#  define AVLSTUFF_H
+
+#  include "avl.h"
 
 extern struct libavl_allocator avl_xallocator;
 
-/* end of file avlstuff.h */
+int comp_int_entry(const void *, const void *, void *);
+int comp_string_entry(const void *, const void *, void *);
+integer avl_find_obj(integer, integer, integer);
+void avl_put_obj(integer, integer);
+void PdfObjTree_free();
+
+#endif                          /* AVLSTUFF_H */

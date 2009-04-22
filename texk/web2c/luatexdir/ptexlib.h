@@ -1,5 +1,5 @@
 /* ptexlib.h
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
    Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
@@ -20,8 +20,8 @@
 
 /* $Id$ */
 
-#ifndef LUATEXLIB
-#  define LUATEXLIB
+#ifndef PTEXLIB_H
+#  define PTEXLIB_H
 
 /* WEB2C macros and prototypes */
 #  if !defined(LUATEXCOERCE)
@@ -43,305 +43,36 @@ extern double rint(double x);
 #  include "utils/synctex.h"
 
 #  include "utils/avlstuff.h"
-#  include "image/image.h"
-
+#  include "image/writeimg.h"
 #  include "openbsd-compat.h"
-
 #  include "pdf/pagetree.h"
 #  include "pdf/pdfpage.h"
-
-/* pdftexlib type declarations */
-typedef struct {
-    const char *pdfname;
-    const char *t1name;
-    boolean valid;
-} key_entry;
-
-typedef struct _subfont_entry {
-    char *infix;                /* infix for this subfont, eg "01" */
-    long charcodes[256];        /* the mapping for this subfont as read from sfd */
-    struct _subfont_entry *next;
-} subfont_entry;
-
-typedef struct {
-    char *name;                 /* sfd name, eg "Unicode" */
-    subfont_entry *subfont;     /* linked list of subfonts */
-} sfd_entry;
-
+#  include "font/luatexfont.h"
 #  include "font/mapfile.h"
-
-typedef struct {
-    integer fe_objnum;          /* object number */
-    char *name;                 /* encoding file name */
-    char **glyph_names;         /* array of glyph names */
-    struct avl_table *tx_tree;  /* tree of encoding positions marked as used by TeX */
-} fe_entry;
-
-typedef struct {
-    char *name;                 /* glyph name */
-    long code;                  /* -1 = undefined; -2 = multiple codes, stored
-                                   as string in unicode_seq; otherwise unicode value */
-    char *unicode_seq;          /* multiple unicode sequence */
-} glyph_unicode_entry;
-
-#  define FD_FLAGS_NOT_SET_IN_MAPLINE -1
-#  define FD_FLAGS_DEFAULT_EMBED  4     /* a symbol font */
-#  define FD_FLAGS_DEFAULT_NON_EMBED 0x22
-                                        /* a nonsymbolic serif font */
-
-typedef struct glw_entry_ {     /* subset glyphs for inclusion in CID-based fonts */
-    unsigned int id;            /* glyph CID */
-    signed int wd;              /* glyph width in 1/1000 em parts */
-} glw_entry;
-
-/**********************************************************************/
-
-typedef struct {
-    int val;                    /* value */
-    boolean set;                /* true if parameter has been set */
-} intparm;
-
-typedef struct fd_entry_ {
-    integer fd_objnum;          /* object number of the font descriptor object */
-    char *fontname;             /* /FontName (without subset tag) */
-    char *subset_tag;           /* 6-character subset tag */
-    boolean ff_found;
-    integer ff_objnum;          /* object number of the font program stream */
-    integer fn_objnum;          /* font name object number (embedded PDF) */
-    boolean all_glyphs;         /* embed all glyphs? */
-    boolean write_ttf_glyph_names;
-    intparm font_dim[FONT_KEYS_NUM];
-    fe_entry *fe;               /* pointer to encoding structure */
-    char **builtin_glyph_names; /* builtin encoding as read from the Type1 font file */
-    fm_entry *fm;               /* pointer to font map structure */
-    struct avl_table *tx_tree;  /* tree of non-reencoded TeX characters marked as used */
-    struct avl_table *gl_tree;  /* tree of all marked glyphs */
-} fd_entry;
-
-typedef struct fo_entry_ {
-    integer fo_objnum;          /* object number of the font dictionary */
-    internalfontnumber tex_font;        /* needed only for \pdffontattr{} */
-    fm_entry *fm;               /* pointer to font map structure for this font dictionary */
-    fd_entry *fd;               /* pointer to /FontDescriptor object structure */
-    fe_entry *fe;               /* pointer to encoding structure */
-    integer cw_objnum;          /* object number of the font program object */
-    integer first_char;         /* first character used in this font */
-    integer last_char;          /* last character used in this font */
-    struct avl_table *tx_tree;  /* tree of non-reencoded TeX characters marked as used */
-    integer tounicode_objnum;   /* object number of ToUnicode */
-} fo_entry;
+#  include "utils/utils.h"
+#  include "image/writejbig2.h"
+#  include "image/pdftoepdf.h"
 
 /**********************************************************************/
 
 typedef short shalfword;
-typedef struct {
-    integer charcode, cwidth, cheight, xoff, yoff, xescape, rastersize;
-    halfword *raster;
-} chardesc;
-
-/* pdftexlib variable declarations */
-extern boolean true_dimen;
-extern char **t1_glyph_names, *t1_builtin_glyph_names[];
-extern char *cur_file_name;
-extern const char notdef[];
-extern integer t1_length1, t1_length2, t1_length3;
-extern integer ttf_length;
-extern strnumber last_tex_string;
-extern size_t last_ptr_index;
 
 /* loadpool.c */
-
 int loadpoolstrings(integer spare_size);
 
-/* filename.c */
+/* tex/filename.c */
 extern void scan_file_name(void);
 extern void pack_job_name(char *s);
 extern void prompt_file_name(char *s, char *e);
 extern str_number make_name_string(void);
 extern void print_file_name(str_number, str_number, str_number);
 
-/* luainit.c */
+/* lua/luainit.c */
 extern void write_svnversion(char *a);
 
-/* pdftexlib function prototypes */
-
-/* epdf.c */
-extern integer get_fontfile_num(int);
-extern integer get_fontname_num(int);
-extern void epdf_free(void);
-
-/* papersiz.c */
-extern integer myatodim(char **);
-extern integer myatol(char **);
-
-/* pkin.c */
-extern int readchar(boolean, chardesc *);
-
-/* subfont.c */
-extern void sfd_free(void);
-extern boolean handle_subfont_fm(fm_entry *, int);
-
-/* tounicode.c */
-extern void glyph_unicode_free(void);
-extern void def_tounicode(strnumber, strnumber);
-extern integer write_tounicode(char **, char *);
-
-/* utils.c */
-extern char *makecstring(integer);
-extern char *makeclstring(integer, size_t *);
-extern void print_string(char *j);
-extern void append_string(char *s);
-extern void getcreationdate(void);
-extern void tconfusion(char *s);
-extern void tprint(char *s);
-extern void tprint_nl(char *s);
-extern void tprint_esc(char *s);
-extern char *stripzeros(char *);
-
-#  define overflow_string(a,b) { overflow(maketexstring(a),b); flush_str(last_tex_string); }
-
-extern int xfflush(FILE *);
-extern int xgetc(FILE *);
-extern int xputc(int, FILE *);
-extern scaled ext_xn_over_d(scaled, scaled, scaled);
-extern size_t xfwrite(void *, size_t size, size_t nmemb, FILE *);
-extern strnumber get_resname_prefix(void);
-extern strnumber maketexstring(const char *);
-extern strnumber maketexlstring(const char *, size_t);
-extern integer fb_offset(void);
-extern void fb_flush(void);
-extern void fb_putchar(eight_bits b);
-extern void fb_seek(integer);
-extern void libpdffinish(void);
-extern char *makecfilename(strnumber s);
-extern void make_subset_tag(fd_entry *);
-__attribute__ ((format(printf, 1, 2)))
-extern void pdf_printf(const char *, ...);
-extern void pdf_puts(const char *);
-__attribute__ ((noreturn, format(printf, 1, 2)))
-extern void pdftex_fail(const char *, ...);
-__attribute__ ((format(printf, 1, 2)))
-extern void pdftex_warn(const char *, ...);
-extern void set_job_id(int, int, int, int);
-__attribute__ ((format(printf, 1, 2)))
-extern void tex_printf(const char *, ...);
-extern void write_stream_length(integer, longinteger);
-extern char *convertStringToPDFString(const char *in, int len);
-extern void print_ID(strnumber);
-extern void print_creation_date();
-extern void print_mod_date();
-extern void escapename(poolpointer in);
-extern void escapestring(poolpointer in);
-extern void escapehex(poolpointer in);
-extern void unescapehex(poolpointer in);
-extern void make_pdftex_banner(void);
-extern void init_start_time();
-extern void remove_pdffile(void);
-extern void garbage_warning(void);
-extern void initversionstring(char **versions);
-extern int newcolorstack(integer s, integer literal_mode, boolean pagestart);
-extern int colorstackused();
-extern integer colorstackset(int colstack_no, integer s);
-extern integer colorstackpush(int colstack_no, integer s);
-extern integer colorstackpop(int colstack_no);
-extern integer colorstackcurrent(int colstack_no);
-extern integer colorstackskippagestart(int colstack_no);
-extern void checkpdfsave(scaledpos pos);
-extern void checkpdfrestore(scaledpos pos);
-extern void pdfshipoutbegin(boolean shipping_page);
-extern void pdfshipoutend(boolean shipping_page);
-extern void pdfsetmatrix(poolpointer in, scaledpos pos);
-extern void matrixtransformpoint(scaled x, scaled y);
-extern void matrixtransformrect(scaled llx, scaled lly, scaled urx, scaled ury);
-extern boolean matrixused();
-extern void matrixrecalculate(scaled urx);
-extern scaled getllx();
-extern scaled getlly();
-extern scaled geturx();
-extern scaled getury();
-
-/* writeenc.c */
-extern fe_entry *get_fe_entry(char *);
-extern void enc_free(void);
-extern void write_fontencodings(void);
-
-/* writefont.c */
-extern void do_pdf_font(integer, internalfontnumber);
-extern fd_entry *lookup_fd_entry(char *, integer, integer);
-extern fd_entry *new_fd_entry(void);
-extern void write_fontstuff();
-
-/* writeimg.c */
-extern boolean check_image_b(integer);
-extern boolean check_image_c(integer);
-extern boolean check_image_i(integer);
-extern boolean is_pdf_image(integer);
-extern boolean is_png_image(integer);
-extern integer image_pages(integer);
-extern integer image_index(integer);
-extern integer image_width(integer);
-extern integer image_height(integer);
-extern integer image_depth(integer);
-extern integer image_objnum(integer);
-extern integer image_imgnum(integer);
-extern integer new_image_entry(void);
-extern integer read_image(integer, integer, strnumber, integer, strnumber,
-                          strnumber, integer, integer, integer, integer);
-extern void img_free(void);
-extern void update_image_procset(integer);
-extern void write_image(integer);
-extern integer image_colordepth(integer img);
-extern integer image_groupref(integer img);
-extern void scale_image(integer);
-extern void set_image_dimensions(integer, integer, integer, integer);
-extern void set_image_index(integer, integer);
-extern void out_image(integer, scaled, scaled);
-extern void dumpimagemeta(void);
-extern void undumpimagemeta(integer, integer);
-extern void pdf_print_resname_prefix(void);
-
-/* writejbig2.c */
-extern void flush_jbig2_page0_objects();
-
-/* writet1.c */
-extern boolean t1_subset(char *, char *, unsigned char *);
-extern char **load_enc_file(char *);
-extern void writet1(fd_entry *);
-extern void t1_free(void);
-
-/* writet3.c */
-extern void writet3(int, internalfontnumber);
-extern scaled get_pk_char_width(internalfontnumber, scaled);
-
-/* writettf.c */
-extern void writettf(fd_entry *);
-extern void writeotf(fd_entry *);
-extern void ttf_free(void);
-
-/* writezip.c */
+/* utils/writezip.c */
 extern void write_zip(boolean);
 extern void zip_free(void);
-
-/* avlstuff.c */
-extern int comp_int_entry(const void *, const void *, void *);
-extern int comp_string_entry(const void *, const void *, void *);
-extern void avl_put_obj(integer, integer);
-extern integer avl_find_obj(integer, integer, integer);
-
-/**********************************************************************/
-static const key_entry font_key[FONT_KEYS_NUM] = {
-    {"Ascent", "Ascender", 1}
-    , {"CapHeight", "CapHeight", 1}
-    , {"Descent", "Descender", 1}
-    , {"ItalicAngle", "ItalicAngle", 1}
-    , {"StemV", "StdVW", 1}
-    , {"XHeight", "XHeight", 1}
-    , {"FontBBox", "FontBBox", 1}
-    , {"", "", 0}
-    , {"", "", 0}
-    , {"", "", 0}
-    , {"FontName", "FontName", 1}
-};
 
 /**********************************************************************/
 
@@ -354,9 +85,6 @@ typedef enum {
     new_string = 21
 } selector_settings;
 
-
-#  include "font/texfont.h"
-
 /* language stuff */
 
 typedef struct _lang_variables {
@@ -365,7 +93,6 @@ typedef struct _lang_variables {
     int pre_exhyphen_char;
     int post_exhyphen_char;
 } lang_variables;
-
 
 #  include "hyphen.h"
 
@@ -408,7 +135,7 @@ extern halfword new_ligkern(halfword head, halfword tail);
 extern halfword handle_ligaturing(halfword head, halfword tail);
 extern halfword handle_kerning(halfword head, halfword tail);
 
-#  define push_dir(a)                               \
+#  define push_dir(a)                           \
   { dir_tmp=new_dir((a));                       \
     vlink(dir_tmp)=dir_ptr; dir_ptr=dir_tmp;    \
     dir_ptr=dir_tmp;                            \
@@ -423,13 +150,11 @@ extern halfword handle_kerning(halfword head, halfword tail);
     vlink(dir_tmp)=dir_ptr; dir_ptr=dir_tmp;    \
   }
 
-#  define pop_dir_node()                    \
-  { dir_tmp=dir_ptr;                    \
-    dir_ptr=vlink(dir_tmp);             \
-    flush_node(dir_tmp);                \
+#  define pop_dir_node()                        \
+  { dir_tmp=dir_ptr;                            \
+    dir_ptr=vlink(dir_tmp);                     \
+    flush_node(dir_tmp);                        \
   }
-
-
 
 #  define dir_parallel(a,b) (((a) % 2)==((b) % 2))
 #  define dir_orthogonal(a,b) (((a) % 2)!=((b) % 2))
@@ -571,7 +296,6 @@ mathcodeval scan_delimiter_as_mathchar(int extcode);
 mathcodeval mathchar_from_integer(integer value, int extcode);
 void show_mathcode_value(mathcodeval d);
 
-
 typedef struct delcodeval {
     integer class_value;
     integer origin_value;
@@ -594,18 +318,18 @@ void initialize_math_codes(void);
 void dump_math_codes(void);
 void undump_math_codes(void);
 
-/* texlang.c */
+/* lang/texlang.c */
 
 void dump_language_data(void);
 void undump_language_data(void);
 char *exception_strings(struct tex_language *lang);
 
-/* llualib.c */
+/* lua/llualib.c */
 
 void dump_luac_registers(void);
 void undump_luac_registers(void);
 
-/* ltexlib.c */
+/* lua/ltexlib.c */
 void luacstring_start(int n);
 void luacstring_close(int n);
 integer luacstring_cattable(void);
@@ -613,58 +337,41 @@ int luacstring_input(void);
 int luacstring_partial(void);
 int luacstring_final_line(void);
 
-/* luatoken.c */
+/* lua/luatoken.c */
 void do_get_token_lua(integer callback_id);
 
-/* luanode.c */
+/* lua/luanode.c */
 int visible_last_node_type(int n);
-void print_node_mem_stats(int n, int o);
+void print_node_mem_stats(void);
 
-/* writeimg.c */
-integer epdf_xsize(integer i);
-integer epdf_ysize(integer i);
-integer epdf_orig_y(integer i);
-integer epdf_orig_x(integer i);
-
-/* limglib.c */
+/* lua/limglib.c */
 void vf_out_image(unsigned i);
 
-/* vfovf.c */
-void vf_expand_local_fonts(internal_font_number f);
-internal_font_number letter_space_font(halfword u, internal_font_number f,
-                                       integer e);
-internal_font_number auto_expand_font(internal_font_number f, integer e);
-str_number expand_font_name(internal_font_number f, integer e);
-void pdf_check_vf_cur_val(void);
-internal_font_number copy_font_info(internal_font_number f);
-
-/* ltexiolib.c */
+/* lua/ltexiolib.c */
 void flush_loggable_info(void);
 
-/* luastuff.c */
+/* lua/luastuff.c */
 void luacall(int s, int nameptr);
 void luatokencall(int p, int nameptr);
 
 extern void check_texconfig_init(void);
 
-void tex_error(char *msg, char **hlp);
-
 scaled divide_scaled(scaled s, scaled m, integer dd);
 scaled divide_scaled_n(double s, double m, double d);
 
-/* mlist.c */
+/* tex/mlist.c */
 void run_mlist_to_hlist(pointer p, integer m_style, boolean penalties);
 void fixup_math_parameters(integer fam_id, integer size_id, integer f,
                            integer lvl);
 
-/* texpdf.c */
+/* tex/texpdf.c */
 void pdf_print_char(internal_font_number f, integer c);
 void pdf_print(str_number n);
 void pdf_print_str(str_number n);
 void pdf_print_int(longinteger n);
 void pdf_print_real(integer m, integer d);
 
-/* textoken.c */
+/* tex/textoken.c */
 
 #  define  NO_CAT_TABLE      -2
 #  define  DEFAULT_CAT_TABLE -1
@@ -678,14 +385,13 @@ halfword active_to_cs(int, int);
 void get_token_lua(void);
 int get_char_cat_code(int);
 
-/* texdeffont.c */
+/* tex/texdeffont.c */
 
 void tex_def_font(small_number a);
 
 /* lcallbacklib.c */
 
 #  include <../lua51/lua.h>
-
 
 typedef enum {
     find_write_file_callback = 1,
@@ -748,4 +454,4 @@ extern char *get_lua_name(int i);
 #  include "texmath.h"
 #  include "primitive.h"
 
-#endif                          /* PDFTEXLIB */
+#endif                          /* PTEXLIB_H */

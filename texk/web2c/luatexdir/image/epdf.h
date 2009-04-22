@@ -1,7 +1,7 @@
 /* epdf.h
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: epdf.h 2073 2009-03-21 10:06:50Z hhenkel $ */
+/* $Id: epdf.h 2327 2009-04-18 12:47:21Z hhenkel $ */
 
 extern "C" {
 
@@ -47,7 +47,7 @@ extern "C" {
 #include "image.h"
 #include "../utils/avlstuff.h"
 
-/* #-define pdfbufsize      pdfbufmax */
+    extern void unrefPdfDocument(char *);
 
     extern integer epdf_page_box;
     extern void *epdf_xref;

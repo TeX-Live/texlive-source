@@ -45,7 +45,8 @@
 #include "epdf.h"
 
 static const char _svn_version[] =
-    "$Id: pdftoepdf.cc 2195 2009-03-31 14:09:50Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
+    "$Id: pdftoepdf.cc 2325 2009-04-18 11:24:38Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
 
 #define one_hundred_bp  6578176 /* 7227 * 65536 / 72 */
 

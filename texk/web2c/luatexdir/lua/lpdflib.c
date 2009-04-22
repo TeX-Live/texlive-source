@@ -21,7 +21,8 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: lpdflib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lpdflib.c $";
+    "$Id: lpdflib.c 2329 2009-04-18 14:25:30Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lpdflib.c $";
 
 static int findcurv(lua_State * L)
 {
@@ -97,9 +98,6 @@ int luapdfprint(lua_State * L)
     }
     return 0;
 }
-
-/* DANGER! this should go into some header file */
-#define obj_type_others 0
 
 static int l_immediateobj(lua_State * L)
 {

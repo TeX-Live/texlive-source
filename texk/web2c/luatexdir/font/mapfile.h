@@ -17,10 +17,68 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: mapfile.h 2271 2009-04-12 23:42:21Z oneiros $ */
+/* $Id: mapfile.h 2331 2009-04-18 16:39:50Z hhenkel $ */
 
 #ifndef MAPFILE_H
 #  define MAPFILE_H
+
+#  define F_INCLUDED          0x01
+#  define F_SUBSETTED         0x02
+#  define F_STDT1FONT         0x04
+#  define F_SUBFONT           0x08
+#  define F_TYPE1             0x10
+#  define F_TRUETYPE          0x20
+#  define F_OTF               0x40
+#  define F_CIDKEYED          0x80
+
+#  define set_included(fm)    ((fm)->type |= F_INCLUDED)
+#  define set_subsetted(fm)   ((fm)->type |= F_SUBSETTED)
+#  define set_std_t1font(fm)  ((fm)->type |= F_STDT1FONT)
+#  define set_subfont(fm)     ((fm)->type |= F_SUBFONT)
+#  define set_type1(fm)       ((fm)->type |= F_TYPE1)
+#  define set_truetype(fm)    ((fm)->type |= F_TRUETYPE)
+#  define set_opentype(fm)    ((fm)->type |= F_OTF)
+#  define set_subfont(fm)     ((fm)->type |= F_SUBFONT)
+#  define set_cidkeyed(fm)    ((fm)->type |= F_CIDKEYED)
+
+#  define unset_included(fm)  ((fm)->type &= ~F_INCLUDED)
+#  define unset_subsetted(fm) ((fm)->type &= ~F_SUBSETTED)
+#  define unset_std_t1font(fm)((fm)->type &= ~F_STDT1FONT)
+#  define unset_subfont(fm)   ((fm)->type &= ~F_SUBFONT)
+#  define unset_type1(fm)     ((fm)->type &= ~F_TYPE1)
+#  define unset_truetype(fm)  ((fm)->type &= ~F_TRUETYPE)
+#  define unset_opentype(fm)  ((fm)->type &= ~F_OTF)
+#  define unset_subfont(fm)   ((fm)->type &= ~F_SUBFONT)
+#  define unset_cidkeyed(fm)  ((fm)->type &= ~F_CIDKEYED)
+
+#  define is_included(fm)     (((fm)->type & F_INCLUDED) != 0)
+#  define is_subsetted(fm)    (((fm)->type & F_SUBSETTED) != 0)
+#  define is_std_t1font(fm)   (((fm)->type & F_STDT1FONT) != 0)
+#  define is_subfont(fm)      (((fm)->type & F_SUBFONT) != 0)
+#  define is_type1(fm)        (((fm)->type & F_TYPE1) != 0)
+#  define is_truetype(fm)     (((fm)->type & F_TRUETYPE) != 0)
+#  define is_opentype(fm)     (((fm)->type & F_OTF) != 0)
+#  define is_subfont(fm)      (((fm)->type & F_SUBFONT) != 0)
+#  define is_cidkeyed(fm)     (((fm)->type & F_CIDKEYED) != 0)
+
+#  define fm_slant(fm)        (fm)->slant
+#  define fm_extend(fm)       (fm)->extend
+#  define fm_fontfile(fm)     (fm)->ff_name
+
+#  define is_reencoded(fm)    ((fm)->encname != NULL)
+#  define is_fontfile(fm)     (fm_fontfile(fm) != NULL)
+#  define is_t1fontfile(fm)   (is_fontfile(fm) && is_type1(fm))
+#  define is_builtin(fm)      (!is_fontfile(fm))
+
+#  define LINK_TFM            0x01
+#  define LINK_PS             0x02
+#  define set_tfmlink(fm)     ((fm)->links |= LINK_TFM)
+#  define set_pslink(fm)      ((fm)->links |= LINK_PS)
+#  define unset_tfmlink(fm)   ((fm)->links &= ~LINK_TFM)
+#  define unset_pslink(fm)    ((fm)->links &= ~LINK_PS)
+#  define has_tfmlink(fm)     ((fm)->links & LINK_TFM)
+#  define has_pslink(fm)      ((fm)->links & LINK_PS)
+
 /**********************************************************************/
 
 typedef struct {
@@ -61,6 +119,6 @@ fm_entry *new_fm_entry(void);
 void delete_fm_entry(fm_entry *);
 int avl_do_entry(fm_entry *, int);
 int check_std_t1font(char *s);
+int is_subsetable(fm_entry * fm);
 
-/**********************************************************************/
-#endif
+#endif                          /* MAPFILE_H */

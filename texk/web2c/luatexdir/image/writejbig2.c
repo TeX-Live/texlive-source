@@ -1,7 +1,7 @@
 /* writejbig2.c
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -80,36 +80,134 @@ object exists, reference it. Else create fresh one.
 
 ***********************************************************************/
 
-#include "writejbig2.h"
-
 static const char _svn_version[] =
-    "$Id: writejbig2.c 1407 2008-07-15 10:49:28Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejbig2.c $";
+    "$Id: writejbig2.c 2315 2009-04-17 23:34:42Z hhenkel $ "
+    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejbig2.c $";
 
 #undef DEBUG
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <assert.h>
+#include "ptexlib.h"
+#include "ptexmac.h"
+#include "image.h"
+
 /**********************************************************************/
 
-struct avl_table *file_tree = NULL;
+/* 7.3 Segment types */
+#define M_SymbolDictionary 0
+#define M_IntermediateTextRegion 4
+#define M_ImmediateTextRegion 6
+#define M_ImmediateLosslessTextRegion 7
+#define M_PatternDictionary 16
+#define M_IntermediateHalftoneRegion 20
+#define M_ImmediateHalftoneRegion 22
+#define M_ImmediateLosslessHalftoneRegion 23
+#define M_IntermediateGenericRegion 36
+#define M_ImmediateGenericRegion 38
+#define M_ImmediateLosslessGenericRegion 39
+#define M_IntermediateGenericRefinementRegion 40
+#define M_ImmediateGenericRefinementRegion 42
+#define M_ImmediateLosslessGenericRefinementRegion 43
+#define M_PageInformation 48
+#define M_EndOfPage 49
+#define M_EndOfStripe 50
+#define M_EndOfFile 51
+#define M_Profiles 52
+#define M_Tables 53
+#define M_Extension 62
+
+/**********************************************************************/
+
+typedef enum { INITIAL, HAVEINFO, WRITEPDF } PHASE;
+
+typedef struct _LITEM {
+    struct _LITEM *prev;
+    struct _LITEM *next;
+    void *d;                    /* data */
+} LITEM;
+
+typedef struct _LIST {
+    LITEM *first;
+    LITEM *last;
+    struct avl_table *tree;
+} LIST;
+
+typedef struct _SEGINFO {
+    unsigned long segnum;
+    boolean isrefered;
+    boolean refers;
+    unsigned int seghdrflags;   /* set by readseghdr() */
+    boolean pageassocsizeflag;  /* set by readseghdr() */
+    unsigned int reftosegcount; /* set by readseghdr() */
+    unsigned int countofrefered;        /* set by readseghdr() */
+    unsigned int fieldlen;      /* set by readseghdr() */
+    unsigned int segnumwidth;   /* set by readseghdr() */
+    long segpage;               /* set by readseghdr() */
+    unsigned long segdatalen;   /* set by readseghdr() */
+    unsigned long hdrstart;     /* set by readseghdr() */
+    unsigned long hdrend;       /* set by readseghdr() */
+    unsigned long datastart;
+    unsigned long dataend;
+    boolean endofstripeflag;    /* set by checkseghdrflags() */
+    boolean endofpageflag;      /* set by checkseghdrflags() */
+    boolean pageinfoflag;       /* set by checkseghdrflags() */
+    boolean endoffileflag;      /* set by checkseghdrflags() */
+} SEGINFO;
+
+typedef struct _PAGEINFO {
+    LIST segments;              /* segments associated with page */
+    unsigned long pagenum;
+    unsigned int width;
+    unsigned int height;
+    unsigned int xres;
+    unsigned int yres;
+    unsigned int pagesegmentflags;
+    unsigned int stripinginfo;
+    unsigned int stripedheight;
+} PAGEINFO;
+
+typedef struct _FILEINFO {
+    FILE *file;
+    char *filepath;
+    long filesize;
+    LIST pages;                 /* not including page0 */
+    LIST page0;
+    unsigned int filehdrflags;  /* set by readfilehdr() */
+    boolean sequentialaccess;   /* set by readfilehdr() */
+    unsigned long numofpages;   /* set by readfilehdr() */
+    unsigned long streamstart;  /* set by get_jbig2_info() */
+    unsigned long pdfpage0objnum;
+    PHASE phase;
+} FILEINFO;
+
+/**********************************************************************/
+
+static struct avl_table *file_tree = NULL;
 
 static int comp_file_entry(const void *pa, const void *pb, void *p)
 {
+    (void) p;
     return strcmp(((const FILEINFO *) pa)->filepath,
                   ((const FILEINFO *) pb)->filepath);
 }
 
 static int comp_page_entry(const void *pa, const void *pb, void *p)
 {
+    (void) p;
     return ((const PAGEINFO *) pa)->pagenum - ((const PAGEINFO *) pb)->pagenum;
 }
 
 static int comp_segment_entry(const void *pa, const void *pb, void *p)
 {
+    (void) p;
     return ((const SEGINFO *) pa)->segnum - ((const SEGINFO *) pb)->segnum;
 }
 
 /**********************************************************************/
 
-int ygetc(FILE * stream)
+static int ygetc(FILE * stream)
 {
     int c = getc(stream);
     if (c < 0) {
@@ -123,7 +221,33 @@ int ygetc(FILE * stream)
 
 /**********************************************************************/
 
-FILEINFO *new_fileinfo()
+static void initlinkedlist(LIST * lp)
+{
+    lp->first = NULL;
+    lp->last = NULL;
+    lp->tree = NULL;
+}
+
+static LIST *litem_append(LIST * lp)
+{
+    LITEM *ip;
+    ip = xtalloc(1, LITEM);
+    if (lp->first == NULL) {
+        lp->first = ip;
+        ip->prev = NULL;
+    } else {
+        lp->last->next = ip;
+        ip->prev = lp->last;
+    }
+    lp->last = ip;
+    ip->next = NULL;
+    ip->d = NULL;
+    return lp;
+}
+
+/**********************************************************************/
+
+static FILEINFO *new_fileinfo()
 {
     FILEINFO *fip;
     fip = xtalloc(1, FILEINFO);
@@ -141,7 +265,7 @@ FILEINFO *new_fileinfo()
     return fip;
 }
 
-PAGEINFO *new_pageinfo()
+static PAGEINFO *new_pageinfo()
 {
     PAGEINFO *pip;
     pip = xtalloc(1, PAGEINFO);
@@ -157,7 +281,7 @@ PAGEINFO *new_pageinfo()
     return pip;
 }
 
-void init_seginfo(SEGINFO * sip)
+static void init_seginfo(SEGINFO * sip)
 {
     sip->segnum = 0;
     sip->isrefered = false;
@@ -182,33 +306,7 @@ void init_seginfo(SEGINFO * sip)
 
 /**********************************************************************/
 
-void initlinkedlist(LIST * lp)
-{
-    lp->first = NULL;
-    lp->last = NULL;
-    lp->tree = NULL;
-}
-
-LIST *litem_append(LIST * lp)
-{
-    LITEM *ip;
-    ip = xtalloc(1, LITEM);
-    if (lp->first == NULL) {
-        lp->first = ip;
-        ip->prev = NULL;
-    } else {
-        lp->last->next = ip;
-        ip->prev = lp->last;
-    }
-    lp->last = ip;
-    ip->next = NULL;
-    ip->d = NULL;
-    return lp;
-}
-
-/**********************************************************************/
-
-void pages_maketree(LIST * plp)
+static void pages_maketree(LIST * plp)
 {
     LITEM *ip;
     void **aa;
@@ -221,7 +319,7 @@ void pages_maketree(LIST * plp)
     }
 }
 
-void segments_maketree(LIST * slp)
+static void segments_maketree(LIST * slp)
 {
     LITEM *ip;
     void **aa;
@@ -236,7 +334,7 @@ void segments_maketree(LIST * slp)
 
 /**********************************************************************/
 
-PAGEINFO *find_pageinfo(LIST * plp, unsigned long pagenum)
+static PAGEINFO *find_pageinfo(LIST * plp, unsigned long pagenum)
 {
     PAGEINFO tmp;
     tmp.pagenum = pagenum;
@@ -244,7 +342,7 @@ PAGEINFO *find_pageinfo(LIST * plp, unsigned long pagenum)
     return (PAGEINFO *) avl_find(plp->tree, &tmp);
 }
 
-SEGINFO *find_seginfo(LIST * slp, unsigned long segnum)
+static SEGINFO *find_seginfo(LIST * slp, unsigned long segnum)
 {
     SEGINFO tmp;
     tmp.segnum = segnum;
@@ -254,13 +352,13 @@ SEGINFO *find_seginfo(LIST * slp, unsigned long segnum)
 
 /**********************************************************************/
 
-unsigned int read2bytes(FILE * f)
+static unsigned int read2bytes(FILE * f)
 {
     unsigned int c = ygetc(f);
     return (c << 8) + ygetc(f);
 }
 
-unsigned long read4bytes(FILE * f)
+static unsigned long read4bytes(FILE * f)
 {
     unsigned int l = read2bytes(f);
     return (l << 16) + read2bytes(f);
@@ -268,7 +366,7 @@ unsigned long read4bytes(FILE * f)
 
 /**********************************************************************/
 
-unsigned long getstreamlen(LITEM * slip, boolean refer)
+static unsigned long getstreamlen(LITEM * slip, boolean refer)
 {
     SEGINFO *sip;
     unsigned long len = 0;
@@ -282,7 +380,7 @@ unsigned long getstreamlen(LITEM * slip, boolean refer)
 
 /**********************************************************************/
 
-void readfilehdr(FILEINFO * fip)
+static void readfilehdr(FILEINFO * fip)
 {
     unsigned int i;
     /* Annex D.4 File header syntax */
@@ -308,13 +406,61 @@ void readfilehdr(FILEINFO * fip)
 }
 
 /**********************************************************************/
+
+static void checkseghdrflags(SEGINFO * sip)
+{
+    sip->endofstripeflag = false;
+    sip->endofpageflag = false;
+    sip->pageinfoflag = false;
+    sip->endoffileflag = false;
+    /* 7.3 Segment types */
+    switch (sip->seghdrflags & 0x3f) {
+    case M_SymbolDictionary:
+    case M_IntermediateTextRegion:
+    case M_ImmediateTextRegion:
+    case M_ImmediateLosslessTextRegion:
+    case M_PatternDictionary:
+    case M_IntermediateHalftoneRegion:
+    case M_ImmediateHalftoneRegion:
+    case M_ImmediateLosslessHalftoneRegion:
+    case M_IntermediateGenericRegion:
+    case M_ImmediateGenericRegion:
+    case M_ImmediateLosslessGenericRegion:
+    case M_IntermediateGenericRefinementRegion:
+    case M_ImmediateGenericRefinementRegion:
+    case M_ImmediateLosslessGenericRefinementRegion:
+        break;
+    case M_PageInformation:
+        sip->pageinfoflag = true;
+        break;
+    case M_EndOfPage:
+        sip->endofpageflag = true;
+        break;
+    case M_EndOfStripe:
+        sip->endofstripeflag = true;
+        break;
+    case M_EndOfFile:
+        sip->endoffileflag = true;
+        break;
+    case M_Profiles:
+    case M_Tables:
+    case M_Extension:
+        break;
+    default:
+        pdftex_fail
+            ("checkseghdrflags(): unknown segment type in JBIG2 image file");
+        break;
+    }
+}
+
+/**********************************************************************/
 /* for first reading of file; return value tells if header been read */
 
-boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
+static boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
 {
     unsigned int i;
     sip->hdrstart = xftell(fip->file, fip->filepath);
-    if (fip->sequentialaccess && sip->hdrstart == fip->filesize)
+    if (fip->sequentialaccess && sip->hdrstart == (unsigned) fip->filesize)
         return false;           /* no endoffileflag is ok for sequentialaccess */
 #ifdef DEBUG
     printf("\nhdrstart %d\n", sip->hdrstart);
@@ -375,9 +521,26 @@ boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
 }
 
 /**********************************************************************/
+
+static void checkseghdr(FILEINFO * fip, SEGINFO * sip);
+
+static void markpage0seg(FILEINFO * fip, unsigned long referedseg)
+{
+    PAGEINFO *pip;
+    SEGINFO *sip;
+    pip = fip->page0.first->d;
+    sip = find_seginfo(&(pip->segments), referedseg);
+    if (sip != NULL) {
+        if (!sip->refers && sip->countofrefered > 0)
+            checkseghdr(fip, sip);
+        sip->isrefered = true;
+    }
+}
+
+/**********************************************************************/
 /* for writing, marks refered page0 segments, sets segpage > 0 to 1 */
 
-void writeseghdr(FILEINFO * fip, SEGINFO * sip)
+static void writeseghdr(FILEINFO * fip, SEGINFO * sip)
 {
     unsigned int i;
     unsigned long referedseg = 0;
@@ -428,7 +591,7 @@ void writeseghdr(FILEINFO * fip, SEGINFO * sip)
 /**********************************************************************/
 /* for recursive marking of refered page0 segments */
 
-void checkseghdr(FILEINFO * fip, SEGINFO * sip)
+static void checkseghdr(FILEINFO * fip, SEGINFO * sip)
 {
     unsigned int i;
     unsigned long referedseg = 0;
@@ -465,70 +628,7 @@ void checkseghdr(FILEINFO * fip, SEGINFO * sip)
 
 /**********************************************************************/
 
-void checkseghdrflags(SEGINFO * sip)
-{
-    sip->endofstripeflag = false;
-    sip->endofpageflag = false;
-    sip->pageinfoflag = false;
-    sip->endoffileflag = false;
-    /* 7.3 Segment types */
-    switch (sip->seghdrflags & 0x3f) {
-    case M_SymbolDictionary:
-    case M_IntermediateTextRegion:
-    case M_ImmediateTextRegion:
-    case M_ImmediateLosslessTextRegion:
-    case M_PatternDictionary:
-    case M_IntermediateHalftoneRegion:
-    case M_ImmediateHalftoneRegion:
-    case M_ImmediateLosslessHalftoneRegion:
-    case M_IntermediateGenericRegion:
-    case M_ImmediateGenericRegion:
-    case M_ImmediateLosslessGenericRegion:
-    case M_IntermediateGenericRefinementRegion:
-    case M_ImmediateGenericRefinementRegion:
-    case M_ImmediateLosslessGenericRefinementRegion:
-        break;
-    case M_PageInformation:
-        sip->pageinfoflag = true;
-        break;
-    case M_EndOfPage:
-        sip->endofpageflag = true;
-        break;
-    case M_EndOfStripe:
-        sip->endofstripeflag = true;
-        break;
-    case M_EndOfFile:
-        sip->endoffileflag = true;
-        break;
-    case M_Profiles:
-    case M_Tables:
-    case M_Extension:
-        break;
-    default:
-        pdftex_fail
-            ("checkseghdrflags(): unknown segment type in JBIG2 image file");
-        break;
-    }
-}
-
-/**********************************************************************/
-
-void markpage0seg(FILEINFO * fip, unsigned long referedseg)
-{
-    PAGEINFO *pip;
-    SEGINFO *sip;
-    pip = fip->page0.first->d;
-    sip = find_seginfo(&(pip->segments), referedseg);
-    if (sip != NULL) {
-        if (!sip->refers && sip->countofrefered > 0)
-            checkseghdr(fip, sip);
-        sip->isrefered = true;
-    }
-}
-
-/**********************************************************************/
-
-unsigned long findstreamstart(FILEINFO * fip)
+static unsigned long findstreamstart(FILEINFO * fip)
 {
     SEGINFO tmp;
     assert(!fip->sequentialaccess);     /* D.2 Random-access organisation */
@@ -542,7 +642,7 @@ unsigned long findstreamstart(FILEINFO * fip)
 
 /**********************************************************************/
 
-void rd_jbig2_info(FILEINFO * fip)
+static void rd_jbig2_info(FILEINFO * fip)
 {
     unsigned long seekdist = 0; /* for sequential-access only */
     unsigned long streampos = 0;        /* for random-access only */
@@ -564,7 +664,7 @@ void rd_jbig2_info(FILEINFO * fip)
         if (!readseghdr(fip, sip) || sip->endoffileflag)
             break;
         if (sip->segpage > 0) {
-            if (sip->segpage > currentpage) {
+            if (sip->segpage > (int) currentpage) {
                 plp = litem_append(&(fip->pages));
                 plp->last->d = new_pageinfo();
                 currentpage = sip->segpage;
@@ -625,7 +725,7 @@ void rd_jbig2_info(FILEINFO * fip)
 
 /**********************************************************************/
 
-void wr_jbig2(FILEINFO * fip, unsigned long page)
+static void wr_jbig2(FILEINFO * fip, unsigned long page)
 {
     LITEM *slip;
     PAGEINFO *pip;
@@ -719,8 +819,6 @@ void read_jbig2_info(image_dict * idict)
     img_colordepth(idict) = 1;
 }
 
-/**********************************************************************/
-
 void write_jbig2(image_dict * idict)
 {
     FILEINFO *fip, tmp;
@@ -736,8 +834,6 @@ void write_jbig2(image_dict * idict)
     wr_jbig2(fip, pip->pagenum);
     img_file(idict) = NULL;
 }
-
-/**********************************************************************/
 
 void flush_jbig2_page0_objects()
 {

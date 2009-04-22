@@ -106,7 +106,6 @@ Tue Jul 1 15:23:00 UTC 2008
 #define ruleht rule_ht
 #define ruledp rule_dp
 #define rulewd rule_wd
-#define zmem varmem
 #define jobname job_name
 #define totalpages total_pages
 #define curinput cur_input
@@ -124,7 +123,6 @@ Tue Jul 1 15:23:00 UTC 2008
  *  and *tex.web for details, the synctex_ prefix prevents name conflicts, it
  *  is some kind of namespace
 */
-#   warning These structures MUST be kept in synchronization with the main program
 /*  synctexoption is a global integer variable defined in *tex.web
  *  it is set to 1 by texmfmp.c if the command line has the '-synctex=1'
  *  option.  */
@@ -132,13 +130,8 @@ Tue Jul 1 15:23:00 UTC 2008
 #   define SYNCTEX_NO_OPTION INT_MAX
 /*  if synctex_options is set to SYNCTEX_NO_OPTION, no command line option was provided.  */
 
-/*  glue code: really define the main memory,
- *  this is exactly the same "mem" as in *tex.web.  */
-#   define mem zmem
-/*  glue code: synctexoffset is a global integer variable defined in *tex.web
- *  it is set to the offset where the primitive \synctex reads and writes its
- *  value.  */
-#   define SYNCTEX_VALUE zeqtb[synctexoffset].cint
+#   define SYNCTEX_VALUE int_par(param_synctex_code)
+
 /*  if there were a mean to share the value of synctex_code between *tex.web
  *  and this file, it would be great.  */
 
@@ -186,28 +179,14 @@ Tue Jul 1 15:23:00 UTC 2008
 /*  SYNCTEX_TAG_MODEL and SYNCTEX_LINE_MODEL are used to define
  *  SYNCTEX_TAG and SYNCTEX_LINE in a model independant way
  *  Both are tag and line accessors */
-/*#   define box_node_size (7+synchronization_field_size)*/
-/*  see: @d box_node_size=...  
- *  There should be an automatic process here because these definitions
- *  are redundant. However, this process would certainly be overcomplicated
- *  (building then parsing the *tex.web file would be a pain) */
-#   define width_offset 2
-/*  see: @d width_offset=...  */
-#   define depth_offset 3
-/*  see: @d depth_offset=...  */
-#   define height_offset 4
-/*  see: @d height_offset=...  */
 
 /*  Now define the local version of width(##), height(##) and depth(##) macros
         These only depend on the 3 macros above.  */
 #   define SYNCTEX_TYPE(NODE) type(NODE)
-/*#   define rule_node 2*/
-/*#   define glue_node 10*/
-/*#   define kern_node 11*/
 #   define SYNCTEX_SUBTYPE(NODE) subtype(NODE)
-#   define SYNCTEX_WIDTH(NODE) mem[NODE+width_offset].cint
-#   define SYNCTEX_DEPTH(NODE) mem[NODE+depth_offset].cint
-#   define SYNCTEX_HEIGHT(NODE) mem[NODE+height_offset].cint
+#   define SYNCTEX_WIDTH(NODE) width(NODE)
+#   define SYNCTEX_DEPTH(NODE) depth(NODE)
+#   define SYNCTEX_HEIGHT(NODE) height(NODE)
 
 /*  When an hlist ships out, it can contain many different kern/glue nodes with
  *  exactly the same sync tag and line.  To reduce the size of the .synctex
@@ -235,6 +214,8 @@ Tue Jul 1 15:23:00 UTC 2008
 #   define SYNCTEX_NO_ERROR  (0)
 
 #   include "luatexd.h"
+#   include "nodes.h"
+#   include "commands.h"
 #    undef  SYNCTEX_OFFSET_IS_PDF
 #    define SYNCTEX_OFFSET_IS_PDF (pdf_output_value>0)
 #    undef  SYNCTEX_OUTPUT
@@ -518,7 +499,7 @@ void synctex_start_input(void)
 }
 
 /*  All the synctex... functions below have the smallest set of parameters.  It
- *  appears to be either the address of a node, or nothing at all.  Using zmem,
+ *  appears to be either the address of a node, or nothing at all.  Using varmem,
  *  which is the place where all the nodes are stored, one can retrieve every
  *  information about a node.  The other information is obtained through the
  *  global context variable.
@@ -731,6 +712,7 @@ static inline void synctex_record_void_vlist(halfword p);
 void synctex_void_vlist(halfword p, halfword this_box)
 {
     scaledpos pos;
+    (void)this_box;
 	SYNCTEX_RETURN_IF_DISABLED;
 #if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexvoidvlist\n");
@@ -808,6 +790,7 @@ static inline void synctex_record_void_hlist(halfword p);
 void synctex_void_hlist(halfword p, halfword this_box)
 {
     scaledpos pos;
+    (void)this_box;
 	SYNCTEX_RETURN_IF_DISABLED;
 #if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexvoidhlist\n");
@@ -858,6 +841,7 @@ void synctex_math_recorder(halfword p);
 void synctex_math(halfword p, halfword this_box)
 {
     scaledpos pos;
+    (void)this_box;
 	SYNCTEX_RETURN_IF_DISABLED;
 #if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexmath\n");
@@ -891,6 +875,7 @@ static inline void synctex_record_rule(halfword p);
 void synctex_horizontal_rule_or_glue(halfword p, halfword this_box)
 {
     scaledpos pos;
+    (void)this_box;
 	SYNCTEX_RETURN_IF_DISABLED;
 #if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexglue\n");
@@ -985,6 +970,7 @@ void synctex_char_recorder(halfword p);
 /*  this message is sent whenever a char node ships out    */
 void synctexchar(halfword p, halfword this_box)
 {
+    (void)this_box;
 	SYNCTEX_RETURN_IF_DISABLED;
 #if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexchar\n");
@@ -1013,6 +999,7 @@ void synctex_node_recorder(halfword p);
          for a node of an unknown type    */
 void synctexnode(halfword p, halfword this_box)
 {
+    (void)this_box;
 	SYNCTEX_RETURN_IF_DISABLED;
 #if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexnode\n");
@@ -1048,9 +1035,6 @@ void synctex_current(void)
     synctex_abort();
 	return;
 }
-
-#pragma mark -
-#pragma mark Glue code Recorders
 
 /*  Recording the settings  */
 static inline int synctex_record_settings(void)
@@ -1227,6 +1211,7 @@ static inline void synctex_record_vlist(halfword p)
 static inline void synctex_record_tsilv(halfword p)
 {
 	size_t len = 0;
+    (void)p;
 #if SYNCTEX_DEBUG > 999
     printf("\nSynchronize DEBUG: synctex_record_tsilv\n");
 #endif
@@ -1243,6 +1228,7 @@ static inline void synctex_record_tsilv(halfword p)
 static inline void synctex_record_void_hlist(halfword p)
 {
 	size_t len = 0;
+    (void)p;
 #if SYNCTEX_DEBUG > 999
     printf("\nSynchronize DEBUG: synctex_record_void_hlist\n");
 #endif
@@ -1290,6 +1276,7 @@ static inline void synctex_record_hlist(halfword p)
 static inline void synctex_record_tsilh(halfword p)
 {
 	size_t len = 0;
+    (void)p;
 #if SYNCTEX_DEBUG > 999
     printf("\nSynchronize DEBUG: synctex_record_tsilh\n");
 #endif
@@ -1407,9 +1394,6 @@ static inline void synctex_record_rule(halfword p)
 }
 
 
-#pragma mark -
-#pragma mark Recorders
-
 /*  Recording a "$..." line  */
 void synctex_math_recorder(halfword p)
 {
@@ -1455,6 +1439,7 @@ void synctex_kern_recorder(halfword p)
 void synctex_char_recorder(halfword p)
 {
 	size_t len = 0;
+    (void)p;
 #if SYNCTEX_DEBUG > 999
     printf("\nSynchronize DEBUG: synctex_char_recorder\n");
 #endif
@@ -1473,12 +1458,13 @@ void synctex_char_recorder(halfword p)
 void synctex_node_recorder(halfword p)
 {
 	size_t len = 0;
+    (void)p;
 #if SYNCTEX_DEBUG > 999
     printf("\nSynchronize DEBUG: synctex_node_recorder(0x%x)\n",p);
 #endif
 	len = SYNCTEX_fprintf(SYNCTEX_FILE,"?%i,%i:%i,%i\n",
 				synctex_ctxt.curh UNIT, synctex_ctxt.curv UNIT,
-				mem[p].hh.b0,mem[p].hh.b1);
+                          type(p),subtype(p));
 	if(len>0) {
 		synctex_ctxt.total_length += len;
         ++synctex_ctxt.count;
