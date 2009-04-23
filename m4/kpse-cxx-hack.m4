@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2002 Olaf Weber <olaf@infovore.xs4all.nl>
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #

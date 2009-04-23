@@ -12,10 +12,10 @@ AC_CONFIG_SRCDIR([m4/kpse-pkgs.m4])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
-dnl ## --------------------------------------------------- ##
-dnl ## Setup of the teTeX / TeX Live (TL) infrastructure   ##
-dnl ##    done in ./, libs/, utils/, and texk/             ##
-dnl ## --------------------------------------------------- ##
+dnl ## ------------------------------------------- ##
+dnl ## Setup of the TeX Live (TL) infrastructure   ##
+dnl ##    done in ./, libs/, utils/, and texk/     ##
+dnl ## ------------------------------------------- ##
 dnl
 dnl 1. Define three lists of TeXk programs, utility programs, and
 dnl    TL libraries.  Hopefully these list occur nowhere else.

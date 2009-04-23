@@ -37,7 +37,7 @@ FOFI_SRC = $(top_srcdir)/$(XPDF_TREE)/fofi
 XPDF_SRC = $(top_srcdir)/$(XPDF_TREE)/xpdf
 
 INCLUDES = -Igoo -Ifofi -Ixpdf -I$(GOO_SRC) -I$(FOFI_SRC) -I$(XPDF_SRC)
-AM_CPPFLAGS = $(XPDF_SELF_FLAGS)
+AM_CPPFLAGS = -DPDF_PARSER_ONLY
 
 noinst_LIBRARIES = libxpdf.a
 

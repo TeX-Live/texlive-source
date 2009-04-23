@@ -59,10 +59,6 @@ AC_CHECK_FUNCS([popen mkstemp mkstemps])
 AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO
 
-dnl **** We need to use the same flags when building and using libxpdf.a
-
-KPSE_XPDF_SELF_FLAGS
-
 AC_CONFIG_HEADERS([aconf.h],
  [sed -e 's/^#define PACKAGE/#define XPDF_PACKAGE/' \
       -e 's/^#define VERSION/#define XPDF_VERSION/' aconf.h >aconf.tmp && mv -f aconf.tmp aconf.h])

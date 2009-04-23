@@ -5113,6 +5113,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ZLIB_RULE='# Rebuild libz

@@ -17245,6 +17245,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   KPATHSEA_LIBS=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   KPATHSEA_DEPEND=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
     -e 's,BLD/texk/,${top_builddir}/../,g'`
    KPATHSEA_RULE='# Rebuild libkpathsea
@@ -17284,6 +17285,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ZLIB_RULE='# Rebuild libz
@@ -17323,6 +17325,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   LIBPNG_LIBS=`echo 'BLD/libs/libpng/libpng.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   LIBPNG_DEPEND=`echo 'BLD/libs/libpng/libpng.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    LIBPNG_RULE='# Rebuild libpng
@@ -17397,6 +17400,28 @@ $as_echo "$kpse_cv_have_truetype_format" >&6; }
 if test "x$kpse_cv_have_truetype_format" = xyes; then
   :
 else
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building dvipdfmx has been disabled and would fail because
+Required file formats not found in Kpathsea header files.
+
+This version of dvipdfmx requires that kpathsea and its headers be available.
+If you are sure they are installed and in a standard place, maybe you need a
+newer version of kpathsea?  You also might try setting the environment
+variable CPPFLAGS (or CFLAGS) with -I pointing to the directory containing
+the file \"kpathsea/kpathsea.h\"
+
+" >&5
+$as_echo "$as_me: WARNING: building dvipdfmx has been disabled and would fail because
+Required file formats not found in Kpathsea header files.
+
+This version of dvipdfmx requires that kpathsea and its headers be available.
+If you are sure they are installed and in a standard place, maybe you need a
+newer version of kpathsea?  You also might try setting the environment
+variable CPPFLAGS (or CFLAGS) with -I pointing to the directory containing
+the file \"kpathsea/kpathsea.h\"
+
+" >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error: Required file formats not found in Kpathsea header files.
 
 This version of dvipdfmx requires that kpathsea and its headers be available.
@@ -17416,6 +17441,9 @@ the file \"kpathsea/kpathsea.h\"
 
 " >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 fi
 
 { $as_echo "$as_me:$LINENO: checking whether xbasename is declared" >&5
@@ -17475,9 +17503,18 @@ $as_echo "$ac_cv_have_decl_xbasename" >&6; }
 if test "x$ac_cv_have_decl_xbasename" = x""yes; then
   :
 else
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building dvipdfmx has been disabled and would fail because
+This version of dvipdfmx requires xbasename in libkpathsea." >&5
+$as_echo "$as_me: WARNING: building dvipdfmx has been disabled and would fail because
+This version of dvipdfmx requires xbasename in libkpathsea." >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error: This version of dvipdfmx requires xbasename in libkpathsea." >&5
 $as_echo "$as_me: error: This version of dvipdfmx requires xbasename in libkpathsea." >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 fi
 
 

@@ -99,8 +99,6 @@ KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_T1LIB_FLAGS
 KPSE_FREETYPE2_FLAGS
-kpse_save_FREETYPE2_INCLUDES=$FREETYPE2_INCLUDES
-kpse_save_FREETYPE2_LIBS=$FREETYPE2_LIBS
 KPSE_GD_FLAGS
 
 dnl We have to check properties of libraries, either installed (system)
@@ -119,14 +117,6 @@ AC_CHECK_FUNC([png_read_image],
                          [Define to 1 if you have the `png' library (-lpng).])],
               [KPSE_MSG_ERROR([dvipng], [cannot find/use libpng])])
 
-set -x
-kpse_save_FREETYPE2_INCLUDES=$FREETYPE2_INCLUDES
-kpse_save_FREETYPE2_LIBS=$FREETYPE2_LIBS
-eval FREETYPE2_INCLUDES="$FREETYPE2_INCLUDES"
-eval FREETYPE2_LIBS="$FREETYPE2_LIBS"
-set +x
-AC_MSG_NOTICE([FREETYPE2_INCLUDES=\"$FREETYPE2_INCLUDES\"])
-AC_MSG_NOTICE([FREETYPE2_LIBS=\"$FREETYPE2_LIBS\"])
 KPSE_ADD_FLAGS([freetype2])
 KPSE_ADD_FLAGS([gd])
 AC_CHECK_FUNC([gdImageCreate],
@@ -174,8 +164,6 @@ AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImag
 AM_CONDITIONAL([have_gif], [test "x$ac_cv_func_gdImageGif" = xyes])
 
 KPSE_RESTORE_FLAGS
-FREETYPE2_INCLUDES=$kpse_save_FREETYPE2_INCLUDES
-FREETYPE2_LIBS=$kpse_save_FREETYPE2_LIBS
 
 DVIPNG_VERSION=dvipng_version
 AC_SUBST([DVIPNG_VERSION])

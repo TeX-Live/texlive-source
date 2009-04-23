@@ -961,8 +961,6 @@ with_system_t1lib
 with_t1lib_includes
 with_t1lib_libdir
 with_system_freetype2
-with_freetype2_includes
-with_freetype2_libdir
 with_system_gd
 with_gd_includes
 with_gd_libdir
@@ -1645,10 +1643,7 @@ Optional Packages:
                           t1lib headers installed in DIR
   --with-t1lib-libdir=DIR t1lib library installed in DIR
   --with-system-freetype2 use installed freetype2 headers and library
-  --with-freetype2-includes=DIR
-                          freetype2 headers installed in DIR
-  --with-freetype2-libdir=DIR
-                          freetype2 library installed in DIR
+                          (requires freetype-config)
   --with-system-gd        use installed gd headers and library
   --with-gd-includes=DIR  gd headers installed in DIR
   --with-gd-libdir=DIR    gd library installed in DIR
@@ -4244,13 +4239,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4247: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4242: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4250: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4245: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4253: output\"" >&5)
+  (eval echo "\"\$as_me:4248: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5456,7 +5451,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5459 "configure"' > conftest.$ac_ext
+  echo '#line 5454 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7503,11 +7498,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7506: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7501: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7510: \$? = $ac_status" >&5
+   echo "$as_me:7505: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7842,11 +7837,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7845: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7840: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7849: \$? = $ac_status" >&5
+   echo "$as_me:7844: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7947,11 +7942,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7950: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7945: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7954: \$? = $ac_status" >&5
+   echo "$as_me:7949: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8002,11 +7997,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8005: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8000: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8009: \$? = $ac_status" >&5
+   echo "$as_me:8004: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10802,7 +10797,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10805 "configure"
+#line 10800 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10898,7 +10893,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10901 "configure"
+#line 10896 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17991,6 +17986,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   KPATHSEA_LIBS=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   KPATHSEA_DEPEND=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
     -e 's,BLD/texk/,${top_builddir}/../,g'`
    KPATHSEA_RULE='# Rebuild libkpathsea
@@ -18030,6 +18026,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ZLIB_RULE='# Rebuild libz
@@ -18069,6 +18066,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   LIBPNG_LIBS=`echo 'BLD/libs/libpng/libpng.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   LIBPNG_DEPEND=`echo 'BLD/libs/libpng/libpng.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    LIBPNG_RULE='# Rebuild libpng
@@ -18108,6 +18106,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   T1LIB_LIBS=`echo 'BLD/libs/t1lib/libt1.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   T1LIB_DEPEND=`echo 'BLD/libs/t1lib/libt1.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    T1LIB_RULE='# Rebuild libt1
@@ -18215,16 +18214,6 @@ fi
 if test "${with_system_freetype2+set}" = set; then
   withval=$with_system_freetype2;
 fi
-
-# Check whether --with-freetype2-includes was given.
-if test "${with_freetype2_includes+set}" = set; then
-  withval=$with_freetype2_includes;
-fi
-
-# Check whether --with-freetype2-libdir was given.
-if test "${with_freetype2_libdir+set}" = set; then
-  withval=$with_freetype2_libdir;
-fi
 if test "x$with_system_freetype2" = xyes; then
   if test -n `$FT2_CONFIG --ftversion 2>/dev/null`; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
@@ -18235,11 +18224,13 @@ $as_echo "$as_me: error: Can not use installed freetype2 headers and library" >&
    { (exit 1); exit 1; }; }
 fi
 else
-  FREETYPE2_INCLUDES=`echo 'cat BLD/libs/freetype2/ft-' | sed \
+  FREETYPE2_INCLUDES=`echo 'BLD/libs/freetype2' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   FREETYPE2_LIBS=`echo 'BLD/libs/freetype2/libfreetype.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+  FREETYPE2_LIBS=`cat $FREETYPE2_INCLUDES/ft-libs`
+  FREETYPE2_INCLUDES=`cat $FREETYPE2_INCLUDES/ft-includes`
   FREETYPE2_DEPEND=`echo 'BLD/libs/freetype2/libfreetype.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    FREETYPE2_RULE='# Rebuild libfreetype
@@ -18248,13 +18239,7 @@ $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/ft2build.h
 ${top_builddir}/../../libs/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS)'
 fi
-if test "x$with_system_freetype2" = xno; then
-  FREETYPE2_LIBS='`'"$FREETYPE2_INCLUDES"'libs`'
-  FREETYPE2_INCLUDES='`'"$FREETYPE2_INCLUDES"'includes`'
-fi
 
-kpse_save_FREETYPE2_INCLUDES=$FREETYPE2_INCLUDES
-kpse_save_FREETYPE2_LIBS=$FREETYPE2_LIBS
 ## _KPSE_LIB_FLAGS: Setup gd (-lgd) flags
 
 # Check whether --with-system-gd was given.
@@ -18285,6 +18270,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   GD_LIBS=`echo 'BLD/libs/gd/libgd.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   GD_DEPEND=`echo 'BLD/libs/gd/libgd.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    GD_RULE='# Rebuild libgd
@@ -18506,16 +18492,6 @@ fi
 fi
 
 
-set -x
-kpse_save_FREETYPE2_INCLUDES=$FREETYPE2_INCLUDES
-kpse_save_FREETYPE2_LIBS=$FREETYPE2_LIBS
-eval FREETYPE2_INCLUDES="$FREETYPE2_INCLUDES"
-eval FREETYPE2_LIBS="$FREETYPE2_LIBS"
-set +x
-{ $as_echo "$as_me:$LINENO: FREETYPE2_INCLUDES=\"$FREETYPE2_INCLUDES\"" >&5
-$as_echo "$as_me: FREETYPE2_INCLUDES=\"$FREETYPE2_INCLUDES\"" >&6;}
-{ $as_echo "$as_me:$LINENO: FREETYPE2_LIBS=\"$FREETYPE2_LIBS\"" >&5
-$as_echo "$as_me: FREETYPE2_LIBS=\"$FREETYPE2_LIBS\"" >&6;}
 CPPFLAGS="$CPPFLAGS $FREETYPE2_INCLUDES"
 LIBS="$FREETYPE2_LIBS $LIBS"
 
@@ -19466,8 +19442,6 @@ fi
 CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
-FREETYPE2_INCLUDES=$kpse_save_FREETYPE2_INCLUDES
-FREETYPE2_LIBS=$kpse_save_FREETYPE2_LIBS
 
 DVIPNG_VERSION=1.12
 

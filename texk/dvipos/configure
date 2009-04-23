@@ -14248,6 +14248,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   KPATHSEA_LIBS=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   KPATHSEA_DEPEND=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
     -e 's,BLD/texk/,${top_builddir}/../,g'`
    KPATHSEA_RULE='# Rebuild libkpathsea

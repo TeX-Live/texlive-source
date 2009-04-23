@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -7,27 +7,27 @@
 
 # serial 0
 
-# KPSE_KPATHSEA_FLAGS([SHELL-CODE=DEFAULT-SHELL-CODE])
-# ----------------------------------------------------
+# KPSE_KPATHSEA_FLAGS
+# -------------------
 # Provide the configure options '--with-system-kpathsea' (if in the TL tree),
 # '--with-kpathsea-includes', and '--with-kpathsea-libdir'.
 #
 # Set the make variables KPATHSEA_INCLUDES and KPATHSEA_LIBS to the CPPFLAGS and
 # LIBS required for the `-lkpathsea' library in texk/kpathsea/ of the TL tree.
 AC_DEFUN([KPSE_KPATHSEA_FLAGS],
-[_KPSE_LIB_FLAGS([kpathsea], [kpathsea],
-                 [$1],
-                 [-IBLD/texk -ISRC/texk],
-                 [BLD/texk/kpathsea/libkpathsea.la], [lt],
+[_KPSE_LIB_FLAGS([kpathsea], [kpathsea], [lt],
+                 [-IBLD/texk -ISRC/texk], [BLD/texk/kpathsea/libkpathsea.la], [],
                  [${top_srcdir}/../kpathsea/*.[ch]],
                  [${top_builddir}/../kpathsea/paths.h])[]dnl
 ]) # KPSE_KPATHSEA_FLAGS
 
+# KPSE_KPATHSEA_OPTIONS([WITH-SYSTEM])
+# ------------------------------------
+AC_DEFUN([KPSE_KPATHSEA_OPTIONS], [_KPSE_LIB_OPTIONS([kpathsea], [$1])])
+
 # KPSE_KPATHSEA_SYSTEM_FLAGS
 # --------------------------
-AC_DEFUN([KPSE_KPATHSEA_SYSTEM_FLAGS],
-[_KPSE_LIB_FLAGS_SYSTEM([kpathsea], [kpathsea])[]dnl
-]) # KPSE__SYSTEM_FLAGS
+AC_DEFUN([KPSE_KPATHSEA_SYSTEM_FLAGS], [_KPSE_LIB_FLAGS_SYSTEM([kpathsea], [kpathsea])])
 
 # KPSE_CHECK_KPSE_FORMAT(FORMAT,
 #                        [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])

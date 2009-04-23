@@ -4,5 +4,5 @@ dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for dvipng
-KPSE_WITH_PROG([dvipng], [kpathsea freetype2 gd t1lib])
+KPSE_ENABLE_PROG([dvipng], [kpathsea freetype2 gd t1lib])
 m4_include(kpse_TL[texk/dvipng/ac/dvipng.ac])

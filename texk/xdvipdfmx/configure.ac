@@ -59,18 +59,10 @@ CHO_CHECK_ZLIB
 KPSE_ADD_FLAGS([libpng])
 CHO_CHECK_LIBPNG
 
-set -x
-kpse_save_FREETYPE2_INCLUDES=$FREETYPE2_INCLUDES
-kpse_save_FREETYPE2_LIBS=$FREETYPE2_LIBS
-eval FREETYPE2_INCLUDES="$FREETYPE2_INCLUDES"
-eval FREETYPE2_LIBS="$FREETYPE2_LIBS"
-set +x
 KPSE_ADD_FLAGS([freetype2])
 CHO_CHECK_LIBFREETYPE([xdvipdfmx])
 
 KPSE_RESTORE_FLAGS
-FREETYPE2_INCLUDES=$kpse_save_FREETYPE2_INCLUDES
-FREETYPE2_LIBS=$kpse_save_FREETYPE2_LIBS
 
 dnl We do not provide the configure option '--enable-tetex-build', but may
 dnl inherit enable_tetex_build when part of a teTeX / TeX Live installation.

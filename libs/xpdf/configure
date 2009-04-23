@@ -640,7 +640,6 @@ ac_includes_default="\
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 XPDF_TREE
-XPDF_SELF_FLAGS
 EGREP
 GREP
 CPP
@@ -5707,10 +5706,6 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
-
-
-
-XPDF_SELF_FLAGS=-DPDF_PARSER_ONLY
 
 
 ac_config_headers="$ac_config_headers aconf.h"

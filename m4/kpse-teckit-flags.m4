@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -7,8 +7,8 @@
 
 # serial 0
 
-# KPSE_TECKIT_FLAGS([SHELL-CODE=DEFAULT-SHELL-CODE])
-# --------------------------------------------------
+# KPSE_TECKIT_FLAGS
+# -----------------
 # Provide the configure options '--with-system-teckit' (if in the TL tree),
 # '--with-teckit-includes', and '--with-teckit-libdir'.
 #
@@ -16,15 +16,15 @@
 # LIBS required for the `-lTECkit' library in libs/teckit/ of the TL tree.
 AC_DEFUN([KPSE_TECKIT_FLAGS],
 [AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
-_KPSE_LIB_FLAGS([teckit], [TECkit],
-                 [$1],
-                 [-ISRC/libs/teckit/source/Public-headers],
-                 [BLD/libs/teckit/libTECkit.a], [],
-                 [], [])[]dnl
+_KPSE_LIB_FLAGS([teckit], [TECkit], [],
+                [-ISRC/libs/teckit/source/Public-headers], [BLD/libs/teckit/libTECkit.a], [],
+                [], [])[]dnl
 ]) # KPSE_TECKIT_FLAGS
+
+# KPSE_TECKIT_OPTIONS([WITH-SYSTEM])
+# ----------------------------------
+AC_DEFUN([KPSE_TECKIT_OPTIONS], [_KPSE_LIB_OPTIONS([teckit], [$1])])
 
 # KPSE_TECKIT_SYSTEM_FLAGS
 # ------------------------
-AC_DEFUN([KPSE_TECKIT_SYSTEM_FLAGS],
-[_KPSE_LIB_FLAGS_SYSTEM([teckit], [TECkit])[]dnl
-]) # KPSE_TECKIT_SYSTEM_FLAGS
+AC_DEFUN([KPSE_TECKIT_SYSTEM_FLAGS], [_KPSE_LIB_FLAGS_SYSTEM([teckit], [TECkit])])

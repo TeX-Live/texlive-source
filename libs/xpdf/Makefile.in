@@ -41,8 +41,7 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/../../build-aux/depcomp \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
 	../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-xpdf-flags.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -163,7 +162,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-XPDF_SELF_FLAGS = @XPDF_SELF_FLAGS@
 XPDF_TREE = @XPDF_TREE@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -220,7 +218,7 @@ GOO_SRC = $(top_srcdir)/$(XPDF_TREE)/goo
 FOFI_SRC = $(top_srcdir)/$(XPDF_TREE)/fofi
 XPDF_SRC = $(top_srcdir)/$(XPDF_TREE)/xpdf
 INCLUDES = -Igoo -Ifofi -Ixpdf -I$(GOO_SRC) -I$(FOFI_SRC) -I$(XPDF_SRC)
-AM_CPPFLAGS = $(XPDF_SELF_FLAGS)
+AM_CPPFLAGS = -DPDF_PARSER_ONLY
 noinst_LIBRARIES = libxpdf.a
 nodist_libxpdf_a_SOURCES = \
 	$(goo_libGoo_a_sources) \

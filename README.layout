@@ -1,8 +1,8 @@
 Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
-	Layout of the teTeX / TeX Live (TL) build system
-	================================================
+	Layout of the TeX Live (TL) build system
+	========================================
 
 The TL 2009 build system has been completely restructured, using Autoconf,
 Automake, and Libtool.  The main purpose was to configure and build each

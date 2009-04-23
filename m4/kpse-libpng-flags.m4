@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -7,8 +7,8 @@
 
 # serial 0
 
-# KPSE_LIBPNG_FLAGS([SHELL-CODE=DEFAULT-SHELL-CODE])
-# --------------------------------------------------
+# KPSE_LIBPNG_FLAGS
+# -----------------
 # Provide the configure options '--with-system-libpng' (if in the TL tree),
 # '--with-libpng-includes', and '--with-libpng-libdir'.
 #
@@ -16,14 +16,15 @@
 # LIBS required for the `-lpng' library in libs/libpng/ of the TL tree.
 AC_DEFUN([KPSE_LIBPNG_FLAGS],
 [AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
-_KPSE_LIB_FLAGS([libpng], [png],
-                 [$1],
-                 [-IBLD/libs/libpng], [BLD/libs/libpng/libpng.a], [],
-                 [], [${top_builddir}/../../libs/libpng/png.h ${top_builddir}/../../libs/libpng/pngconf.h])[]dnl
+_KPSE_LIB_FLAGS([libpng], [png], [],
+                [-IBLD/libs/libpng], [BLD/libs/libpng/libpng.a], [],
+                [], [${top_builddir}/../../libs/libpng/png.h ${top_builddir}/../../libs/libpng/pngconf.h])[]dnl
 ]) # KPSE_LIBPNG_FLAGS
+
+# KPSE_LIBPNG_OPTIONS([WITH-SYSTEM])
+# ----------------------------------
+AC_DEFUN([KPSE_LIBPNG_OPTIONS], [_KPSE_LIB_OPTIONS([libpng], [$1])])
 
 # KPSE_LIBPNG_SYSTEM_FLAGS
 # ------------------------
-AC_DEFUN([KPSE_LIBPNG_SYSTEM_FLAGS],
-[_KPSE_LIB_FLAGS_SYSTEM([libpng], [png])[]dnl
-]) # KPSE_LIBPNG_SYSTEM_FLAGS
+AC_DEFUN([KPSE_LIBPNG_SYSTEM_FLAGS], [_KPSE_LIB_FLAGS_SYSTEM([libpng], [png])])

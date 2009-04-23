@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -7,8 +7,8 @@
 
 # serial 0
 
-# KPSE_GD_FLAGS([SHELL-CODE=DEFAULT-SHELL-CODE])
-# ----------------------------------------------
+# KPSE_GD_FLAGS
+# -------------
 # Provide the configure options '--with-system-gd' (if in the TL tree),
 # '--with-gd-includes', and '--with-gd-libdir'.
 #
@@ -16,14 +16,16 @@
 # LIBS required for the `-lgd' library in libs/gd/ of the TL tree.
 AC_DEFUN([KPSE_GD_FLAGS],
 [AC_REQUIRE([KPSE_LIBPNG_FLAGS])[]dnl
-_KPSE_LIB_FLAGS([gd], [gd],
-                 [$1],
-                 [-IBLD/libs/gd], [BLD/libs/gd/libgd.a], [],
-                 [], [${top_builddir}/../../libs/gd/gd.h])[]dnl
+AC_REQUIRE([KPSE_FREETYPE2_FLAGS])[]dnl
+_KPSE_LIB_FLAGS([gd], [gd], [],
+                [-IBLD/libs/gd], [BLD/libs/gd/libgd.a], [],
+                [], [${top_builddir}/../../libs/gd/gd.h])[]dnl
 ]) # KPSE_GD_FLAGS
+
+# KPSE_GD_OPTIONS([WITH-SYSTEM])
+# ------------------------------
+AC_DEFUN([KPSE_GD_OPTIONS], [_KPSE_LIB_OPTIONS([gd], [$1])])
 
 # KPSE_GD_SYSTEM_FLAGS
 # --------------------
-AC_DEFUN([KPSE_GD_SYSTEM_FLAGS],
-[_KPSE_LIB_FLAGS_SYSTEM([gd], [gd])[]dnl
-]) # KPSE_GD_SYSTEM_FLAGS
+AC_DEFUN([KPSE_GD_SYSTEM_FLAGS], [_KPSE_LIB_FLAGS_SYSTEM([gd], [gd])])

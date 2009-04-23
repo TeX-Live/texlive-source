@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 1995 - 2009 Karl Berry <tex-live@tug.org>
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
@@ -34,7 +34,7 @@ AC_DEFUN([KPSE_INIT],
 [AC_REQUIRE([_KPSE_INIT])])
 
 # _KPSE_USE_LIBTOOL()
-# ------------------
+# -------------------
 AC_DEFUN([_KPSE_USE_LIBTOOL],
 [## $0: Generate a libtool script for use in configure tests
 AC_PROVIDE_IFELSE([LT_INIT], ,
@@ -50,28 +50,30 @@ AC_PROVIDE_IFELSE([AC_PROG_CXX],
 AC_LANG(_AC_LANG)[]dnl
 ]) # _KPSE_USE_LIBTOOL
 
-# _KPSE_LIB_FLAGS(LIBDIR, LIBNAME,
-#                 [SHELL-CODE=DEFAULT-SHELL-CODE],
-#                 INCLUDES, LIBS, OPTIONS,
+# _KPSE_LIB_FLAGS(LIBDIR, LIBNAME, OPTIONS,
+#                 TL-INCLUDES, TL-LIBS, TL-EXTRA,
 #                 [REBUILD-SRC-DEPENDENCIES],
 #                 [REBUILD-BLD-DEPENDENCIES])
-# ------------------------------------------------
+# -----------------------------------------------
 # Provide the configure options '--with-system-LIBDIR' (if in the TL tree),
 # '--with-LIBDIR-includes', and '--with-LIBDIR-libdir'.
+# Options:
+#          lt - this is a Libtool library
+#          tree - only use library from the TL tree
 #
 # Set the make variables LIBDIR_INCLUDES and LIBDIR_LIBS to the CPPFLAGS and
 # LIBS required for the library in the directory libs/LIBDIR/ of the TL tree.
 #
 # If an installed (system) version of the library has been selected or is
-# implied, then execute SHELL-CODE to set the two variables.
-# In most cases DEFAULT-SHELL-CODE will do the right thing, based on the
-# values of with_LIBDIR_includes and with_LIBDIR_libdir.
+# implied, then execute KPSE_LIBDIR_SYSTEM_FLAGS to set the two variables.
 #
-# Otherwise, set LIBDIR_INCLUDES based on the value of INCLUDES and
-# LIBDIR_LIBS based on the value of LIBS.  If OPTIONS specifies a libtool
-# library, then arrange that future configure test use libtool. 
+# Otherwise, set LIBDIR_INCLUDES based on the value of TL_INCLUDES and
+# LIBDIR_LIBS based on the value of TL_LIBS; the optional shell code
+# TL-EXTRA may modifiy these values.
+# If OPTIONS specifies a Libtool library, then arrange that future configure
+# test use Libtool. 
 # Furthermore, set LIBDIR_DEPEND and LIBDIR_RULE to values suitable as
-# dependency and rule to rebuild the library (assuming that
+# dependency and (multiline) Make rule to rebuild the library (assuming that
 # '${top_srcdir}/../../' and '${top_builddir}/../../' point to the root of
 # the TL tree).
 AC_DEFUN([_KPSE_LIB_FLAGS],
@@ -87,30 +89,27 @@ AC_SUBST(AS_TR_CPP($1)[_RULE])[]dnl
 m4_provide_if([AM_INIT_AUTOMAKE], [_AM_SUBST_NOTMAKE(AS_TR_CPP($1)[_RULE])])[]dnl
 ]) # _KPSE_LIB_FLAGS
 
-# _KPSE_LIB_FLAGS_TL(LIBDIR, LIBNAME,
-#                    [SHELL-CODE=DEFAULT-SHELL-CODE],
-#                    INCLUDES, LIBS, OPTIONS,
+# _KPSE_LIB_FLAGS_TL(LIBDIR, LIBNAME, OPTIONS,
+#                    TL-INCLUDES, TL-LIBS, TL-EXTRA,
 #                    [REBUILD-SRC-DEPENDENCIES],
 #                    [REBUILD-BLD-DEPENDENCIES])
-# ---------------------------------------------------
+# --------------------------------------------------
 # Internal subroutine for use of _KPSE_LIB_FLAGS inside the TL tree.
 m4_define([_KPSE_LIB_FLAGS_TL],
-[m4_if(m4_index([ $6 ], [ lt ]), [-1], ,
+[m4_if(m4_index([ $3 ], [ lt ]), [-1], ,
        [AC_REQUIRE([_KPSE_USE_LIBTOOL])])[]dnl m4_if
-m4_if(m4_index([ $6 ], [ tree ]), [-1],
-      [AC_ARG_WITH([system-$1],
-                   [AS_HELP_STRING([--with-system-$1],
-                                   [use installed $1 headers and library])])[]dnl
-_KPSE_LIB_FLAGS_WITH([$1])[]dnl
+m4_if(m4_index([ $3 ], [ tree ]), [-1],
+[KPSE_]AS_TR_CPP([$1])[_OPTIONS([with-system])[]dnl
 if test "x$with_system_[]AS_TR_SH($1)" = xyes; then
-  m4_ifval([$3], [$3], AS_TR_CPP([kpse-$1-system-flags]))[]dnl
+  AS_TR_CPP([kpse-$1-system-flags])[]dnl
 else
 ])[]dnl m4_if
   AS_TR_CPP($1)[_INCLUDES=`echo '$4' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`]
   AS_TR_CPP($1)[_LIBS=`echo '$5' | sed \
-    -e "s,BLD/,$kpse_BLD/,g"`]
+    -e "s,BLD/,$kpse_BLD/,g"`
+  $6]
   m4_if([$1], [kpathsea],
   [AS_TR_CPP($1)[_DEPEND=`echo '$5' | sed \
     -e 's,BLD/texk/,${top_builddir}/../,g'`]
@@ -128,38 +127,41 @@ $(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
 	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS)
 $8:]])[
 	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS)']])
-m4_if(m4_index([ $6 ], [ tree ]), [-1],
+m4_if(m4_index([ $3 ], [ tree ]), [-1],
       [fi
 ])[]dnl m4_if
 ]) # _KPSE_LIB_FLAGS_TL
 
-# _KPSE_LIB_FLAGS_STANDALONE(LIBDIR, LIBNAME,
-#                 [SHELL-CODE=DEFAULT-SHELL-CODE],
-#                 INCLUDES, LIBS, OPTIONS)
-# ------------------------------------------------
-# Internal subroutine for standalone use of_KPSE_LIB_FLAGS.
+# _KPSE_LIB_FLAGS_STANDALONE(LIBDIR, LIBNAME, OPTIONS)
+# ----------------------------------------------------
+# Internal subroutine for standalone use of _KPSE_LIB_FLAGS.
 m4_define([_KPSE_LIB_FLAGS_STANDALONE],
-[m4_if(m4_index([ $6 ], [ tree ]), [-1], ,
+[m4_if(m4_index([ $3 ], [ tree ]), [-1],
+[KPSE_]AS_TR_CPP([$1])[_OPTIONS([])]dnl
+[KPSE_]AS_TR_CPP([$1])[_SYSTEM_FLAGS],
 [m4_fatal([$0: not in TL tree])])[]dnl m4_if
-_KPSE_LIB_FLAGS_WITH([$1])[]dnl
-m4_ifval([$3], [$3], [_KPSE_LIB_FLAGS_SYSTEM([$1], [$2])])[]dnl
 ]) # _KPSE_LIB_FLAGS_STANDALONE
 
-# _KPSE_LIB_FLAGS_WITH(LIBDIR)
-# ----------------------------
-# Internal subroutine for of_KPSE_LIB_FLAGS: configure options.
-m4_define([_KPSE_LIB_FLAGS_WITH],
-[AC_ARG_WITH([$1-includes],
-             [AS_HELP_STRING([--with-$1-includes=DIR],
-                             [$1 headers installed in DIR])])[]dnl
+# _KPSE_LIB_OPTIONS(LIBDIR, [WITH-SYSTEM])
+# ----------------------------------------
+# Internal subroutine: default configure options for system library,
+# including '--with-system-LIBDIR' if WITH-SYSTEM is nonempty.
+m4_define([_KPSE_LIB_OPTIONS],
+[m4_ifval([$2],
+          [AC_ARG_WITH([system-$1],
+                       AS_HELP_STRING([--with-system-$1],
+                                      [use installed $1 headers and library]))])[]dnl
+AC_ARG_WITH([$1-includes],
+            AS_HELP_STRING([--with-$1-includes=DIR],
+                           [$1 headers installed in DIR]))[]dnl
 AC_ARG_WITH([$1-libdir],
-            [AS_HELP_STRING([--with-$1-libdir=DIR],
-                            [$1 library installed in DIR])])[]dnl
-]) # _KPSE_LIB_FLAGS_WITH
+            AS_HELP_STRING([--with-$1-libdir=DIR],
+                           [$1 library installed in DIR]))[]dnl
+]) # _KPSE_LIB_OPTIONS
 
 # _KPSE_LIB_FLAGS_SYSTEM(LIBDIR, LIBNAME)
 # ---------------------------------------
-# Internal subroutine for of_KPSE_LIB_FLAGS: default flags for system library.
+# Internal subroutine: default flags for system library.
 m4_define([_KPSE_LIB_FLAGS_SYSTEM],
 [if test "x$with_[]AS_TR_SH($1)_includes" != x && test "x$with_[]AS_TR_SH($1)_includes" != xyes; then
   AS_TR_CPP($1)_INCLUDES="-I$with_[]AS_TR_SH($1)_includes"
@@ -169,6 +171,32 @@ if test "x$with_[]AS_TR_SH($1)_libdir" != x && test "x$with_[]AS_TR_SH($1)_libdi
   AS_TR_CPP($1)_LIBS="-L$with_[]AS_TR_SH($1)_libdir $AS_TR_CPP($1)_LIBS"
 fi
 ]) # _KPSE_LIB_FLAGS_SYSTEM
+
+# KPSE_SAVE_FLAGS
+# ---------------
+# Save values of CPPFLAGS and LIBS.
+AC_DEFUN([KPSE_SAVE_FLAGS],
+[kpse_save_CPPFLAGS=$CPPFLAGS
+kpse_save_LIBS=$LIBS
+]) # KPSE_SAVE_FLAGS
+
+# KPSE_RESTORE_FLAGS
+# ------------------
+# Restore values of CPPFLAGS and LIBS.
+AC_DEFUN([KPSE_RESTORE_FLAGS],
+[AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+]) # KPSE_RESTORE_FLAGS
+
+# KPSE_ADD_FLAGS(LIBDIR)
+# ----------------------
+# Add flags for LIBDIR to values of CPPFLAGS and LIBS.
+AC_DEFUN([KPSE_ADD_FLAGS],
+[AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
+CPPFLAGS="$CPPFLAGS $[]AS_TR_CPP($1)_INCLUDES"
+LIBS="$[]AS_TR_CPP($1)_LIBS $LIBS"
+]) # KPSE_ADD_FLAGS
 
 # KPSE_COMMON(PACKAGE-NAME, [MORE-AUTOMAKE-OPTIONS])
 # --------------------------------------------------
@@ -233,32 +261,6 @@ if test "$kb_cv_var_program_inv_name" = yes; then
              `program_invocation_name' and `program_invocation_short_name'.])
 fi
 ]) # KPSE_COMMON
-
-# KPSE_SAVE_FLAGS
-# ---------------
-# Save values of CPPFLAGS and LIBS.
-AC_DEFUN([KPSE_SAVE_FLAGS],
-[kpse_save_CPPFLAGS=$CPPFLAGS
-kpse_save_LIBS=$LIBS
-]) # KPSE_SAVE_FLAGS
-
-# KPSE_RESTORE_FLAGS
-# ------------------
-# Restore values of CPPFLAGS and LIBS.
-AC_DEFUN([KPSE_RESTORE_FLAGS],
-[AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
-CPPFLAGS=$kpse_save_CPPFLAGS
-LIBS=$kpse_save_LIBS
-]) # KPSE_RESTORE_FLAGS
-
-# KPSE_ADD_FLAGS(LIBDIR)
-# ----------------------
-# Add flags for LIBDIR to values of CPPFLAGS and LIBS.
-AC_DEFUN([KPSE_ADD_FLAGS],
-[AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
-CPPFLAGS="$CPPFLAGS $[]AS_TR_CPP($1)_INCLUDES"
-LIBS="$[]AS_TR_CPP($1)_LIBS $LIBS"
-]) # KPSE_ADD_FLAGS
 
 # KPSE_MSG_ERROR(PACKAGE, ERROR, [EXIT-STATUS = 1])
 # -------------------------------------------------

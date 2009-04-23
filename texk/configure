@@ -2192,6 +2192,7 @@ if test "x$enable_multiplatform" = xyes; then
 fi
 
 
+
 ## ac/withenable.ac: configure.ac fragment for the TeX Live top-level
 
 ## utils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/
@@ -3334,15 +3335,25 @@ $as_echo "$as_me:   ->  installed \`libpng' headers and library" >&6;}
 $as_echo "$as_me: error: Sorry, \`--with-system-gd' requires \`--with-system-libpng'" >&2;}
    { (exit 1); exit 1; }; }
   fi
+  if test "x$with_system_freetype2" = x; then
+    { $as_echo "$as_me:$LINENO:   ->  installed \`freetype2' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`freetype2' headers and library" >&6;}
+    with_system_freetype2=yes
+    ac_configure_args="$ac_configure_args '--with-system-freetype2'"
+  elif test "x$with_system_freetype2" != xyes; then
+    { { $as_echo "$as_me:$LINENO: error: Sorry, \`--with-system-gd' requires \`--with-system-freetype2'" >&5
+$as_echo "$as_me: error: Sorry, \`--with-system-gd' requires \`--with-system-freetype2'" >&2;}
+   { (exit 1); exit 1; }; }
+  fi
 fi
 
 test "x$need_gd" = xyes && {
   need_libpng=yes
+  need_freetype2=yes
 }
 
 
 ## libs/freetype2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype2/
-## configure options and TL libraries required for freetype2
 
 # Check whether --with-system-freetype2 was given.
 if test "${with_system_freetype2+set}" = set; then
@@ -3360,6 +3371,22 @@ $as_echo "$as_me: Assuming installed \`freetype2' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-freetype2=$with_system_freetype2'"
 fi
+if test "x$with_system_freetype2" = xyes; then
+  if test "x$with_system_zlib" = x; then
+    { $as_echo "$as_me:$LINENO:   ->  installed \`zlib' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`zlib' headers and library" >&6;}
+    with_system_zlib=yes
+    ac_configure_args="$ac_configure_args '--with-system-zlib'"
+  elif test "x$with_system_zlib" != xyes; then
+    { { $as_echo "$as_me:$LINENO: error: Sorry, \`--with-system-freetype2' requires \`--with-system-zlib'" >&5
+$as_echo "$as_me: error: Sorry, \`--with-system-freetype2' requires \`--with-system-zlib'" >&2;}
+   { (exit 1); exit 1; }; }
+  fi
+fi
+
+test "x$need_freetype2" = xyes && {
+  need_zlib=yes
+}
 
 
 ## libs/freetype/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/

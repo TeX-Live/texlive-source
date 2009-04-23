@@ -2449,6 +2449,7 @@ if test "x$enable_multiplatform" = xyes; then
 fi
 
 
+
 ## ac/withenable.ac: configure.ac fragment for the TeX Live top-level
 
 ## utils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/
@@ -3631,15 +3632,25 @@ $as_echo "$as_me:   ->  installed \`libpng' headers and library" >&6;}
 $as_echo "$as_me: error: Sorry, \`--with-system-gd' requires \`--with-system-libpng'" >&2;}
    { (exit 1); exit 1; }; }
   fi
+  if test "x$with_system_freetype2" = x; then
+    { $as_echo "$as_me:$LINENO:   ->  installed \`freetype2' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`freetype2' headers and library" >&6;}
+    with_system_freetype2=yes
+    ac_configure_args="$ac_configure_args '--with-system-freetype2'"
+  elif test "x$with_system_freetype2" != xyes; then
+    { { $as_echo "$as_me:$LINENO: error: Sorry, \`--with-system-gd' requires \`--with-system-freetype2'" >&5
+$as_echo "$as_me: error: Sorry, \`--with-system-gd' requires \`--with-system-freetype2'" >&2;}
+   { (exit 1); exit 1; }; }
+  fi
 fi
 
 test "x$need_gd" = xyes && {
   need_libpng=yes
+  need_freetype2=yes
 }
 
 
 ## libs/freetype2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype2/
-## configure options and TL libraries required for freetype2
 
 # Check whether --with-system-freetype2 was given.
 if test "${with_system_freetype2+set}" = set; then
@@ -3667,6 +3678,22 @@ $as_echo "$as_me: Using \`freetype2' headers and library from TL tree" >&6;}
     ac_configure_args="$ac_configure_args '--without-system-freetype2'"
   fi
 fi
+if test "x$with_system_freetype2" = xyes; then
+  if test "x$with_system_zlib" = x; then
+    { $as_echo "$as_me:$LINENO:   ->  installed \`zlib' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`zlib' headers and library" >&6;}
+    with_system_zlib=yes
+    ac_configure_args="$ac_configure_args '--with-system-zlib'"
+  elif test "x$with_system_zlib" != xyes; then
+    { { $as_echo "$as_me:$LINENO: error: Sorry, \`--with-system-freetype2' requires \`--with-system-zlib'" >&5
+$as_echo "$as_me: error: Sorry, \`--with-system-freetype2' requires \`--with-system-zlib'" >&2;}
+   { (exit 1); exit 1; }; }
+  fi
+fi
+
+test "x$need_freetype2" = xyes && {
+  need_zlib=yes
+}
 
 
 ## libs/freetype/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/
@@ -5871,13 +5898,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:5874: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:5901: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5877: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:5904: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5880: output\"" >&5)
+  (eval echo "\"\$as_me:5907: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -7083,7 +7110,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7086 "configure"' > conftest.$ac_ext
+  echo '#line 7113 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9130,11 +9157,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9133: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9160: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9137: \$? = $ac_status" >&5
+   echo "$as_me:9164: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9469,11 +9496,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9472: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9499: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9476: \$? = $ac_status" >&5
+   echo "$as_me:9503: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9574,11 +9601,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9577: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9604: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9581: \$? = $ac_status" >&5
+   echo "$as_me:9608: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9629,11 +9656,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9632: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9659: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9636: \$? = $ac_status" >&5
+   echo "$as_me:9663: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12429,7 +12456,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12432 "configure"
+#line 12459 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12525,7 +12552,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12528 "configure"
+#line 12555 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -18921,11 +18948,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:18924: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:18951: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:18928: \$? = $ac_status" >&5
+   echo "$as_me:18955: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -19020,11 +19047,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19023: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19050: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:19027: \$? = $ac_status" >&5
+   echo "$as_me:19054: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -19072,11 +19099,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19075: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19102: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:19079: \$? = $ac_status" >&5
+   echo "$as_me:19106: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -20073,7 +20100,6 @@ $as_echo "$as_me: error: Sorry, not found under any of: $list *****" >&2;}
 fi
 
 syslib_status=yes
-
 if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
   ZLIB_INCLUDES="-I$with_zlib_includes"
 fi

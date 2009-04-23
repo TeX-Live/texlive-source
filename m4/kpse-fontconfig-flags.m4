@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -13,7 +13,7 @@
 # installed fontconfig headers and library.
 # Check or set the cache variables kpse_cv_have_fontconfig,
 # kpse_cv_fontconfig_includes, and kpse_cv_fontconfig_libs.
-# If found set the make variables FONTCONFIG_INCLUDES and FONTCONFIG_LIBS
+# If found set the Make variables FONTCONFIG_INCLUDES and FONTCONFIG_LIBS
 # to the CPPFLAGS and LIBS required for the installed '-lfontconfig'
 # library and define HAVE_LIBFONTCONFIG.
 AC_DEFUN([KPSE_FONTCONFIG_FLAGS],

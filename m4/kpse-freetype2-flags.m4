@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -7,32 +7,31 @@
 
 # serial 0
 
-# KPSE_FREETYPE2_FLAGS([SHELL-CODE=DEFAULT-SHELL-CODE])
-# -----------------------------------------------------
+# KPSE_FREETYPE2_FLAGS
+# --------------------
 # Provide the configure options '--with-system-freetype2' (if in the TL tree).
 #
 # Set the make variables FREETYPE2_INCLUDES and FREETYPE2_LIBS to the CPPFLAGS and
 # LIBS required for the `-lfreetype' library in libs/freetype2/ of the TL tree.
-dnl AC_DEFUN([KPSE_FREETYPE2_FLAGS],
-dnl [AC_REQUIRE([_KPSE_CHECK_FT2_CONFIG])[]dnl
-dnl _KPSE_LIB_FLAGS([freetype2], [freetype],
-dnl                 [$1],
-dnl                 [-IBLD/libs/freetype2/freetype2 -IBLD/libs/freetype2],
-dnl                 [BLD/libs/freetype2/libfreetype.a], [],
-dnl                 [], [${top_builddir}/../../libs/freetype2/ft2build.h])[]dnl
-dnl ]) # KPSE_FREETYPE2_FLAGS
 AC_DEFUN([KPSE_FREETYPE2_FLAGS],
-[AC_REQUIRE([_KPSE_CHECK_FT2_CONFIG])[]dnl
-_KPSE_LIB_FLAGS([freetype2], [freetype],
-                [$1],
-                [cat BLD/libs/freetype2/ft-],
-                [BLD/libs/freetype2/libfreetype.a], [],
+[AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
+AC_REQUIRE([_KPSE_CHECK_FT2_CONFIG])[]dnl
+_KPSE_LIB_FLAGS([freetype2], [freetype], [],
+                [BLD/libs/freetype2],
+                [BLD/libs/freetype2/libfreetype.a],
+                [FREETYPE2_LIBS=`cat $FREETYPE2_INCLUDES/ft-libs`
+  FREETYPE2_INCLUDES=`cat $FREETYPE2_INCLUDES/ft-includes`],
                 [], [${top_builddir}/../../libs/freetype2/ft2build.h])[]dnl
-if test "x$with_system_freetype2" = xno; then
-  FREETYPE2_LIBS='`'"$FREETYPE2_INCLUDES"'libs`'
-  FREETYPE2_INCLUDES='`'"$FREETYPE2_INCLUDES"'includes`'
-fi
 ]) # KPSE_FREETYPE2_FLAGS
+
+# KPSE_FREETYPE2_OPTIONS([WITH-SYSTEM])
+# -------------------------------------
+AC_DEFUN([KPSE_FREETYPE2_OPTIONS],
+[m4_ifval([$1],
+          [AC_ARG_WITH([system-freetype2],
+                       AS_HELP_STRING([--with-system-freetype2],
+                                      [use installed freetype2 headers and library (requires freetype-config)]))])[]dnl
+]) # KPSE_FREETYPE2_OPTIONS
 
 # KPSE_FREETYPE2_SYSTEM_FLAGS
 # ---------------------------

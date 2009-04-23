@@ -14988,6 +14988,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   KPATHSEA_LIBS=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   KPATHSEA_DEPEND=`echo 'BLD/texk/kpathsea/libkpathsea.la' | sed \
     -e 's,BLD/texk/,${top_builddir}/../,g'`
    KPATHSEA_RULE='# Rebuild libkpathsea
@@ -15027,6 +15028,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ZLIB_RULE='# Rebuild libz
@@ -15066,6 +15068,7 @@ else
     -e "s,BLD/,$kpse_BLD/,g"`
   LIBPNG_LIBS=`echo 'BLD/libs/libpng/libpng.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
+
   LIBPNG_DEPEND=`echo 'BLD/libs/libpng/libpng.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    LIBPNG_RULE='# Rebuild libpng

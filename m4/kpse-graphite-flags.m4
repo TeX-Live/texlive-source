@@ -1,4 +1,4 @@
-# Public macros for the teTeX / TeX Live (TL) tree.
+# Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -7,8 +7,8 @@
 
 # serial 0
 
-# KPSE_GRAPHITE_FLAGS([SHELL-CODE=DEFAULT-SHELL-CODE])
-# ----------------------------------------------------
+# KPSE_GRAPHITE_FLAGS
+# -------------------
 # Provide the configure options '--with-system-graphite' (if in the TL tree),
 # '--with-graphite-includes', and '--with-graphite-libdir'.
 #
@@ -16,15 +16,15 @@
 # and LIBS required for the `-lgraphite' library in libs/graphite/ of the TL tree.
 AC_DEFUN([KPSE_GRAPHITE_FLAGS],
 [AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
-_KPSE_LIB_FLAGS([graphite], [graphite],
-                 [$1],
-                 [-ISRC/libs/graphite/include],
-                 [BLD/libs/graphite/libgraphite.a], [],
-                 [], [])[]dnl
+_KPSE_LIB_FLAGS([graphite], [graphite], [],
+                [-ISRC/libs/graphite/include], [BLD/libs/graphite/libgraphite.a], [],
+                [], [])[]dnl
 ]) # KPSE_GRAPHITE_FLAGS
+
+# KPSE_GRAPHITE_OPTIONS([WITH-SYSTEM])
+# ------------------------------------
+AC_DEFUN([KPSE_GRAPHITE_OPTIONS], [_KPSE_LIB_OPTIONS([graphite], [$1])])
 
 # KPSE_GRAPHITE_SYSTEM_FLAGS
 # --------------------------
-AC_DEFUN([KPSE_GRAPHITE_SYSTEM_FLAGS],
-[_KPSE_LIB_FLAGS_SYSTEM([graphite], [graphite])[]dnl
-]) # KPSE_GRAPHITE_SYSTEM_FLAGS
+AC_DEFUN([KPSE_GRAPHITE_SYSTEM_FLAGS], [_KPSE_LIB_FLAGS_SYSTEM([graphite], [graphite])])
