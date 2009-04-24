@@ -1,5 +1,10 @@
-dnl ### Determine integer type to use for bitmaps
-
+# Autoconf macros for xdvik.
+# Copyright (C) 1999 - 2009 Paul Vojta <xdvi-core@lists.sourceforge.net>
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+#
+# This file is free software; the copyright holders
+# give unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
 # XDVI_C_BITMAP_TYPE
 # ------------------

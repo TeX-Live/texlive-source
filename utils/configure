@@ -682,8 +682,9 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_all_pkgs
-enable_cxx_runtime_hack
+enable_native_texlive_build
 enable_multiplatform
+enable_cxx_runtime_hack
 enable_dialog
 enable_pdfopen
 enable_ps2eps
@@ -1437,9 +1438,11 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-all-pkgs      do not build packages unless explicitly enabled
-  --enable-cxx-runtime-hack  link C++ runtime statically
+  --disable-native-texlive-build
+                          do not build for the TeX Live binary distribution
   --enable-multiplatform  put executables into bin/PLATFORM and libraries into
                           lib/PLATFORM
+  --enable-cxx-runtime-hack  link C++ runtime statically
   --disable-dialog        do not build the dialog package
   --disable-pdfopen       do not build the pdfopen package
   --disable-ps2eps        do not build the ps2eps package
@@ -2148,11 +2151,36 @@ if test "${enable_all_pkgs+set}" = set; then
   enableval=$enable_all_pkgs;
 fi
 test "x$enable_all_pkgs" = xno || enable_all_pkgs=yes
-# Check whether --enable-cxx-runtime-hack was given.
-if test "${enable_cxx_runtime_hack+set}" = set; then
-  enableval=$enable_cxx_runtime_hack;
+# Check whether --enable-native-texlive-build was given.
+if test "${enable_native_texlive_build+set}" = set; then
+  enableval=$enable_native_texlive_build;
 fi
+case $enable_native_texlive_build in
+  yes | no) : ;;
+  *) enable_native_texlive_build=yes
+         ac_configure_args="$ac_configure_args '--enable-native-texlive-build'" ;;
+esac
 
+if test "x$enable_native_texlive_build" = xyes; then
+  case $enable_multiplatform in
+  yes | no) : ;;
+  *) enable_multiplatform=yes
+           ac_configure_args="$ac_configure_args '--enable-multiplatform'" ;;
+esac
+
+  case $enable_cxx_runtime_hack in
+  yes | no) : ;;
+  *) enable_cxx_runtime_hack=yes
+           ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack'" ;;
+esac
+
+  case $enable_shared in
+  yes | no) : ;;
+  *) enable_shared=no
+           ac_configure_args="$ac_configure_args '--disable-shared'" ;;
+esac
+
+fi
 # Check whether --enable-multiplatform was given.
 if test "${enable_multiplatform+set}" = set; then
   enableval=$enable_multiplatform;
@@ -2166,6 +2194,11 @@ if test "x$enable_multiplatform" = xyes; then
     libdir="$libdir/$host"
     ac_configure_args="$ac_configure_args '--libdir=$libdir'"
   fi
+fi
+
+# Check whether --enable-cxx-runtime-hack was given.
+if test "${enable_cxx_runtime_hack+set}" = set; then
+  enableval=$enable_cxx_runtime_hack;
 fi
 
 

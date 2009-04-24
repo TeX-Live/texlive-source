@@ -746,7 +746,7 @@ install-links:
 	  for p in $(shell_scripts); do \
 	    rm -f $$p; \
 	    echo "creating link '$$p' -> '$(REL)/$(tex4ht_subdir)/$$p.sh'"; \
-	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.pl $$p; \
+	    $(LN_S) $(REL)/$(tex4ht_subdir)/$$p.sh $$p; \
 	  done
 
 uninstall-hook:

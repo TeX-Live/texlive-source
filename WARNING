@@ -1,16 +1,25 @@
 	CONSTRUCTION WORK
 	=================
 
-The TeX Live build system is currently under reconstruction.
+The TeX Live build system is currently under reconstruction.  It is now
+nearly complete, except for the directory
+	utils/xindy/
+and a few features not yet available.  Moreover the directory
+	texk/xdvik/
+still needs some work, and building in that subdirectory may fail.
 
-At the moment the `Build' script should succeed, but might as well fail.
+My builds on i686-linux and i686-Darwin both went through without any
+problems.
 
-Please inform me of any failures!
+Please try ./Build for your system and tell me about any failures.
 
-The new build system is nearly complete, except for the directory
+If building a particular subdirectory, e.g., texk/xdvik/ fails, try
+	TL_CONFIGURE_ARGS='--disable-xdvik' ./Build
+(assuming a bourne compatible shell).
 
-	utils/xindy
+If there are problems with the cxx-runtime-hack (gcc only), please try adding
+'--disable-cxx-runtime-hack' to TL_CONFIGURE_ARGS.
 
-and a few features not yet available.
+Good luck!
 
-Peter Breitenlohner	2009-04-21	10:00 UTC
+Peter Breitenlohner	<peb@mppmu.mpg.de>	2009-04-24	15:00 UTC

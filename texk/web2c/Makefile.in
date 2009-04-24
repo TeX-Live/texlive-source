@@ -54,11 +54,11 @@ DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/alephdir/am/aleph.am \
-	$(srcdir)/am/bootstrap.am $(srcdir)/am/cweb.am \
-	$(srcdir)/am/texmf.am $(srcdir)/am/web.am $(srcdir)/c-auto.in \
-	$(srcdir)/etexdir/am/etex.am $(srcdir)/libmd5/am/md5.am \
-	$(srcdir)/luatexdir/am/liblua51.am \
+	$(srcdir)/Makefile.in $(srcdir)/README \
+	$(srcdir)/alephdir/am/aleph.am $(srcdir)/am/bootstrap.am \
+	$(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/am/web.am \
+	$(srcdir)/c-auto.in $(srcdir)/etexdir/am/etex.am \
+	$(srcdir)/libmd5/am/md5.am $(srcdir)/luatexdir/am/liblua51.am \
 	$(srcdir)/luatexdir/am/libluatex.am \
 	$(srcdir)/luatexdir/am/libzzip.am \
 	$(srcdir)/luatexdir/am/luafontforge.am \
@@ -187,7 +187,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = c-auto.h ff-config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = CXXLD.sh
 ARFLAGS = cru
 libff_a_AR = $(AR) $(ARFLAGS)
 libff_a_LIBADD =
@@ -1990,6 +1990,8 @@ stamp-h2: $(top_srcdir)/luatexdir/luafontloader/ff-config.in $(top_builddir)/con
 
 distclean-hdr:
 	-rm -f c-auto.h stamp-h1 ff-config.h stamp-h2
+CXXLD.sh: $(top_builddir)/config.status $(srcdir)/README
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 libff.a: $(libff_a_OBJECTS) $(libff_a_DEPENDENCIES) 
 	-rm -f libff.a
 	$(libff_a_AR) libff.a $(libff_a_OBJECTS) $(libff_a_LIBADD)

@@ -23,8 +23,29 @@ AC_ARG_ENABLE([all-pkgs],
               AS_HELP_STRING([--disable-all-pkgs],
                              [do not build packages unless explicitly enabled]))[]dnl
 test "x$enable_all_pkgs" = xno || enable_all_pkgs=yes
-KPSE_ENABLE_CXX_HACK
+AC_ARG_ENABLE([native-texlive-build],
+              AS_HELP_STRING([--disable-native-texlive-build],
+                             [do not build for the TeX Live binary distribution]))[]dnl
+AS_CASE([$enable_native_texlive_build],
+        [yes | no], [:],
+        [enable_native_texlive_build=yes
+         ac_configure_args="$ac_configure_args '--enable-native-texlive-build'"])
+if test "x$enable_native_texlive_build" = xyes; then
+  AS_CASE([$enable_multiplatform],
+          [yes | no], [:],
+          [enable_multiplatform=yes
+           ac_configure_args="$ac_configure_args '--enable-multiplatform'"])
+  AS_CASE([$enable_cxx_runtime_hack],
+          [yes | no], [:],
+          [enable_cxx_runtime_hack=yes
+           ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack'"])
+  AS_CASE([$enable_shared],
+          [yes | no], [:],
+          [enable_shared=no
+           ac_configure_args="$ac_configure_args '--disable-shared'"])
+fi
 KPSE_OPTIONS
+KPSE_ENABLE_CXX_HACK
 KPSE_LIBS_PREPARE
 KPSE_WEB2C_PREPARE
 m4_sinclude(kpse_TL[ac/withenable.ac])

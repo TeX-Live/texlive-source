@@ -152,10 +152,6 @@ EXTRA_DIST += \
 ##
 EXTRA_DIST += m4/gs-device.m4
 
-## Eventually delete this file (temporary fix to build without FT2)
-##
-EXTRA_DIST += fontmap.c.temp
-
 ## Eventually delete these files
 ##
 EXTRA_DIST += Makefile.in.orig acinclude.m4.orig configure.ac.orig

@@ -13888,8 +13888,7 @@ if test "${xdvi_cv_func_good_vsnprintf+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   if test "$cross_compiling" = yes; then
-  # safe value for cross-compiling
-xdvi_cv_func_good_vsnprintf=no
+  xdvi_cv_func_good_vsnprintf=no # safe value for cross-compiling
 else
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -13902,12 +13901,14 @@ cat >>conftest.$ac_ext <<_ACEOF
 #define _XOPEN_SOURCE 500
 #endif
 #include <stdio.h>
-int main()
+int
+main ()
 {
-  char s[2];
+char s[2];
   int retval = snprintf(s, 2, "test");
   if (retval > -1 && retval != 4) /* neither negative nor desired size, not OK */
     return 1;
+  ;
   return 0;
 }
 _ACEOF
@@ -13950,13 +13951,14 @@ fi
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_func_good_vsnprintf" >&5
 $as_echo "$xdvi_cv_func_good_vsnprintf" >&6; }
-if test $xdvi_cv_func_good_vsnprintf = yes; then
+if test "x$xdvi_cv_func_good_vsnprintf" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_GOOD_VSNPRINTF 1
 _ACEOF
 
 fi
+
 { $as_echo "$as_me:$LINENO: checking for memicmp" >&5
 $as_echo_n "checking for memicmp... " >&6; }
 if test "${xdvi_cv_memicmp+set}" = set; then
@@ -13969,7 +13971,6 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <string.h>
-
 int
 main ()
 {
@@ -14013,13 +14014,14 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_memicmp" >&5
 $as_echo "$xdvi_cv_memicmp" >&6; }
-if test $xdvi_cv_memicmp = yes; then
+if test "x$xdvi_cv_memicmp" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_MEMICMP 1
 _ACEOF
 
 fi
+
 # The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
 # for constant arguments.  Useless!
 { $as_echo "$as_me:$LINENO: checking for working alloca.h" >&5
@@ -16540,15 +16542,14 @@ _ACEOF
 fi
 
 
-if test $ac_cv_func_vfork_works = yes; then
-{ $as_echo "$as_me:$LINENO: checking for whether setsid() is allowed within vfork()" >&5
+if test "x$ac_cv_func_vfork_works" = xyes; then
+  { $as_echo "$as_me:$LINENO: checking for whether setsid() is allowed within vfork()" >&5
 $as_echo_n "checking for whether setsid() is allowed within vfork()... " >&6; }
 if test "${xdvi_cv_setsid_in_vfork+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   if test "$cross_compiling" = yes; then
-  # safe value for cross-compiling
-xdvi_cv_setsid_in_vfork=no
+  xdvi_cv_setsid_in_vfork=no # safe value for cross-compiling
 else
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -16556,6 +16557,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
+
 /* Test adapted from Gnu autoconf */
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
@@ -16568,7 +16570,9 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <vfork.h>
 #endif
 int
-main() {
+main ()
+{
+
   pid_t parent = getpid ();
   pid_t child;
 
@@ -16591,6 +16595,8 @@ main() {
 	 || status
 	 );
   }
+  ;
+  return 0;
 }
 _ACEOF
 rm -f conftest$ac_exeext
@@ -16632,7 +16638,7 @@ fi
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_setsid_in_vfork" >&5
 $as_echo "$xdvi_cv_setsid_in_vfork" >&6; }
-if test $xdvi_cv_setsid_in_vfork = yes; then
+if test "x$xdvi_cv_setsid_in_vfork" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_GOOD_SETSID_VFORK 1
@@ -16640,6 +16646,8 @@ _ACEOF
 
 fi
 fi
+
+
 { $as_echo "$as_me:$LINENO: checking whether C compiler supports string concatenation" >&5
 $as_echo_n "checking whether C compiler supports string concatenation... " >&6; }
 if test "${xdvi_cv_cc_concat+set}" = set; then
@@ -16652,12 +16660,10 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <stdio.h>
-
 int
 main ()
 {
 puts("Testing" " string" " concatenation");
-
   ;
   return 0;
 }
@@ -16692,13 +16698,14 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_cc_concat" >&5
 $as_echo "$xdvi_cv_cc_concat" >&6; }
-if test $xdvi_cv_cc_concat = yes; then
+if test "x$xdvi_cv_cc_concat" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_CC_CONCAT 1
 _ACEOF
 
 fi
+
 # The cast to long int works around a bug in the HP C Compiler
 # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
 # declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
@@ -18175,7 +18182,6 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <stropts.h>
-
 int
 main ()
 {
@@ -18223,53 +18229,56 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_sys_streams" >&5
 $as_echo "$xdvi_cv_sys_streams" >&6; }
-if test $xdvi_cv_sys_streams = yes; then
+if test "x$xdvi_cv_sys_streams" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_STREAMS 1
 _ACEOF
 
 fi
+
 { $as_echo "$as_me:$LINENO: checking for SunOS 4" >&5
 $as_echo_n "checking for SunOS 4... " >&6; }
 if test "${xdvi_cv_sys_sunos_4+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   case "`(uname -sr) 2>/dev/null`" in
-"SunOS 4."*)
-  xdvi_cv_sys_sunos_4=yes ;;
-*) xdvi_cv_sys_sunos_4=no ;;
+  "SunOS 4."*) xdvi_cv_sys_sunos_4=yes ;;
+  *) xdvi_cv_sys_sunos_4=no ;;
 esac
+
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_sys_sunos_4" >&5
 $as_echo "$xdvi_cv_sys_sunos_4" >&6; }
-if test $xdvi_cv_sys_sunos_4 = yes; then
+if test "x$xdvi_cv_sys_sunos_4" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define SUNOS4 1
 _ACEOF
 
 fi
+
 { $as_echo "$as_me:$LINENO: checking for certain old versions of Linux" >&5
 $as_echo_n "checking for certain old versions of Linux... " >&6; }
 if test "${xdvi_cv_sys_old_linux+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   case "`(uname -sr) 2>/dev/null`" in
-"Linux 2."[01].* | "Linux 2.2."[0-8] | "Linux 2.2."[0-8]-*)
-  xdvi_cv_sys_old_linux=yes ;;
-*) xdvi_cv_sys_old_linux=no ;;
+  "Linux 2."[01].* | "Linux 2.2."[0-8] | "Linux 2.2."[0-8]-*) xdvi_cv_sys_old_linux=yes ;;
+  *) xdvi_cv_sys_old_linux=no ;;
 esac
+
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_sys_old_linux" >&5
 $as_echo "$xdvi_cv_sys_old_linux" >&6; }
-if test $xdvi_cv_sys_old_linux = yes; then
+if test "x$xdvi_cv_sys_old_linux" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define FLAKY_SIGPOLL 1
 _ACEOF
 
 fi
+
 { $as_echo "$as_me:$LINENO: checking for poll.h and poll()" >&5
 $as_echo_n "checking for poll.h and poll()... " >&6; }
 if test "${xdvi_cv_func_poll+set}" = set; then
@@ -18282,7 +18291,6 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <poll.h>
-
 int
 main ()
 {
@@ -18326,7 +18334,7 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_func_poll" >&5
 $as_echo "$xdvi_cv_func_poll" >&6; }
-if test $xdvi_cv_func_poll = yes; then
+if test "x$xdvi_cv_func_poll" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_POLL 1
@@ -18490,27 +18498,25 @@ fi
 
 
 
+
 { $as_echo "$as_me:$LINENO: checking whether linker supports the --allow-multiple-definition flag" >&5
 $as_echo_n "checking whether linker supports the --allow-multiple-definition flag... " >&6; }
 if test "${xdvi_cv_linker_multiple_defns+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-  xdvi_save_LDFLAGS="$LDFLAGS"
-LDFLAGS="-Xlinker --allow-multiple-definition"
-x_linker_options=""
-cat >conftest.$ac_ext <<_ACEOF
+  xdvi_save_LDFLAGS=$LDFLAGS
+                 LDFLAGS="-Xlinker --allow-multiple-definition"
+                 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <stdio.h>
-
 int
 main ()
 {
 void foo(void);
-
   ;
   return 0;
 }
@@ -18542,39 +18548,32 @@ else
 sed 's/^/| /' conftest.$ac_ext >&5
 
 	xdvi_cv_linker_multiple_defns=no
-
 fi
 
 rm -rf conftest.dSYM
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
-
+                 LDFLAGS=$xdvi_save_LDFLAGS
 fi
 { $as_echo "$as_me:$LINENO: result: $xdvi_cv_linker_multiple_defns" >&5
 $as_echo "$xdvi_cv_linker_multiple_defns" >&6; }
-if test $xdvi_cv_linker_multiple_defns = yes; then
-    x_linker_options="-Xlinker --allow-multiple-definition"
-    LDFLAGS="$xdvi_save_LDFLAGS"
 
-cat >>confdefs.h <<\_ACEOF
-#define LD_ALLOWS_MULTIPLE_DEFINITIONS 1
-_ACEOF
+x_linker_options=""
+case $xdvi_cv_linker_multiple_defns in
+  yes) x_linker_options="-Xlinker --allow-multiple-definition" ;;
+  "by default") : ;;
+  *) { $as_echo "$as_me:$LINENO: checking whether linker supports multiple definitions" >&5
+$as_echo_n "checking whether linker supports multiple definitions... " >&6; }
 
-else
-    LDFLAGS="$xdvi_save_LDFLAGS"
-
-    xdvi_ld_save_LIBS="$LIBS"
-    xdvi_ld_save_CFLAGS="$CFLAGS"
-    xdvi_ld_save_CPPFLAGS="$CPPFLAGS"
-    xdvi_ld_save_LDFLAGS="$LDFLAGS"
+    xdvi_ld_save_LIBS=$LIBS
+    xdvi_ld_save_CFLAGS=$CFLAGS
+    xdvi_ld_save_CPPFLAGS=$CPPFLAGS
+    xdvi_ld_save_LDFLAGS=$LDFLAGS
 
     LIBS="$X_PRE_LIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
     CFLAGS="$X_CFLAGS $CFLAGS"
     CPPFLAGS="$X_CFLAGS $CPPFLAGS"
     LDFLAGS="$X_LIBS $LDFLAGS"
-
-    { $as_echo "$as_me:$LINENO: checking whether linker supports multiple definitions by default" >&5
-$as_echo_n "checking whether linker supports multiple definitions by default... " >&6; }
 
     cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -18584,22 +18583,19 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <X11/Intrinsic.h>
 
-	XtIntervalId XtAppAddTimeOut(XtAppContext app,
+        XtIntervalId XtAppAddTimeOut(XtAppContext app,
                                      unsigned long interval,
                                      XtTimerCallbackProc proc,
                                      XtPointer closure)
-	{
-    	    (void)app; (void)interval; (void)proc; (void)closure;
-    	    return (XtIntervalId)0;
-	}
+        {
+            (void)app; (void)interval; (void)proc; (void)closure;
+            return (XtIntervalId)0;
+        }
 
 int
 main ()
 {
-
-	XtIntervalId i = 0;
-	XtRemoveTimeOut(i);
-
+XtIntervalId i = 0; XtRemoveTimeOut(i);
   ;
   return 0;
 }
@@ -18625,12 +18621,11 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  xdvi_cv_linker_multiple_defns=yes
+  xdvi_cv_linker_multiple_defns="by default"
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	xdvi_cv_linker_multiple_defns=no
 
 fi
 
@@ -18638,17 +18633,23 @@ rm -rf conftest.dSYM
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 
-    if test $xdvi_cv_linker_multiple_defns = yes; then
-        { $as_echo "$as_me:$LINENO: result: yes" >&5
-$as_echo "yes" >&6; }
-        cat >>confdefs.h <<\_ACEOF
+    LIBS=$xdvi_ld_save_LIBS
+    CFLAGS=$xdvi_ld_save_CFLAGS
+    CPPFLAGS=$xdvi_ld_save_CPPFLAGS
+    LDFLAGS=$xdvi_ld_save_LDFLAGS
+
+    { $as_echo "$as_me:$LINENO: result: $xdvi_cv_linker_multiple_defns" >&5
+$as_echo "$xdvi_cv_linker_multiple_defns" >&6; } ;;
+esac
+
+if test "x$xdvi_cv_linker_multiple_defns" != xno; then
+
+cat >>confdefs.h <<\_ACEOF
 #define LD_ALLOWS_MULTIPLE_DEFINITIONS 1
 _ACEOF
 
-    else
-        { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
- 	{ $as_echo "$as_me:$LINENO: WARNING: Linker does not allow multiple definitions.
+else
+    { $as_echo "$as_me:$LINENO: WARNING: Linker does not allow multiple definitions.
   *****************************************************************
   * Warning: Your linker does not allow multiple definitions.     *
   * This does not make xdvik unusable, but it will cause problems *
@@ -18664,12 +18665,8 @@ $as_echo "$as_me: WARNING: Linker does not allow multiple definitions.
   * tooltips, statusline messages and hyperlink location markers  *
   * will not be updated until the mouse is moved.                 *
   *****************************************************************" >&2;}
-    fi
-    LIBS="$xdvi_ld_save_LIBS"
-    CFLAGS="$xdvi_ld_save_CFLAGS"
-    CPPFLAGS="$xdvi_ld_save_CPPFLAGS"
-    LDFLAGS="$xdvi_ld_save_LDFLAGS"
 fi
+
 
 
 

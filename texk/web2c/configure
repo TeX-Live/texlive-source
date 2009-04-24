@@ -17457,7 +17457,7 @@ if test "x$kpse_cv_cxx_hack" = xok; then
 set -- $CXX \"\$@\" $CXX_HACK_LIBS
 echo \"\$0:\" \"\$@\"
 exec \"\$@\""
-  ac_config_files="$ac_config_files CXXLD.sh:Makefile.in"
+  ac_config_files="$ac_config_files CXXLD.sh:README"
 
 else
   CXXLD='$(CXX)'
@@ -25316,7 +25316,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
-    "CXXLD.sh") CONFIG_FILES="$CONFIG_FILES CXXLD.sh:Makefile.in" ;;
+    "CXXLD.sh") CONFIG_FILES="$CONFIG_FILES CXXLD.sh:README" ;;
     "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
     "ff-config.h") CONFIG_HEADERS="$CONFIG_HEADERS ff-config.h:luatexdir/luafontloader/ff-config.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;

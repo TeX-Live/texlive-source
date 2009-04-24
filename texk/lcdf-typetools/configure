@@ -17588,7 +17588,7 @@ if test "x$kpse_cv_cxx_hack" = xok; then
 set -- $CXX \"\$@\" $CXX_HACK_LIBS
 echo \"\$0:\" \"\$@\"
 exec \"\$@\""
-  ac_config_files="$ac_config_files CXXLD.sh:Makefile.in"
+  ac_config_files="$ac_config_files CXXLD.sh:README"
 
 else
   CXXLD='$(CXX)'
@@ -24033,7 +24033,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
-    "CXXLD.sh") CONFIG_FILES="$CONFIG_FILES CXXLD.sh:Makefile.in" ;;
+    "CXXLD.sh") CONFIG_FILES="$CONFIG_FILES CXXLD.sh:README" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "liblcdf/Makefile") CONFIG_FILES="$CONFIG_FILES liblcdf/Makefile" ;;
     "libefont/Makefile") CONFIG_FILES="$CONFIG_FILES libefont/Makefile" ;;

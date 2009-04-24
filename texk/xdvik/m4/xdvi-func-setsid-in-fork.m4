@@ -1,12 +1,20 @@
-dnl ### Check for whether setsid() is allowed within vfork()
-dnl (Mac OS X 10.3 (Panther, 11/2003) is one O/S which does not allow this.)
+# Autoconf macros for xdvik.
+# Copyright (C) 2002 - 2009 Paul Vojta <xdvi-core@lists.sourceforge.net>
+#
+# This file is free software; the copyright holder
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
+# XDVI_FUNC_SETSID_IN_VFORK
+# -------------------------
+# Check for whether setsid() is allowed within vfork()
+# (Mac OS X 10.3 (Panther, 11/2003) is one O/S which does not allow this).
 AC_DEFUN([XDVI_FUNC_SETSID_IN_VFORK],
-[if test $ac_cv_func_vfork_works = yes; then
-AC_CACHE_CHECK([for whether setsid() is allowed within vfork()],
-xdvi_cv_setsid_in_vfork,
-[AC_TRY_RUN(
-[/* Test adapted from Gnu autoconf */
+[AS_IF([test "x$ac_cv_func_vfork_works" = xyes],
+[AC_CACHE_CHECK([for whether setsid() is allowed within vfork()],
+                [xdvi_cv_setsid_in_vfork],
+                [AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+/* Test adapted from Gnu autoconf */
 /* Thanks to Paul Eggert for this test.  */
 #include <stdio.h>
 #include <sys/types.h>
@@ -16,9 +24,8 @@ xdvi_cv_setsid_in_vfork,
 #endif
 #ifdef HAVE_VFORK_H
 #include <vfork.h>
-#endif
-int
-main() {
+#endif]],
+                                                [[
   pid_t parent = getpid ();
   pid_t child;
 
@@ -40,15 +47,12 @@ main() {
 	 /* Did the child fail?  (This shouldn't happen.)  */
 	 || status
 	 );
-  }
-}],
-xdvi_cv_setsid_in_vfork=yes,
-xdvi_cv_setsid_in_vfork=no,
-# safe value for cross-compiling
-xdvi_cv_setsid_in_vfork=no)])
-if test $xdvi_cv_setsid_in_vfork = yes; then
+  }]])],
+                               [xdvi_cv_setsid_in_vfork=yes],
+                               [xdvi_cv_setsid_in_vfork=no],
+                               [xdvi_cv_setsid_in_vfork=no # safe value for cross-compiling])])
+if test "x$xdvi_cv_setsid_in_vfork" = xyes; then
   AC_DEFINE([HAVE_GOOD_SETSID_VFORK], 1,
             [Define if your system allows setsid() within vfork().])
-fi]
-fi)
-
+fi])
+]) # XDVI_FUNC_SETSID_IN_VFORK
