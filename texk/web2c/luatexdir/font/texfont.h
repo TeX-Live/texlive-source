@@ -397,6 +397,9 @@ typedef enum {
 #  define space_stretch(f) font_param(f,space_stretch_code)
 #  define space_shrink(f)  font_param(f,space_shrink_code)
 #  define x_height(f)      font_param(f,x_height_code)
+#ifdef quad
+#  undef quad
+#endif
 #  define quad(f)          font_param(f,quad_code)
 #  define extra_space(f)   font_param(f,extra_space_code)
 

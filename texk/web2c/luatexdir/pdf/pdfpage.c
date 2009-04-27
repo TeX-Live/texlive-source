@@ -30,7 +30,7 @@ static const char __svn_version[] =
 
 #define lround(a) (long) floor((a) + 0.5)
 #define setpdffloat(a,b,c) {(a).m = (b); (a).e = (c);}
-#define pdf2double(a) ((double) (a).m / exp10[(a).e])
+#define pdf2double(a) ((double) (a).m / exp10_arr[(a).e])
 
 /* eternal constants */
 #define one_bp ((double) 65536 * (double) 72.27 / 72)   /* number of sp per 1bp */
@@ -41,7 +41,7 @@ static const char __svn_version[] =
 
 pdfstructure *pstruct = NULL;
 
-static long *exp10 = NULL;
+static long *exp10_arr = NULL;
 
 /**********************************************************************/
 
@@ -52,16 +52,16 @@ static pdfstructure *new_pdfstructure()
 
 static void calc_k1(pdfstructure * p)
 {
-    p->k1 = exp10[p->pdf.h.e] / one_bp;
+    p->k1 = exp10_arr[p->pdf.h.e] / one_bp;
 }
 
 static void calc_k2(pdfstructure * p)
 {
     p->tm[0].m =
-        lround(pdf2double(p->hz) * pdf2double(p->ext) * exp10[p->tm[0].e]);
+        lround(pdf2double(p->hz) * pdf2double(p->ext) * exp10_arr[p->tm[0].e]);
     p->k2 =
-        exp10[e_tj +
-              p->cw.e] / (exp10[p->pdf.h.e] * pdf2double(p->fs) *
+        exp10_arr[e_tj +
+              p->cw.e] / (exp10_arr[p->pdf.h.e] * pdf2double(p->fs) *
                           pdf2double(p->tm[0]));
 }
 
@@ -69,11 +69,11 @@ void pdf_page_init()
 {
     pdfstructure *p;
     int i, decimal_digits = fixed_decimal_digits;
-    if (exp10 == NULL) {
-        exp10 = xmalloc(10 * sizeof(long));
-        exp10[0] = 1;
+    if (exp10_arr == NULL) {
+        exp10_arr = xmalloc(10 * sizeof(long));
+        exp10_arr[0] = 1;
         for (i = 1; i < 10; i++)
-            exp10[i] = 10 * exp10[i - 1];
+            exp10_arr[i] = 10 * exp10_arr[i - 1];
     }
     if (pstruct == NULL)
         pstruct = new_pdfstructure();
@@ -92,7 +92,7 @@ void pdf_page_init()
     setpdffloat(p->cm[4], 0, decimal_digits);   /* horizontal movement on page */
     setpdffloat(p->cm[5], 0, decimal_digits);   /* vertical movement on page */
     /* for placement inside BT...ET */
-    setpdffloat(p->tm[0], exp10[6], 6); /* mantissa holds HZ expand * ExtendFont */
+    setpdffloat(p->tm[0], exp10_arr[6], 6); /* mantissa holds HZ expand * ExtendFont */
     setpdffloat(p->tm[1], 0, 0);
     setpdffloat(p->tm[2], 0, 3);        /* mantissa holds SlantFont, 0 = default */
     setpdffloat(p->tm[3], 1, 0);
@@ -180,7 +180,7 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos * pos)
             new.h = lround((pos->h * p->k1 - p->pdf_tj_pos.h.m) * p->k2);
             new.v = lround(pos->v * p->k1);
             p->tj_delta.m =
-                -lround((new.h - p->cw.m) / exp10[p->cw.e - p->tj_delta.e]);
+                -lround((new.h - p->cw.m) / exp10_arr[p->cw.e - p->tj_delta.e]);
             p->tm[5].m = new.v - p->pdf_bt_pos.v.m;     /* p->tm[4] is meaningless */
             if (p->tj_delta.m != 0 || new.v != p->pdf.v.m)
                 move_pdfpos = TRUE;
@@ -190,7 +190,7 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos * pos)
             new.v = lround((p->pdf_tj_pos.v.m - pos->v * p->k1) * p->k2);
             p->tm[4].m = new.h - p->pdf_bt_pos.h.m;     /* p->tm[5] is meaningless */
             p->tj_delta.m =
-                -lround((new.v - p->cw.m) / exp10[p->cw.e - p->tj_delta.e]);
+                -lround((new.v - p->cw.m) / exp10_arr[p->cw.e - p->tj_delta.e]);
             if (p->tj_delta.m != 0 || new.h != p->pdf.h.m)
                 move_pdfpos = TRUE;
             break;
@@ -215,12 +215,12 @@ void print_pdffloat(pdffloat * f)
         pdf_printf("-");
         m *= -1;
     }
-    l = m / exp10[e];
+    l = m / exp10_arr[e];
     pdf_print_int(l);
-    l = m % exp10[e];
+    l = m % exp10_arr[e];
     if (l != 0) {
         pdf_printf(".");
-        j = snprintf(a, 23, "%ld", l + exp10[e]);
+        j = snprintf(a, 23, "%ld", l + exp10_arr[e]);
         assert(j < 23);
         for (i = e; i > 0; i--) {
             if (a[i] != '0')
@@ -289,7 +289,7 @@ static long pdf_char_width(pdfstructure * p, internal_font_number f, int i)
     /* use exactly this formula also for calculating the /Width array values */
     return
         lround((double) char_width(f, i) / font_size(f) *
-               exp10[e_tj + p->cw.e]);
+               exp10_arr[e_tj + p->cw.e]);
 }
 
 void pdf_print_charwidth(internal_font_number f, int i)
@@ -458,11 +458,11 @@ static void setup_fontparameters(pdfstructure * p, internal_font_number f)
     p->tj_delta.e = p->cw.e - 1;        /* "- 1" makes less corrections inside []TJ */
     /* no need to be more precise than TeX (1sp) */
     while (p->tj_delta.e > 0
-           && (double) font_size(f) / exp10[p->tj_delta.e + e_tj] < 0.5)
+           && (double) font_size(f) / exp10_arr[p->tj_delta.e + e_tj] < 0.5)
         p->tj_delta.e--;        /* happens for very tiny fonts */
-    assert(p->cw.e >= p->tj_delta.e);   /* else we would need, e. g., exp10[-1] */
-    p->fs.m = lround(font_size(f) / one_bp * exp10[p->fs.e]);
-    p->hz.m = pdf_font_expand_ratio(f) + exp10[p->hz.e];
+    assert(p->cw.e >= p->tj_delta.e);   /* else we would need, e. g., exp10_arr[-1] */
+    p->fs.m = lround(font_size(f) / one_bp * exp10_arr[p->fs.e]);
+    p->hz.m = pdf_font_expand_ratio(f) + exp10_arr[p->hz.e];
     calc_k2(p);
 }
 
@@ -524,7 +524,7 @@ place_glyph(pdfstructure * p, scaledpos * pos, internal_font_number f,
                 end_charmode(p);
             assert(p->tj_delta.m != 0);
             print_pdffloat(&(p->tj_delta));
-            p->cw.m -= p->tj_delta.m * exp10[p->cw.e - p->tj_delta.e];
+            p->cw.m -= p->tj_delta.m * exp10_arr[p->cw.e - p->tj_delta.e];
         }
     }
     if (is_chararraymode(p))

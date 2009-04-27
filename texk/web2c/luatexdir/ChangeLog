@@ -1,3 +1,10 @@
+2009-04-27  Taco Hoekwater <taco@luatex.org>
+
+	* pdf/pdfpage.c: rename exp10 to exp10_arr to solve a 
+	conflict with cygwin's <math.h>.
+	* font/texfont.h: add #undef quad before definition to suppress a
+	compiler warning under cygwin. 
+
 2009-04-22  Taco Hoekwater <taco@luatex.org>
 
 	* luatexdir: import of the current state of luatex, 0.40.0. 
