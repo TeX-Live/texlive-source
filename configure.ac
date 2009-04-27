@@ -115,8 +115,10 @@ AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE_STRING:
 
    $msg_compiling for $host
-   prefix:               $prefix
-   enable_multiplatform: $enable_multiplatform
+   prefix:                    $prefix
+   enable_shared:             $enable_shared
+   enable_multiplatform:      $enable_multiplatform
+   enable_cxx_runtime_hack:   $enable_cxx_runtime_hack
 
 ** Next run `make' to configure and build each library and program.
 ])

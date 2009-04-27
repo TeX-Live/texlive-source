@@ -19,15 +19,12 @@ run_tests_SOURCES = \
 	test_string_utils.c \
 	test_util.c
 
-run_tests_DEPENDENCIES = ../libxdvi.a ../gui/libgui.a $(common_dependencies)
+run_tests_DEPENDENCIES = ../libxdvi.a $(common_dependencies)
 
-LDADD = ../libxdvi.a ../gui/libgui.a $(common_ldadd)
+LDADD = ../libxdvi.a $(common_ldadd)
 
 ../libxdvi.a: $(libxdvi_dependencies)
 	cd .. && $(MAKE) $(AM_MAKEFLAGS) libxdvi.a
-
-../gui/libgui.a: $(libgui_dependencies)
-	cd ../gui && $(MAKE) $(AM_MAKEFLAGS) libgui.a
 
 ## Not used
 ##

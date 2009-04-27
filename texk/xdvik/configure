@@ -798,14 +798,14 @@ KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
 KPATHSEA_INCLUDES
-iconv_includes
-iconv_libs
-iconv_libpath
 final_exec_name
 x_tool_libs
-x_xpm_libs
 x_ext_lib
+x_xpm_libs
 x_xmu_lib
+iconv_libs
+iconv_libpath
+iconv_includes
 x_linker_options
 X_EXTRA_LIBS
 X_LIBS
@@ -938,14 +938,14 @@ with_xdvi_x_toolkit
 with_ps
 enable_a4
 with_x
+with_iconv_include
+with_iconv_libdir
 enable_magick
 with_xpm
 with_xpm_includes
 with_xpm_libraries
 with_motif_include
 with_motif_libdir
-with_iconv_libdir
-with_iconv_include
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
@@ -1626,17 +1626,17 @@ Optional Packages:
                           [default: Motif if available, else Xaw]
   --with-ps=PS            Use PostScript (PS=no/yes/gs/dps/news, default gs)
   --with-x                use the X Window System
-  --without-xpm           Do not use the Xpm library (will disable the toolbar)
-  --with-xpm-include=DIR
-                          Specify the location of Xpm include files
-  --with-xpm-libdir=DIR
-                          Specify the location of Xpm libraries
+  --with-iconv-include=DIR
+                          Specify the location of <iconv.h> header
+  --with-iconv-libdir=DIR Specify the location of iconv (-liconv or -lrecode)
+                          library
+  --without-xpm           Do not use the Xpm library (will disable the
+                          toolbar)
+  --with-xpm-include=DIR  Specify the location of Xpm include files
+  --with-xpm-libdir=DIR   Specify the location of Xpm libraries
   --with-motif-include=DIR
                           Specify the location of Motif include files
   --with-motif-libdir=DIR Specify the location of Motif libraries
-  --with-iconv-libdir=DIR Specify the location of iconv library (librecode.so)
-  --with-iconv-include=DIR
-                          Specify the location of iconv header (iconv.h)
   --with-system-kpathsea  use installed kpathsea headers and library
   --with-kpathsea-includes=DIR
                           kpathsea headers installed in DIR
@@ -12902,6 +12902,16 @@ _ACEOF
 fi
 
 
+## texk/xdvik/ac/xdvik.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
+## configure options for xdvik
+
+# Check whether --with-xdvi-x-toolkit was given.
+if test "${with_xdvi_x_toolkit+set}" = set; then
+  withval=$with_xdvi_x_toolkit;
+fi
+
+
+
 { $as_echo "$as_me:$LINENO: checking for library containing pow" >&5
 $as_echo_n "checking for library containing pow... " >&6; }
 if test "${ac_cv_search_pow+set}" = set; then
@@ -12989,30 +12999,6 @@ if test "$ac_res" != no; then
 
 fi
 
-
-## texk/xdvik/ac/xdvik.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
-## configure options for xdvik
-
-# Check whether --with-xdvi-x-toolkit was given.
-if test "${with_xdvi_x_toolkit+set}" = set; then
-  withval=$with_xdvi_x_toolkit;
-fi
-
-
-case $with_xdvi_x_toolkit in
-  next | nextaw | neXtaw) val=neXtaw ;;
-  xaw3d) val=xaw3d ;;
-  "" | x | xa | xaw) val=xaw ;;
-  y | ye | yes) val=yes ;;
-  m | mo | mot | moti | motif) val=motif ;;
-  *) { $as_echo "$as_me:$LINENO: WARNING: unknown --with-xdvi-x-toolkit argument
-                                                     \`$with_xdvi_x_toolkit'; using xaw." >&5
-$as_echo "$as_me: WARNING: unknown --with-xdvi-x-toolkit argument
-                                                     \`$with_xdvi_x_toolkit'; using xaw." >&2;}
-                                        val=xaw ;;
-esac
-
-with_xdvi_x_toolkit=$val
 
 
 # Check whether --with-ps was given.
@@ -18499,14 +18485,14 @@ fi
 
 
 
-{ $as_echo "$as_me:$LINENO: checking whether linker supports the --allow-multiple-definition flag" >&5
-$as_echo_n "checking whether linker supports the --allow-multiple-definition flag... " >&6; }
+{ $as_echo "$as_me:$LINENO: checking if linker supports multiple definitions and for required flags" >&5
+$as_echo_n "checking if linker supports multiple definitions and for required flags... " >&6; }
 if test "${xdvi_cv_linker_multiple_defns+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-  xdvi_save_LDFLAGS=$LDFLAGS
-                 LDFLAGS="-Xlinker --allow-multiple-definition"
-                 cat >conftest.$ac_ext <<_ACEOF
+  xdvi_ld_save_LDFLAGS=$LDFLAGS
+    LDFLAGS="-Xlinker --allow-multiple-definition"
+    cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -18542,40 +18528,21 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  xdvi_cv_linker_multiple_defns=yes
+  xdvi_cv_linker_multiple_defns=$LDFLAGS
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	xdvi_cv_linker_multiple_defns=no
-fi
+	xdvi_ld_save_LIBS=$LIBS
+       xdvi_ld_save_CFLAGS=$CFLAGS
+       xdvi_ld_save_CPPFLAGS=$CPPFLAGS
 
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-                 LDFLAGS=$xdvi_save_LDFLAGS
-fi
-{ $as_echo "$as_me:$LINENO: result: $xdvi_cv_linker_multiple_defns" >&5
-$as_echo "$xdvi_cv_linker_multiple_defns" >&6; }
+       LIBS="$X_PRE_LIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+       CFLAGS="$X_CFLAGS $CFLAGS"
+       CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+       LDFLAGS="$X_LIBS $xdvi_ld_save_LDFLAGS"
 
-x_linker_options=""
-case $xdvi_cv_linker_multiple_defns in
-  yes) x_linker_options="-Xlinker --allow-multiple-definition" ;;
-  "by default") : ;;
-  *) { $as_echo "$as_me:$LINENO: checking whether linker supports multiple definitions" >&5
-$as_echo_n "checking whether linker supports multiple definitions... " >&6; }
-
-    xdvi_ld_save_LIBS=$LIBS
-    xdvi_ld_save_CFLAGS=$CFLAGS
-    xdvi_ld_save_CPPFLAGS=$CPPFLAGS
-    xdvi_ld_save_LDFLAGS=$LDFLAGS
-
-    LIBS="$X_PRE_LIBS -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-    CFLAGS="$X_CFLAGS $CFLAGS"
-    CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-    LDFLAGS="$X_LIBS $LDFLAGS"
-
-    cat >conftest.$ac_ext <<_ACEOF
+       cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -18583,15 +18550,14 @@ cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <X11/Intrinsic.h>
 
-        XtIntervalId XtAppAddTimeOut(XtAppContext app,
-                                     unsigned long interval,
-                                     XtTimerCallbackProc proc,
-                                     XtPointer closure)
-        {
-            (void)app; (void)interval; (void)proc; (void)closure;
-            return (XtIntervalId)0;
-        }
-
+              XtIntervalId XtAppAddTimeOut(XtAppContext app,
+                                           unsigned long interval,
+                                           XtTimerCallbackProc proc,
+                                           XtPointer closure)
+              {
+                  (void)app; (void)interval; (void)proc; (void)closure;
+                  return (XtIntervalId)0;
+              }
 int
 main ()
 {
@@ -18621,35 +18587,39 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  xdvi_cv_linker_multiple_defns="by default"
+  xdvi_cv_linker_multiple_defns="none required"
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-
+	xdvi_cv_linker_multiple_defns=unsupported
 fi
 
 rm -rf conftest.dSYM
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 
-    LIBS=$xdvi_ld_save_LIBS
-    CFLAGS=$xdvi_ld_save_CFLAGS
-    CPPFLAGS=$xdvi_ld_save_CPPFLAGS
+       LIBS=$xdvi_ld_save_LIBS
+       CFLAGS=$xdvi_ld_save_CFLAGS
+       CPPFLAGS=$xdvi_ld_save_CPPFLAGS
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
     LDFLAGS=$xdvi_ld_save_LDFLAGS
+fi
+{ $as_echo "$as_me:$LINENO: result: $xdvi_cv_linker_multiple_defns" >&5
+$as_echo "$xdvi_cv_linker_multiple_defns" >&6; }
 
-    { $as_echo "$as_me:$LINENO: result: $xdvi_cv_linker_multiple_defns" >&5
-$as_echo "$xdvi_cv_linker_multiple_defns" >&6; } ;;
-esac
-
-if test "x$xdvi_cv_linker_multiple_defns" != xno; then
-
+x_linker_options=""
+case $xdvi_cv_linker_multiple_defns in
+  "none required")
 cat >>confdefs.h <<\_ACEOF
 #define LD_ALLOWS_MULTIPLE_DEFINITIONS 1
 _ACEOF
-
-else
-    { $as_echo "$as_me:$LINENO: WARNING: Linker does not allow multiple definitions.
+ ;;
+  unsupported) { $as_echo "$as_me:$LINENO: WARNING: Linker does not allow multiple definitions.
   *****************************************************************
   * Warning: Your linker does not allow multiple definitions.     *
   * This does not make xdvik unusable, but it will cause problems *
@@ -18664,8 +18634,14 @@ $as_echo "$as_me: WARNING: Linker does not allow multiple definitions.
   * with event handling: Some widgets, e.g. the print log window, *
   * tooltips, statusline messages and hyperlink location markers  *
   * will not be updated until the mouse is moved.                 *
-  *****************************************************************" >&2;}
-fi
+  *****************************************************************" >&2;} ;;
+  *) x_linker_options=$xdvi_cv_linker_multiple_defns
+         cat >>confdefs.h <<\_ACEOF
+#define LD_ALLOWS_MULTIPLE_DEFINITIONS 1
+_ACEOF
+ ;;
+esac
+
 
 
 
@@ -19021,10 +18997,8 @@ fi
 
 
 
-
-
 for ac_func in mkstemp memcpy strerror waitpid sigaction strchr setenv ulltostr \
-                fchdir getcwd getpwnam getuid getpwuid iconv nl_langinfo \
+                fchdir getcwd getpwnam getuid getpwuid \
                 lstat ftruncate snprintf vsnprintf realpath
 do
 as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -19132,9 +19106,7 @@ done
 
 
 
-
-
-for ac_header in netdb.h sys/bsdtypes.h sys/param.h unistd.h sys/fcntl.h regex.h iconv.h langinfo.h
+for ac_header in netdb.h sys/bsdtypes.h sys/param.h unistd.h sys/fcntl.h regex.h
 do
 as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
@@ -19283,6 +19255,781 @@ _ACEOF
 fi
 
 done
+
+
+# Checks for iconv
+
+# Check whether --with-iconv-include was given.
+if test "${with_iconv_include+set}" = set; then
+  withval=$with_iconv_include;
+fi
+
+# Check whether --with-iconv-libdir was given.
+if test "${with_iconv_libdir+set}" = set; then
+  withval=$with_iconv_libdir;
+fi
+case $with_iconv_include in
+  yes | no | "") iconv_includes= ;;
+  *) iconv_includes="-I$with_iconv_include" ;;
+esac
+
+case $with_iconv_libdir in
+  yes | no | "") iconv_libpath= ;;
+  *) iconv_libpath="-L$with_iconv_libdir" ;;
+esac
+
+xdvi_iconv_save_CPPFLAGS=$CPPFLAGS
+xdvi_iconv_save_LDFLAGS=$LDFLAGS
+xdvi_iconv_save_LIBS=$LIBS
+CPPFLAGS="$iconv_includes $CPPFLAGS"
+LDFLAGS="$iconv_libpath $LDFLAGS"
+# Check if -liconv or -lrecode is needed for iconv()
+{ $as_echo "$as_me:$LINENO: checking for library containing iconv" >&5
+$as_echo_n "checking for library containing iconv... " >&6; }
+if test "${ac_cv_search_iconv+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char iconv ();
+int
+main ()
+{
+return iconv ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' iconv recode; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  ac_cv_search_iconv=$ac_res
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext
+  if test "${ac_cv_search_iconv+set}" = set; then
+  break
+fi
+done
+if test "${ac_cv_search_iconv+set}" = set; then
+  :
+else
+  ac_cv_search_iconv=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_search_iconv" >&5
+$as_echo "$ac_cv_search_iconv" >&6; }
+ac_res=$ac_cv_search_iconv
+if test "$ac_res" != no; then
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
+
+case $ac_cv_search_iconv in
+  no | "none required") : ;;
+  *) iconv_libs="-l$ac_cv_search_iconv" ;;
+esac
+
+
+for ac_func in iconv
+do
+as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+{ $as_echo "$as_me:$LINENO: checking for $ac_func" >&5
+$as_echo_n "checking for $ac_func... " >&6; }
+if { as_var=$as_ac_var; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $ac_func innocuous_$ac_func
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $ac_func
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_$ac_func || defined __stub___$ac_func
+choke me
+#endif
+
+int
+main ()
+{
+return $ac_func ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  eval "$as_ac_var=yes"
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	eval "$as_ac_var=no"
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+ac_res=`eval 'as_val=${'$as_ac_var'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+as_val=`eval 'as_val=${'$as_ac_var'}
+		 $as_echo "$as_val"'`
+   if test "x$as_val" = x""yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+
+for ac_header in iconv.h
+do
+as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  { $as_echo "$as_me:$LINENO: checking for $ac_header" >&5
+$as_echo_n "checking for $ac_header... " >&6; }
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+fi
+ac_res=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+else
+  # Is the header compilable?
+{ $as_echo "$as_me:$LINENO: checking $ac_header usability" >&5
+$as_echo_n "checking $ac_header usability... " >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <$ac_header>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_header_compiler=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_header_compiler=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+$as_echo "$ac_header_compiler" >&6; }
+
+# Is the header present?
+{ $as_echo "$as_me:$LINENO: checking $ac_header presence" >&5
+$as_echo_n "checking $ac_header presence... " >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <$ac_header>
+_ACEOF
+if { (ac_try="$ac_cpp conftest.$ac_ext"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null && {
+	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       }; then
+  ac_header_preproc=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+
+rm -f conftest.err conftest.$ac_ext
+{ $as_echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+$as_echo "$ac_header_preproc" >&6; }
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
+$as_echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the compiler's result" >&5
+$as_echo "$as_me: WARNING: $ac_header: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
+$as_echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header:     check for missing prerequisite headers?" >&5
+$as_echo "$as_me: WARNING: $ac_header:     check for missing prerequisite headers?" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: see the Autoconf documentation" >&5
+$as_echo "$as_me: WARNING: $ac_header: see the Autoconf documentation" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&5
+$as_echo "$as_me: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+$as_echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: in the future, the compiler will take precedence" >&5
+$as_echo "$as_me: WARNING: $ac_header: in the future, the compiler will take precedence" >&2;}
+    ( cat <<\_ASBOX
+## ---------------------------- ##
+## Report this to tex-k@tug.org ##
+## ---------------------------- ##
+_ASBOX
+     ) | sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+{ $as_echo "$as_me:$LINENO: checking for $ac_header" >&5
+$as_echo_n "checking for $ac_header... " >&6; }
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+else
+  eval "$as_ac_Header=\$ac_header_preproc"
+fi
+ac_res=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+
+fi
+as_val=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+   if test "x$as_val" = x""yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+if test "x$ac_cv_func_iconv:$ac_cv_header_iconv_h" = xyes:yes; then
+  { $as_echo "$as_me:$LINENO: checking for iconv input type" >&5
+$as_echo_n "checking for iconv input type... " >&6; }
+if test "${xdvi_cv_iconv_char_pptr_type+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* iconv() definitions may differ depending on following macros ... */
+#ifdef __hpux
+/* On HP-UX 10.10 B and 20.10, compiling with _XOPEN_SOURCE + ..._EXTENDED
+ * leads to poll() not realizing that a file descriptor is writable in psgs.c.
+ */
+# define _HPUX_SOURCE	1
+#else
+# ifndef _XOPEN_SOURCE
+# define _XOPEN_SOURCE	600
+# endif
+# define _XOPEN_SOURCE_EXTENDED	1
+# define __EXTENSIONS__	1	/* needed to get struct timeval on SunOS 5.5 */
+# define _SVID_SOURCE	1	/* needed to get S_IFLNK in glibc */
+# define _BSD_SOURCE	1	/* needed to get F_SETOWN in glibc-2.1.3 */
+#endif
+
+#include <iconv.h>
+
+int
+main ()
+{
+extern size_t iconv(iconv_t, char **, size_t *, char**, size_t*);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  xdvi_cv_iconv_char_pptr_type='char **'
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	xdvi_cv_iconv_char_pptr_type='const char **'
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:$LINENO: result: $xdvi_cv_iconv_char_pptr_type" >&5
+$as_echo "$xdvi_cv_iconv_char_pptr_type" >&6; }
+
+cat >>confdefs.h <<_ACEOF
+#define ICONV_CHAR_PPTR_TYPE $xdvi_cv_iconv_char_pptr_type
+_ACEOF
+
+
+fi
+CPPFLAGS=$xdvi_iconv_save_CPPFLAGS
+LDFLAGS=$xdvi_iconv_save_LDFLAGS
+LIBS=$xdvi_iconv_save_LIBS
+
+
+
+
+
+# Checks for langinfo
+
+for ac_func in nl_langinfo
+do
+as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+{ $as_echo "$as_me:$LINENO: checking for $ac_func" >&5
+$as_echo_n "checking for $ac_func... " >&6; }
+if { as_var=$as_ac_var; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $ac_func innocuous_$ac_func
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $ac_func
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_$ac_func || defined __stub___$ac_func
+choke me
+#endif
+
+int
+main ()
+{
+return $ac_func ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  eval "$as_ac_var=yes"
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	eval "$as_ac_var=no"
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+ac_res=`eval 'as_val=${'$as_ac_var'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+as_val=`eval 'as_val=${'$as_ac_var'}
+		 $as_echo "$as_val"'`
+   if test "x$as_val" = x""yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+
+for ac_header in langinfo.h
+do
+as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  { $as_echo "$as_me:$LINENO: checking for $ac_header" >&5
+$as_echo_n "checking for $ac_header... " >&6; }
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+fi
+ac_res=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+else
+  # Is the header compilable?
+{ $as_echo "$as_me:$LINENO: checking $ac_header usability" >&5
+$as_echo_n "checking $ac_header usability... " >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <$ac_header>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_header_compiler=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_header_compiler=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+$as_echo "$ac_header_compiler" >&6; }
+
+# Is the header present?
+{ $as_echo "$as_me:$LINENO: checking $ac_header presence" >&5
+$as_echo_n "checking $ac_header presence... " >&6; }
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <$ac_header>
+_ACEOF
+if { (ac_try="$ac_cpp conftest.$ac_ext"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null && {
+	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       }; then
+  ac_header_preproc=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+
+rm -f conftest.err conftest.$ac_ext
+{ $as_echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+$as_echo "$ac_header_preproc" >&6; }
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
+$as_echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the compiler's result" >&5
+$as_echo "$as_me: WARNING: $ac_header: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
+$as_echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header:     check for missing prerequisite headers?" >&5
+$as_echo "$as_me: WARNING: $ac_header:     check for missing prerequisite headers?" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: see the Autoconf documentation" >&5
+$as_echo "$as_me: WARNING: $ac_header: see the Autoconf documentation" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&5
+$as_echo "$as_me: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+$as_echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;}
+    { $as_echo "$as_me:$LINENO: WARNING: $ac_header: in the future, the compiler will take precedence" >&5
+$as_echo "$as_me: WARNING: $ac_header: in the future, the compiler will take precedence" >&2;}
+    ( cat <<\_ASBOX
+## ---------------------------- ##
+## Report this to tex-k@tug.org ##
+## ---------------------------- ##
+_ASBOX
+     ) | sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+{ $as_echo "$as_me:$LINENO: checking for $ac_header" >&5
+$as_echo_n "checking for $ac_header... " >&6; }
+if { as_var=$as_ac_Header; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+else
+  eval "$as_ac_Header=\$ac_header_preproc"
+fi
+ac_res=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+
+fi
+as_val=`eval 'as_val=${'$as_ac_Header'}
+		 $as_echo "$as_val"'`
+   if test "x$as_val" = x""yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+if test "x$ac_cv_func_nl_langinfo:$ac_cv_header_langinfo_h" = xyes:yes; then
+  { $as_echo "$as_me:$LINENO: checking if nl_langinfo(CODESET) is working" >&5
+$as_echo_n "checking if nl_langinfo(CODESET) is working... " >&6; }
+if test "${xdvi_cv_nl_langinfo_codeset+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <langinfo.h>
+int
+main ()
+{
+char* cs = nl_langinfo(CODESET);
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  xdvi_cv_nl_langinfo_codeset=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	xdvi_cv_nl_langinfo_codeset=no
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:$LINENO: result: $xdvi_cv_nl_langinfo_codeset" >&5
+$as_echo "$xdvi_cv_nl_langinfo_codeset" >&6; }
+  if test "x$xdvi_cv_nl_langinfo_codeset" = xyes; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_WORKING_NL_LANGINFO_CODESET 1
+_ACEOF
+
+fi
+
+fi
 
 
 xdvi_save_CPPFLAGS=$CPPFLAGS
@@ -19549,283 +20296,180 @@ $as_echo "cannot run 'Magick-config' - ImageMagick support disabled" >&6; }
   fi
 fi
 
+# Check whether -lXpm can be used
 
-if test "${with_xdvi_x_toolkit}" = xaw; then
-	{ $as_echo "$as_me:$LINENO: checking for Xaw library" >&5
-$as_echo_n "checking for Xaw library... " >&6; }
-	save_CPPFLAGS="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-	cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
+xpm_includes=
+xpm_libraries=
 
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xos.h>
-
-#include <X11/Xfuncs.h>
-#include <X11/Intrinsic.h>
-#include <X11/Xaw/Form.h>
-
-int
-main ()
-{
-
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  xdvi_have_xaw=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	xdvi_have_xaw=no
-
+# Check whether --with-xpm was given.
+if test "${with_xpm+set}" = set; then
+  withval=$with_xpm;
 fi
 
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-	CPPFLAGS=$save_CPPFLAGS
-	if test $xdvi_have_xaw = yes; then
-	    { $as_echo "$as_me:$LINENO: result: yes" >&5
-$as_echo "yes" >&6; }
-	else
-	    { $as_echo "$as_me:$LINENO: result: not found" >&5
-$as_echo "not found" >&6; }
-	    { { $as_echo "$as_me:$LINENO: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&5
-$as_echo "$as_me: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&2;}
-   { (exit 1); exit 1; }; }
-	fi
-
-	{ $as_echo "$as_me:$LINENO: checking version of Xaw library" >&5
-$as_echo_n "checking version of Xaw library... " >&6; }
-	save_CPPFLAGS="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-	cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-#include <X11/IntrinsicP.h>
-#include <X11/StringDefs.h>
-#include <X11/Intrinsic.h>
-#include <X11/StringDefs.h>
-#include <X11/Xos.h>
-#include <X11/Xaw/Text.h>
-#include <X11/Xaw/AsciiText.h>
-#include <X11/Xaw/ToggleP.h>
-	    typedef void (*XawDiamondProc) (Widget);
-
-	    /* New fields for the Radio widget class record */
-	    typedef struct _RadioClass  {
-	        Dimension	dsize;		/* diamond size */
-	        XawDiamondProc drawDiamond;
-	        /* pixmaps for the button */
-	        Pixmap sel_radio;		/* selected state */
-	        Pixmap unsel_radio;		/* unselected state */
-	        Pixmap sel_menu;		/* selected state */
-	        Pixmap unsel_menu;		/* unselected state */
-	        /* TODO: 3-d and xaw-xpm features? */
-	        XtPointer	extension;
-	    } RadioClassPart;
-
-	    /* Full class record declaration */
-	    typedef struct _RadioClassRec {
-	        CoreClassPart	core_class;
-	        SimpleClassPart	simple_class;
-	        LabelClassPart	label_class;
-	        CommandClassPart	command_class;
-	        ToggleClassPart	toggle_class;
-	        RadioClassPart	radio_class;
-	    } RadioClassRec;
-	    /* New fields for the Radio widget record */
-	    typedef struct {
-	        /* resources */
-	        Boolean isRadio;		/* radio if True, checkbox else */
-	        /* TODO: 3-d and xaw-xpm features? */
-
-	        /* private data */
-	        XtPointer	extension;
-	    } RadioPart;
-
-	       /* Full widget declaration */
-	    typedef struct _RadioRec {
-	        CorePart	core;
-	        SimplePart	simple;
-#ifdef _ThreeDP_h
-	        ThreeDPart	threeD;
-#endif
-	        LabelPart	label;
-	        CommandPart	command;
-	        TogglePart	toggle;
-	        RadioPart	radio;
-	    } RadioRec;
-
-
-	    /* The actions table from Toggle is almost perfect, but we need
-	     * to override Highlight, Set, and Unset.
-	     */
-
-#define SuperClass ((ToggleWidgetClass)&toggleClassRec)
-
-#define	BOX_SIZE	16
-#define PIXMAP_OFFSET 2    /* additional space between pixmap and label */
-
-int
-main ()
-{
-
-	    RadioClassRec radioClassRec = {
-	      {
-	        (WidgetClass) SuperClass,		/* superclass		*/
-	        "Radio",				/* class_name		*/
-	        sizeof(RadioRec),			/* size			*/
-	        NULL,			/* class_initialize	*/
-	        NULL,			/* class_part_initialize  */
-	        FALSE,				/* class_inited		*/
-	        NULL,				/* initialize		*/
-	        NULL,				/* initialize_hook	*/
-	        XtInheritRealize,			/* realize		*/
-	        NULL,			/* actions		*/
-	        0,		/* num_actions		*/
-	        NULL,				/* resources		*/
-	        0,		/* resource_count	*/
-	        NULLQUARK,				/* xrm_class		*/
-	        TRUE,				/* compress_motion	*/
-	        TRUE,				/* compress_exposure	*/
-	        TRUE,				/* compress_enterleave	*/
-	        FALSE,				/* visible_interest	*/
-	        NULL,			/* destroy		*/
-	        NULL,			/* resize		*/
-	        NULL,			/* expose		*/
-	        NULL,			/* set_values		*/
-	        NULL,				/* set_values_hook	*/
-	        XtInheritSetValuesAlmost,		/* set_values_almost	*/
-	        NULL,				/* get_values_hook	*/
-	        NULL,				/* accept_focus		*/
-	        XtVersion,				/* version		*/
-	        NULL,				/* callback_private	*/
-	        XtInheritTranslations,		/* tm_table		*/
-	        NULL,			/* query_geometry	*/
-	        XtInheritDisplayAccelerator,	/* display_accelerator	*/
-	        NULL				/* extension		*/
-	      },  /* CoreClass fields initialization */
-	      {
-	        XtInheritChangeSensitive,		/* change_sensitive	*/
-		NULL
-              },  /* SimpleClass fields initialization */
-	      {
-	        0					  /* field not used	*/
-	      },  /* LabelClass fields initialization */
-	      {
-	        0					  /* field not used	*/
-	      },  /* CommandClass fields initialization */
-	      {
-	          NULL,				/* Set Procedure.	*/
-	          NULL,			/* Unset Procedure.	*/
-	          NULL				/* extension.		*/
-	      },  /* ToggleClass fields initialization */
-	      {
-	          BOX_SIZE,
-	          NULL,			/* draw procedure */
-	          None,				/* selected radiobutton */
-	          None,				/* unselected radiobutton */
-	          None,				/* selected menubutton */
-	          None,				/* unselected menubutton */
-	          NULL				/* extension. */
-	      }  /* RadioClass fields initialization */
-	    };
-	    (void)radioClassRec;
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  xdvi_old_xaw=no
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	xdvi_old_xaw=yes
-
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-	CPPFLAGS=$save_CPPFLAGS
-if test $xdvi_old_xaw = yes; then
-    { $as_echo "$as_me:$LINENO: result: old" >&5
-$as_echo "old" >&6; }
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_OLD_XAW 1
-_ACEOF
-
-else
-    { $as_echo "$as_me:$LINENO: result: current" >&5
-$as_echo "current" >&6; }
-fi
+# Check whether --with-xpm-includes was given.
+if test "${with_xpm_includes+set}" = set; then
+  withval=$with_xpm_includes; xpm_includes="$withval"
 fi
 
 
-{ $as_echo "$as_me:$LINENO: checking if nl_langinfo(CODESET) is working" >&5
-$as_echo_n "checking if nl_langinfo(CODESET) is working... " >&6; }
-if test "${xdvi_cv_nl_langinfo_codeset+set}" = set; then
+# Check whether --with-xpm-libraries was given.
+if test "${with_xpm_libraries+set}" = set; then
+  withval=$with_xpm_libraries; xpm_libraries="$withval"
+fi
+
+if test "x$with_xpm" = xno; then
+  xpm_includes=no
+  xpm_libraries=no
+fi
+{ $as_echo "$as_me:$LINENO: checking for Xpm" >&5
+$as_echo_n "checking for Xpm... " >&6; }
+#
+# Check the headers.
+#
+if test "x$xpm_includes" = x; then
+  if test "${xdvi_cv_xpm_includes+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-  cat >conftest.$ac_ext <<_ACEOF
+  xdvi_xpm_save_LIBS=$LIBS
+xdvi_xpm_save_CFLAGS=$CFLAGS
+xdvi_xpm_save_CPPFLAGS=$CPPFLAGS
+xdvi_xpm_save_LDFLAGS=$LDFLAGS
+#
+LIBS="$X_PRE_LIBS -lXpm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include <langinfo.h>
+#include <X11/xpm.h>
 int
 main ()
 {
-char* cs = nl_langinfo(CODESET);
+int a;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  # X11/xpm.h is in the standard search path.
+                   xdvi_cv_xpm_includes=default
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	# X11/xpm.h is not in the standard search path.
+                   xdvi_cv_xpm_includes=no
+# Locate it and put its directory in `xpm_includes'
+#
+# /usr/include/Motif* are used on HP-UX (Motif).
+# /usr/include/X11* are used on HP-UX (X and Xaw).
+# /usr/dt is used on Solaris (Motif).
+# /usr/openwin is used on Solaris (X and Xaw).
+# Other directories are just guesses.
+for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
+	   /usr/X11/include /usr/X11R5/include /usr/X11R6/include \
+           /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
+           /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
+           /usr/dt/include /usr/openwin/include \
+           /usr/dt/*/include /opt/*/include /usr/include/Motif* \
+	   "${prefix}"/*/include /usr/*/include /usr/local/*/include \
+	   "${prefix}"/include/* /usr/include/* /usr/local/include/*
+do
+    if test -f "$dir/X11/xpm.h"; then
+    	xdvi_cv_xpm_includes=$dir
+    	break
+    elif test -f "$dir/xpm.h"; then
+    	xdvi_cv_xpm_includes=$dir
+    	break
+    fi
+done
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+#
+LIBS=$xdvi_xpm_save_LIBS
+CFLAGS=$xdvi_xpm_save_CFLAGS
+CPPFLAGS=$xdvi_xpm_save_CPPFLAGS
+LDFLAGS=$xdvi_xpm_save_LDFLAGS
+fi
+
+#
+xpm_includes=$xdvi_cv_xpm_includes
+
+fi
+if test "x$xpm_includes" != x; then
+    if test "x$xpm_includes" = xdefault; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_X11_XPM_H 1
+_ACEOF
+
+    elif test -f "$xpm_includes/X11/xpm.h"; then
+	cat >>confdefs.h <<\_ACEOF
+#define HAVE_X11_XPM_H 1
+_ACEOF
+
+    elif test -f "$xpm_includes/xpm.h"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_XPM_H 1
+_ACEOF
+
+    fi
+fi
+#
+# Check the libraries.
+#
+if test "x$xpm_libraries" = x; then
+  if test "${xdvi_cv_xpm_libraries+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  xdvi_xpm_save_LIBS=$LIBS
+xdvi_xpm_save_CFLAGS=$CFLAGS
+xdvi_xpm_save_CPPFLAGS=$CPPFLAGS
+xdvi_xpm_save_LDFLAGS=$LDFLAGS
+#
+LIBS="$X_PRE_LIBS -lXpm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
+CFLAGS="$X_CFLAGS $CFLAGS"
+CPPFLAGS="$X_CFLAGS $CPPFLAGS"
+LDFLAGS="$X_LIBS $LDFLAGS"
+#
+# We use XtToolkitInitialize() here since it takes no arguments
+# and thus also works with a C++ compiler.
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <X11/Intrinsic.h>
+#include <X11/xpm.h>
+int
+main ()
+{
+XtToolkitInitialize();
   ;
   return 0;
 }
@@ -19851,27 +20495,104 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  xdvi_cv_nl_langinfo_codeset=yes
+  # libxpm.a is in the standard search path.
+                xdvi_cv_xpm_libraries=default
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	xdvi_cv_nl_langinfo_codeset=no
+	# libXpm.a is not in the standard search path.
+                xdvi_cv_xpm_libraries=no
+# Locate it and put its directory in `xpm_libraries'
+#
+# /usr/lib/Motif* are used on HP-UX (Motif).
+# /usr/lib/X11* are used on HP-UX (X and Xpm).
+# /usr/dt is used on Solaris (Motif).
+# /usr/openwin is used on Solaris (X and Xpm).
+# Other directories are just guesses.
+for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
+	   /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
+	   /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
+           /usr/dt/lib /usr/openwin/lib \
+	   /usr/dt/*/lib /opt/*/lib /usr/lib/Motif* \
+	   "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
+	   "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*
+do
+    if test -d "$dir" && test "`ls $dir/libXpm.* 2> /dev/null`" != ""; then
+        xdvi_cv_xpm_libraries=$dir
+        break
+    fi
+done
 fi
 
 rm -rf conftest.dSYM
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
+#
+LIBS=$xdvi_xpm_save_LIBS
+CFLAGS=$xdvi_xpm_save_CFLAGS
+CPPFLAGS=$xdvi_xpm_save_CPPFLAGS
+LDFLAGS=$xdvi_xpm_save_LDFLAGS
 fi
-{ $as_echo "$as_me:$LINENO: result: $xdvi_cv_nl_langinfo_codeset" >&5
-$as_echo "$xdvi_cv_nl_langinfo_codeset" >&6; }
-if test "x$xdvi_cv_nl_langinfo_codeset" = xyes; then
+
+#
+xpm_libraries="$xdvi_cv_xpm_libraries"
+fi
+#
+# Add Xpm definitions to X flags
+#
+if test "x$xpm_includes" != "xdefault" && test "$xpm_includes" != "" \
+    && test "$xpm_includes" != "$x_includes" && test "$xpm_includes" != "no"
+then
+  X_CFLAGS="-I$xpm_includes $X_CFLAGS"
+fi
+#
+if test "x$xpm_libraries" != "xdefault" && test "$xpm_libraries" != "" \
+    && test "$xpm_libraries" != "$x_libraries" && test "$xpm_libraries" != "no"
+then
+  case "$X_LIBS" in
+    *-R\ *) X_LIBS="-L$xpm_libraries -R $xpm_libraries $X_LIBS";;
+    *-R*)   X_LIBS="-L$xpm_libraries -R$xpm_libraries $X_LIBS";;
+    *)      X_LIBS="-L$xpm_libraries $X_LIBS";;
+  esac
+fi
+#
+# Now check the results of headers and libraries and set USE_XPM to 0
+# if one of them hadn't been found.
+#
 
 cat >>confdefs.h <<\_ACEOF
-#define HAVE_WORKING_NL_LANGINFO_CODESET 1
+#define USE_XPM 1
 _ACEOF
 
+x_xpm_libs="-lXpm"
+#
+xpm_libraries_result=$xpm_libraries
+if test "x$xpm_libraries_result" = xdefault ; then
+  xpm_libraries_result="in default path"
+elif test "$xpm_libraries_result" = no || test "x$xpm_libraries_result" = "x"; then
+  xpm_libraries_result="(none)"
+  cat >>confdefs.h <<\_ACEOF
+#define USE_XPM 0
+_ACEOF
+
+  x_xpm_libs=""
 fi
+
+#
+xpm_includes_result=$xpm_includes
+if test "x$xpm_includes_result" = "xdefault"; then
+  xpm_includes_result="in default path"
+elif test "$xpm_includes_result" = no || test "x$xpm_includes_result" = "x"; then
+  cat >>confdefs.h <<\_ACEOF
+#define USE_XPM 0
+_ACEOF
+
+  xpm_includes_result="(none)"
+fi
+#
+{ $as_echo "$as_me:$LINENO: result: libraries $xpm_libraries_result, headers $xpm_includes_result" >&5
+$as_echo "libraries $xpm_libraries_result, headers $xpm_includes_result" >&6; }
 
 
 
@@ -20028,56 +20749,33 @@ fi
 
 
 
+case $with_xdvi_x_toolkit in
+  next | nextaw | neXtaw) val=neXtaw ;;
+  xaw3d) val=xaw3d ;;
+  "" | x | xa | xaw) val=xaw ;;
+  y | ye | yes) val=yes ;;
+  m | mo | mot | moti | motif) val=motif ;;
+  *) { $as_echo "$as_me:$LINENO: WARNING: unknown --with-xdvi-x-toolkit argument
+                                                     \`$with_xdvi_x_toolkit'; using xaw." >&5
+$as_echo "$as_me: WARNING: unknown --with-xdvi-x-toolkit argument
+                                                     \`$with_xdvi_x_toolkit'; using xaw." >&2;}
+                                        val=xaw ;;
+esac
 
+with_xdvi_x_toolkit=$val
 
-xpm_includes=
-xpm_libraries=
-
-# Check whether --with-xpm was given.
-if test "${with_xpm+set}" = set; then
-  withval=$with_xpm;
-fi
-
-if test "$with_xpm" = "no"
-then
-xpm_includes=no
-xpm_libraries=no
-fi
-
-# Check whether --with-xpm-includes was given.
-if test "${with_xpm_includes+set}" = set; then
-  withval=$with_xpm_includes; xpm_includes="$withval"
-fi
-
-
-# Check whether --with-xpm-libraries was given.
-if test "${with_xpm_libraries+set}" = set; then
-  withval=$with_xpm_libraries; xpm_libraries="$withval"
-fi
-
-{ $as_echo "$as_me:$LINENO: checking for Xpm" >&5
-$as_echo_n "checking for Xpm... " >&6; }
-#
-#
-# Search the include files.  XPM can either be in <X11/xpm.h> (as in X11R6),
-# which is dealt with by AC_CHECK_HEADERS(X11/xpm.h), or in <xpm.h> if installed locally;
-# this is what this test is for.
-#
-if test "$xpm_includes" = ""; then
-if test "${xdvi_cv_xpm_includes+set}" = set; then
-  $as_echo_n "(cached) " >&6
+if test "x$with_xdvi_x_toolkit" = xxaw3d; then
+  prog_extension="xaw3d"
+  x_tool_libs="-lXaw3d"
+elif test "x$with_xdvi_x_toolkit" = xneXtaw; then
+  prog_extension="nextaw"
+  x_tool_libs="-lneXtaw"
 else
-
-xdvi_xpm_save_LIBS="$LIBS"
-xdvi_xpm_save_CFLAGS="$CFLAGS"
-xdvi_xpm_save_CPPFLAGS="$CPPFLAGS"
-xdvi_xpm_save_LDFLAGS="$LDFLAGS"
-#
-LIBS="$X_PRE_LIBS -lXpm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-CFLAGS="$X_CFLAGS $CFLAGS"
-CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-LDFLAGS="$X_LIBS $LDFLAGS"
-#
+  # Check for Xaw
+  save_CPPFLAGS=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+{ $as_echo "$as_me:$LINENO: checking for Xaw library" >&5
+$as_echo_n "checking for Xaw library... " >&6; }
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -20085,12 +20783,18 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
-#include <X11/xpm.h>
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
 
+#include <X11/Xfuncs.h>
+#include <X11/Intrinsic.h>
+#include <X11/Xaw/Form.h>
 int
 main ()
 {
-int a;
+
   ;
   return 0;
 }
@@ -20113,126 +20817,60 @@ $as_echo "$ac_try_echo") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-
-# X11/xpm.h is in the standard search path.
-xdvi_cv_xpm_includes="default"
-
+  xdvi_have_xaw=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-
-# X11/xpm.h is not in the standard search path.
-# Locate it and put its directory in `xpm_includes'
-#
-# /usr/include/Motif* are used on HP-UX (Motif).
-# /usr/include/X11* are used on HP-UX (X and Xaw).
-# /usr/dt is used on Solaris (Motif).
-# /usr/openwin is used on Solaris (X and Xaw).
-# Other directories are just guesses.
-for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
-	   /usr/X11/include /usr/X11R5/include /usr/X11R6/include \
-           /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
-           /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
-           /usr/dt/include /usr/openwin/include \
-           /usr/dt/*/include /opt/*/include /usr/include/Motif* \
-	   "${prefix}"/*/include /usr/*/include /usr/local/*/include \
-	   "${prefix}"/include/* /usr/include/* /usr/local/include/*
-do
-    if test -f "$dir/X11/xpm.h"; then
-    	xdvi_cv_xpm_includes="$dir"
-    	break
-    elif test -f "$dir/xpm.h"; then
-    	xdvi_cv_xpm_includes="$dir"
-    	break
-    fi
-done
-
+	xdvi_have_xaw=no
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:$LINENO: result: $xdvi_have_xaw" >&5
+$as_echo "$xdvi_have_xaw" >&6; }
 #
-LIBS="$xdvi_xpm_save_LIBS"
-CFLAGS="$xdvi_xpm_save_CFLAGS"
-CPPFLAGS="$xdvi_xpm_save_CPPFLAGS"
-LDFLAGS="$xdvi_xpm_save_LDFLAGS"
+if test "x$xdvi_have_xaw" = xyes; then
 
-fi
-
-xpm_includes="$xdvi_cv_xpm_includes"
-fi
-
-if test "x$xpm_includes" != x; then
-    if test "x$xpm_includes" = xdefault; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_X11_XPM_H 1
-_ACEOF
-
-    elif test -f "$xpm_includes/X11/xpm.h"; then
-	cat >>confdefs.h <<\_ACEOF
-#define HAVE_X11_XPM_H 1
-_ACEOF
-
-    elif test -f "$xpm_includes/xpm.h"; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_XPM_H 1
-_ACEOF
-
-    fi
-fi
-
-#
-#
-# Now for the libraries.
-#
-if test "$xpm_libraries" = ""; then
-if test "${xdvi_cv_xpm_libraries+set}" = set; then
+save_CPPFLAGS=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+{ $as_echo "$as_me:$LINENO: checking for SimpleClassPart.extension" >&5
+$as_echo_n "checking for SimpleClassPart.extension... " >&6; }
+if test "${ac_cv_member_SimpleClassPart_extension+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-
-xdvi_xpm_save_LIBS="$LIBS"
-xdvi_xpm_save_CFLAGS="$CFLAGS"
-xdvi_xpm_save_CPPFLAGS="$CPPFLAGS"
-xdvi_xpm_save_LDFLAGS="$LDFLAGS"
-#
-LIBS="$X_PRE_LIBS -lXpm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-CFLAGS="$X_CFLAGS $CFLAGS"
-CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-LDFLAGS="$X_LIBS $LDFLAGS"
-xdvi_cv_xpm_libraries=
-#
-#
-# We use XtToolkitInitialize() here since it takes no arguments
-# and thus also works with a C++ compiler.
-cat >conftest.$ac_ext <<_ACEOF
+  cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
+#include <X11/IntrinsicP.h>
+#include <X11/StringDefs.h>
 #include <X11/Intrinsic.h>
-#include <X11/xpm.h>
+#include <X11/StringDefs.h>
+#include <X11/Xos.h>
+#include <X11/Xaw/SimpleP.h>
 
 int
 main ()
 {
-XtToolkitInitialize();
+static SimpleClassPart ac_aggr;
+if (ac_aggr.extension)
+return 0;
   ;
   return 0;
 }
 _ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
   *) ac_try_echo=$ac_try;;
 esac
 eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
 $as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
+  (eval "$ac_compile") 2>conftest.er1
   ac_status=$?
   grep -v '^ *+' conftest.er1 >conftest.err
   rm -f conftest.er1
@@ -20241,117 +20879,95 @@ $as_echo "$ac_try_echo") >&5
   (exit $ac_status); } && {
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-
-# libxpm.a is in the standard search path.
-xdvi_cv_xpm_libraries="default"
-
+       } && test -s conftest.$ac_objext; then
+  ac_cv_member_SimpleClassPart_extension=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
+	cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
 
-# libXpm.a is not in the standard search path.
-# Locate it and put its directory in `xpm_libraries'
-#
-#
-# /usr/lib/Motif* are used on HP-UX (Motif).
-# /usr/lib/X11* are used on HP-UX (X and Xpm).
-# /usr/dt is used on Solaris (Motif).
-# /usr/openwin is used on Solaris (X and Xpm).
-# Other directories are just guesses.
-for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
-	   /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
-	   /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
-           /usr/dt/lib /usr/openwin/lib \
-	   /usr/dt/*/lib /opt/*/lib /usr/lib/Motif* \
-	   "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
-	   "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*
-do
-    if test -d "$dir" && test "`ls $dir/libXpm.* 2> /dev/null`" != ""; then
-        xdvi_cv_xpm_libraries="$dir"
-        break
-    fi
-done
+#include <X11/IntrinsicP.h>
+#include <X11/StringDefs.h>
+#include <X11/Intrinsic.h>
+#include <X11/StringDefs.h>
+#include <X11/Xos.h>
+#include <X11/Xaw/SimpleP.h>
 
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-#
-LIBS="$xdvi_xpm_save_LIBS"
-CFLAGS="$xdvi_xpm_save_CFLAGS"
-CPPFLAGS="$xdvi_xpm_save_CPPFLAGS"
-LDFLAGS="$xdvi_xpm_save_LDFLAGS"
-
-fi
-
-#
-xpm_libraries="$xdvi_cv_xpm_libraries"
-fi
-#
-# Add Xpm definitions to X flags
-#
-if test "x$xpm_includes" != "xdefault" && test "$xpm_includes" != "" \
-    && test "$xpm_includes" != "$x_includes" && test "$xpm_includes" != "no"
-then
-    X_CFLAGS="-I$xpm_includes $X_CFLAGS"
-fi
-
-if test "x$xpm_libraries" != "xdefault" && test "$xpm_libraries" != "" \
-    && test "$xpm_libraries" != "$x_libraries" && test "$xpm_libraries" != "no"
-then
-case "$X_LIBS" in
-  *-R\ *) X_LIBS="-L$xpm_libraries -R $xpm_libraries $X_LIBS";;
-  *-R*)   X_LIBS="-L$xpm_libraries -R$xpm_libraries $X_LIBS";;
-  *)      X_LIBS="-L$xpm_libraries $X_LIBS";;
+int
+main ()
+{
+static SimpleClassPart ac_aggr;
+if (sizeof ac_aggr.extension)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
 esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ac_cv_member_SimpleClassPart_extension=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_member_SimpleClassPart_extension=no
 fi
 
-#
-#
-x_xpm_libs="-lXpm"
-#
-# Now check the results of headers and libraries and set USE_XPM to 0
-# if one of them hadn't been found.
-#
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_member_SimpleClassPart_extension" >&5
+$as_echo "$ac_cv_member_SimpleClassPart_extension" >&6; }
+if test "x$ac_cv_member_SimpleClassPart_extension" = x""yes; then
+  :
+else
 
 cat >>confdefs.h <<\_ACEOF
-#define USE_XPM 1
+#define HAVE_OLD_XAW 1
 _ACEOF
 
-xpm_libraries_result="$xpm_libraries"
-xpm_includes_result="$xpm_includes"
-if test "x$xpm_libraries_result" = "xdefault" ; then
-  xpm_libraries_result="in default path"
-elif test "$xpm_libraries_result" = no || test "x$xpm_libraries_result" = "x"; then
-  xpm_libraries_result="(none)"
-  cat >>confdefs.h <<\_ACEOF
-#define USE_XPM 0
-_ACEOF
-
-  x_xpm_libs=""
 fi
 
-if test "x$xpm_includes_result" = "xdefault"; then
-  xpm_includes_result="in default path"
-elif test "$xpm_includes_result" = no || test "x$xpm_includes_result" = "x"; then
-  cat >>confdefs.h <<\_ACEOF
-#define USE_XPM 0
-_ACEOF
+CPPFLAGS=$save_CPPFLAGS
 
-  xpm_includes_result="(none)"
 fi
+CPPFLAGS=$save_CPPFLAGS
 
+  if test "x$with_xdvi_x_toolkit" != xxaw; then
+    # Requested motiv (possibly with xaw as fallback)
+    if test "x$with_xdvi_x_toolkit" = xmotif; then
+      default_toolkit=none
+    else
+      default_toolkit=Xaw
+    fi
 
-{ $as_echo "$as_me:$LINENO: result: libraries $xpm_libraries_result, headers $xpm_includes_result" >&5
-$as_echo "libraries $xpm_libraries_result, headers $xpm_includes_result" >&6; }
-
-
+{ $as_echo "$as_me:$LINENO: checking for Motif" >&5
+$as_echo_n "checking for Motif... " >&6; }
+#
 
 # Check whether --with-motif-include was given.
 if test "${with_motif_include+set}" = set; then
@@ -20364,22 +20980,6 @@ if test "${with_motif_libdir+set}" = set; then
   withval=$with_motif_libdir;
 fi
 
-
-case $with_xdvi_x_toolkit in
-  xaw3d) prog_extension="xaw3d"; x_tool_libs="-lXaw3d" ;;
-  neXtaw) prog_extension="nextaw"; x_tool_libs="-lneXtaw" ;;
-  xaw) prog_extension="xaw"; x_tool_libs="-lXaw"
-
-cat >>confdefs.h <<\_ACEOF
-#define XAW 1
-_ACEOF
- ;;
-  motif)
-default_toolkit="none"
-
-{ $as_echo "$as_me:$LINENO: checking for Motif" >&5
-$as_echo_n "checking for Motif... " >&6; }
-#
 #
 # Search the include files.
 #
@@ -20723,12 +21323,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 else
     { $as_echo "$as_me:$LINENO: result: not found, using Xaw" >&5
 $as_echo "not found, using Xaw" >&6; }
-    prog_extension="xaw"
-    cat >>confdefs.h <<\_ACEOF
-#define XAW 1
-_ACEOF
-
-    x_tool_libs="-lXaw"
+    with_xdvi_x_toolkit="xaw"
 fi
 
 #
@@ -20803,708 +21398,27 @@ else
     { $as_echo "$as_me:$LINENO: result: no" >&5
 $as_echo "no" >&6; }
 fi
- ;;
-  *)
-default_toolkit="Xaw"
 
-{ $as_echo "$as_me:$LINENO: checking for Motif" >&5
-$as_echo_n "checking for Motif... " >&6; }
-#
-#
-# Search the include files.
-#
-if test "$motif_include" = ""; then
-if test "${xdvi_cv_motif_include+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-
-xdvi_motif_save_LIBS="$LIBS"
-xdvi_motif_save_CFLAGS="$CFLAGS"
-xdvi_motif_save_CPPFLAGS="$CPPFLAGS"
-xdvi_motif_save_LDFLAGS="$LDFLAGS"
-#
-LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-CFLAGS="$X_CFLAGS $CFLAGS"
-CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-LDFLAGS="$X_LIBS $LDFLAGS"
-#
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <Xm/Xm.h>
-int
-main ()
-{
-int a;
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-
-# Xm/Xm.h is in the standard search path.
-xdvi_cv_motif_include=
-
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-
-# Xm/Xm.h is not in the standard search path.
-# Locate it and put its directory in `motif_include'
-#
-# /usr/include/Motif* are used on HP-UX (Motif).
-# /usr/include/X11* are used on HP-UX (X and Athena).
-# /usr/dt is used on Solaris (Motif).
-# /usr/openwin is used on Solaris (X and Athena).
-# Other directories are just guesses.
-for dir in "$x_includes" "${prefix}/include" /usr/include /usr/local/include \
-           /usr/include/Motif2.0 /usr/include/Motif1.2 /usr/include/Motif1.1 \
-           /usr/include/X11R6 /usr/include/X11R5 /usr/include/X11R4 \
-           /usr/dt/include /usr/openwin/include \
-           /usr/dt/*/include /opt/*/include /usr/include/Motif* \
-	   "${prefix}"/*/include /usr/*/include /usr/local/*/include \
-	   "${prefix}"/include/* /usr/include/* /usr/local/include/*; do
-    if test -f "$dir/Xm/Xm.h"; then
-        xdvi_cv_motif_include="$dir"
-        break
+  fi
+  if test "x$with_xdvi_x_toolkit" = xxaw; then
+    # Requested or defaulted to Xaw
+    if test "x$xdvi_have_xaw" = xno; then
+      { { $as_echo "$as_me:$LINENO: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&5
+$as_echo "$as_me: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&2;}
+   { (exit 1); exit 1; }; }
     fi
-done
-if test "$xdvi_cv_motif_include" = ""; then
-xdvi_cv_motif_include=no
-fi
-
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-#
-LIBS="$xdvi_motif_save_LIBS"
-CFLAGS="$xdvi_motif_save_CFLAGS"
-CPPFLAGS="$xdvi_motif_save_CPPFLAGS"
-LDFLAGS="$xdvi_motif_save_LDFLAGS"
-
-fi
-
-motif_include="$xdvi_cv_motif_include"
-fi
-#
-#
-# Now for the libraries.
-#
-if test "$motif_libdir" = ""; then
-if test "${xdvi_cv_motif_libdir+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-
-xdvi_motif_save_LIBS="$LIBS"
-xdvi_motif_save_CFLAGS="$CFLAGS"
-xdvi_motif_save_CPPFLAGS="$CPPFLAGS"
-xdvi_motif_save_LDFLAGS="$LDFLAGS"
-#
-LIBS="$X_PRE_LIBS -lXm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
-CFLAGS="$X_CFLAGS $CFLAGS"
-CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-LDFLAGS="$X_LIBS $LDFLAGS"
-#
-# We use XtToolkitInitialize() here since it takes no arguments
-# and thus also works with a C++ compiler.
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-#include <X11/Intrinsic.h>
-#include <Xm/Xm.h>
-
-int
-main ()
-{
-XtToolkitInitialize();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-
-# libXm.a is in the standard search path.
-xdvi_cv_motif_libdir=
-
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-
-# libXm.a is not in the standard search path.
-# Locate it and put its directory in `motif_libdir'
-#
-# /usr/lib/Motif* are used on HP-UX (Motif).
-# /usr/lib/X11* are used on HP-UX (X and Athena).
-# /usr/dt is used on Solaris (Motif).
-# /usr/lesstif is used on Linux (Lesstif).
-# /usr/openwin is used on Solaris (X and Athena).
-# Other directories are just guesses.
-for dir in "$x_libraries" "${prefix}/lib" /usr/lib /usr/local/lib \
-	   /usr/lib/Motif2.0 /usr/lib/Motif1.2 /usr/lib/Motif1.1 \
-	   /usr/lib/X11R6 /usr/lib/X11R5 /usr/lib/X11R4 /usr/lib/X11 \
-           /usr/dt/lib /usr/openwin/lib \
-	   /usr/dt/*/lib /opt/*/lib /usr/lib/Motif* \
-           /usr/lesstif*/lib /usr/lib/Lesstif* \
-	   "${prefix}"/*/lib /usr/*/lib /usr/local/*/lib \
-	   "${prefix}"/lib/* /usr/lib/* /usr/local/lib/*; do
-    if test -d "$dir" && test "`ls $dir/libXm.* 2> /dev/null`" != ""; then
-        xdvi_cv_motif_libdir="$dir"
-        break
-    fi
-done
-if test "$xdvi_cv_motif_libdir" = ""; then
-xdvi_cv_motif_libdir=no
-fi
-
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-#
-LIBS="$xdvi_motif_save_LIBS"
-CFLAGS="$xdvi_motif_save_CFLAGS"
-CPPFLAGS="$xdvi_motif_save_CPPFLAGS"
-LDFLAGS="$xdvi_motif_save_LDFLAGS"
-
-fi
-
-#
-motif_libdir="$xdvi_cv_motif_libdir"
-fi
-# Add Motif definitions to X flags
-#
-if test "$motif_include" != "" && test "$motif_include" != "$x_includes" && test "$motif_include" != "no"
-then
-X_CFLAGS="-I$motif_include $X_CFLAGS"
-fi
-if test "$motif_libdir" != "" && test "$motif_libdir" != "$x_libraries" && test "$motif_libdir" != "no"
-then
-case "$X_LIBS" in
-  *-R\ *) X_LIBS="-L$motif_libdir -R $motif_libdir $X_LIBS";;
-  *-R*)   X_LIBS="-L$motif_libdir -R$motif_libdir $X_LIBS";;
-  *)      X_LIBS="-L$motif_libdir $X_LIBS";;
-esac
-fi
-#
-#
-motif_libdir_result="$motif_libdir"
-motif_include_result="$motif_include"
-test "$motif_libdir_result" = "" &&
-  motif_libdir_result="in default path" &&
-cat >>confdefs.h <<\_ACEOF
-#define MOTIF 1
-_ACEOF
-
-test "$motif_include_result" = "" &&
-  motif_include_result="in default path" && cat >>confdefs.h <<\_ACEOF
-#define MOTIF 1
-_ACEOF
-
-if test "$motif_libdir_result" = "no"; then
-    if test "$default_toolkit" = "none"; then
-        motif_libdir_result="(none)"
-    else
-	motif_libdir_result=""
-    fi
-fi
-if test "$motif_include_result" = "no"; then
-    if test "$default_toolkit" = "none"; then
-        motif_include_result="(none)"
-    else
-	motif_include_result=""
-    fi
-fi
-
-if test "$motif_include_result" != "" && test "$motif_libdir_result" != ""; then
-    { $as_echo "$as_me:$LINENO: result: libraries $motif_libdir_result, headers $motif_include_result" >&5
-$as_echo "libraries $motif_libdir_result, headers $motif_include_result" >&6; }
-    prog_extension="motif"
-    cat >>confdefs.h <<\_ACEOF
-#define MOTIF 1
-_ACEOF
-
-    x_tool_libs="-lXm"
-    # now warn if we're using LessTif (see LESSTIF-BUGS for why ...)
-    { $as_echo "$as_me:$LINENO: checking for LessTif" >&5
-$as_echo_n "checking for LessTif... " >&6; }
-    save_CPPFLAGS="$CPPFLAGS"
-    CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-    cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-    #include <X11/X.h>
-    #include <X11/Xlib.h>
-    #include <X11/Xutil.h>
-    #include <X11/Xos.h>
-    #include <X11/Intrinsic.h>
-    #include <Xm/Xm.h>
-int
-main ()
-{
-const char *p = LesstifVERSION_STRING;
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-
-    # yes, we're running LessTif
-    { $as_echo "$as_me:$LINENO: result: yes" >&5
-$as_echo "yes" >&6; }
-    { $as_echo "$as_me:$LINENO: WARNING: LessTif header detected.
-  *****************************************************************
-  * Warning: You are using LessTif instead of OpenMotif.          *
-  * Some GUI elements might be broken; please see the file        *
-  *                                                               *
-  * texk/xdvik/LESSTIF-BUGS                                       *
-  *                                                               *
-  * for more information.                                         *
-  *****************************************************************" >&5
-$as_echo "$as_me: WARNING: LessTif header detected.
-  *****************************************************************
-  * Warning: You are using LessTif instead of OpenMotif.          *
-  * Some GUI elements might be broken; please see the file        *
-  *                                                               *
-  * texk/xdvik/LESSTIF-BUGS                                       *
-  *                                                               *
-  * for more information.                                         *
-  *****************************************************************" >&2;}
-
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-
-    # no, not running LessTif
-    { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
-
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-else
-    { $as_echo "$as_me:$LINENO: result: not found, using Xaw" >&5
-$as_echo "not found, using Xaw" >&6; }
     prog_extension="xaw"
-    cat >>confdefs.h <<\_ACEOF
+    x_tool_libs="-lXaw"
+
+cat >>confdefs.h <<\_ACEOF
 #define XAW 1
 _ACEOF
 
-    x_tool_libs="-lXaw"
+  fi
 fi
-
-#
-{ $as_echo "$as_me:$LINENO: checking whether to compile in panner (requires Xaw)" >&5
-$as_echo_n "checking whether to compile in panner (requires Xaw)... " >&6; }
-save_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-#include <X11/X.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xos.h>
-
-#include <X11/Xfuncs.h>
-#include <X11/Intrinsic.h>
-
-#include <X11/Xaw/Reports.h>
-
-int
-main ()
-{
-
-
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  xdvi_use_xaw_panner=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	xdvi_use_xaw_panner=no
-
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-CPPFLAGS=$save_CPPFLAGS
-if test $xdvi_use_xaw_panner = yes; then
-    { $as_echo "$as_me:$LINENO: result: yes" >&5
-$as_echo "yes" >&6; }
-
-cat >>confdefs.h <<\_ACEOF
-#define USE_XAW_PANNER 1
-_ACEOF
-
-else
-    { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
-fi
- ;;
-esac
-
 
 final_exec_name="xdvi-$prog_extension"
 program_transform_name="'s,xdvi-bin,$final_exec_name,'"
-
-
-
-
-
-
-# Check whether --with-iconv-libdir was given.
-if test "${with_iconv_libdir+set}" = set; then
-  withval=$with_iconv_libdir; if test XXX"$withval" != "XXX"; then
-    iconv_libpath="-L$withval"
-    iconv_libs="-lrecode"
-else
-    iconv_libpath=
-    iconv_libs=
-fi
-else
-
-iconv_libpath=
-iconv_libs=
-{ $as_echo "$as_me:$LINENO: checking for iconv_open in -liconv" >&5
-$as_echo_n "checking for iconv_open in -liconv... " >&6; }
-if test "${ac_cv_lib_iconv_iconv_open+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-liconv  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char iconv_open ();
-int
-main ()
-{
-return iconv_open ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-  ac_cv_lib_iconv_iconv_open=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_cv_lib_iconv_iconv_open=no
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_iconv_iconv_open" >&5
-$as_echo "$ac_cv_lib_iconv_iconv_open" >&6; }
-if test "x$ac_cv_lib_iconv_iconv_open" = x""yes; then
-  iconv_libs=-liconv
-else
-  { $as_echo "$as_me:$LINENO: checking for libiconv_open in -liconv" >&5
-$as_echo_n "checking for libiconv_open in -liconv... " >&6; }
-if test "${ac_cv_lib_iconv_libiconv_open+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-liconv  $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char libiconv_open ();
-int
-main ()
-{
-return libiconv_open ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-  ac_cv_lib_iconv_libiconv_open=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_cv_lib_iconv_libiconv_open=no
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_iconv_libiconv_open" >&5
-$as_echo "$ac_cv_lib_iconv_libiconv_open" >&6; }
-if test "x$ac_cv_lib_iconv_libiconv_open" = x""yes; then
-  iconv_libs=-liconv
-else
-  iconv_libs=
-fi
-
-fi
-
-fi
-
-if test "x$iconv_libs" != x; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_ICONV 1
-_ACEOF
-
-fi
-
-
-
-
-# Check whether --with-iconv-include was given.
-if test "${with_iconv_include+set}" = set; then
-  withval=$with_iconv_include; if test XXX"$withval" != "XXX"; then
-    iconv_includes="-I$withval"
-fi
-else
-
-iconv_includes=
-
-fi
-
-
-
-{ $as_echo "$as_me:$LINENO: checking for iconv input type" >&5
-$as_echo_n "checking for iconv input type... " >&6; }
-if test "${xdvi_cv_iconv_char_pptr_type+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-
-  xdvi_iconv_save_cppflags=$CPPFLAGS
-  xdvi_iconv_save_libs=$LIBS
-  CPPFLAGS="$CPPFLAGS $iconv_includes"
-  LIBS="$LIBS $iconv_libpath $iconv_libs"
-  cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* iconv() definitions may differ depending on following macros ... */
-#ifdef __hpux
-/* On HP-UX 10.10 B and 20.10, compiling with _XOPEN_SOURCE + ..._EXTENDED
- * leads to poll() not realizing that a file descriptor is writable in psgs.c.
- */
-# define _HPUX_SOURCE	1
-#else
-# ifndef _XOPEN_SOURCE
-# define _XOPEN_SOURCE	600
-# endif
-# define _XOPEN_SOURCE_EXTENDED	1
-# define __EXTENSIONS__	1	/* needed to get struct timeval on SunOS 5.5 */
-# define _SVID_SOURCE	1	/* needed to get S_IFLNK in glibc */
-# define _BSD_SOURCE	1	/* needed to get F_SETOWN in glibc-2.1.3 */
-#endif
-
-#include <iconv.h>
-
-int
-main ()
-{
-extern size_t iconv(iconv_t, char **, size_t *, char**, size_t*);
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  xdvi_cv_iconv_char_pptr_type='char **'
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	xdvi_cv_iconv_char_pptr_type='const char **'
-fi
-
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-  CPPFLAGS=$xdvi_iconv_save_cppflags
-  LIBS=$xdvi_iconv_save_libs
-fi
-{ $as_echo "$as_me:$LINENO: result: $xdvi_cv_iconv_char_pptr_type" >&5
-$as_echo "$xdvi_cv_iconv_char_pptr_type" >&6; }
-
-cat >>confdefs.h <<_ACEOF
-#define ICONV_CHAR_PPTR_TYPE $xdvi_cv_iconv_char_pptr_type
-_ACEOF
-
 
 
 
@@ -23341,13 +23255,6 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-PS_DEF="$PS_DEF $MAGICK_DEF"
-if echo "$PS_DEF" | grep MAGICK >/dev/null; then
-    { $as_echo "$as_me:$LINENO: adding ImageMagick libraries" >&5
-$as_echo "$as_me: adding ImageMagick libraries" >&6;}
-    X_EXTRA_LIBS="$X_EXTRA_LIBS `Magick-config --libs`"
-fi
-
 XDVIK_VERSION=22.84.15
 
 
@@ -23356,7 +23263,7 @@ XDVIK_VERSION=22.84.15
 subdirs="$subdirs squeeze"
 
 
-ac_config_files="$ac_config_files Makefile gui/Makefile tests/Makefile"
+ac_config_files="$ac_config_files Makefile tests/Makefile"
 
 
 ac_config_files="$ac_config_files xdvi:xdvi-sh.in"
@@ -24251,7 +24158,6 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "gui/Makefile") CONFIG_FILES="$CONFIG_FILES gui/Makefile" ;;
     "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
     "xdvi") CONFIG_FILES="$CONFIG_FILES xdvi:xdvi-sh.in" ;;
 

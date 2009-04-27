@@ -38,15 +38,16 @@ subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/xdvi-c-bitmap-type.m4 \
 	$(top_srcdir)/m4/xdvi-cc-concat.m4 \
+	$(top_srcdir)/m4/xdvi-check-iconv.m4 \
+	$(top_srcdir)/m4/xdvi-check-langinfo.m4 \
+	$(top_srcdir)/m4/xdvi-check-xaw.m4 \
 	$(top_srcdir)/m4/xdvi-find-motif.m4 \
 	$(top_srcdir)/m4/xdvi-find-xpm.m4 \
 	$(top_srcdir)/m4/xdvi-func-memicmp.m4 \
 	$(top_srcdir)/m4/xdvi-func-poll.m4 \
 	$(top_srcdir)/m4/xdvi-func-setsid-in-fork.m4 \
 	$(top_srcdir)/m4/xdvi-func-working-vsnprintf.m4 \
-	$(top_srcdir)/m4/xdvi-iconv-char-pptr-type.m4 \
 	$(top_srcdir)/m4/xdvi-linker-multiple-defns.m4 \
-	$(top_srcdir)/m4/xdvi-old-xaw.m4 \
 	$(top_srcdir)/m4/xdvi-sys-old-linux.m4 \
 	$(top_srcdir)/m4/xdvi-sys-streams.m4 \
 	$(top_srcdir)/m4/xdvi-sys-sunos4.m4 \
@@ -239,8 +240,7 @@ xdvi_x_libs = $(x_ldflags) $(x_tool_libs) $(x_xmu_lib) -lXt \
 	$(X_PRE_LIBS) $(x_ext_lib) $(x_xpm_libs) -lX11 $(x_extra_libs)
 common_ldadd = $(KPATHSEA_LIBS) $(T1LIB_LIBS) $(xdvi_x_libs)
 common_dependencies = $(KPATHSEA_DEPEND) $(T1LIB_DEPEND)
-libxdvi_dependencies = ${top_srcdir}/*.[ch] ${top_builddir}/psheader.c
-libgui_dependencies = ${top_srcdir}/*.h ${top_srcdir}/print-internal.c ${top_srcdir}/gui/*.[ch]
+libxdvi_dependencies = ${top_srcdir}/*.[ch] ${top_srcdir}/gui/*.[ch] ${top_builddir}/psheader.c
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/gui $(common_includes)
 TESTS = $(check_PROGRAMS)
 run_tests_SOURCES = \
@@ -251,8 +251,8 @@ run_tests_SOURCES = \
 	test_string_utils.c \
 	test_util.c
 
-run_tests_DEPENDENCIES = ../libxdvi.a ../gui/libgui.a $(common_dependencies)
-LDADD = ../libxdvi.a ../gui/libgui.a $(common_ldadd)
+run_tests_DEPENDENCIES = ../libxdvi.a $(common_dependencies)
+LDADD = ../libxdvi.a $(common_ldadd)
 EXTRA_DIST = test1.c
 all: all-am
 
@@ -607,9 +607,6 @@ uninstall-am:
 
 ../libxdvi.a: $(libxdvi_dependencies)
 	cd .. && $(MAKE) $(AM_MAKEFLAGS) libxdvi.a
-
-../gui/libgui.a: $(libgui_dependencies)
-	cd ../gui && $(MAKE) $(AM_MAKEFLAGS) libgui.a
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

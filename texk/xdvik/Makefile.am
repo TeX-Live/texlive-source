@@ -5,88 +5,160 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
-SUBDIRS = squeeze gui . tests
+SUBDIRS = squeeze . tests
 
 include common.am
 
 INCLUDES = -I$(srcdir)/gui $(common_includes)
 
-noinst_HEADERS = \
-	alloc-debug.h \
-	browser.h \
-	c-openmx.h \
-	dl_list.h \
-	dvi-draw.h \
-	dvi-init.h \
-	dvi.h \
-	dvisel.h \
-	encodings.h \
-	events.h \
-	exit-handlers.h \
-	filehist.h \
-	font-open.h \
-	hypertex.h \
-	image-magick.h \
-	mime.h \
-	my-snprintf.h \
-	my-vsnprintf.h \
-	pagehist.h \
-	print-internal.h \
-	psdps.h \
-	psgs.h \
-	psnews.h \
-	read-mapfile.h \
-	search-internal.h \
-	special.h \
-	string-utils.h \
-	string_list.h \
-	tfmload.h \
-	translations.h \
-	util.h \
-	version.h \
-	x_util.h \
-	xdvi-config.h \
-	xdvi-debug.h \
-	xdvi.h \
-	xserver-info.h
-
+## The object files created from ./*.c and gui/*.c are used for both
+## ./xdvi-bin and tests/run_tests.
+## In order not to compile them twice, we put them into a library.
 noinst_LIBRARIES = libxdvi.a
 
 nodist_libxdvi_a_SOURCES = psheader.c
 
 libxdvi_a_SOURCES = \
+	alloc-debug.h \
 	browser.c \
+	browser.h \
+	c-openmx.h \
 	dl_list.c \
+	dl_list.h \
 	dvi-draw.c \
+	dvi-draw.h \
 	dvi-init.c \
+	dvi-init.h \
+	dvi.h \
 	dvisel.c \
+	dvisel.h \
 	encodings.c \
+	encodings.h \
 	events.c \
+	events.h \
 	exit-handlers.c \
+	exit-handlers.h \
 	filehist.c \
+	filehist.h \
 	font-open.c \
+	font-open.h \
 	gf.c \
 	hypertex.c \
+	hypertex.h \
 	image-magick.c \
+	image-magick.h \
 	mime.c \
+	mime.h \
 	my-snprintf.c \
+	my-snprintf.h \
 	my-vsnprintf.c \
+	my-vsnprintf.h \
 	pagehist.c \
+	pagehist.h \
 	pk.c \
+	print-internal.c \
+	print-internal.h \
 	psdps.c \
+	psdps.h \
 	psgs.c \
+	psgs.h \
 	psnews.c \
+	psnews.h \
 	read-mapfile.c \
+	read-mapfile.h \
 	search-internal.c \
+	search-internal.h \
 	special.c \
+	special.h \
 	string-utils.c \
+	string-utils.h \
 	string_list.c \
+	string_list.h \
 	tfmload.c \
+	tfmload.h \
+	translations.h \
 	util.c \
+	util.h \
+	version.h \
 	vf.c \
 	x_util.c \
+	x_util.h \
 	xdvi.c \
-	xserver-info.c
+	xdvi-config.h \
+	xdvi-debug.h \
+	xserver-info.c \
+	xdvi.h \
+	xserver-info.h
+
+## We cannot easily use two different libraries due to the mutual
+## dependencies between routines in ./*.c and gui/*.c.
+libxdvi_a_SOURCES += \
+	gui/Panner.c \
+	gui/Panner.h \
+	gui/PannerP.h \
+	gui/Tip.c \
+	gui/Tip.h \
+	gui/TipP.h \
+	gui/help-window.c \
+	gui/help-window.h \
+	gui/mag.c \
+	gui/mag.h \
+	gui/menu.c \
+	gui/menu.h \
+	gui/message-window.c \
+	gui/message-window.h \
+	gui/pagesel.c \
+	gui/pagesel.h \
+	gui/print-dialog.c \
+	gui/print-dialog.h \
+	gui/print-log.c \
+	gui/print-log.h \
+	gui/search-dialog.c \
+	gui/search-dialog.h \
+	gui/selection.c \
+	gui/selection.h \
+	gui/sfDir.c \
+	gui/sfDir.h \
+	gui/sfDraw.c \
+	gui/sfDraw.h \
+	gui/sfPath.c \
+	gui/sfPath.h \
+	gui/sfSelFile.c \
+	gui/sfSelFile.h \
+	gui/sfinternal.h \
+	gui/statusline.c \
+	gui/statusline.h \
+	gui/topic-window.c \
+	gui/topic-window.h \
+	gui/xaw_bitmaps.c \
+	gui/xaw_bitmaps.h \
+	gui/xaw_menu.c \
+	gui/xaw_menu.h \
+	gui/xicon.c \
+	gui/xicon.h \
+	gui/xlwradio.c \
+	gui/xlwradio.h \
+	gui/xlwradioP.h \
+	gui/xm_colorsel.c \
+	gui/xm_colorsel.h \
+	gui/xm_filesel.c \
+	gui/xm_menu.c \
+	gui/xm_menu.h \
+	gui/xm_prefs.c \
+	gui/xm_prefs.h \
+	gui/xm_prefsP.h \
+	gui/xm_prefs_appearance.c \
+	gui/xm_prefs_appearance.h \
+	gui/xm_prefs_fonts.c \
+	gui/xm_prefs_fonts.h \
+	gui/xm_prefs_helpers.c \
+	gui/xm_prefs_helpers.h \
+	gui/xm_prefs_page.c \
+	gui/xm_prefs_page.h \
+	gui/xm_prefs_scroll.c \
+	gui/xm_prefs_scroll.h \
+	gui/xm_toolbar.c \
+	gui/xm_toolbar.h
 
 bin_SCRIPTS = xdvi
 
@@ -94,12 +166,9 @@ bin_PROGRAMS = xdvi-bin
 
 xdvi_bin_SOURCES = main.c
 
-xdvi_bin_DEPENDENCIES = libxdvi.a gui/libgui.a libxdvi.a $(common_dependencies)
+xdvi_bin_DEPENDENCIES = libxdvi.a $(common_dependencies)
 
-LDADD = libxdvi.a gui/libgui.a $(common_ldadd)
-
-gui/libgui.a: $(libgui_dependencies)
-	cd gui && $(MAKE) $(AM_MAKEFLAGS) libgui.a
+LDADD = libxdvi.a $(common_ldadd)
 
 psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
 	squeeze/squeeze $(srcdir)/psheader.txt $@

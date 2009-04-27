@@ -1,14 +1,26 @@
+# Autoconf macros for xdvik.
+# Copyright (C) 2001 - 2009 Marcin Dalecki <xdvi-core@lists.sourceforge.net>
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+#
+# This file is free software; the copyright holders
+# give unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
 dnl ### Check for Motif libraries and headers
 dnl Put Motif include directory in motif_include,
 dnl put Motif library directory in motif_libdir,
 dnl and add appropriate flags to X_CFLAGS and X_LIBS.
-dnl If $1 is not `none', use Xaw as default toolkit if Motif isn't found.
+dnl If default_toolkit is not `none', use Xaw as default toolkit if Motif isn't found.
 AC_DEFUN([XDVI_FIND_MOTIF],
-[
-default_toolkit="$1"
-AC_REQUIRE([AC_PATH_XTRA])
-AC_MSG_CHECKING(for Motif)
+[AC_REQUIRE([AC_PATH_XTRA])
+AC_MSG_CHECKING([for Motif])
 #
+AC_ARG_WITH([motif-include],
+            AS_HELP_STRING([--with-motif-include=DIR],
+                           [Specify the location of Motif include files]))
+AC_ARG_WITH([motif-libdir],
+            AS_HELP_STRING([--with-motif-libdir=DIR],
+                           [Specify the location of Motif libraries]))
 #
 # Search the include files.
 #
@@ -197,9 +209,7 @@ if test "$motif_include_result" != "" && test "$motif_libdir_result" != ""; then
     ])
 else
     AC_MSG_RESULT([not found, using Xaw])
-    prog_extension="xaw"
-    AC_DEFINE(XAW)
-    x_tool_libs="-lXaw"
+    with_xdvi_x_toolkit="xaw"
 fi
 
 #

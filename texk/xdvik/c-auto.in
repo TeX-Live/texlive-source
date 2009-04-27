@@ -108,7 +108,7 @@
 /* Define if the vsnprintf function works. */
 #undef HAVE_GOOD_VSNPRINTF
 
-/* Define if you have the iconv function. */
+/* Define to 1 if you have the `iconv' function. */
 #undef HAVE_ICONV
 
 /* Define to 1 if you have the <iconv.h> header file. */

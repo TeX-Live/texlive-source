@@ -23,10 +23,9 @@ common_ldadd = $(KPATHSEA_LIBS) $(T1LIB_LIBS) $(xdvi_x_libs)
 
 common_dependencies = $(KPATHSEA_DEPEND) $(T1LIB_DEPEND)
 
-## Dependencies for libxdvi.a and gui/libgui.a
+## Dependencies for libxdvi.a
 ##
-libxdvi_dependencies = ${top_srcdir}/*.[ch] ${top_builddir}/psheader.c
-libgui_dependencies = ${top_srcdir}/*.h ${top_srcdir}/print-internal.c ${top_srcdir}/gui/*.[ch]
+libxdvi_dependencies = ${top_srcdir}/*.[ch] ${top_srcdir}/gui/*.[ch] ${top_builddir}/psheader.c
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@

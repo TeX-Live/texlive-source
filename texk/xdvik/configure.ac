@@ -16,19 +16,10 @@ AC_CONFIG_MACRO_DIR([../../m4])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([xdvik])
 
-AC_SEARCH_LIBS([pow], [m])
-
+dnl Include additional code for xdvik.
 m4_include([ac/xdvik.ac])
-AS_CASE([$with_xdvi_x_toolkit],
-        [next | nextaw | neXtaw],      [val=neXtaw],
-        [xaw3d],                       [val=xaw3d],
-        ["" | x | xa | xaw],           [val=xaw],
-        [y | ye | yes],                [val=yes],
-        [m | mo | mot | moti | motif], [val=motif],
-                                       [AC_MSG_WARN([unknown --with-xdvi-x-toolkit argument 
-                                                     `$with_xdvi_x_toolkit'; using xaw.])
-                                        val=xaw])
-with_xdvi_x_toolkit=$val
+
+AC_SEARCH_LIBS([pow], [m])
 
 AC_ARG_WITH([ps],
             AS_HELP_STRING([--with-ps=PS],
@@ -122,12 +113,18 @@ AC_CHECK_TYPE([ptrdiff_t], [],
                                   [Define to `long' if <sys/types.h> does not define.])])
 
 AC_CHECK_FUNCS([mkstemp memcpy strerror waitpid sigaction strchr setenv ulltostr \
-                fchdir getcwd getpwnam getuid getpwuid iconv nl_langinfo \
+                fchdir getcwd getpwnam getuid getpwuid \
                 lstat ftruncate snprintf vsnprintf realpath])
 
 dnl <sys/bsdtypes.h> is for ISC 4.0, to define fd_set in psgs.c.
 dnl regex.h is needed for regexp support in DVI search.    
-AC_CHECK_HEADERS([netdb.h sys/bsdtypes.h sys/param.h unistd.h sys/fcntl.h regex.h iconv.h langinfo.h])
+AC_CHECK_HEADERS([netdb.h sys/bsdtypes.h sys/param.h unistd.h sys/fcntl.h regex.h])
+
+# Checks for iconv
+XDVI_CHECK_ICONV
+
+# Checks for langinfo
+XDVI_CHECK_LANGINFO
 
 dnl Check X11 headers.
 xdvi_save_CPPFLAGS=$CPPFLAGS
@@ -171,19 +168,8 @@ if test "x$enable_magick" = xyes; then
   fi
 fi
 
-dnl check for Xaw version
-XDVI_OLD_XAW
-
-dnl nl_langinfo checks
-AC_CACHE_CHECK([if nl_langinfo(CODESET) is working],
-               [xdvi_cv_nl_langinfo_codeset],
-               [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <langinfo.h>]],
-                                                [[char* cs = nl_langinfo(CODESET);]])],
-                               [xdvi_cv_nl_langinfo_codeset=yes],
-                               [xdvi_cv_nl_langinfo_codeset=no])])
-AS_IF([test "x$xdvi_cv_nl_langinfo_codeset" = xyes],
-      [AC_DEFINE([HAVE_WORKING_NL_LANGINFO_CODESET], 1,
-                 [Define if the CODESET argument to nl_langinfo works.])])
+# Check whether -lXpm can be used	
+XDVI_FIND_XPM
 
 dnl #######
 
@@ -210,70 +196,49 @@ AC_SUBST([x_ext_lib])
 
 dnl #######
 
-dnl Check whether -lXpm can be used	
-XDVI_FIND_XPM
-
-AC_ARG_WITH([motif-include],
-            AS_HELP_STRING([--with-motif-include=DIR],
-                           [Specify the location of Motif include files]))
-AC_ARG_WITH([motif-libdir],
-            AS_HELP_STRING([--with-motif-libdir=DIR],
-                           [Specify the location of Motif libraries]))
-
 AS_CASE([$with_xdvi_x_toolkit],
-        [xaw3d],  [prog_extension="xaw3d"; x_tool_libs="-lXaw3d"],
-        [neXtaw], [prog_extension="nextaw"; x_tool_libs="-lneXtaw"],
-        [xaw],    [prog_extension="xaw"; x_tool_libs="-lXaw"
-                   AC_DEFINE([XAW], 1, [Define to use the Xaw toolkit.])],
-        [motif],  [XDVI_FIND_MOTIF([none])],
-                  [XDVI_FIND_MOTIF([Xaw])])
+        [next | nextaw | neXtaw],      [val=neXtaw],
+        [xaw3d],                       [val=xaw3d],
+        ["" | x | xa | xaw],           [val=xaw],
+        [y | ye | yes],                [val=yes],
+        [m | mo | mot | moti | motif], [val=motif],
+                                       [AC_MSG_WARN([unknown --with-xdvi-x-toolkit argument 
+                                                     `$with_xdvi_x_toolkit'; using xaw.])
+                                        val=xaw])
+with_xdvi_x_toolkit=$val
+
+if test "x$with_xdvi_x_toolkit" = xxaw3d; then
+  prog_extension="xaw3d"
+  x_tool_libs="-lXaw3d"
+elif test "x$with_xdvi_x_toolkit" = xneXtaw; then
+  prog_extension="nextaw"
+  x_tool_libs="-lneXtaw"
+else
+  # Check for Xaw
+  XDVI_CHECK_XAW
+  if test "x$with_xdvi_x_toolkit" != xxaw; then
+    # Requested motiv (possibly with xaw as fallback)
+    if test "x$with_xdvi_x_toolkit" = xmotif; then
+      default_toolkit=none
+    else
+      default_toolkit=Xaw
+    fi
+    XDVI_FIND_MOTIF
+  fi
+  if test "x$with_xdvi_x_toolkit" = xxaw; then
+    # Requested or defaulted to Xaw
+    if test "x$xdvi_have_xaw" = xno; then
+      AC_MSG_ERROR([Sorry, you will need at least the Xaw header/library files to compile xdvik.])
+    fi
+    prog_extension="xaw"
+    x_tool_libs="-lXaw"
+    AC_DEFINE([XAW], 1, [Define to use the Xaw toolkit.])
+  fi
+fi
 AC_SUBST([x_tool_libs])
 final_exec_name="xdvi-$prog_extension"
 program_transform_name="'s,xdvi-bin,$final_exec_name,'"
 AC_SUBST([final_exec_name])
-
-dnl #######
-
-dnl AC_SUBST(x_tool_libs) ??
-
-dnl #######
-
-dnl Only relevant if AC_CHECK_FUNCS([... iconv ...]) above failed
-AC_ARG_WITH([iconv-libdir],
-            AS_HELP_STRING([--with-iconv-libdir=DIR],
-                           [Specify the location of iconv library (librecode.so)]),
-[if test XXX"$withval" != "XXX"; then
-    iconv_libpath="-L$withval"
-    iconv_libs="-lrecode"
-else
-    iconv_libpath=
-    iconv_libs=	    
-fi], [
-dnl On non-Linux systems, -liconv is needed. Check for both iconv_open and libiconv_open.
-iconv_libpath=
-iconv_libs=	
-AC_CHECK_LIB([iconv], [iconv_open],
-             [iconv_libs=-liconv],
-             [AC_CHECK_LIB([iconv], [libiconv_open],
-                           [iconv_libs=-liconv],
-                           [iconv_libs=])])])
-if test "x$iconv_libs" != x; then
-   AC_DEFINE([HAVE_ICONV], 1, [Define if you have the iconv function.])
-fi    	
-AC_SUBST([iconv_libpath])
-AC_SUBST([iconv_libs])
-
-AC_ARG_WITH([iconv-include],
-            AS_HELP_STRING([--with-iconv-include=DIR],
-                           [Specify the location of iconv header (iconv.h)]),
-[if test XXX"$withval" != "XXX"; then
-    iconv_includes="-I$withval"
-fi],[
-iconv_includes=
-])
-AC_SUBST([iconv_includes])
-
-XDVI_ICONV_CHAR_PPTR_TYPE
 
 dnl #######
 
@@ -330,19 +295,12 @@ AC_ARG_WITH([default-ps2pdf-path],
 AC_DEFINE_UNQUOTED([DEFAULT_PS2PDF_PATH], ["$with_default_ps2pdf_path"],
                    [Define to point to the default command to use for printing (optional).])
 
-dnl ImageMagick support (requires at the moment MAGICK_DEF from the environment)
-PS_DEF="$PS_DEF $MAGICK_DEF"
-if echo "$PS_DEF" | grep MAGICK >/dev/null; then
-    AC_MSG_NOTICE([adding ImageMagick libraries])
-    X_EXTRA_LIBS="$X_EXTRA_LIBS `Magick-config --libs`"
-fi
-
 XDVIK_VERSION=xdvik_version
 AC_SUBST([XDVIK_VERSION])
 
 AC_CONFIG_SUBDIRS([squeeze])
 
-AC_CONFIG_FILES([Makefile gui/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile tests/Makefile])
 
 AC_CONFIG_FILES([xdvi:xdvi-sh.in], [chmod +x xdvi])
 
