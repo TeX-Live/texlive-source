@@ -1,5 +1,8 @@
 ## texk/web2c/luatexdir/am/luamisc.am: Makefile fragment for libluamisc
 ## (luafilesystem, luamd5, luapeg, luazip, luazlib, luaprofiler, and slnunicode)
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## libluamisc (luafilesystem, luamd5, luapeg, luazip, luazlib, luaprofiler,
 ## and slnunicode)

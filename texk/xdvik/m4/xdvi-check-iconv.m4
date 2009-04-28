@@ -32,7 +32,7 @@ LDFLAGS="$iconv_libpath $LDFLAGS"
 AC_SEARCH_LIBS([iconv], [iconv recode])
 AS_CASE([$ac_cv_search_iconv],
         [no | "none required"], [:],
-        [iconv_libs="-l$ac_cv_search_iconv"])
+        [iconv_libs=$ac_cv_search_iconv])
 AC_CHECK_FUNCS([iconv])
 AC_CHECK_HEADERS([iconv.h])
 if test "x$ac_cv_func_iconv:$ac_cv_header_iconv_h" = xyes:yes; then

@@ -1533,11 +1533,13 @@ uninstall-man: uninstall-man1
 @KPATHSEA_RULE@
 @T1LIB_RULE@
 
-psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
+# When cross-compiling, EXEEXT for the build and hosts system may differ.
+# Thus we depend on the auxiliary file squeeze/stamp-squeeze.
+psheader.c: psheader.txt squeeze/stamp-squeeze
 	squeeze/squeeze $(srcdir)/psheader.txt $@
 
-squeeze/squeeze$(EXEEXT):
-	cd squeeze && $(MAKE) $(AM_MAKEFLAGS)
+squeeze/stamp-squeeze:
+	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
 
 xdvi.1: xdvi.1.in sedscript
 	sed -f sedscript <$(srcdir)/xdvi.1.in >$@

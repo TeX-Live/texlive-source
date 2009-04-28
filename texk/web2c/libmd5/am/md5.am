@@ -1,4 +1,7 @@
 ## texk/web2c/libmd5/am/md5.am: Makefile fragment for md5.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## libmd5
 ##

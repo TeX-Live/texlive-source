@@ -110,7 +110,7 @@ SOURCES = $(fixwrites_SOURCES) $(makecpool_SOURCES) $(splitup_SOURCES) \
 	$(web2c_SOURCES)
 DIST_SOURCES = $(fixwrites_SOURCES) $(makecpool_SOURCES) \
 	$(splitup_SOURCES) $(web2c_SOURCES)
-DATA = $(dist_noinst_DATA)
+DATA = $(dist_noinst_DATA) $(nodist_noinst_DATA)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -274,6 +274,8 @@ splitup_SOURCES = \
 makecpool_SOURCES = \
 	makecpool.c
 
+nodist_noinst_DATA = stamp-web2c stamp-fixwrites stamp-splitup stamp-makecpool
+CLEANFILES = $(nodist_noinst_DATA)
 EXTRA_DIST = convert.bat
 all: all-am
 
@@ -603,6 +605,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -697,6 +700,18 @@ uninstall-am:
 
 native/config.h: ../config.h
 	sed -e 's,web2c/c-auto,kpathsea/c-auto,' $(srcdir)/../config.h >$@
+
+stamp-web2c: web2c$(EXEEXT)
+	echo timestamp >$@
+
+stamp-fixwrites: fixwrites$(EXEEXT)
+	echo timestamp >$@
+
+stamp-splitup: splitup$(EXEEXT)
+	echo timestamp >$@
+
+stamp-makecpool: makecpool$(EXEEXT)
+	echo timestamp >$@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -1,4 +1,7 @@
 ## texk/web2c/luatexdir/am/liblua51.am: Makefile fragment for liblua51.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## liblua51
 ##

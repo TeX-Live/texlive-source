@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/ stamp-squeeze/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -86,16 +90,18 @@ texc.lpro: texc.script tex.lpro
 
 SUFFIXES = .pro .lpro
 
-## The `t[mp]-' business is so that we don't create an empty .pro file,
-## if running squeeze fails for some reason.  A dependency on squeeze
-## fails here, so we include it below.
+# The `t[mp]-' business is so that we don't create an empty .pro file,
+# if running squeeze fails for some reason.  A dependency on squeeze
+# fails here, so we include it below.
 .lpro.pro:
 	squeeze/squeeze <$< >t-$@ && mv t-$@ $@
 
-$(prologues): squeeze/squeeze$(EXEEXT)
+# When cross-compiling, EXEEXT for the build and hosts system may differ.
+# Thus we depend on the auxiliary file squeeze/stamp-squeeze.
+$(prologues): squeeze/stamp-squeeze
 
-squeeze/squeeze$(EXEEXT):
-	cd squeeze && $(MAKE) $(AM_MAKEFLAGS)
+squeeze/stamp-squeeze:
+	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
 
 EXTRA_DIST = $(dist_prologues) texc.script
 
@@ -145,7 +151,7 @@ EXTRA_DIST += \
 	vmcms \
 	vms
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 

@@ -1,4 +1,7 @@
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## XeTeX
 ##
@@ -97,7 +100,7 @@ xetexdir/xetex.version: xetexdir/xetex.ch
 	  | sed "s/^.*'-//;s/'.*$$//" >$@
 
 ## Generate xetex.web
-xetex.web: $(TIE) $(xetex_web_srcs)
+xetex.web: tie$(EXEEXT) $(xetex_web_srcs)
 	$(tie) -m xetex.web $(xetex_web_srcs)
 
 xetex_web_srcs = \

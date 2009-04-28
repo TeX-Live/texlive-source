@@ -1,4 +1,7 @@
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 pdftex_cppflags = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
 pdftex_cppflags += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
@@ -45,7 +48,7 @@ pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch
 	$(pdf_tangle) pdftex pdftex
 	echo timestamp >$@
 	touch pdftex.p pdftex.pool
-pdftex-pool.c: pdftex.pool $(makecpool) pdftexdir/ptexlib.h pdftexd.h
+pdftex-pool.c: pdftex.pool $(makecpool_stamp) pdftexdir/ptexlib.h pdftexd.h
 	$(makecpool) pdftex.pool pdftexdir/ptexlib.h >$@ || rm -f $@
 ## Extract pdftex version
 pdftexdir/pdftex.version: pdftexdir/pdftex.web
@@ -57,7 +60,7 @@ pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexd
 	    -e s/ETEX-VERSION/`cat etexdir/etex.version`/ \
 	  $(srcdir)/pdftexdir/pdftexextra.in >$@
 ## Generate pdftex.ch
-pdftex.ch: $(TIE) $(pdftex_ch_srcs)
+pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \

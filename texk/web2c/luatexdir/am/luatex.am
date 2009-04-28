@@ -1,4 +1,7 @@
 ## texk/web2c/luatexdir/am/luatex.am: Makefile fragment for luaTeX.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## luaTeX
 ##
@@ -44,7 +47,7 @@ luatex-tangle: luatangle$(EXEEXT) $(luatex_sources)
 	$(luatex_tangle) --underlines luatex luatex
 	echo timestamp >$@
 	touch luatex.p luatex.pool
-luatex-pool.c: luatex.pool $(makecpool) luatexdir/ptexlib.h luatexd.h
+luatex-pool.c: luatex.pool $(makecpool_stamp) luatexdir/ptexlib.h luatexd.h
 	$(makecpool) luatex.pool luatexdir/ptexlib.h >$@ || rm -f $@
 ## Extract luatex version
 luatexdir/luatex.version: luatexdir/luatex.web

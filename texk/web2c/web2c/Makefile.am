@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/web2c/web2c/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../../m4
 
@@ -42,6 +46,22 @@ splitup_SOURCES = \
 
 makecpool_SOURCES = \
 	makecpool.c
+
+nodist_noinst_DATA = stamp-web2c stamp-fixwrites stamp-splitup stamp-makecpool
+
+stamp-web2c: web2c$(EXEEXT)
+	echo timestamp >$@
+
+stamp-fixwrites: fixwrites$(EXEEXT)
+	echo timestamp >$@
+
+stamp-splitup: splitup$(EXEEXT)
+	echo timestamp >$@
+
+stamp-makecpool: makecpool$(EXEEXT)
+	echo timestamp >$@
+
+CLEANFILES = $(nodist_noinst_DATA)
 
 ## Obsolete ??
 ##

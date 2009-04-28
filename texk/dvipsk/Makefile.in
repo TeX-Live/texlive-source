@@ -1177,13 +1177,18 @@ uninstall-man: uninstall-man1
 texc.lpro: texc.script tex.lpro
 	$(SHELL) $(srcdir)/texc.script $(srcdir)/tex.lpro $@
 
+# The `t[mp]-' business is so that we don't create an empty .pro file,
+# if running squeeze fails for some reason.  A dependency on squeeze
+# fails here, so we include it below.
 .lpro.pro:
 	squeeze/squeeze <$< >t-$@ && mv t-$@ $@
 
-$(prologues): squeeze/squeeze$(EXEEXT)
+# When cross-compiling, EXEEXT for the build and hosts system may differ.
+# Thus we depend on the auxiliary file squeeze/stamp-squeeze.
+$(prologues): squeeze/stamp-squeeze
 
-squeeze/squeeze$(EXEEXT):
-	cd squeeze && $(MAKE) $(AM_MAKEFLAGS)
+squeeze/stamp-squeeze:
+	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
 
 install-data-hook:
 	cd $(DESTDIR)$(man1dir) && \
@@ -1197,6 +1202,7 @@ uninstall-hook:
 	rm -f $(DESTDIR)$(man1dir)/odvips.1
 	rm -f $(DESTDIR)$(bindir)/odvips
 
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

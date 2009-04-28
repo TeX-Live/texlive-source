@@ -170,11 +170,13 @@ xdvi_bin_DEPENDENCIES = libxdvi.a $(common_dependencies)
 
 LDADD = libxdvi.a $(common_ldadd)
 
-psheader.c: psheader.txt squeeze/squeeze$(EXEEXT)
+# When cross-compiling, EXEEXT for the build and hosts system may differ.
+# Thus we depend on the auxiliary file squeeze/stamp-squeeze.
+psheader.c: psheader.txt squeeze/stamp-squeeze
 	squeeze/squeeze $(srcdir)/psheader.txt $@
 
-squeeze/squeeze$(EXEEXT):
-	cd squeeze && $(MAKE) $(AM_MAKEFLAGS)
+squeeze/stamp-squeeze:
+	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
 
 EXTRA_DIST = psheader.txt
 CLEANFILES = psheader.c

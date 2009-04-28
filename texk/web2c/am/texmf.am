@@ -1,4 +1,7 @@
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## Common for MF and TeX
 EXTRA_DIST += \
@@ -18,28 +21,35 @@ EXTRA_PROGRAMS += tex
 
 tex_CPPFLAGS =
 
-## With --enable-ipc, TeX may need to link with -lsocket.
+# With --enable-ipc, TeX may need to link with -lsocket.
 tex_LDADD = $(LDADD) $(ipc_socketlibs)
 
+# TeX C sources
 tex_c_h = texini.c tex0.c tex1.c tex2.c texcoerce.h texd.h
 nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c
 $(tex_c_h): tex-web2c
+
 tex-web2c: tex.p $(web2c_texmf)
 	$(web2c) tex
 	: $(synctex_convert_tex)
 	echo timestamp >$@
 	touch $(tex_c_h)
+
+tex-pool.c: tex.pool $(makecpool_stamp) tmf-pool.h
+	$(makecpool) tex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+
 texextra.c: lib/texmfmp.c texd.h
 	sed s/TEX-OR-MF-OR-MP/tex/ $(srcdir)/lib/texmfmp.c >$@
+
+# Tangling TeX
 tex.p tex.pool: tex-tangle
-tex-tangle: $(TANGLE) tex.web tex-final.ch
+tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch
 	$(tangle) tex.web tex-final.ch
 	echo timestamp >$@
 	touch tex.p tex.pool
-tex-pool.c: tex.pool $(makecpool) tmf-pool.h
-	$(makecpool) tex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+
 ## Generate tex-final.ch
-tex-final.ch: $(TIE) $(tex_ch_srcs)
+tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
 	$(tie) -c $@ $(tex_ch_srcs)
 tex_ch_srcs = \
 	tex.web \
@@ -87,26 +97,37 @@ mf_x_libs = $(X_LIBS) $(x_tool_libs) $(X_PRE_LIBS) $(x_ext_lib) $(wlibs) $(X_EXT
 ## Automake, however, does not support CPPFLAGS for individual source files.
 ## To avoid compiling everything twice, the common objects are in a library.
 EXTRA_LIBRARIES += libmf.a
+
+# Metafont C sources
 mf_c_h = mfini.c mf0.c mf1.c mfcoerce.h mfd.h
 nodist_libmf_a_SOURCES = $(mf_c_h) mf-pool.c
 libmf_a_CPPFLAGS = -DMETA_FONT
+
 $(mf_c_h): mf-web2c
 mf-web2c: mf.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed
 	$(web2c) mf
 	echo timestamp >$@
 	touch $(mf_c_h)
-EXTRA_DIST += mf.web mf-binpool.ch mf.ch mftalk.h lib/texmfmp.c tmf-pool.h
+
+mf-pool.c: mf.pool $(makecpool_stamp) tmf-pool.h
+	$(makecpool) mf.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+
 mfextra.c: lib/texmfmp.c mfd.h
 	sed s/TEX-OR-MF-OR-MP/mf/ $(srcdir)/lib/texmfmp.c >$@
+
+# Tangling Metafont
 mf.p mf.pool: mf-tangle
-mf-tangle: $(TANGLE) mf.web mf-final.ch
+mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch
 	$(tangle) mf.web mf-final.ch
 	echo timestamp >$@
 	touch mf.p mf.pool
-mf-final.ch: $(TIE) mf.web mf.ch mf-binpool.ch
+
+# Generate mf-final.ch
+mf-final.ch: tie$(EXEEXT) mf.web mf.ch mf-binpool.ch
 	$(tie) -c $@ mf.web mf.ch mf-binpool.ch
-mf-pool.c: mf.pool $(makecpool) tmf-pool.h
-	$(makecpool) mf.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+##
+EXTRA_DIST += mf.web mf-binpool.ch mf.ch mftalk.h lib/texmfmp.c tmf-pool.h
+
 DISTCLEANFILES += $(nodist_libmf_a_SOURCES) mfextra.c mf-final.ch mf-web2c \
 	mf.p mf.pool mf-tangle
 

@@ -1,4 +1,7 @@
 ## texk/web2c/am/cweb.am: Makefile fragment for cweb programs (except ctangle).
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 bin_PROGRAMS += ctie
 nodist_ctie_SOURCES = ctie.c

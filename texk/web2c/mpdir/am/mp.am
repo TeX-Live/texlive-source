@@ -1,4 +1,7 @@
 ## texk/web2c/mpdir/am/mp.am: Makefile fragment for MetaPost.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## MetaPost
 ##
@@ -24,7 +27,7 @@ mp-tangle: tangle$(EXEEXT) mp.web mp.ch
 	$(tangle) mp mp
 	echo timestamp >$@
 	touch mp.p mp.pool
-mp-pool.c: mp.pool $(makecpool) mpdir/mplib.h
+mp-pool.c: mp.pool $(makecpool_stamp) mpdir/mplib.h
 	$(makecpool) mp.pool $(srcdir)/mpdir/mplib.h >$@ || rm -f $@
 DISTCLEANFILES += $(nodist_oldmpost_SOURCES) mp-web2c \
 	mp.p mp.pool mp-tangle

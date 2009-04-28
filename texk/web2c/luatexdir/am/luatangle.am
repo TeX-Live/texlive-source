@@ -1,4 +1,7 @@
 ## texk/web2c/luatexdir/am/luatangle.am: Makefile fragment for luatangle.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## luatangle
 ##
@@ -9,7 +12,7 @@ EXTRA_PROGRAMS += luatangle
 
 nodist_luatangle_SOURCES = luatangle.c luatangle.h
 luatangle.c luatangle.h: luatangle-web2c
-luatangle-web2c: $(web2c_common) $(web2c_programs) luatangle.p
+luatangle-web2c: $(web2c_depend) luatangle.p
 	$(web2c) luatangle
 	echo timestamp >$@
 	touch luatangle.c luatangle.h

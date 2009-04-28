@@ -19373,7 +19373,7 @@ fi
 
 case $ac_cv_search_iconv in
   no | "none required") : ;;
-  *) iconv_libs="-l$ac_cv_search_iconv" ;;
+  *) iconv_libs=$ac_cv_search_iconv ;;
 esac
 
 

@@ -1,4 +1,7 @@
 ## texk/web2c/alephdir/am/aleph.am: Makefile fragment for Aleph.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## Aleph
 ##
@@ -30,7 +33,7 @@ aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines
 	$(web2c) aleph
 	echo timestamp >$@
 	touch $(aleph_c_h)
-aleph-pool.c: aleph.pool $(makecpool) alephdir/aleph-pool.h
+aleph-pool.c: aleph.pool $(makecpool_stamp) alephdir/aleph-pool.h
 	$(makecpool) aleph.pool $(srcdir)/alephdir/aleph-pool.h >$@ || rm -f $@
 alephextra.c: lib/texmfmp.c alephdir/alephextra.h alephd.h
 	sed s/TEX-OR-MF-OR-MP/aleph/ $(srcdir)/lib/texmfmp.c >$@
@@ -67,7 +70,7 @@ aleph_web_srcs = \
 	alephdir/eover.ch \
 	alephdir/eopage.ch \
 	alephdir/eochar.ch
-aleph.web: $(TIE) $(aleph_web_srcs)
+aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
 	$(tie) -m aleph.web $(aleph_web_srcs)
 
 ## Generate aleph.ch
@@ -84,7 +87,7 @@ aleph_ch_srcs = \
 	alephdir/comdir.ch \
 	alephdir/comsrcspec.ch \
 	alephdir/ceostuff.ch
-aleph.ch: $(TIE) aleph.web $(aleph_ch_srcs)
+aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)
 	$(tie) -c aleph.ch aleph.web $(aleph_ch_srcs)
 
 ##

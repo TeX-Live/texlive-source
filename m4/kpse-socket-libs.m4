@@ -14,7 +14,7 @@
 # Set ac_cv_search_connect as AC_SEARCH_LIBS([connect], [LIB...])
 # would do.
 # -lsocket is needed on Solaris, at least.  Maybe -lnsl on SCO, too?
-# See ac_path_xtra.
+# See AC_PATH_XTRA.
 # For WIN32 systems we need -lwsock32 but AC_SEARCH_LIBS would fail.
 AC_DEFUN([KPSE_CHECK_SOCKET_LIBS],
 [AC_REQUIRE([KPSE_CHECK_WIN32])
@@ -23,6 +23,6 @@ AS_IF([test "x$kpse_cv_have_win32" = xno],
        AC_SEARCH_LIBS([connect], [socket nsl])
        LIBS=$kpse_save_LIBS],
       [AC_CHECK_LIB([wsock32], [main],
-                    [ac_cv_search_connect=wsock32],
+                    [ac_cv_search_connect=-lwsock32],
                     [ac_cv_search_connect=no])])
 ]) # KPSE_CHECK_SOCKET_LIBS

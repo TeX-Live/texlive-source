@@ -1,4 +1,7 @@
 ## texk/web2c/luatexdir/am/luasocket.am: Makefile fragment for libluasocket.
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 
 ## luasocket
 ##
