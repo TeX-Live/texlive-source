@@ -6,26 +6,96 @@
 # give unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-dnl ### Check for Motif libraries and headers
-dnl Put Motif include directory in motif_include,
-dnl put Motif library directory in motif_libdir,
-dnl and add appropriate flags to X_CFLAGS and X_LIBS.
-dnl If default_toolkit is not `none', use Xaw as default toolkit if Motif isn't found.
+# XDVI_FIND_MOTIF
+# ---------------
+# Check for Motif libraries and headers.
+# Put Motif include directory in motif_include,
+# put Motif library directory in motif_libdir,
+# and add appropriate flags to X_CFLAGS and X_LIBS.
+# If default_toolkit is not `none', use Xaw as toolkit if Motif isn't found.
 AC_DEFUN([XDVI_FIND_MOTIF],
 [AC_REQUIRE([AC_PATH_XTRA])
-AC_MSG_CHECKING([for Motif])
-#
+motif_include=
+motif_libdir=
 AC_ARG_WITH([motif-include],
             AS_HELP_STRING([--with-motif-include=DIR],
-                           [Specify the location of Motif include files]))
+                           [Specify the location of Motif include files])
+            [motif_include=$withval])
 AC_ARG_WITH([motif-libdir],
             AS_HELP_STRING([--with-motif-libdir=DIR],
-                           [Specify the location of Motif libraries]))
+                           [Specify the location of Motif libraries])
+            [motif_libdir=$withval])
+AC_MSG_CHECKING([for Motif])
 #
 # Search the include files.
 #
 if test "$motif_include" = ""; then
-AC_CACHE_VAL(xdvi_cv_motif_include,
+  _XDVI_FIND_MOTIF_INCLUDES
+fi
+#
+# Now for the libraries.
+#
+if test "$motif_libdir" = ""; then
+  _XDVI_FIND_MOTIF_LIBRARIES
+fi
+# Add Motif definitions to X flags
+#
+if test "$motif_include" != "" && test "$motif_include" != "$x_includes" && test "$motif_include" != "no"
+then
+X_CFLAGS="-I$motif_include $X_CFLAGS"
+fi
+if test "$motif_libdir" != "" && test "$motif_libdir" != "$x_libraries" && test "$motif_libdir" != "no"
+then
+case "$X_LIBS" in
+  *-R\ *) X_LIBS="-L$motif_libdir -R $motif_libdir $X_LIBS";;
+  *-R*)   X_LIBS="-L$motif_libdir -R$motif_libdir $X_LIBS";;
+  *)      X_LIBS="-L$motif_libdir $X_LIBS";;
+esac
+fi
+#
+#
+motif_libdir_result="$motif_libdir"
+motif_include_result="$motif_include"
+test "$motif_libdir_result" = "" && 
+  motif_libdir_result="in default path" && AC_DEFINE([MOTIF], 1, [Define to use the Motif toolkit.])
+test "$motif_include_result" = "" && 
+  motif_include_result="in default path" && AC_DEFINE([MOTIF], 1)
+if test "$motif_libdir_result" = "no"; then
+    if test "$default_toolkit" = "none"; then
+        motif_libdir_result="(none)"
+    else
+	motif_libdir_result=""
+    fi
+fi
+if test "$motif_include_result" = "no"; then
+    if test "$default_toolkit" = "none"; then
+        motif_include_result="(none)"
+    else
+	motif_include_result=""
+    fi
+fi
+
+if test "$motif_include_result" != "" && test "$motif_libdir_result" != ""; then
+  AC_MSG_RESULT([libraries $motif_libdir_result, headers $motif_include_result])
+  prog_extension="motif"
+  AC_DEFINE([MOTIF], 1)
+  x_tool_libs="-lXm"
+  # now warn if we're using LessTif (see LESSTIF-BUGS for why ...)
+  _XDVI_CHECK_LESSTIF
+  # Check whether to compile for Motif with Xaw Panner.
+  _XDVI_CHECK_PANNER
+else
+    AC_MSG_RESULT([not found, using Xaw])
+    with_xdvi_x_toolkit="xaw"
+fi
+
+]) # XDVI_FIND_MOTIF
+
+# _XDVI_FIND_MOTIF_INCLUDES
+# -------------------------
+# Search the Xm include files.
+m4_define([_XDVI_FIND_MOTIF_INCLUDES],
+[AC_CACHE_VAL([xdvi_cv_motif_include],
 [
 xdvi_motif_save_LIBS="$LIBS"
 xdvi_motif_save_CFLAGS="$CFLAGS"
@@ -74,13 +144,13 @@ CPPFLAGS="$xdvi_motif_save_CPPFLAGS"
 LDFLAGS="$xdvi_motif_save_LDFLAGS"
 ])
 motif_include="$xdvi_cv_motif_include"
-fi
-#
-#
-# Now for the libraries.
-#
-if test "$motif_libdir" = ""; then
-AC_CACHE_VAL(xdvi_cv_motif_libdir,
+]) # _XDVI_FIND_MOTIF_INCLUDES
+
+# _XDVI_FIND_MOTIF_LIBRARIES
+# --------------------------
+# Search the Xm library.
+m4_define([_XDVI_FIND_MOTIF_LIBRARIES],
+[AC_CACHE_VAL([xdvi_cv_motif_libdir],
 [
 xdvi_motif_save_LIBS="$LIBS"
 xdvi_motif_save_CFLAGS="$CFLAGS"
@@ -137,64 +207,26 @@ LDFLAGS="$xdvi_motif_save_LDFLAGS"
 ])
 #
 motif_libdir="$xdvi_cv_motif_libdir"
-fi
-# Add Motif definitions to X flags
-#
-if test "$motif_include" != "" && test "$motif_include" != "$x_includes" && test "$motif_include" != "no"
-then
-X_CFLAGS="-I$motif_include $X_CFLAGS"
-fi
-if test "$motif_libdir" != "" && test "$motif_libdir" != "$x_libraries" && test "$motif_libdir" != "no"
-then
-case "$X_LIBS" in
-  *-R\ *) X_LIBS="-L$motif_libdir -R $motif_libdir $X_LIBS";;
-  *-R*)   X_LIBS="-L$motif_libdir -R$motif_libdir $X_LIBS";;
-  *)      X_LIBS="-L$motif_libdir $X_LIBS";;
-esac
-fi
-#
-#
-motif_libdir_result="$motif_libdir"
-motif_include_result="$motif_include"
-test "$motif_libdir_result" = "" && 
-  motif_libdir_result="in default path" && AC_DEFINE([MOTIF], 1, [Define to use the Motif toolkit.])
-test "$motif_include_result" = "" && 
-  motif_include_result="in default path" && AC_DEFINE([MOTIF], 1)
-if test "$motif_libdir_result" = "no"; then
-    if test "$default_toolkit" = "none"; then
-        motif_libdir_result="(none)"
-    else
-	motif_libdir_result=""
-    fi
-fi
-if test "$motif_include_result" = "no"; then
-    if test "$default_toolkit" = "none"; then
-        motif_include_result="(none)"
-    else
-	motif_include_result=""
-    fi
-fi
+]) # _XDVI_FIND_MOTIF_LIBRARIES
 
-if test "$motif_include_result" != "" && test "$motif_libdir_result" != ""; then
-    AC_MSG_RESULT([libraries $motif_libdir_result, headers $motif_include_result])
-    prog_extension="motif"
-    AC_DEFINE([MOTIF], 1)
-    x_tool_libs="-lXm"
-    # now warn if we're using LessTif (see LESSTIF-BUGS for why ...)
-    AC_MSG_CHECKING(for LessTif)
-    save_CPPFLAGS="$CPPFLAGS"
-    CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-    AC_TRY_COMPILE([
-    #include <X11/X.h>
-    #include <X11/Xlib.h>
-    #include <X11/Xutil.h>
-    #include <X11/Xos.h>
-    #include <X11/Intrinsic.h>
-    #include <Xm/Xm.h>],[const char *p = LesstifVERSION_STRING;
-    ],[
-    # yes, we're running LessTif
-    AC_MSG_RESULT(yes)
-    AC_MSG_WARN([LessTif header detected.
+# _XDVI_CHECK_LESSTIF
+# -------------------
+# Check if using LessTif and warn if so.
+m4_define([_XDVI_CHECK_LESSTIF],
+[AC_MSG_CHECKING([for LessTif])
+save_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+AC_TRY_COMPILE([
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
+#include <X11/Intrinsic.h>
+#include <Xm/Xm.h>],[const char *p = LesstifVERSION_STRING;
+],[
+# yes, we're running LessTif
+AC_MSG_RESULT([yes])
+AC_MSG_WARN([LessTif header detected.
   *****************************************************************
   * Warning: You are using LessTif instead of OpenMotif.          *
   * Some GUI elements might be broken; please see the file        *
@@ -203,39 +235,33 @@ if test "$motif_include_result" != "" && test "$motif_libdir_result" != ""; then
   *                                                               *
   * for more information.                                         *
   *****************************************************************])
-    ],[
-    # no, not running LessTif
-    AC_MSG_RESULT([no])
-    ])
-else
-    AC_MSG_RESULT([not found, using Xaw])
-    with_xdvi_x_toolkit="xaw"
-fi
+],[
+# no, not running LessTif
+AC_MSG_RESULT([no])
+])
+CPPFLAGS=$save_CPPFLAGS
+]) # _XDVI_CHECK_LESSTIF
 
-#
-AC_MSG_CHECKING(whether to compile in panner (requires Xaw))
-save_CPPFLAGS="$CPPFLAGS"
+# _XDVI_CHECK_PANNER
+# ------------------
+# Check whether to compile for Motif with Xaw Panner.
+m4_define([_XDVI_CHECK_PANNER],
+[AC_MSG_CHECKING([whether to compile in panner (requires Xaw)])
+save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
-
 #include <X11/Xfuncs.h>
 #include <X11/Intrinsic.h>
-
-#include <X11/Xaw/Reports.h>
-],[
-],
-xdvi_use_xaw_panner=yes, xdvi_use_xaw_panner=no
-)
+#include <X11/Xaw/Reports.h>]])],
+                 [xdvi_use_xaw_panner=yes],
+                 [xdvi_use_xaw_panner=no])
 CPPFLAGS=$save_CPPFLAGS
-if test $xdvi_use_xaw_panner = yes; then
-    AC_MSG_RESULT(yes)
-    AC_DEFINE([USE_XAW_PANNER], 1, [Define to use Xaw panner.])
-else
-    AC_MSG_RESULT(no)
+AC_MSG_RESULT([$xdvi_use_xaw_panner])
+if test "x$xdvi_use_xaw_panner" = xyes; then
+  AC_DEFINE([USE_XAW_PANNER], 1, [Define to use Xaw panner.])
 fi
-])dnl
-
+]) # _XDVI_CHECK_PANNER

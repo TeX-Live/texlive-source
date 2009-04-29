@@ -263,6 +263,7 @@ libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 lt_ECHO = @lt_ECHO@
+lua_socketlibs = @lua_socketlibs@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -272,7 +273,6 @@ program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-socketlibs = @socketlibs@
 srcdir = @srcdir@
 subdirs = @subdirs@
 sysconfdir = @sysconfdir@
@@ -642,13 +642,15 @@ $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 @KPATHSEA_RULE@
 
 install-exec-hook:
-	cd $(DESTDIR)$(bindir) && for f in $(linked_programs); do \
-	  rm -f $$f && $(LN_S) omfonts $$f || exit 1; \
-	done
+	cd $(DESTDIR)$(bindir) && \
+	  for f in $(linked_programs); do \
+	    rm -f $$f$(EXEEXT) && \
+	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
+	  done
 
 unistall-hook:
 	for f in $(linked_programs); do \
-	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 	done
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

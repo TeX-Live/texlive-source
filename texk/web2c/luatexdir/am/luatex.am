@@ -24,7 +24,7 @@ luatex_ldadd = libluatex.a libff.a libluamisc.a libzzip.a libluasocket.a liblua5
 luatex_ldadd += $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
 luatex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a libmplib.a 
 
-luatex_LDADD = $(luatex_ldadd) $(LDADD) $(socketlibs)
+luatex_LDADD = $(luatex_ldadd) $(LDADD) $(lua_socketlibs)
 
 luatex_DEPENDENCIES = $(proglib) libluatex.a
 luatex_DEPENDENCIES += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(XPDF_DEPEND)

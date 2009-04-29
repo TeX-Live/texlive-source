@@ -1058,13 +1058,18 @@ README: readme.texi
 	  -o $@ $<
 
 @have_gif_TRUE@install-exec-hook:
-@have_gif_TRUE@	cd $(DESTDIR)/$(bindir) && rm -f dvigif && $(LN_S) dvipng dvigif
+@have_gif_TRUE@	cd $(DESTDIR)$(bindir) && \
+@have_gif_TRUE@	  rm -f dvigif$(EXEEXT) && \
+@have_gif_TRUE@	  $(LN_S) dvipng$(EXEEXT) dvigif$(EXEEXT)
 
 @have_gif_TRUE@install-data-hook:
-@have_gif_TRUE@	cd $(DESTDIR)/$(man1dir) && rm -f dvigif.1 && $(LN_S) dvipng.1 dvigif.1
+@have_gif_TRUE@	cd $(DESTDIR)$(man1dir) && \
+@have_gif_TRUE@	  rm -f dvigif.1 && \
+@have_gif_TRUE@	  $(LN_S) dvipng.1 dvigif.1
 
 @have_gif_TRUE@uninstall-hook:
-@have_gif_TRUE@	rm -f $(DESTDIR)/$(bindir)/dvigif $(DESTDIR)/$(man1dir)/dvigif.1
+@have_gif_TRUE@	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
+@have_gif_TRUE@	rm -f $(DESTDIR)$(man1dir)/dvigif.1
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

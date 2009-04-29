@@ -63,13 +63,15 @@ DISTCLEANFILES = pl-parser.output
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 
 install-exec-hook:
-	cd $(DESTDIR)$(bindir) && for f in $(linked_programs); do \
-	  rm -f $$f && $(LN_S) omfonts $$f || exit 1; \
-	done
+	cd $(DESTDIR)$(bindir) && \
+	  for f in $(linked_programs); do \
+	    rm -f $$f$(EXEEXT) && \
+	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
+	  done
 
 unistall-hook:
 	for f in $(linked_programs); do \
-	  rm -f $(DESTDIR)$(bindir)/$$f; \
+	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 	done
 
 ## ######

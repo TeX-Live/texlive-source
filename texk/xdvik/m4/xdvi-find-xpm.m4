@@ -22,11 +22,11 @@ AC_ARG_WITH([xpm],
 AC_ARG_WITH([xpm-includes],
             AS_HELP_STRING([--with-xpm-include=DIR],
                            [Specify the location of Xpm include files]),
-            [xpm_includes="$withval"])
+            [xpm_includes=$withval])
 AC_ARG_WITH([xpm-libraries],
             AS_HELP_STRING([--with-xpm-libdir=DIR],
                            [Specify the location of Xpm libraries]),
-            [xpm_libraries="$withval"])
+            [xpm_libraries=$withval])
 dnl Treat --without-xpm like
 dnl --without-xpm-includes --without-xpm-libraries.
 if test "x$with_xpm" = xno; then
@@ -59,14 +59,14 @@ fi
 #
 # Add Xpm definitions to X flags
 #
-if test "x$xpm_includes" != "xdefault" && test "$xpm_includes" != "" \
-    && test "$xpm_includes" != "$x_includes" && test "$xpm_includes" != "no"
+if test "x$xpm_includes" != xdefault && test "x$xpm_includes" != x \
+    && test "x$xpm_includes" != "x$x_includes" && test "x$xpm_includes" != xno
 then
   X_CFLAGS="-I$xpm_includes $X_CFLAGS"
 fi
 #
-if test "x$xpm_libraries" != "xdefault" && test "$xpm_libraries" != "" \
-    && test "$xpm_libraries" != "$x_libraries" && test "$xpm_libraries" != "no"
+if test "x$xpm_libraries" != xdefault && test "x$xpm_libraries" != x \
+    && test "x$xpm_libraries" != "x$x_libraries" && test "x$xpm_libraries" != xno
 then
   case "$X_LIBS" in
     *-R\ *) X_LIBS="-L$xpm_libraries -R $xpm_libraries $X_LIBS";;
@@ -84,7 +84,7 @@ x_xpm_libs="-lXpm"
 xpm_libraries_result=$xpm_libraries
 if test "x$xpm_libraries_result" = xdefault ; then
   xpm_libraries_result="in default path"
-elif test "$xpm_libraries_result" = no || test "x$xpm_libraries_result" = "x"; then
+elif test "x$xpm_libraries_result" = xno || test "x$xpm_libraries_result" = x; then
   xpm_libraries_result="(none)"
   AC_DEFINE([USE_XPM], 0)
   x_xpm_libs=""
@@ -92,9 +92,9 @@ fi
 AC_SUBST([x_xpm_libs])
 #
 xpm_includes_result=$xpm_includes
-if test "x$xpm_includes_result" = "xdefault"; then
+if test "x$xpm_includes_result" = xdefault; then
   xpm_includes_result="in default path"
-elif test "$xpm_includes_result" = no || test "x$xpm_includes_result" = "x"; then
+elif test "x$xpm_includes_result" = xno || test "x$xpm_includes_result" = x; then
   AC_DEFINE([USE_XPM], 0)
   xpm_includes_result="(none)"
 fi
@@ -110,15 +110,11 @@ AC_MSG_RESULT([libraries $xpm_libraries_result, headers $xpm_includes_result])
 # or in <xpm.h> if installed locally; this is what this test is for.
 m4_define([_XDVI_FIND_XPM_INCLUDES],
 [AC_CACHE_VAL([xdvi_cv_xpm_includes],
-[xdvi_xpm_save_LIBS=$LIBS
-xdvi_xpm_save_CFLAGS=$CFLAGS
+[xdvi_xpm_save_CFLAGS=$CFLAGS
 xdvi_xpm_save_CPPFLAGS=$CPPFLAGS
-xdvi_xpm_save_LDFLAGS=$LDFLAGS
 #
-LIBS="$X_PRE_LIBS -lXpm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
 CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-LDFLAGS="$X_LIBS $LDFLAGS"
 #
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <X11/xpm.h>]],
                                    [[int a;]])],
@@ -151,10 +147,8 @@ do
     fi
 done])
 #
-LIBS=$xdvi_xpm_save_LIBS
 CFLAGS=$xdvi_xpm_save_CFLAGS
-CPPFLAGS=$xdvi_xpm_save_CPPFLAGS
-LDFLAGS=$xdvi_xpm_save_LDFLAGS])
+CPPFLAGS=$xdvi_xpm_save_CPPFLAGS])
 #
 xpm_includes=$xdvi_cv_xpm_includes
 ]) # _XDVI_FIND_XPM_INCLUDES

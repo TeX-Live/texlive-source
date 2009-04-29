@@ -103,7 +103,7 @@ dnl COMPILER_WARNINGS
 
 dnl #######
 
-dnl SU: for `--allow-multiple-definition' linker flag on Cygwin	
+# Check for `--allow-multiple-definition' linker flag
 XDVI_LINKER_MULTIPLE_DEFNS
 
 AC_CHECK_HEADERS([stdint.h inttypes.h])
@@ -116,8 +116,8 @@ AC_CHECK_FUNCS([mkstemp memcpy strerror waitpid sigaction strchr setenv ulltostr
                 fchdir getcwd getpwnam getuid getpwuid \
                 lstat ftruncate snprintf vsnprintf realpath])
 
-dnl <sys/bsdtypes.h> is for ISC 4.0, to define fd_set in psgs.c.
-dnl regex.h is needed for regexp support in DVI search.    
+# <sys/bsdtypes.h> is for ISC 4.0, to define fd_set in psgs.c.
+# regex.h is needed for regexp support in DVI search.    
 AC_CHECK_HEADERS([netdb.h sys/bsdtypes.h sys/param.h unistd.h sys/fcntl.h regex.h])
 
 # Checks for iconv
@@ -126,11 +126,11 @@ XDVI_CHECK_ICONV
 # Checks for langinfo
 XDVI_CHECK_LANGINFO
 
-dnl Check X11 headers.
+# Check X11 headers.
 xdvi_save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 AC_CHECK_HEADERS([X11/Intrinsic.h X11/Xosdefs.h X11/xpm.h Xm/XpmP.h])
-dnl For editres, we need to check both the header and define a linker option.
+# For editres, we need to check both the header and define a linker option.
 AC_CHECK_HEADERS([X11/Xmu/Editres.h X11/Xmu/Xmu.h],
                  [x_xmu_lib=-lXmu],
                  [x_xmu_lib=],
@@ -171,31 +171,27 @@ fi
 # Check whether -lXpm can be used	
 XDVI_FIND_XPM
 
-dnl #######
-
-dnl First, check for libXp and libXext.
-dnl We certainly don't want to include the now defunct libXp unless necessay,
-dnl this would just perpetuate the need to keep libXp.so around.  Moreover,
-dnl for ELF shared libraries, the need for libXp is probably encoded into
-dnl libXm.so and/or libXaw.so and need not to be specified explicitly.
-dnl
+# Check for libXext and libXp.
+# Although libXp is now defunct (no longer part of XOrg), older versions
+# of libXm may need to include libXp.  Same for the equally defunct libXaw8.
+# We certainly don't want to include libXp unless necessay,this would just
+# perpetuate the need to keep libXp.so around.  Moreover for ELF shared
+# libraries the need for libXp is probably encoded into libXm.so and/or
+# libXaw.so and need not to be specified explicitly.
 AS_IF([test -n "$x_libraries"],
       [XLFLAG="-L$x_libraries"],
       [XLFLAG=])
 if test -z "$x_ext_lib"; then # allow envvar override
-  AC_CHECK_LIB([Xp], [XpQueryVersion],
-               [x_ext_lib_with_Xp='-lXp -lXext'],
-               [:],
-               [-lXext -lX11 $X_EXTRA_LIBS $XLFLAG])
   AC_CHECK_LIB([Xext], [XextCreateExtension],
-               [x_ext_lib='-lXext'],
-               [:],
+               [x_ext_lib='-lXext'], [],
                [-lX11 $X_EXTRA_LIBS $XLFLAG])
+  AC_CHECK_LIB([Xp], [XpQueryVersion],
+               [x_xp_lib='-lXp'], [],
+               [$x_ext_lib -lX11 $X_EXTRA_LIBS $XLFLAG])
 fi
 AC_SUBST([x_ext_lib])
 
-dnl #######
-
+# Check which toolkit was specified
 AS_CASE([$with_xdvi_x_toolkit],
         [next | nextaw | neXtaw],      [val=neXtaw],
         [xaw3d],                       [val=xaw3d],
@@ -214,25 +210,21 @@ elif test "x$with_xdvi_x_toolkit" = xneXtaw; then
   prog_extension="nextaw"
   x_tool_libs="-lneXtaw"
 else
-  # Check for Xaw
-  XDVI_CHECK_XAW
+  # Check for Xaw headers
+  XDVI_CHECK_XAW_HEADERS
   if test "x$with_xdvi_x_toolkit" != xxaw; then
-    # Requested motiv (possibly with xaw as fallback)
     if test "x$with_xdvi_x_toolkit" = xmotif; then
+      # Requested motiv
       default_toolkit=none
     else
+      # Requested motiv with Xaw as fallback
       default_toolkit=Xaw
     fi
     XDVI_FIND_MOTIF
   fi
   if test "x$with_xdvi_x_toolkit" = xxaw; then
-    # Requested or defaulted to Xaw
-    if test "x$xdvi_have_xaw" = xno; then
-      AC_MSG_ERROR([Sorry, you will need at least the Xaw header/library files to compile xdvik.])
-    fi
-    prog_extension="xaw"
-    x_tool_libs="-lXaw"
-    AC_DEFINE([XAW], 1, [Define to use the Xaw toolkit.])
+    # Requested or fallback to Xaw, check for library
+    XDVI_CHECK_XAW_LIBRARY
   fi
 fi
 AC_SUBST([x_tool_libs])
@@ -246,8 +238,8 @@ dnl $program_transform_name replacement
 
 dnl #######
 
-dnl If we're on Solaris and we want DPS, then add the extra compilation stuff
-dnl to get it.
+# If we're on Solaris and we want DPS, then add the extra compilation stuff
+# to get it.
 if echo "$PS_DEF" | grep PS_DPS >/dev/null; then
    if test "`(uname) 2>/dev/null`" = SunOS \
       && uname -r | grep '^5' >/dev/null; then

@@ -36,6 +36,7 @@ Used with permission.
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef EXIT_SUCCESS
 #define EXIT_SUCCESS 0

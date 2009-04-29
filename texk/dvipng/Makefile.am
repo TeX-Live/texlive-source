@@ -111,13 +111,18 @@ dist_noinst_SCRIPTS = texi2pod.pl
 if have_gif
 
 install-exec-hook:
-	cd $(DESTDIR)/$(bindir) && rm -f dvigif && $(LN_S) dvipng dvigif
+	cd $(DESTDIR)$(bindir) && \
+	  rm -f dvigif$(EXEEXT) && \
+	  $(LN_S) dvipng$(EXEEXT) dvigif$(EXEEXT)
 
 install-data-hook:
-	cd $(DESTDIR)/$(man1dir) && rm -f dvigif.1 && $(LN_S) dvipng.1 dvigif.1
+	cd $(DESTDIR)$(man1dir) && \
+	  rm -f dvigif.1 && \
+	  $(LN_S) dvipng.1 dvigif.1
 
 uninstall-hook:
-	rm -f $(DESTDIR)/$(bindir)/dvigif $(DESTDIR)/$(man1dir)/dvigif.1
+	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
+	rm -f $(DESTDIR)$(man1dir)/dvigif.1
 
 endif have_gif
 

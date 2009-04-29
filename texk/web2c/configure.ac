@@ -80,19 +80,29 @@ if test "x$enable_ipc" = xyes; then
    ipc_socketlibs=$socketlibs
    AC_DEFINE([IPC], 1, [tex: Define to enable --ipc.])
 fi
-# On Solaris we may need -lrt for nanosleep in luaTeX.
+# We may need additional libraries for luaTeX.
+# On Solaris -lnsl for gethostbyname() and -lrt for nanosleep().
+lua_socketlibs=$socketlibs
 if test "x$kpse_cv_have_win32" = xno; then
   kpse_save_LIBS=$LIBS
+  AC_SEARCH_LIBS([gethostbyname], [nsl])
+  LIBS=$kpse_save_LIBS
   AC_SEARCH_LIBS([nanosleep], [rt])
   LIBS=$kpse_save_LIBS
+  AS_CASE([$ac_cv_search_gethostbyname],
+          ["none required"], [],
+          [no], [AS_IF([test "x$enable_luatex" = xyes],
+                       [AC_MSG_WARN([Sorry, no gethostbyname(): can not build luaTeX])
+                        enable_luatex=no])],
+          [lua_socketlibs="$lua_socketlibs ac_cv_search_gethostbyname"])
   AS_CASE([$ac_cv_search_nanosleep],
           ["none required"], [],
           [no], [AS_IF([test "x$enable_luatex" = xyes],
-                       [AC_MSG_WARN([Sorry, no nanosleep: can not build luaTeX])
+                       [AC_MSG_WARN([Sorry, no nanosleep(): can not build luaTeX])
                         enable_luatex=no])],
-          [socketlibs="$socketlibs ac_cv_search_nanosleep"])
+          [lua_socketlibs="$lua_socketlibs ac_cv_search_nanosleep"])
 fi
-AC_SUBST([socketlibs])
+AC_SUBST([lua_socketlibs])
 AC_SUBST([ipc_socketlibs])
 
 KPSE_CHECK_FRAMEWORK([Carbon], [ATSUStyle style])

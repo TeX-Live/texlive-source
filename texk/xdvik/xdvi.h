@@ -1185,7 +1185,9 @@ extern void motif_translations_hack(void);
 #define iconv libiconv
 #endif /* 0 */
 
+#if HAVE_ICONV_H
 typedef ICONV_CHAR_PPTR_TYPE iconv_char_pptrT;
+#endif /* HAVE_ICONV_H */
 
 #define DEVEL_MODE 0
 

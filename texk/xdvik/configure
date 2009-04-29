@@ -1636,7 +1636,9 @@ Optional Packages:
   --with-xpm-libdir=DIR   Specify the location of Xpm libraries
   --with-motif-include=DIR
                           Specify the location of Motif include files
+            motif_include=$withval
   --with-motif-libdir=DIR Specify the location of Motif libraries
+            motif_libdir=$withval
   --with-system-kpathsea  use installed kpathsea headers and library
   --with-kpathsea-includes=DIR
                           kpathsea headers installed in DIR
@@ -4243,13 +4245,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4246: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4248: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4249: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4251: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4252: output\"" >&5)
+  (eval echo "\"\$as_me:4254: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5455,7 +5457,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5458 "configure"' > conftest.$ac_ext
+  echo '#line 5460 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7502,11 +7504,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7505: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7507: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7509: \$? = $ac_status" >&5
+   echo "$as_me:7511: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7841,11 +7843,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7844: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7846: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7848: \$? = $ac_status" >&5
+   echo "$as_me:7850: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7946,11 +7948,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7949: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7951: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7953: \$? = $ac_status" >&5
+   echo "$as_me:7955: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8001,11 +8003,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8004: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8006: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8008: \$? = $ac_status" >&5
+   echo "$as_me:8010: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10801,7 +10803,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10804 "configure"
+#line 10806 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10897,7 +10899,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10900 "configure"
+#line 10902 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -18485,6 +18487,7 @@ fi
 
 
 
+# Check for `--allow-multiple-definition' linker flag
 { $as_echo "$as_me:$LINENO: checking if linker supports multiple definitions and for required flags" >&5
 $as_echo_n "checking if linker supports multiple definitions and for required flags... " >&6; }
 if test "${xdvi_cv_linker_multiple_defns+set}" = set; then
@@ -19100,6 +19103,8 @@ fi
 done
 
 
+# <sys/bsdtypes.h> is for ISC 4.0, to define fd_set in psgs.c.
+# regex.h is needed for regexp support in DVI search.
 
 
 
@@ -20032,6 +20037,7 @@ fi
 fi
 
 
+# Check X11 headers.
 xdvi_save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 
@@ -20188,6 +20194,7 @@ fi
 
 done
 
+# For editres, we need to check both the header and define a linker option.
 
 
 for ac_header in X11/Xmu/Editres.h X11/Xmu/Xmu.h
@@ -20308,13 +20315,13 @@ fi
 
 # Check whether --with-xpm-includes was given.
 if test "${with_xpm_includes+set}" = set; then
-  withval=$with_xpm_includes; xpm_includes="$withval"
+  withval=$with_xpm_includes; xpm_includes=$withval
 fi
 
 
 # Check whether --with-xpm-libraries was given.
 if test "${with_xpm_libraries+set}" = set; then
-  withval=$with_xpm_libraries; xpm_libraries="$withval"
+  withval=$with_xpm_libraries; xpm_libraries=$withval
 fi
 
 if test "x$with_xpm" = xno; then
@@ -20330,15 +20337,11 @@ if test "x$xpm_includes" = x; then
   if test "${xdvi_cv_xpm_includes+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-  xdvi_xpm_save_LIBS=$LIBS
-xdvi_xpm_save_CFLAGS=$CFLAGS
+  xdvi_xpm_save_CFLAGS=$CFLAGS
 xdvi_xpm_save_CPPFLAGS=$CPPFLAGS
-xdvi_xpm_save_LDFLAGS=$LDFLAGS
 #
-LIBS="$X_PRE_LIBS -lXpm -lXt -lX11 $X_EXTRA_LIBS $LIBS"
 CFLAGS="$X_CFLAGS $CFLAGS"
 CPPFLAGS="$X_CFLAGS $CPPFLAGS"
-LDFLAGS="$X_LIBS $LDFLAGS"
 #
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -20409,10 +20412,8 @@ fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 #
-LIBS=$xdvi_xpm_save_LIBS
 CFLAGS=$xdvi_xpm_save_CFLAGS
 CPPFLAGS=$xdvi_xpm_save_CPPFLAGS
-LDFLAGS=$xdvi_xpm_save_LDFLAGS
 fi
 
 #
@@ -20541,14 +20542,14 @@ fi
 #
 # Add Xpm definitions to X flags
 #
-if test "x$xpm_includes" != "xdefault" && test "$xpm_includes" != "" \
-    && test "$xpm_includes" != "$x_includes" && test "$xpm_includes" != "no"
+if test "x$xpm_includes" != xdefault && test "x$xpm_includes" != x \
+    && test "x$xpm_includes" != "x$x_includes" && test "x$xpm_includes" != xno
 then
   X_CFLAGS="-I$xpm_includes $X_CFLAGS"
 fi
 #
-if test "x$xpm_libraries" != "xdefault" && test "$xpm_libraries" != "" \
-    && test "$xpm_libraries" != "$x_libraries" && test "$xpm_libraries" != "no"
+if test "x$xpm_libraries" != xdefault && test "x$xpm_libraries" != x \
+    && test "x$xpm_libraries" != "x$x_libraries" && test "x$xpm_libraries" != xno
 then
   case "$X_LIBS" in
     *-R\ *) X_LIBS="-L$xpm_libraries -R $xpm_libraries $X_LIBS";;
@@ -20570,7 +20571,7 @@ x_xpm_libs="-lXpm"
 xpm_libraries_result=$xpm_libraries
 if test "x$xpm_libraries_result" = xdefault ; then
   xpm_libraries_result="in default path"
-elif test "$xpm_libraries_result" = no || test "x$xpm_libraries_result" = "x"; then
+elif test "x$xpm_libraries_result" = xno || test "x$xpm_libraries_result" = x; then
   xpm_libraries_result="(none)"
   cat >>confdefs.h <<\_ACEOF
 #define USE_XPM 0
@@ -20581,9 +20582,9 @@ fi
 
 #
 xpm_includes_result=$xpm_includes
-if test "x$xpm_includes_result" = "xdefault"; then
+if test "x$xpm_includes_result" = xdefault; then
   xpm_includes_result="in default path"
-elif test "$xpm_includes_result" = no || test "x$xpm_includes_result" = "x"; then
+elif test "x$xpm_includes_result" = xno || test "x$xpm_includes_result" = x; then
   cat >>confdefs.h <<\_ACEOF
 #define USE_XPM 0
 _ACEOF
@@ -20595,7 +20596,13 @@ fi
 $as_echo "libraries $xpm_libraries_result, headers $xpm_includes_result" >&6; }
 
 
-
+# Check for libXext and libXp.
+# Although libXp is now defunct (no longer part of XOrg), older versions
+# of libXm may need to include libXp.  Same for the equally defunct libXaw8.
+# We certainly don't want to include libXp unless necessay,this would just
+# perpetuate the need to keep libXp.so around.  Moreover for ELF shared
+# libraries the need for libXp is probably encoded into libXm.so and/or
+# libXaw.so and need not to be specified explicitly.
 if test -n "$x_libraries"; then
   XLFLAG="-L$x_libraries"
 else
@@ -20603,77 +20610,6 @@ else
 fi
 
 if test -z "$x_ext_lib"; then # allow envvar override
-  { $as_echo "$as_me:$LINENO: checking for XpQueryVersion in -lXp" >&5
-$as_echo_n "checking for XpQueryVersion in -lXp... " >&6; }
-if test "${ac_cv_lib_Xp_XpQueryVersion+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lXp -lXext -lX11 $X_EXTRA_LIBS $XLFLAG $LIBS"
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char XpQueryVersion ();
-int
-main ()
-{
-return XpQueryVersion ();
-  ;
-  return 0;
-}
-_ACEOF
-rm -f conftest.$ac_objext conftest$ac_exeext
-if { (ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_link") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 $as_test_x conftest$ac_exeext
-       }; then
-  ac_cv_lib_Xp_XpQueryVersion=yes
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_cv_lib_Xp_XpQueryVersion=no
-fi
-
-rm -rf conftest.dSYM
-rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_Xp_XpQueryVersion" >&5
-$as_echo "$ac_cv_lib_Xp_XpQueryVersion" >&6; }
-if test "x$ac_cv_lib_Xp_XpQueryVersion" = x""yes; then
-  x_ext_lib_with_Xp='-lXp -lXext'
-else
-  :
-fi
-
   { $as_echo "$as_me:$LINENO: checking for XextCreateExtension in -lXext" >&5
 $as_echo_n "checking for XextCreateExtension in -lXext... " >&6; }
 if test "${ac_cv_lib_Xext_XextCreateExtension+set}" = set; then
@@ -20741,14 +20677,81 @@ fi
 $as_echo "$ac_cv_lib_Xext_XextCreateExtension" >&6; }
 if test "x$ac_cv_lib_Xext_XextCreateExtension" = x""yes; then
   x_ext_lib='-lXext'
+fi
+
+  { $as_echo "$as_me:$LINENO: checking for XpQueryVersion in -lXp" >&5
+$as_echo_n "checking for XpQueryVersion in -lXp... " >&6; }
+if test "${ac_cv_lib_Xp_XpQueryVersion+set}" = set; then
+  $as_echo_n "(cached) " >&6
 else
-  :
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lXp $x_ext_lib -lX11 $X_EXTRA_LIBS $XLFLAG $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char XpQueryVersion ();
+int
+main ()
+{
+return XpQueryVersion ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  ac_cv_lib_Xp_XpQueryVersion=yes
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_Xp_XpQueryVersion=no
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_Xp_XpQueryVersion" >&5
+$as_echo "$ac_cv_lib_Xp_XpQueryVersion" >&6; }
+if test "x$ac_cv_lib_Xp_XpQueryVersion" = x""yes; then
+  x_xp_lib='-lXp'
 fi
 
 fi
 
 
-
+# Check which toolkit was specified
 case $with_xdvi_x_toolkit in
   next | nextaw | neXtaw) val=neXtaw ;;
   xaw3d) val=xaw3d ;;
@@ -20771,11 +20774,11 @@ elif test "x$with_xdvi_x_toolkit" = xneXtaw; then
   prog_extension="nextaw"
   x_tool_libs="-lneXtaw"
 else
-  # Check for Xaw
+  # Check for Xaw headers
   save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-{ $as_echo "$as_me:$LINENO: checking for Xaw library" >&5
-$as_echo_n "checking for Xaw library... " >&6; }
+{ $as_echo "$as_me:$LINENO: checking for Xaw headers" >&5
+$as_echo_n "checking for Xaw headers... " >&6; }
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
@@ -20787,7 +20790,6 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
-
 #include <X11/Xfuncs.h>
 #include <X11/Intrinsic.h>
 #include <X11/Xaw/Form.h>
@@ -20830,10 +20832,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo "$xdvi_have_xaw" >&6; }
 #
 if test "x$xdvi_have_xaw" = xyes; then
-
-save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-{ $as_echo "$as_me:$LINENO: checking for SimpleClassPart.extension" >&5
+ { $as_echo "$as_me:$LINENO: checking for SimpleClassPart.extension" >&5
 $as_echo_n "checking for SimpleClassPart.extension... " >&6; }
 if test "${ac_cv_member_SimpleClassPart_extension+set}" = set; then
   $as_echo_n "(cached) " >&6
@@ -20952,22 +20951,21 @@ _ACEOF
 
 fi
 
-CPPFLAGS=$save_CPPFLAGS
 
 fi
 CPPFLAGS=$save_CPPFLAGS
 
   if test "x$with_xdvi_x_toolkit" != xxaw; then
-    # Requested motiv (possibly with xaw as fallback)
     if test "x$with_xdvi_x_toolkit" = xmotif; then
+      # Requested motiv
       default_toolkit=none
     else
+      # Requested motiv with Xaw as fallback
       default_toolkit=Xaw
     fi
 
-{ $as_echo "$as_me:$LINENO: checking for Motif" >&5
-$as_echo_n "checking for Motif... " >&6; }
-#
+motif_include=
+motif_libdir=
 
 # Check whether --with-motif-include was given.
 if test "${with_motif_include+set}" = set; then
@@ -20980,11 +20978,13 @@ if test "${with_motif_libdir+set}" = set; then
   withval=$with_motif_libdir;
 fi
 
+{ $as_echo "$as_me:$LINENO: checking for Motif" >&5
+$as_echo_n "checking for Motif... " >&6; }
 #
 # Search the include files.
 #
 if test "$motif_include" = ""; then
-if test "${xdvi_cv_motif_include+set}" = set; then
+  if test "${xdvi_cv_motif_include+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
 
@@ -21076,13 +21076,13 @@ LDFLAGS="$xdvi_motif_save_LDFLAGS"
 fi
 
 motif_include="$xdvi_cv_motif_include"
+
 fi
-#
 #
 # Now for the libraries.
 #
 if test "$motif_libdir" = ""; then
-if test "${xdvi_cv_motif_libdir+set}" = set; then
+  if test "${xdvi_cv_motif_libdir+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
 
@@ -21186,6 +21186,7 @@ fi
 
 #
 motif_libdir="$xdvi_cv_motif_libdir"
+
 fi
 # Add Motif definitions to X flags
 #
@@ -21232,32 +21233,32 @@ if test "$motif_include_result" = "no"; then
 fi
 
 if test "$motif_include_result" != "" && test "$motif_libdir_result" != ""; then
-    { $as_echo "$as_me:$LINENO: result: libraries $motif_libdir_result, headers $motif_include_result" >&5
+  { $as_echo "$as_me:$LINENO: result: libraries $motif_libdir_result, headers $motif_include_result" >&5
 $as_echo "libraries $motif_libdir_result, headers $motif_include_result" >&6; }
-    prog_extension="motif"
-    cat >>confdefs.h <<\_ACEOF
+  prog_extension="motif"
+  cat >>confdefs.h <<\_ACEOF
 #define MOTIF 1
 _ACEOF
 
-    x_tool_libs="-lXm"
-    # now warn if we're using LessTif (see LESSTIF-BUGS for why ...)
-    { $as_echo "$as_me:$LINENO: checking for LessTif" >&5
+  x_tool_libs="-lXm"
+  # now warn if we're using LessTif (see LESSTIF-BUGS for why ...)
+  { $as_echo "$as_me:$LINENO: checking for LessTif" >&5
 $as_echo_n "checking for LessTif... " >&6; }
-    save_CPPFLAGS="$CPPFLAGS"
-    CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-    cat >conftest.$ac_ext <<_ACEOF
+save_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 
-    #include <X11/X.h>
-    #include <X11/Xlib.h>
-    #include <X11/Xutil.h>
-    #include <X11/Xos.h>
-    #include <X11/Intrinsic.h>
-    #include <Xm/Xm.h>
+#include <X11/X.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xos.h>
+#include <X11/Intrinsic.h>
+#include <Xm/Xm.h>
 int
 main ()
 {
@@ -21286,10 +21287,10 @@ $as_echo "$ac_try_echo") >&5
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
 
-    # yes, we're running LessTif
-    { $as_echo "$as_me:$LINENO: result: yes" >&5
+# yes, we're running LessTif
+{ $as_echo "$as_me:$LINENO: result: yes" >&5
 $as_echo "yes" >&6; }
-    { $as_echo "$as_me:$LINENO: WARNING: LessTif header detected.
+{ $as_echo "$as_me:$LINENO: WARNING: LessTif header detected.
   *****************************************************************
   * Warning: You are using LessTif instead of OpenMotif.          *
   * Some GUI elements might be broken; please see the file        *
@@ -21313,23 +21314,19 @@ else
 sed 's/^/| /' conftest.$ac_ext >&5
 
 
-    # no, not running LessTif
-    { $as_echo "$as_me:$LINENO: result: no" >&5
+# no, not running LessTif
+{ $as_echo "$as_me:$LINENO: result: no" >&5
 $as_echo "no" >&6; }
 
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-else
-    { $as_echo "$as_me:$LINENO: result: not found, using Xaw" >&5
-$as_echo "not found, using Xaw" >&6; }
-    with_xdvi_x_toolkit="xaw"
-fi
+CPPFLAGS=$save_CPPFLAGS
 
-#
-{ $as_echo "$as_me:$LINENO: checking whether to compile in panner (requires Xaw)" >&5
+  # Check whether to compile for Motif with Xaw Panner.
+  { $as_echo "$as_me:$LINENO: checking whether to compile in panner (requires Xaw)" >&5
 $as_echo_n "checking whether to compile in panner (requires Xaw)... " >&6; }
-save_CPPFLAGS="$CPPFLAGS"
+save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -21342,16 +21339,12 @@ cat >>conftest.$ac_ext <<_ACEOF
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
-
 #include <X11/Xfuncs.h>
 #include <X11/Intrinsic.h>
-
 #include <X11/Xaw/Reports.h>
-
 int
 main ()
 {
-
 
   ;
   return 0;
@@ -21381,38 +21374,47 @@ else
 sed 's/^/| /' conftest.$ac_ext >&5
 
 	xdvi_use_xaw_panner=no
-
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 CPPFLAGS=$save_CPPFLAGS
-if test $xdvi_use_xaw_panner = yes; then
-    { $as_echo "$as_me:$LINENO: result: yes" >&5
-$as_echo "yes" >&6; }
+{ $as_echo "$as_me:$LINENO: result: $xdvi_use_xaw_panner" >&5
+$as_echo "$xdvi_use_xaw_panner" >&6; }
+if test "x$xdvi_use_xaw_panner" = xyes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define USE_XAW_PANNER 1
 _ACEOF
 
-else
-    { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
 fi
+
+else
+    { $as_echo "$as_me:$LINENO: result: not found, using Xaw" >&5
+$as_echo "not found, using Xaw" >&6; }
+    with_xdvi_x_toolkit="xaw"
+fi
+
 
   fi
   if test "x$with_xdvi_x_toolkit" = xxaw; then
-    # Requested or defaulted to Xaw
-    if test "x$xdvi_have_xaw" = xno; then
-      { { $as_echo "$as_me:$LINENO: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&5
-$as_echo "$as_me: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&2;}
-   { (exit 1); exit 1; }; }
-    fi
-    prog_extension="xaw"
-    x_tool_libs="-lXaw"
+    # Requested or fallback to Xaw, check for library
+
+if test "x$xdvi_have_xaw" = xyes; then
+  :
+fi
+if test "x$xdvi_have_xaw" = xyes; then
+  prog_extension="xaw"
+  x_tool_libs="-lXaw"
 
 cat >>confdefs.h <<\_ACEOF
 #define XAW 1
 _ACEOF
+
+else
+  { { $as_echo "$as_me:$LINENO: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&5
+$as_echo "$as_me: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&2;}
+   { (exit 1); exit 1; }; }
+fi
 
   fi
 fi
@@ -21424,6 +21426,8 @@ program_transform_name="'s,xdvi-bin,$final_exec_name,'"
 
 
 
+# If we're on Solaris and we want DPS, then add the extra compilation stuff
+# to get it.
 if echo "$PS_DEF" | grep PS_DPS >/dev/null; then
    if test "`(uname) 2>/dev/null`" = SunOS \
       && uname -r | grep '^5' >/dev/null; then

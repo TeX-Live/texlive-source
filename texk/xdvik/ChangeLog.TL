@@ -1,5 +1,11 @@
-ChangeLog.TL: Changes for xdvik (teTeX / TeX Live)
+ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
+
+2009-04-88  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xdvi.h: guard typedef of iconv_char_pptrT by '#if HAVE_ICONV_H'.
+
+	* squeeze/squeeze.c: add '#include <string.h>'.
 
 2009-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

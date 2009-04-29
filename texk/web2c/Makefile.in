@@ -940,6 +940,7 @@ libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 lt_ECHO = @lt_ECHO@
+lua_socketlibs = @lua_socketlibs@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -949,7 +950,6 @@ program_transform_name = @program_transform_name@
 psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
-socketlibs = @socketlibs@
 srcdir = @srcdir@
 subdirs = @subdirs@
 sysconfdir = @sysconfdir@
@@ -1351,7 +1351,7 @@ luatex_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES) \
 luatex_ldadd = libluatex.a libff.a libluamisc.a libzzip.a \
 	libluasocket.a liblua51.a $(LIBPNG_LIBS) $(ZLIB_LIBS) \
 	$(XPDF_LIBS) $(OBSDCOMPAT_LIBS) libmd5.a libmplib.a
-luatex_LDADD = $(luatex_ldadd) $(LDADD) $(socketlibs)
+luatex_LDADD = $(luatex_ldadd) $(LDADD) $(lua_socketlibs)
 luatex_DEPENDENCIES = $(proglib) libluatex.a $(LIBPNG_DEPEND) \
 	$(ZLIB_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libmd5.a \
 	libmplib.a

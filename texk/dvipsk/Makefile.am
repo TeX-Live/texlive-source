@@ -109,15 +109,17 @@ CLEANFILES = $(prologues) texc.lpro
 
 install-data-hook:
 	cd $(DESTDIR)$(man1dir) && \
-	  rm -f odvips.1 && $(LN_S) dvips.1 odvips.1
+	  rm -f odvips.1 && \
+	  $(LN_S) dvips.1 odvips.1
 
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
-	  rm -f odvips && $(LN_S) dvips odvips
+	  rm -f odvips && \
+	  $(LN_S) dvips$(EXEEXT) odvips$(EXEEXT)
 
 uninstall-hook:
 	rm -f $(DESTDIR)$(man1dir)/odvips.1
-	rm -f $(DESTDIR)$(bindir)/odvips
+	rm -f $(DESTDIR)$(bindir)/odvips$(EXEEXT)
 
 ## Not yet used
 ##
