@@ -24,36 +24,62 @@ AS_CASE([$with_iconv_libdir],
         [yes | no | ""], [iconv_libpath=],
         [iconv_libpath="-L$with_iconv_libdir"])
 xdvi_iconv_save_CPPFLAGS=$CPPFLAGS
-xdvi_iconv_save_LDFLAGS=$LDFLAGS
-xdvi_iconv_save_LIBS=$LIBS
 CPPFLAGS="$iconv_includes $CPPFLAGS"
-LDFLAGS="$iconv_libpath $LDFLAGS"
-# Check if -liconv or -lrecode is needed for iconv()
-AC_SEARCH_LIBS([iconv], [iconv recode])
-AS_CASE([$ac_cv_search_iconv],
-        [no | "none required"], [:],
-        [iconv_libs=$ac_cv_search_iconv])
-AC_CHECK_FUNCS([iconv])
 AC_CHECK_HEADERS([iconv.h])
-if test "x$ac_cv_func_iconv:$ac_cv_header_iconv_h" = xyes:yes; then
-  XDVI_ICONV_CHAR_PPTR_TYPE
+# Check if -liconv or -lrecode is needed for iconv()
+_XDVI_ICONV_LIB
+if test "x$xdvi_cv_search_iconv" != xno; then
+  if test "x$xdvi_cv_search_iconv" = "xnone required"; then
+    iconv_libs=
+  else
+    iconv_libs=$xdvi_cv_search_iconv
+  fi
+  AC_DEFINE([HAVE_ICONV], 1, [Define to 1 if you have the `iconv' function.])
+  if test "x$ac_cv_header_iconv_h" = xyes; then
+    _XDVI_ICONV_CHAR_PPTR_TYPE
+  fi
 fi
 CPPFLAGS=$xdvi_iconv_save_CPPFLAGS
-LDFLAGS=$xdvi_iconv_save_LDFLAGS
-LIBS=$xdvi_iconv_save_LIBS
 AC_SUBST([iconv_includes])
 AC_SUBST([iconv_libpath])
 AC_SUBST([iconv_libs])
 ]) # XDVI_CHECK_ICONV
 
-# XDVI_ICONV_CHAR_PPTR_TYPE
-# -------------------------
+# _XDVI_ICONV_LIB
+# ---------------
+# Check for library containing iconv(), could be -liconv or -lrecode.
+# Much like AC_SEARCH_LIBS([iconv], [iconv recode]),
+# but needs to '#include <iconv.h>'.
+m4_define([_XDVI_ICONV_LIB],
+[AC_CACHE_CHECK([for library containing iconv],
+                [xdvi_cv_search_iconv],
+[
+xdvi_iconv_save_LDFLAGS=$LDFLAGS
+xdvi_iconv_save_LIBS=$LIBS
+LDFLAGS="$iconv_libpath $LDFLAGS"
+AC_LANG_CONFTEST([AC_LANG_PROGRAM([[#include <stdlib.h>
+#include <iconv.h>]],
+                                  [[iconv_t cd = iconv_open("","");]])])
+xdvi_cv_search_iconv=no
+for xdvi_lib in "" -liconv -lrecode; do
+  LIBS="$xdvi_lib $xdvi_iconv_save_LIBS"
+  AC_LINK_IFELSE([],
+                 [xdvi_cv_search_iconv=$xdvi_lib
+                  break])
+done
+test "x$xdvi_cv_search_iconv" = x && xdvi_cv_search_iconv="none required"
+LDFLAGS=$xdvi_iconv_save_LDFLAGS
+LIBS=$xdvi_iconv_save_LIBS])
+]) # _XDVI_ICONV_LIB
+
+# _XDVI_ICONV_CHAR_PPTR_TYPE
+# --------------------------
 # Check whether iconv takes a 'const char **' or a 'char **' input argument.
 # According to IEEE 1003.1, `char **' is correct, but e.g. librecode
 # uses `const char **'.
 # Inspired by Autoconf's AC_FUNC_SELECT_ARGTYPES we do this without the need
 # to run a test program or to use C++.
-m4_define([XDVI_ICONV_CHAR_PPTR_TYPE],
+m4_define([_XDVI_ICONV_CHAR_PPTR_TYPE],
 [AC_CACHE_CHECK([for iconv input type],
                 [xdvi_cv_iconv_char_pptr_type],
    [AC_COMPILE_IFELSE(
@@ -82,4 +108,4 @@ m4_define([XDVI_ICONV_CHAR_PPTR_TYPE],
       [xdvi_cv_iconv_char_pptr_type='const char **'])])
 AC_DEFINE_UNQUOTED([ICONV_CHAR_PPTR_TYPE], [$xdvi_cv_iconv_char_pptr_type],
                    [Define the type of the iconv input string (char ** or const char **)])
-]) # XDVI_ICONV_CHAR_PPTR_TYPE
+]) # _XDVI_ICONV_CHAR_PPTR_TYPE

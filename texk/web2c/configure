@@ -18225,7 +18225,7 @@ $as_echo "$as_me: WARNING: Sorry, no gethostbyname(): can not build luaTeX" >&2;
                         enable_luatex=no
 fi
  ;;
-  *) lua_socketlibs="$lua_socketlibs ac_cv_search_gethostbyname" ;;
+  *) lua_socketlibs="$lua_socketlibs $ac_cv_search_gethostbyname" ;;
 esac
 
   case $ac_cv_search_nanosleep in
@@ -18236,7 +18236,7 @@ $as_echo "$as_me: WARNING: Sorry, no nanosleep(): can not build luaTeX" >&2;}
                         enable_luatex=no
 fi
  ;;
-  *) lua_socketlibs="$lua_socketlibs ac_cv_search_nanosleep" ;;
+  *) lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep" ;;
 esac
 
 fi

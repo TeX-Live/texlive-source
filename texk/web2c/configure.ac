@@ -94,13 +94,13 @@ if test "x$kpse_cv_have_win32" = xno; then
           [no], [AS_IF([test "x$enable_luatex" = xyes],
                        [AC_MSG_WARN([Sorry, no gethostbyname(): can not build luaTeX])
                         enable_luatex=no])],
-          [lua_socketlibs="$lua_socketlibs ac_cv_search_gethostbyname"])
+          [lua_socketlibs="$lua_socketlibs $ac_cv_search_gethostbyname"])
   AS_CASE([$ac_cv_search_nanosleep],
           ["none required"], [],
           [no], [AS_IF([test "x$enable_luatex" = xyes],
                        [AC_MSG_WARN([Sorry, no nanosleep(): can not build luaTeX])
                         enable_luatex=no])],
-          [lua_socketlibs="$lua_socketlibs ac_cv_search_nanosleep"])
+          [lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep"])
 fi
 AC_SUBST([lua_socketlibs])
 AC_SUBST([ipc_socketlibs])
