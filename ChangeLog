@@ -1,3 +1,8 @@
+2009-04-29  Karl Berry  <karl@tug.org>
+
+	* Build (MACOSX_DEPLOYMENT_TARGET): set to 10.3 on powerpc-darwin
+	(but not i386-darwin).
+
 2009-04-11  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (world): do the run-texlinks target in texk/tetex
