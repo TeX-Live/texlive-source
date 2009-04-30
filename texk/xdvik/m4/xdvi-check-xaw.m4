@@ -12,8 +12,9 @@
 AC_DEFUN([XDVI_CHECK_XAW_HEADERS],
 [save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
-AC_MSG_CHECKING([for Xaw headers])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+AC_CACHE_CHECK([for Xaw headers],
+               [xdvi_cv_xaw_headers],
+               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -21,9 +22,9 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <X11/Xfuncs.h>
 #include <X11/Intrinsic.h>
 #include <X11/Xaw/Form.h>]])],
-                  [xdvi_have_xaw=yes],
-                  [xdvi_have_xaw=no])
-AC_MSG_RESULT([$xdvi_have_xaw])
+                                  [xdvi_cv_xaw_headers=yes],
+                                  [xdvi_cv_xaw_headers=no])])
+xdvi_have_xaw=$xdvi_cv_xaw_headers
 #
 if test "x$xdvi_have_xaw" = xyes; then
  _XDVI_CHECK_XAW_VERSION
@@ -55,11 +56,23 @@ m4_define([_XDVI_CHECK_XAW_VERSION],
 AC_DEFUN([XDVI_CHECK_XAW_LIBRARY],
 [AC_REQUIRE([XDVI_CHECK_XAW_HEADERS])
 if test "x$xdvi_have_xaw" = xyes; then
-  :
+  # First try without libXp
+  AC_CHECK_LIB([Xaw], [XawInitializeWidgetSet],
+      [x_tool_libs="-lXaw"],
+      [# libXaw without libXp failed
+       if test "x$x_xp_lib" = x; then
+         xdvi_have_xaw=no
+       else
+         # Now try with libXp
+         AC_CHECK_LIB([Xaw], [XawTextReplace],
+             [x_tool_libs="-lXaw $x_xp_lib"],
+             [xdvi_have_xaw=no],
+             [$x_xp_lib $x_xmu_lib -lXt $X_PRE_LIBS $x_ext_lib $x_xpm_libs -lX11 $X_EXTRA_LIBS $XLFLAG])
+       fi],
+      [$x_xmu_lib -lXt $X_PRE_LIBS $x_ext_lib $x_xpm_libs -lX11 $X_EXTRA_LIBS $XLFLAG])
 fi 
 if test "x$xdvi_have_xaw" = xyes; then
   prog_extension="xaw"
-  x_tool_libs="-lXaw"
   AC_DEFINE([XAW], 1, [Define to use the Xaw toolkit.])
 else
   AC_MSG_ERROR([Sorry, you will need at least the Xaw header/library files to compile xdvik.])

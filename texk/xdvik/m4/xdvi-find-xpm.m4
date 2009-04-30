@@ -14,19 +14,17 @@
 # and add appropriate flags to X_CFLAGS and X_LIBS.
 AC_DEFUN([XDVI_FIND_XPM],
 [AC_REQUIRE([AC_PATH_XTRA])
-xpm_includes=
-xpm_libraries=
 AC_ARG_WITH([xpm],
             AS_HELP_STRING([--without-xpm],
                            [Do not use the Xpm library (will disable the toolbar)]))[]dnl
 AC_ARG_WITH([xpm-includes],
             AS_HELP_STRING([--with-xpm-include=DIR],
                            [Specify the location of Xpm include files]),
-            [xpm_includes=$withval])
+            [xpm_includes=$withval], [xpm_includes=])[]dnl
 AC_ARG_WITH([xpm-libraries],
             AS_HELP_STRING([--with-xpm-libdir=DIR],
                            [Specify the location of Xpm libraries]),
-            [xpm_libraries=$withval])
+            [xpm_libraries=$withval], [xpm_libraries=])[]dnl
 dnl Treat --without-xpm like
 dnl --without-xpm-includes --without-xpm-libraries.
 if test "x$with_xpm" = xno; then
@@ -40,15 +38,22 @@ AC_MSG_CHECKING([for Xpm])
 if test "x$xpm_includes" = x; then
   _XDVI_FIND_XPM_INCLUDES
 fi
-if test "x$xpm_includes" != x; then
-    if test "x$xpm_includes" = xdefault; then
-	AC_DEFINE([HAVE_X11_XPM_H], 1, [Define if you have the <X11/xpm.h> header file.])
-    elif test -f "$xpm_includes/X11/xpm.h"; then
-	AC_DEFINE([HAVE_X11_XPM_H], 1)
-    elif test -f "$xpm_includes/xpm.h"; then
-	AC_DEFINE([HAVE_XPM_H], 1,
-	          [Define if you have the <xpm.h> header file (not in X11, e.g. Solaris 5.8).])
-    fi
+if test "x$xpm_includes" = xdefault; then
+  AC_DEFINE([HAVE_X11_XPM_H], 1, [Define if you have the <X11/xpm.h> header file.])
+elif test -f "$xpm_includes/X11/xpm.h"; then
+  AC_DEFINE([HAVE_X11_XPM_H], 1)
+elif test -f "$xpm_includes/xpm.h"; then
+  AC_DEFINE([HAVE_XPM_H], 1,
+            [Define if you have the <xpm.h> header file (not in X11, e.g. Solaris 5.8).])
+fi
+#
+# Add Xpm definition to X_CFLAGS (and remember previous value)
+#
+xdvi_xpm_save_X_CFLAGS=$X_CFLAGS
+if test "x$xpm_includes" != xdefault \
+    && test "x$xpm_includes" != "x$x_includes" && test "x$xpm_includes" != xno
+then
+  X_CFLAGS="-I$xpm_includes $X_CFLAGS"
 fi
 #
 # Check the libraries.
@@ -57,49 +62,52 @@ if test "x$xpm_libraries" = x; then
   _XDVI_FIND_XPM_LIBRARIES
 fi
 #
-# Add Xpm definitions to X flags
+# Report the results of headers and libraries.
 #
-if test "x$xpm_includes" != xdefault && test "x$xpm_includes" != x \
-    && test "x$xpm_includes" != "x$x_includes" && test "x$xpm_includes" != xno
-then
-  X_CFLAGS="-I$xpm_includes $X_CFLAGS"
-fi
+xdvi_use_xpm=yes
 #
-if test "x$xpm_libraries" != xdefault && test "x$xpm_libraries" != x \
-    && test "x$xpm_libraries" != "x$x_libraries" && test "x$xpm_libraries" != xno
-then
-  case "$X_LIBS" in
-    *-R\ *) X_LIBS="-L$xpm_libraries -R $xpm_libraries $X_LIBS";;
-    *-R*)   X_LIBS="-L$xpm_libraries -R$xpm_libraries $X_LIBS";;
-    *)      X_LIBS="-L$xpm_libraries $X_LIBS";;
-  esac
-fi
-#
-# Now check the results of headers and libraries and set USE_XPM to 0
-# if one of them hadn't been found.
-#
-AC_DEFINE([USE_XPM], 1, [Define if you want to use the Xpm library])
-x_xpm_libs="-lXpm"
 #
 xpm_libraries_result=$xpm_libraries
-if test "x$xpm_libraries_result" = xdefault ; then
+if test "x$xpm_libraries_result" = xdefault; then
   xpm_libraries_result="in default path"
-elif test "x$xpm_libraries_result" = xno || test "x$xpm_libraries_result" = x; then
+elif test "x$xpm_libraries_result" = xno; then
   xpm_libraries_result="(none)"
-  AC_DEFINE([USE_XPM], 0)
-  x_xpm_libs=""
+  xdvi_use_xpm=no
 fi
-AC_SUBST([x_xpm_libs])
 #
 xpm_includes_result=$xpm_includes
 if test "x$xpm_includes_result" = xdefault; then
   xpm_includes_result="in default path"
-elif test "x$xpm_includes_result" = xno || test "x$xpm_includes_result" = x; then
-  AC_DEFINE([USE_XPM], 0)
+elif test "x$xpm_includes_result" = xno; then
   xpm_includes_result="(none)"
+  xdvi_use_xpm=no
 fi
 #
 AC_MSG_RESULT([libraries $xpm_libraries_result, headers $xpm_includes_result])
+#
+if test "x$xdvi_use_xpm" = xyes; then
+  #
+  # Add Xpm definition to X_LIBS
+  #
+  if test "x$xpm_libraries" != xdefault \
+      && test "x$xpm_libraries" != "x$x_libraries" && test "x$xpm_libraries" != xno
+  then
+    case "$X_LIBS" in
+      *-R\ *) X_LIBS="-L$xpm_libraries -R $xpm_libraries $X_LIBS";;
+      *-R*)   X_LIBS="-L$xpm_libraries -R$xpm_libraries $X_LIBS";;
+      *)      X_LIBS="-L$xpm_libraries $X_LIBS";;
+    esac
+  fi
+  #
+  AC_DEFINE([USE_XPM], 1, [Define if you want to use the Xpm library])
+  x_xpm_libs="-lXpm"
+else
+  # Restore previous X_CFLAGS
+  X_CFLAGS=$xdvi_xpm_save_X_CFLAGS
+  AC_DEFINE([USE_XPM], 0)
+  x_xpm_libs=
+fi
+AC_SUBST([x_xpm_libs])
 ]) # XDVI_FIND_XPM
 
 # _XDVI_FIND_XPM_INCLUDES

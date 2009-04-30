@@ -171,13 +171,7 @@ fi
 # Check whether -lXpm can be used	
 XDVI_FIND_XPM
 
-# Check for libXext and libXp.
-# Although libXp is now defunct (no longer part of XOrg), older versions
-# of libXm may need to include libXp.  Same for the equally defunct libXaw8.
-# We certainly don't want to include libXp unless necessay,this would just
-# perpetuate the need to keep libXp.so around.  Moreover for ELF shared
-# libraries the need for libXp is probably encoded into libXm.so and/or
-# libXaw.so and need not to be specified explicitly.
+# Check for libXext.
 AS_IF([test -n "$x_libraries"],
       [XLFLAG="-L$x_libraries"],
       [XLFLAG=])
@@ -185,11 +179,19 @@ if test -z "$x_ext_lib"; then # allow envvar override
   AC_CHECK_LIB([Xext], [XextCreateExtension],
                [x_ext_lib='-lXext'], [],
                [-lX11 $X_EXTRA_LIBS $XLFLAG])
-  AC_CHECK_LIB([Xp], [XpQueryVersion],
-               [x_xp_lib='-lXp'], [],
-               [$x_ext_lib -lX11 $X_EXTRA_LIBS $XLFLAG])
 fi
 AC_SUBST([x_ext_lib])
+
+# Check for libXp.
+# Although libXp is now defunct (no longer part of XOrg), older versions
+# of libXm may need to link with libXp; same for the equally defunct libXaw8.
+# We certainly don't want to include libXp unless necessay, since this might
+# only perpetuate the need to keep libXp.so around.
+# Moreover for ELF shared libraries a requirement for libXp.so is probably
+# encoded into libXm.so and/or libXaw.so and need not be specified explicitly.
+AC_CHECK_LIB([Xp], [XpQueryVersion],
+             [x_xp_lib='-lXp'], [],
+             [$x_ext_lib -lX11 $X_EXTRA_LIBS $XLFLAG])
 
 # Check which toolkit was specified
 AS_CASE([$with_xdvi_x_toolkit],
@@ -210,7 +212,7 @@ elif test "x$with_xdvi_x_toolkit" = xneXtaw; then
   prog_extension="nextaw"
   x_tool_libs="-lneXtaw"
 else
-  # Check for Xaw headers
+  # Check for Xaw headers and library version
   XDVI_CHECK_XAW_HEADERS
   if test "x$with_xdvi_x_toolkit" != xxaw; then
     if test "x$with_xdvi_x_toolkit" = xmotif; then
