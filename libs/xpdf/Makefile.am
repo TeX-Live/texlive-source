@@ -102,6 +102,10 @@ xpdf_libxpdf_a_sources = \
 ##
 EXTRA_DIST += xpdf-3.02-pl2.patch
 
+## Patch for xpdf-3.02pl3
+##
+EXTRA_DIST += xpdf-3.02-pl3.patch
+
 ## Patch required to build with -DPDF_PARSER_ONLY
 ##
 EXTRA_DIST += xpdf-3.02-PDF_PARSER_ONLY.patch
