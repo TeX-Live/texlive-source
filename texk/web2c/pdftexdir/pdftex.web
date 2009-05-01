@@ -288,7 +288,7 @@ known as `\eTeX'.
   {printed when \eTeX\ starts}
 @#
 @d pdftex_version==140 { \.{\\pdftexversion} }
-@d pdftex_revision=="9" { \.{\\pdftexrevision} }
+@d pdftex_revision=="10" { \.{\\pdftexrevision} }
 @d pdftex_version_string=='-1.40.10' {current \pdfTeX\ version}
 @#
 @d pdfeTeX_banner=='This is pdfeTeX, Version 3.1415926',pdftex_version_string,eTeX_version_string
@@ -9427,7 +9427,9 @@ label exit;
 var p:pointer; {tail of the backup list}
 @!q:pointer; {new node being added to the token list via |store_new_token|}
 @!k:pool_pointer; {index into |str_pool|}
+@!save_cur_cs:pointer; {to save |cur_cs|}
 begin p:=backup_head; link(p):=null; k:=str_start[s];
+save_cur_cs:=cur_cs;
 while k<str_start[s+1] do
   begin get_x_token; {recursion is possible here}
 @^recursion@>
@@ -9438,6 +9440,7 @@ while k<str_start[s+1] do
   else if (cur_cmd<>spacer)or(p<>backup_head) then
     begin back_input;
     if p<>backup_head then back_list(link(backup_head));
+    cur_cs:=save_cur_cs;
     scan_keyword:=false; return;
     end;
   end;
@@ -19289,26 +19292,74 @@ if (pdf_unique_resname > 0) and (pdf_resname_prefix = 0) then
 
 @ Finishing the PDF output file.
 
-The following procedures sort the table of destination names
-@p function str_less_str(s1, s2: str_number): boolean; {compare two strings}
-var j1, j2: pool_pointer;
-    l, i: integer;
+The following procedures sort the table of destination names.
+@d get_next_char(#)==
+    c@&# := str_pool[j@&#];
+    incr(j@&#);
+    if (c@&# = 92) and (j@&# < e@&#) then begin
+        c@&# := str_pool[j@&#];
+        incr(j@&#);
+        if (c@&# >= 48) and (c@&# <= 55) then begin
+            c@&# := c@&# - 48;
+            if (j@&# < e@&#) and (str_pool[j@&#] >= 48)
+                         and (str_pool[j@&#] <= 55) then begin
+                c@&# := 8 * c@&# + str_pool[j@&#] - 48;
+                incr(j@&#);
+                if (j@&# < e@&#) and (str_pool[j@&#] >= 48)
+                             and (str_pool[j@&#] <= 55)
+                             and (c@&# < 32) then begin
+                    c@&# := 8 * c@&# + str_pool[j@&#] - 48;
+                    incr(j@&#);
+                end;
+            end;
+        end else begin
+            case c@&# of
+                 98: c@&# :=  8; {`\.b': backspace} 
+                102: c@&# := 12; {`\.f': form feed}
+                110: c@&# := 10; {`\.n': line feed}
+                114: c@&# := 13; {`\.r': carriage return} 
+                116: c@&# :=  9; {`\.t': horizontal tab}
+                {nothing to do for `\.{\\}', `\.(', `\.)'}
+            othercases do_nothing
+            endcases;
+        end;
+    end
+
+@p function str_less_str(s1, s2: str_number): boolean; {compare two pdf strings}
+var j1, j2, e1, e2: pool_pointer;
+    c1, c2: packed_ASCII_code;
 begin
+    {Minimal requirement: output of \.{\\pdfescapestring} must be supported.}
+    {This implementation also supports all escape sequences}
+    {listed in the table `Escape sequences in literal strings'}
+    {of the pdf specification.}
+    {End-of-line markers are not detected:}
+    {The marker is not replaced by `\.{\\n}' or removed if it is escaped.}
     j1 := str_start[s1];
     j2 := str_start[s2];
-    if length(s1) < length(s2) then
-        l := length(s1)
-    else
-        l := length(s2);
-    i := 0;
-    while (i < l) and (str_pool[j1 + i] = str_pool[j2 + i]) do
-        incr(i);
-    if ((i < l) and (str_pool[j1 + i] < str_pool[j2 + i])) or
-        ((i = l) and (length(s1) < length(s2))) then
+    e1 := j1 + length(s1);
+    e2 := j2 + length(s2);
+    while (j1 < e1) and (j2 < e2) do begin
+        {get next character of first string}
+        get_next_char(1);
+        {get next character of second string}
+        get_next_char(2);
+        {compare characters}
+        if c1 < c2 then begin
+            str_less_str := true;
+            return;
+        end
+        else if c1 > c2 then begin
+            str_less_str := false;
+            return;
+        end;
+    end;
+    {compare string lengths}
+    if (j1 >= e1) and (j2 < e2) then
         str_less_str := true
     else
         str_less_str := false;
-end;
+exit: end;
 
 procedure sort_dest_names(l, r: integer); {sorts |dest_names| by names}
 var i, j: integer;

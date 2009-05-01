@@ -198,7 +198,7 @@ extern boolean handle_subfont_fm(fm_entry *, int);
 /* tounicode.c */
 extern void glyph_unicode_free(void);
 extern void deftounicode(strnumber, strnumber);
-extern integer write_tounicode(char **, char *);
+extern integer write_tounicode(char **, const char *, const char *);
 
 /* utils.c */
 extern boolean str_eq_cstr(strnumber, char *);

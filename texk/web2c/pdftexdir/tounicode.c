@@ -124,7 +124,7 @@ void deftounicode(strnumber glyph, strnumber unistr)
 }
 
 
-static long check_unicode_value(char *s, boolean multiple_value)
+static long check_unicode_value(const char *s, boolean multiple_value)
 {
     int l = strlen(s);
     int i;
@@ -181,12 +181,15 @@ static char *utf16be_str(long code)
 }
 
 
-/* this function set proper values to *gp based on s; in case it returns
+/* this function writes /ToUnicode data to *gp based on glyph name s and
+ * taking into account tfmname; in case it returns
  * gp->code == UNI_EXTRA_STRING then the caller is responsible for freeing
  * gp->unicode_seq too */
-static void set_glyph_unicode(char *s, glyph_unicode_entry * gp)
+static void set_glyph_unicode(const char *s, const char* tfmname, 
+                              glyph_unicode_entry *gp)
 {
     char buf[SMALL_BUF_SIZE], buf2[SMALL_BUF_SIZE], *p;
+    const char *p2; /* p2 points in s; p above points in writable copies */
     long code;
     boolean last_component;
     glyph_unicode_entry tmp, *ptmp;
@@ -220,7 +223,7 @@ static void set_glyph_unicode(char *s, glyph_unicode_entry * gp)
         for (;;) {
             *p = 0;
             tmp.code = UNI_UNDEF;
-            set_glyph_unicode(s, &tmp);
+            set_glyph_unicode(s, tfmname, &tmp);
             switch (tmp.code) {
             case UNI_UNDEF:    /* not found, do nothing */
                 break;
@@ -253,8 +256,26 @@ static void set_glyph_unicode(char *s, glyph_unicode_entry * gp)
         return;
     }
 
-    /* lookup for glyph name in the database */
-    tmp.name = s;
+    /* Glyph name search strategy: first look up the glyph name in the
+       tfm's namespace, failing that look it up in the main database. */
+    /* Note: buf may alias s in the code below, but s and buf2 are
+       guaranteed to be distinct because the code changing buf2 above
+       always returns before reaching the code below. */
+
+    /* lookup for glyph name in the tfm's namespace */
+    snprintf(buf2, SMALL_BUF_SIZE, "tfm:%s/%s", tfmname, s);
+    tmp.name = buf2;
+    tmp.code = UNI_UNDEF;
+    ptmp = (glyph_unicode_entry *) avl_find(glyph_unicode_tree, &tmp);
+    if (ptmp != NULL) {
+        gp->code = ptmp->code;
+        gp->unicode_seq = ptmp->unicode_seq;
+        return;
+    }
+
+    /* lookup for glyph name in the main database */
+    tmp.name = (char *)s; /* this is okay since we're not calling
+                             destroy_glyph_unicode_entry on this */
     tmp.code = UNI_UNDEF;
     ptmp = (glyph_unicode_entry *) avl_find(glyph_unicode_tree, &tmp);
     if (ptmp != NULL) {
@@ -265,14 +286,14 @@ static void set_glyph_unicode(char *s, glyph_unicode_entry * gp)
 
     /* check for case of "uniXXXX" (multiple 4-hex-digit values allowed) */
     if (str_prefix(s, "uni")) {
-        p = s + strlen("uni");
-        code = check_unicode_value(p, true);
+        p2 = s + strlen("uni");
+        code = check_unicode_value(p2, true);
         if (code != UNI_UNDEF) {
-            if (strlen(p) == 4) /* single value */
+            if (strlen(p2) == 4) /* single value */
                 gp->code = code;
             else {              /* multiple value */
                 gp->code = UNI_EXTRA_STRING;
-                gp->unicode_seq = xstrdup(p);
+                gp->unicode_seq = xstrdup(p2);
             }
         }
         return;                 /* since the last case cannot happen */
@@ -280,8 +301,8 @@ static void set_glyph_unicode(char *s, glyph_unicode_entry * gp)
 
     /* check for case of "uXXXX" (single value up to 6 hex digits) */
     if (str_prefix(s, "u")) {
-        p = s + strlen("u");
-        code = check_unicode_value(p, false);
+        p2 = s + strlen("u");
+        code = check_unicode_value(p2, false);
         if (code != UNI_UNDEF) {
             assert(code >= 0);
             gp->code = code;
@@ -289,27 +310,41 @@ static void set_glyph_unicode(char *s, glyph_unicode_entry * gp)
     }
 }
 
-integer write_tounicode(char **glyph_names, char *name)
+
+/* tfmname is without .tfm extension, but encname ends in .enc; */
+integer write_tounicode(char **glyph_names, const char *tfmname,
+                        const char* encname)
 {
     char buf[SMALL_BUF_SIZE], *p;
-    static char builtin_suffix[] = "-builtin";
+    static char builtin_suffix[] = "builtin";
     short range_size[257];
     glyph_unicode_entry gtab[257];
     integer objnum;
     int i, j;
     int bfchar_count, bfrange_count, subrange_count;
-    assert(strlen(name) + strlen(builtin_suffix) < SMALL_BUF_SIZE);
+
     if (glyph_unicode_tree == NULL) {
         pdftex_warn("no GlyphToUnicode entry has been inserted yet!");
         fixedgentounicode = 0;
         return 0;
     }
-    strcpy(buf, name);
-    if ((p = strrchr(buf, '.')) != NULL && strcmp(p, ".enc") == 0)
-        *p = 0;                 /* strip ".enc" from encoding name */
-    else
-        strcat(buf, builtin_suffix);    /* ".enc" not present, this is a builtin
-                                           encoding so the name is eg "cmr10-builtin" */
+
+    /* build the name for this CMap as <tfmname>-<encname>; if encname is NULL
+     * then this is a builtin encoding so use instead builtin_suffix */
+    strcpy(buf, tfmname);
+    strcat(buf, "-");
+    if (encname) {
+        assert(strlen(tfmname) + strlen(encname) + 1 < SMALL_BUF_SIZE);
+        strcat(buf, encname);
+        if ((p = strrchr(buf, '.')) != NULL && strcmp(p, ".enc") == 0)
+            *p = 0;                 /* strip ".enc" from encoding name */
+        else /* some silly encoding file name not ending in enc; use as-is */
+            pdftex_warn("Dubious encoding file name: `%s'", encname);
+    } else { /* this is a builtin encoding, so name is e.g. "cmr10-builtin" */
+        assert(strlen(tfmname) + strlen(builtin_suffix) + 1 < SMALL_BUF_SIZE);
+        strcat(buf, builtin_suffix);    
+    }
+
     objnum = pdfnewobjnum();
     pdfbegindict(objnum, 0);
     pdfbeginstream();
@@ -336,7 +371,7 @@ integer write_tounicode(char **glyph_names, char *name)
     /* set gtab */
     for (i = 0; i < 256; ++i) {
         gtab[i].code = UNI_UNDEF;
-        set_glyph_unicode(glyph_names[i], &gtab[i]);
+        set_glyph_unicode(glyph_names[i], tfmname, &gtab[i]);
     }
     gtab[256].code = UNI_UNDEF;
 

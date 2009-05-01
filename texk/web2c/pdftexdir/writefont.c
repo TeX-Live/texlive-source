@@ -531,11 +531,11 @@ void write_fontdictionary(fo_entry * fo)
     if (fixedgentounicode > 0 && fo->fd != NULL) {
         if (fo->fe != NULL) {
             fo->tounicode_objnum =
-                write_tounicode(fo->fe->glyph_names, fo->fe->name);
+                write_tounicode(fo->fe->glyph_names, fo->fm->tfm_name, fo->fe->name);
         } else if (is_type1(fo->fm)) {
             assert(fo->fd->builtin_glyph_names != NULL);
             fo->tounicode_objnum =
-                write_tounicode(fo->fd->builtin_glyph_names, fo->fm->tfm_name);
+                write_tounicode(fo->fd->builtin_glyph_names, fo->fm->tfm_name, NULL);
         }
     }
 
