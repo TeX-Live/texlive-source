@@ -16,6 +16,11 @@ AC_CONFIG_MACRO_DIR([../../m4])
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
 
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_MAKE_SET
+AC_PROG_INSTALL
+
 DIALOG_TREE=dialog-[]dialog_version
 AC_SUBST([DIALOG_TREE])
 
