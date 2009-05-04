@@ -8,8 +8,6 @@ ACLOCAL_AMFLAGS = -I ../m4
 SUBDIRS = dummy . $(SUBLIBS)
 DIST_SUBDIRS = dummy $(DIST_SUBLIBS)
 
-EXTRA_DIST = README.orig
-
 ## just in case a subdirectory has added directories
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`

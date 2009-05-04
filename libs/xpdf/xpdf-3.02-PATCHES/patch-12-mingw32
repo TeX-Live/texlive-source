@@ -1,0 +1,22 @@
+	Build fix for mingw32
+
+diff -ur -N xpdf-3.02.orig/xpdf/GlobalParams.cc xpdf-3.02/xpdf/GlobalParams.cc
+--- xpdf-3.02.orig/xpdf/GlobalParams.cc	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/GlobalParams.cc	2009-04-02 10:22:18.000000000 +0200
+@@ -5,9 +5,16 @@
+ // Copyright 2001-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #include <aconf.h>
+ 
++#ifdef __MINGW32__
++#undef WIN32
++#endif
++
+ #ifdef USE_GCC_PRAGMAS
+ #pragma implementation
+ #endif

@@ -1,28 +1,11 @@
+	Official patch http://www.foolabs.com/xpdf/xpdf-3.02pl2.patch
+
+	Update of xpdfVersion in xpdf-3.02/xpdf/config.h
+
 diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
---- xpdf-3.02.orig/xpdf/Stream.cc	2007-02-27 23:05:52.000000000 +0100
+--- xpdf-3.02.orig/xpdf/Stream.cc	2007-08-01 10:34:31.000000000 +0200
 +++ xpdf-3.02/xpdf/Stream.cc	2007-11-12 13:27:21.000000000 +0100
-@@ -410,15 +410,13 @@
-   ok = gFalse;
- 
-   nVals = width * nComps;
--  if (width <= 0 || nComps <= 0 || nBits <= 0 ||
--      nComps >= INT_MAX / nBits ||
--      width >= INT_MAX / nComps / nBits ||
--      nVals * nBits + 7 < 0) {
--    return;
--  }
-   pixBytes = (nComps * nBits + 7) >> 3;
-   rowBytes = ((nVals * nBits + 7) >> 3) + pixBytes;
--  if (rowBytes <= 0) {
-+  if (width <= 0 || nComps <= 0 || nBits <= 0 ||
-+      nComps > gfxColorMaxComps ||
-+      nBits > 16 ||
-+      width >= INT_MAX / nComps ||      // check for overflow in nVals 
-+      nVals >= (INT_MAX - 7) / nBits) { // check for overflow in rowBytes
-     return;
-   }
-   predLine = (Guchar *)gmalloc(rowBytes);
-@@ -1245,23 +1243,26 @@
+@@ -1243,23 +1243,26 @@
    columns = columnsA;
    if (columns < 1) {
      columns = 1;
@@ -57,7 +40,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
  
    buf = EOF;
  }
-@@ -1280,9 +1281,9 @@
+@@ -1278,9 +1281,9 @@
    row = 0;
    nextLine2D = encoding < 0;
    inputBits = 0;
@@ -70,7 +53,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
    buf = EOF;
  
    // skip any initial zero bits and end-of-line marker, and get the 2D
-@@ -1299,211 +1300,230 @@
+@@ -1297,211 +1300,230 @@
    }
  }
  
@@ -439,7 +422,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
      // byte-align the row
      if (byteAlign) {
        inputBits &= ~7;
-@@ -1562,14 +1582,17 @@
+@@ -1560,14 +1582,17 @@
      // this if we know the stream contains end-of-line markers because
      // the "just plow on" technique tends to work better otherwise
      } else if (err && endOfLine) {
@@ -460,7 +443,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
        eatBits(12); 
        if (encoding > 0) {
  	eatBits(1);
-@@ -1577,11 +1600,11 @@
+@@ -1575,11 +1600,11 @@
        }
      }
  
@@ -477,7 +460,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
      }
  
      ++row;
-@@ -1589,39 +1612,43 @@
+@@ -1587,39 +1612,43 @@
  
    // get a byte
    if (outputBits >= 8) {
@@ -542,7 +525,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
    return buf;
  }
  
-@@ -1663,6 +1690,9 @@
+@@ -1661,6 +1690,9 @@
    code = 0; // make gcc happy
    if (endOfBlock) {
      code = lookBits(12);
@@ -552,7 +535,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
      if ((code >> 5) == 0) {
        p = &whiteTab1[code];
      } else {
-@@ -1675,6 +1705,9 @@
+@@ -1673,6 +1705,9 @@
    } else {
      for (n = 1; n <= 9; ++n) {
        code = lookBits(n);
@@ -562,7 +545,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
        if (n < 9) {
  	code <<= 9 - n;
        }
-@@ -1686,6 +1719,9 @@
+@@ -1684,6 +1719,9 @@
      }
      for (n = 11; n <= 12; ++n) {
        code = lookBits(n);
@@ -572,7 +555,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
        if (n < 12) {
  	code <<= 12 - n;
        }
-@@ -1711,9 +1747,12 @@
+@@ -1709,9 +1747,12 @@
    code = 0; // make gcc happy
    if (endOfBlock) {
      code = lookBits(13);
@@ -586,7 +569,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
        p = &blackTab2[(code >> 1) - 64];
      } else {
        p = &blackTab3[code >> 7];
-@@ -1725,6 +1764,9 @@
+@@ -1723,6 +1764,9 @@
    } else {
      for (n = 2; n <= 6; ++n) {
        code = lookBits(n);
@@ -596,7 +579,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
        if (n < 6) {
  	code <<= 6 - n;
        }
-@@ -1736,6 +1778,9 @@
+@@ -1734,6 +1778,9 @@
      }
      for (n = 7; n <= 12; ++n) {
        code = lookBits(n);
@@ -606,7 +589,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
        if (n < 12) {
  	code <<= 12 - n;
        }
-@@ -1749,6 +1794,9 @@
+@@ -1747,6 +1794,9 @@
      }
      for (n = 10; n <= 13; ++n) {
        code = lookBits(n);
@@ -616,7 +599,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
        if (n < 13) {
  	code <<= 13 - n;
        }
-@@ -1963,6 +2011,12 @@
+@@ -1961,6 +2011,12 @@
      // allocate a buffer for the whole image
      bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
      bufHeight = ((height + mcuHeight - 1) / mcuHeight) * mcuHeight;
@@ -629,7 +612,7 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.cc xpdf-3.02/xpdf/Stream.cc
      for (i = 0; i < numComps; ++i) {
        frameBuf[i] = (int *)gmallocn(bufWidth * bufHeight, sizeof(int));
        memset(frameBuf[i], 0, bufWidth * bufHeight * sizeof(int));
-@@ -3038,6 +3092,11 @@
+@@ -3036,6 +3092,11 @@
    }
    scanInfo.firstCoeff = str->getChar();
    scanInfo.lastCoeff = str->getChar();
@@ -664,37 +647,15 @@ diff -ur -N xpdf-3.02.orig/xpdf/Stream.h xpdf-3.02/xpdf/Stream.h
    short getTwoDimCode();
    short getWhiteCode();
    short getBlackCode();
-diff -ur -N xpdf-3.02.orig/xpdf/XPDFViewer.cc xpdf-3.02/xpdf/XPDFViewer.cc
---- xpdf-3.02.orig/xpdf/XPDFViewer.cc	2007-02-27 23:05:52.000000000 +0100
-+++ xpdf-3.02/xpdf/XPDFViewer.cc	2007-06-25 16:21:28.000000000 +0200
-@@ -3406,10 +3406,12 @@
-   PSOutputDev *psOut;
+diff -ur -N xpdf-3.02.orig/xpdf/config.h xpdf-3.02/xpdf/config.h
+--- xpdf-3.02.orig/xpdf/config.h	2007-08-01 10:34:31.000000000 +0200
++++ xpdf-3.02/xpdf/config.h	2007-11-12 13:27:21.000000000 +0100
+@@ -17,7 +17,7 @@
+ //------------------------------------------------------------------------
  
-   doc = viewer->core->getDoc();
-+#if 0
-   if (!doc->okToPrint()) {
-     error(-1, "Printing this document is not allowed.");
-     return;
-   }
-+#endif
- 
-   viewer->core->setBusyCursor(gTrue);
- 
-diff -ur -N xpdf-3.02.orig/xpdf/pdftops.cc xpdf-3.02/xpdf/pdftops.cc
---- xpdf-3.02.orig/xpdf/pdftops.cc	2007-02-27 23:05:52.000000000 +0100
-+++ xpdf-3.02/xpdf/pdftops.cc	2007-06-25 16:21:33.000000000 +0200
-@@ -278,12 +278,14 @@
-     goto err1;
-   }
- 
-+#if 0
-   // check for print permission
-   if (!doc->okToPrint()) {
-     error(-1, "Printing this document is not allowed.");
-     exitCode = 3;
-     goto err1;
-   }
-+#endif
- 
-   // construct PostScript file name
-   if (argc == 3) {
+ // xpdf version
+-#define xpdfVersion          "3.02pl1"
++#define xpdfVersion          "3.02pl2"
+ #define xpdfVersionNum       3.02
+ #define xpdfMajorVersion     3
+ #define xpdfMinorVersion     2

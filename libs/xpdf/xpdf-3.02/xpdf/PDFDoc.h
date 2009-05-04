@@ -5,6 +5,9 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
+//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
+//  See top-level ChangeLog for a list of all modifications
+//========================================================================
 
 #ifndef PDFDOC_H
 #define PDFDOC_H
