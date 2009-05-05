@@ -1,0 +1,28 @@
+	It seems some compilers don't like a call of pow(int, int).
+
+	from:
+		Han The Thanh <thanh@pdftex.org>
+		Martin Schroeder <martin@pdftex.org>
+
+diff -ur -N xpdf-3.02.orig/goo/GString.cc xpdf-3.02/goo/GString.cc
+--- xpdf-3.02.orig/goo/GString.cc	2007-02-27 23:05:51.000000000 +0100
++++ xpdf-3.02/goo/GString.cc	2008-05-08 15:40:41.000000000 +0200
+@@ -7,6 +7,9 @@
+ // Copyright 1996-2003 Glyph & Cog, LLC
+ //
+ //========================================================================
++//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
++//  See top-level ChangeLog for a list of all modifications
++//========================================================================
+ 
+ #include <aconf.h>
+ 
+@@ -528,7 +531,7 @@
+   if ((neg = x < 0)) {
+     x = -x;
+   }
+-  x = floor(x * pow(10, prec) + 0.5);
++  x = floor(x * pow(10.0, prec) + 0.5);
+   i = bufSize;
+   started = !trim;
+   for (j = 0; j < prec && i > 1; ++j) {

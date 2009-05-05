@@ -1,3 +1,11 @@
+2009-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xpdf-3.02-PATCHES/patch-15-fix-pow-arg,
+	xpdf-3.02-PATCHES/patch-16-size-of-struct,
+	xpdf-3.02-PATCHES/patch-17-strCrypt (new):
+	three small patches split off from ...
+	* xpdf-3.02-PATCHES/patch-20-pdftex: ... this file.
+
 2009-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Applied official 3.02pl3 patch
