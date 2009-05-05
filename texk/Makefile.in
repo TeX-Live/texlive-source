@@ -58,6 +58,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../m4/kpse-t1lib-flags.m4 \
 	$(top_srcdir)/../m4/kpse-teckit-flags.m4 \
 	$(top_srcdir)/../m4/kpse-web2c.m4 \
+	$(top_srcdir)/../m4/kpse-xpdf-flags.m4 \
 	$(top_srcdir)/../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/../ac/withenable.ac \
 	$(top_srcdir)/../utils/ac/withenable.ac \

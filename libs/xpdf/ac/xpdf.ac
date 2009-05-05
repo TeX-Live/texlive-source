@@ -1,0 +1,7 @@
+## libs/xpdf/ac/xpdf.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
+dnl
+dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## define required functions and headers from system xpdf
+KPSE_CHECK_LIB([xpdf], [free], [gtypes.h])

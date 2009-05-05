@@ -4,4 +4,4 @@ dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for xpdf
-KPSE_WITH_LIB([xpdf], , [tree])
+KPSE_WITH_LIB([xpdf])

@@ -40,8 +40,6 @@ AC_DEFUN([KPSE_FREETYPE2_SYSTEM_FLAGS],
 if test -n `$FT2_CONFIG --ftversion 2>/dev/null`; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
-else
-  AC_MSG_ERROR([Can not use installed freetype2 headers and library])
 fi
 ]) # KPSE_FREETYPE2_SYSTEM_FLAGS
 

@@ -822,6 +822,7 @@ XPDF_RULE
 XPDF_DEPEND
 XPDF_LIBS
 XPDF_INCLUDES
+PKG_CONFIG
 LIBPNG_RULE
 LIBPNG_DEPEND
 LIBPNG_LIBS
@@ -1066,6 +1067,7 @@ with_zlib_libdir
 with_system_libpng
 with_libpng_includes
 with_libpng_libdir
+with_system_xpdf
 with_system_graphite
 with_graphite_includes
 with_graphite_libdir
@@ -1782,6 +1784,8 @@ Optional Packages:
                           libpng headers installed in DIR
   --with-libpng-libdir=DIR
                           libpng library installed in DIR
+  --with-system-xpdf      use installed poppler headers and library instead of
+                          xpdf (requires pkg-config)
   --with-system-graphite  use installed graphite headers and library
   --with-graphite-includes=DIR
                           graphite headers installed in DIR
@@ -4402,13 +4406,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4405: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4409: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4408: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4412: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4411: output\"" >&5)
+  (eval echo "\"\$as_me:4415: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5614,7 +5618,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5617 "configure"' > conftest.$ac_ext
+  echo '#line 5621 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7661,11 +7665,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7664: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7668: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7668: \$? = $ac_status" >&5
+   echo "$as_me:7672: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8000,11 +8004,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8003: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8007: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8007: \$? = $ac_status" >&5
+   echo "$as_me:8011: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8105,11 +8109,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8108: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8112: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8112: \$? = $ac_status" >&5
+   echo "$as_me:8116: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8160,11 +8164,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8163: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8167: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8167: \$? = $ac_status" >&5
+   echo "$as_me:8171: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10960,7 +10964,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10963 "configure"
+#line 10967 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11056,7 +11060,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11059 "configure"
+#line 11063 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16072,11 +16076,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16075: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16079: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16079: \$? = $ac_status" >&5
+   echo "$as_me:16083: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16171,11 +16175,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16174: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16178: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16178: \$? = $ac_status" >&5
+   echo "$as_me:16182: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16223,11 +16227,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16226: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16230: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16230: \$? = $ac_status" >&5
+   echo "$as_me:16234: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -23656,7 +23660,113 @@ ${top_builddir}/../../libs/libpng/png.h ${top_builddir}/../../libs/libpng/pngcon
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS)'
 fi
 
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_PKG_CONFIG+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$PKG_CONFIG"; then
+  ac_cv_prog_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_PKG_CONFIG="${ac_tool_prefix}pkg-config"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+PKG_CONFIG=$ac_cv_prog_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { $as_echo "$as_me:$LINENO: result: $PKG_CONFIG" >&5
+$as_echo "$PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_PKG_CONFIG"; then
+  ac_ct_PKG_CONFIG=$PKG_CONFIG
+  # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ac_ct_PKG_CONFIG+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_PKG_CONFIG"; then
+  ac_cv_prog_ac_ct_PKG_CONFIG="$ac_ct_PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_PKG_CONFIG="pkg-config"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_PKG_CONFIG=$ac_cv_prog_ac_ct_PKG_CONFIG
+if test -n "$ac_ct_PKG_CONFIG"; then
+  { $as_echo "$as_me:$LINENO: result: $ac_ct_PKG_CONFIG" >&5
+$as_echo "$ac_ct_PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_PKG_CONFIG" = x; then
+    PKG_CONFIG="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:$LINENO: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    PKG_CONFIG=$ac_ct_PKG_CONFIG
+  fi
+else
+  PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
+fi
+
 ## _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags
+
+# Check whether --with-system-xpdf was given.
+if test "${with_system_xpdf+set}" = set; then
+  withval=$with_system_xpdf;
+fi
+if test "x$with_system_xpdf" = xyes; then
+  if $PKG_CONFIG poppler --atleast-version=0.10; then
+  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+  XPDF_INCLUDES=`$PKG_CONFIG poppler --cflags`
+  XPDF_INCLUDES=`echo $XPDF_INCLUDES`
+  XPDF_INCLUDES="$POPPLER_VERSION $XPDF_INCLUDES $XPDF_INCLUDES/goo"
+  XPDF_LIBS=`$PKG_CONFIG poppler --libs`
+fi
+else
   XPDF_INCLUDES=`echo '-DPDF_PARSER_ONLY -IBLD/libs/xpdf -IBLD/libs/xpdf/goo -IBLD/libs/xpdf/fofi -IBLD/libs/xpdf/xpdf' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
@@ -23670,6 +23780,7 @@ $(XPDF_DEPEND): ${top_builddir}/../../libs/xpdf/xpdf/Stream.h
 	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS)
 ${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
 	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS)'
+fi
 
 ## _KPSE_LIB_FLAGS: Setup graphite (-lgraphite) flags
 
@@ -23811,10 +23922,6 @@ if test "x$with_system_freetype2" = xyes; then
   if test -n `$FT2_CONFIG --ftversion 2>/dev/null`; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
-else
-  { { $as_echo "$as_me:$LINENO: error: Can not use installed freetype2 headers and library" >&5
-$as_echo "$as_me: error: Can not use installed freetype2 headers and library" >&2;}
-   { (exit 1); exit 1; }; }
 fi
 else
   FREETYPE2_INCLUDES=`echo 'BLD/libs/freetype2' | sed \

@@ -779,6 +779,7 @@ with_graphite
 with_system_graphite
 with_graphite_includes
 with_graphite_libdir
+with_system_xpdf
 with_system_gd
 with_gd_includes
 with_gd_libdir
@@ -1556,6 +1557,8 @@ Optional Packages:
                           graphite headers installed in DIR
   --with-graphite-libdir=DIR
                           graphite library installed in DIR
+  --with-system-xpdf      use installed poppler headers and library instead of
+                          xpdf (requires pkg-config)
   --with-system-gd        use installed gd headers and library
   --with-gd-includes=DIR  gd headers installed in DIR
   --with-gd-libdir=DIR    gd library installed in DIR
@@ -3303,6 +3306,23 @@ fi
 
 ## libs/xpdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 ## configure options and TL libraries required for xpdf
+
+# Check whether --with-system-xpdf was given.
+if test "${with_system_xpdf+set}" = set; then
+  withval=$with_system_xpdf;
+fi
+if test "x$with_system_xpdf" = x; then
+  if test -f $srcdir/../libs/xpdf/configure; then
+    { $as_echo "$as_me:$LINENO: Assuming \`xpdf' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`xpdf' headers and library from TL tree" >&6;}
+    with_system_xpdf=no
+  else
+    { $as_echo "$as_me:$LINENO: Assuming installed \`xpdf' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`xpdf' headers and library" >&6;}
+    with_system_xpdf=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-xpdf=$with_system_xpdf'"
+fi
 
 
 ## libs/gd/kpse/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
