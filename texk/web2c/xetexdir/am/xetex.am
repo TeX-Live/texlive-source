@@ -32,8 +32,8 @@ libxetex += libxetexmm.a
 else !XETEX_MACOSX
 
 xetex_cppflags += -DXETEX_OTHER
-xetex_cppflags += $(FONTCONFIG_INCLUDES) $(XPDF_INCLUDES) $(LIBPNG_INCLUDES)
-xetex_ldadd += $(FONTCONFIG_LIBS) $(XPDF_LIBS) $(LIBPNG_LIBS)
+xetex_cppflags += $(XPDF_INCLUDES) $(LIBPNG_INCLUDES) $(FONTCONFIG_INCLUDES)
+xetex_ldadd += $(XPDF_LIBS) $(LIBPNG_LIBS) $(FONTCONFIG_LIBS)
 xetex_dependencies += $(XPDF_DEPEND) $(LIBPNG_DEPEND)
 
 endif !XETEX_MACOSX
