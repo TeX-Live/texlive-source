@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory utils/psutils/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 OS = UNIX
 PAPER = a4
@@ -133,6 +137,3 @@ EXTRA_DIST += \
 	md68_0.ps \
 	md71_0.ps
 
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig

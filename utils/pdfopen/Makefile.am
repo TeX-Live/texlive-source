@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory utils/pdfopen/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES = $(X_CFLAGS)
 
@@ -10,8 +14,4 @@ pdfopen_SOURCES = pdfopen.c sendx.c
 pdfclose_SOURCES = pdfclose.c sendx.c
 
 EXTRA_DIST = xpdfopen.pdf xpdfopen.tex
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.am.orig configure.ac.orig
 

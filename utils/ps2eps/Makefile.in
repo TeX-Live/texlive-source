@@ -41,7 +41,8 @@ DIST_COMMON = $(am__configure_deps) $(dist_bin_SCRIPTS) \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap install-sh
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog \
+	install-sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -170,8 +171,13 @@ top_srcdir = @top_srcdir@
 bbox_SOURCES = bbox.c
 dist_bin_SCRIPTS = ps2eps
 dist_man1_MANS = bbox.1 ps2eps.1
-EXTRA_DIST = Changes.txt INSTALL.txt LICENSE.txt Latest_is_1.64 \
-	README.txt Makefile.in.orig configure.in.orig
+EXTRA_DIST = \
+	Changes.txt  \
+	INSTALL.txt  \
+	LICENSE.txt  \
+	Latest_is_1.64  \
+	README.txt
+
 all: all-am
 
 .SUFFIXES:

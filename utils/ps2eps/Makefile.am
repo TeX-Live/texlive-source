@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory utils/ps2eps/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 bin_PROGRAMS = bbox
 
@@ -13,8 +17,4 @@ EXTRA_DIST = \
 	LICENSE.txt  \
 	Latest_is_1.64  \
 	README.txt
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
 

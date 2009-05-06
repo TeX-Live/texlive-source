@@ -248,8 +248,7 @@ pstops_SOURCES = \
 EXTRA_DIST = LICENSE $(perl_scripts:=.pl) $(shell_scripts:=.sh) \
 	$(nodist_man1_MANS:.1=.man) maketext Makefile.bcc Makefile.msc \
 	Makefile.nt Makefile.os2 Makefile.sc Makefile.unix \
-	Makefile.wat descrip.mms md68_0.ps md71_0.ps Makefile.in.orig \
-	configure.in.orig
+	Makefile.wat descrip.mms md68_0.ps md71_0.ps
 perl_scripts = extractres fixdlsrps fixfmps fixmacps fixpsditps fixpspps \
 	fixscribeps fixtpps fixwfwps fixwpps fixwwps includeres psmerge
 
