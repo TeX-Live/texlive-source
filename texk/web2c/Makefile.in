@@ -1117,29 +1117,29 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	xetexdir/xetex.defines xetexdir/xetexextra.in \
 	xetexdir/pool2c.pl xetexdir/unicode-char-prep.pl \
 	xetexdir/appleGlyphNames.c xetexdir/XeTeXFontMgr_Mac.mm \
-	xetexdir/LICENSE.txt xetexdir/acx_pthread.m4 \
-	xetexdir/am/xetex.mk xetexdir/tests.ac xetexdir/withenable.ac \
-	xetexdir/xetex.mk omegaware/ChangeLog $(odvicopy_sources) \
-	$(odvitype_sources) $(ofm2opl_sources) $(opl2ofm_sources) \
-	$(otangle_sources) $(ovf2ovp_sources) $(ovp2ovf_sources) \
-	$(aleph_web_srcs) $(aleph_ch_srcs) lib/texmfmp.c \
-	alephdir/ChangeLog alephdir/Makefile alephdir/aleph.defines \
-	alephdir/aleph.version alephdir/eomega.ech alephdir/etex.ch \
-	alephdir/omega.ch0 alephdir/omega.ch1 alephdir/omega.ch2 \
-	alephdir/omxml.ch alephdir/aleph.mk synctexdir/INSTALL \
-	synctexdir/Makefile synctexdir/Makefile.in \
-	synctexdir/README.txt synctexdir/synctex-common.h \
-	synctexdir/synctex-convert.sh synctexdir/synctex.c \
-	synctexdir/synctex.defines synctexdir/synctex.h \
-	synctexdir/synctex-mem.ch0 synctexdir/synctex-mem.ch1 \
-	synctexdir/synctex-mem.ch2 synctexdir/synctex-rec.ch0 \
-	synctexdir/synctex-rec.ch1 synctexdir/synctex-rec.ch2 \
-	synctexdir/synctex-e-mem.ch0 synctexdir/synctex-e-mem.ch1 \
-	synctexdir/synctex-e-rec.ch0 synctexdir/synctex-e-rec.ch1 \
-	synctexdir/synctex-pdf-rec.ch2 synctexdir/synctex-xe-mem.ch2 \
-	synctexdir/synctex-xe-rec.ch2 synctexdir/synctex-xe-rec.ch3 \
-	synctexdir/synctex.mk fmtutil.in Makefile.in.orig \
-	configure.in.orig
+	xetexdir/ChangeLog xetexdir/LICENSE.txt \
+	xetexdir/acx_pthread.m4 xetexdir/tests.ac \
+	xetexdir/withenable.ac xetexdir/xetex.mk omegaware/ChangeLog \
+	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
+	$(opl2ofm_sources) $(otangle_sources) $(ovf2ovp_sources) \
+	$(ovp2ovf_sources) $(aleph_web_srcs) $(aleph_ch_srcs) \
+	lib/texmfmp.c alephdir/ChangeLog alephdir/Makefile \
+	alephdir/aleph.defines alephdir/aleph.version \
+	alephdir/eomega.ech alephdir/etex.ch alephdir/omega.ch0 \
+	alephdir/omega.ch1 alephdir/omega.ch2 alephdir/omxml.ch \
+	alephdir/aleph.mk synctexdir/INSTALL synctexdir/Makefile \
+	synctexdir/Makefile.in synctexdir/README.txt \
+	synctexdir/synctex-common.h synctexdir/synctex-convert.sh \
+	synctexdir/synctex.c synctexdir/synctex.defines \
+	synctexdir/synctex.h synctexdir/synctex-mem.ch0 \
+	synctexdir/synctex-mem.ch1 synctexdir/synctex-mem.ch2 \
+	synctexdir/synctex-rec.ch0 synctexdir/synctex-rec.ch1 \
+	synctexdir/synctex-rec.ch2 synctexdir/synctex-e-mem.ch0 \
+	synctexdir/synctex-e-mem.ch1 synctexdir/synctex-e-rec.ch0 \
+	synctexdir/synctex-e-rec.ch1 synctexdir/synctex-pdf-rec.ch2 \
+	synctexdir/synctex-xe-mem.ch2 synctexdir/synctex-xe-rec.ch2 \
+	synctexdir/synctex-xe-rec.ch3 synctexdir/synctex.mk fmtutil.in \
+	Makefile.in.orig configure.in.orig
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c stamp-tangle tangleboot.c tangleboot.h ctangle.c \
 	cweb.c stamp-ctangle cftest.p $(web_programs:=.c) \

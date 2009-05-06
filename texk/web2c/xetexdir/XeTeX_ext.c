@@ -33,7 +33,14 @@ authorization from SIL International.
  */
 
 #ifdef XETEX_OTHER
+#ifdef POPPLER_VERSION
+#define xpdfVersion POPPLER_VERSION
+#define xpdfString "poppler"
+#include "poppler-config.h"
+#else
+#define xpdfString "xpdf"
 #include "xpdf/config.h"
+#endif
 #include "png.h"
 #endif
 
@@ -190,7 +197,7 @@ void initversionstring(char **versions)
 #else
 		"Compiled with fontconfig version %d.%d.%d; using %d.%d.%d\n"
 		"Compiled with libpng version %s; using %s\n"
-		"Compiled with xpdf version %s\n"
+		"Compiled with %s version %s\n"
 #endif
 		;
 
@@ -201,6 +208,7 @@ void initversionstring(char **versions)
 #ifdef XETEX_OTHER
 			+ strlen(PNG_LIBPNG_VER_STRING)
 			+ strlen(png_libpng_ver)
+			+ strlen(xpdfString)
 			+ strlen(xpdfVersion)
 			+ 6 * 3 /* for fontconfig version #s (won't really need 3 digits per field!) */
 #endif
@@ -226,7 +234,7 @@ void initversionstring(char **versions)
 		FC_VERSION / 10000, (FC_VERSION % 10000) / 100, FC_VERSION % 100,
 		fc_version / 10000, (fc_version % 10000) / 100, fc_version % 100,
 		PNG_LIBPNG_VER_STRING, png_libpng_ver,
-		xpdfVersion
+		xpdfString, xpdfVersion
 #endif
 		);
 }

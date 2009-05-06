@@ -1,3 +1,9 @@
+2009-05-05  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* image/pdftoepdf.cc, utils/utils.c: adapt for poppler.
+
+	patches from Norbert Preinig <preining@logic.at>
+
 2009-04-27  Taco Hoekwater <taco@luatex.org>
 
 	* pdf/pdfpage.c: rename exp10 to exp10_arr to solve a 

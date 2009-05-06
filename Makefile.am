@@ -10,6 +10,7 @@ DISTCHECK_CONFIGURE_FLAGS = -C
 
 EXTRA_DIST = \
 	Build \
+	README.config \
 	README.cross \
 	README.layout \
 	build-aux/README.TL \
@@ -26,12 +27,12 @@ SUBDIRS =
 endif !build_kpathsea
 SUBDIRS += libs utils texk
 
-## This is the default target for the Build script in TeX Live.
+# This is the default target for the Build script in TeX Live.
+#
+# run texlinks here since the binaries won't be there 
+# at install-data, and fmtutil.cnf won't be there at install-exec,
+# and there is no install-hook or install-local.
 world: install-strip
-##
-## run texlinks here since the binaries won't be there 
-## at install-data, and fmtutil.cnf won't be there at install-exec,
-## and there is no hook or -local for install.
 	echo "top-level make $@: running texlinks ..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 ##

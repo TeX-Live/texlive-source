@@ -1,0 +1,6 @@
+2009-05-05  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* XeTeX_ext.c, image/pdfimage.cpp: adapt for poppler.
+
+	patches from Norbert Preinig <preining@logic.at>
+

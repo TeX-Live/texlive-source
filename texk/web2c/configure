@@ -23761,13 +23761,11 @@ fi
 if test "x$with_system_xpdf" = xyes; then
   if $PKG_CONFIG poppler --atleast-version=0.10; then
   POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-  XPDF_INCLUDES=`$PKG_CONFIG poppler --cflags`
-  XPDF_INCLUDES=`echo $XPDF_INCLUDES`
-  XPDF_INCLUDES="$POPPLER_VERSION $XPDF_INCLUDES $XPDF_INCLUDES/goo"
+  XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
   XPDF_LIBS=`$PKG_CONFIG poppler --libs`
 fi
 else
-  XPDF_INCLUDES=`echo '-DPDF_PARSER_ONLY -IBLD/libs/xpdf -IBLD/libs/xpdf/goo -IBLD/libs/xpdf/fofi -IBLD/libs/xpdf/xpdf' | sed \
+  XPDF_INCLUDES=`echo '-DPDF_PARSER_ONLY -IBLD/libs/xpdf -IBLD/libs/xpdf/goo -IBLD/libs/xpdf/xpdf' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   XPDF_LIBS=`echo 'BLD/libs/xpdf/libxpdf.a' | sed \

@@ -218,6 +218,9 @@ libxetexmm_a_SOURCES = \
 ## included by xetexdir/XeTeXFontMgr_Mac.cpp
 EXTRA_DIST += xetexdir/XeTeXFontMgr_Mac.mm
 
+EXTRA_DIST += \
+	xetexdir/ChangeLog
+
 ## Not used
 ##
 EXTRA_DIST += \
@@ -227,7 +230,6 @@ EXTRA_DIST += \
 ##
 EXTRA_DIST += \
 	xetexdir/acx_pthread.m4 \
-	xetexdir/am/xetex.mk \
 	xetexdir/tests.ac \
 	xetexdir/withenable.ac \
 	xetexdir/xetex.mk

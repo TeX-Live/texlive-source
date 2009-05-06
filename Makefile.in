@@ -283,6 +283,7 @@ ACLOCAL_AMFLAGS = -I m4
 DISTCHECK_CONFIGURE_FLAGS = -C
 EXTRA_DIST = \
 	Build \
+	README.config \
 	README.cross \
 	README.layout \
 	build-aux/README.TL \
@@ -727,6 +728,11 @@ uninstall-am:
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
+# This is the default target for the Build script in TeX Live.
+#
+# run texlinks here since the binaries won't be there 
+# at install-data, and fmtutil.cnf won't be there at install-exec,
+# and there is no install-hook or install-local.
 world: install-strip
 	echo "top-level make $@: running texlinks ..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks

@@ -1,3 +1,9 @@
+2009-05-05  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* pdftoepdf.cc, pdftosrc.cc, utils.c: adapt for poppler.
+
+	patches from Norbert Preinig <preining@logic.at>
+
 2009-02-18  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* pdftoepdf.cc: Uninclude <config.h>, included later by "epdf.h".

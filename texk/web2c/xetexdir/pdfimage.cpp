@@ -11,10 +11,20 @@
 
 #include "pdfimage.h"
 
+#ifdef POPPLER_VERSION
+#include <dirent.h>
+#include <poppler-config.h>
+#include <goo/GooString.h>
+#include <goo/gmem.h>
+#include <goo/gfile.h>
+#define GString GooString
+#else
+#include "goo/GString.h"
+#endif
+
 #include "PDFDoc.h"
 #include "Catalog.h"
 #include "Page.h"
-#include "GString.h"
 
 #include "XeTeX_ext.h"
 
