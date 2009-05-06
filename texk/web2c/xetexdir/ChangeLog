@@ -1,3 +1,8 @@
+2009-05-06  Karl Berry  <karl@tug.org>
+
+	* jpegimage.c: #include <stdlib.h> and <string.h>
+	instead of <memory.h>.
+
 2009-05-05  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* am/xetex.am: in CPPFLAGS define U_STATIC_IMPLEMENTATION

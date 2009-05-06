@@ -1,6 +1,6 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- copyright (c) 1994-2006 by SIL International
+ copyright (c) 1994-2009 by SIL International
  written by Jonathan Kew
 
     This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,8 @@
 
 #include "jpegimage.h"
 
-#include <memory.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "kpathsea/lib.h" /* for xmalloc/xrealloc prototypes */
 
