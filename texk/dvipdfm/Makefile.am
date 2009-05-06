@@ -2,7 +2,7 @@
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
+AM_CPPFLAGS = -DHAVE_KPATHSEA
 
 ## FIXME: don't install ebb (use compatible version in dvipdfmx)
 

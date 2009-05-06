@@ -255,7 +255,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
+AM_CPPFLAGS = -DHAVE_KPATHSEA
 dvipdfm_SOURCES = colors.h colorsp.c colorsp.h dvi.c dvi.h dvicodes.h \
 	dvipdfm.c dvipdfm.h encodings.c encodings.h error.h epdf.c \
 	epdf.h htex.c htex.h jpeg.c jpeg.h macglyphs.h mem.c mem.h \
