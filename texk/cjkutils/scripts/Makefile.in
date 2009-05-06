@@ -190,7 +190,6 @@ dist_bin_SCRIPTS = \
 	sjislatex \
 	sjispdflatex
 
-EXTRA_DIST = Makefile.in.orig
 all: all-am
 
 .SUFFIXES:

@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/cjkutils/hbf2gf/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -Dunix -DHAVE_LIBKPATHSEA $(XX_CPPFLAGS)
@@ -27,7 +31,7 @@ EXTRA_DIST = $(CWEB_SRC) $(CWEB_TEX) $(CWEB_DVI) cfg
 
 CLEANFILES = hbf2gf.log hbf2gf.toc
 
-hbf2gf.dvi: hbf2gf.tex hbf2gf.idx hbf2gf.scn
+hbf2gf.dvi: $(CWEB_TEX)
 	TEXINPUTS=.:$(srcdir):$$TEXINPUTS $(TEX) hbf2gf.tex
 
 # Running cweave in order to create hbf2gf.tex generates in addition
@@ -48,7 +52,7 @@ else
 all-local:
 endif
 
-## Not yet used
+## Not used
 ##
 EXTRA_DIST += \
 	emdir.c \
@@ -56,16 +60,4 @@ EXTRA_DIST += \
 	emtexdir.c \
 	emtexdir.h \
 	hbf2gf.def
-
-## Eventually delete these files
-##
-EXTRA_DIST += \
-	Makefile.in.orig \
-	c-auto.in \
-	config.guess \
-	config.sub \
-	configure \
-	configure.ac \
-	install-sh \
-	mkinstalldirs
 

@@ -1,3 +1,7 @@
+2009-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
 2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: Use AC_CONFIG_FILES([Makefile]) instead of

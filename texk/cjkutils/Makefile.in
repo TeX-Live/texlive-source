@@ -205,7 +205,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = conv hbf2gf scripts
-EXTRA_DIST = bat Makefile.in.orig configure.in.orig
+EXTRA_DIST = bat
 all: all-recursive
 
 .SUFFIXES:
@@ -640,6 +640,7 @@ uninstall-am:
 	tags tags-recursive uninstall uninstall-am
 
 
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
