@@ -27,6 +27,9 @@ fi
 # allow override of make program.
 : ${TL_MAKE=make}
 
+# make flags
+: ${TL_MAKE_FLAGS=}
+
 # and then also set GNUMAKE to that, for the sake of freetype2/configure.
 : ${GNUMAKE=${TL_MAKE}}
 export GNUMAKE
@@ -104,7 +107,7 @@ cd $TL_WORKDIR || exit 1
         $TL_CONF_XINDY \
         $TL_CONFIGURE_ARGS \
         "$@" \
-  && eval $TL_BUILD_ENV time $TL_MAKE $TL_TARGET
+  && eval $TL_BUILD_ENV time $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET
   
   # Too arcane to try to propagate the exit status through a pipeline.
   # Just use a temp file.
