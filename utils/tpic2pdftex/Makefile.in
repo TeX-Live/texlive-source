@@ -32,13 +32,14 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(dist_bin_SCRIPTS) \
-	$(dist_man1_MANS) $(srcdir)/../../build-aux/install-sh \
+	$(dist_check_SCRIPTS) $(dist_man1_MANS) \
+	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap install-sh
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -140,8 +141,16 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 dist_bin_SCRIPTS = tpic2pdftex
 dist_man1_MANS = tpic2pdftex.1
-EXTRA_DIST = beamerexample.pic example.pic Makefile.in.orig \
-	Makefile.orig configure.ac.orig
+pic_files = beamerexample.pic example.pic
+tpic_files = $(pic_files:.pic=.tpic)
+tex_files = $(pic_files:.pic=.tex)
+pdf_files = $(pic_files:.pic=.pdf)
+dist_check_SCRIPTS = tpic2pdftex.test
+TESTS = tpic2pdftex.test
+exp_files = $(pic_files:.pic=.exp)
+CLEANFILES = $(pic_files:.pic=.log) *.aux *.nav *.out *.snm *.toc
+DISTCLEANFILES = $(pdf_files) $(tex_files) $(tpic_files)
+EXTRA_DIST = $(exp_files) $(pic_files)
 all: all-am
 
 .SUFFIXES:
@@ -236,6 +245,92 @@ TAGS:
 ctags: CTAGS
 CTAGS:
 
+
+check-TESTS: $(TESTS)
+	@failed=0; all=0; xfail=0; xpass=0; skip=0; \
+	srcdir=$(srcdir); export srcdir; \
+	list=' $(TESTS) '; \
+	if test -n "$$list"; then \
+	  for tst in $$list; do \
+	    if test -f ./$$tst; then dir=./; \
+	    elif test -f $$tst; then dir=; \
+	    else dir="$(srcdir)/"; fi; \
+	    if $(TESTS_ENVIRONMENT) $${dir}$$tst; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *[\ \	]$$tst[\ \	]*) \
+		xpass=`expr $$xpass + 1`; \
+		failed=`expr $$failed + 1`; \
+		echo "XPASS: $$tst"; \
+	      ;; \
+	      *) \
+		echo "PASS: $$tst"; \
+	      ;; \
+	      esac; \
+	    elif test $$? -ne 77; then \
+	      all=`expr $$all + 1`; \
+	      case " $(XFAIL_TESTS) " in \
+	      *[\ \	]$$tst[\ \	]*) \
+		xfail=`expr $$xfail + 1`; \
+		echo "XFAIL: $$tst"; \
+	      ;; \
+	      *) \
+		failed=`expr $$failed + 1`; \
+		echo "FAIL: $$tst"; \
+	      ;; \
+	      esac; \
+	    else \
+	      skip=`expr $$skip + 1`; \
+	      echo "SKIP: $$tst"; \
+	    fi; \
+	  done; \
+	  if test "$$all" -eq 1; then \
+	    tests="test"; \
+	    All=""; \
+	  else \
+	    tests="tests"; \
+	    All="All "; \
+	  fi; \
+	  if test "$$failed" -eq 0; then \
+	    if test "$$xfail" -eq 0; then \
+	      banner="$$All$$all $$tests passed"; \
+	    else \
+	      if test "$$xfail" -eq 1; then failures=failure; else failures=failures; fi; \
+	      banner="$$All$$all $$tests behaved as expected ($$xfail expected $$failures)"; \
+	    fi; \
+	  else \
+	    if test "$$xpass" -eq 0; then \
+	      banner="$$failed of $$all $$tests failed"; \
+	    else \
+	      if test "$$xpass" -eq 1; then passes=pass; else passes=passes; fi; \
+	      banner="$$failed of $$all $$tests did not behave as expected ($$xpass unexpected $$passes)"; \
+	    fi; \
+	  fi; \
+	  dashes="$$banner"; \
+	  skipped=""; \
+	  if test "$$skip" -ne 0; then \
+	    if test "$$skip" -eq 1; then \
+	      skipped="($$skip test was not run)"; \
+	    else \
+	      skipped="($$skip tests were not run)"; \
+	    fi; \
+	    test `echo "$$skipped" | wc -c` -le `echo "$$banner" | wc -c` || \
+	      dashes="$$skipped"; \
+	  fi; \
+	  report=""; \
+	  if test "$$failed" -ne 0 && test -n "$(PACKAGE_BUGREPORT)"; then \
+	    report="Please report to $(PACKAGE_BUGREPORT)"; \
+	    test `echo "$$report" | wc -c` -le `echo "$$banner" | wc -c` || \
+	      dashes="$$report"; \
+	  fi; \
+	  dashes=`echo "$$dashes" | sed s/./=/g`; \
+	  echo "$$dashes"; \
+	  echo "$$banner"; \
+	  test -z "$$skipped" || echo "$$skipped"; \
+	  test -z "$$report" || echo "$$report"; \
+	  echo "$$dashes"; \
+	  test "$$failed" -eq 0; \
+	else :; fi
 
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
@@ -369,6 +464,8 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(dist_check_SCRIPTS)
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 all-am: Makefile $(SCRIPTS) $(MANS)
 installdirs:
@@ -392,9 +489,11 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -460,20 +559,37 @@ uninstall-man: uninstall-man1
 
 .MAKE: install-am install-strip
 
-.PHONY: all all-am am--refresh check check-am clean clean-generic dist \
-	dist-all dist-bzip2 dist-gzip dist-lzma dist-shar dist-tarZ \
-	dist-zip distcheck distclean distclean-generic distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-data install-data-am \
-	install-dist_binSCRIPTS install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-dist_binSCRIPTS uninstall-man uninstall-man1
+.PHONY: all all-am am--refresh check check-TESTS check-am clean \
+	clean-generic dist dist-all dist-bzip2 dist-gzip dist-lzma \
+	dist-shar dist-tarZ dist-zip distcheck distclean \
+	distclean-generic distcleancheck distdir distuninstallcheck \
+	dvi dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dist_binSCRIPTS \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-man1 install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
+	uninstall-am uninstall-dist_binSCRIPTS uninstall-man \
+	uninstall-man1
 
+
+doc: $(pdf_files)
+
+example.pdf: example.tex
+	pdftex $<
+
+beamerexample.pdf: beamerexample.tex
+	pdflatex $<
+
+%.tex: %.tpic
+	$(srcdir)/tpic2pdftex $< > $@
+
+$(tpic_files): Makefile
+
+%.tpic: %.pic
+	pic -z -t $< > $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

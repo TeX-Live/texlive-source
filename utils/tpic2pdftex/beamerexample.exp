@@ -1,0 +1,528 @@
+%$Id: beamerexample.pic,v 1.3 2004/04/13 21:36:47 hahe Exp hahe $
+\documentclass{beamer}
+\beamertemplatenavigationsymbolsempty
+\newcommand\gpicbox[1]{\vbox{\unvcopy\csname #1\endcsname\kern0pt}}
+%***********************************************************************
+\begin{document}
+
+\section{PDF File Generation}
+
+\frame{
+\frametitle{How a PDF File is generated\ldots}
+\expandafter\ifx\csname graph\endcsname\relax
+   \csname newbox\expandafter\endcsname\csname graph\endcsname
+\fi
+\ifx\graphtemp\undefined
+  \csname newdimen\endcsname\graphtemp
+\fi
+\expandafter\setbox\csname graph\endcsname
+ =\vtop{\vskip 0pt\hbox{%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.576 w
+141.12 -9 m
+141.12 -13.970563 128.225801 -18 112.32 -18 c
+96.414199 -18 83.52 -13.970563 83.52 -9 c
+83.52 -4.029437 96.414199 0 112.32 0 c
+128.225801 0 141.12 -4.029437 141.12 -9 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.125in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily foo.tex}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+114.12 -25.2 m
+112.32 -32.4 l
+110.52 -25.2 l
+114.12 -25.2 l
+B Q
+0.576 w
+112.32 -18 m
+112.32 -25.2 l
+S
+83.52 -46.8 m
+141.12 -46.8 l
+141.12 -32.4 l
+83.52 -32.4 l
+83.52 -46.8 l
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.550in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss tex\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+69.12 -39.6 m
+69.12 -44.570563 53.646961 -48.6 34.56 -48.6 c
+15.473039 -48.6 0 -44.570563 0 -39.6 c
+0 -34.629437 15.473039 -30.6 34.56 -30.6 c
+53.646961 -30.6 69.12 -34.629437 69.12 -39.6 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.550in
+    \rlap{\kern 0.480in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily $\ast$.tfm}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+76.32 -37.8 m
+83.52 -39.6 l
+76.32 -41.4 l
+76.32 -37.8 l
+B Q
+0.576 w
+69.12 -39.6 m
+76.32 -39.6 l
+S
+0.072 w
+q 0 g
+114.12 -54 m
+112.32 -61.2 l
+110.52 -54 l
+114.12 -54 l
+B Q
+0.576 w
+112.32 -46.8 m
+112.32 -54 l
+S
+141.12 -70.2 m
+141.12 -75.170563 128.225801 -79.2 112.32 -79.2 c
+96.414199 -79.2 83.52 -75.170563 83.52 -70.2 c
+83.52 -65.229437 96.414199 -61.2 112.32 -61.2 c
+128.225801 -61.2 141.12 -65.229437 141.12 -70.2 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.975in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily foo.dvi}\hss}}%
+\only<2-3>{%%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+114.12 -86.4 m
+112.32 -93.6 l
+110.52 -86.4 l
+114.12 -86.4 l
+B Q
+0.576 w
+112.32 -79.2 m
+112.32 -86.4 l
+S
+83.52 -108 m
+141.12 -108 l
+141.12 -93.6 l
+83.52 -93.6 l
+83.52 -108 l
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 1.400in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss dvips\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+69.12 -68.4 m
+69.12 -73.370563 53.646961 -77.4 34.56 -77.4 c
+15.473039 -77.4 0 -73.370563 0 -68.4 c
+0 -63.429437 15.473039 -59.4 34.56 -59.4 c
+53.646961 -59.4 69.12 -63.429437 69.12 -68.4 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.950in
+    \rlap{\kern 0.480in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily $\ast$.vf}, {\ttfamily $\ast$.tfm}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+69.12 -113.4 m
+69.12 -129.305801 53.646961 -142.2 34.56 -142.2 c
+15.473039 -142.2 0 -129.305801 0 -113.4 c
+0 -97.494199 15.473039 -84.6 34.56 -84.6 c
+53.646961 -84.6 69.12 -97.494199 69.12 -113.4 c
+S
+Q
+}%
+    \graphtemp=\baselineskip
+    \multiply\graphtemp by -1
+    \divide\graphtemp by 2
+    \advance\graphtemp by .5ex
+    \advance\graphtemp by 1.575in
+    \rlap{\kern 0.480in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily psfonts.map}\hss}}%
+    \graphtemp=\baselineskip
+    \multiply\graphtemp by 1
+    \divide\graphtemp by 2
+    \advance\graphtemp by .5ex
+    \advance\graphtemp by 1.575in
+    \rlap{\kern 0.480in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily $\ast$.enc}, {\ttfamily $\ast$.pfb}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+82.368 -86.256 m
+83.52 -93.6 l
+79.056 -87.696 l
+82.368 -86.256 l
+B Q
+0.576 w
+69.12 -68.4 m
+70.92 -68.4 l
+72.144 -68.4 74.40192 -72.32832 77.976 -80.676 c
+83.232 -92.952 l
+S
+0.072 w
+q 0 g
+76.248 -109.584 m
+83.52 -108 l
+77.904 -112.824 l
+76.248 -109.584 l
+B Q
+0.576 w
+69.12 -113.4 m
+70.92 -113.4 l
+72.144 -113.4 74.34432 -112.58208 77.796 -110.844 c
+82.872 -108.288 l
+S
+0.072 w
+q 0 g
+114.12 -115.2 m
+112.32 -122.4 l
+110.52 -115.2 l
+114.12 -115.2 l
+B Q
+0.576 w
+112.32 -108 m
+112.32 -115.2 l
+S
+141.12 -131.4 m
+141.12 -136.370563 128.225801 -140.4 112.32 -140.4 c
+96.414199 -140.4 83.52 -136.370563 83.52 -131.4 c
+83.52 -126.429437 96.414199 -122.4 112.32 -122.4 c
+128.225801 -122.4 141.12 -126.429437 141.12 -131.4 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 1.825in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily foo.ps}\hss}}%
+\relax}%%
+\only<3>{%%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+114.12 -147.6 m
+112.32 -154.8 l
+110.52 -147.6 l
+114.12 -147.6 l
+B Q
+0.576 w
+112.32 -140.4 m
+112.32 -147.6 l
+S
+83.52 -169.2 m
+141.12 -169.2 l
+141.12 -154.8 l
+83.52 -154.8 l
+83.52 -169.2 l
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 2.250in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss ps2pdf\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+114.12 -176.4 m
+112.32 -183.6 l
+110.52 -176.4 l
+114.12 -176.4 l
+B Q
+0.576 w
+112.32 -169.2 m
+112.32 -176.4 l
+S
+141.12 -192.6 m
+141.12 -197.570563 128.225801 -201.6 112.32 -201.6 c
+96.414199 -201.6 83.52 -197.570563 83.52 -192.6 c
+83.52 -187.629437 96.414199 -183.6 112.32 -183.6 c
+128.225801 -183.6 141.12 -187.629437 141.12 -192.6 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 2.675in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily foo.pdf}\hss}}%
+\relax}%%
+\only<4-| handout:0>{%%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+114.12 -86.4 m
+112.32 -93.6 l
+110.52 -86.4 l
+114.12 -86.4 l
+B Q
+0.576 w
+112.32 -79.2 m
+112.32 -86.4 l
+S
+83.52 -108 m
+141.12 -108 l
+141.12 -93.6 l
+83.52 -93.6 l
+83.52 -108 l
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 1.400in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss dvipdfm\textcolor{black!50}{x}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+69.12 -68.4 m
+69.12 -73.370563 53.646961 -77.4 34.56 -77.4 c
+15.473039 -77.4 0 -73.370563 0 -68.4 c
+0 -63.429437 15.473039 -59.4 34.56 -59.4 c
+53.646961 -59.4 69.12 -63.429437 69.12 -68.4 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.950in
+    \rlap{\kern 0.480in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily $\ast$.vf}, {\ttfamily $\ast$.tfm}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+69.12 -113.4 m
+69.12 -129.305801 53.646961 -142.2 34.56 -142.2 c
+15.473039 -142.2 0 -129.305801 0 -113.4 c
+0 -97.494199 15.473039 -84.6 34.56 -84.6 c
+53.646961 -84.6 69.12 -97.494199 69.12 -113.4 c
+S
+Q
+}%
+    \graphtemp=\baselineskip
+    \multiply\graphtemp by -1
+    \divide\graphtemp by 2
+    \advance\graphtemp by .5ex
+    \advance\graphtemp by 1.575in
+    \rlap{\kern 0.480in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily psfonts.map}\hss}}%
+    \graphtemp=\baselineskip
+    \multiply\graphtemp by 1
+    \divide\graphtemp by 2
+    \advance\graphtemp by .5ex
+    \advance\graphtemp by 1.575in
+    \rlap{\kern 0.480in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily $\ast$.enc}, {\ttfamily $\ast$.pfb}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+82.368 -86.256 m
+83.52 -93.6 l
+79.056 -87.696 l
+82.368 -86.256 l
+B Q
+0.576 w
+69.12 -68.4 m
+70.92 -68.4 l
+72.144 -68.4 74.40192 -72.32832 77.976 -80.676 c
+83.232 -92.952 l
+S
+0.072 w
+q 0 g
+76.248 -109.584 m
+83.52 -108 l
+77.904 -112.824 l
+76.248 -109.584 l
+B Q
+0.576 w
+69.12 -113.4 m
+70.92 -113.4 l
+72.144 -113.4 74.34432 -112.58208 77.796 -110.844 c
+82.872 -108.288 l
+S
+0.072 w
+q 0 g
+114.12 -115.2 m
+112.32 -122.4 l
+110.52 -115.2 l
+114.12 -115.2 l
+B Q
+0.576 w
+112.32 -108 m
+112.32 -115.2 l
+S
+141.12 -131.4 m
+141.12 -136.370563 128.225801 -140.4 112.32 -140.4 c
+96.414199 -140.4 83.52 -136.370563 83.52 -131.4 c
+83.52 -126.429437 96.414199 -122.4 112.32 -122.4 c
+128.225801 -122.4 141.12 -126.429437 141.12 -131.4 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 1.825in
+    \rlap{\kern 1.560in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily foo.pdf}\hss}}%
+\relax}%%
+\only<5->{%%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+299.52 -9 m
+299.52 -13.970563 286.625801 -18 270.72 -18 c
+254.814199 -18 241.92 -13.970563 241.92 -9 c
+241.92 -4.029437 254.814199 0 270.72 0 c
+286.625801 0 299.52 -4.029437 299.52 -9 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.125in
+    \rlap{\kern 3.760in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily foo.tex}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+272.52 -25.2 m
+270.72 -32.4 l
+268.92 -25.2 l
+272.52 -25.2 l
+B Q
+0.576 w
+270.72 -18 m
+270.72 -25.2 l
+S
+241.92 -108 m
+299.52 -108 l
+299.52 -32.4 l
+241.92 -32.4 l
+241.92 -108 l
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.975in
+    \rlap{\kern 3.760in\lower\graphtemp\hbox to 0pt{\hss pdftex\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+227.52 -68.4 m
+227.52 -73.370563 212.046961 -77.4 192.96 -77.4 c
+173.873039 -77.4 158.4 -73.370563 158.4 -68.4 c
+158.4 -63.429437 173.873039 -59.4 192.96 -59.4 c
+212.046961 -59.4 227.52 -63.429437 227.52 -68.4 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 0.950in
+    \rlap{\kern 2.680in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily $\ast$.vf}, {\ttfamily $\ast$.tfm}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+234.72 -66.6 m
+241.92 -68.4 l
+234.72 -70.2 l
+234.72 -66.6 l
+B Q
+0.576 w
+227.52 -68.4 m
+234.72 -68.4 l
+S
+227.52 -113.4 m
+227.52 -129.305801 212.046961 -142.2 192.96 -142.2 c
+173.873039 -142.2 158.4 -129.305801 158.4 -113.4 c
+158.4 -97.494199 173.873039 -84.6 192.96 -84.6 c
+212.046961 -84.6 227.52 -97.494199 227.52 -113.4 c
+S
+Q
+}%
+    \graphtemp=\baselineskip
+    \multiply\graphtemp by -1
+    \divide\graphtemp by 2
+    \advance\graphtemp by .5ex
+    \advance\graphtemp by 1.575in
+    \rlap{\kern 2.680in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily pdftex.map}\hss}}%
+    \graphtemp=\baselineskip
+    \multiply\graphtemp by 1
+    \divide\graphtemp by 2
+    \advance\graphtemp by .5ex
+    \advance\graphtemp by 1.575in
+    \rlap{\kern 2.680in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily $\ast$.enc}, {\ttfamily $\ast$.pfb}\hss}}%
+\pdfliteral{
+q [] 0 d 1 J 1 j
+0.576 w
+0.072 w
+q 0 g
+234.648 -109.584 m
+241.92 -108 l
+236.304 -112.824 l
+234.648 -109.584 l
+B Q
+0.576 w
+227.52 -113.4 m
+229.32 -113.4 l
+230.544 -113.4 232.74432 -112.58208 236.196 -110.844 c
+241.272 -108.288 l
+S
+0.072 w
+q 0 g
+272.52 -115.2 m
+270.72 -122.4 l
+268.92 -115.2 l
+272.52 -115.2 l
+B Q
+0.576 w
+270.72 -108 m
+270.72 -115.2 l
+S
+299.52 -131.4 m
+299.52 -136.370563 286.625801 -140.4 270.72 -140.4 c
+254.814199 -140.4 241.92 -136.370563 241.92 -131.4 c
+241.92 -126.429437 254.814199 -122.4 270.72 -122.4 c
+286.625801 -122.4 299.52 -126.429437 299.52 -131.4 c
+S
+Q
+}%
+    \graphtemp=.5ex
+    \advance\graphtemp by 1.825in
+    \rlap{\kern 3.760in\lower\graphtemp\hbox to 0pt{\hss {\ttfamily foo.pdf}\hss}}%
+\relax}%%
+    \hbox{\vrule depth2.800in width0pt height 0pt}%
+    \kern 4.160in
+  }%
+}%
+
+\centering
+\leavevmode\gpicbox{graph}
+}
+
+\end{document}
