@@ -1,3 +1,14 @@
+2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
+	* configure.ac (AC_CONFIG_AUX_DIR): Use auxiliary files from
+	../../build-aux in TeX Live tree.
+
+	* Makefile.am, configure.ac: Use the Automake conditional
+	do_cweb for regeneration of vlna.{c,tex,dvi} from vlna.w;
+	thus, e.g., missing csplain does not disable maintainer mode.
+
 2008-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vlna.idx, vlna.scn (new): Add these files required to build
@@ -7,7 +18,7 @@
 2008-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vlna.dvi: new version from Zdenek, keep it here because it is
-	required for 'make dist (copy in Master/texmf/doc/vlna/).
+	required for 'make dist' (copy in Master/texmf/doc/vlna/).
 
 2008-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -18,3 +29,4 @@
 
 	Autoconfiscated vlna-1.2, imported from
 	ftp://math.feld.cvut.cz/pub/olsak/vlna.
+

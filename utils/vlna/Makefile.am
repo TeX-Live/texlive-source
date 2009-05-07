@@ -1,5 +1,8 @@
-# Makefile.am -- Peter Breitenlohner <peb@mppmu.mpg.de> -- Public domain.
-
+## Makefile.am for the TeX Live subdirectory utils/vlna/
+##
+## Copyright (C) 2008, 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
 bin_PROGRAMS = vlna
 dist_man1_MANS = vlna.man
 
@@ -22,15 +25,15 @@ vlna.dvi: vlna.tex vlna.idx vlna.scn
 # up to date (even if vlna.tex is up to date). Thus the sub-make.
 #
 vlna.tex vlna.idx vlna.scn: vlna.w
-	$(MAKE) do-cweave
+	$(MAKE) $(AM_MAKEFLAGS) do-cweave
 do-cweave: vlna.w .FORCE
 	$(CWEAVE) $<
 .PHONY: do-cweave .FORCE
 
-if MAINTAINER_MODE
+if do_cweb
 all-local: vlna.dvi
 vlna.c: vlna.w
 	$(CTANGLE) $<
-else
+else !do_cweb
 all-local:
-endif
+endif !do_cweb

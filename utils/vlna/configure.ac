@@ -1,31 +1,38 @@
-dnl configure.ac -- Peter Breitenlohner <peb@mppmu.mpg.de> -- Public domain.
-
-AC_PREREQ(2.60)
-AC_INIT([vlna], [1.3], [tex-live@tug.org])
+dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl
+dnl   This file is free software; the copyright holder
+dnl   gives unlimited permission to copy and/or distribute it,
+dnl   with or without modifications, as long as this notice is preserved.
+dnl
+AC_INIT([vlna for TeX Live], [1.3], [tex-live@tug.org])
+AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([vlna.w])
+AC_CONFIG_AUX_DIR([../../build-aux])
 
-AM_INIT_AUTOMAKE([foreign no-define])dnl using automake
+AM_INIT_AUTOMAKE([foreign dist-bzip2 no-define])
+AM_MAINTAINER_MODE
 
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_MAKE_SET
-AC_PROG_INSTALL
 
-dnl Maintainer mode requires ctangle, cweave, and csplain
+# With --enable-maintainer-mode we may want to regenerate
+# vlna.c, vlna.tex, and vlna.dvi, this requires ctangle, cweave, and csplain.
 AC_CHECK_PROGS([CTANGLE], [ctangle], [none])
 AC_CHECK_PROGS([CWEAVE], [cweave], [none])
 AC_CHECK_PROGS([CSPLAIN], [csplain], [none])
 
-if test x"$enable_maintainer_mode" = xyes; then
+do_cweb=$enable_maintainer_mode
+if test x"$do_cweb" = xyes; then
   case :$CTANGLE:$CWEAVE:$CSPLAIN: in
   *:none:*)
-    AC_MSG_WARN([Maintainer mode disabled -- requires ctangle, cweave, and csplain.])
-    enable_maintainer_mode=no
+    AC_MSG_WARN([Can not regenerate vlna.c, vlna.tex, and vlna.dvi -- requires ctangle, cweave, and csplain.])
+    do_cweb=no
   ;;
   esac
 fi
-
-AM_MAINTAINER_MODE[]dnl maintainer mode only if requested
+AM_CONDITIONAL([do_cweb], [test "x$do_cweb" = xyes])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
