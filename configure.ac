@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([TeX Live], [2009-04-20], [tex-k@tug.org])
+AC_INIT([TeX Live], [2009-05-07], [tex-k@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([m4/kpse-pkgs.m4])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -17,29 +17,29 @@ dnl ## Setup of the TeX Live (TL) infrastructure   ##
 dnl ##    done in ./, libs/, utils/, and texk/     ##
 dnl ## ------------------------------------------- ##
 dnl
-dnl 1. Define three lists of TeXk programs, utility programs, and
-dnl    TL libraries.  Hopefully these list occur nowhere else.
+dnl 1. Define three lists of TeXk programs, utility programs,
+dnl    and TL libraries.  These list occur nowhere else.
 dnl
-dnl 2. For each program PROG in the list of utility programs:
-dnl    sinclude utils/PROG/ac/withenable.ac
-dnl      providing the configure option --disable-PROG or --enable-PROG
-dnl    if PROG is to be built:
-dnl      set need_LIB=yes for each required TL library LIB (if any)
+dnl 2. For each program Prog in the list of utility programs:
+dnl    sinclude utils/Prog/ac/withenable.ac
+dnl      providing the configure option --disable-Prog or --enable-Prog
+dnl    if Prog is to be built:
+dnl      set need_Lib=yes for each required TL library Lib (if any)
 dnl
-dnl 3. For each program PROG in the list of TeXk programs:
-dnl    sinclude texk/PROG/ac/withenable.ac
-dnl      providing the configure option --disable-PROG or --enable-PROG
-dnl    if PROG is to be built:
-dnl      set need_LIB=yes for each required TL library LIB (if any)
+dnl 3. For each program Prog in the list of TeXk programs:
+dnl    sinclude texk/Prog/ac/withenable.ac
+dnl      providing the configure option --disable-Prog or --enable-Prog
+dnl    if Prog is to be built:
+dnl      set need_Lib=yes for each required TL library Lib (if any)
 dnl
 dnl 4. Sinclude texk/kpathsea/ac/withenable.ac
 dnl
-dnl 5. For each library LIB in the list of TL libraries:
-dnl    sinclude libs/LIB/ac/withenable.ac
-dnl      usually providing the configure options --with-system-LIB,
-dnl        --with-LIB-includes=DIR, and --with-LIB-libdir=DIR
-dnl     for each required TL library SUBLIB (if any):
-dnl        disallow with_system_LIB=yes and with_system_SUBLIB=no
+dnl 5. For each library Lib in the list of TL libraries:
+dnl    sinclude libs/Lib/ac/withenable.ac
+dnl      usually providing the configure options --with-system-Lib,
+dnl        --with-Lib-includes=DIR, and --with-Lib-libdir=DIR
+dnl     for each required TL library SubLib (if any):
+dnl        disallow with_system_Lib=yes and with_system_SubLib=no
 dnl
 KPSE_SETUP([])
 

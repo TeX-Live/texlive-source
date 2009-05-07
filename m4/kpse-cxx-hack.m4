@@ -67,9 +67,13 @@ using namespace std;
 #include <iostream.h>
 #endif]],
                                      [[cout <<"worksok\n";]])])
-  flags_try0='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm'
-  flags_try1='-lgcc_eh -lgcc -lc -lgcc_eh -lgcc'
-  flags_try2='-lgcc -lc -lgcc'
+  case $host in
+  *cygwin*)  flags_try0='-static -static-libgcc';
+             flags_try1='-lstdc++'; flags_try2=$flags_try1;;
+  *)  flags_try0='-nodefaultlibs -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic -lm'
+      flags_try1='-lgcc_eh -lgcc -lc -lgcc_eh -lgcc'
+      flags_try2='-lgcc -lc -lgcc';;
+  esac
   kpse_save_LIBS=$LIBS
   cpp_link_hack=false
   for flags in "$flags_try1" "$flags_try2"; do

@@ -31,7 +31,7 @@ else
   kpse_cv_fontconfig_includes=
   kpse_cv_fontconfig_libs='-lfontconfig'
 fi
-CPPFLAGS="$with_fontconfig $CPPFLAGS"
+CPPFLAGS="$kpse_cv_fontconfig_libs $CPPFLAGS"
 LIBS="$kpse_cv_fontconfig_libs $LIBS"
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <fontconfig/fontconfig.h>]],
                                 [[FcObjectSet *os; FcInit();]])],
