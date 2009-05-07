@@ -46,7 +46,8 @@ m4_include([ac/web2c.ac])
 
 KPSE_ASM_UNDERSCORE
 
-AS_CASE([$with_editor], [''|yes|no], [with_editor='vi +%d %s'])
+AS_CASE([$with_editor],
+        [''|yes|no], [with_editor='vi +%d %s'])
 AC_DEFINE_UNQUOTED([EDITOR], ["$with_editor"],
                    [web2c: Default editor for interactive `e' option.])
 
@@ -59,7 +60,9 @@ AS_IF([test "x$enable_dump_share" = xno],
                  [web2c: Define to disable architecture-independent dump files.
                   Faster on LittleEndian architectures.])])
 
-AM_CONDITIONAL([FMU], [test "x$enable_fmtutil" = xyes])
+AS_CASE([$enable_ipc],
+        [yes|no], [],
+            [enable_ipc=yes])
 
 KPSE_CHECK_WIN32
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
@@ -75,7 +78,7 @@ AS_IF([test "x$enable_luatex:$enable_ipc" != xno:no],
                       AS_IF([test "x$enable_ipc" = xyes],
                             [AC_MSG_WARN([no socket library: disabling ipc])
                              enable_ipc=no])],
-               [socketlibs=$ac_cv_search_connect])])
+                   [socketlibs=$ac_cv_search_connect])])
 if test "x$enable_ipc" = xyes; then
    ipc_socketlibs=$socketlibs
    AC_DEFINE([IPC], 1, [tex: Define to enable --ipc.])
@@ -94,13 +97,13 @@ if test "x$kpse_cv_have_win32" = xno; then
           [no], [AS_IF([test "x$enable_luatex" = xyes],
                        [AC_MSG_WARN([Sorry, no gethostbyname(): can not build luaTeX])
                         enable_luatex=no])],
-          [lua_socketlibs="$lua_socketlibs $ac_cv_search_gethostbyname"])
+              [lua_socketlibs="$lua_socketlibs $ac_cv_search_gethostbyname"])
   AS_CASE([$ac_cv_search_nanosleep],
           ["none required"], [],
           [no], [AS_IF([test "x$enable_luatex" = xyes],
                        [AC_MSG_WARN([Sorry, no nanosleep(): can not build luaTeX])
                         enable_luatex=no])],
-          [lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep"])
+              [lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep"])
 fi
 AC_SUBST([lua_socketlibs])
 AC_SUBST([ipc_socketlibs])
@@ -128,18 +131,18 @@ AM_CONDITIONAL([OTANGLE],
 AM_CONDITIONAL([OMFONTS], [true])
 
 AM_CONDITIONAL([MF], [test "x$enable_mf" != xno])
-AM_CONDITIONAL([MFN], [test "x$enable_mf_nowin" = xyes])
+AM_CONDITIONAL([MFN], [test "x$enable_mf_nowin" != xno])
 
 # Handle --with-mf-x-toolkit and --with-x
 AS_CASE([$with_mf_x_toolkit],
-        [''|yes|no], ,
-        [''|y|ye],   [with_mf_x_toolkit=yes],
-        [n],         [with_mf_x_toolkit=no],
-        [AC_MSG_WARN([unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes.])
-         with_mf_x_toolkit=yes])
+        [yes|no], [],
+        [''|y|ye], [with_mf_x_toolkit=yes],
+        [n], [with_mf_x_toolkit=no],
+            [AC_MSG_WARN([unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes.])
+             with_mf_x_toolkit=yes])
 test "x$with_x_toolkit" = xyes && with_x=yes
 test "x$with_x" = xno && with_x_toolkit=no
-: ${with_x=no} # tell PATH_XTRA no X by default, if not specified.
+: ${with_x=yes} # tell PATH_XTRA to use X by default, if not specified.
 
 # Distinguish no X at all, no toolkit, or toolkit.
 AC_PATH_XTRA

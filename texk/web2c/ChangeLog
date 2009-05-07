@@ -1,3 +1,7 @@
+2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/web2c.ac, configure.ac: Remove --enable-fmtutil option.
+
 2009-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.h: remove references to pdfeTeX.

@@ -696,7 +696,6 @@ enable_web2c
 with_editor
 enable_auto_core
 enable_dump_share
-enable_fmtutil
 enable_ipc
 enable_tex
 enable_etex
@@ -1459,8 +1458,8 @@ Optional Features:
   --enable-auto-core        cause TeX&MF to dump core, given a certain
                             filename
   --disable-dump-share      make fmt/base/mem files architecture-dependent
-  --enable-fmtutil          use fmtutil for build dumps
-  --enable-ipc              enable TeX's --ipc option, i.e., pipe to a program
+  --disable-ipc             disable TeX's --ipc option, i.e., pipe to a
+                            program
   --disable-tex             do not compile and install TeX
   --enable-etex             compile and install e-TeX
   --disable-aleph           do not compile and install Aleph
@@ -1468,7 +1467,8 @@ Optional Features:
   --disable-luatex          do not compile and install luaTeX
   --disable-xetex           do not compile and install XeTeX
   --disable-mf              do not build METAFONT
-  --enable-mf-nowin         build a separate non-windows-capable METAFONT
+  --disable-mf-nowin        do not build a separate non-windows-capable
+                            METAFONT
   --enable-epsfwin          include EPSF pseudo window support
   --enable-hp2627win        include HP 2627 window support
   --enable-mftalkwin        include mftalk (generic server) window support
@@ -1540,7 +1540,7 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
-  --with-mf-x-toolkit     Use X toolkit for METAFONT
+  --without-mf-x-toolkit  do not use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
   --with-xdvi-x-toolkit=KIT
                           Use toolkit KIT (motif/xaw/xaw3d/neXtaw) for xdvi
@@ -2355,10 +2355,6 @@ fi
 # Check whether --enable-dump-share was given.
 if test "${enable_dump_share+set}" = set; then
   enableval=$enable_dump_share;
-fi
-# Check whether --enable-fmtutil was given.
-if test "${enable_fmtutil+set}" = set; then
-  enableval=$enable_fmtutil;
 fi
 ## configure options for TeX
 # Check whether --enable-ipc was given.

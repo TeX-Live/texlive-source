@@ -1,3 +1,7 @@
+2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
 2009-04-03  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (EXTRA_DIST): remove texdoc.man from list.
