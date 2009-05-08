@@ -69,6 +69,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../utils/t1utils/ac/withenable.ac \
 	$(top_srcdir)/../utils/tpic2pdftex/ac/withenable.ac \
 	$(top_srcdir)/../utils/vlna/ac/withenable.ac \
+	$(top_srcdir)/../utils/xindy/ac/withenable.ac \
 	$(top_srcdir)/../texk/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/web2c.ac \
@@ -233,7 +234,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-ACLOCAL_AMFLAGS = -I ../m4
+ACLOCAL_AMFLAGS = -I ../m4 --force
 SUBDIRS = dummy . $(SUBLIBS)
 DIST_SUBDIRS = dummy $(DIST_SUBLIBS)
 SUBLIBS_AUX = sublibsdir-configure sublibsdir-conf.args

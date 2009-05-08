@@ -1,4 +1,4 @@
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 #ifndef T1UTILS_CONFIG_H
 #define T1UTILS_CONFIG_H

@@ -22,16 +22,16 @@
 
 if TETEX_BUILD
 install-exec-hook: xindy
-	$(MKDIR_P) "$(prefix)/texmf/scripts/xindy"
-	-rm -f $(bindir)/xindy $(bindir)/texindy
-	$(INSTALL_SCRIPT) xindy $(prefix)/texmf/scripts/xindy/xindy.pl
-	$(INSTALL_SCRIPT) $(srcdir)/texindy $(prefix)/texmf/scripts/xindy/texindy.pl
-	if test -d "$(bindir)/../../texmf/scripts/xindy"; then \
-	  ln -s ../../texmf/scripts/xindy/xindy.pl $(bindir)/xindy; \
-	  ln -s ../../texmf/scripts/xindy/texindy.pl $(bindir)/texindy; \
-	elif test -d "$(bindir)/../texmf/scripts/xindy"; then \
-	  ln -s ../texmf/scripts/xindy/xindy.pl $(bindir)/xindy; \
-	  ln -s ../texmf/scripts/xindy/texindy.pl $(bindir)/texindy; \
+	$(MKDIR_P) "$(DESTDIR)$(prefix)/texmf/scripts/xindy"
+	-rm -f $(DESTDIR)$(bindir)/xindy $(DESTDIR)$(bindir)/texindy
+	$(INSTALL_SCRIPT) xindy $(DESTDIR)$(prefix)/texmf/scripts/xindy/xindy.pl
+	$(INSTALL_SCRIPT) $(srcdir)/texindy $(DESTDIR)$(prefix)/texmf/scripts/xindy/texindy.pl
+	if test -d "$(DESTDIR)$(bindir)/../../texmf/scripts/xindy"; then \
+	  ln -s ../../texmf/scripts/xindy/xindy.pl $(DESTDIR)$(bindir)/xindy; \
+	  ln -s ../../texmf/scripts/xindy/texindy.pl $(DESTDIR)$(bindir)/texindy; \
+	elif test -d "$(DESTDIR)$(bindir)/../texmf/scripts/xindy"; then \
+	  ln -s ../texmf/scripts/xindy/xindy.pl $(DESTDIR)$(bindir)/xindy; \
+	  ln -s ../texmf/scripts/xindy/texindy.pl $(DESTDIR)$(bindir)/texindy; \
 	else \
 	  echo "Error: texmf/scripts/xindy directory not found" >&2; \
 	  exit 1; \

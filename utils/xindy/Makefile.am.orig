@@ -24,7 +24,7 @@
 
 ## Global options
 
-ACLOCAL_AMFLAGS = -I m4 -I ../../m4
+ACLOCAL_AMFLAGS = -I m4
 
 # do we build make-rules?
 if BUILDRULES
@@ -44,5 +44,3 @@ EXTRA_DIST = setup.sh ChangeLog.Gour README.distrib-source README.distrib-binary
 
 distclean-local:
 	rm -rf $(srcdir)/autom4te.cache
-
-EXTRA_DIST += ChangeLog.TL Makefile.am.orig configure.ac.orig

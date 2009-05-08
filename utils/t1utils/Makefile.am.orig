@@ -1,4 +1,5 @@
 ## Process this file with automake to produce Makefile.in
+AUTOMAKE_OPTIONS = foreign check-news
 
 bin_PROGRAMS = t1ascii t1binary t1asm t1disasm t1unmac t1mac
 man_MANS = t1ascii.1 t1binary.1 t1asm.1 t1disasm.1 t1unmac.1 t1mac.1
@@ -46,8 +47,3 @@ rpm: dist
 	rm -rf /tmp/rpm-t1u
 
 .PHONY: srclinks versionize rpm
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.am.orig configure.in.orig
-
