@@ -83,7 +83,7 @@ nobase_dist_script_SCRIPTS = \
 	purifyeps/purifyeps \
 	splitindex/perl/splitindex.pl \
 	svn-multi/svn-multi.pl \
-	texcount/TeXcount.pl \
+	texcount/texcount.pl \
 	texdirflatten/texdirflatten \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
