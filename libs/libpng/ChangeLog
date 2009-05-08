@@ -1,0 +1,20 @@
+2009-05-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpng-1.2.36.
+
+	* configure.ac: switch libpng version number.
+	* libpng-1.2.36/ (new): new source tree.
+	* libpng-1.2.35/ (removed): old source tree.
+
+2009-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpng-1.2.35.
+
+	* configure.ac: switch libpng version number.
+	* libpng-1.2.35/ (new): new source tree.
+	* libpng-1.2.34/ (removed): old source tree.
+
+2009-03-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
