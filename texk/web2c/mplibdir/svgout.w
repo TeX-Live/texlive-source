@@ -828,6 +828,7 @@ void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
             if (mp_chars[k][l] == 1) {
                if (f == NULL) {
                   f = mp_ps_font_parse(mp, k);
+                  if (f == NULL) continue;
                   if (f->extend != 0) {
                     dx = scaled_from_double(((double)f->extend / 1000.0) * scale);
                   }
@@ -863,8 +864,9 @@ void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
                    mp_svg_open_starttag(mp,"path");
                    mp_svg_attribute(mp, "style", "fill-rule: evenodd;");
                    while (p!=NULL) {
+                     if (mp->svg->loc>0) mp->svg->loc--; /* drop a '\0' */
                      mp_svg_font_path_out(mp, gr_path_p((mp_fill_object *)p));
-                     p = gr_link(p);
+                     p=p->next;
                    }
                    mp_svg_attribute(mp, "d", mp->svg->buf);
                    mp_svg_reset_buf(mp);

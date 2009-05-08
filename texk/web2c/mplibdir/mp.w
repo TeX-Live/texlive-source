@@ -1,4 +1,4 @@
-% $Id: mp.w 976 2009-04-22 07:55:33Z taco $
+% $Id: mp.w 999 2009-04-29 09:05:32Z taco $
 %
 % Copyright 2008 Taco Hoekwater.
 %
@@ -4819,8 +4819,7 @@ and |string_type| in that order.
 
 @<Types...@>=
 enum mp_variable_type {
-mp_internal_type=0, /* an internal that has not been frozen yet */
-mp_vacuous, /* no expression was present */
+mp_vacuous = 1, /* no expression was present */
 mp_boolean_type, /* \&{boolean} with a known value */
 mp_unknown_boolean,
 mp_string_type, /* \&{string} with a known value */
@@ -4852,7 +4851,6 @@ static void mp_print_type (MP mp,quarterword t) ;
 @ @<Basic printing procedures@>=
 void mp_print_type (MP mp,quarterword t) { 
   switch (t) {
-  case mp_internal_type:mp_print(mp, "new internal"); break;
   case mp_vacuous:mp_print(mp, "mp_vacuous"); break;
   case mp_boolean_type:mp_print(mp, "boolean"); break;
   case mp_unknown_boolean:mp_print(mp, "unknown boolean"); break;
@@ -17102,7 +17100,6 @@ case mp_vacuous:mp_print(mp, "mp_vacuous"); break;
 case mp_boolean_type:
   if ( v==true_code ) mp_print(mp, "true"); else mp_print(mp, "false");
   break;
-case mp_internal_type:
 case unknown_types: case mp_numeric_type:
   @<Display a variable that's been declared but not defined@>;
   break;
@@ -17867,14 +17864,8 @@ of the save stack, as described earlier.)
       mp->cur_exp=mp_get_avail(mp);
       mp_info(mp->cur_exp)=q+hash_end; mp->cur_type=mp_token_list; 
       goto DONE;
-    } else {
-      if (mp->int_type[q]==mp_internal_type)
-        mp->int_type[q] = mp_known;
     }
     mp_back_input(mp);
-  } else {
-    if (mp->int_type[q]==mp_internal_type)
-      mp->int_type[q] = mp_known;
   }
   mp->cur_exp=mp->internal[q];
   if (mp->int_type[q]==mp_string_type)
@@ -19717,7 +19708,7 @@ moves at the actual points.
 @d bezier_error (720*(256*256*16))+1
 @d mp_sign(v) ((v)>0 ? 1 : ((v)<0 ? -1 : 0 ))
 @d mp_out(A) (double)((A)/(256*256*16))
-@d divisor (256*256)
+@d divisor (256.0*256.0)
 @d double2angle(a) (int)mp_floor(a*256.0*256.0*16.0)
 
 @<Declare unary action...@>=
@@ -21899,9 +21890,6 @@ void mp_do_assignment (MP mp) {
 
 @ @<Assign the current expression to an internal variable@>=
 if ( mp->cur_type==mp_known || mp->cur_type==mp_string_type )  {
-  if (mp->int_type[mp_info(lhs)-(hash_end)]==mp_internal_type) {
-      mp->int_type[mp_info(lhs)-(hash_end)]=mp->cur_type;
-  }
   if (mp->cur_type==mp_string_type) {
     if (mp->int_type[mp_info(lhs)-(hash_end)]!=mp->cur_type) {
        exp_err("Internal quantity `");
@@ -22349,10 +22337,7 @@ void mp_set_internal (MP mp, char *n, char *v, int isstring) {
       if (text(p)>0 && length(text(p))==l && 
 	  mp_str_eq_cstr(mp, text(p),n)) {
         if (eq_type(p)==internal_quantity) {
-          if (mp->int_type[equiv(p)]==mp_internal_type) {
-            mp->int_type[equiv(p)] = (isstring ? mp_string_type : mp_known);
-          }
-	  if ((mp->int_type[equiv(p)]==mp_string_type) && (isstring)) {
+     	  if ((mp->int_type[equiv(p)]==mp_string_type) && (isstring)) {
             mp->internal[equiv(p)] = mp_rts(mp,v);
           } else if ((mp->int_type[equiv(p)]==mp_known) && (!isstring)) {
             scaled test = (scaled)atoi(v);
@@ -22577,7 +22562,7 @@ static char *mplib_read_ascii_file(MP mp, void *ff, size_t * size)
         if (s == NULL)
             return NULL;
         while (c != EOF && c != '\n' && c != '\r') {
-            if (len == lim) {
+            if (len >= (lim-1)) {
                 s = xrealloc(s, (lim + (lim >> 2)),1);
                 if (s == NULL)
                     return NULL;
@@ -23128,7 +23113,7 @@ void mp_grow_internals (MP mp, int l) {
     } else {
       internal[k]=0; 
       int_name[k]=NULL; 
-      int_type[k]=mp_internal_type; 
+      int_type[k]=0; 
     }
   }
   xfree(mp->internal); xfree(mp->int_name); xfree(mp->int_type);
@@ -23139,6 +23124,15 @@ void mp_grow_internals (MP mp, int l) {
 }
 
 void mp_do_new_internal (MP mp) { 
+  int the_type = mp_known;
+  mp_get_x_next(mp);
+  if (mp->cur_cmd==type_name && mp->cur_mod==mp_string_type) {
+     the_type = mp_string_type;
+  } else {
+     if (!(mp->cur_cmd==type_name && mp->cur_mod==mp_known)) {
+        mp_back_input(mp);
+     }
+  }
   do {  
     if ( mp->int_ptr==mp->max_internal ) {
       mp_grow_internals(mp, (mp->max_internal + (mp->max_internal/4)));
@@ -23149,7 +23143,12 @@ void mp_do_new_internal (MP mp) {
     if(mp->int_name[mp->int_ptr]!=NULL)
       xfree(mp->int_name[mp->int_ptr]);
     mp->int_name[mp->int_ptr]=str(text(mp->cur_sym)); 
-    mp->internal[mp->int_ptr]=0;
+    if (the_type==mp_string_type) {
+      mp->internal[mp->int_ptr]=null_str;
+    } else {
+      mp->internal[mp->int_ptr]=0;
+    }
+    mp->int_type[mp->int_ptr]=the_type;
     mp_get_x_next(mp);
   } while (mp->cur_cmd==comma);
 }

@@ -1,4 +1,4 @@
-% $Id: mpxout.w 973 2009-04-21 15:28:57Z taco $
+% $Id: mpxout.w 997 2009-04-27 19:31:57Z taco $
 %
 % Copyright 2008 Taco Hoekwater.
 %
@@ -452,6 +452,11 @@ choose the leftmost one.  If there is no such $t$, we set $b=s$ and return 0.
 static int mpx_getbta(MPX mpx, char *s) {
   int ok = 1;         /* zero if last character was |a-z|, |A-Z|, or |_| */
   mpx->bb = s;
+  if (s==NULL) {
+    mpx->tt = NULL;
+    mpx->aa = NULL;
+    return 0;
+  }
   for (mpx->tt = mpx->bb; *(mpx->tt) != 0; mpx->tt++) {
     switch (*(mpx->tt)) {
     case '"':
@@ -499,19 +504,23 @@ static void mpx_copy_mpto (MPX mpx, FILE *outfile) {
     char c;
     char *res = NULL;
     do {
-    if (*mpx->aa == 0) {
+    if (mpx->aa == NULL || *mpx->aa == 0) {
       if ((mpx->aa = mpx_getline(mpx,mpx->mpfile)) == NULL) {
         mpx_error(mpx,"btex section does not end"); 
+        return;
       }
     }
     if (mpx_getbta(mpx, mpx->aa) && *(mpx->tt) == 'e') {
       s = mpx->tt;
     } else {
-      if (*(mpx->tt) == 'b')
-      mpx_error(mpx,"btex in TeX mode");
-      if (*(mpx->tt) == 'v')
-      mpx_error(mpx,"verbatimtex in TeX mode");
+      if (mpx->tt == NULL)
+        mpx_error(mpx,"btex section does not end"); 
+      else if (*(mpx->tt) == 'b')
+        mpx_error(mpx,"btex in TeX mode");
+      else if (*(mpx->tt) == 'v')
+        mpx_error(mpx,"verbatimtex in TeX mode");
       s = mpx->aa;
+      return;
     }
     c = *s;
     *s = 0;
