@@ -250,8 +250,8 @@ known as `\eTeX'.
 @d pdftex_version_string=='-2.00.0' {current \pdfTeX\ version}
 @#
 @d luatex_version==40 { \.{\\luatexversion} }
-@d luatex_revision=="0" { \.{\\luatexrevision} }
-@d luatex_version_string=='beta-0.40.0' {current \LuaTeX\ version}
+@d luatex_revision=="1" { \.{\\luatexrevision} }
+@d luatex_version_string=='beta-0.40.1' {current \LuaTeX\ version}
 @d luatex_date_info==-extra_version_info { the compile date is negated }
 @d luatex_svnversion=='$Id$'
    {for long --version information, as proposed by Peter M\"unster}
@@ -7115,6 +7115,12 @@ if (mag<=0)or(mag>32768) then
   help1("The magnification ratio must be between 1 and 32768.");
   int_error(mag); geq_word_define(int_base+mag_code,1000);
   end;
+if (mag_set=0) and (mag<>mag_set) then begin
+  if mag<>1000 then
+    one_true_inch:=xn_over_d(one_hundred_inch,10,mag)
+  else
+    one_true_inch:=one_inch;
+end;
 mag_set:=mag;
 end;
 
@@ -13913,10 +13919,6 @@ if total_pages=0 then
 @^preamble of \.{DVI} file@>
   dvi_four(25400000); dvi_four(473628672); {conversion ratio for sp}
   prepare_mag; dvi_four(mag); {magnification factor is frozen}
-  if mag<>1000 then
-    one_true_inch:=xn_over_d(one_hundred_inch,10,mag)
-  else
-    one_true_inch:=one_inch;
   old_setting:=selector; selector:=new_string;
   print(" LuaTeX output "); print_int(year); print_char(".");
   print_two(month); print_char("."); print_two(day);
@@ -14789,6 +14791,8 @@ flush_node_list(p);
 tats
 
 @ @<Ship box |p| out@>=
+if box_dir(p) <> page_direction then
+  pdf_warning("\shipout", "\pagedir != \bodydir; \box255 may be placed wrongly on the page.", true, true);
 @<Update the values of |max_h| and |max_v|; but if the page is too large,
   |goto done|@>;
 @<Initialize variables as |ship_out| begins@>;
@@ -14805,24 +14809,22 @@ for the DVI origin depending on the |page_direction|.}
 dvi_direction:=page_direction;
 case box_direction(dvi_direction) of
 dir_TL_,dir_LT_: begin
-  cur.h := page_left_offset;
-  cur.v := page_top_offset;
+  cur.h := h_offset;
+  cur.v := v_offset;
   end;
 dir_TR_,dir_RT_: begin
-  cur.h := cur_page_size.h - page_right_offset;
-  cur.v := page_top_offset;
+  cur.h := cur_page_size.h - page_right_offset - one_true_inch;
+  cur.v := v_offset;
   end;
 dir_BL_,dir_LB_: begin
-  cur.h := page_left_offset;
-  cur.v := cur_page_size.v - page_bottom_offset;
+  cur.h := h_offset;
+  cur.v := cur_page_size.v - page_bottom_offset - one_true_inch;
   end;
 dir_RB_,dir_BR_: begin
-  cur.h := cur_page_size.h - page_right_offset;
-  cur.v := cur_page_size.v - page_bottom_offset;
+  cur.h := cur_page_size.h - page_right_offset - one_true_inch;
+  cur.v := cur_page_size.v - page_bottom_offset - one_true_inch;
   end;
 end;
-cur.h := cur.h - one_true_inch; {correct for DVI origin}
-cur.v := cur.v - one_true_inch;
 {The movement is actually done within the upright page coordinate system.}
 dvi_direction := dir_TL_; {only temporarily for this adjustment}
 synch_pos_with_cur; box_pos := pos; {keep track on page}
@@ -15588,6 +15590,7 @@ accurary.
 @ @<Set init...@>=
 one_hundred_inch := 7227 * 65536; {exact, 473628672}
 one_inch := (one_hundred_inch + 50) div 100; {rounded to 4736287}
+one_true_inch := one_inch;
 one_hundred_bp := one_hundred_inch div 72; {exact, 6578176}
 one_bp := (one_hundred_bp + 50) div 100; {rounded to 65782}
 ten_pow[0] := 1;
@@ -17600,6 +17603,8 @@ if post_callback_id>0 then
 end;
 
 @ @<(\pdfTeX) Ship box |p| out@>=
+if shipping_page and (box_dir(p) <> page_direction) then
+  pdf_warning("\shipout", "\pagedir != \bodydir; \box255 may be placed wrongly on the page.", true, true);
 @<Update the values of |max_h| and |max_v|; but if the page is too large,
   |goto done|@>;
 @<Initialize variables as |pdf_ship_out| begins@>;
@@ -17612,10 +17617,6 @@ done:
 
 @ @<Initialize variables as |pdf_ship_out| begins@>=
 prepare_mag;
-if mag<>1000 then
-  one_true_inch:=xn_over_d(one_hundred_inch,10,mag)
-else
-  one_true_inch:=one_inch;
 temp_ptr:=p;
 pdf_last_resources := pdf_new_objnum;
 @<Reset resource lists@>;
@@ -17662,24 +17663,22 @@ if is_shipping_page then begin
     dvi_direction:=page_direction;
     case box_direction(dvi_direction) of
     dir_TL_,dir_LT_: begin
-      cur.h := page_left_offset;
-      cur.v := page_top_offset;
+      cur.h := h_offset;
+      cur.v := v_offset;
       end;
     dir_TR_,dir_RT_: begin
-      cur.h := cur_page_size.h - page_right_offset;
-      cur.v := page_top_offset;
+      cur.h := cur_page_size.h - page_right_offset - one_true_inch;
+      cur.v := v_offset;
       end;
     dir_BL_,dir_LB_: begin
-      cur.h := page_left_offset;
-      cur.v := cur_page_size.v - page_bottom_offset;
+      cur.h := h_offset;
+      cur.v := cur_page_size.v - page_bottom_offset - one_true_inch;
       end;
     dir_RB_,dir_BR_: begin
-      cur.h := cur_page_size.h - page_right_offset;
-      cur.v := cur_page_size.v - page_bottom_offset;
+      cur.h := cur_page_size.h - page_right_offset - one_true_inch;
+      cur.v := cur_page_size.v - page_bottom_offset - one_true_inch;
       end;
     end;
-    cur.h := cur.h - one_true_inch; {correct for DVI origin}
-    cur.v := cur.v - one_true_inch;
     {The movement is actually done within the upright page coordinate system.}
     dvi_direction := dir_TL_; {only temporarily for this adjustment}
     synch_pos_with_cur; box_pos := pos; {keep track on page}
@@ -24294,19 +24293,19 @@ might be necessary.  Good first step.}
   end
 else if (p>=dimen_base)and(p<eqtb_size) then begin
   if p=(dimen_base+page_left_offset_code) then begin
-    n:=cur_val - one_inch;
+    n:=cur_val - one_true_inch;
     word_define(dimen_base+h_offset_code, n);
     end
   else if p=(dimen_base+h_offset_code) then begin
-    n:=cur_val + one_inch;
+    n:=cur_val + one_true_inch;
     word_define(dimen_base+page_left_offset_code, n);
     end
   else if p=(dimen_base+page_top_offset_code) then begin
-    n:=cur_val - one_inch;
+    n:=cur_val - one_true_inch;
     word_define(dimen_base+v_offset_code, n);
     end
   else if p=(dimen_base+v_offset_code) then begin
-    n:=cur_val + one_inch;
+    n:=cur_val + one_true_inch;
     word_define(dimen_base+page_top_offset_code, n);
     end;
   word_define(p,cur_val);

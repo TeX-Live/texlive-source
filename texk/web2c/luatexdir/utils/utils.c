@@ -42,15 +42,15 @@
 #include "png.h"
 #ifdef POPPLER_VERSION
 #define xpdfString "poppler"
-#define xpdfVersion POPPLER_VERSION
 #include "poppler-config.h"
+#define xpdfVersion POPPLER_VERSION
 #else
 #define xpdfString "xpdf"
 #include "xpdf/config.h"        /* just to get the xpdf version */
 #endif
 
 static const char __svn_version[] =
-    "$Id: utils.c 2329 2009-04-18 14:25:30Z hhenkel $ "
+    "$Id: utils.c 2381 2009-05-08 11:52:01Z taco $ "
     "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/utils.c $";
 
 #define check_nprintf(size_get, size_want) \

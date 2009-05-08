@@ -25,7 +25,7 @@
 #include <luatexdir/luatexextra.h>
 
 static const char _svn_version[] =
-    "$Id: luainit.c 2330 2009-04-18 16:21:21Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luainit.c $";
+    "$Id: luainit.c 2363 2009-04-30 07:47:37Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luainit.c $";
 
 /* TH: TODO
  *
@@ -43,9 +43,6 @@ static const char _svn_version[] =
  *   SELFAUTOLOC  SELFAUTODIR  SELFAUTOPARENT  progname
  *
  */
-extern void mk_shellcmdlist(char *v);
-extern int shell_cmd_is_allowed(char **cmd, char **safecmd, char **cmdname);
-extern void init_shell_escape(void);
 
 extern string normalize_quotes(const_string name, const_string mesg);
 

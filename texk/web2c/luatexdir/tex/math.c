@@ -27,7 +27,7 @@
 #include "tokens.h"
 
 static const char _svn_version[] =
-    "$Id: math.c 2314 2009-04-17 20:57:48Z hhenkel $ "
+    "$Id: math.c 2362 2009-04-29 16:03:00Z taco $ "
     "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/math.c $";
 
 #define mode          cur_list.mode_field
@@ -1320,7 +1320,7 @@ void set_math_char(mathcodeval mval)
           case 3: subtype(p) = rel_noad_type; break;
           case 4: subtype(p) = open_noad_type; break;
           case 5: subtype(p) = close_noad_type; break;
-          case 6: subtype(p) = inner_noad_type; break;
+          case 6: subtype(p) = punct_noad_type; break;
           }
         }
         vlink(tail) = p;

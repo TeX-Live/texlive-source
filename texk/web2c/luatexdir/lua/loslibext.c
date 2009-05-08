@@ -25,15 +25,13 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: loslibext.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/loslibext.c $";
+    "$Id: loslibext.c 2363 2009-04-30 07:47:37Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/loslibext.c $";
 
 #if defined(_WIN32) || defined(WIN32) || defined(__NT__)
 #  define MKDIR(a,b) mkdir(a)
 #else
 #  define MKDIR(a,b) mkdir(a,b)
 #endif
-
-extern int shell_cmd_is_allowed(char **cmd, char **safecmd, char **cmdname);
 
 /* An attempt to figure out the basic platform, does not
   care about niceties like version numbers yet,

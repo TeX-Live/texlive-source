@@ -1,4 +1,32 @@
 ==============================================================
+Luatex beta-0.40.1 was released 20090508
+==============================================================
+
+* Vertical placement of root radicals and degrees is fixed.
+
+* The use of \pageleftoffset could deviate from \hoffset
+  if \mag != 1000.
+
+* LuaTeX now issues a warning if \pagedir !- \bodydir during
+  shipout.
+
+* The previous crash in font.read_tfm() was still not quite
+  correct.
+
+* The Web2C version is now also printed in the --version
+  and --credits output.
+
+
+* There is a new MPlib 1.200 release candidate with a few minor 
+  fixes included.
+
+* The xpdf library is updated to patch level 3.
+
+* New imports to the build system, from texlive. In particular,
+  there is now configure-level support for building with 
+  libpoppler and support for building under cygwin 1.7 is added.
+
+==============================================================
 Luatex beta-0.40.0 was released 20090422
 ==============================================================
 

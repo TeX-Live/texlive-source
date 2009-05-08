@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: mlist.c 2323 2009-04-18 09:53:47Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.c $";
+    "$Id: mlist.c 2358 2009-04-27 06:39:33Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.c $";
 
 #define delimiter_factor     int_par(param_delimiter_factor_code)
 #define delimiter_shortfall  dimen_par(param_delimiter_shortfall_code)
@@ -2356,21 +2356,17 @@ void make_radical(pointer q)
         theta = fraction_rule(cur_style);
         y = var_delimiter(left_delimiter(q), cur_size,
                           height(x) + depth(x) + clr + theta);
-        left_delimiter(q) = null;
         theta = height(y);
-        delta = depth(y) - (height(x) + depth(x) + clr);
-        if (delta > 0)
-            clr = clr + half(delta);    /* increase the actual clearance */
-        shift_amount(y) = -(height(x) + clr);
-        h = shift_amount(y) + height(y);
     } else {
         y = var_delimiter(left_delimiter(q), cur_size,
                           height(x) + depth(x) + clr + theta);
-        left_delimiter(q) = null;
-        delta = height(y) - (height(x) + clr + theta);
-        shift_amount(y) = delta;
-        h = -(height(y) - shift_amount(y));
     }
+    left_delimiter(q) = null;
+    delta = (depth(y)+height(y)-theta) - (height(x) + depth(x) + clr);
+    if (delta > 0)
+        clr = clr + half(delta);    /* increase the actual clearance */
+    shift_amount(y) = (height(y)-theta)-(height(x) + clr);
+    h = depth(y) + height(y);
     p = overbar(x, clr, theta, radical_kern(cur_style), node_attr(y));
     vlink(y) = p;
     if (degree(q) != null) {
@@ -2388,8 +2384,9 @@ void make_radical(pointer q)
             x = new_kern(ar);
             reset_attributes(x, node_attr(degree(q)));
             vlink(x) = y;
-            shift_amount(r) =
-                (xn_over_d(h, radical_degree_raise(cur_style), 100));
+            shift_amount(r) = 
+	      - ((xn_over_d(h, radical_degree_raise(cur_style), 100)) -
+		 depth(y) - shift_amount(y));
             vlink(r) = x;
             x = new_kern(br);
             reset_attributes(x, node_attr(degree(q)));

@@ -1,5 +1,5 @@
 /*
-** $Id: liolib.c 2271 2009-04-12 23:42:21Z oneiros $
+** $Id: liolib.c 2363 2009-04-30 07:47:37Z taco $
 ** Standard I/O (and system) library
 ** See Copyright Notice in lua.h
 */
@@ -26,8 +26,6 @@
 
 #define IO_INPUT	1
 #define IO_OUTPUT	2
-
-extern int shell_cmd_is_allowed(char **cmd, char **safecmd, char **cmdname);
 
 static const char *const fnames[] = { "input", "output" };
 

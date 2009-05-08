@@ -1844,7 +1844,12 @@ end {|main_body|};
   end;
 @z
 
-
+@x
+write_svnversion(luatex_svnversion);
+@y
+wterm(versionstring);
+write_svnversion(luatex_svnversion);
+@z
 
 @x
      slow_print(log_name); print_char(".");

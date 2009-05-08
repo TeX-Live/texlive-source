@@ -25,7 +25,7 @@
 #include "ptexlib.h"
 
 static const char __svn_version[] =
-    "$Id: pdfpage.c 2264 2009-04-12 17:54:48Z hhenkel $ "
+    "$Id: pdfpage.c 2361 2009-04-27 14:30:46Z taco $ "
     "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
 
 #define lround(a) (long) floor((a) + 0.5)

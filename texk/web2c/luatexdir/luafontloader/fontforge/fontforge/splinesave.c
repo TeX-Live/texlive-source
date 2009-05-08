@@ -1477,6 +1477,7 @@ static unsigned char *SplineChar2PS(SplineChar *sc,int *len,int round,int iscjk,
     MMSet *mm = sc->parent->mm;
     HintMask *hm[MmMax];
     int fixuphm = false;
+    hm[0] = 0;
 
     if ( !(flags&ps_flag_nohints) && SCNeedsSubsPts(sc,format,gi->layer))
 	SCFigureHintMasks(sc,gi->layer);
@@ -2513,8 +2514,8 @@ static void RSC2PS2(GrowBuf *gb, SplineChar *base,SplineChar *rsc,
     RefChar *r, *unsafe=NULL;
     int unsafecnt=0, allwithouthints=true;
     int round = (flags&ps_flag_round)? true : false;
-    StemInfo *oldh, *oldv;
-    int hc, vc;
+    StemInfo *oldh = NULL, *oldv = NULL;
+    int hc = 0, vc = 0;
     SplineSet *freeme, *temp;
     int wasntconflicted = hdb->noconflicts;
 
@@ -2595,8 +2596,8 @@ static unsigned char *SplineChar2PS2(SplineChar *sc,int *len, int nomwid,
     GrowBuf gb;
     unsigned char *ret;
     struct hintdb hdb;
-    StemInfo *oldh, *oldv;
-    int hc, vc;
+    StemInfo *oldh = NULL, *oldv = NULL;
+    int hc = 0, vc = 0;
     SplineChar *scs[MmMax];
     int round = (flags&ps_flag_round)? true : false;
     HintMask *hm = NULL;
