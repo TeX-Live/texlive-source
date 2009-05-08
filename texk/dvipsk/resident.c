@@ -964,7 +964,7 @@ void getpsinfo P1C(char *, name)
             if (downloadinfo)
                strcat(downbuf, downloadinfo) ;
             slen = strlen(downbuf) - 1;
-            if (downbuf[slen] == ' ') {
+            if (slen > 0 && downbuf[slen] == ' ') {
               downbuf[slen] = 0;
             }
             if (TeXname) {

@@ -1,3 +1,10 @@
+2009-05-08  Karl Berry  <karl@tug.org>
+
+	* resident.c (getpsinfo): avoid accessing unallocated downbuf[-1].
+	* dvips.c (main): do not check iname[-1] if there is no iname.
+	Reports from Akira.
+	Also prettify some related error messages.
+
 2009-04-04  Karl Berry  <karl@tug.org>
 
 	* writet1.c (append_cs_return): new fn.

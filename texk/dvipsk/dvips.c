@@ -1175,7 +1175,8 @@ default:
    }
    if (oname[0] == '-' && oname[1] == 0)
       oname[0] = 0 ;
-   else if (*oname == 0 && ! filter) {
+   else if (*oname == 0 && ! filter && *iname) {
+      /* determine output name from input name */
       oname = nextstring ;
 #ifndef VMCMS  /* get stuff before LAST "." */
       lastext = strlen(iname) - 1 ;
@@ -1281,21 +1282,21 @@ default:
 	 SET_BINARY(fileno(stdin)) ;
    } else {
 #ifdef KPATHSEA
-      fprintf (stderr, "Missing DVI file argument (or -f).\n");
-      fprintf (stderr, "Try --help for more information.\n");
+      fprintf (stderr, "dvips: Missing DVI file argument (or -f).\n");
+      fprintf (stderr, "dvips: Try --help for more information.\n");
 #else
       help(1) ;
 #endif
       exit(1) ;
    }
-   initcolor() ;
    if (dvifile==NULL) {
-      extern char errbuf[];
-      (void)sprintf(errbuf,"! DVI file <%s> can't be opened.", iname) ;
-      error("! DVI file can't be opened.") ;
+      error_with_perror("DVI file can't be opened:", iname);
+      exit(1);
    }
    if (fseek(dvifile, 0L, 0) < 0)
       error("! DVI file must not be a pipe.") ;
+
+   initcolor() ;
 #ifdef FONTLIB
    fliload();    /* read the font libaries */
 #endif
