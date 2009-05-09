@@ -36,6 +36,8 @@ if $PKG_CONFIG poppler --atleast-version=0.10; then
   POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
   XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
   XPDF_LIBS=`$PKG_CONFIG poppler --libs`
+elif test "x$need_xpdf:$with_system_xpdf" = 'xyes:yes'; then
+  AC_MSG_ERROR([did not find poppler-0.10 or better])
 fi
 ]) # KPSE_XPDF_SYSTEM_FLAGS
 

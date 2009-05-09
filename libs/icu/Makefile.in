@@ -578,6 +578,7 @@ uninstall-am:
 	uninstall uninstall-am
 
 
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/icu-xetex -name .svn`
 

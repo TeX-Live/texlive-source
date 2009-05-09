@@ -13,7 +13,7 @@ SUBDIRS = dummy
 ## We want to re-distribute the whole icu-xetex source tree.
 EXTRA_DIST = icu-xetex
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/icu-xetex -name .svn`
 

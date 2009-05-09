@@ -6,6 +6,9 @@
 ## Copyright (C) 2004-2005 by Gour.
 ## Copyright (C) 2008 by Joachim Schrod.
 ##
+## Adapted for TeX Live
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##
 ## This program is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
 ## published by the Free Software Foundation; either version 2 of the
@@ -21,10 +24,11 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-AC_PREREQ(2.60)
+AC_PREREQ([2.63])
 AC_INIT([xindy], [2.3], [xindy-discuss@lists.sourceforge.net])
+AC_CONFIG_AUX_DIR([../../build-aux])
 
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
 
 # Checks for programs.
@@ -34,13 +38,12 @@ dnl test "x$LEX" != "x:" || AC_MSG_ERROR([flex or lex is required, but not found
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
-AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules],[build and install make-rules package (default is YES)]))
-AC_ARG_ENABLE(docs, AS_HELP_STRING([--enable-docs],[build and install documentation (default is YES)]))
+# Include onfigure options that also appear at the top-level of the TL tree.
+m4_include([ac/xindy.ac])
+
 # This option haqs been renamed --enable-native-texlive-build
-# but should only inherited and not specified here
+# but should only be inherited and not specified here
 # AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
-AC_ARG_WITH(clisp, AS_HELP_STRING([--with-clisp=...],[Use the specified location of the clisp executable (default is search in PATH)]))
-AC_ARG_WITH(xindy-recode, AS_HELP_STRING([--with-xindy-recode],[Use `recode' instead of `iconv' (default is NO)]))
 
 if test "x$with_xindy_recode" != xyes; then
   CONVERT_FROM_UTF8="iconv -f UTF-8 -t "
@@ -58,56 +61,45 @@ if test "x$enable_native_texlive_build" = xyes; then
   datadir="$prefix/texmf"
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
-  if test -z "$enable_docs"; then
+  if test -z "$enable_xindy_docs"; then
     AC_MSG_NOTICE([Disabling docs building])
-    enable_docs=no;
+    enable_xindy_docs=no;
   fi
-#  if test -z "$enable_make_rules"; then
+#  if test -z "$enable_xindy_make_rules"; then
 #    AC_MSG_NOTICE([Disabling make-rules building])
-#    enable_make_rules=no;
+#    enable_xindy_make_rules=no;
 #  fi
 else
   enable_native_texlive_build=no
 fi
 AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_native_texlive_build" = xyes])
 
-if test "x$enable_make_rules" != xno; then
+if test "x$enable_xindy_make_rules" != xno; then
     AC_PROG_LATEX
 fi
 
-AM_CONDITIONAL([BUILDRULES], [test "x$enable_make_rules" != xno])
+AM_CONDITIONAL([BUILDRULES], [test "x$enable_xindy_make_rules" != xno])
 
-if test "x$enable_docs" != xno; then
+if test "x$enable_xindy_docs" != xno; then
     AC_PROG_PDFLATEX
 fi
 
-AM_CONDITIONAL([BUILDDOCS], [test "x$enable_docs" != xno])
+AM_CONDITIONAL([BUILDDOCS], [test "x$enable_xindy_docs" != xno])
 
-CLISP=
-if test "x$with_clisp" = xyes; then
-  AC_PATH_PROG(CLISP, clisp)
-elif test "x$with_clisp" = xno; then
-  KPSE_MSG_ERROR([xindy], [--without-clisp specified, but clisp is required])
-elif test -n "$with_clisp"; then
-  CLISP="$with_clisp"
+AC_CHECK_PROGS([CLISP], [clisp], [no])
+if test "x$CLISP" = xno; then
+  TL_MSG_ERROR([clisp is required but not found in PATH.
+Please install clisp or specify the clisp executable location
+via the CLISP=... configure argument.])
 else
-  AC_PATH_PROG(CLISP, clisp)
-fi
-
-if test -n "$CLISP"; then
-  test -x "$CLISP" || KPSE_MSG_ERROR([xindy], [clisp is not executable: $CLISP])
+  test -x "$CLISP" || TL_MSG_ERROR([clisp is not executable: $CLISP])
   AC_MSG_CHECKING([for clisp library directory])
   CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`
   AC_MSG_RESULT([$CLISP_LIB])
-  test -f "$CLISP_LIB/clisp-link" || KPSE_MSG_ERROR([xindy], [clisp is not usable: expected file is not found: $CLISP_LIB/clisp-link])
-  test -d "$CLISP_LIB/full" || KPSE_MSG_ERROR([xindy], [clisp is not usable: expected directory is not found: $CLISP_LIB/full])
-  test -d "$CLISP_LIB/linkkit" || KPSE_MSG_ERROR([xindy], [clisp is not usable: expected directory is not found: $CLISP_LIB/linkkit])
-else
-  KPSE_MSG_ERROR([xindy], [clisp is required but not found in PATH.
-Please install clisp or specify the clisp executable location
-via the --with-clisp=... option.])
+  test -f "$CLISP_LIB/clisp-link" || TL_MSG_ERROR([clisp is not usable: expected file is not found: $CLISP_LIB/clisp-link])
+  test -d "$CLISP_LIB/full" || TL_MSG_ERROR([clisp is not usable: expected directory is not found: $CLISP_LIB/full])
+  test -d "$CLISP_LIB/linkkit" || TL_MSG_ERROR([clisp is not usable: expected directory is not found: $CLISP_LIB/linkkit])
 fi
-AC_SUBST(CLISP)
 AC_SUBST(CLISP_LIB)
 dnl CLISP_LIB may end with a backslash (on mingw)
 _AM_SUBST_NOTMAKE(CLISP_LIB)

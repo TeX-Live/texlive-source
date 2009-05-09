@@ -70,6 +70,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../utils/tpic2pdftex/ac/withenable.ac \
 	$(top_srcdir)/../utils/vlna/ac/withenable.ac \
 	$(top_srcdir)/../utils/xindy/ac/withenable.ac \
+	$(top_srcdir)/../utils/xindy/ac/xindy.ac \
 	$(top_srcdir)/../texk/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/web2c.ac \
@@ -237,7 +238,6 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../m4 --force
 SUBDIRS = dummy . $(SUBUTILS)
 DIST_SUBDIRS = dummy $(DIST_SUBUTILS)
-EXTRA_DIST = README.orig
 SUBUTILS_AUX = subutilsdir-configure subutilsdir-conf.args
 noinst_DATA = $(SUBUTILS_AUX)
 DISTCLEANFILES = $(noinst_DATA)
@@ -665,6 +665,7 @@ uninstall-am:
 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
 
 
+# just in case a subdirectory has added directories
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 

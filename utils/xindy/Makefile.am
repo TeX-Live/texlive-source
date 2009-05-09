@@ -24,7 +24,7 @@
 
 ## Global options
 
-ACLOCAL_AMFLAGS = -I m4 -I ../../m4
+ACLOCAL_AMFLAGS = -I m4
 
 # do we build make-rules?
 if BUILDRULES

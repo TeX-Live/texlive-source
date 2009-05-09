@@ -59,3 +59,6 @@ kernel_SCRIPTS = $(XINDY_RUN)
 EXTRA_SCRIPTS = xindy.run xindy-lisp.exe
 
 CLEANFILES = $(FAS) $(FASLIBS) defaults.xdy base.mem xindy.mem $(XINDY_RUN)
+
+# Serialize
+.NOTPARALLEL:

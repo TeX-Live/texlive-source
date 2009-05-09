@@ -15,7 +15,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## Thus nodist_* for all files in $(ZLIB_TREE).
 EXTRA_DIST = $(ZLIB_TREE)
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
 

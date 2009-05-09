@@ -40,6 +40,8 @@ AC_DEFUN([KPSE_FREETYPE2_SYSTEM_FLAGS],
 if test -n `$FT2_CONFIG --ftversion 2>/dev/null`; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
+elif test "x$need_freetype2:$with_freetype2_xpdf" = 'xyes:yes'; then
+  AC_MSG_ERROR([did not find freetype-config required for system freetype2 library])
 fi
 ]) # KPSE_FREETYPE2_SYSTEM_FLAGS
 

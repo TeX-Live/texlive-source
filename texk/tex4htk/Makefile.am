@@ -34,7 +34,7 @@ tex4ht_subdir = texmf-dist/scripts/tex4ht
 tex4htdir = ${prefix}/$(tex4ht_subdir)
 tex4ht_SCRIPTS =
 
-## We support both multiplatform and non-multiplatform builds.
+# We support both multiplatform and non-multiplatform builds.
 install-data-hook:
 	@for p in $(perl_scripts); do \
 	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.pl'"; \
@@ -197,7 +197,7 @@ EXTRA_DIST += \
 	xhxetex \
 	xv4ht.java
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 

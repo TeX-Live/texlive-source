@@ -1212,6 +1212,7 @@ uninstall-man: uninstall-man1
 	uninstall-man uninstall-man1
 
 
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 

@@ -55,8 +55,8 @@ test -d $srcdir/../kpathsea && enable_tetex_build=yes
 AM_CONDITIONAL([tetex_build], [test "x$enable_tetex_build" = xyes])
 
 AC_ARG_WITH([kpathsea],
-            [AS_HELP_STRING([--without-kpathsea],
-                            [build otftotfm without kpathsea])])
+            AS_HELP_STRING([--without-kpathsea],
+                           [build otftotfm without kpathsea]))
 
 KPSE_KPATHSEA_FLAGS
 

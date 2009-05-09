@@ -749,9 +749,8 @@ ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
 enable_dependency_tracking
-enable_make_rules
-enable_docs
-with_clisp
+enable_xindy_make_rules
+enable_xindy_docs
 with_xindy_recode
 '
       ac_precious_vars='build_alias
@@ -1397,16 +1396,16 @@ Optional Features:
 			  (and sometimes confusing) to the casual installer
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
-  --enable-make-rules     build and install make-rules package (default is
+  --enable-xindy-make-rules
+                          build and install make-rules package (default is
                           YES)
-  --enable-docs           build and install documentation (default is YES)
+  --enable-xindy-docs     build and install documentation (default is YES)
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-clisp=...        Use the specified location of the clisp executable
-                          (default is search in PATH)
-  --with-xindy-recode     Use `recode' instead of `iconv' (default is NO)
+  --with-xindy-recode     For `xindy': use `recode' instead of `iconv'
+                          (default is NO)
 
 Some influential environment variables:
   CC          C compiler command
@@ -1866,11 +1865,8 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-
-am__api_version='1.10'
-
 ac_aux_dir=
-for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
+for ac_dir in ../../build-aux "$srcdir"/../../build-aux; do
   if test -f "$ac_dir/install-sh"; then
     ac_aux_dir=$ac_dir
     ac_install_sh="$ac_aux_dir/install-sh -c"
@@ -1886,8 +1882,8 @@ for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
   fi
 done
 if test -z "$ac_aux_dir"; then
-  { { $as_echo "$as_me:$LINENO: error: cannot find install-sh or install.sh in \"$srcdir\" \"$srcdir/..\" \"$srcdir/../..\"" >&5
-$as_echo "$as_me: error: cannot find install-sh or install.sh in \"$srcdir\" \"$srcdir/..\" \"$srcdir/../..\"" >&2;}
+  { { $as_echo "$as_me:$LINENO: error: cannot find install-sh or install.sh in ../../build-aux \"$srcdir\"/../../build-aux" >&5
+$as_echo "$as_me: error: cannot find install-sh or install.sh in ../../build-aux \"$srcdir\"/../../build-aux" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
@@ -1899,6 +1895,9 @@ ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
 ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
 ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
+
+
+am__api_version='1.10'
 
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
@@ -3826,31 +3825,27 @@ $as_echo "no" >&6; }
 fi
 
 
-# Check whether --enable-make-rules was given.
-if test "${enable_make_rules+set}" = set; then
-  enableval=$enable_make_rules;
+# Include onfigure options that also appear at the top-level of the TL tree.
+## utils/xindy/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
+## configure options for xindy
+# Check whether --enable-xindy-make-rules was given.
+if test "${enable_xindy_make_rules+set}" = set; then
+  enableval=$enable_xindy_make_rules;
 fi
-
-# Check whether --enable-docs was given.
-if test "${enable_docs+set}" = set; then
-  enableval=$enable_docs;
+# Check whether --enable-xindy-docs was given.
+if test "${enable_xindy_docs+set}" = set; then
+  enableval=$enable_xindy_docs;
 fi
-
-# This option haqs been renamed --enable-native-texlive-build
-# but should only inherited and not specified here
-# AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
-
-# Check whether --with-clisp was given.
-if test "${with_clisp+set}" = set; then
-  withval=$with_clisp;
-fi
-
 
 # Check whether --with-xindy-recode was given.
 if test "${with_xindy_recode+set}" = set; then
   withval=$with_xindy_recode;
 fi
 
+
+# This option haqs been renamed --enable-native-texlive-build
+# but should only be inherited and not specified here
+# AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
 
 if test "x$with_xindy_recode" != xyes; then
   CONVERT_FROM_UTF8="iconv -f UTF-8 -t "
@@ -3907,14 +3902,14 @@ $as_echo "$as_me: Using installation layout for TeX Live" >&6;}
   datadir="$prefix/texmf"
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
-  if test -z "$enable_docs"; then
+  if test -z "$enable_xindy_docs"; then
     { $as_echo "$as_me:$LINENO: Disabling docs building" >&5
 $as_echo "$as_me: Disabling docs building" >&6;}
-    enable_docs=no;
+    enable_xindy_docs=no;
   fi
-#  if test -z "$enable_make_rules"; then
+#  if test -z "$enable_xindy_make_rules"; then
 #    AC_MSG_NOTICE([Disabling make-rules building])
-#    enable_make_rules=no;
+#    enable_xindy_make_rules=no;
 #  fi
 else
   enable_native_texlive_build=no
@@ -3928,7 +3923,7 @@ else
 fi
 
 
-if test "x$enable_make_rules" != xno; then
+if test "x$enable_xindy_make_rules" != xno; then
 
 for ac_prog in latex elatex lambda
 do
@@ -3984,7 +3979,7 @@ fi
 
 fi
 
- if test "x$enable_make_rules" != xno; then
+ if test "x$enable_xindy_make_rules" != xno; then
   BUILDRULES_TRUE=
   BUILDRULES_FALSE='#'
 else
@@ -3993,7 +3988,7 @@ else
 fi
 
 
-if test "x$enable_docs" != xno; then
+if test "x$enable_xindy_docs" != xno; then
 
 for ac_prog in pdflatex
 do
@@ -4049,7 +4044,7 @@ fi
 
 fi
 
- if test "x$enable_docs" != xno; then
+ if test "x$enable_xindy_docs" != xno; then
   BUILDDOCS_TRUE=
   BUILDDOCS_FALSE='#'
 else
@@ -4058,28 +4053,26 @@ else
 fi
 
 
-CLISP=
-if test "x$with_clisp" = xyes; then
-  # Extract the first word of "clisp", so it can be a program name with args.
-set dummy clisp; ac_word=$2
+for ac_prog in clisp
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
 { $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
-if test "${ac_cv_path_CLISP+set}" = set; then
+if test "${ac_cv_prog_CLISP+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
-  case $CLISP in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_CLISP="$CLISP" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+  if test -n "$CLISP"; then
+  ac_cv_prog_CLISP="$CLISP" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
 for as_dir in $PATH
 do
   IFS=$as_save_IFS
   test -z "$as_dir" && as_dir=.
   for ac_exec_ext in '' $ac_executable_extensions; do
   if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_CLISP="$as_dir/$ac_word$ac_exec_ext"
+    ac_cv_prog_CLISP="$ac_prog"
     $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
     break 2
   fi
@@ -4087,10 +4080,9 @@ done
 done
 IFS=$as_save_IFS
 
-  ;;
-esac
 fi
-CLISP=$ac_cv_path_CLISP
+fi
+CLISP=$ac_cv_prog_CLISP
 if test -n "$CLISP"; then
   { $as_echo "$as_me:$LINENO: result: $CLISP" >&5
 $as_echo "$CLISP" >&6; }
@@ -4100,65 +4092,32 @@ $as_echo "no" >&6; }
 fi
 
 
-elif test "x$with_clisp" = xno; then
+  test -n "$CLISP" && break
+done
+test -n "$CLISP" || CLISP="no"
+
+if test "x$CLISP" = xno; then
   if test "x$enable_build" = xno; then
   { $as_echo "$as_me:$LINENO: WARNING: building xindy has been disabled and would fail because
---without-clisp specified, but clisp is required" >&5
+clisp is required but not found in PATH.
+Please install clisp or specify the clisp executable location
+via the CLISP=... configure argument." >&5
 $as_echo "$as_me: WARNING: building xindy has been disabled and would fail because
---without-clisp specified, but clisp is required" >&2;}
+clisp is required but not found in PATH.
+Please install clisp or specify the clisp executable location
+via the CLISP=... configure argument." >&2;}
 else
-  { { $as_echo "$as_me:$LINENO: error: --without-clisp specified, but clisp is required" >&5
-$as_echo "$as_me: error: --without-clisp specified, but clisp is required" >&2;}
+  { { $as_echo "$as_me:$LINENO: error: clisp is required but not found in PATH.
+Please install clisp or specify the clisp executable location
+via the CLISP=... configure argument." >&5
+$as_echo "$as_me: error: clisp is required but not found in PATH.
+Please install clisp or specify the clisp executable location
+via the CLISP=... configure argument." >&2;}
    { (exit 1); exit 1; }; }
 fi
 
 
-elif test -n "$with_clisp"; then
-  CLISP="$with_clisp"
 else
-  # Extract the first word of "clisp", so it can be a program name with args.
-set dummy clisp; ac_word=$2
-{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if test "${ac_cv_path_CLISP+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  case $CLISP in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_CLISP="$CLISP" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_CLISP="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-CLISP=$ac_cv_path_CLISP
-if test -n "$CLISP"; then
-  { $as_echo "$as_me:$LINENO: result: $CLISP" >&5
-$as_echo "$CLISP" >&6; }
-else
-  { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-fi
-
-if test -n "$CLISP"; then
   test -x "$CLISP" || if test "x$enable_build" = xno; then
   { $as_echo "$as_me:$LINENO: WARNING: building xindy has been disabled and would fail because
 clisp is not executable: $CLISP" >&5
@@ -4212,29 +4171,7 @@ $as_echo "$as_me: error: clisp is not usable: expected directory is not found: $
 fi
 
 
-else
-  if test "x$enable_build" = xno; then
-  { $as_echo "$as_me:$LINENO: WARNING: building xindy has been disabled and would fail because
-clisp is required but not found in PATH.
-Please install clisp or specify the clisp executable location
-via the --with-clisp=... option." >&5
-$as_echo "$as_me: WARNING: building xindy has been disabled and would fail because
-clisp is required but not found in PATH.
-Please install clisp or specify the clisp executable location
-via the --with-clisp=... option." >&2;}
-else
-  { { $as_echo "$as_me:$LINENO: error: clisp is required but not found in PATH.
-Please install clisp or specify the clisp executable location
-via the --with-clisp=... option." >&5
-$as_echo "$as_me: error: clisp is required but not found in PATH.
-Please install clisp or specify the clisp executable location
-via the --with-clisp=... option." >&2;}
-   { (exit 1); exit 1; }; }
 fi
-
-
-fi
-
 
 
 

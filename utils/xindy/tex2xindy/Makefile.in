@@ -36,9 +36,9 @@ bin_PROGRAMS = tex2xindy$(EXEEXT)
 subdir = tex2xindy
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in tex2xindy.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/m4/ac_prog_latex.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
+	$(top_srcdir)/m4/tl_msg_error.m4 $(top_srcdir)/ac/xindy.ac \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -51,7 +51,7 @@ am_tex2xindy_OBJECTS = tex2xindy.$(OBJEXT)
 tex2xindy_OBJECTS = $(am_tex2xindy_OBJECTS)
 tex2xindy_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/depcomp
+depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -59,7 +59,7 @@ CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 @MAINTAINER_MODE_FALSE@am__skiplex = test -f $@ ||
 LEXCOMPILE = $(LEX) $(LFLAGS) $(AM_LFLAGS)
-YLWRAP = $(top_srcdir)/ylwrap
+YLWRAP = $(top_srcdir)/../../build-aux/ylwrap
 SOURCES = $(tex2xindy_SOURCES)
 DIST_SOURCES = $(tex2xindy_SOURCES)
 man1dir = $(mandir)/man1

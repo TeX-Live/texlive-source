@@ -10,7 +10,7 @@ ACLOCAL_AMFLAGS = -I ../m4 --force
 SUBDIRS = dummy . $(SUBTEXK)
 DIST_SUBDIRS = dummy $(DIST_SUBTEXK)
 
-## just in case a subdirectory has added directories
+# just in case a subdirectory has added directories
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 

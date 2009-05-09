@@ -1177,6 +1177,7 @@ uninstall-am:
 	uninstall-am
 
 
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(T1LIB_TREE) -name .svn`
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

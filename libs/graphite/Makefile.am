@@ -47,7 +47,7 @@ EXTRA_DIST = \
 	test \
 	uninstalled-top.pc.in
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 

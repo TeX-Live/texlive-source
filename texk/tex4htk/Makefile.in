@@ -719,6 +719,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS \
 
 @KPATHSEA_RULE@
 
+# We support both multiplatform and non-multiplatform builds.
 install-data-hook:
 	@for p in $(perl_scripts); do \
 	  echo "$(INSTALL_SCRIPT) $(srcdir)/$$p '$(DESTDIR)$(tex4htdir)/$$p.pl'"; \
@@ -759,6 +760,7 @@ uninstall-hook:
 	  rm -f "$(DESTDIR)$(bindir)/$$p"; \
 	done
 
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

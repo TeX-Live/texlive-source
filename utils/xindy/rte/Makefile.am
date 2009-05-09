@@ -29,14 +29,17 @@ binariesdir = ../binaries
 
 all-local: $(binariesdir)/$(XINDY_RUN) $(binariesdir)/base.mem
 
-$(binariesdir)/$(XINDY_RUN) $(binariesdir)/base.mem:
+## Serialize to allow parallel builds
+##
+$(binariesdir)/base.mem: $(binariesdir)/$(XINDY_RUN)
+	cp xindy-build-dir/lispinit.mem $(binariesdir)/base.mem
+$(binariesdir)/$(XINDY_RUN):
 	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c
 	env CLISP_LINKKIT='@CLISP_LIB@/linkkit' MAKE="$(MAKE)" \
 	sh '@CLISP_LIB@/clisp-link' add-module-set ordrules '@CLISP_LIB@/full' xindy-build-dir
 	cp xindy-build-dir/$(LISP_RUN) $(binariesdir)/$(XINDY_RUN)
-	cp xindy-build-dir/lispinit.mem $(binariesdir)/base.mem
 
 clean-local:
 	rm -rf xindy-build-dir

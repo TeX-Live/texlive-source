@@ -24,7 +24,7 @@ program_transform_name = 's,^,tc,'
 ## Thus nodist_* for all files in $(DIALOG_TREE).
 EXTRA_DIST = $(DIALOG_TREE)
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(DIALOG_TREE) -name .svn`
 

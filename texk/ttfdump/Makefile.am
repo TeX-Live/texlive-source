@@ -7,7 +7,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## DISTFILES contains a directory and files in that directory.
 EXTRA_DIST = docs include libttf src
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 

@@ -34,9 +34,9 @@ host_triplet = @host@
 subdir = rte
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in NEWS
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/m4/ac_prog_latex.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
+	$(top_srcdir)/m4/tl_msg_error.m4 $(top_srcdir)/ac/xindy.ac \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -472,14 +472,15 @@ uninstall-am:
 
 all-local: $(binariesdir)/$(XINDY_RUN) $(binariesdir)/base.mem
 
-$(binariesdir)/$(XINDY_RUN) $(binariesdir)/base.mem:
+$(binariesdir)/base.mem: $(binariesdir)/$(XINDY_RUN)
+	cp xindy-build-dir/lispinit.mem $(binariesdir)/base.mem
+$(binariesdir)/$(XINDY_RUN):
 	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c
 	env CLISP_LINKKIT='@CLISP_LIB@/linkkit' MAKE="$(MAKE)" \
 	sh '@CLISP_LIB@/clisp-link' add-module-set ordrules '@CLISP_LIB@/full' xindy-build-dir
 	cp xindy-build-dir/$(LISP_RUN) $(binariesdir)/$(XINDY_RUN)
-	cp xindy-build-dir/lispinit.mem $(binariesdir)/base.mem
 
 clean-local:
 	rm -rf xindy-build-dir

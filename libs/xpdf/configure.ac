@@ -18,24 +18,24 @@ AM_MAINTAINER_MODE
 
 dnl ##### Optional features.
 AC_ARG_ENABLE([a4-paper],
-              [AS_HELP_STRING([--enable-a4-paper],
-                              [use A4 paper size instead of Letter for PostScript output])],
+              AS_HELP_STRING([--enable-a4-paper],
+                             [use A4 paper size instead of Letter for PostScript output]),
               [if test "x$enableval" = xyes; then
 AC_DEFINE([A4_PAPER], 1, [Use A4 paper size instead of Letter for PostScript output])
 fi
 ])
 
 AC_ARG_ENABLE([opi],
-              [AS_HELP_STRING([--enable-opi],
-                              [include support for OPI comments])],
+              AS_HELP_STRING([--enable-opi],
+                             [include support for OPI comments]),
               [if test "x$enableval" = xyes; then
 AC_DEFINE([OPI_SUPPORT], 1, [Include support for OPI comments])
 fi
 ])
 
 AC_ARG_ENABLE([multithreaded],
-              [AS_HELP_STRING([--enable-multithreaded],
-                              [include support for multithreading])],
+              AS_HELP_STRING([--enable-multithreaded],
+                             [include support for multithreading]),
               [if test "x$enableval" = xyes; then
 AC_DEFINE([MULTITHREADED], 1, [Enable multithreading support])
 fi

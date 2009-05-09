@@ -36,9 +36,9 @@ host_triplet = @host@
 subdir = binaries
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/m4/ac_prog_latex.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
 	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
+	$(top_srcdir)/m4/tl_msg_error.m4 $(top_srcdir)/ac/xindy.ac \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -394,6 +394,9 @@ defaults.xdy:
 
 %.fas: $(SRCDIR)/%.lsp
 	$(RUN_XINDY) -c $< -o $@
+
+# Serialize
+.NOTPARALLEL:
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

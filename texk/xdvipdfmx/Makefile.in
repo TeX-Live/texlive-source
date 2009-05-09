@@ -673,6 +673,7 @@ uninstall-am:
 	ps ps-am tags tags-recursive uninstall uninstall-am
 
 
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -31,7 +31,7 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h
 DISTCLEANFILES = $(EXTRA_LIBRARIES)
 CLEANFILES =
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
@@ -58,11 +58,11 @@ LDADD = $(proglib) $(KPATHSEA_LIBS)
 ## This does not work for the configure substitution  $(KPATHSEA_LIBS),
 ## thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
 
-## Rebuild $(proglib)
+# Rebuild $(proglib)
 $(proglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
 	cd lib && $(MAKE) $(AM_MAKEFLAGS)
 
-## Rebuild Web2C programs
+# Rebuild Web2C programs
 web2c/stamp-fixwrites: $(web2c_common) ${srcdir}/web2c/*.[chly]
 	cd web2c && $(MAKE) $(AM_MAKEFLAGS) stamp-fixwrites
 web2c/stamp-splitup: $(web2c_common) ${srcdir}/web2c/*.[chly]

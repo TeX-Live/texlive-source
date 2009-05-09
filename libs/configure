@@ -693,6 +693,9 @@ enable_t1utils
 enable_tpic2pdftex
 enable_vlna
 enable_xindy
+enable_xindy_make_rules
+enable_xindy_docs
+with_xindy_recode
 enable_web2c
 with_editor
 enable_auto_core
@@ -1456,6 +1459,9 @@ Optional Features:
   --disable-tpic2pdftex   do not build the tpic2pdftex package
   --disable-vlna          do not build the vlna package
   --enable-xindy          build the xindy package
+  --enable-xindy-make-rules build and install make-rules package (default is
+                            YES)
+  --enable-xindy-docs       build and install documentation (default is YES)
   --disable-web2c         do not build the web2c (TeX & Co.) package
   --enable-auto-core        cause TeX&MF to dump core, given a certain
                             filename
@@ -1540,6 +1546,8 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-xindy-recode     For `xindy': use `recode' instead of `iconv'
+                          (default is NO)
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d %s]
   --without-mf-x-toolkit  do not use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
@@ -2333,6 +2341,22 @@ case $enable_xindy in #(
 $as_echo "$as_me: Assuming \`--enable-xindy=$enable_xindy'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-xindy=$enable_xindy'";;
 esac
+
+## utils/xindy/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
+## configure options for xindy
+# Check whether --enable-xindy-make-rules was given.
+if test "${enable_xindy_make_rules+set}" = set; then
+  enableval=$enable_xindy_make_rules;
+fi
+# Check whether --enable-xindy-docs was given.
+if test "${enable_xindy_docs+set}" = set; then
+  enableval=$enable_xindy_docs;
+fi
+
+# Check whether --with-xindy-recode was given.
+if test "${with_xindy_recode+set}" = set; then
+  withval=$with_xindy_recode;
+fi
 
 
 

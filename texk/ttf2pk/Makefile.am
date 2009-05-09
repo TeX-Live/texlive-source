@@ -89,7 +89,7 @@ EXTRA_DIST = \
 	emtexdir.h \
 	ttf2pk.doc
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 

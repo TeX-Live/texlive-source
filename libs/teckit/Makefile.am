@@ -80,7 +80,7 @@ EXTRA_DIST += \
 	source/version_defs.h \
 	test
 
-## in case of an SVN repository
+# in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
