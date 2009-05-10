@@ -1,40 +1,18 @@
-2009-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2009-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* xpdf-3.02-PATCHES/patch-15-fix-pow-arg,
-	xpdf-3.02-PATCHES/patch-16-size-of-struct,
-	xpdf-3.02-PATCHES/patch-17-strCrypt (new):
-	three small patches split off from ...
-	* xpdf-3.02-PATCHES/patch-20-pdftex: ... this file.
+	Adapt to TL2009 build system.
 
-2009-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	Applied official 3.02pl3 patch
-	adapted xpdf-3.02-PATCHES/patch-[12]?-*
-
-	* xpdf/config.h (xpdfVersion): "3.02pl2" -> "3.02pl3"
-
-2009-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* xpdf/GlobalParams.cc: '#undef WIN32' for mingw32 as patch
-		xpdf-3.02-PATCHES/patch-12-mingw32
-
-2009-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* goo/gfile.cc: '#include <time.h>' as patch
-		xpdf-3.02-PATCHES/patch-11-time_h
-
-2009-02-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	* configure.ac: for the new TeX Live build system.
 	* Makefile.am, fofi/Makefile.am, goo/Makefile.am,
-	xpdf/Makefile.am: proxy Makefiles for the patched original
-	sources in xpdf-3.02/
+	xpdf/Makefile.am, configure.ac:
+	Proxy build system using source tree xpdf-3.02/ as obtained
+	from http://www.foolabs.com/xpdf/ with patches.
 
-2008-05-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+	* xpdf-3.02-foolabs/*: Orignal patches for xpdf-3.02pl1 etc.
+	from http://www.foolabs.com/xpdf/.
 
-	Imported/updated changes for pdfTeX as patches
-		xpdf-3.02-PATCHES/patch-10-PDF_PARSER_ONLY
-		xpdf-3.02-PATCHES/patch-20-pdftex
+	* xpdf-3.02-PATCHES/*: Actual patches applied to the original
+	source tree.
+	See xpdf-3.02-PATCHES/ChangeLog for details.
 
 2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -45,22 +23,4 @@
 	replaced AC_DEFUN(FOO,...) by AC_DEFUN([FOO],...).
 	* aclocal.m4 (new): Generated (aclocal -I ../../texk/m4).
 	* configure: Regenerated (autoconf).
-
-2007-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	Applied official 3.02pl2 patch
-
-	* xpdf/config.h (xpdfVersion): "3.02pl1" -> "3.02pl2"
-
-2007-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	Applied official 3.02pl1 patch
-
-	* xpdf/config.h (xpdfVersion): "3.02" -> "3.02pl1"
-
-2007-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	Imported xpdf-3.02 source tree:
-	  ftp://ftp.foolabs.com/pub/xpdf/xpdf-3.02.tar.gz
-	  http://www.foolabs.com/xpdf/xpdf-3.02.tar.gz
 

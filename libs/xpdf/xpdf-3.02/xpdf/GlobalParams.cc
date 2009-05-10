@@ -462,7 +462,7 @@ KeyBinding::KeyBinding(int codeA, int modsA, int contextA, GList *cmdsA) {
 KeyBinding::~KeyBinding() {
   deleteGList(cmds, GString);
 }
-#endif
+#endif /* !PDF_PARSER_ONLY */
 
 #ifdef ENABLE_PLUGINS
 //------------------------------------------------------------------------
@@ -610,142 +610,15 @@ Plugin::~Plugin() {
 // parsing
 //------------------------------------------------------------------------
 
+#ifdef PDF_PARSER_ONLY
 GlobalParams::GlobalParams() {
   UnicodeMap *map;
-  int i;
-
-#if MULTITHREADED
-  gInitMutex(&mutex);
-  gInitMutex(&unicodeMapCacheMutex);
-  gInitMutex(&cMapCacheMutex);
-#endif
-
-  initBuiltinFontTables();
-
-  // scan the encoding in reverse because we want the lowest-numbered
-  // index for each char name ('space' is encoded twice)
-  macRomanReverseMap = new NameToCharCode();
-  for (i = 255; i >= 0; --i) {
-    if (macRomanEncoding[i]) {
-      macRomanReverseMap->add(macRomanEncoding[i], (CharCode)i);
-    }
-  }
-
-#ifdef WIN32
-  // baseDir will be set by a call to setBaseDir
-  baseDir = new GString();
 #else
-  baseDir = appendToPath(getHomeDir(), ".xpdf");
-#endif
-  nameToUnicode = new NameToCharCode();
-  cidToUnicodes = new GHash(gTrue);
-  unicodeToUnicodes = new GHash(gTrue);
-  residentUnicodeMaps = new GHash();
-  unicodeMaps = new GHash(gTrue);
-  cMapDirs = new GHash(gTrue);
-  toUnicodeDirs = new GList();
-  displayFonts = new GHash();
-  displayCIDFonts = new GHash();
-  displayNamedCIDFonts = new GHash();
-#if HAVE_PAPER_H
-  char *paperName;
-  const struct paper *paperType;
-  paperinit();
-  if ((paperName = systempapername())) {
-    paperType = paperinfo(paperName);
-    psPaperWidth = (int)paperpswidth(paperType);
-    psPaperHeight = (int)paperpsheight(paperType);
-  } else {
-    error(-1, "No paper information available - using defaults");
-    psPaperWidth = defPaperWidth;
-    psPaperHeight = defPaperHeight;
-  }
-  paperdone();
-#else
-  psPaperWidth = defPaperWidth;
-  psPaperHeight = defPaperHeight;
-#endif
-  psImageableLLX = psImageableLLY = 0;
-  psImageableURX = psPaperWidth;
-  psImageableURY = psPaperHeight;
-  psCrop = gTrue;
-  psExpandSmaller = gFalse;
-  psShrinkLarger = gTrue;
-  psCenter = gTrue;
-  psDuplex = gFalse;
-  psLevel = psLevel2;
-  psFile = NULL;
-  psFonts = new GHash();
-  psNamedFonts16 = new GList();
-  psFonts16 = new GList();
-  psEmbedType1 = gTrue;
-  psEmbedTrueType = gTrue;
-  psEmbedCIDPostScript = gTrue;
-  psEmbedCIDTrueType = gTrue;
-  psOPI = gFalse;
-  psASCIIHex = gFalse;
-  textEncoding = new GString("Latin1");
-#if defined(WIN32)
-  textEOL = eolDOS;
-#elif defined(MACOS)
-  textEOL = eolMac;
-#else
-  textEOL = eolUnix;
-#endif
-  textPageBreaks = gTrue;
-  textKeepTinyChars = gFalse;
-  fontDirs = new GList();
-  initialZoom = new GString("125");
-  continuousView = gFalse;
-  enableT1lib = gTrue;
-  enableFreeType = gTrue;
-  antialias = gTrue;
-  urlCommand = NULL;
-  movieCommand = NULL;
-  mapNumericCharNames = gTrue;
-  printCommands = gFalse;
-  errQuiet = gFalse;
-
-  cidToUnicodeCache = new CharCodeToUnicodeCache(cidToUnicodeCacheSize);
-  unicodeToUnicodeCache =
-      new CharCodeToUnicodeCache(unicodeToUnicodeCacheSize);
-  unicodeMapCache = new UnicodeMapCache();
-  cMapCache = new CMapCache();
-
-#ifdef ENABLE_PLUGINS
-  plugins = new GList();
-  securityHandlers = new GList();
-#endif
-
-  // set up the initial nameToUnicode table
-  for (i = 0; nameToUnicodeTab[i].name; ++i) {
-    nameToUnicode->add(nameToUnicodeTab[i].name, nameToUnicodeTab[i].u);
-  }
-
-  // set up the residentUnicodeMaps table
-  map = new UnicodeMap("Latin1", gFalse,
-		       latin1UnicodeMapRanges, latin1UnicodeMapLen);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("ASCII7", gFalse,
-		       ascii7UnicodeMapRanges, ascii7UnicodeMapLen);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("Symbol", gFalse,
-		       symbolUnicodeMapRanges, symbolUnicodeMapLen);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("ZapfDingbats", gFalse, zapfDingbatsUnicodeMapRanges,
-		       zapfDingbatsUnicodeMapLen);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("UTF-8", gTrue, &mapUTF8);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-  map = new UnicodeMap("UCS-2", gTrue, &mapUCS2);
-  residentUnicodeMaps->add(map->getEncodingName(), map);
-
-}
-
 GlobalParams::GlobalParams(char *cfgFileName) {
   UnicodeMap *map;
   GString *fileName;
   FILE *f;
+#endif
   int i;
 
 #if MULTITHREADED
@@ -891,6 +764,7 @@ GlobalParams::GlobalParams(char *cfgFileName) {
   map = new UnicodeMap("UCS-2", gTrue, &mapUCS2);
   residentUnicodeMaps->add(map->getEncodingName(), map);
 
+#ifndef PDF_PARSER_ONLY
   // look for a user config file, then a system-wide config file
   f = NULL;
   fileName = NULL;
@@ -924,12 +798,11 @@ GlobalParams::GlobalParams(char *cfgFileName) {
     }
   }
   if (f) {
-#ifndef PDF_PARSER_ONLY
     parseFile(fileName, f);
-#endif
     delete fileName;
     fclose(f);
   }
+#endif /* !PDF_PARSER_ONLY */
 }
 
 #ifndef PDF_PARSER_ONLY
@@ -1259,7 +1132,7 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
 
   deleteGList(tokens, GString);
 }
-#endif
+#endif /* !PDF_PARSER_ONLY */
 
 void GlobalParams::parseNameToUnicode(GList *tokens, GString *fileName,
 					 int line) {
@@ -1790,7 +1663,7 @@ GBool GlobalParams::parseKey(GString *modKeyStr, GString *contextStr,
 
   return gTrue;
 }
-#endif
+#endif /* !PDF_PARSER_ONLY */
 
 void GlobalParams::parseCommand(char *cmdName, GString **val,
 				GList *tokens, GString *fileName, int line) {
@@ -2613,7 +2486,7 @@ GList *GlobalParams::getKeyBinding(int code, int mods, int context) {
   unlockGlobalParams;
   return cmds;
 }
-#endif
+#endif /* !PDF_PARSER_ONLY */
 
 GBool GlobalParams::getPrintCommands() {
   GBool p;

@@ -5,9 +5,6 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
-//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
-//  See top-level ChangeLog for a list of all modifications
-//========================================================================
 
 #ifndef PAGE_H
 #define PAGE_H
@@ -173,11 +170,9 @@ public:
 
   void processLinks(OutputDev *out, Catalog *catalog);
 
-#ifndef PDF_PARSER_ONLY
   // Get the page's default CTM.
   void getDefaultCTM(double *ctm, double hDPI, double vDPI,
 		     int rotate, GBool useMediaBox, GBool upsideDown);
-#endif
 
 private:
 

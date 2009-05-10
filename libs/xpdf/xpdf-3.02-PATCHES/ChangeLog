@@ -1,0 +1,66 @@
+2009-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reorganize and simplify pdftex patches.
+
+	* patch-10-PDF_PARSER_ONLY (removed): replaced by ...
+	* patch-10-exclude-body-of-Page::getDefaultCTM (new): ... this.
+
+		from Derek B. Noonburg <derek@foolabs.com>
+
+	* patch-20-pdftex (removed): split into several pieces.
+	* patch-20-skip-reading-config-file (new): simplified version
+	of previous code.
+	* patch-22-exclude-openTempFile: new file.
+	* patch-23-exclude-keyBindings: new file.
+	* patch-40-objectStream-support-for-pdftosrc: new file.
+
+		from Han The Thanh <thanh@pdftex.org>
+
+2009-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-15-fix-pow-arg (new): Three ...
+	* patch-16-size-of-struct (new): ... small patches ...
+	* patch-17-strCrypt (new): ... split of from ...
+	* patch-20-pdftex: ... this one.
+
+2009-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-pl3 (new): Official 3.02pl3 patch plus change of
+	xpdfVersion "3.02pl2" -> "3.02pl3"
+	* patch-[12]?-*: adapted to presence of patch-01-pl3.
+
+2009-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-mingw32 (new): Buld fix for mingw32.
+
+		from Derek B. Noonburg <derek@foolabs.com>
+
+2009-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-11-time_h (new): Buld fix for djgpp.
+
+		from Derek B. Noonburg <derek@foolabs.com>
+
+2009-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-10-PDF_PARSER_ONLY (new): required build with
+	PDF_PARSER_ONLY defined.
+
+	* patch-20-pdftex (new): To restore former tree for pdfTeX.
+
+2007-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-pl2 (new): Official 3.02pl2 patch plus change of
+	xpdfVersion "3.02pl1" -> "3.02pl2"
+
+2007-08-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-pl1 (new): Official 3.02pl1 patch plus change of
+	xpdfVersion "3.02" -> "3.02pl1" in ../xpdf/config.h.
+
+2007-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported xpdf-3.02 source tree:
+	  ftp://ftp.foolabs.com/pub/xpdf/xpdf-3.02.tar.gz
+	  http://www.foolabs.com/xpdf/xpdf-3.02.tar.gz
+

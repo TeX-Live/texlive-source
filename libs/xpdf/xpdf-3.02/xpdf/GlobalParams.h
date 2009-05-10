@@ -190,28 +190,28 @@ public:
 #define xpdfKeyContextMainWin     (2 << 6)
 #define xpdfKeyContextScrLockOn   (1 << 8)
 #define xpdfKeyContextScrLockOff  (2 << 8)
-#endif
+#endif /* !PDF_PARSER_ONLY */
 
 //------------------------------------------------------------------------
 
 class GlobalParams {
 public:
 
+#ifdef PDF_PARSER_ONLY
+  // Initialize the global parameters  without reading a config file.
+  GlobalParams();
+#else
   // Initialize the global parameters by attempting to read a config
   // file.
   GlobalParams(char *cfgFileName);
-
-  // Initialize it without reading the config
-  GlobalParams();
+#endif
 
   ~GlobalParams();
 
   void setBaseDir(char *dir);
   void setupBaseFonts(char *dir);
 
-#ifndef PDF_PARSER_ONLY
   void parseLine(char *buf, GString *fileName, int line);
-#endif
 
   //----- accessors
 

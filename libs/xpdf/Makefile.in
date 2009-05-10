@@ -1457,6 +1457,7 @@ uninstall-am:
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(XPDF_TREE) -name .svn`
+	rm -f $(distdir)/$(XPDF_TREE)/install-sh
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -5,9 +5,6 @@
 // Copyright 1996-2007 Glyph & Cog, LLC
 //
 //========================================================================
-//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
-//  See top-level ChangeLog for a list of all modifications
-//========================================================================
 
 #include <aconf.h>
 
@@ -423,9 +420,9 @@ void Page::processLinks(OutputDev *out, Catalog *catalog) {
   delete links;
 }
 
-#ifndef PDF_PARSER_ONLY
 void Page::getDefaultCTM(double *ctm, double hDPI, double vDPI,
 			 int rotate, GBool useMediaBox, GBool upsideDown) {
+#ifndef PDF_PARSER_ONLY
   GfxState *state;
   int i;
 
@@ -442,5 +439,5 @@ void Page::getDefaultCTM(double *ctm, double hDPI, double vDPI,
     ctm[i] = state->getCTM()[i];
   }
   delete state;
-}
 #endif
+}
