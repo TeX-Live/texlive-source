@@ -1,3 +1,8 @@
+2009-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Don't check LLONG_MAX twice, otherwise may use
+	wrong value from cache file.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

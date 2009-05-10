@@ -675,6 +675,8 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+build_FALSE
+build_TRUE
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
@@ -2379,6 +2381,15 @@ fi
 
   MAINT=$MAINTAINER_MODE_TRUE
 
+
+
+ if test "x$enable_build" != xno; then
+  build_TRUE=
+  build_FALSE='#'
+else
+  build_TRUE='#'
+  build_FALSE=
+fi
 
 
 ac_config_headers="$ac_config_headers obsdcompat/config.h"
@@ -5598,13 +5609,12 @@ if test "$GCC" = "yes" || test "$GCC" = "egcs"; then
 	esac
 
 	if test -z "$have_llong_max"; then
-		# retry LLONG_MAX with -std=gnu99, needed on some Linuxes
-		unset ac_cv_have_decl_LLONG_MAX
+		# now try LLONG_MIN with -std=gnu99, needed on some Linuxes
 		saved_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS -std=gnu99"
-		{ $as_echo "$as_me:$LINENO: checking whether LLONG_MAX is declared" >&5
-$as_echo_n "checking whether LLONG_MAX is declared... " >&6; }
-if test "${ac_cv_have_decl_LLONG_MAX+set}" = set; then
+		{ $as_echo "$as_me:$LINENO: checking whether LLONG_MIN is declared" >&5
+$as_echo_n "checking whether LLONG_MIN is declared... " >&6; }
+if test "${ac_cv_have_decl_LLONG_MIN+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   cat >conftest.$ac_ext <<_ACEOF
@@ -5619,8 +5629,8 @@ cat >>conftest.$ac_ext <<_ACEOF
 int
 main ()
 {
-#ifndef LLONG_MAX
-  (void) LLONG_MAX;
+#ifndef LLONG_MIN
+  (void) LLONG_MIN;
 #endif
 
   ;
@@ -5645,19 +5655,19 @@ $as_echo "$ac_try_echo") >&5
 	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
        } && test -s conftest.$ac_objext; then
-  ac_cv_have_decl_LLONG_MAX=yes
+  ac_cv_have_decl_LLONG_MIN=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_have_decl_LLONG_MAX=no
+	ac_cv_have_decl_LLONG_MIN=no
 fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_have_decl_LLONG_MAX" >&5
-$as_echo "$ac_cv_have_decl_LLONG_MAX" >&6; }
-if test "x$ac_cv_have_decl_LLONG_MAX" = x""yes; then
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_have_decl_LLONG_MIN" >&5
+$as_echo "$ac_cv_have_decl_LLONG_MIN" >&6; }
+if test "x$ac_cv_have_decl_LLONG_MIN" = x""yes; then
   have_llong_max=1
 else
   CFLAGS="$saved_CFLAGS"
@@ -10773,6 +10783,13 @@ $as_echo "$as_me: error: conditional \"MAINTAINER_MODE\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
+if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"build\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"build\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
 if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
   { { $as_echo "$as_me:$LINENO: error: conditional \"AMDEP\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
@@ -11953,6 +11970,9 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
 
 
   case $ac_file$ac_mode in
+    "obsdcompat/config.h":H) sed -e 's/^#define PACKAGE/#define OBSD_PACKAGE/' \
+      -e 's/^#define VERSION/#define OBSD_VERSION/' \
+    obsdcompat/config.h >obsdcompat/config.tmp && mv -f obsdcompat/config.tmp obsdcompat/config.h ;;
     "depfiles":C) test x"$AMDEP_TRUE" != x"" || # Autoconf 2.62 quotes --file arguments for eval, but not when files
 # are listed without --file.  Let's play safe and only enable the eval
 # if we detect the quoting.

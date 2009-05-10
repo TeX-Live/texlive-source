@@ -28,7 +28,9 @@ AC_CONFIG_MACRO_DIR([../../m4])
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
 
-AC_CONFIG_HEADER([obsdcompat/config.h],
+AM_CONDITIONAL([build], [test "x$enable_build" != xno])
+
+AC_CONFIG_HEADERS([obsdcompat/config.h],
  [sed -e 's/^#define PACKAGE/#define OBSD_PACKAGE/' \
       -e 's/^#define VERSION/#define OBSD_VERSION/' \
     obsdcompat/config.h >obsdcompat/config.tmp && mv -f obsdcompat/config.tmp obsdcompat/config.h])
@@ -78,11 +80,10 @@ if test "$GCC" = "yes" || test "$GCC" = "egcs"; then
 	esac
 
 	if test -z "$have_llong_max"; then
-		# retry LLONG_MAX with -std=gnu99, needed on some Linuxes
-		unset ac_cv_have_decl_LLONG_MAX
+		# now try LLONG_MIN with -std=gnu99, needed on some Linuxes
 		saved_CFLAGS="$CFLAGS"
 		CFLAGS="$CFLAGS -std=gnu99"
-		AC_CHECK_DECL(LLONG_MAX,
+		AC_CHECK_DECL(LLONG_MIN,
 		    [have_llong_max=1],
 		    [CFLAGS="$saved_CFLAGS"],
 		    [#include <limits.h>]

@@ -5,7 +5,10 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+if build
 noinst_LIBRARIES = libopenbsd-compat.a
+endif build
+EXTRA_LIBRARIES = libopenbsd-compat.a
 
 compat_sources = \
 	bsd-asprintf.c \
