@@ -18,6 +18,12 @@ EXTRA_DIST = $(LIBPNG_TREE)
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(LIBPNG_TREE) -name .svn`
+	rm -f $(distdir)/$(LIBPNG_TREE)/config.sub \
+	  $(distdir)/$(LIBPNG_TREE)/config.guess \
+	  $(distdir)/$(LIBPNG_TREE)/depcomp \
+	  $(distdir)/$(LIBPNG_TREE)/install-sh \
+	  $(distdir)/$(LIBPNG_TREE)/missing \
+	  $(distdir)/$(LIBPNG_TREE)/mkinstalldirs
 
 INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = $(LIBPNG_DEFINES)

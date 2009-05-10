@@ -4118,18 +4118,6 @@ fi
 
 
 else
-  test -x "$CLISP" || if test "x$enable_build" = xno; then
-  { $as_echo "$as_me:$LINENO: WARNING: building xindy has been disabled and would fail because
-clisp is not executable: $CLISP" >&5
-$as_echo "$as_me: WARNING: building xindy has been disabled and would fail because
-clisp is not executable: $CLISP" >&2;}
-else
-  { { $as_echo "$as_me:$LINENO: error: clisp is not executable: $CLISP" >&5
-$as_echo "$as_me: error: clisp is not executable: $CLISP" >&2;}
-   { (exit 1); exit 1; }; }
-fi
-
-
   { $as_echo "$as_me:$LINENO: checking for clisp library directory" >&5
 $as_echo_n "checking for clisp library directory... " >&6; }
   CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`

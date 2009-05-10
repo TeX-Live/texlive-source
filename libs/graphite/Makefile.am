@@ -8,6 +8,7 @@ AM_CPPFLAGS = -DNDEBUG
 if build
 noinst_LIBRARIES = libgraphite.a
 endif build
+EXTRA_LIBRARIES = libgraphite.a
 
 noinst_HEADERS = \
 	include/graphite/FileFont.h \
@@ -119,11 +120,7 @@ EXTRA_DIST += \
 	src/segment/Makefile.am \
 	src/segment/XmlTransductionLog.cpp
 
-## Eventually delete these files
+## Original files
 ##
-EXTRA_DIST += \
-	Makefile.am.orig \
-	configure.ac.orig \
-	graphite-engine.ac \
-	withenable.ac
+EXTRA_DIST += Makefile.am.orig configure.ac.orig
 

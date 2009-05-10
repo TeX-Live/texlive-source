@@ -18,6 +18,12 @@ EXTRA_DIST = $(T1LIB_TREE)
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(T1LIB_TREE) -name .svn`
+	rm -f $(distdir)/$(T1LIB_TREE)/ac-tools/config.guess \
+	  $(distdir)/$(T1LIB_TREE)/ac-tools/config.sub \
+	  $(distdir)/$(T1LIB_TREE)/ac-tools/install-sh \
+	  $(distdir)/$(T1LIB_TREE)/ac-tools/ltmain.sh \
+	  $(distdir)/$(T1LIB_TREE)/ac-tools/mkinstalldirs \
+	  $(distdir)/$(T1LIB_TREE)/lib/t1lib/t1lib.h
 
 INCLUDES = -Ilib -I$(top_srcdir)/$(T1LIB_TREE)
 AM_CPPFLAGS = $(T1LIB_DEFINES)

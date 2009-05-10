@@ -45,7 +45,7 @@ DIST_COMMON = README $(am__configure_deps) $(noinst_HEADERS) \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap COPYING \
-	INSTALL TODO
+	ChangeLog INSTALL TODO
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -206,6 +206,7 @@ INCLUDES = -I$(top_srcdir)/include/graphite \
 	-I$(top_srcdir)/src/segment
 AM_CPPFLAGS = -DNDEBUG
 @build_TRUE@noinst_LIBRARIES = libgraphite.a
+EXTRA_LIBRARIES = libgraphite.a
 noinst_HEADERS = \
 	include/graphite/FileFont.h \
 	include/graphite/Font.h \
@@ -241,7 +242,7 @@ EXTRA_DIST = build.bat build_d.bat debian doc installed-top.pc.in \
 	src/generic/HashMap_i.cpp src/generic/Makefile.am \
 	src/painter/Makefile.am src/segment/Makefile.am \
 	src/segment/XmlTransductionLog.cpp Makefile.am.orig \
-	configure.ac.orig graphite-engine.ac withenable.ac
+	configure.ac.orig
 libgraphite_a_SOURCES = \
 	src/font/FileFont.cpp \
 	src/font/Font.cpp \

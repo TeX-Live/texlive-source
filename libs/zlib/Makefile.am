@@ -18,6 +18,7 @@ EXTRA_DIST = $(ZLIB_TREE)
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(ZLIB_TREE) -name .svn`
+	rm -f $(distdir)/$(ZLIB_TREE)/zconf.h
 
 INCLUDES = -I$(top_srcdir)/$(ZLIB_TREE)
 AM_CPPFLAGS = $(ZLIB_DEFINES)

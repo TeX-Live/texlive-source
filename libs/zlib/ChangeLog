@@ -1,0 +1,5 @@
+2009-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+	Add a test case for 'make check'.
+

@@ -92,7 +92,6 @@ if test "x$CLISP" = xno; then
 Please install clisp or specify the clisp executable location
 via the CLISP=... configure argument.])
 else
-  test -x "$CLISP" || TL_MSG_ERROR([clisp is not executable: $CLISP])
   AC_MSG_CHECKING([for clisp library directory])
   CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`
   AC_MSG_RESULT([$CLISP_LIB])

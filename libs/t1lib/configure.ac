@@ -127,7 +127,7 @@ if test -f $srcdir/$T1LIB_TREE/lib/t1lib/t1lib.h; then
   AC_MSG_ERROR([Sorry, you must remove the file $T1LIB_TREE/lib/t1lib/t1lib.h])
 fi
 
-dnl Use $T1LIB_TREE to exclude $T1LIB_TREE/png.h from DIST_COMMON
+dnl Use $T1LIB_TREE to exclude $T1LIB_TREE/lib/t1lib/t1lib.h.in from DIST_COMMON
 AC_CONFIG_FILES([t1lib.h:$T1LIB_TREE/lib/t1lib/t1lib.h.in])
 AC_CONFIG_LINKS([lib/t1lib/t1lib.h:t1lib.h])
 
