@@ -1,3 +1,18 @@
+2009-05-11  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (paths.h): depend on stamp-paths, instead of
+	recursively invoking it.  Else it does not get invoked once it is
+	created.
+
+2009-05-11  Karl Berry  <karl@tug.org>
+
+	* types.h (kpse_file_format_type): add kpse_fea_format,
+	kpse_cid_format for Hans/Taco.
+	* texmf.cnf: define default paths (fonts/fea// and fonts/cid//).
+	* tex-file.c (kpathsea_init_format): initialize them.
+	Also, for kpse_enc_format, set suffix_search_only=true.
+	* doc/kpathsea.texi: document this.
+
 2009-04-18  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): add fc-match, request

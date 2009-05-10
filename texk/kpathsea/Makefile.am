@@ -182,8 +182,7 @@ $(kpseinclude_HEADERS): paths.h
 ## We also replace all semicolons with colons in the paths.
 ## The path-splitting code should be changed to understand both.
 #
-paths.h:
-	$(MAKE) $(AM_MAKE_FLAGS) stamp-paths
+paths.h: stamp-paths
 stamp-paths: texmf.cnf
 	echo "/* paths.h: Generated from texmf.cnf. */" >paths.tmp
 	sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' $< \

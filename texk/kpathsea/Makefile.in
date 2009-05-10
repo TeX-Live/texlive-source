@@ -1544,8 +1544,7 @@ $(kpseinclude_HEADERS): paths.h
 #
 #
 #
-paths.h:
-	$(MAKE) $(AM_MAKE_FLAGS) stamp-paths
+paths.h: stamp-paths
 stamp-paths: texmf.cnf
 	echo "/* paths.h: Generated from texmf.cnf. */" >paths.tmp
 	sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' $< \
