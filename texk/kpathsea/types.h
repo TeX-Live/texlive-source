@@ -1,6 +1,6 @@
 /* types.h: general types for kpathsea.
 
-   Copyright 1993, 1995, 1996, 2005, 2008 Karl Berry.
+   Copyright 1993, 1995, 1996, 2005, 2008, 2009 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -135,6 +135,8 @@ typedef enum
   kpse_lig_format,
   kpse_texmfscripts_format,
   kpse_lua_format,
+  kpse_fea_format,
+  kpse_cid_format,
   kpse_last_format /* one past last index */
 } kpse_file_format_type;
 

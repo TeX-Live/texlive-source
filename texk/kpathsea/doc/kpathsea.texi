@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 5.0.0
-@set month-year April 2009
+@set month-year May 2009
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -475,7 +475,7 @@ lines is not ignored.
 
 @noindent where the @samp{=} and surrounding whitespace is optional.
 
-@item 
+@item
 @cindex identifiers, characters valid in
 The @var{variable} name may contain any character other than whitespace,
 @samp{=}, or @samp{.}, but sticking to @samp{A-Za-z_} is safest.
@@ -486,7 +486,7 @@ component of @code{argv[0]} is) @var{progname} or
 @file{@var{progname}.exe}.  This allows different flavors of @TeX{} to
 have different search paths, for example.
 
-@item 
+@item
 @cindex right-hand side of variable assignments
 @var{value} may contain any characters except @samp{%} and @samp{@@}.
 (These restrictions are only necessary because of the processing done on
@@ -1111,16 +1111,18 @@ sake of the shell.)
 
 Here's the current list of recognized names and the associated suffixes.
 @xref{Supported file formats}, for more information on each of these.
+
 @example
 gf: gf
 pk: pk
-bitmap font
+bitmap font:
+tfm: .tfm
 afm: .afm
 base: .base
 bib: .bib
 bst: .bst
 cnf: .cnf
-ls-R: ls-R
+ls-R: ls-R ls-r
 fmt: .fmt
 map: .map
 mem: .mem
@@ -1129,40 +1131,42 @@ mfpool: .pool
 mft: .mft
 mp: .mp
 mppool: .pool
-MetaPost support
+MetaPost support:
 ocp: .ocp
 ofm: .ofm .tfm
 opl: .opl
 otp: .otp
 ovf: .ovf
 ovp: .ovp
-graphic/figure: .eps .epsi
-tex: .tex
-TeX system documentation
+graphic/figure:  .eps .epsi
+tex: .tex  .sty .cls .fd .aux .bbl .def .clo .ldf
+TeX system documentation:
 texpool: .pool
-TeX system sources
-PostScript header/font: .pro
-Troff fonts
-tfm: .tfm
+TeX system sources:  .dtx .ins
+PostScript header:  .pro
+Troff fonts:
 type1 fonts: .pfa .pfb
 vf: .vf
-dvips config
+dvips config:
 ist: .ist
-truetype fonts: .ttf .ttc
-type42 fonts
-web2c files
-other text files
-other binary files
-misc fonts
-web: .web
-cweb: .w .web
-enc: .enc
-cmap: .cmap
-sfd: .sfd
-opentype fonts
-pdftex config
+truetype fonts: .ttf .ttc .TTF .TTC
+type42 fonts: .t42 .T42
+web2c files:
+other text files:
+other binary files:
+misc fonts:
+web: .web  .ch
+cweb: .w .web  .ch
+enc files: .enc
+cmap files:
+subfont definition files: .sfd
+opentype fonts: .otf
+pdftex config:
 lig files: .lig
-texmfscripts
+texmfscripts:
+lua: .luc .luctex .texluc .lua .luatex .texlua
+font feature files: .fea
+cid maps: .cid .cidmap
 @end example
 
 This option and @samp{--path} are mutually exclusive.
@@ -1268,7 +1272,7 @@ important, since it ``anchors'' the match to a full component name:
 
 @example
 kpsewhich --subdir=/lace foo.sty
-@result{} 
+@result{}
 @end example
 
 @noindent
@@ -1570,6 +1574,20 @@ suffix @samp{.enc}.
 @code{TEXFORMATS}, @code{TEXMFINI};
 suffix @samp{.fmt}.
 
+@item font cid map
+@flindex .cid
+@vindex FONTCIDMAPS
+(CJK mapping)
+@code{FONTCIDMAPS}
+suffix @samp{.cid}.
+
+@item font feature files
+@flindex .fea
+@vindex FONTFEATURES
+(primarily for OpenType font features)
+@code{FONTFEATURES}
+suffix @samp{.fea}.
+
 @item gf
 @flindex gf
 @vindex GFFONTS
@@ -1626,7 +1644,7 @@ suffix @samp{.mem}.
 
 @item @r{MetaPost support}
 @vindex MPSUPPORT
-(MetaPost support files, used by DMP; @pxref{dmp invocation,,, web2c, Web2c}) 
+(MetaPost support files, used by DMP; @pxref{dmp invocation,,, web2c, Web2c})
 @code{MPSUPPORT}.
 
 @item mf
@@ -1794,7 +1812,7 @@ dynamic creation program: @code{mktextfm}.
 
 @item Troff fonts
 @vindex TRFONTS
-(Troff fonts, used by DMP; @pxref{DMP invocation,,, web2c, Web2c}) 
+(Troff fonts, used by DMP; @pxref{DMP invocation,,, web2c, Web2c})
 @code{TRFONTS}.
 
 @item truetype fonts
@@ -2335,14 +2353,14 @@ work, e.g., initializing the Bib@TeX{} search paths in a DVI driver.)
 @item
 @findex kpathsea_find_file
 The routine to actually find a file of type @var{format} is
-@file{kpathsea_find_file}.  You can call 
+@file{kpathsea_find_file}.  You can call
 @code{kpathsea_find_file} after doing only the first and second of the
 initialization steps above---Kpathsea automatically reads the
 @file{texmf.cnf} generic config files, looks for environment variables,
 and does expansions at the first lookup.
 
 @item
-To find PK and/or GF bitmap fonts, the routine 
+To find PK and/or GF bitmap fonts, the routine
 is @code{kpathsea_find_glyph}, defined in
 @file{tex-glyph.h}. This returns a structure in addition to the
 resultant filename, because fonts can be found in so many ways. See the
@@ -2361,7 +2379,7 @@ exist, don't use this.
 @item
 @findex kpathsea_finish
 To close the kpathsea library instance you are using, call
-@code{kpathsea_finish}.  This function closes any open log files and 
+@code{kpathsea_finish}.  This function closes any open log files and
 frees the memory used by the instance.
 
 @end enumerate

@@ -85,6 +85,8 @@
 #define LIG_ENVS "LIGFONTS", "TEXFONTS"
 #define TEXMFSCRIPTS_ENVS "TEXMFSCRIPTS"
 #define LUA_ENVS "LUAINPUTS"
+#define FONTFEATURES_ENVS "FONTFEATURES"
+#define FONTCIDMAPS_ENVS "FONTCIDMAPS"
 
 /* The compiled-in default list, DEFAULT_FONT_SIZES, is intended to be
    set from the command line (presumably via the Makefile).  */
@@ -705,6 +707,7 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
     case kpse_enc_format:
       INIT_FORMAT ("enc files", DEFAULT_ENCFONTS, ENC_ENVS);
       SUFFIXES (".enc");
+      FMT_INFO.suffix_search_only = true;
       break;
     case kpse_cmap_format:
       INIT_FORMAT ("cmap files", DEFAULT_CMAPFONTS, CMAP_ENVS);
@@ -732,6 +735,17 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
       INIT_FORMAT ("lua", DEFAULT_LUAINPUTS, LUA_ENVS);
 #define LUA_SUFFIXES ".luc", ".luctex", ".texluc", ".lua", ".luatex", ".texlua"
       SUFFIXES (LUA_SUFFIXES);
+      FMT_INFO.suffix_search_only = true;
+      break;
+    case kpse_fea_format:
+      INIT_FORMAT ("font feature files", DEFAULT_FONTFEATURES, FONTFEATURES_ENVS);
+      SUFFIXES (".fea");
+      FMT_INFO.suffix_search_only = true;
+      break;
+    case kpse_cid_format:
+      INIT_FORMAT ("cid maps", DEFAULT_FONTCIDMAPS, FONTCIDMAPS_ENVS);
+#define CID_SUFFIXES ".cid", ".cidmap"
+      SUFFIXES (CID_SUFFIXES);
       FMT_INFO.suffix_search_only = true;
       break;
     default:
