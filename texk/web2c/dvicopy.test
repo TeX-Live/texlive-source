@@ -6,8 +6,9 @@ TEXMFCNF=$srcdir/../kpathsea \
   ./dvicopy $srcdir/tests/story tests/xstory.dvi ## || exit 1
 ## failed with: TFM: font 1 = cmbx10(That was a fatal error, my friend.)
 
-TEXMFCNF=$srcdir/../kpathsea \
+# Redirect stderr so the terminal output will end up in the log file.
+(TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS=$srcdir/tests \
   VFFONTS=$srcdir/tests \
-  ./dvicopy <$srcdir/tests/pplr.dvi >tests/xpplr.dvi 2>&1 || exit 1
+  ./dvicopy <$srcdir/tests/pplr.dvi >tests/xpplr.dvi) 2>&1 || exit 1
 
