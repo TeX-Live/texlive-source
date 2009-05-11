@@ -3,6 +3,11 @@ ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 
 2009-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* m4/ac_prog_latex.m4, m4/ac_prog_pdflatex.m4: Use TL_MSG_ERROR
+	instead of AC_MSG_ERROR.	
+
+2009-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* configure.ac: Remove '--with-clisp=...', use 'CLISP=...'.
 
 2009-05-08  Peter Breitenlohner  <peb@mppmu.mpg.de>

@@ -13,7 +13,7 @@ AC_CHECK_PROGS(latex,[latex elatex lambda],no)
 export latex;
 if test $latex = "no" ;
 then
-	AC_MSG_ERROR([Unable to find a LaTeX application]);
+	TL_MSG_ERROR([Unable to find a LaTeX application]);
 fi
 AC_SUBST(latex)
 ])

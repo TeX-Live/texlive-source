@@ -18318,7 +18318,7 @@ else
   kpse_cv_fontconfig_includes=
   kpse_cv_fontconfig_libs='-lfontconfig'
 fi
-CPPFLAGS="$kpse_cv_fontconfig_libs $CPPFLAGS"
+CPPFLAGS="$kpse_cv_fontconfig_includes $CPPFLAGS"
 LIBS="$kpse_cv_fontconfig_libs $LIBS"
 cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */

@@ -13,7 +13,7 @@ AC_CHECK_PROGS(pdflatex,[pdflatex],no)
 export pdflatex;
 if test $pdflatex = "no" ;
 then
-	AC_MSG_ERROR([Unable to find a PDFLaTeX application]);
+	TL_MSG_ERROR([Unable to find a PDFLaTeX application]);
 fi
 AC_SUBST(pdflatex)
 ])

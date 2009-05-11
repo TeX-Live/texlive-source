@@ -3971,9 +3971,18 @@ test -n "$latex" || latex="no"
 export latex;
 if test $latex = "no" ;
 then
-	{ { $as_echo "$as_me:$LINENO: error: Unable to find a LaTeX application" >&5
+	if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building xindy has been disabled and would fail because
+Unable to find a LaTeX application" >&5
+$as_echo "$as_me: WARNING: building xindy has been disabled and would fail because
+Unable to find a LaTeX application" >&2;}
+else
+  { { $as_echo "$as_me:$LINENO: error: Unable to find a LaTeX application" >&5
 $as_echo "$as_me: error: Unable to find a LaTeX application" >&2;}
-   { (exit 1); exit 1; }; };
+   { (exit 1); exit 1; }; }
+fi
+
+;
 fi
 
 
@@ -4036,9 +4045,18 @@ test -n "$pdflatex" || pdflatex="no"
 export pdflatex;
 if test $pdflatex = "no" ;
 then
-	{ { $as_echo "$as_me:$LINENO: error: Unable to find a PDFLaTeX application" >&5
+	if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building xindy has been disabled and would fail because
+Unable to find a PDFLaTeX application" >&5
+$as_echo "$as_me: WARNING: building xindy has been disabled and would fail because
+Unable to find a PDFLaTeX application" >&2;}
+else
+  { { $as_echo "$as_me:$LINENO: error: Unable to find a PDFLaTeX application" >&5
 $as_echo "$as_me: error: Unable to find a PDFLaTeX application" >&2;}
-   { (exit 1); exit 1; }; };
+   { (exit 1); exit 1; }; }
+fi
+
+;
 fi
 
 
