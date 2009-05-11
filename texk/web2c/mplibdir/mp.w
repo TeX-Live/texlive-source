@@ -1,4 +1,4 @@
-% $Id: mp.w 999 2009-04-29 09:05:32Z taco $
+% $Id: mp.w 1016 2009-05-09 12:51:56Z taco $
 %
 % Copyright 2008 Taco Hoekwater.
 %
@@ -26278,11 +26278,12 @@ in the output of |mp_ps_font_charstring|.
 @c
 pointer mp_gr_unexport(MP mp, struct mp_edge_object *hh) {
   pointer h; /* the edge object */
-  pointer ph, pn; /* for adding items */
+  pointer ph, pn, pt; /* for adding items */
   mp_graphic_object *p; /* the current graphical object */
   h = mp_get_node(mp, edge_header_size);
   mp_init_edges(mp, h);
   ph = dummy_loc(h); 
+  pt = ph;
   p = hh->body;
   minx_val(h) = hh->minx;
   miny_val(h) = hh->miny;
@@ -26293,13 +26294,16 @@ pointer mp_gr_unexport(MP mp, struct mp_edge_object *hh) {
     case mp_fill_code: 
       if ( gr_pen_p((mp_fill_object *)p)==NULL ) {
         pn = mp_new_fill_node (mp, null);
-  	    mp_path_p(pn) = mp_import_knot_list(mp,gr_path_p((mp_fill_object *)p));
+        mp_path_p(pn) = mp_import_knot_list(mp,gr_path_p((mp_fill_object *)p));
+        mp_color_model(pn)=mp_grey_model;
         if (mp_new_turn_cycles(mp, mp_path_p(pn))<0) {
-          mp_color_model(pn)=mp_grey_model;
           grey_val(pn) = unity;
+          mp_link(pt) = pn;
+          pt = mp_link(pt);
+        } else {
+          mp_link(pn) = mp_link(ph);
+          mp_link(ph) = pn;
         }
-        mp_link(ph) = pn;
-        ph = mp_link(ph);
       }
       break;
     case mp_stroked_code:

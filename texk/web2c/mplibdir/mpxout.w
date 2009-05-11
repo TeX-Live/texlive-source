@@ -1,4 +1,4 @@
-% $Id: mpxout.w 997 2009-04-27 19:31:57Z taco $
+% $Id: mpxout.w 1024 2009-05-11 08:22:49Z taco $
 %
 % Copyright 2008 Taco Hoekwater.
 %
@@ -513,14 +513,17 @@ static void mpx_copy_mpto (MPX mpx, FILE *outfile) {
     if (mpx_getbta(mpx, mpx->aa) && *(mpx->tt) == 'e') {
       s = mpx->tt;
     } else {
-      if (mpx->tt == NULL)
+      if (mpx->tt == NULL) {
         mpx_error(mpx,"btex section does not end"); 
-      else if (*(mpx->tt) == 'b')
+        return;
+      } else if (*(mpx->tt) == 'b') {
         mpx_error(mpx,"btex in TeX mode");
-      else if (*(mpx->tt) == 'v')
+        return;
+      } else if (*(mpx->tt) == 'v') {
         mpx_error(mpx,"verbatimtex in TeX mode");
+        return;
+      }
       s = mpx->aa;
-      return;
     }
     c = *s;
     *s = 0;

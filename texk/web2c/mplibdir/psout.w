@@ -1,4 +1,4 @@
-% $Id: psout.w 963 2009-04-21 13:35:03Z taco $
+% $Id: psout.w 1017 2009-05-09 16:40:50Z taco $
 %
 % Copyright 2008 Taco Hoekwater.
 %
@@ -1307,7 +1307,7 @@ static int check_fm_entry (MP mp, fm_entry * fm, boolean warn) {
             mp->selector = save_selector;
             mp->ps->fm_file = NULL;
         }
-        mp_xfree(n);
+        /* mp_xfree(n); */
         break;
     case MAPLINE:
         fm_scan_line (mp);
@@ -3507,6 +3507,19 @@ boolean cs_parse (MP mp, mp_ps_font *f, const char *cs_name, int subr);
       while (gr_link(q) != NULL)
         q = gr_link(q);
       q->next = f->p;
+    }
+  }
+  if (f->p!=NULL) {
+    mp_knot *r, *rr;
+    r = gr_path_p((mp_fill_object *)f->p); 
+    rr = r;
+    if (r && r->x_coord == f->pp->x_coord &&  r->y_coord == f->pp->y_coord ) {
+      while ( rr->next != f->pp) 
+        rr = rr->next;
+      rr->next = r;
+      r->left_x = f->pp->left_x;
+      r->left_y = f->pp->left_y;
+      mp_xfree(f->pp);
     }
   }
   f->p = NULL;
