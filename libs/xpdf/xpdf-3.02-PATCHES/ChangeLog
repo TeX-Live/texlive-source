@@ -1,5 +1,11 @@
 2009-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* patch-10-exclude-body-of-Page::getDefaultCTM (removed),
+	* patch-10-exclude-body-of-Page_getDefaultCTM (new): renamed
+	this file to avoid problems with rsync and windows.
+
+2009-05-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Reorganize and simplify pdftex patches.
 
 	* patch-10-PDF_PARSER_ONLY (removed): replaced by ...
