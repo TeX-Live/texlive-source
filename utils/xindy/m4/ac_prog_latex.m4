@@ -9,11 +9,11 @@ dnl @version 2005-01-21
 dnl @license GPLWithACException
 
 AC_DEFUN([AC_PROG_LATEX],[
-AC_CHECK_PROGS(latex,[latex elatex lambda],no)
+AC_CHECK_PROGS([latex], [latex elatex lambda], [no])
 export latex;
 if test $latex = "no" ;
 then
-	TL_MSG_ERROR([Unable to find a LaTeX application]);
+	TL_MSG_ERROR([Unable to find a LaTeX application])
 fi
 AC_SUBST(latex)
 ])

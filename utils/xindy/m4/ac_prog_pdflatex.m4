@@ -9,11 +9,11 @@ dnl @version 2005-01-21
 dnl @license GPLWithACException
 
 AC_DEFUN([AC_PROG_PDFLATEX],[
-AC_CHECK_PROGS(pdflatex,[pdflatex],no)
+AC_CHECK_PROGS([pdflatex], [pdflatex], [no])
 export pdflatex;
 if test $pdflatex = "no" ;
 then
-	TL_MSG_ERROR([Unable to find a PDFLaTeX application]);
+	TL_MSG_ERROR([Unable to find a PDFLaTeX application])
 fi
 AC_SUBST(pdflatex)
 ])

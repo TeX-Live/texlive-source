@@ -3982,7 +3982,7 @@ $as_echo "$as_me: error: Unable to find a LaTeX application" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
-;
+
 fi
 
 
@@ -4056,7 +4056,7 @@ $as_echo "$as_me: error: Unable to find a PDFLaTeX application" >&2;}
    { (exit 1); exit 1; }; }
 fi
 
-;
+
 fi
 
 
