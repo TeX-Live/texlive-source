@@ -1,0 +1,5 @@
+#! /bin/sh
+
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/cwebdir ./cweave common.w || exit 1
+

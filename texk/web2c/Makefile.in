@@ -47,8 +47,11 @@ bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_5) \
 	synctex$(EXEEXT)
 noinst_PROGRAMS = tangleboot$(EXEEXT) ctangleboot$(EXEEXT)
 check_PROGRAMS = md5main$(EXEEXT)
-DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
-	$(dist_man_MANS) $(srcdir)/../../build-aux/config.guess \
+TESTS = tangle.test $(am__EXEEXT_19) ctiedir/ctie.test \
+	cwebdir/cweave.test tiedir/tie.test $(am__append_12) \
+	$(am__append_28) libmd5/md5.test
+DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
+	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
@@ -82,35 +85,36 @@ DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap AUTHORS \
 	ChangeLog INSTALL NEWS
 @WEB_TRUE@am__append_2 = $(web_programs)
-@TEX_TRUE@am__append_3 = tex
-@MF_TRUE@am__append_4 = mf
-@MFN_TRUE@@MF_TRUE@am__append_5 = mf-nowin
-@MP_TRUE@am__append_6 = oldmpost mpost
-@ETEX_TRUE@am__append_7 = etex
-@PDFTEX_TRUE@am__append_8 = pdftex
-@MINGW32_TRUE@am__append_9 = \
+@WEB_TRUE@am__append_3 = $(web_tests)
+@TEX_TRUE@am__append_4 = tex
+@MF_TRUE@am__append_5 = mf
+@MFN_TRUE@@MF_TRUE@am__append_6 = mf-nowin
+@MP_TRUE@am__append_7 = oldmpost mpost
+@ETEX_TRUE@am__append_8 = etex
+@PDFTEX_TRUE@am__append_9 = pdftex
+@MINGW32_TRUE@am__append_10 = \
 @MINGW32_TRUE@	pdftexdir/regex/regex.c \
 @MINGW32_TRUE@	pdftexdir/regex/regex.h
 
-@LUATEX_TRUE@am__append_10 = luatex luatangle
-@LUATEX_TRUE@am__append_11 = luatexdir/luatangle.test
-@MINGW32_FALSE@am__append_12 = -DLUA_USE_POSIX
-@XETEX_TRUE@am__append_13 = xetex
-@XETEX_MACOSX_TRUE@am__append_14 = -DXETEX_MAC
-@XETEX_MACOSX_TRUE@am__append_15 = libxetexmm.a
-@XETEX_MACOSX_FALSE@am__append_16 = -DXETEX_OTHER $(XPDF_INCLUDES) \
+@LUATEX_TRUE@am__append_11 = luatex luatangle
+@LUATEX_TRUE@am__append_12 = luatexdir/luatangle.test
+@MINGW32_FALSE@am__append_13 = -DLUA_USE_POSIX
+@XETEX_TRUE@am__append_14 = xetex
+@XETEX_MACOSX_TRUE@am__append_15 = -DXETEX_MAC
+@XETEX_MACOSX_TRUE@am__append_16 = libxetexmm.a
+@XETEX_MACOSX_FALSE@am__append_17 = -DXETEX_OTHER $(XPDF_INCLUDES) \
 @XETEX_MACOSX_FALSE@	$(LIBPNG_INCLUDES) $(FONTCONFIG_INCLUDES)
-@XETEX_MACOSX_FALSE@am__append_17 = $(XPDF_LIBS) $(LIBPNG_LIBS) $(FONTCONFIG_LIBS)
-@XETEX_MACOSX_FALSE@am__append_18 = $(XPDF_DEPEND) $(LIBPNG_DEPEND)
-@XETEX_GRAPHITE_TRUE@am__append_19 = -DXETEX_GRAPHITE $(GRAPHITE_INCLUDES)
-@XETEX_GRAPHITE_TRUE@am__append_20 = $(GRAPHITE_LIBS)
-@XETEX_GRAPHITE_TRUE@am__append_21 = $(GRAPHITE_DEPEND)
-@XETEX_MACOSX_TRUE@am__append_22 = \
+@XETEX_MACOSX_FALSE@am__append_18 = $(XPDF_LIBS) $(LIBPNG_LIBS) $(FONTCONFIG_LIBS)
+@XETEX_MACOSX_FALSE@am__append_19 = $(XPDF_DEPEND) $(LIBPNG_DEPEND)
+@XETEX_GRAPHITE_TRUE@am__append_20 = -DXETEX_GRAPHITE $(GRAPHITE_INCLUDES)
+@XETEX_GRAPHITE_TRUE@am__append_21 = $(GRAPHITE_LIBS)
+@XETEX_GRAPHITE_TRUE@am__append_22 = $(GRAPHITE_DEPEND)
+@XETEX_MACOSX_TRUE@am__append_23 = \
 @XETEX_MACOSX_TRUE@	xetexdir/XeTeXFontInst_Mac.cpp \
 @XETEX_MACOSX_TRUE@	xetexdir/XeTeXFontInst_Mac.h \
 @XETEX_MACOSX_TRUE@	xetexdir/XeTeX_mac.c
 
-@XETEX_MACOSX_FALSE@am__append_23 = \
+@XETEX_MACOSX_FALSE@am__append_24 = \
 @XETEX_MACOSX_FALSE@	xetexdir/XeTeXFontMgr_FC.cpp \
 @XETEX_MACOSX_FALSE@	xetexdir/XeTeXFontMgr_FC.h \
 @XETEX_MACOSX_FALSE@	xetexdir/XeTeX_pic.c \
@@ -127,30 +131,30 @@ DIST_COMMON = README $(am__configure_deps) $(dist_check_SCRIPTS) \
 @XETEX_MACOSX_FALSE@	xetexdir/pngimage.c \
 @XETEX_MACOSX_FALSE@	xetexdir/pngimage.h
 
-@XETEX_GRAPHITE_TRUE@am__append_24 = \
+@XETEX_GRAPHITE_TRUE@am__append_25 = \
 @XETEX_GRAPHITE_TRUE@	xetexdir/XeTeXGrLayout.cpp \
 @XETEX_GRAPHITE_TRUE@	xetexdir/XeTeXGrLayout.h
 
-@OTANGLE_TRUE@am__append_25 = $(omegaware_tools)
-@OMFONTS_FALSE@@OTANGLE_TRUE@am__append_26 = $(omegaware_font_tools)
-@OTANGLE_TRUE@am__append_27 = omegaware/otangle.test
-@ALEPH_TRUE@am__append_28 = aleph
-@TEX_SYNCTEX_TRUE@am__append_29 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
-@TEX_SYNCTEX_TRUE@am__append_30 = $(ZLIB_LIBS)
-@TEX_SYNCTEX_TRUE@am__append_31 = \
+@OTANGLE_TRUE@am__append_26 = $(omegaware_tools)
+@OMFONTS_FALSE@@OTANGLE_TRUE@am__append_27 = $(omegaware_font_tools)
+@OTANGLE_TRUE@am__append_28 = omegaware/otangle.test
+@ALEPH_TRUE@am__append_29 = aleph
+@TEX_SYNCTEX_TRUE@am__append_30 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
+@TEX_SYNCTEX_TRUE@am__append_31 = $(ZLIB_LIBS)
+@TEX_SYNCTEX_TRUE@am__append_32 = \
 @TEX_SYNCTEX_TRUE@	synctex.c
 
-@ETEX_SYNCTEX_TRUE@am__append_32 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
-@ETEX_SYNCTEX_TRUE@am__append_33 = $(ZLIB_LIBS)
-@ETEX_SYNCTEX_TRUE@am__append_34 = \
+@ETEX_SYNCTEX_TRUE@am__append_33 = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
+@ETEX_SYNCTEX_TRUE@am__append_34 = $(ZLIB_LIBS)
+@ETEX_SYNCTEX_TRUE@am__append_35 = \
 @ETEX_SYNCTEX_TRUE@	synctex-e.c
 
-@PDFTEX_SYNCTEX_TRUE@am__append_35 = -I$(srcdir)/synctexdir
-@PDFTEX_SYNCTEX_TRUE@am__append_36 = \
+@PDFTEX_SYNCTEX_TRUE@am__append_36 = -I$(srcdir)/synctexdir
+@PDFTEX_SYNCTEX_TRUE@am__append_37 = \
 @PDFTEX_SYNCTEX_TRUE@	synctex-pdf.c
 
-@XETEX_SYNCTEX_TRUE@am__append_37 = -I$(srcdir)/synctexdir
-@XETEX_SYNCTEX_TRUE@am__append_38 = \
+@XETEX_SYNCTEX_TRUE@am__append_38 = -I$(srcdir)/synctexdir
+@XETEX_SYNCTEX_TRUE@am__append_39 = \
 @XETEX_SYNCTEX_TRUE@	synctex-xe.c
 
 subdir = .
@@ -773,6 +777,12 @@ RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
 CTAGS = ctags
+am__EXEEXT_17 = bibtex.test dvicopy.test dvitomp.test dvitype.test \
+	gftodvi.test gftopk.test gftype.test mft.test patgen.test \
+	pktogf.test pktype.test pltotf.test pooltype.test tftopl.test \
+	vftovp.test vptovf.test weave.test
+am__EXEEXT_18 = $(am__EXEEXT_17)
+@WEB_TRUE@am__EXEEXT_19 = $(am__EXEEXT_18)
 DIST_SUBDIRS = doc lib man mpware web2c . window omegafonts otps
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
@@ -967,35 +977,32 @@ SUBDIRS = doc lib man mpware web2c . window $(am__append_1) otps
 proglib = lib/lib.a
 dist_man_MANS = synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 nodist_man_MANS = ctiedir/ctie.1 tiedir/tie.1
-dist_check_SCRIPTS = tangle.test luatexdir/luatangle.test \
-	omegaware/otangle.test libmd5/md5.test
-TESTS = tangle.test tiedir/tie.test $(am__append_11) $(am__append_27) \
-	libmd5/md5.test
 EXTRA_LIBRARIES = libmf.a liboldmpost.a libmplib.a libpdftex.a \
 	liblua51.a libzzip.a libluasocket.a libluamisc.a libff.a \
 	libluatex.a libxetex.a libxetexmm.a libmd5.a
 EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	tangle.ch tangleboot.p cwebdir ctangleboot.c cwebboot.c \
-	$(web_programs:=.web) $(web_programs:=.ch) ctiedir tiedir \
-	lib/mfmpi386.asm lib/mfmpw32.c lib/texmfmp.c texmfmem.h \
-	texmfmp-help.h texmfmp.h $(tex_ch_srcs) lib/texmfmp.c \
-	tmf-pool.h mf.web mf-binpool.ch mf.ch mftalk.h lib/texmfmp.c \
-	tmf-pool.h mp.web mp.ch lib/texmfmp.c mpdir/mp.defines \
-	mpdir/mplib.h metapost.mk mpdir/Makefile.in.orig \
-	mpdir/mpostlib.mk mplibdir/ChangeLog $(mpost_web) \
-	$(libmplib_web) mplibdir/lmplib.c $(etex_web_srcs) \
-	$(etex_ch_srcs) etexdir/etexextra.in lib/texmfmp.c tmf-pool.h \
-	etexdir/ChangeLog etexdir/INSTALL etexdir/README \
-	etexdir/etex_gen.tex etexdir/etex.mak etexdir/etex.mk \
-	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/pdftex.h \
-	pdftexdir/pdftexextra.in pdftexdir/ChangeLog pdftexdir/NEWS \
-	pdftexdir/README pdftexdir/change-files.txt \
-	pdftexdir/pdftex.mak pdftexdir/Makefile.in.orig \
-	pdftexdir/pdftex.mk pdftexdir/pdftexlib.mk \
-	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
-	$(luatex_sources) luatexdir/luatex.defines \
-	luatexdir/luatexextra.in luatexdir/ptexlib.h \
-	$(luatangle_sources) luatexdir/lua51/Makefile \
+	tangle.test $(web_programs:=.web) $(web_programs:=.ch) \
+	$(web_tests) ctiedir tiedir lib/mfmpi386.asm lib/mfmpw32.c \
+	lib/texmfmp.c texmfmem.h texmfmp-help.h texmfmp.h \
+	$(tex_ch_srcs) lib/texmfmp.c tmf-pool.h mf.web mf-binpool.ch \
+	mf.ch mftalk.h lib/texmfmp.c tmf-pool.h mp.web mp.ch \
+	lib/texmfmp.c mpdir/mp.defines mpdir/mplib.h metapost.mk \
+	mpdir/Makefile.in.orig mpdir/mpostlib.mk mplibdir/ChangeLog \
+	$(mpost_web) $(libmplib_web) mplibdir/lmplib.c \
+	$(etex_web_srcs) $(etex_ch_srcs) etexdir/etexextra.in \
+	lib/texmfmp.c tmf-pool.h etexdir/ChangeLog etexdir/INSTALL \
+	etexdir/README etexdir/etex_gen.tex etexdir/etex.mak \
+	etexdir/etex.mk $(pdftex_ch_srcs) pdftexdir/pdftex.defines \
+	pdftexdir/pdftex.h pdftexdir/pdftexextra.in \
+	pdftexdir/ChangeLog pdftexdir/NEWS pdftexdir/README \
+	pdftexdir/change-files.txt pdftexdir/pdftex.mak \
+	pdftexdir/Makefile.in.orig pdftexdir/pdftex.mk \
+	pdftexdir/pdftexlib.mk pdftexdir/regex/COPYING.LIB \
+	pdftexdir/regex/README $(luatex_sources) \
+	luatexdir/luatex.defines luatexdir/luatexextra.in \
+	luatexdir/ptexlib.h $(luatangle_sources) \
+	luatexdir/luatangle.test luatexdir/lua51/Makefile \
 	luatexdir/lua51/liolib.c luatexdir/lua51/lua.c \
 	luatexdir/lua51/luac.c luatexdir/lua51/print.c \
 	luatexdir/zziplib/COPYING.LIB luatexdir/zziplib/ChangeLog \
@@ -1122,31 +1129,58 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	xetexdir/withenable.ac xetexdir/xetex.mk omegaware/ChangeLog \
 	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
 	$(opl2ofm_sources) $(otangle_sources) $(ovf2ovp_sources) \
-	$(ovp2ovf_sources) $(aleph_web_srcs) $(aleph_ch_srcs) \
-	lib/texmfmp.c alephdir/ChangeLog alephdir/Makefile \
-	alephdir/aleph.defines alephdir/aleph.version \
-	alephdir/eomega.ech alephdir/etex.ch alephdir/omega.ch0 \
-	alephdir/omega.ch1 alephdir/omega.ch2 alephdir/omxml.ch \
-	alephdir/aleph.mk synctexdir/INSTALL synctexdir/Makefile \
-	synctexdir/Makefile.in synctexdir/README.txt \
-	synctexdir/synctex-common.h synctexdir/synctex-convert.sh \
-	synctexdir/synctex.c synctexdir/synctex.defines \
-	synctexdir/synctex.h synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-mem.ch1 synctexdir/synctex-mem.ch2 \
-	synctexdir/synctex-rec.ch0 synctexdir/synctex-rec.ch1 \
-	synctexdir/synctex-rec.ch2 synctexdir/synctex-e-mem.ch0 \
-	synctexdir/synctex-e-mem.ch1 synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-e-rec.ch1 synctexdir/synctex-pdf-rec.ch2 \
-	synctexdir/synctex-xe-mem.ch2 synctexdir/synctex-xe-rec.ch2 \
-	synctexdir/synctex-xe-rec.ch3 synctexdir/synctex.mk fmtutil.in \
-	Makefile.in.orig configure.in.orig
+	$(ovp2ovf_sources) omegaware/otangle.test $(aleph_web_srcs) \
+	$(aleph_ch_srcs) lib/texmfmp.c alephdir/ChangeLog \
+	alephdir/Makefile alephdir/aleph.defines \
+	alephdir/aleph.version alephdir/eomega.ech alephdir/etex.ch \
+	alephdir/omega.ch0 alephdir/omega.ch1 alephdir/omega.ch2 \
+	alephdir/omxml.ch alephdir/aleph.mk synctexdir/INSTALL \
+	synctexdir/Makefile synctexdir/Makefile.in \
+	synctexdir/README.txt synctexdir/synctex-common.h \
+	synctexdir/synctex-convert.sh synctexdir/synctex.c \
+	synctexdir/synctex.defines synctexdir/synctex.h \
+	synctexdir/synctex-mem.ch0 synctexdir/synctex-mem.ch1 \
+	synctexdir/synctex-mem.ch2 synctexdir/synctex-rec.ch0 \
+	synctexdir/synctex-rec.ch1 synctexdir/synctex-rec.ch2 \
+	synctexdir/synctex-e-mem.ch0 synctexdir/synctex-e-mem.ch1 \
+	synctexdir/synctex-e-rec.ch0 synctexdir/synctex-e-rec.ch1 \
+	synctexdir/synctex-pdf-rec.ch2 synctexdir/synctex-xe-mem.ch2 \
+	synctexdir/synctex-xe-rec.ch2 synctexdir/synctex-xe-rec.ch3 \
+	synctexdir/synctex.mk libmd5/md5.test tests/allbib.aux \
+	tests/allbib.tex tests/apalike.bst tests/batch.tex \
+	tests/check.log tests/cmr10.600gf tests/cmr10.pk \
+	tests/cmr10.pl tests/cmr10.tfm tests/cmr7.tfm tests/cmr8.tfm \
+	tests/cmti10.tfm tests/cmtt10.tfm tests/cmtt8.tfm tests/dict \
+	tests/eight.tex tests/end.tex tests/exampl.aux \
+	tests/exampl.tex tests/gray.tfm tests/hello.tex tests/io.mf \
+	tests/just.texi tests/label.mp tests/label.mpx tests/logo8.tfm \
+	tests/longtfm.tex tests/magic.tex tests/memtest.tex \
+	tests/mltextst.tex tests/mptest.mp tests/mptest.mpx \
+	tests/one.two.mf tests/one.two.mp tests/one.two.tex \
+	tests/online.mf tests/openout.mp tests/openout.tex \
+	tests/pagenum.dvi tests/pagenum.tex tests/patgen.in \
+	tests/patterns tests/plain.mft tests/pplr.dvi tests/pplr.tfm \
+	tests/ptmr.dvi tests/ptmr.tfm tests/ptmr.vf tests/ptmr.vpl \
+	tests/rpsyr.tfm tests/rptmr.tfm tests/story.dvi \
+	tests/testex.err tests/testex.mp tests/testex.tex \
+	tests/translate tests/uno.dos tests/write18.tex \
+	tests/xampl.bib fmtutil.in Makefile.in.orig configure.in.orig
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c stamp-tangle tangleboot.c tangleboot.h ctangle.c \
 	cweb.c stamp-ctangle cftest.p $(web_programs:=.c) \
 	$(web_programs:=.h) $(web_programs:=.p) \
-	$(web_programs:=-web2c) ctie.c cweave.c tie.c tie.outc \
-	tie.outm $(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p \
-	tex.pool tex-tangle $(nodist_libmf_a_SOURCES) mfextra.c \
+	$(web_programs:=-web2c) tests/xexampl.aux tests/xexampl.bbl \
+	tests/xexampl.blg tests/xstory.dvi tests/xpplr.dvi ptmr.mpx \
+	tests/xptmr.mpx tests/xstory.mpx tests/xstory.dvityp \
+	tests/xpagenum.typ cmr10.dvi tests/xcmr10.dvi cmr10.pk \
+	tests/xcmr10.pk tests/xcmr10.gft1 tests/xcmr10.gft2 io.tex \
+	tests/io.tex tests/xpatout pattmp.4 cmr10.gf \
+	tests/xcmr10.600gf tests/xcmr10.pktyp tests/xcmr10.tfm \
+	tests/xtexpool.typ tests/xcmr10.pl tests/xptmr.vpl \
+	tests/xptmr.tfm tests/xptmr.vf pooltype.tex ctie.c cweave.c \
+	tie.c ctie.outc ctie.outm common.tex common.scn common.idx \
+	tie.outc tie.outm $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
+	tex.p tex.pool tex-tangle $(nodist_libmf_a_SOURCES) mfextra.c \
 	mf-final.ch mf-web2c mf.p mf.pool mf-tangle \
 	$(nodist_oldmpost_SOURCES) mp-web2c mp.p mp.pool mp-tangle \
 	$(nodist_mpost_SOURCES) mpxout-ctangle \
@@ -1210,17 +1244,18 @@ nodist_tftopl_SOURCES = tftopl.c tftopl.h
 nodist_vftovp_SOURCES = vftovp.c vftovp.h
 nodist_vptovf_SOURCES = vptovf.c vptovf.h
 nodist_weave_SOURCES = weave.c weave.h
+web_tests = $(web_programs:=.test)
 nodist_ctie_SOURCES = ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
 nodist_tie_SOURCES = tie.c
-tex_CPPFLAGS = $(am__append_29)
+tex_CPPFLAGS = $(am__append_30)
 
 # With --enable-ipc, TeX may need to link with -lsocket.
-tex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_30)
+tex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_31)
 
 # TeX C sources
 tex_c_h = texini.c tex0.c tex1.c tex2.c texcoerce.h texd.h
-nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c $(am__append_31)
+nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c $(am__append_32)
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
@@ -1274,15 +1309,15 @@ psout_c_h = mppsout.h psout.c mplibps.h
 svgout_c_h = mplibsvg.h mpsvgout.h svgout.c
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w \
 	mplibdir/memio.w mplibdir/tfmin.w
-etex_CPPFLAGS = $(am__append_32)
+etex_CPPFLAGS = $(am__append_33)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
-etex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_33)
+etex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_34)
 
 # e-TeX C sources
 etex_c_h = etexini.c etex0.c etex1.c etex2.c etexcoerce.h etexd.h
 nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexextra.c \
-	etexdir/etexextra.h $(am__append_34)
+	etexdir/etexextra.h $(am__append_35)
 etex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -1305,12 +1340,12 @@ pdftex_dependencies = $(proglib) $(LIBPNG_DEPEND) $(ZLIB_DEPEND) \
 	$(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libmd5.a
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(buildenv) $(TANGLE)
-pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_35)
+pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_36)
 pdftex_LDADD = $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 pdftex_c_h = pdftexini.c pdftex0.c pdftex1.c pdftex2.c pdftex3.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c \
-	pdftexdir/pdftexextra.h $(am__append_36)
+	pdftexdir/pdftexextra.h $(am__append_37)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
@@ -1330,7 +1365,7 @@ libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writejbig2.h pdftexdir/writejpg.c \
 	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
-	$(am__append_9)
+	$(am__append_10)
 EXTRA_libpdftex_a_SOURCES = pdftexdir/macnames.c \
 	pdftexdir/regex/regcomp.c pdftexdir/regex/regex_internal.c \
 	pdftexdir/regex/regex_internal.h pdftexdir/regex/regexec.c
@@ -1360,7 +1395,7 @@ nodist_luatex_SOURCES = $(luatex_c_h) luatex-pool.c luatexextra.c luatexdir/luat
 luatex_sources = luatexdir/luatex.web luatexdir/luatex.ch
 nodist_luatangle_SOURCES = luatangle.c luatangle.h
 luatangle_sources = luatexdir/luatangle.web luatexdir/luatangle.ch
-liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51 $(am__append_12)
+liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51 $(am__append_13)
 liblua51_a_SOURCES = \
 	luatexdir/lua51/lapi.c \
 	luatexdir/lua51/lapi.h \
@@ -1742,23 +1777,23 @@ libluatex_a_SOURCES = \
 
 EXTRA_libluatex_a_SOURCES = luatexdir/font/macnames.c
 nodist_EXTRA_xetex_SOURCES = dummy.cxx
-libxetex = libxetex.a $(am__append_15)
+libxetex = libxetex.a $(am__append_16)
 xetex_cppflags = -DU_STATIC_IMPLEMENTATION -I$(srcdir)/xetexdir \
-	$(ICU_INCLUDES) $(TECKIT_INCLUDES) $(am__append_14) \
-	$(am__append_16) $(am__append_19) $(FREETYPE2_INCLUDES) \
+	$(ICU_INCLUDES) $(TECKIT_INCLUDES) $(am__append_15) \
+	$(am__append_17) $(am__append_20) $(FREETYPE2_INCLUDES) \
 	$(ZLIB_INCLUDES)
-xetex_ldadd = $(libxetex) $(ICU_LIBS) $(TECKIT_LIBS) $(am__append_17) \
-	$(am__append_20) $(FREETYPE2_LIBS) $(ZLIB_LIBS)
+xetex_ldadd = $(libxetex) $(ICU_LIBS) $(TECKIT_LIBS) $(am__append_18) \
+	$(am__append_21) $(FREETYPE2_LIBS) $(ZLIB_LIBS)
 xetex_dependencies = $(proglib) $(ICU_DEPEND) $(TECKIT_DEPEND) \
-	$(am__append_18) $(am__append_21) $(FREETYPE2_DEPEND) \
+	$(am__append_19) $(am__append_22) $(FREETYPE2_DEPEND) \
 	$(ZLIB_DEPEND)
 @XETEX_MACOSX_TRUE@xetex_LDFLAGS = -framework Carbon -framework Cocoa -framework QuickTime
-xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_37)
+xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_38)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
 xetex_DEPENDENCIES = $(xetex_dependencies) $(libxetex)
 xetex_c_h = xetexini.c xetex0.c xetex1.c xetex2.c xetexcoerce.h xetexd.h
 nodist_xetex_SOURCES = $(xetex_c_h) xetex_pool.c xetexextra.c \
-	xetexdir/xetexextra.h $(am__append_38)
+	xetexdir/xetexextra.h $(am__append_39)
 xetex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -1782,8 +1817,8 @@ libxetex_a_SOURCES = xetexdir/MathTable.h xetexdir/FontTableCache.cpp \
 	xetexdir/XeTeXOTMath.h xetexdir/XeTeX_ext.c \
 	xetexdir/XeTeX_ext.h xetexdir/XeTeXswap.h xetexdir/cmaps.cpp \
 	xetexdir/cmaps.h xetexdir/sfnt.h xetexdir/trans.c \
-	xetexdir/trans.h xetexdir/xetex.h $(am__append_22) \
-	$(am__append_23) $(am__append_24)
+	xetexdir/trans.h xetexdir/xetex.h $(am__append_23) \
+	$(am__append_24) $(am__append_25)
 libxetexmm_a_CPPFLAGS = $(xetex_cppflags)
 libxetexmm_a_CXXFLAGS = -ObjC++
 libxetexmm_a_SOURCES = \
@@ -7737,8 +7772,7 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS) \
-	  $(dist_check_SCRIPTS)
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
 all-am: Makefile $(PROGRAMS) $(MANS) c-auto.h ff-config.h

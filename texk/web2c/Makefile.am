@@ -24,7 +24,6 @@ noinst_PROGRAMS =
 dist_man_MANS =
 nodist_man_MANS =
 check_PROGRAMS =
-dist_check_SCRIPTS =
 TESTS =
 EXTRA_LIBRARIES =
 EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h
@@ -169,6 +168,69 @@ include $(srcdir)/synctexdir/am/synctex.am
 
 ## libmd5
 include $(srcdir)/libmd5/am/md5.am
+
+## Test data
+##
+EXTRA_DIST += \
+	tests/allbib.aux \
+	tests/allbib.tex \
+	tests/apalike.bst \
+	tests/batch.tex \
+	tests/check.log \
+	tests/cmr10.600gf \
+	tests/cmr10.pk \
+	tests/cmr10.pl \
+	tests/cmr10.tfm \
+	tests/cmr7.tfm \
+	tests/cmr8.tfm \
+	tests/cmti10.tfm \
+	tests/cmtt10.tfm \
+	tests/cmtt8.tfm \
+	tests/dict \
+	tests/eight.tex \
+	tests/end.tex \
+	tests/exampl.aux \
+	tests/exampl.tex \
+	tests/gray.tfm \
+	tests/hello.tex \
+	tests/io.mf \
+	tests/just.texi \
+	tests/label.mp \
+	tests/label.mpx \
+	tests/logo8.tfm \
+	tests/longtfm.tex \
+	tests/magic.tex \
+	tests/memtest.tex \
+	tests/mltextst.tex \
+	tests/mptest.mp \
+	tests/mptest.mpx \
+	tests/one.two.mf \
+	tests/one.two.mp \
+	tests/one.two.tex \
+	tests/online.mf \
+	tests/openout.mp \
+	tests/openout.tex \
+	tests/pagenum.dvi \
+	tests/pagenum.tex \
+	tests/patgen.in \
+	tests/patterns \
+	tests/plain.mft \
+	tests/pplr.dvi \
+	tests/pplr.tfm \
+	tests/ptmr.dvi \
+	tests/ptmr.tfm \
+	tests/ptmr.vf \
+	tests/ptmr.vpl \
+	tests/rpsyr.tfm \
+	tests/rptmr.tfm \
+	tests/story.dvi \
+	tests/testex.err \
+	tests/testex.mp \
+	tests/testex.tex \
+	tests/translate \
+	tests/uno.dos \
+	tests/write18.tex \
+	tests/xampl.bib
 
 ## Not used
 ##

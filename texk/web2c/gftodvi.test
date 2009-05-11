@@ -1,0 +1,9 @@
+#! /bin/sh
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../kpathsea \
+  TFMFONTS=$srcdir/tests \
+  ./gftodvi -verbose $srcdir/tests/cmr10.600gf && \
+  mv cmr10.dvi tests/xcmr10.dvi|| exit 1
+

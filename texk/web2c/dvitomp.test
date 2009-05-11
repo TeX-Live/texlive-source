@@ -1,0 +1,12 @@
+#! /bin/sh
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../kpathsea \
+  ./dvitomp $srcdir/tests/story.dvi tests/xstory.mpx ## || exit 1
+## fails with: ./dvitomp: fatal: tfm file `cmbx10' not found.
+
+TEXMFCNF=$srcdir/../kpathsea TFMFONTS=$srcdir/tests VFFONTS=$srcdir/tests: \
+  ./dvitomp $srcdir/tests/ptmr && \
+  mv ptmr.mpx tests/xptmr.mpx || exit 1
+

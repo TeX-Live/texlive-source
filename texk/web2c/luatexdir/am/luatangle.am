@@ -27,7 +27,7 @@ DISTCLEANFILES += luatangle.c luatangle.h luatangle-web2c luatangle.p
 
 ## Tests
 ##
-dist_check_SCRIPTS += luatexdir/luatangle.test
+EXTRA_DIST += luatexdir/luatangle.test
 
 if LUATEX
 TESTS += luatexdir/luatangle.test

@@ -1,0 +1,6 @@
+#! /bin/sh
+
+test -d tests || mkdir -p tests
+
+./pooltype tex.pool >tests/xtexpool.typ || exit 1
+

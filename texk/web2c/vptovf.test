@@ -1,0 +1,7 @@
+#! /bin/sh
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../kpathsea \
+  ./vptovf $srcdir/tests/ptmr tests/xptmr tests/xptmr || exit 1
+

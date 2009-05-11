@@ -1,0 +1,10 @@
+#! /bin/sh
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../kpathsea \
+  ./dvitype -show-opcodes $srcdir/tests/story >tests/xstory.dvityp || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea \
+  ./dvitype --p=\*.\*.2 $srcdir/tests/pagenum.dvi >tests/xpagenum.typ || exit 1
+

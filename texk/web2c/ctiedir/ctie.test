@@ -1,0 +1,16 @@
+#! /bin/sh
+
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/ctiedir \
+  ./ctie -c ctie.outc ctie.tie ctie.cf1 ctie.cf2 ctie.cf3 || exit 1
+
+
+diff ctie.outc $srcdir/ctiedir/ctie.chf.gen || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/ctiedir \
+  ./ctie -m ctie.outm ctie.tie ctie.cf1 ctie.cf2 ctie.cf3 || exit 1
+
+
+diff ctie.outm $srcdir/ctiedir/ctie.master.gen || exit 1
+

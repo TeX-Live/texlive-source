@@ -3,31 +3,34 @@
 ## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-bin_PROGRAMS += ctie
+bin_PROGRAMS += ctie cweave tie
+EXTRA_DIST += ctiedir tiedir
+
 nodist_ctie_SOURCES = ctie.c
-EXTRA_DIST += ctiedir
 nodist_man_MANS += ctiedir/ctie.1
 ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
 DISTCLEANFILES += ctie.c
 
-bin_PROGRAMS += cweave
 nodist_cweave_SOURCES = cweave.c cweb.c
 cweave.c: ctangle$(EXEEXT) cwebdir/cweave.w cwebdir/cweav-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
 DISTCLEANFILES += cweave.c
 
-bin_PROGRAMS += tie
 nodist_tie_SOURCES = tie.c
-EXTRA_DIST += tiedir
 nodist_man_MANS += tiedir/tie.1
 tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 	CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
 DISTCLEANFILES += tie.c
 
 ## Tests
+##
+TESTS += ctiedir/ctie.test cwebdir/cweave.test tiedir/tie.test
 
-TESTS += tiedir/tie.test
-
+## ctiedir/ctie.test
+DISTCLEANFILES += ctie.outc ctie.outm
+## cwebdir/cweave.test
+DISTCLEANFILES += common.tex common.scn common.idx
+## tiedir/tie.test
 DISTCLEANFILES += tie.outc tie.outm
 

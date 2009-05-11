@@ -168,3 +168,50 @@ weave-web2c: $(web2c_depend) weave.p
 	touch weave.c weave.h
 weave.p: tangle$(EXEEXT) weave.web weave.ch
 	$(tangle) weave weave
+
+
+## Tests
+##
+web_tests = $(web_programs:=.test)
+
+EXTRA_DIST += $(web_tests)
+
+if WEB
+TESTS += $(web_tests)
+endif WEB
+
+## bibtex.test
+DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
+## dvicopy.test
+DISTCLEANFILES += tests/xstory.dvi tests/xpplr.dvi
+## dvitomp.test
+DISTCLEANFILES += ptmr.mpx tests/xptmr.mpx tests/xstory.mpx
+## dvitype.test
+DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
+## gftodvi.test
+DISTCLEANFILES += cmr10.dvi tests/xcmr10.dvi
+## gftopk.test
+DISTCLEANFILES += cmr10.pk tests/xcmr10.pk
+## gftype.test
+DISTCLEANFILES += tests/xcmr10.gft1 tests/xcmr10.gft2
+## mft.test
+DISTCLEANFILES += io.tex tests/io.tex
+## patgen.test
+DISTCLEANFILES += tests/xpatout pattmp.4
+## pktogf.test
+DISTCLEANFILES += cmr10.gf tests/xcmr10.600gf
+## pktype.test
+DISTCLEANFILES += tests/xcmr10.pktyp
+## pltotf.tes
+DISTCLEANFILES += tests/xcmr10.tfm
+## pooltype.test
+DISTCLEANFILES += tests/xtexpool.typ
+## tftopl.test
+DISTCLEANFILES += tests/xcmr10.pl
+## vftovp.test
+DISTCLEANFILES += tests/xptmr.vpl
+## vptovf.test
+DISTCLEANFILES += tests/xptmr.tfm tests/xptmr.vf
+## weave.test
+DISTCLEANFILES += pooltype.tex
+

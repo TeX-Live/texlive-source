@@ -100,7 +100,7 @@ ovp2ovf.p: tangle$(EXEEXT) $(ovp2ovf_sources)
 
 ## Tests
 ##
-dist_check_SCRIPTS += omegaware/otangle.test
+EXTRA_DIST += omegaware/otangle.test
 
 if OTANGLE
 TESTS += omegaware/otangle.test

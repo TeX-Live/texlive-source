@@ -1,0 +1,7 @@
+#! /bin/sh
+
+test -d tests || mkdir -p tests
+
+./patgen $srcdir/tests/dict $srcdir/tests/patterns tests/xpatout \
+  $srcdir/tests/translate <$srcdir/tests/patgen.in || exit 1
+

@@ -12,9 +12,9 @@ libmd5_a_CPPFLAGS = -I$(srcdir)/libmd5
 libmd5_a_SOURCES = libmd5/md5.c libmd5/md5.h
 
 ## Tests
-
+##
 check_PROGRAMS += md5main
-dist_check_SCRIPTS += libmd5/md5.test
+EXTRA_DIST += libmd5/md5.test
 
 TESTS += libmd5/md5.test
 

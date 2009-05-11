@@ -1,0 +1,7 @@
+#! /bin/sh
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../kpathsea WEBINPUTS=$srcdir \
+  ./weave pooltype || exit 1
+

@@ -1,0 +1,13 @@
+#! /bin/sh
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../kpathsea \
+  ./dvicopy $srcdir/tests/story tests/xstory.dvi ## || exit 1
+## failed with: TFM: font 1 = cmbx10(That was a fatal error, my friend.)
+
+TEXMFCNF=$srcdir/../kpathsea \
+  TFMFONTS=$srcdir/tests \
+  VFFONTS=$srcdir/tests \
+  ./dvicopy <$srcdir/tests/pplr.dvi >tests/xpplr.dvi 2>&1 || exit 1
+
