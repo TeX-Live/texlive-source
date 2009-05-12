@@ -80,6 +80,48 @@ EXTRA_DIST += \
 	etexdir/README \
 	etexdir/etex_gen.tex
 
+## e-TeX Tests
+##
+etex_tests = etexdir/etrip.test
+
+EXTRA_DIST += $(etex_tests)
+
+if ETEX
+TESTS += $(etex_tests)
+check_PROGRAMS += dvitype pltotf tftopl
+endif ETEX
+
+.PHONY: etrip-clean
+clean-local:: etrip-clean
+## trip.test
+etrip-clean:
+	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
+	rm -f ctrip.fot ctrip.log trip.dvi ctrip.typ
+	rm -f xtripin.fot xtripin.log
+	rm -f xtrip.fot xtrip.log xtrip.typ
+	rm -f etrip.tfm etrip.pl etrip.tex etrip.fmt etripin.fot etripin.log
+	rm -f etrip.fot etrip.log etrip.dvi etrip.out etrip.typ
+	rm -f tripos.tex 8terminal.tex
+	rm -rf tfm
+
+## Test data
+##
+EXTRA_DIST += \
+	etexdir/etrip/etrip.diffs \
+	etexdir/etrip/etrip.fot \
+	etexdir/etrip/etrip.log \
+	etexdir/etrip/etrip.out \
+	etexdir/etrip/etrip.pl \
+	etexdir/etrip/etrip.tex \
+	etexdir/etrip/etrip.typ \
+	etexdir/etrip/etrip1.in \
+	etexdir/etrip/etrip2.in \
+	etexdir/etrip/etrip3.in \
+	etexdir/etrip/etripin.log \
+	etexdir/etrip/etripman.tex \
+	etexdir/etrip/texmf.cnf \
+	etexdir/etrip/trip2.in
+
 ## Not used
 ##
 EXTRA_DIST += etexdir/etex.mak
