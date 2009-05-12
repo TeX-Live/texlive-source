@@ -7,12 +7,12 @@ half_error_line = 32
 max_print_line = 72
 		
 % e-TeX.
-main_memory.etex     = 2999 % can't change mem_bot, it stays 0
+main_memory.etex     = 3999 % can't change mem_bot, it stays 0
 max_strings.etex     = 3300
 pool_size.etex       = 34000
 
 % In case you happen to run an ini* link by hand.
-main_memory.einitex  = 2999 % can't change mem_bot, it stays 0
+main_memory.einitex  = 3999 % can't change mem_bot, it stays 0
 max_strings.einitex  = 3300
 pool_size.einitex    = 34000
 

@@ -1,3 +1,9 @@
+2009-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etrip.test (new): Shell script for e-TRIP tests.
+	* etrip/texmf.cnf (main_memory): Increased from 2999 to 3999
+	required due to increased node sizes for syncTeX extensions.
+
 2008-05-15  Karl Berry  <karl@tug.org>
 
 	* etex.mk (etex-pool.c): the input is etex.pool.  From Akira.

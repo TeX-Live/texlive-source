@@ -44,10 +44,10 @@ diff $testdir/trip.fot ctrip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
-## $DIFF $DIFFFLAGS $testdir/trip.log ctrip.log
+$DIFF $DIFFFLAGS $testdir/trip.log ctrip.log
 
 eval ./dvitype $dvitype_args trip.dvi >ctrip.typ || exit 1
-## $DIFF $DIFFFLAGS $testdir/trip.typ ctrip.typ
+$DIFF $DIFFFLAGS $testdir/trip.typ ctrip.typ
 
 # ==============================
 
