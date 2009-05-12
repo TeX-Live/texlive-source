@@ -429,7 +429,6 @@ PSFontParam::~PSFontParam() {
   }
 }
 
-#ifndef PDF_PARSER_ONLY
 //------------------------------------------------------------------------
 // KeyBinding
 //------------------------------------------------------------------------
@@ -462,7 +461,6 @@ KeyBinding::KeyBinding(int codeA, int modsA, int contextA, GList *cmdsA) {
 KeyBinding::~KeyBinding() {
   deleteGList(cmds, GString);
 }
-#endif /* !PDF_PARSER_ONLY */
 
 #ifdef ENABLE_PLUGINS
 //------------------------------------------------------------------------
@@ -720,9 +718,7 @@ GlobalParams::GlobalParams(char *cfgFileName) {
   movieCommand = NULL;
   mapNumericCharNames = gTrue;
   mapUnknownCharNames = gFalse;
-#ifndef PDF_PARSER_ONLY
   createDefaultKeyBindings();
-#endif
   printCommands = gFalse;
   errQuiet = gFalse;
 
@@ -805,7 +801,6 @@ GlobalParams::GlobalParams(char *cfgFileName) {
 #endif /* !PDF_PARSER_ONLY */
 }
 
-#ifndef PDF_PARSER_ONLY
 void GlobalParams::createDefaultKeyBindings() {
   keyBindings = new GList();
 
@@ -1132,7 +1127,6 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
 
   deleteGList(tokens, GString);
 }
-#endif /* !PDF_PARSER_ONLY */
 
 void GlobalParams::parseNameToUnicode(GList *tokens, GString *fileName,
 					 int line) {
@@ -1477,7 +1471,6 @@ void GlobalParams::parseScreenType(GList *tokens, GString *fileName,
   }
 }
 
-#ifndef PDF_PARSER_ONLY
 void GlobalParams::parseBind(GList *tokens, GString *fileName, int line) {
   KeyBinding *binding;
   GList *cmds;
@@ -1663,7 +1656,6 @@ GBool GlobalParams::parseKey(GString *modKeyStr, GString *contextStr,
 
   return gTrue;
 }
-#endif /* !PDF_PARSER_ONLY */
 
 void GlobalParams::parseCommand(char *cmdName, GString **val,
 				GList *tokens, GString *fileName, int line) {
@@ -1807,9 +1799,7 @@ GlobalParams::~GlobalParams() {
   if (movieCommand) {
     delete movieCommand;
   }
-#ifndef PDF_PARSER_ONLY
   deleteGList(keyBindings, KeyBinding);
-#endif
 
   cMapDirs->startIter(&iter);
   while (cMapDirs->getNext(&iter, &key, (void **)&list)) {
@@ -2460,7 +2450,6 @@ GBool GlobalParams::getMapUnknownCharNames() {
   return map;
 }
 
-#ifndef PDF_PARSER_ONLY
 GList *GlobalParams::getKeyBinding(int code, int mods, int context) {
   KeyBinding *binding;
   GList *cmds;
@@ -2486,7 +2475,6 @@ GList *GlobalParams::getKeyBinding(int code, int mods, int context) {
   unlockGlobalParams;
   return cmds;
 }
-#endif /* !PDF_PARSER_ONLY */
 
 GBool GlobalParams::getPrintCommands() {
   GBool p;

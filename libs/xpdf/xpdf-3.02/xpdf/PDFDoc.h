@@ -5,9 +5,6 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
-//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
-//  See top-level ChangeLog for a list of all modifications
-//========================================================================
 
 #ifndef PDFDOC_H
 #define PDFDOC_H
@@ -174,15 +171,13 @@ private:
   double pdfVersion;
   XRef *xref;
   Catalog *catalog;
-  GBool ok;
-  int errCode;
-/* Keep the size of the structure the same whether DISABLE_OUTLINE or
-   not, and put it last to try to find errors more quickly.  */
 #ifndef DISABLE_OUTLINE
   Outline *outline;
-#else
-  void *dummy;
 #endif
+
+
+  GBool ok;
+  int errCode;
 };
 
 #endif

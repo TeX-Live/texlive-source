@@ -126,7 +126,6 @@ enum ScreenType {
 
 //------------------------------------------------------------------------
 
-#ifndef PDF_PARSER_ONLY
 class KeyBinding {
 public:
 
@@ -190,7 +189,6 @@ public:
 #define xpdfKeyContextMainWin     (2 << 6)
 #define xpdfKeyContextScrLockOn   (1 << 8)
 #define xpdfKeyContextScrLockOff  (2 << 8)
-#endif /* !PDF_PARSER_ONLY */
 
 //------------------------------------------------------------------------
 
@@ -266,9 +264,7 @@ public:
   GString *getMovieCommand() { return movieCommand; }
   GBool getMapNumericCharNames();
   GBool getMapUnknownCharNames();
-#ifndef PDF_PARSER_ONLY
   GList *getKeyBinding(int code, int mods, int context);
-#endif
   GBool getPrintCommands();
   GBool getErrQuiet();
 
@@ -327,9 +323,7 @@ public:
 
 private:
 
-#ifndef PDF_PARSER_ONLY
   void createDefaultKeyBindings();
-#endif
   void parseFile(GString *fileName, FILE *f);
   void parseNameToUnicode(GList *tokens, GString *fileName, int line);
   void parseCIDToUnicode(GList *tokens, GString *fileName, int line);
@@ -352,14 +346,12 @@ private:
   void parseFontDir(GList *tokens, GString *fileName, int line);
   void parseInitialZoom(GList *tokens, GString *fileName, int line);
   void parseScreenType(GList *tokens, GString *fileName, int line);
-#ifndef PDF_PARSER_ONLY
   void parseBind(GList *tokens, GString *fileName, int line);
   void parseUnbind(GList *tokens, GString *fileName, int line);
   GBool parseKey(GString *modKeyStr, GString *contextStr,
 		 int *code, int *mods, int *context,
 		 char *cmdName,
 		 GList *tokens, GString *fileName, int line);
-#endif
   void parseCommand(char *cmdName, GString **val,
 		    GList *tokens, GString *fileName, int line);
   void parseYesNo(char *cmdName, GBool *flag,
@@ -454,9 +446,7 @@ private:
   GString *movieCommand;	// command executed for movie annotations
   GBool mapNumericCharNames;	// map numeric char names (from font subsets)?
   GBool mapUnknownCharNames;	// map unknown char names?
-#ifndef PDF_PARSER_ONLY
   GList *keyBindings;		// key & mouse button bindings [KeyBinding]
-#endif
   GBool printCommands;		// print the drawing commands
   GBool errQuiet;		// suppress error messages?
 

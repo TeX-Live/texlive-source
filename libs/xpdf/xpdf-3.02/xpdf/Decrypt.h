@@ -5,9 +5,6 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
-//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
-//  See top-level ChangeLog for a list of all modifications
-//========================================================================
 
 #ifndef DECRYPT_H
 #define DECRYPT_H
@@ -76,7 +73,7 @@ public:
 		CryptAlgorithm algoA, int keyLength,
 		int objNum, int objGen);
   virtual ~DecryptStream();
-  virtual StreamKind getKind() { return strCrypt; }
+  virtual StreamKind getKind() { return strWeird; }
   virtual void reset();
   virtual int getChar();
   virtual int lookChar();

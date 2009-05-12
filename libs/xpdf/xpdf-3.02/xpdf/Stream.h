@@ -5,9 +5,6 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
-//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
-//  See top-level ChangeLog for a list of all modifications
-//========================================================================
 
 #ifndef STREAM_H
 #define STREAM_H
@@ -37,7 +34,6 @@ enum StreamKind {
   strFlate,
   strJBIG2,
   strJPX,
-  strCrypt,
   strWeird			// internal-use stream types
 };
 

@@ -1,3 +1,10 @@
+2009-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-16-size-of-struct (removed): unnecessary.
+	* patch-17-strCrypt (removed): was never useful.
+	* patch-23-exclude-keyBindings (removed): has removed lots of
+	unused code, but may be problematic with future foolabs updates.
+
 2009-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-10-exclude-body-of-Page::getDefaultCTM (removed),
