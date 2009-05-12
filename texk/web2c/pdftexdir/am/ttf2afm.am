@@ -5,7 +5,10 @@
 
 ## ttf2afm
 ##
+if PDFTEX
 bin_PROGRAMS += ttf2afm
+endif PDFTEX
+EXTRA_PROGRAMS += ttf2afm
 
 ttf2afm_CPPFLAGS = -I$(srcdir)/pdftexdir 
 
