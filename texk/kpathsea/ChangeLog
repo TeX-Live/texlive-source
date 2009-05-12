@@ -1,3 +1,8 @@
+2009-05-12  Karl Berry  <karl@tug.org>
+
+	* tex-file.c (kpathsea_init_format): set suffix_search_only
+	for sfd, otf, and lig.  Output binmode value for debugging.
+
 2009-05-11  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (paths.h): depend on stamp-paths, instead of

@@ -715,10 +715,12 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
     case kpse_sfd_format:
       INIT_FORMAT ("subfont definition files", DEFAULT_SFDFONTS, SFD_ENVS);
       SUFFIXES (".sfd");
+      FMT_INFO.suffix_search_only = true;
       break;
     case kpse_opentype_format:
       INIT_FORMAT ("opentype fonts", DEFAULT_OPENTYPEFONTS, OPENTYPE_ENVS);
       SUFFIXES (".otf");
+      FMT_INFO.suffix_search_only = true;
       FMT_INFO.binmode = true;
       break;
     case kpse_pdftex_config_format:
@@ -727,6 +729,7 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
     case kpse_lig_format:
       INIT_FORMAT ("lig files", DEFAULT_LIGFONTS, LIG_ENVS);
       SUFFIXES (".lig");
+      FMT_INFO.suffix_search_only = true;
       break;
     case kpse_texmfscripts_format:
       INIT_FORMAT ("texmfscripts", DEFAULT_TEXMFSCRIPTS, TEXMFSCRIPTS_ENVS);
@@ -788,7 +791,6 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
         fputs (" (none)\n", stderr);
       }
       DEBUGF1 ("  search only with suffix = %d\n",FMT_INFO.suffix_search_only);
-      DEBUGF1 ("  numeric format value = %d\n", format);
       DEBUGF1 ("  runtime generation program = %s\n", MAYBE (program));
       DEBUGF  ("  runtime generation command =");
       if (FMT_INFO.argv) {
@@ -802,6 +804,8 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
       }
       DEBUGF1 ("  program enabled = %d\n", FMT_INFO.program_enabled_p);
       DEBUGF1 ("  program enable level = %d\n", FMT_INFO.program_enable_level);
+      DEBUGF1 ("  open files in binary mode = %d\n", FMT_INFO.binmode);
+      DEBUGF1 ("  numeric format value = %d\n", format);
     }
 #endif /* KPSE_DEBUG */
 
