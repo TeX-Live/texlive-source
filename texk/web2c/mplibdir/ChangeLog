@@ -1,3 +1,8 @@
+2009-05-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	    * mptrap.test (new): Shell script for MPTRAP test.
+	    * am/mplib.am: Added MPTRAP test.
+
 2009-05-11  Taco Hoekwater <taco@elvenkind.com>
 	    
 	    * Released version of MPLib 1.200
