@@ -7,7 +7,7 @@ rem Public Domain
 rem Make environment changes local
 setlocal enableextensions
 rem Get program/script name
-if not defined progname set progname=%~n0
+set progname=%~n0
 rem Check if this is 'sys' version of program
 set TEX_SYS_PROG=
 if /i "%progname:~-4%"=="-sys" (
