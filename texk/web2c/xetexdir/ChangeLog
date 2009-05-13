@@ -1,3 +1,9 @@
+2009-05-13  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* am/xetex.am: Put FREETYPE2_INCLUDES as early as possible to
+	avoid freetype1/freetype2 problems when both are installed under
+	the same prefix.
+
 2009-05-06  Karl Berry  <karl@tug.org>
 
 	* jpegimage.c: #include <stdlib.h> and <string.h>

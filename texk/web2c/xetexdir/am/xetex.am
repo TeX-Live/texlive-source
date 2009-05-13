@@ -16,6 +16,9 @@ nodist_EXTRA_xetex_SOURCES = dummy.cxx
 libxetex = libxetex.a
 
 xetex_cppflags = -DU_STATIC_IMPLEMENTATION -I$(srcdir)/xetexdir
+## Must add freetype2 includes as early as possible to avoid
+## freetype1/freetype2 confusion -- what a mess.
+xetex_cppflags += $(FREETYPE2_INCLUDES)
 xetex_cppflags += $(ICU_INCLUDES) $(TECKIT_INCLUDES)
 xetex_ldadd = $(libxetex) $(ICU_LIBS) $(TECKIT_LIBS)
 xetex_dependencies = $(proglib)
@@ -46,7 +49,7 @@ xetex_dependencies += $(GRAPHITE_DEPEND)
 
 endif XETEX_GRAPHITE
 
-xetex_cppflags += $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES)
+xetex_cppflags += $(ZLIB_INCLUDES)
 xetex_ldadd += $(FREETYPE2_LIBS) $(ZLIB_LIBS)
 xetex_dependencies += $(FREETYPE2_DEPEND) $(ZLIB_DEPEND)
 

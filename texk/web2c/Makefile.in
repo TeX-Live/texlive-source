@@ -1823,8 +1823,8 @@ EXTRA_libluatex_a_SOURCES = luatexdir/font/macnames.c
 nodist_EXTRA_xetex_SOURCES = dummy.cxx
 libxetex = libxetex.a $(am__append_22)
 xetex_cppflags = -DU_STATIC_IMPLEMENTATION -I$(srcdir)/xetexdir \
-	$(ICU_INCLUDES) $(TECKIT_INCLUDES) $(am__append_21) \
-	$(am__append_23) $(am__append_26) $(FREETYPE2_INCLUDES) \
+	$(FREETYPE2_INCLUDES) $(ICU_INCLUDES) $(TECKIT_INCLUDES) \
+	$(am__append_21) $(am__append_23) $(am__append_26) \
 	$(ZLIB_INCLUDES)
 xetex_ldadd = $(libxetex) $(ICU_LIBS) $(TECKIT_LIBS) $(am__append_24) \
 	$(am__append_27) $(FREETYPE2_LIBS) $(ZLIB_LIBS)
