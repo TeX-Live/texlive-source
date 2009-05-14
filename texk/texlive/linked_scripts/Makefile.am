@@ -76,8 +76,8 @@ nobase_dist_script_SCRIPTS = \
 	pdfcrop/pdfcrop.pl \
 	perltex/perltex \
 	pkfix-helper/pkfix-helper \
-	ppower4/pdfthumb.texlua \
-	ppower4/ppower4.texlua \
+	ppower4/pdfthumb.tlu \
+	ppower4/ppower4.tlu \
 	pst-pdf/ps4pdf \
 	pst2pdf/pst2pdf.pl \
 	purifyeps/purifyeps \
