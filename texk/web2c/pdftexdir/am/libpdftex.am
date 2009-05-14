@@ -46,7 +46,7 @@ libpdftex_a_SOURCES += \
 	pdftexdir/regex/regex.h
 endif MINGW32
 
-## We must create pdftexd.h before building the libpdftex_a_OBJECTS.
+# We must create pdftexd.h before building the libpdftex_a_OBJECTS.
 $(libpdftex_a_OBJECTS): pdftexd.h
 
 ## included by pdftexdir/writettf.c

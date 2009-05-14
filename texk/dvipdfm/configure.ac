@@ -43,7 +43,7 @@ KPSE_LIBPNG_FLAGS
 KPSE_ADD_FLAGS([kpathsea])
 
 dnl Check for required file formats.
-dnl We need tex-ps_header, type1, and vf;
+dnl We need tex_ps_header, type1, and vf;
 dnl of these type1 was introduced last (Feb 1996).
 KPSE_CHECK_KPSE_FORMAT([type1], ,
                        [KPSE_MSG_ERROR([dvipdfm],

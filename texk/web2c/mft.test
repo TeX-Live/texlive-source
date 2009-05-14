@@ -3,7 +3,6 @@
 test -d tests || mkdir -p tests
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./mft $srcdir/tests/io ## && mv -f io.tex tests/io.tex || exit 1
-## fails with: ./mft: fatal: mft file `plain.mft' not found.
-exit 0
+  MFTINPUTS=$srcdir/tests \
+  ./mft $srcdir/tests/io && mv -f io.tex tests/io.tex || exit 1
 

@@ -25,7 +25,7 @@ aleph_SOURCES = \
 	alephdir/alephmem.h \
 	alephdir/aleph-pool.h
 
-## We must create alephd.h before building the aleph_OBJECTS.
+# We must create alephd.h before building the aleph_OBJECTS.
 $(aleph_OBJECTS): alephd.h
 
 $(aleph_c_h): aleph-web2c

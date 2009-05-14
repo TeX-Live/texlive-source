@@ -197,7 +197,7 @@ libxetex_a_SOURCES += \
 
 endif XETEX_GRAPHITE
 
-## We must create xetexd.h before building the libxetex_a_OBJECTS.
+# We must create xetexd.h before building the libxetex_a_OBJECTS.
 $(libxetex_a_OBJECTS): xetexd.h
 
 ## libxetexmm (Mac OS X only)

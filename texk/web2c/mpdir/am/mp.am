@@ -51,7 +51,7 @@ liboldmpost_a_SOURCES = \
 	mpdir/writefont.c \
 	mpdir/writet1.c
 
-## We must create mpd.h before building the liboldmpost_a_OBJECTS.
+# We must create mpd.h before building the liboldmpost_a_OBJECTS.
 $(liboldmpost_a_OBJECTS): mpd.h
 
 ## Eventually delete these files

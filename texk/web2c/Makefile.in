@@ -8171,8 +8171,11 @@ cweave.c: ctangle$(EXEEXT) cwebdir/cweave.w cwebdir/cweav-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
 tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 	CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
-$(tex_c_h): tex-web2c
 
+# We must create texd.h before building the tex_OBJECTS.
+$(tex_OBJECTS): texd.h
+
+$(tex_c_h): tex-web2c
 tex-web2c: tex.p $(web2c_texmf)
 	$(web2c) tex
 	: $(synctex_convert_tex)
@@ -8203,6 +8206,9 @@ trip-clean:
 	rm -rf tfm
 $(windowlib): mfd.h $(srcdir)/window/*.c
 	cd window && $(MAKE) $(AM_MAKEFLAGS) libwindow.a
+
+# We must create mfd.h before building the libmf_a_OBJECTS.
+$(libmf_a_OBJECTS): mfd.h
 
 $(mf_c_h): mf-web2c
 mf-web2c: mf.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed
@@ -8249,6 +8255,7 @@ mp-tangle: tangle$(EXEEXT) mp.web mp.ch
 mp-pool.c: mp.pool $(makecpool_stamp) mpdir/mplib.h
 	$(makecpool) mp.pool $(srcdir)/mpdir/mplib.h >$@ || rm -f $@
 
+# We must create mpd.h before building the liboldmpost_a_OBJECTS.
 $(liboldmpost_a_OBJECTS): mpd.h
 
 mpost.c: ctangle$(EXEEXT) mplibdir/mpost.w
@@ -8376,6 +8383,7 @@ pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexd
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
 
+# We must create pdftexd.h before building the libpdftex_a_OBJECTS.
 $(libpdftex_a_OBJECTS): pdftexd.h
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libpdftex.a 
@@ -8460,6 +8468,7 @@ xetexdir/xetex.version: xetexdir/xetex.ch
 xetex.web: tie$(EXEEXT) $(xetex_web_srcs)
 	$(tie) -m xetex.web $(xetex_web_srcs)
 
+# We must create xetexd.h before building the libxetex_a_OBJECTS.
 $(libxetex_a_OBJECTS): xetexd.h
 odvicopy.c odvicopy.h: odvicopy-web2c
 odvicopy-web2c: $(web2c_depend) odvicopy.p
@@ -8511,6 +8520,7 @@ ovp2ovf-web2c: $(web2c_depend) ovp2ovf.p
 ovp2ovf.p: tangle$(EXEEXT) $(ovp2ovf_sources)
 	$(ow_tangle) ovp2ovf ovp2ovf
 
+# We must create alephd.h before building the aleph_OBJECTS.
 $(aleph_OBJECTS): alephd.h
 
 $(aleph_c_h): aleph-web2c
