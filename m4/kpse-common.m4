@@ -277,3 +277,11 @@ AC_DEFUN([KPSE_MSG_ERROR],
 $2])],
        [AC_MSG_ERROR([$2], m4_default([$3], 1))])
 ]) # KPSE_MSG_ERROR
+
+# _KPSE_CHECK_PKG_CONFIG
+# ----------------------
+# Check for pkg-config
+AC_DEFUN([_KPSE_CHECK_PKG_CONFIG],
+[AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
+]) # _KPSE_CHECK_PKG_CONFIG

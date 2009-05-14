@@ -18,9 +18,7 @@ EXTRA_DIST = $(FREETYPE_TREE)
 dist-hook:
 	rm -rf `find $(distdir)/$(FREETYPE_TREE) -name .svn`
 
-if build
 noinst_DATA = libfreetype.a
-endif build
 
 ft-build/Makefile:
 	rm -rf ft-build

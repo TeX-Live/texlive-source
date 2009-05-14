@@ -189,8 +189,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(ZLIB_TREE)
 INCLUDES = -I$(top_srcdir)/$(ZLIB_TREE)
 AM_CPPFLAGS = $(ZLIB_DEFINES)
-@build_TRUE@noinst_LIBRARIES = libz.a
-EXTRA_LIBRARIES = libz.a
+noinst_LIBRARIES = libz.a
 nodist_libz_a_SOURCES = \
 	$(ZLIB_TREE)/adler32.c \
 	$(ZLIB_TREE)/compress.c \

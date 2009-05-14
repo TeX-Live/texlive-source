@@ -28,10 +28,7 @@ dist-hook:
 INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = $(LIBPNG_DEFINES)
 
-if build
 noinst_LIBRARIES=libpng.a
-endif build
-EXTRA_LIBRARIES=libpng.a
 
 nodist_libpng_a_SOURCES = \
 	$(LIBPNG_TREE)/png.c \

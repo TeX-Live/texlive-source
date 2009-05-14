@@ -205,8 +205,7 @@ INCLUDES = -I$(top_srcdir)/include/graphite \
 	-I$(top_srcdir)/src/generic -I$(top_srcdir)/src/font \
 	-I$(top_srcdir)/src/segment
 AM_CPPFLAGS = -DNDEBUG
-@build_TRUE@noinst_LIBRARIES = libgraphite.a
-EXTRA_LIBRARIES = libgraphite.a
+noinst_LIBRARIES = libgraphite.a
 noinst_HEADERS = \
 	include/graphite/FileFont.h \
 	include/graphite/Font.h \

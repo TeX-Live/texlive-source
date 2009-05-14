@@ -8,10 +8,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = -I$(top_srcdir)/source/Public-headers $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DNDEBUG
 
-if build
 noinst_LIBRARIES = libTECkit.a
-endif
-EXTRA_LIBRARIES = libTECkit_Compiler.a libTECkit.a
+EXTRA_LIBRARIES = libTECkit_Compiler.a
 
 libTECkit_Compiler_a_SOURCES = \
 	source/Compiler.cpp \

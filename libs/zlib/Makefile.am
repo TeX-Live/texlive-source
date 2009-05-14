@@ -23,10 +23,7 @@ dist-hook:
 INCLUDES = -I$(top_srcdir)/$(ZLIB_TREE)
 AM_CPPFLAGS = $(ZLIB_DEFINES)
 
-if build
 noinst_LIBRARIES = libz.a
-endif build
-EXTRA_LIBRARIES = libz.a
 
 nodist_libz_a_SOURCES = \
 	$(ZLIB_TREE)/adler32.c \

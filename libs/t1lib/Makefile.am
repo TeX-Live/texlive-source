@@ -34,10 +34,7 @@ AM_CFLAGS = $(T1LIB_CFLAGS)
 
 LDADD = libt1.a
 
-if build
 noinst_LIBRARIES = libt1.a
-endif build
-EXTRA_LIBRARIES = libt1.a
 
 nodist_libt1_a_SOURCES = $(lib_t1lib_sources) $(lib_type1_sources)
 

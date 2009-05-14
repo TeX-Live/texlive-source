@@ -137,7 +137,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(FREETYPE_TREE)
-@build_TRUE@noinst_DATA = libttf.a
+noinst_DATA = libttf.a
 all: all-am
 
 .SUFFIXES:

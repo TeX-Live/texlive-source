@@ -37,7 +37,7 @@ AC_DEFUN([KPSE_FREETYPE2_OPTIONS],
 # ---------------------------
 AC_DEFUN([KPSE_FREETYPE2_SYSTEM_FLAGS],
 [AC_REQUIRE([_KPSE_CHECK_FT2_CONFIG])[]dnl
-if test -n `$FT2_CONFIG --ftversion 2>/dev/null`; then
+if $FT2_CONFIG --ftversion >/dev/null 2>&1; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
 elif test "x$need_freetype2:$with_freetype2_xpdf" = 'xyes:yes'; then
@@ -50,5 +50,5 @@ fi
 # Check for freetype-config
 AC_DEFUN([_KPSE_CHECK_FT2_CONFIG],
 [AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
-AC_CHECK_TOOL([FT2_CONFIG], [freetype-config], [:])[]dnl
+AC_CHECK_TOOL([FT2_CONFIG], [freetype-config], [false])[]dnl
 ]) # _KPSE_CHECK_FT2_CONFIG

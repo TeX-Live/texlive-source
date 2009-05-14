@@ -193,8 +193,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(LIBPNG_TREE)
 INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = $(LIBPNG_DEFINES)
-@build_TRUE@noinst_LIBRARIES = libpng.a
-EXTRA_LIBRARIES = libpng.a
+noinst_LIBRARIES = libpng.a
 nodist_libpng_a_SOURCES = \
 	$(LIBPNG_TREE)/png.c \
 	$(LIBPNG_TREE)/pngset.c \

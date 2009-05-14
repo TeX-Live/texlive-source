@@ -21,10 +21,7 @@ dist-hook:
 
 INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 
-if build
 noinst_LIBRARIES=libgd.a
-endif build
-EXTRA_LIBRARIES=libgd.a
 
 nodist_libgd_a_SOURCES = \
 	$(GD_TREE)/gd.c \

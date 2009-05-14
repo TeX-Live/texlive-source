@@ -23992,7 +23992,7 @@ $as_echo "no" >&6; }
 fi
 
   if test "x$ac_ct_FT2_CONFIG" = x; then
-    FT2_CONFIG=":"
+    FT2_CONFIG="false"
   else
     case $cross_compiling:$ac_tool_warned in
 yes:)
@@ -24013,7 +24013,7 @@ if test "${with_system_freetype2+set}" = set; then
   withval=$with_system_freetype2;
 fi
 if test "x$with_system_freetype2" = xyes; then
-  if test -n `$FT2_CONFIG --ftversion 2>/dev/null`; then
+  if $FT2_CONFIG --ftversion >/dev/null 2>&1; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
 elif test "x$need_freetype2:$with_freetype2_xpdf" = 'xyes:yes'; then

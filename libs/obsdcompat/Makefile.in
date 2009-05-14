@@ -188,8 +188,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-@build_TRUE@noinst_LIBRARIES = libopenbsd-compat.a
-EXTRA_LIBRARIES = libopenbsd-compat.a
+noinst_LIBRARIES = libopenbsd-compat.a
 compat_sources = \
 	bsd-asprintf.c \
 	bsd-snprintf.c

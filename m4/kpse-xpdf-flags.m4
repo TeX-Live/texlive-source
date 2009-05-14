@@ -40,11 +40,3 @@ elif test "x$need_xpdf:$with_system_xpdf" = 'xyes:yes'; then
   AC_MSG_ERROR([did not find poppler-0.10 or better])
 fi
 ]) # KPSE_XPDF_SYSTEM_FLAGS
-
-# _KPSE_CHECK_PKG_CONFIG
-# ----------------------
-# Check for pkg-config
-AC_DEFUN([_KPSE_CHECK_PKG_CONFIG],
-[AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
-AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
-]) # _KPSE_CHECK_PKG_CONFIG
