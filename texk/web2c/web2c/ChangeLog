@@ -1,3 +1,9 @@
+2009-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* coerce.h: Modify #define of synch_p_with_c for luaTeX.
+
+	From  Vladimir Volovich <vvv@vsu.ru>
+
 2009-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* convert: use output redirection ('>>') to append the contents

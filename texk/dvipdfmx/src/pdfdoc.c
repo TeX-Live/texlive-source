@@ -965,12 +965,13 @@ pdf_doc_get_page (pdf_obj *trailer, long *page_p, long *count_p,
    */
   {
     pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
+    long count;
     if (!PDF_OBJ_NUMBERTYPE(tmp)) {
       if (tmp)
 	pdf_release_obj(tmp);
       goto error;
     }
-    long count = pdf_number_value(tmp);
+    count = pdf_number_value(tmp);
     pdf_release_obj(tmp);
     page_idx = page_no + (page_no >= 0 ? -1 : count);
     if (page_idx < 0 || page_idx >= count) {

@@ -182,6 +182,7 @@ hash_lookup (hash_table_type table,  const_string key)
 
 #ifdef KPSE_DEBUG
 #if defined (KPSE_COMPAT_API)
+  {
   kpathsea kpse = kpse_def;
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_HASH))
     {
@@ -203,6 +204,7 @@ hash_lookup (hash_table_type table,  const_string key)
         }
       fflush (stderr);
     }
+  }
 #endif
 #endif
 

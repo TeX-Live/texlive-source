@@ -1,6 +1,13 @@
 ChangeLog.TL: Changes for dvipdfmx (teTeX / TeX Live)
 =====================================================
 
+2009-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfdoc.c (pdf_doc_get_page): Avoid C99isms
+	(variable declaration not at the beginning of a block).
+
+	From  Vladimir Volovich <vvv@vsu.ru>
+
 2009-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 	* src/cff.c, src/dpxutil.c, src/mem.c, src/pdfencoding.c,
 	src/pdfencrypt.c: Must include Kpathsea headers (via `system.h')

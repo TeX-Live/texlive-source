@@ -27,7 +27,7 @@
 boolean
 kpathsea_absolute_p (kpathsea kpse, const_string filename,  boolean relative_ok)
 {
-    (void)kpse; /* currenty not used */
+/*    (void)kpse; */ /* currenty not used */
 #ifdef VMS
 #include <string.h>
   return strcspn (filename, "]>:") != strlen (filename);

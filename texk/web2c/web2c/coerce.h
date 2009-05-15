@@ -22,6 +22,11 @@
 #define	eq_destroy(x)	zeq_destroy(x)
 #endif
 
+#ifdef  synch_p_with_c
+#undef  synch_p_with_c
+#define synch_p_with_c(x) zsynch_p_with_c(x)
+#endif
+
 #else /* luaTeX */
 
 #ifdef	printword

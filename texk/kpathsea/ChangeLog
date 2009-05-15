@@ -1,3 +1,10 @@
+2009-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* absolute.c, hash.c: Avoid C99isms (variable declaration not at
+        the beginning of a block).
+
+	From  Vladimir Volovich <vvv@vsu.ru>
+
 2009-05-12  Karl Berry  <karl@tug.org>
 
 	* tex-file.c (kpathsea_init_format): set suffix_search_only
