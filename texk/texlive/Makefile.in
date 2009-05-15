@@ -230,7 +230,6 @@ EXTRA_DIST = \
 	texsis texsis.bat \
 	text1 text1.bat \
 	tl-w32-starter.bat \
-	tl-w32-wrapper.texlua \
 	virmf \
 	virmpost \
 	viromega \
