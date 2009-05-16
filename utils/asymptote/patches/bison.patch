@@ -1,0 +1,206 @@
+diff -ru bison-2.0a/data/yacc.c bison-2.0aJ/data/yacc.c
+--- bison-2.0a/data/yacc.c	2005-05-21 11:12:32.000000000 -0600
++++ bison-2.0aJ/data/yacc.c	2005-06-30 18:14:16.509158136 -0600
+@@ -237,7 +237,7 @@
+ 
+ # ifdef YYSTACK_ALLOC
+    /* Pacify GCC's `empty if-body' warning. */
+-#  define YYSTACK_FREE(Ptr) do { /* empty */; } while (0)
++#  define YYSTACK_FREE(Ptr) { /* empty */; }
+ #  ifndef YYSTACK_ALLOC_MAXIMUM
+     /* The OS might guarantee only one guard page at the bottom of the stack,
+        and a page size can be as small as 4096 bytes.  So we cannot safely
+@@ -291,19 +291,20 @@
+ /* Copy COUNT objects from FROM to TO.  The source and destination do
+    not overlap.  */
+ # ifndef YYCOPY
+-#  if defined (__GNUC__) && 1 < __GNUC__
++#  if defined (__GNUC__)
++#   if 1 < __GNUC__
+ #   define YYCOPY(To, From, Count) \
+       __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
+-#  else
++#   endif
++#  endif
++# endif
++# ifndef YYCOPY
+ #   define YYCOPY(To, From, Count)		\
+-      do					\
+ 	{					\
+ 	  YYSIZE_T yyi;				\
+ 	  for (yyi = 0; yyi < (Count); yyi++)	\
+ 	    (To)[yyi] = (From)[yyi];		\
+-	}					\
+-      while (0)
+-#  endif
++	}
+ # endif
+ 
+ /* Relocate STACK from its old location to the new one.  The
+@@ -312,15 +313,13 @@
+    stack.  Advance YYPTR to a properly aligned location for the next
+    stack.  */
+ # define YYSTACK_RELOCATE(Stack)					\
+-    do									\
+       {									\
+ 	YYSIZE_T yynewbytes;						\
+ 	YYCOPY (&yyptr->Stack, Stack, yysize);				\
+ 	Stack = &yyptr->Stack;						\
+ 	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
+ 	yyptr += yynewbytes / sizeof (*yyptr);				\
+-      }									\
+-    while (0)
++      }
+ 
+ #endif
+ 
+@@ -487,6 +486,7 @@
+ #define YYACCEPT	goto yyacceptlab
+ #define YYABORT		goto yyabortlab
+ #define YYERROR		goto yyerrorlab
++int yy_false=false; /* Used to suppress compiler warning about unused label */
+ 
+ 
+ /* Like YYERROR except do call yyerror.  This remains here temporarily
+@@ -498,7 +498,7 @@
+ #define YYRECOVERING()  (!!yyerrstatus)
+ 
+ #define YYBACKUP(Token, Value)					\
+-do								\
++{								\
+   if (yychar == YYEMPTY && yylen == 1)				\
+     {								\
+       yychar = (Token);						\
+@@ -512,7 +512,7 @@
+       yyerror (]b4_yyerror_args[_("syntax error: cannot back up")); \
+       YYERROR;							\
+     }								\
+-while (0)
++}
+ 
+ 
+ #define YYTERROR	1
+@@ -526,7 +526,7 @@
+ #define YYRHSLOC(Rhs, K) ((Rhs)[K])
+ #ifndef YYLLOC_DEFAULT
+ # define YYLLOC_DEFAULT(Current, Rhs, N)				\
+-    do									\
++    {									\
+       if (N)								\
+ 	{								\
+ 	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
+@@ -541,7 +541,7 @@
+ 	  (Current).first_column = (Current).last_column =		\
+ 	    YYRHSLOC (Rhs, 0).last_column;				\
+ 	}								\
+-    while (0)
++    }
+ #endif
+ 
+ 
+@@ -550,7 +550,7 @@
+    we won't break user code: when these are the locations we know.  */
+ 
+ #ifndef YY_LOCATION_PRINT
+-# if YYLTYPE_IS_TRIVIAL
++# ifdef YYLTYPE_IS_TRIVIAL
+ #  define YY_LOCATION_PRINT(File, Loc)			\
+      fprintf (File, "%d.%d-%d.%d",			\
+               (Loc).first_line, (Loc).first_column,	\
+@@ -578,13 +578,13 @@
+ # endif
+ 
+ # define YYDPRINTF(Args)			\
+-do {						\
++{						\
+   if (yydebug)					\
+     YYFPRINTF Args;				\
+-} while (0)
++}
+ 
+ # define YY_SYMBOL_PRINT(Title, Type, Value, Location)		\
+-do {								\
++{								\
+   if (yydebug)							\
+     {								\
+       YYFPRINTF (stderr, "%s ", Title);				\
+@@ -592,7 +592,7 @@
+                   Type, Value]b4_location_if([, Location])[);	\
+       YYFPRINTF (stderr, "\n");					\
+     }								\
+-} while (0)
++}
+ 
+ /*------------------------------------------------------------------.
+ | yy_stack_print -- Print the state stack from its BOTTOM up to its |
+@@ -610,10 +610,10 @@
+ }
+ 
+ # define YY_STACK_PRINT(Bottom, Top)				\
+-do {								\
++{								\
+   if (yydebug)							\
+     yy_stack_print ((Bottom), (Top));				\
+-} while (0)
++}
+ 
+ 
+ /*------------------------------------------------.
+@@ -634,10 +634,10 @@
+ }
+ 
+ # define YY_REDUCE_PRINT(Rule)		\
+-do {					\
++{					\
+   if (yydebug)				\
+     yy_reduce_print (Rule);		\
+-} while (0)
++}
+ 
+ /* Nonzero means print parse trace.  It is left uninitialized so that
+    multiple parsers can coexist.  */
+@@ -826,7 +826,7 @@
+ 
+   /* When reducing, the number of symbols on the RHS of the reduced
+      rule.  */
+-  int yylen;
++  int yylen=0;
+ 
+   YYDPRINTF ((stderr, "Starting parse\n"));
+ 
+@@ -874,7 +874,7 @@
+   yyssp++;
+ 
+  yysetstate:
+-  *yyssp = yystate;
++  *yyssp = (short int) yystate;
+ 
+   if (yyss + yystacksize - 1 <= yyssp)
+     {
+@@ -1222,12 +1222,6 @@
+ `---------------------------------------------------*/
+ yyerrorlab:
+ 
+-  /* Pacify compilers like GCC when the user code never invokes
+-     YYERROR and the label yyerrorlab therefore never appears in user
+-     code.  */
+-  if (0)
+-     goto yyerrorlab;
+-
+ ]b4_location_if([[  yyerror_range[0] = yylsp[1-yylen];
+   yylsp -= yylen;
+   ]])[yyvsp -= yylen;
+@@ -1297,6 +1291,13 @@
+ `-----------------------------------*/
+ yyabortlab:
+   yyresult = 1;
++
++  /* Pacify compilers like GCC when the user code never invokes
++     YYERROR and the label yyerrorlab therefore never appears in user
++     code.  */
++  if (yy_false)
++     goto yyerrorlab;
++
+   goto yyreturn;
+ 
+ #ifndef yyoverflow

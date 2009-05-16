@@ -1,0 +1,96 @@
+MANFILES = asy.1 xasy.1x
+ASYFILES = $(wildcard *.asy) latexusage.asy
+SOURCE = asymptote.texi version.texi options
+ASY = ../asy -dir ../base -config "" -render=0
+DOCFILES = asymptote.pdf CAD.pdf
+
+docdir = $(DESTDIR)@docdir@
+infodir = $(DESTDIR)@infodir@
+datarootdir = @datarootdir@
+INSTALL = @INSTALL@
+TEXI2DVI = @TEXI2DVI@
+
+export docdir infodir INSTALL
+
+all:    doc
+
+htmlinfo: latexusage.eps
+	cd png; $(MAKE) all
+
+man:	$(DOCFILES) asy.1
+
+faq:	
+	cd FAQ; $(MAKE) faq
+
+doc:	asymptote.dvi htmlinfo man faq
+
+%.eps:	%.asy
+	$(ASY) -f eps $<
+
+%.pdf:	%.asy
+	$(ASY) -f pdf -noprc $<
+
+latexusage.dvi: latexusage.tex
+	rm -f latexusage-*
+	rm -f latexusage_.pre
+	rm -f latexusage.aux
+	latex latexusage
+	$(ASY) -noprc latexusage
+	latex latexusage
+
+latexusage.eps: latexusage.dvi
+	dvips -o latexusage.eps latexusage
+
+latexusage.pdf: latexusage.dvi
+	dvipdf latexusage
+
+options: ../settings.cc
+	$(ASY) -h 2>&1 | grep -iv Asymptote > options
+
+asy.1: options asy.1.begin asy.1.end
+	cat options | grep \^- | sed -e "s/-\(.*\)  \([A-Z].*\)/.TP\n.B -\1\n\2\./" | sed -e "/^.B/ s/-/\\\\-/g" | cat asy.1.begin - asy.1.end > asy.1
+
+asymptote.dvi: $(SOURCE) $(ASYFILES:.asy=.eps)
+	ln -sf asymptote.texi asymptote_.texi
+	$(TEXI2DVI) asymptote_.texi
+	mv asymptote_.dvi asymptote.dvi
+
+asymptote.pdf: $(SOURCE) $(ASYFILES:.asy=.pdf)
+	$(TEXI2DVI) --pdf asymptote.texi
+
+CAD.pdf: CAD.tex CAD1.eps 
+	latex CAD
+	latex CAD
+	latex CAD
+	dvipdf CAD
+
+clean: FORCE
+	-rm -f $(ASYFILES:.asy=.pdf) $(DOCFILES)
+	-rm -f *.eps latexusage.{asy,dvi,eps,log,aux,*.eps}
+	-rm -f {asymptote,asymptote_}.{aux,cp,cps,dvi,fn,info,ky,log,pg,pdf,toc,tp,vr} 
+	-rm -f asymptote_.texi
+	-rm -f CAD.{aux,dvi,log,pdf,toc}
+	cd png; $(MAKE) clean
+
+install: man faq
+	cd FAQ; $(MAKE) install
+	${INSTALL} -d -m 755 $(docdir) $(mandir)/man1
+	${INSTALL} -p -m 644 $(DOCFILES) $(docdir)
+	${INSTALL} -p -m 644 $(MANFILES) $(mandir)/man1
+
+install-all: doc install
+	cd FAQ; $(MAKE) install-info
+	cd png; $(MAKE) install
+
+uninstall: uninstall-all
+
+uninstall-all:
+	cd FAQ; $(MAKE) uninstall
+	cd png; $(MAKE) uninstall
+	-cd $(mandir)/man1; rm -f $(MANFILES)
+	-rm -f $(addprefix $(docdir)/,$(DOCFILES))
+
+distclean: FORCE clean
+	-rm -f version.texi Makefile
+	cd FAQ; make distclean
+FORCE:
