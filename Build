@@ -77,8 +77,11 @@ cd $TL_WORKDIR || exit 1
 # default to include freetype2 support for old Mac font file formats.
 : ${TL_CONF_MAC_FONTS=--with-old-mac-fonts}
 
-# skip xindy by default, it requires clisp (see utils/README).
-: ${TL_CONF_XINDY=--disable-xindy}
+# configure defaults to skipping xindy, as it requires clisp (see
+# utils/README).  But in addition, if --enable-xindy is given, still
+# disable the documentation and data file building, which require a
+# working LaTeX installation.
+: ${TL_CONF_XINDY="--disable-xindy-docs --disable-xindy-make-rules"}
 
 # allow adding arbitrary other configure args.
 : ${TL_CONFIGURE_ARGS=}
