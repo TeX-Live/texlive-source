@@ -819,13 +819,13 @@ romanian/cp1250.pl : romanian/utf8.pl
 	sed -n '1,10 p' <$< >$@
 
 %-test.xdy : %.pl
-	perl -I$(srcdir) $< $*
+	$(PERL) -I$(srcdir) $< $*
 
 %-doc.tex : %.pl
-	perl -I$(srcdir) $< $*
+	$(PERL) -I$(srcdir) $< $*
 
 %.xdy :	%.pl
-	perl -I$(srcdir) $< $*
+	$(PERL) -I$(srcdir) $< $*
 
 SUBDIRS = \
 	albanian \
@@ -1168,8 +1168,8 @@ if BUILDRULES
 
 if BUILDDOCS
 alphabets-doc.pdf : $(srcdir)/alphabets-doc.tex alphabets-inc.tex
-	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
-	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
+	$(PDFLATEX) -interaction batchmode $(srcdir)/alphabets-doc.tex
+	$(PDFLATEX) -interaction batchmode $(srcdir)/alphabets-doc.tex
 
 PDFS = alphabets-doc.pdf
 

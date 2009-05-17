@@ -37,6 +37,9 @@ AM_PROG_LEX
 dnl test "x$LEX" != "x:" || AC_MSG_ERROR([flex or lex is required, but not found])
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+AC_CHECK_PROGS([PERL], [perl], [no])
+AC_CHECK_PROGS([LATEX], [latex elatex lambda], [no])
+AC_CHECK_PROGS([PDFLATEX], [pdflatex], [no])
 
 # Include onfigure options that also appear at the top-level of the TL tree.
 m4_include([ac/xindy.ac])

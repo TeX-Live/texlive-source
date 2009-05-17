@@ -82,6 +82,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+LATEX = @LATEX@
 LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
@@ -101,6 +102,8 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PDFLATEX = @PDFLATEX@
+PERL = @PERL@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -452,9 +455,9 @@ latin.xdy : latin1.xdy latin2.xdy latin3.xdy
 	env - sort -u $+ | grep -v '^;' >>latin.xdy
 
 %.xdy %.idx :
-	perl $(srcdir)/make-testidx.pl TS1,T2A,T1 $* >$*.tex
-	latex -interaction batchmode $*.tex
-	perl $(srcdir)/make-inp-rules.pl <$*.idx >$*.xdy
+	$(PERL) $(srcdir)/make-testidx.pl TS1,T2A,T1 $* >$*.tex
+	$(LATEX) -interaction batchmode $*.tex
+	$(PERL) $(srcdir)/make-inp-rules.pl <$*.idx >$*.xdy
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -3,6 +3,12 @@ ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 
 2009-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* configure.ac: Check for PERL, LATEX, and PDFLATEX.
+	* make-rules/alphabets/Makefile.am: Use PERL and PDFLATEX.
+	* make-rules/inputenc/Makefile.am: Use PERL and LATEX.
+
+2009-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* m4/ac_prog_latex.m4, m4/ac_prog_pdflatex.m4: Use TL_MSG_ERROR
 	instead of AC_MSG_ERROR.	
 
