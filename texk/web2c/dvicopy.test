@@ -1,10 +1,17 @@
 #! /bin/sh
 
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
 test -d tests || mkdir -p tests
 
-TEXMFCNF=$srcdir/../kpathsea \
-  ./dvicopy $srcdir/tests/story tests/xstory.dvi ## || exit 1
-## failed with: TFM: font 1 = cmbx10(That was a fatal error, my friend.)
+if tfmpath=`$KPSEWHICH cmbx10.tfm`; then
+
+  TEXMFCNF=$srcdir/../kpathsea \
+    TFMFONTS=`dirname $tfmpath` \
+    ./dvicopy $srcdir/tests/story tests/xstory.dvi || exit 1
+
+fi
 
 # Redirect stderr so the terminal output will end up in the log file.
 (TEXMFCNF=$srcdir/../kpathsea \

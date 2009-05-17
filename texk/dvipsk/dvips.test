@@ -1,0 +1,27 @@
+#! /bin/sh
+
+echo "KPSEWHICH=\"$KPSEWHICH\""
+
+rm -f mtest.ps
+
+set -x
+
+TEXMFCNF=$srcdir/../kpathsea \
+  TFMFONTS=$srcdir/testdata: \
+  VFFONTS=$srcdir/testdata: \
+  TEXPSHEADERS=$srcdir/testdata: \
+  TEXCONFIG=$srcdir/testdata: \
+  ./dvips -D 300 $srcdir/testdata/dvipstst.xdv -o dvipstst.ps
+
+exit 77
+
+checkenv = TEXMFCNF=../kpathsea \
+  TFMFONTS=$srcdir/testdata: VFFONTS=$srcdir/testdata: \
+  TEXPSHEADERS=$srcdir/testdata: TEXCONFIG=$srcdir/testdata:
+
+rm -f mtest.ps
+-($checkenv ./dvips -D 300 $srcdir/testdata/dvipstst.xdv -o dvipstst.ps)
+mv dvipstst.ps mtest.ps
+-($checkenv ./dvips -D 300 $srcdir/testdata/dvipstst.xdv -o)
+-diff $srcdir/testdata/dvipstst.xps dvipstst.ps
+

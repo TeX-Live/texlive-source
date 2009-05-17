@@ -44,6 +44,9 @@ dnl Include additional code for web2c.
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
 
+dnl For tests
+AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])
+
 KPSE_ASM_UNDERSCORE
 
 AS_CASE([$with_editor],

@@ -1,0 +1,1300 @@
+%!PS-Adobe-2.0
+%%Creator: dvips(k) 5.86 Copyright 1999 Radical Eye Software
+%%Title: dvipstst.xdv
+%%Pages: 1
+%%PageOrder: Ascend
+%%BoundingBox: 0 0 596 842
+%%DocumentFonts: Times-Roman Times-Italic Times-BoldItalic
+%%EndComments
+%DVIPSWebPage: (www.radicaleye.com)
+%DVIPSCommandLine: dvips -D 300 dvipstst.xdv -o
+%DVIPSParameters: dpi=300, compressed
+%DVIPSSource:  TeX output 2009.05.16:1919
+%%BeginProcSet: texc.pro
+%!
+/TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
+N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
+mul N/landplus90{false}def/@rigin{isls{[0 landplus90{1 -1}{-1 1}ifelse 0
+0 0]concat}if 72 Resolution div 72 VResolution div neg scale isls{
+landplus90{VResolution 72 div vsize mul 0 exch}{Resolution -72 div hsize
+mul 0}ifelse TR}if Resolution VResolution vsize -72 div 1 add mul TR[
+matrix currentmatrix{A A round sub abs 0.00001 lt{round}if}forall round
+exch round exch]setmatrix}N/@landscape{/isls true N}B/@manualfeed{
+statusdict/manualfeed true put}B/@copies{/#copies X}B/FMat[1 0 0 -1 0 0]
+N/FBB[0 0 0 0]N/nn 0 N/IEn 0 N/ctr 0 N/df-tail{/nn 8 dict N nn begin
+/FontType 3 N/FontMatrix fntrx N/FontBBox FBB N string/base X array
+/BitMaps X/BuildChar{CharBuilder}N/Encoding IEn N end A{/foo setfont}2
+array copy cvx N load 0 nn put/ctr 0 N[}B/sf 0 N/df{/sf 1 N/fntrx FMat N
+df-tail}B/dfs{div/sf X/fntrx[sf 0 0 sf neg 0 0]N df-tail}B/E{pop nn A
+definefont setfont}B/Cw{Cd A length 5 sub get}B/Ch{Cd A length 4 sub get
+}B/Cx{128 Cd A length 3 sub get sub}B/Cy{Cd A length 2 sub get 127 sub}
+B/Cdx{Cd A length 1 sub get}B/Ci{Cd A type/stringtype ne{ctr get/ctr ctr
+1 add N}if}B/id 0 N/rw 0 N/rc 0 N/gp 0 N/cp 0 N/G 0 N/CharBuilder{save 3
+1 roll S A/base get 2 index get S/BitMaps get S get/Cd X pop/ctr 0 N Cdx
+0 Cx Cy Ch sub Cx Cw add Cy setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx
+sub Cy .1 sub]/id Ci N/rw Cw 7 add 8 idiv string N/rc 0 N/gp 0 N/cp 0 N{
+rc 0 ne{rc 1 sub/rc X rw}{G}ifelse}imagemask restore}B/G{{id gp get/gp
+gp 1 add N A 18 mod S 18 idiv pl S get exec}loop}B/adv{cp add/cp X}B
+/chg{rw cp id gp 4 index getinterval putinterval A gp add/gp X adv}B/nd{
+/cp 0 N rw exit}B/lsh{rw cp 2 copy get A 0 eq{pop 1}{A 255 eq{pop 254}{
+A A add 255 and S 1 and or}ifelse}ifelse put 1 adv}B/rsh{rw cp 2 copy
+get A 0 eq{pop 128}{A 255 eq{pop 127}{A 2 idiv S 128 and or}ifelse}
+ifelse put 1 adv}B/clr{rw cp 2 index string putinterval adv}B/set{rw cp
+fillstr 0 4 index getinterval putinterval adv}B/fillstr 18 string 0 1 17
+{2 copy 255 put pop}for N/pl[{adv 1 chg}{adv 1 chg nd}{1 add chg}{1 add
+chg nd}{adv lsh}{adv lsh nd}{adv rsh}{adv rsh nd}{1 add adv}{/rc X nd}{
+1 add set}{1 add clr}{adv 2 chg}{adv 2 chg nd}{pop nd}]A{bind pop}
+forall N/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
+/BitMaps get S ctr S sf 1 ne{A A length 1 sub A 2 index S get sf div put
+}if put/ctr ctr 1 add N}B/I{cc 1 add D}B/bop{userdict/bop-hook known{
+bop-hook}if/SI save N @rigin 0 0 moveto/V matrix currentmatrix A 1 get A
+mul exch 0 get A mul add .99 lt{/QV}{/RV}ifelse load def pop pop}N/eop{
+SI restore userdict/eop-hook known{eop-hook}if showpage}N/@start{
+userdict/start-hook known{start-hook}if pop/VResolution X/Resolution X
+1000 div/DVImag X/IEn 256 array N 2 string 0 1 255{IEn S A 360 add 36 4
+index cvrs cvn put}for pop 65781.76 div/vsize X 65781.76 div/hsize X}N
+/p{show}N/RMat[1 0 0 -1 0 0]N/BDot 260 string N/Rx 0 N/Ry 0 N/V{}B/RV/v{
+/Ry X/Rx X V}B statusdict begin/product where{pop false[(Display)(NeXT)
+(LaserWriter 16/600)]{A length product length le{A length product exch 0
+exch getinterval eq{pop true exit}if}{pop}ifelse}forall}{false}ifelse
+end{{gsave TR -.1 .1 TR 1 1 scale Rx Ry false RMat{BDot}imagemask
+grestore}}{{gsave TR -.1 .1 TR Rx Ry scale 1 1 false RMat{BDot}
+imagemask grestore}}ifelse B/QV{gsave newpath transform round exch round
+exch itransform moveto Rx 0 rlineto 0 Ry neg rlineto Rx neg 0 rlineto
+fill grestore}B/a{moveto}B/delta 0 N/tail{A/delta X 0 rmoveto}B/M{S p
+delta add tail}B/b{S p tail}B/c{-4 M}B/d{-3 M}B/e{-2 M}B/f{-1 M}B/g{0 M}
+B/h{1 M}B/i{2 M}B/j{3 M}B/k{4 M}B/w{0 rmoveto}B/l{p -4 w}B/m{p -3 w}B/n{
+p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
+rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
+
+%%EndProcSet
+%%BeginProcSet: 8r.enc
+% @@psencodingfile@{
+%   author = "S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry",
+%   version = "0.6",
+%   date = "1 July 1998",
+%   filename = "8r.enc",
+%   email = "tex-fonts@@tug.org",
+%   docstring = "Encoding for TrueType or Type 1 fonts
+%                to be used with TeX."
+% @}
+% 
+% Idea is to have all the characters normally included in Type 1 fonts
+% available for typesetting. This is effectively the characters in Adobe
+% Standard Encoding + ISO Latin 1 + extra characters from Lucida.
+% 
+% Character code assignments were made as follows:
+% 
+% (1) the Windows ANSI characters are almost all in their Windows ANSI
+% positions, because some Windows users cannot easily reencode the
+% fonts, and it makes no difference on other systems. The only Windows
+% ANSI characters not available are those that make no sense for
+% typesetting -- rubout (127 decimal), nobreakspace (160), softhyphen
+% (173). quotesingle and grave are moved just because it's such an
+% irritation not having them in TeX positions.
+% 
+% (2) Remaining characters are assigned arbitrarily to the lower part
+% of the range, avoiding 0, 10 and 13 in case we meet dumb software.
+% 
+% (3) Y&Y Lucida Bright includes some extra text characters; in the
+% hopes that other PostScript fonts, perhaps created for public
+% consumption, will include them, they are included starting at 0x12.
+% 
+% (4) Remaining positions left undefined are for use in (hopefully)
+% upward-compatible revisions, if someday more characters are generally
+% available.
+% 
+% (5) hyphen appears twice for compatibility with both 
+% ASCII and Windows.
+% 
+/TeXBase1Encoding [
+% 0x00 (encoded characters from Adobe Standard not in Windows 3.1)
+  /.notdef /dotaccent /fi /fl
+  /fraction /hungarumlaut /Lslash /lslash
+  /ogonek /ring /.notdef
+  /breve /minus /.notdef 
+% These are the only two remaining unencoded characters, so may as
+% well include them.
+  /Zcaron /zcaron 
+% 0x10
+ /caron /dotlessi 
+% (unusual TeX characters available in, e.g., Lucida Bright)
+ /dotlessj /ff /ffi /ffl 
+ /.notdef /.notdef /.notdef /.notdef
+ /.notdef /.notdef /.notdef /.notdef
+ % very contentious; it's so painful not having quoteleft and quoteright
+ % at 96 and 145 that we move the things normally found there to here.
+ /grave /quotesingle 
+% 0x20 (ASCII begins)
+ /space /exclam /quotedbl /numbersign
+ /dollar /percent /ampersand /quoteright
+ /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash
+% 0x30
+ /zero /one /two /three /four /five /six /seven
+ /eight /nine /colon /semicolon /less /equal /greater /question
+% 0x40
+ /at /A /B /C /D /E /F /G /H /I /J /K /L /M /N /O
+% 0x50
+ /P /Q /R /S /T /U /V /W
+ /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+% 0x60
+ /quoteleft /a /b /c /d /e /f /g /h /i /j /k /l /m /n /o
+% 0x70
+ /p /q /r /s /t /u /v /w
+ /x /y /z /braceleft /bar /braceright /asciitilde
+ /.notdef % rubout; ASCII ends
+% 0x80
+ /.notdef /.notdef /quotesinglbase /florin
+ /quotedblbase /ellipsis /dagger /daggerdbl
+ /circumflex /perthousand /Scaron /guilsinglleft
+ /OE /.notdef /.notdef /.notdef
+% 0x90
+ /.notdef /.notdef /.notdef /quotedblleft
+ /quotedblright /bullet /endash /emdash
+ /tilde /trademark /scaron /guilsinglright
+ /oe /.notdef /.notdef /Ydieresis
+% 0xA0
+ /.notdef % nobreakspace
+ /exclamdown /cent /sterling
+ /currency /yen /brokenbar /section
+ /dieresis /copyright /ordfeminine /guillemotleft
+ /logicalnot
+ /hyphen % Y&Y (also at 45); Windows' softhyphen
+ /registered
+ /macron
+% 0xD0
+ /degree /plusminus /twosuperior /threesuperior
+ /acute /mu /paragraph /periodcentered
+ /cedilla /onesuperior /ordmasculine /guillemotright
+ /onequarter /onehalf /threequarters /questiondown
+% 0xC0
+ /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+ /Egrave /Eacute /Ecircumflex /Edieresis
+ /Igrave /Iacute /Icircumflex /Idieresis
+% 0xD0
+ /Eth /Ntilde /Ograve /Oacute
+ /Ocircumflex /Otilde /Odieresis /multiply
+ /Oslash /Ugrave /Uacute /Ucircumflex
+ /Udieresis /Yacute /Thorn /germandbls
+% 0xE0
+ /agrave /aacute /acircumflex /atilde
+ /adieresis /aring /ae /ccedilla
+ /egrave /eacute /ecircumflex /edieresis
+ /igrave /iacute /icircumflex /idieresis
+% 0xF0
+ /eth /ntilde /ograve /oacute
+ /ocircumflex /otilde /odieresis /divide
+ /oslash /ugrave /uacute /ucircumflex
+ /udieresis /yacute /thorn /ydieresis
+] def
+
+%%EndProcSet
+%%BeginProcSet: texnansi.enc
+% @psencodingfile{
+%   author = "Y&Y, Inc.",
+%   version = "1.1",
+%   date = "1 December 1996",
+%   filename = "texnansi.enc",
+%   email = "help@YandY.com",
+%   address = "45 Walden Street // Concord, MA 01742, USA",
+%   codetable = "ISO/ASCII",
+%   checksum = "xx",
+%   docstring = "Encoding for fonts in Adobe Type 1 format for use with TeX."
+% }
+%
+% The idea is to have all 228 characters normally included in Type 1 text
+% fonts (plus a few more) available for typesetting.  This is effectively
+% the character set in Adobe Standard Encoding, ISO Latin 1, plus a few more.
+%
+% Character code assignments were made as follows:
+%
+% (1) The character layout largely matches `ASCII' in the 32 -- 126 range,
+% except for `circumflex' in 94 and `tilde' in 126, to match `TeX text'
+% (`asciicircumflex' and `asciitilde' appear in 158 and 142 instead).
+%
+% (2) The character layout matches `Windows ANSI' in almost all places,
+% except for `quoteright' in 39 and `quoteleft' in 96 to match ASCII
+% (`quotesingle' and `grave' appear in 129 and 18 instead).
+%
+% (3) The character layout matches `TeX typewriter' used by CM text fonts
+% in most places (except for discordant positions such as hungarumlaut
+% (instead of braceright), dotaccent (instead of underscore) etc.
+%
+% (4) Remaining characters are assigned arbitrarily to the `control character'
+% range (0 -- 31), avoiding 0, 9, 10 and 13 in case we meet dumb software
+% - similarly one should really avoid 127 and 128 if possible.
+% In addition, the 8 open slots in Windows ANSI between 128 and 159 are used.
+%
+% (5) Y&Y Lucida Bright includes some extra ligatures and such; ff, ffi, ffl,
+% and `dotlessj,' these are included 11 -- 15, and 17.
+%
+% (6) Hyphen appears both at 45 and 173 for compatibility with both ASCII
+% and Windows ANSI.
+%
+% (7) It doesn't really matter where ligatures appear (both real, such as ffi,
+% and pseudo such as ---) since these should not be accessed directly, only
+% via ligature information in the TFM file.
+%
+% SAMPLE USAGE (in `psfonts.map' file for DVIPS):
+% 
+% lbr LucidaBright "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <lbr.pfb
+%
+% This tells DVIPS that the font called `lbr' in TeX has PostScript 
+% FontName `LucidaBright.'  It also asks DVIPS to expand the file `lbr.pfb'
+% into PFA form, to include the attached `texnansi.enc' encoding vector,
+% and to then actually reencode the font based on that encoding vector.
+%
+% Revised 1996 June 1 by adding second position for `fl' to avoid Acrobat bug.
+% Revised 1996 June 1 by adding second position for `fraction' for same reason.
+%
+/TeXnANSIEncoding [
+/.notdef /uni20AC /.notdef /.notdef % 0, 1, 2, 3
+/fraction %	4
+/dotaccent %	5
+/hungarumlaut %	6
+/ogonek	%	7
+/fl	%	8
+/.notdef % /fraction %	9	not used (see 4), backward compatability only
+/cwm	%	10	not used, except boundary char internally maybe
+/ff    %	11
+/fi    %	12
+/.notdef % /fl    %	13	not used (see 8), backward compatability only
+/ffi   %	14
+/ffl   %	15
+/dotlessi %	16
+/dotlessj %	17
+/grave %	18
+/acute %	19
+/caron %	20
+/breve %	21
+/macron %	22
+/ring  %	23
+/cedilla %	24
+/germandbls %	25
+/ae    %	26
+/oe    %	27
+/oslash %	28
+/AE    %	29
+/OE    %	30
+/Oslash %	31
+/space %	32	% /suppress in TeX text
+/exclam %	33
+/quotedbl %	34	% /quotedblright in TeX text
+/numbersign %	35
+/dollar %	36
+/percent %	37
+/ampersand %	38
+/quoteright %	39	% /quotesingle in ANSI
+/parenleft %	40
+/parenright %	41
+/asterisk %	42
+/plus  %	43
+/comma %	44
+/hyphen %	45
+/period %	46
+/slash %	47
+/zero  %	48
+/one   %	49
+/two   %	50
+/three %	51
+/four  %	52
+/five  %	53
+/six   %	54
+/seven %	55
+/eight %	56
+/nine  %	57
+/colon %	58
+/semicolon %	59
+/less  %	60	% /exclamdown in Tex text
+/equal %	61
+/greater %	62	% /questiondown in TeX text
+/question %	63
+/at %	64
+/A %	65
+/B %	66
+/C %	67
+/D %	68
+/E %	69
+/F %	70
+/G %	71
+/H %	72
+/I %	73
+/J %	74
+/K %	75
+/L %	76
+/M %	77
+/N %	78
+/O %	79
+/P %	80
+/Q %	81
+/R %	82
+/S %	83
+/T %	84
+/U %	85
+/V %	86
+/W %	87
+/X %	88
+/Y %	89
+/Z %	90
+/bracketleft %	91
+/backslash %	92	% /quotedblleft in TeX text
+/bracketright %	93
+/circumflex %	94	% /asciicircum in ASCII
+/underscore %	95	% /dotaccent in TeX text
+/quoteleft %	96	% /grave accent in ANSI
+/a %	97
+/b %	98
+/c %	99
+/d %	100
+/e %	101
+/f %	102
+/g %	103
+/h %	104
+/i %	105
+/j %	106
+/k %	107
+/l %	108
+/m %	109
+/n %	110
+/o %	111
+/p %	112
+/q %	113
+/r %	114
+/s %	115
+/t %	116
+/u %	117
+/v %	118
+/w %	119
+/x %	120
+/y %	121
+/z %	122
+/braceleft %	123	% /endash in TeX text
+/bar   %	124	% /emdash in TeX test
+/braceright %	125	% /hungarumlaut in TeX text
+/tilde %	126	% /asciitilde in ASCII
+/dieresis %	127	not used (see 168), use higher up instead
+/Lslash	%	128	this position is unfortunate, but now too late to fix
+/quotesingle %	129
+/quotesinglbase %	130
+/florin %	131
+/quotedblbase %	132
+/ellipsis %	133
+/dagger %	134
+/daggerdbl %	135
+/circumflex %	136
+/perthousand %	137
+/Scaron %	138
+/guilsinglleft %	139
+/OE    %	140
+/Zcaron %	141
+/asciicircum %	142
+/minus %	143
+/lslash %	144
+/quoteleft %	145
+/quoteright %	146
+/quotedblleft %	147
+/quotedblright %	148
+/bullet %	149
+/endash %	150
+/emdash %	151
+/tilde %	152
+/trademark %	153
+/scaron %	154
+/guilsinglright %	155
+/oe    %	156
+/zcaron %	157
+/asciitilde %	158
+/Ydieresis %	159
+/nbspace %	160	% /space (no break space)
+/exclamdown %	161
+/cent  %	162
+/sterling %	163
+/currency %	164
+/yen   %	165
+/brokenbar %	166
+/section %	167
+/dieresis %	168
+/copyright %	169
+/ordfeminine %	170
+/guillemotleft %	171
+/logicalnot %	172
+/sfthyphen %	173 % /hyphen (hanging hyphen)
+/registered %	174
+/macron %	175
+/degree %	176
+/plusminus %	177
+/twosuperior %	178
+/threesuperior %	179
+/acute %	180
+/mu    %	181
+/paragraph %	182
+/periodcentered %	183
+/cedilla %	184
+/onesuperior %	185
+/ordmasculine %	186
+/guillemotright %	187
+/onequarter %	188
+/onehalf %	189
+/threequarters %	190
+/questiondown %	191
+/Agrave %	192
+/Aacute %	193
+/Acircumflex %	194
+/Atilde %	195
+/Adieresis %	196
+/Aring %	197
+/AE    %	198
+/Ccedilla %	199
+/Egrave %	200
+/Eacute %	201
+/Ecircumflex %	202
+/Edieresis %	203
+/Igrave %	204
+/Iacute %	205
+/Icircumflex %	206
+/Idieresis %	207
+/Eth   %	208
+/Ntilde %	209
+/Ograve %	210
+/Oacute %	211
+/Ocircumflex %	212
+/Otilde %	213
+/Odieresis %	214
+/multiply %	215	% OE in T1
+/Oslash %	216
+/Ugrave %	217
+/Uacute %	218
+/Ucircumflex %	219
+/Udieresis %	220
+/Yacute %	221
+/Thorn %	222
+/germandbls %	223 % SS in T1
+/agrave %	224
+/aacute %	225
+/acircumflex %	226
+/atilde %	227
+/adieresis %	228
+/aring %	229
+/ae    %	230
+/ccedilla %	231
+/egrave %	232
+/eacute %	233
+/ecircumflex %	234
+/edieresis %	235
+/igrave %	236
+/iacute %	237
+/icircumflex %	238
+/idieresis %	239
+/eth   %	240
+/ntilde %	241
+/ograve %	242
+/oacute %	243
+/ocircumflex %	244
+/otilde %	245
+/odieresis %	246
+/divide %	247	% oe in T1
+/oslash %	248
+/ugrave %	249
+/uacute %	250
+/ucircumflex %	251
+/udieresis %	252
+/yacute %	253
+/thorn %	254
+/ydieresis %	255	% germandbls in T1
+] def
+
+%%EndProcSet
+%%BeginProcSet: texps.pro
+%!
+TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
+index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
+exec 0 exch 5 -1 roll VResolution Resolution div mul neg 0 0]/Metrics
+exch def dict begin Encoding{exch dup type/integertype ne{pop pop 1 sub
+dup 0 le{pop}{[}ifelse}{FontMatrix 0 get div Metrics 0 get div def}
+ifelse}forall Metrics/Metrics currentdict end def[2 index currentdict
+end definefont 3 -1 roll makefont/setfont cvx]cvx def}def/ObliqueSlant{
+dup sin S cos div neg}B/SlantFont{4 index mul add}def/ExtendFont{3 -1
+roll mul exch}def/ReEncodeFont{CharStrings rcheck{/Encoding false def
+dup[exch{dup CharStrings exch known not{pop/.notdef/Encoding true def}
+if}forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}
+def end
+
+%%EndProcSet
+%%BeginProcSet: special.pro
+%!
+TeXDict begin/SDict 200 dict N SDict begin/@SpecialDefaults{/hs 612 N
+/vs 792 N/ho 0 N/vo 0 N/hsc 1 N/vsc 1 N/ang 0 N/CLIP 0 N/rwiSeen false N
+/rhiSeen false N/letter{}N/note{}N/a4{}N/legal{}N}B/@scaleunit 100 N
+/@hscale{@scaleunit div/hsc X}B/@vscale{@scaleunit div/vsc X}B/@hsize{
+/hs X/CLIP 1 N}B/@vsize{/vs X/CLIP 1 N}B/@clip{/CLIP 2 N}B/@hoffset{/ho
+X}B/@voffset{/vo X}B/@angle{/ang X}B/@rwi{10 div/rwi X/rwiSeen true N}B
+/@rhi{10 div/rhi X/rhiSeen true N}B/@llx{/llx X}B/@lly{/lly X}B/@urx{
+/urx X}B/@ury{/ury X}B/magscale true def end/@MacSetUp{userdict/md known
+{userdict/md get type/dicttype eq{userdict begin md length 10 add md
+maxlength ge{/md md dup length 20 add dict copy def}if end md begin
+/letter{}N/note{}N/legal{}N/od{txpose 1 0 mtx defaultmatrix dtransform S
+atan/pa X newpath clippath mark{transform{itransform moveto}}{transform{
+itransform lineto}}{6 -2 roll transform 6 -2 roll transform 6 -2 roll
+transform{itransform 6 2 roll itransform 6 2 roll itransform 6 2 roll
+curveto}}{{closepath}}pathforall newpath counttomark array astore/gc xdf
+pop ct 39 0 put 10 fz 0 fs 2 F/|______Courier fnt invertflag{PaintBlack}
+if}N/txpose{pxs pys scale ppr aload pop por{noflips{pop S neg S TR pop 1
+-1 scale}if xflip yflip and{pop S neg S TR 180 rotate 1 -1 scale ppr 3
+get ppr 1 get neg sub neg ppr 2 get ppr 0 get neg sub neg TR}if xflip
+yflip not and{pop S neg S TR pop 180 rotate ppr 3 get ppr 1 get neg sub
+neg 0 TR}if yflip xflip not and{ppr 1 get neg ppr 0 get neg TR}if}{
+noflips{TR pop pop 270 rotate 1 -1 scale}if xflip yflip and{TR pop pop
+90 rotate 1 -1 scale ppr 3 get ppr 1 get neg sub neg ppr 2 get ppr 0 get
+neg sub neg TR}if xflip yflip not and{TR pop pop 90 rotate ppr 3 get ppr
+1 get neg sub neg 0 TR}if yflip xflip not and{TR pop pop 270 rotate ppr
+2 get ppr 0 get neg sub neg 0 S TR}if}ifelse scaleby96{ppr aload pop 4
+-1 roll add 2 div 3 1 roll add 2 div 2 copy TR .96 dup scale neg S neg S
+TR}if}N/cp{pop pop showpage pm restore}N end}if}if}N/normalscale{
+Resolution 72 div VResolution 72 div neg scale magscale{DVImag dup scale
+}if 0 setgray}N/psfts{S 65781.76 div N}N/startTexFig{/psf$SavedState
+save N userdict maxlength dict begin/magscale true def normalscale
+currentpoint TR/psf$ury psfts/psf$urx psfts/psf$lly psfts/psf$llx psfts
+/psf$y psfts/psf$x psfts currentpoint/psf$cy X/psf$cx X/psf$sx psf$x
+psf$urx psf$llx sub div N/psf$sy psf$y psf$ury psf$lly sub div N psf$sx
+psf$sy scale psf$cx psf$sx div psf$llx sub psf$cy psf$sy div psf$ury sub
+TR/showpage{}N/erasepage{}N/copypage{}N/p 3 def @MacSetUp}N/doclip{
+psf$llx psf$lly psf$urx psf$ury currentpoint 6 2 roll newpath 4 copy 4 2
+roll moveto 6 -1 roll S lineto S lineto S lineto closepath clip newpath
+moveto}N/endTexFig{end psf$SavedState restore}N/@beginspecial{SDict
+begin/SpecialSave save N gsave normalscale currentpoint TR
+@SpecialDefaults count/ocount X/dcount countdictstack N}N/@setspecial{
+CLIP 1 eq{newpath 0 0 moveto hs 0 rlineto 0 vs rlineto hs neg 0 rlineto
+closepath clip}if ho vo TR hsc vsc scale ang rotate rwiSeen{rwi urx llx
+sub div rhiSeen{rhi ury lly sub div}{dup}ifelse scale llx neg lly neg TR
+}{rhiSeen{rhi ury lly sub div dup scale llx neg lly neg TR}if}ifelse
+CLIP 2 eq{newpath llx lly moveto urx lly lineto urx ury lineto llx ury
+lineto closepath clip}if/showpage{}N/erasepage{}N/copypage{}N newpath}N
+/@endspecial{count ocount sub{pop}repeat countdictstack dcount sub{end}
+repeat grestore SpecialSave restore end}N/@defspecial{SDict begin}N
+/@fedspecial{end}B/li{lineto}B/rl{rlineto}B/rc{rcurveto}B/np{/SaveX
+currentpoint/SaveY X N 1 setlinecap newpath}N/st{stroke SaveX SaveY
+moveto}N/fil{fill SaveX SaveY moveto}N/ellipse{/endangle X/startangle X
+/yrad X/xrad X/savematrix matrix currentmatrix N TR xrad yrad scale 0 0
+1 startangle endangle arc savematrix setmatrix}N end
+
+%%EndProcSet
+TeXDict begin @defspecial
+
+ userdict begin /bop-hook{gsave 200 30 translate 65 rotate /Times-Roman
+findfont 260 scalefont setfont 0 0 moveto 0.8 setgray (DVIPS) show
+grestore}def end
+ 
+@fedspecial end TeXDict begin
+39158280 55380996 1000 300 300 (dvipstst.xdv) @start
+/Fa 25[48 6[33 24[63 17[22 11[22 11[48 4[66 10[63 3[22
+16[44 29 37 18 26 26 1[33 33 37 52 18 2[18 37 1[22 29
+33 29 1[33 23[26 4[48 21[17 6[22 21[18 13[37 3[{
+TeXBase1Encoding ReEncodeFont}33 66.4176 /Times-BoldItalic
+rf
+%DVIPSBitmapFont: Fb cmtt10 10 10
+/Fb 10 118 df<12C07EA21270A27EA27EA27EA27EA26C7EA26C7EA26C7EA21370A27FA2
+7FA27FA27FA2EB0380A2130111207E9C16>92 D<EA1FE0487E487EEA783CEA300E1200A2
+EA03FE121FEA3E0E127012E0A3EA783E387FFFE0EA3FE7EA0F8313127E9116>97
+D<EA03F0EA0FFC487EEA3C0F487E3870038012E0B5FCA300E0C7FCA2387003801278EA3E
+07381FFF00EA07FEEA01F811127E9116>101 D<131E137F3801FF8013C7380383001380
+A2EA7FFFB5FCA2EA0380ACEA7FFC487E6C5A11197F9816>I<EA7FC012FF127F1201B3EA
+7FFFB512806C130011197E9816>108 D<EA03E0EA0FF8487EEA3C1E487EEA700738E003
+80A5EAF00700701300EA780FEA3C1EEA1FFC6C5AEA03E011127E9116>111
+D<387F0FC038FF3FE0EA7F7F3807F040EBC0005BA290C7FCA8EA7FFC12FF127F13127F91
+16>114 D<EA0FECEA3FFC127FEAF03CEAE01CA2EA7000EA7F80EA1FF0EA07F8EA003CEA
+600E12E012F0EAF81EEAFFFC13F8EAC7E00F127D9116>I<12035AA4EA7FFFB5FCA20007
+C7FCA75BEB0380A3EB8700EA03FE6C5A6C5A11177F9616>I<EAFC3FA3EA1C07AB131F38
+1FFFE0EA0FF7EA07C713127F9116>I E
+%EndDVIPSBitmapFont
+%DVIPSBitmapFont: Fc cmsy10 10 3
+/Fc 3 42 df<B61280A219027D8A20>0 D<153081A381A281811680ED00C0B712F8A2C9
+12C0ED0380160015065DA25DA35D25167E942A>33 D<14036E7EA26E7E811560B612F015
+FCC8120EED0380ED01E0ED007816E0ED0380ED0700150CB612F85DC812605DA24A5AA24A
+C7FC25187E952A>41 D E
+%EndDVIPSBitmapFont
+%DVIPSBitmapFont: Fd cmr10 10 65
+/Fd 65 128 df<137E3801C180EA0301380703C0120EEB018090C7FCA5B512C0EA0E01B0
+387F87F8151D809C17>12 D<EB7FC0EA01C1EA03031207EA0E01A7B5FCEA0E01B0387FCF
+F8151D809C17>I<90383F07FC3901C0DC1C390381F03CEA0701000EEBE01C1300A6B612
+FC390E00E01CB03A7FC7FCFF80211D809C23>15 D<12FC121CB0EAFF8009127F910C>I<
+120EA2121E1238127012E012800707779C15>19 D<EA01F8EA070EEA0E07EA0C03001C13
+80A4EB07001306131CEAFCF0EA1C187F7F7F1480A2EB01C0A6148013E3140013E6EAFC7C
+121D7F9C15>25 D<381FC07C3830718339783B0180131E0030EB00C0EA001CA248B5FCD8
+0F1CC7FC12381270126012E0011E1340A2D860331380393061C300381F807C1A127E911E
+>I<3903E00F80390C18306039180C6030383006C0D8700713183860038012E0ECFFF8EC
+8000A41260397007C008EA300639180C6010390C1838603903E00F801D127F9120>I<01
+3FB5FC903805F00F01041303010C7F1308168001101300A30120EB1000A2136013401530
+90B512F0903880F0301510EA01001640A20002EC0080A25AA21501000CEC0300001E140F
+D8FF87B5FC221C7F9B25>29 D<EB3F8001E0B512E03903807801D80700EB0060000E0138
+13205A003C153000381510127815020070150012F01506150EEC3FFEEC380E15061502A2
+00781508150016107EA26C1530120E6C01781360D80380EB01E0D800E0B5FCD93F80C7FC
+251E7D9C2A>I<EA6060EAF0F0EAF8F8EA6868EA0808A3EA1010A2EA2020EA4040EA8080
+0D0C7F9C15>34 D<126012F012F812681208A31210A2122012401280050C7C9C0C>39
+D<1380EA0100120212065AA25AA25AA35AA412E0AC1260A47EA37EA27EA27E12027EEA00
+80092A7C9E10>I<7E12407E12307EA27EA27EA37EA41380AC1300A41206A35AA25AA25A
+12205A5A092A7E9E10>I<126012F0A212701210A41220A212401280040C7C830C>44
+D<EAFFE0A20B0280890E>I<126012F0A2126004047C830C>I<5A1207123F12C71207B3A5
+EAFFF80D1C7C9B15>49 D<130CA2131C133CA2135C13DC139CEA011C120312021204120C
+1208121012301220124012C0B512C038001C00A73801FFC0121C7F9B15>52
+D<EA300CEA3FF813F013C0EA2000A6EA23E0EA2C30EA3018131CEA200E1200130FA31260
+12F0A3EA800EEA401E131CEA2038EA1870EA07C0101D7E9B15>I<13F0EA030CEA0404EA
+0C0EEA181E1230130CEA7000A21260EAE3E0EAE430EAE818EAF00C130EEAE0061307A512
+60A2EA7006EA300E130CEA1818EA0C30EA03E0101D7E9B15>I<EA03E0EA0C30EA1008EA
+200C13061260A21270A2EA7C0CEA3E18EA3FB0EA1FE0EA07F013F8EA18FCEA307EEA601E
+130FEAC0071303A4EA60021304EA300CEA1C10EA07E0101D7E9B15>56
+D<126012F0A212601200AA126012F0A212701210A41220A212401280041A7C910C>59
+D<B612E0A2C9FCA8B612E0A21B0C7E8F20>61 D<1306A3130FA3EB1780A2EB37C01323A2
+EB43E01341A2EB80F0A338010078A2EBFFF83802003CA3487FA2000C131F80001E5BB4EB
+FFF01C1D7F9C1F>65 D<90381F8080EBE0613801801938070007000E13035A14015A0078
+1300A2127000F01400A8007014801278A212386CEB0100A26C13026C5B380180083800E0
+30EB1FC0191E7E9C1E>67 D<B512C0380F00F0143C140E80A2EC038015C01401A215E0A8
+15C0A21403158014071500140E5C1470B512C01B1C7E9B20>I<B512FC380F003C140C14
+04A214061402A213011400A35B13FF13037FA3140113001402A31406A2140C143CB512FC
+181C7E9B1C>I<B512F8380F007814181408A2140C1404A213011400A35B13FF13037FA4
+90C7FCA8EAFFF8161C7E9B1B>I<EAFFF0EA0F00B3A8EAFFF00C1C7F9B0F>73
+D<B51280380F00E01478143C141C141EA5141C143C147814E0EBFF8090C7FCACEAFFF017
+1C7E9B1C>80 D<B5FC380F01E0EB007880141C141EA4141C143C5CEB01E001FFC7FCEB01
+E0EB0070147880A61510A2141CA239FFF00E20C7EA03C01C1D7E9B1F>82
+D<3807E080EA1C19EA30051303EA600112E01300A36C13007E127CEA7FC0EA3FF8EA1FFE
+EA07FFC61380130FEB07C0130313011280A300C01380A238E00300EAD002EACC0CEA83F8
+121E7E9C17>I<007FB512C038700F010060130000401440A200C014201280A300001400
+B1497E3803FFFC1B1C7F9B1E>I<39FFF07FC0390FC01E003807800CEBC00800035B6C6C
+5A13F000005BEB7880137C013DC7FC133E7F7F80A2EB13C0EB23E01321EB40F0497E1478
+3801007C00027F141E0006131F001F148039FF807FF01C1C7F9B1F>88
+D<39FFF003FC390F8001E00007EB00C06D13800003EB01006D5A000113026C6C5A13F8EB
+7808EB7C18EB3C10EB3E20131F6D5A14C06D5AABEB7FF81E1C809B1F>I<EA0808EA1010
+EA2020EA4040A2EA8080A3EAB0B0EAF8F8EA7878EA30300D0C7A9C15>92
+D<120C12121221EA4080EA80400A057B9B15>94 D<1208121012201240A21280A312B012
+F812781230050C7D9C0C>96 D<EA1FC0EA3070EA78387F12301200A2EA01FCEA0F1C1238
+1270126000E01340A3EA603C38304E80381F870012127E9115>I<12FC121CAA137CEA1D
+87381E0180381C00C014E014601470A6146014E014C0381E018038190700EA10FC141D7F
+9C17>I<EA03F8EA0C0CEA181E1230EA700CEA600012E0A61260EA70021230EA1804EA0C
+18EA03E00F127F9112>I<EB1F801303AAEA03F3EA0E0BEA1807EA30031270126012E0A6
+126012701230EA1807EA0E1B3803E3F0141D7F9C17>I<EA07E0EA0C30EA1818EA300CEA
+700EEA600612E0EAFFFEEAE000A41260EA70021230EA1804EA0C18EA03E00F127F9112>
+I<13F8EA018CEA071E1206EA0E0C1300A6EAFFE0EA0E00B0EA7FE00F1D809C0D>I<EB03
+803807C4C0EA1C783838388038301800EA701CA4EA3018EA38386C5AEA27C00020C7FCA2
+1230EA3FF86CB4FC1480EA2003386001C0EAC000A33860018038300300EA1C0EEA07F812
+1C7F9215>I<12FC121CAA137C1387EA1D03001E1380121CAD38FF9FF0141D7F9C17>I<12
+18123CA21218C7FCA712FC121CB0EAFF80091D7F9C0C>I<12FC121CAAEB0FE0EB0780EB
+06005B13105B5B13E0121DEA1E70EA1C781338133C131C7F130F148038FF9FE0131D7F9C
+16>107 D<12FC121CB3A9EAFF80091D7F9C0C>I<39FC7E07E0391C838838391D01901800
+1EEBE01C001C13C0AD3AFF8FF8FF8021127F9124>I<EAFC7CEA1C87EA1D03001E138012
+1CAD38FF9FF014127F9117>I<EA03F0EA0E1CEA1806487E00701380EA600100E013C0A6
+00601380EA700300301300EA1806EA0E1CEA03F012127F9115>I<EAFC7CEA1D87381E01
+80001C13C0EB00E0A21470A614E0A2EB01C0001E1380381D0700EA1CFC90C7FCA7B47E14
+1A7F9117>I<3803E080EA0E19EA1805EA3807EA7003A212E0A61270A2EA38071218EA0E
+1BEA03E3EA0003A7EB1FF0141A7F9116>I<EAFCE0EA1D38EA1E78A2EA1C301300ACEAFF
+C00D127F9110>I<EA1F90EA2070EA4030EAC010A212E0EAF800EA7F80EA3FE0EA0FF0EA
+00F8EA8038131812C0A2EAE010EAD060EA8FC00D127F9110>I<1204A4120CA2121C123C
+EAFFE0EA1C00A91310A5120CEA0E20EA03C00C1A7F9910>I<38FC1F80EA1C03AD130712
+0CEA0E1B3803E3F014127F9117>I<38FF07E0383C0380381C0100A2EA0E02A2EA0F06EA
+0704A2EA0388A213C8EA01D0A2EA00E0A3134013127F9116>I<39FF3FC7E0393C0703C0
+001CEB01801500130B000E1382A21311000713C4A213203803A0E8A2EBC06800011370A2
+EB8030000013201B127F911E>I<38FF0FE0381E0700EA1C06EA0E046C5AEA039013B0EA
+01E012007F12011338EA021C1204EA0C0E487E003C138038FE1FF014127F9116>I<38FF
+07E0383C0380381C0100A2EA0E02A2EA0F06EA0704A2EA0388A213C8EA01D0A2EA00E0A3
+1340A25BA212F000F1C7FC12F312661238131A7F9116>I<B812802901808B2A>124
+D<EA6060EAF0F0A2EA60600C047C9C15>127 D E
+%EndDVIPSBitmapFont
+%DVIPSBitmapFont: Fe cmmi10 10 4
+/Fe 4 100 df<380FFFF85A5A386084001241EA81041201EA030CA212021206A2120E12
+0CEA1C0EA21238EA180615127E9118>25 D<EA01E3EA0717EA0C0F1218EA380E12301270
+A2485AA4EB3880A3EA607838319900EA1E0E11127E9116>97 D<123F1207A2120EA45AA4
+EA39E0EA3A30EA3C1812381270131CA3EAE038A313301370136013C01261EA2300121E0E
+1D7E9C12>I<EA01F0EA030C120CEA1C1EEA383CEA3018EA7000A25AA51304EA60081310
+EA3060EA1F800F127E9112>I E
+%EndDVIPSBitmapFont
+%DVIPSBitmapFont: Ff cmex10 10 3
+/Ff 3 119 df<EC0180A91208120C121CA2122EA2124E12471287A21207EA0380A3EA01
+C0A3EA00E0A31370A31338A4131CA3130EA31307A3EB0381A4EB01C1A3EB00E1A31471A3
+1439A3141DA4140FA31407A31403A314011500194C7B802C>116
+D<12C0B3A9021B64802C>I<387FFF80B5FC00C0C7FCB3A6111A64812C>I
+E
+%EndDVIPSBitmapFont
+/Fg 152[208 103[{TeXBase1Encoding ReEncodeFont}1 415.11
+/Times-Italic rf /Fh 137[42 1[23 32 28 1[42 42 5[23 3[37
+1[37 10[60 1[60 1[51 46 2[46 6[28 2[46 51 60 2[60 6[23
+58[{TeXBase1Encoding ReEncodeFont}20 83.022 /Times-Roman
+rf end
+%%EndProlog
+%%BeginSetup
+%%Feature: *Resolution 300dpi
+TeXDict begin
+%%PaperSize: A4
+
+%%EndSetup
+%%Page: 1 1
+1 0 bop -225 -200 2331 25 v -225 3108 25 3309 v 325 -77
+a Fh(D)m(VIPS:)21 b(A)g(T)724 -58 y(E)764 -77 y(X)f(Dri)n(v)o(er)g(F)o
+(or)f(PostScript)836 238 y Fg(g)-225 695 y @beginspecial
+@setspecial
+ 0 36 translate .05 .099 .95 { 27.4 0 translate gsave 0 0 moveto dup
+90 mul rotate -10 -10 rmoveto 20 0 rlineto 0 20 rlineto -20 0 rlineto
+closepath gsave dup setgray fill grestore 1 exch sub setgray stroke
+grestore 27.4 0 translate } for
+ 
+@endspecial 441 770 a Ff(v)441 794 y(u)441
+818 y(u)441 843 y(u)441 868 y(u)441 893 y(u)441 918 y(u)441
+943 y(u)441 968 y(t)p 485 770 954 2 v -180 x(v)485 811
+y(u)485 836 y(u)485 861 y(u)485 885 y(u)485 910 y(u)485
+935 y(u)485 960 y(t)p 529 788 910 2 v 865 828 a Fe(a)12
+b Fd(=)-7 b Fc(\))11 b Fe(b)g Fc(\000)-6 b(!)11 b Fe(c)p
+534 846 900 2 v 534 880 a Fd(the)17 b(phase)f(of)f(the)i(mo)q(on)d(m)o
+(ultiplied)f(b)o(y)j(the)h(n)o(um)o(b)q(er)534 930 y(of)10
+b(angels)h(that)g(can)g(dance)h(on)f(the)h(head)f(of)f(a)h(pin)f(while)
+534 980 y(the)18 b(ric)o(h)f(man)e(threads)j(the)g(needle)g(divided)e
+(b)o(y)h Fe(\031)h Fd(or)534 1030 y(some)13 b(other)h(transcenden)o
+(tal)i(n)o(um)o(b)q(er)-158 2836 y @beginspecial 18 @llx
+18 @lly 577 @urx 814 @ury 2796 @rwi @setspecial
+%%BeginDocument: mtest.ps
+%!PS-Adobe-2.0
+%%Creator: dvips(k) 5.86 Copyright 1999 Radical Eye Software
+%%Title: dvipstst.xdv
+%%Pages: 1
+%%PageOrder: Ascend
+%%BoundingBox: 0 0 596 842
+%%DocumentFonts: Times-Roman Times-Italic Times-BoldItalic
+%%EndComments
+%DVIPSWebPage: (www.radicaleye.com)
+%DVIPSCommandLine: dvips -D 300 dvipstst.xdv -o
+%DVIPSParameters: dpi=300, compressed
+%DVIPSSource:  TeX output 2009.05.16:1919
+%%BeginProcSet: texc.pro
+%!
+/TeXDict 300 dict def TeXDict begin/N{def}def/B{bind def}N/S{exch}N/X{S
+N}B/A{dup}B/TR{translate}N/isls false N/vsize 11 72 mul N/hsize 8.5 72
+mul N/landplus90{false}def/@rigin{isls{[0 landplus90{1 -1}{-1 1}ifelse 0
+0 0]concat}if 72 Resolution div 72 VResolution div neg scale isls{
+landplus90{VResolution 72 div vsize mul 0 exch}{Resolution -72 div hsize
+mul 0}ifelse TR}if Resolution VResolution vsize -72 div 1 add mul TR[
+matrix currentmatrix{A A round sub abs 0.00001 lt{round}if}forall round
+exch round exch]setmatrix}N/@landscape{/isls true N}B/@manualfeed{
+statusdict/manualfeed true put}B/@copies{/#copies X}B/FMat[1 0 0 -1 0 0]
+N/FBB[0 0 0 0]N/nn 0 N/IEn 0 N/ctr 0 N/df-tail{/nn 8 dict N nn begin
+/FontType 3 N/FontMatrix fntrx N/FontBBox FBB N string/base X array
+/BitMaps X/BuildChar{CharBuilder}N/Encoding IEn N end A{/foo setfont}2
+array copy cvx N load 0 nn put/ctr 0 N[}B/sf 0 N/df{/sf 1 N/fntrx FMat N
+df-tail}B/dfs{div/sf X/fntrx[sf 0 0 sf neg 0 0]N df-tail}B/E{pop nn A
+definefont setfont}B/Cw{Cd A length 5 sub get}B/Ch{Cd A length 4 sub get
+}B/Cx{128 Cd A length 3 sub get sub}B/Cy{Cd A length 2 sub get 127 sub}
+B/Cdx{Cd A length 1 sub get}B/Ci{Cd A type/stringtype ne{ctr get/ctr ctr
+1 add N}if}B/id 0 N/rw 0 N/rc 0 N/gp 0 N/cp 0 N/G 0 N/CharBuilder{save 3
+1 roll S A/base get 2 index get S/BitMaps get S get/Cd X pop/ctr 0 N Cdx
+0 Cx Cy Ch sub Cx Cw add Cy setcachedevice Cw Ch true[1 0 0 -1 -.1 Cx
+sub Cy .1 sub]/id Ci N/rw Cw 7 add 8 idiv string N/rc 0 N/gp 0 N/cp 0 N{
+rc 0 ne{rc 1 sub/rc X rw}{G}ifelse}imagemask restore}B/G{{id gp get/gp
+gp 1 add N A 18 mod S 18 idiv pl S get exec}loop}B/adv{cp add/cp X}B
+/chg{rw cp id gp 4 index getinterval putinterval A gp add/gp X adv}B/nd{
+/cp 0 N rw exit}B/lsh{rw cp 2 copy get A 0 eq{pop 1}{A 255 eq{pop 254}{
+A A add 255 and S 1 and or}ifelse}ifelse put 1 adv}B/rsh{rw cp 2 copy
+get A 0 eq{pop 128}{A 255 eq{pop 127}{A 2 idiv S 128 and or}ifelse}
+ifelse put 1 adv}B/clr{rw cp 2 index string putinterval adv}B/set{rw cp
+fillstr 0 4 index getinterval putinterval adv}B/fillstr 18 string 0 1 17
+{2 copy 255 put pop}for N/pl[{adv 1 chg}{adv 1 chg nd}{1 add chg}{1 add
+chg nd}{adv lsh}{adv lsh nd}{adv rsh}{adv rsh nd}{1 add adv}{/rc X nd}{
+1 add set}{1 add clr}{adv 2 chg}{adv 2 chg nd}{pop nd}]A{bind pop}
+forall N/D{/cc X A type/stringtype ne{]}if nn/base get cc ctr put nn
+/BitMaps get S ctr S sf 1 ne{A A length 1 sub A 2 index S get sf div put
+}if put/ctr ctr 1 add N}B/I{cc 1 add D}B/bop{userdict/bop-hook known{
+bop-hook}if/SI save N @rigin 0 0 moveto/V matrix currentmatrix A 1 get A
+mul exch 0 get A mul add .99 lt{/QV}{/RV}ifelse load def pop pop}N/eop{
+SI restore userdict/eop-hook known{eop-hook}if showpage}N/@start{
+userdict/start-hook known{start-hook}if pop/VResolution X/Resolution X
+1000 div/DVImag X/IEn 256 array N 2 string 0 1 255{IEn S A 360 add 36 4
+index cvrs cvn put}for pop 65781.76 div/vsize X 65781.76 div/hsize X}N
+/p{show}N/RMat[1 0 0 -1 0 0]N/BDot 260 string N/Rx 0 N/Ry 0 N/V{}B/RV/v{
+/Ry X/Rx X V}B statusdict begin/product where{pop false[(Display)(NeXT)
+(LaserWriter 16/600)]{A length product length le{A length product exch 0
+exch getinterval eq{pop true exit}if}{pop}ifelse}forall}{false}ifelse
+end{{gsave TR -.1 .1 TR 1 1 scale Rx Ry false RMat{BDot}imagemask
+grestore}}{{gsave TR -.1 .1 TR Rx Ry scale 1 1 false RMat{BDot}
+imagemask grestore}}ifelse B/QV{gsave newpath transform round exch round
+exch itransform moveto Rx 0 rlineto 0 Ry neg rlineto Rx neg 0 rlineto
+fill grestore}B/a{moveto}B/delta 0 N/tail{A/delta X 0 rmoveto}B/M{S p
+delta add tail}B/b{S p tail}B/c{-4 M}B/d{-3 M}B/e{-2 M}B/f{-1 M}B/g{0 M}
+B/h{1 M}B/i{2 M}B/j{3 M}B/k{4 M}B/w{0 rmoveto}B/l{p -4 w}B/m{p -3 w}B/n{
+p -2 w}B/o{p -1 w}B/q{p 1 w}B/r{p 2 w}B/s{p 3 w}B/t{p 4 w}B/x{0 S
+rmoveto}B/y{3 2 roll p a}B/bos{/SS save N}B/eos{SS restore}B end
+
+%%EndProcSet
+%%BeginProcSet: 8r.enc
+% @@psencodingfile@{
+%   author = "S. Rahtz, P. MacKay, Alan Jeffrey, B. Horn, K. Berry",
+%   version = "0.6",
+%   date = "1 July 1998",
+%   filename = "8r.enc",
+%   email = "tex-fonts@@tug.org",
+%   docstring = "Encoding for TrueType or Type 1 fonts
+%                to be used with TeX."
+% @}
+% 
+% Idea is to have all the characters normally included in Type 1 fonts
+% available for typesetting. This is effectively the characters in Adobe
+% Standard Encoding + ISO Latin 1 + extra characters from Lucida.
+% 
+% Character code assignments were made as follows:
+% 
+% (1) the Windows ANSI characters are almost all in their Windows ANSI
+% positions, because some Windows users cannot easily reencode the
+% fonts, and it makes no difference on other systems. The only Windows
+% ANSI characters not available are those that make no sense for
+% typesetting -- rubout (127 decimal), nobreakspace (160), softhyphen
+% (173). quotesingle and grave are moved just because it's such an
+% irritation not having them in TeX positions.
+% 
+% (2) Remaining characters are assigned arbitrarily to the lower part
+% of the range, avoiding 0, 10 and 13 in case we meet dumb software.
+% 
+% (3) Y&Y Lucida Bright includes some extra text characters; in the
+% hopes that other PostScript fonts, perhaps created for public
+% consumption, will include them, they are included starting at 0x12.
+% 
+% (4) Remaining positions left undefined are for use in (hopefully)
+% upward-compatible revisions, if someday more characters are generally
+% available.
+% 
+% (5) hyphen appears twice for compatibility with both 
+% ASCII and Windows.
+% 
+/TeXBase1Encoding [
+% 0x00 (encoded characters from Adobe Standard not in Windows 3.1)
+  /.notdef /dotaccent /fi /fl
+  /fraction /hungarumlaut /Lslash /lslash
+  /ogonek /ring /.notdef
+  /breve /minus /.notdef 
+% These are the only two remaining unencoded characters, so may as
+% well include them.
+  /Zcaron /zcaron 
+% 0x10
+ /caron /dotlessi 
+% (unusual TeX characters available in, e.g., Lucida Bright)
+ /dotlessj /ff /ffi /ffl 
+ /.notdef /.notdef /.notdef /.notdef
+ /.notdef /.notdef /.notdef /.notdef
+ % very contentious; it's so painful not having quoteleft and quoteright
+ % at 96 and 145 that we move the things normally found there to here.
+ /grave /quotesingle 
+% 0x20 (ASCII begins)
+ /space /exclam /quotedbl /numbersign
+ /dollar /percent /ampersand /quoteright
+ /parenleft /parenright /asterisk /plus /comma /hyphen /period /slash
+% 0x30
+ /zero /one /two /three /four /five /six /seven
+ /eight /nine /colon /semicolon /less /equal /greater /question
+% 0x40
+ /at /A /B /C /D /E /F /G /H /I /J /K /L /M /N /O
+% 0x50
+ /P /Q /R /S /T /U /V /W
+ /X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore
+% 0x60
+ /quoteleft /a /b /c /d /e /f /g /h /i /j /k /l /m /n /o
+% 0x70
+ /p /q /r /s /t /u /v /w
+ /x /y /z /braceleft /bar /braceright /asciitilde
+ /.notdef % rubout; ASCII ends
+% 0x80
+ /.notdef /.notdef /quotesinglbase /florin
+ /quotedblbase /ellipsis /dagger /daggerdbl
+ /circumflex /perthousand /Scaron /guilsinglleft
+ /OE /.notdef /.notdef /.notdef
+% 0x90
+ /.notdef /.notdef /.notdef /quotedblleft
+ /quotedblright /bullet /endash /emdash
+ /tilde /trademark /scaron /guilsinglright
+ /oe /.notdef /.notdef /Ydieresis
+% 0xA0
+ /.notdef % nobreakspace
+ /exclamdown /cent /sterling
+ /currency /yen /brokenbar /section
+ /dieresis /copyright /ordfeminine /guillemotleft
+ /logicalnot
+ /hyphen % Y&Y (also at 45); Windows' softhyphen
+ /registered
+ /macron
+% 0xD0
+ /degree /plusminus /twosuperior /threesuperior
+ /acute /mu /paragraph /periodcentered
+ /cedilla /onesuperior /ordmasculine /guillemotright
+ /onequarter /onehalf /threequarters /questiondown
+% 0xC0
+ /Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla
+ /Egrave /Eacute /Ecircumflex /Edieresis
+ /Igrave /Iacute /Icircumflex /Idieresis
+% 0xD0
+ /Eth /Ntilde /Ograve /Oacute
+ /Ocircumflex /Otilde /Odieresis /multiply
+ /Oslash /Ugrave /Uacute /Ucircumflex
+ /Udieresis /Yacute /Thorn /germandbls
+% 0xE0
+ /agrave /aacute /acircumflex /atilde
+ /adieresis /aring /ae /ccedilla
+ /egrave /eacute /ecircumflex /edieresis
+ /igrave /iacute /icircumflex /idieresis
+% 0xF0
+ /eth /ntilde /ograve /oacute
+ /ocircumflex /otilde /odieresis /divide
+ /oslash /ugrave /uacute /ucircumflex
+ /udieresis /yacute /thorn /ydieresis
+] def
+
+%%EndProcSet
+%%BeginProcSet: texps.pro
+%!
+TeXDict begin/rf{findfont dup length 1 add dict begin{1 index/FID ne 2
+index/UniqueID ne and{def}{pop pop}ifelse}forall[1 index 0 6 -1 roll
+exec 0 exch 5 -1 roll VResolution Resolution div mul neg 0 0]/Metrics
+exch def dict begin Encoding{exch dup type/integertype ne{pop pop 1 sub
+dup 0 le{pop}{[}ifelse}{FontMatrix 0 get div Metrics 0 get div def}
+ifelse}forall Metrics/Metrics currentdict end def[2 index currentdict
+end definefont 3 -1 roll makefont/setfont cvx]cvx def}def/ObliqueSlant{
+dup sin S cos div neg}B/SlantFont{4 index mul add}def/ExtendFont{3 -1
+roll mul exch}def/ReEncodeFont{CharStrings rcheck{/Encoding false def
+dup[exch{dup CharStrings exch known not{pop/.notdef/Encoding true def}
+if}forall Encoding{]exch pop}{cleartomark}ifelse}if/Encoding exch def}
+def end
+
+%%EndProcSet
+%%BeginProcSet: special.pro
+%!
+TeXDict begin/SDict 200 dict N SDict begin/@SpecialDefaults{/hs 612 N
+/vs 792 N/ho 0 N/vo 0 N/hsc 1 N/vsc 1 N/ang 0 N/CLIP 0 N/rwiSeen false N
+/rhiSeen false N/letter{}N/note{}N/a4{}N/legal{}N}B/@scaleunit 100 N
+/@hscale{@scaleunit div/hsc X}B/@vscale{@scaleunit div/vsc X}B/@hsize{
+/hs X/CLIP 1 N}B/@vsize{/vs X/CLIP 1 N}B/@clip{/CLIP 2 N}B/@hoffset{/ho
+X}B/@voffset{/vo X}B/@angle{/ang X}B/@rwi{10 div/rwi X/rwiSeen true N}B
+/@rhi{10 div/rhi X/rhiSeen true N}B/@llx{/llx X}B/@lly{/lly X}B/@urx{
+/urx X}B/@ury{/ury X}B/magscale true def end/@MacSetUp{userdict/md known
+{userdict/md get type/dicttype eq{userdict begin md length 10 add md
+maxlength ge{/md md dup length 20 add dict copy def}if end md begin
+/letter{}N/note{}N/legal{}N/od{txpose 1 0 mtx defaultmatrix dtransform S
+atan/pa X newpath clippath mark{transform{itransform moveto}}{transform{
+itransform lineto}}{6 -2 roll transform 6 -2 roll transform 6 -2 roll
+transform{itransform 6 2 roll itransform 6 2 roll itransform 6 2 roll
+curveto}}{{closepath}}pathforall newpath counttomark array astore/gc xdf
+pop ct 39 0 put 10 fz 0 fs 2 F/|______Courier fnt invertflag{PaintBlack}
+if}N/txpose{pxs pys scale ppr aload pop por{noflips{pop S neg S TR pop 1
+-1 scale}if xflip yflip and{pop S neg S TR 180 rotate 1 -1 scale ppr 3
+get ppr 1 get neg sub neg ppr 2 get ppr 0 get neg sub neg TR}if xflip
+yflip not and{pop S neg S TR pop 180 rotate ppr 3 get ppr 1 get neg sub
+neg 0 TR}if yflip xflip not and{ppr 1 get neg ppr 0 get neg TR}if}{
+noflips{TR pop pop 270 rotate 1 -1 scale}if xflip yflip and{TR pop pop
+90 rotate 1 -1 scale ppr 3 get ppr 1 get neg sub neg ppr 2 get ppr 0 get
+neg sub neg TR}if xflip yflip not and{TR pop pop 90 rotate ppr 3 get ppr
+1 get neg sub neg 0 TR}if yflip xflip not and{TR pop pop 270 rotate ppr
+2 get ppr 0 get neg sub neg 0 S TR}if}ifelse scaleby96{ppr aload pop 4
+-1 roll add 2 div 3 1 roll add 2 div 2 copy TR .96 dup scale neg S neg S
+TR}if}N/cp{pop pop showpage pm restore}N end}if}if}N/normalscale{
+Resolution 72 div VResolution 72 div neg scale magscale{DVImag dup scale
+}if 0 setgray}N/psfts{S 65781.76 div N}N/startTexFig{/psf$SavedState
+save N userdict maxlength dict begin/magscale true def normalscale
+currentpoint TR/psf$ury psfts/psf$urx psfts/psf$lly psfts/psf$llx psfts
+/psf$y psfts/psf$x psfts currentpoint/psf$cy X/psf$cx X/psf$sx psf$x
+psf$urx psf$llx sub div N/psf$sy psf$y psf$ury psf$lly sub div N psf$sx
+psf$sy scale psf$cx psf$sx div psf$llx sub psf$cy psf$sy div psf$ury sub
+TR/showpage{}N/erasepage{}N/copypage{}N/p 3 def @MacSetUp}N/doclip{
+psf$llx psf$lly psf$urx psf$ury currentpoint 6 2 roll newpath 4 copy 4 2
+roll moveto 6 -1 roll S lineto S lineto S lineto closepath clip newpath
+moveto}N/endTexFig{end psf$SavedState restore}N/@beginspecial{SDict
+begin/SpecialSave save N gsave normalscale currentpoint TR
+@SpecialDefaults count/ocount X/dcount countdictstack N}N/@setspecial{
+CLIP 1 eq{newpath 0 0 moveto hs 0 rlineto 0 vs rlineto hs neg 0 rlineto
+closepath clip}if ho vo TR hsc vsc scale ang rotate rwiSeen{rwi urx llx
+sub div rhiSeen{rhi ury lly sub div}{dup}ifelse scale llx neg lly neg TR
+}{rhiSeen{rhi ury lly sub div dup scale llx neg lly neg TR}if}ifelse
+CLIP 2 eq{newpath llx lly moveto urx lly lineto urx ury lineto llx ury
+lineto closepath clip}if/showpage{}N/erasepage{}N/copypage{}N newpath}N
+/@endspecial{count ocount sub{pop}repeat countdictstack dcount sub{end}
+repeat grestore SpecialSave restore end}N/@defspecial{SDict begin}N
+/@fedspecial{end}B/li{lineto}B/rl{rlineto}B/rc{rcurveto}B/np{/SaveX
+currentpoint/SaveY X N 1 setlinecap newpath}N/st{stroke SaveX SaveY
+moveto}N/fil{fill SaveX SaveY moveto}N/ellipse{/endangle X/startangle X
+/yrad X/xrad X/savematrix matrix currentmatrix N TR xrad yrad scale 0 0
+1 startangle endangle arc savematrix setmatrix}N end
+
+%%EndProcSet
+TeXDict begin @defspecial
+
+ userdict begin /bop-hook{gsave 200 30 translate 65 rotate /Times-Roman
+findfont 260 scalefont setfont 0 0 moveto 0.8 setgray (DVIPS) show
+grestore}def end
+ 
+@fedspecial end TeXDict begin
+39158280 55380996 1000 300 300 (dvipstst.xdv) @start
+/Fa 25[48 6[33 24[63 17[22 11[22 11[48 4[66 10[63 3[22
+16[44 29 37 18 26 26 1[33 33 37 52 18 2[18 37 1[22 29
+33 29 1[33 23[26 4[48 21[17 6[22 21[18 13[37 3[{
+TeXBase1Encoding ReEncodeFont}33 66.4176 /Times-BoldItalic
+rf
+%DVIPSBitmapFont: Fb cmtt10 10 10
+/Fb 10 118 df<12C07EA21270A27EA27EA27EA27EA26C7EA26C7EA26C7EA21370A27FA2
+7FA27FA27FA2EB0380A2130111207E9C16>92 D<EA1FE0487E487EEA783CEA300E1200A2
+EA03FE121FEA3E0E127012E0A3EA783E387FFFE0EA3FE7EA0F8313127E9116>97
+D<EA03F0EA0FFC487EEA3C0F487E3870038012E0B5FCA300E0C7FCA2387003801278EA3E
+07381FFF00EA07FEEA01F811127E9116>101 D<131E137F3801FF8013C7380383001380
+A2EA7FFFB5FCA2EA0380ACEA7FFC487E6C5A11197F9816>I<EA7FC012FF127F1201B3EA
+7FFFB512806C130011197E9816>108 D<EA03E0EA0FF8487EEA3C1E487EEA700738E003
+80A5EAF00700701300EA780FEA3C1EEA1FFC6C5AEA03E011127E9116>111
+D<387F0FC038FF3FE0EA7F7F3807F040EBC0005BA290C7FCA8EA7FFC12FF127F13127F91
+16>114 D<EA0FECEA3FFC127FEAF03CEAE01CA2EA7000EA7F80EA1FF0EA07F8EA003CEA
+600E12E012F0EAF81EEAFFFC13F8EAC7E00F127D9116>I<12035AA4EA7FFFB5FCA20007
+C7FCA75BEB0380A3EB8700EA03FE6C5A6C5A11177F9616>I<EAFC3FA3EA1C07AB131F38
+1FFFE0EA0FF7EA07C713127F9116>I E
+%EndDVIPSBitmapFont
+%DVIPSBitmapFont: Fc cmsy10 10 3
+/Fc 3 42 df<B61280A219027D8A20>0 D<153081A381A281811680ED00C0B712F8A2C9
+12C0ED0380160015065DA25DA35D25167E942A>33 D<14036E7EA26E7E811560B612F015
+FCC8120EED0380ED01E0ED007816E0ED0380ED0700150CB612F85DC812605DA24A5AA24A
+C7FC25187E952A>41 D E
+%EndDVIPSBitmapFont
+%DVIPSBitmapFont: Fd cmr10 10 65
+/Fd 65 128 df<137E3801C180EA0301380703C0120EEB018090C7FCA5B512C0EA0E01B0
+387F87F8151D809C17>12 D<EB7FC0EA01C1EA03031207EA0E01A7B5FCEA0E01B0387FCF
+F8151D809C17>I<90383F07FC3901C0DC1C390381F03CEA0701000EEBE01C1300A6B612
+FC390E00E01CB03A7FC7FCFF80211D809C23>15 D<12FC121CB0EAFF8009127F910C>I<
+120EA2121E1238127012E012800707779C15>19 D<EA01F8EA070EEA0E07EA0C03001C13
+80A4EB07001306131CEAFCF0EA1C187F7F7F1480A2EB01C0A6148013E3140013E6EAFC7C
+121D7F9C15>25 D<381FC07C3830718339783B0180131E0030EB00C0EA001CA248B5FCD8
+0F1CC7FC12381270126012E0011E1340A2D860331380393061C300381F807C1A127E911E
+>I<3903E00F80390C18306039180C6030383006C0D8700713183860038012E0ECFFF8EC
+8000A41260397007C008EA300639180C6010390C1838603903E00F801D127F9120>I<01
+3FB5FC903805F00F01041303010C7F1308168001101300A30120EB1000A2136013401530
+90B512F0903880F0301510EA01001640A20002EC0080A25AA21501000CEC0300001E140F
+D8FF87B5FC221C7F9B25>29 D<EB3F8001E0B512E03903807801D80700EB0060000E0138
+13205A003C153000381510127815020070150012F01506150EEC3FFEEC380E15061502A2
+00781508150016107EA26C1530120E6C01781360D80380EB01E0D800E0B5FCD93F80C7FC
+251E7D9C2A>I<EA6060EAF0F0EAF8F8EA6868EA0808A3EA1010A2EA2020EA4040EA8080
+0D0C7F9C15>34 D<126012F012F812681208A31210A2122012401280050C7C9C0C>39
+D<1380EA0100120212065AA25AA25AA35AA412E0AC1260A47EA37EA27EA27E12027EEA00
+80092A7C9E10>I<7E12407E12307EA27EA27EA37EA41380AC1300A41206A35AA25AA25A
+12205A5A092A7E9E10>I<126012F0A212701210A41220A212401280040C7C830C>44
+D<EAFFE0A20B0280890E>I<126012F0A2126004047C830C>I<5A1207123F12C71207B3A5
+EAFFF80D1C7C9B15>49 D<130CA2131C133CA2135C13DC139CEA011C120312021204120C
+1208121012301220124012C0B512C038001C00A73801FFC0121C7F9B15>52
+D<EA300CEA3FF813F013C0EA2000A6EA23E0EA2C30EA3018131CEA200E1200130FA31260
+12F0A3EA800EEA401E131CEA2038EA1870EA07C0101D7E9B15>I<13F0EA030CEA0404EA
+0C0EEA181E1230130CEA7000A21260EAE3E0EAE430EAE818EAF00C130EEAE0061307A512
+60A2EA7006EA300E130CEA1818EA0C30EA03E0101D7E9B15>I<EA03E0EA0C30EA1008EA
+200C13061260A21270A2EA7C0CEA3E18EA3FB0EA1FE0EA07F013F8EA18FCEA307EEA601E
+130FEAC0071303A4EA60021304EA300CEA1C10EA07E0101D7E9B15>56
+D<126012F0A212601200AA126012F0A212701210A41220A212401280041A7C910C>59
+D<B612E0A2C9FCA8B612E0A21B0C7E8F20>61 D<1306A3130FA3EB1780A2EB37C01323A2
+EB43E01341A2EB80F0A338010078A2EBFFF83802003CA3487FA2000C131F80001E5BB4EB
+FFF01C1D7F9C1F>65 D<90381F8080EBE0613801801938070007000E13035A14015A0078
+1300A2127000F01400A8007014801278A212386CEB0100A26C13026C5B380180083800E0
+30EB1FC0191E7E9C1E>67 D<B512C0380F00F0143C140E80A2EC038015C01401A215E0A8
+15C0A21403158014071500140E5C1470B512C01B1C7E9B20>I<B512FC380F003C140C14
+04A214061402A213011400A35B13FF13037FA3140113001402A31406A2140C143CB512FC
+181C7E9B1C>I<B512F8380F007814181408A2140C1404A213011400A35B13FF13037FA4
+90C7FCA8EAFFF8161C7E9B1B>I<EAFFF0EA0F00B3A8EAFFF00C1C7F9B0F>73
+D<B51280380F00E01478143C141C141EA5141C143C147814E0EBFF8090C7FCACEAFFF017
+1C7E9B1C>80 D<B5FC380F01E0EB007880141C141EA4141C143C5CEB01E001FFC7FCEB01
+E0EB0070147880A61510A2141CA239FFF00E20C7EA03C01C1D7E9B1F>82
+D<3807E080EA1C19EA30051303EA600112E01300A36C13007E127CEA7FC0EA3FF8EA1FFE
+EA07FFC61380130FEB07C0130313011280A300C01380A238E00300EAD002EACC0CEA83F8
+121E7E9C17>I<007FB512C038700F010060130000401440A200C014201280A300001400
+B1497E3803FFFC1B1C7F9B1E>I<39FFF07FC0390FC01E003807800CEBC00800035B6C6C
+5A13F000005BEB7880137C013DC7FC133E7F7F80A2EB13C0EB23E01321EB40F0497E1478
+3801007C00027F141E0006131F001F148039FF807FF01C1C7F9B1F>88
+D<39FFF003FC390F8001E00007EB00C06D13800003EB01006D5A000113026C6C5A13F8EB
+7808EB7C18EB3C10EB3E20131F6D5A14C06D5AABEB7FF81E1C809B1F>I<EA0808EA1010
+EA2020EA4040A2EA8080A3EAB0B0EAF8F8EA7878EA30300D0C7A9C15>92
+D<120C12121221EA4080EA80400A057B9B15>94 D<1208121012201240A21280A312B012
+F812781230050C7D9C0C>96 D<EA1FC0EA3070EA78387F12301200A2EA01FCEA0F1C1238
+1270126000E01340A3EA603C38304E80381F870012127E9115>I<12FC121CAA137CEA1D
+87381E0180381C00C014E014601470A6146014E014C0381E018038190700EA10FC141D7F
+9C17>I<EA03F8EA0C0CEA181E1230EA700CEA600012E0A61260EA70021230EA1804EA0C
+18EA03E00F127F9112>I<EB1F801303AAEA03F3EA0E0BEA1807EA30031270126012E0A6
+126012701230EA1807EA0E1B3803E3F0141D7F9C17>I<EA07E0EA0C30EA1818EA300CEA
+700EEA600612E0EAFFFEEAE000A41260EA70021230EA1804EA0C18EA03E00F127F9112>
+I<13F8EA018CEA071E1206EA0E0C1300A6EAFFE0EA0E00B0EA7FE00F1D809C0D>I<EB03
+803807C4C0EA1C783838388038301800EA701CA4EA3018EA38386C5AEA27C00020C7FCA2
+1230EA3FF86CB4FC1480EA2003386001C0EAC000A33860018038300300EA1C0EEA07F812
+1C7F9215>I<12FC121CAA137C1387EA1D03001E1380121CAD38FF9FF0141D7F9C17>I<12
+18123CA21218C7FCA712FC121CB0EAFF80091D7F9C0C>I<12FC121CAAEB0FE0EB0780EB
+06005B13105B5B13E0121DEA1E70EA1C781338133C131C7F130F148038FF9FE0131D7F9C
+16>107 D<12FC121CB3A9EAFF80091D7F9C0C>I<39FC7E07E0391C838838391D01901800
+1EEBE01C001C13C0AD3AFF8FF8FF8021127F9124>I<EAFC7CEA1C87EA1D03001E138012
+1CAD38FF9FF014127F9117>I<EA03F0EA0E1CEA1806487E00701380EA600100E013C0A6
+00601380EA700300301300EA1806EA0E1CEA03F012127F9115>I<EAFC7CEA1D87381E01
+80001C13C0EB00E0A21470A614E0A2EB01C0001E1380381D0700EA1CFC90C7FCA7B47E14
+1A7F9117>I<3803E080EA0E19EA1805EA3807EA7003A212E0A61270A2EA38071218EA0E
+1BEA03E3EA0003A7EB1FF0141A7F9116>I<EAFCE0EA1D38EA1E78A2EA1C301300ACEAFF
+C00D127F9110>I<EA1F90EA2070EA4030EAC010A212E0EAF800EA7F80EA3FE0EA0FF0EA
+00F8EA8038131812C0A2EAE010EAD060EA8FC00D127F9110>I<1204A4120CA2121C123C
+EAFFE0EA1C00A91310A5120CEA0E20EA03C00C1A7F9910>I<38FC1F80EA1C03AD130712
+0CEA0E1B3803E3F014127F9117>I<38FF07E0383C0380381C0100A2EA0E02A2EA0F06EA
+0704A2EA0388A213C8EA01D0A2EA00E0A3134013127F9116>I<39FF3FC7E0393C0703C0
+001CEB01801500130B000E1382A21311000713C4A213203803A0E8A2EBC06800011370A2
+EB8030000013201B127F911E>I<38FF0FE0381E0700EA1C06EA0E046C5AEA039013B0EA
+01E012007F12011338EA021C1204EA0C0E487E003C138038FE1FF014127F9116>I<38FF
+07E0383C0380381C0100A2EA0E02A2EA0F06EA0704A2EA0388A213C8EA01D0A2EA00E0A3
+1340A25BA212F000F1C7FC12F312661238131A7F9116>I<B812802901808B2A>124
+D<EA6060EAF0F0A2EA60600C047C9C15>127 D E
+%EndDVIPSBitmapFont
+%DVIPSBitmapFont: Fe cmmi10 10 4
+/Fe 4 100 df<380FFFF85A5A386084001241EA81041201EA030CA212021206A2120E12
+0CEA1C0EA21238EA180615127E9118>25 D<EA01E3EA0717EA0C0F1218EA380E12301270
+A2485AA4EB3880A3EA607838319900EA1E0E11127E9116>97 D<123F1207A2120EA45AA4
+EA39E0EA3A30EA3C1812381270131CA3EAE038A313301370136013C01261EA2300121E0E
+1D7E9C12>I<EA01F0EA030C120CEA1C1EEA383CEA3018EA7000A25AA51304EA60081310
+EA3060EA1F800F127E9112>I E
+%EndDVIPSBitmapFont
+%DVIPSBitmapFont: Ff cmex10 10 3
+/Ff 3 119 df<EC0180A91208120C121CA2122EA2124E12471287A21207EA0380A3EA01
+C0A3EA00E0A31370A31338A4131CA3130EA31307A3EB0381A4EB01C1A3EB00E1A31471A3
+1439A3141DA4140FA31407A31403A314011500194C7B802C>116
+D<12C0B3A9021B64802C>I<387FFF80B5FC00C0C7FCB3A6111A64812C>I
+E
+%EndDVIPSBitmapFont
+/Fg 152[208 103[{TeXBase1Encoding ReEncodeFont}1 415.11
+/Times-Italic rf /Fh 137[42 1[23 32 28 1[42 42 5[23 3[37
+1[37 10[60 1[60 1[51 46 2[46 6[28 2[46 51 60 2[60 6[23
+58[{TeXBase1Encoding ReEncodeFont}20 83.022 /Times-Roman
+rf end
+%%EndProlog
+%%BeginSetup
+%%Feature: *Resolution 300dpi
+TeXDict begin
+%%PaperSize: A4
+
+%%EndSetup
+%%Page: 1 1
+1 0 bop -225 -200 2331 25 v -225 3108 25 3309 v 325 -77
+a Fh(D)m(VIPS:)21 b(A)g(T)724 -58 y(E)764 -77 y(X)f(Dri)n(v)o(er)g(F)o
+(or)f(PostScript)836 238 y Fg(g)-225 695 y @beginspecial
+@setspecial
+ 0 36 translate .05 .099 .95 { 27.4 0 translate gsave 0 0 moveto dup
+90 mul rotate -10 -10 rmoveto 20 0 rlineto 0 20 rlineto -20 0 rlineto
+closepath gsave dup setgray fill grestore 1 exch sub setgray stroke
+grestore 27.4 0 translate } for
+ 
+@endspecial 441 770 a Ff(v)441 794 y(u)441
+818 y(u)441 843 y(u)441 868 y(u)441 893 y(u)441 918 y(u)441
+943 y(u)441 968 y(t)p 485 770 954 2 v -180 x(v)485 811
+y(u)485 836 y(u)485 861 y(u)485 885 y(u)485 910 y(u)485
+935 y(u)485 960 y(t)p 529 788 910 2 v 865 828 a Fe(a)12
+b Fd(=)-7 b Fc(\))11 b Fe(b)g Fc(\000)-6 b(!)11 b Fe(c)p
+534 846 900 2 v 534 880 a Fd(the)17 b(phase)f(of)f(the)i(mo)q(on)d(m)o
+(ultiplied)f(b)o(y)j(the)h(n)o(um)o(b)q(er)534 930 y(of)10
+b(angels)h(that)g(can)g(dance)h(on)f(the)h(head)f(of)f(a)h(pin)f(while)
+534 980 y(the)18 b(ric)o(h)f(man)e(threads)j(the)g(needle)g(divided)e
+(b)o(y)h Fe(\031)h Fd(or)534 1030 y(some)13 b(other)h(transcenden)o
+(tal)i(n)o(um)o(b)q(er)-158 2836 y @beginspecial 18 @llx
+18 @lly 577 @urx 814 @ury 2796 @rwi @setspecial @endspecial
+1090 1185 a(T)m(o)i(run)g(this)h(test,)h(remo)o(v)o(e)d(a)h(\014le)h
+(called)f(m)o(test.ps)f(if)h(it)1049 1235 y(exists.)36
+b(Then,)21 b(run)f(T)1429 1244 y(E)1452 1235 y(X)g(o)o(v)o(er)g
+(test.tex,)i(run)e(dvips)g(o)o(v)o(er)1049 1285 y(test.dvi,)10
+b(sa)o(ving)g(the)h(output)f(in)g(a)g(\014le)g(test.ps.)18
+b(Cop)o(y)10 b(test.ps)1049 1335 y(to)17 b(m)o(test.ps.)28
+b(Run)17 b(dvips)g(o)o(v)o(er)g(test.dvi)h(again,)e(this)i(time)1049
+1385 y(prin)o(ting)9 b(or)h(sa)o(ving)f(the)h(output,)h(as)f(y)o(ou)f
+(c)o(ho)q(ose.)18 b(\(Including)1049 1434 y(the)12 b(do)q(cumen)o(t)g
+(to)q(o)g(man)o(y)e(times)h(inside)h(itself)g(will)f(o)o(v)o(er\015o)o
+(w)1049 1484 y(the)j(virtual)f(memory)f(capacities)i(of)f(most)g(prin)o
+(ters.\))1090 1565 y(Some)i(things)h(to)g(c)o(hec)o(k)i(on)e(this)g
+(page.)25 b(First,)17 b(the)g(large)1049 1615 y(rules)c(surrounding)f
+(the)h(page)g(should)f(b)q(e)h(exactly)f(one)h(quar-)1049
+1665 y(ter)i(inc)o(h)f(from)f(eac)o(h)i(b)q(order)h(\(assuming)d(a)h
+(8.5)g(b)o(y)g(11)g(page;)1049 1715 y(for)c(an)g(a4)g(page,)h(c)o
+(hange)g(the)g Fb(\\afourfalse)d Fd(to)j Fb(\\afourtrue)1049
+1765 y Fd(on)i(line)h(16.\))1090 1845 y(Y)m(ou)f(should)g(see)i(a)e
+(title)g(at)g(the)h(top,)f(and)g(a)g(large)g(italic)f(g)1049
+1895 y(under)f(that.)17 b(Then,)11 b(there)g(should)g(b)q(e)g(a)f(cen)o
+(tered)i(ro)o(w)e(of)g(ten)1049 1945 y(b)q(o)o(xes,)k(going)e(from)g
+(dark)i(to)g(ligh)o(t)f(gra)o(y)m(,)f(rotating)h(slo)o(wly)m(.)1090
+2026 y(In)18 b(the)h(`equation')d(that)i(follo)o(ws,)f(c)o(hec)o(k)i
+(the)g(upp)q(er)g(left)1049 2076 y(corner)g(of)e(the)i(radical)f(signs)
+g(for)f(alignmen)o(t.)29 b(Also)18 b(c)o(hec)o(k)1049
+2126 y(the)c(righ)o(t)g(arro)o(ws.)1090 2207 y(In)e(the)h(recursiv)o
+(ely)g(included)f(page)g(to)g(the)h(left,)f(note)g(ho)o(w)1049
+2256 y(bad)g(the)i(bitmapp)q(ed)d(fon)o(ts)i(lo)q(ok)f(\(they)i(are)f
+(the)g(ones)h(under)1049 2306 y(the)g(radical,)f(and)g(indeed)i(this)f
+(text)g(itself.\))k(The)c(thin)g(rules)1049 2356 y(ma)o(y)f(disapp)q
+(ear)j(altogether.)23 b(This)16 b(p)q(oin)o(ts)f(out)g(the)h(resolu-)
+1049 2406 y(tion)11 b(dep)q(endence)j(of)d(dvips)h(output;)g(this)g(is)
+g(an)f(unfortunate)1049 2456 y(necessit)o(y)23 b(of)d(using)h(bitmapp)q
+(ed)g(fon)o(ts.)40 b(The)22 b(P)o(ostScript)1049 2506
+y(fon)o(ts,)13 b(on)h(the)g(other)h(hand,)e(should)g(scale)i(\014ne.)
+1090 2586 y(Finally)m(,)c(at)h(the)i(b)q(ottom)d(of)h(the)h(page,)g(y)o
+(ou)f(will)f(see)j(some)1049 2636 y(tests)f(of)f(the)g(accen)o(ts)i(in)
+e(the)h(P)o(ostScript)f(fon)o(ts.)18 b(P)o(a)o(y)11 b(careful)1049
+2686 y(atten)o(tion)18 b(to)g(the)h(w)o(ord)f(na)-5 b(\177)-16
+b(\020v)o(e;)20 b(there)g(should)e(b)q(e)h(an)f(um-)1049
+2736 y(laut)e(o)o(v)o(er)h(a)g(dotless)h(i.)27 b(The)17
+b(text)h(should)e(read)i(\\Ic)o(h)f(w)o(ei\031)1049 2786
+y(tats\177)-21 b(ac)o(hlic)o(h)15 b(nic)o(h)o(t)f(mehr)h(als)f(das.)22
+b(D\032monic)13 b(sou\017)o(\023)-20 b(es)16 b(ha)o(v)o(e)1049
+2836 y(no)d(r^)-21 b(ole)14 b(in)g(na)-5 b(\177)-16 b(\020v)o(e)13
+b(\033uvres.)19 b(|\035sop's)14 b(\036uvres.")100 2963
+y Fa(Ic)o(h)25 b(w)o(ei\337)i(tats)467 2962 y(\250)461
+2963 y(ac)o(hlich)g(nic)o(ht)g(mehr)d(als)i(das.)48 b(D\346monic)25
+b(souf)o(\003)1729 2962 y(\264)1725 2963 y(es)100 3027
+y(hav)o(e)18 b(no)e(r)363 3026 y(\210)357 3027 y(ole)i(in)f(na)595
+3026 y(\250)597 3027 y(\021v)o(e)h(\234uvres.)24 b(\227\306sop')-5
+b(s)17 b(\214uvres.)p 2080 3108 25 3309 v -225 3133 2331
+25 v eop
+%%Trailer
+end
+userdict /end-hook known{end-hook}if
+%%EOF
+
+%%EndDocument
+ @endspecial 1090 1185 a(T)m(o)i(run)g(this)h(test,)h(remo)o(v)o(e)d(a)
+h(\014le)h(called)f(m)o(test.ps)f(if)h(it)1049 1235 y(exists.)36
+b(Then,)21 b(run)f(T)1429 1244 y(E)1452 1235 y(X)g(o)o(v)o(er)g
+(test.tex,)i(run)e(dvips)g(o)o(v)o(er)1049 1285 y(test.dvi,)10
+b(sa)o(ving)g(the)h(output)f(in)g(a)g(\014le)g(test.ps.)18
+b(Cop)o(y)10 b(test.ps)1049 1335 y(to)17 b(m)o(test.ps.)28
+b(Run)17 b(dvips)g(o)o(v)o(er)g(test.dvi)h(again,)e(this)i(time)1049
+1385 y(prin)o(ting)9 b(or)h(sa)o(ving)f(the)h(output,)h(as)f(y)o(ou)f
+(c)o(ho)q(ose.)18 b(\(Including)1049 1434 y(the)12 b(do)q(cumen)o(t)g
+(to)q(o)g(man)o(y)e(times)h(inside)h(itself)g(will)f(o)o(v)o(er\015o)o
+(w)1049 1484 y(the)j(virtual)f(memory)f(capacities)i(of)f(most)g(prin)o
+(ters.\))1090 1565 y(Some)i(things)h(to)g(c)o(hec)o(k)i(on)e(this)g
+(page.)25 b(First,)17 b(the)g(large)1049 1615 y(rules)c(surrounding)f
+(the)h(page)g(should)f(b)q(e)h(exactly)f(one)h(quar-)1049
+1665 y(ter)i(inc)o(h)f(from)f(eac)o(h)i(b)q(order)h(\(assuming)d(a)h
+(8.5)g(b)o(y)g(11)g(page;)1049 1715 y(for)c(an)g(a4)g(page,)h(c)o
+(hange)g(the)g Fb(\\afourfalse)d Fd(to)j Fb(\\afourtrue)1049
+1765 y Fd(on)i(line)h(16.\))1090 1845 y(Y)m(ou)f(should)g(see)i(a)e
+(title)g(at)g(the)h(top,)f(and)g(a)g(large)g(italic)f(g)1049
+1895 y(under)f(that.)17 b(Then,)11 b(there)g(should)g(b)q(e)g(a)f(cen)o
+(tered)i(ro)o(w)e(of)g(ten)1049 1945 y(b)q(o)o(xes,)k(going)e(from)g
+(dark)i(to)g(ligh)o(t)f(gra)o(y)m(,)f(rotating)h(slo)o(wly)m(.)1090
+2026 y(In)18 b(the)h(`equation')d(that)i(follo)o(ws,)f(c)o(hec)o(k)i
+(the)g(upp)q(er)g(left)1049 2076 y(corner)g(of)e(the)i(radical)f(signs)
+g(for)f(alignmen)o(t.)29 b(Also)18 b(c)o(hec)o(k)1049
+2126 y(the)c(righ)o(t)g(arro)o(ws.)1090 2207 y(In)e(the)h(recursiv)o
+(ely)g(included)f(page)g(to)g(the)h(left,)f(note)g(ho)o(w)1049
+2256 y(bad)g(the)i(bitmapp)q(ed)d(fon)o(ts)i(lo)q(ok)f(\(they)i(are)f
+(the)g(ones)h(under)1049 2306 y(the)g(radical,)f(and)g(indeed)i(this)f
+(text)g(itself.\))k(The)c(thin)g(rules)1049 2356 y(ma)o(y)f(disapp)q
+(ear)j(altogether.)23 b(This)16 b(p)q(oin)o(ts)f(out)g(the)h(resolu-)
+1049 2406 y(tion)11 b(dep)q(endence)j(of)d(dvips)h(output;)g(this)g(is)
+g(an)f(unfortunate)1049 2456 y(necessit)o(y)23 b(of)d(using)h(bitmapp)q
+(ed)g(fon)o(ts.)40 b(The)22 b(P)o(ostScript)1049 2506
+y(fon)o(ts,)13 b(on)h(the)g(other)h(hand,)e(should)g(scale)i(\014ne.)
+1090 2586 y(Finally)m(,)c(at)h(the)i(b)q(ottom)d(of)h(the)h(page,)g(y)o
+(ou)f(will)f(see)j(some)1049 2636 y(tests)f(of)f(the)g(accen)o(ts)i(in)
+e(the)h(P)o(ostScript)f(fon)o(ts.)18 b(P)o(a)o(y)11 b(careful)1049
+2686 y(atten)o(tion)18 b(to)g(the)h(w)o(ord)f(na)-5 b(\177)-16
+b(\020v)o(e;)20 b(there)g(should)e(b)q(e)h(an)f(um-)1049
+2736 y(laut)e(o)o(v)o(er)h(a)g(dotless)h(i.)27 b(The)17
+b(text)h(should)e(read)i(\\Ic)o(h)f(w)o(ei\031)1049 2786
+y(tats\177)-21 b(ac)o(hlic)o(h)15 b(nic)o(h)o(t)f(mehr)h(als)f(das.)22
+b(D\032monic)13 b(sou\017)o(\023)-20 b(es)16 b(ha)o(v)o(e)1049
+2836 y(no)d(r^)-21 b(ole)14 b(in)g(na)-5 b(\177)-16 b(\020v)o(e)13
+b(\033uvres.)19 b(|\035sop's)14 b(\036uvres.")100 2963
+y Fa(Ic)o(h)25 b(w)o(ei\337)i(tats)467 2962 y(\250)461
+2963 y(ac)o(hlich)g(nic)o(ht)g(mehr)d(als)i(das.)48 b(D\346monic)25
+b(souf)o(\003)1729 2962 y(\264)1725 2963 y(es)100 3027
+y(hav)o(e)18 b(no)e(r)363 3026 y(\210)357 3027 y(ole)i(in)f(na)595
+3026 y(\250)597 3027 y(\021v)o(e)h(\234uvres.)24 b(\227\306sop')-5
+b(s)17 b(\214uvres.)p 2080 3108 25 3309 v -225 3133 2331
+25 v eop
+%%Trailer
+end
+userdict /end-hook known{end-hook}if
+%%EOF

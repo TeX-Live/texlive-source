@@ -101,10 +101,10 @@ ctangle = $(buildenv) $(CTANGLE)
 ctangleboot = $(buildenv) $(CTANGLEBOOT)
 tie = WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
 
-## For trip and trap tests
+## For trip, trap, and other tests
 DIFF = diff
 DIFFFLAGS =
-TESTS_ENVIRONMENT = DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)'
+TESTS_ENVIRONMENT = DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
 
 ## The environment for making dumps.
 ## No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain

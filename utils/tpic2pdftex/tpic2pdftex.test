@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
 for f in beamerexample example; do
 	pic -z -t $srcdir/$f.pic >$f.tpic || exit 77
 	$srcdir/tpic2pdftex $f.tpic >$f.tex || exit 1

@@ -107,21 +107,35 @@ EXTRA_DIST = $(dist_prologues) texc.script
 
 CLEANFILES = $(prologues) texc.lpro
 
-install-data-hook:
-	cd $(DESTDIR)$(man1dir) && \
-	  rm -f odvips.1 && \
-	  $(LN_S) dvips.1 odvips.1
+## dvips test
+##
+TESTS = dvips.test
 
-install-exec-hook:
-	cd $(DESTDIR)$(bindir) && \
-	  rm -f odvips && \
-	  $(LN_S) dvips$(EXEEXT) odvips$(EXEEXT)
+TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
 
-uninstall-hook:
-	rm -f $(DESTDIR)$(man1dir)/odvips.1
-	rm -f $(DESTDIR)$(bindir)/odvips$(EXEEXT)
+EXTRA_DIST += \
+	dvips.test \
+	testdata/dvipstst.tex \
+	testdata/dvipstst.xdv \
+	testdata/dvipstst.xps
 
-## Not yet used
+CLEANFILES += missfont.log mtest.ps dvipstst.ps
+
+##install-data-hook:
+##	cd $(DESTDIR)$(man1dir) && \
+##	  rm -f odvips.1 && \
+##	  $(LN_S) dvips.1 odvips.1
+
+##install-exec-hook:
+##	cd $(DESTDIR)$(bindir) && \
+##	  rm -f odvips && \
+##	  $(LN_S) dvips$(EXEEXT) odvips$(EXEEXT)
+
+##uninstall-hook:
+##	rm -f $(DESTDIR)$(man1dir)/odvips.1
+##	rm -f $(DESTDIR)$(bindir)/odvips$(EXEEXT)
+
+## Not used
 ##
 EXTRA_DIST += \
 	INSTALLATION \
@@ -148,7 +162,8 @@ EXTRA_DIST += \
 	psfonts.map \
 	reencode \
 	test.ps \
-	testdata \
+	testdata/pfbincl.eps \
+	testdata/pfbincl.tex \
 	tex \
 	vmcms \
 	vms
@@ -159,7 +174,6 @@ dist-hook:
 
 ## Eventually delete these files
 ##
-
 EXTRA_DIST += \
 	Makefile.in.orig \
 	configure.in.orig \

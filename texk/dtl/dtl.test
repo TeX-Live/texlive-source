@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
 ./dt2dv $srcdir/edited.txt testfile.dvi || exit 1
 
 ./dv2dt testfile.dvi testfile.dtl || exit 1

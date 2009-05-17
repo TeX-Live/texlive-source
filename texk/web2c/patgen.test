@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
 test -d tests || mkdir -p tests
 
 ./patgen $srcdir/tests/dict $srcdir/tests/patterns tests/xpatout \

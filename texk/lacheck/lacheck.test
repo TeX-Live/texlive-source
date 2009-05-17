@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
 ./lacheck $srcdir/test.tex | \
 	sed -e "s!$srcdir/test.tex!test.tex!g" >test.xout || exit 1
 
