@@ -23,7 +23,7 @@ nobase_dist_scriptx_SCRIPTS = \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
 	texdoc/texdoc.tlu \
-	texlive/getnonfreefonts.pl \
+	getnonfreefonts/getnonfreefonts.pl \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
 
