@@ -272,6 +272,15 @@ typedef struct option getoptstruct;
 #undef getname
 #define getname vms_getname
 #endif
+
+/* Apparently POSIX 2008 has getline and glibc 2.9.90 exports it.
+   tangle, weave, et al. use that symbol; try to define it away so
+   something that a standard won't usurp.  */
+#ifdef getline
+#undef getline
+#endif
+#define getline web2c_getline
+
 
 /* Declarations for the routines we provide ourselves in lib/.  */
 

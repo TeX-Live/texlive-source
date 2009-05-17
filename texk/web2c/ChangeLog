@@ -1,3 +1,10 @@
+2009-05-18  Karl Berry  <karl@tug.org>
+
+	* cpascal.h (getline): #define to web2c_getline,
+	to try to avoid conflict with a newly broken POSIX and glibc.
+	Report from Gabriele Balducci via Taco, tlbuild mail
+	17 May 2009 17:56:54.
+
 2009-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* vftovp.ch: Send print_real to stderr.
