@@ -1,3 +1,11 @@
+2009-05-18  Karl Berry  <karl@tug.org>
+
+	* Build (-Wdecl): allow with -g, to do -Wdeclaration-after-statement.
+
+2009-05-16  Karl Berry  <karl@tug.org>
+
+	* Build (TL_CONF_XINDY): default to disabling latex-requiring stuff.
+
 2009-04-29  Karl Berry  <karl@tug.org>
 
 	* Build (MACOSX_DEPLOYMENT_TARGET): set to 10.3 on powerpc-darwin

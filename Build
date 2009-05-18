@@ -1,8 +1,8 @@
 #!/bin/sh
 # $Id$
 # Public domain.  Originally written many years ago by Sebastian Rahtz.
-# To build again from same sources, try Build --no-clean.
-# To build (mostly) without optimization, try Build --debug.
+# To build again, try Build --no-clean.
+# To build without optimization, try Build --debug.
 # 
 # Any other options given are passed along to configure, and everything can be
 # overridden with environment variables.
@@ -51,8 +51,15 @@ fi
 
 : ${TL_BUILD_ENV=}
 if test "x$1" = x--debug || test "x$1" = x-g; then
-  TL_BUILD_ENV="CFLAGS=-g CXXFLAGS=-g OBJCFLAGS=-g $TL_BUILD_ENV"
   shift
+  if test "x$1" = x-Wdecl || test "x$1" = x-Wdeclaration-after-statement; then
+    wdecl=-Wdeclaration-after-statement
+    shift
+  else
+    wdecl=
+  fi
+  TL_GFLAGS="wdecl $TL_GCFLAGS"
+  TL_BUILD_ENV="CFLAGS='-g $TL_GCFLAGS' CXXFLAGS=-g OBJCFLAGS=-g $TL_BUILD_ENV"
 fi
 
 test -d $TL_WORKDIR || mkdir $TL_WORKDIR
