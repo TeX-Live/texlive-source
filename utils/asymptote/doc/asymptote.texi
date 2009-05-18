@@ -1772,15 +1772,16 @@ length(z);
 @end example
 returns the result 5. A synonym for @code{length(pair)} is @code{abs(pair)};
 
-@item real angle(pair z)
+@item real angle(pair z, bool warn=true)
 @cindex @code{angle}
 returns the angle of @code{z} in radians in the interval 
-[-@code{pi},@code{pi}];
+[-@code{pi},@code{pi}] or @code{0} if @code{warn} is @code{false} and
+@code{z=(0,0)} (rather than producing an error);
 
 @item real degrees(pair z, bool warn=true)
 @cindex @code{degrees}
 returns the angle of @code{z} in degrees in the interval [0,360)
-or @code{0} if @code{warn} is @code{false} and @code{z.x=z.y=0} (rather than
+or @code{0} if @code{warn} is @code{false} and @code{z=(0,0)} (rather than
 producing an error);
 
 @item pair unit(pair z)
@@ -1835,25 +1836,33 @@ Here are the built-in functions for triples:
 returns the length @code{|v|} of the vector @code{v}. 
 A synonym for @code{length(triple)} is @code{abs(triple)};
 
-@item real polar(triple v)
+@item real polar(triple v, bool warn=true)
 @cindex @code{polar}
-returns the colatitude of @code{v} measured from the @math{z} axis in radians;
+returns the colatitude of @code{v} measured from the @math{z} axis in radians
+or @code{0} if @code{warn} is @code{false} and @code{v=O} (rather than
+producing an error);
 
-@item real azimuth(triple v)
+@item real azimuth(triple v, bool warn=true)
 @cindex @code{azimuth}
-returns the longitude of @code{v} measured from the @math{x} axis in radians;
+returns the longitude of @code{v} measured from the @math{x} axis in radians
+or @code{0} if @code{warn} is @code{false} and @code{v.x=v.y=0} (rather than
+producing an error);
 
-@item real colatitude(triple v)
+@item real colatitude(triple v, bool warn=true)
 @cindex @code{colatitude}
-returns the colatitude of @code{v} measured from the @math{z} axis in degrees;
+returns the colatitude of @code{v} measured from the @math{z} axis in degrees
+or @code{0} if @code{warn} is @code{false} and @code{v=O} (rather than
+producing an error);
 
-@item real latitude(triple v)
+@item real latitude(triple v, bool warn=true)
 @cindex @code{latitude}
-returns the latitude of @code{v} measured from the @math{xy} plane in degrees;
+returns the latitude of @code{v} measured from the @math{xy} plane in degrees
+or @code{0} if @code{warn} is @code{false} and @code{v=O} (rather than
+producing an error);
 
 @item real longitude(triple v, bool warn=true)
 @cindex @code{longitude}
-returns the longitude of @code{v} measured from the @math{x} axis in degrees;
+returns the longitude of @code{v} measured from the @math{x} axis in degrees
 or @code{0} if @code{warn} is @code{false} and @code{v.x=v.y=0} (rather than
 producing an error);
 
@@ -3213,16 +3222,18 @@ by calling the @code{shipout} function:
 @anchor{shipout}
 @cindex @code{shipout}
 @verbatim
-void shipout(string prefix=defaultfilename, picture pic,
+void shipout(string prefix=defaultfilename, picture pic=currentpicture,
              orientation orientation=orientation,
-             string format="", bool wait=false, bool view=true);
-void shipout(string prefix=defaultfilename,
-             orientation orientation=orientation,
-             string format="", bool wait=false, bool view=true);
+             string format="", bool wait=false, bool view=true,
+             string options="", string script="",
+             projection P=currentprojection);
 @end verbatim
 @noindent
 The default output format, @code{PostScript}, may be changed
 with the @code{-f} or @code{-tex} command-line options.
+The @code{options}, @code{script}, and @code{projection} parameters
+are only relevant for 3D pictures.
+
 A @code{shipout()} command is added implicitly at file exit if no
 previous @code{shipout} commands have been executed.
 @cindex @code{orientation}
@@ -5988,11 +5999,11 @@ interpolation in @code{Asymptote}, as illustrated in the example
 This module, written by Philippe Ivaldi, provides an extensive set of
 geometry routines, including @code{perpendicular} symbols and a @code{triangle}
 structure. It is documented here:
-@url{http://piprim.tuxfamily.org/asymptote/geometry_en.pdf},
+@url{http://asymptote.sourceforge.net/geometry_en.pdf},
 including an extensive set of examples,
-@url{http://piprim.tuxfamily.org/asymptote/travaux/}, and an index:
+@url{http://piprim.tuxfamily.org/asymptote/geometry/index.html}, and an index:
 @quotation
-@url{http://piprim.tuxfamily.org/asymptote/travaux/modules/geometry_dev.asy.index.type.html}
+@url{http://piprim.tuxfamily.org/asymptote/geometry/modules/geometry.asy.index.type.html}
 @end quotation
 
 @node trembling
@@ -6001,7 +6012,7 @@ including an extensive set of examples,
 This module, written by Philippe Ivaldi and illustrated in the example
 @code{floatingdisk.asy}, allows one to draw wavy lines, as if drawn by
 hand. Further examples are posted at 
-@url{http://piprim.tuxfamily.org/asymptote/modules}
+@url{http://piprim.tuxfamily.org/asymptote/trembling/index.html}
 
 @node stats
 @section @code{stats}
@@ -7103,9 +7114,10 @@ as illustrated in this simple example of a flow field:
 @cindex @code{vectorfield}
 @verbatim
 picture vectorfield(path vector(pair), pair a, pair b,
-                    int nx=nmesh, int ny=nx, 
-                    bool autoscale=true, bool truesize=false,
-                    pen p=currentpen, arrowbar arrow=Arrow);
+                    int nx=nmesh, int ny=nx, bool truesize=false,
+                    real maxlength=truesize ? 0 : maxlength(a,b,nx,ny),
+                    bool cond(pair z)=null, pen p=currentpen,
+                    arrowbar arrow=Arrow, margin margin=PenMargin)
 @end verbatim
 as illustrated in this example:
 @verbatiminclude vectorfield.asy
@@ -7652,25 +7664,22 @@ positive @math{y} axis is drawn at this angle in degrees.
 @cindex @code{up}
 @cindex @code{target}
 @cindex @code{showtarget}
-@cindex @code{autoadjust}
 @cindex @code{center}
-@item orthographic(triple camera, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool autoadjust=true, bool center=false)
+@item orthographic(triple camera, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool center=false)
 This projects from three to two dimensions using the view as seen at a point
 infinitely far away in the direction @code{unit(camera)}, orienting the camera
 so that, if possible, the vector @code{up} points upwards. Parallel
 lines are projected to parallel lines. The bounding volume is expanded
-to include @code{target} if @code{showtarget=true}. If @code{autoadjust=true},
-the camera will automatically be adjusted to lie outside the bounding volume
-for all possible interactive rotations about @code{target}.
+to include @code{target} if @code{showtarget=true}.
 If @code{center=true}, the target will be adjusted to the center of the 
 bounding volume. 
 
-@item orthographic(real x, real y, real z, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool autoadjust=true, bool center=false)
+@item orthographic(real x, real y, real z, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool center=false)
 This is equivalent to 
-@code{orthographic((x,y,z),up,target,showtarget,autoadjust,
-center)}.
+@code{orthographic((x,y,z),up,target,showtarget,center)}.
 
-@item perspective(triple camera, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool autoadjust=true, bool center=false)
+@cindex @code{autoadjust}
+@item perspective(triple camera, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool autoadjust=true, @*@ @ @ @ @ @ @ @ @ @ @ @ bool center=autoadjust)
 @cindex @code{perspective}
 @cindex @code{NURBS}
 This projects from three to two dimensions, taking account of
@@ -7685,7 +7694,7 @@ for all possible interactive rotations about @code{target}.
 If @code{center=true}, the target will be adjusted to the center of the 
 bounding volume. 
 
-@item perspective(real x, real y, real z, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool autoadjust=true, bool center=false)
+@item perspective(real x, real y, real z, triple up=Z, triple target=O, @*@ @ @ @ @ @ @ @ @ @ @ @ bool showtarget=true, bool autoadjust=true, @*@ @ @ @ @ @ @ @ @ @ @ @ bool center=autoadjust)
 This is equivalent to @code{perspective((x,y,z),up,target,showtarget,
 autoadjust,center)}.
 @end table
@@ -8054,6 +8063,19 @@ of a Gaussian surface:
 @noindent
 A mesh can be drawn without surface filling by specifying @code{nullpen}
 for the surfacepen.
+
+A vector field of @code{nu}@math{\times}@code{nv} arrows on a
+parametric surface @code{f} over @code{box(a,b)} can be drawn with the routine
+@cindex @code{vectorfield3}
+@verbatim
+picture vectorfield(path3 vector(pair v), triple f(pair z), pair a, pair b,
+                    int nu=nmesh, int nv=nu, bool truesize=false,
+                    real maxlength=truesize ? 0 : maxlength(f,a,b,nu,nv),
+                    bool cond(pair z)=null, pen p=currentpen,
+                    arrowbar3 arrow=Arrow3, margin3 margin=PenMargin3)
+@end verbatim
+as illustrated in the examples @code{vectorfield3.asy} and
+@code{vectorfieldsphere.asy}.
 
 @node grid3
 @section @code{grid3}

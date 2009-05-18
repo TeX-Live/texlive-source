@@ -1,3 +1,15 @@
+Release Notes for Version 1.73
+
+An alternative OpenGL background color can now be specified with the pen 
+currentlight.background. A new textpath command allows 3D labels to be
+drawn with settings.texengine="none". Minor bugs in the geometry package were
+fixed. The interface to the vectorfield routines was improved.
+The autoadjust parameter was removed from orthographic projections;
+autoadjust=false is now always respected for perspective projections.
+Optional warn=true arguments were added to the polar, azimuth, colatitude,
+and latitude functions. A call to reportError interrupts execution again.
+A segmentation fault that can occur after file mode errors was fixed. 
+
 Release Notes for Version 1.72
 
 PostScript calculator function shading was implemented. Interactive camera

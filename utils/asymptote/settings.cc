@@ -105,7 +105,7 @@ string defaultPDFViewer="AcroRd32.exe";
 string defaultGhostscript="gswin32c.exe";
 string defaultPython="python.exe";
 string defaultDisplay="imdisplay";
-string systemDir;
+string systemDir=ASYMPTOTE_SYSDIR;
 const string docdir=".";
 const string dirsep="\\";
   
@@ -169,7 +169,9 @@ void queryRegistry()
     defaultPDFViewer;
   defaultPSViewer=getEntry("Ghostgum/GSview/*")+"\\gsview\\"+defaultPSViewer;
   defaultPython=getEntry("Python/PythonCore/*/InstallPath/@")+defaultPython;
-  systemDir=getEntry("Microsoft/Windows/CurrentVersion/App Paths/Asymptote/Path");
+  if(!systemDir.empty()) // An empty systemDir indicates a TeXLive build
+    systemDir=
+      getEntry("Microsoft/Windows/CurrentVersion/App Paths/Asymptote/Path");
   defaultXasy=asyInstallDir+"\\"+defaultXasy;
 }
   
@@ -513,7 +515,7 @@ struct userSetting : public argumentSetting {
 string GetEnv(string s, string Default) {
   transform(s.begin(), s.end(), s.begin(), toupper);        
   string t=Getenv(("ASYMPTOTE_"+s).c_str(),msdos);
-  return t != "" ? string(t) : Default;
+  return t.empty() ? Default : t;
 }
   
 struct envSetting : public stringSetting {
@@ -862,7 +864,7 @@ void resetOptions()
 {
   for(optionsMap_t::iterator opt=optionsMap.begin(); opt != optionsMap.end();
       ++opt)
-    if(opt->first != "config" && opt->first != "dir")
+    if(opt->first != "config" && opt->first != "dir" && opt->first != "sysdir")
       opt->second->reset();
 }
   
@@ -993,6 +995,7 @@ void initSettings() {
   addOption(new boolSetting("embed", 0, "Embed rendered preview image", true));
   addOption(new boolSetting("auto3D", 0, "Automatically activate 3D scene",
                             true));
+
   addOption(new boolSetting("inlineimage", 0,
                             "Generate inline embedded image"));
   addOption(new boolSetting("parseonly", 'p', "Parse file"));
@@ -1108,6 +1111,13 @@ void initSettings() {
   addOption(new envSetting("papertype", "letter"));
   addOption(new envSetting("dir", ""));
   addOption(new envSetting("sysdir", systemDir));
+  addOption(new envSetting("textcommand",
+                           "sh -c 'groff -e -P-b16 $1 > $2' groff "));
+  addOption(new envSetting("textextension", "roff"));
+  addOption(new envSetting("textoutputtype", "ps"));
+  addOption(new envSetting("textprologue", ".EQ\ndelim $$\n.EN\n"));
+  addOption(new envSetting("textinitialfont", ".fam T\n.ps 12"));
+  addOption(new envSetting("textepilogue", ""));
 }
 
 // Access the arguments once options have been parsed.

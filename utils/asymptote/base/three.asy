@@ -216,7 +216,7 @@ pair dir(triple v, triple dir, projection P)
 // perpendicular to the vector camera-target.
 projection perspective(triple camera, triple up=Z, triple target=O,
                        bool showtarget=true, bool autoadjust=true,
-                       bool center=false)
+                       bool center=autoadjust)
 {
   if(camera == target)
     abort("camera cannot be at target");
@@ -228,16 +228,15 @@ projection perspective(triple camera, triple up=Z, triple target=O,
 
 projection perspective(real x, real y, real z, triple up=Z, triple target=O,
                        bool showtarget=true, bool autoadjust=true,
-                       bool center=false)
+                       bool center=autoadjust)
 {
   return perspective((x,y,z),up,target,showtarget,autoadjust,center);
 }
 
 projection orthographic(triple camera, triple up=Z, triple target=O,
-                        bool showtarget=true,  bool autoadjust=true,
-                        bool center=false)
+                        bool showtarget=true, bool center=false)
 {
-  return projection(camera,up,target,showtarget,autoadjust,center,
+  return projection(camera,up,target,showtarget,center=center,
                     new transformation(triple camera, triple up,
                                        triple target) {
                       return transformation(look(camera,up,target));});
@@ -245,9 +244,9 @@ projection orthographic(triple camera, triple up=Z, triple target=O,
 
 projection orthographic(real x, real y, real z, triple up=Z,
                         triple target=O, bool showtarget=true,
-                        bool autoadjust=true, bool center=false)
+                        bool center=false)
 {
-  return orthographic((x,y,z),up,target,showtarget,autoadjust,center);
+  return orthographic((x,y,z),up,target,showtarget,center=center);
 }
 
 projection oblique(real angle=45)
@@ -2176,9 +2175,8 @@ private string format(triple v, string sep=" ")
   return format(v.x)+sep+format(v.y)+sep+format(v.z);
 }
 
-private string format(pen p)
+private string format(real[] c)
 {
-  real[] c=colors(rgb(p));
   return format((c[0],c[1],c[2]));
 }
 
@@ -2256,8 +2254,7 @@ string embed3D(string label="", string text=label, string prefix,
                frame f, string format="",
                real width=0, real height=0, real angle=30,
                string options="", string script="",
-               pen background=white, light light=currentlight,
-               projection P=currentprojection)
+               light light=currentlight, projection P=currentprojection)
 {
   if(!prc(format) || Embed == null) return "";
 
@@ -2302,7 +2299,7 @@ string embed3D(string label="", string text=label, string prefix,
     ",3Dcoo="+format(P.target/cm)+
     ",3Droll="+format(roll)+
     ",3Droo="+format(abs(v))+
-    ",3Dbg="+format(background);
+    ",3Dbg="+format(light.background());
   if(options != "") options3 += ","+options;
   if(name != "") options3 += ",3Djscript="+stripdirectory(name);
 
@@ -2315,14 +2312,13 @@ object embed(string label="", string text=label,
              frame f, string format="",
              real width=0, real height=0, real angle=30,
              string options="", string script="", 
-             pen background=white, light light=currentlight,
-             projection P=currentprojection)
+             light light=currentlight, projection P=currentprojection)
 {
   object F;
 
   if(is3D(format))
     F.L=embed3D(label,text,prefix,f,format,width,height,angle,options,script,
-                background,light,P);
+                light,P);
   else
     F.f=f;
   return F;
@@ -2333,7 +2329,7 @@ object embed(string label="", string text=label,
              picture pic, string format="",
              real xsize=pic.xsize, real ysize=pic.ysize,
              bool keepAspect=pic.keepAspect, bool view=true, string options="",
-             string script="", real angle=0, pen background=white,
+             string script="", real angle=0,
              light light=currentlight, projection P=currentprojection)
 {
   object F;
@@ -2348,7 +2344,7 @@ object embed(string label="", string text=label,
 
   projection P=P.copy();
 
-  if(!P.autoadjust && !P.absolute && P.showtarget)
+  if(!P.absolute && P.showtarget)
     draw(pic,P.target,nullpen);
 
   transform3 t=pic.scaling(xsize3,ysize3,zsize3,keepAspect,warn);
@@ -2359,18 +2355,11 @@ object embed(string label="", string text=label,
 
   if(!P.absolute) {
     P=t*P;
-    if(P.autoadjust || P.center) {
+    if(P.center) {
       bool recalculate=false;
-      if(P.center || P.target.x < m.x ||
-         P.target.y < m.y ||
-         P.target.z < m.z ||
-         P.target.x > M.x ||
-         P.target.y > M.y ||
-         P.target.z > M.z) {
-        P.target=0.5*(m+M);
-        recalculate=true;
-        if(!P.center) write("adjusting target to ",tinv*P.target);
-      }
+      triple target=0.5*(m+M);
+      P.target=target;
+      recalculate=true;
       if(recalculate) P.calculate();
     }
     if(P.autoadjust || P.infinity) 
@@ -2421,9 +2410,7 @@ object embed(string label="", string text=label,
       if(P.autoadjust || P.infinity)
         adjusted=adjusted | P.adjust(min3(f),max3(f));
 
-      if(adjusted && !P.infinity)
-        write("adjusting camera to ",tinv*P.camera);
-
+      triple target=P.target;
       modelview=P.modelview();
       f=modelview*f;
       P=modelview*P;
@@ -2436,9 +2423,11 @@ object embed(string label="", string text=label,
         triple s=(-0.5(m.x+M.x),-0.5*(m.y+M.y),0);
         f=shift(s)*f;  // Eye will be at (0,0,0).
       } else {
+        transform3 T=identity4;
         // Choose the angle to be just large enough to view the entire image:
+        if(angle == 0) angle=P.angle;
         int maxiterations=100;
-        if(is3D && angle == 0 && !P.infinity) {
+        if(is3D && angle == 0) {
           real h=-0.5*P.target.z;
           pair r,R;
           real diff=realMax;
@@ -2448,20 +2437,45 @@ object embed(string label="", string text=label,
             r=minratio(f);
             R=maxratio(f);
             pair lasts=s;
-            s=r+R;
-            transform3 t=shift(h*s.x,h*s.y,0);
-            f=t*f;
-            P=t*P;
+            if(P.autoadjust) {
+              s=r+R;
+              transform3 t=shift(h*s.x,h*s.y,0);
+              f=t*f;
+              T=t*T;
+              adjusted=true;
+            }
             diff=abs(s-lasts);
             ++i;
           } while (diff > angleprecision && i < maxiterations);
-              
           real aspect=width > 0 ? height/width : 1;
-          angle=anglefactor*max(aTan(-r.x*aspect)+aTan(R.x*aspect),
-                                aTan(-r.y)+aTan(R.y));
+          real rx=-r.x*aspect;
+          real Rx=R.x*aspect;
+          real ry=-r.y;
+          real Ry=R.y;
+          if(!P.autoadjust) {
+            if(rx > Rx) Rx=rx;
+            else rx=Rx;
+            if(ry > Ry) Ry=ry;
+            else ry=Ry;
+          }
+          
+          angle=anglefactor*max(aTan(rx)+aTan(Rx),aTan(ry)+aTan(Ry));
           if(viewportmargin.y != 0)
             angle=2*aTan(Tan(0.5*angle)-viewportmargin.y/P.target.z);
+          
+          modelview=T*modelview;
         }
+        if(settings.verbose > 0) {
+          transform3 inv=inverse(modelview);
+          if(adjusted) 
+            write("adjusting camera to ",tinv*inv*P.camera);
+            target=inv*P.target;
+        }
+        P=T*P;
+      }
+      if(settings.verbose > 0) {
+        if(P.center || (!P.infinity && P.autoadjust))
+          write("adjusting target to ",tinv*target);
       }
     }
     
@@ -2483,7 +2497,6 @@ object embed(string label="", string text=label,
         modelview=P.modelview();
         f=modelview*f;
         P=modelview*P;
-        angle=P.angle;
         m=min3(f);
         M=max3(f);
         real r=0.5*abs(M-m);
@@ -2510,7 +2523,7 @@ object embed(string label="", string text=label,
       shipout3(prefix,f,preview ? nativeformat() : format,
                width+2*viewportmargin.x,height+2*viewportmargin.y,
                P.infinity ? 0 : angle,m,M,
-               tinv*inverse(modelview)*shift(0,0,zcenter),
+               tinv*inverse(modelview)*shift(0,0,zcenter),light.background(),
                P.absolute ? (modelview*light).position : light.position,
                light.diffuse,light.ambient,light.specular,
                light.viewport,view && !preview);
@@ -2526,7 +2539,7 @@ object embed(string label="", string text=label,
       image=graphic(image);
     }
     if(prc) F.L=embed3D(label,text=image,prefix,f,format,
-                        width,height,angle,options,script,background,light,
+                        width,height,angle,options,script,light,
                         P.absolute ? P : Q);
   }
 
@@ -2562,13 +2575,15 @@ currentpicture.fitter=new frame(string prefix, picture pic, string format,
       if(!keep) file3.push(prefix+"."+format);
     }
     object F=embed(prefix=prefix,pic,format,xsize,ysize,keepAspect,view,
-                   options,script,P);
+                   options,script,currentlight,P);
     if(prc)
       label(f,F.L);
     else {
-      if(settings.render == 0)
+      if(settings.render == 0) {
         add(f,F.f);
-      else if(!view)
+        if(currentlight.background != nullpen)
+          box(f,currentlight.background,Fill,above=false);
+      } else if(!view)
         label(f,graphic(prefix));
     }
   }

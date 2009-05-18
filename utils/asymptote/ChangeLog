@@ -1,4 +1,188 @@
 ------------------------------------------------------------------------
+r4285 | jcbowman | 2009-05-18 02:02:35 -0600 (Mon, 18 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Allow sysdir to be overridden on the command line.
+
+------------------------------------------------------------------------
+r4284 | jcbowman | 2009-05-18 00:52:28 -0600 (Mon, 18 May 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Fix texlive build under MSWindows
+------------------------------------------------------------------------
+r4283 | jcbowman | 2009-05-17 23:10:36 -0600 (Sun, 17 May 2009) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_boxes.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_light.asy
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/builtin.h
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/glrender.h
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/picture.h
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+
+Support user-specified background color in OpenGL renderer via light
+constructor.
+
+------------------------------------------------------------------------
+r4282 | jcbowman | 2009-05-17 21:18:17 -0600 (Sun, 17 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/pen.h
+   M /trunk/asymptote/settings.cc
+
+Add textinitialfont environment variable.
+
+------------------------------------------------------------------------
+r4281 | jcbowman | 2009-05-17 11:41:49 -0600 (Sun, 17 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/camperror.cc
+   M /trunk/asymptote/psfile.cc
+
+Call reportFatal in psfile.close().
+
+------------------------------------------------------------------------
+r4280 | jcbowman | 2009-05-17 11:22:56 -0600 (Sun, 17 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/camperror.cc
+   M /trunk/asymptote/psfile.cc
+
+Don't return after reportError.
+
+------------------------------------------------------------------------
+r4279 | jcbowman | 2009-05-17 11:08:10 -0600 (Sun, 17 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/runtime.in
+
+Add warn=true arguments to polar, azimuth, colatitude, and latitude.
+
+------------------------------------------------------------------------
+r4278 | jcbowman | 2009-05-17 01:18:07 -0600 (Sun, 17 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/pen.h
+
+Set default font to groff 12pt Times Roman when settings.tex="none".
+
+------------------------------------------------------------------------
+r4277 | jcbowman | 2009-05-17 00:52:19 -0600 (Sun, 17 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_Label.asy
+   A /trunk/asymptote/examples/textpath.asy
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+
+Add pen support to textpath and example.
+
+------------------------------------------------------------------------
+r4276 | jcbowman | 2009-05-17 00:49:39 -0600 (Sun, 17 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fileio.h
+
+Fix segmentation fault after mode error.
+
+------------------------------------------------------------------------
+r4275 | jcbowman | 2009-05-16 23:10:29 -0600 (Sat, 16 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/base/plain_Label.asy
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+
+Add textpath command, contributed by Michail Vidiassov.
+
+------------------------------------------------------------------------
+r4274 | jcbowman | 2009-05-16 15:21:49 -0600 (Sat, 16 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/examples/condor.asy
+
+Update links.
+
+------------------------------------------------------------------------
+r4273 | jcbowman | 2009-05-16 10:16:47 -0600 (Sat, 16 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/flowchartdemo.asy
+
+Restore example.
+
+------------------------------------------------------------------------
+r4272 | pivaldi | 2009-05-16 08:04:32 -0600 (Sat, 16 May 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/trembling.asy
+
+trembling.asy: change licence GPL to LGPL.
+------------------------------------------------------------------------
+r4271 | pivaldi | 2009-05-16 05:07:49 -0600 (Sat, 16 May 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+geometry.asy: put the compatibility routines
+------------------------------------------------------------------------
+r4270 | pivaldi | 2009-05-16 04:52:59 -0600 (Sat, 16 May 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Fix minor bugs in geometry.asy. Change licence GPL to LGPL.
+------------------------------------------------------------------------
+r4269 | jcbowman | 2009-05-16 01:23:23 -0600 (Sat, 16 May 2009) | 6 lines
+Changed paths:
+   M /trunk/asymptote/base/graph.asy
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/doc/FAQ/asy-faq.bfnn
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/cube.asy
+   M /trunk/asymptote/doc/flowchartdemo.asy
+   M /trunk/asymptote/examples/vectorfield3.asy
+   A /trunk/asymptote/examples/vectorfieldsphere.asy
+
+Use center=false by default again for orthographic projections.
+
+Improve vectorfield routines.
+
+Update documentation and FAQ.
+
+------------------------------------------------------------------------
+r4268 | jcbowman | 2009-05-15 14:32:28 -0600 (Fri, 15 May 2009) | 6 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/cube.asy
+   M /trunk/asymptote/examples/condor.asy
+   M /trunk/asymptote/examples/teapot.asy
+
+Respect autoadjust=false.
+
+Remove autoadjust parameter from orthographic projections.
+
+Center target by default, unless autoadjust=false.
+
+------------------------------------------------------------------------
+r4267 | jcbowman | 2009-05-15 08:55:36 -0600 (Fri, 15 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update documentation of shipout.
+
+------------------------------------------------------------------------
+r4266 | jcbowman | 2009-05-15 08:31:21 -0600 (Fri, 15 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.73svn.
+
+------------------------------------------------------------------------
+r4265 | jcbowman | 2009-05-14 17:26:51 -0600 (Thu, 14 May 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+
+Increment version to 1.73svn.
+------------------------------------------------------------------------
 r4264 | jcbowman | 2009-05-14 16:03:48 -0600 (Thu, 14 May 2009) | 2 lines
 Changed paths:
    M /trunk/asymptote/configure.ac
