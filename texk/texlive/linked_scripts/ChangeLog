@@ -1,3 +1,7 @@
+2009-05-18  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_script_SCRIPTS): add ulqda.pl.
+
 2009-05-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): pdfthumb.texlua and

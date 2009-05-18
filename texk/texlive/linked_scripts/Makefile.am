@@ -87,6 +87,7 @@ nobase_dist_script_SCRIPTS = \
 	texdirflatten/texdirflatten \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
+	ulqda/ulqda.pl \
 	vpe/vpe.pl
 
 ## The idea is to install the scripts themselves in texmf*/scripts, and
