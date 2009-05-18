@@ -36,10 +36,8 @@ subdir = user-commands
 DIST_COMMON = $(am__dist_bin_SCRIPTS_DIST) $(dist_noinst_SCRIPTS) \
 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_latex.m4 \
-	$(top_srcdir)/m4/ac_prog_pdflatex.m4 \
-	$(top_srcdir)/m4/tl_msg_error.m4 $(top_srcdir)/ac/xindy.ac \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/tl_msg_error.m4 \
+	$(top_srcdir)/ac/xindy.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -66,6 +64,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CLISP = @CLISP@
+CLISP_LIB = @CLISP_LIB@
 CONVERT_FROM_UTF8 = @CONVERT_FROM_UTF8@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
@@ -141,7 +140,6 @@ htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
-latex = @latex@
 libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
@@ -150,7 +148,6 @@ mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
-pdflatex = @pdflatex@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@

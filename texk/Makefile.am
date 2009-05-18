@@ -22,13 +22,13 @@ DISTCLEANFILES = $(noinst_DATA)
 all-local: subtexk
 
 .PHONY: subtexk
-## We must configure all texk subdirs since 'make dist' needs the Makefile.
-## For those not required for the current set of configure options
-## we append '--disable-build' so they can skip tests that would
-## fail because, e.g., some libraries were not built.
-
-## Sequentially configure and optionally build all texk subdirs;
-## code inspired by automake's way to handle recursive targets.
+# We must configure all texk subdirs since 'make dist' needs the Makefile.
+# For those not required for the current set of configure options
+# we append '--disable-build' so they can skip tests that would
+# fail because, e.g., some required libraries were not built.
+#
+# Sequentially configure and optionally build all texk subdirs;
+# code inspired by automake's way to handle recursive targets.
 subtexk: $(noinst_DATA)
 	@failcom='exit 1'; \
 	for f in x $$MAKEFLAGS; do \

@@ -18,6 +18,18 @@ EXTRA_DIST = $(GD_TREE)
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(GD_TREE) -name .svn`
+	rm -f $(distdir)/$(GD_TREE)/config/config.guess \
+	  $(distdir)/$(GD_TREE)/config/config.rpath \
+	  $(distdir)/$(GD_TREE)/config/config.sub \
+	  $(distdir)/$(GD_TREE)/config/depcomp \
+	  $(distdir)/$(GD_TREE)/config/install-sh \
+	  $(distdir)/$(GD_TREE)/config/ltmain.sh \
+	  $(distdir)/$(GD_TREE)/config/missing \
+	  $(distdir)/$(GD_TREE)/config/mkinstalldirs \
+	  $(distdir)/$(GD_TREE)/depcomp \
+	  $(distdir)/$(GD_TREE)/install-sh \
+	  $(distdir)/$(GD_TREE)/missing \
+	  $(distdir)/$(GD_TREE)/mkinstalldirs 
 
 INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 

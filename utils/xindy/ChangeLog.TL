@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 ======================================================
 
+2009-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, ac/xindy.ac: Reorganize for dual use:
+	xindy in TL and standalone xindy. Adjust enable/disable.
+
 2009-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check for PERL, LATEX, and PDFLATEX.

@@ -24,9 +24,16 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
+dnl Produce different results for standalone xindy or xindy as part of
+dnl the TeX Live (TL) tree; first distinguish these two cases.
+m4_syscmd([test -f ../../texk/kpathsea/doc/kpathsea.texi])[]dnl
+m4_if(m4_sysval, [0], [m4_define([kpse_TL], [])])[]dnl
+
 AC_PREREQ([2.63])
 AC_INIT([xindy], [2.3], [xindy-discuss@lists.sourceforge.net])
+m4_ifdef([kpse_TL], [dnl For xindy as part of the TL tree
 AC_CONFIG_AUX_DIR([../../build-aux])
+])
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
@@ -41,10 +48,29 @@ AC_CHECK_PROGS([PERL], [perl], [no])
 AC_CHECK_PROGS([LATEX], [latex elatex lambda], [no])
 AC_CHECK_PROGS([PDFLATEX], [pdflatex], [no])
 
-# Include onfigure options that also appear at the top-level of the TL tree.
-m4_include([ac/xindy.ac])
+m4_ifdef([kpse_TL], [dnl For xindy as part of the TL tree
+AC_MSG_NOTICE([Configuring xindy as part of the TeX Live tree])
+# Include configure options that also appear at the top-level of the TL tree.
+dnl We use m4_sinclude because the standalone version has no such file.
+m4_sinclude([ac/xindy.ac])
+test "x$enable_xindy_rules" = xyes || enable_xindy_rules=no
+test "x$enable_xindy_docs" = xyes || enable_xindy_docs=no
+], [dnl For standalone xindy
+AC_MSG_NOTICE([Configuring standalone xindy])
+AC_ARG_ENABLE([xindy-rules],
+              AS_HELP_STRING([--disable-xindy-rules],
+                             [do not build and install make-rules package]))[]dnl
+AC_ARG_ENABLE([xindy-docs],
+              AS_HELP_STRING([--disable-xindy-docs],
+                             [do not build and install documentation]))[]dnl
+AC_ARG_WITH([xindy-recode],
+            AS_HELP_STRING([--with-xindy-recode],
+                           [Use `recode' instead of `iconv' (default is NO)]))[]dnl
+test "x$enable_xindy_rules" = xno || enable_xindy_rules=yes
+test "x$enable_xindy_docs" = xno || enable_xindy_docs=yes
+])
 
-# This option haqs been renamed --enable-native-texlive-build
+# This option has been renamed --enable-native-texlive-build
 # but should only be inherited and not specified here
 # AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
 
@@ -64,29 +90,23 @@ if test "x$enable_native_texlive_build" = xyes; then
   datadir="$prefix/texmf"
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
-  if test -z "$enable_xindy_docs"; then
-    AC_MSG_NOTICE([Disabling docs building])
-    enable_xindy_docs=no;
-  fi
-#  if test -z "$enable_xindy_make_rules"; then
-#    AC_MSG_NOTICE([Disabling make-rules building])
-#    enable_xindy_make_rules=no;
-#  fi
-else
-  enable_native_texlive_build=no
 fi
 AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_native_texlive_build" = xyes])
 
-if test "x$enable_xindy_make_rules" != xno; then
-    AC_PROG_LATEX
+if test "x$enable_xindy_rules" != xno; then
+  if text "x$PERL" = xno; then
+    TL_MSG_ERROR([Unable to find a Perl application, required to build rules])
+  fi
+  if text "x$LATEX" = xno; then
+    TL_MSG_ERROR([Unable to find a LaTeX application, required to build rules])
+  fi
+  if test "x$enable_xindy_docs" != xno; then
+    if text "x$PDFLATEX" = xno; then
+      TL_MSG_ERROR([Unable to find a pdfLaTeX application, required to build rules and docs])
+    fi
+  fi
 fi
-
-AM_CONDITIONAL([BUILDRULES], [test "x$enable_xindy_make_rules" != xno])
-
-if test "x$enable_xindy_docs" != xno; then
-    AC_PROG_PDFLATEX
-fi
-
+AM_CONDITIONAL([BUILDRULES], [test "x$enable_xindy_rules" != xno])
 AM_CONDITIONAL([BUILDDOCS], [test "x$enable_xindy_docs" != xno])
 
 AC_CHECK_PROGS([CLISP], [clisp], [no])
@@ -96,15 +116,14 @@ Please install clisp or specify the clisp executable location
 via the CLISP=... configure argument.])
 else
   AC_MSG_CHECKING([for clisp library directory])
-  CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`
+  # Remove trailing slash (ugly) or backslash (harmful substitution).
+  CLISP_LIB=`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))' | sed -e 's,[\\/]$,,'`
   AC_MSG_RESULT([$CLISP_LIB])
   test -f "$CLISP_LIB/clisp-link" || TL_MSG_ERROR([clisp is not usable: expected file is not found: $CLISP_LIB/clisp-link])
   test -d "$CLISP_LIB/full" || TL_MSG_ERROR([clisp is not usable: expected directory is not found: $CLISP_LIB/full])
   test -d "$CLISP_LIB/linkkit" || TL_MSG_ERROR([clisp is not usable: expected directory is not found: $CLISP_LIB/linkkit])
 fi
 AC_SUBST(CLISP_LIB)
-dnl CLISP_LIB may end with a backslash (on mingw)
-_AM_SUBST_NOTMAKE(CLISP_LIB)
 
 if test "x$EXEEXT" = "x.exe"; then
   XINDY_RUN=xindy-lisp.exe

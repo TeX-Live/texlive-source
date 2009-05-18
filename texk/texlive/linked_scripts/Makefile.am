@@ -11,19 +11,19 @@ bin_SCRIPTS =
 
 ## Copies of these scripts exist here for the sake of avoiding
 ## dangling symlinks produced by `make install'.
-## The instances in texmf* or are the masters (except when it is CTAN).
+## The instances in texmf* are the masters (except when it is CTAN).
 
 scriptxdir = ${prefix}/texmf/scripts
 nobase_dist_scriptx_SCRIPTS = \
 	a2ping/a2ping.pl \
 	epstopdf/epstopdf.pl \
+	getnonfreefonts/getnonfreefonts.pl \
 	pkfix/pkfix.pl \
 	ps2eps/ps2eps.pl \
 	simpdftex/simpdftex \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
 	texdoc/texdoc.tlu \
-	getnonfreefonts/getnonfreefonts.pl \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl
 

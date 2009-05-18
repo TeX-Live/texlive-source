@@ -36,7 +36,7 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure ChangeLog \
 	build-aux/config.guess build-aux/config.sub build-aux/depcomp \
 	build-aux/install-sh build-aux/ltmain.sh build-aux/missing \
-	build-aux/texinfo.tex build-aux/ylwrap
+	build-aux/mkinstalldirs build-aux/texinfo.tex build-aux/ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/m4/kpse-cxx-hack.m4 \
@@ -130,7 +130,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
-mkinstalldirs = $(install_sh) -d
+mkinstalldirs = $(SHELL) $(top_srcdir)/build-aux/mkinstalldirs
 CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
@@ -289,6 +289,7 @@ EXTRA_DIST = \
 	README.cross \
 	README.layout \
 	build-aux/README.TL \
+	build-aux/mkinstalldirs \
 	m4/README
 
 @build_kpathsea_FALSE@SUBDIRS = libs utils texk
@@ -736,7 +737,7 @@ dist-hook:
 # run texlinks here since the binaries won't be there 
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
-world: install-strip
+world: all install-strip
 	echo "top-level make $@: running texlinks ..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 	@echo "make $@ done."

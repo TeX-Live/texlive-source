@@ -16,6 +16,7 @@ EXTRA_DIST = \
 	README.cross \
 	README.layout \
 	build-aux/README.TL \
+	build-aux/mkinstalldirs \
 	m4/README
 
 # just in case a subdirectory has added directories
@@ -34,7 +35,7 @@ SUBDIRS += libs utils texk
 # run texlinks here since the binaries won't be there 
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
-world: install-strip
+world: all install-strip
 	echo "top-level make $@: running texlinks ..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 ##

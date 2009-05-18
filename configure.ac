@@ -85,6 +85,7 @@ fi
 
 dnl We check that all required system libraries are usable, and may
 dnl reduce frustration if anything is wrong by doing this first.
+KPSE_SAVE_FLAGS
 syslib_status=yes
 KPSE_ALL_SYSTEM_FLAGS
 KPSE_FOR_PKGS([syslib],
@@ -93,6 +94,7 @@ KPSE_FOR_PKGS([syslib],
 if test "x$syslib_status" = xno; then
   AC_MSG_ERROR([some requested system libraries failed])
 fi
+KPSE_RESTORE_FLAGS
 
 AS_IF([test "x$cross_compiling:$enable_xetex" = xyes:yes],
       [AC_MSG_ERROR([Sorry, can not cross compile icu libraries required for XeTeX])])

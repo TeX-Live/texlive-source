@@ -593,9 +593,17 @@ icu-build/Makefile: $(noinst_DATA)
 	  echo "make: running $(SHELL) $$cmd" && \
 	  eval $(SHELL) $$cmd)
 
-.PHONY: icubuild
-icubuild: icu-build/Makefile
+.PHONY: icubuild check-makeflags
+icubuild: icu-build/Makefile check-makeflags
 	cd icu-build && $(MAKE) $(AM_MAKEFLAGS) all
+check-makeflags:
+	@for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    CFLAGS=* | CPPFLAGS=* | CXXFLAGS=* | LDFLAGS=*) \
+	      echo "Sorry, the icu-xetex build systems disallows \`make $$f'."; \
+	      exit 1;; \
+	  esac; \
+	done
 
 distclean-local:
 	rm -rf icu-build
