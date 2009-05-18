@@ -39,10 +39,20 @@ recorder_start()
     /* Alas, while we might want to use mkstemp it is not portable.
        So we have to be content with using a default name... */
     string cwd;
+    
     recorder_name = (string)xmalloc(strlen(kpse_program_name)+5);
     strcpy(recorder_name, kpse_program_name);
     strcat(recorder_name, ".fls");
+    
+    /* If an output directory was specified, use it instead of cwd.  */
+    if (output_directory) {
+      string temp = concat3(output_directory, DIR_SEP_STRING, recorder_name);
+      free(recorder_name);
+      recorder_name = temp;
+    }
+    
     recorder_file = xfopen(recorder_name, FOPEN_W_MODE);
+    
     cwd = xgetcwd();
     fprintf(recorder_file, "PWD %s\n", cwd);
     free(cwd);

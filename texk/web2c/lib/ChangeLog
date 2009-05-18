@@ -1,3 +1,9 @@
+2009-05-18  Karl Berry  <karl@tug.org>
+
+	* openclose.c (recorder_start): use output_directory for the .fls
+	  file, if it has been specified with --output-directory.
+	  metapost mail from Nicola, 16 May 2009 13:41:36.
+
 2009-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: remove all references to Omega, eOmega, and pdfeTeX.
