@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.h,v 1.4 2004/03/11 11:50:25 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.h,v 1.5 2009/03/24 02:07:48 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -37,6 +37,8 @@
 
 extern int png_include_image (pdf_ximage *ximage, FILE *file);
 extern int check_for_png     (FILE *file);
+extern int png_get_bbox (FILE *fp, long *width, long *height,
+			 double *xdensity, double *ydensity);
 
 #endif
 

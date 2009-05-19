@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.10 2008/02/12 18:44:40 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.c,v 1.13 2009/03/27 23:47:01 matthias Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -37,6 +37,7 @@
 #endif /* WIN32 */
 
 #include "system.h"
+#include "system.h"
 #include "mem.h"
 #include "error.h"
 #include "pdfobj.h"
@@ -49,7 +50,7 @@
 #define MAX_PWD_LEN 128
 
 static unsigned char algorithm, revision, key_size;
-static unsigned long permission;
+static long permission;
 
 static unsigned char key_data[MAX_KEY_LEN], id_string[MAX_KEY_LEN];
 static unsigned char opwd_string[MAX_STR_LEN], upwd_string[MAX_STR_LEN];
@@ -389,10 +390,10 @@ void pdf_enc_set_passwd (unsigned bits, unsigned perm, char *dviname, char *pdfn
 
   key_size = (unsigned char)(bits / 8);
   algorithm = (key_size == 5 ? 1 : 2);
-  permission = (unsigned long)perm | 0x000000C0;
-  revision = ((algorithm == 1 && permission < 0x100) ? 2 : 3);
+  permission = (long) (perm | 0xC0U);
+  revision = ((algorithm == 1 && permission < 0x100L) ? 2 : 3);
   if (revision == 3)
-    permission |= 0xFFFFF000;
+    permission |= ~0xFFFL;
 
   compute_id_string(dviname, pdfname);
   compute_owner_password();
@@ -501,7 +502,7 @@ pdf_obj *pdf_encrypt_obj (void)
 		pdf_new_name ("U"),
 		pdf_new_string (upwd_string, 32));
   /* KEY  : P
-   * TYPE : integer
+   * TYPE : (signed 32 bit) integer
    * VALUE: (Required) A set of flags specifying which operations are
    *        permitted when the document is opened with user access.
    */

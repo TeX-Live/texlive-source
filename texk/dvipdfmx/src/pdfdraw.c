@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.18 2008/12/11 16:03:05 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.19 2009/03/16 22:26:40 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -799,7 +799,7 @@ pdf_dev__rectshape (pdf_dev           *P,
   buf[len++] = ' ';
   buf[len++] = isclip ? 'n' : 'Q';
 
-  pdf_doc_add_page_content(buf, len); len = 0;
+  pdf_doc_add_page_content(buf, len);  /* op: q cm n re Q */
 
   return 0;
 }
@@ -842,7 +842,8 @@ pdf_dev__flushpath (pdf_dev   *P,
     b[len++] = ' ';
     b[len++] = 'r';
     b[len++] = 'e';
-    pdf_doc_add_page_content(b, len); len = 0;
+    pdf_doc_add_page_content(b, len);  /* op: re */
+    len = 0;
   } else {
     n_seg = PA_LENGTH(pa);
     for (i = 0, len = 0, pe = &pa->path[0];
@@ -856,11 +857,13 @@ pdf_dev__flushpath (pdf_dev   *P,
       b[len++] = ' ';
       b[len++] = PE_OPCHR(pe);
       if (len + 128 > b_len) {
-        pdf_doc_add_page_content(b, len); len = 0;
+        pdf_doc_add_page_content(b, len);  /* op: m l c v y h */
+	len = 0;
       }
     }
     if (len > 0) {
-      pdf_doc_add_page_content(b, len); len = 0;
+      pdf_doc_add_page_content(b, len);  /* op: m l c v y h */
+      len = 0;
     }
   }
 
@@ -869,7 +872,7 @@ pdf_dev__flushpath (pdf_dev   *P,
   if (rule == PDF_FILL_RULE_EVENODD)
     b[len++] = '*';
 
-  pdf_doc_add_page_content(b, len);
+  pdf_doc_add_page_content(b, len);  /* op: f F s S b B W f* F* s* S* b* B* W* */
 
   return 0;
 }
@@ -1107,7 +1110,7 @@ pdf_dev_gsave (void)
   copy_a_gstate(gs1, gs0);
   m_stack_push(&gs_stack, gs1);
 
-  pdf_doc_add_page_content(" q", 2);
+  pdf_doc_add_page_content(" q", 2);  /* op: q */
 
   return 0;
 }
@@ -1126,7 +1129,7 @@ pdf_dev_grestore (void)
   clear_a_gstate(gs);
   RELEASE(gs);
 
-  pdf_doc_add_page_content(" Q", 2);
+  pdf_doc_add_page_content(" Q", 2);  /* op: Q */
 
   pdf_dev_reset_fonts();
 
@@ -1188,7 +1191,7 @@ pdf_dev_grestore_to (int depth)
   }
 
   while (m_stack_depth(gss) > depth + 1) {
-    pdf_doc_add_page_content(" Q", 2);
+    pdf_doc_add_page_content(" Q", 2);  /* op: Q */
     gs = m_stack_pop(gss);
     clear_a_gstate(gs);
     RELEASE(gs);
@@ -1283,7 +1286,7 @@ pdf_dev_set_color (const pdf_color *color, char mask, int force)
   default: /* already verified the given color */
     break;
   }
-  pdf_doc_add_page_content(fmt_buf, len);
+  pdf_doc_add_page_content(fmt_buf, len);  /* op: RG K G rg k g */
 
   pdf_color_copycolor(current, color);
 }
@@ -1327,7 +1330,7 @@ pdf_dev_concat (const pdf_tmatrix *M)
   buf[len++] = ' ';
   buf[len++] = 'c';
   buf[len++] = 'm';
-  pdf_doc_add_page_content(buf, len);
+  pdf_doc_add_page_content(buf, len);  /* op: cm */
 
   pdf_concatmatrix(CTM, M);
 
@@ -1362,7 +1365,7 @@ pdf_dev_setmiterlimit (double mlimit)
     len += pdf_sprint_length(buf + len, mlimit);
     buf[len++] = ' ';
     buf[len++] = 'M';
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: M */
     gs->miterlimit = mlimit;
   }
 
@@ -1379,7 +1382,7 @@ pdf_dev_setlinecap (int capstyle)
 
   if (gs->linecap != capstyle) {
     len = sprintf(buf, " %d J", capstyle);
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: J */
     gs->linecap = capstyle;
   }
 
@@ -1396,7 +1399,7 @@ pdf_dev_setlinejoin (int joinstyle)
 
   if (gs->linejoin != joinstyle) {
     len = sprintf(buf, " %d j", joinstyle);
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: j */
     gs->linejoin = joinstyle;
   }
 
@@ -1416,7 +1419,7 @@ pdf_dev_setlinewidth (double width)
     len += pdf_sprint_length(buf + len, width);
     buf[len++] = ' ';
     buf[len++] = 'w';
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: w */
     gs->linewidth = width;
   }
 
@@ -1434,17 +1437,17 @@ pdf_dev_setdash (int count, double *pattern, double offset)
 
   gs->linedash.num_dash = count;
   gs->linedash.offset   = offset;
-  pdf_doc_add_page_content(" [", 2);
+  pdf_doc_add_page_content(" [", 2);  /* op: */
   for (i = 0; i < count; i++) {
     buf[0] = ' ';
     len = pdf_sprint_length (buf + 1, pattern[i]);
-    pdf_doc_add_page_content(buf, len + 1);
+    pdf_doc_add_page_content(buf, len + 1);  /* op: */
     gs->linedash.pattern[i] = pattern[i];
   }
-  pdf_doc_add_page_content("] ", 2);
+  pdf_doc_add_page_content("] ", 2);  /* op: */
   len = pdf_sprint_length (buf, offset);
-  pdf_doc_add_page_content(buf, len);
-  pdf_doc_add_page_content(" d", 2);
+  pdf_doc_add_page_content(buf, len);  /* op: */
+  pdf_doc_add_page_content(" d", 2);  /* op: d */
 
   return 0;
 }
@@ -1464,7 +1467,7 @@ pdf_dev_setflat (int flatness)
   if (gs->flatness != flatness) {
     gs->flatness = flatness;
     len = sprintf(buf, " %d i", flatness);
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: i */
   }
 
   return 0;
@@ -1523,7 +1526,7 @@ pdf_dev_newpath (void)
     pdf_path__clearpath (p);
   }
   /* The following is required for "newpath" operator in mpost.c. */
-  pdf_doc_add_page_content(" n", 2);
+  pdf_doc_add_page_content(" n", 2);  /* op: n */
 
   return 0;
 }

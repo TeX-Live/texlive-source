@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.63 2008/11/30 21:12:27 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.70 2009/05/06 06:07:09 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -161,6 +161,7 @@ struct pdf_file
   FILE       *file;
   pdf_obj    *trailer;
   xref_entry *xref_table;
+  pdf_obj    *catalog;
   long        num_obj;
   long        file_size;
   int         version;
@@ -178,6 +179,8 @@ static pdf_obj *trailer_dict;
 static pdf_obj *xref_stream;
 
 /* Internal static routines */
+
+static int check_for_pdf_version (FILE *file);
 
 static void pdf_flush_obj (pdf_obj *object, FILE *file);
 static void pdf_label_obj (pdf_obj *object);
@@ -240,13 +243,13 @@ pdf_set_compression (int level)
   return;
 }
 
-static unsigned pdf_version = 4;
+static unsigned pdf_version = PDF_VERSION_DEFAULT;
 
 void
 pdf_set_version (unsigned version)
 {
   /* Don't forget to update CIDFont_stdcc_def[] in cid.c too! */
-  if (version >= 3 && version <= 6) {
+  if (version >= PDF_VERSION_MIN && version <= PDF_VERSION_MAX) {
     pdf_version = version;
   }
 }
@@ -581,15 +584,12 @@ void pdf_out_white (FILE *file)
   ERROR("typecheck: Invalid object type: %d %d (line %d)", (o) ? (o)->type : -1, (t), __LINE__);\
 }
 
-#define INVALIDOBJ(o)  ((o) == NULL || (o)->type <= 0 || (o)->type > PDF_INDIRECT)
+#define INVALIDOBJ(o)  ((o) == NULL || (o)->type <= 0 || (o)->type > PDF_UNDEFINED)
 
 static pdf_obj *
 pdf_new_obj(int type)
 {
   pdf_obj *result;
-
-  if (type > PDF_INDIRECT || type < PDF_UNDEFINED)
-    ERROR("Invalid object type: %d", type);
 
   result = NEW(1, pdf_obj);
   result->type  = type;
@@ -598,6 +598,9 @@ pdf_new_obj(int type)
   result->generation = 0;
   result->refcount   = 1;
   result->flags      = 0;
+
+  if (INVALIDOBJ(result))
+    ERROR("Invalid object type: %d", type);
 
   return result;
 }
@@ -694,6 +697,20 @@ write_indirect (pdf_indirect *indirect, FILE *file)
 
   length = sprintf(format_buffer, "%lu %hu R", indirect->label, indirect->generation);
   pdf_out(file, format_buffer, length);
+}
+
+/* The undefined object is used as a placeholder in pdfnames.c
+ * for objects which are referenced before they are defined.
+ */
+pdf_obj *
+pdf_new_undefined (void)
+{
+  pdf_obj *result;
+
+  result = pdf_new_obj(PDF_UNDEFINED);
+  result->data = NULL;
+
+  return result;
 }
 
 pdf_obj *
@@ -834,19 +851,17 @@ pdf_new_string (const void *str, unsigned length)
   pdf_obj    *result;
   pdf_string *data;
 
+  ASSERT(str);
+
   result = pdf_new_obj(PDF_STRING);
   data   = NEW(1, pdf_string);
   result->data = data;
-  if (length != 0) {
-    data->length = length;
-    data->string = NEW(length+1, unsigned char);
-    memcpy(data->string, str, length);
-    /* Shouldn't assume NULL terminated. */
-    data->string[length] = '\0';
-  } else {
-    data->length = 0;
-    data->string = NULL;
-  }
+
+  data->length = length;
+  data->string = NEW(length+1, unsigned char);
+  memcpy(data->string, str, length);
+  /* Shouldn't assume NULL terminated. */
+  data->string[length] = '\0';
 
   return result;
 }
@@ -1327,14 +1342,20 @@ pdf_pop_array (pdf_obj *array)
 static void
 write_dict (pdf_dict *dict, FILE *file)
 {
+#if 0
   pdf_out (file, "<<\n", 3); /* dropping \n saves few kb. */
+#else
+  pdf_out (file, "<<", 2);
+#endif
   while (dict->key != NULL) {
     pdf_write_obj(dict->key, file);
     if (pdf_need_white(PDF_NAME, (dict->value)->type)) {
       pdf_out_white(file);
     }
     pdf_write_obj(dict->value, file);
+#if 0
     pdf_out_char (file, '\n'); /* removing this saves few kb. */
+#endif
     dict = dict->next;
   }
   pdf_out(file, ">>", 2);
@@ -1925,7 +1946,7 @@ pdf_write_obj (pdf_obj *object, FILE *file)
     return;
   }
 
-  if (INVALIDOBJ(object))
+  if (INVALIDOBJ(object) || PDF_OBJ_UNDEFINED(object))
     ERROR("pdf_write_obj: Invalid object, type = %d\n", object->type);
 
   if (file == stderr)
@@ -2735,7 +2756,6 @@ parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
   return 0;
 }
 
-/* TODO: parse Version entry */
 static pdf_obj *
 read_xref (pdf_file *pf)
 {
@@ -2820,6 +2840,7 @@ pdf_file_new (FILE *file)
   pf->file    = file;
   pf->trailer = NULL;
   pf->xref_table = NULL;
+  pf->catalog = NULL;
   pf->num_obj = 0;
   pf->version = 0;
 
@@ -2845,8 +2866,15 @@ pdf_file_free (pdf_file *pf)
       pdf_release_obj(pf->xref_table[i].indirect);
   }
 
-  RELEASE(pf->xref_table);  
-  pdf_release_obj(pf->trailer);
+  RELEASE(pf->xref_table);
+  if (pf->trailer) {
+    pdf_release_obj(pf->trailer);
+    pf->trailer = NULL;
+  }
+  if (pf->catalog) {
+    pdf_release_obj(pf->catalog);
+    pf->catalog = NULL;
+  }
 
   RELEASE(pf);  
 }
@@ -2858,15 +2886,31 @@ pdf_files_init (void)
   ht_init_table(pdf_files);
 }
 
+int
+pdf_file_get_version (pdf_file *pf)
+{
+  ASSERT(pf);
+  return pf->version;
+}
+
+#if 0
 pdf_obj *
 pdf_file_get_trailer (pdf_file *pf)
 {
   ASSERT(pf);
-  return pdf_link_obj(pf->trailer);
+  return pf->trailer;
+}
+#endif
+
+pdf_obj *
+pdf_file_get_catalog (pdf_file *pf)
+{
+  ASSERT(pf);
+  return pf->catalog;
 }
 
 pdf_file *
-pdf_open (char *ident, FILE *file)
+pdf_open (const char *ident, FILE *file)
 {
   pdf_file *pf;
 
@@ -2877,24 +2921,57 @@ pdf_open (char *ident, FILE *file)
   if (pf) {
     pf->file = file;
   } else {
-    int version = check_for_pdf(file);
-    if (!version) {
-      WARN("pdf_open: Not a PDF 1.[1-5] file.");
+    int version;
+    pdf_obj *new_version;
+
+    version = check_for_pdf_version(file);
+    if (version < 0) {
+      WARN("Not a PDF file.");
       return NULL;
     }
 
     pf = pdf_file_new(file);
     pf->version = version;
 
-    if (!(pf->trailer = read_xref(pf))) {
-      pdf_file_free(pf);
-      return NULL;
+    if (!(pf->trailer = read_xref(pf)))
+      goto error;
+
+    if (pdf_lookup_dict(pf->trailer, "Encrypt")) {
+      WARN("PDF document is encrypted.");
+      goto error;
+    }
+
+    pf->catalog = pdf_deref_obj(pdf_lookup_dict(pf->trailer, "Root"));
+    if (!PDF_OBJ_DICTTYPE(pf->catalog)) {
+      WARN("Cannot read PDF document catalog. Broken PDF file?");
+      goto error;
+    }
+
+    new_version = pdf_deref_obj(pdf_lookup_dict(pf->catalog, "Version"));
+    if (new_version) {
+      unsigned char minor;
+
+      if (!PDF_OBJ_NAMETYPE(new_version) ||
+	  sscanf(pdf_name_value(new_version), "1.%hhu", &minor) != 1) {
+	pdf_release_obj(new_version);
+	WARN("Illegal Version entry in document catalog. Broken PDF file?");
+	goto error;
+      }
+
+      if (pf->version < minor)
+	pf->version = minor;
+
+      pdf_release_obj(new_version);
     }
 
     ht_append_table(pdf_files, ident, strlen(ident), pf);
   }
 
   return pf;
+
+ error:
+  pdf_file_free(pf);
+  return NULL;
 }
 
 void
@@ -2912,24 +2989,21 @@ pdf_files_close (void)
   RELEASE(pdf_files);
 }
 
+static int
+check_for_pdf_version (FILE *file) 
+{
+  unsigned char minor;
+
+  rewind(file);
+
+  return (ungetc(fgetc(file), file) == '%' &&
+	  fscanf(file, "%%PDF-1.%hhu", &minor) == 1) ? minor : -1;
+}
+
 int
 check_for_pdf (FILE *file) 
 {
-  int result = 0;
-
-  rewind(file);
-  if (fread(work_buffer, sizeof(char), strlen("%PDF-1.x"), file) ==
-      strlen("%PDF-1.x") &&
-      !strncmp(work_buffer, "%PDF-1.", strlen("%PDF-1."))) {
-    if (work_buffer[7] >= '0' && work_buffer[7] <= '0' + pdf_version)
-      result = 1;
-    else {
-      WARN("Version of PDF file (1.%c) is newer than version limit specification.",
-	   work_buffer[7]);
-    }
-  }
-
-  return result;
+  return (check_for_pdf_version(file) >= 0);
 }
 
 static int CDECL

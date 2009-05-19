@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.9 2008/11/03 22:49:29 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.11 2009/04/26 21:23:29 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -28,6 +28,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "system.h"
 #include "system.h"
 #include "mem.h"
 #include "error.h"
@@ -200,6 +201,13 @@ ht_clear_table (struct ht_table *ht, void (*hval_free_fn) (void *))
     ht->table[i] = NULL;
   }
   ht->count = 0;
+}
+
+long ht_table_size (struct ht_table *ht)
+{
+  ASSERT(ht);
+
+  return ht->count;
 }
 
 static unsigned int

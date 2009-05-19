@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_tpic.c,v 1.5 2008/11/30 21:39:19 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_tpic.c,v 1.6 2009/03/16 22:26:40 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -193,7 +193,7 @@ set_fillstyle (double g, double a, int f_ais)
     }
     len += sprintf(buf + len, " /%s gs", resname);
 
-    pdf_doc_add_page_content(buf, len);
+    pdf_doc_add_page_content(buf, len);  /* op: gs */
   }
 
   {

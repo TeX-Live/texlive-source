@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cmap_read.c,v 1.3 2008/01/11 18:04:15 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cmap_read.c,v 1.4 2009/05/06 01:51:01 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -510,7 +510,7 @@ CMap_parse_check_sig (FILE *fp)
   if (fread(sig, sizeof(char), CMAP_SIG_MAX, fp) != CMAP_SIG_MAX)
     result = -1;
   else {
-    sig[CMAP_SIG_MAX+1] = 0;
+    sig[CMAP_SIG_MAX] = 0;
     if (strncmp(sig, "%!PS", 4))
       result = -1;
     else if (strstr(sig+4, "Resource-CMap"))

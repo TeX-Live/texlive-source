@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.65 2008/12/11 16:03:05 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.70 2009/05/04 00:41:42 matthias Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -373,7 +373,7 @@ static void pdf_doc_close_page_tree (pdf_doc *p);
 static void pdf_doc_init_names  (pdf_doc *p, int check_gotos);
 static void pdf_doc_close_names (pdf_doc *p);
 
-static void pdf_doc_add_gotos (pdf_obj *annot_dict);
+static void pdf_doc_add_goto (pdf_obj *annot_dict);
 
 static void pdf_doc_init_docinfo  (pdf_doc *p);
 static void pdf_doc_close_docinfo (pdf_doc *p);
@@ -929,33 +929,16 @@ pdf_doc_close_page_tree (pdf_doc *p)
  */
 
 pdf_obj *
-pdf_doc_get_page (pdf_obj *trailer, long *page_p, long *count_p,
-		  pdf_rect *bbox, pdf_obj **resources_p,
-		  pdf_obj **markinfo_p) {
+pdf_doc_get_page (pdf_file *pf, long *page_p, long *count_p,
+		  pdf_rect *bbox, pdf_obj **resources_p) {
   pdf_obj *page_tree = NULL;
   pdf_obj *resources = NULL, *box = NULL, *rotate = NULL;
   pdf_obj *catalog;
   long page_no = *page_p, page_idx;
 
-  if (pdf_lookup_dict(trailer, "Encrypt")) {
-    WARN("This PDF document is encrypted.");
-    pdf_release_obj(trailer);
-    goto error_silent;
-  }
-
-  catalog = pdf_deref_obj(pdf_lookup_dict(trailer, "Root"));
-  pdf_release_obj(trailer);
-  if (!PDF_OBJ_DICTTYPE(catalog)) {
-    if (catalog)
-      pdf_release_obj(catalog);
-    goto error;
-  }
-
-  if (markinfo_p)
-    *markinfo_p = pdf_deref_obj(pdf_lookup_dict(catalog, "MarkInfo"));
+  catalog = pdf_file_get_catalog(pf);
 
   page_tree = pdf_deref_obj(pdf_lookup_dict(catalog, "Pages"));
-  pdf_release_obj(catalog);
 
   if (!PDF_OBJ_DICTTYPE(page_tree))
     goto error;
@@ -1094,7 +1077,7 @@ pdf_doc_get_page (pdf_obj *trailer, long *page_p, long *count_p,
   {
     int i;
 
-    for (i = 4; --i; ) {
+    for (i = 4; i--; ) {
       double x;
       pdf_obj *tmp = pdf_deref_obj(pdf_get_array(box, i));
       if (!PDF_OBJ_NUMBERTYPE(tmp)) {
@@ -1382,7 +1365,7 @@ pdf_doc_bookmarks_add (pdf_obj *dict, int is_open)
 
   p->outlines.current = item;
 
-  pdf_doc_add_gotos(dict);
+  pdf_doc_add_goto(dict);
 
   return;
 }
@@ -1475,63 +1458,54 @@ pdf_doc_add_names (const char *category,
 }
 
 static void
-pdf_doc_add_gotos (pdf_obj *annot_dict)
+pdf_doc_add_goto (pdf_obj *annot_dict)
 {
-  pdf_obj *subtype, *A, *S, *D = NULL, *tmp;
-  char *dest;
+  pdf_obj *subtype = NULL, *A = NULL, *S = NULL, *D = NULL, *D_new, *dict;
+  char *dest, *key;
 
   if (!pdoc.check_gotos)
     return;
-
-  /*
-   * We cannot use pdf_deref_obj because if it return NULL
-   * we don't know whether a dictionary does not exist
-   * or has been declared as @foo and not yet defined. (As
-   * long as @foo is undefined, it is stored as "null" object.)
-   */
 
   /*
    * An annotation dictionary coming from an annotation special
    * must have a "Subtype". An annotation dictionary coming from
    * an outline special has none.
    */
-  subtype = pdf_lookup_dict(annot_dict, "Subtype");
-  if (PDF_OBJ_INDIRECTTYPE(subtype))
-    goto indirect;
-  else if (subtype && !PDF_OBJ_NULLTYPE(subtype)) {
-    if (!PDF_OBJ_NAMETYPE(subtype))
+  subtype = pdf_deref_obj(pdf_lookup_dict(annot_dict, "Subtype"));
+  if (subtype) {
+    if (PDF_OBJ_UNDEFINED(subtype))
+      goto undefined;
+    else if (!PDF_OBJ_NAMETYPE(subtype))
       goto error;
     else if (strcmp(pdf_name_value(subtype), "Link"))
-      return;
+      goto cleanup;
   }
 
-  A = pdf_lookup_dict(annot_dict, "A");
-  if (PDF_OBJ_DICTTYPE(A)) {
-    S = pdf_lookup_dict(A, "S");
-    if (PDF_OBJ_INDIRECTTYPE(S))
-      goto indirect;
-    else if (!PDF_OBJ_NAMETYPE(S))
+  dict = annot_dict;
+  key = "Dest";
+  D = pdf_deref_obj(pdf_lookup_dict(annot_dict, key));
+  if (PDF_OBJ_UNDEFINED(D))
+    goto undefined;
+
+  A = pdf_deref_obj(pdf_lookup_dict(annot_dict, "A"));
+  if (A) {
+    if (PDF_OBJ_UNDEFINED(A))
+      goto undefined;
+    else if (D || !PDF_OBJ_DICTTYPE(A))
       goto error;
-    else if (strcmp(pdf_name_value(S), "GoTo"))
-      return;
+    else {
+      S = pdf_deref_obj(pdf_lookup_dict(A, "S"));
+      if (PDF_OBJ_UNDEFINED(S))
+	goto undefined;
+      else if (!PDF_OBJ_NAMETYPE(S))
+	goto error;
+      else if (strcmp(pdf_name_value(S), "GoTo"))
+	goto cleanup;
 
-    D = pdf_lookup_dict(A, "D");
-    if (PDF_OBJ_NULLTYPE(D))
-      D = NULL;
-  } else if (PDF_OBJ_INDIRECTTYPE(A))
-    goto indirect;
-  else if (A && !PDF_OBJ_NULLTYPE(A))
-    goto error;
-
-  tmp = pdf_lookup_dict(annot_dict, "Dest");
-  if (PDF_OBJ_NULLTYPE(tmp))
-    tmp = NULL;
-
-  if (tmp) {
-    if (D)
-      goto error;
-    else
-      D = tmp;
+      dict = A;
+      key = "D";
+      D = pdf_deref_obj(pdf_lookup_dict(A, key));
+    }
   }
 
   if (PDF_OBJ_STRINGTYPE(D))
@@ -1542,26 +1516,51 @@ pdf_doc_add_gotos (pdf_obj *annot_dict)
     dest = pdf_name_value(D);
 #endif
   else if (PDF_OBJ_ARRAYTYPE(D))
-    return;
-  else if (PDF_OBJ_INDIRECTTYPE(D))
-    goto indirect;
+    goto cleanup;
+  else if (PDF_OBJ_UNDEFINED(D))
+    goto undefined;
   else
     goto error;
 
-  ht_insert_table(&pdoc.gotos, dest, strlen(dest), NULL+1, NULL);
-  /* NULL+1 is just some non-null pointer */
-  return;
+  D_new = ht_lookup_table(&pdoc.gotos, dest, strlen(dest));
+  if (!D_new) {
+    char buf[10];
 
- indirect:
-  pdoc.check_gotos = 0;
-  if (verbose)
-    MESG("\nFound unexpected annotation format."
-	 " Will not remove PDF destinations\n");
+    /* We use hexadecimal notation for our numeric destinations.
+     * Other bases (e.g., 10+26 or 10+2*26) would be more efficient.
+     */
+    sprintf(buf, "%lx", ht_table_size(&pdoc.gotos));
+    D_new = pdf_new_string(buf, strlen(buf));
+    ht_insert_table(&pdoc.gotos, dest, strlen(dest),
+		    D_new, (void (*) (void *)) pdf_release_obj);
+  }
+
+  {
+    pdf_obj *key_obj = pdf_new_name(key);
+    if (!pdf_add_dict(dict, key_obj, pdf_link_obj(D_new)))
+      pdf_release_obj(key_obj);
+  }
+
+ cleanup:
+  if (subtype)
+    pdf_release_obj(subtype);
+  if (A)
+    pdf_release_obj(A);
+  if (S)
+    pdf_release_obj(S);
+  if (D)
+    pdf_release_obj(D);
+
   return;
 
  error:
-  WARN("Unknown PDF annotation format.");
-  return;
+  WARN("Unknown PDF annotation format. Output file may be broken.");
+  goto cleanup;
+
+ undefined:
+  WARN("Cannot optimize PDF annotations. Output file may be broken."
+       " Please restart with option \"-C 0x10\"\n");
+  goto cleanup;
 }
 
 static void
@@ -1645,57 +1644,57 @@ pdf_doc_close_names (pdf_doc *p)
   RELEASE(p->names);
   p->names = NULL;
 
-  ht_clear_table(&p->gotos, NULL);
+  ht_clear_table(&p->gotos, (void (*) (void *)) pdf_release_obj);
 
   return;
 }
 
 
 void
-pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect, pdf_obj *annot_dict)
+pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect,
+		   pdf_obj *annot_dict, int new_annot)
 {
   pdf_doc  *p = &pdoc;
   pdf_page *page;
   pdf_obj  *rect_array;
   double    annot_grow = p->opt.annot_grow;
+  double    xpos, ypos;
+  pdf_rect  mediabox, annbox;
 
   page = doc_get_page_entry(p, page_no);
   if (!page->annots)
     page->annots = pdf_new_array();
 
-#if 1
-  {
-    pdf_rect  mediabox;
+  pdf_doc_get_mediabox(page_no, &mediabox);
+  pdf_dev_get_coord(&xpos, &ypos);
+  annbox.llx = rect->llx - xpos; annbox.lly = rect->lly - ypos;
+  annbox.urx = rect->urx - xpos; annbox.ury = rect->ury - ypos;
 
-    pdf_doc_get_mediabox(page_no, &mediabox);
-    if (rect->llx < mediabox.llx ||
-        rect->urx > mediabox.urx ||
-       rect->lly < mediabox.lly ||
-       rect->ury > mediabox.ury) {
-      WARN("Annotation out of page boundary.");
-      WARN("Current page's MediaBox: [%g %g %g %g]",
-           mediabox.llx, mediabox.lly, mediabox.urx, mediabox.ury);
-      WARN("Annotation: [%g %g %g %g]",
-           rect->llx, rect->lly, rect->urx, rect->ury);
-      WARN("Maybe incorrect paper size specified.");
-    }
-    if (rect->llx > rect->urx || rect->lly > rect->ury) {
-      WARN("Rectangle with negative width/height: [%g %g %g %g]",
-           rect->llx, rect->lly, rect->urx, rect->ury);
-    }
+  if (annbox.llx < mediabox.llx || annbox.urx > mediabox.urx ||
+      annbox.lly < mediabox.lly || annbox.ury > mediabox.ury) {
+    WARN("Annotation out of page boundary.");
+    WARN("Current page's MediaBox: [%g %g %g %g]",
+         mediabox.llx, mediabox.lly, mediabox.urx, mediabox.ury);
+    WARN("Annotation: [%g %g %g %g]",
+         annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+    WARN("Maybe incorrect paper size specified.");
   }
-#endif
+  if (annbox.llx > annbox.urx || annbox.lly > annbox.ury) {
+    WARN("Rectangle with negative width/height: [%g %g %g %g]",
+         annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+  }
 
   rect_array = pdf_new_array();
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->llx - annot_grow, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->lly - annot_grow, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->urx + annot_grow, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->ury + annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.llx - annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.lly - annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.urx + annot_grow, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.ury + annot_grow, 0.001)));
   pdf_add_dict (annot_dict, pdf_new_name("Rect"), rect_array);
 
   pdf_add_array(page->annots, pdf_ref_obj(annot_dict));
 
-  pdf_doc_add_gotos(annot_dict);
+  if (new_annot)
+    pdf_doc_add_goto(annot_dict);
 
   return;
 }
@@ -2653,17 +2652,16 @@ pdf_doc_end_grabbing (pdf_obj *attrib)
 static struct
 {
   int      dirty;
+  int      broken;
   pdf_obj *annot_dict;
   pdf_rect rect;
-} breaking_state = {0, NULL, {0.0, 0.0, 0.0, 0.0}};
+} breaking_state = {0, 0, NULL, {0.0, 0.0, 0.0, 0.0}};
 
 static void
 reset_box (void)
 {
-  breaking_state.rect.llx = 10000.0; /* large value */
-  breaking_state.rect.lly = 10000.0; /* large value */
-  breaking_state.rect.urx = 0.0;     /* small value */
-  breaking_state.rect.ury = 0.0;     /* small value */
+  breaking_state.rect.llx = breaking_state.rect.lly =  HUGE_VAL;
+  breaking_state.rect.urx = breaking_state.rect.ury = -HUGE_VAL;
   breaking_state.dirty    = 0;
 }
 
@@ -2671,6 +2669,7 @@ void
 pdf_doc_begin_annot (pdf_obj *dict)
 {
   breaking_state.annot_dict = dict;
+  breaking_state.broken = 0;
   reset_box();
 }
 
@@ -2690,9 +2689,11 @@ pdf_doc_break_annot (void)
     /* Copy dict */
     annot_dict = pdf_new_dict();
     pdf_merge_dict(annot_dict, breaking_state.annot_dict);
-    pdf_doc_add_annot(pdf_doc_current_page_number(),
-                      &(breaking_state.rect), annot_dict);
+    pdf_doc_add_annot(pdf_doc_current_page_number(), &(breaking_state.rect),
+		      annot_dict, !breaking_state.broken);
     pdf_release_obj(annot_dict);
+
+    breaking_state.broken = 1;
   }
   reset_box();
 }

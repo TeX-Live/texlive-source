@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.31 2008/11/30 21:12:27 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.34 2009/05/03 00:13:04 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -38,9 +38,9 @@
 #define PDF_STREAM	7
 #define PDF_NULL        8
 #define PDF_INDIRECT	9
+#define PDF_UNDEFINED   10
 
 #define PDF_OBJ_INVALID 0
-#define PDF_UNDEFINED   PDF_OBJ_INVALID
 
 #define STREAM_COMPRESS (1 << 0)
 
@@ -73,6 +73,7 @@ extern int      pdf_obj_typeof  (pdf_obj *object);
 #define PDF_OBJ_DICTTYPE(o)     ((o) && pdf_obj_typeof((o)) == PDF_DICT)
 #define PDF_OBJ_STREAMTYPE(o)   ((o) && pdf_obj_typeof((o)) == PDF_STREAM)
 #define PDF_OBJ_INDIRECTTYPE(o) ((o) && pdf_obj_typeof((o)) == PDF_INDIRECT)
+#define PDF_OBJ_UNDEFINED(o)    ((o) && pdf_obj_typeof((o)) == PDF_UNDEFINED)
 
 #define PDF_OBJ_TYPEOF(o)       pdf_obj_typeof((o))
 
@@ -80,6 +81,8 @@ extern int      pdf_obj_typeof  (pdf_obj *object);
 extern pdf_obj *pdf_ref_obj        (pdf_obj *object);
 extern pdf_obj *pdf_link_obj       (pdf_obj *object);
 extern void     pdf_transfer_label (pdf_obj *dst, pdf_obj *src);
+
+extern pdf_obj *pdf_new_undefined  (void);
 
 extern pdf_obj *pdf_new_null       (void);
 
@@ -188,9 +191,13 @@ extern void      pdf_set_encrypt  (pdf_obj *encrypt, pdf_obj *id);
 extern void      pdf_files_init    (void);
 extern void      pdf_files_close   (void);
 extern int      check_for_pdf     (FILE *file);
-extern pdf_file *pdf_open          (char *ident, FILE *file);
+extern pdf_file *pdf_open          (const char *ident, FILE *file);
 extern void      pdf_close         (pdf_file *pf);
+#if 0
 extern pdf_obj  *pdf_file_get_trailer (pdf_file *pf);
+#endif
+extern int       pdf_file_get_version (pdf_file *pf);
+extern pdf_obj  *pdf_file_get_catalog (pdf_file *pf);
 
 extern pdf_obj *pdf_deref_obj     (pdf_obj *object);
 extern pdf_obj *pdf_import_object (pdf_obj *object);

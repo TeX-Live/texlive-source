@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdflimits.h,v 1.4 2004/09/05 13:30:05 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdflimits.h,v 1.6 2009/05/06 06:07:09 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -24,6 +24,15 @@
 
 #ifndef _PDFLIMITS_H_
 #define _PDFLIMITS_H_
+
+/*
+ * The minimal and maximal PDF version supported by DVIPDFMx.
+ * NOTE: Don't forget to update CIDFont_stdcc_def[] in cid.c
+ * if you increase PDF_VERSION_MAX!
+ */
+#define PDF_VERSION_MIN  3
+#define PDF_VERSION_MAX  7
+#define PDF_VERSION_DEFAULT 4
 
 /*
  * PDF_NAME_LEN_MAX: see, Appendix C of PDF Ref. v1.3, 2nd. ed.

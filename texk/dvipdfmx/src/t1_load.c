@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.12 2008/10/13 19:42:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.13 2009/04/08 03:10:58 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -566,18 +566,24 @@ parse_subrs (cff_font *font,
   }
 
   if (mode != 1) {
-    subrs = font->subrs[0] = cff_new_index(count);
-    subrs->data = NEW(offset, card8);
-    offset = 0;
-    for (i = 0; i < count; i++) {
-      subrs->offset[i] = offset + 1;
-      if (lengths[i] > 0) {
-	memcpy(subrs->data + offset, data + offsets[i], lengths[i]);
-	offset += lengths[i];
+    if (font->subrs[0] == NULL) {
+      subrs = font->subrs[0] = cff_new_index(count);
+      subrs->data = NEW(offset, card8);
+      offset = 0;
+      for (i = 0; i < count; i++) {
+        subrs->offset[i] = offset + 1;
+        if (lengths[i] > 0) {
+	  memcpy(subrs->data + offset, data + offsets[i], lengths[i]);
+	  offset += lengths[i];
+        }
       }
+      subrs->offset[count] = offset + 1;
+    } else {
+      /* Adobe's OPO_____.PFB and OPBO____.PFB have two /Subrs dicts,
+       * and also have /CharStrings not followed by dicts.
+       * Simply ignores those data. By ChoF on 2009/04/08. */
+      WARN("Already found /Subrs; ignores the other /Subrs dicts.");
     }
-    subrs->offset[count] = offset + 1;
-
     RELEASE(data);
     RELEASE(offsets);
     RELEASE(lengths);
@@ -605,8 +611,11 @@ parse_charstrings (cff_font *font,
   tok = pst_get_token(start, end);
   if (!PST_INTEGERTYPE(tok) ||
       pst_getIV(tok) < 0 || pst_getIV(tok) > CFF_GLYPH_MAX) {
+    unsigned char *s = pst_getSV(tok);
+    WARN("Ignores non dict \"/CharStrings %s ...\"", s);
+    RELEASE(s);
     RELEASE_TOK(tok);
-    return -1;
+    return 0;
   }
   count = pst_getIV(tok);
   RELEASE_TOK(tok);

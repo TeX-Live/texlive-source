@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.h,v 1.8 2004/09/11 14:50:28 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.h,v 1.9 2009/05/03 00:13:04 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -28,6 +28,7 @@
 #include "mfileio.h"
 #include "pdfximage.h"
 
-extern int pdf_include_page (pdf_ximage *ximage, FILE *file);
+extern int pdf_include_page (pdf_ximage *ximage, FILE *file,
+			     const char *filename);
 
 #endif /* _EPDF_H_ */

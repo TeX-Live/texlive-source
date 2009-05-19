@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.28 2008/11/30 21:12:27 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.31 2009/05/04 00:41:43 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -56,10 +56,9 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_names()     pdf_doc_get_dictionary("Names")
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
 
-extern pdf_obj *pdf_doc_get_page (pdf_obj *trailer,
+extern pdf_obj *pdf_doc_get_page (pdf_file *pf,
 				  long *page_p, long *count_p,
-				  pdf_rect *bbox, pdf_obj **resources_p,
-				  pdf_obj **markinfo_p);
+				  pdf_rect *bbox, pdf_obj **resources_p);
 
 extern long     pdf_doc_current_page_number    (void);
 extern pdf_obj *pdf_doc_current_page_resources (void);
@@ -116,7 +115,9 @@ extern void     pdf_doc_end_grabbing   (pdf_obj *attrib);
 
 /* Annotation */
 extern void     pdf_doc_add_annot   (unsigned page_no,
-				     const pdf_rect *rect, pdf_obj *annot_dict);
+				     const pdf_rect *rect,
+				     pdf_obj *annot_dict,
+				     int dest_is_new);
 
 /* Annotation with auto- clip and line (or page) break */
 extern void     pdf_doc_begin_annot (pdf_obj *dict);

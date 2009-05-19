@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mem.c,v 1.6 2008/11/03 22:49:29 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mem.c,v 1.7 2009/03/24 07:55:52 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -25,6 +25,7 @@
 #include <stdio.h>	
 #include <stdlib.h>
 
+#include "system.h"
 #include "system.h"
 #include "mem.h"
 #include "error.h"

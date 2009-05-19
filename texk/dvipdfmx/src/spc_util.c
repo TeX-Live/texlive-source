@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.14 2008/06/01 01:38:32 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.c,v 1.16 2009/04/29 11:30:51 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -204,18 +204,18 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
   default:
     /* Try to read the color names defined in dvipsname.def */
     q = parse_c_ident(&ap->curptr, ap->endptr);
-    if (!q) {
-      spc_warn(spe, "No valid color specified?");
-      return  -1;
+    if (q) {
+      error = pdf_color_namedcolor(colorspec, q);
+      if (error)
+        spc_warn(spe, "Unrecognized color name: %s, keep the current color", q);
+      RELEASE(q);
+    } else {
+      error = -1;
     }
-    error = pdf_color_namedcolor(colorspec, q);
-    if (error)
-      spc_warn(spe, "Unrecognized color name: %s", q);
-    RELEASE(q);
     break;
   }
 
-  if (!error && isarry) {
+  if (isarry) {
     skip_blank(&ap->curptr, ap->endptr);
     if (ap->curptr >= ap->endptr || ap->curptr[0] != ']') {
       spc_warn(spe, "Unbalanced '[' and ']' in color specification.");
@@ -231,9 +231,21 @@ spc_read_color_pdf (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *a
 
 /* This is for reading *single* color specification. */
 int
-spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap, int syntax)
+spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap)
 {
-  int  error = 0;
+  ASSERT(colorspec && spe && ap);
+
+  skip_blank(&ap->curptr, ap->endptr);
+  if (ap->curptr >= ap->endptr) {
+    return -1;
+  }
+  return spc_read_color_color(spe, colorspec, ap);
+}
+
+int
+spc_util_read_pdfcolor (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *ap, pdf_color *defaultcolor)
+{
+  int error = 0;
 
   ASSERT(colorspec && spe && ap);
 
@@ -241,15 +253,13 @@ spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_a
   if (ap->curptr >= ap->endptr) {
     return -1;
   }
-
-  if (syntax)
-    error = spc_read_color_color(spe, colorspec, ap);
-  else
-    error = spc_read_color_pdf(spe, colorspec, ap);
-
-  return  error;
+  error = spc_read_color_pdf(spe, colorspec, ap);
+  if (error < 0 && defaultcolor) {
+    pdf_color_copycolor(colorspec, defaultcolor);
+    error = 0;
+  }
+  return error;
 }
-
 
 /* This need to allow 'true' prefix for unit and
  * length value must be divided by current magnification.
@@ -481,9 +491,9 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 #define  K_TRN__XSCALE 4
 #define  K_TRN__YSCALE 5
 #define  K_TRN__ROTATE 6
-    "scale", "xscale", "yscale", "rotate",
+    "scale", "xscale", "yscale", "rotate", /* See "Dvipdfmx User's Manual", p.5 */
 #define  K_TRN__BBOX   7
-    "bbox", /* See "Dvipdfmx User's Manual", p.5 */
+    "bbox",
 #define  K_TRN__MATRIX 8
     "matrix",
 #undef  K__CLIP

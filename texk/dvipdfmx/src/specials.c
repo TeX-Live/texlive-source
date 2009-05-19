@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.12 2009/01/15 21:04:38 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/specials.c,v 1.13 2009/04/26 21:23:29 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -283,31 +283,12 @@ spc_lookup_object (const char *key)
 void
 spc_push_object (const char *key, pdf_obj *value)
 {
-  int  error = 0;
+  ASSERT(named_objects);
 
   if (!key || !value)
     return;
 
-  if (PDF_OBJ_INDIRECTTYPE(value)) {
-    pdf_names_add_reference(named_objects,
-                            key, strlen(key), value);
-  } else {
-    error = pdf_names_add_object(named_objects,
-                                 key, strlen(key), value);
-    if (!error) {
-      /* _FIXME_:
-       * Objects created by pdf:obj must always
-       * be written to output regardless of if
-       * they are actually used in document.
-       */
-      pdf_obj *obj_ref = pdf_names_lookup_reference(named_objects,
-                                                    key, strlen(key));
-      if (obj_ref)
-        pdf_release_obj(obj_ref);
-    }
-  }
-
-  return;
+  pdf_names_add_object(named_objects, key, strlen(key), value);
 }
 
 void

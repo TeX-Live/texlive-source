@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.45 2008/12/11 16:03:05 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.48 2009/04/29 11:22:19 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -572,7 +572,7 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   if (ident)
     spc_push_object(ident, pdf_link_obj(annot_dict));
   /* This add reference. */
-  pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict);
+  pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict, 1);
 
   if (ident) {
     spc_flush_object(ident);
@@ -643,11 +643,13 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
 {
   int       error;
   pdf_color fc, sc;
+  pdf_color *pfc, *psc;
 
-  error = spc_util_read_colorspec(spe, &fc, ap, 0);
+  pdf_color_get_current(&psc, &pfc);
+  error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
   if (!error) {
     if (ap->curptr < ap->endptr) {
-      error = spc_util_read_colorspec(spe, &sc, ap, 0);
+      error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
     } else {
       pdf_color_copycolor(&sc, &fc);
     }
@@ -671,11 +673,13 @@ spc_handler_pdfm_scolor (struct spc_env *spe, struct spc_arg *ap)
 {
   int       error;
   pdf_color fc, sc;
+  pdf_color *pfc, *psc;
 
-  error = spc_util_read_colorspec(spe, &fc, ap, 0);
+  pdf_color_get_current(&psc, &pfc);
+  error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
   if (!error) {
     if (ap->curptr < ap->endptr) {
-      error = spc_util_read_colorspec(spe, &sc, ap, 0);
+      error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
     } else {
       pdf_color_copycolor(&sc, &fc);
     }
@@ -1252,10 +1256,10 @@ spc_handler_pdfm_content (struct spc_env *spe, struct spc_arg *args)
     work_buffer[len++] = 'm';
     work_buffer[len++] = ' ';
 
-    pdf_doc_add_page_content(work_buffer, len);
+    pdf_doc_add_page_content(work_buffer, len);  /* op: q cm */
     len = (long) (args->endptr - args->curptr);
-    pdf_doc_add_page_content(args->curptr, len);
-    pdf_doc_add_page_content(" Q", 2);
+    pdf_doc_add_page_content(args->curptr, len);  /* op: ANY */
+    pdf_doc_add_page_content(" Q", 2);  /* op: Q */
   }
   args->curptr = args->endptr;
 
@@ -1290,8 +1294,8 @@ spc_handler_pdfm_literal (struct spc_env *spe, struct spc_arg *args)
       M.e = spe->x_user; M.f = spe->y_user;
       pdf_dev_concat(&M);
     }
-    pdf_doc_add_page_content(" ", 1);
-    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));
+    pdf_doc_add_page_content(" ", 1);  /* op: */
+    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));  /* op: ANY */
     if (!direct) {
       M.e = -spe->x_user; M.f = -spe->y_user;
       pdf_dev_concat(&M);
@@ -1333,8 +1337,8 @@ spc_handler_pdfm_code (struct spc_env *spe, struct spc_arg *args)
   skip_white(&args->curptr, args->endptr);
 
   if (args->curptr < args->endptr) {
-    pdf_doc_add_page_content(" ", 1);
-    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));
+    pdf_doc_add_page_content(" ", 1);  /* op: */
+    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));  /* op: ANY */
     args->curptr = args->endptr;
   }
 
@@ -1669,7 +1673,7 @@ spc_handler_pdfm_bgcolor (struct spc_env *spe, struct spc_arg *args)
   int       error;
   pdf_color colorspec;
 
-  error = spc_util_read_colorspec(spe, &colorspec, args, 0);
+  error = spc_util_read_pdfcolor(spe, &colorspec, args, NULL);
   if (error)
     spc_warn(spe, "No valid color specified?");
   else {

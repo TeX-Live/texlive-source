@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.h,v 1.5 2008/02/13 20:22:21 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_util.h,v 1.6 2009/04/29 11:22:19 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -35,7 +35,8 @@
  *
  * This is for reading *single* color specification.
  */
-extern int  spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *args, int syntax);
+extern int  spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *args);
+extern int  spc_util_read_pdfcolor (struct spc_env *spe, pdf_color *colorspec, struct spc_arg *args, pdf_color *defaultcolor);
 extern int  spc_util_read_dimtrns   (struct spc_env *spe, transform_info *dimtrns, struct spc_arg *args, long *page, int syntax);
 extern int  spc_util_read_length    (struct spc_env *spe, double *length, struct spc_arg *ap);
 

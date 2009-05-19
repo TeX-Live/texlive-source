@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_color.c,v 1.8 2008/12/11 16:03:05 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_color.c,v 1.9 2009/04/29 11:22:19 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -53,7 +53,7 @@ spc_handler_color_push (struct spc_env *spe, struct spc_arg *args)
   int        error;
   pdf_color  colorspec;
 
-  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
+  error = spc_util_read_colorspec(spe, &colorspec, args);
   if (!error) {
     pdf_color_push(&colorspec, &colorspec);
   }
@@ -78,7 +78,7 @@ spc_handler_color_default (struct spc_env *spe, struct spc_arg *args)
   int        error;
   pdf_color  colorspec;
 
-  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
+  error = spc_util_read_colorspec(spe, &colorspec, args);
   if (!error) {
     pdf_color_clear_stack();
     pdf_color_set(&colorspec, &colorspec);
@@ -97,7 +97,7 @@ spc_handler_background (struct spc_env *spe, struct spc_arg *args)
   int        error;
   pdf_color  colorspec;
 
-  error = spc_util_read_colorspec(spe, &colorspec, args, 1);
+  error = spc_util_read_colorspec(spe, &colorspec, args);
   if (!error)
     pdf_doc_set_bgcolor(&colorspec);
 

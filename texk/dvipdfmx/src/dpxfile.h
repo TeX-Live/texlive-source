@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.h,v 1.8 2008/05/18 12:05:22 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.h,v 1.9 2009/03/12 19:29:48 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -53,7 +53,9 @@ extern FILE *dpx_open_file (const char *filename, int type);
 
 extern void  dpx_file_set_verbose  (void);
 
-extern int   dpx_file_apply_filter (const char *cmdtmpl, const char *input, const char *output);
+extern int   dpx_file_apply_filter (const char *cmdtmpl,
+                                   const char *input, const char *output,
+                                   unsigned char version);
 extern char *dpx_create_temp_file  (void);
 extern void  dpx_delete_temp_file  (char *tmp); /* tmp freed here */
 

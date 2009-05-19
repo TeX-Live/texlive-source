@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.c,v 1.25 2007/05/18 05:19:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.c,v 1.26 2009/03/24 02:07:48 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -206,9 +206,6 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   png_read_update_info(png_ptr, png_info_ptr);
   rowbytes = png_get_rowbytes(png_ptr, png_info_ptr);
 
-  stream      = pdf_new_stream (STREAM_COMPRESS);
-  stream_dict = pdf_stream_dict(stream);
-
   /* Values listed below will not be modified in the remaining process. */
   info.width  = width;
   info.height = height;
@@ -217,6 +214,9 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
     info.xdensity = 72.0 / 0.0254 / xppm;
   if (yppm > 0)
     info.ydensity = 72.0 / 0.0254 / yppm;
+
+  stream      = pdf_new_stream (STREAM_COMPRESS);
+  stream_dict = pdf_stream_dict(stream);
 
   stream_data_ptr = (png_bytep) NEW(rowbytes*height, png_byte);
   read_image_data(png_ptr, png_info_ptr, stream_data_ptr, height, rowbytes);
@@ -1004,6 +1004,48 @@ read_image_data (png_structp png_ptr, png_infop info_ptr, /* info_ptr unused */
     rows_p[i] = dest_ptr + (rowbytes * i);
   png_read_image(png_ptr, rows_p);
   RELEASE(rows_p);
+}
+
+int
+png_get_bbox (FILE *png_file, long *width, long *height,
+	       double *xdensity, double *ydensity)
+{
+  png_structp png_ptr;
+  png_infop   png_info_ptr;
+  png_uint_32 xppm, yppm;
+
+  rewind (png_file);
+  png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if (png_ptr == NULL || 
+      (png_info_ptr = png_create_info_struct (png_ptr)) == NULL) {
+    WARN("%s: Creating Libpng read/info struct failed.", PNG_DEBUG_STR);
+    if (png_ptr)
+      png_destroy_read_struct(&png_ptr, NULL, NULL);
+    return -1;
+  }
+
+  /* Inititializing file IO. */
+  png_init_io (png_ptr, png_file);
+
+  /* Read PNG info-header and get some info. */
+  png_read_info(png_ptr, png_info_ptr);
+  *width      = png_get_image_width (png_ptr, png_info_ptr);
+  *height     = png_get_image_height(png_ptr, png_info_ptr);
+  xppm       = png_get_x_pixels_per_meter(png_ptr, png_info_ptr);
+  yppm       = png_get_y_pixels_per_meter(png_ptr, png_info_ptr);
+
+  /* Cleanup */
+  if (png_info_ptr)
+    png_destroy_info_struct(png_ptr, &png_info_ptr);
+  if (png_ptr)
+    png_destroy_read_struct(&png_ptr, NULL, NULL);
+
+  if (xppm > 0)
+    *xdensity = 72.0 / 0.0254 / xppm;
+  if (yppm > 0)
+    *ydensity = 72.0 / 0.0254 / yppm;
+
+  return 0;
 }
 
 #endif /* HAVE_LIBPNG */

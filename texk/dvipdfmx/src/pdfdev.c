@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.70 2008/12/11 16:03:04 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdev.c,v 1.71 2009/03/16 22:26:40 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -536,7 +536,7 @@ dev_set_text_matrix (spt_t xpos, spt_t ypos, double slant, double extend, int ro
   format_buffer[len++] = 'T';
   format_buffer[len++] = 'm';
 
-  pdf_doc_add_page_content(format_buffer, len);
+  pdf_doc_add_page_content(format_buffer, len);  /* op: Tm */
 
   text_state.ref_x = xpos;
   text_state.ref_y = ypos;
@@ -556,7 +556,7 @@ reset_text_state (void)
   /*
    * We need to reset the line matrix to handle slanted fonts.
    */
-  pdf_doc_add_page_content(" BT", 3);
+  pdf_doc_add_page_content(" BT", 3);  /* op: BT */
   /*
    * text_state.matrix is identity at top of page.
    * This sometimes write unnecessary "Tm"s when transition from
@@ -584,7 +584,7 @@ text_mode (void)
   case TEXT_MODE:
     break;
   case STRING_MODE:
-    pdf_doc_add_page_content(text_state.is_mb ? ">]TJ" : ")]TJ", 4);
+    pdf_doc_add_page_content(text_state.is_mb ? ">]TJ" : ")]TJ", 4);  /* op: TJ */
     break;
   case GRAPHICS_MODE:
     reset_text_state();
@@ -601,10 +601,10 @@ graphics_mode (void)
   case GRAPHICS_MODE:
     break;
   case STRING_MODE:
-    pdf_doc_add_page_content(text_state.is_mb ? ">]TJ" : ")]TJ", 4);
+    pdf_doc_add_page_content(text_state.is_mb ? ">]TJ" : ")]TJ", 4);  /* op: TJ */
     /* continue */
   case TEXT_MODE:
-    pdf_doc_add_page_content(" ET", 3);
+    pdf_doc_add_page_content(" ET", 3);  /* op: ET */
     text_state.force_reset =  0;
     text_state.font_id     = -1;
     break;
@@ -731,12 +731,12 @@ start_string (spt_t xpos, spt_t ypos, double slant, double extend, int rotate)
     len += dev_sprint_bp(format_buffer+len, desired_dely, &error_dely);
     break;
   }
-  pdf_doc_add_page_content(format_buffer, len);
+  pdf_doc_add_page_content(format_buffer, len);  /* op: */
   /*
    * dvipdfm wrongly using "TD" in place of "Td".
    * The TD operator set leading, but we are not using T* etc.
    */
-  pdf_doc_add_page_content(text_state.is_mb ? " Td[<" : " Td[(", 5);
+  pdf_doc_add_page_content(text_state.is_mb ? " Td[<" : " Td[(", 5);  /* op: Td */
 
   /* Error correction */
   text_state.ref_x = xpos - error_delx;
@@ -757,7 +757,7 @@ string_mode (spt_t xpos, spt_t ypos, double slant, double extend, int rotate)
   case TEXT_MODE:
     if (text_state.force_reset) {
       dev_set_text_matrix(xpos, ypos, slant, extend, rotate);
-      pdf_doc_add_page_content(text_state.is_mb ? "[<" : "[(", 2);
+      pdf_doc_add_page_content(text_state.is_mb ? "[<" : "[(", 2);  /* op: */
       text_state.force_reset = 0;
     } else {
       start_string(xpos, ypos, slant, extend, rotate);
@@ -832,14 +832,14 @@ dev_set_font (int font_id)
   format_buffer[len++] = ' ';
   format_buffer[len++] = 'T';
   format_buffer[len++] = 'f';
-  pdf_doc_add_page_content(format_buffer, len);
+  pdf_doc_add_page_content(format_buffer, len);  /* op: Tf */
 
   if (font->bold > 0.0 || font->bold != text_state.bold_param) {
     if (font->bold <= 0.0)
       len = sprintf(format_buffer, " 0 Tr");
     else
       len = sprintf(format_buffer, " 2 Tr %.2f w", font->bold); /* _FIXME_ */
-    pdf_doc_add_page_content(format_buffer, len);
+    pdf_doc_add_page_content(format_buffer, len);  /* op: Tr w */
   }
   text_state.bold_param = font->bold;
 
@@ -1134,7 +1134,7 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
       len += p_itoa( kern, format_buffer + len);
     }
     format_buffer[len++] = text_state.is_mb ? '<' : '(';
-    pdf_doc_add_page_content(format_buffer, len);
+    pdf_doc_add_page_content(format_buffer, len);  /* op: */
     len = 0;
   }
 
@@ -1154,7 +1154,7 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
                              FORMAT_BUF_SIZE - len, str_ptr, length);
   }
   /* I think if you really care about speed, you should avoid memcopy here. */
-  pdf_doc_add_page_content(format_buffer, len);
+  pdf_doc_add_page_content(format_buffer, len);  /* op: */
 
   text_state.offset += width;
 }
@@ -1533,7 +1533,7 @@ pdf_dev_set_rule (spt_t xpos, spt_t ypos, spt_t width, spt_t height)
   }
   format_buffer[len++] = ' ';
   format_buffer[len++] = 'Q';
-  pdf_doc_add_page_content(format_buffer, len);
+  pdf_doc_add_page_content(format_buffer, len);  /* op: q re f Q */
 }
 
 /* Rectangle in device space coordinate. */
@@ -1740,7 +1740,7 @@ pdf_dev_put_image (int             id,
 
   res_name = pdf_ximage_get_resname(id);
   len = sprintf(work_buffer, " /%s Do", res_name);
-  pdf_doc_add_page_content(work_buffer, len);
+  pdf_doc_add_page_content(work_buffer, len);  /* op: Do */
 
   pdf_dev_grestore();
 

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.68 2009/01/15 21:46:08 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.74 2009/05/06 06:07:09 chofchof Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -30,6 +30,7 @@
 #include <string.h>
 #include <limits.h>
 #include <ctype.h>
+#include <libgen.h>
 
 #include "system.h"
 #include "mem.h"
@@ -40,6 +41,7 @@
 
 #include "dvi.h"
 
+#include "pdflimits.h"
 #include "pdfdoc.h"
 #include "pdfdev.h"
 #include "pdfparse.h"
@@ -125,6 +127,9 @@ set_default_pdf_filename(void)
 static void
 usage (void)
 {
+  if (really_quiet)
+    return;
+
   fprintf (stdout, "\nThis is %s-%s by the DVIPDFMx project team,\n", PACKAGE, VERSION);
   fprintf (stdout, "an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
   fprintf (stdout, "\nCopyright (C) 2002-2009 by the DVIPDFMx project team\n");
@@ -157,7 +162,7 @@ usage (void)
   fprintf (stdout, "\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
   fprintf (stdout, "\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
   fprintf (stdout, "\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
-  fprintf (stdout, "\t\t  0x0010 Do not remove unused PDF destinations.\n");
+  fprintf (stdout, "\t\t  0x0010 Do not optimize PDF destinations.\n");
   fprintf (stdout, "\t\tPositive values are always ORed with previously given flags.\n");
   fprintf (stdout, "\t\tAnd negative values replace old values.\n");
   fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
@@ -311,7 +316,8 @@ select_pages (const char *pagespec)
 #define POP_ARG() {argv += 1; argc -= 1;}
 /* It doesn't work as expected (due to dvi filename). */
 #define CHECK_ARG(n,m) if (argc < (n) + 1) {\
-  fprintf (stderr, "\nMissing %s after \"-%c\".\n", (m), *flag);\
+  if (!really_quiet)\
+    fprintf (stderr, "\nMissing %s after \"-%c\".\n", (m), *flag);\
   usage();\
 }
 
@@ -443,11 +449,11 @@ do_args (int argc, char *argv[])
           ver_minor = atoi(argv[1]);
           POP_ARG();
         }
-        if (ver_minor < 3 || ver_minor > 6) {
-          WARN("PDF version 1.%d not supported. (1.4 used instead)", ver_minor);
-          ver_minor = 4;
-        }
-        pdf_set_version((unsigned) ver_minor);
+        if (ver_minor < PDF_VERSION_MIN || ver_minor > PDF_VERSION_MAX) {
+          WARN("PDF version 1.%d not supported. Using PDF 1.%d instead.",
+	       ver_minor, pdf_get_version());
+        } else
+	  pdf_set_version((unsigned) ver_minor);
       }
       break;
       case 'z':
@@ -517,7 +523,8 @@ do_args (int argc, char *argv[])
         POP_ARG();
         break;
       default:
-        fprintf (stderr, "Unknown option in \"%s\"", flag);
+	if (!really_quiet)
+	  fprintf (stderr, "Unknown option in \"%s\"", flag);
         usage();
         break;
       }
@@ -526,7 +533,8 @@ do_args (int argc, char *argv[])
   }
 
   if (argc > 1) {
-    fprintf(stderr, "Multiple dvi filenames?");
+    if (!really_quiet)
+      fprintf(stderr, "Multiple dvi filenames?");
     usage();
   } else if (argc > 0) {
     /*
@@ -619,7 +627,8 @@ error_cleanup (void)
   pdf_error_cleanup();
   if (pdf_filename) {
     remove(pdf_filename);
-    fprintf(stderr, "\nOutput file removed.\n");
+    if (!really_quiet)
+      fprintf(stderr, "\nOutput file removed.\n");
   }
 }
 
@@ -778,15 +787,19 @@ main (int argc, char *argv[])
 {
   double dvi2pts;
 
-  if (strcmp(argv[0], "ebb") == 0)
-    return extractbb(argc, argv, EBB_OUTPUT);
-  else if (strcmp(argv[0], "xbb") == 0 || strcmp(argv[0], "extractbb") == 0)
-    return extractbb(argc, argv, XBB_OUTPUT);
+  {
+    char *base = basename(argv[0]);
+    if (strcmp(base, "ebb") == 0)
+      return extractbb(argc, argv, EBB_OUTPUT);
+    else if (strcmp(base, "xbb") == 0 || strcmp(base, "extractbb") == 0)
+      return extractbb(argc, argv, XBB_OUTPUT);
+  }
 
   mem_debug_init();
 
   if (argc < 2) {
-    fprintf(stderr, "No dvi filename specified.");
+    if (!really_quiet)
+      fprintf(stderr, "No dvi filename specified.");
     usage();
     return 1;
   }
@@ -833,9 +846,10 @@ main (int argc, char *argv[])
   MESG("%s -> %s\n", dvi_filename, pdf_filename);
 
   if (do_encryption) {
+    if (key_bits > 40 && pdf_get_version() <= PDF_VERSION_MIN)
+      ERROR("Chosen key length requires at least PDF 1.4. "
+	    "Use \"-V 4\" to change.");
     pdf_enc_set_passwd(key_bits, permission, dvi_filename, pdf_filename);
-    if (key_bits > 40 && pdf_get_version() < 4)
-      pdf_set_version(4);
   }
 
   if (mp_mode) {

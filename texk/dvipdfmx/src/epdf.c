@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.25 2008/10/01 00:48:46 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.27 2009/05/04 00:41:42 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -49,31 +49,32 @@
 #include "epdf.h"
 
 int
-pdf_include_page (pdf_ximage *ximage, FILE *image_file)
+pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 {
-  char *ident = pdf_ximage_get_ident(ximage);
   pdf_file *pf;
   xform_info info;
-  pdf_obj *trailer, *contents = NULL;
+  pdf_obj *contents = NULL, *catalog;
   pdf_obj *page = NULL, *resources = NULL, *markinfo = NULL;
   long page_no, count;
 
-  pdf_ximage_init_form_info(&info);
-
-  pf = pdf_open(ident, image_file);
+  pf = pdf_open(filename, image_file);
   if (!pf)
     return -1;
 
-  trailer = pdf_file_get_trailer(pf);
+  if (pdf_file_get_version(pf) > pdf_get_version())
+    goto too_recent;
+
+  pdf_ximage_init_form_info(&info);  
 
   page_no = pdf_ximage_get_page(ximage);
 
-  page = pdf_doc_get_page(trailer, &page_no, &count,
-			  &info.bbox, &resources, &markinfo);
+  page = pdf_doc_get_page(pf, &page_no, &count, &info.bbox, &resources);
 
   if(!page)
     goto error_silent;
 
+  catalog = pdf_file_get_catalog(pf);
+  markinfo = pdf_deref_obj(pdf_lookup_dict(catalog, "MarkInfo"));
   if (markinfo) {
     pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(markinfo, "Marked"));
     pdf_release_obj(markinfo);
@@ -199,4 +200,10 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file)
   pdf_close(pf);
 
   return -1;
+
+ too_recent:
+  WARN("PDF version of input file more recent than in output file.");
+  WARN("Converting. Use \"-V\" switch to change output PDF version.");
+  pdf_close(pf);
+  return 1;
 }

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.21 2008/05/29 13:43:51 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.23 2009/05/03 00:13:04 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -261,8 +261,14 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   case  IMAGE_TYPE_PDF:
     if (_opts.verbose)
       MESG("[PDF]");
-    if (pdf_include_page(I, fp) < 0)
-      goto error;
+    {
+      int result = pdf_include_page(I, fp, ident);
+      if (result > 0)
+	/* PDF version too recent */
+	result = ps_include_page(I, fullname);
+      if (result < 0)
+	goto error;
+    }
     if (_opts.verbose)
       MESG(",Page:%ld", I->page_no);
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
@@ -441,12 +447,6 @@ pdf_ximage_init_image_info (ximage_info *info)
   info->num_components = 0;
   info->min_dpi = 0;
   info->xdensity = info->ydensity = 1.0;
-}
-
-char *
-pdf_ximage_get_ident (pdf_ximage *I)
-{
-  return I->ident;
 }
 
 void
@@ -827,7 +827,8 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     MESG("pdf_image>> ...");
   }
 
-  error = dpx_file_apply_filter(distiller_template, filename, temp);
+  error = dpx_file_apply_filter(distiller_template, filename, temp,
+                               (unsigned char) pdf_get_version());
   if (error) {
     WARN("Image format conversion for \"%s\" failed...", filename);
     dpx_delete_temp_file(temp);
@@ -840,7 +841,7 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     dpx_delete_temp_file(temp);
     return  -1;
   }
-  error = pdf_include_page(ximage, fp);
+  error = pdf_include_page(ximage, fp, temp);
   MFCLOSE(fp);
 
   if (_opts.verbose > 1) {

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.h,v 1.8 2007/11/14 03:36:01 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.h,v 1.9 2009/04/26 21:23:29 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -73,6 +73,7 @@ struct ht_table {
 
 extern void  ht_init_table   (struct ht_table *ht);
 extern void  ht_clear_table  (struct ht_table *ht, void (*hval_free_fn) (void *));
+extern long  ht_table_size   (struct ht_table *ht);
 extern void *ht_lookup_table (struct ht_table *ht, const void *key, int keylen);
 extern void  ht_append_table (struct ht_table *ht,
 			      const void *key, int keylen, void *value) ;

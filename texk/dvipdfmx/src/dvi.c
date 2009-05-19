@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.39 2008/11/30 21:12:27 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvi.c,v 1.40 2009/04/04 02:10:44 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1660,6 +1660,7 @@ read_length (double *vp, double mag, char **pp, char *endptr)
 
   q = parse_c_ident(&p, endptr);
   if (q) {
+    char *qq = q;
     if (strlen(q) > strlen("true") &&
         !memcmp(q, "true", strlen("true"))) {
       u /= mag != 0.0 ? mag : 1.0; /* inverse magnify */
@@ -1673,11 +1674,11 @@ read_length (double *vp, double mag, char **pp, char *endptr)
     case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
     case K_UNIT__BP: u *= 1.0 ; break;
     default:
-      WARN("Unknown unit of measure: %s", q);
+      WARN("Unknown unit of measure: %s", qq);
       error = -1;
       break;
     }
-    RELEASE(q);
+    RELEASE(qq);
   }
 
   *vp = v * u; *pp = p;

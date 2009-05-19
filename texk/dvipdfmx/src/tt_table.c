@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.10 2008/11/30 21:12:27 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_table.c,v 1.11 2009/05/02 12:16:32 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -188,7 +188,6 @@ tt_read_hhea_table (sfnt *sfont)
   ULONG  len;
   struct tt_hhea_table *table = NULL;
 
-  len = sfnt_find_table_len(sfont, "hhea");
   sfnt_locate_table(sfont, "hhea");
 
   table = NEW(1, struct tt_hhea_table);
@@ -210,6 +209,8 @@ tt_read_hhea_table (sfnt *sfont)
   if (table->metricDataFormat != 0)
     ERROR("unknown metricDaraFormat");
   table->numOfLongHorMetrics = sfnt_get_ushort(sfont);
+
+  len = sfnt_find_table_len(sfont, "hmtx");
   table->numOfExSideBearings = (USHORT)((len - table->numOfLongHorMetrics * 4) / 2);
 
   return table;
@@ -251,7 +252,6 @@ struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont)
   ULONG len;
   struct tt_vhea_table *table = NULL;
 
-  len = sfnt_find_table_len(sfont, "vhea");
   sfnt_locate_table(sfont, "vhea");
 
   table = NEW(1, struct tt_vhea_table);
@@ -271,6 +271,8 @@ struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont)
   }
   table->metricDataFormat = sfnt_get_short(sfont);
   table->numOfLongVerMetrics = sfnt_get_ushort(sfont);
+
+  len = sfnt_find_table_len(sfont, "vmtx");
   table->numOfExSideBearings = (USHORT)((len - table->numOfLongVerMetrics * 4) / 2);
 
   return table;

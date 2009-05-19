@@ -1,7 +1,161 @@
-$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.234 2009/01/15 21:09:29 chofchof Exp $
+$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.256 2009/05/06 06:09:05 chofchof Exp $
 
 ChangeLog: Changes for DVIPDFMx
 ===============================
+
+2009-05-06  Jin-Hwan Cho
+
+	* dvipdfmx.c, pdflimits.h, pdfobj.c:
+          Improved PDF version handling.
+
+	* cmap_read.c:
+          Fixed a silly bug; reported by Fumihito YOSHIDA.
+
+2009-05-06  Matthias Franz
+
+	* cid.c, dvipdfmx.c, pdflimits.h, pdfobj.c:
+          Fixed minor issues with PDF version handling, following
+          a question by Akira Kakuto. The minimal and maximal
+          PDF versions allowed are now defined in pdflimits.h.
+
+2009-05-03  Matthias Franz
+
+	* dvipdfmx.c, epdf.c, epdf.h, pdfdoc.c, pdfdoc.h, pdfobj.c, pdfobj.h, pdfximage.c, pdfximage.h, xbb.c:
+          Improved PDF version handling. A "Version" entry in the
+          document catalog is now honored. Moreover, dvipdfmx accepts
+          to write PDF 1.7, and extractbb doesn't complain about PDF
+          versions any more. Encryption keys too long for PDF 1.3 now
+          lead to an error instead of a silent change of PDF version.
+
+2009-05-02  Jin-Hwan Cho
+
+	* tt_table.c:
+          Fixed a bug of reading numOfExSideBearings; reported by
+          Tomas Janousek.
+
+2009-04-30  Matthias Franz
+
+	* dvipdfmx.cfg:
+          Use ps2pdf for PS-to-PDF conversion on all platforms.
+
+2009-04-29  Jin-Hwan Cho
+
+	* spc_color.c, spc_pdfm.c, spc_util.c, spc_util.h:
+          Allow changing strokecolor or fillcolor only; for example,
+          "pdf:scolor Red []" changes fillcolor only and
+          "pdf:scolor [] Red" changes strokecolor only, but
+          "pdf:scolor Red" changes both fillcolor and strokecolor.
+
+	* pdfparse.c:
+          Parse stream objects in a strict way as DVIPDFM because
+          DVIPDFMx already has another specials for stream objects.
+
+2009-04-26  Matthias Franz
+
+	* pdfobj.c:
+          Don't print unnecessary newlines in PDF dictionaries.
+
+	* pdfobj.c, pdfobj.h, xbb.c:
+          Added "%%HiResBoundingBox" and "%%PDFVersion" lines to
+          extractbb output.
+
+	* dpxutil.c, dpxutil.h, dvipdfmx.c, pdfdoc.c,pdfdoc.h, pdfnames.c, pdfnames.h, pdfobj.c, pdfobj.h, spc_pdfm.c, specials.c, dvipdfmx.cfg:
+          Rename PDF destinations to shorter names (in order to save
+          space). Together with the removal of unused PDF destinations
+          implemented previously, this is more or less equivalent to
+          Heiko Oberdiek's LaTeX package "hypdestopt".
+
+2009-04-20  Jin-Hwan Cho
+
+	* pdfdoc.c:
+          Bug fix: \special{pdf:bann} ... \special{pdf:eann} (e.g., \hyperlink)
+	  cause a problem when it was surrounded by the pair
+	  \special{pdf:bcontent} ... \special{\special{pdf:econtent}.
+
+2009-04-19  Jin-Hwan Cho
+
+	* generic/pgf-doc-diff.texlive2008, generic/pgf-generic-diff.texlive2008:
+          Patches and a new dvipdfmx driver for PGF, Version 2.00
+	  included in texlive 2008.
+
+	* generic/pgfsys-dvipdfmx.def.version2, generic/pgfsys-dvipdfmx-patch.tex.version2:
+          Removed contributed files because of new patch files
+	  pgf-doc-diff.texlive2008 and pgf-generic-diff.texlive2008.
+
+2009-04-18  Jin-Hwan Cho
+
+	* generic/pgf-doc-diff.version2cvs, generic/pgf-generic-diff.version2cvs:
+          Patches and a new dvipdfmx driver for PGF, Version 2.00-cvs 20090418.
+
+	* contrib/context/spec-dpx.tex, contrib/latex/animate.sty.sample, color.sty.sample, dvipdfmx.def.sample, graphics.sty.sample, movie15.sty.sample, sample-imagemask.tex:
+          Removed contributed files already applied to texlive 2008.
+
+2009-04-08  Jin-Hwan Cho
+
+	* t1_load.c:
+          Ignores the second /Subrs dicts and /CharStrings not followed
+          by dict; Adobe's OPO_____.PFB and OPBO____.PFB had those problems.
+
+2009-04-07  Matthias Franz
+
+	* xbb.c:
+          Removed binary mode option "-b". In ebb, just ignore it.
+
+2009-03-30  Jin-Hwan Cho
+
+	* pdfdoc.c:
+          Fixed the bug: bbox->llx is not extracted for PDF images.
+
+2009-03-29  Matthias Franz
+
+	* xbb.c:
+          Changed output-to-stdout option to "-O".
+
+2009-03-24  Jin-Hwan Cho
+
+	* cff.c, dpxutil.c, pdfencoding.c, pdfencrypt.c, mem.c:
+          Revive system.h to work with TeXLive.
+
+2009-03-23  Matthias Franz
+
+	* dvipdfmx.c, jpegimage.c, jpegimage.h, pngimage.c, pngimage.h, xbb.c:
+          Several changes related to xbb/extractbb:
+	  Combined code with jpegimage.c and pngimage.c, added number
+	  of pages to xbb output for PDF files, introduced quiet mode
+	  (option "-q") and output to stdout (option "-s"), improved test
+	  of filename check in dvipdfmx.c (now uses >libgen.h>), new
+	  version numbering for xbb (same as dvipdfmx version)
+
+2009-03-15  Jin-Hwan Cho
+
+	* data/Makefile.am, data/Makefile.in, data/EUC-UCS2:
+          Revive the cmap EUC-UCS2; suggested by Nobuyuki Tsuchimura.
+
+2009-03-16  Matthias Franz
+
+	* pdfdev.c, pdfdraw.c, spc_html.c, spc_pdfm.c, spc_tpic.c:
+          Added comments to show the PDF operators inserted by each
+          call of pdf_doc_add_page_content. This makes it easier to
+          find out which part of the source is responsible for a PDF
+          operator in the output. Example:
+
+          pdf_doc_add_page_content(work_buffer, len);  /* op: q cm *
+
+2009-03-12  Matthias Franz
+
+	* dvipdfmx.c:
+          Don't print messages in quiet mode.
+
+	* dpxfile.c, dpxfile.h, pdfximage.c, data/dvipdfmx.cfg:
+          Added conversion specifier "%v" (PDF version) to PS-to-PDF
+          conversion template. Also changed default template for
+          GhostScript to use the script ps2pdf instead of calling gs
+          directly. (This works for all platforms.)
+
+	* pdfobj.c:
+          Fixed a bug concerning empty PDF strings: Empty PDF strings
+          were reduced to NULL, which could lead to errors when calling
+          string functions.
 
 2009-01-15  Jin-Hwan Cho
 

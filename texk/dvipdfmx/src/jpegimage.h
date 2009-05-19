@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.h,v 1.2 2004/03/11 11:50:21 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.h,v 1.3 2009/03/24 02:07:48 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -30,6 +30,8 @@
 
 extern int check_for_jpeg     (FILE *fp);
 extern int jpeg_include_image (pdf_ximage *ximage, FILE *fp);
+extern int jpeg_get_bbox (FILE *fp, long *width, long *height,
+			  double *xdensity, double *ydensity);
 
 #endif /* _JPEGIMAGE_H_ */
 
