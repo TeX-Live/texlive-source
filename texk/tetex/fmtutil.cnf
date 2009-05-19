@@ -117,10 +117,6 @@ pdfmex          pdftex	mexconf.tex     -translate-file=cp227.tcx *pdfmex.ini
 mltex           pdftex	-		-translate-file=cp227.tcx -mltex mltex.ini
 mllatex         pdftex	language.dat	-translate-file=cp227.tcx -mltex mllatex.ini
 # ------------------------------------------------------------------
-# $Id: format.omega.cnf 8442 2008-05-31 23:30:56Z karl $
-omega           omega	-		omega.ini
-lambda          omega	language.dat    lambda.ini
-# ------------------------------------------------------------------
 # $Id: format.pdftex.cnf 8658 2008-06-10 16:49:17Z karl $
 # The pdftex engine always includes the e-TeX extensions.
 etex		pdftex	language.def	-translate-file=cp227.tcx *etex.ini
