@@ -211,7 +211,7 @@ versions of the program.
 @d ssup_hyph_size == 65535 {Changing this requires changing (un)dumping!}
 @d iinf_hyphen_size == 610 {Must be not less than |hyph_prime|!}
 
-@d max_font_max=5000 {maximum number of internal fonts; this can be
+@d max_font_max=9000 {maximum number of internal fonts; this can be
                       increased, but |hash_size+max_font_max|
                       should not exceed 29000.}
 @d font_base=0 {smallest internal font number; must be
@@ -303,8 +303,8 @@ versions of the program.
 @d hash_prime=1777 {a prime number equal to about 85\pct! of |hash_size|}
 @d hyph_size=307 {another prime; the number of \.{\\hyphenation} exceptions}
 @y
-@d hash_size=10000 {maximum number of control sequences; it should be at most
-  about |(mem_max-mem_min)/10|}
+@d hash_size=15000 {maximum number of control sequences; it should be at most
+  about |(mem_max-mem_min)/10|; see also |font_max|}
 @d hash_prime=8501 {a prime number equal to about 85\pct! of |hash_size|}
 @d hyph_prime=607 {another prime for hashing \.{\\hyphenation} exceptions;
                 if you change this, you should also change |iinf_hyphen_size|.}

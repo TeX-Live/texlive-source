@@ -1,3 +1,9 @@
+2009-05-19  Karl Berry  <karl@tug.org>
+
+	* tex.ch (max_font_max): increase to 9000.
+	(hash_size): increase to 15000.
+	(Their sum is supposed to stay <29000.)
+
 2009-05-18  Karl Berry  <karl@tug.org>
 
 	* cpascal.h (getline): #define to web2c_getline,
