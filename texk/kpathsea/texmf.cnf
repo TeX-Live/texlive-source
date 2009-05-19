@@ -4,8 +4,8 @@
 % If you modify this original file, YOUR CHANGES WILL BE LOST when it is
 % updated.  Instead, put your changes -- and only your changes, not an
 % entire copy of the full texmf.cnf! -- in ../../texmf.cnf.  That is, if
-% this file is installed in /some/path/to/texlive/2008/texmf/web2c/texmf.cnf,
-% add your custom settings to /some/path/to/texlive/2008/texmf.cnf.
+% this file is installed in /some/path/to/texlive/2009/texmf/web2c/texmf.cnf,
+% add your custom settings to /some/path/to/texlive/2009/texmf.cnf.
 % 
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
@@ -27,18 +27,20 @@
 % right-hand side. For environment variables, use FOO_PROGRAM.
 %
 % Which file formats use which paths for searches is described in the
-% various programs' and the Kpathsea documentation.
+% various programs' and the Kpathsea documentation (http://tug.org/kpathsea).
 %
 % // means to search subdirectories (recursively).
 % A leading !! means to look only in the ls-R db, never on the disk.
 % In this file, either ; or : can be used to separate path components.
 % A leading/trailing/doubled path separator in the paths will be
 %   expanded into the compile-time default. Probably not what you want.
-%   
+%
+
 % Brace notation is supported, for example: /usr/local/{mytex,othertex}
 % expands to /usr/local/mytex:/usr/local/othertex.  You can use the path
 % separator as well as the comma for this: /usr/local/{mytex:othertex}
-% also expands to /usr/local/mytex:/usr/local/othertex.
+% also expands to /usr/local/mytex:/usr/local/othertex.  We make
+% extensive use of this.
 
 %  Part 1: Search paths and directories.
 
@@ -223,7 +225,7 @@ TEXINPUTS.pdfxtex       = .;$TEXMF/tex/{plain,generic,}//
 TEXINPUTS.lualatex      = .;$TEXMF/tex/{lualatex,latex,generic,}//
 TEXINPUTS.luatex        = .;$TEXMF/tex/{luatex,plain,generic,}//
 TEXINPUTS.pdflualatex   = .;$TEXMF/tex/{lualatex,latex,generic,}//
-TEXINPUTS.pdfluatex     = .;$TEXMF/tex/{lualatex,latex,generic,}//
+TEXINPUTS.pdfluatex     = .;$TEXMF/tex/{luatex,plain,generic,}//
 
 % XeTeX.
 TEXINPUTS.xelatex       = .;$TEXMF/tex/{xelatex,latex,generic,}//
@@ -400,14 +402,12 @@ FONTCONFIG_FILE=fonts.conf
 FONTCONFIG_PATH=$TEXMFSYSVAR/fonts/conf
 FC_CACHEDIR=$TEXMFSYSVAR/fonts/cache
 
-% TeX documentation and source files, for use with kpsewhich.
+% TeX documentation and source files, for use with kpsewhich (and texdoc).
 % TeX Live has a separate hierarchy with just documentation, texmf-doc,
 % in addition to the doc files in the other hierarchies.
-% Also, find the English documentation first -- better than random, when
-% there are name collisions.
-% Also, find things from man pages first, same reason.
-TEXMFDOCDIR = $TEXMFDOC/doc{/english,}
-TEXDOCS = .;$TEXMF/doc{/man,}//;$TEXMFDOCDIR//
+% Find non-man pages first, better than random in case of conflict.
+TEXMFDOCDIR = $TEXMFDOC/doc
+TEXDOCS = .;$TEXMF/doc{,/man}//;$TEXMFDOCDIR//
 TEXSOURCES = .;$TEXMF/source//
 
 % Web and CWeb input paths.
@@ -503,7 +503,7 @@ shell_escape_commands = \
 bibtex,convert,dvips,epstopdf,epspdf,etex,fc-match,gnuplot,\
 kpsewhich,latex,luatex,lualatex,makeindex,mpost,\
 pdfcrop,pdflatex,pdfluatex,ps2pdf,ps4pdf,pstopdf,pygmentize,\
-tex,texexec,texmfstart\
+tex,texexec,texmfstart,ulqda\
 
 % plain TeX should remain unenhanced.
 shell_escape.tex = f
@@ -611,11 +611,10 @@ extra_mem_bot.context = 4000000
 % Must be >= 20000 and <= 4000000 (without tex.ch changes).
 font_mem_size = 3000000
 
-% Total number of fonts. Must be >= 50 and <= 5000 (without tex.ch changes).
-font_max = 5000
+% Total number of fonts. Must be >= 50 and <= 9000 (without tex.ch changes).
+font_max = 9000
 
-% Extra space for the hash table of control sequences (which allows 10K
-% names as distributed).
+% Extra space for the hash table of control sequences.
 hash_extra = 50000
 
 % Max number of characters in all strings, including all error messages,
