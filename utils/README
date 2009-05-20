@@ -75,9 +75,9 @@ cd ffcall-1.10
 ln -s lib $clisp_toolsdir/lib64
 
 cd $clisp_basedir
-wget http://ftp.gnu.org/gnu/clisp/release/2.46/clisp-2.46.tar.gz
-gzip -dc clisp-2.46.tar.gz | tar xf -
-cd clisp-2.46
+wget http://ftp.gnu.org/gnu/clisp/release/2.47/clisp-2.47.tar.gz
+gzip -dc clisp-2.47.tar.gz | tar xf -
+cd clisp-2.47
 ./configure --with-ffcall --with-libffcall-prefix=$clisp_toolsdir \
   --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
   $clisp_builddir \
