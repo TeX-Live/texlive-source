@@ -450,7 +450,10 @@ extern const double third;
 
 }
 
-// Delete the following line to work around problems with old broken compilers.
+// Do -DOMIT_SOLVEDKNOT_DECL to work around redefinition error reported by
+// old (broken) compilers.
+#ifndef BROKEN_COMPILER
 GC_DECLARE_PTRFREE(camp::solvedKnot);
+#endif
 
 #endif
