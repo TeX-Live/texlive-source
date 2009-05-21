@@ -9,11 +9,11 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
-   * 22.84.16:
+   * 22.84.16 (2009-05-18):
 	+ Fixed a problem with the distribution (texmf.cnf file wasn't
 	  included).
 
-   * 22.84.15:
+   * 22.84.15 (2009-03-02):
 	+ Fixed #2067614: Re-introduced default binding for key 0
 	  which had been forgotten in previous changes
 	+ Fixed #1502137 (compiler warnings on 64bit systems)

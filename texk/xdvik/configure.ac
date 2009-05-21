@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([xdvik_version], [22.84.15])
+m4_define([xdvik_version], [22.84.16])
 AC_INIT([xdvik for TeX Live], xdvik_version, [tex-k@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([xdvi.c])

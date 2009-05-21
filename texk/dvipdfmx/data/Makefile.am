@@ -11,6 +11,6 @@ mapdatadir = ${prefix}/texmf/fonts/map/dvipdfm/dvipdfmx
 dist_mapdata_DATA = \
   $(srcdir)/cid-x.map
 
-cmapdatadir = $(datadir)/texmf/fonts/cmap/dvipdfmx
+cmapdatadir = ${prefix}/texmf/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = \
   $(srcdir)/EUC-UCS2

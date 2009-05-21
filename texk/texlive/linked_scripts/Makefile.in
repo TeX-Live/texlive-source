@@ -38,7 +38,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-mkinstalldirs = $(install_sh) -d
+mkinstalldirs = $(SHELL) $(top_srcdir)/../../build-aux/mkinstalldirs
 CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(scriptdir)" \
 	"$(DESTDIR)$(scriptxdir)"
@@ -146,7 +146,6 @@ nobase_dist_scriptx_SCRIPTS = \
 	a2ping/a2ping.pl \
 	epstopdf/epstopdf.pl \
 	getnonfreefonts/getnonfreefonts.pl \
-	pkfix/pkfix.pl \
 	ps2eps/ps2eps.pl \
 	simpdftex/simpdftex \
 	tetex/e2pall.pl \
@@ -203,6 +202,7 @@ nobase_dist_script_SCRIPTS = \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
 	perltex/perltex \
+	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
 	ppower4/pdfthumb.tlu \
 	ppower4/ppower4.tlu \
@@ -215,6 +215,7 @@ nobase_dist_script_SCRIPTS = \
 	texdirflatten/texdirflatten \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
+	ulqda/ulqda.pl \
 	vpe/vpe.pl
 
 all: all-am
