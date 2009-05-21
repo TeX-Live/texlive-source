@@ -18,7 +18,6 @@ nobase_dist_scriptx_SCRIPTS = \
 	a2ping/a2ping.pl \
 	epstopdf/epstopdf.pl \
 	getnonfreefonts/getnonfreefonts.pl \
-	pkfix/pkfix.pl \
 	ps2eps/ps2eps.pl \
 	simpdftex/simpdftex \
 	tetex/e2pall.pl \
@@ -75,6 +74,7 @@ nobase_dist_script_SCRIPTS = \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
 	perltex/perltex \
+	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
 	ppower4/pdfthumb.tlu \
 	ppower4/ppower4.tlu \

@@ -1,3 +1,8 @@
+2009-05-21  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_script_SCRIPTS): move pkfix here
+	(texmf-dist instead of texmf).
+
 2009-05-18  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): add ulqda.pl.
