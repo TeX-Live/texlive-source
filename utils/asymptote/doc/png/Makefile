@@ -5,7 +5,7 @@ ASY = ../asy -dir ../base -config "" -render=0
 docdir = $(DESTDIR)/usr/local/share/doc/asymptote
 infodir = $(DESTDIR)${datarootdir}/info
 datarootdir = ${prefix}/share
-INSTALL = /usr/bin/ginstall -c
+INSTALL = /usr/local/gnu/bin/install -c
 
 all:	html info
 
@@ -29,7 +29,7 @@ info:	asymptote.info
 clean: FORCE
 	-rm -f *.png *.html asymptote.info* texput.aux texput.log
 
-distclean:
+distclean: FORCE clean
 	-rm -f Makefile
 
 install: 

@@ -720,6 +720,8 @@ enable_tetex_build
 enable_gc
 enable_gc_debug
 enable_gc_full_debug
+enable_gsl
+enable_gl
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1357,12 +1359,14 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-tetex-build    automatically determine settings.sysdir from kpsewhich
+  --enable-tetex-build    automatically determine sysdir from kpsewhich
   --enable-gc[=system]    enable system Boehm garbage collector
 	     [=VERSION]   enable local VERSION of Boehm garbage collector
 	     [=PREFIX]    use Boehm garbage collector installed in PREFIX
   --enable-gc-debug       enable (slow) garbage collector debugging
   --enable-gc-full-debug  enable (very slow) garbage collector backtrace
+  --enable-gsl[=yes]      enable GNU Scientific Library
+  --enable-gl[=yes]       enable OpenGL Library
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -8212,7 +8216,14 @@ fi
 
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
-if test "${ac_cv_header_gsl_gsl_sf_h+set}" = set; then
+# Check whether --enable-gsl was given.
+if test "${enable_gsl+set}" = set; then
+  enableval=$enable_gsl;
+fi
+
+
+if test "x$enable_gsl" != "xno"; then
+  if test "${ac_cv_header_gsl_gsl_sf_h+set}" = set; then
   { $as_echo "$as_me:$LINENO: checking for gsl/gsl_sf.h" >&5
 $as_echo_n "checking for gsl/gsl_sf.h... " >&6; }
 if test "${ac_cv_header_gsl_gsl_sf_h+set}" = set; then
@@ -8345,9 +8356,9 @@ $as_echo "$ac_cv_header_gsl_gsl_sf_h" >&6; }
 
 fi
 if test "x$ac_cv_header_gsl_gsl_sf_h" = x""yes; then
-  { $as_echo "$as_me:$LINENO: checking for gsl_sf_Si in -lgsl" >&5
-$as_echo_n "checking for gsl_sf_Si in -lgsl... " >&6; }
-if test "${ac_cv_lib_gsl_gsl_sf_Si+set}" = set; then
+  { $as_echo "$as_me:$LINENO: checking for gsl_sf_debye_6 in -lgsl" >&5
+$as_echo_n "checking for gsl_sf_debye_6 in -lgsl... " >&6; }
+if test "${ac_cv_lib_gsl_gsl_sf_debye_6+set}" = set; then
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -8365,11 +8376,11 @@ cat >>conftest.$ac_ext <<_ACEOF
 #ifdef __cplusplus
 extern "C"
 #endif
-char gsl_sf_Si ();
+char gsl_sf_debye_6 ();
 int
 main ()
 {
-return gsl_sf_Si ();
+return gsl_sf_debye_6 ();
   ;
   return 0;
 }
@@ -8395,12 +8406,12 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  ac_cv_lib_gsl_gsl_sf_Si=yes
+  ac_cv_lib_gsl_gsl_sf_debye_6=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	ac_cv_lib_gsl_gsl_sf_Si=no
+	ac_cv_lib_gsl_gsl_sf_debye_6=no
 fi
 
 rm -rf conftest.dSYM
@@ -8408,9 +8419,9 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_gsl_gsl_sf_Si" >&5
-$as_echo "$ac_cv_lib_gsl_gsl_sf_Si" >&6; }
-if test "x$ac_cv_lib_gsl_gsl_sf_Si" = x""yes; then
+{ $as_echo "$as_me:$LINENO: result: $ac_cv_lib_gsl_gsl_sf_debye_6" >&5
+$as_echo "$ac_cv_lib_gsl_gsl_sf_debye_6" >&6; }
+if test "x$ac_cv_lib_gsl_gsl_sf_debye_6" = x""yes; then
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_LIBGSL 1
@@ -8427,7 +8438,15 @@ $as_echo "$as_me: *** Header file gsl_sf.h not found: will compile without optio
 fi
 
 
+fi
 
+# Check whether --enable-gl was given.
+if test "${enable_gl+set}" = set; then
+  enableval=$enable_gl;
+fi
+
+
+if test "x$enable_gl" != "xno"; then
 case "$OSTYPE" in
      cygwin) if test "${ac_cv_header_GL_glut_h+set}" = set; then
   { $as_echo "$as_me:$LINENO: checking for GL/glut.h" >&5
@@ -9014,7 +9033,7 @@ $as_echo "$as_me: *** Could not find libGLU: will compile without OpenGL support
 fi
 
 esac
-
+fi
 
 # Checks for typedefs, structures, and compiler characteristics.
 { $as_echo "$as_me:$LINENO: checking for pid_t" >&5
