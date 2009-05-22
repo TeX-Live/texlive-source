@@ -1,4 +1,8 @@
-2008-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2009-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (world): serialize to avoid parallel build problems.
+
+2009-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Build (TL_CONF_MAC_FONTS, TL_CONF_XINDY): removed,
 	no longer required.

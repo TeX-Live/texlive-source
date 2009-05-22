@@ -731,11 +731,12 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 # This is the default target for the Build script in TeX Live.
-#
-# run texlinks here since the binaries won't be there 
+.PHONY: world
+# Run texlinks here since the binaries won't be there 
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
-world: all install-strip
+world: all
+	$(MAKE) $(AM_MAKEFLAGS) install-strip
 	echo "top-level make $@: running texlinks ..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 	@echo "make $@ done."

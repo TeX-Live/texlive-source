@@ -32,11 +32,14 @@ endif !build_kpathsea
 SUBDIRS += libs utils texk
 
 # This is the default target for the Build script in TeX Live.
-#
-# run texlinks here since the binaries won't be there 
+.PHONY: world
+# Run texlinks here since the binaries won't be there 
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
-world: all install-strip
+world: all
+## Serialize 'make all' and 'make install-strip'.
+	$(MAKE) $(AM_MAKEFLAGS) install-strip
+##
 	echo "top-level make $@: running texlinks ..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 ##
