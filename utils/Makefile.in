@@ -37,12 +37,14 @@ DIST_COMMON = README $(am__configure_deps) \
 	$(srcdir)/../build-aux/config.guess \
 	$(srcdir)/../build-aux/config.sub \
 	$(srcdir)/../build-aux/install-sh \
-	$(srcdir)/../build-aux/missing $(srcdir)/Makefile.am \
+	$(srcdir)/../build-aux/missing \
+	$(srcdir)/../build-aux/mkinstalldirs $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
 	../build-aux/config.guess ../build-aux/config.sub \
 	../build-aux/depcomp ../build-aux/install-sh \
 	../build-aux/ltmain.sh ../build-aux/missing \
-	../build-aux/texinfo.tex ../build-aux/ylwrap
+	../build-aux/mkinstalldirs ../build-aux/texinfo.tex \
+	../build-aux/ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../m4/kpse-cxx-hack.m4 \
@@ -60,8 +62,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../m4/kpse-web2c.m4 \
 	$(top_srcdir)/../m4/kpse-xpdf-flags.m4 \
 	$(top_srcdir)/../m4/kpse-zlib-flags.m4 \
-	$(top_srcdir)/../ac/withenable.ac \
-	$(top_srcdir)/../utils/ac/withenable.ac \
 	$(top_srcdir)/../utils/dialog/ac/withenable.ac \
 	$(top_srcdir)/../utils/pdfopen/ac/withenable.ac \
 	$(top_srcdir)/../utils/ps2eps/ac/withenable.ac \
@@ -71,7 +71,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../utils/vlna/ac/withenable.ac \
 	$(top_srcdir)/../utils/xindy/ac/withenable.ac \
 	$(top_srcdir)/../utils/xindy/ac/xindy.ac \
-	$(top_srcdir)/../texk/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/web2c.ac \
 	$(top_srcdir)/../texk/afm2pl/ac/withenable.ac \
@@ -108,7 +107,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../texk/texlive/ac/withenable.ac \
 	$(top_srcdir)/../texk/kpathsea/ac/withenable.ac \
 	$(top_srcdir)/../texk/kpathsea/ac/web2c.ac \
-	$(top_srcdir)/../libs/ac/withenable.ac \
 	$(top_srcdir)/../libs/icu/ac/withenable.ac \
 	$(top_srcdir)/../libs/teckit/ac/withenable.ac \
 	$(top_srcdir)/../libs/graphite/ac/withenable.ac \
@@ -125,7 +123,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
-mkinstalldirs = $(install_sh) -d
+mkinstalldirs = $(SHELL) $(top_srcdir)/../build-aux/mkinstalldirs
 CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =

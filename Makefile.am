@@ -17,7 +17,8 @@ EXTRA_DIST = \
 	README.layout \
 	build-aux/README.TL \
 	build-aux/mkinstalldirs \
-	m4/README
+	m4/README \
+	reautoconf
 
 # just in case a subdirectory has added directories
 dist-hook:

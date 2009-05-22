@@ -3,5 +3,7 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
+dnl extra_dirs = texk/dvipsk/squeeze
+dnl
 ## configure options and TL libraries required for dvipsk
 KPSE_ENABLE_PROG([dvipsk], [kpathsea])

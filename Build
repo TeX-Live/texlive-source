@@ -81,15 +81,6 @@ cd $TL_WORKDIR || exit 1
 # default to building ICU without thread support, since xetex doesn't need it.
 : ${TL_CONF_THREADS=--disable-threads}
 
-# default to include freetype2 support for old Mac font file formats.
-: ${TL_CONF_MAC_FONTS=--with-old-mac-fonts}
-
-# configure defaults to skipping xindy, as it requires clisp (see
-# utils/README).  But in addition, if --enable-xindy is given, still
-# disable the documentation and data file building, which require a
-# working LaTeX installation.
-: ${TL_CONF_XINDY="--disable-xindy-docs --disable-xindy-make-rules"}
-
 # allow adding arbitrary other configure args.
 : ${TL_CONFIGURE_ARGS=}
 
@@ -113,8 +104,6 @@ cd $TL_WORKDIR || exit 1
         $TL_CONF_LARGEFILE \
         $TL_CONF_XDVI_TOOLKIT \
         $TL_CONF_THREADS \
-        $TL_CONF_MAC_FONTS \
-        $TL_CONF_XINDY \
         $TL_CONFIGURE_ARGS \
         "$@" \
   && eval $TL_BUILD_ENV time $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET

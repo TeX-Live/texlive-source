@@ -1,3 +1,8 @@
+2008-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Build (TL_CONF_MAC_FONTS, TL_CONF_XINDY): removed,
+	no longer required.
+
 2009-05-18  Karl Berry  <karl@tug.org>
 
 	* Build (-Wdecl): allow with -g, to do -Wdeclaration-after-statement.

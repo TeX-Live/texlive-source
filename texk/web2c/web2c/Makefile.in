@@ -46,12 +46,14 @@ DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
 	$(srcdir)/../../../build-aux/install-sh \
 	$(srcdir)/../../../build-aux/ltmain.sh \
 	$(srcdir)/../../../build-aux/missing \
+	$(srcdir)/../../../build-aux/mkinstalldirs \
 	$(srcdir)/../../../build-aux/ylwrap $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
 	$(top_srcdir)/native/kpathsea/c-auto.in \
 	../../../build-aux/config.guess ../../../build-aux/config.sub \
 	../../../build-aux/depcomp ../../../build-aux/install-sh \
 	../../../build-aux/ltmain.sh ../../../build-aux/missing \
+	../../../build-aux/mkinstalldirs \
 	../../../build-aux/texinfo.tex ../../../build-aux/ylwrap \
 	ChangeLog web2c-lexer.c web2c-parser.c web2c-parser.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -67,7 +69,8 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
-mkinstalldirs = $(install_sh) -d
+mkinstalldirs = $(SHELL) \
+	$(top_srcdir)/../../../build-aux/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/native/kpathsea/c-auto.h
 CONFIG_CLEAN_FILES =
 PROGRAMS = $(noinst_PROGRAMS)

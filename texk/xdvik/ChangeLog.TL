@@ -1,12 +1,12 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
-2009-04-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2009-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* CHANGES: fixed version/relase-date such that mksedscript can
 	extract them.
 
-2009-04-88  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2009-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xdvi.h: guard typedef of iconv_char_pptrT by '#if HAVE_ICONV_H'.
 

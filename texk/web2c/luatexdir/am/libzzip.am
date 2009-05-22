@@ -71,7 +71,6 @@ EXTRA_DIST += \
 	luatexdir/zziplib/msvc7 \
 	luatexdir/zziplib/msvc8 \
 	luatexdir/zziplib/test \
-	luatexdir/zziplib/uses \
 	luatexdir/zziplib/zzip/Makefile \
 	luatexdir/zziplib/zzip/Makefile.am \
 	luatexdir/zziplib/zzip/Makefile.in \

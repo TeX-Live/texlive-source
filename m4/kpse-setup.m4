@@ -48,13 +48,9 @@ KPSE_OPTIONS
 KPSE_ENABLE_CXX_HACK
 KPSE_LIBS_PREPARE
 KPSE_WEB2C_PREPARE
-m4_sinclude(kpse_TL[ac/withenable.ac])
-m4_sinclude(kpse_TL[utils/ac/withenable.ac])
 KPSE_FOR_PKGS([utils], [m4_sinclude(kpse_TL[utils/]Kpse_Pkg[/ac/withenable.ac])])
-m4_sinclude(kpse_TL[texk/ac/withenable.ac])
 KPSE_FOR_PKGS([texk], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])])
 m4_sinclude(kpse_TL[texk/kpathsea/ac/withenable.ac])
-m4_sinclude(kpse_TL[libs/ac/withenable.ac])
 KPSE_FOR_PKGS([libs], [m4_sinclude(kpse_TL[libs/]Kpse_Pkg[/ac/withenable.ac])])
 ]) # KPSE_SETUP
 

@@ -3,6 +3,8 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
+dnl extra_dirs = texk/xdvik/squeeze
+dnl
 ## configure options and TL libraries required for xdvik
 KPSE_ENABLE_PROG([xdvik], [kpathsea t1lib])
 m4_include(kpse_TL[texk/xdvik/ac/xdvik.ac])

@@ -57,7 +57,8 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
-	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
+	$(srcdir)/../../build-aux/missing \
+	$(srcdir)/../../build-aux/mkinstalldirs $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/README \
 	$(srcdir)/alephdir/am/aleph.am $(srcdir)/am/bootstrap.am \
 	$(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/am/web.am \
@@ -83,8 +84,8 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap AUTHORS \
-	ChangeLog INSTALL NEWS
+	../../build-aux/mkinstalldirs ../../build-aux/texinfo.tex \
+	../../build-aux/ylwrap AUTHORS ChangeLog INSTALL NEWS
 @WEB_TRUE@am__append_2 = $(web_programs)
 @WEB_TRUE@am__append_3 = $(web_tests)
 @TEX_TRUE@am__append_4 = tex
@@ -197,7 +198,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
-mkinstalldirs = $(install_sh) -d
+mkinstalldirs = $(SHELL) $(top_srcdir)/../../build-aux/mkinstalldirs
 CONFIG_HEADER = c-auto.h ff-config.h
 CONFIG_CLEAN_FILES = CXXLD.sh
 ARFLAGS = cru
@@ -1073,8 +1074,7 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	luatexdir/zziplib/configure.ac luatexdir/zziplib/docs \
 	luatexdir/zziplib/m4 luatexdir/zziplib/msvc6 \
 	luatexdir/zziplib/msvc7 luatexdir/zziplib/msvc8 \
-	luatexdir/zziplib/test luatexdir/zziplib/uses \
-	luatexdir/zziplib/zzip/Makefile \
+	luatexdir/zziplib/test luatexdir/zziplib/zzip/Makefile \
 	luatexdir/zziplib/zzip/Makefile.am \
 	luatexdir/zziplib/zzip/Makefile.in \
 	luatexdir/zziplib/zzip/_msvc.h \
