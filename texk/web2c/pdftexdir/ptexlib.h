@@ -278,10 +278,6 @@ extern eightbits packetbyte(void);
 extern void poppacketstate(void);
 extern void pushpacketstate(void);
 extern void vf_free(void);
-#  define SIGNED_QUAD scaled
-#  define fixword integer
-extern SIGNED_QUAD sqxfw(SIGNED_QUAD sq, fixword fw);
-
 
 /* writeenc.c */
 extern fe_entry *get_fe_entry(char *);

@@ -97,7 +97,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 @define function packetbyte;
 @define procedure startpacket();
 @define procedure storepacket();
-@define function sqxfw();
 
 { functions from writefont.c }
 @define procedure dopdffont();

@@ -1,4 +1,16 @@
-  - \pdfshellescape is 2 if restricted shell escapes are enabled.
+- \pdfshellescape is 2 if restricted shell escapes are enabled.
+- sync with TL new build system
+- update to libpng 1.2.35
+- update to xpdf-3.02pl3
+- applied patch #2087: Support for CMap namespace
+- bugfixes:
+  - bugfix #993: "/Names array not sorted correctly"
+  - bugfix #606: "Forbidden ... while scanning ???"
+  - bugfix #3253: Bug in Type1 font subsetting
+  - bugfix #2090: enabling LFS breaks PDF inclusion on some systems (warning: not heavily-tested yet)
+  - bugfix #4288: character width mismatch in font XY.vf ignored
+  - bugfix #4289: \primitive\pdfoutput cannot be queried
+  - various minor fixes
 
 --------------------------------------------------
 pdfTeX 3.1415926-1.40.9 was released on 2008-08-16
