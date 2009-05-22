@@ -19,7 +19,7 @@ maintained here in the TL repo, that is explicitly stated.
 Anyone -- please research and update any of this information.
 
 
-afm2pl 0.7.03 - ok 28apr08
+afm2pl 0.7.03 - checked 28apr08
   http://tex.aanhet.net/afm2pl/
 
 bibtex8 - ?
@@ -42,17 +42,17 @@ dvidvi - ?
 
 dviljk - maintained here, by Joachim Schrod
 
-dvipdfm - ok 12apr09
+dvipdfm - checked 12apr09
   http://gaspra.kettering.edu/dvipdfm/dvipdfm-0.13.2d.tar.gz
   ftp://ftp.kettering.edu/pub/outgoing/mwicks/dvipdfm/dvipdfm-0.13.2d.tar.gz
   (until dvipdfmx is a 100% replacement we cannot drop it.)
 
-dvipdfmx - ok 12apr09
+dvipdfmx - checked 19may09
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/
-  http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20090115.tar.gz
+  http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20090506.tar.gz
   dvipdfmx@project.ktug.or.kr (ChoF, Hirata, Matthias)
 
-dvipng - ok 12apr09
+dvipng - checked 12apr09
   http://www.ctan.org/tex-archive/dviware/dvipng/ (but maybe stale)
   http://savannah.nongnu.org/files/?group=dvipng
   http://mirror.cinquix.com/pub/savannah/dvipng/dvipng-1.12.tar.gz
@@ -69,7 +69,7 @@ kpathsea - maintained here by Karl Berry, Akira Kakuto, ...
 
 lacheck - ?
 
-lcdf-typetools - ok 13apr09
+lcdf-typetools - checked 13apr09
   http://www.lcdf.org/type/
   http://www.lcdf.org/type/lcdf-typetools-2.78.tar.gz
 
@@ -101,7 +101,7 @@ web2c - maintained here by Karl Berry et al. - core web2c, plain tex, omega.
 
 xdv2pdf - Jonathan Kew
 
-xdvik 22.84.16 - ok 18may09
+xdvik 22.84.16 - checked 18may09
   ftp://tug.org/tex/
 
 xdvipdfmx - Jonathan Kew
