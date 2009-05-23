@@ -1,3 +1,8 @@
+2009-05-23  Karl Berry  <karl@tug.org>
+
+	* tex.ch (pool_size): increase default to 200000, so pdftex -ini
+	can start up without texmf.cnf.  From Thanh.
+
 2009-05-19  Karl Berry  <karl@tug.org>
 
 	* tex.ch (max_font_max): increase to 9000.

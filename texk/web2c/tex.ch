@@ -4625,7 +4625,7 @@ begin @!{|start_here|}
     {increase high mem in \.{VIRTEX}}
   setup_bound_var (0)('extra_mem_bot')(extra_mem_bot);
     {increase low mem in \.{VIRTEX}}
-  setup_bound_var (100000)('pool_size')(pool_size);
+  setup_bound_var (200000)('pool_size')(pool_size);
   setup_bound_var (75000)('string_vacancies')(string_vacancies);
   setup_bound_var (5000)('pool_free')(pool_free); {min pool avail after fmt}
   setup_bound_var (15000)('max_strings')(max_strings);
