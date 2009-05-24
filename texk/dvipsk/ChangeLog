@@ -1,3 +1,11 @@
+2009-05-24  Karl Berry  <karl@tug.org>
+
+	* dvips.texi (Configuration file commands): document -G,
+	including its obsolesence.
+	* Master/texmf/dvips/tetex/config.pdf: remove the G setting,
+	now actively problematic.  Report from Uwe Siart,
+	04 May 2009 09:27:27.
+
 2009-05-08  Karl Berry  <karl@tug.org>
 
 	* resident.c (getpsinfo): avoid accessing unallocated downbuf[-1].

@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.97
-@set month-year February 2009
+@set month-year May 2009
 
 @copying
 This manual documents Dvips version @value{version}
@@ -790,7 +790,8 @@ recommended.
 @cindex low characters, shifting
 @cindex non-printing characters, shifting
 Shift non-printing characters (ASCII 0-32, 127) to higher-numbered positions.
-This may be useful sometimes.
+This was useful to work around bugs in old versions of Adobe's PDF
+reader.  It's more likely to cause problems nowadays.
 
 @item -h @var{name}
 @opindex -h @var{name}
@@ -1428,6 +1429,11 @@ be printed if the option is used (and warnings are not suppressed).
 @opindex F @r{config command (filter)}
 Run as a filter.  Same as @samp{-f}, @pxref{Option details}.
 
+@item G*
+@opindex G @r{character shifting config command}
+Shift low-numbered characters; obsolete.  Same as @samp{-G},
+@pxref{Option details}.
+
 @item h @var{header}
 @opindex h @r{header downloading config command}
 Prepend @var{header} to output.  Same as @samp{h-}, @pxref{Option details}.
@@ -1449,7 +1455,7 @@ details}.
 Partially download Type 1 fonts.  Same as @samp{-j}, @pxref{Option details}.
 
 @item K*
-@opindex K @r{config command (comment-removeal)}
+@opindex K @r{config command (comment-removal)}
 Remove comments from included PostScript files.  Same as @samp{-K},
 @pxref{Option details}.
 
