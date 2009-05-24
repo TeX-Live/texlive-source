@@ -1,0 +1,4 @@
+2009-05-25  Karl Berry  <karl@tug.org>
+
+	* am/mp.am (install-exec-hook): new target to install dvitomp
+	symlink.

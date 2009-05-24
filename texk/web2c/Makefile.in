@@ -7998,7 +7998,8 @@ install-dvi: install-dvi-recursive
 install-dvi-am:
 
 install-exec-am: install-binPROGRAMS
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-html: install-html-recursive
 
 install-html-am:
@@ -8044,7 +8045,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-man
 uninstall-man: uninstall-man1 uninstall-man5
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check-am \
-	ctags-recursive install-am install-strip tags-recursive
+	ctags-recursive install-am install-exec-am install-strip \
+	tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-TESTS check-am clean \
@@ -8057,15 +8059,16 @@ uninstall-man: uninstall-man1 uninstall-man5
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-man5 \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-binPROGRAMS uninstall-man \
-	uninstall-man1 uninstall-man5
+	install-exec-am install-exec-hook install-html install-html-am \
+	install-info install-info-am install-man install-man1 \
+	install-man5 install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-man uninstall-man1 \
+	uninstall-man5
 
 
 # in case of an SVN repository
@@ -8382,6 +8385,11 @@ mp-pool.c: mp.pool $(makecpool_stamp) mpdir/mplib.h
 # We must create mpd.h before building the liboldmpost_a_OBJECTS.
 $(liboldmpost_a_OBJECTS): mpd.h
 
+# Double-colon rule since we do something similar in luatexdir (maybe others).
+install-exec-hook::
+	cd $(DESTDIR)$(bindir) && rm -f dvitomp$(EXEEXT) \
+	  && ln -s mpost$(EXEEXT) dvitomp$(EXEEXT)
+
 mpost.c: ctangle$(EXEEXT) mplibdir/mpost.w
 	$(mp_ctangle) mpost.w
 
@@ -8534,6 +8542,13 @@ luatexdir/luatex.version: luatexdir/luatex.web
 luatexdir/luatexextra.h: luatexdir/luatexextra.in luatexdir/luatex.version
 	sed -e s/LUATEX-VERSION/`cat luatexdir/luatex.version`/ \
 	  $(srcdir)/luatexdir/luatexextra.in >$@
+
+# Double-colon rule since we do something similar in mpdir (maybe others).
+install-exec-hook::
+	cd $(DESTDIR)$(bindir) && rm -f texlua$(EXEEXT) \
+	  && ln -s luatex$(EXEEXT) texlua$(EXEEXT)
+	cd $(DESTDIR)$(bindir) && rm -f texluac$(EXEEXT) \
+	  && ln -s luatex$(EXEEXT) texluac$(EXEEXT)
 luatangle.c luatangle.h: luatangle-web2c
 luatangle-web2c: $(web2c_depend) luatangle.p
 	$(web2c) luatangle

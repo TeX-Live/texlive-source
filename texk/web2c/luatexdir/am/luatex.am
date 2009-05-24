@@ -58,6 +58,13 @@ luatexdir/luatexextra.h: luatexdir/luatexextra.in luatexdir/luatex.version
 	sed -e s/LUATEX-VERSION/`cat luatexdir/luatex.version`/ \
 	  $(srcdir)/luatexdir/luatexextra.in >$@
 
+# Double-colon rule since we do something similar in mpdir (maybe others).
+install-exec-hook::
+	cd $(DESTDIR)$(bindir) && rm -f texlua$(EXEEXT) \
+	  && ln -s luatex$(EXEEXT) texlua$(EXEEXT)
+	cd $(DESTDIR)$(bindir) && rm -f texluac$(EXEEXT) \
+	  && ln -s luatex$(EXEEXT) texluac$(EXEEXT)
+
 EXTRA_DIST += $(luatex_sources) \
 	luatexdir/luatex.defines \
 	luatexdir/luatexextra.in \
@@ -65,4 +72,3 @@ EXTRA_DIST += $(luatex_sources) \
 
 DISTCLEANFILES += $(nodist_luatex_SOURCES) luatex-web2c \
 	luatex.p luatex.pool luatex-tangle luatexdir/luatex.version
-

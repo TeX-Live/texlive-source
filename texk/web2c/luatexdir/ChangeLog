@@ -1,3 +1,8 @@
+2009-05-25  Karl Berry  <karl@tug.org>
+
+	* am/luatex.am (install-exec-hook): new target to install texlua[c]
+	symlinks.
+
 2009-05-08  Taco Hoekwater <taco@luatex.org>
  	
 	* luatexdir: import of the current state of luatex, 0.40.1.
