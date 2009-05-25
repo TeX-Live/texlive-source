@@ -38,6 +38,13 @@ EXTRA_DIST += mplibdir/ChangeLog $(mpost_web)
 
 DISTCLEANFILES += $(nodist_mpost_SOURCES) mpxout-ctangle
 
+# Double-colon rule since we do something similar in luatexdir (maybe others).
+install-exec-hook::
+	cd $(DESTDIR)$(bindir) && rm -f dvitomp$(EXEEXT) \
+	  && $(LN_S) mpost$(EXEEXT) dvitomp$(EXEEXT)
+uninstall-hook::
+	rm -f $(DESTDIR)$(bindir)/dvitomp$(EXEEXT)
+
 ## MetaPost Tests
 ##
 mp_tests = mplibdir/mptrap.test

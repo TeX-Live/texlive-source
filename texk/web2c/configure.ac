@@ -120,11 +120,10 @@ AC_SUBST([lua_socketlibs])
 AC_SUBST([ipc_socketlibs])
 
 KPSE_CHECK_FRAMEWORK([Carbon], [ATSUStyle style])
-AS_IF([test "x$kpse_cv_have_Carbon" = xno],
-      [KPSE_FONTCONFIG_FLAGS
-       AS_IF([test "x$enable_xetex:$kpse_cv_have_fontconfig" = xyes:no],
-             [AC_MSG_WARN([Sorry, can not build XeTeX without fontconfig])
-              enable_xetex=no])])
+KPSE_FONTCONFIG_FLAGS
+AS_IF([test "x$enable_xetex:$kpse_cv_have_Carbon:$kpse_cv_have_fontconfig" = xyes:no:no],
+      [AC_MSG_WARN([Sorry, can not build XeTeX without Carbon framework or fontconfig])
+       enable_xetex=no])
 AM_CONDITIONAL([XETEX_MACOSX], [test "x$kpse_cv_have_Carbon" = xyes])
 AM_CONDITIONAL([XETEX_GRAPHITE], [test "x$with_graphite" != xno])
 

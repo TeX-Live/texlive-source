@@ -54,11 +54,6 @@ liboldmpost_a_SOURCES = \
 # We must create mpd.h before building the liboldmpost_a_OBJECTS.
 $(liboldmpost_a_OBJECTS): mpd.h
 
-# Double-colon rule since we do something similar in luatexdir (maybe others).
-install-exec-hook::
-	cd $(DESTDIR)$(bindir) && rm -f dvitomp$(EXEEXT) \
-	  && ln -s mpost$(EXEEXT) dvitomp$(EXEEXT)
-
 ## Eventually delete these files
 ##
 EXTRA_DIST += \

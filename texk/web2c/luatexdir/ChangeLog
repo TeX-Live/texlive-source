@@ -1,3 +1,8 @@
+2009-05-25  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* am/luatex.am (uninstall-hook): new target to uninstall texlua[c]
+	symlinks.
+
 2009-05-25  Karl Berry  <karl@tug.org>
 
 	* am/luatex.am (install-exec-hook): new target to install texlua[c]
