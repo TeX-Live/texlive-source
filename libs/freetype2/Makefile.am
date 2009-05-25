@@ -24,6 +24,7 @@ ft-build/Makefile:
 	rm -rf ft-build
 	$(mkdir_p) ft-build
 	cd ft-build && \
+	  CC='$(CC)' \
 	  $(abs_srcdir)/$(FREETYPE_TREE)/configure \
 	    $(config_args) --disable-shared \
 	    --with-old-mac-fonts \

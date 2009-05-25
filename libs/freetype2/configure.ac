@@ -15,6 +15,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
+AC_PROG_CC
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
