@@ -74,14 +74,15 @@ fi
 dnl Check for additional libraries.
 
 KPSE_CHECK_FRAMEWORK([ApplicationServices], [ATSFontRef fontRef])
-
+KPSE_FONTCONFIG_FLAGS
 if test "x$kpse_cv_have_ApplicationServices" = xyes; then
   build=yes
   AC_DEFINE([XETEX_MAC], 1, [Define if part of a teTeX/TeX Live build for Mac OS X.])
-  LIBS="$LIBS -framework ApplicationServices"
 else
+  KPSE_ADD_FLAGS([fontconfig])
   CHO_CHECK_LIBFONTCONFIG
-  build=$have_libfontconfig
+  KPSE_RESTORE_FLAGS
+  build=$cho_cv_have_fontconfig
 fi
 
 if test "x$build" = xyes; then
@@ -93,6 +94,7 @@ or the fontconfig library (on other platforms) to be available, otherwise it
 cannot support XeTeX output using standard system-installed fonts.])
 fi
 AM_CONDITIONAL([build], [test "x$build" = xyes])
+AM_CONDITIONAL([build_MacOsX], [test "x$kpse_cv_have_ApplicationServices" = xyes])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 

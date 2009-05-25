@@ -70,26 +70,16 @@ AC_DEFUN([CHO_CHECK_LIBPAPER],
 # -----------------------
 # Check for libfontconfig
 AC_DEFUN([CHO_CHECK_LIBFONTCONFIG],
-[_cppflags=$CPPFLAGS _ldflags=$LDFLAGS
- have_libfontconfig=no
- AC_ARG_WITH([fontconfig],
-  [AS_HELP_STRING([--with-fontconfig=DIR],[use fontconfig include/library files from DIR])],
-  [if test -d "$withval"; then
-     CPPFLAGS="$CPPFLAGS -I$withval/include"
-     LDFLAGS="$LDFLAGS -L$withval/lib"
-     FONTCONFIGLDFLAGS="-L$withval/lib"
-   fi])
- AC_MSG_CHECKING([for fontconfig header files])
- AC_TRY_COMPILE(
-  [#include <fontconfig/fontconfig.h>],
-  [FcObjectSet *os;],
-  [AC_MSG_RESULT(yes)
-   AC_SEARCH_LIBS([FcInit], [fontconfig],
-    [AC_DEFINE([HAVE_LIBFONTCONFIG], 1, [Define if you have libfontconfig])
-     have_libfontconfig=yes])],
-  [CPPFLAGS=$_cppflags
-   LDDFLAGS=$_ldflags
-   AC_MSG_RESULT(no)])
+[AC_CACHE_CHECK([for fontconfig header files and library],
+                [cho_cv_have_fontconfig],
+                [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <fontconfig/fontconfig.h>]],
+                                                 [[FcObjectSet *os;]])],
+                                [cho_cv_have_fontconfig=yes],
+                                [cho_cv_have_fontconfig=no])])
+AS_IF([test "x$cho_cv_have_fontconfig" = xyes],
+      [AC_CHECK_FUNCS([FcInit],
+                      [AC_DEFINE([HAVE_LIBFONTCONFIG], 1,
+                                 [Define if you have libfontconfig and its headers.])])])
 ])# CHO_CHECK_LIBFONTCONFIG
 
 # CHO_CHECK_LIBFREETYPE(PACKAGE-NAME)

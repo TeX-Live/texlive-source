@@ -17,16 +17,27 @@
 # to the CPPFLAGS and LIBS required for the installed '-lfontconfig'
 # library and define HAVE_LIBFONTCONFIG.
 AC_DEFUN([KPSE_FONTCONFIG_FLAGS],
-[AC_ARG_WITH([fontconfig],
-             AS_HELP_STRING([--with-fontconfig=DIR],
-                            [use fontconfig include/library files from DIR]))[]dnl
+[AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
+AC_ARG_WITH([fontconfig-includes],
+            AS_HELP_STRING([--with-fontconfig-includes=DIR],
+                           [fontconfig headers installed in DIR]))[]dnl
+AC_ARG_WITH([fontconfig-libdir],
+            AS_HELP_STRING([--with-fontconfig-libdir=DIR],
+                           [fontconfig library installed in DIR]))[]dnl
 AC_CACHE_CHECK([for installed fontconfig headers and library],
                [kpse_cv_have_fontconfig],
 [kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
-if test "x$with_fontconfig" != x && test -d "$with_fontconfig"; then
-  kpse_cv_fontconfig_includes="-I$with_fontconfig/include"
-  kpse_cv_fontconfig_libs="-L$with_fontconfig/lib -lfontconfig"
+if test "x$with_fontconfig_includes:$with_fontconfig_libdir" != x:; then
+  if test "x$with_fontconfig_includes" != x; then
+    kpse_cv_fontconfig_includes="-I$with_fontconfig_includes"
+  fi
+  if test "x$with_fontconfig_libdir" != x; then
+    kpse_cv_fontconfig_libdir="-L$with_fontconfig_libdir -lfontconfig"
+  fi
+elif $PKG_CONFIG fontconfig; then
+  kpse_cv_fontconfig_includes=`$PKG_CONFIG fontconfig --cflags`
+  kpse_cv_fontconfig_libs=`$PKG_CONFIG fontconfig --libs`
 else
   kpse_cv_fontconfig_includes=
   kpse_cv_fontconfig_libs='-lfontconfig'

@@ -20247,6 +20247,17 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+## FIXME
+if test "x$with_fontconfig" != x; then
+  { { $as_echo "$as_me:$LINENO: error: Sorry, the configure option \`--with-fontconfig' is no longer supported.
+        Either use \`--with-fontconfig-includes' and/or \`--with-fontconfig-libdir'.
+        or (preferably) use pkg-config, if necessary setting PKG_CONFIG." >&5
+$as_echo "$as_me: error: Sorry, the configure option \`--with-fontconfig' is no longer supported.
+        Either use \`--with-fontconfig-includes' and/or \`--with-fontconfig-libdir'.
+        or (preferably) use pkg-config, if necessary setting PKG_CONFIG." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
 if test "x$mandir" = 'x${datarootdir}/man'; then
   mandir='${prefix}/texmf/doc/man'
   ac_configure_args="$ac_configure_args '--mandir=$mandir'"

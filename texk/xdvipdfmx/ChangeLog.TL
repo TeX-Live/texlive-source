@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xdvipdfmx (teTeX / TeX Live)
 ======================================================
 
+2009-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+	* configure.ac, src/Makefile.am: Do not use CPPFLAGS for
+	required -I flags, leave it for the user.
+
 2009-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 	* src/cff.c, src/dpxutil.c, src/mem.c, src/pdfencoding.c,
 	src/pdfencrypt.c: Must include Kpathsea headers (via `system.h')

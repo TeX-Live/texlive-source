@@ -789,8 +789,13 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
+build_MacOsX_FALSE
+build_MacOsX_TRUE
 build_FALSE
 build_TRUE
+FONTCONFIG_LIBS
+FONTCONFIG_INCLUDES
+PKG_CONFIG
 TDS_VERSION_11_FALSE
 TDS_VERSION_11_TRUE
 FREETYPE2_RULE
@@ -941,7 +946,8 @@ with_libpng_includes
 with_libpng_libdir
 with_system_freetype2
 with_paper
-with_fontconfig
+with_fontconfig_includes
+with_fontconfig_libdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1616,7 +1622,10 @@ Optional Packages:
   --with-system-freetype2 use installed freetype2 headers and library
                           (requires freetype-config)
   --with-paper=DIR        use paper include/library files from DIR
-  --with-fontconfig=DIR   use fontconfig include/library files from DIR
+  --with-fontconfig-includes=DIR
+                          fontconfig headers installed in DIR
+  --with-fontconfig-libdir=DIR
+                          fontconfig library installed in DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -4361,13 +4370,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4364: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4373: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4367: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4376: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4370: output\"" >&5)
+  (eval echo "\"\$as_me:4379: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5573,7 +5582,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5576 "configure"' > conftest.$ac_ext
+  echo '#line 5585 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7519,11 +7528,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7522: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7531: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7526: \$? = $ac_status" >&5
+   echo "$as_me:7535: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7858,11 +7867,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7861: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7870: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7865: \$? = $ac_status" >&5
+   echo "$as_me:7874: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7963,11 +7972,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7966: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7975: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7970: \$? = $ac_status" >&5
+   echo "$as_me:7979: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8018,11 +8027,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8021: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8030: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8025: \$? = $ac_status" >&5
+   echo "$as_me:8034: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10818,7 +10827,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10821 "configure"
+#line 10830 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10914,7 +10923,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10917 "configure"
+#line 10926 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -18639,31 +18648,132 @@ _ACEOF
 
 fi
 
-
-if test "x$kpse_cv_have_ApplicationServices" = xyes; then
-  build=yes
-
-cat >>confdefs.h <<\_ACEOF
-#define XETEX_MAC 1
-_ACEOF
-
-  LIBS="$LIBS -framework ApplicationServices"
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_PKG_CONFIG+set}" = set; then
+  $as_echo_n "(cached) " >&6
 else
-  _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
- have_libfontconfig=no
+  if test -n "$PKG_CONFIG"; then
+  ac_cv_prog_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_PKG_CONFIG="${ac_tool_prefix}pkg-config"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
 
-# Check whether --with-fontconfig was given.
-if test "${with_fontconfig+set}" = set; then
-  withval=$with_fontconfig; if test -d "$withval"; then
-     CPPFLAGS="$CPPFLAGS -I$withval/include"
-     LDFLAGS="$LDFLAGS -L$withval/lib"
-     FONTCONFIGLDFLAGS="-L$withval/lib"
-   fi
+fi
+fi
+PKG_CONFIG=$ac_cv_prog_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { $as_echo "$as_me:$LINENO: result: $PKG_CONFIG" >&5
+$as_echo "$PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
- { $as_echo "$as_me:$LINENO: checking for fontconfig header files" >&5
-$as_echo_n "checking for fontconfig header files... " >&6; }
- cat >conftest.$ac_ext <<_ACEOF
+
+fi
+if test -z "$ac_cv_prog_PKG_CONFIG"; then
+  ac_ct_PKG_CONFIG=$PKG_CONFIG
+  # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ac_ct_PKG_CONFIG+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_PKG_CONFIG"; then
+  ac_cv_prog_ac_ct_PKG_CONFIG="$ac_ct_PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_PKG_CONFIG="pkg-config"
+    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_PKG_CONFIG=$ac_cv_prog_ac_ct_PKG_CONFIG
+if test -n "$ac_ct_PKG_CONFIG"; then
+  { $as_echo "$as_me:$LINENO: result: $ac_ct_PKG_CONFIG" >&5
+$as_echo "$ac_ct_PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:$LINENO: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_PKG_CONFIG" = x; then
+    PKG_CONFIG="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:$LINENO: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    PKG_CONFIG=$ac_ct_PKG_CONFIG
+  fi
+else
+  PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
+fi
+
+
+# Check whether --with-fontconfig-includes was given.
+if test "${with_fontconfig_includes+set}" = set; then
+  withval=$with_fontconfig_includes;
+fi
+
+# Check whether --with-fontconfig-libdir was given.
+if test "${with_fontconfig_libdir+set}" = set; then
+  withval=$with_fontconfig_libdir;
+fi
+{ $as_echo "$as_me:$LINENO: checking for installed fontconfig headers and library" >&5
+$as_echo_n "checking for installed fontconfig headers and library... " >&6; }
+if test "${kpse_cv_have_fontconfig+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  kpse_save_CPPFLAGS=$CPPFLAGS
+kpse_save_LIBS=$LIBS
+if test "x$with_fontconfig_includes:$with_fontconfig_libdir" != x:; then
+  if test "x$with_fontconfig_includes" != x; then
+    kpse_cv_fontconfig_includes="-I$with_fontconfig_includes"
+  fi
+  if test "x$with_fontconfig_libdir" != x; then
+    kpse_cv_fontconfig_libdir="-L$with_fontconfig_libdir -lfontconfig"
+  fi
+elif $PKG_CONFIG fontconfig; then
+  kpse_cv_fontconfig_includes=`$PKG_CONFIG fontconfig --cflags`
+  kpse_cv_fontconfig_libs=`$PKG_CONFIG fontconfig --libs`
+else
+  kpse_cv_fontconfig_includes=
+  kpse_cv_fontconfig_libs='-lfontconfig'
+fi
+CPPFLAGS="$kpse_cv_fontconfig_includes $CPPFLAGS"
+LIBS="$kpse_cv_fontconfig_libs $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -18673,67 +18783,12 @@ cat >>conftest.$ac_ext <<_ACEOF
 int
 main ()
 {
-FcObjectSet *os;
+FcObjectSet *os; FcInit();
   ;
   return 0;
 }
 _ACEOF
-rm -f conftest.$ac_objext
-if { (ac_try="$ac_compile"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
-$as_echo "$ac_try_echo") >&5
-  (eval "$ac_compile") 2>conftest.er1
-  ac_status=$?
-  grep -v '^ *+' conftest.er1 >conftest.err
-  rm -f conftest.er1
-  cat conftest.err >&5
-  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
-  (exit $ac_status); } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest.$ac_objext; then
-  { $as_echo "$as_me:$LINENO: result: yes" >&5
-$as_echo "yes" >&6; }
-   { $as_echo "$as_me:$LINENO: checking for library containing FcInit" >&5
-$as_echo_n "checking for library containing FcInit... " >&6; }
-if test "${ac_cv_search_FcInit+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  ac_func_search_save_LIBS=$LIBS
-cat >conftest.$ac_ext <<_ACEOF
-/* confdefs.h.  */
-_ACEOF
-cat confdefs.h >>conftest.$ac_ext
-cat >>conftest.$ac_ext <<_ACEOF
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char FcInit ();
-int
-main ()
-{
-return FcInit ();
-  ;
-  return 0;
-}
-_ACEOF
-for ac_lib in '' fontconfig; do
-  if test -z "$ac_lib"; then
-    ac_res="none required"
-  else
-    ac_res=-l$ac_lib
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-  fi
-  rm -f conftest.$ac_objext conftest$ac_exeext
+rm -f conftest.$ac_objext conftest$ac_exeext
 if { (ac_try="$ac_link"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
@@ -18754,55 +18809,213 @@ $as_echo "$ac_try_echo") >&5
 	 test "$cross_compiling" = yes ||
 	 $as_test_x conftest$ac_exeext
        }; then
-  ac_cv_search_FcInit=$ac_res
+  kpse_cv_have_fontconfig=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-
+	kpse_cv_have_fontconfig=no
 fi
 
 rm -rf conftest.dSYM
 rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
-      conftest$ac_exeext
-  if test "${ac_cv_search_FcInit+set}" = set; then
-  break
+      conftest$ac_exeext conftest.$ac_ext
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
 fi
-done
-if test "${ac_cv_search_FcInit+set}" = set; then
-  :
-else
-  ac_cv_search_FcInit=no
-fi
-rm conftest.$ac_ext
-LIBS=$ac_func_search_save_LIBS
-fi
-{ $as_echo "$as_me:$LINENO: result: $ac_cv_search_FcInit" >&5
-$as_echo "$ac_cv_search_FcInit" >&6; }
-ac_res=$ac_cv_search_FcInit
-if test "$ac_res" != no; then
-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_have_fontconfig" >&5
+$as_echo "$kpse_cv_have_fontconfig" >&6; }
+if test "x$kpse_cv_have_fontconfig" = xyes; then
+  FONTCONFIG_INCLUDES=$kpse_cv_fontconfig_includes
+  FONTCONFIG_LIBS=$kpse_cv_fontconfig_libs
 
 cat >>confdefs.h <<\_ACEOF
 #define HAVE_LIBFONTCONFIG 1
 _ACEOF
 
-     have_libfontconfig=yes
 fi
 
+
+
+if test "x$kpse_cv_have_ApplicationServices" = xyes; then
+  build=yes
+
+cat >>confdefs.h <<\_ACEOF
+#define XETEX_MAC 1
+_ACEOF
+
+else
+  CPPFLAGS="$CPPFLAGS $FONTCONFIG_INCLUDES"
+LIBS="$FONTCONFIG_LIBS $LIBS"
+
+  { $as_echo "$as_me:$LINENO: checking for fontconfig header files and library" >&5
+$as_echo_n "checking for fontconfig header files and library... " >&6; }
+if test "${cho_cv_have_fontconfig+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <fontconfig/fontconfig.h>
+int
+main ()
+{
+FcObjectSet *os;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  cho_cv_have_fontconfig=yes
 else
   $as_echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-	CPPFLAGS=$_cppflags
-   LDDFLAGS=$_ldflags
-   { $as_echo "$as_me:$LINENO: result: no" >&5
-$as_echo "no" >&6; }
+	cho_cv_have_fontconfig=no
 fi
 
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:$LINENO: result: $cho_cv_have_fontconfig" >&5
+$as_echo "$cho_cv_have_fontconfig" >&6; }
+if test "x$cho_cv_have_fontconfig" = xyes; then
 
-  build=$have_libfontconfig
+for ac_func in FcInit
+do
+as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+{ $as_echo "$as_me:$LINENO: checking for $ac_func" >&5
+$as_echo_n "checking for $ac_func... " >&6; }
+if { as_var=$as_ac_var; eval "test \"\${$as_var+set}\" = set"; }; then
+  $as_echo_n "(cached) " >&6
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+/* Define $ac_func to an innocuous variant, in case <limits.h> declares $ac_func.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $ac_func innocuous_$ac_func
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $ac_func (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $ac_func
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $ac_func ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_$ac_func || defined __stub___$ac_func
+choke me
+#endif
+
+int
+main ()
+{
+return $ac_func ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
+$as_echo "$ac_try_echo") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 $as_test_x conftest$ac_exeext
+       }; then
+  eval "$as_ac_var=yes"
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	eval "$as_ac_var=no"
+fi
+
+rm -rf conftest.dSYM
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+ac_res=`eval 'as_val=${'$as_ac_var'}
+		 $as_echo "$as_val"'`
+	       { $as_echo "$as_me:$LINENO: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+as_val=`eval 'as_val=${'$as_ac_var'}
+		 $as_echo "$as_val"'`
+   if test "x$as_val" = x""yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_LIBFONTCONFIG 1
+_ACEOF
+
+fi
+done
+
+fi
+
+
+  CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
+  build=$cho_cv_have_fontconfig
 fi
 
 if test "x$build" = xyes; then
@@ -18827,6 +19040,14 @@ fi
 else
   build_TRUE='#'
   build_FALSE=
+fi
+
+ if test "x$kpse_cv_have_ApplicationServices" = xyes; then
+  build_MacOsX_TRUE=
+  build_MacOsX_FALSE='#'
+else
+  build_MacOsX_TRUE='#'
+  build_MacOsX_FALSE=
 fi
 
 
@@ -18971,6 +19192,13 @@ if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then
   { { $as_echo "$as_me:$LINENO: error: conditional \"build\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 $as_echo "$as_me: error: conditional \"build\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${build_MacOsX_TRUE}" && test -z "${build_MacOsX_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"build_MacOsX\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"build_MacOsX\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
