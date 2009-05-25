@@ -58,9 +58,6 @@ TEXMFMAIN = $SELFAUTOPARENT/texmf
 % The main distribution tree:
 TEXMFDIST = $SELFAUTOPARENT/texmf-dist
 
-% Our documentation-only tree, arranged by language:
-TEXMFDOC = $SELFAUTOPARENT/texmf-doc
-
 % A place for local additions to a "standard" texmf tree.
 % This tree is not used for local configuration maintained by
 % texconfig, it uses TEXMFCONFIG below.
@@ -135,13 +132,12 @@ VARTEXFONTS = $TEXMFVAR/fonts
 
 % Where to look for ls-R files.  There need not be an ls-R in the
 % directories in this path, but if there is one, Kpathsea will use it.
-% By default, this is only the !! elements of TEXMF, plus texmf-doc, so
-% that mktexlsr does not create ls-R files in the non-!! elements --
-% because if an ls-R is present, it will be used, and the disk will not
-% be searched.  This is arguably a bug in kpathsea, but we will not
-% think about it now.
+% By default, this is only the !! elements of TEXMF, so that mktexlsr
+% does not create ls-R files in the non-!! elements -- because if an
+% ls-R is present, it will be used, and the disk will not be searched.
+% This is arguably a bug in kpathsea.
 %
-TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST,!!$TEXMFDOC}
+TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
 
 % On some systems, there will be a system tree which contains all the font
 % files that may be created as well as the formats.  For example
@@ -403,11 +399,8 @@ FONTCONFIG_PATH=$TEXMFSYSVAR/fonts/conf
 FC_CACHEDIR=$TEXMFSYSVAR/fonts/cache
 
 % TeX documentation and source files, for use with kpsewhich (and texdoc).
-% TeX Live has a separate hierarchy with just documentation, texmf-doc,
-% in addition to the doc files in the other hierarchies.
 % Find non-man pages first, better than random in case of conflict.
-TEXMFDOCDIR = $TEXMFDOC/doc
-TEXDOCS = .;$TEXMF/doc{,/man}//;$TEXMFDOCDIR//
+TEXDOCS = .;$TEXMF/doc{,/man}//
 TEXSOURCES = .;$TEXMF/source//
 
 % Web and CWeb input paths.
