@@ -142,7 +142,7 @@ TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMF
 % On some systems, there will be a system tree which contains all the font
 % files that may be created as well as the formats.  For example
 %   TEXMFVAR = /var/lib/texmf
-% is used on many Linux systems.  In this case, set VARTEXFONTS like this
+% is used in many distros.  In this case, set VARTEXFONTS like this
 % VARTEXFONTS = $TEXMFVAR/fonts
 % and do not mention it in TEXMFDBS (but _do_ mention TEXMFVAR).
 %
@@ -391,9 +391,8 @@ MPSUPPORT = .;$TEXMF/metapost/support
 MIMELIBDIR = $SELFAUTOPARENT/etc
 MAILCAPLIBDIR = $SELFAUTOPARENT/etc
 
-% Default settings for fontconfig library, used by Win32 versions of
-% xetex/xdvipdfmx (note that fontconfig on Linux/Unix-like systems
-% will ignore settings in this file)
+% Default settings for fontconfig library, used by Windows versions of
+% xetex/xdvipdfmx.  On Unixish systems, fontconfig ignores this.
 FONTCONFIG_FILE=fonts.conf
 FONTCONFIG_PATH=$TEXMFSYSVAR/fonts/conf
 FC_CACHEDIR=$TEXMFSYSVAR/fonts/cache
