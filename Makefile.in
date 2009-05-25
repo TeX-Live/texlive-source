@@ -78,7 +78,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/texk/dvi2tty/ac/withenable.ac \
 	$(top_srcdir)/texk/dvidvi/ac/withenable.ac \
 	$(top_srcdir)/texk/dviljk/ac/withenable.ac \
-	$(top_srcdir)/texk/dvipdfm/ac/withenable.ac \
 	$(top_srcdir)/texk/dvipdfmx/ac/withenable.ac \
 	$(top_srcdir)/texk/dvipng/ac/withenable.ac \
 	$(top_srcdir)/texk/dvipng/ac/dvipng.ac \

@@ -1,3 +1,7 @@
+2009-05-26  Karl Berry  <karl@tug.org>
+
+	* README: dvipdfm can now be emulated by dvipdfmx.
+
 2009-02-02  Karl Berry  <karl@tug.org>
 
 	* install-sh: rename from install.sh.

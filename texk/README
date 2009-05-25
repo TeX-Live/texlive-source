@@ -42,11 +42,6 @@ dvidvi - ?
 
 dviljk - maintained here, by Joachim Schrod
 
-dvipdfm - checked 12apr09
-  http://gaspra.kettering.edu/dvipdfm/dvipdfm-0.13.2d.tar.gz
-  ftp://ftp.kettering.edu/pub/outgoing/mwicks/dvipdfm/dvipdfm-0.13.2d.tar.gz
-  (until dvipdfmx is a 100% replacement we cannot drop it.)
-
 dvipdfmx - checked 26may09
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20090522.tar.gz

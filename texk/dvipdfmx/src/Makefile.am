@@ -42,13 +42,15 @@ LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
-	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) && \
+	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) dvipdfm$(EXEEXT) && \
 	  $(LN_S) dvipdfmx$(EXEEXT) ebb$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT)
+	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT) && \
+	  $(LN_S) dvipdfmx$(EXEEXT) dvipdfm$(EXEEXT)
 
 uninstall-hook:
 	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 
 ## Eventually delete these files
 ##

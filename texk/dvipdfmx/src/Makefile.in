@@ -645,13 +645,15 @@ uninstall-am: uninstall-binPROGRAMS
 
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
-	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) && \
+	  rm -f ebb$(EXEEXT) extractbb$(EXEEXT) dvipdfm$(EXEEXT) && \
 	  $(LN_S) dvipdfmx$(EXEEXT) ebb$(EXEEXT) && \
-	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT)
+	  $(LN_S) dvipdfmx$(EXEEXT) extractbb$(EXEEXT) && \
+	  $(LN_S) dvipdfmx$(EXEEXT) dvipdfm$(EXEEXT)
 
 uninstall-hook:
 	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
