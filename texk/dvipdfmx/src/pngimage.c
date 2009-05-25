@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.c,v 1.26 2009/03/24 02:07:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pngimage.c,v 1.27 2009/05/10 17:04:54 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -52,6 +52,8 @@
 #include "system.h"
 #include "error.h"
 #include "mem.h"
+
+#include "dvipdfmx.h"
 
 #include "pdfcolor.h"
 #include "pdfobj.h"
@@ -210,10 +212,15 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   info.width  = width;
   info.height = height;
   info.bits_per_component = bpc;
-  if (xppm > 0)
-    info.xdensity = 72.0 / 0.0254 / xppm;
-  if (yppm > 0)
-    info.ydensity = 72.0 / 0.0254 / yppm;
+
+  if (compat_mode)
+    info.xdensity = info.ydensity = 72.0 / 100.0;
+  else {
+    if (xppm > 0)
+      info.xdensity = 72.0 / 0.0254 / xppm;
+    if (yppm > 0)
+      info.ydensity = 72.0 / 0.0254 / yppm;
+  }
 
   stream      = pdf_new_stream (STREAM_COMPRESS);
   stream_dict = pdf_stream_dict(stream);
@@ -1040,10 +1047,12 @@ png_get_bbox (FILE *png_file, long *width, long *height,
   if (png_ptr)
     png_destroy_read_struct(&png_ptr, NULL, NULL);
 
-  if (xppm > 0)
-    *xdensity = 72.0 / 0.0254 / xppm;
-  if (yppm > 0)
-    *ydensity = 72.0 / 0.0254 / yppm;
+  if (compat_mode)
+    *xdensity = *ydensity = 72.0 / 100.0;
+  else {
+    *xdensity = xppm ? 72.0 / 0.0254 / xppm : 1.0;
+    *ydensity = yppm ? 72.0 / 0.0254 / yppm : 1.0;
+  }
 
   return 0;
 }

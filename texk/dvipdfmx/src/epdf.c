@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.27 2009/05/04 00:41:42 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.28 2009/05/10 21:35:12 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -39,6 +39,8 @@
 #include "mem.h"
 #include "mfileio.h"
 #include "error.h"
+
+#include "dvipdfmx.h"
 
 #include "pdfobj.h"
 #include "pdfdev.h"
@@ -202,8 +204,13 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
   return -1;
 
  too_recent:
-  WARN("PDF version of input file more recent than in output file.");
-  WARN("Converting. Use \"-V\" switch to change output PDF version.");
   pdf_close(pf);
-  return 1;
+  WARN("PDF version of input file more recent than in output file.");
+  if (compat_mode) {
+    WARN("Converting. Use \"-V\" switch to change output PDF version.");
+    return 1;
+  } else {
+    WARN("Use \"-V\" switch to change output PDF version.");
+    return -1;
+  }
 }

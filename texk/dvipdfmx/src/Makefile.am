@@ -19,7 +19,7 @@ dvipdfmx_SOURCES = \
 	unicode.c vf.c xbb.c \
 	agl.h bmpimage.h cff.h cff_dict.h cff_limits.h cff_stdstr.h cff_types.h \
 	cid.h cid_basefont.h cid_p.h cidtype0.h cidtype2.h cmap.h cmap_p.h cmap_read.h cmap_write.h \
-	cs_type2.h dpxconf.h dpxcrypt.h dpxutil.h dpxfile.h dvi.h dvicodes.h epdf.h error.h fontmap.h \
+	cs_type2.h dpxconf.h dpxcrypt.h dpxutil.h dpxfile.h dvi.h dvicodes.h dvipdfmx.h epdf.h error.h fontmap.h \
 	jpegimage.h mem.h mfileio.h mpost.h numbers.h otl_conf.h otl_opt.h pdfcolor.h pdfdev.h \
 	pdfdoc.h pdfdraw.h pdfencoding.h pdfencrypt.h pdffont.h pdflimits.h pdfnames.h pdfobj.h \
 	pdfparse.h pdfresource.h pdfximage.h pkfont.h pngimage.h pst.h pst_obj.h sfnt.h \

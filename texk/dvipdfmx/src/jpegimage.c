@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.c,v 1.10 2009/03/24 02:07:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.c,v 1.11 2009/05/10 17:04:54 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -61,6 +61,8 @@
 
 #include "mfileio.h"
 #include "numbers.h"
+
+#include "dvipdfmx.h"
 
 #include "pdfobj.h"
 
@@ -347,6 +349,13 @@ static void
 jpeg_get_density (struct JPEG_info *j_info,
 		  double *xdensity, double *ydensity)
 {
+  if (compat_mode) {
+    *xdensity = *ydensity = 72.0 / 100.0;
+    return;
+  }
+
+  *xdensity = *ydensity = 1.0;
+
   if (IS_JFIF(j_info)) {
     struct JPEG_APPn_JFIF *app_data;
     int i;

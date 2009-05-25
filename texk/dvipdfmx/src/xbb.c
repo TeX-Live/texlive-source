@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.25 2009/05/04 00:41:43 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.26 2009/05/10 17:04:54 matthias Exp $
 
     This is extractbb, a bounding box extraction program.
 
@@ -37,6 +37,7 @@
 #include "jpegimage.h"
 #include "pngimage.h"
 
+#include "dvipdfmx.h"
 #include "xbb.h"
 
 #define XBB_PROGRAM "extractbb"
@@ -81,8 +82,6 @@ char *extensions[] = {
   ".jpeg", ".JPEG", ".jpg", ".JPG", ".pdf", ".PDF", ".png", ".PNG"
 };
 
-static int xbb_output_mode = XBB_OUTPUT;
-
 static int xbb_to_file = 1;
 
 static char *make_xbb_filename(const char *name)
@@ -104,7 +103,7 @@ static char *make_xbb_filename(const char *name)
     strncpy(result, name, strlen(name)-strlen(extensions[i]));
     result[strlen(name)-strlen(extensions[i])] = 0;
   }
-  strcat(result, (xbb_output_mode == XBB_OUTPUT ? ".xbb" : ".bb"));
+  strcat(result, (!compat_mode ? ".xbb" : ".bb"));
   return result;
 }
 
@@ -137,7 +136,7 @@ static void write_xbb(char *fname,
   fprintf(fp, "%%%%Creator: %s %s\n", XBB_PROGRAM, XBB_VERSION);
   fprintf(fp, "%%%%BoundingBox: %ld %ld %ld %ld\n", bbllx, bblly, bburx, bbury);
 
-  if (xbb_output_mode == XBB_OUTPUT) {
+  if (!compat_mode) {
     /* Note:
      * According to Adobe Technical Note #5644, the arguments to
      * "%%HiResBoundingBox:" must be of type real. And according
@@ -164,15 +163,12 @@ static void write_xbb(char *fname,
 static void do_jpeg (FILE *fp, char *filename)
 {
   long   width, height;
-  double xdensity = 1.0, ydensity = 1.0;
+  double xdensity, ydensity;
 
   if (jpeg_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
     WARN("%s does not look like a JPEG file...\n", filename);
     return;
   }
-
-  if (xbb_output_mode == EBB_OUTPUT)
-    xdensity = ydensity = 72.0 / 100.0;
 
   write_xbb(filename, 0, 0, xdensity*width, ydensity*height, -1, -1);
   return;
@@ -183,15 +179,12 @@ static void do_jpeg (FILE *fp, char *filename)
 static void do_png (FILE *fp, char *filename)
 {
   long   width, height;
-  double xdensity = 1.0, ydensity = 1.0;
+  double xdensity, ydensity;
 
   if (png_get_bbox(fp, &width, &height, &xdensity, &ydensity) < 0) {
     WARN("%s does not look like a PNG file...\n", filename);
     return;
   }
-
-  if (xbb_output_mode == EBB_OUTPUT)
-    xdensity = ydensity = 72.0 / 100.0;
 
   write_xbb(filename, 0, 0, xdensity*width, ydensity*height, -1, -1);
   return;
@@ -225,11 +218,9 @@ static void do_pdf (FILE *fp, char *filename)
 	    pdf_file_get_version(pf), count);
 }
 
-int extractbb (int argc, char *argv[], int mode) 
+int extractbb (int argc, char *argv[]) 
 {
   mem_debug_init();
-
-  xbb_output_mode = mode;
 
   pdf_files_init();
 
@@ -248,11 +239,11 @@ int extractbb (int argc, char *argv[], int mode)
       argc -= 1; argv += 1;
       break;
     case 'm':
-      xbb_output_mode = EBB_OUTPUT;
+      compat_mode = 1;
       argc -= 1; argv += 1;
       break;
     case 'x':
-      xbb_output_mode = XBB_OUTPUT;
+      compat_mode = 0;
       argc -= 1; argv += 1;
       break;
     case 'v':
@@ -269,7 +260,7 @@ int extractbb (int argc, char *argv[], int mode)
       argc -= 1; argv += 1;
       break;
     case 'b':
-      if (mode == EBB_OUTPUT) {
+      if (compat_mode) {
 	/* ignore obsolete "binary mode" option */
 	argc -= 1; argv += 1;
 	break;

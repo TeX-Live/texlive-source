@@ -1,7 +1,28 @@
-$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.256 2009/05/06 06:09:05 chofchof Exp $
+$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.260 2009/05/22 07:59:59 chofchof Exp $
 
 ChangeLog: Changes for DVIPDFMx
 ===============================
+
+2009-05-22  Jin-Hwan Cho
+
+	* generic/pgf-doc-diff.version2cvs, generic/pgf-generic-diff.version2cvs:
+          Removed the patches for the CVS version of pgf,
+          because they are applied to the main stream.
+
+2009-05-10  Matthias Franz
+
+	* epdf.c:
+          Don't try to convert included PDF files whose version number
+          is higher than output file version. (If run as dvipdfm,
+          conversion still occurs.)
+
+	* Makefile.am, Makefile.in, dvipdfmx.c, dvipdfmx.h, jpegimage.c, pngimage.c, xbb.c, xbb.h:
+          Added dvipdfm compatibility mode. This mode is triggered
+          if dvipdfmx is called as "dvipdfm", and likewise extractbb
+          as "ebb". (The latter mode was already present.)
+
+	* dpxconf.c:
+          Made predefined paper sizes match values given by libpaper.
 
 2009-05-06  Jin-Hwan Cho
 

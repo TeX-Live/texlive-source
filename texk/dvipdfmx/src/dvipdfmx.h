@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.h,v 1.2 2009/05/10 17:04:54 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.h,v 1.1 2009/05/10 17:04:54 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2009 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
     
     This program is free software; you can redistribute it and/or modify
@@ -20,12 +20,9 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-#ifndef _XBB_H_
-#define _XBB_H_
+#ifndef _DVIPDFMX_H_
+#define _DVIPDFMX_H_
 
-#define EBB_OUTPUT 0
-#define XBB_OUTPUT 1
+extern int compat_mode;
 
-extern int extractbb(int argc, char *argv[]);
-
-#endif /* _XBB_H_ */
+#endif /* _DVIPDFMX_H_ */

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.74 2009/05/06 06:07:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.76 2009/05/10 17:04:54 matthias Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -30,7 +30,6 @@
 #include <string.h>
 #include <limits.h>
 #include <ctype.h>
-#include <libgen.h>
 
 #include "system.h"
 #include "mem.h"
@@ -57,9 +56,12 @@
 #include "pdfximage.h"
 #include "cid.h"
 
+#include "dvipdfmx.h"
 #include "xbb.h"
 
 extern void error_cleanup (void);
+
+int compat_mode = 0;     /* 0 = dvipdfmx, 1 = dvipdfm */
 
 static int verbose = 0;
 
@@ -432,9 +434,6 @@ do_args (int argc, char *argv[])
           pdf_load_fontmap_file(argv[1], FONTMAP_RMODE_REPLACE);
         POP_ARG();
         break;
-      case 'e':
-        WARN("dvipdfm \"-e\" option not supported.");
-        break;
       case 'q': case 'v':
         break;
       case 'V':
@@ -449,11 +448,16 @@ do_args (int argc, char *argv[])
           ver_minor = atoi(argv[1]);
           POP_ARG();
         }
-        if (ver_minor < PDF_VERSION_MIN || ver_minor > PDF_VERSION_MAX) {
+        if (ver_minor < PDF_VERSION_MIN) {
           WARN("PDF version 1.%d not supported. Using PDF 1.%d instead.",
-	       ver_minor, pdf_get_version());
-        } else
-	  pdf_set_version((unsigned) ver_minor);
+	       ver_minor, PDF_VERSION_MIN);
+	  ver_minor = PDF_VERSION_MIN;
+        } else if (ver_minor > PDF_VERSION_MAX) {
+          WARN("PDF version 1.%d not supported. Using PDF 1.%d instead.",
+	       ver_minor, PDF_VERSION_MAX);
+	  ver_minor = PDF_VERSION_MAX;
+        }
+	pdf_set_version((unsigned) ver_minor);
       }
       break;
       case 'z':
@@ -471,7 +475,11 @@ do_args (int argc, char *argv[])
         pdf_set_compression(level);
       }
       break;
-      case 'd': 
+      case 'd':
+	if (compat_mode) {
+	  WARN("dvipdfm \"-d\" option not supported.");
+	  break;
+	}
         if (isdigit(*(flag+1))) {
           flag++;
           pdfdecimaldigits = atoi(flag);
@@ -522,6 +530,11 @@ do_args (int argc, char *argv[])
         }
         POP_ARG();
         break;
+      case 'e':
+	if (compat_mode) {
+	  WARN("dvipdfm \"-e\" option not supported.");
+	  break;
+	} /* else fall through */
       default:
 	if (!really_quiet)
 	  fprintf (stderr, "Unknown option in \"%s\"", flag);
@@ -788,11 +801,14 @@ main (int argc, char *argv[])
   double dvi2pts;
 
   {
-    char *base = basename(argv[0]);
-    if (strcmp(base, "ebb") == 0)
-      return extractbb(argc, argv, EBB_OUTPUT);
-    else if (strcmp(base, "xbb") == 0 || strcmp(base, "extractbb") == 0)
-      return extractbb(argc, argv, XBB_OUTPUT);
+    const char *base = xbasename(argv[0]);
+
+    if (!(strcmp(base, "dvipdfm") && strcmp(base, "ebb")))
+      compat_mode = 1;
+
+    if (!(strcmp(base, "extractbb") && strcmp(base, "xbb") &&
+	  strcmp(base, "ebb")))
+      return extractbb(argc, argv);
   }
 
   mem_debug_init();
@@ -846,7 +862,7 @@ main (int argc, char *argv[])
   MESG("%s -> %s\n", dvi_filename, pdf_filename);
 
   if (do_encryption) {
-    if (key_bits > 40 && pdf_get_version() <= PDF_VERSION_MIN)
+    if (key_bits > 40 && pdf_get_version() < 4)
       ERROR("Chosen key length requires at least PDF 1.4. "
 	    "Use \"-V 4\" to change.");
     pdf_enc_set_passwd(key_bits, permission, dvi_filename, pdf_filename);
