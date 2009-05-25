@@ -47,7 +47,7 @@ uninstall-hook::
 
 ## MetaPost Tests
 ##
-mp_tests = mplibdir/mptrap.test
+mp_tests = mplibdir/dvitomp.test mplibdir/mptrap.test
 
 EXTRA_DIST += $(mp_tests)
 
@@ -58,6 +58,8 @@ endif MP
 
 .PHONY: mptrap-clean
 clean-local:: mptrap-clean
+## dvitomp.test
+DISTCLEANFILES += ptmr.mpx tests/xptmr.mpx tests/xstory.mpx
 ## mptrap.test
 mptrap-clean:
 	rm -f mtrap.mp mtrap.mem trapf.tfm

@@ -1,5 +1,10 @@
 2009-05-25  Peter Breitenlohner <peb@mppmu.mpg.de>
 
+	* dvitomp.test (new): Shell script to test dvitomp.
+	* am/mplib.am: Added dvitomp.test.
+
+2009-05-25  Peter Breitenlohner <peb@mppmu.mpg.de>
+
 	* am/.am (install-exec-hook, uninstall-hook): new targets
 	to (un)install dvitomp symlink.
 

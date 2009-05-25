@@ -15,7 +15,8 @@ web_man_sources = bibtex.man dvicopy.man dvitomp.man dvitype.man gftodvi.man \
 	gftopk.man gftype.man mft.man patgen.man pktogf.man pktype.man \
 	pltotf.man pooltype.man tftopl.man vftovp.man vptovf.man weave.man
 
-man_sources += $(mpware_man_sources)
+## Obsolete mpware manpages
+## man_sources += $(mpware_man_sources)
 EXTRA_DIST += $(mpware_man_sources)
 mpware_man_sources = dmp.man makempx.man mpto.man newer.man
 
@@ -43,10 +44,10 @@ endif ETEX
 EXTRA_DIST += etex.man
 
 if PDFTEX
-man_sources += $(pdeftex_man_sources)
+man_sources += $(pdftex_man_sources)
 endif PDFTEX
-EXTRA_DIST += $(pdeftex_man_sources)
-pdeftex_man_sources = pdftex.man pdftosrc.man
+EXTRA_DIST += $(pdftex_man_sources)
+pdftex_man_sources = pdftex.man pdftosrc.man
 
 if LUATEX
 man_sources +=

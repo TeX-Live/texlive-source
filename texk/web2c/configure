@@ -24705,7 +24705,7 @@ fi
 subdirs="$subdirs web2c"
 
 
-ac_config_files="$ac_config_files Makefile doc/Makefile lib/Makefile man/Makefile mpware/Makefile omegafonts/Makefile otps/Makefile window/Makefile"
+ac_config_files="$ac_config_files Makefile doc/Makefile lib/Makefile man/Makefile omegafonts/Makefile otps/Makefile window/Makefile"
 
 
 
@@ -25881,7 +25881,6 @@ do
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
-    "mpware/Makefile") CONFIG_FILES="$CONFIG_FILES mpware/Makefile" ;;
     "omegafonts/Makefile") CONFIG_FILES="$CONFIG_FILES omegafonts/Makefile" ;;
     "otps/Makefile") CONFIG_FILES="$CONFIG_FILES otps/Makefile" ;;
     "window/Makefile") CONFIG_FILES="$CONFIG_FILES window/Makefile" ;;

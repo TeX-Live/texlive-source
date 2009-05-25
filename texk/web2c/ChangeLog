@@ -1,3 +1,10 @@
+2009-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mp.ch, mp.web, mpdir/, mpware/: removed (old MetaPost).
+	* Makefile.am, configure.ac: removed old MetaPost and mpware.
+	* dvitomp.ch, dvitomp.test, dvitomp.web: removed.
+	* am/web.am: removed dvitomp.
+
 2009-05-23  Karl Berry  <karl@tug.org>
 
 	* tex.ch (pool_size): increase default to 200000, so pdftex -ini

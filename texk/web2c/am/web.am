@@ -3,7 +3,7 @@
 ## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-web_programs = bibtex dvicopy dvitomp dvitype gftodvi gftopk gftype mft \
+web_programs = bibtex dvicopy dvitype gftodvi gftopk gftype mft \
 	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf weave
 
 if WEB
@@ -32,15 +32,6 @@ dvicopy-web2c: $(web2c_depend) dvicopy.p
 	touch dvicopy.c dvicopy.h
 dvicopy.p: tangle$(EXEEXT) dvicopy.web dvicopy.ch
 	$(tangle) dvicopy dvicopy
-
-nodist_dvitomp_SOURCES = dvitomp.c dvitomp.h
-dvitomp.c dvitomp.h: dvitomp-web2c
-dvitomp-web2c: $(web2c_depend) dvitomp.p
-	$(web2c) dvitomp
-	echo timestamp >$@
-	touch dvitomp.c dvitomp.h
-dvitomp.p: tangle$(EXEEXT) dvitomp.web dvitomp.ch
-	$(tangle) dvitomp dvitomp
 
 nodist_dvitype_SOURCES = dvitype.c dvitype.h
 dvitype.c dvitype.h: dvitype-web2c
@@ -184,8 +175,6 @@ endif WEB
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
 ## dvicopy.test
 DISTCLEANFILES += tests/xstory.dvi tests/xpplr.dvi
-## dvitomp.test
-DISTCLEANFILES += ptmr.mpx tests/xptmr.mpx tests/xstory.mpx
 ## dvitype.test
 DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
 ## gftodvi.test

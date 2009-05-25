@@ -9,13 +9,13 @@ if tfmpath=`$KPSEWHICH cmbx10.tfm`; then
 
   TEXMFCNF=$srcdir/../kpathsea \
     TFMFONTS=`dirname $tfmpath` \
-    ./dvitomp $srcdir/tests/story.dvi tests/xstory.mpx || exit 1
+    ./mpost --dvitomp $srcdir/tests/story.dvi tests/xstory.mpx || exit 1
 
 fi
 
 TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS=$srcdir/tests \
   VFFONTS=$srcdir/tests: \
-  ./dvitomp $srcdir/tests/ptmr && \
+  ./mpost --dvitomp $srcdir/tests/ptmr ptmr.mpx && \
   mv ptmr.mpx tests/xptmr.mpx || exit 1
 
