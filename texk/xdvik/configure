@@ -21396,9 +21396,18 @@ _ACEOF
 fi
 
 elif test "x$default_toolkit" = xnone; then
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building xdvik has been disabled and would fail because
+No Motif." >&5
+$as_echo "$as_me: WARNING: building xdvik has been disabled and would fail because
+No Motif." >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error: No Motif." >&5
 $as_echo "$as_me: error: No Motif." >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 else
   # Restore previous X_CFLAGS
   X_CFLAGS=$xdvi_motif_save_X_CFLAGS
@@ -21570,9 +21579,18 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 else
+  if test "x$enable_build" = xno; then
+  { $as_echo "$as_me:$LINENO: WARNING: building xdvik has been disabled and would fail because
+Sorry, you will need at least the Xaw header/library files to compile xdvik." >&5
+$as_echo "$as_me: WARNING: building xdvik has been disabled and would fail because
+Sorry, you will need at least the Xaw header/library files to compile xdvik." >&2;}
+else
   { { $as_echo "$as_me:$LINENO: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&5
 $as_echo "$as_me: error: Sorry, you will need at least the Xaw header/library files to compile xdvik." >&2;}
    { (exit 1); exit 1; }; }
+fi
+
+
 fi
 
   fi

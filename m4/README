@@ -25,7 +25,7 @@ owned by the TL tree.
 kpse-pkgs.m4: defines lists of subdirectories libs/Lib/, utils/Util/, and
 	tex/Prog/ with libraries and programs that can be built as part of
 	the TL tree.
-kpse-setup.m4: macros that recurse through these lists to provide configure
+kpse-setup.m4: macros that walk through these lists to provide configure
 	options.  They depend on configure fragments */*/ac/withenable.ac
 	defining the dependencies between these libraries and programs.
 

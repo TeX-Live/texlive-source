@@ -2216,6 +2216,14 @@ fi
 
 
 
+case $with_x in
+  yes | no) : ;;
+  *) with_x=yes
+         { $as_echo "$as_me:$LINENO: Assuming \`--with-x'" >&5
+$as_echo "$as_me: Assuming \`--with-x'" >&6;}
+         ac_configure_args="$ac_configure_args '--with-x'" ;;
+esac
+
 ## utils/dialog/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/dialog/
 ## configure options and TL libraries required for dialog
 # Check whether --enable-dialog was given.
@@ -2233,6 +2241,19 @@ esac
 
 ## utils/pdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/pdfopen/
 ## configure options and TL libraries required for pdfopen
+if test "x$with_x" = xno; then
+  case $enable_pdfopen in
+  "") { $as_echo "$as_me:$LINENO: \`--without-x' -> \`--disable-pdfopen'" >&5
+$as_echo "$as_me: \`--without-x' -> \`--disable-pdfopen'" >&6;}
+                      enable_pdfopen=no
+                      ac_configure_args="$ac_configure_args '--disable-pdfopen'" ;;
+  yes) { { $as_echo "$as_me:$LINENO: error: Sorry, incompatible options \`--without-x' and \`--enable-pdfopen'" >&5
+$as_echo "$as_me: error: Sorry, incompatible options \`--without-x' and \`--enable-pdfopen'" >&2;}
+   { (exit 1); exit 1; }; } ;;
+esac
+
+fi
+
 # Check whether --enable-pdfopen was given.
 if test "${enable_pdfopen+set}" = set; then
   enableval=$enable_pdfopen;
@@ -3054,6 +3075,19 @@ test "x$enable_xdv2pdf" = xno || {
 
 ## texk/xdvik/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 ## configure options and TL libraries required for xdvik
+if test "x$with_x" = xno; then
+  case $enable_xdvik in
+  "") { $as_echo "$as_me:$LINENO: \`--without-x' -> \`--disable-xdvik'" >&5
+$as_echo "$as_me: \`--without-x' -> \`--disable-xdvik'" >&6;}
+                      enable_xdvik=no
+                      ac_configure_args="$ac_configure_args '--disable-xdvik'" ;;
+  yes) { { $as_echo "$as_me:$LINENO: error: Sorry, incompatible options \`--without-x' and \`--enable-xdvik'" >&5
+$as_echo "$as_me: error: Sorry, incompatible options \`--without-x' and \`--enable-xdvik'" >&2;}
+   { (exit 1); exit 1; }; } ;;
+esac
+
+fi
+
 # Check whether --enable-xdvik was given.
 if test "${enable_xdvik+set}" = set; then
   enableval=$enable_xdvik;

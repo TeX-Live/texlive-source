@@ -2495,6 +2495,14 @@ fi
 
 
 
+case $with_x in
+  yes | no) : ;;
+  *) with_x=yes
+         { $as_echo "$as_me:$LINENO: Assuming \`--with-x'" >&5
+$as_echo "$as_me: Assuming \`--with-x'" >&6;}
+         ac_configure_args="$ac_configure_args '--with-x'" ;;
+esac
+
 ## utils/dialog/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/dialog/
 ## configure options and TL libraries required for dialog
 # Check whether --enable-dialog was given.
@@ -2512,6 +2520,19 @@ esac
 
 ## utils/pdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/pdfopen/
 ## configure options and TL libraries required for pdfopen
+if test "x$with_x" = xno; then
+  case $enable_pdfopen in
+  "") { $as_echo "$as_me:$LINENO: \`--without-x' -> \`--disable-pdfopen'" >&5
+$as_echo "$as_me: \`--without-x' -> \`--disable-pdfopen'" >&6;}
+                      enable_pdfopen=no
+                      ac_configure_args="$ac_configure_args '--disable-pdfopen'" ;;
+  yes) { { $as_echo "$as_me:$LINENO: error: Sorry, incompatible options \`--without-x' and \`--enable-pdfopen'" >&5
+$as_echo "$as_me: error: Sorry, incompatible options \`--without-x' and \`--enable-pdfopen'" >&2;}
+   { (exit 1); exit 1; }; } ;;
+esac
+
+fi
+
 # Check whether --enable-pdfopen was given.
 if test "${enable_pdfopen+set}" = set; then
   enableval=$enable_pdfopen;
@@ -3333,6 +3354,19 @@ test "x$enable_xdv2pdf" = xno || {
 
 ## texk/xdvik/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 ## configure options and TL libraries required for xdvik
+if test "x$with_x" = xno; then
+  case $enable_xdvik in
+  "") { $as_echo "$as_me:$LINENO: \`--without-x' -> \`--disable-xdvik'" >&5
+$as_echo "$as_me: \`--without-x' -> \`--disable-xdvik'" >&6;}
+                      enable_xdvik=no
+                      ac_configure_args="$ac_configure_args '--disable-xdvik'" ;;
+  yes) { { $as_echo "$as_me:$LINENO: error: Sorry, incompatible options \`--without-x' and \`--enable-xdvik'" >&5
+$as_echo "$as_me: error: Sorry, incompatible options \`--without-x' and \`--enable-xdvik'" >&2;}
+   { (exit 1); exit 1; }; } ;;
+esac
+
+fi
+
 # Check whether --enable-xdvik was given.
 if test "${enable_xdvik+set}" = set; then
   enableval=$enable_xdvik;
@@ -6121,13 +6155,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:6124: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:6158: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:6127: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:6161: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:6130: output\"" >&5)
+  (eval echo "\"\$as_me:6164: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -7333,7 +7367,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7336 "configure"' > conftest.$ac_ext
+  echo '#line 7370 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9279,11 +9313,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9282: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9316: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9286: \$? = $ac_status" >&5
+   echo "$as_me:9320: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9618,11 +9652,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9621: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9655: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9625: \$? = $ac_status" >&5
+   echo "$as_me:9659: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9723,11 +9757,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9726: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9760: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9730: \$? = $ac_status" >&5
+   echo "$as_me:9764: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9778,11 +9812,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9781: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9815: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9785: \$? = $ac_status" >&5
+   echo "$as_me:9819: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12578,7 +12612,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12581 "configure"
+#line 12615 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12674,7 +12708,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12677 "configure"
+#line 12711 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -19108,11 +19142,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19111: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19145: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:19115: \$? = $ac_status" >&5
+   echo "$as_me:19149: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -19207,11 +19241,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19210: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19244: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:19214: \$? = $ac_status" >&5
+   echo "$as_me:19248: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -19259,11 +19293,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:19262: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:19296: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:19266: \$? = $ac_status" >&5
+   echo "$as_me:19300: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized

@@ -6,5 +6,11 @@ dnl
 dnl extra_dirs = texk/xdvik/squeeze
 dnl
 ## configure options and TL libraries required for xdvik
+AS_IF([test "x$with_x" = xno],
+      [AS_CASE([$enable_xdvik],
+               [""], [AC_MSG_NOTICE([`--without-x' -> `--disable-xdvik'])
+                      enable_xdvik=no
+                      ac_configure_args="$ac_configure_args '--disable-xdvik'"],
+               [yes], [AC_MSG_ERROR([Sorry, incompatible options `--without-x' and `--enable-xdvik'])])])
 KPSE_ENABLE_PROG([xdvik], [kpathsea t1lib])
 m4_include(kpse_TL[texk/xdvik/ac/xdvik.ac])
