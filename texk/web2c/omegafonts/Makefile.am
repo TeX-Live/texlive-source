@@ -8,11 +8,11 @@ AM_YFLAGS = -d -v
 
 proglib = ../lib/lib.a
 
-## Automake automatically uses $(proglib)=../lib/lib.a as dependency.
-## This does not work for the configure substitution  $(KPATHSEA_LIBS),
-## thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
-
-## Rebuild $(proglib)
+# Automake automatically uses $(proglib)=../lib/lib.a as dependency.
+# This does not work for the configure substitution  $(KPATHSEA_LIBS),
+# thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
+#
+# Rebuild $(proglib)
 $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
@@ -73,9 +73,4 @@ unistall-hook:
 	for f in $(linked_programs); do \
 	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 	done
-
-## ######
-## Eventually delete these files
-
-EXTRA_DIST = Makefile.in.orig
 

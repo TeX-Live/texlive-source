@@ -9,11 +9,7 @@ INCLUDES = -I$(top_builddir)/.. $(KPATHSEA_INCLUDES)
 
 version = $(WEB2CVERSION)
 
-SUBDIRS = doc lib man web2c . window
-if OMFONTS
-SUBDIRS += omegafonts
-endif OMFONTS
-SUBDIRS += otps
+SUBDIRS = doc lib man web2c . window omegafonts otps
 
 proglib = lib/lib.a
 

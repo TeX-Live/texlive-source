@@ -1,3 +1,9 @@
+2009-05-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* {ofm2opl,opl2ofm,ovf2ovp,ovp2ovf}.{ch,web} (removed):
+	these Pascal Web versions are obsolete, replaced by symlinks
+	to omfonts (from ../omegafonts/).
+
 2009-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* otangle.ch: use kpse_open_file to locate input files,

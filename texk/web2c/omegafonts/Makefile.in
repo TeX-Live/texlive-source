@@ -329,7 +329,6 @@ omfonts_SOURCES = \
 LDADD = $(LEXLIB) $(proglib) $(KPATHSEA_LIBS)
 DISTCLEANFILES = pl-parser.output
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
-EXTRA_DIST = Makefile.in.orig
 all: all-am
 
 .SUFFIXES:
@@ -678,6 +677,11 @@ uninstall-am: uninstall-binPROGRAMS
 	uninstall-am uninstall-binPROGRAMS
 
 
+# Automake automatically uses $(proglib)=../lib/lib.a as dependency.
+# This does not work for the configure substitution  $(KPATHSEA_LIBS),
+# thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
+#
+# Rebuild $(proglib)
 $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
