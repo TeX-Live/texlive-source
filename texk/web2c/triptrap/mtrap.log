@@ -1,8 +1,8 @@
-This is MetaPost, C Version 0.64 (INIMP)  28 JAN 1998 11:18
-**mtrap 
-(mtrap.mp
-Memory usage 28&13 (3463 still untouched)
-String usage 4&24 (1306&9877 now untouched)
+This is MetaPost, version 1.201 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
+**mtrap
+(./mtrap.mp
+Memory usage 19&13 (3972 still untouched)
+String usage 3&12 (101&7774 now untouched)
 >> 7629.39453
 >> -7629.39453
 >> 166.74463
@@ -23,8 +23,8 @@ String usage 4&24 (1306&9877 now untouched)
 >> 7629.39453
 >> -7629.39453
 ! Arithmetic overflow.
-TS->...roup.show(EXPR2)*(EXPR3),
-                                (-(EXPR2))*(EXPR3),(EXPR2)*(-...
+TS->begingroup.show(EXPR2)*(EXPR3),
+                                   (-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),(-(...
 l.24 TS(13107.20000)(2.50000)
                              ;      % p*q=2^47-2^15 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -34,8 +34,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(-(EXPR2))*(EXPR3),
-                                (EXPR2)*(-(EXPR3)),(-(EXPR2))...
+TS->...oup.show(EXPR2)*(EXPR3),(-(EXPR2))*(EXPR3),
+                                                  (EXPR2)*(-(EXPR3)),(-(EXPR...
 l.24 TS(13107.20000)(2.50000)
                              ;      % p*q=2^47-2^15 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -45,8 +45,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(EXPR2)*(-(EXPR3)),
-                                (-(EXPR2))*(-(EXPR3))endgroup
+TS->...PR3),(-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),
+                                                  (-(EXPR2))*(-(EXPR3))endgroup
 l.24 TS(13107.20000)(2.50000)
                              ;      % p*q=2^47-2^15 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -56,8 +56,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR2))*(-(EXPR3))endgroup
-                                
+TS->...2)*(-(EXPR3)),(-(EXPR2))*(-(EXPR3))endgroup
+                                                  
 l.24 TS(13107.20000)(2.50000)
                              ;      % p*q=2^47-2^15 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -67,8 +67,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...roup.show(EXPR2)*(EXPR3),
-                                (-(EXPR2))*(EXPR3),(EXPR2)*(-...
+TS->begingroup.show(EXPR2)*(EXPR3),
+                                   (-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),(-(...
 l.25 TS(124.77580)(262.61502)
                              ;      % p*q=2^47-2^15+6 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -78,8 +78,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(-(EXPR2))*(EXPR3),
-                                (EXPR2)*(-(EXPR3)),(-(EXPR2))...
+TS->...oup.show(EXPR2)*(EXPR3),(-(EXPR2))*(EXPR3),
+                                                  (EXPR2)*(-(EXPR3)),(-(EXPR...
 l.25 TS(124.77580)(262.61502)
                              ;      % p*q=2^47-2^15+6 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -89,8 +89,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(EXPR2)*(-(EXPR3)),
-                                (-(EXPR2))*(-(EXPR3))endgroup
+TS->...PR3),(-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),
+                                                  (-(EXPR2))*(-(EXPR3))endgroup
 l.25 TS(124.77580)(262.61502)
                              ;      % p*q=2^47-2^15+6 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -100,8 +100,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR2))*(-(EXPR3))endgroup
-                                
+TS->...2)*(-(EXPR3)),(-(EXPR2))*(-(EXPR3))endgroup
+                                                  
 l.25 TS(124.77580)(262.61502)
                              ;      % p*q=2^47-2^15+6 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -115,8 +115,8 @@ tactics next time. But I shall try to carry on anyway.
 >> -32767.99998
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...roup.show(EXPR2)*(EXPR3),
-                                (-(EXPR2))*(EXPR3),(EXPR2)*(-...
+TS->begingroup.show(EXPR2)*(EXPR3),
+                                   (-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),(-(...
 l.27 TS(64.03127)(511.75000)
                             ;       % p*q=2^47-2^14 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -126,8 +126,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(-(EXPR2))*(EXPR3),
-                                (EXPR2)*(-(EXPR3)),(-(EXPR2))...
+TS->...oup.show(EXPR2)*(EXPR3),(-(EXPR2))*(EXPR3),
+                                                  (EXPR2)*(-(EXPR3)),(-(EXPR...
 l.27 TS(64.03127)(511.75000)
                             ;       % p*q=2^47-2^14 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -137,8 +137,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(EXPR2)*(-(EXPR3)),
-                                (-(EXPR2))*(-(EXPR3))endgroup
+TS->...PR3),(-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),
+                                                  (-(EXPR2))*(-(EXPR3))endgroup
 l.27 TS(64.03127)(511.75000)
                             ;       % p*q=2^47-2^14 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -148,8 +148,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR2))*(-(EXPR3))endgroup
-                                
+TS->...2)*(-(EXPR3)),(-(EXPR2))*(-(EXPR3))endgroup
+                                                  
 l.27 TS(64.03127)(511.75000)
                             ;       % p*q=2^47-2^14 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -159,8 +159,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...roup.show(EXPR2)*(EXPR3),
-                                (-(EXPR2))*(EXPR3),(EXPR2)*(-...
+TS->begingroup.show(EXPR2)*(EXPR3),
+                                   (-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),(-(...
 l.28 TS(39.46178)(830.37315)
                             ;       % p*q=2^47-2^14+1 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -170,8 +170,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(-(EXPR2))*(EXPR3),
-                                (EXPR2)*(-(EXPR3)),(-(EXPR2))...
+TS->...oup.show(EXPR2)*(EXPR3),(-(EXPR2))*(EXPR3),
+                                                  (EXPR2)*(-(EXPR3)),(-(EXPR...
 l.28 TS(39.46178)(830.37315)
                             ;       % p*q=2^47-2^14+1 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -181,8 +181,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(EXPR2)*(-(EXPR3)),
-                                (-(EXPR2))*(-(EXPR3))endgroup
+TS->...PR3),(-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),
+                                                  (-(EXPR2))*(-(EXPR3))endgroup
 l.28 TS(39.46178)(830.37315)
                             ;       % p*q=2^47-2^14+1 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -192,8 +192,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR2))*(-(EXPR3))endgroup
-                                
+TS->...2)*(-(EXPR3)),(-(EXPR2))*(-(EXPR3))endgroup
+                                                  
 l.28 TS(39.46178)(830.37315)
                             ;       % p*q=2^47-2^14+1 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -203,8 +203,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...roup.show(EXPR2)*(EXPR3),
-                                (-(EXPR2))*(EXPR3),(EXPR2)*(-...
+TS->begingroup.show(EXPR2)*(EXPR3),
+                                   (-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),(-(...
 l.29 TS(1207.05434)(27.14708)
                              ;      % p*q=2^47-2^14-1 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -214,8 +214,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> 32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(-(EXPR2))*(EXPR3),
-                                (EXPR2)*(-(EXPR3)),(-(EXPR2))...
+TS->...oup.show(EXPR2)*(EXPR3),(-(EXPR2))*(EXPR3),
+                                                  (EXPR2)*(-(EXPR3)),(-(EXPR...
 l.29 TS(1207.05434)(27.14708)
                              ;      % p*q=2^47-2^14-1 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -225,8 +225,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR3),(EXPR2)*(-(EXPR3)),
-                                (-(EXPR2))*(-(EXPR3))endgroup
+TS->...PR3),(-(EXPR2))*(EXPR3),(EXPR2)*(-(EXPR3)),
+                                                  (-(EXPR2))*(-(EXPR3))endgroup
 l.29 TS(1207.05434)(27.14708)
                              ;      % p*q=2^47-2^14-1 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -236,8 +236,8 @@ tactics next time. But I shall try to carry on anyway.
 
 >> -32767.99998
 ! Arithmetic overflow.
-TS->...XPR2))*(-(EXPR3))endgroup
-                                
+TS->...2)*(-(EXPR3)),(-(EXPR2))*(-(EXPR3))endgroup
+                                                  
 l.29 TS(1207.05434)(27.14708)
                              ;      % p*q=2^47-2^14-1 => *
 Uh, oh. A little while ago one of the quantities that I was
@@ -296,14 +296,14 @@ tactics next time. But I shall try to carry on anyway.
 >> 360.31036
 >> 32767
 >> 16394
-Memory usage 28&13 (3358 still untouched)
-String usage 8&32 (1302&9869 now untouched)
-Memory usage 109&13 (3358 still untouched)
-String usage 10&42 (1300&9859 now untouched)
-Memory usage 116&13 (3358 still untouched)
-String usage 11&45 (1299&9856 now untouched)
-Memory usage 139&56 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 19&13 (3867 still untouched)
+String usage 7&20 (97&7766 now untouched)
+Memory usage 111&13 (3867 still untouched)
+String usage 9&30 (95&7756 now untouched)
+Memory usage 118&13 (3867 still untouched)
+String usage 10&33 (94&7753 now untouched)
+Memory usage 141&56 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> Edge structure at line 71:
 End edges
 
@@ -313,21 +313,18 @@ End edges
 >> false
 >> false
 >> 0
-Memory usage 152&59 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 154&59 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> Edge structure at line 73:
 clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 End edges
@@ -338,8 +335,8 @@ End edges
 >> true
 >> false
 >> 0
-Memory usage 220&59 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 230&59 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> Edge structure at line 75:
 setbounds path:
 (-3,-2)..controls (0.33333,-2) and (3.66667,-2)
@@ -355,8 +352,8 @@ End edges
 >> false
 >> true
 >> 0
-Memory usage 245&59 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 258&59 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> Edge structure at line 76:
 Filled pen stroke :
 (1,1)..controls (1.66667,1.33333) and (2.33333,1.66667)
@@ -371,21 +368,18 @@ End edges
 >> false
 >> false
 >> 1
-Memory usage 293&72 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 312&72 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> Edge structure at line 78:
 clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -401,8 +395,8 @@ End edges
 >> true
 >> false
 >> 2
-Memory usage 314&59 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 339&59 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> (0.5,2.5)
 >> (3.5,0.5)
 >> Edge structure at line 81:
@@ -415,14 +409,11 @@ clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -439,8 +430,8 @@ End edges
 >> false
 >> true
 >> 2
-Memory usage 339&59 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 367&59 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> (-7,-3)
 >> (2,7)
 >> Edge structure at line 82:
@@ -453,14 +444,11 @@ clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -477,8 +465,8 @@ End edges
 >> false
 >> true
 >> 2
-Memory usage 339&59 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 367&59 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> Edge structure at line 83:
 Filled contour colored (0.4,0.4,0.4):
 (-36,-24)..controls (3.99994,-24) and (44.00006,-24)
@@ -493,8 +481,8 @@ End edges
 >> false
 >> false
 >> 1
-Memory usage 345&70 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 373&70 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> Edge structure at line 85:
 setbounds path:
 (2,-3)..controls (2,0.33333) and (2,3.66667)
@@ -505,14 +493,11 @@ clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -534,8 +519,8 @@ End edges
 >> false
 >> true
 >> 2
-Memory usage 364&59 (3358 still untouched)
-String usage 14&51 (1296&9850 now untouched)
+Memory usage 398&59 (3867 still untouched)
+String usage 13&39 (91&7747 now untouched)
 >> Edge structure at line 86:
 "A56" infont "trapf"
 transformed (0,0,1,0,0,1)
@@ -547,8 +532,8 @@ End edges
 >> false
 >> false
 >> 1
-Memory usage 355&64 (3358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 386&64 (3867 still untouched)
+String usage 15&47 (89&7739 now untouched)
 >> Edge structure at line 88:
 setbounds path:
 (2,-3)..controls (2,0.33333) and (2,3.66667)
@@ -559,14 +544,11 @@ clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -591,8 +573,8 @@ End edges
 >> false
 >> true
 >> 3
-Memory usage 365&59 (3358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 399&59 (3867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> Edge structure at line 89:
 Filled pen stroke :
 (4,5)..controls (5.33333,3.66667) and (6.66667,2.33333)
@@ -607,8 +589,8 @@ End edges
 >> false
 >> false
 >> 1
-Memory usage 390&73 (3358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 427&73 (3867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> Edge structure at line 91:
 setbounds path:
 (2,-3)..controls (2,0.33333) and (2,3.66667)
@@ -619,14 +601,11 @@ clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -656,8 +635,8 @@ End edges
 >> false
 >> true
 >> 4
-Memory usage 409&59 (3358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 452&59 (3867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> "non-picture"
 >> false
 >> false
@@ -665,10 +644,10 @@ String usage 17&64 (1293&9837 now untouched)
 >> false
 >> false
 >> 11
-Memory usage 409&59 (3358 still untouched)
-String usage 18&75 (1292&9826 now untouched)
-Memory usage 308&13 (3358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 452&59 (3867 still untouched)
+String usage 15&53 (89&7733 now untouched)
+Memory usage 342&13 (3867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> Edge structure at line 96:
 setbounds path:
 (2,-3)..controls (2,0.33333) and (2,3.66667)
@@ -679,14 +658,11 @@ clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -718,11 +694,11 @@ butt ends, mitered joins limited 1 with pen
 pencircle transformed (0,0,0,0,0,1)
 End edges
 
-Memory usage 308&13 (3358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 342&13 (3867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> 4
-Memory usage 563&13 (3358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 637&13 (3867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> Edge structure at line 104:
 clipping path:
 (5,5)..controls (5,6.32608) and (4.47322,7.59785)
@@ -743,14 +719,11 @@ clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -782,14 +755,11 @@ clipping path:
 (50,0)..controls (50,13.26082) and (44.73216,25.97853)
  ..(35.35535,35.35535)..controls (25.97853,44.73216) and (13.26082,50)
  ..(0,50)..controls (-13.26082,50) and (-25.97853,44.73216)
- ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082
-)
+ ..(-35.35535,35.35535)..controls (-44.73216,25.97853) and (-50,13.26082)
  ..(-50,0)..controls (-50,-13.26082) and (-44.73216,-25.97853)
- ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,
--50)
+ ..(-35.35535,-35.35535)..controls (-25.97853,-44.73216) and (-13.26082,-50)
  ..(0,-50)..controls (13.26082,-50) and (25.97853,-44.73216)
- ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082
-)
+ ..(35.35535,-35.35535)..controls (44.73216,-25.97853) and (50,-13.26082)
  ..cycle
 stop clipping
 Filled pen stroke :
@@ -814,8 +784,8 @@ pencircle transformed (0,0,0,0,0,1)
 End edges
 
 >> 5
-Memory usage 747&13 (3358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 853&13 (3867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> false
 >> false
 >> false
@@ -844,8 +814,8 @@ End edges
 >> (0,0)
 >> (0,0)
 >> (0,0)
-Memory usage 1003&85 (2358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 1149&85 (2867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> false
 >> false
 >> false
@@ -869,8 +839,8 @@ End edges
 >> (0,0)
 >> (0,0)
 >> (0,0)
-Memory usage 873&85 (2358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 996&85 (2867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> false
 >> true
 >> false
@@ -894,8 +864,8 @@ End edges
 >> (0,0)
 >> (0,0)
 >> (0,0)
-Memory usage 786&85 (2358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 898&85 (2867 still untouched)
+String usage 14&42 (90&7744 now untouched)
 >> false
 >> false
 >> true
@@ -916,8 +886,8 @@ End edges
 >> (2,3)
 >> (0.86603,0.5)
 >> (-0.5,0.86603)
-Memory usage 773&85 (2358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 882&85 (2867 still untouched)
+String usage 15&47 (89&7739 now untouched)
 >> true
 >> false
 >> false
@@ -939,23 +909,27 @@ End edges
 >> (0,0)
 >> (0,0)
 >> (0,0)
-Memory usage 788&85 (2358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
+Memory usage 900&85 (2867 still untouched)
+String usage 15&47 (89&7739 now untouched)
 >> Edge structure at line 116:
 "B34" infont "trapf"
 transformed (0,0,1,0,0,1)
 End edges
 
-Memory usage 319&13 (2358 still untouched)
-String usage 17&64 (1293&9837 now untouched)
-[0] [1]
-Memory usage 325&13 (2358 still untouched)
-String usage 20&78 (1287&9809 now untouched)
+Memory usage 353&13 (2867 still untouched)
+String usage 15&47 (89&7739 now untouched)
+[0] [1
+Warning: cannot open font map file psfonts.map
+]
+Memory usage 359&13 (2867 still untouched)
+String usage 16&50 (84&7716 now untouched)
 >> "%!PS"
->> "%%BoundingBox: -36 -24 84 84"
->> "%%Creator: MetaPost"
+>> "%%BoundingBox: -36 -24 84 84 "
+>> "%%HiResBoundingBox: -36 -24 84 84 "
+>> "%%Creator: MetaPost 1.201"
 >> "%%Pages: 1"
 >> "%*Font: trapf 9.9628 9.96265 35:c008"
+>> "%%BeginProlog"
 >> "%%EndProlog"
 >> "%%Page: 1 1"
 >> "gsave newpath 50 0 moveto"
@@ -968,16 +942,16 @@ String usage 20&78 (1287&9809 now untouched)
 >> "13.26082 -50 25.97853 -44.73216 35.35535 -35.35535 curveto"
 >> "44.73216 -25.97853 50 -13.26082 50 0 curveto closepath clip"
 >> "grestore"
->> " 0 setgray 0 1 dtransform truncate idtransform setlinewidth pop"
+>> " 0 0 0 setrgbcolor 0 1 dtransform truncate idtransform setlinewidth pop"
 >> " [] 0 setdash 0 setlinecap 0 setlinejoin 1 setmiterlimit"
 >> "newpath 1 1 moveto"
 >> "3 2 lineto stroke"
->> " 0.4 setgray"
+>> " 0.4 0.4 0.4 setrgbcolor"
 >> "newpath -36 -24 moveto"
 >> "84 -24 lineto"
 >> "0 84 lineto"
 >> " closepath fill"
->> " 0 setgray"
+>> " 0 0 0 setrgbcolor"
 >> "gsave [0.86601 0.5 -0.5 0.86601 2 3 ] concat 0 0 moveto"
 >> "(A56) trapf 9.9628 fshow grestore"
 >> "gsave newpath 4 5 moveto"
@@ -985,33 +959,33 @@ String usage 20&78 (1287&9809 now untouched)
 >> "0.00064 1 scale stroke grestore"
 >> "showpage"
 >> "%%EOF"
-Memory usage 325&13 (2358 still untouched)
-String usage 22&84 (1247&8769 now untouched)
+Memory usage 359&13 (2867 still untouched)
+String usage 16&50 (46&6607 now untouched)
 >> "%!PS-Adobe-3.0 EPSF-3.0"
->> "%%BoundingBox: -84 -36 24 84"
->> 40
-Memory usage 325&13 (2358 still untouched)
-String usage 22&84 (1206&7603 now untouched)
+>> "%%BoundingBox: -84 -36 24 84 "
+>> 42
+Memory usage 359&13 (2867 still untouched)
+String usage 16&50 (5&5366 now untouched)
 >> "^^@"
 >> "%!PS"
->> "%%BoundingBox: -36 -24 84 84"
->> "%%Creator: MetaPost"
-Memory usage 325&13 (2358 still untouched)
-String usage 24&110 (1197&7522 now untouched)
-Memory usage 325&13 (2358 still untouched)
-String usage 26&125 (1148&7358 now untouched)
+>> "%%BoundingBox: -36 -24 84 84 "
+>> "%%HiResBoundingBox: -36 -24 84 84 "
+Memory usage 359&13 (2867 still untouched)
+String usage 17&84 (1&5292 now untouched)
+Memory usage 359&13 (2867 still untouched)
+String usage 30&97 (43&7558 now untouched)
 >> "1  1"
->> "%%Pages: 1"
+>> "%%CreationDate: 2009.05.25:1247"
 >> "2  4"
->> "%*Font: trapf 9.9628 9.96265 35:c008"
+>> "%%Pages: 1"
 >> "3  9"
->> "%%EndProlog"
-Memory usage 325&13 (2358 still untouched)
-String usage 25&135 (1144&7308 now untouched)
+>> "%*Font: trapf 9.9628 9.96265 35:c008"
+Memory usage 359&13 (2867 still untouched)
+String usage 30&88 (41&7527 now untouched)
 {randomseed:=4.34294}
 >> "bbbbbbbbadadbbbbbbbbadadbbbbbbbbadadbbbbbbbbadadbbbbbbbbadad"
-Memory usage 325&13 (2358 still untouched)
-String usage 26&141 (1195&1840 now untouched)
+Memory usage 359&13 (2867 still untouched)
+String usage 30&88 (61&6618 now untouched)
 ! Number is too large (12000).
 l.185 n = 12000
                ; show n;
@@ -1035,8 +1009,8 @@ I can't handle numbers bigger than 32767.99998;
 so I've changed your constant to that maximum amount.
 
 >> 32767.99998
-Memory usage 325&13 (2358 still untouched)
-String usage 26&141 (1195&1840 now untouched)
+Memory usage 359&13 (2867 still untouched)
+String usage 30&88 (61&6618 now untouched)
 >> triangle
 ! Improper iteration spec has been replaced by nullpicture.
 <to be read again> 
@@ -1045,8 +1019,8 @@ l.191 for x within triangle:
                               show x; endfor
 When you say `for x in p', p must be a known picture.
 
-Memory usage 327&13 (2358 still untouched)
-String usage 27&149 (1194&1832 now untouched)
+Memory usage 361&13 (2867 still untouched)
+String usage 31&96 (60&6610 now untouched)
 >> path
 ! Not a string.
 <to be read again> 
@@ -1090,19 +1064,19 @@ now in front of anything that you don't want me to delete.
 ! Not a string.
 <to be read again> 
                    ;
-l.195 ...e "triangle" to triang;
-                                
+l.195 write "triangle" to triang;
+                                 
 I can't write to that file name.  It isn't a known string
 
-Memory usage 327&13 (2358 still untouched)
-String usage 27&149 (1193&1824 now untouched)
->> "%%BoundingBox: -36 -24 84 84" ) 
+Memory usage 361&13 (2867 still untouched)
+String usage 31&96 (59&6602 now untouched)
+>> "%%BoundingBox: -36 -24 84 84 " )
+ 
 Here is how much of MetaPost's memory you used:
- 32 strings out of 1310
- 561 string characters out of 9901
- 2143 words of memory out of 4501
- 237 symbolic tokens out of 2100
- 5i,33n,6p,100b stack positions out of 30i,100n,150p,500b
- 3 string compactions (moved 1368 characters, 89 strings)
-
+ 37 strings out of 104
+ 508 string characters out of 7786
+ 2134 words of memory out of 5000
+ 265 symbolic tokens out of 16384
+ 5i,42n,6p,99b,2f stack positions out of 300i,84n,1500p,200b,25f
+ 8 string compactions (moved 2756 characters, 222 strings)
 2 output files written: mtrap.0 .. mtrap.1

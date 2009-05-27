@@ -20,6 +20,7 @@ avl_default_item_copy (const void *item)
 void *
 avl_default_item_dispose (void *item)
 {
+  (void)item; /* for -Wall */
   return (void *) NULL;
 }
 

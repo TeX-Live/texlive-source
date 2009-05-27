@@ -1,6 +1,6 @@
 % $Id: mp.w 597 2008-07-03 15:35:34Z taco $
 %
-% Copyright 2008 Taco Hoekwater.
+% Copyright 2008-2009 Taco Hoekwater.
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU Lesser General Public License as published by

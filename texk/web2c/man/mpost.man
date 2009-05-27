@@ -1,4 +1,4 @@
-.TH MPOST 1 "7 January 2007" "MetaPost 0.993" "Web2C @VERSION@"
+.TH MPOST 1 "27 May 2009" "MetaPost 1.201"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -19,49 +19,40 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-mpost, inimpost, virmpost \- MetaPost, a system for drawing pictures
+mpost \- MetaPost, a system for creating graphics
 .SH SYNOPSIS
 .B mpost
 .RI [ options ]
 .RI [ commands ]
+.PP
+.B mpost 
+.B --dvitomp
+.IR dvifile [.dvi]
+.RI [ mpxfile [.mpx]]
+
 .\"=====================================================================
 .SH DESCRIPTION
-\*(MP interprets the \*(MP language and produces PostScript
-pictures.  The \*(MP language is similar to Knuth's \*(MF
-with additional features for including
+\*(MP interprets the \*(MP language and produces PostScript (EPS)
+or Scalable Vector Graphics (SVG) pictures.  The \*(MP language is similar 
+to Knuth's \*(MF with additional features for including
 .BR tex (1)
 or
 .BR troff (1)
 commands and accessing features of PostScript not found in \*(MF. 
 .PP
 Like \*(TX and \*(MF, \*(MP is normally used with a large body of
-precompiled macros.  This version of \*(MP looks at its command line
-to see what name it was called under.  Both
-.B inimpost
-and
-.B virmpost
-are symlinks to the
-.B mpost
-executable.  When called as 
-.BR inimpost
-(or when the
-.B -ini
-option is given) it can be used to precompile macros into a
+precompiled macros.  When the
+.B --ini
+option is given, it can be used to precompile macros into a
 .I .mem
-file.  When called as
-.B virmpost
-it will use the
-.I plain
-mem.  When called under any other name, \*(MP will use that name as
+file.  When called without that option, \*(MP will use its executable name as
 the name of the mem to use.   For example, when called as
 .B mpost
 the
 .I mpost
 mem is used, which is identical to the
 .I plain
-mem.  Other mems than
-.I plain
-are rarely used.
+mem.  
 .PP
 The
 .I commands
@@ -69,12 +60,7 @@ given on the command line to the \*(MP program are passed to it as the
 first input line.  (But it is often easier to type extended arguments
 as the first input line, since UNIX shells tend to gobble up or
 misinterpret \*(MP's favorite symbols, like semicolons, unless you
-quote them.)  The first line should begin with a filename, a
-.RI \e controlsequence ,
-or a
-.IR &memname .
-.PP
-The normal usage is to say
+quote them.) The normal usage is to say
 .I mpost figs
 to process the file
 .IR figs.mp .
@@ -88,307 +74,23 @@ The default extension,
 .IR .mp ,
 can be overridden by specifying an extension explicitly.
 .PP
-There is normally one output file for each picture generated,
-and the output files are named \fIjobname\fP\fB\^.\^\fP\fInnn\fP,
-where \fInnn\fP 
-is a number passed to the
-.I beginfig
-macro.  The output file name
-can also be \fIjobname\fP\fB\^.\^\fP\fIps\fP
-if this number is negative.
+When the
+.B --dvitomp
+option is given, \*(MP acts as DVI-to-MPX converter only.
+See dvitomp (1) for details.
 .PP
-The output files can be used as figures in a \*(TX document by including
-.ce
-.BI "\especial{psfile=" jobname.nnn }
-in the \*(TX document.  Alternatively, one can
-.B \einput epsf.tex
-and then use the macro
-.ce
-.BI "\eepsfbox{" jobname.nnn }
-to produce a box of the appropriate size containing the figure.
-.TP
-.BI btex " TeX commands " etex
-This causes
-.I mpost
-to generate a \*(MP picture expression that corresponds to the
-\*(TX commands.  If the \*(TX commands generate
-more than one line of text, it must be in a
-.I \evbox
-or a minipage environment.
-.TP
-.BI verbatimtex " TeX commands " etex
-This is ignored by
-.I mpost
-except that the \*(TX commands are passed on to \*(TX.  When using \*(LX
-instead of \*(TX the input file must start with a
-.I verbatimtex
-block that gives the
-.I \edocumentstyle
-and
-.I "\ebegin{document}"
-commands.  You can use the `%&' construct in the first verbatimtex
-block to ensure that the correct \*(TX format is used to process the
-commands.
-.PP
-Since most \*(TX fonts have to be downloaded as bitmaps, the
-.I btex
-feature works best when the output of
-.I mpost
-is to be included in a \*(TX document so that
-.BR dvips (1)
-can download the fonts.  For self-contained PostScript output that can be
-used directly or included in a
-.I troff
-document, start your \*(MP input file with the command
-.I "prologues:=1"
-and stick to standard PostScript fonts.  \*(TX and \*(MP use the names in the
-third column of the file
-.IR trfonts.map ,
-which can be found in the directories with support files for \*(MP.
-.PP
-\*(MP output can be included in a
-.I troff
-document via the
-.I "-m pictures"
-macro package.  In this case
-.I mpost
-should be invoked with the
-.B -T
-flag so that the commands between
-.I btex
-and
-.I etex
-or between
-.I verbatimtex
-and
-.I etex
-are interpreted as
-.I troff
-instead of \*(TX.  (This automatically sets
-.I "prologues:=1"
-).
-.\"=====================================================================
-.SH OPTIONS
-This version of \*(MP understands the following command line options.
-.TP
-.B -file-line-error
-.rb
-Print error messages in the form
-.I file:line:error
-which is similar to the way many compilers format them.
-.TP
-.B -no-file-line-error
-.rb
-Disable printing error messages in the
-.I file:line:error
-style.
-.TP
-.B -file-line-error-style
-.rb
-This is the old name of the
-.B -file-line-error
-option.
-.TP
-.B -halt-on-error
-.rb
-Exit with an error code when an error is encountered during processing.
-.TP
-.B -help
-.rb
-Print help message and exit.
-.TP
-.B -ini
-.rb
-Be
-.BR inimpost ,
-for dumping bases; this is implicitly true if the program is called
-as
-.BR inimpost .
-.TP
-.BI -interaction \ mode
-.rb
-Sets the interaction mode.  The mode can be one of
-.IR batchmode ,
-.IR nonstopmode ,
-.IR scrollmode ,
-and
-.IR errorstopmode .
-The meaning of these modes is the same as that of the corresponding
-commands.
-.TP
-.BI -jobname \ name
-.rb
-Use
-.I name
-for the job name, instead of deriving it from the name of the input file.
-.TP
-.BI -kpathsea-debug \ bitmask
-.rb
-Sets path searching debugging flags according to the bitmask.  See the
-.I Kpathsea
-manual for details.
-.TP
-.BI -mem \ mem
-.rb
-Use
-.I mem
-as the name of the mem to be used, instead of the name by which
-\*(MP was called or a
-.I %&
-line.
-.TP
-.BI -output-directory \ directory
-.rb Write output files in
-.I directory
-instead of the current directory.  Look up input files in
-.I directory
-first, the along the normal search path.
-.TP
-.B -parse-first-line
-.rb
-If the first line of the main input file begins with
-.I %&
-parse it to look for a dump name or a
-.B -translate-file
-option.
-.TP
-.B -no-parse-first-line
-.rb
-Disable parsing of the first line of the main input file.
-.TP
-.BI -progname \ name
-.rb
-Pretend to be program
-.IR name .
-This affects both the format used and the search paths.
-.TP
-.B -recorder
-.rb
-Enable the filename recorder.  This leaves a trace of the files opened
-for input and output in a file with extension
-.IR .fls .
-.TP
-.B -T
-.rb
-Produce TROFF output.
-.TP
-.BI -translate-file \ tcxname
-.rb
-Use the
-.I tcxname
-translation table.
-.TP
-.B -troff
-.rb
-As
-.BR -T .
-.TP
-.B -version
-.rb
-Print version information and exit.
-.\"=====================================================================
-.SH ENVIRONMENT
-See the Kpathsearch library documentation (the `Path specifications'
-node) for the details of how the environment variables are use when
-searching.  The
-.B kpsewhich
-utility can be used to query the values of the variables.
-.PP
-If the environment variable
-TEXMFOUTPUT is set, \*(MP attempts to put its output
-files in it, if they cannot be put in the current directory.
-.PP
-Here is a list of the environment variables affect the behavior of
-.IR mpost :
-.TP
-.TP
-MPINPUTS
-Search path for
-.I input
-files.
-.TP
-MFINPUTS
-Auxiliary search path for
-.I input
-files with
-.I .mf
-extensions.
-.TP
-MPSUPPORT
-Directory for various tables for handling included
-.I tex
-and
-.IR troff .
-.TP
-MPXCOMMAND
-The name of a shell script that converts embedded typesetting commands
-to a form that \*(MP understands.  Defaults:
-.I makempx
-for
-.I tex
-and
-.I troffmpx
-for
-.IR troff .
-.TP
-TEX
-The version of \*(TX \- or \*(LX \- to use when processing
-.I btex
-and
-.I verbatimtex
-commands.  Default
-.IR tex .
-This version of \*(MP allows you to use a `%&format' line instead.
-.TP
-TROFF
-The
-.I troff
-pipeline for
-.I btex
-and
-.I verbatimtex
-commands.  Default
-.I eqn -d\e$\e$ | troff
-.TP
-MPEDIT
-A command template for invoking an editor.
-.PP
-A
-.I .mem
-file is a binary file that permits fast loading of macro packages.
-.I mpost
-reads the default
-.I plain.mem
-unless another
-.I .mem
-file is specified at the start of the first line with an
-.I &
-just before it.  There is also an
-.I mfplain.mem
-that simulates plain \*(MF so that
-.I mpost
-can read
-.I .mf
-fonts.  (Plain \*(MF is described in
-.IR "The \*(MF\^book" ).
-.PP
-Experts can create
-.I .mem
-files be invoking
-.I inimpost
-and giving macro definitions followed by a
-.I dump
-command.
+This manual page is not meant to be exhaustive.  The complete
+documentation for this version of \*(MP can be found in the
+User Manual that should have been installed along with the program and
+is also available from http://tug.org/metapost.
+See the FILES section below.
 .PP
 The \*(MP language is similar to \*(MF, but the manual
-.I A User's Manual for \*(MP
 assumes no knowledge of \*(MF.  \*(MP does not have bitmap
 output commands or \*(MF's online display mechanism.
+
 .\"=====================================================================
 .SH FILES
-.TP
-.I mpost.pool
-Encoded text of \*(MP's messages.
 .TP
 .I *.mem
 Predigested \*(MP mem files.
@@ -397,10 +99,7 @@ Predigested \*(MP mem files.
 The standard mem file.
 .TP
 .I mfplain.mp
-The \*(MF-compatible mem file.  This is loaded when 
-.I virmp
-is invoked via a symbolic link as
-.IR mfmp .
+The \*(MF-compatible mem file. 
 .TP
 .I $TEXMFMAIN/metapost/base/*.mp
 The standard \*(MP macros included in the original distribution.
@@ -421,26 +120,8 @@ Table of corresponding font names for
 .I tex
 and PostScript.
 .TP
-.I $TEXMFMAIN/doc/metapost/examples.mp
-The source file for a few sample figures
-that are part of a \*(LX document
-.I $TEXMFMAIN/doc/metapost/mpintro.tex 
-that describes the \*(MP system 
-in a little more detail.
-.\"=====================================================================
-.SH NOTES
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(MP can be found in the info manual
-.IR "Web2C: A TeX implementation" .
-See also 
-.IR mpman.pdf ,
-the manual written by John Hobby (it lives in the documentation
-directory).
-.PP
-.B MetaPost
-is the native graphics language for ConTeXt, a typesetting system
-built on top of the \*(TX family.  See 
-.BR texexec (1).
+.I $TEXMFMAIN/doc/metapost/*
+The \*(MP manual and tutorial source, also including sample figures
 .\"=====================================================================
 .SH "SUGGESTED READING"
 Donald E. Knuth,
@@ -449,31 +130,20 @@ Donald E. Knuth,
 .IR "Computers and Typesetting" ),
 Addison-Wesley, 1986, ISBN 0-201-13445-4.
 .br
-John D. Hobby,
-.IR "A User's Manual for \*(MP" ,
-CSTR 162, AT&T Bell Labs,
-.br
-John D. Hobby,
-.IR "Drawing Graphs with \*(MP" ,
-CSTR 164, AT&T Bell Labs,
-.br
 .I TUGboat
 (the journal of the \*(TX Users Group).
 .\"=====================================================================
 .SH "SEE ALSO"
 .PP
-.BR dvips (1),
 .BR dvitomp (1),
 .BR epstopdf (1),
 .BR mf (1),
-.BR mpto (1),
 .BR mptopdf (1),
-.BR pdftex (1),
 .BR tex (1),
-.BR texexec (1).
 .PP
-.URL "http://sarovar.org/projects/metapost/" "MetaPost source code" .
-
+.URL "http://foundry.supelec.fr/gf/project/metapost/" "MetaPost source code" .
+.BR
+.URL "http://tug.org/metapost/" "MetaPost home page" .
 .\"=====================================================================
 .SH AUTHORS
 \*(MP was designed by John D. Hobby, incorporating algorithms from 
@@ -486,14 +156,13 @@ Ulrik Vieth adapted \*(MP to take advantage of the advanced path
 searching features in more recent versions of
 .B web2c
 and worked towards fully integrating \*(MP into the canonical Unix 
-\*(TX distribution.  He also updated and extended this manual page.
+\*(TX distribution.
 .PP
-The current maintainer of MetaPost is Taco Hoekwater.
+The current, CWEB based version of MetaPost is maintained by 
+Taco Hoekwater.
+.PP
+The manual and tutorial are maintained by Stephan Hennig and
+Troy Henderson.
 .\"=====================================================================
-.SH TRIVIA
-Unlike \*(TX and \*(MF, \*(MP originally didn't use any fancy logo.
-John Hobby says he prefers the spelling ``MetaPost'', yet Don Knuth 
-has updated the \*(MF 
-.I logo.mf
-font to be able to typeset a proper \*(MP logo similar to the \*(MF 
-logo.  Feel free to use whatever you think is more appropriate!
+.SH BUGS
+Email bug reports to metapost@tug.org.

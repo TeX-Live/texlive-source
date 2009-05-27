@@ -1,6 +1,6 @@
-% $Id: psout.w 1017 2009-05-09 16:40:50Z taco $
+% $Id: psout.w 1051 2009-05-25 08:31:54Z taco $
 %
-% Copyright 2008 Taco Hoekwater.
+% Copyright 2008-2009 Taco Hoekwater.
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU Lesser General Public License as published by
@@ -4379,11 +4379,11 @@ static void mp_mark_string_chars (MP mp,font_number f, char *s, size_t l) ;
 void mp_mark_string_chars (MP mp,font_number f, char *s, size_t l) {
   integer b; /* |char_base[f]| */
   int bc,ec; /* only characters between these bounds are marked */
-  char *k; /* an index into string |s| */
+  unsigned char *k; /* an index into string |s| */
   b=mp->char_base[f];
   bc=(int)mp->font_bc[f];
   ec=(int)mp->font_ec[f];
-  k=s;
+  k=(unsigned char *)s;
   while (l-->0){ 
     if ( (*k>=bc)&&(*k<=ec) )
       mp->font_info[b+*k].qqqq.b3=mp_used;

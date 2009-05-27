@@ -1,6 +1,6 @@
-% $Id: mpxout.w 1024 2009-05-11 08:22:49Z taco $
+% $Id: mpxout.w 1061 2009-05-27 13:01:37Z taco $
 %
-% Copyright 2008 Taco Hoekwater.
+% Copyright 2008-2009 Taco Hoekwater.
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU Lesser General Public License as published by
@@ -351,7 +351,7 @@ static int mpx_newer(char *source, char *target) {
 #if HAVE_ST_MTIM
     if (source_stat.st_mtim.tv_sec > target_stat.st_mtim.tv_sec || 
          (source_stat.st_mtim.tv_sec  == target_stat.st_mtim.tv_sec && 
-          source_stat.st_mtim.tv_nsec >+ target_stat.st_mtim.tv_nsec))
+          source_stat.st_mtim.tv_nsec >= target_stat.st_mtim.tv_nsec))
   	  return 0;
 #else
     if (source_stat.st_mtime >= target_stat.st_mtime)
@@ -595,9 +595,12 @@ static void mpx_mpto(MPX mpx, char *tmpname, char *mptexpre) {
     if (mode==mpx_tex_mode) {
       FILE *fr;
       if ((fr = fopen(mptexpre, "r"))!= NULL) {
-	    while (mpx_getline(mpx, fr) != NULL)
-	      fputs(mpx->buf, outfile);
- 	    mpx_fclose(mpx,fr);
+           size_t i;
+  	   char buf[512];
+           while ((i=fread((void *)buf, 1, 512 , fr))>0) {
+	      fwrite((void *)buf,1, i, outfile);
+           }
+ 	   mpx_fclose(mpx,fr);
       }
     }
     mpx->mpfile   = mpx_xfopen(mpx,mpname, "r");
@@ -3932,28 +3935,37 @@ static char *mpx_print_command (MPX mpx, int cmdlength, char **cmdline) {
 systems.
 
 @c
-static int do_spawn (MPX mpx, char *cmd, char **options) {
+static int do_spawn (MPX mpx, char *icmd, char **options) {
 #ifndef WIN32
-   int retcode = -1;
-   pid_t child;
-   child = fork();
-   if (child < 0) 
-     mpx_abort(mpx, "fork failed: %s", strerror(errno));
-   if (child == 0) {
-	 if(execvp(cmd, options))
-       mpx_abort(mpx, "exec failed: %s", strerror(errno));
-   } else {
-  	 if (wait(&retcode)==child) {
-       retcode = (WIFEXITED(retcode) ? WEXITSTATUS(retcode) : -1);
-     } else {
-       mpx_abort(mpx, "wait failed: %s", strerror(errno));
-     }  
-   }
-   return retcode;
-#else
-   (void)mpx;
-   return spawnvp(P_WAIT, cmd, (const char **)options);
+  pid_t child;
 #endif
+  int retcode = -1;
+  char * cmd = xmalloc(strlen(icmd)+1,1);
+  if (icmd[0] != '"') {
+    strcpy(cmd,icmd);
+  } else {
+    strncpy(cmd,icmd+1,strlen(icmd)-2);
+    cmd[strlen(icmd)-2] = 0;
+  }
+#ifndef WIN32
+  child = fork();
+  if (child < 0) 
+    mpx_abort(mpx, "fork failed: %s", strerror(errno));
+  if (child == 0) {
+    if(execvp(cmd, options))
+      mpx_abort(mpx, "exec failed: %s", strerror(errno));
+  } else {
+    if (wait(&retcode)==child) {
+      retcode = (WIFEXITED(retcode) ? WEXITSTATUS(retcode) : -1);
+    } else {
+      mpx_abort(mpx, "wait failed: %s", strerror(errno));
+    }  
+  }
+#else
+  retcode = spawnvp(P_WAIT, cmd, (const char **)options);
+#endif
+  xfree(cmd);
+  return retcode;
 }
 
 @ @c

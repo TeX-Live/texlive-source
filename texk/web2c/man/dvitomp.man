@@ -1,9 +1,17 @@
-.TH DVITOMP 1 "30 October 1999" "Web2C @VERSION@"
+.TH DVITOMP 1 "27 May 2009" "dvitomp 1.201"
 .\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
 .SH NAME
 dvitomp \- convert a TeX DVI file to a MetaPost MPXFILE
 .SH SYNOPSIS
-\fBdvitomp\fP [\fIoptions\fP] \fIdvifile\fP[.dvi] [\fImpxfile\fP[.mpx]]
+.B dvitomp
+.RI [ options ]
+.IR dvifile [.dvi]
+.RI [ mpxfile [.mpx]]
+.PP
+.B mpost 
+.B --dvitomp
+.IR dvifile [.dvi]
+.RI [ mpxfile [.mpx]]
 .SH DESCRIPTION
 \fBdvitomp\fP translates the given \fIdvifile\fP to a MetaPost
 MPXFILE.  The default \fImpxfile\fP is the basename of \fIdvifile\fP
@@ -14,4 +22,4 @@ write usage summary and exit.
 .IP \fB-version\fP
 output version information and exit.
 .SH BUGS
-Email bug reports to tex-k@mail.tug.org.
+Email bug reports to metapost@tug.org.

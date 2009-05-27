@@ -1,13 +1,13 @@
-This is MetaPost, C Version 0.632 (INIMP)  24 JAN 1997 11:13
+This is MetaPost, version 1.201 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 **\input trap
-(trap.mp
+(./trap.mp
 >> << == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}((5.5 0.5))
 >> ".."
 ! Not implemented: (unknown numeric)++(string).
 <to be read again> 
                    ;
-l.4 ...}} . (( 5.5.5 )) ++ "..";
-                                
+l.4 ...&& @@ $$ [[ ]] {{ }} . (( 5.5.5 )) ++ "..";
+                                                  
 I'm afraid I don't know how to apply that operation to that
 combination of types. Continue, and I'll return the second
 argument (see above) as the result of the operation.
@@ -17,7 +17,7 @@ argument (see above) as the result of the operation.
 <to be read again> 
                    ,
 l.5   begingroup save =; let=,
-                              ; save,; newinternal $=,; let )...
+                              ; save,; newinternal $=,; let ):=, endgroup;
 You should have said `let symbol = something'.
 But don't worry; I'll pretend that an equals sign
 was present. The next token I read will be `something'.
@@ -30,18 +30,18 @@ was present. The next token I read will be `something'.
 > (=tag
 > )=,
 << == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}(([][]))=numeric
-<< == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}((5.5 0.5))=<< == >> ::: 
-||`` ''--!! ??## && @@ $$[[]]{{ }}((5.5 0.5))
+<< == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}((5.5 0.5))=<< == >> ::: ||`` ''
+--!! ??## && @@ $$[[]]{{ }}((5.5 0.5))
 > year=month
 ! OK.
-l.6 ...ring,2,"2",,,(,),<<,year;
-                                
+l.6 ...rorstopmode,readstring,2,"2",,,(,),<<,year;
+                                                  
 
 ! Missing `:' has been inserted.
 <to be read again> 
                    ;
-l.8 ...not cycle "":1.1 forever;
-                                fi;
+l.8 ...acingcommands:=if not cycle "":1.1 forever;
+                                                  fi;
 The next thing in this loop should have been a `:'.
 So I'll pretend that a colon was present;
 everything from here to `endfor' will be iterated.
@@ -59,12 +59,12 @@ everything from here to `endfor' will be iterated.
 {showtoken}
 > |=:|>=|=:|>
 ! OK.
-l.9 ... endfor; showtoken |=:|>;
-                                
+l.9 ... tracingcommands>2 endfor; showtoken |=:|>;
+                                                  
 
 ! Arithmetic overflow.
-l.10 ...acinglostchars:=1/.00001
-                                ; tracingequations:=$+1; p~=t...
+l.10   tracinglostchars:=1/.00001
+                                 ; tracingequations:=$+1; p~=tracinglostchar...
 Uh, oh. A little while ago one of the quantities that I was
 computing got too large, so I'm afraid your answers will be
 somewhat askew. You'll probably have to adopt different
@@ -75,8 +75,8 @@ tactics next time. But I shall try to carry on anyway.
 {tracingequations:=1}
 {(32767.99998)+(0.00002)}
 ! Arithmetic overflow.
-l.10 ...tracinglostchars+.00001;
-                                
+l.10 ...quations:=$+1; p~=tracinglostchars+.00001;
+                                                  
 Uh, oh. A little while ago one of the quantities that I was
 computing got too large, so I'm afraid your answers will be
 somewhat askew. You'll probably have to adopt different
@@ -95,19 +95,19 @@ tactics next time. But I shall try to carry on anyway.
 {$:=-1}
 {$:=x}
 >> x
-! Internal quantity `$' must receive a known value.
+! Internal quantity `$' must receive a known numeric or string.
 <to be read again> 
                    ;
-l.12 ...os:=1; $:=ASCII""; $:=x;
-                                 p~:=p~;
-I can't set an internal quantity to anything but a known
-numeric value, so I'll have to ignore this assignment.
+l.12 ...utput:=tracingmacros:=1; $:=ASCII""; $:=x;
+                                                   p~:=p~;
+I can't set an internal quantity to anything but a known string
+or known numeric value, so I'll have to ignore this assignment.
 
 {p~:=32767.99998}
 ## p~=32767.99998
 ! Value is too large (32767.99998).
-l.12 ...:=ASCII""; $:=x; p~:=p~;
-                                
+l.12 ...racingmacros:=1; $:=ASCII""; $:=x; p~:=p~;
+                                                  
 The equation I just processed has given some variable
 a value of 4096 or more. Continue and I'll try to cope
 with that big value; but it might be dangerous.
@@ -121,19 +121,19 @@ with that big value; but it might be dangerous.
 foo(TEXT2)->begingroup(TEXT2)endgroup
 (SUFFIX0)<-
 (SUFFIX1)<-foo
-(TEXT2)<-interim.tracinglostchars:=(0.5;show.urcorner("flubo"infont"trap
-f"),2+2
+(TEXT2)<-interim.tracinglostchars:=(0.5;show.urcorner("flubo"infont"trapf"),2+2
 {begingroup}
 {interim}
 ! Missing `)' has been inserted.
 <to be read again> 
                    ;
-<argument> ...nglostchars:=(0.5;
-                                show.urcorner("flubo"infont"t...
+<argument> interim.tracinglostchars:=(0.5;
+                                          show.urcorner("flubo"infont"trapf"...
+
 foo->begingroup(TEXT2)
                       endgroup
 l.17   ),2+2endtext
-                   ; for n=tracingspecs step 1 until $:fi end...
+                   ; for n=tracingspecs step 1 until $:fi endfor showstats;
 I found no right delimiter to match a left one. So I've
 put one in, behind the scenes; this may fix the problem.
 
@@ -152,17 +152,17 @@ Missing character: There is no o in font trapf!
 <to be read again> 
                    endgroup
 l.17   ),2+2endtext
-                   ; for n=tracingspecs step 1 until $:fi end...
+                   ; for n=tracingspecs step 1 until $:fi endfor showstats;
 
 {restoring tracinglostchars=32767.99998}
 {endgroup}
 {for}
 {showstats}
-Memory usage 292&42 (3418 still untouched)
-String usage 28&93 (1282&9362 now untouched)
+Memory usage 283&42 (3927 still untouched)
+String usage 25&72 (78&7709 now untouched)
 ! OK.
-l.17 ...l $:fi endfor showstats;
-                                
+l.17 ...gspecs step 1 until $:fi endfor showstats;
+                                                  
 
 {let}
 {path}
@@ -192,7 +192,7 @@ Path at line 18, after choices:
 )
 *dump
 Beginning to dump on file trap.mem
- (preloaded mem=trap 97.1.24)
-at most 1226 strings of total length 22670
-398 memory locations dumped; current usage is 318&68
-279 symbolic tokens
+ (mem=trap 2009.05.25)
+at most 553 strings of total length 2302
+391 memory locations dumped; current usage is 311&68
+308 symbolic tokens

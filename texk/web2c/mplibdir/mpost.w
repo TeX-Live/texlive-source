@@ -1,6 +1,6 @@
-% $Id: mpost.w 941 2009-04-19 13:13:56Z taco $
+% $Id: mpost.w 1061 2009-05-27 13:01:37Z taco $
 %
-% Copyright 2008 Taco Hoekwater.
+% Copyright 2008-2009 Taco Hoekwater.
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU Lesser General Public License as published by
@@ -44,6 +44,9 @@ have our customary command-line interface.
 #elif defined (HAVE_SYS_TIMEB_H)
 #include <sys/timeb.h>
 #endif
+#if HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
 #include <mplib.h>
 #include <mpxout.h>
 #ifdef WIN32
@@ -62,6 +65,7 @@ static boolean recorder_enabled = false;
 static string recorder_name = NULL;
 static FILE *recorder_file = NULL;
 static char *job_name = NULL;
+static char *job_area = NULL;
 static int dvitomp_only = 0;
 
 @ Allocating a bit of memory, with error detection:
@@ -206,9 +210,13 @@ static string normalize_quotes (const char *name, const char *mesg) {
 @c
 void recorder_start(char *jobname) {
     char cwd[1024];
-    recorder_name = (string)xmalloc((unsigned int)(strlen(jobname)+5));
-    strcpy(recorder_name, jobname);
-    strcat(recorder_name, ".fls");
+    if (jobname==NULL) {
+      recorder_name = mpost_xstrdup("mpout.fls");
+    } else {
+      recorder_name = (string)xmalloc((unsigned int)(strlen(jobname)+5));
+      strcpy(recorder_name, jobname);
+      strcat(recorder_name, ".fls");
+    }
     recorder_file = xfopen(recorder_name, FOPEN_W_MODE);
 
     if(GETCWD(cwd,1020) != NULL) {
@@ -257,18 +265,52 @@ void recorder_start(char *jobname) {
 static int mpost_run_make_mpx (MP mp, char *mpname, char *mpxname) {
   int ret;
   char *cnf_cmd = kpse_var_value ("MPXCOMMAND");
-  
   if (cnf_cmd != NULL && (strcmp (cnf_cmd, "0")==0)) {
     /* If they turned off this feature, just return success.  */
     ret = 0;
-
   } else {
     /* We will invoke something. Compile-time default if nothing else.  */
-    char *cmd;
-    char *tmp = normalize_quotes(mpname, "mpname");
-    char *qmpname = kpse_find_file (tmp,kpse_mp_format, true);
-    char *qmpxname = normalize_quotes(mpxname, "mpxname");
+    char *cmd, *tmp, *qmpname, *qmpxname;
+    if (job_area != NULL) {
+      char *l = mpost_xmalloc(strlen(mpname)+strlen(job_area)+1);
+      strcpy(l, job_area);
+      strcat(l, mpname);
+      tmp = normalize_quotes(l, "mpname");
+      mpost_xfree(l);
+    } else {
+      tmp = normalize_quotes(mpname, "mpname");
+    }
+    qmpname = kpse_find_file (tmp,kpse_mp_format, true);
     mpost_xfree(tmp);
+    if (qmpname != NULL && job_area != NULL) {
+       /* if there is a usable mpx file in the source path already,
+          simply use that and return true */
+      char *l = mpost_xmalloc(strlen(qmpname)+2);
+      strcpy(l, qmpname);
+      strcat(l, "x");
+      qmpxname = l;
+      if (qmpxname) {
+#if HAVE_SYS_STAT_H
+        struct stat source_stat, target_stat;
+        int nothingtodo = 0;       
+        if ((stat(qmpxname, &target_stat) >= 0) &&
+            (stat(qmpname, &source_stat) >= 0)) {
+#if HAVE_ST_MTIM
+          if (source_stat.st_mtim.tv_sec <= target_stat.st_mtim.tv_sec || 
+             (source_stat.st_mtim.tv_sec  == target_stat.st_mtim.tv_sec && 
+              source_stat.st_mtim.tv_nsec <= target_stat.st_mtim.tv_nsec))
+     	    nothingtodo = 1;
+#else
+          if (source_stat.st_mtime <= target_stat.st_mtime)
+  	        nothingtodo = 1;
+#endif
+        }
+        if (nothingtodo == 1)
+          return 1; /* success ! */
+#endif
+      }
+    }
+    qmpxname = normalize_quotes(mpxname, "mpxname");
     if (cnf_cmd!=NULL && (strcmp (cnf_cmd, "1")!=0)) {
       if (mp_troff_mode(mp)!=0)
         cmd = concatn (cnf_cmd, " -troff ",
@@ -432,34 +474,74 @@ static char *mpost_find_file(MP mp, const char *fname, const char *fmode, int ft
   (void)mp;
   s = NULL;
   if (fmode[0]=='r') {
+	if ((job_area != NULL) &&
+        (ftype>=mp_filetype_text || ftype==mp_filetype_program )) {
+      char *f = mpost_xmalloc(strlen(job_area)+strlen(fname)+1);
+      strcpy(f,job_area);
+      strcat(f,fname);
+      if (ftype>=mp_filetype_text) {
+        s = kpse_find_file (f, kpse_mp_format, 0); 
+      } else {
+        l = strlen(f);
+   	    if (l>3 && strcmp(f+l-3,".mf")==0) {
+   	      s = kpse_find_file (f,kpse_mf_format, 0); 
+#if HAVE_SYS_STAT_H
+        } else if (l>4 && strcmp(f+l-4,".mpx")==0) {
+          struct stat source_stat, target_stat;
+          char *mpname = mpost_xstrdup(f);
+          *(mpname + strlen(mpname) -1 ) = '\0';
+          printf("statting %s and %s\n", mpname, f);
+          if ((stat(f, &target_stat) >= 0) &&
+              (stat(mpname, &source_stat) >= 0)) {
+#if HAVE_ST_MTIM
+            if (source_stat.st_mtim.tv_sec <= target_stat.st_mtim.tv_sec || 
+               (source_stat.st_mtim.tv_sec  == target_stat.st_mtim.tv_sec && 
+                source_stat.st_mtim.tv_nsec <= target_stat.st_mtim.tv_nsec))
+     	        s = mpost_xstrdup(f);
+#else
+            if (source_stat.st_mtime <= target_stat.st_mtime)
+  	            s = mpost_xstrdup(f);
+#endif
+          }
+          mpost_xfree(mpname);
+#endif
+        } else {
+   	      s = kpse_find_file (f,kpse_mp_format, 0); 
+        }
+      }
+      mpost_xfree(f);
+      if (s!=NULL) {
+        return s;
+      }
+    }
 	if (ftype>=mp_filetype_text) {
       s = kpse_find_file (fname, kpse_mp_format, 0); 
     } else {
-    switch(ftype) {
-    case mp_filetype_program: 
-      l = strlen(fname);
-   	  if (l>3 && strcmp(fname+l-3,".mf")==0) {
-   	    s = kpse_find_file (fname, kpse_mf_format, 0); 
-      } else {
-   	    s = kpse_find_file (fname, kpse_mp_format, 0); 
+      switch(ftype) {
+      case mp_filetype_program: 
+        l = strlen(fname);
+   	    if (l>3 && strcmp(fname+l-3,".mf")==0) {
+   	      s = kpse_find_file (fname, kpse_mf_format, 0); 
+        } else {
+   	      s = kpse_find_file (fname, kpse_mp_format, 0); 
+        }
+        break;
+      case mp_filetype_memfile: 
+        s = kpse_find_file (fname, kpse_mem_format, 1); 
+        break;
+      case mp_filetype_metrics: 
+        s = kpse_find_file (fname, kpse_tfm_format, 0); 
+        break;
+      case mp_filetype_fontmap: 
+        s = kpse_find_file (fname, kpse_fontmap_format, 0); 
+        break;
+      case mp_filetype_font: 
+        s = kpse_find_file (fname, kpse_type1_format, 0); 
+        break;
+      case mp_filetype_encoding: 
+        s = kpse_find_file (fname, kpse_enc_format, 0); 
+        break;
       }
-      break;
-    case mp_filetype_memfile: 
-      s = kpse_find_file (fname, kpse_mem_format, 1); 
-      break;
-    case mp_filetype_metrics: 
-      s = kpse_find_file (fname, kpse_tfm_format, 0); 
-      break;
-    case mp_filetype_fontmap: 
-      s = kpse_find_file (fname, kpse_fontmap_format, 0); 
-      break;
-    case mp_filetype_font: 
-      s = kpse_find_file (fname, kpse_type1_format, 0); 
-      break;
-    case mp_filetype_encoding: 
-      s = kpse_find_file (fname, kpse_enc_format, 0); 
-      break;
-    }
     }
   } else {
     if (fname!=NULL)
@@ -507,7 +589,7 @@ void internal_set_option(const char *opt) {
    struct set_list_item *itm;
    char *s, *v;
    int isstring = 0;
-   s = xstrdup(opt) ;
+   s = mpost_xstrdup(opt) ;
    v = strstr(s,"=") ;
    if (v==NULL) {
      v="1";
@@ -797,7 +879,7 @@ if (dvitomp_only)
 else
   fprintf(stdout, "\n" "MetaPost %s\n", s);
 fprintf(stdout, 
-"Copyright 2008 AT&T Bell Laboratories.\n"
+"Copyright 2009 AT&T Bell Laboratories.\n"
 "There is NO warranty.  Redistribution of this software is\n"
 "covered by the terms of both the MetaPost copyright and\n"
 "the Lesser GNU Lesser General Public License.\n"
@@ -977,10 +1059,21 @@ if ( options->mem_name == NULL )
     options->mem_name = mpost_xstrdup(kpse_program_name);
 
 
-@ The jobname needs to be known for the recorder to work.
+@ The job name needs to be known for the recorder to work,
+so we have to fix up |job_name| and |job_area|. If there 
+was a \.{--jobname} on the command line, we have to reset
+the options structure as well.
+
+@d IS_DIR_SEP(c) (c=='/' || c=='\\')
 
 @<Discover the job name@>=
-if ( options->job_name == NULL ) {
+{ 
+char *tmp_job = NULL;
+if (options->job_name != NULL) {
+  tmp_job = mpost_xstrdup(options->job_name);
+  mpost_xfree(options->job_name);
+  options->job_name = NULL;
+} else {
   char *m = NULL; /* head of potential |job_name| */
   char *n = NULL; /* a moving pointer */
   if (options->command_line != NULL){
@@ -990,7 +1083,7 @@ if ( options->job_name == NULL ) {
       while (*n != '\0' && *n != ' ') n++;
       if (n>m) {
         *n='\0';
-        job_name = mpost_xstrdup(m);
+        tmp_job = mpost_xstrdup(m);
       }
     } else { /* this is still not perfect, but better */
       char *mm =  strstr(m,"input ");
@@ -1000,32 +1093,54 @@ if ( options->job_name == NULL ) {
          while (*n != '\0' && *n != ' ' && *n!=';') n++;
          if (n>mm) {
            *n='\0';
-           job_name = mpost_xstrdup(mm);
+           tmp_job = mpost_xstrdup(mm);
         }
       }
     }
     free(m);
   }
-  if (job_name == NULL) {
+  if (tmp_job == NULL) {
     if (options->ini_version == 1 &&
         options->mem_name != NULL) {
-      job_name = mpost_xstrdup(options->mem_name);
+      tmp_job = mpost_xstrdup(options->mem_name);
     }
   }
-  if (job_name == NULL) {
-    job_name = mpost_xstrdup("mpout");
+  if (tmp_job == NULL) {
+    tmp_job = mpost_xstrdup("mpout");
   } else {
-    size_t i = strlen(job_name);
+    size_t i = strlen(tmp_job);
     if (i>3
-        && *(job_name+i-3)=='.' 
-        && *(job_name+i-2)=='m' 
-        && *(job_name+i-1)=='p')
-    *(job_name+i-3)='\0';
+        && *(tmp_job+i-3)=='.' 
+        && *(tmp_job+i-2)=='m' 
+        && *(tmp_job+i-1)=='p')
+    *(tmp_job+i-3)='\0';
   }
-  options->job_name = job_name;
-} else {
-  job_name = mpost_xstrdup(options->job_name);
 }
+/* now split |tmp_job| into |job_area| and |job_name| */
+{
+  char *s = tmp_job + strlen(tmp_job);
+  if (!IS_DIR_SEP(*s)) { /* just in case */
+    while (s>tmp_job) {
+      if (IS_DIR_SEP(*s)) {
+        break;
+      }
+      s--;
+    }
+    if (s>tmp_job) {
+      /* there was a directory part */
+      if (strlen(s)>1) {
+        job_name = mpost_xstrdup((s+1));
+        *(s+1) = '\0';
+        job_area = tmp_job;
+      }
+    } else {
+      job_name = tmp_job;
+      /* |job_area| stays NULL */
+    }
+  }
+}
+}
+options->job_name = job_name;
 
 
 @ Now this is really it: \MP\ starts and ends here.
@@ -1071,7 +1186,7 @@ int main (int argc, char **argv) { /* |start_here| */
   if (!nokpse) {
     kpse_set_program_enabled (kpse_mem_format, MAKE_TEX_FMT_BY_DEFAULT,
                               kpse_src_compile);
-    kpse_set_program_name("mpost", user_progname);  
+    kpse_set_program_name(argv[0], user_progname);  
   }
   @= /*@@=nullpass@@*/ @> 
   if(putenv((char *)"engine=metapost"))
