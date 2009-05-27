@@ -1,3 +1,7 @@
+2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
 2009-02-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* error.c: Include <config.h> instead of <c-auto.h> as

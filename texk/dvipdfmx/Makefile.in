@@ -244,7 +244,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = data src
-EXTRA_DIST = ChangeLog.TL Makefile.am.orig configure.in.orig
+EXTRA_DIST = ChangeLog.TL
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

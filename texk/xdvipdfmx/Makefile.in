@@ -254,9 +254,18 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 @build_TRUE@SUBDIRS = src
-EXTRA_DIST = BUGS ChangeLog.TL contrib data doc index.html \
-	style_base.css style_dflt.css style_ie.css style_plain.css \
-	Makefile.am.orig configure.in.orig
+EXTRA_DIST = \
+	BUGS \
+	ChangeLog.TL \
+	contrib \
+	data \
+	doc \
+	index.html \
+	style_base.css \
+	style_dflt.css \
+	style_ie.css \
+	style_plain.css
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

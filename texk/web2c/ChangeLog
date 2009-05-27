@@ -1,3 +1,7 @@
+2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, ac/web2c.ac (enable_ipc): default is enabled.
+
 2009-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mp.ch, mp.web, mpdir/, mpware/: removed (old MetaPost).

@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/afm2pl/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -10,6 +14,8 @@ EXTRA_DIST = docs include libttf src
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+	rm -f $(distdir)/libttf/Makefile.in
+	rm -f $(distdir)/src/Makefile.in
 
 INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES)
 
@@ -66,8 +72,4 @@ nodist_man1_MANS = docs/ttfdump.1
 ## Not yet used
 ##
 EXTRA_DIST += ILX NOTE README.bg5
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
 

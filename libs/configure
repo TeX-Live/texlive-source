@@ -1464,7 +1464,8 @@ Optional Features:
   --enable-auto-core        cause TeX&MF to dump core, given a certain
                             filename
   --disable-dump-share      make fmt/base/mem files architecture-dependent
-  --enable-ipc              enable TeX's --ipc option, i.e., pipe to a program
+  --disable-ipc             disable TeX's --ipc option, i.e., pipe to a
+                            program
   --disable-tex             do not compile and install TeX
   --enable-etex             compile and install e-TeX
   --disable-aleph           do not compile and install Aleph

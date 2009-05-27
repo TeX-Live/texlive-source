@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xdvipdfmx (teTeX / TeX Live)
 ======================================================
 
+2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
 2009-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 	* configure.ac, src/Makefile.am: Do not use CPPFLAGS for
 	required -I flags, leave it for the user.

@@ -65,7 +65,7 @@ AS_IF([test "x$enable_dump_share" = xno],
 
 AS_CASE([$enable_ipc],
         [yes|no], [],
-            [enable_ipc=no])
+            [enable_ipc=yes])
 
 KPSE_CHECK_WIN32
 AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])

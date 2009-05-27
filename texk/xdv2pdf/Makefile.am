@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/dtl/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
@@ -34,12 +38,4 @@ xdv2pdf_LDADD = $(KPATHSEA_LIBS)
 @KPATHSEA_RULE@
 
 EXTRA_DIST = LICENSE.txt
-
-## Eventually delete these files
-##
-EXTRA_DIST += \
-	Makefile.in.orig \
-	acconfig.h.dist \
-	acconfig.h.in \
-	configure.in.orig
 

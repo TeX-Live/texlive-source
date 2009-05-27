@@ -1,3 +1,7 @@
+2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
 2009-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* T1Wrap.m, xdv2pdf.cpp: Use again config.h, not c-auto.h.

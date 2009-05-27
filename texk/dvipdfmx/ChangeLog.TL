@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for dvipdfmx (teTeX / TeX Live)
 =====================================================
 
+2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
 2009-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfdoc.c (pdf_doc_get_page): Avoid C99isms

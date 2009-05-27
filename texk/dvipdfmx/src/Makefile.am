@@ -52,7 +52,3 @@ uninstall-hook:
 	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
 
-## Eventually delete these files
-##
-EXTRA_DIST = Makefile.am.orig
-

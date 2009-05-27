@@ -275,8 +275,7 @@ xdv2pdf_SOURCES = \
 EXTRA_xdv2pdf_SOURCES = appleGlyphNames.c
 xdv2pdf_LDFLAGS = -framework Carbon -framework QuickTime
 xdv2pdf_LDADD = $(KPATHSEA_LIBS)
-EXTRA_DIST = LICENSE.txt Makefile.in.orig acconfig.h.dist \
-	acconfig.h.in configure.in.orig
+EXTRA_DIST = LICENSE.txt
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

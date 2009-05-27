@@ -256,8 +256,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = docs include libttf src ILX NOTE README.bg5 \
-	Makefile.in.orig configure.in.orig
+EXTRA_DIST = docs include libttf src ILX NOTE README.bg5
 INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES)
 noinst_LIBRARIES = libttf.a
 nodist_libttf_a_SOURCES = \
@@ -1304,6 +1303,8 @@ uninstall-man: uninstall-man1
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+	rm -f $(distdir)/libttf/Makefile.in
+	rm -f $(distdir)/src/Makefile.in
 
 @KPATHSEA_RULE@
 

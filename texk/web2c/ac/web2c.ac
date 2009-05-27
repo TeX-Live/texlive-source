@@ -18,8 +18,8 @@ AC_ARG_ENABLE([dump-share],
                              kpse_indent_26))[]dnl
 ## configure options for TeX
 AC_ARG_ENABLE([ipc],
-              AS_HELP_STRING([--enable-ipc],
-                             [enable TeX's --ipc option, i.e., pipe to a program],
+              AS_HELP_STRING([--disable-ipc],
+                             [disable TeX's --ipc option, i.e., pipe to a program],
                              kpse_indent_26))[]dnl
 m4_define([kpse_tex_progs], [dnl
 [[tex],    [yes], [no],  [TeX],    []],

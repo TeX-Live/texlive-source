@@ -1,3 +1,7 @@
+2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
 2009-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipos.1 (BUGS): added a missing "\fB=\fP".
