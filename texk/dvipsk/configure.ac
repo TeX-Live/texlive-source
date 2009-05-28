@@ -15,9 +15,6 @@ AC_CONFIG_MACRO_DIR([../../m4])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([dvipsk])
 
-dnl For tests
-AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])
-
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
 AC_CHECK_SIZEOF([int])

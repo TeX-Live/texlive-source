@@ -228,7 +228,6 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
 KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
-KPSEWHICH = @KPSEWHICH@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -377,19 +376,31 @@ dist_prologues = \
 prologdir = ${prefix}/texmf/dvips/base
 prologues = $(dist_prologues:.lpro=.pro) texc.pro
 SUFFIXES = .pro .lpro
-EXTRA_DIST = $(dist_prologues) texc.script dvips.test \
-	testdata/dvipstst.tex testdata/dvipstst.xdv \
-	testdata/dvipstst.xps INSTALLATION atari cmfonts.map config.ps \
+EXTRA_DIST = $(dist_prologues) texc.script dvips.test pfbincl.test \
+	testdata/8r.enc testdata/ad.enc testdata/cmex10.pfb \
+	testdata/cmex10.tfm testdata/cmmi10.pfb testdata/cmmi10.tfm \
+	testdata/cmr10.pfb testdata/cmr10.tfm testdata/cmsy10.pfb \
+	testdata/cmsy10.tfm testdata/cmtt10.pfb testdata/cmtt10.tfm \
+	testdata/config.ps testdata/dvipstst.tex testdata/dvipstst.xdv \
+	testdata/dvipstst.xps testdata/pfbincl.eps \
+	testdata/pfbincl.tex testdata/pfbincl.xdv testdata/pfbincl.xps \
+	testdata/psfonts.map testdata/ptmbi.vf testdata/ptmbi8r.tfm \
+	testdata/ptmr.vf testdata/ptmr8r.tfm testdata/ptmri.vf \
+	testdata/ptmri8r.tfm testdata/special.pro testdata/texc.pro \
+	testdata/texps.pro INSTALLATION atari cmfonts.map config.ps \
 	contrib/PSTricks contrib/afm-extra contrib/colorsep.lpro \
 	contrib/configs contrib/crop.lpr contrib/latex209 \
 	contrib/volker contrib/whichinpath cyrfonts.map eufonts.map \
-	flib.c hps lafonts.map makefont.c mtest.ps mvs pc psfonts.map \
-	reencode test.ps testdata/pfbincl.eps testdata/pfbincl.tex tex \
-	vmcms vms Makefile.in.orig configure.in.orig depend.make \
+	flib.c hps lafonts.map makefont.c mvs pc psfonts.map reencode \
+	tex vmcms vms Makefile.in.orig configure.in.orig depend.make \
 	depend.mk
-CLEANFILES = $(prologues) texc.lpro missfont.log mtest.ps dvipstst.ps
-TESTS = dvips.test
-TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
+CLEANFILES = $(prologues) texc.lpro dvipstst.ps missfont.log mtest.ps \
+	pfbincl.ps
+TESTS = dvips.test pfbincl.test
+TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
+	TEXCONFIG=$(srcdir)/testdata TFMFONTS=$(srcdir)/testdata \
+	VFFONTS=$(srcdir)/testdata TEXFONTMAPS=$(srcdir)/testdata \
+	TEXPSHEADERS=$(srcdir)/testdata
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

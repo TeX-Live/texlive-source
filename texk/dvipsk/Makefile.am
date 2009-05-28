@@ -109,31 +109,47 @@ CLEANFILES = $(prologues) texc.lpro
 
 ## dvips test
 ##
-TESTS = dvips.test
+TESTS = dvips.test pfbincl.test
 
-TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
+TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea TEXCONFIG=$(srcdir)/testdata
+TESTS_ENVIRONMENT += TFMFONTS=$(srcdir)/testdata VFFONTS=$(srcdir)/testdata
+TESTS_ENVIRONMENT += TEXFONTMAPS=$(srcdir)/testdata TEXPSHEADERS=$(srcdir)/testdata
 
 EXTRA_DIST += \
 	dvips.test \
+	pfbincl.test \
+	testdata/8r.enc \
+	testdata/ad.enc \
+	testdata/cmex10.pfb \
+	testdata/cmex10.tfm \
+	testdata/cmmi10.pfb \
+	testdata/cmmi10.tfm \
+	testdata/cmr10.pfb \
+	testdata/cmr10.tfm \
+	testdata/cmsy10.pfb \
+	testdata/cmsy10.tfm \
+	testdata/cmtt10.pfb \
+	testdata/cmtt10.tfm \
+	testdata/config.ps \
 	testdata/dvipstst.tex \
 	testdata/dvipstst.xdv \
-	testdata/dvipstst.xps
+	testdata/dvipstst.xps \
+	testdata/pfbincl.eps \
+	testdata/pfbincl.tex \
+	testdata/pfbincl.xdv \
+	testdata/pfbincl.xps \
+	testdata/psfonts.map \
+	testdata/ptmbi.vf \
+	testdata/ptmbi8r.tfm \
+	testdata/ptmr.vf \
+	testdata/ptmr8r.tfm \
+	testdata/ptmri.vf \
+	testdata/ptmri8r.tfm \
+	testdata/special.pro \
+	testdata/texc.pro \
+	testdata/texps.pro
 
-CLEANFILES += missfont.log mtest.ps dvipstst.ps
-
-##install-data-hook:
-##	cd $(DESTDIR)$(man1dir) && \
-##	  rm -f odvips.1 && \
-##	  $(LN_S) dvips.1 odvips.1
-
-##install-exec-hook:
-##	cd $(DESTDIR)$(bindir) && \
-##	  rm -f odvips && \
-##	  $(LN_S) dvips$(EXEEXT) odvips$(EXEEXT)
-
-##uninstall-hook:
-##	rm -f $(DESTDIR)$(man1dir)/odvips.1
-##	rm -f $(DESTDIR)$(bindir)/odvips$(EXEEXT)
+CLEANFILES += dvipstst.ps missfont.log mtest.ps pfbincl.ps
 
 ## Not used
 ##
@@ -156,14 +172,10 @@ EXTRA_DIST += \
 	hps \
 	lafonts.map \
 	makefont.c \
-	mtest.ps \
 	mvs \
 	pc \
 	psfonts.map \
 	reencode \
-	test.ps \
-	testdata/pfbincl.eps \
-	testdata/pfbincl.tex \
 	tex \
 	vmcms \
 	vms

@@ -1,5 +1,10 @@
 2009-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	Adapt to TL2009 build system.
+
+2009-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* testdata/*: recover old test data and add missing pieces.
 	* texc.script: use sed instead of ed (which may be missing).
 
 2009-05-24  Karl Berry  <karl@tug.org>
