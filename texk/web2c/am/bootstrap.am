@@ -73,6 +73,7 @@ DISTCLEANFILES += ctangle.c cweb.c
 noinst_PROGRAMS += ctangleboot
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
 # ctangleboot.c and cwebboot.c are in the distribution
+$(ctangleboot_OBJECTS): stamp-ctangle
 stamp-ctangle: ctangleboot.c cwebboot.c
 	date >stamp-ctangle
 EXTRA_DIST += ctangleboot.c cwebboot.c
@@ -82,8 +83,7 @@ EXTRA_DIST += ctangleboot.c cwebboot.c
 # We must serialize this.
 ctangleboot.c: cwebboot.c cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
-	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) ctangle ctang-w2c; \
-	  mv ctangle.c ctangleboot.c; \
+	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) ctangle ctang-w2c ctangleboot.c; \
 	elif [ -r ctangleboot.c ]; then \
 	  touch ctangleboot.c; \
 	else \
@@ -93,8 +93,7 @@ ctangleboot.c: cwebboot.c cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
 cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
-	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) common comm-w2c cweb.c; \
-	  mv cweb.c cwebboot.c; \
+	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) common comm-w2c cwebboot.c; \
 	elif [ -r cwebboot.c ]; then \
 	  touch cwebboot.c; \
 	else \

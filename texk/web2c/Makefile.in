@@ -7831,6 +7831,7 @@ ctangle.c: ctangleboot$(EXEEXT) cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 cweb.c: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangleboot) common comm-w2c cweb.c
 # ctangleboot.c and cwebboot.c are in the distribution
+$(ctangleboot_OBJECTS): stamp-ctangle
 stamp-ctangle: ctangleboot.c cwebboot.c
 	date >stamp-ctangle
 # This is not run unless one of the cwebdir/* files is changed.
@@ -7839,8 +7840,7 @@ stamp-ctangle: ctangleboot.c cwebboot.c
 # We must serialize this.
 ctangleboot.c: cwebboot.c cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
-	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) ctangle ctang-w2c; \
-	  mv ctangle.c ctangleboot.c; \
+	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) ctangle ctang-w2c ctangleboot.c; \
 	elif [ -r ctangleboot.c ]; then \
 	  touch ctangleboot.c; \
 	else \
@@ -7850,8 +7850,7 @@ ctangleboot.c: cwebboot.c cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	$(MAKE) $(AM_MAKEFLAGS) ctangle$(EXEEXT)
 cwebboot.c: cwebdir/common.w cwebdir/comm-w2c.ch
 	if [ -r $(CTANGLE) ] || [ -r $(CTANGLE).exe ]; then \
-	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) common comm-w2c cweb.c; \
-	  mv cweb.c cwebboot.c; \
+	  CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) common comm-w2c cwebboot.c; \
 	elif [ -r cwebboot.c ]; then \
 	  touch cwebboot.c; \
 	else \

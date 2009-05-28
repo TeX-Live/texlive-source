@@ -50,6 +50,14 @@ AC_PATH_XTRA
 
 AC_PROG_CXX
 
+AC_PROG_LN_S
+AC_ARG_WITH([ln-s],
+            AS_HELP_STRING([--without-ln-s],
+                           [do build even if `ln -s' does not work]))[]dnl
+if test "x$LN_S" != "xln -s" && test "x$with_ln_s" != xno; then
+  AC_MSG_ERROR([You could use `--without-ln-s' to build without working `ln -s'])
+fi
+
 ## FIXME
 if test "x$with_fontconfig" != x; then
   AC_MSG_ERROR([Sorry, the configure option `--with-fontconfig' is no longer supported.
