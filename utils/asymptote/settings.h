@@ -93,10 +93,13 @@ Int getScroll();
   
 bool pdf(const string& texengine);
 bool latex(const string& texengine);
+bool context(const string& texengine);
   
 string nativeformat();
 string defaultformat();
   
+const char *beginput(const string& texengine);
+const char *endput(const string& texengine);
 const char *beginlabel(const string& texengine);
 const char *endlabel(const string& texengine);
 const char *rawpostscript(const string& texengine);
@@ -109,8 +112,8 @@ const char *texunits(const string& texengine);
 extern bool fataltex[];
 const char **texabort(const string& texengine);
   
-string texcommand(bool ps=false);
-string texprogram(bool ps=false);
+string texcommand();
+string texprogram();
   
 const double inches=72;
 const double cm=inches/2.54;

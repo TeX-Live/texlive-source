@@ -1,7 +1,7 @@
 %{!?_texmf: %define _texmf %(eval "echo `kpsewhich -expand-var '$TEXMFLOCAL'`")}
 
 Name:           asymptote
-Version:        1.73
+Version:        1.74
 Release:        1%{?dist}
 Summary:        Descriptive vector graphics language
 
@@ -27,8 +27,6 @@ Requires:       freeglut-devel >= 2.4.0
 Requires(post): /usr/bin/texhash /sbin/install-info
 Requires(postun): /usr/bin/texhash /sbin/install-info
 
-%define texpkgdir   %{_texmf}/tex/latex/%{name}
-
 %description
 Asymptote is a powerful descriptive vector graphics language for technical
 drawings, inspired by MetaPost but with an improved C++-like syntax.
@@ -43,7 +41,7 @@ that LaTeX does for scientific text.
 
 %build
 CFLAGS="`echo $RPM_OPT_FLAGS | sed s/-O2/-O3/`" \
-%configure --with-latex=%{_texmf}/tex/latex/
+%configure --with-latex=%{_texmf}/tex/latex --with-context=%{_texmf}/tex/context/third
 make %{?_smp_mflags}
 
 
@@ -75,7 +73,8 @@ fi
 %doc %{_defaultdocdir}/%{name}/
 %{_bindir}/*
 %{_datadir}/%{name}/
-%{texpkgdir}/
+%{_texmf}/tex/latex/%{name}
+%{_texmf}/tex/context/third/%{name}
 %{_mandir}/man1/*.1*
 %{_infodir}/*.info*
 

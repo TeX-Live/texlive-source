@@ -1,3 +1,15 @@
+Release Notes for Version 1.74
+
+An error in the surface bounding box routines was fixed. Path/surface
+intersection routines were added. PDF tex engines are now supported for
+3D labels and texpath. The new ConTeXT tex engine can be used for both 2D
+and non-PRC 3D drawings. Projections LeftView, RightView, FrontView,
+BackView, BottomView, and TopView, along with an addViews function, were
+implemented. Portability fixes and various updates to support TeXLive
+builds were made. The dependence on currentprojection in label(Label,
+path3) was removed. The font command for LaTeX tex engines now requires all
+four NFSS (encoding, family, series, shape) arguments.
+
 Release Notes for Version 1.73
 
 An alternative OpenGL background color can now be specified with the pen 

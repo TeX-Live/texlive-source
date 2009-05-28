@@ -174,17 +174,29 @@ void write(file file=stdout, string s="", pen[] p)
     write(file,s,p[i],endl);
 }
 
-pen font(string name) 
+void usetypescript(string s, string encoding="")
 {
-  return fontcommand("\font\ASYfont="+name+"\ASYfont");
+  texpreamble("\usetypescript["+s+"]["+encoding+"]");
 }
 
-pen font(string name, real size) 
+pen font(string name, string options="") 
 {
+  // Protect context switchtobodyfont with gsave/grestore to prevent
+  // misalignment if font is not found.
+  return fontcommand(settings.tex == "context" ?
+                     "\special{pdf:q}\switchtobodyfont["+name+
+                     (options == "" ? "" : ","+options)+"]\special{pdf:Q}%" :
+                     "\font\ASYfont="+name+"\ASYfont");
+}
+
+pen font(string name, real size, string options="") 
+{
+  if(settings.tex == "context")
+    return fontsize(size)+font(name+","+(string) size+"pt",options);
   return fontsize(size)+font(name+" at "+(string) size+"pt");
 }
 
-pen font(string encoding, string family, string series="m", string shape="n") 
+pen font(string encoding, string family, string series, string shape) 
 {
   return fontcommand("\usefont{"+encoding+"}{"+family+"}{"+series+"}{"+shape+
                      "}");

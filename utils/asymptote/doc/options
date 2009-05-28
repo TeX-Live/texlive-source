@@ -58,7 +58,7 @@ Options (negate by replacing - with -no):
 -safe                 Disable system call [true]
 -scroll n             Scroll standard output n lines at a time [0]
 -tabcompletion        Interactive prompt auto-completion [true]
--tex engine           latex|pdflatex|xelatex|tex|pdftex|none [latex]
+-tex engine           latex|pdflatex|xelatex|tex|pdftex|context|none [latex]
 -thick                Render thick 3D lines [true]
 -thin                 Render thin 3D lines [true]
 -threads              Use POSIX threads for 3D rendering [true]
@@ -67,7 +67,7 @@ Options (negate by replacing - with -no):
 -twice                Run LaTeX twice (to resolve references) [false]
 -twosided             Use two-sided 3D lighting model for rendering [true]
 -u,-user string       General purpose user string
--v,-verbose           Increase verbosity level [0]
+-v,-verbose           Increase verbosity level (can specify multiple times) [0]
 -version              Show version; command-line only
 -wait                 Wait for child processes to finish before exiting [false]
 -where                Show where listed variables are declared [false]

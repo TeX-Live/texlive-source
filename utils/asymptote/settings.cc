@@ -607,6 +607,27 @@ struct alignSetting : public argumentSetting {
   }
 };
 
+// For setting the alignment of a figure on the page.
+struct engineSetting : public argumentSetting {
+  engineSetting(string name, char code,
+               string argname, string desc,
+               string defaultValue)
+    : argumentSetting(name, code, argname, description(desc,defaultValue),
+                      types::primString(), (item)defaultValue) {}
+
+  bool getOption() {
+    string str=optarg;
+    
+    if(str == "latex" || str == "pdflatex" || str == "xelatex" ||
+       str == "tex" || str == "pdftex" || str == "context" || str == "none") {
+      value=str;
+      return true;
+    }
+    error("invalid argument for option");
+    return false;
+  }
+};
+
 template<class T>
 string stringCast(T x)
 {
@@ -978,7 +999,7 @@ void initSettings() {
   
   addOption(new boolSetting("debug", 'd', "Enable debugging messages"));
   addOption(new incrementSetting("verbose", 'v',
-                                 "Increase verbosity level", &verbose));
+                                 "Increase verbosity level (can specify multiple times)", &verbose));
   // Resolve ambiguity with --version
   addOption(new incrementOption("vv", 0,"", &verbose,2));
   addOption(new incrementOption("novv", 0,"", &verbose,-2));
@@ -986,9 +1007,10 @@ void initSettings() {
   addOption(new boolSetting("keep", 'k', "Keep intermediate files"));
   addOption(new boolSetting("keepaux", 0,
                             "Keep intermediate LaTeX .aux files"));
-  addOption(new stringSetting("tex", 0,"engine",
-                              "latex|pdflatex|xelatex|tex|pdftex|none",
+  addOption(new engineSetting("tex", 0, "engine",
+                              "latex|pdflatex|xelatex|tex|pdftex|context|none",
                               "latex"));
+
   addOption(new boolSetting("twice", 0,
                             "Run LaTeX twice (to resolve references)"));
   addOption(new boolSetting("inlinetex", 0, "Generate inline TeX code"));
@@ -1101,7 +1123,6 @@ void initSettings() {
   addOption(new envSetting("gs", defaultGhostscript));
   addOption(new envSetting("texpath", ""));
   addOption(new envSetting("texcommand", ""));
-  addOption(new envSetting("texdvicommand", ""));
   addOption(new envSetting("dvips", "dvips"));
   addOption(new envSetting("convert", "convert"));
   addOption(new envSetting("display", defaultDisplay));
@@ -1111,11 +1132,10 @@ void initSettings() {
   addOption(new envSetting("papertype", "letter"));
   addOption(new envSetting("dir", ""));
   addOption(new envSetting("sysdir", systemDir));
-  addOption(new envSetting("textcommand",
-                           "sh -c 'groff -e -P-b16 $1 > $2' groff "));
+  addOption(new envSetting("textcommand","groff -e -P-b16"));
   addOption(new envSetting("textextension", "roff"));
   addOption(new envSetting("textoutputtype", "ps"));
-  addOption(new envSetting("textprologue", ".EQ\ndelim $$\n.EN\n"));
+  addOption(new envSetting("textprologue", ".EQ\ndelim $$\n.EN"));
   addOption(new envSetting("textinitialfont", ".fam T\n.ps 12"));
   addOption(new envSetting("textepilogue", ""));
 }
@@ -1178,6 +1198,10 @@ void setPath() {
     pipe >> sysdir;
     size_t size=sysdir.size();
     if(size > 2) {
+// Workaround broken header file on i386-solaris with g++ 3.4.3.
+#ifdef erase
+#undef erase
+#endif
       sysdir.erase(size-1,1);
       sysdir.append(dirsep+"texmf/asymptote");
       Setting("sysdir")=sysdir;
@@ -1209,16 +1233,22 @@ void SetPageDimensions() {
   }
 }
 
-bool xelatex(const string& texengine) {
+bool xe(const string& texengine) {
   return texengine == "xelatex";
 }
 
+bool context(const string& texengine) {
+  return texengine == "context";
+}
+
 bool pdf(const string& texengine) {
-  return texengine == "pdflatex" || texengine == "pdftex" || xelatex(texengine);
+  return texengine == "pdflatex" || texengine == "pdftex" || xe(texengine)
+    || context(texengine);
 }
 
 bool latex(const string& texengine) {
-  return texengine == "latex" || texengine == "pdflatex" || xelatex(texengine);
+  return texengine == "latex" || texengine == "pdflatex" || 
+    texengine == "xelatex";
 }
 
 string nativeformat() {
@@ -1230,10 +1260,26 @@ string defaultformat() {
   return (format == "") ? nativeformat() : format;
 }
 
+// Begin TeX put command.
+const char *beginput(const string& texengine) {
+  if(context(texengine))
+    return "\\put";
+  else
+    return "\\put(#1,#2)";
+}
+
+// End TeX put command.
+const char *endput(const string& texengine) {
+  if(context(texengine)) 
+    return " at #1 #2"; 
+  else
+    return "";
+}
+
 // TeX special command to set up currentmatrix for typesetting labels.
 const char *beginlabel(const string& texengine) {
   if(pdf(texengine))
-    return xelatex(texengine) ? "\\special{pdf:literal q #5 0 0 cm}" :
+    return xe(texengine) ? "\\special{pdf:literal q #5 0 0 cm}" :
       "\\special{pdf:q #5 0 0 cm}";
   else 
     return "\\special{ps:gsave currentpoint currentpoint translate [#5 0 0] "
@@ -1243,7 +1289,7 @@ const char *beginlabel(const string& texengine) {
 // TeX special command to restore currentmatrix after typesetting labels.
 const char *endlabel(const string& texengine) {
   if(pdf(texengine))
-    return xelatex(texengine) ? "\\special{pdf:literal Q}" : "\\special{pdf:Q}";
+    return xe(texengine) ? "\\special{pdf:literal Q}" : "\\special{pdf:Q}";
   else
     return "\\special{ps:currentpoint grestore moveto}";
 }
@@ -1264,6 +1310,8 @@ const char *rawpostscript(const string& texengine) {
 const char *beginpicture(const string& texengine) {
   if(latex(texengine))
     return "\\begin{picture}";
+  if(context(texengine))
+    return "%";
   else
     return "\\picture";
 }
@@ -1272,6 +1320,8 @@ const char *beginpicture(const string& texengine) {
 const char *endpicture(const string& texengine) {
   if(latex(texengine))
     return "\\end{picture}%";
+  else if(context(texengine))
+    return "%";
   else
     return "\\endpicture%";
 }
@@ -1279,8 +1329,9 @@ const char *endpicture(const string& texengine) {
 // Begin TeX special command.
 const char *beginspecial(const string& texengine) {
   if(pdf(texengine))
-    return xelatex(texengine) ? "\\special{pdf:literal " : "\\special{pdf:";
-  return "\\special{ps:";
+    return xe(texengine) ? "\\special{pdf:literal " : "\\special{pdf:";
+  else
+    return "\\special{ps:";
 }
 
 // End TeX special command.
@@ -1291,7 +1342,7 @@ const char *endspecial() {
 // Default TeX units.
 const char *texunits(const string& texengine) 
 {
-  return xelatex(texengine) ? "bp" : "pt";
+  return xe(texengine) ? "bp" : "pt";
 }
 
 
@@ -1305,22 +1356,16 @@ const char **texabort(const string& texengine)
   return settings::pdf(texengine) ? pdftexerrors : texerrors;
 }
 
-string texcommand(bool ps)
+string texcommand()
 {
-  string command;
-  if(ps) {
-    command=getSetting<string>("texdvicommand");
-    if(command == "")
-      command=latex(getSetting<string>("tex")) ? "latex" : "tex";
-  } else
-    command=getSetting<string>("texcommand");
+  string command=getSetting<string>("texcommand");
   return command.empty() ? getSetting<string>("tex") : command;
 }
   
-string texprogram(bool ps)
+string texprogram()
 {
   string path=getSetting<string>("texpath");
-  string engine=texcommand(ps);
+  string engine=texcommand();
   if(!path.empty()) engine=(string) (path+"/"+engine);
   string program="'"+engine+"'";
   string dir=stripFile(outname());

@@ -72,6 +72,7 @@ extern const double BigFuzz;
 extern const double Fuzz;
 extern const double Fuzz2;
 extern const double sqrtFuzz;
+extern const double fuzzFactor;
   
 class path : public gc {
   bool cycles;  // If the path is closed in a loop
@@ -450,9 +451,8 @@ extern const double third;
 
 }
 
-// Do -DOMIT_SOLVEDKNOT_DECL to work around redefinition error reported by
-// old (broken) compilers.
 #ifndef BROKEN_COMPILER
+// Delete the following line to work around problems with old broken compilers.
 GC_DECLARE_PTRFREE(camp::solvedKnot);
 #endif
 

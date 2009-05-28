@@ -1397,7 +1397,7 @@ and @code{rainbow.asy}.
 @cindex function shading
 @cindex @code{functionshade}
 More general shading possibilities are available with the @code{pdflatex},
-@code{xetex}, and @code{pdftex} @TeX{} engines: the routine
+@code{context}, and @code{pdftex} @TeX{} engines: the routine
 @verbatim
 void functionshade(picture pic=currentpicture, path[] g, bool stroke=false,
                    pen fillrule=currentpen, string shader);
@@ -2324,7 +2324,7 @@ path times along @code{p} and @code{q}, in the sense of
 @code{point(path, real)}, for one such intersection point (as chosen by
 the algorithm described on page 137 of @code{The MetaFontbook}). 
 The computations are performed to the absolute error specified by @code{fuzz}, 
-or, if @code{fuzz < 0}, to machine precision. If the paths do not 
+or if @code{fuzz < 0}, to machine precision. If the paths do not 
 intersect, return a real array of length 0.
 
 @cindex @code{intersections}
@@ -2332,7 +2332,7 @@ intersect, return a real array of length 0.
 Return all (unless there are infinitely many) intersection times of
 paths @code{p} and @code{q} as a sorted array of real arrays of length 2
 (@pxref{sort}). The computations are performed to the absolute error
-specified by @code{fuzz}, or, if @code{fuzz < 0}, to machine precision.
+specified by @code{fuzz}, or if @code{fuzz < 0}, to machine precision.
 
 @cindex @code{intersections}
 @item real[] intersections(path p, explicit pair a, explicit pair b,
@@ -2340,7 +2340,7 @@ specified by @code{fuzz}, or, if @code{fuzz < 0}, to machine precision.
 Return all (unless there are infinitely many) intersection times of path
 @code{p} with the (infinite) line through points @code{a} and @code{b}
 as a sorted array. The intersections returned are guaranteed to be
-correct to within the absolute error specified by @code{fuzz}, or, if
+correct to within the absolute error specified by @code{fuzz}, or if
 @code{fuzz < 0}, to machine precision.
 
 @cindex @code{times}
@@ -2377,7 +2377,7 @@ returns an array containing all intersection points of the paths
 @cindex @code{extension}
 @item pair extension(pair P, pair Q, pair p, pair q);
 returns the intersection point of the extensions of the line segments 
-@code{P--Q} and @code{p--q}, or, if the lines are parallel,
+@code{P--Q} and @code{p--q}, or if the lines are parallel,
 @code{(infinity,infinity)}.
 
 @cindex @code{cut}
@@ -2860,7 +2860,7 @@ skip of a pen can be examined with the routines
 @cindex @code{font command}
 @item A pen using a specific @code{LaTeX} @code{NFSS} font is returned
 by calling the function @code{pen font(string encoding, string family,
-string series="m", string shape="n")}. The default setting,
+string series, string shape)}. The default setting,
 @code{font("OT1","cmr","m","n")}, corresponds to 12pt Computer Modern Roman;
 this may be changed with @code{defaultpen(pen)}. 
 The font setting of a pen is returned by
@@ -6189,7 +6189,7 @@ This module provides an interface to the @code{LaTeX} package
 @noindent
 for embedding movies, sounds, and 3D objects into a @acronym{PDF} document.
 @noindent
-@cindex @code{XeLaTeX}
+@cindex @code{xelatex}
 However, @code{XeLaTeX} users need to rename the modified version
 @code{movie15_dvipdfmx.sty} from
 @quotation
@@ -6270,7 +6270,7 @@ To use Cyrillic fonts, you will need to change the font encoding:
 @verbatim
 import unicode;
 texpreamble("\usepackage{mathtext}\usepackage[russian]{babel}");
-defaultpen(font("T2A","cmr"));
+defaultpen(font("T2A","cmr","m","n"));
 @end verbatim
 @noindent
 @cindex Chinese
@@ -7704,6 +7704,31 @@ autoadjust,center)}.
 The default projection, @code{currentprojection}, is initially set to
 @code{perspective(5,4,2)}.
 
+@cindex @code{LeftView}
+@cindex @code{RightView}
+@cindex @code{FrontView}
+@cindex @code{BackView}
+@cindex @code{BottomView}
+@cindex @code{TopView}
+We also define standard orthographic views used in technical drawing:
+@verbatim
+projection LeftView=orthographic(-X,showtarget=true);
+projection RightView=orthographic(X,showtarget=true);
+projection FrontView=orthographic(-Y,showtarget=true);
+projection BackView=orthographic(Y,showtarget=true);
+projection BottomView=orthographic(-Z,showtarget=true);
+projection TopView=orthographic(Z,showtarget=true);
+@end verbatim
+@noindent
+The function
+@verbatim
+void addViews(picture dest=currentpicture, picture src, bool group=true,
+              filltype filltype=NoFill, bool above=true);
+@end verbatim
+@noindent
+adds picture @code{pic} as seen with @code{FrontView} aligned above the
+projection @code{TopView} and to the right of the projection @code{RightView}. 
+
 A triple or path3 can be projected to a pair or path,
 with @code{project(triple, projection P=currentprojection)} or
 @code{project(path3, projection P=currentprojection)}.
@@ -7829,7 +7854,24 @@ Three-dimensional versions of the path functions @code{length},
 @code{arclength}, @code{arctime}, @code{reverse}, @code{subpath},
 @code{intersect}, @code{intersections}, @code{intersectionpoint},
 @code{intersectionpoints}, @code{min}, @code{max}, @code{cyclic}, and
-@code{straight} are also defined.
+@code{straight} are also defined. 
+
+The routine
+@cindex @code{intersections}
+@verbatim
+real[][] intersections(path3 p, surface s, real fuzz=-1);
+@end verbatim
+@noindent
+returns the intersection times of a path @code{p} with a surface
+@code{s} as a sorted array of real arrays of length 2, and
+@cindex @code{intersectionpoints}
+@verbatim
+triple[] intersectionpoints(path3 p, surface s, real fuzz=-1);
+@end verbatim
+@noindent
+returns the corresponding intersection points.
+Here, the computations are performed to the absolute error specified by
+@code{fuzz}, or if @code{fuzz < 0}, to machine precision.
 
 Here is an example showing all five guide3 connectors:
 @verbatiminclude join3.asy
@@ -8520,10 +8562,15 @@ at the beginning of the configuration file, it can contain arbitrary
 @cindex @code{render}
 @cindex @code{antialias}
 @cindex @code{size}
+@cindex @code{latex}
+@cindex @code{tex}
+@cindex @code{pdflatex}
+@cindex @code{xelatex}
+@cindex @code{context}
 @anchor{convert}
 The default output format is @acronym{EPS} for the (default)
-@code{latex} tex engine and @acronym{PDF} for the @code{pdflatex} and
-@code{xelatex} tex engines.
+@code{latex} and @code{tex} tex engine and @acronym{PDF} for the
+@code{pdflatex}, @code{xelatex}, and @code{context} tex engines.
 Alternative output formats may be produced using the @code{-f} option 
 (or @code{outformat} setting). The optional setting @code{-render n} requests
 an output resolution of @code{n} pixels per @code{bp}. Antialiasing is
@@ -9149,5 +9196,7 @@ Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  minblockwidth minblockheight mincirclediameter nonassociative
 @c  LocalWords:  nonintegral gettriple enablerepo hexidecimal XeLaTeX xelatex
 @c  LocalWords:  dvipdfmx autoadjust viewportsize viewportwidth viewportheight
-@c  LocalWords:  subregions nonsimply functionshade xetex shader floatingdisk
-@c  LocalWords:  functionshading nonselfintersecting
+@c  LocalWords:  subregions nonsimply functionshade shader floatingdisk TopView
+@c  LocalWords:  functionshading nonselfintersecting maxlength LeftView
+@c  LocalWords:  vectorfieldsphere RightView FrontView BackView BottomView
+@c  LocalWords:  addViews

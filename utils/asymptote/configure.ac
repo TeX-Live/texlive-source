@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[1.73],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[1.74],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 
@@ -20,7 +20,8 @@ test "$Datadir" = '${prefix}/share' && Datadir=$prefix/share
 AC_SUBST(Datadir)
 
 AC_ARG_WITH(latex,
-	[  --with-latex=PATH       specify path to LaTeX installation ],
+	[AS_HELP_STRING(--with-latex=PATH,
+                        specify path to LaTeX installation)],
                      [if test "x$withval" != "x" ; then
 			latexdir=$withval
 		      fi
@@ -36,14 +37,32 @@ else
 fi
 ])
 
+AC_ARG_WITH(context,
+	[AS_HELP_STRING(--with-context=PATH,
+                        specify path to ConTeXt installation)],
+                     [if test "x$withval" != "x" ; then
+			contextdir=$withval
+		      fi
+		     ],[
+AC_CHECK_PROG(kpsewhich,kpsewhich,true)
+if test "x$kpsewhich" = "xtrue"; then
+  contextdir=`kpsewhich -expand-var='$TEXMFLOCAL'/tex/context/third`
+else
+  contextdir=$prefix/share/texmf/tex/context/third
+fi
+])
+
 AC_CHECK_PROGS(TEXI2DVI,[texi2dvi texi2dvi4a2ps])
 AC_SUBST(TEXI2DVI)
 
 latexdir=$latexdir/asymptote
+contextdir=$contextdir/asymptote
 
 AC_MSG_NOTICE([Using $latexdir for LaTeX style file])
+AC_MSG_NOTICE([Using $contextdir for ConTeXT style file])
 
 AC_SUBST(latexdir)
+AC_SUBST(contextdir)
 
 docdir=$Datadir/doc/asymptote
 
@@ -199,6 +218,7 @@ AC_CHECK_LIB([m], [sqrt])
 AC_CHECK_LIB([z], [deflate])
 AC_CHECK_LIB([pthread], [pthread_create])
 AC_CHECK_LIB([sigsegv], [stackoverflow_install_handler])
+AC_CHECK_LIB([rt], [sched_yield])
 
 AC_CHECK_LIB([readline], [rl_completion_matches],,
 AC_MSG_NOTICE(*** Could not find GNU readline 4.2 or later: will compile without readline support ***))
@@ -277,7 +297,7 @@ AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIGNAL
 
-AC_DEFUN(AC_FUNC_STRPTIME, [
+AC_DEFUN([ac_FUNC_STRPTIME], [
     AC_CHECK_FUNCS(strptime)
     AC_MSG_CHECKING(for strptime declaration in time.h)
     AC_EGREP_HEADER(strptime, time.h, [
@@ -290,7 +310,7 @@ AC_DEFUN(AC_FUNC_STRPTIME, [
 AC_FUNC_FORK
 AC_CHECK_FUNCS([dup2 floor memset pow sqrt strchr tgamma])
 AC_FUNC_STRFTIME
-AC_FUNC_STRPTIME
+ac_FUNC_STRPTIME
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_FSEEKO
 

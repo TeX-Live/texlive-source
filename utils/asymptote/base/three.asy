@@ -6,6 +6,7 @@ if(prc0()) {
   access embed;
   Embed=embed.embed;
   Link=embed.link;
+  if(settings.tex == "context") settings.prc=false;
 }
 
 real defaultshininess=0.25;
@@ -14,9 +15,10 @@ real linegranularity=0.01;
 real tubegranularity=0.003;
 real dotgranularity=0.0001;
 pair viewportmargin=0;     // Horizontal and vertical viewport margins.
-real viewportfactor=1.02;  // Factor used to expand orthographic viewport.
-real anglefactor=1.02;     // Factor used to expand perspective viewport.
+real viewportfactor=1.005; // Factor used to expand orthographic viewport.
 real angleprecision=1e-3;  // Precision for centering perspective projections.
+real anglefactor=max(1.015,1+angleprecision);
+                           // Factor used to expand perspective viewport.
 
 string defaultembed3Doptions;
 string defaultembed3Dscript;
@@ -298,6 +300,13 @@ projection obliqueY(real angle=45)
 
 projection oblique=oblique();
 projection obliqueX=obliqueX(), obliqueY=obliqueY(), obliqueZ=obliqueZ();
+
+projection LeftView=orthographic(-X,showtarget=true);
+projection RightView=orthographic(X,showtarget=true);
+projection FrontView=orthographic(-Y,showtarget=true);
+projection BackView=orthographic(Y,showtarget=true);
+projection BottomView=orthographic(-Z,showtarget=true);
+projection TopView=orthographic(Z,showtarget=true);
 
 currentprojection=perspective(5,4,2);
 
@@ -1790,10 +1799,8 @@ restricted path3 unitsquare3=O--X--X+Y--Y--cycle;
 
 path3 circle(triple c, real r, triple normal=Z)
 {
-  path3 p=scale3(r)*unitcircle3;
-  if(normal != Z) 
-    p=align(unit(normal))*p;
-  return shift(c)*p;
+  path3 p=normal == Z ? unitcircle3 : align(unit(normal))*unitcircle3;
+  return shift(c)*scale3(r)*p;
 }
 
 // return an arc centered at c from triple v1 to v2 (assuming |v2-c|=|v1-c|),
@@ -1811,10 +1818,14 @@ path3 arc(triple c, triple v1, triple v2, triple normal=O, bool direction=CCW)
     if(normal == O) abort("explicit normal required for these endpoints");
   }
 
-  transform3 T=align(unit(normal));
-  transform3 Tinv=transpose(T);
-  v1=Tinv*v1;
-  v2=Tinv*v2;
+  transform3 T;
+  bool align=normal != Z;
+  if(align) {
+    T=align(unit(normal));
+    transform3 Tinv=transpose(T);
+    v1=Tinv*v1;
+    v2=Tinv*v2;
+  }
   
   string invalidnormal="invalid normal vector";
   real fuzz=sqrtEpsilon*max(abs(v1),abs(v2));
@@ -1833,7 +1844,9 @@ path3 arc(triple c, triple v1, triple v2, triple normal=O, bool direction=CCW)
   if(t1 >= t2 && direction) t1 -= n;
   if(t2 >= t1 && !direction) t2 -= n;
 
-  return shift(c)*scale3(r)*T*subpath(unitcircle3,t1,t2);
+  path3 p=subpath(unitcircle3,t1,t2);
+  if(align) p=T*p;
+  return shift(c)*scale3(r)*p;
 }
 
 // return an arc centered at c with radius r from c+r*dir(theta1,phi1) to
@@ -2469,7 +2482,7 @@ object embed(string label="", string text=label,
           transform3 inv=inverse(modelview);
           if(adjusted) 
             write("adjusting camera to ",tinv*inv*P.camera);
-            target=inv*P.target;
+          target=inv*P.target;
         }
         P=T*P;
       }
@@ -2589,6 +2602,23 @@ currentpicture.fitter=new frame(string prefix, picture pic, string format,
   }
   return f;
 };
+
+void addViews(picture dest, picture src, bool group=true,
+              filltype filltype=NoFill, bool above=true)
+{
+  frame Front=src.fit(FrontView);
+  add(dest,Front,group,filltype,above);
+  frame Top=src.fit(TopView);
+  add(dest,shift(0,min(Front).y-max(Top).y)*Top,group,filltype,above);
+  frame Right=src.fit(RightView);
+  add(dest,shift(min(Front).x-max(Right).x)*Right,group,filltype,above);
+}
+
+void addViews(picture src, bool group=true, filltype filltype=NoFill,
+              bool above=true)
+{
+  addViews(currentpicture,src,group,filltype,above);
+}
 
 // Force an array of 3D pictures to be as least as large as picture all.
 void rescale3(picture[] pictures, picture all, projection P=currentprojection)
