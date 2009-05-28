@@ -8,8 +8,8 @@
 #define	EXTERN /* Instantiate data from {tex,mf,mp}d.h here.  */
 
 /* This file is used to create texextra.c etc., with this line
-   changed to include texd.h, mfd.h, or mpd.h.  The ?d.h file is what
-   #defines TeX or MF or MP, which avoids the need for a special
+   changed to include texd.h or mfd.h.  The ?d.h file is what
+   #defines TeX or MF, which avoids the need for a special
    Makefile rule.  */
 #include "TEX-OR-MF-OR-MPd.h"
 
@@ -85,21 +85,6 @@
 #define VIR_PROGRAM "virmf"
 #define edit_var "MFEDIT"
 #endif /* MF */
-#ifdef MP
-#define BANNER "This is MetaPost, Version 1.005"
-#define COPYRIGHT_HOLDER "AT&T Bell Laboratories"
-#define AUTHOR "John Hobby.\nCurrent maintainer of MetaPost: Taco Hoekwater"
-#define PROGRAM_HELP MPHELP
-#define BUG_ADDRESS "tex-k@mail.tug.org"
-#define DUMP_VAR MPmemdefault
-#define DUMP_LENGTH_VAR memdefaultlength
-#define DUMP_OPTION "mem"
-#define DUMP_EXT ".mem"
-#define INPUT_FORMAT kpse_mp_format
-#define INI_PROGRAM "inimpost"
-#define VIR_PROGRAM "virmpost"
-#define edit_var "MPEDIT"
-#endif /* MP */
 
 /* Shell escape.
 
@@ -560,11 +545,6 @@ static int eightbitp;
 char *ptexbanner;
 #endif
 
-#ifdef MP
-/* name of TeX program to pass to makempx */
-static string mpost_tex_program = "";
-#endif
-
 /* Get a true/false value for a variable from texmf.cnf and the environment. */
 static boolean
 texmf_yesno(const_string var)
@@ -761,10 +741,6 @@ maininit P2C(int, ac, string *, av)
   kpse_set_program_enabled (kpse_base_format, MAKE_TEX_FMT_BY_DEFAULT,
                             kpse_src_compile);
 #endif /* MF */
-#ifdef MP
-  kpse_set_program_enabled (kpse_mem_format, MAKE_TEX_FMT_BY_DEFAULT,
-                            kpse_src_compile);
-#endif /* MP */
 #ifdef TeX
 #if defined (Aleph)
   kpse_set_program_enabled (kpse_ocp_format, MAKE_OMEGA_OCP_BY_DEFAULT,
@@ -1091,7 +1067,7 @@ ipcpage P1C(int, is_eof)
 }
 #endif /* TeX && IPC */
 
-#if defined (TeX) || defined (MF) || defined (MP)
+#if defined (TeX) || defined (MF)
   /* TCX and Aleph&Co get along like sparks and gunpowder. */
 #if !defined(Aleph) && !defined(XeTeX) && !defined(luaTeX) 
 
@@ -1195,7 +1171,7 @@ readtcxfile P1H(void)
   }
 }
 #endif /* !Aleph && !XeTeX && !luaTeX */
-#endif /* TeX || MF || MP [character translation] */
+#endif /* TeX || MF [character translation] */
 
 #ifdef XeTeX /* XeTeX handles this differently, and allows odd quotes within names */
 string
@@ -1359,7 +1335,7 @@ static struct option long_options[]
       { "synctex",                   1, 0, 0 },
 #endif
 #endif /* TeX */
-#if defined (TeX) || defined (MF) || defined (MP)
+#if defined (TeX) || defined (MF)
       { "file-line-error-style",     0, &filelineerrorstylep, 1 },
       { "no-file-line-error-style",  0, &filelineerrorstylep, -1 },
       /* Shorter option names for the above. */
@@ -1381,16 +1357,9 @@ static struct option long_options[]
       { "output-driver",          1, 0, 0 },
       { "papersize",              1, 0, 0 },
 #endif /* XeTeX */
-#endif /* TeX || MF || MP */
-#if defined (TeX) || defined (MF)
       { "mktex",                     1, 0, 0 },
       { "no-mktex",                  1, 0, 0 },
 #endif /* TeX or MF */
-#ifdef MP
-      { "T",                         0, &troffmode, 1 },
-      { "troff",                     0, &troffmode, 1 },
-      { "tex",                       1, 0, 0 },
-#endif /* MP */
       { 0, 0, 0, 0 } };
 
 
@@ -1510,7 +1479,7 @@ parse_options P2C(int, argc,  string *, argv)
       pdfdraftmodeoption = 1;
       pdfdraftmodevalue = 1;
 #endif /* pdfTeX */
-#if defined (TeX) || defined (MF) || defined (MP)
+#if defined (TeX) || defined (MF)
     } else if (ARGUMENT_IS ("translate-file")) {
       translate_filename = optarg;
     } else if (ARGUMENT_IS ("default-translate-file")) {
@@ -1519,19 +1488,12 @@ parse_options P2C(int, argc,  string *, argv)
     } else if (ARGUMENT_IS ("8bit")) {
       /* FIXME: print snippy message? Possibly also for above? */
 #endif /* !Aleph */
-#endif /* TeX || MF || MP */
-
-#if defined (TeX) || defined (MF)
     } else if (ARGUMENT_IS ("mktex")) {
       kpse_maketex_option (optarg, true);
 
     } else if (ARGUMENT_IS ("no-mktex")) {
       kpse_maketex_option (optarg, false);
 #endif /* TeX or MF */
-#if defined (MP)
-    } else if (ARGUMENT_IS ("tex")) {
-      mpost_tex_program = optarg;
-#endif /* MP */
     } else if (ARGUMENT_IS ("interaction")) {
         /* These numbers match @d's in *.ch */
       if (STREQ (optarg, "batchmode")) {
@@ -2367,7 +2329,7 @@ setupboundvariable P3C(integer *, var,  const_string, var_name,  integer, dflt)
 }
 
 /* FIXME -- some (most?) of this can/should be moved to the Pascal/WEB side. */
-#if defined(TeX) || defined(MP) || defined(MF)
+#if defined(TeX) || defined(MF)
 #if !defined(pdfTeX) && !defined(luaTeX)
 static void
 checkpoolpointer (poolpointer poolptr, size_t len)
@@ -2378,8 +2340,6 @@ checkpoolpointer (poolpointer poolptr, size_t len)
     exit(1);
   }
 }
-
-#ifndef MP  /* MP has its own in mpdir/utils.c */
 
 #ifndef XeTeX	/* XeTeX uses this from XeTeX_mac.c */
 static
@@ -2422,7 +2382,6 @@ maketexstring(const_string s)
 
   return (makestring());
 }
-#endif /* !MP */
 #endif /* !pdfTeX */
 
 strnumber
@@ -2581,55 +2540,6 @@ makesrcspecial P2C(strnumber, srcfilename,
   return (oldpoolptr);
 }
 #endif
-
-#ifdef MP
-/* Invoke makempx (or troffmpx) to make sure there is an up-to-date
-   .mpx file for a given .mp file.  (Original from John Hobby 3/14/90)  */
-
-#include <kpathsea/concatn.h>
-
-#ifndef MPXCOMMAND
-#define MPXCOMMAND "makempx"
-#endif
-
-boolean
-callmakempx P2C(string, mpname,  string, mpxname)
-{
-  int ret;
-  string cnf_cmd = kpse_var_value ("MPXCOMMAND");
-  
-  if (cnf_cmd && STREQ (cnf_cmd, "0")) {
-    /* If they turned off this feature, just return success.  */
-    ret = 0;
-
-  } else {
-    /* We will invoke something. Compile-time default if nothing else.  */
-    string cmd;
-    string qmpname = normalize_quotes(mpname, "mpname");
-    string qmpxname = normalize_quotes(mpxname, "mpxname");
-    if (!cnf_cmd)
-      cnf_cmd = xstrdup (MPXCOMMAND);
-
-    if (troffmode)
-      cmd = concatn (cnf_cmd, " -troff ",
-                     qmpname, " ", qmpxname, NULL);
-    else if (mpost_tex_program && *mpost_tex_program)
-      cmd = concatn (cnf_cmd, " -tex=", mpost_tex_program, " ",
-                     qmpname, " ", qmpxname, NULL);
-    else
-      cmd = concatn (cnf_cmd, " -tex ", qmpname, " ", qmpxname, NULL);
-
-    /* Run it.  */
-    ret = system (cmd);
-    free (cmd);
-    free (qmpname);
-    free (qmpxname);
-  }
-
-  free (cnf_cmd);
-  return ret == 0;
-}
-#endif /* MP */
 
 /* Metafont/MetaPost fraction routines. Replaced either by assembler or C.
    The assembler syntax doesn't work on Solaris/x86.  */
@@ -2814,7 +2724,7 @@ zmakescaled P2C(integer, p, integer, q)		/* Approximate 2^16*p/q */
 
 #endif /* not FIXPT */
 #endif /* not assembler */
-#endif /* not TeX, i.e., MF or MP */
+#endif /* not TeX, i.e., MF */
 
 #ifdef MF
 /* On-line display routines for Metafont.  Here we use a dispatch table

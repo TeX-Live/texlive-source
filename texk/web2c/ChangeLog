@@ -1,3 +1,9 @@
+2009-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* help.h (DVITOMPHELP): remove help for obsolete Web2C version.
+	* help.h (LUATANGLEHELP): sort in alphabetically.
+	* texmfmp-help.h (MPHELP): remove help for obsolete Web2C version.	
+
 2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, ac/web2c.ac (enable_ipc): default is enabled.

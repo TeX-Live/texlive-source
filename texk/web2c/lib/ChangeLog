@@ -1,3 +1,7 @@
+2009-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: remove all references to (Web2C version of) MP.
+
 2009-05-18  Karl Berry  <karl@tug.org>
 
 	* openclose.c (recorder_start): use output_directory for the .fls
