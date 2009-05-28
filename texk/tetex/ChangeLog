@@ -1,3 +1,7 @@
+2009-05-28  Karl Berry  <karl@tug.org>
+
+	* texconfig.man: update from Frank K, 27 May 2009 23:17:49.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
