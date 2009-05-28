@@ -1,3 +1,7 @@
+2009-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texc.script: use sed instead of ed (which may be missing).
+
 2009-05-24  Karl Berry  <karl@tug.org>
 
 	* dvips.texi (Configuration file commands): document -G,

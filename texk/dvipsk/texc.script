@@ -4,9 +4,5 @@
 # To use it, say
 #       texc.script tex.lpro texc.lpro
 #
-ed $1 <<edscriptend
-/% begin code for uncompressed fonts only/d
-.,/% end code for uncompressed fonts only/d
-.,/% end of code for unpacking compressed fonts/s/% //
-w $2
-edscriptend
+sed $1 -e '/begin code/,/end code/d' \
+       -e '/alternate code/,/end of code/s/^% //' >$2
