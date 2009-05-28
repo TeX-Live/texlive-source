@@ -1210,7 +1210,8 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	synctexdir/synctex-e-rec.ch1 synctexdir/synctex-pdf-rec.ch2 \
 	synctexdir/synctex-xe-mem.ch2 synctexdir/synctex-xe-rec.ch2 \
 	synctexdir/synctex-xe-rec.ch3 synctexdir/synctex.mk \
-	libmd5/md5.test fmtutil.in Makefile.in.orig configure.in.orig
+	libmd5/md5.test fmtutil.in Makefile.in.orig configure.in.orig \
+	metapost.mk
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c stamp-tangle tangleboot.c tangleboot.h ctangle.c \
 	cweb.c stamp-ctangle cftest.p $(web_programs:=.c) \

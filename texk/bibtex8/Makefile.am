@@ -1,8 +1,13 @@
+## Makefile.am for the TeX Live subdirectory texk/afm2pl/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT
+AM_CFLAGS = -funsigned-char
 
 bin_PROGRAMS = bibtex8
 
@@ -28,36 +33,39 @@ LDADD = $(KPATHSEA_LIBS)
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
-## Not (yet) used
-##
-EXTRA_DIST = \
+csfdir = ${prefix}/texmf-dist/bibtex/csf/base
+
+dist_csf_DATA = \
+	csf/88591lat.csf \
+	csf/88591sca.csf \
+	csf/ascii.csf \
+	csf/cp437lat.csf \
+	csf/cp850lat.csf \
+	csf/cp850sca.csf \
+	csf/cp866rus.csf \
+	csf/csfile.txt
+
+btdocdir = ${prefix}/texmf/doc/bibtex8
+
+dist_btdoc_DATA = \
 	00readme.txt \
 	HISTORY \
-	bt371csf.zip \
 	csfile.txt \
+	file_id.diz
+
+## Not used
+##
+EXTRA_DIST = \
+	bt371csf.zip \
 	dos-dj.mak \
 	dos-emx.mak \
-	file_id.diz \
 	getopt.c \
 	getopt.h \
 	getopt1.c \
 	os2.mak \
 	unix.mak \
 	csf/00readme.txt \
-	csf/88591lat.csf \
-	csf/88591sca.csf \
 	csf/COPYING \
 	csf/HISTORY \
-	csf/ascii.csf \
-	csf/cp437lat.csf \
-	csf/cp850lat.csf \
-	csf/cp850sca.csf \
-	csf/cp866rus.csf \
-	csf/csfile.txt \
 	csf/file_id.diz
-
-## Eventually delete these files
-##
-
-EXTRA_DIST += Makefile.in.orig configure.in.orig
 

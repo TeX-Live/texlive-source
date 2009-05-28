@@ -15,6 +15,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -36,8 +37,8 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = bibtex8$(EXEEXT)
 subdir = .
-DIST_COMMON = $(am__configure_deps) \
-	$(srcdir)/../../build-aux/config.guess \
+DIST_COMMON = $(am__configure_deps) $(dist_btdoc_DATA) \
+	$(dist_csf_DATA) $(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
@@ -66,7 +67,8 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(SHELL) $(top_srcdir)/../../build-aux/mkinstalldirs
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(btdocdir)" \
+	"$(DESTDIR)$(csfdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_bibtex8_OBJECTS = bibtex-1.$(OBJEXT) bibtex-2.$(OBJEXT) \
 	bibtex-3.$(OBJEXT) bibtex-4.$(OBJEXT) bibtex.$(OBJEXT) \
@@ -89,6 +91,28 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(bibtex8_SOURCES)
 DIST_SOURCES = $(bibtex8_SOURCES)
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+DATA = $(dist_btdoc_DATA) $(dist_csf_DATA)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -218,7 +242,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT
+AM_CFLAGS = -funsigned-char
 bibtex8_SOURCES = \
 	bibtex-1.c \
 	bibtex-2.c \
@@ -236,13 +261,38 @@ bibtex8_SOURCES = \
 
 bibtex8_DEPENDENCIES = $(KPATHSEA_DEPEND)
 LDADD = $(KPATHSEA_LIBS)	
-EXTRA_DIST = 00readme.txt HISTORY bt371csf.zip csfile.txt dos-dj.mak \
-	dos-emx.mak file_id.diz getopt.c getopt.h getopt1.c os2.mak \
-	unix.mak csf/00readme.txt csf/88591lat.csf csf/88591sca.csf \
-	csf/COPYING csf/HISTORY csf/ascii.csf csf/cp437lat.csf \
-	csf/cp850lat.csf csf/cp850sca.csf csf/cp866rus.csf \
-	csf/csfile.txt csf/file_id.diz Makefile.in.orig \
-	configure.in.orig
+csfdir = ${prefix}/texmf-dist/bibtex/csf/base
+dist_csf_DATA = \
+	csf/88591lat.csf \
+	csf/88591sca.csf \
+	csf/ascii.csf \
+	csf/cp437lat.csf \
+	csf/cp850lat.csf \
+	csf/cp850sca.csf \
+	csf/cp866rus.csf \
+	csf/csfile.txt
+
+btdocdir = ${prefix}/texmf/doc/bibtex8
+dist_btdoc_DATA = \
+	00readme.txt \
+	HISTORY \
+	csfile.txt \
+	file_id.diz
+
+EXTRA_DIST = \
+	bt371csf.zip \
+	dos-dj.mak \
+	dos-emx.mak \
+	getopt.c \
+	getopt.h \
+	getopt1.c \
+	os2.mak \
+	unix.mak \
+	csf/00readme.txt \
+	csf/COPYING \
+	csf/HISTORY \
+	csf/file_id.diz
+
 all: all-am
 
 .SUFFIXES:
@@ -370,6 +420,46 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
+install-dist_btdocDATA: $(dist_btdoc_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(btdocdir)" || $(MKDIR_P) "$(DESTDIR)$(btdocdir)"
+	@list='$(dist_btdoc_DATA)'; test -n "$(btdocdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(btdocdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(btdocdir)" || exit $$?; \
+	done
+
+uninstall-dist_btdocDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_btdoc_DATA)'; test -n "$(btdocdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(btdocdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(btdocdir)" && rm -f $$files
+install-dist_csfDATA: $(dist_csf_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(csfdir)" || $(MKDIR_P) "$(DESTDIR)$(csfdir)"
+	@list='$(dist_csf_DATA)'; test -n "$(csfdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(csfdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(csfdir)" || exit $$?; \
+	done
+
+uninstall-dist_csfDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_csf_DATA)'; test -n "$(csfdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(csfdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(csfdir)" && rm -f $$files
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -571,9 +661,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile $(PROGRAMS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(btdocdir)" "$(DESTDIR)$(csfdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -624,7 +714,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-dist_btdocDATA install-dist_csfDATA
 
 install-dvi: install-dvi-am
 
@@ -672,7 +762,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am: uninstall-binPROGRAMS uninstall-dist_btdocDATA \
+	uninstall-dist_csfDATA
 
 .MAKE: install-am install-strip
 
@@ -683,14 +774,16 @@ uninstall-am: uninstall-binPROGRAMS
 	distclean-generic distclean-libtool distclean-tags \
 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
 	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-data install-data-am install-dist_btdocDATA \
+	install-dist_csfDATA install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-dist_btdocDATA uninstall-dist_csfDATA
 
 
 @KPATHSEA_RULE@

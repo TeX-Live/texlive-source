@@ -334,7 +334,8 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = . doc man
 EXTRA_DIST = BUGS HIER PROJECTS README.CONFIGURE putenv.c strcasecmp.c \
-	strtol.c strstr.c mktex.cnf Makefile.in.orig common.ac.orig
+	strtol.c strstr.c mktex.cnf Makefile.in.orig common.ac.orig \
+	withenable.ac
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
 lib_LTLIBRARIES = libkpathsea.la
 libkpathsea_la_CPPFLAGS = -DMAKE_KPSE_DLL

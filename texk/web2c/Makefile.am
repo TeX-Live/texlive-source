@@ -173,5 +173,5 @@ EXTRA_DIST += fmtutil.in
 
 ## Eventually delete these files
 ##
-EXTRA_DIST += Makefile.in.orig configure.in.orig
+EXTRA_DIST += Makefile.in.orig configure.in.orig metapost.mk
 
