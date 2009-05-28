@@ -140,8 +140,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.05b';
-$version_details = "$My_name, John Collins, 11 April 2009";
+$version_num = '4.07';
+$version_details = "$My_name, John Collins, 27 May 2009";
 
 
 use Config;
@@ -210,6 +210,18 @@ else {
 ##
 ##   Modification log for 24 Sep 2008 onwards in detail
 ##
+##     27 May 2009, John Collins  V. 4.07
+##     23 May 2009, John Collins  Try to work rationally when run of
+##                                    (pdf)latex does not produce
+##                                    output.  
+##                                Diagonostic when latex makes pdf or
+##                                    pdflatex makes dvi.
+##     28 Apr 2009, John Collins  Deal with case that file is written
+##                                    during run, but is not in database 
+##                                    before run.
+##     17 Apr 2009, John Collins  V. 4.06
+##     14 Apr 2009, John Collins  In parse_logB, clean up a bit more
+##                                    aggressively non-existent source files
 ##     11 Apr 2009, John Collins  Capture ctrl/C and ctrl/break during wait 
 ##                                   loop in preview_continuous.  Then 
 ##                                   control stays within latexmk on break
@@ -1648,10 +1660,11 @@ foreach $filename ( @file_list )
     if ( $cleanup_mode > 0 ) {
         # Use parse_logB to get names of generated files.
         # It returns its results in the following variables:
-        local %dependents = ();   # Maps files to status
+        local %dependents = ();    # Maps files to status
         local @bbl_files = ();
-        local %idx_files = ();    # Maps idx_file to (ind_file, base)
-        local %generated_log = ();    # Lists generated files
+        local %idx_files = ();     # Maps idx_file to (ind_file, base)
+        local %generated_log = (); # Lists generated files
+        local $primary_out = '';   # Actual output file (dvi or pdf)
         print "$My_name: Examining log file for generated files...\n";
         &parse_logB;
 
@@ -1798,7 +1811,7 @@ continue {
         if ( $failure_msg ) {
             #Remove trailing space
             $failure_msg =~ s/\s*$//;
-            warn "$My_name: Did not finish processing file: $failure_msg\n";
+            warn "$My_name: Did not finish processing file:\n   $failure_msg\n";
             $failure = 1;
         }
         $failure_count ++;
@@ -2404,9 +2417,7 @@ CHANGE:
   WAIT: while (1) {
            sleep($sleep_time);
 	   if ($have_break) { last WAIT; }
-           &rdb_clear_change_record;
-           rdb_recurseA( [@targets], \&rdb_flag_changes_here );
-           if ( &rdb_need_run ) { 
+           if ( rdb_have_changes(@targets) ) { 
   	       if (!$silent) {
                    warn "$My_name: Need to remake files.\n";
  	           &rdb_diagnose_changes( '  ' );
@@ -2424,7 +2435,7 @@ CHANGE:
      } # end WAIT:
      &default_break;
      if ($have_break) { 
-          print "$Latexmk: User typed ctrl/C or ctrl/break.  I'll stop.\n";
+          print "$My_name: User typed ctrl/C or ctrl/break.  I'll stop.\n";
           exit;
      }
      $waiting = 0; if ($diagnostics) { warn "NOT       WAITING\n"; }
@@ -2788,6 +2799,8 @@ sub parse_logB {
 #            There's no need to do a search.
 #      4 = definitive, which in this subroutine is only
 #          done for default dependents
+#      5 = Had a missing file line.  Now the file exists.
+#      6 = File was written during run.  (Overrides 5)
 # Treat the following specially, since they have special rules
 #   @bbl_files to list of .bbl files.
 #   %idx_files to map from .idx files to .ind files.
@@ -2814,6 +2827,9 @@ sub parse_logB {
     @bbl_files = ();
     %idx_files = ();    # Maps idx_file to (ind_file, base)
     %generated_log = ();
+    # $primary_out is actual output file (dvi or pdf)
+    # It is initialized before the call to this routine, to ensure
+    # a sensible default in case of misparsing
 
     $reference_changed = 0;
     $bad_reference = 0;
@@ -2891,8 +2907,15 @@ LINE:
 	    # Font info line
 	    next LINE;
 	}
-	if ( /^Output written on / ) {
-	    # Latex message
+	if (/^No pages of output\./) {
+            $primary_out = ''; 
+	    warn "$My_name: Log file says no output from latex\n";
+	    next LINE;
+	}
+	if ( /^Output written on\s+(.*)\s+\(\d+\s+page/ ) {
+            $primary_out = $1;
+	    warn "$My_name: Log file says output to '$1'\n"
+	       unless $silent;
 	    next LINE;
 	}
 	if ( /^Overfull / 
@@ -2988,11 +3011,6 @@ LINE:
 	    next LINE;
 	}
 	if (/^\! LaTeX Error: / ) {
-	    next LINE;
-	}
-	if (/^No pages of output\./) {
-	    warn "$My_name: Log file says no output from latex\n"
-	       unless $silent;
 	    next LINE;
 	}
    INCLUDE_CANDIDATE:
@@ -3129,7 +3147,15 @@ CANDIDATE:
     foreach my $candidate (keys %dependents) {
         my $code = $dependents{$candidate};
         if ( -e $candidate ) {
-	    $dependents{$candidate} = 4;
+            if ( exists $generated_log{$candidate} ){
+	        $dependents{$candidate} = 6;
+	    }
+            elsif ($code == 0) {
+	        $dependents{$candidate} = 5;
+	    }
+	    else {
+		$dependents{$candidate} = 4;
+	    }
 	}
 	elsif ($code == 1) {
             # Graphics file that is supposed to have been read.
@@ -3153,8 +3179,20 @@ CANDIDATE:
             #    which should include pathname if valid input file.
             # Name does not have pathname-characteristic character (hence
             #    $code==2.
-            # Candidate file does not exist with given name
+            # We get here if candidate file does not exist with given name
             # Almost surely result of a misparsed line in log file.
+	    delete $dependents{$candidate};
+            push @misparse, $candidate;
+	}
+        elsif ($code == 3) {
+            # Candidate is from '(...' construct in log file, for input file
+            #    which should include pathname if valid input file.
+            # Name does have pathname-characteristic character (hence
+            #    $code==3.
+            # But we get here only if candidate file does not exist with 
+            # given name.  
+            # Almost surely result of a misparsed line in log file.
+            # But with lower probability than $code == 2
 	    delete $dependents{$candidate};
             push @misparse, $candidate;
 	}
@@ -3187,7 +3225,11 @@ CANDIDATE:
               "$exist exist, $not_found were not found,\n",
 	      "   and $missing appear not to exist.\n";
         print "Dependents:\n";
-        foreach (@dependents) { print "   $_\n"; }
+        foreach (@dependents) { 
+            print "   '$_' "; 
+            if ( $dependents{$_} == 6 ) { print " written by (pdf)latex";}
+	    print "\n";
+        }
         if ($not_found > 0) {
 	    print "Not found:\n";
 	    foreach (@not_found) { print "   $_\n"; }
@@ -3206,13 +3248,7 @@ CANDIDATE:
             print "Apparent input files apparently from misunderstood lines in .log file:\n";
             foreach ( @misparse ) { print "   $_\n"; }
         }
-        print "Log file shows the following generated files: ";
-        foreach (keys %generated_log) {
-	    print "'$_' ";
-        }
-        print "\n";
     }
-
     return 1;
 } #END parse_logB
 
@@ -3683,11 +3719,35 @@ sub rdb_set_from_logB {
     local @bbl_files = ();
     local %idx_files = ();     # Maps idx_file to (ind_file, base)
     local %generated_log = (); # Lists generated files found in log file
+    local $primary_out = $$Pdest;  # output file (dvi or pdf)
 
     # The following are also returned, but are global, to be used by caller
     # $reference_changed, $bad_reference $bad_citation
 
     &parse_logB;
+
+    # Handle result on output file:
+    #   1.  Non-existent output file, which is because of no content.
+    #         This could either be because the source file has genuinely
+    #         no content, or because of a missing input file.  Since a
+    #         missing input file might be correctable by a run of some
+    #         other program whose running is provoked AFTER a run of
+    #         (pdf)latex, we'll set a diagnostic and leave it to the
+    #         rdb_makeB to handle after all circular dependencies are
+    #         resolved. 
+    #   2.  The output file might be of a different kind than expected
+    #         (i.e., dvi instead of pdf, or vv).  This could
+    #         legitimately occur when the source file (or an invoked
+    #         package or class) sets \pdfoutput. 
+    $missing_dvi_pdf = ''; 
+    if ($primary_out eq '')  {
+        warn "$My_name: For rule '$rule', no output was made\n";
+        $missing_dvi_pdf = $$Pdest;
+    }
+    elsif ($primary_out ne $$Pdest) {
+        warn "$My_name: ===For rule '$rule', actual output '$primary_out'\n",
+             "       ======appears not to match expected output '$$Pdest'\n";
+    }
 
   IDX_FILE:
     foreach my $idx_file ( keys %idx_files ) {
@@ -3742,7 +3802,25 @@ NEW_SOURCE:
     foreach my $new_source (keys %dependents) {
         print "  ===Source file for rule '$rule': '$new_source'\n"
 	    if ($diagnostics);
-        rdb_ensure_file( $rule, $new_source );
+	if ( ($dependents{$new_source} == 5) 
+             || ($dependents{$new_source} == 6) ) {
+            # (a) File was detected in "No file..." line in log file. 
+            #     Typically file was searched for early in run of 
+            #     latex/pdflatex, was not found, and then was written 
+            #     later in run.
+            # or (b) File was written during run. 
+            # In both cases, if file doesn't already exist in database, we 
+            #    don't know its previous status.  Therefore we tell 
+            #    rdb_ensure_file that if it needs to add the file to its 
+            #    database, then the previous version of the file should be 
+            #    treated as non-existent, to ensure another run is forced.
+            rdb_ensure_file( $rule, $new_source, undef, 1 );
+	}
+	else {
+            # But we don't need this precaution for ordinary user files (or 
+            #    for files that are generated outside of latex/pdflatex). 
+            rdb_ensure_file( $rule, $new_source );
+	}
     }
 
     my @more_sources = &rdb_set_dependentsA( $rule );
@@ -4250,6 +4328,7 @@ sub rdb_makeB {
 
     local %pass = ();
     local $failure = 0;        # General accumulated error flag
+    local $missing_dvi_pdf = ''; # Did primary run fail to make its output file? 
     local $runs = 0;
     local $too_many_runs = 0;
     local %rules_applied = ();
@@ -4273,7 +4352,6 @@ sub rdb_makeB {
                 print "MakeB: doing pre_primary and primary...\n";
             }
             rdb_for_some( [@pre_primary, $primary], \&rdb_makeB1 );
-
             if ( ($runs > 0) && ! $too_many_runs ) {
                 $retry_msg = 0;
                 if ( $failure && $newrule_nofile ) { 
@@ -4293,6 +4371,12 @@ sub rdb_makeB {
                     print "But in fact no new files made\n";
 		}
 	    }
+            if ( $missing_dvi_pdf ) { 
+               # No output from primary, after completing circular dependence
+               warn "Failure to make '$missing_dvi_pdf'\n";
+               $failure = 1; 
+               last PASS;
+            }    
             if ($failure && !$force_mode ) { last PASS; }
 	    if ($diagnostics) {
   	        print "MakeB: doing post_primary...\n";
@@ -4350,14 +4434,45 @@ sub rdb_makeB1 {
     # up-to-date. 
     if ($diagnostics) { print "  MakeB1 $rule\n"; }
     if ($failure & ! $force_mode) {return;}
+    if ( ! defined $pass{$rule} ) {$pass{$rule} = 0; } 
     &rdb_clear_change_record;
     if ( ($$Prun_time == 0) && exists($possible_primaries{$rule}) ) {
         push @rules_never_run, $rule;
         $$Pout_of_date = 1;
     }
     else {
-        &rdb_flag_changes_here;
+        if ( $$Pdest && (! -e $$Pdest) ) {
+	    # With a non-existent desintation, if we haven't made any passes
+            #   through a rule, rerunning the rule is good, because the file
+            #   may fail to exist because of being deleted by the user (for ex.)
+            #   rather than because of a failure on a previous run. 
+            # (We could do better with a flag in fdb file.)
+	    # But after the first pass, the situation is different.  
+	    #   For a primary rule (pdf)latex, the lack of a destination file 
+	    #      could result from there being zero content due to a missing
+	    #      essential input file.  The input file could be generated 
+	    #      by a program to be run later (e.g., a cusdep or bibtex), 
+	    #      so we should wait until all passes are completed before 
+            #      deciding a non-existent destination file is an error.
+	    #   For a custom dependency, the rule may be obsolete, and
+	    #      if the source file does not exist also, we should simply
+	    #      not run the rule, but not set an error condition.
+	    #      Any error will arise at the (pdf)latex level due to a 
+	    #      missing source file at that level.
+	    if ( ( $$Pcmd_type eq 'cusdep') && $$Psource && (! -e $$Psource) ) {
+		# No action
+	    }
+	    elsif ( $pass{$rule}==0) {
+		push @no_dest, $$Pdest;
+		$$Pout_of_date = 1;
+	    }
+	    if ( $$Pcmd_type eq 'primary' ) {
+		$missing_dvi_pdf = $$Pdest;
+	    }
+	}
     }
+
+    &rdb_flag_changes_here;
 
     if (!$$Pout_of_date) {
 #??	if ( ($$Pcmd_type eq 'primary') && (! $silent) ) {
@@ -4368,7 +4483,7 @@ sub rdb_makeB1 {
     if ($diagnostics) { print "     remake\n"; }
     if (!$silent) { 
         print "$My_name: applying rule '$rule'...\n"; 
-        &rdb_diagnose_changes( "Rule '$rule': ");
+        &rdb_diagnose_changes( "Rule '$rule': " );
     }
     $rules_applied{$rule} = 1;
     $runs++;
@@ -4403,12 +4518,10 @@ sub rdb_makeB1 {
     }
     elsif ( $$Pdest && ( !-e $$Pdest ) && (! $failure) ){
         # If there is a destination to make, but for some reason
-        #    it did not get made, then make sure a failure gets reported.
-        # But if the failure has already been reported, there's no need
-        #    to report here, since that would give a generic error
-        #    message instead of a specific one.
-
-## ??? 1 Sep. 2008, for cusdep no-file-exists issue
+        #    it did not get made, and no other error was reported, 
+        #    then a priori there appears to be an error condition:
+        #    the run failed.   But there are two important cases in
+        #    which this is a wrong diagnosis.
         if ( ( $$Pcmd_type eq 'cusdep') && $$Psource && (! -e $$Psource) ) {
             # However, if the rule is a custom dependency, this is not by
             #  itself an error, if also the source file does not exist.  In 
@@ -4421,12 +4534,21 @@ sub rdb_makeB1 {
             # So in this case, do NOT report an error          
             $$Pout_of_date = 0;
 	}
+        elsif ($$Pcmd_type eq 'primary' ) { 
+            # For a primary rule, i.e., (pdf)latex, not to produce the 
+            #    expected output file may not be an error condition.  
+            # Diagnostics were handled in parsing the log file.
+            # Special action in main loop inrdb_makeB1
+            $missing_dvi_pdf = $$Pdest;
+        }
 	else {
             $failure = 1;
-	    $failure_msg = "'$rule' did not make '$$Pdest'";
 	}
     }
-    if ($return != 0) {$failure = 1;}
+    if ($return != 0) {
+        $failure = 1; 
+        $failure_msg = "Run of rule '$rule' gave a non-zero error code";
+    }
 }  #END rdb_makeB1
 
 #************************************************************
@@ -4677,6 +4799,7 @@ sub rdb_primary_run {
     my $return = 0;
 
     my $return_latex = &rdb_run1;
+    if (-e $$Pdest) { $missing_dvi_pdf = '';}
 
     ######### Analyze results of run:
     if ( ! -e "$root_filename.log" ) {
@@ -4705,6 +4828,9 @@ sub rdb_primary_run {
     my $submake_return = &rdb_submakeB;
     &rdb_clear_change_record;
     &rdb_flag_changes_here;
+    if ($$Pout_of_date && !$silent) { 
+        &rdb_diagnose_changes( "Rule '$rule': " );
+    }
     $updated = 1;    # Flag that some dependent file has been remade
     # Fix the state of the files as of now: this will solve the
     # problem of latex and pdflatex interfering with each other,
@@ -4744,7 +4870,7 @@ sub rdb_clear_change_record {
     # Initialize diagnostics for reasons for running rule.
     @changed = ();
     @disappeared = ();
-    @no_dest = ();
+    @no_dest = ();          # We are not now using this
     @rules_never_run = ();
     @rules_to_apply = ();   # This is used in recursive application
                             # of rdb_flag_changes_here, to list
@@ -4759,24 +4885,6 @@ sub rdb_flag_changes_here {
     local $dest_mtime = 0;
     $dest_mtime = get_mtime($$Pdest) if ($$Pdest);
     rdb_do_files( \&rdb_file_change1);
-    if ( $$Pdest && (! -e $$Pdest) ) {
-## ??? 1 Sep. 2008, for cusdep no-file-exists issue
-        if ( ( $$Pcmd_type eq 'cusdep') && $$Psource && (! -e $$Psource) ) {
-            # However, if the rule is a custom dependency, this is not by
-            #  itself an error, if also the source file does not exist.  In 
-            #  that case, we may have the situation that (1) the dest file is no
-            #  longer needed by the tex file, and (2) therefore the user
-            #  has deleted the source and dest files.  After the next
-            #  latex run and the consequent analysis of the log file, the
-            #  cusdep rule will no longer be needed, and will be removed.
-
-            # So in this case, do NOT report an error          
-	}
-	else {
-            $$Pout_of_date = 1;
-            push @no_dest, $$Pdest;
-	}
-    }
     if ($$Pout_of_date) {
 	push @rules_to_apply, $rule;
     }
@@ -4834,9 +4942,11 @@ sub rdb_file_change1 {
 
 #************************************************************
 
-sub rdb_need_run {
+sub rdb_have_changes {
+    &rdb_clear_change_record;
+    rdb_recurseA( [@_], \&rdb_flag_changes_here );
     return ($#changed >= 0) || ($#no_dest >= 0) || ($#rules_to_apply >= 0);
-} #END rdb_need_run
+} #END rdb_have_changes
 
 #************************************************************
 
@@ -5208,23 +5318,35 @@ sub rdb_create_rule {
 #************************************************************
 
 sub rdb_ensure_file {
-    # rdb_ensure_file( rule, file[, fromrule] )
+    # rdb_ensure_file( rule, file[, fromrule[, set_not_exists]] )
     # Ensures the source file item exists in the given rule.
-    # Initialize to current file state if the item is created.
     # Then if the fromrule is specified, set it for the file item.
+    # If the item is created, then:
+    #    (a) by default initialize it to current file state.
+    #    (b) but if the fourth argument, set_not_exists, is true, 
+    #        initialize the item as if the file does not exist.
+    #        This case is typically used when the log file for a run
+    #        of latex/pdflatex claims that the file was non-existent
+    #        at the beginning of a run. 
 #============ rule and file data set here ======================================
     my $rule = shift;
-    local ( $new_file, $new_from_rule ) = @_;
+    local ( $new_file, $new_from_rule, $set_not_exists ) = @_;
     if ( ! rdb_rule_exists( $rule ) ) {
 	die_trace( "$My_name: BUG in rdb_ensure_file: non-existent rule '$rule'" );
     }
     if ( ! defined $new_file ) {
 	die_trace( "$My_name: BUG in rdb_ensure_file: undefined file for '$rule'" );
     }
+    if ( ! defined $set_not_exists ) { $set_not_exists = 0; }
     rdb_one_rule( $rule, 
                   sub{
                       if (! exists ${$PHsource}{$new_file} ) {
-                          ${$PHsource}{$new_file} = [fdb_get($new_file), '', 0];
+  		          if ( $set_not_exists ) {
+                              ${$PHsource}{$new_file} = [0, -1, 0, '', 0];
+		          }
+		          else {
+                              ${$PHsource}{$new_file} = [fdb_get($new_file), '', 0];
+               	          }
 		      }
 		  }
     );
@@ -6273,7 +6395,6 @@ sub finish_dir_stack {
 
 sub end_wait {
     #  Handler for break: Set global variable $have_break to 1.
-    $signal = shift;
     # Some systems (e.g., MSWin reset) appear to reset the handler.
     # So I'll re-enable it
     &catch_break;
