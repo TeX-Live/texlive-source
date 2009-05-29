@@ -81,7 +81,7 @@ Donald E. Knuth.
 The errors of @TeX{}.
 @cite{Software---Practice and Experience}, 19(7):607--681, July
   1989.
-This is an updated version of iteKnuth:1988:ET.
+This is an updated version of Knuth:1988:ET.
 
 @item [Knu90]
 Donald Knuth.

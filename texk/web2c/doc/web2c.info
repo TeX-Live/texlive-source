@@ -1049,8 +1049,9 @@ suffice.)
 
 `-mktex=FILETYPE'
 `-no-mktex=FILETYPE'
-     Turn on or off the `mktex' script associated with FILETYPE.  The
-     only values that make sense for FILETYPE are `tex' and `tfm'.
+     Turn on or off the `mktex' script associated with FILETYPE.  For
+     TeX proper, FILETYPE can only be `tex' and `tfm', but for pdfTeX
+     and luaTeX, it can also be `pk'.
 
 `-mltex'
      If we are `INITEX' (*note Initial and virgin::), enable MLTeX
@@ -3703,7 +3704,7 @@ Appendix B References
 
  21. [Knu89] Donald E. Knuth.  The errors of TeX.  `Software--Practice
      and Experience', 19(7):607-681, July   1989.  This is an updated
-     version of iteKnuth:1988:ET.
+     version of Knuth:1988:ET.
 
  22. [Knu90] Donald Knuth.  Virtual Fonts: More Fun for Grand Wizards.
      `TUGboat', 11(1):13-23, April 1990.
@@ -3795,9 +3796,9 @@ Index
 * -charcode-format=TYPE:                 tftopl invocation.   (line  28)
 * -D compiler options:                   Compile-time options.
                                                               (line   6)
-* -disable-write18:                      tex invocation.      (line 135)
+* -disable-write18:                      tex invocation.      (line 136)
 * -dpi=REAL:                             dvitype invocation.  (line  24)
-* -enable-write18:                       tex invocation.      (line 134)
+* -enable-write18:                       tex invocation.      (line 135)
 * -enc:                                  tex invocation.      (line  95)
 * -file-line-error:                      Common options.      (line  25)
 * -file-line-error-style:                Common options.      (line  26)
@@ -3829,15 +3830,15 @@ Index
 * -mixedcase:                            tangle invocation.   (line  35)
 * -mktex=FILETYPE <1>:                   mf invocation.       (line  87)
 * -mktex=FILETYPE:                       tex invocation.      (line 111)
-* -mltex:                                tex invocation.      (line 115)
+* -mltex:                                tex invocation.      (line 116)
 * -mnemonics:                            gftype invocation.   (line  29)
 * -no-file-line-error:                   Common options.      (line  26)
 * -no-mktex=FILETYPE <1>:                mf invocation.       (line  87)
 * -no-mktex=FILETYPE:                    tex invocation.      (line 111)
 * -no-parse-first-line:                  Common options.      (line  78)
-* -no-shell-escape:                      tex invocation.      (line 128)
+* -no-shell-escape:                      tex invocation.      (line 129)
 * -oem:                                  Common options.      (line 108)
-* -output-comment=STRING:                tex invocation.      (line 120)
+* -output-comment=STRING:                tex invocation.      (line 121)
 * -output-directory <1>:                 Output file location.
                                                               (line  15)
 * -output-directory:                     Common options.      (line  67)
@@ -3850,8 +3851,8 @@ Index
                                                               (line  18)
 * -progname=STRING:                      Common options.      (line  83)
 * -recorder:                             Common options.      (line  90)
-* -shell-escape:                         tex invocation.      (line 127)
-* -shell-restricted:                     tex invocation.      (line 129)
+* -shell-escape:                         tex invocation.      (line 128)
+* -shell-restricted:                     tex invocation.      (line 130)
 * -show-opcodes:                         dvitype invocation.  (line  56)
 * -strict:                               tangle invocation.   (line  46)
 * -style=MFTFILE:                        mft invocation.      (line  68)
@@ -4083,7 +4084,7 @@ Index
 * DrawPath ditroff command:              dmp invocation.      (line  15)
 * dump file:                             Common options.      (line  34)
 * dumping memory:                        Memory dumps.        (line   6)
-* DVI comment, specifying:               tex invocation.      (line 120)
+* DVI comment, specifying:               tex invocation.      (line 121)
 * DVI files, converting to MPX:          dvitomp invocation.  (line   6)
 * DVI files, explained:                  Font file formats.   (line  30)
 * DVI format definition:                 DVI utilities.       (line  14)
@@ -4180,7 +4181,7 @@ Index
 * Free Software Foundation documentation system: Formats.     (line  47)
 * freedom of Web2c:                      Introduction.        (line  23)
 * ftp.math.utah.edu:                     bibtex invocation.   (line  54)
-* generating source specials:            tex invocation.      (line 141)
+* generating source specials:            tex invocation.      (line 142)
 * geometric designs:                     Metafont.            (line   6)
 * geometric font scaling:                Font file formats.   (line  22)
 * geometry for Metafont:                 Online Metafont graphics.
@@ -4380,7 +4381,7 @@ Index
 * mktexmf, disabling:                    mf invocation.       (line  24)
 * mktextfM, disabling:                   tex invocation.      (line  44)
 * mltex:                                 MLTeX.               (line   6)
-* MLTeX, enabling:                       tex invocation.      (line 115)
+* MLTeX, enabling:                       tex invocation.      (line 116)
 * mode needed to run Metafont:           mf invocation.       (line  48)
 * mode_def:                              Modes.               (line  15)
 * mode_setup:                            Modes.               (line  15)
@@ -4442,7 +4443,7 @@ Index
 * output file location:                  Output file location.
                                                               (line   6)
 * output files, written by TeX programs: tex invocation.      (line  51)
-* output_comment for DVI files:          tex invocation.      (line 120)
+* output_comment for DVI files:          tex invocation.      (line 121)
 * overflow label offset:                 gftodvi invocation.  (line  59)
 * packet length:                         pktype invocation.   (line  50)
 * page, starting <1>:                    dvitype invocation.  (line  50)
@@ -4514,7 +4515,7 @@ Index
 * production use:                        Initial and virgin.  (line  20)
 * program name, determines memory dump:  Determining the memory dump to use.
                                                               (line  32)
-* program names, special <1>:            tex invocation.      (line 115)
+* program names, special <1>:            tex invocation.      (line 116)
 * program names, special:                Common options.      (line  45)
 * prologues:                             mpost invocation.    (line 117)
 * prologues and Troff in MetaPost:       makempx invocation.  (line  39)
@@ -4542,7 +4543,7 @@ Index
                                                               (line  39)
 * Regis graphics support:                Online Metafont graphics.
                                                               (line  40)
-* regression testing:                    tex invocation.      (line 120)
+* regression testing:                    tex invocation.      (line 121)
 * repeated rows:                         pktype invocation.   (line  76)
 * representation of strings:             pooltype invocation. (line  30)
 * restricted shell escapes:              Shell escapes.       (line   6)
@@ -4790,56 +4791,56 @@ Node: Editor invocation33264
 Node: \input filenames33994
 Node: TeX36987
 Node: tex invocation38133
-Node: Initial TeX45465
-Node: Formats46954
-Node: Languages and hyphenation49893
-Node: MLTeX50323
-Node: \charsubdef51818
-Node: \tracingcharsubdef54144
-Node: TCX files54719
-Node: patgen invocation60143
-Node: Shell escapes60860
-Node: IPC and TeX64424
-Node: TeX extensions64994
-Node: Metafont65973
-Node: mf invocation67261
-Node: Initial Metafont71144
-Node: Modes72897
-Node: Online Metafont graphics75152
-Node: gftodvi invocation78425
-Node: mft invocation81247
-Node: MetaPost85302
-Node: mpost invocation86323
-Node: Initial MetaPost91508
-Node: makempx invocation93319
-Node: dvitomp invocation97324
-Node: dmp invocation98095
-Node: mpto invocation102116
-Node: newer invocation103098
-Node: BibTeX104035
-Node: bibtex invocation104396
-Node: Basic BibTeX style files106721
-Node: WEB108063
-Node: tangle invocation109346
-Node: weave invocation111469
-Node: pooltype invocation112877
-Node: DVI utilities114007
-Node: dvicopy invocation114951
-Node: dvitype invocation116249
-Node: dvitype output example118604
-Node: Font utilities121655
-Node: Font file formats122835
-Node: gftopk invocation126134
-Node: pktogf invocation127338
-Node: pktype invocation128517
-Node: gftype invocation131352
-Node: tftopl invocation135868
-Node: pltotf invocation140502
-Node: vftovp invocation141567
-Node: vptovf invocation143851
-Node: Font utilities available elsewhere144905
-Node: Legalisms147313
-Node: References149484
-Node: Index153869
+Node: Initial TeX45506
+Node: Formats46995
+Node: Languages and hyphenation49934
+Node: MLTeX50364
+Node: \charsubdef51859
+Node: \tracingcharsubdef54185
+Node: TCX files54760
+Node: patgen invocation60184
+Node: Shell escapes60901
+Node: IPC and TeX64465
+Node: TeX extensions65035
+Node: Metafont66014
+Node: mf invocation67302
+Node: Initial Metafont71185
+Node: Modes72938
+Node: Online Metafont graphics75193
+Node: gftodvi invocation78466
+Node: mft invocation81288
+Node: MetaPost85343
+Node: mpost invocation86364
+Node: Initial MetaPost91549
+Node: makempx invocation93360
+Node: dvitomp invocation97365
+Node: dmp invocation98136
+Node: mpto invocation102157
+Node: newer invocation103139
+Node: BibTeX104076
+Node: bibtex invocation104437
+Node: Basic BibTeX style files106762
+Node: WEB108104
+Node: tangle invocation109387
+Node: weave invocation111510
+Node: pooltype invocation112918
+Node: DVI utilities114048
+Node: dvicopy invocation114992
+Node: dvitype invocation116290
+Node: dvitype output example118645
+Node: Font utilities121696
+Node: Font file formats122876
+Node: gftopk invocation126175
+Node: pktogf invocation127379
+Node: pktype invocation128558
+Node: gftype invocation131393
+Node: tftopl invocation135909
+Node: pltotf invocation140543
+Node: vftovp invocation141608
+Node: vptovf invocation143892
+Node: Font utilities available elsewhere144946
+Node: Legalisms147354
+Node: References149525
+Node: Index153907
 
 End Tag Table
