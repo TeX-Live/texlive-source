@@ -203,7 +203,3 @@ EXTRA_DIST += \
 	synctexdir/synctex-xe-rec.ch2 \
 	synctexdir/synctex-xe-rec.ch3
 
-## Eventually delete these files
-##
-EXTRA_DIST += synctexdir/synctex.mk
-

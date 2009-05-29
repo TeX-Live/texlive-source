@@ -206,7 +206,7 @@ $(libxetex_a_OBJECTS): xetexd.h
 ## the Objective C++ file xetexdir/XeTeXFontMgr_Mac.mm.
 ## Since this file is to be compiled with '$(CXX) -ObjC++' we provide a
 ## C++ wrapper xetexdir/XeTeXFontMgr_Mac.cpp including the Objective C++ file.
-## Since Automake does not allow to specify CXXFLAGS for inividual objects,
+## Since Automake does not allow to specify CXXFLAGS for individual objects,
 ## we use an additional library libxetexmm.a.
 EXTRA_LIBRARIES += libxetexmm.a
 
@@ -221,19 +221,13 @@ libxetexmm_a_SOURCES = \
 ## included by xetexdir/XeTeXFontMgr_Mac.cpp
 EXTRA_DIST += xetexdir/XeTeXFontMgr_Mac.mm
 
-EXTRA_DIST += \
-	xetexdir/ChangeLog
+EXTRA_DIST += xetexdir/ChangeLog
 
 ## Not used
 ##
-EXTRA_DIST += \
-	xetexdir/LICENSE.txt
+EXTRA_DIST += xetexdir/LICENSE.txt
 
 ## Eventually delete these files
 ##
-EXTRA_DIST += \
-	xetexdir/acx_pthread.m4 \
-	xetexdir/tests.ac \
-	xetexdir/withenable.ac \
-	xetexdir/xetex.mk
+EXTRA_DIST += xetexdir/xetex.mk
 

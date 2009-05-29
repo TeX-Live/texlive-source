@@ -75,3 +75,8 @@ EXTRA_DIST += $(luatex_sources) \
 
 DISTCLEANFILES += $(nodist_luatex_SOURCES) luatex-web2c \
 	luatex.p luatex.pool luatex-tangle luatexdir/luatex.version
+
+## Eventually delete these files
+##
+EXTRA_DIST += luatexdir/luatex.mk
+

@@ -1085,25 +1085,25 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/pdftex.h \
 	pdftexdir/pdftexextra.in pdftexdir/ChangeLog pdftexdir/NEWS \
 	pdftexdir/README pdftexdir/change-files.txt \
-	pdftexdir/pdftex.mak pdftexdir/Makefile.in.orig \
-	pdftexdir/pdftex.mk pdftexdir/pdftexlib.mk \
+	pdftexdir/pdftex.mak pdftexdir/pdftex.mk \
 	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
 	$(luatex_sources) luatexdir/luatex.defines \
 	luatexdir/luatexextra.in luatexdir/ptexlib.h \
-	$(luatangle_sources) luatexdir/luatangle.test \
-	luatexdir/lua51/Makefile luatexdir/lua51/liolib.c \
-	luatexdir/lua51/lua.c luatexdir/lua51/luac.c \
-	luatexdir/lua51/print.c luatexdir/zziplib/COPYING.LIB \
-	luatexdir/zziplib/ChangeLog luatexdir/zziplib/README \
-	luatexdir/zziplib/TODO luatexdir/zziplib/zziplib.spec \
-	luatexdir/zziplib/Makefile.am luatexdir/zziplib/Makefile.in \
-	luatexdir/zziplib/Makefile.mk luatexdir/zziplib/SDL \
-	luatexdir/zziplib/aclocal.m4 luatexdir/zziplib/bins \
-	luatexdir/zziplib/config.h.in luatexdir/zziplib/configure \
-	luatexdir/zziplib/configure.ac luatexdir/zziplib/docs \
-	luatexdir/zziplib/m4 luatexdir/zziplib/msvc6 \
-	luatexdir/zziplib/msvc7 luatexdir/zziplib/msvc8 \
-	luatexdir/zziplib/test luatexdir/zziplib/zzip/Makefile \
+	luatexdir/luatex.mk $(luatangle_sources) \
+	luatexdir/luatangle.test luatexdir/lua51/Makefile \
+	luatexdir/lua51/liolib.c luatexdir/lua51/lua.c \
+	luatexdir/lua51/luac.c luatexdir/lua51/print.c \
+	luatexdir/zziplib/COPYING.LIB luatexdir/zziplib/ChangeLog \
+	luatexdir/zziplib/README luatexdir/zziplib/TODO \
+	luatexdir/zziplib/zziplib.spec luatexdir/zziplib/Makefile.am \
+	luatexdir/zziplib/Makefile.in luatexdir/zziplib/Makefile.mk \
+	luatexdir/zziplib/SDL luatexdir/zziplib/aclocal.m4 \
+	luatexdir/zziplib/bins luatexdir/zziplib/config.h.in \
+	luatexdir/zziplib/configure luatexdir/zziplib/configure.ac \
+	luatexdir/zziplib/docs luatexdir/zziplib/m4 \
+	luatexdir/zziplib/msvc6 luatexdir/zziplib/msvc7 \
+	luatexdir/zziplib/msvc8 luatexdir/zziplib/test \
+	luatexdir/zziplib/zzip/Makefile \
 	luatexdir/zziplib/zzip/Makefile.am \
 	luatexdir/zziplib/zzip/Makefile.in \
 	luatexdir/zziplib/zzip/_msvc.h \
@@ -1207,14 +1207,11 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	luatexdir/luafontloader/fontforge/plugins/Makefile.in \
 	luatexdir/ChangeLog luatexdir/NEWS luatexdir/README \
 	luatexdir/change-files.txt luatexdir/font/subfont.txt \
-	luatexdir/Makefile.in luatexdir/luatex.mk \
-	luatexdir/luatexlib.mk $(xetex_web_srcs) \
-	xetexdir/xetex.defines xetexdir/xetexextra.in \
-	xetexdir/pool2c.pl xetexdir/unicode-char-prep.pl \
-	xetexdir/appleGlyphNames.c xetexdir/XeTeXFontMgr_Mac.mm \
-	xetexdir/ChangeLog xetexdir/LICENSE.txt \
-	xetexdir/acx_pthread.m4 xetexdir/tests.ac \
-	xetexdir/withenable.ac xetexdir/xetex.mk omegaware/ChangeLog \
+	$(xetex_web_srcs) xetexdir/xetex.defines \
+	xetexdir/xetexextra.in xetexdir/pool2c.pl \
+	xetexdir/unicode-char-prep.pl xetexdir/appleGlyphNames.c \
+	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/ChangeLog \
+	xetexdir/LICENSE.txt xetexdir/xetex.mk omegaware/ChangeLog \
 	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
 	$(opl2ofm_sources) $(otangle_sources) $(ovf2ovp_sources) \
 	$(ovp2ovf_sources) omegaware/otangle.test $(aleph_web_srcs) \
@@ -1234,8 +1231,8 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	synctexdir/synctex-e-rec.ch0 synctexdir/synctex-e-rec.ch1 \
 	synctexdir/synctex-pdf-rec.ch2 synctexdir/synctex-xe-mem.ch2 \
 	synctexdir/synctex-xe-rec.ch2 synctexdir/synctex-xe-rec.ch3 \
-	synctexdir/synctex.mk libmd5/md5.test fmtutil.in \
-	Makefile.in.orig configure.in.orig metapost.mk
+	libmd5/md5.test fmtutil.in Makefile.in.orig configure.in.orig \
+	metapost.mk
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c stamp-tangle tangleboot.c tangleboot.h ctangle.c \
 	cweb.c stamp-ctangle cftest.p $(web_programs:=.c) \

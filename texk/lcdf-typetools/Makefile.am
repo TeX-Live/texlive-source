@@ -96,6 +96,5 @@ EXTRA_DIST += ac/withenable.ac
 
 ## Eventually delete these files
 ##
-
 EXTRA_DIST += Makefile.am.orig configure.ac.orig
 

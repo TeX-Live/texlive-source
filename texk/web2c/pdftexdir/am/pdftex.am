@@ -88,7 +88,5 @@ EXTRA_DIST += pdftexdir/pdftex.mak
 ## Eventually delete these files
 ##
 EXTRA_DIST += \
-	pdftexdir/Makefile.in.orig \
-	pdftexdir/pdftex.mk \
-	pdftexdir/pdftexlib.mk
+	pdftexdir/pdftex.mk
 

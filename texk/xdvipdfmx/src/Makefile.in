@@ -268,7 +268,7 @@ xdvipdfmx_DEPENDENCIES = $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) $(LIBPNG_DEPEND)
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) \
 	$(am__append_2)
 @build_MacOsX_TRUE@AM_LDFLAGS = -framework ApplicationServices
-EXTRA_DIST = mk_agl_standard_c.pl Makefile.am.orig
+EXTRA_DIST = mk_agl_standard_c.pl
 all: all-am
 
 .SUFFIXES:

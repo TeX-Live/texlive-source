@@ -1,3 +1,0 @@
-AC_ARG_WITH(fontconfig,
-[  --with-fontconfig=DIR   Specify dir prefix where fontconfig is installed
-                           (e.g., /usr/X11R6).])

@@ -55,7 +55,3 @@ endif !build_MacOsX
 
 EXTRA_DIST = mk_agl_standard_c.pl
 
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.am.orig
-

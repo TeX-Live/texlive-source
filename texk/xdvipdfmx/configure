@@ -12931,9 +12931,6 @@ fi
 ac_config_headers="$ac_config_headers config.h"
 
 
-# TEXMF='${datadir}/texmf'
-# AC_SUBST(TEXMF)
-
 { $as_echo "$as_me:$LINENO: checking for ANSI C header files" >&5
 $as_echo_n "checking for ANSI C header files... " >&6; }
 if test "${ac_cv_header_stdc+set}" = set; then

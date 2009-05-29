@@ -17,9 +17,6 @@ KPSE_COMMON([xdvipdfmx])
 
 AC_CONFIG_HEADERS([config.h])
 
-# TEXMF='${datadir}/texmf'
-# AC_SUBST(TEXMF)
-
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdint.h inttypes.h sys/types.h])
