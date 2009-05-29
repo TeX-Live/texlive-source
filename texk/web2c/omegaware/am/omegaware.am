@@ -3,10 +3,15 @@
 ## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-omegaware_programs = odvicopy odvitype otangle
+omegaware_tools = odvicopy odvitype otangle
+omegaware_font_tools = ofm2opl opl2ofm ovf2ovp ovp2ovf
+omegaware_programs = $(omegaware_tools) $(omegaware_font_tools)
 
 if OTANGLE
-bin_PROGRAMS += $(omegaware_programs)
+bin_PROGRAMS += $(omegaware_tools)
+if !OMFONTS
+bin_PROGRAMS += $(omegaware_font_tools)
+endif !OMFONTS
 endif OTANGLE
 EXTRA_PROGRAMS += $(omegaware_programs)
 
@@ -38,6 +43,28 @@ odvitype_sources = omegaware/odvitype.web omegaware/odvitype.ch
 odvitype.p: tangle$(EXEEXT) $(odvitype_sources)
 	$(ow_tangle) odvitype odvitype
 
+nodist_ofm2opl_SOURCES = ofm2opl.c ofm2opl.h
+ofm2opl.c ofm2opl.h: ofm2opl-web2c
+ofm2opl-web2c: $(web2c_depend) ofm2opl.p
+	$(web2c) ofm2opl
+	echo timestamp >$@
+	touch ofm2opl.c ofm2opl.h
+EXTRA_DIST += $(ofm2opl_sources)
+ofm2opl_sources = omegaware/ofm2opl.web omegaware/ofm2opl.ch
+ofm2opl.p: tangle$(EXEEXT) $(ofm2opl_sources)
+	$(ow_tangle) ofm2opl ofm2opl
+
+nodist_opl2ofm_SOURCES = opl2ofm.c opl2ofm.h
+opl2ofm.c opl2ofm.h: opl2ofm-web2c
+opl2ofm-web2c: $(web2c_depend) opl2ofm.p
+	$(web2c) opl2ofm
+	echo timestamp >$@
+	touch opl2ofm.c opl2ofm.h
+EXTRA_DIST += $(opl2ofm_sources)
+opl2ofm_sources = omegaware/opl2ofm.web omegaware/opl2ofm.ch
+opl2ofm.p: tangle$(EXEEXT) $(opl2ofm_sources)
+	$(ow_tangle) opl2ofm opl2ofm
+
 nodist_otangle_SOURCES = otangle.c otangle.h
 otangle.c otangle.h: otangle-web2c
 otangle-web2c: $(web2c_depend) otangle.p
@@ -48,6 +75,28 @@ EXTRA_DIST += $(otangle_sources)
 otangle_sources = omegaware/otangle.web omegaware/otangle.ch
 otangle.p: tangle$(EXEEXT) $(otangle_sources)
 	$(ow_tangle) otangle otangle
+
+nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
+ovf2ovp.c ovf2ovp.h: ovf2ovp-web2c
+ovf2ovp-web2c: $(web2c_depend) ovf2ovp.p
+	$(web2c) ovf2ovp
+	echo timestamp >$@
+	touch ovf2ovp.c ovf2ovp.h
+EXTRA_DIST += $(ovf2ovp_sources)
+ovf2ovp_sources = omegaware/ovf2ovp.web omegaware/ovf2ovp.ch
+ovf2ovp.p: tangle$(EXEEXT) $(ovf2ovp_sources)
+	$(ow_tangle) ovf2ovp ovf2ovp
+
+nodist_ovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
+ovp2ovf.c ovp2ovf.h: ovp2ovf-web2c
+ovp2ovf-web2c: $(web2c_depend) ovp2ovf.p
+	$(web2c) ovp2ovf
+	echo timestamp >$@
+	touch ovp2ovf.c ovp2ovf.h
+EXTRA_DIST += $(ovp2ovf_sources)
+ovp2ovf_sources = omegaware/ovp2ovf.web omegaware/ovp2ovf.ch
+ovp2ovf.p: tangle$(EXEEXT) $(ovp2ovf_sources)
+	$(ow_tangle) ovp2ovf ovp2ovf
 
 ## Tests
 ##

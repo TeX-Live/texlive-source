@@ -36,11 +36,12 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = otp2ocp$(EXEEXT) outocp$(EXEEXT)
+@OTANGLE_TRUE@bin_PROGRAMS = $(am__EXEEXT_1)
+EXTRA_PROGRAMS = $(am__EXEEXT_1)
 subdir = otps
-DIST_COMMON = $(dist_bin_SCRIPTS) $(noinst_HEADERS) \
-	$(srcdir)/Makefile.am $(srcdir)/Makefile.in ChangeLog \
-	otp-lexer.c otp-parser.c otp-parser.h
+DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in ChangeLog otp-lexer.c otp-parser.c \
+	otp-parser.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-asm.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
@@ -73,6 +74,7 @@ mkinstalldirs = $(SHELL) $(top_srcdir)/../../build-aux/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/c-auto.h $(top_builddir)/ff-config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+am__EXEEXT_1 = otp2ocp$(EXEEXT) outocp$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_otp2ocp_OBJECTS = otp-parser.$(OBJEXT) otp-lexer.$(OBJEXT) \
@@ -105,7 +107,7 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-SCRIPTS = $(dist_bin_SCRIPTS)
+SCRIPTS = $(bin_SCRIPTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -313,8 +315,11 @@ x_tool_libs = @x_tool_libs@
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
 AM_YFLAGS = -d -v
 proglib = ../lib/lib.a
+otps_programs = otp2ocp outocp
+otps_scripts = mkocp mkofm
 noinst_HEADERS = otp.h routines.h yystype.h
-dist_bin_SCRIPTS = mkocp mkofm
+@OTANGLE_TRUE@bin_SCRIPTS = $(otps_scripts)
+EXTRA_DIST = $(otps_scripts) bugs.txt
 otp2ocp_SOURCES = \
 	otp-parser.y \
 	otp-lexer.l \
@@ -327,7 +332,6 @@ outocp_SOURCES = \
 	outocp.c
 
 outocp_LDADD = $(proglib) $(KPATHSEA_LIBS)
-EXTRA_DIST = bugs.txt Makefile.in.orig
 all: all-am
 
 .SUFFIXES:
@@ -416,10 +420,10 @@ otp2ocp$(EXEEXT): $(otp2ocp_OBJECTS) $(otp2ocp_DEPENDENCIES)
 outocp$(EXEEXT): $(outocp_OBJECTS) $(outocp_DEPENDENCIES) 
 	@rm -f outocp$(EXEEXT)
 	$(LINK) $(outocp_OBJECTS) $(outocp_LDADD) $(LIBS)
-install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
+install-binSCRIPTS: $(bin_SCRIPTS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
@@ -442,9 +446,9 @@ install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
 	     } \
 	; done
 
-uninstall-dist_binSCRIPTS:
+uninstall-binSCRIPTS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	@list='$(bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
 	files=`for p in $$list; do echo "$$p"; done | \
 	       sed -e 's,.*/,,;$(transform)'`; \
 	test -n "$$list" || exit 0; \
@@ -642,7 +646,7 @@ install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-dist_binSCRIPTS
+install-exec-am: install-binPROGRAMS install-binSCRIPTS
 
 install-html: install-html-am
 
@@ -682,7 +686,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS
+uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS
 
 .MAKE: install-am install-strip
 
@@ -690,16 +694,16 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS
 	clean-generic clean-libtool ctags distclean distclean-compile \
 	distclean-generic distclean-libtool distclean-tags distdir dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am \
-	install-dist_binSCRIPTS install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-binPROGRAMS install-binSCRIPTS install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-dist_binSCRIPTS
+	uninstall-binSCRIPTS
 
 
 $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c

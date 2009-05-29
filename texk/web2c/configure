@@ -860,6 +860,8 @@ MFN_FALSE
 MFN_TRUE
 MF_FALSE
 MF_TRUE
+OMFONTS_FALSE
+OMFONTS_TRUE
 OTANGLE_FALSE
 OTANGLE_TRUE
 XETEX_SYNCTEX_FALSE
@@ -1035,6 +1037,7 @@ with_editor
 enable_auto_core
 enable_dump_share
 enable_ipc
+enable_omfonts
 enable_tex
 enable_etex
 enable_aleph
@@ -1739,6 +1742,8 @@ Optional Features:
   --enable-auto-core      cause TeX&MF to dump core, given a certain filename
   --disable-dump-share    make fmt/base/mem files architecture-dependent
   --disable-ipc           disable TeX's --ipc option, i.e., pipe to a program
+  --disable-omfonts       do not compile and install omfonts (use Web2C
+                          versions)
   --disable-tex           do not compile and install TeX
   --enable-etex           compile and install e-TeX
   --disable-aleph         do not compile and install Aleph
@@ -4559,13 +4564,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4562: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4567: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4565: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4570: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4568: output\"" >&5)
+  (eval echo "\"\$as_me:4573: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5771,7 +5776,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5774 "configure"' > conftest.$ac_ext
+  echo '#line 5779 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7717,11 +7722,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7720: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7725: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7724: \$? = $ac_status" >&5
+   echo "$as_me:7729: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8056,11 +8061,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8059: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8064: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8063: \$? = $ac_status" >&5
+   echo "$as_me:8068: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8161,11 +8166,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8164: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8169: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8168: \$? = $ac_status" >&5
+   echo "$as_me:8173: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8216,11 +8221,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8219: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8224: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8223: \$? = $ac_status" >&5
+   echo "$as_me:8228: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11016,7 +11021,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11019 "configure"
+#line 11024 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11112,7 +11117,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11115 "configure"
+#line 11120 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16166,11 +16171,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16169: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16174: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16173: \$? = $ac_status" >&5
+   echo "$as_me:16178: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16265,11 +16270,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16268: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16273: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16272: \$? = $ac_status" >&5
+   echo "$as_me:16277: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16317,11 +16322,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16320: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16325: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16324: \$? = $ac_status" >&5
+   echo "$as_me:16329: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17586,6 +17591,10 @@ fi
 if test "${enable_ipc+set}" = set; then
   enableval=$enable_ipc;
 fi
+# Check whether --enable-omfonts was given.
+if test "${enable_omfonts+set}" = set; then
+  enableval=$enable_omfonts;
+fi
 # Check whether --enable-tex was given.
 if test "${enable_tex+set}" = set; then
   enableval=$enable_tex;
@@ -18845,6 +18854,15 @@ else
   OTANGLE_TRUE='#'
   OTANGLE_FALSE=
 fi
+
+ if test "x$enable_omfonts" != xno; then
+  OMFONTS_TRUE=
+  OMFONTS_FALSE='#'
+else
+  OMFONTS_TRUE='#'
+  OMFONTS_FALSE=
+fi
+
 
  if test "x$enable_mf" != xno; then
   MF_TRUE=
@@ -24955,6 +24973,13 @@ if test -z "${OTANGLE_TRUE}" && test -z "${OTANGLE_FALSE}"; then
   { { $as_echo "$as_me:$LINENO: error: conditional \"OTANGLE\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 $as_echo "$as_me: error: conditional \"OTANGLE\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${OMFONTS_TRUE}" && test -z "${OMFONTS_FALSE}"; then
+  { { $as_echo "$as_me:$LINENO: error: conditional \"OMFONTS\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+$as_echo "$as_me: error: conditional \"OMFONTS\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi

@@ -1,3 +1,7 @@
+## Makefile.am for the TeX Live subdirectory texk/dvipdfmx/src/
+##
+## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CPPFLAGS =

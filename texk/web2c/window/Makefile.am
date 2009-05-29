@@ -1,4 +1,4 @@
-## Makefile.am for the TeX Live subdirectory texk/web2c/doc/
+## Makefile.am for the TeX Live subdirectory texk/web2c/window/
 ##
 ## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.

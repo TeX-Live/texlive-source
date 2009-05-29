@@ -1,3 +1,8 @@
+2009-05-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, ac/web2c.ac (enable_omfonts): allow to choose
+	between Web2C versions of ofm2opl&Co and symlinks to omfonts.
+
 2009-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* help.h (DVITOMPHELP): remove help for obsolete Web2C version.

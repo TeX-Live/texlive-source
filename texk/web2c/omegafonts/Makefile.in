@@ -34,7 +34,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = omfonts$(EXEEXT)
+@OTANGLE_TRUE@bin_PROGRAMS = omfonts$(EXEEXT)
+EXTRA_PROGRAMS = omfonts$(EXEEXT)
 subdir = omegafonts
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in ChangeLog \
 	pl-lexer.c pl-parser.c pl-parser.h
@@ -589,6 +590,7 @@ maintainer-clean-generic:
 	-rm -f pl-lexer.c
 	-rm -f pl-parser.c
 	-rm -f pl-parser.h
+@OTANGLE_FALSE@install-exec-hook:
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
@@ -687,17 +689,16 @@ $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 
 @KPATHSEA_RULE@
 
-install-exec-hook:
-	cd $(DESTDIR)$(bindir) && \
-	  for f in $(linked_programs); do \
-	    rm -f $$f$(EXEEXT) && \
-	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
-	  done
-
-unistall-hook:
-	for f in $(linked_programs); do \
-	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
-	done
+@OTANGLE_TRUE@install-exec-hook:
+@OTANGLE_TRUE@	cd $(DESTDIR)$(bindir) && \
+@OTANGLE_TRUE@	  for f in $(linked_programs); do \
+@OTANGLE_TRUE@	    rm -f $$f$(EXEEXT) && \
+@OTANGLE_TRUE@	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
+@OTANGLE_TRUE@	  done
+@OTANGLE_TRUE@unistall-hook:
+@OTANGLE_TRUE@	for f in $(linked_programs); do \
+@OTANGLE_TRUE@	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
+@OTANGLE_TRUE@	done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

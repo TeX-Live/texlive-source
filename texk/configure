@@ -701,6 +701,7 @@ with_editor
 enable_auto_core
 enable_dump_share
 enable_ipc
+enable_omfonts
 enable_tex
 enable_etex
 enable_aleph
@@ -1484,6 +1485,8 @@ Optional Features:
   --disable-dump-share      make fmt/base/mem files architecture-dependent
   --disable-ipc             disable TeX's --ipc option, i.e., pipe to a
                             program
+  --disable-omfonts         do not compile and install omfonts (use Web2C
+                            versions)
   --disable-tex             do not compile and install TeX
   --enable-etex             compile and install e-TeX
   --disable-aleph           do not compile and install Aleph
@@ -2431,6 +2434,10 @@ fi
 # Check whether --enable-ipc was given.
 if test "${enable_ipc+set}" = set; then
   enableval=$enable_ipc;
+fi
+# Check whether --enable-omfonts was given.
+if test "${enable_omfonts+set}" = set; then
+  enableval=$enable_omfonts;
 fi
 # Check whether --enable-tex was given.
 if test "${enable_tex+set}" = set; then

@@ -19,11 +19,18 @@ $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
-bin_PROGRAMS = otp2ocp outocp
+otps_programs = otp2ocp outocp
+otps_scripts = mkocp mkofm
 
 noinst_HEADERS = otp.h routines.h yystype.h
 
-dist_bin_SCRIPTS = mkocp mkofm
+if OTANGLE
+bin_PROGRAMS = $(otps_programs)
+bin_SCRIPTS = $(otps_scripts)
+endif OTANGLE
+EXTRA_PROGRAMS = $(otps_programs)
+
+EXTRA_DIST = $(otps_scripts)
 
 otp2ocp_SOURCES = \
 	otp-parser.y \
@@ -42,9 +49,5 @@ outocp_LDADD = $(proglib) $(KPATHSEA_LIBS)
 
 ## Not used
 ##
-EXTRA_DIST = bugs.txt
+EXTRA_DIST += bugs.txt
 
-## Eventually delete these files
-##
-EXTRA_DIST += \
-	Makefile.in.orig

@@ -19,7 +19,10 @@ $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
+if OTANGLE
 bin_PROGRAMS = omfonts
+endif OTANGLE
+EXTRA_PROGRAMS = omfonts
 
 omfonts_SOURCES = \
 	char_routines.c \
@@ -62,15 +65,16 @@ DISTCLEANFILES = pl-parser.output
 
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 
+if OTANGLE
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
 	  for f in $(linked_programs); do \
 	    rm -f $$f$(EXEEXT) && \
 	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
 	  done
-
 unistall-hook:
 	for f in $(linked_programs); do \
 	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 	done
+endif OTANGLE
 

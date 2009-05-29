@@ -1,4 +1,4 @@
-## Makefile.am for the TeX Live subdirectory texk/dtl/
+## Makefile.am for the TeX Live subdirectory texk/xdv2pdf/
 ##
 ## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.

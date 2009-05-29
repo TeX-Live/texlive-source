@@ -1,3 +1,7 @@
+2009-05-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* {ofm2opl,opl2ofm,ovf2ovp,ovp2ovf}.{ch,web}: revived.
+
 2009-05-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* {ofm2opl,opl2ofm,ovf2ovp,ovp2ovf}.{ch,web} (removed):
