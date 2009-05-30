@@ -392,8 +392,7 @@ EXTRA_DIST = $(dist_prologues) texc.script dvips.test pfbincl.test \
 	contrib/configs contrib/crop.lpr contrib/latex209 \
 	contrib/volker contrib/whichinpath cyrfonts.map eufonts.map \
 	flib.c hps lafonts.map makefont.c mvs pc psfonts.map reencode \
-	tex vmcms vms Makefile.in.orig configure.in.orig depend.make \
-	depend.mk
+	tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro dvipstst.ps missfont.log mtest.ps \
 	pfbincl.ps
 TESTS = dvips.test pfbincl.test

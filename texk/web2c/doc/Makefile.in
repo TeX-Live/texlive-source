@@ -284,7 +284,6 @@ x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
 info_TEXINFOS = web2c.texi
 web2c_TEXINFOS = install.texi ref.txi
-EXTRA_DIST = ref.tex texinfo.bst Makefile.in.orig
 all: all-am
 
 .SUFFIXES:

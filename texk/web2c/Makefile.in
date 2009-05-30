@@ -86,7 +86,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/mkinstalldirs ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap AUTHORS ChangeLog INSTALL NEWS
+	../../build-aux/ylwrap AUTHORS ChangeLog NEWS
 @WEB_TRUE@am__append_1 = $(web_programs)
 @WEB_TRUE@am__append_2 = $(web_tests)
 @TEX_TRUE@am__append_3 = tex

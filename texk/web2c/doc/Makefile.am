@@ -6,7 +6,3 @@
 info_TEXINFOS = web2c.texi
 web2c_TEXINFOS = install.texi ref.txi
 
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig
-

@@ -4,5 +4,6 @@
 # To use it, say
 #       texc.script tex.lpro texc.lpro
 #
-sed $1 -e '/begin code/,/end code/d' \
-       -e '/alternate code/,/end of code/s/^% //' >$2
+sed -e '/begin code/,/end code/d' \
+    -e '/alternate code/,/end of code/s/^% //' \
+    $1 >$2

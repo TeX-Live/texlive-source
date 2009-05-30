@@ -184,11 +184,3 @@ EXTRA_DIST += \
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-## Eventually delete these files
-##
-EXTRA_DIST += \
-	Makefile.in.orig \
-	configure.in.orig \
-	depend.make \
-	depend.mk
-
