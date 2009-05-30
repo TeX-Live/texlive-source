@@ -89,7 +89,7 @@ TEXMFHOME = ~/texmf
 %   TEXMFVAR = $TEXMFMAIN
 % For using a separate tree:
 %   TEXMFVAR = ~/.texmf-var  # teTeX 3.0 default
-TEXMFVAR = ~/.texlive2008/texmf-var
+TEXMFVAR = ~/.texlive2009/texmf-var
 
 % TEXMFCONFIG, where texconfig stores configuration data.
 % With teTeX-3.0 or later, this must be set.
@@ -99,7 +99,7 @@ TEXMFVAR = ~/.texlive2008/texmf-var
 %   TEXMFCONFIG = ~/.texmf-config  # teTeX 3.0 default
 % For using a separate tree:
 %   TEXMFCONFIG = $SELFAUTOPARENT/texmf-config
-TEXMFCONFIG = ~/.texlive2008/texmf-config
+TEXMFCONFIG = ~/.texlive2009/texmf-config
 
 % Now, list all the texmf trees. If you have multiple trees you can
 % use shell brace notation, like this:
@@ -278,8 +278,7 @@ MFBASES = .;$TEXMF/web2c{/$engine,}
 MPMEMS = .;$TEXMF/web2c{/$engine,}
 %
 % As of 2008, pool files don't exist any more (the strings are compiled
-% into the binaries), but just in case something expects to find these
-% settings:
+% into the binaries), but just in case something expects to find these:
 TEXPOOL = .;$TEXMF/web2c
 MFPOOL = ${TEXPOOL}
 MPPOOL = ${TEXPOOL}
