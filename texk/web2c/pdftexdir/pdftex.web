@@ -17811,7 +17811,7 @@ else begin
     cc := vf_byte;
     if not is_valid_char(cc) then
         bad_vf("invalid character code");
-    tfm_width := store_scaled_f(vf_read_signed(3), font_size[f]);
+    tfm_width := store_scaled_f(vf_read_unsigned(3), font_size[f]);
 end;
 if packet_length < 0 then
     bad_vf("negative packet length");
