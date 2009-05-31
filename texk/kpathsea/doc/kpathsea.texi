@@ -30,7 +30,7 @@ permission notice identical to this one.
 Permission is granted to copy and distribute translations of this manual
 into another language, under the above conditions for modified versions,
 except that this permission notice may be stated in a translation
-approved by the TeX Users Group.
+approved by the @TeX{} Users Group.
 @end copying
 
 @c Define new indices for commands, filenames, and options.
@@ -65,9 +65,9 @@ approved by the TeX Users Group.
 @title Kpathsea library
 @subtitle for version @value{version}
 @subtitle @value{month-year}
-@author Karl Berry (@email{kb@@mail.tug.org})
-@author Olaf Weber (@email{infovore@@xs4all.nl})
-@author Taco Hoekwater (@email{taco@@luatex.org})
+@author Karl Berry
+@author Olaf Weber
+@author Taco Hoekwater
 
 @page
 @vskip 0pt plus 1filll
@@ -143,8 +143,8 @@ We distribute the library under the GNU Library General Public License
 you must (offer to) distribute the source to the library, along with any
 changes you have made, and allow anyone to modify the library source and
 distribute their modifications.  It does not mean you have to distribute
-the source to your program, although we hope you will.  See the files
-@file{GPL} and @file{LGPL} for the text of the GNU licenses.
+the source to your program, although we hope you will.  See the
+accompanying files for the text of the GNU licenses.
 
 @cindex @TeX{} Users Group
 If you know enough about @TeX{} to be reading this manual, then you (or

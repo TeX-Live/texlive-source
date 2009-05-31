@@ -1,9 +1,12 @@
+2009-06-01  Karl Berry  <karl@tug.org>
+
+	* Update version numbers 5.0.0.
+
 2009-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* absolute.c, hash.c: Avoid C99isms (variable declaration not at
         the beginning of a block).
-
-	From  Vladimir Volovich <vvv@vsu.ru>
+	From Vladimir Volovich.
 
 2009-05-12  Karl Berry  <karl@tug.org>
 

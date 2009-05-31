@@ -1,4 +1,9 @@
 This file records noteworthy changes.
+5.0.0 (for TeX Collection 2009)
+* Make shared library version and general package version the same.
+* Make library re-entrant, thus unavoidable binary API changes.
+* Change build system to Automake.
+
 3.5.7 (for TeX Collection 2008, 8 July 2008)
 * kpsewhich has new options --all (to report all matches) and --subdir
   (to limit matches).

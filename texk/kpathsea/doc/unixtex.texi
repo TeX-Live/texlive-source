@@ -21,7 +21,7 @@ is @uref{ftp://ftp.tug.org/tex/unixtex.ftp}, last updated 26 December
 2003.  Also available as @uref{http://www.tug.org/unixtex.ftp}.  The
 IP address is currently @code{[130.225.2.178]}.  It is also in
 Kpathsea source distributions as @file{etc/unixtex.ftp} (although the
-network version is usually newer).  Mail @email{tex-k@@mail.tug.org}
+network version is usually newer).  Mail @email{tex-k@@tug.org}
 with comments or questions.
 
 Following are general instructions for Unix or other sites who wish to
@@ -208,14 +208,12 @@ minimal @TeX{} source distribution described in the previous section
 
 @item
 @cindex Linux, using Web2c
-Most Linux distributions include some @TeX{} package based on
-Web2c; see the Linux documentation file @samp{Distribution-HOWTO} for a
-comparison of Linux distributions, available (for example) via
-@uref{http://www.linux.org}.
+Most GNU/Linux distributions include some @TeX{} package based on
+@TeX{} Live.
 @end itemize
 
 If you know of additional @TeX{} distributions to add to this
-list, please inform @email{tex-k@@mail.tug.org}.
+list, please inform @email{tex-k@@tug.org}.
 
 @ignore
 

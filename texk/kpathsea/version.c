@@ -1,6 +1,6 @@
 /*  version.c: version number for libkpathsea.
 
-    Copyright 1993, 1996, 2008 Karl Berry.
+    Copyright 1993, 1996, 2008, 2009 Karl Berry.
     Copyright 1997, 1999, 2005 Olaf Weber.
   
    This library is free software; you can redistribute it and/or
@@ -21,13 +21,9 @@
 
 KPSEDLL char *kpathsea_version_string = (char *) KPSEVERSION;
 
-/* If you are redistributing a modified version of my original
-   distribution, please change this address.
-
-   Also change the address in makempx.in, mpto.c, and newer.c in
-   web2c/mpware/, and in dvilj/dvihp.
-
-   Thanks.  --kb@cs.umb.edu  */
+/* If you are redistributing a modified version of the original
+   distribution, please change this address here, among many other
+   places.  Thanks.  */
 
 KPSEDLL char *kpathsea_bug_address = (char *) 
-  "Email bug reports to tex-k@mail.tug.org.\n";
+  "Email bug reports to tex-k@tug.org.\n";
