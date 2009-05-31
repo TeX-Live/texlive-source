@@ -9,7 +9,7 @@
 
 #define CREATIONDATE
 #define BANNER \
-"This is dvips(k) 5.97 Copyright 2008 Radical Eye Software"
+"This is dvips(k) 5.98 Copyright 2009 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
 #ifdef KPATHSEA
 #include "config.h"

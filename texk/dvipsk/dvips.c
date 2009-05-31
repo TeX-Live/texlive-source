@@ -634,7 +634,7 @@ main P2C(int, argc, char **, argv)
         extern KPSEDLL char *kpathsea_version_string;
         puts (BANNER);
         puts (kpathsea_version_string);
-        puts ("Copyright (C) 2008 Radical Eye Software.\n\
+        puts ("Copyright 2009 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
