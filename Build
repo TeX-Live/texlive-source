@@ -69,20 +69,20 @@ cd $TL_WORKDIR || exit 1
 : ${TL_CONFIGURE=../configure}
 
 # banner for TeX et al.
-: ${TL_CONF_BANNER=--with-tex-banner="TeX Live 2009"}
-
-# default to static linking.
-: ${TL_CONF_SHARED=--disable-shared}
+: ${TL_CONF_BANNER=--with-tex-banner='"TeX Live 2009"'}
 
 # longinteger and off_t declarations are still inconsistent, do not
 # enable this unless you are testing.
 : ${TL_CONF_LARGEFILE=--disable-largefile}
 
-# allow override of xdvi toolkit, default to standard xaw.
-: ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
+# default to static linking.
+: ${TL_CONF_SHARED=--disable-shared}
 
 # default to building ICU without thread support, since xetex doesn't need it.
 : ${TL_CONF_THREADS=--disable-threads}
+
+# allow override of xdvi toolkit, default to standard xaw.
+: ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
 # allow adding arbitrary other configure args.
 : ${TL_CONFIGURE_ARGS=}
@@ -103,10 +103,11 @@ cd $TL_WORKDIR || exit 1
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \
         --datadir=$TL_INSTALL_DEST \
+        $TL_CONF_BANNER \
         $TL_CONF_SHARED \
         $TL_CONF_LARGEFILE \
-        $TL_CONF_XDVI_TOOLKIT \
         $TL_CONF_THREADS \
+        $TL_CONF_XDVI_TOOLKIT \
         $TL_CONFIGURE_ARGS \
         "$@" \
   && eval $TL_BUILD_ENV time $TL_MAKE $TL_MAKE_FLAGS $TL_TARGET
