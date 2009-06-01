@@ -40,7 +40,7 @@ world: all
 ## Serialize 'make all' and 'make install-strip'.
 	$(MAKE) $(AM_MAKEFLAGS) install-strip
 ##
-	echo "top-level make $@: running texlinks ..."
+	@echo "top-level make $@: running texlinks in texk/tetex..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 ##
 	@echo "make $@ done."

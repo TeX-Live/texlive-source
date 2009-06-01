@@ -1,3 +1,7 @@
+2009-06-01  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (world): don't echo the echo.
+
 2009-05-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (world): serialize to avoid parallel build problems.
