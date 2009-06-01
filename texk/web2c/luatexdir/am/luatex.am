@@ -58,7 +58,8 @@ luatexdir/luatexextra.h: luatexdir/luatexextra.in luatexdir/luatex.version
 	sed -e s/LUATEX-VERSION/`cat luatexdir/luatex.version`/ \
 	  $(srcdir)/luatexdir/luatexextra.in >$@
 
-# Double-colon rule since we do something similar in mplibdir (maybe others).
+# Double-colon rules since we do something similar in mplibdir (maybe others).
+if LUATEX
 install-exec-hook::
 	cd $(DESTDIR)$(bindir) && rm -f texlua$(EXEEXT) \
 	  && $(LN_S) luatex$(EXEEXT) texlua$(EXEEXT)
@@ -67,6 +68,7 @@ install-exec-hook::
 uninstall-hook::
 	rm -f $(DESTDIR)$(bindir)/texlua$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/texluac$(EXEEXT)
+endif LUATEX
 
 EXTRA_DIST += $(luatex_sources) \
 	luatexdir/luatex.defines \

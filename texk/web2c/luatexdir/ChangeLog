@@ -1,3 +1,8 @@
+2009-05-30  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* am/luatex.am (install-exec-hook, uninstall-hook):
+	avoid dangling symlinks.
+
 2009-05-25  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* am/luatex.am (uninstall-hook): new target to uninstall texlua[c]
