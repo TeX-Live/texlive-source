@@ -59,7 +59,7 @@ reset(vpl_file);
 reset (vpl_file, vpl_name);
 if verbose then begin
   print (banner);
-  print_ln (banner);
+  print_ln (version_string);
 end;
 @z
 

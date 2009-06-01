@@ -40,10 +40,11 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 #define PROG_MIN		0
 #define PROG_OFM2OPL	0
-#define PROG_OVF2OVP	1
-#define PROG_OPL2OFM	2
+#define PROG_OPL2OFM	1
+#define PROG_OVF2OVP	2
 #define PROG_OVP2OVF	3
-#define PROG_MAX		3
+#define PROG_OMFONTS	4
+#define PROG_NUM		5
 
 extern FILE *yyin;
 
@@ -74,10 +75,28 @@ unsigned length_ofm = 0;
 unsigned length_ovf = 0;
 
 const_string name_program;
-const_string *name_help;
-string name_msg;
 
-string name_empty = NULL;
+const_string OMFONTSHELP[] = {
+    "Usage: omfomts -ofm2opl [OPTION]... FILE...",
+    "       omfomts -opl2ofm [OPTION]... FILE...",
+    "       omfomts -ovf2ovp [OPTION]... FILE...",
+    "       omfomts -ovp2ovf [OPTION]... FILE...",
+    "",
+    "be ofm2opl, opl2ofm, ovf2ovp, or ovp2ovf",
+    NULL
+};
+
+static const_string names_program[PROG_NUM] =
+    { "ofm2opl", "opl2ofm", "ovf2ovp", "ovp2ovf", "omfonts" };
+static const_string *names_help[PROG_NUM] =
+    { OFM2OPLHELP, OPL2OFMHELP, OVF2OVPHELP, OVP2OVFHELP, OMFONTSHELP };
+static string names_msg[PROG_NUM] = {
+    "This is ofm2opl, Version 2.0",
+    "This is opl2ofm, Version 2.0",
+    "This is ovf2ovp, Version 2.0",
+    "This is ovp2ovf, Version 2.0",
+    "This is omfomts, Version 2.0"
+};
 
 int no_files=0;
 string *files[3] = {NULL, NULL, NULL};
@@ -89,6 +108,10 @@ static struct option long_options[] = {
     {"char-format", 1, 0, 0},
     {"num-format", 1, 0, 0},
     {"text-format", 1, 0, 0},
+    {"ofm2opl", 0, 0, 0},
+    {"opl2ofm", 0, 0, 0},
+    {"ovf2ovp", 0, 0, 0},
+    {"ovp2ovf", 0, 0, 0},
     {"help", 0, 0, 0},
     {"version", 0, 0, 0},
     {0, 0, 0, 0}
@@ -104,82 +127,43 @@ main (int argc, string *argv)
     if (!strcmp(name_program, "ofm2opl") ||
         !strcmp(name_program, "OFM2OPL.EXE")) {
         program = PROG_OFM2OPL;
-        name_help = OFM2OPLHELP;
-	name_program = "ofm2opl";
-        name_msg = "This is ofm2opl, Version 2.0";
-        no_files = 2;
-        files[0] = &name_ofm;
-        files[1] = &name_opl;
-        suffixes[0] = "ofm";
-        suffixes[1] = "opl";
-        full_suffixes[0] = ".ofm";
-        full_suffixes[1] = ".opl";
     } else if (!strcmp(name_program, "opl2ofm") ||
                !strcmp(name_program, "OPL2OFM.EXE")) {
         program = PROG_OPL2OFM;
-        name_help = OPL2OFMHELP;
-	name_program = "opl2ofm";
-        name_msg = "This is opl2ofm, Version 2.0";
-        no_files = 2;
-        files[0] = &name_opl;
-        files[1] = &name_ofm;
-        suffixes[0] = "opl";
-        suffixes[1] = "ofm";
-        full_suffixes[0] = ".opl";
-        full_suffixes[1] = ".ofm";
-    } else if (!strcmp(name_program, "ovp2ovf") ||
-               !strcmp(name_program, "OVP2OVF.EXE")) {
-        program = PROG_OVP2OVF;
-        name_help = OVP2OVFHELP;
-	name_program = "ovp2ovf";
-        name_msg = "This is ovp2ovf, Version 2.0";
-        no_files = 3;
-        files[0] = &name_ovp;
-        files[1] = &name_ovf;
-        files[2] = &name_ofm;
-        suffixes[0] = "ovp";
-        suffixes[1] = "ovf";
-        suffixes[2] = "ofm";
-        full_suffixes[0] = ".ovp";
-        full_suffixes[1] = ".ovf";
-        full_suffixes[2] = ".ofm";
     } else if (!strcmp(name_program, "ovf2ovp") ||
                !strcmp(name_program, "OVF2OVP.EXE")) {
         program = PROG_OVF2OVP;
-        name_help = OVF2OVPHELP;
-	name_program = "ovf2ovp";
-        name_msg = "This is ovf2ovp, Version 2.0";
-        no_files = 3;
-        files[0] = &name_ovf;
-        files[1] = &name_ofm;
-        files[2] = &name_ovp;
-        suffixes[0] = "ovf";
-        suffixes[1] = "ofm";
-        suffixes[2] = "ovp";
-        full_suffixes[0] = ".ovf";
-        full_suffixes[1] = ".ofm";
-        full_suffixes[2] = ".ovp";
+    } else if (!strcmp(name_program, "ovp2ovf") ||
+               !strcmp(name_program, "OVP2OVF.EXE")) {
+        program = PROG_OVP2OVF;
     } else {
-        fprintf(stderr , "Unrecognized program: %s\n", name_program);
-        fprintf(stderr ,
-        "This binary supports ofm2opl, opl2ofm, ovf2ovp, and ovp2ovf\n");
-        exit(1);
+        program = PROG_OMFONTS;
     }
-    kpse_set_program_name(name_program, NULL);
-    kpse_init_prog(uppercasify(name_program), 0, nil, nil);
 
     do {
         getopt_return_val =
         getopt_long_only(argc, argv, "", long_options, &option_index) ;
         if (getopt_return_val == -1) { ; }
-        else if ( getopt_return_val == 63 ) {
-            usage (name_program);
+        else if ( getopt_return_val == '?' ) {
+            usage (names_program[program]);
         } else if (!strcmp(long_options[option_index].name, "help")) {
-            usagehelp (name_help, NULL);
+            usagehelp (names_help[program], NULL);
         } else if (!strcmp(long_options[option_index ].name, "version")) {
-            printversionandexit(name_msg, nil,
+            printversionandexit(names_msg[program], nil,
                 "J. Plaice, Y. Haralambous, D.E. Knuth",
                 nil);
+        } else if (!strcmp(long_options[option_index ].name, "ofm2opl")) {
+            if (program == PROG_OMFONTS) program = PROG_OFM2OPL;
+            else usage (names_program[program]);
+        } else if (!strcmp(long_options[option_index ].name, "opl2ofm")) {
+            if (program == PROG_OMFONTS) program = PROG_OPL2OFM;
+            else usage (names_program[program]);
+        } else if (!strcmp(long_options[option_index ].name, "ovf2ovp")) {
+            if (program == PROG_OMFONTS) program = PROG_OVF2OVP;
+            else usage (names_program[program]);
+        } else if (!strcmp(long_options[option_index ].name, "ovp2ovf")) {
+            if (program == PROG_OMFONTS) program = PROG_OVP2OVF;
+            else usage (names_program[program]);
         } else if (!strcmp(long_options[option_index ].name, "char-format")) {
             if (!strcmp(optarg, "ascii")) char_format = CHAR_CODE_ASCII;
             else if (!strcmp(optarg, "num")) char_format = CHAR_CODE_NUM;
@@ -194,6 +178,66 @@ main (int argc, string *argv)
             else warning_s("Bad text code format (%s)", optarg);
         }
     } while (getopt_return_val != -1);
+
+    switch(program) {
+        case PROG_OFM2OPL: {
+            no_files = 2;
+            files[0] = &name_ofm;
+            files[1] = &name_opl;
+            suffixes[0] = "ofm";
+            suffixes[1] = "opl";
+            full_suffixes[0] = ".ofm";
+            full_suffixes[1] = ".opl";
+            break;
+        }
+        case PROG_OPL2OFM: {
+            no_files = 2;
+            files[0] = &name_opl;
+            files[1] = &name_ofm;
+            suffixes[0] = "opl";
+            suffixes[1] = "ofm";
+            full_suffixes[0] = ".opl";
+            full_suffixes[1] = ".ofm";
+            break;
+        }
+        case PROG_OVF2OVP: {
+            no_files = 3;
+            files[0] = &name_ovf;
+            files[1] = &name_ofm;
+            files[2] = &name_ovp;
+            suffixes[0] = "ovf";
+            suffixes[1] = "ofm";
+            suffixes[2] = "ovp";
+            full_suffixes[0] = ".ovf";
+            full_suffixes[1] = ".ofm";
+            full_suffixes[2] = ".ovp";
+            break;
+        }
+        case PROG_OVP2OVF: {
+            no_files = 3;
+            files[0] = &name_ovp;
+            files[1] = &name_ovf;
+            files[2] = &name_ofm;
+            suffixes[0] = "ovp";
+            suffixes[1] = "ovf";
+            suffixes[2] = "ofm";
+            full_suffixes[0] = ".ovp";
+            full_suffixes[1] = ".ovf";
+            full_suffixes[2] = ".ofm";
+            break;
+        }
+        default: {
+            fprintf(stderr , "Unrecognized program: %s\n", name_program);
+            fprintf(stderr ,
+            "This binary supports ofm2opl, opl2ofm, ovf2ovp, and ovp2ovf\n");
+            usage ("omfonts");
+        }
+    }
+
+    name_program = names_program[program];
+    kpse_set_program_name(name_program, NULL);
+    kpse_init_prog(uppercasify(name_program), 0, nil, nil);
+
     if (((argc-optind) > no_files) || ((argc-optind) < 1)) {
         fprintf(stderr , "%s: %s\n", name_program,
                 no_files == 2 ? "Need one or two file arguments."

@@ -1,3 +1,12 @@
+2009-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* omfonts.c: allow 'omfonts -ofm2opl' to be ofm2opl etc., used
+	to test uninstalled program.
+
+	* omfonts.test (new): Shell script to test ofm2opl etc.
+	* tests/* (new): test data.
+	* Makefile.am: add the new test.
+
 2009-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pl-lexer.l: Add #ifdef __MINGW32__ to source file.

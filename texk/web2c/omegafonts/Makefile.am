@@ -19,8 +19,11 @@ $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 
+bin_PROGRAMS =
 if OTANGLE
-bin_PROGRAMS = omfonts
+if OMFONTS
+bin_PROGRAMS += omfonts
+endif OMFONTS
 endif OTANGLE
 EXTRA_PROGRAMS = omfonts
 
@@ -66,6 +69,7 @@ DISTCLEANFILES = pl-parser.output
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 
 if OTANGLE
+if OMFONTS
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
 	  for f in $(linked_programs); do \
@@ -76,5 +80,25 @@ unistall-hook:
 	for f in $(linked_programs); do \
 	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 	done
+endif OMFONTS
 endif OTANGLE
+
+## Tests
+##
+EXTRA_DIST = omfonts.test
+
+## Test data
+##
+EXTRA_DIST += tests/Cherokee.pl tests/OCherokee.ovp
+
+if OTANGLE
+if OMFONTS
+TESTS = omfonts.test
+endif OMFONTS
+endif OTANGLE
+
+DISTCLEANFILES += tests/Cherokee.tfm tests/OCherokee.ofm \
+	tests/OCherokee.opl tests/OCherokee.ovf \
+	tests/xCherokee.pl tests/xOCherokee.ofm \
+	tests/xOCherokee.opl tests/xOCherokee.ovp
 

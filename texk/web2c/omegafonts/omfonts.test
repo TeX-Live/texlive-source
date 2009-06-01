@@ -1,0 +1,34 @@
+#! /bin/sh
+
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+../pltotf $srcdir/tests/Cherokee tests/Cherokee || exit 1
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  ../tftopl tests/Cherokee tests/xCherokee || exit 1
+
+diff $srcdir/tests/Cherokee.pl tests/xCherokee.pl || exit 1
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  OFMFONTS=tests \
+  ./omfonts -ovp2ovf -verbose $srcdir/tests/OCherokee tests/OCherokee tests/OCherokee || exit 1
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./omfonts -ofm2opl -verbose tests/OCherokee tests/OCherokee || exit 1
+
+./omfonts -opl2ofm -verbose tests/OCherokee tests/xOCherokee || exit 1
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./omfonts -ofm2opl -verbose tests/xOCherokee tests/xOCherokee || exit 1
+
+diff tests/OCherokee.opl tests/xOCherokee.opl || exit 1
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  OFMFONTS=.:./tests \
+  ./omfonts -ovf2ovp -verbose tests/OCherokee tests/OCherokee tests/xOCherokee || exit 1
+
+diff $srcdir/tests/OCherokee.ovp tests/xOCherokee.ovp || exit 1
+

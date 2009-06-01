@@ -207,6 +207,8 @@ DISTCLEANFILES += pooltype.tex
 ## Test data
 ##
 EXTRA_DIST += \
+	tests/Cherokee.pl \
+	tests/OCherokee.ovp \
 	tests/allbib.aux \
 	tests/allbib.tex \
 	tests/apalike.bst \
@@ -232,6 +234,7 @@ EXTRA_DIST += \
 	tests/just.texi \
 	tests/label.mp \
 	tests/label.mpx \
+	tests/level1.opl \
 	tests/logo8.tfm \
 	tests/longtfm.tex \
 	tests/magic.tex \

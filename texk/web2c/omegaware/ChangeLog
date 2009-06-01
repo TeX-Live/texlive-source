@@ -1,3 +1,11 @@
+2009-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* level1.test (new): Shell script to test ofm_level=1.
+	* omfonts.test (new): Shell script to test ofm2opl etc.
+	* am/omegaware.am: add the new test.
+
+	* ovp2ovf.ch: correctly print banner and version_string.
+
 2009-05-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* {ofm2opl,opl2ofm,ovf2ovp,ovp2ovf}.{ch,web}: revived.
