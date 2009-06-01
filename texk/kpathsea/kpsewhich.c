@@ -247,8 +247,9 @@ lookup (kpathsea kpse, string name)
           *loc = ':';
       }
     }
+    user_path = kpathsea_path_expand (kpse, user_path);
     if (show_all) {
-        ret_list = kpathsea_all_path_search (kpse, user_path, name);
+      ret_list = kpathsea_all_path_search (kpse, user_path, name);
     } else {
       ret = kpathsea_path_search (kpse, user_path, name, must_exist);
     }

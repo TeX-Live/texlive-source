@@ -1,9 +1,10 @@
 2009-06-01  Karl Berry  <karl@tug.org>
 
-	* Update version numbers 5.0.0.
+	* Update version numbers to 5.0.0.
 
 	* kpsewhich.c (lookup): translate ; to : in user_path,
-	for consistency.  Report from Tomek T.
+	for consistency.  Also do path expansions as promised in the
+	documentation.  Report from Tomek T.
 
 2009-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
