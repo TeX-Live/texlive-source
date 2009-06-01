@@ -1,3 +1,12 @@
+2009-06-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Update version number to 2009.
+
+	* configure.ac, ac/web2c.ac (--with-tex-banner):
+	allow to specify the string appended to banner lines instead of
+	the current default 'Web2C 2009'.
+	This string must contain the current Web2C version number.
+
 2009-05-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, ac/web2c.ac (enable_omfonts): allow to choose

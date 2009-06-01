@@ -19,7 +19,7 @@ dnl get these features if you are willing to hack the sources. If not,
 dnl it'll take a good argument to convince me to invest the time to make
 dnl them configurable.
 dnl
-m4_define([web2_version], [7.5.7])
+m4_define([web2_version], [2009])
 AC_INIT([Web2C], web2_version(), [tex-k@tug.org])
 AC_PREREQ([2.63])
 dnl 
@@ -32,7 +32,6 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 WEB2CVERSION=web2_version()
 AC_SUBST([WEB2CVERSION])
-AC_DEFINE_UNQUOTED([WEB2CVERSION], [" (Web2C $WEB2CVERSION)"])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([web2c programs])
@@ -43,6 +42,12 @@ KPSE_CXX_HACK
 dnl Include additional code for web2c.
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
+
+AS_CASE([$with_tex_banner],
+        [''|yes|no], [with_tex_banner="Web2C $WEB2CVERSION"],
+        [AS_IF([test -z `echo "$with_tex_banner" | sed -n "/ $WEB2CVERSION/p"`],
+               [AC_MSG_ERROR([Bad `--with-tex-banner=$with_tex_banner' version string (must contain ` $WEB2CVERSION')])])])
+AC_DEFINE_UNQUOTED([WEB2CVERSION], [" ($with_tex_banner)"])
 
 dnl For tests
 AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])
