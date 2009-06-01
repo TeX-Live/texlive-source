@@ -239,6 +239,14 @@ lookup (kpathsea kpse, string name)
   string *ret_list = NULL;
   
   if (user_path) {
+    /* Translate ; to : if that's our ENV_SEP.  See cnf.c.  */
+    if (IS_ENV_SEP (':')) {
+      string loc;
+      for (loc = user_path; *loc; loc++) {
+        if (*loc == ';')
+          *loc = ':';
+      }
+    }
     if (show_all) {
         ret_list = kpathsea_all_path_search (kpse, user_path, name);
     } else {

@@ -2,6 +2,9 @@
 
 	* Update version numbers 5.0.0.
 
+	* kpsewhich.c (lookup): translate ; to : in user_path,
+	for consistency.  Report from Tomek T.
+
 2009-05-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* absolute.c, hash.c: Avoid C99isms (variable declaration not at
