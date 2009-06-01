@@ -40,12 +40,10 @@ printversionandexit P4C(const_string, banner,
   puts (kpathsea_version_string);
 
   if (copyright_holder) {
-    printf ("Copyright 2008 %s.\n", copyright_holder);
+    printf ("Copyright 2009 %s.\n", copyright_holder);
     if (!author)
       author = copyright_holder;
   }
-
-  puts ("Kpathsea is copyright 2008 Karl Berry and Olaf Weber.");
 
   puts ("There is NO warranty.  Redistribution of this software is");
   fputs ("covered by the terms of ", stdout);
@@ -54,7 +52,6 @@ printversionandexit P4C(const_string, banner,
   puts ("For more information about these matters, see the file");
   printf ("named COPYING and the %s source.\n", prog_name);
   printf ("Primary author of %s: %s.\n", prog_name, author);
-  puts ("Kpathsea written by Karl Berry, Olaf Weber, and others.\n");
 
   if (extra_info) {
     puts (extra_info);

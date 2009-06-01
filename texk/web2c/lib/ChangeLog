@@ -1,3 +1,8 @@
+2009-06-01  Karl Berry  <karl@tug.org>
+
+	* printversion.c (printversionandexit): it's 2009.
+	Also, remove special references to kpathsea author(s) etc.
+
 2009-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: remove all references to (Web2C version of) MP.
