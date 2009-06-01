@@ -11,8 +11,8 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 \fi
 @end tex
 
-@set version 7.5.7
-@set month-year March 2009
+@set version 2009
+@set month-year June 2009
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -67,7 +67,7 @@ This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
 
 Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007 Karl Berry & Olaf Weber.
+2004, 2005, 2007, 2008, 2009 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -96,8 +96,9 @@ except that this permission notice may be stated in a translation
 @title Web2c
 @subtitle for version @value{version}
 @subtitle @value{month-year}
-@author Karl Berry (@email{karl@@tug.org})
-@author Olaf Weber (@email{infovore@@xs4all.nl})
+@author Karl Berry
+@author Olaf Weber
+@author @url{http://tug.org/web2c}
 
 @page
 @vskip 0pt plus 1filll
@@ -206,7 +207,7 @@ other people have contributed; their names are listed in the
 @cindex Morris, Bob
 @cindex Stallman, Richard
 Other acknowledgements: The University of Massachusetts at Boston
-(particularly Rick Martin and Bob Morris) has provided computers and ftp
+(particularly Rick Martin and Bob Morris) provided computers and ftp
 access to me for many years.  Richard Stallman at the Free Software
 Foundation employed me while I wrote the original path searching library
 (for the GNU font utilities).  (rms also gave us Emacs, GDB, and GCC,
@@ -2012,7 +2013,7 @@ the @code{mode_def} names, and that's a lot.)
 
 If you have a device not included in @file{modes.mf}, please see
 comments in that file for how to create the new definition, and please
-send the definition to @email{tex-fonts@@mail.tug.org} to get it included
+send the definition to @email{tex-fonts@@math.utah.edu} to get it included
 in the next release of @file{modes.mf}.
 
 @findex smode @r{and dynamic Metafont mode definition}
@@ -3143,14 +3144,12 @@ The template file and documentation for the standard styles.
 @cindex WEB
 @cindex literate programming
 
-@flindex litprog@@shsu.edu
 @dfn{WEB} languages allow you to write a single source file that can
 produce both a compilable program and a well-formatted document
 describing the program in as much detail as you wish to prepare.
 Writing in this kind of dual-purpose language is called @dfn{literate
 programming}.  (The Usenet newsgroup @file{comp.programming.literate}
-and the mailing list @email{litprog@@shsu.edu} are devoted to this
-subject; they are gatewayed to each other.)
+is devoted to this subject.)
 
 @flindex webman.tex
 @cindex Spiderweb
