@@ -47,7 +47,7 @@ rpm: dist
 
 .PHONY: srclinks versionize rpm
 
-## Eventually delete these files
+## Original files from t1utils distribution
 ##
 EXTRA_DIST += Makefile.am.orig configure.in.orig
 
