@@ -315,12 +315,13 @@ MISCFONTS = .;$TEXMF/fonts/misc//
 % map file syntax the definition can be simplified again.
 TEXFONTMAPS = .;$TEXMF/fonts/map/{$progname,pdftex,dvips,}//
 
-% BibTeX bibliographies and style files.
+% BibTeX bibliographies and style files.  bibtex8 also uses these.
 BIBINPUTS = .;$TEXMF/bibtex/bib//
 BSTINPUTS = .;$TEXMF/bibtex/{bst,csf}//
-% For bibtex8. Do we really need to repeat the BIBINPUTS setting?
-BIBINPUTS.bibtex8 =             .;$TEXMF/bibtex/{bib,}//
-BSTINPUTS.bibtex8 =             .;$TEXMF/bibtex/{bst,csf,}//
+
+% MlBibTeX.
+MLBIBINPUTS = .;$TEXMF/bibtex/bib/{mlbib,}//
+MLBSTINPUTS = .;$TEXMF/bibtex/{mlbst,bst}//
 
 % MFT style files.
 MFTINPUTS = .;$TEXMF/mft//

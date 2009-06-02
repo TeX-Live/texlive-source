@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 5.0.0
-@set month-year May 2009
+@set month-year June 2009
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -68,6 +68,7 @@ approved by the @TeX{} Users Group.
 @author Karl Berry
 @author Olaf Weber
 @author Taco Hoekwater
+@author @url{http://tug.org/kpathsea}
 
 @page
 @vskip 0pt plus 1filll
@@ -1524,7 +1525,7 @@ suffix @samp{.bib}.
 @item bst
 @flindex .bst
 @vindex BSTINPUTS
-(Bib@TeX{} style file, @pxref{Basic BibTeX style files,, Basic Bib@TeX{}
+(Bib@TeX{} style, @pxref{Basic BibTeX style files,, Basic Bib@TeX{}
 style files, web2c, Web2c})
 @code{BSTINPUTS};
 suffix @samp{.bst}.
@@ -1673,6 +1674,23 @@ suffix @samp{.mft}.
 @vindex MISCFONTS
 (font-related files that don't fit the other categories)
 @code{MISCFONTS}
+
+@item mlbib
+@flindex .mlbib
+@vindex MLBIBINPUTS
+@vindex BIBINPUTS
+@vindex TEXBIB
+(MlBib@TeX{} bibliography source)
+@code{MLBIBINPUTS}, @code{BIBINPUTS}, @code{TEXBIB};
+suffixes @samp{.mlbib}, @samp{.mlbib}.
+
+@item mlbst
+@flindex .mlbst
+@vindex MLBSTINPUTS
+@vindex BSTINPUTS
+(MlBib@TeX{} style)
+@code{MLBSTINPUTS}, @code{BSTINPUTS};
+suffixes @samp{.mlbst}, @samp{.bst}.
 
 @item mp
 @flindex .mp

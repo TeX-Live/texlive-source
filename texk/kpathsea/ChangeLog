@@ -1,3 +1,11 @@
+2009-06-02  Karl Berry  <karl@tug.org>
+
+	* types.h (kpse_file_format_type): add kpse_mlbib_format,
+	kpse_mlbst_format for Jean-Michel Hufflen and MlBibTeX.
+	* texmf.cnf (MLBIBINPUTS, MLBSTINPUTS): define default paths.
+	* tex-file.c (kpathsea_init_format): initialize them.
+	* doc/kpathsea.texi: document this.
+
 2009-06-01  Karl Berry  <karl@tug.org>
 
 	* Update version numbers to 5.0.0.

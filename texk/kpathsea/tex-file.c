@@ -87,6 +87,8 @@
 #define LUA_ENVS "LUAINPUTS"
 #define FONTFEATURES_ENVS "FONTFEATURES"
 #define FONTCIDMAPS_ENVS "FONTCIDMAPS"
+#define MLBIB_ENVS "MLBIBINPUTS", BIB_ENVS
+#define MLBST_ENVS "MLBSTINPUTS", BST_ENVS
 
 /* The compiled-in default list, DEFAULT_FONT_SIZES, is intended to be
    set from the command line (presumably via the Makefile).  */
@@ -749,6 +751,18 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
       INIT_FORMAT ("cid maps", DEFAULT_FONTCIDMAPS, FONTCIDMAPS_ENVS);
 #define CID_SUFFIXES ".cid", ".cidmap"
       SUFFIXES (CID_SUFFIXES);
+      FMT_INFO.suffix_search_only = true;
+      break;
+    case kpse_mlbib_format:
+      INIT_FORMAT ("mlbib", DEFAULT_MLBIBINPUTS, MLBIB_ENVS);
+#define MLBIB_SUFFIXES ".mlbib", ".bib"
+      SUFFIXES (MLBIB_SUFFIXES);
+      FMT_INFO.suffix_search_only = true;
+      break;
+    case kpse_mlbst_format:
+      INIT_FORMAT ("mlbst", DEFAULT_MLBSTINPUTS, MLBST_ENVS);
+#define MLBST_SUFFIXES ".mlbst", ".bst"
+      SUFFIXES (MLBST_SUFFIXES);
       FMT_INFO.suffix_search_only = true;
       break;
     default:
