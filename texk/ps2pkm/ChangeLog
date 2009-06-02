@@ -1,5 +1,11 @@
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* regions.c, regions.h, t1imager.h:
+	rename INFINITY -> T1_INFINITY, to avoid name conflict with
+	INFINITY from cygwin <math.h>.
+
+2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Adapt to TL2009 build system.
 
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>

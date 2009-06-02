@@ -40,7 +40,7 @@ struct region *t1_Intersect();  /* set intersection of regions                */
 struct region *t1_Complement();  /* complement of a region                    */
 int t1_Overlap();             /* returns a Boolean; TRUE if regions overlap   */
  
-#define   INFINITY    t1_Infinity
+#define   T1_INFINITY    t1_Infinity
  
 /*END SHARED*/
 /*SHARED*/

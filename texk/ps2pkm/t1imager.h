@@ -137,9 +137,9 @@ Null path definition:
 /*
 Full page and null region definition:
 */
-#define    INFINITY     t1_Infinity
+#define    T1_INFINITY     t1_Infinity
 #ifndef NOEXTERNS
-extern     region       *INFINITY;
+extern     region       *T1_INFINITY;
 #endif
 #ifdef NULLREGION
 #undef NULLREGION
