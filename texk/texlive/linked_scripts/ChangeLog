@@ -1,3 +1,9 @@
+2009-06-03  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_scriptx_SCRIPTS): remove ps2eps.pl,
+	it is installed in utils/ps2eps, and we can't easily separate
+	it since the package also includes a C program.
+
 2009-05-21  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): move pkfix here
