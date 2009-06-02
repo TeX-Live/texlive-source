@@ -43,11 +43,10 @@ char	*getenv();
 #define TMP_OPEN_MODE  2
 #endif
 
+#ifdef DOSISH
 #ifndef WIN32
 #define __cdecl
 #endif
-
-#ifdef DOSISH
 static char *TmpFile;
 static void __cdecl
 RemoveTempFile(void)

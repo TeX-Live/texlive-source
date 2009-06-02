@@ -1,3 +1,8 @@
+2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tempfile.c: define __cdecl only when used, to avoid warnings
+	on cygwin.
+
 2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

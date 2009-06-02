@@ -38,13 +38,11 @@
                  "Improved from 1.0 to 1.1, 1994, Markus Kohm\n"
 #define STRINGSIZE (500L)  /* maximum number of strings in program */
 
-#ifdef WIN32
+#ifndef VMS
 #include <stdlib.h>
+#ifdef WIN32
 #include <malloc.h>
 #endif
-void error(char *);
-
-#ifndef VMS
 #include <stdio.h>
 #include <string.h>
 #else /* VMS */
@@ -52,6 +50,8 @@ void error(char *);
 #include <alloc.h>
 #endif /* VMS */
 #define MAXPPERP (32)
+
+void error(char *);
 
 /* defines READBIN, WRITEBIN, PATHSEP and IS_DIR_SEP*/
 

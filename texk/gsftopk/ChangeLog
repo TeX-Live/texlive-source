@@ -1,3 +1,8 @@
+2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gsftopk.c: remove obsolete 'NORETURN void' -> 'volatile void'
+	return type for functions, this may just give a wrning.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

@@ -352,12 +352,6 @@ char *buffer_stdin; /* This is the buffer from where data are taken. */
 #define	GS_PATH	"gs"
 #endif
 
-#if __GNUC__
-#define	NORETURN	volatile
-#else
-#define	NORETURN	/* nothing */
-#endif
-
 #if STDC_HEADERS && __STDC__
 #define	NeedVarargsPrototypes	1
 #include <stdarg.h>
@@ -529,7 +523,7 @@ int		pk_len;
  *	Exit, and kill the child process, too.
  */
 
-NORETURN void
+void
 exit_toto_too P1H(void)
 {
 #if !WIN32
@@ -588,11 +582,11 @@ exit_toto_too P1H(void)
  */
 
 #if NeedVarargsPrototypes
-NORETURN void
+void
 oops(const char *message, ...)
 #else
 /* VARARGS */
-NORETURN void
+void
 oops(va_alist)
 	va_dcl
 #endif
@@ -620,11 +614,11 @@ oops(va_alist)
  *	Same as oops, but with arguments.
  */
 #if NeedVarargsPrototypes
-NORETURN void
+void
 opt_oops(const char *message, ...)
 #else
 /* VARARGS */
-NORETURN void
+void
 opt_oops(va_alist)
 	va_dcl
 #endif
