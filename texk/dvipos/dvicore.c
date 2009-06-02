@@ -79,7 +79,7 @@ static void calc_bbox (SIGNED_QUAD width, SIGNED_QUAD height, SIGNED_QUAD depth)
   if (do_smashchars) height = depth = 0;
 
   while (bb) {
-    if (bb->fb == -INFINITY) bb->fb = dvi_state.v;
+    if (bb->fb == -WEB_INFINITY) bb->fb = dvi_state.v;
     bb->cb = dvi_state.v;
     if (bb->h1 > dvi_state.h) bb->h1 = dvi_state.h;
     if (bb->v1 > dvi_state.v - height) bb->v1 = dvi_state.v - height;
@@ -173,9 +173,9 @@ static void draw_frame (BBOX *bb)
 
 static void reset_bbox (BBOX *bb)
 {
-  bb->h1 = bb->v1 = INFINITY;
-  bb->h2 = bb->v2 = -INFINITY;
-  bb->fb = bb->cb = -INFINITY;
+  bb->h1 = bb->v1 = WEB_INFINITY;
+  bb->h2 = bb->v2 = -WEB_INFINITY;
+  bb->fb = bb->cb = -WEB_INFINITY;
 }
 
 static void clear_bbox (int init)
@@ -384,7 +384,7 @@ static void out_text (char c)
   dvi_buffer[dvi_buffer_len++] = c;
 }
 
-#define INFINITY 0x7FFFFFFFL //017777777777
+#define WEB_INFINITY 0x7FFFFFFFL //017777777777
 #define MAX_DRIFT 2
 #define PIXEL_ROUND(p) xround(conv*(p))
 
@@ -394,13 +394,13 @@ static void move_right (SIGNED_QUAD q)
 
   h = dvi_state.h; hh = dvi_state.hh;
 
-  if (h > 0 && q > 0 && h > INFINITY - q) {
-    msg_out(M_DEBUG, " arithmetic overflow! parameter changed from '%ld' to '%ld'\n", q, INFINITY - h);
-    q = INFINITY - h;
+  if (h > 0 && q > 0 && h > WEB_INFINITY - q) {
+    msg_out(M_DEBUG, " arithmetic overflow! parameter changed from '%ld' to '%ld'\n", q, WEB_INFINITY - h);
+    q = WEB_INFINITY - h;
   }
-  if (h < 0 && q < 0 && -h > q + INFINITY) {
-    msg_out(M_DEBUG, " arithmetic overflow! parameter changed from '%ld' to '%ld'\n", q, (-h) - INFINITY);
-    q = (-h) - INFINITY;
+  if (h < 0 && q < 0 && -h > q + WEB_INFINITY) {
+    msg_out(M_DEBUG, " arithmetic overflow! parameter changed from '%ld' to '%ld'\n", q, (-h) - WEB_INFINITY);
+    q = (-h) - WEB_INFINITY;
   }
   hhh = PIXEL_ROUND(h + q);
   if (labs(hhh - hh) > MAX_DRIFT) {
@@ -429,13 +429,13 @@ static void move_down (SIGNED_QUAD p)
 
   v = dvi_state.v; vv = dvi_state.vv;
 
-  if (v > 0 && p > 0 && v > INFINITY - p) {
-    msg_out(M_DEBUG, " arithmetic overflow! parameter changed from '%ld' to '%ld'\n", p, INFINITY - v);
-    p = INFINITY - v;
+  if (v > 0 && p > 0 && v > WEB_INFINITY - p) {
+    msg_out(M_DEBUG, " arithmetic overflow! parameter changed from '%ld' to '%ld'\n", p, WEB_INFINITY - v);
+    p = WEB_INFINITY - v;
   }
-  if (v < 0 && p < 0 && -v > p + INFINITY) {
-    msg_out(M_DEBUG, " arithmetic overflow! parameter changed from '%ld' to '%ld'\n", p, (-v) - INFINITY);
-    p = (-v) - INFINITY;
+  if (v < 0 && p < 0 && -v > p + WEB_INFINITY) {
+    msg_out(M_DEBUG, " arithmetic overflow! parameter changed from '%ld' to '%ld'\n", p, (-v) - WEB_INFINITY);
+    p = (-v) - WEB_INFINITY;
   }
   vvv = PIXEL_ROUND(v + p);
   if (labs(vvv - vv) > MAX_DRIFT) {

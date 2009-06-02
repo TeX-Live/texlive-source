@@ -245,7 +245,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 
 #define UNITY     0x100000
-#define INFINITY  0x7fffffff
+#define WEB_INFINITY  0x7fffffff
 
 #define LEN_CODING_SCHEME  39
 #define LEN_FAMILY         19

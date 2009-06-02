@@ -62,7 +62,7 @@ init_measures(void)
 {
     register int i;
     for (i=C_MIN; i<=C_MAX; i++) {
-        measure_list[i] = in_list1(INFINITY, NULL);
+        measure_list[i] = in_list1(WEB_INFINITY, NULL);
         measure_max[i] = 0;
     }
 }
@@ -142,8 +142,8 @@ min_cover(int h, int d)
     int m=0; /* the current size of the cover being generated */
     int l;   /* the least element covered by the current interval */
 
-    m = 0; next_d = INFINITY;
-    while (lval(L) != INFINITY) {
+    m = 0; next_d = WEB_INFINITY;
+    while (lval(L) != WEB_INFINITY) {
         m++; l = lval(L);
         while (lval(L->ptr) <= (l+d)) L = L->ptr;
 	L = L->ptr;
@@ -191,7 +191,7 @@ set_indices(int h, int d)
 
 /* How to store the information for each character ? */
     L1 = measure_list[h]; m = 0;
-    while (lval(L1) != INFINITY) {
+    while (lval(L1) != WEB_INFINITY) {
         L2 = L1;
         m++; l = lval(L1); 
 	L1->index = m;
@@ -236,7 +236,7 @@ build_dimen_tables(void)
             dimen_tables[i] = (int *) malloc((measure_max[i]+1)*sizeof(int));
             L1 = measure_list[i];
             j=0;
-            while (lval(L1) != INFINITY) {
+            while (lval(L1) != WEB_INFINITY) {
                 L1 = L1->actual;
                 dimen_tables[i][j] = lval(L1);
                 L1 = L1->ptr;

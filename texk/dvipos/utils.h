@@ -78,7 +78,7 @@ extern FILE *infp, *outfp, *bbxfp, *frmfp;
 extern char *infname, *bbxfname, *frmfname;
 extern SIGNED_QUAD dbg_location, rule_width;
 
-#define INFINITY 0x7FFFFFFFL //017777777777
+#define WEB_INFINITY 0x7FFFFFFFL //017777777777
 
 #define VERSION "20070107"
 

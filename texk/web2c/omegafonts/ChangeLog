@@ -1,3 +1,8 @@
+2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dimen_routines.c, manifests.h: rename INFINITY -> WEB_INFINITY,
+	to avoid name conflict with INFINITY from cygwin <math.h>.
+
 2009-05-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* omfonts.c: allow 'omfonts -ofm2opl' to be ofm2opl etc., used

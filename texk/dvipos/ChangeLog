@@ -1,3 +1,8 @@
+2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvicore.c, utils.h: rename INFINITY -> WEB_INFINITY, to avoid
+	name conflict with INFINITY from cygwin <math.h>.
+
 2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
