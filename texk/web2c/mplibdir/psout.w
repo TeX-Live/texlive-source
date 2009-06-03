@@ -1,4 +1,4 @@
-% $Id: psout.w 1051 2009-05-25 08:31:54Z taco $
+% $Id: psout.w 1084 2009-06-03 07:40:57Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -2022,6 +2022,7 @@ static boolean str_suffix (const char *begin_buf, const char *end_buf,
         size_t last_ptr_index;
         last_ptr_index = (size_t)(mp->ps->T##_ptr - mp->ps->T##_array);
         mp->ps->T##_limit *= 2;
+        mp->ps->T##_limit += s;
         if ((size_t)(mp->ps->T##_ptr - mp->ps->T##_array + (n)) > mp->ps->T##_limit)
             mp->ps->T##_limit = (size_t)(mp->ps->T##_ptr - mp->ps->T##_array + (n));
         mp->ps->T##_array = mp_xrealloc(mp,mp->ps->T##_array,mp->ps->T##_limit, sizeof(T##_entry));

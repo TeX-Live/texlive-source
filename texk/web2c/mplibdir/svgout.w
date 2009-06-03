@@ -800,12 +800,11 @@ void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
   mp_ps_font *f = NULL; 
   mp_edge_object *ch;
   p = h->body;
-  while ( p!=NULL ) { 
-    l = gr_text_l(p);
+  while ( p!=NULL ) {
     if ((gr_type(p) == mp_text_code) &&
         (gr_font_n(p)!=null_font) && 
-        (l>0) ) {
-      char *s = gr_text_p(p);
+        ((l = gr_text_l(p))>0) ) {
+      unsigned char *s = (unsigned char *)gr_text_p(p);
       while (l-->0) {
         do_mark(gr_font_n(p), *s);
         s++;
@@ -899,13 +898,14 @@ static void mp_svg_text_out (MP mp, mp_text_object *p, int prologues) ;
 
 @ @c
 void mp_svg_text_out (MP mp, mp_text_object *p, int prologues) {
-  char *s, *fname;
+  char *fname;
+  unsigned char *s;
   int k; /* a character */
   int l; /* string length */
   boolean transformed ;
   scaled ds; /* design size and scale factor for a text node */
   fname = mp->font_ps_name[gr_font_n(p)];
-  s = gr_text_p(p);
+  s = (unsigned char *)gr_text_p(p);
   l = gr_text_l(p);
   transformed=(gr_txx_val(p)!=unity)||(gr_tyy_val(p)!=unity)||
               (gr_txy_val(p)!=0)||(gr_tyx_val(p)!=0);

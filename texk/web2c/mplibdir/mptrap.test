@@ -42,11 +42,9 @@ mv trap.log mptrapin.log || exit 1
 diff $testdir/mptrapin.log mptrapin.log
 
 # Must run inimpost or font_name[null_font] is not initialized, leading to diffs.
-./mpost --progname=inimpost --jobname=trap <$testdir/mptrap2.in >mptrap.fot
+./mpost --progname=inimpost --jobname=trap --memname=trap <$testdir/mptrap2.in >mptrap.fot
 
 ## Here the test fails, but we just exit or 'make distcheck' would fail
-
-echo "WARNING: $0 failed"; exit 0
 
 mv trap.log mptrap.log || exit 1
 mv trap.tfm mptrap.tfm || exit 1

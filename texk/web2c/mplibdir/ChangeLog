@@ -1,3 +1,7 @@
+2009-06-03  Taco Hoekwater <taco@elvenkind.com>
+	    
+	    * Released version of MPLib 1.202
+	
 2009-05-30  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* am/mplib.am (install-exec-hook, uninstall-hook):

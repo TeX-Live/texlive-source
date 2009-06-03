@@ -1,4 +1,4 @@
-% $Id: mp.w 1061 2009-05-27 13:01:37Z taco $
+ $Id: mp.w 1084 2009-06-03 07:40:57Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -89,13 +89,13 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 1.201" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 1.202" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @(mpmp.h@>=
-#define metapost_version "1.201"
-#define metapost_magic (('M'*256) + 'P')*65536 + 1201
+#define metapost_version "1.202"
+#define metapost_magic (('M'*256) + 'P')*65536 + 1202
 #define metapost_old_magic (('M'*256) + 'P')*65536 + 1080
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
@@ -838,7 +838,7 @@ static void mp_reallocate_buffer(MP mp, size_t l) {
     mp_confusion(mp,"buffer size"); /* can't happen (I hope) */
   }
   buffer = xmalloc((l+1),sizeof(ASCII_code));
-  memcpy(buffer,mp->buffer,(mp->buf_size+1));
+  (void)memcpy(buffer,mp->buffer,(mp->buf_size+1));
   xfree(mp->buffer);
   mp->buffer = buffer ;
   mp->buf_size = l;
@@ -876,7 +876,7 @@ static boolean mp_input_ln (MP mp, void *f ) {
         mp_reallocate_buffer(mp,(mp->buf_size+(mp->buf_size>>2)));
       }
     }
-    memcpy((mp->buffer+mp->first),s,size);
+    (void)memcpy((mp->buffer+mp->first),s,size);
   } 
   free(s);
   return true;
@@ -908,7 +908,7 @@ initialization.
     mp->term_in = (mp->open_file)(mp,"terminal", "r", mp_filetype_terminal);
     if (mp->command_line!=NULL) {
       mp->last = strlen(mp->command_line);
-      strncpy((char *)mp->buffer,mp->command_line,mp->last);
+      (void)memcpy((void *)mp->buffer,(void *)mp->command_line,mp->last);
       xfree(mp->command_line);
     } else {
 	  mp->last = 0;
@@ -1114,7 +1114,7 @@ char * mp_str (MP mp, str_number ss) {
   } else {
     len = (size_t)length(ss);
     s = xmalloc(len+1,sizeof(char));
-    strncpy(s,(char *)(mp->str_pool+(mp->str_start[ss])),len);
+    (void)memcpy(s,(char *)(mp->str_pool+(mp->str_start[ss])),len);
     s[len] = 0;
     return (char *)s;
   }
@@ -3153,8 +3153,12 @@ and truncation operations.
 
 @<Internal library declarations@>=
 #define mp_floor_scaled(M,i) ((i)&(-65536))
-#define mp_round_unscaled(M,i) (i>0 ? (((i/32768)+1)/2) : (((i/32768)-1)/2))
-#define mp_round_fraction(M,i) (i>0 ? (((i/2048)+1)/2) : (((i/2048)-1)/2))
+
+#define mp_round_unscaled(M,x) (x>=0100000 ? 1+((x-0100000) / 0200000) \
+  : ( x>=-0100000 ? 0 : -(1+((-(x+1)-0100000) / 0200000))))
+
+#define mp_round_fraction(M,x) (x>=2048 ? 1+((x-2048) / 4096) \
+  : ( x>=-2048 ? 0 : -(1+((-(x+1)-2048) / 4096))))
 
 
 @* \[8] Algebraic and transcendental functions.
@@ -4501,7 +4505,7 @@ void mp_check_mem (MP mp,boolean print_locs ) {
   if ( print_locs ) {
     @<Print newly busy locations@>;
   }
-  memcpy(mp->was_free,mp->free, sizeof(char)*(mp->mem_end+1));
+  (void)memcpy(mp->was_free,mp->free, sizeof(char)*(mp->mem_end+1));
   mp->was_mem_end=mp->mem_end; 
   mp->was_lo_max=mp->lo_mem_max; 
   mp->was_hi_min=mp->hi_mem_min;
@@ -4850,7 +4854,7 @@ static void mp_print_type (MP mp,quarterword t) ;
 @ @<Basic printing procedures@>=
 void mp_print_type (MP mp,quarterword t) { 
   switch (t) {
-  case mp_vacuous:mp_print(mp, "mp_vacuous"); break;
+  case mp_vacuous:mp_print(mp, "vacuous"); break;
   case mp_boolean_type:mp_print(mp, "boolean"); break;
   case mp_unknown_boolean:mp_print(mp, "unknown boolean"); break;
   case mp_string_type:mp_print(mp, "string"); break;
@@ -8815,6 +8819,8 @@ if ( arc>0 ) {
   n = arc / (arc0 - arc);
   arc = arc - n*(arc0 - arc);
   if ( t_tot > (el_gordo / (n+1)) ) { 
+        mp->arith_error = true;
+        check_arith;
 	return el_gordo;
   }
   t_tot = (n + 1)*t_tot;
@@ -16190,7 +16196,7 @@ boolean mp_more_name (MP mp, ASCII_code c) {
 
 @d copy_pool_segment(A,B,C) { 
       A = xmalloc(C+1,sizeof(char)); 
-      strncpy(A,(char *)(mp->str_pool+B),C);  
+      (void)memcpy(A,(char *)(mp->str_pool+B),C);  
       A[C] = 0;}
 
 @c
@@ -16325,7 +16331,9 @@ boolean mp_open_mem_file (MP mp) {
     return true;
   if (mp_xstrcmp(mp->mem_name, "plain")) {
     wake_up_terminal;
-    wterm_ln("Sorry, I can\'t find that mem file; will try PLAIN.");
+    wterm_ln("Sorry, I can\'t find the '");
+    wterm(mp->mem_name);
+    wterm("' mem file; will try 'plain'.");
 @.Sorry, I can't find...@>
     update_terminal;
     /* now pull out all the stops: try for the system \.{plain} file */
@@ -16335,7 +16343,7 @@ boolean mp_open_mem_file (MP mp) {
       return true;
   }
   wake_up_terminal;
-  wterm_ln("I can\'t find the PLAIN mem file!\n");
+  wterm_ln("I can't find the 'plain' mem file!\n");
 @.I can't find PLAIN...@>
 @.plain@>
   return false;
@@ -17132,7 +17140,7 @@ void mp_print_exp (MP mp,pointer p, quarterword verbosity) {
 
 @ @<Print an abbreviated value of |v| with format depending on |t|@>=
 switch (t) {
-case mp_vacuous:mp_print(mp, "mp_vacuous"); break;
+case mp_vacuous:mp_print(mp, "vacuous"); break;
 case mp_boolean_type:
   if ( v==true_code ) mp_print(mp, "true"); else mp_print(mp, "false");
   break;
@@ -19390,7 +19398,7 @@ case black_part:
   else mp_bad_unary(mp, c);
   break;
 case grey_part: 
-  if ( mp->cur_type==mp_known ) mp->cur_exp=value(c);
+  if ( mp->cur_type==mp_known ) ; /* mp->cur_exp=mp->cur_exp */
   else if ( mp->cur_type==mp_picture_type ) {
     if pict_color_type(mp_grey_model) mp_take_pict_part(mp, c);
     else mp_bad_color_part(mp, c);
@@ -19986,7 +19994,7 @@ static scaled mp_turn_cycles_wrapper (MP mp,pointer c) {
   } else {
     nval = mp_new_turn_cycles(mp, c);
     oval = mp_turn_cycles(mp, c);
-    if ( nval!=oval ) {
+    if ( nval!=oval && mp->internal[mp_tracing_choices]>(2*unity)) {
       saved_t_o=mp->internal[mp_tracing_online];
       mp->internal[mp_tracing_online]=unity;
       mp_begin_diagnostic(mp);
@@ -21184,12 +21192,15 @@ since the \ps\ output procedures will try to compensate for the transformation
 we are applying to |mp_pen_p(q)|.  Since this compensation is based on the square
 root of the determinant, |sqdet| is the appropriate factor.
 
+We pass the mptrap test only if |dash_scale| is not adjusted, nowadays
+(backend is changed?)
+
 @<Transform |mp_pen_p(q)|, making sure...@>=
 if ( mp_pen_p(q)!=null ) {
   sx=mp->tx; sy=mp->ty;
   mp->tx=0; mp->ty=0;
   mp_do_pen_trans(mp, mp_pen_p(q));
-  if ( ((mp_type(q)==mp_stroked_code)&&(mp_dash_p(q)!=null)) )
+  if ( sqdet !=0 && ((mp_type(q)==mp_stroked_code)&&(mp_dash_p(q)!=null)) )
     dash_scale(q)=mp_take_scaled(mp, dash_scale(q),sqdet);
   if ( ! pen_is_elliptical(mp_pen_p(q)) )
     if ( sgndet<0 )
@@ -21406,10 +21417,10 @@ static void mp_cat (MP mp,pointer p) {
     }
     mp->max_pool_ptr=needed; 
   }
-  memcpy(mp->str_pool+mp->pool_ptr, mp->str_pool+mp->str_start[a],(size_t)k);
+  (void)memcpy(mp->str_pool+mp->pool_ptr, mp->str_pool+mp->str_start[a],(size_t)k);
   mp->pool_ptr+=k; 
   k=length(b);
-  memcpy(mp->str_pool+mp->pool_ptr, mp->str_pool+mp->str_start[b],(size_t)k);
+  (void)memcpy(mp->str_pool+mp->pool_ptr, mp->str_pool+mp->str_start[b],(size_t)k);
   mp->pool_ptr+=k;
   mp->cur_exp=mp_make_string(mp); delete_str_ref(b);
 }
@@ -23669,7 +23680,9 @@ else if ( mp->cur_type==mp_cmykcolor_type )
 else if ( mp->cur_type==mp_known )
    @<Transfer a greyscale from the current expression to object~|cp|@>
 else if ( mp->cur_exp==false_code )
-   @<Transfer a noncolor from the current expression to object~|cp|@>;
+   @<Transfer a noncolor from the current expression to object~|cp|@>
+else if ( mp->cur_exp==true_code )
+   @<Transfer no color from the current expression to object~|cp|@>;
 }
 
 @ @<Transfer a rgbcolor from the current expression to object~|cp|@>=
@@ -23727,6 +23740,16 @@ yellow_val(cp)=0;
 black_val(cp)=0;
 grey_val(cp)=0;
 mp_color_model(cp)=mp_no_model;
+}
+
+@ @<Transfer no color from the current expression to object~|cp|@>=
+{
+cyan_val(cp)=0;
+magenta_val(cp)=0;
+yellow_val(cp)=0;
+black_val(cp)=0;
+grey_val(cp)=0;
+mp_color_model(cp)=mp_uninitialized_model;
 }
 
 @ @<Make |cp| a colored object in object list~|p|@>=
@@ -24955,12 +24978,13 @@ We may need to cancel skips that span more than 127 lig/kern steps.
 @ The header could contain ASCII zeroes, so can't use |strdup|.
 
 @<Store a list of header bytes@>=
+j--;
 do {  
   if ( j>=mp->header_size ) {
     size_t l = (size_t)(mp->header_size + (mp->header_size/4));
     char *t = xmalloc(l,1);
     memset(t,0,l); 
-    memcpy(t,mp->header_byte,(size_t)mp->header_size);
+    (void)memcpy(t,mp->header_byte,(size_t)mp->header_size);
     xfree (mp->header_byte);
     mp->header_byte = t;
     mp->header_size = (int)l;
@@ -25890,7 +25914,11 @@ static char *mp_set_output_file_name (MP mp, integer c) {
  	    mp_append_to_template(mp,f,mp_job_name); 
 	    break;
 	  case 'c': 
-	    mp_append_to_template(mp,f,mp_char_code); 
+            if (mp->internal[mp_char_code]<0) {
+                mp_print(mp,"ps");
+            } else {
+                mp_append_to_template(mp,f,mp_char_code); 
+            }
             break;
 	  case 'o': 
 	    mp_append_to_template(mp,f,mp_output_format); 
@@ -25925,7 +25953,7 @@ static char *mp_set_output_file_name (MP mp, integer c) {
                 integer h = mp_compute_hash(mp, (char *)(mp->str_pool+frst),l);
                 pointer p=h+hash_base; /* we start searching here */
 	        char *id = xmalloc(mp, (l+1));
-                strncpy(id,(char *)(mp->str_pool+frst),l);
+                (void)memcpy(id,(char *)(mp->str_pool+frst),l);
 	        *(id+l)=0;
 	        while (true)  { 
 	     	  if (text(p)>0 && length(text(p))==l && 
