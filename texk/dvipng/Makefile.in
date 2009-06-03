@@ -342,16 +342,11 @@ dvipng_TEXINFOS = readme.texi install.texi macros.texi dvipng.help
 dist_man1_MANS = dvipng.1
 EXTRA_DIST = ChangeLog.0 ChangeLog.TL INSTALL README RELEASE \
 	test_dvipng.tex miktex.h miktex.mak \
-	Makefile.in-$(DVIPNG_VERSION) aclocal.m4-$(DVIPNG_VERSION) \
-	color.c-$(DVIPNG_VERSION) config.h.in-$(DVIPNG_VERSION) \
-	configure-$(DVIPNG_VERSION) configure.ac-$(DVIPNG_VERSION) \
-	dvipng.h-$(DVIPNG_VERSION) fontmap.c-$(DVIPNG_VERSION) \
-	ft.c-$(DVIPNG_VERSION) misc.c-$(DVIPNG_VERSION) \
-	pk.c-$(DVIPNG_VERSION) set.c-$(DVIPNG_VERSION) \
-	special.c-$(DVIPNG_VERSION) t1.c-$(DVIPNG_VERSION) \
-	tfm.c-$(DVIPNG_VERSION) m4/gs-device.m4 Makefile.in.orig \
-	acinclude.m4.orig configure.ac.orig Makefile.am.demo \
-	Makefile.in.work configure.ac.demo configure.ac.work
+	dvipng-$(DVIPNG_VERSION)-patches Makefile.in-$(DVIPNG_VERSION) \
+	aclocal.m4-$(DVIPNG_VERSION) configure.ac-$(DVIPNG_VERSION) \
+	m4/gs-device.m4 Makefile.in.orig acinclude.m4.orig \
+	configure.ac.orig Makefile.am.demo Makefile.in.work \
+	configure.ac.demo configure.ac.work
 dist_noinst_SCRIPTS = texi2pod.pl
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

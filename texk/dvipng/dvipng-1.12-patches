@@ -1,0 +1,186 @@
+diff -ur dvipng-1.12/color.c dvipng/color.c
+--- dvipng-1.12/color.c	2008-06-03 19:29:31.000000000 +0200
++++ dvipng/color.c	2009-03-25 14:03:10.000000000 +0100
+@@ -23,7 +23,7 @@
+ ************************************************************************/
+ 
+ #include "dvipng.h"
+-#if HAVE_ALLOCA_H
++#ifdef HAVE_ALLOCA_H
+ # include <alloca.h>
+ #endif
+ 
+diff -ur dvipng-1.12/dvipng.h dvipng/dvipng.h
+--- dvipng-1.12/dvipng.h	2008-06-03 19:30:18.000000000 +0200
++++ dvipng/dvipng.h	2009-03-25 14:04:41.000000000 +0100
+@@ -478,11 +478,11 @@
+ 
+ /************************timing stuff*********************/
+ #ifdef TIMING
+-#if TIME_WITH_SYS_TIME
++#ifdef TIME_WITH_SYS_TIME
+ # include <sys/time.h>
+ # include <time.h>
+ #else
+-# if HAVE_SYS_TIME_H
++# ifdef HAVE_SYS_TIME_H
+ #  include <sys/time.h>
+ # else
+ #  include <time.h>
+diff -ur dvipng-1.12/fontmap.c dvipng/fontmap.c
+--- dvipng-1.12/fontmap.c	2008-05-05 20:58:00.000000000 +0200
++++ dvipng/fontmap.c	2009-04-22 14:14:06.000000000 +0200
+@@ -25,7 +25,7 @@
+ #include "dvipng.h"
+ 
+ static struct filemmap psfont_mmap;
+-#if HAVE_FT2
++#ifdef HAVE_FT2
+ static struct filemmap ttfont_mmap;
+ #endif
+ static struct psfontmap *psfontmap=NULL;
+@@ -106,10 +106,10 @@
+     newentry->psfile = copyword(copyfrom->psfile);
+     newentry->encname = copyword(copyfrom->encname);
+     newentry->encoding = copyfrom->encoding;
+-#if HAVE_LIBT1
++#ifdef HAVE_LIBT1
+     newentry->t1_transformp = copyfrom->t1_transformp;
+ #endif
+-#if HAVE_FT2
++#ifdef HAVE_FT2
+     newentry->ft_transformp = copyfrom->ft_transformp;
+     newentry->subfont = copyfrom->subfont;
+ #endif
+@@ -120,10 +120,10 @@
+     newentry->psfile = NULL;
+     newentry->encname = NULL;
+     newentry->encoding = NULL;
+-#if HAVE_LIBT1
++#ifdef HAVE_LIBT1
+     newentry->t1_transformp = NULL;
+ #endif
+-#if HAVE_FT2
++#ifdef HAVE_FT2
+     newentry->ft_transformp = NULL;
+     newentry->subfont = NULL;
+ #endif
+@@ -249,14 +249,14 @@
+ 	}
+ 	free(word);
+       }
+-#if HAVE_FT2
++#ifdef HAVE_FT2
+       entry->ft_transformp=&(entry->ft_transform);
+       entry->ft_transform.xx=(FT_Fixed)(cxx*0x10000);
+       entry->ft_transform.xy=(FT_Fixed)(cxy*0x10000);
+       entry->ft_transform.yx=0;
+       entry->ft_transform.yy=0x10000;
+ #endif
+-#if HAVE_LIBT1
++#ifdef HAVE_LIBT1
+       entry->t1_transformp=&(entry->t1_transform);
+       entry->t1_transform.cxx=cxx;
+       entry->t1_transform.cxy=cxy;
+@@ -316,6 +316,7 @@
+     }
+ #endif
+   }
++#ifdef HAVE_FT2
+   if(entry==NULL) {
+     struct psfontmap* entry_subfont=NULL;
+     entry=psfontmap;
+@@ -331,6 +332,7 @@
+       }
+     }
+   }
++#endif
+   if (entry!=NULL && entry->psfile==NULL) 
+     ReadPSFontMap(entry);
+   if (entry!=NULL && entry->encname!=NULL && entry->encoding==NULL) 
+diff -ur dvipng-1.12/ft.c dvipng/ft.c
+--- dvipng-1.12/ft.c	2008-02-08 14:45:24.000000000 +0100
++++ dvipng/ft.c	2009-03-25 14:05:41.000000000 +0100
+@@ -23,7 +23,7 @@
+ ************************************************************************/
+ 
+ #include "dvipng.h"
+-#if HAVE_ALLOCA_H
++#ifdef HAVE_ALLOCA_H
+ # include <alloca.h>
+ #endif
+ 
+diff -ur dvipng-1.12/misc.c dvipng/misc.c
+--- dvipng-1.12/misc.c	2008-06-02 21:29:33.000000000 +0200
++++ dvipng/misc.c	2009-03-25 14:05:54.000000000 +0100
+@@ -195,7 +195,7 @@
+ 	}
+ 	break ;
+       case 't':       /* specify paper format, only for cropmarks */
+-#if HAVE_GDIMAGECREATETRUECOLOR
++#ifdef HAVE_GDIMAGECREATETRUECOLOR
+ 	/* Truecolor */
+ 	if (strncmp(p,"ruecolor",8)==0) { 
+ 	  if (p[8] != '0') {
+diff -ur dvipng-1.12/pk.c dvipng/pk.c
+--- dvipng-1.12/pk.c	2008-05-05 20:58:00.000000000 +0200
++++ dvipng/pk.c	2009-03-25 14:06:03.000000000 +0100
+@@ -23,7 +23,7 @@
+ ************************************************************************/
+ 
+ #include "dvipng.h"
+-#if HAVE_ALLOCA_H
++#ifdef HAVE_ALLOCA_H
+ # include <alloca.h>
+ #endif
+ 
+diff -ur dvipng-1.12/set.c dvipng/set.c
+--- dvipng-1.12/set.c	2008-02-08 14:45:23.000000000 +0100
++++ dvipng/set.c	2009-03-25 14:06:11.000000000 +0100
+@@ -23,7 +23,7 @@
+ ************************************************************************/
+ 
+ #include "dvipng.h"
+-#if HAVE_ALLOCA_H
++#ifdef HAVE_ALLOCA_H
+ # include <alloca.h>
+ #endif
+ #include <math.h>
+diff -ur dvipng-1.12/special.c dvipng/special.c
+--- dvipng-1.12/special.c	2009-02-23 14:48:50.000000000 +0100
++++ dvipng/special.c	2009-03-24 21:44:50.000000000 +0100
+@@ -632,9 +632,9 @@
+ 
+   if (dvi->flags & DVI_PREVIEW_BOP_HOOK && ~page_flags & PAGE_PREVIEW_BOP 
+       && strncmp(special,"ps::",4)==0) {
++    dviunits adj_llx,adj_lly,adj_urx,adj_ury,ht,dp,wd;
+     page_flags |= PAGE_PREVIEW_BOP;
+     /* Hokay, decode bounding box */
+-    dviunits adj_llx,adj_lly,adj_urx,adj_ury,ht,dp,wd;
+     adj_llx = strtol(special+4,&special,10);
+     adj_lly = strtol(special,&special,10);
+     adj_urx = strtol(special,&special,10);
+diff -ur dvipng-1.12/t1.c dvipng/t1.c
+--- dvipng-1.12/t1.c	2008-02-08 14:45:23.000000000 +0100
++++ dvipng/t1.c	2009-03-25 14:06:17.000000000 +0100
+@@ -23,7 +23,7 @@
+ ************************************************************************/
+ 
+ #include "dvipng.h"
+-#if HAVE_ALLOCA_H
++#ifdef HAVE_ALLOCA_H
+ # include <alloca.h>
+ #endif
+ 
+diff -ur dvipng-1.12/tfm.c dvipng/tfm.c
+--- dvipng-1.12/tfm.c	2008-05-05 20:58:00.000000000 +0200
++++ dvipng/tfm.c	2009-03-25 14:06:21.000000000 +0100
+@@ -23,7 +23,7 @@
+ ************************************************************************/
+ 
+ #include "dvipng.h"
+-#if HAVE_ALLOCA_H
++#ifdef HAVE_ALLOCA_H
+ # include <alloca.h>
+ #endif
+ 

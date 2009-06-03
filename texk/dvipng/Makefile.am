@@ -134,24 +134,16 @@ EXTRA_DIST += test_dvipng.tex
 ##
 EXTRA_DIST += miktex.h miktex.mak
 
+## Patches applied to dvipng-$(DVIPNG_VERSION) distribution
+##
+EXTRA_DIST += dvipng-$(DVIPNG_VERSION)-patches
+
 ## Original files from dvipng-$(DVIPNG_VERSION)
 ##
 EXTRA_DIST += \
 	Makefile.in-$(DVIPNG_VERSION) \
 	aclocal.m4-$(DVIPNG_VERSION) \
-	color.c-$(DVIPNG_VERSION) \
-	config.h.in-$(DVIPNG_VERSION) \
-	configure-$(DVIPNG_VERSION) \
-	configure.ac-$(DVIPNG_VERSION) \
-	dvipng.h-$(DVIPNG_VERSION) \
-	fontmap.c-$(DVIPNG_VERSION) \
-	ft.c-$(DVIPNG_VERSION) \
-	misc.c-$(DVIPNG_VERSION) \
-	pk.c-$(DVIPNG_VERSION) \
-	set.c-$(DVIPNG_VERSION) \
-	special.c-$(DVIPNG_VERSION) \
-	t1.c-$(DVIPNG_VERSION) \
-	tfm.c-$(DVIPNG_VERSION)
+	configure.ac-$(DVIPNG_VERSION)
 
 ## Eventually use these macro files
 ##

@@ -2,9 +2,9 @@
 
 2009-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* color.c-1.12, dvipng.h-1.12, fontmap.c-1.12,
-	ft.c-1.12, misc.c-1.12, pk.c-1.12, set.c-1.12,
-	t1.c-1.12, tfm.c-1.12 (all new): Original files.
+	* dvipng-1.12-patches (new): patches applied to dvipng-1.12.
+
+2009-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* color.c, dvipng.h, fontmap.c, ft.c, misc.c, pk.c, set.c,
 	t1.c, tfm.c: "#if HAVE_ALLOCA_H" => "#ifdef HAVE_ALLOCA_H"
@@ -18,7 +18,6 @@
 	* Makefile.am, configure.ac: New TeX Live build system.
 
 	From Vladimir Volovich  <vvv@vsu.ru>
-	* special.c-1.12 (new): Original file from release 1.12.
 	* special.c: portability fix - put variable declarations
 	at the beginning of the block.
 
@@ -29,8 +28,6 @@
 	* configure.ac: Updated for release 1.11.
 
 	From Vladimir Volovich  <vvv@vsu.ru>
-	* misc.c-1.11, special.c-1.11 (new): Original files from
-	release 1.11.
 	* misc.c: fix the field name: mmap => data (oversight from
 	old code?)
 	* special.c: portability fix - put variable declarations
