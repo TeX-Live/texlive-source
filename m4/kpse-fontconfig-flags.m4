@@ -28,19 +28,18 @@ AC_CACHE_CHECK([for installed fontconfig headers and library],
                [kpse_cv_have_fontconfig],
 [kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
+kpse_cv_fontconfig_includes=
+kpse_cv_fontconfig_libs='-lfontconfig'
 if test "x$with_fontconfig_includes:$with_fontconfig_libdir" != x:; then
   if test "x$with_fontconfig_includes" != x; then
     kpse_cv_fontconfig_includes="-I$with_fontconfig_includes"
   fi
   if test "x$with_fontconfig_libdir" != x; then
-    kpse_cv_fontconfig_libdir="-L$with_fontconfig_libdir -lfontconfig"
+    kpse_cv_fontconfig_libs="-L$with_fontconfig_libdir $kpse_cv_fontconfig_libs"
   fi
 elif $PKG_CONFIG fontconfig; then
   kpse_cv_fontconfig_includes=`$PKG_CONFIG fontconfig --cflags`
   kpse_cv_fontconfig_libs=`$PKG_CONFIG fontconfig --libs`
-else
-  kpse_cv_fontconfig_includes=
-  kpse_cv_fontconfig_libs='-lfontconfig'
 fi
 CPPFLAGS="$kpse_cv_fontconfig_includes $CPPFLAGS"
 LIBS="$kpse_cv_fontconfig_libs $LIBS"
