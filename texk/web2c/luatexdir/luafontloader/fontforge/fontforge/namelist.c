@@ -37,7 +37,8 @@ static struct psaltnames {
     char *name;
     int unicode;
     int provenance;		/* 1=> Adobe PUA, 2=>AMS PUA, 3=>TeX */
-} psaltnames[];
+} psaltnames[5488];  /* Explicit dimension specification or initializer 
+                        required for an auto or static array. */
 
 static NameList agl_sans, agl, adobepua, greeksc, tex, ams;
 NameList *namelist_for_new_fonts = &agl;

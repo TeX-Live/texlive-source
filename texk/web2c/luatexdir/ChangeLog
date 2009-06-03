@@ -1,5 +1,10 @@
 2009-06-03  Taco Hoekwater <taco@luatex.org>
  	
+	* luatexdir/luafontloader/fontforge/fontforge/namelist.c (psaltnames): add
+        a dimension specifier, for AIX portability.
+
+2009-06-03  Taco Hoekwater <taco@luatex.org>
+ 	
 	* luatexdir: import of luatex release 0.40.2.
 	This affects many files in subdirectories.
 
