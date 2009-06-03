@@ -213,3 +213,4 @@ tracingonline:=1; f xx[1); showdependencies; qq:=q; showstats; bye endtext
 % unusual cases of fixed-point arithmetic
 % certain other unusual cases, especially when something similar is tested
 % most events that trigger string pool compaction
+% features that have entered the language after 0.632

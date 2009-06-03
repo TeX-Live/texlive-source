@@ -1,12 +1,15 @@
 %!PS
 %%BoundingBox: -7 -6 37 38 
-%%Creator: MetaPost
-%%CreationDate: 1998.01.28:1118
+%%HiResBoundingBox: -6.2132 -5.9851 36.21318 37.00375 
+%%Creator: MetaPost 1.202
+%%CreationDate: 2009.06.02:2231
 %%Pages: 1
 %*Font: trapf 9.96265 9.96265 41:800000008000b8
 %*Font: trapf 19.9253 9.96265 42:800000010000c
+%%BeginProlog
 %%EndProlog
 %%Page: 1 1
+ 0 0 0 setrgbcolor
 newpath 1 13 moveto
 5 11 lineto
 5.75 11.75 6.125 12.3125 6.3125 12.6875 curveto
@@ -25,9 +28,9 @@ newpath 1 13 moveto
 gsave newpath 0 0 moveto
 48.28426 -48.28429 48.28426 78.28429 0 30 curveto
 -8.28427 21.71573 -8.28427 8.28427 0 0 curveto closepath clip
- 0.5 setgray 0 1.58115 dtransform truncate idtransform setlinewidth pop
- [2.23608 1.11804 ] 1.11804 setdash 0 setlinecap 0 setlinejoin
- 1 setmiterlimit
+ 0.5 0.5 0.5 setrgbcolor 0 1.58115
+ dtransform truncate idtransform setlinewidth pop [2 1 ] 1 setdash 0 setlinecap
+ 0 setlinejoin 1 setmiterlimit
 gsave newpath 0 0 moveto
 30 0 lineto
 [0.89442 0.89442 -0.4472 0.4472 0 0] concat stroke grestore
@@ -36,12 +39,11 @@ gsave newpath 0 0 moveto
 -48.28429 48.28426 78.28429 48.28426 30 0 curveto
 [0.89442 0.89442 -0.4472 0.4472 0 0] concat stroke grestore
 grestore
- 0.5 setgray
+ 0.5 0.5 0.5 setrgbcolor
 0 -2 moveto
 (Aqua) trapf 9.96265 fshow
  1.58115 0 dtransform exch truncate exch idtransform pop setlinewidth
- [2.23608 1.11804 ] 1.11804 setdash 0 setlinecap 1 setlinejoin
- 1 setmiterlimit
+ [2 1 ] 1 setdash 0 setlinecap 1 setlinejoin 1 setmiterlimit
 gsave newpath 8.1693 -5.9851 moveto
 8.1693 13.9402 lineto
 [0.89442 0.89442 -0.4472 0.4472 0 0] concat stroke grestore
@@ -51,7 +53,7 @@ gsave newpath 8.1693 -5.9851 moveto
 gsave newpath 1 0 moveto
 2 1 lineto
 [0.89442 0.89442 -0.4472 0.4472 0 0] concat stroke grestore
- 0 setgray
+ 0 0 0 setrgbcolor
 0 10 moveto
 (ast) trapf 9.96265 fshow
 showpage

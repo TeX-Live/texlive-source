@@ -1,12 +1,14 @@
 %!PS-Adobe-3.0 EPSF-3.0
 %%BoundingBox: -4096 -102 4096 261 
-%%Creator: MetaPost
-%%CreationDate: 1998.01.28:1118
+%%HiResBoundingBox: -4095.49998 -101.96362 4095.49998 261 
+%%Creator: MetaPost 1.202
+%%CreationDate: 2009.06.02:2234
 %%Pages: 1
+%%BeginProlog
 %%EndProlog
 %%Page: 1 1
 bye
- 0 0 dtransform truncate idtransform setlinewidth pop
+ 0 0 0 setrgbcolor 0 0 dtransform truncate idtransform setlinewidth pop
  [3 0 ] 0 setdash 0 setlinecap 0 setlinejoin 1 setmiterlimit
 newpath 0.5 0 moveto
 3.5 1.5 lineto stroke

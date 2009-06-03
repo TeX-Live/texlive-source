@@ -1,6 +1,6 @@
-This is MetaPost, C Version 0.632 (preloaded mem=trap 97.1.24)  24 JAN 1997 11:13
-** &trap  trap
-(trap.mp
+This is MetaPost, version 1.202 (kpathsea version 3.5.7dev) (mem=trap 2009.06.02)  2 JUN 2009 22:19
+**  trap 
+(./trap.mp
 {if}
 {known(0)}
 {not(true)}
@@ -8,8 +8,8 @@ This is MetaPost, C Version 0.632 (preloaded mem=trap 97.1.24)  24 JAN 1997 11:1
 {known("")}
 {true}
 
-/*\`'@#->begingroup.message(SUFFIX1)&str(SUFFIX0)&jobname&char.ASCII'`&s
-tr(SUFFIX2)!endgroup
+/*\`'@#->begingroup.message(SUFFIX1)&str(SUFFIX0)&jobname&char.ASCII'`&str(SUFF
+IX2)!endgroup
 (SUFFIX0)<-/*\
 (SUFFIX1)<-`'
 (SUFFIX2)<-pass2
@@ -24,7 +24,6 @@ tr(SUFFIX2)!endgroup
 '`->"\*/"
 {endgroup}
 {("\*/")&("/*\")}
-{jobname}
 {("\*//*\")&("trap")}
 
 '`->"\*/"
@@ -43,8 +42,8 @@ tr(SUFFIX2)!endgroup
 ! Missing symbolic token inserted.
 <inserted text> 
                  INACCESSIBLE
-l.22 ...t next=\; delimiters ^~7
-                                ! fi
+l.22 ...opmode; outer\; let next=\; delimiters ^~7
+                                                  ! fi
 Sorry: You can't redefine a number, string, or expr.
 I've inserted an inaccessible symbol so that your
 definition will be completed without mixing me up too badly.
@@ -52,8 +51,8 @@ definition will be completed without mixing me up too badly.
 ! Extra tokens will be flushed.
 <to be read again> 
                    !
-l.22 ... next=\; delimiters ^~7!
-                                 fi
+l.22 ...pmode; outer\; let next=\; delimiters ^~7!
+                                                   fi
 I've just read as much of that statement as I could fathom,
 so a semicolon should have been next. It's very puzzling...
 but I'll try to get myself back together, by ignoring
@@ -67,7 +66,7 @@ now in front of anything that you don't want me to delete.
 <to be read again> 
                    \
 l.23 next\
-          ; % the second pass will now compute silently; the ...
+          ; % the second pass will now compute silently; the first pass will...
 A previous error seems to have propagated,
 causing me to read past where you wanted me to stop.
 I'll try to recover; but if the error is serious,
@@ -82,7 +81,7 @@ you'd better type `E' or `X' now and fix your file.
 <to be read again> 
                    endgroup
 l.24 batchmode; ^~7,endgroup
-                             pausing:=1; exitif p exitif bool...
+                             pausing:=1; exitif p exitif boolean pen pencirc...
 I'm afraid I need some sort of value in order to continue,
 so I've tentatively inserted `0'. You may want to
 delete this zero and insert something else;
@@ -92,7 +91,7 @@ see Chapter 27 of The METAFONTbook for an example.
 <to be read again> 
                    endgroup
 l.24 batchmode; ^~7,endgroup
-                             pausing:=1; exitif p exitif bool...
+                             pausing:=1; exitif p exitif boolean pen pencirc...
 I found no right delimiter to match a left one. So I've
 put one in, behind the scenes; this may fix the problem.
 
@@ -100,7 +99,7 @@ put one in, behind the scenes; this may fix the problem.
 <recently read> endgroup
                         
 l.24 batchmode; ^~7,endgroup
-                             pausing:=1; exitif p exitif bool...
+                             pausing:=1; exitif p exitif boolean pen pencirc...
 I'm not currently working on a `begingroup',
 so I had better not try to end anything.
 
@@ -110,8 +109,8 @@ so I had better not try to end anything.
 {pencircle}
 {endfor}
 ! Extra `endfor'.
-l.24 ...ean pen pencircle endfor
-                                
+l.24 ...itif p exitif boolean pen pencircle endfor
+                                                  
 I'm not currently working on a for loop,
 so I had better not try to end anything.
 
@@ -123,7 +122,7 @@ so I had better not try to end anything.
 ^^@watch this
 {-(1)}
 {char(-1)}
-{("pair p[],';")&("^^ff")}
+{("pair p[],';")&("ÿ")}
 {endgroup}
 {pen(pen)}
 {boolean(true)}
@@ -132,11 +131,11 @@ so I had better not try to end anything.
 <to be read again> 
                    pair
 <scantokens> pair
-                  p[],';^^ff
+                  p[],';ÿ
 <to be read again> 
                    path
 l.26 path
-          p[][]p,w,qw; qw=(1,-2)..(2,-1)..(2.5,0.5)..(1,2)..(...
+          p[][]p,w,qw; qw=(1,-2)..(2,-1)..(2.5,0.5)..(1,2)..(turningnumber',...
 Why say `exitif' when there's nothing to exit from?
 
 >> p
@@ -144,11 +143,11 @@ Why say `exitif' when there's nothing to exit from?
 <to be read again> 
                    pair
 <scantokens> pair
-                  p[],';^^ff
+                  p[],';ÿ
 <to be read again> 
                    path
 l.26 path
-          p[][]p,w,qw; qw=(1,-2)..(2,-1)..(2.5,0.5)..(1,2)..(...
+          p[][]p,w,qw; qw=(1,-2)..(2,-1)..(2.5,0.5)..(1,2)..(turningnumber',...
 The expression shown above should have had a definite
 true-or-false value. I'm changing it to `false'.
 
@@ -157,22 +156,22 @@ true-or-false value. I'm changing it to `false'.
 <to be read again> 
                    pair
 <scantokens> pair
-                  p[],';^^ff
+                  p[],';ÿ
 <to be read again> 
                    path
 l.26 path
-          p[][]p,w,qw; qw=(1,-2)..(2,-1)..(2.5,0.5)..(1,2)..(...
+          p[][]p,w,qw; qw=(1,-2)..(2,-1)..(2.5,0.5)..(1,2)..(turningnumber',...
 After `exitif <boolean exp>' I expect to see a semicolon.
 I shall pretend that one was there.
 
 {pair}
 ! Text line contains an invalid character.
-<scantokens> pair p[],';^^ff
-                            
+<scantokens> pair p[],';ÿ
+                         
 <to be read again> 
                    path
 l.26 path
-          p[][]p,w,qw; qw=(1,-2)..(2,-1)..(2.5,0.5)..(1,2)..(...
+          p[][]p,w,qw; qw=(1,-2)..(2,-1)..(2.5,0.5)..(1,2)..(turningnumber',...
 A funny symbol that I can't read has just been input.
 Continue, and I'll forget that it ever happened.
 
@@ -197,24 +196,24 @@ Path at line 26, after choices:
 {(unknown path qw)=(path)}
 {numeric}
 ! Enormous number has been reduced.
-l.27 ...[$] ]]=10000000000000000
-                                ; "this string constant is in...
+l.27 numeric p[][]; p[[ [$] ]]=10000000000000000
+                                                ; "this string constant is i...
 I can't handle numbers bigger than 32767.99998;
 so I've changed your constant to that maximum amount.
 
 {(p[[ [-1] ]])=(32767.99998)}
 ## p[[ [-1] ]]=32767.99998
 ! Value is too large (32767.99998).
-l.27 ...$] ]]=10000000000000000;
-                                 "this string constant is inc...
+l.27 numeric p[][]; p[[ [$] ]]=10000000000000000;
+                                                  "this string constant is i...
 The equation I just processed has given some variable
 a value of 4096 or more. Continue and I'll try to cope
 with that big value; but it might be dangerous.
 (Set warningcheck:=0 to suppress this message.)
 
 ! Incomplete string token has been flushed.
-l.27 ...g constant is incomplete
-                                
+l.27 ...00000; "this string constant is incomplete
+                                                  
 Strings should finish on the same line as they began.
 I've deleted the partial string; you might want to
 insert another by typing, e.g., `I"new string"'.
@@ -236,8 +235,8 @@ Proceed, and I'll ignore the illegal redeclaration.
 {showvariable}
 boolean.boolean=unknown boolean
 ! OK.
-l.29 ...n; showvariable boolean;
-                                
+l.29 ...,boolean fi.boolean; showvariable boolean;
+                                                  
 
 {inner}
 {def}
@@ -250,7 +249,7 @@ l.29 ...n; showvariable boolean;
 <to be read again> 
                    "a"
 l.31 pen p~[]~,q["a"
-                    ,qq; p~1~=q=pencircle scaled mexp(-3016.5...
+                    ,qq; p~1~=q=pencircle scaled mexp(-3016.57654);
 Variables in declarations must consist entirely of
 names and collective subscripts, e.g., `x[]a'.
 Are you trying to use a reserved word in a variable name?
@@ -268,7 +267,7 @@ up to the next comma or the end of the declaration.
 <to be read again> 
                    0
 l.32 transform p,pp0
-                    ; if p=p:qq=makepen((7,0)..cycle) xscaled...
+                    ; if p=p:qq=makepen((7,0)..cycle) xscaled hex "1000";sho...
 Variables in declarations must consist entirely of
 names and collective subscripts, e.g., `x[]a'.
 Explicit subscripts like `x15a' aren't permitted.
@@ -276,8 +275,8 @@ I'm going to discard the junk I found here,
 up to the next comma or the end of the declaration.
 
 {if}
-{((xpart p,ypart p,xxpart p,xypart p,yxpart p,yypart p))=((xpart p,ypart
- p,xxpart p,xypart p,yxpart p,yypart p))}
+{((xpart p,ypart p,xxpart p,xypart p,yxpart p,yypart p))=((xpart p,ypart p,xxpa
+rt p,xypart p,yxpart p,yypart p))}
 {true}
 Path at line 32, before choices:
 (7,0)
@@ -292,8 +291,8 @@ Path at line 32, after choices:
 ! Number too large (4096).
 <to be read again> 
                    ;
-l.32 ...cle) xscaled hex "1000";
-                                show qq;fi
+l.32 ...=makepen((7,0)..cycle) xscaled hex "1000";
+                                                  show qq;fi
 I have trouble with numbers greater than 4095; watch out.
 (Set warningcheck:=0 to suppress this message.)
 
@@ -304,8 +303,8 @@ I have trouble with numbers greater than 4095; watch out.
 pencircle transformed (28672,0,0,0,0,0)
 
 ! OK.
-l.32 ...aled hex "1000";show qq;
-                                fi
+l.32 ...((7,0)..cycle) xscaled hex "1000";show qq;
+                                                  fi
 
 {fi}
 Path at line 33, before choices:
@@ -340,15 +339,15 @@ Path at line 33, after choices:
  .. cycle
 
 ! OK.
-l.33 .....(1,0)..cycle);show qq;
-                                
+l.33 ...3,2)..(1,1)..(0,1)..(1,0)..cycle);show qq;
+                                                  
 
 {vardef}
 ! Missing parameter type; `expr' will be assumed.
 <to be read again> 
                    )
-l.34 ...ext suffix a,b endtext()
-                                )suffix@=show #@; p.a.b() end...
+l.34 vardef p[][]p~ begintext suffix a,b endtext()
+                                                  )suffix@=show #@; p.a.b() ...
 You should've had `expr' or `suffix' or `text' here.
 
 {expandafter}
@@ -358,26 +357,24 @@ You should've had `expr' or `suffix' or `text' here.
 \\->=show
 {outer}
 {((6,12))-((xpart p7,ypart p7))}
-{((0,1))transformed((xpart p,ypart p,xxpart p,xypart p,yxpart p,yypart p
-))}
+{((0,1))transformed((xpart p,ypart p,xxpart p,xypart p,yxpart p,yypart p))}
 {(x)-(x)}
 {(2)/(0)}
 >> 2
 ! Division by zero.
 <to be read again> 
                    ,
-l.36 ...)transformed p=(2/(x-x),
-                                3/0)transformed p;
+l.36 (6,12)-p7=(0,1)transformed p=(2/(x-x),
+                                           3/0)transformed p;
 You're trying to divide the quantity shown above the error
 message by zero. I'm going to divide it by one instead.
 
 ! Division by zero.
-l.36 ...ansformed p=(2/(x-x),3/0
-                                )transformed p;
+l.36 (6,12)-p7=(0,1)transformed p=(2/(x-x),3/0
+                                              )transformed p;
 I'll pretend that you meant to divide by 1.
 
-{((2,3))transformed((xpart p,ypart p,xxpart p,xypart p,yxpart p,yypart p
-))}
+{((2,3))transformed((xpart p,ypart p,xxpart p,xypart p,yxpart p,yypart p))}
 {((linearform,linearform))=((linearform,linearform))}
 ## yxpart p=-yypart p
 ## xxpart p=-xypart p
@@ -390,14 +387,13 @@ I'll pretend that you meant to divide by 1.
 {true}
 {(p0.1 0.2)-(p0.1 0.2)}
 ! The token `endtext' is no longer a right delimiter.
-l.37 ...1.2-p.1.199999,1 endtext
-                                 transformed p;
+l.37 ...f string p~[$]: p.1.2-p.1.199999,1 endtext
+                                                   transformed p;
 Strange: This token has lost its former meaning!
 I'll read it as a right delimiter this time;
 but watch out, I'll probably miss it later.
 
-{((0,1))transformed((xpart p,ypart p,-xypart p,xypart p,-yypart p,yypart
- p))}
+{((0,1))transformed((xpart p,ypart p,-xypart p,xypart p,-yypart p,yypart p))}
 {((linearform,linearform))=((linearform,linearform))}
 ## ypart p=-yypart p+6
 #### ypart p7=6
@@ -410,7 +406,7 @@ p=(-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p)
 p[]=pair
 p[][]=numeric
 p[][]p=unknown path
-p[][]p~=macro:(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup ETC.
+p[][]p~=macro:(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup.show ETC.
 p[]~=unknown boolean
 p~=path
 p~[]=unknown string
@@ -423,23 +419,19 @@ p[[ [-1] ]]=32767.99998
 p0.1 0.2=p0.1 0.2
 p1 2p=path
 p7=(3,6)
-{((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))=((-xy
-part p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))}
+{((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))=((-xypart p+
+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))}
 {let}
 {let}
-{xxpart((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))
-}
+{xxpart((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))}
 {(-xypart p)+(0.002)}
-{yxpart((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))
-}
+{yxpart((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))}
 {((xpart p2,ypart p2))-((xpart p1,ypart p1))}
 {(1)*((linearform,linearform))}
 {((xpart p1,ypart p1))+((linearform,linearform))}
 {(y)+(0.00002)}
-{yypart((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))
-}
-{xypart((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))
-}
+{yypart((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))}
+{xypart((-xypart p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))}
 {((5,y))=((yypart p,xypart p))}
 ## y=xypart p
 ## yypart p=5
@@ -458,8 +450,8 @@ part p+3,-yypart p+6,-xypart p,xypart p,-yypart p,yypart p))}
 ! Inconsistent equation (off by -0.002).
 <to be read again> 
                    ;
-l.39 ...,y)=(yypart p,xypart p);
-                                
+l.39 ...2]=(5,y+.00001)=(5,y)=(yypart p,xypart p);
+                                                  
 The equation I just read contradicts what was said before.
 But don't worry; continue and I'll just ignore it.
 
@@ -477,20 +469,19 @@ Path at line 40, after choices:
 {(path)transformed((8,1,5,-5,-5,5))}
 {(path)=(unknown path p2 3p)}
 
-p1 2p~(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup.show(SUFFIX0);p(SUFF
-IX2)(SUFFIX3)((EXPR4)endgroup
+p1 2p~(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup.show(SUFFIX0);p(SUFFIX2)(SU
+FFIX3)((EXPR4)endgroup
 (SUFFIX0)<-p1 2p
 (SUFFIX1)<-~
 (SUFFIX2)<-
 (SUFFIX3)<-2 3p~
-! A primary expression can't begin with `right delimiter that matches ('
-.
+! A primary expression can't begin with `right delimiter that matches ('.
 <inserted text> 
                 0
 <to be read again> 
                    )
-l.41 ...000000001]2p~(,[2]3p~,-)
-                                =p~1~2[pausing];
+l.41 p[000000000001]2p~(,[2]3p~,-)
+                                  =p~1~2[pausing];
 I'm afraid I need some sort of value in order to continue,
 so I've tentatively inserted `0'. You may want to
 delete this zero and insert something else;
@@ -505,19 +496,19 @@ see Chapter 27 of The METAFONTbook for an example.
 (3,6)
 
 
-p2 3p~(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup.show(SUFFIX0);p(SUFF
-IX2)(SUFFIX3)((EXPR4)endgroup
+p2 3p~(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup.show(SUFFIX0);p(SUFFIX2)(SU
+FFIX3)((EXPR4)endgroup
 (SUFFIX0)<-p2 3p
 (SUFFIX1)<-~
 ! Missing `,' has been inserted.
 <to be read again> 
                    (0)
-p1 2p~->...IX2)(SUFFIX3)((EXPR4)
-                                endgroup
+p1 2p~->...ow(SUFFIX0);p(SUFFIX2)(SUFFIX3)((EXPR4)
+                                                  endgroup
 <to be read again> 
                    =
-l.41 ...00000001]2p~(,[2]3p~,-)=
-                                p~1~2[pausing];
+l.41 p[000000000001]2p~(,[2]3p~,-)=
+                                   p~1~2[pausing];
 I've finished reading a macro argument and am about to
 read another; the arguments weren't delimited correctly.
 You might want to delete some tokens before continuing.
@@ -526,12 +517,12 @@ You might want to delete some tokens before continuing.
 ! Missing `,' has been inserted.
 <to be read again> 
                    (0)
-p1 2p~->...IX2)(SUFFIX3)((EXPR4)
-                                endgroup
+p1 2p~->...ow(SUFFIX0);p(SUFFIX2)(SUFFIX3)((EXPR4)
+                                                  endgroup
 <to be read again> 
                    =
-l.41 ...00000001]2p~(,[2]3p~,-)=
-                                p~1~2[pausing];
+l.41 p[000000000001]2p~(,[2]3p~,-)=
+                                   p~1~2[pausing];
 I've finished reading a macro argument and am about to
 read another; the arguments weren't delimited correctly.
 You might want to delete some tokens before continuing.
@@ -542,8 +533,8 @@ You might want to delete some tokens before continuing.
                    endgroup
 <to be read again> 
                    =
-l.41 ...00000001]2p~(,[2]3p~,-)=
-                                p~1~2[pausing];
+l.41 p[000000000001]2p~(,[2]3p~,-)=
+                                   p~1~2[pausing];
 I've gotten to the end of the macro parameter list.
 You might want to delete some tokens before continuing.
 
@@ -560,14 +551,14 @@ You might want to delete some tokens before continuing.
 ! Isolated expression.
 <to be read again> 
                    (
-p2 3p~->...;p(SUFFIX2)(SUFFIX3)(
-                                (EXPR4)endgroup
+p2 3p~->...roup.show(SUFFIX0);p(SUFFIX2)(SUFFIX3)(
+                                                  (EXPR4)endgroup
 <to be read again> 
                    endgroup
 <to be read again> 
                    =
-l.41 ...00000001]2p~(,[2]3p~,-)=
-                                p~1~2[pausing];
+l.41 p[000000000001]2p~(,[2]3p~,-)=
+                                   p~1~2[pausing];
 I couldn't find an `=' or `:=' after the
 expression that is shown above this error message,
 so I guess I'll just ignore it and carry on.
@@ -575,14 +566,14 @@ so I guess I'll just ignore it and carry on.
 ! Extra tokens will be flushed.
 <to be read again> 
                    (
-p2 3p~->...;p(SUFFIX2)(SUFFIX3)(
-                                (EXPR4)endgroup
+p2 3p~->...roup.show(SUFFIX0);p(SUFFIX2)(SUFFIX3)(
+                                                  (EXPR4)endgroup
 <to be read again> 
                    endgroup
 <to be read again> 
                    =
-l.41 ...00000001]2p~(,[2]3p~,-)=
-                                p~1~2[pausing];
+l.41 p[000000000001]2p~(,[2]3p~,-)=
+                                   p~1~2[pausing];
 I've just read as much of that statement as I could fathom,
 so a semicolon should have been next. It's very puzzling...
 but I'll try to get myself back together, by ignoring
@@ -598,8 +589,8 @@ now in front of anything that you don't want me to delete.
 ! Equation cannot be performed (vacuous=unknown picture).
 <to be read again> 
                    ;
-l.41 ...2]3p~,-)=p~1~2[pausing];
-                                
+l.41 p[000000000001]2p~(,[2]3p~,-)=p~1~2[pausing];
+                                                  
 I'm sorry, but I don't know how to make such things equal.
 (See the two expressions just above the error message.)
 
@@ -611,8 +602,8 @@ if.p(SUFFIX1)(SUFFIX1)=(SUFFIX1)(SUFFIX1)p.fi
                 enddef
 <to be read again> 
                    ;
-l.42 ...iary t:=if p@ @=@ @p fi;
-                                 vardef p[][]p~[]=BAD; inner ;;
+l.42 vardef p~[]@# tertiary t:=if p@ @=@ @p fi;
+                                                vardef p[][]p~[]=BAD; inner ;;
 I suspect you have forgotten an `enddef',
 causing me to read past where you wanted me to stop.
 I'll try to recover; but if the error is serious,
@@ -620,8 +611,8 @@ you'd better type `E' or `X' now and fix your file.
 
 {vardef}
 ! This variable already starts with a macro.
-l.42 ...@p fi; vardef p[][]p~[]=
-                                BAD; inner ;;
+l.42 ...iary t:=if p@ @=@ @p fi; vardef p[][]p~[]=
+                                                  BAD; inner ;;
 After `vardef a' you can't say `vardef a.b'.
 So I'll have to discard this definition.
 
@@ -632,8 +623,8 @@ BAD
                 enddef
 <to be read again> 
                    ;
-l.42 ...i; vardef p[][]p~[]=BAD;
-                                 inner ;;
+l.42 ... t:=if p@ @=@ @p fi; vardef p[][]p~[]=BAD;
+                                                   inner ;;
 I suspect you have forgotten an `enddef',
 causing me to read past where you wanted me to stop.
 I'll try to recover; but if the error is serious,
@@ -643,8 +634,8 @@ you'd better type `E' or `X' now and fix your file.
 {show}
 {-(2)}
 
-p~[-2]@#<tertiary>->begingroup.if.p(SUFFIX1)(SUFFIX1)=(SUFFIX1)(SUFFIX1)
-p.fi.endgroup
+p~[-2]@#<tertiary>->begingroup.if.p(SUFFIX1)(SUFFIX1)=(SUFFIX1)(SUFFIX1)p.fi.en
+dgroup
 (SUFFIX0)<-p~
 (SUFFIX1)<-[-2]
 (SUFFIX2)<-~
@@ -676,8 +667,8 @@ see Chapter 27 of The METAFONTbook for an example.
 ! Unknown relation will be considered false.
 <to be read again> 
                    [-2]
-p~[-2]->...1)=(SUFFIX1)(SUFFIX1)
-                                p.fi.endgroup
+p~[-2]->....p(SUFFIX1)(SUFFIX1)=(SUFFIX1)(SUFFIX1)
+                                                  p.fi.endgroup
 <to be read again> 
                    >
 l.43 show p~[-2]~[3000,x]++4000>
@@ -689,8 +680,8 @@ negative, or zero. So this comparison test won't be `true'.
 ! Missing `:' has been inserted.
 <to be read again> 
                    [-2]
-p~[-2]->...1)=(SUFFIX1)(SUFFIX1)
-                                p.fi.endgroup
+p~[-2]->....p(SUFFIX1)(SUFFIX1)=(SUFFIX1)(SUFFIX1)
+                                                  p.fi.endgroup
 <to be read again> 
                    >
 l.43 show p~[-2]~[3000,x]++4000>
@@ -706,8 +697,8 @@ I shall pretend that one was there.
 ! Not implemented: (vacuous)>(boolean).
 <to be read again> 
                    ;
-l.43 ...~[3000,x]++4000>path p3;
-                                 showvariable p,P;
+l.43 show p~[-2]~[3000,x]++4000>path p3;
+                                         showvariable p,P;
 I'm afraid I don't know how to apply that operation to that
 combination of types. Continue, and I'll return the second
 argument (see above) as the result of the operation.
@@ -718,10 +709,10 @@ p=(8,1,5,-5,-5,5)
 p[]=pair
 p[][]=numeric
 p[][]p=unknown path
-p[][]p~=macro:(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup ETC.
+p[][]p~=macro:(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup.show ETC.
 p[]~=unknown boolean
 p~=path
-p~[]@#=macro:<tertiary>->begingroup.if.p(SUFFIX1)(SUFFIX1) ETC.
+p~[]@#=macro:<tertiary>->begingroup.if.p(SUFFIX1)(SUFFIX1)=(SUFFIX1) ETC.
 p[[ [] ]]=numeric
 p[[ [-1] ]]=32767.99998
 p[-2][-2]=p[-2][-2]
@@ -756,10 +747,10 @@ p=(8,1,5,-5,-5,5)
 p[]=pair
 p[][]=numeric
 p[][]p=unknown path
-p[][]p~=macro:(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup ETC.
+p[][]p~=macro:(SUFFIX2)(SUFFIX3)(EXPR4)<suffix>->begingroup.show ETC.
 p[]~=numeric
 p~=path
-p~[]@#=macro:<tertiary>->begingroup.if.p(SUFFIX1)(SUFFIX1) ETC.
+p~[]@#=macro:<tertiary>->begingroup.if.p(SUFFIX1)(SUFFIX1)=(SUFFIX1) ETC.
 p[[ [] ]]=numeric
 p[[ [-1] ]]=32767.99998
 p[-2][-2]=p[-2][-2]
@@ -777,8 +768,8 @@ p7=(3,6)
 ! Missing `=' has been inserted.
 <to be read again> 
                    false
-l.46 ...enddef;def!primary!false
-                                ):!fi enddef;
+l.46 def//expr;=enddef;def!primary!false
+                                        ):!fi enddef;
 The next thing in this `def' should have been `=',
 because I've already looked at the definition heading.
 But don't worry; I'll pretend that an equals sign
@@ -896,8 +887,8 @@ Path at line 52, after choices:
 ! Missing `)' has been inserted.
 <to be read again> 
                    sqrt
-l.52 ...ion atleast1..cycle sqrt
-                                2++sqrt2***[[]];
+l.52  {curl- +1)..tension atleast1..cycle sqrt
+                                              2++sqrt2***[[]];
 I found no right delimiter to match a left one. So I've
 put one in, behind the scenes; this may fix the problem.
 
@@ -918,8 +909,8 @@ put one in, behind the scenes; this may fix the problem.
                    ]]
 <to be read again> 
                    sqrt
-l.52 ...ion atleast1..cycle sqrt
-                                2++sqrt2***[[]];
+l.52  {curl- +1)..tension atleast1..cycle sqrt
+                                              2++sqrt2***[[]];
 I'm afraid I don't know how to apply that operation to that
 combination of types. Continue, and I'll return the second
 argument (see above) as the result of the operation.
@@ -947,8 +938,8 @@ argument (see above) as the result of the operation.
 ! Not implemented: oct(known numeric).
 <to be read again> 
                    ;
-l.52 ...cle sqrt2++sqrt2***[[]];
-                                
+l.52 ...nsion atleast1..cycle sqrt2++sqrt2***[[]];
+                                                  
 I'm afraid I don't know how to apply that operation to that
 particular type. Continue, and I'll simply return the
 argument (shown above) as the result of the operation.
@@ -967,8 +958,8 @@ argument (shown above) as the result of the operation.
                    ]]
 <to be read again> 
                    ;
-l.52 ...cle sqrt2++sqrt2***[[]];
-                                
+l.52 ...nsion atleast1..cycle sqrt2++sqrt2***[[]];
+                                                  
 I'm afraid I don't know how to apply that operation to that
 combination of types. Continue, and I'll return the second
 argument (see above) as the result of the operation.
@@ -985,8 +976,8 @@ argument (see above) as the result of the operation.
 ! Enormous chardp has been reduced.
 <to be read again> 
                    ;
-l.53 ...048;shipout nullpicture;
-                                
+l.53 ...:=-20.5;chardp:=-2048;shipout nullpicture;
+                                                  
 Font metric dimensions must be less than 2048pt.
 
 []
@@ -1005,8 +996,8 @@ End edges
 ! Missing `:=' has been inserted.
 <to be read again> 
                    charcode
-l.54 ... p~: randomseed charcode
-                                ; fi
+l.54 ...>known p0 0p=known p~: randomseed charcode
+                                                  ; fi
 Always say `randomseed:=<numeric expression>'.
 
 {randomseed:=-20.5}
@@ -1029,8 +1020,8 @@ so I won't change the random seed just now.
 ! Missing `]' has been inserted.
 <to be read again> 
                    ;
-l.55 ...8),(2,3)]=b[(3,2),(1,$);
-                                
+l.55 ...f"; a[($,18++1+-+18),(2,3)]=b[(3,2),(1,$);
+                                                  
 I've scanned an expression of the form `a[b,c',
 so a right bracket should have come next.
 I shall pretend that one was there.
@@ -1052,21 +1043,18 @@ I shall pretend that one was there.
 {-((3,4))}
 {((linearform,-2~-4))zscaled((-3,-4))}
 >> (-5~-3^-13,10~-4^+16)
-{((xpart pp,ypart pp,xxpart pp,xypart pp,yxpart pp,yypart pp))xscaled(9)
-}
-{((8,1,5,-5,-5,5))transformed((9xpart pp,ypart pp,9xxpart pp,9xypart pp,
-yxpart pp,yypart pp))}
->> (9xpart pp+72xxpart pp+9xypart pp,ypart pp+8yxpart pp+yypart pp,45xxp
-art pp-45xypart pp,-45xxpart pp+45xypart pp,5yxpart pp-5yypart pp,-5yxpa
-rt pp+5yypart pp)
-{((xpart pp,ypart pp,xxpart pp,xypart pp,yxpart pp,yypart pp))shifted((1
-,2))}
+{((xpart pp,ypart pp,xxpart pp,xypart pp,yxpart pp,yypart pp))xscaled(9)}
+{((8,1,5,-5,-5,5))transformed((9xpart pp,ypart pp,9xxpart pp,9xypart pp,yxpart 
+pp,yypart pp))}
+>> (9xpart pp+72xxpart pp+9xypart pp,ypart pp+8yxpart pp+yypart pp,45xxpart pp-
+45xypart pp,-45xxpart pp+45xypart pp,5yxpart pp-5yypart pp,-5yxpart pp+5yypart 
+pp)
+{((xpart pp,ypart pp,xxpart pp,xypart pp,yxpart pp,yypart pp))shifted((1,2))}
 {((8,1,5,-5,-5,5))transformed((8,1,5,-5,-5,5))}
-{((xpart pp+1,ypart pp+2,xxpart pp,xypart pp,yxpart pp,yypart pp))transf
-ormed((43,-34,50,-50,-50,50))}
->> (50xpart pp-50ypart pp-7,-50xpart pp+50ypart pp+16,50xxpart pp-50yxpa
-rt pp,50xypart pp-50yypart pp,-50xxpart pp+50yxpart pp,-50xypart pp+50yy
-part pp)
+{((xpart pp+1,ypart pp+2,xxpart pp,xypart pp,yxpart pp,yypart pp))transformed((
+43,-34,50,-50,-50,50))}
+>> (50xpart pp-50ypart pp-7,-50xpart pp+50ypart pp+16,50xxpart pp-50yxpart pp,5
+0xypart pp-50yypart pp,-50xxpart pp+50yxpart pp,-50xypart pp+50yypart pp)
 {(2)-(1)}
 {(_0)*(1)}
 {(1)+(_0)}
@@ -1093,8 +1081,8 @@ part pp)
 ! Redundant equation.
 <to be read again> 
                    ;
-l.59 ... s1=s2=s4; s3=s5; s1=s2;
-                                 if s1<=s4<>(s1<>s3):show[[ch...
+l.59 string s[]; s1=s2=s4; s3=s5; s1=s2;
+                                         if s1<=s4<>(s1<>s3):show[[char34=s2...
 I already knew that this equation was true.
 But perhaps no harm has been done; let's continue.
 
@@ -1106,8 +1094,8 @@ But perhaps no harm has been done; let's continue.
 ! Unknown relation will be considered false.
 <to be read again> 
                    )
-l.59 ...=s2; if s1<=s4<>(s1<>s3)
-                                :show[[char34=s2:=s3]]fi;
+l.59 ...1=s2=s4; s3=s5; s1=s2; if s1<=s4<>(s1<>s3)
+                                                  :show[[char34=s2:=s3]]fi;
 The quantities shown above have not been equated.
 
 {(true)<>(false)}
@@ -1131,8 +1119,8 @@ The quantities shown above have not been equated.
 ! Paths don't touch; `&' will be changed to `..'.
 <to be read again> 
                    )
-l.61 ...tcontrol-1.5of(p~&cycle)
-                                -precontrol1/2of p~(p~)=s1:=s...
+l.61  directiontime postcontrol-1.5of(p~&cycle)
+                                               -precontrol1/2of p~(p~)=s1:=s...
 When you join paths `p&q', the ending point of p
 must be exactly equal to the starting point of q.
 So I'm going to pretend that you said `p..q' instead.
@@ -1153,8 +1141,8 @@ Path at line 61, after choices:
 ! Missing `of' has been inserted for directiontime.
 <to be read again> 
                    (
-l.61 ...cle)-precontrol1/2of p~(
-                                p~)=s1:=s4:=s4;
+l.61 ...ontrol-1.5of(p~&cycle)-precontrol1/2of p~(
+                                                  p~)=s1:=s4:=s4;
 I've got the first argument; will look now for the other.
 
 {((-6.5,-4))directiontime(path)}
@@ -1168,8 +1156,8 @@ I've got the first argument; will look now for the other.
 ! Missing `,' has been inserted.
 <to be read again> 
                    }
-l.62 ...p~[]; p~1=p2{length"  "}
-                                &cycle; p~1=p2=p~0; p2..contr...
+l.62 path p~[]; p~1=p2{length"  "}
+                                  &cycle; p~1=p2=p~0; p2..controls-p2..cycle...
 I've got the x coordinate of a path direction;
 will look for the y coordinate next.
 
@@ -1178,8 +1166,8 @@ will look for the y coordinate next.
                 0
 <to be read again> 
                    }
-l.62 ...p~[]; p~1=p2{length"  "}
-                                &cycle; p~1=p2=p~0; p2..contr...
+l.62 path p~[]; p~1=p2{length"  "}
+                                  &cycle; p~1=p2=p~0; p2..controls-p2..cycle...
 I'm afraid I need some sort of value in order to continue,
 so I've tentatively inserted `0'. You may want to
 delete this zero and insert something else;
@@ -1199,8 +1187,8 @@ Path at line 62, after choices:
 ! Redundant or inconsistent equation.
 <to be read again> 
                    ;
-l.62 ..."  "}&cycle; p~1=p2=p~0;
-                                 p2..controls-p2..cycle=p~2;(p7
+l.62 ...~[]; p~1=p2{length"  "}&cycle; p~1=p2=p~0;
+                                                   p2..controls-p2..cycle=p~...
 An equation between already-known quantities can't help.
 But don't worry; continue and I'll just ignore it.
 
@@ -1236,7 +1224,7 @@ Path at line 63, after choices:
 <to be read again> 
                    ..
 l.64  x..
-         {curl1}-p7{curl hex "IsBad"}..tension.75and.74999..p...
+         {curl1}-p7{curl hex "IsBad"}..tension.75and.74999..p2{0,1}&p2{_,'}....
 The expression above should have been a number >=3/4.
 
 {-((3,6))}
@@ -1245,24 +1233,24 @@ The expression above should have been a number >=3/4.
 ! String contains illegal digits.
 <to be read again> 
                    }
-l.64 ...l1}-p7{curl hex "IsBad"}
-                                ..tension.75and.74999..p2{0,1...
+l.64  x..{curl1}-p7{curl hex "IsBad"}
+                                     ..tension.75and.74999..p2{0,1}&p2{_,'}....
 I zeroed out characters that weren't hex digits.
 
 >> 0.74998
 ! Improper tension has been set to 1.
 <to be read again> 
                    ..
-l.64 ...}..tension.75and.74999..
-                                p2{0,1}&p2{_,'}..cycle:=p
+l.64 ...7{curl hex "IsBad"}..tension.75and.74999..
+                                                  p2{0,1}&p2{_,'}..cycle:=p
 The expression above should have been a number >=3/4.
 
 >> _
 ! Undefined x coordinate has been replaced by 0.
 <to be read again> 
                    ,
-l.64 ...and.74999..p2{0,1}&p2{_,
-                                '}..cycle:=p
+l.64 ...sBad"}..tension.75and.74999..p2{0,1}&p2{_,
+                                                  '}..cycle:=p
 I need a `known' x value for this part of the path.
 The value I found (see above) was no good;
 so I'll try to keep going by using zero instead.
@@ -1273,8 +1261,8 @@ you might want to type `I ???' now.)
 ! Undefined y coordinate has been replaced by 0.
 <to be read again> 
                    }
-l.64 ...d.74999..p2{0,1}&p2{_,'}
-                                ..cycle:=p
+l.64 ...ad"}..tension.75and.74999..p2{0,1}&p2{_,'}
+                                                  ..cycle:=p
 I need a `known' y value for this part of the path.
 The value I found (see above) was no good;
 so I'll try to keep going by using zero instead.
@@ -1305,8 +1293,8 @@ Path at line 64, after choices:
 
 >> path
 ! Improper `:=' will be changed to `='.
-l.64 ...p2{0,1}&p2{_,'}..cycle:=
-                                p
+l.64 ...sion.75and.74999..p2{0,1}&p2{_,'}..cycle:=
+                                                  p
 I didn't find a variable name at the left of the `:=',
 so I'm going to pretend that you said `=' instead.
 
@@ -1372,8 +1360,8 @@ Path at line 69, after choices:
 ! Missing `endtext' has been inserted.
 <to be read again> 
                    ;
-l.69 ...~3)shifted begintext1,0;
-                                
+l.69 ...subpath(.25,1)of p~3)shifted begintext1,0;
+                                                  
 I found no right delimiter to match a left one. So I've
 put one in, behind the scenes; this may fix the problem.
 
@@ -1386,7 +1374,7 @@ put one in, behind the scenes; this may fix the problem.
 <to be read again> 
                    {
 l.70 p~3:=2/3'zscaled'{
-                       p~3}..controls(2,2/3(3))and penoffset(...
+                       p~3}..controls(2,2/3(3))and penoffset(1/2x,y)of(0,1)(...
 I'm unable to apply a partially specified transformation
 except to a fully known pair or transform.
 Proceed, and I'll omit the transformation.
@@ -1396,7 +1384,7 @@ Proceed, and I'll omit the transformation.
 <to be read again> 
                    {
 l.70 p~3:=2/3'zscaled'{
-                       p~3}..controls(2,2/3(3))and penoffset(...
+                       p~3}..controls(2,2/3(3))and penoffset(1/2x,y)of(0,1)(...
 I need a `known' x value for this part of the path.
 The value I found (see above) was no good;
 so I'll try to keep going by using zero instead.
@@ -1408,7 +1396,7 @@ you might want to type `I ???' now.)
 <to be read again> 
                    {
 l.70 p~3:=2/3'zscaled'{
-                       p~3}..controls(2,2/3(3))and penoffset(...
+                       p~3}..controls(2,2/3(3))and penoffset(1/2x,y)of(0,1)(...
 I need a `known' y value for this part of the path.
 The value I found (see above) was no good;
 so I'll try to keep going by using zero instead.
@@ -1420,7 +1408,7 @@ you might want to type `I ???' now.)
 <to be read again> 
                    }
 l.70 p~3:=2/3'zscaled'{p~3}
-                           ..controls(2,2/3(3))and penoffset(...
+                           ..controls(2,2/3(3))and penoffset(1/2x,y)of(0,1)(...
 I need x and y numbers for this part of the path.
 The value I found (see above) was no good;
 so I'll try to keep going by using zero instead.
@@ -1435,8 +1423,8 @@ you might want to type `I ???' now.)
 ! Not implemented: penoffset(unknown pair)of(pair).
 <to be read again> 
                    (
-l.70 ...enoffset(1/2x,y)of(0,1)(
-                                1,0);
+l.70 ...ols(2,2/3(3))and penoffset(1/2x,y)of(0,1)(
+                                                  1,0);
 I'm afraid I don't know how to apply that operation to that
 combination of types. Continue, and I'll return the second
 argument (see above) as the result of the operation.
@@ -1444,8 +1432,8 @@ argument (see above) as the result of the operation.
 ! Missing `..' has been inserted.
 <to be read again> 
                    (
-l.70 ...enoffset(1/2x,y)of(0,1)(
-                                1,0);
+l.70 ...ols(2,2/3(3))and penoffset(1/2x,y)of(0,1)(
+                                                  1,0);
 A path join command should end with two dots.
 
 Path at line 70, before choices:
@@ -1532,8 +1520,8 @@ End edges
 ! String contains illegal digits.
 <to be read again> 
                    ++
-l.79 ...en qq xscaled(oct"180"++
-                                1) rotated-angle(64,$) shifte...
+l.79  withpen qq xscaled(oct"180"++
+                                   1) rotated-angle(64,$) shifted (9,8);
 I zeroed out characters that weren't in the range 0..7.
 
 {(64)++(1)}
@@ -1618,8 +1606,8 @@ End edges
 {nullpicture}
 {(unknown picture e3)=(picture)}
 {showstats}
-Memory usage 1178&115 (2344 still untouched)
-String usage 22&84 (1244&9177 now untouched)
+Memory usage 1247&115 (2853 still untouched)
+String usage 18&58 (43&7564 now untouched)
 {addto}
 Path at line 81, before choices:
 (0.5,0){curl 1}
@@ -1741,7 +1729,7 @@ End edges
 <to be read again> 
                    elseif
 l.87 if "a" if "ab">"b" elseif
-                               path reverse (3,4): >="aa":foo...
+                               path reverse (3,4): >="aa":foo elseif fi "bar"
 
 {("ab")>("b")}
 {false}
@@ -1757,8 +1745,8 @@ l.87 if "a" if "ab">"b" elseif
 {fi}
 {else}
 ! Extra else.
-l.88 ... if '-(1,yy)<': :fi else
-                                 def dup text t=[[t;save endd...
+l.88 else if '-(1,yy)<': :fi else
+                                  def dup text t=[[t;save enddef;def|suffix$=,$
 I'm ignoring this; it doesn't match any if.
 
 {def}
@@ -1798,8 +1786,8 @@ Path at line 95, after choices:
 
 {(2)+(3)}
 
-++->[[dup.showtoken(EXPR0);]];def.x.expr.z.of(EXPR1)=z.enddef;texts(x=((
-EXPR1)+0)(EXPR1)+(EXPR1))("xx",foo((EXPR0)))=0]]
+++->[[dup.showtoken(EXPR0);]];def.x.expr.z.of(EXPR1)=z.enddef;texts(x=((EXPR1)+
+0)(EXPR1)+(EXPR1))("xx",foo((EXPR0)))=0]]
 (EXPR0)<-path
 (EXPR1)<-5
 {begingroup}
@@ -1816,21 +1804,21 @@ dup<text>->[[(TEXT0);save
 ! Missing symbolic token inserted.
 <inserted text> 
                  INACCESSIBLE
-++->...]];def.x.expr.z.of(EXPR1)
-                                =z.enddef;texts(x=((EXPR1)+0)...
+++->....showtoken(EXPR0);]];def.x.expr.z.of(EXPR1)
+                                                  =z.enddef;texts(x=((EXPR1)...
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 Sorry: You can't redefine a number, string, or expr.
 I've inserted an inaccessible symbol so that your
 definition will be completed without mixing me up too badly.
 
 
-texts(TEXT0)(TEXT1)<expr>->for.n:=,for.n"yy":n,length.if.false:endfor(TE
-XT1),(TEXT0),:if.string.n:forsuffixes.n=foo1,[foo(n)],':show(TEXT0),(TEX
-T1)|(n;exitif.not('<='+((EXPR2),yy))endfor.for.m= :+endfor.for.m=alpha.s
-tep-1.1 3$:+m.endfor.fi.endfor
+texts(TEXT0)(TEXT1)<expr>->for.n:=,for.n"yy":n,length.if.false:endfor(TEXT1),(T
+EXT0),:if.string.n:forsuffixes.n=foo1,[foo(n)],':show(TEXT0),(TEXT1)|(n;exitif.
+not('<='+((EXPR2),yy))endfor.for.m= :+endfor.for.m=alpha.step-1.1 3$:+m.endfor.
+fi.endfor
 (TEXT0)<-x=((5)+0)(5)+(5)
 (TEXT1)<-"xx",foo((path))
 (EXPR2)<-0
@@ -1840,13 +1828,13 @@ tep-1.1 3$:+m.endfor.fi.endfor
 <to be read again> 
                    "yy"
 texts->for.n:=,for.n"yy"
-                        :n,length.if.false:endfor(TEXT1),(TEX...
+                        :n,length.if.false:endfor(TEXT1),(TEXT0),:if.string....
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 The next thing in this loop should have been `=' or `:='.
 But don't worry; I'll pretend that an equals sign
 was present, and I'll look for the values next.
@@ -1860,16 +1848,16 @@ was present, and I'll look for the values next.
                 fi
 <to be read again> 
                     ENDFOR
-<for("yy")> ....if.false: ENDFOR
-                                
-texts->...length.if.false:endfor
-                                (TEXT1),(TEXT0),:if.string.n:...
+<for("yy")> (EXPR0),length.if.false: ENDFOR
+                                           
+texts->for.n:=,for.n"yy":n,length.if.false:endfor
+                                                 (TEXT1),(TEXT0),:if.string....
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 A forbidden `outer' token occurred in skipped text.
 This kind of error happens when you say `if...' and forget
 the matching `fi'. I've inserted a `fi'; this might work.
@@ -1892,14 +1880,14 @@ x<expr>of<primary>->(EXPR0)
                    (5)
 <argument> x=((5)+0)(5)
                        +(5)
-texts->...:endfor(TEXT1),(TEXT0)
-                                ,:if.string.n:forsuffixes.n=f...
+texts->...:n,length.if.false:endfor(TEXT1),(TEXT0)
+                                                  ,:if.string.n:forsuffixes....
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 I've got the first argument; will look now for the other.
 
 (EXPR1)<-5
@@ -1912,16 +1900,17 @@ I've got the first argument; will look now for the other.
 ! Missing symbolic token inserted.
 <inserted text> 
                  INACCESSIBLE
-<for("yy")> ...orsuffixes(EXPR0)
-                                =foo1,[foo((EXPR0))],':show.x...
-texts->...3$:+m.endfor.fi.endfor
-                                
+<for("yy")> if.string(EXPR0):forsuffixes(EXPR0)
+                                               =foo1,[foo((EXPR0))],':show.x...
+
+texts->....m=alpha.step-1.1 3$:+m.endfor.fi.endfor
+                                                  
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 Sorry: You can't redefine a number, string, or expr.
 I've inserted an inaccessible symbol so that your
 definition will be completed without mixing me up too badly.
@@ -1935,16 +1924,17 @@ foo(TEXT2)->begingroup(TEXT2)endgroup
 {endgroup}
 >> "yy"
 ! Improper subscript has been replaced by zero.
-<for("yy")> ...o1,[foo((EXPR0))]
-                                ,':show.x=((5)+0)(5)+(5),"xx"...
-texts->...3$:+m.endfor.fi.endfor
-                                
+<for("yy")> ...suffixes(EXPR0)=foo1,[foo((EXPR0))]
+                                                  ,':show.x=((5)+0)(5)+(5),"...
+
+texts->....m=alpha.step-1.1 3$:+m.endfor.fi.endfor
+                                                  
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 A bracketed subscript must have a known numeric value;
 unfortunately, what I found was the value that appears just
 above this error message. So I'll try a zero subscript.
@@ -1959,17 +1949,18 @@ x<expr>of<primary>->(EXPR0)
 <to be read again> 
                    (5)
 <for(foo1)> show.x=((5)+0)(5)
-                             +(5),"xx",foo((path))|(("yy");ex...
-<for("yy")> ...'+((0),yy))endfor
-                                .for.m= :+endfor.for.m=alpha....
-texts->...3$:+m.endfor.fi.endfor
-                                
+                             +(5),"xx",foo((path))|(("yy");exitif.not('<='+(...
+<for("yy")> ...R0);exitif.not('<='+((0),yy))endfor
+                                                  .for.m= :+endfor.for.m=alp...
+
+texts->....m=alpha.step-1.1 3$:+m.endfor.fi.endfor
+                                                  
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 I've got the first argument; will look now for the other.
 
 (EXPR1)<-5
@@ -1987,18 +1978,19 @@ foo(TEXT2)->begingroup(TEXT2)endgroup
 ! Missing `)' has been inserted.
 <to be read again> 
                    ("yy")
-<for(foo1)> ...o((path))|(("yy")
-                                ;exitif.not('<='+((0),yy)) EN...
-<for("yy")> ...'+((0),yy))endfor
-                                .for.m= :+endfor.for.m=alpha....
-texts->...3$:+m.endfor.fi.endfor
-                                
+<for(foo1)> ...+0)(5)+(5),"xx",foo((path))|(("yy")
+                                                  ;exitif.not('<='+((0),yy))...
+<for("yy")> ...R0);exitif.not('<='+((0),yy))endfor
+                                                  .for.m= :+endfor.for.m=alp...
+
+texts->....m=alpha.step-1.1 3$:+m.endfor.fi.endfor
+                                                  
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 I've gotten to the end of the macro parameter list.
 You might want to delete some tokens before continuing.
 
@@ -2015,18 +2007,19 @@ You might want to delete some tokens before continuing.
 ! Unknown relation will be considered false.
 <to be read again> 
                    )
-<for(foo1)> ...ot('<='+((0),yy))
-                                 ENDFOR
-<for("yy")> ...'+((0),yy))endfor
-                                .for.m= :+endfor.for.m=alpha....
-texts->...3$:+m.endfor.fi.endfor
-                                
+<for(foo1)> ...)|(("yy");exitif.not('<='+((0),yy))
+                                                   ENDFOR
+<for("yy")> ...R0);exitif.not('<='+((0),yy))endfor
+                                                  .for.m= :+endfor.for.m=alp...
+
+texts->....m=alpha.step-1.1 3$:+m.endfor.fi.endfor
+                                                  
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 Oh dear. I can't decide if the expression above is positive,
 negative, or zero. So this comparison test won't be `true'.
 
@@ -2040,16 +2033,16 @@ negative, or zero. So this comparison test won't be `true'.
 ! Improper initial value has been replaced by 0.
 <to be read again> 
                    step
-<for("yy")> ....for.m=alpha.step
-                                -1.1 3$:+m.endfor.fi ENDFOR
-texts->...3$:+m.endfor.fi.endfor
-                                
+<for("yy")> ...or.for.m= :+endfor.for.m=alpha.step
+                                                  -1.1 3$:+m.endfor.fi ENDFOR
+texts->....m=alpha.step-1.1 3$:+m.endfor.fi.endfor
+                                                  
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 When you say `for x=a step b until c',
 the initial value `a' and the step size `b'
 and the final value `c' must have known numeric values.
@@ -2059,16 +2052,16 @@ I'm zeroing this one. Proceed, with fingers crossed.
 ! Missing `until' has been inserted.
 <to be read again> 
                    3
-<for("yy")> ...=alpha.step-1.1 3
-                                $:+m.endfor.fi ENDFOR
-texts->...3$:+m.endfor.fi.endfor
-                                
+<for("yy")> ....m= :+endfor.for.m=alpha.step-1.1 3
+                                                  $:+m.endfor.fi ENDFOR
+texts->....m=alpha.step-1.1 3$:+m.endfor.fi.endfor
+                                                  
 <to be read again> 
                    ]]
 <to be read again> 
                    ;
-l.95 ...rl4}..cycle;zzz=p~++2+3;
-                                [[
+l.95 ...9{curl3}..($,$){curl4}..cycle;zzz=p~++2+3;
+                                                  [[
 I assume you meant to say `until' after `step'.
 So I'll look for the final value and colon next.
 
@@ -2110,7 +2103,7 @@ So I'll look for the final value and colon next.
 
 texts->input
 {input}
-(trap.mp
+(./trap.mp
 if->endinput?
 {endinput}
 {if}
@@ -2121,8 +2114,8 @@ if->endinput?
 ! Incomplete if; all text was ignored after line 2.
 <inserted text> 
                 fi
-l.96 ...=input enddef;texts trap
-                                 ]];
+l.96 ...t?enddef;def texts=input enddef;texts trap
+                                                   ]];
 The file ended while I was skipping conditional text.
 This kind of error happens when you say `if...' and forget
 the matching `fi'. I've inserted a `fi'; this might work.
@@ -2133,21 +2126,21 @@ the matching `fi'. I've inserted a `fi'; this might work.
 
 dup<text>->[[(TEXT0);save
 Runaway text?
-[[def.texts.secondary.x=primarydef.y++y=x@y.enddef;showtoken ETC.
+[[def.texts.secondary.x=primarydef.y++y=x@y.enddef;showtoken++;x.enddef ETC.
 ! Forbidden token found while scanning a text argument.
 <inserted text> 
                 endgroup
 <to be read again> 
                    \
-l.97 ... showtoken++;x enddef]]\
-                                ;
+l.97 ...f y++y=x@y enddef; showtoken++;x enddef]]\
+                                                  ;
 It seems that a right delimiter was left out,
 causing me to read past where you wanted me to stop.
 I'll try to recover; but if the error is serious,
 you'd better type `E' or `X' now and fix your file.
 
-(TEXT0)<-[[def.texts.secondary.x=primarydef.y++y=x@y.enddef;showtoken++;
-x.enddef]]
+(TEXT0)<-[[def.texts.secondary.x=primarydef.y++y=x@y.enddef;showtoken++;x.endde
+f]]
 {begingroup}
 {begingroup}
 {def}
@@ -2158,8 +2151,8 @@ x.enddef]]
                  INACCESSIBLE
 <to be read again> 
                    \
-l.97 ... showtoken++;x enddef]]\
-                                ;
+l.97 ...f y++y=x@y enddef; showtoken++;x enddef]]\
+                                                  ;
 Sorry: You can't redefine my error-recovery tokens.
 I've inserted an inaccessible symbol so that your
 definition will be completed without mixing me up too badly.
@@ -2243,15 +2236,15 @@ a1=1.99992a6*4+1.99992a5*4-3.99982
 {interim}
 {tracingcommands:=0}
 
-lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,en
-dfor.skipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=bou
-ndarychar+51.29999
+lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,endfor.sk
+ipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=boundarychar+51.2
+9999
 (TEXT0)<-"g"
 (TEXT1)<-=:|
 
-lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,en
-dfor.skipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=bou
-ndarychar+51.29999
+lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,endfor.sk
+ipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=boundarychar+51.2
+9999
 (TEXT0)<-"h":"i"
 (TEXT1)<-|=:
 ! Character h is already in a ligtable.
@@ -2259,29 +2252,29 @@ ndarychar+51.29999
                    :
 <argument> "h":
                "i"
-lig->...;ligtable(TEXT0):(TEXT0)
-                                (TEXT1)0,skipto255;boundarych...
-l.102 ...=:|); lig("h":"i")(|=:)
-                                ;
+lig->...r+*,endfor.skipto0;ligtable(TEXT0):(TEXT0)
+                                                  (TEXT1)0,skipto255;boundar...
+l.102 ...ands:=0; lig("g")(=:|); lig("h":"i")(|=:)
+                                                  ;
 It's not legal to label a character more than once.
 So I'll not change anything just now.
 
 
-lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,en
-dfor.skipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=bou
-ndarychar+51.29999
+lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,endfor.sk
+ipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=boundarychar+51.2
+9999
 (TEXT0)<-"j"
 (TEXT1)<-|=:>
 
-lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,en
-dfor.skipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=bou
-ndarychar+51.29999
+lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,endfor.sk
+ipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=boundarychar+51.2
+9999
 (TEXT0)<-"k"
 (TEXT1)<-=:|>
 
-lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,en
-dfor.skipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=bou
-ndarychar+51.29999
+lig(TEXT0)(TEXT1)->ligtable0::for*=1step1until60:0kern.boundarychar+*,endfor.sk
+ipto0;ligtable(TEXT0):(TEXT0)(TEXT1)0,skipto255;boundarychar:=boundarychar+51.2
+9999
 (TEXT0)<-"l"
 (TEXT1)<-|=:|>
 {restoring tracingcommands=2.1}
@@ -2294,8 +2287,8 @@ ndarychar+51.29999
 ! Variable c.a1 has been obliterated.
 <to be read again> 
                    ;
-l.104 ...;vardef b=enddef;1]] ];
-                                 ligtable"m":0=:0,skipto5;
+l.104 b1:=c.a[ [[let c=++;vardef b=enddef;1]] ];
+                                                 ligtable"m":0=:0,skipto5;
 It seems you did a nasty thing---probably by accident,
 but nevertheless you nearly hornswoggled me...
 While I was evaluating the suffix of this variable,
@@ -2306,8 +2299,8 @@ In order to get back on my feet, I've inserted `0' instead.
 ! Variable b1 has been obliterated.
 <to be read again> 
                    ;
-l.104 ...;vardef b=enddef;1]] ];
-                                 ligtable"m":0=:0,skipto5;
+l.104 b1:=c.a[ [[let c=++;vardef b=enddef;1]] ];
+                                                 ligtable"m":0=:0,skipto5;
 It seems you did a nasty thing---probably by accident,
 but nevertheless you nearly hornswoggled me...
 While I was evaluating the right-hand side of this
@@ -2351,8 +2344,8 @@ A message should be a known string expression.
 ! Be like Jane.
 <to be read again> 
                    ;
-l.105 ...message "Be like Jane";
-                                
+l.105 !!; errhelp 0; errmessage "Be like Jane";
+                                               
 This error message was generated by an `errmessage'
 command, so I can't give any explicit help.
 Pretend that you're Miss Marple: Examine all clues,
@@ -2363,8 +2356,8 @@ and deduce the truth by inspired guesses.
 ! .
 <to be read again> 
                    ;
-l.106 ...e%%%lp%"; errmessage"";
-                                 errhelp ""; errmessage "Anot...
+l.106 errhelp "He%%%lp%"; errmessage"";
+                                        errhelp ""; errmessage "Another";
 He%
 lp
 
@@ -2374,8 +2367,8 @@ lp
 ! Another.
 <to be read again> 
                    ;
-l.106 ...; errmessage "Another";
-                                
+l.106 ...sage""; errhelp ""; errmessage "Another";
+                                                  
 (That was another `errmessage'.)
 
 {headerbyte}
@@ -2384,7 +2377,7 @@ l.106 ...; errmessage "Another";
 <to be read again> 
                    ;
 l.107 headerbyte 0;
-                    headerbyte(48.5)substring(-9,9)of"long"; ...
+                    headerbyte(48.5)substring(-9,9)of"long"; for\=0:\
 I was looking for a known, positive number.
 For safety's sake I'll ignore the present command.
 
@@ -2392,8 +2385,8 @@ For safety's sake I'll ignore the present command.
 ! Missing `:' has been inserted.
 <to be read again> 
                    substring
-l.107 ...aderbyte(48.5)substring
-                                (-9,9)of"long"; for\=0:\
+l.107 headerbyte 0; headerbyte(48.5)substring
+                                             (-9,9)of"long"; for\=0:\
 A colon should follow a headerbyte or fontinfo location.
 
 {-(9)}
@@ -2402,8 +2395,8 @@ A colon should follow a headerbyte or fontinfo location.
 ! Invalid code has been replaced by 0.
 <to be read again> 
                    ;
-l.107 ...ubstring(-9,9)of"long";
-                                 for\=0:\
+l.107 ... headerbyte(48.5)substring(-9,9)of"long";
+                                                   for\=0:\
 I was looking for a number between 0 and 255, or for a
 string of length 1. Didn't find it; will use 0 instead.
 
@@ -2414,8 +2407,8 @@ Runaway loop?
                 endfor
 <to be read again> 
                    \
-l.107 ...-9,9)of"long"; for\=0:\
-                                
+l.107 ...te(48.5)substring(-9,9)of"long"; for\=0:\
+                                                  
 I suspect you have forgotten an `endfor',
 causing me to read past where you wanted me to stop.
 I'll try to recover; but if the error is serious,
@@ -2432,8 +2425,8 @@ you'd better type `E' or `X' now and fix your file.
 ! Improper font parameter.
 <to be read again> 
                    ;
-l.108 ..."; fontdimen 9:2a6,"q";
-                                 fontdimen 1:2048;
+l.108 headerbyte 9:2a6,"q"; fontdimen 9:2a6,"q";
+                                                 fontdimen 1:2048;
 I'm zeroing this one. Proceed, with fingers crossed.
 
 {fontdimen}
@@ -2442,23 +2435,23 @@ I'm zeroing this one. Proceed, with fingers crossed.
 ! Missing `:' has been inserted.
 <to be read again> 
                    5
-l.109 ...king:=1; extensible 5 5
-                                ,"c"255.5,"d"; charlist 0:5:"...
+l.109 fontmaking:=1; extensible 5 5
+                                   ,"c"255.5,"d"; charlist 0:5:"a":"d";
 I'm processing `extensible c: t,m,b,r'.
 
 ! Missing `,' has been inserted.
 <to be read again> 
                    255.5
-l.109 ...extensible 5 5,"c"255.5
-                                ,"d"; charlist 0:5:"a":"d";
+l.109 fontmaking:=1; extensible 5 5,"c"255.5
+                                            ,"d"; charlist 0:5:"a":"d";
 I'm processing `extensible c: t,m,b,r'.
 
 >> 255.5
 ! Invalid code has been replaced by 0.
 <to be read again> 
                    ,
-l.109 ...xtensible 5 5,"c"255.5,
-                                "d"; charlist 0:5:"a":"d";
+l.109 fontmaking:=1; extensible 5 5,"c"255.5,
+                                             "d"; charlist 0:5:"a":"d";
 I was looking for a number between 0 and 255, or for a
 string of length 1. Didn't find it; will use 0 instead.
 
@@ -2466,23 +2459,23 @@ string of length 1. Didn't find it; will use 0 instead.
 ! Character code 5 is already extensible.
 <to be read again> 
                    :
-l.109 ...,"d"; charlist 0:5:"a":
-                                "d";
+l.109 ...sible 5 5,"c"255.5,"d"; charlist 0:5:"a":
+                                                  "d";
 It's not legal to label a character more than once.
 So I'll not change anything just now.
 
 {ligtable}
 ! Too far to skip.
 l.110 ligtable255:255::
-                       "a"=:"b","d" kern -2048,"c":0:99.5:"e"...
+                       "a"=:"b","d" kern -2048,"c":0:99.5:"e"|=:|"f",0kern';
 At most 127 lig/kern steps can separate skipto1 from 1::.
 
 {-(2048)}
 ! Character code 0 is already in a charlist.
 <to be read again> 
                    :
-l.110 ...","d" kern -2048,"c":0:
-                                99.5:"e"|=:|"f",0kern';
+l.110 ...le255:255::"a"=:"b","d" kern -2048,"c":0:
+                                                  99.5:"e"|=:|"f",0kern';
 It's not legal to label a character more than once.
 So I'll not change anything just now.
 
@@ -2490,8 +2483,8 @@ So I'll not change anything just now.
 ! Improper kern.
 <to be read again> 
                    ;
-l.110 ...99.5:"e"|=:|"f",0kern';
-                                
+l.110 ... kern -2048,"c":0:99.5:"e"|=:|"f",0kern';
+                                                  
 The amount of kern should be a known numeric value.
 I'm zeroing this one. Proceed, with fingers crossed.
 
@@ -2500,7 +2493,7 @@ I'm zeroing this one. Proceed, with fingers crossed.
 <to be read again> 
                    :
 l.111 ligtable 5:
-                 0; def clear(text x)=interim x:=$ enddef; cl...
+                 0; def clear(text x)=interim x:=$ enddef; clear(hppp); vppp=0;
 It's not legal to label a character more than once.
 So I'll not change anything just now.
 
@@ -2508,7 +2501,7 @@ So I'll not change anything just now.
 <to be read again> 
                    ;
 l.111 ligtable 5:0;
-                    def clear(text x)=interim x:=$ enddef; cl...
+                    def clear(text x)=interim x:=$ enddef; clear(hppp); vppp=0;
 I was looking for `=:' or `kern' here.
 
 {def}
@@ -2521,8 +2514,8 @@ clear(TEXT0)->interim(TEXT0):=$
                    hppp
 clear->interim(TEXT0)
                      :=$
-l.111 ...:=$ enddef; clear(hppp)
-                                ; vppp=0;
+l.111 ...(text x)=interim x:=$ enddef; clear(hppp)
+                                                  ; vppp=0;
 Something like `tracingonline' should follow `interim'.
 
 {hppp:=-1}
@@ -2544,8 +2537,8 @@ tracingoutput
                 )
 <to be read again> 
                    \
-l.112 ...); clear(tracingoutput\
-                                ;
+l.112 ...ar(tracingcommands); clear(tracingoutput\
+                                                  ;
 It seems that a right delimiter was left out,
 causing me to read past where you wanted me to stop.
 I'll try to recover; but if the error is serious,
@@ -2572,15 +2565,15 @@ Path at line 122, after choices:
  ..cycle
 
 
-f(SUFFIX0)(EXPR1)(EXPR2)(TEXT3)->numeric.w;show(EXPR1);addto(SUFFIX0)con
-tour(0,0)..(2,0)..(1,$)..(1,1)..cycle.withpen.qq;addto(SUFFIX0)doublepat
-h(0,0){1,1}..{2,1}(2,1)withpen.qq;addto(SUFFIX0)doublepath(($,$){1,0}..(
-1,1){1,0})scaled0.5withpen.nullpen;
+f(SUFFIX0)(EXPR1)(EXPR2)(TEXT3)->numeric.w;show(EXPR1);addto(SUFFIX0)contour(0,
+0)..(2,0)..(1,$)..(1,1)..cycle.withpen.qq;addto(SUFFIX0)doublepath(0,0){1,1}..{
+2,1}(2,1)withpen.qq;addto(SUFFIX0)doublepath(($,$){1,0}..(1,1){1,0})scaled0.5wi
+thpen.nullpen;
 ! Missing `]' has been inserted.
 <to be read again> 
                    ,
 l.123 f(e[3,
-            w); g(e3,transformed p,penoffset-(1,1.3)of(pencir...
+            w); g(e3,transformed p,penoffset-(1,1.3)of(pencircle scaled20 ys...
 I've seen a `[' and a subscript value, in a suffix,
 so a right bracket should have come next.
 I shall pretend that one was there.
@@ -2591,7 +2584,7 @@ I shall pretend that one was there.
 <to be read again> 
                    ;
 l.123 f(e[3,w);
-                g(e3,transformed p,penoffset-(1,1.3)of(pencir...
+                g(e3,transformed p,penoffset-(1,1.3)of(pencircle scaled20 ys...
 That macro has more parameters than you thought.
 I'll continue by pretending that each missing argument
 is either zero or null.
@@ -2601,7 +2594,7 @@ is either zero or null.
 <to be read again> 
                    ;
 l.123 f(e[3,w);
-                g(e3,transformed p,penoffset-(1,1.3)of(pencir...
+                g(e3,transformed p,penoffset-(1,1.3)of(pencircle scaled20 ys...
 That macro has more parameters than you thought.
 I'll continue by pretending that each missing argument
 is either zero or null.
@@ -2609,7 +2602,7 @@ is either zero or null.
 (TEXT3)<-
 {numeric}
 {show}
->> unknown path %CAPSULE1695
+>> unknown path %CAPSULE1133
 {addto}
 Path at line 123, before choices:
 (0,0)
@@ -2651,7 +2644,7 @@ g(SUFFIX0)->show(SUFFIX0)
 ! Too many arguments to g;
   Missing `)' has been inserted.
 l.123 f(e[3,w); g(e3,
-                     transformed p,penoffset-(1,1.3)of(pencir...
+                     transformed p,penoffset-(1,1.3)of(pencircle scaled20 ys...
 I'm going to assume that the comma I just read was a
 right delimiter, and then I'll begin expanding the macro.
 You might want to delete some tokens before continuing.
@@ -2765,7 +2758,7 @@ Path at line 127, after choices:
 <to be read again> 
                    ;
 l.128 pencircle;
-                 addto e3 also e3 shifted (0,257); ,"flushed ...
+                 addto e3 also e3 shifted (0,257); ,"flushed with pride"; nu...
 I'm afraid I don't know how to apply that operation to that
 combination of types. Continue, and I'll return the second
 argument (see above) as the result of the operation.
@@ -2775,8 +2768,8 @@ argument (see above) as the result of the operation.
 ! A statement can't begin with `,'.
 <to be read again> 
                    ,
-l.128 ...o e3 shifted (0,257); ,
-                                "flushed with pride"; numeric...
+l.128 ...rcle; addto e3 also e3 shifted (0,257); ,
+                                                  "flushed with pride"; nume...
 I was looking for the beginning of a new statement.
 If you just proceed without changing anything, I'll ignore
 everything up to the next `;'. Please insert a semicolon
@@ -2786,8 +2779,8 @@ now in front of anything that you don't want me to delete.
 ! Extra tokens will be flushed.
 <to be read again> 
                    ,
-l.128 ...o e3 shifted (0,257); ,
-                                "flushed with pride"; numeric...
+l.128 ...rcle; addto e3 also e3 shifted (0,257); ,
+                                                  "flushed with pride"; nume...
 I've just read as much of that statement as I could fathom,
 so a semicolon should have been next. It's very puzzling...
 but I'll try to get myself back together, by ignoring
@@ -2798,10 +2791,10 @@ now in front of anything that you don't want me to delete.
 {numeric}
 {def}
 
-f(EXPR0)(EXPR1)(EXPR2)->showdependencies;tracingcapsules:=1;showdependen
-cies;show1/3(3,6)*(((EXPR0)+(EXPR1))+((EXPR1)-(EXPR0))),(1,1)/sqrt2zscal
-ed((EXPR0)+1,(EXPR0)+2)-((EXPR0)+1,(EXPR0)+2)rotated45,(0,1)zscaled(1,(E
-XPR1)+2)-(1,(EXPR1)+2)rotated90
+f(EXPR0)(EXPR1)(EXPR2)->showdependencies;tracingcapsules:=1;showdependencies;sh
+ow1/3(3,6)*(((EXPR0)+(EXPR1))+((EXPR1)-(EXPR0))),(1,1)/sqrt2zscaled((EXPR0)+1,(
+EXPR0)+2)-((EXPR0)+1,(EXPR0)+2)rotated45,(0,1)zscaled(1,(EXPR1)+2)-(1,(EXPR1)+2
+)rotated90
 {(xx)+(1)}
 {(xx+1)/(0.3)}
 (EXPR0)<-3.3333xx+3.3333
@@ -2813,9 +2806,9 @@ XPR1)+2)-(1,(EXPR1)+2)rotated90
 alpha=0.45p3~+7
 {tracingcapsules:=1}
 {showdependencies}
-xpart %CAPSULE2512=xx
-%CAPSULE2520=2yy-2
-%CAPSULE2528 = 3.3333xx+3.3333
+xpart %CAPSULE2306=xx
+%CAPSULE2314=2yy-2
+%CAPSULE2322 = 3.3333xx+3.3333
 alpha=0.45p3~+7
 {show}
 {(1/3)*((3,6))}
@@ -2874,66 +2867,66 @@ o6=-0.0001o2
 o4=0.44444o2+0.88889o1
 o5=0.44444o2+0.88889o1
 oo=1.7o2+1.6o1-18
-%CAPSULE2440 = 3ooo-0.01o3
-%CAPSULE2460 = 8000o2-4000o1+1000o3+9
-xpart %CAPSULE2536=xpart '
-ypart %CAPSULE2536=ypart '
+%CAPSULE2234 = 3ooo-0.01o3
+%CAPSULE2254 = 8000o2-4000o1+1000o3+9
+xpart %CAPSULE2330=xpart '
+ypart %CAPSULE2330=ypart '
 alpha=0.45p3~+7
 {numeric}
-### 4000o1 = -%CAPSULE2460+8000o2+1000o3+9
-### -4.87383o2 = -oo-0.0004%CAPSULE2460+0.39673o3-17.99643
+### 4000o1 = -%CAPSULE2254+8000o2+1000o3+9
+### -4.87383o2 = -oo-0.0004%CAPSULE2254+0.39673o3-17.99643
 #### o6=-0.00027
 ### -0.04366o3 = -o4+0.46689oo+8.40439
 ### -o4 = -o5
-### 0.22894o5 = -%CAPSULE2440+0.10689oo+3ooo+1.92412
+### 0.22894o5 = -%CAPSULE2234+0.10689oo+3ooo+1.92412
 {begingroup}
 {pair}
-### -alfa=-%CAPSULE2428
+### -alfa=-%CAPSULE2222
 {endgroup}
-### -%CAPSULE2428=-xpart %CAPSULE2426
-{xpart((xpart %CAPSULE2426,0))}
-### -xpart %CAPSULE9=-%CAPSULE2416
+### -%CAPSULE2222=-xpart %CAPSULE2220
+{xpart((xpart %CAPSULE2220,0))}
+### -xpart %CAPSULE9=-%CAPSULE2210
 {endgroup}
-{(%CAPSULE2440)+(%CAPSULE2416)}
-### -%CAPSULE2440=-%CAPSULE2404+%CAPSULE2416
-### -%CAPSULE2404=-ypart %CAPSULE2402
-### -%CAPSULE2460=-xpart %CAPSULE2402
+{(%CAPSULE2234)+(%CAPSULE2210)}
+### -%CAPSULE2234=-%CAPSULE2198+%CAPSULE2210
+### -%CAPSULE2198=-ypart %CAPSULE2196
+### -%CAPSULE2254=-xpart %CAPSULE2196
 {begingroup}
 {save}
 {(1)-(p$)}
 {restoring p}
-### p$=-ypart %CAPSULE2368+1
+### p$=-ypart %CAPSULE2162+1
 {endgroup}
-{(2/3)*((-ypart %CAPSULE2368+1,ypart %CAPSULE2368))}
-### ypart %CAPSULE2368=-xpart %CAPSULE2368+1
-### -0.66667xpart %CAPSULE2368=-xpart %CAPSULE2360
-{-((xpart %CAPSULE2360,-xpart %CAPSULE2360+0.66667))}
-### xpart %CAPSULE2360=-xpart %CAPSULE2340
-{((xpart %CAPSULE2402,ypart %CAPSULE2402))=((xpart %CAPSULE2340,-xpart %
-CAPSULE2340-0.66667))}
-## xpart %CAPSULE2340=-ypart %CAPSULE2402-0.66667
-## xpart %CAPSULE2402=-ypart %CAPSULE2402-0.66667
-### ypart %CAPSULE2402=-xpart %CAPSULE2402-0.66667
-### -xpart %CAPSULE2402=-xpart %CAPSULE2340
-{((xpart ',ypart '))=((xpart %CAPSULE2340,-xpart %CAPSULE2340-0.66667))}
-## xpart %CAPSULE2340=-ypart '-0.66667
+{(2/3)*((-ypart %CAPSULE2162+1,ypart %CAPSULE2162))}
+### ypart %CAPSULE2162=-xpart %CAPSULE2162+1
+### -0.66667xpart %CAPSULE2162=-xpart %CAPSULE2154
+{-((xpart %CAPSULE2154,-xpart %CAPSULE2154+0.66667))}
+### xpart %CAPSULE2154=-xpart %CAPSULE2134
+{((xpart %CAPSULE2196,ypart %CAPSULE2196))=((xpart %CAPSULE2134,-xpart %CAPSULE
+2134-0.66667))}
+## xpart %CAPSULE2134=-ypart %CAPSULE2196-0.66667
+## xpart %CAPSULE2196=-ypart %CAPSULE2196-0.66667
+### ypart %CAPSULE2196=-xpart %CAPSULE2196-0.66667
+### -xpart %CAPSULE2196=-xpart %CAPSULE2134
+{((xpart ',ypart '))=((xpart %CAPSULE2134,-xpart %CAPSULE2134-0.66667))}
+## xpart %CAPSULE2134=-ypart '-0.66667
 ## xpart '=-ypart '-0.66667
 {begingroup}
 {(0.5)*(ooo)}
 {begingroup}
 {numeric}
-### -ooo=-%CAPSULE2302
+### -ooo=-%CAPSULE2096
 {endgroup}
-{(%CAPSULE2302)+(1)}
-### -%CAPSULE2302=-%CAPSULE2290+1
-{(1/2)*(%CAPSULE2290)}
-### -0.5%CAPSULE2290=-%CAPSULE2282
-{-(%CAPSULE2282)}
-### %CAPSULE2282=-%CAPSULE2274
-{(2)*(%CAPSULE2274)}
-### -2%CAPSULE2274=-%CAPSULE2266
-{(-0.5%CAPSULE2266-0.5)=(%CAPSULE2266)}
-## %CAPSULE2266=-0.33333
+{(%CAPSULE2096)+(1)}
+### -%CAPSULE2096=-%CAPSULE2084+1
+{(1/2)*(%CAPSULE2084)}
+### -0.5%CAPSULE2084=-%CAPSULE2076
+{-(%CAPSULE2076)}
+### %CAPSULE2076=-%CAPSULE2068
+{(2)*(%CAPSULE2068)}
+### -2%CAPSULE2068=-%CAPSULE2060
+{(-0.5%CAPSULE2060-0.5)=(%CAPSULE2060)}
+## %CAPSULE2060=-0.33333
 {(oo)=(-0.33333)}
 ## oo=-0.33333
 {endgroup}
@@ -2951,7 +2944,7 @@ foo(TEXT2)->begingroup(TEXT2)endgroup
 <to be read again> 
                    contour
 l.136 addto foo contour
-                        begingroup vardef foo=enddef; (0,0).....
+                        begingroup vardef foo=enddef; (0,0)..cycle endgroup;
 That macro has more parameters than you thought.
 I'll continue by pretending that each missing argument
 is either zero or null.
@@ -2964,7 +2957,7 @@ is either zero or null.
 <to be read again> 
                    contour
 l.136 addto foo contour
-                        begingroup vardef foo=enddef; (0,0).....
+                        begingroup vardef foo=enddef; (0,0)..cycle endgroup;
 At this point I needed to see the name of a picture variable.
 (Or perhaps you have indeed presented me with one; I might
 have missed it, if it wasn't followed by the proper token.)
@@ -2974,7 +2967,7 @@ So I'll not change anything just now.
 <to be read again> 
                    contour
 l.136 addto foo contour
-                        begingroup vardef foo=enddef; (0,0).....
+                        begingroup vardef foo=enddef; (0,0)..cycle endgroup;
 I've just read as much of that statement as I could fathom,
 so a semicolon should have been next. It's very puzzling...
 but I'll try to get myself back together, by ignoring
@@ -2991,8 +2984,8 @@ Path at line 136, after choices:
  ..cycle
 
 ! Extra `endgroup'.
-l.136 ...; (0,0)..cycle endgroup
-                                ;
+l.136 ... vardef foo=enddef; (0,0)..cycle endgroup
+                                                  ;
 I'm not currently working on a `begingroup',
 so I had better not try to end anything.
 
@@ -3023,8 +3016,8 @@ Path at line 137, after choices:
 ! Missing `}' has been inserted.
 <to be read again> 
                    )
-l.139 ...(0,0){1,0}..(0,0){0,-1)
-                                ..cycle);
+l.139 of ((0,0){1,0}..(0,0){0,-1)
+                                 ..cycle);
 I've scanned a direction spec for part of a path,
 so a right brace should have come next.
 I shall pretend that one was there.
@@ -3042,8 +3035,8 @@ Path at line 139, after choices:
 ! Extra tokens will be flushed.
 <to be read again> 
                    ..
-l.139 ...,0){1,0}..(0,0){0,-1)..
-                                cycle);
+l.139 of ((0,0){1,0}..(0,0){0,-1)..
+                                   cycle);
 I've just read as much of that statement as I could fathom,
 so a semicolon should have been next. It's very puzzling...
 but I'll try to get myself back together, by ignoring
@@ -3059,8 +3052,8 @@ now in front of anything that you don't want me to delete.
 ! Picture is too complicated to use as a dash pattern.
 <to be read again> 
                    ;
-l.141 ...ublepath p~8 dashed e4;
-                                 e9:=nullpicture;
+l.141 addto e9 doublepath p~8 dashed e4;
+                                         e9:=nullpicture;
 When you say `dashed p', every path in p should be monotone
 in x and there must be no overlapping.  This failed
 so I'll just make it a solid line instead.
@@ -3148,7 +3141,7 @@ Path at line 149, after choices:
 <to be read again> 
                    dashed
 l.150 dashed
-             e5 withpen pencircle scaled2 dashed e5shifted(0,...
+             e5 withpen pencircle scaled2 dashed e5shifted(0,-11)
 Next time say `dashed <known picture expression>';
 I'll ignore the bad `with' clause and look for another.
 
@@ -3190,7 +3183,7 @@ Path at line 152, after choices:
 <to be read again> 
                    ;
 l.153 e6=nullpicture;
-                      addto e6 doublepath p~8 dashed e5 withp...
+                      addto e6 doublepath p~8 dashed e5 withpen pencircle;
 An equation between already-known quantities can't help.
 But don't worry; continue and I'll just ignore it.
 
@@ -3207,8 +3200,8 @@ But don't worry; continue and I'll just ignore it.
 {vardef}
 {(unknown string _n0)=("trapf")}
 
-_s(EXPR2)(EXPR3)(EXPR4)(EXPR5)(EXPR6)->begingroup.addto._p.also(EXPR2)in
-font(EXPR3)scaled(EXPR4)shifted((EXPR5),(EXPR6));endgroup
+_s(EXPR2)(EXPR3)(EXPR4)(EXPR5)(EXPR6)->begingroup.addto._p.also(EXPR2)infont(EX
+PR3)scaled(EXPR4)shifted((EXPR5),(EXPR6));endgroup
 (SUFFIX0)<-
 (SUFFIX1)<-_s
 (EXPR2)<-"Aqua"
@@ -3226,8 +3219,8 @@ font(EXPR3)scaled(EXPR4)shifted((EXPR5),(EXPR6));endgroup
 {linecap:=0}
 {vardef}
 
-_r(EXPR2)(EXPR3)->begingroup.addto._p.doublepath(EXPR2)withpen.pencircle
-.scaled(EXPR3)endgroup
+_r(EXPR2)(EXPR3)->begingroup.addto._p.doublepath(EXPR2)withpen.pencircle.scaled
+(EXPR3)endgroup
 (SUFFIX0)<-
 (SUFFIX1)<-_r
 {-(3.9851)}
@@ -3248,8 +3241,8 @@ Path at line 11, after choices:
 {endgroup}
 {(unknown string _n1)=("trapf")}
 
-_s(EXPR2)(EXPR3)(EXPR4)(EXPR5)(EXPR6)->begingroup.addto._p.also(EXPR2)in
-font(EXPR3)scaled(EXPR4)shifted((EXPR5),(EXPR6));endgroup
+_s(EXPR2)(EXPR3)(EXPR4)(EXPR5)(EXPR6)->begingroup.addto._p.also(EXPR2)infont(EX
+PR3)scaled(EXPR4)shifted((EXPR5),(EXPR6));endgroup
 (SUFFIX0)<-
 (SUFFIX1)<-_s
 (EXPR2)<-"Brass"
@@ -3320,8 +3313,8 @@ Path at line 155, after choices:
 {vardef}
 {(unknown string _n0)=("trapf")}
 
-_s(EXPR2)(EXPR3)(EXPR4)(EXPR5)(EXPR6)->begingroup.addto._p.also(EXPR2)in
-font(EXPR3)scaled(EXPR4)shifted((EXPR5),(EXPR6));endgroup
+_s(EXPR2)(EXPR3)(EXPR4)(EXPR5)(EXPR6)->begingroup.addto._p.also(EXPR2)infont(EX
+PR3)scaled(EXPR4)shifted((EXPR5),(EXPR6));endgroup
 (SUFFIX0)<-
 (SUFFIX1)<-_s
 (EXPR2)<-"ast"
@@ -3506,8 +3499,8 @@ end of setbounds
 End edges
 
 {showstats}
-Memory usage 3017&264 (273 still untouched)
-String usage 68&249 (1155&8794 now untouched)
+Memory usage 3371&264 (401 still untouched)
+String usage 63&214 (8&7476 now untouched)
 {("curb")infont("trapf")}
 Missing character: There is no c in font trapf!
 {-(0.5)}
@@ -3517,8 +3510,8 @@ Missing character: There is no c in font trapf!
 {e6:=picture}
 {e5:=picture}
 {showstats}
-Memory usage 2267&264 (273 still untouched)
-String usage 66&241 (1154&8790 now untouched)
+Memory usage 2497&264 (401 still untouched)
+String usage 61&206 (7&7472 now untouched)
 {show}
 {pencircle}
 {((0,0))penoffset(pen)}
@@ -3533,8 +3526,8 @@ String usage 66&241 (1154&8790 now untouched)
 ! Improper transformation argument.
 <to be read again> 
                    ;
-l.161 ...ated 90 shifted "oops";
-                                 show llcorner e5, urcorner e5;
+l.161 e5:=e5 rotated 90 shifted "oops";
+                                        show llcorner e5, urcorner e5;
 The expression shown above has the wrong type,
 so I can't transform anything using it.
 Proceed, and I'll omit the transformation.
@@ -3547,8 +3540,8 @@ Proceed, and I'll omit the transformation.
 >> (7.97011,3.98506)
 {show}
 {char(220)}
-{("^^dc")infont("trapf")}
-Missing character: There is no ^^dc in font trapf!
+{("Ü")infont("trapf")}
+Missing character: There is no Ü in font trapf!
 {urcorner(picture)}
 >> (0,0)
 {makepath(pen)}
@@ -3582,19 +3575,19 @@ Missing character: There is no ^^dc in font trapf!
 {("hi")infont("qw99z")}
 ! Font qw99z not usable: TFM file not found.
 l.164 "hi" infont "qw99z";
-                           special "ij"="ij"; show substring(...
+                           special "ij"="ij"; show substring(-2,-1)of"abc";
 I wasn't able to read the size data for this font so this
 `infont' operation won't produce anything. If the font name
 is right, you might ask an expert to make a TFM file
 
-Missing character: There is no h in font !
-Missing character: There is no i in font !
+Missing character: There is no h in font nullfont!
+Missing character: There is no i in font nullfont!
 >> picture
 ! Isolated expression.
 <to be read again> 
                    ;
 l.164 "hi" infont "qw99z";
-                           special "ij"="ij"; show substring(...
+                           special "ij"="ij"; show substring(-2,-1)of"abc";
 I couldn't find an `=' or `:=' after the
 expression that is shown above this error message,
 so I guess I'll just ignore it and carry on.
@@ -3605,8 +3598,8 @@ so I guess I'll just ignore it and carry on.
 ! Unsuitable expression.
 <to be read again> 
                    ;
-l.164 ...9z"; special "ij"="ij";
-                                 show substring(-2,-1)of"abc";
+l.164 "hi" infont "qw99z"; special "ij"="ij";
+                                              show substring(-2,-1)of"abc";
 Only known strings are allowed for output as specials.
 
 {show}
@@ -3622,7 +3615,7 @@ Only known strings are allowed for output as specials.
 <to be read again> 
                    ;
 l.165 addto e5 contour [[ ]];
-                              addto e5 contour true; pausing:...
+                              addto e5 contour true; pausing:=0;prologues:=1;
 This expression should have specified a known path.
 So I'll not change anything just now.
 
@@ -3632,8 +3625,8 @@ So I'll not change anything just now.
 ! Improper `addto'.
 <to be read again> 
                    ;
-l.165 ... addto e5 contour true;
-                                 pausing:=0;prologues:=1;
+l.165 ... e5 contour [[ ]]; addto e5 contour true;
+                                                   pausing:=0;prologues:=1;
 This expression should have specified a known path.
 So I'll not change anything just now.
 
@@ -3641,7 +3634,9 @@ So I'll not change anything just now.
 {prologues:=1}
 {charcode:=197}
 {shipout}
-[197]
+[197
+Warning: cannot open font map file psfonts.map
+]
 Edge structure at line 166 (just shipped out):
 "curb" infont "trapf"
 transformed (0,0,0,1,-1,0.5)
@@ -3731,8 +3726,8 @@ End edges
                 0
 <to be read again> 
                    ;
-l.172 ...llpicture; clip p~8 to;
-                                 clip e5 to e4; clip e5 to p~...
+l.172 e5:=nullpicture; clip p~8 to;
+                                    clip e5 to e4; clip e5 to p~8; clip e5 t...
 I'm afraid I need some sort of value in order to continue,
 so I've tentatively inserted `0'. You may want to
 delete this zero and insert something else;
@@ -3741,8 +3736,8 @@ see Chapter 27 of The METAFONTbook for an example.
 ! Variable p~8 is the wrong type (path).
 <to be read again> 
                    ;
-l.172 ...llpicture; clip p~8 to;
-                                 clip e5 to e4; clip e5 to p~...
+l.172 e5:=nullpicture; clip p~8 to;
+                                    clip e5 to e4; clip e5 to p~8; clip e5 t...
 I was looking for a "known" picture variable.
 So I'll not change anything just now.
 
@@ -3751,8 +3746,8 @@ So I'll not change anything just now.
 ! Improper `clip'.
 <to be read again> 
                    ;
-l.172 ... p~8 to; clip e5 to e4;
-                                 clip e5 to p~8; clip e5 to p~7;
+l.172 e5:=nullpicture; clip p~8 to; clip e5 to e4;
+                                                   clip e5 to p~8; clip e5 t...
 This expression should have specified a known path.
 So I'll not change anything just now.
 
@@ -3760,8 +3755,8 @@ So I'll not change anything just now.
 ! Not a cycle.
 <to be read again> 
                    ;
-l.172 ... to e4; clip e5 to p~8;
-                                 clip e5 to p~7;
+l.172 ...ip p~8 to; clip e5 to e4; clip e5 to p~8;
+                                                   clip e5 to p~7;
 That contour should have ended with `..cycle' or `&cycle'.
 So I'll not change anything just now.
 
@@ -3855,8 +3850,7 @@ Filled pen stroke :
  ..(0,25)..controls (-6.63042,25) and (-12.98926,22.36609)
  ..(-17.67767,17.67767)..controls (-22.36609,12.98926) and (-25,6.63042)
  ..(-25,0)..controls (-25,-6.63042) and (-22.36609,-12.98926)
- ..(-17.67767,-17.67767)..controls (-12.98926,-22.36609) and (-6.63042,-
-25)
+ ..(-17.67767,-17.67767)..controls (-12.98926,-22.36609) and (-6.63042,-25)
  ..(0,-25)..controls (6.63042,-25) and (12.98926,-22.36609)
  ..(17.67767,-17.67767)..controls (22.36609,-12.98926) and (25,-6.63042)
  ..cycle
@@ -3897,8 +3891,8 @@ End edges
 ! Not a suitable variable.
 <to be read again> 
                    ;
-l.177 ...; shipout e5;  addto 3;
-                                 addto p~8 contour p~7;
+l.177 charcode:=149; shipout e5;  addto 3;
+                                           addto p~8 contour p~7;
 At this point I needed to see the name of a picture variable.
 (Or perhaps you have indeed presented me with one; I might
 have missed it, if it wasn't followed by the proper token.)
@@ -3908,8 +3902,8 @@ So I'll not change anything just now.
 ! Variable p~8 is the wrong type (path).
 <to be read again> 
                    ;
-l.177 ... addto p~8 contour p~7;
-                                
+l.177 ...pout e5;  addto 3; addto p~8 contour p~7;
+                                                  
 I was looking for a "known" picture variable.
 So I'll not change anything just now.
 
@@ -4048,33 +4042,33 @@ End edges
 {sqrt(-1)}
 ! Square root of -1 has been replaced by 0.
 l.183 for @=angle(sqrt$,
-                        mlog$):charext:=uniformdeviate$;charh...
+                        mlog$):charext:=uniformdeviate$;charht:=2048;
 Since I don't take square roots of negative numbers,
 I'm zeroing this one. Proceed, with fingers crossed.
 
 {mlog(-1)}
 ! Logarithm of -1 has been replaced by 0.
 l.183 for @=angle(sqrt$,mlog$)
-                              :charext:=uniformdeviate$;charh...
+                              :charext:=uniformdeviate$;charht:=2048;
 Since I don't take logs of non-positive numbers,
 I'm zeroing this one. Proceed, with fingers crossed.
 
 {angle((0,0))}
 ! angle(0,0) is taken as zero.
 l.183 for @=angle(sqrt$,mlog$):
-                               charext:=uniformdeviate$;charh...
+                               charext:=uniformdeviate$;charht:=2048;
 The `angle' between two identical points is undefined.
 I'm zeroing this one. Proceed, with fingers crossed.
 
 Runaway loop?
-charext:=uniformdeviate$;charht:=2048;addto.e3contour( ETC.
+charext:=uniformdeviate$;charht:=2048;addto.e3contour(0,-100)..tension ETC.
 ! Forbidden token found while scanning the text of a for loop.
 <inserted text> 
                 endfor
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 I suspect you have forgotten an `endfor',
 causing me to read past where you wanted me to stop.
 I'll try to recover; but if the error is serious,
@@ -4104,14 +4098,14 @@ Path at line 206, after choices:
 ! Enormous charht has been reduced.
 <to be read again> 
                    ;
-<for(0)> ...ode:=151;shipout.e3;
-                                interim.char99="c";true=false...
+<for(0)> ...special"bye";charcode:=151;shipout.e3;
+                                                  interim.char99="c";true=fa...
 <inserted text> endfor
                       
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 Font metric dimensions must be less than 2048pt.
 
 [151
@@ -4328,14 +4322,14 @@ Envelope spec at line 206:
 ! The token `char' isn't an internal quantity.
 <to be read again> 
                    char
-<for(0)> ...pout.e3;interim.char
-                                99="c";true=false;show.penoff...
+<for(0)> ...;charcode:=151;shipout.e3;interim.char
+                                                  99="c";true=false;show.pen...
 <inserted text> endfor
                       
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 Something like `tracingonline' should follow `interim'.
 
 {char(99)}
@@ -4343,14 +4337,14 @@ Something like `tracingonline' should follow `interim'.
 ! Redundant equation.
 <to be read again> 
                    ;
-<for(0)> ...;interim.char99="c";
-                                true=false;show.penoffset(2,1...
+<for(0)> ...de:=151;shipout.e3;interim.char99="c";
+                                                  true=false;show.penoffset(...
 <inserted text> endfor
                       
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 I already knew that this equation was true.
 But perhaps no harm has been done; let's continue.
 
@@ -4360,14 +4354,14 @@ But perhaps no harm has been done; let's continue.
 ! Inconsistent equation.
 <to be read again> 
                    ;
-<for(0)> ...ar99="c";true=false;
-                                show.penoffset(2,1)of.qq;show...
+<for(0)> ...pout.e3;interim.char99="c";true=false;
+                                                  show.penoffset(2,1)of.qq;s...
 <inserted text> endfor
                       
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 The equation I just read contradicts what was said before.
 But don't worry; continue and I'll just ignore it.
 
@@ -4375,14 +4369,14 @@ But don't worry; continue and I'll just ignore it.
 {((2,1))penoffset(pen)}
 >> (0,-2.5)
 {showstats}
-Memory usage 2744&607 (39 still untouched)
-String usage 73&279 (1138&8717 now untouched)
+Memory usage 3022&607 (167 still untouched)
+String usage 69&244 (2&7446 now untouched)
 {let}
 {showtoken}
 > f=tag
 {showstats}
-Memory usage 2704&536 (39 still untouched)
-String usage 73&279 (1138&8717 now untouched)
+Memory usage 2982&536 (167 still untouched)
+String usage 69&244 (2&7446 now untouched)
 {nullpicture}
 {(unknown picture e17)=(picture)}
 {addto}
@@ -4489,11 +4483,9 @@ setbounds path:
 (4.5,-10)..controls (4.5,-9.86739) and (3.49911,-9.74022)
  ..(1.71751,-9.64645)..controls (-0.06409,-9.55269) and (-2.48044,-9.5)
  ..(-5,-9.5)..controls (-7.51956,-9.5) and (-9.93591,-9.55269)
- ..(-11.71751,-9.64645)..controls (-13.49911,-9.74022) and (-14.5,-9.867
-39)
+ ..(-11.71751,-9.64645)..controls (-13.49911,-9.74022) and (-14.5,-9.86739)
  ..(-14.5,-10)..controls (-14.5,-10.13261) and (-13.49911,-10.25978)
- ..(-11.71751,-10.35355)..controls (-9.93591,-10.44731) and (-7.51956,-1
-0.5)
+ ..(-11.71751,-10.35355)..controls (-9.93591,-10.44731) and (-7.51956,-10.5)
  ..(-5,-10.5)..controls (-2.48044,-10.5) and (-0.06409,-10.44731)
  ..(1.71751,-10.35355)..controls (3.49911,-10.25978) and (4.5,-10.13261)
  ..cycle
@@ -4503,11 +4495,9 @@ setbounds path:
  ..(-5,-5.5)..controls (-6.19348,-5.5) and (-7.33806,-5.9741)
  ..(-8.18198,-6.81802)..controls (-9.0259,-7.66194) and (-9.5,-8.80652)
  ..(-9.5,-10)..controls (-9.5,-11.19348) and (-9.0259,-12.33806)
- ..(-8.18198,-13.18198)..controls (-7.33806,-14.0259) and (-6.19348,-14.
-5)
+ ..(-8.18198,-13.18198)..controls (-7.33806,-14.0259) and (-6.19348,-14.5)
  ..(-5,-14.5)..controls (-3.80652,-14.5) and (-2.66194,-14.0259)
- ..(-1.81802,-13.18198)..controls (-0.9741,-12.33806) and (-0.5,-11.1934
-8)
+ ..(-1.81802,-13.18198)..controls (-0.9741,-12.33806) and (-0.5,-11.19348)
  ..cycle
 Filled pen stroke :
 (-9,-15)..controls (-5.66667,-11.66667) and (-2.33333,-8.33333)
@@ -4554,14 +4544,14 @@ Path at line 206, after choices:
 {(path)scaled(1000)}
 {arclength(path)}
 ! Arithmetic overflow.
-<for(0)> ...ngth(ap2scaled1000),
-                                arclength(ap3scaled200);show....
+<for(0)> ....(50,0);show.arclength(ap2scaled1000),
+                                                  arclength(ap3scaled200);sh...
 <inserted text> endfor
                       
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 Uh, oh. A little while ago one of the quantities that I was
 computing got too large, so I'm afraid your answers will be
 somewhat askew. You'll probably have to adopt different
@@ -4571,14 +4561,14 @@ tactics next time. But I shall try to carry on anyway.
 {(path)scaled(200)}
 {arclength(path)}
 ! Arithmetic overflow.
-<for(0)> ...ength(ap3scaled200);
-                                show.arclength.ap1,arclength....
+<for(0)> ...p2scaled1000),arclength(ap3scaled200);
+                                                  show.arclength.ap1,arcleng...
 <inserted text> endfor
                       
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 Uh, oh. A little while ago one of the quantities that I was
 computing got too large, so I'm afraid your answers will be
 somewhat askew. You'll probably have to adopt different
@@ -4607,14 +4597,14 @@ tactics next time. But I shall try to carry on anyway.
 {(path)scaled(0.00002)}
 {(314)arctime(path)}
 ! Arithmetic overflow.
-<for(0)> ...f(ap1scaled0.00002);
-                                [[clear(tracingcommands);char...
+<for(0)> ...of.ap2,arctime314of(ap1scaled0.00002);
+                                                  [[clear(tracingcommands);c...
 <inserted text> endfor
                       
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 Uh, oh. A little while ago one of the quantities that I was
 computing got too large, so I'm afraid your answers will be
 somewhat askew. You'll probably have to adopt different
@@ -4630,21 +4620,21 @@ clear(TEXT0)->interim(TEXT0):=$
 ! Enormous charht has been reduced.
 <to be read again> 
                    ;
-<for(0)> ...shipout.nullpicture;
-                                "careful"for.for=(EXPR0)step2...
+<for(0)> ...=ASCII.char269-13;shipout.nullpicture;
+                                                  "careful"for.for=(EXPR0)st...
 <inserted text> endfor
                       
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 Font metric dimensions must be less than 2048pt.
 
 [0]
-careful METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT M
-ETAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT M
-ETAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT M
-ETAFONT METAFONT METAFONT METAFONT
+careful METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT
+ METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFO
+NT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT METAFONT META
+FONT METAFONT
 {restoring tracingcommands=2.1}
 {endgroup}
 {scrollmode}
@@ -4670,15 +4660,15 @@ f<expr>->let)=];let[=(;show._
 xpart '=-ypart '-0.66667
 {qq:=pen}
 {showstats}
-Memory usage 2147&536 (39 still untouched)
-String usage 73&277 (1110&5373 now untouched)
+Memory usage 2372&536 (167 still untouched)
+String usage 69&244 (1&6758 now untouched)
 {[repeat the loop]}
 >> bye
 ! Isolated expression.
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 I couldn't find an `=' or `:=' after the
 expression that is shown above this error message,
 so I guess I'll just ignore it and carry on.
@@ -4686,8 +4676,8 @@ so I guess I'll just ignore it and carry on.
 ! Extra tokens will be flushed.
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 I've just read as much of that statement as I could fathom,
 so a semicolon should have been next. It's very puzzling...
 but I'll try to get myself back together, by ignoring
@@ -4700,8 +4690,8 @@ now in front of anything that you don't want me to delete.
                 ;
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 A previous error seems to have propagated,
 causing me to read past where you wanted me to stop.
 I'll try to recover; but if the error is serious,
@@ -4734,22 +4724,21 @@ by `endgroup'. So I've inserted `endgroup' now.
 {endgroup}
 (end occurred when else on line 88 was incomplete)
 (end occurred when if on line 37 was incomplete)
-(end occurred when elseif on line 22 was incomplete) 
+(end occurred when elseif on line 22 was incomplete)
+ 
 Here is how much of MetaPost's memory you used:
- 75 strings out of 1277
- 768 string characters out of 9330
- 4462 words of memory out of 4501
- 337 symbolic tokens out of 2100
- 8i,35n,8p,167b stack positions out of 30i,100n,150p,500b
- 0 string compactions (moved 0 characters, 0 strings)
-
+ 71 strings out of 73
+ 735 string characters out of 7698
+ 4834 words of memory out of 5000
+ 366 symbolic tokens out of 16384
+ 8i,44n,8p,162b,2f stack positions out of 300i,84n,1500p,200b,25f
+ 13 string compactions (moved 5119 characters, 856 strings)
 (illegal design size has been changed to 128pt)
 (some chardp values had to be adjusted by as much as 0.5pt)
 (local label 0:: was missing)
 (local label 5:: was missing)
-(4 font metric dimensions had to be decreased) 
-(You used 3w,2h,16d,2i,312l,301k,1e,10p metric file positions
-  out of 256w,16h,16d,64i,5000l,500k,256e,50p)
-
+(4 font metric dimensions had to be decreased)
+ 
+(You used 3w,2h,16d,2i,312l,301k,1e,10p metric file positions)
 Font metrics written on trap.tfm.
 25 output files written: trap.ps .. trap.200

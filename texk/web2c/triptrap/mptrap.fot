@@ -1,23 +1,29 @@
-**(trap.mp
+This is MetaPost, version 1.202 (kpathsea version 3.5.7dev)
+**(./trap.mp
 \*//*\trap\pass2!
 ! Missing symbolic token inserted.
 <inserted text> 
                  INACCESSIBLE
-l.22 ...t next=\; delimiters ^~7
-                                ! fi
+l.22 ...opmode; outer\; let next=\; delimiters ^~7
+                                                  ! fi
 ! Extra tokens will be flushed.
 <to be read again> 
                    !
-l.22 ... next=\; delimiters ^~7!
-                                 fi
+l.22 ...pmode; outer\; let next=\; delimiters ^~7!
+                                                   fi
 ! Forbidden token found while scanning to the end of the statement.
 <inserted text> 
                 ;
 <to be read again> 
                    \
 l.23 next\
-          ; % the second pass will now compute silently; the ...
+          ; % the second pass will now compute silently; the first pass will...
 
+
+Missing character: There is no c in font trapf!
+Missing character: There is no Ü in font trapf!
+Missing character: There is no h in font nullfont!
+Missing character: There is no i in font nullfont!
 hello again^^_
 {tracingonline:=1}
 
@@ -31,27 +37,27 @@ f<expr>->let)=];let[=(;show._
 xpart '=-ypart '-0.66667
 {qq:=pen}
 {showstats}
-Memory usage 2147&536 (39 still untouched)
-String usage 73&277 (1110&5373 now untouched)
+Memory usage 2372&536 (167 still untouched)
+String usage 69&244 (1&6758 now untouched)
 {[repeat the loop]}
 >> bye
 ! Isolated expression.
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 ! Extra tokens will be flushed.
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 ! Forbidden token found while scanning to the end of the statement.
 <inserted text> 
                 ;
 <to be read again> 
                    endtext
-l.206 ... showstats; bye endtext
-                                
+l.206 ...pendencies; qq:=q; showstats; bye endtext
+                                                  
 {show}
 )
 *! An expression can't begin with `end'.
