@@ -41,26 +41,7 @@ typedef SHORT F2Dot14;          /* 2.14 fixed point number used for
 typedef LONG F26Dot6;           /* 26.6 fixed point number to specify
                                  * pixel positions */
 
-#ifndef inline
-extern inline BYTE 
-ttfGetBYTE(FILE *fp)
-{
-  int cc;
-
-
-  if ((cc = fgetc (fp)) == EOF)
-  {
-#if 0
-    if (feof(fp) != 0)
-      ttfError("Unexpected EOF \n");
-    else
-       ttfError("Error Getting BYTE\n");
-#endif
-  }
-  return (BYTE) cc;
-}
-#endif
-
+BYTE ttfGetBYTE(FILE *fp);
 CHAR ttfGetCHAR(FILE *fp);
 USHORT ttfGetUSHORT(FILE *fp);
 USHORT ttfGetSHORT(FILE *fp);

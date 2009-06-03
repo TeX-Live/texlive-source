@@ -1,3 +1,9 @@
+2009-06-03  Karl Berry  <karl@tug.org>
+
+	* include/ttf.h (ttfGetBYTE): replace [non-inline] definition
+	here with declaration, referring to the definition in
+	libttf/ttfread.c.  Report from vvv, tlbuild 02 Jun 2009 23:48:52.
+
 2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
