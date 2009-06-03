@@ -17727,7 +17727,7 @@ fi
 
 case $with_tex_banner in
   ''|yes|no) with_tex_banner="Web2C $WEB2CVERSION" ;;
-  *) if test -z `echo "$with_tex_banner" | sed -n "/ $WEB2CVERSION/p"`; then
+  *) if echo "$with_tex_banner" | grep -v "$WEB2CVERSION" >/dev/null; then
   { { $as_echo "$as_me:$LINENO: error: Bad \`--with-tex-banner=$with_tex_banner' version string (must contain \` $WEB2CVERSION')" >&5
 $as_echo "$as_me: error: Bad \`--with-tex-banner=$with_tex_banner' version string (must contain \` $WEB2CVERSION')" >&2;}
    { (exit 1); exit 1; }; }

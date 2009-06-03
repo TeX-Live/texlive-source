@@ -1,3 +1,8 @@
+2009-06-03  Karl Berry  <karl@tug.org>
+
+	* configure.ac (with_tex_banner): use echo|grep for check
+	instead of test -z ..., since we don't want to risk nested "quotes".
+
 2009-06-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Update version number to 2009.

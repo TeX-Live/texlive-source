@@ -45,7 +45,7 @@ m4_include([ac/web2c.ac])
 
 AS_CASE([$with_tex_banner],
         [''|yes|no], [with_tex_banner="Web2C $WEB2CVERSION"],
-        [AS_IF([test -z `echo "$with_tex_banner" | sed -n "/ $WEB2CVERSION/p"`],
+        [AS_IF([echo "$with_tex_banner" | grep -v "$WEB2CVERSION" >/dev/null],
                [AC_MSG_ERROR([Bad `--with-tex-banner=$with_tex_banner' version string (must contain ` $WEB2CVERSION')])])])
 AC_DEFINE_UNQUOTED([WEB2CVERSION], [" ($with_tex_banner)"])
 
