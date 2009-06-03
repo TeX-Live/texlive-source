@@ -605,9 +605,8 @@ am__objects_14 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT) \
 nodist_pdftex_OBJECTS = $(am__objects_14) pdftex-pdftex-pool.$(OBJEXT) \
 	pdftex-pdftexextra.$(OBJEXT) $(am__objects_15)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
-am__DEPENDENCIES_6 = libpdftex.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) libmd5.a
+am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libmd5.a
 am_pdftosrc_OBJECTS = pdftosrc-pdftosrc.$(OBJEXT)
 pdftosrc_OBJECTS = $(am_pdftosrc_OBJECTS)
 nodist_pktogf_OBJECTS = pktogf.$(OBJEXT)
@@ -1396,14 +1395,16 @@ etex_tests = etexdir/etrip.test
 pdftex_cppflags = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES) \
 	$(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5 \
 	-I$(srcdir)/pdftexdir
-pdftex_ldadd = libpdftex.a $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS) \
+
+# used for both pdftex and pdftosrc.
+pdftex_ldadd = $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS) \
 	$(OBSDCOMPAT_LIBS) libmd5.a
 pdftex_dependencies = $(proglib) $(LIBPNG_DEPEND) $(ZLIB_DEPEND) \
 	$(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libmd5.a
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(buildenv) $(TANGLE)
 pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_44)
-pdftex_LDADD = $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
+pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 pdftex_c_h = pdftexini.c pdftex0.c pdftex1.c pdftex2.c pdftex3.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c \

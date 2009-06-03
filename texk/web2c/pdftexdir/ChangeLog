@@ -1,3 +1,10 @@
+2009-06-04  Karl Berry  <karl@tug.org>
+
+	* am/pdftex.am (pdftex_LDADD): add libpdftex.a here.
+	(pdftex_ldadd): remove it from here, so we do not try
+	to link pdftosrc with it.
+	Report from vvv, tlbuild mail 03 Jun 2009 21:45:00.
+
 2009-05-07  Norbert Preinig <preining@logic.at>
 
 	* pdftosrc.cc: add warning that poppler version doesn't support

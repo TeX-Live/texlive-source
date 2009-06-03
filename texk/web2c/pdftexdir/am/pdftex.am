@@ -7,7 +7,8 @@ pdftex_cppflags = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
 pdftex_cppflags += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
 pdftex_cppflags += -I$(srcdir)/pdftexdir
 
-pdftex_ldadd = libpdftex.a $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
+# used for both pdftex and pdftosrc.
+pdftex_ldadd = $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
 pdftex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a
 
 pdftex_dependencies = $(proglib)
@@ -29,7 +30,7 @@ pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(buildenv) $(TANGLE)
 pdftex_CPPFLAGS = $(pdftex_cppflags)
 
 ## With --enable-ipc, pdfTeX may need to link with -lsocket.
-pdftex_LDADD = $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
+pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
