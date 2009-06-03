@@ -1,6 +1,12 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2009-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* events.c: avoid declaration after statement.
+
+	from Vladimir Volovich <vvv@vsu.ru>.
+
 2009-05-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* CHANGES: fixed version/relase-date such that mksedscript can
