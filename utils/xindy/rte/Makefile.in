@@ -547,7 +547,7 @@ $(binariesdir)/$(XINDY_RUN):
 	$(MAKE) -C ordrules ordrulei.c
 	env CLISP_LINKKIT='$(CLISP_LIB)/linkkit' MAKE="$(MAKE)" \
 	sh '$(CLISP_LIB)/clisp-link' add-module-set ordrules '$(CLISP_LIB)/full' xindy-build-dir
-	cp xindy-build-dir/$(LISP_RUN) $(binariesdir)/$(XINDY_RUN)
+	$(INSTALL_STRIP_PROGRAM) xindy-build-dir/$(LISP_RUN) $(binariesdir)/$(XINDY_RUN)
 
 clean-local:
 	rm -rf xindy-build-dir

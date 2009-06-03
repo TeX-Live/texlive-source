@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 ======================================================
 
+2009-06-03  Karl Berry  <karl@tug.org>
+
+	* rte/Makefile.am (XINDY_RUN): $(STRIP) it.
+
 2009-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, ac/xindy.ac: Reorganize for dual use:
@@ -38,4 +42,3 @@ ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 	* ac/xindy.ac (new): Configure options also shown at top-level.
 	* m4/tl_msg_error.m4 (new): Define TL_MSG_ERROR such that
 	'configure --disable-build' succeeds without clisp.
-
