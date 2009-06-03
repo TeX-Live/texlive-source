@@ -25,8 +25,8 @@
 #include "ptexlib.h"
 
 static const char __svn_version[] =
-    "$Id: pdfpage.c 2361 2009-04-27 14:30:46Z taco $ "
-    "$URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
+    "$Id: pdfpage.c 2414 2009-06-03 12:57:01Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
 
 #define lround(a) (long) floor((a) + 0.5)
 #define setpdffloat(a,b,c) {(a).m = (b); (a).e = (c);}
@@ -493,7 +493,7 @@ static void
 place_glyph(pdfstructure * p, scaledpos * pos, internal_font_number f,
             integer c)
 {
-    int move;
+    boolean move;
     if (f != p->f_cur || is_textmode(p) || is_pagemode(p)) {
         goto_textmode(p);
         if (f != p->f_cur)

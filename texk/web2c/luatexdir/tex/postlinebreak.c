@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: postlinebreak.c 2294 2009-04-15 19:40:11Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/postlinebreak.c $";
+    "$Id: postlinebreak.c 2294 2009-04-15 19:40:11Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/postlinebreak.c $";
 
 /* So far we have gotten a little way into the |line_break| routine, having
 covered its important |try_break| subroutine. Now let's consider the

@@ -25,7 +25,7 @@
 #include "luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: writet1.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writet1.c $";
+    "$Id: writet1.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/writet1.c $";
 
 #define t1_log(str)      if(tracefilenames) tex_printf("%s", str)
 #define get_length1()    t1_length1 = t1_offset() - t1_save_offset

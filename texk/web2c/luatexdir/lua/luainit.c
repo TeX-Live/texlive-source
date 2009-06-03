@@ -25,7 +25,7 @@
 #include <luatexdir/luatexextra.h>
 
 static const char _svn_version[] =
-    "$Id: luainit.c 2363 2009-04-30 07:47:37Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luainit.c $";
+    "$Id: luainit.c 2376 2009-05-08 08:40:13Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/luainit.c $";
 
 /* TH: TODO
  *

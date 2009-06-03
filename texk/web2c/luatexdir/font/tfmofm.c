@@ -22,7 +22,7 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: tfmofm.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/tfmofm.c $";
+    "$Id: tfmofm.c 2414 2009-06-03 12:57:01Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/tfmofm.c $";
 
 /* Here are some macros that help process ligatures and kerns */
 
@@ -508,12 +508,56 @@ open_tfm_file(char *nom, unsigned char **tfm_buf, integer * tfm_siz)
    of \TeX\ between computers.
 */
 
-#define store_scaled(zz)            \
-  { fget; a=fbyte; fget; b=fbyte;                                       \
-    fget; c=fbyte; fget; d=fbyte;                                       \
-    sw=(((((d*z)>>8)+(c*z))>>8)+(b*z)) / beta;                          \
-    if (a==0) { zz=sw; } else if (a==255) { zz=sw-alpha; } else tfm_abort;  \
+#define store_scaled(zz)                                                   \
+  { fget; a=fbyte; fget; b=fbyte;                                          \
+    fget; c=fbyte; fget; d=fbyte;                                          \
+    sw=(((((d*z)>>8)+(c*z))>>8)+(b*z)) / beta;                             \
+    if (a==0) { zz=sw; } else if (a==255) { zz=sw-alpha; } else tfm_abort; \
   }
+
+scaled store_scaled_f(scaled sq, scaled z_in)
+{
+    eight_bits a, b, c, d;
+    scaled sw;
+    static integer alpha, beta; /* beta:1..16 */
+    static scaled z, z_prev = 0;
+    /* @<Replace |z| by $|z|^\prime$ and compute $\alpha,\beta$@>; */
+    if (z_in != z_prev || z_prev == 0) {
+        z = z_prev = z_in;
+        alpha = 16;
+        while (z >= 0x800000) {
+            z /= 2;
+            alpha += alpha;
+        }
+        beta = 256 / alpha;
+        alpha *= z;
+    };
+    if (sq >= 0) {
+        d = sq % 256;           /* any "mod 256" not really needed, would typecast alone be safe? */
+        sq = sq / 256;
+        c = sq % 256;
+        sq = sq / 256;
+        b = sq % 256;
+        sq = sq / 256;
+        a = sq % 256;
+    } else {
+        sq = (sq + 1073741824) + 1073741824;    /* braces for optimizing compiler */
+        d = sq % 256;
+        sq = sq / 256;
+        c = sq % 256;
+        sq = sq / 256;
+        b = sq % 256;
+        sq = sq / 256;
+        a = (sq + 128) % 256;
+    }
+    sw = (((((d * z) >> 8) + (c * z)) >> 8) + (b * z)) / beta;
+    if (a == 0)
+        return sw;
+    else if (a == 255)
+        return (sw - alpha);
+    else
+        pdf_error(maketexstring("vf"), maketexstring("vf scaling"));
+}
 
 #define  check_existence(z)                                             \
   { check_byte_range(z);                                                \

@@ -78,8 +78,6 @@ typedef struct dir_data {
 #define STAT_STRUCT struct _stati64
 #define STAT_FUNC _stati64
 #else
-#define _O_TEXT               0
-#define _O_BINARY             0
 #define lfs_setmode(L,file,m)   ((void)((void)file,m),  \
 		 luaL_error(L, LUA_QL("setmode") " not supported on this platform"), -1)
 #ifdef HAVE_STAT64

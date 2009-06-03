@@ -21,7 +21,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: vfpacket.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/vfpacket.c $";
+    "$Id: vfpacket.c 2414 2009-06-03 12:57:01Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/vfpacket.c $";
 
 /*
   The |do_vf_packet| procedure is called in order to interpret the
@@ -64,7 +64,7 @@ static packet_stack_index packet_stack_ptr = 0; /* pointer into |packet_stack| *
   fw = fw*256 + do_packet_byte();         \
   fw = fw*256 + do_packet_byte();         \
   fw = fw*256 + do_packet_byte();         \
-    a = sqxfw(fw, fs); }
+    a = store_scaled_f(fw, fs); }
 
 
 /* count the number of bytes in a command packet */
@@ -370,42 +370,4 @@ replace_packet_fonts(internal_font_number f, integer * old_fontid,
             }
         }
     }
-}
-
-/* this function was copied/borrowed/stolen from dvipdfm code */
-
-scaled sqxfw(scaled sq, integer fw)
-{
-    int sign = 1;
-    unsigned long a, b, c, d, ad, bd, bc, ac;
-    unsigned long e, f, g, h, i, j, k;
-    unsigned long result;
-    /* Make positive. */
-    if (sq < 0) {
-        sign = -sign;
-        sq = -sq;
-    }
-    if (fw < 0) {
-        sign = -sign;
-        fw = -fw;
-    }
-    a = ((unsigned long) sq) >> 16u;
-    b = ((unsigned long) sq) & 0xffffu;
-    c = ((unsigned long) fw) >> 16u;
-    d = ((unsigned long) fw) & 0xffffu;
-    ad = a * d;
-    bd = b * d;
-    bc = b * c;
-    ac = a * c;
-    e = bd >> 16u;
-    f = ad >> 16u;
-    g = ad & 0xffffu;
-    h = bc >> 16u;
-    i = bc & 0xffffu;
-    j = ac >> 16u;
-    k = ac & 0xffffu;
-    result = (e + g + i + (1 << 3)) >> 4u;      /* 1<<3 is for rounding */
-    result += (f + h + k) << 12u;
-    result += j << 28u;
-    return (sign > 0) ? result : -result;
 }

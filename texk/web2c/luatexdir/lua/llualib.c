@@ -21,7 +21,7 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: llualib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/llualib.c $";
+    "$Id: llualib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/llualib.c $";
 
 #define LOAD_BUF_SIZE 256
 #define UINT_MAX32 0xFFFFFFFF

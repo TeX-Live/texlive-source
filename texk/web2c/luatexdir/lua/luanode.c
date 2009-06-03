@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: luanode.c 2284 2009-04-14 12:58:45Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luanode.c $";
+    "$Id: luanode.c 2284 2009-04-14 12:58:45Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/luanode.c $";
 
 #undef link                     /* defined by cpascal.h */
 #define info(a)    fixmem[(a)].hhlh

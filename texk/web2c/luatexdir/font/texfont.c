@@ -35,7 +35,7 @@
 #include "luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: texfont.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/texfont.c $";
+    "$Id: texfont.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/texfont.c $";
 
 #define proper_char_index(c) (c<=font_ec(f) && c>=font_bc(f))
 #define dxfree(a,b) { xfree(a); a = b ; }

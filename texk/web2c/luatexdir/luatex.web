@@ -250,8 +250,8 @@ known as `\eTeX'.
 @d pdftex_version_string=='-2.00.0' {current \pdfTeX\ version}
 @#
 @d luatex_version==40 { \.{\\luatexversion} }
-@d luatex_revision=="1" { \.{\\luatexrevision} }
-@d luatex_version_string=='beta-0.40.1' {current \LuaTeX\ version}
+@d luatex_revision=="2" { \.{\\luatexrevision} }
+@d luatex_version_string=='beta-0.40.2' {current \LuaTeX\ version}
 @d luatex_date_info==-extra_version_info { the compile date is negated }
 @d luatex_svnversion=='$Id$'
    {for long --version information, as proposed by Peter M\"unster}
@@ -17597,7 +17597,7 @@ if (tracing_output<=0)and(post_callback_id=0) and shipping_page then
 dead_cycles:=0;
 update_terminal; {progress report}
 @<Flush the box from memory, showing statistics if requested@>;
-if post_callback_id>0 then
+if shipping_page and post_callback_id>0 then
   ret:=run_callback(post_callback_id,'->');
 @<Finish sheet {\sl Sync\TeX} information record@>;
 end;

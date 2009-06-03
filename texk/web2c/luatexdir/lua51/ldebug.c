@@ -28,7 +28,7 @@
 #include "ltm.h"
 #include "lvm.h"
 
-#include <stdio.h>
+
 
 static const char *getfuncname (lua_State *L, CallInfo *ci, const char **name);
 
@@ -37,8 +37,6 @@ static int currentpc (lua_State *L, CallInfo *ci) {
   if (!isLua(ci)) return -1;  /* function is not a Lua function? */
   if (ci == L->ci)
     ci->savedpc = L->savedpc;
-  if (ci->savedpc==NULL)
-	return -1;
   return pcRel(ci->savedpc, ci_func(ci)->l.p);
 }
 
@@ -48,7 +46,7 @@ static int currentline (lua_State *L, CallInfo *ci) {
   if (pc < 0)
     return -1;  /* only active lua functions have current-line information */
   else
-    return getline(ci_func(ci)->l.p, pc);
+    return GETLINE(ci_func(ci)->l.p, pc);
 }
 
 

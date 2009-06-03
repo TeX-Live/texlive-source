@@ -1,7 +1,7 @@
 /* vfovf.c
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -23,7 +23,8 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: vfovf.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/vfovf.c $";
+    "$Id: vfovf.c 2414 2009-06-03 12:57:01Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/vfovf.c $";
 
 /* this is a hack! */
 #define font_max 5000
@@ -128,40 +129,52 @@ boolean auto_expand_vf(internal_font_number f); /* forward */
 
 /* get a byte from\.{VF} file */
 
-#define vf_byte(a) { real_eight_bits vf_tmp_b;    \
-    if (vf_cur>=vf_size) {        \
-      pdftex_fail("unexpected eof on virtual font");  \
-    }             \
-    vf_tmp_b = vf_buffer[vf_cur++] ; a = vf_tmp_b; }
+#define vf_byte(a)                                     \
+{                                                      \
+    real_eight_bits vf_tmp_b;                          \
+    if (vf_cur >= vf_size) {                           \
+        pdftex_fail("unexpected eof on virtual font"); \
+    }                                                  \
+    vf_tmp_b = vf_buffer[vf_cur++];                    \
+    a = vf_tmp_b;                                      \
+}
 
-
-#define vf_replace_z() {      \
-    vf_alpha=16;        \
-  while (vf_z>=040000000) {     \
-    vf_z= vf_z / 2;       \
-    vf_alpha += vf_alpha;     \
-  }           \
-  vf_beta=256 / vf_alpha;     \
-  vf_alpha=vf_alpha*vf_z; }
+#define vf_replace_z()                           \
+{                                                \
+    vf_alpha = 16;                               \
+    while (vf_z >= 040000000) {                  \
+        vf_z = vf_z / 2;                         \
+        vf_alpha += vf_alpha;                    \
+    }                                            \
+    vf_beta = 256 / vf_alpha;                    \
+    vf_alpha = vf_alpha * vf_z;                  \
+}
 
 /* read |k| bytes as an integer from \.{VF} file */
+/* beware: the vf_read() macro differs from vf_read() in vftovp.web for 1...3 byte words */
 
-#define vf_read(k,l) {  integer itmp = 0, dtmp = k, jtmp = 0;   \
-    while (dtmp > 0) {              \
-      vf_byte(jtmp);              \
-      if ((dtmp==(integer)k) && jtmp>127)              \
-  jtmp = jtmp - 256;            \
-      itmp  = itmp*256 + jtmp;            \
-      decr(dtmp);             \
-    }                 \
-    l = itmp; }
+#define vf_read(k, l)                            \
+{                                                \
+    integer itmp = 0, dtmp = k, jtmp = 0;        \
+    while (dtmp > 0) {                           \
+        vf_byte(jtmp);                           \
+        if ((dtmp == (integer) k) && jtmp > 127) \
+            jtmp = jtmp - 256;                   \
+        itmp = itmp * 256 + jtmp;                \
+        decr(dtmp);                              \
+    }                                            \
+    l = itmp;                                    \
+}
 
-#define vf_read_u(k,l) {  unsigned int dtmp=k, itmp = 0, jtmp = 0;  \
-    while (dtmp-- > 0) {            \
-      vf_byte(jtmp);            \
-      itmp  = itmp*256 + jtmp;          \
-    }               \
-    l = itmp; }
+#define vf_read_u(k, l)                          \
+{                                                \
+    unsigned int dtmp = k, itmp = 0, jtmp = 0;   \
+    while (dtmp-- > 0) {                         \
+        vf_byte(jtmp);                           \
+        itmp = itmp * 256 + jtmp;                \
+    }                                            \
+    l = itmp;                                    \
+}
 
 void pdf_check_vf_cur_val(void)
 {
@@ -220,7 +233,7 @@ vf_def_font(internal_font_number f, unsigned char *vf_buffer, integer * vf_cr)
     k = k * 256 + vf_buffer[(*vf_cr)];
     (*vf_cr)++;
 
-    fs = sqxfw(k, font_size(f));
+    fs = store_scaled_f(k, font_size(f));
 
     k = vf_buffer[(*vf_cr)];
     (*vf_cr)++;
@@ -339,16 +352,20 @@ int open_vf_file(char *fn, unsigned char **vbuffer, integer * vsize)
 /* life is easier if all internal font commands are fnt4 and
    all character commands are set4 or put4 */
 
-#define append_fnt_set(k) {     \
-    assert(k>0) ;       \
-    append_packet(packet_font_code);    \
-    append_four(k); }
+#define append_fnt_set(k)            \
+{                                    \
+    assert(k > 0);                   \
+    append_packet(packet_font_code); \
+    append_four(k);                  \
+}
 
-#define append_four(k) {      \
-    append_packet((k&0xFF000000)>>24);    \
-    append_packet((k&0x00FF0000)>>16);    \
-    append_packet((k&0x0000FF00)>>8);   \
-    append_packet((k&0x000000FF));  }
+#define append_four(k)                     \
+{                                          \
+    append_packet((k & 0xFF000000) >> 24); \
+    append_packet((k & 0x00FF0000) >> 16); \
+    append_packet((k & 0x0000FF00) >> 8);  \
+    append_packet((k & 0x000000FF));       \
+}
 
 /* some of these things happen twice, adding a define is simplest */
 
@@ -364,14 +381,17 @@ int open_vf_file(char *fn, unsigned char **vbuffer, integer * vsize)
       print_string(font_name(f));         \
       print_string(".vf ignored "); } }
 
-#define test_dsize() {  int read_tmp; vf_read(4,read_tmp);    \
-    if ((read_tmp / 16) != font_dsize(f)) {       \
-      print_nlp();              \
-      print_string("design size mismatch in font ");      \
-      print_string(font_name(f));         \
-      print_string(".vf ignored");          \
-    } }
-
+#define test_dsize()                                   \
+{                                                      \
+    int read_tmp;                                      \
+    vf_read(4, read_tmp);                              \
+    if ((read_tmp / 16) != font_dsize(f)) {            \
+        print_nlp();                                   \
+        print_string("design size mismatch in font "); \
+        print_string(font_name(f));                    \
+        print_string(".vf ignored");                   \
+    }                                                  \
+}
 
 int count_packet_bytes(real_eight_bits * vf_buf, int cur_bute, int count)
 {
@@ -703,7 +723,7 @@ void do_vf(internal_font_number f)
     save_cur_byte = vf_cur;
     vf_byte(cmd);
     while ((cmd >= fnt_def1) && (cmd <= (fnt_def1 + 3))) {
-        vf_read((cmd - fnt_def1 + 1), junk);
+        vf_read_u((cmd - fnt_def1 + 1), junk);
         vf_read(4, junk);
         vf_read(4, junk);
         vf_read(4, junk);
@@ -745,21 +765,20 @@ void do_vf(internal_font_number f)
                 bad_vf("invalid character code");
             }
             vf_read(4, k);
-            tfm_width = sqxfw(k, font_size(f));
+            tfm_width = store_scaled_f(k, font_size(f));
         } else {
             packet_length = cmd;
             vf_byte(cc);
             if (!char_exists(f, cc)) {
                 bad_vf("invalid character code");
             }
-            vf_read(3, k);
-            tfm_width = sqxfw(k, font_size(f));
+            vf_read_u(3, k);    /* cf. vftovp.web, line 1028 */
+            tfm_width = store_scaled_f(k, font_size(f));
         }
         if (packet_length < 0)
             bad_vf("negative packet length");
         if (tfm_width != char_width(f, cc)) {
-            /* precisely 'one off' errors are rampant */
-            if (abs(tfm_width - char_width(f, cc)) > 1) {
+            if (tfm_width != char_width(f, cc)) {
                 print_nlp();
                 print_string("character width mismatch in font ");
                 print_string(font_name(f));
@@ -1126,7 +1145,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
         vf_byte(cs.b3);
 
         vf_read(4, k);
-        fs = sqxfw(k, atsize);
+        fs = store_scaled_f(k, atsize);
         lua_pushstring(L, "size");
         lua_pushnumber(L, fs);
         lua_rawset(L, -3);
@@ -1172,7 +1191,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
         } else {
             packet_length = cmd;
             vf_byte(cc);
-            vf_read(3, tfm_width);
+            vf_read_u(3, tfm_width);
         }
         if (packet_length < 0)
             lua_bad_vf("negative packet length");
@@ -1216,7 +1235,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                 case set_rule:
                     vf_read(4, h);
                     vf_read(4, v);
-                    make_command2("rule", sqxfw(h, atsize), sqxfw(v, atsize),
+                    make_command2("rule", store_scaled_f(h, atsize), store_scaled_f(v, atsize),
                                   k);
                     packet_length -= 8;
                     break;
@@ -1224,7 +1243,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                     vf_read(4, h);
                     vf_read(4, v);
                     make_command0("push", k);
-                    make_command2("rule", sqxfw(h, atsize), sqxfw(v, atsize),
+                    make_command2("rule", store_scaled_f(h, atsize), store_scaled_f(v, atsize),
                                   k);
                     make_command0("pop", k);
                     packet_length -= 8;
@@ -1260,7 +1279,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                 case right3:
                 case right4:
                     vf_read((cmd - right1 + 1), i);
-                    make_command1("right", sqxfw(i, atsize), k);
+                    make_command1("right", store_scaled_f(i, atsize), k);
                     packet_length -= (cmd - right1 + 1);
                     break;
                 case w1:
@@ -1268,7 +1287,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                 case w3:
                 case w4:
                     vf_read((cmd - w1 + 1), w);
-                    make_command1("right", sqxfw(w, atsize), k);
+                    make_command1("right", store_scaled_f(w, atsize), k);
                     packet_length -= (cmd - w1 + 1);
                     break;
                 case x1:
@@ -1276,7 +1295,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                 case x3:
                 case x4:
                     vf_read((cmd - x1 + 1), x);
-                    make_command1("right", sqxfw(x, atsize), k);
+                    make_command1("right", store_scaled_f(x, atsize), k);
                     packet_length -= (cmd - x1 + 1);
                     break;
                 case down1:
@@ -1284,7 +1303,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                 case down3:
                 case down4:
                     vf_read((cmd - down1 + 1), i);
-                    make_command1("down", sqxfw(i, atsize), k);
+                    make_command1("down", store_scaled_f(i, atsize), k);
                     packet_length -= (cmd - down1 + 1);
                     break;
                 case y1:
@@ -1292,7 +1311,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                 case y3:
                 case y4:
                     vf_read((cmd - y1 + 1), y);
-                    make_command1("down", sqxfw(y, atsize), k);
+                    make_command1("down", store_scaled_f(y, atsize), k);
                     packet_length -= (cmd - y1 + 1);
                     break;
                 case z1:
@@ -1300,7 +1319,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                 case z3:
                 case z4:
                     vf_read((cmd - z1 + 1), z);
-                    make_command1("down", sqxfw(z, atsize), k);
+                    make_command1("down", store_scaled_f(z, atsize), k);
                     packet_length -= (cmd - z1 + 1);
                     break;
                 case xxx1:
@@ -1325,16 +1344,16 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                     free(s);
                     break;
                 case w0:
-                    make_command1("right", sqxfw(w, atsize), k);
+                    make_command1("right", store_scaled_f(w, atsize), k);
                     break;
                 case x0:
-                    make_command1("right", sqxfw(x, atsize), k);
+                    make_command1("right", store_scaled_f(x, atsize), k);
                     break;
                 case y0:
-                    make_command1("down", sqxfw(y, atsize), k);
+                    make_command1("down", store_scaled_f(y, atsize), k);
                     break;
                 case z0:
-                    make_command1("down", sqxfw(z, atsize), k);
+                    make_command1("down", store_scaled_f(z, atsize), k);
                     break;
                 case nop:
                     break;
@@ -1389,7 +1408,7 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
 }
 
 
-/* This function is called from |do_vf|, and fixes up the virtual data 
+/* This function is called from |do_vf|, and fixes up the virtual data
    inside an auto-expanded virtual font */
 
 boolean auto_expand_vf(internal_font_number f)
@@ -1558,7 +1577,7 @@ letter_space_font(halfword u, internal_font_number f, integer e)
        vf_packet_base[k] = new_vf_packet(k);
 
        for (c=font_bc(k);c<=font_ec(k);c++) {
-       string_room(17); 
+       string_room(17);
        append_fnt_set(f);
        append_packet(right1 + 3);
        append_packet(tmp_b0);

@@ -25,7 +25,7 @@
 #include "commands.h"
 
 static const char __svn_version[] =
-    "$Id$ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/textcodes.c $";
+    "$Id$ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/textcodes.c $";
 
 #define LCCODESTACK  8
 #define LCCODEDEFAULT 0
@@ -263,6 +263,7 @@ void initex_cat_codes(int h)
     set_cat_code(h, '%', comment_cmd, 1);
     set_cat_code(h, 127, invalid_char_cmd, 1);
     set_cat_code(h, 0, ignore_cmd, 1);
+    set_cat_code(h, 0xFEFF, ignore_cmd, 1);
     for (k = 'A'; k <= 'Z'; k++) {
         set_cat_code(h, k, letter_cmd, 1);
         set_cat_code(h, k + 'a' - 'A', letter_cmd, 1);

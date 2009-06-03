@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: mlist.c 2358 2009-04-27 06:39:33Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.c $";
+    "$Id: mlist.c 2414 2009-06-03 12:57:01Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/mlist.c $";
 
 #define delimiter_factor     int_par(param_delimiter_factor_code)
 #define delimiter_shortfall  dimen_par(param_delimiter_shortfall_code)
@@ -2393,6 +2393,7 @@ void make_radical(pointer q)
             vlink(x) = r;
             y = x;
         }
+        math_list(degree(q)) = null; /* for \Uroot ..{<list>}{} */
         flush_node(degree(q));
     }
     p = hpack(y, 0, additional);
@@ -2565,6 +2566,9 @@ void do_make_math_accent(pointer q, internal_font_number f, integer c,
             }
         } else {                /* new skewchar madness for bot accents */
             s = char_bot_accent(cur_f, cur_c);
+            if (s == 0) {            /* better than nothing: */
+              s = char_top_accent(cur_f, cur_c);
+            }
             if (s != 0) {
                 s_is_absolute = true;
             }

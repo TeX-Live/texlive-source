@@ -1,4 +1,36 @@
 ==============================================================
+Luatex beta-0.40.2 was released 20090603
+==============================================================
+
+* Fix for a compilation warning under Cygwin.
+
+* A complicated bugfix by Hartmut for a rounding problem in the
+  VF loading that resulted in 'character width mismatch in font
+  XY.vf ignored' messages at large load sizes 
+
+* The embedded MPlib is now 1.202.
+
+* The post_page_number callback was accidentally run when 
+  shipping out xforms as well as during actual pages.
+
+* When a math accent char doesn't have a bot_accent placer, 
+  luatex now uses the top_accent placer, if present.
+
+* A crash caused by \Uroot .. {<list>}{...} is fixed
+
+* A portability fix for solaris 8 sparc using sun studio 
+  compiler, and one for glibc > 2.9.90
+
+* luatex -ini now sets the \catcode of the BOM character to
+  ignore
+
+* Kpathsea is updated from TeXLive, giving four extra types of
+  searchable files: 'font feature files','cid maps','mlbib',
+  and 'mlbst'.
+
+* libpng is now 1.2.36
+
+==============================================================
 Luatex beta-0.40.1 was released 20090508
 ==============================================================
 
@@ -749,7 +781,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

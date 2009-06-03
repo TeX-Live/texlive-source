@@ -25,7 +25,7 @@
 #include <kpathsea/readable.h>
 
 static const char _svn_version[] =
-    "$Id: lkpselib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lkpselib.c $";
+    "$Id: lkpselib.c 2414 2009-06-03 12:57:01Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/lkpselib.c $";
 
 static const int filetypes[] = {
     kpse_gf_format,
@@ -79,7 +79,11 @@ static const int filetypes[] = {
     kpse_pdftex_config_format,
     kpse_lig_format,
     kpse_texmfscripts_format,
-    kpse_lua_format
+    kpse_lua_format,
+    kpse_fea_format,
+    kpse_cid_format,
+    kpse_mlbib_format,
+    kpse_mlbst_format
 };
 
 static const char *const filetypenames[] = {
@@ -135,6 +139,10 @@ static const char *const filetypenames[] = {
     "lig files",
     "texmfscripts",
     "lua",
+    "font feature files",
+    "cid maps",
+    "mlbib",
+    "mlbst",
     NULL
 };
 
