@@ -1,3 +1,9 @@
+2009-06-04  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (AM_CPPFLAGS): move -funsigned-char here,
+	since we don't want to pass it to the loader.
+	peb tlbuild mail 3 Jun 2009 17:37:38 +0200.
+
 2009-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
