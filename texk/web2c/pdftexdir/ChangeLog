@@ -5,7 +5,7 @@
 	to link pdftosrc with it.
 	Report from vvv, tlbuild mail 03 Jun 2009 21:45:00.
 
-2009-05-07  Norbert Preinig <preining@logic.at>
+2009-05-07  Norbert Preining <preining@logic.at>
 
 	* pdftosrc.cc: add warning that poppler version doesn't support
 	object streams.
@@ -14,7 +14,7 @@
 
 	* pdftoepdf.cc, pdftosrc.cc, utils.c: adapt for poppler.
 
-	patches from Norbert Preinig <preining@logic.at>
+	patches from Norbert Preining <preining@logic.at>
 
 2009-02-18  Peter Breitenlohner <peb@mppmu.mpg.de>
 
