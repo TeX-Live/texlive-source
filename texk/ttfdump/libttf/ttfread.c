@@ -19,7 +19,7 @@ typedef long		blkcnt_t;	/* number of blocks in the file */
 static char vcid[] = "$Id: ttfread.c,v 1.2 1998/07/04 13:17:51 werner Exp $";
 #endif /* lint */
 
-inline BYTE ttfGetBYTE(FILE *fp)
+BYTE ttfGetBYTE(FILE *fp)
 {
     int cc;
     if ((cc = fgetc(fp)) == EOF)

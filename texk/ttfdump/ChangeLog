@@ -1,5 +1,7 @@
 2009-06-03  Karl Berry  <karl@tug.org>
 
+	* libttf/ttfread.c (ttfGetBYTE): do not make inline, just in case.
+
 	* include/ttf.h (ttfGetBYTE): replace [non-inline] definition
 	here with declaration, referring to the definition in
 	libttf/ttfread.c.  Report from vvv, tlbuild 02 Jun 2009 23:48:52.
