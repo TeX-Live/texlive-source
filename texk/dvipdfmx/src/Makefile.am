@@ -7,6 +7,7 @@ INCLUDES = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CPPFLAGS =
 
 bin_PROGRAMS = dvipdfmx
+dist_bin_SCRIPTS = dvipdft
 
 dvipdfmx_SOURCES = \
 	agl.c bmpimage.c cff.c cff_dict.c cid.c cidtype0.c cidtype2.c \

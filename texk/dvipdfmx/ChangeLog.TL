@@ -1,6 +1,12 @@
 ChangeLog.TL: Changes for dvipdfmx (teTeX / TeX Live)
 =====================================================
 
+2009-06-04  Karl Berry  <karl@tug.org>
+
+	* src/Makefile.am (dist_bin_SCRIPTS): dvipdft.
+	* src/dvipdft: revised script from Matthias to replace
+	version in dvipdfm.
+
 2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
