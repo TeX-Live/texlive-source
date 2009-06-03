@@ -5,6 +5,10 @@ ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 
 	* rte/Makefile.am (XINDY_RUN): $(STRIP) it.
 
+2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* rte/ordrules/ordrules.c: declare logs, logc, and logi static.
+
 2009-05-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, ac/xindy.ac: Reorganize for dual use:

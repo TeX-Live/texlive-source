@@ -52,7 +52,7 @@ static int   ordrules_sort_rule_tables = 0;
 #define DBG( expr ) if (ordrules_msg_logging!=0) { expr; }
 
 
-void
+static void
 logs( msg )
 char* msg;
 {
@@ -76,7 +76,7 @@ char* msg;
   ordrules_msg_buffer[ordrules_msg_buffer_ptr] = '\0';
 }
 
-void
+static void
 logc( c )
 char c;
 {
@@ -86,7 +86,7 @@ char c;
   logs(msg);
 }
 
-void
+static void
 logi( n )
 int n;
 {
