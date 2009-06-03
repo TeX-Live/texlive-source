@@ -1,3 +1,12 @@
+Release Notes for Version 1.75
+
+Issues with 3D labels and texpath, both in inlinetex mode and with the
+ConTeXt TeX engine, were resolved. A bug in bezulate was fixed. A partial
+workaround was added for the unimplememented -output-directory ConTeXt
+option (the current directory must still be writeable). The aspect ratio
+and viewportmargin calculation in module three was improved, with tighter
+3D bounds. A bug in the intersectionpoints(path3, surface) routine was fixed.
+
 Release Notes for Version 1.74
 
 An error in the surface bounding box routines was fixed. Path/surface

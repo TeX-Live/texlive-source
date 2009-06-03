@@ -91,6 +91,11 @@ string stripFile(string name)
   return dir ? name : "";
 }
   
+string stripTeXFile(string name)
+{
+  return getSetting<string>("tex") == "context" ? "" : stripFile(name);
+}
+
 string stripExt(string name, const string& ext)
 {
   string suffix="."+ext;
@@ -365,8 +370,8 @@ void popupHelp() {
   // viewer again.
   if (pid==0 || (waitpid(pid, &status, WNOHANG) == pid)) {
     ostringstream cmd;
-    cmd << "'" << getSetting<string>("pdfviewer") << "' " 
-        << docdir << "/asymptote.pdf";
+    cmd << "'" << getSetting<string>("pdfviewer") << "' '" 
+        << docdir << dirsep << "asymptote.pdf'";
     status=System(cmd,0,false,"pdfviewer","your PDF viewer",&pid);
   }
 }

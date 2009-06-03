@@ -1,0 +1,167 @@
+This is asymptote.info, produced by makeinfo version 4.13 from
+../asymptote.texi.
+
+This file documents `Asymptote', version 1.75.
+
+   `http://asymptote.sourceforge.net'
+
+   Copyright (C) 2004-9 Andy Hammerlindl, John Bowman, and Tom Prince.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Lesser General Public License
+     (see the file LICENSE in the top-level source directory).
+
+
+INFO-DIR-SECTION Languages
+START-INFO-DIR-ENTRY
+* asymptote: (asymptote).               Vector graphics language.
+END-INFO-DIR-ENTRY
+
+
+Indirect:
+asymptote.info-1: 578
+asymptote.info-2: 295810
+
+Tag Table:
+(Indirect)
+Node: Top578
+Node: Description6646
+Node: Installation10061
+Node: UNIX binary distributions11054
+Node: MacOS X binary distributions12160
+Node: Microsoft Windows13108
+Node: Configuring14278
+Node: Search paths18463
+Node: Compiling from UNIX source19143
+Ref: multisampling19732
+Node: Editing modes22158
+Node: Subversion24358
+Node: Uninstall24819
+Node: Tutorial25169
+Ref: unitcircle29177
+Ref: Bezier29386
+Node: Drawing commands34799
+Node: draw36508
+Ref: arrows37656
+Node: fill42881
+Ref: gradient shading43925
+Node: clip48118
+Node: label48710
+Ref: Label49409
+Node: Programming55205
+Ref: array iteration56022
+Node: Data types57104
+Ref: format66001
+Node: Paths and guides69398
+Ref: circle69652
+Ref: arctime75050
+Ref: extension78915
+Node: Pens85488
+Ref: fillrule92742
+Ref: basealign93639
+Ref: transparency96464
+Ref: makepen100013
+Ref: overwrite100905
+Node: Transforms102115
+Node: Frames and pictures103906
+Ref: envelope105047
+Ref: size106130
+Ref: unitsize107117
+Ref: shipout108177
+Ref: filltype110395
+Ref: add113378
+Ref: add about114324
+Ref: tex117325
+Node: Files118199
+Ref: cd119164
+Ref: scroll123545
+Node: Variable initializers126588
+Node: Structures128883
+Node: Operators136225
+Node: Arithmetic & logical136539
+Node: Self & prefix operators138436
+Node: User-defined operators139224
+Node: Implicit scaling140135
+Node: Functions140698
+Ref: stack overflow143451
+Node: Default arguments144015
+Node: Named arguments144754
+Node: Rest arguments146916
+Node: Mathematical functions149726
+Node: Arrays154331
+Ref: sort161512
+Ref: tridiagonal163803
+Ref: solve165031
+Node: Slices169158
+Node: Casts173052
+Node: Import175018
+Node: Static180248
+Node: LaTeX usage183144
+Node: Base modules188613
+Node: plain191049
+Node: simplex191701
+Node: math191974
+Node: interpolate193073
+Node: geometry193352
+Node: trembling193915
+Node: stats194276
+Node: patterns194536
+Node: markers194772
+Node: tree196661
+Node: binarytree196847
+Node: drawtree197493
+Node: syzygy197695
+Node: feynman197969
+Node: roundedpath198244
+Node: animation198527
+Ref: animate198946
+Node: embed200085
+Node: slide201887
+Node: MetaPost202227
+Node: unicode202943
+Node: latin1203831
+Node: babel204199
+Node: labelpath204428
+Node: labelpath3205248
+Node: annotate205559
+Node: CAD206030
+Node: graph206340
+Ref: ticks213178
+Ref: pathmarkers226599
+Ref: marker227064
+Ref: markuniform227415
+Ref: errorbars229206
+Ref: automatic scaling233543
+Node: palette244951
+Ref: images245069
+Ref: image249240
+Ref: logimage249769
+Ref: penimage250627
+Node: three251123
+Ref: PostScript3D272277
+Node: obj274022
+Node: graph3274272
+Ref: GaussianSurface279000
+Node: grid3280141
+Node: solids280935
+Node: tube281937
+Node: flowchart284168
+Node: contour288724
+Node: contour3294022
+Node: slopefield294329
+Node: Options295810
+Ref: configuration file300978
+Ref: settings300978
+Ref: convert302049
+Node: Interactive mode304808
+Ref: history306432
+Node: GUI307737
+Node: GUI Installation308240
+Node: GUI Usage309765
+Node: PostScript to Asymptote310668
+Node: Help311811
+Node: Debugger313538
+Node: Credits315323
+Node: Index316236
+
+End Tag Table

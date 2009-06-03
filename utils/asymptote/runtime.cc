@@ -1343,7 +1343,7 @@ void gen27(stack *Stack)
   string dviname=auxname(prefix,"dvi");
   bbox b;
   bool pdf=settings::pdf(getSetting<string>("tex"));
-  texfile tex(texname,b);
+  texfile tex(texname,b,true);
   tex.miniprologue();
   tex.setfont(p);
   
@@ -1356,7 +1356,7 @@ void gen27(stack *Stack)
                      "/ASY1 false def} if currentpoint newpath moveto false charpath "+
                      pathforall+"} bind def}");
   }
-  tex.verbatimline(*s);
+  tex.verbatimline(*s+"%");
   tex.epilogue(true);
   tex.close();
   
@@ -3901,68 +3901,48 @@ void gen213(stack *Stack)
 }
 
 #line 2914 "runtime.in"
-// realarray* intersections(triple v, triplearray2 *P, real fuzz=-1);
+// Int size(path3 p);
 void gen214(stack *Stack)
 {
-  real fuzz=vm::pop<real>(Stack,-1);
-  triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-  triple v=vm::pop<triple>(Stack);
-#line 2915 "runtime.in"
-  triple *A=copyTripleArray2C(P,true,4);
-  if(fuzz <= 0) fuzz=BigFuzz*::max(length(v),norm(A,16));
-  real U,V;
-  if(intersections(U,V,v,A,fuzz)) {
-    array *W=new array(2);    
-    (*W)[0]=U;
-    (*W)[1]=V;
-    {Stack->push<realarray*>(W); return;}
-  }
-  {Stack->push<realarray*>(new array(0)); return;}
-}
-
-#line 2928 "runtime.in"
-// Int size(path3 p);
-void gen215(stack *Stack)
-{
   path3 p=vm::pop<path3>(Stack);
-#line 2929 "runtime.in"
+#line 2915 "runtime.in"
   {Stack->push<Int>(p.size()); return;}
 }
 
-#line 2933 "runtime.in"
+#line 2919 "runtime.in"
 // path3 &(path3 p, path3 q);
-void gen216(stack *Stack)
+void gen215(stack *Stack)
 {
   path3 q=vm::pop<path3>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 2934 "runtime.in"
+#line 2920 "runtime.in"
   {Stack->push<path3>(camp::concat(p,q)); return;}
 }
 
-#line 2938 "runtime.in"
+#line 2924 "runtime.in"
 // triple min(path3 p);
-void gen217(stack *Stack)
+void gen216(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 2939 "runtime.in"
+#line 2925 "runtime.in"
   {Stack->push<triple>(p.min()); return;}
 }
 
-#line 2943 "runtime.in"
+#line 2929 "runtime.in"
 // triple max(path3 p);
-void gen218(stack *Stack)
+void gen217(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 2944 "runtime.in"
+#line 2930 "runtime.in"
   {Stack->push<triple>(p.max()); return;}
 }
 
-#line 2948 "runtime.in"
+#line 2934 "runtime.in"
 // realarray* mintimes(path3 p);
-void gen219(stack *Stack)
+void gen218(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 2949 "runtime.in"
+#line 2935 "runtime.in"
   array *V=new array(3);
   triple v=p.mintimes();
   (*V)[0]=v.getx();
@@ -3971,12 +3951,12 @@ void gen219(stack *Stack)
   {Stack->push<realarray*>(V); return;}
 }
 
-#line 2958 "runtime.in"
+#line 2944 "runtime.in"
 // realarray* maxtimes(path3 p);
-void gen220(stack *Stack)
+void gen219(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 2959 "runtime.in"
+#line 2945 "runtime.in"
   array *V=new array(3);
   triple v=p.maxtimes();
   (*V)[0]=v.getx();
@@ -3985,30 +3965,30 @@ void gen220(stack *Stack)
   {Stack->push<realarray*>(V); return;}
 }
 
-#line 2968 "runtime.in"
+#line 2954 "runtime.in"
 // path3 *(realarray2 *t, path3 g);
-void gen221(stack *Stack)
+void gen220(stack *Stack)
 {
   path3 g=vm::pop<path3>(Stack);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
-#line 2969 "runtime.in"
+#line 2955 "runtime.in"
   {Stack->push<path3>(transformed(*t,g)); return;}
 }
 
 
 // Guide operations
-#line 2975 "runtime.in"
+#line 2961 "runtime.in"
 void nullGuide(stack *Stack)
 {
-#line 2976 "runtime.in"
+#line 2962 "runtime.in"
   {Stack->push<guide*>(new pathguide(path())); return;}
 }
 
-#line 2981 "runtime.in"
+#line 2967 "runtime.in"
 void dotsGuide(stack *Stack)
 {
   guidearray * a=vm::pop<guidearray *>(Stack);
-#line 2982 "runtime.in"
+#line 2968 "runtime.in"
   guidevector v;
   size_t size=checkArray(a);
   for (size_t i=0; i < size; ++i)
@@ -4017,11 +3997,11 @@ void dotsGuide(stack *Stack)
   {Stack->push<guide*>(new multiguide(v)); return;}
 }
 
-#line 2991 "runtime.in"
+#line 2977 "runtime.in"
 void dashesGuide(stack *Stack)
 {
   guidearray * a=vm::pop<guidearray *>(Stack);
-#line 2992 "runtime.in"
+#line 2978 "runtime.in"
   static camp::curlSpec curly;
   static specguide curlout(&curly, camp::OUT);
   static specguide curlin(&curly, camp::IN);
@@ -4047,179 +4027,179 @@ void dashesGuide(stack *Stack)
   {Stack->push<guide*>(new multiguide(v)); return;}
 }
 
-#line 3018 "runtime.in"
+#line 3004 "runtime.in"
 void newCycleToken(stack *Stack)
 {
-#line 3019 "runtime.in"
+#line 3005 "runtime.in"
   {Stack->push<cycleToken>(cycleToken()); return;}
 }
 
-#line 3023 "runtime.in"
+#line 3009 "runtime.in"
 // guide* operator cast(cycleToken tok);
-void gen226(stack *Stack)
+void gen225(stack *Stack)
 {
   cycleToken tok=vm::pop<cycleToken>(Stack);
-#line 3024 "runtime.in"
+#line 3010 "runtime.in"
 // Avoid unused variable warning messages.
   unused(&tok);
   {Stack->push<guide*>(new cycletokguide()); return;}
 }
 
-#line 3030 "runtime.in"
+#line 3016 "runtime.in"
 // guide* operator spec(pair z, Int p);
-void gen227(stack *Stack)
+void gen226(stack *Stack)
 {
   Int p=vm::pop<Int>(Stack);
   pair z=vm::pop<pair>(Stack);
-#line 3031 "runtime.in"
+#line 3017 "runtime.in"
   camp::side d=(camp::side) p;
   camp::dirSpec *sp=new camp::dirSpec(z);
 
   {Stack->push<guide*>(new specguide(sp,d)); return;}
 }
 
-#line 3038 "runtime.in"
+#line 3024 "runtime.in"
 // curlSpecifier operator curl(real gamma, Int p);
-void gen228(stack *Stack)
+void gen227(stack *Stack)
 {
   Int p=vm::pop<Int>(Stack);
   real gamma=vm::pop<real>(Stack);
-#line 3039 "runtime.in"
+#line 3025 "runtime.in"
   camp::side s=(camp::side) p;
   {Stack->push<curlSpecifier>(curlSpecifier(gamma,s)); return;}
 }
 
-#line 3044 "runtime.in"
+#line 3030 "runtime.in"
 void curlSpecifierValuePart(stack *Stack)
 {
   curlSpecifier spec=vm::pop<curlSpecifier>(Stack);
-#line 3045 "runtime.in"
+#line 3031 "runtime.in"
   {Stack->push<real>(spec.getValue()); return;}
 }
 
-#line 3049 "runtime.in"
+#line 3035 "runtime.in"
 void curlSpecifierSidePart(stack *Stack)
 {
   curlSpecifier spec=vm::pop<curlSpecifier>(Stack);
-#line 3050 "runtime.in"
+#line 3036 "runtime.in"
   {Stack->push<Int>(spec.getSide()); return;}
 }
 
-#line 3054 "runtime.in"
+#line 3040 "runtime.in"
 // guide* operator cast(curlSpecifier spec);
-void gen231(stack *Stack)
+void gen230(stack *Stack)
 {
   curlSpecifier spec=vm::pop<curlSpecifier>(Stack);
-#line 3055 "runtime.in"
+#line 3041 "runtime.in"
   {Stack->push<guide*>(new specguide(spec)); return;}
 }
 
-#line 3059 "runtime.in"
+#line 3045 "runtime.in"
 // tensionSpecifier operator tension(real tout, real tin, bool atleast);
-void gen232(stack *Stack)
+void gen231(stack *Stack)
 {
   bool atleast=vm::pop<bool>(Stack);
   real tin=vm::pop<real>(Stack);
   real tout=vm::pop<real>(Stack);
-#line 3060 "runtime.in"
+#line 3046 "runtime.in"
   {Stack->push<tensionSpecifier>(tensionSpecifier(tout, tin, atleast)); return;}
 }
 
-#line 3064 "runtime.in"
+#line 3050 "runtime.in"
 void tensionSpecifierOutPart(stack *Stack)
 {
   tensionSpecifier t=vm::pop<tensionSpecifier>(Stack);
-#line 3065 "runtime.in"
+#line 3051 "runtime.in"
   {Stack->push<real>(t.getOut()); return;}
 }
 
-#line 3069 "runtime.in"
+#line 3055 "runtime.in"
 void tensionSpecifierInPart(stack *Stack)
 {
   tensionSpecifier t=vm::pop<tensionSpecifier>(Stack);
-#line 3070 "runtime.in"
+#line 3056 "runtime.in"
   {Stack->push<real>(t.getIn()); return;}
 }
 
-#line 3074 "runtime.in"
+#line 3060 "runtime.in"
 void tensionSpecifierAtleastPart(stack *Stack)
 {
   tensionSpecifier t=vm::pop<tensionSpecifier>(Stack);
-#line 3075 "runtime.in"
+#line 3061 "runtime.in"
   {Stack->push<bool>(t.getAtleast()); return;}
 }
 
-#line 3079 "runtime.in"
+#line 3065 "runtime.in"
 // guide* operator cast(tensionSpecifier t);
-void gen236(stack *Stack)
+void gen235(stack *Stack)
 {
   tensionSpecifier t=vm::pop<tensionSpecifier>(Stack);
-#line 3080 "runtime.in"
+#line 3066 "runtime.in"
   {Stack->push<guide*>(new tensionguide(t)); return;}
 }
 
-#line 3084 "runtime.in"
+#line 3070 "runtime.in"
 // guide* operator controls(pair zout, pair zin);
-void gen237(stack *Stack)
+void gen236(stack *Stack)
 {
   pair zin=vm::pop<pair>(Stack);
   pair zout=vm::pop<pair>(Stack);
-#line 3085 "runtime.in"
+#line 3071 "runtime.in"
   {Stack->push<guide*>(new controlguide(zout, zin)); return;}
 }
 
-#line 3089 "runtime.in"
+#line 3075 "runtime.in"
 // Int size(guide *g);
-void gen238(stack *Stack)
+void gen237(stack *Stack)
 {
   guide * g=vm::pop<guide *>(Stack);
-#line 3090 "runtime.in"
+#line 3076 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   {Stack->push<Int>(f.size()); return;}
 }
 
-#line 3096 "runtime.in"
+#line 3082 "runtime.in"
 // Int length(guide *g);
-void gen239(stack *Stack)
+void gen238(stack *Stack)
 {
   guide * g=vm::pop<guide *>(Stack);
-#line 3097 "runtime.in"
+#line 3083 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   {Stack->push<Int>(g->cyclic() ? f.size() : f.size()-1); return;}
 }
 
-#line 3103 "runtime.in"
+#line 3089 "runtime.in"
 // bool cyclic(guide *g);
-void gen240(stack *Stack)
+void gen239(stack *Stack)
 {
   guide * g=vm::pop<guide *>(Stack);
-#line 3104 "runtime.in"
+#line 3090 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   {Stack->push<bool>(g->cyclic()); return;}
 }
 
-#line 3110 "runtime.in"
+#line 3096 "runtime.in"
 // pair point(guide *g, Int t);
-void gen241(stack *Stack)
+void gen240(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   guide * g=vm::pop<guide *>(Stack);
-#line 3111 "runtime.in"
+#line 3097 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   {Stack->push<pair>(f.Nodes(adjustedIndex(t,f.size(),g->cyclic())).z); return;}
 }
 
-#line 3117 "runtime.in"
+#line 3103 "runtime.in"
 // pairarray* dirSpecifier(guide *g, Int t);
-void gen242(stack *Stack)
+void gen241(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   guide * g=vm::pop<guide *>(Stack);
-#line 3118 "runtime.in"
+#line 3104 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   Int n=f.size();
@@ -4230,13 +4210,13 @@ void gen242(stack *Stack)
   {Stack->push<pairarray*>(c); return;}
 }
 
-#line 3129 "runtime.in"
+#line 3115 "runtime.in"
 // pairarray* controlSpecifier(guide *g, Int t);
-void gen243(stack *Stack)
+void gen242(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   guide * g=vm::pop<guide *>(Stack);
-#line 3130 "runtime.in"
+#line 3116 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   Int n=f.size();
@@ -4252,13 +4232,13 @@ void gen243(stack *Stack)
   } else {Stack->push<pairarray*>(new array(0)); return;}
 }
 
-#line 3146 "runtime.in"
+#line 3132 "runtime.in"
 // tensionSpecifier tensionSpecifier(guide *g, Int t);
-void gen244(stack *Stack)
+void gen243(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   guide * g=vm::pop<guide *>(Stack);
-#line 3147 "runtime.in"
+#line 3133 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   Int n=f.size();
@@ -4267,13 +4247,13 @@ void gen244(stack *Stack)
   {Stack->push<tensionSpecifier>(tensionSpecifier(curr.tout.val,f.Nodes(t+1).tin.val,curr.tout.atleast)); return;}
 }
 
-#line 3156 "runtime.in"
+#line 3142 "runtime.in"
 // realarray* curlSpecifier(guide *g, Int t);
-void gen245(stack *Stack)
+void gen244(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   guide * g=vm::pop<guide *>(Stack);
-#line 3157 "runtime.in"
+#line 3143 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   Int n=f.size();
@@ -4286,12 +4266,12 @@ void gen245(stack *Stack)
   {Stack->push<realarray*>(c); return;}
 }
 
-#line 3170 "runtime.in"
+#line 3156 "runtime.in"
 // guide* reverse(guide *g);
-void gen246(stack *Stack)
+void gen245(stack *Stack)
 {
   guide * g=vm::pop<guide *>(Stack);
-#line 3171 "runtime.in"
+#line 3157 "runtime.in"
   flatguide f;
   g->flatten(f,false);
   if(f.precyclic())
@@ -4346,21 +4326,21 @@ void gen246(stack *Stack)
 
 
 // Three-dimensional picture and surface operations
-#line 3226 "runtime.in"
+#line 3212 "runtime.in"
 // void _draw(picture *f, path3 g, pen p);
-void gen247(stack *Stack)
+void gen246(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack);
   path3 g=vm::pop<path3>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 3227 "runtime.in"
+#line 3213 "runtime.in"
   if(g.size() > 0)
     f->append(new drawPath3(g,p));
 }
 
-#line 3233 "runtime.in"
+#line 3219 "runtime.in"
 // void draw(picture *f, triplearray2 *g, bool straight, penarray *p, real opacity,          real shininess, real granularity, triple normal, bool lighton,          penarray *colors);
-void gen248(stack *Stack)
+void gen247(stack *Stack)
 {
   penarray * colors=vm::pop<penarray *>(Stack);
   bool lighton=vm::pop<bool>(Stack);
@@ -4372,80 +4352,80 @@ void gen248(stack *Stack)
   bool straight=vm::pop<bool>(Stack);
   triplearray2 * g=vm::pop<triplearray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 3236 "runtime.in"
+#line 3222 "runtime.in"
   f->append(new drawSurface(*g,straight,*p,opacity,shininess,granularity,
                             normal,lighton,*colors));
 }
 
-#line 3241 "runtime.in"
+#line 3227 "runtime.in"
 // triple min3(picture *f);
-void gen249(stack *Stack)
+void gen248(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 3242 "runtime.in"
+#line 3228 "runtime.in"
   {Stack->push<triple>(f->bounds3().Min()); return;}
 }
 
-#line 3246 "runtime.in"
+#line 3232 "runtime.in"
 // triple max3(picture *f);
-void gen250(stack *Stack)
+void gen249(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 3247 "runtime.in"
+#line 3233 "runtime.in"
   {Stack->push<triple>(f->bounds3().Max()); return;}
 }
 
-#line 3251 "runtime.in"
+#line 3237 "runtime.in"
 // pair min(picture *f, realarray2 *t);
-void gen251(stack *Stack)
+void gen250(stack *Stack)
 {
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 3252 "runtime.in"
+#line 3238 "runtime.in"
   real *T=copyArray2C(t,4);
   pair m=f->bounds(::min,xproject,yproject,T);
   delete[] T;
   {Stack->push<pair>(m); return;}
 }
 
-#line 3259 "runtime.in"
+#line 3245 "runtime.in"
 // pair max(picture *f, realarray2 *t);
-void gen252(stack *Stack)
+void gen251(stack *Stack)
 {
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   picture * f=vm::pop<picture *>(Stack);
-#line 3260 "runtime.in"
+#line 3246 "runtime.in"
   real *T=copyArray2C(t,4);
   pair M=f->bounds(::max,xproject,yproject,T);
   delete[] T;
   {Stack->push<pair>(M); return;}
 }
 
-#line 3267 "runtime.in"
+#line 3253 "runtime.in"
 // pair minratio(picture *f);
-void gen253(stack *Stack)
+void gen252(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 3268 "runtime.in"
+#line 3254 "runtime.in"
   {Stack->push<pair>(f->bounds(::min,xratio,yratio)); return;}
 }
 
-#line 3272 "runtime.in"
+#line 3258 "runtime.in"
 // pair maxratio(picture *f);
-void gen254(stack *Stack)
+void gen253(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 3273 "runtime.in"
+#line 3259 "runtime.in"
   {Stack->push<pair>(f->bounds(::max,xratio,yratio)); return;}
 }
 
-#line 3277 "runtime.in"
+#line 3263 "runtime.in"
 // triple minbound(triplearray2 *P, triple b);
-void gen255(stack *Stack)
+void gen254(stack *Stack)
 {
   triple b=vm::pop<triple>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-#line 3278 "runtime.in"
+#line 3264 "runtime.in"
   real *A=copyTripleArray2Components(P,true,4);
   b=triple(bound(A,::min,b.getx(),sqrtFuzz*norm(A,16)),
            bound(A+16,::min,b.gety(),sqrtFuzz*norm(A+16,16)),
@@ -4454,13 +4434,13 @@ void gen255(stack *Stack)
   {Stack->push<triple>(b); return;}
 }
 
-#line 3287 "runtime.in"
+#line 3273 "runtime.in"
 // triple maxbound(triplearray2 *P, triple b);
-void gen256(stack *Stack)
+void gen255(stack *Stack)
 {
   triple b=vm::pop<triple>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-#line 3288 "runtime.in"
+#line 3274 "runtime.in"
   real *A=copyTripleArray2Components(P,true,4);
   b=triple(bound(A,::max,b.getx(),sqrtFuzz*norm(A,16)),
            bound(A+16,::max,b.gety(),sqrtFuzz*norm(A+16,16)),
@@ -4469,14 +4449,14 @@ void gen256(stack *Stack)
   {Stack->push<triple>(b); return;}
 }
 
-#line 3297 "runtime.in"
+#line 3283 "runtime.in"
 // pair minbound(triplearray2 *P, realarray2 *t, pair b);
-void gen257(stack *Stack)
+void gen256(stack *Stack)
 {
   pair b=vm::pop<pair>(Stack);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-#line 3298 "runtime.in"
+#line 3284 "runtime.in"
   triple *A=copyTripleArray2C(P,true,4);
   real *T=copyArray2C(t,4);
   real fuzz=sqrtFuzz*norm(A,16);
@@ -4487,14 +4467,14 @@ void gen257(stack *Stack)
   {Stack->push<pair>(b); return;}
 }
 
-#line 3309 "runtime.in"
+#line 3295 "runtime.in"
 // pair maxbound(triplearray2 *P, realarray2 *t, pair b);
-void gen258(stack *Stack)
+void gen257(stack *Stack)
 {
   pair b=vm::pop<pair>(Stack);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
-#line 3310 "runtime.in"
+#line 3296 "runtime.in"
   triple *A=copyTripleArray2C(P,true,4);
   real *T=copyArray2C(t,4);
   real fuzz=sqrtFuzz*norm(A,16);
@@ -4505,38 +4485,38 @@ void gen258(stack *Stack)
   {Stack->push<pair>(b); return;}
 }
 
-#line 3321 "runtime.in"
+#line 3307 "runtime.in"
 // pair max(path3 g, realarray2 *t);
-void gen259(stack *Stack)
+void gen258(stack *Stack)
 {
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   path3 g=vm::pop<path3>(Stack);
-#line 3322 "runtime.in"
+#line 3308 "runtime.in"
   real *T=copyArray2C(t,4);
   pair b=g.bounds(::max,xproject,yproject,T);
   delete[] T;
   {Stack->push<pair>(b); return;}
 }
 
-#line 3329 "runtime.in"
+#line 3315 "runtime.in"
 // pair min(path3 g, realarray2 *t);
-void gen260(stack *Stack)
+void gen259(stack *Stack)
 {
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   path3 g=vm::pop<path3>(Stack);
-#line 3330 "runtime.in"
+#line 3316 "runtime.in"
   real *T=copyArray2C(t,4);
   pair b=g.bounds(::min,xproject,yproject,T);
   delete[] T;
   {Stack->push<pair>(b); return;}
 }
 
-#line 3337 "runtime.in"
+#line 3323 "runtime.in"
 // real change2(triplearray2 *a);
-void gen261(stack *Stack)
+void gen260(stack *Stack)
 {
   triplearray2 * a=vm::pop<triplearray2 *>(Stack);
-#line 3338 "runtime.in"
+#line 3324 "runtime.in"
   size_t n=checkArray(a);
   if(n == 0) {Stack->push<real>(0.0); return;}
   
@@ -4557,17 +4537,32 @@ void gen261(stack *Stack)
   {Stack->push<real>(M); return;}
 }
 
-#line 3359 "runtime.in"
+#line 3345 "runtime.in"
 // bool is3D(picture *f);
-void gen262(stack *Stack)
+void gen261(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
-#line 3360 "runtime.in"
+#line 3346 "runtime.in"
   {Stack->push<bool>(f->have3D()); return;}
 }
 
-#line 3364 "runtime.in"
+#line 3350 "runtime.in"
 // pair bezier(pair a, pair b, pair c, pair d, real t);
+void gen262(stack *Stack)
+{
+  real t=vm::pop<real>(Stack);
+  pair d=vm::pop<pair>(Stack);
+  pair c=vm::pop<pair>(Stack);
+  pair b=vm::pop<pair>(Stack);
+  pair a=vm::pop<pair>(Stack);
+#line 3351 "runtime.in"
+  real onemt=1-t;
+  real onemt2=onemt*onemt;
+  {Stack->push<pair>(onemt2*onemt*a+t*(3.0*(onemt2*b+t*onemt*c)+t*t*d)); return;}
+}
+
+#line 3357 "runtime.in"
+// pair bezierP(pair a, pair b, pair c, pair d, real t);
 void gen263(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
@@ -4575,14 +4570,12 @@ void gen263(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 3365 "runtime.in"
-  real onemt=1-t;
-  real onemt2=onemt*onemt;
-  {Stack->push<pair>(onemt2*onemt*a+t*(3.0*(onemt2*b+t*onemt*c)+t*t*d)); return;}
+#line 3358 "runtime.in"
+  {Stack->push<pair>(3.0*(t*t*(d-a+3.0*(b-c))+t*(2.0*(a+c)-4.0*b)+b-a)); return;}
 }
 
-#line 3371 "runtime.in"
-// pair bezierP(pair a, pair b, pair c, pair d, real t);
+#line 3362 "runtime.in"
+// pair bezierPP(pair a, pair b, pair c, pair d, real t);
 void gen264(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
@@ -4590,37 +4583,39 @@ void gen264(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 3372 "runtime.in"
-  {Stack->push<pair>(3.0*(t*t*(d-a+3.0*(b-c))+t*(2.0*(a+c)-4.0*b)+b-a)); return;}
-}
-
-#line 3376 "runtime.in"
-// pair bezierPP(pair a, pair b, pair c, pair d, real t);
-void gen265(stack *Stack)
-{
-  real t=vm::pop<real>(Stack);
-  pair d=vm::pop<pair>(Stack);
-  pair c=vm::pop<pair>(Stack);
-  pair b=vm::pop<pair>(Stack);
-  pair a=vm::pop<pair>(Stack);
-#line 3377 "runtime.in"
+#line 3363 "runtime.in"
   {Stack->push<pair>(6.0*(t*(d-a+3.0*(b-c))+a+c-2.0*b)); return;}
 }
 
-#line 3381 "runtime.in"
+#line 3367 "runtime.in"
 // pair bezierPPP(pair a, pair b, pair c, pair d);
-void gen266(stack *Stack)
+void gen265(stack *Stack)
 {
   pair d=vm::pop<pair>(Stack);
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 3382 "runtime.in"
+#line 3368 "runtime.in"
   {Stack->push<pair>(6.0*(d-a+3.0*(b-c))); return;}
 }
 
-#line 3386 "runtime.in"
+#line 3372 "runtime.in"
 // triple bezier(triple a, triple b, triple c, triple d, real t);
+void gen266(stack *Stack)
+{
+  real t=vm::pop<real>(Stack);
+  triple d=vm::pop<triple>(Stack);
+  triple c=vm::pop<triple>(Stack);
+  triple b=vm::pop<triple>(Stack);
+  triple a=vm::pop<triple>(Stack);
+#line 3373 "runtime.in"
+  real onemt=1-t;
+  real onemt2=onemt*onemt;
+  {Stack->push<triple>(onemt2*onemt*a+t*(3.0*(onemt2*b+t*onemt*c)+t*t*d)); return;}
+}
+
+#line 3379 "runtime.in"
+// triple bezierP(triple a, triple b, triple c, triple d, real t);
 void gen267(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
@@ -4628,14 +4623,12 @@ void gen267(stack *Stack)
   triple c=vm::pop<triple>(Stack);
   triple b=vm::pop<triple>(Stack);
   triple a=vm::pop<triple>(Stack);
-#line 3387 "runtime.in"
-  real onemt=1-t;
-  real onemt2=onemt*onemt;
-  {Stack->push<triple>(onemt2*onemt*a+t*(3.0*(onemt2*b+t*onemt*c)+t*t*d)); return;}
+#line 3380 "runtime.in"
+  {Stack->push<triple>(3.0*(t*t*(d-a+3.0*(b-c))+t*(2.0*(a+c)-4.0*b)+b-a)); return;}
 }
 
-#line 3393 "runtime.in"
-// triple bezierP(triple a, triple b, triple c, triple d, real t);
+#line 3384 "runtime.in"
+// triple bezierPP(triple a, triple b, triple c, triple d, real t);
 void gen268(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
@@ -4643,155 +4636,142 @@ void gen268(stack *Stack)
   triple c=vm::pop<triple>(Stack);
   triple b=vm::pop<triple>(Stack);
   triple a=vm::pop<triple>(Stack);
-#line 3394 "runtime.in"
-  {Stack->push<triple>(3.0*(t*t*(d-a+3.0*(b-c))+t*(2.0*(a+c)-4.0*b)+b-a)); return;}
-}
-
-#line 3398 "runtime.in"
-// triple bezierPP(triple a, triple b, triple c, triple d, real t);
-void gen269(stack *Stack)
-{
-  real t=vm::pop<real>(Stack);
-  triple d=vm::pop<triple>(Stack);
-  triple c=vm::pop<triple>(Stack);
-  triple b=vm::pop<triple>(Stack);
-  triple a=vm::pop<triple>(Stack);
-#line 3399 "runtime.in"
+#line 3385 "runtime.in"
   {Stack->push<triple>(6.0*(t*(d-a+3.0*(b-c))+a+c-2.0*b)); return;}
 }
 
-#line 3403 "runtime.in"
+#line 3389 "runtime.in"
 // triple bezierPPP(triple a, triple b, triple c, triple d);
-void gen270(stack *Stack)
+void gen269(stack *Stack)
 {
   triple d=vm::pop<triple>(Stack);
   triple c=vm::pop<triple>(Stack);
   triple b=vm::pop<triple>(Stack);
   triple a=vm::pop<triple>(Stack);
-#line 3404 "runtime.in"
+#line 3390 "runtime.in"
   {Stack->push<triple>(6.0*(d-a+3.0*(b-c))); return;}
 }
 
 
 // String operations
-#line 3410 "runtime.in"
+#line 3396 "runtime.in"
 void emptyString(stack *Stack)
 {
-#line 3411 "runtime.in"
+#line 3397 "runtime.in"
   {Stack->push<string>(emptystring); return;}
 }
 
-#line 3416 "runtime.in"
+#line 3402 "runtime.in"
 // Int length(string *s);
-void gen272(stack *Stack)
+void gen271(stack *Stack)
 {
   string * s=vm::pop<string *>(Stack);
-#line 3417 "runtime.in"
+#line 3403 "runtime.in"
   {Stack->push<Int>((Int) s->length()); return;}
 }
 
-#line 3421 "runtime.in"
+#line 3407 "runtime.in"
 // Int find(string *s, string t, Int pos=0);
-void gen273(stack *Stack)
+void gen272(stack *Stack)
 {
   Int pos=vm::pop<Int>(Stack,0);
   string t=vm::pop<string>(Stack);
   string * s=vm::pop<string *>(Stack);
-#line 3422 "runtime.in"
+#line 3408 "runtime.in"
   size_t n=s->find(t,pos);
   {Stack->push<Int>(n == string::npos ? (Int) -1 : (Int) n); return;}
 }
 
-#line 3427 "runtime.in"
+#line 3413 "runtime.in"
 // Int rfind(string *s, string t, Int pos=-1);
-void gen274(stack *Stack)
+void gen273(stack *Stack)
 {
   Int pos=vm::pop<Int>(Stack,-1);
   string t=vm::pop<string>(Stack);
   string * s=vm::pop<string *>(Stack);
-#line 3428 "runtime.in"
+#line 3414 "runtime.in"
   size_t n=s->rfind(t,pos);
   {Stack->push<Int>(n == string::npos ? (Int) -1 : (Int) n); return;}
 }
 
-#line 3433 "runtime.in"
+#line 3419 "runtime.in"
 // string reverse(string s);
-void gen275(stack *Stack)
+void gen274(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
-#line 3434 "runtime.in"
+#line 3420 "runtime.in"
   reverse(s.begin(),s.end());
   {Stack->push<string>(s); return;}
 }
 
-#line 3439 "runtime.in"
+#line 3425 "runtime.in"
 // string insert(string s, Int pos, string t);
-void gen276(stack *Stack)
+void gen275(stack *Stack)
 {
   string t=vm::pop<string>(Stack);
   Int pos=vm::pop<Int>(Stack);
   string s=vm::pop<string>(Stack);
-#line 3440 "runtime.in"
+#line 3426 "runtime.in"
   if ((size_t) pos < s.length())
     {Stack->push<string>(s.insert(pos,t)); return;}
   {Stack->push<string>(s); return;}
 }
 
-#line 3446 "runtime.in"
+#line 3432 "runtime.in"
 // string substr(string* s, Int pos, Int n=-1);
-void gen277(stack *Stack)
+void gen276(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack,-1);
   Int pos=vm::pop<Int>(Stack);
   string* s=vm::pop<string*>(Stack);
-#line 3447 "runtime.in"
+#line 3433 "runtime.in"
   if ((size_t) pos < s->length())
     {Stack->push<string>(s->substr(pos,n)); return;}
   {Stack->push<string>(emptystring); return;}
 }
 
-#line 3453 "runtime.in"
+#line 3439 "runtime.in"
 // string erase(string s, Int pos, Int n);
-void gen278(stack *Stack)
+void gen277(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
   Int pos=vm::pop<Int>(Stack);
   string s=vm::pop<string>(Stack);
-#line 3454 "runtime.in"
+#line 3440 "runtime.in"
   if ((size_t) pos < s.length())
     {Stack->push<string>(s.erase(pos,n)); return;}
   {Stack->push<string>(s); return;} 
 }
 
-#line 3460 "runtime.in"
+#line 3446 "runtime.in"
 // string downcase(string s);
-void gen279(stack *Stack)
+void gen278(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
-#line 3461 "runtime.in"
+#line 3447 "runtime.in"
   std::transform(s.begin(),s.end(),s.begin(),tolower);
   {Stack->push<string>(s); return;}
 }
 
-#line 3466 "runtime.in"
+#line 3452 "runtime.in"
 // string upcase(string s);
-void gen280(stack *Stack)
+void gen279(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
-#line 3467 "runtime.in"
+#line 3453 "runtime.in"
   std::transform(s.begin(),s.end(),s.begin(),toupper);
   {Stack->push<string>(s); return;}
 }
 
 // returns a string constructed by translating all occurrences of the string
 // from in an array of string pairs {from,to} to the string to in string s.
-#line 3474 "runtime.in"
+#line 3460 "runtime.in"
 // string replace(string *S, stringarray2 *translate);
-void gen281(stack *Stack)
+void gen280(stack *Stack)
 {
   stringarray2 * translate=vm::pop<stringarray2 *>(Stack);
   string * S=vm::pop<string *>(Stack);
-#line 3475 "runtime.in"
+#line 3461 "runtime.in"
   size_t size=checkArray(translate);
   for(size_t i=0; i < size; i++) {
     array *a=read<array*>(translate,i);
@@ -4815,13 +4795,13 @@ void gen281(stack *Stack)
   {Stack->push<string>(buf.str()); return;}
 }
 
-#line 3499 "runtime.in"
+#line 3485 "runtime.in"
 // string format(string *format, Int x);
-void gen282(stack *Stack)
+void gen281(stack *Stack)
 {
   Int x=vm::pop<Int>(Stack);
   string * format=vm::pop<string *>(Stack);
-#line 3500 "runtime.in"
+#line 3486 "runtime.in"
   const char *f=format->c_str();
   
   checkformat(f,true);
@@ -4835,14 +4815,14 @@ void gen282(stack *Stack)
   {Stack->push<string>(s); return;}
 }
 
-#line 3514 "runtime.in"
+#line 3500 "runtime.in"
 // string format(string *format, real x, string locale=emptystring);
-void gen283(stack *Stack)
+void gen282(stack *Stack)
 {
   string locale=vm::pop<string>(Stack,emptystring);
   real x=vm::pop<real>(Stack);
   string * format=vm::pop<string *>(Stack);
-#line 3515 "runtime.in"
+#line 3501 "runtime.in"
   ostringstream out;
   
   checkformat(format->c_str(),false);
@@ -4959,12 +4939,12 @@ void gen283(stack *Stack)
   {Stack->push<string>(out.str()); return;}
 }
 
-#line 3632 "runtime.in"
+#line 3618 "runtime.in"
 // Int hex(string s);
-void gen284(stack *Stack)
+void gen283(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
-#line 3633 "runtime.in"
+#line 3619 "runtime.in"
   istringstream is(s);
   is.setf(std::ios::hex,std::ios::basefield);
   Int value;
@@ -4974,36 +4954,36 @@ void gen284(stack *Stack)
   error(buf);
 }
 
-#line 3643 "runtime.in"
+#line 3629 "runtime.in"
 // string string(Int x);
-void gen285(stack *Stack)
+void gen284(stack *Stack)
 {
   Int x=vm::pop<Int>(Stack);
-#line 3644 "runtime.in"
+#line 3630 "runtime.in"
   ostringstream buf;
   buf << x;
   {Stack->push<string>(buf.str()); return;}
 }
 
-#line 3650 "runtime.in"
+#line 3636 "runtime.in"
 // string string(real x, Int digits=DBL_DIG);
-void gen286(stack *Stack)
+void gen285(stack *Stack)
 {
   Int digits=vm::pop<Int>(Stack,DBL_DIG);
   real x=vm::pop<real>(Stack);
-#line 3651 "runtime.in"
+#line 3637 "runtime.in"
   ostringstream buf;
   buf.precision(digits);
   buf << x;
   {Stack->push<string>(buf.str()); return;}
 }
 
-#line 3658 "runtime.in"
+#line 3644 "runtime.in"
 // string time(string format=defaulttimeformat);
-void gen287(stack *Stack)
+void gen286(stack *Stack)
 {
   string format=vm::pop<string>(Stack,defaulttimeformat);
-#line 3659 "runtime.in"
+#line 3645 "runtime.in"
 #ifdef HAVE_STRFTIME
   const time_t bintime=time(NULL);
   if(!strftime(Time,nTime,format.c_str(),localtime(&bintime))) {Stack->push<string>(""); return;}
@@ -5013,13 +4993,13 @@ void gen287(stack *Stack)
 #endif  
 }
 
-#line 3669 "runtime.in"
+#line 3655 "runtime.in"
 // string time(Int seconds, string format=defaulttimeformat);
-void gen288(stack *Stack)
+void gen287(stack *Stack)
 {
   string format=vm::pop<string>(Stack,defaulttimeformat);
   Int seconds=vm::pop<Int>(Stack);
-#line 3670 "runtime.in"
+#line 3656 "runtime.in"
 #ifdef HAVE_STRFTIME
   const time_t bintime=seconds;
   if(!strftime(Time,nTime,format.c_str(),localtime(&bintime))) {Stack->push<string>(""); return;}
@@ -5031,13 +5011,13 @@ void gen288(stack *Stack)
 #endif
 }
 
-#line 3682 "runtime.in"
+#line 3668 "runtime.in"
 // Int seconds(string t=emptystring, string format=emptystring);
-void gen289(stack *Stack)
+void gen288(stack *Stack)
 {
   string format=vm::pop<string>(Stack,emptystring);
   string t=vm::pop<string>(Stack,emptystring);
-#line 3683 "runtime.in"
+#line 3669 "runtime.in"
 #if defined(HAVE_STRPTIME)
   const time_t bintime=time(NULL);
   tm tm=*localtime(&bintime);
@@ -5048,11 +5028,11 @@ void gen289(stack *Stack)
 #endif  
 }
 
-#line 3694 "runtime.in"
+#line 3680 "runtime.in"
 // realarray* _cputime();
-void gen290(stack *Stack)
+void gen289(stack *Stack)
 {
-#line 3695 "runtime.in"
+#line 3681 "runtime.in"
   static const real ticktime=1.0/sysconf(_SC_CLK_TCK);
   struct tms buf;
 
@@ -5067,234 +5047,234 @@ void gen290(stack *Stack)
 
 
 // Math
-#line 3710 "runtime.in"
+#line 3696 "runtime.in"
 // real ^(real x, Int y);
-void gen291(stack *Stack)
+void gen290(stack *Stack)
 {
   Int y=vm::pop<Int>(Stack);
   real x=vm::pop<real>(Stack);
-#line 3711 "runtime.in"
+#line 3697 "runtime.in"
   {Stack->push<real>(pow(x,y)); return;}
 }
 
-#line 3716 "runtime.in"
+#line 3702 "runtime.in"
 // pair ^(pair z, Int y);
-void gen292(stack *Stack)
+void gen291(stack *Stack)
 {
   Int y=vm::pop<Int>(Stack);
   pair z=vm::pop<pair>(Stack);
-#line 3717 "runtime.in"
+#line 3703 "runtime.in"
   {Stack->push<pair>(pow(z,y)); return;}
 }
 
-#line 3721 "runtime.in"
+#line 3707 "runtime.in"
 // Int quotient(Int x, Int y);
-void gen293(stack *Stack)
+void gen292(stack *Stack)
 {
   Int y=vm::pop<Int>(Stack);
   Int x=vm::pop<Int>(Stack);
-#line 3722 "runtime.in" 
+#line 3708 "runtime.in" 
   if(y == 0) dividebyzero();
   if(y == -1) {Stack->push<Int>(Negate(x)); return;}
 // Implementation-independent definition of integer division: round down
   {Stack->push<Int>((x-portableMod(x,y))/y); return;}
 }
 
-#line 3729 "runtime.in"
+#line 3715 "runtime.in"
 // Int abs(Int x);
-void gen294(stack *Stack)
+void gen293(stack *Stack)
 {
   Int x=vm::pop<Int>(Stack);
-#line 3730 "runtime.in" 
+#line 3716 "runtime.in" 
   {Stack->push<Int>(Abs(x)); return;}
 }
 
-#line 3734 "runtime.in"
+#line 3720 "runtime.in"
 // Int sgn(real x);
-void gen295(stack *Stack)
+void gen294(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3735 "runtime.in" 
+#line 3721 "runtime.in" 
   {Stack->push<Int>(sgn(x)); return;}
 }
 
-#line 3739 "runtime.in"
+#line 3725 "runtime.in"
 // Int rand();
-void gen296(stack *Stack)
+void gen295(stack *Stack)
 {
-#line 3740 "runtime.in" 
+#line 3726 "runtime.in" 
   {Stack->push<Int>(rand()); return;}
 }
 
-#line 3744 "runtime.in"
+#line 3730 "runtime.in"
 // void srand(Int seed);
-void gen297(stack *Stack)
+void gen296(stack *Stack)
 {
   Int seed=vm::pop<Int>(Stack);
-#line 3745 "runtime.in" 
+#line 3731 "runtime.in" 
   srand(intcast(seed));
 }
 
 // a random number uniformly distributed in the interval [0,1]
-#line 3750 "runtime.in"
+#line 3736 "runtime.in"
 // real unitrand();
-void gen298(stack *Stack)
+void gen297(stack *Stack)
 {
-#line 3751 "runtime.in"                         
+#line 3737 "runtime.in"                         
   {Stack->push<real>(((real) rand())/RAND_MAX); return;}
 }
 
-#line 3755 "runtime.in"
+#line 3741 "runtime.in"
 // Int ceil(real x);
-void gen299(stack *Stack)
+void gen298(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3756 "runtime.in" 
+#line 3742 "runtime.in" 
   {Stack->push<Int>(Intcast(ceil(x))); return;}
 }
 
-#line 3760 "runtime.in"
+#line 3746 "runtime.in"
 // Int floor(real x);
-void gen300(stack *Stack)
+void gen299(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3761 "runtime.in" 
+#line 3747 "runtime.in" 
   {Stack->push<Int>(Intcast(floor(x))); return;}
 }
 
-#line 3765 "runtime.in"
+#line 3751 "runtime.in"
 // Int round(real x);
-void gen301(stack *Stack)
+void gen300(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3766 "runtime.in" 
+#line 3752 "runtime.in" 
   if(validInt(x)) {Stack->push<Int>(Round(x)); return;}
   integeroverflow(0);
 }
 
-#line 3771 "runtime.in"
+#line 3757 "runtime.in"
 // Int Ceil(real x);
-void gen302(stack *Stack)
+void gen301(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3772 "runtime.in" 
+#line 3758 "runtime.in" 
   {Stack->push<Int>(Ceil(x)); return;}
 }
 
-#line 3776 "runtime.in"
+#line 3762 "runtime.in"
 // Int Floor(real x);
-void gen303(stack *Stack)
+void gen302(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3777 "runtime.in" 
+#line 3763 "runtime.in" 
   {Stack->push<Int>(Floor(x)); return;}
 }
 
-#line 3781 "runtime.in"
+#line 3767 "runtime.in"
 // Int Round(real x);
-void gen304(stack *Stack)
+void gen303(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3782 "runtime.in" 
+#line 3768 "runtime.in" 
   {Stack->push<Int>(Round(Intcap(x))); return;}
 }
 
-#line 3786 "runtime.in"
+#line 3772 "runtime.in"
 // real fmod(real x, real y);
-void gen305(stack *Stack)
+void gen304(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 3787 "runtime.in"
+#line 3773 "runtime.in"
   if (y == 0.0) dividebyzero();
   {Stack->push<real>(fmod(x,y)); return;}
 }
 
-#line 3792 "runtime.in"
+#line 3778 "runtime.in"
 // real atan2(real y, real x);
-void gen306(stack *Stack)
+void gen305(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
   real y=vm::pop<real>(Stack);
-#line 3793 "runtime.in" 
+#line 3779 "runtime.in" 
   {Stack->push<real>(atan2(y,x)); return;}
 }
 
-#line 3797 "runtime.in"
+#line 3783 "runtime.in"
 // real hypot(real x, real y);
+void gen306(stack *Stack)
+{
+  real y=vm::pop<real>(Stack);
+  real x=vm::pop<real>(Stack);
+#line 3784 "runtime.in" 
+  {Stack->push<real>(hypot(x,y)); return;}
+}
+
+#line 3788 "runtime.in"
+// real remainder(real x, real y);
 void gen307(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 3798 "runtime.in" 
-  {Stack->push<real>(hypot(x,y)); return;}
-}
-
-#line 3802 "runtime.in"
-// real remainder(real x, real y);
-void gen308(stack *Stack)
-{
-  real y=vm::pop<real>(Stack);
-  real x=vm::pop<real>(Stack);
-#line 3803 "runtime.in" 
+#line 3789 "runtime.in" 
   {Stack->push<real>(remainder(x,y)); return;}
 }
 
-#line 3807 "runtime.in"
+#line 3793 "runtime.in"
 // real J(Int n, real x);
+void gen308(stack *Stack)
+{
+  real x=vm::pop<real>(Stack);
+  Int n=vm::pop<Int>(Stack);
+#line 3794 "runtime.in"
+  {Stack->push<real>(jn(n,x)); return;}
+}
+
+#line 3798 "runtime.in"
+// real Y(Int n, real x);
 void gen309(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
   Int n=vm::pop<Int>(Stack);
-#line 3808 "runtime.in"
-  {Stack->push<real>(jn(n,x)); return;}
-}
-
-#line 3812 "runtime.in"
-// real Y(Int n, real x);
-void gen310(stack *Stack)
-{
-  real x=vm::pop<real>(Stack);
-  Int n=vm::pop<Int>(Stack);
-#line 3813 "runtime.in"
+#line 3799 "runtime.in"
   {Stack->push<real>(yn(n,x)); return;}
 }
 
-#line 3817 "runtime.in"
+#line 3803 "runtime.in"
 // real erf(real x);
-void gen311(stack *Stack)
+void gen310(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3818 "runtime.in"
+#line 3804 "runtime.in"
   {Stack->push<real>(erf(x)); return;}
 }
 
-#line 3822 "runtime.in"
+#line 3808 "runtime.in"
 // real erfc(real x);
-void gen312(stack *Stack)
+void gen311(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3823 "runtime.in"
+#line 3809 "runtime.in"
   {Stack->push<real>(erfc(x)); return;}
 }
 
-#line 3827 "runtime.in"
+#line 3813 "runtime.in"
 // Int factorial(Int n);
-void gen313(stack *Stack)
+void gen312(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
-#line 3828 "runtime.in"
+#line 3814 "runtime.in"
   if(n < 0) error(invalidargument);
   {Stack->push<Int>(factorial(n)); return;}
 }
 
-#line 3832 "runtime.in"
+#line 3818 "runtime.in"
 // Int choose(Int n, Int k);
-void gen314(stack *Stack)
+void gen313(stack *Stack)
 {
   Int k=vm::pop<Int>(Stack);
   Int n=vm::pop<Int>(Stack);
-#line 3833 "runtime.in"
+#line 3819 "runtime.in"
   if(n < 0 || k < 0 || k > n) error(invalidargument);
   Int f=1;
   Int r=n-k;
@@ -5305,12 +5285,12 @@ void gen314(stack *Stack)
   {Stack->push<Int>(f); return;}
 }
 
-#line 3843 "runtime.in"
+#line 3829 "runtime.in"
 // real gamma(real x);
-void gen315(stack *Stack)
+void gen314(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 3844 "runtime.in"
+#line 3830 "runtime.in"
 #ifdef HAVE_TGAMMA
   {Stack->push<real>(tgamma(x)); return;}
 #else
@@ -5320,23 +5300,23 @@ void gen315(stack *Stack)
 }
 
 // Complex Gamma function
-#line 3854 "runtime.in"
+#line 3840 "runtime.in"
 // pair gamma(explicit pair z);
-void gen316(stack *Stack)
+void gen315(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 3855 "runtime.in"
+#line 3841 "runtime.in"
   {Stack->push<pair>(gamma(z)); return;}
 }
 
-#line 3859 "runtime.in"
+#line 3845 "runtime.in"
 // realarray* quadraticroots(real a, real b, real c);
-void gen317(stack *Stack)
+void gen316(stack *Stack)
 {
   real c=vm::pop<real>(Stack);
   real b=vm::pop<real>(Stack);
   real a=vm::pop<real>(Stack);
-#line 3860 "runtime.in"
+#line 3846 "runtime.in"
   quadraticroots q(a,b,c);
   array *roots=new array(q.roots);
   if(q.roots >= 1) (*roots)[0]=q.t1;
@@ -5344,14 +5324,14 @@ void gen317(stack *Stack)
   {Stack->push<realarray*>(roots); return;}
 }
 
-#line 3868 "runtime.in"
+#line 3854 "runtime.in"
 // pairarray* quadraticroots(explicit pair a, explicit pair b, explicit pair c);
-void gen318(stack *Stack)
+void gen317(stack *Stack)
 {
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 3869 "runtime.in"
+#line 3855 "runtime.in"
   Quadraticroots q(a,b,c);
   array *roots=new array(q.roots);
   if(q.roots >= 1) (*roots)[0]=q.z1;
@@ -5359,15 +5339,15 @@ void gen318(stack *Stack)
   {Stack->push<pairarray*>(roots); return;}
 }
 
-#line 3877 "runtime.in"
+#line 3863 "runtime.in"
 // realarray* cubicroots(real a, real b, real c, real d);
-void gen319(stack *Stack)
+void gen318(stack *Stack)
 {
   real d=vm::pop<real>(Stack);
   real c=vm::pop<real>(Stack);
   real b=vm::pop<real>(Stack);
   real a=vm::pop<real>(Stack);
-#line 3878 "runtime.in"
+#line 3864 "runtime.in"
   cubicroots q(a,b,c,d);
   array *roots=new array(q.roots);
   if(q.roots >= 1) (*roots)[0]=q.t1;
@@ -5378,103 +5358,103 @@ void gen319(stack *Stack)
 
   
 // Transforms
-#line 3889 "runtime.in"
+#line 3875 "runtime.in"
 // bool ==(transform a, transform b);
+void gen319(stack *Stack)
+{
+  transform b=vm::pop<transform>(Stack);
+  transform a=vm::pop<transform>(Stack);
+#line 3876 "runtime.in"
+  {Stack->push<bool>(a == b); return;}
+}
+
+#line 3881 "runtime.in"
+// bool !=(transform a, transform b);
 void gen320(stack *Stack)
 {
   transform b=vm::pop<transform>(Stack);
   transform a=vm::pop<transform>(Stack);
-#line 3890 "runtime.in"
-  {Stack->push<bool>(a == b); return;}
+#line 3882 "runtime.in"
+  {Stack->push<bool>(a != b); return;}
 }
 
-#line 3895 "runtime.in"
-// bool !=(transform a, transform b);
+#line 3886 "runtime.in"
+// transform +(transform a, transform b);
 void gen321(stack *Stack)
 {
   transform b=vm::pop<transform>(Stack);
   transform a=vm::pop<transform>(Stack);
-#line 3896 "runtime.in"
-  {Stack->push<bool>(a != b); return;}
+#line 3887 "runtime.in"
+  {Stack->push<transform>(a+b); return;}
 }
 
-#line 3900 "runtime.in"
-// transform +(transform a, transform b);
+#line 3891 "runtime.in"
+// transform *(transform a, transform b);
 void gen322(stack *Stack)
 {
   transform b=vm::pop<transform>(Stack);
   transform a=vm::pop<transform>(Stack);
-#line 3901 "runtime.in"
-  {Stack->push<transform>(a+b); return;}
-}
-
-#line 3905 "runtime.in"
-// transform *(transform a, transform b);
-void gen323(stack *Stack)
-{
-  transform b=vm::pop<transform>(Stack);
-  transform a=vm::pop<transform>(Stack);
-#line 3906 "runtime.in"
+#line 3892 "runtime.in"
   {Stack->push<transform>(a*b); return;}
 }
 
-#line 3910 "runtime.in"
+#line 3896 "runtime.in"
 // pair *(transform t, pair z);
-void gen324(stack *Stack)
+void gen323(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
   transform t=vm::pop<transform>(Stack);
-#line 3911 "runtime.in"
+#line 3897 "runtime.in"
   {Stack->push<pair>(t*z); return;}
 }
 
-#line 3915 "runtime.in"
+#line 3901 "runtime.in"
 // path *(transform t, path g);
-void gen325(stack *Stack)
+void gen324(stack *Stack)
 {
   path g=vm::pop<path>(Stack);
   transform t=vm::pop<transform>(Stack);
-#line 3916 "runtime.in"
+#line 3902 "runtime.in"
   {Stack->push<path>(transformed(t,g)); return;}
 }
 
-#line 3920 "runtime.in"
+#line 3906 "runtime.in"
 // pen *(transform t, pen p);
-void gen326(stack *Stack)
+void gen325(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack);
   transform t=vm::pop<transform>(Stack);
-#line 3921 "runtime.in"
+#line 3907 "runtime.in"
   {Stack->push<pen>(transformed(t,p)); return;}
 }
 
-#line 3925 "runtime.in"
+#line 3911 "runtime.in"
 // picture* *(transform t, picture *f);
-void gen327(stack *Stack)
+void gen326(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
   transform t=vm::pop<transform>(Stack);
-#line 3926 "runtime.in"
+#line 3912 "runtime.in"
   {Stack->push<picture*>(transformed(t,f)); return;}
 }
 
-#line 3930 "runtime.in"
+#line 3916 "runtime.in"
 // picture* *(realarray2 *t, picture *f);
-void gen328(stack *Stack)
+void gen327(stack *Stack)
 {
   picture * f=vm::pop<picture *>(Stack);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
-#line 3931 "runtime.in"
+#line 3917 "runtime.in"
   {Stack->push<picture*>(transformed(*t,f)); return;}
 }
 
-#line 3935 "runtime.in"
+#line 3921 "runtime.in"
 // transform ^(transform t, Int n);
-void gen329(stack *Stack)
+void gen328(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
   transform t=vm::pop<transform>(Stack);
-#line 3936 "runtime.in"
+#line 3922 "runtime.in"
   transform T;
   if(n < 0) {
     n=-n;
@@ -5484,55 +5464,55 @@ void gen329(stack *Stack)
   {Stack->push<transform>(T); return;}
 }
 
-#line 3946 "runtime.in"
+#line 3932 "runtime.in"
 void transformXPart(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3947 "runtime.in"
+#line 3933 "runtime.in"
   {Stack->push<real>(t.getx()); return;}
 }
 
-#line 3951 "runtime.in"
+#line 3937 "runtime.in"
 void transformYPart(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3952 "runtime.in"
+#line 3938 "runtime.in"
   {Stack->push<real>(t.gety()); return;}
 }
 
-#line 3956 "runtime.in"
+#line 3942 "runtime.in"
 void transformXXPart(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3957 "runtime.in"
+#line 3943 "runtime.in"
   {Stack->push<real>(t.getxx()); return;}
 }
 
-#line 3961 "runtime.in"
+#line 3947 "runtime.in"
 void transformXYPart(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3962 "runtime.in"
+#line 3948 "runtime.in"
   {Stack->push<real>(t.getxy()); return;}
 }
 
-#line 3966 "runtime.in"
+#line 3952 "runtime.in"
 void transformYXPart(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3967 "runtime.in"
+#line 3953 "runtime.in"
   {Stack->push<real>(t.getyx()); return;}
 }
 
-#line 3971 "runtime.in"
+#line 3957 "runtime.in"
 void transformYYPart(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3972 "runtime.in"
+#line 3958 "runtime.in"
   {Stack->push<real>(t.getyy()); return;}
 }
 
-#line 3976 "runtime.in"
+#line 3962 "runtime.in"
 void real6ToTransform(stack *Stack)
 {
   real yy=vm::pop<real>(Stack);
@@ -5541,765 +5521,765 @@ void real6ToTransform(stack *Stack)
   real xx=vm::pop<real>(Stack);
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 3978 "runtime.in"
+#line 3964 "runtime.in"
   {Stack->push<transform>(transform(x,y,xx,xy,yx,yy)); return;}
 }
 
-#line 3982 "runtime.in"
+#line 3968 "runtime.in"
 // transform shift(transform t);
-void gen337(stack *Stack)
+void gen336(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3983 "runtime.in"
+#line 3969 "runtime.in"
   {Stack->push<transform>(transform(t.getx(),t.gety(),0,0,0,0)); return;}
 }
 
-#line 3987 "runtime.in"
+#line 3973 "runtime.in"
 // transform shiftless(transform t);
-void gen338(stack *Stack)
+void gen337(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3988 "runtime.in"
+#line 3974 "runtime.in"
   {Stack->push<transform>(transform(0,0,t.getxx(),t.getxy(),t.getyx(),t.getyy())); return;}
 }
 
-#line 3992 "runtime.in"
+#line 3978 "runtime.in"
 // transform identity();
 void transformIdentity(stack *Stack)
 {
-#line 3993 "runtime.in"
+#line 3979 "runtime.in"
   {Stack->push<transform>(identity); return;}
 }
 
-#line 3997 "runtime.in"
+#line 3983 "runtime.in"
 // transform inverse(transform t);
-void gen340(stack *Stack)
+void gen339(stack *Stack)
 {
   transform t=vm::pop<transform>(Stack);
-#line 3998 "runtime.in"
+#line 3984 "runtime.in"
   {Stack->push<transform>(inverse(t)); return;}
 }
 
-#line 4002 "runtime.in"
+#line 3988 "runtime.in"
 // transform shift(pair z);
-void gen341(stack *Stack)
+void gen340(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4003 "runtime.in"
+#line 3989 "runtime.in"
   {Stack->push<transform>(shift(z)); return;}
 }
 
-#line 4007 "runtime.in"
+#line 3993 "runtime.in"
 // transform shift(real x, real y);
-void gen342(stack *Stack)
+void gen341(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 4008 "runtime.in"
+#line 3994 "runtime.in"
   {Stack->push<transform>(shift(pair(x,y))); return;}
 }
 
-#line 4012 "runtime.in"
+#line 3998 "runtime.in"
 // transform xscale(real x);
-void gen343(stack *Stack)
+void gen342(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 4013 "runtime.in"
+#line 3999 "runtime.in"
   {Stack->push<transform>(xscale(x)); return;}
 }
 
-#line 4017 "runtime.in"
+#line 4003 "runtime.in"
 // transform yscale(real y);
-void gen344(stack *Stack)
+void gen343(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
-#line 4018 "runtime.in"
+#line 4004 "runtime.in"
   {Stack->push<transform>(yscale(y)); return;}
 }
 
-#line 4022 "runtime.in"
+#line 4008 "runtime.in"
 // transform scale(real x);
-void gen345(stack *Stack)
+void gen344(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 4023 "runtime.in"
+#line 4009 "runtime.in"
   {Stack->push<transform>(scale(x)); return;}
 }
 
-#line 4027 "runtime.in"
+#line 4013 "runtime.in"
 // transform scale(real x, real y);
-void gen346(stack *Stack)
+void gen345(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 4028 "runtime.in"
+#line 4014 "runtime.in"
   {Stack->push<transform>(xscale(x)*yscale(y)); return;}
 }
 
-#line 4032 "runtime.in"
+#line 4018 "runtime.in"
 // transform slant(real s);
-void gen347(stack *Stack)
+void gen346(stack *Stack)
 {
   real s=vm::pop<real>(Stack);
-#line 4033 "runtime.in"
+#line 4019 "runtime.in"
   {Stack->push<transform>(slant(s)); return;}
 }
 
-#line 4037 "runtime.in"
+#line 4023 "runtime.in"
 // transform rotate(real angle, pair z=0);
-void gen348(stack *Stack)
+void gen347(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack,0);
   real angle=vm::pop<real>(Stack);
-#line 4038 "runtime.in"
+#line 4024 "runtime.in"
   {Stack->push<transform>(rotatearound(z,radians(angle))); return;}
 }
 
-#line 4042 "runtime.in"
+#line 4028 "runtime.in"
 // transform reflect(pair a, pair b);
-void gen349(stack *Stack)
+void gen348(stack *Stack)
 {
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 4043 "runtime.in"
+#line 4029 "runtime.in"
   {Stack->push<transform>(reflectabout(a,b)); return;}
 }
 
 
 // Pair operations
-#line 4049 "runtime.in"
+#line 4035 "runtime.in"
 void pairZero(stack *Stack)
 {
-#line 4050 "runtime.in"
+#line 4036 "runtime.in"
   {Stack->push<pair>(zero); return;}
 }
 
-#line 4055 "runtime.in"
+#line 4041 "runtime.in"
 void realRealToPair(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 4056 "runtime.in"
+#line 4042 "runtime.in"
   {Stack->push<pair>(pair(x,y)); return;}
 }
 
-#line 4060 "runtime.in"
+#line 4046 "runtime.in"
 void pairNegate(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4061 "runtime.in"
+#line 4047 "runtime.in"
   {Stack->push<pair>(-z); return;}
 }
 
-#line 4065 "runtime.in"
+#line 4051 "runtime.in"
 // real xpart(pair z);
 void pairXPart(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4066 "runtime.in"
+#line 4052 "runtime.in"
   {Stack->push<real>(z.getx()); return;}
 }
 
-#line 4070 "runtime.in"
+#line 4056 "runtime.in"
 // real ypart(pair z);
 void pairYPart(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4071 "runtime.in"
+#line 4057 "runtime.in"
   {Stack->push<real>(z.gety()); return;}
 }
 
-#line 4075 "runtime.in"
+#line 4061 "runtime.in"
 // real length(pair z);
+void gen354(stack *Stack)
+{
+  pair z=vm::pop<pair>(Stack);
+#line 4062 "runtime.in"
+  {Stack->push<real>(z.length()); return;}
+}
+
+#line 4066 "runtime.in"
+// real abs(pair z);
 void gen355(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4076 "runtime.in"
+#line 4067 "runtime.in"
   {Stack->push<real>(z.length()); return;}
 }
 
-#line 4080 "runtime.in"
-// real abs(pair z);
+#line 4071 "runtime.in"
+// pair sqrt(explicit pair z);
 void gen356(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4081 "runtime.in"
-  {Stack->push<real>(z.length()); return;}
-}
-
-#line 4085 "runtime.in"
-// pair sqrt(explicit pair z);
-void gen357(stack *Stack)
-{
-  pair z=vm::pop<pair>(Stack);
-#line 4086 "runtime.in"
+#line 4072 "runtime.in"
   {Stack->push<pair>(Sqrt(z)); return;}
 }
 
 // Return the angle of z in radians.
-#line 4091 "runtime.in"
+#line 4077 "runtime.in"
 // real angle(pair z, bool warn=true);
-void gen358(stack *Stack)
+void gen357(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   pair z=vm::pop<pair>(Stack);
-#line 4092 "runtime.in"
+#line 4078 "runtime.in"
   if(!warn && z.getx() == 0.0 && z.gety() == 0.0) {Stack->push<real>(0.0); return;}
   {Stack->push<real>(z.angle()); return;}
 }
 
 // Return the angle of z in degrees in the interval [0,360).
-#line 4098 "runtime.in"
+#line 4084 "runtime.in"
 // real degrees(pair z, bool warn=true);
-void gen359(stack *Stack)
+void gen358(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   pair z=vm::pop<pair>(Stack);
-#line 4099 "runtime.in"
+#line 4085 "runtime.in"
   if(!warn && z.getx() == 0.0 && z.gety() == 0.0) {Stack->push<real>(0.0); return;}
   {Stack->push<real>(principalBranch(degrees(z.angle()))); return;}
 }
 
 // Convert degrees to radians.
-#line 4105 "runtime.in"
+#line 4091 "runtime.in"
 // real radians(real degrees);
-void gen360(stack *Stack)
+void gen359(stack *Stack)
 {
   real degrees=vm::pop<real>(Stack);
-#line 4106 "runtime.in"
+#line 4092 "runtime.in"
   {Stack->push<real>(radians(degrees)); return;}
 }
 
 // Convert radians to degrees.
-#line 4111 "runtime.in"
+#line 4097 "runtime.in"
 // real degrees(real radians);
-void gen361(stack *Stack)
+void gen360(stack *Stack)
 {
   real radians=vm::pop<real>(Stack);
-#line 4112 "runtime.in"
+#line 4098 "runtime.in"
   {Stack->push<real>(degrees(radians)); return;}
 }
 
 // Convert radians to degrees in [0,360).
-#line 4117 "runtime.in"
+#line 4103 "runtime.in"
 // real Degrees(real radians);
-void gen362(stack *Stack)
+void gen361(stack *Stack)
 {
   real radians=vm::pop<real>(Stack);
-#line 4118 "runtime.in"
+#line 4104 "runtime.in"
   {Stack->push<real>(principalBranch(degrees(radians))); return;}
 }
 
-#line 4122 "runtime.in"
+#line 4108 "runtime.in"
 // real Sin(real deg);
-void gen363(stack *Stack)
+void gen362(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
-#line 4123 "runtime.in"
+#line 4109 "runtime.in"
   {Stack->push<real>(sin(radians(deg))); return;}
 }
 
-#line 4127 "runtime.in"
+#line 4113 "runtime.in"
 // real Cos(real deg);
-void gen364(stack *Stack)
+void gen363(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
-#line 4128 "runtime.in"
+#line 4114 "runtime.in"
   {Stack->push<real>(cos(radians(deg))); return;}
 }
 
-#line 4132 "runtime.in"
+#line 4118 "runtime.in"
 // real Tan(real deg);
-void gen365(stack *Stack)
+void gen364(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
-#line 4133 "runtime.in"
+#line 4119 "runtime.in"
   {Stack->push<real>(tan(radians(deg))); return;}
 }
 
-#line 4137 "runtime.in"
+#line 4123 "runtime.in"
 // real aSin(real x);
-void gen366(stack *Stack)
+void gen365(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 4138 "runtime.in"
+#line 4124 "runtime.in"
   {Stack->push<real>(degrees(asin(x))); return;}
 }
 
-#line 4142 "runtime.in"
+#line 4128 "runtime.in"
 // real aCos(real x);
-void gen367(stack *Stack)
+void gen366(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 4143 "runtime.in"
+#line 4129 "runtime.in"
   {Stack->push<real>(degrees(acos(x))); return;}
 }
 
-#line 4147 "runtime.in"
+#line 4133 "runtime.in"
 // real aTan(real x);
-void gen368(stack *Stack)
+void gen367(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 4148 "runtime.in"
+#line 4134 "runtime.in"
   {Stack->push<real>(degrees(atan(x))); return;}
 }
 
-#line 4152 "runtime.in"
+#line 4138 "runtime.in"
 // pair unit(pair z);
-void gen369(stack *Stack)
+void gen368(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4153 "runtime.in"
+#line 4139 "runtime.in"
   {Stack->push<pair>(unit(z)); return;}
 }
 
-#line 4157 "runtime.in"
+#line 4143 "runtime.in"
 // pair dir(real degrees);
-void gen370(stack *Stack)
+void gen369(stack *Stack)
 {
   real degrees=vm::pop<real>(Stack);
-#line 4158 "runtime.in"
+#line 4144 "runtime.in"
   {Stack->push<pair>(expi(radians(degrees))); return;}
 }
 
-#line 4162 "runtime.in"
+#line 4148 "runtime.in"
 // pair dir(explicit pair z);
-void gen371(stack *Stack)
+void gen370(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4163 "runtime.in"
+#line 4149 "runtime.in"
   {Stack->push<pair>(unit(z)); return;}
 }
 
-#line 4167 "runtime.in"
+#line 4153 "runtime.in"
 // pair expi(real angle);
-void gen372(stack *Stack)
+void gen371(stack *Stack)
 {
   real angle=vm::pop<real>(Stack);
-#line 4168 "runtime.in"
+#line 4154 "runtime.in"
   {Stack->push<pair>(expi(angle)); return;}
 }
 
-#line 4172 "runtime.in"
+#line 4158 "runtime.in"
 // pair exp(explicit pair z);
-void gen373(stack *Stack)
+void gen372(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4173 "runtime.in" 
+#line 4159 "runtime.in" 
   {Stack->push<pair>(exp(z)); return;}
 }
 
-#line 4177 "runtime.in"
+#line 4163 "runtime.in"
 // pair log(explicit pair z);
-void gen374(stack *Stack)
+void gen373(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4178 "runtime.in" 
+#line 4164 "runtime.in" 
   {Stack->push<pair>(pair(log(z.length()),z.angle())); return;}
 }
 
-#line 4182 "runtime.in"
+#line 4168 "runtime.in"
 // pair sin(explicit pair z);
-void gen375(stack *Stack)
+void gen374(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4183 "runtime.in" 
+#line 4169 "runtime.in" 
   {Stack->push<pair>(sin(z)); return;}
 }
 
-#line 4187 "runtime.in"
+#line 4173 "runtime.in"
 // pair cos(explicit pair z);
-void gen376(stack *Stack)
+void gen375(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4188 "runtime.in" 
+#line 4174 "runtime.in" 
   {Stack->push<pair>(pair(cos(z.getx())*cosh(z.gety()),-sin(z.getx())*sinh(z.gety()))); return;} 
 }
 
-#line 4192 "runtime.in"
+#line 4178 "runtime.in"
 // pair conj(pair z);
-void gen377(stack *Stack)
+void gen376(stack *Stack)
 {
   pair z=vm::pop<pair>(Stack);
-#line 4193 "runtime.in"
+#line 4179 "runtime.in"
   {Stack->push<pair>(conj(z)); return;}
 }
 
-#line 4197 "runtime.in"
+#line 4183 "runtime.in"
 // pair realmult(pair z, pair w);
-void gen378(stack *Stack)
+void gen377(stack *Stack)
 {
   pair w=vm::pop<pair>(Stack);
   pair z=vm::pop<pair>(Stack);
-#line 4198 "runtime.in"
+#line 4184 "runtime.in"
   {Stack->push<pair>(pair (z.getx()*w.getx(),z.gety()*w.gety())); return;}
 }
 
-#line 4202 "runtime.in"
+#line 4188 "runtime.in"
 // triple realmult(triple u, triple v);
-void gen379(stack *Stack)
+void gen378(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
   triple u=vm::pop<triple>(Stack);
-#line 4203 "runtime.in"
+#line 4189 "runtime.in"
   {Stack->push<triple>(triple (u.getx()*v.getx(),u.gety()*v.gety(),u.getz()*v.getz())); return;}
 }
 
 // To avoid confusion, a dot product requires explicit pair arguments.
-#line 4208 "runtime.in"
+#line 4194 "runtime.in"
 // real dot(explicit pair z, explicit pair w);
-void gen380(stack *Stack)
+void gen379(stack *Stack)
 {
   pair w=vm::pop<pair>(Stack);
   pair z=vm::pop<pair>(Stack);
-#line 4209 "runtime.in"
+#line 4195 "runtime.in"
   {Stack->push<real>(dot(z,w)); return;}
 }
 
 
 // Triple operations
-#line 4215 "runtime.in"
+#line 4201 "runtime.in"
 void tripleZero(stack *Stack)
 {
-#line 4216 "runtime.in"
+#line 4202 "runtime.in"
   static triple zero;
   {Stack->push<triple>(zero); return;}
 }
 
-#line 4222 "runtime.in"
+#line 4208 "runtime.in"
 void realRealRealToTriple(stack *Stack)
 {
   real z=vm::pop<real>(Stack);
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 4223 "runtime.in"
+#line 4209 "runtime.in"
   {Stack->push<triple>(triple(x,y,z)); return;}
 }
 
-#line 4227 "runtime.in"
+#line 4213 "runtime.in"
 // real xpart(triple v);
 void tripleXPart(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
-#line 4228 "runtime.in"
+#line 4214 "runtime.in"
   {Stack->push<real>(v.getx()); return;}
 }
 
-#line 4232 "runtime.in"
+#line 4218 "runtime.in"
 // real ypart(triple v);
 void tripleYPart(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
-#line 4233 "runtime.in"
+#line 4219 "runtime.in"
   {Stack->push<real>(v.gety()); return;}
 }
 
-#line 4237 "runtime.in"
+#line 4223 "runtime.in"
 // real zpart(triple v);
 void tripleZPart(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
-#line 4238 "runtime.in"
+#line 4224 "runtime.in"
   {Stack->push<real>(v.getz()); return;}
 }
 
-#line 4242 "runtime.in"
+#line 4228 "runtime.in"
 // triple *(real x, triple v);
-void gen386(stack *Stack)
+void gen385(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
   real x=vm::pop<real>(Stack);
-#line 4243 "runtime.in"
+#line 4229 "runtime.in"
   {Stack->push<triple>(x*v); return;}
 }
 
-#line 4247 "runtime.in"
+#line 4233 "runtime.in"
 // triple *(triple v, real x);
+void gen386(stack *Stack)
+{
+  real x=vm::pop<real>(Stack);
+  triple v=vm::pop<triple>(Stack);
+#line 4234 "runtime.in"
+  {Stack->push<triple>(v*x); return;}
+}
+
+#line 4238 "runtime.in"
+// triple /(triple v, real x);
 void gen387(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
   triple v=vm::pop<triple>(Stack);
-#line 4248 "runtime.in"
-  {Stack->push<triple>(v*x); return;}
-}
-
-#line 4252 "runtime.in"
-// triple /(triple v, real x);
-void gen388(stack *Stack)
-{
-  real x=vm::pop<real>(Stack);
-  triple v=vm::pop<triple>(Stack);
-#line 4253 "runtime.in"
+#line 4239 "runtime.in"
   {Stack->push<triple>(v/x); return;}
 }
 
-#line 4257 "runtime.in"
+#line 4243 "runtime.in"
 // real length(triple v);
+void gen388(stack *Stack)
+{
+  triple v=vm::pop<triple>(Stack);
+#line 4244 "runtime.in"
+  {Stack->push<real>(v.length()); return;}
+}
+
+#line 4248 "runtime.in"
+// real abs(triple v);
 void gen389(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
-#line 4258 "runtime.in"
+#line 4249 "runtime.in"
   {Stack->push<real>(v.length()); return;}
 }
 
-#line 4262 "runtime.in"
-// real abs(triple v);
-void gen390(stack *Stack)
-{
-  triple v=vm::pop<triple>(Stack);
-#line 4263 "runtime.in"
-  {Stack->push<real>(v.length()); return;}
-}
-
-#line 4267 "runtime.in"
+#line 4253 "runtime.in"
 // real polar(triple v, bool warn=true);
-void gen391(stack *Stack)
+void gen390(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   triple v=vm::pop<triple>(Stack);
-#line 4268 "runtime.in"
+#line 4254 "runtime.in"
   if(!warn && v.getx() == 0.0 && v.gety() == 0.0 && v.getz() == 0.0) {Stack->push<real>(0.0); return;}
   {Stack->push<real>(v.polar()); return;}
 }
 
-#line 4273 "runtime.in"
+#line 4259 "runtime.in"
 // real azimuth(triple v, bool warn=true);
-void gen392(stack *Stack)
+void gen391(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   triple v=vm::pop<triple>(Stack);
-#line 4274 "runtime.in"
+#line 4260 "runtime.in"
   if(!warn && v.getx() == 0.0 && v.gety() == 0.0) {Stack->push<real>(0.0); return;}
   {Stack->push<real>(v.azimuth()); return;}
 }
 
-#line 4279 "runtime.in"
+#line 4265 "runtime.in"
 // real colatitude(triple v, bool warn=true);
-void gen393(stack *Stack)
+void gen392(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   triple v=vm::pop<triple>(Stack);
-#line 4280 "runtime.in"
+#line 4266 "runtime.in"
   if(!warn && v.getx() == 0.0 && v.gety() == 0.0 && v.getz() == 0.0) {Stack->push<real>(0.0); return;}
   {Stack->push<real>(degrees(v.polar())); return;}
 }
 
-#line 4285 "runtime.in"
+#line 4271 "runtime.in"
 // real latitude(triple v, bool warn=true);
-void gen394(stack *Stack)
+void gen393(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   triple v=vm::pop<triple>(Stack);
-#line 4286 "runtime.in"
+#line 4272 "runtime.in"
   if(!warn && v.getx() == 0.0 && v.gety() == 0.0 && v.getz() == 0.0) {Stack->push<real>(0.0); return;}
   {Stack->push<real>(90.0-degrees(v.polar())); return;}
 }
 
 // Return the longitude of v in [0,360).
-#line 4292 "runtime.in"
+#line 4278 "runtime.in"
 // real longitude(triple v, bool warn=true);
-void gen395(stack *Stack)
+void gen394(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   triple v=vm::pop<triple>(Stack);
-#line 4293 "runtime.in"
+#line 4279 "runtime.in"
   if(!warn && v.getx() == 0.0 && v.gety() == 0.0) {Stack->push<real>(0.0); return;}
   {Stack->push<real>(principalBranch(degrees(v.azimuth()))); return;}
 }
 
-#line 4298 "runtime.in"
+#line 4284 "runtime.in"
 // triple unit(triple v);
-void gen396(stack *Stack)
+void gen395(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
-#line 4299 "runtime.in"
+#line 4285 "runtime.in"
   {Stack->push<triple>(unit(v)); return;}
 }
 
-#line 4303 "runtime.in"
+#line 4289 "runtime.in"
 // real dot(triple u, triple v);
+void gen396(stack *Stack)
+{
+  triple v=vm::pop<triple>(Stack);
+  triple u=vm::pop<triple>(Stack);
+#line 4290 "runtime.in"
+  {Stack->push<real>(dot(u,v)); return;}
+}
+
+#line 4294 "runtime.in"
+// triple cross(triple u, triple v);
 void gen397(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
   triple u=vm::pop<triple>(Stack);
-#line 4304 "runtime.in"
-  {Stack->push<real>(dot(u,v)); return;}
-}
-
-#line 4308 "runtime.in"
-// triple cross(triple u, triple v);
-void gen398(stack *Stack)
-{
-  triple v=vm::pop<triple>(Stack);
-  triple u=vm::pop<triple>(Stack);
-#line 4309 "runtime.in"
+#line 4295 "runtime.in"
   {Stack->push<triple>(cross(u,v)); return;}
 }
 
-#line 4313 "runtime.in"
+#line 4299 "runtime.in"
 // triple expi(real polar, real azimuth);
-void gen399(stack *Stack)
+void gen398(stack *Stack)
 {
   real azimuth=vm::pop<real>(Stack);
   real polar=vm::pop<real>(Stack);
-#line 4314 "runtime.in"
+#line 4300 "runtime.in"
   {Stack->push<triple>(expi(polar,azimuth)); return;}
 }
 
-#line 4318 "runtime.in"
+#line 4304 "runtime.in"
 // triple dir(real colatitude, real longitude);
-void gen400(stack *Stack)
+void gen399(stack *Stack)
 {
   real longitude=vm::pop<real>(Stack);
   real colatitude=vm::pop<real>(Stack);
-#line 4319 "runtime.in"
+#line 4305 "runtime.in"
   {Stack->push<triple>(expi(radians(colatitude),radians(longitude))); return;}
 }
 
 
 // System routines
-#line 4325 "runtime.in"
+#line 4311 "runtime.in"
 // void atupdate(callable *f);
-void gen401(stack *Stack)
+void gen400(stack *Stack)
 {
   callable * f=vm::pop<callable *>(Stack);
-#line 4326 "runtime.in"
+#line 4312 "runtime.in"
   processData().atUpdateFunction=f;
 }
 
-#line 4331 "runtime.in"
+#line 4317 "runtime.in"
 // callable* atupdate();
-void gen402(stack *Stack)
+void gen401(stack *Stack)
 {
-#line 4332 "runtime.in"
+#line 4318 "runtime.in"
   {Stack->push<callable*>(processData().atUpdateFunction); return;}
 }
 
-#line 4336 "runtime.in"
+#line 4322 "runtime.in"
 // void atexit(callable *f);
-void gen403(stack *Stack)
+void gen402(stack *Stack)
 {
   callable * f=vm::pop<callable *>(Stack);
-#line 4337 "runtime.in"
+#line 4323 "runtime.in"
   processData().atExitFunction=f;
 }
 
-#line 4341 "runtime.in"
+#line 4327 "runtime.in"
 // callable* atexit();
-void gen404(stack *Stack)
+void gen403(stack *Stack)
 {
-#line 4342 "runtime.in"
+#line 4328 "runtime.in"
   {Stack->push<callable*>(processData().atExitFunction); return;}
 }
 
-#line 4346 "runtime.in"
+#line 4332 "runtime.in"
 // void atbreakpoint(callableBp *f);
-void gen405(stack *Stack)
+void gen404(stack *Stack)
 {
   callableBp * f=vm::pop<callableBp *>(Stack);
-#line 4347 "runtime.in"
+#line 4333 "runtime.in"
   processData().atBreakpointFunction=f;
 }
 
-#line 4351 "runtime.in"
+#line 4337 "runtime.in"
 // void breakpoint(runnable *s=NULL);
-void gen406(stack *Stack)
+void gen405(stack *Stack)
 {
   runnable * s=vm::pop<runnable *>(Stack,NULL);
-#line 4352 "runtime.in"
+#line 4338 "runtime.in"
   breakpoint(Stack,s);
 }
 
-#line 4356 "runtime.in"
+#line 4342 "runtime.in"
 // string locatefile(string file);
-void gen407(stack *Stack)
+void gen406(stack *Stack)
 {
   string file=vm::pop<string>(Stack);
-#line 4357 "runtime.in"
+#line 4343 "runtime.in"
   {Stack->push<string>(locateFile(file)); return;}
 }
 
-#line 4361 "runtime.in"
+#line 4347 "runtime.in"
 // void stop(string file, Int line, runnable *s=NULL);
-void gen408(stack *Stack)
+void gen407(stack *Stack)
 {
   runnable * s=vm::pop<runnable *>(Stack,NULL);
   Int line=vm::pop<Int>(Stack);
   string file=vm::pop<string>(Stack);
-#line 4362 "runtime.in"
+#line 4348 "runtime.in"
   file=locateFile(file);
   clear(file,line);
   cout << "setting breakpoint at " << file << ": " << line << endl;
   bplist.push_back(bpinfo(file,line,s));
 }
 
-#line 4369 "runtime.in"
+#line 4355 "runtime.in"
 // void breakpoints();
-void gen409(stack *)
+void gen408(stack *)
 {
-#line 4370 "runtime.in"
+#line 4356 "runtime.in"
   for(mem::list<bpinfo>::iterator p=bplist.begin(); p != bplist.end(); ++p)
     cout << p->f.name() << ": " << p->f.line() << endl;
 }
 
-#line 4375 "runtime.in"
+#line 4361 "runtime.in"
 // void clear(string file, Int line);
-void gen410(stack *Stack)
+void gen409(stack *Stack)
 {
   Int line=vm::pop<Int>(Stack);
   string file=vm::pop<string>(Stack);
-#line 4376 "runtime.in"
+#line 4362 "runtime.in"
   file=locateFile(file);
   clear(file,line,true);
 }
 
-#line 4381 "runtime.in"
+#line 4367 "runtime.in"
 // void clear();
-void gen411(stack *)
+void gen410(stack *)
 {
-#line 4382 "runtime.in"
+#line 4368 "runtime.in"
   bplist.clear();
 }
 
 // Strip directory from string
-#line 4387 "runtime.in"
+#line 4373 "runtime.in"
 // string stripdirectory(string *s);
-void gen412(stack *Stack)
+void gen411(stack *Stack)
 {
   string * s=vm::pop<string *>(Stack);
-#line 4388 "runtime.in"
+#line 4374 "runtime.in"
   {Stack->push<string>(stripDir(*s)); return;}
 }
 
 // Strip directory from string
-#line 4393 "runtime.in"
+#line 4379 "runtime.in"
 // string stripfile(string *s);
-void gen413(stack *Stack)
+void gen412(stack *Stack)
 {
   string * s=vm::pop<string *>(Stack);
-#line 4394 "runtime.in"
+#line 4380 "runtime.in"
   {Stack->push<string>(stripFile(*s)); return;}
 }
 
 // Strip file extension from string
-#line 4399 "runtime.in"
+#line 4385 "runtime.in"
 // string stripextension(string *s);
-void gen414(stack *Stack)
+void gen413(stack *Stack)
 {
   string * s=vm::pop<string *>(Stack);
-#line 4400 "runtime.in"
+#line 4386 "runtime.in"
   {Stack->push<string>(stripExt(*s)); return;}
 }
 
 // Call ImageMagick convert.
-#line 4405 "runtime.in"
+#line 4391 "runtime.in"
 // Int convert(string args=emptystring, string file=emptystring,            string format=emptystring);
-void gen415(stack *Stack)
+void gen414(stack *Stack)
 {
   string format=vm::pop<string>(Stack,emptystring);
   string file=vm::pop<string>(Stack,emptystring);
   string args=vm::pop<string>(Stack,emptystring);
-#line 4407 "runtime.in"
+#line 4393 "runtime.in"
   ostringstream cmd;
   
   string name=convertname(file,format);
@@ -6315,14 +6295,14 @@ void gen415(stack *Stack)
 }
 
 // Call ImageMagick animate.
-#line 4423 "runtime.in"
+#line 4409 "runtime.in"
 // Int animate(string args=emptystring, string file=emptystring,            string format=emptystring);
-void gen416(stack *Stack)
+void gen415(stack *Stack)
 {
   string format=vm::pop<string>(Stack,emptystring);
   string file=vm::pop<string>(Stack,emptystring);
   string args=vm::pop<string>(Stack,emptystring);
-#line 4425 "runtime.in"
+#line 4411 "runtime.in"
 #ifndef __CYGWIN__
   string name=convertname(file,format,false);
   if(view()) {
@@ -6336,12 +6316,12 @@ void gen416(stack *Stack)
 }
 
 // Delete file named s.
-#line 4439 "runtime.in"
+#line 4425 "runtime.in"
 // Int delete(string *s);
-void gen417(stack *Stack)
+void gen416(stack *Stack)
 {
   string * s=vm::pop<string *>(Stack);
-#line 4440 "runtime.in"
+#line 4426 "runtime.in"
   checkLocal(*s);
   Int rc=unlink(s->c_str());
   if(rc == 0 && verbose > 0) 
@@ -6350,13 +6330,13 @@ void gen417(stack *Stack)
 }
 
 // Rename file "from" to file "to".
-#line 4449 "runtime.in"
+#line 4435 "runtime.in"
 // Int rename(string *from, string *to);
-void gen418(stack *Stack)
+void gen417(stack *Stack)
 {
   string * to=vm::pop<string *>(Stack);
   string * from=vm::pop<string *>(Stack);
-#line 4450 "runtime.in"
+#line 4436 "runtime.in"
   checkLocal(*from);
   checkLocal(*to);
   Int rc=rename(from->c_str(),to->c_str());
@@ -6369,10 +6349,10 @@ void gen418(stack *Stack)
 // Array operations
 
 // Create an empty array.
-#line 4463 "runtime.in"
+#line 4449 "runtime.in"
 void emptyArray(stack *Stack)
 {
-#line 4464 "runtime.in"
+#line 4450 "runtime.in"
   {Stack->push<array*>(new array(0)); return;}
 }
 
@@ -6381,11 +6361,11 @@ void emptyArray(stack *Stack)
 // is popped off the stack, followed by each dimension in reverse order.
 // The array itself is technically a one dimensional array of one
 // dimension arrays and so on.
-#line 4473 "runtime.in"
+#line 4459 "runtime.in"
 void newDeepArray(stack *Stack)
 {
   Int depth=vm::pop<Int>(Stack);
-#line 4474 "runtime.in"
+#line 4460 "runtime.in"
   assert(depth > 0);
 
   Int *dims = new Int[depth];
@@ -6404,11 +6384,11 @@ void newDeepArray(stack *Stack)
 // Creates an array with elements already specified.  First, the number
 // of elements is popped off the stack, followed by each element in
 // reverse order.
-#line 4493 "runtime.in"
+#line 4479 "runtime.in"
 void newInitializedArray(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
-#line 4494 "runtime.in"
+#line 4480 "runtime.in"
   assert(n >= 0);
 
   array *a = new array(n);
@@ -6421,12 +6401,12 @@ void newInitializedArray(stack *Stack)
 
 // Similar to newInitializedArray, but after the n elements, append another
 // array to it.
-#line 4507 "runtime.in"
+#line 4493 "runtime.in"
 void newAppendedArray(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
   array* tail=vm::pop<array*>(Stack);
-#line 4508 "runtime.in"
+#line 4494 "runtime.in"
   assert(n >= 0);
 
   array *a = new array(n);
@@ -6441,13 +6421,13 @@ void newAppendedArray(stack *Stack)
 
 // The function T[] array(int n, T value, int depth=0) produces a array of n
 // copies of x, where each copy is copied up to depth.
-#line 4523 "runtime.in"
+#line 4509 "runtime.in"
 void newDuplicateArray(stack *Stack)
 {
   Int depth=vm::pop<Int>(Stack,Int_MAX);
   item value=vm::pop(Stack);
   Int n=vm::pop<Int>(Stack);
-#line 4524 "runtime.in"
+#line 4510 "runtime.in"
   if(n < 0) error("cannot create a negative length array");
   if(depth < 0) error("cannot copy to a negative depth");
 
@@ -6455,12 +6435,12 @@ void newDuplicateArray(stack *Stack)
 }
 
 // Read an element from an array. Checks for initialization & bounds.
-#line 4532 "runtime.in"
+#line 4518 "runtime.in"
 void arrayRead(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 4533 "runtime.in"
+#line 4519 "runtime.in"
   item& i=arrayRead(a,n);
   if (i.empty()) {
     ostringstream buf;
@@ -6471,50 +6451,50 @@ void arrayRead(stack *Stack)
 }
 
 // Slice a substring from an array.
-#line 4544 "runtime.in"
+#line 4530 "runtime.in"
 void arraySliceRead(stack *Stack)
 {
   Int right=vm::pop<Int>(Stack);
   Int left=vm::pop<Int>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 4545 "runtime.in"
+#line 4531 "runtime.in"
   checkArray(a);
   {Stack->push(a->slice(left, right)); return;}
 }
 
 // Slice a substring from an array.  This implements the cases a[i:] and a[:]
 // where the endpoint is not given, and assumed to be the length of the array.
-#line 4552 "runtime.in"
+#line 4538 "runtime.in"
 void arraySliceReadToEnd(stack *Stack)
 {
   Int left=vm::pop<Int>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 4553 "runtime.in"
+#line 4539 "runtime.in"
   size_t len=checkArray(a);
   {Stack->push(a->slice(left, (Int)len)); return;}
 }
 
 // Read an element from an array of arrays. Check bounds and initialize
 // as necessary.
-#line 4560 "runtime.in"
+#line 4546 "runtime.in"
 void arrayArrayRead(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 4561 "runtime.in"
+#line 4547 "runtime.in"
   item& i=arrayRead(a,n);
   if (i.empty()) i=new array(0);
   {Stack->push(i); return;}
 }
 
 // Write an element to an array.  Increase size if necessary.
-#line 4568 "runtime.in"
+#line 4554 "runtime.in"
 void arrayWrite(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
   array * a=vm::pop<array *>(Stack);
   item value=vm::pop(Stack);
-#line 4569 "runtime.in"
+#line 4555 "runtime.in"
   size_t len=checkArray(a);
   bool cyclic=a->cyclic();
   if(cyclic && len > 0) n=imod(n,len);
@@ -6528,27 +6508,27 @@ void arrayWrite(stack *Stack)
   {Stack->push(value); return;}
 }
 
-#line 4583 "runtime.in"
+#line 4569 "runtime.in"
 void arraySliceWrite(stack *Stack)
 {
   Int right=vm::pop<Int>(Stack);
   Int left=vm::pop<Int>(Stack);
   array * dest=vm::pop<array *>(Stack);
   array * src=vm::pop<array *>(Stack);
-#line 4584 "runtime.in"
+#line 4570 "runtime.in"
   checkArray(src);
   checkArray(dest);
   dest->setSlice(left, right, src);
   {Stack->push<array*>(src); return;}
 }
 
-#line 4591 "runtime.in"
+#line 4577 "runtime.in"
 void arraySliceWriteToEnd(stack *Stack)
 {
   Int left=vm::pop<Int>(Stack);
   array * dest=vm::pop<array *>(Stack);
   array * src=vm::pop<array *>(Stack);
-#line 4592 "runtime.in"
+#line 4578 "runtime.in"
   checkArray(src);
   size_t len=checkArray(dest);
   dest->setSlice(left, (Int) len, src);
@@ -6556,20 +6536,20 @@ void arraySliceWriteToEnd(stack *Stack)
 }
 
 // Returns the length of an array.
-#line 4600 "runtime.in"
+#line 4586 "runtime.in"
 void arrayLength(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4601 "runtime.in"
+#line 4587 "runtime.in"
   {Stack->push<Int>((Int) checkArray(a)); return;}
 }
 
 // Returns an array of integers representing the keys of the array.
-#line 4606 "runtime.in"
+#line 4592 "runtime.in"
 void arrayKeys(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4607 "runtime.in"
+#line 4593 "runtime.in"
   size_t size=checkArray(a);
 
   array *keys=new array();
@@ -6583,22 +6563,22 @@ void arrayKeys(stack *Stack)
 }
 
 // Return the cyclic flag for an array.
-#line 4621 "runtime.in"
+#line 4607 "runtime.in"
 void arrayCyclicFlag(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4622 "runtime.in"
+#line 4608 "runtime.in"
   checkArray(a);
   {Stack->push<bool>(a->cyclic()); return;}
 }
 
 // Check to see if an array element is initialized.
-#line 4628 "runtime.in"
+#line 4614 "runtime.in"
 void arrayInitializedHelper(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
   Int n=vm::pop<Int>(Stack);
-#line 4629 "runtime.in"
+#line 4615 "runtime.in"
   size_t len=checkArray(a);
   bool cyclic=a->cyclic();
   if(cyclic && len > 0) n=imod(n,len);
@@ -6608,62 +6588,62 @@ void arrayInitializedHelper(stack *Stack)
 }
 
 // Returns the initialize method for an array.
-#line 4639 "runtime.in"
+#line 4625 "runtime.in"
 void arrayInitialized(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4640 "runtime.in"
+#line 4626 "runtime.in"
   {Stack->push<callable*>(new thunk(new bfunc(arrayInitializedHelper),a)); return;}
 }
 
 // The helper function for the cyclic method that sets the cyclic flag.
-#line 4645 "runtime.in"
+#line 4631 "runtime.in"
 void arrayCyclicHelper(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
   bool b=vm::pop<bool>(Stack);
-#line 4646 "runtime.in"
+#line 4632 "runtime.in"
   checkArray(a);
   a->cyclic(b);
 }
 
 // Set the cyclic flag for an array.
-#line 4652 "runtime.in"
+#line 4638 "runtime.in"
 void arrayCyclic(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4653 "runtime.in"
+#line 4639 "runtime.in"
   {Stack->push<callable*>(new thunk(new bfunc(arrayCyclicHelper),a)); return;}
 }
 
 // The helper function for the push method that does the actual operation.
-#line 4658 "runtime.in"
+#line 4644 "runtime.in"
 void arrayPushHelper(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
   item x=vm::pop(Stack);
-#line 4659 "runtime.in"
+#line 4645 "runtime.in"
   checkArray(a);
   a->push(x);
   {Stack->push(x); return;}
 }
 
 // Returns the push method for an array.
-#line 4666 "runtime.in"
+#line 4652 "runtime.in"
 void arrayPush(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4667 "runtime.in"
+#line 4653 "runtime.in"
   {Stack->push<callable*>(new thunk(new bfunc(arrayPushHelper),a)); return;}
 }
 
 // The helper function for the append method that appends b to a.
-#line 4672 "runtime.in"
+#line 4658 "runtime.in"
 void arrayAppendHelper(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
   array * b=vm::pop<array *>(Stack);
-#line 4673 "runtime.in"
+#line 4659 "runtime.in"
   checkArray(a);
   size_t size=checkArray(b);
   for(size_t i=0; i < size; i++)
@@ -6671,20 +6651,20 @@ void arrayAppendHelper(stack *Stack)
 }
 
 // Returns the append method for an array.
-#line 4681 "runtime.in"
+#line 4667 "runtime.in"
 void arrayAppend(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4682 "runtime.in"
+#line 4668 "runtime.in"
   {Stack->push<callable*>(new thunk(new bfunc(arrayAppendHelper),a)); return;}
 }
 
 // The helper function for the pop method.
-#line 4687 "runtime.in"
+#line 4673 "runtime.in"
 void arrayPopHelper(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4688 "runtime.in"
+#line 4674 "runtime.in"
   size_t asize=checkArray(a);
   if(asize == 0) 
     error("cannot pop element from empty array");
@@ -6692,22 +6672,22 @@ void arrayPopHelper(stack *Stack)
 }
 
 // Returns the pop method for an array.
-#line 4696 "runtime.in"
+#line 4682 "runtime.in"
 void arrayPop(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4697 "runtime.in"
+#line 4683 "runtime.in"
   {Stack->push<callable*>(new thunk(new bfunc(arrayPopHelper),a)); return;}
 }
 
 // The helper function for the insert method.
-#line 4702 "runtime.in"
+#line 4688 "runtime.in"
 void arrayInsertHelper(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
   array * x=vm::pop<array *>(Stack);
   Int i=vm::pop<Int>(Stack);
-#line 4703 "runtime.in"
+#line 4689 "runtime.in"
   size_t asize=checkArray(a);
   checkArray(x);
   if(a->cyclic() && asize > 0) i=imod(i,asize);
@@ -6717,39 +6697,39 @@ void arrayInsertHelper(stack *Stack)
 }
 
 // Returns the insert method for an array.
-#line 4713 "runtime.in"
+#line 4699 "runtime.in"
 void arrayInsert(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4714 "runtime.in"
+#line 4700 "runtime.in"
   {Stack->push<callable*>(new thunk(new bfunc(arrayInsertHelper),a)); return;}
 }
 
 // Returns the delete method for an array.
-#line 4719 "runtime.in"
+#line 4705 "runtime.in"
 void arrayDelete(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4720 "runtime.in"
+#line 4706 "runtime.in"
   {Stack->push<callable*>(new thunk(new bfunc(arrayDeleteHelper),a)); return;}
 }
 
-#line 4724 "runtime.in"
+#line 4710 "runtime.in"
 void arrayAlias(stack *Stack)
 {
   array * b=vm::pop<array *>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 4725 "runtime.in"
+#line 4711 "runtime.in"
   {Stack->push<bool>(a==b); return;}
 }
 
 // Return array formed by indexing array a with elements of integer array b
-#line 4730 "runtime.in"
+#line 4716 "runtime.in"
 void arrayIntArray(stack *Stack)
 {
   array * b=vm::pop<array *>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 4731 "runtime.in"
+#line 4717 "runtime.in"
   size_t asize=checkArray(a);
   size_t bsize=checkArray(b);
   array *r=new array(bsize);
@@ -6767,13 +6747,13 @@ void arrayIntArray(stack *Stack)
 
 // returns the complement of the integer array a in {0,2,...,n-1},
 // so that b[complement(a,b.length)] yields the complement of b[a].
-#line 4749 "runtime.in"
+#line 4735 "runtime.in"
 // Intarray* complement(Intarray *a, Int n);
-void gen449(stack *Stack)
+void gen448(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
   Intarray * a=vm::pop<Intarray *>(Stack);
-#line 4750 "runtime.in"
+#line 4736 "runtime.in"
   size_t asize=checkArray(a);
   array *r=new array(0);
   bool *keep=new bool[n];
@@ -6790,12 +6770,12 @@ void gen449(stack *Stack)
 }
 
 // Generate the sequence {f(i) : i=0,1,...n-1} given a function f and integer n
-#line 4767 "runtime.in"
+#line 4753 "runtime.in"
 void arraySequence(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
   callable * f=vm::pop<callable *>(Stack);
-#line 4768 "runtime.in"
+#line 4754 "runtime.in"
   if(n < 0) n=0;
   array *a=new array(n);
   for(Int i=0; i < n; ++i) {
@@ -6807,12 +6787,12 @@ void arraySequence(stack *Stack)
 }
 
 // Return the array {0,1,...n-1}
-#line 4780 "runtime.in"
+#line 4766 "runtime.in"
 // Intarray* sequence(Int n);
-void gen451(stack *Stack)
+void gen450(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
-#line 4781 "runtime.in"
+#line 4767 "runtime.in"
   if(n < 0) n=0;
   array *a=new array(n);
   for(Int i=0; i < n; ++i) {
@@ -6822,12 +6802,12 @@ void gen451(stack *Stack)
 }
 
 // Apply a function to each element of an array
-#line 4791 "runtime.in"
+#line 4777 "runtime.in"
 void arrayFunction(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
   callable * f=vm::pop<callable *>(Stack);
-#line 4792 "runtime.in"
+#line 4778 "runtime.in"
   size_t size=checkArray(a);
   array *b=new array(size);
   for(size_t i=0; i < size; ++i) {
@@ -6838,12 +6818,12 @@ void arrayFunction(stack *Stack)
   {Stack->push<array*>(b); return;}
 }
 
-#line 4803 "runtime.in"
+#line 4789 "runtime.in"
 void arraySort(stack *Stack)
 {
   callable * f=vm::pop<callable *>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 4804 "runtime.in"
+#line 4790 "runtime.in"
   array *c=copyArray(a);
   compareFunc=f;
   FuncStack=Stack;
@@ -6851,12 +6831,12 @@ void arraySort(stack *Stack)
   {Stack->push<array*>(c); return;}
 }
 
-#line 4812 "runtime.in"
+#line 4798 "runtime.in"
 // bool all(boolarray *a);
-void gen454(stack *Stack)
+void gen453(stack *Stack)
 {
   boolarray * a=vm::pop<boolarray *>(Stack);
-#line 4813 "runtime.in"
+#line 4799 "runtime.in"
   size_t size=checkArray(a);
   bool c=true;
   for(size_t i=0; i < size; i++)
@@ -6864,12 +6844,12 @@ void gen454(stack *Stack)
   {Stack->push<bool>(c); return;}
 }
 
-#line 4821 "runtime.in"
+#line 4807 "runtime.in"
 // boolarray* !(boolarray* a);
-void gen455(stack *Stack)
+void gen454(stack *Stack)
 {
   boolarray* a=vm::pop<boolarray*>(Stack);
-#line 4822 "runtime.in"
+#line 4808 "runtime.in"
   size_t size=checkArray(a);
   array *c=new array(size);
   for(size_t i=0; i < size; i++)
@@ -6877,12 +6857,12 @@ void gen455(stack *Stack)
   {Stack->push<boolarray*>(c); return;}
 }
 
-#line 4830 "runtime.in"
+#line 4816 "runtime.in"
 // Int sum(boolarray *a);
-void gen456(stack *Stack)
+void gen455(stack *Stack)
 {
   boolarray * a=vm::pop<boolarray *>(Stack);
-#line 4831 "runtime.in"
+#line 4817 "runtime.in"
   size_t size=checkArray(a);
   Int sum=0;
   for(size_t i=0; i < size; i++)
@@ -6890,19 +6870,19 @@ void gen456(stack *Stack)
   {Stack->push<Int>(sum); return;}
 }
 
-#line 4839 "runtime.in"
+#line 4825 "runtime.in"
 void arrayCopy(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4840 "runtime.in"
+#line 4826 "runtime.in"
   {Stack->push<array*>(copyArray(a)); return;}
 }
 
-#line 4844 "runtime.in"
+#line 4830 "runtime.in"
 void arrayConcat(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4845 "runtime.in"
+#line 4831 "runtime.in"
   // a is an array of arrays to be concatenated together.
   // The signature is
   //   T[] concat(... T[][] a);
@@ -6929,27 +6909,27 @@ void arrayConcat(stack *Stack)
   {Stack->push<array*>(result); return;}
 }
 
-#line 4872 "runtime.in"
+#line 4858 "runtime.in"
 void array2Copy(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4873 "runtime.in"
+#line 4859 "runtime.in"
   {Stack->push<array*>(copyArray2(a)); return;}
 }
 
-#line 4877 "runtime.in"
+#line 4863 "runtime.in"
 void array3Copy(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4878 "runtime.in"
+#line 4864 "runtime.in"
   {Stack->push<array*>(copyArray3(a)); return;}
 }
 
-#line 4882 "runtime.in"
+#line 4868 "runtime.in"
 void array2Transpose(stack *Stack)
 {
   array * a=vm::pop<array *>(Stack);
-#line 4883 "runtime.in"
+#line 4869 "runtime.in"
   size_t asize=checkArray(a);
   array *c=new array(0);
   for(size_t i=0; i < asize; i++) {
@@ -6976,12 +6956,12 @@ void array2Transpose(stack *Stack)
 // permutation  (021 or 120, etc; original is 012).
 // Transpose by sending respective members to the permutated locations:
 // return the array obtained by putting a[i][j][k] into position perm{ijk}. 
-#line 4910 "runtime.in"
+#line 4896 "runtime.in"
 void array3Transpose(stack *Stack)
 {
   array * perm=vm::pop<array *>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 4911 "runtime.in"
+#line 4897 "runtime.in"
   const size_t DIM=3;
 
   if(checkArray(perm) != DIM) {
@@ -7065,13 +7045,13 @@ void array3Transpose(stack *Stack)
 
 // In a boolean array, find the index of the nth true value or -1 if not found
 // If n is negative, search backwards.
-#line 4995 "runtime.in"
+#line 4981 "runtime.in"
 // Int find(boolarray *a, Int n=1);
-void gen463(stack *Stack)
+void gen462(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack,1);
   boolarray * a=vm::pop<boolarray *>(Stack);
-#line 4996 "runtime.in"
+#line 4982 "runtime.in"
   
   size_t size=checkArray(a);
   Int j=-1;
@@ -7088,13 +7068,13 @@ void gen463(stack *Stack)
   {Stack->push<Int>(j); return;}
 }
 
-#line 5013 "runtime.in"
+#line 4999 "runtime.in"
 // bool ==(realarray2 *a, realarray2 *b);
-void gen464(stack *Stack)
+void gen463(stack *Stack)
 {
   realarray2 * b=vm::pop<realarray2 *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 5014 "runtime.in"
+#line 5000 "runtime.in"
   size_t n=checkArray(a);
   if(n != checkArray(b)) {Stack->push<bool>(false); return;}
   
@@ -7114,13 +7094,13 @@ void gen464(stack *Stack)
 
 // construct vector obtained by replacing those elements of b for which the
 // corresponding elements of a are false by the corresponding element of c.
-#line 5034 "runtime.in"
+#line 5020 "runtime.in"
 void arrayConditional(stack *Stack)
 {
   array * c=vm::pop<array *>(Stack);
   array * b=vm::pop<array *>(Stack);
   array * a=vm::pop<array *>(Stack);
-#line 5035 "runtime.in"
+#line 5021 "runtime.in"
   size_t size=checkArray(a);
   array *r=new array(size);
   if(b && c) {
@@ -7144,21 +7124,21 @@ void arrayConditional(stack *Stack)
 }
 
 // Return an n x n identity matrix.
-#line 5059 "runtime.in"
+#line 5045 "runtime.in"
 // realarray2* identity(Int n);
-void gen466(stack *Stack)
+void gen465(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack);
-#line 5060 "runtime.in"
+#line 5046 "runtime.in"
   {Stack->push<realarray2*>(Identity(n)); return;}
 }
 
 // Return the diagonal matrix with diagonal entries given by a.
-#line 5065 "runtime.in"
+#line 5051 "runtime.in"
 void diagonal(stack *Stack)
 {
   realarray * a=vm::pop<realarray *>(Stack);
-#line 5066 "runtime.in"
+#line 5052 "runtime.in"
   size_t n=checkArray(a);
   array *c=new array(n);
   for(size_t i=0; i < n; ++i) {
@@ -7174,12 +7154,12 @@ void diagonal(stack *Stack)
 }
 
 // Return the inverse of an n x n matrix a using Gauss-Jordan elimination.
-#line 5082 "runtime.in"
+#line 5068 "runtime.in"
 // realarray2* inverse(realarray2 *a);
-void gen468(stack *Stack)
+void gen467(stack *Stack)
 {
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 5083 "runtime.in"
+#line 5069 "runtime.in"
   a=copyArray2(a);
   size_t n=checkArray(a);
   checkSquare(a);
@@ -7272,14 +7252,14 @@ void gen468(stack *Stack)
 // Solve the linear equation ax=b by LU decomposition, returning the
 // solution x, where a is an n x n matrix and b is an array of length n.
 // If no solution exists, return an empty array.
-#line 5176 "runtime.in"
+#line 5162 "runtime.in"
 // realarray* solve(realarray2 *a, realarray *b, bool warn=true);
-void gen469(stack *Stack)
+void gen468(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   realarray * b=vm::pop<realarray *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 5177 "runtime.in"
+#line 5163 "runtime.in"
   size_t n=checkArray(a);
   
   if(n == 0) {Stack->push<realarray*>(new array(0)); return;}
@@ -7329,14 +7309,14 @@ void gen469(stack *Stack)
 // Solve the linear equation ax=b by LU decomposition, returning the
 // solution x, where a is an n x n matrix and b is an n x m matrix.
 // If no solution exists, return an empty array.
-#line 5227 "runtime.in"
+#line 5213 "runtime.in"
 // realarray2* solve(realarray2 *a, realarray2 *b, bool warn=true);
-void gen470(stack *Stack)
+void gen469(stack *Stack)
 {
   bool warn=vm::pop<bool>(Stack,true);
   realarray2 * b=vm::pop<realarray2 *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 5228 "runtime.in"
+#line 5214 "runtime.in"
   size_t n=checkArray(a);
   
   if(n == 0) {Stack->push<realarray2*>(new array(0)); return;}
@@ -7397,12 +7377,12 @@ void gen470(stack *Stack)
 }
 
 // Compute the determinant of an n x n matrix.
-#line 5289 "runtime.in"
+#line 5275 "runtime.in"
 // real determinant(realarray2 *a);
-void gen471(stack *Stack)
+void gen470(stack *Stack)
 {
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 5290 "runtime.in"
+#line 5276 "runtime.in"
   real *A=copyArray2C(a);
   size_t n=checkArray(a);
   
@@ -7416,13 +7396,13 @@ void gen471(stack *Stack)
   {Stack->push<real>(det); return;}
 }
 
-#line 5304 "runtime.in"
+#line 5290 "runtime.in"
 // realarray* *(realarray2 *a, realarray *b);
-void gen472(stack *Stack)
+void gen471(stack *Stack)
 {
   realarray * b=vm::pop<realarray *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 5305 "runtime.in"
+#line 5291 "runtime.in"
   size_t n=checkArray(a);
   size_t m=checkArray(b);
   array *c=new array(n);
@@ -7439,13 +7419,13 @@ void gen472(stack *Stack)
   {Stack->push<realarray*>(c); return;}
 }
 
-#line 5322 "runtime.in"
+#line 5308 "runtime.in"
 // realarray2* *(realarray2 *a, realarray2 *b);
-void gen473(stack *Stack)
+void gen472(stack *Stack)
 {
   realarray2 * b=vm::pop<realarray2 *>(Stack);
   realarray2 * a=vm::pop<realarray2 *>(Stack);
-#line 5323 "runtime.in"
+#line 5309 "runtime.in"
   size_t n=checkArray(a);
   
   size_t nb=checkArray(b);
@@ -7479,23 +7459,23 @@ void gen473(stack *Stack)
   {Stack->push<realarray2*>(c); return;}
 }
 
-#line 5357 "runtime.in"
+#line 5343 "runtime.in"
 // triple *(realarray2 *t, triple v);
-void gen474(stack *Stack)
+void gen473(stack *Stack)
 {
   triple v=vm::pop<triple>(Stack);
   realarray2 * t=vm::pop<realarray2 *>(Stack);
-#line 5358 "runtime.in"
+#line 5344 "runtime.in"
   {Stack->push<triple>(*t*v); return;}
 }
 
-#line 5362 "runtime.in"
+#line 5348 "runtime.in"
 // pair project(triple v, realarray2 *t);
-void gen475(stack *Stack)
+void gen474(stack *Stack)
 {
   realarray2 * t=vm::pop<realarray2 *>(Stack);
   triple v=vm::pop<triple>(Stack);
-#line 5363 "runtime.in"
+#line 5349 "runtime.in"
   size_t n=checkArray(t);
   if(n != 4) error(incommensurate);
   array *t0=read<array*>(t,0);
@@ -7520,13 +7500,13 @@ void gen475(stack *Stack)
 }
 
 // Compute the dot product of vectors a and b.
-#line 5388 "runtime.in"
+#line 5374 "runtime.in"
 // real dot(realarray *a, realarray *b);
-void gen476(stack *Stack)
+void gen475(stack *Stack)
 {
   realarray * b=vm::pop<realarray *>(Stack);
   realarray * a=vm::pop<realarray *>(Stack);
-#line 5389 "runtime.in"
+#line 5375 "runtime.in"
   size_t n=checkArrays(a,b);
   real sum=0.0;
   for(size_t i=0; i < n; ++i)
@@ -7541,15 +7521,15 @@ void gen476(stack *Stack)
 // [      a[2] b[2] c[2]        ]
 // [                ...         ]
 // [ c[n-1]       a[n-1] b[n-1] ]
-#line 5404 "runtime.in"
+#line 5390 "runtime.in"
 // realarray* tridiagonal(realarray *a, realarray *b, realarray *c, realarray *f);
-void gen477(stack *Stack)
+void gen476(stack *Stack)
 {
   realarray * f=vm::pop<realarray *>(Stack);
   realarray * c=vm::pop<realarray *>(Stack);
   realarray * b=vm::pop<realarray *>(Stack);
   realarray * a=vm::pop<realarray *>(Stack);
-#line 5405 "runtime.in"
+#line 5391 "runtime.in"
   size_t n=checkArrays(a,b);
   checkEqual(n,checkArray(c));
   checkEqual(n,checkArray(f));
@@ -7646,16 +7626,16 @@ void gen477(stack *Stack)
 }
 
 // Root solve by Newton-Raphson
-#line 5502 "runtime.in"
+#line 5488 "runtime.in"
 // real newton(Int iterations=100, callableReal *f, callableReal *fprime, real x,            bool verbose=false);
-void gen478(stack *Stack)
+void gen477(stack *Stack)
 {
   bool verbose=vm::pop<bool>(Stack,false);
   real x=vm::pop<real>(Stack);
   callableReal * fprime=vm::pop<callableReal *>(Stack);
   callableReal * f=vm::pop<callableReal *>(Stack);
   Int iterations=vm::pop<Int>(Stack,100);
-#line 5504 "runtime.in"
+#line 5490 "runtime.in"
   static const real fuzz=1000.0*DBL_EPSILON;
   Int i=0;
   size_t oldPrec=0;
@@ -7701,9 +7681,9 @@ void gen478(stack *Stack)
 
 // Root solve by Newton-Raphson bisection
 // cf. routine rtsafe (Press et al.,  Numerical Recipes, 1991).
-#line 5550 "runtime.in"
+#line 5536 "runtime.in"
 // real newton(Int iterations=100, callableReal *f, callableReal *fprime, real x1,            real x2, bool verbose=false);
-void gen479(stack *Stack)
+void gen478(stack *Stack)
 {
   bool verbose=vm::pop<bool>(Stack,false);
   real x2=vm::pop<real>(Stack);
@@ -7711,7 +7691,7 @@ void gen479(stack *Stack)
   callableReal * fprime=vm::pop<callableReal *>(Stack);
   callableReal * f=vm::pop<callableReal *>(Stack);
   Int iterations=vm::pop<Int>(Stack,100);
-#line 5552 "runtime.in"
+#line 5538 "runtime.in"
   static const real fuzz=1000.0*DBL_EPSILON;
   size_t oldPrec=0;
   if(verbose) 
@@ -7789,16 +7769,16 @@ void gen479(stack *Stack)
   {Stack->push<real>((j == iterations) ? DBL_MAX : x); return;}
 }
 
-#line 5630 "runtime.in"
+#line 5616 "runtime.in"
 // real simpson(callableReal *f, real a, real b, real acc=DBL_EPSILON,             real dxmax=0);
-void gen480(stack *Stack)
+void gen479(stack *Stack)
 {
   real dxmax=vm::pop<real>(Stack,0);
   real acc=vm::pop<real>(Stack,DBL_EPSILON);
   real b=vm::pop<real>(Stack);
   real a=vm::pop<real>(Stack);
   callableReal * f=vm::pop<callableReal *>(Stack);
-#line 5632 "runtime.in"
+#line 5618 "runtime.in"
   real integral;
   if(dxmax == 0) dxmax=b-a;
   Func=f;
@@ -7809,12 +7789,12 @@ void gen480(stack *Stack)
 }
 
 // Compute the fast Fourier transform of a pair array
-#line 5643 "runtime.in"
+#line 5629 "runtime.in"
 void pairArrayFFT(stack *Stack)
 {
   Int sign=vm::pop<Int>(Stack,1);
   pairarray * a=vm::pop<pairarray *>(Stack);
-#line 5644 "runtime.in"
+#line 5630 "runtime.in"
   unsigned n=(unsigned) checkArray(a);
 #ifdef HAVE_LIBFFTW3
   array *c=new array(n);
@@ -7842,12 +7822,12 @@ void pairArrayFFT(stack *Stack)
   {Stack->push<pairarray*>(c); return;}
 }
 
-#line 5672 "runtime.in"
+#line 5658 "runtime.in"
 // Intarray2* triangulate(pairarray *z);
-void gen482(stack *Stack)
+void gen481(stack *Stack)
 {
   pairarray * z=vm::pop<pairarray *>(Stack);
-#line 5673 "runtime.in"
+#line 5659 "runtime.in"
   size_t nv=checkArray(z);
 // Call robust version of Gilles Dumoulin's port of Paul Bourke's
 // triangulation code.
@@ -7883,55 +7863,55 @@ void gen482(stack *Stack)
 
 
 // File operations
-#line 5709 "runtime.in"
+#line 5695 "runtime.in"
 // bool ==(file *a, file *b);
+void gen482(stack *Stack)
+{
+  file * b=vm::pop<file *>(Stack);
+  file * a=vm::pop<file *>(Stack);
+#line 5696 "runtime.in"
+  {Stack->push<bool>(a == b); return;}
+}
+
+#line 5701 "runtime.in"
+// bool !=(file *a, file *b);
 void gen483(stack *Stack)
 {
   file * b=vm::pop<file *>(Stack);
   file * a=vm::pop<file *>(Stack);
-#line 5710 "runtime.in"
-  {Stack->push<bool>(a == b); return;}
-}
-
-#line 5715 "runtime.in"
-// bool !=(file *a, file *b);
-void gen484(stack *Stack)
-{
-  file * b=vm::pop<file *>(Stack);
-  file * a=vm::pop<file *>(Stack);
-#line 5716 "runtime.in"
+#line 5702 "runtime.in"
   {Stack->push<bool>(a != b); return;}
 }
 
-#line 5720 "runtime.in"
+#line 5706 "runtime.in"
 void nullFile(stack *Stack)
 {
-#line 5721 "runtime.in"
+#line 5707 "runtime.in"
   {Stack->push<file*>(&camp::nullfile); return;}
 }
 
-#line 5725 "runtime.in"
+#line 5711 "runtime.in"
 // file* input(string name, bool check=true, string comment=commentchar);
-void gen486(stack *Stack)
+void gen485(stack *Stack)
 {
   string comment=vm::pop<string>(Stack,commentchar);
   bool check=vm::pop<bool>(Stack,true);
   string name=vm::pop<string>(Stack);
-#line 5726 "runtime.in"
+#line 5712 "runtime.in"
   char c=comment.empty() ? (char) 0 : comment[0];
   file *f=new ifile(name,c,check);
   f->open();
   {Stack->push<file*>(f); return;}
 }
 
-#line 5733 "runtime.in"
+#line 5719 "runtime.in"
 // file* output(string name, bool update=false, string comment=commentchar);
-void gen487(stack *Stack)
+void gen486(stack *Stack)
 {
   string comment=vm::pop<string>(Stack,commentchar);
   bool update=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack);
-#line 5734 "runtime.in"
+#line 5720 "runtime.in"
   file *f;
   if(update) {
     char c=comment.empty() ? (char) 0 : comment[0];
@@ -7942,13 +7922,13 @@ void gen487(stack *Stack)
   {Stack->push<file*>(f); return;}
 }
 
-#line 5745 "runtime.in"
+#line 5731 "runtime.in"
 // file* xinput(string name, bool check=true);
-void gen488(stack *Stack)
+void gen487(stack *Stack)
 {
   bool check=vm::pop<bool>(Stack,true);
   string name=vm::pop<string>(Stack);
-#line 5746 "runtime.in"
+#line 5732 "runtime.in"
 #ifdef HAVE_RPC_RPC_H
   file *f=new ixfile(name,check);
   f->open();
@@ -7961,13 +7941,13 @@ void gen488(stack *Stack)
 #endif
 }
 
-#line 5759 "runtime.in"
+#line 5745 "runtime.in"
 // file* xoutput(string name, bool update=false);
-void gen489(stack *Stack)
+void gen488(stack *Stack)
 {
   bool update=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack);
-#line 5760 "runtime.in"
+#line 5746 "runtime.in"
 #ifdef HAVE_RPC_RPC_H
   file *f;
   if(update)
@@ -7984,25 +7964,25 @@ void gen489(stack *Stack)
 #endif
 }
 
-#line 5777 "runtime.in"
+#line 5763 "runtime.in"
 // file* binput(string name, bool check=true);
-void gen490(stack *Stack)
+void gen489(stack *Stack)
 {
   bool check=vm::pop<bool>(Stack,true);
   string name=vm::pop<string>(Stack);
-#line 5778 "runtime.in"
+#line 5764 "runtime.in"
   file *f=new ibfile(name,check);
   f->open();
   {Stack->push<file*>(f); return;}
 }
 
-#line 5784 "runtime.in"
+#line 5770 "runtime.in"
 // file* boutput(string name, bool update=false);
-void gen491(stack *Stack)
+void gen490(stack *Stack)
 {
   bool update=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack);
-#line 5785 "runtime.in"
+#line 5771 "runtime.in"
   file *f;
   if(update) f=new iobfile(name);
   else f=new obfile(name);
@@ -8011,77 +7991,77 @@ void gen491(stack *Stack)
   {Stack->push<file*>(f); return;}
 }
 
-#line 5794 "runtime.in"
+#line 5780 "runtime.in"
 // bool eof(file *File);
-void gen492(stack *Stack)
+void gen491(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5795 "runtime.in"
+#line 5781 "runtime.in"
   {Stack->push<bool>(File->eof()); return;}
 }
 
-#line 5799 "runtime.in"
+#line 5785 "runtime.in"
 // bool eol(file *File);
-void gen493(stack *Stack)
+void gen492(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5800 "runtime.in"
+#line 5786 "runtime.in"
   {Stack->push<bool>(File->eol()); return;}
 }
 
-#line 5804 "runtime.in"
+#line 5790 "runtime.in"
 // bool error(file *File);
-void gen494(stack *Stack)
+void gen493(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5805 "runtime.in"
+#line 5791 "runtime.in"
   {Stack->push<bool>(File->error()); return;}
 }
 
-#line 5809 "runtime.in"
+#line 5795 "runtime.in"
 // void clear(file *File);
-void gen495(stack *Stack)
+void gen494(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5810 "runtime.in"
+#line 5796 "runtime.in"
   File->clear();
 }
 
-#line 5814 "runtime.in"
+#line 5800 "runtime.in"
 // void close(file *File);
-void gen496(stack *Stack)
+void gen495(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5815 "runtime.in"
+#line 5801 "runtime.in"
   File->close();
 }
 
-#line 5819 "runtime.in"
+#line 5805 "runtime.in"
 // Int precision(file *File=NULL, Int digits=0);
-void gen497(stack *Stack)
+void gen496(stack *Stack)
 {
   Int digits=vm::pop<Int>(Stack,0);
   file * File=vm::pop<file *>(Stack,NULL);
-#line 5820 "runtime.in"
+#line 5806 "runtime.in"
   if(File == 0) File=&camp::Stdout;
   {Stack->push<Int>(File->precision(digits)); return;}
 }
 
-#line 5825 "runtime.in"
+#line 5811 "runtime.in"
 // void flush(file *File);
-void gen498(stack *Stack)
+void gen497(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5826 "runtime.in"
+#line 5812 "runtime.in"
   File->flush();
 }
 
-#line 5830 "runtime.in"
+#line 5816 "runtime.in"
 // string getc(file *File);
-void gen499(stack *Stack)
+void gen498(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5831 "runtime.in"
+#line 5817 "runtime.in"
   char c=0;
   if(File->isOpen()) File->read(c);
   static char str[1];
@@ -8089,189 +8069,189 @@ void gen499(stack *Stack)
   {Stack->push<string>(string(str)); return;}
 }
 
-#line 5839 "runtime.in"
+#line 5825 "runtime.in"
 // Int tell(file *File);
-void gen500(stack *Stack)
+void gen499(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5840 "runtime.in"
+#line 5826 "runtime.in"
   {Stack->push<Int>(File->tell()); return;}
 }
 
-#line 5844 "runtime.in"
+#line 5830 "runtime.in"
 // void seek(file *File, Int pos);
-void gen501(stack *Stack)
+void gen500(stack *Stack)
 {
   Int pos=vm::pop<Int>(Stack);
   file * File=vm::pop<file *>(Stack);
-#line 5845 "runtime.in"
+#line 5831 "runtime.in"
   File->seek(pos,pos >= 0);
 }
 
-#line 5849 "runtime.in"
+#line 5835 "runtime.in"
 // void seekeof(file *File);
-void gen502(stack *Stack)
+void gen501(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5850 "runtime.in"
+#line 5836 "runtime.in"
   File->seek(0,false);
 }
 
 // Set file dimensions
-#line 5855 "runtime.in"
+#line 5841 "runtime.in"
 // file* dimension(file *File, Int nx);
-void gen503(stack *Stack)
+void gen502(stack *Stack)
 {
   Int nx=vm::pop<Int>(Stack);
   file * File=vm::pop<file *>(Stack);
-#line 5856 "runtime.in"
+#line 5842 "runtime.in"
   File->dimension(nx);
   {Stack->push<file*>(File); return;}
 }
 
-#line 5861 "runtime.in"
+#line 5847 "runtime.in"
 // file* dimension(file *File, Int nx, Int ny);
-void gen504(stack *Stack)
+void gen503(stack *Stack)
 {
   Int ny=vm::pop<Int>(Stack);
   Int nx=vm::pop<Int>(Stack);
   file * File=vm::pop<file *>(Stack);
-#line 5862 "runtime.in"
+#line 5848 "runtime.in"
   File->dimension(nx,ny);
   {Stack->push<file*>(File); return;}
 }
 
-#line 5867 "runtime.in"
+#line 5853 "runtime.in"
 // file* dimension(file *File, Int nx, Int ny, Int nz);
-void gen505(stack *Stack)
+void gen504(stack *Stack)
 {
   Int nz=vm::pop<Int>(Stack);
   Int ny=vm::pop<Int>(Stack);
   Int nx=vm::pop<Int>(Stack);
   file * File=vm::pop<file *>(Stack);
-#line 5868 "runtime.in"
+#line 5854 "runtime.in"
   File->dimension(nx,ny,nz);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read comma-separated values
-#line 5874 "runtime.in"
+#line 5860 "runtime.in"
 // file* csv(file *File, bool b=true);
-void gen506(stack *Stack)
+void gen505(stack *Stack)
 {
   bool b=vm::pop<bool>(Stack,true);
   file * File=vm::pop<file *>(Stack);
-#line 5875 "runtime.in"
+#line 5861 "runtime.in"
   File->CSVMode(b);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read whitespace-separated values
-#line 5881 "runtime.in"
+#line 5867 "runtime.in"
 // file* word(file *File, bool b=true);
-void gen507(stack *Stack)
+void gen506(stack *Stack)
 {
   bool b=vm::pop<bool>(Stack,true);
   file * File=vm::pop<file *>(Stack);
-#line 5882 "runtime.in"
+#line 5868 "runtime.in"
   File->WordMode(b);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read arrays in line-at-a-time mode
-#line 5888 "runtime.in"
+#line 5874 "runtime.in"
 // file* line(file *File, bool b=true);
-void gen508(stack *Stack)
+void gen507(stack *Stack)
 {
   bool b=vm::pop<bool>(Stack,true);
   file * File=vm::pop<file *>(Stack);
-#line 5889 "runtime.in"
+#line 5875 "runtime.in"
   File->LineMode(b);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read/write single-precision XDR values.
-#line 5895 "runtime.in"
+#line 5881 "runtime.in"
 // file* single(file *File, bool b=true);
-void gen509(stack *Stack)
+void gen508(stack *Stack)
 {
   bool b=vm::pop<bool>(Stack,true);
   file * File=vm::pop<file *>(Stack);
-#line 5896 "runtime.in"
+#line 5882 "runtime.in"
   File->SingleReal(b);
   File->SingleInt(b);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read/write single-precision real XDR values.
-#line 5903 "runtime.in"
+#line 5889 "runtime.in"
 // file* single(file *File, real x, bool b=true);
-void gen510(stack *Stack)
+void gen509(stack *Stack)
 {
   bool b=vm::pop<bool>(Stack,true);
   real x=vm::pop<real>(Stack);
   file * File=vm::pop<file *>(Stack);
-#line 5904 "runtime.in"
+#line 5890 "runtime.in"
   File->SingleReal(b);
   unused(&x);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read/write single-precision int XDR values.
-#line 5911 "runtime.in"
+#line 5897 "runtime.in"
 // file* single(file *File, Int x, bool b=true);
-void gen511(stack *Stack)
+void gen510(stack *Stack)
 {
   bool b=vm::pop<bool>(Stack,true);
   Int x=vm::pop<Int>(Stack);
   file * File=vm::pop<file *>(Stack);
-#line 5912 "runtime.in"
+#line 5898 "runtime.in"
   File->SingleInt(b);
   unused(&x);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read an array1 (1 Int size followed by a 1d array)
-#line 5919 "runtime.in"
+#line 5905 "runtime.in"
 // file* read1(file *File);
-void gen512(stack *Stack)
+void gen511(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5920 "runtime.in"
+#line 5906 "runtime.in"
   File->dimension(-2);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read an array2 (2 Int sizes followed by a 2d array)
-#line 5926 "runtime.in"
+#line 5912 "runtime.in"
 // file* read2(file *File);
-void gen513(stack *Stack)
+void gen512(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5927 "runtime.in"
+#line 5913 "runtime.in"
   File->dimension(-2,-2);
   {Stack->push<file*>(File); return;}
 }
 
 // Set file to read an array3 (3 Int sizes followed by a 3d array)
-#line 5933 "runtime.in"
+#line 5919 "runtime.in"
 // file* read3(file *File);
-void gen514(stack *Stack)
+void gen513(stack *Stack)
 {
   file * File=vm::pop<file *>(Stack);
-#line 5934 "runtime.in"
+#line 5920 "runtime.in"
   File->dimension(-2,-2,-2);
   {Stack->push<file*>(File); return;}
 }
 
 // Return the last n lines of the history named name.
-#line 5940 "runtime.in"
+#line 5926 "runtime.in"
 // stringarray* history(string name, Int n=1);
-void gen515(stack *Stack)
+void gen514(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack,1);
   string name=vm::pop<string>(Stack);
-#line 5941 "runtime.in"
+#line 5927 "runtime.in"
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   bool newhistory=historyMap.find(name) == historyMap.end();
   
@@ -8303,12 +8283,12 @@ void gen515(stack *Stack)
 }
 
 // Return the last n lines of the interactive history.
-#line 5973 "runtime.in"
+#line 5959 "runtime.in"
 // stringarray* history(Int n=0);
-void gen516(stack *Stack)
+void gen515(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack,0);
-#line 5974 "runtime.in"
+#line 5960 "runtime.in"
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   {Stack->push<stringarray*>(get_history(n)); return;}
 #else
@@ -8319,14 +8299,14 @@ void gen516(stack *Stack)
 
 // Prompt for a string using prompt, the GNU readline library, and a
 // local history named name.
-#line 5985 "runtime.in"
+#line 5971 "runtime.in"
 // string readline(string prompt=emptystring, string name=emptystring,                bool tabcompletion=false);
-void gen517(stack *Stack)
+void gen516(stack *Stack)
 {
   bool tabcompletion=vm::pop<bool>(Stack,false);
   string name=vm::pop<string>(Stack,emptystring);
   string prompt=vm::pop<string>(Stack,emptystring);
-#line 5987 "runtime.in"
+#line 5973 "runtime.in"
   if(!isatty(STDIN_FILENO)) 
     {Stack->push<string>(emptystring); return;}
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
@@ -8368,14 +8348,14 @@ void gen517(stack *Stack)
 
 // Save a string in a local history named name.
 // If store=true, store the local history in the file historyfilename(name).
-#line 6029 "runtime.in"
+#line 6015 "runtime.in"
 // void saveline(string name, string value, bool store=true);
-void gen518(stack *Stack)
+void gen517(stack *Stack)
 {
   bool store=vm::pop<bool>(Stack,true);
   string value=vm::pop<string>(Stack);
   string name=vm::pop<string>(Stack);
-#line 6030 "runtime.in"
+#line 6016 "runtime.in"
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   store_history(&history_save);
   bool newhistory=historyMap.find(name) == historyMap.end();
@@ -8402,11 +8382,11 @@ void gen518(stack *Stack)
 #endif   
 }
 
-#line 6057 "runtime.in"
+#line 6043 "runtime.in"
 // void generate_random_backtrace();
-void gen519(stack *)
+void gen518(stack *)
 {
-#line 6058 "runtime.in"
+#line 6044 "runtime.in"
 #if defined(USEGC) && defined(GC_DEBUG) && defined(GC_BACKTRACE)
   GC_generate_random_backtrace();
 #else
@@ -8414,12 +8394,12 @@ void gen519(stack *)
 #endif
 }
 
-#line 6066 "runtime.in"
+#line 6052 "runtime.in"
 // void print_random_addresses(Int n=1);
-void gen520(stack *Stack)
+void gen519(stack *Stack)
 {
   Int n=vm::pop<Int>(Stack,1);
-#line 6067 "runtime.in"
+#line 6053 "runtime.in"
 #if defined(USEGC) && defined(GC_DEBUG) && defined(GC_BACKTRACE)
   GC_gcollect();
   for (Int i=0; i < n; ++i)
@@ -8825,489 +8805,487 @@ void gen_base_venv(venv &ve)
 #line 2894 "runtime.in"
   addFunc(ve, run::gen213, realArray2(), "intersections", formal(primPath3(), "p", false, false), formal(tripleArray2(), "p", false, false), formal(primReal(), "fuzz", true, false));
 #line 2914 "runtime.in"
-  addFunc(ve, run::gen214, realArray(), "intersections", formal(primTriple(), "v", false, false), formal(tripleArray2(), "p", false, false), formal(primReal(), "fuzz", true, false));
-#line 2928 "runtime.in"
-  addFunc(ve, run::gen215, primInt(), "size", formal(primPath3(), "p", false, false));
-#line 2933 "runtime.in"
-  addFunc(ve, run::gen216, primPath3(), "&", formal(primPath3(), "p", false, false), formal(primPath3(), "q", false, false));
-#line 2938 "runtime.in"
-  addFunc(ve, run::gen217, primTriple(), "min", formal(primPath3(), "p", false, false));
-#line 2943 "runtime.in"
-  addFunc(ve, run::gen218, primTriple(), "max", formal(primPath3(), "p", false, false));
-#line 2948 "runtime.in"
-  addFunc(ve, run::gen219, realArray(), "mintimes", formal(primPath3(), "p", false, false));
-#line 2958 "runtime.in"
-  addFunc(ve, run::gen220, realArray(), "maxtimes", formal(primPath3(), "p", false, false));
-#line 2968 "runtime.in"
-  addFunc(ve, run::gen221, primPath3(), "*", formal(realArray2(), "t", false, false), formal(primPath3(), "g", false, false));
-#line 3023 "runtime.in"
-  addFunc(ve, run::gen226, primGuide(), "operator cast", formal(primCycleToken(), "tok", false, false));
-#line 3030 "runtime.in"
-  addFunc(ve, run::gen227, primGuide(), "operator spec", formal(primPair(), "z", false, false), formal(primInt(), "p", false, false));
-#line 3038 "runtime.in"
-  addFunc(ve, run::gen228, primCurlSpecifier(), "operator curl", formal(primReal(), "gamma", false, false), formal(primInt(), "p", false, false));
-#line 3054 "runtime.in"
-  addFunc(ve, run::gen231, primGuide(), "operator cast", formal(primCurlSpecifier(), "spec", false, false));
-#line 3059 "runtime.in"
-  addFunc(ve, run::gen232, primTensionSpecifier(), "operator tension", formal(primReal(), "tout", false, false), formal(primReal(), "tin", false, false), formal(primBoolean(), "atleast", false, false));
-#line 3079 "runtime.in"
-  addFunc(ve, run::gen236, primGuide(), "operator cast", formal(primTensionSpecifier(), "t", false, false));
-#line 3084 "runtime.in"
-  addFunc(ve, run::gen237, primGuide(), "operator controls", formal(primPair(), "zout", false, false), formal(primPair(), "zin", false, false));
+  addFunc(ve, run::gen214, primInt(), "size", formal(primPath3(), "p", false, false));
+#line 2919 "runtime.in"
+  addFunc(ve, run::gen215, primPath3(), "&", formal(primPath3(), "p", false, false), formal(primPath3(), "q", false, false));
+#line 2924 "runtime.in"
+  addFunc(ve, run::gen216, primTriple(), "min", formal(primPath3(), "p", false, false));
+#line 2929 "runtime.in"
+  addFunc(ve, run::gen217, primTriple(), "max", formal(primPath3(), "p", false, false));
+#line 2934 "runtime.in"
+  addFunc(ve, run::gen218, realArray(), "mintimes", formal(primPath3(), "p", false, false));
+#line 2944 "runtime.in"
+  addFunc(ve, run::gen219, realArray(), "maxtimes", formal(primPath3(), "p", false, false));
+#line 2954 "runtime.in"
+  addFunc(ve, run::gen220, primPath3(), "*", formal(realArray2(), "t", false, false), formal(primPath3(), "g", false, false));
+#line 3009 "runtime.in"
+  addFunc(ve, run::gen225, primGuide(), "operator cast", formal(primCycleToken(), "tok", false, false));
+#line 3016 "runtime.in"
+  addFunc(ve, run::gen226, primGuide(), "operator spec", formal(primPair(), "z", false, false), formal(primInt(), "p", false, false));
+#line 3024 "runtime.in"
+  addFunc(ve, run::gen227, primCurlSpecifier(), "operator curl", formal(primReal(), "gamma", false, false), formal(primInt(), "p", false, false));
+#line 3040 "runtime.in"
+  addFunc(ve, run::gen230, primGuide(), "operator cast", formal(primCurlSpecifier(), "spec", false, false));
+#line 3045 "runtime.in"
+  addFunc(ve, run::gen231, primTensionSpecifier(), "operator tension", formal(primReal(), "tout", false, false), formal(primReal(), "tin", false, false), formal(primBoolean(), "atleast", false, false));
+#line 3065 "runtime.in"
+  addFunc(ve, run::gen235, primGuide(), "operator cast", formal(primTensionSpecifier(), "t", false, false));
+#line 3070 "runtime.in"
+  addFunc(ve, run::gen236, primGuide(), "operator controls", formal(primPair(), "zout", false, false), formal(primPair(), "zin", false, false));
+#line 3075 "runtime.in"
+  addFunc(ve, run::gen237, primInt(), "size", formal(primGuide(), "g", false, false));
+#line 3082 "runtime.in"
+  addFunc(ve, run::gen238, primInt(), "length", formal(primGuide(), "g", false, false));
 #line 3089 "runtime.in"
-  addFunc(ve, run::gen238, primInt(), "size", formal(primGuide(), "g", false, false));
+  addFunc(ve, run::gen239, primBoolean(), "cyclic", formal(primGuide(), "g", false, false));
 #line 3096 "runtime.in"
-  addFunc(ve, run::gen239, primInt(), "length", formal(primGuide(), "g", false, false));
+  addFunc(ve, run::gen240, primPair(), "point", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
 #line 3103 "runtime.in"
-  addFunc(ve, run::gen240, primBoolean(), "cyclic", formal(primGuide(), "g", false, false));
-#line 3110 "runtime.in"
-  addFunc(ve, run::gen241, primPair(), "point", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
-#line 3117 "runtime.in"
-  addFunc(ve, run::gen242, pairArray(), "dirSpecifier", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
-#line 3129 "runtime.in"
-  addFunc(ve, run::gen243, pairArray(), "controlSpecifier", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
-#line 3146 "runtime.in"
-  addFunc(ve, run::gen244, primTensionSpecifier(), "tensionSpecifier", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
+  addFunc(ve, run::gen241, pairArray(), "dirSpecifier", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
+#line 3115 "runtime.in"
+  addFunc(ve, run::gen242, pairArray(), "controlSpecifier", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
+#line 3132 "runtime.in"
+  addFunc(ve, run::gen243, primTensionSpecifier(), "tensionSpecifier", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
+#line 3142 "runtime.in"
+  addFunc(ve, run::gen244, realArray(), "curlSpecifier", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
 #line 3156 "runtime.in"
-  addFunc(ve, run::gen245, realArray(), "curlSpecifier", formal(primGuide(), "g", false, false), formal(primInt(), "t", false, false));
-#line 3170 "runtime.in"
-  addFunc(ve, run::gen246, primGuide(), "reverse", formal(primGuide(), "g", false, false));
-#line 3224 "runtime.in"
-  addFunc(ve, run::gen247, primVoid(), "_draw", formal(primPicture(), "f", false, false), formal(primPath3(), "g", false, false), formal(primPen(), "p", false, false));
-#line 3233 "runtime.in"
-  addFunc(ve, run::gen248, primVoid(), "draw", formal(primPicture(), "f", false, false), formal(tripleArray2(), "g", false, false), formal(primBoolean(), "straight", false, false), formal(penArray()  , "p", false, false), formal(primReal(), "opacity", false, false), formal(primReal(), "shininess", false, false), formal(primReal(), "granularity", false, false), formal(primTriple(), "normal", false, false), formal(primBoolean(), "lighton", false, false), formal(penArray()  , "colors", false, false));
-#line 3241 "runtime.in"
-  addFunc(ve, run::gen249, primTriple(), "min3", formal(primPicture(), "f", false, false));
-#line 3246 "runtime.in"
-  addFunc(ve, run::gen250, primTriple(), "max3", formal(primPicture(), "f", false, false));
-#line 3251 "runtime.in"
-  addFunc(ve, run::gen251, primPair(), "min", formal(primPicture(), "f", false, false), formal(realArray2(), "t", false, false));
-#line 3259 "runtime.in"
-  addFunc(ve, run::gen252, primPair(), "max", formal(primPicture(), "f", false, false), formal(realArray2(), "t", false, false));
-#line 3267 "runtime.in"
-  addFunc(ve, run::gen253, primPair(), "minratio", formal(primPicture(), "f", false, false));
-#line 3272 "runtime.in"
-  addFunc(ve, run::gen254, primPair(), "maxratio", formal(primPicture(), "f", false, false));
-#line 3277 "runtime.in"
-  addFunc(ve, run::gen255, primTriple(), "minbound", formal(tripleArray2(), "p", false, false), formal(primTriple(), "b", false, false));
-#line 3287 "runtime.in"
-  addFunc(ve, run::gen256, primTriple(), "maxbound", formal(tripleArray2(), "p", false, false), formal(primTriple(), "b", false, false));
-#line 3297 "runtime.in"
-  addFunc(ve, run::gen257, primPair(), "minbound", formal(tripleArray2(), "p", false, false), formal(realArray2(), "t", false, false), formal(primPair(), "b", false, false));
-#line 3309 "runtime.in"
-  addFunc(ve, run::gen258, primPair(), "maxbound", formal(tripleArray2(), "p", false, false), formal(realArray2(), "t", false, false), formal(primPair(), "b", false, false));
-#line 3321 "runtime.in"
-  addFunc(ve, run::gen259, primPair(), "max", formal(primPath3(), "g", false, false), formal(realArray2(), "t", false, false));
-#line 3329 "runtime.in"
-  addFunc(ve, run::gen260, primPair(), "min", formal(primPath3(), "g", false, false), formal(realArray2(), "t", false, false));
-#line 3337 "runtime.in"
-  addFunc(ve, run::gen261, primReal(), "change2", formal(tripleArray2(), "a", false, false));
-#line 3359 "runtime.in"
-  addFunc(ve, run::gen262, primBoolean(), "is3D", formal(primPicture(), "f", false, false));
-#line 3364 "runtime.in"
-  addFunc(ve, run::gen263, primPair(), "bezier", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false), formal(primPair(), "c", false, false), formal(primPair(), "d", false, false), formal(primReal(), "t", false, false));
-#line 3371 "runtime.in"
-  addFunc(ve, run::gen264, primPair(), "bezierP", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false), formal(primPair(), "c", false, false), formal(primPair(), "d", false, false), formal(primReal(), "t", false, false));
-#line 3376 "runtime.in"
-  addFunc(ve, run::gen265, primPair(), "bezierPP", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false), formal(primPair(), "c", false, false), formal(primPair(), "d", false, false), formal(primReal(), "t", false, false));
-#line 3381 "runtime.in"
-  addFunc(ve, run::gen266, primPair(), "bezierPPP", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false), formal(primPair(), "c", false, false), formal(primPair(), "d", false, false));
-#line 3386 "runtime.in"
-  addFunc(ve, run::gen267, primTriple(), "bezier", formal(primTriple(), "a", false, false), formal(primTriple(), "b", false, false), formal(primTriple(), "c", false, false), formal(primTriple(), "d", false, false), formal(primReal(), "t", false, false));
-#line 3393 "runtime.in"
-  addFunc(ve, run::gen268, primTriple(), "bezierP", formal(primTriple(), "a", false, false), formal(primTriple(), "b", false, false), formal(primTriple(), "c", false, false), formal(primTriple(), "d", false, false), formal(primReal(), "t", false, false));
-#line 3398 "runtime.in"
-  addFunc(ve, run::gen269, primTriple(), "bezierPP", formal(primTriple(), "a", false, false), formal(primTriple(), "b", false, false), formal(primTriple(), "c", false, false), formal(primTriple(), "d", false, false), formal(primReal(), "t", false, false));
-#line 3403 "runtime.in"
-  addFunc(ve, run::gen270, primTriple(), "bezierPPP", formal(primTriple(), "a", false, false), formal(primTriple(), "b", false, false), formal(primTriple(), "c", false, false), formal(primTriple(), "d", false, false));
-#line 3416 "runtime.in"
-  addFunc(ve, run::gen272, primInt(), "length", formal(primString(), "s", false, false));
-#line 3421 "runtime.in"
-  addFunc(ve, run::gen273, primInt(), "find", formal(primString(), "s", false, false), formal(primString() , "t", false, false), formal(primInt(), "pos", true, false));
-#line 3427 "runtime.in"
-  addFunc(ve, run::gen274, primInt(), "rfind", formal(primString(), "s", false, false), formal(primString() , "t", false, false), formal(primInt(), "pos", true, false));
-#line 3433 "runtime.in"
-  addFunc(ve, run::gen275, primString() , "reverse", formal(primString() , "s", false, false));
+  addFunc(ve, run::gen245, primGuide(), "reverse", formal(primGuide(), "g", false, false));
+#line 3210 "runtime.in"
+  addFunc(ve, run::gen246, primVoid(), "_draw", formal(primPicture(), "f", false, false), formal(primPath3(), "g", false, false), formal(primPen(), "p", false, false));
+#line 3219 "runtime.in"
+  addFunc(ve, run::gen247, primVoid(), "draw", formal(primPicture(), "f", false, false), formal(tripleArray2(), "g", false, false), formal(primBoolean(), "straight", false, false), formal(penArray()  , "p", false, false), formal(primReal(), "opacity", false, false), formal(primReal(), "shininess", false, false), formal(primReal(), "granularity", false, false), formal(primTriple(), "normal", false, false), formal(primBoolean(), "lighton", false, false), formal(penArray()  , "colors", false, false));
+#line 3227 "runtime.in"
+  addFunc(ve, run::gen248, primTriple(), "min3", formal(primPicture(), "f", false, false));
+#line 3232 "runtime.in"
+  addFunc(ve, run::gen249, primTriple(), "max3", formal(primPicture(), "f", false, false));
+#line 3237 "runtime.in"
+  addFunc(ve, run::gen250, primPair(), "min", formal(primPicture(), "f", false, false), formal(realArray2(), "t", false, false));
+#line 3245 "runtime.in"
+  addFunc(ve, run::gen251, primPair(), "max", formal(primPicture(), "f", false, false), formal(realArray2(), "t", false, false));
+#line 3253 "runtime.in"
+  addFunc(ve, run::gen252, primPair(), "minratio", formal(primPicture(), "f", false, false));
+#line 3258 "runtime.in"
+  addFunc(ve, run::gen253, primPair(), "maxratio", formal(primPicture(), "f", false, false));
+#line 3263 "runtime.in"
+  addFunc(ve, run::gen254, primTriple(), "minbound", formal(tripleArray2(), "p", false, false), formal(primTriple(), "b", false, false));
+#line 3273 "runtime.in"
+  addFunc(ve, run::gen255, primTriple(), "maxbound", formal(tripleArray2(), "p", false, false), formal(primTriple(), "b", false, false));
+#line 3283 "runtime.in"
+  addFunc(ve, run::gen256, primPair(), "minbound", formal(tripleArray2(), "p", false, false), formal(realArray2(), "t", false, false), formal(primPair(), "b", false, false));
+#line 3295 "runtime.in"
+  addFunc(ve, run::gen257, primPair(), "maxbound", formal(tripleArray2(), "p", false, false), formal(realArray2(), "t", false, false), formal(primPair(), "b", false, false));
+#line 3307 "runtime.in"
+  addFunc(ve, run::gen258, primPair(), "max", formal(primPath3(), "g", false, false), formal(realArray2(), "t", false, false));
+#line 3315 "runtime.in"
+  addFunc(ve, run::gen259, primPair(), "min", formal(primPath3(), "g", false, false), formal(realArray2(), "t", false, false));
+#line 3323 "runtime.in"
+  addFunc(ve, run::gen260, primReal(), "change2", formal(tripleArray2(), "a", false, false));
+#line 3345 "runtime.in"
+  addFunc(ve, run::gen261, primBoolean(), "is3D", formal(primPicture(), "f", false, false));
+#line 3350 "runtime.in"
+  addFunc(ve, run::gen262, primPair(), "bezier", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false), formal(primPair(), "c", false, false), formal(primPair(), "d", false, false), formal(primReal(), "t", false, false));
+#line 3357 "runtime.in"
+  addFunc(ve, run::gen263, primPair(), "bezierP", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false), formal(primPair(), "c", false, false), formal(primPair(), "d", false, false), formal(primReal(), "t", false, false));
+#line 3362 "runtime.in"
+  addFunc(ve, run::gen264, primPair(), "bezierPP", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false), formal(primPair(), "c", false, false), formal(primPair(), "d", false, false), formal(primReal(), "t", false, false));
+#line 3367 "runtime.in"
+  addFunc(ve, run::gen265, primPair(), "bezierPPP", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false), formal(primPair(), "c", false, false), formal(primPair(), "d", false, false));
+#line 3372 "runtime.in"
+  addFunc(ve, run::gen266, primTriple(), "bezier", formal(primTriple(), "a", false, false), formal(primTriple(), "b", false, false), formal(primTriple(), "c", false, false), formal(primTriple(), "d", false, false), formal(primReal(), "t", false, false));
+#line 3379 "runtime.in"
+  addFunc(ve, run::gen267, primTriple(), "bezierP", formal(primTriple(), "a", false, false), formal(primTriple(), "b", false, false), formal(primTriple(), "c", false, false), formal(primTriple(), "d", false, false), formal(primReal(), "t", false, false));
+#line 3384 "runtime.in"
+  addFunc(ve, run::gen268, primTriple(), "bezierPP", formal(primTriple(), "a", false, false), formal(primTriple(), "b", false, false), formal(primTriple(), "c", false, false), formal(primTriple(), "d", false, false), formal(primReal(), "t", false, false));
+#line 3389 "runtime.in"
+  addFunc(ve, run::gen269, primTriple(), "bezierPPP", formal(primTriple(), "a", false, false), formal(primTriple(), "b", false, false), formal(primTriple(), "c", false, false), formal(primTriple(), "d", false, false));
+#line 3402 "runtime.in"
+  addFunc(ve, run::gen271, primInt(), "length", formal(primString(), "s", false, false));
+#line 3407 "runtime.in"
+  addFunc(ve, run::gen272, primInt(), "find", formal(primString(), "s", false, false), formal(primString() , "t", false, false), formal(primInt(), "pos", true, false));
+#line 3413 "runtime.in"
+  addFunc(ve, run::gen273, primInt(), "rfind", formal(primString(), "s", false, false), formal(primString() , "t", false, false), formal(primInt(), "pos", true, false));
+#line 3419 "runtime.in"
+  addFunc(ve, run::gen274, primString() , "reverse", formal(primString() , "s", false, false));
+#line 3425 "runtime.in"
+  addFunc(ve, run::gen275, primString() , "insert", formal(primString() , "s", false, false), formal(primInt(), "pos", false, false), formal(primString() , "t", false, false));
+#line 3432 "runtime.in"
+  addFunc(ve, run::gen276, primString() , "substr", formal(primString(), "s", false, false), formal(primInt(), "pos", false, false), formal(primInt(), "n", true, false));
 #line 3439 "runtime.in"
-  addFunc(ve, run::gen276, primString() , "insert", formal(primString() , "s", false, false), formal(primInt(), "pos", false, false), formal(primString() , "t", false, false));
+  addFunc(ve, run::gen277, primString() , "erase", formal(primString() , "s", false, false), formal(primInt(), "pos", false, false), formal(primInt(), "n", false, false));
 #line 3446 "runtime.in"
-  addFunc(ve, run::gen277, primString() , "substr", formal(primString(), "s", false, false), formal(primInt(), "pos", false, false), formal(primInt(), "n", true, false));
-#line 3453 "runtime.in"
-  addFunc(ve, run::gen278, primString() , "erase", formal(primString() , "s", false, false), formal(primInt(), "pos", false, false), formal(primInt(), "n", false, false));
-#line 3460 "runtime.in"
-  addFunc(ve, run::gen279, primString() , "downcase", formal(primString() , "s", false, false));
-#line 3466 "runtime.in"
-  addFunc(ve, run::gen280, primString() , "upcase", formal(primString() , "s", false, false));
-#line 3472 "runtime.in"
-  addFunc(ve, run::gen281, primString() , "replace", formal(primString(), "s", false, false), formal(stringArray2(), "translate", false, false));
-#line 3499 "runtime.in"
-  addFunc(ve, run::gen282, primString() , "format", formal(primString(), "format", false, false), formal(primInt(), "x", false, false));
-#line 3514 "runtime.in"
-  addFunc(ve, run::gen283, primString() , "format", formal(primString(), "format", false, false), formal(primReal(), "x", false, false), formal(primString() , "locale", true, false));
-#line 3632 "runtime.in"
-  addFunc(ve, run::gen284, primInt(), "hex", formal(primString() , "s", false, false));
-#line 3643 "runtime.in"
-  addFunc(ve, run::gen285, primString() , "string", formal(primInt(), "x", false, false));
-#line 3650 "runtime.in"
-  addFunc(ve, run::gen286, primString() , "string", formal(primReal(), "x", false, false), formal(primInt(), "digits", true, false));
-#line 3658 "runtime.in"
-  addFunc(ve, run::gen287, primString() , "time", formal(primString() , "format", true, false));
-#line 3669 "runtime.in"
-  addFunc(ve, run::gen288, primString() , "time", formal(primInt(), "seconds", false, false), formal(primString() , "format", true, false));
-#line 3682 "runtime.in"
-  addFunc(ve, run::gen289, primInt(), "seconds", formal(primString() , "t", true, false), formal(primString() , "format", true, false));
+  addFunc(ve, run::gen278, primString() , "downcase", formal(primString() , "s", false, false));
+#line 3452 "runtime.in"
+  addFunc(ve, run::gen279, primString() , "upcase", formal(primString() , "s", false, false));
+#line 3458 "runtime.in"
+  addFunc(ve, run::gen280, primString() , "replace", formal(primString(), "s", false, false), formal(stringArray2(), "translate", false, false));
+#line 3485 "runtime.in"
+  addFunc(ve, run::gen281, primString() , "format", formal(primString(), "format", false, false), formal(primInt(), "x", false, false));
+#line 3500 "runtime.in"
+  addFunc(ve, run::gen282, primString() , "format", formal(primString(), "format", false, false), formal(primReal(), "x", false, false), formal(primString() , "locale", true, false));
+#line 3618 "runtime.in"
+  addFunc(ve, run::gen283, primInt(), "hex", formal(primString() , "s", false, false));
+#line 3629 "runtime.in"
+  addFunc(ve, run::gen284, primString() , "string", formal(primInt(), "x", false, false));
+#line 3636 "runtime.in"
+  addFunc(ve, run::gen285, primString() , "string", formal(primReal(), "x", false, false), formal(primInt(), "digits", true, false));
+#line 3644 "runtime.in"
+  addFunc(ve, run::gen286, primString() , "time", formal(primString() , "format", true, false));
+#line 3655 "runtime.in"
+  addFunc(ve, run::gen287, primString() , "time", formal(primInt(), "seconds", false, false), formal(primString() , "format", true, false));
+#line 3668 "runtime.in"
+  addFunc(ve, run::gen288, primInt(), "seconds", formal(primString() , "t", true, false), formal(primString() , "format", true, false));
+#line 3680 "runtime.in"
+  addFunc(ve, run::gen289, realArray(), "_cputime");
 #line 3694 "runtime.in"
-  addFunc(ve, run::gen290, realArray(), "_cputime");
-#line 3708 "runtime.in"
-  addFunc(ve, run::gen291, primReal(), "^", formal(primReal(), "x", false, false), formal(primInt(), "y", false, false));
-#line 3716 "runtime.in"
-  addFunc(ve, run::gen292, primPair(), "^", formal(primPair(), "z", false, false), formal(primInt(), "y", false, false));
-#line 3721 "runtime.in"
-  addFunc(ve, run::gen293, primInt(), "quotient", formal(primInt(), "x", false, false), formal(primInt(), "y", false, false));
-#line 3729 "runtime.in"
-  addFunc(ve, run::gen294, primInt(), "abs", formal(primInt(), "x", false, false));
-#line 3734 "runtime.in"
-  addFunc(ve, run::gen295, primInt(), "sgn", formal(primReal(), "x", false, false));
-#line 3739 "runtime.in"
-  addFunc(ve, run::gen296, primInt(), "rand");
-#line 3744 "runtime.in"
-  addFunc(ve, run::gen297, primVoid(), "srand", formal(primInt(), "seed", false, false));
-#line 3749 "runtime.in"
-  addFunc(ve, run::gen298, primReal(), "unitrand");
-#line 3755 "runtime.in"
-  addFunc(ve, run::gen299, primInt(), "ceil", formal(primReal(), "x", false, false));
-#line 3760 "runtime.in"
-  addFunc(ve, run::gen300, primInt(), "floor", formal(primReal(), "x", false, false));
-#line 3765 "runtime.in"
-  addFunc(ve, run::gen301, primInt(), "round", formal(primReal(), "x", false, false));
-#line 3771 "runtime.in"
-  addFunc(ve, run::gen302, primInt(), "Ceil", formal(primReal(), "x", false, false));
-#line 3776 "runtime.in"
-  addFunc(ve, run::gen303, primInt(), "Floor", formal(primReal(), "x", false, false));
-#line 3781 "runtime.in"
-  addFunc(ve, run::gen304, primInt(), "Round", formal(primReal(), "x", false, false));
-#line 3786 "runtime.in"
-  addFunc(ve, run::gen305, primReal(), "fmod", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
-#line 3792 "runtime.in"
-  addFunc(ve, run::gen306, primReal(), "atan2", formal(primReal(), "y", false, false), formal(primReal(), "x", false, false));
-#line 3797 "runtime.in"
-  addFunc(ve, run::gen307, primReal(), "hypot", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
-#line 3802 "runtime.in"
-  addFunc(ve, run::gen308, primReal(), "remainder", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
-#line 3807 "runtime.in"
-  addFunc(ve, run::gen309, primReal(), "J", formal(primInt(), "n", false, false), formal(primReal(), "x", false, false));
-#line 3812 "runtime.in"
-  addFunc(ve, run::gen310, primReal(), "Y", formal(primInt(), "n", false, false), formal(primReal(), "x", false, false));
-#line 3817 "runtime.in"
-  addFunc(ve, run::gen311, primReal(), "erf", formal(primReal(), "x", false, false));
-#line 3822 "runtime.in"
-  addFunc(ve, run::gen312, primReal(), "erfc", formal(primReal(), "x", false, false));
-#line 3827 "runtime.in"
-  addFunc(ve, run::gen313, primInt(), "factorial", formal(primInt(), "n", false, false));
-#line 3832 "runtime.in"
-  addFunc(ve, run::gen314, primInt(), "choose", formal(primInt(), "n", false, false), formal(primInt(), "k", false, false));
-#line 3843 "runtime.in"
-  addFunc(ve, run::gen315, primReal(), "gamma", formal(primReal(), "x", false, false));
-#line 3853 "runtime.in"
-  addFunc(ve, run::gen316, primPair(), "gamma", formal(primPair(), "z", false, true));
-#line 3859 "runtime.in"
-  addFunc(ve, run::gen317, realArray(), "quadraticroots", formal(primReal(), "a", false, false), formal(primReal(), "b", false, false), formal(primReal(), "c", false, false));
-#line 3868 "runtime.in"
-  addFunc(ve, run::gen318, pairArray(), "quadraticroots", formal(primPair(), "a", false, true), formal(primPair(), "b", false, true), formal(primPair(), "c", false, true));
-#line 3877 "runtime.in"
-  addFunc(ve, run::gen319, realArray(), "cubicroots", formal(primReal(), "a", false, false), formal(primReal(), "b", false, false), formal(primReal(), "c", false, false), formal(primReal(), "d", false, false));
-#line 3887 "runtime.in"
-  addFunc(ve, run::gen320, primBoolean(), "==", formal(primTransform(), "a", false, false), formal(primTransform(), "b", false, false));
-#line 3895 "runtime.in"
-  addFunc(ve, run::gen321, primBoolean(), "!=", formal(primTransform(), "a", false, false), formal(primTransform(), "b", false, false));
-#line 3900 "runtime.in"
-  addFunc(ve, run::gen322, primTransform(), "+", formal(primTransform(), "a", false, false), formal(primTransform(), "b", false, false));
-#line 3905 "runtime.in"
-  addFunc(ve, run::gen323, primTransform(), "*", formal(primTransform(), "a", false, false), formal(primTransform(), "b", false, false));
-#line 3910 "runtime.in"
-  addFunc(ve, run::gen324, primPair(), "*", formal(primTransform(), "t", false, false), formal(primPair(), "z", false, false));
-#line 3915 "runtime.in"
-  addFunc(ve, run::gen325, primPath(), "*", formal(primTransform(), "t", false, false), formal(primPath(), "g", false, false));
-#line 3920 "runtime.in"
-  addFunc(ve, run::gen326, primPen(), "*", formal(primTransform(), "t", false, false), formal(primPen(), "p", false, false));
-#line 3925 "runtime.in"
-  addFunc(ve, run::gen327, primPicture(), "*", formal(primTransform(), "t", false, false), formal(primPicture(), "f", false, false));
-#line 3930 "runtime.in"
-  addFunc(ve, run::gen328, primPicture(), "*", formal(realArray2(), "t", false, false), formal(primPicture(), "f", false, false));
-#line 3935 "runtime.in"
-  addFunc(ve, run::gen329, primTransform(), "^", formal(primTransform(), "t", false, false), formal(primInt(), "n", false, false));
-#line 3982 "runtime.in"
-  addFunc(ve, run::gen337, primTransform(), "shift", formal(primTransform(), "t", false, false));
-#line 3987 "runtime.in"
-  addFunc(ve, run::gen338, primTransform(), "shiftless", formal(primTransform(), "t", false, false));
-#line 3992 "runtime.in"
+  addFunc(ve, run::gen290, primReal(), "^", formal(primReal(), "x", false, false), formal(primInt(), "y", false, false));
+#line 3702 "runtime.in"
+  addFunc(ve, run::gen291, primPair(), "^", formal(primPair(), "z", false, false), formal(primInt(), "y", false, false));
+#line 3707 "runtime.in"
+  addFunc(ve, run::gen292, primInt(), "quotient", formal(primInt(), "x", false, false), formal(primInt(), "y", false, false));
+#line 3715 "runtime.in"
+  addFunc(ve, run::gen293, primInt(), "abs", formal(primInt(), "x", false, false));
+#line 3720 "runtime.in"
+  addFunc(ve, run::gen294, primInt(), "sgn", formal(primReal(), "x", false, false));
+#line 3725 "runtime.in"
+  addFunc(ve, run::gen295, primInt(), "rand");
+#line 3730 "runtime.in"
+  addFunc(ve, run::gen296, primVoid(), "srand", formal(primInt(), "seed", false, false));
+#line 3735 "runtime.in"
+  addFunc(ve, run::gen297, primReal(), "unitrand");
+#line 3741 "runtime.in"
+  addFunc(ve, run::gen298, primInt(), "ceil", formal(primReal(), "x", false, false));
+#line 3746 "runtime.in"
+  addFunc(ve, run::gen299, primInt(), "floor", formal(primReal(), "x", false, false));
+#line 3751 "runtime.in"
+  addFunc(ve, run::gen300, primInt(), "round", formal(primReal(), "x", false, false));
+#line 3757 "runtime.in"
+  addFunc(ve, run::gen301, primInt(), "Ceil", formal(primReal(), "x", false, false));
+#line 3762 "runtime.in"
+  addFunc(ve, run::gen302, primInt(), "Floor", formal(primReal(), "x", false, false));
+#line 3767 "runtime.in"
+  addFunc(ve, run::gen303, primInt(), "Round", formal(primReal(), "x", false, false));
+#line 3772 "runtime.in"
+  addFunc(ve, run::gen304, primReal(), "fmod", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
+#line 3778 "runtime.in"
+  addFunc(ve, run::gen305, primReal(), "atan2", formal(primReal(), "y", false, false), formal(primReal(), "x", false, false));
+#line 3783 "runtime.in"
+  addFunc(ve, run::gen306, primReal(), "hypot", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
+#line 3788 "runtime.in"
+  addFunc(ve, run::gen307, primReal(), "remainder", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
+#line 3793 "runtime.in"
+  addFunc(ve, run::gen308, primReal(), "J", formal(primInt(), "n", false, false), formal(primReal(), "x", false, false));
+#line 3798 "runtime.in"
+  addFunc(ve, run::gen309, primReal(), "Y", formal(primInt(), "n", false, false), formal(primReal(), "x", false, false));
+#line 3803 "runtime.in"
+  addFunc(ve, run::gen310, primReal(), "erf", formal(primReal(), "x", false, false));
+#line 3808 "runtime.in"
+  addFunc(ve, run::gen311, primReal(), "erfc", formal(primReal(), "x", false, false));
+#line 3813 "runtime.in"
+  addFunc(ve, run::gen312, primInt(), "factorial", formal(primInt(), "n", false, false));
+#line 3818 "runtime.in"
+  addFunc(ve, run::gen313, primInt(), "choose", formal(primInt(), "n", false, false), formal(primInt(), "k", false, false));
+#line 3829 "runtime.in"
+  addFunc(ve, run::gen314, primReal(), "gamma", formal(primReal(), "x", false, false));
+#line 3839 "runtime.in"
+  addFunc(ve, run::gen315, primPair(), "gamma", formal(primPair(), "z", false, true));
+#line 3845 "runtime.in"
+  addFunc(ve, run::gen316, realArray(), "quadraticroots", formal(primReal(), "a", false, false), formal(primReal(), "b", false, false), formal(primReal(), "c", false, false));
+#line 3854 "runtime.in"
+  addFunc(ve, run::gen317, pairArray(), "quadraticroots", formal(primPair(), "a", false, true), formal(primPair(), "b", false, true), formal(primPair(), "c", false, true));
+#line 3863 "runtime.in"
+  addFunc(ve, run::gen318, realArray(), "cubicroots", formal(primReal(), "a", false, false), formal(primReal(), "b", false, false), formal(primReal(), "c", false, false), formal(primReal(), "d", false, false));
+#line 3873 "runtime.in"
+  addFunc(ve, run::gen319, primBoolean(), "==", formal(primTransform(), "a", false, false), formal(primTransform(), "b", false, false));
+#line 3881 "runtime.in"
+  addFunc(ve, run::gen320, primBoolean(), "!=", formal(primTransform(), "a", false, false), formal(primTransform(), "b", false, false));
+#line 3886 "runtime.in"
+  addFunc(ve, run::gen321, primTransform(), "+", formal(primTransform(), "a", false, false), formal(primTransform(), "b", false, false));
+#line 3891 "runtime.in"
+  addFunc(ve, run::gen322, primTransform(), "*", formal(primTransform(), "a", false, false), formal(primTransform(), "b", false, false));
+#line 3896 "runtime.in"
+  addFunc(ve, run::gen323, primPair(), "*", formal(primTransform(), "t", false, false), formal(primPair(), "z", false, false));
+#line 3901 "runtime.in"
+  addFunc(ve, run::gen324, primPath(), "*", formal(primTransform(), "t", false, false), formal(primPath(), "g", false, false));
+#line 3906 "runtime.in"
+  addFunc(ve, run::gen325, primPen(), "*", formal(primTransform(), "t", false, false), formal(primPen(), "p", false, false));
+#line 3911 "runtime.in"
+  addFunc(ve, run::gen326, primPicture(), "*", formal(primTransform(), "t", false, false), formal(primPicture(), "f", false, false));
+#line 3916 "runtime.in"
+  addFunc(ve, run::gen327, primPicture(), "*", formal(realArray2(), "t", false, false), formal(primPicture(), "f", false, false));
+#line 3921 "runtime.in"
+  addFunc(ve, run::gen328, primTransform(), "^", formal(primTransform(), "t", false, false), formal(primInt(), "n", false, false));
+#line 3968 "runtime.in"
+  addFunc(ve, run::gen336, primTransform(), "shift", formal(primTransform(), "t", false, false));
+#line 3973 "runtime.in"
+  addFunc(ve, run::gen337, primTransform(), "shiftless", formal(primTransform(), "t", false, false));
+#line 3978 "runtime.in"
   addFunc(ve, run::transformIdentity, primTransform(), "identity");
-#line 3997 "runtime.in"
-  addFunc(ve, run::gen340, primTransform(), "inverse", formal(primTransform(), "t", false, false));
-#line 4002 "runtime.in"
-  addFunc(ve, run::gen341, primTransform(), "shift", formal(primPair(), "z", false, false));
-#line 4007 "runtime.in"
-  addFunc(ve, run::gen342, primTransform(), "shift", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
-#line 4012 "runtime.in"
-  addFunc(ve, run::gen343, primTransform(), "xscale", formal(primReal(), "x", false, false));
-#line 4017 "runtime.in"
-  addFunc(ve, run::gen344, primTransform(), "yscale", formal(primReal(), "y", false, false));
-#line 4022 "runtime.in"
-  addFunc(ve, run::gen345, primTransform(), "scale", formal(primReal(), "x", false, false));
-#line 4027 "runtime.in"
-  addFunc(ve, run::gen346, primTransform(), "scale", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
-#line 4032 "runtime.in"
-  addFunc(ve, run::gen347, primTransform(), "slant", formal(primReal(), "s", false, false));
-#line 4037 "runtime.in"
-  addFunc(ve, run::gen348, primTransform(), "rotate", formal(primReal(), "angle", false, false), formal(primPair(), "z", true, false));
-#line 4042 "runtime.in"
-  addFunc(ve, run::gen349, primTransform(), "reflect", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false));
-#line 4065 "runtime.in"
+#line 3983 "runtime.in"
+  addFunc(ve, run::gen339, primTransform(), "inverse", formal(primTransform(), "t", false, false));
+#line 3988 "runtime.in"
+  addFunc(ve, run::gen340, primTransform(), "shift", formal(primPair(), "z", false, false));
+#line 3993 "runtime.in"
+  addFunc(ve, run::gen341, primTransform(), "shift", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
+#line 3998 "runtime.in"
+  addFunc(ve, run::gen342, primTransform(), "xscale", formal(primReal(), "x", false, false));
+#line 4003 "runtime.in"
+  addFunc(ve, run::gen343, primTransform(), "yscale", formal(primReal(), "y", false, false));
+#line 4008 "runtime.in"
+  addFunc(ve, run::gen344, primTransform(), "scale", formal(primReal(), "x", false, false));
+#line 4013 "runtime.in"
+  addFunc(ve, run::gen345, primTransform(), "scale", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
+#line 4018 "runtime.in"
+  addFunc(ve, run::gen346, primTransform(), "slant", formal(primReal(), "s", false, false));
+#line 4023 "runtime.in"
+  addFunc(ve, run::gen347, primTransform(), "rotate", formal(primReal(), "angle", false, false), formal(primPair(), "z", true, false));
+#line 4028 "runtime.in"
+  addFunc(ve, run::gen348, primTransform(), "reflect", formal(primPair(), "a", false, false), formal(primPair(), "b", false, false));
+#line 4051 "runtime.in"
   addFunc(ve, run::pairXPart, primReal(), "xpart", formal(primPair(), "z", false, false));
-#line 4070 "runtime.in"
+#line 4056 "runtime.in"
   addFunc(ve, run::pairYPart, primReal(), "ypart", formal(primPair(), "z", false, false));
-#line 4075 "runtime.in"
-  addFunc(ve, run::gen355, primReal(), "length", formal(primPair(), "z", false, false));
-#line 4080 "runtime.in"
-  addFunc(ve, run::gen356, primReal(), "abs", formal(primPair(), "z", false, false));
-#line 4085 "runtime.in"
-  addFunc(ve, run::gen357, primPair(), "sqrt", formal(primPair(), "z", false, true));
+#line 4061 "runtime.in"
+  addFunc(ve, run::gen354, primReal(), "length", formal(primPair(), "z", false, false));
+#line 4066 "runtime.in"
+  addFunc(ve, run::gen355, primReal(), "abs", formal(primPair(), "z", false, false));
+#line 4071 "runtime.in"
+  addFunc(ve, run::gen356, primPair(), "sqrt", formal(primPair(), "z", false, true));
+#line 4076 "runtime.in"
+  addFunc(ve, run::gen357, primReal(), "angle", formal(primPair(), "z", false, false), formal(primBoolean(), "warn", true, false));
+#line 4083 "runtime.in"
+  addFunc(ve, run::gen358, primReal(), "degrees", formal(primPair(), "z", false, false), formal(primBoolean(), "warn", true, false));
 #line 4090 "runtime.in"
-  addFunc(ve, run::gen358, primReal(), "angle", formal(primPair(), "z", false, false), formal(primBoolean(), "warn", true, false));
-#line 4097 "runtime.in"
-  addFunc(ve, run::gen359, primReal(), "degrees", formal(primPair(), "z", false, false), formal(primBoolean(), "warn", true, false));
-#line 4104 "runtime.in"
-  addFunc(ve, run::gen360, primReal(), "radians", formal(primReal(), "degrees", false, false));
-#line 4110 "runtime.in"
-  addFunc(ve, run::gen361, primReal(), "degrees", formal(primReal(), "radians", false, false));
-#line 4116 "runtime.in"
-  addFunc(ve, run::gen362, primReal(), "Degrees", formal(primReal(), "radians", false, false));
-#line 4122 "runtime.in"
-  addFunc(ve, run::gen363, primReal(), "Sin", formal(primReal(), "deg", false, false));
-#line 4127 "runtime.in"
-  addFunc(ve, run::gen364, primReal(), "Cos", formal(primReal(), "deg", false, false));
-#line 4132 "runtime.in"
-  addFunc(ve, run::gen365, primReal(), "Tan", formal(primReal(), "deg", false, false));
-#line 4137 "runtime.in"
-  addFunc(ve, run::gen366, primReal(), "aSin", formal(primReal(), "x", false, false));
-#line 4142 "runtime.in"
-  addFunc(ve, run::gen367, primReal(), "aCos", formal(primReal(), "x", false, false));
-#line 4147 "runtime.in"
-  addFunc(ve, run::gen368, primReal(), "aTan", formal(primReal(), "x", false, false));
-#line 4152 "runtime.in"
-  addFunc(ve, run::gen369, primPair(), "unit", formal(primPair(), "z", false, false));
-#line 4157 "runtime.in"
-  addFunc(ve, run::gen370, primPair(), "dir", formal(primReal(), "degrees", false, false));
-#line 4162 "runtime.in"
-  addFunc(ve, run::gen371, primPair(), "dir", formal(primPair(), "z", false, true));
-#line 4167 "runtime.in"
-  addFunc(ve, run::gen372, primPair(), "expi", formal(primReal(), "angle", false, false));
-#line 4172 "runtime.in"
-  addFunc(ve, run::gen373, primPair(), "exp", formal(primPair(), "z", false, true));
-#line 4177 "runtime.in"
-  addFunc(ve, run::gen374, primPair(), "log", formal(primPair(), "z", false, true));
-#line 4182 "runtime.in"
-  addFunc(ve, run::gen375, primPair(), "sin", formal(primPair(), "z", false, true));
-#line 4187 "runtime.in"
-  addFunc(ve, run::gen376, primPair(), "cos", formal(primPair(), "z", false, true));
-#line 4192 "runtime.in"
-  addFunc(ve, run::gen377, primPair(), "conj", formal(primPair(), "z", false, false));
-#line 4197 "runtime.in"
-  addFunc(ve, run::gen378, primPair(), "realmult", formal(primPair(), "z", false, false), formal(primPair(), "w", false, false));
-#line 4202 "runtime.in"
-  addFunc(ve, run::gen379, primTriple(), "realmult", formal(primTriple(), "u", false, false), formal(primTriple(), "v", false, false));
-#line 4207 "runtime.in"
-  addFunc(ve, run::gen380, primReal(), "dot", formal(primPair(), "z", false, true), formal(primPair(), "w", false, true));
-#line 4227 "runtime.in"
+  addFunc(ve, run::gen359, primReal(), "radians", formal(primReal(), "degrees", false, false));
+#line 4096 "runtime.in"
+  addFunc(ve, run::gen360, primReal(), "degrees", formal(primReal(), "radians", false, false));
+#line 4102 "runtime.in"
+  addFunc(ve, run::gen361, primReal(), "Degrees", formal(primReal(), "radians", false, false));
+#line 4108 "runtime.in"
+  addFunc(ve, run::gen362, primReal(), "Sin", formal(primReal(), "deg", false, false));
+#line 4113 "runtime.in"
+  addFunc(ve, run::gen363, primReal(), "Cos", formal(primReal(), "deg", false, false));
+#line 4118 "runtime.in"
+  addFunc(ve, run::gen364, primReal(), "Tan", formal(primReal(), "deg", false, false));
+#line 4123 "runtime.in"
+  addFunc(ve, run::gen365, primReal(), "aSin", formal(primReal(), "x", false, false));
+#line 4128 "runtime.in"
+  addFunc(ve, run::gen366, primReal(), "aCos", formal(primReal(), "x", false, false));
+#line 4133 "runtime.in"
+  addFunc(ve, run::gen367, primReal(), "aTan", formal(primReal(), "x", false, false));
+#line 4138 "runtime.in"
+  addFunc(ve, run::gen368, primPair(), "unit", formal(primPair(), "z", false, false));
+#line 4143 "runtime.in"
+  addFunc(ve, run::gen369, primPair(), "dir", formal(primReal(), "degrees", false, false));
+#line 4148 "runtime.in"
+  addFunc(ve, run::gen370, primPair(), "dir", formal(primPair(), "z", false, true));
+#line 4153 "runtime.in"
+  addFunc(ve, run::gen371, primPair(), "expi", formal(primReal(), "angle", false, false));
+#line 4158 "runtime.in"
+  addFunc(ve, run::gen372, primPair(), "exp", formal(primPair(), "z", false, true));
+#line 4163 "runtime.in"
+  addFunc(ve, run::gen373, primPair(), "log", formal(primPair(), "z", false, true));
+#line 4168 "runtime.in"
+  addFunc(ve, run::gen374, primPair(), "sin", formal(primPair(), "z", false, true));
+#line 4173 "runtime.in"
+  addFunc(ve, run::gen375, primPair(), "cos", formal(primPair(), "z", false, true));
+#line 4178 "runtime.in"
+  addFunc(ve, run::gen376, primPair(), "conj", formal(primPair(), "z", false, false));
+#line 4183 "runtime.in"
+  addFunc(ve, run::gen377, primPair(), "realmult", formal(primPair(), "z", false, false), formal(primPair(), "w", false, false));
+#line 4188 "runtime.in"
+  addFunc(ve, run::gen378, primTriple(), "realmult", formal(primTriple(), "u", false, false), formal(primTriple(), "v", false, false));
+#line 4193 "runtime.in"
+  addFunc(ve, run::gen379, primReal(), "dot", formal(primPair(), "z", false, true), formal(primPair(), "w", false, true));
+#line 4213 "runtime.in"
   addFunc(ve, run::tripleXPart, primReal(), "xpart", formal(primTriple(), "v", false, false));
-#line 4232 "runtime.in"
+#line 4218 "runtime.in"
   addFunc(ve, run::tripleYPart, primReal(), "ypart", formal(primTriple(), "v", false, false));
-#line 4237 "runtime.in"
+#line 4223 "runtime.in"
   addFunc(ve, run::tripleZPart, primReal(), "zpart", formal(primTriple(), "v", false, false));
-#line 4242 "runtime.in"
-  addFunc(ve, run::gen386, primTriple(), "*", formal(primReal(), "x", false, false), formal(primTriple(), "v", false, false));
-#line 4247 "runtime.in"
-  addFunc(ve, run::gen387, primTriple(), "*", formal(primTriple(), "v", false, false), formal(primReal(), "x", false, false));
-#line 4252 "runtime.in"
-  addFunc(ve, run::gen388, primTriple(), "/", formal(primTriple(), "v", false, false), formal(primReal(), "x", false, false));
-#line 4257 "runtime.in"
-  addFunc(ve, run::gen389, primReal(), "length", formal(primTriple(), "v", false, false));
-#line 4262 "runtime.in"
-  addFunc(ve, run::gen390, primReal(), "abs", formal(primTriple(), "v", false, false));
-#line 4267 "runtime.in"
-  addFunc(ve, run::gen391, primReal(), "polar", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
-#line 4273 "runtime.in"
-  addFunc(ve, run::gen392, primReal(), "azimuth", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
-#line 4279 "runtime.in"
-  addFunc(ve, run::gen393, primReal(), "colatitude", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
-#line 4285 "runtime.in"
-  addFunc(ve, run::gen394, primReal(), "latitude", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
-#line 4291 "runtime.in"
-  addFunc(ve, run::gen395, primReal(), "longitude", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
-#line 4298 "runtime.in"
-  addFunc(ve, run::gen396, primTriple(), "unit", formal(primTriple(), "v", false, false));
-#line 4303 "runtime.in"
-  addFunc(ve, run::gen397, primReal(), "dot", formal(primTriple(), "u", false, false), formal(primTriple(), "v", false, false));
-#line 4308 "runtime.in"
-  addFunc(ve, run::gen398, primTriple(), "cross", formal(primTriple(), "u", false, false), formal(primTriple(), "v", false, false));
-#line 4313 "runtime.in"
-  addFunc(ve, run::gen399, primTriple(), "expi", formal(primReal(), "polar", false, false), formal(primReal(), "azimuth", false, false));
-#line 4318 "runtime.in"
-  addFunc(ve, run::gen400, primTriple(), "dir", formal(primReal(), "colatitude", false, false), formal(primReal(), "longitude", false, false));
-#line 4323 "runtime.in"
-  addFunc(ve, run::gen401, primVoid(), "atupdate", formal(voidFunction(), "f", false, false));
-#line 4331 "runtime.in"
-  addFunc(ve, run::gen402, voidFunction(), "atupdate");
-#line 4336 "runtime.in"
-  addFunc(ve, run::gen403, primVoid(), "atexit", formal(voidFunction(), "f", false, false));
-#line 4341 "runtime.in"
-  addFunc(ve, run::gen404, voidFunction(), "atexit");
-#line 4346 "runtime.in"
-  addFunc(ve, run::gen405, primVoid(), "atbreakpoint", formal(breakpointFunction(), "f", false, false));
-#line 4351 "runtime.in"
-  addFunc(ve, run::gen406, primVoid(), "breakpoint", formal(primCode(), "s", true, false));
-#line 4356 "runtime.in"
-  addFunc(ve, run::gen407, primString() , "locatefile", formal(primString() , "file", false, false));
+#line 4228 "runtime.in"
+  addFunc(ve, run::gen385, primTriple(), "*", formal(primReal(), "x", false, false), formal(primTriple(), "v", false, false));
+#line 4233 "runtime.in"
+  addFunc(ve, run::gen386, primTriple(), "*", formal(primTriple(), "v", false, false), formal(primReal(), "x", false, false));
+#line 4238 "runtime.in"
+  addFunc(ve, run::gen387, primTriple(), "/", formal(primTriple(), "v", false, false), formal(primReal(), "x", false, false));
+#line 4243 "runtime.in"
+  addFunc(ve, run::gen388, primReal(), "length", formal(primTriple(), "v", false, false));
+#line 4248 "runtime.in"
+  addFunc(ve, run::gen389, primReal(), "abs", formal(primTriple(), "v", false, false));
+#line 4253 "runtime.in"
+  addFunc(ve, run::gen390, primReal(), "polar", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
+#line 4259 "runtime.in"
+  addFunc(ve, run::gen391, primReal(), "azimuth", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
+#line 4265 "runtime.in"
+  addFunc(ve, run::gen392, primReal(), "colatitude", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
+#line 4271 "runtime.in"
+  addFunc(ve, run::gen393, primReal(), "latitude", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
+#line 4277 "runtime.in"
+  addFunc(ve, run::gen394, primReal(), "longitude", formal(primTriple(), "v", false, false), formal(primBoolean(), "warn", true, false));
+#line 4284 "runtime.in"
+  addFunc(ve, run::gen395, primTriple(), "unit", formal(primTriple(), "v", false, false));
+#line 4289 "runtime.in"
+  addFunc(ve, run::gen396, primReal(), "dot", formal(primTriple(), "u", false, false), formal(primTriple(), "v", false, false));
+#line 4294 "runtime.in"
+  addFunc(ve, run::gen397, primTriple(), "cross", formal(primTriple(), "u", false, false), formal(primTriple(), "v", false, false));
+#line 4299 "runtime.in"
+  addFunc(ve, run::gen398, primTriple(), "expi", formal(primReal(), "polar", false, false), formal(primReal(), "azimuth", false, false));
+#line 4304 "runtime.in"
+  addFunc(ve, run::gen399, primTriple(), "dir", formal(primReal(), "colatitude", false, false), formal(primReal(), "longitude", false, false));
+#line 4309 "runtime.in"
+  addFunc(ve, run::gen400, primVoid(), "atupdate", formal(voidFunction(), "f", false, false));
+#line 4317 "runtime.in"
+  addFunc(ve, run::gen401, voidFunction(), "atupdate");
+#line 4322 "runtime.in"
+  addFunc(ve, run::gen402, primVoid(), "atexit", formal(voidFunction(), "f", false, false));
+#line 4327 "runtime.in"
+  addFunc(ve, run::gen403, voidFunction(), "atexit");
+#line 4332 "runtime.in"
+  addFunc(ve, run::gen404, primVoid(), "atbreakpoint", formal(breakpointFunction(), "f", false, false));
+#line 4337 "runtime.in"
+  addFunc(ve, run::gen405, primVoid(), "breakpoint", formal(primCode(), "s", true, false));
+#line 4342 "runtime.in"
+  addFunc(ve, run::gen406, primString() , "locatefile", formal(primString() , "file", false, false));
+#line 4347 "runtime.in"
+  addFunc(ve, run::gen407, primVoid(), "stop", formal(primString() , "file", false, false), formal(primInt(), "line", false, false), formal(primCode(), "s", true, false));
+#line 4355 "runtime.in"
+  addFunc(ve, run::gen408, primVoid(), "breakpoints");
 #line 4361 "runtime.in"
-  addFunc(ve, run::gen408, primVoid(), "stop", formal(primString() , "file", false, false), formal(primInt(), "line", false, false), formal(primCode(), "s", true, false));
-#line 4369 "runtime.in"
-  addFunc(ve, run::gen409, primVoid(), "breakpoints");
-#line 4375 "runtime.in"
-  addFunc(ve, run::gen410, primVoid(), "clear", formal(primString() , "file", false, false), formal(primInt(), "line", false, false));
-#line 4381 "runtime.in"
-  addFunc(ve, run::gen411, primVoid(), "clear");
-#line 4386 "runtime.in"
-  addFunc(ve, run::gen412, primString() , "stripdirectory", formal(primString(), "s", false, false));
-#line 4392 "runtime.in"
-  addFunc(ve, run::gen413, primString() , "stripfile", formal(primString(), "s", false, false));
-#line 4398 "runtime.in"
-  addFunc(ve, run::gen414, primString() , "stripextension", formal(primString(), "s", false, false));
-#line 4404 "runtime.in"
-  addFunc(ve, run::gen415, primInt(), "convert", formal(primString() , "args", true, false), formal(primString() , "file", true, false), formal(primString() , "format", true, false));
-#line 4422 "runtime.in"
-  addFunc(ve, run::gen416, primInt(), "animate", formal(primString() , "args", true, false), formal(primString() , "file", true, false), formal(primString() , "format", true, false));
-#line 4438 "runtime.in"
-  addFunc(ve, run::gen417, primInt(), "delete", formal(primString(), "s", false, false));
-#line 4448 "runtime.in"
-  addFunc(ve, run::gen418, primInt(), "rename", formal(primString(), "from", false, false), formal(primString(), "to", false, false));
-#line 4747 "runtime.in"
-  addFunc(ve, run::gen449, IntArray(), "complement", formal(IntArray(), "a", false, false), formal(primInt(), "n", false, false));
-#line 4779 "runtime.in"
-  addFunc(ve, run::gen451, IntArray(), "sequence", formal(primInt(), "n", false, false));
-#line 4812 "runtime.in"
-  addFunc(ve, run::gen454, primBoolean(), "all", formal(boolArray(), "a", false, false));
-#line 4821 "runtime.in"
-  addFunc(ve, run::gen455, boolArray(), "!", formal(boolArray(), "a", false, false));
-#line 4830 "runtime.in"
-  addFunc(ve, run::gen456, primInt(), "sum", formal(boolArray(), "a", false, false));
-#line 4993 "runtime.in"
-  addFunc(ve, run::gen463, primInt(), "find", formal(boolArray(), "a", false, false), formal(primInt(), "n", true, false));
-#line 5013 "runtime.in"
-  addFunc(ve, run::gen464, primBoolean(), "==", formal(realArray2(), "a", false, false), formal(realArray2(), "b", false, false));
-#line 5058 "runtime.in"
-  addFunc(ve, run::gen466, realArray2(), "identity", formal(primInt(), "n", false, false));
-#line 5081 "runtime.in"
-  addFunc(ve, run::gen468, realArray2(), "inverse", formal(realArray2(), "a", false, false));
-#line 5173 "runtime.in"
-  addFunc(ve, run::gen469, realArray(), "solve", formal(realArray2(), "a", false, false), formal(realArray(), "b", false, false), formal(primBoolean(), "warn", true, false));
-#line 5224 "runtime.in"
-  addFunc(ve, run::gen470, realArray2(), "solve", formal(realArray2(), "a", false, false), formal(realArray2(), "b", false, false), formal(primBoolean(), "warn", true, false));
-#line 5288 "runtime.in"
-  addFunc(ve, run::gen471, primReal(), "determinant", formal(realArray2(), "a", false, false));
-#line 5304 "runtime.in"
-  addFunc(ve, run::gen472, realArray(), "*", formal(realArray2(), "a", false, false), formal(realArray(), "b", false, false));
-#line 5322 "runtime.in"
-  addFunc(ve, run::gen473, realArray2(), "*", formal(realArray2(), "a", false, false), formal(realArray2(), "b", false, false));
-#line 5357 "runtime.in"
-  addFunc(ve, run::gen474, primTriple(), "*", formal(realArray2(), "t", false, false), formal(primTriple(), "v", false, false));
-#line 5362 "runtime.in"
-  addFunc(ve, run::gen475, primPair(), "project", formal(primTriple(), "v", false, false), formal(realArray2(), "t", false, false));
-#line 5387 "runtime.in"
-  addFunc(ve, run::gen476, primReal(), "dot", formal(realArray(), "a", false, false), formal(realArray(), "b", false, false));
-#line 5397 "runtime.in"
-  addFunc(ve, run::gen477, realArray(), "tridiagonal", formal(realArray(), "a", false, false), formal(realArray(), "b", false, false), formal(realArray(), "c", false, false), formal(realArray(), "f", false, false));
-#line 5501 "runtime.in"
-  addFunc(ve, run::gen478, primReal(), "newton", formal(primInt(), "iterations", true, false), formal(realRealFunction(), "f", false, false), formal(realRealFunction(), "fprime", false, false), formal(primReal(), "x", false, false), formal(primBoolean(), "verbose", true, false));
-#line 5548 "runtime.in"
-  addFunc(ve, run::gen479, primReal(), "newton", formal(primInt(), "iterations", true, false), formal(realRealFunction(), "f", false, false), formal(realRealFunction(), "fprime", false, false), formal(primReal(), "x1", false, false), formal(primReal(), "x2", false, false), formal(primBoolean(), "verbose", true, false));
-#line 5630 "runtime.in"
-  addFunc(ve, run::gen480, primReal(), "simpson", formal(realRealFunction(), "f", false, false), formal(primReal(), "a", false, false), formal(primReal(), "b", false, false), formal(primReal(), "acc", true, false), formal(primReal(), "dxmax", true, false));
-#line 5672 "runtime.in"
-  addFunc(ve, run::gen482, IntArray2(), "triangulate", formal(pairArray(), "z", false, false));
-#line 5707 "runtime.in"
-  addFunc(ve, run::gen483, primBoolean(), "==", formal(primFile(), "a", false, false), formal(primFile(), "b", false, false));
-#line 5715 "runtime.in"
-  addFunc(ve, run::gen484, primBoolean(), "!=", formal(primFile(), "a", false, false), formal(primFile(), "b", false, false));
-#line 5725 "runtime.in"
-  addFunc(ve, run::gen486, primFile(), "input", formal(primString() , "name", false, false), formal(primBoolean(), "check", true, false), formal(primString() , "comment", true, false));
-#line 5733 "runtime.in"
-  addFunc(ve, run::gen487, primFile(), "output", formal(primString() , "name", false, false), formal(primBoolean(), "update", true, false), formal(primString() , "comment", true, false));
+  addFunc(ve, run::gen409, primVoid(), "clear", formal(primString() , "file", false, false), formal(primInt(), "line", false, false));
+#line 4367 "runtime.in"
+  addFunc(ve, run::gen410, primVoid(), "clear");
+#line 4372 "runtime.in"
+  addFunc(ve, run::gen411, primString() , "stripdirectory", formal(primString(), "s", false, false));
+#line 4378 "runtime.in"
+  addFunc(ve, run::gen412, primString() , "stripfile", formal(primString(), "s", false, false));
+#line 4384 "runtime.in"
+  addFunc(ve, run::gen413, primString() , "stripextension", formal(primString(), "s", false, false));
+#line 4390 "runtime.in"
+  addFunc(ve, run::gen414, primInt(), "convert", formal(primString() , "args", true, false), formal(primString() , "file", true, false), formal(primString() , "format", true, false));
+#line 4408 "runtime.in"
+  addFunc(ve, run::gen415, primInt(), "animate", formal(primString() , "args", true, false), formal(primString() , "file", true, false), formal(primString() , "format", true, false));
+#line 4424 "runtime.in"
+  addFunc(ve, run::gen416, primInt(), "delete", formal(primString(), "s", false, false));
+#line 4434 "runtime.in"
+  addFunc(ve, run::gen417, primInt(), "rename", formal(primString(), "from", false, false), formal(primString(), "to", false, false));
+#line 4733 "runtime.in"
+  addFunc(ve, run::gen448, IntArray(), "complement", formal(IntArray(), "a", false, false), formal(primInt(), "n", false, false));
+#line 4765 "runtime.in"
+  addFunc(ve, run::gen450, IntArray(), "sequence", formal(primInt(), "n", false, false));
+#line 4798 "runtime.in"
+  addFunc(ve, run::gen453, primBoolean(), "all", formal(boolArray(), "a", false, false));
+#line 4807 "runtime.in"
+  addFunc(ve, run::gen454, boolArray(), "!", formal(boolArray(), "a", false, false));
+#line 4816 "runtime.in"
+  addFunc(ve, run::gen455, primInt(), "sum", formal(boolArray(), "a", false, false));
+#line 4979 "runtime.in"
+  addFunc(ve, run::gen462, primInt(), "find", formal(boolArray(), "a", false, false), formal(primInt(), "n", true, false));
+#line 4999 "runtime.in"
+  addFunc(ve, run::gen463, primBoolean(), "==", formal(realArray2(), "a", false, false), formal(realArray2(), "b", false, false));
+#line 5044 "runtime.in"
+  addFunc(ve, run::gen465, realArray2(), "identity", formal(primInt(), "n", false, false));
+#line 5067 "runtime.in"
+  addFunc(ve, run::gen467, realArray2(), "inverse", formal(realArray2(), "a", false, false));
+#line 5159 "runtime.in"
+  addFunc(ve, run::gen468, realArray(), "solve", formal(realArray2(), "a", false, false), formal(realArray(), "b", false, false), formal(primBoolean(), "warn", true, false));
+#line 5210 "runtime.in"
+  addFunc(ve, run::gen469, realArray2(), "solve", formal(realArray2(), "a", false, false), formal(realArray2(), "b", false, false), formal(primBoolean(), "warn", true, false));
+#line 5274 "runtime.in"
+  addFunc(ve, run::gen470, primReal(), "determinant", formal(realArray2(), "a", false, false));
+#line 5290 "runtime.in"
+  addFunc(ve, run::gen471, realArray(), "*", formal(realArray2(), "a", false, false), formal(realArray(), "b", false, false));
+#line 5308 "runtime.in"
+  addFunc(ve, run::gen472, realArray2(), "*", formal(realArray2(), "a", false, false), formal(realArray2(), "b", false, false));
+#line 5343 "runtime.in"
+  addFunc(ve, run::gen473, primTriple(), "*", formal(realArray2(), "t", false, false), formal(primTriple(), "v", false, false));
+#line 5348 "runtime.in"
+  addFunc(ve, run::gen474, primPair(), "project", formal(primTriple(), "v", false, false), formal(realArray2(), "t", false, false));
+#line 5373 "runtime.in"
+  addFunc(ve, run::gen475, primReal(), "dot", formal(realArray(), "a", false, false), formal(realArray(), "b", false, false));
+#line 5383 "runtime.in"
+  addFunc(ve, run::gen476, realArray(), "tridiagonal", formal(realArray(), "a", false, false), formal(realArray(), "b", false, false), formal(realArray(), "c", false, false), formal(realArray(), "f", false, false));
+#line 5487 "runtime.in"
+  addFunc(ve, run::gen477, primReal(), "newton", formal(primInt(), "iterations", true, false), formal(realRealFunction(), "f", false, false), formal(realRealFunction(), "fprime", false, false), formal(primReal(), "x", false, false), formal(primBoolean(), "verbose", true, false));
+#line 5534 "runtime.in"
+  addFunc(ve, run::gen478, primReal(), "newton", formal(primInt(), "iterations", true, false), formal(realRealFunction(), "f", false, false), formal(realRealFunction(), "fprime", false, false), formal(primReal(), "x1", false, false), formal(primReal(), "x2", false, false), formal(primBoolean(), "verbose", true, false));
+#line 5616 "runtime.in"
+  addFunc(ve, run::gen479, primReal(), "simpson", formal(realRealFunction(), "f", false, false), formal(primReal(), "a", false, false), formal(primReal(), "b", false, false), formal(primReal(), "acc", true, false), formal(primReal(), "dxmax", true, false));
+#line 5658 "runtime.in"
+  addFunc(ve, run::gen481, IntArray2(), "triangulate", formal(pairArray(), "z", false, false));
+#line 5693 "runtime.in"
+  addFunc(ve, run::gen482, primBoolean(), "==", formal(primFile(), "a", false, false), formal(primFile(), "b", false, false));
+#line 5701 "runtime.in"
+  addFunc(ve, run::gen483, primBoolean(), "!=", formal(primFile(), "a", false, false), formal(primFile(), "b", false, false));
+#line 5711 "runtime.in"
+  addFunc(ve, run::gen485, primFile(), "input", formal(primString() , "name", false, false), formal(primBoolean(), "check", true, false), formal(primString() , "comment", true, false));
+#line 5719 "runtime.in"
+  addFunc(ve, run::gen486, primFile(), "output", formal(primString() , "name", false, false), formal(primBoolean(), "update", true, false), formal(primString() , "comment", true, false));
+#line 5731 "runtime.in"
+  addFunc(ve, run::gen487, primFile(), "xinput", formal(primString() , "name", false, false), formal(primBoolean(), "check", true, false));
 #line 5745 "runtime.in"
-  addFunc(ve, run::gen488, primFile(), "xinput", formal(primString() , "name", false, false), formal(primBoolean(), "check", true, false));
-#line 5759 "runtime.in"
-  addFunc(ve, run::gen489, primFile(), "xoutput", formal(primString() , "name", false, false), formal(primBoolean(), "update", true, false));
-#line 5777 "runtime.in"
-  addFunc(ve, run::gen490, primFile(), "binput", formal(primString() , "name", false, false), formal(primBoolean(), "check", true, false));
-#line 5784 "runtime.in"
-  addFunc(ve, run::gen491, primFile(), "boutput", formal(primString() , "name", false, false), formal(primBoolean(), "update", true, false));
-#line 5794 "runtime.in"
-  addFunc(ve, run::gen492, primBoolean(), "eof", formal(primFile(), "file", false, false));
-#line 5799 "runtime.in"
-  addFunc(ve, run::gen493, primBoolean(), "eol", formal(primFile(), "file", false, false));
-#line 5804 "runtime.in"
-  addFunc(ve, run::gen494, primBoolean(), "error", formal(primFile(), "file", false, false));
-#line 5809 "runtime.in"
-  addFunc(ve, run::gen495, primVoid(), "clear", formal(primFile(), "file", false, false));
-#line 5814 "runtime.in"
-  addFunc(ve, run::gen496, primVoid(), "close", formal(primFile(), "file", false, false));
-#line 5819 "runtime.in"
-  addFunc(ve, run::gen497, primInt(), "precision", formal(primFile(), "file", true, false), formal(primInt(), "digits", true, false));
+  addFunc(ve, run::gen488, primFile(), "xoutput", formal(primString() , "name", false, false), formal(primBoolean(), "update", true, false));
+#line 5763 "runtime.in"
+  addFunc(ve, run::gen489, primFile(), "binput", formal(primString() , "name", false, false), formal(primBoolean(), "check", true, false));
+#line 5770 "runtime.in"
+  addFunc(ve, run::gen490, primFile(), "boutput", formal(primString() , "name", false, false), formal(primBoolean(), "update", true, false));
+#line 5780 "runtime.in"
+  addFunc(ve, run::gen491, primBoolean(), "eof", formal(primFile(), "file", false, false));
+#line 5785 "runtime.in"
+  addFunc(ve, run::gen492, primBoolean(), "eol", formal(primFile(), "file", false, false));
+#line 5790 "runtime.in"
+  addFunc(ve, run::gen493, primBoolean(), "error", formal(primFile(), "file", false, false));
+#line 5795 "runtime.in"
+  addFunc(ve, run::gen494, primVoid(), "clear", formal(primFile(), "file", false, false));
+#line 5800 "runtime.in"
+  addFunc(ve, run::gen495, primVoid(), "close", formal(primFile(), "file", false, false));
+#line 5805 "runtime.in"
+  addFunc(ve, run::gen496, primInt(), "precision", formal(primFile(), "file", true, false), formal(primInt(), "digits", true, false));
+#line 5811 "runtime.in"
+  addFunc(ve, run::gen497, primVoid(), "flush", formal(primFile(), "file", false, false));
+#line 5816 "runtime.in"
+  addFunc(ve, run::gen498, primString() , "getc", formal(primFile(), "file", false, false));
 #line 5825 "runtime.in"
-  addFunc(ve, run::gen498, primVoid(), "flush", formal(primFile(), "file", false, false));
+  addFunc(ve, run::gen499, primInt(), "tell", formal(primFile(), "file", false, false));
 #line 5830 "runtime.in"
-  addFunc(ve, run::gen499, primString() , "getc", formal(primFile(), "file", false, false));
-#line 5839 "runtime.in"
-  addFunc(ve, run::gen500, primInt(), "tell", formal(primFile(), "file", false, false));
-#line 5844 "runtime.in"
-  addFunc(ve, run::gen501, primVoid(), "seek", formal(primFile(), "file", false, false), formal(primInt(), "pos", false, false));
-#line 5849 "runtime.in"
-  addFunc(ve, run::gen502, primVoid(), "seekeof", formal(primFile(), "file", false, false));
-#line 5854 "runtime.in"
-  addFunc(ve, run::gen503, primFile(), "dimension", formal(primFile(), "file", false, false), formal(primInt(), "nx", false, false));
-#line 5861 "runtime.in"
-  addFunc(ve, run::gen504, primFile(), "dimension", formal(primFile(), "file", false, false), formal(primInt(), "nx", false, false), formal(primInt(), "ny", false, false));
-#line 5867 "runtime.in"
-  addFunc(ve, run::gen505, primFile(), "dimension", formal(primFile(), "file", false, false), formal(primInt(), "nx", false, false), formal(primInt(), "ny", false, false), formal(primInt(), "nz", false, false));
+  addFunc(ve, run::gen500, primVoid(), "seek", formal(primFile(), "file", false, false), formal(primInt(), "pos", false, false));
+#line 5835 "runtime.in"
+  addFunc(ve, run::gen501, primVoid(), "seekeof", formal(primFile(), "file", false, false));
+#line 5840 "runtime.in"
+  addFunc(ve, run::gen502, primFile(), "dimension", formal(primFile(), "file", false, false), formal(primInt(), "nx", false, false));
+#line 5847 "runtime.in"
+  addFunc(ve, run::gen503, primFile(), "dimension", formal(primFile(), "file", false, false), formal(primInt(), "nx", false, false), formal(primInt(), "ny", false, false));
+#line 5853 "runtime.in"
+  addFunc(ve, run::gen504, primFile(), "dimension", formal(primFile(), "file", false, false), formal(primInt(), "nx", false, false), formal(primInt(), "ny", false, false), formal(primInt(), "nz", false, false));
+#line 5859 "runtime.in"
+  addFunc(ve, run::gen505, primFile(), "csv", formal(primFile(), "file", false, false), formal(primBoolean(), "b", true, false));
+#line 5866 "runtime.in"
+  addFunc(ve, run::gen506, primFile(), "word", formal(primFile(), "file", false, false), formal(primBoolean(), "b", true, false));
 #line 5873 "runtime.in"
-  addFunc(ve, run::gen506, primFile(), "csv", formal(primFile(), "file", false, false), formal(primBoolean(), "b", true, false));
+  addFunc(ve, run::gen507, primFile(), "line", formal(primFile(), "file", false, false), formal(primBoolean(), "b", true, false));
 #line 5880 "runtime.in"
-  addFunc(ve, run::gen507, primFile(), "word", formal(primFile(), "file", false, false), formal(primBoolean(), "b", true, false));
-#line 5887 "runtime.in"
-  addFunc(ve, run::gen508, primFile(), "line", formal(primFile(), "file", false, false), formal(primBoolean(), "b", true, false));
-#line 5894 "runtime.in"
-  addFunc(ve, run::gen509, primFile(), "single", formal(primFile(), "file", false, false), formal(primBoolean(), "b", true, false));
-#line 5902 "runtime.in"
-  addFunc(ve, run::gen510, primFile(), "single", formal(primFile(), "file", false, false), formal(primReal(), "x", false, false), formal(primBoolean(), "b", true, false));
-#line 5910 "runtime.in"
-  addFunc(ve, run::gen511, primFile(), "single", formal(primFile(), "file", false, false), formal(primInt(), "x", false, false), formal(primBoolean(), "b", true, false));
+  addFunc(ve, run::gen508, primFile(), "single", formal(primFile(), "file", false, false), formal(primBoolean(), "b", true, false));
+#line 5888 "runtime.in"
+  addFunc(ve, run::gen509, primFile(), "single", formal(primFile(), "file", false, false), formal(primReal(), "x", false, false), formal(primBoolean(), "b", true, false));
+#line 5896 "runtime.in"
+  addFunc(ve, run::gen510, primFile(), "single", formal(primFile(), "file", false, false), formal(primInt(), "x", false, false), formal(primBoolean(), "b", true, false));
+#line 5904 "runtime.in"
+  addFunc(ve, run::gen511, primFile(), "read1", formal(primFile(), "file", false, false));
+#line 5911 "runtime.in"
+  addFunc(ve, run::gen512, primFile(), "read2", formal(primFile(), "file", false, false));
 #line 5918 "runtime.in"
-  addFunc(ve, run::gen512, primFile(), "read1", formal(primFile(), "file", false, false));
+  addFunc(ve, run::gen513, primFile(), "read3", formal(primFile(), "file", false, false));
 #line 5925 "runtime.in"
-  addFunc(ve, run::gen513, primFile(), "read2", formal(primFile(), "file", false, false));
-#line 5932 "runtime.in"
-  addFunc(ve, run::gen514, primFile(), "read3", formal(primFile(), "file", false, false));
-#line 5939 "runtime.in"
-  addFunc(ve, run::gen515, stringArray(), "history", formal(primString() , "name", false, false), formal(primInt(), "n", true, false));
-#line 5972 "runtime.in"
-  addFunc(ve, run::gen516, stringArray(), "history", formal(primInt(), "n", true, false));
-#line 5983 "runtime.in"
-  addFunc(ve, run::gen517, primString() , "readline", formal(primString() , "prompt", true, false), formal(primString() , "name", true, false), formal(primBoolean(), "tabcompletion", true, false));
-#line 6027 "runtime.in"
-  addFunc(ve, run::gen518, primVoid(), "saveline", formal(primString() , "name", false, false), formal(primString() , "value", false, false), formal(primBoolean(), "store", true, false));
-#line 6057 "runtime.in"
-  addFunc(ve, run::gen519, primVoid(), "generate_random_backtrace");
-#line 6066 "runtime.in"
-  addFunc(ve, run::gen520, primVoid(), "print_random_addresses", formal(primInt(), "n", true, false));
+  addFunc(ve, run::gen514, stringArray(), "history", formal(primString() , "name", false, false), formal(primInt(), "n", true, false));
+#line 5958 "runtime.in"
+  addFunc(ve, run::gen515, stringArray(), "history", formal(primInt(), "n", true, false));
+#line 5969 "runtime.in"
+  addFunc(ve, run::gen516, primString() , "readline", formal(primString() , "prompt", true, false), formal(primString() , "name", true, false), formal(primBoolean(), "tabcompletion", true, false));
+#line 6013 "runtime.in"
+  addFunc(ve, run::gen517, primVoid(), "saveline", formal(primString() , "name", false, false), formal(primString() , "value", false, false), formal(primBoolean(), "store", true, false));
+#line 6043 "runtime.in"
+  addFunc(ve, run::gen518, primVoid(), "generate_random_backtrace");
+#line 6052 "runtime.in"
+  addFunc(ve, run::gen519, primVoid(), "print_random_addresses", formal(primInt(), "n", true, false));
 }
 
 } // namespace trans

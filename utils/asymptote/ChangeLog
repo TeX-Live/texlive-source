@@ -1,4 +1,187 @@
 ------------------------------------------------------------------------
+r4358 | jcbowman | 2009-06-01 00:04:03 -0600 (Mon, 01 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/FAQ/Makefile
+   M /trunk/asymptote/doc/Makefile.in
+
+Fix target.
+
+------------------------------------------------------------------------
+r4357 | jcbowman | 2009-05-31 23:35:47 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/arrows3.asy
+
+Update example.
+
+------------------------------------------------------------------------
+r4356 | jcbowman | 2009-05-31 23:06:06 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/doc/FAQ/Makefile
+   M /trunk/asymptote/doc/Makefile.in
+
+Add install-prebuilt target for CTAN distribution.
+
+------------------------------------------------------------------------
+r4355 | jcbowman | 2009-05-31 13:15:28 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/bezulate.asy
+
+Increase fuzz.
+
+------------------------------------------------------------------------
+r4354 | jcbowman | 2009-05-31 12:01:15 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/latexusage.tex
+
+Revert inadvertent commit.
+
+------------------------------------------------------------------------
+r4353 | jcbowman | 2009-05-31 11:59:17 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/latexusage.tex
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/texfile.cc
+
+Fix missing documentclass when texpath is used in inlinetex mode.
+
+------------------------------------------------------------------------
+r4352 | jcbowman | 2009-05-31 11:11:40 -0600 (Sun, 31 May 2009) | 3 lines
+Changed paths:
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/util.cc
+   M /trunk/asymptote/util.h
+
+Workaround missing -output-directory option in ConTeXt (current directory
+must be writeable).
+
+------------------------------------------------------------------------
+r4351 | jcbowman | 2009-05-31 10:20:19 -0600 (Sun, 31 May 2009) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_pens.asy
+   M /trunk/asymptote/pen.h
+
+Implement alternative workaround, suggested by Hans Hagen, for ConTeXt
+switchtobodyfont alignment bug in TeXLive 2008.
+
+------------------------------------------------------------------------
+r4350 | jcbowman | 2009-05-31 10:09:14 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Add --disable-readline and --disable-fftw.
+
+------------------------------------------------------------------------
+r4349 | jcbowman | 2009-05-31 09:59:40 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_pens.asy
+   M /trunk/asymptote/examples/contextfonts.asy
+
+Remove font encodings by default.
+
+------------------------------------------------------------------------
+r4348 | jcbowman | 2009-05-31 01:25:55 -0600 (Sun, 31 May 2009) | 3 lines
+Changed paths:
+   M /trunk/asymptote/picture.cc
+
+Remove troublesome --purgeall context option (ignored in TeXLive 2008;
+leads to bad argument #1 to 'match' error with ConTeXT Minimals).
+
+------------------------------------------------------------------------
+r4347 | jcbowman | 2009-05-31 01:14:21 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/texfile.cc
+
+Clean up epilogue.
+
+------------------------------------------------------------------------
+r4346 | jcbowman | 2009-05-31 01:13:23 -0600 (Sun, 31 May 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Fix aspect ratio calculation; tighten anglefactor.
+
+Improve viewportmargin handling.
+
+------------------------------------------------------------------------
+r4345 | jcbowman | 2009-05-31 00:46:12 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Remove GCLIB_CHECK.
+
+------------------------------------------------------------------------
+r4344 | jcbowman | 2009-05-31 00:33:09 -0600 (Sun, 31 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/bezulate.asy
+
+Handle cusps.
+
+------------------------------------------------------------------------
+r4343 | jcbowman | 2009-05-30 21:54:39 -0600 (Sat, 30 May 2009) | 1 line
+Changed paths:
+   D /trunk/asymptote/.cvsignore
+
+Remove unused file.
+------------------------------------------------------------------------
+r4342 | jcbowman | 2009-05-30 10:47:00 -0600 (Sat, 30 May 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Return a sorted array from intersections(path3, surface).
+
+Add intersectionpoints(path3, patch) routine.
+
+------------------------------------------------------------------------
+r4341 | jcbowman | 2009-05-30 10:37:10 -0600 (Sat, 30 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Fix intrapatch duplicate point removal in intersections(path,surface).
+
+------------------------------------------------------------------------
+r4340 | jcbowman | 2009-05-29 09:20:50 -0600 (Fri, 29 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runtime.in
+
+Remove unused interface.
+
+------------------------------------------------------------------------
+r4339 | jcbowman | 2009-05-29 09:14:39 -0600 (Fri, 29 May 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/texfile.cc
+
+Add usetypescript[modern] to texpath.
+
+Adjust anglefactor.
+
+------------------------------------------------------------------------
+r4338 | jcbowman | 2009-05-28 22:36:28 -0600 (Thu, 28 May 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/texfile.cc
+
+Add missing brace for context miniprologue used by texpath.
+
+------------------------------------------------------------------------
+r4337 | jcbowman | 2009-05-28 03:26:53 -0600 (Thu, 28 May 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.75svn.
+------------------------------------------------------------------------
+r4336 | jcbowman | 2009-05-28 01:57:37 -0600 (Thu, 28 May 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/settings.h
+   M /trunk/asymptote/util.cc
+
+Fix help command under MSWindows
+------------------------------------------------------------------------
 r4335 | jcbowman | 2009-05-28 00:56:30 -0600 (Thu, 28 May 2009) | 2 lines
 Changed paths:
    M /trunk/asymptote/doc/latexusage.tex
