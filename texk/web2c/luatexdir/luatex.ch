@@ -29,15 +29,6 @@
 @z
 
 @x
-@d banner==LuaTeX_banner
-@y
-@d luaTeXk_banner=='This is LuaTeXk, Version ',luatex_version_string
-@#
-@d banner==LuaTeX_banner
-@d banner_k==luaTeXk_banner
-@z
-
-@x
 Actually the heading shown here is not quite normal: The |program| line
 does not mention any |output| file, because \ph\ would ask the \TeX\ user
 to specify a file name if |output| were specified here.
@@ -1055,16 +1046,6 @@ recorder_change_filename(stringcast(nameoffile+1));
 @z
 
 @x
-begin wlog(banner);
-@y
-begin if filelineerrorstylep or parsefirstlinep
-then
-  wlog(banner_k)
-else
-  wlog(banner);
-@z
-
-@x
 slow_print(format_ident); print("  ");
 @y
 wlog(versionstring);
@@ -1813,15 +1794,6 @@ end {|main_body|};
 @z
 
 @x
-  wterm(banner);
-@y
-  if filelineerrorstylep or parsefirstlinep then
-    wterm(banner_k)
-  else
-    wterm(banner);
-@z
-
-@x
   if format_ident=0 then wterm_ln(' (no format preloaded)')
   else  begin slow_print(format_ident); print_ln;
     end;
@@ -1835,12 +1807,6 @@ end {|main_body|};
       wterm('restricted ');
     end;
     wterm_ln('\write18 enabled.');
-  end;
-  if filelineerrorstylep then begin
-    wterm_ln(' file:line:error style messages enabled.')
-  end;
-  if parsefirstlinep then begin
-   wterm_ln(' %&-line parsing enabled.')
   end;
 @z
 

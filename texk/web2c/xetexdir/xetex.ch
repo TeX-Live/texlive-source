@@ -81,7 +81,7 @@ authorization from SIL International.
 @y
 @d XeTeX_banner=='This is XeTeX, Version 3.1415926',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
-@d XeTeX_banner_k=='This is XeTeXk, Version 3.1415926',eTeX_version_string,XeTeX_version_string
+@d XeTeX_banner_k==XeTeX_banner
 @#
 @d banner==XeTeX_banner
 @d banner_k==XeTeX_banner_k

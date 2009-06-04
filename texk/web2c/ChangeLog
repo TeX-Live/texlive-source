@@ -1,3 +1,12 @@
+2009-06-04  Karl Berry  <karl@tug.org>
+
+	* tex.ch: do not announce file_line_error or parse_first_line
+	on terminal, log file is good enough.
+	* alephdir/comsrcspec.ch: no need for Alephk.
+	* luatexdir/luatex.ch: no need for LuaTeXk.
+	* pdftexdir/pdftex.ch: no need for pdfTeXk.	
+	* xetexdir/xetex.ch: no need for XeTeXk.
+
 2009-06-03  Karl Berry  <karl@tug.org>
 
 	* configure.ac (with_tex_banner): use echo|grep for check

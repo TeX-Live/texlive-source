@@ -836,12 +836,6 @@ end;
 if src_specials_p then begin
   wterm_ln(' Source specials enabled.')
 end;
-if file_line_error_style_p then begin
-  wterm_ln(' file:line:error style messages enabled.')
-end;
-if parse_first_line_p then begin
-  wterm_ln(' %&-line parsing enabled.')
-end;
 if translate_filename then begin
   wterm(' (');
   fputs(translate_filename, stdout);
