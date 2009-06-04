@@ -852,10 +852,10 @@ void scale_image(integer ref)
 
 void out_image(integer ref, scaled hpos, scaled vpos)
 {
+    image *a = img_array[ref];
     scaledpos pos;
     pos.h = hpos;
     pos.v = vpos;
-    image *a = img_array[ref];
     out_img(a, pstruct, &pos);
 }
 

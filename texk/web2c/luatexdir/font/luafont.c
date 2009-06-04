@@ -2000,15 +2000,16 @@ static halfword handle_lig_word(halfword cur)
                 if (vlink_no_break(cur)!=null)
                     handle_lig_nest(no_break(cur),vlink_no_break(cur));
                 while ((fwd = vlink(cur)) != null ) {
+                  halfword nob, pst, next;
                     if (type(fwd) != glyph_node) break;
-                    halfword nob = tlink_no_break(cur);
-                    halfword pst = tlink_post_break(cur);
+                    nob = tlink_no_break(cur);
+                    pst = tlink_post_break(cur);
                     if ((nob == null || !test_ligature(&lig, nob, fwd)) &&
                         (pst == null || !test_ligature(&lig, pst, fwd)) )
                         break;
                     nesting_append(no_break(cur),copy_node(fwd));
                     handle_lig_nest(no_break(cur),nob);
-                    halfword next = vlink(fwd);
+                    next = vlink(fwd);
                     uncouple_node(fwd);
                     try_couple_nodes(cur, next);
                     nesting_append(post_break(cur),fwd);
@@ -2027,7 +2028,7 @@ static halfword handle_lig_word(halfword cur)
                         /* Building an init_disc followed by a select_disc
                          * {a-}{b}{AB} {-}{}{} 'c'
                          */
-                        halfword last = vlink(next);
+                        halfword last = vlink(next), tail;
                         uncouple_node(next);
                         try_couple_nodes(fwd, last);
                         /* {a-}{b}{AB} {-}{c}{} */
@@ -2044,7 +2045,7 @@ static halfword handle_lig_word(halfword cur)
                             nesting_prepend_list(no_break(fwd),copy_node_list(vlink_no_break(cur)));
                         }
                         /* {a-}{b}{ABC} {b-}{c}{AB-} */
-                        halfword tail = tlink_no_break(cur);
+                        tail = tlink_no_break(cur);
                         nesting_append(no_break(cur),copy_node(next));
                         handle_lig_nest(no_break(cur),tail);
                         /* {a-}{BC}{ABC} {b-}{c}{AB-} */

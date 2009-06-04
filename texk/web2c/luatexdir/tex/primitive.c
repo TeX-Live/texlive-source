@@ -331,6 +331,7 @@ primitive(str_number ss, quarterword c, halfword o, halfword off,
 {
     str_number s;               /* actual |str_number| used */
     integer prim_val;           /* needed to fill |prim_eqtb| */
+    char *thes;
     assert(o >= off);
     if (ss < string_offset) {
         if (ss > 127)
@@ -340,7 +341,7 @@ primitive(str_number ss, quarterword c, halfword o, halfword off,
     } else {
         s = ss;
     }
-    char *thes = makecstring(s);
+    thes = makecstring(s);
     if (cmd_origin == tex_command || cmd_origin == core_command) {
         primitive_def(thes, strlen(thes), c, o);
     }

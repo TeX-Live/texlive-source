@@ -45,6 +45,11 @@ typedef enum { WMODE_H, WMODE_V } writing_mode; /* []TJ runs horizontal or verti
 
 #  define setpdffloat(a,b,c) {(a).m = (b); (a).e = (c);}
 
+#ifdef hz
+/* AIX 4.3 defines hz as 100 in system headers */
+#undef hz
+#endif
+
 typedef struct {
     pdfpos pdf;                 /* pos. on page (PDF page raster) */
     pdfpos pdf_bt_pos;          /* pos. at begin of BT-ET group (PDF page raster) */

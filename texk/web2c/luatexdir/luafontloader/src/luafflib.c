@@ -2130,9 +2130,10 @@ handle_splinefont(lua_State *L, struct splinefont *sf) {
   }
   
   if (sf->loadvalidation_state != 0) {
+    int val, st;
     lua_newtable(L);
-    int val = 1;
-    int st = sf->loadvalidation_state;
+    val = 1;
+    st = sf->loadvalidation_state;
     if (st & lvs_bad_ps_fontname) { 
        lua_pushliteral(L, "bad_ps_fontname"); lua_rawseti(L,-2,val++); 
     }

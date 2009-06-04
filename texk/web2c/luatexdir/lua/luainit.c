@@ -530,6 +530,7 @@ void lua_initialize(int ac, char **av)
     }
     /* now run the file */
     if (startup_filename != NULL) {
+        char *v1;
         /* hide the 'tex' and 'pdf' table */
         tex_table_id = hide_lua_table(Luas, "tex");
         token_table_id = hide_lua_table(Luas, "token");
@@ -585,7 +586,7 @@ void lua_initialize(int ac, char **av)
         get_lua_boolean("texconfig", "halt_on_error", &haltonerrorp);
 
         /* restrictedshell */
-        char *v1 = NULL;
+        v1 = NULL;
         get_lua_string("texconfig", "shell_escape", &v1);
         if (v1) {
             if (*v1 == 't' || *v1 == 'y' || *v1 == '1') {

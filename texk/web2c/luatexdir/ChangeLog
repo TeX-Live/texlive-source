@@ -1,3 +1,8 @@
+2009-06-04  Taco Hoekwater <taco@luatex.org>
+	
+	* luatexdir: "avoid variable declaration after statement" patch
+	from Vladimir Volovich
+
 2009-06-03  Taco Hoekwater <taco@luatex.org>
  	
 	* luatexdir/luafontloader/fontforge/fontforge/namelist.c (psaltnames): add

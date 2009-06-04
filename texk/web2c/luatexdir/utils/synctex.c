@@ -1023,8 +1023,9 @@ void synctex_current(void)
 	if (SYNCTEX_IGNORE(nothing)) {
         return;
     } else {
+                size_t len;
 		pos = synch_p_with_c(cur);
-		size_t len = SYNCTEX_fprintf(SYNCTEX_FILE,"x%i,%i:%i,%i\n",
+		len = SYNCTEX_fprintf(SYNCTEX_FILE,"x%i,%i:%i,%i\n",
 			synctex_ctxt.tag,synctex_ctxt.line,
 			pos.h UNIT,pos.v UNIT);
 		if(len>0) {

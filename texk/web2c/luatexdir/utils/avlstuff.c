@@ -163,8 +163,8 @@ integer avl_find_obj(integer t, integer i, integer byname)
 
 static void destroy_oentry(void *pa, void *pb)
 {
-    (void) pb;
     oentry *p = (oentry *) pa;
+    (void) pb;
     xfree(p);
 }
 
