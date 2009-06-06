@@ -17,7 +17,7 @@
 #include "LEFontInstance.h"
 #include "OpenTypeTables.h"
 //#include "Lookups.h"
-//#include "Features.h"
+//#include "ICUFeatures.h"
 
 U_NAMESPACE_BEGIN
 

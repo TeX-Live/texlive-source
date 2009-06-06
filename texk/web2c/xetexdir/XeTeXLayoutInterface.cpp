@@ -45,7 +45,7 @@ authorization from SIL International.
 #include "XeTeXGrLayout.h"
 #endif
 
-#include "Features.h"
+#include "ICUFeatures.h"
 #include "ScriptAndLanguage.h"
 
 #include "unicode/ubidi.h"

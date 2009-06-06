@@ -36,7 +36,7 @@ authorization from SIL International.
 
 #include "XeTeXswap.h"
 
-#include "Features.h"
+#include "ICUFeatures.h"
 #include "GlyphPositioningTables.h"
 
 #include "sfnt.h"

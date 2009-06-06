@@ -46,10 +46,6 @@ SO = dll
 STATIC_O = ao
 LIBICU = cyg$(ICUPREFIX)
 
-# Change the stubnames so that poorly working FAT disks and installation programs can work.
-# This is also for backwards compatibility.
-DATA_STUBNAME = dt
-I18N_STUBNAME = in
 
 ## Compilation rules
 %.$(STATIC_O): $(srcdir)/%.c

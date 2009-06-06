@@ -8,7 +8,7 @@
 #include "OpenTypeUtilities.h"
 #include "LEFontInstance.h"
 #include "OpenTypeTables.h"
-#include "Features.h"
+#include "ICUFeatures.h"
 #include "Lookups.h"
 #include "ScriptAndLanguage.h"
 #include "GlyphDefinitionTables.h"
