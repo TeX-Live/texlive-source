@@ -189,7 +189,7 @@ tt_read_hhea_table (sfnt *sfont)
   ULONG  len;
   struct tt_hhea_table *table = NULL;
 
-  len = sfnt_find_table_len(sfont, "hhea");
+  len = sfnt_find_table_len(sfont, "hmtx");
   sfnt_locate_table(sfont, "hhea");
 
   table = NEW(1, struct tt_hhea_table);
@@ -252,7 +252,7 @@ struct tt_vhea_table *tt_read_vhea_table (sfnt *sfont)
 
   table = NEW(1, struct tt_vhea_table);
 
-  len = sfnt_find_table_len(sfont, "vhea");
+  len = sfnt_find_table_len(sfont, "vmtx");
   sfnt_locate_table(sfont, "vhea");
   table->version = sfnt_get_ulong(sfont);
   table->vertTypoAscender = sfnt_get_short (sfont);
