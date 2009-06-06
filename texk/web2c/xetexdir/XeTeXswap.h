@@ -58,16 +58,6 @@ SWAP32(const UInt32 p)
 }
 
 #ifdef __cplusplus
-
-#ifdef XETEX_MAC
-#include "sfnt.h" /* for the 'fixed' typedef */
-static inline fixed
-SWAP(fixed p)
-{
-	return (fixed)SWAP32((UInt32)p);
-}
-#endif
-
 static inline UInt16
 SWAP(UInt16 p)
 {
