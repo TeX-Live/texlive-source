@@ -115,6 +115,7 @@ xetex_web_srcs = \
 	etexdir/tex.ech \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
+	xetexdir/xetex-latex3.ch \
 	$(xetex_post_ch_synctex)
 ##
 EXTRA_DIST += $(xetex_web_srcs) xetexdir/xetex.defines xetexdir/xetexextra.in

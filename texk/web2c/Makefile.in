@@ -1866,6 +1866,7 @@ xetex_web_srcs = \
 	etexdir/tex.ech \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
+	xetexdir/xetex-latex3.ch \
 	$(xetex_post_ch_synctex)
 
 libxetex_a_CPPFLAGS = $(xetex_cppflags)

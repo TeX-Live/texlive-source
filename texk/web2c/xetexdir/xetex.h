@@ -36,6 +36,11 @@ authorization from SIL International.
 #define getnativechar(p,i)		native_node_text(p)[i]
 #define setnativechar(p,i,v)	native_node_text(p)[i] = v
 
+#define getnativeusv(p,i) \
+  ((native_node_text(p)[i] >= 0xd800 && native_node_text(p)[i] < 0xdc00) ? \
+    0x10000 + (native_node_text(p)[i] - 0xd800) * 0x400 + native_node_text(p)[(i)+1] - 0xdc00 : \
+    native_node_text(p)[i])
+
 /* p is native_word node; g is XeTeX_use_glyph_metrics flag */
 #define setnativemetrics(p,g)					measure_native_node(&(mem[p]), g)
 

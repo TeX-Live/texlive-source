@@ -264,6 +264,7 @@ xetex_web_srcs = $(srcdir)/tex.web \
   $(srcdir)/etexdir/tex.ech \
   $(xetex_ch_srcs-with_synctex) \
   $(srcdir)/xetexdir/xetex.ch \
+  $(srcdir)/xetexdir/xetex-latex3.ch \
   $(xetex_post_ch_srcs-with_synctex)
 xetex.web: tie xetexdir/xetex.mk $(xetex_web_srcs)
 	$(TIE) -m xetex.web $(xetex_web_srcs)

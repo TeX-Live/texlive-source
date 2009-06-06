@@ -64,8 +64,8 @@ authorization from SIL International.
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".999"
-@d XeTeX_version_string=='-0.999.7' {current \XeTeX\ version}
+@d XeTeX_revision==".9994"
+@d XeTeX_version_string=='-0.9994.0' {current \XeTeX\ version}
 @z
 
 @x
@@ -129,12 +129,15 @@ authorization from SIL International.
 @d hyph_prime=607 {another prime for hashing \.{\\hyphenation} exceptions;
                 if you change this, you should also change |iinf_hyphen_size|.}
 
+{NB: |biggest_char| here refers to UTF16 codepoints that we store in strings, etc;
+ actual character codes can exceed this range, up to |biggest_usv|.}
 @d biggest_char=65535 {the largest allowed character number;
    must be |<=max_quarterword|}
 @d biggest_usv=@"10FFFF {the largest Unicode Scalar Value}
 @d too_big_char=65536 {|biggest_char+1|}
 @d special_char=65537 {|biggest_char+2|}
 @d number_chars=65536 {|biggest_char+1|}
+@d too_big_usv=@"110000
 @d number_usvs=@"110000
 @d biggest_reg=255 {the largest allowed register number;
    must be |<=max_quarterword|}
@@ -633,10 +636,14 @@ done: if a<>@$ then
 c:=true;
 end
 @y
-@ @<Read the other strings...@>=
-if init_pool(pool_size-string_vacancies) = 0 then
-  get_strings_started:=false;
-get_strings_started:=true;
+@ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
+  get_strings_started:=false; return;
+  end
+@<Read the other strings...@>=
+if init_pool(pool_size-string_vacancies) = 0 then begin
+  bad_pool('! You have to increase POOLSIZE.');
+end else
+  get_strings_started := true;
 @z
 
 @x
@@ -1754,7 +1761,7 @@ primitive("XeTeXradical",radical,1);@/
 @x
 primitive("relax",relax,256); {cf.\ |scan_file_name|}
 @y
-primitive("relax",relax,too_big_char); {cf.\ |scan_file_name|}
+primitive("relax",relax,too_big_usv); {cf.\ |scan_file_name|}
 @z
 
 @x
@@ -2047,7 +2054,7 @@ declared at this point.
 @x
 primitive("par",par_end,256); {cf.\ |scan_file_name|}
 @y
-primitive("par",par_end,too_big_char); {cf.\ |scan_file_name|}
+primitive("par",par_end,too_big_usv); {cf.\ |scan_file_name|}
 @z
 
 @x
@@ -2369,7 +2376,7 @@ if cur_cs=0 then cur_tok:=(cur_cmd*max_char_val)+cur_chr
 @x
   begin eq_define(cur_cs,relax,256); {N.B.: The |save_stack| might change}
 @y
-  begin eq_define(cur_cs,relax,too_big_char);
+  begin eq_define(cur_cs,relax,too_big_usv);
         {N.B.: The |save_stack| might change}
 @z
 
@@ -2548,6 +2555,48 @@ else if m<math_code_base then scanned_result(equiv(m+cur_val) mod @"10000)(int_v
 @y
 @#
 @d XeTeX_int=eTeX_int+8 {first of \XeTeX\ codes for integers}
+@#
+@d XeTeX_version_code=XeTeX_int {code for \.{\\XeTeXversion}}
+
+{ these are also in xetexmac.c and must correspond! }
+@d XeTeX_count_glyphs_code=XeTeX_int+1
+
+@d XeTeX_count_variations_code=XeTeX_int+2
+@d XeTeX_variation_code=XeTeX_int+3
+@d XeTeX_find_variation_by_name_code=XeTeX_int+4
+@d XeTeX_variation_min_code=XeTeX_int+5
+@d XeTeX_variation_max_code=XeTeX_int+6
+@d XeTeX_variation_default_code=XeTeX_int+7
+
+@d XeTeX_count_features_code=XeTeX_int+8
+@d XeTeX_feature_code_code=XeTeX_int+9
+@d XeTeX_find_feature_by_name_code=XeTeX_int+10
+@d XeTeX_is_exclusive_feature_code=XeTeX_int+11
+@d XeTeX_count_selectors_code=XeTeX_int+12
+@d XeTeX_selector_code_code=XeTeX_int+13
+@d XeTeX_find_selector_by_name_code=XeTeX_int+14
+@d XeTeX_is_default_selector_code=XeTeX_int+15
+
+@d XeTeX_OT_count_scripts_code=XeTeX_int+16
+@d XeTeX_OT_count_languages_code=XeTeX_int+17
+@d XeTeX_OT_count_features_code=XeTeX_int+18
+@d XeTeX_OT_script_code=XeTeX_int+19
+@d XeTeX_OT_language_code=XeTeX_int+20
+@d XeTeX_OT_feature_code=XeTeX_int+21
+
+@d XeTeX_map_char_to_glyph_code=XeTeX_int+22
+@d XeTeX_glyph_index_code=XeTeX_int+23
+@d XeTeX_font_type_code=XeTeX_int+24
+
+@d XeTeX_first_char_code=XeTeX_int+25
+@d XeTeX_last_char_code=XeTeX_int+26
+
+@d pdf_last_x_pos_code        = XeTeX_int+27
+@d pdf_last_y_pos_code        = XeTeX_int+28
+
+@d XeTeX_pdf_page_count_code  = XeTeX_int+29
+
+{ NB: must update |eTeX_dim| when items are added here! }
 @#
 @d eTeX_dim=XeTeX_int+30 {first of \eTeX\ codes for dimensions}
  {changed for \XeTeX\ to make room for \XeTeX\ integers}
@@ -2812,7 +2861,7 @@ if (cur_cmd>active_char)or(cur_chr>255) then {not a character}
   begin m:=relax; n:=256;
 @y
 if (cur_cmd>active_char)or(cur_chr>biggest_usv) then {not a character}
-  begin m:=relax; n:=too_big_char;
+  begin m:=relax; n:=too_big_usv;
 @z
 
 @x
@@ -2820,7 +2869,7 @@ if (cur_cmd>active_char)or(cur_chr>255) then
   begin cur_cmd:=relax; cur_chr:=256;
 @y
 if (cur_cmd>active_char)or(cur_chr>biggest_usv) then
-  begin cur_cmd:=relax; cur_chr:=too_big_char;
+  begin cur_cmd:=relax; cur_chr:=too_big_usv;
 @z
 
 @x
@@ -5032,13 +5081,15 @@ ligature_node: begin f:=font(lig_char(cur_p));
 @x
 @!hc:array[0..65] of 0..256; {word to be hyphenated}
 @y
-@!hc:array[0..65] of 0..too_big_char; {word to be hyphenated}
+@!hc:array[0..66] of 0..number_usvs; {word to be hyphenated}
+{ note that element 0 needs to be a full UnicodeScalar, even though we
+  basically work in utf16 }
 @z
 
 @x
 @!hu:array[0..63] of 0..256; {like |hc|, before conversion to lowercase}
 @y
-@!hu:array[0..63] of 0..too_big_char;
+@!hu:array[0..64] of 0..too_big_char;
      {like |hc|, before conversion to lowercase}
 @z
 
@@ -5062,7 +5113,7 @@ max_hyph_char:=too_big_lang;
 @x
 @!c:0..255; {character being considered for hyphenation}
 @y
-@!c:ASCII_code; {character being considered for hyphenation}
+@!c:UnicodeScalar; {character being considered for hyphenation}
 @z
 
 @x
@@ -5099,7 +5150,7 @@ done6:
 hn := 0;
 restart:
 for l := 0 to native_length(ha)-1 do begin
-  c := get_native_char(ha, l);
+  c := get_native_usv(ha, l);
   set_lc_code(c);
   if (hc[0] = 0) then begin
     if (hn > 0) then begin
@@ -5118,7 +5169,19 @@ for l := 0 to native_length(ha)-1 do begin
     goto done3
   else begin
     { found a letter that is part of a potentially hyphenatable sequence }
-    incr(hn); hu[hn] := c; hc[hn] := hc[0]; hyf_bchar := non_char;
+    incr(hn);
+    if c<@"10000 then begin
+      hu[hn] := c; hc[hn] := hc[0];
+      end
+    else begin
+      hu[hn] := (c - @"10000) div @"400 + @"D800;
+      hc[hn] := (hc[0] - @"10000) div @"400 + @"D800;
+      incr(hn);
+      hu[hn] := c mod @"400 + @"DC00;
+      hc[hn] := hc[0] mod @"400 + @"DC00;
+      incr(l);
+      end;
+    hyf_bchar := non_char;
   end
 end;
 
@@ -5149,12 +5212,13 @@ first letter.
       if subtype(s) = native_word_node then begin
         { we only consider the node if it contains at least one letter, otherwise we'll skip it }
         for l:=0 to native_length(s) - 1 do begin
-          c := get_native_char(s, l);
+          c := get_native_usv(s, l);
           if lc_code(c) <> 0 then begin
             hf := native_font(s);
             prev_s := s;
             goto done2;
-          end
+          end;
+          if c>=@"10000 then incr(l);
         end
       end;
       @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>;
@@ -5264,6 +5328,12 @@ flush_node_list(ha);
 @z
 
 @x
+@!c:ASCII_code; {character temporarily replaced by a hyphen}
+@y
+@!c:UnicodeScalar; {character temporarily replaced by a hyphen}
+@z
+
+@x
   begin decr(l); c:=hu[l]; c_loc:=l; hu[l]:=256;
 @y
   begin decr(l); c:=hu[l]; c_loc:=l; hu[l]:=max_hyph_char;
@@ -5297,6 +5367,22 @@ hc[0]:=0; hc[hn+1]:=0; hc[hn+2]:=max_hyph_char; {insert delimiters}
   else if language>255 then cur_lang:=0
 @y
   else if language>biggest_lang then cur_lang:=0
+@z
+
+@x
+  else if n<63 then
+    begin incr(n); hc[n]:=hc[0];
+    end;
+@y
+  else if n<63 then
+    begin incr(n);
+      if hc[0]<@"10000 then hc[n]:=hc[0]
+      else begin
+        hc[n] := (hc[0] - @"10000) div @"400 + @"D800;
+        incr(n);
+        hc[n] := hc[0] mod @"400 + @"DC00;
+        end;
+    end;
 @z
 
 @x
@@ -6381,7 +6467,7 @@ XeTeX_math_given: begin print_esc("XeTeXmathchar"); print_hex(chr_code);
 @x
 else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 @y
-else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,too_big_char);
+else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,too_big_usv);
 @z
 
 @x
@@ -7835,48 +7921,6 @@ end
 @d eTeX_version_code=eTeX_int {code for \.{\\eTeXversion}}
 @y
 @d eTeX_version_code=eTeX_int {code for \.{\\eTeXversion}}
-
-@d XeTeX_version_code=XeTeX_int {code for \.{\\XeTeXversion}}
-
-{ these are also in xetexmac.c and must correspond! }
-@d XeTeX_count_glyphs_code=XeTeX_int+1
-
-@d XeTeX_count_variations_code=XeTeX_int+2
-@d XeTeX_variation_code=XeTeX_int+3
-@d XeTeX_find_variation_by_name_code=XeTeX_int+4
-@d XeTeX_variation_min_code=XeTeX_int+5
-@d XeTeX_variation_max_code=XeTeX_int+6
-@d XeTeX_variation_default_code=XeTeX_int+7
-
-@d XeTeX_count_features_code=XeTeX_int+8
-@d XeTeX_feature_code_code=XeTeX_int+9
-@d XeTeX_find_feature_by_name_code=XeTeX_int+10
-@d XeTeX_is_exclusive_feature_code=XeTeX_int+11
-@d XeTeX_count_selectors_code=XeTeX_int+12
-@d XeTeX_selector_code_code=XeTeX_int+13
-@d XeTeX_find_selector_by_name_code=XeTeX_int+14
-@d XeTeX_is_default_selector_code=XeTeX_int+15
-
-@d XeTeX_OT_count_scripts_code=XeTeX_int+16
-@d XeTeX_OT_count_languages_code=XeTeX_int+17
-@d XeTeX_OT_count_features_code=XeTeX_int+18
-@d XeTeX_OT_script_code=XeTeX_int+19
-@d XeTeX_OT_language_code=XeTeX_int+20
-@d XeTeX_OT_feature_code=XeTeX_int+21
-
-@d XeTeX_map_char_to_glyph_code=XeTeX_int+22
-@d XeTeX_glyph_index_code=XeTeX_int+23
-@d XeTeX_font_type_code=XeTeX_int+24
-
-@d XeTeX_first_char_code=XeTeX_int+25
-@d XeTeX_last_char_code=XeTeX_int+26
-
-@d pdf_last_x_pos_code        = XeTeX_int+27
-@d pdf_last_y_pos_code        = XeTeX_int+28
-
-@d XeTeX_pdf_page_count_code  = XeTeX_int+29
-
-{ NB: must update |eTeX_dim| when items are added here! }
 @z
 
 @x

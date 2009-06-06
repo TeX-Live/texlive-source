@@ -36,6 +36,7 @@ authorization from SIL International.
 @define const nullptr;
 @define type voidpointer;
 @define function getnativechar();
+@define function getnativeusv();
 @define procedure setnativechar();
 @define function getnativeglyph();
 @define procedure setnativemetrics();
