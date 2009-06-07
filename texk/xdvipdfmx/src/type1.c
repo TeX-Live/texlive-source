@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.41 2008/01/06 09:12:06 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.44 2008/08/31 18:42:39 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2008 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -57,6 +57,8 @@
 #include "t1_char.h"
 
 #include "type1.h"
+
+#include "tfm.h"
 
 #define FONT_FLAG_FIXEDPITCH (1 << 0)  /* Fixed-width font */
 #define FONT_FLAG_SERIF      (1 << 1)  /* Serif font */
@@ -274,8 +276,7 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
   pdf_obj *tmp_array;
   int      code, firstchar, lastchar;
   double   val;
-  card16   gid;
-  int      i;
+  int      i, tfm_id;
   char    *usedchars;
   double   scaling;
 
@@ -310,18 +311,14 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
   pdf_add_dict(descriptor, pdf_new_name("FontBBox"), tmp_array);
 
   tmp_array = pdf_new_array();
-  if (num_glyphs <= 1) {
-    /* This should be error. */
+  if (num_glyphs <= 1) { /* This must be an error. */
     firstchar = lastchar = 0;
     pdf_add_array(tmp_array, pdf_new_number(0.0));
   } else {
-    for (firstchar = 255, lastchar = 0, code = 0;
-	 code < 256; code++) {
+    for (firstchar = 255, lastchar = 0, code = 0; code < 256; code++) {
       if (usedchars[code]) {
-	if (code < firstchar)
-	  firstchar = code;
-	if (code > lastchar)
-	  lastchar  = code;
+	if (code < firstchar) firstchar = code;
+	if (code > lastchar)  lastchar  = code;
       }
     }
     if (firstchar > lastchar) {
@@ -329,20 +326,25 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
       pdf_release_obj(tmp_array);
       return;
     }
+    tfm_id = tfm_open(pdf_font_get_mapname(font), 0);
     for (code = firstchar; code <= lastchar; code++) {
       if (usedchars[code]) {
-	gid = cff_glyph_lookup(cffont, enc_vec[code]);
+        double width;
+        if (tfm_id < 0) /* tfm is not found */
+	  width = scaling * widths[cff_glyph_lookup(cffont, enc_vec[code])];
+        else
+          width = 1000. * tfm_get_width(tfm_id, code);
 	pdf_add_array(tmp_array,
-		      pdf_new_number(ROUND(scaling*widths[gid], 1.0)));
+		      pdf_new_number(ROUND(width, 1.0)));
       } else {
 	pdf_add_array(tmp_array, pdf_new_number(0.0));
       }
     }
-
   }
+
   if (pdf_array_length(tmp_array) > 0) {
     pdf_add_dict(fontdict,
-		 pdf_new_name("Widths"),    pdf_ref_obj(tmp_array));
+		 pdf_new_name("Widths"),  pdf_ref_obj(tmp_array));
   }
   pdf_release_obj(tmp_array);
 
@@ -353,6 +355,7 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
 
   return;
 }
+
 
 static long
 write_fontfile (pdf_font *font, cff_font *cffont, long num_glyphs)
@@ -667,10 +670,10 @@ pdf_font_load_type1 (pdf_font *font)
    * The Type 1 seac operator may add another glyph but the glyph name of
    * those glyphs are contained in standard string. The String Index will
    * not be modified after here.
+   * BUT: We cannot update the String Index yet because then we wouldn't be
+   * able to find the GIDs of the base and accent characters (unless they
+   * have been used already).
    */
-  cff_dict_update  (cffont->topdict,    cffont);
-  cff_dict_update  (cffont->private[0], cffont);
-  cff_update_string(cffont);
 
   {
     cff_index *cstring;
@@ -768,6 +771,11 @@ pdf_font_load_type1 (pdf_font *font)
   }
   if (verbose > 2)
     MESG("]");
+
+  /* Now we can update the String Index */
+  cff_dict_update  (cffont->topdict,    cffont);
+  cff_dict_update  (cffont->private[0], cffont);
+  cff_update_string(cffont);
 
   add_metrics(font, cffont, enc_vec, widths, num_glyphs);
 

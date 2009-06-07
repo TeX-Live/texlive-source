@@ -38,10 +38,10 @@ const struct paper paperspecs[] = {
   {"legal" ,  612.00, 1008.00},
   {"ledger", 1224.00,  792.00},
   {"tabloid", 792.00, 1224.00},
-  {"a6",      297.64,  420.91},
-  {"a5",      420.91,  595.27},
-  {"a4",      595.27,  841.82},
-  {"a3",      841.82, 1190.16},
+  {"a6",      297.638,  419.528},
+  {"a5",      419.528,  595.276},
+  {"a4",      595.276,  841.890},
+  {"a3",      841.890, 1190.550},
   /*
    * The B series paper formats were first introduced in Japanese
    * patch (jpatch). The size of b6, ..., b5var paper is JIS paper
@@ -49,10 +49,10 @@ const struct paper paperspecs[] = {
    * libpaper if you need ISO paper sizes.
    */
 #if defined(USE_ISO_PAPERSIZE) || defined(ISO_PAPERSIZE)
-  {"b6",         354,     499},
-  {"b5",         501,     709},
-  {"b4",         709,    1002},
-  {"b3",        1002,    1418},
+  {"b6",      354.331,  498.898},
+  {"b5",      498.898,  708.661},
+  {"b4",      708.661, 1000.630},
+  {"b3",     1000.630, 1417.320},
 #else
   {"b6",      364.25,  515.91},
   {"b5",      515.91,  728.50},
@@ -65,10 +65,10 @@ const struct paper paperspecs[] = {
   {"jisb5",   515.91,  728.50},
   {"jisb4",   728.50, 1031.81},
   {"jisb3",  1031.81, 1457.00},
-  {"isob6",      354,     499},
-  {"isob5",      501,     709},
-  {"isob4",      709,    1002},
-  {"isob3",     1002,    1418},
+  {"isob6",   354.331,  498.898},
+  {"isob5",   498.898,  708.661},
+  {"isob4",   708.661, 1000.630},
+  {"isob3",  1000.630, 1417.320},
   /* -- */
   {NULL, 0, 0},
 };

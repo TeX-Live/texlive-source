@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pkfont.c,v 1.17 2007/11/14 03:12:21 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pkfont.c,v 1.19 2008/11/03 22:18:52 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -416,7 +416,7 @@ struct pk_header_
   unsigned long  pkt_len;
   SIGNED_QUAD    chrcode;
   SIGNED_QUAD    wd, dx, dy;
-  UNSIGNED_QUAD  bm_wd, bm_ht, bm_hoff, bm_voff;
+  SIGNED_QUAD    bm_wd, bm_ht, bm_hoff, bm_voff;
   int            dyn_f, run_color;
 };
 
@@ -594,7 +594,8 @@ pdf_font_load_pkfont (pdf_font *font)
    * rendering in several viewers.
    */
   pix2charu  = 72. * 1000. / ((double) base_dpi) / point_size;
-  bbox.llx = bbox.lly = bbox.urx = bbox.ury = 0.0;
+  bbox.llx = bbox.lly =  HUGE_VAL;
+  bbox.urx = bbox.ury = -HUGE_VAL;
   while ((opcode = fgetc(fp)) >= 0 && opcode != PK_POST) {
     if (opcode < 240) {
       struct pk_header_  pkh;
@@ -622,8 +623,8 @@ pdf_font_load_pkfont (pdf_font *font)
         /* Update font BBox info */
         bbox.llx = MIN(bbox.llx, -pkh.bm_hoff);
         bbox.lly = MIN(bbox.lly,  pkh.bm_voff - pkh.bm_ht);
-        bbox.urx = MIN(bbox.urx,  pkh.bm_wd - pkh.bm_hoff);
-        bbox.ury = MIN(bbox.ury,  pkh.bm_voff);
+        bbox.urx = MAX(bbox.urx,  pkh.bm_wd - pkh.bm_hoff);
+        bbox.ury = MAX(bbox.ury,  pkh.bm_voff);
 
         pkt_ptr = NEW(pkh.pkt_len, unsigned char);
         if ((bytesread = fread(pkt_ptr, 1, pkh.pkt_len, fp))!= pkh.pkt_len) {
@@ -746,7 +747,8 @@ pdf_font_load_pkfont (pdf_font *font)
     pdf_add_dict(fontdict,
 		 pdf_new_name("Encoding"),    pdf_ref_obj(encoding));
     pdf_release_obj(encoding);
-  }
+  } else
+    pdf_release_obj(tmp_array);
 
   /* FontBBox: Accurate value is important.
    */
@@ -787,12 +789,6 @@ pdf_font_load_pkfont (pdf_font *font)
                pdf_new_name("FirstChar"), pdf_new_number(firstchar));
   pdf_add_dict(fontdict,
                pdf_new_name("LastChar"),  pdf_new_number(lastchar));
-
-#if  ENABLE_GLYPHENC
-  if (encoding_id >= 0) {
-    pdf_encoding_add_usedchars(encoding_id, usedchars);
-  }
-#endif /* ENABLE_GLYPHENC */
 
   return  0;
 }
