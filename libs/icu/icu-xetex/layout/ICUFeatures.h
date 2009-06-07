@@ -4,8 +4,8 @@
  *
  */
 
-#ifndef __TLFEATURES_H
-#define __TLFEATURES_H
+#ifndef __ICUFEATURES_H
+#define __ICUFEATURES_H
 
 /**
  * \file
