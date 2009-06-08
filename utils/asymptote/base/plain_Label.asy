@@ -571,7 +571,12 @@ path[] texpath(Label L, bool tex=settings.tex != "none")
   path[] g;
 
   string s=L.s;
-  pen p=L.p;
+  pen p=fontcommand(font(L.p))+fontsize(fontsize(L.p));
+
+  // PDF tex engines lose track of the baseline.
+  bool adjust=tex && basealign(L.p) == 1 && pdf();
+  if(adjust) p=p+basealign;
+  
   int k=0;
   int i;
   while((i=find(stringcache == s,++k)) >= 0) {
@@ -582,7 +587,16 @@ path[] texpath(Label L, bool tex=settings.tex != "none")
   }
 
   if(i == -1) {
-    g=tex ? _texpath(s,p) : textpath(s,p);
+    if(tex) {
+      if(adjust) {
+        g=_texpath("."+s,p);
+        if(g.length == 0) return g;
+        real y=min(g[0]).y;
+        g.delete(0);
+        g=shift(0,-y)*g;
+      } else g=_texpath(s,p);
+    } else g=textpath(s,p);
+
     stringcache.push(s);
     pencache.push(p);
     pathcache.push(g);
@@ -593,7 +607,7 @@ path[] texpath(Label L, bool tex=settings.tex != "none")
   pair m=min(g);
   pair M=max(g);
   pair dir=rectify(inverse(L.T)*-L.align.dir);
-  if(basealign(p) == 1)
+  if(tex && basealign(L.p) == 1)
     dir -= (0,(1-dir.y)*m.y/(M.y-m.y));
   a=m+realmult(dir,M-m);
 

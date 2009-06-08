@@ -1,3 +1,16 @@
+Release Notes for Version 1.76
+
+A bezulate bug was fixed. The resolution and caching of texpath were
+improved; for PDF tex engines, the basealign pen attribute is now
+respected. Support for OCG layers was added. Lights Headlamp and White were
+implemented; the predefined adobe light was removed. Holes are now handled
+in superpath-to-surface constructor when planar=true. A degenerate
+transform3 issue was fixed. The alignment of rendered and PRC images was
+improved; the angle for rendering absolute projections was fixed. Inaccurate
+TeX and ConTeXt font scalings were fixed. A texsize(string, pen=currentpen)
+function returns the raw TeX dimensions {width,height,depth}. A new version
+of asymptote.sty (1.07) fixes attach=true mode.
+
 Release Notes for Version 1.75
 
 Issues with 3D labels and texpath, both in inlinetex mode and with the
@@ -5,7 +18,7 @@ ConTeXt TeX engine, were resolved. A bug in bezulate was fixed. A partial
 workaround was added for the unimplememented -output-directory ConTeXt
 option (the current directory must still be writeable). The aspect ratio
 and viewportmargin calculation in module three was improved, with tighter
-3D bounds. A bug in the intersectionpoints(path3, surface) routine was fixed.
+3D bounds. A bug in the intersections(path3, surface) routine was fixed.
 
 Release Notes for Version 1.74
 

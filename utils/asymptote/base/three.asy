@@ -3,10 +3,12 @@ private import math;
 if(inXasyMode) settings.render=0;
 
 if(prc0()) {
-  access embed;
-  Embed=embed.embed;
-  Link=embed.link;
   if(settings.tex == "context") settings.prc=false;
+  else {
+    access embed;
+    Embed=embed.embed;
+    Link=embed.link;
+  }
 }
 
 real defaultshininess=0.25;
@@ -14,12 +16,12 @@ real defaultgranularity=0;
 real linegranularity=0.01;
 real tubegranularity=0.003;
 real dotgranularity=0.0001;
-pair viewportmargin=0;     // Horizontal and vertical viewport margins.
-real viewportfactor=1.005; // Factor used to expand orthographic viewport.
-
-real angleprecision=1e-3;  // Precision for centering perspective projections.
+pair viewportmargin=0;       // Horizontal and vertical viewport margins.
+real viewportfactor=1.002;   // Factor used to expand orthographic viewport.
+real viewportpadding=1.2;    // Offset used to expand PRC viewport.
+real angleprecision=1e-3;    // Precision for centering perspective projections.
 real anglefactor=max(1.005,1+angleprecision);
-                           // Factor used to expand perspective viewport.
+// Factor used to expand perspective viewport.
 
 string defaultembed3Doptions;
 string defaultembed3Dscript;
@@ -1690,7 +1692,8 @@ transform3 transform3(projection P)
   triple v=unit(P.oblique ? P.camera : P.vector());
   triple u=unit(perp(P.up,v));
   if(u == O) u=cross(perp(v),v);
-  return transform3(cross(u,v),u);
+  v=cross(u,v);
+  return v != O ? transform3(v,u) : identity(4);
 }
 
 triple[] triples(real[] x, real[] y, real[] z)
@@ -2203,7 +2206,7 @@ function asyProjection() {"+
     (infinity ? "activeCamera.projectionType=activeCamera.TYPE_ORTHOGRAPHIC;" :
      "activeCamera.projectionType=activeCamera.TYPE_PERSPECTIVE;")+"
 activeCamera.viewPlaneSize="+string(viewplanesize)+";
-activeCamera.binding=activeCamera.BINDING_VERTICAL;
+activeCamera.binding=activeCamera.BINDING_"+(infinity ? "MAX" : "VERTICAL")+";
 }
 
 asyProjection();
@@ -2252,7 +2255,7 @@ void writeJavaScript(string name, string preamble, string script)
     file3.push(name);
 }
 
-pair viewportmargin(projection P, real width, real height) 
+pair viewportmargin(real width, real height) 
 {
   pair viewportmargin=viewportmargin;
   real xmargin=viewportmargin.x;
@@ -2281,10 +2284,11 @@ string embed3D(string label="", string text=label, string prefix,
   real viewplanesize;
   if(P.infinity) {
     triple lambda=max3(f)-min3(f);
-    real margin=(viewportfactor-1.0)*lambda.y+
-      viewportmargin(P,lambda.x,lambda.y).y;
-    viewplanesize=(lambda.y+2*margin)/cm;
-  }
+    pair margin=viewportpadding*(1,1)+viewportmargin(lambda.x,lambda.y);
+    viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/cm;
+  } else
+    if(!P.absolute) angle=2*aTan(Tan(0.5*angle)-viewportpadding/P.target.z);
+
   string name=prefix+".js";
   writeJavaScript(name,lightscript+projection(P.infinity,viewplanesize),script);
 
@@ -2308,7 +2312,7 @@ string embed3D(string label="", string text=label, string prefix,
   if(defaultembed3Doptions != "") options3 += ","+defaultembed3Doptions;
   if((settings.render < 0 || !settings.embed) && settings.auto3D)
     options3 += ",poster";
-  options3 += ",text="+text+",label="+label+
+  options3 += ",text={"+text+"},label="+label+
     ",toolbar="+(settings.toolbar ? "true" : "false")+
     ",3Daac="+format(P.absolute ? P.angle : angle)+
     ",3Dc2c="+format(u)+
@@ -2402,7 +2406,7 @@ object embed(string label="", string text=label,
     pair m2=pic2.min(s);
     pair M2=pic2.max(s);
     pair lambda=M2-m2;
-    pair viewportmargin=viewportmargin(P,lambda.x,lambda.y);
+    pair viewportmargin=viewportmargin(lambda.x,lambda.y);
     real width=ceil(lambda.x+2*viewportmargin.x);
     real height=ceil(lambda.y+2*viewportmargin.y);
 
@@ -2435,6 +2439,11 @@ object embed(string label="", string text=label,
       if(P.infinity) {
         triple m=min3(f);
         triple M=max3(f);
+        triple lambda=M-m;
+        viewportmargin=viewportmargin(lambda.x,lambda.y);
+        width=lambda.x+2*viewportmargin.x;
+        height=lambda.y+2*viewportmargin.y;
+
         triple s=(-0.5(m.x+M.x),-0.5*(m.y+M.y),0);
         f=shift(s)*f;  // Eye will be at (0,0,0).
       } else {
@@ -2513,13 +2522,14 @@ object embed(string label="", string text=label,
       if(P.absolute) {
         modelview=P.modelview();
         f=modelview*f;
-        P=modelview*P;
+        Q=modelview*P;
         m=min3(f);
         M=max3(f);
         real r=0.5*abs(M-m);
         zcenter=0.5*(M.z+m.z);
         M=(M.x,M.y,zcenter+r);
         m=(m.x,m.y,zcenter-r);
+        angle=P.angle;
       } else {
         m=min3(f);
         M=max3(f);
@@ -2530,9 +2540,9 @@ object embed(string label="", string text=label,
       }
 
       if(P.infinity) {
-        triple margin=(viewportfactor-1.0)*(abs(M.x-m.x),
-                                            abs(M.y-m.y),0)+
-                       viewportfactor*(0,viewportmargin.y,0);
+        triple margin=(viewportfactor-1.0)*(abs(M.x-m.x),abs(M.y-m.y),0)
+          +(viewportmargin.x,viewportmargin.y,0);
+
         M += margin; 
         m -= margin;
       } else if(M.z >= 0) abort("camera too close");
@@ -2552,11 +2562,10 @@ object embed(string label="", string text=label,
       if(settings.inlinetex) image += "_0";
       image += "."+nativeformat();
       if(!settings.inlinetex) file3.push(image);
-      image=graphic(image);
+      image=graphic(image,"hiresbb");
     }
     if(prc) F.L=embed3D(label,text=image,prefix,f,format,
-                        width,height,angle,options,script,light,
-                        P.absolute ? P : Q);
+                        width,height,angle,options,script,light,Q);
   }
 
   if(!is3D) {
@@ -2600,27 +2609,60 @@ currentpicture.fitter=new frame(string prefix, picture pic, string format,
         if(currentlight.background != nullpen)
           box(f,currentlight.background,Fill,above=false);
       } else if(!view)
-        label(f,graphic(prefix));
+        label(f,graphic(prefix,"hiresbb"));
     }
   }
   return f;
 };
 
 void addViews(picture dest, picture src, bool group=true,
-              filltype filltype=NoFill, bool above=true)
+              filltype filltype=NoFill)
 {
+  if(group) begingroup(dest);
   frame Front=src.fit(FrontView);
-  add(dest,Front,group,filltype,above);
+  add(dest,Front,filltype);
   frame Top=src.fit(TopView);
-  add(dest,shift(0,min(Front).y-max(Top).y)*Top,group,filltype,above);
+  add(dest,shift(0,min(Front).y-max(Top).y)*Top,filltype);
   frame Right=src.fit(RightView);
-  add(dest,shift(min(Front).x-max(Right).x)*Right,group,filltype,above);
+  add(dest,shift(min(Front).x-max(Right).x)*Right,filltype);
+  if(group) endgroup(dest);
 }
 
-void addViews(picture src, bool group=true, filltype filltype=NoFill,
-              bool above=true)
+void addViews(picture src, bool group=true, filltype filltype=NoFill)
 {
-  addViews(currentpicture,src,group,filltype,above);
+  addViews(currentpicture,src,group,filltype);
+}
+
+void addAllViews(picture dest, picture src,
+                 real xmargin=0, real ymargin=xmargin,
+                 bool group=true,
+                 filltype filltype=NoFill)
+{
+  picture picL,picM,picR,picLM;
+  if(xmargin == 0) xmargin=sqrtEpsilon;
+  if(ymargin == 0) ymargin=sqrtEpsilon;
+
+  add(picL,src.fit(FrontView),(0,0),ymargin*N);
+  add(picL,src.fit(BackView),(0,0),ymargin*S);
+
+  add(picM,src.fit(TopView),(0,0),ymargin*N);
+  add(picM,src.fit(BottomView),(0,0),ymargin*S);
+
+  add(picR,src.fit(RightView),(0,0),ymargin*N);
+  add(picR,src.fit(LeftView),(0,0),ymargin*S);
+
+  add(picLM,picL.fit(),(0,0),xmargin*W);
+  add(picLM,picM.fit(),(0,0),xmargin*E);
+
+  if(group) begingroup(dest);
+  add(dest,picLM.fit(),(0,0),xmargin*W,filltype);
+  add(dest,picR.fit(),(0,0),xmargin*E,filltype);
+  if(group) endgroup(dest);
+}
+
+void addAllViews(picture src, bool group=true, filltype filltype=NoFill)
+{
+  addAllViews(currentpicture,src,group,filltype);
 }
 
 // Force an array of 3D pictures to be as least as large as picture all.

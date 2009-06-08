@@ -25,7 +25,9 @@ restricted pen beveljoin=linejoin(2);
 
 restricted pen zerowinding=fillrule(0);
 restricted pen evenodd=fillrule(1);
-bool inside(int windingnumber, pen fillrule) {
+
+bool interior(int windingnumber, pen fillrule)
+{
   return windingnumber != undefined &&
     (fillrule(fillrule) == 1 ? windingnumber % 2 == 1 : windingnumber != 0);
 }
@@ -351,5 +353,3 @@ pen[] mean(pen[][] palette, real opacity(real[])=min)
   return sequence(new pen(int i) {return mean(palette[i],opacity);},
 		  palette.length);
 }
-
-

@@ -75,7 +75,7 @@ Installation
 * Search paths::                Where @code{Asymptote} looks for your files
 * Compiling from UNIX source::  Building @code{Asymptote} from scratch
 * Editing modes::               Convenient @code{emacs} and @code{vim} modes
-* Subversion::                  
+* Subversion::                  Getting the latest development source
 * Uninstall::                   Goodbye, @code{Asymptote}!
 
 Drawing commands
@@ -265,7 +265,7 @@ Links to many external resources, including an excellent user-written
 * Search paths::                Where @code{Asymptote} looks for your files
 * Compiling from UNIX source::  Building @code{Asymptote} from scratch
 * Editing modes::               Convenient @code{emacs} and @code{vim} modes
-* Subversion::                  
+* Subversion::                  Getting the latest development source
 * Uninstall::                   Goodbye, @code{Asymptote}!
 @end menu
 
@@ -2431,9 +2431,14 @@ returns the winding number of the cyclic path @code{p} relative to the point
 counterclockwise direction. If @code{z} lies on @code{p} the constant
 @code{undefined} (defined to be the largest odd integer) is returned.
 
+@cindex @code{interior}
+@item bool interior(int windingnumber, pen fillrule)
+returns true if @code{windingnumber} corresponds to an interior point
+according to @code{fillrule}.
+
 @cindex @code{inside}
 @item bool inside(path p, pair z, pen fillrule=currentpen);
-returns @code{true} iff the point @code{z} is inside or on the edge of
+returns @code{true} iff the point @code{z} lies inside or on the edge of
 the region bounded by the cyclic path @code{p} according to the fill
 rule @code{fillrule} (@pxref{fillrule}). 
 
@@ -5847,7 +5852,7 @@ need to remove the files @code{latexusage-*}, @code{latexusage_.pre}, and
 One can specify @code{width}, @code{height},
 @code{viewportwidth}, @code{viewportheight}, and @code{attach}
 @code{keyval}-style options to the @code{asy} environment.
-The current version (1.06) of @code{asymptote.sty} supports the
+The current version (1.07) of @code{asymptote.sty} supports the
 embedding of 3D @acronym{PRC} files, either inline or, using the
 @code{attach} option with the @code{attachfile2} (or older
 @code{attachfile}) @code{LaTeX} package,
@@ -7391,9 +7396,9 @@ surface surface(path3 external, triple[] internal=new triple[],
 @noindent
 and then filled:
 @verbatim
-draw(surface(path3(polygon(5))),red);
-draw(surface(unitcircle3),red);
-draw(surface(unitcircle3,new pen[] {red,green,blue,black}));
+draw(surface(path3(polygon(5))),red,nolight);
+draw(surface(unitcircle3),red,nolight);
+draw(surface(unitcircle3,new pen[] {red,green,blue,black}),nolight);
 @end verbatim
 @noindent
 The last example constructs a patch with vertex-specific colors.
@@ -7723,11 +7728,21 @@ projection TopView=orthographic(Z,showtarget=true);
 The function
 @verbatim
 void addViews(picture dest=currentpicture, picture src, bool group=true,
-              filltype filltype=NoFill, bool above=true);
+              filltype filltype=NoFill);
 @end verbatim
 @noindent
 adds picture @code{pic} as seen with @code{FrontView} aligned above the
 projection @code{TopView} and to the right of the projection @code{RightView}. 
+Alternatively, the function
+@verbatim
+void addAllViews(picture dest=currentpicture, picture src,
+                 real xmargin=0, real ymargin=xmargin,
+                 bool group=true, filltype filltype=NoFill);
+@end verbatim
+@noindent
+may be used to exhibit all six standard views, with FrontView,
+TopView, RightView in the upper row and BackView, BottomView, LeftView
+in the lower row.
 
 A triple or path3 can be projected to a pair or path,
 with @code{project(triple, projection P=currentprojection)} or
