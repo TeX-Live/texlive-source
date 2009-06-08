@@ -22,7 +22,7 @@
 #include <zlib.h>
 
 static const char _svn_version[] =
-    "$Id: luatex.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/luatex.c $";
+    "$Id: luatex.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/lua/luatex.c $";
 
 /* do this aleph stuff here, for now */
 
@@ -251,7 +251,7 @@ static gzFile gz_fmtfile = NULL;
 void do_zdump(char *p, int item_size, int nitems, FILE * out_file)
 {
     int err;
-    (void)out_file;
+    (void) out_file;
     if (nitems == 0)
         return;
     if (gzwrite(gz_fmtfile, (void *) p, item_size * nitems) !=
@@ -265,7 +265,7 @@ void do_zdump(char *p, int item_size, int nitems, FILE * out_file)
 void do_zundump(char *p, int item_size, int nitems, FILE * in_file)
 {
     int err;
-    (void)in_file;
+    (void) in_file;
     if (nitems == 0)
         return;
     if (gzread(gz_fmtfile, (void *) p, item_size * nitems) <= 0) {
@@ -325,7 +325,7 @@ boolean zopen_w_output(FILE ** f, const_string fopen_mode)
 
 void zwclose(FILE * f)
 {
-    (void)f;
+    (void) f;
     gzclose(gz_fmtfile);
 }
 

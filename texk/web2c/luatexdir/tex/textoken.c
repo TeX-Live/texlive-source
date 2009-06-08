@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: textoken.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/textoken.c $";
+    "$Id: textoken.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/tex/textoken.c $";
 
 #define skipping 1              /* |scanner_status| when passing conditional text */
 #define defining 2              /* |scanner_status| when reading a macro definition */
@@ -216,7 +216,7 @@ boolean scan_keyword(char *s)
     pointer p;                  /* tail of the backup list */
     pointer q;                  /* new node being added to the token list via |store_new_token| */
     char *k;                    /* index into |str_pool| */
-    pointer save_cur_cs = cur_cs;    
+    pointer save_cur_cs = cur_cs;
     if (strlen(s) == 1) {
         /* @<Get the next non-blank non-call token@>; */
         do {
@@ -225,7 +225,7 @@ boolean scan_keyword(char *s)
         if ((cur_cs == 0) && ((cur_chr == *s) || (cur_chr == *s - 'a' + 'A'))) {
             return true;
         } else {
-	    cur_cs = save_cur_cs;
+            cur_cs = save_cur_cs;
             back_input();
             return false;
         }
@@ -249,7 +249,7 @@ boolean scan_keyword(char *s)
                 } else {
                     back_input();
                 }
-		cur_cs = save_cur_cs;
+                cur_cs = save_cur_cs;
                 return false;
             }
         }

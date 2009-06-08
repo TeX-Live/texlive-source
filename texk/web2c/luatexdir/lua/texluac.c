@@ -46,7 +46,7 @@
 #include <../lua51/lundump.h>
 
 static const char _svn_version[] =
-    "$Id: texluac.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/texluac.c $";
+    "$Id: texluac.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/lua/texluac.c $";
 
 #define PROGNAME        "texluac"       /* default program name */
 #define OUTPUT          PROGNAME ".out" /* default output file */

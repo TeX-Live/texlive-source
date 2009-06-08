@@ -25,18 +25,18 @@
 #include <string.h>
 #include <ctype.h>
 #ifdef POPPLER_VERSION
-#define GString GooString
-#include <dirent.h>
-#include <poppler-config.h>
-#include <goo/GooString.h>
-#include <goo/gmem.h>
-#include <goo/gfile.h>
+#  define GString GooString
+#  include <dirent.h>
+#  include <poppler-config.h>
+#  include <goo/GooString.h>
+#  include <goo/gmem.h>
+#  include <goo/gfile.h>
 #else
-#include <aconf.h>
-#include <GString.h>
-#include <gmem.h>
-#include <gfile.h>
-#include <assert.h>
+#  include <aconf.h>
+#  include <GString.h>
+#  include <gmem.h>
+#  include <gfile.h>
+#  include <assert.h>
 #endif
 #include "Object.h"
 #include "Stream.h"
@@ -54,8 +54,8 @@
 #include "epdf.h"
 
 static const char _svn_version[] =
-    "$Id: pdftoepdf.cc 2376 2009-05-08 08:40:13Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
+    "$Id: pdftoepdf.cc 2448 2009-06-08 07:43:50Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
 
 #define one_hundred_bp  6578176 /* 7227 * 65536 / 72 */
 

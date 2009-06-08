@@ -21,7 +21,7 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: luastuff.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/luastuff.c $";
+    "$Id: luastuff.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/lua/luastuff.c $";
 
 lua_State *Luas = NULL;
 

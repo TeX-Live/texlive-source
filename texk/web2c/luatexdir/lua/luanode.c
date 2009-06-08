@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: luanode.c 2284 2009-04-14 12:58:45Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/luanode.c $";
+    "$Id: luanode.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/lua/luanode.c $";
 
 #undef link                     /* defined by cpascal.h */
 #define info(a)    fixmem[(a)].hhlh
@@ -62,8 +62,8 @@ void lua_node_filter_s(int filterid, char *extrainfo)
     lua_State *L = Luas;
     int s_top = lua_gettop(L);
     int callback_id = callback_defined(filterid);
-    if (callback_id<=0) 
-      return;
+    if (callback_id <= 0)
+        return;
     if (!get_callback(L, callback_id)) {
         lua_settop(L, s_top);
         return;
@@ -267,48 +267,44 @@ int visible_last_node_type(int n)
     return last_known_node + 1;
 }
 
-void
-lua_pdf_literal (int i)
+void lua_pdf_literal(int i)
 {
-  char *s = NULL;
-  size_t l = 0;
-  lua_rawgeti(Luas, LUA_REGISTRYINDEX, i);
-  s = (char *)lua_tolstring(Luas,-1,&l);
-  while (l--) {
-    pdf_room(1);
-    pdf_buf[pdf_ptr++] = *s++;
-  }
-  pdf_buf[pdf_ptr++] = 10; /* pdf_print_nl */
-  lua_pop(Luas,1);
+    char *s = NULL;
+    size_t l = 0;
+    lua_rawgeti(Luas, LUA_REGISTRYINDEX, i);
+    s = (char *) lua_tolstring(Luas, -1, &l);
+    while (l--) {
+        pdf_room(1);
+        pdf_buf[pdf_ptr++] = *s++;
+    }
+    pdf_buf[pdf_ptr++] = 10;    /* pdf_print_nl */
+    lua_pop(Luas, 1);
 }
 
-void
-copy_pdf_literal (pointer r, pointer p)
+void copy_pdf_literal(pointer r, pointer p)
 {
-  pdf_literal_type(r) = pdf_literal_type(p);
-  pdf_literal_mode(r) = pdf_literal_mode(p);
-  if (pdf_literal_type(p)==normal) {
-    pdf_literal_data(r) = pdf_literal_data(p);
-    add_token_ref(pdf_literal_data(p));
-  } else {
-    lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
-    pdf_literal_data(r) = luaL_ref(Luas, LUA_REGISTRYINDEX);
-  }
+    pdf_literal_type(r) = pdf_literal_type(p);
+    pdf_literal_mode(r) = pdf_literal_mode(p);
+    if (pdf_literal_type(p) == normal) {
+        pdf_literal_data(r) = pdf_literal_data(p);
+        add_token_ref(pdf_literal_data(p));
+    } else {
+        lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
+        pdf_literal_data(r) = luaL_ref(Luas, LUA_REGISTRYINDEX);
+    }
 }
 
 
-void
-free_pdf_literal (pointer p)
+void free_pdf_literal(pointer p)
 {
-  if (pdf_literal_type(p)==normal) {
-    delete_token_ref(pdf_literal_data(p));
-  } else {
-    luaL_unref(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
-  }
+    if (pdf_literal_type(p) == normal) {
+        delete_token_ref(pdf_literal_data(p));
+    } else {
+        luaL_unref(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
+    }
 }
 
-void
-show_pdf_literal (pointer p)
+void show_pdf_literal(pointer p)
 {
     tprint_esc("pdfliteral");
     switch (pdf_literal_mode(p)) {
@@ -316,19 +312,19 @@ show_pdf_literal (pointer p)
         break;
     case direct_page:
         tprint(" page");
-	break;
+        break;
     case direct_always:
         tprint(" direct");
-	break;
+        break;
     default:
         tconfusion("literal2");
-	break;
+        break;
     }
-    if (pdf_literal_type(p)==normal) {
+    if (pdf_literal_type(p) == normal) {
         print_mark(pdf_literal_data(p));
     } else {
         lua_rawgeti(Luas, LUA_REGISTRYINDEX, pdf_literal_data(p));
-	tprint((char *)lua_tostring(Luas,-1));
-	lua_pop(Luas,1);
+        tprint((char *) lua_tostring(Luas, -1));
+        lua_pop(Luas, 1);
     }
-}           
+}

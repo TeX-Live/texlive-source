@@ -28,7 +28,7 @@
 #define noDEBUG
 
 static const char _svn_version[] =
-    "$Id: texnodes.c 2329 2009-04-18 14:25:30Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/texnodes.c $";
+    "$Id: texnodes.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/tex/texnodes.c $";
 
 #define append_char(A) str_pool[pool_ptr++]=(A)
 #define cur_length (pool_ptr - str_start_macro(str_ptr))
@@ -662,7 +662,7 @@ halfword copy_node(const halfword p)
             add_token_ref(write_tokens(p));
             break;
         case pdf_literal_node:
-    	    copy_pdf_literal(r,p);
+            copy_pdf_literal(r, p);
             break;
         case pdf_colorstack_node:
             if (pdf_colorstack_cmd(p) <= colorstack_data)
@@ -948,7 +948,7 @@ void flush_node(halfword p)
             delete_token_ref(write_tokens(p));
             break;
         case pdf_literal_node:
-     	    free_pdf_literal(p);
+            free_pdf_literal(p);
             break;
         case pdf_colorstack_node:
             if (pdf_colorstack_cmd(p) <= colorstack_data)
@@ -1180,7 +1180,7 @@ void check_node(halfword p)
             check_token_ref(write_tokens(p));
             break;
         case pdf_literal_node:
-   	    if (pdf_literal_type(p)==normal)
+            if (pdf_literal_type(p) == normal)
                 check_token_ref(pdf_literal_data(p));
             break;
         case pdf_colorstack_node:
@@ -1978,7 +1978,8 @@ void build_attribute_list(halfword b)
         attr_list_ref(attr_list_cache)++;
         node_attr(b) = attr_list_cache;
 #ifdef DEBUG
-        fprintf(stderr, "Added attrlist (%d) to node %d (count=%d)\n", node_attr(b), b, attr_list_ref(attr_list_cache)) ;
+        fprintf(stderr, "Added attrlist (%d) to node %d (count=%d)\n",
+                node_attr(b), b, attr_list_ref(attr_list_cache));
 #endif
     }
 }
@@ -1989,7 +1990,8 @@ void delete_attribute_ref(halfword b)
         assert(type(b) == attribute_list_node);
         attr_list_ref(b)--;
 #ifdef DEBUG
-        fprintf(stderr, "Removed attrlistref (%d) (count=%d)\n", b, attr_list_ref(b)) ;
+        fprintf(stderr, "Removed attrlistref (%d) (count=%d)\n", b,
+                attr_list_ref(b));
 #endif
         if (attr_list_ref(b) == 0) {
             if (b == attr_list_cache)

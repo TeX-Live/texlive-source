@@ -25,7 +25,7 @@
 #include "luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: writet1.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/writet1.c $";
+    "$Id: writet1.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/writet1.c $";
 
 #define t1_log(str)      if(tracefilenames) tex_printf("%s", str)
 #define get_length1()    t1_length1 = t1_offset() - t1_save_offset
@@ -1407,7 +1407,7 @@ static void cs_mark(const char *cs_name, int subr)
 
 static int comp_t1_glyphs(const void *pa, const void *pb, void *p)
 {
-    (void)p;
+    (void) p;
     return strcmp(*((const char **) pa), *((const char **) pb));
 }
 

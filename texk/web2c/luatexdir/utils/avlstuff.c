@@ -24,8 +24,8 @@
 #include "avl.h"
 
 static const char __svn_version[] =
-    "$Id: avlstuff.c 2329 2009-04-18 14:25:30Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/utils/avlstuff.c $";
+    "$Id: avlstuff.c 2448 2009-06-08 07:43:50Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/utils/avlstuff.c $";
 
 static struct avl_table **PdfObjTree = NULL;
 

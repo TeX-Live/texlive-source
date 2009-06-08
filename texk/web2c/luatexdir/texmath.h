@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texmath.h 2280 2009-04-14 09:49:01Z taco $ */
+/* $Id: texmath.h 2448 2009-06-08 07:43:50Z taco $ */
 
 #ifndef TEXMATH_H
 #  define TEXMATH_H 1
@@ -40,19 +40,19 @@ extern halfword new_sub_box(halfword);
 #  define default_code 010000000000     /* denotes |default_rule_thickness| */
 
 typedef enum {
-  ord_noad_type = 0,
-  op_noad_type_normal,
-  op_noad_type_limits,
-  op_noad_type_no_limits,
-  bin_noad_type,
-  rel_noad_type,
-  open_noad_type,
-  close_noad_type,
-  punct_noad_type,
-  inner_noad_type,
-  under_noad_type,
-  over_noad_type,
-  vcenter_noad_type,
+    ord_noad_type = 0,
+    op_noad_type_normal,
+    op_noad_type_limits,
+    op_noad_type_no_limits,
+    bin_noad_type,
+    rel_noad_type,
+    open_noad_type,
+    close_noad_type,
+    punct_noad_type,
+    inner_noad_type,
+    under_noad_type,
+    over_noad_type,
+    vcenter_noad_type,
 } noad_types;
 
 extern void initialize_math(void);
@@ -121,12 +121,12 @@ extern const char *math_style_names[];
 #  define sup_style(A) 2*((A)/4)+script_style+((A)%2)   /* smaller */
 #  define num_style(A) (A)+2-2*((A)/6)  /* smaller unless already script-script */
 #  define denom_style(A) 2*((A)/2)+cramped+2-2*((A)/6)  /* smaller, cramped */
-#  define sup_sup_style(A) sup_style(sup_style((A)))   /* smaller */
+#  define sup_sup_style(A) sup_style(sup_style((A)))    /* smaller */
 
 void mlist_to_hlist(void);
 
-void setup_math_style (void);
-void print_math_style (void);
+void setup_math_style(void);
+void print_math_style(void);
 
 #  define text_size 0
 #  define script_size 1

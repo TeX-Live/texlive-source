@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: postlinebreak.c 2294 2009-04-15 19:40:11Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/postlinebreak.c $";
+    "$Id: postlinebreak.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/tex/postlinebreak.c $";
 
 /* So far we have gotten a little way into the |line_break| routine, having
 covered its important |try_break| subroutine. Now let's consider the
@@ -218,7 +218,7 @@ void ext_post_line_break(boolean d,
             assert(a != null);
             assert(v != null);
             switch (subtype(r)) {
-              case select_disc:
+            case select_disc:
                 if (vlink_pre_break(r) != null) {
                     flush_node_list(vlink_pre_break(r));
                     vlink_pre_break(r) = null;
@@ -230,8 +230,8 @@ void ext_post_line_break(boolean d,
                     vlink_no_break(r) = null;
                     tlink_no_break(r) = null;
                 }
-		
-                assert(type(a)==disc_node && subtype(a)==init_disc);
+
+                assert(type(a) == disc_node && subtype(a) == init_disc);
                 flush_node_list(vlink_no_break(a));
                 vlink_no_break(a) = null;
                 tlink_no_break(a) = null;
@@ -241,17 +241,17 @@ void ext_post_line_break(boolean d,
                 flush_node_list(vlink_post_break(a));
                 vlink_post_break(a) = null;
                 tlink_post_break(a) = null;
-		
+
                 break;
-              case init_disc:
-                assert(type(v)==disc_node && subtype(v)==select_disc);
-                subtype(v) = syllable_disc; /* not special any more */
+            case init_disc:
+                assert(type(v) == disc_node && subtype(v) == select_disc);
+                subtype(v) = syllable_disc;     /* not special any more */
                 flush_node_list(vlink_no_break(v));
                 vlink_no_break(v) = vlink_post_break(r);
                 tlink_no_break(v) = tlink_post_break(r);
                 vlink_post_break(r) = null;
                 tlink_post_break(r) = null;
-              default:
+            default:
                 if (vlink_no_break(r) != null) {
                     flush_node_list(vlink_no_break(r));
                     vlink_no_break(r) = null;

@@ -27,8 +27,8 @@
 #include "tokens.h"
 
 static const char _svn_version[] =
-    "$Id: math.c 2376 2009-05-08 08:40:13Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/math.c $";
+    "$Id: math.c 2448 2009-06-08 07:43:50Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/tex/math.c $";
 
 #define mode          cur_list.mode_field
 #define head          cur_list.head_field
@@ -211,7 +211,7 @@ void def_fam_fnt(integer fam_id, integer size_id, integer f, integer lvl)
         begin_diagnostic();
         tprint("{assigning");
         print_char(' ');
-        print_cmd_chr(def_family_cmd,size_id);
+        print_cmd_chr(def_family_cmd, size_id);
         print_int(fam_id);
         print_char('=');
         print_font_identifier(fam_fnt(fam_id, size_id));
@@ -238,7 +238,7 @@ void unsave_math_fam_data(integer gl)
                 begin_diagnostic();
                 tprint("{restoring");
                 print_char(' ');
-		print_cmd_chr(def_family_cmd,size_id);
+                print_cmd_chr(def_family_cmd, size_id);
                 print_int(fam_id);
                 print_char('=');
                 print_font_identifier(fam_fnt(fam_id, size_id));
@@ -267,8 +267,8 @@ void def_math_param(int param_id, int style_id, scaled value, int lvl)
         begin_diagnostic();
         tprint("{assigning");
         print_char(' ');
-	print_cmd_chr(set_math_param_cmd,param_id);
-        print_cmd_chr(math_style_cmd,style_id);
+        print_cmd_chr(set_math_param_cmd, param_id);
+        print_cmd_chr(math_style_cmd, style_id);
         print_char('=');
         print_int(value);
         print_char('}');
@@ -301,8 +301,8 @@ void unsave_math_param_data(integer gl)
                 begin_diagnostic();
                 tprint("{restoring");
                 print_char(' ');
-		print_cmd_chr(set_math_param_cmd,param_id);
-                print_cmd_chr(math_style_cmd,style_id);
+                print_cmd_chr(set_math_param_cmd, param_id);
+                print_cmd_chr(math_style_cmd, style_id);
                 print_char('=');
                 print_int(get_math_param(param_id, style_id));
                 print_char('}');
@@ -456,7 +456,7 @@ i.e., a smaller style has a larger numerical value.
 @:TeXbook}{\sl The \TeX book@>
 */
 
-const char *math_style_names[] = { 
+const char *math_style_names[] = {
     "display", "crampeddisplay",
     "text", "crampedtext",
     "script", "crampedscript",
@@ -467,22 +467,22 @@ const char *math_style_names[] = {
 const char *math_param_names[] = {
     "quad", "axis", "operatorsize",
     "overbarkern", "overbarrule", "overbarvgap",
-    "underbarkern","underbarrule", "underbarvgap",
+    "underbarkern", "underbarrule", "underbarvgap",
     "radicalkern", "radicalrule", "radicalvgap",
     "radicaldegreebefore", "radicaldegreeafter", "radicaldegreeraise",
     "stackvgap", "stacknumup", "stackdenomdown",
     "fractionrule", "fractionnumvgap", "fractionnumup",
-    "fractiondenomvgap","fractiondenomdown", "fractiondelsize",
+    "fractiondenomvgap", "fractiondenomdown", "fractiondelsize",
     "limitabovevgap", "limitabovebgap", "limitabovekern",
     "limitdownvgap", "limitdownbgap", "limitdownkern",
     "underdelimitervgap", "underdelimiterbgap",
     "overdelimitervgap", "overdelimiterbgap",
     "subshiftdrop", "supshiftdrop", "subshiftdown",
-    "subsupshiftdown","subtopmax", "supshiftup",
+    "subsupshiftdown", "subtopmax", "supshiftup",
     "supbottommin", "supsubbottommax", "subsupvgap",
     "spaceafterscript", "connectoroverlapmin",
-    "ordordspacing", "ordopspacing","ordbinspacing","ordrelspacing",
-    "ordopenspacing","ordclosespacing", "ordpunctspacing","ordinnerspacing",
+    "ordordspacing", "ordopspacing", "ordbinspacing", "ordrelspacing",
+    "ordopenspacing", "ordclosespacing", "ordpunctspacing", "ordinnerspacing",
     "opordspacing", "opopspacing", "opbinspacing", "oprelspacing",
     "opopenspacing", "opclosespacing", "oppunctspacing", "opinnerspacing",
     "binordspacing", "binopspacing", "binbinspacing", "binrelspacing",
@@ -490,14 +490,19 @@ const char *math_param_names[] = {
     "relordspacing", "relopspacing", "relbinspacing", "relrelspacing",
     "relopenspacing", "relclosespacing", "relpunctspacing", "relinnerspacing",
     "openordspacing", "openopspacing", "openbinspacing", "openrelspacing",
-    "openopenspacing", "openclosespacing", "openpunctspacing", "openinnerspacing",
+    "openopenspacing", "openclosespacing", "openpunctspacing",
+        "openinnerspacing",
     "closeordspacing", "closeopspacing", "closebinspacing", "closerelspacing",
-    "closeopenspacing", "closeclosespacing", "closepunctspacing", "closeinnerspacing",
+    "closeopenspacing", "closeclosespacing", "closepunctspacing",
+        "closeinnerspacing",
     "punctordspacing", "punctopspacing", "punctbinspacing", "punctrelspacing",
-    "punctopenspacing", "punctclosespacing", "punctpunctspacing", "punctinnerspacing",
+    "punctopenspacing", "punctclosespacing", "punctpunctspacing",
+        "punctinnerspacing",
     "innerordspacing", "inneropspacing", "innerbinspacing", "innerrelspacing",
-    "inneropenspacing", "innerclosespacing", "innerpunctspacing", "innerinnerspacing",
-    NULL };
+    "inneropenspacing", "innerclosespacing", "innerpunctspacing",
+        "innerinnerspacing",
+    NULL
+};
 
 pointer new_style(small_number s)
 {                               /* create a style node */
@@ -542,7 +547,7 @@ void show_math_node(pointer p)
 {
     switch (type(p)) {
     case style_node:
-	print_cmd_chr(math_style_cmd,subtype(p));
+        print_cmd_chr(math_style_cmd, subtype(p));
         break;
     case choice_node:
         tprint_esc("mathchoice");
@@ -659,12 +664,12 @@ void display_normal_noad(pointer p)
     switch (type(p)) {
     case simple_noad:
         switch (subtype(p)) {
-        case ord_noad_type: 
-            tprint_esc("mathord"); 
+        case ord_noad_type:
+            tprint_esc("mathord");
             break;
-        case op_noad_type_normal: 
-        case op_noad_type_limits: 
-        case op_noad_type_no_limits: 
+        case op_noad_type_normal:
+        case op_noad_type_limits:
+        case op_noad_type_no_limits:
             tprint_esc("mathop");
             if (subtype(p) == op_noad_type_limits)
                 tprint_esc("limits");
@@ -832,20 +837,20 @@ called for.
 
 void init_math(void)
 {
-    if ( cur_cmd == math_shift_cmd ) {
-        get_token();                /* |get_x_token| would fail on \.{\\ifmmode}\thinspace! */
+    if (cur_cmd == math_shift_cmd) {
+        get_token();            /* |get_x_token| would fail on \.{\\ifmmode}\thinspace! */
         if ((cur_cmd == math_shift_cmd) && (mode > 0)) {
             enter_display_math();
         } else {
             back_input();
             enter_ordinary_math();
         }
-    } else if (cur_cmd==math_shift_cs_cmd && cur_chr == display_style ) {
+    } else if (cur_cmd == math_shift_cs_cmd && cur_chr == display_style) {
         enter_display_math();
-    } else if (cur_cmd==math_shift_cs_cmd && cur_chr == text_style ) {
+    } else if (cur_cmd == math_shift_cs_cmd && cur_chr == text_style) {
         enter_ordinary_math();
     } else {
-        you_cant(); 
+        you_cant();
     }
 }
 
@@ -1313,7 +1318,8 @@ void set_math_char(mathcodeval mval)
                 math_fam(nucleus(p)) = cur_fam;
             subtype(p) = ord_noad_type;
         } else {
-          switch (mval.class_value) {
+            switch (mval.class_value) {
+          /* *INDENT-OFF* */
           case 0: subtype(p) = ord_noad_type; break;
           case 1: subtype(p) = op_noad_type_normal; break;
           case 2: subtype(p) = bin_noad_type; break;
@@ -1321,7 +1327,8 @@ void set_math_char(mathcodeval mval)
           case 4: subtype(p) = open_noad_type; break;
           case 5: subtype(p) = close_noad_type; break;
           case 6: subtype(p) = punct_noad_type; break;
-          }
+          /* *INDENT-ON* */
+            }
         }
         vlink(tail) = p;
         tail = p;
@@ -1362,7 +1369,7 @@ void math_math_comp(void)
     subtype(tail) = cur_chr;
     q = new_node(math_char_node, 0);
     nucleus(tail) = q;
-    if (cur_chr==over_noad_type)
+    if (cur_chr == over_noad_type)
         (void) scan_math(nucleus(tail), cramped_style(m_style));
     else
         (void) scan_math(nucleus(tail), m_style);
@@ -1478,8 +1485,8 @@ void math_radical(void)
     else
         tconfusion("math_radical");
     if (chr_code == 3) {
-      /* the trick with the |vlink(q)| is used by |scan_math| 
-         to decide whether it needs to go on */
+        /* the trick with the |vlink(q)| is used by |scan_math| 
+           to decide whether it needs to go on */
         q = new_node(math_char_node, 0);
         vlink(q) = tail;
         degree(tail) = q;
@@ -1598,7 +1605,7 @@ void build_choices(void)
         break;
     }                           /* there are no other cases */
     incr(saved(-1));
-    push_math(math_choice_group, (prev_style+2));
+    push_math(math_choice_group, (prev_style + 2));
     scan_left_brace();
 }
 
@@ -1615,8 +1622,7 @@ void sub_sup(void)
         q = new_node(sub_mlist_node, 0);
         nucleus(tail) = q;
     }
-    if (cur_cmd == sup_mark_cmd || 
-        cur_chr == sup_mark_cmd ) { /* super_sub_script */
+    if (cur_cmd == sup_mark_cmd || cur_chr == sup_mark_cmd) {   /* super_sub_script */
         if (supscr(tail) != null) {
             char *hlp[] = {
                 "I treat `x^1^2' essentially like `x^1{}^2'.", NULL
@@ -1629,8 +1635,7 @@ void sub_sup(void)
         q = new_node(math_char_node, 0);
         supscr(tail) = q;
         (void) scan_math(supscr(tail), sup_style(m_style));
-    } else if (cur_cmd == sub_mark_cmd || 
-               cur_chr == sub_mark_cmd ) {
+    } else if (cur_cmd == sub_mark_cmd || cur_chr == sub_mark_cmd) {
         if (subscr(tail) != null) {
             char *hlp[] = {
                 "I treat `x_1_2' essentially like `x_1{}_2'.", NULL
@@ -1765,7 +1770,7 @@ void close_math_group(pointer p)
     math_list(saved(0)) = p;
     if (p != null) {
         if (vlink(p) == null) {
-            if (type(p) == simple_noad && subtype(p) == ord_noad_type ) {
+            if (type(p) == simple_noad && subtype(p) == ord_noad_type) {
                 if (subscr(p) == null && supscr(p) == null) {
                     type(saved(0)) = type(nucleus(p));
                     if (type(nucleus(p)) == math_char_node) {
@@ -1775,14 +1780,15 @@ void close_math_group(pointer p)
                         math_list(saved(0)) = math_list(nucleus(p));
                         math_list(nucleus(p)) = null;
                     }
-                    delete_attribute_ref(node_attr(saved(0))); 
+                    delete_attribute_ref(node_attr(saved(0)));
                     node_attr(saved(0)) = node_attr(nucleus(p));
                     node_attr(nucleus(p)) = null;
                     flush_node(p);
                 }
-	    } else if (type(p) == accent_noad) {
-	        if (saved(0) == nucleus(tail)) {
-		    if (type(tail) == simple_noad && subtype(tail) == ord_noad_type) {
+            } else if (type(p) == accent_noad) {
+                if (saved(0) == nucleus(tail)) {
+                    if (type(tail) == simple_noad
+                        && subtype(tail) == ord_noad_type) {
                         q = head;
                         while (vlink(q) != tail)
                             q = vlink(q);
@@ -1790,7 +1796,7 @@ void close_math_group(pointer p)
                         nucleus(tail) = null;
                         subscr(tail) = null;
                         supscr(tail) = null;
-                        delete_attribute_ref(node_attr(p)); 
+                        delete_attribute_ref(node_attr(p));
                         node_attr(p) = node_attr(tail);
                         node_attr(tail) = null;
                         flush_node(tail);
@@ -1928,10 +1934,10 @@ void after_math(void)
     p = fin_mlist(null);        /* this pops the nest */
     if (cur_cmd == math_shift_cs_cmd &&
         (cur_chr == text_style || cur_chr == display_style)) {
-      you_cant();
+        you_cant();
     }
     if (mode == -m) {           /* end of equation number */
-        if (cur_cmd == math_shift_cmd ) {
+        if (cur_cmd == math_shift_cmd) {
             check_second_math_shift();
         } else {
             check_display_math_end();
@@ -1973,12 +1979,12 @@ void after_math(void)
         unsave_math();
     } else {
         if (a == null) {
-          if (cur_cmd == math_shift_cmd) {
+            if (cur_cmd == math_shift_cmd) {
                 check_second_math_shift();
             } else {
                 check_display_math_end();
             }
-        } 
+        }
         run_mlist_to_hlist(p, display_style, false);
         finish_displayed_math(l, danger, a);
     }
@@ -2180,7 +2186,7 @@ void finish_display_alignment(pointer p, pointer q, memory_word aux_save)
 
 /* Interface to \.{\\Umath} and \.{\\mathstyle} */
 
-void setup_math_style (void)
+void setup_math_style(void)
 {
     pointer q;
     tail_append(new_noad());
@@ -2190,9 +2196,9 @@ void setup_math_style (void)
 }
 
 
-void print_math_style (void)
+void print_math_style(void)
 {
-    if (abs(mode)==mmode)
+    if (abs(mode) == mmode)
         print_int(m_style);
     else
         print_int(-1);

@@ -192,8 +192,8 @@ typedef enum {
     explicit_disc,
     automatic_disc,
     syllable_disc,
-    init_disc, /* first of a duo of syllable_discs */
-    select_disc, /* second of a duo of syllable_discs */
+    init_disc,                  /* first of a duo of syllable_discs */
+    select_disc,                /* second of a duo of syllable_discs */
 } discretionary_types;
 
 #  define pre_break_head(a)   ((a)+4)
@@ -324,7 +324,7 @@ typedef enum {
     old_op_noad,
     old_bin_noad,
     old_rel_noad,
-    old_open_noad,                  /* 20 */
+    old_open_noad,              /* 20 */
     old_close_noad,
     old_punct_noad,
     old_inner_noad,
@@ -584,7 +584,7 @@ typedef enum {
 #  define pdf_literal_type(a)  subtype((a)+2)
 
 /* type of literal data */
-#define lua_refid_literal      1 /* not a |normal| string */
+#  define lua_refid_literal      1      /* not a |normal| string */
 
 /* literal ctm types */
 

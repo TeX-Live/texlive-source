@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: mlist.c 2414 2009-06-03 12:57:01Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/mlist.c $";
+    "$Id: mlist.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/tex/mlist.c $";
 
 #define delimiter_factor     int_par(param_delimiter_factor_code)
 #define delimiter_shortfall  dimen_par(param_delimiter_shortfall_code)
@@ -237,7 +237,7 @@ static scaled get_math_quad_size(int b)
     else if (b == script_script_size)
         var = script_script_style;
     else
-        var = text_style;    
+        var = text_style;
     return get_math_param(math_param_quad, var);
 }
 
@@ -831,11 +831,16 @@ void fixup_math_parameters(integer fam_id, integer size_id, integer f,
         DEFINE_DMATH_PARAMETERS(math_param_sub_shift_down, size_id,
                                 font_MATH_par(f, SubscriptShiftDown), lvl);
 
-        if (font_MATH_par(f, SubscriptShiftDownWithSuperscript)!=undefined_math_parameter) {
+        if (font_MATH_par(f, SubscriptShiftDownWithSuperscript) !=
+            undefined_math_parameter) {
             DEFINE_MATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
-                                   font_MATH_par(f, SubscriptShiftDownWithSuperscript), lvl);
+                                   font_MATH_par(f,
+                                                 SubscriptShiftDownWithSuperscript),
+                                   lvl);
             DEFINE_DMATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
-                                    font_MATH_par(f, SubscriptShiftDownWithSuperscript), lvl);
+                                    font_MATH_par(f,
+                                                  SubscriptShiftDownWithSuperscript),
+                                    lvl);
         } else {
             DEFINE_MATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
                                    font_MATH_par(f, SubscriptShiftDown), lvl);
@@ -1038,22 +1043,26 @@ void fixup_math_parameters(integer fam_id, integer size_id, integer f,
 
         /* The display-size radical_vgap is done twice because it needs 
            values from both the sy and the ex font. */
-	DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
-				(default_rule_thickness(size_id) +
-				 (abs(math_x_height(size_id)) / 4)), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
+                                (default_rule_thickness(size_id) +
+                                 (abs(math_x_height(size_id)) / 4)), lvl);
 
-	DEFINE_MATH_PARAMETERS(math_param_radical_degree_raise, size_id,
-			       60, lvl);
-	DEFINE_DMATH_PARAMETERS(math_param_radical_degree_raise, size_id, 
-				60, lvl);
+        DEFINE_MATH_PARAMETERS(math_param_radical_degree_raise, size_id,
+                               60, lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_radical_degree_raise, size_id,
+                                60, lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_degree_before, size_id,
-                               xn_over_d(get_math_quad_size(size_id), 5, 18), lvl);
+                               xn_over_d(get_math_quad_size(size_id), 5, 18),
+                               lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_degree_before, size_id,
-				xn_over_d(get_math_quad_size(size_id), 5, 18), lvl);
-	DEFINE_MATH_PARAMETERS(math_param_radical_degree_after,size_id,
-			       (-xn_over_d(get_math_quad_size(size_id), 10, 18)), lvl);
-	DEFINE_DMATH_PARAMETERS(math_param_radical_degree_after,size_id,
-				(-xn_over_d(get_math_quad_size(size_id), 10, 18)), lvl);
+                                xn_over_d(get_math_quad_size(size_id), 5, 18),
+                                lvl);
+        DEFINE_MATH_PARAMETERS(math_param_radical_degree_after, size_id,
+                               (-xn_over_d
+                                (get_math_quad_size(size_id), 10, 18)), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_radical_degree_after, size_id,
+                                (-xn_over_d
+                                 (get_math_quad_size(size_id), 10, 18)), lvl);
 
     } else if (fam_id == 3 && is_old_mathfont(f, total_mathex_params)) {
         /* fix old-style |ex| parameters */
@@ -1162,9 +1171,9 @@ void fixup_math_parameters(integer fam_id, integer size_id, integer f,
 
         /* The display-size radical_vgap is done twice because it needs 
            values from both the sy and the ex font. */
-	DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
-				(default_rule_thickness(size_id) +
-				 (abs(math_x_height(size_id)) / 4)), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
+                                (default_rule_thickness(size_id) +
+                                 (abs(math_x_height(size_id)) / 4)), lvl);
     }
 }
 
@@ -1178,7 +1187,7 @@ void finalize_math_parameters(void)
         def_math_param(math_param_space_after_script, display_style,
                        script_space, level_one);
         def_math_param(math_param_space_after_script, text_style,
-		       script_space, level_one);
+                       script_space, level_one);
         def_math_param(math_param_space_after_script, script_style,
                        script_space, level_one);
         def_math_param(math_param_space_after_script, script_script_style,
@@ -2095,7 +2104,7 @@ void run_mlist_to_hlist(pointer p, integer mstyle, boolean penalties)
     int a, sfix;
     lua_State *L = Luas;
     if (p == null) {
-        vlink(temp_head) =  null; 
+        vlink(temp_head) = null;
         return;
     }
     finalize_math_parameters();
@@ -2107,7 +2116,7 @@ void run_mlist_to_hlist(pointer p, integer mstyle, boolean penalties)
             return;
         }
         nodelist_to_lua(L, p);  /* arg 1 */
-        lua_pushstring(L, math_style_names[mstyle]);   /* arg 2 */
+        lua_pushstring(L, math_style_names[mstyle]);    /* arg 2 */
         lua_pushboolean(L, penalties);  /* arg 3 */
         if (lua_pcall(L, 3, 1, 0) != 0) {       /* 3 args, 1 result */
             fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
@@ -2118,13 +2127,13 @@ void run_mlist_to_hlist(pointer p, integer mstyle, boolean penalties)
         a = nodelist_from_lua(L);
         lua_settop(L, sfix);
         vlink(temp_head) = a;
-    } else if (callback_id==0) {
+    } else if (callback_id == 0) {
         cur_mlist = p;
         cur_style = mstyle;
         mlist_penalties = penalties;
         mlist_to_hlist();
     } else {
-        vlink(temp_head) =  null; 
+        vlink(temp_head) = null;
     }
 }
 
@@ -2362,10 +2371,10 @@ void make_radical(pointer q)
                           height(x) + depth(x) + clr + theta);
     }
     left_delimiter(q) = null;
-    delta = (depth(y)+height(y)-theta) - (height(x) + depth(x) + clr);
+    delta = (depth(y) + height(y) - theta) - (height(x) + depth(x) + clr);
     if (delta > 0)
-        clr = clr + half(delta);    /* increase the actual clearance */
-    shift_amount(y) = (height(y)-theta)-(height(x) + clr);
+        clr = clr + half(delta);        /* increase the actual clearance */
+    shift_amount(y) = (height(y) - theta) - (height(x) + clr);
     h = depth(y) + height(y);
     p = overbar(x, clr, theta, radical_kern(cur_style), node_attr(y));
     vlink(y) = p;
@@ -2384,16 +2393,16 @@ void make_radical(pointer q)
             x = new_kern(ar);
             reset_attributes(x, node_attr(degree(q)));
             vlink(x) = y;
-            shift_amount(r) = 
-	      - ((xn_over_d(h, radical_degree_raise(cur_style), 100)) -
-		 depth(y) - shift_amount(y));
+            shift_amount(r) =
+                -((xn_over_d(h, radical_degree_raise(cur_style), 100)) -
+                  depth(y) - shift_amount(y));
             vlink(r) = x;
             x = new_kern(br);
             reset_attributes(x, node_attr(degree(q)));
             vlink(x) = r;
             y = x;
         }
-        math_list(degree(q)) = null; /* for \Uroot ..{<list>}{} */
+        math_list(degree(q)) = null;    /* for \Uroot ..{<list>}{} */
         flush_node(degree(q));
     }
     p = hpack(y, 0, additional);
@@ -2566,8 +2575,8 @@ void do_make_math_accent(pointer q, internal_font_number f, integer c,
             }
         } else {                /* new skewchar madness for bot accents */
             s = char_bot_accent(cur_f, cur_c);
-            if (s == 0) {            /* better than nothing: */
-              s = char_top_accent(cur_f, cur_c);
+            if (s == 0) {       /* better than nothing: */
+                s = char_top_accent(cur_f, cur_c);
             }
             if (s != 0) {
                 s_is_absolute = true;
@@ -2814,44 +2823,45 @@ scaled make_op(pointer q)
     if (type(nucleus(q)) == math_char_node) {
         fetch(nucleus(q));
         if (cur_style < text_style) {   /* try to make it larger */
-	    ok_size = minimum_operator_size(cur_style);
+            ok_size = minimum_operator_size(cur_style);
             if (ok_size != undefined_math_parameter) {
-		/* creating a temporary delimiter is the cleanest way */
-		y = new_node(delim_node, 0);
-		small_fam(y) = math_fam(nucleus(q));
-		small_char(y) = math_character(nucleus(q));
-		x = var_delimiter (y, text_size, ok_size);
-		delta = 0;
+                /* creating a temporary delimiter is the cleanest way */
+                y = new_node(delim_node, 0);
+                small_fam(y) = math_fam(nucleus(q));
+                small_char(y) = math_character(nucleus(q));
+                x = var_delimiter(y, text_size, ok_size);
+                delta = 0;
             } else {
                 ok_size = height_plus_depth(cur_f, cur_c) + 1;
                 while ((char_tag(cur_f, cur_c) == list_tag) &&
-		       height_plus_depth(cur_f, cur_c) < ok_size) {
-		    c = char_remainder(cur_f, cur_c);
-		    if (!char_exists(cur_f, c))
+                       height_plus_depth(cur_f, cur_c) < ok_size) {
+                    c = char_remainder(cur_f, cur_c);
+                    if (!char_exists(cur_f, c))
                         break;
-		    cur_c = c;
-		    math_character(nucleus(q)) = c;
-		}
-		delta = char_italic(cur_f, cur_c);
-		x = clean_box(nucleus(q), cur_style);
-		if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits))
-  		    width(x) = width(x) - delta;        /* remove italic correction */
-	        shift_amount(x) = half(height(x) - depth(x)) - math_axis(cur_size);
-	        /* center vertically */
-	    }
-	    type(nucleus(q)) = sub_box_node;
-	    math_list(nucleus(q)) = x;
+                    cur_c = c;
+                    math_character(nucleus(q)) = c;
+                }
+                delta = char_italic(cur_f, cur_c);
+                x = clean_box(nucleus(q), cur_style);
+                if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits))
+                    width(x) = width(x) - delta;        /* remove italic correction */
+                shift_amount(x) =
+                    half(height(x) - depth(x)) - math_axis(cur_size);
+                /* center vertically */
+            }
+            type(nucleus(q)) = sub_box_node;
+            math_list(nucleus(q)) = x;
 
-        } else { /* normal size */
+        } else {                /* normal size */
             delta = char_italic(cur_f, cur_c);
-	    x = clean_box(nucleus(q), cur_style);
-	    if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits))
-	        width(x) = width(x) - delta;        /* remove italic correction */
-	    shift_amount(x) = half(height(x) - depth(x)) - math_axis(cur_size);
-	    /* center vertically */
-	    type(nucleus(q)) = sub_box_node;
-	    math_list(nucleus(q)) = x;
-	}
+            x = clean_box(nucleus(q), cur_style);
+            if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits))
+                width(x) = width(x) - delta;    /* remove italic correction */
+            shift_amount(x) = half(height(x) - depth(x)) - math_axis(cur_size);
+            /* center vertically */
+            type(nucleus(q)) = sub_box_node;
+            math_list(nucleus(q)) = x;
+        }
     } else {
         delta = 0;
     }
@@ -3079,7 +3089,7 @@ scaled math_kern_at(internal_font_number f, integer c, int side, int v)
         kerns_heights = co->bottom_right_math_kern_array;
     } else {
         tconfusion("math_kern_at");
-        kerns_heights = NULL; /* not reached */
+        kerns_heights = NULL;   /* not reached */
     }
 #ifdef DEBUG
     fprintf(stderr, "   entry 0: %d,%d\n", kerns_heights[0], kerns_heights[1]);
@@ -3299,11 +3309,11 @@ void make_scripts(pointer q, pointer p, scaled it)
                                        sub_mark_cmd, shift_down);
                     if (delta2 != MATH_KERN_NOT_FOUND && delta2 != 0) {
                         p = attach_hkern_to_new_hlist(q, delta2);
-                    } 
+                    }
                 }
             }
             /* now the horizontal shift for the superscript. */
-            /* the superscript is also to be shifted by |delta1| (the italic correction)*/
+            /* the superscript is also to be shifted by |delta1| (the italic correction) */
             clr = MATH_KERN_NOT_FOUND;
             if (is_char_node(p) && supscr(q) != null
                 && type(subscr(q)) == math_char_node) {
@@ -3315,7 +3325,7 @@ void make_scripts(pointer q, pointer p, scaled it)
                 }
             }
             if (delta2 == MATH_KERN_NOT_FOUND)
-               delta2=0;
+                delta2 = 0;
             if (clr != MATH_KERN_NOT_FOUND) {
                 shift_amount(x) = clr + delta1 - delta2;
             } else {

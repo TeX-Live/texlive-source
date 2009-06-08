@@ -27,7 +27,7 @@
 #include "hyphen.h"
 
 static const char _svn_version[] =
-    "$Id: texlang.c 2338 2009-04-20 06:37:43Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lang/texlang.c $";
+    "$Id: texlang.c 2450 2009-06-08 08:30:52Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lang/texlang.c $";
 
 /* functions from the fontforge unicode library */
 
@@ -223,7 +223,7 @@ integer get_post_exhyphen_char(integer n)
 
 void load_patterns(struct tex_language *lang, unsigned char *buffer)
 {
-  if (lang == NULL || buffer == NULL || strlen((char *)buffer) == 0)
+    if (lang == NULL || buffer == NULL || strlen((char *) buffer) == 0)
         return;
     if (lang->patterns == NULL) {
         lang->patterns = hnj_hyphen_new();
@@ -247,7 +247,12 @@ void load_tex_patterns(int curlang, halfword head)
 }
 
 
-#define STORE_CHAR(x) { word[w] = x ; if (w<MAX_WORD_LEN) w++; }
+#define STORE_CHAR(x) do {						\
+    int xx = get_lc_code(x);						\
+    if (xx==0) xx = 0xFFFE;						\
+    word[w] = xx;							\
+    if (w<MAX_WORD_LEN) w++;						\
+  } while (0)
 
 /* todo change this! */
 
@@ -852,7 +857,7 @@ void hnj_hyphenation(halfword head, halfword tail)
                clang == char_lang(r) &&
                (lchar = get_lc_code(character(r))) > 0) {
             wordlen++;
-            hy = utf8_idpb(hy, character(r));
+            hy = utf8_idpb(hy, lchar);
             /* this should not be needed  any more */
             /*if (vlink(r)!=null) alink(vlink(r))=r; */
             end_word = r;

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: commands.h 2280 2009-04-14 09:49:01Z taco $ */
+/* $Id: commands.h 2448 2009-06-08 07:43:50Z taco $ */
 
 
 typedef enum {
@@ -235,7 +235,7 @@ typedef enum {
     convert_pdf_colorstack_init_code,   /* command code for \.{\\pdfcolorstackinit} */
     convert_luatex_revision_code,       /* command code for \.{\\luatexrevision} */
     convert_luatex_date_code,   /* command code for \.{\\luatexdate} */
-    convert_math_style_code,      /* command code for \.{\\mathstyle} */
+    convert_math_style_code,    /* command code for \.{\\mathstyle} */
     convert_expanded_code,      /* command code for \.{\\expanded} */
     convert_job_name_code,      /* command code for \.{\\jobname} */
 #define  convert_pdftex_convert_codes convert_job_name_code     /* end of \pdfTeX's command codes */

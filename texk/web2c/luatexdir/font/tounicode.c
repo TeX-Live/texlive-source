@@ -20,7 +20,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: tounicode.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/tounicode.c $";
+    "$Id: tounicode.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/tounicode.c $";
 
 #define isXdigit(c) (isdigit(c) || ('A' <= (c) && (c) <= 'F'))
 #define UNI_UNDEF          -1
@@ -31,7 +31,7 @@ static struct avl_table *glyph_unicode_tree = NULL;
 
 static int comp_glyph_unicode_entry(const void *pa, const void *pb, void *p)
 {
-    (void)p;
+    (void) p;
     return strcmp(((const glyph_unicode_entry *) pa)->name,
                   ((const glyph_unicode_entry *) pb)->name);
 }
@@ -49,7 +49,7 @@ static glyph_unicode_entry *new_glyph_unicode_entry(void)
 static void destroy_glyph_unicode_entry(void *pa, void *pb)
 {
     glyph_unicode_entry *e = (glyph_unicode_entry *) pa;
-    (void)pb;
+    (void) pb;
     xfree(e->name);
     if (e->code == UNI_STRING) {
         assert(e->unicode_seq != NULL);

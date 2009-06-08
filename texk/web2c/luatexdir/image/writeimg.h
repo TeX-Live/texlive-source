@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writeimg.h 2327 2009-04-18 12:47:21Z hhenkel $ */
+/* $Id: writeimg.h 2448 2009-06-08 07:43:50Z taco $ */
 
 #ifndef WRITEIMG_H
 #  define WRITEIMG_H
@@ -44,8 +44,8 @@ integer image_objnum(integer);
 integer image_pages(integer);
 integer image_width(integer);
 integer img_to_array(image *);
-integer read_image(integer, integer, str_number, integer, str_number, str_number,
-                   integer, integer, integer, integer);
+integer read_image(integer, integer, str_number, integer, str_number,
+                   str_number, integer, integer, integer, integer);
 void check_pdfstream_dict(image_dict *);
 void dumpimagemeta(void);
 void free_image_dict(image_dict * p);

@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: lfontlib.c 2349 2009-04-22 12:13:26Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/lfontlib.c $";
+    "$Id: lfontlib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/lua/lfontlib.c $";
 
 #define TIMERS 0
 
@@ -34,12 +34,12 @@ static const char _svn_version[] =
 /* this function is in vfovf.c for the moment */
 extern int make_vf_table(lua_State * L, char *name, scaled s);
 
-static int get_fontid (void)
+static int get_fontid(void)
 {
-  if (font_tables==NULL || font_tables[0]==NULL) {
-    create_null_font();
-  }
-  return new_font();
+    if (font_tables == NULL || font_tables[0] == NULL) {
+        create_null_font();
+    }
+    return new_font();
 }
 
 static int font_read_tfm(lua_State * L)
@@ -222,7 +222,7 @@ static int deffont(lua_State * L)
         tvdiff -= (double) tva.tv_usec;
         tvdiff /= 1000000;
         fprintf(stdout, "font.define(%s,%i): %f seconds\n",
-                font_fullname(i),i, tvdiff);
+                font_fullname(i), i, tvdiff);
 #endif
         lua_pushnumber(L, i);
         return 1;

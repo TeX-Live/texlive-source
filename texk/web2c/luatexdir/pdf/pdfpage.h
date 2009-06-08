@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfpage.h 2336 2009-04-19 08:38:24Z hhenkel $ */
+/* $Id: pdfpage.h 2448 2009-06-08 07:43:50Z taco $ */
 
 #ifndef PDFPAGE_H
 #  define PDFPAGE_H
@@ -45,10 +45,10 @@ typedef enum { WMODE_H, WMODE_V } writing_mode; /* []TJ runs horizontal or verti
 
 #  define setpdffloat(a,b,c) {(a).m = (b); (a).e = (c);}
 
-#ifdef hz
+#  ifdef hz
 /* AIX 4.3 defines hz as 100 in system headers */
-#undef hz
-#endif
+#    undef hz
+#  endif
 
 typedef struct {
     pdfpos pdf;                 /* pos. on page (PDF page raster) */

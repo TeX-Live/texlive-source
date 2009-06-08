@@ -23,8 +23,8 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: vfovf.c 2414 2009-06-03 12:57:01Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/vfovf.c $";
+    "$Id: vfovf.c 2448 2009-06-08 07:43:50Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/vfovf.c $";
 
 /* this is a hack! */
 #define font_max 5000
@@ -1235,16 +1235,16 @@ int make_vf_table(lua_State * L, char *cnom, scaled atsize)
                 case set_rule:
                     vf_read(4, h);
                     vf_read(4, v);
-                    make_command2("rule", store_scaled_f(h, atsize), store_scaled_f(v, atsize),
-                                  k);
+                    make_command2("rule", store_scaled_f(h, atsize),
+                                  store_scaled_f(v, atsize), k);
                     packet_length -= 8;
                     break;
                 case put_rule:
                     vf_read(4, h);
                     vf_read(4, v);
                     make_command0("push", k);
-                    make_command2("rule", store_scaled_f(h, atsize), store_scaled_f(v, atsize),
-                                  k);
+                    make_command2("rule", store_scaled_f(h, atsize),
+                                  store_scaled_f(v, atsize), k);
                     make_command0("pop", k);
                     packet_length -= 8;
                     break;

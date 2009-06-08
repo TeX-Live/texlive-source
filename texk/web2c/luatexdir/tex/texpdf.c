@@ -22,7 +22,7 @@
 #include <ctype.h>
 
 static const char _svn_version[] =
-    "$Id: texpdf.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/texpdf.c $";
+    "$Id: texpdf.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/tex/texpdf.c $";
 
 #define number_chars 1114112
 #define string_offset 2097152

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texfont.h 2414 2009-06-03 12:57:01Z taco $ */
+/* $Id: texfont.h 2448 2009-06-08 07:43:50Z taco $ */
 
 /* Here we have the interface to LuaTeX's font system, as seen from the
    main pascal program. There is a companion list in luatex.defines to
@@ -397,9 +397,9 @@ typedef enum {
 #  define space_stretch(f) font_param(f,space_stretch_code)
 #  define space_shrink(f)  font_param(f,space_shrink_code)
 #  define x_height(f)      font_param(f,x_height_code)
-#ifdef quad
-#  undef quad
-#endif
+#  ifdef quad
+#    undef quad
+#  endif
 #  define quad(f)          font_param(f,quad_code)
 #  define extra_space(f)   font_param(f,extra_space_code)
 

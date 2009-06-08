@@ -22,7 +22,7 @@
 #include <string.h>
 
 static const char _svn_version[] =
-    "$Id: subfont.c 2306 2009-04-16 15:01:45Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/subfont.c $";
+    "$Id: subfont.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/subfont.c $";
 
 static struct avl_table *sfd_tree = NULL;
 
@@ -69,7 +69,7 @@ static void destroy_sfd_entry(void *pa, void *pb)
     subfont_entry *p, *q;
     sfd_entry *sfd;
     sfd = (sfd_entry *) pa;
-    (void)pb;
+    (void) pb;
     p = sfd->subfont;
     while (p != NULL) {
         q = p->next;
@@ -82,7 +82,7 @@ static void destroy_sfd_entry(void *pa, void *pb)
 
 static int comp_sfd_entry(const void *pa, const void *pb, void *p)
 {
-    (void)p;
+    (void) p;
     return strcmp(((const sfd_entry *) pa)->name,
                   ((const sfd_entry *) pb)->name);
 }

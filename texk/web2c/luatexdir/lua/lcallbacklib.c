@@ -21,7 +21,7 @@
 #include <ptexlib.h>
 
 static const char _svn_version[] =
-    "$Id: lcallbacklib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
+    "$Id: lcallbacklib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
 extern int do_run_callback(int special, char *values, va_list vl);
 extern int lua_traceback(lua_State * L);
@@ -430,10 +430,10 @@ static int callback_register(lua_State * L)
 {
     int cb;
     char *s;
-    if (!lua_isstring(L, 1) || 
-	((!lua_isfunction(L, 2)) && 
-	 (!lua_isnil(L, 2)) &&
-	 (!(lua_isboolean(L, 2) && lua_toboolean(L,2)==0)))) {
+    if (!lua_isstring(L, 1) ||
+        ((!lua_isfunction(L, 2)) &&
+         (!lua_isnil(L, 2)) &&
+         (!(lua_isboolean(L, 2) && lua_toboolean(L, 2) == 0)))) {
         lua_pushnil(L);
         lua_pushstring(L, "Invalid arguments to callback.register.");
         return 2;

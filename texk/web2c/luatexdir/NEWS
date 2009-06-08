@@ -1,4 +1,27 @@
 ==============================================================
+Luatex beta-0.40.3 was released 20090608
+==============================================================
+
+* A set of portability fixes for the AIX compiler from Vladimir
+  Volovich.
+
+* A set of fixes to the synctex support.
+
+* A patch to the build script to prevent installed X11 headers 
+  from being required.
+
+* Some weave (web syntax) fixes from Manuel Pégourié-Gonnard.
+
+* A simplification in luatex.ch (it is now less verbose
+  about the web2c-specific extensions) from Karl Berry.
+
+* A fix in the handling of UTF-8 (input) file names.
+
+* Hyphenation exceptions were case sensitive in 0.40.2.
+
+* libpng is now 1.2.37.
+
+==============================================================
 Luatex beta-0.40.2 was released 20090603
 ==============================================================
 
@@ -781,7 +804,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

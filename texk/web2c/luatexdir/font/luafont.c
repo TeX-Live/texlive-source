@@ -1,6 +1,6 @@
 /* luafont.c
    
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -23,7 +23,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: luafont.c 2312 2009-04-17 15:43:13Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/luafont.c $";
+    "$Id: luafont.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/luafont.c $";
 
 #define noVERBOSE
 
@@ -107,10 +107,12 @@ static void dump_intfield(lua_State * L, char *n, int c)
 }
 
 
-void dump_math_kerns (lua_State *L, charinfo *co, int l, int id) {
-  int i;
-  for (i=0; i<l;i++) {
-    lua_newtable(L);
+void dump_math_kerns(lua_State * L, charinfo * co, int l, int id)
+{
+    int i;
+    for (i = 0; i < l; i++) {
+        lua_newtable(L);
+    /* *INDENT-OFF* */
     if (id==top_left_kern) {
         dump_intfield(L, "height", co->top_left_math_kern_array[(2*i)]);
         dump_intfield(L, "kern",   co->top_left_math_kern_array[(2*i)+1]);
@@ -124,8 +126,9 @@ void dump_math_kerns (lua_State *L, charinfo *co, int l, int id) {
         dump_intfield(L, "height", co->bottom_left_math_kern_array[(2*i)]);
         dump_intfield(L, "kern",   co->bottom_left_math_kern_array[(2*i)+1]);
     }
-    lua_rawseti(L,-2, (i+1));
-  }
+    /* *INDENT-ON* */
+        lua_rawseti(L, -2, (i + 1));
+    }
 }
 
 
@@ -287,37 +290,37 @@ void font_char_to_lua(lua_State * L, internalfontnumber f, charinfo * co)
 
     i = get_charinfo_math_kerns(co, top_right_kern);
     j = 0;
-    if (i>0) {
+    if (i > 0) {
         j++;
         lua_newtable(L);
         dump_math_kerns(L, co, i, top_right_kern);
         lua_setfield(L, -2, "top_right");
     }
     i = get_charinfo_math_kerns(co, top_left_kern);
-    if (i>0) {
+    if (i > 0) {
         j++;
         lua_newtable(L);
         dump_math_kerns(L, co, i, top_left_kern);
         lua_setfield(L, -2, "top_left");
     }
     i = get_charinfo_math_kerns(co, bottom_right_kern);
-    if (i>0) {
+    if (i > 0) {
         j++;
         lua_newtable(L);
         dump_math_kerns(L, co, i, bottom_right_kern);
         lua_setfield(L, -2, "bottom_right");
     }
     i = get_charinfo_math_kerns(co, bottom_left_kern);
-    if (i>0) {
+    if (i > 0) {
         j++;
         lua_newtable(L);
         dump_math_kerns(L, co, i, bottom_left_kern);
         lua_setfield(L, -2, "bottom_left");
     }
-    if (j>0) 
+    if (j > 0)
         lua_setfield(L, -2, "mathkern");
     else
-        lua_pop(L,1);
+        lua_pop(L, 1);
 
 }
 
@@ -378,7 +381,7 @@ int font_to_lua(lua_State * L, int f)
 {
     int k;
     charinfo *co;
-    if (font_cache_id(f)>0) {
+    if (font_cache_id(f) > 0) {
         /* fetch the table from the registry if  it was 
            saved there by font_from_lua() */
         lua_rawgeti(L, LUA_REGISTRYINDEX, font_cache_id(f));
@@ -509,9 +512,9 @@ int font_to_lua(lua_State * L, int f)
     }
     lua_setfield(L, -2, "characters");
 
-    if (font_cache_id(f)==0) { /* renew */
+    if (font_cache_id(f) == 0) {        /* renew */
         integer r;
-        lua_pushvalue(L,-1);
+        lua_pushvalue(L, -1);
         r = luaL_ref(Luas, LUA_REGISTRYINDEX);  /* pops the table */
         set_font_cache_id(f, r);
     }
@@ -1124,37 +1127,36 @@ static void read_lua_math_parameters(lua_State * L, int f)
 #define MIN_INF -0x7FFFFFFF
 
 
-static void 
-store_math_kerns (lua_State * L, charinfo *co, int id )
+static void store_math_kerns(lua_State * L, charinfo * co, int id)
 {
     int l, k;
     scaled ht, krn;
-    if (lua_istable(L, -1) && ((k=lua_objlen(L,-1))>0)) {
-        for (l=0;l<k;l++) {
-            lua_rawgeti(L,-1,(l+1));
+    if (lua_istable(L, -1) && ((k = lua_objlen(L, -1)) > 0)) {
+        for (l = 0; l < k; l++) {
+            lua_rawgeti(L, -1, (l + 1));
             if (lua_istable(L, -1)) {
                 lua_getfield(L, -1, "height");
-                if (lua_isnumber(L,-1)) {
-                    ht = (scaled)lua_tonumber(L,-1);
+                if (lua_isnumber(L, -1)) {
+                    ht = (scaled) lua_tonumber(L, -1);
                 } else {
                     ht = MIN_INF;
                 }
-                lua_pop(L,1);
+                lua_pop(L, 1);
                 lua_getfield(L, -1, "kern");
-                if (lua_isnumber(L,-1)) {
-                    krn = (scaled)lua_tonumber(L,-1);
+                if (lua_isnumber(L, -1)) {
+                    krn = (scaled) lua_tonumber(L, -1);
                 } else {
                     krn = MIN_INF;
                 }
-                lua_pop(L,1);
-                if (krn>MIN_INF && ht>MIN_INF) 
-                    add_charinfo_math_kern(co,id,ht,krn);
+                lua_pop(L, 1);
+                if (krn > MIN_INF && ht > MIN_INF)
+                    add_charinfo_math_kern(co, id, ht, krn);
             }
-            lua_pop(L,1);
+            lua_pop(L, 1);
         }
     }
 }
-    
+
 void
 font_char_from_lua(lua_State * L, internal_font_number f, integer i,
                    integer * l_fonts)
@@ -1284,22 +1286,22 @@ font_char_from_lua(lua_State * L, internal_font_number f, integer i,
            ["top_left"]    ={ { ["height"]=620, ["kern"]=0   }, { ["height"]=720,  ["kern"]=-80 } },
            ["top_right"]   ={ { ["height"]=676, ["kern"]=115 }, { ["height"]=776,  ["kern"]=45  } },
            } 
-        */
+         */
         lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_mathkern_index);
         lua_rawget(L, -2);
         if (lua_istable(L, -1)) {
             lua_getfield(L, -1, "top_left");
             store_math_kerns(L, co, top_left_kern);
-            lua_pop(L,1);
+            lua_pop(L, 1);
             lua_getfield(L, -1, "top_right");
             store_math_kerns(L, co, top_right_kern);
-            lua_pop(L,1);
+            lua_pop(L, 1);
             lua_getfield(L, -1, "bottom_right");
             store_math_kerns(L, co, bottom_right_kern);
-            lua_pop(L,1);
+            lua_pop(L, 1);
             lua_getfield(L, -1, "bottom_left");
             store_math_kerns(L, co, bottom_left_kern);
-            lua_pop(L,1);
+            lua_pop(L, 1);
         }
         lua_pop(L, 1);
 
@@ -1433,18 +1435,18 @@ int font_from_lua(lua_State * L, int f)
     int ec;                     /* last char index */
     char *s;
     integer *l_fonts = NULL;
-    integer save_ref = 1; /* unneeded, really */
+    integer save_ref = 1;       /* unneeded, really */
 
     /* will we save a cache of the luat table? */
     s = string_field(L, "cache", "yes");
-    if (strcmp(s,"yes")==0)
-        save_ref=1;
-    else if (strcmp(s,"no")==0)
-        save_ref=-1;
-    else if (strcmp(s,"renew")==0)
-        save_ref=0;
+    if (strcmp(s, "yes") == 0)
+        save_ref = 1;
+    else if (strcmp(s, "no") == 0)
+        save_ref = -1;
+    else if (strcmp(s, "renew") == 0)
+        save_ref = 0;
     free(s);
-        
+
     /* the table is at stack index -1 */
 
     if (luaS_width_index == 0)
@@ -1664,8 +1666,8 @@ int font_from_lua(lua_State * L, int f)
                         font_name(f));
         }
 
-        if (save_ref>0) {
-            r = luaL_ref(Luas, LUA_REGISTRYINDEX);  /* pops the table */
+        if (save_ref > 0) {
+            r = luaL_ref(Luas, LUA_REGISTRYINDEX);      /* pops the table */
             set_font_cache_id(f, r);
         } else {
             lua_pop(Luas, 1);
@@ -1747,7 +1749,7 @@ static void nesting_prepend_list(halfword nest, halfword newn)
     } else {
         halfword tail = tail_of_list(newn);
         assert(alink(head) == nest);
-        assert(tail_of_list(head) == tlink(nest)); 
+        assert(tail_of_list(head) == tlink(nest));
         couple_nodes(tail, head);
     }
 }
@@ -1995,36 +1997,37 @@ static halfword handle_lig_word(halfword cur)
             if (vlink_no_break(cur) != null || vlink_post_break(cur) != null) {
                 halfword fwd;
                 liginfo lig;
-                if (vlink_post_break(cur)!=null)
-                    handle_lig_nest(post_break(cur),vlink_post_break(cur));
-                if (vlink_no_break(cur)!=null)
-                    handle_lig_nest(no_break(cur),vlink_no_break(cur));
-                while ((fwd = vlink(cur)) != null ) {
-                  halfword nob, pst, next;
-                    if (type(fwd) != glyph_node) break;
+                if (vlink_post_break(cur) != null)
+                    handle_lig_nest(post_break(cur), vlink_post_break(cur));
+                if (vlink_no_break(cur) != null)
+                    handle_lig_nest(no_break(cur), vlink_no_break(cur));
+                while ((fwd = vlink(cur)) != null) {
+                    halfword nob, pst, next;
+                    if (type(fwd) != glyph_node)
+                        break;
                     nob = tlink_no_break(cur);
                     pst = tlink_post_break(cur);
                     if ((nob == null || !test_ligature(&lig, nob, fwd)) &&
-                        (pst == null || !test_ligature(&lig, pst, fwd)) )
+                        (pst == null || !test_ligature(&lig, pst, fwd)))
                         break;
-                    nesting_append(no_break(cur),copy_node(fwd));
-                    handle_lig_nest(no_break(cur),nob);
+                    nesting_append(no_break(cur), copy_node(fwd));
+                    handle_lig_nest(no_break(cur), nob);
                     next = vlink(fwd);
                     uncouple_node(fwd);
                     try_couple_nodes(cur, next);
-                    nesting_append(post_break(cur),fwd);
-                    handle_lig_nest(post_break(cur),pst);
+                    nesting_append(post_break(cur), fwd);
+                    handle_lig_nest(post_break(cur), pst);
                 }
                 if (fwd != null && type(fwd) == disc_node) {
                     halfword next = vlink(fwd);
-                    if (vlink_no_break(fwd)==null &&
-                        vlink_post_break(fwd)==null &&
+                    if (vlink_no_break(fwd) == null &&
+                        vlink_post_break(fwd) == null &&
                         next != null &&
                         type(next) == glyph_node &&
-                        ((tlink_post_break(cur)!= null &&
-                          test_ligature(&lig,tlink_post_break(cur),next)) ||
-                         (tlink_no_break(cur)!= null &&
-                          test_ligature(&lig,tlink_no_break(cur),next)))) {
+                        ((tlink_post_break(cur) != null &&
+                          test_ligature(&lig, tlink_post_break(cur), next)) ||
+                         (tlink_no_break(cur) != null &&
+                          test_ligature(&lig, tlink_no_break(cur), next)))) {
                         /* Building an init_disc followed by a select_disc
                          * {a-}{b}{AB} {-}{}{} 'c'
                          */
@@ -2032,26 +2035,31 @@ static halfword handle_lig_word(halfword cur)
                         uncouple_node(next);
                         try_couple_nodes(fwd, last);
                         /* {a-}{b}{AB} {-}{c}{} */
-                        nesting_append(post_break(fwd),copy_node(next));
+                        nesting_append(post_break(fwd), copy_node(next));
                         /* {a-}{b}{AB} {-}{c}{-} */
-                        if (vlink_no_break(cur)!=null) {
-                            nesting_prepend(no_break(fwd),copy_node(vlink_pre_break(fwd)));
+                        if (vlink_no_break(cur) != null) {
+                            nesting_prepend(no_break(fwd),
+                                            copy_node(vlink_pre_break(fwd)));
                         }
                         /* {a-}{b}{AB} {b-}{c}{-} */
-                        if (vlink_post_break(cur)!=null) 
-                            nesting_prepend_list(pre_break(fwd),copy_node_list(vlink_post_break(cur)));
+                        if (vlink_post_break(cur) != null)
+                            nesting_prepend_list(pre_break(fwd),
+                                                 copy_node_list(vlink_post_break
+                                                                (cur)));
                         /* {a-}{b}{AB} {b-}{c}{AB-} */
-                        if (vlink_no_break(cur)!=null) {
-                            nesting_prepend_list(no_break(fwd),copy_node_list(vlink_no_break(cur)));
+                        if (vlink_no_break(cur) != null) {
+                            nesting_prepend_list(no_break(fwd),
+                                                 copy_node_list(vlink_no_break
+                                                                (cur)));
                         }
                         /* {a-}{b}{ABC} {b-}{c}{AB-} */
                         tail = tlink_no_break(cur);
-                        nesting_append(no_break(cur),copy_node(next));
-                        handle_lig_nest(no_break(cur),tail);
+                        nesting_append(no_break(cur), copy_node(next));
+                        handle_lig_nest(no_break(cur), tail);
                         /* {a-}{BC}{ABC} {b-}{c}{AB-} */
                         tail = tlink_post_break(cur);
-                        nesting_append(post_break(cur),next);
-                        handle_lig_nest(post_break(cur),tail);
+                        nesting_append(post_break(cur), next);
+                        handle_lig_nest(post_break(cur), tail);
                         /* and set the subtypes */
                         subtype(cur) = init_disc;
                         subtype(fwd) = select_disc;

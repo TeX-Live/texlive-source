@@ -23,7 +23,7 @@
 #include <assert.h>
 
 static const char __svn_version[] =
-    "$Id: writezip.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/utils/writezip.c $";
+    "$Id: writezip.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/utils/writezip.c $";
 
 #define ZIP_BUF_SIZE  32768
 

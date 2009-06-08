@@ -1,6 +1,6 @@
 /* tfmofm.c
    
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -22,7 +22,7 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: tfmofm.c 2414 2009-06-03 12:57:01Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/font/tfmofm.c $";
+    "$Id: tfmofm.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/tfmofm.c $";
 
 /* Here are some macros that help process ligatures and kerns */
 
@@ -375,8 +375,7 @@ additional parameter information, which is explained later.
           xfree(xligs);  xfree(xkerns); return 1; }
 
 
-int
-open_tfm_file(char *nom, unsigned char **tfm_buf, integer * tfm_siz)
+int open_tfm_file(char *nom, unsigned char **tfm_buf, integer * tfm_siz)
 {
     boolean res;                /* was the callback successful? */
     boolean opened;             /* was |tfm_file| successfully opened? */
@@ -557,6 +556,7 @@ scaled store_scaled_f(scaled sq, scaled z_in)
         return (sw - alpha);
     else
         pdf_error(maketexstring("vf"), maketexstring("vf scaling"));
+    return sw;                  /* not reached, just to make the compiler happy */
 }
 
 #define  check_existence(z)                                             \

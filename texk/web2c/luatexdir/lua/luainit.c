@@ -25,7 +25,7 @@
 #include <luatexdir/luatexextra.h>
 
 static const char _svn_version[] =
-    "$Id: luainit.c 2376 2009-05-08 08:40:13Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/lua/luainit.c $";
+    "$Id: luainit.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/lua/luainit.c $";
 
 /* TH: TODO
  *
@@ -626,9 +626,9 @@ void lua_initialize(int ac, char **av)
     }
 }
 
-void
-check_texconfig_init (void) {
-    if (Luas!=NULL) {
+void check_texconfig_init(void)
+{
+    if (Luas != NULL) {
         lua_getglobal(Luas, "texconfig");
         if (lua_istable(Luas, -1)) {
             lua_getfield(Luas, -1, "init");
@@ -636,7 +636,8 @@ check_texconfig_init (void) {
                 int i = lua_pcall(Luas, 0, 0, 0);
                 if (i != 0) {
                     /* Can't be more precise here, called before TeX initialization  */
-                    fprintf(stderr, "This went wrong: %s\n", lua_tostring(Luas, -1));
+                    fprintf(stderr, "This went wrong: %s\n",
+                            lua_tostring(Luas, -1));
                     error();
                 }
             }
@@ -644,20 +645,20 @@ check_texconfig_init (void) {
     }
 }
 
-void write_svnversion(char *v) 
-{       
+void write_svnversion(char *v)
+{
     char *a_head, *n;
     char *a = strdup(v);
     size_t l = strlen("$Id: luatex.web ");
     if (a != NULL) {
         a_head = a;
-        if (strlen(a)>l)
-            a+=l;
+        if (strlen(a) > l)
+            a += l;
         n = a;
-        while (*n!='\0' && *n!=' ')
+        while (*n != '\0' && *n != ' ')
             n++;
         *n = '\0';
-        fprintf(stdout, " luatex.web >= v%s",  a);
-        free (a_head);
+        fprintf(stdout, " luatex.web >= v%s", a);
+        free(a_head);
     }
 }

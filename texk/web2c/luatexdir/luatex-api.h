@@ -126,4 +126,3 @@ extern command_item command_names[];
 extern int callback_callbacks_id;
 
 extern void luainterpreter(void);
-

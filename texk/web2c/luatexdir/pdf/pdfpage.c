@@ -25,8 +25,8 @@
 #include "ptexlib.h"
 
 static const char __svn_version[] =
-    "$Id: pdfpage.c 2414 2009-06-03 12:57:01Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
+    "$Id: pdfpage.c 2448 2009-06-08 07:43:50Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
 
 #define lround(a) (long) floor((a) + 0.5)
 #define setpdffloat(a,b,c) {(a).m = (b); (a).e = (c);}
@@ -61,8 +61,8 @@ static void calc_k2(pdfstructure * p)
         lround(pdf2double(p->hz) * pdf2double(p->ext) * exp10_arr[p->tm[0].e]);
     p->k2 =
         exp10_arr[e_tj +
-              p->cw.e] / (exp10_arr[p->pdf.h.e] * pdf2double(p->fs) *
-                          pdf2double(p->tm[0]));
+                  p->cw.e] / (exp10_arr[p->pdf.h.e] * pdf2double(p->fs) *
+                              pdf2double(p->tm[0]));
 }
 
 void pdf_page_init()
@@ -92,7 +92,7 @@ void pdf_page_init()
     setpdffloat(p->cm[4], 0, decimal_digits);   /* horizontal movement on page */
     setpdffloat(p->cm[5], 0, decimal_digits);   /* vertical movement on page */
     /* for placement inside BT...ET */
-    setpdffloat(p->tm[0], exp10_arr[6], 6); /* mantissa holds HZ expand * ExtendFont */
+    setpdffloat(p->tm[0], exp10_arr[6], 6);     /* mantissa holds HZ expand * ExtendFont */
     setpdffloat(p->tm[1], 0, 0);
     setpdffloat(p->tm[2], 0, 3);        /* mantissa holds SlantFont, 0 = default */
     setpdffloat(p->tm[3], 1, 0);

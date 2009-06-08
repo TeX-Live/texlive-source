@@ -250,8 +250,8 @@ known as `\eTeX'.
 @d pdftex_version_string=='-2.00.0' {current \pdfTeX\ version}
 @#
 @d luatex_version==40 { \.{\\luatexversion} }
-@d luatex_revision=="2" { \.{\\luatexrevision} }
-@d luatex_version_string=='beta-0.40.2' {current \LuaTeX\ version}
+@d luatex_revision=="3" { \.{\\luatexrevision} }
+@d luatex_version_string=='beta-0.40.3' {current \LuaTeX\ version}
 @d luatex_date_info==-extra_version_info { the compile date is negated }
 @d luatex_svnversion=='$Id$'
    {for long --version information, as proposed by Peter M\"unster}
@@ -11839,7 +11839,7 @@ if callback_defined(start_run_callback)=0 then begin
 @.**@>
   l:=input_stack[0].limit_field; {last position of first line}
   if buffer[l]=end_line_char then decr(l); { TODO: multichar endlinechar}
-  for k:=1 to l do print(buffer[k]);
+  for k:=1 to l do print_char(buffer[k]);
   print_ln; {now the transcript file contains the first line of input}
   end;
 flush_loggable_info; {should be done always}
@@ -11900,7 +11900,7 @@ if tracefilenames then begin
   if term_offset+length(name)>max_print_line-2 then print_ln
   else if (term_offset>0)or(file_offset>0) then print_char(" ");
   print_char("(");
-  slow_print(name);
+  print_file_name(0,name,0);
 end;
 incr(open_parens);
 update_terminal;
@@ -21283,7 +21283,7 @@ node $r_j$ is followed by |r@t$_{j+1}$@>=vlink(r@t$_j$@>)|; and if there are
 each node in this list refers to an insertion number; for example, `\.{\\insert
 250}' would correspond to a node whose |subtype| is |qi(250)|
 (the same as the |subtype| field of the relevant |ins_node|). These |subtype|
-fields are in increasing order, and |subtype(page_ins_head)=65535, so
+fields are in increasing order, and |subtype(page_ins_head)=65535|, so
 |page_ins_head| serves as a convenient sentinel
 at the end of the list. A record is present for each insertion number that
 appears in the current page.
@@ -21483,7 +21483,7 @@ last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
 last_node_type:=-1;
 page_depth:=0; page_max_depth:=0
 
-@ At certain times box \outputbox is supposed to be void (i.e., |null|),
+@ At certain times box \.{\\outputbox} is supposed to be void (i.e., |null|),
 or an insertion box is supposed to be ready to accept a vertical list.
 If not, an error message is printed, and the following subroutine
 flushes the unwanted contents, reporting them to the user.
@@ -23279,7 +23279,7 @@ begin if cur_cmd=vadjust then cur_val:=output_box
 else  begin scan_register_num;
   if cur_val=output_box then
     begin print_err("You can't "); print_esc("insert"); print_int(output_box);
-@.You can't \\insert\outputbox@>
+@.You can't \\insert\\outputbox@>
     help1("I'm changing to \insert0; box \outputbox is special.");
     error; cur_val:=0;
     end;

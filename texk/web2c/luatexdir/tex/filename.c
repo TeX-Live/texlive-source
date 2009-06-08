@@ -22,8 +22,14 @@
 #include "tokens.h"
 #include "commands.h"
 
+
 static const char _svn_version[] =
-    "$Id: filename.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.2/source/texk/web2c/luatexdir/tex/filename.c $";
+    "$Id: filename.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/tex/filename.c $";
+
+/* for use by |scan_file_name|, it comes from fontforge's Unicode library */
+
+extern char *utf8_idpb(char *w, unsigned int i);
+
 
 #define wake_up_terminal() ;
 #define clear_terminal() ;
@@ -159,8 +165,20 @@ void scan_file_name(void)
         if ((cur_chr == ' ') && (state != token_list) && (loc > limit)
             && !quoted_filename)
             break;
-        if (!more_name(cur_chr))
-            break;
+        if (cur_chr > 127) {
+            unsigned char *bytes;
+            unsigned char thebytes[5] = { 0 };
+            utf8_idpb((char *) thebytes, cur_chr);
+            bytes = thebytes;
+            while (*bytes) {
+                if (!more_name(*bytes))
+                    break;
+                bytes++;
+            }
+        } else {
+            if (!more_name(cur_chr))
+                break;
+        }
         get_x_token();
     }
     end_name();
