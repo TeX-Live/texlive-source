@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.98
-@set month-year May 2009
+@set month-year June 2009
 
 @copying
 This manual documents Dvips version @value{version}
@@ -37,6 +37,7 @@ PostScript.  You may freely use, modify and/or distribute this file.
 @subtitle for version @value{version}
 @subtitle @value{month-year}
 @author Tomas Rokicki
+@author @url{http://tug.org/dvips}
 
 @page
 @insertcopying
