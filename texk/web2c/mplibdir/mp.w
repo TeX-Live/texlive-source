@@ -1,4 +1,4 @@
- $Id: mp.w 1084 2009-06-03 07:40:57Z taco $
+ $Id: mp.w 1096 2009-06-09 12:28:28Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -89,13 +89,13 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 1.202" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 1.203" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @(mpmp.h@>=
-#define metapost_version "1.202"
-#define metapost_magic (('M'*256) + 'P')*65536 + 1202
+#define metapost_version "1.203"
+#define metapost_magic (('M'*256) + 'P')*65536 + 1203
 #define metapost_old_magic (('M'*256) + 'P')*65536 + 1080
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
@@ -279,10 +279,10 @@ MP mp_initialize (MP_options *opt) {
     @<Initialize the output routines@>;
     @<Get the first line of input and prepare to start@>;
     @<Initializations after first line is read@>;
+    @<Fix up |mp->internal[mp_job_name]|@>;
   } else {
     mp->history=mp_spotless;
   }
-  @<Fix up |mp->internal[mp_job_name]|@>;
   return mp;
 }
 
@@ -15899,6 +15899,23 @@ text(frozen_repeat_loop)=intern(" ENDFOR");
     }
     mp->cur_type=mp_known; q=mp_stash_cur_exp(mp); /* make |q| an \&{expr} argument */
     value(p)=mp->cur_exp+step_size(p); /* set |value(p)| for the next iteration */
+    /* detect numeric overflow */
+    if ((step_size(p)>0) && (value(p)<mp->cur_exp)) {
+       if (final_value(p)>0) {
+         value(p)=final_value(p);
+         final_value(p) = final_value(p) - 1;
+       } else {
+         value(p)=final_value(p)+1;
+       }
+    } else if ((step_size(p)<0) && (value(p)>mp->cur_exp)) {
+       if (final_value(p)<0) {
+         value(p)=final_value(p);
+         final_value(p) = final_value(p)+1;
+       } else {
+         value(p)=final_value(p)-1;
+       }
+    }
+    
   } else if ( p==null ) { 
     p=loop_list(mp->loop_ptr);
     if ( p==null ) {
@@ -18403,6 +18420,8 @@ static void mp_scan_expression (MP mp) {
   int t; /* knot type following a path join */
   t=0; y=0; x=0;
   my_var_flag=mp->var_flag; mac_name=null;
+  mp->expand_depth_count++;
+  mp_check_expansion_depth(mp);
 RESTART:
   if ((mp->cur_cmd<min_primary_command)||
       (mp->cur_cmd>max_primary_command) )
@@ -18434,6 +18453,7 @@ CONTINUE:
         goto CONTINUE;
      }
   }
+  mp->expand_depth_count--;
 }
 
 @ The reader should review the data structure conventions for paths before
@@ -22813,6 +22833,7 @@ if (mp->troff_mode) {
   mp->internal[mp_gtroffmode]=unity; 
   mp->internal[mp_prologues]=unity; 
 }
+@<Fix up |mp->internal[mp_job_name]|@>;
 if ( mp->start_sym>0 ) { /* insert the `\&{everyjob}' symbol */
   mp->cur_sym=mp->start_sym; mp_back_input(mp);
 }
@@ -26036,7 +26057,8 @@ static char * mp_get_output_file_name (MP mp) {
   char *f;
   char *saved_name;  /* saved |name_of_file| */
   saved_name = xstrdup(mp->name_of_file);
-  f = mp_set_output_file_name(mp, mp_round_unscaled(mp, mp->internal[mp_char_code]));
+  (void)mp_set_output_file_name(mp, mp_round_unscaled(mp, mp->internal[mp_char_code]));
+  f = xstrdup(mp->name_of_file);
   mp_pack_file_name(mp, saved_name,NULL,NULL);
   free(saved_name);
   return f;

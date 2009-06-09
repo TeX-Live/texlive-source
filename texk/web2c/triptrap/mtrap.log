@@ -1,4 +1,4 @@
-This is MetaPost, version 1.202 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
+This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 **mtrap
 (./mtrap.mp
 Memory usage 19&13 (3972 still untouched)
@@ -926,7 +926,7 @@ String usage 16&50 (84&7716 now untouched)
 >> "%!PS"
 >> "%%BoundingBox: -36 -24 84 84 "
 >> "%%HiResBoundingBox: -36 -24 84 84 "
->> "%%Creator: MetaPost 1.202"
+>> "%%Creator: MetaPost 1.203"
 >> "%%Pages: 1"
 >> "%*Font: trapf 9.9628 9.96265 35:c008"
 >> "%%BeginProlog"
