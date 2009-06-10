@@ -1,3 +1,7 @@
+2009-06-10  Karl Berry  <karl@tug.org>
+
+	* dt2dv.c: do not include timestamp in binary.
+
 2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
