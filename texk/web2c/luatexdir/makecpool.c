@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 static const char __svn_version[] =
-    "$Id: makecpool.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.4/source/texk/web2c/luatexdir/makecpool.c $";
+    "$Id: makecpool.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/makecpool.c $";
 
 int main(int argc, char *argv[])
 {

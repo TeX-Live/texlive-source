@@ -27,7 +27,7 @@
 
 static const char _svn_version[] =
     "$Id: mapfile.c 2331 2009-04-18 16:39:50Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/mapfile.c $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/font/mapfile.c $";
 
 #define FM_BUF_SIZE     1024
 

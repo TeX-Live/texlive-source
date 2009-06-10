@@ -25,7 +25,7 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: writet3.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/writet3.c $";
+    "$Id: writet3.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/font/writet3.c $";
 
 #define T3_BUF_SIZE   1024
 

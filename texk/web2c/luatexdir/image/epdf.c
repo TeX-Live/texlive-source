@@ -26,7 +26,7 @@
 
 static const char _svn_version[] =
     "$Id: epdf.c 2331 2009-04-18 16:39:50Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/image/epdf.c $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/image/epdf.c $";
 
 fd_entry *epdf_create_fontdescriptor(fm_entry * fm, int stemV)
 {

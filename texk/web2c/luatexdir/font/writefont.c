@@ -23,7 +23,7 @@
 
 static const char _svn_version[] =
     "$Id: writefont.c 2331 2009-04-18 16:39:50Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/writefont.c $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/font/writefont.c $";
 
 void write_cid_fontdictionary(fo_entry * fo, internalfontnumber f);
 void create_cid_fontdictionary(fm_entry * fm, integer font_objnum,

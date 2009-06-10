@@ -23,7 +23,7 @@
 #include <string.h>
 
 static const char _svn_version[] =
-    "$Id: writettf.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/writettf.c $";
+    "$Id: writettf.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/font/writettf.c $";
 
 #define DEFAULT_NTABS       14
 #define NEW_CMAP_SIZE       2

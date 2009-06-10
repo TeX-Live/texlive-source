@@ -26,7 +26,7 @@
 
 static const char __svn_version[] =
     "$Id: pdfpage.c 2448 2009-06-08 07:43:50Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
 
 #define lround(a) (long) floor((a) + 0.5)
 #define setpdffloat(a,b,c) {(a).m = (b); (a).e = (c);}

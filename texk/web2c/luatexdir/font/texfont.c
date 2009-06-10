@@ -37,7 +37,7 @@
 #define noDEBUG
 
 static const char _svn_version[] =
-    "$Id: texfont.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/font/texfont.c $";
+    "$Id: texfont.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/font/texfont.c $";
 
 #define proper_char_index(c) (c<=font_ec(f) && c>=font_bc(f))
 #define dxfree(a,b) { xfree(a); a = b ; }

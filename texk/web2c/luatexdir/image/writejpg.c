@@ -24,7 +24,7 @@
 
 static const char _svn_version[] =
     "$Id: writejpg.c 2320 2009-04-18 08:52:30Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.3/source/texk/web2c/luatexdir/image/writejpg.c $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/image/writejpg.c $";
 
 #define JPG_GRAY  1             /* Gray color space, use /DeviceGray    */
 #define JPG_RGB   3             /* RGB color space, use /DeviceRGB      */

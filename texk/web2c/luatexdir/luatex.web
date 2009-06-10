@@ -250,8 +250,8 @@ known as `\eTeX'.
 @d pdftex_version_string=='-2.00.0' {current \pdfTeX\ version}
 @#
 @d luatex_version==40 { \.{\\luatexversion} }
-@d luatex_revision=="4" { \.{\\luatexrevision} }
-@d luatex_version_string=='beta-0.40.4' {current \LuaTeX\ version}
+@d luatex_revision=="5" { \.{\\luatexrevision} }
+@d luatex_version_string=='beta-0.40.5' {current \LuaTeX\ version}
 @d luatex_date_info==-extra_version_info { the compile date is negated }
 @d luatex_svnversion=='$Id$'
    {for long --version information, as proposed by Peter M\"unster}
@@ -2026,19 +2026,11 @@ begin if ((term_offset>0)and(odd(selector)))or@|
   ((file_offset>0)and(selector>=log_only)) then print_ln;
 end;
 
-@ Control sequence names, file names, and strings constructed with
-\.{\\string} might contain |ASCII_code| values that can't
-be printed using |print_char|. Therefore we use |slow_print| for them:
+@ |slow_print| is the same as |print| nowadays, but the name is kept for now.
 
 @<Basic print...@>=
 procedure slow_print(@!s:integer); {prints string |s|}
-var j:pool_pointer; {current character code position}
-begin if (s>=str_ptr) or (s<string_offset) then print(s)
-else begin j:=str_start_macro(s);
-  while j<str_start_macro(s+1) do
-    begin print(so(str_pool[j])); incr(j);
-    end;
-  end;
+begin print(s);
 end;
 
 @ Here is the very first thing that \TeX\ prints: a headline that identifies
