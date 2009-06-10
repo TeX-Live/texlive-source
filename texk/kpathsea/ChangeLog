@@ -1,3 +1,7 @@
+2009-06-10  Karl Berry  <karl@tug.org>
+
+	* ac/web2c.ac (mktexfmt): default to yes.
+
 2009-06-02  Karl Berry  <karl@tug.org>
 
 	* types.h (kpse_file_format_type): add kpse_mlbib_format,
