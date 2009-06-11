@@ -123,7 +123,7 @@ void            rule            P3H(bool, long, long);
 void            ruleaux         P3H(long, long, char);
 long            horizontalmove  P1H(long);
 int             skipnops        P1H(void);
-linetype    *   getline         P1H(void);
+linetype    *   texlive_getline         P1H(void);
 linetype    *   findline        P1H(void);
 unsigned long   num             P1H(int);
 long            snum            P1H(int);
@@ -149,7 +149,7 @@ void            rule            (bool, long, long);
 void            ruleaux         (long, long, char);
 long            horizontalmove  (long);
 int             skipnops        (void);
-linetype    *   getline         (void);
+linetype    *   texlive_getline         (void);
 linetype    *   findline        (void);
 unsigned long   num             (int);
 long            snum            (int);
@@ -174,7 +174,7 @@ void            rule            ();
 void            ruleaux         ();
 long            horizontalmove  ();
 int             skipnops        ();
-linetype    *   getline         ();
+linetype    *   texlive_getline         ();
 linetype    *   findline        ();
 unsigned long   num             ();
 long            snum            ();
@@ -316,7 +316,7 @@ void initpage()
     h = 0L;  v = 0L;                        /* initialize coordinates   */
     x = 0L;  w = 0L;  y = 0L;  z = 0L;      /* initialize amounts       */
     sptr = 0;                               /* initialize stack         */
-    currentline = getline();                /* initialize list of lines */
+    currentline = texlive_getline();                /* initialize list of lines */
     currentline->vv = 0L;
     firstline   = currentline;
     lastline    = currentline;
@@ -671,7 +671,7 @@ int skipnops()                      /* skips by no-op commands  */
 
 /*----------------------------------------------------------------------------*/
 
-linetype *getline()             /* returns an initialized line-object */
+linetype *texlive_getline()             /* returns an initialized line-object */
 {
     register int  i;
     register linetype *temp;
@@ -686,7 +686,7 @@ linetype *getline()             /* returns an initialized line-object */
     temp->text[i] = '\0';
     return temp;
 
-} /* getline */
+} /* texlive_getline */
 
 /*----------------------------------------------------------------------------*/
 
@@ -697,7 +697,7 @@ linetype *findline()            /* find best fit line were text should go */
 
     if (v <= firstline->vv) {                      /* above first line */
         if (firstline->vv - v > VERTICALEPSILON) {
-            temp = getline();
+            temp = texlive_getline();
             temp->next = firstline;
             firstline->prev = temp;
             temp->vv = v;
@@ -708,7 +708,7 @@ linetype *findline()            /* find best fit line were text should go */
 
     if (v >= lastline->vv) {                       /* below last line */
         if (v - lastline->vv > VERTICALEPSILON) {
-            temp = getline();
+            temp = texlive_getline();
             temp->prev = lastline;
             lastline->next = temp;
             temp->vv = v;
@@ -732,7 +732,7 @@ linetype *findline()            /* find best fit line were text should go */
     }
 
     /* no line fits suitable, generate a new one */
-    currentline = getline();
+    currentline = texlive_getline();
     currentline->next = temp->next;
     currentline->prev = temp;
     temp->next->prev = currentline;

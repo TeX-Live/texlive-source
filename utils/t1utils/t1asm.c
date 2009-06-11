@@ -280,7 +280,7 @@ static int check_line_charstring()
    the newline is put into line[]. When terminated by '{', the '{' is not put
    into line[], and the flag start_charstring is set to 1. */
 
-static void getline()
+static void texlive_getline()
 {
   int c;
   char *p = line;
@@ -721,7 +721,7 @@ particular purpose.\n");
      without /Subrs sections and provided a patch. */
   
   while (!feof(ifp) && !ferror(ifp)) {
-    getline();
+    texlive_getline();
     
     if (!ever_active) {
       if (strncmp(line, "currentfile eexec", 17) == 0 && isspace(line[17])) {
@@ -792,7 +792,7 @@ particular purpose.\n");
   
   /* There may be additional code. */
   while (!feof(ifp) && !ferror(ifp)) {
-    getline();
+    texlive_getline();
     eexec_string(line);
   }
   

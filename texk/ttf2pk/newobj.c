@@ -128,13 +128,13 @@ get_line(FILE *f)
 
 
 /*
- *   getline() is a wrapper function for get_line().  It returns `False' in
+ *   texlive_getline() is a wrapper function for get_line().  It returns `False' in
  *   case of error and expects a pointer to a buffer to store the current
  *   line.   Additionally, the final newline character is stripped.
  */
 
 Boolean
-getline(char **bufferp, FILE *f)
+texlive_getline(char **bufferp, FILE *f)
 {
   size_t l;
 

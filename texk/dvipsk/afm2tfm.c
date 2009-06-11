@@ -260,7 +260,7 @@ transform P2C(register int, x, register int, y)
 }
 
 int
-getline P1H(void) {
+texlive_getline P1H(void) {
    register char *p ;
    register int c ;
 
@@ -615,7 +615,7 @@ readadobe P1H(void) {
    ai = newchar() ;
    ai->adobenum = -1 ;
    ai->adobename = "||" ; /* boundary character name */
-   while (getline()) {
+   while (texlive_getline()) {
       switch(interest(paramstring())) {
 case FontName:
          fontname = paramnewstring() ;
@@ -1891,7 +1891,7 @@ char *gettoken() {
 
    while (1) {
       while (param == 0 || *param == 0) {
-         if (getline() == 0)
+         if (texlive_getline() == 0)
             error("! premature end in encoding file") ;
          for (p=buffer; *p; p++)
             if (*p == '%') {
@@ -1982,7 +1982,7 @@ struct encoding *readencoding P1C(char *, enc)
       p = gettoken() ;
       if (strcmp(p, "]"))
          error("! token 258 in encoding must be make-array (])") ;
-      while (getline()) {
+      while (texlive_getline()) {
          for (p=buffer; *p; p++)
             if (*p == '%') {
                if (ignoreligkern == 0)

@@ -345,7 +345,7 @@ P2C (register int, x, register int, y)
 
 /* read a line from infile into buffer and obuffer */
 int
-  get_line
+  texlive_getline
 P1H (void)
 {
   register char *p;
@@ -781,7 +781,7 @@ P1H (void)
     afmencoding->vec[i] = ".notdef";
   afmencoding->name = "Unspecified";
 
-  while (get_line ()) {
+  while (texlive_getline ()) {
     switch (interest (paramstring ())) {
     case FontName:
       fontname = paramnewstring ();
@@ -963,7 +963,7 @@ gettoken ()
 
   while (1) {
     while (param == 0 || *param == 0) {
-      if (get_line () == 0)
+      if (texlive_getline () == 0)
         error ("! premature end in encoding file");
     }
     if (param[0] == '%') {
@@ -1540,7 +1540,7 @@ extraligkerninfo ()
     encfilename =
       openin (encfilename, kpse_enc_format, ".enc");
     for (lig_it = 0; lig_it < 2; lig_it++) {
-      while (get_line ()) {
+      while (texlive_getline ()) {
         /* search for (ligkern) comment in line */
         for (p = buffer; *p; p++)
           if (*p == '%') {
@@ -1576,7 +1576,7 @@ extraligkerninfo ()
     for (i = 0; i < ligfilenames->n; i++) {
       ligfilename = openin (ligfilenames->names[i],
                             kpse_lig_format, ".lig");
-      while (get_line ())
+      while (texlive_getline ())
         checkligkern (buffer, 0);       /* 2nd param 0: lig file */
       fclose (infile);
     }
@@ -1607,7 +1607,7 @@ extraligkerninfo ()
   for (i = 0; i < Ligfilenames->n; i++) {
     ligfilename = openin (Ligfilenames->names[i],
                           kpse_lig_format, ".lig");
-    while (get_line ())
+    while (texlive_getline ())
       checkligkern (buffer, 0);       /* 2nd param 0: lig file */
     fclose (infile);
   }

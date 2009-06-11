@@ -63,7 +63,7 @@ gettoken(char **bufferp, size_t *offsetp, FILE *f, Font *fnt,
       if (*bufferp)
         free(*bufferp);
 
-      if (getline(bufferp, f) == False)
+      if (texlive_getline(bufferp, f) == False)
         oops("Premature end in encoding file.");
 
       curp = *bufferp;
@@ -187,7 +187,7 @@ readencoding(char **enc, Font *fnt, Boolean ignoreligkern)
         "Token 258 in encoding must be make-array (]).");
     free(p);
 
-    while (getline(&buffer, enc_file))
+    while (texlive_getline(&buffer, enc_file))
     {
       for (p = buffer; *p; p++)
         if (*p == '%')
@@ -246,7 +246,7 @@ get_replacements(Font *fnt)
   if (replacement_file == NULL)
     oops("Cannot open replacement file `%s'.", real_replacement_name);
 
-  while (getline(&buffer, replacement_file))
+  while (texlive_getline(&buffer, replacement_file))
   {
     for (p = buffer; *p; p++)
       if (*p == '%')

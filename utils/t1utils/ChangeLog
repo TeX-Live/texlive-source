@@ -1,3 +1,7 @@
+2009-06-12  Francois Charette  <firmicus@ankabut.net>
+
+	* t1asm.c: rename getline to texlive_getline.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

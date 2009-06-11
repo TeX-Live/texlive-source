@@ -26,7 +26,7 @@ void *mycalloc(size_t len);
 void *myrealloc(void *oldp, size_t len);
 
 char *get_line(FILE *f);
-Boolean getline(char **bufferp, FILE *f);
+Boolean texlive_getline(char **bufferp, FILE *f);
 char *newstring(char *s);
 
 ttfinfo *newchar(Font *fnt);
