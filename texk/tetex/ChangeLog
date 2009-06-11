@@ -1,3 +1,9 @@
+2009-06-11  Norbert Preining  <preining@logic.at>
+
+	* fmtutil (log_warning): new fn, related code, so that
+	LaTeX's five-year-old warning does not trigger failure.
+	Debian bug #531595.
+
 2009-05-28  Karl Berry  <karl@tug.org>
 
 	* texconfig.man: update from Frank K, 27 May 2009 23:17:49.

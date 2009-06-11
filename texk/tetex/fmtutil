@@ -84,8 +84,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 progname=fmtutil
 argv0=$0
-version=1205513038 # seconds since `00:00:00 1970-01-01 UTC'
-                   # date '+%s' (with GNU date)
+version=20090611.2319
 
 cnf=fmtutil.cnf   # name of the config file
 export PATH
@@ -259,6 +258,23 @@ verboseMsg() {
 ###############################################################################
 byebye()
 {
+  if $has_warnings; then
+    {
+      cat <<eof
+
+###############################################################################
+$progname: Warning! Some warnings have been issued.
+Visit the log files in directory
+  $destdir
+for details.
+###############################################################################
+
+This is a summary of all \`warning' messages:
+$log_warning_msg
+eof
+    } >&2
+  fi
+
   if $has_errors; then
     {
       cat <<eof
@@ -270,7 +286,7 @@ Visit the log files in directory
 for details.
 ###############################################################################
 
-This is a summary of all \`failed' messages and warnings:
+This is a summary of all \`failed' messages:
 $log_failure_msg
 eof
     } >&2
@@ -281,6 +297,16 @@ eof
 }
 
 ###############################################################################
+# init_log_warning()
+#   reset the list of warning messages
+###############################################################################
+init_log_warning()
+{
+  log_warning_msg=
+  has_warnings=false
+}
+
+###############################################################################
 # init_log_failure()
 #   reset the list of failure messages
 ###############################################################################
@@ -288,6 +314,24 @@ init_log_failure()
 {
   log_failure_msg=
   has_errors=false
+}
+
+###############################################################################
+# log_warning(errmsg)
+#   report and save warning message `errmsg'
+###############################################################################
+log_warning()
+{
+  echo "Warning: $@" >&2
+  if test -z "$log_warning_msg"; then
+    log_warning_msg="$@"
+  else
+    OLDIFS=$IFS; IFS=
+    log_warning_msg="$log_warning_msg
+$@"
+    IFS=$OLDIFS
+  fi
+  has_warnings=true
 }
 
 ###############################################################################
@@ -547,6 +591,7 @@ main()
 
   cache_vars
   init_log_failure
+  init_log_warning
   # execute the desired command:
   case "$cmd" in 
     all)
@@ -706,7 +751,7 @@ run_initex()
   mkdir -p "$fulldestdir"
   if test -f $fmtfile; then
     grep '^! ' $format.log >/dev/null 2>&1 &&
-      log_failure "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' possibly failed."
+      log_warning "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' possibly failed."
 
     # We don't want user-interaction for the following "mv" commands:
     mv "$format.log" "$fulldestdir/$format.log" </dev/null
