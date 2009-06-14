@@ -1,4 +1,14 @@
 /******************************************************************************
+ * dvitty - get an ascii representation of a dvi-file, suitable for ttys
+ 
+This program was originally written in Pascal by 
+Svante Lindahl <svante dot lindahl (at) pantor dot com>
+and then converted to C by Marcel Mol <marcel (at) mesa dot nl>.
+Some changes have been made for TeX Live (see ./ChangeLog).
+
+It is released under the GNU GPL, version 2 or any later version.
+(http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=424018)
+
  * Marcel Mol: 1990-03-27  (UUCP: marcel@duteca.tudelft.nl)
  *               Fixed bug that causes the program to hang when it finds a
  *               fontname with an 's' in it not followed by an 'y'.
@@ -83,18 +93,6 @@
  * VERA::<SVANTE-LINDAHL.DVITTY>DVITTY.PAS.45, 29-Sep-84 18:29:53,
  *  Edit: Svante Lindahl
  *
- * dvitty - get an ascii representation of a dvi-file, suitable for ttys
- *
- * This program, and any documentation for it, is copyrighted by Svante
- * Lindahl. It may be copied for non-commercial use only, provided that
- * any and all copyright notices are preserved.
- *
- * Please report any bugs and/or fixes to:
- *
- * UUCP: {seismo,mcvax,cernvax,diku,ukc,unido}!enea!ttds!zap
- * ARPA: enea!ttds!zap@seismo.CSS.GOV
- *  or   Svante_Lindahl_NADA%QZCOM.MAILNET@MIT-MULTICS.ARPA
- * EAN:  zap@cs.kth.sunet
  */
 
 

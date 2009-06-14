@@ -1,3 +1,11 @@
+2009-06-15  Karl Berry  <karl@tug.org>
+
+	* dvi2tty.c,
+	* README: clarify that it's GPLv2+, per
+	http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=424018.
+	(I do not agree that the VMS folks contributed under the nonfree
+	license.)
+
 2009-06-12  Francois Charette  <firmicus@ankabut.net>
 
 	* dvistuff.c: rename getline to texlive_getline.

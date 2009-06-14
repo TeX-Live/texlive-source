@@ -3,7 +3,7 @@
 
 dvi2tty is intended for previewing dvi-files on text-only
 devices (terminals and lineprinters).
-The program is basicly an improved C version of the pascal
+The program is basically an improved C version of the pascal
 program written by Svante Lindahl (see README.ORG).
 I translated it because I could not find a pascal compiler 
 on our machine that could compile it.
@@ -49,5 +49,5 @@ Thats all, good luck.
 | Marcel J.E. Mol                       | They hate you if your're clever
 | Delft University of Technology        | And they despise the fool
 | The Netherlands                       | Till you're so fucking crazy
-| UUCP: marcel@duteca.tudelft.nl        | You can't follow the rules.
+| UUCP: marcel (at) mesa dot nl         | You can't follow the rules.
 -----------------------------------------			 - Lennon
