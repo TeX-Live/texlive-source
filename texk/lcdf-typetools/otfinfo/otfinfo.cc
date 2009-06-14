@@ -54,6 +54,7 @@ using namespace Efont;
 #define TABLES_OPT		326
 #define QUERY_FAMILY_OPT	327
 #define INFO_OPT		328
+#define DUMP_TABLE_OPT		329
 
 const Clp_Option options[] = {
 
@@ -69,6 +70,7 @@ const Clp_Option options[] = {
     { "info", 'i', INFO_OPT, 0, 0 },
     { "glyphs", 'g', QUERY_GLYPHS_OPT, 0, 0 },
     { "tables", 't', TABLES_OPT, 0, 0 },
+    { "dump-table", 'T', DUMP_TABLE_OPT, Clp_ValString, 0 },
     { "help", 'h', HELP_OPT, 0, 0 },
     { "version", 0, VERSION_OPT, 0, 0 },
 
@@ -117,6 +119,7 @@ Query options:\n\
   -i, --info                   Report font%,s names and designer/vendor info.\n\
   -g, --glyphs                 Report font%,s glyph names.\n\
   -t, --tables                 Report font%,s OpenType tables.\n\
+  -T, --dump-table NAME        Output font%,s %<NAME%> table.\n\
 \n\
 Other options:\n\
       --script=SCRIPT[.LANG]   Set script used for --features [latn].\n\
@@ -445,6 +448,24 @@ do_tables(const OpenType::Font &otf, ErrorHandler *errh, ErrorHandler *result_er
     }
 }
 
+static void
+do_dump_table(const OpenType::Font &otf, OpenType::Tag tag, ErrorHandler *errh)
+{
+    int before_nerrors = errh->nerrors();
+    try {
+	if (otf.has_table(tag)) {
+	    String s = otf.table(tag);
+	    int written = fwrite(s.data(), 1, s.length(), stdout);
+	    if (written != s.length())
+		errh->error("%s", strerror(errno));
+	} else
+	    errh->message("no %<%s%> table", tag.text().c_str());
+    } catch (OpenType::Error) {
+	if (errh->nerrors() == before_nerrors)
+	    errh->message("corrupted tables");
+    }
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -454,6 +475,7 @@ main(int argc, char *argv[])
 
     ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr, String(program_name) + ": "));
     Vector<const char *> input_files;
+    OpenType::Tag dump_table;
     int query = 0;
 
     while (1) {
@@ -491,6 +513,14 @@ main(int argc, char *argv[])
 	  case INFO_OPT:
 	    if (query)
 		usage_error(errh, "supply exactly one query type option");
+	    query = opt;
+	    break;
+
+	case DUMP_TABLE_OPT:
+	    if (query)
+		usage_error(errh, "supply exactly one query type option");
+	    if (!(dump_table = OpenType::Tag(clp->vstr)))
+		usage_error(errh, "bad table name");
 	    query = opt;
 	    break;
 
@@ -575,6 +605,8 @@ particular purpose.\n");
 	    do_query_font_version(otf, &cerrh, result_errh);
 	else if (query == TABLES_OPT)
 	    do_tables(otf, &cerrh, result_errh);
+	else if (query == DUMP_TABLE_OPT)
+	    do_dump_table(otf, dump_table, &cerrh);
 	else if (query == INFO_OPT)
 	    do_info(otf, &cerrh, result_errh);
     }

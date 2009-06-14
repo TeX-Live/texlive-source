@@ -563,6 +563,8 @@ srclinks:
 	ln -sf ../../../liblcdf/include/lcdf/$$i.hh include/lcdf/$$i.hh ; done
 	cd $(top_srcdir); for i in inttypes; do \
 	ln -sf ../../../liblcdf/include/lcdf/$$i.h include/lcdf/$$i.h ; done
+	cd $(top_srcdir); for i in hashcode; do \
+	ln -sf ../../../liblcdf/include/lcdf/$$i.hh include/lcdf/$$i.hh ; done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

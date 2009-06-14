@@ -39,3 +39,5 @@ srclinks:
 	ln -sf ../../../liblcdf/include/lcdf/$$i.hh include/lcdf/$$i.hh ; done
 	cd $(top_srcdir); for i in inttypes; do \
 	ln -sf ../../../liblcdf/include/lcdf/$$i.h include/lcdf/$$i.h ; done
+	cd $(top_srcdir); for i in hashcode; do \
+	ln -sf ../../../liblcdf/include/lcdf/$$i.hh include/lcdf/$$i.hh ; done

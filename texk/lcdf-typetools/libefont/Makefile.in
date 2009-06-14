@@ -67,7 +67,7 @@ am_libefont_a_OBJECTS = afm.$(OBJEXT) afmparse.$(OBJEXT) \
 	t1csgen.$(OBJEXT) t1interp.$(OBJEXT) t1item.$(OBJEXT) \
 	t1font.$(OBJEXT) t1fontskel.$(OBJEXT) t1mm.$(OBJEXT) \
 	t1rw.$(OBJEXT) t1unparser.$(OBJEXT) ttfcs.$(OBJEXT) \
-	ttfhead.$(OBJEXT)
+	ttfhead.$(OBJEXT) ttfkern.$(OBJEXT)
 libefont_a_OBJECTS = $(am_libefont_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -242,7 +242,8 @@ libefont_a_SOURCES = \
 	t1rw.cc \
 	t1unparser.cc \
 	ttfcs.cc \
-	ttfhead.cc
+	ttfhead.cc \
+	ttfkern.cc
 
 libefont_a_LIBADD = @TEMPLATE_OBJS@
 CLEANFILES = @TEMPLATE_OBJS@
@@ -326,6 +327,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t1unparser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ttfcs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ttfhead.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ttfkern.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

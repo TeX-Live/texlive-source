@@ -95,6 +95,7 @@ struct Position {
     inline Position(Glyph, uint16_t format, const Data &);
     inline Position(uint16_t format, const Data &);
     inline Position(Glyph, const Position &);
+    inline Position(Glyph g, int pdx, int pdy, int adx, int ady);
     bool empty() const		{ return pdx == 0 && pdy == 0 && adx == 0 && ady == 0; }
     operator bool() const	{ return !empty(); }
     bool h_empty() const	{ return pdx == 0 && pdy == 0 && adx == 0; }
@@ -196,6 +197,11 @@ inline Position::Position(uint16_t format, const Data &value)
 
 inline Position::Position(Glyph g_, const Position &p)
     : g(g_), pdx(p.pdx), pdy(p.pdy), adx(p.adx), ady(p.ady)
+{
+}
+
+inline Position::Position(Glyph g_, int pdx_, int pdy_, int adx_, int ady_)
+    : g(g_), pdx(pdx_), pdy(pdy_), adx(adx_), ady(ady_)
 {
 }
 

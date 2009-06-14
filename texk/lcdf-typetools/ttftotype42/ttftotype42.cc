@@ -136,6 +136,15 @@ fprint_sfnts(FILE *f, const String &data, bool glyf, const OpenType::Font &font)
 	}
 	fprint_sfnts(f, data.substring(first_offset), false, font);
 	return;
+    } else if (data.length() >= 65535) {
+	for (int offset = 0; offset < data.length(); ) {
+	    int next_offset = offset + 65534;
+	    if (next_offset > data.length())
+		next_offset = data.length();
+	    fprint_sfnts(f, data.substring(offset, next_offset - offset), false, font);
+	    offset = next_offset;
+	}
+	return;
     }
 
     fputc('<', f);

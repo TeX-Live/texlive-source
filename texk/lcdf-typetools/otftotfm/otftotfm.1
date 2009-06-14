@@ -1,5 +1,5 @@
 '\"t
-.ds V 2.78
+.ds V 2.79
 .de M
 .BR "\\$1" "(\\$2)\\$3"
 ..
@@ -1314,7 +1314,9 @@ translating regular "s" to long "s".  Supported.
 .TP 5
 .IR kern ", Kerning"
 Adjusts the space between characters (pair kerning).  Generally supported,
-and you should probably turn it on.
+and you should probably turn it on.  As a special case, "\fB\-f\fRkern" can
+also read kerning information from the "kern" table in conventional
+TrueType fonts.
 .TP 5
 .IR liga ", Standard Ligatures"
 Activates common ligatures, such as "f_f", "f_i", "f_f_j", and (in some

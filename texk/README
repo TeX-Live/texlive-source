@@ -64,9 +64,9 @@ kpathsea - maintained here by Karl Berry, Akira Kakuto, ...
 
 lacheck - ?
 
-lcdf-typetools - checked 13apr09
+lcdf-typetools - checked 15jun09
   http://www.lcdf.org/type/
-  http://www.lcdf.org/type/lcdf-typetools-2.78.tar.gz
+  http://www.lcdf.org/type/lcdf-typetools-2.79.tar.gz
 
 m4 - maintained here, part of our build
 

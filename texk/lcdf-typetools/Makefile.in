@@ -280,28 +280,29 @@ DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj 
 EXTRA_DIST = ONEWS lcdf-typetools.spec include/lcdf/bezier.hh \
 	include/lcdf/clp.h include/lcdf/error.hh \
 	include/lcdf/filename.hh include/lcdf/globmatch.hh \
-	include/lcdf/hashmap.hh include/lcdf/hashmap.cc \
-	include/lcdf/inttypes.h include/lcdf/landmark.hh \
-	include/lcdf/md5.h include/lcdf/permstr.hh \
-	include/lcdf/point.hh include/lcdf/slurper.hh \
-	include/lcdf/straccum.hh include/lcdf/string.hh \
-	include/lcdf/strtonum.h include/lcdf/transform.hh \
-	include/lcdf/vector.hh include/lcdf/vector.cc \
-	include/efont/afm.hh include/efont/afmparse.hh \
-	include/efont/afmw.hh include/efont/amfm.hh \
-	include/efont/cff.hh include/efont/encoding.hh \
-	include/efont/findmet.hh include/efont/metrics.hh \
-	include/efont/otf.hh include/efont/otfcmap.hh \
-	include/efont/otfdata.hh include/efont/otfgpos.hh \
-	include/efont/otfgsub.hh include/efont/otfname.hh \
-	include/efont/otfos2.hh include/efont/otfpost.hh \
-	include/efont/pairop.hh include/efont/psres.hh \
-	include/efont/t1bounds.hh include/efont/t1cs.hh \
-	include/efont/t1csgen.hh include/efont/t1font.hh \
-	include/efont/t1interp.hh include/efont/t1item.hh \
-	include/efont/t1mm.hh include/efont/t1rw.hh \
-	include/efont/t1unparser.hh include/efont/ttfcs.hh \
-	include/efont/ttfhead.hh glyphlist.txt texglyphlist.txt 7t.enc \
+	include/lcdf/hashcode.hh include/lcdf/hashmap.hh \
+	include/lcdf/hashmap.cc include/lcdf/inttypes.h \
+	include/lcdf/landmark.hh include/lcdf/md5.h \
+	include/lcdf/permstr.hh include/lcdf/point.hh \
+	include/lcdf/slurper.hh include/lcdf/straccum.hh \
+	include/lcdf/string.hh include/lcdf/strtonum.h \
+	include/lcdf/transform.hh include/lcdf/vector.hh \
+	include/lcdf/vector.cc include/efont/afm.hh \
+	include/efont/afmparse.hh include/efont/afmw.hh \
+	include/efont/amfm.hh include/efont/cff.hh \
+	include/efont/encoding.hh include/efont/findmet.hh \
+	include/efont/metrics.hh include/efont/otf.hh \
+	include/efont/otfcmap.hh include/efont/otfdata.hh \
+	include/efont/otfgpos.hh include/efont/otfgsub.hh \
+	include/efont/otfname.hh include/efont/otfos2.hh \
+	include/efont/otfpost.hh include/efont/pairop.hh \
+	include/efont/psres.hh include/efont/t1bounds.hh \
+	include/efont/t1cs.hh include/efont/t1csgen.hh \
+	include/efont/t1font.hh include/efont/t1interp.hh \
+	include/efont/t1item.hh include/efont/t1mm.hh \
+	include/efont/t1rw.hh include/efont/t1unparser.hh \
+	include/efont/ttfcs.hh include/efont/ttfhead.hh \
+	include/efont/ttfkern.hh glyphlist.txt texglyphlist.txt 7t.enc \
 	Makefile.am.orig configure.ac.orig
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

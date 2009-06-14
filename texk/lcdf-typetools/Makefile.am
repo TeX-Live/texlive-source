@@ -28,6 +28,7 @@ EXTRA_DIST = \
 	include/lcdf/error.hh \
 	include/lcdf/filename.hh \
 	include/lcdf/globmatch.hh \
+	include/lcdf/hashcode.hh \
 	include/lcdf/hashmap.hh include/lcdf/hashmap.cc \
 	include/lcdf/inttypes.h \
 	include/lcdf/landmark.hh \
@@ -69,6 +70,7 @@ EXTRA_DIST = \
 	include/efont/t1unparser.hh \
 	include/efont/ttfcs.hh \
 	include/efont/ttfhead.hh \
+	include/efont/ttfkern.hh \
 	glyphlist.txt \
 	texglyphlist.txt \
 	7t.enc

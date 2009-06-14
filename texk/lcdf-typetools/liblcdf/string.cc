@@ -531,7 +531,7 @@ String::printable() const
     return *this;
 }
 
-uint32_t
+hashcode_t
 String::hashcode(const char *begin, const char *end)
 {
     if (end <= begin)
@@ -612,7 +612,7 @@ String::hashcode(const char *begin, const char *end)
 #if 0
 // 11.Apr.2008 -- This old hash function was swapped out in favor of
 // SuperFastHash, above.
-size_t
+hashcode_t
 String::hashcode() const
 {
     int l = length();

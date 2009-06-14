@@ -132,6 +132,15 @@ Font::table(Tag tag) const
 	return String();
 }
 
+bool
+Font::has_table(Tag tag) const
+{
+    const uint8_t *entry = 0;
+    if (error() >= 0)
+	entry = tag.table_entry(data() + HEADER_SIZE, USHORT_AT(data() + 4), TABLE_DIR_ENTRY_SIZE);
+    return entry != 0;
+}
+
 uint32_t
 Font::table_checksum(Tag tag) const
 {

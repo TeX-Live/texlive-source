@@ -1,6 +1,7 @@
 // -*- related-file-name: "../../liblcdf/string.cc" -*-
 #ifndef LCDF_STRING_HH
 #define LCDF_STRING_HH
+#include <lcdf/hashcode.hh>
 #ifdef HAVE_PERMSTRING
 # include <lcdf/permstr.hh>
 #endif
@@ -243,11 +244,11 @@ class String { public:
      * @invariant If end1 - begin1 == end2 - begin2 and memcmp(begin1, begin2,
      * end1 - begin1) == 0, then hashcode(begin1, end1) == hashcode(begin2,
      * end2). */
-    static unsigned hashcode(const char *begin, const char *end);
+    static hashcode_t hashcode(const char *begin, const char *end);
 
     /** @overload */
-    static inline unsigned hashcode(const unsigned char *begin,
-				    const unsigned char *end) {
+    static inline hashcode_t hashcode(const unsigned char *begin,
+				      const unsigned char *end) {
 	return hashcode(reinterpret_cast<const char *>(begin),
 			reinterpret_cast<const char *>(end));
     }
@@ -258,7 +259,7 @@ class String { public:
      * "SuperFastHash."
      *
      * @invariant  If s1 == s2, then s1.hashcode() == s2.hashcode(). */
-    inline unsigned hashcode() const {
+    inline hashcode_t hashcode() const {
 	return length() ? hashcode(begin(), end()) : 0;
     }
 
@@ -782,7 +783,7 @@ inline String operator+(PermString a, PermString b) {
 
 #endif
 
-inline unsigned hashcode(const String &str) {
+inline hashcode_t hashcode(const String &str) {
     return str.hashcode();
 }
 

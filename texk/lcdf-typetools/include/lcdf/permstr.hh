@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <lcdf/inttypes.h>
+#include <lcdf/hashcode.hh>
 class PermString;
 inline bool operator==(PermString a, PermString b);
 inline bool operator!=(PermString a, PermString b);
@@ -180,7 +181,7 @@ inline PermString PermString::decapsule(Capsule c)
     return PermString(c);
 }
 
-inline size_t hashcode(PermString s)
+inline hashcode_t hashcode(PermString s)
 {
     return (uintptr_t) s.c_str();
 }

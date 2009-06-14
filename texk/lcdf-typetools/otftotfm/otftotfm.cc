@@ -25,6 +25,7 @@
 #include <efont/otfcmap.hh>
 #include <efont/otfname.hh>
 #include <efont/otfgsub.hh>
+#include <efont/ttfkern.hh>
 #include "glyphfilter.hh"
 #include "metrics.hh"
 #include "dvipsencoding.hh"
@@ -1202,8 +1203,8 @@ output_metrics(Metrics &metrics, const String &ps_name, int boundary_char,
 
 enum { F_GSUB_TRY = 1, F_GSUB_PART = 2, F_GSUB_ALL = 4,
        F_GPOS_TRY = 8, F_GPOS_PART = 16, F_GPOS_ALL = 32,
-       X_UNUSED = 0, X_BOTH_NONE = 1, X_GSUB_NONE = 2, X_GSUB_PART = 3,
-       X_GPOS_NONE = 4, X_GPOS_PART = 5, X_COUNT };
+       X_UNUSED = 0, X_BOTH_NONE = 1, X_GSUB_NONE = 2,
+       X_GSUB_PART = 3, X_GPOS_NONE = 4, X_GPOS_PART = 5, X_COUNT };
 
 static const char * const x_messages[] = {
     "% ignored, not supported by font",
@@ -1221,7 +1222,7 @@ report_underused_features(const HashMap<uint32_t, int> &feature_usage, ErrorHand
     for (int i = 0; i < interesting_features.size(); i++) {
 	OpenType::Tag f = interesting_features[i];
 	int fu = feature_usage[f.value()];
-	String ftext = "'" + f.text() + "'";
+	String ftext = errh->format("%<%s%>", f.text().c_str());
 	if (fu == 0)
 	    x[X_UNUSED].push_back(ftext);
 	else if ((fu & (F_GSUB_TRY | F_GPOS_TRY)) == fu)
@@ -1360,6 +1361,19 @@ do_gpos(Metrics& metrics, const OpenType::Font& otf, HashMap<uint32_t, int>& fea
 }
 
 static void
+do_kern(Metrics& metrics, const OpenType::Font& otf, HashMap<uint32_t, int>& feature_usage, ErrorHandler* errh)
+{
+    OpenType::KernTable kern(otf.table("kern"), errh);
+    Vector<OpenType::Positioning> poss;
+    bool understood = kern.unparse_automatics(poss, errh);
+    int nunderstood = metrics.apply(poss);
+
+    // mark as used
+    int d = (understood && nunderstood == poss.size() ? F_GPOS_ALL : (nunderstood ? F_GPOS_PART : 0)) + F_GPOS_TRY;
+    feature_usage.find_force(OpenType::Tag("kern").value()) |= d;
+}
+
+static void
 do_math_spacing(Metrics &metrics, const FontInfo &finfo,
 		const DvipsEncoding &dvipsenc)
 {
@@ -1458,7 +1472,17 @@ do_file(const String &otf_filename, const OpenType::Font &otf,
     try {
 	do_gpos(metrics, otf, feature_usage, errh);
     } catch (OpenType::BlankTable) {
-	// nada
+	// special case: if no GPOS and "kern" requested, look in "kern" table
+	if (std::find(interesting_features.begin(), interesting_features.end(),
+		      OpenType::Tag("kern")) != interesting_features.end()) {
+	    try {
+		do_kern(metrics, otf, feature_usage, errh);
+	    } catch (OpenType::BlankTable) {
+		// nada
+	    } catch (OpenType::Error e) {
+		errh->warning("kern %<%s%> error, continuing", e.description.c_str());
+	    }
+	}
     } catch (OpenType::Error e) {
 	errh->warning("GPOS %<%s%> error, continuing", e.description.c_str());
     }

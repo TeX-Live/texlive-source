@@ -5,6 +5,19 @@ Version 2.76-rc1   2.Mar.2009
 * Adapt to new TeX Live build scheme.
 
 
+Version 2.79   12.Jun.2009
+
+* otftotfm: Use TrueType "kern" tables to satisfy the "-fkern" feature if
+  GPOS information isn't available.  Requested by Nico Schlömer.
+
+* ttftotype42: Split very large non-glyf tables, as well as very large glyf
+  tables.  Requested by Mark DeVries.
+
+* otfinfo: The -T option dumps a table's contents to standard out.
+
+* Introduce and use a consistent hashcode_t type.  Reported by Karl Berry.
+
+
 Version 2.78   6.Apr.2009
 
 * t1lint: Report warnings when a font charstring command has too many

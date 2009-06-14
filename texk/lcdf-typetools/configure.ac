@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Adapted for TeX Live.
-AC_INIT([LCDF typetools], [2.78], [tex-k@tug.org])
+AC_INIT([LCDF typetools], [2.79], [tex-k@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([NEWS])
 AC_CONFIG_AUX_DIR([../../build-aux])
