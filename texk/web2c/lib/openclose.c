@@ -3,6 +3,7 @@
    Written 1995, 96 Karl Berry.  Public domain.  */
 
 #include "config.h"
+#include "lib.h"
 #include <kpathsea/c-pathch.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
@@ -70,8 +71,8 @@ recorder_change_filename P1C(string, new_name)
 }
 
 /* helper for recorder_record_* */
-void
-recorder_record_name P2C(string, prefix, string, nameoffile)
+static void
+recorder_record_name P2C(string, prefix, const_string, nameoffile)
 {
     if (recorder_enabled) {
         if (!recorder_file)
@@ -83,14 +84,14 @@ recorder_record_name P2C(string, prefix, string, nameoffile)
 
 /* record an input file */
 void
-recorder_record_input P1C(string, nameoffile)
+recorder_record_input P1C(const_string, nameoffile)
 {
     recorder_record_name ("INPUT", nameoffile);
 }
 
 /* record an output file */
 void
-recorder_record_output P1C(string, nameoffile)
+recorder_record_output P1C(const_string, nameoffile)
 {
     recorder_record_name ("OUTPUT", nameoffile);
 }

@@ -2,7 +2,7 @@
 /* Public domain. */
 
 #include "config.h"
-
+#include "lib.h"
 
 /* These variables are referenced from the change files.  */
 char **argv;

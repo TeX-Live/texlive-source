@@ -2,6 +2,7 @@
    file F.  Public domain. */
 
 #include "config.h"
+#include "lib.h"
 
 void
 fprintreal P4C(FILE*, f, double, r, int, n, int, m)

@@ -2,7 +2,7 @@
    testing.  Public domain. */
 
 #include "config.h"
-
+#include "lib.h"
 
 /* Return true if we're at the end of FILE, else false.  This implements
    Pascal's `eof' builtin.  */

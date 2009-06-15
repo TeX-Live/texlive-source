@@ -3,7 +3,7 @@
    necessary.  Public domain. */
 
 #include "config.h"
-
+#include "lib.h"
 
 /* Read an integer from the file F, reading past the subsequent end of
    line.  */

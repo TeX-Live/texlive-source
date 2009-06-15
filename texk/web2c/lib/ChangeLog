@@ -1,3 +1,14 @@
+2009-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* lib.h (new): declarations for *.c from ../cpascal.h.
+	* basechsuffix.c, chartostring.c, eofeoln.c, fprintreal.c,
+	input2int.c, inputint.c, main.c, openclose.c, printversion.c,
+	zround.c: #include "lib.h" to declare function prototypes.
+	* openclose.c: declare internal function recorder_record_name as
+	static; declare arg of recorder_record_input and
+	recorder_record_output as const_string as from ../cpascal.h.
+
 2009-06-01  Karl Berry  <karl@tug.org>
 
 	* printversion.c (printversionandexit): it's 2009.

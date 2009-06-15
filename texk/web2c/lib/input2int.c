@@ -2,6 +2,7 @@
    routines are only used in patgen.  Public domain. */
 
 #include "config.h"
+#include "lib.h"
 
 #ifdef INTEGER_IS_INT
 #define SCAN2INT "%d %d"
