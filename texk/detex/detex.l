@@ -59,19 +59,19 @@ char	*malloc();
 
 #endif
 
-extern void SetEnvIgnore(char *sbEnvList);
-extern int BeginEnv(char *sbEnv);
-extern int EndEnv(char *sbEnv);
-extern void InputFile(char *sbFile);
-extern void IncludeFile(char *sbFile);
-extern void AddInclude(char *sbFile);
-extern int InList(char *sbFile);
-extern void SetInputPaths();
-extern int SeparateList(char *sbList,char **rgsbList ,char chSep,int csbMax);
-extern FILE * TexOpen(char *sbFile);
-extern char * SafeMalloc(int cch,char *sbMessage);
-extern void Warning(char *sb1,char *sb2);
-extern int ErrorExit(char *sb1);
+void SetEnvIgnore(char *sbEnvList);
+int BeginEnv(char *sbEnv);
+int EndEnv(char *sbEnv);
+void InputFile(char *sbFile);
+void IncludeFile(char *sbFile);
+void AddInclude(char *sbFile);
+int InList(char *sbFile);
+void SetInputPaths(void);
+int SeparateList(char *sbList, char **rgsbList ,char chSep,int csbMax);
+FILE * TexOpen(char *sbFile);
+char * SafeMalloc(int cch, char *sbMessage);
+void Warning(char *sb1, char *sb2);
+void ErrorExit(char *sb1);
 
 #define	LaBEGIN		if (fLatex) BEGIN
 #define	CITEBEGIN	if (fLatex && !fCite) BEGIN
@@ -79,9 +79,9 @@ extern int ErrorExit(char *sb1);
 #define	SPACE		if (!fWord) putchar(' ')
 #define	NEWLINE		if (!fWord) putchar('\n')
 
-char	*SafeMalloc();
 #ifdef OS2
 void	yyless(int);
+void OS2UsageExit(void);
 #endif
 
 char	*rgsbEnvIgnore[MAXENVS];	/* list of environments ignored */
@@ -271,9 +271,8 @@ W	[a-zA-Z]+
 **	If no input files are specified on the command line, process stdin.
 ******/
 
-main(cArgs,rgsbArgs)
-int	cArgs;
-char	*rgsbArgs[];
+int
+main(int cArgs, char *rgsbArgs[])
 {
 	char	*pch, *sbEnvList = DEFAULTENV, sbBadOpt[2];
 	FILE	*TexOpen();
@@ -382,7 +381,8 @@ char	*rgsbArgs[];
 **	return the termination signal for lex.
 ******/
 
-yywrap()
+int
+yywrap(void)
 {
 	(void)fclose(yyin);
 	if (cfp > 0) {
@@ -399,8 +399,8 @@ yywrap()
 **	a yyless routine
 ******/
 
-void yyless(n)
-int n;
+void
+yyless(int n)
 {
 	int 	i = strlen(yytext);
 
@@ -415,8 +415,7 @@ int n;
 ******/
 
 void
-SetEnvIgnore(sbEnvList)
-char	*sbEnvList;
+SetEnvIgnore(char *sbEnvList)
 {
 	char *sb;
 
@@ -432,8 +431,8 @@ char	*sbEnvList;
 **	is, sbCurrentEnv is set to sbEnv.
 ******/
 
-BeginEnv(sbEnv)
-char	*sbEnv;
+int
+BeginEnv(char *sbEnv)
 {
 	int	i;
 
@@ -450,8 +449,8 @@ char	*sbEnv;
 ** EndEnv -- checks to see if sbEnv is the current environment being ignored.
 ******/
 
-EndEnv(sbEnv)
-char	*sbEnv;
+int
+EndEnv(char *sbEnv)
 {
 	if (!fLatex) return(0);
 	if (strcmp(sbEnv, sbCurrentEnv) == 0)
@@ -465,8 +464,7 @@ char	*sbEnv;
 ******/
 
 void
-InputFile(sbFile)
-char	*sbFile;
+InputFile(char *sbFile)
 {
 	FILE	*TexOpen();
 
@@ -485,8 +483,7 @@ char	*sbFile;
 ******/
 
 void
-IncludeFile(sbFile)
-char	*sbFile;
+IncludeFile(char *sbFile)
 {
 	FILE	*TexOpen();
 
@@ -507,8 +504,7 @@ char	*sbFile;
 ******/
 
 void
-AddInclude(sbFile)
-char	*sbFile;
+AddInclude(char *sbFile)
 {
 	if (!fFollow)
 	    return;
@@ -523,8 +519,8 @@ char	*sbFile;
 **	no list, all files are assumed to be "in the list".
 ******/
 
-InList(sbFile)
-char	*sbFile;
+int
+InList(char *sbFile)
 {
 	char	*pch, sbBase[PATH_MAX];
 	int	i;
@@ -551,7 +547,7 @@ char	*sbFile;
 ******/
 
 void
-SetInputPaths()
+SetInputPaths(void)
 {
 	char *sb, *sbPaths;
 #ifndef WIN32
@@ -594,15 +590,14 @@ SetInputPaths()
 **	ERROR is returned if there are more than csbMax words.
 ******/
 
-SeparateList(sbList, rgsbList, chSep, csbMax)
-char	*sbList, *rgsbList[], chSep;
-int	csbMax;
+int
+SeparateList(char *sbList, char **rgsbList, char chSep, int csbMax)
 {
 	int	csbList = 0;
 
 	while (sbList && *sbList && csbList < csbMax) {
 	    rgsbList[csbList++] = sbList;
-	    if (sbList = strchr(sbList, chSep))
+	    if ((sbList = strchr(sbList, chSep)))
 		*sbList++ = '\0';
 	}
 	return(sbList && *sbList ? ERROR : csbList);
@@ -621,15 +616,15 @@ int	csbMax;
 ******/
 
 FILE *
-TexOpen(sbFile)
-char	*sbFile;
+TexOpen(char *sbFile)
 {
-	char	*pch, *sbNew;
+	char	*sbNew;
+#ifndef KPATHSEA
+	char	*pch;
 	FILE	*fp;
 	int	iPath;
 	static char	sbFullPath[PATH_MAX];
 
-#ifndef KPATHSEA
 	for (iPath = 0; iPath < csbInputPaths; iPath++) {
 #ifdef OS2
 	    if (*sbFile == '/' || *sbFile == '\\' || strchr(sbFile, ':'))	/* absolute path */
@@ -690,9 +685,7 @@ char	*sbFile;
 ******/
 
 char *
-SafeMalloc(cch, sbMessage)
-int cch;
-char *sbMessage;
+SafeMalloc(int cch, char *sbMessage)
 {
 	char *sb;
 
@@ -706,8 +699,7 @@ char *sbMessage;
 ******/
 
 void
-Warning(sb1, sb2)
-char	*sb1, *sb2;
+Warning(char *sb1, char *sb2)
 {
 	(void)fprintf(stderr, "%s: warning: %s %s\n", sbProgName, sb1, sb2);
 }
@@ -717,8 +709,8 @@ char	*sb1, *sb2;
 **	Stdout is flushed and detex exits.
 ******/
 
-ErrorExit(sb1)
-char	*sb1;
+void
+ErrorExit(char *sb1)
 {
 	(void)fflush(stdout);
 	(void)fprintf(stderr, "%s: error: %s\n", sbProgName, sb1);
@@ -730,7 +722,8 @@ char	*sb1;
 ** OS2UsageExit -- print OS/2 usage message and exit.
 ******/
 
-OS2UsageExit()
+void
+OS2UsageExit(void)
 {
 	(void)printf("\n%s [ -clnstw ] [ -e environment-list ] [ filename[.tex] ... ]\n",
 		sbProgName);
