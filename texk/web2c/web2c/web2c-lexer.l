@@ -24,7 +24,7 @@ extern boolean doing_statements;
    giving it ourselves avoids the need to find -lfl or -ll at link time.
    This is a good thing, since libfl.a is often installed somewhere that
    the linker doesn't search by default.  */
-int
+static int
 yywrap P1H(void)
 {
   return 1;

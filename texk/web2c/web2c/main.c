@@ -141,7 +141,7 @@ semicolon P1H(void)
   }
 }
 
-int
+static int
 hash P1C(const_string, id)
 {
   register int i = 0, j;

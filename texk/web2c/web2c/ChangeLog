@@ -1,3 +1,12 @@
+2009-06-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* fixwrites.c (advance_cp): declare as static.
+	* main.c (hash): declare as static.
+	* splitup.c (read_line): declare as static.
+	* web2c-lexer.l (yywrap): declare as static.
+	* web2c.h: re-add declaration of get_result_type().
+
 2009-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* convert: remove all references to mp.

@@ -66,6 +66,7 @@ extern int yyerror P1H(string);
 
 extern void get_string_literal P1H(char*);
 extern void get_single_char P1H(char*);
+extern void get_result_type P1H(char*);
 extern void get_return_type P1H(char*);
 
 /* No prototypes for these two. As used, neither takes arguments. */

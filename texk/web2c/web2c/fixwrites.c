@@ -169,7 +169,7 @@ bare P2C(string, cp,  char, c)
    errors.  Ensures that it is the matching bracket that is replaced,
    not the first one.  */
 
-char *
+static char *
 advance_cp P2C(char *, cp, int, lefts)
 {
   char *cp1;

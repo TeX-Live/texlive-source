@@ -58,7 +58,7 @@ FILE *out, *ini, *temp;
  * `true' else `false'.  We also keep up with the #ifdef/#endif nesting
  * so we know when it's safe to finish writing the current file.
  */
-int
+static int
 read_line P1H(void)
 {
   if (fgets (buffer, sizeof (buffer), stdin) == NULL)
