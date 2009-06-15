@@ -126,7 +126,7 @@
 /* extern char *realloc(); */
 
 #define YY_SKIP_YYWRAP
-int yywrap() { return 1; }
+static int yywrap(void) { return 1; }
 
 #ifdef NEED_STRSTR
 char *strstr();
@@ -145,16 +145,16 @@ char *strstr();
 #define CG_ITALIC gstack[gstackp-1].italic
 #define CG_FILE gstack[gstackp-1].s_file
 
-char *bg_command();
-void pop();
-void push();
-void linecount();
-void g_checkend();
-void e_checkend();
-void f_checkend();
-void input_file();
-void print_bad_match();
-int check_top_level_end();
+char *bg_command(char *name);
+void pop(void);
+void push(unsigned char *p_name, int p_type, int p_line);
+void linecount(void);
+void g_checkend(int n);
+void e_checkend(int n, char *name);
+void f_checkend(char *name);
+void input_file(char *file_nam);
+void print_bad_match(char *end_command, int type);
+int check_top_level_end(char *end_command, int type);
 
   /* global variables */
 
@@ -765,9 +765,7 @@ symbol ("$"("\\"{atoz}+|.)"$"|"\\#"|"\\$"|"\\%"|"\\ref")
 
 . { ; }
 %%
-int main( argc, argv )
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
 {
     /* allocate initial stacks */
     gstack = (tex_group *)malloc(gstack_size * sizeof(tex_group));
@@ -861,10 +859,7 @@ strstr(string, substring)
 }
 #endif /* NEED_STRSTR */
 
-void push(p_name, p_type, p_line)
-unsigned char *p_name;
-int p_type;
-int p_line;
+void push(unsigned char *p_name, int p_type, int p_line)
 {
     if ( gstackp == gstack_size ) {	/* extend stack */
 	gstack_size *= 2;
@@ -896,8 +891,7 @@ int p_line;
 
 }
 
-void input_file(file_nam)
-char *file_nam;
+void input_file(char *file_nam)
 {
     char *tmp_file_name;
     FILE *tmp_yyin;
@@ -954,7 +948,7 @@ char *file_nam;
 	 }
 }
 
-void pop()
+void pop(void)
 {
     if ( gstackp == 0 )
     {
@@ -967,8 +961,7 @@ void pop()
     free(gstack[gstackp].s_file);
 }
 
-char *bg_command(name)
-char *name;
+char *bg_command(char *name)
 {
     
     switch (CG_TYPE) {
@@ -1002,9 +995,7 @@ char *name;
     return ((char *)returnval);
 }
 
-char *eg_command(name,type)
-int type;
-char *name;
+static char *eg_command(char *name, int type)
 {
     
     switch (type) {
@@ -1039,19 +1030,18 @@ char *name;
 }
 
 
-void g_checkend(n)
-int n;
+void g_checkend(int n)
 {
     if ( check_top_level_end(yytext,n) == 1 ) 
+       {
        if (  CG_TYPE != n  )
 	 print_bad_match(yytext,n);
        else
 	pop();
+       }
 }
 
-void e_checkend(n, name)
-int n;
-char *name;
+void e_checkend(int n, char *name)
 {
    if ( check_top_level_end(name,n) == 1 )
     {
@@ -1063,8 +1053,7 @@ char *name;
     }
 }
 
-void f_checkend(name)
-char *name;
+void f_checkend(char *name)
 {
     if ( check_top_level_end(name,3) == 1 )
      {
@@ -1080,9 +1069,7 @@ char *name;
      }
 }
 
-void print_bad_match(end_command,type)
-char *end_command;	      
-int type;
+void print_bad_match(char *end_command, int type)
 {
 	  printf("\"%s\", line %d: <- unmatched \"%s\"\n",
 	         file_name, 
@@ -1096,9 +1083,7 @@ int type;
 	  warn_count += 2;
 }
 
-int check_top_level_end(end_command,type)
-char *end_command;	      
-int type;
+int check_top_level_end(char *end_command, int type)
 {
     if ( gstackp == 0 )
 	{
@@ -1113,7 +1098,7 @@ int type;
     	return(1);
 }
 
-void linecount()
+void linecount(void)
 {
   int i;
   for (i = 0; i < yyleng; i++)

@@ -1,3 +1,17 @@
+2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* configure.ac: use AC_PROG_LEX instead of KPSE_PROG_LEX
+	because 'flex -l' produces bad code (at least with flex-2.5.35).
+
+	* lacheck.l: use ANSI C prototypes for all functions.
+	declare yywrap as static.
+	(g_checkend): add explict braces to avoid ambiguous `else'.
+
+2009-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.in: added AC_CONFIG_HEADERS (moved
