@@ -61,6 +61,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../../m4/kpse-lex.m4 \
+	$(top_srcdir)/../../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../../m4/libtool.m4 \
 	$(top_srcdir)/../../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../../m4/ltsugar.m4 \
@@ -194,6 +195,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
 abs_builddir = @abs_builddir@
@@ -251,6 +253,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../../m4
 INCLUDES = -Inative -I$(srcdir)/native -I$(srcdir)/.. -I$(srcdir)/../..
 AM_YFLAGS = -d -v
+AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_HEADERS = coerce.h
 dist_noinst_SCRIPTS = convert
 dist_noinst_DATA = \

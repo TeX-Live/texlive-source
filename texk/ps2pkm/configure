@@ -794,6 +794,7 @@ KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
 KPATHSEA_INCLUDES
+WARNING_CFLAGS
 CPP
 OTOOL64
 OTOOL
@@ -913,6 +914,7 @@ enable_dependency_tracking
 with_gnu_ld
 enable_libtool_lock
 enable_largefile
+enable_compiler_warnings
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
@@ -1567,6 +1569,9 @@ Optional Features:
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --disable-largefile     omit support for large files
+  --enable-compiler-warnings=[no|min|yes|max]
+                          Turn on compiler warnings [default: yes if
+                          maintainer-mode, min otherwise]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -4323,13 +4328,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4326: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4331: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4329: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4334: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4332: output\"" >&5)
+  (eval echo "\"\$as_me:4337: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5535,7 +5540,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5538 "configure"' > conftest.$ac_ext
+  echo '#line 5543 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -6890,6 +6895,21 @@ fi
 
 done
 
+# Check whether --enable-compiler-warnings was given.
+if test "${enable_compiler_warnings+set}" = set; then
+  enableval=$enable_compiler_warnings;
+fi
+case $enable_compiler_warnings in
+  no | min | yes | max) : ;;
+  *) if test "x$enable_maintainer_mode" = xyes; then
+  enable_compiler_warnings=yes
+else
+  enable_compiler_warnings=min
+fi
+ ;;
+esac
+
+
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -7472,11 +7492,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7475: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7495: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7479: \$? = $ac_status" >&5
+   echo "$as_me:7499: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7811,11 +7831,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7814: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7834: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7818: \$? = $ac_status" >&5
+   echo "$as_me:7838: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7916,11 +7936,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7919: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7939: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7923: \$? = $ac_status" >&5
+   echo "$as_me:7943: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -7971,11 +7991,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7974: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7994: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7978: \$? = $ac_status" >&5
+   echo "$as_me:7998: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10771,7 +10791,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10774 "configure"
+#line 10794 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10867,7 +10887,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10870 "configure"
+#line 10890 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12870,6 +12890,42 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+{ $as_echo "$as_me:$LINENO: checking what warning flags to pass to the C compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
+if test "${kpse_cv_warning_cflags+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
+elif test "x$GCC" = xyes; then
+  kpse_cv_warning_cflags="-Wall -Wunused"
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+    case `$CC -dumpversion` in
+  3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;;
+esac
+
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wimplicit -Wparentheses -Wreturn-type"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+      case `$CC -dumpversion` in
+  3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;;
+esac
+
+    fi
+  fi
+else
+  : # FIXME: warning flags for non-gcc compilers
+fi
+fi
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_warning_cflags" >&5
+$as_echo "$kpse_cv_warning_cflags" >&6; }
+WARNING_CFLAGS=$kpse_cv_warning_cflags
+
+
+
+
 
 
 { $as_echo "$as_me:$LINENO: checking for library containing pow" >&5

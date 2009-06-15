@@ -755,6 +755,7 @@ enable_dependency_tracking
 enable_xindy_rules
 enable_xindy_docs
 with_xindy_recode
+enable_texlive_build
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1401,6 +1402,7 @@ Optional Features:
   --enable-dependency-tracking   do not reject slow dependency extractors
   --enable-xindy-rules    build and install make-rules package
   --enable-xindy-docs     build and install documentation
+  --enable-texlive-build  Build as part of a TeX Live installation
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -4032,7 +4034,11 @@ test "x$enable_xindy_docs" = xyes || enable_xindy_docs=no
 
 # This option has been renamed --enable-native-texlive-build
 # but should only be inherited and not specified here
-# AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
+# Check whether --enable-texlive-build was given.
+if test "${enable_texlive_build+set}" = set; then
+  enableval=$enable_texlive_build;
+fi
+
 
 if test "x$with_xindy_recode" != xyes; then
   CONVERT_FROM_UTF8="iconv -f UTF-8 -t "
@@ -4082,15 +4088,14 @@ $as_echo "$as_me: error: --with-xindy-recode specified, but \`recode' not found"
 fi
 
 
-## if test "x$enable_native_texlive_build" = xyes -a "x$datadir" = "x$prefix"; then
-if test "x$enable_native_texlive_build" = xyes; then
+if test "x$enable_texlive_build" = xyes; then
   { $as_echo "$as_me:$LINENO: Using installation layout for TeX Live" >&5
 $as_echo "$as_me: Using installation layout for TeX Live" >&6;}
   datadir="$prefix/texmf"
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
 fi
- if test "x$enable_native_texlive_build" = xyes; then
+ if test "x$enable_texlive_build" = xyes; then
   TETEX_BUILD_TRUE=
   TETEX_BUILD_FALSE='#'
 else

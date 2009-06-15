@@ -42,6 +42,7 @@ DIST_COMMON = $(dist_bin_SCRIPTS) $(srcdir)/Makefile.am \
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
@@ -145,6 +146,7 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 TEX = @TEX@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 XX_CFLAGS = @XX_CFLAGS@
 XX_CPPFLAGS = @XX_CPPFLAGS@
 abs_builddir = @abs_builddir@

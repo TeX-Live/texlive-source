@@ -53,6 +53,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-asm.m4 \
 	$(top_srcdir)/../../m4/kpse-obsdcompat-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-teckit-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-web2c.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-xpdf-flags.m4 \
@@ -200,6 +201,8 @@ TECKIT_INCLUDES = @TECKIT_INCLUDES@
 TECKIT_LIBS = @TECKIT_LIBS@
 TIE = @TIE@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WEB2CVERSION = @WEB2CVERSION@
 XMKMF = @XMKMF@
 XPDF_DEPEND = @XPDF_DEPEND@
@@ -274,6 +277,7 @@ wlibs = @wlibs@
 x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
+AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = lib.a
 lib_a_SOURCES = \
 	basechsuffix.c \
@@ -283,6 +287,7 @@ lib_a_SOURCES = \
 	fprintreal.c \
 	inputint.c \
 	input2int.c \
+	lib.h \
 	main.c \
 	openclose.c \
 	printversion.c \

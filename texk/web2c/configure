@@ -906,12 +906,14 @@ CXX_HACK_LIBS
 CXX_HACK_DEPS
 CXXLD
 CXXCPP
+WARNING_CXXFLAGS
 am__fastdepCXX_FALSE
 am__fastdepCXX_TRUE
 CXXDEPMODE
 ac_ct_CXX
 CXXFLAGS
 CXX
+WARNING_CFLAGS
 CPP
 OTOOL64
 OTOOL
@@ -1032,6 +1034,7 @@ enable_dependency_tracking
 with_gnu_ld
 enable_libtool_lock
 enable_largefile
+enable_compiler_warnings
 enable_cxx_runtime_hack
 with_tex_banner
 with_editor
@@ -1739,6 +1742,9 @@ Optional Features:
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --disable-largefile     omit support for large files
+  --enable-compiler-warnings=[no|min|yes|max]
+                          Turn on compiler warnings [default: yes if
+                          maintainer-mode, min otherwise]
   --enable-cxx-runtime-hack  link C++ runtime statically
   --enable-auto-core      cause TeX&MF to dump core, given a certain filename
   --disable-dump-share    make fmt/base/mem files architecture-dependent
@@ -4562,13 +4568,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4565: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4571: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4568: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4574: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4571: output\"" >&5)
+  (eval echo "\"\$as_me:4577: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5774,7 +5780,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5777 "configure"' > conftest.$ac_ext
+  echo '#line 5783 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7129,6 +7135,21 @@ fi
 
 done
 
+# Check whether --enable-compiler-warnings was given.
+if test "${enable_compiler_warnings+set}" = set; then
+  enableval=$enable_compiler_warnings;
+fi
+case $enable_compiler_warnings in
+  no | min | yes | max) : ;;
+  *) if test "x$enable_maintainer_mode" = xyes; then
+  enable_compiler_warnings=yes
+else
+  enable_compiler_warnings=min
+fi
+ ;;
+esac
+
+
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
@@ -7720,11 +7741,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7723: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7744: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7727: \$? = $ac_status" >&5
+   echo "$as_me:7748: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8059,11 +8080,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8062: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8083: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8066: \$? = $ac_status" >&5
+   echo "$as_me:8087: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8164,11 +8185,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8167: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8188: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8171: \$? = $ac_status" >&5
+   echo "$as_me:8192: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8219,11 +8240,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8222: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8243: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8226: \$? = $ac_status" >&5
+   echo "$as_me:8247: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11019,7 +11040,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11022 "configure"
+#line 11043 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11115,7 +11136,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11118 "configure"
+#line 11139 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13118,6 +13139,42 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+{ $as_echo "$as_me:$LINENO: checking what warning flags to pass to the C compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
+if test "${kpse_cv_warning_cflags+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
+elif test "x$GCC" = xyes; then
+  kpse_cv_warning_cflags="-Wall -Wunused"
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+    case `$CC -dumpversion` in
+  3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;;
+esac
+
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wimplicit -Wparentheses -Wreturn-type"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+      case `$CC -dumpversion` in
+  3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;;
+esac
+
+    fi
+  fi
+else
+  : # FIXME: warning flags for non-gcc compilers
+fi
+fi
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_warning_cflags" >&5
+$as_echo "$kpse_cv_warning_cflags" >&6; }
+WARNING_CFLAGS=$kpse_cv_warning_cflags
+
+
+
+
 
 
 ac_ext=cpp
@@ -14117,6 +14174,30 @@ else
   am__fastdepCXX_TRUE='#'
   am__fastdepCXX_FALSE=
 fi
+
+{ $as_echo "$as_me:$LINENO: checking what warning flags to pass to the C++ compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
+if test "${kpse_cv_warning_cxxflags+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cxxflags=
+elif test "x$GXX" = xyes; then
+  kpse_cv_warning_cxxflags="-Wall -Wunused"
+  if test "x$enable_compiler_warnings" != xmin; then
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wimplicit -Wparentheses -Wreturn-type"
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
+    fi
+  fi
+else
+  : # FIXME: warning flags for non-g++ compilers
+fi
+fi
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_warning_cxxflags" >&5
+$as_echo "$kpse_cv_warning_cxxflags" >&6; }
+WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
 
 
 if test -n "$CXX" && ( test "X$CXX" != "Xno" &&
@@ -16169,11 +16250,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16172: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16253: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16176: \$? = $ac_status" >&5
+   echo "$as_me:16257: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16268,11 +16349,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16271: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16352: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16275: \$? = $ac_status" >&5
+   echo "$as_me:16356: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16320,11 +16401,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16323: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16404: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16327: \$? = $ac_status" >&5
+   echo "$as_me:16408: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17283,6 +17364,30 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+{ $as_echo "$as_me:$LINENO: checking what warning flags to pass to the C++ compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
+if test "${kpse_cv_warning_cxxflags+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cxxflags=
+elif test "x$GXX" = xyes; then
+  kpse_cv_warning_cxxflags="-Wall -Wunused"
+  if test "x$enable_compiler_warnings" != xmin; then
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wimplicit -Wparentheses -Wreturn-type"
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
+    fi
+  fi
+else
+  : # FIXME: warning flags for non-g++ compilers
+fi
+fi
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_warning_cxxflags" >&5
+$as_echo "$kpse_cv_warning_cxxflags" >&6; }
+WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
 
 
 # Check whether --enable-cxx-runtime-hack was given.

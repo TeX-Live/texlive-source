@@ -54,6 +54,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-asm.m4 \
 	$(top_srcdir)/../../m4/kpse-obsdcompat-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-teckit-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-web2c.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-xpdf-flags.m4 \
@@ -205,6 +206,8 @@ TECKIT_INCLUDES = @TECKIT_INCLUDES@
 TECKIT_LIBS = @TECKIT_LIBS@
 TIE = @TIE@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 WEB2CVERSION = @WEB2CVERSION@
 XMKMF = @XMKMF@
 XPDF_DEPEND = @XPDF_DEPEND@
@@ -280,6 +283,7 @@ x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
 INCLUDES = -I$(top_srcdir) $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = $(X_CFLAGS)
+AM_CFLAGS = $(WARNING_CFLAGS)
 EXTRA_LIBRARIES = libwindow.a
 libwindow_a_SOURCES = amiga.c epsf.c hp2627.c mftalk.c next.c regis.c \
 	suntools.c tek.c trap.c uniterm.c win32.c $(am__append_1) \

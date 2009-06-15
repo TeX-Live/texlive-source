@@ -54,6 +54,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_template_objs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
@@ -215,6 +216,8 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 TEMPLATE_OBJS = @TEMPLATE_OBJS@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -272,11 +275,11 @@ ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
 SUBDIRS = $(SELECTED_SUBDIRS)
 DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
-@tetex_build_TRUE@glyphlistdir = ${prefix}/texmf-dist/fonts/map/glyphlist
-@tetex_build_TRUE@glyphlist_DATA = glyphlist.txt texglyphlist.txt
-@tetex_build_TRUE@encdir = ${prefix}/texmf-dist/fonts/enc/dvips/base
-@tetex_build_TRUE@enc_DATA = 7t.enc
-@tetex_build_FALSE@pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
+@texlive_build_TRUE@glyphlistdir = ${prefix}/texmf-dist/fonts/map/glyphlist
+@texlive_build_TRUE@glyphlist_DATA = glyphlist.txt texglyphlist.txt
+@texlive_build_TRUE@encdir = ${prefix}/texmf-dist/fonts/enc/dvips/base
+@texlive_build_TRUE@enc_DATA = 7t.enc
+@texlive_build_FALSE@pkgdata_DATA = glyphlist.txt texglyphlist.txt 7t.enc
 EXTRA_DIST = ONEWS lcdf-typetools.spec include/lcdf/bezier.hh \
 	include/lcdf/clp.h include/lcdf/error.hh \
 	include/lcdf/filename.hh include/lcdf/globmatch.hh \

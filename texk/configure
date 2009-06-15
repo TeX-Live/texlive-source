@@ -1558,8 +1558,7 @@ Optional Features:
                             do not run mktextfm if TFM file missing
   --disable-mkocp-default   do not run mkocp if OCP file missing
   --disable-mkofm-default   do not run mkofm if OFM file missing
-  --disable-mktexfmt-default
-                            do not run mktexfmt if format file missing
+  --enable-mktexfmt-default run mktexfmt if format file missing
   --enable-mktextex-default run mktextex if TeX source missing
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
@@ -2212,13 +2211,28 @@ esac
            ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack'" ;;
 esac
 
-  case $enable_shared in
-  yes | no) : ;;
+fi
+case $enable_shared in
+  no) : ;;
+  yes ) if test "x$enable_native_texlive_build" = xyes; then
+  { { $as_echo "$as_me:$LINENO: error: you can not use a shared Kpathsea library for a native TeX Live build" >&5
+$as_echo "$as_me: error: you can not use a shared Kpathsea library for a native TeX Live build" >&2;}
+   { (exit 1); exit 1; }; }
+fi
+ ;;
   *) enable_shared=no
-           ac_configure_args="$ac_configure_args '--disable-shared'" ;;
+         ac_configure_args="$ac_configure_args '--disable-shared'" ;;
 esac
 
-fi
+case $enable_texlive_build in
+  yes) : ;;
+  no) { { $as_echo "$as_me:$LINENO: error: you can not configure the TeX Live tree with \`--disable-texlive-build'" >&5
+$as_echo "$as_me: error: you can not configure the TeX Live tree with \`--disable-texlive-build'" >&2;}
+   { (exit 1); exit 1; }; } ;;
+  *) enable_texlive_build=yes
+         ac_configure_args="$ac_configure_args '--enable-texlive-build'" ;;
+esac
+
 # Check whether --enable-multiplatform was given.
 if test "${enable_multiplatform+set}" = set; then
   enableval=$enable_multiplatform;
@@ -3231,9 +3245,8 @@ $as_echo "$as_me: Assuming installed \`kpathsea' headers and library" >&6;}
   ac_configure_args="$ac_configure_args '--with-system-kpathsea=$with_system_kpathsea'"
 fi
 
-## texk/kpathsea/ac/web2c.ac: configure.ac fragment for the TeX Live
-## subdirectory texk/kpathsea.
-## configure defaults for mktexfmt & Co.
+## texk/kpathsea/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
+## configure options for mktextmf-default & Co
 # Check whether --enable-mktexmf-default was given.
 if test "${enable_mktexmf_default+set}" = set; then
   enableval=$enable_mktexmf_default;
@@ -3280,7 +3293,7 @@ if test "${enable_mktexfmt_default+set}" = set; then
 fi
 case $enable_mktexfmt_default in
   yes|no) : ;;
-  *) enable_mktexfmt_default=yes ;;
+  *) enable_mktexfmt_default=no ;;
 esac
 # Check whether --enable-mktextex-default was given.
 if test "${enable_mktextex_default+set}" = set; then

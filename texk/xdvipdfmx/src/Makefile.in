@@ -48,6 +48,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/cho-kpse.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
+	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
@@ -181,6 +182,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 ZLIB_DEPEND = @ZLIB_DEPEND@
 ZLIB_INCLUDES = @ZLIB_INCLUDES@
 ZLIB_LIBS = @ZLIB_LIBS@
