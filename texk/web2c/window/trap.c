@@ -7,36 +7,46 @@
 
 /* No #ifdef for the whole file, because we always want to support this.  */
 
+boolean mf_trap_initscreen(void);
+void mf_trap_updatescreen(void);
+void mf_trap_blankrectangle(screencol left,
+                            screencol right,
+                            screenrow top,
+                            screenrow bottom);
+void mf_trap_paintrow(screenrow row,
+                      pixelcolor init_color,
+                      transspec transition_vector,
+                      screencol vector_size);
 
 /* This returns true if we can do window operations, else false.  */
 
 boolean
-mf_trap_initscreen P1H(void)
+mf_trap_initscreen(void)
 {
   return 1;
 }
 
 void
-mf_trap_updatescreen P1H(void)
+mf_trap_updatescreen(void)
 {
   fputs ("Calling UPDATESCREEN\n", logfile);
 }
 
 void
-mf_trap_blankrectangle P4C(screencol, left,
-                           screencol, right,
-                           screenrow, top,
-                           screenrow, bottom)
+mf_trap_blankrectangle(screencol left,
+                       screencol right,
+                       screenrow top,
+                       screenrow bottom)
 {
   fprintf (logfile, "\nCalling BLANKRECTANGLE(%ld,%ld,%ld,%ld)\n",
            (long)left, (long)right, (long)top, (long)bottom);
 }
 
 void
-mf_trap_paintrow P4C(screenrow, row,
-                     pixelcolor, init_color,
-                     transspec, transition_vector,
-                     screencol, vector_size)
+mf_trap_paintrow(screenrow row,
+                 pixelcolor init_color,
+                 transspec transition_vector,
+                 screencol vector_size)
 {
   unsigned k;
 

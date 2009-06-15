@@ -78,16 +78,27 @@ static XrmOptionDescRec mf_optiondesclist[]
     { "-bg", "background", XrmoptionSepArg, (XPointer) NULL },
 };
 
-static void mf_events ();
-static void mf_mapstatus ();
-static void mf_newpixmap P2H(unsigned int, unsigned int);
-static void mf_redraw ();
-static void mf_repaint ();
+int mf_x11_initscreen(void);
+void mf_x11_updatescreen(void);
+void mf_x11_blankrectangle(screencol left,
+                           screencol right,
+                           screenrow top,
+                           screenrow bottom);
+void mf_x11_paintrow(screenrow row,
+                     pixelcolor init_color,
+                     transspec transition_vector,
+                     screencol vector_size);
+
+static void mf_events(void);
+static void mf_mapstatus(Widget w, XtPointer data, XEvent *ev);
+static void mf_newpixmap(unsigned int width, unsigned int height);
+static void mf_redraw(void);
+static void mf_repaint(Widget w, XtPointer data, XEvent *ev);
 
 /* Return 1 if display opened successfully, else 0.  */
 
 int
-mf_x11_initscreen ()
+mf_x11_initscreen (void)
 {
   XSetWindowAttributes xwa;
   Widget mf_toplevel;
@@ -135,9 +146,9 @@ mf_x11_initscreen ()
   mf_app = XtWidgetToApplicationContext (mf_canvas);
 
   XtAddEventHandler (mf_canvas, (Cardinal) ExposureMask, True,
-		     mf_repaint, NULL);
+		     (XtEventHandler) mf_repaint, NULL);
   XtAddEventHandler (mf_canvas, (Cardinal) StructureNotifyMask, True,
-		     mf_mapstatus, NULL);
+		     (XtEventHandler) mf_mapstatus, NULL);
 
   XtRealizeWidget (mf_toplevel);
 
@@ -170,7 +181,7 @@ mf_x11_initscreen ()
 }
 
 void
-mf_x11_updatescreen ()
+mf_x11_updatescreen (void)
 {
   mf_events ();
   mf_redraw ();
@@ -184,10 +195,10 @@ mf_x11_updatescreen ()
 
 
 void
-mf_x11_blankrectangle P4C(screencol, left,
-                          screencol, right,
-                          screenrow, top,
-                          screenrow, bottom)
+mf_x11_blankrectangle(screencol left,
+                      screencol right,
+                      screenrow top,
+                      screenrow bottom)
 {
   XFillRectangle (mf_display, mf_pixmap, mf_egc, (int) left, (int) top,
 		  (int) (right - left + 1), (int) (bottom - top + 1));
@@ -195,10 +206,10 @@ mf_x11_blankrectangle P4C(screencol, left,
 }
 
 void
-mf_x11_paintrow P4C(screenrow, row,
-                    pixelcolor, init_color,
-                    transspec, tvect,
-                    register screencol, vector_size)
+mf_x11_paintrow(screenrow row,
+                pixelcolor init_color,
+                transspec tvect,
+                screencol vector_size)
 {
   GC gc;
   int col;
@@ -225,7 +236,7 @@ mf_x11_paintrow P4C(screenrow, row,
 
 #ifdef MF_XT_DEBUG
 static void
-mf_checkextent P3C(int, x1, int, x2, int, y)
+mf_checkextent(int x1, int x2, int y)
 {
   if (x1 < mf_min_x)
     mf_min_x = x1;
@@ -245,7 +256,7 @@ mf_checkextent P3C(int, x1, int, x2, int, y)
 #endif /* MF_XT_DEBUG */
 
 static void
-mf_events ()
+mf_events (void)
 {
   XEvent event;
 
@@ -260,7 +271,7 @@ mf_events ()
 }
 
 static void
-mf_newpixmap P2C(unsigned int, width, unsigned int, height)
+mf_newpixmap(unsigned int width, unsigned int height)
 {
   XGCValues gcv;
   Pixmap newpixmap;
@@ -310,7 +321,7 @@ mf_newpixmap P2C(unsigned int, width, unsigned int, height)
 }
 
 static void
-mf_repaint P3C(Widget, w, XtPointer, data, XEvent*, ev)
+mf_repaint(Widget w, XtPointer data, XEvent *ev)
 {
   if (!mf_mapped || !ev || ev->type != Expose)
     return;
@@ -330,7 +341,7 @@ mf_repaint P3C(Widget, w, XtPointer, data, XEvent*, ev)
 
 
 static void
-mf_mapstatus P3C(Widget, w, XtPointer, data, XEvent*, ev)
+mf_mapstatus(Widget w, XtPointer data, XEvent *ev)
 {
   switch (ev->type)
     {
@@ -351,7 +362,7 @@ mf_mapstatus P3C(Widget, w, XtPointer, data, XEvent*, ev)
 
 
 static void
-mf_redraw ()
+mf_redraw (void)
 {
   XCopyPlane (mf_display, mf_pixmap, mf_window, mf_cgc, 0, 0,
 	      mf_x11_resources.mf_width, mf_x11_resources.mf_height,

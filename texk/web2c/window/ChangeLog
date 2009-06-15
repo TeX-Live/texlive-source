@@ -1,3 +1,8 @@
+2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* trap.c, x11-Xlib.c, x11-Xt.c: use ANSI C prototypes.
+
 2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* x11-Xt.c: remove unused preprocessor stuff (FOIL...).

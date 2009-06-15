@@ -74,11 +74,22 @@ static XWMHints wm_hints = {
 #define DEFAULT_X_POSITION 0
 #define DEFAULT_Y_POSITION 0
 
+int mf_x11_initscreen(void);
+void mf_x11_updatescreen(void);
+void mf_x11_blankrectangle(screencol left,
+                           screencol right,
+                           screenrow top,
+                           screenrow bottom);
+void mf_x11_paintrow(screenrow row,
+                     pixelcolor init_color,
+                     transspec transition_vector,
+                     screencol vector_size);
+
 
 /* Return 1 (i.e., true) if display opened successfully, else 0.  */
 
 int
-mf_x11_initscreen()
+mf_x11_initscreen(void)
 {
     char *geometry;
     int geometry_found = 0;
@@ -224,7 +235,7 @@ mf_x11_initscreen()
 buffer)  */
 
 void
-mf_x11_updatescreen()
+mf_x11_updatescreen(void)
 {
     XFlush(my_display);
 }
@@ -235,10 +246,10 @@ reset the foreground to black because we always set it at the beginning
 of paintrow (below).  */
 
 void
-mf_x11_blankrectangle P4C(screencol, left,
-                          screencol, right,
-                          screenrow, top,
-                          screenrow, bottom)
+mf_x11_blankrectangle(screencol left,
+                      screencol right,
+                      screenrow top,
+                      screenrow bottom)
 {
     XSetForeground(my_display, my_gc, white);
     XFillRectangle(my_display, my_window, my_gc,
@@ -253,10 +264,10 @@ mf_x11_blankrectangle P4C(screencol, left,
 able to do something here with drawing many lines.  */
 
 void
-mf_x11_paintrow P4C(screenrow, row,
-                    pixelcolor, init_color,
-                    transspec, tvect,
-                    register screencol, vector_size)
+mf_x11_paintrow(screenrow row,
+                pixelcolor init_color,
+                transspec tvect,
+                screencol vector_size)
 {
     register int color, col;
 
