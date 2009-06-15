@@ -2,6 +2,12 @@
 
 	* dt2dv.c: do not include timestamp in binary.
 
+2009-06-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* dt2dv.c: #include <unistd.h> to declare isatty.
+	* dv2dt.c: #include <unistd.h> to declare isatty.
+
 2009-05-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

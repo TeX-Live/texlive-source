@@ -24,6 +24,14 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#else
+#ifndef __cplusplus
+extern int isatty (int );
+#endif /* __cplusplus */
+#endif
+
 #ifdef KPATHSEA
 #include <kpathsea/c-fopen.h>
 #endif
@@ -164,7 +172,7 @@ main
   if (argc > 1)
     open_dvi (argv[1], &dvi);
   else if (!isatty(fileno(dvi)))
-    SET_BINARY(fileno(dvi));
+    (void)SET_BINARY(fileno(dvi));
 
   if (argc > 2)
     open_dtl (argv[2], &dtl);

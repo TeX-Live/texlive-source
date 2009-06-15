@@ -31,6 +31,14 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#else
+#ifndef __cplusplus
+extern int isatty (int );
+#endif /* __cplusplus */
+#endif
+
 #ifdef KPATHSEA
 #include <kpathsea/c-fopen.h>
 #endif
@@ -469,7 +477,7 @@ Void dvi_stdout (VOID)
   dvi_filename = "Standard Output";
   ++ nfile;
   if (!isatty(fileno(dvi_fp)))
-    SET_BINARY(fileno(dvi_fp));
+    (void)SET_BINARY(fileno(dvi_fp));
 }
 
 
