@@ -253,7 +253,13 @@
 #define STREQ(A, B)  (strcmp(A, B) == 0)
 #define STRNEQ(A, B) (strcmp(A, B) != 0)
 
-#define MESSAGE(F, S) { \
+#define MESSAGE(F) { \
+    if (verbose) \
+	fprintf(stderr, F); \
+    fprintf(ilg_fp, F); \
+}
+
+#define MESSAGE1(F, S) { \
     if (verbose) \
 	fprintf(stderr, F, S); \
     fprintf(ilg_fp, F, S); \
@@ -263,7 +269,17 @@
 #undef FATAL
 #endif
 
-#define FATAL(F, S) { \
+#define FATAL(F) { \
+    fprintf(stderr, F); \
+    fprintf(stderr, USAGE, pgm_fn); \
+    EXIT(1); \
+}
+
+#if USE_KPATHSEA /* kpathsea defines a different FATAL1 */
+#undef FATAL1
+#endif
+
+#define FATAL1(F, S) { \
     fprintf(stderr, F, S); \
     fprintf(stderr, USAGE, pgm_fn); \
     EXIT(1); \
@@ -348,8 +364,8 @@ ensuing.
 #endif
 
 #define PUT_VERSION { \
-    MESSAGE("This is %s, ", pgm_fn); \
-    MESSAGE("%s.\n", VERSION); \
+    MESSAGE1("This is %s, ", pgm_fn); \
+    MESSAGE1("%s.\n", VERSION); \
     need_version = FALSE; \
 }
 

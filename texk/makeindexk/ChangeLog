@@ -1,3 +1,23 @@
+2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+
+	* genind.c (gen_ind): FIXME: `let' may be used uninitialized ,
+	probably a bug.
+
+	Avoid compiler warnings.
+
+	* genind.h: rename IND_ERROR(F,S) to IND_ERROR1(F,S) and define
+	IND_ERROR(F).
+	* mkind.h: same for MESSAGE, MESSAGE1 and FATAL, FATAL1.
+	* scanid.h: same for IDX_ERROR, IDX_ERROR1.
+	* scanst.h: same for STY_ERROR, STY_ERROR1.
+	* genind.c, mkind.c, scanid.c, scanst.c, sortid.c: always use
+	fprintf (via IND_ERROR etc.) with correct number of args.
+
+	* mkind.c (open_sty): avoid unused variables.	
+	(check_idx): add explict braces to avoid ambiguous `else'.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

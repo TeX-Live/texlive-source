@@ -48,7 +48,7 @@ sort_idx(VOID_ARG)
     char *prev_locale;
 #endif
 
-    MESSAGE("Sorting entries...", "");
+    MESSAGE("Sorting entries...");
 #ifdef HAVE_SETLOCALE
     prev_locale = setlocale(LC_COLLATE, NULL);
     setlocale(LC_COLLATE, "");
@@ -60,7 +60,7 @@ sort_idx(VOID_ARG)
 #ifdef HAVE_SETLOCALE
     setlocale(LC_COLLATE, prev_locale);
 #endif
-    MESSAGE("done (%ld comparisons).\n", idx_gc);
+    MESSAGE1("done (%ld comparisons).\n", idx_gc);
 }
 
 static int

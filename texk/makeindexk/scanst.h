@@ -145,7 +145,19 @@
 
 #define INDENTLEN_DEF 16
 
-#define STY_ERROR(F, D) { \
+#define STY_ERROR(F) { \
+    if (idx_dot) { \
+	fprintf(ilg_fp, "\n"); \
+	idx_dot = FALSE; \
+    } \
+    fprintf(ilg_fp, "** Input style error (file = %s, line = %d):\n   -- ", \
+	    sty_fn, sty_lc); \
+    fprintf(ilg_fp, F); \
+    sty_ec++; \
+    put_dot = FALSE; \
+}
+
+#define STY_ERROR1(F, D) { \
     if (idx_dot) { \
 	fprintf(ilg_fp, "\n"); \
 	idx_dot = FALSE; \

@@ -97,11 +97,22 @@
 }
 
 #define NULL_RTN { \
-    IDX_ERROR("Illegal null field.\n", NULL); \
+    IDX_ERROR("Illegal null field.\n"); \
     return (FALSE); \
 }
 
-#define IDX_ERROR(F, D) { \
+#define IDX_ERROR(F) { \
+    if (idx_dot) { \
+	fprintf(ilg_fp, "\n"); \
+	idx_dot = FALSE; \
+    } \
+    fprintf(ilg_fp, "!! Input index error (file = %s, line = %d):\n   -- ", \
+	    idx_fn, idx_lc); \
+    fprintf(ilg_fp, F); \
+    idx_ec++; \
+}
+
+#define IDX_ERROR1(F, D) { \
     if (idx_dot) { \
 	fprintf(ilg_fp, "\n"); \
 	idx_dot = FALSE; \

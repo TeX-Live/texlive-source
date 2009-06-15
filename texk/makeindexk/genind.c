@@ -66,7 +66,7 @@ gen_ind(VOID_ARG)
     int     n;
     int     tmp_lc;
 
-    MESSAGE("Generating output file %s...", ind_fn);
+    MESSAGE1("Generating output file %s...", ind_fn);
     PUT(preamble);
     ind_lc += prelen;
     if (init_page)
@@ -83,7 +83,7 @@ gen_ind(VOID_ARG)
     tmp_lc = ind_lc;
     if (in_range) {
 	curr = range_ptr;
-	IND_ERROR("Unmatched range opening operator %c.\n", idx_ropen);
+	IND_ERROR1("Unmatched range opening operator %c.\n", idx_ropen);
     }
     prev = curr;
     flush_line(TRUE);
@@ -137,7 +137,7 @@ int     n;
 
     if (*curr->encap == idx_ropen)
 	if (in_range) {
-	    IND_ERROR("Extra range opening operator %c.\n", idx_ropen);
+	    IND_ERROR1("Extra range opening operator %c.\n", idx_ropen);
 	} else {
 	    in_range = TRUE;
 	    range_ptr = curr;
@@ -147,15 +147,15 @@ int     n;
 	    in_range = FALSE;
 	    if (STRNEQ(&(curr->encap[1]), "") &&
 		STRNEQ(prev_encap, &(curr->encap[1]))) {
-IND_ERROR("Range closing operator has an inconsistent encapsulator %s.\n",
+IND_ERROR1("Range closing operator has an inconsistent encapsulator %s.\n",
 			  &(curr->encap[1]));
 	    }
 	} else {
-	    IND_ERROR("Unmatched range closing operator %c.\n", idx_rclose);
+	    IND_ERROR1("Unmatched range closing operator %c.\n", idx_rclose);
 	}
     else if ((*curr->encap != NUL) &&
 	     STRNEQ(curr->encap, prev_encap) && in_range)
-	IND_ERROR("Inconsistent page encapsulator %s within range.\n",
+	IND_ERROR1("Inconsistent page encapsulator %s within range.\n",
 		  curr->encap);
     return (1);
 }
@@ -232,7 +232,7 @@ new_entry(VOID_ARG)
     if (in_range) {
 	ptr = curr;
 	curr = range_ptr;
-	IND_ERROR("Unmatched range opening operator %c.\n", idx_ropen);
+	IND_ERROR1("Unmatched range opening operator %c.\n", idx_ropen);
 	in_range = FALSE;
 	curr = ptr;
     }
@@ -251,6 +251,7 @@ new_entry(VOID_ARG)
 	PUT(group_skip);
 	ind_lc += skiplen;
 	/* beginning of a new letter? */
+	/* FIXME: let may be uninitialized. Probably a BUG. */
 	put_header(let);
 	make_item(NIL);
     } else
@@ -290,16 +291,13 @@ old_entry(VOID_ARG)
 	flush_line(FALSE);
 	if ((diff == 0) && (prev->type == curr->type)) {
 IND_ERROR(
-"Conflicting entries: multiple encaps for the same page under same key.\n",
-"");
+"Conflicting entries: multiple encaps for the same page under same key.\n");
 	} else if (in_range && (prev->type != curr->type)) {
 IND_ERROR(
-"Illegal range formation: starting & ending pages are of different types.\n",
-"");
+"Illegal range formation: starting & ending pages are of different types.\n");
 	} else if (in_range && (diff == -1)) {
 IND_ERROR(
-"Illegal range formation: starting & ending pages cross chap/sec breaks.\n",
-"");
+"Illegal range formation: starting & ending pages cross chap/sec breaks.\n");
 	}
 	SAVE;
     }

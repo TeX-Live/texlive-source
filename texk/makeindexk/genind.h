@@ -25,7 +25,19 @@
  *
  */
 
-#define IND_ERROR(F, D) { \
+#define IND_ERROR(F) { \
+    if (idx_dot) { \
+	fprintf(ilg_fp, "\n"); \
+	idx_dot = FALSE; \
+    } \
+    fprintf(ilg_fp, \
+    "## Warning (input = %s, line = %d; output = %s, line = %d):\n   -- ", \
+	    curr->fn, curr->lc, ind_fn, ind_lc+1); \
+    fprintf(ilg_fp, F); \
+    ind_ec++; \
+}
+
+#define IND_ERROR1(F, D) { \
     if (idx_dot) { \
 	fprintf(ilg_fp, "\n"); \
 	idx_dot = FALSE; \

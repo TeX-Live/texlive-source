@@ -151,7 +151,7 @@ char   *argv[];
 		case 's':
 		    argc--;
 		    if (argc <= 0)
-			FATAL("Expected -s <stylefile>\n","");
+			FATAL("Expected -s <stylefile>\n");
 		    open_sty(*++argv);
 		    sty_given = TRUE;
 		    break;
@@ -160,7 +160,7 @@ char   *argv[];
 		case 'o':
 		    argc--;
 		    if (argc <= 0)
-			FATAL("Expected -o <ind>\n","");
+			FATAL("Expected -o <ind>\n");
 		    ind_fn = *++argv;
 		    ind_given = TRUE;
 		    break;
@@ -169,7 +169,7 @@ char   *argv[];
 		case 't':
 		    argc--;
 		    if (argc <= 0)
-			FATAL("Expected -t <logfile>\n","");
+			FATAL("Expected -t <logfile>\n");
 		    ilg_fn = *++argv;
 		    ilg_given = TRUE;
 		    break;
@@ -178,9 +178,9 @@ char   *argv[];
 		case 'p':
 		    argc--;
 		    if (argc <= 0)
-			FATAL("Expected -p <num>\n","");
+			FATAL("Expected -p <num>\n");
 		    if (strlen(*++argv) >= sizeof(pageno))
-			FATAL("Page number too high\n","");
+			FATAL("Page number too high\n");
 		    strcpy(pageno, *argv);
 		    init_page = TRUE;
 		    if (STREQ(pageno, EVEN)) {
@@ -214,7 +214,7 @@ char   *argv[];
 
 		    /* bad option */
 		default:
-		    FATAL("Unknown option -%c.\n", *ap);
+		    FATAL1("Unknown option -%c.\n", *ap);
 		    break;
 		}
 	} else {
@@ -222,7 +222,7 @@ char   *argv[];
 		check_idx(*argv, FALSE);
 		fns[++fn_no] = *argv;
 	    } else {
-		FATAL("Too many input files (max %d).\n", ARRAY_MAX);
+		FATAL1("Too many input files (max %d).\n", ARRAY_MAX);
 	    }
 	}
     }
@@ -246,11 +246,11 @@ char   *argv[];
 	prepare_idx();
 	sort_idx();
 	gen_ind();
-	MESSAGE("Output written in %s.\n", ind_fn);
+	MESSAGE1("Output written in %s.\n", ind_fn);
     } else
-	MESSAGE("Nothing written in %s.\n", ind_fn);
+	MESSAGE1("Nothing written in %s.\n", ind_fn);
 
-    MESSAGE("Transcript written in %s.\n", ilg_fn);
+    MESSAGE1("Transcript written in %s.\n", ilg_fn);
     CLOSE(ind_fp);
     CLOSE(ilg_fp);
     EXIT(0);
@@ -273,10 +273,10 @@ prepare_idx(VOID_ARG)
 #endif /* DEBUG */
 
     if (head == (NODE_PTR)NULL)
-	FATAL("No valid index entries collected.\n", "");
+	FATAL("No valid index entries collected.\n");
 
     if ((idx_key = (FIELD_PTR *) calloc(idx_gt, sizeof(FIELD_PTR))) == NULL) {
-	FATAL("Not enough core...abort.\n", "");
+	FATAL("Not enough core...abort.\n");
     }
     for (i = 0; i < idx_gt; i++) {
 	idx_key[i] = &(ptr->data);
@@ -310,7 +310,7 @@ int     log_given;
 	if (sty_given)
 	    scan_sty();
 	if (german_sort && (idx_quote == '"'))
-FATAL("Option -g invalid, quote character must be different from '%c'.\n",
+FATAL1("Option -g invalid, quote character must be different from '%c'.\n",
 '"');
 	scan_idx();
 	ind_given = TRUE;
@@ -327,7 +327,7 @@ FATAL("Option -g invalid, quote character must be different from '%c'.\n",
 
 	if (ind_given) {
 	    if (!ind_fp && ((ind_fp = OPEN_OUT(ind_fn)) == NULL))
-		FATAL("Can't create output index file %s.\n", ind_fn);
+		FATAL1("Can't create output index file %s.\n", ind_fn);
 	} else {
 	    ind_fn = "stdout";
 	    ind_fp = stdout;
@@ -335,7 +335,7 @@ FATAL("Option -g invalid, quote character must be different from '%c'.\n",
 
 	if (ilg_given) {
 	    if (!ilg_fp && ((ilg_fp = OPEN_OUT(ilg_fn)) == NULL))
-		FATAL("Can't create transcript file %s.\n", ilg_fn);
+		FATAL1("Can't create transcript file %s.\n", ilg_fn);
 	} else {
 	    ilg_fn = "stderr";
 	    ilg_fp = stderr;
@@ -346,7 +346,7 @@ FATAL("Option -g invalid, quote character must be different from '%c'.\n",
 	if ((fn_no == -1) && (sty_given))
 	    scan_sty();
 	if (german_sort && (idx_quote == '"'))
-FATAL("Option -g ignored, quote character must be different from '%c'.\n",
+FATAL1("Option -g ignored, quote character must be different from '%c'.\n",
 '"');
 
 	if (need_version) {
@@ -396,9 +396,9 @@ int     open_fn;
     if ( ( open_fn && 
 	 ((idx_fp = OPEN_IN(idx_fn)) == NULL)
 	 ) ||
-	((!open_fn) && (access(idx_fn, R_OK) != 0)))
+	((!open_fn) && (access(idx_fn, R_OK) != 0))) {
 	if (with_ext) {
-	    FATAL("Input index file %s not found.\n", idx_fn);
+	    FATAL1("Input index file %s not found.\n", idx_fn);
 	} else {
 
 #ifdef DEBUG
@@ -408,16 +408,17 @@ int     open_fn;
 #endif /* DEBUG */
 
 	    if ((idx_fn = (char *) malloc(STRING_MAX+5)) == NULL)
-		FATAL("Not enough core...abort.\n", "");
+		FATAL("Not enough core...abort.\n");
 	    snprintf(idx_fn, STRING_MAX+5, "%s%s", base, INDEX_IDX);
 	    if ((open_fn && 
-	 ((idx_fp = OPEN_IN(idx_fn)) == NULL)
-	) ||
+		((idx_fp = OPEN_IN(idx_fn)) == NULL)
+		) ||
 		((!open_fn) && (access(idx_fn, R_OK) != 0))) {
 		FATAL2("Couldn't find input index file %s nor %s.\n", base,
 		       idx_fn);
 	    }
 	}
+    }
 }
 
 
@@ -440,7 +441,7 @@ int     log_given;
 	ind_fn = ind;
     }
     if ((ind_fp = OPEN_OUT(ind_fn)) == NULL)
-	FATAL("Can't create output index file %s.\n", ind_fn);
+	FATAL1("Can't create output index file %s.\n", ind_fn);
 
     /* index transcript file */
     if (!ilg_given) {
@@ -448,12 +449,12 @@ int     log_given;
 	ilg_fn = ilg;
     }
     if ((ilg_fp = OPEN_OUT(ilg_fn)) == NULL)
-	FATAL("Can't create transcript file %s.\n", ilg_fn);
+	FATAL1("Can't create transcript file %s.\n", ilg_fn);
 
     if (log_given) {
 	snprintf(log_fn, sizeof(log_fn), "%s%s", base, INDEX_LOG);
 	if ((log_fp = OPEN_IN(log_fn)) == NULL) {
-	    FATAL("Source log file %s not found.\n", log_fn);
+	    FATAL1("Source log file %s not found.\n", log_fn);
 	} else {
 	    find_pageno();
 	    CLOSE(log_fp);
@@ -497,28 +498,29 @@ open_sty(fn)
 char   *fn;
 #endif
 {
-    char   *path;
-    char   *ptr;
-    int     i;
-    int     len;
 #if USE_KPATHSEA
     char   *found;
 
   if ((found = kpse_find_file (fn, kpse_ist_format, 1)) == NULL) {
-     FATAL("Index style file %s not found.\n", fn);
+     FATAL1("Index style file %s not found.\n", fn);
   } else {
     if (strlen(found) >= sizeof(sty_fn)) {
-      FATAL("Style file name %s too long.\n", found);
+      FATAL1("Style file name %s too long.\n", found);
     }
     strcpy(sty_fn,found);
     if ((sty_fp = OPEN_IN(sty_fn)) == NULL) {
-      FATAL("Could not open style file %s.\n", sty_fn);
+      FATAL1("Could not open style file %s.\n", sty_fn);
     }
   }
 #else
+    char   *path;
+    char   *ptr;
+    int     i;
+    int     len;
+
     if ((path = getenv(STYLE_PATH)) == NULL) {
         if (strlen(fn) >= sizeof(sty_fn)) {
-          FATAL("Style file name %s too long.\n", fn);
+          FATAL1("Style file name %s too long.\n", fn);
         }
 	/* style input path not defined */
 	strcpy(sty_fn, fn);
@@ -555,7 +557,7 @@ char   *fn;
     }
 
     if (sty_fp == NULL)
-	FATAL("Index style file %s not found.\n", fn);
+	FATAL1("Index style file %s not found.\n", fn);
 #endif
 }
 

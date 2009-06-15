@@ -71,7 +71,7 @@ scan_idx(VOID_ARG)
     int     not_eof = TRUE;
     int     arg_count = -1;
 
-    MESSAGE("Scanning input file %s...", idx_fn);
+    MESSAGE1("Scanning input file %s...", idx_fn);
     idx_lc = idx_tc = idx_ec = idx_dc = 0;
     comp_len = strlen(page_comp);
     while (not_eof) {
@@ -93,8 +93,7 @@ scan_idx(VOID_ARG)
 		    IDX_DOT(DOT_MAX);
 		arg_count = -1;
 	    } else if (arg_count > -1) {
-		IDX_ERROR("Missing arguments -- need two (premature LFD).\n",
-			  NULL);
+		IDX_ERROR("Missing arguments -- need two (premature LFD).\n");
 		arg_count = -1;
 	    }
 	case TAB:
@@ -119,7 +118,7 @@ scan_idx(VOID_ARG)
 			}
 		    } else {
 			IDX_SKIPLINE;
-			IDX_ERROR("Unknown index keyword %s.\n", keyword);
+			IDX_ERROR1("Unknown index keyword %s.\n", keyword);
 		    }
 		} else {
 		    if (i < ARRAY_MAX)
@@ -139,13 +138,13 @@ scan_idx(VOID_ARG)
 		    }
 		} else {
 		    IDX_SKIPLINE;
-IDX_ERROR(
+IDX_ERROR1(
 "No opening delimiter for second argument (illegal character `%c').\n", c);
 		}
 		break;
 	    case 2:
 		IDX_SKIPLINE;
-IDX_ERROR(
+IDX_ERROR1(
 "No closing delimiter for second argument (illegal character `%c').\n", c);
 		break;
 	    }
@@ -409,12 +408,12 @@ int     ck_actual;
 	{
 	FIELD_OVERFLOW:
 	    if (!ck_encap) {
-		IDX_ERROR("Encapsulator of page number too long (max. %d).\n",
+		IDX_ERROR1("Encapsulator of page number too long (max. %d).\n",
 			  len_field);
 	    } else if (ck_actual) {
-		IDX_ERROR("Index sort key too long (max. %d).\n", len_field);
+		IDX_ERROR1("Index sort key too long (max. %d).\n", len_field);
 	    } else {
-		IDX_ERROR("Text of key entry too long (max. %d).\n", len_field);
+		IDX_ERROR1("Text of key entry too long (max. %d).\n", len_field);
 	    }
 	    return (FALSE);
 	}
@@ -481,7 +480,7 @@ short  *type;
 	if (!scan_alpha_upper(no, npg, count))
 	    return (FALSE);
     } else {
-	IDX_ERROR("Illegal page number %s.\n", no);
+	IDX_ERROR1("Illegal page number %s.\n", no);
 	return (FALSE);
     }
     return (TRUE);
@@ -717,7 +716,7 @@ scan_arg1(VOID_ARG)
 	    {
 	    case LFD:
 		idx_lc++;
-		IDX_ERROR("Incomplete first argument (premature LFD).\n", "");
+		IDX_ERROR("Incomplete first argument (premature LFD).\n");
 		return (FALSE);
 	    case TAB:
 	    case SPC:
@@ -738,7 +737,7 @@ scan_arg1(VOID_ARG)
 
     flush_to_eol();			/* Skip to end of line */
     idx_lc++;
-    IDX_ERROR("First argument too long (max %d).\n", ARGUMENT_MAX);
+    IDX_ERROR1("First argument too long (max %d).\n", ARGUMENT_MAX);
     return (FALSE);
 }
 
@@ -760,7 +759,7 @@ scan_arg2(VOID_ARG)
 	    switch (a) {
 	    case LFD:
 		idx_lc++;
-IDX_ERROR("Incomplete second argument (premature LFD).\n", "");
+IDX_ERROR("Incomplete second argument (premature LFD).\n");
 		return (FALSE);
 	    case TAB:
 	    case SPC:
@@ -770,7 +769,7 @@ IDX_ERROR("Incomplete second argument (premature LFD).\n", "");
 		if (hit_blank) {
 		    flush_to_eol();	/* Skip to end of line */
 		    idx_lc++;
-IDX_ERROR("Illegal space within numerals in second argument.\n", "");
+IDX_ERROR("Illegal space within numerals in second argument.\n");
 		    return (FALSE);
 		}
 		no[i++] = (char) a;
@@ -780,7 +779,7 @@ IDX_ERROR("Illegal space within numerals in second argument.\n", "");
     }
     flush_to_eol();	/* Skip to end of line */
     idx_lc++;
-    IDX_ERROR("Second argument too long (max %d).\n", NUMBER_MAX);
+    IDX_ERROR1("Second argument too long (max %d).\n", NUMBER_MAX);
     return (FALSE);
 }
 

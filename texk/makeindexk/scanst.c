@@ -118,7 +118,7 @@ scan_sty(VOID_ARG)
     char    spec[STRING_MAX];
     int     tmp;
 
-    MESSAGE("Scanning style file %s", sty_fn);
+    MESSAGE1("Scanning style file %s", sty_fn);
     while (scan_spec(spec)) {
 	sty_tc++;
 	put_dot = TRUE;
@@ -253,7 +253,7 @@ scan_sty(VOID_ARG)
 	else {
 	    (void) next_nonblank();
 	    STY_SKIPLINE;
-	    STY_ERROR("Unknown specifier %s.\n", spec);
+	    STY_ERROR1("Unknown specifier %s.\n", spec);
 	    put_dot = FALSE;
 	}
 	if (put_dot) {
@@ -263,7 +263,7 @@ scan_sty(VOID_ARG)
 
     /* check if quote and escape are distinct */
     if (idx_quote == idx_escape) {
-	STY_ERROR(
+	STY_ERROR1(
 	       "Quote and escape symbols must be distinct (both `%c' now).\n",
 	       idx_quote);
 	idx_quote = IDX_QUOTE;
@@ -299,7 +299,7 @@ char    spec[];
     if (i < STRING_MAX) {
 	spec[i] = NUL;
 	if (c == EOF) {
-	    STY_ERROR(
+	    STY_ERROR1(
 		      "No attribute for specifier %s (premature EOF)\n",
 		      spec);
 	    return (-1);
@@ -354,7 +354,7 @@ char    str[];
 	while (TRUE)
 	    switch (c = GET_CHAR(sty_fp)) {
 	    case EOF:
-		STY_ERROR("No closing delimiter in %s.\n",
+		STY_ERROR1("No closing delimiter in %s.\n",
 			  clone);
 		return (FALSE);
 	    case STR_DELIM:
@@ -395,7 +395,7 @@ char    str[];
 	break;
     default:
 	STY_SKIPLINE;
-	STY_ERROR("No opening delimiter.\n", "");
+	STY_ERROR("No opening delimiter.\n");
 	return (FALSE);
     }
     return (TRUE);                     /* function value no longer used */
@@ -417,12 +417,12 @@ char   *c;
 	switch (clone = GET_CHAR(sty_fp)) {
 	case CHR_DELIM:
 	    STY_SKIPLINE;
-	    STY_ERROR("Premature closing delimiter.\n", "");
+	    STY_ERROR("Premature closing delimiter.\n");
 	    return (FALSE);
 	case LFD:
 	    sty_lc++;
 	case EOF:
-	    STY_ERROR("No character (premature EOF).\n", "");
+	    STY_ERROR("No character (premature EOF).\n");
 	    return (FALSE);
 	case BSH:
 	    clone = GET_CHAR(sty_fp);
@@ -431,7 +431,7 @@ char   *c;
 		*c = (char) clone;
 		return (TRUE);
 	    } else {
-		STY_ERROR("No closing delimiter or too many letters.\n", "");
+		STY_ERROR("No closing delimiter or too many letters.\n");
 		return (FALSE);
 	    }
 	}
@@ -441,7 +441,7 @@ char   *c;
 	break;
     default:
 	STY_SKIPLINE;
-	STY_ERROR("No opening delimiter.\n", "");
+	STY_ERROR("No opening delimiter.\n");
 	return (FALSE);
     }
     return (TRUE);                     /* function value no longer used */
@@ -516,7 +516,7 @@ process_precedence(VOID_ARG)
 	    break;
 	default:
 	    STY_SKIPLINE;
-	    STY_ERROR("Unknow type `%c' in page precedence specification.\n",
+	    STY_ERROR1("Unknow type `%c' in page precedence specification.\n",
 		      page_prec[i]);
 	    return (FALSE);
 	}
@@ -524,7 +524,7 @@ process_precedence(VOID_ARG)
     }
     if (page_prec[i] != NUL) {
 	STY_SKIPLINE;
-	STY_ERROR("Page precedence specification string too long.\n", "");
+	STY_ERROR("Page precedence specification string too long.\n");
 	return (FALSE);
     }
     last = i;
