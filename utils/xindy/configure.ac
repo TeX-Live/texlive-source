@@ -72,7 +72,9 @@ test "x$enable_xindy_docs" = xno || enable_xindy_docs=yes
 
 # This option has been renamed --enable-native-texlive-build
 # but should only be inherited and not specified here
-# AC_ARG_ENABLE(tetex-build, AS_HELP_STRING([--enable-tetex-build],[Build as part of a TeX Live installation]))
+AC_ARG_ENABLE([texlive-build],
+               AS_HELP_STRING([--enable-texlive-build],
+                              [Build as part of a TeX Live installation]))
 
 if test "x$with_xindy_recode" != xyes; then
   CONVERT_FROM_UTF8="iconv -f UTF-8 -t "
@@ -84,14 +86,13 @@ else
 fi
 AC_SUBST(CONVERT_FROM_UTF8)
 
-## if test "x$enable_native_texlive_build" = xyes -a "x$datadir" = "x$prefix"; then
-if test "x$enable_native_texlive_build" = xyes; then
+if test "x$enable_texlive_build" = xyes; then
   AC_MSG_NOTICE([Using installation layout for TeX Live])
   datadir="$prefix/texmf"
   docdir="$prefix/texmf/doc/$PACKAGE_NAME"
   mandir="$prefix/texmf/doc/man"
 fi
-AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_native_texlive_build" = xyes])
+AM_CONDITIONAL([TETEX_BUILD],[test "x$enable_texlive_build" = xyes])
 
 if test "x$enable_xindy_rules" != xno; then
   if text "x$PERL" = xno; then

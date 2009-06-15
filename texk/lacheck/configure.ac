@@ -19,7 +19,7 @@ AC_SUBST([REV])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([lacheck])
 
-KPSE_PROG_LEX
+AC_PROG_LEX
 
 AC_CONFIG_HEADERS([config.h])
 

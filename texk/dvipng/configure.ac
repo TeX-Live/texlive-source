@@ -40,9 +40,9 @@ AC_CONFIG_SRCDIR([dvipng.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-dnl Common code for all programs using libkpathsea.
+# Common code for all programs using libkpathsea.
 KPSE_COMMON([dvipng])
-
+# Configure options for dvipng also shown at the TeX Live top-level.
 m4_include([ac/dvipng.ac])
 
 if test "x$enable_debug" != xno; then
@@ -54,29 +54,38 @@ if test "x$enable_timing" = xyes; then
   AC_DEFINE([TIMING], 1, [Define as 1 to get execution time output.])
 fi
 
-dnl Checks for programs.
-dnl FIXME
-AC_DEFINE_UNQUOTED([GS_PATH], ["gs"], [Define as the path to GhostScript.])
+# Checks for programs.
+# For a native TeX Live build '--with-gs' is ignored.
+AS_IF([test "x$enable_native_texlive_build" = xyes],
+      [with_gs=])
+AS_CASE([$with_gs],
+        ["" | yes | no], [AC_CHECK_PROG([GS], [gs], [gs])],
+        [AC_PATH_PROG([GS], ["$with_gs"])])
+AS_IF([test -n "$GS"],
+      [GS_CHECK_DEVICES],
+      [AC_MSG_WARN([Cannot find GhostScript in your PATH])
+       GS=gs])
+AC_DEFINE_UNQUOTED([GS_PATH], ["$GS"], [Define as the path to GhostScript.])
 
-dnl Checks for libraries.
+# Checks for libraries.
 AC_SEARCH_LIBS([pow], [m])
 AC_SEARCH_LIBS([basename], [gen])
 
-dnl Checks for header files.
+# Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h sys/time.h])
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 AC_HEADER_STDBOOL
 
-dnl Checks for typedefs, structures, and compiler characteristics.
+# Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_TYPE_INT64_T
 AC_TYPE_UINT64_T
 
-dnl Checks for library functions.
+# Checks for library functions.
 AC_FUNC_ALLOCA
 AC_FUNC_FORK
 AC_FUNC_MALLOC
@@ -89,10 +98,71 @@ if test "x$enable_timing" = xyes; then
   AC_CHECK_FUNCS([ftime gettimeofday])
 fi
 
-dnl Documentation-related checks.
+# Documentation-related checks.
 AC_PATH_PROG([MAKEINFO], [makeinfo], [:])
 MAKEINFO_CHECK_MACROS([acronym env option])
 AC_PATH_PROG([INSTALL_INFO], [install-info], [:], [$PATH /usr/sbin /sbin])
+
+# SELFAUTO
+# When dvipng is built as part of the TeX Live tree, the option
+# '--enable-texlive-build' is automatically passed from the top-level.
+# In that case we silently assume '--disable-selfauto-set'.
+test "x$enable_texlive_build" = xyes && enable_selfauto_set=no
+AC_ARG_ENABLE([selfauto-set], 
+  AC_HELP_STRING([--enable-selfauto-set],
+  [This option will make the final binary explicitly set the
+   $SELFAUTO... variables to make it look as dvipng is installed in the
+   main texmf tree, even if it isn't. This is necessary when texmf.cnf
+   only uses $SELFAUTO... variables and dvipng is not installed in the
+   texmf tree. Otherwise, dvipng may not be able to find virtual
+   fonts, or psfonts.map. To find out, first build the binary and do
+   'make test'. If the test fails, you need this switch.]),
+  [ if test "$enableval" = yes ; then
+      AC_MSG_CHECKING([for \$SELFAUTOLOC])
+      SELFAUTOLOC=`kpsewhich -expand-var=\\\$SELFAUTOLOC`
+      AC_DEFINE_UNQUOTED([ENV_SELFAUTOLOC], ["SELFAUTOLOC=$SELFAUTOLOC"],
+	[The environment setting for $SELFAUTOLOC])
+      AC_MSG_RESULT([$SELFAUTOLOC])
+      AC_MSG_CHECKING([for \$SELFAUTODIR])
+      SELFAUTODIR=`kpsewhich -expand-var=\\\$SELFAUTODIR`
+      AC_DEFINE_UNQUOTED([ENV_SELFAUTODIR], ["SELFAUTODIR=$SELFAUTODIR"],
+	[The environment setting for $SELFAUTODIR])
+      AC_MSG_RESULT([$SELFAUTODIR])
+      AC_MSG_CHECKING([for \$SELFAUTOPARENT])
+      SELFAUTOPARENT=`kpsewhich -expand-var=\\\$SELFAUTOPARENT`
+      AC_DEFINE_UNQUOTED([ENV_SELFAUTOPARENT], ["SELFAUTOPARENT=$SELFAUTOPARENT"],
+	[The environment setting for $SELFAUTOPARENT])
+      AC_MSG_RESULT([$SELFAUTOPARENT])
+    fi ],
+  [AC_MSG_CHECKING([for texmf.cnf])
+  TEXMF_CNF=`kpsewhich texmf.cnf`
+  AC_MSG_RESULT([$TEXMF_CNF])
+  AC_PATH_PROG([KPSEWHICH], [kpsewhich])
+  AC_MSG_CHECKING([for psfonts.map])
+  cp $KPSEWHICH .
+  PSFONTS_MAP=`./kpsewhich psfonts.map`
+  rm -f ./kpsewhich
+  if test -n "$PSFONTS_MAP"; then
+    AC_MSG_RESULT([$PSFONTS_MAP])
+  else
+    AC_MSG_RESULT([not found from outside the texmf tree])
+    AC_MSG_CHECKING([for \$SELFAUTO in texmf.cnf])
+    if grep SELFAUTO "$TEXMF_CNF" > /dev/null 2> /dev/null; then
+      AC_MSG_RESULT([yes
+***************************************************************
+texmf.cnf is using \$SELFAUTO... variables. If you are going to
+install dvipng outside the texmf tree, you may need to use
+--enable-selfauto-set. To find out, do 'make ; make test'. If the test
+is unsuccessful, add the mentioned switch and rebuild.
+***************************************************************])
+    else
+      AC_MSG_RESULT([no])
+    fi
+  fi])
+
+# We have to check properties of libraries, either installed (system)
+# libraries or unistalled (possibly libtool) ones from the TeX Live tree.
+# Thus we can not use, e.g., AC_CHECK_LIB(LIB, FUNCTION)
 
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
@@ -101,11 +171,7 @@ KPSE_T1LIB_FLAGS
 KPSE_FREETYPE2_FLAGS
 KPSE_GD_FLAGS
 
-dnl We have to check properties of libraries, either installed (system)
-dnl libraries or unistalled (possibly libtool) ones from the TL tree.
-dnl Thus we can not use, e.g., AC_CHECK_LIB(LIB, FUNCTION)
-
-dnl Checks for more libraries.
+# Checks for more libraries.
 KPSE_ADD_FLAGS([zlib])
 AC_CHECK_FUNC([deflate],
               [AC_DEFINE([HAVE_LIBZ], 1,
@@ -131,8 +197,8 @@ AC_CHECK_FUNC([kpse_set_progname],
                          [Define to 1 if you have the `kpathsea' library (-lkpathsea).])],
               [KPSE_MSG_ERROR([dvipng], [cannot find/use libkpathsea])])
 
-dnl We need enc, cmap, and sfd formats.
-dnl Introduced together with opentype format (Dec 2003).
+# We need enc, cmap, and sfd formats.
+# Introduced together with opentype format (Dec 2003).
 KPSE_CHECK_KPSE_FORMAT([opentype],
                        [AC_DEFINE([HAVE_KPSE_ENC_FORMATS], 1,
                                   [Define to 1 if your kpathsea has kpse_enc_format.])])
@@ -153,20 +219,17 @@ AC_CHECK_FUNC([FT_Init_FreeType],
 AM_CONDITIONAL([have_ft2], [test "x$ac_cv_func_FT_Init_FreeType" = xyes])
 AM_CONDITIONAL([have_ft2_or_t1], [test "x$have_ft2_or_t1" = xyes])
 
-dnl Checks for more header files.
+# Checks for more header files.
 AC_CHECK_HEADERS([gd.h png.h kpathsea/kpathsea.h], ,
                  [KPSE_MSG_ERROR([dvipng], [cannot find/use $ac_header])])
 AC_CHECK_HEADERS([t1lib.h])
 
-dnl Checks for library functions.
+# Checks for more library functions.
 AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImageCreateFromPngPtr gdImageGif FT_Library_Version])
 
 AM_CONDITIONAL([have_gif], [test "x$ac_cv_func_gdImageGif" = xyes])
 
 KPSE_RESTORE_FLAGS
-
-DVIPNG_VERSION=dvipng_version
-AC_SUBST([DVIPNG_VERSION])
 
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE_STRING:
@@ -193,6 +256,6 @@ AC_MSG_RESULT([
 
 AC_CONFIG_HEADER([config.h])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile help/Makefile doc/Makefile])
 
 AC_OUTPUT

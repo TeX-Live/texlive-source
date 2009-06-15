@@ -57,10 +57,9 @@ CHO_CHECK_LIBPNG
 
 KPSE_RESTORE_FLAGS
 
-dnl We do not provide the configure option '--enable-tetex-build', but may
-dnl inherit enable_tetex_build when part of a teTeX / TeX Live installation.
-dnl If not, check for libpaper.
-if test "x$enable_tetex_build" != xyes || test ! -d $srdir/../kpathsea; then
+dnl Check for additional libraries.
+
+if test "x$enable_texlive_build" != xyes || test ! -d $srdir/../kpathsea; then
   CHO_CHECK_LIBPAPER
 fi
 

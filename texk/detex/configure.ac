@@ -15,7 +15,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([detex])
 
-KPSE_PROG_LEX
+AC_PROG_LEX
 AC_HEADER_TIME
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])

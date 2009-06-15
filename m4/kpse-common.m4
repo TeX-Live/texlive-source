@@ -260,6 +260,9 @@ if test "$kb_cv_var_program_inv_name" = yes; then
             [Define to 1 if you are using GNU libc or otherwise have global variables
              `program_invocation_name' and `program_invocation_short_name'.])
 fi
+dnl
+dnl Enable flags for compiler warnings
+KPSE_COMPILER_WARNINGS
 ]) # KPSE_COMMON
 
 # KPSE_MSG_ERROR(PACKAGE, ERROR, [EXIT-STATUS = 1])
@@ -285,3 +288,4 @@ AC_DEFUN([_KPSE_CHECK_PKG_CONFIG],
 [AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
 ]) # _KPSE_CHECK_PKG_CONFIG
+

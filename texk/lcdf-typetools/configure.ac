@@ -47,12 +47,13 @@ dnl
 dnl kpathsea
 dnl
 
-AC_ARG_ENABLE(tetex-build, [  --enable-tetex-build    build as part of a teTeX installation], :, enable_tetex_build=no)
+AC_ARG_ENABLE([texlive-build], 
+              AS_HELP_STRING([--enable-texlive-build],
+                             [build as part of a TeX Live installation]),
+              [:],
+              [enable_texlive_build=no])
 
-dnl FIXME:
-test -d $srcdir/../kpathsea && enable_tetex_build=yes
-
-AM_CONDITIONAL([tetex_build], [test "x$enable_tetex_build" = xyes])
+AM_CONDITIONAL([texlive_build], [test "x$enable_texlive_build" = xyes])
 
 AC_ARG_WITH([kpathsea],
             AS_HELP_STRING([--without-kpathsea],
@@ -90,7 +91,7 @@ KPSE_RESTORE_FLAGS
 
 AC_ARG_ENABLE(selfauto-set, [  --disable-selfauto-set  disable setting SELFAUTO variables from kpsewhich], :, enable_selfauto_set=yes)
 
-if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno -a "x$enable_tetex_build" != xyes; then
+if test "x$enable_selfauto_set" = xyes -a "x$kpathsea" != xno -a "x$enable_texlive_build" != xyes; then
     kpsewhich='kpsewhich'
     test "x$kpathsea" != xyes -a -x "$kpathsea/bin/kpsewhich" && kpsewhich="$kpathsea/bin/kpsewhich"
     SELFAUTOLOC=`$kpsewhich --expand-var='$SELFAUTOLOC' 2>/dev/null`
