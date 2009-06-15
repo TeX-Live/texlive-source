@@ -1,3 +1,12 @@
+2009-06-15  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.jadetex,pdfjadetex): search latex, not plain.
+	Thus we find the latex fonttext.cfg before cslatex's, and thus
+	we can build the format using latex.ltx, and thus
+	we can avoid & in fmtutil.cnf, and thus
+	we can avoid painful infinite loops on failure, or something.
+	http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=427562
+
 2009-06-10  Karl Berry  <karl@tug.org>
 
 	* ac/web2c.ac (mktexfmt): default to yes.

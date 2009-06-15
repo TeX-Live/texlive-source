@@ -174,7 +174,6 @@ TEXINPUTS.amstex        = .;$TEXMF/tex/{amstex,plain,generic,}//
 TEXINPUTS.csplain       = .;$TEXMF/tex/{csplain,plain,generic,}//
 TEXINPUTS.eplain        = .;$TEXMF/tex/{eplain,plain,generic,}//
 TEXINPUTS.ftex          = .;$TEXMF/tex/{formate,plain,generic,}//
-TEXINPUTS.jadetex       = .;$TEXMF/tex/{jadetex,plain,generic,}//
 TEXINPUTS.mex           = .;$TEXMF/tex/{mex,plain,generic,}//
 TEXINPUTS.texinfo       = .;$TEXMF/tex/{texinfo,plain,generic,}//
 
@@ -200,7 +199,6 @@ TEXINPUTS.etex          = .;$TEXMF/tex/{plain,generic,}//
 % pdfTeX.
 TEXINPUTS.pdfcslatex    = .;$TEXMF/tex/{cslatex,csplain,latex,generic,}//
 TEXINPUTS.pdfcsplain    = .;$TEXMF/tex/{csplain,plain,generic,}//
-TEXINPUTS.pdfjadetex    = .;$TEXMF/tex/{jadetex,plain,generic,}//
 TEXINPUTS.pdflatex      = .;$TEXMF/tex/{latex,generic,}//
 TEXINPUTS.pdfmex        = .;$TEXMF/tex/{mex,plain,generic,}//
 TEXINPUTS.utf8mex       = .;$TEXMF/tex/{mex,plain,generic,}//
@@ -238,6 +236,10 @@ TEXINPUTS.omega         = .;$TEXMF/tex/{plain,generic,}//
 
 % ConTeXt.
 TEXINPUTS.context       = .;$TEXMF/tex/{context,plain,generic,}//
+
+% jadetex
+TEXINPUTS.jadetex       = .;$TEXMF/tex/{jadetex,latex,generic,}//
+TEXINPUTS.pdfjadetex    = .;$TEXMF/tex/{jadetex,latex,generic,}//
 
 % XMLTeX.
 TEXINPUTS.xmltex        = .;$TEXMF/tex/{xmltex,latex,generic,}//
