@@ -5,6 +5,8 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
+AM_CFLAGS = $(WARNING_CFLAGS)
+
 SUBDIRS = squeeze . tests
 
 include common.am
@@ -214,7 +216,7 @@ uninstall-hook:
 	  rm -f "$(DESTDIR)$(xdvidir)/xdvi.cfg"; \
 	else :; fi
 
-## Not yet used
+## Not used
 ##
 EXTRA_DIST += \
 	BUGS \
@@ -224,7 +226,6 @@ EXTRA_DIST += \
 	LESSTIF-BUGS \
 	README.t1fonts \
 	README.t1mapper \
-	m4/acinclude.m4 \
 	pixmaps/drag_horiz.xbm \
 	pixmaps/drag_horiz_mask.xbm \
 	pixmaps/drag_omni.xbm \

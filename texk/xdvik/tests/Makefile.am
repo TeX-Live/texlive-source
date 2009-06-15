@@ -6,6 +6,7 @@
 include ../common.am
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/gui $(common_includes)
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 check_PROGRAMS = run_tests
 

@@ -9,6 +9,7 @@ INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA -DUNIX -DNeedFunctionPrototypes
 ## We don't use libkpathsea, so don't overload fopen and stuff.
 AM_CPPFLAGS += -DNO_DEBUG
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = dvidvi
 

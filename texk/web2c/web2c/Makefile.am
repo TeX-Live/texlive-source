@@ -7,6 +7,7 @@ ACLOCAL_AMFLAGS = -I ../../../m4
 
 INCLUDES =  -Inative -I$(srcdir)/native -I$(srcdir)/.. -I$(srcdir)/../..
 AM_YFLAGS = -d -v
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_PROGRAMS = web2c fixwrites splitup makecpool
 

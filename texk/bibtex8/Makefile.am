@@ -6,7 +6,12 @@
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT -funsigned-char
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT
+## FIXME: (1) this should go away once the code has been carefully
+## FIXME: analyzed and uses 'unsigned char' where necessary.
+## FIXME: (2) this should go to AM_CFLAGS, but AIX xlc only
+## FIXME: accepts this flag when compiling, not when linking.
+AM_CPPFLAGS += -funsigned-char
 
 bin_PROGRAMS = bibtex8
 

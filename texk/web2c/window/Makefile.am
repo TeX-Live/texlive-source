@@ -6,6 +6,7 @@
 INCLUDES = -I$(top_srcdir) $(KPATHSEA_INCLUDES)
 
 AM_CPPFLAGS = $(X_CFLAGS)
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@

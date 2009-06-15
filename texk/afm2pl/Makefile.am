@@ -7,6 +7,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = afm2pl
 
@@ -21,9 +22,15 @@ LDADD = $(KPATHSEA_LIBS)
 
 dist_man1_MANS = afm2pl.1
 
+TESTS = afm2pl.test
+
+EXTRA_DIST = afm2pl.test logo10.afm xlogo10.map xlogo10.pl 
+
+CLEANFILES = logo10.map logo10.pl
+
 ## Not used
 ##
-EXTRA_DIST = \
+EXTRA_DIST += \
 	afm2pl.html \
 	afm2pl.txt \
 	afm2pl.xml

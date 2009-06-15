@@ -7,6 +7,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## The Makefile.in from 2002 by Thomas Esser applied the sed script
 ## states.sed to detex.l in order to "convert long labels to a shorter

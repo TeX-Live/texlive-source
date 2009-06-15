@@ -4,6 +4,7 @@
 ## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
@@ -20,6 +21,7 @@ lib_a_SOURCES = \
 	fprintreal.c \
 	inputint.c \
 	input2int.c \
+	lib.h \
 	main.c \
 	openclose.c \
 	printversion.c \

@@ -5,6 +5,8 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../../m4
 
+AM_CFLAGS = $(WARNING_CFLAGS)
+
 noinst_PROGRAMS = squeeze
 
 nodist_noinst_DATA = stamp-squeeze
