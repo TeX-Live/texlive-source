@@ -35,7 +35,7 @@ static int lastspecial = 1 ;
  *   we simply put it out, since any special character terminates the
  *   preceding token.
  */
-void
+static void
 specialout (char c)
 {
    if (linepos + 1 > LINELENGTH) {
@@ -46,7 +46,8 @@ specialout (char c)
    linepos++ ;
    lastspecial = 1 ;
 }
-void
+
+static void
 strout (char *s)
 {
    if (linepos + strlen(s) > LINELENGTH) {
@@ -58,7 +59,8 @@ strout (char *s)
       putchar(*s++) ;
    lastspecial = 1 ;
 }
-void
+
+static void
 cmdout (char *s)
 {
    int l ;
