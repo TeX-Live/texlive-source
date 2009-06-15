@@ -149,21 +149,23 @@ AM_CONDITIONAL([MF], [test "x$enable_mf" != xno])
 AM_CONDITIONAL([MFN], [test "x$enable_mf_nowin" != xno])
 
 # Handle --with-mf-x-toolkit and --with-x
+test "x$enable_mf" = xno || enable_mf=yes
 AS_CASE([$with_mf_x_toolkit],
         [yes|no], [],
-        [''|y|ye], [with_mf_x_toolkit=yes],
+        [''], [with_mf_x_toolkit=$enable_mf],
+        [y|ye], [with_mf_x_toolkit=yes],
         [n], [with_mf_x_toolkit=no],
             [AC_MSG_WARN([unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes.])
              with_mf_x_toolkit=yes])
 test "x$with_x_toolkit" = xyes && with_x=yes
 test "x$with_x" = xno && with_x_toolkit=no
-: ${with_x=yes} # tell PATH_XTRA to use X by default, if not specified.
+: ${with_x=$enable_mf} # tell PATH_XTRA to use X for Metafont, if not specified.
 
 # Distinguish no X at all, no toolkit, or toolkit.
 AC_PATH_XTRA
 if test "x$with_x" = xyes; then
   if test "x$no_x" = xyes; then
-    AC_MSG_ERROR([Sorry, could not find required X include and library files.])
+    AC_MSG_ERROR([Sorry, could not find X include and library files required for Metafont.])
   fi
   test -n "$x_libraries" && XLFLAG="-L$x_libraries"
   wlibs="$XLFLAG -lX11"
