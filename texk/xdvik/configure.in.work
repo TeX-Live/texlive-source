@@ -1,11 +1,6 @@
 
 dnl ##########
 
-dnl SU: added flags to turn on gcc warnings, taken from gnome/compiler-flags.m4 and put into aclocal.m4
-COMPILER_WARNINGS
-
-dnl ##########
-
 dnl First, check for libXp and libXext:
 if test -z "$x_ext_lib"; then # allow envvar override
   if test -n "$x_libraries"; then

@@ -82,7 +82,7 @@ utils/Util/ac/withenable.ac	defines libraries required by Util, provides the
 ======================
 
 Running 'configure' for the top-level directory will in addition configure
-the directories texk/kpathsea/, libs/, libs/dummy/, utils/, utils/dummy,
+the directories texk/kpathsea/, libs/, libs/dummy/, utils/, utils/dummy/,
 texk/, and texk/dummy/.  This will determine the programs (utils/Util/ and
 texk/Prog) to be built and libraries from the TL tree (texk/kpathsea/ and
 libs/Lib) required by these programs.
@@ -96,7 +96,7 @@ texk/kpathsea/, libs/, utils/, and texk/.
 3.1. Running `make' in libs/
 ----------------------------
 
-First, for each subdirectory libs/Lib not yet configured, this runs
+First, for each subdirectory libs/Lib/ not yet configured, this runs
 `configure' and if required `make all' in that directory.  Then this
 recurses into all required subdirectories for the selected Make target:
 `default' or `all' to (re-)build, `check' to run tests, `install' etc.
@@ -104,7 +104,7 @@ recurses into all required subdirectories for the selected Make target:
 3.2. Running `make' in utils/ and texk/
 ---------------------------------------
 
-Quite similarly, for each subdirectory utils/Util and texk/Prog not yet
+Quite similarly, for each subdirectory utils/Util/ and texk/Prog/ not yet
 configured, this first runs `configure' and if required `make all' in that
 directory.  Subsequently, this recurses into all required subdirectories to
 (re-)build, run tests, install, etc.
@@ -180,26 +180,28 @@ build e-TeX (although there is no simple way to have e-TeX installed).
 4.1 Adding a new program directory
 ----------------------------------
 
-To add a new program directory utils/Util (not using Kpathsea) or texk/Prog
-(possibly using Kpathsea) you first have to add the directory Util to the M4
-list kpse_utils_pkgs or Prog to the M4 list kpse_texk_pkgs defined in
+To add a new program directory utils/Util/ (not using Kpathsea) or
+texk/Prog/ (possibly using Kpathsea) you must add the directory Util to the
+M4 list kpse_utils_pkgs or Prog to the M4 list kpse_texk_pkgs defined in
 m4/kpse-pkgs.m4.  In addition you must create a configure.ac fragment
 utils/Util/ac/witheanble.ac or texk/Prog/ac/witheanble.ac defining any
 required libraries from the TL tree and whether this new program is to be
 built by default (in the absence of the corresponding '--enable-Util/Prog'
-or '--disable-Util/Prog' configure options).  If a program texk/Prog
-requires specific configure options to be seen at the top-level, they should
-be defined in an additional configure.ac fragment texk/Prog/ac/Prog.ac
-included from texk/Prog/ac/withenable.ac and texk/Prog/configure.ac (as,
-e.g., for texk/web2c/ and texk/xdvik/).
+or '--disable-Util/Prog' configure options).  If a program in texk/Prog/ or
+utils/Util/ requires specific configure options to be seen at the top-level,
+they should be defined in an additional configure.ac fragment
+texk/Prog/ac/Prog.ac or utils/Util/ac/Util.ac (included from
+texk/Prog/ac/withenable.ac or utils/Util/ac/withenable.ac and
+texk/Prog/configure.ac (as, e.g., for texk/web2c/, texk/xdvik/, and
+utils/xindy/).
 
 4.2 Adding a new library directory
 ----------------------------------
 
-To add a new library directory libs/Lib you first have to add the directory
-Lib to the M4 list kpse_libs_pkgs defined in m4/kpse-pkgs.m4.  In addition
-you must create a configure.ac fragment libs/Lib/ac/witheanble.ac defining
-any required libraries from the TL tree and whether an installed (system)
+To add a new library directory libs/Lib/ you must add the directory Lib to
+the M4 list kpse_libs_pkgs defined in m4/kpse-pkgs.m4.  In addition you must
+create a configure.ac fragment libs/Lib/ac/witheanble.ac defining any
+required libraries from the TL tree and whether an installed (system)
 version of this library can be used.  If that is the case, another
 configure.ac fragment libs/Lib/ac/Lib.ac must define (AC_CHECK_FUNCS and
 AC_CHECK_HEADERS) tests for a system version to be acceptable.  Finally you
@@ -211,10 +213,10 @@ for CPPFLAGS, LDADD, and dependencies, as well as LIB_RULE with a
 
 If a system version of the library can be used, another M4 macro
 KPSE_LIB_SYSTEM_FLAGS in m4/kpse-Lib-flags.m4 must define values for
-LIB_INCLUDES and LIB_LIBS, depending on values for the configure options
-'--with-Lib-includes' and/or '--with-Lib-libdir', and you must add the line
-'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])' to the definition of the M4 macro
-KPSE_ALL_SYSTEM_FLAGS in m4/kpse-pkgs.m4.
+LIB_INCLUDES and LIB_LIBS, usually depending on values for the configure
+options '--with-Lib-includes' and/or '--with-Lib-libdir', and you must add
+the line 'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])' to the definition of the M4
+macro KPSE_ALL_SYSTEM_FLAGS in m4/kpse-pkgs.m4.
 
 5. Updating the TL build system
 ===============================
@@ -222,23 +224,16 @@ KPSE_ALL_SYSTEM_FLAGS in m4/kpse-pkgs.m4.
 When anything in the TL build system (configure.ac and Makefile.am files
 with their fragments or M4 macros in m4/) has been modified you have to
 rebuild the coresponding configure, Makefile.in, and config.h or c-auto,h
-files.
+files. 
 
-This is most easily done automatically using maintainer-mode.  Due to some
-dependencies known to Makefile but not recognized by Aclocal it may,
-however, happen that Aclocal is run again and agin, keeping the aclocal.m4
-files unmodified.  This can be fixed by
-	touch {,libs/texk/,utils/}aclocal.m4
-from the top-level.
+This is most easily done automatically using maintainer-mode.  The files in
+the SVN repository are all up to date, but some of them may be rebuilt in
+maintainer-mode due to their relative timestamps.  This will eventually be
+fixed, once everything has stabilized.
 
-The files in the SVN repository are all up to date, but some of them may be
-rebuilt when using maintainer-mode due to their relative timestamps.  This
-will eventually be fixed, once everything has stabilized.
+Alternatively, you can run the 'reautoconf' script from the top-level.
 
-Alternatively, you can run the 'reautoconf' script from the top-level (yet
-to be done).
-
-The 'config.guess', 'config.sub', etc. files for most packages are now kept
+The 'config.guess', 'config.sub', etc. files for most packages are kept
 centrally in build-aux/.  There are, however, independent copies in, e.g.,
 libs/freetype/freetype-1.5/, libs/freetype2/freetype-2.3.8/builds/unix/, and
 similar places that might need updating (not done automatically by the
