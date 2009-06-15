@@ -59,6 +59,14 @@ void error(char *);
 #include <config.h>
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#else
+#ifndef __cplusplus
+extern int isatty (int );
+#endif /* __cplusplus */
+#endif
+
 #ifdef KPATHSEA
 #include <kpathsea/c-fopen.h>
 #define READBIN         FOPEN_RBIN_MODE
@@ -92,20 +100,6 @@ void error(char *);
 #define IS_DIR_SEP      ((c) == '/')
 #endif
 #endif /* not KPATHSEA */
-
-#ifdef XENIX
-#define SHORTINT
-#else
-#undef SHORTINT
-#endif
-#ifdef MSDOS
-#define SHORTINT
-#endif
-#ifdef __TOS__
-#ifdef __TURBOC__
-#define SHORTINT
-#endif
-#endif
 
 /*
  *   Type declarations.  integer must be a 32-bit signed; shalfword must
@@ -209,13 +203,13 @@ short comlen[256] = {
  *   updating the current position as necessary.
  */
 
-void
-abortpage()
+static void
+abortpage(void)
 {
    error("! unexpected eof on DVI file") ;
 }
 
-shalfword dvibyte()
+static shalfword dvibyte(void)
 {
   register shalfword i ;
   if ((i=getc(infile))==EOF)
@@ -223,20 +217,22 @@ shalfword dvibyte()
   return(i) ;
 }
 
-halfword  twobytes()
+static halfword  twobytes(void)
 {
   register halfword i ;
   i = dvibyte() ;
   return(i*256+dvibyte()) ; }
 
-integer   threebytes()
+#if 0 /* not used */
+static integer   threebytes(void)
 {
   register integer i ;
   i = twobytes() ;
   return(i*256+dvibyte()) ; }
+#endif
 
-shalfword
-signedbyte()
+static shalfword
+signedbyte(void)
 {
   register shalfword i ;
   if ((i=getc(infile))==EOF)
@@ -245,24 +241,26 @@ signedbyte()
   else return(i-256) ;
 }
 
-shalfword
-signedpair()
+static shalfword
+signedpair(void)
 {
   register shalfword i ;
   i = signedbyte() ;
   return(i*256+dvibyte()) ;
 }
 
-integer
-signedtrio()
+#if 0 /* not used */
+static integer
+signedtrio(void)
 {
   register integer i ;
   i = signedpair() ;
   return(i*256+dvibyte()) ;
 }
+#endif
 
-integer
-signedquad()
+static integer
+signedquad(void)
 {
   register integer i ;
   i = signedpair() ;
@@ -277,9 +275,7 @@ signedquad()
  * transformpages makes the transformation for the options -f -i -l -x
  */
 
-integer transf(p,q)
-integer p;
-halfword q;
+static integer transf(integer p, halfword q)
 {
 int i=0, j=0;
 
@@ -288,7 +284,8 @@ int i=0, j=0;
    if ( j != q ) error ("! Page specified not found");
    return (i++);
 }
-void transformpages()
+
+static void transformpages(void)
 {
 int i;
 
@@ -304,8 +301,7 @@ int i;
 /*
  *
  */
-integer fontdeflen(p)
-integer p;
+static integer fontdeflen(integer p)
 {
    fseek(infile,p+14,SEEK_SET);
    return (16L+dvibyte()+dvibyte());
@@ -315,8 +311,7 @@ integer p;
  *       Simulation of dvibuf, get the character located at the position
  *       p in the input dvi file
  */
-unsigned char dvibuf(p)
-integer p;
+static unsigned char dvibuf(integer p)
 {
   fseek(infile,p,SEEK_SET);
   return(dvibyte());
@@ -325,8 +320,7 @@ integer p;
 /*
  *       Read a string of length n from the file into the string temp
  */
-void stringdvibuf(p,n)
-integer p,n;
+static void stringdvibuf(integer p, integer n)
 {
   fseek(infile,p,SEEK_SET);
   while ( n-- > 0 )
@@ -336,7 +330,7 @@ integer p,n;
 /*
  *   Print a usage error messsage, and quit.
  */
-void usage() {
+static void usage(void) {
    (void)fprintf(stderr,banner);
    (void)fprintf(stderr,"Usage:  dvidvi [options] input[.dvi] [output]\n");
    (void)fprintf(stderr,"where options are:\n");
@@ -357,8 +351,7 @@ void usage() {
 /*
  *   Print an error message, and exit if it is fatal.
  */
-void error(s)
-char *s ;
+void error(char *s)
 {
    (void)fprintf(stderr, "%s\n", s) ;    /* AKT: was dvidvi: %s */
    if (*s == '!')
@@ -383,8 +376,7 @@ char *s ;
  *      0 <= whole
  */
 integer defaultscale = 4736286 ;
-integer scale(whole, num, den, sf)
-integer whole, num, den, sf ;
+static integer scale(integer whole, integer num, integer den, integer sf)
 {
    integer v ;
 
@@ -407,8 +399,7 @@ integer whole, num, den, sf ;
  *
  *   (Could blow up if a parameter * mag / 1000 > 2^30 sp.)
  */
-void scalemag(p)
-long *p ;
+static void scalemag(long *p)
 {
    int negative ;
 
@@ -425,8 +416,7 @@ long *p ;
  *   Convert a sequence of digits into an integer; return -1 if no digits.
  *   Advance the passed pointer as well.
  */
-integer myatol(s)
-char **s ;
+static integer myatol(char **s)
 {
    register char *p ;
    register integer result ;
@@ -440,17 +430,14 @@ char **s ;
    }
    if (p == *s)
       usage() ;
-   else {
-      *s = p ;
-      return(result) ;
-   }
+   *s = p ;
+   return(result) ;
 }
 /*
  *   Get a dimension, allowing all the various extensions, and
  *   defaults.
  */
-integer myatodim(s)
-char **s ;
+static integer myatodim(char **s)
 {
    register integer w, num, den ;
    register char *p ;
@@ -522,8 +509,7 @@ char **s ;
  * depending on the values of options -f, -l, -i and -x
  */
 
-short selectedpage (n)
-integer n;
+static short selectedpage (integer n)
 {
 short i;
 
@@ -541,8 +527,8 @@ short i;
 /*
  *   Initialize sets up all the globals and data structures.
  */
-void
-initialize()
+static void
+initialize(void)
 {
 int i;
 /* initialize values in case of option -m is not specified */
@@ -579,11 +565,9 @@ int i;
  *   Parse the arguments to the routine, and stuff everything away
  *   into those globals above.
  */
-void processargs(argc, argv)
-int argc ;
-char *argv[] ;
+static void processargs(int argc, char *argv[])
 {
-   char *p, *q ;
+   char *q ;
    int i, pageno, lastext = -1 ;
    long hoffset, voffset ;
    int reversed ;
@@ -612,11 +596,7 @@ case 'f' :
 	    else if (*p == '@') {
 	       p++; firsttransf = 1 ;
 	       }
-#ifdef SHORTINT
             if(sscanf(p, "%ld", &firstpage)==0)
-#else   /* ~SHORTINT */
-            if(sscanf(p, "%d", &firstpage)==0)
-#endif  /* ~SHORTINT */
 	       error("! Bad first page option (-f).") ;
             break ;
 case 'i' :
@@ -660,21 +640,13 @@ case 'l':
 	    else if (*p == '@') {
 	       p++; lasttransf = 1 ;
 	       }
-#ifdef SHORTINT
             if(sscanf(p, "%ld", &lastpage)==0)
-#else   /* ~SHORTINT */
-            if(sscanf(p, "%d", &lastpage)==0)
-#endif  /* ~SHORTINT */
                error("! Bad last page option (-l).") ;
             break ;
 case 'p' :
             if (*p == 0 && argv[i+1])
                p = argv[++i] ;
-#ifdef SHORTINT
             if (sscanf(p, "%ld", &pagemodulo)==0)
-#else   /* ~SHORTINT */
-            if (sscanf(p, "%d", &pagemodulo)==0)
-#endif  /* ~SHORTINT */
                error("! Bad pagemodulo option (-p).") ;
             break ;
 case 'm' :
@@ -734,11 +706,7 @@ case 'm' :
 case 'n' :
             if (*p == 0 && argv[i+1])
                p = argv[++i] ;
-#ifdef SHORTINT
             if (sscanf(p, "%ld", &maxpages)==0)
-#else   /* ~SHORTINT */
-            if (sscanf(p, "%d", &maxpages)==0)
-#endif  /* ~SHORTINT */
                error("! Bad number of pages option (-n).") ;
             break ;
 case 'q' : case 'Q' :
@@ -849,7 +817,7 @@ default:
    if(!oname) {
      oname="stdout";
      if (!isatty(fileno(stdout)))
-       SET_BINARY(fileno(stdout));
+       (void)SET_BINARY(fileno(stdout));
    }
 
    if (*oname != 0 && !quiet) {
@@ -861,8 +829,7 @@ default:
 /*
  *   Grabs a pointer, and checks it for validity.
  */
-integer ptr(where)
-register integer where ;
+static integer ptr(integer where)
 {
    fseek(infile,where,SEEK_SET);
    where = signedquad() ;
@@ -874,7 +841,7 @@ register integer where ;
 /*
  *   This routine store the page locations by tracing the pointers backwards.
  */
-void searchpageloc()
+static void searchpageloc(void)
 {
    integer p,num ;
 
@@ -896,7 +863,7 @@ void searchpageloc()
  *   This routine simply reads the entire dvi file, and then initializes
  *   some values about it.
  */
-void readdvifile() {
+static void readdvifile(void) {
    integer p ;
    unsigned char c,d,e ;
 
@@ -982,8 +949,7 @@ void readdvifile() {
 /*
  *   Output a single byte, keeping track of where we are.
  */
-void outdvibyte(c)
-unsigned char c ;
+static void outdvibyte(unsigned char c)
 {
    fputc(c, stdout) ;
    dviloc++ ;
@@ -991,8 +957,7 @@ unsigned char c ;
 /*
  *   Send out two bytes.
  */
-void outdvi2(v)
-integer v ;
+static void outdvi2(integer v)
 {
    outdvibyte((unsigned char)(v >> 8)) ;
    outdvibyte((unsigned char)(v & 255)) ;
@@ -1000,8 +965,7 @@ integer v ;
 /*
  *   Send out a longword.
  */
-void outdviquad(v)
-integer v ;
+static void outdviquad(integer v)
 {
    outdvi2(v >> 16) ;
    outdvi2(v & 65535) ;
@@ -1010,8 +974,7 @@ integer v ;
  *   This routine just copies some stuff from the buffer on out.
  *   Suppose the file is positioned correctly before
  */
-void putbuf(length)
-integer length ;
+static void putbuf(integer length)
 {
    while ( length-- > 0 )
       outdvibyte(dvibyte()) ;
@@ -1019,8 +982,7 @@ integer length ;
 /*
  *   This routine outputs a string, terminated by null.
  */
-void putstr(s)
-register unsigned char *s ;
+static void putstr(unsigned char *s)
 {
    while (*s)
       outdvibyte(*s++) ;
@@ -1028,7 +990,7 @@ register unsigned char *s ;
 /*
  *   Here we write the preamble to the dvi file.
  */
-void writepreamble() {
+static void writepreamble(void) {
 /*   just copy the first 14 bytes of the file */
    fseek(infile,0L,SEEK_SET);
    putbuf(14L) ;
@@ -1038,8 +1000,7 @@ void writepreamble() {
 /*
  *   This routine writes out a font definition.
  */
-void putfontdef(f)
-int f ;
+static void putfontdef(int f)
 {
    integer p,q ;
 
@@ -1051,7 +1012,7 @@ int f ;
 /*
  *   The postamble is next.
  */
-void writepostamble() {
+static void writepostamble(void) {
    int i ;
    integer p ;
 
@@ -1076,7 +1037,7 @@ void writepostamble() {
 /*
  *   This routine starts a page, by writing out a bop command.
  */
-void beginpage() {
+static void beginpage(void) {
    int i ;
    integer p ;
 
@@ -1092,10 +1053,9 @@ void beginpage() {
  *   This routine sends out a page.  We need to handle the
  *   landscape special, though.
  */
-void dopage(num)
-integer num ;
+static void dopage(integer num)
 {
-   register integer p,q ;
+   register integer p ;
    register int len ;
    integer v, oldp ;
    unsigned char c;
@@ -1119,11 +1079,7 @@ integer num ;
          prettycolumn = 0 ;
       }
       prettycolumn += i + 1 ;
-#ifdef SHORTINT
       (void)fprintf(stderr, "[%ld", num+1) ;
-#else  /* ~SHORTINT */
-      (void)fprintf(stderr, "[%d", num+1) ;
-#endif /* ~SHORTINT */
       (void)fflush(stderr) ;
    }
    p = pageloc[num] + 45 ;
@@ -1193,7 +1149,7 @@ default:       fprintf(stderr, "Bad dvi command was %d at %ld\n", len, p) ;
 /*
  *   Here we end a page.  Simple enough.
  */
-void endpage() {
+static void endpage(void) {
    outputpages++ ;
    outdvibyte(140) ;
 }
@@ -1201,12 +1157,11 @@ void endpage() {
  *   This is our main routine for output, which runs through all the
  *   pages we need to output.
  */
-void writedvifile() {
+static void writedvifile(void) {
    integer pagenum ;
    int ppp ;
    integer actualpageno, lastpageno ;
    struct pagespec *ps ;
-   integer p ;
    Boolean beginp ;
 
    writepreamble() ;
@@ -1259,9 +1214,7 @@ void writedvifile() {
    }
    writepostamble() ;
 }
-int main(argc, argv)
-int argc ;
-char *argv[] ;
+int main(int argc, char *argv[])
 {
    processargs(argc, argv) ;
    readdvifile() ;

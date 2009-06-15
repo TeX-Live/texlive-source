@@ -1,3 +1,12 @@
+2009-06-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* dvidvi.c: declare most function as static and define them
+	with ANSI C prototypes. #include <unistd.h> to declare isatty.
+	Remove unused variables.
+	Remove SHORTINT (to select '%ld' or '%d' format specifiers),
+	all relevant variables are integer (typedef'ed as long).
+
 2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvidvi.c: always include <stdlib.h>, to avoid implicit
