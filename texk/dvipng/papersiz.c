@@ -36,7 +36,7 @@ const int32_t lengthsp[]={ 1L, 65536L, 65782L,
  *   Advance the passed pointer as well.
  */
 
-int32_t myatodim(char ** p)
+static int32_t myatodim(char ** p)
 { 
   double tmp; /* double accuracy is enough, I think */
   int i=0;

@@ -30,8 +30,19 @@ ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
 INCLUDES = $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(GD_INCLUDES)
 INCLUDES +=  $(T1LIB_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
-AM_CPPFLAGS =
+AM_CFLAGS = $(WARNING_CFLAGS)
 
+DVIPS = dvips -Ppdf
+
+TEXI2HTML = texi2html
+
+# In order that `make distcheck' succeeds, we must not attempt to rebuild
+# dvipng.info if dvipng.help has not changed,  Thus we delegate rebuilding
+# dvipng.help and  dvipng.info, if necessary, to subdirectories. 
+SUBDIRS = . help doc
+
+## #################################### The program
+##
 bin_PROGRAMS = dvipng
 
 dvipng_SOURCES = \
@@ -81,77 +92,49 @@ LDADD += $(T1LIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 ## Rebuild libz
 @ZLIB_RULE@
 
-info_TEXINFOS = dvipng.texi
-dvipng_TEXINFOS = readme.texi install.texi macros.texi dvipng.help
-
-dist_man1_MANS = dvipng.1
-dvipng.1: dvipng.texi readme.texi
-	$(srcdir)/texi2pod.pl -D man $(srcdir)/dvipng.texi | \
-	sed -es/@//g -es/previewlatex/preview-latex/g -es/{}//g > dvipng.pod
-	pod2man --center="User commands" --release="$(PACKAGE_STRING)" \
-		dvipng.pod > dvipng.1
-	rm dvipng.pod
-
-## Make sure INSTALL and README exist
-##
-EXTRA_DIST = ChangeLog.0 ChangeLog.TL INSTALL README RELEASE
-
-INSTALL: install.texi
-	-$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
-	  -D rawfile --no-headers --no-validate --no-number-sections \
-	  -o $@ $<
-
-README: readme.texi
-	-$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
-	  -D rawfile --no-headers --no-validate --no-number-sections \
-	  -o $@ $<
-
-dist_noinst_SCRIPTS = texi2pod.pl
-
 if have_gif
-
 install-exec-hook:
 	cd $(DESTDIR)$(bindir) && \
 	  rm -f dvigif$(EXEEXT) && \
 	  $(LN_S) dvipng$(EXEEXT) dvigif$(EXEEXT)
-
-install-data-hook:
-	cd $(DESTDIR)$(man1dir) && \
-	  rm -f dvigif.1 && \
-	  $(LN_S) dvipng.1 dvigif.1
-
 uninstall-hook:
 	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
-	rm -f $(DESTDIR)$(man1dir)/dvigif.1
-
 endif have_gif
 
-## Not yet used
+## #################################### The test
 ##
-EXTRA_DIST += test_dvipng.tex
+test: test_dvipng.dvi dvipng$(EXEEXT)
+	./dvipng -T tight -strict test_dvipng
+	echo View the result e.g. with xv test_dvipng\*.png
+
+test_dvipng.dvi: test_dvipng.tex
+	latex $(srcdir)/test_dvipng.tex
+
+TESTS = dvipng.test
+
+EXTRA_DIST = dvipng.test test_dvipng.tex
+
+CLEANFILES = missfont.log test_dvipng.aux test_dvipng.dvi test_dvipng.log test_dvipng*.png
+
+## #################################### Maintainer targets
+##
+## Make sure INSTALL and README exist
+##
+EXTRA_DIST += ChangeLog.0 INSTALL README RELEASE
 
 ## Not used
 ##
 EXTRA_DIST += miktex.h miktex.mak
 
-## Patches applied to dvipng-$(DVIPNG_VERSION) distribution
+## #################################### Build as part of the TeX Live tree
 ##
-EXTRA_DIST += dvipng-$(DVIPNG_VERSION)-patches
+EXTRA_DIST += ChangeLog.TL
 
-## Original files from dvipng-$(DVIPNG_VERSION)
+## Patches applied to the dvipng-1.12 distribution
 ##
-EXTRA_DIST += \
-	Makefile.in-$(DVIPNG_VERSION) \
-	aclocal.m4-$(DVIPNG_VERSION) \
-	configure.ac-$(DVIPNG_VERSION)
+EXTRA_DIST += dvipng-1.12-patches
 
-## Eventually use these macro files
+## Original files from the dvipng distribution
 ##
-EXTRA_DIST += m4/gs-device.m4
-
-## Eventually delete these files
-##
-EXTRA_DIST += Makefile.in.orig acinclude.m4.orig configure.ac.orig
-
-EXTRA_DIST += Makefile.am.demo Makefile.in.work configure.ac.demo configure.ac.work
+EXTRA_DIST += Makefile.in.orig aclocal.m4.orig configure.ac.orig
 

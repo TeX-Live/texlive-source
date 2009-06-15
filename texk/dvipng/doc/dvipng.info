@@ -1,4 +1,4 @@
-This is dvipng.info, produced by makeinfo version 4.12 from dvipng.texi.
+This is dvipng.info, produced by makeinfo version 4.13 from dvipng.texi.
 
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
@@ -326,7 +326,7 @@ File: dvipng.info,  Node: Option summary,  Next: Option details,  Up: Command-li
 Here is a handy summary of the options; it is printed out when you run
 dvipng with no arguments or with the standard `--help' option.
 
-     This is ./dvipng 1.11 Copyright 2002-2008 Jan-Ake Larsson
+     This is ./dvipng 1.12 Copyright 2002-2008 Jan-Ake Larsson
 
      Usage: ./dvipng [OPTION]... FILENAME[.dvi]
      Options are chosen to be similar to dvips' options where possible:

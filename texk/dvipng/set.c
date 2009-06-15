@@ -84,7 +84,7 @@ void CreateImage(pixels x_width,pixels y_width)
 }
 
 
-void ChangeColor(gdImagePtr imagep,int x1,int y1,
+static void ChangeColor(gdImagePtr imagep,int x1,int y1,
 		 int x2,int y2,int color1,int color2)
 /* In the given rectangle, change color1 to color2 */
 {

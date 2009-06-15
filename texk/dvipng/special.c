@@ -40,7 +40,7 @@ struct pscode {
 
 struct pscode* psheaderp=NULL; /* static, DVI-specific header list */
 
-void PSCodeInit(struct pscode *entry, char *special)
+static void PSCodeInit(struct pscode *entry, char *special)
 {
   entry->next=NULL;
   entry->special=special;
@@ -91,7 +91,7 @@ void ClearPSHeaders(void)
   }
 }
 
-void writepscode(struct pscode* pscodep, FILE* psstream)
+static void writepscode(struct pscode* pscodep, FILE* psstream)
 {
   while (pscodep!=NULL) {
     if (pscodep->code!=NULL) {
@@ -131,7 +131,7 @@ void writepscode(struct pscode* pscodep, FILE* psstream)
 }
 
 
-gdImagePtr
+static gdImagePtr
 ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution, 
        int llx, int lly, int urx, int ury, int bgred, int bggreen, int bgblue)
 {
@@ -274,7 +274,7 @@ ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution,
   return psimage;
 }
 
-gdImagePtr
+static gdImagePtr
 rescale(gdImagePtr psimage, int pngwidth, int pngheight)
 {
   gdImagePtr scaledimage=psimage;
@@ -305,7 +305,7 @@ rescale(gdImagePtr psimage, int pngwidth, int pngheight)
   return(scaledimage);
 }
 
-void newpsheader(char* special) {
+static void newpsheader(char* special) {
   struct pscode* tmp;
   char* txt;
 

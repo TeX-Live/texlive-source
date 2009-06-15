@@ -164,7 +164,7 @@ bool InitT1(struct font_entry * tfontp)
 }
 
 
-void UnLoadT1(struct char_entry *ptr)
+static void UnLoadT1(struct char_entry *ptr)
 {
   if (ptr->data!=NULL)
     free(ptr->data);

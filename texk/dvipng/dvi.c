@@ -56,7 +56,7 @@ static unsigned char fgetc_follow(FILE* fp)
   return (unsigned char)got;
 }
 
-void DVIInit(struct dvi_data* dvi)
+static void DVIInit(struct dvi_data* dvi)
 {
   int     k;
   unsigned char* pre;
@@ -277,7 +277,7 @@ uint32_t CommandLength(unsigned char* command)
   return(length);
 }
 
-void SkipPage(struct dvi_data* dvi)
+static void SkipPage(struct dvi_data* dvi)
 { 
   /* Skip present page */
   unsigned char* command;           
@@ -307,7 +307,7 @@ void SkipPage(struct dvi_data* dvi)
   DEBUG_PRINT(DEBUG_DVI,("SKIP CMD:\t%s", dvi_commands[*command]));
 }
 
-struct page_list* InitPage(struct dvi_data* dvi)
+static struct page_list* InitPage(struct dvi_data* dvi)
 {
   /* Find page start, return pointer to page_list entry if found */
   struct page_list* tpagelistp=NULL;
@@ -428,7 +428,7 @@ struct page_list* FindPage(struct dvi_data* dvi, int32_t pagenum, bool abspage)
 }
 
 
-void DelPageList(struct dvi_data* dvi)
+static void DelPageList(struct dvi_data* dvi)
 {
   struct page_list* temp;
   

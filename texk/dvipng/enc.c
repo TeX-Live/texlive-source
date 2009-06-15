@@ -26,7 +26,7 @@
 
 struct encoding* encodingp=NULL;
 
-struct encoding* InitEncoding(char* encoding) 
+static struct encoding* InitEncoding(char* encoding) 
 {
   char *pos,*max,*buf,*enc_file;
   int i;

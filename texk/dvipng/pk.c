@@ -35,7 +35,7 @@ unsigned char   dyn_f;
 int             repeatcount;
 int             poshalf;
 
-unsigned char getnyb(unsigned char** pos)
+static unsigned char getnyb(unsigned char** pos)
 {
   if (poshalf == 0) {
     poshalf=1;
@@ -46,7 +46,7 @@ unsigned char getnyb(unsigned char** pos)
   }
 }
 
-uint32_t pk_packed_num(unsigned char** pos)
+static uint32_t pk_packed_num(unsigned char** pos)
 {
   register int    i;
   uint32_t        j;
@@ -77,7 +77,7 @@ uint32_t pk_packed_num(unsigned char** pos)
   }
 }
 
-unsigned char* skip_specials(unsigned char* pos)
+static unsigned char* skip_specials(unsigned char* pos)
 {
   uint32_t    i;
 
@@ -384,7 +384,7 @@ void InitPK(struct font_entry * tfontp)
   }
 }
 
-void UnLoadPK(struct char_entry *ptr)
+static void UnLoadPK(struct char_entry *ptr)
 {
   if (ptr->data!=NULL)
     free(ptr->data);

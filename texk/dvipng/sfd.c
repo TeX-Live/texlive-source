@@ -25,7 +25,7 @@
 #include "dvipng.h"
 struct subfont* subfontp=NULL;
 
-struct subfont* ReadSubfont(char* sfdname, char *infix) 
+static struct subfont* ReadSubfont(char* sfdname, char *infix) 
 {
   char *pos,*max,*sfdfile=NULL;
   struct subfont* sfdp=NULL;

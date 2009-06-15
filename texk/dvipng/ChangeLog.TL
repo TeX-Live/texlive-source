@@ -1,5 +1,34 @@
 	Changes for teTeX / TeX Live.
 
+2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* help/Makefile.am: do not even try to rebuild doc/dvipng.help
+	unless dvipng$(EXEEXT) has been rebuilt.
+
+2009-06-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid warnings when compiling with 'gcc --Wmissing-prototypes'.
+	* color.c (NewColor, LoadColornameFile, ClearXColorPrologue,
+	LoadXColorPrologue): declare as static.
+	* draw.c (DrawPage): declare as static.
+	* dvi.c (DVIInit, SkipPage, InitPage, DelPageList): declare as
+	static.
+	* enc.c (InitEncoding): declare as static.
+	* font.c (ActualFactor, kpse_find_t1_or_tt, FontFind, DoneFont):
+	declare as static.
+	* fontmap.c (newword, find_format, SearchPSFontMap,
+	ReadPSFontMap): declare as static.
+	* ft.c (UnLoadFT): declare as static.
+	* papersiz.c (myatodim): declare as static.
+	* pk.c (getnyb, pk_packed_num, skip_specials, UnLoadPK): declare
+	as static.
+	* ppagelist.c (ListPage): declare as static.
+	* set.c (ChangeColor): declare as static.
+	* sfd.c (ReadSubfont): declare as static.
+	* special.c (PSCodeInit, writepscode, ps2png, rescale,
+	newpsheader): declare as static.
+	* t1.c (UnLoadT1): declare as static.
+
 2009-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipng-1.12-patches (new): patches applied to dvipng-1.12.

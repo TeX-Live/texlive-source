@@ -145,7 +145,7 @@ bool InitFT(struct font_entry * tfontp)
 }
 
 
-void UnLoadFT(struct char_entry *ptr)
+static void UnLoadFT(struct char_entry *ptr)
 {
   if (ptr->data!=NULL)
     free(ptr->data);

@@ -30,7 +30,7 @@ static struct filemmap ttfont_mmap;
 #endif
 static struct psfontmap *psfontmap=NULL;
 
-char* newword(char** buffer, char* end) 
+static char* newword(char** buffer, char* end) 
 {
   char *word,*pos=*buffer;
 
@@ -55,7 +55,7 @@ char* copyword(char* orig)
   return(word);
 }
 
-char* find_format(char* name)
+static char* find_format(char* name)
 {
   /* Cater for both new (first case) and old (second case) kpathsea */
   char* format =
@@ -134,7 +134,7 @@ struct psfontmap *NewPSFont(struct psfontmap* copyfrom)
   return(newentry);
 }
 
-struct psfontmap *SearchPSFontMap(char* fontname,
+static struct psfontmap *SearchPSFontMap(char* fontname,
 				  struct filemmap* search_mmap)
 {
   static char *pos=NULL,*end=NULL;
@@ -196,7 +196,7 @@ void ClearPSFontMap(void)
 #endif
 }
 
-void ReadPSFontMap(struct psfontmap *entry)
+static void ReadPSFontMap(struct psfontmap *entry)
 {
   char *pos,*end,*psname;
   int nameno = 0;

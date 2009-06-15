@@ -107,7 +107,7 @@ bool InPageList(int32_t i)
   return(false);
 }
 
-void ListPage(int32_t pslow, int32_t pshigh)
+static void ListPage(int32_t pslow, int32_t pshigh)
 {
   register struct pp_list   *pl;
 

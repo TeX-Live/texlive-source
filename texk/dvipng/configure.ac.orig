@@ -1,9 +1,5 @@
 # configure.ac
 
-# Adapted for dvipng-1.9 / teTeX by Thomas Esser.
-# Adapted for dvipng-1.10 / TeX live by Peter Breitenlohner.
-# All settings here are our fault, don't blame the dvipng maintainers for it.
-
 #************************************************************************
 #
 #  Part of the dvipng distribution
@@ -22,12 +18,12 @@
 #  License along with this program. If not, see
 #  <http://www.gnu.org/licenses/>.
 #
-#  Copyright (C) 2002-2008 Jan-Åke Larsson
+#  Copyright (C) 2002-2009 Jan-Åke Larsson
 #
 #************************************************************************
 
 # Process this file with autoconf to produce a configure script.
-AC_INIT([dvipng], [1.11], [dvipng@nongnu.org])
+AC_INIT([dvipng], [1.12], [dvipng@nongnu.org])
 AC_CONFIG_SRCDIR([dvipng.c])
 
 AC_ARG_ENABLE(debug, 
@@ -44,123 +40,100 @@ AC_ARG_ENABLE(timing,
      fi ])
 
 # Checks for programs.
-AC_PROG_MAKE_SET
+AC_SET_MAKE
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_ARG_WITH(gs,
   AC_HELP_STRING([--with-gs=/PATH/TO/gs],[Hard-wire the location of GhostScript]), 
-  [if test "x$withval" = xno ; then
-    GS=no
-  else
+  [if test "x$withval" != xno ; then
     AC_PATH_PROG(GS,["$withval"])
+    AC_DEFINE_UNQUOTED(GS_PATH, "$GS", [Define as the path to GhostScript.])
     GS_CHECK_DEVICES
   fi],
   [AC_CHECK_PROG(GS,gs,gs)
+  AC_DEFINE_UNQUOTED(GS_PATH, "gs", [Define as the path to GhostScript.])
   if test -n "$GS"; then
     GS_CHECK_DEVICES
   else
-    GS="gs"
     AC_MSG_WARN([Cannot find GhostScript in your PATH])
   fi
 ])
-AC_DEFINE_UNQUOTED(GS_PATH, "$GS", [Define as the path to GhostScript.])
 
-ac_cv_lib_t1_T1_InitLib=yes
+# Checks for libraries.
+AC_CHECK_LIB(m, pow)
+AC_CHECK_LIB(z, deflate)
+AC_CHECK_LIB(gen, basename)
+AC_CHECK_LIB([png], [png_read_image],,
+             [AC_MSG_ERROR([cannot find/use libpng])])
+AC_CHECK_LIB([gd], [gdImageCreate],,
+             [AC_MSG_ERROR([cannot find/use libgd
+This drawing library can be downloaded at http://www.boutell.com/gd])])
+AC_CHECK_LIB([kpathsea], [kpse_set_progname],, 
+             AC_MSG_ERROR([cannot find/use libkpathsea]))
+AC_CHECK_LIB([t1], [T1_InitLib])
 PSFONTS_O=""
 if test "$ac_cv_lib_t1_T1_InitLib" = yes; then
   PSFONTS_O="t1.o"
 fi
 AC_SUBST(PSFONTS_O)
 
-ac_have_freetype2="yes"    # we have ft2
-if test "$ac_have_freetype2" = yes; then
-  # Have to set compiler and linker flags in Makefile.in, it seems.
+# Checks for header files. 
+AC_HEADER_STDC
+AC_CHECK_HEADERS([gd.h png.h kpathsea/kpathsea.h],,
+		 [AC_MSG_ERROR([cannot find/use $ac_header])])
+AC_CHECK_HEADERS([t1lib.h])
+AC_CHECK_FT2(,[CFLAGS="$FT2_CFLAGS $CFLAGS"
+	LIBS="$FT2_LIBS $LIBS"
 	PSFONTS_O="$PSFONTS_O sfd.o ft.o"	
 	AC_DEFINE(HAVE_FT2, 1, [Define to 1 if you have freetype2])
-	AC_DEFINE(HAVE_FT_LIBRARY_VERSION)
-fi
-
+	ac_have_freetype2="yes"],
+	[ac_have_freetype2="no"])
 if test -n "$PSFONTS_O"; then
   PSFONTS_O="$PSFONTS_O enc.o fontmap.o tfm.o"
 fi
-AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_HEADER_TIME
 AC_HEADER_STDBOOL
-AC_CHECK_HEADERS([inttypes.h fcntl.h sys/time.h])
+AC_CHECK_HEADERS([fcntl.h sys/time.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
-
-#if test "$ac_cv_header_inttypes_h" = yes; then
+if test "$ac_cv_header_inttypes_h" = "yes"; then
   # Sometimes we want to use gcc -ansi -pedantic as a portability test
   # The typedef of int64_t is not in the system header file in that
   # case. Then, #define int64_t as "long long", which is non-ansi, but
   # is present in most modern compilers. Using a #define rather than a
-  # typedef can be a problem, but in dvipng int64_t only is used as
-  # typecast, and there are no problems.
+  # typedef can be a problem, but in dvipng int64_t is only used as
+  # typecast, and there are no problems. autoconf 2.13 equivalent:
+  # AC_CHECK_TYPE(int64_t, long long)
+  # AC_CHECK_TYPE(uint64_t, unsigned long long)
+  AC_CHECK_TYPE([int64_t],,
+                [AC_DEFINE_UNQUOTED([int64_t], [long long],
+                                    [Define to `long long' if
+                                     <inttypes.h> does not define it.])])
+  AC_CHECK_TYPE([uint64_t],,
+                [AC_DEFINE_UNQUOTED([uint64_t], [unsigned long long],
+                                    [Define to `unsigned long long' if
+                                     <inttypes.h> does not define it.])])
+fi
+AC_HAS_KPSE_ENC_FORMATS
 
-#  MY_CHECK_TYPE(int64_t, long long)
-#  MY_CHECK_TYPE(uint64_t, unsigned long long)
-#fi
 
 # Checks for library functions.
 AC_FUNC_ALLOCA
+AC_FUNC_FORK
+AC_FUNC_MALLOC
 AC_FUNC_MMAP
+AC_FUNC_STRTOD
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS([dup2 memset munmap pow putenv strchr strrchr strtol strstr])
 if test "$enable_timing" = "yes"; then
   AC_CHECK_FUNCS([ftime gettimeofday])
 fi
-
-AC_SEARCH_LIBS([pow], [m])
-AC_SEARCH_LIBS([basename], [gen])
-
-# Documentation-related checks
-AC_PATH_PROG(MAKEINFO, makeinfo, :)
-MAKEINFO_CHECK_MACROS(acronym env option)
-AC_PATH_PROG(INSTALL_INFO, install-info, :, $PATH /usr/sbin /sbin)
-
-sinclude(../../libs/zlib/withenable.ac)
-sinclude(../../libs/zlib/zlib.ac)
-sinclude(../../libs/libpng/withenable.ac)
-sinclude(../../libs/libpng/libpng.ac)
-sinclude(../../libs/t1lib/withenable.ac)
-sinclude(../../libs/t1lib/t1lib.ac)
-sinclude(../../libs/freetype2/withenable.ac)
-sinclude(../../libs/freetype2/freetype2.ac)
-sinclude(../../libs/gd/withenable.ac)
-sinclude(../../libs/gd/gd.ac)
-sinclude(../kpathsea/withenable.ac)
-
-if test "$with_system_freetype2" = yes; then
-  OLD_LIBS=$LIBS
-  LIBS="$LDFREETYPE2 $LIBS"
-  AC_CHECK_FUNCS([FT_Library_Version])
-  LIBS=$OLD_LIBS
-else
-  AC_DEFINE([HAVE_FT_LIBRARY_VERSION])
-fi
-
-if test "$with_system_gd" = yes; then
-  OLD_LIBS=$LIBS
-  LIBS="$LDGD $LIBS"
-  AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImageCreateFromPngPtr gdImageGif])
-  LIBS=$OLD_LIBS
-else
-  AC_DEFINE([HAVE_GDIMAGECREATETRUECOLOR])
-  AC_DEFINE([HAVE_GDIMAGEPNGEX])
-  AC_DEFINE([HAVE_GDIMAGECREATEFROMPNGPTR])
-  ac_cv_func_gdImageGif=yes
-  AC_DEFINE([HAVE_GDIMAGEGIF])
-fi
-
-AC_DEFINE([HAVE_GD_H])
-AC_DEFINE([HAVE_LIBGD])
-
+AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImageCreateFromPngPtr gdImageGif FT_Library_Version])
 if test "$ac_cv_func_gdImageGif" = "yes"; then
    INSTALL_BIN_TARGET="install-dvigif"
 else
@@ -168,49 +141,87 @@ else
 fi
 AC_SUBST(INSTALL_BIN_TARGET)
 
-AC_DEFINE([HAVE_T1LIB_H], 1,
-          [Define to 1 if you have the <t1lib.h> header file.])
-AC_DEFINE([HAVE_LIBT1], 1,
-          [Define to 1 if you have the `t1' library (-lt1).])
+# Documentation-related checks
+AC_PATH_PROG(MAKEINFO, makeinfo, :)
+MAKEINFO_CHECK_MACROS(acronym env option)
+AC_PATH_PROG(INSTALL_INFO, install-info, :, $PATH /usr/sbin /sbin)
 
-AC_DEFINE([HAVE_PNG_H], 1,
-          [Define to 1 if you have the <png.h> header file.])
-AC_DEFINE([HAVE_LIBPNG], 1,
-          [Define to 1 if you have the `png' library (-lpng).])
+# SELFAUTO
+AC_ARG_ENABLE(selfauto-set, 
+  AC_HELP_STRING([--enable-selfauto-set],
+  [This option will make the final binary explicitly set the
+   $SELFAUTO... variables to make it look as dvipng is installed in the
+   main texmf tree, even if it isn't. This is necessary when texmf.cnf
+   only uses $SELFAUTO... variables and dvipng is not installed in the
+   texmf tree. Otherwise, dvipng may not be able to find virtual
+   fonts, or psfonts.map. To find out, first build the binary and do
+   'make test'. If the test fails, you need this switch.]),
+  [ if test "$enableval" = yes ; then
+      AC_MSG_CHECKING([for \$SELFAUTOLOC])
+      SELFAUTOLOC=`kpsewhich -expand-var=\\\$SELFAUTOLOC`
+      AC_DEFINE_UNQUOTED(ENV_SELFAUTOLOC,["SELFAUTOLOC=$SELFAUTOLOC"],
+	[The environment setting for $SELFAUTOLOC])
+      AC_MSG_RESULT([$SELFAUTOLOC])
+      AC_MSG_CHECKING([for \$SELFAUTODIR])
+      SELFAUTODIR=`kpsewhich -expand-var=\\\$SELFAUTODIR`
+      AC_DEFINE_UNQUOTED(ENV_SELFAUTODIR,["SELFAUTODIR=$SELFAUTODIR"],
+	[The environment setting for $SELFAUTODIR])
+      AC_MSG_RESULT([$SELFAUTODIR])
+      AC_MSG_CHECKING([for \$SELFAUTOPARENT])
+      SELFAUTOPARENT=`kpsewhich -expand-var=\\\$SELFAUTOPARENT`
+      AC_DEFINE_UNQUOTED(ENV_SELFAUTOPARENT,["SELFAUTOPARENT=$SELFAUTOPARENT"],
+	[The environment setting for $SELFAUTOPARENT])
+      AC_MSG_RESULT([$SELFAUTOPARENT])
+    fi ],
+  [AC_MSG_CHECKING([for texmf.cnf])
+  TEXMF_CNF=`kpsewhich texmf.cnf`
+  AC_MSG_RESULT([$TEXMF_CNF])
+  AC_PATH_PROG(KPSEWHICH, kpsewhich)
+  AC_MSG_CHECKING([for psfonts.map])
+  cp $KPSEWHICH .
+  PSFONTS_MAP=`./kpsewhich psfonts.map`
+  rm -f ./kpsewhich
+  if test -n "$PSFONTS_MAP"; then
+    AC_MSG_RESULT([$PSFONTS_MAP])
+  else
+    AC_MSG_RESULT([not found from outside the texmf tree])
+    AC_MSG_CHECKING([for \$SELFAUTO in texmf.cnf])
+    if grep SELFAUTO "$TEXMF_CNF" > /dev/null 2> /dev/null; then
+      AC_MSG_RESULT([yes
+***************************************************************
+texmf.cnf is using \$SELFAUTO... variables. If you are going to
+install dvipng outside the texmf tree, you may need to use
+--enable-selfauto-set. To find out, do 'make ; make test'. If the test
+is unsuccessful, add the mentioned switch and rebuild.
+***************************************************************])
+    else
+      AC_MSG_RESULT([no])
+    fi
+  fi])
 
-AC_DEFINE([HAVE_LIBZ])
+AC_MSG_RESULT([
+** Configuration summary for $PACKAGE_STRING:
 
-# Allow shared or static libkpathsea
-LIBS="-L../kpathsea/.libs -lkpathsea $LIBS"
-AC_DEFINE([HAVE_KPATHSEA_KPATHSEA_H], 1,
-          [Define to 1 if you have the <kpathsea/kpathsea.h> header file.])
-AC_DEFINE([HAVE_KPSE_ENC_FORMATS], 1,
-          [Define to 1 if your kpathsea has kpse_enc_format.])
-AC_DEFINE([HAVE_LIBKPATHSEA], 1,
-          [Define to 1 if you have the `kpathsea' library (-lkpathsea).])
-
-#
-# Check for ApplicationServices framework (Mac OS X)
-#
-AC_DEFUN([AC_HAS_APP_SERVICES], [
- _cppflags=$CPPFLAGS _ldflags=$LDFLAGS
- AC_MSG_CHECKING([for Mac OS X ApplicationServices framework])
- AC_TRY_COMPILE(
- [
-#include <ApplicationServices/ApplicationServices.h>
- ], [
-ATSFontRef fontRef;
- ],
- [ AC_MSG_RESULT(yes)
-   AC_DEFINE(HAVE_APP_SERVICES, 1, [Define if you have ApplicationServices (Mac OS X)])
-   LIBS="$LIBS -framework ApplicationServices"
- ],
- [ AC_MSG_RESULT(no) ]
- )
+   The -d (debug) switch is enabled:        $enable_debug
+   Your gd is new enough (>=2.0) to enable
+     the --truecolor switch, full alpha 
+     transparency, proper rescaling of 
+     included bitmaps, and jpeg inclusion:  $ac_cv_func_gdImageCreateTrueColor
+   Your gd has jpeg inclusion enabled:      $ac_cv_func_gdImageCreateFromJpeg
+   Your gd is new enough (>=2.0.12) to 
+     enable transparent backgrounds for EPS
+     inclusion and the -z (compression)
+     switch:                                $ac_cv_func_gdImagePngEx
+   Your gd is new enough (>=2.0.21) to
+     allow image creation from memory       $ac_cv_func_gdImageCreateFromPngPtr
+   Your gd is new enough (>=2.0.28) to
+     enable gif inclusion and output 
+     (dvigif):                              $ac_cv_func_gdImageGif
+   FreeType font rendering available:       $ac_have_freetype2
+   Support for subfonts (CJK-LaTeX):        $ac_have_freetype2
+   T1lib font rendering available:          $ac_cv_lib_t1_T1_InitLib
 ])
 
-AC_HAS_APP_SERVICES
-
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADER([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

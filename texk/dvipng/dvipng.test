@@ -1,0 +1,17 @@
+#! /bin/sh
+
+TEXMFCNF=$(dirname $(kpsewhich texmf.cnf))
+TEXFONTMAPS=$(dirname $(dirname $(kpsewhich psfonts.map)))//
+ENCFONTS=$(dirname $(dirname $(kpsewhich 8r.enc)))//
+TEXMFMAIN=$(kpsewhich --expand-var='$TEXMFMAIN')
+TEXMFDIST=$(kpsewhich --expand-var='$TEXMFDIST')
+TEXMFLOCAL=$(kpsewhich --expand-var='$TEXMFLOCAL')
+
+export TEXMFCNF TEXFONTMAPS ENCFONTS TEXMFMAIN TEXMFDIST TEXMFLOCAL
+
+latex $srcdir/test_dvipng.tex || exit 77
+
+./dvipng -T tight -strict test_dvipng || exit 1
+
+echo View the result e.g. with xv test_dvipng\*.png
+

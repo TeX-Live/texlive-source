@@ -284,7 +284,7 @@ void EndVFMacro(void)
 }
 
 
-void DrawPage(dviunits hoffset, dviunits voffset) 
+static void DrawPage(dviunits hoffset, dviunits voffset) 
      /* To be used after having read BOP and will exit cleanly when
       * encountering EOP.
       */

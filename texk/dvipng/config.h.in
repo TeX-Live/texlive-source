@@ -14,6 +14,15 @@
 /* Define as 1 to get the debug (-d) option. */
 #undef DEBUG
 
+/* The environment setting for $SELFAUTODIR */
+#undef ENV_SELFAUTODIR
+
+/* The environment setting for $SELFAUTOLOC */
+#undef ENV_SELFAUTOLOC
+
+/* The environment setting for $SELFAUTOPARENT */
+#undef ENV_SELFAUTOPARENT
+
 /* Define as the path to GhostScript. */
 #undef GS_PATH
 

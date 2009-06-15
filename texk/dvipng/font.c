@@ -38,7 +38,7 @@ void CheckChecksum(uint32_t c1, uint32_t c2, const char* name)
 }
 
 
-double ActualFactor(uint32_t unmodsize)
+static double ActualFactor(uint32_t unmodsize)
 /* compute the actual size factor given the approximation */
 /* actually factor * 1000 */
 {
@@ -189,7 +189,7 @@ void FontDef(unsigned char* command, void* parent)
 }
 
 #ifdef HAVE_FT2_OR_LIBT1
-char* kpse_find_t1_or_tt(char* filename) 
+static char* kpse_find_t1_or_tt(char* filename) 
 {
     char* filepath = kpse_find_file(filename, kpse_type1_format, false);
 #ifdef HAVE_FT2
@@ -200,7 +200,7 @@ char* kpse_find_t1_or_tt(char* filename)
 }
 #endif
 
-void FontFind(struct font_entry * tfontptr)
+static void FontFind(struct font_entry * tfontptr)
 {
 #ifdef HAVE_LIBKPATHSEA
   kpse_glyph_file_type font_ret;
@@ -300,7 +300,7 @@ void FontFind(struct font_entry * tfontptr)
 }
 
 
-void DoneFont(struct font_entry *tfontp)
+static void DoneFont(struct font_entry *tfontp)
 {
   switch (tfontp->type) {
   case FONT_TYPE_PK:
