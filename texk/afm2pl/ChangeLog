@@ -1,3 +1,16 @@
+2009-06-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* afm2pl.c: use ANSI C prototypes for functions or declare
+	them as static.
+	avoid "/*" within comment.
+	(readadobe): avoid unused variable.
+	(readargs): avoid && within || (without parentheses).
+	(copykerns): silence 'used uninitialized' warning.
+	(adobermkern): silence 'used uninitialized' warning.
+
+	* afm2pl.test (new): Shell script for test case.
+
 2009-06-12  Francois Charette  <firmicus@ankabut.net>
 
 	* afm2pl.c: rename getline to texlive_getline.

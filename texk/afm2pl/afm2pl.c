@@ -98,7 +98,7 @@ extern char ascii2ebcdic[];
 #define fopen cmsfopen
 #endif
 
-/* from dvips.h:
+/* from dvips.h: */
 
 #ifdef VMS
 #include "[.vms]vms.h"
@@ -248,9 +248,8 @@ int verbose = 0;
  * off with one #define */
 
 /* little hack: error message is warning unless it starts with '!' */
-void
-  error
-P1C (register char *, s)
+static void
+error(char *s)
 {
   char *parasave;
   parasave = param;
@@ -268,8 +267,8 @@ P1C (register char *, s)
   param = parasave;
 }
 
-char *mymalloc
-P1C (unsigned long, len)
+static char *
+mymalloc(unsigned long len)
 {
   register char *p;
   unsigned long i;
@@ -286,8 +285,8 @@ P1C (unsigned long, len)
   return (p);
 }
 
-char *newstring
-P1C (char *, s)
+static char *
+newstring(char *s)
 {
   char *q = mymalloc ((unsigned long) (strlen (s) + 1));
   (void) strcpy (q, s);
@@ -295,8 +294,8 @@ P1C (char *, s)
 }
 
 /* find a glyph name in an adobeinfo array */
-struct adobeinfo *findname
-P3C (struct adobeinfo **, achars, int, n, char *, p)
+static struct adobeinfo *
+findname(struct adobeinfo **achars, int n, char *p)
 {
   register int i;
   for (i = 0; i < n; i++)
@@ -309,22 +308,22 @@ P3C (struct adobeinfo **, achars, int, n, char *, p)
  * We don't include the boundarychars in the search but always test
  * separately for those.
  */
-struct adobeinfo *findadobe
-P1C (char *, p)
+static struct adobeinfo *
+findadobe(char *p)
 {
   return findname (adobechars, nglyphs, p);
 }
 
 /* Find glyph info by name in target encoding */
-struct adobeinfo *findtfm
-P1C (char *, p)
+static struct adobeinfo *
+findtfm(char *p)
 {
   return findname (tfmptrs, 256, p);
 }
 
 /* just for adobechars, we sometimes want the index instead */
-int findindex
-P1C (char *, p)
+static int
+findindex(char *p)
 {
   int i;
   for (i = 0; i < nglyphs; i++)
@@ -334,9 +333,8 @@ P1C (char *, p)
 }
 
 /* geometrically transformed boundingbox */
-int
-  transform
-P2C (register int, x, register int, y)
+static int
+transform(int x, int y)
 {
   register double acc;
   acc = efactor * x + slant * y;
@@ -344,9 +342,8 @@ P2C (register int, x, register int, y)
 }
 
 /* read a line from infile into buffer and obuffer */
-int
-  texlive_getline
-P1H (void)
+static int
+texlive_getline(void)
 {
   register char *p;
   register int c;
@@ -383,8 +380,8 @@ typedef enum {
 } kpse_file_format_type;
 
 /* string concatenation with allocation */
-char *concat
-P2C (char *, s1, char *, s2)
+static char *
+concat(char *s1, char *s2)
 {
   char *answer = (char *) malloc (strlen (s1) + strlen (s2) + 1);
   strcpy (answer, s1);
@@ -396,8 +393,8 @@ P2C (char *, s1, char *, s2)
 /* Return pointer to first character after `.' in last directory element
  * of NAME.  If the name is `foo' or `/foo.bar/baz', we have no extension.
  */
-char *find_suffix
-P1C (char *, name)
+static char *
+find_suffix(char *name)
 {
   char *slash_pos;
   char *dot_pos = (char *) strrchr (name, '.');
@@ -416,8 +413,8 @@ P1C (char *, name)
 }
 
 /* Return pointer to filename with leading path stripped */
-char *xbasename
-P1C (char *, name)
+static char *
+xbasename(char *name)
 {
   char *base = NULL;
   unsigned len = strlen (name);
@@ -449,8 +446,8 @@ P1C (char *, name)
  * kpse handling isn't so helpful in the enc- and lig cases,
  * so we add a suffix explicitly.
  */
-char *openin
-P3C (char *, fname, kpse_file_format_type, format, char *, ext)
+static char *
+openin(char *fname, kpse_file_format_type format, char *ext)
 {
   char *realfname;
 
@@ -491,8 +488,8 @@ P3C (char *, fname, kpse_file_format_type, format, char *, ext)
  * In this function, kpathsea functions don't provide better
  * functionality, but they do improve portability.
  */
-char *openout
-P3C (char *, fname, int, based_on, char *, outext)
+static char *
+openout(char *fname, int based_on, char *outext)
 {
   char *inext = ".afm";
   /* use inext+1 and outext+1 when the leading dot is not desired */
@@ -543,9 +540,8 @@ char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
 #define StartCharMetrics (7)
 #define CharWidth (8)
 #define NONE (-1)
-int
-  interest
-P1C (char *, s)
+static int
+interest(char *s)
 {
   register char **p;
   register int n;
@@ -566,8 +562,8 @@ P1C (char *, s)
 /* next (parameter) string (param is input pointer),
  * with allocation */
 
-char *paramnewstring
-P1H (void)
+static char *
+paramnewstring(void)
 {
   register char *p, *q;
 
@@ -586,8 +582,8 @@ P1H (void)
 /* next (parameter) string from afm file (param is input pointer),
  * pre-allocated */
 
-char *paramstring
-P1H (void)
+static char *
+paramstring(void)
 {
   register char *p, *q;
 
@@ -603,9 +599,8 @@ P1H (void)
   return (q);
 }
 
-int
-  paramnum
-P1H (void)
+static int
+paramnum(void)
 {
   register char *p;
   int i;
@@ -616,9 +611,8 @@ P1H (void)
   return (i);
 }
 
-float
-  paramfloat
-P1H (void)
+static float
+paramfloat(void)
 {
   register char *p;
   float i;
@@ -629,9 +623,8 @@ P1H (void)
   return (i);
 }
 
-void
-  expect
-P1C (char *, s)
+static void
+expect(char *s)
 {
   if (strcmp (paramstring (), s) != 0) {
     (void) fprintf (stderr, "%s expected: ", s);
@@ -642,8 +635,8 @@ P1C (char *, s)
 /* allocating and initializing structs */
 
 /* initialize afm info for one char */
-struct adobeinfo *newchar
-P1H (void)
+static struct adobeinfo *
+newchar(void)
 {
   register struct adobeinfo *ai;
 
@@ -664,8 +657,8 @@ P1H (void)
   return (ai);
 }
 
-struct kern *newkern
-P1H (void)
+static struct kern *
+newkern(void)
 {
   register struct kern *nk;
 
@@ -676,8 +669,8 @@ P1H (void)
   return (nk);
 }
 
-struct lig *newlig
-P1H (void)
+static struct lig *
+newlig(void)
 {
   register struct lig *nl;
 
@@ -694,9 +687,8 @@ P1H (void)
  * adobeptrs is an array of pointers to adobeinfo structs
  * indexed by adobenum.
  * */
-void
-  handlechar
-P1H (void)
+static void
+handlechar(void)
 {                  /* an input line beginning with C */
   register struct adobeinfo *ai;
   register struct lig *nl;
@@ -735,9 +727,8 @@ P1H (void)
   }
 }
 
-void
-  handlekern
-P1H (void)
+static void
+handlekern(void)
 {                  /* an input line beginning with KPX */
   register struct adobeinfo *ai;
   register char *p, *sc;
@@ -762,11 +753,9 @@ P1H (void)
 }
 
 /* read afm file */
-void
-  readadobe
-P1H (void)
+static void
+readadobe(void)
 {
-  struct adobeinfo *ai;
   char *inname;
   int i;
 
@@ -833,9 +822,8 @@ P1H (void)
 }
 
 /* now some changes to the afm info */
-void
-  changeadobe
-P1H (void)
+static void
+changeadobe(void)
 {
   struct adobeinfo *ai;
   int i;
@@ -956,8 +944,8 @@ char smbuffer[100];             /* for tokens */
  *   allow commented lines and names like 0, .notdef, _foo_.  We do
  *   not allow //abc.
  */
-char *
-gettoken ()
+static char *
+gettoken(void)
 {
   char *p, *q;
 
@@ -1010,9 +998,8 @@ gettoken ()
  * tfmnext, which tracks multiple encodings of a single glyph and is
  * best explained by the code creating it.
  */
-void
-  readencoding
-P1H (void)
+static void
+readencoding(void)
 {
   char *p;
   int i, inx;
@@ -1152,9 +1139,8 @@ char *encligops[] = {
  * In the pl file, the kerning info of both s1 and s2 will be written
  * out in full.
  */
-void
-  copykerns
-P2C (char *, s1, char *, s2)
+static void
+copykerns(char *s1, char *s2)
 {
   int i, found, delta2, found1, found2;
   struct adobeinfo *ai, *ai1, *ai2;
@@ -1203,6 +1189,7 @@ P2C (char *, s1, char *, s2)
   /* a name '||' for s1/s2 is untouched */
   if (!strcmp (s1, s2))
     return;
+  delta2 = 0; /* silence 'might be used uninitialized' warning */
   for (i = 0; i < nglyphs; i++) {
     ai = adobechars[i];
     found1 = 0;
@@ -1230,8 +1217,8 @@ P2C (char *, s1, char *, s2)
 
 /* remove kern between ai->adobechar and s2, where s2 != "*"
  */
-void adobermkern
-P2C (struct adobeinfo *, ai, char *, s2)
+static void
+adobermkern(struct adobeinfo *ai, char *s2)
 {
   struct kern *k, *kprev;
   char *s2a;
@@ -1243,6 +1230,7 @@ P2C (struct adobeinfo *, ai, char *, s2)
     s2a = boundglyph;
   else
     s2a = s2;
+  kprev = k; /* silence 'might be used uninitialized' warning */
   first = 1;
   while (k) {
     if (!strcmp (s2a, k->succ) || !strcmp (s2, k->succ)) {
@@ -1259,8 +1247,8 @@ P2C (struct adobeinfo *, ai, char *, s2)
 }
 
 /* remove kerns between s1 and s2 (wildcards allowed) */
-void rmkern
-P2C (char *, s1, char *, s2)
+static void
+rmkern(char *s1, char *s2)
 {
   int i;
   struct adobeinfo *ai;
@@ -1303,8 +1291,8 @@ int lig_it;
  * scanned for a rboundarychar spec but before we know whether it
  * will actually be used.
  */
-void set_rboundarychar
-P1C (int, bch)
+static void
+set_rboundarychar(int bch)
 {
   int i;
   if (bch == -1) {
@@ -1338,8 +1326,8 @@ P1C (int, bch)
  * lig_it != 0: process all other ligkern specs
  * lig_it = 2: post-letterspacing; only `{}' specs are allowed.
  */
-void checkligkern
-P2C (char *, s, int, isencfile)
+static void
+checkligkern(char *s, int isencfile)
 {
   char *mlist[5];               /* tokens constituting a ligkern spec */
   int n, i, bch;
@@ -1473,8 +1461,8 @@ P2C (char *, s, int, isencfile)
   }
 }
 
-void
-letterspace ()
+static void
+letterspace(void)
 {
   int i,j;
   struct kern *k;
@@ -1505,8 +1493,8 @@ letterspace ()
   fontspace += 2 * lspace;
 }
 
-void
-extraligkerninfo ()
+static void
+extraligkerninfo(void)
 {
   int i;
   char *p;
@@ -1613,9 +1601,8 @@ extraligkerninfo ()
   }
 }
 
-void
-  spaceparms
-P1H (void)
+static void
+spaceparms(void)
 {
   /* afm2tfm values for fstretch, fshrink, fextra: 200, 100, 111
    * fontinst values: 0.6 * space, 0.24 * space, ?
@@ -1635,8 +1622,8 @@ P1H (void)
 FILE *dmp;
 char *dmpname = "afm2pl.dmp";
 
-void dumpai
-P1C (struct adobeinfo *, ai)
+static void
+dumpai(struct adobeinfo *ai)
 {
   struct lig *lg;
   struct kern *kr;
@@ -1663,8 +1650,8 @@ P1C (struct adobeinfo *, ai)
       fprintf (dmp, "kern %s %d\n", kr->succ, kr->delta);
 }
 
-void writedump
-P1H (void)
+static void
+writedump(void)
 {
   int i;
   dmp = fopen (dmpname, "w");
@@ -1697,8 +1684,8 @@ P1H (void)
 int level;                      /* depth of parenthesis nesting in PL output file */
 
 /* indent */
-void
-pllevout ()
+static void
+pllevout(void)
 {
   register int l = level;
   while (l--)
@@ -1706,8 +1693,8 @@ pllevout ()
 }
 
 /* newline plus indent */
-void
-pllevnlout ()
+static void
+pllevnlout(void)
 {
   plout ("\n");
   pllevout ();
@@ -1719,18 +1706,16 @@ pllevnlout ()
 #define ploutln4(f,a,b,c) {fprintf(outfile,f,a,b,c);pllevnlout();}
 
 /* left bracket */
-void
-  plleft
-P1H (void)
+static void
+plleft(void)
 {
   level++;
   plout ("(");
 }
 
 /* right bracket */
-void
-  plright
-P1H (void)
+static void
+plright(void)
 {
   level--;
   ploutln (")");
@@ -1744,8 +1729,8 @@ P1H (void)
  * forceoctal would be a good idea.
  */
 char plcharbuf[6];
-char *plchar
-P1C (int, c)
+static char *
+plchar(int c)
 {
   if (forceoctal == 0 && ISALNUM (c))
     (void) sprintf (plcharbuf, "C %c",
@@ -1763,8 +1748,8 @@ P1C (int, c)
  * null string otherwise
  */
 char plnamebuf[100];
-char *plname
-P1C (int, c)
+static char *
+plname(int c)
 {
   if (!forceoctal && ISALNUM (c)) {
     plnamebuf[0] = 0;
@@ -1778,9 +1763,8 @@ P1C (int, c)
 /* obuffer: originally unmodified copy of input buffer,
  * now recycled as output buffer
  */
-void
-  writepl
-P1H (void)
+static void
+writepl(void)
 {
   register int i, j, k;
   int bc, ec;
@@ -1988,8 +1972,8 @@ P1H (void)
 /*******************************************************************
  * (version and) usage
  */
-void version
-P1C (FILE *, f)
+static void
+version(FILE *f)
 {
 #ifdef KPATHSEA
   extern KPSEDLL char *kpathsea_version_string;
@@ -2020,8 +2004,8 @@ Convert an Adobe font metric file to a TeX font property list.\n\
 See the man page for full documentation.\n\n\
 "
 
-void afm2pl_usage
-P1C (FILE *, f)
+static void
+afm2pl_usage(FILE *f)
 {
   fputs ("Usage: afm2pl [OPTIONS]... FILE[.afm] [FILE[.pl]]\n", f);
   fputs (USAGE, f);
@@ -2036,8 +2020,8 @@ P1C (FILE *, f)
 /* decode comma-separated list of non-negative integers.
  * initialize everything to -1 i.e. undefined
 */
-int getnums
-P3C (char *, st, int *, nums, int, num)
+static int
+getnums(char *st, int *nums, int num)
 {
   char *p; /* pointer into st */
   int curnum, curindex, ndigits;
@@ -2069,8 +2053,8 @@ P3C (char *, st, int *, nums, int, num)
 }
 
 /* split string on commas into strings; disregard empty strings */
-struct nstrings *getoutnames
-P2C (char *, st, struct nstrings *, onames)
+static struct nstrings *
+getoutnames(char *st, struct nstrings *onames)
 {
   char *argcopy;
   unsigned i;
@@ -2104,9 +2088,8 @@ P2C (char *, st, struct nstrings *, onames)
 /* call this when an option requires an argument */
 #define CHECKARG3 if (argc < 3) { afm2pl_usage(stderr); exit(1); }
 
-void
-  readargs
-P2C (int, argc, char **, argv)
+static void
+readargs(int argc, char **argv)
 {
   register int i;
   int fdims[3];
@@ -2115,8 +2098,8 @@ P2C (int, argc, char **, argv)
   argv++;
   argc--;
 
-  if (argc == 0 || (argc > 0 && (!strcmp (argv[0], "--help") ||
-    !strcmp (argv[0], "-help")) || !strcmp (argv[0], "-h"))) {
+  if (argc <= 0 || !strcmp (argv[0], "--help") ||
+    !strcmp (argv[0], "-help") || !strcmp (argv[0], "-h")) {
     afm2pl_usage (stdout);
     exit (0);
   }
@@ -2254,8 +2237,8 @@ P2C (int, argc, char **, argv)
 
 /* This routine prints out the line that needs to be added to psfonts.map.
  */
-void
-conspsfonts ()
+static void
+conspsfonts(void)
 {
   char *base, *p, *q;
 
@@ -2302,8 +2285,7 @@ conspsfonts ()
 #ifndef VMS
 int
 #endif
-  main
-P2C (int, argc, char **, argv)
+main(int argc, char **argv)
 {
 
 #ifdef KPATHSEA

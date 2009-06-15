@@ -1,0 +1,12 @@
+#! /bin/sh
+
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea \
+  ./afm2pl -l 0 $srcdir/logo10 || exit 1
+
+diff $srcdir/xlogo10.pl logo10.pl || exit 1
+
+diff $srcdir/xlogo10.map logo10.map || exit 1
+
