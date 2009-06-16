@@ -29,7 +29,7 @@ AS_CASE([$with_ps],
         [no],            [PS_DEF=],
         [dps],           [PS_DEF=-DPS_DPS],
         [news],          [PS_DEF=-DPS_NEWS],
-                         [AC_MSG_WARN([unknown--with-ps argument `$with_ps'; using gs.])
+                         [KPSE_MSG_WARN([unknown--with-ps argument `$with_ps'; using gs.])
                           PS_DEF=-DPS_GS])
 AC_SUBST([PS_DEF])
 
@@ -200,8 +200,8 @@ AS_CASE([$with_xdvi_x_toolkit],
         ["" | x | xa | xaw],           [val=xaw],
         [y | ye | yes],                [val=yes],
         [m | mo | mot | moti | motif], [val=motif],
-                                       [AC_MSG_WARN([unknown --with-xdvi-x-toolkit argument 
-                                                     `$with_xdvi_x_toolkit'; using xaw.])
+                                       [KPSE_MSG_WARN([unknown --with-xdvi-x-toolkit argument 
+                                                       `$with_xdvi_x_toolkit'; using xaw.])
                                         val=xaw])
 with_xdvi_x_toolkit=$val
 

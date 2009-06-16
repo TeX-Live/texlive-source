@@ -281,6 +281,26 @@ $2])],
        [AC_MSG_ERROR([$2], m4_default([$3], 1))])
 ]) # KPSE_MSG_ERROR
 
+# KPSE_MSG_WARN(PROBLEM)
+# ----------------------
+# Same as AC_MSG_WARN, but terminate if `--disable-missing' was given.
+AC_DEFUN([KPSE_MSG_WARN],
+[AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
+AC_MSG_WARN([$1])
+AS_IF([test "x$enable_missing" = xno],
+      [AC_MSG_ERROR([terminating.])])
+]) # KPSE_MSG_WARN
+
+# _KPSE_MSG_WARN_PREPARE
+# ----------------------
+# Internal subroutine.
+AC_DEFUN([_KPSE_MSG_WARN_PREPARE],
+[AC_ARG_ENABLE([missing],
+               AS_HELP_STRING([--disable-missing],
+                              [terminate if a requested program or feature must
+                               be disabled, e.g., due to missing libraries]))[]dnl
+]) # _KPSE_MSG_WARN_PREPARE
+
 # _KPSE_CHECK_PKG_CONFIG
 # ----------------------
 # Check for pkg-config

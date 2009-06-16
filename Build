@@ -78,6 +78,9 @@ cd $TL_WORKDIR || exit 1
 # default to static linking.
 : ${TL_CONF_SHARED=--disable-shared}
 
+# default to terminate if requested programs or features must be disabled.
+: ${TL_CONF_MISSING=--disable-missing}
+
 # default to building ICU without thread support, since xetex doesn't need it.
 : ${TL_CONF_THREADS=--disable-threads}
 
@@ -105,6 +108,7 @@ cd $TL_WORKDIR || exit 1
         --datadir=$TL_INSTALL_DEST \
         $TL_CONF_BANNER \
         $TL_CONF_SHARED \
+        $TL_CONF_MISSING \
         $TL_CONF_LARGEFILE \
         $TL_CONF_THREADS \
         $TL_CONF_XDVI_TOOLKIT \

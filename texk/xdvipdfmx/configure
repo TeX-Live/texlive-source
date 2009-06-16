@@ -950,6 +950,7 @@ with_system_freetype2
 with_paper
 with_fontconfig_includes
 with_fontconfig_libdir
+enable_missing
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1603,6 +1604,8 @@ Optional Features:
   --enable-compiler-warnings=[no|min|yes|max]
                           Turn on compiler warnings [default: yes if
                           maintainer-mode, min otherwise]
+  --disable-missing       terminate if a requested program or feature must be
+                          disabled, e.g., due to missing libraries
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -4375,13 +4378,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4378: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4381: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4381: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4384: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4384: output\"" >&5)
+  (eval echo "\"\$as_me:4387: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5587,7 +5590,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5590 "configure"' > conftest.$ac_ext
+  echo '#line 5593 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7548,11 +7551,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7551: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7554: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7555: \$? = $ac_status" >&5
+   echo "$as_me:7558: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7887,11 +7890,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7890: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7893: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7894: \$? = $ac_status" >&5
+   echo "$as_me:7897: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7992,11 +7995,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7995: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7998: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:7999: \$? = $ac_status" >&5
+   echo "$as_me:8002: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8047,11 +8050,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8050: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8053: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8054: \$? = $ac_status" >&5
+   echo "$as_me:8057: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10847,7 +10850,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10850 "configure"
+#line 10853 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10943,7 +10946,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10946 "configure"
+#line 10949 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -19077,7 +19080,12 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 else
-  { $as_echo "$as_me:$LINENO: WARNING: fontconfig library or ApplicationServices framework not found.
+  # Check whether --enable-missing was given.
+if test "${enable_missing+set}" = set; then
+  enableval=$enable_missing;
+fi
+
+{ $as_echo "$as_me:$LINENO: WARNING: fontconfig library or ApplicationServices framework not found.
 This version of xdvipdfmx requires either ApplicationServices (on Mac OS X)
 or the fontconfig library (on other platforms) to be available, otherwise it
 cannot support XeTeX output using standard system-installed fonts." >&5
@@ -19085,6 +19093,13 @@ $as_echo "$as_me: WARNING: fontconfig library or ApplicationServices framework n
 This version of xdvipdfmx requires either ApplicationServices (on Mac OS X)
 or the fontconfig library (on other platforms) to be available, otherwise it
 cannot support XeTeX output using standard system-installed fonts." >&2;}
+if test "x$enable_missing" = xno; then
+  { { $as_echo "$as_me:$LINENO: error: terminating." >&5
+$as_echo "$as_me: error: terminating." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
 fi
  if test "x$build" = xyes; then
   build_TRUE=

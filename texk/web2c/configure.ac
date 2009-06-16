@@ -81,10 +81,10 @@ AS_IF([test "x$enable_luatex:$enable_ipc" != xno:no],
       [AS_CASE([$ac_cv_search_connect],
                ["none required"], [],
                [no], [AS_IF([test "x$enable_luatex" = xyes],
-                            [AC_MSG_WARN([Sorry, no socket library: can not build luaTeX])
+                            [KPSE_MSG_WARN([Sorry, no socket library: can not build luaTeX])
                              enable_luatex=no])
                       AS_IF([test "x$enable_ipc" = xyes],
-                            [AC_MSG_WARN([no socket library: disabling ipc])
+                            [KPSE_MSG_WARN([no socket library: disabling ipc])
                              enable_ipc=no])],
                    [socketlibs=$ac_cv_search_connect])])
 if test "x$enable_ipc" = xyes; then
@@ -105,19 +105,19 @@ if test "x$kpse_cv_have_win32" = xno; then
   AS_CASE([$ac_cv_search_inet_aton],
           ["none required"], [],
           [no], [AS_IF([test "x$enable_luatex" = xyes],
-                       [AC_MSG_WARN([Sorry, no inet_aton(): can not build luaTeX])
+                       [KPSE_MSG_WARN([Sorry, no inet_aton(): can not build luaTeX])
                         enable_luatex=no])],
               [lua_socketlibs="$lua_socketlibs $ac_cv_search_inet_aton"])
   AS_CASE([$ac_cv_search_gethostbyname],
           ["none required"], [],
           [no], [AS_IF([test "x$enable_luatex" = xyes],
-                       [AC_MSG_WARN([Sorry, no gethostbyname(): can not build luaTeX])
+                       [KPSE_MSG_WARN([Sorry, no gethostbyname(): can not build luaTeX])
                         enable_luatex=no])],
               [lua_socketlibs="$lua_socketlibs $ac_cv_search_gethostbyname"])
   AS_CASE([$ac_cv_search_nanosleep],
           ["none required"], [],
           [no], [AS_IF([test "x$enable_luatex" = xyes],
-                       [AC_MSG_WARN([Sorry, no nanosleep(): can not build luaTeX])
+                       [KPSE_MSG_WARN([Sorry, no nanosleep(): can not build luaTeX])
                         enable_luatex=no])],
               [lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep"])
 fi
@@ -127,7 +127,7 @@ AC_SUBST([ipc_socketlibs])
 KPSE_CHECK_FRAMEWORK([Carbon], [ATSUStyle style])
 KPSE_FONTCONFIG_FLAGS
 AS_IF([test "x$enable_xetex:$kpse_cv_have_Carbon:$kpse_cv_have_fontconfig" = xyes:no:no],
-      [AC_MSG_WARN([Sorry, can not build XeTeX without Carbon framework or fontconfig])
+      [KPSE_MSG_WARN([Sorry, can not build XeTeX without Carbon framework or fontconfig])
        enable_xetex=no])
 AM_CONDITIONAL([XETEX_MACOSX], [test "x$kpse_cv_have_Carbon" = xyes])
 AM_CONDITIONAL([XETEX_GRAPHITE], [test "x$with_graphite" != xno])
@@ -155,7 +155,7 @@ AS_CASE([$with_mf_x_toolkit],
         [''], [with_mf_x_toolkit=$enable_mf],
         [y|ye], [with_mf_x_toolkit=yes],
         [n], [with_mf_x_toolkit=no],
-            [AC_MSG_WARN([unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes.])
+            [KPSE_MSG_WARN([unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes.])
              with_mf_x_toolkit=yes])
 test "x$with_x_toolkit" = xyes && with_x=yes
 test "x$with_x" = xno && with_x_toolkit=no

@@ -50,7 +50,7 @@ dnl Check that Kpathsea supports the opentype file format.
 KPSE_ADD_FLAGS([kpathsea])
 KPSE_CHECK_KPSE_FORMAT([opentype], ,
                        [build=no
-AC_MSG_WARN([Kpathsea does not support opentype files, can not build xdv2pdf.])])
+KPSE_MSG_WARN([Kpathsea does not support opentype files, can not build xdv2pdf.])])
 KPSE_RESTORE_FLAGS
 
 fi

@@ -17,7 +17,8 @@
 #   additional program specific configure options (if any)
 #   library dependencies for programs and libraries
 AC_DEFUN([KPSE_SETUP],
-[m4_define([kpse_TL], [$1])[]dnl
+[AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
+m4_define([kpse_TL], [$1])[]dnl
 m4_define([kpse_indent_26], [28])[]dnl
 AC_ARG_ENABLE([all-pkgs],
               AS_HELP_STRING([--disable-all-pkgs],

@@ -1061,6 +1061,7 @@ enable_tektronixwin
 enable_unitermwin
 enable_mp
 enable_web_progs
+enable_missing
 with_fontconfig_includes
 with_fontconfig_libdir
 with_x
@@ -1769,6 +1770,8 @@ Optional Features:
   --enable-unitermwin     include Uniterm window support
   --disable-mp            do not build METAPOST
   --disable-web-progs     do not build WEB programs bibtex ... weave
+  --disable-missing       terminate if a requested program or feature must be
+                          disabled, e.g., due to missing libraries
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -4568,13 +4571,13 @@ if test "${lt_cv_nm_interface+set}" = set; then
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4571: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4574: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4574: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4577: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4577: output\"" >&5)
+  (eval echo "\"\$as_me:4580: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5780,7 +5783,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5783 "configure"' > conftest.$ac_ext
+  echo '#line 5786 "configure"' > conftest.$ac_ext
   if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7741,11 +7744,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7744: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7747: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7748: \$? = $ac_status" >&5
+   echo "$as_me:7751: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8080,11 +8083,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8083: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8086: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8087: \$? = $ac_status" >&5
+   echo "$as_me:8090: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8185,11 +8188,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8188: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8191: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8192: \$? = $ac_status" >&5
+   echo "$as_me:8195: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8240,11 +8243,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8243: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8246: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8247: \$? = $ac_status" >&5
+   echo "$as_me:8250: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11040,7 +11043,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11043 "configure"
+#line 11046 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11136,7 +11139,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11139 "configure"
+#line 11142 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16250,11 +16253,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16253: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16256: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16257: \$? = $ac_status" >&5
+   echo "$as_me:16260: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16349,11 +16352,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16352: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16355: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16356: \$? = $ac_status" >&5
+   echo "$as_me:16359: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16401,11 +16404,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16404: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16407: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16408: \$? = $ac_status" >&5
+   echo "$as_me:16411: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -18275,18 +18278,37 @@ fi
 fi
 
 
+# Check whether --enable-missing was given.
+if test "${enable_missing+set}" = set; then
+  enableval=$enable_missing;
+fi
+
 if test "x$enable_luatex:$enable_ipc" != xno:no; then
   case $ac_cv_search_connect in
   "none required") : ;;
   no) if test "x$enable_luatex" = xyes; then
   { $as_echo "$as_me:$LINENO: WARNING: Sorry, no socket library: can not build luaTeX" >&5
 $as_echo "$as_me: WARNING: Sorry, no socket library: can not build luaTeX" >&2;}
+if test "x$enable_missing" = xno; then
+  { { $as_echo "$as_me:$LINENO: error: terminating." >&5
+$as_echo "$as_me: error: terminating." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
                              enable_luatex=no
 fi
 
                       if test "x$enable_ipc" = xyes; then
   { $as_echo "$as_me:$LINENO: WARNING: no socket library: disabling ipc" >&5
 $as_echo "$as_me: WARNING: no socket library: disabling ipc" >&2;}
+if test "x$enable_missing" = xno; then
+  { { $as_echo "$as_me:$LINENO: error: terminating." >&5
+$as_echo "$as_me: error: terminating." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
                              enable_ipc=no
 fi
  ;;
@@ -18577,6 +18599,13 @@ fi
   no) if test "x$enable_luatex" = xyes; then
   { $as_echo "$as_me:$LINENO: WARNING: Sorry, no inet_aton(): can not build luaTeX" >&5
 $as_echo "$as_me: WARNING: Sorry, no inet_aton(): can not build luaTeX" >&2;}
+if test "x$enable_missing" = xno; then
+  { { $as_echo "$as_me:$LINENO: error: terminating." >&5
+$as_echo "$as_me: error: terminating." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
                         enable_luatex=no
 fi
  ;;
@@ -18588,6 +18617,13 @@ esac
   no) if test "x$enable_luatex" = xyes; then
   { $as_echo "$as_me:$LINENO: WARNING: Sorry, no gethostbyname(): can not build luaTeX" >&5
 $as_echo "$as_me: WARNING: Sorry, no gethostbyname(): can not build luaTeX" >&2;}
+if test "x$enable_missing" = xno; then
+  { { $as_echo "$as_me:$LINENO: error: terminating." >&5
+$as_echo "$as_me: error: terminating." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
                         enable_luatex=no
 fi
  ;;
@@ -18599,6 +18635,13 @@ esac
   no) if test "x$enable_luatex" = xyes; then
   { $as_echo "$as_me:$LINENO: WARNING: Sorry, no nanosleep(): can not build luaTeX" >&5
 $as_echo "$as_me: WARNING: Sorry, no nanosleep(): can not build luaTeX" >&2;}
+if test "x$enable_missing" = xno; then
+  { { $as_echo "$as_me:$LINENO: error: terminating." >&5
+$as_echo "$as_me: error: terminating." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
                         enable_luatex=no
 fi
  ;;
@@ -18858,6 +18901,13 @@ fi
 if test "x$enable_xetex:$kpse_cv_have_Carbon:$kpse_cv_have_fontconfig" = xyes:no:no; then
   { $as_echo "$as_me:$LINENO: WARNING: Sorry, can not build XeTeX without Carbon framework or fontconfig" >&5
 $as_echo "$as_me: WARNING: Sorry, can not build XeTeX without Carbon framework or fontconfig" >&2;}
+if test "x$enable_missing" = xno; then
+  { { $as_echo "$as_me:$LINENO: error: terminating." >&5
+$as_echo "$as_me: error: terminating." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
        enable_xetex=no
 fi
 
@@ -19012,6 +19062,13 @@ case $with_mf_x_toolkit in
   n) with_mf_x_toolkit=no ;;
   *) { $as_echo "$as_me:$LINENO: WARNING: unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes." >&5
 $as_echo "$as_me: WARNING: unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes." >&2;}
+if test "x$enable_missing" = xno; then
+  { { $as_echo "$as_me:$LINENO: error: terminating." >&5
+$as_echo "$as_me: error: terminating." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+
              with_mf_x_toolkit=yes ;;
 esac
 

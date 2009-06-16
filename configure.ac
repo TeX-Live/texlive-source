@@ -58,13 +58,6 @@ if test "x$LN_S" != "xln -s" && test "x$with_ln_s" != xno; then
   AC_MSG_ERROR([You could use `--without-ln-s' to build without working `ln -s'])
 fi
 
-## FIXME
-if test "x$with_fontconfig" != x; then
-  AC_MSG_ERROR([Sorry, the configure option `--with-fontconfig' is no longer supported.
-        Either use `--with-fontconfig-includes' and/or `--with-fontconfig-libdir'.
-        or (preferably) use pkg-config, if necessary setting PKG_CONFIG.])
-fi
-
 if test "x$mandir" = 'x${datarootdir}/man'; then
   mandir='${prefix}/texmf/doc/man'
   ac_configure_args="$ac_configure_args '--mandir=$mandir'"  
