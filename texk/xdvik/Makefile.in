@@ -433,14 +433,7 @@ EXTRA_DIST = psheader.txt mksedscript xdvi.1.in BUGS CHANGES \
 	t1mapper.1 texmf-alt/README texmf-alt/charter2.map \
 	texmf-alt/lucida.map texmf-alt/marvosym.map texmf-alt/xdvi.cfg \
 	texmf-alt/xdvifont.map texmf-alt/xypic.map xdvi-search.el \
-	xdvi.icon xdvizilla xdvizilla.1 Makefile.in-22.84.14 \
-	acconfig.h-22.84.14 acinclude.m4-22.84.14 aclocal.m4-22.84.14 \
-	configure.in-22.84.14 kpathsea.ac-22.84.14 \
-	withenable.ac-22.84.14 Makefile.in-22.84.15 \
-	acconfig.h-22.84.15 aclocal.m4-22.84.15 configure.in-22.84.15 \
-	gui/Makefile.in-22.84.15 kpathsea.ac-22.84.15 \
-	tests/Makefile.in-22.84.15 withenable.ac-22.84.15 \
-	Makefile.in.work configure.in.work
+	xdvi.icon xdvizilla xdvizilla.1
 CLEANFILES = psheader.c sedscript xdvi.1
 nodist_man1_MANS = xdvi.1
 xdvidir = ${prefix}/texmf/xdvi

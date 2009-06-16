@@ -257,32 +257,3 @@ EXTRA_DIST += \
 	xdvizilla \
 	xdvizilla.1
 
-## Original files from xdvik-22.84.14
-##
-EXTRA_DIST += \
-	Makefile.in-22.84.14 \
-	acconfig.h-22.84.14 \
-	acinclude.m4-22.84.14 \
-	aclocal.m4-22.84.14 \
-	configure.in-22.84.14 \
-	kpathsea.ac-22.84.14 \
-	withenable.ac-22.84.14
-
-## Original files from xdvik-22.84.15
-##
-EXTRA_DIST += \
-	Makefile.in-22.84.15 \
-	acconfig.h-22.84.15 \
-	aclocal.m4-22.84.15 \
-	configure.in-22.84.15 \
-	gui/Makefile.in-22.84.15 \
-	kpathsea.ac-22.84.15 \
-	tests/Makefile.in-22.84.15 \
-	withenable.ac-22.84.15
-
-## Eventually delete these files
-##
-EXTRA_DIST += \
-	Makefile.in.work \
-	configure.in.work
-
