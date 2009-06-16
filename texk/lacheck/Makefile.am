@@ -11,8 +11,6 @@ bin_PROGRAMS = lacheck
 
 lacheck_SOURCES = lacheck.l
 
-LDADD = $(LEXLIB)
-
 nodist_man1_MANS = lacheck.1
 
 lacheck.1: lacheck.man

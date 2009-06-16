@@ -81,11 +81,12 @@ PROGRAMS = $(bin_PROGRAMS)
 am_otp2ocp_OBJECTS = otp-parser.$(OBJEXT) otp-lexer.$(OBJEXT) \
 	otp2ocp.$(OBJEXT) routines.$(OBJEXT)
 otp2ocp_OBJECTS = $(am_otp2ocp_OBJECTS)
+otp2ocp_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-otp2ocp_DEPENDENCIES = $(am__DEPENDENCIES_1) $(proglib) \
-	$(am__DEPENDENCIES_1)
+otp2ocp_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am_outocp_OBJECTS = outocp.$(OBJEXT)
 outocp_OBJECTS = $(am_outocp_OBJECTS)
+outocp_LDADD = $(LDADD)
 outocp_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -329,12 +330,11 @@ otp2ocp_SOURCES = \
 	otp2ocp.c \
 	routines.c
 
-otp2ocp_LDADD = $(LEXLIB) $(proglib) $(KPATHSEA_LIBS)
 DISTCLEANFILES = otp-parser.output
 outocp_SOURCES = \
 	outocp.c
 
-outocp_LDADD = $(proglib) $(KPATHSEA_LIBS)
+LDADD = $(proglib) $(KPATHSEA_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -709,6 +709,11 @@ uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS
 	uninstall-binSCRIPTS
 
 
+# Automake automatically uses $(proglib)=../lib/lib.a as dependency.
+# This does not work for the configure substitution  $(KPATHSEA_LIBS),
+# thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
+
+# Rebuild $(proglib)
 $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 

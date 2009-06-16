@@ -1,3 +1,8 @@
+2009-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* otp-lexer.l (yywrap): define as static function.
+	* Makefile.am: no more need for $(LEXLIB).
+
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.in: Add @configure_input@ line.

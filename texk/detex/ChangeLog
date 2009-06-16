@@ -1,3 +1,7 @@
+2009-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: detex.l provides yywrap, no need for $(LEXLIB).
+
 2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

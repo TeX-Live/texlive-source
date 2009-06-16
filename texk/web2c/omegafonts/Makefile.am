@@ -62,7 +62,7 @@ omfonts_SOURCES = \
 	print_routines.c \
 	print_routines.h
 
-LDADD = $(LEXLIB) $(proglib) $(KPATHSEA_LIBS)
+LDADD = $(proglib) $(KPATHSEA_LIBS)
 
 DISTCLEANFILES = pl-parser.output
 

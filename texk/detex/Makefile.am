@@ -18,7 +18,7 @@ bin_PROGRAMS = detex
 
 detex_SOURCES = detex.h detex.l
 
-LDADD = $(LEXLIB) $(KPATHSEA_LIBS)
+LDADD = $(KPATHSEA_LIBS)
 
 detex_DEPENDENCIES = $(KPATHSEA_DEPEND)
 

@@ -8,11 +8,11 @@ AM_YFLAGS = -d -v
 
 proglib = ../lib/lib.a
 
-## Automake automatically uses $(proglib)=../lib/lib.a as dependency.
-## This does not work for the configure substitution  $(KPATHSEA_LIBS),
-## thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
+# Automake automatically uses $(proglib)=../lib/lib.a as dependency.
+# This does not work for the configure substitution  $(KPATHSEA_LIBS),
+# thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
 
-## Rebuild $(proglib)
+# Rebuild $(proglib)
 $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
@@ -38,14 +38,12 @@ otp2ocp_SOURCES = \
 	otp2ocp.c \
 	routines.c
 
-otp2ocp_LDADD = $(LEXLIB) $(proglib) $(KPATHSEA_LIBS)
-
 DISTCLEANFILES = otp-parser.output
 
 outocp_SOURCES = \
 	outocp.c
 
-outocp_LDADD = $(proglib) $(KPATHSEA_LIBS)
+LDADD = $(proglib) $(KPATHSEA_LIBS)
 
 ## Not used
 ##

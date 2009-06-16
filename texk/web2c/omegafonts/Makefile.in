@@ -87,8 +87,7 @@ am_omfonts_OBJECTS = char_routines.$(OBJEXT) dimen_routines.$(OBJEXT) \
 omfonts_OBJECTS = $(am_omfonts_OBJECTS)
 omfonts_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-omfonts_DEPENDENCIES = $(am__DEPENDENCIES_1) $(proglib) \
-	$(am__DEPENDENCIES_1)
+omfonts_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -334,7 +333,7 @@ omfonts_SOURCES = \
 	print_routines.c \
 	print_routines.h
 
-LDADD = $(LEXLIB) $(proglib) $(KPATHSEA_LIBS)
+LDADD = $(proglib) $(KPATHSEA_LIBS)
 DISTCLEANFILES = pl-parser.output tests/Cherokee.tfm \
 	tests/OCherokee.ofm tests/OCherokee.opl tests/OCherokee.ovf \
 	tests/xCherokee.pl tests/xOCherokee.ofm tests/xOCherokee.opl \
