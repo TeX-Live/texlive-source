@@ -1,3 +1,20 @@
+2009-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+
+	* use ANSI C prototypes for all functions.
+	* tempfile.h (new): prototype for MakeRWTempFile.
+	* Makefile.am: distribute tempfile.h.
+
+	* avoid unused variables, remove rcsid's.
+	* remove unnecessary prototypes for static functions
+	(some with long/i32 discrepancies).
+	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c:
+	(HandleFontDef) add explicit braces to avoid ambiguous `else'.
+	* dviselect.c (main): add parentheses around && within ||.
+	* font.h: guard against multiple inclusion.
+	* gripes.h: #include "font.h", for struct font.
+
 2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tempfile.c: define __cdecl only when used, to avoid warnings

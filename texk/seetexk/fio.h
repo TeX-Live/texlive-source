@@ -50,4 +50,4 @@
 /*
  * Function types
  */
-i32	GetByte(), GetWord(), Get3Byte(), GetLong();
+i32	GetByte(FILE *), GetWord(FILE *), Get3Byte(FILE *), GetLong(FILE *);

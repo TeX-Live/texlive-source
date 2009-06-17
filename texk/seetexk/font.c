@@ -65,8 +65,12 @@ static	struct fontconf *fonts;	/* font list */
 static	struct fontconf **nextfc;/* used during initialisation */
 static	char spec_any[] = "*";	/* the `anything' specifier */
 
-static void readconf(), badcf(), setfenv(), setfont();
-static struct font *getafont();
+static void readconf(char *name);
+static void badcf(char *why);
+static void setfenv(struct fontconf *pfc, char *env, char *suf);
+static void setfont(struct fontconf *pfc, char *path);
+static struct font *getafont(char *nm, i32 dvimag, i32 dvidsz,
+                             char *dev, char **fname, int wantrast);
 
 /*
  * Imports.
@@ -93,8 +97,7 @@ char	*getenv(), *malloc(), *strncpy(), *strsave();
 }
 
 void
-fontinit(file)
-	char *file;
+fontinit(char *file)
 {
 
 	if (didinit) {
@@ -124,8 +127,7 @@ fontinit(file)
  * Find a font's operations, given its name.
  */
 static struct fontops *
-findops(name)
-	register char *name;
+findops(char *name)
 {
 	register struct fontops *fo;
 
@@ -142,8 +144,7 @@ findops(name)
  * words and make a fontconf entry.
  */
 static void
-readconf(name)
-	char *name;
+readconf(char *name)
 {
 	register FILE *f;	/* config file */
 	register int c;		/* char and word counter */
@@ -251,9 +252,7 @@ readconf(name)
  * as there are components in the given environment variable.
  */
 static void
-setfenv(pfc, env, suf)
-	struct fontconf *pfc;
-	char *env, *suf;
+setfenv(struct fontconf *pfc, char *env, char *suf)
 {
 	register char *s, *t;
 	register int len, suflen = strlen(suf);
@@ -297,9 +296,7 @@ setfenv(pfc, env, suf)
  * Turn a prototype fontconf into a real one.
  */
 static void
-setfont(pfc, path)
-	struct fontconf *pfc;
-	char *path;
+setfont(struct fontconf *pfc, char *path)
 {
 	register struct fontconf *fc;
 
@@ -320,8 +317,7 @@ setfont(pfc, path)
  * Complain about a problem in the configuration file.
  */
 static void
-badcf(why)
-	char *why;
+badcf(char *why)
 {
 
 	error(1, 0, "\"%s\", line %d: %s", cfname, cfline, why);
@@ -333,9 +329,7 @@ badcf(why)
  * E.g., cmr7 and cmr10 become cmr.  (This is the `%b' operator.)
  */
 static void
-basify(s, buf, size)
-	char *s, *buf;
-	int size;
+basify(char *s, char *buf, int size)
 {
 	register char *p, *endp;
 	register int n;
@@ -354,9 +348,7 @@ basify(s, buf, size)
  * path (expand %f, %m, %b).
  */
 static void
-pave(result, proto, name, mag)
-	char *result, *proto, *name;
-	int mag;
+pave(char *result, char *proto, char *name, int mag)
 {
 	register int c;
 	register char *s, *d, *p;
@@ -426,10 +418,7 @@ put:
  * are no fonts for the device, in which case we set *fname to NULL.
  */
 struct font *
-GetFont(nm, dvimag, dvidsz, dev, fname)
-	char *nm;
-	i32 dvimag, dvidsz;
-	char *dev, **fname;
+GetFont(char *nm, i32 dvimag, i32 dvidsz, char *dev, char **fname)
 {
 
 	return (getafont(nm, dvimag, dvidsz, dev, fname, 1));
@@ -439,10 +428,7 @@ GetFont(nm, dvimag, dvidsz, dev, fname)
  * Same as GetFont, but caller promises never to ask for rasters.
  */
 struct font *
-GetRasterlessFont(nm, dvimag, dvidsz, dev, fname)
-	char *nm;
-	i32 dvimag, dvidsz;
-	char *dev, **fname;
+GetRasterlessFont(char *nm, i32 dvimag, i32 dvidsz, char *dev, char **fname)
 {
 
 	return (getafont(nm, dvimag, dvidsz, dev, fname, 0));
@@ -453,11 +439,7 @@ GetRasterlessFont(nm, dvimag, dvidsz, dev, fname)
  * WHAT ABOUT OTHERS?
  */
 static struct font *
-getafont(nm, dvimag, dvidsz, dev, fname, wantrast)
-	char *nm;
-	i32 dvimag, dvidsz;
-	char *dev, **fname;
-	int wantrast;
+getafont(char *nm, i32 dvimag, i32 dvidsz, char *dev, char **fname, int wantrast)
 {
 	register int slop, fmag;
 	register struct font *f;

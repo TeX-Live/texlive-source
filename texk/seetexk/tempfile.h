@@ -6,12 +6,7 @@
  */
 
 /*
- * Errors.
+ * Temp Files.
  */
 
-#include <stdarg.h>
-
-void	error(int quit, int e, const char *fmt, ...);
-void	panic(const char *fmt, ...);
-
-void	SetErrorTrap(void (*fn)(int quit, char *text));
+int MakeRWTempFile(char *name);

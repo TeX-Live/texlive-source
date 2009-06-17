@@ -15,10 +15,10 @@ struct search {
 };
 
 /* returns a pointer to the search table (for future search/installs) */
-struct	search *SCreate();	/* create a search table */
+struct	search *SCreate(unsigned int dsize);	/* create a search table */
 
 /* returns a pointer to the data object found or created */
-char	*SSearch();		/* search for a data object */
+char	*SSearch(struct search *s, i32 key, int *disp);		/* search for a data object */
 
 /* clears a search table (wipes out all entries) */
 #define	SClear(s)	((s)->s_space += (s)->s_n, (s)->s_n = 0)
@@ -34,4 +34,4 @@ char	*SSearch();		/* search for a data object */
 #define	S_NEW		0x10	/* created (occurs iff S_CREATE && !S_EXCL) */
 #define	S_ERROR		0x20	/* problem creating (out of memory) */
 
-void SEnumerate();
+void SEnumerate(struct search *s, void(*f)(char*,i32));

@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/gripes0.c,v 2.5 89/09/01 13:52:38 chris Exp $";
-#endif
-
 /*
  * Common errors (`gripes').
  */
@@ -19,16 +15,14 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/gripes0.c
 #include "gripes.h"
 
 #ifndef WIN32
-extern	errno;
+extern int errno;
 #endif
 
 /*
  * Cannot allocate memory.
  */
 void
-GripeOutOfMemory(n, why)
-	int n;
-	char *why;
+GripeOutOfMemory(int n, char *why)
 {
 
 	error(1, -1, "ran out of memory allocating %d bytes for %s", n, why);
@@ -40,10 +34,7 @@ GripeOutOfMemory(n, why)
  * RETURNS TO CALLER
  */
 void
-GripeCannotGetFont(name, mag, dsz, dev, fullname)
-	char *name;
-	i32 mag, dsz;
-	char *dev, *fullname;
+GripeCannotGetFont(char *name, i32 mag, i32 dsz, char *dev, char *fullname)
 {
 	int e = errno;
 	char scale[40];
@@ -72,9 +63,7 @@ GripeCannotGetFont(name, mag, dsz, dev, fullname)
  * RETURNS TO CALLER
  */
 void
-GripeDifferentChecksums(font, tfmsum, fontsum)
-	char *font;
-	i32 tfmsum, fontsum;
+GripeDifferentChecksums(char *font, i32 tfmsum, i32 fontsum)
 {
 
 	error(0, 0, "\
@@ -89,8 +78,7 @@ WARNING: TeX and I have different checksums for font\n\
  * A font, or several fonts, are missing, so no output.
  */
 void
-GripeMissingFontsPreventOutput(n)
-	int n;
+GripeMissingFontsPreventOutput(int n)
 {
 	static char s[2] = {'s', 0};
 

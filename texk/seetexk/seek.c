@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/seek.c,v 3.1 89/08/22 21:59:04 chris Exp $";
-#endif
-
 /*
  * SeekFile copies an input stdio file, if necessary, so that
  * it produces a stdio file on which fseek() works properly.
@@ -34,19 +30,7 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/seek.c,v 
 #include <stdio.h>
 #include "types.h"		/* for BSD_FILE_SYSTEM */
 #include "seek.h"
-
-#ifdef HAVE_PROTOTYPES
-extern int MakeRWTempFile(char *);
-#else
-extern int MakeRWTempFile();
-#endif
-
-#ifdef EASY_BUT_NOT_GOOD
-
-FILE *CopyFile(f) FILE *f; { return (f); }
-FILE *SeekFile(f) FILE *f; { return (f); }
-
-#else
+#include "tempfile.h"
 
 #include <errno.h>
 #ifdef BSD_FILE_SYSTEM
@@ -68,13 +52,14 @@ extern int errno;
  * This code is somewhat Unix-specific.
  */
 FILE *
-CopyFile(f)
-	FILE *f;
+CopyFile(FILE *f)
 {
 	register int tf, n, ifd, w;
 	register char *p, *buf;
 	register int blksize;
+#ifdef BSD_FILE_SYSTEM
 	struct stat st;
+#endif
 	int e;
 #ifdef MAXBSIZE
 #define BSIZE MAXBSIZE
@@ -168,12 +153,9 @@ CopyFile(f)
 /*
  * Copy an input file, but only if necessary.
  */
-FILE *SeekFile(f)
-	FILE *f;
+FILE *SeekFile(FILE *f)
 {
 	int fd = fileno(f);
 
 	return (lseek(fd, 0L, 1) >= 0 && !isatty(fd) ? f : CopyFile(f));
 }
-
-#endif /* EASY_BUT_NOT_GOOD */

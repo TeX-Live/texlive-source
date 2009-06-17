@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/dvi/RCS/dviselect.c,v 3.1 89/08/22 17:16:13 chris Exp $";
-#endif
-
 /*
  * DVI page rearrangement program
  *
@@ -26,7 +22,7 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/dvi/RCS/dviselect
 #else
 #define FOPEN_RBIN_MODE  "r"
 #define FOPEN_RBIN_MODE  "w"
-#define SET_BINARY(x)
+#define SET_BINARY(x) 0
 extern char *optarg;
 extern int   optind;
 #endif
@@ -114,51 +110,10 @@ char	*malloc(), *realloc();
 #endif
 
 #ifdef HAVE_PROTOTYPES
-void specusage(void);
-long scale(long whole,int num,int den,long sf);
-struct pagespec * newspec(void);
-int parseint(char **sp );
-long parsedimen(char **sp );
-struct pagespec * ParseSpecs(char *str,int make);
-long singledimen(char *str);
-void message(int space,char *str,int len);
-void BeginPage(int really);
-void DviEndPage(int really);
-void PostAmbleFontEnumerator(char *addr,long key);
-void HandlePostAmble(void);
-void WriteFont(struct fontinfo *fi);
-void HandlePreAmble(void);
-void HandleFontDef(long strchr);
-void HandleSpecial(int c,int l,long p);
-void ReallyUseFont(void);
-void PutFontSelector(long strchr);
-int HandlePage(int first,int last,long hoffset,long voffset);
-void PutEmptyPage(void);
-void ScanDVIFile(void);
-void HandleDVIFile(void);
-#else
-void specusage();
-long scale();
-struct pagespec *newspec();
-int parseint();
-long parsedimen();
-struct pagespec *ParseSpecs();
-long singledimen();
-void message();
-void BeginPage();
-void DviEndPage();
-void PostAmbleFontEnumerator();
-void HandlePostAmble();
-void WriteFont();
-void HandlePreAmble();
-void HandleFontDef();
-void HandleSpecial();
-void ReallyUseFont();
-void PutFontSelector();
-int HandlePage();
-void PutEmptyPage();
-void ScanDVIFile();
-void HandleDVIFile();
+static void WriteFont(struct fontinfo *fi);
+static void PutFontSelector(i32 index);
+static void ScanDVIFile(void);
+static void HandleDVIFile(void);
 #endif
 
 /*
@@ -179,7 +134,8 @@ void HandleDVIFile();
 #endif
 #endif
 
-void specusage()
+static void
+specusage(void)
 {
    error(1, -1, "page specification error:\n\
   <pagespecs> = [modulo:][mag@]<spec>\n\
@@ -198,9 +154,9 @@ void specusage()
  *      0 <= whole
  */
 i32 defaultscale = 4736286 ;
-i32 scale(whole, num, den, sf)
-     i32 whole, sf;
-     int num, den;
+
+static i32
+scale(i32 whole, int num, int den, i32 sf)
 {
    i32 v ;
 
@@ -220,7 +176,8 @@ struct pagespec {
    struct pagespec *next;
 };
 
-struct pagespec *newspec()
+static struct pagespec *
+newspec(void)
 {
    struct pagespec *temp = (struct pagespec *)malloc(sizeof(struct pagespec));
    temp->reversed = temp->pageno = temp->add = 0;
@@ -229,8 +186,8 @@ struct pagespec *newspec()
    return (temp);
 }
 
-int parseint(sp)
-     char **sp;
+static int
+parseint(char **sp)
 {
    char *s = *sp;
    int n = 0, neg = 0;
@@ -246,8 +203,8 @@ int parseint(sp)
    return (neg ? -n : n);
 }
 
-i32 parsedimen(sp)
-     char **sp;
+static i32
+parsedimen(char **sp)
 {
    i32 whole = 0;
    int num = 0, den = 1, neg = 0;
@@ -325,9 +282,8 @@ i32 parsedimen(sp)
    return (neg ? -whole : whole);
 }
 
-struct pagespec *ParseSpecs(str, make)
-     char *str;
-     int make;
+static struct pagespec *
+ParseSpecs(char *str, int make)
 {
    struct pagespec *head, *tail;
    int other = 0;
@@ -388,8 +344,8 @@ struct pagespec *ParseSpecs(str, make)
    return (head);
 }
 
-i32 singledimen(str)
-     char *str;
+static i32
+singledimen(char *str)
 {
    i32 num = parsedimen(&str);
    if (*str) return (0);
@@ -400,11 +356,8 @@ i32 singledimen(str)
  * Print a message to stderr, with an optional leading space, and handling
  * long line wraps.
  */
-void
-message(space, str, len)
-	int space;
-	register char *str;
-	register int len;
+static void
+message(int space, char *str, int len)
 {
 	static int beenhere;
 	static int col;
@@ -428,9 +381,8 @@ message(space, str, len)
 /*
  * Start a page (process a DVI_BOP).
  */
-void
-BeginPage(really)
-     int really;
+static void
+BeginPage(int really)
 {
 	register i32 *i;
 
@@ -477,9 +429,8 @@ BeginPage(really)
 /*
  * End a page (process a DVI_EOP).
  */
-void
-EndPage(really)
-     int really;
+static void
+EndPage(int really)
 {
 
 	if (!UseThisPage || !really)
@@ -497,18 +448,16 @@ EndPage(really)
  * For each of the fonts used in the new DVI file, write out a definition.
  */
 /* ARGSUSED */
-void
-PostAmbleFontEnumerator(addr, key)
-	char *addr;
-	i32 key;
+static void
+PostAmbleFontEnumerator(char *addr, i32 key)
 {
 
 	if (((struct fontinfo *)addr)->fi_reallyused)
 		WriteFont((struct fontinfo *)addr);
 }
 
-void
-HandlePostAmble()
+static void
+HandlePostAmble(void)
 {
 	register i32 c;
 
@@ -568,9 +517,8 @@ HandlePostAmble()
 /*
  * Write a font definition to the output file
  */
-void
-WriteFont(fi)
-	register struct fontinfo *fi;
+static void
+WriteFont(struct fontinfo *fi)
 {
 	register int l;
 	register char *s;
@@ -607,8 +555,8 @@ WriteFont(fi)
 /*
  * Handle the preamble.  Someday we should update the comment field.
  */
-void
-HandlePreAmble()
+static void
+HandlePreAmble(void)
 {
 	register int n, c;
 
@@ -639,9 +587,7 @@ HandlePreAmble()
 }
 
 int
-main(argc, argv)
-	int argc;
-	register char **argv;
+main(int argc, char **argv)
 {
 	register int c;
 	register char *s;
@@ -721,13 +667,13 @@ Usage: %s [-q] [-i infile] [-o outfile] [-w width] [-h height] <pagespecs> [infi
 		DVIFileName = "`stdin'";
 		inf = stdin;
 		if (!isatty(fileno(inf)))
-		  SET_BINARY(fileno(inf));
+		  (void)SET_BINARY(fileno(inf));
 	} else if ((inf = fopen(DVIFileName, FOPEN_RBIN_MODE)) == 0)
 		error(1, -1, "cannot read %s", DVIFileName);
 	if (outname == NULL) {
 		outf = stdout;
 		if (!isatty(fileno(outf)))
-		  SET_BINARY(fileno(outf));
+		  (void)SET_BINARY(fileno(outf));
 	}
 	else if ((outf = fopen(outname, FOPEN_WBIN_MODE)) == 0)
 		error(1, -1, "cannot write %s", outname);
@@ -766,9 +712,8 @@ Usage: %s [-q] [-i infile] [-o outfile] [-w width] [-h height] <pagespecs> [infi
 /*
  * Handle a font definition.
  */
-void
-HandleFontDef(index)
-	i32 index;
+static void
+HandleFontDef(i32 index)
 {
 	register struct fontinfo *fi;
 	register int i;
@@ -776,12 +721,13 @@ HandleFontDef(index)
 	int def = S_CREATE | S_EXCL;
 
 	if (!UseThisPage) {
-		if ((fi = (struct fontinfo *)SSearch(FontFinder, index, &def)) == 0)
+		if ((fi = (struct fontinfo *)SSearch(FontFinder, index, &def)) == 0) {
 			if (def & S_COLL)
 				error(1, 0, "font %ld already defined", (long)index);
 			else
 				error(1, 0, "cannot stash font %ld (out of memory?)",
 					(long)index);
+		}
 		fi->fi_reallyused = 0;
 		fi->fi_checksum = GetLong(inf);
 		fi->fi_mag = GetLong(inf);
@@ -808,11 +754,8 @@ HandleFontDef(index)
 /*
  * Handle a \special.
  */
-void
-HandleSpecial(c, l, p)
-	int c;
-	register int l;
-	register i32 p;
+static void
+HandleSpecial(int c, int l, i32 p)
 {
 	register int i;
 
@@ -858,8 +801,8 @@ HandleSpecial(c, l, p)
 			(void) getc(inf);
 }
 
-void
-ReallyUseFont()
+static void
+ReallyUseFont(void)
 {
 	register struct fontinfo *fi;
 	int look = S_LOOKUP;
@@ -882,9 +825,8 @@ ReallyUseFont()
 /*
  * Write a font selection command to the output file
  */
-void
-PutFontSelector(index)
-	i32 index;
+static void
+PutFontSelector(i32 index)
 {
 
 	if (index < 64) {
@@ -951,13 +893,11 @@ char	oplen[128] = {
 	0, 0, 0, 0, 0, 0,	/* 250 .. 255 */
 };
 
-int
-HandlePage(first, last, hoffset, voffset)
-     int first, last;
-     i32 hoffset, voffset;
+static int
+HandlePage(int first, int last, i32 hoffset, i32 voffset)
 {
 	register int c, l;
-	register i32 p;
+	register i32 p = 0;	/* avoid uninitialized warning */
 	register int CurrentFontOK = 0;
 	int doingpage = 0;
 
@@ -1146,8 +1086,8 @@ HandlePage(first, last, hoffset, voffset)
 }
 
 /* write an empty page to fill out space */
-void
-PutEmptyPage()
+static void
+PutEmptyPage(void)
 {
         int i;
 
@@ -1172,8 +1112,8 @@ PutEmptyPage()
 /*
  * Here we scan the input DVI file and record pointers to the pages.
  */
-void
-ScanDVIFile()
+static void
+ScanDVIFile(void)
 {
 	UseThisPage = 0;
 
@@ -1188,8 +1128,8 @@ ScanDVIFile()
  * output DVI file. We also keep track of font changes, handle font
  * definitions, and perform some other housekeeping.
  */
-void
-HandleDVIFile()
+static void
+HandleDVIFile(void)
 {
         int CurrentPage, ActualPage, MaxPage;
 

@@ -267,6 +267,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes
+AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libtex.a
 libtex_a_SOURCES = \
 	dviclass.c \
@@ -284,6 +285,7 @@ libtex_a_SOURCES = \
 	seek.h \
 	seek.c \
 	tempfile.c \
+	tempfile.h \
 	types.h
 
 dvibook_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)

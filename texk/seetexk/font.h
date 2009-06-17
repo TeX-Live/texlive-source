@@ -5,6 +5,9 @@
  * so long as this copyright notice remains intact.
  */
 
+#ifndef _MCTEX_FONT_
+#define _MCTEX_FONT_
+
 /*
  * Font file information, readers, etc.
  */
@@ -276,15 +279,15 @@ struct	fontops {
 /*
  * Function types.
  */
-struct	font *GetFont(), *GetRasterlessFont();
+struct	font *GetFont(char *nm, i32 dvimag, i32 dvidsz, char *dev, char **fname);
+struct	font *GetRasterlessFont(char *nm, i32 dvimag, i32 dvidsz, char *dev, char **fname);
 struct	glyph *GetGlyph();
 char	*GetRaster();
 void	FreeFont();
 void	FreeGlyph();
 void	FreeRaster();
 char	*Font_TeXName();
-double	DMagFactor();		/* from magfactor.c */
-void	fontinit();
+void	fontinit(char *file);
 
 /*
  * Normally from stdio.h
@@ -299,3 +302,5 @@ void	fontinit();
  * called, or is passed a null pointer.
  */
 #define	CONFENV	"TEXFONTDESC"
+
+#endif /* _MCTEX_FONT_ */

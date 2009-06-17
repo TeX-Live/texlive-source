@@ -7,6 +7,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libtex.a
 
@@ -26,6 +27,7 @@ libtex_a_SOURCES = \
 	seek.h \
 	seek.c \
 	tempfile.c \
+	tempfile.h \
 	types.h
 
 bin_PROGRAMS = dvibook dviconcat dviselect dvitodvi

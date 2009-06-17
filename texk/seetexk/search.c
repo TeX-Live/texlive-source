@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/search.c,v 3.1 89/08/22 21:58:14 chris Exp $";
-#endif
-
 /*
  * Key search routines (for a 32 bit key)
  *
@@ -39,8 +35,7 @@ char	*malloc(), *realloc();
 #endif
 
 struct search *
-SCreate(dsize)
-	register unsigned int dsize;
+SCreate(unsigned int dsize)
 {
 	register struct search *s;
 
@@ -85,10 +80,7 @@ SCreate(dsize)
  * We actually use a binary search right now - this may change.
  */
 char *
-SSearch(s, key, disp)
-	register struct search *s;
-	register i32 key;
-	int *disp;
+SSearch(struct search *s, i32 key, int *disp)
 {
 	register char *keyaddr;
 	int itemstomove;
@@ -166,9 +158,7 @@ SSearch(s, key, disp)
  * Call function `f' for each element in the search table `s'.
  */
 void
-SEnumerate(s, f)
-	register struct search *s;
-	register void (*f)();
+SEnumerate(struct search *s, void(*f)(char*,i32))
 {
 	register int n;
 	register char *p;

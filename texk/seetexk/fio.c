@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/fio.c,v 2.4 89/08/22 21:50:31 chris Exp $";
-#endif
-
 /*
  * File I/O subroutines for getting bytes, words, 3bytes, and longwords.
  * N.B.: these believe they are working on a DVI file.
@@ -27,8 +23,7 @@ static char eofmsg[] = "unexpected EOF, help";
 
 #define make(name, func, signextend) \
 i32 \
-name(fp) \
-	register FILE *fp; \
+name(FILE *fp) \
 { \
 	register i32 n; \
  \

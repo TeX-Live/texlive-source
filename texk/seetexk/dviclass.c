@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/dviclass.c,v 3.1 89/08/22 21:48:35 chris Exp $";
-#endif
-
 /*
  * dviclass - DVI code classification tables.
  */

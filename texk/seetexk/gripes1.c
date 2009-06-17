@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/gripes1.c,v 1.1 89/08/22 21:54:19 chris Exp $";
-#endif
-
 /*
  * Gripes having to do with DVI files.
  */
@@ -22,7 +18,7 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/gripes1.c
 extern char *DVIFileName;
 
 static char *
-dfn()
+dfn(void)
 {
 
 	return (DVIFileName ? DVIFileName : "the input");
@@ -43,8 +39,7 @@ static char areyousure[] = "(are you sure %s is a %s?)";
  * DVI file requests a font it never defined.
  */
 void
-GripeNoSuchFont(n)
-	i32 n;
+GripeNoSuchFont(i32 n)
 {
 
 	error(0, 0, "%s wants font %ld, which it never defined", dfl, (long)n);
@@ -56,8 +51,7 @@ GripeNoSuchFont(n)
  * DVI file redefines a font.
  */
 void
-GripeFontAlreadyDefined(n)
-	i32 n;
+GripeFontAlreadyDefined(i32 n)
 {
 
 	error(0, 0, "%s redefines font %ld", dfl, n);
@@ -69,7 +63,7 @@ GripeFontAlreadyDefined(n)
  * Unexpected end of DVI file.
  */
 void
-GripeUnexpectedDVIEOF()
+GripeUnexpectedDVIEOF(void)
 {
 
 	GripeUnexpectedOp("end of file");
@@ -80,8 +74,7 @@ GripeUnexpectedDVIEOF()
  * Unexpected DVI opcode.
  */
 void
-GripeUnexpectedOp(s)
-	char *s;
+GripeUnexpectedOp(char *s)
 {
 
 	error(0, 0, "unexpected %s in %s", s, dfl);
@@ -93,8 +86,7 @@ GripeUnexpectedOp(s)
  * Missing DVI opcode.
  */
 void
-GripeMissingOp(s)
-	char *s;
+GripeMissingOp(char *s)
 {
 
 	error(0, 0, "missing %s in %s", s, dfl);
@@ -106,7 +98,7 @@ GripeMissingOp(s)
  * Cannot find DVI postamble.
  */
 void
-GripeCannotFindPostamble()
+GripeCannotFindPostamble(void)
 {
 
 	error(0, 0, "cannot find postamble");
@@ -118,8 +110,7 @@ GripeCannotFindPostamble()
  * Inconsistent DVI value.
  */
 void
-GripeMismatchedValue(s)
-	char *s;
+GripeMismatchedValue(char *s)
 {
 
 	error(0, 0, "mismatched %s in %s", s, dfl);
@@ -131,8 +122,7 @@ GripeMismatchedValue(s)
  * Undefined DVI opcode.
  */
 void
-GripeUndefinedOp(n)
-	int n;
+GripeUndefinedOp(int n)
 {
 
 	error(0, 0, "undefined DVI opcode %d", n);
@@ -147,9 +137,7 @@ GripeUndefinedOp(n)
  * RETURNS TO CALLER
  */
 void
-GripeBadGlyph(c, f)
-	i32 c;
-	struct font *f;
+GripeBadGlyph(i32 c, struct font *f)
 {
 
 	if (f->f_path == NULL) {

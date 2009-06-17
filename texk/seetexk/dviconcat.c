@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/dvi/RCS/dviconcat.c,v 3.1 89/08/22 17:23:15 chris Exp $";
-#endif
-
 /*
  * DVI page concatenation program.
  */
@@ -24,7 +20,7 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/dvi/RCS/dviconcat
 #else
 #define FOPEN_RBIN_MODE  "rb"
 #define FOPEN_RBIN_MODE  "wb"
-#define SET_BINARY(x)
+#define SET_BINARY(x) 0
 extern char *optarg;
 extern int optind;
 #endif
@@ -91,10 +87,7 @@ i16	DVIStackSize;		/* max of all stack sizes */
 char	writeerr[] = "error writing DVI file";
 
 #ifdef NeedFunctionPrototypes
-void HandleDVIFile();
-void HandleFontDef(i32);
-void HandleSpecial(int, int, i32);
-void UseFont();
+static void HandleDVIFile(void);
 #ifdef _AMIGA
 #define bcmp(s1, s2, len) memcmp(s1, s2, len)
 #define bzero(s, len) memset(s, '\0', len)
@@ -123,8 +116,8 @@ char	*malloc(), *realloc();
 /*
  * Start a page (process a DVI_BOP).
  */
-void
-BeginPage()
+static void
+BeginPage(void)
 {
 	register i32 t;
 	register int i;
@@ -148,8 +141,8 @@ BeginPage()
 /*
  * End a page (process a DVI_EOP).
  */
-void
-EndPage()
+static void
+EndPage(void)
 {
 
 	putbyte(outf, DVI_EOP);
@@ -162,9 +155,8 @@ EndPage()
 /*
  * Write a font definition to the output file.
  */
-void
-WriteFont(fi)
-	register struct fontinfo *fi;
+static void
+WriteFont(register struct fontinfo *fi)
 {
 	register int l;
 	register char *s;
@@ -201,8 +193,8 @@ WriteFont(fi)
 /*
  * Write the postamble for the concatenation of all the input files.
  */
-void
-WritePostAmble()
+static void
+WritePostAmble(void)
 {
 	register struct fontinfo *fi;
 	register i32 postpos = CurrentPosition;	/* remember for later */
@@ -241,8 +233,8 @@ WritePostAmble()
 /*
  * Read the information we need from the postamble for the current DVI file.
  */
-void
-HandlePostAmble()
+static void
+HandlePostAmble(void)
 {
 	register i32 t;
 	register i16 w;
@@ -292,9 +284,8 @@ HandlePostAmble()
  * `firstone' is true if this is the first input file.
  * Return true iff something is wrong with the file.
  */
-int
-HandlePreAmble(firstone)
-	int firstone;
+static int
+HandlePreAmble(int firstone)
 {
 	register int n, c;
 	static char warn1[] = "%s: Warning: preamble %s of %ld";
@@ -367,10 +358,8 @@ HandlePreAmble(firstone)
  * Read one DVI file, concatenating it with the previous one (if any)
  * or starting up the output file (otherwise).
  */
-void
-doit(name, fp)
-	char *name;
-	FILE *fp;
+static void
+doit(char *name, FILE *fp)
 {
 	static int started;
 
@@ -385,9 +374,7 @@ doit(name, fp)
 }
 
 int
-main(argc, argv)
-	int argc;
-	register char **argv;
+main(int argc, char **argv)
 {
 	register int c;
 	register char *s;
@@ -428,7 +415,7 @@ usage:
 	if (outf == NULL) {
 		outf = stdout;
 		if (!isatty(fileno(outf)))
-		  SET_BINARY(fileno(outf));
+		  (void)SET_BINARY(fileno(outf));
 	}
 	if ((FontFinder = SCreate(sizeof(struct fontinfo *))) == 0)
 		error(1, 0, "cannot create font finder (out of memory?)");
@@ -440,7 +427,7 @@ usage:
 	 */
 	if (optind >= argc) {
 	  if (!isatty(fileno(stdin)))
-	    SET_BINARY(fileno(stdin));
+	    (void)SET_BINARY(fileno(stdin));
 	  doit("`stdin'", stdin);
 	}
 	else {
@@ -448,7 +435,7 @@ usage:
 			s = argv[c];
 			if (*s == '-' && s[1] == 0) {
 			  if (!isatty(fileno(stdin)))
-			    SET_BINARY(fileno(stdin));
+			    (void)SET_BINARY(fileno(stdin));
 			  doit("`stdin'", stdin);
 			}
 			else if ((f = fopen(s, FOPEN_RBIN_MODE)) == NULL) {
@@ -472,8 +459,8 @@ usage:
 /*
  * Handle a font definition.
  */
-void HandleFontDef(index)
-	i32 index;
+static void
+HandleFontDef(i32 index)
 {
 	register struct fontinfo *fi;
 	register int i;
@@ -484,13 +471,14 @@ void HandleFontDef(index)
 	char *name;
 	int d = S_CREATE | S_EXCL;
 
-	if ((p = (struct fontinfo **)SSearch(FontFinder, index, &d)) == NULL)
+	if ((p = (struct fontinfo **)SSearch(FontFinder, index, &d)) == NULL) {
 		if (d & S_COLL)
 			error(1, 0, "font %ld already defined", (long)index);
 		else
 			error(1, 0, "cannot stash font %ld (out of memory?)",
 			    (long)index);
 
+	}
 	/* collect the font information */
 	checksum = GetLong(inf);
 	mag = GetLong(inf);
@@ -546,10 +534,8 @@ void HandleFontDef(index)
 /*
  * Handle a \special.
  */
-void HandleSpecial(c, l, p)
-	int c;
-	register int l;
-	register i32 p;
+static void
+HandleSpecial(int c, int l, i32 p)
 {
 	register int i;
 
@@ -591,8 +577,8 @@ void HandleSpecial(c, l, p)
 		error(1, -1, writeerr);
 }
 
-void UseFont(index)
-	register i32 index;
+static void
+UseFont(i32 index)
 {
 	struct fontinfo *fi, **p;
 	int look = S_LOOKUP;
@@ -673,10 +659,11 @@ char	oplen[128] = {
  * DVI file, renumbering fonts.  We also keep track of font changes,
  * handle font definitions, and perform some other housekeeping.
  */
-void HandleDVIFile()
+static void
+HandleDVIFile(void)
 {
 	register int c, l;
-	register i32 p;
+	register i32 p = 0;	/* avoid uninitialized warning */
 	int doingpage = 0;
 
 	/* Only way out is via "return" statement */

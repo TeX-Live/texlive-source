@@ -56,8 +56,6 @@ dvipos - ?
 
 dvipsk - maintained here by Tom Rokicki, Karl Berry, Akira Kakuto, ...
 
-etc - random additional files
-
 gsftopk - from Paul Vojta's xdvi?
 
 kpathsea - maintained here by Karl Berry, Akira Kakuto, ...
@@ -67,10 +65,6 @@ lacheck - ?
 lcdf-typetools - checked 15jun09
   http://www.lcdf.org/type/
   http://www.lcdf.org/type/lcdf-typetools-2.79.tar.gz
-
-m4 - maintained here, part of our build
-
-make - maintained here, part of our build
 
 makeindexk - maintained here (but should it be?)
 

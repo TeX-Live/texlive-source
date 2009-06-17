@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/dvi/RCS/dviselect.c,v 3.1 89/08/22 17:16:13 chris Exp $";
-#endif
-
 /*
  * DVI page rearrangement program
  *
@@ -26,7 +22,7 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/dvi/RCS/dviselect
 #else
 #define FOPEN_RBIN_MODE  "r"
 #define FOPEN_RBIN_MODE  "w"
-#define SET_BINARY(x)
+#define SET_BINARY(x) 0
 extern char *optarg;
 extern int   optind;
 #endif
@@ -127,48 +123,20 @@ char *malloc(), *realloc();
 #endif
 
 #ifdef HAVE_PROTOTYPES
-void message(int space,char *str,int len);
-void BeginPage(void);
-void DviEndPage(void);
-void PostAmbleFontEnumerator(char *addr,long key);
-void HandlePostAmble(void);
-void WriteFont(struct fontinfo *fi);
-void HandlePreAmble(void);
-void HandleFontDef(long strchr);
-void HandleSpecial(int c,int l,long p);
-void ReallyUseFont(void);
-void PutFontSelector(long strchr);
-void ScanDVIFile(void);
-void HandleDVIFile(void);
-int HandlePage(void);
-void PutEmptyPage(void);
-#else
-void message();
-void BeginPage();
-void DviEndPage();
-void PostAmbleFontEnumerator();
-void HandlePostAmble();
-void WriteFont();
-void HandlePreAmble();
-void HandleFontDef();
-void HandleSpecial();
-void ReallyUseFont();
-void PutFontSelector();
-void ScanDVIFile();
-void HandleDVIFile();
-int HandlePage();
-void PutEmptyPage();
+static void WriteFont(struct fontinfo *fi);
+static void PutFontSelector(i32 index);
+static void ScanDVIFile(void);
+static void HandleDVIFile(void);
+static int HandlePage(void);
+static void PutEmptyPage(void);
 #endif
 
 /*
  * Print a message to stderr, with an optional leading space, and handling
  * long line wraps.
  */
-void
-message(space, str, len)
-	int space;
-	register char *str;
-	register int len;
+static void
+message(int space, char *str, int len)
 {
 	static int beenhere;
 	static int col;
@@ -192,8 +160,8 @@ message(space, str, len)
 /*
  * Start a page (process a DVI_BOP).
  */
-void
-BeginPage()
+static void
+BeginPage(void)
 {
 	register i32 *i;
 
@@ -240,8 +208,8 @@ BeginPage()
 /*
  * End a page (process a DVI_EOP).
  */
-void
-EndPage()
+static void
+EndPage(void)
 {
 
 	if (!UseThisPage)
@@ -259,18 +227,16 @@ EndPage()
  * For each of the fonts used in the new DVI file, write out a definition.
  */
 /* ARGSUSED */
-void
-PostAmbleFontEnumerator(addr, key)
-	char *addr;
-	i32 key;
+static void
+PostAmbleFontEnumerator(char *addr, i32 key)
 {
 
 	if (((struct fontinfo *)addr)->fi_reallyused)
 		WriteFont((struct fontinfo *)addr);
 }
 
-void
-HandlePostAmble()
+static void
+HandlePostAmble(void)
 {
 	register i32 c;
 
@@ -330,9 +296,8 @@ HandlePostAmble()
 /*
  * Write a font definition to the output file
  */
-void
-WriteFont(fi)
-	register struct fontinfo *fi;
+static void
+WriteFont(struct fontinfo *fi)
 {
 	register int l;
 	register char *s;
@@ -369,8 +334,8 @@ WriteFont(fi)
 /*
  * Handle the preamble.  Someday we should update the comment field.
  */
-void
-HandlePreAmble()
+static void
+HandlePreAmble(void)
 {
 	register int n, c;
 
@@ -401,9 +366,7 @@ HandlePreAmble()
 }
 
 int
-main(argc, argv)
-	int argc;
-	register char **argv;
+main(int argc, char **argv)
 {
 	register int c;
 	register char *s;
@@ -468,13 +431,13 @@ Usage: %s [-s signature] [-q] [-i infile] [-o outfile] [infile [outfile]]\n",
 		DVIFileName = "`stdin'";
 		inf = stdin;
 		if (!isatty(fileno(inf)))
-		  SET_BINARY(fileno(inf));
+		  (void)SET_BINARY(fileno(inf));
 	} else if ((inf = fopen(DVIFileName, FOPEN_RBIN_MODE)) == 0)
 		error(1, -1, "cannot read %s", DVIFileName);
 	if (outname == NULL) {
 		outf = stdout;
 		if (!isatty(fileno(outf)))
-		  SET_BINARY(fileno(outf));
+		  (void)SET_BINARY(fileno(outf));
 	}
 	else if ((outf = fopen(outname, FOPEN_WBIN_MODE)) == 0)
 		error(1, -1, "cannot write %s", outname);
@@ -502,9 +465,8 @@ Usage: %s [-s signature] [-q] [-i infile] [-o outfile] [infile [outfile]]\n",
 /*
  * Handle a font definition.
  */
-void
-HandleFontDef(index)
-	i32 index;
+static void
+HandleFontDef(i32 index)
 {
 	register struct fontinfo *fi;
 	register int i;
@@ -512,12 +474,13 @@ HandleFontDef(index)
 	int def = S_CREATE | S_EXCL;
 
 	if (!UseThisPage) {
-		if ((fi = (struct fontinfo *)SSearch(FontFinder, index, &def)) == 0)
+		if ((fi = (struct fontinfo *)SSearch(FontFinder, index, &def)) == 0) {
 			if (def & S_COLL)
 				error(1, 0, "font %ld already defined", (long)index);
 			else
 				error(1, 0, "cannot stash font %ld (out of memory?)",
 					(long)index);
+		}
 		fi->fi_reallyused = 0;
 		fi->fi_checksum = GetLong(inf);
 		fi->fi_mag = GetLong(inf);
@@ -544,11 +507,8 @@ HandleFontDef(index)
 /*
  * Handle a \special.
  */
-void
-HandleSpecial(c, l, p)
-	int c;
-	register int l;
-	register i32 p;
+static void
+HandleSpecial(int c, int l, i32 p)
 {
 	register int i;
 
@@ -594,8 +554,8 @@ HandleSpecial(c, l, p)
 			(void) getc(inf);
 }
 
-void
-ReallyUseFont()
+static void
+ReallyUseFont(void)
 {
 	register struct fontinfo *fi;
 	int look = S_LOOKUP;
@@ -618,9 +578,8 @@ ReallyUseFont()
 /*
  * Write a font selection command to the output file
  */
-void
-PutFontSelector(index)
-	i32 index;
+static void
+PutFontSelector(i32 index)
 {
 
 	if (index < 64) {
@@ -690,8 +649,8 @@ char	oplen[128] = {
 /*
  * Here we scan the input DVI file and record pointers to the pages.
  */
-void
-ScanDVIFile()
+static void
+ScanDVIFile(void)
 {
 	UseThisPage = 0;
 
@@ -706,8 +665,8 @@ ScanDVIFile()
  * output DVI file. We also keep track of font changes, handle font
  * definitions, and perform some other housekeeping.
  */
-void
-HandleDVIFile()
+static void
+HandleDVIFile(void)
 {
         int CurrentPage, ActualPage, MaxPage;
 
@@ -741,11 +700,11 @@ HandleDVIFile()
 	        error(1, -1, "can't seek last page");
 }
 
-int
-HandlePage()
+static int
+HandlePage(void)
 {
 	register int c, l;
-	register i32 p;
+	register i32 p = 0;	/* avoid uninitialized warning */
 	register int CurrentFontOK = 0;
 	int doingpage = 0;
 
@@ -914,8 +873,8 @@ HandlePage()
 }
 
 /* write an empty page to fill out space */
-void
-PutEmptyPage()
+static void
+PutEmptyPage(void)
 {
         int i;
 

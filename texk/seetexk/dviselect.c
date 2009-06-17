@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/dvi/RCS/dviselect.c,v 3.1 89/08/22 17:16:13 chris Exp $";
-#endif
-
 /*
  * DVI page selection program
  *
@@ -29,7 +25,7 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/dvi/RCS/dviselect
 #else
 #define FOPEN_RBIN_MODE  "rb"
 #define FOPEN_RBIN_MODE  "wb"
-#define SET_BINARY(x)
+#define SET_BINARY(x) 0
 extern char *optarg;
 extern int optind;
 #endif
@@ -147,11 +143,11 @@ char	writeerr[] = "error writing DVI file";
 
 #ifdef NeedFunctionPrototypes
 #include <string.h>
-void WriteFont(struct fontinfo *);
-int evenodd(char *);
-int ParsePages(char *);
-void HandleDVIFile();
-void PutFontSelector(i32);
+static void WriteFont(struct fontinfo *);
+static int evenodd(char *);
+static int ParsePages(char *);
+static void HandleDVIFile(void);
+static void PutFontSelector(i32);
 
 #ifdef _AMIGA
 #define bcmp(s1, s2, len) memcmp(s1, s2, len)
@@ -184,7 +180,8 @@ char	*malloc(), *realloc();
 /*
  * Return true iff the 10 \counts are one of the desired output pages.
  */
-DesiredPageP()
+static int
+DesiredPageP(void)
 {
 	register struct pagelist *pl;
 
@@ -237,10 +234,8 @@ DesiredPageP()
  * Print a message to stderr, with an optional leading space, and handling
  * long line wraps.
  */
-void message(space, str, len)
-	int space;
-	register char *str;
-	register int len;
+static void
+message(int space, char *str, int len)
 {
 	static int beenhere;
 	static int col;
@@ -264,7 +259,8 @@ void message(space, str, len)
 /*
  * Start a page (process a DVI_BOP).
  */
-void BeginPage()
+static void
+BeginPage(void)
 {
 	register i32 *i;
 
@@ -312,7 +308,8 @@ void BeginPage()
 /*
  * End a page (process a DVI_EOP).
  */
-void EndPage()
+static void
+EndPage(void)
 {
 
 	if (!UseThisPage)
@@ -330,17 +327,16 @@ void EndPage()
  * For each of the fonts used in the new DVI file, write out a definition.
  */
 /* ARGSUSED */
-void
-PostAmbleFontEnumerator(addr, key)
-	char *addr;
-	i32 key;
+static void
+PostAmbleFontEnumerator(char *addr, i32 key)
 {
 
 	if (((struct fontinfo *)addr)->fi_reallyused)
 		WriteFont((struct fontinfo *)addr);
 }
 
-void HandlePostAmble()
+static void
+HandlePostAmble(void)
 {
 	register i32 c;
 
@@ -400,8 +396,8 @@ void HandlePostAmble()
 /*
  * Write a font definition to the output file
  */
-void WriteFont(fi)
-	register struct fontinfo *fi;
+static void
+WriteFont(struct fontinfo *fi)
 {
 	register int l;
 	register char *s;
@@ -438,7 +434,8 @@ void WriteFont(fi)
 /*
  * Handle the preamble.  Someday we should update the comment field.
  */
-void HandlePreAmble()
+static void
+HandlePreAmble(void)
 {
 	register int n, c;
 
@@ -469,9 +466,7 @@ void HandlePreAmble()
 }
 
 int
-main(argc, argv)
-	int argc;
-	register char **argv;
+main(int argc, char **argv)
 {
 	register int c;
 	register char *s;
@@ -512,8 +507,8 @@ Usage: %s [-s] [-i infile] [-o outfile] pages [...] [infile [outfile]]\n",
 	while (optind < argc) {
 		s = argv[optind++];
 		c = *s;
-		if (!isalpha(c) && c != '/' ||
-		    (c == 'e' || c == 'o') && evenodd(s)) {
+		if ((!isalpha(c) && c != '/') ||
+		    ((c == 'e' || c == 'o') && evenodd(s))) {
 			if (ParsePages(s))
 				goto usage;
 		} else if (DVIFileName == NULL)
@@ -529,13 +524,13 @@ Usage: %s [-s] [-i infile] [-o outfile] pages [...] [infile [outfile]]\n",
 		DVIFileName = "`stdin'";
 		inf = stdin;
 		if (!isatty(fileno(inf)))
-		  SET_BINARY(fileno(inf));
+		  (void)SET_BINARY(fileno(inf));
 	} else if ((inf = fopen(DVIFileName, FOPEN_RBIN_MODE)) == 0)
 		error(1, -1, "cannot read %s", DVIFileName);
 	if (outname == NULL) {
 		outf = stdout;
 		if (!isatty(fileno(outf)))
-		  SET_BINARY(fileno(outf));
+		  (void)SET_BINARY(fileno(outf));
 	} else if ((outf = fopen(outname, FOPEN_WBIN_MODE)) == 0)
 		error(1, -1, "cannot write %s", outname);
 
@@ -553,11 +548,8 @@ Usage: %s [-s] [-i infile] [-o outfile] pages [...] [infile [outfile]]\n",
 	return 0;
 }
 
-struct pagelist *
-InstallPL(ps, n, absolute)
-	register struct pagesel *ps;
-	register int n;
-	int absolute;
+static struct pagelist *
+InstallPL(struct pagesel *ps, int n, int absolute)
 {
 	register struct pagelist *pl;
 
@@ -577,9 +569,8 @@ InstallPL(ps, n, absolute)
  * Return true iff the string `s' is the word `even' or `odd',
  * followed by `.' or `white' characters.
  */
-int
-evenodd(s)
-	char *s;
+static int
+evenodd(char *s)
 {
 	register int c;
 
@@ -598,8 +589,8 @@ evenodd(s)
  * Parse a string representing a list of pages.  Return 0 iff ok.  As a
  * side effect, the page selection(s) is (are) prepended to PageList.
  */
-int ParsePages(s)
-	register char *s;
+static int
+ParsePages(char *s)
 {
 	register struct pagesel *ps;
 	register int c;		/* current character */
@@ -613,7 +604,9 @@ int ParsePages(s)
 	struct pagesel pagesel[10];
 
 	range = 0;
+	n = 0;
 	innumber = 0;
+	negative = 0;
 	absolute = 0;
 	i = 0;
 	ps = pagesel;
@@ -739,20 +732,21 @@ finishnum:
 /*
  * Handle a font definition.
  */
-void HandleFontDef(index)
-	i32 index;
+static void
+HandleFontDef(i32 index)
 {
 	register struct fontinfo *fi;
 	register int i;
 	register char *s;
 	int def = S_CREATE | S_EXCL;
 
-	if ((fi = (struct fontinfo *)SSearch(FontFinder, index, &def)) == 0)
+	if ((fi = (struct fontinfo *)SSearch(FontFinder, index, &def)) == 0) {
 		if (def & S_COLL)
 			error(1, 0, "font %ld already defined", (long)index);
 		else
 			error(1, 0, "cannot stash font %ld (out of memory?)",
 				(long)index);
+	}
 	fi->fi_reallyused = 0;
 	fi->fi_checksum = GetLong(inf);
 	fi->fi_mag = GetLong(inf);
@@ -770,10 +764,8 @@ void HandleFontDef(index)
 /*
  * Handle a \special.
  */
-void HandleSpecial(c, l, p)
-	int c;
-	register int l;
-	register i32 p;
+static void
+HandleSpecial(int c, int l, i32 p)
 {
 	register int i;
 
@@ -819,7 +811,8 @@ void HandleSpecial(c, l, p)
 			(void) getc(inf);
 }
 
-void ReallyUseFont()
+static void
+ReallyUseFont(void)
 {
 	register struct fontinfo *fi;
 	int look = S_LOOKUP;
@@ -842,8 +835,8 @@ void ReallyUseFont()
 /*
  * Write a font selection command to the output file
  */
-void PutFontSelector(index)
-	i32 index;
+static void
+PutFontSelector(i32 index)
 {
 
 	if (index < 64) {
@@ -915,10 +908,11 @@ char	oplen[128] = {
  * output DVI file. We also keep track of font changes, handle font
  * definitions, and perform some other housekeeping.
  */
-void HandleDVIFile()
+static void
+HandleDVIFile(void)
 {
 	register int c, l;
-	register i32 p;
+	register i32 p = 0;	/* avoid uninitialized warning */
 	register int CurrentFontOK = 0;
 	int doingpage = 0;
 

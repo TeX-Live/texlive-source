@@ -5,16 +5,16 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/tempfile.c,v 3.1 89/08/22 21:45:20 chris Exp $";
-#endif
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
 #include <stdio.h>
 #include <sys/types.h>
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #ifdef _AMIGA
 #define getpid() 42
@@ -28,6 +28,8 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/tempfile.
 char	*getenv();
 
 #endif
+
+#include "tempfile.h"
 
 #ifdef KPATHSEA
 #include <kpathsea/c-fopen.h>
@@ -73,8 +75,7 @@ RemoveTempFile(void)
  * then exit with the same status, or send itself the same signal.
  */
 int
-MakeRWTempFile(name)
-	register char *name;
+MakeRWTempFile(char *name)
 {
 	register int tf, n;
 	int mypid, tries;

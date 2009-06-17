@@ -6,13 +6,11 @@
  */
 
 /*
- * Declarations for seek.c: SeekFile(FILE *fp) returns a
- * version of `fp' on which `fseek' functions properly;
- * CopyFile(FILE *fp) returns a temporary copy of fp.
+ * Declarations for seek.c: SeekFile(FILE *f) returns a
+ * version of `f' on which `fseek' functions properly;
+ * CopyFile(FILE *f) returns a temporary copy of f.
  */
 #ifdef WIN32
 #undef CopyFile
-FILE *SeekFile(FILE *fp), *CopyFile(FILE *fp);
-#else
-FILE *SeekFile(/* FILE *fp */), *CopyFile(/* FILE *fp */);
 #endif
+FILE *SeekFile(FILE *f), *CopyFile(FILE *f);

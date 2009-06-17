@@ -5,10 +5,6 @@
  * so long as this copyright notice remains intact.
  */
 
-#ifndef lint
-static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/error.c,v 2.8 89/08/22 21:49:12 chris Exp $";
-#endif
-
 /*
  * Print an error message with an optional system error number, and
  * optionally quit.
@@ -22,19 +18,7 @@ static char rcsid[] = "$Header: /usr/src/local/tex/local/mctex/lib/RCS/error.c,v
 
 #include "types.h"		/* for HAVE_VPRINTF */
 #include "error.h"
-
-#if defined(lint) && !defined(LINT_ANYWAY)
-
-/* ARGSUSED */
-void SetErrorTrap(fn) void (*fn)(); {;}
-
-/* VARARGS3 ARGSUSED */
-void error(quit, e, fmt) int quit, e; char *fmt; {;}
-
-/* VARARGS1 ARGSUSED */
-void panic(fmt) char *fmt; { exit(1); /* NOTREACHED */ }
-
-#else /* lint */
+#include "tempfile.h"
 
 extern char *ProgName;		/* program name from argv[0] */
 
@@ -44,7 +28,7 @@ extern int errno;
 #endif
 
 static FILE *trap_file;		/* error diversion file, if any */
-static void (*trap_fn)();	/* trap function */
+static void (*trap_fn)(int, char *);	/* trap function */
 static char *trap_buf;		/* buffer for trapped error strings */
 static int trap_size;		/* size of trap_buf */
 
@@ -52,13 +36,9 @@ static int trap_size;		/* size of trap_buf */
 extern char *malloc(), *realloc();
 #endif
 
-extern int MakeRWTempFile();
-
-
 #if !defined (HAVE_STRERROR) && !defined (strerror)
 static char *
-strerror (errnum)
-     int errnum;
+strerror (int errnum)
 {
   extern char *sys_errlist[];
   extern int sys_nerr;
@@ -74,7 +54,7 @@ strerror (errnum)
  * If something goes wrong, return something else printable.
  */
 static char *
-readback()
+readback(void)
 {
 	int nbytes = ftell(trap_file) + 1;
 
@@ -108,10 +88,7 @@ readback()
  * the program name is omitted.
  */
 static void
-verror(quit, a0, fmt, l, e)
-	char *a0, *fmt;
-	va_list l;
-	int e;
+verror(int quit, const char *a0, const char *fmt, va_list l, int e)
 {
 	register FILE *fp = trap_file;
 
@@ -140,30 +117,35 @@ verror(quit, a0, fmt, l, e)
 /*
  * Print an error message and optionally quit.
  */
-void	error PVAR3C(int, quit,  int, e,  const char *, fmt,  l)
+void
+error(int quit, int e, const char *fmt, ...)
 {
+	va_list l;
+	va_start(l, fmt);
 	if (e < 0)
 		e = errno;
-	verror(quit, (char *)NULL, fmt, l, e);
+	verror(quit, NULL, fmt, l, e);
 	va_end(l);
-}}
+}
 /*
  * Panic (print to stderr and abort).
  */
-void	panic PVAR1C(const char *, fmt,  l)
+void
+panic(const char *fmt, ...)
 {
+	va_list l;
+	va_start(l, fmt);
 	verror(0, "panic: ", fmt, l, 0);
 	va_end(l);
 	abort();
-}}
+}
 
 /*
  * Enable error trapping: register the function fn as the trapper.
  * If fn is NULL, stop trapping.
  */
 void
-SetErrorTrap(fn)
-	void (*fn)(int, char *);
+SetErrorTrap(void (*fn)(int, char *))
 {
 	int tempfd;
 	char fname[BUFSIZ];
@@ -187,5 +169,3 @@ SetErrorTrap(fn)
 	if ((trap_file = fdopen(tempfd, "r+")) == NULL)
 		error(1, -1, "cannot get stdio file for error trap");
 }
-
-#endif /* lint */
