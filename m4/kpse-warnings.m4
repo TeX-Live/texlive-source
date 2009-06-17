@@ -107,5 +107,6 @@ else
 fi])
 WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
 AC_SUBST([WARNING_CXXFLAGS])
+m4_define([_KPSE_WARNING_CXXFLAGS], [])[]dnl
 ]) # _KPSE_WARNING_CXXFLAGS
 

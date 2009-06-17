@@ -20380,30 +20380,6 @@ ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-{ $as_echo "$as_me:$LINENO: checking what warning flags to pass to the C++ compiler" >&5
-$as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
-if test "${kpse_cv_warning_cxxflags+set}" = set; then
-  $as_echo_n "(cached) " >&6
-else
-  if test "x$enable_compiler_warnings" = xno; then
-  kpse_cv_warning_cxxflags=
-elif test "x$GXX" = xyes; then
-  kpse_cv_warning_cxxflags="-Wall -Wunused"
-  if test "x$enable_compiler_warnings" != xmin; then
-    if test "x$enable_compiler_warnings" != xyes; then
-      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wimplicit -Wparentheses -Wreturn-type"
-      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"
-      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
-    fi
-  fi
-else
-  : # FIXME: warning flags for non-g++ compilers
-fi
-fi
-{ $as_echo "$as_me:$LINENO: result: $kpse_cv_warning_cxxflags" >&5
-$as_echo "$kpse_cv_warning_cxxflags" >&6; }
-WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
-
 
 
 { $as_echo "$as_me:$LINENO: checking whether ln -s works" >&5
@@ -20594,7 +20570,7 @@ fi
 if $FT2_CONFIG --ftversion >/dev/null 2>&1; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
-elif test "x$need_freetype2:$with_freetype2_xpdf" = 'xyes:yes'; then
+elif test "x$need_freetype2:$with_system_freetype2" = 'xyes:yes'; then
   { { $as_echo "$as_me:$LINENO: error: did not find freetype-config required for system freetype2 library" >&5
 $as_echo "$as_me: error: did not find freetype-config required for system freetype2 library" >&2;}
    { (exit 1); exit 1; }; }
