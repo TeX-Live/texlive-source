@@ -221,7 +221,7 @@ char   *term;
 static void
 new_entry(VOID_ARG)
 {
-    int    let;
+    int let = -1;
     FIELD_PTR ptr;
 #ifdef HAVE_SETLOCALE
     char *prev_locale;
@@ -251,7 +251,6 @@ new_entry(VOID_ARG)
 	PUT(group_skip);
 	ind_lc += skiplen;
 	/* beginning of a new letter? */
-	/* FIXME: let may be uninitialized. Probably a BUG. */
 	put_header(let);
 	make_item(NIL);
     } else

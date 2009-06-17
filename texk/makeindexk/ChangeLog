@@ -1,8 +1,17 @@
+2009-06-18  Karl Berry  <karl@tug.org>
+
+	* mkind.h (VERSION) [USE_KPATHSEA]: use TeX Live 2009 in version
+	ident.
+
+	* genind.c (new_entry): initialize let to -1.  It will be
+	reassigned if it is actually used, as far as I can make out the
+	overcomplex condition.
+
 2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.
 
-	* genind.c (gen_ind): FIXME: `let' may be used uninitialized ,
+	* genind.c (new_entry): FIXME: `let' may be used uninitialized ,
 	probably a bug.
 
 	Avoid compiler warnings.
