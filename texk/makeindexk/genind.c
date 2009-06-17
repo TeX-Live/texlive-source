@@ -221,7 +221,7 @@ char   *term;
 static void
 new_entry(VOID_ARG)
 {
-    int let = -1;
+    int let = -1; /* see comment below */
     FIELD_PTR ptr;
 #ifdef HAVE_SETLOCALE
     char *prev_locale;
@@ -251,6 +251,11 @@ new_entry(VOID_ARG)
 	PUT(group_skip);
 	ind_lc += skiplen;
 	/* beginning of a new letter? */
+	/* Although we may use let unassigned here, it doesn't matter,
+	   because put_header will not use its arg except in case
+	   ALPHA, when it is assigned in the midst of condition above.
+	   Let's not perturb the logic, just initialize it (above) to
+	   avoid the warning.  */
 	put_header(let);
 	make_item(NIL);
     } else

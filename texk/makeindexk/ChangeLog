@@ -5,7 +5,7 @@
 
 	* genind.c (new_entry): initialize let to -1.  It will be
 	reassigned if it is actually used, as far as I can make out the
-	overcomplex condition.
+	overcomplex condition and usage in put_header.
 
 2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
