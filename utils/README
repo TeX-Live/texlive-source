@@ -13,9 +13,6 @@ asymptote 1.76 - checked 8jun09
 dialog 1.1-20080819 - checked 20mar09
   ftp://invisible-island.net/dialog/dialog.tar.gz
 
-gzip - (old, not built) only here so we have the sources for the Windows
-  binaries we distribute.
-
 pdfopen 0.5 - checked 26nov06
   (really xpdfopen)
   http://tex.aanhet.net/pdfopen
