@@ -14,6 +14,7 @@
 	* dviselect.c (main): add parentheses around && within ||.
 	* font.h: guard against multiple inclusion.
 	* gripes.h: #include "font.h", for struct font.
+	* tempfile.c: #include <unistd.h> for unlink and getpid.
 
 2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
