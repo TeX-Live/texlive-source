@@ -94,5 +94,3 @@ extern void input_command(unsigned *, int *);
 extern void input_ovf_fonts(void);
 extern void input_ovf_chars(void);
 extern void input_ovf_file(void);
-extern void in_ovf_4(int *);
-extern void in_ovf_unsigned_4(unsigned *);

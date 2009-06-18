@@ -4,6 +4,7 @@
 ## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES =  -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
+AM_CFLAGS = $(WARNING_CFLAGS)
 AM_YFLAGS = -d -v
 
 proglib = ../lib/lib.a

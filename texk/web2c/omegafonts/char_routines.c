@@ -536,7 +536,7 @@ set_char_remainder(unsigned c, unsigned remainder)
     planes[c/PLANE][c%PLANE]->remainder = remainder;
 }
 
-int
+static int
 get_char_remainder(unsigned c)
 {
     ensure_existence(c);

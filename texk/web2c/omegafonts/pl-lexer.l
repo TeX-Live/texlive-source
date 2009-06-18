@@ -47,11 +47,11 @@ extern YYSTYPE yylval;
 #define MAX_PTR 10000
 char saved_text[MAX_PTR];
 
-extern void scan_int(unsigned);
-extern void scan_char(void);
-extern void scan_fix(void);
-extern void scan_string(char *, unsigned, unsigned);
-extern void scan_hex_string();
+static void scan_int(unsigned);
+static void scan_char(void);
+static void scan_fix(void);
+static void scan_string(char *, unsigned, unsigned);
+static void scan_hex_string(void);
 
 /* from kpathsea, but avoid including kpathsea header files */
 extern char *xstrdup (const char *);
@@ -333,7 +333,7 @@ int
 yywrap (void)
 { return 1; }
 
-void
+static void
 scan_int(unsigned base)
 {
     register unsigned j, q = 0x10000 / base, c0=0, c1=0, i=1;
@@ -357,7 +357,7 @@ scan_int(unsigned base)
     yylval.yint = c0 * 0x10000 + c1;
 }
 
-void
+static void
 scan_fix(void)
 {
     unsigned i=1;
@@ -401,7 +401,7 @@ scan_fix(void)
     yylval.yfix = sign * (int_part*UNITY + acc);
 }
 
-void
+static void
 scan_char(void)
 {
     register unsigned i=1;
@@ -415,7 +415,7 @@ scan_char(void)
     } else yylval.yint = yytext[i];
 }
 
-void
+static void
 scan_string(char *attribute, unsigned keep, unsigned length)
 {
     register unsigned c, saved_ptr = 0, paren_level = 0;
@@ -476,7 +476,7 @@ scan_string(char *attribute, unsigned keep, unsigned length)
     }
 }
 
-void
+static void
 scan_hex_string(void)
 {
     register unsigned i=10;

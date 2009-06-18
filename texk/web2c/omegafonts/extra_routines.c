@@ -127,7 +127,9 @@ output_ofm_extra_stuff(void)
     }
 }
 
-void
+#if 0
+/* Not used */
+static void
 init_all_tables(void)
 {
      unsigned i=0;
@@ -141,6 +143,7 @@ init_all_tables(void)
          glue_tables[i] = NULL;
      }
 }
+#endif
 
 void
 init_font_ivalue(unsigned tab)

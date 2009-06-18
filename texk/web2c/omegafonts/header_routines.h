@@ -86,12 +86,10 @@ extern void set_family(string );
 extern void store_family(void);
 extern void retrieve_family(void);
 
-extern void init_face();
 extern void set_face(unsigned);
 extern void store_face(void);
 extern void retrieve_face(void);
 
-extern void init_seven_bit_safe_flag();
 extern void set_seven_bit_safe_flag(unsigned);
 extern void store_seven_bit_safe_flag(void);
 extern void retrieve_seven_bit_safe_flag(void);

@@ -1,3 +1,26 @@
+2009-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+
+	* char_routines.c (get_char_remainder): declare as static.
+	* dimen_routines.c (min_cover, shorten, set_indices):
+	declare as static.
+	* error_routines.c: #include "error_routines.h".
+	* extra_routines.c (init_all_tables): declare as static, unused.
+	* font_routines.c (font_no_incr, packet_ptr_incr, append_to_packet,
+	move_ptr_decr, move_ptr_incr, output_ovf_fonts, in_ovf_4,
+	in_ovf_unsigned_4, in_ovf_3, in_ovf): declare as static.
+	* font_routines.h (in_ovf_4, in_ovf_unsigned_4):
+	remove declaration as external.
+	* header_routines.c (init_header_word, store_header_word,
+	retrieve_header_word, init_face, init_seven_bit_safe_flag):
+	declare as static.
+	(init_ofm_level, init_font_dir): declare as static, unused.
+	* header_routines.h (init_face, init_seven_bit_safe_flag):
+	remove declaration as external.
+	* pl-lexer.l (scan_int, scan_char, scan_fix, scan_string,
+	scan_hex_string): declare as static.
+
 2009-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: pl-lexer.l provides yywrap, no need for $(LEXLIB).

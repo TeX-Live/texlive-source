@@ -135,7 +135,7 @@ int next_d;
 int excess;
 int delta;
 
-int
+static int
 min_cover(int h, int d)
 {
     in_list L = measure_list[h];
@@ -154,7 +154,7 @@ min_cover(int h, int d)
 
 /* finds best way to round */
 
-int
+static int
 shorten(int h, int m)
 {
     int d=0; /* the current trial interval length */
@@ -180,7 +180,7 @@ shorten(int h, int m)
 
 /* reduces and indexes a list */
 
-void
+static void
 set_indices(int h, int d)
 {
     in_list L1;     /* the current node of interest */

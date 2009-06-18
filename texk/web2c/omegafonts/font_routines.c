@@ -54,7 +54,7 @@ font_table_init(void)
     no_fonts = 0;
 }
 
-void
+static void
 font_no_incr(void)
 {
     if (no_fonts * BLOCK == font_table_size) {
@@ -210,7 +210,7 @@ packet_table_init(void)
     cur_packet = packet_table;
 }
 
-void
+static void
 packet_ptr_incr(void)
 {
     if (packet_ptr == packet_table_size) {
@@ -221,7 +221,7 @@ packet_ptr_incr(void)
     packet_ptr++;
 }
 
-void
+static void
 append_to_packet(unsigned val)
 {
     packet_ptr_incr();
@@ -413,7 +413,7 @@ packet_table_end(void)
 }
 
 
-void
+static void
 move_ptr_decr(void)
 {
     if (move_ptr==0)
@@ -422,7 +422,7 @@ move_ptr_decr(void)
     cur_move = &move_table[move_ptr];
 }
 
-void
+static void
 move_ptr_incr(void)
 {
     if (move_ptr == move_table_size) {
@@ -569,7 +569,7 @@ out_ovf_4(unsigned i)
     file_ovf_count += 4;
 }
 
-void
+static void
 output_ovf_fonts(void)
 {
     unsigned i, j, k1, k2;
@@ -623,7 +623,7 @@ output_ovf_file(void)
     } while ((file_ovf_count % 4) != 0);
 }
 
-void
+static void
 in_ovf_4(int *value)
 {
     *value = (((*ovf_ptr)    & 0xff) << 24) |
@@ -633,7 +633,7 @@ in_ovf_4(int *value)
     ovf_ptr += 4;
 }
 
-void
+static void
 in_ovf_unsigned_4(unsigned *value)
 {
     *value = (((*ovf_ptr)    & 0xff) << 24) |
@@ -643,7 +643,7 @@ in_ovf_unsigned_4(unsigned *value)
     ovf_ptr += 4;
 }
 
-void
+static void
 in_ovf_3(int *value)
 {
     *value = (((*ovf_ptr) & 0xff) << 16) |
@@ -652,7 +652,7 @@ in_ovf_3(int *value)
     ovf_ptr += 3;
 }
 
-void
+static void
 in_ovf(int *value)
 {
     *value = (*ovf_ptr) & 0xff;

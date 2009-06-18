@@ -112,8 +112,8 @@ retrieve_header_byte(unsigned loc, unsigned char *where)
 
 /* HEADER */
 
-void
-init_header_word()
+static void
+init_header_word(void)
 {
 header_list = NULL;
 header_max = HEADER_MIN-1;
@@ -159,8 +159,8 @@ set_header_word(unsigned index, unsigned val)
     }
 }
 
-void
-store_header_word()
+static void
+store_header_word(void)
 {
     av_list L = header_list;
     unsigned ctr = HEADER_MIN;
@@ -176,8 +176,8 @@ store_header_word()
     }
 }
 
-void
-retrieve_header_word()
+static void
+retrieve_header_word(void)
 {
     unsigned j = HEADER_MIN, value, header_no=lh;
 
@@ -426,8 +426,8 @@ retrieve_family(void)
 
 /* FACE */
 
-void
-init_face()
+static void
+init_face(void)
 {
     face = 0;
     face_specified = FALSE;
@@ -462,12 +462,15 @@ retrieve_face(void)
 
 /* OFMLEVEL */
 
-void
-init_ofm_level()
+#if 0
+/* Not yet used */
+static void
+init_ofm_level(void)
 {
     ofm_level = OFM_TFM;
     ofm_level_specified = FALSE;
 }
+#endif
 
 void
 set_ofm_level(unsigned level)
@@ -485,12 +488,15 @@ set_ofm_level(unsigned level)
 
 /* FONTDIR */
 
-void
-init_font_dir()
+#if 0
+/* Not yet used */
+static void
+init_font_dir(void)
 {
     font_dir = DIR_ORD+DIR_TL;
     font_dir_specified = FALSE;
 }
+#endif
 
 void
 set_font_dir(unsigned direction)
@@ -507,8 +513,8 @@ set_font_dir(unsigned direction)
 
 /* SEVENBITSAFEFLAG */
 
-void
-init_seven_bit_safe_flag()
+static void
+init_seven_bit_safe_flag(void)
 {
     seven_bit = 0;
     seven_bit_calculated = 1;
