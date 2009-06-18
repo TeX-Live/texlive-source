@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([afm2pl for TeX Live], [x.x], [tex-k@tug.org])
+AC_INIT([afm2pl for TeX Live], [0.7.03], [tex-k@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([afm2pl.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

@@ -105,7 +105,7 @@ static boolean doreturn P1H(string);
 
 
 /* Line 189 of yacc.c  */
-#line 109 "../../../../tex-live-2009test-1.3/texk/web2c/web2c/web2c-parser.c"
+#line 109 "web2c-parser.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -263,7 +263,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 267 "../../../../tex-live-2009test-1.3/texk/web2c/web2c/web2c-parser.c"
+#line 267 "web2c-parser.c"
 
 #ifdef short
 # undef short
@@ -3880,7 +3880,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 3884 "../../../../tex-live-2009test-1.3/texk/web2c/web2c/web2c-parser.c"
+#line 3884 "web2c-parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
