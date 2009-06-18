@@ -131,7 +131,6 @@
 ******************************************************************************
 ******************************************************************************
 */
-static char *rcsid = "$Id: bibtex-3.c,v 3.71 1996/08/18 20:37:06 kempson Exp $";
 
 #include "sysdep.h"
 #include "bibtex.h"
@@ -2503,6 +2502,7 @@ BEGIN
   p = h + HASH_BASE;
   hash_found = FALSE;
   old_string = FALSE;
+  str_num = 0;	/* avoid uninitialized warning */
   LOOP
   BEGIN
 

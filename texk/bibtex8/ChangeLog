@@ -1,3 +1,14 @@
+2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* bibtex-3.c (str_lookup): silence 'used uninitialized' warning.
+	* datatype.h, gblvars.h: in various places replace Integer8_T
+	(i.e., char) by UChar_T (i.e., unsigned char).
+	* utils.c (c8read_csf): avoid unused variable.
+	* remove rcsid's.
+
+	* FIXME: still needs careful checking for signed/unsigned char.
+
 2009-06-04  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (AM_CPPFLAGS): move -funsigned-char here,

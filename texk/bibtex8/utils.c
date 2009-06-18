@@ -118,7 +118,6 @@
 ******************************************************************************
 ******************************************************************************
 */
-static char *rcsid = "$Id: utils.c,v 3.71 1996/08/18 20:37:06 kempson Exp $";
 
 #include <stdarg.h>
 #ifdef WIN32
@@ -1573,7 +1572,9 @@ int c8read_csf (void)
     int                 c, i;
     int                 in_comment;
     char                sx[BUF_SIZE + 1];
+#ifndef KPATHSEA
     char               *value;
+#endif
     
     /*
     ** Construct the name of the CS file to be used:

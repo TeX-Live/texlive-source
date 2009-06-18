@@ -316,7 +316,7 @@ __EXTERN__ Boolean_T                    store_entry;
 __EXTERN__ Boolean_T                    store_field;
 __EXTERN__ Boolean_T                    store_token;
 __EXTERN__ StrEntLoc_T                  str_ent_ptr;
-__EXTERN__ Integer8_T                   str_glb_ptr;
+__EXTERN__ UChar_T                      str_glb_ptr;
 __EXTERN__ Integer_T                    string_width;
 __EXTERN__ StrNumber_T                  str_num;
 __EXTERN__ StrNumber_T                  str_ptr;
@@ -368,9 +368,9 @@ __EXTERN__ Integer_T                    lit_stack[LIT_STK_SIZE + 1];
 __EXTERN__ StkType_T                    lit_stk_type[LIT_STK_SIZE + 1];
 __EXTERN__ ASCIICode_T                  name_sep_char[BUF_SIZE + 1];
 __EXTERN__ BufPointer_T                 name_tok[BUF_SIZE + 1];
-__EXTERN__ char                         name_of_file[FILE_NAME_SIZE + 1];
+__EXTERN__ unsigned char                name_of_file[FILE_NAME_SIZE + 1];
 __EXTERN__ StrNumber_T                  s_preamble[MAX_BIB_FILES + 1];
-__EXTERN__ char                         xchr[LAST_ASCII_CHAR + 1];
+__EXTERN__ unsigned char                xchr[LAST_ASCII_CHAR + 1];
 __EXTERN__ ASCIICode_T                  xord[LAST_TEXT_CHAR + 1];
 
 #ifdef SUPPORT_8BIT

@@ -245,6 +245,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT -funsigned-char
+AM_CFLAGS = $(WARNING_CFLAGS)
 bibtex8_SOURCES = \
 	bibtex-1.c \
 	bibtex-2.c \

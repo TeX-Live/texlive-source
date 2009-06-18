@@ -7,6 +7,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT
+AM_CFLAGS = $(WARNING_CFLAGS)
+
 ## FIXME: (1) this should go away once the code has been carefully
 ## FIXME: analyzed and uses 'unsigned char' where necessary.
 ## FIXME: (2) this should go to AM_CFLAGS, but AIX xlc only

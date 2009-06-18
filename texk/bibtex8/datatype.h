@@ -141,7 +141,7 @@ typedef long                Integer_T;
 ** data types used in the BibTeX WEB source.
 **============================================================================
 */
-typedef Integer8_T          ASCIICode_T;
+typedef UChar_T             ASCIICode_T;
 typedef File_ptr            AlphaFile_T;
 typedef Integer16_T         AuxNumber_T;
 typedef Integer16_T         BibNumber_T;
@@ -165,9 +165,9 @@ typedef Integer8_T          IDType_T;
 typedef Integer16_T         IntEntLoc_T;
 typedef Integer8_T          LexType_T;
 typedef Integer16_T         LitStkLoc_T;
-typedef Integer8_T          PdsLen_T;
+typedef UChar_T             PdsLen_T;
 typedef Integer8_T          PdsLoc_T;
-typedef Char_T              PdsType_T[FILE_NAME_SIZE + 1];
+typedef UChar_T             PdsType_T[FILE_NAME_SIZE + 1];
 typedef Unsigned16_T        PoolPointer_T;
 typedef Integer8_T          StkType_T;
 typedef Integer16_T         StrEntLoc_T;
