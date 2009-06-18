@@ -1,3 +1,11 @@
+2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS, AM_CFLAGS): enable compiler warnings.
+
+	* t4ht.c: FIXME: this causes three 'might be used uninitialized'
+	warnings.
+	Given the complexity of the code I leave them for the maintainer.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
