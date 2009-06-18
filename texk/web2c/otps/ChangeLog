@@ -1,7 +1,14 @@
+2009-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* Use ANSI C prototypes for functions.
+	* otp-parser.y (yyerror): declare as static.
+	* otp2ocp.c (output, otp_read): declare as static.
+	* outocp.c (ctp_get, ctp_read, ctp_explain): declare as static.
+
 2009-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* otp-lexer.l (yywrap): define as static function.
-	* Makefile.am: no more need for $(LEXLIB).
+	* Makefile.am: otp2ocp.c provides yywrap, no need for $(LEXLIB).
 
 2008-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

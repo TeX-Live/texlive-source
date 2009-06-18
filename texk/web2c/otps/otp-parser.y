@@ -28,7 +28,8 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "yystype.h"
 int k, len;
 
-void yyerror(char * msg)
+static void
+yyerror(char * msg)
 {
 fprintf(stderr, "line %d: %s\n", line_number, msg);
 }

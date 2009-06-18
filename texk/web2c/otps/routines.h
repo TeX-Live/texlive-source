@@ -52,8 +52,9 @@ extern void exit();
 #define BEGINNINGLEFT 8
 #define ENDLEFT 9
 
-extern int yyparse();
-extern int yylex();
+extern int yyparse(void);
+extern int yylex(void);
+extern int yywrap(void);
 
 extern int line_number;
 
@@ -76,35 +77,35 @@ typedef struct lcell_struct {struct lcell_struct *ptr;
         left val; } lcell;
 typedef lcell *llist;
 
-extern list cons();
-extern list list1();
-extern list list2();
-extern list append();
-extern list append1();
+extern list cons(int x, list L);
+extern list list1(int x);
+extern list list2(int x, int y);
+extern list append(list K, list L);
+extern list append1(list L, int x);
 
-extern llist lcons();
-extern llist llist1 P1H(left);
-extern llist llist2();
-extern llist lappend P2H(llist,llist);
-extern llist lappend1 P2H(llist,left);
+extern llist lcons(left x, llist L);
+extern llist llist1(left x);
+extern llist llist2(left x, left y);
+extern llist lappend(llist K, llist L);
+extern llist lappend1(llist L, left x);
 
-extern left WildCard();
-extern left SingleLeft P1H(int);
-extern left StringLeft P1H(char *);
-extern left DoubleLeft P2H(int,int);
-extern left ChoiceLeft P1H(llist);
-extern left NotChoiceLeft P1H(llist);
-extern left PlusLeft P2H(left,int);
-extern left CompleteLeft P3H(left,int,int);
-extern left BeginningLeft();
-extern left EndLeft();
-extern list gen_left();
-extern void fill_in_left();
-extern void out_left P1H(llist);
+extern left WildCard(void);
+extern left StringLeft(char *x);
+extern left SingleLeft(int x);
+extern left DoubleLeft(int x, int y);
+extern left ChoiceLeft(llist L);
+extern left NotChoiceLeft(llist L);
+extern left PlusLeft(left l, int n);
+extern left CompleteLeft(left l, int n, int m);
+extern left BeginningLeft(void);
+extern left EndLeft(void);
+extern list gen_left(left arg);
+
 extern int no_lefts;
-
-extern void store_alias P2H(string, left);
-extern left lookup_alias P1H(string);
+extern void store_alias(string str, left l);
+extern left lookup_alias(string str);
+extern void out_left(llist L);
+extern void fill_in_left(void);
 
 #define ARRAY_SIZE 50000
 typedef struct {
@@ -117,7 +118,7 @@ extern int no_tables;
 extern int cur_table;
 extern int room_for_tables;
 extern table_type tables[];
-extern void add_to_table P1H(int);
+extern void add_to_table(int x);
 
 typedef struct {
 	int length;
@@ -130,17 +131,16 @@ extern int no_states;
 extern int cur_state;
 extern int room_for_states;
 extern state_type states[];
-extern void add_to_state P1H(int);
+extern void add_to_state(int x);
 
-extern void fill_in P1H(list);
-extern void right_int();
-extern void out_int P2H(int,int);
-extern void out_right P2H(int,int);
+extern void fill_in(list L);
+extern void out_int(int instr, int val);
+extern void out_right(int instr, int val);
 
-extern void store_state P1H(string);
-extern int lookup_state P1H(string);
-extern void store_table P2H(string, int);
-extern int lookup_table P1H(string);
+extern void store_state(string str);
+extern int lookup_state(string str);
+extern void store_table(string str, int len);
+extern int lookup_table(string str);
 
 typedef struct { char * str; left left_val; } alias_pair;
 

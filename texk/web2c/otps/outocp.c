@@ -73,8 +73,8 @@ char *otp_names[] = {
 
 int no_words_read = 0;
 
-int ctp_get
-P1C (FILE *, input_file)
+static int
+ctp_get(FILE *input_file)
 {
   int ctpchar;
   ctpchar = getc (input_file);
@@ -85,8 +85,8 @@ P1C (FILE *, input_file)
   return ctpchar;
 }
 
-int ctp_read
-P1C (FILE *, input_file)
+static int
+ctp_read(FILE *input_file)
 {
   int ctpword;
   no_words_read++;
@@ -101,8 +101,8 @@ P1C (FILE *, input_file)
   return ctpword;
 }
 
-void ctp_explain
-P1C (FILE *, input_file)
+static void
+ctp_explain(FILE *input_file)
 {
   int i, j, arg, entry, instruction;
   int ctp_length, real_ctp_length, ctp_input, ctp_output,
@@ -191,8 +191,8 @@ P1C (FILE *, input_file)
 	   no_words_read, no_words_read);
 }
 
-int main
-P2C (int, argc, string *, argv)
+int
+main(int argc, string *argv)
 {
   string input_name, full_input_name;
   FILE *input_file;

@@ -32,14 +32,14 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "routines.h"
 
 extern FILE *yyin;
-int yywrap
-P1H (void)
+int
+yywrap(void)
 {
   return 1;
 }
 
-void output
-P2C (FILE *, output_file, int, i)
+static void
+output(FILE *output_file, int i)
 {
 /* make sure output is in big-endian form */
   char j;
@@ -57,8 +57,8 @@ P2C (FILE *, output_file, int, i)
   fwrite (&j, 1, 1, output_file);
 }
 
-void otp_read
-P2C (string, input_name, string, output_name)
+static void
+otp_read(string input_name, string output_name)
 {
   int i, j, len, no_words;
   int *table, *instrs;
@@ -118,8 +118,8 @@ P2C (string, input_name, string, output_name)
     }
 }
 
-int main
-P2C (int, argc, string *, argv)
+int
+main(int argc, string *argv)
 {
   string input_name, full_input_name;
   string output_name;

@@ -32,12 +32,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 int line_number = 1;
 int i,j,last;
 extern YYSTYPE yylval;
-
-static int
-yywrap (void)
-{
-  return 1;
-}
 %}
 
 

@@ -54,7 +54,7 @@ alias_pair aliases[OTP_MAXALIASES];
 
 /* cons = [x] + L */
 list
-cons P2C(int, x, list, L)
+cons(int x, list L)
 {
 list temp;
 temp = (list) malloc(sizeof(cell));
@@ -65,7 +65,7 @@ return temp;
 
 /* list1 = [x] */
 list
-list1 P1C(int, x)
+list1(int x)
 {
 list temp;
 temp = (list) malloc(sizeof(cell));
@@ -76,7 +76,7 @@ return temp;
 
 /* list2 = [x, y] */
 list
-list2 P2C(int, x, int, y)
+list2(int x, int y)
 {
 list temp, temp1;
 temp = (list) malloc(sizeof(cell));
@@ -90,7 +90,7 @@ return temp;
 
 /* append = copy(K) + L */
 list
-append P2C(list, K, list, L)
+append(list K, list L)
 {
 if (K==nil) return L;
 return cons(K->val, append(K->ptr, L));
@@ -98,14 +98,14 @@ return cons(K->val, append(K->ptr, L));
 
 /* append1 = copy(L) + [x] */
 list
-append1 P2C(list, L, int, x)
+append1(list L, int x)
 {
 return (append(L,list1(x)));
 }
 
 /* lcons = [x] + L */
 llist
-lcons P2C(left, x, llist, L)
+lcons(left x, llist L)
 {
 llist temp;
 temp = (llist) malloc(sizeof(lcell));
@@ -116,7 +116,7 @@ return temp;
 
 /* llist1 = [x] */
 llist
-llist1 P1C(left, x)
+llist1(left x)
 {
 llist temp;
 temp = (llist) malloc(sizeof(lcell));
@@ -127,7 +127,7 @@ return temp;
 
 /* llist2 = [x, y] */
 llist
-llist2 P2C(left, x, left, y)
+llist2(left x, left y)
 {
 llist temp, temp1;
 temp = (llist) malloc(sizeof(lcell));
@@ -141,7 +141,7 @@ return temp;
 
 /* lappend = copy(K) + L */
 llist
-lappend P2C(llist, K, llist, L)
+lappend(llist K, llist L)
 {
 if (K==nil) return L;
 return lcons(K->val, lappend(K->ptr, L));
@@ -149,13 +149,13 @@ return lcons(K->val, lappend(K->ptr, L));
 
 /* lappend1 = copy(L) + [x] */
 llist
-lappend1 P2C(llist, L, left, x)
+lappend1(llist L, left x)
 {
 return (lappend(L,llist1(x)));
 }
 
 left
-WildCard P1H(void)
+WildCard(void)
 {
 left temp;
 temp = (left) malloc(sizeof(lft_cell));
@@ -164,7 +164,7 @@ return temp;
 }
 
 left
-StringLeft P1C(char *, x)
+StringLeft(char *x)
 {
 left temp;
 temp = (left) malloc(sizeof(lft_cell));
@@ -174,7 +174,7 @@ return temp;
 }
 
 left
-SingleLeft P1C(int, x)
+SingleLeft(int x)
 {
 left temp;
 temp = (left) malloc(sizeof(lft_cell));
@@ -184,7 +184,7 @@ return temp;
 }
 
 left
-DoubleLeft P2C(int, x, int, y)
+DoubleLeft(int x, int y)
 {
 left temp;
 temp = (left) malloc(sizeof(lft_cell));
@@ -195,7 +195,7 @@ return temp;
 }
 
 left
-ChoiceLeft P1C(llist, L)
+ChoiceLeft(llist L)
 {
 left temp;
 temp = (left) malloc(sizeof(lft_cell));
@@ -205,7 +205,7 @@ return temp;
 }
 
 left
-NotChoiceLeft P1C(llist, L)
+NotChoiceLeft(llist L)
 {
 left temp;
 temp = (left) malloc(sizeof(lft_cell));
@@ -215,7 +215,7 @@ return temp;
 }
 
 left
-PlusLeft P2C(left, l, int, n)
+PlusLeft(left l, int n)
 {
 left temp;
 if (n == 0) { FATAL ("plusleft's argument must be non-zero"); }
@@ -227,7 +227,7 @@ return temp;
 }
 
 left
-CompleteLeft P3C(left, l, int, n, int, m)
+CompleteLeft(left l, int n, int m)
 {
 left temp;
 if (n == 0) { FATAL ("completeleft's first argument must be non-zero"); }
@@ -240,7 +240,7 @@ return temp;
 }
 
 left
-BeginningLeft P1H(void)
+BeginningLeft(void)
 {
 left temp;
 temp = (left) malloc(sizeof(lft_cell));
@@ -249,7 +249,7 @@ return temp;
 }
 
 left
-EndLeft P1H(void)
+EndLeft(void)
 {
 left temp;
 temp = (left) malloc(sizeof(lft_cell));
@@ -258,7 +258,7 @@ return temp;
 }
 
 list
-gen_left P1C(left, arg)
+gen_left(left arg)
 {
 int save_ptr, k;
 list holes, false_holes, true_holes, backup_holes;
@@ -397,7 +397,7 @@ default:
 }
 
 void
-store_alias P2C(string, str, left, l)
+store_alias(string str, left l)
 {
 int i;
 for (i=0; i<no_aliases; i++) {
@@ -411,7 +411,7 @@ no_aliases++;
 }
 
 left
-lookup_alias P1C(string, str)
+lookup_alias(string str)
 {
 int i;
 for (i=0; i<no_aliases; i++) {
@@ -423,7 +423,7 @@ FATAL1 ("alias %s not defined", str);
 }
 
 void
-out_left P1C(llist, L)
+out_left(llist L)
 {
 llist p;
 list holes;
@@ -448,14 +448,14 @@ while (p!=nil) {
 }
 
 void
-fill_in_left P1H(void)
+fill_in_left(void)
 {
 	out_int(OTP_STOP, 0);
 	fill_in(left_false_holes);
 }
 
 void
-fill_in P1C(list, L) 
+fill_in(list L) 
 {
 list p;
 p=L;
@@ -466,13 +466,13 @@ while (p!=0) {
 }
 
 void
-out_right P2C(int, instr, int, val)
+out_right(int instr, int val)
 {
 out_int(instr+right_offset, val);
 }
 
 void
-out_int P2C(int, instr, int, val)
+out_int(int instr, int val)
 {
 if (val>=(1<<24)) {
     FATAL1 ("Argument (%d) of instruction too big", val);
@@ -481,7 +481,7 @@ add_to_state((instr<<24)+val);
 }
 
 void
-store_state P1C(string, str)
+store_state(string str)
 {
 int i;
 for (i=0; i<no_states; i++) {
@@ -497,7 +497,7 @@ no_states++;
 }
 
 int
-lookup_state P1C(string, str)
+lookup_state(string str)
 {
 int i;
 for (i=0; i<no_states; i++) {
@@ -509,7 +509,7 @@ FATAL1 ("state %s not defined", str);
 }
 
 void
-add_to_state P1C(int, x)
+add_to_state(int x)
 {
 int len;
 len = states[cur_state].length;
@@ -522,7 +522,7 @@ states[cur_state].length = len+1;
 }
 
 void
-store_table P2C(string, str, int, len)
+store_table(string str, int len)
 {
 int i;
 for (i=0; i<no_tables; i++) {
@@ -537,7 +537,7 @@ no_tables++;
 }
 
 void
-add_to_table P1C(int, x)
+add_to_table(int x)
 {
 int len;
 len = tables[cur_table].length;
@@ -546,7 +546,7 @@ tables[cur_table].length = len+1;
 }
 
 int
-lookup_table P1C(string, str)
+lookup_table(string str)
 {
 int i;
 for (i=0; i<no_tables; i++) {
