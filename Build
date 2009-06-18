@@ -52,13 +52,6 @@ fi
 : ${TL_BUILD_ENV=}
 if test "x$1" = x--debug || test "x$1" = x-g; then
   shift
-  if test "x$1" = x-Wdecl || test "x$1" = x-Wdeclaration-after-statement; then
-    wdecl=-Wdeclaration-after-statement
-    shift
-  else
-    wdecl=
-  fi
-  TL_GFLAGS="wdecl $TL_GCFLAGS"
   TL_BUILD_ENV="CFLAGS='-g $TL_GCFLAGS' CXXFLAGS=-g OBJCFLAGS=-g $TL_BUILD_ENV"
 fi
 
