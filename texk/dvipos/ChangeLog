@@ -1,3 +1,18 @@
+2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* dvicore.c: initialize various local vars (although not
+	needed) to avoid compiler warnings.
+	(write_bbox): use long format spec for long vars.
+	(dvi_unsigned_quad): unused.
+	(sqxfw): always return at end of non-void function.
+	(define_font): allocate empty string for null font name to
+	avoid later problems (possibly a segmentation fault).
+	* tfm.c:#include "tfm.h" for function prototypes.
+	(tfm_open): parentheses around assignment used as truth value.
+	(a_tfm_init): declare as static.
+	(dump_sizes): declare as static, unused.
+
 2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvicore.c, utils.h: rename INFINITY -> WEB_INFINITY, to avoid

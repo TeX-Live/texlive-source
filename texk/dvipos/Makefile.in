@@ -245,6 +245,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
+AM_CFLAGS = $(WARNING_CFLAGS)
 dvipos_SOURCES = \
 	dvicore.c \
 	dvicore.h \

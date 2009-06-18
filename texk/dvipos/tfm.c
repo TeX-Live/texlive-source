@@ -26,6 +26,7 @@
 
 #include "utils.h"
 #include "dvicore.h"
+#include "tfm.h"
 
 #define tfm_unsigned_byte()   get_unsigned_byte(tfm_file)
 #define tfm_signed_byte()     get_signed_byte(tfm_file)
@@ -71,7 +72,8 @@ struct a_tfm {
   fixword *unpacked_depths;
 };
 
-void a_tfm_init (struct a_tfm *a_tfm) 
+static void
+a_tfm_init (struct a_tfm *a_tfm) 
 {
   a_tfm->id = 0;
   a_tfm->nt = 0;
@@ -222,6 +224,8 @@ static int ofm_get_sizes (struct a_tfm *a_tfm)
   return (int) (level);
 }
 
+#if 0
+/* Not used */
 static void dump_sizes (struct a_tfm *a_tfm)
 {
   fprintf (stderr, "\nwlenfile: %ld, ", a_tfm -> wlenfile);
@@ -238,7 +242,7 @@ static void dump_sizes (struct a_tfm *a_tfm)
   fprintf (stderr, "nfonparm: %ld\n", a_tfm -> nfonparm);
   return;
 }
-
+#endif
 
 static void get_fix_word_array (SIGNED_QUAD *a_word, SIGNED_QUAD length)
 {
@@ -516,14 +520,14 @@ int tfm_open (const char *tfm_name, int must_exist)
         tfm file with the must_exist flag set.
      4. If not found and must_exist flag is not set, return -1. */
 
-  if (file_name = kpse_find_file(tfm_name, kpse_tfm_format, 0))
+  if ((file_name = kpse_find_file(tfm_name, kpse_tfm_format, 0)))
     format = TFM_FORMAT;
-  else if (file_name = kpse_find_file(tfm_name, kpse_ofm_format, 0))
+  else if ((file_name = kpse_find_file(tfm_name, kpse_ofm_format, 0)))
     format = OFM_FORMAT;
   /* In case that must_exist is set, MiKTeX returns always non-NULL value
      even if the tfm file is not found. */
   else if (must_exist) {
-    if (file_name = kpse_find_file(tfm_name, kpse_tfm_format, 1))
+    if ((file_name = kpse_find_file(tfm_name, kpse_tfm_format, 1)))
       format = TFM_FORMAT;
     else {
       fprintf(stderr, "\n** Fatal: Unable to find TFM file '%s'.\n", tfm_name);

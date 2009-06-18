@@ -215,13 +215,15 @@ static void new_bbox (unsigned char *tag, int type)
 static void write_bbox (BBOX *bb)
 {
   if (bbxfp) {
-    fprintf(bbxfp, "\"%d.%04X & ", (bb->fb / 65536), (bb->fb < 0 ? -1 : 1) * (bb->fb % 65536));
-    fprintf(bbxfp, "\"%d.%04X \"%d.%04X \"%d.%04X \"%d.%04X & ",
+    fprintf(bbxfp, "\"%ld.%04lX & ",
+      (bb->fb / 65536), (bb->fb < 0 ? -1 : 1) * (bb->fb % 65536));
+    fprintf(bbxfp, "\"%ld.%04lX \"%ld.%04lX \"%ld.%04lX \"%ld.%04lX & ",
       (bb->v1 / 65536), (bb->v1 < 0 ? -1 : 1) * (bb->v1 % 65536),
       (bb->h1 / 65536), (bb->h1 < 0 ? -1 : 1) * (bb->h1 % 65536),
       (bb->v2 / 65536), (bb->v2 < 0 ? -1 : 1) * (bb->v2 % 65536),
       (bb->h2 / 65536), (bb->h2 < 0 ? -1 : 1) * (bb->h2 % 65536));
-    fprintf(bbxfp, "\"%d.%04X\n", (bb->cb / 65536), (bb->cb < 0 ? -1 : 1) * (bb->cb % 65536));
+    fprintf(bbxfp, "\"%ld.%04lX\n",
+      (bb->cb / 65536), (bb->cb < 0 ? -1 : 1) * (bb->cb % 65536));
 /*
     fprintf(bbxfp, "\"%ld & ", bb->fb);
     fprintf(bbxfp, "\"%ld \"%ld \"%ld \"%ld & ", bb->v1, bb->h1, bb->v2, bb->h2);
@@ -321,11 +323,14 @@ static SIGNED_PAIR dvi_signed_triple (void)
   return get_signed_triple(dvi_file);
 }
 
+#if 0
+/* Not used */
 static UNSIGNED_PAIR dvi_unsigned_quad (void)
 {
   dvi_location += 4;
   return get_unsigned_quad(dvi_file);
 }
+#endif
 
 static SIGNED_PAIR dvi_signed_quad (void)
 {
@@ -351,10 +356,11 @@ static SIGNED_QUAD sqxfw (SIGNED_QUAD z, SIGNED_QUAD b)
 
   result = (((((b3 * z) / 0x100) + (b2 * z)) / 0x100) + (b1 * z)) / beta;
 
-  if (b0 == 0) return result;
-  else if (b0 == 255) return (result - alpha);
+  if (b0 == 255) result -= alpha;
+  else if (b0 != 0)
+    msg_out(M_FAIL, "[fatal] sqxfw(): TFM file is bad.\n");
 
-  msg_out(M_FAIL, "[fatal] sqxfw(): TFM file is bad.\n");
+  return result;
 }
 
 static SIGNED_QUAD xround (double p)
@@ -499,7 +505,7 @@ static void out_vmove (SIGNED_QUAD p)
 
 static void do_space (UNSIGNED_BYTE opcode)
 {
-  SIGNED_QUAD x;
+  SIGNED_QUAD x = 0;	/* avoid uninitialized warning */
 
   msg_out(M_DEBUG, "%ld: ", dvi_location);
   switch (opcode) {
@@ -582,7 +588,7 @@ static void do_space (UNSIGNED_BYTE opcode)
 
 static void do_vmove (UNSIGNED_BYTE opcode)
 {
-  SIGNED_QUAD y;
+  SIGNED_QUAD y = 0;	/* avoid uninitialized warning */
 
   flush_text();
   msg_out(M_DEBUG, "%ld: ", dvi_location);
@@ -748,7 +754,7 @@ static void do_setchar (UNSIGNED_BYTE opcode)
  * goto move_right or done> */
 static void do_set (UNSIGNED_BYTE opcode)
 {
-  SIGNED_QUAD ch;
+  SIGNED_QUAD ch = 0;	/* avoid uninitialized warning */
 
   flush_text();
   msg_out(M_DEBUG, "%ld: ", dvi_location);
@@ -780,7 +786,7 @@ static void do_set (UNSIGNED_BYTE opcode)
  * goto move_right or done> */
 static void do_put (UNSIGNED_BYTE opcode)
 {
-  SIGNED_QUAD ch;
+  SIGNED_QUAD ch = 0;	/* avoid uninitialized warning */
 
   flush_text();
   msg_out(M_DEBUG, "%ld: ", dvi_location);
@@ -849,7 +855,7 @@ static void do_pop (void)
 static void do_fnt_num (UNSIGNED_BYTE opcode)
 {
   register int i;
-  SIGNED_QUAD id;
+  SIGNED_QUAD id = 0;	/* avoid uninitialized warning */
 
   flush_text();
   msg_out(M_DEBUG, "%ld: ", dvi_location);
@@ -897,7 +903,8 @@ static void do_fnt_num (UNSIGNED_BYTE opcode)
 static void do_pos_special (unsigned char *buffer, SIGNED_QUAD buffer_len)
 {
   unsigned char *cmd, *tag, *p;
-  SIGNED_QUAD x, y, w, h, d;
+  SIGNED_QUAD x, y;
+  SIGNED_QUAD w = 0, h = 0, d = 0;	/* avoid uninitialized warning */
   double w_pt, h_pt, d_pt;	/* in pt */
   int parsed = 0;		/* how many conversions the sscanf managed */
 
@@ -966,7 +973,7 @@ static void do_pos_special (unsigned char *buffer, SIGNED_QUAD buffer_len)
 
 static void do_xxx (UNSIGNED_BYTE opcode)
 {
-  SIGNED_QUAD size;
+  SIGNED_QUAD size = 0;	/* avoid uninitialized warning */
   unsigned char *sp_buf;
 
   flush_text();
@@ -1298,12 +1305,12 @@ static void define_font (SIGNED_QUAD e)
   msg_out(M_DEBUG, "Font %ld: ", e);
 
   /* Retrieve the directory name and the font name */
+  name = (char *)calloc(p+n+1, sizeof(char));
   if (p + n > 0) {
-    name = (char *)calloc(p+n+1, sizeof(char));
     if (fread(name, sizeof(char), p+n, dvi_file) != p+n)
       msg_out(M_FAIL, "[fatal] Failed to retrieve a font name.\n");
-    name[p+n] = 0;
   }
+  name[p+n] = 0;
 
   msg_out(M_DEBUG, "%s", (p + n > 0 ? name : "null font name!"));
 
