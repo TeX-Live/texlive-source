@@ -7,10 +7,13 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DKPATHSEA
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libdvilj.a
 
-libdvilj_a_SOURCES = tfm.c
+libdvilj_a_SOURCES = \
+	tfm.c \
+	tfm.h
 
 libdvilj_a_DEPENDENCIES = $(KPATHSEA_DEPEND)
 

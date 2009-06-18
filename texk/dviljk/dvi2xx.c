@@ -102,6 +102,7 @@
  */
 
 #include "dvi2xx.h"
+#include "tfm.h"
 
 #ifdef SEVENBIT
 #define VIS   33
@@ -776,10 +777,11 @@ char    *str;
 /*********************************************************************/
 /***************************** CopyHPFile ******************************/
 /*********************************************************************/
+static int
 #if NeedFunctionPrototypes
-int getnum(FILEPTR spfp, char *t, char *numstr)
+getnum(FILEPTR spfp, char *t, char *numstr)
 #else
-int getnum(spfp, t, numstr)
+getnum(spfp, t, numstr)
 FILEPTR spfp;
 char *t, *numstr;
 #endif
@@ -791,10 +793,11 @@ char *t, *numstr;
   return atoi(numstr);
 }
 
+static void
 #if NeedFunctionPrototypes
-void setOffset(char dir, char sign, int pos)
+setOffset(char dir, char sign, int pos)
 #else
-void setOffset(dir, sign, pos, first)
+setOffset(dir, sign, pos)
 char dir, sign;
 int pos;
 #endif
@@ -4980,14 +4983,14 @@ long4    conv;           /* conversion factor */
 /**********************************************************************/
 /****************************  TryResident  ***************************/
 /**********************************************************************/
+static bool
 #if NeedFunctionPrototypes
-bool TryResident(struct font_entry *fontptr)
+TryResident(struct font_entry *fontptr)
 #else
-bool TryResident(fontptr)
+TryResident(fontptr)
 struct font_entry *fontptr;
 #endif
 {
-  extern bool tfm_read_info();
   tfm_info_type tfm_info;
 
   /* To determine if a font is resident, check for a special family

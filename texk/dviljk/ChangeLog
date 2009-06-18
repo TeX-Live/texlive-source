@@ -1,3 +1,11 @@
+2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* dvi2xx.c: #include "tfm.h".
+	(getnum, setOffset, TryResident): declare as static.
+	* tfm.c: #include "tfm.h".
+	* tfm.h (new): protoype for tfm_read_info.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

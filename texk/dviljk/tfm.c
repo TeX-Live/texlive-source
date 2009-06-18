@@ -17,6 +17,8 @@ extern char* TFMpath;
 #include "config.h" /* for STRSIZE and tfm_info_type, at least */
                     /* and for IO-functions (since RISC OS) */
 
+#include "tfm.h"
+
 #ifdef NeedVarargsPrototypes
 extern void Fatal(char *, ...);
 #else
