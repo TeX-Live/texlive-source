@@ -68,9 +68,6 @@
 
 #define GETLINE fgets(linebuf, (int) sizeof(linebuf), infile)
 
-/* ! If next line causes trouble, comment it out ! */
-void error_exit(int error_number);
-
 int zbar[MAX_BARS], lr_repeat[MAX_BARS], raggedline[MAX_BARS],
     l_repeat[MAX_BARS], barno[MAX_BARS], autolines[MAX_SECTIONS],
     bars[MAX_SECTIONS], mulooseness[MAX_SECTIONS], signchange[MAX_SIGNS],
@@ -87,8 +84,8 @@ double hardbarlength[MAX_BARS], softbarlength[MAX_BARS],
 FILE *infile, *outfile, *logfile;
 char linebuf[128];
 
-void error_exit(error_number)
-     int error_number;
+static void
+error_exit(int error_number)
 {
   switch (error_number){
 
@@ -108,9 +105,8 @@ void error_exit(error_number)
   default:
     printf("!!! Can't go on !!!\n"); exit(3);}}
 
-int main(argc, argv)
-     int argc;
-     char **argv;
+int
+main(int argc, char **argv)
 {
   register int i, j, bar;
 
@@ -662,7 +658,8 @@ int main(argc, argv)
  added correct computing of fill_length
 ****************************************************************/
 
-    for (j=1; j<=lines; ++j, ++line_in_section){
+    for (j=1; j<=lines; ++j, ++line_in_section)
+    {
       ++line_number;
       fill_length=(lines-j+1)*(linewidth-(clefskip+signskip[sign]));
 
@@ -678,8 +675,9 @@ int main(argc, argv)
       if (!eff_softlength[section]) error_exit(5);
       spc_factor=(fill_length-eff_hardlength[section])/eff_softlength[section];
 
-    if ((xbar[mark+1]>1) && (mark>0)){ 
-       /* The bar is an bar+xbar with a sign change. jh-1 */
+      if ((xbar[mark+1]>1) && (mark>0))
+      { 
+        /* The bar is an bar+xbar with a sign change. jh-1 */
         eff_linewidth=linewidth-(clefskip+signskip[sign-1])-parindent;
       } else { /* This is a normal bar. jh-1 */
         eff_linewidth=linewidth-(clefskip+signskip[sign])-parindent;
@@ -697,9 +695,11 @@ int main(argc, argv)
       hardlength= 0;
       softlength = 0;
       x = 0;
+      lastbar = 0.0;
       detect_end= FALSE;
 
-      while (x<eff_linewidth){
+      while (x<eff_linewidth)
+      {
         if (detect_end) break;
         ++i;
 
@@ -726,7 +726,8 @@ int main(argc, argv)
         else if (line_in_section==lines){detect_end=FALSE; x=0;}
 
         hardlength += hardbarlength[i];
-        softlength += softbarlength[i];}
+        softlength += softbarlength[i];
+      }
 
 /************************************************
  If the overhang is less than half the barlength,
@@ -734,7 +735,8 @@ int main(argc, argv)
  and shrink the line accordingly.
 *************************************************/
 
-      if ((x-eff_linewidth)<(lastbar/2)){
+      if ((x-eff_linewidth)<(lastbar/2))
+      {
         barsinline=i-mark;
         mark=i;
         lastbarno=barno[mark];
@@ -745,9 +747,11 @@ int main(argc, argv)
  the amount of afterruleskip
 *********************************************/
 
-        if (zbar[mark]){
+        if (zbar[mark])
+        {
           softbarlength[i+1] += afterrule;
-          eff_softlength[section] += afterrule;}
+          eff_softlength[section] += afterrule;
+        }
 
 /********************************************
  last bar in line a leftrightrepeat?
@@ -756,7 +760,8 @@ int main(argc, argv)
             advance the softwidth of next bar
 *********************************************/
 
-        if (lr_repeat[mark]){
+        if (lr_repeat[mark])
+        {
 /*          printf("mark=%d\n",mark);
             printf("width_leftright=%f\n",width_leftrightrepeat[i]);
             printf("width_left=%f\n",width_leftrepeat[i]);   */
@@ -767,7 +772,7 @@ int main(argc, argv)
           softbarlength[i+1] += afterrule/2;
           eff_softlength[section] += afterrule/2;
           
-          }
+        }
 
 /********************************************
  last bar in line a leftrepeat?
@@ -776,13 +781,16 @@ int main(argc, argv)
             advance the softwidth of next bar
 *********************************************/
 
-        if (l_repeat[mark]){
+        if (l_repeat[mark])
+        {
           hardlength -= (width_leftrepeat[i]-lthick);
           hardbarlength[i+1] += width_leftrepeat[i];
           softbarlength[i+1] += afterrule/2;
-          eff_softlength[section] += afterrule/2;}
+          eff_softlength[section] += afterrule/2;
+        }
 
-        if (signchange[sign+1]==mark+1){ /* s.b. */
+        if (signchange[sign+1]==mark+1) /* s.b. */
+        {
           ++sign;
           /* Because the bar is staying here in the line, we look ahead
              to see if the upcoming bar is a sign change, and adjust space
@@ -791,15 +799,20 @@ int main(argc, argv)
              sign change bar is really a bar+xbar set, where the sign change
              is buried in the xbar, then we don't do the move because the
              change notice really won't be posted in this line.  jh-1 */
-         if (xbar[mark+1]<2){ /* okay to do the move.  jh-1 */
-          hardlength += oldsignskip[sign];
-          hardbarlength[mark+1] -= oldsignskip[sign];}}}
+          if (xbar[mark+1]<2) /* okay to do the move.  jh-1 */
+          {
+            hardlength += oldsignskip[sign];
+            hardbarlength[mark+1] -= oldsignskip[sign];
+          }
+        }
+      }
 
 /*********************************************
  Exclude the latest bar, and stretch the line.
 **********************************************/
 
-      else{
+      else
+      {
 
         barsinline=i-1-mark;
         if (barsinline<1) error_exit(2);
@@ -810,19 +823,23 @@ int main(argc, argv)
 
         if (zbar[mark]) softbarlength[i] += afterrule;
 
-        if (lr_repeat[mark]){
+        if (lr_repeat[mark])
+        {
           hardlength -= (width_leftrightrepeat[i-1]-width_leftrepeat[i-1]);
           eff_hardlength[section] +=
                         (width_leftrightrepeat[i-1]-width_leftrepeat[i-1]);
           hardbarlength[i] += width_leftrepeat[i-1];
           softbarlength[i] += afterrule/2;
-          eff_softlength[section] += afterrule/2;}
+          eff_softlength[section] += afterrule/2;
+        }
 
-        if (l_repeat[mark]){
+        if (l_repeat[mark])
+        {
           hardlength -= (width_leftrepeat[i-1]-lthick);
           hardbarlength[i] += width_leftrepeat[i-1];
           softbarlength[i] += afterrule/2;
-          eff_softlength[section] += afterrule/2;}
+          eff_softlength[section] += afterrule/2;
+        }
 
 /*********************************************************************
  Error (o/u-hbox) occurs only when signature change start in next line
@@ -831,13 +848,18 @@ int main(argc, argv)
               reduce next hard barlength by signature change
 **********************************************************************/
 
-        if (signchange[sign]==mark+1){
+        if (signchange[sign]==mark+1)
+        {
           /* However, if the next bar is a bar+xbar set where the
              sign change comes from the xbar, then don't do this
              move, because the extra skip is not really there! jh-1 */
-         if (xbar[mark+1]<2) { /* alright, do the move.   jh-1 */
-          hardlength += oldsignskip[sign];
-          hardbarlength[mark+1] -= oldsignskip[sign];}}}
+          if (xbar[mark+1]<2) /* alright, do the move.   jh-1 */
+          {
+            hardlength += oldsignskip[sign];
+            hardbarlength[mark+1] -= oldsignskip[sign];
+          }
+        }
+      }
 
 /***********************************************
  Define a flex factor for this line as the ratio

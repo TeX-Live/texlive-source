@@ -16,6 +16,7 @@ AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
+KPSE_COMPILER_WARNINGS
 
 dnl Not used, but avoids zillions of defines on commandline
 AC_CONFIG_HEADERS([config.h])

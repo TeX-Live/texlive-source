@@ -5,5 +5,7 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+AM_CFLAGS = $(WARNING_CFLAGS)
+
 bin_PROGRAMS = musixflx
 

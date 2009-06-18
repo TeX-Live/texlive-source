@@ -36,11 +36,11 @@ if test "x$enable_compiler_warnings" = xno; then
   kpse_cv_warning_cflags=
 elif test "x$GCC" = xyes; then
   kpse_cv_warning_cflags="-Wall -Wunused"
+  AS_CASE([`$CC -dumpversion`],
+          [3.4.* | 4.*],
+          [kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement"])
   if test "x$enable_compiler_warnings" != xmin; then
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
-    AS_CASE([`$CC -dumpversion`],
-            [3.4.* | 4.*],
-            [kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement"])
     if test "x$enable_compiler_warnings" != xyes; then
       kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wimplicit -Wparentheses -Wreturn-type"
       kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"

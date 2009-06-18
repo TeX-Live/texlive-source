@@ -45,7 +45,8 @@ DIST_COMMON = $(am__configure_deps) $(srcdir)/../../build-aux/depcomp \
 	../../build-aux/missing ../../build-aux/mkinstalldirs \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -123,6 +124,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -166,6 +168,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
+AM_CFLAGS = $(WARNING_CFLAGS)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
