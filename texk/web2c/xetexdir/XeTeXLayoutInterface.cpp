@@ -680,11 +680,15 @@ UInt32 getRgbValue(XeTeXLayoutEngine engine)
 void getGlyphBounds(XeTeXLayoutEngine engine, UInt32 glyphID, GlyphBBox* bbox)
 {
 	engine->font->getGlyphBounds(glyphID, bbox);
+	if (engine->extend != 0.0) {
+	    bbox->xMin *= engine->extend;
+	    bbox->xMax *= engine->extend;
+    }
 }
 
 float getGlyphWidthFromEngine(XeTeXLayoutEngine engine, UInt32 glyphID)
 {
-	return engine->font->getGlyphWidth(glyphID);
+	return engine->extend * engine->font->getGlyphWidth(glyphID);
 }
 
 void getGlyphHeightDepth(XeTeXLayoutEngine engine, UInt32 glyphID, float* height, float* depth)
@@ -695,11 +699,15 @@ void getGlyphHeightDepth(XeTeXLayoutEngine engine, UInt32 glyphID, float* height
 void getGlyphSidebearings(XeTeXLayoutEngine engine, UInt32 glyphID, float* lsb, float* rsb)
 {
 	engine->font->getGlyphSidebearings(glyphID, lsb, rsb);
+	if (engine->extend != 0.0) {
+	    *lsb *= engine->extend;
+	    *rsb *= engine->extend;
+	}
 }
 
 float getGlyphItalCorr(XeTeXLayoutEngine engine, UInt32 glyphID)
 {
-	return engine->font->getGlyphItalCorr(glyphID);
+	return engine->extend * engine->font->getGlyphItalCorr(glyphID);
 }
 
 UInt32 mapCharToGlyph(XeTeXLayoutEngine engine, UInt32 charCode)

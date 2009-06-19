@@ -2243,7 +2243,7 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 					realGlyphCount = 0;
 					for (i = 0; i < nGlyphs; ++i) {
 						if (glyphs[i] < 0xfffe) {
-							float rhs = positions[2*i] + getGlyphWidth(getFont(engine), glyphs[i]);
+							float rhs = positions[2*i] + getGlyphWidthFromEngine(engine, glyphs[i]);
 							if (rhs > maxRhs)
 								maxRhs = rhs;
 							glyphIDs[realGlyphCount] = glyphs[i];
