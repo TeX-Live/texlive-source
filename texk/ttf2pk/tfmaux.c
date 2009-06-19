@@ -162,7 +162,7 @@ remap(long *what,
 }
 
 
-void
+static void
 write16(register short what,
         register FILE *out)
 {
@@ -171,7 +171,7 @@ write16(register short what,
 }
 
 
-void
+static void
 writearr(register long *p,
          register int n,
          register FILE *out)
@@ -186,7 +186,7 @@ writearr(register long *p,
 }
 
 
-void
+static void
 writesarr(long *what,
           int len,
           FILE *out)

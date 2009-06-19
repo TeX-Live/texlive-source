@@ -1,3 +1,9 @@
+2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* pklib.c (xgetc): declare as static.
+	* tfmaux.c (write16, writearr, writesarr): declare as static.
+
 2009-06-12  Francois Charette  <firmicus@ankabut.net>
 
 	* newobj.c, newobj.h, parse.c: rename getline to texlive_getline.

@@ -678,7 +678,7 @@ putlong(long w)
 }
 
 
-char
+static char
 xgetc(FILE *f)
 {
   int c;
