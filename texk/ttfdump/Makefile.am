@@ -18,9 +18,13 @@ dist-hook:
 	rm -f $(distdir)/src/Makefile.in
 
 INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = -Dlint
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libttf.a
 
+# libttf/interp.c is not used (would just produce compiler warnings).
+#
 nodist_libttf_a_SOURCES = \
 	libttf/cmap.c \
 	libttf/cvt.c \
@@ -35,7 +39,6 @@ nodist_libttf_a_SOURCES = \
 	libttf/head.c \
 	libttf/hhea.c \
 	libttf/hmtx.c \
-	libttf/interp.c \
 	libttf/kern.c \
 	libttf/loca.c \
 	libttf/ltsh.c \
@@ -54,22 +57,20 @@ nodist_libttf_a_SOURCES = \
 	libttf/vhea.c \
 	libttf/vmtx.c
 
-## The library doesn't actually depend on kpathsea, but this way
-## kpathsea is rebuilt before compiling ttfdump (I hope).
-libttf_a_DEPENDENCIES = $(KPATHSEA_DEPEND)
-
-## Rebuild libkpathsea
-@KPATHSEA_RULE@
-
 bin_PROGRAMS = ttfdump
 
 nodist_ttfdump_SOURCES = src/ttfdump.c
 
 LDADD = libttf.a
 
+$(ttfdump_OBJECTS): $(KPATHSEA_DEPEND)
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+
 nodist_man1_MANS = docs/ttfdump.1
 
-## Not yet used
+## Not used
 ##
 EXTRA_DIST += ILX NOTE README.bg5
 

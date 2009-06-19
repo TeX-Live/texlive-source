@@ -6,7 +6,7 @@
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
+AM_CPPFLAGS = -DKPATHSEA -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## The Makefile.in from 2002 by Thomas Esser applied the sed script

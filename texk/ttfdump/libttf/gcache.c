@@ -103,7 +103,9 @@ static void ttfFreeCacheData(TTFontPtr font);
 static void ttfInsertBST(TTFontPtr font,GlyphCachePtr gcache);
 static GlyphCachePtr ttfSearchBST(TTFontPtr font,ULONG offset);
 static void ttfDeleteBST(TTFontPtr font,ULONG offset);
+#ifdef MERGEDELETE
 static void merge(GlyphCachePtr *root);
+#endif
 static void copy(GlyphCachePtr *root);
 
 void ttfInitGlyphCache(TTFontPtr font)
@@ -253,8 +255,7 @@ static void ttfInitCacheData(TTFontPtr font)
 	    cur->glyf.flags = tmp->glyf.flags + maxPoints;
 	    cur->glyf.xCoordinates = tmp->glyf.xCoordinates + maxPoints;
 	    cur->glyf.yCoordinates = tmp->glyf.yCoordinates + maxPoints;
-	    tmp = cur;
-	    cur = cur++;
+	    tmp = cur++;
 	}
 }
 static void ttfFreeCacheData(TTFontPtr font)
@@ -374,6 +375,7 @@ static void ttfDeleteBST(TTFontPtr font,ULONG offset)
     
 }
 
+#ifdef MERGEDELETE
 static void merge(GlyphCachePtr *root)
 {
     GlyphCachePtr tmp;
@@ -395,6 +397,7 @@ static void merge(GlyphCachePtr *root)
 	    *root = (*root)->left;
 	}
 }
+#endif
 static void copy(GlyphCachePtr *root)
 {
     GlyphCachePtr tmp, parent;

@@ -99,6 +99,8 @@ TableDirPtr ttfLookUpTableDir(ULONG tagname,TTFontPtr font)
     return NULL;
 }
 
+#if 0
+/* Not used */
 /* calculate table check sum */
 /* can't be done until the data abstraction have been finished */
 /* not finished yet */    
@@ -119,3 +121,4 @@ ULONG ttfCalcTableCheckSum(ULONG tagname,TTFontPtr font)
 
     return sum;
 }
+#endif

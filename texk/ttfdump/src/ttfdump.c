@@ -65,9 +65,15 @@ static void print_vdmx(FILE *out);
 static void print_vhea(FILE *out);
 static void print_vmtx(FILE *out);
 
+#if 0
+/* Not used */
 static void dialog (int argc, char *argv[]);
+#endif
 static void usage (void);
+#if 0
+/* Not used */
 static void add_suffix (char *name, char *suffix);
+#endif
 
 
 #if !defined(EXIT_FAILURE)
@@ -82,7 +88,7 @@ static void add_suffix (char *name, char *suffix);
 /* strdup() is not available on all platforms; this version has been
  * contributed by Nelson Beebe. */
 
-char *
+static char *
 Strdup(const char *s)
 {
   char *p;
@@ -101,13 +107,12 @@ Strdup(const char *s)
 int
 main(int argc, char *argv[])
 {
-  FILE *tt_file, *dp_file;
-  TTCHeaderPtr ttc;
+  FILE *dp_file;
+  TTCHeaderPtr ttc = NULL;	/* avoid uninitialized warning */
 
   int c;
   extern int optind;
   extern char *optarg;
-  char *options, *value;
 
   char *tablename = NULL;
 
@@ -548,6 +553,8 @@ print_vmtx(FILE *out)
 }
 
 
+#if 0
+/* Not used */
 static void
 dialog(int argc, char *argv[])
 {
@@ -562,6 +569,7 @@ dialog(int argc, char *argv[])
   else
     strcpy(dumpname, *++argv);
 }
+#endif
 
 
 static void
@@ -572,6 +580,8 @@ usage(void)
 }
 
 
+#if 0
+/* Not used */
 static void
 add_suffix(char *name, char *suffix)
 {
@@ -595,6 +605,7 @@ add_suffix(char *name, char *suffix)
     }
   }
 }
+#endif
 
 
 /* end of ttfdump.c */

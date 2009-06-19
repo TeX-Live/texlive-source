@@ -1,3 +1,16 @@
+2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* libttf/font.c (ttfCloneFont): not used.
+	* libttf/gcache.c (ttfInitCacheData): avoid ambiguous "cur = cur++".
+	(merge): only used #ifdef MERGEDELETE.
+	* libttf/stack.c (GetLONG): unused.
+	* libttf/tabledir.c (ttfCalcTableCheckSum): unused.
+	* src/ttfdump.c (dialog, add_suffix): unused.
+	(Strdup): declare as static.
+	(main): silence 'used uninitialized' warning.
+	avoid unused variables.
+
 2009-06-03  Karl Berry  <karl@tug.org>
 
 	* libttf/ttfread.c (ttfGetBYTE): do not make inline, just in case.

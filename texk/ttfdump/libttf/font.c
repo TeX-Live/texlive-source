@@ -134,6 +134,8 @@ void ttfFreeOptionalTables(TTFontPtr font)
     ttfFreeVMTX(font->vmtx);
 }
 
+#if 0
+/* Not used */
 /* make a clone of the origional font
  * This is use for fonts that support more than one encoding scheme
  *
@@ -152,6 +154,8 @@ TTFontPtr ttfCloneFont(TTFontPtr font)
 
     return newfont;
 }
+#endif
+
 static void ttfInitInterpreter(TTFontPtr font)
 {
     ttfInitStorageArea(font);

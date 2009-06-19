@@ -78,11 +78,11 @@ nodist_libttf_a_OBJECTS = cmap.$(OBJEXT) cvt.$(OBJEXT) \
 	disasm.$(OBJEXT) font.$(OBJEXT) fpgm.$(OBJEXT) gasp.$(OBJEXT) \
 	gcache.$(OBJEXT) glyf.$(OBJEXT) gstate.$(OBJEXT) \
 	hdmx.$(OBJEXT) head.$(OBJEXT) hhea.$(OBJEXT) hmtx.$(OBJEXT) \
-	interp.$(OBJEXT) kern.$(OBJEXT) loca.$(OBJEXT) ltsh.$(OBJEXT) \
-	maxp.$(OBJEXT) name.$(OBJEXT) os2.$(OBJEXT) pclt.$(OBJEXT) \
-	post.$(OBJEXT) prep.$(OBJEXT) stack.$(OBJEXT) \
-	tabledir.$(OBJEXT) ttc.$(OBJEXT) ttfread.$(OBJEXT) \
-	ttfutil.$(OBJEXT) vdmx.$(OBJEXT) vhea.$(OBJEXT) vmtx.$(OBJEXT)
+	kern.$(OBJEXT) loca.$(OBJEXT) ltsh.$(OBJEXT) maxp.$(OBJEXT) \
+	name.$(OBJEXT) os2.$(OBJEXT) pclt.$(OBJEXT) post.$(OBJEXT) \
+	prep.$(OBJEXT) stack.$(OBJEXT) tabledir.$(OBJEXT) \
+	ttc.$(OBJEXT) ttfread.$(OBJEXT) ttfutil.$(OBJEXT) \
+	vdmx.$(OBJEXT) vhea.$(OBJEXT) vmtx.$(OBJEXT)
 libttf_a_OBJECTS = $(nodist_libttf_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
@@ -260,7 +260,12 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = docs include libttf src ILX NOTE README.bg5
 INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES)
+AM_CPPFLAGS = -Dlint
+AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libttf.a
+
+# libttf/interp.c is not used (would just produce compiler warnings).
+#
 nodist_libttf_a_SOURCES = \
 	libttf/cmap.c \
 	libttf/cvt.c \
@@ -275,7 +280,6 @@ nodist_libttf_a_SOURCES = \
 	libttf/head.c \
 	libttf/hhea.c \
 	libttf/hmtx.c \
-	libttf/interp.c \
 	libttf/kern.c \
 	libttf/loca.c \
 	libttf/ltsh.c \
@@ -294,7 +298,6 @@ nodist_libttf_a_SOURCES = \
 	libttf/vhea.c \
 	libttf/vmtx.c
 
-libttf_a_DEPENDENCIES = $(KPATHSEA_DEPEND)
 nodist_ttfdump_SOURCES = src/ttfdump.c
 LDADD = libttf.a
 nodist_man1_MANS = docs/ttfdump.1
@@ -427,7 +430,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/head.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hhea.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmtx.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kern.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loca.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ltsh.Po@am__quote@
@@ -649,20 +651,6 @@ hmtx.obj: libttf/hmtx.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/hmtx.c' object='hmtx.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hmtx.obj `if test -f 'libttf/hmtx.c'; then $(CYGPATH_W) 'libttf/hmtx.c'; else $(CYGPATH_W) '$(srcdir)/libttf/hmtx.c'; fi`
-
-interp.o: libttf/interp.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT interp.o -MD -MP -MF $(DEPDIR)/interp.Tpo -c -o interp.o `test -f 'libttf/interp.c' || echo '$(srcdir)/'`libttf/interp.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/interp.Tpo $(DEPDIR)/interp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/interp.c' object='interp.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o interp.o `test -f 'libttf/interp.c' || echo '$(srcdir)/'`libttf/interp.c
-
-interp.obj: libttf/interp.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT interp.obj -MD -MP -MF $(DEPDIR)/interp.Tpo -c -o interp.obj `if test -f 'libttf/interp.c'; then $(CYGPATH_W) 'libttf/interp.c'; else $(CYGPATH_W) '$(srcdir)/libttf/interp.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/interp.Tpo $(DEPDIR)/interp.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libttf/interp.c' object='interp.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o interp.obj `if test -f 'libttf/interp.c'; then $(CYGPATH_W) 'libttf/interp.c'; else $(CYGPATH_W) '$(srcdir)/libttf/interp.c'; fi`
 
 kern.o: libttf/kern.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT kern.o -MD -MP -MF $(DEPDIR)/kern.Tpo -c -o kern.o `test -f 'libttf/kern.c' || echo '$(srcdir)/'`libttf/kern.c
@@ -1307,6 +1295,8 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 	rm -f $(distdir)/libttf/Makefile.in
 	rm -f $(distdir)/src/Makefile.in
+
+$(ttfdump_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
 

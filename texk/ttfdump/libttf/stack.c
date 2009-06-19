@@ -80,6 +80,8 @@ inline SHORT GetSHORT(VirtualMachine *vm)
 	    return 0;
 	} 
 }
+#if 0
+/* Not used */
 /* read four bytes from the instruction steam */
 inline LONG GetLONG(VirtualMachine *vm)
 {
@@ -99,3 +101,4 @@ inline LONG GetLONG(VirtualMachine *vm)
 	    return 0;
 	}
 }
+#endif
