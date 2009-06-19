@@ -37,7 +37,7 @@ AC_PROG_CPP
 dnl get Compiler flags right.
 
 if test "x$CC" = xgcc; then
-  XX_CFLAGS="-Wall -pedantic -ansi -D_REENTRANT"
+  XX_CFLAGS="-Wall -fno-strict-aliasing -pedantic -ansi -D_REENTRANT"
 else
   case "$host" in
     *-dec-osf*)

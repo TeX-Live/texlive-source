@@ -39,6 +39,9 @@ elif test "x$GCC" = xyes; then
   AS_CASE([`$CC -dumpversion`],
           [3.4.* | 4.*],
           [kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement"])
+  AS_CASE([`$CC -dumpversion`],
+          [3.@<:@234@:>@.* | 4.*],
+          [kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas"])
   if test "x$enable_compiler_warnings" != xmin; then
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
     if test "x$enable_compiler_warnings" != xyes; then
@@ -95,6 +98,9 @@ if test "x$enable_compiler_warnings" = xno; then
   kpse_cv_warning_cxxflags=
 elif test "x$GXX" = xyes; then
   kpse_cv_warning_cxxflags="-Wall -Wunused"
+  AS_CASE([`$CXX -dumpversion`],
+          [3.@<:@234@:>@.* | 4.*],
+          [kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas"])
   if test "x$enable_compiler_warnings" != xmin; then
     if test "x$enable_compiler_warnings" != xyes; then
       kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wimplicit -Wparentheses -Wreturn-type"

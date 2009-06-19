@@ -1,3 +1,8 @@
+2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: enable compiler warnings.
+	* Makefile.am (AM_CFLAGS, AM_CXXFLAGS): enable compiler warnings.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

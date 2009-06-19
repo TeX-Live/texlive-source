@@ -27,6 +27,7 @@ dist-hook:
 
 INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = $(LIBPNG_DEFINES)
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_LIBRARIES=libpng.a
 

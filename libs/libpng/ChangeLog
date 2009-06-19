@@ -1,3 +1,9 @@
+2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: enable compiler warnings.
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* libpng-1.2.37/png.c (png_64bit_product): declare as static.
+
 2009-06-04  Martin Schröder <martin@oneiros.de>
 
 	Import libpng-1.2.37.

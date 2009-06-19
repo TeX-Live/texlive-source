@@ -7,6 +7,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = -I$(top_srcdir)/source/Public-headers $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DNDEBUG
+AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 noinst_LIBRARIES = libTECkit.a
 EXTRA_LIBRARIES = libTECkit_Compiler.a

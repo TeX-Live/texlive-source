@@ -50,7 +50,8 @@ DIST_COMMON = README $(am__configure_deps) $(noinst_HEADERS) \
 	../../build-aux/mkinstalldirs ../../build-aux/texinfo.tex \
 	../../build-aux/ylwrap COPYING ChangeLog INSTALL TODO
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -154,6 +155,8 @@ SHELL = @SHELL@
 SIZEOF_WCHAR_T = @SIZEOF_WCHAR_T@
 STRIP = @STRIP@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -210,6 +213,8 @@ INCLUDES = -I$(top_srcdir)/include/graphite \
 	-I$(top_srcdir)/src/generic -I$(top_srcdir)/src/font \
 	-I$(top_srcdir)/src/segment
 AM_CPPFLAGS = -DNDEBUG
+AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 noinst_LIBRARIES = libgraphite.a
 noinst_HEADERS = \
 	include/graphite/FileFont.h \

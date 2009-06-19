@@ -650,6 +650,8 @@ ZLIB_INCLUDES
 EGREP
 GREP
 CPP
+WARNING_CXXFLAGS
+WARNING_CFLAGS
 LN_S
 RANLIB
 am__fastdepCC_FALSE
@@ -742,6 +744,7 @@ ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
 enable_dependency_tracking
+enable_compiler_warnings
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
@@ -1389,6 +1392,9 @@ Optional Features:
 			  (and sometimes confusing) to the casual installer
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
+  --enable-compiler-warnings=[no|min|yes|max]
+                          Turn on compiler warnings [default: yes if
+                          maintainer-mode, min otherwise]
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -4131,6 +4137,90 @@ else
   { $as_echo "$as_me:$LINENO: result: no, using $LN_S" >&5
 $as_echo "no, using $LN_S" >&6; }
 fi
+
+
+# Check whether --enable-compiler-warnings was given.
+if test "${enable_compiler_warnings+set}" = set; then
+  enableval=$enable_compiler_warnings;
+fi
+case $enable_compiler_warnings in
+  no | min | yes | max) : ;;
+  *) if test "x$enable_maintainer_mode" = xyes; then
+  enable_compiler_warnings=yes
+else
+  enable_compiler_warnings=min
+fi
+ ;;
+esac
+
+
+{ $as_echo "$as_me:$LINENO: checking what warning flags to pass to the C compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
+if test "${kpse_cv_warning_cflags+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
+elif test "x$GCC" = xyes; then
+  kpse_cv_warning_cflags="-Wall -Wunused"
+  case `$CC -dumpversion` in
+  3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;;
+esac
+
+  case `$CC -dumpversion` in
+  3.[234].* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;;
+esac
+
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wimplicit -Wparentheses -Wreturn-type"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+      case `$CC -dumpversion` in
+  3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;;
+esac
+
+    fi
+  fi
+else
+  : # FIXME: warning flags for non-gcc compilers
+fi
+fi
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_warning_cflags" >&5
+$as_echo "$kpse_cv_warning_cflags" >&6; }
+WARNING_CFLAGS=$kpse_cv_warning_cflags
+
+
+{ $as_echo "$as_me:$LINENO: checking what warning flags to pass to the C++ compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C++ compiler... " >&6; }
+if test "${kpse_cv_warning_cxxflags+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cxxflags=
+elif test "x$GXX" = xyes; then
+  kpse_cv_warning_cxxflags="-Wall -Wunused"
+  case `$CXX -dumpversion` in
+  3.[234].* | 4.*) kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas" ;;
+esac
+
+  if test "x$enable_compiler_warnings" != xmin; then
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wimplicit -Wparentheses -Wreturn-type"
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"
+      kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
+    fi
+  fi
+else
+  : # FIXME: warning flags for non-g++ compilers
+fi
+fi
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_warning_cxxflags" >&5
+$as_echo "$kpse_cv_warning_cxxflags" >&6; }
+WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
+
+
 
 
 # Checks for header files.

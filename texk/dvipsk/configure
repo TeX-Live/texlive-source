@@ -12913,6 +12913,10 @@ elif test "x$GCC" = xyes; then
   3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;;
 esac
 
+  case `$CC -dumpversion` in
+  3.[234].* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;;
+esac
+
   if test "x$enable_compiler_warnings" != xmin; then
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
     if test "x$enable_compiler_warnings" != xyes; then

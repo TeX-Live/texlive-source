@@ -19960,7 +19960,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 if test "x$CC" = xgcc; then
-  XX_CFLAGS="-Wall -pedantic -ansi -D_REENTRANT"
+  XX_CFLAGS="-Wall -fno-strict-aliasing -pedantic -ansi -D_REENTRANT"
 else
   case "$host" in
     *-dec-osf*)

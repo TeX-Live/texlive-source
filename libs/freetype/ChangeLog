@@ -1,3 +1,8 @@
+2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* freetype-1.5/configure.in, freetype-1.5/configure: avoid lots
+	of gcc warnings, adding -fno-strict-aliasing to XX_CFLAGS.
+
 2009-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

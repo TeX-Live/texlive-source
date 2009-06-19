@@ -8,6 +8,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = -I$(top_srcdir)/include/graphite -I$(top_srcdir)/src/generic
 INCLUDES += -I$(top_srcdir)/src/font -I$(top_srcdir)/src/segment 
 AM_CPPFLAGS = -DNDEBUG
+AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 noinst_LIBRARIES = libgraphite.a
 
