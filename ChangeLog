@@ -1,3 +1,8 @@
+2009-06-18  Karl Berry  <karl@tug.org>
+
+	* Build: eradicate -Wdecl stuff, peb has implemented something
+	more general.
+
 2009-06-01  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (world): don't echo the echo.

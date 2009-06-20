@@ -80,7 +80,8 @@ cd $TL_WORKDIR || exit 1
 # allow override of xdvi toolkit, default to standard xaw.
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
-# allow adding arbitrary other configure args.
+# allow adding arbitrary other configure args, such as
+# --with-tex-banner='TeX Live 2009/SomeDistro'.
 : ${TL_CONFIGURE_ARGS=}
 
 # allow override of make target.
