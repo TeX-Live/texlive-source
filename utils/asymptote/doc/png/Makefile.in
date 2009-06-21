@@ -19,12 +19,13 @@ latexusage.png: ../latexusage.eps
 index.html: $(SOURCE) $(ASYFILES:.asy=.png)
 	makeinfo --html ../asymptote -o .
 
-asymptote.info: $(SOURCE) $(ASYFILES:.asy=.png)
+asymptote.info: $(SOURCE)
+	makeinfo --no-split ../asymptote >& /dev/null
+
+info:	asymptote.info $(SOURCE)
 	makeinfo --no-split ../asymptote
 
 html:	index.html
-
-info:	asymptote.info
 
 clean: FORCE
 	-rm -f *.png *.html asymptote.info* texput.aux texput.log
@@ -32,14 +33,18 @@ clean: FORCE
 distclean: FORCE clean
 	-rm -f Makefile
 
-install: 
-	${INSTALL} -d -m 755 $(infodir)
-	${INSTALL} -p -m 644 asymptote.info $(infodir)
+install: asymptote.info
+	${INSTALL} -d -m 755 $(infodir)/asymptote
+	${INSTALL} -p -m 644 asymptote.info $(infodir)/asymptote
 	-if test -z "$(DESTDIR)"; then \
 		install-info --infodir=$(infodir) asymptote.info; \
 	fi
 
+install-all: all install
+	${INSTALL} -p -m 644 *.png $(infodir)/asymptote
+
 uninstall: 
 	-install-info --remove --infodir=$(infodir) asymptote.info
-	-rm -f $(infodir)/asymptote.info $(infodir)/asymptote.info-*
+	-cd $(infodir)/asymptote; rm -f asymptote.info *.png
+	-rmdir -f $(infodir)/asymptote
 FORCE:

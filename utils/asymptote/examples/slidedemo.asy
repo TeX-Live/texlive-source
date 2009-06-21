@@ -7,6 +7,7 @@ orientation=Landscape;
 import slide;
 import three;
 
+settings.toolbar=false;
 viewportsize=pagewidth-2pagemargin;
 
 usersetting();
@@ -108,10 +109,8 @@ draw(pic,"$r$",(x,0,0)--(x,f(r),0),X+0.2Z,red,Arrow3);
 draw(pic,arc(1.1X,0.4,90,90,3,-90),Arrow3);
 add(pic.fit(8.5cm));
 
-viewportsize=viewportmargin=0;
 title("\mbox{Asymptote: 2D \& 3D Vector Graphics Language}");
 asyinclude("logo3");
-skip();
 center("\tt http://asymptote.sf.net");
 center("(freely available under the GNU public license)");
 

@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[1.76],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[1.77],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 
@@ -77,8 +77,8 @@ AC_SUBST(docdir)
 
 sysdir=$Datadir/asymptote
 
-AC_ARG_ENABLE(tetex-build,
-[AS_HELP_STRING(--enable-tetex-build,
+AC_ARG_ENABLE(texlive-build,
+[AS_HELP_STRING(--enable-texlive-build,
 automatically determine sysdir from kpsewhich)],
 [ if test "x$enableval" = "xyes" ; then
     sysdir=""

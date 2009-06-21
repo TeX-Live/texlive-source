@@ -1134,7 +1134,7 @@ void initSettings() {
   addOption(new envSetting("sysdir", systemDir));
   addOption(new envSetting("textcommand","groff -e -P-b16"));
   addOption(new envSetting("textextension", "roff"));
-  addOption(new envSetting("textoutputtype", "ps"));
+  addOption(new envSetting("textoutformat", "ps"));
   addOption(new envSetting("textprologue", ".EQ\ndelim $$\n.EN"));
   addOption(new envSetting("textinitialfont", ".fam T\n.ps 12"));
   addOption(new envSetting("textepilogue", ""));
@@ -1196,14 +1196,18 @@ void setPath() {
   if(sysdir == "") {
     iopipestream pipe("kpsewhich --var-value=SELFAUTOPARENT");
     pipe >> sysdir;
-    size_t size=sysdir.size();
-    if(size > 2) {
 // Workaround broken header file on i386-solaris with g++ 3.4.3.
 #ifdef erase
 #undef erase
 #endif
-      sysdir.erase(size-1,1);
-      sysdir.append(dirsep+"texmf/asymptote");
+    size_t n=sysdir.find('\r');
+    if(n != string::npos)
+      sysdir.erase(n,1);
+    n=sysdir.find('\n');
+    if(n != string::npos)
+      sysdir.erase(n,1);
+    if(sysdir.size() > 1) {
+      sysdir.append(dirsep+"texmf"+dirsep+"asymptote");
       Setting("sysdir")=sysdir;
     }
   }

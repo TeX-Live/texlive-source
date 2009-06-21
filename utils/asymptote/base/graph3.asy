@@ -1591,15 +1591,11 @@ private surface bispline(real[][] z, real[][] p, real[][] q, real[][] r,
       real yj=y[j];
       real yp=y[j+1];
       if(all || condi[j]) {
-        triple[][] P={
-          {O,O,O,O},
-          {O,O,O,O},
-          {O,O,O,O},
-          {O,O,O,O}};
+        triple[][] P=array(4,array(4,O));
         real hy=(yp-yj)/3;
         real hxy=hx*hy;
         // first x and y  directions
-        for(int k=0 ; k < 4 ; ++k) {
+        for(int k=0; k < 4; ++k) {
           P[k][0] += xi*X;
           P[0][k] += yj*Y;
           P[k][1] += (xp+2*xi)/3*X;
@@ -1636,34 +1632,38 @@ private surface bispline(real[][] z, real[][] p, real[][] q, real[][] r,
 }
 
 // return the surface described by a real matrix f, interpolated with
-// splinetype.
+// xsplinetype and ysplinetype.
 surface surface(real[][] f, real[] x, real[] y,
-                splinetype splinetype=null, bool[][] cond={})
+                splinetype xsplinetype=null, splinetype ysplinetype=xsplinetype,
+                bool[][] cond={})
 {
-  if(splinetype == null)
-    splinetype=(x[0] == x[x.length-1] && y[0] == y[y.length-1]) ? 
-      periodic : notaknot;
+  real epsilon=sqrtEpsilon*max(abs(y));
+  if(xsplinetype == null)
+    xsplinetype=(abs(x[0]-x[x.length-1]) <= epsilon) ? periodic : notaknot;
+  if(ysplinetype == null)
+    ysplinetype=(abs(y[0]-y[y.length-1]) <= epsilon) ? periodic : notaknot;
   int n=x.length; int m=y.length;
   real[][] ft=transpose(f);
   real[][] tp=new real[m][];
-  for(int j=0; j < m ; ++j)
-    tp[j]=splinetype(x,ft[j]);
+  for(int j=0; j < m; ++j)
+    tp[j]=xsplinetype(x,ft[j]);
   real[][] q=new real[n][];
-  for(int i=0; i < n ; ++i)
-    q[i]=splinetype(y,f[i]);
+  for(int i=0; i < n; ++i)
+    q[i]=ysplinetype(y,f[i]);
   real[][] qt=transpose(q);
-  real[] d1=splinetype(x,qt[0]);
-  real[] d2=splinetype(x,qt[m-1]);
+  real[] d1=xsplinetype(x,qt[0]);
+  real[] d2=xsplinetype(x,qt[m-1]);
   real[][] r=new real[n][];
-  for(int i=0; i < n ; ++i)
-    r[i]=clamped(d1[i],d2[i])(y,f[i]);
-  return bispline(f,transpose(tp),q,r,x,y,cond);
+  real[][] p=transpose(tp);
+  for(int i=0; i < n; ++i)
+    r[i]=clamped(d1[i],d2[i])(y,p[i]);
+  return bispline(f,p,q,r,x,y,cond);
 }
 
 // return the surface described by a real matrix f, interpolated with
-// splinetype.
-surface surface(real[][] f, pair a, pair b, splinetype splinetype,
-                bool[][] cond={})
+// xsplinetype and ysplinetype.
+surface surface(real[][] f, pair a, pair b, splinetype xsplinetype,
+                splinetype ysplinetype=xsplinetype, bool[][] cond={})
 {
   if(!rectangular(f)) abort("matrix is not rectangular");
 
@@ -1674,7 +1674,7 @@ surface surface(real[][] f, pair a, pair b, splinetype splinetype,
 
   real[] x=uniform(a.x,b.x,nx);
   real[] y=uniform(a.y,b.y,ny);
-  return surface(f,x,y,splinetype,cond);
+  return surface(f,x,y,xsplinetype,ysplinetype,cond);
 }
 
 // return the surface described by a real matrix f, interpolated linearly.
@@ -1732,6 +1732,82 @@ surface surface(triple f(pair z), pair a, pair b, int nu=nmesh, int nv=nu,
   return surface(v,active);
 }
   
+// return the surface described by a parametric function f over box(a,b),
+// interpolated with usplinetype and vsplinetype.
+surface surface(triple f(pair z), pair a, pair b, int nu=nmesh, int nv=nu,
+                splinetype[] usplinetype, splinetype[] vsplinetype=Spline,
+                bool cond(pair z)=null)
+{
+  real[] upt=uniform(a.x,b.x,nu);
+  real[] vpt=uniform(a.y,b.y,nv);
+  real[] ipt=sequence(nu+1);
+  real[] jpt=sequence(nv+1);
+  real[][] fx=new real[nu+1][nv+1];
+  real[][] fy=new real[nu+1][nv+1];
+  real[][] fz=new real[nu+1][nv+1];
+
+  bool[][] active;
+  bool all=cond == null;
+  if(!all) active=new bool[nu+1][nv+1];
+
+  real norm;
+  for(int i=0; i <= nu; ++i) {
+    real upti=upt[i];
+    real[] fxi=fx[i];
+    real[] fyi=fy[i];
+    real[] fzi=fz[i];
+    bool[] activei=all ? null : active[i];
+    for(int j=0; j <= nv; ++j) {
+      pair z=(upti,vpt[j]);
+      triple f=(all || (activei[j]=cond(z))) ? f(z) : O;
+      norm=max(norm,abs(f));
+      fxi[j]=f.x;
+      fyi[j]=f.y;
+      fzi[j]=f.z;
+    }
+  }
+
+  real epsilon=sqrtEpsilon*norm;
+
+  if(usplinetype.length == 0) {
+    bool uperiodic(real[][] a) {
+      for(int j=0; j < nv; ++j)
+        if(abs(a[0][j]-a[nu][j]) > epsilon) return false;
+      return true;
+    }
+    usplinetype=new splinetype[] {uperiodic(fx) ? periodic : notaknot,
+                                  uperiodic(fy) ? periodic : notaknot,
+                                  uperiodic(fz) ? periodic : notaknot};
+  } else if(usplinetype.length != 3) abort("usplinetype must have length 3");
+
+  if(vsplinetype.length == 0) {
+    bool vperiodic(real[][] a) {
+      for(int i=0; i < nu; ++i)
+        if(abs(a[i][0]-a[i][nv]) > epsilon) return false;
+      return true;
+    }
+    vsplinetype=new splinetype[] {vperiodic(fx) ? periodic : notaknot,
+                                  vperiodic(fy) ? periodic : notaknot,
+                                  vperiodic(fz) ? periodic : notaknot};
+  } else if(vsplinetype.length != 3) abort("vsplinetype must have length 3");
+  
+  surface sx=surface(fx,ipt,jpt,usplinetype[0],vsplinetype[0],active);
+  surface sy=surface(fy,ipt,jpt,usplinetype[1],vsplinetype[1],active);
+  surface sz=surface(fz,ipt,jpt,usplinetype[2],vsplinetype[2],active);
+
+  surface s=surface(sx.s.length);
+  for(int k=0; k < sx.s.length; ++k) {
+    triple[][] Q=new triple[4][4];
+    for(int i=0; i < 4 ; ++i) {
+      for(int j=0; j < 4 ; ++j) {
+        Q[i][j]=(sx.s[k].P[i][j].z,sy.s[k].P[i][j].z,sz.s[k].P[i][j].z);
+      }
+      s.s[k]=patch(Q);
+    }
+  }
+  return s;
+}
+
 // return the surface described by a real function f over box(a,b),
 // interpolated linearly.
 surface surface(real f(pair z), pair a, pair b, int nx=nmesh, int ny=nx,
@@ -1741,9 +1817,10 @@ surface surface(real f(pair z), pair a, pair b, int nx=nmesh, int ny=nx,
 }
 
 // return the surface described by a real function f over box(a,b),
-// interpolated with splinetype.
+// interpolated with xsplinetype and ysplinetype.
 surface surface(real f(pair z), pair a, pair b, int nx=nmesh, int ny=nx,
-                splinetype splinetype, bool cond(pair z)=null)
+                splinetype xsplinetype, splinetype ysplinetype=xsplinetype,
+                bool cond(pair z)=null)
 {
   bool[][] active;
   bool all=cond == null;
@@ -1767,7 +1844,7 @@ surface surface(real f(pair z), pair a, pair b, int nx=nmesh, int ny=nx,
       if(!all) activei[j]=cond(z);
     }
   }
-  return surface(F,x,y,splinetype,active);
+  return surface(F,x,y,xsplinetype,ysplinetype,active);
 }
 
 guide3[][] lift(real f(real x, real y), guide[][] g,

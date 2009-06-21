@@ -1,7 +1,7 @@
 %{!?_texmf: %define _texmf %(eval "echo `kpsewhich -expand-var '$TEXMFLOCAL'`")}
 
 Name:           asymptote
-Version:        1.76
+Version:        1.77
 Release:        1%{?dist}
 Summary:        Descriptive vector graphics language
 
@@ -47,7 +47,7 @@ make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install-all DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
 
 %{__install} -p -m 644 BUGS ChangeLog LICENSE README ReleaseNotes TODO \
     $RPM_BUILD_ROOT%{_defaultdocdir}/%{name}/
@@ -59,12 +59,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 texhash >/dev/null 2>&1 || :
-/sbin/install-info %{_infodir}/%{name}.info.gz %{_infodir}/dir 2>/dev/null || :
+/sbin/install-info %{_infodir}/%{name}/%{name}.info.gz %{_infodir}/dir 2>/dev/null || :
 
 %postun
 texhash >/dev/null 2>&1 || :
 if [ $1 = 0 ]; then
-    /sbin/install-info --remove %{_infodir}/%{name}.info.gz %{_infodir}/dir 2>/dev/null || :
+    /sbin/install-info --remove %{_infodir}/%{name}/%{name}.info.gz %{_infodir}/dir 2>/dev/null || :
 fi
 
 
@@ -76,6 +76,8 @@ fi
 %{_texmf}/tex/latex/%{name}
 %{_texmf}/tex/context/third/%{name}
 %{_mandir}/man1/*.1*
+%{_infodir}/%{name}/
+%{_infodir}/%{name}/*.info*
 %{_infodir}/*.info*
 
 

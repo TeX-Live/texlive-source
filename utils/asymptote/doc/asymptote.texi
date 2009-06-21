@@ -21,7 +21,7 @@ file LICENSE in the top-level source directory).
      
 @dircategory Languages
 @direntry
-* asymptote: (asymptote).               Vector graphics language.
+* asymptote: (asymptote/asymptote). Vector graphics language.
 @end direntry
 
 @titlepage
@@ -161,7 +161,7 @@ Base modules
 * contour::                     Contour lines
 * contour3::                    Contour surfaces
 * slopefield::                  Slope fields
-
+* ode::                         Ordinary differential equations
 
 Graphical User Interface
 
@@ -403,7 +403,8 @@ pressing the @code{r} key).
 @cindex @code{settings}
 @cindex configuration file
 Configuration variables are most easily set as @code{Asymptote}
-variables in the configuration file (by default, @code{.asy/config.asy} in the 
+variables in an optional configuration file (by default,
+@code{.asy/config.asy} in the
 user's home directory or @code{%USERPROFILE%\.asy\config.asy} under
 @code{MSDOS}); @pxref{configuration file}. Here are the default values
 of several important configuration variables under @code{UNIX}:
@@ -2010,13 +2011,14 @@ delimited by @code{delimiter};
 returns a string containing @code{n} formatted according to the C-style
 format string @code{s} using the current locale;
 
-@item string format(string s, real x, string locale="")
+@item string format(string s=defaultformat, real x, string locale="")
 returns a string containing @code{x} formatted according to the C-style format
 string @code{s} using locale @code{locale} (or the current locale if an
 empty string is specified), following the behaviour of the C function
 @code{fprintf}), except that only one data field is allowed, trailing
-zeros are removed by default (unless @code{#} is specified), and @TeX{}
-is used to typeset scientific notation;
+zeros are removed by default (unless @code{#} is specified), and
+(if the format string specifies math mode) @TeX{} is used to typeset
+scientific notation;
 
 @cindex @code{hex}
 @cindex @code{hexidecimal}
@@ -3226,6 +3228,7 @@ A picture @code{pic} can be fit to a frame and output to a file
 by calling the @code{shipout} function:
 @anchor{shipout}
 @cindex @code{shipout}
+@cindex @code{outprefix}
 @verbatim
 void shipout(string prefix=defaultfilename, picture pic=currentpicture,
              orientation orientation=orientation,
@@ -3237,7 +3240,8 @@ void shipout(string prefix=defaultfilename, picture pic=currentpicture,
 The default output format, @code{PostScript}, may be changed
 with the @code{-f} or @code{-tex} command-line options.
 The @code{options}, @code{script}, and @code{projection} parameters
-are only relevant for 3D pictures.
+are only relevant for 3D pictures. If @code{defaultfilename} is an
+empty string, the prefix @code{outprefix()} will be used.
 
 A @code{shipout()} command is added implicitly at file exit if no
 previous @code{shipout} commands have been executed.
@@ -5863,9 +5867,9 @@ inline 3D figures and @code{0} for attachments.
 
 If the @code{inline} option is given to the
 @code{asymptote.sty} package, inline @code{LaTeX} code is generated instead of
-@acronym{EPS} or @acronym{PDF} files. This makes LaTeX symbols visible to the
+@acronym{EPS} or @acronym{PDF} files. This makes 2D LaTeX symbols visible to the
 @code{\begin@{asy@}...\end@{asy@}} environment.  In this mode,
-Asymptote correctly aligns LaTeX symbols defined outside of
+Asymptote correctly aligns 2D LaTeX symbols defined outside of
 @code{\begin@{asy@}...\end@{asy@}}, but treats their size as zero; an
 optional second string can be given to @code{Label} to provide an
 estimate of the unknown label size. 
@@ -5930,7 +5934,7 @@ Here now is @code{latexusage.tex}:
 * contour::                     Contour lines
 * contour3::                    Contour surfaces
 * slopefield::                  Slope fields
-
+* ode::                         Ordinary differential equations
 @end menu
 
 @node plain
@@ -6003,8 +6007,9 @@ interpolation in @code{Asymptote}, as illustrated in the example
 @cindex @code{perpendicular}
 This module, written by Philippe Ivaldi, provides an extensive set of
 geometry routines, including @code{perpendicular} symbols and a @code{triangle}
-structure. It is documented here:
-@url{http://asymptote.sourceforge.net/geometry_en.pdf},
+structure. Link to the documentation for the @code{geometry} module
+are posted here:
+@url{http://asymptote.sourceforge.net/links.html},
 including an extensive set of examples,
 @url{http://piprim.tuxfamily.org/asymptote/geometry/index.html}, and an index:
 @quotation
@@ -6202,7 +6207,7 @@ However, @code{XeLaTeX} users need to rename the modified version
 @end quotation
 to @code{movie15.sty} and place it in their @code{LaTeX} path.
 
-The latest version (2008/10/08) of the @code{movie15} package requires both
+The latest version of the @code{movie15} package requires both
 @code{pdflatex} version 1.20 or later and the file
 @quotation
 @url{http://www.ctan.org/tex-archive/macros/latex/contrib/oberdiek/ifdraft.dtx}
@@ -8011,9 +8016,9 @@ as illustrated in the example files @code{galleon.asy} and
 @cindex 3D graphs
 This module implements three-dimensional versions of the
 functions in @code{graph.asy}.
-@cindex @code{xaxis}
-@cindex @code{yaxis}
-@cindex @code{zaxis}
+@cindex @code{xaxis3}
+@cindex @code{yaxis3}
+@cindex @code{zaxis3}
 @noindent
 To draw an @math{x} axis in three dimensions, use the routine
 @verbatim
@@ -8086,26 +8091,35 @@ One can also place ticks along a general three-dimensional axis:
 @sp 1
 @center @image{generalaxis3}
 
+@cindex @code{surface}
+@cindex @code{Spline}
+@cindex parametric surface
 Surface plots of matrices and functions over the region
 @code{box(a,b)} in the @math{XY} plane are also implemented: 
 @verbatim
 surface surface(real[][] f, pair a, pair b, bool[][] cond={});
-surface surface(real[][] f, pair a, pair b, splinetype splinetype,
-                bool[][] cond={});
+surface surface(real[][] f, pair a, pair b, splinetype xsplinetype,
+                splinetype ysplinetype=xsplinetype, bool[][] cond={});
 surface surface(real[][] f, real[] x, real[] y,
-                splinetype splinetype=null, bool[][] cond={})
+                splinetype xsplinetype=null, splinetype ysplinetype=xsplinetype,
+                bool[][] cond={})
 surface surface(triple[][] f, bool[][] cond={});
 surface surface(real f(pair z), pair a, pair b, int nx=nmesh, int ny=nx,
                 bool cond(pair z)=null);
 surface surface(real f(pair z), pair a, pair b, int nx=nmesh, int ny=nx,
-                splinetype splinetype, bool cond(pair z)=null);
+                splinetype xsplinetype, splinetype ysplinetype=xsplinetype,
+                bool cond(pair z)=null);
 surface surface(triple f(pair z), pair a, pair b, int nu=nmesh, int nv=nu,
+                bool cond(pair z)=null);
+surface surface(triple f(pair z), pair a, pair b, int nu=nmesh, int nv=nu,
+                splinetype[] usplinetype, splinetype[] vsplinetype=Spline,
                 bool cond(pair z)=null);
 @end verbatim
 @noindent
-The final version draws a parametric surface for a function
+The final two versions draw parametric surfaces for a function
 @math{f(u,v)} over the parameter space @code{box(a,b)},
 as illustrated in the example @code{parametricsurface.asy}.
+An optional splinetype @code{Spline} may be specified.
 The boolean array or function @code{cond} can be used to control which
 surface mesh cells are actually drawn (by default all mesh cells over
 @code{box(a,b)} are drawn).
@@ -8502,6 +8516,13 @@ Both @code{slopefield} and @code{curve} alternatively accept a function
 @sp 1
 @center @image{slopefield1}
 
+@node ode
+@section @code{ode}
+@cindex @code{ode}
+The @code{ode} module, illustrated in the example @code{odetest.asy},
+implements a number of explicit numerical integration schemes for
+ordinary differential equations.
+
 @node Options
 @chapter Options
 @cindex options
@@ -8775,9 +8796,9 @@ The modified figure can then be saved as a normal @code{Asymptote} file.
 
 As @code{xasy} is written in the interactive scripting language
 @code{Python/TK}, it requires @code{Python}
-(@url{http://www.python.org}), the Python Imaging Library
+(@url{http://www.python.org}), the @code{Python Imaging Library}
 (@url{http://www.pythonware.com/products/pil/}), and the @code{tkinter}
-package (included with s@code{Python} under @code{Microsoft Windows}) be
+package (included with @code{Python} under @code{Microsoft Windows}) be
 installed. @code{Fedora Linux} users can either install
 @code{tkinter} with the commands
 @verbatim
@@ -9212,6 +9233,7 @@ Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  nonintegral gettriple enablerepo hexidecimal XeLaTeX xelatex
 @c  LocalWords:  dvipdfmx autoadjust viewportsize viewportwidth viewportheight
 @c  LocalWords:  subregions nonsimply functionshade shader floatingdisk TopView
-@c  LocalWords:  functionshading nonselfintersecting maxlength LeftView
+@c  LocalWords:  functionshading nonselfintersecting maxlength LeftView odetest
 @c  LocalWords:  vectorfieldsphere RightView FrontView BackView BottomView
-@c  LocalWords:  addViews
+@c  LocalWords:  addViews outprefix addAllViews xsplinetype ysplinetype
+@c  LocalWords:  usplinetype vsplinetype

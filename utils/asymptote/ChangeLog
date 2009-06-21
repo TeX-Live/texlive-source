@@ -1,4 +1,345 @@
 ------------------------------------------------------------------------
+r4428 | jcbowman | 2009-06-19 00:53:54 -0600 (Fri, 19 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Document the ode module.
+
+------------------------------------------------------------------------
+r4427 | jcbowman | 2009-06-19 00:47:08 -0600 (Fri, 19 Jun 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/plain.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/doc/asymptote.sty
+
+Set viewportmargin=(1,1) in asymptote.sty.
+
+Reinstate ceil.
+
+------------------------------------------------------------------------
+r4426 | jcbowman | 2009-06-19 00:45:07 -0600 (Fri, 19 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/animations/torusanimation.asy
+   A /trunk/asymptote/examples/soccerball.asy
+
+Update examples.
+
+------------------------------------------------------------------------
+r4425 | jcbowman | 2009-06-18 23:30:24 -0600 (Thu, 18 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+   M /trunk/asymptote/base/splinetype.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/examples/Klein.asy
+   M /trunk/asymptote/examples/RiemannSurface.asy
+   M /trunk/asymptote/examples/RiemannSurfaceRoot.asy
+   M /trunk/asymptote/examples/condor.asy
+   A /trunk/asymptote/examples/p-orbital.asy
+   M /trunk/asymptote/examples/parametricelevation.asy
+   M /trunk/asymptote/examples/parametricsurface.asy
+   A /trunk/asymptote/examples/roll.asy
+   M /trunk/asymptote/examples/sphericalharmonic.asy
+   M /trunk/asymptote/examples/torus.asy
+   A /trunk/asymptote/examples/trumpet.asy
+   M /trunk/asymptote/examples/twistedtubes.asy
+   M /trunk/asymptote/examples/xxsq01y.asy
+
+Implement splined parametric surfaces, based on contribution of Olivier Guibe.
+
+------------------------------------------------------------------------
+r4424 | jcbowman | 2009-06-18 22:14:48 -0600 (Thu, 18 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/pipestream.h
+
+Move SIGQUIT earlier.
+
+------------------------------------------------------------------------
+r4423 | jcbowman | 2009-06-18 13:48:59 -0600 (Thu, 18 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/splinetype.asy
+
+Remove periodicity check.
+
+------------------------------------------------------------------------
+r4422 | jcbowman | 2009-06-18 13:47:22 -0600 (Thu, 18 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+
+Allow different splinetypes in x and y directions.
+
+------------------------------------------------------------------------
+r4421 | jcbowman | 2009-06-18 13:41:12 -0600 (Thu, 18 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+   M /trunk/asymptote/examples/odetest.asy
+
+Implement FSAL.
+
+------------------------------------------------------------------------
+r4420 | jcbowman | 2009-06-18 11:28:41 -0600 (Thu, 18 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+   M /trunk/asymptote/examples/odetest.asy
+
+Implement dynamic time stepping in ode solver.
+
+------------------------------------------------------------------------
+r4419 | jcbowman | 2009-06-17 21:01:13 -0600 (Wed, 17 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Rename --enable-tetex-build to --enable-texlive-build.
+
+------------------------------------------------------------------------
+r4418 | jcbowman | 2009-06-17 11:48:42 -0600 (Wed, 17 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph.asy
+
+Fix autoformat.
+
+------------------------------------------------------------------------
+r4417 | jcbowman | 2009-06-15 05:06:13 -0600 (Mon, 15 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Simplify sysdir code.
+
+------------------------------------------------------------------------
+r4416 | jcbowman | 2009-06-13 20:54:06 -0600 (Sat, 13 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Strip both LF and CR from kpsewhich
+------------------------------------------------------------------------
+r4415 | jcbowman | 2009-06-11 20:04:26 -0600 (Thu, 11 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Reinstate viewportfactor.
+
+------------------------------------------------------------------------
+r4414 | jcbowman | 2009-06-11 19:57:21 -0600 (Thu, 11 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+
+Autogenerate default steps.
+
+------------------------------------------------------------------------
+r4413 | jcbowman | 2009-06-10 23:41:31 -0600 (Wed, 10 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Set default viewportmargin back to (0,0).
+
+------------------------------------------------------------------------
+r4412 | jcbowman | 2009-06-10 22:45:06 -0600 (Wed, 10 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+
+Rename textoutputtype to textoutformat for consistency.
+
+------------------------------------------------------------------------
+r4411 | jcbowman | 2009-06-10 22:43:53 -0600 (Wed, 10 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/slide.asy
+   M /trunk/asymptote/examples/slidedemo.asy
+   M /trunk/asymptote/picture.cc
+
+Fix reference sizing.
+
+------------------------------------------------------------------------
+r4410 | jcbowman | 2009-06-10 09:42:13 -0600 (Wed, 10 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+   M /trunk/asymptote/base/three_surface.asy
+
+Fix path3 label alignment.
+
+------------------------------------------------------------------------
+r4409 | jcbowman | 2009-06-10 08:04:35 -0600 (Wed, 10 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Fix path3 label alignment.
+
+------------------------------------------------------------------------
+r4408 | jcbowman | 2009-06-09 22:16:39 -0600 (Tue, 09 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+
+Package asy-faq.info.gz.
+
+------------------------------------------------------------------------
+r4407 | jcbowman | 2009-06-09 21:59:58 -0600 (Tue, 09 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Fix typo.
+------------------------------------------------------------------------
+r4406 | jcbowman | 2009-06-09 21:37:17 -0600 (Tue, 09 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+
+Fix Jacobian.
+
+------------------------------------------------------------------------
+r4405 | jcbowman | 2009-06-09 21:18:19 -0600 (Tue, 09 Jun 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/math.asy
+   M /trunk/asymptote/base/ode.asy
+   M /trunk/asymptote/runtime.in
+
+Move real[]*real[][] to C++ code.
+
+Simplify ode module.
+
+------------------------------------------------------------------------
+r4404 | jcbowman | 2009-06-09 15:12:29 -0600 (Tue, 09 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+   A /trunk/asymptote/examples/odetest.asy
+
+Update ode module; extract example.
+
+------------------------------------------------------------------------
+r4403 | jcbowman | 2009-06-09 15:10:59 -0600 (Tue, 09 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/graph3.asy
+
+Fix bug found by Olivier in surface(real[][] f, real[] x, real[] y).
+
+------------------------------------------------------------------------
+r4402 | jcbowman | 2009-06-07 21:53:40 -0600 (Sun, 07 Jun 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/examples/slidedemo.asy
+
+Uninstall asy-keywords.el.
+
+Update slidedemo.
+
+------------------------------------------------------------------------
+r4401 | jcbowman | 2009-06-07 21:32:37 -0600 (Sun, 07 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+
+Fix build error.
+
+------------------------------------------------------------------------
+r4400 | jcbowman | 2009-06-07 20:53:31 -0600 (Sun, 07 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+
+Fix spec file.
+
+------------------------------------------------------------------------
+r4399 | jcbowman | 2009-06-07 20:36:06 -0600 (Sun, 07 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+
+Update info location.
+
+------------------------------------------------------------------------
+r4398 | jcbowman | 2009-06-07 20:11:06 -0600 (Sun, 07 Jun 2009) | 3 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/doc/FAQ/Makefile
+   M /trunk/asymptote/doc/Makefile.in
+   M /trunk/asymptote/doc/png/Makefile.in
+
+Clean up info installation: make install installs info files without png
+images, make install-all installs info files with png files.
+
+------------------------------------------------------------------------
+r4397 | jcbowman | 2009-06-07 16:51:01 -0600 (Sun, 07 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/png/Makefile.in
+
+Install png files with asymptote.info in directory info/asymptote.
+
+------------------------------------------------------------------------
+r4396 | jcbowman | 2009-06-07 14:36:36 -0600 (Sun, 07 Jun 2009) | 3 lines
+Changed paths:
+   M /trunk/asymptote/doc/Makefile.in
+
+Install asymptote.info before asy-faq.info so that info asy accesses
+asymptote.info.
+
+------------------------------------------------------------------------
+r4395 | jcbowman | 2009-06-07 07:52:49 -0600 (Sun, 07 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Resolve ambiguity.
+
+------------------------------------------------------------------------
+r4394 | jcbowman | 2009-06-07 07:31:41 -0600 (Sun, 07 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/path.cc
+   M /trunk/asymptote/path3.cc
+
+Fix mintimes and maxtimes for arbitrary length paths.
+
+------------------------------------------------------------------------
+r4393 | jcbowman | 2009-06-07 07:11:07 -0600 (Sun, 07 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_strings.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/runtime.in
+
+Make format return TeX compatible output only in math mode.
+
+------------------------------------------------------------------------
+r4392 | jcbowman | 2009-06-07 06:18:43 -0600 (Sun, 07 Jun 2009) | 3 lines
+Changed paths:
+   A /trunk/asymptote/base/lmfit.asy
+
+Add Levenberg-Marquardt nonlinear fitting routine, contributed by Philipp
+Stephani.
+
+------------------------------------------------------------------------
+r4391 | jcbowman | 2009-06-07 06:10:56 -0600 (Sun, 07 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/path.cc
+   M /trunk/asymptote/path3.cc
+
+Fix maxtimes for paths where maximum occurs at the endpoint.
+
+------------------------------------------------------------------------
+r4390 | jcbowman | 2009-06-06 19:09:43 -0600 (Sat, 06 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Improve viewport padding.
+
+------------------------------------------------------------------------
+r4389 | jcbowman | 2009-06-06 09:26:30 -0600 (Sat, 06 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/util.cc
+
+Add links to manual in error message.
+
+------------------------------------------------------------------------
+r4388 | jcbowman | 2009-06-06 07:52:40 -0600 (Sat, 06 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+
+Add preliminary ode module (untested).
+
+------------------------------------------------------------------------
+r4387 | jcbowman | 2009-06-05 23:47:42 -0600 (Fri, 05 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.77svn.
+------------------------------------------------------------------------
 r4386 | jcbowman | 2009-06-05 21:23:37 -0600 (Fri, 05 Jun 2009) | 2 lines
 Changed paths:
    M /trunk/asymptote/drawclipend.h

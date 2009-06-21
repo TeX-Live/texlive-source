@@ -1,3 +1,12 @@
+Release Notes for Version 1.77
+
+Splined parametric surfaces were implemented; a bug in the Cartesian
+splined surface routines was fixed. An ode module for solving ordinary
+differential equations was added. A bug in maxtimes and mintimes was fixed.
+A Levenberg-Marquardt nonlinear fitting routine was added. The format
+command now returns TeX compatible output only in math mode. A path3 label
+alignment problem was fixed. The MSWindows support for TeXLive 2009 was fixed.
+
 Release Notes for Version 1.76
 
 A bezulate bug was fixed. The resolution and caching of texpath were

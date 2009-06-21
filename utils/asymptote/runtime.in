@@ -1417,7 +1417,7 @@ patharray *textpath(string *s, pen p=CURRENTPEN)
   
   string prefix=outname();
   spaceToUnderscore(prefix);
-  string outputname=auxname(prefix,getSetting<string>("textoutputtype"));
+  string outputname=auxname(prefix,getSetting<string>("textoutformat"));
 
   string textname=auxname(prefix,getSetting<string>("textextension"));
   std::ofstream text(textname.c_str());
@@ -3515,6 +3515,8 @@ string format(string *format, Int x)
 
 string format(string *format, real x, string locale=emptystring) 
 {
+  bool tex=getSetting<string>("tex") != "none";
+  bool texify=false;
   ostringstream out;
   
   checkformat(format->c_str(),false);
@@ -3524,8 +3526,12 @@ string format(string *format, real x, string locale=emptystring)
   
   const char *p=p0;
   const char *start=NULL;
-  while (*p != 0) {
-    if(*p == '%') {
+  char prev=0;
+  while(*p != 0) {
+    char curr=*p;
+    if(tex && curr == '$' && prev != '\\') texify=true;
+    prev=curr;
+    if(curr == '%') {
       p++;
       if(*p != '%') {start=p-1; break;}
     }
@@ -3535,7 +3541,7 @@ string format(string *format, real x, string locale=emptystring)
   if(!start) return out.str();
   
   // Allow at most 1 argument  
-  while (*p != 0) {
+  while(*p != 0) {
     if(*p == '*' || *p == '$') return out.str();
     if(isupper(*p) || islower(*p)) {p++; break;}
     p++;
@@ -3608,7 +3614,8 @@ string format(string *format, real x, string locale=emptystring)
   
   // Translate "E+/E-/e+/e-" exponential notation to TeX
   while(*q != 0) {
-    if((*q == 'E' || *q == 'e') && (*(q+1) == '+' || *(q+1) == '-')) {
+    if(texify && (*q == 'E' || *q == 'e') && 
+       (*(q+1) == '+' || *(q+1) == '-')) {
       if(!zero) out << "\\!\\times\\!10^{";
       bool plus=(*(q+1) == '+');
       q++;
@@ -5318,6 +5325,34 @@ realarray *Operator *(realarray2 *a, realarray *b)
     (*c)[i]=sum;
   }
   delete[] B;
+  return c;
+}
+
+realarray *Operator *(realarray *a, realarray2 *b)
+{
+  size_t n=checkArray(a);
+  if(n != checkArray(b)) error(incommensurate);
+  real *A=copyArrayC(a);
+
+  array **B=new array*[n];
+  array *bk=read<array *>(b,0);
+  B[0]=bk;
+  size_t m=bk->size();
+  for(size_t k=1; k < n; k++) {
+    array *bk=read<array *>(b,k);
+    if(bk->size() != m) error(incommensurate);
+    B[k]=bk;
+  }
+  array *c=new array(m);
+
+  for(size_t i=0; i < m; ++i) {
+    real sum=0.0;
+    for(size_t k=0; k < n; ++k)
+      sum += A[k]*read<real>(B[k],i);
+    (*c)[i]=sum;
+  }
+  delete[] B;
+  delete[] A;
   return c;
 }
 
