@@ -1,3 +1,17 @@
+2009-06-21  Siep Kroonenberg  <siepo@cybercomm.nl>
+
+	* Makefile.am: remove references to afm2pl.[txt|html]
+	* Makefile.in: regenerated
+	* afm2pl.c:
+	(openin): find afm2pl-<name>.[lig|enc] before <name>.[lig|enc]
+	* afm2pl.[1|xml]: updated
+	* afm2pl.[html|txt]: removed
+	* README: updated
+	* README.DOC (new): describes generation of afm2pl.1 and afm2pl.pdf
+	from afm2pl.xml
+	* Support files in texmf: corrected ot1tt.enc, added
+	prefix to enc files, pre-generated afm2pl.pdf; see also svn logs
+
 2009-06-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

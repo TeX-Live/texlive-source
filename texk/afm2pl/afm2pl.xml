@@ -1,30 +1,12 @@
 <?xml version='1.0' standalone="no"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
- "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
   <!ENTITY szlig "&#x00DF;">
 ]>
-<article>
-<articleinfo>
-  <title>afm2pl</title>
-  <author>
-    <firstname>Siep</firstname>
-    <surname>Kroonenberg</surname>
-    <affiliation>
-      <address><email>ntg-afm2pl@ntg.nl</email></address>
-    </affiliation>
-  </author>
-
-  <copyright>
-    <year>2004</year>
-    <holder>Siep Kroonenberg</holder>
-  </copyright>
-</articleinfo>
-
 <refentry>
 <refentryinfo>
   <title>afm2pl</title>
-  <date>February 2004</date>
-  <!--productname Linux /productname-->
+  <date>May 2009</date>
 </refentryinfo>
 
 <refmeta>
@@ -64,6 +46,7 @@
     <arg choice="opt"><option>-L</option>
       <replaceable>ligkern_spec</replaceable>
     </arg>
+    <arg choice="opt"><option>-n</option></arg>
     <arg choice="req"><replaceable>input_file[.afm]</replaceable></arg>
     <arg choice="opt"><replaceable>output_file[.pl]</replaceable></arg>
   </cmdsynopsis>
@@ -81,17 +64,19 @@
 <title>Description</title>
 <para>afm2pl converts an afm (Adobe Font Metric) file into a pl
 (Property List) file, which in its turn can be converted to a tfm
-(TeX Font Metric) file. It preserves kerns and ligatures.</para>
+(TeX Font Metric) file. It normally preserves kerns and ligatures,
+but also offers additional control over them.</para>
 
-<para>afm2pl is meant to be a replacement for afm2tfm, on which it
-is based. With afm2tfm, preserving kerns and ligatures is possible
-only in a roundabout way.</para>
+<para>afm2pl is meant to be a partial replacement for afm2tfm, on
+which it is based. With afm2tfm, preserving kerns and ligatures is
+possible only in a roundabout way, and handling of them is
+hard-wired.</para>
 
-<para>For text fonts, Y&amp;Y's texnansi is the recommended encoding
-to be used with afm2pl.  This gives you a good character set with
-all the more important accented characters and many typographic
-symbols available as single characters, without a need for either
-virtual fonts or a separate text companion font.</para>
+<para>For text fonts, Y&amp;Y's texnansi is a good encoding to be
+used with afm2pl.  Its character set includes all the accented
+characters likely to be needed for Western languages, plus many
+typographic symbols, without a need for either virtual fonts or a
+separate text companion font.</para>
 
 <para>Full LaTeX support for this encoding is available in the form
 of the texnansi package, which is already part of TeX Live and
@@ -99,16 +84,16 @@ teTeX. These distributions also contain the encoding file
 texnansi.enc.</para>
 
 <para>The distribution contains uppercased and lowercased versions
-of texnansi, viz. texnanuc.enc and texnanlc.enc, to allow font-based
-rather than macro-based uppercasing and lowercasing, and the
-familiar old ot1 encoding plus some variations in PostScript .enc
-format (I included these because they seem to be absent from
-teTeX/TeX Live).  </para>
+of texnansi, viz. texnanuc and texnanlc, to allow font-based rather
+than macro-based uppercasing and lowercasing, and the familiar old
+ot1 encoding plus some variations in PostScript .enc format (I
+included these because they seem to be absent from teTeX/TeX
+Live). However, <link linkend="mapwarn">check your mapfiles</link>
+if you have old afm2pl-generated fonts using these.</para>
 
 <para>Return value: 0 if no error; a negative number indicating the
-number of missing glyphs if
-conversion was successfull but glyphs are missing, and 1 in case of
-error.</para>
+number of missing glyphs if conversion was otherwise successfull but
+glyphs are missing, and 1 in case of error.</para>
 </refsect1>
 
 <refsect1>
@@ -117,11 +102,14 @@ error.</para>
 <varlistentry>
   <term><option>-p</option> <replaceable>encoding_file</replaceable></term>
   <listitem>
-    <para>The default is the encoding specified
-     in the afm file, which had better match the encoding in the
-     fontfile (pfa or pfb). The generated mapfile entry (see below)
-     instructs pdftex or the dvi driver to reencode the font on the fly.
-     On-the-fly reencoding does not require virtual fonts.</para>
+    <para>The default is the encoding specified in the afm file,
+     which had better match the encoding in the fontfile (pfa or
+     pfb). If <literal>afm2pl-name.enc</literal> exists, afm2pl will
+     use this file instead of <literal>name.enc</literal>, unless an
+     option <literal>-n</literal> is given. The generated mapfile
+     entry (see below) instructs pdftex or the dvi driver to
+     reencode the font on the fly.  On-the-fly reencoding does not
+     require virtual fonts.</para>
   </listitem>
 </varlistentry>
 
@@ -137,11 +125,12 @@ error.</para>
   <listitem>
     <para>Widen or narrow characters by
       <replaceable>extend_factor</replaceable>. Default is 1.0
-      (natural width). Not recommended, except that
-      arguably a narrowed Courier is less jarring than a full-width
-      Courier, when used in
-      combination with a normal proportional font.
-      For Courier, choose .833 to match the width of cmtt.</para>
+      (natural width). Not recommended<footnote><para>Except that arguably a
+      narrowed Courier is less jarring than a full-width Courier,
+      when used in combination with a normal proportional font.  For
+      Courier, choose .833 to match the width of cmtt. Better yet,
+      don't use Courier at all; most TeX distributions offer various
+      good replacements.</para></footnote>.</para>
   </listitem>
 </varlistentry>
 
@@ -150,7 +139,7 @@ error.</para>
   <listitem>
     <para>Oblique (slant) characters by
     <replaceable>slant_factor</replaceable>.
-    Not recommended.</para>
+    Not recommended either.</para>
   </listitem>
 </varlistentry>
 
@@ -276,11 +265,14 @@ error.</para>
   <term><option>-m</option> <replaceable>letter_spacing</replaceable></term>
   <listitem>
     <para>Letterspace by
-    <replaceable>letter_spacing</replaceable>/1000 em (integer). This is
-    useful for making all-caps typesetting look better. Try a value
-    of e.g. 50 or 100. But see the section
-    on <link linkend="lspace">letterspacing and extra ligkern info</link>
-    for details.</para>
+    <replaceable>letter_spacing</replaceable>/1000 em
+    (integer). This is useful for making all-caps typesetting look
+    better. Try a value of e.g. 50 or 100. But see the section
+    on <link linkend="lspace">letterspacing and extra ligkern
+    info</link> for details. A better alternative, though, is
+    letting pdftex do the
+    letterspacing. The <package>microtype</package> package gives
+    LaTeX users access to this feature.</para>
   </listitem>
 </varlistentry>
 
@@ -295,11 +287,21 @@ error.</para>
 </varlistentry>
 
 <varlistentry>
+  <term><option>-n</option></term>
+  <listitem>
+    <para>No prefix. For .enc- and .lig files, the program normally
+    first prefixes the name with `afm2pl-'. Only if the prefixed
+    filename is not found, will it search for the original
+    filename. This option prevents searching for the prefixed filename.
+    </para>
+  </listitem>
+</varlistentry>
+
+<varlistentry>
   <term><option>-V</option></term>
   <listitem>
     <para>Verbose. If turned on, it reports the number of missing
-    glyphs to stderr and their names to stdout. This is not particularly
-    logical, but this way the glyph names can be captured even under Windows.
+    glyphs to stderr and their names to stdout.
     </para>
   </listitem>
 </varlistentry>
@@ -324,17 +326,24 @@ error.</para>
 <title>Mapfile entries</title>
 <para>afm2pl writes a mapfile entry to a file with the same basename
 as the pl output file, but with extension .map. It can be used for
-the dvips mapfile and for the pdftex mapfile, although, in case of a
-geometrically transformed font, it may be better to remove the
-PostScript name for a pdftex mapfile entry.  It is assumed that the
+the dvips mapfile and for the pdftex mapfile.  It is assumed that the
 pfb file has the same basename as the afm file and must be
 downloaded. <emphasis>You may have to hand-edit this
 entry.</emphasis></para>
 
 <para>You can configure dvips and pdftex to read this additional
-mapfile or otherwise add the entry to an existing mapfile. It
-appears that pdftex automatically will consult a mapfile xxx.map for
-a font xxx.</para>
+mapfile or otherwise add the entry to an existing mapfile.</para>
+
+<para id="mapwarn"><emphasis role="strong">Check your
+  mapfiles!</emphasis> To reduce the likelihood of name conflicts,
+  the .enc- files which are part of afm2pl (ot1, ot1csc, ot1ital,
+  ot1tt, texnanlc and texnanuc) have now been prepended
+  with <literal>afm2pl-</literal>. The .enc files are referenced in
+  mapfiles. If you have old afm2pl-generated .tfm files using these,
+  then you should update their mapfile fragments and rerun updmap or
+  updmap-sys. Or you can copy the relevant enc files to your
+  personal or local texmf tree under their previous non-prefixed
+  names.</para>
 </refsect1>
 
 <refsect1 id="lspecs" xreflabel="ligkern specs">
@@ -347,11 +356,12 @@ and to accept the default behavior.</emphasis></para>
 modified in various ways.  Default, the encoding file is scanned for
 extra ligkern specifications, whose format will be described below.
 If there are no ligkern specifications in the encoding file, then
-extra ligkern specifications will be read from a file default.lig. A
-value of 0 for <replaceable>ligkern_spec</replaceable> means that
-the ligatures and kerns from the afm file won't be tampered with and
-a value of 1 specifies default behavior. One can also specify a
-comma-separated list of files with extra ligkerns specs.</para>
+extra ligkern specifications will be read from a file
+[afm2pl-]default.lig. A value of 0
+for <replaceable>ligkern_spec</replaceable> means that the ligatures
+and kerns from the afm file won't be tampered with and a value of 1
+specifies default behavior. One can also specify a comma-separated
+list of files with extra ligkerns specs.</para>
 
 <para>If afm2pl is compiled with the kpathsea library, then these
 files will be searched for under $TEXMF/fonts/lig.</para>
@@ -411,7 +421,8 @@ glyphname which does not occur in the afm. In fact, this is what
 default.lig does: <literal>|| = cwm ;</literal>.</para>
 
 <para>You can copy the kerns of an unencoded character to the
-boundarychar:</para>
+boundarychar. Below, <literal>space</literal> is the unencoded
+character:</para>
 
 <screen>
 || &lt;&gt; space ;
@@ -457,20 +468,21 @@ and modifies existing kerns.</para></listitem>
 
 <listitem><para>The extra ligkern info specified with -L is applied.
 The only ligkern specs which are allowed here, are removals of
-kerning pairs (with the <literal>{}</literal> operator).  Values
-0 and 1 have a similar meaning as for the -l parameter.  The tfm
-format has room for only about 180x180 ligatures and kerning pairs.
-This is enough for OT1 encoding, but for texnansi encoding quite a
-few ligkern specifications  have to be removed.  The pltotf program
-will remove <emphasis>all</emphasis> ligkern info if too many
-ligatures and kerns remain. The default lig file is defpost.lig.
-This file throws out kerning pairs which are unlikely to be involved
-in letterspacing, such as kerns involving accents or kerns with a
+kerning pairs (with the <literal>{}</literal> operator).  Values 0
+and 1 have a similar meaning as for the -l
+parameter.  <emphasis id="lspacewarn">The tfm format has room for
+only about 180x180 ligatures and kerning pairs.</emphasis> This is
+enough for OT1 encoding, but for texnansi encoding quite a few
+ligkern specifications have to be removed.  The pltotf program will
+remove <emphasis>all</emphasis> ligkern info if too many ligatures
+and kerns remain. The default lig file is defpost.lig.  This file
+throws out kerning pairs which are unlikely to be involved in
+letterspacing, such as kerns involving accents or kerns with a
 punctuation character or right bracket at the left. It does not add
 letterspacing kerns involving boundarychars.  Instead, fontspace is
-increased by twice the letterspacing. defpost.lig throws out
-enough kerns in case of texnansi encoding.  With other encodings,
-you may have to throw out additional kerning
+increased by twice the letterspacing. defpost.lig throws out enough
+kerns in case of texnansi encoding.  With other encodings, you may
+have to throw out additional kerning
 pairs.</para></listitem> </orderedlist>
 </refsect1>
 
@@ -478,13 +490,42 @@ pairs.</para></listitem> </orderedlist>
 <title>Font-based upper- and lowercasing</title>
 
 <para>The distribution includes encoding vectors texnanuc.enc and
-texnanlc.enc which produce all-uppercase and all-lowercase fonts.
-The distribution contains an example ucshape.tex on how to use such
-fonts with LaTeX font selection.</para>
+texnanlc.enc which produce all-uppercase and all-lowercase
+fonts</para>
 
 <para>The principal uses for an all-uppercase font are page headers
 and section heads. If these contain math, then macro-based
-uppercasing would create unpleasant complications.</para>
+uppercasing would create unpleasant complications. Example:
+<programlisting>
+afm2pl -p texnanuc ptmr8a ptmup8y
+pltotf ptmup8y
+</programlisting>
+For best results, you should add some letterspacing. In LaTeX, this
+is best done with the <package>microtype</package>
+package; see the documentation of that package. But it can also be
+done with <package>afm2pl</package>:
+<programlisting>
+afm2pl -p texnanuc -m 100 ptmr8a ptmup8y
+</programlisting>
+This requires caution;
+see <link linkend="lspacewarn">above.</link></para>
+
+<para>You can use this new font within the context of LaTeX font
+  selection as follows:
+<programlisting>
+<![CDATA[
+<preamble commands>
+\makeatletter
+{\nfss@catcodes
+\DeclareFontShape{LY1}{ptm}{m}{upp}{<-> ptmup8y}{}}
+\makeatother
+...
+\begin{document}
+...
+{\fontshape{upp}\selectfont uppercase text}
+]]>
+</programlisting>
+Note that <code>upp</code> is simply a newly made-up shape name.</para>
 
 <refsect2>
 <title>The sz ligature &szlig;</title>
@@ -512,7 +553,8 @@ that to work.</para>
 
 <refsect1>
 <title>Afm2pl, fontinst and artificial smallcaps</title>
-<para>Afm2pl currently doesn't do virtual fonts. That means that for
+
+<para>Afm2pl doesn't do virtual fonts. That means that for
 things such as artificial smallcaps you have to turn elsewhere,
 e.g. to the fontinst package, which is part of any mainstream TeX
 distribution.</para>
@@ -531,26 +573,26 @@ useable as PostScript names.</para>
 </refsect1>
 
 <refsect1>
-<title>Future plans</title>
+<title>Changed in version 0.7.1</title>
 
-<para>I am considering a revision which makes afm2pl a more complete
-replacement for afm2tfm. In that version, afm2pl can optionally
-create a second, virtual font, possibly with a different encoding
-and possibly letterspaced. The current option of non-virtual
-letterspacing via kerns will be dropped. If the encodings differ
-then it is assumed that the virtual font is intended as a small-caps
-version of the main font, and a scaling parameter can be
-specified for non-matching glyphs.</para> </refsect1>
+<para>In order to avoid name conflicts, the .enc- and .lig files
+  distributed with afm2pl got <literal>afm2pl-</literal> prepended
+  to their name. The program itself now first searches for the thus
+  prepended name. If the .enc- or .lig file is not found it will
+  look for the original filename. The renaming of the afm2pl .enc
+  files may require modification of some mapfiles.</para>
+</refsect1>
 
-<refsect1>
-<title>Copyright</title>
-<para>The afm2pl distribution is subject to the GNU General Public Licence
-(GPL). Please refer to the file COPYING for details.</para>
-
+<refsect1><title>Urls</title>
 <para>The afm2pl homepage is <ulink
 url="http://www.ntg.nl/afm2pl.html">http://www.ntg.nl/afm2pl.html</ulink>.</para>
+
+<para>The paper
+  <ulink url="http://www.tug.org/TUGboat/Articles/tb27-1/tb86kroonenberg-fonts.pdf">Font
+  installation the shallow way</ulink> (EuroTeX 2006 Proceedings,
+  published
+  as <ulink url="http://www.tug.org/TUGboat/">TUGboat</ulink> issue
+  27.1) illustrates the use of afm2pl.</para>
 </refsect1>
 
 </refentry>
-</article>
-

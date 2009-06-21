@@ -1,5 +1,5 @@
 /* afm2pl
- * Copyright (C) 2002, 2005 Siep Kroonenberg
+ * Copyright (C) 2002, 2005, 2009 Siep Kroonenberg
  * ntg-afm2pl@ntg.nl
  * based on afm2tfm.
  */
@@ -194,7 +194,7 @@ struct encoding *outencoding = NULL;
 char *ligoption = "1";          /* which extra ligkerns? */
 char *Ligoption = "1";          /* extra ligkern info after letterspacing */
 int based_on;                   /* name output file based on name afm file? */
-
+int no_prefix = 0;              /* don't look for afm2pl- prefixed filenames */
 FILE *infile, *outfile;
 char *afmname, *outname;        /* names of input and output files */
 char *encfilename;              /* encoding file */
@@ -452,10 +452,20 @@ openin(char *fname, kpse_file_format_type format, char *ext)
   char *realfname;
 
 #ifdef KPATHSEA
-  realfname = kpse_find_file (fname, format, false);
+  realfname = NULL;
+  if (!no_prefix && (!strcmp(ext, ".enc") || !strcmp(ext, ".lig"))) {
+    realfname = kpse_find_file (concat("afm2pl-", fname), format, false);
+    if (!realfname) {
+      realfname = concat (concat("afm2pl-", fname), ext);
+      realfname = kpse_find_file (realfname, format, false);
+    }
+  }
   if (!realfname) {
-    realfname = concat (fname, ext);
-    realfname = kpse_find_file (realfname, format, false);
+    realfname = kpse_find_file (fname, format, false);
+    if (!realfname) {
+      realfname = concat (fname, ext);
+      realfname = kpse_find_file (realfname, format, false);
+    }
   }
   if (!realfname)
     FATAL1 ("%s not found", fname);
@@ -1978,11 +1988,11 @@ version(FILE *f)
 #ifdef KPATHSEA
   extern KPSEDLL char *kpathsea_version_string;
 #endif
-  fputs ("afm2pl(k) 0.7.03\n", f);
+  fputs ("afm2pl(k) 0.7.1\n", f);
 #ifdef KPATHSEA
   fprintf (f, "%s\n", kpathsea_version_string);
 #endif
-  fputs ("Copyright (C) 2002, 2005 Siep Kroonenberg.\n\
+  fputs ("Copyright (C) 2002, 2005, 2009 Siep Kroonenberg.\n\
 This program is derived from afm2tfm, (C) 2002 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License.\n\
@@ -2201,6 +2211,11 @@ readargs(int argc, char **argv)
       break;
     case 'k':
       keepligs = 1;
+      argv += 1;
+      argc -= 1;
+      break;
+    case 'n':
+      no_prefix = 1;
       argv += 1;
       argc -= 1;
       break;

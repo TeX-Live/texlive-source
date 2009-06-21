@@ -1,0 +1,77 @@
+GENERATING THE DOCUMENTATION
+
+The documentation source is a DocBook refentry. Texinfo would have
+made more sense, but at the time it was a nice excuse to have a look
+at DocBook, xml and xslt.
+
+The manpage and pdf were generated separately, not as part of the
+TeX Live build process.
+
+The required tools, dblatex and xmlto, are available as Ubuntu- and
+Debian packages.
+
+The pdf is generated with dblatex, with a command-line
+
+dblatex -P latex.hyperparam=bookmarks=false,colorlinks \
+  -s ./mystyle.sty \
+  -p ./dbl.xsl \
+  afm2pl.xml
+
+This is the contents of mystyle.sty:
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mystyle}
+\RequirePackageWithOptions{db2latex}
+\AtBeginDocument{\setcounter{secnumdepth}{-1}}
+
+This is the contents of dbl.xsl:
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                version='1.0'>
+
+<xsl:variable name="arg.choice.opt.open.str"><xsl:text> [</xsl:text></xsl:variable>
+<xsl:variable name="arg.choice.opt.close.str"><xsl:text>] </xsl:text></xsl:variable>
+<xsl:variable name="arg.choice.req.open.str"><xsl:text> {</xsl:text></xsl:variable>
+<xsl:variable name="arg.choice.req.close.str"><xsl:text>} </xsl:text></xsl:variable>
+<xsl:variable name="arg.choice.def.open.str"><xsl:text> [</xsl:text></xsl:variable>
+<xsl:variable name="arg.choice.def.close.str"><xsl:text>] </xsl:text></xsl:variable>
+
+<xsl:template match="cmdsynopsis">
+  <xsl:text>{\raggedright\parindent0pt\parskip7pt &#10;</xsl:text>
+  <xsl:call-template name="label.id"/>
+  <xsl:apply-templates/>
+  <xsl:text>&#10; \par}</xsl:text>
+</xsl:template>
+
+<xsl:param name="monoseq.hyphenation">0</xsl:param>
+<xsl:template match="synopsis">
+  <xsl:call-template name="label.id"/>
+  <xsl:call-template name="output.verbatim"/>
+</xsl:template>
+<xsl:template match="option">
+  <xsl:call-template name="inline.monoseq"/><xsl:text> </xsl:text>
+</xsl:template>
+</xsl:stylesheet>
+
+The manpage is generated with xmlto, which uses xsltproc and docbook
+xsl transformations. The command-line is:
+
+  xmlto -m xml2.xsl man afm2pl.xml
+
+This is the contents of xml2.xsl:
+
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version='1.0'>
+<xsl:variable name="arg.choice.req.open.str"></xsl:variable>
+<xsl:variable name="arg.choice.req.close.str"></xsl:variable>
+<xsl:template name="make.toc"></xsl:template>
+</xsl:stylesheet>
+
+An html version can be generated with
+
+xmlto -m xml2.xsl html-nochunks afm2pl.xml
+
+June 21 2009
+
+Siep Kroonenberg
+ntg-afm2pl@ntg.nl
+http://tex.aanhet.net/afm2pl/

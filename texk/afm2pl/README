@@ -1,9 +1,10 @@
 DESCRIPTION
 
-afm2pl is meant to be a replacement for afm2tfm, on which it is
-based. Its default action is to convert an afm file to a tfm file,
-with preservation of kerns and ligatures (with afm2tfm, preserving
-kerns and ligatures is possible only in a roundabout way).
+afm2pl is meant to be a partial replacement for afm2tfm, on which it
+is based. Its default action is to convert an afm file to a tfm
+file, with preservation of kerns and ligatures (with afm2tfm,
+preserving kerns and ligatures is possible only in a roundabout
+way).
 
 For PostScript text fonts, Y&Y's texnansi is the recommended
 encoding to be used with afm2pl.  This gives you a good character
@@ -15,10 +16,11 @@ Full LaTeX support for this encoding is available in the form of the
 texnansi package, which is already part of TeX Live and teTeX.
 
 The distribution also contains uppercased and lowercased versions of
-texnansi, texnanuc.enc and texnanlc.enc, to allow font-based rather
-than macro-based uppercasing and lowercasing. LaTeX macro support
-for this, in the context of LaTeX2e's font handling, is not hard;
-the key is to treat all-uppercase and all-lowercase as new shapes.
+texnansi, [afm2pl-]texnanuc.enc and [afm2pl-]texnanlc.enc, to allow
+font-based rather than macro-based uppercasing and
+lowercasing. LaTeX macro support for this, in the context of
+LaTeX2e's font handling, is not hard; the key is to treat
+all-uppercase and all-lowercase as new shapes.
 
 USAGE
 
@@ -32,6 +34,7 @@ This is the help message printed by afm2pl:
   -e REAL             Widen (extend) characters by a factor of REAL
   -s REAL             Oblique (slant) characters by REAL, generally <<1
   -m INTEGER          Letterspace by INTEGER/1000 em
+  -V                  Verbose output; i.e. report on missing glyphs
   --help              Print this message and exit.
   --version           Print version number and exit.
 
@@ -43,12 +46,21 @@ This is the help message printed by afm2pl:
 
 INSTALLATION FROM SOURCE
 
-Afm2pl is meant to be incorporated into a current TeX Live/teTeX
-installation. TeX Live already includes afm2pl, and for teTeX
-(version >= 3.0) you can simply place the afm2pl source directory
-under texk before compilation. A Windows binary is also provided.
+Afm2pl is part of the TeX Live source tree. Standalone compilation
+may still work, but is no longer supported.
 
 TROUBLESHOOTING
+
+Problem: the fonts appear to be missing or I get the wrong characters.
+
+Solution: check your mapfiles. Starting TeX Live 2009, the
+afm2pl-specific .enc files got `afm2pl-' prepended to their
+names. Although you don't have to add this prefix to the
+command-line, the prefix is necessary in the mapfile. You may have
+to edit your mapfiles accordingly.
+
+Also, afm2pl-ot1tt.enc is brought in conformance with the monospaced
+version of OT1, and ot1csc.enc has been removed altogether.
 
 Problem: I get warnings
 
@@ -76,10 +88,10 @@ contains all kerning pairs which are likely to matter. If you use a
 different encoding, you might exceed these boundaries and as a
 consequence lose all glyphs and kerns.
 
-Feedback is welcome.
+Consider using the tracking option of the microtype package instead.
 
-June 23 2005
+June 21 2009
 
 Siep Kroonenberg
 ntg-afm2pl@ntg.nl
-http://www.ntg.nl/afm2pl.html
+http://tex.aanhet.net/afm2pl/

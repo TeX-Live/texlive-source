@@ -15,7 +15,7 @@ afm2pl_SOURCES = afm2pl.c
 
 afm2pl_DEPENDENCIES = $(KPATHSEA_DEPEND)
 
-LDADD = $(KPATHSEA_LIBS)	
+LDADD = $(KPATHSEA_LIBS)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
@@ -24,14 +24,12 @@ dist_man1_MANS = afm2pl.1
 
 TESTS = afm2pl.test
 
-EXTRA_DIST = afm2pl.test logo10.afm xlogo10.map xlogo10.pl 
+EXTRA_DIST = afm2pl.test logo10.afm xlogo10.map xlogo10.pl
 
 CLEANFILES = logo10.map logo10.pl
 
 ## Not used
 ##
 EXTRA_DIST += \
-	afm2pl.html \
-	afm2pl.txt \
-	afm2pl.xml
+	afm2pl.xml README.DOC
 
