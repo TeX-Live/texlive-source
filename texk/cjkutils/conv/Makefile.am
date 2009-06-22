@@ -5,3 +5,5 @@
 ##
 bin_PROGRAMS = bg5conv cefconv cef5conv cefsconv extconv sjisconv
 
+AM_CFLAGS = $(XX_CFLAGS)
+

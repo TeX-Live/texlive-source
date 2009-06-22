@@ -1,3 +1,8 @@
+2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: enable compiler warnings (TeX Live style).
+	* conv/Makefile.am: enable compiler warnings.
+
 2009-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

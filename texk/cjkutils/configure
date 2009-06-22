@@ -12951,18 +12951,7 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 ac_config_headers="$ac_config_headers hbf2gf/c-auto.h:hbf2gf/c-auto.in"
 
 
-if test "x$CC" = xgcc; then
-	XX_CFLAGS="-Wall"
-else
-	case "$host" in
-  		alpha-dec-osf*)
-        	XX_CFLAGS="-std1 -O2 -g3"
-       		;;
-  		*)
-          	XX_CFLAGS=
-       		;;
-	esac
-fi
+XX_CFLAGS=$WARNING_CFLAGS
 
 
 { $as_echo "$as_me:$LINENO: checking whether struct tm is in sys/time.h or time.h" >&5

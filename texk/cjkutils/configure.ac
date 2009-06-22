@@ -18,18 +18,7 @@ KPSE_COMMON([cjkutils])
 AC_CONFIG_HEADERS([hbf2gf/c-auto.h:hbf2gf/c-auto.in])
 
 dnl get Compiler flags right.
-if test "x$CC" = xgcc; then
-	XX_CFLAGS="-Wall"
-else
-	case "$host" in
-  		alpha-dec-osf*)
-        	XX_CFLAGS="-std1 -O2 -g3"
-       		;;
-  		*)
-          	XX_CFLAGS=
-       		;;
-	esac
-fi
+XX_CFLAGS=$WARNING_CFLAGS
 AC_SUBST([XX_CFLAGS])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
