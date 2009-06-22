@@ -41,7 +41,7 @@ authorization from SIL International.
 
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/c-pathch.h>
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 #include <kpathsea/cnf.h>
 #include <kpathsea/concatn.h>
 #include <kpathsea/default.h>
@@ -100,7 +100,7 @@ extern int	xdv2pdf(int argc, char** argv);
   }
 
 static string
-remove_dbonly P1C(const_string, path)
+remove_dbonly(const_string path)
 {
   string ret = XTALLOC(strlen (path) + 1, char), q=ret;
   const_string p=path;
@@ -125,10 +125,13 @@ remove_dbonly P1C(const_string, path)
    `client_path' member must already be set upon entry.  */
 
 static void
-init_path PVAR2C(kpse_format_info_type *, info, const_string, default_path, ap)
+init_path(kpse_format_info_type *info, const_string default_path, ...)
 {
   string env_name;
   string var = NULL;
+  va_list ap;
+
+  va_start (ap, default_path);
   
   info->default_path = default_path;
 
@@ -191,7 +194,6 @@ init_path PVAR2C(kpse_format_info_type *, info, const_string, default_path, ap)
   EXPAND_DEFAULT (info->override_path, "application override variable");
   info->path = kpse_brace_expand (info->path);
 }
-}	/* extra closing brace to match with PVAR2C in function header */
 
 int
 main(int argc, char** argv)

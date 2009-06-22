@@ -261,6 +261,9 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = 
+AM_CFLAGS = $(WARNING_CFLAGS)
+AM_OBJCFLAGS = ## $(WARNING_CFLAGS)
+AM_CXXFLAGS = ## $(WARNING_CXXFLAGS)
 T1Wrap_SOURCES = \
 	SimplePSInterpreter.h \
 	SimplePSInterpreter.m \

@@ -649,6 +649,7 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
 	      else
 		{
 		  if (opterr)
+		   {
 		   if (argv[optind - 1][1] == '-')
 		    /* --option */
 		    fprintf (stderr,
@@ -659,6 +660,7 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
 		    fprintf (stderr,
 		     _("%s: option `%c%s' doesn't allow an argument\n"),
 		     argv[0], argv[optind - 1][0], pfound->name);
+		   }
 
 		  nextchar += strlen (nextchar);
 

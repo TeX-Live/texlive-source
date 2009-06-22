@@ -7,6 +7,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS =
+AM_CFLAGS = $(WARNING_CFLAGS)
+## Not yet for ObjC and C++ (too many warnings)
+AM_OBJCFLAGS = ## $(WARNING_CFLAGS)
+AM_CXXFLAGS = ## $(WARNING_CXXFLAGS)
 
 if build
 bin_PROGRAMS = T1Wrap xdv2pdf
