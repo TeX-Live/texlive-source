@@ -76,11 +76,7 @@ void t1_Free();               /* free memory                                  */
 struct xobject *t1_Unique();  /* make a unique temporary copy of an object    */
 struct xobject *t1_ArgErr();  /* handle argument errors                       */
 struct xobject *t1_TypeErr(); /* handle 'bad type' argument errors            */
-#ifdef KPATHSEA
-void t1_Consume PVAR1H(int);  /* consume a variable number of arguments       */
-#else
-void t1_Consume();            /* consume a variable number of arguments       */
-#endif
+void t1_Consume(int, ...);    /* consume a variable number of arguments       */
 struct xobject *t1_Copy();    /* make a new copy, not reference bump PNM      */
  
 /*END SHARED*/

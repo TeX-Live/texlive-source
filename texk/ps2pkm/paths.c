@@ -52,12 +52,8 @@ The included files are:
 #include  "strokes.h"      /* understands how to coerce stroke paths       */
 #include  "trig.h"
 
-#ifdef KPATHSEA
-static int UnClose P1H(struct segment *);
-extern void DumpText P1H(struct segment *);
-#else
-static Unclose();
-#endif
+static int UnClose(struct segment *);
+extern void DumpText(struct segment *);
 
 /*
 :h3.Routines Available to the TYPE1IMAGER User

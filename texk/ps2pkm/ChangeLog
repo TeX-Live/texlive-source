@@ -1,3 +1,9 @@
+2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* objects.c, objects.h: use ANSI C variadic function syntax.
+	* paths.c: use ANSI C prototypes instead of P[1-9]H.
+	* type1.c: use ANSI C prototypes instead of P[1-9]H or AA.
+
 2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* regions.c, regions.h, t1imager.h:

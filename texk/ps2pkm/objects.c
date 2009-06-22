@@ -895,12 +895,14 @@ if it is already known that the object is temporary, it is faster to
 just kill it rather than consume it, for example, KillSpace().
 */
  
-#ifdef KPATHSEA
-void Consume PVAR1C(int, n, ap)
+void
+Consume(int n, ...)
 {
   struct xobject *arg;
   int i;
+  va_list ap;
 
+  va_start (ap, n);
   for(i = 0; i < n; i++) {
     arg = va_arg(ap, struct xobject *);
     if (arg != NULL && !ISPERMANENT(arg->flag))
@@ -908,43 +910,8 @@ void Consume PVAR1C(int, n, ap)
   }
   va_end(ap);
   return;
-}}
-#else
-void Consume(n, obj1, obj2, obj3) /* non-ANSI avoids overly strict type checking */
-       int n;
-       struct xobject *obj1,*obj2,*obj3;
-{
-       switch(n) {
- 
-           case 0:
-               return;
- 
-           case 1:
-               if (obj1 != NULL && !ISPERMANENT(obj1->flag))
-                       Destroy(obj1);
-               return;
- 
-           case 2:
-               if (obj1 != NULL && !ISPERMANENT(obj1->flag))
-                       Destroy(obj1);
-               if (obj2 != NULL && !ISPERMANENT(obj2->flag))
-                       Destroy(obj2);
-               return;
- 
-           case 3:
-               if (obj1 != NULL && !ISPERMANENT(obj1->flag))
-                       Destroy(obj1);
-               if (obj2 != NULL && !ISPERMANENT(obj2->flag))
-                       Destroy(obj2);
-               if (obj3 != NULL && !ISPERMANENT(obj3->flag))
-                       Destroy(obj3);
-               return;
- 
-           default:
-               t1_abort("Consume:  too many objects");
-       }
 }
-#endif /* WIN32 */
+
 /*
 :h3.TypeErr() - Handles "Invalid Object Type" Errors
 */
