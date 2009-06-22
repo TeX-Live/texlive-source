@@ -31,5 +31,5 @@ CLEANFILES = logo10.map logo10.pl
 ## Not used
 ##
 EXTRA_DIST += \
-	afm2pl.xml README.DOC
+	afm2pl.xml README.DOCS
 
