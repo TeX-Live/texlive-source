@@ -19,11 +19,7 @@ extern char* TFMpath;
 
 #include "tfm.h"
 
-#ifdef NeedVarargsPrototypes
 extern void Fatal(char *, ...);
-#else
-void Fatal();
-#endif
 
 #ifdef vms
 #include <ssdef.h>
@@ -31,14 +27,8 @@ void Fatal();
 #define getenv vms_getenv
 #endif
 
-#if NeedFunctionPrototypes
-# define DVIPROTO(x) x
-#else
-# define DVIPROTO(x) ()
-#endif
-
 /* Defined in dvi2xx.c. */
-extern long4 NoSignExtend DVIPROTO((FILEPTR, int));
+extern long4 NoSignExtend(FILEPTR, int);
 
 #define TFM_GET_TWO()  NoSignExtend (tfm_fp, 2)
 #define TFM_GET_FOUR() NoSignExtend (tfm_fp, 4)
@@ -50,14 +40,7 @@ extern void Warning();
    OUTBUF==NULL, in which case throw them away. */
 
 static void
-#if NeedFunctionPrototypes
 tfm_get_n (FILEPTR tfm_fp, unsigned nwords, unsigned char **outbuf)
-#else
-tfm_get_n (tfm_fp, nwords, outbuf)
-    FILE *tfm_fp;
-    unsigned nwords;
-    void **outbuf;
-#endif
 {
   unsigned n = nwords * 4;
   void *buf = (void *) malloc (n);
@@ -83,13 +66,7 @@ tfm_get_n (tfm_fp, nwords, outbuf)
    Assume STR is long enough.  */
 
 static void
-#if NeedFunctionPrototypes
 get_bcpl (unsigned char *data, unsigned char *str)
-#else
-get_bcpl (data, str)
-unsigned char *data;
-unsigned char *str;
-#endif
 {
   unsigned length;
   
@@ -115,17 +92,8 @@ unsigned char *str;
    Assume DATA is long enough for everything we might try to read. */
 
 static bool
-#if NeedFunctionPrototypes
 get_pcl_info (unsigned char *data, unsigned *spacing, unsigned *style, 
 	      int *weight, unsigned *typeface_id)
-#else
-get_pcl_info (data, spacing, style, weight, typeface_id)
-    unsigned char *data;
-    unsigned *spacing;
-    unsigned *style;
-    int *weight;
-    unsigned *typeface_id;
-#endif
 {
   /* No magic number for our extensions => forget it. */
   if (data[0] != 'K' && data[1] != 'N')
@@ -151,13 +119,7 @@ get_pcl_info (data, spacing, style, weight, typeface_id)
    Otherwise, return false.  */
 
 bool
-#if NeedFunctionPrototypes
 tfm_read_info (char *name, tfm_info_type *ret)
-#else
-tfm_read_info (name, ret)
-    char *name;
-    tfm_info_type *ret;
-#endif
 {
   /* Don't use a structure for this, since then it might occupy more
      than the exactly four bytes that we need. */

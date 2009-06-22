@@ -127,13 +127,7 @@ unsigned char   c;
 /*******************************  main  *******************************/
 /**********************************************************************/
 int
-#if NeedFunctionPrototypes
 main(int argc, char *argv[])
-#else
-main(argc, argv)
-int     argc;
-char    *argv[];
-#endif
 {
   struct stack_entry {  /* stack entry */
     long4    h, v, w, x, y, z;  /* what's on stack */
@@ -655,12 +649,7 @@ char    *argv[];
 
 /* read a buffered byte */
 char
-#if NeedFunctionPrototypes
 b_read(FILEPTR spfp)
-#else
-b_read(spfp)
-FILEPTR spfp;
-#endif
 {
   if (biact >= binumber) {
 #ifdef RISC_USE_OSL
@@ -675,13 +664,7 @@ FILEPTR spfp;
 
 #ifdef RISC_BUFFER
 void
-#if NeedFunctionPrototypes
 b_write(FILEPTR spfp, char c) /* write a buffered byte */
-#else
-b_write(spfp, c)
-FILEPTR spfp;
-char c;
-#endif
 {
   if (boact >= BUFFSIZE) {
     write_multi(buffout,1,BUFFSIZE,spfp);
@@ -691,14 +674,7 @@ char c;
 }
 
 void
-#if NeedFunctionPrototypes
 b_wrtmult(FILEPTR spfp, char *buf, int len) /* write a sequence of bytes to the output buffer */
-#else
-b_wrtmult(spfp, buf, len)
-FILEPTR spfp;
-char *buf;
-int len;
-#endif
 {
   register int i;
 
@@ -722,12 +698,7 @@ int len;
 
 /* flush the output buffer */
 void
-#if NeedFunctionPrototypes
 b_oflush(FILEPTR spfp)
-#else
-b_oflush(spfp)
-FILEPTR spfp;
-#endif
 {
   write_multi(buffout,1,boact,spfp);
   boact = 0;
@@ -741,12 +712,7 @@ FILEPTR spfp;
 /***************************** CopyFile ******************************/
 /*********************************************************************/
 void
-#if NeedFunctionPrototypes
 CopyFile(char *str )
-#else
-CopyFile( str )
-char    *str;
-#endif
 {
   FILEPTR spfp;
   int     todo;
@@ -778,13 +744,7 @@ char    *str;
 /***************************** CopyHPFile ******************************/
 /*********************************************************************/
 static int
-#if NeedFunctionPrototypes
 getnum(FILEPTR spfp, char *t, char *numstr)
-#else
-getnum(spfp, t, numstr)
-FILEPTR spfp;
-char *t, *numstr;
-#endif
 {
   int count=0;
   for (*t = (char)b_read(spfp); *t<0x40; *t = (char)b_read(spfp))
@@ -794,13 +754,7 @@ char *t, *numstr;
 }
 
 static void
-#if NeedFunctionPrototypes
 setOffset(char dir, char sign, int pos)
-#else
-setOffset(dir, sign, pos)
-char dir, sign;
-int pos;
-#endif
 {
   if ((sign == '+' || sign == '-') && pos > 0 ) {
     EMIT4("\033*p%c%d%c",sign,pos,dir);
@@ -826,12 +780,7 @@ int pos;
 
 
 void
-#if NeedFunctionPrototypes
 CopyHPFile(char *str )
-#else
-CopyHPFile( str )
-char    *str;
-#endif
 {
   FILEPTR spfp;
   char    t,numstr[20];
@@ -1065,11 +1014,7 @@ char    *str;
 
 /* This function closes all open files */
 void
-#if NeedFunctionPrototypes
 CloseFiles(void)
-#else
-CloseFiles()
-#endif
 {
   struct font_entry *fe;
   FILEPTR f;
@@ -1105,13 +1050,7 @@ CloseFiles()
 /***************************  NoSignExtend  ***************************/
 /**********************************************************************/
 long4
-#if NeedFunctionPrototypes
 NoSignExtend(FILEPTR fp, register int n)
-#else
-NoSignExtend(fp, n)     /* return n byte quantity from file fd */
-register FILEPTR fp;    /* file pointer    */
-register int    n;      /* number of bytes */
-#endif
 {
   long4 x = 0;      /* number being constructed */
   unsigned char h;
@@ -1135,13 +1074,7 @@ long4 extendTab[5] = {0,~0^0xff,~0^0xffff,~0^0xffffff,~0^0xffffffff};
 /****************************  SignExtend  ****************************/
 /**********************************************************************/
 long4
-#if NeedFunctionPrototypes
 SignExtend(FILEPTR fp, register int n)
-#else
-SignExtend(fp, n)     /* return n byte quantity from file fd */
-register FILEPTR fp;  /* file pointer    */
-register int     n;   /* number of bytes */
-#endif
 {
   int     n1;       /* number of bytes      */
   long4   x;        /* number being constructed */
@@ -1214,13 +1147,7 @@ register int     n;   /* number of bytes */
   favourable to collect as many PMP commands as possible in one envelope. */
 /*****************************************************************************/
 void
-#if NeedFunctionPrototypes
 PMPout(int l, char *s)
-#else
-PMPout(l, s)
-int     l;
-char    *s;
-#endif
 {
   static char           buffer[OUTBUFSIZE];
   static unsigned short bp = 0;         /* range 0..OUTBUFSIZE */
@@ -1261,12 +1188,7 @@ char    *s;
 
 
 void
-#if NeedFunctionPrototypes
 PMPoutC(char c)
-#else
-PMPoutC(c)
-char c;
-#endif
 {
   PMPout(1, &c);
 }
@@ -1286,12 +1208,7 @@ char c;
 /* useless. (Background: MSDOS 3.2 Technical Reference upd 1 pg 6-137 */
 /**********************************************************************/
 void
-#if NeedFunctionPrototypes
 AssureBinary(FILEPTR f)
-#else
-AssureBinary(f)
-FILEPTR f;
-#endif
 {
   union REGS regs;                      /* registers for bios call */
 
@@ -1322,13 +1239,7 @@ FILEPTR f;
 /****************************  EmitChar  ******************************/
 /**********************************************************************/
 void                     /* output a character bitmap */
-#if NeedFunctionPrototypes
 EmitChar(long4 c, struct char_entry *ce)
-#else
-EmitChar(c, ce)
-long4    c;
-struct char_entry *ce;
-#endif
 {
   register int i;
   register unsigned char  *sl;
@@ -1637,17 +1548,7 @@ printf("Emit character %c(%d) id=%d, yoff=%d[%d], w=%d[%d], h=%d[%d]\n",
 /*********************************************************************/
 
 #ifdef USEPXL
-unsigned char getnyb (
-#if NeedFunctionPrototypes
-                      void
-#endif
-);
-
-long4 pk_packed_num (
-#if NeedFunctionPrototypes
-                      void
-#endif
-);
+static long4 pk_packed_num(void);
 
 #define  PKBYTE   *pkloc; pkloc ++
 #define  OUTCHAR(c) raster_line_buf[bp]= (unsigned char)c; bp++
@@ -1658,13 +1559,7 @@ unsigned char   *pkloc;
 int     repeatcount;
 
 void             /* <Read and translate raster description@>*/
-#if NeedFunctionPrototypes
 PkRaster(struct char_entry *ce, int raster)
-#else
-PkRaster(ce, raster)
-struct char_entry *ce;
-int raster;
-#endif
 {
   int     rp;
   int     current_line;
@@ -1905,11 +1800,8 @@ int raster;
   } /* .... create normally packed raster */
 }
 
-unsigned char getnyb(
-#if NeedFunctionPrototypes
-                      void
-#endif
-                      )
+static unsigned char
+getnyb(void)
 {
   register unsigned char  temp;
   if ( bitweight == 0 ) {
@@ -1923,11 +1815,8 @@ unsigned char getnyb(
 }
 
 
-long4 pk_packed_num(
-#if NeedFunctionPrototypes
-                     void
-#endif
-                     )
+static long4
+pk_packed_num(void)
 { /*@<Packed number procedure@>= */
   register int    i;
   long4    j;
@@ -1961,12 +1850,7 @@ long4 pk_packed_num(
 
 #ifndef USEPXL
 void
-#if NeedFunctionPrototypes
 bad_gf(int n)
-#else
-bad_gf(int n)
-int n;
-#endif
 {
   Fatal("Bad gf file, case %d\n",n);      /* See gf.c */
 }
@@ -1976,14 +1860,7 @@ int n;
 #ifdef LJ4
 /* Compress a raster line in compression mode 2 */
 int
-#if NeedFunctionPrototypes
 CompressLine2(unsigned char *buffer, unsigned char *buffout, int emitbytes)
-#else
-CompressLine2(buffer, buffout, emitbytes)
-unsigned char *buffer;
-unsigned char *buffout;
-int emitbytes;
-#endif
 {
   unsigned char *pos,*ppos,*litpos,*upper;
   int lit,i,pack;
@@ -2072,14 +1949,7 @@ int emitbytes;
 
 
 /* Compress a raster line in compression mode 3 */
-#if NeedFunctionPrototypes
 int CompressLine3(unsigned char *buffer, unsigned char *buffout, int emitbytes)
-#else
-int CompressLine3(buffer, buffout, emitbytes)
-unsigned char *buffer;
-unsigned char *buffout;
-int emitbytes;
-#endif
 {
   unsigned char *pos,*ppos,*litpos,*upper,*prev;
   int lit,i,pack;
@@ -2139,15 +2009,8 @@ int emitbytes;
 /****************************  RasterLine  ****************************/
 /**********************************************************************/
 void
-#if NeedFunctionPrototypes
 RasterLine(struct char_entry *ce, unsigned int nbpl,
            unsigned int current_line, unsigned char *buffer)
-#else
-RasterLine(ce, nbpl, current_line, buffer)
-struct char_entry *ce;
-unsigned short  nbpl, current_line;
-char *buffer;
-#endif
 {
 #ifdef IBM3812
   long   total;
@@ -2243,12 +2106,7 @@ char *buffer;
 /****************************  RasterChar  ****************************/
 /**********************************************************************/
 void                     /* raster a character bitmap */
-#if NeedFunctionPrototypes
 RasterChar(struct char_entry *ce)
-#else
-RasterChar(ce)
-struct char_entry *ce;
-#endif
 {
   int      i;
   register unsigned char  *sl;
@@ -2357,13 +2215,7 @@ struct char_entry *ce;
 /***************************** LoadAChar ******************************/
 /**********************************************************************/
 void
-#if NeedFunctionPrototypes
 LoadAChar(long4 c, register struct char_entry *ptr)
-#else
-LoadAChar(c, ptr)
-long4    c;
-register struct char_entry *ptr;
-#endif
 {
   long4    *pr;
   long     bytes;
@@ -2482,15 +2334,7 @@ register struct char_entry *ptr;
 /*****************************  SetChar  ******************************/
 /**********************************************************************/
 void
-#if NeedFunctionPrototypes
 SetChar(long4 c, short command, int PassNo, bool do_posn, bool in_string)
-#else
-SetChar(c, command, PassNo, do_posn,in_string)
-long4    c;
-short   command;
-int     PassNo;
-bool do_posn,in_string;
-#endif
 {
   register struct char_entry *ptr;  /* temporary char_entry pointer */
   bool pos_after = _FALSE;
@@ -2673,11 +2517,7 @@ bool do_posn,in_string;
     last_rx = (int)PIXROUND(h, hconv) + x_goffset;
 }
 
-#if NeedFunctionPrototypes
 void DoBop(void)
-#else
-void DoBop()
-#endif
 {
   struct font_entry *p;
 #ifdef LJ
@@ -2697,13 +2537,7 @@ void DoBop()
 /*****************************  SetString  ****************************/
 /**********************************************************************/
 void
-#if NeedFunctionPrototypes
 SetString(short firstch, int PassNo)
-#else
-SetString(firstch, PassNo)    /* read and set a consecutive string of chars */
-short   firstch;
-int     PassNo;
-#endif
 {
   short   c;
   register unsigned short i;
@@ -2735,12 +2569,7 @@ int     PassNo;
 /*****************************  SetPosn  ******************************/
 /**********************************************************************/
 void                  /* output a positioning command */
-#if NeedFunctionPrototypes
 SetPosn(long4 x, long4 y)
-#else
-SetPosn(x, y)
-long4    x, y;
-#endif
 {
   int     rx, ry;
   rx = (int)PIXROUND(x, hconv) + x_goffset;
@@ -2811,14 +2640,7 @@ long4    x, y;
    compacted row (line repeat count).  Updates the previous line
    (PrevLine) if necessary. */
 void
-#if NeedFunctionPrototypes
 CompressedCharLine(struct char_entry *ce, int nbpl, unsigned char *buffer)
-#else
-CompressedCharLine(ce, nbpl, buffer)
-struct char_entry *ce;
-int nbpl;
-unsigned char *buffer;
-#endif
 {
   if (CChar_Off >= 0) {
     register unsigned char *obuf,*buff;
@@ -2931,12 +2753,7 @@ check_checksum (c1, c2, name)
 /**************************  ActualFactor  ****************************/
 /**********************************************************************/
 double  /* compute the actual size factor given the approximation */
-#if NeedFunctionPrototypes
 ActualFactor(long4 unmodsize)
-#else
-ActualFactor(unmodsize)
-long4    unmodsize;                 /* actually factor * 1000 */
-#endif
 {
   double  realsize;     /* the actual magnification factor */
   realsize = (double)unmodsize / 1000.0;
@@ -2965,13 +2782,7 @@ long4    unmodsize;                 /* actually factor * 1000 */
 /***************************** DecodeArgs ****************************/
 /*********************************************************************/
 void
-#if NeedFunctionPrototypes
 DecodeArgs(int argc, char *argv[])
-#else
-DecodeArgs(argc, argv)
-int     argc;
-char    *argv[];
-#endif
 {
   int     argind;            /* argument index for flags      */
   char    *curarea;	     /* current file area             */
@@ -3545,13 +3356,7 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
 /********************************  DoConv  ***************************/
 /*********************************************************************/
 long4
-#if NeedFunctionPrototypes
 DoConv(long4 num, long4 den, int convResolution)
-#else
-DoConv(num, den, convResolution)
-long4    num, den;
-int     convResolution;
-#endif
 {
   /*register*/ double conv;
   conv = ((double)num / (double)den) *
@@ -3568,12 +3373,7 @@ int     convResolution;
 /**********************************************************************/
 /****************************** AllDone  ******************************/
 /**********************************************************************/
-#if NeedFunctionPrototypes
 void AllDone(bool PFlag)
-#else
-void AllDone(PFlag)
-bool PFlag;
-#endif
 {
 #ifdef TIMING
   double  time;
@@ -3784,14 +3584,7 @@ KeyDesc KeyTab[] = {
 /* Compare two strings, ignoring case;
    s1 pointer to null-terminated keyword, s2 pointer to parseline;
    returns (if successful) pointer to character following keyword in s2 */
-#if NeedFunctionPrototypes
 bool StrCompare(char *s1, char *s2, char **end)
-#else
-bool StrCompare(s1, s2, end)
-char *s1;
-char *s2;
-char **end;
-#endif
 {
   char *a,*b;
 
@@ -3809,15 +3602,8 @@ char **end;
 /* Read <number> integer values from string and store results in
    <result>. Returns number + of arguments actually read, end =
    pointer to char following last number */
-#if NeedFunctionPrototypes
-int ParseNumbers(char *str, int *result, int number, char **end)
-#else
-int ParseNumbers(str, result, number, end)
-char *str;
-int *result;
-int number;
-char **end;
-#endif
+int
+ParseNumbers(char *str, int *result, int number, char **end)
 {
   char *s;
   int count = 0;
@@ -3839,12 +3625,7 @@ char **end;
 
 /* Diagram commands are parsed separately since the format varies from the one
 +    used by the other special commands */
-#if NeedFunctionPrototypes
 bool ParseDiagram(char *str)
-#else
-bool ParseDiagram(str)
-char *str;
-#endif
 {
   diagtrafo dt;
   char *s,*sh;
@@ -3939,13 +3720,7 @@ char * mkdtemp ( char * template )
 
 
 /* interpret a \special command, made up of keyword=value pairs */
-#if NeedFunctionPrototypes
 void DoSpecial(char *str, int n)
-#else
-void DoSpecial(str, n)
-char *str;
-int  n;
-#endif
 {
   bool	  first_keyword = _TRUE;
   char    xs[STRSIZE], ys[STRSIZE];
@@ -4353,13 +4128,7 @@ int  n;
  * Return pointer to remainder of string,
  * return NULL if none found.
  */
-#if NeedFunctionPrototypes
 char *GetKeyStr(char *str, KeyWord *kw )
-#else
-char    *GetKeyStr( str, kw )
-char    *str;
-KeyWord *kw;
-#endif
 {
   char *s, *start;
   char save_char, quote_char;
@@ -4410,15 +4179,7 @@ KeyWord *kw;
 /*****************************  GetKeyVal  ****************************/
 /**********************************************************************/
 /* get next keyword-value pair decode value according to table entry  */
-#if NeedFunctionPrototypes
 bool GetKeyVal(KeyWord *kw, KeyDesc tab[], int nt, int *tno)
-#else
-bool    GetKeyVal( kw, tab, nt, tno)
-KeyWord *kw;
-KeyDesc tab[];
-int     nt;
-int     *tno;
-#endif
 {
   int     i;
   char    c = '\0';
@@ -4454,12 +4215,7 @@ int     *tno;
 /*******************************  IsSame  *****************************/
 /**********************************************************************/
 /* compare strings, ignore case */
-#if NeedFunctionPrototypes
 bool IsSame(char *a, char *b)
-#else
-bool IsSame(a, b)
-char    *a, *b;
-#endif
 {
   char *x, *y;
 
@@ -4477,12 +4233,7 @@ char    *a, *b;
 /**********************************************************************/
 /* this routine will move to the end of the file and find the start
     of the postamble */
-#if NeedFunctionPrototypes
 void FindPostAmblePtr(long *postambleptr)
-#else
-void FindPostAmblePtr(postambleptr)
-long *postambleptr;
-#endif
 {
   long4    i;
   FSEEK(dvifp,  0l, SEEK_END);   /* goto end of file */
@@ -4511,12 +4262,7 @@ long *postambleptr;
     initializes the magnification and checks the stack height prior to
     starting printing the document.
 ***********************************************************************/
-#if NeedFunctionPrototypes
 void ReadPostAmble(bool load)
-#else
-void ReadPostAmble(load)
-bool load;
-#endif
 {
   FindPostAmblePtr(&postambleptr);
   if (NoSignExtend(dvifp, 1) != POST)
@@ -4556,12 +4302,7 @@ bool load;
 /*****************************  PMPLine  ******************************/
 /**********************************************************************/
 /* drawing lines on the 3812 using PMP vector commands */
-#if NeedFunctionPrototypes
 void PMPLine(int w, int y, int x)
-#else
-void PMPLine(w, y, x)
-int     w, y, x;
-#endif
 {
 
   if ((w == 0) || (x == 0 && y == 0))
@@ -4608,13 +4349,7 @@ int     w, y, x;
 /*****************************  SetRule  ******************************/
 /**********************************************************************/
 /*   this routine will draw a rule */
-#if NeedFunctionPrototypes
 void SetRule(long4 a, long4 b, int Set)
-#else
-void SetRule(a, b, Set)
-long4    a, b;
-int     Set;
-#endif
 {
   long4    xx, yy;
 #ifdef IBM3812
@@ -4743,11 +4478,7 @@ int     Set;
 /**********************************************************************/
 /*****************************  FormFeed ******************************/
 /**********************************************************************/
-#if NeedFunctionPrototypes
 void FormFeed(void)
-#else
-void FormFeed()
-#endif
 {
 
 #ifdef IBM3812
@@ -4778,11 +4509,7 @@ void FormFeed()
 /**********************************************************************/
 /**************************** GetFontDef  *****************************/
 /**********************************************************************/
-#if NeedFunctionPrototypes
 void GetFontDef(void)
-#else
-void GetFontDef()
-#endif
 /***********************************************************************
    Read the font  definitions as they  are in the  postamble of the  DVI
    file.
@@ -4820,11 +4547,7 @@ void GetFontDef()
 /**********************************************************************/
 /************************** OpenFontFile  *****************************/
 /**********************************************************************/
-#if NeedFunctionPrototypes
 void OpenFontFile(void)
-#else
-void OpenFontFile()
-#endif
 /***********************************************************************
     The original version of this dvi driver reopened the font file  each
     time the font changed, resulting in an enormous number of relatively
@@ -4966,13 +4689,7 @@ void OpenFontFile()
 /**********************************************************************/
 /*****************************  PixRound  *****************************/
 /**********************************************************************/
-#if NeedFunctionPrototypes
 long4 PixRound(long4 x, long4 conv)
-#else
-long4 PixRound(x, conv)  /* return rounded number of pixels */
-long4    x;              /* in DVI units     */
-long4    conv;           /* conversion factor */
-#endif
 {
   return((x + conv) / conv);
 }
@@ -4984,12 +4701,7 @@ long4    conv;           /* conversion factor */
 /****************************  TryResident  ***************************/
 /**********************************************************************/
 static bool
-#if NeedFunctionPrototypes
 TryResident(struct font_entry *fontptr)
-#else
-TryResident(fontptr)
-struct font_entry *fontptr;
-#endif
 {
   tfm_info_type tfm_info;
 
@@ -5070,12 +4782,7 @@ struct font_entry *fontptr;
 /****************************  ReadFontDef  ***************************/
 /**********************************************************************/
 
-#if NeedFunctionPrototypes
 unsigned char skip_specials(long4 *pkloc)
-#else
-unsigned char skip_specials(pkloc)
-long4    *pkloc;
-#endif
 {
   long4    i, j;
   register unsigned char  flag_byte;
@@ -5129,12 +4836,7 @@ long4    *pkloc;
 }
 
 
-#if NeedFunctionPrototypes
 void ReadFontDef(long4 k)
-#else
-void ReadFontDef(k)
-long4    k;
-#endif
 {
   long4    t;
   unsigned short i;
@@ -5557,13 +5259,7 @@ printf("fontid=%d: max_width=%u, max_height=%d, max_yoff=%u\n",
 /**********************************************************************/
 /****************************  SetFntNum  *****************************/
 /**********************************************************************/
-#if NeedFunctionPrototypes
 void SetFntNum(long4 k, bool Emitting)
-#else
-void SetFntNum(k, Emitting)
-long4    k;
-bool Emitting;
-#endif
 /*  this routine is used to specify the font to be used in printing future
     characters */
 {
@@ -5656,11 +5352,7 @@ bool Emitting;
 /**********************************************************************/
 /****************************  SkipFontDef  ***************************/
 /**********************************************************************/
-#if NeedFunctionPrototypes
 void SkipFontDef(void)
-#else
-void SkipFontDef()
-#endif
 {
   int     a, l;
   char    n[STRSIZE];
@@ -5682,24 +5374,11 @@ void SkipFontDef()
 /******************************  Fatal  *******************************/
 /**********************************************************************/
 void
-#if NeedVarargsPrototypes
 Fatal (char *fmt, ...)
-#else
-Fatal(va_alist)      /* issue a fatal error message */
-     va_dcl
-#endif
 {
-#if !NeedVarargsPrototypes
-  const char *fmt;
-#endif
   va_list args;
 
-#if NeedVarargsPrototypes
   va_start(args, fmt);
-#else
-  va_start(args);
-  fmt = va_arg(args, const char *);
-#endif
   fprintf(ERR_STREAM, "\n");
   fprintf(ERR_STREAM, "%s: FATAL--", G_progname);
   vfprintf(ERR_STREAM, fmt, args);
@@ -5721,24 +5400,11 @@ Fatal(va_alist)      /* issue a fatal error message */
 /*****************************  Warning  ******************************/
 /**********************************************************************/
 void                           /* issue a warning */
-#if NeedVarargsPrototypes
 Warning(char *fmt, ...)
-#else
-Warning(va_alist)
-     va_dcl
-#endif
 {
-#if !NeedVarargsPrototypes
-  const char *fmt;
-#endif
   va_list args;
 
-#if NeedVarargsPrototypes
   va_start(args, fmt);
-#else
-  va_start(args);
-  fmt = va_arg(args, const char *);
-#endif
 
 #ifndef vms
   G_errenc = 1;

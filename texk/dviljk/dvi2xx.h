@@ -19,7 +19,7 @@
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/tex-hush.h>
 #include <kpathsea/tex-make.h>
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 #include <c-auto.h>
 #else
 #include <string.h>
@@ -298,11 +298,7 @@ char *MFMODE     = MFMODE600;
 #ifndef WIN32
 #ifndef _AMIGA
 # ifndef unix
-#  if NeedFunctionPrototypes
 long    access(char *, int);      /* all the other ones known under RISC OS */
-#  else
-long    access();
-#  endif
 #  ifndef __riscos
 FILEPTR BOPENCMD();
 void    exit();
@@ -452,79 +448,67 @@ typedef struct {
    alphabetical order following the main() procedure.  The names are
    kept unique in the first 6 characters for portability. */
 
-#if NeedFunctionPrototypes
-# define DVIPROTO(x) x
-#if NeedVarargsPrototypes
-# define DVIELI() (char *fmt, ...)
-#else
-# define DVIELI() ()
-#endif
-#else
-# define DVIPROTO(x) ()
-# define DVIELI() ()
-#endif
-
-double  ActualFactor DVIPROTO((long4));
-void    AllDone DVIPROTO((bool));
+double  ActualFactor(long4);
+void    AllDone(bool);
 #ifdef  MSC5
-void    AssureBinary DVIPROTO((FILEPTR));  /* DOS and Microsoft C dependent !!! */
+void    AssureBinary(FILEPTR);  /* DOS and Microsoft C dependent !!! */
 #endif
-void    CloseFiles DVIPROTO((void));
-void    CopyFile DVIPROTO((char *));
-void    CopyHPFile DVIPROTO((char *));
-void    DecodeArgs DVIPROTO((int, char *[]));
+void    CloseFiles(void);
+void    CopyFile(char *);
+void    CopyHPFile(char *);
+void    DecodeArgs(int, char *[]);
 #ifdef __riscos
-void    diagram DVIPROTO((char *, diagtrafo *));
-void   *xosfile_set_type DVIPROTO((char *, int));
-void    MakeMetafontFile DVIPROTO((char *, char *, int));
+void    diagram(char *, diagtrafo *);
+void   *xosfile_set_type(char *, int);
+void    MakeMetafontFile(char *, char *, int);
 #endif
-void    DoBop DVIPROTO((void));
-long4   DoConv DVIPROTO((long4, long4, int));
-void    DoSpecial DVIPROTO((char *, int));
-void    EmitChar DVIPROTO((long4, struct char_entry *));
-void    Fatal DVIELI();
-void    FindPostAmblePtr DVIPROTO((long *));
-void    FormFeed DVIPROTO((void));
-void    GetFontDef DVIPROTO((void));
-char    *GetKeyStr DVIPROTO((char *, KeyWord *));
-bool    GetKeyVal DVIPROTO((KeyWord *, KeyDesc[], int, int *));
-bool    IsSame DVIPROTO((char *, char *));
-void    LoadAChar DVIPROTO((long4, register struct char_entry *));
-long4   NoSignExtend DVIPROTO((FILEPTR, int));
-void    OpenFontFile DVIPROTO((void));
-long4   PixRound DVIPROTO((long4, long4));
-void    PkRaster DVIPROTO((struct char_entry *, int));
-void    RasterLine DVIPROTO((struct char_entry *, unsigned int,
-			     unsigned int, unsigned char *));
-void    RasterChar DVIPROTO((struct char_entry *));
-void    ReadFontDef DVIPROTO((long4));
-void    ReadPostAmble DVIPROTO((bool));
-void    SetChar DVIPROTO((long4, short, int, bool, bool));
-void    SetFntNum DVIPROTO((long4, bool));
-void    SetPosn DVIPROTO((long4, long4));
-void    SetRule DVIPROTO((long4, long4, int));
-void    SetString DVIPROTO((short, int));
-long4   SignExtend DVIPROTO((FILEPTR, int));
-void    SkipFontDef DVIPROTO((void));
-bool    tfm_read_info  DVIPROTO((char *, tfm_info_type *));
-void    Warning DVIELI();
-unsigned char   skip_specials DVIPROTO((long4 *));
+void    DoBop(void);
+long4   DoConv(long4, long4, int);
+void    DoSpecial(char *, int);
+void    EmitChar(long4, struct char_entry *);
+void    Fatal(char *fmt, ...);
+void    FindPostAmblePtr(long *);
+void    FormFeed(void);
+void    GetFontDef(void);
+char    *GetKeyStr(char *, KeyWord *);
+bool    GetKeyVal(KeyWord *, KeyDesc[], int, int *);
+bool    IsSame(char *, char *);
+void    LoadAChar(long4, register struct char_entry *);
+long4   NoSignExtend(FILEPTR, int);
+void    OpenFontFile(void);
+long4   PixRound(long4, long4);
+void    PkRaster(struct char_entry *, int);
+void    RasterLine(struct char_entry *, unsigned int,
+                   unsigned int, unsigned char *);
+void    RasterChar(struct char_entry *);
+void    ReadFontDef(long4);
+void    ReadPostAmble(bool);
+void    SetChar(long4, short, int, bool, bool);
+void    SetFntNum(long4, bool);
+void    SetPosn(long4, long4);
+void    SetRule(long4, long4, int);
+void    SetString(short, int);
+long4   SignExtend(FILEPTR, int);
+void    SkipFontDef(void);
+bool    tfm_read_info (char *, tfm_info_type *);
+void    Warning(char *fmt, ...);
+unsigned char   skip_specials(long4 *);
 #ifdef LJ4
-int     CompressLine2 DVIPROTO((unsigned char *, unsigned char *, int));
-int     CompressLine3 DVIPROTO((unsigned char *, unsigned char *, int));
-void    CompressedCharLine DVIPROTO((struct char_entry *,int,unsigned char *));
+int     CompressLine2(unsigned char *, unsigned char *, int);
+int     CompressLine3(unsigned char *, unsigned char *, int);
+void    CompressedCharLine(struct char_entry *,int,unsigned char *);
 #endif
 #ifdef IBM3812
-void    PMPout DVIPROTO((int, char *));
-void    PMPoutC DVIPROTO((char));
+void    PMPout(int, char *);
+void    PMPoutC(char);
 #endif
 
 /* buffer IO */
-char   b_read DVIPROTO((FILEPTR));
+char   b_read(FILEPTR);
 #ifdef RISC_BUFFER
-void   b_write DVIPROTO((FILEPTR, char));
-void   b_wrtmult DVIPROTO((FILEPTR, char *, int));
-void   b_oflush DVIPROTO((FILEPTR));
+void   b_write(FILEPTR, char);
+void   b_wrtmult(FILEPTR, char *, int);
+void   b_oflush(FILEPTR);
 #endif
 
 

@@ -1,5 +1,12 @@
 2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* config.h, dvi2xx.c, dvi2xx.h, tfm.c, tfm.h:
+	always use ANSI C function definitions and prototypes.
+	* dvi2xx.c (getnyb, pk_packed_num): declare as static.
+	* dvi2xx.h: #include <stdarg.h>, not <kpathsea/c-vararg.h>.
+
+2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.
 	* dvi2xx.c: #include "tfm.h".
 	(getnum, setOffset, TryResident): declare as static.

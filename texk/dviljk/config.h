@@ -203,17 +203,7 @@ typedef SCHAR_TYPE signed_char;
 # define long4 long
 #endif
 
-#ifdef __STDC__
-#define NeedFunctionPrototypes 1
 #include <stdarg.h>
-#else
-#define NeedFunctionPrototypes 0
-#include <varargs.h>
-#endif
-
-#if NeedFunctionPrototypes
-#define NeedVarargsPrototypes 1
-#endif
 
 #ifndef KPATHSEA
 #error "Would need changed findfile, dviljk has changed allocation semantic of name member in tfontptr"
