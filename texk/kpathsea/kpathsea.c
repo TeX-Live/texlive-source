@@ -17,6 +17,13 @@
 
 /* One big global struct, and a variable that points to it */
 
+/*
+ * The code freeing the strings used in this struct is enabled/disabled
+ * by KPATHSEA_CAN_FREE.
+ */
+/* At the moment can not free */
+#define KPATHSEA_CAN_FREE 0
+
 #include <kpathsea/config.h>
 
 kpathsea
@@ -27,9 +34,11 @@ kpathsea_new (void)
     return ret;
 }
 
+#if KPATHSEA_CAN_FREE
+
 #define string_free(a) if((a)!=NULL) free((char *)(a))
 
-void
+static void
 str_llist_free (str_llist_type p)
 {
     str_llist_type q;
@@ -41,7 +50,7 @@ str_llist_free (str_llist_type p)
     }
 }
 
-void
+static void
 cache_free (cache_entry *the_cache, int cache_size) 
 {
     int f ;
@@ -51,17 +60,20 @@ cache_free (cache_entry *the_cache, int cache_size)
     }
     free (the_cache);
 }
+#endif /* KPATHSEA_CAN_FREE */
 
 /* Sadly, quite a lot of the freeing is not safe: 
    it seems there are literals used all over. */
 void
 kpathsea_finish (kpathsea kpse)
 {
+#if KPATHSEA_CAN_FREE
     int i;
     kpse_format_info_type f;
+#endif /* KPATHSEA_CAN_FREE */
     if (kpse==NULL)
         return;
-#if 0
+#if KPATHSEA_CAN_FREE
     /* free internal stuff */
     hash_free (kpse->cnf_hash);
     hash_free (kpse->db);
@@ -102,7 +114,7 @@ kpathsea_finish (kpathsea kpse)
             string_free (kpse->saved_env[i]);
         free (kpse->saved_env);
     }    
-#endif /* zero */
+#endif /* KPATHSEA_CAN_FREE */
 #if defined (KPSE_COMPAT_API)
     if (kpse==kpse_def)
         return;
@@ -237,4 +249,4 @@ kpathsea_instance kpse_def_inst;
 
 kpathsea kpse_def = &kpse_def_inst;
 
-#endif
+#endif /* KPSE_COMPAT_API */

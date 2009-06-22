@@ -23,9 +23,7 @@
    <taco@luatex.org>.
 */
 
-#ifndef __MINGW32__
-static int static_variable_mingw32_c = 0;
-#else
+#ifdef __MINGW32__
 
 #include <kpathsea/config.h>
 #include <kpathsea/c-proto.h>
@@ -1028,4 +1026,4 @@ int win32_system(const char *cmd, int async)
   return ret;
 }
 
-#endif
+#endif /* __MINGW32__ */

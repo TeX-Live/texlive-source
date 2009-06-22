@@ -95,16 +95,12 @@ try_size (kpathsea kpse, const_string fontname,  unsigned dpi,
   
   /* Look for PK first (since it's more likely to be found), then GF.  */
   ret = try_pk ? try_format (kpse, fontname, dpi, kpse_pk_format) : NULL;
+  format_found = kpse_pk_format;
 
-  if (ret != NULL)
-    format_found = kpse_pk_format;
-  else
+  if (ret == NULL && try_gf)
     {
-      if (try_gf)
-        {
-            ret = try_format (kpse, fontname, dpi, kpse_gf_format);
-          format_found = kpse_gf_format;
-        }
+      ret = try_format (kpse, fontname, dpi, kpse_gf_format);
+      format_found = kpse_gf_format;
     }
   
   if (ret != NULL && glyph_file)

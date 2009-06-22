@@ -1,3 +1,12 @@
+2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: enable compiler warnings.
+	* kpathsea.c (KPATHSEA_CAN_FREE): disable not yet used code.
+	(str_llist_free, cache_free): declare as static, not yet used.
+	(kpathsea_finish): avoid warning about not yet used variables.
+	* tex-glyph.c (try_size): avoid uninitialized warning.
+	* mingw32.c: avoid unused static variable.
+
 2009-06-15  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.jadetex,pdfjadetex): search latex, not plain.

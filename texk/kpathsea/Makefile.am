@@ -10,6 +10,7 @@ SUBDIRS = . doc man
 EXTRA_DIST = BUGS HIER PROJECTS README.CONFIGURE
 
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 lib_LTLIBRARIES = libkpathsea.la
 
@@ -49,7 +50,6 @@ libkpathsea_la_SOURCES = \
 	line.c \
 	magstep.c \
 	make-suffix.c \
-	mingw32.c \
 	path-elt.c \
 	pathsearch.c \
 	proginit.c \
@@ -81,6 +81,10 @@ libkpathsea_la_SOURCES = \
 	xrealloc.c \
 	xstat.c \
 	xstrdup.c
+
+if MINGW32
+libkpathsea_la_SOURCES += mingw32.c
+endif MINGW32
 
 $(libkpathsea_la_SOURCES): paths.h
 
