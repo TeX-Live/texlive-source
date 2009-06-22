@@ -1,3 +1,14 @@
+2009-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* gsftopk.c: use ANSI C function declarations and prototypes.
+	(exit_toto_too, oops, opt_oops, get_one_arg, fgets_long,
+	getdefaults, scan_map_file, addtodls, getlong, expect,
+	whitespace, getint): declare as static.
+	(main): explicit braces to avoid ambiguous `else'.
+
+	* gsftopk.c (ISSET): add parens to definition (for polling).
+
 2009-06-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* gsftopk.c: remove obsolete 'NORETURN void' -> 'volatile void'

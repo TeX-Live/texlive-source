@@ -173,48 +173,8 @@ char	*getenv();
 #endif /* undef FOPEN_WBIN_MODE */
 
 
-/* These macros munge function declarations to make them work in both
-   cases.  The P?H macros are used for declarations, the P?C for
-   definitions.  Cf. <ansidecl.h> from the GNU C library.  P1H(void)
-   also works for definitions of routines which take no args.  */
-
-#if __STDC__
-
-#define	AA(args) args /* For an arbitrary number; ARGS must be in parens.  */
-
-#define	P1H(p1) (p1)
-
-#define	P1C(t1,n1)(t1 n1)
-#define	P2C(t1,n1, t2,n2)(t1 n1, t2 n2)
-#define	P3C(t1,n1, t2,n2, t3,n3)(t1 n1, t2 n2, t3 n3)
-#define	P4C(t1,n1, t2,n2, t3,n3, t4,n4)(t1 n1, t2 n2, t3 n3, t4 n4)
-#define	P5C(t1,n1, t2,n2, t3,n3, t4,n4, t5,n5) \
-  (t1 n1, t2 n2, t3 n3, t4 n4, t5 n5)
-#define	P6C(t1,n1, t2,n2, t3,n3, t4,n4, t5,n5, t6,n6) \
-  (t1 n1, t2 n2, t3 n3, t4 n4, t5 n5, t6 n6)
-#define	P7C(t1,n1, t2,n2, t3,n3, t4,n4, t5,n5, t6,n6, t7,n7) \
-  (t1 n1, t2 n2, t3 n3, t4 n4, t5 n5, t6 n6, t7 n7)
-
-#else /* not __STDC__ */
-
-#define	AA(args) ()
-
-#define	P1H(p1) ()
-
-#define	P1C(t1,n1) (n1) t1 n1;
-#define	P2C(t1,n1, t2,n2) (n1,n2) t1 n1; t2 n2;
-#define	P3C(t1,n1, t2,n2, t3,n3) (n1,n2,n3) t1 n1; t2 n2; t3 n3;
-#define	P4C(t1,n1, t2,n2, t3,n3, t4,n4) (n1,n2,n3,n4) \
-  t1 n1; t2 n2; t3 n3; t4 n4;
-#define	P5C(t1,n1, t2,n2, t3,n3, t4,n4, t5,n5) (n1,n2,n3,n4,n5) \
-  t1 n1; t2 n2; t3 n3; t4 n4; t5 n5;
-#define	P6C(t1,n1, t2,n2, t3,n3, t4,n4, t5,n5, t6,n6) (n1,n2,n3,n4,n5,n6) \
-  t1 n1; t2 n2; t3 n3; t4 n4; t5 n5; t6 n6;
-#define	P7C(t1,n1, t2,n2, t3,n3, t4,n4, t5,n5, t6,n6, t7,n7) \
-  (n1,n2,n3,n4,n5,n6,n7) \
-  t1 n1; t2 n2; t3 n3; t4 n4; t5 n5; t6 n6; t7 n7;
+#ifndef __STDC__
 #define	const	/* nothing */
-
 #endif /* not __STDC__ */
 
 #else /* KPATHSEA */
@@ -352,31 +312,13 @@ char *buffer_stdin; /* This is the buffer from where data are taken. */
 #define	GS_PATH	"gs"
 #endif
 
-#if STDC_HEADERS && __STDC__
-#define	NeedVarargsPrototypes	1
 #include <stdarg.h>
-#else /* no prototypes */
-#define	NeedVarargsPrototypes	0
-#include <varargs.h>
-#endif /* no prototypes */
 
 typedef	char	Boolean;
 #define	True	1
 #define	False	0
 
-#ifndef NeedWidePrototypes
-#if __STDC__
-#define	NeedWidePrototypes	1
-#else
-#define	NeedWidePrototypes	0
-#endif
-#endif /* NeedWidePrototypes */
-
-#if NeedWidePrototypes
 typedef	int		wide_bool;
-#else
-typedef	Boolean		wide_bool;
-#endif
 
 #ifndef MAXPATHLEN
 #define	MAXPATHLEN	256
@@ -523,8 +465,8 @@ int		pk_len;
  *	Exit, and kill the child process, too.
  */
 
-void
-exit_toto_too P1H(void)
+static void
+exit_toto_too(void)
 {
 #if !WIN32
 	if (gs_pid != 0)
@@ -581,27 +523,12 @@ exit_toto_too P1H(void)
  *	Print error message and quit.
  */
 
-#if NeedVarargsPrototypes
-void
+static void
 oops(const char *message, ...)
-#else
-/* VARARGS */
-void
-oops(va_alist)
-	va_dcl
-#endif
 {
-#if !NeedVarargsPrototypes
-	const char *message;
-#endif
 	va_list	args;
 
-#if NeedVarargsPrototypes
 	va_start(args, message);
-#else
-	va_start(args);
-	message = va_arg(args, const char *);
-#endif
 	if (col != 0) putchar('\n');
 	vfprintf(stderr, message, args);
 	va_end(args);
@@ -613,27 +540,12 @@ oops(va_alist)
 /*
  *	Same as oops, but with arguments.
  */
-#if NeedVarargsPrototypes
-void
+static void
 opt_oops(const char *message, ...)
-#else
-/* VARARGS */
-void
-opt_oops(va_alist)
-	va_dcl
-#endif
 {
-#if !NeedVarargsPrototypes
-	const char *message;
-#endif
 	va_list	args;
 
-#if NeedVarargsPrototypes
 	va_start(args, message);
-#else
-	va_start(args);
-	message = va_arg(args, const char *);
-#endif
 	fputs("gsftopk: ", stderr);
 	vfprintf(stderr, message, args);
 	va_end(args);
@@ -649,7 +561,7 @@ opt_oops(va_alist)
  */
 
 static void *
-xmalloc P1C(unsigned, size)
+xmalloc(unsigned size)
 {
 	void *mem = (void *) malloc(size);
 
@@ -664,7 +576,7 @@ xmalloc P1C(unsigned, size)
  */
 
 static void *
-xrealloc P2C(char *, oldp, unsigned, size)
+xrealloc(char *oldp, unsigned size)
 {
 	void	*mem;
 
@@ -682,8 +594,8 @@ xrealloc P2C(char *, oldp, unsigned, size)
  *	Get a single white-space-delimited argument (or fail).
  */
 
-char *
-get_one_arg P1C(const char *, src)
+static char *
+get_one_arg(const char *src)
 {
 	char		*dest;
 	const char	*p;
@@ -740,14 +652,14 @@ handle_sigterm(DWORD dwCtrlType)
 
 /* ARGSUSED */
 static RETSIGTYPE
-handle_sigchild P1C(int, signo)
+handle_sigchild(int signo)
 {
 	got_sigchld = True;
 }
 
 /* ARGSUSED */
 static RETSIGTYPE
-handle_sigterm P1C(int, signo)
+handle_sigterm(int signo)
 {
 	exit_toto_too();
 }
@@ -879,7 +791,7 @@ DWORD WINAPI Win32GsSendData(LPVOID lpParam)
 #else /* not WIN32 */
 
 static void
-wait_for_gs P1H(void)
+wait_for_gs(void)
 {
 	gsf_wait_t	status;
 
@@ -936,7 +848,7 @@ wait_for_gs P1H(void)
 #if WIN32
 
 static void
-data_fillbuf P1H(void)
+data_fillbuf(void)
 {
   if (data_eof)
     return;
@@ -962,13 +874,13 @@ data_fillbuf P1H(void)
 #else /* not WIN32 */
 
 #if HAVE_POLL
-#define	ISSET(a, b)		(poll_fd.revents & POLLIN != 0)
+#define	ISSET(a, b)		((poll_fd.revents & POLLIN) != 0)
 #else
 #define	ISSET(a, b)		FD_ISSET(a, b)
 #endif
 
 static void
-data_fillbuf P1H(void)
+data_fillbuf(void)
 {
 	int			n;
 
@@ -1043,7 +955,7 @@ data_fillbuf P1H(void)
 #endif /* not WIN32 */
 
 static byte
-data_fgetc P1H(void)
+data_fgetc(void)
 {
 	if (data_out >= data_end)
 	    data_fillbuf();
@@ -1054,7 +966,7 @@ data_fgetc P1H(void)
 #define	data_getc()	(data_out < data_end ? *data_out++ : data_fgetc())
 
 static void
-data_ungetc P1C(byte, c)
+data_ungetc(byte c)
 {
 	if (data_out <= buffer)
 	    oops("Too many calls to data_ungetc()");
@@ -1063,7 +975,7 @@ data_ungetc P1C(byte, c)
 }
 
 static int
-data_read P2C(byte *, buf, int, n)
+data_read(byte *buf, int n)
 {
 	byte	*buf1	= buf;
 	byte	*buf_end = buf + n;
@@ -1087,7 +999,7 @@ data_read P2C(byte *, buf, int, n)
 }
 
 static void
-data_gets P2C(byte *, buf, int, n)
+data_gets(byte *buf, int n)
 {
 	byte	*buf1	= buf;
 	byte	*buf_end = buf + n - 1;
@@ -1147,7 +1059,7 @@ static	const char	*searchname;
 static	int		searchnamelen;
 
 static const char *
-find_dbl_slash P2C(const char *, sp_bgn, const char *, sp_end)
+find_dbl_slash(const char *sp_bgn, const char *sp_end)
 {
 	const char	*p;
 
@@ -1160,9 +1072,9 @@ find_dbl_slash P2C(const char *, sp_bgn, const char *, sp_end)
 }
 
 static void
-main_search_proc P7C(char *, matpos, const char *, sp_pos,
-	const char *, sp_slash, const char *, sp_end,
-	wide_bool, skip_subdirs, struct spacenode *, space, char *, spacenext)
+main_search_proc(char *matpos, const char *sp_pos,
+	const char *sp_slash, const char *sp_end,
+	wide_bool skip_subdirs, struct spacenode *space, char *spacenext)
 {
 	char		*mp;
 	struct stat	statbuf;
@@ -1251,7 +1163,7 @@ main_search_proc P7C(char *, matpos, const char *, sp_pos,
 }
 
 static FILE *
-search P3C(const char *, path, const char *, path_var, const char *, name)
+search(const char *path, const char *path_var, const char *name)
 {
 	const char	*env_path	= NULL;
 	FILE		*f;
@@ -1301,8 +1213,8 @@ search P3C(const char *, path, const char *, path_var, const char *, name)
 char	*long_line		= NULL;	/* for reading config and map files */
 int	long_line_len		= 82;	/* allocated length of the above */
 
-Boolean
-fgets_long P1C(FILE *, f)
+static Boolean
+fgets_long(FILE *f)
 {
 	int	len;
 
@@ -1327,11 +1239,11 @@ fgets_long P1C(FILE *, f)
 }
 
 
-void
+static void
 #ifndef KPATHSEA
-getdefaults P1C(FILE *, f)
+getdefaults(FILE *f)
 #else
-getdefaults P1C(const char *, name)
+getdefaults(const char *name)
 #endif
 {
 #ifdef KPATHSEA
@@ -1383,8 +1295,8 @@ getdefaults P1C(const char *, name)
 }
 
 
-Boolean
-scan_map_file P1C(FILE *, f)
+static Boolean
+scan_map_file(FILE *f)
 {
 	while (fgets_long(f))
 	    if (memcmp(long_line, fontname, fontlen) == 0
@@ -1406,8 +1318,8 @@ char		*dlstring	= NULL;
 unsigned int	dls_len		= 0;
 unsigned int	dls_max		= 0;
 
-void
-addtodls P1C(const char *, s)
+static void
+addtodls(const char *s)
 {
 	int	len	= strlen(s);
 
@@ -1423,8 +1335,8 @@ addtodls P1C(const char *, s)
 
 
 
-long
-getlong P1C(FILE *, f)
+static long
+getlong(FILE *f)
 {
 	int	value;
 
@@ -1438,8 +1350,8 @@ getlong P1C(FILE *, f)
 
 char	line[82];
 
-void
-expect P1C(const char *, waitingfor)
+static void
+expect(const char *waitingfor)
 {
 	for (;;) {
 #if !_AMIGA
@@ -1463,8 +1375,8 @@ expect P1C(const char *, waitingfor)
 	}
 }
 
-void
-whitespace P1H(void)
+static void
+whitespace(void)
 {
 	char	c;
 
@@ -1479,8 +1391,8 @@ whitespace P1H(void)
 	}
 }
 
-int
-getint P1H(void)
+static int
+getint(void)
 {
 	char	c;
 	int	i	= 0;
@@ -1508,7 +1420,7 @@ int	deltas[13];	/* cost of increasing pk_dyn_f from i to i+1 */
  */
 
 static void
-tallyup P1C(int, n)
+tallyup(int n)
 {
 	int	m;
 
@@ -1530,7 +1442,7 @@ static	Boolean	odd	= False;
 static	byte	part;
 
 static void
-pk_put_nyb P1C(int, n)
+pk_put_nyb(int n)
 {
 	if (odd) {
 	    *bitmap_end++ = (part << 4) | n;
@@ -1543,7 +1455,7 @@ pk_put_nyb P1C(int, n)
 }
 
 static void
-pk_put_long P1C(int, n)
+pk_put_long(int n)
 {
 	if (n >= 16) {
 	    pk_put_nyb(0);
@@ -1553,7 +1465,7 @@ pk_put_long P1C(int, n)
 }
 
 static void
-pk_put_count P1C(int, n)
+pk_put_count(int n)
 {
 	if (n > pk_dyn_f) {
 	    if (n > pk_dyn_g)
@@ -1567,7 +1479,7 @@ pk_put_count P1C(int, n)
 }
 
 static void
-trim_bitmap P1H(void)
+trim_bitmap(void)
 {
 	byte	*p;
 	byte	mask;
@@ -1674,7 +1586,7 @@ trim_bitmap P1H(void)
  */
 
 static Boolean
-pk_rll_cvt P1H(void)
+pk_rll_cvt(void)
 {
 	static	int	*counts		= NULL;	/* area for saving bit counts */
 	static	int	maxcounts	= 0;	/* size of this area */
@@ -1837,7 +1749,7 @@ pk_rll_cvt P1H(void)
 }
 
 static void
-pk_bm_cvt P1H(void)
+pk_bm_cvt(void)
 {
 	byte	*rowptr;
 	byte	*p;
@@ -1902,14 +1814,14 @@ pk_bm_cvt P1H(void)
 }
 
 static void
-putshort P1C(short, w)
+putshort(short w)
 {
 	putc(w >> 8, pk_file);
 	putc(w, pk_file);
 }
 
 static void
-putmed P1C(long, w)
+putmed(long w)
 {
 	putc(w >> 16, pk_file);
 	putc(w >> 8, pk_file);
@@ -1917,7 +1829,7 @@ putmed P1C(long, w)
 }
 
 static void
-putlong P1C(long, w)
+putlong(long w)
 {
 	putc(w >> 24, pk_file);
 	putc(w >> 16, pk_file);
@@ -1926,7 +1838,7 @@ putlong P1C(long, w)
 }
 
 static void
-putglyph P1C(int, cc)
+putglyph(int cc)
 {
 	static	Boolean	have_first_line = False;
 	static	int	llx, lly, urx, ury;
@@ -2039,7 +1951,7 @@ putglyph P1C(int, cc)
 }
 
 static void
-putspecl P2C(const char *, str1, const char *, str2)
+putspecl(const char *str1, const char *str2)
 {
 	int	len1	= strlen(str1);
 	int	len2	= 0;
@@ -2053,7 +1965,7 @@ putspecl P2C(const char *, str1, const char *, str2)
 }
 
 int
-main P2C(int, argc, char **, argv)
+main(int argc, char **argv)
 {
 	FILE		*config_file;
 	FILE		*render_ps;
@@ -2162,11 +2074,12 @@ main P2C(int, argc, char **, argv)
 		arg = arg1;
 	    }		/* end long argument */
 
-	    if (opt->addr != NULL)
+	    if (opt->addr != NULL) {
 		if (opt->has_arg)
 		    *((char **) opt->addr) = arg;
 		else
 		    *((Boolean *) opt->addr) = opt->value;
+	    }
 
 	    switch (opt->shortname) {
 #ifdef KPATHSEA
@@ -2358,11 +2271,12 @@ Author of gsftopk: Paul Vojta.");
 		}
 	    }
 
-	    if (!font_found)
+	    if (!font_found) {
 		if (test)
 		    exit(1);
 		else
 		    oops("Cannot find font %s in map file(s).", fontname);
+	    }
 
 	    mapline = long_line;
 	}

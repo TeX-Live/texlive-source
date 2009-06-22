@@ -247,7 +247,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
+AM_CPPFLAGS = -DKPATHSEA -Dlint
+AM_CFLAGS = $(WARNING_CFLAGS)
 gsftopk_SOURCES = \
 	gsftopk.c \
 	version.h
