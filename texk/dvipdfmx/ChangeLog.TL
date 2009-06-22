@@ -1,5 +1,10 @@
-ChangeLog.TL: Changes for dvipdfmx (teTeX / TeX Live)
-=====================================================
+ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
+================================================
+
+2009-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* src/pdfobj.c (pdf_file_new): declare as static.
 
 2009-06-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

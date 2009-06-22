@@ -250,6 +250,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 INCLUDES = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = 
+AM_CFLAGS = $(WARNING_CFLAGS)
 dist_bin_SCRIPTS = dvipdft
 dvipdfmx_SOURCES = \
 	agl.c bmpimage.c cff.c cff_dict.c cid.c cidtype0.c cidtype2.c \
