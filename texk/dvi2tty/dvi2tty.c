@@ -167,26 +167,16 @@ char            optch;          /* for option handling                       */
 
 /*---------------------------------------------------------------------------*/
 
-#ifdef KPATHSEA
-int     main       P2H(int, char **); 
-void    setoption  P1H(char *);
-void    getargs    P1H(void);
-void    getpages   P2H(int, char *);
-void    plcnxt     P1H(int);
-void    getfname   P1H(char *);
-int     getinteger P3H(int *, int *, char *);
-void    usage      P1H(int);
-#else
-#  if defined(MSDOS)
-int     main      (int, char **); 
-void    setoption (char *);
-void    getargs   (void);
-void    getpages  (int, char *);
-void    plcnxt    (int);
+#if defined(KPATHSEA) || defined(MSDOS)
+int     main       (int, char **); 
+void    setoption  (char *);
+void    getargs    (void);
+void    getpages   (int, char *);
+void    plcnxt     (int);
 void    getfname   (char *);
-int     getinteger(int *, int *, char *);
-void    usage     (int);
-#  else
+int     getinteger (int *, int *, char *);
+void    usage      (int);
+#else
 char *  getenv    ();
 FILE *  popen     ();
 
@@ -198,7 +188,6 @@ void    plcnxt    ();
 void    getfname   ();
 int     getinteger();
 void    usage     ();
-#  endif
 #endif
 
 /****************************************************************************/

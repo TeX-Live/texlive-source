@@ -54,17 +54,17 @@ char * dvi_name;
 long   pc = 0;
 
 #ifdef KPATHSEA
-extern int main P2H(int argc,char **argv );
-extern void bop P1H(void);
-extern void postamble P1H(void);
-extern void preamble P1H(void);
-extern void postpostamble P1H(void);
-extern void special P1H(int x);
-extern void fontdef P1H(int x);
-extern char *fontname P1H(long fntnum);
-extern void printnonprint P1H(int ch);
-extern unsigned long num P1H(int size);
-extern long snum P1H(int size);
+extern int main(int argc,char **argv );
+extern void bop(void);
+extern void postamble(void);
+extern void preamble(void);
+extern void postpostamble(void);
+extern void special(int x);
+extern void fontdef(int x);
+extern char *fontname(long fntnum);
+extern void printnonprint(int ch);
+extern unsigned long num(int size);
+extern long snum(int size);
 #else
 char *          malloc          ();
 

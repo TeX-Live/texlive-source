@@ -1,3 +1,8 @@
+2009-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: enable compiler warnings.
+	* disdvi.c, dvi2tty.c, dvi2tty.h, dvistuff.c: ANSI C prototypes.
+
 2009-06-15  Karl Berry  <karl@tug.org>
 
 	* dvi2tty.c,

@@ -247,6 +247,7 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA
+AM_CFLAGS = $(WARNING_CFLAGS)
 LDADD = $(KPATHSEA_LIBS)
 disdvi_SOURCES = \
 	commands.h \

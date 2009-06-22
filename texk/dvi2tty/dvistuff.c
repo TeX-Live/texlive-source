@@ -110,33 +110,7 @@ int  symbolfont = FALSE;        /* true if font is a symbol font             */
 
 /*---------------------------------------------------------------------------*/
 
-#ifdef KPATHSEA
-void            postamble       P1H(void);
-void            preamble        P1H(void);
-void            walkpages       P1H(void);
-void            initpage        P1H(void);
-void            dopage          P1H(void);
-void            skippage        P1H(void);
-void            printpage       P1H(void);
-bool            inlist          P1H(long);
-void            rule            P3H(bool, long, long);
-void            ruleaux         P3H(long, long, char);
-long            horizontalmove  P1H(long);
-int             skipnops        P1H(void);
-linetype    *   texlive_getline         P1H(void);
-linetype    *   findline        P1H(void);
-unsigned long   num             P1H(int);
-long            snum            P1H(int);
-void            dochar          P1H(char);
-void            symchar         P1H(char);
-void            normchar        P1H(char);
-void            outchar         P1H(unsigned char);
-void            putcharacter    P1H(long);
-void            setchar         P1H(long);
-void            fontdef         P1H(int);
-void            setfont         P1H(long);
-#else
-#  if defined(MSDOS)
+#if defined(KPATHSEA) || defined(MSDOS)
 void            postamble       (void);
 void            preamble        (void);
 void            walkpages       (void);
@@ -149,7 +123,7 @@ void            rule            (bool, long, long);
 void            ruleaux         (long, long, char);
 long            horizontalmove  (long);
 int             skipnops        (void);
-linetype    *   texlive_getline         (void);
+linetype    *   texlive_getline (void);
 linetype    *   findline        (void);
 unsigned long   num             (int);
 long            snum            (int);
@@ -174,7 +148,7 @@ void            rule            ();
 void            ruleaux         ();
 long            horizontalmove  ();
 int             skipnops        ();
-linetype    *   texlive_getline         ();
+linetype    *   texlive_getline ();
 linetype    *   findline        ();
 unsigned long   num             ();
 long            snum            ();
@@ -190,7 +164,6 @@ void            setfont         ();
 long		vmsseek		();
 long		vms_ftell	();
 long		vms_ungetc	();
-#endif
 #endif
 #endif
 
