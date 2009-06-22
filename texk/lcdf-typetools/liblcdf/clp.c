@@ -612,7 +612,7 @@ Clp_SetUTF8(Clp_Parser *clp, int utf8)
     return old_utf8;
 }
 
-int
+static int
 Clp_OptionChar(Clp_Parser *clp, int c)
 {
     Clp_Internal *cli = clp->internal;
@@ -1184,7 +1184,7 @@ parse_string_list(Clp_Parser *clp, const char *arg, int complain, void *user_dat
 }
 
 
-int
+static int
 finish_string_list(Clp_Parser *clp, int val_type, int flags,
 		   Clp_Option *items, int nitems, int itemscap)
 {

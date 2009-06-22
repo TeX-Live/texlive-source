@@ -306,7 +306,7 @@ EXTRA_DIST = ONEWS lcdf-typetools.spec include/lcdf/bezier.hh \
 	include/efont/t1rw.hh include/efont/t1unparser.hh \
 	include/efont/ttfcs.hh include/efont/ttfhead.hh \
 	include/efont/ttfkern.hh glyphlist.txt texglyphlist.txt 7t.enc \
-	Makefile.am.orig configure.ac.orig
+	ChangeLog.TL Makefile.am.orig configure.ac.orig
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

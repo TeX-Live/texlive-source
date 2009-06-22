@@ -92,6 +92,10 @@ versionize:
 
 .PHONY: srclinks rpm liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 
+## Changes for TeX Live
+##
+EXTRA_DIST += ChangeLog.TL
+
 ## Original files from lcdf-typetools distribution
 ##
 EXTRA_DIST += Makefile.am.orig configure.ac.orig

@@ -13,7 +13,9 @@ AM_CONFIG_HEADER(config.h)
 
 AC_PROG_CXX
 AC_PROG_CXXCPP
-if test -n "$GCC" ; then CC="$CC -W -Wall" ; CXX="$CXX -W -Wall" ; fi
+
+CC="$CC $WARNING_CFLAGS"
+CXX="$CXX $WARNING_CXXFLAGS"
 
 AC_CXX_TEMPLATE_OBJS
 
