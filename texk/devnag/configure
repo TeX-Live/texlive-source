@@ -608,6 +608,7 @@ LIBOBJS
 EGREP
 GREP
 CPP
+WARNING_CFLAGS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
 CCDEPMODE
@@ -692,6 +693,7 @@ ac_user_opts='
 enable_option_checking
 enable_maintainer_mode
 enable_dependency_tracking
+enable_compiler_warnings
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1333,6 +1335,9 @@ Optional Features:
 			  (and sometimes confusing) to the casual installer
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
+  --enable-compiler-warnings=[no|min|yes|max]
+                          Turn on compiler warnings [default: yes if
+                          maintainer-mode, min otherwise]
 
 Some influential environment variables:
   CC          C compiler command
@@ -1823,6 +1828,7 @@ fi
 ac_config_guess="$SHELL $ac_aux_dir/config.guess"  # Please don't use this var.
 ac_config_sub="$SHELL $ac_aux_dir/config.sub"  # Please don't use this var.
 ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
+
 
 
 
@@ -3557,6 +3563,62 @@ test -z "$INSTALL_PROGRAM" && INSTALL_PROGRAM='${INSTALL}'
 test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
+
+
+# Check whether --enable-compiler-warnings was given.
+if test "${enable_compiler_warnings+set}" = set; then
+  enableval=$enable_compiler_warnings;
+fi
+case $enable_compiler_warnings in
+  no | min | yes | max) : ;;
+  *) if test "x$enable_maintainer_mode" = xyes; then
+  enable_compiler_warnings=yes
+else
+  enable_compiler_warnings=min
+fi
+ ;;
+esac
+
+
+{ $as_echo "$as_me:$LINENO: checking what warning flags to pass to the C compiler" >&5
+$as_echo_n "checking what warning flags to pass to the C compiler... " >&6; }
+if test "${kpse_cv_warning_cflags+set}" = set; then
+  $as_echo_n "(cached) " >&6
+else
+  if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_cflags=
+elif test "x$GCC" = xyes; then
+  kpse_cv_warning_cflags="-Wall -Wunused"
+  case `$CC -dumpversion` in
+  3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;;
+esac
+
+  case `$CC -dumpversion` in
+  3.[234].* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;;
+esac
+
+  if test "x$enable_compiler_warnings" != xmin; then
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
+    if test "x$enable_compiler_warnings" != xyes; then
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wimplicit -Wparentheses -Wreturn-type"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wswitch -Wtrigraphs -Wshadow -Wpointer-arith"
+      kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
+      case `$CC -dumpversion` in
+  3.4.* | 4.*) kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;;
+esac
+
+    fi
+  fi
+else
+  : # FIXME: warning flags for non-gcc compilers
+fi
+fi
+{ $as_echo "$as_me:$LINENO: result: $kpse_cv_warning_cflags" >&5
+$as_echo "$kpse_cv_warning_cflags" >&6; }
+WARNING_CFLAGS=$kpse_cv_warning_cflags
+
+
+
 
 
 

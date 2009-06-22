@@ -10,6 +10,7 @@ AC_INIT([devnag for TeX Live], [2.01], [tex-k@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([src/devnag.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -19,6 +20,8 @@ AM_MAINTAINER_MODE
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_INSTALL
+
+KPSE_COMPILER_WARNINGS
 
 dnl Checks for libraries.
 
