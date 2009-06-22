@@ -245,23 +245,7 @@ typedef unsigned long xuint32;
 
 extern KPSEDLL char *kpathsea_version_string;
 
-#ifndef	NeedFunctionPrototypes
-#  if	__STDC__
-#    define   NeedFunctionPrototypes	1
-#  else
-#    define   NeedFunctionPrototypes	0
-#  endif
-#endif
-
-#ifndef	NeedWidePrototypes
-#  define NeedWidePrototypes	NeedFunctionPrototypes
-#endif
-
-#ifndef	NeedVarargsPrototypes
-#  define NeedVarargsPrototypes	NeedFunctionPrototypes
-#endif
-
-#include "kpathsea/c-vararg.h"
+#include <stdarg.h>
 #include "kpathsea/c-fopen.h"
 
 #ifndef	_XFUNCPROTOBEGIN
@@ -318,13 +302,8 @@ extern KPSEDLL char *kpathsea_version_string;
 
 typedef	unsigned char	ubyte;
 
-/* #if NeedWidePrototypes */ /* bug #1570481 */
 typedef	unsigned int	wide_ubyte;
 typedef	int		wide_bool;
-/* #else */
-/* typedef	ubyte		wide_ubyte; */
-/* typedef	Boolean		wide_bool; */
-/* #endif */
 
 #if defined(MAKEPK) && !defined(MKTEXPK)
 #  define MKTEXPK 1

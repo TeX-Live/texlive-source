@@ -43,7 +43,6 @@ in xdvi.c.
 #include "kpathsea/c-stat.h"
 #include "kpathsea/magstep.h"
 #include "kpathsea/tex-file.h"
-#include "kpathsea/c-vararg.h"
 
 #include <string.h>
 

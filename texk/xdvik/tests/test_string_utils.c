@@ -1,6 +1,6 @@
 #include "xdvi-config.h"
 #include "xdvi.h"
-#include "kpathsea/c-vararg.h"
+#include <stdarg.h>
 
 #include <stdio.h>
 #include <stdlib.h>

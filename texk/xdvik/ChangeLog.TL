@@ -1,6 +1,16 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi-draw.c: do not #include "kpathsea/c-vararg.h" (after
+	#include <stdarg.h>).
+	* string-utils.h, xdvi.h, gui/message-window.c, 
+	gui/statusline.c, tests/test_string_utils.c:
+	#include <stdarg.h>, not "kpathsea/c-vararg.h".
+
+	* xdvi.h: remove NeedFunctionPrototypes et al.
+
 2009-06-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* events.c: avoid declaration after statement.

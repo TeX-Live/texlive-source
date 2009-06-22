@@ -2,7 +2,7 @@
 #define STRING_UTILS_H_
 
 #include "xdvi-config.h"
-#include "kpathsea/c-vararg.h"
+#include <stdarg.h>
 #include "my-vsnprintf.h"
 
 extern Boolean str_is_prefix(const char *, const char *, Boolean case_sensitive);

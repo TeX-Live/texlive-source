@@ -32,7 +32,7 @@
 #include "pagehist.h"
 #include "util.h"
 
-#include "kpathsea/c-vararg.h"
+#include <stdarg.h>
 #include "my-vsnprintf.h"
 
 #include <ctype.h>

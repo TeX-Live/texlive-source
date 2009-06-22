@@ -78,7 +78,7 @@ by the user (as a rough guide: a delay of more than half a second)
 # include <X11/Xaw/Dialog.h>
 #endif
 
-#include "kpathsea/c-vararg.h"
+#include <stdarg.h>
 #include "xdvi.h"
 #include "util.h"
 #include "string-utils.h"
