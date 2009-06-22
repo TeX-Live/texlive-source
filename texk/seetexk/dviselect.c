@@ -141,7 +141,6 @@ i32	Count[10];		/* the 10 \count variables */
 /* save some string space: we use this a lot */
 char	writeerr[] = "error writing DVI file";
 
-#ifdef NeedFunctionPrototypes
 #include <string.h>
 static void WriteFont(struct fontinfo *);
 static int evenodd(char *);
@@ -157,8 +156,8 @@ static void PutFontSelector(i32);
 
 #ifndef KPATHSEA
 char	*malloc(), *realloc();
-#endif /* not WIN32 */
-#endif
+#endif /* not KPATHSEA */
+
 /*
  * You may get lint warnings about sprintf's return value.
  * Older versions of 4BSD have `char *sprintf()'.  ANSI and

@@ -44,12 +44,6 @@
 #include <kpathsea/config.h>
 #include <kpathsea/c-memstr.h>
 
-#ifdef HAVE_PROTOTYPES
-#define NeedFunctionPrototypes 1
-#else
-#undef NeedFunctionPrototypes
-#endif
-
 #else
 
 /*

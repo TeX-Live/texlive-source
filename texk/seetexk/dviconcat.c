@@ -86,7 +86,6 @@ i16	DVIStackSize;		/* max of all stack sizes */
 /* save some string space: we use this a lot */
 char	writeerr[] = "error writing DVI file";
 
-#ifdef NeedFunctionPrototypes
 static void HandleDVIFile(void);
 #ifdef _AMIGA
 #define bcmp(s1, s2, len) memcmp(s1, s2, len)
@@ -97,7 +96,7 @@ static void HandleDVIFile(void);
 #ifndef KPATHSEA
 char	*malloc(), *realloc();
 #endif 
-#endif
+
 /* extern int getopt(int, char **, char*); */
 
 /*

@@ -1,3 +1,8 @@
+2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): remove -DNeedFunctionPrototypes.
+	* dviconcat.c, dviselect.c, types.h: always use prototypes.
+
 2009-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.
