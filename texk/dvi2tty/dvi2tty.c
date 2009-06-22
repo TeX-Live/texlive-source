@@ -478,7 +478,8 @@ int pagnr;
   (access (fn, R_OK) == 0 && stat (fn, &(st)) == 0 && !S_ISDIR (st.st_mode))
 #endif
 
-char * readable_file(char *name)
+static char *
+readable_file(char *name)
 {
   char *ret;
 

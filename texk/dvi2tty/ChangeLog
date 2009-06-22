@@ -1,3 +1,8 @@
+2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi2tty.c (readable_file): declare as static.
+	* disdvi.c, dvi2tty.h: do not #include <kpathsea/c-proto.h>.
+
 2009-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: enable compiler warnings.
