@@ -1508,9 +1508,6 @@ CIDFont_type0_t1open (CIDFont *font, const char *name,
   FILE       *fp;
   char       *fontname, *shortname;
   cff_font   *cffont;
-#ifdef XETEX
-  unsigned short *ft_to_gid;
-#endif
 
   ASSERT(font);
 

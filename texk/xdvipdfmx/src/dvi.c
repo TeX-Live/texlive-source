@@ -198,6 +198,8 @@ static UNSIGNED_BYTE get_and_buffer_unsigned_byte (FILE *file)
   return (UNSIGNED_BYTE) ch;
 }
 
+#if 0
+/* Not used */
 static SIGNED_BYTE get_and_buffer_signed_byte (FILE *file)
 {
   int byte;
@@ -206,6 +208,7 @@ static SIGNED_BYTE get_and_buffer_signed_byte (FILE *file)
     byte -= 0x100;
   return (SIGNED_BYTE) byte;
 }
+#endif
 
 static UNSIGNED_PAIR get_and_buffer_unsigned_pair (FILE *file)
 {
@@ -1775,8 +1778,8 @@ do_fnt4 (void)
 static void
 do_xxx (UNSIGNED_QUAD size) 
 {
-  UNSIGNED_QUAD i;
 #if 0  
+  UNSIGNED_QUAD i;
   Ubyte  *buffer;	/* FIXME - no need for new buffer here */
 
   buffer = NEW(size+1, Ubyte);
@@ -2008,7 +2011,7 @@ do_glyph_array (int yLocsPresent)
   return;
 }
 
-void
+static void
 do_pic_file()
   /* parameters for XDV_PIC_FILE opcode: pdf_box[1] t[4][6] p[2] len[2] path[l] */
 {

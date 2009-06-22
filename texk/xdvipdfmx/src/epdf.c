@@ -47,6 +47,8 @@
 
 #include "pdfximage.h"
 
+#include "pdfdoc.h"
+
 #include "epdf.h"
 
 #if HAVE_ZLIB
@@ -129,10 +131,8 @@ static pdf_obj*
 pdf_get_page_obj (pdf_file *pf, long page_no,
                   pdf_obj **ret_bbox, pdf_obj **ret_resources)
 {
-  xform_info info;
-  pdf_obj *contents,  *contents_dict;
   pdf_obj *page_tree;
-  pdf_obj *bbox = NULL, *resources = NULL, *rotate = NULL, *matrix;
+  pdf_obj *bbox = NULL, *resources = NULL, *rotate = NULL;
   long page_idx;
 
   /*
@@ -400,7 +400,7 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file)
   pdf_obj *page_tree;
   pdf_obj *matrix;
   pdf_obj *bbox = NULL, *resources = NULL;
-  long page_no, page_idx;
+  long page_no;
   pdf_file *pf;
   char *ident = pdf_ximage_get_ident(ximage);
 
@@ -568,8 +568,6 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
   char *clip_path, *temp, *end_path;
   pdf_tmatrix M;
   double stack[6];
-  pdf_coord   p0, p1, p2;
-  pdf_rect    bbox;
   pdf_file *pf;
   
   pf = pdf_open(NULL, image_file);
@@ -600,7 +598,7 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
   depth = 0;
 
   for (; clip_path < end_path; clip_path++) {
-    int color_dimen;
+    int color_dimen = 0;	/* silence uninitialized warning */
     char *token;
     skip_white(&clip_path, end_path);
     if (clip_path == end_path)

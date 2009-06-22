@@ -2884,7 +2884,7 @@ read_xref (pdf_file *pf)
 
 static struct ht_table *pdf_files = NULL;
 
-pdf_file *
+static pdf_file *
 pdf_file_new (FILE *file)
 {
   pdf_file *pf;

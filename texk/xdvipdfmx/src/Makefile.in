@@ -241,6 +241,7 @@ top_srcdir = @top_srcdir@
 INCLUDES = $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(am__append_1)
 AM_CPPFLAGS = 
+AM_CFLAGS = $(WARNING_CFLAGS)
 xdvipdfmx_SOURCES = \
 	agl.c agl_standard.c bmpimage.c cff.c cff_dict.c cid.c cidtype0.c cidtype2.c \
 	cmap.c cmap_read.c cmap_write.c cs_type2.c \

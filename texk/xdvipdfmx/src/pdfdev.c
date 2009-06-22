@@ -50,6 +50,8 @@
 
 #include "pdflimits.h"
 
+#include "dvi.h"
+
 #include "pdfdev.h"
 
 static int verbose = 0;

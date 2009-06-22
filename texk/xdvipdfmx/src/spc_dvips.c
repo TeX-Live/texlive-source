@@ -53,6 +53,8 @@
 #include "spc_dvips.h"
 #include "spc_xtx.h"
 
+#include "epdf.h"
+
 
 static int    block_pending = 0;
 static double pending_x     = 0.0;
@@ -289,6 +291,8 @@ static pdf_coord *put_stack;
 static int put_stack_depth = -1;
 static char *gs_in = 0;
 
+#if 0
+/* Not used */
 static int
 spc_handler_ps_tricks_gdef (struct spc_env *spe, struct spc_arg *args)
 {
@@ -301,6 +305,7 @@ spc_handler_ps_tricks_gdef (struct spc_env *spe, struct spc_arg *args)
 
   return 0;
 }
+#endif
 
 static int
 spc_handler_ps_tricks_pdef (struct spc_env *spe, struct spc_arg *args)
@@ -850,8 +855,6 @@ static struct spc_handler dvips_handlers[] = {
 int
 spc_dvips_at_begin_page (void)
 {
-  FILE* fp;
-
   if (page_defs) {
     dpx_delete_temp_file(page_defs);
     page_defs = 0;

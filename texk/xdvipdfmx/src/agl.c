@@ -54,6 +54,8 @@
 
 static int verbose = 0;
 
+static int agl_load_line(char* p, char* endptr, int is_predef);
+
 void
 agl_set_verbose (void)
 {
@@ -403,7 +405,7 @@ agl_close_map (void)
   ht_clear_table(&aglmap, hval_free);
 }
 
-int
+static int
 agl_load_line(char* p, char* endptr, int is_predef)
 {
   char     *wbuf = p;

@@ -1,5 +1,30 @@
-ChangeLog.TL: Changes for xdvipdfmx (teTeX / TeX Live)
-======================================================
+ChangeLog.TL: TeX Live (TL) changes for xdvipdfmx
+=================================================
+
+2009-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* src/agl.c (agl_load_line): delare as static, add forward decl.
+	* src/cidtype0.c (CIDFont_type0_t1open): remove ft_to_gid (unused).
+	* src/dvi.c (do_xxx): avoid unused variable.
+	(do_pic_file): declare as static.
+	(get_and_buffer_signed_byte): unused.
+	* src/dvipdfmx.c: remove do_objstm (unused).
+	* src/epdf.c: #include "pdfdoc.h" for pdf_doc_add_page_content.
+	(pdf_get_page_obj): remove info, contents, contents_dict, and
+	matrix (all unused).
+	(pdf_include_page): remove page_idx (unused).
+	(pdf_copy_clip): remove p0, p1, p2, and bbox (all unused),
+	silence initialized warning.
+	* src/jpegimage.c (read_APP1_Exif): remove rational_value (unused),
+	silence initialized warnings.
+	* src/pdfdev.c: #include "dvi.h" for dvi_is_tracking_boxes.
+	* src/pdfobj.c (pdf_file_new): declare as static.
+	* src/spc_dvips.c: #include "epdf.h" for pdf_copy_clip.
+	(spc_handler_ps_tricks_gdef): unused.
+	(spc_dvips_at_begin_page): remove fp (unused).
+	* src/tt_aux.[ch] (tt_aux_set_verbose): use ANSI C prototype.
+	* src/tt_cmap.c (handle_subst_glyphs): remove ucv (unused).
 
 2009-06-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

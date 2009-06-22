@@ -74,8 +74,6 @@ static long opt_flags = 0;
 #define OPT_CIDFONT_FIXEDPITCH    (1 << 2)
 #define OPT_FONTMAP_FIRST_MATCH   (1 << 3)
 
-static int    do_objstm;
-
 static char   ignore_colors = 0;
 static double annot_grow    = 0.0;
 static int    bookmark_open = 0;

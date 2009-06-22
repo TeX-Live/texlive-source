@@ -852,7 +852,6 @@ handle_subst_glyphs (CMap *cmap,
 {
   USHORT count;
   USHORT i, gid;
-  long ucv;
   
   for (count = 0, i = 0; i < 8192; i++) {
     int   j;
