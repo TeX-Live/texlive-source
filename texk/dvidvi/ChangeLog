@@ -1,3 +1,7 @@
+2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): remove -DNeedFunctionPrototypes.
+
 2009-06-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

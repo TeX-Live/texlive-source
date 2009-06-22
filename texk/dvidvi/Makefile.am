@@ -6,7 +6,7 @@
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA -DUNIX -DNeedFunctionPrototypes
+AM_CPPFLAGS = -DKPATHSEA -DUNIX
 ## We don't use libkpathsea, so don't overload fopen and stuff.
 AM_CPPFLAGS += -DNO_DEBUG
 AM_CFLAGS = $(WARNING_CFLAGS)
