@@ -36,9 +36,7 @@
 #include "fontfcn.h"
 #include "fontmisc.h"
 
-#ifdef HAVE_PROTOTYPES
 extern void objFormatName(psobj *, int, char *);
-#endif
  
 extern xobject Type1Char();
 extern boolean Init_BuiltInEncoding();

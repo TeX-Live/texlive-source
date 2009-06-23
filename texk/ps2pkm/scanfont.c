@@ -39,7 +39,6 @@
 #include "blues.h"
  
  
-#ifdef HAVE_PROTOTYPES
 extern void objFormatInteger(psobj *,int);
 extern void objFormatReal(psobj *, float);
 extern void objFormatBoolean(psobj *, boolean);
@@ -51,7 +50,6 @@ extern void objFormatFile(psobj *, FILE *);
 extern int SearchDictName(psdict *, psobj *);
 extern int T1Getc(struct F_FILE *f);
 extern int T1Ungetc(int c,struct F_FILE *f);
-#endif
  
 static int rc;
 static boolean InPrivateDict;

@@ -134,13 +134,9 @@ scratchpad areas used while the region is being built:
        struct edgelist *lastedge,*firstedge;  /* last and first edges in subpath */
        pel *edge;            /* pointer to array of X values for edge        */
        fractpel edgeYstop;   /* Y value where 'edges' array ends             */
-#if defined(HAVE_PROTOTYPES) 
        void (*newedgefcn)(struct region *, fractpel, fractpel,
 			  fractpel, fractpel, int);  /* function to use when
 							building a new edge */
-#else
-       int (*newedgefcn)();  /* function to use when building a new edge     */
-#endif
        struct strokeinfo *strokeinfo;  /* scratchpad info during stroking only */
 } ;
 /*

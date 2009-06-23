@@ -72,7 +72,6 @@
 
 typedef char *encoding[256];
 
-#ifdef HAVE_PROTOTYPES
 int Type1OpenScalable(char **ev, struct _Font **ppFont, int flags,
 		      struct _FontEntry *entry, char *fileName,
 		      struct _FontScalable *vals, fsBitmapFormat format,
@@ -105,28 +104,6 @@ extern void QueryFontLib(char *env,char *infoName,void *infoValue,int *rcodeP);
 extern void T1FillFontInfo(struct _Font *pFont,struct _FontScalable *Vals,char *Filename,char *Fontname);
 extern void T1InitStdProps(void);
 extern int FontFileRegisterRenderer(FontRendererRec *);
-#else
-int         Type1OpenScalable ();
-static int  Type1GetGlyphs();
-void        Type1CloseFont();
-extern int  Type1GetInfoScalable ();
- 
-static int  Type1GetMetrics ();
- 
-static void fillrun();
- 
-extern char *Xalloc();
-extern void Xfree();
-static void fill();
-
-extern Bool fontfcnA();
-extern struct region *fontfcnB();
-extern int CheckFSFormat();
-extern void QueryFontLib();
-extern void T1FillFontInfo();
-extern void T1InitStdProps();
-extern int FontFileRegisterRenderer();
-#endif
 
 extern psfont *FontP;
 extern psobj *ISOLatin1EncArrayP;

@@ -52,7 +52,6 @@ The included files are:
 #include  "hints.h"
 #include  "strokes.h"      /* to pick up 'DoStroke'                        */
 static int Unwind();
-#ifdef HAVE_PROTOTYPES
 static void newfilledge(register struct region *, fractpel, fractpel,
 			fractpel, fractpel, int);
 static void vertjoin(register struct edgelist *, register struct edgelist *);
@@ -61,13 +60,6 @@ static void cedgemin(register int, register pel *, register pel);
 static void cedgemax(register int, register pel *, register pel);
 static void edgemin(register int, register pel *, register pel *);
 static void edgemax(register int, register pel *, register pel *);
-#else
-static int newfilledge();
-static int vertjoin();
-static discard();
-static int edgemin();
-static int edgemax();
-#endif
 static struct edgelist *splitedge();
 static int touches();
 static int crosses();
@@ -747,16 +739,8 @@ This function also has to keep the bounding box of the region
 up to date.
 */
  
-#ifdef HAVE_PROTOTYPES
 static void newfilledge(register struct region *R,
   fractpel xmin, fractpel xmax, fractpel ymin, fractpel ymax, int isdown)
-#else
-static int newfilledge(R, xmin, xmax, ymin, ymax, isdown)
-       register struct region *R;  /* region being built                     */
-       fractpel xmin,xmax;   /* X range of this edge                         */
-       fractpel ymin,ymax;   /* Y range of this edge                         */
-       int isdown;           /* flag:  TRUE means edge goes down, else up    */
-#endif
 {
        struct edgelist *swathxsort();  /* 'SortSwath' function               */
  
@@ -996,14 +980,8 @@ Then, we return the caller a pointer to 'new':
  
 The two edges must be disjoint vertically.
 */
-#ifdef HAVE_PROTOTYPES
 static void vertjoin(register struct edgelist *top,
                      register struct edgelist *bottom)
-#else
-static int vertjoin(top, bottom)
-       register struct edgelist *top;  /* uppermost region                   */
-       register struct edgelist *bottom;  /* bottommost region               */
-#endif
 {
        if (BOTTOM(top) > TOP(bottom))
                t1_abort("vertjoin not disjoint");
@@ -1360,13 +1338,7 @@ So, to mark a 'edgelist' structure as discarded, we move it to the end
 of the list and set ymin=ymax.
 */
  
-#ifdef HAVE_PROTOTYPES
 static void discard(register struct edgelist *left, register struct edgelist *right)
-#else
-static discard(left, right)
-       register struct edgelist *left,*right;  /* all edges between here exclusive */
-                                       /* should be discarded */
-#endif
 {
        register struct edgelist *beg,*end,*p;
  
