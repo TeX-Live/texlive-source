@@ -17,11 +17,6 @@
    repeating the definitions everywhere we need them.  */
 #include <kpathsea/tex-file.h>
 
-#ifdef __STDC__
-#define NeedFunctionPrototypes 1
-#include <kpathsea/c-proto.h>
-#endif
-
 #include <c-auto.h>
 
 /* For kpathsea, we don't have paths, we have formats.  This is so

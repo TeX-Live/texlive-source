@@ -65,7 +65,8 @@ struct bangspecial {
    char actualstuff[1] ; /* more space will actually be allocated */
 } *bangspecials = NULL ;
 
-void specerror P1C(char *, s)
+void
+specerror(char *s)
 {
    if (specialerrors > 0 
 #ifdef KPATHSEA
@@ -85,7 +86,8 @@ void specerror P1C(char *, s)
    }
 }
 
-static void outputstring P1C(register char *, p)
+static void
+outputstring(register char *p)
 {
    (void)putc('\n', bitfile) ;
    while(*p) {
@@ -95,7 +97,8 @@ static void outputstring P1C(register char *, p)
    (void)putc('\n', bitfile) ;
 }
 
-static void trytobreakout P1C(register char *, p)
+static void
+trytobreakout(register char *p)
 {
    register int i ;
    register int instring = 0 ;
@@ -131,7 +134,8 @@ static void trytobreakout P1C(register char *, p)
    (void)putc('\n', bitfile) ;
 }
 
-static void dobs P1C(register struct bangspecial *, q)
+static void
+dobs(register struct bangspecial *q)
 {
    if (q) {
       dobs(q->next) ;
@@ -140,7 +144,7 @@ static void dobs P1C(register struct bangspecial *, q)
 }
 
 void
-outbangspecials P1H(void) {
+outbangspecials(void) {
    if (bangspecials) {
       cmdout("TeXDict") ;
       cmdout("begin") ;
@@ -211,7 +215,8 @@ KeyDesc KeyTab[] = {{"psfile",  String}, /* j==0 in the routine below */
 /*
  * compare strings, ignore case
  */
-char Tolower P1C(register char, c)
+char
+Tolower(register char c)
 {
    if ('A' <= c && c <= 'Z')
       return(c+32) ;
@@ -222,7 +227,8 @@ char Tolower P1C(register char, c)
 #endif  /* IBM: VM/CMS */
 #endif
 #endif /* !KPATHSEA */
-int IsSame P2C(char *, a, char *, b)
+int
+IsSame(char *a, char *b)
 {
    for( ; *a != '\0'; ) {
       if( TOLOWER(*a) != TOLOWER(*b) ) 
@@ -237,7 +243,8 @@ char *KeyStr, *ValStr ; /* Key and String values found */
 long ValInt ; /* Integer value found */
 float ValNum ; /* Number or Dimension value found */
 
-char  *GetKeyVal P2C(char *, str, int *, tno) /* returns NULL if none found, else next scan point */
+char  *
+GetKeyVal(char *str, int *tno) /* returns NULL if none found, else next scan point */
      /* str : starting point for scan */
      /* tno : table entry number of keyword, or -1 if keyword not found */
 {
@@ -318,7 +325,8 @@ found: *tno = i ;
  *   new string buffer if necessary.
  */
 
-void predospecial P2C(integer, numbytes, Boolean, scanning)
+void
+predospecial(integer numbytes, Boolean scanning)
 {
    register char *p = nextstring ;
    register int i = 0 ;
@@ -530,7 +538,8 @@ default:
       scanfontcomments(ValStr) ;
 }
 
-int maccess P1C(char *, s)
+int
+maccess(char *s)
 {
    FILE *f = search(figpath, s, "r") ;
    if (f)
@@ -541,7 +550,8 @@ int maccess P1C(char *, s)
 char *tasks[] = { 0, "iff2ps", "tek2ps" } ;
 
 static char psfile[511] ; 
-void dospecial P1C(integer, numbytes)
+void
+dospecial(integer numbytes)
 {
    register char *p = nextstring ;
    register int i = 0 ;
@@ -863,7 +873,8 @@ extern char *realnameoffile;
 extern char realnameoffile[] ;
 extern char *pictpath ;
 #endif
-void fil2ps P2C(char *, task, char *, iname)
+void
+fil2ps(char *task, char *iname)
 {
    char cmd[400] ;
    FILE *f ;
@@ -899,7 +910,8 @@ void fil2ps P2C(char *, task, char *, iname)
  *   that do not use rotations.
  */
 static float rbbox[4] ;
-float *bbdospecial P1C(int, nbytes)
+float *
+bbdospecial(int nbytes)
 {
    char *p = nextstring ;
    int i, j ;

@@ -14,9 +14,10 @@
  *   place in the program where such accuracy is required.
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
+#include "protos.h"
 
 integer
-scalewidth P2C(register integer, a, register integer, b)
+scalewidth(register integer a, register integer b)
 {
   register integer al, bl ;
 

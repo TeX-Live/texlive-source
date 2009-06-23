@@ -48,7 +48,8 @@ static char *cstack, *csp, *cend, *bg ;
  *   is a word followed by arguments, we send out the arguments and
  *   then the word prefixed by "TeXcolor".
  */
-void colorcmdout P1C(char *, s)
+void
+colorcmdout(char *s)
 {
    char *p ;
    char tempword[100] ;
@@ -77,7 +78,7 @@ void colorcmdout P1C(char *, s)
  *   For a new dvi file, call this.  Frees all allocated memory.
  */
 #define DEFAULTCOLOR "Black"
-void initcolor() {
+void initcolor(void) {
    int i ;
    struct colorpage *p, *q ;
 
@@ -101,7 +102,7 @@ void initcolor() {
  * stack during popcolors.
  */
 void
-background P1C(char *, bkgrnd)
+background(char *bkgrnd)
 {
    if (bkgrnd && *bkgrnd) {
       if (strlen(bkgrnd) > MAXCOLORLEN)
@@ -115,7 +116,7 @@ background P1C(char *, bkgrnd)
  * and sets the color in the PostScript.
  */
 void
-pushcolor P2C(char *, p, Boolean, outtops)
+pushcolor(char *p, Boolean outtops)
 {
    while (strlen(p) + csp > cend) {
       int newlen = 3 * (cend - cstack) ;
@@ -137,7 +138,7 @@ pushcolor P2C(char *, p, Boolean, outtops)
  * in the PostScript to the previous color.
  */
 void
-popcolor P1C(Boolean, outtops)
+popcolor(Boolean outtops)
 {
    char *p = csp - 1 ;
 
@@ -158,7 +159,7 @@ popcolor P1C(Boolean, outtops)
  * (this is now the root or global color).
  */
 void
-resetcolorstack P2C(char *, p, int, outtops)
+resetcolorstack(char * p, int outtops)
 {
    char *q = csp - 1 ;
 
@@ -193,7 +194,7 @@ resetcolorstack P2C(char *, p, int, outtops)
  *   this is safe.
  */
 void
-bopcolor P1C(int, outtops)
+bopcolor(int outtops)
 {
    integer pageloc = ftell(dvifile) ;
    int h = pageloc % COLORHASH ;

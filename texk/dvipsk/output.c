@@ -81,7 +81,7 @@ static Boolean lastspecial = 1 ;
 static shalfword d ;
 static Boolean popened = 0 ;
 int lastfont ; /* exported to dospecial to fix rotate.tex problem */
-static void chrcmd P1H(char c);        /* just a forward declaration */
+static void chrcmd(char c);        /* just a forward declaration */
 static char strbuffer[LINELENGTH + 20], *strbp = strbuffer ;
 static struct papsiz *finpapsiz ;
 static struct papsiz defpapsiz = {
@@ -111,7 +111,7 @@ extern char *infont ;
 static char possibleDSCLine[81],
        *dscLinePointer = possibleDSCLine, *dscLineEnd = possibleDSCLine + 80 ;
 void
-copyfile_general P2C(char *, s, struct header_list *, cur_header)
+copyfile_general(char *s, struct header_list *cur_header)
 {
    extern char *realnameoffile ;
    FILE *f = NULL ;
@@ -179,7 +179,7 @@ copyfile_general P2C(char *, s, struct header_list *, cur_header)
          (void)sprintf(errbuf, "Execution of  <%s> failed ", s) ;
          f = popen(s, "r") ;
          if (f != 0)
-            SET_BINARY(fileno(f)) ;
+            (void)SET_BINARY(fileno(f)) ;
 	}
 	else {
       (void)sprintf(errbuf,"Secure mode is %d so execute <%s> will not run", secure,s) ;
@@ -657,7 +657,7 @@ msdosdone:
 }
 
 void
-copyfile P1C(char *, s)
+copyfile(char *s)
 {
    copyfile_general(s, NULL) ;
 }
@@ -666,7 +666,8 @@ copyfile P1C(char *, s)
  *   For included PostScript graphics, we use the above routine, but
  *   with no fatal error message.
  */
-void figcopyfile P2C(char *, s, int, systemtype)
+void
+figcopyfile(char *s, int systemtype)
 {
    infigure = systemtype ? 2 : 1 ;
    copyfile(s) ;
@@ -678,7 +679,7 @@ void figcopyfile P2C(char *, s, int, systemtype)
  *   preceding token.
  */
 void
-specialout P1C(char, c)
+specialout(char c)
 {
    if (linepos >= LINELENGTH) {
       (void)putc('\n', bitfile) ;
@@ -690,7 +691,7 @@ specialout P1C(char, c)
 }
 
 void
-stringend P1H(void)
+stringend(void)
 {
    if (linepos + instring >= LINELENGTH - 2) {
       (void)putc('\n', bitfile) ;
@@ -711,7 +712,8 @@ stringend P1H(void)
  *   moving chars 0-32 and 127 to higher positions
  *   is desirable when using some fonts
  */
-int T1Char P1C(int, c)
+int
+T1Char(int c)
 {
   int tmpchr = c;
   if (shiftlowchars && curfnt->resfont) {
@@ -734,7 +736,7 @@ int T1Char P1C(int, c)
 #endif
 
 void
-scout P1C(unsigned char, c)   /* string character out */
+scout(unsigned char c)   /* string character out */
 {
 /*
  *   Is there room in the buffer?  LINELENGTH-6 is used because we
@@ -776,8 +778,8 @@ scout P1C(unsigned char, c)   /* string character out */
    }
 }
 
-void
-scout2 P1C(int, c)
+static void
+scout2(int c)
 {
    char s[64] ;
 
@@ -786,7 +788,7 @@ scout2 P1C(int, c)
 }
 
 void
-cmdout P1C(char *, s)
+cmdout(char *s)
 {
    int l ;
 
@@ -812,7 +814,7 @@ cmdout P1C(char *, s)
 
 
 static void
-chrcmd P1C(char, c)
+chrcmd(char c)
 {
    if ((! lastspecial && linepos >= LINELENGTH - 20) ||
        linepos + 2 > LINELENGTH) {
@@ -829,7 +831,7 @@ chrcmd P1C(char, c)
 }
 
 void
-floatout P1C(float, n)
+floatout(float n)
 {
    char buf[20] ;
 
@@ -837,7 +839,8 @@ floatout P1C(float, n)
    cmdout(buf) ;
 }
 
-void doubleout P1C(double, n)
+void
+doubleout(double n)
 {
    char buf[40] ;
 
@@ -846,7 +849,7 @@ void doubleout P1C(double, n)
 }
 
 void
-numout P1C(integer, n)
+numout(integer n)
 {
    char buf[10] ;
 
@@ -859,8 +862,8 @@ numout P1C(integer, n)
 }
 
 void
-mhexout P2C(register unsigned char *, p,
-	    register long, len)
+mhexout(register unsigned char *p,
+        register long len)
 {
    register char *hexchar = hxdata ;
    register int n, k ;
@@ -884,7 +887,7 @@ mhexout P2C(register unsigned char *, p,
 }
 
 void
-fontout P1C(int, n)
+fontout(int n)
 {
    char buf[6] ;
 
@@ -897,7 +900,7 @@ fontout P1C(int, n)
 }
 
 void
-hvpos P1H(void)
+hvpos(void)
 {
    if (rvv != vv) {
       if (instring) {
@@ -955,7 +958,8 @@ hvpos P1H(void)
  *   initprinter opens the bitfile and writes the initialization sequence
  *   to it.
  */
-void newline P1H(void)
+void
+newline(void)
 {
    if (linepos != 0) {
       (void)fprintf(bitfile, "\n") ;
@@ -965,7 +969,7 @@ void newline P1H(void)
 }
 
 void
-nlcmdout P1C(char *, s)
+nlcmdout(char *s)
 {
    newline() ;
    cmdout(s) ;
@@ -975,7 +979,8 @@ nlcmdout P1C(char *, s)
  *   Is the dimension close enough for a match?  We use 5bp
  *   as a match; this is 65536*72.27*5/72 or 328909 scaled points.
  */
-static int indelta P1C(integer, i)
+static int
+indelta(integer i)
 {
    if (i < 0)
       i = -i ;
@@ -984,14 +989,16 @@ static int indelta P1C(integer, i)
 /*
  *   A case-irrelevant string compare.
  */
-int mlower P1C(int, c)
+int
+mlower(int c)
 {
    if ('A' <= c && c <= 'Z')
       return c - 'A' + 'a' ;
    else
       return c ;
 }
-int ncstrcmp P2C(char *, a, char *, b)
+int
+ncstrcmp(char *a, char *b)
 {
    while (*a && (*a == *b ||
                        mlower(*a) == mlower(*b)))
@@ -1004,7 +1011,8 @@ int ncstrcmp P2C(char *, a, char *, b)
 /*
  *   Find the paper size.
  */
-void findpapersize P1H(void) {
+void
+findpapersize(void) {
    if (finpapsiz == 0) {
       struct papsiz *ps ;
       struct papsiz *fps = 0 ;
@@ -1172,7 +1180,8 @@ void findpapersize P1H(void) {
  *   as return (i * 72 / (65536 * 72.27)), which is the same as
  *   dividing by 65781.76, but we want to round up.
  */
-static int topoints P1C(integer, i)
+static int
+topoints(integer i)
 {
    i += 65780L ;
    return (i / 6578176L)*100 + (i % 6578176) * 100 / 6578176 ;
@@ -1181,7 +1190,8 @@ static int topoints P1C(integer, i)
  *   Send out the special paper stuff.  If `hed' is non-zero, only
  *   send out lines starting with `!' else send all other lines out.
  */
-void paperspec P2C(char *, s, int, hed)
+void
+paperspec(char *s, int hed)
 {
    int sendit ;
 
@@ -1205,7 +1215,8 @@ void paperspec P2C(char *, s, int, hed)
       }
    }
 }
-char *epsftest P1C(integer, bop)
+char *
+epsftest(integer bop)
 {
    if (tryepsf && paperfmt == 0 && *iname) {
       findbb(bop+44) ;
@@ -1215,7 +1226,8 @@ char *epsftest P1C(integer, bop)
 }
 static char *isepsf = 0 ;
 static int endprologsent ;
-void open_output P1H(void) {
+void
+open_output(void) {
    FILE * pf = NULL;
    if (*oname != 0) {
 /*
@@ -1300,7 +1312,7 @@ void open_output P1H(void) {
       SET_BINARY(fileno(bitfile)) ;
 }
 void
-initprinter P1C(sectiontype *, sect)
+initprinter(sectiontype *sect)
 {
    void tell_needed_fonts() ;
    int n = sect->numpages * pagecopies * collatedcopies ;
@@ -1418,7 +1430,8 @@ initprinter P1C(sectiontype *, sect)
    if (! headers_off)
       send_headers() ;
 }
-void setup P1H(void) {
+void
+setup(void) {
    newline() ;
    if (endprologsent == 0 && !disablecomments) {
       (void)fprintf(bitfile, "%%%%EndProlog\n") ;
@@ -1477,7 +1490,7 @@ void setup P1H(void) {
  *   cleanprinter is the antithesis of the above routine.
  */
 void
-cleanprinter P1H(void)
+cleanprinter(void)
 {
    (void)fprintf(bitfile, "\n") ;
    (void)fprintf(bitfile, "userdict /end-hook known{end-hook}if\n") ;
@@ -1514,7 +1527,8 @@ cleanprinter P1H(void)
 /* this tells dvips that it has no clue where it is. */
 static int thispage = 0 ;
 static integer rulex, ruley ;
-void psflush P1H(void) {
+void
+psflush(void) {
    rulex = ruley = rhh = rvv = -314159265 ;
    lastfont = -1 ;
 }
@@ -1522,12 +1536,12 @@ void psflush P1H(void) {
  *   pageinit initializes the output variables.
  */
 void
-pageinit P1H(void)
+pageinit(void)
 {
    psflush() ;
    newline() ;
    thispage++ ;
-   if (!disablecomments)
+   if (!disablecomments) {
       if (multiplesects)
 #ifdef SHORTINT
          (void)fprintf(bitfile, "%%DVIPSSectionPage: %ld\n", pagenum) ;
@@ -1538,6 +1552,7 @@ pageinit P1H(void)
       else if (! isepsf)
          (void)fprintf(bitfile, "%%%%Page: %d %d\n", pagenum, thispage) ;
 #endif
+   }
    linepos = 0 ;
    cmdout("TeXDict") ;
    cmdout("begin") ;
@@ -1560,7 +1575,7 @@ pageinit P1H(void)
  *   This routine ends a page.
  */
 void
-pageend P1H(void)
+pageend(void)
 {
    if (instring) {
       stringend() ;
@@ -1582,7 +1597,7 @@ pageend P1H(void)
  *   output size almost always.)
  */
 void
-drawrule P2C(integer, rw, integer, rh)
+drawrule(integer rw, integer rh)
 {
    numout((integer)hh) ;
    numout((integer)vv) ;
@@ -1601,7 +1616,7 @@ drawrule P2C(integer, rw, integer, rh)
  *   drawchar draws a character at the specified position.
  */
 void
-drawchar P2C(chardesctype *, c, int, cc)
+drawchar(chardesctype *c, int cc)
 {
    hvpos() ;
    if (lastfont != curfnt->psname) {
@@ -1615,7 +1630,8 @@ drawchar P2C(chardesctype *, c, int, cc)
 /*
  *   This routine sends out the document fonts comment.
  */
-void tell_needed_fonts P1H(void) {
+void
+tell_needed_fonts(void) {
    struct header_list *hl = ps_fonts_used ;
    char *q ;
    int roomleft = -1 ;

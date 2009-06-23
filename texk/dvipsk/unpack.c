@@ -27,7 +27,7 @@ static quarterword *p ;
  */
 
 shalfword
-getnyb P1H(void)
+getnyb(void)
 {
     if ( bitweight == 0 ) 
     { bitweight = 16 ; 
@@ -39,7 +39,7 @@ getnyb P1H(void)
 } 
 
 Boolean
-getbit P1H(void)
+getbit(void)
 {
     bitweight >>= 1 ; 
     if ( bitweight == 0 ) 
@@ -49,7 +49,8 @@ getbit P1H(void)
     return(*p & bitweight) ;
 } 
 
-long pkpackednum P1H(void) {
+long
+pkpackednum(void) {
     register halfword i;
     register long j ; 
     i = getnyb () ; 
@@ -74,7 +75,8 @@ long pkpackednum P1H(void) {
     } 
 } 
 
-void flip P2C(register char *, s, register long, howmany)
+void
+flip(register char *s, register long howmany)
 {
    register char t ;
 
@@ -91,8 +93,8 @@ void flip P2C(register char *, s, register long, howmany)
  */
 static halfword bftest = 1 ;
 long
-unpack P5C(quarterword *, pack, halfword *, raster,
-	   halfword, cwidth, halfword, cheight, halfword, cmd)
+unpack(quarterword *pack, halfword *raster,
+       halfword cwidth, halfword cheight, halfword cmd)
 { 
   register integer i, j ; 
   shalfword wordwidth ; 

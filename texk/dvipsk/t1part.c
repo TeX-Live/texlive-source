@@ -65,8 +65,8 @@ int CharCount;
 int GridCount;
 int ind_ref;
 
-int LoadVector P2H(int, CHAR *) ;
-int Afm P1H(void) ;
+int LoadVector(int, CHAR *) ;
+int Afm(void) ;
 
 typedef struct
 {
@@ -281,8 +281,8 @@ struct def_label label[NUM_LABEL];
 
 
 
-int DefTypeFont
-P1C(unsigned char *,name)
+int
+DefTypeFont(unsigned char *name)
 {
     int i;
 
@@ -294,8 +294,8 @@ P1C(unsigned char *,name)
     return -1;
 }
 
-int GetZeroLine
-P1C(unsigned char *, str)
+int
+GetZeroLine(unsigned char *str)
 {
     int token_type=0;
     if(*str!='0')
@@ -316,8 +316,8 @@ P1C(unsigned char *, str)
 
 /* We get token type and its content for ASCII code */
 
-int GetWord
-P1C(unsigned char *, mem)
+int
+GetWord(unsigned char *mem)
 {
     int  token_type=0;
     register unsigned char *tmp;
@@ -375,7 +375,8 @@ P1C(unsigned char *, mem)
 
 /* We get token type and its content for BINARY code */
 
-int GetToken P1H(void)
+int
+GetToken(void)
 {
     register unsigned char *tmp;
     int token_type=0;
@@ -412,7 +413,8 @@ int GetToken P1H(void)
     return(token_type= -1);
 }
 
-int GetNum P1H(void)
+int
+GetNum(void)
 {
     unsigned char *tmp;
     tmp=token;
@@ -435,7 +437,8 @@ int GetNum P1H(void)
 
 /* We pass token without definition its type, it's for speed */
 
-int PassToken P1H(void)
+int
+PassToken(void)
 {
     while(temp < end_of_scan)
     {
@@ -454,8 +457,8 @@ int PassToken P1H(void)
 /*  Simple pass off without charstring decrypting */
 /*                                                */
 
-int PassString
-P1C(unsigned char, flg)
+int
+PassString(unsigned char flg)
 {
     int len_str;
 
@@ -482,8 +485,8 @@ P1C(unsigned char, flg)
     return 1;
 }
 
-void *getmem
-P1C(unsigned, size)
+void *
+getmem(unsigned size)
 {
     void *tmp;
     if ((tmp = calloc(1, size)) == NULL)
@@ -494,7 +497,8 @@ P1C(unsigned, size)
     return tmp;
 }
 
-CHAR *AddChar P3C(CHAR *, TmpChar, unsigned char *, CharName, int, num)
+CHAR *
+AddChar(CHAR *TmpChar, unsigned char *CharName, int num)
 {
     int length;
 
@@ -510,7 +514,8 @@ CHAR *AddChar P3C(CHAR *, TmpChar, unsigned char *, CharName, int, num)
 }
 
 
-void AddStr P2C(unsigned char *, name, int, num)
+void
+AddStr(unsigned char *name, int num)
 {
     int length;
 
@@ -527,7 +532,8 @@ void AddStr P2C(unsigned char *, name, int, num)
 
 /* We prepare own encoding vector for output */
 
-void RevChar P1C(CHAR *, TmpChar)
+void
+RevChar(CHAR *TmpChar)
 {
     int i;
     CHAR *ThisChar = TmpChar;
@@ -556,8 +562,8 @@ void RevChar P1C(CHAR *, TmpChar)
 
 /* And here we produce own resulting encoding vector for partial font */
 
-void OutChar
-P2C(CHAR *, TmpChar, FILE *, fout)
+void
+OutChar(CHAR *TmpChar, FILE *fout)
 {
 
     CHAR *ThisChar = TmpChar;
@@ -583,7 +589,8 @@ P2C(CHAR *, TmpChar, FILE *, fout)
 
 /* We prepare strings list for output */
 
-void Reeverse P1C(STRING *, TmpStr)
+static void
+Reeverse(STRING *TmpStr)
 {
 
     int tmp;
@@ -612,8 +619,8 @@ void Reeverse P1C(STRING *, TmpStr)
 
 /* And here we post strings to out */
 
-void OutStr
-P2C(STRING *, TmpStr, FILE *, fout)
+void
+OutStr(STRING *TmpStr, FILE *fout)
 {
     STRING *ThisStr = TmpStr;
     if(encode==AFM_ENC)
@@ -633,7 +640,8 @@ P2C(STRING *, TmpStr, FILE *, fout)
 
 
 
-void PrintChar P1C(CHAR *, TmpChar)
+void
+PrintChar(CHAR *TmpChar)
 {
     CHAR *ThisChar = TmpChar;
     while (ThisChar != NULL)
@@ -649,7 +657,8 @@ void PrintChar P1C(CHAR *, TmpChar)
 }
 
 
-int ClearB P1H(void)
+int
+ClearB(void)
 {
     CHAR *ThisChar = FirstCharB;
     while (ThisChar != NULL)
@@ -663,8 +672,8 @@ int ClearB P1H(void)
 /* We mark chars in encoding vector thanks same names from
 reencoding vector */
 
-int ChooseChar
-P2C(unsigned char *, name, CHAR *, TmpChar)
+int
+ChooseChar(unsigned char *name, CHAR *TmpChar)
 {
     int length;
     CHAR *ThisChar = TmpChar;
@@ -706,8 +715,8 @@ P2C(unsigned char *, name, CHAR *, TmpChar)
 /* We find index in label array for char, wich is required
 for compose char, if it uses SEAC command */
 
-int FindSeac
-P1C(int, num)
+int
+FindSeac(int num)
 {
     int i;
 
@@ -722,9 +731,10 @@ P1C(int, num)
 }
 
 
-void ClearCW P1H(CHAR *);
+void ClearCW(CHAR *);
 
-int FindCharW P2C(unsigned char *, name, int, length)
+int
+FindCharW(unsigned char *name, int length)
 {
     CHAR *ThisChar = FirstCharW;
 
@@ -792,8 +802,8 @@ int FindCharW P2C(unsigned char *, name, int, length)
 }
 
 
-void ClearCW
-P1C(CHAR *, ThisChar)
+void
+ClearCW(CHAR *ThisChar)
 {
 
         if (ThisChar == FirstCharW)
@@ -818,8 +828,8 @@ P1C(CHAR *, ThisChar)
 /* We build temporary 'work' encoding vector only for searching
 needed chars */
 
-int WorkVect
-P1C(CHAR *, TmpChar)
+int
+WorkVect(CHAR *TmpChar)
 {
     while (TmpChar != NULL) {
         {
@@ -838,7 +848,8 @@ P1C(CHAR *, TmpChar)
 }
 
 
-void UnDefineCharsW P1H(void)
+void
+UnDefineCharsW(void)
 {
     CHAR *ThisChar = FirstCharW;
     while (ThisChar != NULL)
@@ -851,7 +862,8 @@ void UnDefineCharsW P1H(void)
     CharCount = 0;
 }
 
-CHAR * UnDefineChars P1C(CHAR *, TmpChar)
+CHAR *
+UnDefineChars(CHAR *TmpChar)
 {
     CHAR *ThisChar = TmpChar;
     while (ThisChar != NULL)
@@ -868,7 +880,8 @@ CHAR * UnDefineChars P1C(CHAR *, TmpChar)
 
 
 
-void UnDefineStr P1H(void)
+void
+UnDefineStr(void)
 {
     STRING *ThisStr = FirstStr;
     while (ThisStr != NULL)
@@ -887,7 +900,8 @@ void UnDefineStr P1H(void)
 /* We mark subroutines without charstring decrypting  */
 /*                                                    */
 
-void ScanSubrs P1C(int, i)
+void
+ScanSubrs(int i)
 {
     int err_num;
     int word_type = 0;
@@ -954,8 +968,9 @@ void ScanSubrs P1C(int, i)
     }
 }
 
-void ViewReturnCall P5C(int, num_err, int, top, int *, 
-			pstack, int, j, int, depth)
+void
+ViewReturnCall(int num_err, int top, int *pstack,
+               int j, int depth)
 {
     int k,m;
 
@@ -1018,8 +1033,8 @@ void ViewReturnCall P5C(int, num_err, int, top, int *,
 /* We decrypt charstring  with recursive descent */
 /*                                               */
 
-int DeCodeStr
-P2C(int, num, int, numseac)
+int
+DeCodeStr(int num, int numseac)
 {
     unsigned int loccr;
     unsigned char byte;
@@ -1292,7 +1307,8 @@ P2C(int, num, int, numseac)
 /*                                        */
 
 
-void ScanChars P1C(int, i)
+void
+ScanChars(int i)
 {
 
     int word_type=0;
@@ -1461,14 +1477,16 @@ void ScanChars P1C(int, i)
     }
 }
 
-void LastLook P1H(void)
+void
+LastLook(void)
 {
     label[number].begin = temp;
     label[number].select = FLG_BINARY;
     number++;
 }
 
-int FindKeyWord P2C(int, First_Key, int, lastkey)
+int
+FindKeyWord(int First_Key, int lastkey)
 {
     int word_type=0;
     int i;
@@ -1514,7 +1532,8 @@ int FindKeyWord P2C(int, First_Key, int, lastkey)
 
 /* To increase scan speed we use dynamic range of keywords */
 
-int ScanBinary P1H(void)
+int
+ScanBinary(void)
 {
     int i;
     int firstnum, lastnum;
@@ -1572,8 +1591,8 @@ int ScanBinary P1H(void)
     }
 }
 
-unsigned char *itoasp
-P3C(int, n, unsigned char *, s, int, len)
+unsigned char *
+itoasp(int n, unsigned char *s, int len)
 {
     static int i, j;
 
@@ -1594,7 +1613,8 @@ P3C(int, n, unsigned char *, s, int, len)
     return NULL;
 }
 
-void SubstNum P1H(void)
+void
+SubstNum(void)
 {
     int i, j;
 
@@ -1610,7 +1630,8 @@ void SubstNum P1H(void)
     }
 }
 
-ub4 little4 P1C(ub1 *, buff)
+ub4
+little4(ub1 *buff)
 {
     return (ub4) buff[0] +
     ((ub4) buff[1] << 8) +
@@ -1622,7 +1643,8 @@ unsigned short int  c1 = C1, c2 = C2;
 unsigned short int edr;
 
 
-unsigned char CDeCrypt P2C(unsigned char, cipher, unsigned int *, lcdr)
+unsigned char
+CDeCrypt(unsigned char cipher, unsigned int *lcdr)
 {
     register unsigned char plain;
 
@@ -1639,8 +1661,8 @@ unsigned short int eer;
 */
 
 
-int EndOfEncoding
-P1C(int, err_num)
+int
+EndOfEncoding(int err_num)
 {
 
     int j;
@@ -1721,7 +1743,8 @@ P1C(int, err_num)
 in non StandardEncoding */
 
 
-void CorrectGrid P1H(void)
+void
+CorrectGrid(void)
 {
     int i, j, k, imax;
 
@@ -1741,7 +1764,8 @@ void CorrectGrid P1H(void)
 }
  /* We build vector for non StandardEncoding */
 
-int CharEncoding P1H(void)
+int
+CharEncoding(void)
 {
     int err_token=0;
     int num=0;
@@ -1792,7 +1816,8 @@ int CharEncoding P1H(void)
 
 
 
-void FindEncoding P1H(void)
+void
+FindEncoding(void)
 {
     int num_err=0;
     int tmpnum;
@@ -1844,7 +1869,8 @@ void FindEncoding P1H(void)
 reencode them if there is reencoding vector for this case and
 build work vector */
 
-void CheckChoosing P1H(void)
+void
+CheckChoosing(void)
 {
 
     CHAR *TmpChar;
@@ -1930,7 +1956,8 @@ void CheckChoosing P1H(void)
  *   what we've done.
  */
 
-char *KillUnique P1C(char *, s)
+static char *
+KillUnique(char *s)
 {
    char *r = strstr(s, "/UniqueID") ;
    if (r) {
@@ -1940,7 +1967,8 @@ char *KillUnique P1C(char *, s)
    return s ;
 }
 
-void OutASCII P3C(FILE *, fout, ub1 *, buff, ub4, len)
+void
+OutASCII(FILE *fout, ub1 *buff, ub4 len)
 {
     ub4 i;
 
@@ -1981,7 +2009,8 @@ void OutASCII P3C(FILE *, fout, ub1 *, buff, ub4, len)
 
 /* It's eexec decription for PFB format */
 
-void BinEDeCrypt P2C(ub1 *, buff, ub4, len)
+void
+BinEDeCrypt(ub1 *buff, ub4 len)
 {
     ub4 i;
 
@@ -1995,7 +2024,8 @@ void BinEDeCrypt P2C(ub1 *, buff, ub4, len)
 /* And  it's eexec decription for PFA format */
 
 
-void HexEDeCrypt P1C(unsigned char *, mem)
+void
+HexEDeCrypt(unsigned char *mem)
 {
     int ch1, ch2, cipher;
 
@@ -2028,7 +2058,8 @@ void HexEDeCrypt P1C(unsigned char *, mem)
     }
 }
 
-int PartialPFA P2C(FILE *, fin, FILE *, fout)
+int
+PartialPFA(FILE *fin, FILE *fout)
 {
     ub1  type;
     ub4 memory, addmemory, length, add_of_len;
@@ -2135,8 +2166,8 @@ int PartialPFA P2C(FILE *, fin, FILE *, fout)
 #define NEXT_BINARY     3
 #define NEXT_ASCII      4
 
-int PartialPFB
-P2C(FILE *, fin, FILE *, fout)
+int
+PartialPFB(FILE *fin, FILE *fout)
 {
     ub1  type;
     ub4  t_length, length, nread;
@@ -2275,8 +2306,8 @@ P2C(FILE *, fin, FILE *, fout)
     }
 }
 
-void OutHEX
-P1C(FILE *, fout)
+void
+OutHEX(FILE *fout)
 {
     int i=0;
     int num;
@@ -2326,7 +2357,8 @@ P1C(FILE *, fout)
 /* We parse AFM file only if we've received errors after
 parsing of own vector */
 
-int Afm P1H(void)
+int
+Afm(void)
 {
     unsigned char afmfile[100];
     FILE  *fafm;
@@ -2423,8 +2455,9 @@ int Afm P1H(void)
     return -2;
 }
 
-int FontPart P3C(FILE *, fout, unsigned char *, fontfile,
-		 unsigned char *, vectfile )
+int
+FontPart(FILE *fout, unsigned char *fontfile,
+	 unsigned char *vectfile)
 {
     FILE  *fin=0;
     int   num;
@@ -2537,7 +2570,8 @@ int FontPart P3C(FILE *, fout, unsigned char *, fontfile,
 
 
 
-int LoadVector P2C(int, num, CHAR *, TmpChar)
+int
+LoadVector(int num, CHAR *TmpChar)
 {
 
     FILE  *fvect;
@@ -2643,8 +2677,8 @@ int LoadVector P2C(int, num, CHAR *, TmpChar)
     }
 }
 
-int ChooseVect
-P1C(CHAR *, tmpChar)
+int
+ChooseVect(CHAR *tmpChar)
 {
     CHAR *ThisChar = tmpChar;
 
@@ -2666,8 +2700,8 @@ P1C(CHAR *, tmpChar)
 
 }
 
-void ErrorOfScan
-P1C(int, err)
+void
+ErrorOfScan(int err)
 {
     switch(err)
     {
@@ -2703,7 +2737,8 @@ P1C(int, err)
     }
 }
 
-void NameOfProgram P1H(void)
+void
+NameOfProgram(void)
 {
 #ifdef DVIPS
     fprintf(stderr,"This is DVIPS, t1part module \n");

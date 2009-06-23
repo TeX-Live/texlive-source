@@ -5,6 +5,8 @@
  *   indicate substitution of the default path list at that point.
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
+#include "protos.h"
+
 #ifdef KPATHSEA
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/tex-file.h>
@@ -23,8 +25,6 @@ extern char *getenv();
 #include <stdlib.h>
 FILE *fat_fopen();
 #endif
-
-extern char *newstring P1H(char *) ;
 
 #if defined(SYSV) || defined(VMS) || defined(__THINK__) || defined(MSDOS) || defined(OS2) || defined(ATARIST) || defined(WIN32)
 #define MAXPATHLEN (2000)
@@ -79,7 +79,7 @@ int to_close ;
 char *realnameoffile ;
 
 FILE *
-search P3C(kpse_file_format_type, format, char *, file, char *, mode)
+search(kpse_file_format_type format, char *file, char *mode)
 {
   FILE *ret;
   string found_name;
@@ -149,8 +149,7 @@ search P3C(kpse_file_format_type, format, char *, file, char *, mode)
 }               /* end search */
 
 FILE *
-pksearch P6C(char *, path, char *, file, char *, mode,
-	     halfword, dpi, char **, name_ret, int *, dpi_ret)
+pksearch(char *file, char *mode, halfword dpi, char **name_ret, int *dpi_ret)
 {
   FILE *ret;
   kpse_glyph_file_type font_file;
@@ -182,7 +181,7 @@ char realnameoffile[MAXPATHLEN] ;
 
 extern char *figpath, *pictpath, *headerpath ;
 FILE *
-search P3C(char *, path, char *, file, char *, mode)
+search(char *path, char *file, char *mode)
 {
    register char *nam ;                 /* index into fname */
    register FILE *fd ;                  /* file desc of file */
@@ -378,8 +377,8 @@ if (strchr(nam,'=') != NULL) {
 }               /* end search */
 
 FILE *
-pksearch P6C(char *, path, char *, file, char *, mode,
-	     char *, n, halfword, dpi, halfword, vdpi)
+pksearch(char *path, char *file, char *mode,
+	 char *n, halfword dpi, halfword vdpi)
 {
    register char *nam ;                 /* index into fname */
    register FILE *fd ;                  /* file desc of file */
@@ -538,7 +537,8 @@ pksearch P6C(char *, path, char *, file, char *, mode,
 #  ifdef VMCMS  /* IBM: VM/CMS */
 #    define fopen cmsfopen
 #  endif /* IBM: VM/CMS */
-FILE *my_real_fopen P2C(register char *, n, register char *, t)
+FILE *
+my_real_fopen(register char *n, register char *t)
 {
    FILE *tf ;
    if (dd(D_FILES)) {
@@ -561,7 +561,8 @@ FILE *my_real_fopen P2C(register char *, n, register char *, t)
 #ifdef OS2
 /* truncate filename at end of fname to FAT filesystem 8.3 limit */
 /* if truncated, return fopen() with new name */
-FILE *fat_fopen P2C(char *, fname, char *, t)
+FILE *
+fat_fopen(char *fname, char *t)
 {
    char *np;	/* pointer to name within path */
    char nbuf[13], *ns, *nd;
@@ -630,7 +631,8 @@ FILE *fat_fopen P2C(char *, fname, char *, t)
 }
 #endif
 
-int close_file P1C(FILE *, f)
+int
+close_file(FILE *f)
 {
    switch(to_close) {
 case USE_PCLOSE:  return pclose(f) ;

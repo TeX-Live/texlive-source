@@ -23,7 +23,7 @@ extern FILE *dvifile ;
  *   And now the big routine.
  */
 void
-skippage P1H(void)
+skippage(void)
 {
    register shalfword cmd ;
    register integer i ;

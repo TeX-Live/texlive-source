@@ -55,14 +55,14 @@ extern Boolean flib ;
 FILE *pkfile ;
 char name[MAXPATHLEN] ;
 void
-badpk P1C(char *, s)
+badpk(char *s)
 {
    (void)sprintf(errbuf,"! Bad PK file %s: %s",name,s) ;
    error(errbuf);
 }
 
 shalfword
-pkbyte P1H(void)
+pkbyte(void)
 {
    register shalfword i ;
 
@@ -72,7 +72,7 @@ pkbyte P1H(void)
 }
 
 integer
-pkquad P1H(void)
+pkquad(void)
 {
    register integer i ;
 
@@ -86,7 +86,7 @@ pkquad P1H(void)
 }
 
 integer
-pktrio P1H(void)
+pktrio(void)
 {
    register integer i ;
 
@@ -116,7 +116,7 @@ int dontmakefont = 0 ; /* if makefont fails once we won't try again */
 #endif
 
 void
-lectureuser P1H(void) {
+lectureuser(void) {
    static int userwarned = 0 ;
 
    if (! userwarned) {
@@ -125,7 +125,7 @@ lectureuser P1H(void) {
    }
 }
 Boolean
-pkopen P1C(register fontdesctype *, fd)
+pkopen(register fontdesctype *fd)
 {
    register char *d, *n ;
    char *name_ret ;
@@ -153,7 +153,7 @@ pkopen P1C(register fontdesctype *, fd)
 #ifdef KPATHSEA
      char *this_name = concat (d, n);
 
-     pkfile=pksearch(pkpath, this_name, READBIN, fd->dpi, &name_ret, &dpi_ret);
+     pkfile=pksearch(this_name, READBIN, fd->dpi, &name_ret, &dpi_ret);
 
      if (!pkfile || !FILESTRCASEEQ (this_name, name_ret))
        {
@@ -321,7 +321,7 @@ pkopen P1C(register fontdesctype *, fd)
  *   structure, along with everything else.)
  */
 void
-loadfont P1C(register fontdesctype *, curfnt)
+loadfont(register fontdesctype *curfnt)
 {
    register integer i ;
    register shalfword cmd ;

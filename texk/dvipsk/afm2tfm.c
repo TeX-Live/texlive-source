@@ -235,8 +235,8 @@ char *efactorparam, *slantparam ;
 double newslant ;
 char titlebuf[500] ;
 
-void
-error P1C(register char *, s)
+static void
+error(register char *s)
 {
    (void)fprintf(stderr, "%s\n", s) ;
    if (obuffer[0]) {
@@ -251,16 +251,16 @@ error P1C(register char *, s)
       exit(1) ;
 }
 
-int
-transform P2C(register int, x, register int, y)
+static int
+transform(register int x, register int y)
 {
    register double acc ;
    acc = efactor * x + slant *y ;
    return (int)(acc>=0? floor(acc+0.5) : ceil(acc-0.5) ) ;
 }
 
-int
-texlive_getline P1H(void) {
+static int
+texlive_getline(void) {
    register char *p ;
    register int c ;
 
@@ -302,8 +302,8 @@ char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
 #define CC (6)
 #define EncodingScheme (7)
 #define NONE (-1)
-int
-interest P1C(char *, s)
+static int
+interest(char *s)
 {
    register char **p ;
    register int n ;
@@ -314,8 +314,8 @@ interest P1C(char *, s)
    return(NONE) ;
 }
 
-char *
-mymalloc P1C(unsigned long, len)
+static char *
+mymalloc(unsigned long len)
 {
    register char *p ;
    int i ;
@@ -332,16 +332,16 @@ mymalloc P1C(unsigned long, len)
    return(p) ;
 }
 
-char *
-newstring P1C(char *, s)
+static char *
+newstring(char *s)
 {
    char *q = mymalloc((unsigned long)(strlen(s) + 1)) ;
    (void)strcpy(q, s) ;
    return q ;
 }
 
-char *
-paramnewstring P1H(void) {
+static char *
+paramnewstring(void) {
    register char *p, *q ;
 
    p = param ;
@@ -356,8 +356,8 @@ paramnewstring P1H(void) {
    return(q) ;
 }
 
-char *
-paramstring P1H(void) {
+static char *
+paramstring(void) {
    register char *p, *q ;
 
    p = param ;
@@ -372,8 +372,8 @@ paramstring P1H(void) {
    return(q) ;
 }
 
-int
-paramnum P1H(void) {
+static int
+paramnum(void) {
    register char *p ;
    int i ;
 
@@ -383,8 +383,8 @@ paramnum P1H(void) {
    return(i) ;
 }
 
-float
-paramfloat P1H(void) {
+static float
+paramfloat(void) {
    register char *p ;
    float i ;
 
@@ -394,8 +394,8 @@ paramfloat P1H(void) {
    return(i) ;
 }
 
-struct adobeinfo *
-newchar P1H(void) {
+static struct adobeinfo *
+newchar(void) {
    register struct adobeinfo *ai ;
 
    ai = (struct adobeinfo *)mymalloc((unsigned long)sizeof(struct adobeinfo)) ;
@@ -416,8 +416,8 @@ newchar P1H(void) {
    return(ai) ;
 }
 
-struct kern *
-newkern P1H(void) {
+static struct kern *
+newkern(void) {
    register struct kern *nk ;
 
    nk = (struct kern *)mymalloc((unsigned long)sizeof(struct kern)) ;
@@ -427,8 +427,8 @@ newkern P1H(void) {
    return(nk) ;
 }
 
-struct pcc *
-newpcc P1H(void) {
+static struct pcc *
+newpcc(void) {
    register struct pcc *np ;
 
    np = (struct pcc *)mymalloc((unsigned long)sizeof(struct pcc)) ;
@@ -439,8 +439,8 @@ newpcc P1H(void) {
    return(np) ;
 }
 
-struct lig *
-newlig P1H(void) {
+static struct lig *
+newlig(void) {
    register struct lig *nl ;
 
    nl = (struct lig *)mymalloc((unsigned long)sizeof(struct lig)) ;
@@ -452,8 +452,8 @@ newlig P1H(void) {
    return(nl) ;
 }
 
-void
-expect P1C(char *, s)
+static void
+expect(char *s)
 {
    if (strcmp(paramstring(), s) != 0) {
       (void)fprintf(stderr, "%s expected: ", s) ;
@@ -461,8 +461,8 @@ expect P1C(char *, s)
    }
 }
 
-void
-handlechar P1H(void) { /* an input line beginning with C */
+static void
+handlechar(void) { /* an input line beginning with C */
    register struct adobeinfo *ai ;
    register struct lig *nl ;
 
@@ -510,8 +510,8 @@ handlechar P1H(void) { /* an input line beginning with C */
    }
 }
 
-struct adobeinfo *
-findadobe P1C(char *, p)
+static struct adobeinfo *
+findadobe(char *p)
 {
    register struct adobeinfo *ai ;
 
@@ -531,8 +531,8 @@ findadobe P1C(char *, p)
  * boundarychar mechanisms are not oriented to kerns (they apply
  * to both spaces and punctuation) so we don't want to use them.
  */
-void
-handlekern P1H(void) { /* an input line beginning with KPX */
+static void
+handlekern(void) { /* an input line beginning with KPX */
    register struct adobeinfo *ai ;
    register char *p ;
    register struct kern *nk ;
@@ -550,8 +550,8 @@ handlekern P1H(void) { /* an input line beginning with KPX */
     }
 }
 
-void
-handleconstruct P1H(void) { /* an input line beginning with CC */
+static void
+handleconstruct(void) { /* an input line beginning with CC */
    register struct adobeinfo *ai ;
    register char *p ;
    register struct pcc *np ;
@@ -580,10 +580,12 @@ handleconstruct P1H(void) { /* an input line beginning with CC */
    }
 }
 
-struct encoding *readencoding P1H(char *) ;
+static struct encoding *readencoding(char *) ;
 
-void
-makeaccentligs P1H(void) {
+#if 0
+/* Not used */
+static void
+makeaccentligs(void) {
    register struct adobeinfo *ai, *aci ;
    register char *p ;
    register struct lig *nl ;
@@ -601,9 +603,10 @@ makeaccentligs P1H(void) {
          }
    }
 }
+#endif
 
-void
-readadobe P1H(void) {
+static void
+readadobe(void) {
    struct adobeinfo *ai ;
 #ifdef VMCMS
     int i;
@@ -674,8 +677,8 @@ default:
  *   Re-encode the adobe font.  Assumes that the header file will
  *   also contain the appropriate instructions!
  */
-void
-handlereencoding P1H(void) {
+static void
+handlereencoding(void) {
    if (inenname) {
       int i ;
       struct adobeinfo *ai ;
@@ -711,7 +714,8 @@ handlereencoding P1H(void) {
  *   characters, we would prefer to use the original ordering.  It just
  *   makes more sense.
  */
-struct adobeinfo *revlist P1C(struct adobeinfo *, p)
+static struct adobeinfo *
+revlist (struct adobeinfo *p)
 {
    struct adobeinfo *q = 0, *t ;
 
@@ -724,8 +728,8 @@ struct adobeinfo *revlist P1C(struct adobeinfo *, p)
    return q ;
 }
 
-void
-assignchars P1H(void) {
+static void
+assignchars(void) {
    register char **p ;
    register int i, j ;
    register struct adobeinfo *ai, *pai ;
@@ -807,8 +811,8 @@ finishup:
       }
 }
 
-void
-upmap P1H(void) { /* Compute uppercase mapping, when making a small caps font */
+static void
+upmap(void) { /* Compute uppercase mapping, when making a small caps font */
    register struct adobeinfo *ai, *Ai ;
    register char *p, *q ;
    register struct pcc *np, *nq ;
@@ -872,15 +876,15 @@ upmap P1H(void) { /* Compute uppercase mapping, when making a small caps font */
 
 int lf, lh, nw, nh, nd, ni, nl, nk, ne, np ;
 
-void
-write16 P1C(register short, what)
+static void
+write16(register short what)
 {
    (void)fputc(what >> 8, tfmout) ;
    (void)fputc(what & 255, tfmout) ;
 }
 
-void
-writearr P2C(register long *, p, register int, n)
+static void
+writearr(register long *p, register int n)
 {
    while (n) {
       write16((short)(*p >> 16)) ;
@@ -890,8 +894,8 @@ writearr P2C(register long *, p, register int, n)
    }
 }
 
-void
-makebcpl P3C(register long *, p, register char *, s, register int, n)
+static void
+makebcpl(register long *p, register char *s, register int n)
 {
    register long t ;
    register long sc ;
@@ -928,9 +932,9 @@ int unsort[257] ;
  *   Memory location what[oldn] is set to 0x7fffffffL for convenience.
  */
 long nextd ; /* smallest value that will give a different mincover */
-int
-mincover P2C(long *, what, 
-             register long, d) /* tells how many clusters result, given max difference d */
+static int
+mincover(long *what, 
+         register long d) /* tells how many clusters result, given max difference d */
 {
    register int m ;
    register long l ;
@@ -948,8 +952,8 @@ mincover P2C(long *, what,
    return (m) ;
 }
 
-void
-remap P3C(long *, what, int, oldn, int, newn)
+static void
+remap(long * what, int oldn, int newn)
 {
    register int i, j ;
    register long d, l ;
@@ -984,8 +988,8 @@ remap P3C(long *, what, int, oldn, int, newn)
    }
 }
 
-long
-checksum P1H(void) {
+static long
+checksum(void) {
    int i ;
    unsigned long s1 = 0, s2 = 0 ;
    char *p ;
@@ -1011,8 +1015,8 @@ checksum P1H(void) {
  *   Input is in 1000ths of an em.  Output is in FIXFACTORths of 1000.
  */
 #define FIXFACTOR (0x100000L) /* 2^{20}, the unit fixnum */
-long
-scale P1C(long, what)
+static long
+scale(long what)
 {
    return(((what / 1000) << 20) +
           (((what % 1000) << 20) + 500) / 1000) ;
@@ -1022,8 +1026,8 @@ long *header, *charinfo, *width, *height, *depth, *ligkern, *kern, *tparam,
      *italic ;
 long *tfmdata ;
 
-void
-buildtfm P1H(void) {
+static void
+buildtfm(void) {
    register int i, j ;
    register struct adobeinfo *ai ;
 
@@ -1136,8 +1140,8 @@ buildtfm P1H(void) {
    np = 6 ;
 }
 
-void
-writesarr P2C(long *, what, int, len)
+static void
+writesarr(long *what, int len)
 {
    register long *p ;
    int i ;
@@ -1153,8 +1157,8 @@ writesarr P2C(long *, what, int, len)
    writearr(what, len) ;
 }
 
-void
-writetfm P1H(void) {
+static void
+writetfm(void) {
    lf = 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl + nk + ne + np ;
    write16(lf) ;
    write16(lh) ;
@@ -1188,8 +1192,8 @@ writetfm P1H(void) {
  *   (>50)
  */
 char *accents[] = { "acute", "tilde", "caron", "dieresis", NULL} ;
-int
-texheight P1C(register struct adobeinfo *, ai)
+static int
+texheight(register struct adobeinfo *ai)
 {
    register char **p;
    register struct adobeinfo *aci, *acci ;
@@ -1209,11 +1213,13 @@ texheight P1C(register struct adobeinfo *, ai)
 
 #define vout(s)  fprintf(vplout, s)
 int level ; /* the depth of parenthesis nesting in VPL file being written */
-void vlevout() {
+static void
+vlevout() {
    register int l = level ;
    while (l--) vout("   ") ;
 }
-void vlevnlout() {
+static void
+vlevnlout() {
    vout("\n") ;
    vlevout() ;
 }
@@ -1221,15 +1227,15 @@ void vlevnlout() {
 #define voutln2(f,s) {fprintf(vplout,f,s);vlevnlout();}
 #define voutln3(f,a,b) {fprintf(vplout,f,a,b);vlevnlout();}
 #define voutln4(f,a,b,c) {fprintf(vplout,f,a,b,c);vlevnlout();}
-void
-vleft P1H(void)
+static void
+vleft(void)
 {
    level++ ;
    vout("(") ;
 }
 
-void
-vright P1H(void)
+static void
+vright(void)
 {
    level-- ;
    voutln(")") ;
@@ -1238,7 +1244,8 @@ vright P1H(void)
 int forceoctal = 0 ;
 
 char vcharbuf[6] ;
-char *vchar P1C(int, c)
+static char *
+vchar(int c)
 {
    if (forceoctal == 0 && ISALNUM (c))
       (void) sprintf(vcharbuf,"C %c",
@@ -1252,8 +1259,8 @@ char *vchar P1C(int, c)
 }
 
 char vnamebuf[100];
-char *
-vname P1C(int, c)
+static char *
+vname(int c)
 {
   if (!forceoctal && ISALNUM (c)) {
     vnamebuf[0] = 0;
@@ -1263,8 +1270,8 @@ vname P1C(int, c)
   return vnamebuf;
 }
 
-void
-writevpl P1H(void)
+static void
+writevpl(void)
 {
    register int i, j, k ;
    register struct adobeinfo *ai ;
@@ -1489,7 +1496,8 @@ writevpl P1H(void)
 }
 
 #ifdef KPATHSEA
-void version P1C(FILE *, f)
+static void
+version(FILE *f)
 {
   extern KPSEDLL char *kpathsea_version_string;
   fputs ("afm2tfm(k) (dvips(k) 5.98) 8.1\n", f);
@@ -1520,7 +1528,8 @@ Original author of afm2tfm: T. Rokicki.\n", f);
 --version           print version number and exit.\n\
 "
 
-void usage P1C(FILE *, f)
+static void
+usage(FILE *f)
 {
    extern KPSEDLL char *kpse_bug_address;
    
@@ -1530,7 +1539,8 @@ void usage P1C(FILE *, f)
    fputs (kpse_bug_address, f);
 }
 #else /* ! KPATHSEA */
-void usage P1C(FILE *, f)
+static void
+usage(FILE *f)
 {
    (void)fprintf(f,
  "afm2tfm 8.1, Copyright 1990-97 by Radical Eye Software\n") ;
@@ -1545,8 +1555,8 @@ void usage P1C(FILE *, f)
 
 #define CHECKARG3 if (argc < 4) { usage(stderr); exit(1); }
 
-void
-openfiles P2C(int, argc, char **, argv)
+static void
+openfiles(int argc, char **argv)
 {
 #ifndef KPATHSEA
    register int lastext ;
@@ -1672,7 +1682,7 @@ default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
    if ((afmin=fopen(inname, "r"))==NULL)
       error("! can't open afm input file") ;
 #endif /* KPATHSEA */
-   SET_BINARY(fileno(afmin)) ;
+   (void)SET_BINARY(fileno(afmin)) ;
 
    if (argc>3 || (argc==3 && *argv[2]=='-')) {
      error("! need at most two non-option arguments") ;
@@ -1733,7 +1743,8 @@ default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
 /*
  *   Some routines to remove kerns that match certain patterns.
  */
-struct kern *rmkernmatch P2C(struct kern *, k, char *, s)
+static struct kern *
+rmkernmatch(struct kern *k, char *s)
 {
    struct kern *nkern ;
 
@@ -1749,7 +1760,8 @@ struct kern *rmkernmatch P2C(struct kern *, k, char *, s)
 /*
  *   Recursive to one level.
  */
-void rmkern P3C(char *, s1, char *, s2, struct adobeinfo *, ai)
+static void
+rmkern(char *s1, char *s2, struct adobeinfo *ai)
 {
    if (ai == 0) {
       if (strcmp(s1, "*") == 0) {
@@ -1771,8 +1783,8 @@ void rmkern P3C(char *, s1, char *, s2, struct adobeinfo *, ai)
 /* Make the kerning for character S1 equivalent to that for S2.
    If either S1 or S2 do not exist, do nothing.
    If S1 already has kerning, do nothing.  */
-void
-addkern P2C(char *, s1, char *, s2)
+static void
+addkern(char *s1, char *s2)
 {
   struct adobeinfo *ai1 = findadobe (s1);
   struct adobeinfo *ai2 = findadobe (s2);
@@ -1790,7 +1802,8 @@ int sawligkern ;
  *   Reads a ligkern line, if this is one.  Assumes the first character
  *   passed is `%'.
  */
-void checkligkern P1C(char *, s)
+static void
+checkligkern(char *s)
 {
    char *oparam = param ;
    char *mlist[5] ;
@@ -1886,7 +1899,8 @@ void checkligkern P1C(char *, s)
  *   names like 0, .notdef, _foo_.  We do not allow //abc.
  */
 char smbuffer[100] ;    /* for tokens */
-char *gettoken() {
+static char *
+gettoken(void) {
    char *p, *q ;
 
    while (1) {
@@ -1928,7 +1942,8 @@ char *gettoken() {
       }
    }
 }
-void getligkerndefaults() {
+static void
+getligkerndefaults(void) {
    int i ;
 
    for (i=0; staticligkern[i]; i++) {
@@ -1942,7 +1957,8 @@ void getligkerndefaults() {
  *   This routine reads in an encoding file, given the name.  It returns
  *   the final total structure.  It performs a number of consistency checks.
  */
-struct encoding *readencoding P1C(char *, enc)
+static struct encoding *
+readencoding(char *enc)
 {
    char *p ;
    int i ;
@@ -1958,7 +1974,7 @@ struct encoding *readencoding P1C(char *, enc)
 #else
       afmin = fopen(enc, "r") ;
 #endif
-      SET_BINARY(fileno(afmin)) ;
+      (void)SET_BINARY(fileno(afmin)) ;
       param = 0 ;
       if (afmin == 0)
 #ifdef KPATHSEA
@@ -2005,12 +2021,12 @@ struct encoding *readencoding P1C(char *, enc)
 /*
  *   This routine prints out the line that needs to be added to psfonts.map.
  */
+static void
+conspsfonts(void) {
 #ifndef VMCMS
-void conspsfonts() {
    (void)printf("%s %s", outname,
    fontname) ;
 #else /* VM/CMS: fontname is ascii, so we use ebfontname */
-void conspsfonts() {
    (void)printf("%s %s", outname,
    ebfontname) ;
 #endif
@@ -2031,7 +2047,7 @@ void conspsfonts() {
 #ifndef VMS
 int
 #endif
-main P2C(int, argc, char **, argv)
+main(int argc, char **argv)
 {
    int i ;
 

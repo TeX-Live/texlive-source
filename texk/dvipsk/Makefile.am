@@ -8,7 +8,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = squeeze
 
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes -DSHIFTLOWCHARS
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSHIFTLOWCHARS
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = afm2tfm dvips
 
@@ -169,7 +170,8 @@ EXTRA_DIST += \
 	cyrfonts.map \
 	eufonts.map \
 	flib.c \
-	hps \
+	hps/CHANGES_HPS.txt \
+	hps/README_HPS.txt \
 	lafonts.map \
 	makefont.c \
 	mvs \

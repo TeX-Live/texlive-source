@@ -47,7 +47,7 @@ extern char preamblecomment[] ;
  *   This routine handles the processing of the preamble in the dvi file.
  */
 void
-readpreamble P1H(void)
+readpreamble(void)
 {
    register int i ;
    char *p ;
@@ -88,7 +88,7 @@ readpreamble P1H(void)
  */
 static integer firstmatch = -1, lastmatch = -1 ;
 void
-prescanpages P1H(void)
+prescanpages(void)
 {
    register int cmd ;
    short ret = 0 ;

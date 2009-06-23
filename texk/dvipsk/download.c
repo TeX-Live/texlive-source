@@ -39,7 +39,8 @@ extern real conv ;
  *   We have a routine that downloads an individual character.
  */
 static int lastccout ;
-void downchar P2C(chardesctype *, c, shalfword, cc)
+static void
+downchar(chardesctype *c, shalfword cc)
 {
    register long i, j ;
    register halfword cheight, cwidth ;
@@ -186,7 +187,7 @@ void downchar P2C(chardesctype *, c, shalfword, cc)
 static char goodnames[] =
    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" ;
 void
-makepsname P2C(register char *, s, register int, n)
+makepsname(register char *s, register int n)
 {
    n-- ;
    *s++ = 'F' + n / (sizeof(goodnames)-1) ;
@@ -194,7 +195,7 @@ makepsname P2C(register char *, s, register int, n)
    *s++ = 0 ;
 }
 void
-lfontout P1C(int, n)
+lfontout(int n)
 {
 	char buf[10];
         char *b = buf ;
@@ -206,7 +207,8 @@ lfontout P1C(int, n)
 /*
  *   And the download procedure.
  */
-void download P2C(charusetype *, p, int, psfont)
+void
+download(charusetype *p, int psfont)
 {
    register int b, i ;
    register halfword bit ;
@@ -436,7 +438,8 @@ static void addGlyph(char *glyphName) {
 extern char *downloadedpsnames[];
 extern int unused_top_of_psnames;
 
-void downpsfont P2C(charusetype *, p, charusetype *, all)
+static void
+downpsfont(charusetype *p, charusetype *all)
 {
 #ifdef DOWNLOAD_USING_PDFTEX
     static unsigned char grid[256];
@@ -545,7 +548,8 @@ void downpsfont P2C(charusetype *, p, charusetype *, all)
    }
 }
 
-void dopsfont P1C(sectiontype *, fs)
+void
+dopsfont(sectiontype *fs)
 {
     charusetype *cu ;
 

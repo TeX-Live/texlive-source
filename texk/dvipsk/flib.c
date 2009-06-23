@@ -46,7 +46,7 @@ struct fli_centry *fli_cache[FLICSIZE];
 Boolean flib = 0;  /* non zero if reading a font library */
 
 halfword
-pkdouble P1H(void)
+pkdouble(void)
 {
    register halfword i ;
    i = pkbyte() ;
@@ -60,7 +60,7 @@ extern char name[] ;
  *   fli_cache is initialized.
  */
 void
-fliload P1H(void)
+fliload(void)
 {
    int i ;
    halfword version1, version2;
@@ -182,7 +182,7 @@ fliload P1H(void)
  *   flisearch caches file pointers for 4 font libraries.
  */
 FILE *
-flisearch P2C(char *, n, halfword, dpi)
+flisearch(char *n, halfword dpi)
 {
    halfword dpi1, numsizes, numfonts;
    struct fli_lib *lib=NULL;
@@ -288,7 +288,7 @@ flisearch P2C(char *, n, halfword, dpi)
  * Directory names have a trailing DIRSEP.
  */
 char *
-fliparse P2C(char *, path, char *, name)
+fliparse(char *path, char *name)
 {
    char *p, *prevp ;           /* pointers to path */
    char *n, *prevn ;           /* pointers to name */

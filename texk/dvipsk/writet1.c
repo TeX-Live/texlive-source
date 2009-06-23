@@ -47,6 +47,7 @@ extern char *fb_array;
 
 #else /* writet1 used with dvips */
 #include "dvips.h"
+#include "protos.h"
 #include "ptexmac.h"
 #undef  fm_extend
 #define fm_extend(f)        0
@@ -109,8 +110,7 @@ static char notdef[] = ".notdef";
 static size_t last_ptr_index;
 #endif /* pdfTeX */
 
-#include <kpathsea/c-vararg.h>
-#include <kpathsea/c-proto.h>
+#include <stdarg.h>
 
 #define t1_getchar()    getc(t1_file)
 #define t1_ungetchar(c) ungetc(c, t1_file)
@@ -303,7 +303,7 @@ static void pdftex_warn(char *fmt,...)
 
 #define HEXLINE_WIDTH 64
 
-static void end_hexline()
+static void end_hexline(void)
 {
     if (hexline_length == HEXLINE_WIDTH) {
         fputs("\n", bitfile);
@@ -1071,7 +1071,8 @@ static boolean t1_open_fontfile(char *open_name_prefix)
     if (subr >= subr_size || subr < 0) \
         pdftex_fail("Subrs array: entry index out of range (%i)",  subr);
 
-static const char **check_cs_token_pair()
+static const char **
+check_cs_token_pair(void)
 {
     const char **p = (const char**) cs_token_pairs_list;
     for (; p[0] != NULL; ++p) 
@@ -1224,7 +1225,7 @@ static void cs_warn(const char *cs_name, int subr, const char *fmt,...)
 static void append_cs_return(cs_entry *ptr)
 {
     unsigned short cr;
-    int i, k;
+    int i;
     byte *p, *q, *data, *new_data;
     assert(ptr != NULL && ptr->valid && ptr->used);
 
@@ -1577,9 +1578,9 @@ static void t1_flush_cs(boolean is_subr)
     t1_putline();
 
     /* create return_cs to replace unsused subr's */
+    cs_len = 0;
     if (is_subr) {
         cr = 4330;
-        cs_len = 0;
         /* at this point we have t1_lenIV >= 0; 
          * a negative value would be caught in t1_scan_param() */
         return_cs = xtalloc(t1_lenIV + 1, byte);
@@ -1769,7 +1770,7 @@ void writet1(void)
     t1_close_font_file(">");
 }
 
-void t1_free()
+void t1_free(void)
 {
     xfree(t1_line_array);
     xfree(t1_buf_array);

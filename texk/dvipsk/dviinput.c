@@ -11,13 +11,13 @@ extern FILE *dvifile ;
 extern quarterword *curpos, *curlim ;
 
 void
-abortpage P1H(void)
+abortpage(void)
 {
    error("! unexpected eof on DVI file") ;
 }
 
 shalfword  /* the value returned is, however, between 0 and 255 */
-dvibyte P1H(void)
+dvibyte(void)
 {
   register shalfword i ;
   if (curpos) {
@@ -30,21 +30,21 @@ dvibyte P1H(void)
 }
 
 halfword
-twobytes P1H(void)
+twobytes(void)
 {
   register halfword i ;
   i = dvibyte() ;
   return(i*256+dvibyte()) ; }
 
 integer
-threebytes P1H(void)
+threebytes(void)
 {
   register integer i ;
   i = twobytes() ;
   return(i*256+dvibyte()) ; }
 
 shalfword
-signedbyte P1H(void)
+signedbyte(void)
 {
   register shalfword i ;
   if (curpos) {
@@ -58,7 +58,7 @@ signedbyte P1H(void)
 }
 
 shalfword
-signedpair P1H(void)
+signedpair(void)
 {
   register shalfword i ;
   i = signedbyte() ;
@@ -66,7 +66,7 @@ signedpair P1H(void)
 }
 
 integer
-signedtrio P1H(void)
+signedtrio(void)
 {
   register integer i ;
   i = signedpair() ;
@@ -74,7 +74,7 @@ signedtrio P1H(void)
 }
 
 integer
-signedquad P1H(void)
+signedquad(void)
 {
   register integer i ;
   i = signedpair() ;
@@ -82,7 +82,7 @@ signedquad P1H(void)
 }
 
 void
-skipover P1C(int, i)
+skipover(int i)
 {
   while (i-->0) (void)dvibyte() ;
 }

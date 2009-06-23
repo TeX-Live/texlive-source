@@ -38,7 +38,7 @@ Boolean pprescan ;
  * that the tfm or vf (but not pk) file is loaded.
  */
 static void
-ppreselectfont P1C(fontdesctype *, f)
+ppreselectfont(fontdesctype *f)
 {
    int i ;
 
@@ -56,7 +56,7 @@ ppreselectfont P1C(fontdesctype *, f)
  *   Now our scanpage routine.
  */
 static void
-pscanpage P1H(void)
+pscanpage(void)
 {
    register shalfword cmd ;
    register chardesctype *cd ;
@@ -187,7 +187,7 @@ case 140: /* eop or end of virtual char */
  */
 static integer firstmatch = -1, lastmatch = -1 ;
 void
-pprescanpages P1H(void)
+pprescanpages(void)
 {
    register int cmd ;
    integer lmaxpages = maxpages ;

@@ -32,7 +32,8 @@ typedef struct bbtft {
 
 static bbfontmaptype *bbffont ;
 
-void bbtfmload P1C(register fontdesctype *, curfnt)
+void
+bbtfmload(register fontdesctype *curfnt)
 {
    register integer i, j ;
    register integer li, cd = 0 ;
@@ -177,7 +178,8 @@ extern struct dvistack {
   integer h, v, w, x, y, z ;
 } stack[] ;
 static integer llx, lly, urx, ury ;
-void bbspecial P3C(integer, h, integer, v, int, nbytes)
+void
+bbspecial(integer h, integer v, int nbytes)
 {
    float *r = bbdospecial(nbytes) ;
    if (r) {
@@ -193,7 +195,8 @@ void bbspecial P3C(integer, h, integer, v, int, nbytes)
          ury = (integer) (v - r[1] / conv) ;
    }
 }
-void bbdopage()
+void
+bbdopage(void)
 {
    register shalfword cmd ;
    register bbchardesctype *bcd ;
@@ -344,7 +347,8 @@ case 242: bbspecial(h, v, (int)signedquad()) ; break ;
       }
    }
 }
-void findbb P1C(integer, bop)
+void
+findbb(integer bop)
 {
    integer curpos = ftell(dvifile) ;
    real conv = 72.0 * (real)num / (real)den * (real)mag / 254000000.0 ;

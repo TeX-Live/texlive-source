@@ -35,7 +35,7 @@ extern Boolean HPS_FLAG ;
  *   Now we have the main procedure.
  */
 void
-dosection P2C(sectiontype *, s, int, c)
+dosection(sectiontype *s, int c)
 {
    charusetype *cu ;
    integer prevptr ;
@@ -204,7 +204,8 @@ struct p_list_str {
 /**********************************************************************/
 /* Return true iff i is one of the desired output pages */
 
-int InPageList P1C(integer, i)
+int
+InPageList(integer i)
 {
     register struct p_list_str *pl = ppages;
 
@@ -216,7 +217,8 @@ int InPageList P1C(integer, i)
     return 0;
 }
 
-void InstallPL P2C(integer, pslow, integer, pshigh)
+void
+InstallPL(integer pslow, integer pshigh)
 {
     register struct p_list_str   *pl;
 
@@ -231,7 +233,7 @@ void InstallPL P2C(integer, pslow, integer, pshigh)
    side effect, the page selection(s) is (are) prepended to ppages. */
 
 int
-ParsePages P1C(register char  *, s)
+ParsePages(register char *s)
 {
     register int    c ;		/* current character */
     register integer  n = 0,	/* current numeric value */

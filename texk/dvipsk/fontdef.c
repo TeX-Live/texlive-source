@@ -32,8 +32,8 @@ extern integer fsizetol ;
  * returns a pointer to the new object.
 */
 fontdesctype*
-newfontdesc P5C(integer, cksum, integer, scsize, integer, dssize,
-		char *, name, char *, area)
+newfontdesc(integer cksum, integer scsize, integer dssize,
+            char *name, char *area)
 {
    register fontdesctype *fp ;
 
@@ -92,7 +92,7 @@ newfontdesc P5C(integer, cksum, integer, scsize, integer, dssize,
  * read from an included psfile.
  */
 fontdesctype *
-matchfont P4C(char *, name, char *, area, integer, scsize, char *, scname)
+matchfont(char *name, char *area, integer scsize, char *scname)
 {
    register fontdesctype *fp;
    register integer smin, smax;
@@ -121,7 +121,7 @@ matchfont P4C(char *, name, char *, area, integer, scsize, char *, scname)
  *   into its data structures.
  */
 void
-fontdef P1C(int, siz)
+fontdef(int siz)
 {
    register integer i, j, fn ;
    register fontdesctype *fp ;
@@ -179,7 +179,7 @@ alreadydefined:
  *   Now handles specials (but ignores them)
  */
 int
-skipnop P1H(void)
+skipnop(void)
 {
   register int cmd ;
 

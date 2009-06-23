@@ -150,12 +150,12 @@ static integer penSize = 2;             /* pen size in PS units */
 
 /* forward declarations */
 /* static void doShading(); */
-static double zPixRound P2H(double, double);             /* (x/y)PixRound(x,y) */
+static double zPixRound(double, double);             /* (x/y)PixRound(x,y) */
 static double  shadetp = 0.5;
              /* shading level, initialized as requested by tpic 2.0 -- MJ */
 
 void
-setPenSize P1C(char *, cp)
+setPenSize(char *cp)
 {
   long ps;
 
@@ -171,7 +171,7 @@ setPenSize P1C(char *, cp)
 }                               /* end setPenSize */
 
 void
-addPath P1C(char *, cp)
+addPath(char *cp)
 {
   double x,y;
 
@@ -183,7 +183,7 @@ addPath P1C(char *, cp)
 }                               /* end of addPath */
 
 void
-arc P2C(char *, cp, int, invis)
+arc(char *cp, int invis)
 {
   double xc, yc, xrad, yrad;
   double startAngle, endAngle;
@@ -278,7 +278,7 @@ arc P2C(char *, cp, int, invis)
  * The number of inches/dash must be adjusted accordingly.
  */
 void
-flushDashedPath P2C(int, dotted, double, inchesPerDash)
+flushDashedPath(int dotted, double inchesPerDash)
 {
   register int i;
   int nipd = (integer) convPS((int) inchesPerDash);
@@ -345,7 +345,7 @@ flushDashedPath P2C(int, dotted, double, inchesPerDash)
 }
 
 void
-flushPath P1C(int, invis)
+flushPath(int invis)
 {
   register int i;
 
@@ -443,7 +443,7 @@ flushPath P1C(int, invis)
 }                               /* end of flushPath */
 
 void
-flushDashed P2C(char *, cp, int, dotted)
+flushDashed(char *cp, int dotted)
 {
   double inchesPerDash;
   int savelen = pathLen;
@@ -469,7 +469,7 @@ flushDashed P2C(char *, cp, int, dotted)
 }                               /* end of flushDashed */
 
 void
-flushSpline P1C(char *, cp)
+flushSpline(char *cp)
 {                               /* as exact as psdit!!! */
   register long i ;
   register double dxi, dyi, dxi1, dyi1;
@@ -547,7 +547,7 @@ flushSpline P1C(char *, cp)
 /* Count number of black bits in the pattern together with total number, */
 /* compute the average and use this as the PostScript gray level */
 void
-SetShade P1C(register char *, cp)
+SetShade(register char *cp)
 {
     int blackbits = 0, totalbits = 0;
 
@@ -602,7 +602,7 @@ SetShade P1C(register char *, cp)
 }                               /* end of SetShade       */
 
 void
-shadeLast P1C(char *, cp)
+shadeLast(char *cp)
 {
   char tpout[20];
 
@@ -628,22 +628,23 @@ shadeLast P1C(char *, cp)
 }                               /* end of shadeLast */
 
 void
-whitenLast P1H(void)
+whitenLast(void)
 {
   shading = WHITE;
   cmdout("1 setgray");
 }                               /* end of whitenLast */
 
 void
-blackenLast P1H(void)
+blackenLast(void)
 {
   shading = BLACK;
   cmdout("0 setgray");          /* actually this aint needed */
 }                               /* end of whitenLast */
 
-/*
+#if 0
+/* Not used */
 static void
-doShading P1H(void)
+doShading(void)
 {
   if (shading)
     {
@@ -654,7 +655,7 @@ doShading P1H(void)
   else
     cmdout(STROKE);
 }                               !* end of doShading *!
-*/
+#endif
 
 /*
  *   We need to calculate (x * convDPI * mag) / (tpicResolution * 1000)
@@ -662,9 +663,9 @@ doShading P1H(void)
  *   on the speed of the program.)
  */
 static double
-zPixRound P2C(register double, x, /* in DVI units */
-	      register double, convDPI	/* dots per inch */
-	      )      /* return rounded number of pixels */
+zPixRound(register double x, /* in DVI units */
+	  register double convDPI	/* dots per inch */
+	  )      /* return rounded number of pixels */
 {
    return ((x * mag * (double)convDPI /
                     (1000.0 * tpicRESOLUTION))) ;

@@ -33,7 +33,7 @@ extern Boolean HPS_FLAG ;
 #endif
 
 int
-add_name P2C(char *, s, struct header_list **, what)
+add_name(char *s, struct header_list **what)
 {
   return (int) add_name_general (s, what, NULL, NULL);
 }
@@ -43,7 +43,7 @@ add_name P2C(char *, s, struct header_list **, what)
  *   names.
  */
 int
-add_name_general P4C(char *, s, struct header_list **, what, char *, pre, char *, post)
+add_name_general(char *s, struct header_list **what, char *pre, char *post)
 {
    struct header_list *p, *q ;
 
@@ -70,7 +70,8 @@ add_name_general P4C(char *, s, struct header_list **, what, char *, pre, char *
  *   If we can find a VMusage comment, we use that; otherwise, we use
  *   length of the file.
  */
-void checkhmem P3C(char *, s, char *, pre, char *, post)
+void
+checkhmem(char *s, char *pre, char *post)
 {
    FILE *f ;
 
@@ -120,13 +121,13 @@ void checkhmem P3C(char *, s, char *, pre, char *, post)
  *   use that; otherwise, we use the length of the file.
  */
 int
-add_header P1C(char *, s)
+add_header(char *s)
 {
   return (int) add_header_general (s, NULL, NULL);
 }
 
 int
-add_header_general P3C(char *, s, char *, pre, char *, post)
+add_header_general(char *s, char *pre, char *post)
 {
    int r ;
 
@@ -151,7 +152,7 @@ add_header_general P3C(char *, s, char *, pre, char *, post)
  */
 static struct header_list *CUR_head = NULL ;
 char *
-get_name P1C(struct header_list **, what)
+get_name(struct header_list **what)
 {
    if (what && *what) {
       char *p = (*what)->name ;
@@ -166,7 +167,7 @@ get_name P1C(struct header_list **, what)
  *   This routine actually sends the headers.
  */
 void
-send_headers P1H(void) {
+send_headers(void) {
    struct header_list *p = header_head ;
    char *q ;
 

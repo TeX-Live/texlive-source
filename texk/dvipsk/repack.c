@@ -40,7 +40,8 @@ static unsigned char *specdata ;
 static long tslen = 0 ;
 static unsigned char *tempstore, *tsp, *tsend ;
 
-void putlong P2C(register char *, a, long, i)
+void
+putlong(register char *a, long i)
 {
    a[0] = i >> 24 ;
    a[1] = i >> 16 ;
@@ -48,7 +49,8 @@ void putlong P2C(register char *, a, long, i)
    a[3] = i ;
 }
 
-long getlong P1C(register unsigned char *, a)
+long
+getlong(register unsigned char *a)
 {
    return ((((((a[0] << 8L) + a[1]) << 8L) + a[2]) << 8L) + a[3]) ;
 }
@@ -57,7 +59,8 @@ long getlong P1C(register unsigned char *, a)
 
 #define addtse(n) {lcm=tsp-tempstore;addts(n);} /* mark END option position */
 
-static void addts P1C(register unsigned char, what)
+static void
+addts(register unsigned char what)
 {
    register unsigned char *p, *q ;
 
@@ -99,7 +102,8 @@ static void addts P1C(register unsigned char, what)
  *   they're packed to bytes. Thus, we may have to skip a byte at
  *   the end of each row.
  */
-void dochar P3C(unsigned char *, from, short, width, short, height)
+void
+dochar(unsigned char *from, short width, short height)
 {
    register int i ;
    register unsigned char *f, *t, *d ;
@@ -321,9 +325,9 @@ long mbytesleft ;
 quarterword *mraster ;
 
 char *
-makecopy P3C(register unsigned char *, what, 
-	     register long, len, 
-	     register unsigned char *, p)
+makecopy(register unsigned char *what, 
+         register long len, 
+	 register unsigned char *p)
 {
    register unsigned char *q ;
 
@@ -350,7 +354,8 @@ makecopy P3C(register unsigned char *, what,
 
 /* Now the main routine, which is called when a character is used
    for the very first time. */
-void repack P1C(register chardesctype *, cp)
+void
+repack(register chardesctype *cp)
 {
    register long i, j ;
    register unsigned char *p ;

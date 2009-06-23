@@ -106,7 +106,7 @@ struct header_list *ps_fonts_used ;
  *   Our hash routine.
  */
 int
-hash P1C(char *, s)
+hash(char *s)
 {
    int h = 12 ;
 
@@ -118,7 +118,7 @@ hash P1C(char *, s)
  *   Reverse the hash chains.
  */
 void
-revpslists P1H(void) {
+revpslists(void) {
    register int i ;
    for (i=0; i<RESHASHPRIME; i++)
       reshash[i] = (struct resfont *)revlist(reshash[i]) ;
@@ -129,7 +129,7 @@ revpslists P1H(void) {
  *   main prolog (not section prolog).
  */
 void
-cleanres P1H(void) {
+cleanres(void) {
    register int i ;
    register struct resfont *p ;
    for (i=0; i<RESHASHPRIME; i++)
@@ -141,7 +141,7 @@ cleanres P1H(void) {
  *   The routine that looks up a font name.
  */
 struct resfont *
-lookup P1C(char *, name)
+lookup(char *name)
 {
    struct resfont *p ;
 
@@ -152,7 +152,7 @@ lookup P1C(char *, name)
 }
 
 struct resfont *
-findPSname P1C(char *, name)
+findPSname(char *name)
 {
    register int i ;
    register struct resfont *p ;
@@ -168,8 +168,8 @@ findPSname P1C(char *, name)
  *   This routine adds an entry.
  */
 void
-add_entry P6C(char *, TeXname, char *, PSname, char *, Fontfile,
-	      char *, Vectfile, char *, specinfo, char *, downloadinfo)
+add_entry(char *TeXname, char *PSname, char *Fontfile,
+	  char *Vectfile, char *specinfo, char *downloadinfo)
 {
    struct resfont *p ;
    int h ;
@@ -197,7 +197,7 @@ add_entry P6C(char *, TeXname, char *, PSname, char *, Fontfile,
  */
 extern char *infont ;
 int
-residentfont P1C(register fontdesctype *, curfnt)
+residentfont(register fontdesctype *curfnt)
 {
    int i ;
    struct resfont *p ;
@@ -284,7 +284,7 @@ residentfont P1C(register fontdesctype *, curfnt)
 static char was_inline[INLINE_SIZE] ;
 static unsigned c_lineno;
 void
-bad_config P1C(char *, err)
+bad_config(char *err)
 {
    fprintf (stderr, "%s:%d:", realnameoffile, c_lineno);
    error (err);
@@ -297,7 +297,8 @@ bad_config P1C(char *, err)
  *   We substitute everything of the form ::, ^: or :$ with default,
  *   so a user can easily build on to the existing paths.
  */
-static char *getpath P2C(char *, who, char *, what)
+static char *
+getpath(char *who, char *what)
 {
    if (who) {
       register char *pp, *qq ;
@@ -331,7 +332,8 @@ static char *getpath P2C(char *, who, char *, what)
  *   double quotes with spaces in them.  We also accept strings
  *   with spaces in them, but kill off any spaces at the end.
  */
-char *configstring P2C(char *, s, int, nullok)
+char *
+configstring(char *s, int nullok)
 {
    char tstr[INLINE_SIZE] ;
    char *p = tstr ;
@@ -364,7 +366,7 @@ char *configstring P2C(char *, s, int, nullok)
  */
 char *psmapfile = PSMAPFILE ;
 Boolean
-getdefaults P1C(char *, s)
+getdefaults(char *s)
 {
    FILE *deffile ;
    char PSname[INLINE_SIZE] ;
@@ -853,7 +855,8 @@ default:
 *   If a character pointer is passed in, use that name; else, use the
 *   default (possibly set) name, psfonts.map.
 */
-void getpsinfo P1C(char *, name)
+void
+getpsinfo(char *name)
 {
    FILE *deffile ;
    register char *p ;
@@ -989,7 +992,8 @@ void getpsinfo P1C(char *, name)
  *   We substitute everything of the form ::, ^: or :$ with default,
  *   so a user can easily build on to the existing paths.
  */
-static char *getenvup P2C(char *, who, char *, what)
+static char *
+getenvup(char *who, char *what)
 {
    return getpath(getenv(who), what) ;
 }
@@ -997,7 +1001,8 @@ static char *getenvup P2C(char *, who, char *, what)
 #if !defined(KPATHSEA) && defined(SEARCH_SUBDIRECTORIES)
 static char *concat3();
 #endif
-void checkenv P1C(int, which)
+void
+checkenv(int which)
 {
 #ifndef KPATHSEA
    if (which) {
@@ -1074,7 +1079,7 @@ extern int chdir() ;
    give up the ghost when they fail.  */
 
 char *
-xmalloc P1C(unsigned, size)
+xmalloc(unsigned size)
 {
   char *mem = malloc (size);
   
@@ -1089,7 +1094,7 @@ xmalloc P1C(unsigned, size)
 
 
 char *
-xrealloc P2C(char *, ptr, unsigned, size)
+xrealloc(char *ptr, unsigned size)
 {
   char *mem = realloc (ptr, size);
   
@@ -1107,7 +1112,7 @@ xrealloc P2C(char *, ptr, unsigned, size)
    to the next PATHSEP.  */
    
 static void
-next_component P2C(char *, name, char **, path)
+next_component(char *name, char **path)
 {
   unsigned count = 0;
   
@@ -1133,7 +1138,7 @@ next_component P2C(char *, name, char **, path)
    false if not. */
 
 int
-is_dir P1C(char *, fn)
+is_dir(char *fn)
 {
   struct stat stats;
 
@@ -1142,7 +1147,7 @@ is_dir P1C(char *, fn)
 
 
 static char *
-concat3 P3C(char *, s1, char *, s2, char *, s3)
+concat3(char *s1, char *s2, char *s3)
 {
   char *r = xmalloc (strlen (s1) + strlen (s2) + strlen (s3) + 1);
   strcpy (r, s1);
@@ -1159,7 +1164,7 @@ concat3 P3C(char *, s1, char *, s2, char *, s3)
    We return the list of directories found.  */
 
 char *
-do_subdir_path P1C(char *, dir_list)
+do_subdir_path(char *dir_list)
 {
   char *cwd;
   unsigned len;

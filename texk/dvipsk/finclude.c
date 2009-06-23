@@ -66,8 +66,8 @@ extern int unused_top_of_psnames;
  * encountered by fontdef() (if that ever happens).
  */
 fontdesctype *
-ifontdef P5C(char *, name, char *, area, 
-	     int, scsize, int, dssize, char *, scname)
+ifontdef(char *name, char *area, 
+	 int scsize, int dssize, char *scname)
 {
    fontdesctype *fp;
 
@@ -82,7 +82,7 @@ ifontdef P5C(char *, name, char *, area,
  * links it into the fonthd[] array.
  */
 void
-setfamily P1C(fontdesctype *, f)
+setfamily(fontdesctype *f)
 {
    int i ;
 
@@ -106,7 +106,7 @@ setfamily P1C(fontdesctype *, f)
  * string is the return value.
  */
 char*
-getname P1C(char *, s)
+getname(char *s)
 {
    char *a, *p, sav;
 
@@ -132,7 +132,7 @@ getname P1C(char *, s)
  * usages.
  */
 void
-includechars P2C(fontdesctype *, f, char *, s)
+includechars(fontdesctype *f, char *s)
 {
    int b, c, d ;
    int l = strlen(s) ;
@@ -175,7 +175,7 @@ includechars P2C(fontdesctype *, f, char *, s)
  * to change.
  */
 void
-scan1fontcomment P1C(char *, p)
+scan1fontcomment(char *p)
 {
    char *q, *name, *area;
    char *scname;      /* location in buffer where we got scsize */
@@ -227,7 +227,7 @@ scan1fontcomment P1C(char *, p)
  * if there are two arguments we take the maximum.
  */
 integer
-scanvm P1C(char *, p)
+scanvm(char *p)
 {
    char* q;
    integer vm, vmmax;
@@ -250,7 +250,7 @@ scanvm P1C(char *, p)
  * is added with add_header.
  */
 void
-scan_fontnames P2C(char *, str, char *, psfile)
+scan_fontnames(char *str, char *psfile)
 {
   char *p,*pe;
   struct resfont *re;
@@ -349,7 +349,7 @@ static int fc_state = 0;
 static int check_atend = 0;
 
 void
-scanfontusage P2C(char *, p, char *, psfile)
+scanfontusage(char *p, char *psfile)
 {
   if (strncmp(p, "%%DocumentFonts: ",17) == 0) {
     p += 17 ;
@@ -401,7 +401,7 @@ scanfontusage P2C(char *, p, char *, psfile)
  * usage specifications.  This does not handle the "atend" construction.
  */
 void
-scanfontcomments P1C(char *, filename)
+scanfontcomments(char *filename)
 {
    char p[500];
    char *r;
@@ -426,7 +426,7 @@ scanfontcomments P1C(char *, filename)
       f = search(figpath, filename, READ) ;
    }
    if (f) {
-     SET_BINARY(fileno(f)) ;
+     (void)SET_BINARY(fileno(f)) ;
      fc_state = 0;
      check_atend = 0;
      while (fgets(p,500,f) && p[0]=='%' &&
@@ -481,7 +481,7 @@ scanfontcomments P1C(char *, filename)
  * that are not allowed in PostScript commands.
  */
 Boolean
-okascmd P1C(char *, ss)
+okascmd(char *ss)
 {
    register int c = 0 ;
    register char *s = ss ;
@@ -495,7 +495,7 @@ okascmd P1C(char *, ss)
  * Output font area and font name strings as a literal string
  */
 void
-nameout P2C(char *, area, char *, name)
+nameout(char *area, char *name)
 {
    char buf[30] ;
    char *s ;
@@ -517,7 +517,7 @@ nameout P2C(char *, area, char *, name)
  * fonts used in included psfiles in the current section.
  */
 void
-fonttableout P1H(void)
+fonttableout(void)
 {
    int i, k;
    fontdesctype *f;

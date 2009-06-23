@@ -302,7 +302,7 @@ static char *helparr[] = {
 "    l = comma-separated list of page ranges (e.g., 1-4,7-9)", 0} ;
 
 void
-help P1C(int, status)
+help(int status)
 {
    char **p;
    FILE *f = status == 0 ? stdout : stderr;
@@ -318,7 +318,7 @@ help P1C(int, status)
 #endif
 }
 
-void
+static void
 freememforpsnames(void)
 {
    int i;
@@ -335,7 +335,7 @@ freememforpsnames(void)
 static char *progname ;
 
 void
-error_with_perror P2C(char *, s, char *, fname)
+error_with_perror(char *s, char *fname)
 {
    if (prettycolumn > 0)
         fprintf(stderr,"\n");
@@ -362,13 +362,14 @@ error_with_perror P2C(char *, s, char *, fname)
  *   character is !, it aborts the job.
  */
 void
-error P1C(char *, s)
+error(char *s)
 {
    error_with_perror (s, NULL);
 }
 
 #ifndef KPATHSEA
-char *concat P2C(char *, s1, char *, s2)
+char *
+concat(char *s1, char *s2)
 { 
   char *s = malloc(strlen(s1)+strlen(s2)+1);
   if (s == NULL) {
@@ -385,7 +386,7 @@ char *concat P2C(char *, s1, char *, s2)
    the user hasn't turned it off.  */
 
 void
-check_checksum P3C(unsigned, c1, unsigned, c2, const char *, name)
+check_checksum(unsigned c1, unsigned c2, const char *name)
 {
   if (c1 && c2 && c1 != c2 
 #ifdef KPATHSEA
@@ -407,7 +408,8 @@ check_checksum P3C(unsigned, c1, unsigned, c2, const char *, name)
 #ifdef DEBUG
 static integer totalalloc = 0 ;
 #endif
-char *mymalloc P1C(integer, n)
+char *
+mymalloc(integer n)
 {
    char *p ;
 
@@ -433,14 +435,14 @@ char *mymalloc P1C(integer, n)
    return p ;
 }
 void
-morestrings P1H(void) {
+morestrings(void) {
    strings = mymalloc((integer)STRINGSIZE) ;
    nextstring = strings ;
    maxstring = strings + STRINGSIZE - 200 ;
    *nextstring++ = 0 ;
 }
 void
-checkstrings P1H(void) {
+checkstrings(void) {
    if (nextstring - strings > STRINGSIZE / 2)
       morestrings() ;
 }
@@ -448,7 +450,7 @@ checkstrings P1H(void) {
  *   Initialize sets up all the globals and data structures.
  */
 void
-initialize P1H(void)
+initialize(void)
 {
    int i;
    char *s;
@@ -485,7 +487,7 @@ initialize P1H(void)
  *   This routine copies a string into the string `pool', safely.
  */
 char *
-newstring P1C(char *, s)
+newstring(char *s)
 {
    int l ;
 
@@ -501,7 +503,8 @@ newstring P1C(char *, s)
    nextstring += l + 1 ;
    return(s) ;
 }
-void newoutname P1H(void) {
+void
+newoutname(void) {
    static int seq = 0 ;
    static char *seqptr = 0 ;
    char *p ;
@@ -532,7 +535,8 @@ void newoutname P1H(void) {
  *   This routine reverses a list, where a list is defined to be any
  *   structure whose first element is a pointer to another such structure.
  */
-VOID *revlist P1C(VOID *, p)
+VOID *
+revlist(VOID *p)
 {
    struct list {
       struct list *next ;
@@ -548,7 +552,7 @@ VOID *revlist P1C(VOID *, p)
 }
 /* this asks for a new set of arguments from the command line */
 void
-queryargs P1H(void)
+queryargs(void)
 {
    fputs("Options: ",stdout);
    fgets(queryline,256,stdin);
@@ -567,10 +571,10 @@ queryargs P1H(void)
  */
 extern void handlepapersize() ;
 #ifdef VMS
-main P1H(void)
+main(void)
 #else
 int
-main P2C(int, argc, char **, argv)
+main(int argc, char **argv)
 #endif
 {
    int i, lastext = -1 ;
@@ -681,7 +685,7 @@ Primary author of Dvips: T. Rokicki.");
  *   than one file name is given, and uses stdin if none is given.
  */
 #ifdef VMS
-   vmscli P1H(void);
+   vmscli(void);
    papsizes = (struct papsiz *)revlist((void *)papsizes) ; /* Added by PWD 21-Mar-1997 */
 #else
    queryoptions = 0;

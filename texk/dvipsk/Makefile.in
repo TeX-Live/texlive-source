@@ -316,7 +316,8 @@ top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = squeeze
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA -DNeedFunctionPrototypes -DSHIFTLOWCHARS
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSHIFTLOWCHARS
+AM_CFLAGS = $(WARNING_CFLAGS)
 afm2tfm_SOURCES = afm2tfm.c
 afm2tfm_DEPENDENCIES = $(KPATHSEA_DEPEND)
 dvips_SOURCES = \
@@ -393,8 +394,8 @@ EXTRA_DIST = $(dist_prologues) texc.script dvips.test pfbincl.test \
 	contrib/PSTricks contrib/afm-extra contrib/colorsep.lpro \
 	contrib/configs contrib/crop.lpr contrib/latex209 \
 	contrib/volker contrib/whichinpath cyrfonts.map eufonts.map \
-	flib.c hps lafonts.map makefont.c mvs pc psfonts.map reencode \
-	tex vmcms vms
+	flib.c hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map \
+	makefont.c mvs pc psfonts.map reencode tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro dvipstst.ps missfont.log mtest.ps \
 	pfbincl.ps
 TESTS = dvips.test pfbincl.test

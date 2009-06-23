@@ -66,7 +66,7 @@ integer H_BREAK ; /* An empirical parameter for guessing line breaks; needs
                      dpi dependence */
 #endif 
 void
-dopage P1H(void)
+dopage(void)
 {
    register shalfword cmd ;
    register integer p ;

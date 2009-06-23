@@ -38,14 +38,14 @@ extern Boolean noomega ;
 static FILE *vffile ;
 static char name[50] ;
 void
-badvf P1C(char *, s)
+badvf(char *s)
 {
    (void)sprintf(errbuf,"! Bad VF file %s: %s",name,s) ;
    error(errbuf);
 }
 
 shalfword
-vfbyte P1H(void)
+vfbyte(void)
 {
    register shalfword i ;
 
@@ -55,7 +55,7 @@ vfbyte P1H(void)
 }
 
 integer
-vfquad P1H(void)
+vfquad(void)
 {
    register integer i ;
 
@@ -69,7 +69,7 @@ vfquad P1H(void)
 }
 
 integer
-vftrio P1H(void)
+vftrio(void)
 {
    register integer i ;
 
@@ -80,7 +80,7 @@ vftrio P1H(void)
 }
 
 int
-vfopen P1C(register fontdesctype *, fd)
+vfopen(register fontdesctype *fd)
 {
    register char *n ;
 #ifndef KPATHSEA
@@ -118,7 +118,7 @@ vfopen P1C(register fontdesctype *, fd)
  * The following routine is like fontdef, but for local fontdefs in VF files.
  */
 fontmaptype *
-vfontdef P2C(integer, s, int, siz)
+vfontdef(integer s, int siz)
 {
    register integer i, j, fn ;
    register fontdesctype *fp ;
@@ -162,7 +162,7 @@ vfontdef P2C(integer, s, int, siz)
  *   Now our virtualfont routine.
  */
 Boolean
-virtualfont P1C(register fontdesctype *, curfnt)
+virtualfont(register fontdesctype *curfnt)
 {
    register integer i ;
    register shalfword cmd ;

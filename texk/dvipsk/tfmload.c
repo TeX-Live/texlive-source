@@ -28,7 +28,7 @@ FILE *tfmfile ;
 static char name[50] ;
 
 void
-badtfm P1C(char *, s)
+badtfm(char *s)
 {
    (void)sprintf(errbuf,"! Bad TFM file %s: %s",name,s) ;
    error(errbuf);
@@ -39,7 +39,7 @@ badtfm P1C(char *, s)
  *   and complains loudly about it.
  */
 void
-tfmopen P1C(register fontdesctype *, fd)
+tfmopen(register fontdesctype *fd)
 {
   register char *n;
 #ifdef KPATHSEA
@@ -92,13 +92,13 @@ tfmopen P1C(register fontdesctype *, fd)
 }
 
 shalfword
-tfmbyte P1H(void)
+tfmbyte(void)
 {
   return(getc(tfmfile)) ;
 }
 
 halfword
-tfm16 P1H(void)
+tfm16(void)
 {
   register halfword a ; 
   a = tfmbyte () ; 
@@ -106,7 +106,7 @@ tfm16 P1H(void)
 } 
 
 integer
-tfm32 P1H(void)
+tfm32(void)
 {
   register integer a ; 
   a = tfm16 () ; 
@@ -115,7 +115,7 @@ tfm32 P1H(void)
 } 
 
 int
-tfmload P1C(register fontdesctype *, curfnt)
+tfmload(register fontdesctype *curfnt)
 {
    register integer i, j ;
    register integer li, cd=0 ;

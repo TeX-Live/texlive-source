@@ -24,7 +24,7 @@ extern int vactualdpi ;
  *  Write mfjob file
  */
 void
-mfjobout P2C(char *, font, double, mag)
+mfjobout(char *font, double mag)
 {
    if (mfjobfile == (FILE *)NULL) {
       char pkout[128];
@@ -82,7 +82,7 @@ mfjobout P2C(char *, font, double, mag)
  *   Calculate magstep values.
  */
 static int
-magstep P2C(register int, n, register int, bdpi)
+magstep(register int n, register int bdpi)
 {
    register float t ;
    int neg = 0 ;
@@ -139,7 +139,7 @@ char *command = 0 ;
  */
 static char buf[125] ;
 void
-makefont P3C(char *, name, int, dpi, int, bdpi)
+makefont(char *name, int dpi, int bdpi)
 {
    register char *p, *q ;
    register int m, n ;

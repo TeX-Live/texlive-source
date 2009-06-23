@@ -4,6 +4,7 @@
  *   magnifications.
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
+#include "protos.h"
 
 extern int actualdpi ;
 static integer existsizes[30] = { 0 , 99999999 } ;
@@ -11,7 +12,8 @@ static int checkdpi ;
 /*
  *   This routine adds some sizes to `existsizes'.
  */
-void addsiz P1C(int, rhsize)
+void
+addsiz(int rhsize)
 {
    register integer *p ;
    long t, hsize ;
@@ -26,7 +28,8 @@ void addsiz P1C(int, rhsize)
       hsize = t ;
    } while (hsize) ;
 }
-void adddpi P1C(int, hsize)
+void
+adddpi(int hsize)
 {
    long a, b, c ;
    int i ;
@@ -54,7 +57,7 @@ void adddpi P1C(int, hsize)
  *   Finally, the routine that checks a size for match.
  */
 halfword
-dpicheck P1C(halfword, dpi)
+dpicheck(halfword dpi)
 {
    integer i ;
    integer margin = 1 + dpi / 500 ;

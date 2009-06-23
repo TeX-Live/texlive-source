@@ -118,7 +118,8 @@ char *hs = NULL ; /* html string to be handled */
 char *url_name = NULL ; /* url between double quotes */
 
 /* parse anchor into link */
-void do_html P1C(char *, s)
+void
+do_html(char *s)
 {
   Hps_link *nl ;
   url_name = (char *)malloc(strlen(s)+1) ;
@@ -183,7 +184,8 @@ void do_html P1C(char *, s)
   return ;
 }
 
-int href_or_name P1H(void) {
+int
+href_or_name(void) {
   if ((strncmp(hs, "href", 4) == 0) || (strncmp(hs, "HREF", 4) == 0)) {
     ISHREF = TRUE ;
   } else if ((strncmp(hs, "name", 4) == 0) 
@@ -205,7 +207,8 @@ int href_or_name P1H(void) {
   return(NO_ERROR) ;
 }
 
-int parseref P1H(void) {
+int
+parseref(void) {
   int i = 0 ;
   for(i=0 ; i++ < 4 ; hs++) ; /* skip href or name in html string */
   skip_space(hs) ;
@@ -219,7 +222,8 @@ int parseref P1H(void) {
   return(NO_ERROR) ; /* extract stuff between double quotes */
 }
         
-int get_string P1H(void) {
+int
+get_string(void) {
   char *v = url_name ; 
   
   skip_space(hs) ;
@@ -240,7 +244,8 @@ int get_string P1H(void) {
   }
 }
 
-int do_link P2C(char *, s, int, type)
+int
+do_link(char *s, int type)
 {
 
   Hps_link *p ;
@@ -277,7 +282,8 @@ int do_link P2C(char *, s, int, type)
   return(NO_ERROR) ;
 }
                  
-unsigned int hash_string P1C(char *, s) 
+unsigned int
+hash_string(char *s) 
 {
   unsigned hashval ;
   for (hashval = 0 ; *s != '\0' ; s++)
@@ -287,7 +293,8 @@ unsigned int hash_string P1C(char *, s)
 
 /* lookup a hashed name */ 
 
-struct nlist *lookup_link P2C(char *, s, int, type)
+struct nlist *
+lookup_link(char *s, int type)
 {
   struct nlist *np ;
   
@@ -298,7 +305,8 @@ struct nlist *lookup_link P2C(char *, s, int, type)
   return NULL ; /* not found */
 }
 
-struct nlist *install_link P3C(char *, name, Hps_link *, defn, int, type)
+struct nlist *
+install_link(char *name, Hps_link *defn, int type)
 {
   struct nlist *np ;
   unsigned hashval ;
@@ -314,7 +322,8 @@ struct nlist *install_link P3C(char *, name, Hps_link *, defn, int, type)
 }
 
 #ifndef KPATHSEA
-char *dup_str P1C(char *, w) /* make a duplicate of s */
+char *
+dup_str(char *w) /* make a duplicate of s */
 {
   char *p ;
   p = (char *)malloc(strlen(w)+1) ;
@@ -324,7 +333,8 @@ char *dup_str P1C(char *, w) /* make a duplicate of s */
 }
 #endif
 
-Hps_link *link_dup P1C(Hps_link *, s) /* make a duplicate link */
+Hps_link *
+link_dup(Hps_link *s) /* make a duplicate link */
 {
   Hps_link *p ;
   
@@ -334,7 +344,8 @@ Hps_link *link_dup P1C(Hps_link *, s) /* make a duplicate link */
   return p ;
 }
 
-double dvi_to_hps_conv P2C(int, i, int, dir)
+double
+dvi_to_hps_conv(int i, int dir)
 {
   double hps_coor ;
   /* Convert dvi integers into proper hps coordinates
@@ -344,7 +355,8 @@ double dvi_to_hps_conv P2C(int, i, int, dir)
   return(hps_coor) ;
 }
 
-int vert_loc P1C(int, i)
+int
+vert_loc(int i)
 {
   int return_value ;
   return_value = (int) (i + (PAGESIZE / 4) + FUDGE) ; 
@@ -355,7 +367,8 @@ int vert_loc P1C(int, i)
         } else return(return_value) ;
 }
 
-Hps_link *dest_link P1C(char *, s)
+Hps_link *
+dest_link(char *s)
 {
   /* Assume for now that only one entry with same NAME, i.e.
      Should be true for all legitimate papers.
@@ -375,7 +388,8 @@ Hps_link *dest_link P1C(char *, s)
   return NULL ; /* not found */
 }
 
-int count_targets P1H(void) {
+int
+count_targets(void) {
   int count=0 ;
   int i ;
   struct nlist *np ;
@@ -386,7 +400,8 @@ int count_targets P1H(void) {
   return count ;      
 }
 
-void do_targets P1H(void) {
+void
+do_targets(void) {
 
   struct nlist *np ;
   int i ;
@@ -402,7 +417,8 @@ void do_targets P1H(void) {
     }
 }
 
-void do_target_dict P1H(void)
+void
+do_target_dict(void)
 {
   struct nlist *np ;
   int i ;
@@ -420,7 +436,8 @@ void do_target_dict P1H(void)
   (void)fprintf(bitfile,"end targetdump-hook def end\n") ;
 }
 
-int href_name_match P2C(char *, h, char *, n)
+int
+href_name_match(char *h, char *n)
 {
   int count = 0 ;
   int name_length = strlen(n) ;
@@ -437,7 +454,8 @@ int href_name_match P2C(char *, h, char *, n)
     }
 }
 
-void stamp_hps P1C(Hps_link *, pl)
+void
+stamp_hps(Hps_link *pl)
 {
   char * tmpbuf;
   if (pl == NULL) {
@@ -467,7 +485,8 @@ void stamp_hps P1C(Hps_link *, pl)
 /* For external URL's, we just pass them through as a string. The hyperps
  * interpreter can then do what is wants with them.
  */
-void stamp_external P2C(char *, s, Hps_link *, pl) 
+void
+stamp_external(char *s, Hps_link *pl) 
 {
   char *tmpbuf;
   if (pl == NULL) {
@@ -492,7 +511,8 @@ void stamp_external P2C(char *, s, Hps_link *, pl)
   free(tmpbuf);
 }
 
-void finish_hps P1H(void) {
+void
+finish_hps(void) {
   extern int dvips_debug_flag;
   extern int debug_flag;
 
@@ -514,7 +534,8 @@ void finish_hps P1H(void) {
   }
 }
 
-void set_bitfile P2C(char *, s, int, mode)
+void
+set_bitfile(char *s, int mode)
 {  
 if ((bitfile=fopen(s, mode ? FOPEN_ABIN_MODE : FOPEN_WBIN_MODE))==NULL) {
    error(s) ;
@@ -523,7 +544,8 @@ if ((bitfile=fopen(s, mode ? FOPEN_ABIN_MODE : FOPEN_WBIN_MODE))==NULL) {
   linepos = 0 ;
 }
 
-void vertical_in_hps P1H(void) { 
+void
+vertical_in_hps(void) { 
   Rect_list *rl ;
   /*printf("in vertical_in_hps") ; */
   if (current_type == NAME) return; /* Handle this case later */
@@ -544,7 +566,8 @@ void vertical_in_hps P1H(void) {
   if (POPPED) start_new_box() ; 
 }
 
-void print_rect_list P1H(void) {
+void
+print_rect_list(void) {
   Rect_list *rl, *rln ;
   
   for(rl = current_rect_list ; rl != NULL ; rl = rln) {
@@ -555,7 +578,8 @@ void print_rect_list P1H(void) {
   } 
 } 
 
-void end_current_box P1H(void) { 
+void
+end_current_box(void) { 
   Hps_link *nl ;
   
   POPPED = TRUE ;
@@ -583,7 +607,8 @@ void end_current_box P1H(void) {
   }
 }
 
-void start_new_box P1H(void) {
+void
+start_new_box(void) {
   POPPED = FALSE ; 
   do_link(current_name, current_type) ;
 }

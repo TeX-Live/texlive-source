@@ -1,3 +1,34 @@
+2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+
+	* Use ANSI C function definitions and prototypes instead of
+	P[1-9][CH] macros, declare some functions as static.
+	* config.h, writet1.c: no need to #include <kpathsea/c-proto.h>.
+	* writet1.c: #include <stdarg.h>, not <kpathsea/c-vararg.h>.
+
+	* dpicheck.c: #include "protos.h".
+
+	* t1part.c (Reeverse, KillUnique): declare as static.
+
+	* writet1.c: #include "protos.h".
+	(append_cs_return): remove unused variable 'i'.
+	(t1_flush_cs): avoid uninitialized warning.
+	* protos.h: add prototypes for writet1(), t1_free(), and
+	t1_subset() from writet1.c.
+
+	* Avoid inconsistent arg1 in KPATHSEA version of pksearch (was
+	unused but different in prototype, declaration, and call).
+	* loadfont.c: remove arg1 of pksearch.
+	* protos.h: use prototype for pksearch as defined in search.c.
+	* search.c: #include "protos.h", remove prototype for newstring.
+	(pksearch): remove unused arg1.
+
+2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): remove -DNeedFunctionPrototypes.
+	* config.h, dvips.h: always use ANSI C function definitions.
+
 2009-06-12  Francois Charette  <firmicus@ankabut.net>
 
 	* afm2tfm.c: rename getline to texlive_getline.

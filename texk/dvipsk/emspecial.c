@@ -80,7 +80,7 @@ struct emunit emtable[] = {
 
 /* clear the empoints array if necessary */
 void
-emclear P1H(void)
+emclear(void)
 {
    int i;
    if (emused && empoints)
@@ -90,7 +90,8 @@ emclear P1H(void)
 }
 
 /* put an empoint into the empoints array */
-struct empt *emptput P3C(shalfword, point, integer, x, integer, y)
+struct empt *
+emptput(shalfword point, integer x, integer y)
 {
    struct empt *p ;
    int start ;
@@ -115,7 +116,8 @@ struct empt *emptput P3C(shalfword, point, integer, x, integer, y)
 }
 
 /* get an empoint from the empoints array */
-struct empt *emptget P1C(shalfword, point)
+struct empt *
+emptget(shalfword point)
 {
    struct empt *p ;
    int start;
@@ -136,7 +138,8 @@ struct empt *emptget P1C(shalfword, point)
 
 
 /* convert width into dpi units */
-float emunits P2C(float, width, char *, unit)
+float
+emunits(float width, char *unit)
 {
 struct emunit *p;
 	for (p=emtable; p->unit; p++) {
@@ -149,7 +152,8 @@ struct emunit *p;
 /* The main routine for \special{em:graph ...} called from dospecial.c */
 /* the line cut parameter is not supported (and is ignored) */
 
-void emspecial P1C(char *, p)
+void
+emspecial(char *p)
 {
 float emwidth, emheight;
 shalfword empoint1, empoint2;
@@ -358,7 +362,8 @@ void emgraph();
 /*                                                   8 Oct 92                */
 
 /* Routines to read binary numbers from IBM PC file types */
-integer readinteger P1C(FILE *, f)
+integer
+readinteger(FILE *f)
 {
    integer i;
    int r;
@@ -371,7 +376,8 @@ integer readinteger P1C(FILE *, f)
    return(i);
 }
 
-halfword readhalfword P1C(FILE *, f)
+halfword
+readhalfword(FILE *f)
 {
    halfword i;
    int r;
@@ -417,7 +423,8 @@ typedef struct
 	quarterword fill[58];
 } PCXHEAD; 
 
-int PCXreadhead P2C(FILE *, pcxf, PCXHEAD *, pcxh)
+static int
+PCXreadhead(FILE *pcxf, PCXHEAD *pcxh)
 {
 	pcxh->man = readquarterword(pcxf);
 	pcxh->ver = readquarterword(pcxf);
@@ -445,9 +452,10 @@ int PCXreadhead P2C(FILE *, pcxf, PCXHEAD *, pcxh)
 	return(1);					/* success */
 	}
 
-int PCXreadline P3C(FILE *, pcxf, 
-		    unsigned char *, pcxbuf,
-		    unsigned int, byteperline)
+int
+PCXreadline(FILE *pcxf, 
+	    unsigned char *pcxbuf,
+	    unsigned int byteperline)
 {
 	int n;
 	int c;
@@ -470,10 +478,11 @@ int PCXreadline P3C(FILE *, pcxf,
 	return(n);
 }
 
-void PCXgetpalette P5C( FILE *, pcxf, PCXHEAD *, pcxh, 
-			unsigned char *, r,
-			unsigned char *, g,
-			unsigned char *, b)
+static void
+PCXgetpalette(FILE *pcxf, PCXHEAD *pcxh, 
+	      unsigned char *r,
+	      unsigned char *g,
+	      unsigned char *b)
 {
 	int i;
 
@@ -561,9 +570,10 @@ void PCXgetpalette P5C( FILE *, pcxf, PCXHEAD *, pcxh,
 	}
 }
 
-void PCXshowpicture P9C(FILE *, pcxf, int, wide, int, high, int, bytes,
-			int, cp, int, bp, unsigned char *, r, 
-			unsigned char *, g, unsigned char *, b)
+void
+PCXshowpicture(FILE *pcxf, int wide, int high, int bytes,
+	       int cp, int bp, unsigned char *r, 
+	       unsigned char *g, unsigned char *b)
 {
 	int x;
 	int y;
@@ -656,8 +666,9 @@ void PCXshowpicture P9C(FILE *, pcxf, int, wide, int, high, int, bytes,
 	free(rowa[0]);
 }
 
-void imagehead P5C(char *, filename, int, wide, int, high, 
-		   float, emwidth, float, emheight)
+void
+imagehead(char *filename, int wide, int high, 
+	  float emwidth, float emheight)
 {
 	char *fullname = NULL, *name ;
 	if (!quiet) {
@@ -703,7 +714,8 @@ void imagehead P5C(char *, filename, int, wide, int, high,
 #endif
 }
 
-void imagetail P1H(void)
+void
+imagetail(void)
 {
 	if (!disablecomments) {
 	    (void)fprintf(bitfile, "\n%%%%EndDocument\n") ;
@@ -716,8 +728,9 @@ void imagetail P1H(void)
 	}
 }
 
-void pcxgraph P4C(FILE *, pcxf, char *, filename,
-		  float, emwidth, float, emheight /* dimension in pixels */ )
+void
+pcxgraph(FILE *pcxf, char *filename,
+	 float emwidth, float  emheight /* dimension in pixels */ )
 {
 	PCXHEAD pcxh;
 	unsigned char red[256];
@@ -765,7 +778,8 @@ struct wpnt_1 {
 #define WPAINT_1 1
 #define WPAINT_2 2
 
-void MSP_2_ps P3C(FILE *, f, int,  wide, int, high)
+void
+MSP_2_ps(FILE *f, int wide, int high)
 {
 	char *line;
 	char *l;
@@ -846,7 +860,8 @@ void MSP_2_ps P3C(FILE *, f, int,  wide, int, high)
 	free(line);
 }
 
-void MSP_1_ps P3C(FILE *, f, int, wide, int, high)
+void
+MSP_1_ps(FILE *f, int wide, int high)
 {
 	char *line;
 	int i;
@@ -888,7 +903,8 @@ void MSP_1_ps P3C(FILE *, f, int, wide, int, high)
 }
 
 
-void mspgraph P4C(FILE *, f, char *, filename, float, emwidth, float, emheight)
+void
+mspgraph(FILE *f, char *filename, float emwidth, float emheight)
 {
 	struct wpnt_1 head;
 	int paint_type = 0;
@@ -973,7 +989,8 @@ struct bitmapfileheader {
 	integer offbits;
 };
 
-void rgbread P4C(FILE *, f, int, w, int, b, char *, s)
+void
+rgbread(FILE *f, int w, int b, char *s)
 {
 	int i;
 
@@ -1001,7 +1018,8 @@ unsigned rle_dx = 0;	/* delta command horizontal offset */
 unsigned rle_dy = 0;	/* delta command vertical offset */
 
 /* checked against output from Borland Resource Workshop */
-void rle4read P4C(FILE *, f, int, w, int, b, char *, s)
+void
+rle4read(FILE *f, int w, int b, char *s)
 {
 	int i;
 	int limit;
@@ -1077,7 +1095,8 @@ void rle4read P4C(FILE *, f, int, w, int, b, char *, s)
 }
   
 /* untested */
-void rle8read P4C(FILE *, f, int, w, int, b, char *, s)
+void
+rle8read(FILE *f, int w, int b, char *s)
 {
 	int i;
 	int limit;
@@ -1132,7 +1151,8 @@ void rle8read P4C(FILE *, f, int, w, int, b, char *, s)
 	}
 }
 
-void bmpgraph P4C(FILE *, f, char *, filename, float, emwidth, float, emheight)
+void
+bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 {
 	struct bitmapfileheader bmfh;
 	struct bitmapinfoheader bmih;
@@ -1364,7 +1384,8 @@ void bmpgraph P4C(FILE *, f, char *, filename, float, emwidth, float, emheight)
 char *extarr[]=
 { ".pcx", ".msp", ".bmp", NULL };
 
-void emgraph P3C(char *, filename, float, emwidth, float, emheight)
+void
+emgraph(char *filename, float emwidth, float emheight)
 {
 	char fname[80];
 	int filetype;
@@ -1441,7 +1462,8 @@ void emgraph P3C(char *, filename, float, emwidth, float, emheight)
 }
 
 #else
-void emspecial P1C(char *, p)
+void
+emspecial(char *p)
 {
 	sprintf(errbuf,"emTeX specials not compiled in this version");
 	specerror(errbuf);
