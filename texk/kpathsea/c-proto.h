@@ -37,8 +37,6 @@
 /* We now require that the compiler understands prototypes.  We keep
    these definitions until the macros are not used anymore.  */
 
-#define AA(args) args /* For an arbitrary number; ARGS must be in parens.  */
-
 #define P1H(p1) (p1)
 #define P2H(p1,p2) (p1, p2)
 #define P3H(p1,p2,p3) (p1, p2, p3)

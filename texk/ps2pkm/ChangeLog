@@ -1,3 +1,8 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fontfcn.c, regions.c, regions.h, scanfont.c, t1funcs.c:
+	drop #ifdef HAVE_PROTOTYPES, unconditionalty use prototypes.
+
 2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* objects.c, objects.h: use ANSI C variadic function syntax.
