@@ -122,14 +122,12 @@ char *malloc(), *realloc();
 #endif
 #endif
 
-#ifdef HAVE_PROTOTYPES
 static void WriteFont(struct fontinfo *fi);
 static void PutFontSelector(i32 index);
 static void ScanDVIFile(void);
 static void HandleDVIFile(void);
 static int HandlePage(void);
 static void PutEmptyPage(void);
-#endif
 
 /*
  * Print a message to stderr, with an optional leading space, and handling

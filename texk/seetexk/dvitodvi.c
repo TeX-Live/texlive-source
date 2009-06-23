@@ -109,12 +109,10 @@ char	writeerr[] = "error writing DVI file";
 char	*malloc(), *realloc();
 #endif
 
-#ifdef HAVE_PROTOTYPES
 static void WriteFont(struct fontinfo *fi);
 static void PutFontSelector(i32 index);
 static void ScanDVIFile(void);
 static void HandleDVIFile(void);
-#endif
 
 /*
  * You may get lint warnings about sprintf's return value.
