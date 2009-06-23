@@ -278,7 +278,7 @@ dist_web2c_DATA = fmtutil.cnf
 EXTRA_DIST = README.a2ping README.texdoctk doc/Makefile \
 	doc/TETEXDOC.bib doc/TETEXDOC.tex fontinst.bat pdfetex-pl.pool \
 	updmap.pl win32/epstopdf.c win32/epstopdf.txt
-run_texlinks = $(bindir)/texlinks -f $(web2cdir)/fmtutil.cnf
+run_texlinks = $(bindir)/texlinks -v -f $(web2cdir)/fmtutil.cnf -e "$(EXEEXT)"
 all: all-am
 
 .SUFFIXES:

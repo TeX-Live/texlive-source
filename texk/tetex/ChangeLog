@@ -1,3 +1,9 @@
+2009-06-23  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (run_texlinks): add -e "$(EXEEXT)".
+	* texlinks: new option -e to specify executable extension (for
+	cygwin).	
+
 2009-06-11  Norbert Preining  <preining@logic.at>
 
 	* fmtutil (log_warning): new fn, related code, so that

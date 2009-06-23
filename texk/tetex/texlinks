@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 
 # Thomas Esser, 1999, 2002, 2003. public domain.
 
@@ -38,24 +39,26 @@ export PATH
 # hack around a bug in zsh:
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
-cnf=fmtutil.cnf   # name of the config file
-version=20080528.1847 # utc timestamp 
+version=20090623.0228
 progname=texlinks
+cnf=fmtutil.cnf   # name of the config file
 
 usage='Usage: texlinks [OPTION]... [DIRECTORY]...
 
 Create symbolic links format -> engine according to fmtutil setup.
 
 Mandatory arguments to long options are mandatory for short options too.
-  -h, --help           show this help text
-  --version            show version string
+  -e, --exeext EXT     append EXT to symlink targets (default: none)
   -f, --cnffile FILE   use FILE as config file (default: fmtutil.cnf)
-  -v, --verbose        enable verbose messages (default: off)
   -m, --multiplatform  operate in all platform specific directories
                         (default: operate only in directory for this platform)
-  -s, --silent         silently skip existing scripts / binaries
+  -q, --quiet          silently skip existing scripts / binaries
                         (default: issue warning)
+  -s, --silent         same as -q
   -u, --unlink	       remove symlinks created by texlinks
+  -v, --verbose        enable verbose messages (default: off)
+  -h, --help           show this help text
+  --version            show version string
 
 The DIRECTORY arguments are an optional list of directories in which to
 operate.  If no directories are specified and --multiplatform is
@@ -125,7 +128,8 @@ check_for_binary()
 ###############################################################################
 # install_link(dest src)
 #   create a symlink like ln -s dest src, but make sure that src is not
-#   an existing binary
+#   an existing binary, possibly adding the executable extension if
+#   passed on the command.
 ###############################################################################
 install_link()
 {
@@ -148,6 +152,9 @@ install_link()
       ;;
   esac
 
+  # append .exe if supplied (for cygwin).
+  test -n "$exeext" && dest="$dest$exeext"
+  
   case $src in
     */cont-??|*/mptopdf)
       # context includes wrapper scripts that create/run these.
@@ -155,7 +162,7 @@ install_link()
       ;;
     *)
       test "x$src" != "x`(ls -ld $src | awk '{print $NF}') 2>/dev/null`" &&
-        verbose_do rm -f "$src"
+        rm -f "$src"
   
       if test -f "$src"; then
         case $silent in
@@ -235,6 +242,7 @@ main()
   dirs=
   needsCleanup=false
 
+  exeext=
   multiplatform=false
   verbose=false
   unlink=false
@@ -247,13 +255,14 @@ main()
       --h*|-h)
           echo "$usage"; exit 0;;
       --version)
-          echo "$progname version $version."; exit 0;;
+          echo "$progname version $version"; exit 0;;
       --cnffile|-f)
           shift; cnf_file=$1;;
-      --v*|-v) verbose=true;;
-      --s*|-s) silent=true;;
+      --e*|-e) shift; exeext=$1;;
       --m*|-m) multiplatform=true;;
+      --s*|-s|--q*|-q) silent=true;;
       --u*|-u) unlink=true;;
+      --v*|-v) verbose=true;;
       -*) errmsg "fmtutil: unknown option \`$1' ignored.";;
       *)  break;;
     esac

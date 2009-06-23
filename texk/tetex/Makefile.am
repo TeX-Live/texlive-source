@@ -159,9 +159,10 @@ EXTRA_DIST += \
 ## This target is invoked by the top-level make,
 ## to create the per-format engine symlinks in $(bindir),
 ## after everything else is installed.  We explicitly specify the
-## fmtutil.cnf file to use for the sake of distro builds.  Also, that way
-## we don't have to run mktexlsr also.
-run_texlinks = $(bindir)/texlinks -f $(web2cdir)/fmtutil.cnf
+## fmtutil.cnf file to use for the sake of distro builds.
+## We pass along the executable extension for the sake of cygwin, so we
+## don't create dangling symlinks there (even though they work).
+run_texlinks = $(bindir)/texlinks -v -f $(web2cdir)/fmtutil.cnf -e "$(EXEEXT)"
 run-texlinks:
 	PATH="$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
