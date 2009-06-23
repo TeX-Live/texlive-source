@@ -1,3 +1,15 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* concatn.[ch], tex-file.[ch]: use ANSI C function declarations
+	and prototypes instead of PVAR?[CH] macros.
+	#include <stdarg.h>, not #include <kpathsea/c-vararg.h>.
+
+	* c-vararg.h (removed): no longer used.
+	* kpathsea.h (removed): no longer distributed.
+	* Makefile.am: remove c-vararg.h, rebuild kpathsea.h.
+
+	* c-proto.h: assume HAVE_PROTOTYPES.
+
 2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* getopt.c (_getopt_internal):

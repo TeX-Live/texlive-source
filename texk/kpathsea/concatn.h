@@ -1,6 +1,6 @@
 /* concatn.h: concatenate a variable number of strings.
    This is a separate include file only because I don't see the point of
-   having every source file include <c-vararg.h>.  The declarations for
+   having every source file include <stdarg.h>.  The declarations for
    the other concat routines are in lib.h.
 
    Copyright 1993, 1996, 2008 Karl Berry.
@@ -23,11 +23,11 @@
 #define KPATHSEA_CONCATN_H
 
 #include <kpathsea/c-proto.h>
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 #include <kpathsea/types.h>
 
 /* Concatenate a null-terminated list of strings and return the result
    in malloc-allocated memory.  */
-extern KPSEDLL string concatn PVAR1H(const_string str1);
+extern KPSEDLL string concatn(const_string str1, ...);
 
 #endif /* not KPATHSEA_CONCATN_H */

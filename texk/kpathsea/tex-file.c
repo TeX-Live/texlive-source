@@ -20,7 +20,7 @@
 
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/c-pathch.h>
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 #include <kpathsea/cnf.h>
 #include <kpathsea/concatn.h>
 #include <kpathsea/default.h>
@@ -236,18 +236,20 @@ kpse_maketex_option (const_string fmtname,  boolean value)
    `client_path' member must already be set upon entry.  */
 
 static void
-init_path PVAR3C(kpathsea, kpse, kpse_format_info_type *, info, const_string, default_path, ap)
+init_path (kpathsea kpse, kpse_format_info_type *info, const_string default_path, ...)
 {
   string env_name;
   string env_value = NULL;
   string var = NULL;
+  va_list ap;
   
   info->default_path = default_path;
 
+  va_start (ap, default_path);
   /* First envvar that's set to a nonempty value will exit the loop.  If
      none are set, we want the first cnf entry that matches.  Find the
      cnf value simultaneously with the envvar value, to avoid having to
-     go through the envvar list twice -- because of the PVAR?C macro,
+     go through the envvar list twice,
      that would mean having to create a str_list and use it twice.  */
   while ((env_name = va_arg (ap, string)) != NULL) {
     /* Since sh doesn't like envvar names with `.', check PATH_prog
@@ -313,19 +315,20 @@ init_path PVAR3C(kpathsea, kpse, kpse_format_info_type *, info, const_string, de
 
   EXPAND_DEFAULT (info->override_path, "application override variable");
   info->path = kpathsea_brace_expand (kpse, info->path);
-}}
+}
 
 
 /* Some file types have more than one suffix, and sometimes it is
    convenient to modify the list of searched suffixes.  */ 
 
 void
-kpathsea_set_suffixes PVAR3C(kpathsea, kpse, kpse_file_format_type, format,
-  boolean, alternate,  ap)
+kpathsea_set_suffixes (kpathsea kpse, kpse_file_format_type format,
+  boolean alternate, ...)
 {
   const_string **list;
   const_string s;
   int count = 0;
+  va_list ap;
 
   if (alternate) {
       list = &(kpse->format_info[format].alt_suffix);
@@ -333,6 +336,7 @@ kpathsea_set_suffixes PVAR3C(kpathsea, kpse, kpse_file_format_type, format,
       list = &(kpse->format_info[format].suffix);
   }
 
+  va_start (ap, alternate);
   while ((s = va_arg (ap, string)) != NULL) {
     count++;
     XRETALLOC (*list, count + 1, const_string);
@@ -340,16 +344,19 @@ kpathsea_set_suffixes PVAR3C(kpathsea, kpse, kpse_file_format_type, format,
   }
   va_end (ap);
   (*list)[count] = NULL;
-}}
+}
 
 
 #if defined (KPSE_COMPAT_API)
 void
-kpse_set_suffixes PVAR2C(kpse_file_format_type, format,
-                         boolean, alternate,  ap)
+kpse_set_suffixes (kpse_file_format_type format,
+                   boolean alternate, ...)
 {
-    kpathsea_set_suffixes (kpse_def, format, alternate, ap);
-}}
+  va_list ap;
+  va_start (ap, alternate);
+  kpathsea_set_suffixes (kpse_def, format, alternate, ap);
+  va_end (ap);
+}
 #endif
 
 
@@ -374,13 +381,14 @@ kpse_set_suffixes PVAR2C(kpse_file_format_type, format,
    name to 0 or 1.  */
 
 static void
-init_maketex PVAR3C(kpathsea, kpse, kpse_file_format_type, fmt,  const_string, dflt_prog, ap)
+init_maketex (kpathsea kpse, kpse_file_format_type fmt, const_string dflt_prog, ...)
 {
   kpse_format_info_type *f = &(kpse->format_info[fmt]);
   const_string prog = f->program ? f->program : dflt_prog; /* mktexpk */
   string PROG = uppercasify (prog);             /* MKTEXPK */
   string progval = kpathsea_var_value (kpse, PROG);       /* ENV/cnf{"MKTEXPK"} */
   const_string arg;
+  va_list ap;
 
   /* Doesn't hurt to always set this info.  */
   f->program = prog;
@@ -389,11 +397,13 @@ init_maketex PVAR3C(kpathsea, kpse, kpse_file_format_type, fmt,  const_string, d
   f->argc = 0;
   f->argv = XTALLOC(2, const_string);
   f->argv[f->argc++] = dflt_prog;
+  va_start (ap, dflt_prog);
   while ((arg = va_arg (ap, string)) != NULL) {
     f->argc++;
     XRETALLOC (f->argv, f->argc + 1, const_string);
     f->argv[f->argc - 1] = arg;
   }
+  va_end (ap);
   f->argv[f->argc] = NULL;
 
   if (progval && *progval) {
@@ -403,7 +413,7 @@ init_maketex PVAR3C(kpathsea, kpse, kpse_file_format_type, fmt,  const_string, d
   }
   
   free (PROG);
-}}
+}
 
 /* We need this twice, so ... */
 #define MKTEXPK_ARGS \
@@ -436,16 +446,18 @@ remove_dbonly (const_string path)
    for nice debugging output.  But it's useful.  */
 
 static string
-concatn_with_spaces PVAR1C(const_string, str1,  ap)
+concatn_with_spaces (const_string str1, ...)
 {
   string arg;
   string ret;
+  va_list ap;
 
   if (!str1)
     return NULL;
   
   ret = xstrdup (str1);
   
+  va_start (ap, str1);
   while ((arg = va_arg (ap, string)) != NULL)
     {
       string temp = concat3 (ret, " ", arg);
@@ -455,7 +467,7 @@ concatn_with_spaces PVAR1C(const_string, str1,  ap)
   va_end (ap);
   
   return ret;
-}}
+}
 
 
 /* Initialize everything for FORMAT.  */

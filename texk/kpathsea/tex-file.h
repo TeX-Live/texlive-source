@@ -20,7 +20,7 @@
 #define KPATHSEA_TEX_FILE_H
 
 #include <kpathsea/c-proto.h>
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 #include <kpathsea/types.h>
 
 
@@ -41,9 +41,9 @@ extern KPSEDLL void kpathsea_maketex_option (kpathsea kpse, const_string fmtname
 
 /* Change the list of searched suffixes (alternate suffixes if alternate is
    true).  */
-extern KPSEDLL void kpathsea_set_suffixes PVAR3H(kpathsea kpse, 
-                                                 kpse_file_format_type format,
-                                                 boolean alternate);
+extern KPSEDLL void kpathsea_set_suffixes (kpathsea kpse, 
+                                           kpse_file_format_type format,
+                                           boolean alternate, ...);
 
 /* Initialize the info for the given format.  This is called
    automatically by `kpse_find_file', but the glyph searching (for
@@ -83,8 +83,8 @@ extern KPSEDLL void kpse_set_program_enabled (kpse_file_format_type fmt,
 
 extern KPSEDLL void kpse_maketex_option (const_string fmtname,  boolean value);
 
-extern KPSEDLL void kpse_set_suffixes PVAR2H(kpse_file_format_type format,
-					     boolean alternate);
+extern KPSEDLL void kpse_set_suffixes (kpse_file_format_type format,
+                                       boolean alternate, ...);
 
 extern KPSEDLL const_string kpse_init_format (kpse_file_format_type);
 

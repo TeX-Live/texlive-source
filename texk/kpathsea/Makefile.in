@@ -374,6 +374,7 @@ libkpathsea_la_SOURCES = tex-file.c absolute.c atou.c cnf.c concat.c \
 kpseincludedir = ${includedir}/kpathsea
 nodist_kpseinclude_HEADERS = \
 	c-auto.h \
+	kpathsea.h \
 	paths.h
 
 kpseinclude_HEADERS = \
@@ -392,7 +393,6 @@ kpseinclude_HEADERS = \
 	c-stat.h \
 	c-std.h \
 	c-unistd.h \
-	c-vararg.h \
 	cnf.h \
 	concatn.h \
 	config.h \
@@ -404,7 +404,6 @@ kpseinclude_HEADERS = \
 	fontmap.h \
 	getopt.h \
 	hash.h \
-	kpathsea.h \
 	lib.h \
 	line.h \
 	magstep.h \
@@ -428,7 +427,7 @@ kpseinclude_HEADERS = \
 	xopendir.h \
 	xstat.h
 
-DISTCLEANFILES = paths.h stamp-paths
+DISTCLEANFILES = paths.h stamp-paths kpathsea.h
 kpseaccess_SOURCES = access.c
 kpsereadlink_SOURCES = readlink.c
 kpsewhich_LDADD = libkpathsea.la
@@ -1636,9 +1635,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	uninstall-nodist_kpseincludeHEADERS
 
 
-$(libkpathsea_la_SOURCES): paths.h
-
-$(kpseinclude_HEADERS): paths.h
+$(libkpathsea_la_OBJECTS): paths.h kpathsea.h
 
 #
 #
@@ -1670,7 +1667,18 @@ stamp-paths: texmf.cnf
 	  cp paths.tmp paths.h; \
 	fi
 	rm -f paths.tmp
-	date >stamp-paths
+	date >$@
+
+kpathsea.h: paths.h
+	rm -f $@
+	echo '/* This is a generated file */' >$@
+	echo '/* collecting all kpathsea headers. */' >>$@
+	echo '#include <kpathsea/config.h>' >>$@
+	echo '#include <kpathsea/c-auto.h>' >>$@
+	echo '#include <kpathsea/paths.h>' >>$@
+	(cd $(srcdir) && ls -1 *.h) \
+	  | grep -v '\(config\|paths\|kpathsea\|mingw32\|win32lib\)\.h' \
+	  | sed -e 's,^,#include <kpathsea/,' -e s',$$,>,' >>$@
 
 install-exec-hook:
 	@for f in $(dist_noinst_SCRIPTS); do \
