@@ -67,7 +67,7 @@ int main (ac, av)
 int ac;
 char **av;
 @y
-int main P2C(int,ac, char**,av)
+int main (int ac, char **av)
 @z
 
 @x l.100 - Add Web2C version to banner.
@@ -104,11 +104,11 @@ extern name_pointer section_lookup(); /* finds section name */
 extern void print_section_name(), sprint_section_name();
 @y
 /* looks up a string in the identifier table */
-extern name_pointer id_lookup P3H(char*,char*,char);
+extern name_pointer id_lookup (char*, char*, char);
 /* finds section name */
-extern name_pointer section_lookup P3H(char*,char*,char);
-extern void print_section_name P1H(name_pointer);
-extern void sprint_section_name P2H(char*,name_pointer);
+extern name_pointer section_lookup (char*, char*, char);
+extern void print_section_name (name_pointer);
+extern void sprint_section_name (char*, name_pointer);
 @z
 
 Section 10.
@@ -121,10 +121,10 @@ extern void fatal(); /* issue error message and die */
 extern void overflow(); /* succumb because a table has overflowed */
 @y
 extern int history; /* indicates how bad this run was */
-extern void err_print P1H(char*); /* print error message and context */
-extern int wrap_up P1H(void); /* indicate |history| and exit */
-extern void fatal P2H(char*,char*); /* issue error message and die */
-extern void overflow P1H(char*); /* succumb because a table has overflowed */
+extern void err_print (char*); /* print error message and context */
+extern int wrap_up (void); /* indicate |history| and exit */
+extern void fatal (char*, char*); /* issue error message and die */
+extern void overflow (char*); /* succumb because a table has overflowed */
 @z
 
 Section 11.
@@ -154,9 +154,9 @@ extern reset_input(); /* initialize to read the web file and change file */
 extern get_line(); /* inputs the next line */
 extern check_complete(); /* checks that all changes were picked up */
 @y
-extern void reset_input P1H(void); /* initialize to read the web file and change file */
-extern int get_line P1H(void); /* inputs the next line */
-extern void check_complete P1H(void); /* checks that all changes were picked up */
+extern void reset_input (void); /* initialize to read the web file and change file */
+extern int get_line (void); /* inputs the next line */
+extern void check_complete (void); /* checks that all changes were picked up */
 @z
 
 Section 15.
@@ -164,7 +164,7 @@ Section 15.
 @x common.h l.192
 extern void common_init();
 @y
-extern void common_init P1H(void);
+extern void common_init (void);
 @z
 
 Section 21.
@@ -175,7 +175,7 @@ name_pointer p; /* points to the proposed match */
 char *first; /* position of first character of string */
 int l; /* length of identifier */
 @y
-int names_match P4C(name_pointer,p, char*,first, int,l, char,t)
+int names_match (name_pointer p, char *first, int l, char t)
 @z
 
 Section 22.
@@ -184,13 +184,13 @@ Section 22.
 init_node(node)
 name_pointer node;
 @y
-init_node P1C(name_pointer,node)
+init_node (name_pointer node)
 @z
 
 @x l.207
 init_p() {}
 @y
-init_p P2C(name_pointer,p, char,t) {}
+init_p (name_pointer p, char t) {}
 @z
 
 Section 26.
@@ -199,7 +199,7 @@ Section 26.
 store_two_bytes(x)
 sixteen_bits x;
 @y
-store_two_bytes P1C(sixteen_bits,x)
+store_two_bytes (sixteen_bits x)
 @z
 
 Section 30.
@@ -208,7 +208,7 @@ Section 30.
 push_level(p) /* suspends the current level */
 name_pointer p;
 @y
-push_level P1C(name_pointer,p) /* suspends the current level */
+push_level (name_pointer p) /* suspends the current level */
 @z
 
 Section 31.
@@ -217,7 +217,7 @@ Section 31.
 pop_level(flag) /* do this when |cur_byte| reaches |cur_end| */
 int flag; /* |flag==0| means we are in |output_defs| */
 @y
-pop_level P1C(int,flag) /* do this when |cur_byte| reaches |cur_end| */
+pop_level (int flag) /* do this when |cur_byte| reaches |cur_end| */
 @z
 
 Section 33.
@@ -225,7 +225,7 @@ Section 33.
 @x l.393
 get_output() /* sends next token to |out_char| */
 @y
-get_output P1H(void) /* sends next token to |out_char| */
+get_output (void) /* sends next token to |out_char| */
 @z
 
 Section 37.
@@ -233,7 +233,7 @@ Section 37.
 @x l.483
 flush_buffer() /* writes one line to output file */
 @y
-flush_buffer P1H(void) /* writes one line to output file */
+flush_buffer (void) /* writes one line to output file */
 @z
 
 Section 41.
@@ -241,7 +241,7 @@ Section 41.
 @x l.534
 void phase_two();
 @y
-void phase_two P1H(void);
+void phase_two (void);
 @z
 
 Section 42.
@@ -249,7 +249,7 @@ Section 42.
 @x l.538
 phase_two () {
 @y
-phase_two P1H(void) {
+phase_two (void) {
 @z
 
 Section 46.
@@ -257,7 +257,7 @@ Section 46.
 @x l.603
 void output_defs();
 @y
-void output_defs P1H(void);
+void output_defs (void);
 @z
 
 Section 47.
@@ -265,7 +265,7 @@ Section 47.
 @x l.607
 output_defs()
 @y
-output_defs P1H(void)
+output_defs (void)
 @z
 
 Section 48.
@@ -273,7 +273,7 @@ Section 48.
 @x l.649
 static void out_char();
 @y
-static void out_char P1H(eight_bits);
+static void out_char (eight_bits);
 @z
 
 Section 49.
@@ -282,7 +282,7 @@ Section 49.
 out_char(cur_char)
 eight_bits cur_char;
 @y
-out_char P1C(eight_bits,cur_char)
+out_char (eight_bits cur_char)
 @z
 
 Section 58.
@@ -290,7 +290,7 @@ Section 58.
 @x l.815
 skip_ahead() /* skip to next control code */
 @y
-skip_ahead P1H(void) /* skip to next control code */
+skip_ahead (void) /* skip to next control code */
 @z
 
 Section 60.
@@ -299,7 +299,7 @@ Section 60.
 int skip_comment(is_long_comment) /* skips over comments */
 boolean is_long_comment;
 @y
-int skip_comment P1C(boolean,is_long_comment) /* skips over comments */
+int skip_comment (boolean is_long_comment) /* skips over comments */
 @z
 
 Section 62
@@ -314,7 +314,7 @@ Section 63.
 @x l.902
 get_next() /* produces the next input token */
 @y
-get_next P1H(void) /* produces the next input token */
+get_next (void) /* produces the next input token */
 @z
 
 Section 76.
@@ -323,7 +323,7 @@ Section 76.
 scan_repl(t) /* creates a replacement text */
 eight_bits t;
 @y
-scan_repl P1C(eight_bits,t) /* creates a replacement text */
+scan_repl (eight_bits t) /* creates a replacement text */
 @z
 
 Section 83.
@@ -331,7 +331,7 @@ Section 83.
 @x l.1359
 scan_section()
 @y
-scan_section P1H(void)
+scan_section (void)
 @z
 
 Section 90.
@@ -339,7 +339,7 @@ Section 90.
 @x l.1458
 void phase_one();
 @y
-void phase_one P1H(void);
+void phase_one (void);
 @z
 
 Section 91.
@@ -347,7 +347,7 @@ Section 91.
 @x l.1462
 phase_one() {
 @y
-phase_one P1H(void) {
+phase_one (void) {
 @z
 
 Section 92.
@@ -355,7 +355,7 @@ Section 92.
 @x l.1476
 void skip_limbo();
 @y
-void skip_limbo P1H(void);
+void skip_limbo (void);
 @z
 
 Section 93.
@@ -363,7 +363,7 @@ Section 93.
 @x l.1480
 skip_limbo()
 @y
-skip_limbo P1H(void)
+skip_limbo (void)
 @z
 
 Section 95.
@@ -371,5 +371,5 @@ Section 95.
 @x l.1535
 print_stats() {
 @y
-print_stats P1H(void) {
+print_stats (void) {
 @z

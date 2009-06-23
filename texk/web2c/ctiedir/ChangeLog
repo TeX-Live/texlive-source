@@ -1,3 +1,7 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ctie-k.ch: drop P?C, P?H, use ANSI C function declarations.
+
 2005-02-05  Olaf Weber  <olaf@infovore.xs4all.nl>
 
 	* ctie.1: Correct header from TIE to CTIE.

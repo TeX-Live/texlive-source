@@ -1,0 +1,5 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* comm-w2c.ch, ctang-w2c.ch, cweav-w2c.ch: drop P?C, P?H macros,
+	use ANSI C function declarations.
+

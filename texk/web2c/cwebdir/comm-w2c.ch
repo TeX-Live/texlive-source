@@ -48,7 +48,7 @@ Section 4.
 @x l.91
 common_init()
 @y
-common_init P1H(void)
+common_init (void)
 @z
 
 @x l.93
@@ -64,7 +64,7 @@ Section 9.
 int input_ln(fp) /* copies a line into |buffer| or returns 0 */
 FILE *fp; /* what file to read from */
 @y
-int input_ln P1C(FILE *, fp) /* copies a line into |buffer| or returns 0 */
+int input_ln (FILE *fp) /* copies a line into |buffer| or returns 0 */
 @z
 
 Section 10.
@@ -85,7 +85,7 @@ Section 12.
 @x l.254
 prime_the_change_buffer()
 @y
-prime_the_change_buffer P1H(void)
+prime_the_change_buffer (void)
 @z
 
 Section 16.
@@ -93,7 +93,7 @@ Section 16.
 @x l.322
 check_change() /* switches to |change_file| if the buffers match */
 @y
-check_change P1H(void) /* switches to |change_file| if the buffers match */
+check_change (void) /* switches to |change_file| if the buffers match */
 @z
 
 Section 18.
@@ -101,7 +101,7 @@ Section 18.
 @x l.380
 reset_input()
 @y
-reset_input P1H(void)
+reset_input (void)
 @z
 
 Section 19.
@@ -140,7 +140,7 @@ Section 21.
 @x l.427
 int get_line() /* inputs the next line */
 @y
-int get_line P1H(void) /* inputs the next line */
+int get_line (void) /* inputs the next line */
 @z
 
 Section 22.
@@ -249,7 +249,7 @@ Section 26.
 @x l.571
 check_complete(){
 @y
-check_complete P1H(void) {
+check_complete (void) {
 @z
 
 Section 33.
@@ -257,7 +257,7 @@ Section 33.
 @x l.651
 extern int names_match();
 @y
-extern int names_match P4H(name_pointer, char*, int, char);
+extern int names_match (name_pointer, char*, int, char);
 @z
 
 Section 35.
@@ -269,7 +269,7 @@ char *last; /* last character of string plus one */
 char t; /* the |ilk|; used by \.{CWEAVE} only */
 @y
 /* looks up a string in the identifier table */
-id_lookup P3C(char*,first, char*,last, char,t)
+id_lookup (char *first, char *last, char t)
 @z
 
 Section 38.
@@ -277,7 +277,7 @@ Section 38.
 @x l.704
 void init_p();
 @y
-extern void init_p P2C(name_pointer,p, char,t);
+extern void init_p (name_pointer p, char t);
 @z
 
 Section 42.
@@ -286,7 +286,7 @@ Section 42.
 print_section_name(p)
 name_pointer p;
 @y
-print_section_name P1C(name_pointer, p)
+print_section_name (name_pointer p)
 @z
 
 Section 43.
@@ -296,7 +296,7 @@ sprint_section_name(dest,p)
   char*dest;
   name_pointer p;
 @y
-sprint_section_name P2C(char*,dest, name_pointer,p)
+sprint_section_name (char *dest, name_pointer p)
 @z
 
 Section 44.
@@ -305,7 +305,7 @@ Section 44.
 print_prefix_name(p)
 name_pointer p;
 @y
-print_prefix_name P1C(name_pointer,p)
+print_prefix_name (name_pointer p)
 @z
 
 Section 45.
@@ -316,7 +316,7 @@ int web_strcmp(j,j_len,k,k_len) /* fuller comparison than |strcmp| */
   int j_len, k_len; /* length of strings */
 @y
 /* fuller comparison than |strcmp| */
-int web_strcmp P4C(char*,j, int,j_len, char*,k, int,k_len)
+int web_strcmp (char *j, int j_len, char *k, int k_len)
 @z
 
 Section 46.
@@ -324,7 +324,7 @@ Section 46.
 @x l.853
 extern void init_node();
 @y
-extern void init_node P1C(name_pointer,node);
+extern void init_node (name_pointer node);
 @z
 
 Section 47.
@@ -338,8 +338,8 @@ char *last; /* last character of section name, plus one */
 int ispref; /* are we adding a prefix or a full name? */
 @y
 /* install a new node in the tree */
-add_section_name P5C(name_pointer,par, int,c, char*,first, char*,last,
-                     int,ispref)
+add_section_name (name_pointer par, int c, char *first, char *last,
+                  int ispref)
 @z
 
 Section 48.
@@ -351,7 +351,7 @@ char *first; /* beginning of extension text */
 char *last; /* one beyond end of extension text */
 int ispref; /* are we adding a prefix or a full name? */
 @y
-extend_section_name P4C(name_pointer,p, char*,first, char*,last, int,ispref)
+extend_section_name (name_pointer p, char *first, char *last, int ispref)
 @z
 
 Section 49.
@@ -362,7 +362,7 @@ char *first, *last; /* first and last characters of new name */
 int ispref; /* is the new name a prefix or a full name? */
 @y
 /* find or install section name in tree */
-section_lookup P3C(char*,first, char*,last, int,ispref)
+section_lookup (char *first, char *last, int ispref)
 @z
 
 Section 53.
@@ -370,7 +370,7 @@ Section 53.
 @x l.1018
 int section_name_cmp();
 @y
-int section_name_cmp P3H(char**, int, name_pointer);
+int section_name_cmp (char**, int, name_pointer);
 @z
 
 Section 54.
@@ -381,7 +381,7 @@ char **pfirst; /* pointer to beginning of comparison string */
 int len; /* length of string */
 name_pointer r; /* section name being compared */
 @y
-int section_name_cmp P3C(char**,pfirst, int,len, name_pointer,r)
+int section_name_cmp (char **pfirst, int len, name_pointer r)
 @z
 
 Section 57.
@@ -389,7 +389,7 @@ Section 57.
 @x l.1093
 void  err_print();
 @y
-void  err_print P1H(char*);
+void  err_print (char*);
 @z
 
 Section 58.
@@ -398,7 +398,7 @@ Section 58.
 err_print(s) /* prints `\..' and location of error message */
 char *s;
 @y
-err_print P1C(char*,s) /* prints `\..' and location of error message */
+err_print (char *s) /* prints `\..' and location of error message */
 @z
 
 Section 60.
@@ -407,8 +407,8 @@ Section 60.
 int wrap_up();
 extern void print_stats();
 @y
-int wrap_up P1H(void);
-extern void print_stats P1H(void);
+int wrap_up (void);
+extern void print_stats (void);
 @z
 
 Section 61.
@@ -416,7 +416,7 @@ Section 61.
 @x l.1151
 int wrap_up() {
 @y
-int wrap_up P1H(void) {
+int wrap_up (void) {
 @z
 
 Section 63.
@@ -424,8 +424,8 @@ Section 63.
 @x l.1174
 void fatal(), overflow();
 @y
-void fatal P2H(char*,char*);
-void overflow(char*);
+void fatal (char*, char*);
+void overflow (char*);
 @z
 
 Section 64.
@@ -434,7 +434,7 @@ Section 64.
 fatal(s,t)
   char *s,*t;
 @y
-fatal P2C(char*,s, char*,t)
+fatal (char *s, char *t)
 @z
 
 Section 65.
@@ -443,7 +443,7 @@ Section 65.
 overflow(t)
   char *t;
 @y
-overflow P1C(char*,t)
+overflow (char *t)
 @z
 
 Section 67.
@@ -492,7 +492,7 @@ Section 69.
 @x l.1252
 void scan_args();
 @y
-void scan_args P1H(void);
+void scan_args (void);
 @z
 
 
@@ -501,7 +501,7 @@ Section 70.
 @x l.1257
 scan_args()
 @y
-scan_args P1H(void)
+scan_args (void)
 @z
 
 

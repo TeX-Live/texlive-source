@@ -1,3 +1,7 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tie-w2c.ch: drop P?C, P?H, use ANSI C function declarations.
+
 2009-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tie-w2c.ch, tie.w: remove trailing whitespace.
