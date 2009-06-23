@@ -31,7 +31,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/.  */
 /* The stuff from the path searching library.  */
 #include <kpathsea/config.h>
 #include <web2c/c-auto.h>
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 
 /* How to open a binary file.  */
 #include <kpathsea/c-fopen.h>

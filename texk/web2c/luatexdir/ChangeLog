@@ -1,3 +1,8 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* font/writet1.c, image/epdf.c, utils/avlstuff.c:
+	#include <stdarg.h>, not <kpathsea/c-vararg.h>.
+
 2009-06-09  Taco Hoekwater <taco@luatex.org>
  	
 	* luatexdir: import of luatex release 0.40.4.

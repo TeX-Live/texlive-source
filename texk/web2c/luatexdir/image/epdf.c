@@ -20,7 +20,7 @@
 
 #include "ptexlib.h"
 
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 #include <kpathsea/c-proto.h>
 #include <string.h>
 

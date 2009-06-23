@@ -1,3 +1,8 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* avlstuff.c, epdf.c, ttf2afm.c, writet1.c: #include <stdarg.h>,
+	not <kpathsea/c-vararg.h>.
+
 2009-06-04  Karl Berry  <karl@tug.org>
 
 	* am/pdftex.am (pdftex_LDADD): add libpdftex.a here.

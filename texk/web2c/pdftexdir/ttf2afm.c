@@ -26,7 +26,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <kpathsea/c-proto.h>
 #include <kpathsea/c-std.h>
 #include <kpathsea/c-unistd.h>
-#include <kpathsea/c-vararg.h>
+#include <stdarg.h>
 #include <kpathsea/getopt.h>
 */
 #include <kpathsea/kpathsea.h>
