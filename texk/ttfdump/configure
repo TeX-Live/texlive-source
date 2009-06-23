@@ -12829,13 +12829,7 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
 fi
 { $as_echo "$as_me:$LINENO: result: $kb_cv_c_prototypes" >&5
 $as_echo "$kb_cv_c_prototypes" >&6; }
-if test "$kb_cv_c_prototypes" = yes; then
-
-cat >>confdefs.h <<\_ACEOF
-#define HAVE_PROTOTYPES 1
-_ACEOF
-
-else
+if test "x$kb_cv_c_prototypes" = xno; then
   { { $as_echo "$as_me:$LINENO: error: Sorry, your compiler does not understand prototypes." >&5
 $as_echo "$as_me: error: Sorry, your compiler does not understand prototypes." >&2;}
    { (exit 1); exit 1; }; }

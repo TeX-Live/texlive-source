@@ -62,9 +62,6 @@
    `program_invocation_name' and `program_invocation_short_name'. */
 #undef HAVE_PROGRAM_INVOCATION_NAME
 
-/* Define to 1 if your compiler understands prototypes. */
-#undef HAVE_PROTOTYPES
-
 /* Define to 1 if you have the `putenv' function. */
 #undef HAVE_PUTENV
 
