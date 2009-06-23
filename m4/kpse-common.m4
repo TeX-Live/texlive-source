@@ -245,6 +245,8 @@ AC_CACHE_CHECK([whether the compiler accepts prototypes],
 if test "$kb_cv_c_prototypes" = yes; then
   AC_DEFINE([HAVE_PROTOTYPES], 1,
             [Define to 1 if your compiler understands prototypes.])
+else
+  AC_MSG_ERROR([Sorry, your compiler does not understand prototypes.])
 fi
 dnl
 dnl This is a GNU libc invention.

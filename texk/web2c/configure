@@ -13078,6 +13078,10 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_PROTOTYPES 1
 _ACEOF
 
+else
+  { { $as_echo "$as_me:$LINENO: error: Sorry, your compiler does not understand prototypes." >&5
+$as_echo "$as_me: error: Sorry, your compiler does not understand prototypes." >&2;}
+   { (exit 1); exit 1; }; }
 fi
 { $as_echo "$as_me:$LINENO: checking whether program_invocation_name is predefined" >&5
 $as_echo_n "checking whether program_invocation_name is predefined... " >&6; }
@@ -16261,11 +16265,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16264: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16268: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16268: \$? = $ac_status" >&5
+   echo "$as_me:16272: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16360,11 +16364,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16363: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16367: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16367: \$? = $ac_status" >&5
+   echo "$as_me:16371: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16412,11 +16416,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16415: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16419: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16419: \$? = $ac_status" >&5
+   echo "$as_me:16423: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized

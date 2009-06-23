@@ -12835,6 +12835,10 @@ cat >>confdefs.h <<\_ACEOF
 #define HAVE_PROTOTYPES 1
 _ACEOF
 
+else
+  { { $as_echo "$as_me:$LINENO: error: Sorry, your compiler does not understand prototypes." >&5
+$as_echo "$as_me: error: Sorry, your compiler does not understand prototypes." >&2;}
+   { (exit 1); exit 1; }; }
 fi
 { $as_echo "$as_me:$LINENO: checking whether program_invocation_name is predefined" >&5
 $as_echo_n "checking whether program_invocation_name is predefined... " >&6; }
