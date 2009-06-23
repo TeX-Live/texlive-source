@@ -25,7 +25,7 @@ extern boolean doing_statements;
    This is a good thing, since libfl.a is often installed somewhere that
    the linker doesn't search by default.  */
 static int
-yywrap P1H(void)
+yywrap (void)
 {
   return 1;
 }
@@ -227,7 +227,7 @@ HHB1		("hh"{WW}"."{WW}"b1")
    to yytext outside of this file.  Which means we can omit one of the more
    troublesome autoconf tests. */
 void
-get_string_literal P1C(char *, s)
+get_string_literal (char *s)
 {
     int i, j;
     j = 1;
@@ -244,7 +244,7 @@ get_string_literal P1C(char *, s)
 }
 
 void
-get_single_char P1C(char *, s)
+get_single_char (char *s)
 {
     s[0]='\'';
     if (yytext[1] == '\\' || yytext[1] == '\'') {
@@ -260,7 +260,7 @@ get_single_char P1C(char *, s)
 }
 
 void
-get_result_type P1C(char *, s)
+get_result_type (char *s)
 {
     strcpy(s, yytext);
 }
@@ -270,7 +270,7 @@ get_result_type P1C(char *, s)
    bad status.  */
 
 int
-yyerror P1C(string, s)
+yyerror (string s)
 {
   /* This is so the convert script can delete the output file on error.  */
   puts ("@error@");

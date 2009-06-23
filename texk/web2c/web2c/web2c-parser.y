@@ -48,12 +48,12 @@ extern char coerce_name[];
 extern string program_name;
 extern boolean debug;
 
-static long my_labs P1H(long);
-static void compute_array_bounds P1H(void);
-static void fixup_var_list P1H(void);
-static void do_proc_args P1H(void);
-static void gen_function_head P1H(void);
-static boolean doreturn P1H(string);
+static long my_labs (long);
+static void compute_array_bounds (void);
+static void fixup_var_list (void);
+static void do_proc_args (void);
+static void gen_function_head (void);
+static boolean doreturn (string);
 %}
 
 %start PROGRAM
@@ -1205,7 +1205,7 @@ FOR_LIST:		EXPRESS
 %%
 
 static void
-compute_array_bounds P1H(void)
+compute_array_bounds (void)
 {
   long lb;
   char tmp[200];
@@ -1291,7 +1291,7 @@ fixup_var_list ()
    Otherwise, return 0.  */
    
 static boolean
-doreturn P1C(string, label)
+doreturn (string label)
 {
     return
       tex
@@ -1305,7 +1305,7 @@ doreturn P1C(string, label)
 
 /* Return the absolute value of a long.  */
 static long 
-my_labs P1C(long, x)
+my_labs (long x)
 {
     if (x < 0L) return(-x);
     return(x);
@@ -1315,7 +1315,7 @@ my_labs P1C(long, x)
 /* Output current function declaration to coerce file.  */
 
 static void
-do_proc_args P1H(void)
+do_proc_args (void)
 {
   /* If we want ANSI code and one of the parameters is a var
      parameter, then use the #define to add the &.  We do this by
@@ -1333,18 +1333,18 @@ do_proc_args P1H(void)
 
   /* We can't use our P?H macros here, since there might be an arbitrary
      number of function arguments.  */
-  fprintf (coerce, "%s %s AA((", fn_return_type, z_id);
+  fprintf (coerce, "%s %s (", fn_return_type, z_id);
   if (ids_paramed == 0) fprintf (coerce, "void");
   for (i = 0; i < ids_paramed; i++) {
     if (i > 0)
       putc (',', coerce);
     fprintf (coerce, "%s %s", arg_type[i], symbol (param_id_list[i]));
   }
-  fprintf (coerce, "));\n");
+  fprintf (coerce, ");\n");
 }
 
 static void
-gen_function_head P1H(void)
+gen_function_head (void)
 {
     int i;
 
@@ -1374,7 +1374,11 @@ gen_function_head P1H(void)
        generated code, or we'd generate different code with and without
        prototypes, which might cause splitup to create different numbers
        of files in each case. */
-    fputs ("#ifdef HAVE_PROTOTYPES\n", out);
+    /* We now always use ANSI C prototypes, but keep the '#if 1' in the
+       generated code, to avoid different numbers of files.
+       Once we stop splitting the TeX and Metafont output files all this
+       can go away.  */
+    fputs ("#if 1\n", out);
     my_output (z_id);
     my_output ("(");
     if (ids_paramed == 0) my_output ("void");

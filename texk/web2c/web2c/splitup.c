@@ -59,11 +59,12 @@ FILE *out, *ini, *temp;
  * so we know when it's safe to finish writing the current file.
  */
 static int
-read_line P1H(void)
+read_line (void)
 {
   if (fgets (buffer, sizeof (buffer), stdin) == NULL)
     return false;
   if (strncmp (buffer, "#ifdef", 6) == 0
+      || strncmp (buffer, "#if 1", 5) == 0
       || strncmp (buffer, "#ifndef", 7) == 0)
     {
       ++ifdef_nesting;
@@ -76,7 +77,7 @@ read_line P1H(void)
 }
 
 int
-main P2C(int, argc, string *, argv)
+main (int argc, string *argv)
 {
   string coerce;
   unsigned coerce_len;

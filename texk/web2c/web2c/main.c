@@ -68,7 +68,7 @@ char **gargv;
 extern int yyleng;
 
 void
-find_next_temp P1H(void)
+find_next_temp (void)
 {
   next_temp[4]++;
   if (next_temp[4] > 'z')
@@ -79,13 +79,13 @@ find_next_temp P1H(void)
 }
 
 void
-normal P1H(void)
+normal (void)
 {
   out = stdout;
 }
 
 void
-new_line P1H(void)
+new_line (void)
 {
   if (!out)
     return;
@@ -100,7 +100,7 @@ new_line P1H(void)
 /* Output the string S to the file `out'.  */
 
 void
-my_output P1C(string, s)
+my_output (string s)
 {
   int len = strlen (s);
   int less_indent = 0;
@@ -132,7 +132,7 @@ my_output P1C(string, s)
 }
 
 void
-semicolon P1H(void)
+semicolon (void)
 {
   if (!last_brace) {
     my_output (";");
@@ -142,7 +142,7 @@ semicolon P1H(void)
 }
 
 static int
-hash P1C(const_string, id)
+hash (const_string id)
 {
   register int i = 0, j;
   for (j = 0; id[j] != 0; j++)
@@ -151,7 +151,7 @@ hash P1C(const_string, id)
 }
 
 int
-search_table P1C(const_string, id)
+search_table (const_string id)
 {
   int ptr;
   ptr = hash_list[hash (id)];
@@ -169,7 +169,7 @@ search_table P1C(const_string, id)
 /* Add ID to the symbol table.  Leave it up to the caller to assign to
    the `typ' field.  Return the index into the `sym_table' array.  */
 int
-add_to_table P1C(string, id)
+add_to_table (string id)
 {
   int h, ptr;
   h = hash (id);
@@ -186,7 +186,7 @@ add_to_table P1C(string, id)
 }
 
 void
-remove_locals P1H(void)
+remove_locals (void)
 {
   int h, ptr;
   for (h = 0; h < hash_prime; h++)
@@ -202,7 +202,7 @@ remove_locals P1H(void)
 }
 
 void
-mark P1H(void)
+mark (void)
 {
   mark_sym_free = next_sym_free;
   mark_string_free = next_string_free;
@@ -211,7 +211,7 @@ mark P1H(void)
 
 
 void
-initialize P1H(void)
+initialize (void)
 {
   register int i;
 
@@ -224,7 +224,7 @@ initialize P1H(void)
 }
 
 int
-main P2C(int, argc, string *, argv)
+main (int argc, string *argv)
 {
   int error, i;
 

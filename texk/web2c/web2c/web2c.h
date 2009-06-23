@@ -52,22 +52,22 @@ extern struct sym_entry sym_table[];
 extern int next_sym_free, next_string_free;
 extern int mark_sym_free, mark_string_free;
 
-extern void find_next_temp P1H(void);
-extern void normal P1H(void);
-extern void new_line P1H(void);
-extern void my_output P1H(string);
-extern void semicolon P1H(void);
-extern void remove_locals P1H(void);
-extern void mark P1H(void);
-extern void initialize P1H(void);
-extern int add_to_table P1H(string);
-extern int search_table P1H(const_string);
-extern int yyerror P1H(string);
+extern void find_next_temp (void);
+extern void normal (void);
+extern void new_line (void);
+extern void my_output (string);
+extern void semicolon (void);
+extern void remove_locals (void);
+extern void mark (void);
+extern void initialize (void);
+extern int add_to_table (string);
+extern int search_table (const_string);
+extern int yyerror (string);
 
-extern void get_string_literal P1H(char*);
-extern void get_single_char P1H(char*);
-extern void get_result_type P1H(char*);
-extern void get_return_type P1H(char*);
+extern void get_string_literal (char*);
+extern void get_single_char (char*);
+extern void get_result_type (char*);
+extern void get_return_type (char*);
 
 /* No prototypes for these two. As used, neither takes arguments. */
 extern int yylex(), yyparse();
