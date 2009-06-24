@@ -68,7 +68,7 @@ static	char	mf_hp2627_pencolors[2] = {
  *		sense status or something masochistic like that)
  */
 
-int mf_hp2627_initscreen()
+int mf_hp2627_initscreen(void)
 {
 	(void) fflush(stdout);	/* make sure pascal-level output flushed */
 	(void) write(fileno(stdout), HP2627_INITSTRING, HP2627_INITSTRINGLEN);
@@ -84,7 +84,7 @@ int mf_hp2627_initscreen()
  *		but why not?)
  */
 
-void mf_hp2627_updatescreen()
+void mf_hp2627_updatescreen(void)
 {
 	(void) fflush(stdout);
 }
@@ -96,10 +96,10 @@ void mf_hp2627_updatescreen()
  *			to background color
  */
 
-void mf_hp2627_blankrectangle P4C(screencol, left,
-                                  screencol, right,
-                                  screenrow, top,
-                                  screenrow, bottom)
+void mf_hp2627_blankrectangle (screencol left,
+                               screencol right,
+                               screenrow top,
+                               screenrow bottom)
 {
 	char	sprbuf[128];
 
@@ -163,10 +163,10 @@ void mf_hp2627_blankrectangle P4C(screencol, left,
 	oldx = x; \
 	oldy = y;
 
-void mf_hp2627_paintrow P4C(screenrow,	row,
-                            pixelcolor,	init_color,
-                            transspec,	transition_vector,
-                            screencol,	vector_size)
+void mf_hp2627_paintrow (screenrow row,
+                         pixelcolor init_color,
+                         transspec transition_vector,
+                         screencol vector_size)
 {
 	register	color;
 	char		outbuf[512*6];	/* enough to hold an alternate color */

@@ -1,3 +1,8 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* aleph.c, alephbis.c: drop P?C, P?H, use ANSI C function
+	declarations.
+
 2009-02-26  Karl Berry  <karl@tug.org>
 
 	* alephextra-rc2.h (BANNER, COPYRIGHT_HOLDER, BUG_ADDRESS):

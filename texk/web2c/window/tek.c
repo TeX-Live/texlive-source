@@ -33,7 +33,8 @@ char	zero_array[WIDTHINBYTES];
  *		We always return true.
  */
 
-int mf_tektronix_initscreen()
+int
+mf_tektronix_initscreen(void)
 {
     bzero(zero_array, sizeof(zero_array));
     return 1;
@@ -44,7 +45,8 @@ int mf_tektronix_initscreen()
  *
  *		Print out the screen bitmap.
  */
-void mf_tektronix_updatescreen()
+void
+mf_tektronix_updatescreen(void)
 {
     int r, c, startc, makingline;
 
@@ -92,10 +94,11 @@ void mf_tektronix_updatescreen()
  *
  *		Blanks out a port of the screen.
  */
-void mf_tektronix_blankrectangle P4C(screencol, left,
-                                     screencol, right,
-                                     screenrow, top,
-                                     screenrow, bottom)
+void
+mf_tektronix_blankrectangle (screencol left,
+                             screencol right,
+                             screenrow top,
+                             screenrow bottom)
 {
     int	r, c;
 
@@ -118,10 +121,11 @@ void mf_tektronix_blankrectangle P4C(screencol, left,
  *		transition specified by "transition_vector", switch colors,
  *		and continue for "vector_size" transitions.
  */
-void mf_tektronix_paintrow P4C(screenrow,  row,
-                               pixelcolor, init_color,
-                               transspec,  transition_vector,
-                               screencol,  vector_size)
+void
+mf_tektronix_paintrow (screenrow  row,
+                       pixelcolor init_color,
+                       transspec  transition_vector,
+                       screencol  vector_size)
 {
     int k = 0;
     int c = transition_vector[0];

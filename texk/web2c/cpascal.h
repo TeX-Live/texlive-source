@@ -285,6 +285,6 @@ typedef struct option getoptstruct;
 /* Declarations for the routines we provide ourselves in lib/.  */
 #include "lib/lib.h"
 
-extern int loadpoolstrings P1H(integer);
+extern int loadpoolstrings (integer);
 
 #endif /* not CPASCAL_H */

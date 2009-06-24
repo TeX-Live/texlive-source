@@ -9,7 +9,7 @@
    line.  */
 
 integer
-inputint P1C(FILE *, f)
+inputint (FILE *f)
 {
   char buffer[MAX_INT_LENGTH]; /* Long enough for anything reasonable.  */
 

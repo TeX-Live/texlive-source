@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #if 1
 
 void
-runexternalocp P1C(string, external_ocp_name)
+runexternalocp (string external_ocp_name)
 {
   char *in_file_name;
   char *out_file_name;
@@ -211,7 +211,7 @@ end_of_while:
 #else
 
 void
-runexternalocp P1C(string, external_ocp_name)
+runexternalocp (string external_ocp_name)
 {
   int outpipes[2], inpipes[2];
   char *outbuf;

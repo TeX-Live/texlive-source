@@ -1,3 +1,9 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* epsf.c, hp2627.c, mftalk.c, next.c, regis.c, suntools.c,
+	tek.c, uniterm.c, win32.c: drop P?C, P?H, use ANSI C function
+	declarations.
+
 2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

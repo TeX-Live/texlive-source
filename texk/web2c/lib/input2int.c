@@ -15,7 +15,7 @@
 /* Read two integers from stdin.  */
 
 void
-zinput2ints P2C(integer *, a,  integer *, b)
+zinput2ints (integer *a,  integer *b)
 {
   int ch;
 
@@ -33,7 +33,7 @@ zinput2ints P2C(integer *, a,  integer *, b)
 /* Read three integers from stdin.  */
 
 void
-zinput3ints P3C(integer *, a,  integer *, b,  integer *, c)
+zinput3ints (integer *a,  integer *b,  integer *c)
 {
   int ch;
 

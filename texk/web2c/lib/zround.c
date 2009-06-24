@@ -5,7 +5,7 @@
 #include "lib.h"
 
 integer
-zround P1C(double, r)
+zround (double r)
 {
   integer i;
 

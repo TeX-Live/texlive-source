@@ -8,17 +8,18 @@
 char **argv;
 int argc;
 
+extern void mainbody (void);
+
 /* The entry point for all the programs except TeX and Metafont, which
    have more to do.  We just have to set up the command line.  web2c
    transforms Pascal's main block into a procedure `main_body'.  */
-
-int main P2C(int, ac,  string *, av)
+int
+main (int  ac,  string* av)
 {
 #ifdef __EMX__
   _wildcard (&ac, &av);
   _response (&ac, &av);
 #endif
-  extern void mainbody P1H(void);
 
   argc = ac;
   argv = av;
@@ -30,7 +31,7 @@ int main P2C(int, ac,  string *, av)
 /* Return the Nth (counted as in C) argument from the command line.  */
 
 string 
-cmdline P1C(int, n)
+cmdline (int n)
 {
   if (n >= argc)
     { /* This error message should never happen, because the callers

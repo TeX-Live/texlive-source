@@ -85,7 +85,7 @@ Pixwin *pw;
  */
 
 int
-mf_sun_initscreen()
+mf_sun_initscreen(void)
 {
 	frame = window_create(NULL,FRAME,
 			      FRAME_LABEL, "METAFONT",
@@ -126,7 +126,7 @@ mf_sun_initscreen()
  */
 
 void
-mf_sun_updatescreen()
+mf_sun_updatescreen(void)
 {
 	(void)notify_dispatch();
 /*	if (destroy_ready != 0) return; */
@@ -148,10 +148,10 @@ mf_sun_updatescreen()
  */
 
 void
-mf_sun_blankrectangle P4C(screencol, left,
-                          screencol, right,
-                          screenrow, top,
-                          screenrow, bottom)
+mf_sun_blankrectangle (screencol left,
+                       screencol right,
+                       screenrow top,
+                       screenrow bottom)
 {
 	pw_writebackground(pw, left, top,
 				right-left+1, bottom-top+1, PIX_CLR);
@@ -164,10 +164,10 @@ mf_sun_blankrectangle P4C(screencol, left,
  */
 
 void
-mf_sun_paintrow P4C(screenrow,	row,
-                    pixelcolor,	init_color,
-                    transspec,	transition_vector,
-                    screencol,	vector_size)
+mf_sun_paintrow (screenrow row,
+                 pixelcolor init_color,
+                 transspec transition_vector,
+                 screencol vector_size)
 {
 	register	col;
 	register	color;

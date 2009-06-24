@@ -11,7 +11,11 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 
 noinst_PROGRAMS = web2c fixwrites splitup makecpool
 
-## Include <kpathsea/c-auto.h> instead of <web2c/c-auto.h>
+BUILT_SOURCES = native/config.h
+
+DISTCLEANFILES = native/config.h
+
+# Include <kpathsea/c-auto.h> instead of <web2c/c-auto.h>
 native/config.h: ../config.h
 	sed -e 's,web2c/c-auto,kpathsea/c-auto,' $(srcdir)/../config.h >$@
 
@@ -28,14 +32,13 @@ dist_noinst_DATA = \
 	texmf.defines
 
 web2c_SOURCES = \
-	native/config.h \
 	web2c-parser.y \
 	web2c-lexer.l \
 	kps.c \
 	main.c \
 	web2c.h
 
-DISTCLEANFILES = web2c-parser.output
+DISTCLEANFILES += web2c-parser.output
 
 fixwrites_SOURCES = \
 	fixwrites.c \

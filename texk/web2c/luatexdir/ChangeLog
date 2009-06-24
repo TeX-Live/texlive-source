@@ -1,5 +1,9 @@
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* lua/luatex.c: drop P?C, P?H, use ANSI C function declarations.
+
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* font/writet1.c, image/epdf.c, utils/avlstuff.c:
 	#include <stdarg.h>, not <kpathsea/c-vararg.h>.
 

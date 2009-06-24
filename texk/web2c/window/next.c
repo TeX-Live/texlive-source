@@ -38,7 +38,7 @@ char outstring[1024];	/* the longest string pushed though a pipe */
 #undef read
 #endif
 
-int mf_next_initscreen()
+int mf_next_initscreen(void)
 {
 	int i;
 	void mf_next_closescreen();
@@ -93,7 +93,7 @@ int mf_next_initscreen()
  * 	does nothing
  *
  */
-void mf_next_updatescreen()
+void mf_next_updatescreen(void)
 {
 }
 /*
@@ -101,10 +101,10 @@ void mf_next_updatescreen()
  *
  *		blank out a port of the screen.
  */
-void mf_next_blankrectangle P4C(screencol, left,
-                                screencol, right,
-                                screenrow, top,
-                                screenrow, bottom)
+void mf_next_blankrectangle (screencol left,
+                             screencol right,
+                             screenrow top,
+                             screenrow bottom)
 {
 
 	if(left==0 && top==nextheight && right==nextwidth && bottom==0 ) {
@@ -127,10 +127,10 @@ void mf_next_blankrectangle P4C(screencol, left,
  *		transition specified by "transition_vector", switch colors,
  *		and continue for "vector_size" transitions.
  */
-void mf_next_paintrow P4C(screenrow,   row,
-                          pixelcolor,  init_color,
-                          transspec,   transition_vector,
-                          screencol,   vector_size)
+void mf_next_paintrow (screenrow   row,
+                       pixelcolor  init_color,
+                       transspec   transition_vector,
+                       screencol   vector_size)
 {
 	int i,whereami;
 	if(init_color) {
@@ -164,7 +164,7 @@ void mf_next_paintrow P4C(screenrow,   row,
 }
 /* this isn't part of the online display routines.  We need it to
 kill DrawingServant.  This is called during exit */
-void mf_next_closescreen()
+void mf_next_closescreen(void)
 {
 	if(nextscreenlooksOK) {
 		sprintf(outstring,"DSquit");

@@ -101,14 +101,14 @@ typedef void* voidpointer;
 extern int tfmtemp, texinputtype;
 
 /* TeX, MF and MetaPost use this.  */
-extern boolean openinnameok P1H(const_string);
-extern boolean openoutnameok P1H(const_string);
+extern boolean openinnameok (const_string);
+extern boolean openoutnameok (const_string);
 
 /* pdfTeX uses these for pipe support */
 #if defined(pdfTeX)
-extern boolean open_in_or_pipe P3H(FILE **, int, const_string fopen_mode);
-extern boolean open_out_or_pipe P2H(FILE **, const_string fopen_mode);
-extern void close_file_or_pipe P1H(FILE *);
+extern boolean open_in_or_pipe (FILE **, int, const_string fopen_mode);
+extern boolean open_out_or_pipe (FILE **, const_string fopen_mode);
+extern void close_file_or_pipe (FILE *);
 #endif
 
 /* Executing shell commands.  */
@@ -119,7 +119,7 @@ extern int runsystem (char *cmd);
 
 /* All but the Omega family use this. */
 #if !defined(Aleph)
-extern void readtcxfile P1H(void);
+extern void readtcxfile (void);
 extern string translate_filename;
 #define translatefilename translate_filename
 #endif
@@ -149,7 +149,7 @@ typedef GLUERATIO_TYPE glueratio;
 #endif
 
 #ifdef IPC
-extern void ipcpage P1H(int);
+extern void ipcpage (int);
 #endif /* IPC */
 #endif /* TeX */
 
@@ -175,24 +175,24 @@ extern void ipcpage P1H(int);
 /* Read a line of input as quickly as possible.  */
 #define	inputln(stream, flag) input_line (stream)
 #ifdef XeTeX
-extern boolean input_line P1H(UFILE *);
+extern boolean input_line (UFILE *);
 #else
-extern boolean input_line P1H(FILE *);
+extern boolean input_line (FILE *);
 #endif
 
 /* This routine has to return four values.  */
 #define	dateandtime(i,j,k,l) get_date_and_time (&(i), &(j), &(k), &(l))
-extern void get_date_and_time P4H(integer *, integer *, integer *, integer *);
+extern void get_date_and_time (integer *, integer *, integer *, integer *);
 
 /* Get high-res time info. */
 #define secondsandmicros(i,j) get_seconds_and_micros (&(i), &(j))
-extern void get_seconds_and_micros P2H(integer *, integer *);
+extern void get_seconds_and_micros (integer *, integer *);
 
 /* This routine has to return a scaled value. */
-extern integer getrandomseed P1H(void);
+extern integer getrandomseed (void);
 
 /* Copy command-line arguments into the buffer, despite the name.  */
-extern void topenin P1H(void);
+extern void topenin (void);
 
 /* Can't prototype this since it uses poolpointer and ASCIIcode, which
    are defined later in mfd.h, and mfd.h uses stuff from here.  */
@@ -201,7 +201,7 @@ extern void topenin P1H(void);
 /* extern void calledit (); */
 
 /* Set an array size from texmf.cnf.  */
-extern void setupboundvariable P3H(integer *, const_string, integer);
+extern void setupboundvariable (integer *, const_string, integer);
 
 /* These defines reroute the file i/o calls to the new pipe-enabled 
    functions in texmfmp.c*/
@@ -252,12 +252,12 @@ extern void setupboundvariable P3H(integer *, const_string, integer);
 #endif
 
 #ifdef MP
-extern boolean callmakempx P2H(string, string);
+extern boolean callmakempx (string, string);
 #endif
 
 #ifdef MF
-extern boolean initscreen P1H(void);
-extern void updatescreen P1H(void);
+extern boolean initscreen (void);
+extern void updatescreen (void);
 /* Can't prototype these for same reason as `calledit' above.  */
 #if 0  /* Therefore the real declaration is found in the coerce.h files.  */
 extern void blankrectangle (/*screencol, screencol, screenrow, screenrow*/);
@@ -308,11 +308,11 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
 
 /* We define the routines to do the actual work in texmf.c.  */
 #ifdef XeTeX
-extern void do_dump P4H(char *, int, int, gzFile);
-extern void do_undump P4H(char *, int, int, gzFile);
+extern void do_dump (char *, int, int, gzFile);
+extern void do_undump (char *, int, int, gzFile);
 #else
-extern void do_dump P4H(char *, int, int, FILE *);
-extern void do_undump P4H(char *, int, int, FILE *);
+extern void do_dump (char *, int, int, FILE *);
+extern void do_undump (char *, int, int, FILE *);
 #endif
 
 /* Use the above for all the other dumping and undumping.  */
@@ -376,13 +376,13 @@ extern void do_undump P4H(char *, int, int, FILE *);
 extern int tfmtemp, texinputtype;
 
 /* TeX, MF and MetaPost use this.  */
-extern boolean openinnameok P1H(const_string);
-extern boolean openoutnameok P1H(const_string);
+extern boolean openinnameok (const_string);
+extern boolean openoutnameok (const_string);
 
 /* pdfTeX uses these for pipe support */
-extern boolean open_in_or_pipe P3H(FILE **, int, const_string fopen_mode);
-extern boolean open_out_or_pipe P2H(FILE **, const_string fopen_mode);
-extern void close_file_or_pipe P1H(FILE *);
+extern boolean open_in_or_pipe (FILE **, int, const_string fopen_mode);
+extern boolean open_out_or_pipe (FILE **, const_string fopen_mode);
+extern void close_file_or_pipe (FILE *);
 
 /* Executing shell commands.  */
 extern void mk_shellcmdlist (char *);
@@ -400,7 +400,7 @@ typedef GLUERATIO_TYPE glueratio;
 #endif
 
 #ifdef IPC
-extern void ipcpage P1H(int);
+extern void ipcpage (int);
 #endif /* IPC */
 
 
@@ -416,21 +416,21 @@ extern void ipcpage P1H(int);
 /* Read a line of input as quickly as possible.  */
 #define	input_ln(stream, flag) input_line (stream)
 
-extern boolean input_line P1H(FILE *);
+extern boolean input_line (FILE *);
 
 /* This routine has to return four values.  */
 #define	dateandtime(i,j,k,l) get_date_and_time (&(i), &(j), &(k), &(l))
-extern void get_date_and_time P4H(integer *, integer *, integer *, integer *);
+extern void get_date_and_time (integer *, integer *, integer *, integer *);
 
 /* Get high-res time info. */
 #define seconds_and_micros(i,j) get_seconds_and_micros (&(i), &(j))
-extern void get_seconds_and_micros P2H(integer *, integer *);
+extern void get_seconds_and_micros (integer *, integer *);
 
 /* This routine has to return a scaled value. */
-extern integer getrandomseed P1H(void);
+extern integer getrandomseed (void);
 
 /* Copy command-line arguments into the buffer, despite the name.  */
-extern void topenin P1H(void);
+extern void topenin (void);
 
 /* Can't prototype this since it uses poolpointer and ASCIIcode, which
    are defined later in mfd.h, and mfd.h uses stuff from here.  */
@@ -439,7 +439,7 @@ extern void topenin P1H(void);
 /* extern void calledit (); */
 
 /* Set an array size from texmf.cnf.  */
-extern void setupboundvariable P3H(integer *, const_string, integer);
+extern void setupboundvariable (integer *, const_string, integer);
 
 /* These defines reroute the file i/o calls to the new pipe-enabled 
    functions in texmfmp.c*/
@@ -477,11 +477,11 @@ extern void setupboundvariable P3H(integer *, const_string, integer);
 #define w_open_out(f)    zopen_w_output (&(f), FOPEN_WBIN_MODE)
 #define w_close         zwclose
 
-extern boolean zopen_w_input P3H(FILE **, int, const_string fopen_mode);
-extern boolean zopen_w_output P2H(FILE **, const_string fopen_mode);
-extern void do_zdump P4H(char *, int, int, FILE *);
-extern void do_zundump P4H(char *, int, int, FILE *);
-extern void zwclose P1H(FILE *);
+extern boolean zopen_w_input (FILE **, int, const_string fopen_mode);
+extern boolean zopen_w_output (FILE **, const_string fopen_mode);
+extern void do_zdump (char *, int, int, FILE *);
+extern void do_zundump (char *, int, int, FILE *);
+extern void zwclose (FILE *);
 
 /* Like do_undump, but check each value against LOW and HIGH.  The
    slowdown isn't significant, and this improves the chances of

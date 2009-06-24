@@ -51,7 +51,7 @@ void __cdecl InitGui(void*);
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 int
-mf_win32_initscreen()
+mf_win32_initscreen(void)
 {
   int ret;
   if ((ret = _beginthread(InitGui, 0, NULL)) == -1) {
@@ -142,7 +142,7 @@ void __cdecl InitGui(void *param)
 buffer)  */
 
 void
-mf_win32_updatescreen()
+mf_win32_updatescreen(void)
 {
   RECT r;
   r.left   = 0;
@@ -161,10 +161,11 @@ mf_win32_updatescreen()
 reset the foreground to black because we always set it at the beginning
 of paintrow (below).  */
 
-void mf_win32_blankrectangle P4C(screencol, left,
-                                 screencol, right,
-                                 screenrow, top,
-                                 screenrow, bottom)
+void
+mf_win32_blankrectangle (screencol left,
+                         screencol right,
+                         screenrow top,
+                         screenrow bottom)
 {
   RECT r;
   r.left   = left;
@@ -182,10 +183,10 @@ void mf_win32_blankrectangle P4C(screencol, left,
 able to do something here with drawing many lines.  */
 
 void
-mf_win32_paintrow P4C(screenrow, row,
-                      pixelcolor, init_color,
-                      transspec, tvect,
-                      register screencol, vector_size)
+mf_win32_paintrow (screenrow row,
+                   pixelcolor init_color,
+                   transspec tvect,
+                   register screencol vector_size)
 {
     register int col;
     HGDIOBJ CurrentPen;

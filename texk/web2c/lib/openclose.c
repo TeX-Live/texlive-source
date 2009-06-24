@@ -35,7 +35,7 @@ int texinputtype;
 /* Helpers for the filename recorder... */
 /* Start the recorder */
 static void
-recorder_start()
+recorder_start(void)
 {
     /* Alas, while we might want to use mkstemp it is not portable.
        So we have to be content with using a default name... */
@@ -61,7 +61,7 @@ recorder_start()
 
 /* Change the name of the recorder file. */
 void
-recorder_change_filename P1C(string, new_name)
+recorder_change_filename (string new_name)
 {
    if (!recorder_file)
      return;
@@ -72,7 +72,7 @@ recorder_change_filename P1C(string, new_name)
 
 /* helper for recorder_record_* */
 static void
-recorder_record_name P2C(string, prefix, const_string, nameoffile)
+recorder_record_name (string prefix, const_string nameoffile)
 {
     if (recorder_enabled) {
         if (!recorder_file)
@@ -84,14 +84,14 @@ recorder_record_name P2C(string, prefix, const_string, nameoffile)
 
 /* record an input file */
 void
-recorder_record_input P1C(const_string, nameoffile)
+recorder_record_input (const_string nameoffile)
 {
     recorder_record_name ("INPUT", nameoffile);
 }
 
 /* record an output file */
 void
-recorder_record_output P1C(const_string, nameoffile)
+recorder_record_output (const_string nameoffile)
 {
     recorder_record_name ("OUTPUT", nameoffile);
 }
@@ -102,7 +102,7 @@ recorder_record_output P1C(const_string, nameoffile)
    the full filename opened, and `namelength' to its length.  */
 
 boolean
-open_input P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
+open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
 {
     string fname = NULL;
 #ifdef FUNNY_CORE_DUMP
@@ -221,7 +221,7 @@ open_input P3C(FILE **, f_ptr,  int, filefmt,  const_string, fopen_mode)
    necessary, and `namelength' to its length.  */
 
 boolean
-open_output P2C(FILE **, f_ptr,  const_string, fopen_mode)
+open_output (FILE **f_ptr, const_string fopen_mode)
 {
     string fname;
     boolean absolute = kpse_absolute_p(nameoffile+1, false);
@@ -263,7 +263,7 @@ open_output P2C(FILE **, f_ptr,  const_string, fopen_mode)
 /* Close F.  */
 
 void
-close_file P1C(FILE *, f)
+close_file (FILE *f)
 {
   /* If F is null, just return.  bad_pool might close a file that has
      never been opened.  */

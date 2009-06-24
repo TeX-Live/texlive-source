@@ -45,7 +45,7 @@ btestin(void)
 }
 
 int
-getfilemode P2C(FILE *, f, int, def)
+getfilemode (FILE *f, int def)
 {
     int c,m;
     if ((def==0)||(feof(f))) m=0;
@@ -95,7 +95,7 @@ getfilemode P2C(FILE *, f, int, def)
 }
 
 int
-getc_two_LE P1C(FILE *, f)
+getc_two_LE (FILE *f)
 {
     register int i,j;
     i = getc(f);
@@ -106,14 +106,14 @@ getc_two_LE P1C(FILE *, f)
 }
 
 void
-ungetc_two_LE P2C(int, c, FILE *, f)
+ungetc_two_LE (int c, FILE *f)
 {
     ungetc((c>>8), f);
     ungetc((c&0377), f);
 }
 
 int
-getc_two P1C(FILE *, f)
+getc_two (FILE *f)
 {      
     register int i,j;
     i = getc(f);
@@ -124,7 +124,7 @@ getc_two P1C(FILE *, f)
 }
  
 void
-ungetc_two P2C(int, c, FILE *, f)
+ungetc_two (int c, FILE *f)
 {
     ungetc((c&0377), f);
     ungetc((c>>8), f);
@@ -133,7 +133,7 @@ ungetc_two P2C(int, c, FILE *, f)
 extern boolean zpnewinputln ();
 
 boolean
-newinputln P4C(FILE *,f, halfword,themode, halfword,translation, boolean,bypass)
+newinputln (FILE *f, halfword themode, halfword translation, boolean bypass)
 {
     return zpnewinputln((alphafile)f,
                         (halfword)themode,
@@ -142,7 +142,7 @@ newinputln P4C(FILE *,f, halfword,themode, halfword,translation, boolean,bypass)
 }
  
 boolean
-new_input_line P2C(FILE *, f, halfword, themode)
+new_input_line (FILE *f, halfword themode)
 {
   register int i=EOF;
  
@@ -197,7 +197,7 @@ extern memoryword ziniteqtbentry () ;
 hashword hashtable[HASHTABLESIZE];
 
 void
-inithhashtable P1H(void)
+inithhashtable (void)
 {
    int i;
    for (i=0; i<HASHTABLESIZE; i++) {
@@ -207,7 +207,7 @@ inithhashtable P1H(void)
 }
 
 hashword *
-createeqtbpos P1C(int, p)
+createeqtbpos (int p)
 {
    hashword *runner= &(hashtable[p%HASHTABLESIZE]);
    if (runner->p==p) return runner;
@@ -223,7 +223,7 @@ createeqtbpos P1C(int, p)
 }
 
 memoryword *
-createeqtbptr P1C(int, p)
+createeqtbptr (int p)
 {
    hashword *runner= &(hashtable[p%HASHTABLESIZE]);
    if (runner->p==p) return (&(runner->mw));
@@ -239,7 +239,7 @@ createeqtbptr P1C(int, p)
 }
 
 hashword *
-createxeqlevel P1C(int, p)
+createxeqlevel (int p)
 {
    hashword *runner= &(hashtable[p%HASHTABLESIZE]);
    if (runner->p==p) return runner;
@@ -256,7 +256,7 @@ createxeqlevel P1C(int, p)
 }
 
 hashword *
-createhashpos P1C(int, p)
+createhashpos (int p)
 {
    hashword *runner= &(hashtable[p%HASHTABLESIZE]);
    if (runner->p==p) return runner;
@@ -273,7 +273,7 @@ createhashpos P1C(int, p)
 }
 
 void
-dumphhashtable P1H(void)
+dumphhashtable (void)
 {
    int i;
    hashword *runner;
@@ -292,7 +292,7 @@ dumphhashtable P1H(void)
 }
 
 void
-undumphhashtable P1H(void)
+undumphhashtable (void)
 {
    int i,j;
    hashword *runner;
@@ -321,7 +321,7 @@ undumphhashtable P1H(void)
 }
 
 void
-odateandtime P4C(int,timecode, int,daycode, int,monthcode, int,yearcode)
+odateandtime (int timecode, int daycode, int monthcode, int yearcode)
 {
     integer tc,dc,mc,yc;
     dateandtime(tc,dc,mc,yc);
@@ -335,7 +335,7 @@ memoryword **fonttables;
 static int font_entries = 0;
 
 void
-allocatefonttable P2C(int, font_number, int, font_size)
+allocatefonttable (int font_number, int font_size)
 {
     int i;
     if (font_entries==0) {
@@ -356,15 +356,14 @@ allocatefonttable P2C(int, font_number, int, font_size)
 }
 
 void
-dumpfonttable P2C(int, font_number, int, words)
+dumpfonttable (int  font_number, int  words)
 {
     fonttables[font_number][0].cint=words;
     dumpthings(fonttables[font_number][0], fonttables[font_number][0].cint+1);
 }
 
 void
-undumpfonttable(font_number)
-int font_number;
+undumpfonttable(int font_number)
 {
     memoryword sizeword;
     if (font_entries==0) {
@@ -386,7 +385,7 @@ memoryword **fontsorttables;
 static int fontsort_entries = 0;
 
 void
-allocatefontsorttable P2C(int, fontsort_number, int, fontsort_size)
+allocatefontsorttable (int  fontsort_number, int  fontsort_size)
 {
     int i;
     if (fontsort_entries==0) {
@@ -407,7 +406,7 @@ allocatefontsorttable P2C(int, fontsort_number, int, fontsort_size)
 }
 
 void
-dumpfontsorttable P2C(int, fontsort_number, int, words)
+dumpfontsorttable (int fontsort_number, int words)
 {
     fontsorttables[fontsort_number][0].cint=words;
     dumpthings(fontsorttables[fontsort_number][0],
@@ -415,8 +414,7 @@ dumpfontsorttable P2C(int, fontsort_number, int, words)
 }
 
 void
-undumpfontsorttable(fontsort_number)
-int fontsort_number;
+undumpfontsorttable(int fontsort_number)
 {
     memoryword sizeword;
     if (fontsort_entries==0) {
@@ -438,7 +436,7 @@ int **ocptables;
 static int ocp_entries = 0;
 
 void
-allocateocptable P2C(int, ocp_number, int, ocp_size)
+allocateocptable (int ocp_number, int ocp_size)
 {
     int i;
     if (ocp_entries==0) {
@@ -457,13 +455,13 @@ allocateocptable P2C(int, ocp_number, int, ocp_size)
 }
 
 void
-dumpocptable P1C(int, ocp_number)
+dumpocptable (int ocp_number)
 {
     dumpthings(ocptables[ocp_number][0], ocptables[ocp_number][0]+1);
 }
 
 void
-undumpocptable P1C(int, ocp_number)
+undumpocptable (int ocp_number)
 {
     int sizeword;
     if (ocp_entries==0) {

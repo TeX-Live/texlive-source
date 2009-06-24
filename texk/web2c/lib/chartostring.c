@@ -14,7 +14,7 @@ Written in 1994 by Karl Berry.  Public domain.  */
    malloc overhead) here, but it doesn't matter.  */
 
 string
-chartostring P1C(char, ch)
+chartostring (char ch)
 {
   string str = (string)xmalloc (2);
   str[0] = ch;

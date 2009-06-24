@@ -53,7 +53,7 @@ int **ocp_tables;
 static int ocp_entries = 0;
 
 void
-allocate_ocp_table P2C(int, ocp_number, int, ocp_size)
+allocate_ocp_table (int ocp_number, int ocp_size)
 {
     int i;
     if (ocp_entries == 0) {
@@ -71,13 +71,13 @@ allocate_ocp_table P2C(int, ocp_number, int, ocp_size)
 }
 
 void
-dump_ocp_table P1C(int, ocp_number)
+dump_ocp_table (int ocp_number)
 {
     dump_things(ocp_tables[ocp_number][0], ocp_tables[ocp_number][0] + 1);
 }
 
 void
-undump_ocp_table P1C(int, ocp_number)
+undump_ocp_table (int ocp_number)
 {
     int sizeword;
     if (ocp_entries == 0) {
@@ -95,7 +95,7 @@ undump_ocp_table P1C(int, ocp_number)
 
 
 void
-run_external_ocp P1C(string, external_ocp_name)
+run_external_ocp (string external_ocp_name)
 {
     char *in_file_name;
     char *out_file_name;

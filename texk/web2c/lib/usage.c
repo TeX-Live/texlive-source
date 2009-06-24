@@ -9,7 +9,7 @@
    to be the program name. */
 
 void
-usage P1C(const_string, str)
+usage (const_string str)
 {
   fprintf (stderr, "Try `%s --help' for more information.\n", str);
   uexit (1);
@@ -22,7 +22,7 @@ usage P1C(const_string, str)
    limitations (sigh).
 */
 void
-usagehelp P2C(const_string*, message, const_string,bug_email)
+usagehelp (const_string *message, const_string bug_email)
 {
     if (!bug_email)
         bug_email = "tex-k@mail.tug.org";

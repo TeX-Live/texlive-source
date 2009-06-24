@@ -1,3 +1,10 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* basechsuffix.c, chartostring.c, coredump.c, eofeoln.c,
+	fprintreal.c, input2int.c, inputint.c, main.c, openclose.c,
+	printversion.c, texmfmp.c, uexit.c, usage.c, win32main.c,
+	zround.c: drop P?C, P?H, use ANSI C function declarations.
+
 2009-06-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

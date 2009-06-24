@@ -77,7 +77,7 @@ mf_epsf_header ()
 }
 
 boolean
-mf_epsf_initscreen P1H(void)
+mf_epsf_initscreen (void)
 {
   if (getenv ("MFEPSF") != (char *) NULL)
     {
@@ -101,16 +101,16 @@ mf_epsf_initscreen P1H(void)
 }
 
 void
-mf_epsf_updatescreen P1H(void)
+mf_epsf_updatescreen (void)
 {
   fflush (psout);
 }
 
 void
-mf_epsf_blankrectangle P4C(screencol, left,
-			  screencol, right,
-			  screenrow, top,
-			  screenrow, bottom)
+mf_epsf_blankrectangle (screencol left,
+                        screencol right,
+                        screenrow top,
+                        screenrow bottom)
 {
   int i;
 
@@ -140,10 +140,10 @@ mf_epsf_blankrectangle P4C(screencol, left,
 
 
 void
-mf_epsf_paintrow P4C(screenrow, row,
-		    pixelcolor, init_color,
-		    transspec, transition_vector,
-		    screencol, vector_size)
+mf_epsf_paintrow (screenrow row,
+		  pixelcolor init_color,
+		  transspec transition_vector,
+		  screencol vector_size)
 {
   int col;
   int color;

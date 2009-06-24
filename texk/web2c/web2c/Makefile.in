@@ -254,6 +254,8 @@ ACLOCAL_AMFLAGS = -I ../../../m4
 INCLUDES = -Inative -I$(srcdir)/native -I$(srcdir)/.. -I$(srcdir)/../..
 AM_YFLAGS = -d -v
 AM_CFLAGS = $(WARNING_CFLAGS)
+BUILT_SOURCES = native/config.h
+DISTCLEANFILES = native/config.h web2c-parser.output
 noinst_HEADERS = coerce.h
 dist_noinst_SCRIPTS = convert
 dist_noinst_DATA = \
@@ -265,14 +267,12 @@ dist_noinst_DATA = \
 	texmf.defines
 
 web2c_SOURCES = \
-	native/config.h \
 	web2c-parser.y \
 	web2c-lexer.l \
 	kps.c \
 	main.c \
 	web2c.h
 
-DISTCLEANFILES = web2c-parser.output
 fixwrites_SOURCES = \
 	fixwrites.c \
 	kps.c
@@ -287,7 +287,8 @@ makecpool_SOURCES = \
 nodist_noinst_DATA = stamp-web2c stamp-fixwrites stamp-splitup stamp-makecpool
 CLEANFILES = $(nodist_noinst_DATA)
 EXTRA_DIST = convert.bat
-all: all-am
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .l .lo .o .obj .y
@@ -618,10 +619,12 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(DATA) $(HEADERS)
 installdirs:
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -651,6 +654,7 @@ maintainer-clean-generic:
 	-rm -f web2c-lexer.c
 	-rm -f web2c-parser.c
 	-rm -f web2c-parser.h
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
@@ -725,7 +729,7 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: install-am install-strip
+.MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-generic clean-libtool clean-noinstPROGRAMS ctags dist \
@@ -744,6 +748,7 @@ uninstall-am:
 	tags uninstall uninstall-am
 
 
+# Include <kpathsea/c-auto.h> instead of <web2c/c-auto.h>
 native/config.h: ../config.h
 	sed -e 's,web2c/c-auto,kpathsea/c-auto,' $(srcdir)/../config.h >$@
 

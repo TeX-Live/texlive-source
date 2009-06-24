@@ -17,10 +17,10 @@ This is PROGRAM, Version VERSION-NUMBER
    program, but tangle doesn't allow multiline string constants ...  */
 
 void
-printversionandexit P4C(const_string, banner,
-                        const_string, copyright_holder,  
-                        const_string, author,
-                        char*, extra_info)
+printversionandexit (const_string banner,
+                     const_string copyright_holder,  
+                     const_string author,
+                     char *extra_info)
 {
   extern string versionstring;           /* from web2c/lib/version.c */
   extern KPSEDLL string kpathsea_version_string;/* from kpathsea/version.c */

@@ -103,23 +103,26 @@ register unsigned     x, y;
  *    ESC FF          - clear graphics&alpha screen.
  */
 #define ALPHA_CLS();  (putchar('\33'), putchar('\14'))
-int mf_uniterm_initscreen()
+int
+mf_uniterm_initscreen(void)
 {
       ALPHA_CLS();
       TEXT_SCREEN();
       return 1;
 }
-void mf_uniterm_updatescreen()
+void
+mf_uniterm_updatescreen(void)
 {
       DARK();
       VECTOR(0,HEIGHT-1);
       fflush(stdout);
       TEXT_SCREEN();          /*  switch to text mode */
 }
-void mf_uniterm_blankrectangle P4C(screencol, left,
-                                   screencol, right,
-                                   screenrow, top,
-                                   screenrow, bottom)
+void
+mf_uniterm_blankrectangle (screencol left,
+                           screencol right,
+                           screenrow top,
+                           screenrow bottom)
 {
       if (top==0 && left==0 && bottom>=HEIGHT-1 && right>=WIDTH-1) {
               ALPHA_CLS();
@@ -133,10 +136,11 @@ void mf_uniterm_blankrectangle P4C(screencol, left,
       BLOCK(0);                       /* back to (black) linedraw mode */
       INK(1);                         /* black ink */
 }
-void mf_uniterm_paintrow P4C(screenrow, row,
-                             pixelcolor, init_color,
-                             register transspec, transition_vector,
-                             register screencol, vector_size)
+void
+mf_uniterm_paintrow (screenrow row,
+                     pixelcolor init_color,
+                     register transspec transition_vector,
+                     register screencol vector_size)
 {
       register int            blank = !init_color;
 #if 0

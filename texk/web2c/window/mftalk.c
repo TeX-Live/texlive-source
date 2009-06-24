@@ -61,8 +61,8 @@ extern int write (int, const void *, size_t);
 
 #define fatal(func, cond) do { if (cond) FATAL_PERROR ("perror"); } while (0)
 
-static RETSIGTYPE child_died P1H(int sig);
-static string app_type P2H(char *prog, int *app);
+static RETSIGTYPE child_died (int sig);
+static string app_type (char *prog, int *app);
 
 static int pid = -1;			/* Process ID of our child. */
 static int win = -1;			/* Write handle to the `window'. */
@@ -71,7 +71,7 @@ static RETSIGTYPE (*old) ();		/* Old signal handler. */
 
 
 boolean
-mf_mftalk_initscreen P1H(void)
+mf_mftalk_initscreen (void)
 {
   int app;				/* Client application type. */
   char *prog, *name;			/* Client program name. */
@@ -166,7 +166,7 @@ mf_mftalk_initscreen P1H(void)
 
 
 void
-mf_mftalk_updatescreen P1H(void)
+mf_mftalk_updatescreen (void)
 {
   buf[0] = MF_FLUSH;
   write (win, buf, sizeof (int));
@@ -174,10 +174,10 @@ mf_mftalk_updatescreen P1H(void)
 
 
 void
-mf_mftalk_blankrectangle P4C(screencol, left,
-                             screencol, right,
-                             screenrow, top,
-                             screenrow, bottom)
+mf_mftalk_blankrectangle (screencol left,
+                          screencol right,
+                          screenrow top,
+                          screenrow bottom)
 {
   buf[0] = MF_RECT;
   buf[1] = MF_WHITE;
@@ -191,10 +191,10 @@ mf_mftalk_blankrectangle P4C(screencol, left,
 
 
 void
-mf_mftalk_paintrow P4C(screenrow, row,
-                       pixelcolor, init_color,
-                       transspec, transition_vector,
-                       screencol, vector_size)
+mf_mftalk_paintrow (screenrow row,
+                    pixelcolor init_color,
+                    transspec transition_vector,
+                    screencol vector_size)
 {
   buf[0] = MF_LINE;
   buf[1] = init_color == 0 ? MF_WHITE : MF_BLACK;
@@ -208,7 +208,7 @@ mf_mftalk_paintrow P4C(screenrow, row,
 
 
 static string
-app_type P2C(string, prog,  int *, app)
+app_type (string prog, int *app)
 {
 #ifdef OS2
   int res, app;

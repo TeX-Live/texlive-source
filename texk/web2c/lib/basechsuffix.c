@@ -13,8 +13,8 @@
    In other words, we're implementing `basename NAME OLD`NEW.  */
 
 string
-basenamechangesuffix P3C(const_string, name,  const_string, old_suffix,
-                         const_string, new_suffix)
+basenamechangesuffix (const_string name,  const_string old_suffix,
+                      const_string new_suffix)
 {
   string answer;
   unsigned c;

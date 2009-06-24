@@ -29,7 +29,7 @@ on a black background; undefined is the opposite */
  *		We always return true.
  */
 
-int mf_regis_initscreen()
+int mf_regis_initscreen(void)
 {
 #ifdef WRITEWHITE
 	printf("%cPpS(I0)W(I3)S(E)%c",ESCAPE,ESCAPE);
@@ -43,7 +43,7 @@ int mf_regis_initscreen()
  *	procedure updatescreen;
  *
  */
-void mf_regis_updatescreen()
+void mf_regis_updatescreen(void)
 {
 }
  /*	void blankrectangle(int left,int right,int top,int bottom);
@@ -57,10 +57,10 @@ void mf_regis_updatescreen()
  *		Write both or no planes: W(I3)
  *		Return to alpha mode: <ESC>\ 
  */
-void mf_regis_blankrectangle P4C(screencol, left,
-                                 screencol, right,
-                                 screenrow, top,
-                                 screenrow, bottom)
+void mf_regis_blankrectangle (screencol left,
+                              screencol right,
+                              screenrow top,
+                              screenrow bottom)
 {
 	printf(
 #ifdef WRITEWHITE
@@ -79,10 +79,10 @@ void mf_regis_blankrectangle P4C(screencol, left,
  *		transition specified by "transition_vector", switch colors,
  *		and continue for "vector_size" transitions.
  */
-void mf_regis_paintrow P4C(screenrow,   row,
-                           pixelcolor,  init_color,
-                           transspec,   transition_vector,
-                           screencol,   vector_size)
+void mf_regis_paintrow (screenrow   row,
+                        pixelcolor  init_color,
+                        transspec   transition_vector,
+                        screencol   vector_size)
 {
 	int i;
 	if(init_color) {
