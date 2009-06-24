@@ -1,3 +1,8 @@
+2009-06-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: enable cxx-runtime-hack (for teckit_compile).
+	* Makefile.am: build teckit_compile.
+
 2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: enable compiler warnings.

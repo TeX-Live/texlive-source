@@ -10,15 +10,29 @@ AM_CPPFLAGS = -DNDEBUG
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
-noinst_LIBRARIES = libTECkit.a
-EXTRA_LIBRARIES = libTECkit_Compiler.a
+bin_PROGRAMS = teckit_compile
 
+noinst_LIBRARIES = libTECkit_Compiler.a libTECkit.a
+
+## teckit_compile
+##
+teckit_compile_SOURCES = \
+	source/Sample-tools/TECkit_Compile.cpp
+
+teckit_compile_LDADD = libTECkit_Compiler.a $(ZLIB_LIBS)
+
+teckit_compile_DEPENDENCIES = libTECkit_Compiler.a $(ZLIB_DEPEND)
+
+## libTECkit_Compiler.a
+##
 libTECkit_Compiler_a_SOURCES = \
 	source/Compiler.cpp \
 	source/UnicodeNames.cpp
 
 libTECkit_Compiler_a_DEPENDENCIES = $(ZLIB_DEPEND)
 
+## libTECkit.a
+##
 libTECkit_a_SOURCES = \
 	source/Engine.cpp
 
@@ -71,7 +85,10 @@ EXTRA_DIST += \
 	source/Prefix_Win32.h \
 	source/Public-headers/Makefile.am \
 	source/REALplugin.cp \
-	source/Sample-tools \
+	source/Sample-tools/TECkit_Compile_ver.rc \
+	source/Sample-tools/TxtConv.cpp \
+	source/Sample-tools/TxtConv_ver.rc \
+	source/Sample-tools/version_defs.h \
 	source/TECkit_Compiler.cmd \
 	source/TECkit_Compiler.exp \
 	source/TECkit_Engine.cmd \

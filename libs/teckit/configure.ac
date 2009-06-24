@@ -23,6 +23,8 @@ AC_PROG_LN_S
 
 KPSE_COMPILER_WARNINGS
 
+KPSE_CXX_HACK
+
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdlib.h string.h])
