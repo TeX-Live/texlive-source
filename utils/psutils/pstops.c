@@ -21,7 +21,7 @@ FILE *outfile ;
 char pagelabel[BUFSIZ] ;
 int pageno ;
 
-void usage(void)
+static void usage(void)
 {
    fprintf(stderr, "%s release %d patchlevel %d\n", program, RELEASE, PATCHLEVEL);
    fprintf(stderr, "Copyright (C) Angus J. C. Duggan, 1991-1995. See file LICENSE for details.\n");

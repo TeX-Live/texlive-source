@@ -68,10 +68,11 @@ static int nextdiv(int n, int m)
 
 int main(int argc, char *argv[])
 {
-   int horiz, vert, rotate, column, flip, leftright, topbottom;
+   int horiz = 0, vert = 0, rotate = 0;		/* avoid uninitialized warning */
+   int column, flip, leftright, topbottom;
    int nup = 1;
    double draw = 0;				/* draw page borders */
-   double scale;				/* page scale */
+   double scale = 0;				/* page scale */
    double uscale = 0;				/* user supplied scale */
    double ppwid, pphgt;				/* paper dimensions */
    double margin, border;			/* paper & page margins */

@@ -43,7 +43,7 @@ static void usage(void)
 int main(int argc, char **argv)
 {
    int bbfound = 0;              /* %%BoundingBox: found */
-   int urx, ury, llx, lly;
+   int urx = 0, ury = 0, llx = 0, lly = 0;	/* avoid uninitialized warning */
    int furx, fury, fllx, flly;
    int showpage = 0, centre = 0, rotate = 0, aspect = 0, maximise = 0;
    char buf[BUFSIZ];
