@@ -1,3 +1,9 @@
+2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS), configure.ac: enable compiler warnings.
+	* bbox.c (minus_one, plus_one): declare as static.
+	(readppm_and_calcbb): static, avoid uninitialized warning.
+
 2009-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

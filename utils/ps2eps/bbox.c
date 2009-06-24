@@ -55,12 +55,14 @@ unsigned char bitval[8]=
   1
 };
 
-unsigned int minus_one(const unsigned x) 
+static unsigned int
+minus_one(const unsigned x) 
 {
   return (x == 0) ? x : x-1;
 }
 
-unsigned int plus_one(const unsigned x) 
+static unsigned int
+plus_one(const unsigned x) 
 {
   return (x == (unsigned int) ~0U) ? x : x+1;
 }
@@ -81,9 +83,10 @@ unsigned int plus_one(const unsigned x)
 *       and printed to stdout                                           *
 ************************************************************************/
 /* calculate the bounding box in postscript points, given a resolution in dpi */
-void readppm_and_calcbb(const char *name, 
-                        const unsigned int resolution, 
-                        const unsigned char tight)
+static void
+readppm_and_calcbb(const char *name, 
+                   const unsigned int resolution, 
+                   const unsigned char tight)
 {
 	FILE 	*inputfile;
         char    inputline[1024];
@@ -166,6 +169,7 @@ void readppm_and_calcbb(const char *name,
 #ifdef DEBUG
 	fprintf(stderr,"\nreading picture: %s   X: %u   Y: %u\n",name,xmax,ymax);
 #endif
+        x = 0;		/* avoid uninitialized warning */
         x_min= xmax; 
         x_max= 0; 
         y_min= ymax; 
