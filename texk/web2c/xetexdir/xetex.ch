@@ -65,7 +65,7 @@ authorization from SIL International.
 
 @d XeTeX_version=0
 @d XeTeX_revision==".9994"
-@d XeTeX_version_string=='-0.9994.1' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.9994.2' {current \XeTeX\ version}
 @z
 
 @x
@@ -458,8 +458,23 @@ incr(str_ptr); str_start_macro(str_ptr):=pool_ptr;
 
 @x
 @d flush_string==begin decr(str_ptr); pool_ptr:=str_start[str_ptr];
+  end
 @y
 @d flush_string==begin decr(str_ptr); pool_ptr:=str_start_macro(str_ptr);
+  end
+
+@p procedure append_str(@!s:str_number); { append an existing string to the current string }
+var i: integer;
+    j: pool_pointer;
+begin
+  i:=length(s);
+  str_room(i);
+  j:=str_start_macro(s);
+  while (i > 0) do begin
+    append_char(str_pool[j]);
+    incr(j); decr(i);
+    end;
+end;
 @z
 
 @x
@@ -6668,10 +6683,38 @@ def_family: begin p:=cur_chr; scan_math_fam_int; p:=p+cur_val;
 @z
 
 @x
+for f:=font_base+1 to font_ptr do
   if str_eq_str(font_name[f],cur_name)and str_eq_str(font_area[f],cur_area) then
+    begin if s>0 then
+      begin if s=font_size[f] then goto common_ending;
+      end
+    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+      goto common_ending;
+    end
 @y
+for f:=font_base+1 to font_ptr do begin
   if str_eq_str(font_name[f],cur_name) and
     (((cur_area = "") and is_native_font(f)) or str_eq_str(font_area[f],cur_area)) then
+    begin if s>0 then
+      begin if s=font_size[f] then goto common_ending;
+      end
+    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+      goto common_ending;
+    end;
+  { could be a native font whose "name" ended up partly in area or extension }
+  append_str(cur_area); append_str(cur_name); append_str(cur_ext);
+  if str_eq_str(font_name[f], make_string) then begin
+    flush_string;
+    if is_native_font(f) then
+      begin if s>0 then
+        begin if s=font_size[f] then goto common_ending;
+        end
+      else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+        goto common_ending;
+      end
+    end
+  else flush_string;
+  end
 @z
 
 @x
