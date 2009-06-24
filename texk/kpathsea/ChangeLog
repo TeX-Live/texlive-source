@@ -8,7 +8,7 @@
 	* kpathsea.h (removed): no longer distributed.
 	* Makefile.am: remove c-vararg.h, rebuild kpathsea.h.
 
-	* c-proto.h: assume HAVE_PROTOTYPES, remove AA macro.
+	* c-proto.h: assume HAVE_PROTOTYPES, remove AA, P?[CH] macros.
 
 2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
