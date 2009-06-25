@@ -1,4 +1,4 @@
-% $Id: psout.w 1084 2009-06-03 07:40:57Z taco $
+% $Id: psout.w 1098 2009-06-25 08:23:21Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -4542,31 +4542,24 @@ static void mp_hex_digit_out (MP mp,quarterword d) {
   else mp_ps_print_char(mp, d+'a'-10);
 }
 
-@ We output the marks as a hexadecimal bit string starting at |c| or
-|font_bc[f]|, whichever is greater.  If the output has to be truncated
-to avoid exceeding |emergency_line_length| the return value says where to
-start scanning next time.
+@ We output the marks as a hexadecimal bit string starting at 
+|font_bc[f]|. 
 
 @<Declarations@>=
-static halfword mp_ps_marks_out (MP mp,font_number f, eight_bits c);
+static halfword mp_ps_marks_out (MP mp,font_number f);
 
 @ 
-@d emergency_line_length 255
-  /* \ps\ output lines can be this long in unusual circumstances */
 
 @c
-static halfword mp_ps_marks_out (MP mp,font_number f, eight_bits c) {
+static halfword mp_ps_marks_out (MP mp,font_number f) {
   eight_bits bc,ec; /* only encode characters between these bounds */
-  integer lim; /* the maximum number of marks to encode before truncating */
   int p; /* |font_info| index for the current character */
   int d; /* used to construct a hexadecimal digit */
   unsigned b; /* used to construct a hexadecimal digit */
-  lim=4*(emergency_line_length-mp->ps->ps_offset-4);
   bc=mp->font_bc[f];
   ec=mp->font_ec[f];
-  if ( c>bc ) bc=c;
   @<Restrict the range |bc..ec| so that it contains no unused characters
-    at either end and has length at most |lim|@>;
+    at either end@>;
   @<Print the initial label indicating that the bitmap starts at |bc|@>;
   @<Print a hexadecimal encoding of the marks for characters |bc..ec|@>;
   while ( (ec<mp->font_ec[f])&&(mp->font_info[p].qqqq.b3==mp_unused) ) {
@@ -4583,7 +4576,6 @@ p=mp->char_base[f]+bc;
 while ( (mp->font_info[p].qqqq.b3==mp_unused)&&(bc<ec) ) {
   p++; bc++;
 }
-if ( ec>=(eight_bits)(bc+lim)) ec=(eight_bits)(bc+lim-1);
 p=mp->char_base[f]+ec;
 while ( (mp->font_info[p].qqqq.b3==mp_unused)&&(bc<ec) ) { 
   p--; ec--;
@@ -4611,15 +4603,15 @@ mp_hex_digit_out(mp, (quarterword)d)
 
 
 @ Here is a simple function that determines whether there are any marked
-characters in font~|f| with character code at least~|c|.
+characters in font~|f|.
 
 @<Declarations@>=
-static boolean mp_check_ps_marks (MP mp,font_number f, integer  c) ;
+static boolean mp_check_ps_marks (MP mp,font_number f) ;
 
 @ @c
-static boolean mp_check_ps_marks (MP mp,font_number f, integer  c) {
+static boolean mp_check_ps_marks (MP mp,font_number f) {
   int p; /* |font_info| index for the current character */
-  for (p=mp->char_base[f]+c;p<=mp->char_base[f]+mp->font_ec[f];p++) {
+  for (p=mp->char_base[f];p<=mp->char_base[f]+mp->font_ec[f];p++) {
     if ( mp->font_info[p].qqqq.b3==mp_used ) 
        return true;
   }
@@ -4627,31 +4619,24 @@ static boolean mp_check_ps_marks (MP mp,font_number f, integer  c) {
 }
 
 
-@ If the file name is so long that it can't be printed without exceeding
-|emergency_line_length| then there will be missing items in the \.{\%*Font:}
-line.  We might have to repeat line in order to get the character usage
-information to fit within |emergency_line_length|.
-
-TODO: these two defines are also defined in mp.w!
+@ There used to be a check against |emergency_line_length| here, because
+it was believed that processing programs might not know how to deal with
+long lines. Nowadays (1.204), we trust backends to do the right thing.
 
 @d link(A)   mp->mem[(A)].hh.rh /* the |link| field of a memory word */
 @d sc_factor(A) mp->mem[(A)+1].cint /* the scale factor stored in a font size node */
 
 @<Print the \.{\%*Font} comment for font |f| and advance |cur_fsize[f]|@>=
-{ integer t=0;
-  while ( mp_check_ps_marks(mp, f,t) ) {
+{ 
+  if ( mp_check_ps_marks(mp, f ) ) {
     mp_ps_print_nl(mp, "%*Font: ");
-    if ( mp->ps->ps_offset+strlen(mp->font_name[f])+12>emergency_line_length )
-      break;
     mp_ps_print(mp, mp->font_name[f]);
     mp_ps_print_char(mp, ' ');
     ds=(mp->font_dsize[f] + 8) / 16;
     mp_ps_print_scaled(mp, mp_take_scaled(mp, ds,sc_factor(cur_fsize[f])));
-    if ( mp->ps->ps_offset+12>emergency_line_length ) break;
     mp_ps_print_char(mp, ' ');
     mp_ps_print_scaled(mp, ds);
-    if ( mp->ps->ps_offset+5>emergency_line_length ) break;
-    t=mp_ps_marks_out(mp, f, (eight_bits)t);
+    mp_ps_marks_out(mp, f );
   }
   cur_fsize[f]=link(cur_fsize[f]);
 }
