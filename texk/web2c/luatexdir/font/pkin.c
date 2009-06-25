@@ -45,7 +45,7 @@
 #include "luatexfont.h"
 
 static const char _svn_version[] =
-    "$Id: pkin.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/font/pkin.c $";
+    "$Id: pkin.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/font/pkin.c $";
 
 /*
  *   Now we have some routines to get stuff from the pk file.  pkbyte returns

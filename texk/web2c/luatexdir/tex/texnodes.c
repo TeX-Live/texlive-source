@@ -28,7 +28,7 @@
 #define noDEBUG
 
 static const char _svn_version[] =
-    "$Id: texnodes.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/tex/texnodes.c $";
+    "$Id: texnodes.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/tex/texnodes.c $";
 
 #define append_char(A) str_pool[pool_ptr++]=(A)
 #define cur_length (pool_ptr - str_start_macro(str_ptr))

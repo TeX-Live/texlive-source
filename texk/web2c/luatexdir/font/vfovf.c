@@ -24,7 +24,7 @@
 
 static const char _svn_version[] =
     "$Id: vfovf.c 2448 2009-06-08 07:43:50Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/font/vfovf.c $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/font/vfovf.c $";
 
 /* this is a hack! */
 #define font_max 5000

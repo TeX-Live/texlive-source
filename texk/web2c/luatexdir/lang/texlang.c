@@ -27,7 +27,7 @@
 #include "hyphen.h"
 
 static const char _svn_version[] =
-    "$Id: texlang.c 2450 2009-06-08 08:30:52Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lang/texlang.c $";
+    "$Id: texlang.c 2596 2009-06-25 09:26:59Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lang/texlang.c $";
 
 /* functions from the fontforge unicode library */
 
@@ -247,12 +247,10 @@ void load_tex_patterns(int curlang, halfword head)
 }
 
 
-#define STORE_CHAR(x) do {						\
-    int xx = get_lc_code(x);						\
-    if (xx==0) xx = 0xFFFE;						\
-    word[w] = xx;							\
-    if (w<MAX_WORD_LEN) w++;						\
-  } while (0)
+#define STORE_CHAR(x) do {                          \
+        word[w] = x;                                \
+        if (w<MAX_WORD_LEN) w++;                    \
+    } while (0)
 
 /* todo change this! */
 

@@ -25,8 +25,8 @@
 #include "ptexlib.h"
 
 static const char __svn_version[] =
-    "$Id: pdfpage.c 2448 2009-06-08 07:43:50Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
+    "$Id: pdfpage.c 2491 2009-06-14 13:11:08Z hhenkel $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/pdf/pdfpage.c $";
 
 #define lround(a) (long) floor((a) + 0.5)
 #define setpdffloat(a,b,c) {(a).m = (b); (a).e = (c);}
@@ -362,6 +362,7 @@ void pdf_end_string_nl()
 
 static void goto_pagemode(pdfstructure * p)
 {
+    assert(p != NULL);
     if (!is_pagemode(p)) {
         if (is_charmode(p))
             end_charmode(p);

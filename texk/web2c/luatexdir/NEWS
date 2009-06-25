@@ -1,4 +1,31 @@
 ==============================================================
+Luatex beta-0.40.6 was released 20090625
+==============================================================
+
+* Fix two string vs. toks bugs in the lua node interface:
+  whatsit,annot and whatsit,startlink data assignments were
+  made directly as strings instead of being converted to tokens.
+
+* Sometimes pdf.print() could be used before the proper structures
+  were initialized.
+  
+
+* There was a bug in the type codes for the lua package filter 
+  callback: wrong extra info was passed to lua for the alignment 
+  and vsplit cases. 
+
+* The math parameters \Umathlimitdownvgap, \Umathlimitdownbgap,
+  and \Umathlimitdownkern have been renamed to \Umathlimitbelowbgap,
+  \Umathlimitbelowvgap, and \Umathlimitbelowkern to be more 
+  consistent with the other parameter names.
+
+* The embedded MPlib is now 1.204.
+
+* Handling of UTF-8 hyphenation exceptions has been fixed.
+
+* There were a number of typos in the manual.
+
+==============================================================
 Luatex beta-0.40.5 was released 20090610
 ==============================================================
 
@@ -822,7 +849,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

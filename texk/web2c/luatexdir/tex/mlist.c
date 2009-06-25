@@ -24,7 +24,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: mlist.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/tex/mlist.c $";
+    "$Id: mlist.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/tex/mlist.c $";
 
 #define delimiter_factor     int_par(param_delimiter_factor_code)
 #define delimiter_shortfall  dimen_par(param_delimiter_shortfall_code)

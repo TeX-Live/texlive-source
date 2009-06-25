@@ -25,7 +25,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: texdeffont.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/tex/texdeffont.c $";
+    "$Id: texdeffont.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/tex/texdeffont.c $";
 
 #define text(a) hash[(a)].rh    /* string number for control sequence name */
 #define null_cs 1               /* equivalent of \.{\\csname\\endcsname} */

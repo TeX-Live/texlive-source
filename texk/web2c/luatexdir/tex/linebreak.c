@@ -22,7 +22,7 @@
 #include "nodes.h"
 
 static const char _svn_version[] =
-    "$Id: linebreak.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/tex/linebreak.c $";
+    "$Id: linebreak.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/tex/linebreak.c $";
 
 /* Glue nodes in a horizontal list that is being paragraphed are not supposed to
    include ``infinite'' shrinkability; that is why the algorithm maintains

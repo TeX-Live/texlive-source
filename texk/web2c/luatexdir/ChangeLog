@@ -1,3 +1,7 @@
+2009-06-25  Taco Hoekwater <taco@luatex.org>
+ 	
+	* luatexdir: import of luatex release 0.40.6.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/luatex.c: drop P?C, P?H, use ANSI C function declarations.

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: commands.h 2448 2009-06-08 07:43:50Z taco $ */
+/* $Id: commands.h 2554 2009-06-21 07:58:02Z taco $ */
 
 
 typedef enum {
@@ -544,10 +544,11 @@ typedef enum {
     math_shift_group,           /* code for `\.{\$...\$}' */
     math_left_group,            /* code for `\.{\\left...\\right}' */
     local_box_group,            /* code for `\.{\\localleftbox...\\localrightbox}' */
-    max_group_code,
     split_off_group,            /* box code for the top part of a \.{\\vsplit} */
     split_keep_group,           /* box code for the bottom part of a \.{\\vsplit} */
     preamble_group,             /* box code for the preamble processing  in an alignment */
     align_set_group,            /* box code for the final item pass in an alignment */
     fin_row_group               /* box code for a provisory line in an alignment */
 } tex_group_codes;
+
+#define max_group_code local_box_group

@@ -50,8 +50,8 @@
 #endif
 
 static const char __svn_version[] =
-    "$Id: utils.c 2470 2009-06-10 10:12:48Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/utils/utils.c $";
+    "$Id: utils.c 2492 2009-06-14 13:14:50Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/utils/utils.c $";
 
 #define check_nprintf(size_get, size_want) \
     if ((unsigned)(size_get) >= (unsigned)(size_want)) \
@@ -1762,7 +1762,7 @@ scaled divide_scaled_n(double sd, double md, double n)
 
 void tprint(char *s)
 {
-    unsigned char *ss = s;
+    unsigned char *ss = (unsigned char*) s;
     while (*ss)
         print_char(*ss++);
 }

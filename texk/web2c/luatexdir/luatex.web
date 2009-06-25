@@ -250,8 +250,8 @@ known as `\eTeX'.
 @d pdftex_version_string=='-2.00.0' {current \pdfTeX\ version}
 @#
 @d luatex_version==40 { \.{\\luatexversion} }
-@d luatex_revision=="5" { \.{\\luatexrevision} }
-@d luatex_version_string=='beta-0.40.5' {current \LuaTeX\ version}
+@d luatex_revision=="6" { \.{\\luatexrevision} }
+@d luatex_version_string=='beta-0.40.6' {current \LuaTeX\ version}
 @d luatex_date_info==-extra_version_info { the compile date is negated }
 @d luatex_svnversion=='$Id$'
    {for long --version information, as proposed by Peter M\"unster}
@@ -15337,7 +15337,8 @@ if not callback_defined(read_pk_file_callback) then begin
     end;
 set_job_id(year, month, day, time);
 if (pdf_unique_resname > 0) and (pdf_resname_prefix = 0) then
-    pdf_resname_prefix := get_resname_prefix
+    pdf_resname_prefix := get_resname_prefix;
+pdf_page_init
 
 @ @<Check that variables for \.{PDF} output are unchanged@>=
 if fixed_pdf_minor_version <> pdf_minor_version then
@@ -24571,9 +24572,9 @@ primitive_luatex("Umathfractiondelsize",  set_math_param, math_param_fraction_de
 primitive_luatex("Umathlimitabovevgap",   set_math_param, math_param_limit_above_vgap,0);
 primitive_luatex("Umathlimitabovebgap",   set_math_param, math_param_limit_above_bgap,0);
 primitive_luatex("Umathlimitabovekern",   set_math_param, math_param_limit_above_kern,0);
-primitive_luatex("Umathlimitdownvgap",    set_math_param, math_param_limit_below_vgap,0);
-primitive_luatex("Umathlimitdownbgap",    set_math_param, math_param_limit_below_bgap,0);
-primitive_luatex("Umathlimitdownkern",    set_math_param, math_param_limit_below_kern,0);
+primitive_luatex("Umathlimitbelowvgap",    set_math_param, math_param_limit_below_vgap,0);
+primitive_luatex("Umathlimitbelowbgap",    set_math_param, math_param_limit_below_bgap,0);
+primitive_luatex("Umathlimitbelowkern",    set_math_param, math_param_limit_below_kern,0);
 primitive_luatex("Umathunderdelimitervgap", set_math_param, math_param_under_delimiter_vgap,0);
 primitive_luatex("Umathunderdelimiterbgap", set_math_param, math_param_under_delimiter_bgap,0);
 primitive_luatex("Umathoverdelimitervgap",set_math_param, math_param_over_delimiter_vgap,0);

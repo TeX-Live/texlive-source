@@ -25,7 +25,7 @@
 #include "commands.h"
 
 static const char _svn_version[] =
-    "$Id: lnodelib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/lua/lnodelib.c $";
+    "$Id: lnodelib.c 2476 2009-06-12 19:39:05Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
 #define init_luaS_index(a) do {                                         \
     lua_pushliteral(L,#a);                                              \
@@ -2235,7 +2235,7 @@ static int lua_nodelib_setfield_whatsit(lua_State * L, int n, int field)
             pdf_annot_objnum(n) = lua_tointeger(L, 3);
             break;
         case 8:
-            pdf_annot_data(n) = nodelib_getstring(L, 3);
+            pdf_annot_data(n) = nodelib_gettoks(L, 3);
             break;
         default:
             return nodelib_cantset(L, field, n);
@@ -2256,7 +2256,7 @@ static int lua_nodelib_setfield_whatsit(lua_State * L, int n, int field)
             pdf_link_objnum(n) = lua_tointeger(L, 3);
             break;
         case 8:
-            pdf_link_attr(n) = nodelib_getstring(L, 3);
+            pdf_link_attr(n) = nodelib_gettoks(L, 3);
             break;
         case 9:
             pdf_link_action(n) = nodelib_getaction(L, 3);
