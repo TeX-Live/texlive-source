@@ -29,6 +29,7 @@
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/progname.h>
+#include <kpathsea/version.h>
 
 
 /* Base resolution. (-D, -dpi) */
@@ -416,7 +417,6 @@ read_command_line (kpathsea kpse, int argc,  string *argv)
 
     } else if (ARGUMENT_IS ("help")) {
       int f; /* kpse_file_format_type */
-      extern KPSEDLL char *kpathsea_bug_address; /* from version.c */
       
       printf ("Usage: %s [OPTION]... [FILENAME]...\n", argv[0]);
       fputs (USAGE, stdout);
@@ -474,7 +474,6 @@ read_command_line (kpathsea kpse, int argc,  string *argv)
       var_to_value = optarg;
 
     } else if (ARGUMENT_IS ("version")) {
-      extern KPSEDLL char *kpathsea_version_string; /* from version.c */
       puts (kpathsea_version_string);
       puts ("Copyright 2009 Karl Berry & Olaf Weber.\n\
 License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n\

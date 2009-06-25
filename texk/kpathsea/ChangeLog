@@ -2,7 +2,9 @@
 
 	* version.h (new): header file for definitions in version.c.
 	* version.c: #include <kpathsea/version.h>.
-	* Makefile.am: add the new header.
+	* Makefile.am: add version.h.
+
+	* kpsewhich.c: #include <kpathsea/version.h>.
 
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
