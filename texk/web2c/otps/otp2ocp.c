@@ -25,7 +25,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 #include <kpathsea/config.h>
 #include <kpathsea/types.h>
-#include <kpathsea/c-proto.h>
 #include <kpathsea/c-std.h>
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/tex-file.h>

@@ -19,7 +19,6 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "ptexlib.h"
-#include <kpathsea/c-proto.h>
 #include "avl.h"
 
 static const char __svn_version[] =

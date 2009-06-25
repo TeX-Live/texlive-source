@@ -20,7 +20,6 @@
 
 #include "ptexlib.h"
 
-#include <kpathsea/c-proto.h>
 #include <string.h>
 
 static const char _svn_version[] =

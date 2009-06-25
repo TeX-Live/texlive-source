@@ -19,7 +19,6 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "ptexlib.h"
-#include <kpathsea/c-proto.h>
 #include <string.h>
 #include "luatex-api.h"
 

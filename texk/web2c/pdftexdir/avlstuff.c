@@ -19,8 +19,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "ptexlib.h"
-#include <stdarg.h>
-#include <kpathsea/c-proto.h>
 #include "avl.h"
 
 static struct avl_table *PdfObjTree[pdfobjtypemax + 1] =

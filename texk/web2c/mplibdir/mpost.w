@@ -53,7 +53,7 @@ have our customary command-line interface.
 #include <process.h>
 #endif
 #include <kpathsea/kpathsea.h>
-extern char *kpathsea_version_string;
+extern KPSEDLL char *kpathsea_version_string;
 @= /*@@null@@*/ @> static char *mpost_tex_program = NULL;
 static int debug = 0; /* debugging for makempx */
 #ifdef WIN32

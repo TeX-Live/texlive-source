@@ -1,3 +1,10 @@
+2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* epdf.h, ttf2afm.c, writet1.c: 
+	removed #include <kpathsea/c-proto.h>.
+	* avlstuff.c, epdf.c: removed #include <kpathsea/c-proto.h> and
+	 #include <stdarg.h>.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* avlstuff.c, epdf.c, ttf2afm.c, writet1.c: #include <stdarg.h>,

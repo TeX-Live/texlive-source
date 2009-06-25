@@ -1,3 +1,8 @@
+2009-06-25  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* mpost.w: add KPSEDLL to declaration of
+	kpathsea_version_string.
+
 2009-06-25  Taco Hoekwater <taco@elvenkind.com>
 	    
 	    * Released version of MPLib 1.204
@@ -22,7 +27,7 @@
 
 2009-05-25  Peter Breitenlohner <peb@mppmu.mpg.de>
 
-	* am/.am (install-exec-hook, uninstall-hook): new targets
+	* am/mplib.am (install-exec-hook, uninstall-hook): new targets
 	to (un)install dvitomp symlink.
 
 2009-05-13  Peter Breitenlohner  <peb@mppmu.mpg.de>

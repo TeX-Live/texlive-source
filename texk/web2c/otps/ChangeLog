@@ -1,3 +1,8 @@
+2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* otp2ocp.c, outocp.c, routines.c:
+	removed #include <kpathsea/c-proto.h>.
+
 2009-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

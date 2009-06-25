@@ -27,8 +27,6 @@ extern "C" {
 
 /* the following code is extremly ugly but needed for including web2c/config.h */
 
-#include <kpathsea/c-proto.h>   /* define P?H macros */
-
     typedef const char *const_string;   /* including kpathsea/types.h doesn't work on some systems */
 
 #define KPATHSEA_CONFIG_H       /* avoid including other kpathsea header files */
