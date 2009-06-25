@@ -1,3 +1,9 @@
+2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.h (new): header file for definitions in version.c.
+	* version.c: #include <kpathsea/version.h>.
+	* Makefile.am: add the new header.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* concatn.[ch], tex-file.[ch]: use ANSI C function declarations

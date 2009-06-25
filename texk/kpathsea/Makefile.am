@@ -148,6 +148,7 @@ kpseinclude_HEADERS = \
 	truncate.h \
 	types.h \
 	variable.h \
+	version.h \
 	xopendir.h \
 	xstat.h
 
@@ -212,7 +213,7 @@ stamp-paths: texmf.cnf
 	rm -f paths.tmp
 	date >$@
 
-kpathsea.h: paths.h
+kpathsea.h: Makefile paths.h
 	rm -f $@
 	echo '/* This is a generated file */' >$@
 	echo '/* collecting all kpathsea headers. */' >>$@
