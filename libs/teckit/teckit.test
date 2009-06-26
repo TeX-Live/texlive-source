@@ -1,0 +1,6 @@
+#! /bin/sh
+
+./teckit_compile $srcdir/tex-text.map -o xtex-text.tec || exit 1
+
+cmp $srcdir/tex-text.tec xtex-text.tec || exit 1
+
