@@ -1,3 +1,8 @@
+2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* source/Compiler.h: change type of Compiler::Pass.passType
+	long -> UInt32, to avoid compiler warnings.
+
 2009-06-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: enable cxx-runtime-hack (for teckit_compile).

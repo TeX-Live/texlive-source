@@ -230,7 +230,7 @@ protected:
 		vector<UInt32>		byteClassLines;
 		vector<UInt32>		uniClassLines;
 
-		long				passType;
+		UInt32				passType;
 		UInt32				uniDefault;
 		UInt8				byteDefault;
 		bool				supplementaryChars;
