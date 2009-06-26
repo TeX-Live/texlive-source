@@ -19021,8 +19021,12 @@ begin
             pdf_error("ext5", "cannot open file for embedding");
         print("<<");
         print(s);
-        while not eof(f) do
-            pdf_out(getc(f));
+        if not eof(f) then begin {at least one byte available}
+            while not eof(f) do
+                pdf_out(getc(f));
+            if (not obj_obj_is_stream(n)) and (pdf_ptr > 0) and (pdf_buf[pdf_ptr - 1] <> 10) then
+                pdf_out(10);
+        end;
         print(">>");
         b_close(f);
     end
