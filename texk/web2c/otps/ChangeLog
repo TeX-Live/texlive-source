@@ -1,3 +1,9 @@
+2009-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* otp2ocp.test, outocp.test, uni2lat.ocp, uni2lat.otp,
+	uni2lat.out (all new): 	Shell scripts and data for test cases.
+	* Makefile.am: add test cases.
+
 2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* otp2ocp.c, outocp.c, routines.c:

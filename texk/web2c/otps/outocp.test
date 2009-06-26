@@ -1,0 +1,7 @@
+#! /bin/sh
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./outocp $srcdir/uni2lat.ocp >xuni2lat.out || exit 1
+
+diff $srcdir/uni2lat.out xuni2lat.out || exit 1
+

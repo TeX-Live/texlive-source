@@ -1,3 +1,9 @@
+2009-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* teckit.test, tex-text.map, tex-text.tec (all new):
+	Shell script and data for test case.
+	* Makefile.am: add test case.
+
 2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* source/Compiler.h: change type of Compiler::Pass.passType

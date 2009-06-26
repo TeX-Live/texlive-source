@@ -1,0 +1,7 @@
+#! /bin/sh
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./otp2ocp $srcdir/uni2lat xuni2lat.ocp || exit 1
+
+cmp $srcdir/uni2lat.ocp xuni2lat.ocp || exit 1
+
