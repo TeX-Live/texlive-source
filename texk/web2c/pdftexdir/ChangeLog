@@ -1,3 +1,9 @@
+2009-06-26  Han The Thanh <hanthethanh@gmail.com>
+
+        * pdftex.web: bugfix from Hartmut: fix \pdfobj file {foo} for files
+	          foo that don't end with '\n'
+
+
 2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* epdf.h, ttf2afm.c, writet1.c: 
