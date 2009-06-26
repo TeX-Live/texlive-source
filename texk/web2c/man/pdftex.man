@@ -19,6 +19,8 @@
 .if n .ds AX AmSTeX
 .if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
 .if n .ds AY AmSLaTeX
+.if n .ds WB Web
+.if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
 pdftex, pdfinitex, pdfvirtex \- PDF output from TeX
