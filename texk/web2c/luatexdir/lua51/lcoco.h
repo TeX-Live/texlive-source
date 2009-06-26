@@ -12,6 +12,12 @@
 #endif
 #endif
 
+#if defined(linux) && defined(powerpc)
+#undef COCO_DISABLE
+#define COCO_DISABLE
+#define lcoco_h
+#endif
+
 
 #ifndef lcoco_h
 #define lcoco_h

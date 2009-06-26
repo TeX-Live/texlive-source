@@ -1,3 +1,8 @@
+2009-06-26  Taco Hoekwater <taco@luatex.org>
+
+        * lua51/lcoco.c, lua51/lcoco.h: disable the coco patch on
+	linux+ppc because it crashes the executable.
+
 2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* font/writet1.c, image/epdf.[ch], utils/avlstuff.c:

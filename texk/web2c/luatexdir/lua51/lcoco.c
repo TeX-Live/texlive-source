@@ -34,6 +34,12 @@
 #endif
 #endif
 
+#if defined(linux) && defined(powerpc)
+#undef COCO_DISABLE
+#define COCO_DISABLE
+# warning COCO: not supported on this platform (linux powerpc)
+#endif
+
 #ifndef COCO_DISABLE
 
 #define lcoco_c
