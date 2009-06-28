@@ -140,8 +140,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.07';
-$version_details = "$My_name, John Collins, 27 May 2009";
+$version_num = '4.08';
+$version_details = "$My_name, John Collins, 23 June 2009";
 
 
 use Config;
@@ -210,6 +210,10 @@ else {
 ##
 ##   Modification log for 24 Sep 2008 onwards in detail
 ##
+##     22 Jun 2009, John Collins  Binmode for log file under MSWin
+##                                   to avoid problem with ctrl/Z written
+##                                   by Miktex 2.7 giving spurious end-of-file
+##     10 Jun 2009, John Collins  V. 4.08 
 ##     27 May 2009, John Collins  V. 4.07
 ##     23 May 2009, John Collins  Try to work rationally when run of
 ##                                    (pdf)latex does not produce
@@ -523,6 +527,14 @@ $quote_filenames = 1;       # Quote filenames in external commands
 
 ################################################################
 ##  Special variables for system-dependent fudges, etc.
+$log_file_binary = 0;   # Whether to treat log file as binary
+                        # Normally not, since the log file SHOULD be pure text.
+                        # But Miktex 2.7 sometimes puts binary characters
+                        #    in it.  (Typically in construct \OML ... after
+                        #    overfull box with mathmode.)
+                        # Sometimes there is ctrl/Z, which is not only non-text, 
+                        #    but is end-of-file marker for MS-Win in text mode.  
+
 $MSWin_fudge_break = 1; # Give special treatment to ctrl/C and ctrl/break
                         #    in -pvc mode under MSWin
                         # Under MSWin32 (at least with perl 5.8 and WinXP)
@@ -562,6 +574,8 @@ if ( $^O eq "MSWin32" ) {
 
     ## Use first existing case for $tmpdir:
     $tmpdir = $ENV{TMPDIR} || $ENV{TEMP} || '.';
+    $log_file_binary = 1;   # Protect against ctrl/Z in log file from
+                            # Miktex 2.7.
 
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
@@ -1128,7 +1142,9 @@ if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
                     # Rule data:
                     #   0: [ cmd_type, ext_cmd, int_cmd, test_kind, 
                     #       source, dest, base, out_of_date,
-		    #       out_of_date_user, time_of_last_run ]
+		    #       out_of_date_user, time_of_last_run,
+                    #       last_result, last_message
+                    #      ]
                     # where 
                     #     cmd_type is 'primary', 'external' or 'cusdep',
                     #     ext_cmd is string for associated external command
@@ -1185,6 +1201,13 @@ if (!$TEXINPUTS) { $TEXINPUTS = '.'; }
 		    #              with file modification times.)
                     #     changed flags whether special changes have been made
                     #          that require file-existence status to be ignored
+                    #     last_result is 
+                    #                 -1 if no run has been made,
+                    #                  0 if the last run was successful
+                    #                  1 if last run was successful, but
+                    #                    failed to create an output file
+                    #                  2 if last run failed
+                    #     last_message is error message for last run
                     #   1: {Hash sourcefile -> [source-file data] }
                     # Source-file data array: 
                     #   0: time
@@ -1801,19 +1824,22 @@ foreach $filename ( @file_list )
     $failure = 0;
     $failure_msg = '';
     $failure = rdb_makeB( keys %requested_filerules );
-    if ($failure > 0) { next FILE;}
+    if ($failure > 0) { last FILE; }
     rdb_for_some( [keys %one_time], \&rdb_run1 );
 } # end FILE
 continue {
     if ($dependents_list) { rdb_list(); }
     # Handle any errors
-    if ( $failure > 0 ) {
+    $error_message_count = rdb_show_rule_errors();
+    if ( ($error_message_count == 0) || ($failure > 0) ) {
         if ( $failure_msg ) {
             #Remove trailing space
             $failure_msg =~ s/\s*$//;
             warn "$My_name: Did not finish processing file:\n   $failure_msg\n";
             $failure = 1;
         }
+    }
+    if ( ($failure > 0) || ($error_message_count > 0) ) {
         $failure_count ++;
         $last_failed = 1;
     }
@@ -2408,6 +2434,7 @@ CHANGE:
                 $$Pneed_to_get_viewer_process = 1;
 	    } # end analyze result of trying to run viewer
        } # end start viewer
+       rdb_show_rule_errors();
        if ( $first_time || $updated || $failure ) {
           print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
        }
@@ -2840,7 +2867,7 @@ sub parse_logB {
     if ( ! open( $log_file, "<$log_name" ) ) {
         return 0;
     }
-
+    if ($log_file_binary) { binmode $log_file; }
 # Collect lines of log file
     my @lines = ();
     while(<$log_file>) { 
@@ -4425,6 +4452,36 @@ sub rdb_makeB {
 
 #-------------------
 
+sub rdb_show_rule_errors {
+    local @messages = ();
+    rdb_for_all( 
+	       sub{
+		   if ($$Plast_message ne '') {
+		       push @messages, "$rule: $$Plast_message";
+		   }
+		   elsif ($$Plast_result == 1) {
+		       push @messages, "$rule: failed to create output file";
+		   }
+		   elsif ($$Plast_result == 2) {
+		       push @messages, "$rule: gave an error";
+		   }
+		   elsif ($$Prun_time == 0) {
+#    This can have innocuous causes.  So don't report
+#		       push @messages, "$rule: never run";
+		   }
+	       }
+	      );
+    if ($#messages > -1) { 
+	warn "Collected error summary (may duplicate other messages):\n";
+	foreach (@messages){
+	    warn "  $_\n";
+	}
+    }
+    return $#messages+1;
+}
+
+#-------------------
+
 sub rdb_makeB1 {
     # Call: rdb_makeB1
     # Helper routine for rdb_makeB.
@@ -4439,10 +4496,11 @@ sub rdb_makeB1 {
     if ( ($$Prun_time == 0) && exists($possible_primaries{$rule}) ) {
         push @rules_never_run, $rule;
         $$Pout_of_date = 1;
+        $$Plast_result = -1;
     }
     else {
         if ( $$Pdest && (! -e $$Pdest) ) {
-	    # With a non-existent desintation, if we haven't made any passes
+	    # With a non-existent destination, if we haven't made any passes
             #   through a rule, rerunning the rule is good, because the file
             #   may fail to exist because of being deleted by the user (for ex.)
             #   rather than because of a failure on a previous run. 
@@ -4547,7 +4605,8 @@ sub rdb_makeB1 {
     }
     if ($return != 0) {
         $failure = 1; 
-        $failure_msg = "Run of rule '$rule' gave a non-zero error code";
+	$$Plast_result = 2;
+        $$Plast_message = $failure_msg = "Run of rule '$rule' gave a non-zero error code";
     }
 }  #END rdb_makeB1
 
@@ -4688,6 +4747,8 @@ sub rdb_run1 {
     &rdb_update_filesA;
     $$Prun_time = time;
     $$Pchanged = 0;       # No special changes in files
+    $$Plast_result = 0;
+    $$Plast_message = '';
 
     # Return values for external command:
     my $return = 0;
@@ -4711,15 +4772,17 @@ sub rdb_run1 {
              "    Need to implement the command for '$rule'\n";
         &traceback();
         $return = -1;
+        $$Plast_result = 2;
+        $$Plast_message = "Bug or configuration error; incorrect command type";
     }
     if ( $rule =~ /^bibtex/ ) {
         my $retcode = &check_bibtex_log($$Pbase);
         if ($retcode == 3) {
-            push @warnings, 
-                 "Could not open bibtex log file for '$$Pbase'";
+            $$Plast_result = 2;
+            $$Plast_message = "Could not open bibtex log file for '$$Pbase'";
+            push @warnings, $$Plast_message;
         }
         elsif ($retcode == 2) {
-            push @warnings, "Bibtex errors for '$$Pbase'";
         }
         elsif ($retcode == 1) {
             push @warnings, "Bibtex warnings for '$$Pbase'";
@@ -4733,6 +4796,17 @@ sub rdb_run1 {
         $$Ptest_kind = 1; 
     }
     $$Pout_of_date = $$Pout_of_date_user = 0;
+
+    if ( ($$Plast_result == 0) && ($return != 0) ) {
+        $$Plast_result = 2;
+        if ($$Plast_message eq '') {
+	    $$Plast_message = "Command gave return code $return";
+	}
+    }
+    elsif ( $$Pdest && (! -e $$Pdest) ) {
+	$$Plast_result = 1;
+    }
+
     return $return;
 }  # END rdb_run1
 
@@ -4804,7 +4878,8 @@ sub rdb_primary_run {
     ######### Analyze results of run:
     if ( ! -e "$root_filename.log" ) {
         $failure = 1;
-        $failure_msg = "(Pdf)LaTeX failed to generate a log file";
+        $$Plast_result = 2;
+        $$Plast_message = $failure_msg = "(Pdf)LaTeX failed to generate a log file";
         return -1;
     }
     ####### NOT ANY MORE! Capture any changes in source file status before we
@@ -5233,7 +5308,8 @@ sub rdb_one_rule {
     local ( $PArule_data, $PHsource ) = @{$rule_db{$rule}};
     local ($Pcmd_type, $Pext_cmd, $PAint_cmd, $Ptest_kind, 
            $Psource, $Pdest, $Pbase,
-           $Pout_of_date, $Pout_of_date_user, $Prun_time, $Pchanged )
+           $Pout_of_date, $Pout_of_date_user, $Prun_time, $Pchanged,
+           $Plast_result, $Plast_message )
         = Parray( $PArule_data );
     # Correct array ref:
     $PAint_cmd = $$PArule_data[2];
@@ -5309,7 +5385,7 @@ sub rdb_create_rule {
     $rule_db{$rule} = 
         [  [$cmd_type, $int_cmd, $PAext_cmd, $test_kind, 
             $source, $dest, $base, $needs_making, 0, $run_time,
-            $changed ],
+            $changed, -1, '' ],
            {}
 	];
     if ($source) { rdb_ensure_file( $rule, $source );  }
