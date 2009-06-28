@@ -1,32 +1,34 @@
-******************************************************************************
+/****************************************************************************\
  Part of the XeTeX typesetting system
  copyright (c) 1994-2008 by SIL International
- written by Jonathan Kew
+ copyright (c) 2009 by Jonathan Kew
 
-Permission is hereby granted, free of charge, to any person obtaining  
-a copy of this software and associated documentation files (the  
-"Software"), to deal in the Software without restriction, including  
-without limitation the rights to use, copy, modify, merge, publish,  
-distribute, sublicense, and/or sell copies of the Software, and to  
-permit persons to whom the Software is furnished to do so, subject to  
+ Written by Jonathan Kew
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
 the following conditions:
 
-The above copyright notice and this permission notice shall be  
+The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
-NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
-ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of SIL International  
-shall not be used in advertising or otherwise to promote the sale,  
-use or other dealings in this Software without prior written  
-authorization from SIL International.
-******************************************************************************
+Except as contained in this notice, the name of the copyright holders
+shall not be used in advertising or otherwise to promote the sale,
+use or other dealings in this Software without prior written
+authorization from the copyright holders.
+\****************************************************************************/
 
 @x
 \def\section{\mathhexbox278}
@@ -64,8 +66,8 @@ authorization from SIL International.
 @d eTeX_version_string=='-2.2' {current \eTeX\ version}
 
 @d XeTeX_version=0
-@d XeTeX_revision==".9994"
-@d XeTeX_version_string=='-0.9994.2' {current \XeTeX\ version}
+@d XeTeX_revision==".9995"
+@d XeTeX_version_string=='-0.9995.0' {current \XeTeX\ version}
 @z
 
 @x
@@ -2611,10 +2613,26 @@ else if m<math_code_base then scanned_result(equiv(m+cur_val) mod @"10000)(int_v
 
 @d XeTeX_pdf_page_count_code  = XeTeX_int+29
 
-{ NB: must update |eTeX_dim| when items are added here! }
 @#
-@d eTeX_dim=XeTeX_int+30 {first of \eTeX\ codes for dimensions}
- {changed for \XeTeX\ to make room for \XeTeX\ integers}
+@d XeTeX_dim=XeTeX_int+30 {first of \XeTeX\ codes for dimensions}
+
+@d XeTeX_glyph_bounds_code = XeTeX_dim
+
+@#
+@d eTeX_dim=XeTeX_dim+1 {first of \eTeX\ codes for dimensions}
+ {changed for \XeTeX\ to make room for \XeTeX\ integers and dimens}
+@z
+
+@x
+@<Fetch an item in the current node...@>=
+if m>=input_line_no_code then
+ if m>=eTeX_glue then @<Process an expression and |return|@>@;
+ else if m>=eTeX_dim then
+@y
+@<Fetch an item in the current node...@>=
+if m>=input_line_no_code then
+ if m>=eTeX_glue then @<Process an expression and |return|@>@;
+ else if m>=XeTeX_dim then
 @z
 
 @x
@@ -8007,6 +8025,7 @@ primitive("XeTeXOTfeaturetag",last_item,XeTeX_OT_feature_code);
 
 primitive("XeTeXcharglyph", last_item, XeTeX_map_char_to_glyph_code);
 primitive("XeTeXglyphindex", last_item, XeTeX_glyph_index_code);
+primitive("XeTeXglyphbounds", last_item, XeTeX_glyph_bounds_code);
 
 primitive("XeTeXglyphname",convert,XeTeX_glyph_name_code);
 
@@ -8054,6 +8073,7 @@ XeTeX_OT_feature_code: print_esc("XeTeXOTfeaturetag");
 
 XeTeX_map_char_to_glyph_code: print_esc("XeTeXcharglyph");
 XeTeX_glyph_index_code: print_esc("XeTeXglyphindex");
+XeTeX_glyph_bounds_code: print_esc("XeTeXglyphbounds");
 
 XeTeX_font_type_code: print_esc("XeTeXfonttype");
 
@@ -8323,6 +8343,25 @@ begin
   print("; not a native platform font");
   error;
 end;
+
+@ @<Cases for fetching a dimension value@>=
+XeTeX_glyph_bounds_code:
+  begin
+    if is_native_font(cur_font) then begin
+      scan_int; n:=cur_val; { which edge: 1=left, 2=top, 3=right, 4=bottom }
+      if (n < 1) or (n > 4) then begin
+        print_err("\\XeTeXglyphbounds requires an edge index from 1 to 4;");
+        print_nl("I don't know anything about edge "); print_int(n);
+        error;
+        cur_val:=0;
+      end else begin
+        scan_int; { glyph number }
+        cur_val:=get_glyph_bounds(cur_font, n, cur_val);
+      end
+    end else begin
+      not_native_font_error(last_item, m, cur_font); cur_val:=0
+    end
+  end;
 
 @ @<Cases of |convert| for |print_cmd_chr|@>=
 eTeX_revision_code: print_esc("eTeXrevision");

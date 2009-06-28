@@ -1,3 +1,35 @@
+/****************************************************************************\
+ Part of the XeTeX typesetting system
+ copyright (c) 1994-2008 by SIL International
+ copyright (c) 2009 by Jonathan Kew
+
+ Written by Jonathan Kew
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of the copyright holders
+shall not be used in advertising or otherwise to promote the sale,
+use or other dealings in this Software without prior written
+authorization from the copyright holders.
+\****************************************************************************/
+
 % When updating code here, also increment version number/string in xetex.ch
 
 % \vadjust
@@ -327,10 +359,8 @@ is_in_csname := false;
 
 @d XeTeX_pdf_page_count_code  = XeTeX_int+29
 
-{ NB: must update |eTeX_dim| when items are added here! }
 @#
-@d eTeX_dim=XeTeX_int+30 {first of \eTeX\ codes for dimensions}
- {changed for \XeTeX\ to make room for \XeTeX\ integers}
+@d XeTeX_dim=XeTeX_int+30 {first of \XeTeX\ codes for dimensions}
 @y
 @d pdf_last_x_pos_code        = XeTeX_int+27
 @d pdf_last_y_pos_code        = XeTeX_int+28
@@ -339,10 +369,8 @@ is_in_csname := false;
 
 @d XeTeX_pdf_page_count_code  = XeTeX_int+31
 
-{ NB: must update |eTeX_dim| when items are added here! }
 @#
-@d eTeX_dim=XeTeX_int+32 {first of \eTeX\ codes for dimensions}
- {changed for \XeTeX\ to make room for \XeTeX\ integers}
+@d XeTeX_dim=XeTeX_int+32 {first of \XeTeX\ codes for dimensions}
 @z
 
 % \shellescape
