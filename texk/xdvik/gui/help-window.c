@@ -288,9 +288,7 @@ initialize_items(struct topic_info *info)
 	"  in parts under the X Consortium license.\n",
 	"There is NO WARRANTY of anything.\n",
 	"\n",    
-	"Built on ",
-	__DATE__,
-	" using these configure options:\n",
+	"Built using these configure options:\n",
 #if MOTIF
 	"- Motif toolkit (",
 	XmVERSION_STRING,

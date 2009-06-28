@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2009-06-29  Karl Berry  <karl@tug.org>
+
+	* gui/help-window.c (default_help_general): avoid embedding
+	date in binary.
+
 2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi-draw.c: do not #include "kpathsea/c-vararg.h" (after
