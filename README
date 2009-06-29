@@ -103,7 +103,7 @@ GNU Make 3.79.1
   ftp://ftp.software.ibm.com/aix/freeSoftware/aixtoolbox/RPMS/ppc/fontconfig/
 
   alpha-linux
-OS: Debian GNU/Linux 4.0 (Etch), kernel 2.4.34.6
+OS: Debian GNU/Linux 4.0 (Etch), kernel 2.6.18
 gcc (GCCC) 4.1.2 20061115 (prerelease) (Debian 4.1.1-21)
 bison (GNU Bison) 2.3
 flex 2.5.33
@@ -116,4 +116,7 @@ GNU Make 3.81
   - compiling of texk/web2c/pdftexdir/writezip.c is broken and triggers a 
     compiler error with the above gcc. Disabling optimization -O2 using
     Build --debug ... resolved this problem.
+  - compilation of clisp needs hand adding -lavcall -lcallback -ltrampoline 
+    -lvacall after the -lsigsegv
+  - asy compilation with --disable-gsl && make
 
