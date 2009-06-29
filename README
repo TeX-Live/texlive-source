@@ -17,14 +17,18 @@ Prerequisites:
   try setting the envvar TL_MAKE to what is needed.
 
 - GNU clisp and GNU libffcall, must be present for xindy.  See more
-  details in utils/README.  (Alternative: Build --without-xindy.)
+  details in utils/README.  (Alternative: Build --disable-xindy.)
 
 - libfontconfig (again both headers and library) must be present for
-  XeTeX, except on MacOSX.  (Alternative: Build --without-xetex.)
+  XeTeX and xdvipdfmx, except on MacOSX.  (Alternative:
+  Build --disable-xetex --disable-xdvipdfmx.)
 
 - X11 headers and libraries must be present for pdfopen and xdvi.
+  (Alternative: Build --without-x.)
 
-- Bison and Flex (or maybe equivalents) are needed for web2c.
+- If you modify any .y or .l source files, then Bison and Flex (or maybe
+  equivalents) are needed.  The distributed .c and .h files are generated
+  with bison-2.4.1 and flex-2.5.35.
 
 The binaries will be left in ./inst/bin/<stdplatform>.
 For TeX Live, ignore the other files and directories that end up in ./inst.
@@ -47,7 +51,7 @@ For unusual situations:
 (i.e., configure fails saying the compiler doesn't work), try:
 env LD_OPTIONS=-R/usr/local/lib ./Build
 
-- Running ./reautoconf here reruns autoconf as needed.  Use --help for more.
+- Running ./reautoconf here reruns auto-tools as needed.  Use --help for more.
 
 
 Build information:
