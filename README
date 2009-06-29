@@ -80,7 +80,7 @@ GNU Make 3.81
   xe(la)tex and xdvipdfmx depend on fontconfig.
   Because Solaris 8 does not include fontconfig, we used fontconfig
   package (version 2.3.2) from http://www.blastwave.org/
-  (together with it's dependencies)
+  (together with its dependencies)
 
   sparc-linux
 OS: Debian GNU/Linux 3.1 (Sarge), kernel 2.4.27-2-sparc64
