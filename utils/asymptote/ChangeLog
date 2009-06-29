@@ -1,4 +1,203 @@
 ------------------------------------------------------------------------
+r4452 | jcbowman | 2009-06-24 13:16:28 -0600 (Wed, 24 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/glrender.cc
+
+Fix title message (assuming zoom/menu button is unmodified).
+
+------------------------------------------------------------------------
+r4451 | jcbowman | 2009-06-24 12:26:15 -0600 (Wed, 24 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/settings.h
+
+Fix align.
+
+------------------------------------------------------------------------
+r4450 | jcbowman | 2009-06-24 12:11:02 -0600 (Wed, 24 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/loggraph.asy
+
+Update documentation.
+
+------------------------------------------------------------------------
+r4449 | jcbowman | 2009-06-24 11:24:54 -0600 (Wed, 24 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   A /trunk/asymptote/base/asy-kate.sh
+   M /trunk/asymptote/doc/asymptote.texi
+
+Add support for generating syntax highlighting for the KDE editor Kate.
+
+------------------------------------------------------------------------
+r4448 | jcbowman | 2009-06-24 11:17:55 -0600 (Wed, 24 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/png/Makefile.in
+
+Remove redundant redundancy.
+
+------------------------------------------------------------------------
+r4447 | jcbowman | 2009-06-24 11:04:49 -0600 (Wed, 24 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.nsi
+
+Change exit to exit /b (end currently executing batch file).
+
+------------------------------------------------------------------------
+r4446 | jcbowman | 2009-06-24 01:54:43 -0600 (Wed, 24 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/glrender.h
+   M /trunk/asymptote/settings.cc
+
+Implement customizable mouse bindings.
+
+------------------------------------------------------------------------
+r4445 | jcbowman | 2009-06-23 10:15:33 -0600 (Tue, 23 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/png/Makefile.in
+
+Use --no-warn option for portability.
+
+------------------------------------------------------------------------
+r4444 | jcbowman | 2009-06-23 03:12:03 -0600 (Tue, 23 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Fix interactive exports.
+
+------------------------------------------------------------------------
+r4443 | jcbowman | 2009-06-22 21:23:59 -0600 (Mon, 22 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/label3.asy
+   M /trunk/asymptote/examples/label3ribbon.asy
+   M /trunk/asymptote/examples/label3solid.asy
+   M /trunk/asymptote/texfile.cc
+
+Increase textwidth and textheight.
+
+------------------------------------------------------------------------
+r4442 | jcbowman | 2009-06-22 13:31:48 -0600 (Mon, 22 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Fix configure --disable-gc.
+
+------------------------------------------------------------------------
+r4441 | jcbowman | 2009-06-22 11:48:21 -0600 (Mon, 22 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/main.cc
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.h
+
+Fix thread locking.
+
+------------------------------------------------------------------------
+r4440 | jcbowman | 2009-06-22 07:59:23 -0600 (Mon, 22 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Make the install-prebuilt target omit texhash.
+
+------------------------------------------------------------------------
+r4439 | jcbowman | 2009-06-22 01:27:24 -0600 (Mon, 22 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/patches/freeglut-cygwin.patch
+
+Clean up patch.
+
+------------------------------------------------------------------------
+r4438 | jcbowman | 2009-06-22 01:21:28 -0600 (Mon, 22 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/patches/README
+   A /trunk/asymptote/patches/freeglut-cygwin.patch
+
+Add patch to allow version 2.6.0-rc1 of freeglut.dll to be built under CYGWIN.
+
+------------------------------------------------------------------------
+r4437 | jcbowman | 2009-06-22 00:08:19 -0600 (Mon, 22 Jun 2009) | 7 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasyMainWin.py
+   M /trunk/asymptote/asymptote.nsi
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/patches/README
+   D /trunk/asymptote/patches/TkAlpha-Imaging-1.1.6.patch
+   D /trunk/asymptote/patches/TkAlpha-Imaging-1.1.6msdos.patch
+   D /trunk/asymptote/patches/movie15_20090323.patch
+
+Update xasy for Python 2.6.2 and Imaging-1.1.7b1 (which requires no
+alpha support patches).
+
+Remove obsolete patches.
+
+Delete obsolete _imagingtk.pyd file.
+
+------------------------------------------------------------------------
+r4436 | jcbowman | 2009-06-21 21:24:26 -0600 (Sun, 21 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/Makefile.in
+
+Prebuilt png files are not included in the CTAN distribution.
+
+------------------------------------------------------------------------
+r4435 | jcbowman | 2009-06-21 12:26:28 -0600 (Sun, 21 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/pen.h
+
+Add missing miterlimit defaults.
+
+------------------------------------------------------------------------
+r4434 | jcbowman | 2009-06-19 17:00:10 -0600 (Fri, 19 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Fix mesh mode.
+
+------------------------------------------------------------------------
+r4433 | jcbowman | 2009-06-19 14:39:49 -0600 (Fri, 19 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Add constructors to derived class example.
+
+------------------------------------------------------------------------
+r4432 | jcbowman | 2009-06-19 14:38:37 -0600 (Fri, 19 Jun 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+
+Turn off fsal when dynamic=false.
+
+Implement E_Euler.
+
+------------------------------------------------------------------------
+r4431 | jcbowman | 2009-06-19 09:42:23 -0600 (Fri, 19 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_arrows.asy
+   M /trunk/asymptote/examples/soccerball.asy
+
+Respect linegranularity.
+
+------------------------------------------------------------------------
+r4430 | jcbowman | 2009-06-19 09:41:23 -0600 (Fri, 19 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Swap patch and wireframe modes.
+
+------------------------------------------------------------------------
+r4429 | jcbowman | 2009-06-19 02:37:44 -0600 (Fri, 19 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.78svn.
+------------------------------------------------------------------------
 r4428 | jcbowman | 2009-06-19 00:53:54 -0600 (Fri, 19 Jun 2009) | 2 lines
 Changed paths:
    M /trunk/asymptote/doc/asymptote.texi

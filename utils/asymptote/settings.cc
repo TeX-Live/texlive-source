@@ -33,6 +33,7 @@
 #include "item.h"
 #include "refaccess.h"
 #include "pipestream.h"
+#include "array.h"
 
 #ifdef HAVE_LIBCURSES
 extern "C" {
@@ -60,6 +61,7 @@ using vm::item;
 using trans::itemRefAccess;
 using trans::refAccess;
 using trans::varEntry;
+using vm::array;
 
 void doConfig(string filename);
 
@@ -585,29 +587,29 @@ struct pairSetting : public dataSetting<pair> {
 struct alignSetting : public argumentSetting {
   alignSetting(string name, char code,
                string argname, string desc,
-               Int defaultValue=(Int) CENTER)
-    : argumentSetting(name, code, argname, desc,
-                      types::primInt(), (item)defaultValue) {}
+               string defaultValue)
+    : argumentSetting(name, code, argname, description(desc,defaultValue),
+                      types::primString(), (item)defaultValue) {}
 
   bool getOption() {
     string str=optarg;
-    if (str == "C")
-      value=(Int) CENTER;
-    else if (str == "T")
-      value=(Int) TOP;
-    else if (str == "B")
-      value=(Int) BOTTOM;
-    else if (str == "Z") {
-      value=(Int) ZERO;
-    } else {
-      error("invalid argument for option");
-      return false;
+    if(str == "C" || str == "T" || str == "B" || str == "Z") {
+      value=str;
+      return true;
     }
-    return true;
+    error("invalid argument for option");
+    return false;
   }
 };
 
-// For setting the alignment of a figure on the page.
+struct ButtonSetting : public itemSetting {
+  ButtonSetting(string name, array *defaultValue)
+    : itemSetting(name, 0, "", "",
+                  types::stringArray(), (item) defaultValue) {}
+
+  bool getOption() {return true;}
+};
+
 struct engineSetting : public argumentSetting {
   engineSetting(string name, char code,
                string argname, string desc,
@@ -943,6 +945,49 @@ void initSettings() {
 
   settingsModule=new types::dummyRecord(symbol::trans("settings"));
   
+// Default mouse bindings
+  
+// LEFT: rotate
+// SHIFT LEFT: zoom
+// CTRL LEFT: shift
+  
+  array *leftbutton=new array(3);
+  (*leftbutton)[0]=string("rotate");
+  (*leftbutton)[1]=string("zoom");
+  (*leftbutton)[2]=string("shift");
+  
+// MIDDLE: menu
+  
+  array *middlebutton=new array(1);
+  (*middlebutton)[0]=string("menu");
+  
+// RIGHT: zoom
+// SHIFT RIGHT: rotateX
+// CTRL RIGHT: rotateY
+// ALT RIGHT: rotateZ
+  
+  array *rightbutton=new array(4);
+  (*rightbutton)[0]=string("zoom/menu");
+  (*rightbutton)[1]=string("rotateX");
+  (*rightbutton)[2]=string("rotateY");
+  (*rightbutton)[3]=string("rotateZ");
+  
+// WHEEL_UP: zoomin
+  
+  array *wheelup=new array(1);
+  (*wheelup)[0]=string("zoomin");
+  
+// WHEEL_DOWN: zoomout
+  
+  array *wheeldown=new array(1);
+  (*wheeldown)[0]=string("zoomout");
+  
+  addOption(new ButtonSetting("leftbutton", leftbutton));
+  addOption(new ButtonSetting("middlebutton", middlebutton));
+  addOption(new ButtonSetting("rightbutton", rightbutton));
+  addOption(new ButtonSetting("wheelup", wheelup));
+  addOption(new ButtonSetting("wheeldown", wheeldown));
+  
   multiOption *view=new multiOption("View", 'V', "View output");
   view->add(new boolSetting("batchView", 0, "View output in batch mode",
                             msdos));
@@ -995,7 +1040,8 @@ void initSettings() {
 
   addOption(new pairSetting("offset", 'O', "pair", "PostScript offset"));
   addOption(new alignSetting("align", 'a', "C|B|T|Z",
-                             "Center, Bottom, Top, or Zero page alignment [Center]"));
+                             "Center, Bottom, Top, or Zero page alignment",
+                             "C"));
   
   addOption(new boolSetting("debug", 'd', "Enable debugging messages"));
   addOption(new incrementSetting("verbose", 'v',

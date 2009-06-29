@@ -573,15 +573,15 @@ bool picture::shipout(picture *preamble, const string& Prefix,
   
   paperWidth=getSetting<double>("paperwidth");
   paperHeight=getSetting<double>("paperheight");
-  Int origin=getSetting<Int>("align");
+  string origin=getSetting<string>("align");
     
-  pair bboxshift=(origin == ZERO && !pdfformat) ?
+  pair bboxshift=(origin == "Z" && !pdfformat) ?
     pair(0.0,0.0) : pair(-b.left,-b.bottom);
   if(!pdfformat) {
     bboxshift += getSetting<pair>("offset");
-    if(origin != ZERO && origin != BOTTOM) {
+    if(origin != "Z" && origin != "B") {
       double yexcess=max(paperHeight-(b.top-b.bottom+1.0),0.0);
-      if(origin == TOP) bboxshift += pair(0.0,yexcess);
+      if(origin == "T") bboxshift += pair(0.0,yexcess);
       else {
         double xexcess=max(paperWidth-(b.right-b.left+1.0),0.0);
         bboxshift += pair(0.5*xexcess,0.5*yexcess);
@@ -754,13 +754,15 @@ Communicate com;
 void glrenderWrapper()
 {
 #ifdef HAVE_LIBGL  
+#ifdef HAVE_LIBPTHREAD
+  wait(initSignal,initLock);
+  endwait(initSignal,initLock);
+#endif  
   glrender(com.prefix,com.pic,com.format,com.width,com.height,com.angle,
            com.m,com.M,com.t,com.background,com.nlights,com.lights,com.diffuse,
            com.ambient,com.specular,com.viewportlighting,com.view);
 #endif  
 }
-
-extern bool glinitialize;
 
 bool picture::shipout3(const string& prefix, const string& format,
                        double width, double height,
@@ -781,6 +783,7 @@ bool picture::shipout3(const string& prefix, const string& format,
     getSetting<string>("outformat") : format;
   bool View=settings::view() && view;
   static int oldpid=0;
+  bool Wait=!interact::interactive || !View;
   
   if(glthread) {
 #ifdef HAVE_LIBPTHREAD
@@ -803,16 +806,28 @@ bool picture::shipout3(const string& prefix, const string& format,
       com.specular=specular;
       com.viewportlighting=viewportlighting;
       com.view=View;
-      wait(initSignal,initLock);
 #ifdef HAVE_LIBPTHREAD
-    if(!View)
-      wait(readySignal,readyLock);
-  
-    if(!interact::interactive || !View)
-      wait(quitSignal,quitLock);
+      if(Wait)
+        pthread_mutex_lock(&readyLock);
+      wait(initSignal,initLock);
+      endwait(initSignal,initLock);
+      static bool initialize=true;
+      if(initialize) {
+        wait(initSignal,initLock);
+        endwait(initSignal,initLock);
+        initialize=false;
+      }
+      if(Wait) {
+        pthread_cond_wait(&readySignal,&readyLock);
+        pthread_mutex_unlock(&readyLock);
+      }
 #endif  
       return true;
     }
+#ifdef HAVE_LIBPTHREAD
+  if(Wait)
+    pthread_mutex_lock(&readyLock);
+#endif  
 #endif
   } else {
     int pid=fork();
@@ -825,22 +840,13 @@ bool picture::shipout3(const string& prefix, const string& format,
     }
   }
   
-#ifdef HAVE_LIBPTHREAD
-  if(glthread && !interact::interactive)
-    pthread_mutex_lock(&quitLock);
-#endif  
-  glrender(prefix,this,outputformat,width,height,angle,m,M,t,background,
+    glrender(prefix,this,outputformat,width,height,angle,m,M,t,background,
            nlights,lights,diffuse,ambient,specular,viewportlighting,View,
            oldpid);
 #ifdef HAVE_LIBPTHREAD
-  if(glthread) {
-    if(!View)
-      wait(readySignal,readyLock);
-    
-    if(!interact::interactive) {
-      pthread_cond_wait(&quitSignal,&quitLock);
-      pthread_mutex_unlock(&quitLock);
-    }
+    if(glthread && Wait) {
+    pthread_cond_wait(&readySignal,&readyLock);
+    pthread_mutex_unlock(&readyLock);
   }
   return true;
 #endif  

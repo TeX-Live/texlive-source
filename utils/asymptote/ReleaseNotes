@@ -1,3 +1,16 @@
+Release Notes for Version 1.78
+
+Thread locking issues were fixed. The linegranularity is now respected when
+drawing thick curved lines. A bug in FSAL ODE integrators when using a
+fixed time step was fixed. Missing miterlimit defaults were added.
+Xasy was updated to use Python 2.6.2 and Imaging-1.1.7b1 (which requires no
+alpha support patches). Obsolete patches were removed.  More TeXLive build
+issues were addressed: the install-prebuilt target omits texhash and does
+not attempt to install PNG files for asymptote.info. A configuration
+problem with --disable-gc was fixed. The 3D mouse bindings are now
+customizable. Support was added for generating syntax highlighting for the KDE
+editor Kate.
+
 Release Notes for Version 1.77
 
 Splined parametric surfaces were implemented; a bug in the Cartesian

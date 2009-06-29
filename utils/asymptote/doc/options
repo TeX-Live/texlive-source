@@ -3,7 +3,7 @@ Usage: ../asy [options] [file ...]
 Options (negate by replacing - with -no): 
 
 -V,-View              View output; command-line only
--a,-align C|B|T|Z     Center, Bottom, Top, or Zero page alignment [Center]
+-a,-align C|B|T|Z     Center, Bottom, Top, or Zero page alignment [C]
 -antialias n          Antialiasing width for rasterized output [2]
 -auto3D               Automatically activate 3D scene [true]
 -autoimport string    Module to automatically import

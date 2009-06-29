@@ -48,6 +48,7 @@ using camp::transform;
 using camp::pair;
 using camp::triple;
 using vm::array;
+using vm::read;
 using camp::bbox3;
 using settings::getSetting;
 using settings::Setting;
@@ -111,7 +112,8 @@ bool queueExport=false;
 bool antialias;
 
 int x0,y0;
-int mod;
+string Action;
+int MenuButton=0;
 
 double lastangle;
 
@@ -133,29 +135,23 @@ pthread_t mainthread;
 pthread_cond_t initSignal=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t initLock=PTHREAD_MUTEX_INITIALIZER;
 
-pthread_cond_t quitSignal=PTHREAD_COND_INITIALIZER;
-pthread_mutex_t quitLock=PTHREAD_MUTEX_INITIALIZER;
-
 pthread_cond_t readySignal=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t readyLock=PTHREAD_MUTEX_INITIALIZER;
+
+void endwait(pthread_cond_t& signal, pthread_mutex_t& lock)
+{
+  pthread_mutex_lock(&lock);
+  pthread_cond_signal(&signal);
+  pthread_mutex_unlock(&lock);
+}
+void wait(pthread_cond_t& signal, pthread_mutex_t& lock)
+{
+  pthread_mutex_lock(&lock);
+  pthread_cond_signal(&signal);
+  pthread_cond_wait(&signal,&lock);
+  pthread_mutex_unlock(&lock);
+}
 #endif
-
-inline void lock() 
-{
-#ifdef HAVE_LIBPTHREAD
-  if(glthread)
-    pthread_mutex_lock(&readyLock);
-#endif  
-}
-
-inline void unlock() 
-{
-#ifdef HAVE_LIBPTHREAD
-  if(glthread)
-    pthread_mutex_unlock(&readyLock);
-#endif  
-
-}
 
 template<class T>
 inline T min(T a, T b)
@@ -296,6 +292,14 @@ void update()
 
 void drawscene(double Width, double Height)
 {
+#ifdef HAVE_LIBPTHREAD
+  static bool first=true;
+  if(glthread && first) {
+    wait(initSignal,initLock);
+    endwait(initSignal,initLock);
+    first=false;
+  }
+#endif
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   if(!ViewportLighting) 
@@ -362,7 +366,7 @@ void Export()
         ++count;
       } while (trEndTile(tr));
       if(settings::verbose > 1)
-        cout << count << " tile" << (count > 1 ? "s" : "") << " drawn" << endl;
+        cout << count << " tile" << (count != 1 ? "s" : "") << " drawn" << endl;
       trDelete(tr);
 
       picture pic;
@@ -384,17 +388,13 @@ void Export()
     outOfMemory();
   }
   setProjection();
+  
+#ifdef HAVE_LIBPTHREAD
+  if(glthread)
+    endwait(readySignal,readyLock);
+#endif
 }
   
-void LockedExport()
-{
-  if(interact::interactive)
-    lock();
-  Export();
-  if(interact::interactive)
-    unlock();
-}
-
 void windowposition(int& x, int& y, int width=Width, int height=Height)
 {
   pair z=getSetting<pair>("position");
@@ -486,29 +486,19 @@ void updateHandler(int)
 {
   initlighting();
   update();
-  if(interact::interactive) {
-    glutShowWindow();
-    glutShowWindow(); // Call twice to work around apparent freeglut bug.
-  } else if(glthread) fitscreen();
+  glutShowWindow();
+  glutShowWindow(); // Call twice to work around apparent freeglut bug.
+  if(glthread && !interact::interactive)
+    fitscreen();
 }
 
-void autoExport()
+void exportHandler(int)
 {
   if(!Iconify)
     glutShowWindow();
   Export();
   if(!Iconify)
     glutHideWindow();
-}
-
-void exportHandler(int)
-{
-#ifdef HAVE_LIBPTHREAD
-  if(glthread)
-    wait(readySignal,readyLock);
-#endif
-  initlighting();
-  autoExport();
 }
 
 void reshape(int width, int height)
@@ -519,7 +509,6 @@ void reshape(int width, int height)
       initialize=false;
       signal(SIGUSR1,updateHandler);
       signal(SIGUSR2,exportHandler);
-      unlock();
     }
   }
   
@@ -529,38 +518,14 @@ void reshape(int width, int height)
   reshape0(width,height);
 }
   
-#ifdef HAVE_LIBPTHREAD
-void endwait(pthread_cond_t& signal, pthread_mutex_t& lock)
-{
-  pthread_cond_signal(&signal);
-}
-void wait(pthread_cond_t& signal, pthread_mutex_t& lock)
-{
-  pthread_mutex_lock(&lock);
-  pthread_cond_signal(&signal);
-  pthread_cond_wait(&signal,&lock);
-  endwait(signal,lock);
-  pthread_mutex_unlock(&lock);
-}
-
-#endif
-
 void quit() 
 {
   if(glthread) {
-    if(interact::interactive) {
-      glutHideWindow();
-    } else {
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      glutSwapBuffers();
-    }
+    glutHideWindow();
 #ifdef HAVE_LIBPTHREAD
-    if(!interact::interactive) {
-      pthread_mutex_lock(&quitLock);
-      pthread_cond_signal(&quitSignal);
-      pthread_mutex_unlock(&quitLock);
-    }
-#endif
+    if(!interact::interactive)
+      endwait(readySignal,readyLock);
+#endif    
   } else {
     glutDestroyWindow(window);
     exit(0);
@@ -569,16 +534,12 @@ void quit()
 
 void display()
 {
-  if(interact::interactive)
-    lock();
   drawscene(Width,Height);
   glutSwapBuffers();
   if(queueExport) {
     Export();
     queueExport=false;
   }
-  if(interact::interactive)
-    unlock();
   if(!glthread) {
     if(Oldpid != 0 && waitpid(Oldpid,NULL,WNOHANG) != Oldpid) {
       kill(Oldpid,SIGHUP);
@@ -608,7 +569,8 @@ void capzoom()
 
 void disableMenu() 
 {
-  glutDetachMenu(GLUT_RIGHT_BUTTON);
+  if(MenuButton) 
+    glutDetachMenu(MenuButton);
   Menu=false;
 }
 
@@ -658,8 +620,8 @@ void rotate(int x, int y)
     }
     Motion=true;
     arcball.mouse_motion(x,Height-y,0,
-                         mod == GLUT_ACTIVE_SHIFT, // X rotation only
-                         mod == GLUT_ACTIVE_CTRL);  // Y rotation only
+                         Action == "rotateX", // X rotation only
+                         Action == "rotateY");  // Y rotation only
 
     for(int i=0; i < 4; ++i) {
       const vec4& roti=arcball.rot[i];
@@ -738,31 +700,81 @@ void rotateZ(int x, int y)
 #define GLUT_WHEEL_DOWN 4
 #endif
 
-// Mouse bindings.
-// LEFT: rotate
-// SHIFT LEFT: zoom
-// CTRL LEFT: shift
-// MIDDLE: menu
-// RIGHT: zoom
-// SHIFT RIGHT: rotateX
-// CTRL RIGHT: rotateY
-// ALT RIGHT: rotateZ
+string action(int button, int mod) 
+{
+  size_t Button;
+  size_t nButtons=5;
+  switch(button) {
+    case GLUT_LEFT_BUTTON:
+      Button=0;
+      break;
+    case GLUT_MIDDLE_BUTTON:
+      Button=1;
+      break;
+    case GLUT_RIGHT_BUTTON:
+      Button=2;
+      break;
+    case GLUT_WHEEL_UP:
+      Button=3;
+      break;
+    case GLUT_WHEEL_DOWN:
+      Button=4;
+      break;
+    default:
+      Button=nButtons;
+  }
+    
+  size_t Mod;
+  size_t nMods=4;
+  switch(mod) {
+    case 0:
+      Mod=0;
+      break;
+    case GLUT_ACTIVE_SHIFT:
+      Mod=1;
+      break;
+    case GLUT_ACTIVE_CTRL:
+      Mod=2;
+      break;
+    case GLUT_ACTIVE_ALT:
+      Mod=3;
+      break;
+    default:
+      Mod=nMods;
+  }
+    
+  if(Button >= 0 && Button < nButtons) {
+    array *left=getSetting<array *>("leftbutton");
+    array *middle=getSetting<array *>("middlebutton");
+    array *right=getSetting<array *>("rightbutton");
+    array *wheelup=getSetting<array *>("wheelup");
+    array *wheeldown=getSetting<array *>("wheeldown");
+    array *Buttons[]={left,middle,right,wheelup,wheeldown};
+    array *a=Buttons[button];
+    size_t size=checkArray(a);
+    if(Mod >= 0 && Mod < (Int) size)
+      return read<string>(a,Mod);
+  }
+  return "";
+}
+
 void mouse(int button, int state, int x, int y)
 {
-  if(button == GLUT_WHEEL_UP) {
+  string Action=action(button,glutGetModifiers());
+
+  if(Action == "zoomin") {
     mousewheel(0,1,x,y);
     return;
   } 
-  if(button == GLUT_WHEEL_DOWN) {
+  if(Action == "zoomout") {
     mousewheel(0,-1,x,y);
     return;
   }     
   
-  mod=glutGetModifiers();
-  
-  if(button == GLUT_RIGHT_BUTTON) {
+  if(Action == "zoom/menu") {
     if(state == GLUT_UP && !Motion) {
-      glutAttachMenu(GLUT_RIGHT_BUTTON);
+      MenuButton=button;
+      glutAttachMenu(button);
       Menu=true;
       return;
     }
@@ -772,24 +784,19 @@ void mouse(int button, int state, int x, int y)
   else Motion=false;
   
   if(state == GLUT_DOWN) {
-    if(button == GLUT_LEFT_BUTTON && mod == GLUT_ACTIVE_CTRL) {
+    if(Action == "rotate" || Action == "rotateX" || Action == "rotateY") {
+      arcball.mouse_down(x,Height-y);
+      glutMotionFunc(rotate);
+    } else if(Action == "shift") {
       x0=x; y0=y;
       glutMotionFunc(move);
-      return;
-    } 
-    if((button == GLUT_LEFT_BUTTON && mod == GLUT_ACTIVE_SHIFT) ||
-       (button == GLUT_RIGHT_BUTTON && mod == 0)) {
+    } else if(Action == "zoom" || Action == "zoom/menu") {
       y0=y;
       glutMotionFunc(zoom);
-      return;
-    }
-    if(button == GLUT_RIGHT_BUTTON && mod == GLUT_ACTIVE_ALT) {
+    } else if(Action == "rotateZ") {
       lastangle=Degrees(x,y);
       glutMotionFunc(rotateZ);
-      return;
     }
-    arcball.mouse_down(x,Height-y);
-    glutMotionFunc(rotate);
   } else
     arcball.mouse_up();
 }
@@ -856,12 +863,12 @@ void mode()
     case 1:
       for(size_t i=0; i < Nlights; ++i) 
         glDisable(GL_LIGHT0+i);
-      gluNurbsProperty(nurb,GLU_DISPLAY_MODE,GLU_OUTLINE_POLYGON);
       glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+      gluNurbsProperty(nurb,GLU_DISPLAY_MODE,GLU_OUTLINE_PATCH);
       ++Mode;
       break;
     case 2:
-      gluNurbsProperty(nurb,GLU_DISPLAY_MODE,GLU_OUTLINE_PATCH);
+      gluNurbsProperty(nurb,GLU_DISPLAY_MODE,GLU_OUTLINE_POLYGON);
       Mode=0;
       break;
   }
@@ -974,7 +981,7 @@ void keyboard(unsigned char key, int x, int y)
       mode();
       break;
     case 'e':
-      LockedExport();
+      Export();
       break;
     case 'c':
       camera();
@@ -989,7 +996,7 @@ void keyboard(unsigned char key, int x, int y)
       break;
     case 17: // Ctrl-q
     case 'q':
-      if(!Format.empty()) LockedExport();
+      if(!Format.empty()) Export();
       quit();
       break;
   }
@@ -1077,8 +1084,6 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   
   static bool initializedView=false;
   
-  if(view || initializedView) lock();
-    
   Prefix=prefix;
   Picture=pic;
   Format=format;
@@ -1093,13 +1098,6 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   View=view;
   Oldpid=oldpid;
   
-  static bool initialized=false;
-
-  if(!initialized) {
-    init();
-    Fitscreen=1;
-  }
-  
   Xmin=m.getx();
   Xmax=M.getx();
   Ymin=m.gety();
@@ -1113,6 +1111,15 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   ignorezoom=false;
   Mode=0;
   
+  static bool initialize=true;
+
+  if(initialize) {
+    initialize=false;
+    init();
+    Fitscreen=1;
+  }
+  
+  static bool initialized=false;
   if(!initialized || !interact::interactive) {
     antialias=getSetting<Int>("antialias") > 1;
     double expand=getSetting<double>("render");
@@ -1163,12 +1170,9 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   }
   
 #ifdef HAVE_LIBPTHREAD
-  if(initializedView && glthread) {
-    if(View)
-      pthread_kill(mainthread,SIGUSR1);
-    else
-      pthread_kill(mainthread,SIGUSR2);
-    unlock();
+  if(glthread && initializedView) {
+    if(!View) queueExport=true;
+    pthread_kill(mainthread,SIGUSR1);
     return;
   }
 #endif    
@@ -1176,6 +1180,10 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   unsigned int displaymode=GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH;
   
   bool havewindow=initialized && glthread;
+  
+  int buttons[]={GLUT_LEFT_BUTTON,GLUT_MIDDLE_BUTTON,GLUT_RIGHT_BUTTON};
+  string buttonnames[]={"left","middle","right"};
+  size_t nbuttons=sizeof(buttons)/sizeof(int);
   
   if(View) {
     int x,y;
@@ -1200,8 +1208,13 @@ void glrender(const string& prefix, const picture *pic, const string& format,
         glutSetOption(GLUT_MULTISAMPLE,multisample);
 #endif      
 #endif      
-      string title=string(settings::PROGRAM)+": "+prefix+
-        " [Double click right button for menu]";
+      string title=string(settings::PROGRAM)+": "+prefix;
+      for(size_t i=0; i < nbuttons; ++i) {
+        int button=buttons[i];
+        if(action(button,0) == "zoom/menu")
+          title += " [Double click "+buttonnames[i]+" button for menu]";
+      }
+    
       window=glutCreateWindow(title.c_str());
       GLint samplebuf[1];
       glGetIntegerv(GL_SAMPLES,samplebuf);
@@ -1269,7 +1282,6 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   mode();
   
   initlighting();
-  
   if(View) {
     initializedView=true;
     glutReshapeFunc(reshape);
@@ -1289,16 +1301,16 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     glutAddMenuEntry("(c) Camera",CAMERA);
     glutAddMenuEntry("(q) Quit" ,QUIT);
   
-    glutAttachMenu(GLUT_MIDDLE_BUTTON);
-
+    for(size_t i=0; i < nbuttons; ++i) {
+      int button=buttons[i];
+      if(action(button,0) == "menu")
+        glutAttachMenu(button);
+    }
+    
     glutMainLoop();
   } else {
-    if(glthread) {
-      exportHandler(0);
-    } else {
-      autoExport();
-      quit();
-    }
+    exportHandler(0);
+    if(!glthread) quit();
   }
 }
 

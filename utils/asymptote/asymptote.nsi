@@ -70,6 +70,7 @@ ShowUnInstDetails show
 
 Section "Asymptote" SEC01
   SetOutPath "$INSTDIR"
+  Delete "$INSTDIR\_imagingtk.pyd"
   SetOverwrite try
   File /r build-${PRODUCT_VERSION}\*
 
@@ -91,7 +92,7 @@ Section "Asymptote" SEC01
   FileWriteByte $0 "13" 
   FileWriteByte $0 "10" 
 
-  FileWrite $0 "if %errorlevel% == 0 exit"
+  FileWrite $0 "if %errorlevel% == 0 exit /b"
   FileWriteByte $0 "13" 
   FileWriteByte $0 "10" 
 

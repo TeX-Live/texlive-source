@@ -28,7 +28,7 @@ DIST = camp.tab.h camp.tab.cc lex.yy.cc runtime.h runtime.cc keywords.cc \
 NAME = asy
 XNAME = x$(NAME)
 CLEAN = camp.output asy.list svnrevision.cc doc/version.texi GUI/xasyVersion.py $(XNAME)
-EXTRA = asy-mode.el asy-init.el asy.vim asymptote.py reload.js nopapersize.ps
+EXTRA = asy-mode.el asy-init.el asy.vim asy-kate.sh asymptote.py reload.js nopapersize.ps
 EXEXTRA = piicon.eps *.views *.dat
 DOCEXTRA = *.asy *.csv *.dat latexusage.tex externalprc.tex pixel.pdf
 KEYWORDS = base $(ASYMPTOTE_SITEDIR)
@@ -150,9 +150,14 @@ asy-keywords.el: asy
           grep -v three_\* | grep -v featpost3D | xargs $(ASY) -l >> asy.list
 	./asy-list.pl asy.list @VERSION@
 
-install: asy-keywords.el install-asy install-man
+install: asy-keywords.el install-texhash install-man
 
-install-all: asy-keywords.el install-asy install-html
+install-all: asy-keywords.el install-texhash install-html
+
+install-texhash: install-asy
+	-if test -z "$(DESTDIR)"; then \
+	  texhash; \
+	fi
 
 install-asy: asy
 	${INSTALL} -d $(bindir) $(asydir) $(GUIdir) $(exampledir) \
@@ -170,9 +175,6 @@ install-asy: asy
 	  examples/animations/inlinemovie3.tex $(animationsdir)
 	-${INSTALL} -p -m 644 $(addprefix doc/,$(LATEXFILES)) $(latexdir)
 	-${INSTALL} -p -m 644 $(addprefix doc/,$(CONTEXTFILES)) $(contextdir)
-	-if test -z "$(DESTDIR)"; then \
-	  texhash; \
-	fi
 
 install-html: html
 	cd doc; $(MAKE) install-all
