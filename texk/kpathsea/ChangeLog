@@ -1,3 +1,7 @@
+2009-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (kpathsea.h): avoid GNU grep specific code.
+
 2009-06-30  Karl Berry  <karl@tug.org>
 
 	* variable.c (expand): make boolean, to return whether there

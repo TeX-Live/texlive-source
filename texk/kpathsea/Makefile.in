@@ -1678,7 +1678,11 @@ kpathsea.h: Makefile paths.h
 	echo '#include <kpathsea/c-auto.h>' >>$@
 	echo '#include <kpathsea/paths.h>' >>$@
 	(cd $(srcdir) && ls -1 *.h) \
-	  | grep -v '\(config\|paths\|kpathsea\|mingw32\|win32lib\)\.h' \
+	  | grep -v 'config\.h' \
+	  | grep -v 'paths\.h' \
+	  | grep -v 'kpathsea\.h' \
+	  | grep -v 'mingw32\.h' \
+	  | grep -v 'win32lib\.h' \
 	  | sed -e 's,^,#include <kpathsea/,' -e s',$$,>,' >>$@
 
 install-exec-hook:
