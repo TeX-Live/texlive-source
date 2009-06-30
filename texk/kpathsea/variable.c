@@ -1,6 +1,6 @@
 /* variable.c: variable expansion.
 
-    Copyright 1993, 1994, 1995, 1996, 2008 Karl Berry.
+    Copyright 1993, 1994, 1995, 1996, 2008, 2009 Karl Berry.
     Copyright 1997, 1999, 2001, 2002, 2005 Olaf Weber.
 
     This library is free software; you can redistribute it and/or
@@ -94,7 +94,7 @@ kpse_var_value (const_string var)
    before expanding.  */
 
 static void
-expanding (kpathsea kpse, const_string var,  boolean xp)
+expanding (kpathsea kpse, const_string var, boolean xp)
 {
   unsigned e;
   for (e = 0; e < kpse->expansion_len; e++) {
@@ -128,11 +128,14 @@ expanding_p (kpathsea kpse, const_string var)
 
 /* Append the result of value of `var' to EXPANSION, where `var' begins
    at START and ends at END.  If `var' is not set, do not complain.
-   This is a subroutine for the more complicated expansion function.  */
+   Return 1 if `var' was defined, 0 if not.  This is a subroutine for
+   the `kpathsea_var_expand' function.  */
 
-static void
-expand (kpathsea kpse, fn_type *expansion,  const_string start,  const_string end)
+static boolean
+expand (kpathsea kpse, fn_type *expansion,
+        const_string start, const_string end)
 {
+  boolean ret = false;
   string value;
   unsigned len = end - start + 1;
   string var = (string)xmalloc (len + 1);
@@ -155,6 +158,7 @@ expand (kpathsea kpse, fn_type *expansion,  const_string start,  const_string en
       value = kpathsea_cnf_get (kpse, var);
 
     if (value) {
+      ret = true;
       expanding (kpse, var, true);
       value = kpathsea_var_expand (kpse, value);
       expanding (kpse, var, false);
@@ -173,6 +177,7 @@ expand (kpathsea kpse, fn_type *expansion,  const_string start,  const_string en
 
     free (var);
   }
+  return ret;
 }
 
 /* Can't think of when it would be useful to change these (and the
@@ -217,7 +222,13 @@ kpathsea_var_expand (kpathsea kpse, const_string src)
         } while (IS_VAR_CHAR (*var_end));
 
         var_end--; /* had to go one past */
-        expand (kpse, &expansion, s, var_end);
+        if (!expand (kpse, &expansion, s, var_end)) {
+          /* If no expansion, include the literal $x construct,
+             so filenames containing dollar signs can be read.
+             The first +1 is to get the full variable name,
+             the other +1 is to get the dollar sign; we've moved past it.  */
+          fn_grow (&expansion, s - 1, var_end - s + 1 + 1);
+        }
         s = var_end;
 
       } else if (IS_VAR_BEGIN_DELIMITER (*s)) {
@@ -236,9 +247,10 @@ kpathsea_var_expand (kpathsea kpse, const_string src)
         }
 
       } else {
-        /* $<something-else>: error.  */
+        /* $<something-else>: warn, but preserve characters; again, so 
+           filenames containing dollar signs can be read.  */
         WARNING2 ("%s: Unrecognized variable construct `$%c'", src, *s);
-        /* Just ignore those chars and keep going.  */
+        fn_grow (&expansion, s - 1, 2);  /* moved past the $  */
       }
     } else
      fn_1grow (&expansion, *s);
