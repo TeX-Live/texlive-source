@@ -1,7 +1,5 @@
 2009-06-30  Karl Berry  <karl@tug.org>
 
-	* fixwrites.c: avoid annoying warning from use of STREQ with an array.
-
 	* config.h: #include <c-auto.h>, not <web2c/c-auto.h>.
 	-I.. is evidently not included somewhere along the line?
 
