@@ -440,7 +440,7 @@ main (int argc,  string *argv)
 	  *as = '\0';
 	  printf ("putc (%s, %s);\n", argp, filename);
 	}
-      else if (STREQ (args, "%s"))
+      else if (strcmp (args, "%s") == 0)
         printf ("Fputs (%s, %s\n", filename, argp);
       else
         printf ("fprintf (%s, \"%s\", %s\n", filename, args, argp);

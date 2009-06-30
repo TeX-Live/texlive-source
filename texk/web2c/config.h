@@ -1,6 +1,6 @@
 /* config.h: All .c files include this first.
 
-Copyright (C) 1995, 1996, 2006, 2007 Karl Berry.
+Copyright 1995, 1996, 2006, 2007, 2009 Karl Berry.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/.  */
 
 /* The stuff from the path searching library.  */
 #include <kpathsea/config.h>
-#include <web2c/c-auto.h>
+#include <c-auto.h>
 #include <stdarg.h>
 
 /* How to open a binary file.  */
