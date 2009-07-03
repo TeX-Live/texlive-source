@@ -17,7 +17,6 @@ real linegranularity=0.01;
 real tubegranularity=0.003;
 real dotgranularity=0.0001;
 real viewportfactor=1.002;   // Factor used to expand orthographic viewport.
-real viewportpadding=1;      // Offset used to expand PRC viewport.
 real angleprecision=1e-3;    // Precision for centering perspective projections.
 real anglefactor=max(1.01,1+angleprecision);
 // Factor used to expand perspective viewport.
@@ -127,10 +126,6 @@ transform3 reflect(triple u, triple v, triple w)
   }*shift(-u);
 }
 
-bool operator != (real[][] a, real[][] b) {
-  return !(a == b);
-}
-
 // Project u onto v.
 triple project(triple u, triple v)
 {
@@ -219,38 +214,44 @@ pair dir(triple v, triple dir, projection P)
 // points in three space to a plane through target and
 // perpendicular to the vector camera-target.
 projection perspective(triple camera, triple up=Z, triple target=O,
+                       real zoom=1, real angle=0, pair viewportshift=0,
                        bool showtarget=true, bool autoadjust=true,
                        bool center=autoadjust)
 {
   if(camera == target)
     abort("camera cannot be at target");
-  return projection(camera,up,target,showtarget,autoadjust,center,
+  return projection(camera,up,target,zoom,angle,viewportshift,
+                    showtarget,autoadjust,center,
                     new transformation(triple camera, triple up, triple target)
                     {return transformation(look(camera,up,target),
                                            distort(camera-target));});
 }
 
 projection perspective(real x, real y, real z, triple up=Z, triple target=O,
+                       real zoom=1, real angle=0, pair viewportshift=0,
                        bool showtarget=true, bool autoadjust=true,
                        bool center=autoadjust)
 {
-  return perspective((x,y,z),up,target,showtarget,autoadjust,center);
+  return perspective((x,y,z),up,target,zoom,angle,viewportshift,showtarget,
+                     autoadjust,center);
 }
 
 projection orthographic(triple camera, triple up=Z, triple target=O,
+                        real zoom=1, pair viewportshift=0,
                         bool showtarget=true, bool center=false)
 {
-  return projection(camera,up,target,showtarget,center=center,
+  return projection(camera,up,target,zoom,viewportshift,showtarget,center=center,
                     new transformation(triple camera, triple up,
                                        triple target) {
                       return transformation(look(camera,up,target));});
 }
 
 projection orthographic(real x, real y, real z, triple up=Z,
-                        triple target=O, bool showtarget=true,
-                        bool center=false)
+                        triple target=O, real zoom=1, pair viewportshift=0,
+                        bool showtarget=true, bool center=false)
 {
-  return orthographic((x,y,z),up,target,showtarget,center=center);
+  return orthographic((x,y,z),up,target,zoom,viewportshift,showtarget,
+                      center=center);
 }
 
 projection oblique(real angle=45)
@@ -2278,19 +2279,26 @@ string embed3D(string label="", string text=label, string prefix,
   real viewplanesize;
   if(P.infinity) {
     triple lambda=max3(f)-min3(f);
-    pair margin=viewportpadding*(1,1)+viewportmargin((lambda.x,lambda.y));
-    viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/cm;
+    pair margin=viewportmargin((lambda.x,lambda.y));
+    viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/(cm*P.zoom);
   } else
-    if(!P.absolute) angle=2*aTan(Tan(0.5*angle)-viewportpadding/P.target.z);
+    if(!P.absolute) angle=2*aTan(Tan(0.5*angle));
 
   string name=prefix+".js";
   writeJavaScript(name,lightscript+projection(P.infinity,viewplanesize),script);
 
   shipout3(prefix,f);
-  
+
   prefix += ".prc";
   if(!settings.inlinetex)
     file3.push(prefix);
+
+  triple target=P.target;
+  if(P.infinity && P.viewportshift != 0) {
+    triple lambda=max3(f)-min3(f);
+    target -= (P.viewportshift.x*lambda.x/P.zoom,
+               P.viewportshift.y*lambda.y/P.zoom,0);
+  }
 
   triple v=P.vector()/cm;
   triple u=unit(v);
@@ -2310,7 +2318,7 @@ string embed3D(string label="", string text=label, string prefix,
     ",toolbar="+(settings.toolbar ? "true" : "false")+
     ",3Daac="+Format(P.absolute ? P.angle : angle)+
     ",3Dc2c="+Format(u)+
-    ",3Dcoo="+Format(P.target/cm)+
+    ",3Dcoo="+Format(target/cm)+
     ",3Droll="+Format(roll)+
     ",3Droo="+Format(abs(v))+
     ",3Dbg="+Format(light.background());
@@ -2437,9 +2445,7 @@ object embed(string label="", string text=label,
         viewportmargin=viewportmargin((lambda.x,lambda.y));
         width=lambda.x+2*viewportmargin.x;
         height=lambda.y+2*viewportmargin.y;
-
-        triple s=(-0.5(m.x+M.x),-0.5*(m.y+M.y),0);
-        f=shift(s)*f;  // Eye will be at (0,0,0).
+        f=shift((-0.5(m.x+M.x),-0.5*(m.y+M.y),0))*f;  // Eye will be at (0,0,0).
       } else {
         transform3 T=identity4;
         // Choose the angle to be just large enough to view the entire image:
@@ -2539,9 +2545,10 @@ object embed(string label="", string text=label,
         M += margin; 
         m -= margin;
       } else if(M.z >= 0) abort("camera too close");
-      
+
       shipout3(prefix,f,preview ? nativeformat() : format,
-               width,height,P.infinity ? 0 : angle,m,M,
+               width,height,P.infinity ? 0 : angle,P.zoom,m,M,
+               prc && !P.infinity ? 0 : P.viewportshift,
                tinv*inverse(modelview)*shift(0,0,zcenter),light.background(),
                P.absolute ? (modelview*light).position : light.position,
                light.diffuse,light.ambient,light.specular,
@@ -2557,8 +2564,13 @@ object embed(string label="", string text=label,
       if(!settings.inlinetex) file3.push(image);
       image=graphic(image,"hiresbb");
     }
-    if(prc) F.L=embed3D(label,text=image,prefix,f,format,
+    if(prc) {
+      if(!P.infinity && P.viewportshift != 0)
+        write("warning: PRC does not support off-axis projections; use pan instead of shift");
+      F.L=embed3D(label,text=image,prefix,f,format,
                         width,height,angle,options,script,light,Q);
+    }
+    
   }
 
   if(!is3D) {

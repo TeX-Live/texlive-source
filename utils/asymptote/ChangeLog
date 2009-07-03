@@ -1,4 +1,162 @@
 ------------------------------------------------------------------------
+r4469 | jcbowman | 2009-07-02 00:26:57 -0600 (Thu, 02 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+
+Change default right mouse button assignment from zoom/menu to zoom.
+
+------------------------------------------------------------------------
+r4468 | jcbowman | 2009-07-01 22:00:57 -0600 (Wed, 01 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/settings.cc
+
+Fix docdir under TeXLive.
+
+------------------------------------------------------------------------
+r4467 | jcbowman | 2009-07-01 18:23:47 -0600 (Wed, 01 Jul 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Remove unused code.
+------------------------------------------------------------------------
+r4466 | jcbowman | 2009-07-01 16:32:52 -0600 (Wed, 01 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+
+Add viewportshift support for orthographic projections.
+
+------------------------------------------------------------------------
+r4465 | jcbowman | 2009-07-01 02:49:09 -0600 (Wed, 01 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/pipeintersection.asy
+
+Improve lighting.
+
+------------------------------------------------------------------------
+r4464 | jcbowman | 2009-07-01 02:31:58 -0600 (Wed, 01 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/glrender.cc
+
+Revert orthographic projection and lastzoom changes.
+
+------------------------------------------------------------------------
+r4463 | jcbowman | 2009-07-01 01:06:52 -0600 (Wed, 01 Jul 2009) | 18 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_picture.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/doc/cube.asy
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/glrender.h
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/picture.h
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+
+Don't exit on keystroke-initiated export.
+
+Invert internal zoom variable.
+
+Add pan (in addition to viewportshift) action to native OpenGL renderer.
+
+Output all camera settings as a projection, including mouse actions (pan,
+rotate, zoom, viewportshift).
+
+For convenience, add a zoom argument to perspective and orthographic
+projections.
+
+Add < (shrink) and > (expand) keystrokes.
+
+Remove unused code.
+
+Remove viewportpadding in favour of viewportmargin.
+
+------------------------------------------------------------------------
+r4462 | jcbowman | 2009-07-01 00:41:37 -0600 (Wed, 01 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/builtin.h
+
+Add operator != for 2D arithmetic arrays.
+
+------------------------------------------------------------------------
+r4461 | jcbowman | 2009-07-01 00:32:48 -0600 (Wed, 01 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+   M /trunk/asymptote/examples/odetest.asy
+
+Change integrate routines to output all computed values.
+
+------------------------------------------------------------------------
+r4460 | jcbowman | 2009-06-27 01:01:04 -0600 (Sat, 27 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Fix perp vector calculation.
+
+------------------------------------------------------------------------
+r4459 | jcbowman | 2009-06-26 19:21:52 -0600 (Fri, 26 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+
+Reset mouse motion function.
+
+------------------------------------------------------------------------
+r4458 | jcbowman | 2009-06-26 15:52:42 -0600 (Fri, 26 Jun 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/arrayop.h
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/runtime.in
+
+Fix segmentation fault in operator == (real[][], real[][]).
+
+Add operator == (T[][], T[][]) for all builtin arithmetic types.
+
+------------------------------------------------------------------------
+r4457 | jcbowman | 2009-06-26 00:19:00 -0600 (Fri, 26 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Use $TEXMFCONFIG/asymptote for configuration directory under TeXLive.
+
+------------------------------------------------------------------------
+r4456 | jcbowman | 2009-06-25 23:42:49 -0600 (Thu, 25 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/settings.cc
+
+Remove unused code.
+
+------------------------------------------------------------------------
+r4455 | jcbowman | 2009-06-25 02:51:31 -0600 (Thu, 25 Jun 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.nsi
+
+Remove etc/fstab kludge for cygwin 1.7 since it is no longer needed.
+
+------------------------------------------------------------------------
+r4454 | jcbowman | 2009-06-25 01:27:33 -0600 (Thu, 25 Jun 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+
+Add E_RK2, E_PC, E_RK3BS exponential integrators.
+
+Fix dynamic timestepping; simplify logic.
+
+------------------------------------------------------------------------
+r4453 | jcbowman | 2009-06-24 16:03:23 -0600 (Wed, 24 Jun 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.79svn.
+------------------------------------------------------------------------
 r4452 | jcbowman | 2009-06-24 13:16:28 -0600 (Wed, 24 Jun 2009) | 2 lines
 Changed paths:
    M /trunk/asymptote/asymptote.spec

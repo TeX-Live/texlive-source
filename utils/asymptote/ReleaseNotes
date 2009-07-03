@@ -1,3 +1,17 @@
+Release Notes for Version 1.79
+
+The perp vector calculation in the solids module was fixed. A bug in the
+mouse motion functions was fixed.  A pan action (which differs from shift
+due to perspective distortion) was added to the OpenGl renderer;
+the Camera (c) menu item now outputs all camera settings. The default right
+mouse button mouse binding was changed from "zoom/menu" to "zoom".
+User-initiated exports no longer cause the renderer to quit.
+Dynamic time stepping was fixed in the ode module; the "integrate"
+routines now return the array of computed values. Operators == and != were
+added for all built-in arithmetic 2D arrays; a segmentation fault was
+fixed. The etc/fstab kludge for Cygwin 1.7 was removed. The configuration
+directory under TeXLive is now $TEXMFCONFIG/asymptote.
+
 Release Notes for Version 1.78
 
 Thread locking issues were fixed. The linegranularity is now respected when
