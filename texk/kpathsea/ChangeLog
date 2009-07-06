@@ -1,3 +1,8 @@
+2009-07-07  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (MAKEMPX): remove, this causes btex..etex to fail
+	in current mpost.
+
 2009-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (kpathsea.h): simplify, no more grep.
