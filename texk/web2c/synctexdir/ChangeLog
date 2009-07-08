@@ -1,0 +1,14 @@
+2009-07-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/synctex.am: distribute new files.
+	* synctex_parser_local.h: add newline at end of file.
+	* synctex_parser_readme.txt: Mac -> native line end.
+
+2009-07-08  Jerome Laurens  <jerome.laurens@u-bourgogne.fr>
+
+	Updated version.
+
+2009-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+

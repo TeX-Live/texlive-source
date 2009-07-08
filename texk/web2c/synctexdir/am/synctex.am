@@ -11,9 +11,9 @@ synctex_SOURCES = \
 	synctexdir/synctex_main.c \
 	synctexdir/synctex_parser.c \
 	synctexdir/synctex_parser.h \
+	synctexdir/synctex_parser_local.h \
 	synctexdir/synctex_parser_utils.h \
-	synctexdir/synctex_parser_utils.c \
-	synctexdir/synctex_parser_local.h
+	synctexdir/synctex_parser_utils.c
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
 
@@ -24,10 +24,14 @@ synctex_DEPENDENCIES = $(ZLIB_DEPEND)
 dist_man_MANS += synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 
 EXTRA_DIST += \
+	synctexdir/ChangeLog \
 	synctexdir/INSTALL \
 	synctexdir/Makefile \
 	synctexdir/Makefile.in \
-	synctexdir/README.txt
+	synctexdir/README.txt \
+	synctexdir/synctex_parser_readme.txt \
+	synctexdir/synctex_parser_version.txt \
+	synctexdir/tests
 
 ## SyncTeX infrastructure: common for all engines
 

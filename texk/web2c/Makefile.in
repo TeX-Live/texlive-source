@@ -1226,20 +1226,21 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	alephdir/ChangeLog alephdir/Makefile alephdir/aleph.defines \
 	alephdir/aleph.version alephdir/eomega.ech alephdir/etex.ch \
 	alephdir/omega.ch0 alephdir/omega.ch1 alephdir/omega.ch2 \
-	alephdir/omxml.ch alephdir/aleph.mk synctexdir/INSTALL \
-	synctexdir/Makefile synctexdir/Makefile.in \
-	synctexdir/README.txt synctexdir/synctex-common.h \
-	synctexdir/synctex-convert.sh synctexdir/synctex.c \
-	synctexdir/synctex.defines synctexdir/synctex.h \
-	synctexdir/synctex-mem.ch0 synctexdir/synctex-mem.ch1 \
-	synctexdir/synctex-mem.ch2 synctexdir/synctex-rec.ch0 \
-	synctexdir/synctex-rec.ch1 synctexdir/synctex-rec.ch2 \
-	synctexdir/synctex-e-mem.ch0 synctexdir/synctex-e-mem.ch1 \
-	synctexdir/synctex-e-rec.ch0 synctexdir/synctex-e-rec.ch1 \
-	synctexdir/synctex-pdf-rec.ch2 synctexdir/synctex-xe-mem.ch2 \
-	synctexdir/synctex-xe-rec.ch2 synctexdir/synctex-xe-rec.ch3 \
-	libmd5/md5.test fmtutil.in Makefile.in.orig configure.in.orig \
-	metapost.mk
+	alephdir/omxml.ch alephdir/aleph.mk synctexdir/ChangeLog \
+	synctexdir/INSTALL synctexdir/Makefile synctexdir/Makefile.in \
+	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
+	synctexdir/synctex_parser_version.txt synctexdir/tests \
+	synctexdir/synctex-common.h synctexdir/synctex-convert.sh \
+	synctexdir/synctex.c synctexdir/synctex.defines \
+	synctexdir/synctex.h synctexdir/synctex-mem.ch0 \
+	synctexdir/synctex-mem.ch1 synctexdir/synctex-mem.ch2 \
+	synctexdir/synctex-rec.ch0 synctexdir/synctex-rec.ch1 \
+	synctexdir/synctex-rec.ch2 synctexdir/synctex-e-mem.ch0 \
+	synctexdir/synctex-e-mem.ch1 synctexdir/synctex-e-rec.ch0 \
+	synctexdir/synctex-e-rec.ch1 synctexdir/synctex-pdf-rec.ch2 \
+	synctexdir/synctex-xe-mem.ch2 synctexdir/synctex-xe-rec.ch2 \
+	synctexdir/synctex-xe-rec.ch3 libmd5/md5.test fmtutil.in \
+	Makefile.in.orig configure.in.orig metapost.mk
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c stamp-tangle tangleboot.c tangleboot.h ctangle.c \
 	cweb.c stamp-ctangle cftest.p $(web_programs:=.c) \
@@ -1965,9 +1966,9 @@ synctex_SOURCES = \
 	synctexdir/synctex_main.c \
 	synctexdir/synctex_parser.c \
 	synctexdir/synctex_parser.h \
-	synctexdir/synctex_parser_utils.c \
+	synctexdir/synctex_parser_local.h \
 	synctexdir/synctex_parser_utils.h \
-	synctexdir/synctex_parser_local.h
+	synctexdir/synctex_parser_utils.c
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
 synctex_LDADD = $(ZLIB_LIBS)
