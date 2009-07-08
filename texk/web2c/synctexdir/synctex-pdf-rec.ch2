@@ -1,6 +1,8 @@
-Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
+
+Latest Revision: Wed Jul  1 11:17:45 UTC 2009
 
 License:
 --------
@@ -41,7 +43,12 @@ If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
 Version 1
-Thu Jun 19 09:39:21 UTC 2008
+Latest Revision: Wed Jul  1 08:11:50 UTC 2009
+
+History:
+--------
+
+- if the pdf file is removed, the synctex file is removed too.
 
 @x
 margin_kern_node,
@@ -191,6 +198,19 @@ end;
 end;
 @<Finish sheet {\sl Sync\TeX} information record@>;
 end;
+@z
+
+@x
+procedure close_files_and_terminate;
+@y
+procedure close_files_and_terminate;
+@z
+
+@x
+        remove_pdffile;
+@y
+        remove_pdffile;
+		synctex_abort(log_opened);
 @z
 
 @x

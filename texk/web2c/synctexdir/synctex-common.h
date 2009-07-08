@@ -34,7 +34,7 @@ If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
 Version 1
-Thu Jun 19 09:39:21 UTC 2008
+Latest Revision: Wed Jul  1 08:07:50 UTC 2009
 
 */
 

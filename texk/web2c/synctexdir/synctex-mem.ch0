@@ -1,6 +1,8 @@
-Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
+
+Latest Revision: Wed Jul  1 11:17:37 UTC 2009
 
 License:
 --------
@@ -40,11 +42,11 @@ Nota Bene:
 If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
-Version 1
-Thu Jun 19 09:39:21 UTC 2008
-
 Notice:
 -------
+
+-   Fixing the bug pointed out by Hahn The Thanh during the discussion started by Reinhard Kotucha at
+	http://www.ntg.nl/pipermail/ntg-pdftex/2009-May/003786.html.
 
 The |synctex_field_size| depends on the TeX implementation.
 pdfTeX uses 2 additional words whereas XeTeX will only use one,
@@ -70,7 +72,7 @@ because it naturally has bigger words of memory.
 @y
 @d small_node_size=2 {number of words to allocate for most node types}
 @d medium_node_size=small_node_size+synctex_field_size {number of words to
-           allocate for synchronized node types like math, kern and glue nodes}
+           allocate for synchronized node types like math, kern, glue and penalty nodes}
 @z
 
 @x tex.web l.3090
@@ -122,6 +124,18 @@ begin p:=get_node(small_node_size); type(p):=kern_node;
 begin p:=get_node(medium_node_size); type(p):=kern_node;
 @z
 
+@x tex.web l.3259
+@p function new_penalty(@!m:integer):pointer;
+@y
+@p function new_penalty(@!m:integer):pointer;
+@z
+
+@x
+begin p:=get_node(small_node_size); type(p):=penalty_node;
+@y
+begin p:=get_node(medium_node_size); type(p):=penalty_node;
+@z
+
 @x
 @p procedure flush_node_list(@!p:pointer); {erase list of nodes starting at |p|}
 @y
@@ -140,38 +154,34 @@ begin p:=get_node(medium_node_size); type(p):=kern_node;
       end;
 @z
 
-@x
+@x tex.web l.3937: free nodes with proper size
     kern_node,math_node,penalty_node: do_nothing;
 @y
-    kern_node,math_node:begin
+    kern_node,math_node,penalty_node:begin
         free_node(p, medium_node_size);
         goto done;
       end;
-    penalty_node: do_nothing;
 @z
 
-@x tex.web l.4018: 
+@x tex.web l.4002:
 @ @<Case statement to copy...@>=
 @y
 @ @<Case statement to copy...@>=
 @z
 
-@x
+@x tex.web l.4018:
 glue_node: begin r:=get_node(small_node_size); add_glue_ref(glue_ptr(p));
 @y
 glue_node: begin r:=get_node(medium_node_size); add_glue_ref(glue_ptr(p));
 @z
 
-@x
+@x tex.web l.4021:
 kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
   words:=small_node_size;
   end;
 @y
-kern_node,math_node: begin r:=get_node(medium_node_size);
+kern_node,math_node,penalty_node: begin r:=get_node(medium_node_size);
   words:=medium_node_size;
-  end;
-penalty_node: begin r:=get_node(small_node_size);
-  words:=small_node_size;
   end;
 @z
 
@@ -211,13 +221,13 @@ penalty_node: begin r:=get_node(small_node_size);
 @d synctex_tag==cur_input.synctex_tag_field {{\sl Sync\TeX} tag of the current file}
 @z
 
-@x
+@x tex.web l. 14185
 @<Simplify a trivial box@>=
 @y
 @<Simplify a trivial box@>=
 @z
 
-@x tex.web l. 14189
+@x tex.web l. 14191
     begin free_node(r,small_node_size); link(q):=null;
 @y
     begin free_node(r,medium_node_size); link(q):=null;

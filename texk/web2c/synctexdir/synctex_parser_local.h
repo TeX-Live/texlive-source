@@ -1,7 +1,9 @@
 /* 
-Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
+
+Latest Revision: Wed Jul  1 11:16:13 UTC 2009
 
 License:
 --------
@@ -34,4 +36,6 @@ authorization from the copyright holder.
 */
 
 /* This local header file is for TEXLIVE, use your own header to fit your system */
-#       include "web2c/c-auto.h" /* for inline && HAVE_xxx */
+#   include "web2c/c-auto.h" /* for inline && HAVE_xxx */
+/*	No inlining for synctex tool in texlive. */
+#	define SYNCTEX_INLINE

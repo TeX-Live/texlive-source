@@ -11,6 +11,8 @@ synctex_SOURCES = \
 	synctexdir/synctex_main.c \
 	synctexdir/synctex_parser.c \
 	synctexdir/synctex_parser.h \
+	synctexdir/synctex_parser_utils.h \
+	synctexdir/synctex_parser_utils.c \
 	synctexdir/synctex_parser_local.h
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER

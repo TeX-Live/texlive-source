@@ -1,6 +1,8 @@
-Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
+
+Latest Revision: Wed Jul  1 11:17:50 UTC 2009
 
 License:
 --------
@@ -97,7 +99,7 @@ mem[r+box_node_size-synctex_field_size].int:=mem[p+box_node_size-synctex_field_s
 mem[r+box_node_size-synctex_field_size+1].int:=mem[p+box_node_size-synctex_field_size+1].int;
 @z
 
-@x It is a do_nothing replacement. To be enhanced later.
+@x 
 MISSING IMPLEMENTATION: copy the synctex information for rule node at mem[r] from node at mem[p]
 @y
 {mem[r+rule_node_size-synctex_field_size].int:=mem[p+rule_node_size-synctex_field_size].int;
@@ -105,7 +107,7 @@ mem[r+rule_node_size-synctex_field_size+1].int:=mem[p+rule_node_size-synctex_fie
 @z
 
 @x
-MISSING IMPLEMENTATION: copy the synctex information for glue node at mem[r] from node at mem[p]
+MISSING IMPLEMENTATION: copy the synctex information for medium sized node at mem[r] from node at mem[p]
 @y
 mem[r+medium_node_size-synctex_field_size].int:=mem[p+medium_node_size-synctex_field_size].int;
 mem[r+medium_node_size-synctex_field_size+1].int:=mem[p+medium_node_size-synctex_field_size+1].int;

@@ -1,7 +1,9 @@
 /* 
-Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
+
+Latest Revision: Wed Jul  1 11:18:09 UTC 2009
 
 License:
 --------
@@ -65,7 +67,7 @@ Versioning:
 -----------
 As synctex is embedded into different TeX implementation, there is an independent
 versionning system.
-For TeX implementations, the actual version is: 1
+For TeX implementations, the actual version is: 2
 For .synctex file format, the actual version is SYNCTEX_VERSION below
 
 Please, do not remove these explanations.
@@ -80,8 +82,31 @@ Nota Bene:
 If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
+History:
+--------
+Version 2
+Fri Sep 19 14:55:31 UTC 2008
+- support for file names containing spaces.
+  This is one thing that xetex and pdftex do not manage the same way.
+  When the input file name contains a space character ' ',
+  pdftex will automatically enclose this name between two quote characters '"',
+  making programs believe that these quotes are really part of the name.
+  xetex does nothing special.
+  For that reason, running the command line
+  xetex --synctex=-1 "my file.tex"
+  is producing the expected file named <my file.synctex>, (the '<' and '>' are not part of the name)
+  whereas running the command line
+  pdftex --synctex=-1 "my file.tex"
+  was producing the unexpected file named <"my file".synctex> where the two '"' chracters were part of the name.
+  Of course, that was breaking the typesetting mechanism when pdftex was involved.
+  To solve this problem, we prefer to rely on the output_file_name instead of the jobname.
+  In the case when no output_file_name is available, we use jobname and test if the file name
+  starts and ends with a quote character. Every synctex output file is removed because we consider
+  TeX encontered a problem.
+  There is some conditional coding.
+
 Version 1
-Tue Jul 1 15:23:00 UTC 2008
+Latest Revision: Wed Jul  1 08:15:44 UTC 2009
 
 */
 
@@ -145,7 +170,7 @@ EXTERN char *gettexstring(int n);
  *  IMPORTANT: We can say that the natural unit of .synctex files is SYNCTEX_UNIT_FACTOR sp.
  *  To retrieve the proper bp unit, we'll have to divide by 8.03.  To reduce
  *  rounding errors, we'll certainly have to add 0.5 for non negative integers
- *  and Â±0.5 for negative integers.  This trick is mainly to gain speed and
+ *  and ±0.5 for negative integers.  This trick is mainly to gain speed and
  *  size. A binary file would be more appropriate in that respect, but I guess
  *  that some clients like auctex would not like it very much.  we cannot use
  *  "<<13" instead of "/SYNCTEX_UNIT_FACTOR" because the integers are signed and we do not
@@ -260,10 +285,11 @@ static struct {
         unsigned int no_gz:1;       /*  Whether zlib is used or not */
         unsigned int not_void:1;    /*  Whether it really contains synchronization material */
         unsigned int warn:1;        /*  One shot warning flag */
-        unsigned int reserved:SYNCTEX_BITS_PER_BYTE*sizeof(int)-5; /* Align */
+        unsigned int quoted:1;      /*  Whether the input file name was quoted by tex or not, for example "\"my input file.tex\"", unused by XeTeX */
+        unsigned int reserved:SYNCTEX_BITS_PER_BYTE*sizeof(int)-6; /* Align */
 	} flags;
 } synctex_ctxt = {
-NULL, NULL, NULL, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0, 0, {0,0,0,0,0,0}};
+NULL, NULL, NULL, NULL, 0, 0, NULL, 0, 0, 0, 0, 0, 0, 0, {0,0,0,0,0,0,0}};
 
 #define SYNCTEX_FILE synctex_ctxt.file
 #define SYNCTEX_IS_OFF (synctex_ctxt.flags.off)
@@ -301,9 +327,10 @@ void synctexinitcommand(void)
 	return;
 }
 
-/*  Free all memory used and close the file,
- *  It is sent locally when there is a problem with synctex output. */
-void synctex_abort(void)
+/*  Free all memory used, close and remove the file if any,
+ *  It is sent locally when there is a problem with synctex output.
+ *  It is sent by pdftex when a fatal error occurred in pdftex.web. */
+void synctexabort(boolean log_opened)
 {
 	SYNCTEX_RETURN_IF_DISABLED;
 #if SYNCTEX_DEBUG
@@ -315,11 +342,15 @@ void synctex_abort(void)
 		} else {
 	        gzclose((gzFile)SYNCTEX_FILE);
 		}
+		SYNCTEX_FILE = NULL;
+		remove(synctex_ctxt.busy_name);
         SYNCTEX_FREE(synctex_ctxt.busy_name);
         synctex_ctxt.busy_name = NULL;
     }
-    SYNCTEX_FREE(synctex_ctxt.root_name);
-    synctex_ctxt.root_name = NULL;
+	if(NULL != synctex_ctxt.root_name) {
+		SYNCTEX_FREE(synctex_ctxt.root_name);
+		synctex_ctxt.root_name = NULL;
+	}
     SYNCTEX_IS_OFF = SYNCTEX_YES; /* disable synctex */
 }
 
@@ -360,15 +391,36 @@ static void *synctex_dot_open(void)
 		either SYNCTEX_FILE is nonnegative or synchronization is
 		definitely disabled. */
 	{
+		size_t len;
 		char *tmp = gettexstring(jobname);
 		/*  jobname was set by the \jobname command on the *TeX side  */
 		char * the_busy_name = xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + strlen(synctex_suffix_busy) + 1);
 		if(!the_busy_name) {
 			SYNCTEX_FREE(tmp);
-			synctex_abort();
+			synctexabort(0);
 			return NULL;
 		}
+#		if defined(XeTeX)
+		synctex_ctxt.flags.quoted = 0;
 		strcpy(the_busy_name, tmp);
+#		else
+		len = strlen(tmp);
+		if(len>0 && tmp[0]=='"' && tmp[len-1]=='"') {
+			/*  We are certainly on a pdftex like engine and the input file name did contain spaces inside.
+			    Quotes where added around that file name. We prefer to remove the quotes to have a human readable name.
+				As of Fri Sep 19 14:00:01 UTC 2008, the file names containing quotes are not supported by pdfTeX
+				nor SyncTeX. */
+			synctex_ctxt.flags.quoted = 1;/* we will have to add quotes around the file name in the log file. */
+			strcpy(the_busy_name, tmp+1);/* only copy what follows the leading " character */
+			len = strlen(the_busy_name);
+			if((len>0) && (the_busy_name[len-1]=='"')) {
+				the_busy_name[len-1]='\0';
+			}
+		} else {
+			synctex_ctxt.flags.quoted = 0;
+			strcpy(the_busy_name, tmp);
+		}
+#		endif
 		SYNCTEX_FREE(tmp);
 		tmp = NULL;
 		strcat(the_busy_name, synctex_suffix);
@@ -390,7 +442,7 @@ static void *synctex_dot_open(void)
 #endif
 		if (SYNCTEX_FILE) {
 			if(SYNCTEX_NO_ERROR != synctex_record_preamble()) {
-				synctex_abort();
+				synctexabort(0);
 				return NULL;
 			}
 			/*  Initialization of the context */
@@ -529,63 +581,121 @@ void synctexterminate(boolean log_opened)
 #if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexterminate\n");
 #endif
-	tmp = gettexstring(jobname);
-	the_real_syncname = xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + 1);
-	if(!the_real_syncname) {
+ 	if(log_opened && (tmp = gettexstring(texmflogname))) {
+		/* In version 1, the jobname was used but it caused problems regarding spaces in file names. */
+		the_real_syncname = xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + 1);
+		if(!the_real_syncname) {
+			SYNCTEX_FREE(tmp);
+			synctexabort(0);
+			return;
+		}
+		strcpy(the_real_syncname, tmp);
 		SYNCTEX_FREE(tmp);
-		synctex_abort();
-		return;
-	}
-	strcpy(the_real_syncname, tmp);
-	strcat(the_real_syncname, synctex_suffix);
-	if (!SYNCTEX_NO_GZ) {
-		/*  Remove any uncompressed synctex file, from a previous build. */
+		tmp = NULL;
+		/* now remove the last path extension which is in general log */
+		tmp = the_real_syncname + strlen(the_real_syncname);
+		while(tmp>the_real_syncname) {
+			--tmp;
+			if(*tmp == '.') {
+				*tmp = '\0';/* end the string here */
+				break;
+			}
+		}
+		strcat(the_real_syncname, synctex_suffix);
+		if (!SYNCTEX_NO_GZ) {
+			/*  Remove any uncompressed synctex file, from a previous build. */
+			remove(the_real_syncname);
+			strcat(the_real_syncname, synctex_suffix_gz);
+		}
+		/* allways remove the synctex output file before renaming it, windows requires it. */
+		if(0 != remove(the_real_syncname) && errno == EACCES) {
+			fprintf(stderr,"SyncTeX: Can't remove %s (file is open or read only)\n",the_real_syncname);		
+		}
+		if (SYNCTEX_FILE) {
+			if (SYNCTEX_NOT_VOID) {
+				synctex_record_postamble();
+				/* close the synctex file*/
+				if (SYNCTEX_NO_GZ) {
+					xfclose((FILE *)SYNCTEX_FILE, synctex_ctxt.busy_name);
+				} else {
+					gzclose((gzFile)SYNCTEX_FILE);
+				}
+				SYNCTEX_FILE = NULL;
+				/*  renaming the working synctex file */
+				if(0 == rename(synctex_ctxt.busy_name,the_real_syncname)) {
+					if(log_opened) {
+						printf((synctex_ctxt.flags.quoted?"\nSyncTeX written on \"%s\"":"\nSyncTeX written on %s"),
+							the_real_syncname); /* SyncTeX also refers to the contents */
+					}
+				} else {
+					fprintf(stderr,"SyncTeX: Can't rename %s to %s\n",synctex_ctxt.busy_name,the_real_syncname);
+					remove(synctex_ctxt.busy_name);
+				}
+			} else {
+				/* close and remove the synctex file because there are no pages of output */
+				if (SYNCTEX_NO_GZ) {
+					xfclose((FILE *)SYNCTEX_FILE, synctex_ctxt.busy_name);
+				} else {
+					gzclose((gzFile)SYNCTEX_FILE);
+				}
+				SYNCTEX_FILE = NULL;
+				remove(synctex_ctxt.busy_name);
+			}
+		}
+		if (SYNCTEX_NO_GZ) {
+			/*  Remove any compressed synctex file, from a previous build. */
+			strcat(the_real_syncname, synctex_suffix_gz);
+			remove(the_real_syncname);
+		}
+	} else if((tmp = gettexstring(jobname))) {
+		size_t len;
+		/*  There was a problem with the output.
+		    We just try to remove existing synctex output files
+			including the busy one. */
+		the_real_syncname = xmalloc(strlen(tmp) + strlen(synctex_suffix) + strlen(synctex_suffix_gz) + 1);
+		if(!the_real_syncname) {
+			SYNCTEX_FREE(tmp);
+			synctexabort(0);
+			return;
+		}
+#		if defined(XeTeX)
+		strcpy(the_real_syncname, tmp);
+#		else
+		len = strlen(tmp);
+		if(len>0 && tmp[0]=='"' && tmp[len-1]=='"') {
+			/*  See above a similar situation. */
+			strcpy(the_real_syncname, tmp+1);/* only copy what follows the leading " character */
+			len = strlen(the_real_syncname);
+			if((len>0) && (the_real_syncname[len-1]=='"')) {
+				the_real_syncname[len-1]='\0';
+			}
+		} else {
+			strcpy(the_real_syncname, tmp);
+		}
+#		endif
+		SYNCTEX_FREE(tmp);
+		tmp = NULL;
+		strcat(the_real_syncname, synctex_suffix);
 		remove(the_real_syncname);
 		strcat(the_real_syncname, synctex_suffix_gz);
-	}
-	/* allways remove the synctex output file before renaming it, windows requires it. */
-	if(0 != remove(the_real_syncname) && errno == EACCES) {
-		fprintf(stderr,"SyncTeX: Can't remove %s (file is open or read only)\n",the_real_syncname);		
-	}
-    if (SYNCTEX_FILE) {
-		if (SYNCTEX_NOT_VOID) {
-			synctex_record_postamble();
+		remove(the_real_syncname);
+		if (SYNCTEX_FILE) {
 			/* close the synctex file*/
 			if (SYNCTEX_NO_GZ) {
 				xfclose((FILE *)SYNCTEX_FILE, synctex_ctxt.busy_name);
 			} else {
 				gzclose((gzFile)SYNCTEX_FILE);
 			}
-			/*  renaming the working synctex file */
-			if(0 == rename(synctex_ctxt.busy_name,the_real_syncname)) {
-				if(log_opened) {
-					printf("\nSyncTeX written on %s",the_real_syncname); /* SyncTeX also refers to the contents */
-				}
-			} else {
-				fprintf(stderr,"SyncTeX: Can't rename %s to %s\n",synctex_ctxt.busy_name,the_real_syncname);
-				remove(synctex_ctxt.busy_name);
-			}
-		} else {
-			/* close and remove the synctex file because there are no pages of output */
-			if (SYNCTEX_NO_GZ) {
-				xfclose((FILE *)SYNCTEX_FILE, synctex_ctxt.busy_name);
-			} else {
-				gzclose((gzFile)SYNCTEX_FILE);
-			}
+			SYNCTEX_FILE = NULL;
+			/*  removing the working synctex file */
 			remove(synctex_ctxt.busy_name);
 		}
-		SYNCTEX_FILE = NULL;
-	}
-	if (SYNCTEX_NO_GZ) {
-		/*  Remove any compressed synctex file, from a previous build. */
-		strcat(the_real_syncname, synctex_suffix_gz);
-		remove(the_real_syncname);
 	}
 	SYNCTEX_FREE(synctex_ctxt.busy_name);
 	synctex_ctxt.busy_name = NULL;
 	SYNCTEX_FREE(the_real_syncname);
-	SYNCTEX_FREE(tmp);
-	synctex_abort();
+	the_real_syncname = NULL;
+	synctexabort(0);
 }
 
 static inline int synctex_record_content(void);
@@ -621,7 +731,7 @@ void synctexsheet(integer mag)
             }
 			if(SYNCTEX_NO_ERROR != synctex_record_settings()
 					|| SYNCTEX_NO_ERROR != synctex_record_content()) {
-				synctex_abort();
+				synctexabort(0);
 				return;
 			}
         }
@@ -1010,7 +1120,7 @@ void synctexcurrent(void)
 			return;
 		}
 	}
-    synctex_abort();
+    synctexabort(0);
 	return;
 }
 
@@ -1036,7 +1146,7 @@ static inline int synctex_record_settings(void)
 			return SYNCTEX_NOERR;
 		}
 	}
-	synctex_abort();
+	synctexabort(0);
 	return -1;
 }
 
@@ -1052,7 +1162,7 @@ static inline int synctex_record_preamble(void)
 		synctex_ctxt.total_length = len;
 		return SYNCTEX_NOERR;
 	}
-    synctex_abort();
+    synctexabort(0);
 	return -1;
 }
 
@@ -1068,7 +1178,7 @@ static inline int synctex_record_input(integer tag, char *name)
 		synctex_ctxt.total_length += len;
 		return SYNCTEX_NOERR;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return -1;
 }
 
@@ -1085,7 +1195,7 @@ static inline int synctex_record_anchor(void)
 		++synctex_ctxt.count;
 		return SYNCTEX_NOERR;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return -1;
 }
 
@@ -1101,7 +1211,7 @@ static inline int synctex_record_content(void)
 		synctex_ctxt.total_length += len;
 		return SYNCTEX_NOERR;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return -1;
 }
 
@@ -1119,7 +1229,7 @@ static inline int synctex_record_sheet(integer sheet)
 			return SYNCTEX_NOERR;
 		}
 	}
-	synctex_abort();
+	synctexabort(0);
 	return -1;
 }
 
@@ -1137,7 +1247,7 @@ static inline int synctex_record_teehs(integer sheet)
 			return SYNCTEX_NOERR;
 		}
 	}
-	synctex_abort();
+	synctexabort(0);
 	return -1;
 }
 
@@ -1160,7 +1270,7 @@ static inline void synctex_record_void_vlist(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1184,7 +1294,7 @@ static inline void synctex_record_vlist(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1200,7 +1310,7 @@ static inline void synctex_record_tsilv(halfword p)
 		synctex_ctxt.total_length += len;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1223,7 +1333,7 @@ static inline void synctex_record_void_hlist(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1247,7 +1357,7 @@ static inline void synctex_record_hlist(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1264,7 +1374,7 @@ static inline void synctex_record_tsilh(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1279,7 +1389,7 @@ static inline int synctex_record_count(void) {
 		synctex_ctxt.total_length += len;
 		return SYNCTEX_NOERR;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return -1;
 }
 
@@ -1303,7 +1413,7 @@ static inline int synctex_record_postamble(void)
 			}
 		}
 	}
-	synctex_abort();
+	synctexabort(0);
 	return -1;
 }
 
@@ -1323,7 +1433,7 @@ static inline void synctex_record_glue(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1344,7 +1454,7 @@ static inline void synctex_record_kern(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1367,7 +1477,7 @@ static inline void synctex_record_rule(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1391,7 +1501,7 @@ void synctex_math_recorder(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1412,7 +1522,7 @@ void synctex_kern_recorder(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1430,7 +1540,7 @@ void synctex_char_recorder(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 
@@ -1449,7 +1559,7 @@ void synctex_node_recorder(halfword p)
         ++synctex_ctxt.count;
 		return;
 	}
-	synctex_abort();
+	synctexabort(0);
 	return;
 }
 

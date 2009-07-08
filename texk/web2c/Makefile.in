@@ -627,7 +627,8 @@ pooltype_OBJECTS = $(nodist_pooltype_OBJECTS)
 pooltype_LDADD = $(LDADD)
 pooltype_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am_synctex_OBJECTS = synctex-synctex_main.$(OBJEXT) \
-	synctex-synctex_parser.$(OBJEXT)
+	synctex-synctex_parser.$(OBJEXT) \
+	synctex-synctex_parser_utils.$(OBJEXT)
 synctex_OBJECTS = $(am_synctex_OBJECTS)
 nodist_tangle_OBJECTS = tangle.$(OBJEXT)
 tangle_OBJECTS = $(nodist_tangle_OBJECTS)
@@ -1964,6 +1965,8 @@ synctex_SOURCES = \
 	synctexdir/synctex_main.c \
 	synctexdir/synctex_parser.c \
 	synctexdir/synctex_parser.h \
+	synctexdir/synctex_parser_utils.c \
+	synctexdir/synctex_parser_utils.h \
 	synctexdir/synctex_parser_local.h
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
@@ -2680,6 +2683,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pooltype.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/synctex-synctex_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/synctex-synctex_parser.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/synctex-synctex_parser_utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tangle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tangleboot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tex-synctex.Po@am__quote@
@@ -6603,6 +6607,20 @@ synctex-synctex_parser.obj: synctexdir/synctex_parser.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='synctexdir/synctex_parser.c' object='synctex-synctex_parser.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctex-synctex_parser.obj `if test -f 'synctexdir/synctex_parser.c'; then $(CYGPATH_W) 'synctexdir/synctex_parser.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_parser.c'; fi`
+
+synctex-synctex_parser_utils.o: synctexdir/synctex_parser_utils.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT synctex-synctex_parser_utils.o -MD -MP -MF $(DEPDIR)/synctex-synctex_parser_utils.Tpo -c -o synctex-synctex_parser_utils.o `test -f 'synctexdir/synctex_parser_utils.c' || echo '$(srcdir)/'`synctexdir/synctex_parser_utils.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/synctex-synctex_parser_utils.Tpo $(DEPDIR)/synctex-synctex_parser_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='synctexdir/synctex_parser_utils.c' object='synctex-synctex_parser_utils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctex-synctex_parser_utils.o `test -f 'synctexdir/synctex_parser_utils.c' || echo '$(srcdir)/'`synctexdir/synctex_parser_utils.c
+
+synctex-synctex_parser_utils.obj: synctexdir/synctex_parser_utils.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT synctex-synctex_parser_utils.obj -MD -MP -MF $(DEPDIR)/synctex-synctex_parser_utils.Tpo -c -o synctex-synctex_parser_utils.obj `if test -f 'synctexdir/synctex_parser_utils.c'; then $(CYGPATH_W) 'synctexdir/synctex_parser_utils.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_parser_utils.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/synctex-synctex_parser_utils.Tpo $(DEPDIR)/synctex-synctex_parser_utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='synctexdir/synctex_parser_utils.c' object='synctex-synctex_parser_utils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o synctex-synctex_parser_utils.obj `if test -f 'synctexdir/synctex_parser_utils.c'; then $(CYGPATH_W) 'synctexdir/synctex_parser_utils.c'; else $(CYGPATH_W) '$(srcdir)/synctexdir/synctex_parser_utils.c'; fi`
 
 tex-texini.o: texini.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tex-texini.o -MD -MP -MF $(DEPDIR)/tex-texini.Tpo -c -o tex-texini.o `test -f 'texini.c' || echo '$(srcdir)/'`texini.c
