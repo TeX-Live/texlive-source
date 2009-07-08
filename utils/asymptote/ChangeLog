@@ -1,4 +1,234 @@
 ------------------------------------------------------------------------
+r4494 | jcbowman | 2009-07-06 18:06:06 -0600 (Mon, 06 Jul 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/xstream.h
+
+Reinstate missing prototypes under CYGWIN
+------------------------------------------------------------------------
+r4493 | jcbowman | 2009-07-06 17:56:40 -0600 (Mon, 06 Jul 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/xstream.h
+
+Work around missing RPC definition under CYGWIN.
+------------------------------------------------------------------------
+r4492 | jcbowman | 2009-07-06 17:23:08 -0600 (Mon, 06 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Simplify code.
+
+------------------------------------------------------------------------
+r4491 | jcbowman | 2009-07-06 15:29:09 -0600 (Mon, 06 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/Makefile.in
+
+Update asymptote.info in install-prebuilt because of version.texi dependency.
+
+------------------------------------------------------------------------
+r4490 | jcbowman | 2009-07-06 14:49:09 -0600 (Mon, 06 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/errormsg.cc
+   M /trunk/asymptote/errormsg.h
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/settings.h
+   M /trunk/asymptote/stm.cc
+
+Optionally inform user how to ignore a warning.
+
+------------------------------------------------------------------------
+r4489 | jcbowman | 2009-07-06 13:43:30 -0600 (Mon, 06 Jul 2009) | 6 lines
+Changed paths:
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/errormsg.cc
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/settings.h
+   M /trunk/asymptote/util.cc
+
+Make array.default(j=n) delete only entry j.
+
+Add warn(string) and nowarn(string) functions, along with settings.warnings
+
+Change "PATH" to "LOCATION" in error message.
+
+------------------------------------------------------------------------
+r4488 | jcbowman | 2009-07-05 23:02:24 -0600 (Sun, 05 Jul 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Mention psview as a better (and free) alternative to gsview for MSDOS users.
+
+Update documentation.
+
+------------------------------------------------------------------------
+r4487 | jcbowman | 2009-07-05 22:05:56 -0600 (Sun, 05 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/xstream.h
+
+Remove obsolete CYGWIN code.
+
+------------------------------------------------------------------------
+r4486 | jcbowman | 2009-07-05 19:49:35 -0600 (Sun, 05 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/xstream.h
+
+Work around u_quad_t conversion conflict.
+
+------------------------------------------------------------------------
+r4485 | jcbowman | 2009-07-05 10:29:05 -0600 (Sun, 05 Jul 2009) | 5 lines
+Changed paths:
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/builtin.h
+   M /trunk/asymptote/dec.cc
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/fileio.cc
+   M /trunk/asymptote/fileio.h
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/types.cc
+
+Add virtual fields name, mode, line, csv, word, singlereal, singleint,
+signed to files.
+
+Simplify single precision and signed interface routines.
+
+------------------------------------------------------------------------
+r4484 | jcbowman | 2009-07-05 10:10:35 -0600 (Sun, 05 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/lmfit.asy
+
+Add comments.
+
+------------------------------------------------------------------------
+r4483 | jcbowman | 2009-07-04 20:39:50 -0600 (Sat, 04 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/base/animation.asy
+
+Fix animations with global=false.
+
+------------------------------------------------------------------------
+r4482 | jcbowman | 2009-07-04 15:39:12 -0600 (Sat, 04 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   M /trunk/asymptote/main.cc
+
+Use pthread_join instead of pthread_kill.
+
+------------------------------------------------------------------------
+r4481 | jcbowman | 2009-07-04 14:29:24 -0600 (Sat, 04 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/helix.asy
+   M /trunk/asymptote/examples/filesurface.asy
+
+Minor simplifications.
+
+------------------------------------------------------------------------
+r4480 | jcbowman | 2009-07-04 13:05:54 -0600 (Sat, 04 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/fftw++.h
+
+Update to version 1.04.
+
+------------------------------------------------------------------------
+r4479 | jcbowman | 2009-07-04 12:20:09 -0600 (Sat, 04 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Initialize lighting only in home().
+
+------------------------------------------------------------------------
+r4478 | jcbowman | 2009-07-04 12:08:30 -0600 (Sat, 04 Jul 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/settings.cc
+
+Don't use POSIX timers by default due to portability issues.
+
+Call home() before quit to return to idle state and reset parameters.
+
+------------------------------------------------------------------------
+r4477 | jcbowman | 2009-07-04 12:05:07 -0600 (Sat, 04 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/main.cc
+
+Exit GUI gracefully.
+
+------------------------------------------------------------------------
+r4476 | jcbowman | 2009-07-04 01:53:43 -0600 (Sat, 04 Jul 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/settings.cc
+
+Force zoom/menu to be unmodified.
+
+Update documentation.
+
+------------------------------------------------------------------------
+r4475 | jcbowman | 2009-07-04 01:32:54 -0600 (Sat, 04 Jul 2009) | 9 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/settings.cc
+
+Fix left-button zoom/menu binding bug.
+
+Add new settings zoomfactor, zoomstep, spinstep, arcballradius, resizestep,
+and doubleclick.
+
+Improve doubleclick emulation by adding a timeout (default 200ms).
+
+Re-instate default zoom/menu right-button assignment.
+
+------------------------------------------------------------------------
+r4474 | jcbowman | 2009-07-03 16:43:19 -0600 (Fri, 03 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Enable all warnings when debugging.
+
+------------------------------------------------------------------------
+r4473 | jcbowman | 2009-07-03 16:28:54 -0600 (Fri, 03 Jul 2009) | 3 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/settings.h
+   M /trunk/asymptote/stm.cc
+
+Add setting warn that allows one to enable or disable warnings like
+writeoverloaded.
+
+------------------------------------------------------------------------
+r4472 | jcbowman | 2009-07-03 01:39:13 -0600 (Fri, 03 Jul 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/common.h
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/fileio.h
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/util.cc
+   M /trunk/asymptote/util.h
+   M /trunk/asymptote/xstream.h
+
+Improve interace to routines for setting single precision mode: remove the
+unused x argument, distinguishing the integer case with a new bool signedint
+argument before the file.
+
+------------------------------------------------------------------------
+r4471 | jcbowman | 2009-07-02 11:39:13 -0600 (Thu, 02 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Fix TeXLive docdir.
+
+------------------------------------------------------------------------
+r4470 | jcbowman | 2009-07-02 01:54:52 -0600 (Thu, 02 Jul 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.80svn.
+------------------------------------------------------------------------
 r4469 | jcbowman | 2009-07-02 00:26:57 -0600 (Thu, 02 Jul 2009) | 2 lines
 Changed paths:
    M /trunk/asymptote/doc/asymptote.texi

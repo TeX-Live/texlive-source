@@ -5,6 +5,7 @@ Options (negate by replacing - with -no):
 -V,-View              View output; command-line only
 -a,-align C|B|T|Z     Center, Bottom, Top, or Zero page alignment [C]
 -antialias n          Antialiasing width for rasterized output [2]
+-arcballradius pixels Arcball radius [750]
 -auto3D               Automatically activate 3D scene [true]
 -autoimport string    Module to automatically import
 -autoplain            Enable automatic importing of plain [true]
@@ -18,6 +19,7 @@ Options (negate by replacing - with -no):
 -compact              Conserve memory at the expense of speed [false]
 -d,-debug             Enable debugging messages [false]
 -divisor n            Garbage collect using purge(divisor=n) [2]
+-doubleclick ms       Emulated double-click timeout [200]
 -embed                Embed rendered preview image [true]
 -exitonEOF            Exit interactive mode on EOF [true]
 -fitscreen            Fit rendered image to screen [true]
@@ -54,9 +56,11 @@ Options (negate by replacing - with -no):
 -prompt2 string       Continuation prompt for multiline input  [..]
 -q,-quiet             Suppress welcome message [false]
 -render n             Render 3D graphics using n pixels per bp (-1=auto) [-1]
+-resizestep step      Resize step [1.2]
 -rgb                  Convert cmyk colors to rgb [false]
 -safe                 Disable system call [true]
 -scroll n             Scroll standard output n lines at a time [0]
+-spinstep deg/sec     Spin speed [60]
 -tabcompletion        Interactive prompt auto-completion [true]
 -tex engine           latex|pdflatex|xelatex|tex|pdftex|context|none [latex]
 -thick                Render thick 3D lines [true]
@@ -70,6 +74,9 @@ Options (negate by replacing - with -no):
 -v,-verbose           Increase verbosity level (can specify multiple times) [0]
 -version              Show version; command-line only
 -wait                 Wait for child processes to finish before exiting [false]
+-warn string          Enable warning; command-line only
 -where                Show where listed variables are declared [false]
 -xformat format       GUI deconstruction format [png]
+-zoomfactor factor    Zoom step factor [1.05]
+-zoomstep step        Mouse motion zoom step [0.1]
 

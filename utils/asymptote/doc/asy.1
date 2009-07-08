@@ -39,6 +39,7 @@ Center, Bottom, Top, or Zero page alignment [C].
 .TP
 .B \-antialias n        
 Antialiasing width for rasterized output [2].
+-arcballradius pixels Arcball radius [750]
 .TP
 .B \-auto3D             
 Automatically activate 3D scene [true].
@@ -78,6 +79,9 @@ Enable debugging messages [false].
 .TP
 .B \-divisor n          
 Garbage collect using purge(divisor=n) [2].
+.TP
+.B \-doubleclick ms     
+Emulated double-click timeout [200].
 .TP
 .B \-embed              
 Embed rendered preview image [true].
@@ -187,6 +191,9 @@ Suppress welcome message [false].
 .B \-render n           
 Render 3D graphics using n pixels per bp (-1=auto) [-1].
 .TP
+.B \-resizestep step    
+Resize step [1.2].
+.TP
 .B \-rgb                
 Convert cmyk colors to rgb [false].
 .TP
@@ -195,6 +202,9 @@ Disable system call [true].
 .TP
 .B \-scroll n           
 Scroll standard output n lines at a time [0].
+.TP
+.B \-spinstep deg/sec   
+Spin speed [60].
 .TP
 .B \-tabcompletion      
 Interactive prompt auto-completion [true].
@@ -235,11 +245,20 @@ Show version; command-line only.
 .B \-wait               
 Wait for child processes to finish before exiting [false].
 .TP
+.B \-warn string        
+Enable warning; command-line only.
+.TP
 .B \-where              
 Show where listed variables are declared [false].
 .TP
 .B \-xformat format     
 GUI deconstruction format [png].
+.TP
+.B \-zoomfactor factor  
+Zoom step factor [1.05].
+.TP
+.B \-zoomstep step      
+Mouse motion zoom step [0.1].
 
 .SH SEE ALSO
 Asymptote is documented fully in the asymptote Info page.

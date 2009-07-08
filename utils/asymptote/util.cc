@@ -223,12 +223,12 @@ void execError(const char *command, const char *hint, const char *application)
     cerr << "Please put in a file " << getSetting<string>("config")
          << ": " << endl << endl
          << "import settings;" << endl
-         << hint << "=\"PATH\";" << endl << endl
-         << "where PATH denotes the correct path to " 
+         << hint << "=\"LOCATION\";" << endl << endl
+         << "where LOCATION specifies the location of " 
          << application << "." << endl << endl
          << "Alternatively, set the environment variable ASYMPTOTE_" << s 
          << endl << "or use the command line option -" << hint 
-         << "=\"PATH\". For further details, see" << endl
+         << "=\"LOCATION\". For further details, see" << endl
          << "http://asymptote.sourceforge.net/doc/Configuring.html" << endl
          << "http://asymptote.sourceforge.net/doc/Search-paths.html" << endl;
   }
@@ -378,16 +378,33 @@ void popupHelp() {
   }
 }
 
+const char *intrange="integer argument is outside valid range";
+const char *uintrange="integer argument is outside valid unsigned range";
+
 unsigned unsignedcast(Int n)
 {
   if(n < 0 || n/2 > INT_MAX)
-    vm::error("Unsigned integer argument is outside valid range");
+    vm::error(uintrange);
   return (unsigned) n;
+}
+
+unsignedInt unsignedIntcast(Int n)
+{
+  if(n < 0)
+    vm::error(uintrange);
+  return (unsignedInt) n;
 }
 
 int intcast(Int n)
 {
   if(Abs(n) > INT_MAX)
-    vm::error("Integer argument is outside valid range");
+    vm::error(intrange);
   return (int) n;
+}
+
+Int Intcast(unsignedInt n)
+{
+  if(n > (unsignedInt) Int_MAX)
+    vm::error(intrange);
+  return (Int) n;
 }

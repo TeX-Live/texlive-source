@@ -14,6 +14,7 @@
 #include <locale.h>
 #include <unistd.h>
 #include <algorithm>
+#include <cstdarg>
 
 #include "common.h"
 
@@ -214,6 +215,35 @@ types::dummyRecord *settingsModule;
 
 types::record *getSettingsModule() {
   return settingsModule;
+}
+
+void Warn(const string& s)
+{
+  array *Warn=getSetting<array *>("warnings");
+  size_t size=checkArray(Warn);
+  if(s.empty()) return;
+  for(size_t i=0; i < size; i++)
+    if(vm::read<string>(Warn,i) == s) return;
+  Warn->push(s);
+}
+
+void noWarn(const string& s)
+{
+  array *Warn=getSetting<array *>("warnings");
+  size_t size=checkArray(Warn);
+  for(size_t i=0; i < size; i++)
+    if(vm::read<string>(Warn,i) == s) 
+      (*Warn).erase((*Warn).begin()+i,(*Warn).begin()+i+1);
+}
+
+string warn(const string& s)
+{
+  if(getSetting<bool>("debug")) return s;
+  array *Warn=getSetting<array *>("warnings");
+  size_t size=checkArray(Warn);
+  for(size_t i=0; i < size; i++)
+    if(vm::read<string>(Warn,i) == s) return s;
+  return "";
 }
 
 // The dictionaries of long options and short options.
@@ -484,7 +514,7 @@ struct argumentSetting : public itemSetting {
 struct stringSetting : public argumentSetting {
   stringSetting(string name, char code,
                 string argname, string desc,
-                string defaultValue)
+                string defaultValue="")
     : argumentSetting(name, code, argname, desc.empty() ? "" :
                       desc+(defaultValue.empty() ? "" : " ["+defaultValue+"]"),
                       types::primString(), (item)defaultValue) {}
@@ -498,7 +528,7 @@ struct stringSetting : public argumentSetting {
 struct userSetting : public argumentSetting {
   userSetting(string name, char code,
               string argname, string desc,
-              string defaultValue)
+              string defaultValue="")
     : argumentSetting(name, code, argname, desc,
                       types::primString(), (item)defaultValue) {}
 
@@ -507,6 +537,41 @@ struct userSetting : public argumentSetting {
     s.push_back(';');
     value=(item) s;
     return true;
+  }
+};
+
+struct warnSetting : public option {
+  warnSetting(string name, char code,
+              string argname, string desc)
+    : option(name, code, argname, desc, true) {}
+
+  bool getOption() {
+    Warn(string(optarg));
+    return true;
+  }
+  
+  option *negation(string name) {
+    struct negOption : public option {
+      warnSetting &base;
+
+      negOption(warnSetting &base, string name, string argname)
+        : option(name, 0, argname, ""), base(base) {}
+
+      bool getOption() {
+        noWarn(string(optarg));
+        return true;
+      }
+    };
+    return new negOption(*this, name, argname);
+  }
+  
+  void add() {
+    option::add();
+    negation("no"+name)->add();
+    if (code) {
+      string nocode="no"; nocode.push_back(code);
+      negation(nocode)->add();
+    }
   }
 };
 
@@ -598,8 +663,8 @@ struct alignSetting : public argumentSetting {
   }
 };
 
-struct ButtonSetting : public itemSetting {
-  ButtonSetting(string name, array *defaultValue)
+struct stringArraySetting : public itemSetting {
+  stringArraySetting(string name, array *defaultValue)
     : itemSetting(name, 0, "", "",
                   types::stringArray(), (item) defaultValue) {}
 
@@ -932,6 +997,31 @@ void no_GCwarn(char *, GC_word)
 }
 #endif
 
+array* Array(const char *s ...) 
+{
+  va_list v;
+  size_t count=0;
+  const char *s0=s;
+  
+  va_start(v,s);
+  while(*s) {
+    ++count;
+    s=va_arg(v,char *);
+  }
+  va_end(v);
+  
+  array *a=new array(count);
+  s=s0;
+  va_start(v,s);
+  for(size_t i=0; i < count; ++i) {
+    (*a)[i]=string(s);
+    s=va_arg(v,char *);
+  }
+  va_end(v);
+  
+  return a;
+}
+
 void initSettings() {
   static bool initialize=true;
   if(initialize) {
@@ -947,44 +1037,33 @@ void initSettings() {
 // SHIFT LEFT: zoom
 // CTRL LEFT: shift
 // ALT LEFT: pan
+  array *leftbutton=Array("rotate","zoom","shift","pan","");
   
-  array *leftbutton=new array(4);
-  (*leftbutton)[0]=string("rotate");
-  (*leftbutton)[1]=string("zoom");
-  (*leftbutton)[2]=string("shift");
-  (*leftbutton)[3]=string("pan");
+// MIDDLE: menu (must be unmodified; ignores Shift, Ctrl, and Alt)
+  array *middlebutton=Array("menu","");
   
-// MIDDLE: menu
-  
-  array *middlebutton=new array(1);
-  (*middlebutton)[0]=string("menu");
-  
-// RIGHT: zoom
+// RIGHT: zoom/menu (must be unmodified)
 // SHIFT RIGHT: rotateX
 // CTRL RIGHT: rotateY
 // ALT RIGHT: rotateZ
-  
-  array *rightbutton=new array(4);
-  (*rightbutton)[0]=string("zoom");
-  (*rightbutton)[1]=string("rotateX");
-  (*rightbutton)[2]=string("rotateY");
-  (*rightbutton)[3]=string("rotateZ");
+  array *rightbutton=Array("zoom/menu","rotateX","rotateY","rotateZ","");
   
 // WHEEL_UP: zoomin
-  
-  array *wheelup=new array(1);
-  (*wheelup)[0]=string("zoomin");
+  array *wheelup=Array("zoomin","");
   
 // WHEEL_DOWN: zoomout
+  array *wheeldown=Array("zoomout","");
   
-  array *wheeldown=new array(1);
-  (*wheeldown)[0]=string("zoomout");
+  array *Warn=Array("writeoverloaded","");
   
-  addOption(new ButtonSetting("leftbutton", leftbutton));
-  addOption(new ButtonSetting("middlebutton", middlebutton));
-  addOption(new ButtonSetting("rightbutton", rightbutton));
-  addOption(new ButtonSetting("wheelup", wheelup));
-  addOption(new ButtonSetting("wheeldown", wheeldown));
+  addOption(new stringArraySetting("leftbutton", leftbutton));
+  addOption(new stringArraySetting("middlebutton", middlebutton));
+  addOption(new stringArraySetting("rightbutton", rightbutton));
+  addOption(new stringArraySetting("wheelup", wheelup));
+  addOption(new stringArraySetting("wheeldown", wheeldown));
+  
+  addOption(new stringArraySetting("warnings", Warn));
+  addOption(new warnSetting("warn", 0, "string", "Enable warning"));
   
   multiOption *view=new multiOption("View", 'V', "View output");
   view->add(new boolSetting("batchView", 0, "View output in batch mode",
@@ -1095,8 +1174,7 @@ void initSettings() {
                                       "Allow write to other directory",
                                       &globaloption, false));
   addSecureSetting(new stringSetting("outname", 'o', "name",
-                                     "Alternative output directory/filename",
-                                     ""));
+                                     "Alternative output directory/filename"));
   addOption(new stringOption("cd", 0, "directory", "Set current directory",
                              &startpath));
   
@@ -1144,22 +1222,34 @@ void initSettings() {
                            "Delay before attempting initial pdf reload"
                            ,750000));
   addOption(new stringSetting("autoimport", 0, "string",
-                              "Module to automatically import", ""));
+                              "Module to automatically import"));
   addOption(new userSetting("command", 'c', "string",
-                            "Command to autoexecute", ""));
+                            "Command to autoexecute"));
   addOption(new userSetting("user", 'u', "string",
-                            "General purpose user string", ""));
+                            "General purpose user string"));
+  
+  addOption(new realSetting("zoomfactor", 0, "factor", "Zoom step factor",
+                            1.05));
+  addOption(new realSetting("zoomstep", 0, "step", "Mouse motion zoom step",
+                            0.1));
+  addOption(new realSetting("spinstep", 0, "deg/sec", "Spin speed",
+                            60.0));
+  addOption(new realSetting("arcballradius", 0, "pixels",
+                            "Arcball radius", 750.0));
+  addOption(new realSetting("resizestep", 0, "step", "Resize step", 1.2));
+  addOption(new realSetting("doubleclick", 0, "ms",
+                            "Emulated double-click timeout", 200.0));
   
   addOption(new realSetting("paperwidth", 0, "bp", ""));
   addOption(new realSetting("paperheight", 0, "bp", ""));
   
-  addOption(new stringSetting("dvipsOptions", 0, "string", "", ""));
-  addOption(new stringSetting("convertOptions", 0, "string", "", ""));
-  addOption(new stringSetting("gsOptions", 0, "string", "", ""));
-  addOption(new stringSetting("psviewerOptions", 0, "string", "", ""));
-  addOption(new stringSetting("pdfviewerOptions", 0, "string", "", ""));
-  addOption(new stringSetting("pdfreloadOptions", 0, "string", "", ""));
-  addOption(new stringSetting("glOptions", 0, "string", "", ""));
+  addOption(new stringSetting("dvipsOptions", 0, "string", ""));
+  addOption(new stringSetting("convertOptions", 0, "string", ""));
+  addOption(new stringSetting("gsOptions", 0, "string", ""));
+  addOption(new stringSetting("psviewerOptions", 0, "string", ""));
+  addOption(new stringSetting("pdfviewerOptions", 0, "string", ""));
+  addOption(new stringSetting("pdfreloadOptions", 0, "string", ""));
+  addOption(new stringSetting("glOptions", 0, "string", ""));
   
   addOption(new envSetting("config","config."+suffix));
   addOption(new envSetting("pdfviewer", defaultPDFViewer));
@@ -1239,8 +1329,9 @@ void initDir() {
   if(getSetting<string>("sysdir").empty()) {
     string s=lookup("SELFAUTOPARENT");
     if(s.size() > 1) {
-      docdir=s+dirsep+"texmf"+dirsep+"doc"+dirsep+"asymptote";
-      Setting("sysdir")=s+dirsep+"texmf"+dirsep+"asymptote";
+      string texmf=s+dirsep+"texmf"+dirsep;
+      docdir=texmf+"doc"+dirsep+"asymptote";
+      Setting("sysdir")=texmf+"asymptote";
       s=lookup("TEXMFCONFIG");
       if(s.size() > 1)
         initdir=s+dirsep+"asymptote";

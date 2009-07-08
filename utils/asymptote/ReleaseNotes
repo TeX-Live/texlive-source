@@ -1,3 +1,17 @@
+Release Notes for Version 1.80
+
+The interface for changing the precision for XDR/binary files was
+simplified; file parameters can now be queried as virtual members.
+The zoom/menu action was improved to emulate a double-click and assigned again
+to the right mouse button; a left-button binding bug was fixed.
+New settings zoomfactor, zoomstep, spinstep, arcballradius, resizestep, and
+doubleclick were added. The OpenGL thread is now exited gracefully; idle
+state and other parameters are properly reset on quitting. Lighting is now
+initialized only in home(). Animations with global=false were fixed.
+An improved (and free) psview PostScript viewer is now suggested for MSDOS
+users. A mechanism for disabling annoying warnings like "writeoverloaded"
+was implemented. The documentation directory under TeXLive was fixed.  
+
 Release Notes for Version 1.79
 
 The perp vector calculation in the solids module was fixed. A bug in the

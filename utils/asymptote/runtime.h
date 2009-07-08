@@ -95,6 +95,15 @@ void arrayConditional(vm::stack *);
 void diagonal(vm::stack *);
 void pairArrayFFT(vm::stack *);
 void nullFile(vm::stack *);
+void namePart(vm::stack *);
+void modePart(vm::stack *);
+void dimensionPart(vm::stack *);
+void lineModePart(vm::stack *);
+void csvModePart(vm::stack *);
+void wordModePart(vm::stack *);
+void singleRealModePart(vm::stack *);
+void singleIntModePart(vm::stack *);
+void signedIntModePart(vm::stack *);
 }
 
 #endif // RUNTIME_H

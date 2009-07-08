@@ -53,12 +53,16 @@ using camp::bbox3;
 using settings::getSetting;
 using settings::Setting;
 
-const double moveFactor=1.0;  
-const double zoomFactor=1.05;
-const double zoomFactorStep=0.1;
-const double spinStep=60.0; // Degrees per second
-const double arcballRadius=750.0;
-const double resizeStep=1.2;
+// For now, don't use POSIX timers by default due to portability issues.
+#ifdef HAVE_POSIX_TIMERS
+static timer_t timerid;
+static struct itimerspec Timeout;
+#else
+static struct itimerval Timeout;
+#endif
+
+static const double milliseconds=1000.0; // In microseconds.
+timeval lasttime;
 
 double Aspect;
 bool View;
@@ -120,7 +124,7 @@ bool antialias;
 
 int x0,y0;
 string Action;
-int MenuButton=0;
+int MenuButton;
 
 double lastangle;
 
@@ -258,6 +262,7 @@ void setProjection()
   else
     glFrustum(xmin,xmax,ymin,ymax,-zmax,-zmin);
   glMatrixMode(GL_MODELVIEW);
+  double arcballRadius=getSetting<double>("arcballradius");
   arcball.set_params(vec2(0.5*Width,0.5*Height),arcballRadius*Zoom);
 }
 
@@ -495,7 +500,6 @@ void togglefitscreen()
 
 void updateHandler(int)
 {
-  initlighting();
   update();
   glutShowWindow();
   glutShowWindow(); // Call twice to work around apparent freeglut bug.
@@ -529,11 +533,41 @@ void reshape(int width, int height)
   reshape0(width,height);
 }
   
+void initTimer() 
+{
+  gettimeofday(&lasttime,NULL);
+}
+
+void idleFunc(void (*f)())
+{
+  initTimer();
+  glutIdleFunc(f);
+}
+
+void idle() 
+{
+  glutIdleFunc(NULL);
+  Xspin=Yspin=Zspin=false;
+}
+
+void home() 
+{
+  idle();
+  X=Y=cx=cy=0.0;
+  arcball.init();
+  glLoadIdentity();
+  glGetFloatv(GL_MODELVIEW_MATRIX,Rotate);
+  lastzoom=Zoom=Zoom0;
+  setDimensions(Width,Height,0,0);
+  initlighting();
+}
+
 void quit() 
 {
   if(glthread) {
+    home();
     glutHideWindow();
-#ifdef HAVE_LIBPTHREAD
+ #ifdef HAVE_LIBPTHREAD
     if(!interact::interactive)
       endwait(readySignal,readyLock);
 #endif    
@@ -597,9 +631,8 @@ void capzoom()
 
 void disableMenu() 
 {
-  if(MenuButton) 
-    glutDetachMenu(MenuButton);
   Menu=false;
+  glutDetachMenu(MenuButton);
 }
 
 void zoom(int x, int y)
@@ -612,30 +645,37 @@ void zoom(int x, int y)
       return;
     }
     Motion=true;
-    static const double limit=log(0.1*DBL_MAX)/log(zoomFactor);
-    lastzoom=Zoom;
-    double s=zoomFactorStep*(y0-y);
-    if(fabs(s) < limit) {
-      Zoom *= pow(zoomFactor,s);
-      capzoom();
-      y0=y;
-      setProjection();
-      glutPostRedisplay();
+    double zoomFactor=getSetting<double>("zoomfactor");
+    if(zoomFactor > 0.0) {
+      double zoomStep=getSetting<double>("zoomstep");
+      const double limit=log(0.1*DBL_MAX)/log(zoomFactor);
+      lastzoom=Zoom;
+      double s=zoomStep*(y0-y);
+      if(fabs(s) < limit) {
+        Zoom *= pow(zoomFactor,s);
+        capzoom();
+        y0=y;
+        setProjection();
+        glutPostRedisplay();
+      }
     }
   }
 }
   
 void mousewheel(int wheel, int direction, int x, int y) 
 {
-  lastzoom=Zoom;
-  if(direction > 0)
-    Zoom *= zoomFactor;
-  else
-    Zoom /= zoomFactor;
+  double zoomFactor=getSetting<double>("zoomfactor");
+  if(zoomFactor > 0.0) {
+    lastzoom=Zoom;
+    if(direction > 0)
+      Zoom *= zoomFactor;
+    else
+      Zoom /= zoomFactor;
   
-  capzoom();
-  setProjection();
-  glutPostRedisplay();
+    capzoom();
+    setProjection();
+    glutPostRedisplay();
+  }
 }
 
 void rotate(int x, int y)
@@ -677,7 +717,7 @@ void updateArcball()
   }
   update();
 }
-  
+
 void rotateX(double step) 
 {
   glLoadIdentity();
@@ -786,9 +826,45 @@ string action(int button, int mod)
   return "";
 }
 
+void timeout(int)
+{
+  if(Menu) disableMenu();
+}
+
+void init_timeout()
+{
+  static struct sigaction action;
+  action.sa_handler=timeout;
+  sigemptyset(&action.sa_mask);
+  action.sa_flags=0;
+  sigaction(SIGALRM,&action,NULL);
+  
+  Timeout.it_value.tv_sec=Timeout.it_interval.tv_sec=0;
+#ifdef HAVE_POSIX_TIMERS
+  timer_create (CLOCK_REALTIME,NULL,&timerid);
+  Timeout.it_interval.tv_nsec=0;
+#else  
+  Timeout.it_interval.tv_usec=0;
+#endif  
+}
+
+void set_timeout(int microseconds)
+{
+  if(microseconds >= 0) {
+#ifdef HAVE_POSIX_TIMERS
+    Timeout.it_value.tv_nsec=1000*microseconds;
+    timer_settime(timerid,0,&Timeout,NULL);
+#else
+    Timeout.it_value.tv_usec=microseconds;
+    setitimer(ITIMER_REAL,&Timeout,NULL);
+#endif    
+  }
+}
+
 void mouse(int button, int state, int x, int y)
 {
-  string Action=action(button,glutGetModifiers());
+  int mod=glutGetModifiers();
+  string Action=action(button,mod);
 
   if(Action == "zoomin") {
     glutMotionFunc(NULL);
@@ -801,12 +877,13 @@ void mouse(int button, int state, int x, int y)
     return;
   }     
   
-  if(Action == "zoom/menu") {
+  if(Action == "zoom/menu" && mod == 0) {
     if(state == GLUT_UP && !Motion) {
       MenuButton=button;
       glutMotionFunc(NULL);
       glutAttachMenu(button);
       Menu=true;
+      set_timeout((int) (getSetting<double>("doubleclick")*milliseconds));
       return;
     }
   }
@@ -837,14 +914,13 @@ void mouse(int button, int state, int x, int y)
   }
 }
 
-timeval lasttime;
-
 double spinstep() 
 {
   timeval tv;
   gettimeofday(&tv,NULL);
-  double step=spinStep*(tv.tv_sec-lasttime.tv_sec+
-                        ((double) tv.tv_usec-lasttime.tv_usec)/1000000.0);
+  double step=getSetting<double>("spinstep")*
+    (tv.tv_sec-lasttime.tv_sec+
+     ((double) tv.tv_usec-lasttime.tv_usec)/1000000.0);
   lasttime=tv;
   return step;
 }
@@ -864,26 +940,19 @@ void zspin()
   rotateZ(spinstep());
 }
 
-void initTimer() 
-{
-  gettimeofday(&lasttime,NULL);
-}
-
 void expand() 
 {
-  setsize((int) (Width*resizeStep+0.5),(int) (Height*resizeStep+0.5));
+  double resizeStep=getSetting<double>("resizestep");
+  if(resizeStep > 0.0)
+    setsize((int) (Width*resizeStep+0.5),(int) (Height*resizeStep+0.5));
 }
 
 void shrink() 
 {
-  setsize(max((int) (Width/resizeStep+0.5),1),
-          max((int) (Height/resizeStep+0.5),1));
-}
-
-void idleFunc(void (*f)())
-{
-  initTimer();
-  glutIdleFunc(f);
+  double resizeStep=getSetting<double>("resizestep");
+ if(resizeStep > 0.0)
+   setsize(max((int) (Width/resizeStep+0.5),1),
+           max((int) (Height/resizeStep+0.5),1));
 }
 
 void mode() 
@@ -909,12 +978,6 @@ void mode()
       break;
   }
   glutPostRedisplay();
-}
-
-void idle() 
-{
-  glutIdleFunc(NULL);
-  Xspin=Yspin=Zspin=false;
 }
 
 void spinx() 
@@ -948,17 +1011,6 @@ void spinz()
     Zspin=true;
     Xspin=Yspin=false;
   }
-}
-
-void home() 
-{
-  idle();
-  X=Y=cx=cy=0.0;
-  arcball.init();
-  glLoadIdentity();
-  glGetFloatv(GL_MODELVIEW_MATRIX,Rotate);
-  lastzoom=Zoom=Zoom0;
-  setDimensions(Width,Height,0,0);
 }
 
 void write(const char *text, const double *v)
@@ -998,7 +1050,8 @@ void camera()
   pair viewportshift(X/Width*lastzoom+Shift.getx(),
                      Y/Height*lastzoom+Shift.gety());
   
-  cout << "currentprojection=" 
+  cout << endl
+       << "currentprojection=" 
        << (orthographic ? "orthographic(" : "perspective(")  << endl
        << "camera=" << Camera << "," << endl
        << "up=" << Up << "," << endl
@@ -1011,7 +1064,7 @@ void camera()
     cout << "," << endl << "viewportshift=" << viewportshift;
   if(!orthographic)
     cout << "," << endl << "autoadjust=false";
-  cout << ");" << endl << endl;
+  cout << ");" << endl;
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -1067,7 +1120,8 @@ enum Menu {HOME,FITSCREEN,XSPIN,YSPIN,ZSPIN,STOP,MODE,EXPORT,CAMERA,QUIT};
 
 void menu(int choice)
 {
-  disableMenu();
+  set_timeout(0);
+  if(Menu) disableMenu();
   ignorezoom=true;
   Motion=true;
   switch (choice) {
@@ -1126,6 +1180,7 @@ void init()
   
   screenWidth=glutGet(GLUT_SCREEN_WIDTH);
   screenHeight=glutGet(GLUT_SCREEN_HEIGHT);
+  init_timeout();
 }
 
 // angle=0 means orthographic.
@@ -1240,10 +1295,8 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   
 #ifdef HAVE_LIBPTHREAD
   if(glthread && initializedView) {
-    if(!View) {
+    if(!View)
       readyAfterExport=queueExport=true;
-    }
-    
     pthread_kill(mainthread,SIGUSR1);
     return;
   }
@@ -1284,16 +1337,16 @@ void glrender(const string& prefix, const picture *pic, const string& format,
       string suffix;
       for(size_t i=0; i < nbuttons; ++i) {
         int button=buttons[i];
-        if(action(button,0) == "menu") {
-          suffix="Click "+buttonnames[i]+" button for menu";
+        if(action(button,0) == "zoom/menu") {
+          suffix="Double click "+buttonnames[i]+" button for menu";
           break;
         }
       }
       if(suffix.empty()) {
         for(size_t i=0; i < nbuttons; ++i) {
           int button=buttons[i];
-          if(action(button,0) == "zoom/menu") {
-            suffix="Double click "+buttonnames[i]+" button for menu";
+          if(action(button,0) == "menu") {
+            suffix="Click "+buttonnames[i]+" button for menu";
             break;
           }
         }
@@ -1367,7 +1420,6 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   gluNurbsCallback(nurb,GLU_NURBS_COLOR,(_GLUfuncptr) glColor4fv);
   mode();
   
-  initlighting();
   if(View) {
     initializedView=true;
     glutReshapeFunc(reshape);
