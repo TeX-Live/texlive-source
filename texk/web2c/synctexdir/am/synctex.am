@@ -26,8 +26,6 @@ dist_man_MANS += synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 EXTRA_DIST += \
 	synctexdir/ChangeLog \
 	synctexdir/INSTALL \
-	synctexdir/Makefile \
-	synctexdir/Makefile.in \
 	synctexdir/README.txt \
 	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt \
@@ -197,7 +195,7 @@ synctex_convert_xetex = && $(SHELL) $(srcdir)/synctexdir/synctex-convert.sh xete
 
 else !XETEX_SYNCTEX
 
-synctex_convert_xetex = && echo "warning: SyncTeX for e-TeX is NOT enabled"
+synctex_convert_xetex = && echo "warning: SyncTeX for XeTeX is NOT enabled"
 
 endif !XETEX_SYNCTEX
 
@@ -208,4 +206,10 @@ EXTRA_DIST += \
 	synctexdir/synctex-xe-mem.ch2 \
 	synctexdir/synctex-xe-rec.ch2 \
 	synctexdir/synctex-xe-rec.ch3
+
+## Not used
+##
+EXTRA_DIST += \
+	synctexdir/Makefile \
+	synctexdir/Makefile.in
 

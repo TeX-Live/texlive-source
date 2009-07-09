@@ -1227,8 +1227,8 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	alephdir/aleph.version alephdir/eomega.ech alephdir/etex.ch \
 	alephdir/omega.ch0 alephdir/omega.ch1 alephdir/omega.ch2 \
 	alephdir/omxml.ch alephdir/aleph.mk synctexdir/ChangeLog \
-	synctexdir/INSTALL synctexdir/Makefile synctexdir/Makefile.in \
-	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
+	synctexdir/INSTALL synctexdir/README.txt \
+	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex-convert.sh \
 	synctexdir/synctex.c synctexdir/synctex.defines \
@@ -1239,7 +1239,8 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	synctexdir/synctex-e-mem.ch1 synctexdir/synctex-e-rec.ch0 \
 	synctexdir/synctex-e-rec.ch1 synctexdir/synctex-pdf-rec.ch2 \
 	synctexdir/synctex-xe-mem.ch2 synctexdir/synctex-xe-rec.ch2 \
-	synctexdir/synctex-xe-rec.ch3 libmd5/md5.test fmtutil.in \
+	synctexdir/synctex-xe-rec.ch3 synctexdir/Makefile \
+	synctexdir/Makefile.in libmd5/md5.test fmtutil.in \
 	Makefile.in.orig configure.in.orig metapost.mk
 DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tangle-web2c stamp-tangle tangleboot.c tangleboot.h ctangle.c \
@@ -2040,7 +2041,7 @@ synctex_DEPENDENCIES = $(ZLIB_DEPEND)
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xetex.h
 
-@XETEX_SYNCTEX_FALSE@synctex_convert_xetex = && echo "warning: SyncTeX for e-TeX is NOT enabled"
+@XETEX_SYNCTEX_FALSE@synctex_convert_xetex = && echo "warning: SyncTeX for XeTeX is NOT enabled"
 @XETEX_SYNCTEX_TRUE@synctex_convert_xetex = && $(SHELL) $(srcdir)/synctexdir/synctex-convert.sh xetex
 libmd5_a_CPPFLAGS = -I$(srcdir)/libmd5
 libmd5_a_SOURCES = libmd5/md5.c libmd5/md5.h

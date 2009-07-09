@@ -91,6 +91,7 @@ int main(int argc, char *argv[]);
 void synctex_help(char * error,...);
 void synctex_help_view(char * error,...);
 void synctex_help_edit(char * error,...);
+void synctex_help_update(char * error,...);
 
 int synctex_view(int argc, char *argv[]);
 int synctex_edit(int argc, char *argv[]);
@@ -109,6 +110,9 @@ int main(int argc, char *argv[])
 					return 0;
 				} else if(0==strcmp("edit",argv[arg_index])) {
 					synctex_help_edit(NULL);
+					return 0;
+				} else if(0==strcmp("update",argv[arg_index])) {
+					synctex_help_update(NULL);
 					return 0;
 				}
 			}
@@ -752,7 +756,7 @@ void synctex_help_update(char * error,...) {
 		"\n"
 		"usage: synctex update -o output [-d directory] [-m number] [-x dimension] [-y dimension]\n"
 		"\n"
-		"-o output     is the full or relative path of an existing file,.\n"
+		"-o output     is the full or relative path of an existing file,\n"
 		"              either the real synctex file you wish to update\n"
 		"              or a related file: foo.tex, foo.pdf, foo.dvi...\n"
 		"-d directory  is the directory containing the synctex file, in case it is different from the directory of the output.\n"
