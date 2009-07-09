@@ -28,10 +28,10 @@ EXTRA_DIST += tex.man
 if MF
 man_sources += mf.man
 if MFN
-man_sources +=
+man_sources += # mf-nowin.man
 endif MFN
 endif MF
-EXTRA_DIST += mf.man
+EXTRA_DIST += mf.man # mf-nowin.man
 
 if MP
 man_sources += mpost.man
@@ -52,14 +52,17 @@ pdftex_man_sources = pdftex.man pdftosrc.man
 if LUATEX
 man_sources += luatex.man
 endif LUATEX
+EXTRA_DIST += luatex.man
 
 if XETEX
-man_sources +=
+man_sources += # xetex.man
 endif XETEX
+EXTRA_DIST += # xetex.man
 
 if OTANGLE
-man_sources +=
+man_sources += # otangle.man
 endif OTANGLE
+EXTRA_DIST += # otangle.man
 
 if ALEPH
 man_sources += aleph.man

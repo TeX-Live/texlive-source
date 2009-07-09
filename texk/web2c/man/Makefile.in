@@ -36,13 +36,13 @@ host_triplet = @host@
 @WEB_TRUE@am__append_1 = $(web_man_sources)
 @TEX_TRUE@am__append_2 = tex.man
 @MF_TRUE@am__append_3 = mf.man
-@MFN_TRUE@@MF_TRUE@am__append_4 = 
+@MFN_TRUE@@MF_TRUE@am__append_4 = # mf-nowin.man
 @MP_TRUE@am__append_5 = mpost.man
 @ETEX_TRUE@am__append_6 = etex.man
 @PDFTEX_TRUE@am__append_7 = $(pdftex_man_sources)
-@LUATEX_TRUE@am__append_8 = 
-@XETEX_TRUE@am__append_9 = 
-@OTANGLE_TRUE@am__append_10 = 
+@LUATEX_TRUE@am__append_8 = luatex.man
+@XETEX_TRUE@am__append_9 = # xetex.man
+@OTANGLE_TRUE@am__append_10 = # otangle.man
 @ALEPH_TRUE@am__append_11 = aleph.man
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/../am/man.am ChangeLog
@@ -293,7 +293,7 @@ man_sources = $(bootstrap_man_sources) $(am__append_1) $(am__append_2) \
 	$(misc_man_sources)
 EXTRA_DIST = $(bootstrap_man_sources) $(web_man_sources) \
 	$(mpware_man_sources) tex.man mf.man mpost.man etex.man \
-	$(pdftex_man_sources) aleph.man $(misc_man_sources) \
+	$(pdftex_man_sources) luatex.man aleph.man $(misc_man_sources) \
 	amslatex.min initex.min lamstex.min pdftexman.m4 slitex.min \
 	spell.add virtex.min
 bootstrap_man_sources = cweb.man tangle.man
