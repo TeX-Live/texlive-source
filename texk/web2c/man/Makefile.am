@@ -50,7 +50,7 @@ EXTRA_DIST += $(pdftex_man_sources)
 pdftex_man_sources = pdftex.man pdftosrc.man
 
 if LUATEX
-man_sources +=
+man_sources += luatex.man
 endif LUATEX
 
 if XETEX
