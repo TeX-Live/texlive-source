@@ -207,9 +207,3 @@ EXTRA_DIST += \
 	synctexdir/synctex-xe-rec.ch2 \
 	synctexdir/synctex-xe-rec.ch3
 
-## Not used
-##
-EXTRA_DIST += \
-	synctexdir/Makefile \
-	synctexdir/Makefile.in
-
