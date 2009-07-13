@@ -1227,8 +1227,7 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	alephdir/aleph.version alephdir/eomega.ech alephdir/etex.ch \
 	alephdir/omega.ch0 alephdir/omega.ch1 alephdir/omega.ch2 \
 	alephdir/omxml.ch alephdir/aleph.mk synctexdir/ChangeLog \
-	synctexdir/INSTALL synctexdir/README.txt \
-	synctexdir/synctex_parser_readme.txt \
+	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex-convert.sh \
 	synctexdir/synctex.c synctexdir/synctex.defines \

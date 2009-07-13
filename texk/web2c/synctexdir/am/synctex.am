@@ -25,7 +25,6 @@ dist_man_MANS += synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 
 EXTRA_DIST += \
 	synctexdir/ChangeLog \
-	synctexdir/INSTALL \
 	synctexdir/README.txt \
 	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt \
