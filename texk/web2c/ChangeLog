@@ -1,3 +1,7 @@
+2009-07-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h: recover definition of kpsesrccmdline.
+
 2009-06-30  Karl Berry  <karl@tug.org>
 
 	* config.h: #include <c-auto.h>, not <web2c/c-auto.h>.

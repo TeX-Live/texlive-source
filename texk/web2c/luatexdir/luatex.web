@@ -15333,7 +15333,7 @@ if not callback_defined(read_pk_file_callback) then begin
     end else
         kpseinitprog('PDFTEX', fixed_pk_resolution, nil, nil);
     if not kpsevarvalue('MKTEXPK') then
-         kpsesetprogramenabled (kpsepkformat, 1, kpsesrccompile);
+         kpsesetprogramenabled (kpsepkformat, 1, kpsesrccmdline);
     end;
 set_job_id(year, month, day, time);
 if (pdf_unique_resname > 0) and (pdf_resname_prefix = 0) then

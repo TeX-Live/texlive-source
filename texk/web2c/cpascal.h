@@ -253,6 +253,7 @@ typedef unsigned char *pointertobyte;
 #define kpsewebformat	kpse_web_format
 #define kpsevarvalue	kpse_var_value
 #define kpsesetprogramenabled	kpse_set_program_enabled
+#define kpsesrccmdline	kpse_src_cmdline
 #define kpsesrccompile	kpse_src_compile
 #define makesuffix	make_suffix
 #define recorderchangefilename	recorder_change_filename
