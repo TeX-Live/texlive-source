@@ -403,7 +403,7 @@ static void ttf_read_mapx(void)
         glyph->name_index = 0;
         glyph->name = (char *) notdef;
     }
-    glyph_index = xtalloc(glyphs_count, long);
+    glyph_index = xtalloc(glyphs_count + 1, long);
     glyph_index[0] = 0;         /* index of ".notdef" glyph */
     glyph_index[1] = 1;         /* index of ".null" glyph */
 }

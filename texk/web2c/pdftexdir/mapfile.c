@@ -530,6 +530,8 @@ static void fm_scan_line()
     if (is_fontfile(fm) && strlen(fm_fontfile(fm)) > 3) {
         if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".ttf") == 0)
             set_truetype(fm);
+        else if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".ttc") == 0)
+            set_truetype(fm);
         else if (strcasecmp(strend(fm_fontfile(fm)) - 4, ".otf") == 0)
             set_opentype(fm);
         else

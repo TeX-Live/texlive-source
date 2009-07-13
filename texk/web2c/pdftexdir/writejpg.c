@@ -134,6 +134,13 @@ void read_jpg_info(integer img)
                 break;
             }
         }
+        /* if either xres or yres is 0 but the other isn't, set it to the value of the other */
+        if ((img_xres(img) == 0) && (img_yres(img) != 0)) {
+            img_xres(img) = img_yres(img);
+        }
+        if ((img_yres(img) == 0) && (img_xres(img) != 0)) {
+            img_yres(img) = img_xres(img);
+        }
     }
     xfseek(jpg_ptr(img)->file, 0, SEEK_SET, cur_file_name);
     while (1) {

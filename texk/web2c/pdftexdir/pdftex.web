@@ -19376,6 +19376,7 @@ if pdf_pk_mode <> null then begin
     flush_string;
 end else
     kpse_init_prog('PDFTEX', fixed_pk_resolution, nil, nil);
+kpse_set_program_enabled (kpse_pk_format, 1, kpse_src_compile);
 set_job_id(year, month, day, time);
 if (pdf_unique_resname > 0) and (pdf_resname_prefix = 0) then
     pdf_resname_prefix := get_resname_prefix
