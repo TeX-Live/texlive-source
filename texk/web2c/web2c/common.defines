@@ -50,6 +50,7 @@
 @define const kpsetfmformat;
 @define const kpsevfformat;
 @define const kpsewebformat;
+@define const kpsesrccmdline;
 @define const kpsesrccompile;
 @define const maxint;
 @define const nil;
