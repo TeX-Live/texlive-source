@@ -43,7 +43,7 @@ Nota Bene:
 If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
-Version 1.1
+Version 1.2
 Thu Jun 19 09:39:21 UTC 2008
 
 History:
@@ -140,7 +140,7 @@ void synctex_usage(char * error,va_list ap) {
 	}
 	fprintf((error?stderr:stdout),
 		"usage: synctex <subcommand> [options] [args]\n"
-		"Synchronize TeXnology command-line client, version 1.1\n\n"
+		"Synchronize TeXnology command-line client, version 1.2\n\n"
 		"The Synchronization TeXnology by Jérôme Laurens is a new feature of recent TeX engines.\n"
 		"It allows to synchronize between input and output, which means to\n"
 		"navigate from the source document to the typeset material and vice versa.\n\n"

@@ -6,7 +6,7 @@ It allows to synchronize between input and output, which means to
 navigate from the source document to the typeset material and vice versa.
 More informations on http://itexmac2.sourceforge.net/SyncTeX.html
 
-This package is mainly for developers, it contains the following files:
+This package is mainly for developers, it mainly contains the following files:
 
 synctex_parser_readme.txt
 synctex_parser_version.txt
@@ -53,7 +53,8 @@ History:
 - The bug that prevented synchronization with compressed files on windows has been fixed.
 - New interface to allow system specific customization.
 - Note that some APIs have changed.
-1.7: Mer  8 jul 2009 11:32:38 UTC
+1.8: Mer  8 jul 2009 11:32:38 UTC
+Note that version 1.7 was delivered privately.
 - bug fix: synctex was causing a memory leak in pdftex and xetex, thus some processing speed degradation
 - bug fix: the synctex command line tool was broken when updating a .synctex file
 - enhancement: better accuracy of the synchronization process

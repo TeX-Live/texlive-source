@@ -3,7 +3,7 @@ Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Version: 1.6
+Version: 1.8
 Latest Revision: Wed Jul  1 11:16:01 UTC 2009
 See synctex_parser_readme.txt for more details
 

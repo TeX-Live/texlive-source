@@ -5,7 +5,7 @@ This file is part of the SyncTeX package.
 
 Latest Revision: Wed Jul  1 11:16:25 UTC 2009
 
-Version: 1.6
+Version: 1.8
 See synctex_parser_readme.txt for more details
 
 License:
