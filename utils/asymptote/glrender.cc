@@ -52,16 +52,6 @@ using vm::read;
 using camp::bbox3;
 using settings::getSetting;
 using settings::Setting;
-
-// For now, don't use POSIX timers by default due to portability issues.
-#ifdef HAVE_POSIX_TIMERS
-static timer_t timerid;
-static struct itimerspec Timeout;
-#else
-static struct itimerval Timeout;
-#endif
-
-static const double milliseconds=1000.0; // In microseconds.
 timeval lasttime;
 
 double Aspect;
@@ -831,36 +821,6 @@ void timeout(int)
   if(Menu) disableMenu();
 }
 
-void init_timeout()
-{
-  static struct sigaction action;
-  action.sa_handler=timeout;
-  sigemptyset(&action.sa_mask);
-  action.sa_flags=0;
-  sigaction(SIGALRM,&action,NULL);
-  
-  Timeout.it_value.tv_sec=Timeout.it_interval.tv_sec=0;
-#ifdef HAVE_POSIX_TIMERS
-  timer_create (CLOCK_REALTIME,NULL,&timerid);
-  Timeout.it_interval.tv_nsec=0;
-#else  
-  Timeout.it_interval.tv_usec=0;
-#endif  
-}
-
-void set_timeout(int microseconds)
-{
-  if(microseconds >= 0) {
-#ifdef HAVE_POSIX_TIMERS
-    Timeout.it_value.tv_nsec=1000*microseconds;
-    timer_settime(timerid,0,&Timeout,NULL);
-#else
-    Timeout.it_value.tv_usec=microseconds;
-    setitimer(ITIMER_REAL,&Timeout,NULL);
-#endif    
-  }
-}
-
 void mouse(int button, int state, int x, int y)
 {
   int mod=glutGetModifiers();
@@ -877,19 +837,17 @@ void mouse(int button, int state, int x, int y)
     return;
   }     
   
-  if(Action == "zoom/menu" && mod == 0) {
-    if(state == GLUT_UP && !Motion) {
-      MenuButton=button;
-      glutMotionFunc(NULL);
-      glutAttachMenu(button);
-      Menu=true;
-      set_timeout((int) (getSetting<double>("doubleclick")*milliseconds));
-      return;
-    }
-  }
-  
   if(Menu) disableMenu();
-  else Motion=false;
+  else {
+    if(mod == 0 && state == GLUT_UP && !Motion && Action == "zoom/menu") {
+    MenuButton=button;
+    glutMotionFunc(NULL);
+    glutAttachMenu(button);
+    Menu=true;
+    glutTimerFunc(getSetting<Int>("doubleclick"),timeout,0);
+    return;
+    } else Motion=false;
+  }
   
   if(state == GLUT_DOWN) {
     if(Action == "rotate" || Action == "rotateX" || Action == "rotateY") {
@@ -1055,13 +1013,12 @@ void camera()
        << (orthographic ? "orthographic(" : "perspective(")  << endl
        << "camera=" << Camera << "," << endl
        << "up=" << Up << "," << endl
-       << "target=" << Target << "," << endl;
-  if(orthographic)
-    cout << "zoom=" << Zoom;
-  else
-    cout << "angle=" << 2.0*atan(tan(0.5*Angle)/Zoom)/radians;
+       << "target=" << Target << "," << endl
+       << "zoom=" << Zoom << "," << endl;
+  if(!orthographic)
+    cout << "angle=" << 2.0*atan(tan(0.5*Angle)/Zoom)/radians << "," << endl;
   if(viewportshift != pair(0.0,0.0))
-    cout << "," << endl << "viewportshift=" << viewportshift;
+    cout << "viewportshift=" << viewportshift;
   if(!orthographic)
     cout << "," << endl << "autoadjust=false";
   cout << ");" << endl;
@@ -1120,7 +1077,6 @@ enum Menu {HOME,FITSCREEN,XSPIN,YSPIN,ZSPIN,STOP,MODE,EXPORT,CAMERA,QUIT};
 
 void menu(int choice)
 {
-  set_timeout(0);
   if(Menu) disableMenu();
   ignorezoom=true;
   Motion=true;
@@ -1167,20 +1123,17 @@ void setosize()
 
 void init() 
 {
-  string options=string(settings::argv0)+" ";
+  mem::vector<string> cmd;
+  cmd.push_back(settings::argv0);
   if(Iconify)
-    options += "-iconic ";
-  options += getSetting<string>("glOptions");
-  char **argv=args(options.c_str(),true);
-  int argc=0;
-  while(argv[argc] != NULL)
-    ++argc;
-  
+    cmd.push_back("-iconic");
+  push_split(cmd,getSetting<string>("glOptions"));
+  char **argv=args(cmd,true);
+  int argc=cmd.size();
   glutInit(&argc,argv);
   
   screenWidth=glutGet(GLUT_SCREEN_WIDTH);
   screenHeight=glutGet(GLUT_SCREEN_HEIGHT);
-  init_timeout();
 }
 
 // angle=0 means orthographic.

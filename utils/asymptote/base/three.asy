@@ -950,6 +950,64 @@ bool cyclic(guide3 g) {flatguide3 f; g(f); return f.cyclic();}
 int size(guide3 g) {flatguide3 f; g(f); return f.size();}
 int length(guide3 g) {flatguide3 f; g(f); return f.nodes.length-1;}
 
+triple dir(path3 p)
+{
+  return dir(p,length(p));
+}
+
+triple dir(path3 p, path3 h)
+{
+  return 0.5*(dir(p)+dir(h));
+}
+
+// return the point on path3 p at arclength L
+triple arcpoint(path3 p, real L)
+{
+  return point(p,arctime(p,L));
+}
+
+// return the direction on path3 p at arclength L
+triple arcdir(path3 p, real L)
+{
+  return dir(p,arctime(p,L));
+}
+
+// return the time on path3 p at the relative fraction l of its arclength
+real reltime(path3 p, real l)
+{
+  return arctime(p,l*arclength(p));
+}
+
+// return the point on path3 p at the relative fraction l of its arclength
+triple relpoint(path3 p, real l)
+{
+  return point(p,reltime(p,l));
+}
+
+// return the direction of path3 p at the relative fraction l of its arclength
+triple reldir(path3 p, real l)
+{
+  return dir(p,reltime(p,l));
+}
+
+// return the initial point of path3 p
+triple beginpoint(path3 p)
+{
+  return point(p,0);
+}
+
+// return the point on path3 p at half of its arclength
+triple midpoint(path3 p)
+{
+  return relpoint(p,0.5);
+}
+
+// return the final point of path3 p
+triple endpoint(path3 p)
+{
+  return point(p,length(p));
+}
+
 path3 path3(triple v)
 {
   triple[] point={v};
@@ -2294,7 +2352,7 @@ string embed3D(string label="", string text=label, string prefix,
     file3.push(prefix);
 
   triple target=P.target;
-  if(P.infinity && P.viewportshift != 0) {
+  if(P.viewportshift != 0) {
     triple lambda=max3(f)-min3(f);
     target -= (P.viewportshift.x*lambda.x/P.zoom,
                P.viewportshift.y*lambda.y/P.zoom,0);
@@ -2414,7 +2472,7 @@ object embed(string label="", string text=label,
 
     projection Q;
     if(!P.absolute) {
-      if(scale) {
+      if(scale && P.autoadjust) {
         pair v=(s.xx,s.yy);
         transform3 T=P.t;
         pair x=project(X,T);
@@ -2424,7 +2482,11 @@ object embed(string label="", string text=label,
           return b == 0 ? (0.5*(a.x+a.y)) : (b.x^2*a.x+b.y^2*a.y)/(b.x^2+b.y^2);
         }
         pic2.erase();
-        t=xscale3(f(v,x))*yscale3(f(v,y))*zscale3(f(v,z))*t;
+        transform3 s=keepAspect ? scale3(min(f(v,x),f(v,y),f(v,z))) :
+          xscale3(f(v,x))*yscale3(f(v,y))*zscale3(f(v,z));
+        s=shift(P.target)*s*shift(-P.target);
+        t=s*t;
+        P=s*P;
         f=pic.fit3(t,is3D ? null : pic2,P);
       }
 
@@ -2547,8 +2609,8 @@ object embed(string label="", string text=label,
       } else if(M.z >= 0) abort("camera too close");
 
       shipout3(prefix,f,preview ? nativeformat() : format,
-               width,height,P.infinity ? 0 : angle,P.zoom,m,M,
-               prc && !P.infinity ? 0 : P.viewportshift,
+               width,height,P.infinity ? 0 : 2aTan(Tan(0.5*angle)*P.zoom),
+               P.zoom,m,M,P.viewportshift,
                tinv*inverse(modelview)*shift(0,0,zcenter),light.background(),
                P.absolute ? (modelview*light).position : light.position,
                light.diffuse,light.ambient,light.specular,
@@ -2568,7 +2630,7 @@ object embed(string label="", string text=label,
       if(!P.infinity && P.viewportshift != 0)
         write("warning: PRC does not support off-axis projections; use pan instead of shift");
       F.L=embed3D(label,text=image,prefix,f,format,
-                        width,height,angle,options,script,light,Q);
+                  width,height,angle,options,script,light,Q);
     }
     
   }

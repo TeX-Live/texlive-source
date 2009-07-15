@@ -76,7 +76,6 @@ Options (negate by replacing - with -no):
 -wait                 Wait for child processes to finish before exiting [false]
 -warn string          Enable warning; command-line only
 -where                Show where listed variables are declared [false]
--xformat format       GUI deconstruction format [png]
 -zoomfactor factor    Zoom step factor [1.05]
 -zoomstep step        Mouse motion zoom step [0.1]
 

@@ -14,7 +14,6 @@
 #include <locale.h>
 #include <unistd.h>
 #include <algorithm>
-#include <cstdarg>
 
 #include "common.h"
 
@@ -76,6 +75,8 @@ const bool haveglut=true;
 const bool haveglut=false;
 #endif
   
+mode_t mask;
+  
 #ifndef __CYGWIN__
   
 bool msdos=false;
@@ -88,8 +89,8 @@ string defaultPDFViewer="open";
 string defaultPDFViewer="acroread";
 #endif  
 string defaultGhostscript="gs";
-string defaultPython;
 string defaultDisplay="display";
+string defaultAnimate="animate";
 string systemDir=ASYMPTOTE_SYSDIR;
 string docdir=ASYMPTOTE_DOCDIR;
 void queryRegistry() {}
@@ -100,11 +101,15 @@ const string dirsep="/";
 bool msdos=true;
 string HOME="USERPROFILE";
 const char pathSeparator=';';
-string defaultPSViewer="gsview32.exe";
-string defaultPDFViewer="AcroRd32.exe";
+//string defaultPSViewer="gsview32.exe";
+string defaultPSViewer="cmd";
+//string defaultPDFViewer="AcroRd32.exe";
+string defaultPDFViewer="cmd";
 string defaultGhostscript="gswin32c.exe";
-string defaultPython="python.exe";
-string defaultDisplay="imdisplay";
+//string defaultDisplay="imdisplay";
+string defaultDisplay="cmd";
+//string defaultAnimate="animate";
+string defaultAnimate="cmd";
 string systemDir=ASYMPTOTE_SYSDIR;
 string docdir;
 const string dirsep="\\";
@@ -112,9 +117,9 @@ const string dirsep="\\";
 #include <dirent.h>
   
 // Use key to look up an entry in the MSWindows registry, respecting wild cards
-string getEntry(const string& key)
+string getEntry(const string& location, const string& key)
 {
-  string path="/proc/registry/HKEY_LOCAL_MACHINE/SOFTWARE/"+key;
+  string path="/proc/registry/"+location+key;
   size_t star;
   string head;
   while((star=path.find("*")) < string::npos) {
@@ -159,16 +164,25 @@ string getEntry(const string& key)
   return "";
 }
   
+// Use key to look up an entry in the MSWindows registry, respecting wild cards
+string getEntry(const string& key)
+{
+  string entry=getEntry("HKEY_CURRENT_USER/Software/",key);
+  if(entry.empty()) entry=getEntry("HKEY_LOCAL_MACHINE/SOFTWARE/",key);
+  return entry;
+}
+
 void queryRegistry()
 {
   string gs=getEntry("GPL Ghostscript/*/GS_DLL");
   if(gs.empty())
     gs=getEntry("AFPL Ghostscript/*/GS_DLL");
   defaultGhostscript=stripFile(gs)+defaultGhostscript;
+  if(defaultPDFViewer != "cmd")
   defaultPDFViewer=getEntry("Adobe/Acrobat Reader/*/InstallPath/@")+"\\"+
     defaultPDFViewer;
-  defaultPSViewer=getEntry("Ghostgum/GSview/*")+"\\gsview\\"+defaultPSViewer;
-  defaultPython=getEntry("Python/PythonCore/*/InstallPath/@")+defaultPython;
+  if(defaultPSViewer != "cmd")
+    defaultPSViewer=getEntry("Ghostgum/GSview/*")+"\\gsview\\"+defaultPSViewer;
   docdir=getEntry("Microsoft/Windows/CurrentVersion/App Paths/Asymptote/Path");
   if(!systemDir.empty()) // An empty systemDir indicates a TeXLive build
     systemDir=docdir;
@@ -607,14 +621,6 @@ struct dataSetting : public argumentSetting {
 };
 
 template<class T>
-string String(T x)
-{
-  ostringstream buf;
-  buf << x; 
-  return buf.str();
-}
-  
-template<class T>
 string description(string desc, T defaultValue) 
 {
   return desc.empty() ? "" : desc+" ["+String(defaultValue)+"]";
@@ -997,28 +1003,14 @@ void no_GCwarn(char *, GC_word)
 }
 #endif
 
-array* Array(const char *s ...) 
+array* stringArray(const char **s) 
 {
-  va_list v;
   size_t count=0;
-  const char *s0=s;
-  
-  va_start(v,s);
-  while(*s) {
+  while(s[count])
     ++count;
-    s=va_arg(v,char *);
-  }
-  va_end(v);
-  
   array *a=new array(count);
-  s=s0;
-  va_start(v,s);
-  for(size_t i=0; i < count; ++i) {
-    (*a)[i]=string(s);
-    s=va_arg(v,char *);
-  }
-  va_end(v);
-  
+  for(size_t i=0; i < count; ++i)
+    (*a)[i]=string(s[i]);
   return a;
 }
 
@@ -1037,32 +1029,32 @@ void initSettings() {
 // SHIFT LEFT: zoom
 // CTRL LEFT: shift
 // ALT LEFT: pan
-  array *leftbutton=Array("rotate","zoom","shift","pan","");
+  const char *leftbutton[]={"rotate","zoom","shift","pan",NULL};
   
 // MIDDLE: menu (must be unmodified; ignores Shift, Ctrl, and Alt)
-  array *middlebutton=Array("menu","");
+  const char *middlebutton[]={"menu",NULL};
   
 // RIGHT: zoom/menu (must be unmodified)
 // SHIFT RIGHT: rotateX
 // CTRL RIGHT: rotateY
 // ALT RIGHT: rotateZ
-  array *rightbutton=Array("zoom/menu","rotateX","rotateY","rotateZ","");
+  const char *rightbutton[]={"zoom/menu","rotateX","rotateY","rotateZ",NULL};
   
 // WHEEL_UP: zoomin
-  array *wheelup=Array("zoomin","");
+  const char *wheelup[]={"zoomin",NULL};
   
 // WHEEL_DOWN: zoomout
-  array *wheeldown=Array("zoomout","");
+  const char *wheeldown[]={"zoomout",NULL};
   
-  array *Warn=Array("writeoverloaded","");
+  const char *Warn[]={"writeoverloaded",NULL};
   
-  addOption(new stringArraySetting("leftbutton", leftbutton));
-  addOption(new stringArraySetting("middlebutton", middlebutton));
-  addOption(new stringArraySetting("rightbutton", rightbutton));
-  addOption(new stringArraySetting("wheelup", wheelup));
-  addOption(new stringArraySetting("wheeldown", wheeldown));
-  
-  addOption(new stringArraySetting("warnings", Warn));
+  addOption(new stringArraySetting("leftbutton", stringArray(leftbutton)));
+  addOption(new stringArraySetting("middlebutton", stringArray(middlebutton)));
+  addOption(new stringArraySetting("rightbutton", stringArray(rightbutton)));
+  addOption(new stringArraySetting("wheelup", stringArray(wheelup)));
+  addOption(new stringArraySetting("wheeldown", stringArray(wheeldown)));
+  addOption(new stringArraySetting("warnings", stringArray(Warn)));
+
   addOption(new warnSetting("warn", 0, "string", "Enable warning"));
   
   multiOption *view=new multiOption("View", 'V', "View output");
@@ -1074,8 +1066,6 @@ void initSettings() {
   view->add(new boolSetting("interactiveView", 0,
                             "View output in interactive mode", true));
   addOption(view);
-  addOption(new stringSetting("xformat", 0, "format", 
-                              "GUI deconstruction format","png"));
   addOption(new stringSetting("outformat", 'f', "format",
                               "Convert each output file to specified format",
                               ""));
@@ -1237,8 +1227,8 @@ void initSettings() {
   addOption(new realSetting("arcballradius", 0, "pixels",
                             "Arcball radius", 750.0));
   addOption(new realSetting("resizestep", 0, "step", "Resize step", 1.2));
-  addOption(new realSetting("doubleclick", 0, "ms",
-                            "Emulated double-click timeout", 200.0));
+  addOption(new IntSetting("doubleclick", 0, "ms",
+                           "Emulated double-click timeout", 200));
   
   addOption(new realSetting("paperwidth", 0, "bp", ""));
   addOption(new realSetting("paperheight", 0, "bp", ""));
@@ -1260,12 +1250,12 @@ void initSettings() {
   addOption(new envSetting("dvips", "dvips"));
   addOption(new envSetting("convert", "convert"));
   addOption(new envSetting("display", defaultDisplay));
-  addOption(new envSetting("animate", "animate"));
-  addOption(new envSetting("python", defaultPython));
+  addOption(new envSetting("animate", defaultAnimate));
   addOption(new envSetting("papertype", "letter"));
   addOption(new envSetting("dir", ""));
   addOption(new envSetting("sysdir", systemDir));
-  addOption(new envSetting("textcommand","groff -e -P-b16"));
+  addOption(new envSetting("textcommand","groff"));
+  addOption(new envSetting("textcommandOptions","-e -P -b16"));
   addOption(new envSetting("textextension", "roff"));
   addOption(new envSetting("textoutformat", "ps"));
   addOption(new envSetting("textprologue", ".EQ\ndelim $$\n.EN"));
@@ -1310,7 +1300,10 @@ string outname() {
 string lookup(const string& symbol) 
 {
   string s;
-  iopipestream pipe(("kpsewhich --var-value="+symbol).c_str());
+  mem::vector<string> cmd;
+  cmd.push_back("kpsewhich");
+  cmd.push_back("--var-value="+symbol);
+  iopipestream pipe(cmd);
   pipe >> s;
 // Workaround broken header file on i386-solaris with g++ 3.4.3.
 #ifdef erase
@@ -1341,6 +1334,11 @@ void initDir() {
   if(initdir.empty())
     initdir=Getenv(HOME.c_str(),msdos)+dirsep+"."+suffix;
   
+#ifdef __CYGWIN__  
+  mask=umask(0);
+  if(mask == 0) mask=0027;
+  umask(mask);
+#endif  
   if(verbose > 1)
     cerr << "Using configuration directory " << initdir << endl;
   mkdir(initdir.c_str(),0777);
@@ -1512,10 +1510,7 @@ string texprogram()
 {
   string path=getSetting<string>("texpath");
   string engine=texcommand();
-  if(!path.empty()) engine=(string) (path+"/"+engine);
-  string program="'"+engine+"'";
-  string dir=stripTeXFile(outname());
-  return dir.empty() ? program : (program+" -output-directory="+dir);
+  return path.empty() ? engine : (string) (path+"/"+engine);
 }
 
 Int getScroll() 

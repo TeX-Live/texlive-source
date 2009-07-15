@@ -1,4 +1,227 @@
 ------------------------------------------------------------------------
+r4521 | jcbowman | 2009-07-13 22:36:37 -0600 (Mon, 13 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Fix initial angle calculation.
+
+------------------------------------------------------------------------
+r4520 | jcbowman | 2009-07-13 21:18:26 -0600 (Mon, 13 Jul 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Improve motion detection.
+------------------------------------------------------------------------
+r4519 | jcbowman | 2009-07-13 21:02:58 -0600 (Mon, 13 Jul 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+
+Reinstate doubleclick motion detection.
+------------------------------------------------------------------------
+r4518 | jcbowman | 2009-07-13 20:05:06 -0600 (Mon, 13 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/glrender.cc
+
+Approximate off-axis projections (viewportshift) in PRC.
+
+------------------------------------------------------------------------
+r4517 | jcbowman | 2009-07-13 18:55:52 -0600 (Mon, 13 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/util.cc
+
+Remove unused include.
+
+------------------------------------------------------------------------
+r4516 | jcbowman | 2009-07-13 18:51:32 -0600 (Mon, 13 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/texfile.h
+
+Fix lineskip units.
+
+------------------------------------------------------------------------
+r4515 | jcbowman | 2009-07-13 18:41:39 -0600 (Mon, 13 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/runtime.in
+
+Rename minbound(triple[][], triple) to minbezier, etc.
+
+------------------------------------------------------------------------
+r4514 | jcbowman | 2009-07-13 18:02:14 -0600 (Mon, 13 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/GUI/xasy2asy.py
+   M /trunk/asymptote/runtime.in
+
+Remove unused format argument from xasy.
+
+------------------------------------------------------------------------
+r4513 | jcbowman | 2009-07-13 17:50:26 -0600 (Mon, 13 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+
+Remove obsolete GIF deconstruction format and xformat setting.
+
+------------------------------------------------------------------------
+r4512 | jcbowman | 2009-07-13 17:37:20 -0600 (Mon, 13 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_strings.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/picture.h
+   M /trunk/asymptote/pipestream.h
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/util.cc
+   M /trunk/asymptote/util.h
+
+Allow single quotation marks in filenames.
+
+------------------------------------------------------------------------
+r4511 | jcbowman | 2009-07-12 22:47:17 -0600 (Sun, 12 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Simplify code.
+
+------------------------------------------------------------------------
+r4510 | jcbowman | 2009-07-12 22:31:56 -0600 (Sun, 12 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Simplify code; remove cstdarg dependency.
+
+------------------------------------------------------------------------
+r4509 | jcbowman | 2009-07-12 16:31:02 -0600 (Sun, 12 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Add other missing path3 functions.
+
+------------------------------------------------------------------------
+r4508 | jcbowman | 2009-07-12 14:48:40 -0600 (Sun, 12 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/psfile.cc
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/settings.h
+
+Set executable flag on PostScript files under MSDOS, to allow psviewer="cmd".
+
+------------------------------------------------------------------------
+r4507 | hammera | 2009-07-12 12:30:14 -0600 (Sun, 12 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Added beginpoint and endpoint for path3.
+
+------------------------------------------------------------------------
+r4506 | jcbowman | 2009-07-11 00:00:43 -0600 (Sat, 11 Jul 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/runtime.in
+   M /trunk/asymptote/settings.cc
+   M /trunk/asymptote/util.cc
+   M /trunk/asymptote/util.h
+
+Use "cmd" to request the default MSDOS file association.
+
+Change default file association for pdfviewer, display, and animate to cmd.
+
+------------------------------------------------------------------------
+r4505 | jcbowman | 2009-07-10 15:24:29 -0600 (Fri, 10 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/contextfonts.asy
+
+Improve illustration of ConTeXT font bug workaround.
+
+------------------------------------------------------------------------
+r4504 | jcbowman | 2009-07-10 15:22:23 -0600 (Fri, 10 Jul 2009) | 4 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_pens.asy
+   M /trunk/asymptote/examples/contextfonts.asy
+   M /trunk/asymptote/pen.h
+   M /trunk/asymptote/texfile.h
+
+Fix font units.
+
+Add example of ConTeXT bug workaround for fonts smaller than 12pt.
+
+------------------------------------------------------------------------
+r4503 | jcbowman | 2009-07-09 12:28:50 -0600 (Thu, 09 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Fix doubleclick type.
+
+------------------------------------------------------------------------
+r4502 | jcbowman | 2009-07-09 12:25:46 -0600 (Thu, 09 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/settings.cc
+
+Change doubleclick setting to an int.
+
+------------------------------------------------------------------------
+r4501 | jcbowman | 2009-07-09 12:20:40 -0600 (Thu, 09 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Use a portable doubleclick timeout.
+
+------------------------------------------------------------------------
+r4500 | jcbowman | 2009-07-08 09:33:37 -0600 (Wed, 08 Jul 2009) | 2 lines
+Changed paths:
+   A /trunk/asymptote/examples/lmfit1.asy
+
+Add example of lmfit.
+
+------------------------------------------------------------------------
+r4499 | jcbowman | 2009-07-07 17:43:32 -0600 (Tue, 07 Jul 2009) | 6 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Adjust camera again as part of 2D resizing.
+
+Respect keepAspect flag.
+
+Respect projection.autoadjust.
+
+------------------------------------------------------------------------
+r4498 | jcbowman | 2009-07-07 09:26:05 -0600 (Tue, 07 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Fix targetsize.
+
+------------------------------------------------------------------------
+r4497 | jcbowman | 2009-07-07 09:24:59 -0600 (Tue, 07 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Fix 3D labels.
+
+------------------------------------------------------------------------
+r4496 | jcbowman | 2009-07-07 08:17:31 -0600 (Tue, 07 Jul 2009) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Add bool targetsize=true to 3D label routines; this forces labels to be
+drawn with the size they would have on the target plane.
+
+------------------------------------------------------------------------
+r4495 | jcbowman | 2009-07-06 21:35:38 -0600 (Mon, 06 Jul 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.81svn.
+------------------------------------------------------------------------
 r4494 | jcbowman | 2009-07-06 18:06:06 -0600 (Mon, 06 Jul 2009) | 1 line
 Changed paths:
    M /trunk/asymptote/xstream.h

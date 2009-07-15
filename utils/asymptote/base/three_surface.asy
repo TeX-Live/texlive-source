@@ -148,13 +148,13 @@ struct patch {
   triple min(triple bound=P[0][0]) {
     if(havemin3) return minbound(min3,bound);
     havemin3=true;
-    return min3=minbound(P,bound);
+    return min3=minbezier(P,bound);
   }
 
   triple max(triple bound=P[0][0]) {
     if(havemax3) return maxbound(max3,bound);
     havemax3=true;
-    return max3=maxbound(P,bound);
+    return max3=maxbezier(P,bound);
   }
 
   triple center() {
@@ -162,11 +162,11 @@ struct patch {
   }
 
   pair min(projection P, pair bound=project(this.P[0][0],P.t)) {
-    return minbound(this.P,P.t,bound);
+    return minbezier(this.P,P.t,bound);
   }
 
   pair max(projection P, pair bound=project(this.P[0][0],P.t)) {
-    return maxbound(this.P,P.t,bound);
+    return maxbezier(this.P,P.t,bound);
   }
 
   void operator init(triple[][] P, triple[] normals=new triple[],
@@ -1163,12 +1163,14 @@ path[] path(Label L, pair z=0, projection P)
 }
 
 void label(frame f, Label L, triple position, align align=NoAlign,
-           pen p=currentpen, light light=nolight,
+           pen p=currentpen, bool targetsize=false, light light=nolight,
            projection P=currentprojection)
 {
   Label L=L.copy();
   L.align(align);
   L.p(p);
+  if(targetsize && settings.render != 0)
+    L.T=L.T*scale(abs(P.camera-position)/abs(P.vector()));
   if(L.defaulttransform3)
     L.T3=transform3(P);
   if(is3D()) {
@@ -1188,14 +1190,13 @@ void label(frame f, Label L, triple position, align align=NoAlign,
 }
 
 void label(picture pic=currentpicture, Label L, triple position,
-           align align=NoAlign, pen p=currentpen, light light=nolight)
+           align align=NoAlign, pen p=currentpen, bool targetsize=false,
+           light light=nolight)
 {
   Label L=L.copy();
   L.align(align);
   L.p(p);
   L.position(0);
-  path[] g=texpath(L);
-  if(g.length == 0 || (g.length == 1 && size(g[0]) == 0)) return;
   pic.add(new void(frame f, transform3 t, picture pic, projection P) {
       // Handle relative projected 3D alignments.
       Label L=L.copy();
@@ -1204,6 +1205,8 @@ void label(picture pic=currentpicture, Label L, triple position,
          determinant(P.t) != 0)
           L.align(L.align.dir*unit(project(v+L.align.dir3,P.t)-project(v,P.t)));
       
+      if(targetsize && settings.render != 0)
+        L.T=L.T*scale(abs(P.camera-v)/abs(P.vector()));
       if(L.defaulttransform3)
         L.T3=transform3(P);
       if(is3D())
@@ -1222,6 +1225,12 @@ void label(picture pic=currentpicture, Label L, triple position,
       }
     },!L.defaulttransform3);
 
+  Label L=L.copy();
+  if(targetsize && settings.render != 0)
+    L.T=L.T*scale(abs(currentprojection.camera-position)/
+                  abs(currentprojection.vector()));
+  path[] g=texpath(L);
+  if(g.length == 0 || (g.length == 1 && size(g[0]) == 0)) return;
   if(L.defaulttransform3)
     L.T3=transform3(currentprojection);
   path3[] G=path3(g);
@@ -1230,7 +1239,7 @@ void label(picture pic=currentpicture, Label L, triple position,
 }
 
 void label(picture pic=currentpicture, Label L, path3 g, align align=NoAlign,
-           pen p=currentpen)
+           bool targetsize=false, pen p=currentpen)
 {
   Label L=L.copy();
   L.align(align);
@@ -1246,7 +1255,7 @@ void label(picture pic=currentpicture, Label L, path3 g, align align=NoAlign,
     a.dir3=dir(g,position); // Pass 3D direction via unused field.
     L.align(a);             
   }
-  label(pic,L,point(g,position));
+  label(pic,L,point(g,position),targetsize);
 }
 
 surface extrude(Label L, triple axis=Z)

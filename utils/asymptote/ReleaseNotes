@@ -1,3 +1,16 @@
+Release Notes for Version 1.81
+
+A boolean targetsize option can now be used to draw 3D labels with the apparent
+size they would have on the target plane.  The camera adjustment algorithms
+were fixed; the autoadjust flag is respected. Missing path3 functions
+such as endpoint(path3) were added. The doubleclick timeout under MSWindows
+was fixed. A workaround for a ConTeXT small font bug is illustrated in
+contextfonts.asy. File associations are now used under MSWindows for
+psviewer, pdfviewer, display, and animate. Single quotation marks are now
+allowed in filenames. Deconstruction is now only supported in PNG format;
+the xformat setting was removed. The example lmfit illustrates
+Levenberg-Marquardt nonlinear least-squares fitting.
+
 Release Notes for Version 1.80
 
 The interface for changing the precision for XDR/binary files was

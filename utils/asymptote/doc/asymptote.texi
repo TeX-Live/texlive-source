@@ -366,8 +366,7 @@ A better (and free) @code{PostScript} viewer available at
 @url{http://psview.sourceforge.net/} (which in particular works properly
 in interactive mode) unfortunately currently requires some manual
 configuration. Specifically, if version @code{x.xx} of psview is
-extracted to the directory @code{c:\Program Files\psview-x.xx} one
-needs to put
+extracted to the directory @code{c:\Program Files} one needs to put
 @verbatim
 import settings;
 psviewer="c:\Program Files\psview-x.xx\psv.exe";
@@ -428,20 +427,22 @@ variables in an optional configuration file (by default,
 @pxref{configuration file}). Here are the default values
 of several important configuration variables under @code{UNIX}:
 
-@cindex @code{python}
 @noindent
 @verbatim
 import settings;
 psviewer="gv";
 pdfviewer="acroread";
 gs="gs";
-python="";
 @end verbatim
 
 @noindent
-The (installation-dependent) default values of these configuration
-variables under @code{MSDOS} are determined automatically from the
-@code{Microsoft Windows} registry.
+@cindex @code{cmd}
+Under @code{MSDOS}, the (installation-dependent) default values of
+these configuration variables are determined automatically from the
+@code{Microsoft Windows} registry. Viewer settings (such as
+@code{psviewer} and @code{pdfviewer}) can be set to the string
+@code{cmd} to request the application normally associated with the
+corresponding file type.
 
 For @acronym{PDF} format output, the @code{gs} setting specifies the
 location of the @code{PostScript}-to-@acronym{PDF} processor @code{Ghostscript},
@@ -465,9 +466,6 @@ pdfreloadOptions="-tempFile";
 in the @code{Asymptote} configuration file. This reload feature is not
 useful under @code{MSDOS} since the document cannot be updated anyway on
 that operating system until it is first closed by @code{Adobe Reader}.
-
-The graphical user interface may also require setting the variable
-@code{python} if @code{Python} is installed in a nonstandard location.
 
 The configuration variable @code{dir} can be used to adjust the
 search path (@pxref{Search paths}).
@@ -2028,7 +2026,7 @@ string pairs @{@code{before},@code{after}@} to the corresponding
 string @code{after};
 
 @cindex @code{split}
-@item string[] split(string s, string delimiter)
+@item string[] split(string s, string delimiter=" ")
 returns an array of strings obtained by splitting @code{s} into substrings
 delimited by @code{delimiter};
 
@@ -3798,9 +3796,9 @@ call the @code{ImageMagick} commands @code{convert} and @code{animate},
 respectively, with the arguments @code{args} and the file name constructed
 from the strings @code{file} and @code{format}. 
 @cindex @code{system}
-If the setting @code{safe} is false, then the function 
-@code{int system(string s)} can be used to call the arbitrary system
-command @code{s}.
+If the setting @code{safe} is false, then the functions 
+@code{int system(string s)} and @code{int system(string[] s)} can be
+used to call the arbitrary system command @code{s}.
 
 @node Variable initializers
 @section Variable initializers
@@ -8701,7 +8699,8 @@ asy -o - venn | convert -alpha Off -density 144x144 -geometry 50%x eps:- venn.ti
 @cindex @code{safe}
 @cindex @code{system}
 If the option @code{-nosafe} is given, @code{Asymptote} runs
-in unsafe mode. This enables the @code{int system(string s)} call, allowing one
+in unsafe mode. This enables the @code{int system(string s)} and 
+@code{int system(string[] s)} calls, allowing one
 to execute arbitrary shell commands. The default mode, @code{-safe},
 disables this call.
 
@@ -8899,17 +8898,6 @@ tar -zxf Imaging-1.1.7b1.tar.gz
 cd Imaging-1.1.7b1
 python setup.py install
 @end verbatim
-
-Alternatively, @code{xasy} can deconstruct pictures into the @acronym{GIF}
-image format (not recommended as this is very slow), using white as the
-transparent color. This requires the lines
-@verbatim
-import settings;
-xformat="gif";
-@end verbatim
-@noindent
-in the @code{Asymptote} configuration file (@pxref{configuration file}),
-along with the @code{ImageMagick} (@pxref{convert}) program.
 
 @node GUI Usage
 @section GUI Usage
