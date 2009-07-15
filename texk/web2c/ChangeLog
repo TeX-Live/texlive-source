@@ -1,3 +1,8 @@
+2009-07-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (check_PROGRAMS): pltotf and tftopl are required
+	by both omegafonts/omfonts.test and omegaware/omfonts.test.
+
 2009-07-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h: recover definition of kpsesrccmdline.

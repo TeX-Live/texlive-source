@@ -158,6 +158,11 @@ include $(srcdir)/xetexdir/am/xetex.am
 ## omegaware web programs
 include $(srcdir)/omegaware/am/omegaware.am
 
+## programs required for 'make check' in omegafonts/ and omegaware/
+if OTANGLE
+check_PROGRAMS += pltotf tftopl
+endif OTANGLE
+
 ## Aleph
 include $(srcdir)/alephdir/am/aleph.am
 
