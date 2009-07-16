@@ -388,11 +388,17 @@ print_special(string sval)
 }
 
 void
-print_special_hex(string sval)
+print_special_hex(unsigned char *special, int k)
 {
     left();
-    out("SPECIALHEX");
-    out(" "); out(sval);
+    out("SPECIALHEX ");
+    for (; k > 0; k--, special++) {
+        if ((k & 0x1f) == 0)
+            out_ln();
+        else if ((k & 0x03) == 0)
+            out(" ");
+        out_hex(*special);
+    }
     right();
 }
 

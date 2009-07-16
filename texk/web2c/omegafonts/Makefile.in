@@ -338,10 +338,13 @@ LDADD = $(proglib) $(KPATHSEA_LIBS)
 DISTCLEANFILES = pl-parser.output tests/Cherokee.tfm \
 	tests/OCherokee.ofm tests/OCherokee.opl tests/OCherokee.ovf \
 	tests/xCherokee.pl tests/xOCherokee.ofm tests/xOCherokee.opl \
-	tests/xOCherokee.ovp
+	tests/xOCherokee.ovp tests/specialhex.ofm tests/specialhex.opl \
+	tests/specialhex.ovf tests/xspecialhex.ofm \
+	tests/xspecialhex.opl tests/xspecialhex.ovp
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
-EXTRA_DIST = omfonts.test tests/Cherokee.pl tests/OCherokee.ovp
-@OMFONTS_TRUE@@OTANGLE_TRUE@TESTS = omfonts.test
+EXTRA_DIST = omfonts.test specialhex.test tests/Cherokee.pl \
+	tests/OCherokee.ovp tests/specialhex.ovp
+@OMFONTS_TRUE@@OTANGLE_TRUE@TESTS = omfonts.test specialhex.test
 all: all-am
 
 .SUFFIXES:

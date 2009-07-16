@@ -79,7 +79,6 @@ octnumber       O{ws}[0-7]+
 decnumber       D{ws}[0-9]+
 realnumber      R[ \t+-]+[0-9]*("."[0-9]*){0,1}
 charnumber      C{ws}.
-hexstring       ([A-F0-9][A-F0-9])*
 
 %%
 
@@ -110,7 +109,7 @@ SPECIAL		{scan_string("SPECIAL", KEEP_ALL, 0);
 COMMENT		{scan_string("COMMENT", KEEP_NONE, 0);
                  return(COMMENT); }
 
-SPECIALHEX{ws}{hexstring} {scan_hex_string(); return(SPECIALHEX); }
+SPECIALHEX	{scan_hex_string(); return(SPECIALHEX); }
 
 
 SEVENBITSAFEFLAG{ws}TRUE  {yylval.yint=1; return(SEVENBITSAFEFLAG); }
@@ -479,8 +478,26 @@ scan_string(char *attribute, unsigned keep, unsigned length)
 static void
 scan_hex_string(void)
 {
-    register unsigned i=10;
+    register unsigned c, saved_ptr = 0;
+    unsigned error_msg = FALSE;
 
-    while ((yytext[i]==' ') || (yytext[i]=='\t')) i++;
-    yylval.ystring = xstrdup(yytext+i);
+    while ((c = input()) != EOF) {
+        if (((c >= '0') && (c <= '9')) || ((c >= 'A') && (c <= 'F'))) {
+            if (saved_ptr<(MAX_PTR-3))
+                saved_text[saved_ptr++] = c;
+            else if (error_msg == FALSE) {
+                lex_error_1("SPECIALHEX string longer than %d characters; truncating",
+                            MAX_PTR);
+                error_msg = TRUE;
+            }
+        } else if (c == '\n') {
+            line_number++;
+        } else if ((c != ' ') && (c != '\t')) {
+            unput(c);
+            break;
+        }
+    }
+    if (c == EOF) fatal_error_0("EOF while scanning SPECIALHEX");
+    saved_text[saved_ptr++] = '\0';
+    yylval.ystring = xstrdup(saved_text);
 }

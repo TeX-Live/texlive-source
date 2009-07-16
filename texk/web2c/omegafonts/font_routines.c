@@ -436,9 +436,11 @@ move_ptr_incr(void)
 unsigned
 get_hex(unsigned char c)
 {
-    if ((c>='0') || (c<='9')) return(c-'0');
-    if ((c>='A') || (c<='F')) return(c-'A'+10);
-    internal_error_1("get_hex (a=%c)", c);
+    if ((c>='0') && (c<='9')) return(c-'0');
+    if ((c<'A') || (c>'F')) {
+        internal_error_1("get_hex (a=%c)", c);
+    }
+    return(c-'A'+10);
 }
 
 void

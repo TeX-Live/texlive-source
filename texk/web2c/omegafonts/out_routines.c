@@ -364,6 +364,12 @@ out_fix(fix fval)
 }
 
 void
+out_hex(unsigned char c)
+{
+	fprintf(file_output, "%02X", c);
+}
+
+void
 out_digits(unsigned counter)
 {
 	register unsigned j=counter, c;

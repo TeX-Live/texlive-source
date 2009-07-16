@@ -61,7 +61,7 @@ extern void print_push(void);
 extern void print_pop(void);
 extern void print_move(unsigned, fix);
 extern void print_special(string);
-extern void print_special_hex(string);
+extern void print_special_hex(unsigned char *, int);
 
 extern void print_character_repeat(unsigned, unsigned);
 extern void print_font_ivalue(unsigned);

@@ -1,0 +1,27 @@
+#! /bin/sh
+
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  OFMFONTS=tests \
+  ./omfonts -ovp2ovf -verbose $srcdir/tests/specialhex tests/specialhex tests/specialhex || exit 1
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./omfonts -ofm2opl -verbose tests/specialhex tests/specialhex || exit 1
+
+./omfonts -opl2ofm -verbose tests/specialhex tests/xspecialhex || exit 1
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  ./omfonts -ofm2opl -verbose tests/xspecialhex tests/xspecialhex || exit 1
+
+diff tests/specialhex.opl tests/xspecialhex.opl || exit 1
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  OFMFONTS=.:./tests \
+  ./omfonts -ovf2ovp -verbose tests/specialhex tests/specialhex tests/xspecialhex || exit 1
+
+diff $srcdir/tests/specialhex.ovp tests/xspecialhex.ovp || exit 1
+

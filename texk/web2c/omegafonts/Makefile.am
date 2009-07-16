@@ -86,20 +86,23 @@ endif OTANGLE
 
 ## Tests
 ##
-EXTRA_DIST = omfonts.test
+EXTRA_DIST = omfonts.test specialhex.test
 
 ## Test data
 ##
-EXTRA_DIST += tests/Cherokee.pl tests/OCherokee.ovp
+EXTRA_DIST += tests/Cherokee.pl tests/OCherokee.ovp tests/specialhex.ovp
 
 if OTANGLE
 if OMFONTS
-TESTS = omfonts.test
+TESTS = omfonts.test specialhex.test
 endif OMFONTS
 endif OTANGLE
 
 DISTCLEANFILES += tests/Cherokee.tfm tests/OCherokee.ofm \
 	tests/OCherokee.opl tests/OCherokee.ovf \
 	tests/xCherokee.pl tests/xOCherokee.ofm \
-	tests/xOCherokee.opl tests/xOCherokee.ovp
+	tests/xOCherokee.opl tests/xOCherokee.ovp \
+	tests/specialhex.ofm tests/specialhex.opl \
+	tests/specialhex.ovf tests/xspecialhex.ofm \
+	tests/xspecialhex.opl tests/xspecialhex.ovp
 

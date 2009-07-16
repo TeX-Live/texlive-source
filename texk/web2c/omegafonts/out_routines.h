@@ -39,6 +39,7 @@ extern void out_num(unsigned);
 extern void out_int(unsigned,unsigned);
 extern void out_as_fix(fix);
 extern void out_fix(fix);
+extern void out_hex(unsigned char);
 extern void out_digits(unsigned);
 extern void out(string);
 extern void right(void);

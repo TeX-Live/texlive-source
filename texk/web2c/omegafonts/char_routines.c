@@ -399,6 +399,28 @@ int xstack[1000];
 int ystack[1000];
 int zstack[1000];
 
+static int
+string_balance(unsigned char *special, int k)
+{
+    unsigned paren_level = 0;
+
+    if (k == 0)
+        return 1;
+    if (*special == ' ')
+        return 0;
+    for (; k > 0; k--, special++) {
+        if ((*special < ' ') || (*special > '~'))
+            return 0;
+        if (*special == '(')
+            paren_level++;
+        if (*special == ')') {
+            if (paren_level-- == 0)
+                return 0;
+        }
+    }
+    return (paren_level == 0);
+}
+
 void
 print_packet(unsigned char *packet_start, unsigned packet_length)
 {
@@ -502,6 +524,19 @@ print_packet(unsigned char *packet_start, unsigned packet_length)
       case DVI_XXX_1: case DVI_XXX_2: case DVI_XXX_3: case DVI_XXX_4:
          cmd = *packet; packet++;
          fix_arg = ovf_get_arg(&packet, cmd - DVI_XXX_1 + 1, FALSE);
+         if (fix_arg < 0) {
+             internal_error_1("Special string with negative length (%d)\n", fix_arg);
+         }
+         if ((fix_arg <= 64) && string_balance(packet, fix_arg)) {
+             char *special = (char *) xmalloc(fix_arg+1);
+             strncpy(special, (const char *)packet, fix_arg);
+             special[fix_arg] = '\0';
+             print_special(special);
+             free(special);
+         } else {
+             print_special_hex(packet, fix_arg);
+         }
+         packet += fix_arg;
          break;
       case DVI_FNT_1: case DVI_FNT_2: case DVI_FNT_3: case DVI_FNT_4:
          cmd = *packet; packet++;

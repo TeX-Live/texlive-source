@@ -1,3 +1,19 @@
+2009-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Implement DVI specials in ovp/ovf character packets.
+
+	* font_routines.c (get_hex): fix hex digit conversion.
+	* lexer.l (scan_hex_string): allow white space in hex strings. 
+
+	* char_routines.c (print_packet): handle DVI specials.
+	(string_balance): new function to decide SPECIAL or SPECIALHEX.
+	* print_routines.[ch] (print_special_hex): output DVI specials.
+	* out_routines.[ch] (out_hex): new function.
+
+	* specialhex.test (new): Shell script to test specials.
+	* tests/specialhex.ovp (new): test data.
+	* Makefile.am: add the new test.
+
 2009-06-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.
