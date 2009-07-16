@@ -23,6 +23,10 @@
 #include <config.h>
 #endif
 
+#ifdef __CYGWIN32__
+#include <io.h>
+#endif
+
 #ifdef KPATHSEA
 #include <kpathsea/c-fopen.h>
 #endif

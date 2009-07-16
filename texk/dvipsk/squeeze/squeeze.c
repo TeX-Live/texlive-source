@@ -20,7 +20,13 @@
 #endif /* !O_BINARY */
 
 #if O_BINARY
-#define SET_BINARY(fd) _setmode((fd), O_BINARY)
+# ifdef __CYGWIN__
+#  include <unistd.h>
+#  include <io.h>
+#  define SET_BINARY(fd) setmode((fd), O_BINARY)
+# else
+#  define SET_BINARY(fd) _setmode((fd), O_BINARY)
+# endif
 #endif
 
 #define LINELENGTH (72)

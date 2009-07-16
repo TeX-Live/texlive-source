@@ -1,3 +1,7 @@
+2009-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* seek.c (__CYGWIN32__): #include <io.h> for setmode.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvibook.c, dvitodvi.c: drop #ifdef HAVE_PROTOTYPES,
