@@ -100,12 +100,13 @@ ovp2ovf.p: tangle$(EXEEXT) $(ovp2ovf_sources)
 
 ## Tests
 ##
-EXTRA_DIST += omegaware/level1.test omegaware/omfonts.test omegaware/otangle.test
+EXTRA_DIST += omegaware/level1.test omegaware/omfonts.test \
+	omegaware/otangle.test omegaware/specialhex.test
 
 if OTANGLE
 TESTS += omegaware/otangle.test
 if !OMFONTS
-TESTS += omegaware/level1.test omegaware/omfonts.test
+TESTS += omegaware/level1.test omegaware/omfonts.test omegaware/specialhex.test
 endif !OMFONTS
 endif OTANGLE
 
@@ -118,4 +119,8 @@ DISTCLEANFILES += tests/Cherokee.tfm tests/OCherokee.ofm \
 	tests/xOCherokee.opl tests/xOCherokee.ovp
 ## omegaware/otangle.test
 DISTCLEANFILES += cftest.p
+## omegaware/specialhex.test
+DISTCLEANFILES += tests/specialhex.ofm tests/specialhex.opl \
+	tests/specialhex.ovf tests/xspecialhex.ofm \
+	tests/xspecialhex.opl tests/xspecialhex.ovp
 

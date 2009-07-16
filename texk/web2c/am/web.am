@@ -261,6 +261,7 @@ EXTRA_DIST += \
 	tests/ptmr.vpl \
 	tests/rpsyr.tfm \
 	tests/rptmr.tfm \
+	tests/specialhex.ovp \
 	tests/story.dvi \
 	tests/testex.err \
 	tests/testex.mp \

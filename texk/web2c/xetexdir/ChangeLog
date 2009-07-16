@@ -1,3 +1,8 @@
+2009-07-16  Peter Breitenlohner <peb@mppmu.mpg.de>
+
+	* am/xetex.am: Put ICU_INCLUDES first to avoid an installed
+	version.
+
 2009-05-13  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* am/xetex.am: Put FREETYPE2_INCLUDES as early as possible to

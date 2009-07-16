@@ -57,7 +57,7 @@ This file is named "synctex_main.c".
 This is the command line interface to the synctex_parser.c.
 */
 
-//#   include "web2c/c-auto.h" /* for inline && HAVE_xxx */
+#   include "web2c/c-auto.h" /* for inline && HAVE_xxx */
 
 #   include <stdlib.h>
 #   include <stdio.h>

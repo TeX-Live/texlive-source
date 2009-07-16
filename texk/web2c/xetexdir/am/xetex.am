@@ -16,10 +16,12 @@ nodist_EXTRA_xetex_SOURCES = dummy.cxx
 libxetex = libxetex.a
 
 xetex_cppflags = -DU_STATIC_IMPLEMENTATION -I$(srcdir)/xetexdir
-## Must add freetype2 includes as early as possible to avoid
+## Must add icu first to avoid an installed version.
+xetex_cppflags += $(ICU_INCLUDES)
+## Must add freetype2 includes early to avoid
 ## freetype1/freetype2 confusion -- what a mess.
 xetex_cppflags += $(FREETYPE2_INCLUDES)
-xetex_cppflags += $(ICU_INCLUDES) $(TECKIT_INCLUDES)
+xetex_cppflags += $(TECKIT_INCLUDES)
 xetex_ldadd = $(libxetex) $(ICU_LIBS) $(TECKIT_LIBS)
 xetex_dependencies = $(proglib)
 xetex_dependencies += $(ICU_DEPEND) $(TECKIT_DEPEND)

@@ -1,3 +1,8 @@
+2009-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* specialhex.test (new): Shell script to test specials.
+	* am/omegaware.am: add the new test.
+
 2009-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* level1.test (new): Shell script to test ofm_level=1.
