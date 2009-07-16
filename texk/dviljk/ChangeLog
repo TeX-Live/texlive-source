@@ -1,3 +1,11 @@
+2009-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (dvilj.man): rebuild only in maintainer-mode.
+
+2009-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi2xx.c: use '(void)AssureBinary' to avoid compiler warning.
+
 2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* config.h, dvi2xx.c, dvi2xx.h, tfm.c, tfm.h:

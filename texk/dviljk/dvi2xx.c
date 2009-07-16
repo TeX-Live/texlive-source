@@ -233,7 +233,7 @@ main(int argc, char *argv[])
      in TEXT mode, and we need to switch it to binary, unless they are
      writing to the screen (in which case they get what they deserve).  */
   if (O_BINARY && !isatty(fileno(outfp)))
-    AssureBinary(fileno(outfp));
+    (void)AssureBinary(fileno(outfp));
 
 #ifdef TIMING
 #ifdef BSD_TIME_CALLS

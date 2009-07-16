@@ -76,8 +76,10 @@ uninstall-hook:
 	for f in $(man1_links); do rm -f $(DESTDIR)$(man1dir)/$$f; done
 
 VERSION = `grep 'define VERSION' $(srcdir)/dvi2xx.c | sed -e 's/^.*version //' -e 's/).*//'`
+if MAINTAINER_MODE
 dvilj.man: dvilj.pod dvi2xx.c
 	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
+endif MAINTAINER_MODE
 dvilj.ps: dvilj.man
 	man -t -l $< >$@
 

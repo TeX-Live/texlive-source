@@ -959,8 +959,8 @@ install-data-hook:
 uninstall-hook:
 	rm -f $(DESTDIR)$(bindir)/dvilj6$(EXEEXT)
 	for f in $(man1_links); do rm -f $(DESTDIR)$(man1dir)/$$f; done
-dvilj.man: dvilj.pod dvi2xx.c
-	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
+@MAINTAINER_MODE_TRUE@dvilj.man: dvilj.pod dvi2xx.c
+@MAINTAINER_MODE_TRUE@	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
 dvilj.ps: dvilj.man
 	man -t -l $< >$@
 
