@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.76 2009/05/10 17:04:54 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dvipdfmx.c,v 1.77 2009/07/08 09:33:22 chofchof Exp $
     
     This is DVIPDFMx, an eXtended version of DVIPDFM by Mark A. Wicks.
 
@@ -168,6 +168,7 @@ usage (void)
   fprintf (stdout, "\t\tPositive values are always ORed with previously given flags.\n");
   fprintf (stdout, "\t\tAnd negative values replace old values.\n");
   fprintf (stdout, "-D template\tPS->PDF conversion command line template [none]\n");
+  fprintf (stdout, "-E \t\tEnable DVIPDFM emulation mode\n");
   fprintf (stdout, "-K number\tEncryption key bits [40]\n");
   fprintf (stdout, "-O number\tSet maximum depth of open bookmark items [0]\n");
   fprintf (stdout, "-P number\tSet permission flags for PDF encryption [0x003C]\n");
@@ -529,6 +530,9 @@ do_args (int argc, char *argv[])
             opt_flags |=  flags;
         }
         POP_ARG();
+        break;
+      case 'E':
+        compat_mode = 1;
         break;
       case 'e':
 	if (compat_mode) {

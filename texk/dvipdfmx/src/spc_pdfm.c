@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.48 2009/04/29 11:22:19 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.50 2009/07/07 11:48:34 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -54,6 +54,7 @@
 #include "spc_util.h"
 #include "spc_pdfm.h"
 
+#include "dvipdfmx.h"
 
 #define  ENABLE_TOUNICODE  1
 
@@ -1008,6 +1009,9 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
 
   if (ident) {
+    if (compat_mode &&
+        pdf_ximage_get_subtype(xobj_id) == PDF_XOBJECT_TYPE_IMAGE)
+      pdf_ximage_set_attr(xobj_id, 1, 1, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0);
     addresource(sd, ident, xobj_id);
     RELEASE(ident);
   }

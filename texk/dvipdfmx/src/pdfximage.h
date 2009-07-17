@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.14 2009/05/03 00:13:04 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.h,v 1.16 2009/07/07 11:48:34 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -87,4 +87,8 @@ pdf_ximage_scale_image (int            id,
 
 /* from dvipdfmx.c */
 extern void pdf_ximage_disable_ebb (void);
+
+/* from spc_pdfm.c */
+extern void pdf_ximgge_get_subtype (int xobj_id);
+extern void pdf_ximage_set_attr (int xobj_id, long width, long height, double xdensity, double ydensity, double llx, double lly, double urx, double ury);
 #endif /* _PDFXIMAGE_H_ */

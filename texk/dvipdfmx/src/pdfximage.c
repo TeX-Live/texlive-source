@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.23 2009/05/03 00:13:04 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.25 2009/07/07 11:48:34 chofchof Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -585,6 +585,37 @@ pdf_ximage_get_resname (int id)
   return I->res_name;
 }
 
+int
+pdf_ximage_get_subtype (int id)
+{
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
+
+  CHECK_ID(ic, id);
+
+  I = GET_IMAGE(ic, id);
+
+  return I->subtype;
+}
+
+void
+pdf_ximage_set_attr (int id, long width, long height, double xdensity, double ydensity, double llx, double lly, double urx, double ury)
+{
+  struct ic_ *ic = &_ic;
+  pdf_ximage *I;
+
+  CHECK_ID(ic, id);
+
+  I = GET_IMAGE(ic, id);
+  I->attr.width = width;
+  I->attr.height = height;
+  I->attr.xdensity = xdensity;
+  I->attr.ydensity = ydensity;
+  I->attr.bbox.llx = llx;
+  I->attr.bbox.lly = lly;
+  I->attr.bbox.urx = urx;
+  I->attr.bbox.ury = ury;
+}
 
 /* depth...
  * Dvipdfm treat "depth" as "yoffset" for pdf:image and pdf:uxobj
