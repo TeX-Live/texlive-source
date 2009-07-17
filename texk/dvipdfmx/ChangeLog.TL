@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/pdfximage.h: add prototype for pdf_ximage_get_subtype.
+
 2009-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

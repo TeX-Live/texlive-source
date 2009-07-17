@@ -59,6 +59,7 @@ extern void     pdf_init_images           (void);
 extern void     pdf_close_images          (void);
 
 extern char    *pdf_ximage_get_resname    (int xobj_id);
+extern int      pdf_ximage_get_subtype    (int xobj_id);
 extern pdf_obj *pdf_ximage_get_reference  (int xobj_id);
 
 
