@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 #
 # pdfcrop.pl
 #
-# Copyright (C) 2002, 2004, 2005, 2008 Heiko Oberdiek.
+# Copyright (C) 2002, 2004, 2005, 2008, 2009 Heiko Oberdiek.
 #
 # This program may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.2
@@ -22,10 +22,10 @@ $^W=1; # turn warning on
 #
 my $file        = "pdfcrop.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.13";
-my $date        = "2008/07/24";
+my $version     = "1.15";
+my $date        = "2009/07/14";
 my $author      = "Heiko Oberdiek";
-my $copyright   = "Copyright (c) 2002-2008 by $author.";
+my $copyright   = "Copyright (c) 2002-2009 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -49,6 +49,9 @@ my $copyright   = "Copyright (c) 2002-2008 by $author.";
 #   2008/07/24 v1.13: open("-|")/workaround removed.
 #                     Input files with unsafe file names are linked/copied
 #                     to temporary file with safe file name.
+#   2008/09/12 v1.14: Error detection for invalid Bounding Boxes.
+#   2009/07/14 v1.15: Fix for negative coordinates in Bounding Boxes
+#                     (David Menestrina).
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -334,6 +337,18 @@ if ($::opt_tex eq 'pdftex') {
   \pdfxform0\relax
   \shipout\hbox{\pdfrefxform\pdflastxform}%
 }%
+\def\pageinclude#1{%
+  \pdfhorigin=0pt\relax
+  \pdfvorigin=0pt\relax
+  \pdfximage page #1{\pdffile}%
+  \setbox0=\hbox{\pdfrefximage\pdflastximage}%
+  \pdfpagewidth=\wd0\relax
+  \pdfpageheight=\ht0\relax
+  \advance\pdfpageheight by \dp0\relax
+  \shipout\hbox{%
+    \raise\dp0\box0\relax
+  }%
+}
 END_TMP_HEAD
 }
 else { # XeTeX
@@ -388,16 +403,51 @@ my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
 while (<GS>) {
     print $_ if $::opt_verbose;
     next unless
-        /^$bb:\s*([\.\d]+) ([\.\d]+) ([\.\d]+) ([\.\d]+)/o;
+        /^$bb:\s*(-?[\.\d]+) (-?[\.\d]+) (-?[\.\d]+) (-?[\.\d]+)/o;
     @bbox = ($1, $2, $3, $4) unless $::opt_bbox;
     $page++;
+
+    my $empty = 0;
+    $empty = 1 if $bbox[0] >= $bbox[2];
+    $empty = 1 if $bbox[1] >= $bbox[3];
+    if ($empty) {
+        print <<"END_WARNING";
+
+!!! Warning: Empty Bounding Box is returned by Ghostscript!
+!!!   Page $page: @bbox
+!!! Either there is a problem with the page or with Ghostscript.
+!!! Recovery is tried by embedding the page in its original size.
+
+END_WARNING
+        print TMP "\\pageinclude{$page}\n";
+        next;
+    }
+
     print "* Page $page: @bbox\n" if $::opt_verbose;
+
+    my @bb = ($bbox[0] - $llx, $bbox[1] - $ury,
+             $bbox[2] + $urx, $bbox[3] + $lly);
+
+    $empty = 0;
+    $empty = 1 if $bb[0] >= $bb[2];
+    $empty = 1 if $bb[1] >= $bb[3];
+    if ($empty) {
+        print <<"END_WARNING";
+
+!!! Warning: The final Bounding Box is empty!
+!!!   Page: $page: @bb
+!!! Probably caused by too large negative margin values.
+!!! Recovery by ignoring margin values.
+
+END_WARNING
+        print TMP "\\page $page [@bbox]\n";
+        # clipping shouldn't make a difference
+        next;
+    }
     if ($::opt_clip) {
         print TMP "\\pageclip $page [@bbox][$llx $lly $urx $ury]\n";
     }
     else {
-        my @bb = ($bbox[0] - $llx, $bbox[1] - $ury,
-                 $bbox[2] + $urx, $bbox[3] + $lly);
         print TMP "\\page $page [@bb]\n";
     }
 }
