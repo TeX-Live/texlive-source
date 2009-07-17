@@ -1742,8 +1742,8 @@ pk_rll_cvt(void)
 	    ++cost;
 	}
 	if (cost != 2 * (bitmap_end - bitmap))
-	    printf("Cost miscalculation:  expected %d, got %d\n", cost,
-		2 * (bitmap_end - bitmap));
+	    printf("Cost miscalculation:  expected %d, got %ld\n", cost,
+		2 * (long) (bitmap_end - bitmap));
 	pk_len = bitmap_end - bitmap;
 	return True;
 }

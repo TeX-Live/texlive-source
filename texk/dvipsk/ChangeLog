@@ -1,3 +1,9 @@
+2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writet1.c (t1_flush_cs): cast ptr diff to unsigned long for
+	printing.
+	NB: sizeof(ptr)==sizeof(long) for both 32Bit and 64Bit systems.
+
 2009-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* squeeze/squeeze.c (__CYGWIN__): #include <unistd.h> and <io.h>

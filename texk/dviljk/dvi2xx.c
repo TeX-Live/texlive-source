@@ -378,9 +378,9 @@ main(int argc, char *argv[])
       DEBUG_PRINT ("BOP for [");
       for (i = 0; i <= 9; i++) {
         count[i] = NoSignExtend(dvifp, 4);
-        DEBUG_PRINT1 ("%d.", (int) count[i]);
+        DEBUG_PRINT1 ("%ld.", (long) count[i]);
       }
-      DEBUG_PRINT1 ("] at %ld.\n", cpagep);
+      DEBUG_PRINT1 ("] at %ld.\n", (long)cpagep);
       ppagep = (long)NoSignExtend(dvifp, 4);
       h = v = w = x = y = z = 0;
       hh = vv = 0;
@@ -2907,7 +2907,7 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
 #endif
         break;
       case 'f':       /* next arg is starting pagenumber */
-        if ( sscanf(tcp + 1, "%ld", &FirstPage) != 1 )
+        if ( sscanf(tcp + 1, FMT_long4, &FirstPage) != 1 )
           Fatal("Argument is not a valid integer\n");
         FirstPageSpecified = _TRUE;
         break;
@@ -3020,7 +3020,7 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
         break;
 #endif
       case 'p':       /* print n pages  */
-        if ( sscanf(tcp + 1, "%ld", &PrintPages) != 1 )
+        if ( sscanf(tcp + 1, FMT_long4, &PrintPages) != 1 )
           Fatal("Argument is not a valid integer\n");
         if (PrintPages < 1)
           Fatal("Argument of -p must be greater than 0\n");
@@ -3070,7 +3070,7 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
         break;
 #endif
       case 't':       /* ending pagenumber */
-        if ( sscanf(tcp + 1, "%ld", &LastPage) != 1 )
+        if ( sscanf(tcp + 1, FMT_long4, &LastPage) != 1 )
           Fatal("Argument is not a valid integer\n");
         LastPageSpecified = _TRUE;
         break;
@@ -3856,9 +3856,9 @@ void DoSpecial(char *str, int n)
           if (labs(x_pos)<labs(y_pos)) x_pos = x_pos+3;
           else                         y_pos = y_pos+3;
           if (GrayFill) {
-            EMIT4("\033*c%lda%ldb%dg2P", x_pos, y_pos, GrayScale);
+            EMIT4("\033*c%lda%ldb%dg2P", (long)x_pos, (long)y_pos, GrayScale);
           } else {
-            EMIT4("\033*c%lda%ldb%dg3P", x_pos, y_pos, Pattern);
+            EMIT4("\033*c%lda%ldb%dg3P", (long)x_pos, (long)y_pos, Pattern);
           }
           last_rx = last_ry = UNKNOWN;
 #endif

@@ -1593,7 +1593,7 @@ static void t1_flush_cs(boolean is_subr)
     for (ptr = tab; ptr < end_tab; ptr++) {
         if (ptr->used) {
             if (is_subr)
-                sprintf(t1_line_array, "dup %u %u", ptr - tab, ptr->cslen);
+                sprintf(t1_line_array, "dup %lu %u", (unsigned long) (ptr - tab), ptr->cslen);
             else
                 sprintf(t1_line_array, "/%s %u", ptr->name, ptr->cslen);
             p = strend(t1_line_array);
@@ -1604,7 +1604,7 @@ static void t1_flush_cs(boolean is_subr)
         else {
             /* replace unsused subr's by return_cs */
             if (is_subr) {
-                sprintf(t1_line_array, "dup %u %u%s ", ptr - tab, cs_len,
+                sprintf(t1_line_array, "dup %lu %u%s ", (unsigned long) (ptr - tab), cs_len,
                         cs_token_pair[0]);
                 p = strend(t1_line_array);
                 memcpy(p, return_cs, cs_len);

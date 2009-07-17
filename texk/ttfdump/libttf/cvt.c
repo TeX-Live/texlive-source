@@ -51,7 +51,7 @@ void ttfPrintCVT(FILE *fp, FWord *cvt, USHORT cvtLength)
 
     fprintf(fp,"'cvt ' Table - Control Value Table\n");
     fprintf(fp,"----------------------------------\n");
-    fprintf(fp,"Size = %d bytes, %d entries\n",cvtLength*sizeof(FWord),
+    fprintf(fp,"Size = %d bytes, %d entries\n", (int) (cvtLength*sizeof(FWord)),
 	    cvtLength);
 
     for (i=0;i<cvtLength;i++)

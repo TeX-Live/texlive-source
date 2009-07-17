@@ -66,12 +66,8 @@ char *vm_alloc(bytes)
 {
   char *answer;
  
-  /* Round to next LONG multiple (32-bit) */
-#if defined(sun) || defined(__hpux) || defined(__alpha)
+  /* Align returned bytes to 64-bit boundary */
   bytes = (bytes + 7) & ~7;
-#else
-  bytes = (bytes + 3) & ~3;
-#endif
  
   /* take space from what is left otherwise allocate another CHUNK */
   if (bytes > vm_free)

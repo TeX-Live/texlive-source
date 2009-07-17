@@ -629,7 +629,7 @@ static void ttfPrintCMAP4(FILE *fp,SubTablePtr subTable)
 		    j =  subTable->map.cmap4->segCountX2/2 - i;
 		    j = subTable->map.cmap4->idRangeOffset[i] - 
 			j*sizeof(USHORT);
-		    fprintf(fp, " gId# = %d\n",j/sizeof(USHORT));
+		    fprintf(fp, " gId# = %d\n", (int) (j/sizeof(USHORT)));
 		}
 	    else
 		fprintf(fp, " gId# = N/A\n");

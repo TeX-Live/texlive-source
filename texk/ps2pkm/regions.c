@@ -308,11 +308,8 @@ if the xvalues are long aligned by ANDing the address with the
 (sizeof(long) - 1)--if non zero, the xvalues are not aligned well.  We
 set 'iy' to the ymin value that would give us good alignment:
 */
-#if defined (__alpha)
-       iy = ymin - (((long) xvalues) & (sizeof(LONG) - 1)) / sizeof(pel);
-#else
-       iy = ymin - (((int) xvalues) & (sizeof(LONG) - 1)) / sizeof(pel);
-#endif 
+       iy = ymin - (((unsigned long) xvalues) & (sizeof(LONG) - 1)) / sizeof(pel);
+
        r = (struct edgelist *)Allocate(sizeof(struct edgelist), &template,
                              (ymax - iy) * sizeof(pel));
  

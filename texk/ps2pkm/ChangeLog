@@ -1,7 +1,12 @@
+2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* regions.c (NewEdge): align to sizeof(long), as in t1lib.
+	* util.c (vm_alloc): align to 64-bit boundary, as in t1lib.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fontfcn.c, regions.c, regions.h, scanfont.c, t1funcs.c:
-	drop #ifdef HAVE_PROTOTYPES, unconditionalty use prototypes.
+	drop #ifdef HAVE_PROTOTYPES, unconditionally use prototypes.
 
 2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

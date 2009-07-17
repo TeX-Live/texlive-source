@@ -199,8 +199,10 @@ typedef SCHAR_TYPE signed_char;
 
 #if SIZEOF_LONG > 4
 # define long4 int
+# define FMT_long4 "%d"
 #else
 # define long4 long
+# define FMT_long4 "%ld"
 #endif
 
 #include <stdarg.h>
