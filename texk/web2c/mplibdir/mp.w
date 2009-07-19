@@ -1,4 +1,4 @@
- $Id: mp.w 1102 2009-07-13 08:43:17Z taco $
+ $Id: mp.w 1105 2009-07-18 09:15:07Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -16478,7 +16478,7 @@ except of course for a short time just after |job_name| has become nonzero.
 
 @<Allocate or ...@>=
 mp->job_name=mp_xstrdup(mp, opt->job_name); 
-{
+if (mp->job_name != NULL) {
   char *s = mp->job_name+strlen(mp->job_name);
   while (s>mp->job_name) {
      if (*s == '.') {
