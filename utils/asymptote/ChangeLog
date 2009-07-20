@@ -1,4 +1,72 @@
 ------------------------------------------------------------------------
+r4528 | jcbowman | 2009-07-19 22:57:37 -0600 (Sun, 19 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/labelpath3.asy
+   M /trunk/asymptote/base/three.asy
+   M /trunk/asymptote/base/three_arrows.asy
+   M /trunk/asymptote/base/tube.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Use a consistent approximation for drawing tube centers.
+
+------------------------------------------------------------------------
+r4527 | jcbowman | 2009-07-19 21:35:45 -0600 (Sun, 19 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+   M /trunk/asymptote/main.cc
+   M /trunk/asymptote/picture.cc
+
+Fix threaded exports.
+
+------------------------------------------------------------------------
+r4526 | jcbowman | 2009-07-18 15:26:12 -0600 (Sat, 18 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/examples/animations/inlinemovie3.tex
+   M /trunk/asymptote/pen.h
+   M /trunk/asymptote/prcfile.h
+
+Respect -gray and -bw in PRC output.
+
+------------------------------------------------------------------------
+r4525 | jcbowman | 2009-07-17 23:35:20 -0600 (Fri, 17 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three.asy
+
+Add default argument to transform3(projection).
+
+------------------------------------------------------------------------
+r4524 | jcbowman | 2009-07-17 22:19:35 -0600 (Fri, 17 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/latexusage.tex
+   M /trunk/asymptote/examples/lever.asy
+   M /trunk/asymptote/examples/logo3.asy
+   M /trunk/asymptote/examples/polarcircle.asy
+   M /trunk/asymptote/runtime.in
+
+Fix texpath fontsize with PDF tex engines.
+
+------------------------------------------------------------------------
+r4523 | jcbowman | 2009-07-17 19:55:57 -0600 (Fri, 17 Jul 2009) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/datagraph.asy
+   M /trunk/asymptote/doc/diatom.asy
+   M /trunk/asymptote/doc/logo.asy
+   M /trunk/asymptote/doc/multicontour.asy
+   M /trunk/asymptote/doc/westnile.asy
+   M /trunk/asymptote/examples/mosquito.asy
+   M /trunk/asymptote/examples/polararea.asy
+   M /trunk/asymptote/examples/poster.asy
+   M /trunk/asymptote/examples/slidedemo.asy
+
+Add missing pt units.
+
+------------------------------------------------------------------------
+r4522 | jcbowman | 2009-07-14 00:22:41 -0600 (Tue, 14 Jul 2009) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 1.82svn.
+------------------------------------------------------------------------
 r4521 | jcbowman | 2009-07-13 22:36:37 -0600 (Mon, 13 Jul 2009) | 2 lines
 Changed paths:
    M /trunk/asymptote/base/three.asy

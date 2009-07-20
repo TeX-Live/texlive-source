@@ -1,3 +1,11 @@
+Release Notes for Version 1.82
+
+Threaded exports were fixed. The texpath fontsize was fixed for PDF tex engines. 
+A default currentprojection argument was added to transform3(projection).
+The -gray and -bw settings are now respected in PRC output.
+A consistent approximation is now used for drawing tube centers.
+Missing pt units were added to all fontsize examples.
+
 Release Notes for Version 1.81
 
 A boolean targetsize option can now be used to draw 3D labels with the apparent
