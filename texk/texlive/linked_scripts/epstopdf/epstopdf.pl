@@ -87,11 +87,17 @@ use strict;
 #    * Added BSD-style license
 #  2009/05/09 v2.9.10gw
 #    * Changed cygwin name for ghostscript to gs
+#  2009/07/17 v2.9.11gw
+#    * Added -dSAFER to default gs options
+#	TL2009 wants to use a restricted variant of -shell-escape,
+#	allowing epstopdf to run. However without -dSAFER Ghostscript
+#	allows writing to files (other than given in -sOutputFile)
+#	and running commands (through Ghostscript pipe's language feature).
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2008/08/26";
-my $fileversion="2.9.10gw";
+my $filedate="2009/07/19";
+my $fileversion="2.9.11gw";
 my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al., 2002-2009 by Gerben Wierda et al. Free software under a BSD-style license.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
@@ -191,7 +197,7 @@ else {
 }
 
 ### option compress & embed
-my $GSOPTS = "";
+my $GSOPTS = "-dSAFER ";
 $GSOPTS .= " -dPDFSETTINGS=/prepress -dMaxSubsetPct=100 -dSubsetFonts=true -dEmbedAllFonts=true " if $::opt_embed;
 $GSOPTS .= "-dUseFlateCompression=false " unless $::opt_compress;
 $GSOPTS .= "-r$::opt_res " if $::opt_res;
