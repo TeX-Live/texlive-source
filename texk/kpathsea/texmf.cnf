@@ -525,7 +525,7 @@ MISSFONT_LOG = missfont.log
 % To suppress nothing, use TEX_HUSH = none or do not set the variable at all.
 TEX_HUSH = none
 
-% Allow TeX, MF, and MP to parse the first line of an input file for
+% Allow TeX, and MF to parse the first line of an input file for
 % the %&format construct.
 parse_first_line = t
 
@@ -567,7 +567,7 @@ TEX = etex
 %MFEDIT = ${TEXEDIT}
 %MPEDIT = ${TEXEDIT}
 
-%  Part 3: Array and other sizes for TeX (and Metafont and MetaPost).
+%  Part 3: Array and other sizes for TeX (and Metafont).
 %
 % If you want to change some of these sizes only for a certain TeX
 % variant, the usual dot notation works, e.g.,
@@ -608,9 +608,9 @@ font_max = 9000
 hash_extra = 50000
 
 % Max number of characters in all strings, including all error messages,
-% help texts, font names, control sequences.  These values apply to TeX and MP.
+% help texts, font names, control sequences.  These values apply to TeX.
 pool_size = 1250000
-% Minimum pool space after TeX/MP's own strings; must be at least
+% Minimum pool space after TeX's own strings; must be at least
 % 25000 less than pool_size, but doesn't need to be nearly that large.
 string_vacancies = 90000
 % Maximum number of strings.
@@ -634,8 +634,9 @@ trie_size = 700000
 hyph_size = 8191        % prime number of hyphenation exceptions, >610, <32767.
                         % http://primes.utm.edu/curios/page.php/8191.html
 nest_size = 500         % simultaneous semantic levels (e.g., groups)
-max_in_open = 15        % simultaneous input files and error insertions
-param_size = 10000      % simultaneous macro parameters
+max_in_open = 15        % simultaneous input files and error insertions, 
+                        % also applies to MetaPost
+param_size = 10000      % simultaneous macro parameters, also applies to MP
 save_size = 50000       % for saving values outside current group
 stack_size = 5000       % simultaneous input sources
 
@@ -645,9 +646,8 @@ ocp_stack_size = 10000  % stacks for ocp computations.
 ocp_list_size = 1000    % control for multiple ocps.
 
 % Parameter specific to MetaPost.
-% Maximum number of knots between breakpoints of a path.
-% Set to 2000 by default.
-% path_size.mpost = 10000
+% Size of the hash table for control sequences, default 65536.
+% hash_size.mpost = 65536
 
 % These work best if they are the same as the I/O buffer size, but it
 % doesn't matter much.  Must be a multiple of 8.
