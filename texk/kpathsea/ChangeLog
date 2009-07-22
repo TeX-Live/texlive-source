@@ -1,3 +1,9 @@
+2009-07-23  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape_commands): remove tex programs (too
+	dangerous?), add other indexing programs, change pdfcrop to
+	rpdfcrop, convert to imgconvert.
+
 2009-07-22  Taco Hoekwater <taco@metapost.org>
 
 	* texmf.cnf (sizes): fix some documentation strings for MetaPost,

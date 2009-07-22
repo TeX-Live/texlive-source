@@ -492,12 +492,17 @@ try_std_extension_first = t
 % enable it for everything but bare tex.
 shell_escape = p
 
+% Special: convert is the standard command name for ImageMagick, but it
+% is also the name of a dangerous filesystem-changing command on
+% Windows.  So enable imgconvert (used in w32tex), but not convert.
+
 % No spaces in this command list.
 shell_escape_commands = \
-bibtex,convert,dvips,epstopdf,epspdf,etex,fc-match,gnuplot,\
-kpsewhich,latex,luatex,lualatex,makeindex,mpost,\
-pdfcrop,pdflatex,pdfluatex,ps2pdf,ps4pdf,pstopdf,pygmentize,\
-tex,texexec,texmfstart,ulqda\
+bibtex,bibtex8,dvips,epstopdf,epspdf,etex,fc-match,\
+imgconvert,\
+kpsewhich,makeindex,mkgrkindex,\
+pdfluatex,ps2pdf,ps4pdf,pstopdf,pygmentize,\
+rpdfcrop,texindy,xindy,ulqda\
 
 % plain TeX should remain unenhanced.
 shell_escape.tex = f
