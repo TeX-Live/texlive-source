@@ -1,3 +1,7 @@
+2009-07-23  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (install-links): create rpdfcrop as a link to pdfcrop.
+
 2009-06-03  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_scriptx_SCRIPTS): remove ps2eps.pl,

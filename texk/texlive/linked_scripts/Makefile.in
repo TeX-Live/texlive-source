@@ -563,7 +563,10 @@ install-links:
 	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target; \
 	  done && \
-	  rm -rf getnonfreefonts-sys && \
+	  rm -f rpdfcrop && \
+	  echo "creating link 'rpdfcrop' -> 'pdfcrop'" && \
+	  $(LN_S) pdfcrop rpdfcrop && \
+	  rm -f getnonfreefonts-sys && \
 	  echo "creating link 'getnonfreefonts-sys' -> 'getnonfreefonts'" && \
 	  $(LN_S) getnonfreefonts getnonfreefonts-sys && \
 	  rm -f man && \

@@ -135,13 +135,16 @@ install-links:
 	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target; \
 	  done && \
-	  rm -rf getnonfreefonts-sys && \
+	  rm -f rpdfcrop && \
+	  echo "creating link 'rpdfcrop' -> 'pdfcrop'" && \
+	  $(LN_S) pdfcrop rpdfcrop && \
+	  rm -f getnonfreefonts-sys && \
 	  echo "creating link 'getnonfreefonts-sys' -> 'getnonfreefonts'" && \
 	  $(LN_S) getnonfreefonts getnonfreefonts-sys && \
-## man dir link for those mans which can use it.
 	  rm -f man && \
 	  echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
 	  (ln -s $(REL)/texmf/doc/man man || :)
+## man dir link for those mans which can use it.
 
 uninstall-hook:
 	@for s in $(nobase_dist_scriptx_SCRIPTS) $(nobase_dist_script_SCRIPTS); do \
