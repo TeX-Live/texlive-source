@@ -1,3 +1,9 @@
+2009-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* libpng-1.2.38-PATCHES: New directory to hold patches, if any,
+	applied to the distributed source tree.
+	* Makefile.am: Adjust.
+
 2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import libpng-1.2.38.

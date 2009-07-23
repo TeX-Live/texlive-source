@@ -2,12 +2,15 @@
 	=============================================
 
 This directory libs/libpng/ uses a proxy Makefile.am to build the libpng library
-from the unmodified source tree in libs/libpng/libpng-x.y.z/, bypassing
+from the unmodified (*) source tree in libs/libpng/libpng-x.y.z/, bypassing
 the original build system.
+
+(*) The directory libpng-x.y.z-PATCHES contains patches (if any) applied to
+the original source tree.
 
 As far as applicable, the tests in libs/libpng-x.y.z/configure.ac have been
 copied to libs/libpng/configure.ac.
 
 =============================
 
-2009-01-31	Peter Breitenlohner <peb@mppmu.mpg.de>
+2009-07-23	Peter Breitenlohner <peb@mppmu.mpg.de>

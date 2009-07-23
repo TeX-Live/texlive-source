@@ -15,6 +15,10 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## Thus nodist_* for all files in $(LIBPNG_TREE).
 EXTRA_DIST = $(LIBPNG_TREE)
 
+## Patches applied to the original source tree
+##
+EXTRA_DIST +=  $(LIBPNG_TREE)-PATCHES
+
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir)/$(LIBPNG_TREE) -name .svn`
