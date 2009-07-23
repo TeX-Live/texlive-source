@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2009
-@set month-year June 2009
+@set month-year July 2009
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -35,20 +35,16 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @dircategory Individual utilities
 @direntry
 * bibtex: (web2c)bibtex invocation.             Maintaining bibliographies.
-* dmp: (web2c)dmp invocation.                   Troff->MPX (MetaPost pictures).
 * dvicopy: (web2c)dvicopy invocation.           Virtual font expansion
 * dvitomp: (web2c)dvitomp invocation.           DVI to MPX (MetaPost pictures).
 * dvitype: (web2c)dvitype invocation.           DVI to human-readable text.
 * gftodvi: (web2c)gftodvi invocation.           Generic font proofsheets.
 * gftopk: (web2c)gftopk invocation.             Generic to packed fonts.
 * gftype: (web2c)gftype invocation.             GF to human-readable text.
-* makempx: (web2c)makempx invocation.           MetaPost label typesetting.
 * mf: (web2c)mf invocation.                     Creating typeface families.
 * mft: (web2c)mft invocation.                   Prettyprinting Metafont source.
 * mltex: (web2c)MLTeX.                          Multi-lingual TeX.
 * mpost: (web2c)mpost invocation.               Creating technical diagrams.
-* mpto: (web2c)mpto invocation.                 MetaPost label extraction.
-* newer: (web2c)newer invocation.               Compare modification times.
 * patgen: (web2c)patgen invocation.             Creating hyphenation patterns.
 * pktogf: (web2c)pktogf invocation.             Packed to generic fonts.
 * pktype: (web2c)pktype invocation.             PK to human-readable text.
@@ -2399,11 +2395,7 @@ supported) and a number of other subsidiary programs, described below.
 @menu
 * mpost invocation::            Invoking MetaPost.
 * Initial MetaPost::            Making mems.
-* makempx invocation::          Create MPX files for labels.
 * dvitomp invocation::          DVI-to-MPX translation.
-* dmp invocation::              Ditroff-to-MPX translation.
-* mpto invocation::             Extracting labels from MetaPost programs.
-* newer invocation::            Is one file newer than another?
 @end menu
 
 
@@ -2483,31 +2475,26 @@ The MetaPost construct
 btex @dots{} @var{tex-input} @dots{} etex
 @end example
 @noindent
-calls MakeMPX to generate a MPX file containing a MetaPost picture
-expression corresponding to @var{tex-input} (@pxref{makempx
-invocation}).
+generates a MetaPost picture expression corresponding to
+@var{tex-input}.
 
 The construct
 @example
 verbatimtex @dots{} @var{tex-input} @dots{} etex
 @end example
 @noindent
-simply passes the @var{tex-input} through to MakeMPX and thus to
+simply passes the @var{tex-input} through to
 @TeX{}. For example, if you are using @LaTeX{}, your MetaPost input file
 must start with a @code{verbatimtex} block that gives the necessary
 @code{\documentclass} (or @code{\documentstyle})
 @code{\begin@{document@}} command.  You will also need to set the
-enviroment variable @code{TEX} to @samp{latex} (@pxref{makempx
-invocation}).
+enviroment variable @code{TEX} to @samp{latex}.
 
 @var{tex-input} need not be specifically @TeX{} input; it could also be
 Troff.  In that case, you will need the @samp{-m pictures} Troff macro
 package (unfortunately absent from many Troff implementations), or an
 equivalent such as the @samp{-m pspic} macros from GNU groff described
 in grops(1).
-
-Other typesetters can be supported with no change to MetaPost itself;
-only MakeMPX needs to be updated.
 
 @cindex PostScript fonts, and Troff
 @cindex Troff, and MetaPost
@@ -2568,8 +2555,7 @@ These options are common to @TeX{}, Metafont, and MetaPost.
 @opindex -T
 @opindex -troff
 @vindex prologues
-Set the @code{prologues} internal variable to @code{1}, and use
-@code{makempx -troff} to generate MPX files.  
+Set the @code{prologues} internal variable to @code{1}.
 
 @item -tex=@var{texprogram}
 @opindex -tex=@var{texprogram}
@@ -2635,130 +2621,6 @@ page for MetaFun, other MetaPost-related things, and lots more from
 Pragma: @url{http://www.pragma-ade.com/}.
 
 
-@node makempx invocation
-@section MakeMPX: Support MetaPost labels
-
-@pindex makempx
-@cindex MetaPost labels
-@cindex captions, for MetaPost
-@cindex labels, for MetaPost
-
-In MetaPost, labels can be typeset using any document processor; the
-Web2c implementation supports @TeX{} and Troff.  MakeMPX translates the
-labels from the typesetting language back into low-level MetaPost
-commands in a so-called @dfn{mpx file}, so text can be manipulated like
-other graphic objects.  It is invoked automatically by MetaPost.
-Synopsis:
-
-@example
-makempx [-troff] @var{mpfile} @var{mpxfile}
-@end example
-
-@noindent
-The input comes from @var{mpfile} (no path searching is done), and the
-output goes to @var{mpxfile}.  However, if the file @var{mpxfile}
-already exists, and is newer than @var{mpfile}, then nothing is done
-(presumably the file is up-to-date).
-
-Otherwise:
-@enumerate
-@item
-@cindex MPto, invoked by MakeMPX
-MPto is run to extract the label text from the
-MetaPost source file @var{mpfile} (@pxref{mpto invocation}).
-
-@item
-The typesetting program itself is run, either @TeX{} or Troff (see
-below).  If @TeX{}, and the file named by the @code{MPTEXPRE}
-environment variable exists (@file{mptexpre.tex} by default), that file
-is prepended to the input from the MetaPost file.
-
-@item
-@cindex DVItoMP, invoked by MakeMPX
-@cindex DMP, invoked by MakeMPX
-The typesetter output (a DVI file in the case of @TeX{}, Ditroff output
-for Troff) is translated back to MetaPost, by DVItoMP (@pxref{dvitomp
-invocation}) or DMP (@pxref{dmp invocation}) respectively.
-@end enumerate
-
-@flindex mpxerr.log
-@flindex mpxerr.dvi
-@flindex mpxerr.tex
-@flindex mpxerr.t
-@flindex mpxerr
-If any of the above steps fail, for example if there was a typesetting
-mistake in the original @var{mpfile}, output may be left in files named
-@file{mpxerr.@{log,tex,dvi@}} (@TeX{}) or @file{mpxerr@{,.t@}} (Troff),
-so you can diagnose the problem.
-
-@opindex -troff
-@vindex prologues @r{and Troff in MetaPost}
-The @samp{-troff} option to MPto selects the Troff commands, rather than
-@TeX{}.  MetaPost supplies this automatically if the @samp{-T} or
-@samp{-troff} option was specified to MetaPost.
-
-@cindex picture expressions
-@cindex mpx file, defined
-The MPX file created by MakeMPX is a sequence of MetaPost picture
-expressions, one for every label in the original MetaPost input file.
-
-The names of the commands run by MakeMPX, and the directory
-added to the shell search @code{PATH} for the commands' location, are
-overridden by environment variables.  Here is a list:
-
-@vtable @code
-@item MAKEMPX_BINDIR
-The directory added to the @code{PATH}.  Default is the @samp{$(bindir)}
-Make directory, which in turn is set from the configure-time
-@samp{--bindir}, @samp{--exec-prefix} and @samp{--prefix} options; if
-nothing else is specified, the default is file @samp{/usr/local}.
-
-@item NEWER
-The command run to determine if @var{mpxfile} is out of date with respect
-to @var{mpfile}; default is @samp{newer}.
-
-@item MPTOTEX
-The command run to extract MetaPost labels in @TeX{} format; default is
-@samp{mpto -tex}.
-
-@item MPTOTR
-Likewise, for Troff; default is @samp{mpto -troff}.
-
-@item DVITOMP
-The command run to convert @TeX{} output back to MetaPost; default is
-@samp{dvitomp}.
-
-@item DMP
-Likewise, for Troff; default is @samp{dmp}.
-
-@item TEX
-The command run to typeset the labels in @TeX{}; the default is
-@samp{etex}, set in @file{texmf.cnf}.  If you use @LaTeX{}, set this to
-@code{latex}, and supply an appropriate @code{verbatimtex} header in
-the MP source (@pxref{mpost invocation}).  Or put @samp{%&latex} as
-the first line of your @LaTeX{} source.
-
-@item TROFF
-Likewise, for Troff; default is @samp{'eqn -d\$\$ | troff -Tpost'}.  You
-may need to replace @samp{-Tpost} by @samp{-T@var{term}}, where
-@var{term} is the PostScript device name for your Troff implementation,
-e.g., @samp{ps} or @samp{psc}; see troff(1).
-
-If you change this, you will also need to set the @code{TRFONTS}
-environment variable or configuration value to point to the appropriate
-font directory, traditionally @file{/usr/lib/font/dev@var{term}}.
-
-One more complication is whether the troff programs have a @samp{g}
-prefix.  On Windows, @TeX{} Live supports both ways:
-@file{makempx.exe} is built to use @file{gsoelim.exe},
-@file{geqn.exe}, and @file{gtroff.exe}, while
-@file{makempx-without-g-prefix.exe} is built to use @file{soelim.exe},
-@file{eqn.exe}, and @file{troff.exe}.  MetaPost users on Windows using
-troff for their labels should arrange to run the proper binary.
-
-@end vtable
-
-
 @node dvitomp invocation
 @section DVItoMP: DVI to MPX conversion
 
@@ -2767,8 +2629,7 @@ troff for their labels should arrange to run the proper binary.
 @cindex MPX files, converting from DVI files
 
 DVItoMP converts DVI files into low-level MetaPost commands in a
-so-called MPX file.  This program is generally invoked only by MakeMPX
-(@pxref{makempx invocation}).  Synopsis:
+so-called MPX file.  Synopsis:
 
 @example
 dvitomp @var{dvifile}[.dvi] [@var{mpxfile}[.mpx]]
@@ -2786,192 +2647,6 @@ MetaPost commands.
 
 The only options are @samp{-help} and @samp{-version} (@pxref{Common
 options}).
-
-
-@node dmp invocation
-@section DMP: Ditroff to MPX conversion
-
-@pindex DMP
-@cindex ditroff output, converting to MPX
-@cindex MPX files, creating from ditroff output
-
-DMP converts device-independent Troff (ditroff) output files into
-low-level MetaPost commands in a so-called MPX file.  This program is
-generally invoked by MakeMPX (@pxref{makempx invocation}).  Synopsis:
-
-@example
-dmp [@var{ditroff-file} [@var{mpxfile}]]
-@end example
-
-@noindent
-If @var{ditroff-file} is not specified, input comes from standard input;
-and if @var{mpxfile} is not specified, output goes to standard output.
-
-@pindex dpost
-@findex D @var{c} @r{ditroff graphics}
-@findex x X @r{ditroff device control}
-@findex SetColor @r{ditroff command}
-@findex BeginPath @r{ditroff command}
-@findex DrawPath @r{ditroff command}
-DMP was written to process the output of a Troff pipeline fed the output
-of @code{mpto -troff} (@pxref{mpto invocation}).  DMP understands all
-the @samp{D@var{c}} graphics functions that @code{dpost} does, but it
-ignores @samp{x X} device control functions such as @samp{x X
-SetColor:@dots{}}, @samp{x X BeginPath:}, and @samp{x X
-DrawPath:@dots{}}.
-
-@vindex MPSUPPORT
-The available font names are defined in the support file
-@file{trfonts.map}, which DMP looks for along the @code{MPSUPPORT} path.
-
-@flindex trchars.adj
-Another support file @file{trchars.adj}, also looked for along the
-@code{MPSUPPORT} path, contains a character adjustment table which
-should reflect the shift amounts found in the standard PostScript
-prologue for Troff and dpost found in the @code{TRFONTS} directory.
-Such an adjustment table is unnecessary for some Troff implementations,
-in which case @file{trchars.adj} should be replaced by an empty
-file---but it must still exist.
-
-
-DMP was written for one particular Troff implementation, and it
-unfortunately has many built-in assumptions about the output and fonts
-file formats used by Troff, which may not be satisfied in other
-environments.  In particular, GNU groff uses some extensions in its file
-formats described in groff_font(5) and groff_out(5) which make its
-output completely unusable for DMP.  On the other hand, the Troff
-version found in Sun Solaris 2.x, and perhaps other systems derived from
-System V R4, works fine with the default settings.
-
-If you run into trouble and want to adapt DMP to other systems,
-you might have to try the following (this is primarily for hackers):
-
-@itemize @bullet
-@item
-If DMP complains about a missing font table (e.g., @samp{Cannot find
-TR}), your Troff may not support the device @samp{post}.
-
-Check troff(1) for the devices supported by your Troff and set the
-@code{TROFF} environment variable appropriately (see above).  Also,
-locate the appropriate font directory and set the @code{TRFONTS}
-variable as needed.
-
-@item
-If DMP complains about a missing font description file (e.g., @samp{Font
-TR was not in map file}), your version of Troff may be using internal
-font names different from those in the distributed @file{trfonts.map};
-e.g., TR and TI instead of R and I for Times-Roman and Times-Italic.
-
-@flindex trchars.adj
-In this case, you may have to adapt @file{trfonts.map} and perhaps also
-@file{trchars.adj} in the MetaPost support directory
-(@file{texmf/metapost/support} by default).
-
-@item
-If DMP still complains that it cannot parse the font description files
-or the Troff output (e.g., @samp{TR has a bad line in its description
-file}, you are probably out of luck and have to hack the DMP program (in
-@file{web2c/mpware/dmp.c}).
-
-Such problems may be caused by subtle differences in the file
-formats, such as use of tabs vs.@: spaces as field separators 
-or decimal vs.@: octal vs.@: hex format for font metric data.
-
-A reasonably good description of the expected Troff file formats can be
-found in AT&T technical report CSTR-54 (@cite{Troff User's Manual},
-Revised 1992).  Documentation on the subtle differences in other Troff
-implementation is harder to find except for GNU groff, where it's all
-documented in the above-mentioned groff_font(5) and groff_out(5).
-
-Any contributions to improve the portability of DMP or to make it work
-with GNU groff are welcome, of course.
-
-@end itemize
-
-@flindex dmp.c
-@cindex Hobby, John
-(Some of the above description was edited from the @file{dmp.c} source
-file, written by John Hobby.)
-
-The only options are @samp{--help} and @samp{--version} (@pxref{Common
-options}).
-
-
-@node mpto invocation
-@section MPto: Extract labels from MetaPost input
-
-@pindex MPto
-@cindex labels, extracting from MetaPost input
-@cindex captions, extracting from MetaPost input
-@cindex text, extracting from MetaPost input
-@cindex MetaPost input, extracting labels from
-
-@findex btex @r{and label extraction}
-@findex etex @r{and label extraction}
-@findex verbatimtex @r{MetaPost command}
-MPto extracts the labels from a MetaPost input file; this is the
-contents of any @code{btex@dots{}etex} and @code{verbatimtex@dots{}etex}
-sections.  This program is generally invoked by MakeMPX (@pxref{makempx
-invocation}).  Synopsis:
-
-@example
-mpto [@var{option}]@dots{} @var{mpfile}
-@end example
-
-@noindent
-The input comes from @var{mpfile}; no path searching is done.  The
-output goes to standard output.  Leading and trailing spaces and tabs
-are removed, and various predefined typesetter commands are included at
-the beginning of and end of the file and of each section.
-
-The program accepts the following options, as well as the standard
-@samp{-help} and @samp{-version} (@pxref{Common options}):
-@table @samp
-@item -troff
-@opindex -troff
-Surround the MetaPost sections with Troff commands.
-
-@item -tex
-@opindex -tex
-Surround the MetaPost sections with @TeX{} commands. This is the default.
-@end table
-
-
-@node newer invocation
-@section Newer: Compare file modification times
-
-@pindex newer @r{file comparison}
-@cindex comparing file modification times
-@cindex file mtimes, comparing
-@cindex mtimes of files, comparing
-@cindex older-than, file comparisons
-
-Newer compares file modification times.  Synopsis:
-
-@example
-newer @var{src1} [ @var{src2} ... @var{srcN} ] @var{target}
-@end example
-
-@noindent
-Newer exits successfully if the files @var{src1} ... @var{srcN} exist
-and at least one of them is not older than @var{dependent}, i.e., the
-modification time (mtime) of at least one of the source files
-is greater than or the same as that of @var{dependent}.  Newer also
-exits successfully if the file @var{dependent} doesn't exist.
-@xref{Attribute Meanings,,, libc, GNU C Library}.
-
-The program accepts the following option, as well as the standard
-@samp{--help} and @samp{--version} (@pxref{Common options}):
-@table @samp
-@item --quiet
-@opindex --quiet (newer)
-Return result only, do not print any output.
-@item --verbose
-@opindex --verbose (newer)
-List missing source files to STDERR.  This is the default.
-@end table
-
-This is used by MakeMPX (@pxref{makempx invocation}).
 
 
 @node BibTeX

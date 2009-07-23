@@ -15,11 +15,6 @@ web_man_sources = bibtex.man dvicopy.man dvitomp.man dvitype.man gftodvi.man \
 	gftopk.man gftype.man mft.man patgen.man pktogf.man pktype.man \
 	pltotf.man pooltype.man tftopl.man vftovp.man vptovf.man weave.man
 
-## Obsolete mpware manpages
-## man_sources += $(mpware_man_sources)
-EXTRA_DIST += $(mpware_man_sources)
-mpware_man_sources = dmp.man makempx.man mpto.man newer.man
-
 if TEX
 man_sources += tex.man
 endif TEX

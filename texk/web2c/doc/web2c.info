@@ -1,4 +1,5 @@
-This is web2c.info, produced by makeinfo version 4.13 from web2c.texi.
+This is ../../../../texk/web2c/doc/web2c.info, produced by makeinfo
+version 4.13 from ../../../../texk/web2c/doc/web2c.texi.
 
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
@@ -7,20 +8,16 @@ END-INFO-DIR-ENTRY
 INFO-DIR-SECTION Individual utilities
 START-INFO-DIR-ENTRY
 * bibtex: (web2c)bibtex invocation.             Maintaining bibliographies.
-* dmp: (web2c)dmp invocation.                   Troff->MPX (MetaPost pictures).
 * dvicopy: (web2c)dvicopy invocation.           Virtual font expansion
 * dvitomp: (web2c)dvitomp invocation.           DVI to MPX (MetaPost pictures).
 * dvitype: (web2c)dvitype invocation.           DVI to human-readable text.
 * gftodvi: (web2c)gftodvi invocation.           Generic font proofsheets.
 * gftopk: (web2c)gftopk invocation.             Generic to packed fonts.
 * gftype: (web2c)gftype invocation.             GF to human-readable text.
-* makempx: (web2c)makempx invocation.           MetaPost label typesetting.
 * mf: (web2c)mf invocation.                     Creating typeface families.
 * mft: (web2c)mft invocation.                   Prettyprinting Metafont source.
 * mltex: (web2c)MLTeX.                          Multi-lingual TeX.
 * mpost: (web2c)mpost invocation.               Creating technical diagrams.
-* mpto: (web2c)mpto invocation.                 MetaPost label extraction.
-* newer: (web2c)newer invocation.               Compare modification times.
 * patgen: (web2c)patgen invocation.             Creating hyphenation patterns.
 * pktogf: (web2c)pktogf invocation.             Packed to generic fonts.
 * pktype: (web2c)pktype invocation.             PK to human-readable text.
@@ -62,7 +59,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 2009, released in June 2009.
+corresponds to Web2c version 2009, released in July 2009.
 
 * Menu:
 
@@ -86,7 +83,7 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 1 Introduction
 **************
 
-This manual corresponds to version 2009 of Web2c, released in June 2009.
+This manual corresponds to version 2009 of Web2c, released in July 2009.
 
    "Web2c" is the name of a TeX implementation, originally for Unix,
 but now also running under DOS, Amiga, and other operating systems. By
@@ -2053,11 +2050,7 @@ supported) and a number of other subsidiary programs, described below.
 
 * mpost invocation::            Invoking MetaPost.
 * Initial MetaPost::            Making mems.
-* makempx invocation::          Create MPX files for labels.
 * dvitomp invocation::          DVI-to-MPX translation.
-* dmp invocation::              Ditroff-to-MPX translation.
-* mpto invocation::             Extracting labels from MetaPost programs.
-* newer invocation::            Is one file newer than another?
 
 
 File: web2c.info,  Node: mpost invocation,  Next: Initial MetaPost,  Up: MetaPost
@@ -2111,26 +2104,21 @@ with any other PostScript figures. For example, with this TeX command:
 
    The MetaPost construct
      btex ... TEX-INPUT ... etex
-   calls MakeMPX to generate a MPX file containing a MetaPost picture
-expression corresponding to TEX-INPUT (*note makempx invocation::).
+   generates a MetaPost picture expression corresponding to TEX-INPUT.
 
    The construct
      verbatimtex ... TEX-INPUT ... etex
-   simply passes the TEX-INPUT through to MakeMPX and thus to TeX. For
-example, if you are using LaTeX, your MetaPost input file must start
-with a `verbatimtex' block that gives the necessary `\documentclass'
-(or `\documentstyle') `\begin{document}' command.  You will also need
-to set the enviroment variable `TEX' to `latex' (*note makempx
-invocation::).
+   simply passes the TEX-INPUT through to TeX. For example, if you are
+using LaTeX, your MetaPost input file must start with a `verbatimtex'
+block that gives the necessary `\documentclass' (or `\documentstyle')
+`\begin{document}' command.  You will also need to set the enviroment
+variable `TEX' to `latex'.
 
    TEX-INPUT need not be specifically TeX input; it could also be
 Troff.  In that case, you will need the `-m pictures' Troff macro
 package (unfortunately absent from many Troff implementations), or an
 equivalent such as the `-m pspic' macros from GNU groff described in
 grops(1).
-
-   Other typesetters can be supported with no change to MetaPost itself;
-only MakeMPX needs to be updated.
 
    Naturally, you must use fonts that are supported by the typesetter;
 specifically, you'll probably want to use standard PostScript fonts with
@@ -2176,8 +2164,7 @@ opens a security hole.  *Note tex invocation::.
 
 `-T'
 `-troff'
-     Set the `prologues' internal variable to `1', and use `makempx
-     -troff' to generate MPX files.
+     Set the `prologues' internal variable to `1'.
 
 `-tex=TEXPROGRAM'
      When this option is given, the program TEXPROGRAM is used to
@@ -2185,7 +2172,7 @@ opens a security hole.  *Note tex invocation::.
 
 
 
-File: web2c.info,  Node: Initial MetaPost,  Next: makempx invocation,  Prev: mpost invocation,  Up: MetaPost
+File: web2c.info,  Node: Initial MetaPost,  Next: dvitomp invocation,  Prev: mpost invocation,  Up: MetaPost
 
 6.2 Initial MetaPost
 ====================
@@ -2223,113 +2210,13 @@ page for MetaFun, other MetaPost-related things, and lots more from
 Pragma: `http://www.pragma-ade.com/'.
 
 
-File: web2c.info,  Node: makempx invocation,  Next: dvitomp invocation,  Prev: Initial MetaPost,  Up: MetaPost
+File: web2c.info,  Node: dvitomp invocation,  Prev: Initial MetaPost,  Up: MetaPost
 
-6.3 MakeMPX: Support MetaPost labels
-====================================
-
-In MetaPost, labels can be typeset using any document processor; the
-Web2c implementation supports TeX and Troff.  MakeMPX translates the
-labels from the typesetting language back into low-level MetaPost
-commands in a so-called "mpx file", so text can be manipulated like
-other graphic objects.  It is invoked automatically by MetaPost.
-Synopsis:
-
-     makempx [-troff] MPFILE MPXFILE
-
-The input comes from MPFILE (no path searching is done), and the output
-goes to MPXFILE.  However, if the file MPXFILE already exists, and is
-newer than MPFILE, then nothing is done (presumably the file is
-up-to-date).
-
-   Otherwise:
-  1. MPto is run to extract the label text from the MetaPost source
-     file MPFILE (*note mpto invocation::).
-
-  2. The typesetting program itself is run, either TeX or Troff (see
-     below).  If TeX, and the file named by the `MPTEXPRE' environment
-     variable exists (`mptexpre.tex' by default), that file is
-     prepended to the input from the MetaPost file.
-
-  3. The typesetter output (a DVI file in the case of TeX, Ditroff
-     output for Troff) is translated back to MetaPost, by DVItoMP
-     (*note dvitomp invocation::) or DMP (*note dmp invocation::)
-     respectively.
-
-   If any of the above steps fail, for example if there was a
-typesetting mistake in the original MPFILE, output may be left in files
-named `mpxerr.{log,tex,dvi}' (TeX) or `mpxerr{,.t}' (Troff), so you can
-diagnose the problem.
-
-   The `-troff' option to MPto selects the Troff commands, rather than
-TeX.  MetaPost supplies this automatically if the `-T' or `-troff'
-option was specified to MetaPost.
-
-   The MPX file created by MakeMPX is a sequence of MetaPost picture
-expressions, one for every label in the original MetaPost input file.
-
-   The names of the commands run by MakeMPX, and the directory added to
-the shell search `PATH' for the commands' location, are overridden by
-environment variables.  Here is a list:
-
-`MAKEMPX_BINDIR'
-     The directory added to the `PATH'.  Default is the `$(bindir)'
-     Make directory, which in turn is set from the configure-time
-     `--bindir', `--exec-prefix' and `--prefix' options; if nothing
-     else is specified, the default is file `/usr/local'.
-
-`NEWER'
-     The command run to determine if MPXFILE is out of date with respect
-     to MPFILE; default is `newer'.
-
-`MPTOTEX'
-     The command run to extract MetaPost labels in TeX format; default
-     is `mpto -tex'.
-
-`MPTOTR'
-     Likewise, for Troff; default is `mpto -troff'.
-
-`DVITOMP'
-     The command run to convert TeX output back to MetaPost; default is
-     `dvitomp'.
-
-`DMP'
-     Likewise, for Troff; default is `dmp'.
-
-`TEX'
-     The command run to typeset the labels in TeX; the default is
-     `etex', set in `texmf.cnf'.  If you use LaTeX, set this to
-     `latex', and supply an appropriate `verbatimtex' header in the MP
-     source (*note mpost invocation::).  Or put `%&latex' as the first
-     line of your LaTeX source.
-
-`TROFF'
-     Likewise, for Troff; default is `'eqn -d\$\$ | troff -Tpost''.  You
-     may need to replace `-Tpost' by `-TTERM', where TERM is the
-     PostScript device name for your Troff implementation, e.g., `ps'
-     or `psc'; see troff(1).
-
-     If you change this, you will also need to set the `TRFONTS'
-     environment variable or configuration value to point to the
-     appropriate font directory, traditionally `/usr/lib/font/devTERM'.
-
-     One more complication is whether the troff programs have a `g'
-     prefix.  On Windows, TeX Live supports both ways: `makempx.exe' is
-     built to use `gsoelim.exe', `geqn.exe', and `gtroff.exe', while
-     `makempx-without-g-prefix.exe' is built to use `soelim.exe',
-     `eqn.exe', and `troff.exe'.  MetaPost users on Windows using troff
-     for their labels should arrange to run the proper binary.
-
-
-
-File: web2c.info,  Node: dvitomp invocation,  Next: dmp invocation,  Prev: makempx invocation,  Up: MetaPost
-
-6.4 DVItoMP: DVI to MPX conversion
+6.3 DVItoMP: DVI to MPX conversion
 ==================================
 
 DVItoMP converts DVI files into low-level MetaPost commands in a
-so-called MPX file.  This program is generally invoked only by MakeMPX
-(*note makempx invocation::).  Synopsis:
+so-called MPX file.  Synopsis:
 
      dvitomp DVIFILE[.dvi] [MPXFILE[.mpx]]
 
@@ -2341,148 +2228,6 @@ extended with `.mpx', e.g., `dvitomp /wherever/foo.dvi' creates
 NAME' and `color pop', outputting them as `withcolor' MetaPost commands.
 
    The only options are `-help' and `-version' (*note Common options::).
-
-
-File: web2c.info,  Node: dmp invocation,  Next: mpto invocation,  Prev: dvitomp invocation,  Up: MetaPost
-
-6.5 DMP: Ditroff to MPX conversion
-==================================
-
-DMP converts device-independent Troff (ditroff) output files into
-low-level MetaPost commands in a so-called MPX file.  This program is
-generally invoked by MakeMPX (*note makempx invocation::).  Synopsis:
-
-     dmp [DITROFF-FILE [MPXFILE]]
-
-If DITROFF-FILE is not specified, input comes from standard input; and
-if MPXFILE is not specified, output goes to standard output.
-
-   DMP was written to process the output of a Troff pipeline fed the
-output of `mpto -troff' (*note mpto invocation::).  DMP understands all
-the `DC' graphics functions that `dpost' does, but it ignores `x X'
-device control functions such as `x X SetColor:...', `x X BeginPath:',
-and `x X DrawPath:...'.
-
-   The available font names are defined in the support file
-`trfonts.map', which DMP looks for along the `MPSUPPORT' path.
-
-   Another support file `trchars.adj', also looked for along the
-`MPSUPPORT' path, contains a character adjustment table which should
-reflect the shift amounts found in the standard PostScript prologue for
-Troff and dpost found in the `TRFONTS' directory.  Such an adjustment
-table is unnecessary for some Troff implementations, in which case
-`trchars.adj' should be replaced by an empty file--but it must still
-exist.
-
-   DMP was written for one particular Troff implementation, and it
-unfortunately has many built-in assumptions about the output and fonts
-file formats used by Troff, which may not be satisfied in other
-environments.  In particular, GNU groff uses some extensions in its file
-formats described in groff_font(5) and groff_out(5) which make its
-output completely unusable for DMP.  On the other hand, the Troff
-version found in Sun Solaris 2.x, and perhaps other systems derived from
-System V R4, works fine with the default settings.
-
-   If you run into trouble and want to adapt DMP to other systems, you
-might have to try the following (this is primarily for hackers):
-
-   * If DMP complains about a missing font table (e.g., `Cannot find
-     TR'), your Troff may not support the device `post'.
-
-     Check troff(1) for the devices supported by your Troff and set the
-     `TROFF' environment variable appropriately (see above).  Also,
-     locate the appropriate font directory and set the `TRFONTS'
-     variable as needed.
-
-   * If DMP complains about a missing font description file (e.g., `Font
-     TR was not in map file'), your version of Troff may be using
-     internal font names different from those in the distributed
-     `trfonts.map'; e.g., TR and TI instead of R and I for Times-Roman
-     and Times-Italic.
-
-     In this case, you may have to adapt `trfonts.map' and perhaps also
-     `trchars.adj' in the MetaPost support directory
-     (`texmf/metapost/support' by default).
-
-   * If DMP still complains that it cannot parse the font description
-     files or the Troff output (e.g., `TR has a bad line in its
-     description file', you are probably out of luck and have to hack
-     the DMP program (in `web2c/mpware/dmp.c').
-
-     Such problems may be caused by subtle differences in the file
-     formats, such as use of tabs vs. spaces as field separators or
-     decimal vs. octal vs. hex format for font metric data.
-
-     A reasonably good description of the expected Troff file formats
-     can be found in AT&T technical report CSTR-54 (`Troff User's
-     Manual', Revised 1992).  Documentation on the subtle differences
-     in other Troff implementation is harder to find except for GNU
-     groff, where it's all documented in the above-mentioned
-     groff_font(5) and groff_out(5).
-
-     Any contributions to improve the portability of DMP or to make it
-     work with GNU groff are welcome, of course.
-
-
-   (Some of the above description was edited from the `dmp.c' source
-file, written by John Hobby.)
-
-   The only options are `--help' and `--version' (*note Common
-options::).
-
-
-File: web2c.info,  Node: mpto invocation,  Next: newer invocation,  Prev: dmp invocation,  Up: MetaPost
-
-6.6 MPto: Extract labels from MetaPost input
-============================================
-
-MPto extracts the labels from a MetaPost input file; this is the
-contents of any `btex...etex' and `verbatimtex...etex' sections.  This
-program is generally invoked by MakeMPX (*note makempx invocation::).
-Synopsis:
-
-     mpto [OPTION]... MPFILE
-
-The input comes from MPFILE; no path searching is done.  The output
-goes to standard output.  Leading and trailing spaces and tabs are
-removed, and various predefined typesetter commands are included at the
-beginning of and end of the file and of each section.
-
-   The program accepts the following options, as well as the standard
-`-help' and `-version' (*note Common options::):
-`-troff'
-     Surround the MetaPost sections with Troff commands.
-
-`-tex'
-     Surround the MetaPost sections with TeX commands. This is the
-     default.
-
-
-File: web2c.info,  Node: newer invocation,  Prev: mpto invocation,  Up: MetaPost
-
-6.7 Newer: Compare file modification times
-==========================================
-
-Newer compares file modification times.  Synopsis:
-
-     newer SRC1 [ SRC2 ... SRCN ] TARGET
-
-Newer exits successfully if the files SRC1 ... SRCN exist and at least
-one of them is not older than DEPENDENT, i.e., the modification time
-(mtime) of at least one of the source files is greater than or the same
-as that of DEPENDENT.  Newer also exits successfully if the file
-DEPENDENT doesn't exist.  *Note Attribute Meanings: (libc)Attribute
-Meanings.
-
-   The program accepts the following option, as well as the standard
-`--help' and `--version' (*note Common options::):
-`--quiet'
-     Return result only, do not print any output.
-
-`--verbose'
-     List missing source files to STDERR.  This is the default.
-
-   This is used by MakeMPX (*note makempx invocation::).
 
 
 File: web2c.info,  Node: BibTeX,  Next: WEB,  Prev: MetaPost,  Up: Top
@@ -3756,8 +3501,6 @@ Index
                                                               (line   6)
 * --enable-ipc configure option:         tex invocation.      (line 101)
 * --help common option:                  Common options.      (line  11)
-* --quiet (newer):                       newer invocation.    (line  20)
-* --verbose (newer):                     newer invocation.    (line  23)
 * --verbose common option:               Common options.      (line  15)
 * --version common option:               Common options.      (line  18)
 * --with-editor=CMD:                     Editor invocation.   (line  10)
@@ -3854,14 +3597,11 @@ Index
 * -show-opcodes:                         dvitype invocation.  (line  56)
 * -strict:                               tangle invocation.   (line  46)
 * -style=MFTFILE:                        mft invocation.      (line  68)
-* -T:                                    mpost invocation.    (line 117)
+* -T:                                    mpost invocation.    (line 112)
 * -terse:                                bibtex invocation.   (line  28)
-* -tex:                                  mpto invocation.     (line  24)
-* -tex=TEXPROGRAM:                       mpost invocation.    (line 121)
+* -tex=TEXPROGRAM:                       mpost invocation.    (line 115)
 * -translate-file=TCXFILE:               Common options.      (line  96)
-* -troff <1>:                            mpto invocation.     (line  21)
-* -troff <2>:                            makempx invocation.  (line  39)
-* -troff:                                mpost invocation.    (line 117)
+* -troff:                                mpost invocation.    (line 112)
 * -underline:                            tangle invocation.   (line  41)
 * -uppercase:                            tangle invocation.   (line  35)
 * -x:                                    weave invocation.    (line  22)
@@ -3961,7 +3701,6 @@ Index
 * BDF and GF conversion:                 Font utilities available elsewhere.
                                                               (line  15)
 * beginfig:                              mpost invocation.    (line  37)
-* BeginPath ditroff command:             dmp invocation.      (line  15)
 * Berry, Karl:                           Introduction.        (line  40)
 * BIBINPUTS, search path for bib files:  bibtex invocation.   (line  18)
 * bibliographies, creating:              BibTeX.              (line   6)
@@ -3980,7 +3719,6 @@ Index
 * breakpoints, memory for:               Runtime options.     (line  20)
 * Breitenlohner, Peter:                  Introduction.        (line   8)
 * BSTINPUTS, search path for bst files:  bibtex invocation.   (line  18)
-* btex and label extraction:             mpto invocation.     (line   6)
 * btex for MetaPost labels:              mpost invocation.    (line  50)
 * btxdoc.bib:                            bibtex invocation.   (line  48)
 * btxdoc.tex:                            bibtex invocation.   (line  42)
@@ -3990,8 +3728,6 @@ Index
 * byte swapping:                         Hardware and memory dumps.
                                                               (line  13)
 * c-sources Makefile target:             Additional targets.  (line  12)
-* captions, extracting from MetaPost input: mpto invocation.  (line   6)
-* captions, for MetaPost:                makempx invocation.  (line   6)
 * change files, and MFT:                 mft invocation.      (line  64)
 * change files, and Tangle:              tangle invocation.   (line  11)
 * change files, and Weave:               weave invocation.    (line  14)
@@ -4014,17 +3750,16 @@ Index
 * cmbase.mf:                             Initial Metafont.    (line  28)
 * cmbase.mft:                            mft invocation.      (line  75)
 * cmmf.base not recommended:             Initial Metafont.    (line  28)
-* color, in DVItoMP:                     dvitomp invocation.  (line  16)
+* color, in DVItoMP:                     dvitomp invocation.  (line  15)
 * comments, in TCX files:                TCX files.           (line  71)
 * comments, MFT control:                 mft invocation.      (line  24)
 * common options:                        Common options.      (line   6)
 * commonalities:                         Commonalities.       (line   6)
-* comparing file modification times:     newer invocation.    (line   6)
 * compilation:                           Installation.        (line   6)
 * compile-time options <1>:              Compile-time options.
                                                               (line   6)
 * compile-time options:                  configure options.   (line   6)
-* Computer Modern fonts, and Troff:      mpost invocation.    (line  73)
+* Computer Modern fonts, and Troff:      mpost invocation.    (line  68)
 * Computer Modern macros:                Initial Metafont.    (line  28)
 * configuration:                         Installation.        (line   6)
 * configuration file reading:            Path searching.      (line   6)
@@ -4054,7 +3789,6 @@ Index
 * Curtis, Pavel:                         Introduction.        (line  40)
 * CWEB:                                  WEB.                 (line  13)
 * Cweb:                                  WEB.                 (line  13)
-* D C ditroff graphics:                  dmp invocation.      (line  15)
 * date and time, in memory dumps:        Hardware and memory dumps.
                                                               (line  30)
 * debugging DVI utilities:               dvitype invocation.  (line  56)
@@ -4069,17 +3803,10 @@ Index
 * directory structure:                   Installation.        (line  34)
 * DISPLAY:                               Online Metafont graphics.
                                                               (line  73)
-* ditroff output, converting to MPX:     dmp invocation.      (line   6)
-* DMP <1>:                               dmp invocation.      (line   6)
-* DMP:                                   makempx invocation.  (line  71)
-* DMP, invoked by MakeMPX:               makempx invocation.  (line  29)
-* dmp.c:                                 dmp invocation.      (line  82)
 * dot files, written by TeX programs:    tex invocation.      (line  51)
-* downloading of fonts for MetaPost labels: mpost invocation. (line  78)
-* dpost:                                 dmp invocation.      (line  15)
+* downloading of fonts for MetaPost labels: mpost invocation. (line  73)
 * DrawingServant:                        Online Metafont graphics.
                                                               (line  35)
-* DrawPath ditroff command:              dmp invocation.      (line  15)
 * dump file:                             Common options.      (line  34)
 * dumping memory:                        Memory dumps.        (line   6)
 * DVI comment, specifying:               tex invocation.      (line 121)
@@ -4090,8 +3817,6 @@ Index
 * DVI utilities:                         DVI utilities.       (line   6)
 * dvicopy:                               dvicopy invocation.  (line   6)
 * dvitomp:                               dvitomp invocation.  (line   6)
-* DVITOMP:                               makempx invocation.  (line  67)
-* DVItoMP, invoked by MakeMPX:           makempx invocation.  (line  29)
 * dvitype DVI validation:                dvitype invocation.  (line   6)
 * dvitype output example:                dvitype output example.
                                                               (line   6)
@@ -4123,7 +3848,6 @@ Index
 * escapement, horizontal <1>:            gftype invocation.   (line 107)
 * escapement, horizontal:                pktype invocation.   (line  57)
 * escapement, vertical:                  gftype invocation.   (line 107)
-* etex and label extraction:             mpto invocation.     (line   6)
 * etex for MetaPost labels:              mpost invocation.    (line  50)
 * executables, shared initial and virgin: Initial and virgin. (line   6)
 * exit status, of shell escape:          Shell escapes.       (line  34)
@@ -4134,7 +3858,6 @@ Index
 * FAMILY property:                       tftopl invocation.   (line  96)
 * Ferguson, Michael:                     MLTeX.               (line   6)
 * file formats for fonts:                Font file formats.   (line   6)
-* file mtimes, comparing:                newer invocation.    (line   6)
 * file recorder:                         Common options.      (line  90)
 * filename conventions, in input files:  \input filenames.    (line   6)
 * filenames starting with -:             Option conventions.  (line  19)
@@ -4157,7 +3880,7 @@ Index
 * font aliases:                          Path searching.      (line  15)
 * font character code, translating:      TCX files.           (line 102)
 * font design:                           Metafont.            (line   6)
-* font downloading for MetaPost labels:  mpost invocation.    (line  78)
+* font downloading for MetaPost labels:  mpost invocation.    (line  73)
 * font file formats:                     Font file formats.   (line   6)
 * font proofs:                           gftodvi invocation.  (line   6)
 * font utilities:                        Font utilities.      (line   6)
@@ -4219,7 +3942,6 @@ Index
                                                               (line  20)
 * hex character codes, in TCX files:     TCX files.           (line  78)
 * history:                               Introduction.        (line  40)
-* Hobby, John <1>:                       dmp invocation.      (line  82)
 * Hobby, John:                           Introduction.        (line   8)
 * horizontal escapement <1>:             gftype invocation.   (line 107)
 * horizontal escapement:                 pktype invocation.   (line  57)
@@ -4275,8 +3997,6 @@ Index
 * KRN property:                          tftopl invocation.   (line 102)
 * label font:                            gftodvi invocation.  (line  36)
 * LABEL property:                        tftopl invocation.   (line 102)
-* labels, extracting from MetaPost input: mpto invocation.    (line   6)
-* labels, for MetaPost:                  makempx invocation.  (line   6)
 * language support in TeX:               Languages and hyphenation.
                                                               (line   6)
 * languages, hyphenation rules for:      patgen invocation.   (line   6)
@@ -4313,8 +4033,6 @@ Index
 * magnification:                         dvicopy invocation.  (line  20)
 * main_memory:                           Runtime options.     (line  15)
 * Make targets, additional:              Additional targets.  (line   6)
-* makempx:                               makempx invocation.  (line   6)
-* MAKEMPX_BINDIR:                        makempx invocation.  (line  50)
 * Martin, Rick:                          Introduction.        (line  50)
 * Mathematical Reviews:                  Formats.             (line  39)
 * mathematical typesetting:              TeX.                 (line   6)
@@ -4355,9 +4073,7 @@ Index
 * MetaPost and plain Metafont compatibility: Initial MetaPost.
                                                               (line  25)
 * MetaPost input files:                  mpost invocation.    (line  31)
-* MetaPost input, extracting labels from: mpto invocation.    (line   6)
 * MetaPost invocation:                   mpost invocation.    (line   6)
-* MetaPost labels:                       makempx invocation.  (line   6)
 * MetaPost source, prettyprinting:       mft invocation.      (line  80)
 * MetaPost, initial:                     Initial MetaPost.    (line   6)
 * MetaPost, TeX, and Metafont:           Three programs.      (line   6)
@@ -4393,30 +4109,15 @@ Index
 * mpost, reason for name change:         Installation.        (line  19)
 * mpost.mem:                             Initial MetaPost.    (line  16)
 * mpout:                                 mpost invocation.    (line  37)
-* mproof.tex:                            mpost invocation.    (line  78)
-* MPSUPPORT:                             dmp invocation.      (line  21)
-* MPto:                                  mpto invocation.     (line   6)
-* MPto, invoked by MakeMPX:              makempx invocation.  (line  21)
-* MPTOTEX:                               makempx invocation.  (line  60)
-* MPTOTR:                                makempx invocation.  (line  64)
+* mproof.tex:                            mpost invocation.    (line  73)
 * mptrap Make target:                    Additional targets.  (line  41)
 * mptrap test:                           Triptrap.            (line   6)
 * mptrap.readme:                         Triptrap.            (line   6)
-* mpx file, defined:                     makempx invocation.  (line  43)
 * MPX files, converting from DVI files:  dvitomp invocation.  (line   6)
-* MPX files, creating from ditroff output: dmp invocation.    (line   6)
-* mpxerr:                                makempx invocation.  (line  34)
-* mpxerr.dvi:                            makempx invocation.  (line  34)
-* mpxerr.log:                            makempx invocation.  (line  34)
-* mpxerr.t:                              makempx invocation.  (line  34)
-* mpxerr.tex:                            makempx invocation.  (line  34)
-* mtimes of files, comparing:            newer invocation.    (line   6)
 * Multi-lingual TeX:                     MLTeX.               (line   6)
 * N tilde:                               \charsubdef.         (line  37)
 * new graphics support for Metafont:     Online Metafont graphics.
                                                               (line  77)
-* NEWER:                                 makempx invocation.  (line  56)
-* newer file comparison:                 newer invocation.    (line   6)
 * newrow GF command:                     gftype invocation.   (line  93)
 * next:                                  Online Metafont graphics.
                                                               (line  34)
@@ -4426,7 +4127,6 @@ Index
 * NUL, not allowed in filenames:         \input filenames.    (line  35)
 * octal character codes, in TCX files:   TCX files.           (line  78)
 * offset for overflow labels:            gftodvi invocation.  (line  59)
-* older-than, file comparisons:          newer invocation.    (line   6)
 * Omega:                                 TeX extensions.      (line  15)
 * online Metafont graphics:              Online Metafont graphics.
                                                               (line   6)
@@ -4458,7 +4158,6 @@ Index
 * pfaedit:                               Font utilities available elsewhere.
                                                               (line  30)
 * PiCTeX, increasing memory for:         Runtime options.     (line  20)
-* picture expressions:                   makempx invocation.  (line  43)
 * pipes, reading and writing:            Shell escapes.       (line  63)
 * pixel height:                          pktype invocation.   (line  62)
 * pixel width:                           pktype invocation.   (line  62)
@@ -4492,7 +4191,7 @@ Index
                                                               (line  50)
 * pooltype:                              pooltype invocation. (line   6)
 * portable filenames:                    \input filenames.    (line  41)
-* PostScript fonts, and Troff:           mpost invocation.    (line  73)
+* PostScript fonts, and Troff:           mpost invocation.    (line  68)
 * PostScript meets Metafont:             MetaPost.            (line   6)
 * PostScript output:                     mpost invocation.    (line  37)
 * PostScript to PK bitmaps:              Font utilities available elsewhere.
@@ -4514,9 +4213,8 @@ Index
                                                               (line  32)
 * program names, special <1>:            tex invocation.      (line 116)
 * program names, special:                Common options.      (line  45)
-* prologues:                             mpost invocation.    (line 117)
-* prologues and Troff in MetaPost:       makempx invocation.  (line  39)
-* prologues, and EPSF output:            mpost invocation.    (line  88)
+* prologues:                             mpost invocation.    (line 112)
+* prologues, and EPSF output:            mpost invocation.    (line  83)
 * proof mode:                            mf invocation.       (line  48)
 * proof sheets, of fonts:                gftodvi invocation.  (line   6)
 * property list format:                  tftopl invocation.   (line  44)
@@ -4524,7 +4222,7 @@ Index
 * property list, converting VF to virtual: vftovp invocation. (line   6)
 * ps2pk:                                 Font utilities available elsewhere.
                                                               (line  35)
-* psfonts.map, read by MetaPost:         mpost invocation.    (line  88)
+* psfonts.map, read by MetaPost:         mpost invocation.    (line  83)
 * PXL files, explained:                  Font file formats.   (line  40)
 * pxtoch:                                Font utilities available elsewhere.
                                                               (line  23)
@@ -4558,7 +4256,6 @@ Index
 * security, and \openout:                tex invocation.      (line  51)
 * security, and output files:            tex invocation.      (line  51)
 * security, and shell escapes:           Shell escapes.       (line   6)
-* SetColor ditroff command:              dmp invocation.      (line  15)
 * shapes:                                Metafont.            (line   6)
 * sharing memory dumps:                  Hardware and memory dumps.
                                                               (line   6)
@@ -4619,7 +4316,6 @@ Index
                                                               (line  11)
 * terminator for filenames:              \input filenames.    (line  10)
 * terse output:                          bibtex invocation.   (line  28)
-* TEX:                                   makempx invocation.  (line  74)
 * tex:                                   tex invocation.      (line   6)
 * TeX, bibliographies for:               bibtex invocation.   (line  54)
 * TeX, creating from Metafont:           mft invocation.      (line   6)
@@ -4644,7 +4340,6 @@ Index
 * TEXMFOUTPUT, used if . unwritable:     Output file location.
                                                               (line  19)
 * texput:                                tex invocation.      (line  35)
-* text, extracting from MetaPost input:  mpto invocation.     (line   6)
 * TFM files, converting property lists to: pltotf invocation. (line   6)
 * TFM files, explained:                  Font file formats.   (line  13)
 * TFM files, memory for:                 Runtime options.     (line  25)
@@ -4665,14 +4360,12 @@ Index
 * trap Make target:                      Additional targets.  (line  41)
 * trap test:                             Triptrap.            (line   6)
 * trapman.tex:                           Triptrap.            (line   6)
-* trchars.adj:                           dmp invocation.      (line  24)
 * Trickey, Howard:                       Introduction.        (line  40)
 * trip Make target:                      Additional targets.  (line  41)
 * trip test:                             Triptrap.            (line   6)
 * tripman.tex:                           Triptrap.            (line   6)
 * triptrap Make target:                  Additional targets.  (line  41)
-* TROFF:                                 makempx invocation.  (line  81)
-* Troff, and MetaPost:                   mpost invocation.    (line  73)
+* Troff, and MetaPost:                   mpost invocation.    (line  68)
 * Troff, WEB for:                        WEB.                 (line  13)
 * Trojan horses and TeX programs:        tex invocation.      (line  51)
 * TUGboat bibliography:                  bibtex invocation.   (line  54)
@@ -4700,7 +4393,6 @@ Index
 * validation, of PK files:               pktype invocation.   (line   6)
 * validation, of TFM files:              tftopl invocation.   (line   6)
 * validation, of VF files:               vftovp invocation.   (line   6)
-* verbatimtex MetaPost command:          mpto invocation.     (line   6)
 * verbose BibTeX output, suppressing:    bibtex invocation.   (line  28)
 * verbosity, enabling:                   Common options.      (line  15)
 * version number, finding:               Common options.      (line  18)
@@ -4741,7 +4433,6 @@ Index
                                                               (line  66)
 * X toolkits and Metafont:               Online Metafont graphics.
                                                               (line  60)
-* x X ditroff device control:            dmp invocation.      (line  15)
 * xampl.bib:                             bibtex invocation.   (line  51)
 * xbfe, bitmap font editor:              Font utilities available elsewhere.
                                                               (line  23)
@@ -4765,79 +4456,75 @@ Index
 
 
 Tag Table:
-Node: Top3065
-Node: Introduction4059
-Node: Installation7231
-Node: configure options9395
-Node: Compile-time options11477
-Node: Additional targets12603
-Node: Triptrap13884
-Node: Runtime options15413
-Node: Commonalities17185
-Node: Option conventions17790
-Node: Common options19014
-Node: Path searching23526
-Node: Output file location24548
-Node: Three programs25588
-Node: Initial and virgin26347
-Node: Memory dumps27447
-Node: Creating memory dumps27914
-Node: Determining the memory dump to use29175
-Node: Hardware and memory dumps30799
-Node: Editor invocation33268
-Node: \input filenames33998
-Node: TeX36991
-Node: tex invocation38137
-Node: Initial TeX45510
-Node: Formats46999
-Node: Languages and hyphenation49938
-Node: MLTeX50368
-Node: \charsubdef51863
-Node: \tracingcharsubdef54189
-Node: TCX files54764
-Node: patgen invocation60188
-Node: Shell escapes60905
-Node: IPC and TeX64469
-Node: TeX extensions65039
-Node: Metafont66018
-Node: mf invocation67306
-Node: Initial Metafont71189
-Node: Modes72942
-Node: Online Metafont graphics75198
-Node: gftodvi invocation78471
-Node: mft invocation81293
-Node: MetaPost85348
-Node: mpost invocation86369
-Node: Initial MetaPost91554
-Node: makempx invocation93365
-Node: dvitomp invocation97370
-Node: dmp invocation98141
-Node: mpto invocation102162
-Node: newer invocation103144
-Node: BibTeX104081
-Node: bibtex invocation104442
-Node: Basic BibTeX style files106767
-Node: WEB108109
-Node: tangle invocation109317
-Node: weave invocation111440
-Node: pooltype invocation112848
-Node: DVI utilities113978
-Node: dvicopy invocation114922
-Node: dvitype invocation116220
-Node: dvitype output example118575
-Node: Font utilities121626
-Node: Font file formats122806
-Node: gftopk invocation126105
-Node: pktogf invocation127309
-Node: pktype invocation128488
-Node: gftype invocation131323
-Node: tftopl invocation135839
-Node: pltotf invocation140473
-Node: vftovp invocation141538
-Node: vptovf invocation143822
-Node: Font utilities available elsewhere144876
-Node: Legalisms147284
-Node: References149455
-Node: Index153837
+Node: Top2812
+Node: Introduction3806
+Node: Installation6978
+Node: configure options9142
+Node: Compile-time options11224
+Node: Additional targets12350
+Node: Triptrap13631
+Node: Runtime options15160
+Node: Commonalities16932
+Node: Option conventions17537
+Node: Common options18761
+Node: Path searching23273
+Node: Output file location24295
+Node: Three programs25335
+Node: Initial and virgin26094
+Node: Memory dumps27194
+Node: Creating memory dumps27661
+Node: Determining the memory dump to use28922
+Node: Hardware and memory dumps30546
+Node: Editor invocation33015
+Node: \input filenames33745
+Node: TeX36738
+Node: tex invocation37884
+Node: Initial TeX45257
+Node: Formats46746
+Node: Languages and hyphenation49685
+Node: MLTeX50115
+Node: \charsubdef51610
+Node: \tracingcharsubdef53936
+Node: TCX files54511
+Node: patgen invocation59935
+Node: Shell escapes60652
+Node: IPC and TeX64216
+Node: TeX extensions64786
+Node: Metafont65765
+Node: mf invocation67053
+Node: Initial Metafont70936
+Node: Modes72689
+Node: Online Metafont graphics74945
+Node: gftodvi invocation78218
+Node: mft invocation81040
+Node: MetaPost85095
+Node: mpost invocation85857
+Node: Initial MetaPost90765
+Node: dvitomp invocation92576
+Node: BibTeX93241
+Node: bibtex invocation93602
+Node: Basic BibTeX style files95927
+Node: WEB97269
+Node: tangle invocation98477
+Node: weave invocation100600
+Node: pooltype invocation102008
+Node: DVI utilities103138
+Node: dvicopy invocation104082
+Node: dvitype invocation105380
+Node: dvitype output example107735
+Node: Font utilities110786
+Node: Font file formats111966
+Node: gftopk invocation115265
+Node: pktogf invocation116469
+Node: pktype invocation117648
+Node: gftype invocation120483
+Node: tftopl invocation124999
+Node: pltotf invocation129633
+Node: vftovp invocation130698
+Node: vptovf invocation132982
+Node: Font utilities available elsewhere134036
+Node: Legalisms136444
+Node: References138615
+Node: Index142997
 
 End Tag Table

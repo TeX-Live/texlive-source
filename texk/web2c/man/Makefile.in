@@ -291,17 +291,15 @@ man_sources = $(bootstrap_man_sources) $(am__append_1) $(am__append_2) \
 	$(am__append_6) $(am__append_7) $(am__append_8) \
 	$(am__append_9) $(am__append_10) $(am__append_11) \
 	$(misc_man_sources)
-EXTRA_DIST = $(bootstrap_man_sources) $(web_man_sources) \
-	$(mpware_man_sources) tex.man mf.man mpost.man etex.man \
-	$(pdftex_man_sources) luatex.man aleph.man $(misc_man_sources) \
-	amslatex.min initex.min lamstex.min pdftexman.m4 slitex.min \
-	spell.add virtex.min
+EXTRA_DIST = $(bootstrap_man_sources) $(web_man_sources) tex.man \
+	mf.man mpost.man etex.man $(pdftex_man_sources) luatex.man \
+	aleph.man $(misc_man_sources) amslatex.min initex.min \
+	lamstex.min pdftexman.m4 slitex.min spell.add virtex.min
 bootstrap_man_sources = cweb.man tangle.man
 web_man_sources = bibtex.man dvicopy.man dvitomp.man dvitype.man gftodvi.man \
 	gftopk.man gftype.man mft.man patgen.man pktogf.man pktype.man \
 	pltotf.man pooltype.man tftopl.man vftovp.man vptovf.man weave.man
 
-mpware_man_sources = dmp.man makempx.man mpto.man newer.man
 pdftex_man_sources = pdftex.man pdftosrc.man
 misc_man_sources = \
 	amstex.man \
