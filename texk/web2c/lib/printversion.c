@@ -16,14 +16,15 @@ This is PROGRAM, Version VERSION-NUMBER
    Maybe I should have just done it all inline in each individual
    program, but tangle doesn't allow multiline string constants ...  */
 
+extern string versionstring;           /* from web2c/lib/version.c */
+extern KPSEDLL string kpathsea_version_string;/* from kpathsea/version.c */
+
 void
 printversionandexit (const_string banner,
                      const_string copyright_holder,  
                      const_string author,
                      char *extra_info)
 {
-  extern string versionstring;           /* from web2c/lib/version.c */
-  extern KPSEDLL string kpathsea_version_string;/* from kpathsea/version.c */
   string prog_name;
   unsigned len;
   const_string prog_name_end = strchr (banner, ',');
