@@ -1,8 +1,8 @@
 @echo off
 rem Universal script launcher
 rem
-rem Copyright 2009 by Tomasz M. Trzeciak
 rem Public Domain
+rem Originally written 2009 by Tomasz M. Trzeciak.
 
 rem Make environment changes local
 setlocal enableextensions
