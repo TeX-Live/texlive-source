@@ -1,3 +1,7 @@
+2009-07-31  Taco Hoekwater <taco@elvenkind.com>
+	    
+	    * Released version of MPLib 1.206
+	
 2009-07-20  Taco Hoekwater <taco@elvenkind.com>
 	    
 	* mp.w: hotfix for a possible crash in lib mode 

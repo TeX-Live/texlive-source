@@ -1,4 +1,4 @@
- $Id: mp.w 1105 2009-07-18 09:15:07Z taco $
+ $Id: mp.w 1111 2009-07-31 08:10:35Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -89,13 +89,13 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 1.205" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 1.206" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @(mpmp.h@>=
-#define metapost_version "1.205"
-#define metapost_magic (('M'*256) + 'P')*65536 + 1205
+#define metapost_version "1.206"
+#define metapost_magic (('M'*256) + 'P')*65536 + 1206
 #define metapost_old_magic (('M'*256) + 'P')*65536 + 1080
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
@@ -1828,14 +1828,31 @@ void mp_print (MP mp, const char *ss) {
   if (ss==NULL) return;
   mp_do_print(mp, ss,strlen(ss));
 }
+
+@ This function is somewhat less trivial than expected
+because it is not safe to directly print data in the
+string pool since |mp_do_print()| can potentially reallocate 
+the whole lot.
+
+@<Basic print...@>=
 void mp_print_str (MP mp, str_number s) {
   pool_pointer j; /* current character code position */
+  char *ss; /* a temporary C string */
+  size_t len; /* its length */
   if ( (s<0)||(s>mp->max_str_ptr) ) {
      mp_do_print(mp,"???",3); /* this can't happen */
 @.???@>
   }
   j=mp->str_start[s];
-  mp_do_print(mp, (char *)(mp->str_pool+j), (size_t)(str_stop(s)-j));
+  len = (str_stop(s)-j);
+  ss = xmalloc(len+1, sizeof(char));
+  if (len > 0) {
+    /* the man page doesnt say whether 0 is allowed */
+    memcpy(ss,(char *)(mp->str_pool+j),len);
+  }
+  ss[len] = '\0';
+  mp_do_print(mp, ss, len);
+  mp_xfree(ss);
 }
 
 
