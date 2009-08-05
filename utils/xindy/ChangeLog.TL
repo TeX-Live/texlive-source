@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 ======================================================
 
+2009-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* rte/Makefile.am (XINDY_RUN): For clisp Version 2.48 use
+	'clisp-link add' instead of 'clisp-link add-module-path'.
+
 2009-06-03  Karl Berry  <karl@tug.org>
 
 	* rte/Makefile.am (XINDY_RUN): $(STRIP) it.

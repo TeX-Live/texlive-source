@@ -541,12 +541,15 @@ all-local: $(binariesdir)/$(XINDY_RUN) $(binariesdir)/base.mem
 #
 $(binariesdir)/base.mem: $(binariesdir)/$(XINDY_RUN)
 	cp xindy-build-dir/lispinit.mem $(binariesdir)/base.mem
+# The clisp-link command 'add-module-set' of Versions <=2.47
+# has been replaced by 'add' in Version 2.48 (different args!).
 $(binariesdir)/$(XINDY_RUN):
 	rm -rf xindy-build-dir
 	test -f ordrules/link.sh || for i in $(ORDRULES_FILES); do cp -p $(top_srcdir)/rte/ordrules/$$i ordrules/$$i; done
 	$(MAKE) -C ordrules ordrulei.c
 	env CLISP_LINKKIT='$(CLISP_LIB)/linkkit' MAKE="$(MAKE)" \
-	sh '$(CLISP_LIB)/clisp-link' add-module-set ordrules '$(CLISP_LIB)/full' xindy-build-dir
+	sh '$(CLISP_LIB)/clisp-link' add-module-set ordrules '$(CLISP_LIB)/full' xindy-build-dir || \
+	sh '$(CLISP_LIB)/clisp-link' add '$(CLISP_LIB)/full' xindy-build-dir ordrules
 	$(INSTALL_STRIP_PROGRAM) xindy-build-dir/$(LISP_RUN) $(binariesdir)/$(XINDY_RUN)
 
 clean-local:
