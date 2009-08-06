@@ -173,7 +173,7 @@ tt_release_post_table (struct tt_post_table *post)
 
   ASSERT(post);
 
-  if (post->glyphNamePtr)
+  if (post->glyphNamePtr && post->Version != 0x00010000UL)
     RELEASE(post->glyphNamePtr);
   if (post->names) {
     for (i = 0; i < post->count; i++) {
