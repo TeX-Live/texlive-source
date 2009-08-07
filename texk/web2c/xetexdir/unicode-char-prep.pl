@@ -175,6 +175,10 @@ if ($supp == 1) {
 
 print << '__EOT__';
 
+% set \sfcode for Unicode closing quotes
+\sfcode"2019=0
+\sfcode"201D=0
+
 % check whether the interchar toks features are present
 \ifx\XeTeXinterchartoks\XeTeXcharclass
   \def\next{\endgroup\endinput}
