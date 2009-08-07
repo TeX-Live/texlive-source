@@ -14,6 +14,7 @@ EXTRA_DIST = \
 	Build \
 	README.config \
 	README.cross \
+	README.hacking \
 	README.layout \
 	build-aux/README.TL \
 	build-aux/mkinstalldirs \

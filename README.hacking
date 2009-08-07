@@ -1,0 +1,149 @@
+Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
+
+	Modifying the TeX Live (TL) build system
+	========================================
+
+1. Versions of Tools
+====================
+
+autoconf (GNU Autoconf) 2.63
+
+automake (GNU automake) 1.11
+
+ltmain.sh (GNU libtool) 2.2.6
+
+bison (GNU Bison) 2.4.1
+
+flex 2.5.35
+
+2. Updating the TL build system
+===============================
+
+When anything in the TL build system (configure.ac and Makefile.am files
+with their fragments or M4 macros in m4/) has been modified you have to
+rebuild the coresponding configure, Makefile.in, and config.h or c-auto,h
+files. 
+
+This is most easily done automatically using maintainer-mode.  The files in
+the SVN repository are all up to date, but some of them may be rebuilt in
+maintainer-mode due to their relative timestamps.  This will eventually be
+fixed, once everything has stabilized.
+
+Alternatively, you can run the 'reautoconf' script from the top-level.
+
+The 'config.guess', 'config.sub', etc. files for most packages are kept
+centrally in build-aux/.  There are, however, independent copies in, e.g.,
+libs/freetype/freetype-1.5/, libs/freetype2/freetype-2.3.8/builds/unix/, and
+similar places that might need updating (not done automatically by the
+'reautoconf' script).
+
+3. Extending the TL build system
+================================
+
+3.1 Adding a new program directory
+----------------------------------
+
+To add a new program directory utils/Util/ (not using Kpathsea) or
+texk/Prog/ (possibly using Kpathsea) you must add the directory Util to the
+M4 list kpse_utils_pkgs or Prog to the M4 list kpse_texk_pkgs defined in
+m4/kpse-pkgs.m4.  In addition you must create a configure.ac fragment
+utils/Util/ac/witheanble.ac or texk/Prog/ac/witheanble.ac defining any
+required libraries from the TL tree and whether this new program is to be
+built by default (in the absence of the corresponding '--enable-Util/Prog'
+or '--disable-Util/Prog' configure options).  If a program in texk/Prog/ or
+utils/Util/ requires specific configure options to be seen at the top-level,
+they should be defined in an additional configure.ac fragment
+texk/Prog/ac/Prog.ac or utils/Util/ac/Util.ac (included from
+texk/Prog/ac/withenable.ac and texk/Prog/configure.ac or
+utils/Util/ac/withenable.ac and utils/Util/configure.ac) as, e.g., for
+texk/web2c/, texk/xdvik/, and utils/xindy/.
+
+As example, the file texk/dvipdfmx/ac/withenable.ac contains
+	KPSE_ENABLE_PROG([dvipdfmx], [kpathsea libpng])
+where KPSE_ENABLE_PROG, defined in m4/kpse-setup.m4, has one required
+argument -- the name of the subdirectory -- and three optional arguments: a
+list of required TL libraries (zlib is implied by libpng and need not be
+mentioned), a list of options ('disable' if this program is not built by
+default), and a comment added to the help text for the disable or enable
+configure option for this program.
+
+3.2 Adding a new library directory
+----------------------------------
+
+To add a new library directory libs/Lib/ you must add the directory Lib to
+the M4 list kpse_libs_pkgs defined in m4/kpse-pkgs.m4.  In addition you must
+create a configure.ac fragment libs/Lib/ac/witheanble.ac defining any
+required libraries from the TL tree and whether an installed (system)
+version of this library can be used.  If that is the case, another
+configure.ac fragment libs/Lib/ac/Lib.ac must define (AC_CHECK_FUNCS and
+AC_CHECK_HEADERS) tests for a system version to be acceptable.  Finally you
+must create a file m4/kpse-Lib-flags.m4 defining the M4 macro KPSE_LIB_FLAGS
+(where 'LIB' is a sanitized uppercase version of 'Lib') setting up the Make
+variables LIB_INCLUDES, LIB_LIBS, and LIB_DEPEND with the required values
+for CPPFLAGS, LDADD, and dependencies, as well as LIB_RULE with a
+(multiline) Make rule to rebuild that library when necessary.
+
+If a system version of the library can be used, another M4 macro
+KPSE_LIB_SYSTEM_FLAGS in m4/kpse-Lib-flags.m4 must define values for
+LIB_INCLUDES and LIB_LIBS, usually depending on values for the configure
+options '--with-Lib-includes' and/or '--with-Lib-libdir', and you must add
+the line 'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])' to the definition of the M4
+macro KPSE_ALL_SYSTEM_FLAGS in m4/kpse-pkgs.m4.
+
+As example, the file libs/libpng/kpse/withenable.ac contains
+	KPSE_WITH_LIB([libpng], [zlib])
+where KPSE_WITH_LIB, defined in m4/kpse-setup.m4, has one required argument
+-- the name of the subdirectory -- and two optional arguments: a list of
+required TL libraries, and a list of options ('tree' if only the library
+from the TL can be used).  The file libs/libpng/ac/libpng.ac contains
+	KPSE_CHECK_LIB([libpng], [png_set_read_fn], [png.h])
+indicating that the Autoconf macro calls
+	AC_CHECK_FUNCS([png_set_read_fn])
+	AC_CHECK_HEADERS([png.h])
+shall be used as sanity check for using an installed PNG library.
+
+4. Using libraries from the TL tree
+===================================
+
+The TL build system provides Autoconf macros for all libraries in the TL
+tree.  A program requiring additional libraries must use standard Autoconf
+and Automake features (such as AC_ARG_WITH to specify their installation
+directories, AC_CHECK_LIB and AC_CHECK_FUNCS for library functions,
+AC_CHECK_HEADERS for header files).
+
+4.1 configure.ac
+----------------
+
+In order to use, e.g., libpng (either an installed version or from the TL
+tree) configure.ac must use KPSE_ZLIB_FLAGS and KPSE_LIBPNG_FLAGS.  As a
+consequence the Make variables LIBPNG_DEPEND, LIBPNG_INCLUDES, LIBPNG_LIBS,
+and LIBPNG_RULE will be defined.
+
+A program may wish to examine features of the PNG library.  To do so
+configure.ac must use
+	KPSE_ADD_FLAGS([zlib])
+followed by test for zlib features (if any) and
+	KPSE_ADD_FLAGS([libpng])
+followed by tests for libpng features.  These macros temporarily add
+appropriate values to CPPFLAGS and LIBS.  The tests must be terminated by
+	KPSE_RESTORE_FLAGS
+in order to restore CPPFLAGS and LIBS to their former values.
+
+4.2 Makefile.am
+---------------
+
+In order to use, e.g., libpng (and zlib) the Make variables mentioned above
+must be used in Makefile.am as follows
+
+$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) must be added to either INCLUDES or
+AM_CPPFLAGS (or target specific target_CPPFLAGS).
+
+$(LIBPNG_LIBS) $(ZLIB_LIBS) must be added to LDADD or target_LDADD.
+
+$(LIBPNG_DEPEND) $(ZLIB_DEPEND) should be added to target_DEPENDENCIES such
+that rebuilding zlib and/or libpng causes the target to be rebuilt.
+
+Two lines containing @ZLIB_RULE@ and @LIBPNG_RULE@ create rules to
+(re-)build zlib and libpng when necessary.
+
