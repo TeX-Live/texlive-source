@@ -11,8 +11,8 @@
 # 
 # The current maintainer is Reinhard Kotucha.
 
-my $TL_version='2008';  
-my $revision='2009-01-29';
+my $TL_version='2009';  
+my $revision='2009-08-08';
 
 use Getopt::Long;
 $Getopt::Long::autoabbrev=0;
@@ -54,7 +54,8 @@ EOF
 
 @ARGS=@ARGV;
 
-GetOptions 
+
+$done=GetOptions 
     "all|a",
     "debug|d",
     "force|f",
@@ -64,6 +65,12 @@ GetOptions
     "verbose|v",
     "version",
     "sys";
+
+
+unless ($done) {
+    print "\n"; usage; exit 1;
+}
+
 
 $^W=1 if $opt_debug;
 
@@ -78,7 +85,7 @@ print "$TL_version\n" and exit 0 if $opt_version;
 if ($opt_help or !@ARGS) {
     print "\nThis is getnonfreefonts";
     print '-sys' if ($sys);
-    print ", version $TL_version.\n\n";
+    print ", version $TL_version, revision $revision.\n\n";
     usage; 
 }
 
