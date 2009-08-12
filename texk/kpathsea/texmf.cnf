@@ -610,11 +610,11 @@ font_mem_size = 3000000
 font_max = 9000
 
 % Extra space for the hash table of control sequences.
-hash_extra = 50000
+hash_extra = 200000
 
 % Max number of characters in all strings, including all error messages,
 % help texts, font names, control sequences.  These values apply to TeX.
-pool_size = 1250000
+pool_size = 3250000
 % Minimum pool space after TeX's own strings; must be at least
 % 25000 less than pool_size, but doesn't need to be nearly that large.
 string_vacancies = 90000
@@ -649,10 +649,6 @@ stack_size = 5000       % simultaneous input sources
 ocp_buf_size = 500000   % character buffers for ocp filters.
 ocp_stack_size = 10000  % stacks for ocp computations.
 ocp_list_size = 1000    % control for multiple ocps.
-
-% Parameter specific to MetaPost.
-% Size of the hash table for control sequences, default 65536.
-% hash_size.mpost = 65536
 
 % These work best if they are the same as the I/O buffer size, but it
 % doesn't matter much.  Must be a multiple of 8.

@@ -1,4 +1,4 @@
-% Copyright (c) 1996-2008 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh, <thanh@@pdftex.org>
+% Copyright (c) 1996-2009 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh, <thanh@@pdftex.org>
 
 % This file is part of pdfTeX.
 
@@ -16354,7 +16354,7 @@ so we can use this field for both}
 @!inf_obj_tab_size = 1000; {min size of the cross-reference table for PDF output}
 @!sup_obj_tab_size = 8388607; {max size of the cross-reference table for PDF output}
 @!inf_dest_names_size = 1000; {min size of the destination names table for PDF output}
-@!sup_dest_names_size = 131072; {max size of the destination names table for PDF output}
+@!sup_dest_names_size = 500000; {max size of the destination names table for PDF output}
 @!inf_pk_dpi = 72; {min PK pixel density value from \.{texmf.cnf}}
 @!sup_pk_dpi = 8000; {max PK pixel density value from \.{texmf.cnf}}
 @!pdf_objtype_max = head_tab_max;

@@ -1,5 +1,7 @@
 2009-08-12  Karl Berry  <karl@tug.org>
 
+	* tex.ch (1.11): doc fix.
+
 	* bibtex.ch (xsubstring): forgot to check for pool_overflow.
 	See test case and bug report at
 	http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=520920.

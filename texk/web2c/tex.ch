@@ -204,7 +204,7 @@ versions of the program.
 @d file_name_size == maxint
 @d ssup_error_line = 255
 @d ssup_max_strings == 2097151
-{Larger values than 65536 cause the arrays consume much more memory.}
+{Larger values than 65536 cause the arrays to consume much more memory.}
 @d ssup_trie_opcode == 65535
 @d ssup_trie_size == @"3FFFFF
 
