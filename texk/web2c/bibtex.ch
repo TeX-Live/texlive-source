@@ -1134,6 +1134,15 @@ while ((ex_buf_xptr < ex_buf_ptr) and
 @y
 @z
 
+% Forgot to check for pool overflow here.  Triggered by test case linked
+% from http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=520920.
+@x 
+while (sp_ptr < sp_end) do                      {shift the substring}
+@y
+str_room(sp_end - sp_ptr);
+while (sp_ptr < sp_end) do                      {shift the substring}
+@z
+
 % [459] Eliminate unreferenced statement label, because `undefined' is
 % now a constant expression that is not evaluated at the Web level. If
 % this label were ever required, it could be replaced by the constant

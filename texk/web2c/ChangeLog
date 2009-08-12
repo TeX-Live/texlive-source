@@ -1,3 +1,10 @@
+2009-08-12  Karl Berry  <karl@tug.org>
+
+	* bibtex.ch (xsubstring): forgot to check for pool_overflow.
+	See test case and bug report at
+	http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=520920.
+	Vincent Danen mail to tex-live, 4 Aug 2009 14:42:29.
+
 2009-07-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (check_PROGRAMS): pltotf and tftopl are required
