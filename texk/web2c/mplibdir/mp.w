@@ -1,4 +1,4 @@
- $Id: mp.w 1111 2009-07-31 08:10:35Z taco $
+ $Id: mp.w 1115 2009-08-12 08:39:15Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -89,13 +89,13 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 1.206" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 1.207" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @(mpmp.h@>=
-#define metapost_version "1.206"
-#define metapost_magic (('M'*256) + 'P')*65536 + 1206
+#define metapost_version "1.207"
+#define metapost_magic (('M'*256) + 'P')*65536 + 1207
 #define metapost_old_magic (('M'*256) + 'P')*65536 + 1080
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
@@ -651,21 +651,20 @@ mp->print_found_names = (opt->print_found_names>0 ? true : false);
 @ The |file_line_error_style| parameter makes \MP\ use a more
 standard compiler error message format instead of the Knuthian 
 exclamation mark. It needs the actual version of the current input 
-file name, that will be saved by |a_open_in| in the global 
-|mp->long_name|.
+file name, that will be saved by |a_open_in| in the |long_name|.
 
-@<Glob...@>=
-char *long_name;
+TODO: currently these strings cause memory leaks, because they cannot
+be safely freed as they may appear in the |input_stack| multiple times.
+In fact, the current implementation is just a quick hack in response 
+to a bug report for metapost 1.205.
 
-@ @<Option variables@>=
+@d long_name mp->cur_input.long_name_field /* long name of the current file */
+
+@<Option variables@>=
 int file_line_error_style; /* configuration parameter */
 
 @ @<Allocate or initialize ...@>=
 mp->file_line_error_style = (opt->file_line_error_style>0 ? true : false);
-mp->long_name = NULL;
-
-@ @<Dealloc variables@>=
-mp_xfree(mp->long_name);
 
 @ \MP's file-opening procedures return |false| if no file identified by
 |name_of_file| could be opened.
@@ -683,8 +682,7 @@ is never printed.
         strncpy(mp->name_of_file,s,file_name_size);
       }
       if ((*(A) == 'r') && (ftype == mp_filetype_program)) {
-        xfree(mp->long_name);
-        mp->long_name = xstrdup(s);
+        long_name = xstrdup(s);
       }
       xfree(s);
     } else {
@@ -2021,8 +2019,8 @@ void mp_print_err(MP mp, const char * A) {
     wake_up_terminal;
   if (mp->file_line_error_style && file_state && !terminal_input) {
     mp_print_nl(mp, ""); 
-    if (mp->long_name != NULL) {
-      mp_print(mp, mp->long_name);      
+    if (long_name != NULL) {
+      mp_print(mp, long_name);      
     } else {
       mp_print(mp, mp_str(mp,name));
     }
@@ -13114,8 +13112,9 @@ elements of the stack appear in an array. Hence the stack is declared thus:
 
 @<Types...@>=
 typedef struct {
-  quarterword index_field;
+  char *long_name_field;
   halfword start_field, loc_field, limit_field, name_field;
+  quarterword index_field;
 } in_state_record;
 
 @ @<Glob...@>=
