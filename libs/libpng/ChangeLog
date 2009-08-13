@@ -1,3 +1,9 @@
+2009-08-13  Martin Schröder <martin@oneiros.de>
+
+	Import libpng-1.2.39
+
+	* libpng-1.2.38-PATCHES: Remove our one patch
+
 2009-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* libpng-1.2.38-PATCHES: New directory to hold patches, if any,
@@ -49,3 +55,4 @@
 
 	Adapt to TL2009 build system.
 
+# vim: noexpandtab
