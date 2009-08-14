@@ -1,4 +1,4 @@
-.TH "updmap" "1" "February 2005" "teTeX" "teTeX"
+.TH "updmap" "1" "August 2009" "TeX Live" "TeX Live"
 .PP
 .SH "NAME"
 updmap \- Update font map files for TeX output drivers\&.

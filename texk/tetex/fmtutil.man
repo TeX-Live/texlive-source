@@ -1,4 +1,4 @@
-.TH "fmtutil" "8" "February 2005" "teTeX" "teTeX" 
+.TH "fmtutil" "8" "August 2009" "TeX Live" "TeX Live" 
 .PP 
 .SH "NAME" 
 fmtutil \- utility for maintaining TeX format files
@@ -20,13 +20,15 @@ files or show information about format files\&.
 .PP 
 .IP "\fB--all\fP" 
 recreate all format files
+.IP "\fB--byengine\fP \fIenginename\fP" 
+(re)create formats that depend on the
+engine \fIenginename\fP
 .IP "\fB--byfmt\fP \fIformatname\fP" 
 (re)create the format for
 format \fIformatname\fP
 .IP "\fB--byhyphen\fP \fIhyphenfile\fP" 
-(re)create formats that
-depend on the hyphenation file
-\fIhyphenfile\fP
+(re)create formats that depend on the
+hyphenation file \fIhyphenfile\fP
 .IP "\fB--help\fP" 
 print a summary of commands and options
 .IP "\fB--missing\fP" 
@@ -63,8 +65,6 @@ default configuration file
 .PP 
 \fBkpsewhich\fP(1)
 .PP 
-Web page: <http://tug\&.org/teTeX/>
-.PP 
 .SH "BUGS" 
 .PP 
 None known, but report any bugs found to <tetex@dbs\&.uni-hannover\&.de> (mailing list)\&.
@@ -72,8 +72,7 @@ None known, but report any bugs found to <tetex@dbs\&.uni-hannover\&.de> (mailin
 .SH "AUTHOR" 
 .PP 
 \fBfmtutil\fP was written by Thomas Esser 
-<te@dbs\&.uni-hannover\&.de> and is Copyright 1998 Thomas
-Esser\&.
+<te@dbs\&.uni-hannover\&.de> and is in the public domain.
 .PP 
 This manual page was written by C\&.M\&. Connelly
 <c@eskimo\&.com>, for
