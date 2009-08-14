@@ -17,7 +17,7 @@ use strict;
 
 # Define some global variables.
 my $progname = basename $0;        # Name of this program
-our $VERSION = "1.1";              # Version number of this program
+our $VERSION = "1.2";              # Version number of this program
 my %name2chars;        # Map from a font name to a character list
 my $GS = $ENV{"GS"} || "gs";       # Name of the Ghostscript interpreter
 my $TFTOPL = $ENV{"TFTOPL"} || "tftopl";    # Name of the TFM to PL converter
@@ -29,6 +29,7 @@ my $yinc = 24;                     # Height of font in PostScript points
 my $init_yinc = 36;                # Space after title
 my %tfmfontwidth;                  # Map from font name to character number to character width
 my %tfm2size;                      # Map from font name to design size
+my %tfmmissing;                    # Set of TFM files we looked for but didn't find
 my ($dvips_xscale, $dvips_yscale); # Scaling factors from Dvips's PostScript CTM
 my $discard_output = $^O eq "MSWin32" ? "> NUL:" : "> /dev/null 2>&1";  # Command suffix to discard all output
 
@@ -43,8 +44,59 @@ my $sample_file_ps;                # Name of a PostScript file of font samples t
 my $sample_file_tex;               # Name of a TeX file of font samples to write
 my $single_font_use = 0;           # 1=one use per font; 0=allow repetitions
 my $samples_per_page = 25;         # Number of font samples to print per page
+my $tfm_cache_file;                # Name of a file in which to cache font metrics
 
 ###########################################################################
+
+# Read %tfm2size, %tfmfontwidth, and %tfmmissing from a file named by
+# $tfm_cache_file.
+sub read_tfm_cache_file
+{
+    open(CACHEFILE, "<", $tfm_cache_file) || do {
+        print STDERR "Ignoring TFM cache file $tfm_cache_file ($!).\n" if $verbose;
+        return;
+    };
+    print STDERR "Reading TFM data from $tfm_cache_file ... " if $verbose;
+    my $numlines = 0;
+    while (my $oneline = <CACHEFILE>) {
+        chomp $oneline;
+        my @fields = split " ", $oneline;
+        die "${progname}: Internal error" if $#fields == -1;
+        my $tfm = shift @fields;
+        if ($#fields == -1) {
+            # No metrics -- TFM file must not have been found.
+            $tfmmissing{$tfm} = 1;
+        }
+        else {
+            # Parse and store the TFM data.
+            $tfm2size{$tfm} = shift @fields;
+            my %widths = @fields;
+            $tfmfontwidth{$tfm} = \%widths;
+        }
+	$numlines++;
+    }
+    close CACHEFILE;
+    print STDERR "done ($numlines entries).\n" if $verbose;
+}
+
+
+# Write %tfm2size, %tfmfontwidth, and %tfmmissing to a file named by
+# $tfm_cache_file.
+sub write_tfm_cache_file
+{
+    print STDERR "Writing TFM data to $tfm_cache_file ... " if $verbose;
+    open(CACHEFILE, ">", $tfm_cache_file) || die "${progname}: Failed to create $tfm_cache_file ($!)\n";
+    while (my ($tfm, $size) = each %tfm2size) {
+        my @widths = %{$tfmfontwidth{$tfm}};
+        print CACHEFILE "$tfm $size @widths\n";
+    }
+    foreach my $tfm (keys %tfmmissing) {
+        print CACHEFILE "$tfm\n";
+    }
+    close CACHEFILE;
+    print STDERR "done.\n" if $verbose;
+}
+
 
 # Given the base name of a .tfm file, process the file and return the
 # font's design size and a mapping from character number to character
@@ -57,6 +109,17 @@ sub tfm2widths ($)
     my $plname;       # Name of PL file; some tftopl programs can't write to stdout.
     my $plfile;       # Filehandle corresponding to $plname
 
+    # First see if the information is already cached.
+    if (defined $tfm2size{$tfmname}) {
+        print STDERR "    Processing $tfmname ... cached.\n" if $verbose >= 2;
+        return [$tfm2size{$tfmname}, %{$tfmfontwidth{$tfmname}}];
+    }
+    if (defined $tfmmissing{$tfmname}) {
+        print STDERR "    Processing $tfmname ... cached as not found.\n" if $verbose >= 2;
+        return [$designsize, %num2width];
+    }
+
+    # The information is not cached -- read it from a file.
     ($plfile, $plname) = tempfile (DIR => File::Spec->tmpdir(), SUFFIX => ".pl");
     close $plfile;
     if (!system "$TFTOPL $tfmname $plname $discard_output") {
@@ -260,6 +323,7 @@ GetOptions ("h|help"       => \$wanthelp,
             "t|tex=s"      => \$sample_file_tex,
             "p|ps=s"       => \$sample_file_ps,
             "s|spp=i"      => \$samples_per_page,
+            "C|cache=s"    => \$tfm_cache_file,
             "1|no-repeats" => \$single_font_use) || pod2usage(2);
 if ($wantversion) {
     print "pkfix-helper $VERSION\n";
@@ -487,6 +551,9 @@ close GSCMD || die "${progname}: failed to run $GS ($!)\n";
 unlink $psfilename;
 die "${progname}: No character-width information was found\n" if !%fontwidth;
 
+# Read TFM font metrics from a cache file if specified.
+read_tfm_cache_file() if defined $tfm_cache_file;
+
 # Read each TFM file and store its design size and character widths.
 print STDERR "Reading TFM files ... " if $verbose;
 print STDERR "\n" if $verbose >= 2;
@@ -496,6 +563,9 @@ foreach my $tfm (sort {$a cmp $b}
     if (%num2widths) {
         $tfmfontwidth{$tfm} = \%num2widths;
         $tfm2size{$tfm} = $designsize * 1.0;
+    }
+    else {
+        $tfmmissing{$tfm} = 1;
     }
 }
 
@@ -536,6 +606,9 @@ my $numtfms = keys %tfm2size;
 my $numfonts = 1 + $#tfmlist;
 print STDERR "done ($numtfms TFMs in $numfonts scaling variations).\n" if $verbose;
 die "${progname}: No TFM files were processed successfully\n" if !$numtfms;
+
+# Write the TFM font metrics to a a cache file if specified.
+write_tfm_cache_file() if defined $tfm_cache_file;
 
 # Compare every document font (ordered by decreasing number of
 # characters utilized) to every TFM file (in increasing order of
@@ -869,6 +942,7 @@ pkfix-helper
 [B<--force>=I<name>=I<fontspec>]
 [B<--ps>=I<filename.ps>]
 [B<--tex>=I<filename.tex>]
+[B<--cache>=I<filename>]
 [B<--include>=I<fontspec>]
 [B<--exclude>=I<regexp>]
 [B<--quiet>]
@@ -998,6 +1072,19 @@ output document.
 
 =over 4
 
+=item B<-C> I<filename>, B<--cache>=I<filename>
+
+Speed up TFM file processing by caching character metrics into file
+I<filename>.  On some systems it takes a long time to read a TFM file,
+spawn F<tftopl> to convert it to PL format, and extract from the PL
+data the metrics for each character.  The first time B<--cache> is
+specified, B<pkfix-helper> proceeds as normal then writes all of the
+extracted character metrics to I<filename>.  On subsequent runs in
+which B<--cache>=I<filename> is specified, B<pkfix-helper> reads the
+previously extracted metrics from I<filename>, going through the
+F<tftopl>-based process only for TFM files that were not previously
+encountered.
+
 =item B<-i> I<fontspec>, B<--include>=I<fontspec>
 
 Add I<fontspec> to the list of font specifications against which
@@ -1054,7 +1141,7 @@ is the name of a PostScript file produced by an old version of
 B<dvips> and utilizing at least one bitmapped font.  It's always worth
 verifying that B<pkfix> can't convert the file on its own:
 
-    % pkfix oldfile.ps newfile.ps
+    $ pkfix oldfile.ps newfile.ps
     PKFIX 1.3, 2005/02/25 - Copyright (c) 2001, 2005 by Heiko Oberdiek.
     ==> no fonts converted
 
@@ -1066,7 +1153,7 @@ In its simplest form, B<pkfix-helper> takes the name of an input file
 (F<pkfix-oldfile.ps>), which will have the same contents as the input
 file but serve as suitable input for B<pkfix>:
 
-    % pkfix-helper oldfile.ps pkfix-oldfile.ps
+    $ pkfix-helper oldfile.ps pkfix-oldfile.ps
     Reading netpipe.ps ... done.
     Number of Type 3 fonts encountered: 10
     Bitmapped fonts are typeset at 600 DPI.
@@ -1084,7 +1171,7 @@ file but serve as suitable input for B<pkfix>:
         Processing Fg ... done (cmsy10 @ 1X, mismatch=0.00875).
         Processing Fc ... done (cmr6 @ 1X, mismatch=0.00284).
 
-    % pkfix pkfix-oldfile.ps newfile.ps
+    $ pkfix pkfix-oldfile.ps newfile.ps
     PKFIX 1.3, 2005/02/25 - Copyright (c) 2001, 2005 by Heiko Oberdiek.
     *** Font conversion: `cmti10' -> `CMTI10'.
     *** Font conversion: `cmr8' -> `CMR8'.
@@ -1108,16 +1195,16 @@ indicate that B<pkfix-helper> did a good job.  It is therefore
 strongly recommended that the user produce "before" and "after" font
 sheets:
 
-    % pkfix-helper -q oldfile.ps pkfix-oldfile.ps \
+    $ pkfix-helper -q oldfile.ps pkfix-oldfile.ps \
       --ps=oldfonts.ps --tex=newfonts.tex
 
-    % tex newfonts.tex
+    $ tex newfonts.tex
     This is TeX, Version 3.14159 (Web2C 7.4.5)
     (./newfonts.tex [1] )
     Output written on newfonts.dvi (1 page, 1292 bytes).
     Transcript written on newfonts.log.
 
-    % dvips newfonts.dvi -o newfonts.ps
+    $ dvips newfonts.dvi -o newfonts.ps
     This is dvips(k) 5.92b Copyright 2002 Radical Eye Software (www.radicaleye.com)
     ' TeX output 2006.06.11:1636' -> newfonts.ps
     <texc.pro><8r.enc><texps.pro>. <cmr6.pfb><cmsy10.pfb><cmbx10.pfb><cmbx12.pfb>
@@ -1138,7 +1225,7 @@ B<pkfix-helper> allows C<*> to be used as a scaling factor to tell the
 program to automatically detect an optimal scaling factor, even if
 doing so means choosing a highly nonstandard font size:
 
-    % pkfix-helper oldfile.ps pkfix-oldfile.ps --force="Ff=cmb12 @ *"
+    $ pkfix-helper oldfile.ps pkfix-oldfile.ps --force="Ff=cmb12 @ *"
     Reading netpipe.ps ... done.
     Number of Type 3 fonts encountered: 10
     Bitmapped fonts are typeset at 600 DPI.
@@ -1149,7 +1236,7 @@ doing so means choosing a highly nonstandard font size:
 Oops, it looks like we don't have a F<cmb12.tfm> file on our system.
 Let's try scaling up F<cmb10.tfm> instead:
 
-    % pkfix-helper oldfile.ps pkfix-oldfile.ps --force="Ff=cmb10 @ *"
+    $ pkfix-helper oldfile.ps pkfix-oldfile.ps --force="Ff=cmb10 @ *"
     Reading netpipe.ps ... done.
     Number of Type 3 fonts encountered: 10
     Bitmapped fonts are typeset at 600 DPI.
