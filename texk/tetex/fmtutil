@@ -1,39 +1,13 @@
 #!/bin/sh
+# fmtutil - utility to maintain format files.
+# Public domain.  Originally written by Thomas Esser.
 
-###############################################################################
-# fmtutil: utility to maintain format files.
-#
-# Thomas Esser, public domain.
-#
-# Commands:
-# --all                      recreate all format files
-# --missing                  create all missing format files
-# --refresh                  recreate only existing format files
-# --byfmt formatname         (re)create format for `formatname'
-# --byhyphen hyphenfile      (re)create formats that depend on `hyphenfile'
-# --enablefmt formatname     enable formatname in config file
-# --disablefmt formatname    disable formatname in config file
-# --listcfg                  list (enabled and disabled) configurations,
-#                            filtered to available formats
-# --catcfg                   output the content of the config file
-# --showhyphen formatname    print name of hyphenfile for format `formatname'
-# --edit                     edit fmtutil.cnf file
-# --version                  show version info
-# --help                     show this message
-#
-# Options:
-#  --cnffile file             set configfile for fmtutil
-#  --fmtdir directory         set destination directory for format files
-#  --no-engine-subdir         don't use $engine subdirectory of the fmtdir
-###############################################################################
-
-###############################################################################
 # program history:
 #   further changes in texk/tetex/ChangeLog.
 #   2007-01-04  patch by JK to support $engine subdir (enabled by default)
 #   Fr Apr  8 19:15:05 CEST 2005 cleanup now has an argument for the return code
 #   Do Mar 02 10:42:31 CET 2006 add tmpdir to TEXFORMATS
-#   So Mär 27 18:52:06 CEST 2005 honor $TMPDIR, $TEMP and $TMP, not just $TMP
+#   So Ma 27 18:52:06 CEST 2005 honor $TMPDIR, $TEMP and $TMP, not just $TMP
 #   Sa Jan 15 18:13:46 CET 2005 avoid multiple variable assignments in one statement
 #   Di Jan 11 11:42:36 CET 2005 fix --byhyphen with relative hyphenfile
 #   Fr Dez 31 16:51:29 CET 2004 option catcfg added (for being called by texconfig)
@@ -84,7 +58,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 progname=fmtutil
 argv0=$0
-version=20090611.2319
+version=20090815.0056
 
 cnf=fmtutil.cnf   # name of the config file
 export PATH
@@ -101,6 +75,58 @@ cleanup()
     && { cd / && rm -rf "$tmpdir"; }
   (exit $rc); exit $rc
 }   
+
+###############################################################################
+# help() and version()
+#   display help (or version) message and exit
+###############################################################################
+help()
+{
+  cat <<'eof'
+Usage: fmtutil [OPTION]... CMD [ARG]...
+
+Rebuild, manage, and otherwise manipulate TeX formats (and Metafont
+bases and MetaPost mems).
+
+Valid options:
+  --cnffile FILE
+  --fmtdir DIRECTORY
+  --no-engine-subdir         don't use engine-specific subdir of the fmtdir
+  --quiet                    (not implemented, just for compatibility)
+  --test                     (not implemented, just for compatibility)
+  --dolinks                  (not implemented, just for compatibility)
+  --force                    (not implemented, just for compatibility)
+
+Valid commands:
+  --all                      recreate all format files
+  --missing                  create all missing format files
+  --refresh                  recreate only existing format files
+  --byengine ENGINENAME      (re)create formats using ENGINENAME
+  --byfmt FORMATNAME         (re)create format for FORMATNAME
+  --byhyphen HYPHENFILE      (re)create formats that depend on HYPHENFILE
+  --enablefmt FORMATNAME     enable formatname in config file
+  --disablefmt FORMATNAME    disable formatname in config file
+  --listcfg                  list (enabled and disabled) configurations,
+                             filtered to available formats
+  --catcfg                   output the content of the config file
+  --showhyphen FORMATNAME    print name of hyphenfile for format FORMATNAME
+  --edit                     edit config file
+  --version                  show version info
+  --help                     show this message
+
+The config file is named fmtutil.cnf, and
+running  kpsewhich fmtutil.cnf  should show the active file.
+eof
+  cleanup 0
+}
+
+version()
+{
+  cat <<eof
+$progname version $version
+eof
+  cleanup 0
+}
 
 ###############################################################################
 # setupTmpDir()
@@ -187,51 +213,6 @@ cache_vars()
   : ${MT_MKTEX_OPT=`kpsewhich --format='web2c files' mktex.opt`}
   export MT_VARTEXFONTS MT_MKTEXNAM MT_MKTEXNAM_OPT MT_MKTEXDIR
   export MT_MKTEXDIR_OPT MT_MKTEXUPD MT_MKTEX_CNF MT_MKTEX_OPT
-}
-
-###############################################################################
-# help()
-#   display help message and exit
-###############################################################################
-help()
-{
-  cat <<'eof'
-Usage: fmtutil [option] ... cmd [argument]
-
-Valid options:
-  --cnffile file
-  --fmtdir directory
-  --no-engine-subdir         don't use engine-specific subdir of the fmtdir
-  --quiet                    (not implemented, just for compatibility)
-  --test                     (not implemented, just for compatibility)
-  --dolinks                  (not implemented, just for compatibility)
-  --force                    (not implemented, just for compatibility)
-
-Valid commands:
-  --all                      recreate all format files
-  --missing                  create all missing format files
-  --refresh                  recreate only existing format files
-  --byfmt formatname         (re)create format for `formatname'
-  --byhyphen hyphenfile      (re)create formats that depend on `hyphenfile'
-  --enablefmt formatname     enable formatname in config file
-  --disablefmt formatname    disable formatname in config file
-  --listcfg                  list (enabled and disabled) configurations,
-                             filtered to available formats
-  --catcfg                   output the content of the config file
-  --showhyphen formatname    print name of hyphenfile for format `formatname'
-  --edit                     edit fmtutil.cnf file
-  --version                  show version info
-  --help                     show this message
-eof
-  cleanup 0
-}
-
-version()
-{
-  cat <<eof
-$progname version $version.
-eof
-  cleanup 0
 }
 
 ###############################################################################
@@ -454,6 +435,10 @@ main()
           cmd=missing;;
       --refresh|-r)
           cmd=refresh;;
+      --byengine)
+          shift; cmd=byengine; arg=$1;;
+      --byengine=*)
+          cmd=byengine; arg=`echo "$1" | sed 's/--byengine=//'`; shift ;;
       --byfmt|-f)
           shift; cmd=byfmt; arg=$1;;
       --byfmt=*)
@@ -600,6 +585,8 @@ main()
       create_missing;;
     refresh)
       recreate_existing;;
+    byengine)
+      recreate_by_engine "$arg";;
     byfmt)
       recreate_by_fmt "$arg";;
     byhyphen)
@@ -888,8 +875,28 @@ recreate_by_hyphenfile()
   recreate_loop
 
   # Now check if there was at least one match:
-  getmatch || abort "no format depends on \`$hyphenfile'"
+  getmatch || abort "no format depends on hyphen file \`$hyphenfile'"
 }
+
+###############################################################################
+# recreate_by_engine(enginename)
+#   recreate all formats that are based on enginename
+###############################################################################
+recreate_by_engine()
+{
+  enginename=$1
+
+  match_cmd="test x\$engine = x$enginename"
+
+  # No match before the loop:
+  setmatch false
+
+  recreate_loop
+
+  # Now check if there was at least one match:
+  getmatch || abort "no format depends on engine \`$enginename'"
+}
+
 
 
 ###############################################################################
