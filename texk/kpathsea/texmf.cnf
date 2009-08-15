@@ -498,11 +498,21 @@ shell_escape = p
 
 % No spaces in this command list.
 shell_escape_commands = \
-bibtex,bibtex8,dvips,epstopdf,epspdf,etex,fc-match,\
-imgconvert,\
-kpsewhich,makeindex,mkgrkindex,\
-pdfluatex,ps2pdf,ps4pdf,pstopdf,pygmentize,\
-rpdfcrop,texindy,xindy,ulqda\
+bibtex,bibtex8,epstopdf,epspdf,fc-match,\
+kpsewhich,makeindex,\
+ps2pdf,pstopdf,pygmentize,\
+rpdfcrop,\
+
+% we'd like to allow:
+% dvips - but external commands can be executed, need at least -R1.
+% (img)convert (ImageMagick) - delegates.mgk possible misconfig, besides,
+%   without Unix convert it hardly seems worth it, and Windows convert
+%   is something completely different that destroys filesystems, so
+%   skip it.
+% pygmentize - but is the filter feature insecure?
+% ps4pdf - but it calls an unrestricted latex.
+% texindy,xindy - but is the module feature insecure?
+% ulqda - but requires optional SHA1.pm, so why bother.
 
 % plain TeX should remain unenhanced.
 shell_escape.tex = f
