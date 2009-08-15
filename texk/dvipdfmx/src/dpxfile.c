@@ -647,7 +647,7 @@ dpx_create_temp_file (void)
   }
 #elif defined(HAVE_MKSTEMP)
 #  define __TMPDIR     "/tmp"
-#  define TEMPLATE     "/dvipdfmx.XXXXXX"
+#  define TEMPLATE     "/dvipdfmx.XXXXXXX"
   {
     char *_tmpd;
     int   _fd = -1;
