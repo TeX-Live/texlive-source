@@ -6,7 +6,10 @@
  *****/
 
 #include <iostream>
+#include "util.h"
+#include "callable.h"
 #include "program.h"
+
 
 namespace vm {
 
@@ -18,6 +21,44 @@ static const char* opnames[] = {
   "alloc", "pushframe", "popframe"
 };
 static const Int numOps = (Int)(sizeof(opnames)/sizeof(char *));
+
+#ifdef DEBUG_BLTIN
+mem::map<bltin,string> bltinRegistry;
+
+void registerBltin(bltin b, string s) {
+  bltinRegistry[b] = s;
+}
+string lookupBltin(bltin b) {
+  return bltinRegistry[b];
+}
+#endif
+
+
+ostream& operator<< (ostream& out, const item& i)
+{
+  // TODO: Make a data structure mapping typeids to print functions.
+  if (i.empty())
+    out << "empty";
+  else if (isdefault(i))
+    out << "default";
+  else if (i.type() == typeid(Int))
+    out << "Int, value = " << get<Int>(i);
+  else if (i.type() == typeid(double))
+    out << "real, value = " << get<double>(i);
+  else if (i.type() == typeid(string))
+    out << "string, value = " << get<string>(i);
+  else if (i.type() == typeid(callable))
+    out << *(get<callable *>(i));
+  else if (i.type() == typeid(frame)) {
+    out << "frame";
+#ifdef DEBUG_FRAME
+    out << " " << (get<frame *>(i))->getName();
+#endif
+  }
+  else
+    out << "type " << demangle(i.type().name());
+  return out;
+}
 
 void printInst(ostream& out, const program::label& code,
                const program::label& base)
@@ -44,11 +85,21 @@ void printInst(ostream& out, const program::label& code,
       break;
     }
 
-    case inst::builtin:
-    {      
-      out << " " << get<bltin>(*code) << " ";
+    case inst::constpush:
+    {
+      item c = code->ref;
+      out << " " << c;
       break;
     }
+
+#ifdef DEBUG_BLTIN
+    case inst::builtin:
+    {
+      string s=lookupBltin(get<bltin>(*code));
+      out << " " << (!s.empty() ? s : "<unnamed>") << " ";
+      break;
+    }
+#endif
 
     case inst::jmp:
     case inst::cjmp:
@@ -62,11 +113,13 @@ void printInst(ostream& out, const program::label& code,
       break;
     }
 
+#ifdef DEBUG_FRAME
     case inst::makefunc:
     {
-      out << " " << get<lambda*>(*code) << " ";
+      out << " " << get<lambda*>(*code)->name << " ";
       break;
     }
+#endif
     
     default: {
       /* nothing else to do */

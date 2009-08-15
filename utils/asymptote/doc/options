@@ -9,6 +9,7 @@ Options (negate by replacing - with -no):
 -auto3D               Automatically activate 3D scene [true]
 -autoimport string    Module to automatically import
 -autoplain            Enable automatic importing of plain [true]
+-autoplay             Autoplay 3D animations [false]
 -autorotate           Enable automatic PDF page rotation [false]
 -batchMask            Mask fpu exceptions in batch mode [false]
 -batchView            View output in batch mode [false]
@@ -38,6 +39,7 @@ Options (negate by replacing - with -no):
 -level n              Postscript level [3]
 -l,-listvariables     List available global functions and variables [false]
 -localhistory         Use a local interactive history file [false]
+-loop                 Loop 3D animations [false]
 -m,-mask              Mask fpu exceptions; command-line only
 -maxtile pair         Maximum rendering tile size [(0,0)]
 -maxviewport pair     Maximum viewport size [(2048,2048)]

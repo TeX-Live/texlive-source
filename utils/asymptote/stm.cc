@@ -59,46 +59,73 @@ void expStm::trans(coenv &e) {
   baseTrans(e, body);
 }
 
+// For an object such as currentpicture, write 'picture currentpicture' to
+// give some information.  Only do this when the object has a name.
+void tryToWriteTypeOfExp(types::ty *t, exp *body)
+{
+  symbol *name=body->getName();
+  if (!name)
+    return;
+
+  overloaded *set = dynamic_cast<overloaded *>(t);
+  if (set)
+    for(ty_vector::iterator ot=set->sub.begin(); ot!=set->sub.end(); ++ot)
+      tryToWriteTypeOfExp(*ot, body);
+  else {
+    cout << "<";
+    t->printVar(cout, name);
+    cout << ">" << endl;
+  }
+}
+  
+
 exp *tryToWriteExp(coenv &e, exp *body)
 {
   // First check if it is the kind of expression that should be written.
-  if (body->writtenToPrompt() &&
-      settings::getSetting<bool>("interactiveWrite"))
-    {
-      types::ty *t=body->cgetType(e);
-      if (t->kind == ty_error) {
-        return body;
-      }
-      else {
-        exp *callee=new nameExp(body->getPos(), symbol::trans("write"));
-        exp *call=new callExp(body->getPos(), callee, body);
-
-        types::ty *ct=call->getType(e);
-        if (ct->kind == ty_error || ct->kind == ty_overloaded) {
-          return body;
-        }
-        else {
-          // Issue a warning if the act of writing turns an ambiguous expression
-          // into an unambiguous one.
-          if (t->kind == ty_overloaded) {
-            string s=settings::warn("writeoverloaded");
-            if(!s.empty()) {
-              em.warning(body->getPos());
-              em << "writing overloaded";
-              if (body->getName())
-                em << " variable '" << *body->getName() << "'";
-              else
-                em << " expression";
-              em.disable(s);
-            }
-          }
-          return call;
-        }
-      }
-    }
-  else {
+  if (!body->writtenToPrompt() ||
+      !settings::getSetting<bool>("interactiveWrite"))
     return body;
+
+  types::ty *t=body->cgetType(e);
+  if (t->kind == ty_error)
+    return body;
+
+  exp *callee=new nameExp(body->getPos(), symbol::trans("write"));
+  exp *call=new callExp(body->getPos(), callee, body);
+
+  types::ty *ct=call->getType(e);
+  if (ct->kind == ty_error || ct->kind == ty_overloaded) {
+    if (t->kind == ty_overloaded) {
+      // Translate the body in order to print the ambiguity error first.
+      body->trans(e);
+      em.sync();
+      assert(em.errors());
+      
+      // Then, write out all of the types.
+      tryToWriteTypeOfExp(t, body);
+
+      // Return an innocuous expression to avoid more errors.
+      return new nullExp(body->getPos());
+    }
+    else {
+      tryToWriteTypeOfExp(t, body);
+      return body;
+    }
   }
+
+  // If the exp is overloaded, but the act of writing makes it
+  // unambiguous, add a suffix to the output to warn the user of this.
+  if (t->kind == ty_overloaded) {
+    exp *suffix=new nameExp(body->getPos(),
+                            symbol::trans("overloadedMessage"));
+    exp *callWithSuffix=new callExp(body->getPos(),
+                                    callee, body, suffix);
+
+    if (callWithSuffix->getType(e)->kind != ty_error)
+      return callWithSuffix;
+  }
+
+  return call;
 }
 
 void expStm::interactiveTrans(coenv &e)

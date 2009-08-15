@@ -231,9 +231,9 @@ types::record *getSettingsModule() {
   return settingsModule;
 }
 
-void Warn(const string& s)
+void noWarn(const string& s)
 {
-  array *Warn=getSetting<array *>("warnings");
+  array *Warn=getSetting<array *>("suppress");
   size_t size=checkArray(Warn);
   if(s.empty()) return;
   for(size_t i=0; i < size; i++)
@@ -241,23 +241,23 @@ void Warn(const string& s)
   Warn->push(s);
 }
 
-void noWarn(const string& s)
+void Warn(const string& s)
 {
-  array *Warn=getSetting<array *>("warnings");
+  array *Warn=getSetting<array *>("suppress");
   size_t size=checkArray(Warn);
   for(size_t i=0; i < size; i++)
     if(vm::read<string>(Warn,i) == s) 
       (*Warn).erase((*Warn).begin()+i,(*Warn).begin()+i+1);
 }
 
-string warn(const string& s)
+bool warn(const string& s)
 {
-  if(getSetting<bool>("debug")) return s;
-  array *Warn=getSetting<array *>("warnings");
+  if(getSetting<bool>("debug")) return true;
+  array *Warn=getSetting<array *>("suppress");
   size_t size=checkArray(Warn);
   for(size_t i=0; i < size; i++)
-    if(vm::read<string>(Warn,i) == s) return s;
-  return "";
+    if(vm::read<string>(Warn,i) == s) return false;
+  return true;
 }
 
 // The dictionaries of long options and short options.
@@ -1046,14 +1046,12 @@ void initSettings() {
 // WHEEL_DOWN: zoomout
   const char *wheeldown[]={"zoomout",NULL};
   
-  const char *Warn[]={"writeoverloaded",NULL};
-  
   addOption(new stringArraySetting("leftbutton", stringArray(leftbutton)));
   addOption(new stringArraySetting("middlebutton", stringArray(middlebutton)));
   addOption(new stringArraySetting("rightbutton", stringArray(rightbutton)));
   addOption(new stringArraySetting("wheelup", stringArray(wheelup)));
   addOption(new stringArraySetting("wheeldown", stringArray(wheeldown)));
-  addOption(new stringArraySetting("warnings", stringArray(Warn)));
+  addOption(new stringArraySetting("suppress", new array));
 
   addOption(new warnSetting("warn", 0, "string", "Enable warning"));
   
@@ -1130,6 +1128,8 @@ void initSettings() {
   addOption(new boolSetting("embed", 0, "Embed rendered preview image", true));
   addOption(new boolSetting("auto3D", 0, "Automatically activate 3D scene",
                             true));
+  addOption(new boolSetting("autoplay", 0, "Autoplay 3D animations", false));
+  addOption(new boolSetting("loop", 0, "Loop 3D animations", false));
 
   addOption(new boolSetting("inlineimage", 0,
                             "Generate inline embedded image"));
@@ -1325,11 +1325,14 @@ void initDir() {
       string texmf=s+dirsep+"texmf"+dirsep;
       docdir=texmf+"doc"+dirsep+"asymptote";
       Setting("sysdir")=texmf+"asymptote";
-      s=lookup("TEXMFCONFIG");
+      s=lookup("ASYMPTOTE_HOME");
       if(s.size() > 1)
-        initdir=s+dirsep+"asymptote";
+        initdir=s;
     }
   } 
+  
+  if(initdir.empty())
+    initdir=Getenv("ASYMPTOTE_HOME",msdos);
   
   if(initdir.empty())
     initdir=Getenv(HOME.c_str(),msdos)+dirsep+"."+suffix;
@@ -1462,7 +1465,7 @@ const char *beginpicture(const string& texengine) {
   if(latex(texengine))
     return "\\begin{picture}";
   if(context(texengine))
-    return "%";
+    return "";
   else
     return "\\picture";
 }

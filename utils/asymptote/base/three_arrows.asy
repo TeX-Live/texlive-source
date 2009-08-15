@@ -48,91 +48,20 @@ void bend(surface s, path3 g, real L)
   }
 }
 
-void render(path3 s, real granularity=tubegranularity, void f(path3, real))
-{
-  static int maxdepth=ceil(-log(realEpsilon)/log(2))+1;
-  void Split(triple z0, triple c0, triple c1, triple z1, real t0=0, real t1=1,
-             real depth=mantissaBits) {
-    if(depth > 0) {
-      real S=straightness(z0,c0,c1,z1);
-      real R=infinity;
-      int nintervals=3;
-      real fuzz=sqrtEpsilon*max(abs(z0),abs(z1));
-      if(S > 0) {
-        --depth;
-        for(int i=0; i <= nintervals; ++i) {
-          R=min(R,radius(z0,c0,c1,z1,i/nintervals));
-          if(S > max(granularity*R,fuzz)) {
-            triple m0=0.5*(z0+c0);
-            triple m1=0.5*(c0+c1);
-            triple m2=0.5*(c1+z1);
-            triple m3=0.5*(m0+m1);
-            triple m4=0.5*(m1+m2);
-            triple m5=0.5*(m3+m4);
-            real tm=0.5*(t0+t1);
-            Split(z0,m0,m3,m5,t0,tm,depth);
-            Split(m5,m4,m2,z1,tm,t1,depth);
-            return;
-          }
-        }
-      }
-    }
-    f(z0..controls c0 and c1..z1,t0);
-  }
-  Split(point(s,0),postcontrol(s,0),precontrol(s,1),point(s,1));
-}
-
-struct tube 
-{
-  surface s;
-  path3 center;
-
-  void operator init(path3 g, real width, real granularity=tubegranularity) {
-    real r=0.5*width;
-
-    transform3 t=scale3(r);
-
-    int n=length(g);
-    for(int i=0; i < n; ++i) {
-      path3 gi=subpath(g,i,i+1);
-      real S=straightness(g,i);
-      if(S < sqrtEpsilon*r) {
-        triple v=point(g,i);
-        triple u=point(g,i+1)-v;
-        s.append(shift(v)*align(unit(u))*scale(r,r,abs(u))*unitcylinder);
-        center=center&gi;
-      } else {
-        render(gi,granularity,new void(path3 q, real) {
-            real L=arclength(q);
-            surface segment=scale(r,r,L)*unitcylinder;
-            bend(segment,q,L);
-            s.s.append(segment.s);
-            triple a=L*Z/3;
-            center=center&bend(O,q,L)..controls bend(a,q,L) and bend(2a,q,L)..
-              bend(3a,q,L);
-          });
-      }
-
-      if((cyclic(g) || i > 0) && abs(dir(g,i,1)-dir(g,i,-1)) > sqrtEpsilon)
-        s.append(shift(point(g,i))*t*align(dir(g,i,-1))*unithemisphere);
-    }
-  }
-}
-
 // Refine a noncyclic path3 g so that it approaches its endpoint in
 // geometrically spaced steps.
-path3 approach(path3 g, int n, real radix=3)
+path3 approach(path3 p, int n, real radix=3)
 {
   guide3 G;
-  real L=length(g);
+  real L=length(p);
   real tlast=0;
   real r=1/radix;
   for(int i=1; i < n; ++i) {
     real t=L*(1-r^i);
-    G=G&subpath(g,tlast,t);
+    G=G&subpath(p,tlast,t);
     tlast=t;
   }
-  return G&subpath(g,tlast,L);
+  return G&subpath(p,tlast,L);
 }
 
 struct arrowhead3
@@ -176,7 +105,7 @@ struct arrowhead3
     }
     if(draw)
       for(path3 g : H)
-        s.append(tube(g,width).s);
+        s.append(tube(g,width,linesectors).s);
     return shift(v)*s;
   }
 
@@ -231,8 +160,7 @@ DefaultHead3.head=new surface(path3 g, position position=EndPoint,
           for(int i=0; i < 4; ++i) {
             for(int j=0; j < 4; ++j) {
               real k=1-p.P[i][j].z/remainL;
-              p.P[i][j]=(k*p.P[i][j].x,k*p.P[i][j].y,p.P[i][j].z);
-              p.P[i][j]=bend(p.P[i][j],q,l);
+              p.P[i][j]=bend((k*p.P[i][j].x,k*p.P[i][j].y,p.P[i][j].z),q,l);
             }
           }
         }

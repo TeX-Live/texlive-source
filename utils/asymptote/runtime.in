@@ -17,14 +17,6 @@
 // Use Void f() instead of void f() to force an explicit Stack argument.
 
 
-void     => primVoid()
-Void     => primVoid() 
-Int      => primInt()
-bool     => primBoolean()
-double   => primReal()
-real     => primReal()
-string*  => primString()
-string   => primString() 
 pen      => primPen()
 pair     => primPair()
 triple   => primTriple()
@@ -42,7 +34,7 @@ callableBp* => breakpointFunction()
 callableReal* => realRealFunction()
 callableTransform* => transformFunction()
 runnable* => primCode()
-boolarray* => boolArray()
+boolarray* => booleanArray()
 Intarray*  => IntArray()
 Intarray2*  => IntArray2()
 realarray* => realArray()
@@ -169,7 +161,7 @@ using types::function;
 #include <primitives.h>
 #undef PRIMITIVE
 
-using types::boolArray;
+using types::booleanArray;
 using types::IntArray;
 using types::IntArray2;
 using types::realArray;
@@ -223,6 +215,7 @@ namespace run {
   
 const char *invalidargument="invalid argument";
 const char *arrayempty="cannot take min or max of empty array";
+const char *noruntime="no runtime environment for embedded eval";
 
 // Return the factorial of a non-negative integer using a lookup table.
 Int factorial(Int n)
@@ -324,7 +317,7 @@ inline size_t checkdimension(array *a, size_t dim)
   size_t size=checkArray(a);
   if(dim && size != dim) {
     ostringstream buf;
-    buf << "array of length " << dim << " expected" << endl;
+    buf << "array of length " << dim << " expected";
     error(buf);
   }
   return size;
@@ -390,7 +383,7 @@ double *copyArray2C(array *a, bool square=true, size_t dim2=0)
   size_t m=(square || n == 0) ? n : checkArray(read<array*>(a,0));
   if(n > 0 && dim2 && m != dim2) {
     ostringstream buf;
-    buf << "second matrix dimension must be " << dim2 << endl;
+    buf << "second matrix dimension must be " << dim2;
     error(buf);
   }
   
@@ -414,7 +407,7 @@ triple *copyTripleArray2C(array *a, bool square=true, size_t dim2=0)
   size_t m=(square || n == 0) ? n : checkArray(read<array*>(a,0));
   if(n > 0 && dim2 && m != dim2) {
     ostringstream buf;
-    buf << "second matrix dimension must be " << dim2 << endl;
+    buf << "second matrix dimension must be " << dim2;
     error(buf);
   }
   
@@ -438,7 +431,7 @@ double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0)
   size_t m=(square || n == 0) ? n : checkArray(read<array*>(a,0));
   if(n > 0 && dim2 && m != dim2) {
     ostringstream buf;
-    buf << "second matrix dimension must be " << dim2 << endl;
+    buf << "second matrix dimension must be " << dim2;
     error(buf);
   }
   
@@ -463,24 +456,6 @@ double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0)
       error(square ? "matrix must be square" : "matrix must be rectangular");
   }
   return cx;
-}
-
-double norm(double *a, size_t n) 
-{
-  if(n == 0) return 0.0;
-  double M=fabs(a[0]);
-  for(size_t i=1; i < n; ++i)
-    M=::max(M,fabs(a[i]));
-  return M;
-}
-
-double norm(triple *a, size_t n) 
-{
-  if(n == 0) return 0.0;
-  double M=a[0].abs2();
-  for(size_t i=1; i < n; ++i)
-    M=::max(M,a[i].abs2());
-  return sqrt(M);
 }
 
 static const char *incommensurate="Incommensurate matrices";
@@ -738,11 +713,6 @@ void init_readline(bool tabcompletion=true)
 
 void cleanup()
 {
-  processDataStruct &pd=processData();
-  pd.atExitFunction=NULL;
-  pd.atUpdateFunction=NULL;
-  pd.atBreakpointFunction=NULL;
-  
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   store_history(&history_save);
   int nlines=intcast(getSetting<Int>("historylines"));
@@ -776,7 +746,6 @@ void exitFunction(stack *Stack)
   callable *atExitFunction=processData().atExitFunction;
   if(atExitFunction && !nullfunc::instance()->compare(atExitFunction))
     atExitFunction->call(Stack);
-  cleanup();
 }
 
 default_t def;
@@ -881,7 +850,6 @@ inline double principalBranch(double deg)
 }
 
 static string defaulttransparency=string("Compatible");
-
 static const string defaulttimeformat=string("%a %b %d %T %Z %Y");
 #ifdef HAVE_STRFTIME
 static const size_t nTime=256;
@@ -1112,14 +1080,14 @@ pair gamma(pair z)
 void cannotread(const string& s) 
 {
   ostringstream buf;
-  buf << "Cannot read from " << s << endl;
+  buf << "Cannot read from " << s;
   error(buf);
 }
 
 void cannotwrite(const string& s) 
 {
   ostringstream buf;
-  buf << "Cannot write to " << s << endl;
+  buf << "Cannot write to " << s;
   error(buf);
 }
 
@@ -1326,7 +1294,7 @@ patharray *_texpath(string *s, pen p=CURRENTPEN)
     tex.verbatimline(ASYx);
     tex.verbatimline(ASYy);
     tex.verbatimline("/ASY1 true def");
-    tex.verbatimline("/v {neg exch 4 copy 4 2 roll 2 copy 6 2 roll 2 copy (M) print ASYy ASYx (L) print ASYy add ASYx (L) print add ASYy add ASYx (L) print add ASYy ASYx (c) print} bind def");
+    tex.verbatimline("/v {"+ASY1+"neg exch 4 copy 4 2 roll 2 copy 6 2 roll 2 copy (M) print ASYy ASYx (L) print ASYy add ASYx (L) print add ASYy add ASYx (L) print add ASYy ASYx (c) print} bind def");
     tex.verbatimline("/show {"+ASY1+
                      "currentpoint newpath moveto false charpath "+
                      pathforall+"} bind def}");
@@ -2307,7 +2275,7 @@ void assert(bool b, string s=emptystring)
   if(!b) {
     ostringstream buf;
     buf << "assert FAILED";
-    if(s != "") buf << ": " << s << endl;
+    if(s != "") buf << ": " << s;
     error(buf);
   }
 }
@@ -2326,17 +2294,15 @@ void usleep(Int microseconds)
 
 void _eval(string *s, bool embedded, bool interactiveWrite=false)
 {
-  if (embedded) {
+  if(embedded) {
     trans::coenv *e=Stack->getEnvironment();
     vm::interactiveStack *is=dynamic_cast<vm::interactiveStack *>(Stack);
-    if (e && is) {
+    if(e && is)
       runStringEmbedded(*s, *e, *is);
-    } else {
-      cerr << "no runtime environment for embedded eval" << endl;
-    }
-  } else {
+    else
+      error(noruntime);
+  } else
     runString(*s,interactiveWrite);
-  }
 }
 
 void _eval(runnable *s, bool embedded)
@@ -2344,17 +2310,15 @@ void _eval(runnable *s, bool embedded)
   absyntax::block *ast=new absyntax::block(s->getPos(), false);
   ast->add(s);
 
-  if (embedded) {
+  if(embedded) {
     trans::coenv *e=Stack->getEnvironment();
     vm::interactiveStack *is=dynamic_cast<vm::interactiveStack *>(Stack);
-    if (e && is) {
+    if(e && is)
       runCodeEmbedded(ast, *e, *is);
-    } else {
-      cerr << "no runtime environment for embedded eval" << endl;
-    }
-  } else {
+    else
+      error(noruntime);
+  } else
     runCode(ast);
-  }
 }
 
 string location() {
@@ -2814,7 +2778,7 @@ bool straight(path3 p, Int t)
 // Return the component of vector v perpendicular to a unit vector u.
 triple perp(triple v, triple u)
 {
-  return v-dot(v,u)*u;
+  return perp(v,u);
 }
 
 // Return the maximum perpendicular deviation of segment i of path3 g
@@ -3228,11 +3192,11 @@ void _draw(picture *f, path3 g, pen p)
 }
 
 void draw(picture *f, triplearray2 *g, bool straight, penarray *p, real opacity,
-          real shininess, real granularity, triple normal, bool lighton,
-          penarray *colors)
+          real shininess, real PRCshininess, real granularity, triple normal,
+          bool lighton, penarray *colors)
 {
-  f->append(new drawSurface(*g,straight,*p,opacity,shininess,granularity,
-                            normal,lighton,*colors));
+  f->append(new drawSurface(*g,straight,*p,opacity,shininess,PRCshininess,
+                            granularity,normal,lighton,*colors));
 }
 
 triple min3(picture *f)
@@ -3245,30 +3209,14 @@ triple max3(picture *f)
   return f->bounds3().Max();
 }
 
-pair min(picture *f, realarray2 *t)
-{
-  real *T=copyArray2C(t,4);
-  pair m=f->bounds(::min,xproject,yproject,T);
-  delete[] T;
-  return m;
-}
-
-pair max(picture *f, realarray2 *t)
-{
-  real *T=copyArray2C(t,4);
-  pair M=f->bounds(::max,xproject,yproject,T);
-  delete[] T;
-  return M;
-}
-
 pair minratio(picture *f)
 {
-  return f->bounds(::min,xratio,yratio);
+  return f->ratio(::min);
 }
 
 pair maxratio(picture *f)
 {
-  return f->bounds(::max,xratio,yratio);
+  return f->ratio(::max);
 }
 
 triple minbezier(triplearray2 *P, triple b)
@@ -3291,44 +3239,75 @@ triple maxbezier(triplearray2 *P, triple b)
   return b;
 }
 
-pair minbezier(triplearray2 *P, realarray2 *t, pair b)
+pair minratio(triplearray2 *P, pair b)
 {
   triple *A=copyTripleArray2C(P,true,4);
-  real *T=copyArray2C(t,4);
   real fuzz=sqrtFuzz*norm(A,16);
-  b=pair(bound(A,::min,xproject,T,b.getx(),fuzz),
-         bound(A,::min,yproject,T,b.gety(),fuzz));
-  delete[] T;
+  b=pair(bound(A,::min,xratio,b.getx(),fuzz),
+         bound(A,::min,yratio,b.gety(),fuzz));
   delete[] A;
   return b;
 }
 
-pair maxbezier(triplearray2 *P, realarray2 *t, pair b)
+pair maxratio(triplearray2 *P, pair b)
 {
   triple *A=copyTripleArray2C(P,true,4);
-  real *T=copyArray2C(t,4);
   real fuzz=sqrtFuzz*norm(A,16);
-  b=pair(bound(A,::max,xproject,T,b.getx(),fuzz),
-         bound(A,::max,yproject,T,b.gety(),fuzz));
-  delete[] T;
+  b=pair(bound(A,::max,xratio,b.getx(),fuzz),
+         bound(A,::max,yratio,b.gety(),fuzz));
   delete[] A;
   return b;
 }
 
-pair max(path3 g, realarray2 *t)
+pair minratio(path3 g)
 {
-  real *T=copyArray2C(t,4);
-  pair b=g.bounds(::max,xproject,yproject,T);
-  delete[] T;
-  return b;
+  return g.ratio(::min);
 }
 
-pair min(path3 g, realarray2 *t)
+pair maxratio(path3 g)
 {
-  real *T=copyArray2C(t,4);
-  pair b=g.bounds(::min,xproject,yproject,T);
-  delete[] T;
-  return b;
+  return g.ratio(::max);
+}
+
+real norm(realarray *a)
+{
+  size_t n=checkArray(a);
+  real M=0.0;
+  for(size_t i=0; i < n; ++i) {
+    real x=fabs(vm::read<real>(a,i));
+    if(x > M) M=x;
+  }
+  return M;
+}
+
+real norm(realarray2 *a)
+{
+  size_t n=checkArray(a);
+  real M=0.0;
+  for(size_t i=0; i < n; ++i) {
+    vm::array *ai=vm::read<vm::array*>(a,i);
+    size_t m=checkArray(ai);
+    for(size_t j=0; j < m; ++j) {
+      real a=fabs(vm::read<real>(ai,j));
+      if(a > M) M=a;
+    }
+  }
+  return M;
+}
+
+real norm(triplearray2 *a)
+{
+  size_t n=checkArray(a);
+  real M=0.0;
+  for(size_t i=0; i < n; ++i) {
+    vm::array *ai=vm::read<vm::array*>(a,i);
+    size_t m=checkArray(ai);
+    for(size_t j=0; j < m; ++j) {
+      real a=vm::read<triple>(ai,j).abs2();
+      if(a > M) M=a;
+    }
+  }
+  return sqrt(M);
 }
 
 real change2(triplearray2 *a)
@@ -4314,6 +4293,11 @@ triple cross(triple u, triple v)
   return cross(u,v);
 }
 
+triple dir(explicit triple z)
+{
+  return unit(z);
+}
+
 triple expi(real polar, real azimuth)
 {
   return expi(polar,azimuth);
@@ -4395,6 +4379,14 @@ void warn(string s)
 void nowarn(string s)
 {
   noWarn(s);
+}
+
+void warning(string s, string t, bool position=false)
+{
+  if(settings::warn(s)) {
+    em.warning(position ? getPos() : nullPos,s);
+    em << t;
+  }
 }
 
 // Strip directory from string
@@ -4638,6 +4630,13 @@ bool :arrayCyclicFlag(array *a)
 {
   checkArray(a);
   return a->cyclic();
+}
+
+bool :arraySetCyclicFlag(bool b, array *a)
+{
+  checkArray(a);
+  a->cyclic(b);
+  return b;
 }
 
 // Check to see if an array element is initialized.
@@ -5875,53 +5874,6 @@ void seekeof(file *f)
   f->seek(0,false);
 }
 
-// Set file dimensions
-file* dimension(file *f, Int nx) 
-{
-  f->dimension(nx);
-  return f;
-}
-
-file* dimension(file *f, Int nx, Int ny) 
-{
-  f->dimension(nx,ny);
-  return f;
-}
-
-file* dimension(file *f, Int nx, Int ny, Int nz)
-{
-  f->dimension(nx,ny,nz);
-  return f;
-}
-
-// Set file to read comma-separated values
-file* csv(file *f, bool b=true) 
-{
-  f->CSVMode(b);
-  return f;
-}
-
-// Set file to read whitespace-separated values
-file* word(file *f, bool b=true) 
-{
-  f->WordMode(b);
-  return f;
-}
-
-// Set file to read arrays in line-at-a-time mode
-file* line(file *f, bool b=true) 
-{
-  f->LineMode(b);
-  return f;
-}
-
-// Set file to read/write signed int XDR values.
-file* signed(file *f, bool b=true)
-{
-  f->SignedInt(b);
-  return f;
-}
-
 string :namePart(file f)
 {
   return f.filename();
@@ -5930,6 +5882,18 @@ string :namePart(file f)
 string :modePart(file f)
 {
   return f.FileMode();
+}
+
+// Set file dimensions
+file* :dimensionSetHelper(Int nx=-1, Int ny=-1, Int nz=-1, file *f)
+{
+  f->dimension(nx,ny,nz);
+  return f;
+}
+
+callable* :dimensionSet(file *f)
+{
+  return new thunk(new bfunc(dimensionSetHelper),f);
 }
 
 array * :dimensionPart(file f)
@@ -5941,55 +5905,134 @@ array * :dimensionPart(file f)
   return a;
 }
 
-bool :lineModePart(file f)
+// Set file f to read arrays in line-at-a-time mode
+file* :lineSetHelper(bool b=true, file *f)
+{
+  f->LineMode(b);
+  return f;
+}
+
+callable* :lineSet(file *f)
+{
+  return new thunk(new bfunc(lineSetHelper),f);
+}
+
+bool :linePart(file f)
 {
   return f.LineMode();
 }
 
-bool :csvModePart(file f)
+// Set file to read comma-separated values
+file* :csvSetHelper(bool b=true, file *f)
+{
+  f->CSVMode(b);
+  return f;
+}
+
+callable* :csvSet(file *f)
+{
+  return new thunk(new bfunc(csvSetHelper),f);
+}
+
+bool :csvPart(file f)
 {
   return f.CSVMode();
 }
 
-bool :wordModePart(file f)
+// Set file to read whitespace-separated values
+file* :wordSetHelper(bool b=true, file *f)
+{
+  f->WordMode(b);
+  return f;
+}
+
+callable* :wordSet(file *f)
+{
+  return new thunk(new bfunc(wordSetHelper),f);
+}
+
+bool :wordPart(file f)
 {
   return f.WordMode();
 }
 
-bool :singleRealModePart(file f)
+// Set file to read/write single precision real XDR values.
+file* :singlerealSetHelper(bool b=true, file *f)
+{
+  f->SingleReal(b);
+  return f;
+}
+
+callable* :singlerealSet(file *f)
+{
+  return new thunk(new bfunc(singlerealSetHelper),f);
+}
+
+bool :singlerealPart(file f)
 {
   return f.SingleReal();
 }
 
-bool :singleIntModePart(file f)
+// Set file to read/write single precision int XDR values.
+file* :singleintSetHelper(bool b=true, file *f)
+{
+  f->SingleInt(b);
+  return f;
+}
+
+callable* :singleintSet(file *f)
+{
+  return new thunk(new bfunc(singleintSetHelper),f);
+}
+
+bool :singleintPart(file f)
 {
   return f.SingleInt();
 }
 
-bool :signedIntModePart(file f)
+// Set file to read/write signed int XDR values.
+file* :signedintSetHelper(bool b=true, file *f)
+{
+  f->SignedInt(b);
+  return f;
+}
+
+callable* :signedintSet(file *f)
+{
+  return new thunk(new bfunc(signedintSetHelper),f);
+}
+
+bool :signedintPart(file f)
 {
   return f.SignedInt();
 }
 
-// Set file to read an array1 (1 int size followed by a 1d array)
-file* read1(file *f) 
+// Set file to read an arrayi (i int sizes followed by an i-dimensional array)
+file* :readSetHelper(Int i, file *f)
 {
-  f->dimension(-2);
+  switch(i) {
+    case 1:
+      f->dimension(-2);
+      break;
+      
+    case 2:
+      f->dimension(-2,-2);
+      break;
+      
+    case 3:
+      f->dimension(-2,-2,-2);
+      break;
+      
+    default:
+      f->dimension();
+  }
+  
   return f;
 }
 
-// Set file to read an array2 (2 int sizes followed by a 2d array)
-file* read2(file *f) 
+callable* :readSet(file *f)
 {
-  f->dimension(-2,-2);
-  return f;
-}
-
-// Set file to read an array3 (3 int sizes followed by a 3d array)
-file* read3(file *f) 
-{
-  f->dimension(-2,-2,-2);
-  return f;
+  return new thunk(new bfunc(readSetHelper),f);
 }
 
 // Return the last n lines of the history named name.
@@ -6041,7 +6084,7 @@ stringarray* history(Int n=0)
 string readline(string prompt=emptystring, string name=emptystring,
                 bool tabcompletion=false)
 {
-  if(!isatty(STDIN_FILENO)) 
+  if(!(isatty(STDIN_FILENO) || getSetting<bool>("interactive")))
     return emptystring;
 #if defined(HAVE_LIBREADLINE) && defined(HAVE_LIBCURSES)
   init_readline(tabcompletion);
@@ -6109,24 +6152,3 @@ void saveline(string name, string value, bool store=true)
   unused(&store);
 #endif   
 }
-
-void generate_random_backtrace()
-{
-#if defined(USEGC) && defined(GC_DEBUG) && defined(GC_BACKTRACE)
-  GC_generate_random_backtrace();
-#else
-  error("generate_random_backtrace() requires ./configure --enable-gc-debug");
-#endif
-}
-
-void print_random_addresses(Int n=1)
-{
-#if defined(USEGC) && defined(GC_DEBUG) && defined(GC_BACKTRACE)
-  GC_gcollect();
-  for (Int i=0; i < n; ++i)
-    GC_debug_print_heap_obj_proc(GC_base(GC_generate_random_valid_address()));
-#else
-  error("print_random_addresses() requires ./configure --enable-gc-debug");
-  unused(&n); // Avoid unused variable warning message.
-#endif
-}  

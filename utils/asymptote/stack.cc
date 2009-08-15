@@ -14,8 +14,6 @@
 #include "util.h"
 #include "runtime.h"
 
-//#define DEBUG_STACK
-
 #ifdef DEBUG_STACK
 #include <iostream>
 
@@ -37,12 +35,22 @@ position curPos = nullPos;
 const program::label nulllabel;
 }
 
+#ifdef DEBUG_FRAME
+inline stack::vars_t stack::make_frame(string name,
+                                       size_t size, vars_t closure)
+{
+  vars_t vars = new frame(name, 1+size);
+  (*vars)[0] = closure;
+  return vars;
+}
+#else
 inline stack::vars_t stack::make_frame(size_t size, vars_t closure)
 {
   vars_t vars = new frame(1+size);
   (*vars)[0] = closure;
   return vars;
 }
+#endif
 
 void run(lambda *l)
 {
@@ -63,13 +71,22 @@ void stack::run(func *f)
   lambda *body = f->body;
 
 #ifdef DEBUG_STACK
+#ifdef DEBUG_FRAME
+  cout << "running lambda " + body->name + ": \n";
+#else
   cout << "running lambda: \n";
+#endif
   print(cout, body->code);
   cout << endl;
 #endif
   
   /* make new activation record */
+#ifdef DEBUG_FRAME
+  assert(!body->name.empty());
+  vars_t vars = make_frame(body->name, body->params, f->closure);
+#else
   vars_t vars = make_frame(body->params, f->closure);
+#endif
   marshall(body->params, vars);
 
   run(body->code, vars);
@@ -141,7 +158,7 @@ void stack::run(program *code, vars_t vars)
       
 #ifdef DEBUG_STACK
       cerr << curPos << "\n";
-      printInst(cerr, ip, body->code->begin());
+      printInst(cerr, ip, code->begin());
       cerr << "\n";
 #endif
 
@@ -234,7 +251,11 @@ void stack::run(program *code, vars_t vars)
           }
 
           case inst::pushframe: {
+#ifdef DEBUG_FRAME
+            vars=make_frame("<pushed frame>", 0, vars);
+#else
             vars=make_frame(0, vars);
+#endif
             break;
           }
 
@@ -276,30 +297,8 @@ void stack::load(string index) {
 
 
 #ifdef DEBUG_STACK
-#if __GNUC__
-#include <cxxabi.h>
-string demangle(const char *s)
-{
-  int status;
-  char *demangled = abi::__cxa_demangle(s,NULL,NULL,&status);
-  if (status == 0 && demangled) {
-    string str(demangled);
-    free(demangled);
-    return str;
-  } else if (status == -2) {
-    free(demangled);
-    return s;
-  } else {
-    free(demangled);
-    return string("Unknown(") + s + ")";
-  }
-};
-#else
-string demangle(const char* s)
-{
-  return s;
-}
-#endif 
+
+const size_t MAX_ITEMS=20;
 
 void stack::draw(ostream& out)
 {
@@ -307,14 +306,18 @@ void stack::draw(ostream& out)
 
   out << "operands:";
   stack_t::const_iterator left = theStack.begin();
-  if (theStack.size() > 10) {
-    left = theStack.end()-10;
+  if (theStack.size() > MAX_ITEMS) {
+    left = theStack.end()-MAX_ITEMS;
     out << " ...";
   }
+  else
+    out << " ";
   
   while (left != theStack.end())
     {
-      out << " " << demangle(left->type().name());
+      if (left != theStack.begin())
+        out << " | " ;
+      out << *left;
       left++;
     }
   out << "\n";
@@ -322,18 +325,29 @@ void stack::draw(ostream& out)
 
 void draw(ostream& out, frame* v)
 {
-  out << "vars:    ";
+  out << "vars:" << endl;
   
-  if (!!v) {
-    out << (!get<frame*>((*v)[0]) ? " 0" : " link");
-    for (size_t i = 1; i < 10 && i < v->size(); i++)
-      out << " " << demangle((*v)[i].type().name());
-    if (v->size() > 10)
+  while (!!v) {
+    out << "  " <<  v->getName() << ":";
+
+    frame *parent=0;
+    item link=(*v)[0];
+    try {
+      parent = get<frame *>(link);
+      out << (parent ? "  link" :  "  ----");
+    } catch (bad_item_value&) {
+      out << "  " << (*v)[0];
+    }
+
+    for (size_t i = 1; i < MAX_ITEMS && i < v->size(); i++) {
+      out << " | " << i << ": " << (*v)[i];
+    }
+    if (v->size() > MAX_ITEMS)
       out << "...";
     out << "\n";
+
+    v = parent;
   }
-  else
-    out << "\n";
 }
 #endif // DEBUG_STACK
 
@@ -360,7 +374,12 @@ void error(const ostringstream& message)
 }
 
 interactiveStack::interactiveStack()
-  : globals(new frame(1)) {}
+#ifdef DEBUG_FRAME
+  : globals(new frame("globals", 0)) {}
+#else
+  : globals(new frame(0)) {}
+#endif
+
 
 void interactiveStack::run(lambda *codelet) {
   stack::run(codelet->code, globals);

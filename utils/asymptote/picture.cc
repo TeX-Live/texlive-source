@@ -191,16 +191,13 @@ bbox3 picture::bounds3()
   return b3;
 }
   
-pair picture::bounds(double (*m)(double, double),
-                     double (*x)(const triple&, double*),
-                     double (*y)(const triple&, double*),
-                     double *t)
+pair picture::ratio(double (*m)(double, double))
 {
   bool first=true;
   pair b;
   for(nodelist::const_iterator p=nodes.begin(); p != nodes.end(); ++p) {
     assert(*p);
-    (*p)->bounds(b,m,x,y,t,first);
+    (*p)->ratio(b,m,first);
   }
   return b;
 }
@@ -528,7 +525,7 @@ bool picture::postprocess(const string& prename, const string& outname,
                                                 "psviewerOptions");
         if(!viewerOptions.empty())
           push_split(cmd,viewerOptions);
-        push_split(cmd,outname);
+        cmd.push_back(outname);
         status=System(cmd,0,wait,
                       pdfformat ? "pdfviewer" : "psviewer",
                       pdfformat ? "your PDF viewer" : "your PostScript viewer",

@@ -13,71 +13,27 @@
 #include "types.h"
 #include "runtime.h"
 #include "access.h"
+#include "virtualfieldaccess.h"
 
 namespace types {
 
 /* Base types */
 #define PRIMITIVE(name,Name,asyName)            \
   primitiveTy p##Name(ty_##name);               \
-  ty *prim##Name() { return &p##Name; }
+  ty *prim##Name() { return &p##Name; }         \
+  array name##Array_(prim##Name());             \
+  ty *name##Array() { return &name##Array_; }   \
+  array name##Array2_(name##Array());           \
+  ty *name##Array2() { return &name##Array2_; } \
+  array name##Array3_(name##Array2());          \
+  ty *name##Array3() { return &name##Array3_; }
 #define PRIMERROR
-#include <primitives.h>
+#include "primitives.h"
 #undef PRIMERROR
 #undef PRIMITIVE
                              
 nullTy pNull;
 ty *primNull() { return &pNull; }
-
-array boolArray_(primBoolean());
-ty *boolArray() { return &boolArray_; }
-array IntArray_(primInt());
-ty *IntArray() { return &IntArray_; }
-array realArray_(primReal());
-ty *realArray() { return &realArray_; }
-array pairArray_(primPair());
-ty *pairArray() { return &pairArray_; }
-array tripleArray_(primTriple());
-ty *tripleArray() { return &tripleArray_; }
-array stringArray_(primString());
-ty *stringArray() { return &stringArray_; }
-array transformArray_(primTransform());
-ty *transformArray() { return &transformArray_; }
-array pathArray_(primPath());
-ty *pathArray() { return &pathArray_; }
-array penArray_(primPen());
-ty *penArray() { return &penArray_; }
-array guideArray_(primGuide());
-ty *guideArray() { return &guideArray_; }
-  
-array boolArray2_(boolArray());
-ty *boolArray2() { return &boolArray2_; }
-array IntArray2_(IntArray());
-ty *IntArray2() { return &IntArray2_; }
-array realArray2_(realArray());
-ty *realArray2() { return &realArray2_; }
-array pairArray2_(pairArray());
-ty *pairArray2() { return &pairArray2_; }
-array tripleArray2_(tripleArray());
-ty *tripleArray2() { return &tripleArray2_; }
-array stringArray2_(stringArray());
-ty *stringArray2() { return &stringArray2_; }
-array pathArray2_(pathArray());
-ty *pathArray2() { return &pathArray2_; }
-array penArray2_(penArray());
-ty *penArray2() { return &penArray2_; }
-  
-array boolArray3_(boolArray2());
-ty *boolArray3() { return &boolArray3_; }
-array IntArray3_(IntArray2());
-ty *IntArray3() { return &IntArray3_; }
-array realArray3_(realArray2());
-ty *realArray3() { return &realArray3_; }
-array pairArray3_(pairArray2());
-ty *pairArray3() { return &pairArray3_; }
-array tripleArray3_(tripleArray2());
-ty *tripleArray3() { return &tripleArray3_; }
-array stringArray3_(stringArray2());
-ty *stringArray3() { return &stringArray3_; }
   
 const char *names[] = {
   "null",
@@ -85,7 +41,7 @@ const char *names[] = {
   
 #define PRIMITIVE(name,Name,asyName) #asyName,
 #define PRIMERROR
-#include <primitives.h>
+#include "primitives.h"
 #undef PRIMERROR
 #undef PRIMITIVE
 
@@ -100,15 +56,63 @@ void ty::print(ostream& out) const
   out << names[kind];
 }
 
-trans::varEntry *primitiveTy::virtualField(symbol *id, signature *sig)
-{
+// Used for primitive virtual fields and array virtual fields.
 #define FIELD(Type, name, func)                                 \
   if (sig == 0 && id == symbol::trans(name)) {                  \
-    static trans::bltinAccess a(run::func);                     \
-    static trans::varEntry v(Type(), &a, 0, position());  \
+    static trans::virtualFieldAccess a(run::func);              \
+    static trans::varEntry v(Type(), &a, 0, position());        \
     return &v;                                                  \
   }
 
+#define RWFIELD(Type, name, getter, setter)                       \
+  if (sig == 0 && id == symbol::trans(name)) {                    \
+    static trans::virtualFieldAccess a(run::getter, run::setter); \
+    static trans::varEntry v(Type(), &a, 0, position());          \
+    return &v;                                                    \
+  }
+      
+#define SIGFIELD(Type, name, func)                                      \
+  if (id == symbol::trans(name) &&                                     \
+      equivalent(sig, Type()->getSignature()))                          \
+    {                                                                   \
+      static trans::virtualFieldAccess a(run::func);                    \
+      static trans::varEntry v(Type(), &a, 0, position());        \
+      return &v;                                                        \
+    }
+
+#define DSIGFIELD(name, func)                                           \
+  if (id == symbol::trans(#name) &&                                     \
+      equivalent(sig, name##Type()->getSignature()))                    \
+    {                                                                   \
+      static trans::virtualFieldAccess a(run::func);                    \
+      /* for some fields, v needs to be dynamic */                      \
+      /* e.g. when the function type depends on an array type. */       \
+      trans::varEntry *v =                                              \
+        new trans::varEntry(name##Type(), &a, 0, position());           \
+      return v;                                                         \
+    }
+
+#define FILEFIELD(GetType, SetType, name) \
+  FIELD(GetType,#name,name##Part);        \
+  SIGFIELD(SetType,#name,name##Set);
+
+ty *dimensionType() {
+  return new function(primFile(),
+                      formal(primInt(),"nx",true),
+                      formal(primInt(),"ny",true),
+                      formal(primInt(),"nz",true));
+}
+
+ty *modeType() {
+  return new function(primFile(),formal(primBoolean(),"b", true));
+}
+
+ty *readType() {
+  return new function(primFile(), formal(primInt(), "i"));
+}
+
+trans::varEntry *primitiveTy::virtualField(symbol *id, signature *sig)
+{
   switch (kind) {
     case ty_pair:
       FIELD(primReal,"x",pairXPart);
@@ -139,19 +143,33 @@ trans::varEntry *primitiveTy::virtualField(symbol *id, signature *sig)
     case ty_file:      
       FIELD(primString,"name",namePart);
       FIELD(primString,"mode",modePart);
-      FIELD(IntArray,"dimension",dimensionPart);
-      FIELD(primBoolean,"line",lineModePart);
-      FIELD(primBoolean,"csv",csvModePart);
-      FIELD(primBoolean,"word",wordModePart);
-      FIELD(primBoolean,"singlereal",singleRealModePart);
-      FIELD(primBoolean,"singleint",singleIntModePart);
-      FIELD(primBoolean,"signed",signedIntModePart);
+      FILEFIELD(IntArray,dimensionType,dimension);
+      FILEFIELD(primBoolean,modeType,line);
+      FILEFIELD(primBoolean,modeType,csv);
+      FILEFIELD(primBoolean,modeType,word);
+      FILEFIELD(primBoolean,modeType,singlereal);
+      FILEFIELD(primBoolean,modeType,singleint);
+      FILEFIELD(primBoolean,modeType,signedint);
+      SIGFIELD(readType,"read",readSet);
+      break;
     default:
       break;
   }
   return 0;
+}
 
-#undef FIELD
+ty *overloadedDimensionType() {
+  overloaded *o=new overloaded;
+  o->add(dimensionType());
+  o->add(IntArray());
+  return o;
+}
+
+ty *overloadedModeType() {
+  overloaded *o=new overloaded;
+  o->add(modeType());
+  o->add(primBoolean());
+  return o;
 }
 
 ty *ty::virtualFieldGetType(symbol *id)
@@ -160,19 +178,42 @@ ty *ty::virtualFieldGetType(symbol *id)
   return v ? v->getType() : 0;
 }
 
+ty *primitiveTy::virtualFieldGetType(symbol *id)
+{
+  if(kind == ty_file) {
+    if (id == symbol::trans("dimension"))
+      return overloadedDimensionType();
+  
+    if (id == symbol::trans("line") || id == symbol::trans("csv") || 
+        id == symbol::trans("word") || id == symbol::trans("singlereal") || 
+        id == symbol::trans("singleint") || id == symbol::trans("signedint"))
+      return overloadedModeType();
+  
+    if (id == symbol::trans("read"))
+      return readType();
+  }
+  
+  trans::varEntry *v = virtualField(id, 0);
+  
+  return v ? v->getType() : 0;
+}
+
+#define RETURN_STATIC_BLTIN(func) \
+  { \
+    static trans::bltinAccess a(run::func); \
+    return &a; \
+  }
+
 trans::access *nullTy::castTo(ty *target, caster &) {
   switch (target->kind) {
     case ty_array: {
-      static trans::bltinAccess a(run::pushNullArray);
-      return &a;
+       RETURN_STATIC_BLTIN(pushNullArray);
     }
     case ty_record: {
-      static trans::bltinAccess a(run::pushNullRecord);
-      return &a;
+       RETURN_STATIC_BLTIN(pushNullRecord);
     } 
     case ty_function: {
-      static trans::bltinAccess a(run::pushNullFunction);
-      return &a;
+       RETURN_STATIC_BLTIN(pushNullFunction);
     }
     default:
       return 0;
@@ -181,8 +222,7 @@ trans::access *nullTy::castTo(ty *target, caster &) {
 
 trans::access *array::initializer()
 {
-  static trans::bltinAccess a(run::emptyArray);
-  return &a;
+  RETURN_STATIC_BLTIN(emptyArray)
 }
 
 ty *array::pushType()
@@ -229,109 +269,48 @@ ty *array::deleteType()
   return deletetype;
 }
 
-ty *cyclicType() {
-  return new function(primVoid(),formal(primBoolean(),"b"));
-}
-
 ty *initializedType() {
   return new function(primBoolean(),formal(primInt(),"i"));
 }
 
+#define SIGFIELDLIST \
+  ASIGFIELD(initialized, arrayInitialized); \
+  ASIGFIELD(push, arrayPush); \
+  ASIGFIELD(pop, arrayPop); \
+  ASIGFIELD(append, arrayAppend); \
+  ASIGFIELD(insert, arrayInsert); \
+  ASIGFIELD(delete, arrayDelete); \
+
 ty *array::virtualFieldGetType(symbol *id)
 {
-  return
-    id == symbol::trans("cyclic") ? cyclicType() : 
-    id == symbol::trans("push") ? pushType() : 
-    id == symbol::trans("pop") ? popType() : 
-    id == symbol::trans("append") ? appendType() : 
-    id == symbol::trans("insert") ? insertType() : 
-    id == symbol::trans("delete") ? deleteType() : 
-    id == symbol::trans("initialized") ? initializedType() : 
-    ty::virtualFieldGetType(id);
+  #define ASIGFIELD(name, func) \
+  if (id == symbol::trans(#name)) \
+    return name##Type();
+
+  SIGFIELDLIST
+
+  #undef ASIGFIELD
+
+  return ty::virtualFieldGetType(id);
 }
 
 trans::varEntry *array::virtualField(symbol *id, signature *sig)
 {
-  if (sig == 0 && id == symbol::trans("length"))
-    {
-      static trans::bltinAccess a(run::arrayLength);
-      static trans::varEntry v(primInt(), &a, 0, position());
-      return &v;
-    }
-  if (sig == 0 && id == symbol::trans("keys"))
-    {
-      static trans::bltinAccess a(run::arrayKeys);
-      static trans::varEntry v(IntArray(), &a, 0, position());
-      return &v;
-    }
-  if (sig == 0 && id == symbol::trans("cyclicflag"))
-    {
-      static trans::bltinAccess a(run::arrayCyclicFlag);
-      static trans::varEntry v(primBoolean(), &a, 0, position());
-      return &v;
-    }
-  if (id == symbol::trans("cyclic") &&
-      equivalent(sig, cyclicType()->getSignature()))
-    {
-      static trans::bltinAccess a(run::arrayCyclic);
-      static trans::varEntry v(cyclicType(), &a, 0, position());
-      return &v;
-    }
-  if (id == symbol::trans("initialized") &&
-      equivalent(sig, initializedType()->getSignature()))
-    {
-      static trans::bltinAccess a(run::arrayInitialized);
-      static trans::varEntry v(initializedType(), &a, 0, position());
-      return &v;
-    }
-  if (id == symbol::trans("push") &&
-      equivalent(sig, pushType()->getSignature()))
-    {
-      static trans::bltinAccess a(run::arrayPush);
-      // v needs to be dynamic, as the push type differs among arrays.
-      trans::varEntry *v = new trans::varEntry(pushType(), &a, 0, position());
+  FIELD(primInt, "length", arrayLength);
+  FIELD(IntArray, "keys", arrayKeys);
+  RWFIELD(primBoolean, "cyclic", arrayCyclicFlag, arraySetCyclicFlag);
 
-      return v;
-    }
-  if (id == symbol::trans("pop") &&
-      equivalent(sig, popType()->getSignature()))
-    {
-      static trans::bltinAccess a(run::arrayPop);
-      // v needs to be dynamic, as the pop type differs among arrays.
-      trans::varEntry *v = new trans::varEntry(popType(), &a, 0, position());
-
-      return v;
-    }
-  if (id == symbol::trans("append") &&
-      equivalent(sig, appendType()->getSignature()))
-    {
-      static trans::bltinAccess a(run::arrayAppend);
-      // v needs to be dynamic, as the append type differs among arrays.
-      trans::varEntry *v = new trans::varEntry(appendType(), &a, 0, position());
-
-      return v;
-    }
-  if (id == symbol::trans("insert") &&
-      equivalent(sig, insertType()->getSignature()))
-    {
-      static trans::bltinAccess a(run::arrayInsert);
-      // v needs to be dynamic, as the insert type differs among arrays.
-      trans::varEntry *v = new trans::varEntry(insertType(), &a, 0, position());
-
-      return v;
-    }
-  if (id == symbol::trans("delete") &&
-      equivalent(sig, deleteType()->getSignature()))
-    {
-      static trans::bltinAccess a(run::arrayDelete);
-      // v needs to be dynamic, as the delete type differs among arrays.
-      trans::varEntry *v = new trans::varEntry(deleteType(), &a, 0, position());
-
-      return v;
-    }
-  else
-    return ty::virtualField(id, sig);
+  #define ASIGFIELD(name, func) DSIGFIELD(name,func)
+  
+  SIGFIELDLIST
+    
+  #undef ASIGFIELD
+  
+  // Fall back on base class to handle no match.
+  return ty::virtualField(id, sig);
 }
+
+#undef SIGFIELDLIST
 
 ostream& operator<< (ostream& out, const formal& f)
 {
@@ -448,8 +427,7 @@ size_t signature::hash() {
 }
 
 trans::access *function::initializer() {
-  static trans::bltinAccess a(run::pushNullFunction);
-  return &a;
+  RETURN_STATIC_BLTIN(pushNullFunction);
 }
 
 #if 0
@@ -531,5 +509,10 @@ bool equivalent(ty *t1, ty *t2, bool special) {
   return special ? equivalent(t1, t2) :
     equivalent(t1->getSignature(), t2->getSignature());
 }
+
+#undef FIELD
+#undef RWFIELD
+#undef SIGFIELD
+#undef DSIGFIELD
 
 } // namespace types

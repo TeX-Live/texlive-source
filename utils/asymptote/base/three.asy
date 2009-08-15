@@ -13,13 +13,11 @@ if(prc0()) {
 
 real defaultshininess=0.25;
 real defaultgranularity=0;
-real linegranularity=0.01;
-real tubegranularity=0.003;
+real linegranularity=0.005;
+int linesectors=8;        // Number of angular sectors.
 real dotgranularity=0.0001;
-real viewportfactor=1.002;   // Factor used to expand orthographic viewport.
-real angleprecision=1e-3;    // Precision for centering perspective projections.
-real anglefactor=max(1.01,1+angleprecision);
-// Factor used to expand perspective viewport.
+real angleprecision=1e-5; // Precision for centering perspective projections.
+real rendermargin=0.02;
 
 string defaultembed3Doptions;
 string defaultembed3Dscript;
@@ -137,7 +135,9 @@ triple project(triple u, triple v)
 triple perp(triple v)
 {
   triple u=cross(v,Y);
-  return (abs(u) > sqrtEpsilon) ? unit(u) : unit(cross(v,Z));
+  if(abs(u) > sqrtEpsilon) return unit(u);
+  u=cross(v,Z);
+  return (abs(u) > sqrtEpsilon) ? unit(u) : X;
 }
 
 // Return the transformation corresponding to moving the camera from the target
@@ -757,7 +757,7 @@ real[] theta(triple[] v, real[] alpha, real[] beta,
 {
   real[] a,b,c,f,l,psi;
   int n=alpha.length;
-  bool cyclic=v.cyclicflag;
+  bool cyclic=v.cyclic;
   for(int i=0; i < n; ++i)
     l[i]=1/length(v[i+1]-v[i]);
   int i0,in;
@@ -766,8 +766,8 @@ real[] theta(triple[] v, real[] alpha, real[] beta,
   for(int i=0; i < in; ++i)
     psi[i]=angle(v[i+1]-v[i],v[i+2]-v[i+1],reference);
   if(cyclic) {
-    l.cyclic(true);
-    psi.cyclic(true);
+    l.cyclic=true;
+    psi.cyclic=true;
   } else {
     psi[n-1]=0;
     if(dir0 == O) {
@@ -869,9 +869,9 @@ void aim(flatguide3 g, int N)
     beta[k]=g.Tension[K].in;
   }
   if(cyclic) {
-    v.cyclic(true);
-    alpha.cyclic(true);
-    beta.cyclic(true);
+    v.cyclic=true;
+    alpha.cyclic=true;
+    beta.cyclic=true;
   } else v[n]=g.nodes[(start+n) % N];
   int final=(end-1) % N;
 
@@ -883,8 +883,8 @@ void aim(flatguide3 g, int N)
   real[] theta=theta(v,alpha,beta,d0,d1,g.out[start].gamma,g.in[final].gamma,
                      reference);
 
-  v.cyclic(true);
-  theta.cyclic(true);
+  v.cyclic=true;
+  theta.cyclic=true;
     
   for(int k=1; k < (cyclic ? n+1 : n); ++k) {
     triple w=dir(theta[k],v[k]-v[k-1],v[k+1]-v[k],reference);
@@ -1027,6 +1027,17 @@ path3 path3(path p, triple plane(pair)=XYplane)
 path3[] path3(explicit path[] g, triple plane(pair)=XYplane)
 {
   return sequence(new path3(int i) {return path3(g[i],plane);},g.length);
+}
+
+path3 invert(path p, triple normal, triple point,
+             projection P=currentprojection)
+{
+  return path3(p,new triple(pair z) {return invert(z,normal,point,P);});
+}
+
+path3 invert(path p, projection P=currentprojection)
+{
+  return path3(p,new triple(pair z) {return invert(z,P);});
 }
 
 // Construct a path from a path3 by applying P to each control point.
@@ -1801,6 +1812,16 @@ triple[] operator * (transform3 t, triple[] v)
   return sequence(new triple(int i) {return t*v[i];},v.length);
 }
 
+triple[][] operator * (transform3 t, triple[][] v) 
+{
+  triple[][] V=new triple[v.length][];
+  for(int i=0; i < v.length; ++i) {
+    triple[] vi=v[i];
+    V[i]=sequence(new triple(int j) {return t*vi[j];},vi.length);
+  }
+  return V;
+}
+
 triple min(explicit path3[] p)
 {
   checkEmpty(p.length);
@@ -1978,6 +1999,38 @@ void addPath(picture pic, path3 g, pen p)
 include three_surface;
 include three_margins;
 
+pair min(path3 p, projection P) 
+{
+  path3 q=P.T.modelview*p;
+  if(P.infinity)
+    return xypart(min(q));
+  return maxratio(q)/P.T.projection[3][2];
+}
+
+pair max(path3 p, projection P) 
+{
+  path3 q=P.T.modelview*p;
+  if(P.infinity)
+    return xypart(max(q));
+  return minratio(q)/P.T.projection[3][2];
+}
+
+pair min(frame f, projection P) 
+{
+  frame g=P.T.modelview*f;
+  if(P.infinity)
+    return xypart(min3(g));
+  return maxratio(g)/P.T.projection[3][2];
+}
+
+pair max(frame f, projection P) 
+{
+  frame g=P.T.modelview*f;
+  if(P.infinity)
+    return xypart(max3(g));
+  return minratio(g)/P.T.projection[3][2];
+}
+
 void draw(picture pic=currentpicture, Label L="", path3 g,
           align align=NoAlign, material p=currentpen, margin3 margin=NoMargin3,
           light light=nolight)
@@ -1988,8 +2041,8 @@ void draw(picture pic=currentpicture, Label L="", path3 g,
       if(is3D()) {
         draw(f,G,p,light,null);
         if(pic != null && size(G) > 0) {
-          pic.addPoint(min(G,P.t));
-          pic.addPoint(max(G,P.t));
+          pic.addPoint(min(G,P));
+          pic.addPoint(max(G,P));
         }
       }
       if(pic != null)
@@ -2004,7 +2057,7 @@ void draw(picture pic=currentpicture, Label L="", path3 g,
   addPath(pic,g,q);
 }
 
-include three_arrows;
+include three_tube;
 
 draw=new void(frame f, path3 g, material p=currentpen,
               light light=nolight, projection P=currentprojection) {
@@ -2015,7 +2068,7 @@ draw=new void(frame f, path3 g, material p=currentpen,
       if(settings.thick) {
         real width=linewidth(q);
         if(width > 0) {
-          tube T=tube(g,width,p.granularity);
+          tube T=tube(g,width,linesectors);
           int L=length(g);
           if(L >= 0) {
             if(!cyclic(g)) {
@@ -2050,7 +2103,7 @@ draw=new void(frame f, path3 g, material p=currentpen,
     else {
       real[] dash=(real[]) split(type," ");
       if(sum(dash) > 0) {
-        dash.cyclic(true);
+        dash.cyclic=true;
         real offset=offset(q);
         real L=arclength(g);
         int i=0;
@@ -2080,6 +2133,8 @@ void draw(picture pic=currentpicture, explicit path3[] g,
 {
   for(int i=0; i < g.length; ++i) draw(pic,g[i],p,margin,light);
 }
+
+include three_arrows;
 
 void draw(picture pic=currentpicture, Label L="", path3 g, 
           align align=NoAlign, material p=currentpen, arrowbar3 arrow,
@@ -2321,7 +2376,7 @@ pair viewportmargin(pair lambda)
 
 string embed3D(string label="", string text=label, string prefix,
                frame f, string format="",
-               real width=0, real height=0, real angle=30,
+               real width=0, real height=0,
                string options="", string script="",
                light light=currentlight, projection P=currentprojection)
 {
@@ -2341,7 +2396,7 @@ string embed3D(string label="", string text=label, string prefix,
     pair margin=viewportmargin((lambda.x,lambda.y));
     viewplanesize=(max(lambda.x+2*margin.x,lambda.y+2*margin.y))/(cm*P.zoom);
   } else
-    if(!P.absolute) angle=2*aTan(Tan(0.5*angle));
+    if(!P.absolute) P.angle=2*aTan(Tan(0.5*P.angle));
 
   string name=prefix+".js";
   writeJavaScript(name,lightscript+projection(P.infinity,viewplanesize),script);
@@ -2375,7 +2430,7 @@ string embed3D(string label="", string text=label, string prefix,
     options3 += ",poster";
   options3 += ",text={"+text+"},label="+label+
     ",toolbar="+(settings.toolbar ? "true" : "false")+
-    ",3Daac="+Format(P.absolute ? P.angle : angle)+
+    ",3Daac="+Format(P.angle)+
     ",3Dc2c="+Format(u)+
     ",3Dcoo="+Format(target/cm)+
     ",3Droll="+Format(roll)+
@@ -2387,20 +2442,257 @@ string embed3D(string label="", string text=label, string prefix,
   return Embed(stripdirectory(prefix),options3,width,height);
 }
 
-object embed(string label="", string text=label, 
-             string prefix=defaultfilename, 
-             frame f, string format="",
-             real width=0, real height=0, real angle=30,
-             string options="", string script="", 
-             light light=currentlight, projection P=currentprojection)
+struct scene
+{
+  frame f;
+  transform3 t;
+  projection P;
+  bool adjusted;
+  real width,height;
+  transform3 T=identity4;
+  picture pic2;
+  
+  void operator init(frame f, projection P=currentprojection) {
+    this.f=f;
+    this.t=identity4;
+    this.P=P;
+  }
+  
+  void operator init(picture pic, real xsize=pic.xsize, real ysize=pic.ysize,
+                     bool keepAspect=pic.keepAspect, bool is3D=true,
+                     projection P=currentprojection) {
+    real xsize3=pic.xsize3, ysize3=pic.ysize3, zsize3=pic.zsize3;
+    bool warn=true;
+        
+    if(xsize3 == 0 && ysize3 == 0 && zsize3 == 0) {
+      xsize3=ysize3=zsize3=max(xsize,ysize);
+      warn=false;
+    }
+
+    if(P.absolute)
+      this.P=P.copy();
+    else if(P.showtarget)
+      draw(pic,P.target,nullpen);
+
+    t=pic.scaling(xsize3,ysize3,zsize3,keepAspect,warn);
+    adjusted=false;
+    triple m=pic.min(t);
+    triple M=pic.max(t);
+
+    if(!P.absolute) {
+      this.P=t*P;
+      if(this.P.center) {
+        bool recalculate=false;
+        triple target=0.5*(m+M);
+        this.P.target=target;
+        recalculate=true;
+        if(recalculate) this.P.calculate();
+      }
+      if(this.P.autoadjust || this.P.infinity) 
+        adjusted=adjusted | this.P.adjust(m,M);
+    }
+
+    f=pic.fit3(t,pic.bounds3.exact ? pic2 : null,this.P);
+
+    if(!pic.bounds3.exact) {
+      transform3 s=pic.scale3(f,xsize3,ysize3,zsize3,keepAspect);
+      t=s*t;
+      this.P=s*this.P;
+      f=pic.fit3(t,pic2,this.P);
+    }
+
+    bool scale=xsize != 0 || ysize != 0;
+
+    if(is3D || scale) {
+      pic2.bounds.exact=true;
+      transform s=pic2.scaling(xsize,ysize,keepAspect);
+
+      pair m2=pic2.min(s);
+      pair M2=pic2.max(s);
+      pair lambda=M2-m2;
+      pair viewportmargin=viewportmargin(lambda);
+      width=ceil(lambda.x+2*viewportmargin.x);
+      height=ceil(lambda.y+2*viewportmargin.y);
+
+      if(!this.P.absolute) {
+        if(scale && this.P.autoadjust) {
+          pair v=(s.xx,s.yy);
+          transform3 T=this.P.t;
+          pair x=project(X,T);
+          pair y=project(Y,T);
+          pair z=project(Z,T);
+          real f(pair a, pair b) {
+            return b == 0 ? (0.5*(a.x+a.y)) :
+              (b.x^2*a.x+b.y^2*a.y)/(b.x^2+b.y^2);
+          }
+          pic2.erase();
+          transform3 s=keepAspect ? scale3(min(f(v,x),f(v,y),f(v,z))) :
+            xscale3(f(v,x))*yscale3(f(v,y))*zscale3(f(v,z));
+          s=shift(this.P.target)*s*shift(-this.P.target);
+          t=s*t;
+          this.P=s*this.P;
+          f=pic.fit3(t,is3D ? null : pic2,this.P);
+        }
+
+        if(this.P.autoadjust || this.P.infinity)
+          adjusted=adjusted | this.P.adjust(min3(f),max3(f));
+      }
+    }
+  }
+
+  // Choose the angle to be just large enough to view the entire image.
+  real angle(projection P) {
+    T=identity4;
+    int maxiterations=100;
+    real h=-0.5*P.target.z;
+    pair r,R;
+    real diff=realMax;
+    pair s;
+    int i;
+    do {
+      r=minratio(f);
+      R=maxratio(f);
+      pair lasts=s;
+      if(P.autoadjust) {
+        s=r+R;
+        if(s != 0) {
+          transform3 t=shift(h*s.x,h*s.y,0);
+          f=t*f;
+          T=t*T;
+          adjusted=true;
+        }
+      }
+      diff=abs(s-lasts);
+      ++i;
+    } while (diff > angleprecision && i < maxiterations);
+    real aspect=width > 0 ? height/width : 1;
+    real rx=-r.x*aspect;
+    real Rx=R.x*aspect;
+    real ry=-r.y;
+    real Ry=R.y;
+    if(!P.autoadjust) {
+      if(rx > Rx) Rx=rx;
+      else rx=Rx;
+      if(ry > Ry) Ry=ry;
+      else ry=Ry;
+    }
+    return (1+angleprecision)*max(aTan(rx)+aTan(Rx),aTan(ry)+aTan(Ry));
+  }
+}
+
+object embed(string label="", string text=label, string prefix=defaultfilename,
+             scene S, string format="", bool view=true, string options="",
+             string script="", light light=currentlight)
 {
   object F;
+  transform3 modelview;
+  projection P=S.P;
+  transform3 tinv=inverse(S.t);
 
-  if(is3D(format))
-    F.L=embed3D(label,text,prefix,f,format,width,height,angle,options,script,
-                light,P);
-  else
-    F.f=f;
+  projection Q;
+  modelview=P.T.modelview;
+  if(P.absolute) {
+    Q=modelview*P;
+  } else {
+    triple target=P.target;
+    S.f=modelview*S.f;
+    P=modelview*P;
+    Q=P.copy();
+    light=modelview*light;
+
+    pair viewportmargin=viewportmargin;
+    if(P.infinity) {
+      triple m=min3(S.f);
+      triple M=max3(S.f);
+      triple lambda=M-m;
+      viewportmargin=viewportmargin((lambda.x,lambda.y));
+      S.width=lambda.x+2*viewportmargin.x;
+      S.height=lambda.y+2*viewportmargin.y;
+      S.f=shift((-0.5(m.x+M.x),-0.5*(m.y+M.y),0))*S.f; // Eye will be at (0,0,0)
+    } else {
+      if(P.angle == 0) {
+        Q.angle=P.angle=S.angle(P);
+        modelview=S.T*modelview;
+        if(viewportmargin.y != 0)
+          P.angle=2*aTan(Tan(0.5*P.angle)-viewportmargin.y/P.target.z);
+      }
+      if(settings.verbose > 0) {
+        transform3 inv=inverse(modelview);
+        if(S.adjusted) 
+          write("adjusting camera to ",tinv*inv*P.camera);
+        target=inv*P.target;
+      }
+      P=S.T*P;
+    }
+    if(settings.verbose > 0) {
+      if(P.center || (!P.infinity && P.autoadjust))
+        write("adjusting target to ",tinv*target);
+    }
+  }
+    
+  if(prefix == "") prefix=outprefix();
+  bool prc=prc(format);
+  bool preview=settings.render > 0;
+  if(prc) {
+    // The movie15.sty package cannot handle spaces or dots in filenames.
+    prefix=replace(prefix,new string[][]{{" ","_"},{".","_"}});
+    if(settings.embed || nativeformat() == "pdf")
+      prefix += "+"+(string) file3.length;
+  } else
+    preview=false;
+  if(preview || (!prc && settings.render != 0)) {
+    frame f=S.f;
+    triple m,M;
+    real zcenter;
+    real r;
+    if(P.absolute) {
+      f=modelview*f;
+      m=min3(f);
+      M=max3(f);
+      r=0.5*abs(M-m);
+      zcenter=0.5*(M.z+m.z);
+    } else {
+      m=min3(f);
+      M=max3(f);
+      zcenter=P.target.z;
+      r=P.distance(m,M);
+    }
+    M=(M.x,M.y,zcenter+r);
+    m=(m.x,m.y,zcenter-r);
+
+    if(P.infinity) {
+      triple margin=(viewportmargin.x,viewportmargin.y,0);
+      M += margin; 
+      m -= margin;
+    } else if(M.z >= 0) abort("camera too close");
+
+    shipout3(prefix,f,preview ? nativeformat() : format,
+             S.width-rendermargin,S.height-rendermargin,
+             P.infinity ? 0 : 2aTan(Tan(0.5*P.angle)*P.zoom),
+             P.zoom,m,M,P.viewportshift,
+             tinv*inverse(modelview)*shift(0,0,zcenter),light.background(),
+             P.absolute ? (modelview*light).position : light.position,
+             light.diffuse,light.ambient,light.specular,
+             light.viewport,view && !preview);
+    if(!preview) return F;
+  }
+
+  string image;
+  if(preview && settings.embed) {
+    image=prefix;
+    if(settings.inlinetex) image += "_0";
+    image += "."+nativeformat();
+    if(!settings.inlinetex) file3.push(image);
+    image=graphic(image,"hiresbb");
+  }
+  if(prc) {
+    if(!P.infinity && P.viewportshift != 0)
+      warning("offaxis",
+              "PRC does not support off-axis projections; use pan instead of
+shift");
+    F.L=embed3D(label,text=image,prefix,S.f,format,
+                S.width-2,S.height-2,options,script,light,Q);
+  }
   return F;
 }
 
@@ -2409,279 +2701,90 @@ object embed(string label="", string text=label,
              picture pic, string format="",
              real xsize=pic.xsize, real ysize=pic.ysize,
              bool keepAspect=pic.keepAspect, bool view=true, string options="",
-             string script="", real angle=0,
+             string script="", light light=currentlight,
+             projection P=currentprojection)
+{
+  bool is3D=is3D(format);
+  scene S=scene(pic,xsize,ysize,keepAspect,is3D,P);
+  if(is3D)
+    return embed(label,text,prefix,S,format,view,options,script,light);
+  else {
+    object F;
+    transform T=S.pic2.scaling(xsize,ysize,keepAspect);
+    F.f=pic.fit(scale(S.t[0][0])*T);
+    add(F.f,S.pic2.fit(T));
+    return F;
+  }
+}
+
+object embed(string label="", string text=label,
+             string prefix=defaultfilename,
+             frame f, string format="", real width=0, real height=0,
+             bool view=true, string options="", string script="",
              light light=currentlight, projection P=currentprojection)
 {
-  object F;
-  real xsize3=pic.xsize3, ysize3=pic.ysize3, zsize3=pic.zsize3;
-  bool warn=true;
-  transform3 modelview;
-        
-  if(xsize3 == 0 && ysize3 == 0 && zsize3 == 0) {
-    xsize3=ysize3=zsize3=max(xsize,ysize);
-    warn=false;
+  if(is3D(format))
+    return embed(label,text,prefix,scene(f,P),format,view,options,script,light);
+  else {
+    object F;
+    F.f=f;
+    return F;
   }
-
-  projection P=P.copy();
-
-  if(!P.absolute && P.showtarget)
-    draw(pic,P.target,nullpen);
-
-  transform3 t=pic.scaling(xsize3,ysize3,zsize3,keepAspect,warn);
-  bool adjusted=false;
-  transform3 tinv=inverse(t);
-  triple m=pic.min(t);
-  triple M=pic.max(t);
-
-  if(!P.absolute) {
-    P=t*P;
-    if(P.center) {
-      bool recalculate=false;
-      triple target=0.5*(m+M);
-      P.target=target;
-      recalculate=true;
-      if(recalculate) P.calculate();
-    }
-    if(P.autoadjust || P.infinity) 
-      adjusted=adjusted | P.adjust(m,M);
-  }
-
-  picture pic2;
-  
-  frame f=pic.fit3(t,pic.bounds3.exact ? pic2 : null,P);
-
-  if(!pic.bounds3.exact) {
-    transform3 s=pic.scale3(f,xsize3,ysize3,zsize3,keepAspect);
-    t=s*t;
-    tinv=inverse(t);
-    P=s*P;
-    f=pic.fit3(t,pic2,P);
-  }
-
-  bool is3D=is3D(format);
-  bool scale=xsize != 0 || ysize != 0;
-
-  if(is3D || scale) {
-    pic2.bounds.exact=true;
-    transform s=pic2.scaling(xsize,ysize,keepAspect);
-    pair m2=pic2.min(s);
-    pair M2=pic2.max(s);
-    pair lambda=M2-m2;
-    pair viewportmargin=viewportmargin(lambda);
-    real width=ceil(lambda.x+2*viewportmargin.x);
-    real height=ceil(lambda.y+2*viewportmargin.y);
-
-    projection Q;
-    if(!P.absolute) {
-      if(scale && P.autoadjust) {
-        pair v=(s.xx,s.yy);
-        transform3 T=P.t;
-        pair x=project(X,T);
-        pair y=project(Y,T);
-        pair z=project(Z,T);
-        real f(pair a, pair b) {
-          return b == 0 ? (0.5*(a.x+a.y)) : (b.x^2*a.x+b.y^2*a.y)/(b.x^2+b.y^2);
-        }
-        pic2.erase();
-        transform3 s=keepAspect ? scale3(min(f(v,x),f(v,y),f(v,z))) :
-          xscale3(f(v,x))*yscale3(f(v,y))*zscale3(f(v,z));
-        s=shift(P.target)*s*shift(-P.target);
-        t=s*t;
-        P=s*P;
-        f=pic.fit3(t,is3D ? null : pic2,P);
-      }
-
-      if(P.autoadjust || P.infinity)
-        adjusted=adjusted | P.adjust(min3(f),max3(f));
-
-      triple target=P.target;
-      modelview=P.modelview();
-      f=modelview*f;
-      P=modelview*P;
-      Q=P.copy();
-      light=modelview*light;
-
-      if(P.infinity) {
-        triple m=min3(f);
-        triple M=max3(f);
-        triple lambda=M-m;
-        viewportmargin=viewportmargin((lambda.x,lambda.y));
-        width=lambda.x+2*viewportmargin.x;
-        height=lambda.y+2*viewportmargin.y;
-        f=shift((-0.5(m.x+M.x),-0.5*(m.y+M.y),0))*f;  // Eye will be at (0,0,0).
-      } else {
-        transform3 T=identity4;
-        // Choose the angle to be just large enough to view the entire image:
-        if(angle == 0) angle=P.angle;
-        int maxiterations=100;
-        if(is3D && angle == 0) {
-          real h=-0.5*P.target.z;
-          pair r,R;
-          real diff=realMax;
-          pair s;
-          int i;
-          do {
-            r=minratio(f);
-            R=maxratio(f);
-            pair lasts=s;
-            if(P.autoadjust) {
-              s=r+R;
-              if(s != 0) {
-                transform3 t=shift(h*s.x,h*s.y,0);
-                f=t*f;
-                T=t*T;
-                adjusted=true;
-              }
-            }
-            diff=abs(s-lasts);
-            ++i;
-          } while (diff > angleprecision && i < maxiterations);
-          real aspect=width > 0 ? height/width : 1;
-          real rx=-r.x*aspect;
-          real Rx=R.x*aspect;
-          real ry=-r.y;
-          real Ry=R.y;
-          if(!P.autoadjust) {
-            if(rx > Rx) Rx=rx;
-            else rx=Rx;
-            if(ry > Ry) Ry=ry;
-            else ry=Ry;
-          }
-          
-          angle=anglefactor*max(aTan(rx)+aTan(Rx),aTan(ry)+aTan(Ry));
-          if(viewportmargin.y != 0)
-            angle=2*aTan(Tan(0.5*angle)-viewportmargin.y/P.target.z);
-          
-          modelview=T*modelview;
-        }
-        if(settings.verbose > 0) {
-          transform3 inv=inverse(modelview);
-          if(adjusted) 
-            write("adjusting camera to ",tinv*inv*P.camera);
-          target=inv*P.target;
-        }
-        P=T*P;
-      }
-      if(settings.verbose > 0) {
-        if(P.center || (!P.infinity && P.autoadjust))
-          write("adjusting target to ",tinv*target);
-      }
-    }
-    
-    if(prefix == "") prefix=outprefix();
-    bool prc=prc(format);
-    bool preview=settings.render > 0;
-    if(prc) {
-      // The movie15.sty package cannot handle spaces or dots in filenames.
-      prefix=replace(prefix,new string[][]{{" ","_"},{".","_"}});
-      if(settings.embed || nativeformat() == "pdf")
-        prefix += "+"+(string) file3.length;
-    } else
-      preview=false;
-    if(preview || (!prc && settings.render != 0)) {
-      frame f=f;
-      triple m,M;
-      real zcenter;
-      if(P.absolute) {
-        modelview=P.modelview();
-        f=modelview*f;
-        Q=modelview*P;
-        m=min3(f);
-        M=max3(f);
-        real r=0.5*abs(M-m);
-        zcenter=0.5*(M.z+m.z);
-        M=(M.x,M.y,zcenter+r);
-        m=(m.x,m.y,zcenter-r);
-        angle=P.angle;
-      } else {
-        m=min3(f);
-        M=max3(f);
-        zcenter=P.target.z;
-        real d=P.distance(m,M);
-        M=(M.x,M.y,zcenter+d);
-        m=(m.x,m.y,zcenter-d);
-      }
-
-      if(P.infinity) {
-        triple margin=(viewportfactor-1.0)*(abs(M.x-m.x),abs(M.y-m.y),0)
-          +(viewportmargin.x,viewportmargin.y,0);
-        M += margin; 
-        m -= margin;
-      } else if(M.z >= 0) abort("camera too close");
-
-      shipout3(prefix,f,preview ? nativeformat() : format,
-               width,height,P.infinity ? 0 : 2aTan(Tan(0.5*angle)*P.zoom),
-               P.zoom,m,M,P.viewportshift,
-               tinv*inverse(modelview)*shift(0,0,zcenter),light.background(),
-               P.absolute ? (modelview*light).position : light.position,
-               light.diffuse,light.ambient,light.specular,
-               light.viewport,view && !preview);
-      if(!preview) return F;
-    }
-
-    string image;
-    if(preview && settings.embed) {
-      image=prefix;
-      if(settings.inlinetex) image += "_0";
-      image += "."+nativeformat();
-      if(!settings.inlinetex) file3.push(image);
-      image=graphic(image,"hiresbb");
-    }
-    if(prc) {
-      if(!P.infinity && P.viewportshift != 0)
-        write("warning: PRC does not support off-axis projections; use pan instead of shift");
-      F.L=embed3D(label,text=image,prefix,f,format,
-                  width,height,angle,options,script,light,Q);
-    }
-    
-  }
-
-  if(!is3D) {
-    transform T=pic2.scaling(xsize,ysize,keepAspect);
-    F.f=pic.fit(scale(t[0][0])*T);
-    add(F.f,pic2.fit(T));
-  }
-      
-  return F;
 }
 
 embed3=new object(string prefix, frame f, string format, string options,
-                  string script, projection P) {
-  return embed(prefix=prefix,f,format,options,script,P);
+                  string script, light light, projection P) {
+  return embed(prefix=prefix,f,format,options,script,light,P);
 };
 
-currentpicture.fitter=new frame(string prefix, picture pic, string format,
-                                real xsize, real ysize,
-                                bool keepAspect, bool view,
-                                string options, string script, projection P) {
+frame embedder(object embedder(string prefix, string format),
+               string prefix, string format, bool view, light light)
+{
   frame f;
-  bool empty3=pic.empty3();
-  if(is3D(format) || empty3) add(f,pic.fit2(xsize,ysize,keepAspect));
-  if(!empty3) {
-    bool prc=prc(format);
-    if(!prc && settings.render != 0 && !view) {
-      static int previewcount=0;
-      bool keep=prefix != "";
-      prefix=outprefix(prefix)+"+"+(string) previewcount;
-      ++previewcount;
-      format=nativeformat();
-      if(!keep) file3.push(prefix+"."+format);
-    }
-    object F=embed(prefix=prefix,pic,format,xsize,ysize,keepAspect,view,
-                   options,script,currentlight,P);
-    if(prc)
-      label(f,F.L);
-    else {
-      if(settings.render == 0) {
-        add(f,F.f);
-        if(currentlight.background != nullpen)
-          box(f,currentlight.background,Fill,above=false);
-      } else if(!view)
-        label(f,graphic(prefix,"hiresbb"));
-    }
+  bool prc=prc(format);
+  if(!prc && settings.render != 0 && !view) {
+    static int previewcount=0;
+    bool keep=prefix != "";
+    prefix=outprefix(prefix)+"+"+(string) previewcount;
+    ++previewcount;
+    format=nativeformat();
+    if(!keep) file3.push(prefix+"."+format);
+  }
+  object F=embedder(prefix,format);
+  if(prc)
+    label(f,F.L);
+  else {
+    if(settings.render == 0) {
+      add(f,F.f);
+      if(light.background != nullpen)
+        box(f,light.background,Fill,above=false);
+    } else if(!view)
+      label(f,graphic(prefix,"hiresbb"));
   }
   return f;
+}
+
+currentpicture.fitter=new frame(string prefix, picture pic, string format,
+                                real xsize, real ysize, bool keepAspect,
+                                bool view, string options, string script,
+                                light light, projection P) {
+  frame f;
+  bool empty3=pic.empty3();
+  if(!empty3) f=embedder(new object(string prefix, string format) {
+      return embed(prefix=prefix,pic,format,xsize,ysize,keepAspect,view,
+                   options,script,light,P);
+    },prefix,format,view,light);
+  if(is3D(format) || empty3) add(f,pic.fit2(xsize,ysize,keepAspect));
+  return f;
 };
+
+frame embedder(string prefix, frame f, string format, bool view,
+               string options, string script, light light, projection P)
+{
+  return embedder(new object(string prefix, string format) {
+      return embed(prefix=prefix,f,format,view,options,script,light,P);
+    },prefix,format,view,light);
+}
 
 void addViews(picture dest, picture src, bool group=true,
               filltype filltype=NoFill)
@@ -2733,29 +2836,53 @@ void addAllViews(picture src, bool group=true, filltype filltype=NoFill)
   addAllViews(currentpicture,src,group,filltype);
 }
 
-// Force an array of 3D pictures to be as least as large as picture all.
-void rescale3(picture[] pictures, picture all, projection P=currentprojection)
+// Fit an array of 3D pictures simultaneously using the sizing of picture all.
+frame[] fit3(string prefix="", picture[] pictures, picture all,
+             string format="", bool view=true, string options="",
+             string script="", light light=currentlight,
+             projection P=currentprojection)
 {
-  if(!all.empty3()) {
-    transform3 t=inverse(all.calculateTransform3(P)*pictures[0].T3);
-    triple m=t*min3(all);
-    triple M=t*max3(all);
-    for(int i=0; i < pictures.length; ++i) {
-      draw(pictures[i],m,nullpen);
-      draw(pictures[i],M,nullpen);
-    }
+  frame[] out;
+  scene S=scene(all,P);
+  triple m=all.min(S.t);
+  triple M=all.max(S.t);
+  out=new frame[pictures.length];
+  int i=0;
+  bool loop=settings.loop;
+  for(picture pic : pictures) {
+    picture pic2;
+    frame f=pic.fit3(S.t,pic2,S.P);
+    if(loop && !settings.loop) break;
+    add(f,pic2.fit2());
+    draw(f,m,nullpen);
+    draw(f,M,nullpen);
+    out[i]=loop ? f : embedder(prefix,f,format,view,options,script,light,S.P);
+    ++i;
   }
+
+  while(settings.loop)
+    for(int i=0; i < pictures.length; ++i) {
+      if(!settings.loop) break;
+      embedder(prefix,out[i],format,view,options,script,light,S.P);
+    }
+  
+  return out;
 }
 
-// Force an array of pictures to have a uniform scaling using currenprojection.
-rescale=new void(picture[] pictures) {
-  if(pictures.length == 0) return;
+// Fit an array of pictures simultaneously using the size of the first picture.
+fit=new frame[](string prefix="", picture[] pictures, string format="",
+                bool view=true, string options="", string script="",
+                projection P=currentprojection) {
+  if(pictures.length == 0)
+    return new frame[];
+
   picture all;
   size(all,pictures[0]);
   for(picture pic : pictures)
     add(all,pic);
-  rescale2(pictures,all);
-  rescale3(pictures,all);
+
+  return all.empty3() ? fit2(pictures,all) :
+  fit3(prefix,pictures,all,format,view,options,script,P);
 };
 
 exitfcn currentexitfunction=atexit();

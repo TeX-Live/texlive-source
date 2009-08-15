@@ -1,6 +1,27 @@
+Release Notes for Version 1.83
+
+OpenGL animations, illustrated in glmovie.asy, were implemented. 
+Viewportshift flicker was fixed. An empirical translation between
+OpenGL and PRC shininess was implemented. Splined parametric surfaces are
+now used to implement smooth thick lines and tubes. The projected bounding box
+calculation and angle calculations were fixed. A labelsurface function was
+added. The Headlamp light is now the default light; a light argument was
+added to shipout. Patches are now constructed with the usual orientation
+for a counterclockwise external path; the convention for tensor product
+shading was updated. Picture environments for TeX clipping are no longer
+nested. A texpath initialization bug was fixed. An ASYMPTOTE_HOME
+environment variable was added. Viewing was fixed for file names
+containing spaces. A picture sizing bug was fixed. An example of an inset
+graph was added. Type information for variables is now returned at the
+interactive prompt. Warning message suppression was improved; warnings in
+Asymptote code can now be disabled. The cyclic member of an array is now
+writeable; the obsolete cyclicflag and void cyclic(bool) functions were
+removed. File mode functions are now virtual members; this backwards
+incompatibility requires that line(file f) be changed to f.line(), etc.
+
 Release Notes for Version 1.82
 
-Threaded exports were fixed. The texpath fontsize was fixed for PDF tex engines. 
+Threaded exports were fixed. The texpath fontsize was fixed for PDF tex engines.
 A default currentprojection argument was added to transform3(projection).
 The -gray and -bw settings are now respected in PRC output.
 A consistent approximation is now used for drawing tube centers.

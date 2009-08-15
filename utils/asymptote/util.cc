@@ -17,7 +17,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <signal.h>
 #include <cstring>
 #include <algorithm>
 
@@ -34,6 +33,31 @@ bool False=false;
 namespace vm {
 void error(const char* message);
 }
+
+#if __GNUC__
+#include <cxxabi.h>
+string demangle(const char *s)
+{
+  int status;
+  char *demangled = abi::__cxa_demangle(s,NULL,NULL,&status);
+  if (status == 0 && demangled) {
+    string str(demangled);
+    free(demangled);
+    return str;
+  } else if (status == -2) {
+    free(demangled);
+    return s;
+  } else {
+    free(demangled);
+    return string("Unknown(") + s + ")";
+  }
+};
+#else
+string demangle(const char* s)
+{
+  return s;
+}
+#endif 
 
 char *Strdup(string s)
 {
@@ -162,6 +186,16 @@ string auxname(string filename, string suffix)
   return buildname(filename,suffix,"_");
 }
   
+sighandler_t Signal(int signum, sighandler_t handler)
+{
+  struct sigaction action,oldaction;
+  action.sa_handler=handler;
+  sigemptyset(&action.sa_mask);
+  action.sa_flags=0;
+  return sigaction(signum,&action,&oldaction) == 0 ? oldaction.sa_handler : 
+    SIG_ERR;
+}
+
 void push_split(mem::vector<string>& a, const string& S) 
 {
   const char *p=S.c_str();

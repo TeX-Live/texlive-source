@@ -11,7 +11,6 @@
 #include "common.h"
 #include <typeinfo>
 
-
 namespace vm {
 
 class item;
@@ -22,7 +21,7 @@ T get(const item&);
 
 class item : public gc {
 public:
-  bool empty()
+  bool empty() const
   { return *kind == typeid(void); }
   
   item()
@@ -113,12 +112,23 @@ private:
 };
   
 class frame : public gc {
+#ifdef DEBUG_FRAME
+  string name;
+#endif
   typedef mem::vector<item> vars_t;
   vars_t vars;
 public:
+#ifdef DEBUG_FRAME
+  frame(string name, size_t size)
+    : name(name), vars(size)
+  {}
+
+  string getName() { return name; }
+#else
   frame(size_t size)
     : vars(size)
   {}
+#endif
 
   item& operator[] (size_t n)
   { return vars[n]; }
@@ -181,18 +191,7 @@ inline bool isdefault(const item& it)
   return *it.kind == typeid(default_t);
 } 
 
-inline ostream& operator<< (ostream& out, const item& i)
-{
-  out << "type " << i.type().name();
-  if (i.type() == typeid(Int))
-    cout << ", value = " << get<Int>(i) << endl;
-  else if (i.type() == typeid(double))
-    cout << ", value = " << get<double>(i) << endl;
-  else if (i.type() == typeid(string))
-    cout << ", value = " << get<string>(i) << endl;
-  else out << endl;
-  return out;
-}
+ostream& operator<< (ostream& out, const item& i);
 
 } // namespace vm
 

@@ -11,10 +11,14 @@
 #include <sys/types.h>
 #include <iostream>
 #include <cstdlib>
+#include <csignal>
 
 #include "common.h"
 
 #include <strings.h>
+
+// Demangle a typeid name (if the proper library is installed.
+string demangle(const char *s);
 
 // Duplicate a string.
 char *Strdup(string s);
@@ -51,6 +55,11 @@ string String(T x)
   buf << x;
   return buf.str();
 }
+
+typedef void (*sighandler_t)(int);
+
+// Portable signal (sigaction wrapper).
+sighandler_t Signal(int signum, sighandler_t handler);
 
 // Split string S and push the pieces onto vector a.
 void push_split(mem::vector<string>& a, const string& S);

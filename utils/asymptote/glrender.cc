@@ -8,7 +8,6 @@
 #include <fstream>
 #include <cstring>
 #include <sys/time.h>
-#include <signal.h>
 
 #include "common.h"
 
@@ -74,6 +73,7 @@ int maxTileHeight;
 double *T;
 
 bool Xspin,Yspin,Zspin;
+bool Animate;
 bool Menu;
 bool Motion;
 bool ignorezoom;
@@ -109,6 +109,7 @@ double *Ambient;
 double *Specular;
 bool ViewportLighting;
 bool queueExport=false;
+bool queueScreen=false;
 bool readyAfterExport=false;
 bool antialias;
 
@@ -214,20 +215,24 @@ void initlighting()
 void setDimensions(int Width, int Height, double X, double Y)
 {
   double Aspect=((double) Width)/Height;
-  double X0=(X/Width*lastzoom+Shift.getx()*Xfactor)*(xmax-xmin);
-  double Y0=(Y/Height*lastzoom+Shift.gety()*Yfactor)*(ymax-ymin);
+  double xshift=X/Width*lastzoom+Shift.getx()*Xfactor;
+  double yshift=Y/Height*lastzoom+Shift.gety()*Yfactor;
   double Zoominv=1.0/Zoom;
   if(orthographic) {
     double xsize=Xmax-Xmin;
     double ysize=Ymax-Ymin;
     if(xsize < ysize*Aspect) {
       double r=0.5*ysize*Aspect*Zoominv;
+      double X0=2.0*r*xshift;
+      double Y0=(Ymax-Ymin)*Zoominv*yshift;
       xmin=-r-X0;
       xmax=r-X0;
       ymin=Ymin*Zoominv-Y0;
       ymax=Ymax*Zoominv-Y0;
     } else {
       double r=0.5*xsize/(Aspect*Zoom);
+      double X0=(Xmax-Xmin)*Zoominv*xshift;
+      double Y0=2.0*r*yshift;
       xmin=Xmin*Zoominv-X0;
       xmax=Xmax*Zoominv-X0;
       ymin=-r-Y0;
@@ -235,8 +240,11 @@ void setDimensions(int Width, int Height, double X, double Y)
     }
   } else {
     double r=H*Zoominv;
-    xmin=-r*Aspect-X0;
-    xmax=r*Aspect-X0;
+    double rAspect=r*Aspect;
+    double X0=2.0*rAspect*xshift;
+    double Y0=2.0*r*yshift;
+    xmin=-rAspect-X0;
+    xmax=rAspect-X0;
     ymin=-r-Y0;
     ymax=r-Y0;
   }
@@ -413,7 +421,7 @@ void windowposition(int& x, int& y, int width=Width, int height=Height)
   }
 }
 
-void setsize(int w, int h, int minsize=0)
+void setsize(int w, int h, int minsize=0, bool reposition=true)
 {
   int x,y;
   
@@ -430,14 +438,16 @@ void setsize(int w, int h, int minsize=0)
   }
   
   capsize(w,h);
-  windowposition(x,y,w,h);
-  glutPositionWindow(x,y);
+  if(reposition) {
+    windowposition(x,y,w,h);
+    glutPositionWindow(x,y);
+  }
   glutReshapeWindow(w,h);
   reshape0(w,h);
   glutPostRedisplay();
 }
 
-void fullscreen() 
+void fullscreen(bool reposition=true) 
 {
   Width=screenWidth;
   Height=screenHeight;
@@ -445,19 +455,21 @@ void fullscreen()
 #ifdef __CYGWIN__
   glutFullScreen();
 #else
-  glutPositionWindow(0,0);
+  if(reposition)
+    glutPositionWindow(0,0);
   glutReshapeWindow(Width,Height);
   glutPostRedisplay();
 #endif    
 }
 
-void fitscreen() 
+void fitscreen(bool reposition=true) 
 {
+  if(Animate && Fitscreen == 2) Fitscreen=0;
   switch(Fitscreen) {
     case 0: // Original size
     {
       Xfactor=Yfactor=1.0;
-      setsize(oldWidth,oldHeight,minimumsize);
+      setsize(oldWidth,oldHeight,minimumsize,reposition);
       break;
     }
     case 1: // Fit to screen in one dimension
@@ -468,14 +480,14 @@ void fitscreen()
       int h=screenHeight;
       if(w >= h*Aspect) w=(int) (h*Aspect+0.5);
       else h=(int) (w/Aspect+0.5);
-      setsize(w,h,minimumsize);
+      setsize(w,h,minimumsize,reposition);
       break;
     }
     case 2: // Full screen
     {
       Xfactor=((double) screenHeight)/Height;
       Yfactor=((double) screenWidth)/Width;
-      fullscreen();
+      fullscreen(reposition);
       break;
     }
   }
@@ -490,11 +502,12 @@ void togglefitscreen()
 
 void updateHandler(int)
 {
+  queueScreen=true;
   update();
-  glutShowWindow();
-  glutShowWindow(); // Call twice to work around apparent freeglut bug.
-  if(glthread && !interact::interactive)
-    fitscreen();
+  if(!Animate) {
+    glutShowWindow();
+    glutShowWindow(); // Call twice to work around apparent freeglut bug.
+  }
 }
 
 void exportHandler(int=0)
@@ -513,7 +526,7 @@ void reshape(int width, int height)
     static bool initialize=true;
     if(initialize) {
       initialize=false;
-      signal(SIGUSR1,updateHandler);
+      Signal(SIGUSR1,updateHandler);
     }
   }
   
@@ -540,6 +553,18 @@ void idle()
   Xspin=Yspin=Zspin=false;
 }
 
+void animate() 
+{
+  Animate=!Animate;
+  if(Animate) {
+    if(Fitscreen == 2) {
+      togglefitscreen();
+      togglefitscreen();
+    }
+    update();
+  }
+}
+
 void home() 
 {
   idle();
@@ -555,26 +580,43 @@ void home()
 void quit() 
 {
   if(glthread) {
+    Setting("loop")=false;
     home();
-    glutHideWindow();
- #ifdef HAVE_LIBPTHREAD
+#ifdef HAVE_LIBPTHREAD
     if(!interact::interactive)
       endwait(readySignal,readyLock);
 #endif    
+    glutHideWindow();
   } else {
     glutDestroyWindow(window);
     exit(0);
   }
 }
 
+void screen()
+{
+  if(glthread && !interact::interactive)
+    fitscreen(false);
+}
+
 void display()
 {
+  if(queueScreen) {
+    if(!Animate) screen();
+    queueScreen=false;
+  }
   drawscene(Width,Height);
   glutSwapBuffers();
+#ifdef HAVE_LIBPTHREAD
+  if(glthread && Animate) {
+    queueExport=false;
+    endwait(readySignal,readyLock);
+  }
+#endif
   if(queueExport) {
     Export();
     queueExport=false;
-  }
+  } 
   if(!glthread) {
     if(Oldpid != 0 && waitpid(Oldpid,NULL,WNOHANG) != Oldpid) {
       kill(Oldpid,SIGHUP);
@@ -1014,11 +1056,11 @@ void camera()
        << "camera=" << Camera << "," << endl
        << "up=" << Up << "," << endl
        << "target=" << Target << "," << endl
-       << "zoom=" << Zoom << "," << endl;
+       << "zoom=" << Zoom;
   if(!orthographic)
-    cout << "angle=" << 2.0*atan(tan(0.5*Angle)/Zoom)/radians << "," << endl;
+    cout << "," << endl << "angle=" << 2.0*atan(tan(0.5*Angle)/Zoom)/radians;
   if(viewportshift != pair(0.0,0.0))
-    cout << "viewportshift=" << viewportshift;
+    cout << "," << endl << "viewportshift=" << viewportshift;
   if(!orthographic)
     cout << "," << endl << "autoadjust=false";
   cout << ");" << endl;
@@ -1065,6 +1107,9 @@ void keyboard(unsigned char key, int x, int y)
     case '<':
       shrink();
       break;
+    case 'p':
+      animate();
+      break;
     case 17: // Ctrl-q
     case 'q':
       if(!Format.empty()) Export();
@@ -1073,7 +1118,8 @@ void keyboard(unsigned char key, int x, int y)
   }
 }
  
-enum Menu {HOME,FITSCREEN,XSPIN,YSPIN,ZSPIN,STOP,MODE,EXPORT,CAMERA,QUIT};
+enum Menu {HOME,FITSCREEN,XSPIN,YSPIN,ZSPIN,STOP,MODE,EXPORT,CAMERA,
+           ANIMATE,QUIT};
 
 void menu(int choice)
 {
@@ -1108,6 +1154,9 @@ void menu(int choice)
       break;
     case CAMERA:
       camera();
+      break;
+    case ANIMATE:
+      animate();
       break;
     case QUIT:
       quit();
@@ -1341,6 +1390,7 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   glMatrixMode(GL_MODELVIEW);
     
   home();
+  Animate=getSetting<bool>("autoplay");
   
   if(View) {
     if(!getSetting<bool>("fitscreen"))
@@ -1390,6 +1440,7 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     glutAddMenuEntry("(m) Mode",MODE);
     glutAddMenuEntry("(e) Export",EXPORT);
     glutAddMenuEntry("(c) Camera",CAMERA);
+    glutAddMenuEntry("(p) Play",ANIMATE);
     glutAddMenuEntry("(q) Quit" ,QUIT);
   
     for(size_t i=0; i < nbuttons; ++i) {
@@ -1407,7 +1458,7 @@ void glrender(const string& prefix, const picture *pic, const string& format,
       } else {
         initialized=true;
         readyAfterExport=true;
-        signal(SIGUSR1,exportHandler);
+        Signal(SIGUSR1,exportHandler);
         exportHandler();
       }
     } else {

@@ -30,6 +30,10 @@ using vm::bltin;
 using vm::inst;
 using vm::item;
 
+#ifdef DEBUG_BLTIN
+void assertBltinLookup(inst::opcode op, item it);
+#endif
+
 class coder {
   // The frame of the function we are currently encoding.  This keeps
   // track of local variables, and parameters with respect to the stack.
@@ -100,14 +104,15 @@ public:
   // its own frame, which is the usual (sensible) thing to do.  It is set to
   // false for a line-at-a-time codelet, where variables should be allocated in
   // the lower frame.
-  coder(function *t, coder *parent, modifier sord = DEFAULT_DYNAMIC,
+  coder(string name, function *t, coder *parent,
+        modifier sord = DEFAULT_DYNAMIC,
         bool reframe=true);
 
   // Start encoding the body of the record.  The function being encoded
   // is the record's initializer.
   coder(record *t, coder *parent, modifier sord = DEFAULT_DYNAMIC);
 
-  coder(modifier sord = DEFAULT_DYNAMIC);
+  coder(string name, modifier sord = DEFAULT_DYNAMIC);
   
   coder(const coder&);
   
@@ -174,7 +179,7 @@ public:
   bool isRecord();
   
   // Creates a new coder to handle the translation of a new function.
-  coder newFunction(function *t, modifier sord=DEFAULT_DYNAMIC);
+  coder newFunction(string name, function *t, modifier sord=DEFAULT_DYNAMIC);
 
   // Creates a new record type.
   record *newRecord(symbol *id);
@@ -253,6 +258,9 @@ public:
   }
   void encode(inst::opcode op, item it)
   {
+#ifdef DEBUG_BLTIN
+    assertBltinLookup(op, it);
+#endif
     inst i; i.op = op; i.pos = nullPos; i.ref = it;
     encode(i);
   }
@@ -349,7 +357,7 @@ private:
 public:
   void encodePushFrame() {
     encode(inst::pushframe);
-    level = new frame(level, 0);
+    level = new frame("encodePushFrame", level, 0);
 
     encodeAllocInstruction();
   }
