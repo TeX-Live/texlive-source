@@ -57,6 +57,7 @@ nobase_dist_script_SCRIPTS = \
 	dviasm/dviasm.py \
 	epspdf/epspdf \
 	epspdf/epspdftk \
+	fig4latex/fig4latex \
 	fontools/afm2afm \
 	fontools/autoinst \
 	fontools/cmap2enc \
