@@ -1104,7 +1104,8 @@ updmap is creating new map files using the following configuration:\
 		  "$dvipsoutputdir/ps2pk.map") {
       if ($^O=~/^MSWin(32|64)$/) {
 	  $f =~ s@/@\\@g; $f = "\"$f\"" if ($f =~ m/\s/);
-	  @lines = `$ENV{'COMSPEC'} /c dir /b /s $f`; # rk. Suppress header and footer from dir output.
+          # rk. Suppress header and footer from dir output.
+	  @lines = `\"$ENV{'COMSPEC'}\" /c dir /b /s $f`;
       } else {
 	  @lines = `ls -l $f`;
       }

@@ -1,3 +1,8 @@
+2009-08-19  Karl Berry  <karl@tug.org>
+
+	* updmap.pl (mkmaps): quote invocation of COMSPEC.
+	From Dan Luecking, 19 Aug 2009 15:13:31.
+
 2009-08-15  Karl Berry  <karl@tug.org>
 
 	* fmtutil (--byengine): new option, from Norbert.
