@@ -58,6 +58,7 @@ nobase_dist_script_SCRIPTS = \
 	epspdf/epspdf \
 	epspdf/epspdftk \
 	fig4latex/fig4latex \
+	findhyph/findhyph \
 	fontools/afm2afm \
 	fontools/autoinst \
 	fontools/cmap2enc \
