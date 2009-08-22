@@ -1,3 +1,7 @@
+2009-08-22  Tomek Trzeciak  <t.m.trzeciak@gmail.com>
+
+  * updmap.pl (mkmaps): remove unneeded COMSPEC from backticks
+
 2009-08-19  Karl Berry  <karl@tug.org>
 
 	* updmap.pl (mkmaps): quote invocation of COMSPEC.

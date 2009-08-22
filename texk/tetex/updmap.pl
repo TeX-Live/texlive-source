@@ -1105,7 +1105,7 @@ updmap is creating new map files using the following configuration:\
       if ($^O=~/^MSWin(32|64)$/) {
 	  $f =~ s@/@\\@g; $f = "\"$f\"" if ($f =~ m/\s/);
           # rk. Suppress header and footer from dir output.
-	  @lines = `\"$ENV{'COMSPEC'}\" /c dir /b /s $f`;
+	  @lines = `dir /b /s $f`;
       } else {
 	  @lines = `ls -l $f`;
       }
