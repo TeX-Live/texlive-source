@@ -1,6 +1,10 @@
+2009-08-24  Reinhard Kotucha  <reinhard.kotucha@web.de>
+
+	* updmap.pl (mkMaps): replace dir/ls shell commands by Perl code.
+
 2009-08-22  Tomek Trzeciak  <t.m.trzeciak@gmail.com>
 
-  * updmap.pl (mkmaps): remove unneeded COMSPEC from backticks
+	* updmap.pl (mkmaps): remove unneeded COMSPEC from backticks
 
 2009-08-19  Karl Berry  <karl@tug.org>
 

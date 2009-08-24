@@ -1102,17 +1102,12 @@ updmap is creating new map files using the following configuration:\
 		  "$dvipdfmoutputdir/dvipdfm_dl14.map",
 		  "$dvipdfmoutputdir/dvipdfm_ndl14.map",
 		  "$dvipsoutputdir/ps2pk.map") {
-      if ($^O=~/^MSWin(32|64)$/) {
-	  $f =~ s@/@\\@g; $f = "\"$f\"" if ($f =~ m/\s/);
-          # rk. Suppress header and footer from dir output.
-	  @lines = `dir /b /s $f`;
+      if (-e $f) {
+        my @stat=stat($f);
+        printf "%7d %s %s\n", $stat[7], scalar (localtime $stat[9]), $f;
       } else {
-	  @lines = `ls -l $f`;
+        print STDERR "Warning: File $f doesn't exist.\n";
       }
-      chomp @lines;
-      my $rx = "(^ |dvipdfm.map|dvipdfm_dl14.map|dvipdfm_ndl14.map|pdftex.map|pdftex_dl14.map|pdftex_ndl14.map|ps2pk.map|psfonts.map|psfonts_pk.map|psfonts_t1.map|builtin35.map|download35.map)";
-      @lines = grep /$rx/, @lines;
-      map { print "$_\n"; } @lines;
     }
   }
 }
