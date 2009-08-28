@@ -36,20 +36,16 @@ nobase_dist_script_SCRIPTS = \
 	context/ruby/texmfstart.rb \
 	context/stubs/unix/context \
 	context/stubs/unix/ctxtools \
-	context/stubs/unix/exatools \
 	context/stubs/unix/makempy \
 	context/stubs/unix/mpstools \
 	context/stubs/unix/mptopdf \
 	context/stubs/unix/mtxtools \
 	context/stubs/unix/pdftools \
-	context/stubs/unix/pdftrimwhite \
 	context/stubs/unix/pstopdf \
 	context/stubs/unix/rlxtools \
 	context/stubs/unix/runtools \
 	context/stubs/unix/texexec \
-	context/stubs/unix/texfind \
 	context/stubs/unix/texfont \
-	context/stubs/unix/texshow \
 	context/stubs/unix/textools \
 	context/stubs/unix/texutil \
 	context/stubs/unix/tmftools \

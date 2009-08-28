@@ -1,3 +1,8 @@
+2009-08-28  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_script_SCRIPTS): remove exatools
+	pdftrimwhite texfind texshow, obsolete context scripts.
+
 2009-07-24  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): add mkgrkindex.
