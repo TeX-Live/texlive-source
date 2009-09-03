@@ -19899,7 +19899,7 @@ rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
       conftest$ac_exeext conftest.$ac_ext
 
   if test "x$with_kpathsea" = xno; then
-  if test "x$enable_build" = xno; then
+    if test "x$enable_build" = xno; then
   { $as_echo "$as_me:$LINENO: WARNING: building lcdf-typetools has been disabled and would fail because
 
 =========================================
@@ -19944,6 +19944,11 @@ fi
 
 
   fi
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_KPATHSEA 1
+_ACEOF
+
 fi
  if test "x$with_kpathsea" != xno; then
   have_kpathsea_TRUE=

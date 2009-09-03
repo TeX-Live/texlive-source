@@ -76,7 +76,7 @@ if test "x$with_kpathsea" != xno; then
                   with_kpathsea=no])
 
   if test "x$with_kpathsea" = xno; then
-  KPSE_MSG_ERROR([lcdf-typetools], [
+    KPSE_MSG_ERROR([lcdf-typetools], [
 =========================================
 
 I can't find the kpathsea header and/or library files. Tell me where to look
@@ -86,6 +86,7 @@ disable support using --without-kpathsea.
 
 =========================================])
   fi
+  AC_DEFINE(HAVE_KPATHSEA, 1, [Define if you want to use kpathsea.])
 fi
 AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
 

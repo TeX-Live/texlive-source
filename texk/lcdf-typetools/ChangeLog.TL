@@ -1,6 +1,13 @@
 ChangeLog.TL: TeX Live (TL) changes for lcdf-typetools
 ======================================================
 
+2009-09-03  Karl Berry  <karl@tug.org>
+
+	* configure.ac: AC_DEFINE(HAVE_KPATHSEA) if we have it, else
+	kpse stuff not really enabled, e.g., glyphlist.txt and
+	texnansx.enc not found
+	tlbuild mail from Jown Owens, 31 Aug 2009 14:34:39.
+
 2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: enable compiler warnings (TeX Live style).

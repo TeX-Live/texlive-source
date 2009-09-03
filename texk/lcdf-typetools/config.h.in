@@ -83,6 +83,9 @@
 /* Define to 1 if you have the <iostream> header file. */
 #undef HAVE_IOSTREAM
 
+/* Define if you want to use kpathsea. */
+#undef HAVE_KPATHSEA
+
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
