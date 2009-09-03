@@ -1,3 +1,8 @@
+2009-09-03  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (find_format): remove dvipdfmx.cfg, since there is
+	no special path for it, and add texglyphlist.txt.
+
 2009-08-15  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): remove many more,

@@ -102,8 +102,6 @@ find_format (kpathsea kpse, string name, boolean is_filename)
     ret = user_format;
   } else if (FILESTRCASEEQ (name, "config.ps")) {
     ret = kpse_dvips_config_format;
-  } else if (FILESTRCASEEQ (name, "dvipdfmx.cfg")) {
-    ret = kpse_program_text_format;
   } else if (FILESTRCASEEQ (name, "fmtutil.cnf")) {
     ret = kpse_web2c_format;
   } else if (FILESTRCASEEQ (name, "glyphlist.txt")) {
@@ -114,6 +112,8 @@ find_format (kpathsea kpse, string name, boolean is_filename)
     ret = kpse_fontmap_format;
   } else if (FILESTRCASEEQ (name, "pdftex.cfg")) {
     ret = kpse_pdftex_config_format;
+  } else if (FILESTRCASEEQ (name, "texglyphlist.txt")) {
+    ret = kpse_fontmap_format;
   } else if (FILESTRCASEEQ (name, "texmf.cnf")) {
     ret = kpse_cnf_format;
   } else if (FILESTRCASEEQ (name, "updmap.cfg")) {
