@@ -209,6 +209,7 @@ nobase_dist_script_SCRIPTS = \
 	glossaries/makeglossaries \
 	latex2man/latex2man \
 	latexmk/latexmk.pl \
+	listings-ext/listings-ext.sh \
 	mkjobtexmf/mkjobtexmf.pl \
 	mkgrkindex/mkgrkindex \
 	oberdiek/pdfatfi.pl \
