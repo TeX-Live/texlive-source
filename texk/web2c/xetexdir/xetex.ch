@@ -67,7 +67,7 @@ authorization from the copyright holders.
 
 @d XeTeX_version=0
 @d XeTeX_revision==".9995"
-@d XeTeX_version_string=='-0.9995.0' {current \XeTeX\ version}
+@d XeTeX_version_string=='-0.9995.1' {current \XeTeX\ version}
 @z
 
 @x
@@ -4721,11 +4721,11 @@ if x<>null then begin
     wa:=get_ot_math_accent_pos(f,native_glyph(p));
     if wa=@"7FFFFFFF then wa:=half(width(y));
     p:=list_ptr(x);
-    if (type(p)=whatsit_node) and (subtype(p)=glyph_node) and (link(p)=null) then begin
-      w:=get_ot_math_accent_pos(native_font(p), native_glyph(p));
-      if w=@"7FFFFFFF then w:=half(width(x));
+    if (p<>null) and (type(p)=whatsit_node) and (subtype(p)=glyph_node) and (link(p)=null) then begin
+      w2:=get_ot_math_accent_pos(native_font(p), native_glyph(p));
+      if w2=@"7FFFFFFF then w:=half(w) else w:=w2;
     end else
-      w:=half(width(x));
+      w:=half(w);
     shift_amount(y):=s+w-wa;
   end else
     shift_amount(y):=s+half(w-width(y));
