@@ -67,12 +67,18 @@ begin
 a non-local goto, which we can't use in C.
 @z
 
-@x [5] Remove |terminal_line_length|.
+@x [5] Remove |terminal_line_length|, increase others.
 @<Constants...@>=
 @!terminal_line_length=150; {maximum number of characters input in a single
   line of input from the terminal}
+@!line_length=79; {\\{xxx} strings will not produce lines longer than this}
+@!max_row=79; {vertical extent of pixel image array}
+@!max_col=79; {horizontal extent of pixel image array}
 @y
 @<Constants...@>=
+@!line_length=500; {\\{xxx} strings will not produce lines longer than this}
+@!max_row=500; {vertical extent of pixel image array}
+@!max_col=500; {horizontal extent of pixel image array}
 @z
 
 @x [7] Remove jump_out, and make `abort' end with a newline.

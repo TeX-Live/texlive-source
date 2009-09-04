@@ -1,3 +1,7 @@
+2009-09-04  Karl Berry  <karl@tug.org>
+
+	* gftype.ch (line_length, max_row, max_col): increase to 500.
+
 2009-08-12  Karl Berry  <karl@tug.org>
 
 	* tex.ch (1.11): doc fix.
