@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/cff.h,v 1.9 2004/09/11 14:50:28 hirata Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/cff.h,v 1.10 2008/10/13 19:42:48 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -147,7 +147,7 @@ extern unsigned short* cff_get_ft_to_gid(cff_font *cff);
 extern int   cff_match_string  (cff_font *cff, const char *str, s_SID sid);
 extern char *cff_get_string    (cff_font *cff, s_SID id);
 extern long  cff_get_sid       (cff_font *cff, char *str);
-extern s_SID cff_add_string    (cff_font *cff, char *str);
+extern s_SID cff_add_string    (cff_font *cff, const char *str, int unique);
 extern void  cff_update_string (cff_font *cff);
 
 #define cff_is_stdstr(s) (cff_get_sid(NULL, (s)) >= 0)

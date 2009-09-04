@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.28 2008/08/06 00:10:45 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.30 2009/08/28 00:26:17 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -211,7 +211,7 @@ add_SimpleMetrics (pdf_font *font, cff_font *cffont,
         else
           width = 1000. * tfm_get_width(tfm_id, code);
 	pdf_add_array(tmp_array,
-		      pdf_new_number(ROUND(width, 1.0)));
+		      pdf_new_number(ROUND(width, 0.1)));
       } else {
 	pdf_add_array(tmp_array, pdf_new_number(0.0));
       }
@@ -477,7 +477,12 @@ pdf_font_load_type1c (pdf_font *font)
      *  cff_add_string(cff, ...) -> cff_string_add(string, ...).
      */
     sid_orig = cff_get_sid   (cffont, enc_vec[code]);
-    sid      = cff_add_string(cffont, enc_vec[code]);
+    sid      = sid_orig < CFF_STDSTR_MAX ?
+                 sid_orig : cff_add_string(cffont, enc_vec[code], 0);
+    /*
+     * We use "unique = 0" because duplicate strings are impossible
+     * at this stage unless the original font already had duplicates.
+     */
 
     /*
      * Check if multiply-encoded glyph.

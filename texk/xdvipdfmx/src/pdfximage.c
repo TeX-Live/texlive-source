@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.21 2008/05/29 13:43:51 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.22 2009/03/12 19:29:48 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -842,7 +842,8 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     }
   }
 #endif
-  error = dpx_file_apply_filter(distiller_template, filename, temp);
+  error = dpx_file_apply_filter(distiller_template, filename, temp,
+                               (unsigned char) pdf_get_version());
   if (error) {
     WARN("Image format conversion for \"%s\" failed...", filename);
     dpx_delete_temp_file(temp);

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.10 2008/05/22 11:03:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/truetype.c,v 1.11 2009/08/28 00:26:17 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -261,7 +261,7 @@ do_widths (pdf_font *font, double *widths)
       else
         width = 1000. * tfm_get_width(tfm_id, code);
       pdf_add_array(tmparray,
-                    pdf_new_number(ROUND(width, 1.0)));
+                    pdf_new_number(ROUND(width, 0.1)));
     } else {
       pdf_add_array(tmparray, pdf_new_number(0.0));
     }

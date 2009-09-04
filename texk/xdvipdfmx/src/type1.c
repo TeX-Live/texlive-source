@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.44 2008/08/31 18:42:39 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.46 2009/08/28 00:26:17 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -335,7 +335,7 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
         else
           width = 1000. * tfm_get_width(tfm_id, code);
 	pdf_add_array(tmp_array,
-		      pdf_new_number(ROUND(width, 1.0)));
+		      pdf_new_number(ROUND(width, 0.1)));
       } else {
 	pdf_add_array(tmp_array, pdf_new_number(0.0));
       }
@@ -631,7 +631,7 @@ pdf_font_load_type1 (pdf_font *font)
 	  break;
       }
 
-      sid = cff_add_string(cffont, glyph); /* FIXME */
+      sid = cff_add_string(cffont, glyph, 1); /* FIXME */
       if (duplicate < code) { /* found duplicates */
 	cffont->encoding->supp[cffont->encoding->num_supps].code  = duplicate;
 	cffont->encoding->supp[cffont->encoding->num_supps].glyph = sid;

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.11 2008/01/11 18:04:15 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/t1_load.c,v 1.13 2009/04/08 03:10:58 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -59,13 +59,8 @@
 
 #if  0
 /* We no longer need encryption. */
-static unsigned char  t1_encrypt    (unsigned char  plain);
-#endif /* 0 */
-static void           t1_crypt_init (unsigned short key);
-static unsigned char  t1_decrypt    (unsigned char  cipher);
 static unsigned short r = T1_EEKEY, c1 = 52845, c2 = 22719;
 
-#if  0
 static unsigned char t1_encrypt (unsigned char plain)
 {
   unsigned char cipher;
@@ -73,19 +68,26 @@ static unsigned char t1_encrypt (unsigned char plain)
   r = (cipher + r) * c1 + c2;
   return cipher;
 }
-#endif /* 0 */
 
 static void t1_crypt_init (unsigned short key)
 {
   r = key;
 }
+#endif /* 0 */
 
-static unsigned char t1_decrypt (unsigned char cipher)
+static void
+t1_decrypt (unsigned short key,
+	    unsigned char *dst, const unsigned char *src,
+	    long skip, long len)
 {
-  unsigned char plain;
-  plain = (cipher ^ (r >> 8));
-  r = (cipher + r) * c1 + c2;
-  return plain;
+  len -= skip;
+  while (skip--)
+    key = (key + *src++) * 52845u + 22719u;
+  while (len--) {
+    unsigned char c = *src++;
+    *dst++ = (c ^ (key >> 8));
+    key = (key + c) * 52845u + 22719u;
+  }
 }
 /* T1CRYPT */
 
@@ -549,17 +551,9 @@ parse_subrs (cff_font *font,
 	data = RENEW(data, max_size, card8);
       }
       if (lenIV >= 0) {
-	long j;
-
+	t1_decrypt(T1_CHARKEY, data+offset, *start, lenIV, len);
 	offsets[idx] = offset;
-	lengths[idx] = len - lenIV;
-	t1_crypt_init(T1_CHARKEY);
-	for (j = 0; j < lenIV; j++)
-	  t1_decrypt(*((*start)+j));
-	for (j = lenIV; j < len  ; j++) {
-	  data[offset] = (card8) t1_decrypt(*((*start)+j));
-	  offset++;
-	}
+	offset += (lengths[idx] = len - lenIV);
       } else if (len > 0) {
 	offsets[idx] = offset;
 	lengths[idx] = len;
@@ -688,7 +682,12 @@ parse_charstrings (cff_font *font,
 #endif
 
     if (gid > 0)
-      charset->data.glyphs[gid-1] = cff_add_string(font, glyph_name);
+      charset->data.glyphs[gid-1] = cff_add_string(font, glyph_name, 0);
+    /*
+     * We don't care about duplicate strings here since
+     * later a subset font of this font will be generated.
+     */
+
     RELEASE(glyph_name);
 
     tok = pst_get_token(start, end);
@@ -735,20 +734,9 @@ parse_charstrings (cff_font *font,
     *start += 1;
     if (mode != 1) {
       if (lenIV >= 0) {
-	t1_crypt_init(T1_CHARKEY);
-	for (j = 0; j < lenIV; j++)
-	  t1_decrypt(*((*start)+j));
-	if (gid == 0) {
-	  charstrings->offset[gid] = 1; /* start at 1 */
-	  for (j = lenIV; j < len; j++) {
-	    charstrings->data[j-lenIV] = t1_decrypt(*((*start)+j));
-	  }
-	} else {
-	  charstrings->offset[gid] = offset + 1; /* start at 1 */
-	  for (j = lenIV; j < len; j++) {
-	    charstrings->data[offset+j-lenIV] = t1_decrypt(*((*start)+j));
-	  }
-	}
+	long offs = gid ? offset : 0;
+	charstrings->offset[gid] = offs + 1; /* start at 1 */
+	t1_decrypt(T1_CHARKEY, charstrings->data+offs, *start, lenIV, len);
 	offset += len - lenIV;
       } else {
 	if (gid == 0) {
@@ -970,7 +958,11 @@ parse_part1 (cff_font *font, char **enc_vec,
 
 	cff_dict_add(font->topdict, key, 1);
 	if ((sid = cff_get_sid(font, strval)) == CFF_STRING_NOTDEF)
-	  sid = cff_add_string(font, strval); /* FIXME */
+	  sid = cff_add_string(font, strval, 0); /* FIXME */
+	/*
+	 * We don't care about duplicate strings here since
+	 * later a subset font of this font will be generated.
+	 */
 	cff_dict_set(font->topdict, key, 0, sid);
       }
       RELEASE(strval);
@@ -1207,12 +1199,7 @@ t1_load_font (char **enc_vec, int mode, FILE *fp)
     ERROR("Reading PFB (BINARY part) file failed.");
     return NULL;
   } else {
-    long i;
-
-    t1_crypt_init(T1_EEKEY);
-    for (i = 0; i < length; i++) {
-      buffer[i] = (unsigned char) t1_decrypt(buffer[i]);
-    }
+    t1_decrypt(T1_EEKEY, buffer, buffer, 0, length);
   }
   start = buffer + 4; end = buffer + length;
   if (parse_part2(cff, &start, end, mode) < 0) {

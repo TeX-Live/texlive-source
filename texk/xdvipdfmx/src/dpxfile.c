@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.24 2008/05/22 10:08:02 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxfile.c,v 1.25 2009/03/12 19:29:48 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -668,7 +668,7 @@ dpx_create_temp_file (void)
   }
 #elif defined(HAVE_MKSTEMP)
 #  define __TMPDIR     "/tmp"
-#  define TEMPLATE     "/dvipdfmx.XXXXXX"
+#  define TEMPLATE     "/dvipdfmx.XXXXXXXX"
   {
     char *_tmpd;
     int   _fd = -1;
@@ -726,7 +726,9 @@ dpx_delete_temp_file (char *tmp)
  * Please modify as appropriate (see also pdfximage.c and dvipdfmx.c).
  */
 int
-dpx_file_apply_filter (const char *cmdtmpl, const char *input, const char *output)
+dpx_file_apply_filter (const char *cmdtmpl,
+                      const char *input, const char *output,
+                      unsigned char version)
 {
   char   *cmd = NULL;
   char   *p, *q;
@@ -767,6 +769,13 @@ if ((l) + (n) >= (m)) { \
         } else {
           strcpy(cmd + n, input); n += strlen(input);
         }
+      case  'v': /* Version number, e.g. 1.4 */ {
+       char buf[6];
+       sprintf(buf, "1.%hhu", version);
+       need(cmd, n, size, strlen(buf));
+       strcpy(cmd + n, buf);  n += strlen(buf);
+       break;
+      }
       case  0:
         break;
       case '%':
