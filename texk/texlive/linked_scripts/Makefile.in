@@ -551,14 +551,14 @@ install-links:
 	@cd $(DESTDIR)$(bindir) && \
 	  for s in $(nobase_dist_scriptx_SCRIPTS); do \
 	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-	    target=$$target; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf/scripts/$$s $$target; \
 	  done && \
 	  for s in $(nobase_dist_script_SCRIPTS); do \
-	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-	    target=$$target; \
+	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
+	    echo "$$s" | grep listings-ext.sh >/dev/null \
+	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target; \

@@ -1,3 +1,8 @@
+2009-09-05  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (install-links): we want listings-ext.sh in the
+	bindir, not just listings-ext.
+
 2009-08-28  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): remove exatools

@@ -91,13 +91,13 @@ nobase_dist_script_SCRIPTS = \
 
 ## The idea is to install the scripts themselves in texmf*/scripts, and
 ## have bin/arch/foo be a symlink to, say,
-## ../../texmf/scripts/foo/foo.pl.  That way we save a bit of disk space,
-## but more importantly omit duplication, and most importantly make it
-## possible to invoke the same Perl script on Windows (via
-## tl-w32-wrapper.texlua).
+## ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk space,
+## but much more importantly omit duplication, and most importantly of
+## all make it possible to invoke the same Perl script on Windows (via
+## tl-w32-wrapper).
 ##
 ## The installation into texmf*/scripts is ideally done with ctan2tl.
-## The copy of the texlua wrapper for Windows is also done by hand, but
+## The copy of the wrapper for Windows is also done by hand, but
 ## could/should also be done by ctan2tl.  The check-wrapper-consistency
 ## script at least checks after the fact for problems.
 ##
@@ -108,6 +108,7 @@ nobase_dist_script_SCRIPTS = \
 ## with the masters in Master/texmf*/scripts, but it will happen.
 ##
 ## We support both multiplatform and non-multiplatform builds.
+##
 install-data-hook:
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
@@ -116,21 +117,22 @@ install-data-hook:
 	     exit 1;; \
 	esac
 
-## Link to the basename, removing any extension,
-## downcase for the sake of TeXcount.pl -> texcount.
+## Name the link as the basename, removing any extension,
+## except for listings-ext.sh, which is documented as that name.
+## Downcase for the sake of TeXcount.pl -> texcount.
 .PHONY: install-links
 install-links:
 	@cd $(DESTDIR)$(bindir) && \
 	  for s in $(nobase_dist_scriptx_SCRIPTS); do \
 	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-	    target=$$target; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf/scripts/$$s $$target; \
 	  done && \
 	  for s in $(nobase_dist_script_SCRIPTS); do \
-	    target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-	    target=$$target; \
+	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
+	    echo "$$s" | grep listings-ext.sh >/dev/null \
+	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target; \
