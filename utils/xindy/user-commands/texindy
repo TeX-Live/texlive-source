@@ -367,6 +367,9 @@ if ( -f "$cmd_dir/xindy" && -x _ ) {
     $xindy = "$cmd_dir/xindy";
 } elsif ( -f "$cmd_dir/xindy.pl" && -x _ ) {
     $xindy = "$cmd_dir/xindy.pl";
+} elsif ( exists $ENV{"TL_ROOT"} && -f "$ENV{TL_ROOT}\\bin\\win32\\xindy.exe") {
+    $xindy = "$ENV{TL_ROOT}\\bin\\win32\\xindy.exe";
+    $cmd_dir = "$ENV{TL_ROOT}\\bin\\win32";
 } elsif ( -f "$ENV{SELFAUTOLOC}/xindy.bat" ) { # woe32
     $xindy = "$ENV{SELFAUTOLOC}/xindy.bat";
     $cmd_dir = $ENV{"SELFAUTOLOC"};
@@ -394,9 +397,9 @@ push (@opt, map { ('-M', $_) } ($ENV{TEXINDY_AUTO_MODULE} || 'texindy',
 				@modules));
 push (@opt, '-I', $input_markup);
 
-print "Calling xindy as: $cmd_dir/xindy @opt @ARGV\n"  if (grep /^script$/, @debug);
+print "Calling xindy as: $xindy @opt @ARGV\n"  if (grep /^script$/, @debug);
 
-if ($xindy =~ m,\.bat$,) {
+if ($xindy =~ m,\.(bat|exe)$,) {
   system($xindy, @opt, @ARGV);
   exit $? if $? != -1;
 } else {

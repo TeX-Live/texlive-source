@@ -306,7 +306,10 @@ BEGIN {
 	die "$cmd: Invalid XINDY_LIBDIR setting: cannot find $lib_dir/$xindy_run" if ! -f "$lib_dir/$xindy_run";
     } elsif ( -f "$cmd_dir/$xindy_run" ) { # texlive unix
 	$lib_dir = $cmd_dir;
-    } elsif ( exists $ENV{"SELFAUTOLOC"} && -f "$ENV{SELFAUTOLOC}/$xindy_run" ) { # texlive woe32
+    } elsif ( exists $ENV{"TL_ROOT"} && -f "$ENV{TL_ROOT}\\bin\\win32\\$xindy_run") { # TL2009 woe32
+	$lib_dir = "$ENV{TL_ROOT}\\bin\\win32";
+	$cmd_dir = "$ENV{TL_ROOT}\\bin\\win32";
+    } elsif ( exists $ENV{"SELFAUTOLOC"} && -f "$ENV{SELFAUTOLOC}/$xindy_run" ) { # TL2008 woe32
 	$lib_dir = $ENV{"SELFAUTOLOC"};
 	$cmd_dir = $ENV{"SELFAUTOLOC"};
     } elsif ( '@libdir@' ne '@libdir' . '@' ) { # GNU configure at work?
