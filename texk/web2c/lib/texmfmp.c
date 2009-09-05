@@ -1178,7 +1178,7 @@ string
 normalize_quotes (const_string name, const_string mesg)
 {
     int quote_char = 0;
-    boolean must_quote = (strchr(name, ' ') != NULL);
+    boolean must_quote = false;
     int len = strlen(name);
     /* Leave room for quotes and NUL. */
     string ret;
