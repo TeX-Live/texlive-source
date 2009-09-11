@@ -208,7 +208,7 @@ public:
     }
     Int i=Floor(t);
     t -= i;
-    if(t == 0) return dir(i,0);
+    if(t == 0) return dir(i,0,normalize);
     triple z0=point(i);
     triple c0=postcontrol(i);
     triple c1=precontrol(i+1);
@@ -366,6 +366,14 @@ double bound(double *p, double (*m)(double, double),
 double bound(triple *P, double (*m)(double, double),
              double (*f)(const triple&), double b, double fuzz,
              int depth=maxdepth);
+
+inline void store(Triple& control, const triple& v)
+{
+  control[0]=v.getx();
+  control[1]=v.gety();
+  control[2]=v.getz();
+}
+
 }
 
 #ifndef BROKEN_COMPILER

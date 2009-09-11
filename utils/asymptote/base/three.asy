@@ -22,6 +22,11 @@ real rendermargin=0.02;
 string defaultembed3Doptions;
 string defaultembed3Dscript;
 
+string partname(string s, int i=0) 
+{
+  return s == "" ? s : s+"-"+string(i);
+}
+
 triple O=(0,0,0);
 triple X=(1,0,0), Y=(0,1,0), Z=(0,0,1);
 
@@ -1972,21 +1977,25 @@ triple size3(frame f)
 include three_light;
 
 void draw(frame f, path3 g, material p=currentpen, light light=nolight,
-          projection P=currentprojection);
+          string name="", projection P=currentprojection);
 
-void begingroup3(picture pic=currentpicture)
+void begingroup3(picture pic=currentpicture, string name="")
 {
-  pic.add(new void(frame f, transform3, picture opic, projection) {
-      if(opic != null)
-        begingroup(opic);
+  pic.add(new void(frame f, transform3, picture pic, projection) {
+      if(is3D())
+        begingroup(f,name);
+      if(pic != null)
+        begingroup(pic);
     },true);
 }
 
 void endgroup3(picture pic=currentpicture)
 {
-  pic.add(new void(frame f, transform3, picture opic, projection) {
-      if(opic != null)
-        endgroup(opic);
+  pic.add(new void(frame f, transform3, picture pic, projection) {
+      if(is3D())
+        endgroup(f);
+      if(pic != null)
+        endgroup(pic);
     },true);
 }
 
@@ -2033,17 +2042,15 @@ pair max(frame f, projection P)
 
 void draw(picture pic=currentpicture, Label L="", path3 g,
           align align=NoAlign, material p=currentpen, margin3 margin=NoMargin3,
-          light light=nolight)
+          light light=nolight, string name="")
 {
   pen q=(pen) p;
   pic.add(new void(frame f, transform3 t, picture pic, projection P) {
       path3 G=margin(t*g,q).g;
       if(is3D()) {
-        draw(f,G,p,light,null);
-        if(pic != null && size(G) > 0) {
-          pic.addPoint(min(G,P));
-          pic.addPoint(max(G,P));
-        }
+        draw(f,G,p,light,name,null);
+        if(pic != null && size(G) > 0)
+          pic.addBox(min(G,P),max(G,P),min(q),max(q));
       }
       if(pic != null)
         draw(pic,project(G,P),q);
@@ -2060,7 +2067,8 @@ void draw(picture pic=currentpicture, Label L="", path3 g,
 include three_tube;
 
 draw=new void(frame f, path3 g, material p=currentpen,
-              light light=nolight, projection P=currentprojection) {
+              light light=nolight, string name="",
+              projection P=currentprojection) {
   pen q=(pen) p;
   if(is3D()) {
     p=material(p,(p.granularity >= 0) ? p.granularity : linegranularity);
@@ -2091,12 +2099,12 @@ draw=new void(frame f, path3 g, material p=currentpen,
               T.s.append(shift(point(g,L))*align(dirL)*cap);
             }
             if(opacity(q) == 1)
-              _draw(f,T.center,q);
+              _draw(f,T.center,q,name);
           }
           for(int i=0; i < T.s.s.length; ++i)
-            draw3D(f,T.s.s[i],p,light);
-        } else _draw(f,g,q);
-      } else _draw(f,g,q);
+            draw3D(f,T.s.s[i],p,light,partname(name,i));
+        } else _draw(f,g,q,name);
+      } else _draw(f,g,q,name);
     }
     string type=linetype(adjust(q,arclength(g),cyclic(g)));
     if(length(type) == 0) drawthick(g);
@@ -2123,15 +2131,16 @@ draw=new void(frame f, path3 g, material p=currentpen,
 };
 
 void draw(frame f, explicit path3[] g, material p=currentpen,
-          light light=nolight, projection P=currentprojection)
+          light light=nolight, string name="", projection P=currentprojection)
 {
-  for(int i=0; i < g.length; ++i) draw(f,g[i],p,light,P);
+  for(int i=0; i < g.length; ++i) draw(f,g[i],p,light,name,P);
 }
 
 void draw(picture pic=currentpicture, explicit path3[] g,
-          material p=currentpen, margin3 margin=NoMargin3, light light=nolight)
+          material p=currentpen, margin3 margin=NoMargin3, light light=nolight,
+          string name="")
 {
-  for(int i=0; i < g.length; ++i) draw(pic,g[i],p,margin,light);
+  for(int i=0; i < g.length; ++i) draw(pic,g[i],p,margin,light,name);
 }
 
 include three_arrows;
@@ -2139,23 +2148,23 @@ include three_arrows;
 void draw(picture pic=currentpicture, Label L="", path3 g, 
           align align=NoAlign, material p=currentpen, arrowbar3 arrow,
           arrowbar3 bar=None, margin3 margin=NoMargin3, light light=nolight,
-          light arrowheadlight=currentlight)
+          light arrowheadlight=currentlight, string name="")
 {
   begingroup3(pic);
   bool drawpath=arrow(pic,g,p,margin,light,arrowheadlight);
   if(bar(pic,g,p,margin,light,arrowheadlight) && drawpath)
-    draw(pic,L,g,align,p,margin,light);
+    draw(pic,L,g,align,p,margin,light,name);
   endgroup3(pic);
   label(pic,L,g,align,(pen) p);
 }
 
 void draw(frame f, path3 g, material p=currentpen, arrowbar3 arrow,
           light light=nolight, light arrowheadlight=currentlight,
-          projection P=currentprojection)
+          string name="", projection P=currentprojection)
 {
   picture pic;
   if(arrow(pic,g,p,NoMargin3,light,arrowheadlight))
-    draw(f,g,p,light,P);
+    draw(f,g,p,light,name,P);
   add(f,pic.fit());
 }
 
@@ -2297,7 +2306,7 @@ private string Format(real x)
   // Work around movie15.sty division by zero bug;
   // e.g. u=unit((1e-10,1e-10,0.9));
   if(abs(x) < 1e-9) x=0; 
-  assert(abs(x) < 1e18,"Number too large: "+string(x));
+  assert(abs(x) < 1e17,"Number too large: "+string(x));
   return format("%.18f",x,"C");
 }
 
@@ -2449,6 +2458,7 @@ struct scene
   projection P;
   bool adjusted;
   real width,height;
+  pair viewportmargin;
   transform3 T=identity4;
   picture pic2;
   
@@ -2510,7 +2520,7 @@ struct scene
       pair m2=pic2.min(s);
       pair M2=pic2.max(s);
       pair lambda=M2-m2;
-      pair viewportmargin=viewportmargin(lambda);
+      viewportmargin=viewportmargin(lambda);
       width=ceil(lambda.x+2*viewportmargin.x);
       height=ceil(lambda.y+2*viewportmargin.y);
 
@@ -2600,22 +2610,23 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
     Q=P.copy();
     light=modelview*light;
 
-    pair viewportmargin=viewportmargin;
     if(P.infinity) {
       triple m=min3(S.f);
       triple M=max3(S.f);
+
       triple lambda=M-m;
-      viewportmargin=viewportmargin((lambda.x,lambda.y));
+      S.viewportmargin=viewportmargin((lambda.x,lambda.y));
       S.width=lambda.x+2*viewportmargin.x;
       S.height=lambda.y+2*viewportmargin.y;
       S.f=shift((-0.5(m.x+M.x),-0.5*(m.y+M.y),0))*S.f; // Eye will be at (0,0,0)
     } else {
       if(P.angle == 0) {
-        Q.angle=P.angle=S.angle(P);
+        P.angle=S.angle(P);
         modelview=S.T*modelview;
-        if(viewportmargin.y != 0)
-          P.angle=2*aTan(Tan(0.5*P.angle)-viewportmargin.y/P.target.z);
+        if(S.viewportmargin.y != 0)
+          P.angle=2*aTan(Tan(0.5*P.angle)-S.viewportmargin.y/P.target.z);
       }
+      Q.angle=P.angle;
       if(settings.verbose > 0) {
         transform3 inv=inverse(modelview);
         if(S.adjusted) 
@@ -2661,7 +2672,7 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
     m=(m.x,m.y,zcenter-r);
 
     if(P.infinity) {
-      triple margin=(viewportmargin.x,viewportmargin.y,0);
+      triple margin=(S.viewportmargin.x,S.viewportmargin.y,0);
       M += margin; 
       m -= margin;
     } else if(M.z >= 0) abort("camera too close");

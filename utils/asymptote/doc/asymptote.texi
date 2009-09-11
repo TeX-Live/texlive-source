@@ -341,10 +341,10 @@ official source:
 @url{http://sourceforge.net/project/showfiles.php?group_id=120000}
 
 @noindent
-Note that many @code{MacOS X} (and FreeBSD) systems inexplicably ship
-with an extremely old @acronym{GNU} @code{readline} version (4.1,
-dated 21 March 2000). For full interactive functionality,
-@code{readline} version 4.2 or later (16 April 2001) is required.
+Note that many @code{MacOS X} (and FreeBSD) systems lack the
+@acronym{GNU} @code{readline} library. For full interactive
+functionality, @acronym{GNU} @code{readline} version 4.3 or later must
+be installed.
 
 @node Microsoft Windows
 @section Microsoft Windows
@@ -636,7 +636,7 @@ configure to look for header files and libraries in nonstandard locations:
 
 If you are compiling @code{Asymptote} with @code{gcc}, you will need a
 relatively recent version (e.g.@ 3.4.4 or later).  For full interactive
-functionality, you will need version 4.2 or later of the @acronym{GNU}
+functionality, you will need version 4.3 or later of the @acronym{GNU}
 @code{readline} library.
 The file @code{gcc3.3.2curses.patch} in the @code{patches} directory can
 be used to patch the broken curses.h header file (or a local copy thereof
@@ -2286,7 +2286,7 @@ two accelerations is returned.
 returns the acceleration of the path @code{p} at the point @code{t}.
 
 @cindex @code{radius}
-@item pair radius(path p, real t);
+@item real radius(path p, real t);
 returns the radius of curvature of the path @code{p} at the point @code{t}.
 
 @cindex @code{precontrol}
@@ -5906,7 +5906,7 @@ need to remove the files @code{latexusage-*}, @code{latexusage_.pre}, and
 One can specify @code{width}, @code{height},
 @code{viewportwidth}, @code{viewportheight}, and @code{attach}
 @code{keyval}-style options to the @code{asy} environment.
-The current version (1.09) of @code{asymptote.sty} supports the
+The current version (1.10) of @code{asymptote.sty} supports the
 embedding of 3D @acronym{PRC} files, either inline or, using the
 @code{attach} option with the @code{attachfile2} (or older
 @code{attachfile}) @code{LaTeX} package,
@@ -7405,16 +7405,18 @@ the routines
 @verbatim
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
-          light light=currentlight, light meshlight=light);
+          light light=currentlight, light meshlight=light, string name="");
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen meshpen,
-          light light=currentlight, light meshlight=light);
+          light light=currentlight, light meshlight=light, string name="");
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
-          light light=currentlight, light meshlight=light);
+          light light=currentlight, light meshlight=light, string name="");
 @end verbatim
 The parameters @code{nu} and @code{nv} specify the number of subdivisions
-for drawing optional mesh lines for each Bezier patch.
+for drawing optional mesh lines for each Bezier patch. The optional
+@code{name} parameter is used as a prefix for naming the surface
+patches in the @acronym{PRC} model tree.
 Here material is a structure defined in @code{three_light.asy}:
 @verbatim
 struct material {

@@ -14,7 +14,9 @@ LIBS = $(LFLAGS) @LIBS@ $(GCLIBS)
 CAMP = camperror path drawpath drawlabel picture psfile texfile util settings \
        guide flatguide knot drawfill path3 drawpath3 drawsurface
 
-RUNTIME_FILES = runtime backtrace
+RUNTIME_FILES = runtime runbacktrace runpicture runlabel runhistory runarray \
+	runfile runsystem runpair runtriple runpath runpath3d runstring \
+	runmath
 
 PRC =  prc/PRCbitStream prc/oPRCFile prc/PRCdouble prc/writePRC
 
@@ -66,7 +68,7 @@ latexdir = $(DESTDIR)@latexdir@
 contextdir = $(DESTDIR)@contextdir@
 INSTALL = @INSTALL@
 REVISION = "const char *SVN_REVISION="
-revision = `svn info 2>/dev/null | grep "Revision" | sed -e "s/Revision: \(.*\)/-r\1/"`
+revision = `svn info 2>/dev/null | grep 'Revision' | sed -e 's/Revision: \(.*\)/-r\1/'`
 last = `cat svnrevision.cc | sed -e 's/.*\"\(.*\)\";/\\1/'`
 
 export prefix docdir exampledir mandir infodir INSTALL MAKE DESTDIR TEXI2DVI

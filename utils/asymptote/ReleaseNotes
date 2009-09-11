@@ -1,3 +1,25 @@
+Release Notes for Version 1.86
+
+PRC polygons were optimized. Surface memory usage was reduced.
+The automatic sizing of NURBS surfaces was fixed. A bug in the radius of
+curvature computation at nodes was fixed. The configuration test for the
+GNU readline library was improved. The naming of PRC parts was implemented.
+
+Release Notes for Version 1.85
+
+Compilation is now supported again on platforms lacking OpenGL.
+Missing pen dimensions were added to a 3D picture sizing routine.
+The labelsurface routine was renamed to surface and extended to surfaces
+containing a single patch.
+
+Release Notes for Version 1.84
+
+The perspective PRC viewportmargin was fixed. Unwanted spaces were removed
+from (version 1.10 of) asymptote.sty. Support for drawing PRC and OpenGL
+NURBS surfaces was added. Obsolete code, including an unwanted inline
+qualifier, was removed. A split structure that can be adapted for splitting
+intersecting patches was added, along with the example splitpatch.asy.
+
 Release Notes for Version 1.83
 
 OpenGL animations, illustrated in glmovie.asy, were implemented. 

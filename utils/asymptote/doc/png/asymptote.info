@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 4.13 from
 ../asymptote.texi.
 
-This file documents `Asymptote', version 1.83.
+This file documents `Asymptote', version 1.86.
 
    `http://asymptote.sourceforge.net'
 
@@ -23,7 +23,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Up: (dir)
 Asymptote
 *********
 
-This file documents `Asymptote', version 1.83.
+This file documents `Asymptote', version 1.86.
 
    `http://asymptote.sourceforge.net'
 
@@ -311,10 +311,9 @@ source:
 
    `http://sourceforge.net/project/showfiles.php?group_id=120000'
 
-Note that many `MacOS X' (and FreeBSD) systems inexplicably ship with
-an extremely old GNU `readline' version (4.1, dated 21 March 2000). For
-full interactive functionality, `readline' version 4.2 or later (16
-April 2001) is required.
+Note that many `MacOS X' (and FreeBSD) systems lack the GNU `readline'
+library. For full interactive functionality, GNU `readline' version 4.3
+or later must be installed.
 
 
 File: asymptote.info,  Node: Microsoft Windows,  Next: Configuring,  Prev: MacOS X binary distributions,  Up: Installation
@@ -534,7 +533,7 @@ for header files and libraries in nonstandard locations:
 
    If you are compiling `Asymptote' with `gcc', you will need a
 relatively recent version (e.g. 3.4.4 or later).  For full interactive
-functionality, you will need version 4.2 or later of the GNU `readline'
+functionality, you will need version 4.3 or later of the GNU `readline'
 library.  The file `gcc3.3.2curses.patch' in the `patches' directory can
 be used to patch the broken curses.h header file (or a local copy
 thereof in the current directory) on some `AIX' and `IRIX' systems.
@@ -1820,7 +1819,7 @@ File: asymptote.info,  Node: Paths and guides,  Next: Pens,  Prev: Data types,  
     `pair accel(path p, real t);'
           returns the acceleration of the path `p' at the point `t'.
 
-    `pair radius(path p, real t);'
+    `real radius(path p, real t);'
           returns the radius of curvature of the path `p' at the point
           `t'.
 
@@ -4622,7 +4621,7 @@ remove the files `latexusage-*', `latexusage_.pre', and
 
    One can specify `width', `height', `viewportwidth',
 `viewportheight', and `attach' `keyval'-style options to the `asy'
-environment.  The current version (1.09) of `asymptote.sty' supports the
+environment.  The current version (1.10) of `asymptote.sty' supports the
 embedding of 3D PRC files, either inline or, using the `attach' option
 with the `attachfile2' (or older `attachfile') `LaTeX' package, as
 annotated (but printable) attachments. For many applications, the
@@ -6496,16 +6495,17 @@ containing an array of Bezier patches. Surfaces may drawn with one of
 the routines
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
-          light light=currentlight, light meshlight=light);
+          light light=currentlight, light meshlight=light, string name="");
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen meshpen,
-          light light=currentlight, light meshlight=light);
+          light light=currentlight, light meshlight=light, string name="");
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
-          light light=currentlight, light meshlight=light);
+          light light=currentlight, light meshlight=light, string name="");
  The parameters `nu' and `nv' specify the number of subdivisions for
-drawing optional mesh lines for each Bezier patch.  Here material is a
-structure defined in `three_light.asy':
+drawing optional mesh lines for each Bezier patch. The optional `name'
+parameter is used as a prefix for naming the surface patches in the PRC
+model tree.  Here material is a structure defined in `three_light.asy':
 struct material {
   pen[] p; // diffusepen,ambientpen,emissivepen,specularpen
   real opacity;
@@ -8234,7 +8234,7 @@ Index
 * 2D graphs:                             graph.               (line   6)
 * 3D graphs:                             graph3.              (line   6)
 * 3D grids:                              grid3.               (line   6)
-* 3D PostScript:                         three.               (line 525)
+* 3D PostScript:                         three.               (line 526)
 * 3D rendering:                          Compiling from UNIX source.
                                                               (line  16)
 * ::                                     Arithmetic & logical.
@@ -8263,7 +8263,7 @@ Index
 * abs <1>:                               Mathematical functions.
                                                               (line  35)
 * abs:                                   Data types.          (line  60)
-* accel <1>:                             three.               (line 455)
+* accel <1>:                             three.               (line 456)
 * accel:                                 Paths and guides.    (line 109)
 * access:                                Import.              (line   6)
 * acknowledgments:                       Credits.             (line   6)
@@ -8297,21 +8297,21 @@ Index
 * animation:                             animation.           (line   6)
 * annotate:                              annotate.            (line   6)
 * antialias <1>:                         Options.             (line 136)
-* antialias:                             three.               (line 198)
+* antialias:                             three.               (line 199)
 * antialiasing:                          Compiling from UNIX source.
                                                               (line  16)
 * append <1>:                            Arrays.              (line  39)
 * append:                                Files.               (line  36)
-* arc:                                   three.               (line 264)
+* arc:                                   three.               (line 265)
 * Arc:                                   Paths and guides.    (line  32)
 * arc:                                   Paths and guides.    (line  22)
 * ArcArrow:                              draw.                (line  26)
-* ArcArrow3:                             three.               (line 498)
+* ArcArrow3:                             three.               (line 499)
 * ArcArrows:                             draw.                (line  26)
-* ArcArrows3:                            three.               (line 498)
-* arclength <1>:                         three.               (line 455)
+* ArcArrows3:                            three.               (line 499)
+* arclength <1>:                         three.               (line 456)
 * arclength:                             Paths and guides.    (line 136)
-* arctime <1>:                           three.               (line 455)
+* arctime <1>:                           three.               (line 456)
 * arctime:                               Paths and guides.    (line 140)
 * arguments:                             Default arguments.   (line   6)
 * arithmetic operators:                  Arithmetic & logical.
@@ -8323,10 +8323,10 @@ Index
 * Arrow:                                 draw.                (line  26)
 * arrow:                                 Drawing commands.    (line  31)
 * arrow keys:                            Tutorial.            (line  21)
-* Arrow3:                                three.               (line 498)
+* Arrow3:                                three.               (line 499)
 * Arrows:                                draw.                (line  26)
 * arrows:                                draw.                (line  26)
-* Arrows3:                               three.               (line 498)
+* Arrows3:                               three.               (line 499)
 * as:                                    Import.              (line  70)
 * aSin:                                  Mathematical functions.
                                                               (line  20)
@@ -8353,7 +8353,7 @@ Index
 * atleast:                               Tutorial.            (line 165)
 * attach <1>:                            graph.               (line 405)
 * attach:                                LaTeX usage.         (line  32)
-* autoadjust:                            three.               (line 335)
+* autoadjust:                            three.               (line 336)
 * autoimport:                            Options.             (line 105)
 * automatic scaling:                     graph.               (line 672)
 * axialshade:                            fill.                (line  43)
@@ -8362,11 +8362,11 @@ Index
 * azimuth:                               Data types.          (line 124)
 * babel:                                 babel.               (line   6)
 * background color:                      Frames and pictures. (line 164)
-* BackView:                              three.               (line 362)
+* BackView:                              three.               (line 363)
 * Bar:                                   draw.                (line  19)
-* Bar3:                                  three.               (line 498)
+* Bar3:                                  three.               (line 499)
 * Bars:                                  draw.                (line  19)
-* Bars3:                                 three.               (line 498)
+* Bars3:                                 three.               (line 499)
 * barsize:                               draw.                (line  19)
 * base modules:                          Base modules.        (line   6)
 * basealign:                             Pens.                (line 165)
@@ -8374,25 +8374,25 @@ Index
 * batch mode:                            Tutorial.            (line  30)
 * beep:                                  Data types.          (line 335)
 * BeginArcArrow:                         draw.                (line  26)
-* BeginArcArrow3:                        three.               (line 498)
+* BeginArcArrow3:                        three.               (line 499)
 * BeginArrow:                            draw.                (line  26)
-* BeginArrow3:                           three.               (line 498)
+* BeginArrow3:                           three.               (line 499)
 * BeginBar:                              draw.                (line  19)
-* BeginBar3:                             three.               (line 498)
+* BeginBar3:                             three.               (line 499)
 * BeginDotMargin:                        draw.                (line  42)
-* BeginDotMargin3:                       three.               (line 514)
+* BeginDotMargin3:                       three.               (line 515)
 * BeginMargin:                           draw.                (line  42)
-* BeginMargin3:                          three.               (line 514)
+* BeginMargin3:                          three.               (line 515)
 * BeginPenMargin:                        draw.                (line  42)
-* BeginPenMargin2:                       three.               (line 514)
-* BeginPenMargin3:                       three.               (line 514)
+* BeginPenMargin2:                       three.               (line 515)
+* BeginPenMargin3:                       three.               (line 515)
 * BeginPoint:                            label.               (line  57)
 * Bessel:                                Mathematical functions.
                                                               (line  48)
 * bevel:                                 flowchart.           (line  68)
 * beveljoin:                             Pens.                (line 135)
 * Bezier:                                Tutorial.            (line 115)
-* bezulate:                              three.               (line  98)
+* bezulate:                              three.               (line  99)
 * Bi:                                    Mathematical functions.
                                                               (line  48)
 * Bi_deriv:                              Mathematical functions.
@@ -8420,11 +8420,11 @@ Index
                                                               (line   6)
 * Bottom:                                graph.               (line 128)
 * BottomTop:                             graph.               (line 134)
-* BottomView:                            three.               (line 362)
+* BottomView:                            three.               (line 363)
 * bounding box:                          Frames and pictures. (line 164)
 * Bounds:                                graph3.              (line  20)
 * boutput:                               Files.               (line  71)
-* box <1>:                               three.               (line 286)
+* box <1>:                               three.               (line 287)
 * box:                                   Frames and pictures. (line  22)
 * bp:                                    Tutorial.            (line  17)
 * break:                                 Programming.         (line  29)
@@ -8446,7 +8446,7 @@ Index
 * cd:                                    Files.               (line  24)
 * ceil:                                  Mathematical functions.
                                                               (line  26)
-* center:                                three.               (line 319)
+* center:                                three.               (line 320)
 * Center:                                label.               (line  62)
 * checker:                               Pens.                (line 248)
 * Chinese:                               unicode.             (line  12)
@@ -8455,7 +8455,7 @@ Index
 * Ci:                                    Mathematical functions.
                                                               (line  48)
 * circle <1>:                            flowchart.           (line  57)
-* circle:                                three.               (line 260)
+* circle:                                three.               (line 261)
 * Circle:                                Paths and guides.    (line  17)
 * circle:                                Paths and guides.    (line  10)
 * circlebarframe:                        markers.             (line  18)
@@ -8526,7 +8526,7 @@ Index
 * curl:                                  Tutorial.            (line 172)
 * curlSpecifier:                         Paths and guides.    (line 386)
 * currentpen:                            Pens.                (line   6)
-* currentprojection:                     three.               (line 359)
+* currentprojection:                     three.               (line 360)
 * curve:                                 slopefield.          (line  20)
 * custom axis types:                     graph.               (line 138)
 * custom mark routine:                   graph.               (line 566)
@@ -8534,7 +8534,7 @@ Index
 * cut:                                   Paths and guides.    (line 232)
 * cycle <1>:                             three.               (line   6)
 * cycle:                                 Tutorial.            (line  46)
-* cyclic <1>:                            three.               (line 455)
+* cyclic <1>:                            three.               (line 456)
 * cyclic <2>:                            Arrays.              (line  39)
 * cyclic:                                Paths and guides.    (line  74)
 * Cyrillic:                              unicode.             (line   7)
@@ -8550,7 +8550,7 @@ Index
 * default arguments:                     Default arguments.   (line   6)
 * defaultformat:                         graph.               (line 169)
 * DefaultHead:                           draw.                (line  26)
-* DefaultHead3:                          three.               (line 498)
+* DefaultHead3:                          three.               (line 499)
 * defaultpen:                            Pens.                (line  46)
 * deferred drawing:                      simplex.             (line   6)
 * Degrees:                               Mathematical functions.
@@ -8564,7 +8564,7 @@ Index
 * diagonal:                              Arrays.              (line 302)
 * diamond:                               flowchart.           (line  50)
 * dimension:                             Arrays.              (line 366)
-* dir <1>:                               three.               (line 455)
+* dir <1>:                               three.               (line 456)
 * dir <2>:                               Paths and guides.    (line  98)
 * dir <3>:                               Data types.          (line  85)
 * dir:                                   Search paths.        (line  10)
@@ -8577,11 +8577,11 @@ Index
 * dot <1>:                               Data types.          (line  98)
 * dot:                                   draw.                (line  83)
 * DotMargin:                             draw.                (line  42)
-* DotMargin3:                            three.               (line 514)
+* DotMargin3:                            three.               (line 515)
 * DotMargins:                            draw.                (line  42)
-* DotMargins3:                           three.               (line 514)
+* DotMargins3:                           three.               (line 515)
 * dotted:                                Pens.                (line  92)
-* double deferred drawing:               three.               (line 241)
+* double deferred drawing:               three.               (line 242)
 * double precision:                      Files.               (line  71)
 * Draw:                                  Frames and pictures. (line 147)
 * draw:                                  draw.                (line 110)
@@ -8607,19 +8607,19 @@ Index
 * embed:                                 embed.               (line   6)
 * empty:                                 Frames and pictures. (line   7)
 * EndArcArrow:                           draw.                (line  26)
-* EndArcArrow3:                          three.               (line 498)
+* EndArcArrow3:                          three.               (line 499)
 * EndArrow:                              draw.                (line  26)
-* EndArrow3:                             three.               (line 498)
+* EndArrow3:                             three.               (line 499)
 * EndBar:                                draw.                (line  19)
-* EndBar3:                               three.               (line 498)
+* EndBar3:                               three.               (line 499)
 * EndDotMargin:                          draw.                (line  42)
-* EndDotMargin3:                         three.               (line 514)
+* EndDotMargin3:                         three.               (line 515)
 * endl:                                  Files.               (line  59)
 * EndMargin:                             draw.                (line  42)
-* EndMargin3:                            three.               (line 514)
+* EndMargin3:                            three.               (line 515)
 * EndPenMargin:                          draw.                (line  42)
-* EndPenMargin2:                         three.               (line 514)
-* EndPenMargin3:                         three.               (line 514)
+* EndPenMargin2:                         three.               (line 515)
+* EndPenMargin3:                         three.               (line 515)
 * EndPoint:                              label.               (line  57)
 * envelope:                              Frames and pictures. (line  22)
 * environment variables:                 Configuring.         (line  86)
@@ -8656,12 +8656,12 @@ Index
 * extension <1>:                         MetaPost.            (line  10)
 * extension:                             Paths and guides.    (line 227)
 * external:                              embed.               (line  28)
-* extrude:                               three.               (line 449)
+* extrude:                               three.               (line 450)
 * F:                                     Mathematical functions.
                                                               (line  48)
 * fabs:                                  Mathematical functions.
                                                               (line   6)
-* face:                                  three.               (line 533)
+* face:                                  three.               (line 534)
 * factorial:                             Mathematical functions.
                                                               (line  39)
 * Fedora:                                UNIX binary distributions.
@@ -8705,7 +8705,7 @@ Index
 * freeglut:                              Compiling from UNIX source.
                                                               (line  16)
 * from:                                  Import.              (line  17)
-* FrontView:                             three.               (line 362)
+* FrontView:                             three.               (line 363)
 * function declarations:                 Functions.           (line  67)
 * function shading:                      fill.                (line  95)
 * Function shading:                      fill.                (line  95)
@@ -8724,7 +8724,7 @@ Index
 * getstring:                             Files.               (line 114)
 * gettriple:                             Files.               (line 114)
 * glOptions <1>:                         Options.             (line 124)
-* glOptions:                             three.               (line 198)
+* glOptions:                             three.               (line 199)
 * GNU Scientific Library:                Mathematical functions.
                                                               (line  48)
 * gouraudshade:                          fill.                (line  58)
@@ -8761,14 +8761,14 @@ Index
 * hex:                                   Data types.          (line 279)
 * hexidecimal <1>:                       Pens.                (line  59)
 * hexidecimal:                           Data types.          (line 279)
-* hidden surface removal:                three.               (line 533)
+* hidden surface removal:                three.               (line 534)
 * histogram:                             Mathematical functions.
                                                               (line  39)
 * history <1>:                           Interactive mode.    (line  37)
 * history:                               Files.               (line 139)
 * historylines:                          Interactive mode.    (line  42)
 * HookHead:                              draw.                (line  26)
-* HookHead3:                             three.               (line 498)
+* HookHead3:                             three.               (line 499)
 * Horizontal:                            flowchart.           (line  74)
 * hypot:                                 Mathematical functions.
                                                               (line   6)
@@ -8776,7 +8776,7 @@ Index
                                                               (line  48)
 * i_scaled:                              Mathematical functions.
                                                               (line  48)
-* iconic:                                three.               (line 198)
+* iconic:                                three.               (line 199)
 * identity <1>:                          Arrays.              (line 299)
 * identity <2>:                          Mathematical functions.
                                                               (line   6)
@@ -8815,22 +8815,22 @@ Index
 * interp:                                Arithmetic & logical.
                                                               (line  76)
 * interpolate:                           interpolate.         (line   6)
-* intersect <1>:                         three.               (line 455)
+* intersect <1>:                         three.               (line 456)
 * intersect <2>:                         math.                (line  13)
 * intersect:                             Paths and guides.    (line 175)
-* intersectionpoint <1>:                 three.               (line 455)
+* intersectionpoint <1>:                 three.               (line 456)
 * intersectionpoint <2>:                 math.                (line  17)
 * intersectionpoint:                     Paths and guides.    (line 219)
-* intersectionpoints <1>:                three.               (line 455)
+* intersectionpoints <1>:                three.               (line 456)
 * intersectionpoints:                    Paths and guides.    (line 223)
-* intersections <1>:                     three.               (line 455)
+* intersections <1>:                     three.               (line 456)
 * intersections:                         Paths and guides.    (line 186)
 * InTicks:                               graph3.              (line  34)
 * intMax:                                Data types.          (line  28)
 * intMin:                                Data types.          (line  28)
 * inverse <1>:                           Arrays.              (line 305)
 * inverse:                               Transforms.          (line  16)
-* invert:                                three.               (line 388)
+* invert:                                three.               (line 389)
 * invisible:                             Pens.                (line  39)
 * J:                                     Mathematical functions.
                                                               (line   6)
@@ -8841,7 +8841,7 @@ Index
                                                               (line  48)
 * Kate:                                  Editing modes.       (line  49)
 * KDE editor:                            Editing modes.       (line  49)
-* keyboard bindings::                    three.               (line 163)
+* keyboard bindings::                    three.               (line 164)
 * keys:                                  Arrays.              (line  39)
 * keywords:                              Named arguments.     (line   6)
 * Korean:                                unicode.             (line  12)
@@ -8869,13 +8869,13 @@ Index
 * LeftRight:                             graph.               (line 280)
 * LeftSide:                              label.               (line  62)
 * LeftTicks:                             graph.               (line 155)
-* LeftView:                              three.               (line 362)
+* LeftView:                              three.               (line 363)
 * legend <1>:                            graph.               (line 421)
 * legend <2>:                            draw.                (line  64)
 * legend:                                Drawing commands.    (line  31)
 * Legendre:                              Mathematical functions.
                                                               (line  48)
-* length <1>:                            three.               (line 455)
+* length <1>:                            three.               (line 456)
 * length <2>:                            Arrays.              (line  39)
 * length <3>:                            Paths and guides.    (line  65)
 * length:                                Data types.          (line  60)
@@ -8915,10 +8915,10 @@ Index
 * makepen:                               Pens.                (line 297)
 * map:                                   Arrays.              (line 141)
 * Margin:                                draw.                (line  42)
-* Margin3:                               three.               (line 514)
-* margins:                               three.               (line 247)
+* Margin3:                               three.               (line 515)
+* margins:                               three.               (line 248)
 * Margins:                               draw.                (line  42)
-* Margins3:                              three.               (line 514)
+* Margins3:                              three.               (line 515)
 * mark:                                  graph.               (line 474)
 * markangle:                             markers.             (line  38)
 * marker:                                graph.               (line 474)
@@ -8928,14 +8928,14 @@ Index
 * math:                                  math.                (line   6)
 * mathematical functions:                Mathematical functions.
                                                               (line   6)
-* max <1>:                               three.               (line 455)
+* max <1>:                               three.               (line 456)
 * max <2>:                               Arrays.              (line 228)
 * max <3>:                               Frames and pictures. (line   7)
 * max:                                   Paths and guides.    (line 259)
 * maxbound:                              Data types.          (line 104)
-* maxtile:                               three.               (line 198)
+* maxtile:                               three.               (line 199)
 * maxtimes:                              Paths and guides.    (line 214)
-* maxviewport:                           three.               (line 198)
+* maxviewport:                           three.               (line 199)
 * MetaPost:                              MetaPost.            (line   6)
 * MetaPost ... :                         Tutorial.            (line 176)
 * MetaPost cutafter:                     Paths and guides.    (line 247)
@@ -8944,12 +8944,12 @@ Index
 * MetaPost whatever:                     MetaPost.            (line  10)
 * Microsoft Windows:                     Microsoft Windows.   (line   6)
 * MidArcArrow:                           draw.                (line  26)
-* MidArcArrow3:                          three.               (line 498)
+* MidArcArrow3:                          three.               (line 499)
 * MidArrow:                              draw.                (line  26)
-* MidArrow3:                             three.               (line 498)
+* MidArrow3:                             three.               (line 499)
 * midpoint:                              Paths and guides.    (line 160)
 * MidPoint:                              label.               (line  57)
-* min <1>:                               three.               (line 455)
+* min <1>:                               three.               (line 456)
 * min <2>:                               Arrays.              (line 221)
 * min <3>:                               Frames and pictures. (line   7)
 * min:                                   Paths and guides.    (line 255)
@@ -8961,10 +8961,10 @@ Index
 * mm:                                    Tutorial.            (line  63)
 * mode:                                  Files.               (line  85)
 * mouse:                                 GUI.                 (line   6)
-* mouse bindings:                        three.               (line 131)
+* mouse bindings:                        three.               (line 132)
 * Move:                                  Pens.                (line 336)
 * MoveQuiet:                             Pens.                (line 342)
-* multisample:                           three.               (line 121)
+* multisample:                           three.               (line 122)
 * multisampling:                         Compiling from UNIX source.
                                                               (line  16)
 * N:                                     Tutorial.            (line  94)
@@ -8982,10 +8982,10 @@ Index
 * NoFill <1>:                            Frames and pictures. (line 141)
 * NoFill:                                draw.                (line  26)
 * NoMargin:                              draw.                (line  42)
-* NoMargin3:                             three.               (line 514)
+* NoMargin3:                             three.               (line 515)
 * none:                                  Files.               (line  59)
 * None:                                  draw.                (line  19)
-* normal:                                three.               (line 441)
+* normal:                                three.               (line 442)
 * nosafe:                                Options.             (line 152)
 * NOT:                                   Arithmetic & logical.
                                                               (line  80)
@@ -8994,19 +8994,19 @@ Index
 * null:                                  Structures.          (line   6)
 * nullpen <1>:                           Frames and pictures. (line 127)
 * nullpen:                               label.               (line  14)
-* NURBS:                                 three.               (line 339)
-* O:                                     three.               (line 255)
+* NURBS:                                 three.               (line 340)
+* O:                                     three.               (line 256)
 * obj:                                   obj.                 (line   9)
-* oblique:                               three.               (line 300)
-* obliqueX:                              three.               (line 308)
-* obliqueY:                              three.               (line 315)
-* obliqueZ:                              three.               (line 300)
+* oblique:                               three.               (line 301)
+* obliqueX:                              three.               (line 309)
+* obliqueY:                              three.               (line 316)
+* obliqueZ:                              three.               (line 301)
 * ode:                                   ode.                 (line   9)
 * offset <1>:                            Options.             (line 157)
 * offset:                                Pens.                (line 112)
 * opacity:                               Pens.                (line 219)
 * open:                                  Files.               (line  11)
-* OpenGL:                                three.               (line 121)
+* OpenGL:                                three.               (line 122)
 * operator:                              User-defined operators.
                                                               (line   6)
 * operator --:                           graph.               (line  31)
@@ -9021,8 +9021,8 @@ Index
 * OR:                                    Arithmetic & logical.
                                                               (line  80)
 * orientation:                           Frames and pictures. (line  95)
-* orthographic:                          three.               (line 319)
-* outformat:                             three.               (line 121)
+* orthographic:                          three.               (line 320)
+* outformat:                             three.               (line 122)
 * outprefix:                             Frames and pictures. (line  83)
 * output <1>:                            Options.             (line 136)
 * output:                                Files.               (line  36)
@@ -9041,7 +9041,7 @@ Index
 * paperwidth:                            Configuring.         (line  61)
 * parametric surface:                    graph3.              (line 100)
 * parametrized curve:                    graph.               (line 626)
-* patch-dependent colors:                three.               (line  75)
+* patch-dependent colors:                three.               (line  76)
 * path <1>:                              flowchart.           (line  74)
 * path <2>:                              three.               (line  43)
 * path:                                  Paths and guides.    (line   7)
@@ -9055,30 +9055,30 @@ Index
 * pdfviewerOptions:                      Options.             (line 124)
 * pen:                                   Pens.                (line   6)
 * PenMargin:                             draw.                (line  42)
-* PenMargin2:                            three.               (line 514)
-* PenMargin3:                            three.               (line 514)
+* PenMargin2:                            three.               (line 515)
+* PenMargin3:                            three.               (line 515)
 * PenMargins:                            draw.                (line  42)
-* PenMargins2:                           three.               (line 514)
-* PenMargins3:                           three.               (line 514)
+* PenMargins2:                           three.               (line 515)
+* PenMargins3:                           three.               (line 515)
 * perpendicular:                         geometry.            (line   6)
-* perspective:                           three.               (line 339)
+* perspective:                           three.               (line 340)
 * picture:                               Frames and pictures. (line  35)
 * picture alignment:                     Frames and pictures. (line 205)
 * piecewisestraight:                     Paths and guides.    (line  81)
 * Pl:                                    Mathematical functions.
                                                               (line  48)
 * plain:                                 plain.               (line   6)
-* planar:                                three.               (line  83)
-* plane:                                 three.               (line 282)
-* planeproject:                          three.               (line 438)
-* point <1>:                             three.               (line 455)
+* planar:                                three.               (line  84)
+* plane:                                 three.               (line 283)
+* planeproject:                          three.               (line 439)
+* point <1>:                             three.               (line 456)
 * point:                                 Paths and guides.    (line  84)
 * polar:                                 Data types.          (line 119)
 * polargraph:                            graph.               (line  90)
 * polygon:                               graph.               (line 474)
 * pop:                                   Arrays.              (line  39)
 * Portrait:                              Frames and pictures. (line  95)
-* postcontrol <1>:                       three.               (line 455)
+* postcontrol <1>:                       three.               (line 456)
 * postcontrol:                           Paths and guides.    (line 129)
 * postfix operators:                     Self & prefix operators.
                                                               (line  19)
@@ -9087,9 +9087,9 @@ Index
 * PostScript subpath:                    Tutorial.            (line 197)
 * pow10:                                 Mathematical functions.
                                                               (line   6)
-* prc:                                   three.               (line 216)
+* prc:                                   three.               (line 217)
 * precision:                             Files.               (line  89)
-* precontrol <1>:                        three.               (line 455)
+* precontrol <1>:                        three.               (line 456)
 * precontrol:                            Paths and guides.    (line 122)
 * prefix operators:                      Self & prefix operators.
                                                               (line   6)
@@ -9115,7 +9115,7 @@ Index
 * radialshade:                           fill.                (line  49)
 * radians:                               Mathematical functions.
                                                               (line  17)
-* radius <1>:                            three.               (line 455)
+* radius <1>:                            three.               (line 456)
 * radius:                                Paths and guides.    (line 118)
 * Rainbow:                               palette.             (line  12)
 * rand:                                  Mathematical functions.
@@ -9142,14 +9142,14 @@ Index
                                                               (line   6)
 * rename:                                Files.               (line 148)
 * render <1>:                            Options.             (line 136)
-* render:                                three.               (line 121)
+* render:                                three.               (line 122)
 * replace:                               Data types.          (line 252)
 * resetdefaultpen:                       Pens.                (line 350)
 * rest arguments:                        Rest arguments.      (line   6)
 * restore:                               Frames and pictures. (line 261)
 * restricted:                            Structures.          (line   6)
 * return:                                Debugger.            (line  48)
-* reverse <1>:                           three.               (line 455)
+* reverse <1>:                           three.               (line 456)
 * reverse <2>:                           Arrays.              (line 146)
 * reverse <3>:                           Paths and guides.    (line 163)
 * reverse:                               Data types.          (line 248)
@@ -9161,7 +9161,7 @@ Index
 * Right:                                 graph.               (line 277)
 * RightSide:                             label.               (line  62)
 * RightTicks:                            graph.               (line 155)
-* RightView:                             three.               (line 362)
+* RightView:                             three.               (line 363)
 * Rotate:                                label.               (line  37)
 * Rotate(pair z):                        label.               (line  40)
 * round:                                 Mathematical functions.
@@ -9178,13 +9178,13 @@ Index
 * safe:                                  Options.             (line 152)
 * save:                                  Frames and pictures. (line 258)
 * saveline:                              Files.               (line 131)
-* scale:                                 three.               (line 417)
+* scale:                                 three.               (line 418)
 * Scale:                                 graph.               (line 688)
 * scale <1>:                             graph.               (line 672)
 * scale <2>:                             Transforms.          (line  39)
 * scale:                                 Pens.                (line 112)
 * Scale:                                 label.               (line  46)
-* scale3:                                three.               (line 414)
+* scale3:                                three.               (line 415)
 * scaled graph:                          graph.               (line 653)
 * scientific graph:                      graph.               (line 386)
 * scroll:                                Files.               (line 105)
@@ -9206,12 +9206,12 @@ Index
 * sgn:                                   Mathematical functions.
                                                               (line  26)
 * shading:                               fill.                (line  32)
-* shift <1>:                             three.               (line 402)
+* shift <1>:                             three.               (line 403)
 * shift:                                 Transforms.          (line  27)
 * Shift:                                 label.               (line  34)
 * shiftless:                             Transforms.          (line  53)
 * shipout:                               Frames and pictures. (line  83)
-* showtarget:                            three.               (line 319)
+* showtarget:                            three.               (line 320)
 * Si:                                    Mathematical functions.
                                                               (line  48)
 * signedint:                             Files.               (line  71)
@@ -9229,10 +9229,10 @@ Index
 * sinh:                                  Mathematical functions.
                                                               (line   6)
 * size <1>:                              Options.             (line 136)
-* size <2>:                              three.               (line 455)
+* size <2>:                              three.               (line 456)
 * size <3>:                              Frames and pictures. (line  43)
 * size:                                  Paths and guides.    (line  70)
-* size3:                                 three.               (line 244)
+* size3:                                 three.               (line 245)
 * slant:                                 Transforms.          (line  45)
 * Slant:                                 label.               (line  43)
 * sleep:                                 Data types.          (line 329)
@@ -9261,7 +9261,7 @@ Index
 * step:                                  Debugger.            (line  39)
 * stickframe:                            markers.             (line  16)
 * stop:                                  Debugger.            (line  10)
-* straight:                              three.               (line 455)
+* straight:                              three.               (line 456)
 * Straight:                              graph.               (line  31)
 * straight:                              Paths and guides.    (line  77)
 * strftime:                              Data types.          (line 291)
@@ -9271,7 +9271,7 @@ Index
 * strptime:                              Data types.          (line 299)
 * struct:                                Structures.          (line   6)
 * structures:                            Structures.          (line   6)
-* subpath <1>:                           three.               (line 455)
+* subpath <1>:                           three.               (line 456)
 * subpath:                               Paths and guides.    (line 166)
 * subpictures:                           Frames and pictures. (line 103)
 * substr:                                Data types.          (line 244)
@@ -9294,7 +9294,7 @@ Index
                                                               (line   6)
 * tanh:                                  Mathematical functions.
                                                               (line   6)
-* target:                                three.               (line 319)
+* target:                                three.               (line 320)
 * tell:                                  Files.               (line  89)
 * tension <1>:                           three.               (line   6)
 * tension:                               Tutorial.            (line 165)
@@ -9307,7 +9307,7 @@ Index
 * TeX string:                            Data types.          (line 179)
 * texcommand:                            Configuring.         (line  67)
 * TeXHead:                               draw.                (line  26)
-* TeXHead3:                              three.               (line 498)
+* TeXHead3:                              three.               (line 499)
 * texpath <1>:                           label.               (line 116)
 * texpath:                               Configuring.         (line  67)
 * texpreamble:                           Frames and pictures. (line 282)
@@ -9315,8 +9315,8 @@ Index
 * textbook graph:                        graph.               (line 361)
 * tgz:                                   UNIX binary distributions.
                                                               (line   6)
-* thick:                                 three.               (line 104)
-* thin:                                  three.               (line 104)
+* thick:                                 three.               (line 105)
+* thin:                                  three.               (line 105)
 * this:                                  Structures.          (line   6)
 * three:                                 three.               (line   6)
 * tick:                                  graph.               (line 332)
@@ -9328,12 +9328,12 @@ Index
 * time:                                  Data types.          (line 291)
 * times:                                 Paths and guides.    (line 201)
 * Top:                                   graph.               (line 131)
-* TopView:                               three.               (line 362)
+* TopView:                               three.               (line 363)
 * trace:                                 Debugger.            (line  51)
 * trailingzero:                          graph.               (line 169)
-* transform <1>:                         three.               (line 429)
+* transform <1>:                         three.               (line 430)
 * transform:                             Transforms.          (line   6)
-* transform3:                            three.               (line 398)
+* transform3:                            three.               (line 399)
 * transparency:                          Pens.                (line 219)
 * transpose:                             Arrays.              (line 208)
 * tree:                                  tree.                (line   9)
@@ -9345,9 +9345,9 @@ Index
                                                               (line  48)
 * triple:                                Data types.          (line 108)
 * TrueMargin:                            draw.                (line  42)
-* TrueMargin3:                           three.               (line 514)
+* TrueMargin3:                           three.               (line 515)
 * tube <1>:                              tube.                (line   6)
-* tube:                                  three.               (line 104)
+* tube:                                  three.               (line 105)
 * tutorial:                              Tutorial.            (line   6)
 * typedef <1>:                           Functions.           (line  36)
 * typedef:                               Data types.          (line 339)
@@ -9359,9 +9359,9 @@ Index
 * uniform:                               Arrays.              (line 155)
 * Uninstall:                             Uninstall.           (line   6)
 * unit:                                  Data types.          (line  78)
-* unitbox <1>:                           three.               (line 288)
+* unitbox <1>:                           three.               (line 289)
 * unitbox:                               Tutorial.            (line 218)
-* unitcircle <1>:                        three.               (line 255)
+* unitcircle <1>:                        three.               (line 256)
 * unitcircle:                            Tutorial.            (line 110)
 * unitrand:                              Mathematical functions.
                                                               (line  39)
@@ -9371,7 +9371,7 @@ Index
                                                               (line   6)
 * unpacking:                             Rest arguments.      (line  39)
 * unravel:                               Import.              (line  31)
-* up:                                    three.               (line 319)
+* up:                                    three.               (line 320)
 * update:                                Files.               (line  36)
 * UpsideDown:                            Frames and pictures. (line  95)
 * usepackage:                            Frames and pictures. (line 287)
@@ -9385,13 +9385,13 @@ Index
 * vectorfield3:                          graph3.              (line 159)
 * vectorization:                         Arrays.              (line 322)
 * verbatim:                              Frames and pictures. (line 267)
-* vertex-dependent colors:               three.               (line  75)
+* vertex-dependent colors:               three.               (line  76)
 * Vertical:                              flowchart.           (line  74)
 * viewportheight:                        LaTeX usage.         (line  32)
-* viewportmargin:                        three.               (line 247)
-* viewportsize:                          three.               (line 247)
+* viewportmargin:                        three.               (line 248)
+* viewportsize:                          three.               (line 248)
 * viewportwidth:                         LaTeX usage.         (line  32)
-* views:                                 three.               (line 216)
+* views:                                 three.               (line 217)
 * vim:                                   Editing modes.       (line  33)
 * virtual functions:                     Structures.          (line 189)
 * void:                                  Data types.          (line  10)
@@ -9406,7 +9406,7 @@ Index
 * word:                                  Arrays.              (line 353)
 * write <1>:                             Arrays.              (line 393)
 * write:                                 Files.               (line  51)
-* X:                                     three.               (line 255)
+* X:                                     three.               (line 256)
 * xasy:                                  GUI.                 (line   6)
 * xaxis3:                                graph3.              (line   7)
 * xelatex <1>:                           Options.             (line 136)
@@ -9420,14 +9420,14 @@ Index
 * xoutput:                               Files.               (line  71)
 * xpart:                                 Data types.          (line  89)
 * xscale:                                Transforms.          (line  33)
-* xscale3:                               three.               (line 405)
+* xscale3:                               three.               (line 406)
 * xtick:                                 graph.               (line 332)
 * XYEquals:                              graph3.              (line  20)
 * XYZero:                                graph3.              (line  20)
 * XZEquals:                              graph3.              (line  20)
 * XZero:                                 graph.               (line 265)
 * XZZero:                                graph3.              (line  20)
-* Y <1>:                                 three.               (line 255)
+* Y <1>:                                 three.               (line 256)
 * Y:                                     Mathematical functions.
                                                               (line   6)
 * yaxis3:                                graph3.              (line   7)
@@ -9436,12 +9436,12 @@ Index
 * ylimits:                               graph.               (line 626)
 * ypart:                                 Data types.          (line  92)
 * yscale:                                Transforms.          (line  36)
-* yscale3:                               three.               (line 408)
+* yscale3:                               three.               (line 409)
 * ytick:                                 graph.               (line 332)
 * YZEquals:                              graph3.              (line  20)
 * YZero:                                 graph.               (line 119)
 * YZZero:                                graph3.              (line  20)
-* Z:                                     three.               (line 255)
+* Z:                                     three.               (line 256)
 * zaxis3:                                graph3.              (line   7)
 * zero_Ai:                               Mathematical functions.
                                                               (line  48)
@@ -9457,7 +9457,7 @@ Index
 * zeta:                                  Mathematical functions.
                                                               (line  48)
 * zpart:                                 Data types.          (line 161)
-* zscale3:                               three.               (line 411)
+* zscale3:                               three.               (line 412)
 * |:                                     Arithmetic & logical.
                                                               (line  62)
 * ||:                                    Arithmetic & logical.
@@ -9471,141 +9471,141 @@ Node: Description6760
 Node: Installation10259
 Node: UNIX binary distributions11307
 Node: MacOS X binary distributions12413
-Node: Microsoft Windows13361
-Ref: psview14071
-Node: Configuring14992
-Node: Search paths19205
-Node: Compiling from UNIX source20002
-Ref: multisampling20591
-Node: Editing modes23009
-Node: Subversion25441
-Node: Uninstall25904
-Node: Tutorial26254
-Ref: unitcircle29997
-Ref: Bezier30206
-Node: Drawing commands35265
-Node: draw36974
-Ref: arrows38122
-Node: fill43365
-Ref: gradient shading44409
-Node: clip48602
-Node: label49194
-Ref: Label49893
-Node: Programming55618
-Ref: array iteration56435
-Node: Data types57517
-Ref: format66418
-Node: Paths and guides69882
-Ref: circle70136
-Ref: arctime75453
-Ref: extension79318
-Node: Pens86001
-Ref: fillrule93245
-Ref: basealign94142
-Ref: transparency96967
-Ref: makepen100410
-Ref: overwrite101248
-Node: Transforms102458
-Node: Frames and pictures104249
-Ref: envelope105390
-Ref: size106473
-Ref: unitsize107460
-Ref: shipout108520
-Ref: filltype110853
-Ref: add113835
-Ref: add about114781
-Ref: tex117726
-Node: Files118600
-Ref: cd119565
-Ref: scroll124034
-Node: Variable initializers127107
-Node: Structures129402
-Node: Operators136854
-Node: Arithmetic & logical137168
-Node: Self & prefix operators139065
-Node: User-defined operators139853
-Node: Implicit scaling140764
-Node: Functions141327
-Ref: stack overflow144080
-Node: Default arguments144644
-Node: Named arguments145383
-Node: Rest arguments147545
-Node: Mathematical functions150355
-Node: Arrays154960
-Ref: sort162020
-Ref: tridiagonal164311
-Ref: solve165539
-Node: Slices169736
-Node: Casts173629
-Node: Import175595
-Node: Static180825
-Node: LaTeX usage183721
-Node: Base modules189166
-Node: plain191666
-Node: simplex192318
-Node: math192591
-Node: interpolate193690
-Node: geometry193969
-Node: trembling194573
-Node: stats194934
-Node: patterns195194
-Node: markers195430
-Node: tree197213
-Node: binarytree197401
-Node: drawtree197990
-Node: syzygy198194
-Node: feynman198468
-Node: roundedpath198743
-Node: animation199026
-Ref: animate199443
-Node: embed200582
-Node: slide202371
-Node: MetaPost202711
-Node: unicode203427
-Node: latin1204315
-Node: babel204683
-Node: labelpath204912
-Node: labelpath3205732
-Node: annotate206043
-Node: CAD206514
-Node: graph206824
-Ref: ticks213663
-Ref: pathmarkers226814
-Ref: marker227279
-Ref: markuniform227630
-Ref: errorbars229421
-Ref: automatic scaling233477
-Node: palette244123
-Ref: images244241
-Ref: image248412
-Ref: logimage248890
-Ref: penimage249696
-Node: three250140
-Ref: PostScript3D272471
-Node: obj274163
-Node: graph3274415
-Ref: GaussianSurface279540
-Node: grid3280625
-Node: solids281365
-Node: tube282313
-Node: flowchart284548
-Node: contour289047
-Node: contour3294078
-Node: slopefield294385
-Node: ode295822
-Node: Options296082
-Ref: configuration file301624
-Ref: settings301624
-Ref: convert302719
-Node: Interactive mode305508
-Ref: history307132
-Node: GUI308437
-Node: GUI Installation308940
-Node: GUI Usage310078
-Node: PostScript to Asymptote310981
-Node: Help312124
-Node: Debugger313853
-Node: Credits315638
-Node: Index316551
+Node: Microsoft Windows13297
+Ref: psview14007
+Node: Configuring14928
+Node: Search paths19141
+Node: Compiling from UNIX source19938
+Ref: multisampling20527
+Node: Editing modes22945
+Node: Subversion25377
+Node: Uninstall25840
+Node: Tutorial26190
+Ref: unitcircle29933
+Ref: Bezier30142
+Node: Drawing commands35201
+Node: draw36910
+Ref: arrows38058
+Node: fill43301
+Ref: gradient shading44345
+Node: clip48538
+Node: label49130
+Ref: Label49829
+Node: Programming55554
+Ref: array iteration56371
+Node: Data types57453
+Ref: format66354
+Node: Paths and guides69818
+Ref: circle70072
+Ref: arctime75389
+Ref: extension79254
+Node: Pens85937
+Ref: fillrule93181
+Ref: basealign94078
+Ref: transparency96903
+Ref: makepen100346
+Ref: overwrite101184
+Node: Transforms102394
+Node: Frames and pictures104185
+Ref: envelope105326
+Ref: size106409
+Ref: unitsize107396
+Ref: shipout108456
+Ref: filltype110789
+Ref: add113771
+Ref: add about114717
+Ref: tex117662
+Node: Files118536
+Ref: cd119501
+Ref: scroll123970
+Node: Variable initializers127043
+Node: Structures129338
+Node: Operators136790
+Node: Arithmetic & logical137104
+Node: Self & prefix operators139001
+Node: User-defined operators139789
+Node: Implicit scaling140700
+Node: Functions141263
+Ref: stack overflow144016
+Node: Default arguments144580
+Node: Named arguments145319
+Node: Rest arguments147481
+Node: Mathematical functions150291
+Node: Arrays154896
+Ref: sort161956
+Ref: tridiagonal164247
+Ref: solve165475
+Node: Slices169672
+Node: Casts173565
+Node: Import175531
+Node: Static180761
+Node: LaTeX usage183657
+Node: Base modules189102
+Node: plain191602
+Node: simplex192254
+Node: math192527
+Node: interpolate193626
+Node: geometry193905
+Node: trembling194509
+Node: stats194870
+Node: patterns195130
+Node: markers195366
+Node: tree197149
+Node: binarytree197337
+Node: drawtree197926
+Node: syzygy198130
+Node: feynman198404
+Node: roundedpath198679
+Node: animation198962
+Ref: animate199379
+Node: embed200518
+Node: slide202307
+Node: MetaPost202647
+Node: unicode203363
+Node: latin1204251
+Node: babel204619
+Node: labelpath204848
+Node: labelpath3205668
+Node: annotate205979
+Node: CAD206450
+Node: graph206760
+Ref: ticks213599
+Ref: pathmarkers226750
+Ref: marker227215
+Ref: markuniform227566
+Ref: errorbars229357
+Ref: automatic scaling233413
+Node: palette244059
+Ref: images244177
+Ref: image248348
+Ref: logimage248826
+Ref: penimage249632
+Node: three250076
+Ref: PostScript3D272559
+Node: obj274251
+Node: graph3274503
+Ref: GaussianSurface279628
+Node: grid3280713
+Node: solids281453
+Node: tube282401
+Node: flowchart284636
+Node: contour289135
+Node: contour3294166
+Node: slopefield294473
+Node: ode295910
+Node: Options296170
+Ref: configuration file301712
+Ref: settings301712
+Ref: convert302807
+Node: Interactive mode305596
+Ref: history307220
+Node: GUI308525
+Node: GUI Installation309028
+Node: GUI Usage310166
+Node: PostScript to Asymptote311069
+Node: Help312212
+Node: Debugger313941
+Node: Credits315726
+Node: Index316639
 
 End Tag Table

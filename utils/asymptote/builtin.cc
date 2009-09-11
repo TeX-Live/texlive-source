@@ -9,7 +9,21 @@
 
 #include "builtin.h"
 #include "entry.h"
+
 #include "runtime.h"
+#include "runpicture.h"
+#include "runlabel.h"
+#include "runhistory.h"
+#include "runarray.h"
+#include "runfile.h"
+#include "runsystem.h"
+#include "runstring.h"
+#include "runpair.h"
+#include "runtriple.h"
+#include "runpath.h"
+#include "runpath3d.h"
+#include "runmath.h"
+
 #include "types.h"
 
 #include "castop.h"
@@ -42,11 +56,22 @@ using run::greater;
 using run::plus;
 using run::minus;
 
-
 using namespace run;  
   
 void gen_runtime_venv(venv &ve);
-void gen_backtrace_venv(venv &ve);
+void gen_runbacktrace_venv(venv &ve);
+void gen_runpicture_venv(venv &ve);
+void gen_runlabel_venv(venv &ve);
+void gen_runhistory_venv(venv &ve);
+void gen_runarray_venv(venv &ve);
+void gen_runfile_venv(venv &ve);
+void gen_runsystem_venv(venv &ve);
+void gen_runstring_venv(venv &ve);
+void gen_runpair_venv(venv &ve);
+void gen_runtriple_venv(venv &ve);
+void gen_runpath_venv(venv &ve);
+void gen_runpath3d_venv(venv &ve);
+void gen_runmath_venv(venv &ve);
 
 void addType(tenv &te, const char *name, ty *t)
 {
@@ -1367,10 +1392,6 @@ void base_venv(venv &ve)
           formal(IntRealFunction(),"f"),
           formal(realArray(),"a"));
   
-  addFunc(ve,single,primFile(),"single",formal(primFile(),"file"),
-          formal(primBoolean(),"real",true),
-          formal(primBoolean(),"int",true));
-  
 #ifdef HAVE_LIBFFTW3
   addFunc(ve,pairArrayFFT,pairArray(),"fft",formal(pairArray(),"a"),
           formal(primInt(),"sign",true));
@@ -1396,7 +1417,19 @@ void base_venv(venv &ve)
 #endif
 
   gen_runtime_venv(ve);
-  gen_backtrace_venv(ve);
+  gen_runbacktrace_venv(ve);
+  gen_runpicture_venv(ve);
+  gen_runlabel_venv(ve);
+  gen_runhistory_venv(ve);
+  gen_runarray_venv(ve);
+  gen_runfile_venv(ve);
+  gen_runsystem_venv(ve);
+  gen_runstring_venv(ve);
+  gen_runpair_venv(ve);
+  gen_runtriple_venv(ve);
+  gen_runpath_venv(ve);
+  gen_runpath3d_venv(ve);
+  gen_runmath_venv(ve);
 }
 
 } //namespace trans
@@ -1447,17 +1480,6 @@ void arrayDeleteHelper(stack *Stack)
   }
 
   (*a).erase((*a).begin()+i,(*a).begin()+j+1);
-}
-
-// Set file to read/write single-precision real and int XDR values.
-void single(stack *Stack)
-{
-  bool integer=pop<bool>(Stack,true);
-  bool real=pop<bool>(Stack,true);
-  file *File=pop<file *>(Stack);
-  File->SingleReal(real);
-  File->SingleInt(integer);
-  Stack->push(File);
 }
 
 }

@@ -51,7 +51,7 @@
 /* Define to 1 if you have the `glut' library (-lglut). */
 #undef HAVE_LIBGLUT
 
-/* Define to 1 if you have the 'gsl' library (-lgsl). */
+/* Define to 1 if you have the `gsl' library (-lgsl). */
 #undef HAVE_LIBGSL
 
 /* Define to 1 if you have the <libintl.h> header file. */
@@ -128,9 +128,6 @@
 
 /* Define to 1 if you have the `strptime' function. */
 #undef HAVE_STRPTIME
-
-/* Define if the function strptime is declared in <time.h> */
-#undef HAVE_STRPTIME_DECL
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H

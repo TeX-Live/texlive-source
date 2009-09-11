@@ -933,6 +933,61 @@ private triple[] split(triple z0, triple c0, triple c1, triple z1, real t=0.5)
   return new triple[] {m0,m3,m5,m4,m2};
 }
 
+// Return the control points of the subpatches
+// produced by a horizontal split of P
+triple[][][] hsplit(triple[][] P)
+{
+  // get control points in rows
+  triple[] P0=P[0];
+  triple[] P1=P[1];
+  triple[] P2=P[2];
+  triple[] P3=P[3];
+
+  triple[] c0=split(P0[0],P1[0],P2[0],P3[0]);
+  triple[] c1=split(P0[1],P1[1],P2[1],P3[1]);
+  triple[] c2=split(P0[2],P1[2],P2[2],P3[2]);
+  triple[] c3=split(P0[3],P1[3],P2[3],P3[3]);
+  // bottom, top
+  return new triple[][][] {
+    {{c0[2],c1[2],c2[2],c3[2]},
+        {c0[3],c1[3],c2[3],c3[3]},
+          {c0[4],c1[4],c2[4],c3[4]},
+            {P3[0],P3[1],P3[2],P3[3]}},
+      {{P0[0],P0[1],P0[2],P0[3]},
+          {c0[0],c1[0],c2[0],c3[0]},
+            {c0[1],c1[1],c2[1],c3[1]},
+              {c0[2],c1[2],c2[2],c3[2]}}
+  };
+}
+
+// Return the control points of the subpatches
+// produced by a vertical split of P
+triple[][][] vsplit(triple[][] P)
+{
+  // get control points in rows
+  triple[] P0=P[0];
+  triple[] P1=P[1];
+  triple[] P2=P[2];
+  triple[] P3=P[3];
+
+  triple[] c0=split(P0[0],P0[1],P0[2],P0[3]);
+  triple[] c1=split(P1[0],P1[1],P1[2],P1[3]);
+  triple[] c2=split(P2[0],P2[1],P2[2],P2[3]);
+  triple[] c3=split(P3[0],P3[1],P3[2],P3[3]);
+  // left, right
+  return new triple[][][] {
+    {{P0[0],c0[0],c0[1],c0[2]},
+	{P1[0],c1[0],c1[1],c1[2]},
+	  {P2[0],c2[0],c2[1],c2[2]},
+	    {P3[0],c3[0],c3[1],c3[2]}},
+      
+      {{c0[2],c0[3],c0[4],P0[3]},
+	  {c1[2],c1[3],c1[4],P1[3]},
+            {c2[2],c2[3],c2[4],P2[3]},
+              {c3[2],c3[3],c3[4],P3[3]}}
+  };		  
+}
+
 // Return the control points for a subpatch of P on [u,1] x [v,1].
 triple[][] subpatchbegin(triple[][] P, real u, real v)
 {
@@ -1009,9 +1064,8 @@ real[][] intersections(path3 p, surface s, real fuzz=-1)
     for(real[] s: intersections(p,s.s[i].P,fuzz))
       T.push(s);
 
-  static real fuzzFactor=10.0;
-  static real Fuzz=1000.0*realEpsilon;
-  real fuzz=max(fuzzFactor*fuzz,Fuzz)*abs(max(s)-min(s));
+  static real Fuzz=1000*realEpsilon;
+  real fuzz=max(10*fuzz,Fuzz*max(abs(min(s)),abs(max(s))));
   
   // Remove intrapatch duplicate points.
   for(int i=0; i < T.length; ++i) {
@@ -1039,12 +1093,45 @@ triple[] intersectionpoints(path3 p, surface s, real fuzz=-1)
   return sequence(new triple(int i) {return point(p,t[i][0]);},t.length);
 }
 
+// Return true iff the bounding boxes of patch p and q overlap.
+bool overlap(triple[][] p, triple[][] q, real fuzz=-1)
+{
+  triple p0=p[0][0];
+  triple q0=q[0][0];
+  triple pmin=minbezier(p,p0);
+  triple pmax=maxbezier(p,p0);
+  triple qmin=minbezier(q,q0);
+  triple qmax=maxbezier(q,q0);
+
+  static real Fuzz=1000*realEpsilon;
+  real fuzz=max(10*fuzz,Fuzz*max(abs(pmin),abs(pmax)));
+  
+  return
+    pmax.x+fuzz >= qmin.x &&
+    pmax.y+fuzz >= qmin.y &&
+    pmax.z+fuzz >= qmin.z &&
+    qmax.x+fuzz >= pmin.x &&
+    qmax.y+fuzz >= pmin.y &&
+    qmax.z+fuzz >= pmin.z; // Overlapping bounding boxes?
+}
+
 triple point(patch s, real u, real v)
 {
   return s.point(u,v);
 }
 
-void draw3D(frame f, patch s, material m, light light=currentlight)
+real PRCshininess(real shininess) 
+{
+  // Empirical translation table from Phong-Blinn to PRC shininess model:
+  static real[] x={0.015,0.025,0.05,0.07,0.1,0.14,0.23,0.5,0.65,0.75,0.85,
+                   0.875,0.9,1};
+  static real[] y={0.05,0.1,0.15,0.2,0.25,0.3,0.4,0.5,0.55,0.6,0.7,0.8,0.9,1};
+  static realfunction s=fspline(x,y,monotonic);
+  return s(shininess);
+}
+
+void draw3D(frame f, patch s, material m, light light=currentlight,
+            string name="")
 {
   if(s.colors.length > 0)
     m=mean(s.colors);
@@ -1052,17 +1139,11 @@ void draw3D(frame f, patch s, material m, light light=currentlight)
   if(!lighton && !invisible((pen) m))
     m=emissive(m);
   real PRCshininess;
-  if(prc()) {
-    // Empirical translation table from Phong-Blinn to PRC shininess model:
-    static real[] x={0.015,0.025,0.05,0.07,0.1,0.14,0.23,0.5,0.65,0.75,0.85,
-                     0.875,0.9,1};
-    static real[] y={0.05,0.1,0.15,0.2,0.25,0.3,0.4,0.5,0.55,0.6,0.7,0.8,0.9,1};
-    static realfunction s=fspline(x,y,monotonic);
-    PRCshininess=s(m.shininess);
-  }
+  if(prc())
+    PRCshininess=PRCshininess(m.shininess);
   real granularity=m.granularity >= 0 ? m.granularity : defaultgranularity;
   draw(f,s.P,s.straight,m.p,m.opacity,m.shininess,PRCshininess,granularity,
-       s.planar ? s.normal(0.5,0.5) : O,lighton,s.colors);
+       s.planar ? s.normal(0.5,0.5) : O,s.colors,lighton,name);
 }
 
 void tensorshade(transform t=identity(), frame f, patch s,
@@ -1078,12 +1159,12 @@ nullpens.cyclic=true;
 
 void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
-          light light=currentlight, light meshlight=light,
+          light light=currentlight, light meshlight=light, string name="",
           projection P=currentprojection)
 {
   if(is3D()) {
     for(int i=0; i < s.s.length; ++i)
-      draw3D(f,s.s[i],surfacepen[i],light);
+      draw3D(f,s.s[i],surfacepen[i],light,partname(name,i));
     pen modifiers=thin()+squarecap;
     for(int k=0; k < s.s.length; ++k) {
       pen meshpen=meshpen[k];
@@ -1130,26 +1211,26 @@ void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
 
 void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
-          light light=currentlight, light meshlight=light,
+          light light=currentlight, light meshlight=light, string name="",
           projection P=currentprojection)
 {
   material[] surfacepen={surfacepen};
   pen[] meshpen={meshpen};
   surfacepen.cyclic=true;
   meshpen.cyclic=true;
-  draw(t,f,s,nu,nv,surfacepen,meshpen,light,meshlight,P);
+  draw(t,f,s,nu,nv,surfacepen,meshpen,light,meshlight,name,P);
 }
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
-          light light=currentlight, light meshlight=light)
+          light light=currentlight, light meshlight=light, string name="")
 {
   if(s.empty()) return;
 
   pic.add(new void(frame f, transform3 t, picture pic, projection P) {
       surface S=t*s;
       if(is3D()) {
-        draw(f,S,nu,nv,surfacepen,meshpen,light,meshlight);
+        draw(f,S,nu,nv,surfacepen,meshpen,light,meshlight,name);
       } else if(pic != null)
         pic.add(new void(frame f, transform T) {
             draw(T,f,S,nu,nv,surfacepen,meshpen,light,meshlight,P);
@@ -1180,22 +1261,22 @@ void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
-          light light=currentlight, light meshlight=light)
+          light light=currentlight, light meshlight=light, string name="")
 {
   material[] surfacepen={surfacepen};
   pen[] meshpen={meshpen};
   surfacepen.cyclic=true;
   meshpen.cyclic=true;
-  draw(pic,s,nu,nv,surfacepen,meshpen,light,meshlight);
+  draw(pic,s,nu,nv,surfacepen,meshpen,light,meshlight,name);
 }
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen meshpen,
-          light light=currentlight, light meshlight=light)
+          light light=currentlight, light meshlight=light, string name="")
 {
   pen[] meshpen={meshpen};
   meshpen.cyclic=true;
-  draw(pic,s,nu,nv,surfacepen,meshpen,light,meshlight);
+  draw(pic,s,nu,nv,surfacepen,meshpen,light,meshlight,name);
 }
 
 surface extrude(path3 p, path3 q)
@@ -1211,9 +1292,9 @@ surface extrude(path3 p, triple axis=Z)
   return extrude(p,shift(axis)*p);
 }
 
-surface extrude(path p, triple axis=Z)
+surface extrude(path p, triple plane(pair)=XYplane, triple axis=Z)
 {
-  return extrude(path3(p),axis);
+  return extrude(path3(p,plane),axis);
 }
 
 surface extrude(explicit path[] p, triple axis=Z)
@@ -1381,13 +1462,17 @@ surface extrude(Label L, triple axis=Z)
 
 restricted surface nullsurface;
 
-surface labelsurface(Label L, surface s, real uoffset, real voffset,
-                     real height=0, bool bottom=false, bool top=true)
+// Embed a Label onto a surface.
+surface surface(Label L, surface s, real uoffset, real voffset,
+                real height=0, bool bottom=false, bool top=true)
 {
   int nu=s.index.length;
-  if(nu == 0) return nullsurface;
-  int nv=s.index[0].length;
-  if(nv == 0) return nullsurface;
+  int nv;
+  if(nu == 0) nu=nv=1;
+  else {
+    nv=s.index[0].length;
+    if(nv == 0) nv=1;
+  }
 
   path[] g=texpath(L);
   pair m=min(g);
@@ -1402,7 +1487,7 @@ surface labelsurface(Label L, surface s, real uoffset, real voffset,
         real v=voffset+(z.y-m.y)/lambda.y;
         if(((u < 0 || u >= nu) && !s.ucyclic()) ||
            ((v < 0 || v >= nv) && !s.vcyclic()))
-          abort("cannot fit string to surface");
+          warning("cannotfit","cannot fit string to surface");
         return s.point(u,v)+height*unit(s.normal(u,v));
       });
   }
@@ -1555,4 +1640,114 @@ void dot(picture pic=currentpicture, Label L, triple v, align align=NoAlign,
   L.p((pen) p);
   dot(pic,v,p);
   label(pic,L,v);
+}
+
+pair minbound(triple[][] A, projection P)
+{
+  pair b=project(A[0][0],P);
+  for(triple[] a : A) {
+    for(triple v : a) {
+      b=minbound(b,project(v,P));
+    }
+  }
+  return b;
+}
+
+pair maxbound(triple[][] A, projection P)
+{
+  pair b=project(A[0][0],P);
+  for(triple[] a : A) {
+    for(triple v : a) {
+      b=maxbound(b,project(v,P));
+    }
+  }
+  return b;
+}
+
+triple[][] operator / (triple[][] a, real[][] b) 
+{
+  triple[][] A=new triple[a.length][];
+  for(int i=0; i < a.length; ++i) {
+    triple[] ai=a[i];
+    real[] bi=b[i];
+    A[i]=sequence(new triple(int j) {return ai[j]/bi[j];},ai.length);
+  }
+  return A;
+}
+
+// Draw a NURBS surface.
+void draw(picture pic=currentpicture, triple[][] P, real[] uknot, real[] vknot,
+          real[][] weights=new real[][], material m=currentpen,
+          pen[] colors=new pen[], light light=currentlight, string name="")
+{
+  if(colors.length > 0)
+    m=mean(colors);
+  bool lighton=light.on();
+  pic.add(new void(frame f, transform3 t, picture pic, projection Q) {
+      if(is3D()) {
+        triple[][] P=t*P;
+        real granularity=m.granularity >= 0 ? m.granularity :
+          defaultgranularity;
+        real PRCshininess;
+        if(prc())
+          PRCshininess=PRCshininess(m.shininess);
+        draw(f,P,uknot,vknot,weights,m.p,m.opacity,m.shininess,PRCshininess,
+             granularity,colors,lighton,name);
+        if(pic != null) {
+          triple[][] R=weights.length > 0 ? P/weights : P;
+          pic.addBox(minbound(R,Q),maxbound(R,Q));
+        }
+      }
+    },true);
+  triple[][] R=weights.length > 0 ? P/weights : P;
+  pic.addBox(minbound(R),maxbound(R));
+}
+
+// A structure to subdivide two intersecting patches about their intersection.
+struct split
+{
+  // Container for subpatches of p.
+  triple[][][] T;
+
+  struct tree {
+    tree[] tree=new tree[2];
+  }
+  // Default subdivision depth.
+  int n=23;
+
+  // Subdivide p and q to depth n if they overlap.
+  void write(tree t, triple[][] p, triple[][] q, int depth=n) {
+    --depth;
+    triple[][][] split(triple[][] P)=depth % 2 == 0 ? hsplit : vsplit;
+    triple[][][] P=split(p);
+    triple[][][] Q=split(q);
+
+    for(int i=0; i < 2; ++i) {
+      for(int j=0; j < 2; ++j) {
+        if(overlap(P[i],Q[j])) {
+          if(!t.tree.initialized(i)) t.tree[i]=new tree;
+          if(depth > 0) write(t.tree[i],P[i],Q[j],depth);
+        }
+      }
+    }    
+  }
+  
+  // Output the subpatches of p from subdivision.
+  void read(tree t, triple[][] p, int depth=n) {
+    --depth;
+    triple[][][] split(triple[][] P)=depth % 2 == 0 ? hsplit : vsplit;
+    triple[][][] P=split(p);
+
+    for(int i=0; i < 2; ++i) {
+      if(t.tree.initialized(i)) 
+        read(t.tree[i],P[i],depth);
+      else T.push(P[i]);
+    }
+  }
+
+  void operator init(triple[][] p, triple[][] q, int depth=n) {
+    tree trunk;
+    write(trunk,p,q,depth);
+    read(trunk,p,depth);  
+  }
 }

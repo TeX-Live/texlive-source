@@ -1,6 +1,7 @@
 #ifndef PRCFILE_H
 #define PRCFILE_H
 
+#include "memory.h"
 #include "prc/oPRCFile.h"
 
 namespace camp {
@@ -35,9 +36,10 @@ public:
 inline void writeBezierKnots(PRCbitStream &out, uint32_t d, uint32_t n)
 {
   out << (double) 1;
-  for(uint32_t i=1; i < d+n; ++i)
+  uint32_t stop=d+n;
+  for(uint32_t i=1; i < stop; ++i)
     out << (double) ((i+2)/d); // integer division is intentional
-  out << (double) ((d+n+1)/d);
+  out << (double) ((stop+1)/d);
 }
     
 class PRCBezierCurve : public PRCcurve
@@ -46,11 +48,11 @@ class PRCBezierCurve : public PRCcurve
   uint32_t n;
 public:
   PRCBezierCurve(oPRCFile *p, uint32_t d, uint32_t n, double cP[][3],
-                 const RGBAColour &c) :
-    PRCcurve(p,d,n,cP,NULL,c,scale3D,false,NULL), d(d), n(n) {}
+                 const RGBAColour &c, string name="") :
+    PRCcurve(p,d,n,cP,NULL,c,scale3D,false,NULL,name.c_str()), d(d), n(n) {}
   PRCBezierCurve(oPRCFile *p, uint32_t d, uint32_t n, double cP[][3],
-                 const PRCMaterial &m) :
-    PRCcurve(p,d,n,cP,NULL,m,scale3D,false,NULL), d(d), n(n) {}
+                 const PRCMaterial &m, string name="") :
+    PRCcurve(p,d,n,cP,NULL,m,scale3D,false,NULL,name.c_str()), d(d), n(n) {}
 private:
   void writeKnots(PRCbitStream &out) {
     writeBezierKnots(out,d,n);
@@ -64,14 +66,14 @@ class PRCBezierSurface : public PRCsurface
 public:
   PRCBezierSurface(oPRCFile *p, uint32_t dU, uint32_t dV, uint32_t nU,
                    uint32_t nV, double cP[][3], const RGBAColour &c,
-                   double g=0.0) :
-    PRCsurface(p,dU,dV,nU,nV,cP,NULL,NULL,c,scale3D,false,NULL,g), dU(dU),
-    dV(dV), nU(nU), nV(nV) {}
+                   double g=0.0, string name="") :
+    PRCsurface(p,dU,dV,nU,nV,cP,NULL,NULL,c,scale3D,false,NULL,g,name.c_str()),
+    dU(dU), dV(dV), nU(nU), nV(nV) {}
   PRCBezierSurface(oPRCFile *p, uint32_t dU, uint32_t dV, uint32_t nU,
                    uint32_t nV, double cP[][3], const PRCMaterial &m,
-                   double g=0.0) :
-    PRCsurface(p,dU,dV,nU,nV,cP,NULL,NULL,m,scale3D,false,NULL,g), dU(dU),
-    dV(dV), nU(nU), nV(nV) {}
+                   double g=0.0, string name="") :
+    PRCsurface(p,dU,dV,nU,nV,cP,NULL,NULL,m,scale3D,false,NULL,g,name.c_str()),
+    dU(dU), dV(dV), nU(nU), nV(nV) {}
 private:
   void writeKnots(PRCbitStream &out) {
     writeBezierKnots(out,dU,nU);
