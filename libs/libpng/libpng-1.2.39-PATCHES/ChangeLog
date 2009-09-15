@@ -1,6 +1,6 @@
 2009-08-13  Martin Schröder <martin@oneiros.de>
 
-	* patch-01-static: Remove; has been integrated
+	* patch-01-static: Remove; has been integrated into libpng-1.2.39.
 
 2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -12,4 +12,3 @@
 	* libpng-1.2.37/png.c (png_64bit_product): declare as static to
 	avoid compiler warning.
 
-# vim: noexpandtab
