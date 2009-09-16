@@ -9,9 +9,13 @@ SUBDIRS = linked_scripts
 
 dist_man1_MANS = getnonfreefonts-sys.man getnonfreefonts.man
 
+## Win32 wrapper
+##
+EXTRA_DIST = runscript.c runscript.exe
+
 ## Not used
 ##
-EXTRA_DIST = \
+EXTRA_DIST += \
 	amstex amstex.bat \
 	blue.bat \
 	cont-cz.bat \
