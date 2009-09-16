@@ -1344,6 +1344,20 @@ void writettf(fd_entry * fd)
         pdftex_fail("cannot open TrueType font file for reading");
     }
     cur_file_name = (char *) nameoffile + 1;
+
+    /* skip ttc header, prepare for reading first font  */
+    if (strcasecmp(strchr(cur_file_name, 0) - 4, ".ttc") == 0) {
+        if (get_ulong() != 0x74746366 /* ttcf */) {
+            xfseek(INFILE, 0, SEEK_SET, cur_file_name);
+        } else {
+            ttf_skip(TTF_FIXED_SIZE);   /* ignore the version   */
+            ttf_skip(TTF_ULONG_SIZE);   /* ignore the numFonts  */
+
+            /* goto first font  */
+            xfseek(INFILE, get_ulong(), SEEK_SET, cur_file_name);
+        }
+    }
+
     if (is_subsetted(fd_cur->fm))
         tex_printf("<%s", cur_file_name);
     else
