@@ -1,3 +1,7 @@
+2009-09-17  Karl Berry  <karl@tug.org>
+
+	* Build: show Build command itself in build.log.
+
 2009-06-18  Karl Berry  <karl@tug.org>
 
 	* Build: eradicate -Wdecl stuff, peb has implemented something

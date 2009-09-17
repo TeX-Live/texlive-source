@@ -95,6 +95,8 @@ cd $TL_WORKDIR || exit 1
 # failure at either step.
 {
   echo starting `date`
+  echo "$0 $*"
+  echo
   set -vx  # show the configure and make commands in the log.
 
   eval $TL_BUILD_ENV time $TL_CONFIGURE \
