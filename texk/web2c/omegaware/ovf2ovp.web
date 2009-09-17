@@ -10,6 +10,10 @@
 % Version 1.1 fixed problems of strict Pascal (April 1990).
 % Version 1.2 fixed various bugs found by Peter Breitenlohner (September 1990).
 
+% Version 1.0 of OVF2OVP (Month Year).
+% Version 1.11 (February 2000).
+% Version 1.12 (September 2009) various bug fixes by Peter Breitenlohner.
+
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
 \font\ninerm=cmr9
@@ -27,7 +31,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont OVF2OVP} processor}
   \vskip 15pt
-  \centerline{(Version 1.11, February 2000)}
+  \centerline{(Version 1.12, September 2009)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -62,7 +66,7 @@ called \.{AMFtoXPL}.
 The |banner| string defined here should be changed whenever \.{VFtoVP}
 gets modified.
 
-@d banner=='This is OVF2OVP, Version 1.11' {printed when the program starts}
+@d banner=='This is OVF2OVP, Version 1.12' {printed when the program starts}
 
 @ This program is written entirely in standard \PASCAL, except that
 it occasionally has lower case letters in strings that are output.
@@ -340,7 +344,7 @@ This is called BigEndian order.
 @<Glob...@>=
 @!ofm_level,
 @!nco,@!ncw,@!npc,@!nki,@!nwi,@!nkf,@!nwf,@!nkr,@!nwr,@!nkg,@!nwg,@!nkp,@!nwp,
-@!nkm,@!nwm,@!real_lf,
+@!nkm,@!nwm,@!real_lf,@!nlw,@!neew,
 @!lf,@!lh,@!bc,@!ec,@!nw,@!nh,@!nd,@!ni,@!nl,@!nk,@!ne,@!np,@!font_dir:integer;
   {subfile sizes}
 @!ofm_on:boolean;
@@ -640,7 +644,11 @@ if lf=0 then begin
     read(tfm_file, tfm[i]);
     end;
   ofm_on := true; ofm_level := tfm[2]*@"100+tfm[3];
+  if ofm_level>1 then
+    abort('OFMLEVEL ',ofm_level:1,' not supported, must be 0 or 1!');
+@.OFMLEVEL...must be 0 or 1@>
   if tfm[4]>127 then abort('The fifth byte of the input file exceeds 127!');
+@.The fifth byte...@>
   lf := tfm[4]*@"1000000 + tfm[5]*@"10000 + tfm[6]*@"100 + tfm[7];
   end
 else begin
@@ -705,6 +713,8 @@ if not ofm_on then begin
   eval_two_bytes(ne);
   eval_two_bytes(np);
   ncw:=(ec-bc+1);
+  nlw:=nl;
+  neew:=ne;
   header_length:=6;
   top_char:=255;
   top_width:=255;
@@ -726,6 +736,8 @@ else begin
   eval_four_bytes(ne);
   eval_four_bytes(np);
   eval_four_bytes(font_dir);
+  nlw:=2*nl;
+  neew:=2*ne;
   top_char:=65535;
   top_width:=65535;
   top_height:=255;
@@ -754,13 +766,13 @@ else begin
     eval_four_bytes(nwp); {Words of font penalties}
     end;
   end;
-if lf<>(header_length+lh+ncw+nw+nh+nd+ni+2*nl+nk+2*ne+np+
+if lf<>(header_length+lh+ncw+nw+nh+nd+ni+nlw+nk+neew+np+
         nki+nwi+nkf+nwf+nkr+nwr+nkg+nwg+nkp+nwp) then
   abort('Subfile sizes don''t add up to the stated total!');
 @.Subfile sizes don't add up...@>
 if lh<2 then abort('The header length is only ',lh:1,'!');
 @.The header length...@>
-if (2*nl)>(4*lig_size) then
+if nl>4*lig_size then
   abort('The lig/kern program is longer than I can handle!');
 @.The lig/kern program...@>
 if (bc>ec+1)or(ec>top_char) then abort('The character code range ',
@@ -840,9 +852,9 @@ height_base:=width_base+nw;
 depth_base:=height_base+nh;
 italic_base:=depth_base+nd;
 lig_kern_base:=italic_base+ni;
-kern_base:=lig_kern_base+2*nl;
+kern_base:=lig_kern_base+nlw;
 exten_base:=kern_base+nk;
-param_base:=exten_base+2*ne-1;
+param_base:=exten_base+neew-1;
 end
 
 @ Of course we want to define macros that suppress the detail of how the
@@ -885,8 +897,6 @@ end;
 function italic_index(c:char_type):integer;
 begin if not ofm_on then
   italic_index:=tfm[char_info(c)+2] div 4
-else if ofm_level=0 then
-  italic_index:=tfm[char_info(c)+4]*64 + tfm[char_info(c)+5] div 4
 else
   italic_index:=tfm[char_info(c)+4];
 end;
@@ -1871,9 +1881,14 @@ the \.{TFM} file; the stated value is merely put into the \.{VPL} file.
 The \.{VPtoVF} program will store a correct value and give a warning
 message if a file falsely claims to be safe.
 
+\.{OFM} files are assumed to be seven-bit-unsafe.
+
 @<Output the |seven_bit_safe_flag|@>=
-if (lh>17) and (tfm[random_word]>127) then begin
-  left; out('SEVENBITSAFEFLAG FALSE'); right;
+if ofm_on then
+  begin left; out('SEVENBITSAFEFLAG FALSE'); right;
+  end
+else if (lh>17) and (tfm[random_word]>127) then
+  begin left; out('SEVENBITSAFEFLAG TRUE'); right;
   end
 
 @ The next thing to take care of is the list of parameters.
@@ -2287,7 +2302,7 @@ for clabel_runner:=0 to 256 do
 
 @ @<Output any labels...@>=
 while i=label_table[sort_ptr].rr do begin
-  if not label_table[sort_ptr].ischar then begin
+  if label_table[sort_ptr].cc<>xmax_char and not label_table[sort_ptr].ischar then begin
     if not output_clabels[label_table[sort_ptr].cc] then begin
       output_clabels[label_table[sort_ptr].cc]:=true;
       left;
@@ -3119,6 +3134,7 @@ if level<>0 then print_ln('This program isn''t working!');
 if not perfect then begin
   out('(COMMENT THE OFM AND/OR OVF FILE WAS BAD, ');
   out('SO THE DATA HAS BEEN CHANGED!)');
+  write_ln(vpl_file);
   end;
 @.THE OFM AND/OR OVF FILE WAS BAD...@>
 final_end:end.

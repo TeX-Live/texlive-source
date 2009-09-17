@@ -239,11 +239,11 @@ cur_name[r] := 0; {Append null byte since this is C.}
 @!MBL_string,@!RI_string,@!RCE_string:packed array [1..3] of char;
   {handy string constants for |face| codes}
 @y
-@!ASCII_04,@!ASCII_10,@!ASCII_14,HEX: c_string;
+@!ASCII_04,@!ASCII_10,@!ASCII_14,HEX: const_c_string;
   {strings for output in the user's external character set}
 @!ASCII_all: packed array[0..256] of char;
 @!xchr:packed array [0..255] of char;
-@!MBL_string,@!RI_string,@!RCE_string: c_string;
+@!MBL_string,@!RI_string,@!RCE_string: const_c_string;
   {handy string constants for |face| codes}
 @z
 
@@ -308,7 +308,7 @@ f:=((tfm[k+1] mod 16)*@'400+tfm[k+2])*@'400+tfm[k+3];
 f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 @z
 
-% [100] No progress reports unless verbose.
+% [101] No progress reports unless verbose.
 @x
       incr(chars_on_line);
       end;
@@ -450,7 +450,45 @@ sixty_four_cases(set_char_0),sixty_four_cases(set_char_0+64),
 (These cases moved outside the case statement, section 124.)
 @z
 
-@x [134] No final newline unless verbose.
+@x [132] Eliminate the |final_end| and |exit| labels.
+label final_end, exit;
+@y
+@z
+@x
+vf_input:=true; return;
+final_end: vf_input:=false;
+exit: end;
+@y
+vf_input:=true;
+end;
+@z
+@x
+label final_end, exit;
+@y
+@z
+@x
+organize:=vf_input; return;
+final_end: organize:=false;
+exit: end;
+@y
+organize:=vf_input;
+end;
+@z
+
+@x [134] Eliminate the |final_end| and |exit| labels.
+label final_end,exit;
+@y
+@z
+@x
+do_map:=true; return;
+final_end: do_map:=false;
+exit:end;
+@y
+do_map:=true;
+end;
+@z
+
+@x [135] No final newline unless verbose.
 print_ln('.');@/
 @y
 if verbose then print_ln('.');@/

@@ -82,6 +82,13 @@ rewritebin (vf_file, vf_name);
 rewritebin (tfm_file, tfm_name);
 @z
 
+@x [24] Pascal Web's char
+@d first_ord=0 {ordinal number of the smallest element of |char|}
+@y
+@d char == 0..255
+@d first_ord=0 {ordinal number of the smallest element of |char|}
+@z
+
 % [89] `index' is not a good choice for an identifier on Unix systems.
 % Neither is `class', on AIX.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -103,7 +110,7 @@ if verbose then @<Print |c| in hex notation@>;
 @x
 @!HEX: packed array [1..32] of char;
 @y
-@!HEX: c_string;
+@!HEX: const_c_string;
 @z
 
 @x
@@ -189,7 +196,13 @@ begin if fabs(x/design_units)>=16.0 then begin
 @d vout(#)==putbyte(#,vf_file)
 @z
 
-@x [181] Be quiet unless verbose. 
+@x [204] Eliminate unused variables.
+var @!krn_ptr:0..max_kerns; {an index into |kern|}
+@!c:byte; {runs through all character codes}
+@y
+@z
+
+@x [181?] Be quiet unless verbose. 
 read_input; print_ln('.');@/
 @y
 read_input;

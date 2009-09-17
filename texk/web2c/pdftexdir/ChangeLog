@@ -1,4 +1,5 @@
 2009-09-16  Han The Thanh <hanthethanh@gmail.com>
+
 	* writettf.c: patch for TTC from Liu Yubao <yubao.liu@gmail.com>
 
 2009-08-12  Karl Berry  <karl@tug.org>

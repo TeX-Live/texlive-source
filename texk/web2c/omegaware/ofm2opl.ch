@@ -165,10 +165,10 @@ if 4*lf-1>tfm_size then abort('The file is bigger than I can handle!');
 @!MBL_string,@!RI_string,@!RCE_string:packed array [1..3] of char;
   {handy string constants for |face| codes}
 @y
-@!ASCII_04,@!ASCII_10,@!ASCII_14,HEX: c_string;
+@!ASCII_04,@!ASCII_10,@!ASCII_14,HEX: const_c_string;
   {strings for output in the user's external character set}
 @!ASCII_all: packed array[0..256] of char;
-@!MBL_string,@!RI_string,@!RCE_string: c_string;
+@!MBL_string,@!RI_string,@!RCE_string: const_c_string;
   {handy string constants for |face| codes}
 @z
 

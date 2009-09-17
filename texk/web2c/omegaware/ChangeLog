@@ -1,3 +1,34 @@
+2009-09-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.web, opl2ofm.web, ovf2ovp.web, ovp2ovf.web: Use correct
+	8-bit italic index for ofm_level=0 as in C versions and engines.
+
+2009-09-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.web, ovf2ovp.web: Check for ofm_level<=1.
+	Bugfix: ensure that ofm2opl and ovf2ovp can read TFM files.
+	Handle the seven_bit_safe_flag of TFM files as TFtoPL/VFtoVP do.
+	Add newline after '...WAS BAD, SO THE DATA HAS BEEN CHANGED!'
+
+2009-09-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Version 1.12 (September 2009) of OFM2OPL & Co.
+
+	* opl2ofm.web, ovp2ovf.web: Accept NATURALFONTDIR as alias for
+	NFONTDIR for compatibility with omegafonts (C) versions.
+
+2009-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ovf2ovp.ch (ASCII04 etc.): Declare as const_c_string.
+	(vf_input, organize, do_map): Eliminate unused labels.
+	* ofm2opl.ch (ASCII04 etc.): Declare as const_c_string.
+	* opl2ofm.ch: Define char (used as array index) as 0..255.
+	(ASCII04 etc.): Declare as const_c_string.
+	(read_lig_kern): Eliminate unused variables.
+	* ovp2ovf.ch: Define char (used as array index) as 0..255.
+	(HEX): Declare as const_c_string.
+	(read_lig_kern): Eliminate unused variables.
+
 2009-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* specialhex.test (new): Shell script to test specials.

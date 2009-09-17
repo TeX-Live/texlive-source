@@ -12,6 +12,10 @@
 % Version 1.3 has more robust `out_scaled' (March 1991).
 % Version 1.4 (March 1995) initialized lk_step_ended (Armin K\"ollner).
 
+% Version 1.0 of OVP2OVF (Month Year).
+% Version 1.11 (February 2000).
+% Version 1.12 (September 2009) various bug fixes by Peter Breitenlohner.
+
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
 \font\ninerm=cmr9
@@ -31,7 +35,7 @@
   \vfill
   \centerline{\titlefont The {\ttitlefont OVP2OVF} processor}
   \vskip 15pt
-  \centerline{(Version 1.11, February 2000)}
+  \centerline{(Version 1.12, September 2009)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -67,7 +71,7 @@ called \.{PLFONT}.
 The |banner| string defined here should be changed whenever \.{OVP2OVF}
 gets modified.
 
-@d banner=='This is OVP2OVF, Version 1.11'
+@d banner=='This is OVP2OVF, Version 1.12'
 {printed when the program starts}
 
 @ This program is written entirely in standard \PASCAL, except that
@@ -1372,6 +1376,8 @@ load4("C")("K")("R")("N")(ckrn_code);@/
 load8("O")("F")("M")("L")("E")("V")("E")("L")(ofm_level_code);@/
 load7("F")("O")("N")("T")("D")("I")("R")(font_dir_code);@/
 load8("N")("F")("O")("N")("T")("D")("I")("R")(n_font_dir_code);@/
+load14("N")("A")("T")("U")("R")("A")("L")("F")("O")("N")("T")("D")("I")("R")(n_font_dir_code);
+  {compatibility with \.{omegafonts} (\.{C}) version}
 load10("C")("H")("A")("R")("R")("E")("P")("E")("A")("T")(char_repeat_code);@/
 load10("C")("H")("A")("R")("I")("V")("A")("L")("U")("E")(char_ivalue_code);@/
 load10("C")("H")("A")("R")("F")("V")("A")("L")("U")("E")(char_fvalue_code);@/
@@ -3702,7 +3708,7 @@ case ofm_level of
   0: begin
     out(index[char_wd[c]] div 256); out(index[char_wd[c]] mod 256);
     out(index[char_ht[c]]); out(index[char_dp[c]]);
-    out(index[char_ic[c]] div 64);out((index[char_ic[c]] mod 64)*4+char_tag[c]);
+    out(index[char_ic[c]]); out(char_tag[c]);
     out(char_remainder[c] div 256); out(char_remainder[c] mod 256);
     end;   
   1: begin

@@ -86,6 +86,13 @@ packed file of bytes.  It's no problem in C.
 rewritebin (tfm_file, tfm_name);
 @z
 
+@x [18] Pascal Web's char
+@d first_ord=0 {ordinal number of the smallest element of |char|}
+@y
+@d char == 0..255
+@d first_ord=0 {ordinal number of the smallest element of |char|}
+@z
+
 @x [79] `index' might be a library routine.
 |k|th element of its list.
 @y
@@ -107,10 +114,10 @@ if verbose then @<Print |c| in hex notation@>;
 @!MBL_string,@!RI_string,@!RCE_string:packed array [1..3] of char;
   {handy string constants for |face| codes}
 @y
-@!ASCII_04,@!ASCII_10,@!ASCII_14,HEX: c_string;
+@!ASCII_04,@!ASCII_10,@!ASCII_14,HEX: const_c_string;
   {strings for output in the user's external character set}
 @!ASCII_all: packed array[0..256] of char;
-@!MBL_string,@!RI_string,@!RCE_string: c_string;
+@!MBL_string,@!RI_string,@!RCE_string: const_c_string;
   {handy string constants for |face| codes}
 @z
 
@@ -217,7 +224,13 @@ begin if fabs(x/design_units)>=16.0 then begin
   while label_table[sort_ptr].rr>intcast(char_remainder[c]) do begin
 @z
 
-@x [147] Be quiet unless verbose. 
+@x [170] Eliminate unused variables.
+var @!krn_ptr:0..max_kerns; {an index into |kern|}
+@!c:integer; {runs through all character codes}
+@y
+@z
+
+@x [147?] Be quiet unless verbose. 
 read_input; print('.');@/
 @y
 read_input;
