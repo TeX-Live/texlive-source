@@ -3240,13 +3240,13 @@ case ofm_level of
     top_width:=65535; top_depth:=255; top_height:=255; top_italic:=255;
     end;
   end;
-delta:=shorten(width,max_width); set_indices(width,delta);
+delta:=shorten(width,top_width); set_indices(width,delta);
   round_message('width');@/
-delta:=shorten(height,max_height); set_indices(height,delta);
+delta:=shorten(height,top_height); set_indices(height,delta);
   round_message('height');@/
-delta:=shorten(depth,max_depth); set_indices(depth,delta);
+delta:=shorten(depth,top_depth); set_indices(depth,delta);
   round_message('depth');@/
-delta:=shorten(italic,max_italic); set_indices(italic,delta);
+delta:=shorten(italic,top_italic); set_indices(italic,delta);
   round_message('italic correction');
 
 @ @d clear_lig_kern_entry== {make an unconditional \.{STOP}}

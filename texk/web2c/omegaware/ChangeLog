@@ -1,3 +1,10 @@
+2009-09-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.web: Use top_width as maximum number as character
+	widths, not max_width; same for depth, height, and italic.
+
+	Reported by Lars Hellström <Lars.Hellstrom@residenset.net>
+
 2009-09-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofm2opl.web, opl2ofm.web, ovf2ovp.web, ovp2ovf.web: Use correct
