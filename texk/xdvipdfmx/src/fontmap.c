@@ -1184,7 +1184,7 @@ pdf_load_native_font (const char *ps_name,
             FT_Face face;
             ftErr = FT_New_Face(ftLib, (char*)path, index, &face);
             if (ftErr == 0) {
-              error = pdf_insert_native_fontmap_record(ps_name, NULL, 0, face,
+              error = pdf_insert_native_fontmap_record(ps_name, NULL, index, face,
                                                        layout_dir, extend, slant, embolden);
             }
           }

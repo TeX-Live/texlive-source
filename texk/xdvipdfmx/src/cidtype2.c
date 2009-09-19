@@ -552,8 +552,10 @@ CIDFont_type2_dofont (CIDFont *font)
       ERROR("Invalid TTC index in %s.", font->ident);
     break;
   case SFNT_TYPE_TRUETYPE:
+#ifndef XETEX_MAC
     if (font->options->index > 0)
       ERROR("Found TrueType font file while expecting TTC file (%s).", font->ident);
+#endif
     offset = 0;
     break;
   case SFNT_TYPE_DFONT:
@@ -953,11 +955,15 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     offset = ttc_read_offset(sfont, opt->index);
     break;
   case SFNT_TYPE_TRUETYPE:
+#ifdef XETEX_MAC /* disable the index check here because of how .dfonts are handled */
+    offset = 0;
+#else
     if (opt->index > 0) {
       ERROR("Invalid TTC index (not TTC font): %s", name);
     } else {
       offset = 0;
     }
+#endif
     break;
   case SFNT_TYPE_DFONT:
     offset = sfont->offset;
