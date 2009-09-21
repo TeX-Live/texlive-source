@@ -500,7 +500,7 @@ shell_escape = p
 shell_escape_commands = \
 bibtex,bibtex8,epstopdf,epspdf,fc-match,\
 kpsewhich,makeindex,\
-ps2pdf,pstopdf,pygmentize,\
+ps2pdf,pstopdf,\
 rpdfcrop,\
 
 % we'd like to allow:

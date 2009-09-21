@@ -1,3 +1,7 @@
+2009-09-21  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape_commands): remove pygmentize, as intended.
+
 2009-09-03  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (find_format): remove dvipdfmx.cfg, since there is
