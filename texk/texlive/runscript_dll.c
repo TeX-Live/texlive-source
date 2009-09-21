@@ -1,7 +1,5 @@
 /*
 
-runscript.c
-
 Public Domain
 Originally written 2009 by T.M.Trzeciak
 
@@ -18,15 +16,20 @@ are some odd cases where they are not interchangeable with them.
 
 Usage:
 
-simply copy and rename the compiled binary
+Simply copy and rename the compiled program. The executable part 
+is just a proxy the runscript function in runscript.dll. This arrangement
+is for maintenance reasons - upgrades can be done by replacement of 
+a single .dll rather than all .exe stubs
 
 Compilation:
 
 with gcc (size optimized):
-gcc -Os -s -o runscript.exe runscript.c
+gcc -Os -s -shared -o runscript.dll runscript_dll.c
+gcc -Os -s -o runscript.exe runscript_exe.c -L./ -lrunscript
 
 with tcc (ver. 0.9.24), extra small size
-tcc -o runscript.exe runscript.c
+tcc -shared -o runscript.dll runscript_dll.c
+tcc -o runscript.exe runscript_exe.c runscript.def
 
 */
 
@@ -42,7 +45,7 @@ static char basename[MAX_PATH];
 static char progname[MAX_PATH];
 static char cmdline[MAX_CMD];
 
-int main( int argc, char *argv[] ) {
+__declspec(dllexport) int dllrunscript( int argc, char *argv[] ) {
   int i;
   static char path[MAX_PATH];
   
@@ -98,9 +101,10 @@ int main( int argc, char *argv[] ) {
 PROGRAM_FOUND:
 
   if ( !cmdline[0] ) {
-    strcpy(cmdline, "\"");
+    // batch file has to be executed through the call command in order to propagate its exit code
+    strcpy(cmdline, "cmd.exe /c call \"");
     strcat(cmdline, path);
-    strcat(cmdline, "\"");
+    strcat(cmdline, "\" ");
   }
   
   // get the command line for this process
