@@ -768,7 +768,7 @@ else begin
     end;
   end;
 if lf<>(header_length+lh+ncw+nw+nh+nd+ni+nlw+nk+neew+np+
-        nki+nwi+nkf+nwf+nkr+nwr+nkg+nwg+nkp+nwp) then
+        nki+nwi+nkf+nwf+nkm+nwm+nkr+nwr+nkg+nwg+nkp+nwp) then
   abort('Subfile sizes don''t add up to the stated total!');
 @.Subfile sizes don't add up...@>
 if lh<2 then abort('The header length is only ',lh:1,'!');
@@ -818,7 +818,7 @@ glues_start:=rules_start+nkr;
 penalties_start:=glues_start+nkg;
 ivalues_base:=penalties_start+nkp;
 fvalues_base:=ivalues_base+nwi;
-mvalues_base:=fvalues_base+nwi;
+mvalues_base:=fvalues_base+nwf;
 rules_base:=mvalues_base+nwm;
 glues_base:=rules_base+nwr;
 penalties_base:=glues_base+nwg;
@@ -1275,7 +1275,7 @@ else begin
       read_tfm_word;
       end;
     end;
-  for k:=1 to lh do begin
+  for k:=1 to font_lh do begin
     read_tfm_word;
     if k=1 then @<Check the check sum@>;
     if k=2 then @<Check the design size@>;
@@ -3118,6 +3118,7 @@ begin @<Do the virtual font title@>;
 @<Do the parameters@>;
 @<Do the ivalue parameters@>;@/
 @<Do the fvalue parameters@>;@/
+@<Do the mvalue parameters@>;@/
 @<Do the rule parameters@>;@/
 @<Do the glue parameters@>;@/
 @<Do the penalty parameters@>;@/

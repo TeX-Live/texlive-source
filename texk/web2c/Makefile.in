@@ -1220,10 +1220,10 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	xetexdir/xetexextra.in xetexdir/pool2c.pl \
 	xetexdir/unicode-char-prep.pl xetexdir/appleGlyphNames.c \
 	xetexdir/XeTeXFontMgr_Mac.mm xetexdir/ChangeLog \
-	xetexdir/LICENSE.txt xetexdir/xetex.mk omegaware/ChangeLog \
-	$(odvicopy_sources) $(odvitype_sources) $(ofm2opl_sources) \
-	$(opl2ofm_sources) $(otangle_sources) $(ovf2ovp_sources) \
-	$(ovp2ovf_sources) omegaware/level1.test \
+	xetexdir/LICENSE.txt xetexdir/xetex.mk omegaware/README \
+	omegaware/ChangeLog $(odvicopy_sources) $(odvitype_sources) \
+	$(ofm2opl_sources) $(opl2ofm_sources) $(otangle_sources) \
+	$(ovf2ovp_sources) $(ovp2ovf_sources) omegaware/level1.test \
 	omegaware/omfonts.test omegaware/otangle.test \
 	omegaware/specialhex.test $(aleph_web_srcs) $(aleph_ch_srcs) \
 	lib/texmfmp.c alephdir/ChangeLog alephdir/Makefile \

@@ -15,7 +15,7 @@ endif !OMFONTS
 endif OTANGLE
 EXTRA_PROGRAMS += $(omegaware_programs)
 
-EXTRA_DIST += omegaware/ChangeLog
+EXTRA_DIST += omegaware/README omegaware/ChangeLog
 DISTCLEANFILES += $(omegaware_programs:=.c) $(omegaware_programs:=.h) \
 	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c)
 
