@@ -771,6 +771,20 @@ else
   tfm[char_info(c)+5] := (tfm[char_info(c)+5] div 64)*64 + no_tag;
 end;
 
+procedure check_unused(c:char_type);
+var @!x:integer;
+begin if ofm_level=1 then x:=tfm[char_info(c)+5] div 8
+else x:=tfm[char_info(c)+5] div 4;
+if x<>0 then begin
+  if ofm_level=1 then x:=tfm[char_info(c)+5] mod 8
+  else x:=tfm[char_info(c)+5] mod 4;
+  tfm[char_info(c)+5]:=x;
+  perfect:=false; if chars_on_line>0 then print_ln(' ');
+  chars_on_line:=0; print_ln('Ignoring non-zero unused char info bits');
+@.Ignoring non-zero unused...@>
+  end;
+end;
+
 function ctag(c:char_type):boolean;
 begin if not (ofm_level=1) then
   ctag:=false
@@ -1924,6 +1938,7 @@ if width_index(c)>0 then begin
     print_hex(c); {progress report}
     left; out('CHARACTER'); out_char(c); out_ln;
     end;
+  if ofm_on then check_unused(c);
   @<Output the character's width@>;
   if height_index(c)>0 then @<Output the character's height@>;
   if depth_index(c)>0 then @<Output the character's depth@>;

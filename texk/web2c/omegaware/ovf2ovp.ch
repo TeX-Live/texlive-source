@@ -385,18 +385,19 @@ lig_f:=lig_z[h];
     @<Cases of \.{DVI} instructions that can appear in character packets@>@;
 @y
     o:=vf[vf_ptr]; incr(vf_ptr);
-    if ((o<=set_char_0+127))or
-       ((o>=set1)and(o<=set1+3))or((o>=put1)and(o<=put1+3)) then
+    if (o<=set1+3)or((o>=put1)and(o<=put1+3)) then
 begin if o>=set1 then
     if o>=put1 then c:=get_bytes(o-put1+1,false)
     else c:=get_bytes(o-set1+1,false)
   else c:=o;
-  if f=font_ptr then
+  if (c<0)or(c>65535) then
+    bad_vf('Character ',c:1,' is out of range and will be ignored')
+  else if f=font_ptr then
     bad_vf('Character ',c:1,' in undeclared font will be ignored')
 @.Character...will be ignored@>
-  else begin vf[font_start[f+1]-1]:=c; {store |c| in the ``hole'' we left}
-    k:=font_chars[f];@+while vf[k]<>c do incr(k);
-    if k=font_start[f+1]-1 then
+  else begin vc[font_chars[f+1]-1]:=c; {store |c| in the ``hole'' we left}
+    k:=font_chars[f];@+while vc[k]<>c do incr(k);
+    if k=font_chars[f+1]-1 then
       bad_vf('Character ',c:1,' in font ',f:1,' will be ignored')
     else begin if o>=put1 then out('(PUSH)');
       left; out('SETCHAR'); out_char(c);
@@ -431,12 +432,14 @@ sixty_four_cases(set_char_0),sixty_four_cases(set_char_0+64),
     if o>=put1 then c:=get_bytes(o-put1+1,false)
     else c:=get_bytes(o-set1+1,false)
   else c:=o;
-  if f=font_ptr then
+  if (c<0)or(c>65535) then
+    bad_vf('Character ',c:1,' is out of range and will be ignored')
+  else if f=font_ptr then
     bad_vf('Character ',c:1,' in undeclared font will be ignored')
 @.Character...will be ignored@>
-  else begin vf[font_start[f+1]-1]:=c; {store |c| in the ``hole'' we left}
-    k:=font_chars[f];@+while vf[k]<>c do incr(k);
-    if k=font_start[f+1]-1 then
+  else begin vc[font_chars[f+1]-1]:=c; {store |c| in the ``hole'' we left}
+    k:=font_chars[f];@+while vc[k]<>c do incr(k);
+    if k=font_chars[f+1]-1 then
       bad_vf('Character ',c:1,' in font ',f:1,' will be ignored')
     else begin if o>=put1 then out('(PUSH)');
       left; out('SETCHAR'); out_char(c);

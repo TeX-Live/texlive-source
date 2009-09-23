@@ -1385,8 +1385,11 @@ if r>0 then begin
 end;
 
 function get_integer:integer; {scans an integer property value}
+var @!a:integer; {accumulator}
 begin get_four_bytes;
-get_integer:=(c0*@"1000000)+(c1*@"10000)+(c2*@"100)+c3;
+a:=c0;
+if a>=@"80 then a:=a-@"100;
+get_integer:=(a*@"1000000)+(c1*@"10000)+(c2*@"100)+c3;
 end;
 
 @ @<Multiply by |r|...@>=
@@ -1932,8 +1935,8 @@ else if (cur_code<parameter_code)or(cur_code>=char_wd_code) then
 else begin
   if cur_code=parameter_code then c:=get_integer
   else c:=cur_code-parameter_code;
-  if c=0 then flush_error('PARAMETER index must not be zero')
-@.PARAMETER index must not...@>
+  if c<1 then flush_error('PARAMETER index must be at least 1')
+@.PARAMETER index must be...@>
   else if c>max_param_words then
     flush_error('This PARAMETER index is too big for my present table size')
 @.This PARAMETER index is too big...@>
@@ -2928,8 +2931,8 @@ case ofm_level of
     @<Compute the character info size@>;
     lf:=29+lh+ncw+memory[width]+memory[height]+memory[depth]+
     memory[italic]+2*(nl+lk_offset)+nk+2*ne+np+
-    nki+nwi+nkf+nwf+nkm+nwm++nkr+nwr+nkg+nwg+nkp+nwp;
-    nco:=29+lh+nki+nwi+nkf+nwf+nkm+nwm++nkr+nwr+nkg+nwg+nkp+nwp;
+    nki+nwi+nkf+nwf+nkm+nwm+nkr+nwr+nkg+nwg+nkp+nwp;
+    nco:=29+lh+nki+nwi+nkf+nwf+nkm+nwm+nkr+nwr+nkg+nwg+nkp+nwp;
     end;
   end;
 
@@ -4346,6 +4349,7 @@ begin
 @<Output the penalty headers@>;
 @<Output the ivalues@>;
 @<Output the fvalues@>;
+@<Output the mvalues@>;
 @<Output the rules@>;
 @<Output the glues@>;
 @<Output the penalties@>;

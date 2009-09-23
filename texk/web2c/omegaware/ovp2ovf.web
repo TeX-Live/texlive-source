@@ -1652,10 +1652,12 @@ if r>0 then begin
 end;
 
 function get_integer:integer; {scans an integer property value}
+var @!a:integer; {accumulator}
 begin get_four_bytes;
-get_integer:=(c0*@"1000000)+(c1*@"10000)+(c2*@"100)+c3;
+a:=c0;
+if a>=@"80 then a:=a-@"100;
+get_integer:=(a*@"1000000)+(c1*@"10000)+(c2*@"100)+c3;
 end;
-
 
 @ @<Multiply by |r|...@>=
 begin if cur_char>="A" then cur_char:=cur_char+"0"+10-"A";
@@ -2235,8 +2237,8 @@ else if (cur_code<parameter_code)or(cur_code>=char_wd_code) then
 @.This property name doesn't belong...@>
 else  begin if cur_code=parameter_code then c:=get_integer
   else c:=cur_code-parameter_code;
-  if c=0 then flush_error('PARAMETER index must not be zero')
-@.PARAMETER index must not...@>
+  if c<1 then flush_error('PARAMETER index must be at least 1')
+@.PARAMETER index must be...@>
   else if c>max_param_words then
     flush_error('This PARAMETER index is too big for my present table size')
 @.This PARAMETER index is too big...@>
@@ -4133,7 +4135,7 @@ end.
 @!ofm_level:integer;
 
 @ @<Set init...@>=
-ofm_level:=0; {Suppose that it is a level 0 OFM file}
+ofm_level:=-1; {Suppose that it is a TFM file}
 
 @ @<Read OFM level code@>=
 begin
@@ -5057,6 +5059,7 @@ begin
 @<Output the penalty headers@>;
 @<Output the ivalues@>;
 @<Output the fvalues@>;
+@<Output the mvalues@>;
 @<Output the rules@>;
 @<Output the glues@>;
 @<Output the penalties@>;

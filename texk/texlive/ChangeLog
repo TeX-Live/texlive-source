@@ -1,3 +1,7 @@
+2009-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* runscript*, Makefile.am: New version of Win32 wrapper.
+
 2009-09-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* runscript.{c,exe} (new): Win32 wrapper.

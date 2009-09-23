@@ -1,3 +1,24 @@
+2009-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ovf2ovp.{web,ch}: Bugfix in handling of local fonts with
+	ofm_level=0,1 and characters in the range 0..65535, diagnosing
+	characters outside this range.
+
+	* opl2ofm.web, ovp2ovf.web: Bugfix. Don't forget to output the
+	mvalues.
+
+2009-09-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ovp2ovf.web: Bugfix in handling of ofm_level=-1.
+
+2009-09-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.web (get_integer), ovp2ovf.web (get_integer):
+	Avoid relying on 32-Bit integer overflow.
+	* ofm2opl.web (check_unused), ovf2ovp.web (check_unused):
+	New function to check for non-zero unused char info bits.
+	* opl2ofm.web, ovp2ovf.web: Check for parameter index <0.
+
 2009-09-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* opl2ofm.web: Use top_width as maximum number as character

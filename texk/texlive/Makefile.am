@@ -11,7 +11,7 @@ dist_man1_MANS = getnonfreefonts-sys.man getnonfreefonts.man
 
 ## Win32 wrapper
 ##
-EXTRA_DIST = runscript.c runscript.exe
+EXTRA_DIST = runscript_dll.c runscript_exe.c runscript.dll runscript.exe
 
 ## Not used
 ##
