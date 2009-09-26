@@ -83,6 +83,7 @@ nobase_dist_script_SCRIPTS = \
 	splitindex/perl/splitindex.pl \
 	svn-multi/svn-multi.pl \
 	texcount/texcount.pl \
+	texdiff/texdiff \
 	texdirflatten/texdirflatten \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
