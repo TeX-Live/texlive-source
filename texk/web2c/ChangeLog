@@ -1,3 +1,8 @@
+2009-09-26  Karl Berry  <karl@tug.org>
+
+	* configure.ac (AC_C_BIGENDIAN): need this test for
+	sharable formats.
+
 2009-09-04  Karl Berry  <karl@tug.org>
 
 	* gftype.ch (line_length, max_row, max_col): increase to 500.

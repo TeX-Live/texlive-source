@@ -25,6 +25,9 @@
 /* web2c: the version string. */
 #define WEB2CVERSION "REPLACE-WITH-WEB2CVERSION"
 
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
+
 /* web2c: Define if gcc asm needs _ on external symbols. */
 #undef ASM_NEEDS_UNDERSCORE
 
@@ -261,6 +264,18 @@
 
 /* Version number of package */
 #undef VERSION
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
 
 /* Define to include X11 window in Metafont. */
 #undef X11WIN

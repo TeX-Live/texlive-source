@@ -236,6 +236,9 @@ AC_CHECK_HEADERS([errno.h langinfo.h sys/timeb.h sys/wait.h])
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT
 
+dnl sharable format files.
+AC_C_BIGENDIAN
+
 dnl FIXME: needed for libpdf -> xpdf ?
 AC_CHECK_HEADERS([time.h])
 
