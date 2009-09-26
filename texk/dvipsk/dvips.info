@@ -1,7 +1,7 @@
 This is ../../../texk/dvipsk/dvips.info, produced by makeinfo version
 4.13 from ../../../texk/dvipsk/dvips.texi.
 
-This manual documents Dvips version 5.98 (June 2009), a program to
+This manual documents Dvips version 5.98 (September 2009), a program to
 translate a DVI file into PostScript.  You may freely use, modify
 and/or distribute this file.
 
@@ -18,7 +18,7 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 5.98 (June 2009), a program to
+This manual documents Dvips version 5.98 (September 2009), a program to
 translate a DVI file into PostScript.  You may freely use, modify
 and/or distribute this file.
 
@@ -1486,24 +1486,24 @@ For example:
    When Dvips has a paper format name given on the command line, it
 looks for a match by the NAME; when it has a `papersize' special, it
 looks for a match by dimensions.  The best match found (from the paper
-size information in the configuration file) is used.  If nothing
-matches, a warning is printed and the first paper size is used.  The
-dimensions must match within 5bp.  Landscape mode for all paper sizes
-is automatically supported.
+size information in the configuration file) is used.  The dimensions
+must match within 5bp.
+
+   If nothing matches, a warning is printed and the first paper size
+with zero dimensions is used; this should be the `unknown' paper size
+definition mentioned below, resulting in the actual dimensions being
+used.
+
+   Landscape mode for all paper sizes is automatically supported.
 
    If your printer has a command to set a special paper size, then give
 dimensions of `0in 0in'; the PostScript code that sets the paper size
 can refer to the dimensions the user requested as `hsize' and `vsize';
 these will be macros defined in the PostScript that return the
-requested size in default PostScript units.  Virtually all of the
-PostScript commands you use here are device-dependent and degrade the
-portability of the file; that is why the default first paper size entry
-should not send any PostScript commands down (although a structured
-comment or two would be okay).  Also, some printers want
+requested size in default PostScript units.  Also, some printers want
 `BeginPaperSize' comments and paper size setting commands; others (such
 as the NeXT) want `PaperSize' comments and they will handle setting the
-paper size.  There is no solution I could find that works for both
-(except maybe specifying both).
+paper size.  So paper size entries should typically specify both.
 
    When using a paper size that is not already defined in `config.ps',
 you probably want to say `-t unknown' on the command line; the
@@ -4703,82 +4703,82 @@ Index
 
 
 Tag Table:
-Node: Top559
-Node: Why Dvips1303
-Node: Installation4751
-Node: config.ps installation5889
-Node: PostScript font installation8431
-Node: Ghostscript installation11305
-Node: Diagnosing problems12402
-Node: Debug options13497
-Node: No output14700
-Node: Small or inverted16168
-Node: Printer errors16887
-Node: Long documents fail18219
-Node: Including graphics fails18560
-Node: Invoking Dvips19798
-Node: Basic usage20389
-Node: Command-line options21373
-Node: Option summary21822
-Node: Option details23984
-Node: Environment variables42988
-Node: Config files45947
-Node: Configuration file searching46630
-Node: Configuration file commands49930
-Node: Paper size and landscape57043
-Node: papersize special58641
-Node: Config file paper sizes60050
-Node: Paper trays64359
-Node: Interaction with PostScript65693
-Node: PostScript figures66346
-Node: Bounding box67072
-Node: \includegraphics70443
-Node: EPSF macros72734
-Node: EPSF scaling74704
-Node: EPSF clipping77274
-Node: psfile special77916
-Node: Dynamic creation of graphics80309
-Node: Fonts in figures81627
-Node: Header files83287
-Node: Including headers from TeX84493
-Node: Including headers from the command line86527
-Node: Headers and memory usage87627
-Node: Literal PS88337
-Node: " special88919
-Node: ps special89660
-Node: Literal headers91158
-Node: PostScript hooks91873
-Node: Literal examples93963
-Node: Hypertext95415
-Node: Hypertext caveats96973
-Node: Hypertext specials101370
-Node: PostScript fonts104004
-Node: Font concepts105120
-Node: Metric files106287
-Node: Glyph files109113
-Node: Virtual fonts111469
-Node: Encodings113359
-Node: PostScript typesetting115741
-Node: Making a font available118823
-Node: Invoking afm2tfm123853
-Node: Changing font encodings124823
-Node: Changing TeX encodings125613
-Node: Changing PostScript encodings126713
-Node: Changing both encodings128057
-Node: Reencoding with Afm2tfm128730
-Node: Encoding file format131834
-Node: Special font effects136037
-Node: Afm2tfm options138300
-Node: psfonts.map141285
-Node: Color146017
-Node: Color macro files147061
-Node: User-definable colors150259
-Node: Color subtleties151534
-Node: Ted Turner153185
-Node: Color device configuration154410
-Node: Color support details156852
-Node: Color specifications157230
-Node: Color specials158633
-Node: Index160762
+Node: Top564
+Node: Why Dvips1313
+Node: Installation4761
+Node: config.ps installation5899
+Node: PostScript font installation8441
+Node: Ghostscript installation11315
+Node: Diagnosing problems12412
+Node: Debug options13507
+Node: No output14710
+Node: Small or inverted16178
+Node: Printer errors16897
+Node: Long documents fail18229
+Node: Including graphics fails18570
+Node: Invoking Dvips19808
+Node: Basic usage20399
+Node: Command-line options21383
+Node: Option summary21832
+Node: Option details23994
+Node: Environment variables42998
+Node: Config files45957
+Node: Configuration file searching46640
+Node: Configuration file commands49940
+Node: Paper size and landscape57053
+Node: papersize special58651
+Node: Config file paper sizes60060
+Node: Paper trays64215
+Node: Interaction with PostScript65549
+Node: PostScript figures66202
+Node: Bounding box66928
+Node: \includegraphics70299
+Node: EPSF macros72590
+Node: EPSF scaling74560
+Node: EPSF clipping77130
+Node: psfile special77772
+Node: Dynamic creation of graphics80165
+Node: Fonts in figures81483
+Node: Header files83143
+Node: Including headers from TeX84349
+Node: Including headers from the command line86383
+Node: Headers and memory usage87483
+Node: Literal PS88193
+Node: " special88775
+Node: ps special89516
+Node: Literal headers91014
+Node: PostScript hooks91729
+Node: Literal examples93819
+Node: Hypertext95271
+Node: Hypertext caveats96829
+Node: Hypertext specials101226
+Node: PostScript fonts103860
+Node: Font concepts104976
+Node: Metric files106143
+Node: Glyph files108969
+Node: Virtual fonts111325
+Node: Encodings113215
+Node: PostScript typesetting115597
+Node: Making a font available118679
+Node: Invoking afm2tfm123709
+Node: Changing font encodings124679
+Node: Changing TeX encodings125469
+Node: Changing PostScript encodings126569
+Node: Changing both encodings127913
+Node: Reencoding with Afm2tfm128586
+Node: Encoding file format131690
+Node: Special font effects135893
+Node: Afm2tfm options138156
+Node: psfonts.map141141
+Node: Color145873
+Node: Color macro files146917
+Node: User-definable colors150115
+Node: Color subtleties151390
+Node: Ted Turner153041
+Node: Color device configuration154266
+Node: Color support details156708
+Node: Color specifications157086
+Node: Color specials158489
+Node: Index160618
 
 End Tag Table

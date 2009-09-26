@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.98
-@set month-year June 2009
+@set month-year September 2009
 
 @copying
 This manual documents Dvips version @value{version}
@@ -1781,24 +1781,25 @@ For example:
 When Dvips has a paper format name given on the command line, it looks
 for a match by the @var{name}; when it has a @samp{papersize} special,
 it looks for a match by dimensions.  The best match found (from the
-paper size information in the configuration file) is used.  If nothing
-matches, a warning is printed and the first paper size is used.  The
-dimensions must match within 5bp.  Landscape mode for all paper sizes
-is automatically supported.
+paper size information in the configuration file) is used.  The
+dimensions must match within 5bp.  
+
+If nothing matches, a warning is printed and the first paper size with
+zero dimensions is used; this should be the @code{unknown} paper size
+definition mentioned below, resulting in the actual dimensions being
+used.
+
+Landscape mode for all paper sizes is automatically supported.
 
 If your printer has a command to set a special paper size, then give
 dimensions of @samp{0in 0in}; the PostScript code that sets the paper
-size can refer to the dimensions the user requested as @samp{hsize} and
-@samp{vsize}; these will be macros defined in the PostScript that return
-the requested size in default PostScript units.  Virtually all of the
-PostScript commands you use here are device-dependent and degrade the
-portability of the file; that is why the default first paper size entry
-should not send any PostScript commands down (although a structured
-comment or two would be okay).  Also, some printers want
-@samp{BeginPaperSize} comments and paper size setting commands; others
-(such as the NeXT) want @samp{PaperSize} comments and they will handle
-setting the paper size.  There is no solution I could find that works
-for both (except maybe specifying both).
+size can refer to the dimensions the user requested as @samp{hsize}
+and @samp{vsize}; these will be macros defined in the PostScript that
+return the requested size in default PostScript units.  Also, some
+printers want @samp{BeginPaperSize} comments and paper size setting
+commands; others (such as the NeXT) want @samp{PaperSize} comments and
+they will handle setting the paper size.  So paper size entries should
+typically specify both.
 
 @findex unknown@r{, paper format for @samp{-t}}
 When using a paper size that is not already defined in
@@ -1824,8 +1825,8 @@ definitions.
 Notwithstanding the above, the default @code{letter} and @code{a4}
 paper size definitions in @file{config.ps} execute the
 @code{setpagedevice} operator if it exists (it was defined in
-PostScript Level 2), or the @samp{letter} or @samp{a4} operator if
-they exist (they are nonstandard and thus perhaps cause failures on
+PostScript Level@tie{}2), or the @samp{letter} or @samp{a4} operator
+if they exist (they are nonstandard and thus perhaps cause failures on
 certain (unknown) printers).  Not executing any page size definition
 at all confuses PostScript conversion programs such as
 @command{ps2pdf}, so we want to execute one if we can.

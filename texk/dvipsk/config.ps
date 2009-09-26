@@ -64,6 +64,8 @@ j
 % If you need to have no paper size stuff in the output at all, e.g., if
 % you are producing a multi-page document for further processing, use
 % -tnopaper (defined at end).  (With a single-page document, you can use -E.)
+%
+% emacs-page
 
 @ a4 210mm 297mm
 @+ ! %%DocumentPaperSizes: a4
@@ -584,12 +586,19 @@ j
 @+ if
 @+ %%EndPaperSize
 
-% use -t nopaper to get no paper size stuff in the output at all.
-@ nopaper 0in 0in
-@+ % nopaper
-
 % use -t unknown with a \special{papersize=...} for a nonstandard page size.
 @ unknown 0in 0in
+@+ % dvips-unknown
 @+ statusdict /setpageparams known { hsize vsize 0 1 statusdict begin {
 @+ setpageparams } stopped end } { true } ifelse { statusdict /setpage known
 @+ { hsize vsize 1 statusdict begin { setpage } stopped pop end } if } if
+
+% use -t nopaper to get no paper size stuff in the output at all.
+% This should remain as the last thing in the file, because the first
+% 0in 0in entry is chosen when there is nothing better; ordinarily, we
+% want to that to be "unknown", so that the correct nonstandard paper
+% size is output, instead of just being omitted.
+% http://groups.google.com/group/fr.comp.text.tex/browse_thread/thread/1b08961cf9b8a5ab/6b1d0b32443905e3
+% and mactex mailing list thread from 24 Sep 2009 11:36:26.
+@ nopaper 0in 0in
+@+ % dvips-nopaper

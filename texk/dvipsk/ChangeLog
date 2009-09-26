@@ -1,3 +1,9 @@
+2009-09-26  Karl Berry  <karl@tug.org>
+
+	* config/config.ps (unknown): move to before nopaper; else
+	nonstandard paper sizes, e.g., with the geometry package,
+	end up unrecognized.
+
 2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c (t1_flush_cs): cast ptr diff to unsigned long for
