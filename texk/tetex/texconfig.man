@@ -36,7 +36,7 @@ For making system-wide changes, which will apply to all users of TeX
 .I texconfig-sys
 instead.  Changed or generated files will be placed in
 .I TEXMFSYSCONFIG.
-(You may need ot be root to do this.)
+(You may need to be root to do this.)
 .PP
 .I texconfig
 also offers a non-interactive batch mode which can be accessed with
