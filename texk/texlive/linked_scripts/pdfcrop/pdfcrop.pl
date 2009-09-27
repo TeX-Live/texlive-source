@@ -22,8 +22,8 @@ $^W=1; # turn warning on
 #
 my $file        = "pdfcrop.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.18";
-my $date        = "2009/07/18";
+my $version     = "1.19";
+my $date        = "2009/09/24";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2002-2009 by $author.";
 #
@@ -61,6 +61,8 @@ my $copyright   = "Copyright (c) 2002-2009 by $author.";
 #                     * Validation of options --papersize and --resolution.
 #   2009/07/18 v1.18: * Restricted mode added.
 #                     * Option --version added.
+#   2009/09/24 v1.19: * Ghostscript detection rewritten.
+#                     * Cygwin: `gs' is preferred to `gswin32c'.
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -68,15 +70,64 @@ my $title = "$program $version, $date - $copyright\n";
 ### error strings
 my $Error = "!!! Error:"; # error prefix
 
+### make ENV safer
+delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
+
 ### string constants for Ghostscript run
 # get Ghostscript command name
-my $GS = "gs";
-$GS = "gs386"    if $^O =~ /dos/i;
-$GS = "gsos2"    if $^O =~ /os2/i;
-$GS = "gswin32c" if $^O =~ /mswin32/i;
-$GS = "gswin32c" if $^O =~ /cygwin/i;
-$GS = "mgs"      if defined($ENV{"TEXSYSTEM"}) and
-                    $ENV{"TEXSYSTEM"} =~ /miktex/i;
+$::opt_gscmd = '';
+sub find_ghostscript () {
+    return if $::opt_gscmd;
+    my $system = 'unix';
+    $system = "dos" if $^O =~ /dos/i;
+    $system = "os2" if $^O =~ /os2/i;
+    $system = "win" if $^O =~ /mswin32/i;
+    $system = "cygwin" if $^O =~ /cygwin/i;
+    $system = "miktex" if defined($ENV{"TEXSYSTEM"}) and
+                          $ENV{"TEXSYSTEM"} =~ /miktex/i;
+    print "* System: $system\n" if $::opt_debug;
+    my %candidates = (
+        'unix' => [qw|gs gsc|],
+        'dos' => [qw|gs386 gs|],
+        'os2' => [qw|gsos2 gs|],
+        'win' => [qw|gswin32c gs|],
+        'cygwin' => [qw|gs gswin32c|],
+        'miktex' => [qw|mgs gswin32c gs|]
+    );
+    my %ext = (
+        'unix' => '',
+        'dos' => '.exe',
+        'os2' => '.exe',
+        'win' => '.exe',
+        'cygwin' => '.exe',
+        'miktex' => '.exe'
+    );
+    my $candidates_ref = $candidates{$system};
+    my $ext = $ext{$system};
+    use File::Spec;
+    my @path = File::Spec->path();
+    my $found = 0;
+    foreach my $candidate (@$candidates_ref) {
+        foreach my $dir (@path) {
+            my $file = File::Spec->catfile($dir, "$candidate$ext");
+            if (-x $file) {
+                $::opt_gscmd = $candidate;
+                $found = 1;
+                print "* Found ($candidate): $file\n" if $::opt_debug;
+                last;
+            }
+            print "* Not found ($candidate): $file\n" if $::opt_debug;
+        }
+        last if $found;
+    }
+    if ($found) {
+        print "* Autodetected ghostscript command: $::opt_gscmd\n" if $::opt_debug;
+    }
+    else {
+        $::opt_gscmd = $$candidates_ref[0];
+        print "* Default ghostscript command: $::opt_gscmd\n" if $::opt_debug;
+    }
+}
 
 # Windows detection (no SIGHUP)
 my $Win = 0;
@@ -121,7 +172,6 @@ $::opt_version    = 0;
 $::opt_help       = 0;
 $::opt_debug      = 0;
 $::opt_verbose    = 0;
-$::opt_gscmd      = $GS;
 $::opt_pdftexcmd  = "pdftex";
 $::opt_xetexcmd   = "xetex";
 $::opt_tex        = "pdftex";
@@ -132,7 +182,10 @@ $::opt_papersize  = "";
 $::opt_resolution = "";
 $::opt_bbox       = "";
 
-my $usage = <<"END_OF_USAGE";
+sub usage ($) {
+    my $ret = shift;
+    find_ghostscript();
+    my $usage = <<"END_OF_USAGE";
 ${title}Syntax:   \L$program\E [options] <input[.pdf]> [output file]
 Function: Margins are calculated and removed for each page in the file.
 Options:                                                    (defaults:)
@@ -169,6 +222,14 @@ In case of errors:
 In case of bugs:
   Please, use option --debug for bug reports.
 END_OF_USAGE
+    if ($ret) {
+        die $usage;
+    }
+    else {
+        print $usage;
+        exit(0);
+    }
+}
 
 ### process options
 my @OrgArgv = @ARGV;
@@ -190,8 +251,8 @@ GetOptions(
   "resolution=s",
   "bbox=s",
   "restricted" => sub { $restricted = 1; },
-) or die $usage;
-!$::opt_help or die $usage;
+) or usage(1);
+!$::opt_help or usage(0);
 
 if ($::opt_version) {
     print "$version\n";
@@ -200,9 +261,11 @@ if ($::opt_version) {
 
 $::opt_verbose = 1 if $::opt_debug;
 
-@ARGV >= 1 or die $usage;
+@ARGV >= 1 or usage(1);
 
 print $title;
+
+find_ghostscript();
 
 if ($::opt_bbox) {
     $::opt_bbox =~ s/^\s+//;
