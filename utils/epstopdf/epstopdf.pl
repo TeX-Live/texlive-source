@@ -1,8 +1,19 @@
 #!/usr/bin/env perl
 
-# Change by Thomas Esser, Sept. 1998: The above lines allows us to find
-# perl along $PATH rather than guessing a fixed location. The above
-# construction should work with most shells.
+# Copyright 1998-2001 by Sebastian Rahtz et al.
+# epstopdf is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# epstopdf is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with epstopdf; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use strict;
 
@@ -58,7 +69,6 @@ my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 ### ghostscript command name
 my $GS = "gs";
 $GS = "gswin32c" if $^O eq 'MSWin32';
-$GS = "gswin32c" if $^O =~ /cygwin/;
 
 if ($IsWin32) {
   $GS = `kpsecheck --ghostscript`;
