@@ -2,12 +2,23 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
   if 0;
 use strict;
 
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+# EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+# EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 # Change by Thomas Esser, Sept. 1998: The above lines allows us to find
 # perl along $PATH rather than guessing a fixed location. The above
 # construction should work with most shells.
 
 # A script to transform an EPS file so that:
-#   a) it is guarenteed to start at the 0,0 coordinate
+#   a) it is guaranteed to start at the 0,0 coordinate
 #   b) it sets a page size exactly corresponding to the BoundingBox
 # This means that when Ghostscript renders it, the result needs no
 # cropping, and the PDF MediaBox is correct.
@@ -58,13 +69,28 @@ use strict;
 #    * Quote OutFilename
 #  2005/10/01 v2.9.3draft (Gerben Wierda)
 #    * Quote OutFilename
-#
+#  2005/10/06 v2.9.4gw (Gerben Wierda)
+#    * This has become the official version for now
+#  2005/10/06 v2.9.5gw (Gerben Wierda)
+#    * Fixed a horrendous bug in the (atend) handling code
+#  2007/01/24 v2.9.6sw (Staszek Wawrykiewicz)
+#    * patched to work also on Windows
+#  2007/05/15 v2.9.6tp (Theo Papadopoulo)
+#    * Simplified the (atend) support
+#  2007/05/18 v.2.9.7gw (Gerben Wierda)
+#    * Merged both supplied 2.9.6 versions
+#  2007/07/18 v.2.9.8gw
+#  2008/08/26 v.2.9.9gw
+#    * Switch to embed fonts (default=yes) (J.P. Chretien)
+#    * turned no AutoRotatePages into an option (D. Kreil) (default = None)
+#    * Added resolution switch (D. Kreil)
+#    * Added BSD-style license
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2003/04/20";
-my $fileversion="2.9.3draft";
-my $copyright = "Copyright 1998-2002 by Sebastian Rahtz et al.";
+my $filedate="2008/08/26";
+my $fileversion="2.9.9gw";
+my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al., 2002-2008 by Gerben Wierda et al. Free software under a BSD-style license.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
@@ -77,24 +103,35 @@ $::opt_help=0;
 $::opt_debug=0;
 $::opt_compress=1;
 $::opt_gs=1;
+$::opt_embed=1;
 $::opt_hires=0;
 $::opt_exact=0;
 $::opt_filter=0;
 $::opt_outfile="";
+$::opt_res=0;
+$::opt_autorotate="None";
 
 ### usage
 my @bool = ("false", "true");
+my $resmsg=$::opt_res? $::opt_res:"[use gs default]";
+my $rotmsg=$::opt_autorotate? $::opt_autorotate:"[use gs default]";
 my $usage = <<"END_OF_USAGE";
 ${title}Syntax:  $program [options] <eps file>
 Options:
-  --help:           print usage
-  --outfile=<file>: write result to <file>
-  --(no)filter:     read standard input   (default: $bool[$::opt_filter])
-  --(no)gs:         run ghostscript       (default: $bool[$::opt_gs])
-  --(no)compress:   use compression       (default: $bool[$::opt_compress])
-  --(no)hires:      scan HiResBoundingBox (default: $bool[$::opt_hires])
-  --(no)exact:      scan ExactBoundingBox (default: $bool[$::opt_exact])
-  --(no)debug:      debug informations    (default: $bool[$::opt_debug])
+  --help:             print usage
+  --outfile=<file>:   write result to <file>
+  --res=<dpi>:        set image resolution  (default: $resmsg);
+  --(no)filter:       read standard input   (default: $bool[$::opt_filter])
+  --(no)gs:           run ghostscript       (default: $bool[$::opt_gs])
+  --(no)compress:     use compression       (default: $bool[$::opt_compress])
+  --(no)embed:        embed fonts           (default: $bool[$::opt_embed])
+  --(no)hires:        scan HiResBoundingBox (default: $bool[$::opt_hires])
+  --(no)exact:        scan ExactBoundingBox (default: $bool[$::opt_exact])
+  --(no)debug:        debug informations    (default: $bool[$::opt_debug])
+  --autorotate=<val>: set AutoRotatePages   (default: $rotmsg)
+                      Recognized values: None, All, PageByPage
+                      For EPS files, PageByPage is equivalent to All
+
 Examples for producing 'test.pdf':
   * $program test.eps
   * produce postscript | $program --filter >test.pdf
@@ -111,9 +148,12 @@ GetOptions (
   "filter!",
   "compress!",
   "gs!",
+  "embed!",
   "hires!",
   "exact!",
   "outfile=s",
+  "autorotate=s",
+  "res=i",
 ) or die $usage;
 
 ### help functions
@@ -145,13 +185,20 @@ else {
   @ARGV > 0 or die errorUsage "Input filename missing";
   @ARGV < 2 or die errorUsage "Unknown option or too many input files";
   $InputFilename = $ARGV[0];
-  -f $InputFilename or error "'$InputFilename' does not exist";
+  -f $InputFilename or error "\"$InputFilename\" does not exist";
   debug "Input filename:", $InputFilename;
 }
 
-### option compress
+### option compress & embed
 my $GSOPTS = "";
-$GSOPTS = "-dUseFlateCompression=false " unless $::opt_compress;
+$GSOPTS .= " -dPDFSETTINGS=/prepress -dMaxSubsetPct=100 -dSubsetFonts=true -dEmbedAllFonts=true " if $::opt_embed;
+$GSOPTS .= "-dUseFlateCompression=false " unless $::opt_compress;
+$GSOPTS .= "-r$::opt_res " if $::opt_res;
+$resmsg=$::opt_res? $::opt_res:"[use gs default]";
+$GSOPTS .= "-dAutoRotatePages=/$::opt_autorotate " if $::opt_autorotate;
+die "Invalid value for autorotate: '$::opt_autorotate' (use 'All', 'None' or 'PageByPage').\n"
+    if ($::opt_autorotate and not $::opt_autorotate =~ /^(None|All|PageByPage)$/);
+$rotmsg=$::opt_autorotate? $::opt_autorotate:"[use gs default]";
 
 ### option BoundingBox types
 my $BBName = "%%BoundingBox:";
@@ -186,22 +233,25 @@ else {
 if ($::opt_gs) {
   debug "Ghostscript command:", $GS;
   debug "Compression:", ($::opt_compress) ? "on" : "off";
+  debug "Embedding:", ($::opt_embed) ? "on" : "off";
+  debug("Rotation: $rotmsg");
+  debug("Resolution: $resmsg");
 }
 
 ### open input file
 open(IN,"<$InputFilename") or error "Cannot open",
-  ($::opt_filter) ? "standard input" : "'$InputFilename'";
+  ($::opt_filter) ? "standard input" : "\"$InputFilename\"";
 binmode IN;
 
 ### open output file
 if ($::opt_gs) {
-  my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS -dAutoRotatePages=/None" .
-          " -sOutputFile='$OutputFilename' - -c quit";
+  my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS" .
+          " -sOutputFile=\"$OutputFilename\" - -c quit";
   debug "Ghostscript pipe:", $pipe;
   open(OUT,"|$pipe") or error "Cannot open Ghostscript for piped input";
 }
 else {
-  open(OUT,">$OutputFilename") or error "Cannot write '$OutputFilename";
+  open(OUT,">$OutputFilename") or error "Cannot write \"$OutputFilename\"";
 }
 
 # reading a cr-eol file on a lf-eol system makes it impossible to parse
@@ -213,7 +263,6 @@ else {
 my $buf;
 my $buflen;
 my @bufarray;
-my @parsedbufarray; # for mytell/myseek
 my $bufarraypos;
 
 # We assume 2048 is big enough.
@@ -249,13 +298,14 @@ if ($buflen > 0) {
   # that array until it is empty, then move again back to <IN>
   $buf .= <IN> unless eof( IN);
   $buflen = length( $buf);
+  $bufarraypos = 0;
 
   # Some extra magic is needed here: if we set $/ to \r, Perl's re engine
   # still thinks eol is \n in regular expressions (not very nice) so we
   # cannot split on ^, but have to split on \r and reappend those.
   if ($/ eq "\r") {
-    @bufarray = split( /\r/ms, $buf);
-    grep( $_ .= "\r", @bufarray);
+    @bufarray = split( /\r/ms, $buf); # split on \r
+    grep( $_ .= "\r", @bufarray); # re-append \r to each array item
   }
   else {
     @bufarray = split( /^/ms, $buf);
@@ -266,45 +316,14 @@ if ($buflen > 0) {
 sub getline {
   if ($#bufarray >= 0) {
     $_ = shift( @bufarray);
-    unshift( @parsedbufarray, $_); # for myseek and mytell
     $bufarraypos += length( $_);
+    # debug "getline from array. bufarraypos = $bufarraypos";
+    # debug "*** READ: $_";
   }
   else {
     $_ = <IN>;
   }
   return( defined( $_));
-}
-
-### mytell and myseek, work on <IN> only
-sub mytell {
-  if ($#bufarray) {
-    return $bufarraypos;
-  }
-  else {
-    return tell( IN);
-  }
-}
-
-sub myseek {
-  my $pos = shift;
-  if ($pos < $buflen) {
-    # We were still parsing the array, reset to the end of buf and
-    # move to the right line in the array.
-    # Now, move stuff from the @parsedbufarray until we are back at $pos
-    my $tmpline;
-    while ($pos > 0) {
-      # we test on parsedbufarray to prevent an infinite loop on
-      # a programming error (DEVELOP only)
-      die "Programming error 1\n" unless $#parsedbufarray;
-      $tmpline = pop( @parsedbufarray);
-      $pos -= length( $tmpline);
-      push( @bufarray, $tmpline);
-    }
-    return seek( IN, $buflen, 0);
-  }
-  else {
-    return seek( IN, $pos, 0);
-  }
 }
 
 ### scan first line
@@ -364,7 +383,7 @@ if ($header) {
                 "with option --filter";
         last;
       }
-      my $pos = mytell();
+      my $pos = tell(OUT)+length($_);
       debug "Current file position:", $pos;
 
       # looking for %%BoundingBox
@@ -383,7 +402,7 @@ if ($header) {
       }
 
       # go back
-      myseek( $pos) or error "Cannot go back to line '$BBName (atend)'";
+      seek( IN, $pos, 0) or error "Cannot go back to line \"$BBName (atend)\"";
       last;
     }
 
@@ -403,4 +422,3 @@ print OUT "\ngrestore\n" if $BBCorrected;
 close(OUT);
 warning "BoundingBox not found" unless $BBCorrected;
 debug "Ready.";
-;
