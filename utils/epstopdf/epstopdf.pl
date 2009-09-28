@@ -1,10 +1,10 @@
-eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $argv:q'
-  if 0;
-use strict;
+#!/usr/bin/env perl
 
 # Change by Thomas Esser, Sept. 1998: The above lines allows us to find
 # perl along $PATH rather than guessing a fixed location. The above
 # construction should work with most shells.
+
+use strict;
 
 # A script to transform an EPS file so that:
 #   a) it is guarenteed to start at the 0,0 coordinate
@@ -41,13 +41,16 @@ use strict;
 #    * corrected first line (one line instead of two before 'if 0;';
 #  2000/11/05 v2.6 (Heiko Oberdiek)
 #    * %%HiresBoundingBox corrected to %%HiResBoundingBox
+#  2001/03/05 v2.7 (Heiko Oberdiek)
+#    * Newline before grestore for the case that there is no
+#      whitespace at the end of the eps file.
 #
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2000/11/05";
-my $fileversion="2.6";
-my $copyright = "Copyright 1998,1999,2000 by Sebastian Rahtz et al.";
+my $filedate="2001/03/05";
+my $fileversion="2.7";
+my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
@@ -83,7 +86,7 @@ Examples for producing 'test.pdf':
   * produce postscript | $program --filter >test.pdf
   * produce postscript | $program -f -d -o=test.pdf
 Example: look for HiResBoundingBox and produce corrected PostScript:
-  * $program -d --nogs -hires test.ps>testcorr.ps 
+  * $program -d --nogs -hires test.ps>testcorr.ps
 END_OF_USAGE
 
 ### process options
@@ -119,7 +122,7 @@ die $usage if $::opt_help;
 ### get input filename
 my $InputFilename = "";
 if ($::opt_filter) {
-  @ARGV == 0 or 
+  @ARGV == 0 or
     die errorUsage "Input file cannot be used with filter option";
   $InputFilename = "-";
   debug "Input file: standard input";
@@ -172,7 +175,7 @@ if ($::opt_gs) {
 }
 
 ### open input file
-open(IN,"<$InputFilename") or error "Cannot open", 
+open(IN,"<$InputFilename") or error "Cannot open",
   ($::opt_filter) ? "standard input" : "'$InputFilename'";
 binmode IN;
 
@@ -264,7 +267,7 @@ if ($header) {
       seek(IN, $pos, 0) or error "Cannot go back to line '$BBName (atend)'";
       last;
     }
-    
+
     # print header line
     print OUT;
   }
@@ -277,7 +280,7 @@ while (<IN>) {
 
 ### close files
 close(IN);
-print OUT "grestore\n" if $BBCorrected;
+print OUT "\ngrestore\n" if $BBCorrected;
 close(OUT);
 warning "BoundingBox not found" unless $BBCorrected;
 debug "Ready.";
