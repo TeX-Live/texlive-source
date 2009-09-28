@@ -1,3 +1,20 @@
+Release Notes for Version 1.87
+
+Support for SVG output was added (requires dvisvgm-0.8.4). Billboard
+labels were implemented for the OpenGL renderer. OpenGL animations were
+improved: reverse and step menu items were added, along with a framerate
+setting. An addStereoViews function and example stereoscopic.asy were added.
+The addViews function was generalized to handle any layout; the default
+layout was changed from ThreeViewsFR to SixViewsUS. PRC node names are
+now implemented for curves, surface, labels, and dots. OmitTick was
+generalized to omit both major and minor ticks. A graphicx.tex workaround
+was implemented to parse paths properly. A viewportsize bug was fixed.
+A memory deallocation bug was fixed. The ENDIAN test was fixed. The ucyclic
+and vcyclic parameters are no longer set for conditional surfaces. The
+erase() function clears the PostScript canvas again. A projection()
+function that returns the interactive camera parameters was implemented.
+A hyperrefOptions setting was implemented. The tutorial was improved.
+
 Release Notes for Version 1.86
 
 PRC polygons were optimized. Surface memory usage was reduced.

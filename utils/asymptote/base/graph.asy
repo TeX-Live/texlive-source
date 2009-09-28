@@ -609,38 +609,40 @@ tickvalues generateticks(int sign, Label F="", ticklabel ticklabel=null,
       if(divisor.length > 0) {
         bool autoscale=locate.S.automin && locate.S.automax;
         real h=0.5*(b-a);
-        for(int d=divisor.length-1; d >= 0; --d) {
-          int N0=divisor[d];
-          Step=len/N0;
-          int N1=N0;
-          int m=2;
-          while(Step > h) {
-            N0=m*N1;
+        if(h > 0) {
+          for(int d=divisor.length-1; d >= 0; --d) {
+            int N0=divisor[d];
             Step=len/N0;
-            m *= 2;
-          }
-          if(axiscoverage(N0,T,g,locate,Step,side,sign,Size,F,ticklabel,norm,
-                          limit)) {
-            N=N0;
-            if(N0 == 1 && !autoscale && d < divisor.length-1) {
-              // Try using 2 ticks (otherwise 1);
-              int div=divisor[d+1];
-              Step=quotient(div,2)*len/div;
-              calcStep=false; 
-              if(axiscoverage(2,T,g,locate,Step,side,sign,Size,F,ticklabel,
-                              norm,limit)) N=2;
-              else Step=len;
+            int N1=N0;
+            int m=2;
+            while(Step > h) {
+              N0=m*N1;
+              Step=len/N0;
+              m *= 2;
             }
-            // Found a good divisor; now compute subtick divisor
-            if(n == 0) {
-              if(step != 0) n=ceil(Step/step);
-              else {
-                n=quotient(divisor[divisor.length-1],N);
-                if(N == 1) n=(a*b >= 0) ? 2 : 1;
-                if(n == 1) n=2;
+            if(axiscoverage(N0,T,g,locate,Step,side,sign,Size,F,ticklabel,norm,
+                            limit)) {
+              N=N0;
+              if(N0 == 1 && !autoscale && d < divisor.length-1) {
+                // Try using 2 ticks (otherwise 1);
+                int div=divisor[d+1];
+                Step=quotient(div,2)*len/div;
+                calcStep=false; 
+                if(axiscoverage(2,T,g,locate,Step,side,sign,Size,F,ticklabel,
+                                norm,limit)) N=2;
+                else Step=len;
               }
+              // Found a good divisor; now compute subtick divisor
+              if(n == 0) {
+                if(step != 0) n=ceil(Step/step);
+                else {
+                  n=quotient(divisor[divisor.length-1],N);
+                  if(N == 1) n=(a*b >= 0) ? 2 : 1;
+                  if(n == 1) n=2;
+                }
+              }
+              break;
             }
-            break;
           }
         }
       }
@@ -826,12 +828,17 @@ tickvalues None(tickvalues v) {return v;}
 
 tickmodifier OmitTick(... real[] x) {
   return new tickvalues(tickvalues v) { 
-    if(v.major.length == 0) return v;
-    real norm=max(abs(v.major));
-    for(int i=0; i < x.length; ++i) {
-      int j=find(abs(v.major-x[i]) < zerotickfuzz*norm);
-      if(j >= 0) v.major.delete(j);
+    void omit(real[] a) {
+      if(a.length != 0) {
+        real norm=max(abs(a));
+        for(int i=0; i < x.length; ++i) {
+          int j=find(abs(a-x[i]) < zerotickfuzz*norm);
+          if(j >= 0) a.delete(j);
+        }
+      }
     }
+    omit(v.major);
+    omit(v.minor);
     return v;
   };
 }

@@ -62,6 +62,9 @@ Mask fpu exceptions in batch mode [false].
 .B \-batchView          
 View output in batch mode [false].
 .TP
+.B \-billboard          
+Force unnamed labels to always face viewer [false].
+.TP
 .B \-bw                 
 Convert all colors to black and white [false].
 .TP
@@ -94,6 +97,7 @@ Exit interactive mode on EOF [true].
 .TP
 .B \-fitscreen          
 Fit rendered image to screen [true].
+-framerate frames/sec Animation speed [30]
 .TP
 .B \-globalwrite        
 Allow write to other directory [false].
@@ -106,6 +110,9 @@ Show summary of options; command-line only.
 .TP
 .B \-historylines n     
 Retain n lines of history [1000].
+.TP
+.B \-hyperrefOptions str
+LaTeX hyperref package options [setpagesize=false,unicode].
 .TP
 .B \-iconify            
 Iconify rendering window [false].
@@ -199,6 +206,9 @@ Render 3D graphics using n pixels per bp (-1=auto) [-1].
 .TP
 .B \-resizestep step    
 Resize step [1.2].
+.TP
+.B \-reverse            
+reverse 3D animations [false].
 .TP
 .B \-rgb                
 Convert cmyk colors to rgb [false].

@@ -405,8 +405,9 @@ void shipout3(string prefix, picture *f, string format=emptystring,
   checkEqual(n,checkArray(specular));
   
   real *T=copyArray2C(t,true,4);
-  triple *Lights=copyTripleArrayC(lights);
   real* Background=copyArrayC(background);
+  
+  triple *Lights=copyTripleArrayC(lights);
   real *Diffuse=copyArray2C(diffuse,false,4);
   real *Ambient=copyArray2C(ambient,false,4);
   real *Specular=copyArray2C(specular,false,4);
@@ -414,11 +415,7 @@ void shipout3(string prefix, picture *f, string format=emptystring,
   f->shipout3(prefix,format,width,height,angle,zoom,m,M,shift,T,Background,n,
               Lights,Diffuse,Ambient,Specular,viewportlighting,view);
   
-  delete[] Specular;
-  delete[] Ambient;
-  delete[] Diffuse;
   delete[] Background;
-  delete[] Lights;
   delete[] T;
 }
 
@@ -561,12 +558,14 @@ void _draw(picture *f, path3 g, pen p, string name=emptystring)
 }
 
 // Bezier patch
-void draw(picture *f, triplearray2 *P, bool straight, penarray *p, real opacity,
-          real shininess, real PRCshininess, real granularity, triple normal,
-          penarray *colors, bool lighton, string name=emptystring)
+void draw(picture *f, triplearray2 *P, triple center, bool straight,
+          penarray *p, real opacity, real shininess, real PRCshininess,
+          real granularity, triple normal, penarray *colors, bool lighton,
+          string name=emptystring)
 {
-  f->append(new drawSurface(*P,straight,*p,opacity,shininess,PRCshininess,
-                            granularity,normal,*colors,lighton,name));
+  f->append(new drawSurface(*P,center,straight,*p,opacity,shininess,
+                            PRCshininess,granularity,normal,*colors,lighton,
+                            name));
 }
 
 // General NURBS surface

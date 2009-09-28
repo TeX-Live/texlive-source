@@ -1093,6 +1093,9 @@ void initSettings() {
                             "Render thick 3D lines", true));
   addOption(new boolSetting("thin", 0,
                             "Render thin 3D lines", true));
+  addOption(new boolSetting("billboard", 0,
+                            "Force unnamed labels to always face viewer",
+                            false));
   addOption(new boolSetting("threads", 0,
                             "Use POSIX threads for 3D rendering", !msdos));
   addOption(new boolSetting("fitscreen", 0,
@@ -1130,6 +1133,9 @@ void initSettings() {
                             true));
   addOption(new boolSetting("autoplay", 0, "Autoplay 3D animations", false));
   addOption(new boolSetting("loop", 0, "Loop 3D animations", false));
+  addOption(new boolSetting("interrupt", 0, "", false));
+  addOption(new boolSetting("animating", 0, "", false));
+  addOption(new boolSetting("reverse", 0, "reverse 3D animations", false));
 
   addOption(new boolSetting("inlineimage", 0,
                             "Generate inline embedded image"));
@@ -1224,6 +1230,8 @@ void initSettings() {
                             0.1));
   addOption(new realSetting("spinstep", 0, "deg/sec", "Spin speed",
                             60.0));
+  addOption(new realSetting("framerate", 0, "frames/sec", "Animation speed",
+                            30.0));
   addOption(new realSetting("arcballradius", 0, "pixels",
                             "Arcball radius", 750.0));
   addOption(new realSetting("resizestep", 0, "step", "Resize step", 1.2));
@@ -1234,12 +1242,16 @@ void initSettings() {
   addOption(new realSetting("paperheight", 0, "bp", ""));
   
   addOption(new stringSetting("dvipsOptions", 0, "string", ""));
+  addOption(new stringSetting("dvisvgmOptions", 0, "string", ""));
   addOption(new stringSetting("convertOptions", 0, "string", ""));
   addOption(new stringSetting("gsOptions", 0, "string", ""));
   addOption(new stringSetting("psviewerOptions", 0, "string", ""));
   addOption(new stringSetting("pdfviewerOptions", 0, "string", ""));
   addOption(new stringSetting("pdfreloadOptions", 0, "string", ""));
   addOption(new stringSetting("glOptions", 0, "string", ""));
+  addOption(new stringSetting("hyperrefOptions", 0, "str",
+                              "LaTeX hyperref package options",
+                              "setpagesize=false,unicode"));
   
   addOption(new envSetting("config","config."+suffix));
   addOption(new envSetting("pdfviewer", defaultPDFViewer));
@@ -1248,6 +1260,7 @@ void initSettings() {
   addOption(new envSetting("texpath", ""));
   addOption(new envSetting("texcommand", ""));
   addOption(new envSetting("dvips", "dvips"));
+  addOption(new envSetting("dvisvgm", "dvisvgm"));
   addOption(new envSetting("convert", "convert"));
   addOption(new envSetting("display", defaultDisplay));
   addOption(new envSetting("animate", defaultAnimate));
@@ -1292,7 +1305,8 @@ bool trap() {
     return !getSetting<bool>("batchMask");
 }
 
-string outname() {
+string outname() 
+{
   string name=getSetting<string>("outname");
   return name.empty() ? "out" : name;
 }
@@ -1396,8 +1410,8 @@ bool context(const string& texengine) {
 }
 
 bool pdf(const string& texengine) {
-  return texengine == "pdflatex" || texengine == "pdftex" || xe(texengine)
-    || context(texengine);
+  return texengine == "pdflatex" || texengine == "pdftex" || xe(texengine) ||
+    context(texengine);
 }
 
 bool latex(const string& texengine) {

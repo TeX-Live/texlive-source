@@ -41,5 +41,6 @@ ADD(quit);
 ADD(q);
 ADD(exit);
 ADD(reset);
+ADD(erase);
 ADD(help);
 ADD(input);

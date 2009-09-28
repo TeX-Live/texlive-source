@@ -189,12 +189,6 @@
 # endif
 #endif
 
-/* Define if words are stored with the most significant byte first. */
-#undef WORDS_BIG_ENDIAN
-
-/* Define if words are stored with the least significant byte first. */
-#undef WORDS_LITTLE_ENDIAN
-
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
 #undef YYTEXT_POINTER

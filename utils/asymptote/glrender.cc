@@ -11,11 +11,6 @@
 
 #include "common.h"
 
-namespace gl {
-bool glthread=false;
-bool initialize=true;
-}
-
 #ifdef HAVE_LIBGL
 
 // For CYGWIN
@@ -41,6 +36,9 @@ bool initialize=true;
 
 namespace gl {
   
+bool glthread=false;
+bool initialize=true;
+
 using camp::picture;
 using camp::drawImage;
 using camp::transform;
@@ -52,6 +50,7 @@ using camp::bbox3;
 using settings::getSetting;
 using settings::Setting;
 timeval lasttime;
+timeval lastframetime;
 
 double Aspect;
 bool View;
@@ -70,10 +69,11 @@ int maxHeight;
 int maxTileWidth;
 int maxTileHeight;
 
-double *T;
+double T[16];
 
 bool Xspin,Yspin,Zspin;
 bool Animate;
+bool Step;
 bool Menu;
 bool Motion;
 bool ignorezoom;
@@ -101,7 +101,7 @@ int minimumsize=50; // Minimum initial rendering window width and height
 const double degrees=180.0/M_PI;
 const double radians=1.0/degrees;
 
-double *Background;
+double Background[4];
 size_t Nlights;
 triple *Lights; 
 double *Diffuse;
@@ -126,7 +126,7 @@ double lastzoom;
 GLfloat Rotate[16];
 Arcball arcball;
   
-GLUnurbs *nurb;
+GLUnurbs *nurb=NULL;
 
 int window;
   
@@ -504,7 +504,7 @@ void updateHandler(int)
 {
   queueScreen=true;
   update();
-  if(!Animate) {
+  if(interact::interactive || !Animate) {
     glutShowWindow();
     glutShowWindow(); // Call twice to work around apparent freeglut bug.
   }
@@ -539,6 +539,7 @@ void reshape(int width, int height)
 void initTimer() 
 {
   gettimeofday(&lasttime,NULL);
+  gettimeofday(&lastframetime,NULL);
 }
 
 void idleFunc(void (*f)())
@@ -550,7 +551,7 @@ void idleFunc(void (*f)())
 void idle() 
 {
   glutIdleFunc(NULL);
-  Xspin=Yspin=Zspin=false;
+  Xspin=Yspin=Zspin=Animate=Step=false;
 }
 
 void animate() 
@@ -580,10 +581,13 @@ void home()
 void quit() 
 {
   if(glthread) {
-    Setting("loop")=false;
+    bool animating=getSetting<bool>("animating");
+    if(animating)
+      Setting("interrupt")=true;
     home();
+    Animate=getSetting<bool>("autoplay");
 #ifdef HAVE_LIBPTHREAD
-    if(!interact::interactive)
+    if(!interact::interactive || animating)
       endwait(readySignal,readyLock);
 #endif    
     glutHideWindow();
@@ -599,6 +603,12 @@ void screen()
     fitscreen(false);
 }
 
+void nextframe(int) 
+{
+  endwait(readySignal,readyLock);
+  if(Step) Animate=false;
+}
+
 void display()
 {
   if(queueScreen) {
@@ -610,7 +620,16 @@ void display()
 #ifdef HAVE_LIBPTHREAD
   if(glthread && Animate) {
     queueExport=false;
-    endwait(readySignal,readyLock);
+    double delay=1.0/getSetting<double>("framerate");
+    timeval tv;
+    gettimeofday(&tv,NULL);
+    double seconds=tv.tv_sec-lastframetime.tv_sec+
+      ((double) tv.tv_usec-lastframetime.tv_usec)/1000000.0;
+    lastframetime=tv;
+    double milliseconds=1000.0*(delay-seconds);
+    if(milliseconds > 0)
+      glutTimerFunc(milliseconds,nextframe,0);
+    else nextframe(0);
   }
 #endif
   if(queueExport) {
@@ -1018,49 +1037,68 @@ void write(const char *text, const double *v)
   cout << text << "=(" << v[0] << "," << v[1] << "," << v[2] << ")";
 }
 
-void camera()
+static bool glinitialize=true;
+
+projection camera(bool user)
 {
-  camp::Triple vCamera,vTarget,vUp;
+  if(glinitialize) return projection();
+                   
+  camp::Triple vCamera,vUp,vTarget;
   
   double cz=0.5*(zmin+zmax);
-  
-  for(int i=0; i < 3; ++i) {
-    double sumCamera=0.0, sumTarget=0.0, sumUp=0.0;
-    int i4=4*i;
-    for(int j=0; j < 4; ++j) {
-      int j4=4*j;
-      double R0=Rotate[j4];
-      double R1=Rotate[j4+1];
-      double R2=Rotate[j4+2];
-      double R3=Rotate[j4+3];
-      double T4ij=T[i4+j];
-      sumCamera += T4ij*(R3-cx*R0-cy*R1-cz*R2);
-      sumUp += T4ij*R1;
-      sumTarget += T4ij*(R3-cx*R0-cy*R1);
+
+  if(user) {
+    for(int i=0; i < 3; ++i) {
+      double sumCamera=0.0, sumTarget=0.0, sumUp=0.0;
+      int i4=4*i;
+      for(int j=0; j < 4; ++j) {
+        int j4=4*j;
+        double R0=Rotate[j4];
+        double R1=Rotate[j4+1];
+        double R2=Rotate[j4+2];
+        double R3=Rotate[j4+3];
+        double T4ij=T[i4+j];
+        sumCamera += T4ij*(R3-cx*R0-cy*R1-cz*R2);
+        sumUp += T4ij*R1;
+        sumTarget += T4ij*(R3-cx*R0-cy*R1);
+      }
+      vCamera[i]=sumCamera;
+      vUp[i]=sumUp;
+      vTarget[i]=sumTarget;
     }
-    vCamera[i]=sumCamera;
-    vUp[i]=sumUp;
-    vTarget[i]=sumTarget;
+  } else {
+    for(int i=0; i < 3; ++i) {
+      int i4=4*i;
+      double R0=Rotate[i4];
+      double R1=Rotate[i4+1];
+      double R2=Rotate[i4+2];
+      double R3=Rotate[i4+3];
+      vCamera[i]=R3-cx*R0-cy*R1-cz*R2;
+      vUp[i]=R1;
+      vTarget[i]=R3-cx*R0-cy*R1;
+    }
   }
   
-  triple Camera=triple(vCamera);
-  triple Up=triple(vUp);
-  triple Target=triple(vTarget);
-  
-  pair viewportshift(X/Width*lastzoom+Shift.getx(),
-                     Y/Height*lastzoom+Shift.gety());
-  
+  return projection(orthographic,vCamera,vUp,vTarget,Zoom,
+                    2.0*atan(tan(0.5*Angle)/Zoom)/radians,
+                    pair(X/Width*lastzoom+Shift.getx(),
+                         Y/Height*lastzoom+Shift.gety()));
+}
+
+void showCamera()
+{
+  projection P=camera();
   cout << endl
        << "currentprojection=" 
-       << (orthographic ? "orthographic(" : "perspective(")  << endl
-       << "camera=" << Camera << "," << endl
-       << "up=" << Up << "," << endl
-       << "target=" << Target << "," << endl
-       << "zoom=" << Zoom;
+       << (P.orthographic ? "orthographic(" : "perspective(")  << endl
+       << "camera=" << P.camera << "," << endl
+       << "up=" << P.up << "," << endl
+       << "target=" << P.target << "," << endl
+       << "zoom=" << P.zoom;
   if(!orthographic)
-    cout << "," << endl << "angle=" << 2.0*atan(tan(0.5*Angle)/Zoom)/radians;
-  if(viewportshift != pair(0.0,0.0))
-    cout << "," << endl << "viewportshift=" << viewportshift;
+    cout << "," << endl << "angle=" << P.angle;
+  if(P.viewportshift != pair(0.0,0.0))
+    cout << "," << endl << "viewportshift=" << P.viewportshift;
   if(!orthographic)
     cout << "," << endl << "autoadjust=false";
   cout << ");" << endl;
@@ -1095,7 +1133,7 @@ void keyboard(unsigned char key, int x, int y)
       Export();
       break;
     case 'c':
-      camera();
+      showCamera();
       break;
     case '+':
     case '=':
@@ -1108,6 +1146,18 @@ void keyboard(unsigned char key, int x, int y)
       shrink();
       break;
     case 'p':
+      if(getSetting<bool>("reverse")) Animate=false;
+      Setting("reverse")=Step=false;
+      animate();
+      break;
+    case 'r':
+      if(!getSetting<bool>("reverse")) Animate=false;
+      Setting("reverse")=true;
+      Step=false;
+      animate();
+      break;
+    case ' ':
+      Step=true;
       animate();
       break;
     case 17: // Ctrl-q
@@ -1119,7 +1169,7 @@ void keyboard(unsigned char key, int x, int y)
 }
  
 enum Menu {HOME,FITSCREEN,XSPIN,YSPIN,ZSPIN,STOP,MODE,EXPORT,CAMERA,
-           ANIMATE,QUIT};
+           PLAY,STEP,REVERSE,QUIT};
 
 void menu(int choice)
 {
@@ -1153,9 +1203,21 @@ void menu(int choice)
       queueExport=true;
       break;
     case CAMERA:
-      camera();
+      showCamera();
       break;
-    case ANIMATE:
+    case PLAY:
+      if(getSetting<bool>("reverse")) Animate=false;
+      Setting("reverse")=Step=false;
+      animate();
+      break;
+    case REVERSE:
+      if(!getSetting<bool>("reverse")) Animate=false;
+      Setting("reverse")=true;
+      Step=false;
+      animate();
+      break;
+    case STEP:
+      Step=true;
       animate();
       break;
     case QUIT:
@@ -1207,8 +1269,11 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   Prefix=prefix;
   Picture=pic;
   Format=format;
-  T=t;
-  Background=background;
+  for(int i=0; i < 16; ++i)
+    T[i]=t[i];
+  for(int i=0; i < 4; ++i)
+  Background[i]=background[i];
+  
   Nlights=min(nlights,(size_t) GL_MAX_LIGHTS);
   Lights=lights;
   Diffuse=diffuse;
@@ -1237,10 +1302,8 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   Mode=0;
   Xfactor=Yfactor=1.0;
   
-  static bool initialize=true;
-
-  if(initialize) {
-    initialize=false;
+  if(glinitialize) {
+    glinitialize=false;
     init();
     Fitscreen=1;
   }
@@ -1406,21 +1469,24 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
   
-  nurb=gluNewNurbsRenderer();
-  if(nurb == NULL) 
-    outOfMemory();
-  gluNurbsProperty(nurb,GLU_SAMPLING_METHOD,GLU_PARAMETRIC_ERROR);
-  gluNurbsProperty(nurb,GLU_SAMPLING_TOLERANCE,0.5);
-  gluNurbsProperty(nurb,GLU_PARAMETRIC_TOLERANCE,1.0);
-  gluNurbsProperty(nurb,GLU_CULLING,GLU_TRUE);
+  if(nurb == NULL) {
+    nurb=gluNewNurbsRenderer();
+    if(nurb == NULL) 
+      outOfMemory();
+    gluNurbsProperty(nurb,GLU_SAMPLING_METHOD,GLU_PARAMETRIC_ERROR);
+    gluNurbsProperty(nurb,GLU_SAMPLING_TOLERANCE,0.5);
+    gluNurbsProperty(nurb,GLU_PARAMETRIC_TOLERANCE,1.0);
+    gluNurbsProperty(nurb,GLU_CULLING,GLU_TRUE);
   
-  // The callback tesselation algorithm avoids artifacts at degenerate control
-  // points.
-  gluNurbsProperty(nurb,GLU_NURBS_MODE,GLU_NURBS_TESSELLATOR);
-  gluNurbsCallback(nurb,GLU_NURBS_BEGIN,(_GLUfuncptr) glBegin);
-  gluNurbsCallback(nurb,GLU_NURBS_VERTEX,(_GLUfuncptr) glVertex3fv);
-  gluNurbsCallback(nurb,GLU_NURBS_END,(_GLUfuncptr) glEnd);
-  gluNurbsCallback(nurb,GLU_NURBS_COLOR,(_GLUfuncptr) glColor4fv);
+    // The callback tesselation algorithm avoids artifacts at degenerate control
+    // points.
+    gluNurbsProperty(nurb,GLU_NURBS_MODE,GLU_NURBS_TESSELLATOR);
+    gluNurbsCallback(nurb,GLU_NURBS_BEGIN,(_GLUfuncptr) glBegin);
+    gluNurbsCallback(nurb,GLU_NURBS_VERTEX,(_GLUfuncptr) glVertex3fv);
+    gluNurbsCallback(nurb,GLU_NURBS_END,(_GLUfuncptr) glEnd);
+    gluNurbsCallback(nurb,GLU_NURBS_COLOR,(_GLUfuncptr) glColor4fv);
+  }
+  
   mode();
   
   if(View) {
@@ -1440,7 +1506,9 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     glutAddMenuEntry("(m) Mode",MODE);
     glutAddMenuEntry("(e) Export",EXPORT);
     glutAddMenuEntry("(c) Camera",CAMERA);
-    glutAddMenuEntry("(p) Play",ANIMATE);
+    glutAddMenuEntry("(p) Play",PLAY);
+    glutAddMenuEntry("(r) Reverse",REVERSE);
+    glutAddMenuEntry("( ) Step",STEP);
     glutAddMenuEntry("(q) Quit" ,QUIT);
   
     for(size_t i=0; i < nbuttons; ++i) {

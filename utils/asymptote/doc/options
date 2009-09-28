@@ -13,6 +13,7 @@ Options (negate by replacing - with -no):
 -autorotate           Enable automatic PDF page rotation [false]
 -batchMask            Mask fpu exceptions in batch mode [false]
 -batchView            View output in batch mode [false]
+-billboard            Force unnamed labels to always face viewer [false]
 -bw                   Convert all colors to black and white [false]
 -cd directory         Set current directory; command-line only
 -cmyk                 Convert rgb colors to cmyk [false]
@@ -24,10 +25,12 @@ Options (negate by replacing - with -no):
 -embed                Embed rendered preview image [true]
 -exitonEOF            Exit interactive mode on EOF [true]
 -fitscreen            Fit rendered image to screen [true]
+-framerate frames/sec Animation speed [30]
 -globalwrite          Allow write to other directory [false]
 -gray                 Convert all colors to grayscale [false]
 -h,-help              Show summary of options; command-line only
 -historylines n       Retain n lines of history [1000]
+-hyperrefOptions str  LaTeX hyperref package options [setpagesize=false,unicode]
 -iconify              Iconify rendering window [false]
 -inlineimage          Generate inline embedded image [false]
 -inlinetex            Generate inline TeX code [false]
@@ -59,6 +62,7 @@ Options (negate by replacing - with -no):
 -q,-quiet             Suppress welcome message [false]
 -render n             Render 3D graphics using n pixels per bp (-1=auto) [-1]
 -resizestep step      Resize step [1.2]
+-reverse              reverse 3D animations [false]
 -rgb                  Convert cmyk colors to rgb [false]
 -safe                 Disable system call [true]
 -scroll n             Scroll standard output n lines at a time [0]

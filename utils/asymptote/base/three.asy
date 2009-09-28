@@ -21,6 +21,15 @@ real rendermargin=0.02;
 
 string defaultembed3Doptions;
 string defaultembed3Dscript;
+real defaulteyetoview=63mm/1000mm;
+
+string defaultlabelname="label";
+string Billboard=" "+defaultlabelname;
+
+string defaultlabelname() 
+{
+  return settings.billboard ? Billboard : defaultlabelname;
+}
 
 string partname(string s, int i=0) 
 {
@@ -245,9 +254,9 @@ projection orthographic(triple camera, triple up=Z, triple target=O,
                         real zoom=1, pair viewportshift=0,
                         bool showtarget=true, bool center=false)
 {
-  return projection(camera,up,target,zoom,viewportshift,showtarget,center=center,
-                    new transformation(triple camera, triple up,
-                                       triple target) {
+  return projection(camera,up,target,zoom,viewportshift,showtarget,
+                    center=center,new transformation(triple camera, triple up,
+                                                     triple target) {
                       return transformation(look(camera,up,target));});
 }
 
@@ -313,10 +322,23 @@ projection LeftView=orthographic(-X,showtarget=true);
 projection RightView=orthographic(X,showtarget=true);
 projection FrontView=orthographic(-Y,showtarget=true);
 projection BackView=orthographic(Y,showtarget=true);
-projection BottomView=orthographic(-Z,showtarget=true);
-projection TopView=orthographic(Z,showtarget=true);
+projection BottomView=orthographic(-Z,up=-Y,showtarget=true);
+projection TopView=orthographic(Z,up=Y,showtarget=true);
 
 currentprojection=perspective(5,4,2);
+
+projection projection() 
+{
+  projection P;
+  real[] a=_projection();
+  if(a[10] == 0.0) return currentprojection;
+  int k=0;
+  return a[0] == 1 ?
+    orthographic((a[++k],a[++k],a[++k]),(a[++k],a[++k],a[++k]),
+                 (a[++k],a[++k],a[++k]),a[++k],(a[k += 2],a[++k])) :
+    perspective((a[++k],a[++k],a[++k]),(a[++k],a[++k],a[++k]),
+                (a[++k],a[++k],a[++k]),a[++k],a[++k],(a[++k],a[++k]));
+}
 
 // Map pair z to a triple by inverting the projection P onto the
 // plane perpendicular to normal and passing through point.
@@ -1040,9 +1062,14 @@ path3 invert(path p, triple normal, triple point,
   return path3(p,new triple(pair z) {return invert(z,normal,point,P);});
 }
 
+path3 invert(path p, triple point, projection P=currentprojection)
+{
+  return path3(p,new triple(pair z) {return invert(z,P.vector(),point,P);});
+}
+
 path3 invert(path p, projection P=currentprojection)
 {
-  return path3(p,new triple(pair z) {return invert(z,P);});
+  return path3(p,new triple(pair z) {return invert(z,P.vector(),P.target,P);});
 }
 
 // Construct a path from a path3 by applying P to each control point.
@@ -1763,11 +1790,11 @@ transform3 align(triple u)
 // return a rotation that maps X,Y to the projection plane.
 transform3 transform3(projection P=currentprojection)
 {
-  triple v=unit(P.oblique ? P.camera : P.vector());
-  triple u=unit(perp(P.up,v));
-  if(u == O) u=cross(perp(v),v);
-  v=cross(u,v);
-  return v != O ? transform3(v,u) : identity(4);
+  triple w=unit(P.oblique ? P.camera : P.vector());
+  triple v=unit(perp(P.up,w));
+  if(v == O) v=cross(perp(w),w);
+  triple u=cross(v,w);
+  return u != O ? transform3(u,v,w) : identity(4);
 }
 
 triple[] triples(real[] x, real[] y, real[] z)
@@ -2133,14 +2160,16 @@ draw=new void(frame f, path3 g, material p=currentpen,
 void draw(frame f, explicit path3[] g, material p=currentpen,
           light light=nolight, string name="", projection P=currentprojection)
 {
-  for(int i=0; i < g.length; ++i) draw(f,g[i],p,light,name,P);
+  for(int i=0; i < g.length; ++i)
+    draw(f,g[i],p,light,partname(name,i),P);
 }
 
 void draw(picture pic=currentpicture, explicit path3[] g,
           material p=currentpen, margin3 margin=NoMargin3, light light=nolight,
           string name="")
 {
-  for(int i=0; i < g.length; ++i) draw(pic,g[i],p,margin,light,name);
+  for(int i=0; i < g.length; ++i)
+    draw(pic,g[i],p,margin,light,partname(name,i));
 }
 
 include three_arrows;
@@ -2365,6 +2394,7 @@ void writeJavaScript(string name, string preamble, string script)
   file out=output(name);
   write(out,preamble);
   if(script != "") {
+    write(out,endl);
     file in=input(script);
     while(true) {
       string line=in;
@@ -2616,8 +2646,8 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
 
       triple lambda=M-m;
       S.viewportmargin=viewportmargin((lambda.x,lambda.y));
-      S.width=lambda.x+2*viewportmargin.x;
-      S.height=lambda.y+2*viewportmargin.y;
+      S.width=lambda.x+2*S.viewportmargin.x;
+      S.height=lambda.y+2*S.viewportmargin.y;
       S.f=shift((-0.5(m.x+M.x),-0.5*(m.y+M.y),0))*S.f; // Eye will be at (0,0,0)
     } else {
       if(P.angle == 0) {
@@ -2797,54 +2827,119 @@ frame embedder(string prefix, frame f, string format, bool view,
     },prefix,format,view,light);
 }
 
-void addViews(picture dest, picture src, bool group=true,
+projection[][] ThreeViewsUS={{TopView},
+                             {FrontView,RightView}};
+
+projection[][] SixViewsUS={{null,TopView},
+                           {LeftView,FrontView,RightView,BackView},
+                           {null,BottomView}};
+
+projection[][] ThreeViewsFR={{RightView,FrontView},
+                             {null,TopView}};
+
+projection[][] SixViewsFR={{null,BottomView},
+                           {RightView,FrontView,LeftView,BackView},
+                           {null,TopView}};
+
+projection[][] ThreeViews={{FrontView,TopView,RightView}};
+
+projection[][] SixViews={{FrontView,TopView,RightView},
+                         {BackView,BottomView,LeftView}};
+
+void addViews(picture dest, picture src, projection[][] views=SixViewsUS,
+              bool group=true, filltype filltype=NoFill)
+{
+  frame[][] F=array(views.length,new frame[]);
+  pair[][] M=array(views.length,new pair[]);
+  pair[][] m=array(views.length,new pair[]);
+  
+  for(int i=0; i < views.length; ++i) {
+    projection[] viewsi=views[i];
+    frame[] Fi=F[i];
+    pair[] Mi=M[i];
+    pair[] mi=m[i];
+    for(projection P : viewsi) {
+      if(P != null) {
+        frame f=src.fit(P);
+        mi.push(min(f));
+        Mi.push(max(f));
+        Fi.push(f);
+      } else {
+        pair Infinity=(infinity,infinity);
+        mi.push(Infinity);
+        Mi.push(-Infinity);
+        Fi.push(newframe);
+      }
+    }
+  }
+  
+  real[] my=new real[views.length];
+  real[] My=new real[views.length];
+  
+  int Nj=0;
+  for(int i=0; i < views.length; ++i) {
+    my[i]=minbound(m[i]).y;
+    My[i]=maxbound(M[i]).y;
+    Nj=max(Nj,views[i].length);
+  }
+  
+  real[] mx=array(Nj,infinity);
+  real[] Mx=array(Nj,-infinity);
+  for(int i=0; i < views.length; ++i) {
+    pair[] mi=m[i];
+    pair[] Mi=M[i];
+    for(int j=0; j < views[i].length; ++j) {
+      mx[j]=min(mx[j],mi[j].x);
+      Mx[j]=max(Mx[j],Mi[j].x);
+    }
+  }
+
+  if(group) begingroup(dest);
+
+  real y;
+  for(int i=0; i < views.length; ++i) {
+    real x;
+    pair[] mi=m[i];
+    for(int j=0; j < views[i].length; ++j) {
+      if(size(F[i][j]) != 0)
+        add(dest,shift(x-mx[j],y+my[i])*F[i][j],filltype);
+      x += (Mx[j]-mx[j]);
+    }
+    y -= (My[i]-my[i]);
+  }
+
+  if(group) endgroup(dest);
+}
+
+void addViews(picture src, projection[][] views=SixViewsUS, bool group=true,
               filltype filltype=NoFill)
 {
-  if(group) begingroup(dest);
-  frame Front=src.fit(FrontView);
-  add(dest,Front,filltype);
-  frame Top=src.fit(TopView);
-  add(dest,shift(0,min(Front).y-max(Top).y)*Top,filltype);
-  frame Right=src.fit(RightView);
-  add(dest,shift(min(Front).x-max(Right).x)*Right,filltype);
-  if(group) endgroup(dest);
+  addViews(currentpicture,src,views,group,filltype);
 }
 
-void addViews(picture src, bool group=true, filltype filltype=NoFill)
+void addStereoViews(picture dest, picture src, bool group=true,
+                    filltype filltype=NoFill, real eyetoview=defaulteyetoview,
+                    bool leftright=true, projection P=currentprojection)
 {
-  addViews(currentpicture,src,group,filltype);
+  triple v=P.vector();
+  triple h=0.5*abs(v)*eyetoview*unit(cross(P.up,v));
+  projection leftEye=P.copy();
+  leftEye.camera -= h;
+  leftEye.calculate();
+  projection rightEye=P.copy();
+  rightEye.camera += h;
+  rightEye.calculate();
+  addViews(dest,src,leftright ?
+           new projection[][] {{leftEye,rightEye}} :
+           new projection[][] {{rightEye,leftEye}},group,filltype);
 }
 
-void addAllViews(picture dest, picture src,
-                 real xmargin=0, real ymargin=xmargin,
-                 bool group=true,
-                 filltype filltype=NoFill)
+void addStereoViews(picture src, bool group=true,
+                    filltype filltype=NoFill,
+                    real eyetoview=defaulteyetoview, bool leftright=true,
+                    projection P=currentprojection)
 {
-  picture picL,picM,picR,picLM;
-  if(xmargin == 0) xmargin=sqrtEpsilon;
-  if(ymargin == 0) ymargin=sqrtEpsilon;
-
-  add(picL,src.fit(FrontView),(0,0),ymargin*N);
-  add(picL,src.fit(BackView),(0,0),ymargin*S);
-
-  add(picM,src.fit(TopView),(0,0),ymargin*N);
-  add(picM,src.fit(BottomView),(0,0),ymargin*S);
-
-  add(picR,src.fit(RightView),(0,0),ymargin*N);
-  add(picR,src.fit(LeftView),(0,0),ymargin*S);
-
-  add(picLM,picL.fit(),(0,0),xmargin*W);
-  add(picLM,picM.fit(),(0,0),xmargin*E);
-
-  if(group) begingroup(dest);
-  add(dest,picLM.fit(),(0,0),xmargin*W,filltype);
-  add(dest,picR.fit(),(0,0),xmargin*E,filltype);
-  if(group) endgroup(dest);
-}
-
-void addAllViews(picture src, bool group=true, filltype filltype=NoFill)
-{
-  addAllViews(currentpicture,src,group,filltype);
+  addStereoViews(currentpicture,src,group,filltype,eyetoview,leftright,P);
 }
 
 // Fit an array of 3D pictures simultaneously using the sizing of picture all.
@@ -2859,24 +2954,33 @@ frame[] fit3(string prefix="", picture[] pictures, picture all,
   triple M=all.max(S.t);
   out=new frame[pictures.length];
   int i=0;
-  bool loop=settings.loop;
+  bool reverse=settings.reverse;
+  settings.animating=true;
+
   for(picture pic : pictures) {
     picture pic2;
     frame f=pic.fit3(S.t,pic2,S.P);
-    if(loop && !settings.loop) break;
+    if(settings.interrupt) break;
     add(f,pic2.fit2());
     draw(f,m,nullpen);
     draw(f,M,nullpen);
-    out[i]=loop ? f : embedder(prefix,f,format,view,options,script,light,S.P);
+    out[i]=f;
     ++i;
   }
 
-  while(settings.loop)
-    for(int i=0; i < pictures.length; ++i) {
-      if(!settings.loop) break;
+  while(!settings.interrupt) {
+    for(int i=settings.reverse ? pictures.length-1 : 0;
+        i >= 0 && i < pictures.length && !settings.interrupt;
+        settings.reverse ? --i : ++i) {
       embedder(prefix,out[i],format,view,options,script,light,S.P);
-    }
+    }   
+    if(!settings.loop) break;
+  }
   
+  settings.animating=false;
+  settings.interrupt=false;
+  settings.reverse=reverse;
+
   return out;
 }
 
