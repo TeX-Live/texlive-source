@@ -1,21 +1,10 @@
-#!/usr/bin/env perl
-
-# Copyright 1998-2001 by Sebastian Rahtz et al.
-# epstopdf is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-#
-# epstopdf is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with epstopdf; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $argv:q'
+  if 0;
 use strict;
+
+# Change by Thomas Esser, Sept. 1998: The above lines allows us to find
+# perl along $PATH rather than guessing a fixed location. The above
+# construction should work with most shells.
 
 # A script to transform an EPS file so that:
 #   a) it is guarenteed to start at the 0,0 coordinate
@@ -55,31 +44,33 @@ use strict;
 #  2001/03/05 v2.7 (Heiko Oberdiek)
 #    * Newline before grestore for the case that there is no
 #      whitespace at the end of the eps file.
+#  2002/02/18 v2.8draft (Gerben Wierda)
+#    * Handle different eol styles transparantly
+#    * Applied fix from Peder Axensten for Freehand bug
+#  2002/02/21 v2.8draft (Gerben Wierda)
+#    * Fixed bug where last line of buffer was not copied out (ugh!)
+#  2003/04/22 v2.9draft (Gerben Wierda)
+#    * Fixed bug where with cr-eol files everything up to the first %!
+#    * in the first 2048 bytes was gobbled (double ugh!)
+#  2004/03/17 v2.9.1draft (Gerben Wierda)
+#    * No autorotate page
+#  2005/09/29 v2.9.2draft (Gerben Wierda)
+#    * Quote OutFilename
+#  2005/10/01 v2.9.3draft (Gerben Wierda)
+#    * Quote OutFilename
 #
-
-my $IsWin32 = ($^O =~ /MSWin32/i);
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2001/03/05";
-my $fileversion="2.7";
-my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al.";
+my $filedate="2003/04/20";
+my $fileversion="2.9.3draft";
+my $copyright = "Copyright 1998-2002 by Sebastian Rahtz et al.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
 my $GS = "gs";
 $GS = "gswin32c" if $^O eq 'MSWin32';
-
-if ($IsWin32) {
-  $GS = `kpsecheck --ghostscript`;
-  $GS =~ m/^dll\s*:\s*(.+)/mio;
-  $GS = $1;
-  $GS =~ s/gsdll32.dll/gswin32c.exe/io;
-  if ($GS eq "") {
-    $GS = "gswin32c.exe";
-  }
-  $GS = "\"$GS\"" if ($GS =~ m/\s/);
-}
+$GS = "gswin32c" if $^O =~ /cygwin/;
 
 ### options
 $::opt_help=0;
@@ -204,8 +195,8 @@ binmode IN;
 
 ### open output file
 if ($::opt_gs) {
-  my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS " .
-          "-sOutputFile=$OutputFilename - -c quit";
+  my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS -dAutoRotatePages=/None" .
+          " -sOutputFile='$OutputFilename' - -c quit";
   debug "Ghostscript pipe:", $pipe;
   open(OUT,"|$pipe") or error "Cannot open Ghostscript for piped input";
 }
@@ -213,9 +204,112 @@ else {
   open(OUT,">$OutputFilename") or error "Cannot write '$OutputFilename";
 }
 
+# reading a cr-eol file on a lf-eol system makes it impossible to parse
+# the header and besides it will read the intire file into yor line by line
+# scalar. this is also true the other way around.
+
+### scan a block, try to determine eol style
+
+my $buf;
+my $buflen;
+my @bufarray;
+my @parsedbufarray; # for mytell/myseek
+my $bufarraypos;
+
+# We assume 2048 is big enough.
+my $EOLSCANBUFSIZE = 2048;
+
+$buflen = read( IN, $buf, $EOLSCANBUFSIZE);
+if ($buflen > 0) {
+  my $crlfpos;
+  my $lfpos;
+  my $crpos;
+
+  # remove binary junk before header
+  # if there is no header, we assume the file starts with ascii style and
+  # we look for a eol style anyway, to prevent possible loading of the
+  # entire file
+  if ($buf =~ /%!/) {
+    # throw away binary junk before %!
+    $buf =~ s/(.*?)%!/%!/o;
+  }
+  $lfpos = index( $buf, "\n");
+  $crpos = index( $buf, "\r");
+  $crlfpos = index( $buf, "\r\n");
+
+  if ($crpos > 0 and ($lfpos == -1 or $lfpos > $crpos+1)) {
+    # The first eol was a cr and it was not immediately followed by a lf
+    $/ = "\r";
+    debug "The first eol character was a CR ($crpos) and not immediately followed by a LF ($lfpos)";
+  }
+
+  # Now we have set the correct eol-character. Get one more line and add
+  # it to our buffer. This will make the buffer contain an entire line
+  # at the end. Then split the buffer in an array. We will draw lines from
+  # that array until it is empty, then move again back to <IN>
+  $buf .= <IN> unless eof( IN);
+  $buflen = length( $buf);
+
+  # Some extra magic is needed here: if we set $/ to \r, Perl's re engine
+  # still thinks eol is \n in regular expressions (not very nice) so we
+  # cannot split on ^, but have to split on \r and reappend those.
+  if ($/ eq "\r") {
+    @bufarray = split( /\r/ms, $buf);
+    grep( $_ .= "\r", @bufarray);
+  }
+  else {
+    @bufarray = split( /^/ms, $buf);
+  }
+}
+
+### getline
+sub getline {
+  if ($#bufarray >= 0) {
+    $_ = shift( @bufarray);
+    unshift( @parsedbufarray, $_); # for myseek and mytell
+    $bufarraypos += length( $_);
+  }
+  else {
+    $_ = <IN>;
+  }
+  return( defined( $_));
+}
+
+### mytell and myseek, work on <IN> only
+sub mytell {
+  if ($#bufarray) {
+    return $bufarraypos;
+  }
+  else {
+    return tell( IN);
+  }
+}
+
+sub myseek {
+  my $pos = shift;
+  if ($pos < $buflen) {
+    # We were still parsing the array, reset to the end of buf and
+    # move to the right line in the array.
+    # Now, move stuff from the @parsedbufarray until we are back at $pos
+    my $tmpline;
+    while ($pos > 0) {
+      # we test on parsedbufarray to prevent an infinite loop on
+      # a programming error (DEVELOP only)
+      die "Programming error 1\n" unless $#parsedbufarray;
+      $tmpline = pop( @parsedbufarray);
+      $pos -= length( $tmpline);
+      push( @bufarray, $tmpline);
+    }
+    return seek( IN, $buflen, 0);
+  }
+  else {
+    return seek( IN, $pos, 0);
+  }
+}
+
 ### scan first line
 my $header = 0;
-$_ = <IN>;
+getline();
 if (/%!/) {
   # throw away binary junk before %!
   s/(.*)%!/%!/o;
@@ -245,7 +339,9 @@ sub CorrectBoundingBox {
 
 ### scan header
 if ($header) {
-  while (<IN>) {
+  HEADER: while (getline()) {
+    ### Fix for freehand bug ### by Peder Axensten
+    next HEADER if(!/\S/);
 
     ### end of header
     if (!/^%/ or /^%%EndComments/) {
@@ -268,14 +364,14 @@ if ($header) {
                 "with option --filter";
         last;
       }
-      my $pos = tell(IN);
+      my $pos = mytell();
       debug "Current file position:", $pos;
 
       # looking for %%BoundingBox
-      while (<IN>) {
+      while (getline()) {
         # skip over included documents
         if (/^%%BeginDocument/) {
-          while (<IN>) {
+          while (getline()) {
             last if /^%%EndDocument/;
           }
         }
@@ -287,7 +383,7 @@ if ($header) {
       }
 
       # go back
-      seek(IN, $pos, 0) or error "Cannot go back to line '$BBName (atend)'";
+      myseek( $pos) or error "Cannot go back to line '$BBName (atend)'";
       last;
     }
 
@@ -297,7 +393,7 @@ if ($header) {
 }
 
 ### print rest of file
-while (<IN>) {
+while (getline()) {
   print OUT;
 }
 
