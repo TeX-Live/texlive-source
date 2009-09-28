@@ -79,24 +79,31 @@ use strict;
 #    * Simplified the (atend) support
 #  2007/05/18 v.2.9.7gw (Gerben Wierda)
 #    * Merged both supplied 2.9.6 versions
-#  2007/07/18 v.2.9.8gw
-#  2008/08/26 v.2.9.9gw
+#  2007/07/18 v2.9.8gw
+#  2008/08/26 v2.9.9gw
 #    * Switch to embed fonts (default=yes) (J.P. Chretien)
 #    * turned no AutoRotatePages into an option (D. Kreil) (default = None)
 #    * Added resolution switch (D. Kreil)
 #    * Added BSD-style license
+#  2009/05/09 v2.9.10gw
+#    * Changed cygwin name for ghostscript to gs
+#  2009/07/17 v2.9.11gw
+#    * Added -dSAFER to default gs options
+#	TL2009 wants to use a restricted variant of -shell-escape,
+#	allowing epstopdf to run. However without -dSAFER Ghostscript
+#	allows writing to files (other than given in -sOutputFile)
+#	and running commands (through Ghostscript pipe's language feature).
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2008/08/26";
-my $fileversion="2.9.9gw";
-my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al., 2002-2008 by Gerben Wierda et al. Free software under a BSD-style license.";
+my $filedate="2009/07/19";
+my $fileversion="2.9.11gw";
+my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al., 2002-2009 by Gerben Wierda et al. Free software under a BSD-style license.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
 ### ghostscript command name
 my $GS = "gs";
 $GS = "gswin32c" if $^O eq 'MSWin32';
-$GS = "gswin32c" if $^O =~ /cygwin/;
 
 ### options
 $::opt_help=0;
@@ -190,7 +197,7 @@ else {
 }
 
 ### option compress & embed
-my $GSOPTS = "";
+my $GSOPTS = "-dSAFER ";
 $GSOPTS .= " -dPDFSETTINGS=/prepress -dMaxSubsetPct=100 -dSubsetFonts=true -dEmbedAllFonts=true " if $::opt_embed;
 $GSOPTS .= "-dUseFlateCompression=false " unless $::opt_compress;
 $GSOPTS .= "-r$::opt_res " if $::opt_res;
