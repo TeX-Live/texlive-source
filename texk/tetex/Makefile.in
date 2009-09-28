@@ -226,7 +226,6 @@ dist_man1_MANS = \
 	dvi2fax.man \
 	dvired.man \
 	e2pall.man \
-	epstopdf.man \
 	fmtutil.man \
 	fontinst.man \
 	kpsetool.man \
