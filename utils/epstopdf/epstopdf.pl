@@ -146,6 +146,7 @@ $::opt_exact=0;
 $::opt_filter=0;
 $::opt_gs=1;
 $::opt_hires=0;
+$::opt_gscmd="";
 $::opt_res=0;
 $::opt_autorotate="None";
 
@@ -170,6 +171,7 @@ Options:
   --(no)filter       read standard input   (default: $bool[$::opt_filter])
   --(no)gs           run ghostscript       (default: $bool[$::opt_gs])
   --(no)hires        scan HiResBoundingBox (default: $bool[$::opt_hires])
+  --gscmd=VAL        pipe output to VAL    (default: $GS)
   --res=DPI          set image resolution  (default: $resmsg)
   --autorotate=VAL   set AutoRotatePages   (default: $rotmsg)
                       Recognized VAL choices: None, All, PageByPage
@@ -181,7 +183,7 @@ Examples for producing 'test.pdf':
   * produce postscript | $program -f -d -o=test.pdf
 
 Example: look for HiResBoundingBox and produce corrected PostScript:
-  * $program -d --nogs -hires test.ps>testcorr.ps
+  * $program -d --nogs --hires test.ps >testcorr.ps
 
 When reporting bugs, please include an input file and command line
 options so the problem can be reproduced.
@@ -203,6 +205,7 @@ GetOptions (
   "filter!",
   "gs!",
   "hires!",
+  "gscmd=s",
   "res=i",
   "autorotate=s",
 ) or die $usage;
@@ -291,6 +294,12 @@ if ($::opt_filter) {
 }
 else {
   debug "Output filename:", $OutputFilename;
+}
+
+### option gscmd
+if ($::opt_gscmd) {
+  debug "Switching from $GS to $::opt_gscmd";
+  $GS = $::opt_gscmd;
 }
 
 ### option gs
