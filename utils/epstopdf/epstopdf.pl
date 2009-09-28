@@ -168,13 +168,13 @@ sub debug {
   print STDERR "* @_\n" if $::opt_debug;
 }
 sub warning {
-  print STDERR "==> Warning: @_!\n";
+  print STDERR "==> Warning: @_\n";
 }
 sub error {
-  die "$title!!! Error: @_!\n";
+  die "$title!!! Error: @_\n";
 }
 sub errorUsage {
-  die "$usage\n!!! Error: @_!\n";
+  die "$usage\n!!! Error: @_\n";
 }
 
 ### option help
@@ -192,7 +192,7 @@ else {
   @ARGV > 0 or die errorUsage "Input filename missing";
   @ARGV < 2 or die errorUsage "Unknown option or too many input files";
   $InputFilename = $ARGV[0];
-  -f $InputFilename or error "\"$InputFilename\" does not exist";
+  #-r $InputFilename or error "\"$InputFilename\" not readable";
   debug "Input filename:", $InputFilename;
 }
 
@@ -247,19 +247,23 @@ if ($::opt_gs) {
 
 ### open input file
 open(IN,"<$InputFilename") or error "Cannot open",
-  ($::opt_filter) ? "standard input" : "\"$InputFilename\"";
+  ($::opt_filter) ? "standard input" : "\"$InputFilename\": $!";
 binmode IN;
 
 ### open output file
+my $outname;  # used in error message at end
 if ($::opt_gs) {
   my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS" .
           " -sOutputFile=\"$OutputFilename\" - -c quit";
   debug "Ghostscript pipe:", $pipe;
   open(OUT,"|$pipe") or error "Cannot open Ghostscript for piped input";
+  $outname = $GS;
 }
 else {
   open(OUT,">$OutputFilename") or error "Cannot write \"$OutputFilename\"";
+  $outname = $OutputFilename;
 }
+binmode OUT;
 
 # reading a cr-eol file on a lf-eol system makes it impossible to parse
 # the header and besides it will read the intire file into yor line by line
@@ -391,6 +395,7 @@ if ($header) {
         last;
       }
       my $pos = tell(OUT)+length($_);
+      error "tell() failed: $!" if $pos == -1;
       debug "Current file position:", $pos;
 
       # looking for %%BoundingBox
@@ -427,5 +432,13 @@ while (getline()) {
 close(IN);
 print OUT "\ngrestore\n" if $BBCorrected;
 close(OUT);
+
+# if ghostscript exited badly, we should too.
+if ($? & 127) {
+  error(sprintf "Writing to $outname failed, signal %d\n", $? & 127);
+} elsif ($? != 0) {
+  error(sprintf "Writing to $outname failed, error code %d\n", $? >> 8);
+}
+
 warning "BoundingBox not found" unless $BBCorrected;
 debug "Ready.";
