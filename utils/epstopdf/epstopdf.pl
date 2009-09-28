@@ -93,11 +93,14 @@ use strict;
 #	allowing epstopdf to run. However without -dSAFER Ghostscript
 #	allows writing to files (other than given in -sOutputFile)
 #	and running commands (through Ghostscript pipe's language feature).
+#  2009/08/25 v.2.9.12mvg (Martin von Gagern)
+#    * Fixed two bugs in the (atend) handling code
+#    * Improved handling of CR line endings
 
 ### program identification
 my $program = "epstopdf";
-my $filedate="2009/07/19";
-my $fileversion="2.9.11gw";
+my $filedate="2009/08/25";
+my $fileversion="2.9.12mvg";
 my $copyright = "Copyright 1998-2001 by Sebastian Rahtz et al., 2002-2009 by Gerben Wierda et al. Free software under a BSD-style license.";
 my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 
@@ -274,7 +277,7 @@ binmode OUT;
 my $buf;
 my $buflen;
 my @bufarray;
-my $bufarraypos;
+my $inputpos;
 
 # We assume 2048 is big enough.
 my $EOLSCANBUFSIZE = 2048;
@@ -285,6 +288,8 @@ if ($buflen > 0) {
   my $lfpos;
   my $crpos;
 
+  $inputpos = 0;
+
   # remove binary junk before header
   # if there is no header, we assume the file starts with ascii style and
   # we look for a eol style anyway, to prevent possible loading of the
@@ -292,6 +297,7 @@ if ($buflen > 0) {
   if ($buf =~ /%!/) {
     # throw away binary junk before %!
     $buf =~ s/(.*?)%!/%!/o;
+    $inputpos = length($1);
   }
   $lfpos = index( $buf, "\n");
   $crpos = index( $buf, "\r");
@@ -309,14 +315,12 @@ if ($buflen > 0) {
   # that array until it is empty, then move again back to <IN>
   $buf .= <IN> unless eof( IN);
   $buflen = length( $buf);
-  $bufarraypos = 0;
 
   # Some extra magic is needed here: if we set $/ to \r, Perl's re engine
   # still thinks eol is \n in regular expressions (not very nice) so we
-  # cannot split on ^, but have to split on \r and reappend those.
+  # cannot split on ^, but have to split on a look-behind for \r.
   if ($/ eq "\r") {
-    @bufarray = split( /\r/ms, $buf); # split on \r
-    grep( $_ .= "\r", @bufarray); # re-append \r to each array item
+    @bufarray = split( /(?<=\r)/ms, $buf); # split after \r
   }
   else {
     @bufarray = split( /^/ms, $buf);
@@ -327,13 +331,11 @@ if ($buflen > 0) {
 sub getline {
   if ($#bufarray >= 0) {
     $_ = shift( @bufarray);
-    $bufarraypos += length( $_);
-    # debug "getline from array. bufarraypos = $bufarraypos";
-    # debug "*** READ: $_";
   }
   else {
     $_ = <IN>;
   }
+  $inputpos += length($_) if defined $_;
   return( defined( $_));
 }
 
@@ -362,9 +364,9 @@ sub CorrectBoundingBox {
   debug "New BoundingBox: 0 0", $width, $height;
   debug "Offset:", $xoffset, $yoffset;
 
-  print OUT "%%BoundingBox: 0 0 $width $height\n";
-  print OUT "<< /PageSize [$width $height] >> setpagedevice\n";
-  print OUT "gsave $xoffset $yoffset translate\n";
+  print OUT "%%BoundingBox: 0 0 $width $height$/";
+  print OUT "<< /PageSize [$width $height] >> setpagedevice$/";
+  print OUT "gsave $xoffset $yoffset translate$/";
 }
 
 ### scan header
@@ -380,7 +382,7 @@ if ($header) {
     }
 
     ### BoundingBox with values
-    if (/^$BBName$BBValues/) {
+    if (/^$BBName$BBValues/o) {
       CorrectBoundingBox $1, $2, $3, $4;
       $BBCorrected = 1;
       last;
@@ -394,19 +396,16 @@ if ($header) {
                 "with option --filter";
         last;
       }
-      my $pos = tell(OUT)+length($_);
-      error "tell() failed: $!" if $pos == -1;
+      my $pos = $inputpos;
       debug "Current file position:", $pos;
 
       # looking for %%BoundingBox
       while (getline()) {
         # skip over included documents
-        if (/^%%BeginDocument/) {
-          while (getline()) {
-            last if /^%%EndDocument/;
-          }
-        }
-        if (/^$BBName$BBValues/) {
+        my $nestDepth = 0;
+        $nestDepth++ if /^%%BeginDocument/;
+        $nestDepth-- if /^%%EndDocument/;
+        if ($nestDepth == 0 && /^$BBName$BBValues/o) {
           CorrectBoundingBox $1, $2, $3, $4;
           $BBCorrected = 1;
           last;
@@ -430,7 +429,7 @@ while (getline()) {
 
 ### close files
 close(IN);
-print OUT "\ngrestore\n" if $BBCorrected;
+print OUT "$/grestore$/" if $BBCorrected;
 close(OUT);
 
 # if ghostscript exited badly, we should too.
