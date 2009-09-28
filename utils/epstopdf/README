@@ -1,0 +1,26 @@
+$Id$
+This file is public domain.  (Originally written by Karl Berry, 2009.)
+
+This is the README for the epstopdf script distribution.
+
+Primary distribution point: http://mirror.ctan.org/support/epstopdf/
+  (list of mirrors at: http://ctan.org/mirrors)
+
+Home page: http://tug.org/epstopdf/
+
+Mailing list for bugs and discussion: http://lists.tug.org/tex-k
+When reporting bugs, please include an input file and command line
+options so the problem can be reproduced.
+
+-------------------------------------------------------------------------
+The test-binary file was supplied by Akira Kakuto.  It contains binary
+data.  It is public domain.
+
+The test-binhdr* files were supplied by Martin von Gagern, constructed
+as follows.  They contain binary junk before the EPS starts.  We also
+use this to test different line endings.  These files are public domain.
+
+{ echo -e '%Some\000binary\001comment'; dot -Tps <<< 'digraph{a->b}'; }
+  > test-binhdr-lf.eps
+tr $'\n' $'\r' <test-binhdr-lf.eps >test-binhdr-cr.ps
+unix2dos <test-binhdr-lf.eps >test-binhdr-cr.ps

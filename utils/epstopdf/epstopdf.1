@@ -1,0 +1,78 @@
+.TH EPSTOPDF 1 "27 September 2009"
+.\" $Id$
+.\" man page originally by Jim Van Zandt
+.SH NAME
+epstopdf \- convert an EPS file to PDF
+.SH SYNOPSIS
+\fBepstopdf\fP [\fIoptions\fP] [\fIepsfile\fP]
+.SH DESCRIPTION
+\fBepstopdf\fP transforms the Encapsulated PostScript file \fIepsfile\fP
+(or standard input) so that it is guaranteed to start at the 0,0
+coordinate, and it sets a page size exactly corresponding to the
+BoundingBox.  This means that when Ghostscript renders it, the result
+needs no cropping, and the PDF MediaBox is correct.  By default, the
+result is piped to Ghostscript and a PDF version written.
+.P
+If the bounding box is not right, of course, there are problems.
+.SH OPTIONS
+.IP "\fB--outfile\fP=\fIfile\fP"
+write result to \fIfile\fP; the default is to construct the output file
+name by replacing any extension in the input file with \fI.pdf\fP.  If
+\fB--nogs\fP or \fB--filter\fP is specified, write to standard output.
+.IP "\fB--\fP[\fBno\fP]\fBcompress\fP"
+use compression (default: on).
+.IP "\fB--\fP[\fBno\fP]\fBdebug\fP"
+write debugging info (default: off).
+.IP "\fB--\fP[\fBno\fP]\fBembed\fP"
+embed fonts (default: on).
+.IP "\fB--\fP[\fBno\fP]\fBexact\fP"
+scan ExactBoundingBox (default: off).
+.IP "\fB--\fP[\fBno\fP]\fBfilter\fP"
+read standard input (default: off).
+.IP "\fB--\fP[\fBno\fP]\fBgs\fP"
+run ghostscript (default: on).
+.IP "\fB--\fP[\fBno\fP]\fBhires\fP"
+scan HiresBoundingBox (default: off).
+.IP "\fB--gscmd\fP=\fIval\fP"
+pipe output to \fIval\fP (default: [\fBgswin32c\fP on Windows, else \fBgs\fP])
+.IP "\fB--res\fP=\fIdpi\fP"
+set image resolution (default: [use gs default])
+.IP "\fB--autorotate\fP=\fIval\fP"
+set AutoRotatePages (default: None); recognized \fIval\fP choices:
+None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
+.IP "\fB--help\fP
+display help message and exit
+.IP "\fB--version\fP
+display version information and exit
+.SH EXAMPLES
+Examples for producing "test.pdf":
+.nf
+epstopdf test.eps
+produce postscript | epstopdf --filter >test.pdf
+produce postscript | epstopdf -f -d -o=test.pdf
+
+.fi
+Example: look for HiresBoundingBox and produce corrected PostScript:
+.nf
+epstopdf -d --nogs --hires test.ps >testcorr.ps 
+.fi
+.SH BUGS
+The case of "%%BoundingBox: (atend)"
+when input is not seekable (e.g., from a pipe) is not supported.
+.PP
+When reporting bugs, please include an input file and command line
+options so the problem can be reproduced.  Report bugs in
+the program or this man page to tex-k@tug.org.
+.SH SEE ALSO
+\fBgs\fP(1),
+\fBpdfcrop\fP(1).
+.SH AUTHOR
+The script was originally written by Sebastian Rahtz, for Elsevier
+Science, with subsequent contributions from Gerben Wierda and many
+others.  Currently maintained by Karl Berry.
+.PP
+Man page originally written by Jim Van Zandt.
+.PP
+epstopdf home page: http://tug.org/epstopdf/
+.PP
+You may freely use, modify and/or distribute this file.
