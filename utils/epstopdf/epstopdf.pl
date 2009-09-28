@@ -46,6 +46,8 @@ use strict;
 #      whitespace at the end of the eps file.
 #
 
+my $IsWin32 = ($^O =~ /MSWin32/i);
+
 ### program identification
 my $program = "epstopdf";
 my $filedate="2001/03/05";
@@ -57,6 +59,17 @@ my $title = "\U$program\E $fileversion, $filedate - $copyright\n";
 my $GS = "gs";
 $GS = "gswin32c" if $^O eq 'MSWin32';
 $GS = "gswin32c" if $^O =~ /cygwin/;
+
+if ($IsWin32) {
+  $GS = `kpsecheck --ghostscript`;
+  $GS =~ m/^dll\s*:\s*(.+)/mio;
+  $GS = $1;
+  $GS =~ s/gsdll32.dll/gswin32c.exe/io;
+  if ($GS eq "") {
+    $GS = "gswin32c.exe";
+  }
+  $GS = "\"$GS\"" if ($GS =~ m/\s/);
+}
 
 ### options
 $::opt_help=0;
