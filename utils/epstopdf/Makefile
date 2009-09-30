@@ -57,5 +57,5 @@ htmlopts = $(groff_opts) -Thtml
 pspdf = ps2pdf -sPAPERSIZE=a4
 epstopdf.pdf: epstopdf.1
 	$(groff) $(pdfopts) $< | $(pspdf) - $@
-epstopdf.html: epstopdf.h1
+epstopdf.html: epstopdf.1
 	$(groff) $(htmlopts) $< >$@
