@@ -122,7 +122,7 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $program_ident = '$Id$';
+my $ident = '($Id$) 2.11';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 1998-2001 Sebastian Rahtz et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -131,7 +131,7 @@ License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 END_COPYRIGHT
-my $title = "$program $program_ident\n";
+my $title = "$program $ident\n";
 
 ### ghostscript command name
 my $GS = "gs";
