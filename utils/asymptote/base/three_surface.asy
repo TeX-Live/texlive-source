@@ -1130,8 +1130,27 @@ real PRCshininess(real shininess)
   return s(shininess);
 }
 
+struct interaction
+{
+  int type;
+  bool targetsize;
+  void operator init(int type, bool targetsize=false) {
+    this.type=type;
+    this.targetsize=targetsize;
+  }
+}
+
+restricted interaction Embedded=interaction(0);
+restricted interaction Billboard=interaction(1);
+
+interaction LabelInteraction()
+{
+  return settings.autobillboard ? Billboard : Embedded;
+}
+
 void draw3D(frame f, patch s, triple center=O, material m,
-            light light=currentlight, string name="")
+            light light=currentlight, string name="",
+            interaction interaction=Embedded)
 {
   if(s.colors.length > 0)
     m=mean(s.colors);
@@ -1143,7 +1162,8 @@ void draw3D(frame f, patch s, triple center=O, material m,
     PRCshininess=PRCshininess(m.shininess);
   real granularity=m.granularity >= 0 ? m.granularity : defaultgranularity;
   draw(f,s.P,center,s.straight,m.p,m.opacity,m.shininess,PRCshininess,
-       granularity,s.planar ? s.normal(0.5,0.5) : O,s.colors,lighton,name);
+       granularity,s.planar ? s.normal(0.5,0.5) : O,s.colors,lighton,name,
+       interaction.type);
 }
 
 void tensorshade(transform t=identity(), frame f, patch s,
@@ -1227,11 +1247,18 @@ void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
 {
   if(s.empty()) return;
 
+  bool cyclic=surfacepen.cyclic;
+  surfacepen=copy(surfacepen);
+  surfacepen.cyclic=cyclic;
+  cyclic=meshpen.cyclic;
+  meshpen=copy(meshpen);
+  meshpen.cyclic=cyclic;
+
   pic.add(new void(frame f, transform3 t, picture pic, projection P) {
       surface S=t*s;
-      if(is3D()) {
+      if(is3D())
         draw(f,S,nu,nv,surfacepen,meshpen,light,meshlight,name);
-      } else if(pic != null)
+      else if(pic != null)
         pic.add(new void(frame f, transform T) {
             draw(T,f,S,nu,nv,surfacepen,meshpen,light,meshlight,P);
           },true);
@@ -1354,20 +1381,21 @@ path[] path(Label L, pair z=0, projection P)
 }
 
 void label(frame f, Label L, triple position, align align=NoAlign,
-           pen p=currentpen, bool targetsize=false, light light=nolight,
-           string name=defaultlabelname(), projection P=currentprojection)
+           pen p=currentpen, light light=nolight,
+           string name=L.s, interaction interaction=LabelInteraction(),
+           projection P=currentprojection)
 {
   Label L=L.copy();
   L.align(align);
   L.p(p);
-  if(targetsize && settings.render != 0)
+  if(interaction.targetsize && settings.render != 0)
     L.T=L.T*scale(abs(P.camera-position)/abs(P.vector()));
   if(L.defaulttransform3)
     L.T3=transform3(P);
   if(is3D()) {
     int i=-1;
     for(patch S : surface(L,position).s)
-      draw3D(f,S,position,L.p,light,partname(name,++i));
+      draw3D(f,S,position,L.p,light,partname(name,++i),interaction);
   } else {
     if(L.filltype == NoFill)
       fill(f,path(L,project(position,P.t),P),
@@ -1382,8 +1410,9 @@ void label(frame f, Label L, triple position, align align=NoAlign,
 }
 
 void label(picture pic=currentpicture, Label L, triple position,
-           align align=NoAlign, pen p=currentpen, bool targetsize=false,
-           light light=nolight, string name=defaultlabelname())
+           align align=NoAlign, pen p=currentpen,
+           light light=nolight, string name=L.s,
+           interaction interaction=LabelInteraction())
 {
   Label L=L.copy();
   L.align(align);
@@ -1397,14 +1426,14 @@ void label(picture pic=currentpicture, Label L, triple position,
          determinant(P.t) != 0)
           L.align(L.align.dir*unit(project(v+L.align.dir3,P.t)-project(v,P.t)));
       
-      if(targetsize && settings.render != 0)
+      if(interaction.targetsize && settings.render != 0)
         L.T=L.T*scale(abs(P.camera-v)/abs(P.vector()));
       if(L.defaulttransform3)
         L.T3=transform3(P);
       if(is3D()) {
         int i=-1;
         for(patch S : surface(L,v).s)
-          draw3D(f,S,v,L.p,light,partname(name,++i));
+          draw3D(f,S,v,L.p,light,partname(name,++i),interaction);
       }
       if(pic != null) {
         if(L.filltype == NoFill)
@@ -1420,7 +1449,7 @@ void label(picture pic=currentpicture, Label L, triple position,
     },!L.defaulttransform3);
 
   Label L=L.copy();
-  if(targetsize && settings.render != 0)
+  if(interaction.targetsize && settings.render != 0)
     L.T=L.T*scale(abs(currentprojection.camera-position)/
                   abs(currentprojection.vector()));
   path[] g=texpath(L);
@@ -1433,7 +1462,8 @@ void label(picture pic=currentpicture, Label L, triple position,
 }
 
 void label(picture pic=currentpicture, Label L, path3 g, align align=NoAlign,
-           bool targetsize=false, pen p=currentpen)
+           pen p=currentpen, string name=L.s,
+           interaction interaction=LabelInteraction())
 {
   Label L=L.copy();
   L.align(align);
@@ -1449,7 +1479,7 @@ void label(picture pic=currentpicture, Label L, path3 g, align align=NoAlign,
     a.dir3=dir(g,position); // Pass 3D direction via unused field.
     L.align(a);             
   }
-  label(pic,L,point(g,position),targetsize);
+  label(pic,L,point(g,position),name,interaction);
 }
 
 surface extrude(Label L, triple axis=Z)
@@ -1467,7 +1497,7 @@ restricted surface nullsurface;
 
 // Embed a Label onto a surface.
 surface surface(Label L, surface s, real uoffset, real voffset,
-                real height=0, bool bottom=false, bool top=true)
+                real height=0, bool bottom=true, bool top=true)
 {
   int nu=s.index.length;
   int nv;
@@ -1689,6 +1719,11 @@ void draw(picture pic=currentpicture, triple[][] P, real[] uknot, real[] vknot,
   if(colors.length > 0)
     m=mean(colors);
   bool lighton=light.on();
+  P=copy(P);
+  uknot=copy(uknot);
+  vknot=copy(vknot);
+  weights=copy(weights);
+  colors=copy(colors);
   pic.add(new void(frame f, transform3 t, picture pic, projection Q) {
       if(is3D()) {
         triple[][] P=t*P;

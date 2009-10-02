@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 4.13 from
 ../asymptote.texi.
 
-This file documents `Asymptote', version 1.87.
+This file documents `Asymptote', version 1.88.
 
    `http://asymptote.sourceforge.net'
 
@@ -23,7 +23,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Up: (dir)
 Asymptote
 *********
 
-This file documents `Asymptote', version 1.87.
+This file documents `Asymptote', version 1.88.
 
    `http://asymptote.sourceforge.net'
 
@@ -196,8 +196,8 @@ weaker syntax and capabilities) called `MetaPost'.
 
    * `LaTeX' typesetting of labels, for overall document consistency;
 
-   * the ability to generate and embed 3D vector PRC graphics into PDF
-     files;
+   * the ability to generate and embed 3D vector PRC graphics within
+     PDF files;
 
    * a natural coordinate-based framework for technical drawings,
      inspired by `MetaPost', with a much cleaner, powerful C++-like
@@ -641,6 +641,9 @@ File: asymptote.info,  Node: Tutorial,  Next: Drawing commands,  Prev: Installat
 3 Tutorial
 **********
 
+3.1 Drawing in batch mode
+=========================
+
 To draw a line from coordinate (0,0) to coordinate (100,100), create a
 text file `test.asy' containing
 
@@ -648,7 +651,7 @@ draw((0,0)--(100,100));
  Then execute the command
 asy -V test
  Alternatively, `MSDOS' users can drag and drop `test.asy' onto the
-Desktop `asy' icon (or make `Asymptote' the default application the
+Desktop `asy' icon (or make `Asymptote' the default application for the
 extension `asy').
 
 This method, known as _batch mode_, outputs a `PostScript' file
@@ -657,9 +660,12 @@ you can immediately view the result:
 
 
 The `--' connector joins the two points `(0,0)' and `(100,100)' with a
-linear segment.
+line segment.
 
-   Another method is _interactive mode_, where `Asymptote' reads
+3.2 Drawing in interactive mode
+===============================
+
+Another method is _interactive mode_, where `Asymptote' reads
 individual commands as they are entered by the user. To try this out,
 enter `Asymptote''s interactive mode by clicking on the `Asymptote'
 icon or typing the command `asy'.  Then type
@@ -675,44 +681,56 @@ automatically complete unambiguous words; otherwise, hitting tab again
 will show the possible choices. Further commands specific to
 interactive mode are described in *note Interactive mode::.
 
-   One can draw a line with more than two points and create a cyclic
-path like this square:
+3.3 Figure size
+===============
 
-draw((0,0)--(100,0)--(100,100)--(0,100)--cycle);
+In `Asymptote', coordinates like `(0,0)' and `(100,100)', called
+_pairs_, are expressed in `PostScript' "big points" (1 `bp' = 1/72
+`inch') and the default line width is `0.5bp'.  However, it is often
+inconvenient to work directly in `PostScript' coordinates.  The next
+example produces identical output to the previous example, by scaling
+the line `(0,0)--(1,1)' to fit a rectangle of width `100.5 bp' and
+height `100.5 bp' (the extra `0.5bp' accounts for the line width):
+size(100.5,100.5);
+draw((0,0)--(1,1));
 
 
 
-In `Asymptote' coordinates like (0,0) and (100,100) are called _pairs_.
-The pairs in the previous examples are expressed in `PostScript' "big
-points" (1 `bp' = 1/72 `inch').  However, it is often inconvenient to
-work directly in `PostScript' coordinates. The next example draws a
-unit square scaled to width 101 `bp' and height 101 `bp'. The output is
-identical to that of the previous example.
-size(101,101);
+One can also specify the size in `pt' (1 `pt' = 1/72.27 `inch'), `cm',
+`mm', or `inches'.  Two nonzero size arguments (or a single size
+argument) restrict the size in both directions, preserving the aspect
+ratio.  If 0 is given as a size argument, no restriction is made in
+that direction; the overall scaling will be determined by the other
+direction (*note size::):
+
+size(0,100.5);
+draw((0,0)--(2,1),Arrow);
+
+
+
+To connect several points and create a cyclic path, use the `cycle'
+keyword:
+
+size(100,100);
 draw((0,0)--(1,0)--(1,1)--(0,1)--cycle);
 
-   For convenience, the path `(0,0)--(1,0)--(1,1)--(0,1)--cycle' may be
+
+For convenience, the path `(0,0)--(1,0)--(1,1)--(0,1)--cycle' may be
 replaced with the predefined variable `unitsquare', or equivalently,
-`box((0,0),(1,1))'.  One can also specify the size in `pt' (1 `pt' =
-1/72.27 `inch'), `cm', `mm', or `inches'.  Two nonzero size arguments
-(or a single size argument) restrict the size in both directions,
-preserving the aspect ratio.  If 0 is given as a size argument, no
-restriction is made in that direction; the overall scaling will be
-determined by the other direction (*note size::):
+`box((0,0),(1,1))'.
 
-size(3cm,3cm);
-draw(unitsquare);
-
-
-
-To make the user coordinates represent multiples of exactly `1cm':
+   To make the user coordinates represent multiples of exactly `1cm':
 unitsize(1cm);
 draw(unitsquare);
- Adding labels is easy in `Asymptote'; one specifies the label as a
+
+3.4 Labels
+==========
+
+Adding labels is easy in `Asymptote'; one specifies the label as a
 double-quoted `LaTeX' string, a coordinate, and an optional alignment
 direction:
 
-size(0,3cm);
+size(3cm);
 draw(unitsquare);
 label("$A$",(0,0),SW);
 label("$B$",(1,0),SE);
@@ -728,20 +746,25 @@ the `Asymptote' base module `plain' (a user who has a local variable
 named `E' may access the compass direction `E' by prefixing it with the
 name of the module where it is defined: `plain.E').
 
-   This example draws a path that approximates a quarter circle,
+3.5 Paths
+=========
+
+This example draws a path that approximates a quarter circle,
 terminated with an arrowhead:
 
 size(100,0);
 draw((1,0){up}..{left}(0,1),Arrow);
 
 
+Here the directions `up' and `left' in braces specify the incoming and
+outgoing directions at the points `(1,0)' and `(0,1)', respectively.
 
-In general, a path is specified as a list of pairs (or other paths)
+   In general, a path is specified as a list of points (or other paths)
 interconnected with `--', which denotes a straight line segment, or
 `..', which denotes a cubic spline (*note Bezier curves::).  Specifying
-a final node `cycle' creates a cyclic path that connects smoothly back
-to the initial node, as in this approximation (accurate to within
-0.06%) of a unit circle:
+a final `..cycle' creates a cyclic path that connects smoothly back to
+the initial node, as in this approximation (accurate to within 0.06%)
+of a unit circle:
 path unitcircle=E..N..W..S..cycle;
 
 An `Asymptote' path, being connected, is equivalent to a `Postscript
@@ -790,10 +813,10 @@ label("(0,0,1)",(0,0,1),Z);
 
 See section *note graph:: (or the online `Asymptote' gallery and
 external links posted at `http://asymptote.sourceforge.net') for
-further examples, including two and interactive three-dimensional
-scientific graphs. Additional examples have been posted by Philippe
-Ivaldi at `http://www.piprime.fr/asymptote/'.  A user-written
-`Asymptote' tutorial is available at
+further examples, including two-dimensional and interactive
+three-dimensional scientific graphs. Additional examples have been
+posted by Philippe Ivaldi at `http://www.piprime.fr/asymptote'.  A
+user-written `Asymptote' tutorial is available at
 http://www.artofproblemsolving.com/Wiki/index.php/Asymptote:_Basics
 
 
@@ -7693,13 +7716,13 @@ Options (negate by replacing - with -no):
 -antialias n          Antialiasing width for rasterized output [2]
 -arcballradius pixels Arcball radius [750]
 -auto3D               Automatically activate 3D scene [true]
+-autobillboard        3D labels always face viewer by default [true]
 -autoimport string    Module to automatically import
 -autoplain            Enable automatic importing of plain [true]
 -autoplay             Autoplay 3D animations [false]
 -autorotate           Enable automatic PDF page rotation [false]
 -batchMask            Mask fpu exceptions in batch mode [false]
 -batchView            View output in batch mode [false]
--billboard            Force unnamed labels to always face viewer [false]
 -bw                   Convert all colors to black and white [false]
 -cd directory         Set current directory; command-line only
 -cmyk                 Convert rgb colors to cmyk [false]
@@ -8215,16 +8238,16 @@ Index
                                                               (line  14)
 * -- <1>:                                Self & prefix operators.
                                                               (line   6)
-* --:                                    Tutorial.            (line 102)
+* --:                                    Tutorial.            (line 125)
 * ---:                                   Bezier curves.       (line  83)
 * -=:                                    Self & prefix operators.
                                                               (line   6)
 * -c:                                    Options.             (line 167)
 * -l:                                    Options.             (line 186)
 * -u:                                    Options.             (line 177)
-* -V <1>:                                Tutorial.            (line  16)
+* -V <1>:                                Tutorial.            (line  19)
 * -V:                                    Configuring.         (line   6)
-* ..:                                    Tutorial.            (line 102)
+* ..:                                    Tutorial.            (line 125)
 * .asy:                                  Search paths.        (line  13)
 * /:                                     Arithmetic & logical.
                                                               (line  20)
@@ -8256,7 +8279,7 @@ Index
                                                               (line  28)
 * ^=:                                    Self & prefix operators.
                                                               (line   6)
-* ^^:                                    Tutorial.            (line 109)
+* ^^:                                    Tutorial.            (line 132)
 * a4:                                    Configuring.         (line  61)
 * abort:                                 Data types.          (line 321)
 * abs <1>:                               Mathematical functions.
@@ -8321,7 +8344,7 @@ Index
 * arrow:                                 label.               (line  72)
 * Arrow:                                 draw.                (line  26)
 * arrow:                                 Drawing commands.    (line  31)
-* arrow keys:                            Tutorial.            (line  29)
+* arrow keys:                            Tutorial.            (line  35)
 * Arrow3:                                three.               (line 505)
 * Arrows:                                draw.                (line  26)
 * arrows:                                draw.                (line  26)
@@ -8425,7 +8448,7 @@ Index
 * boutput:                               Files.               (line  71)
 * box <1>:                               three.               (line 293)
 * box:                                   Frames and pictures. (line  22)
-* bp:                                    Tutorial.            (line  21)
+* bp:                                    Tutorial.            (line  24)
 * break:                                 Programming.         (line  29)
 * breakpoints:                           Debugger.            (line  21)
 * brick:                                 Pens.                (line 248)
@@ -8462,7 +8485,7 @@ Index
 * clear <1>:                             Debugger.            (line  23)
 * clear:                                 Files.               (line  89)
 * clip:                                  fill.                (line 110)
-* cm:                                    Tutorial.            (line  58)
+* cm:                                    Tutorial.            (line  61)
 * cmd:                                   Configuring.         (line  34)
 * cmyk:                                  Pens.                (line  34)
 * colatitude:                            Data types.          (line 129)
@@ -8477,7 +8500,7 @@ Index
 * command-line options <1>:              Options.             (line   6)
 * command-line options:                  Configuring.         (line  83)
 * comment character:                     Files.               (line  15)
-* compass directions:                    Tutorial.            (line  86)
+* compass directions:                    Tutorial.            (line 104)
 * Compiling from UNIX source:            Compiling from UNIX source.
                                                               (line   6)
 * complement:                            Arrays.              (line 150)
@@ -8532,7 +8555,7 @@ Index
 * custom tick locations:                 graph.               (line 241)
 * cut:                                   Paths and guides.    (line 232)
 * cycle <1>:                             three.               (line   6)
-* cycle:                                 Tutorial.            (line  40)
+* cycle:                                 Tutorial.            (line  73)
 * cyclic <1>:                            three.               (line 462)
 * cyclic <2>:                            Arrays.              (line  39)
 * cyclic:                                Paths and guides.    (line  74)
@@ -8594,7 +8617,7 @@ Index
 * dvisvg:                                Configuring.         (line  67)
 * E <1>:                                 Mathematical functions.
                                                               (line  48)
-* E:                                     Tutorial.            (line  86)
+* E:                                     Tutorial.            (line 104)
 * Editing modes:                         Editing modes.       (line   6)
 * Ei:                                    Mathematical functions.
                                                               (line  48)
@@ -8630,7 +8653,7 @@ Index
 * EPS:                                   label.               (line  80)
 * erase <1>:                             Frames and pictures. (line   7)
 * erase <2>:                             Data types.          (line 239)
-* erase:                                 Tutorial.            (line  29)
+* erase:                                 Tutorial.            (line  35)
 * erf:                                   Mathematical functions.
                                                               (line   6)
 * erfc:                                  Mathematical functions.
@@ -8640,7 +8663,7 @@ Index
 * errorbars:                             graph.               (line 474)
 * eval:                                  Import.              (line 101)
 * evenodd <1>:                           Pens.                (line 149)
-* evenodd:                               Tutorial.            (line 123)
+* evenodd:                               Tutorial.            (line 146)
 * exit <1>:                              Debugger.            (line  57)
 * exit <2>:                              Interactive mode.    (line  40)
 * exit:                                  Data types.          (line 326)
@@ -8793,7 +8816,7 @@ Index
 * implicit linear solver:                MetaPost.            (line  10)
 * implicit scaling:                      Implicit scaling.    (line   6)
 * import:                                Import.              (line  48)
-* inches:                                Tutorial.            (line  58)
+* inches:                                Tutorial.            (line  61)
 * including images:                      label.               (line  80)
 * inheritance:                           Structures.          (line 189)
 * initialized:                           Arrays.              (line  39)
@@ -8959,7 +8982,7 @@ Index
 * mintimes:                              Paths and guides.    (line 209)
 * miterjoin:                             Pens.                (line 135)
 * miterlimit:                            Pens.                (line 144)
-* mm:                                    Tutorial.            (line  58)
+* mm:                                    Tutorial.            (line  61)
 * mode:                                  Files.               (line  85)
 * mouse:                                 GUI.                 (line   6)
 * mouse bindings:                        three.               (line 132)
@@ -8968,7 +8991,7 @@ Index
 * multisample:                           three.               (line 122)
 * multisampling:                         Compiling from UNIX source.
                                                               (line  16)
-* N:                                     Tutorial.            (line  86)
+* N:                                     Tutorial.            (line 104)
 * name:                                  Files.               (line  85)
 * named arguments:                       Named arguments.     (line   6)
 * new <1>:                               Arrays.              (line 109)
@@ -9035,7 +9058,7 @@ Index
 * pack:                                  label.               (line 102)
 * packing:                               Rest arguments.      (line  30)
 * pair <1>:                              Data types.          (line  41)
-* pair:                                  Tutorial.            (line  21)
+* pair:                                  Tutorial.            (line  49)
 * pairs:                                 Arrays.              (line 245)
 * paperheight:                           Configuring.         (line  61)
 * papertype:                             Configuring.         (line  61)
@@ -9048,7 +9071,7 @@ Index
 * path:                                  Paths and guides.    (line   7)
 * path markers:                          graph.               (line 474)
 * path3:                                 three.               (line   6)
-* path[]:                                Tutorial.            (line 109)
+* path[]:                                Tutorial.            (line 132)
 * patterns <1>:                          patterns.            (line   6)
 * patterns:                              Pens.                (line 235)
 * pdflatex:                              Options.             (line 140)
@@ -9085,7 +9108,7 @@ Index
                                                               (line  19)
 * postscript:                            Frames and pictures. (line 267)
 * PostScript fonts:                      Pens.                (line 207)
-* PostScript subpath:                    Tutorial.            (line 109)
+* PostScript subpath:                    Tutorial.            (line 132)
 * pow10:                                 Mathematical functions.
                                                               (line   6)
 * prc:                                   three.               (line 223)
@@ -9101,7 +9124,7 @@ Index
 * psview:                                Microsoft Windows.   (line  16)
 * psviewer:                              Configuring.         (line   6)
 * psviewerOptions:                       Options.             (line 128)
-* pt:                                    Tutorial.            (line  58)
+* pt:                                    Tutorial.            (line  61)
 * public:                                Structures.          (line   6)
 * push:                                  Arrays.              (line  39)
 * Python usage:                          Interactive mode.    (line  61)
@@ -9109,7 +9132,7 @@ Index
 * quarticroots:                          math.                (line  22)
 * quit <1>:                              Debugger.            (line  54)
 * quit <2>:                              Interactive mode.    (line  40)
-* quit:                                  Tutorial.            (line  29)
+* quit:                                  Tutorial.            (line  35)
 * quote:                                 Import.              (line 119)
 * quotient:                              Arithmetic & logical.
                                                               (line   6)
@@ -9176,7 +9199,7 @@ Index
                                                               (line   6)
 * runtime imports:                       Import.              (line 101)
 * Russian:                               unicode.             (line   7)
-* S:                                     Tutorial.            (line  86)
+* S:                                     Tutorial.            (line 104)
 * safe:                                  Options.             (line 156)
 * save:                                  Frames and pictures. (line 258)
 * saveline:                              Files.               (line 131)
@@ -9279,7 +9302,7 @@ Index
 * substr:                                Data types.          (line 244)
 * Subversion:                            Subversion.          (line   6)
 * sum:                                   Arrays.              (line 216)
-* superpath:                             Tutorial.            (line 109)
+* superpath:                             Tutorial.            (line 132)
 * Suppress:                              Pens.                (line 328)
 * SuppressQuiet:                         Pens.                (line 332)
 * surface <1>:                           graph3.              (line 100)
@@ -9289,7 +9312,7 @@ Index
 * system:                                Files.               (line 156)
 * syzygy:                                syzygy.              (line   6)
 * tab:                                   Files.               (line  59)
-* tab completion:                        Tutorial.            (line  29)
+* tab completion:                        Tutorial.            (line  35)
 * Tan:                                   Mathematical functions.
                                                               (line  20)
 * tan:                                   Mathematical functions.
@@ -9362,13 +9385,13 @@ Index
 * Uninstall:                             Uninstall.           (line   6)
 * unit:                                  Data types.          (line  78)
 * unitbox <1>:                           three.               (line 295)
-* unitbox:                               Tutorial.            (line 130)
+* unitbox:                               Tutorial.            (line 153)
 * unitcircle <1>:                        three.               (line 262)
-* unitcircle:                            Tutorial.            (line 103)
+* unitcircle:                            Tutorial.            (line 126)
 * unitrand:                              Mathematical functions.
                                                               (line  39)
 * unitsize <1>:                          Frames and pictures. (line  64)
-* unitsize:                              Tutorial.            (line  70)
+* unitsize:                              Tutorial.            (line  84)
 * UNIX binary distributions:             UNIX binary distributions.
                                                               (line   6)
 * unpacking:                             Rest arguments.      (line  39)
@@ -9377,7 +9400,7 @@ Index
 * update:                                Files.               (line  36)
 * UpsideDown:                            Frames and pictures. (line  95)
 * usepackage:                            Frames and pictures. (line 287)
-* user coordinates:                      Tutorial.            (line  70)
+* user coordinates:                      Tutorial.            (line  84)
 * user-defined operators:                User-defined operators.
                                                               (line   6)
 * usleep:                                Data types.          (line 332)
@@ -9397,7 +9420,7 @@ Index
 * vim:                                   Editing modes.       (line  33)
 * virtual functions:                     Structures.          (line 189)
 * void:                                  Data types.          (line  10)
-* W:                                     Tutorial.            (line  86)
+* W:                                     Tutorial.            (line 104)
 * whatever:                              Paths and guides.    (line 227)
 * Wheel:                                 palette.             (line  22)
 * wheel mouse:                           GUI.                 (line   6)
@@ -9470,144 +9493,144 @@ Index
 Tag Table:
 Node: Top574
 Node: Description6833
-Node: Installation10332
-Node: UNIX binary distributions11385
-Node: MacOS X binary distributions12491
-Node: Microsoft Windows13375
-Ref: psview14085
-Node: Configuring15006
-Node: Search paths19226
-Node: Compiling from UNIX source20023
-Ref: multisampling20612
-Node: Editing modes23030
-Node: Subversion25462
-Node: Uninstall25925
-Node: Tutorial26275
-Ref: unitcircle30105
-Node: Drawing commands32078
-Node: draw33789
-Ref: arrows34937
-Node: fill40180
-Ref: gradient shading41224
-Node: clip45417
-Node: label46009
-Ref: Label46708
-Node: Bezier curves52433
-Node: Programming56010
-Ref: array iteration56824
-Node: Data types57906
-Ref: format66807
-Node: Paths and guides70271
-Ref: circle70525
-Ref: arctime75882
-Ref: extension79747
-Node: Pens86430
-Ref: fillrule93674
-Ref: basealign94571
-Ref: transparency97396
-Ref: makepen100839
-Ref: overwrite101677
-Node: Transforms102887
-Node: Frames and pictures104678
-Ref: envelope105819
-Ref: size106902
-Ref: unitsize107889
-Ref: shipout108949
-Ref: filltype111282
-Ref: add114251
-Ref: add about115197
-Ref: tex118142
-Node: Files119016
-Ref: cd119981
-Ref: scroll124450
-Node: Variable initializers127523
-Node: Structures129818
-Node: Operators137270
-Node: Arithmetic & logical137584
-Node: Self & prefix operators139481
-Node: User-defined operators140269
-Node: Implicit scaling141180
-Node: Functions141743
-Ref: stack overflow144496
-Node: Default arguments145060
-Node: Named arguments145799
-Node: Rest arguments147961
-Node: Mathematical functions150771
-Node: Arrays155376
-Ref: sort162436
-Ref: tridiagonal164727
-Ref: solve165955
-Node: Slices170152
-Node: Casts174045
-Node: Import176011
-Node: Static181241
-Node: LaTeX usage184137
-Node: Base modules189582
-Node: plain192082
-Node: simplex192734
-Node: math193007
-Node: interpolate194106
-Node: geometry194385
-Node: trembling194979
-Node: stats195330
-Node: patterns195590
-Node: markers195826
-Node: tree197609
-Node: binarytree197797
-Node: drawtree198386
-Node: syzygy198590
-Node: feynman198864
-Node: roundedpath199139
-Node: animation199422
-Ref: animate199839
-Node: embed200978
-Node: slide202767
-Node: MetaPost203107
-Node: unicode203823
-Node: latin1204711
-Node: babel205079
-Node: labelpath205308
-Node: labelpath3206128
-Node: annotate206439
-Node: CAD206910
-Node: graph207220
-Ref: ticks214044
-Ref: pathmarkers227152
-Ref: marker227617
-Ref: markuniform227968
-Ref: errorbars229759
-Ref: automatic scaling233815
-Node: palette244461
-Ref: images244579
-Ref: image248750
-Ref: logimage249228
-Ref: penimage250034
-Node: three250478
-Ref: PostScript3D273050
-Node: obj274742
-Node: graph3274994
-Ref: GaussianSurface280119
-Node: grid3281204
-Node: solids281944
-Node: tube282892
-Node: flowchart285127
-Node: contour289626
-Node: contour3294657
-Node: slopefield294964
-Node: ode296401
-Node: Options296661
-Ref: configuration file302478
-Ref: settings302478
-Ref: convert303573
-Node: Interactive mode306362
-Ref: history308027
-Node: GUI309332
-Node: GUI installation309835
-Node: GUI usage310973
-Node: PostScript to Asymptote311876
-Node: Help312632
-Node: Debugger314368
-Node: Credits316153
-Node: Index317066
+Node: Installation10334
+Node: UNIX binary distributions11387
+Node: MacOS X binary distributions12493
+Node: Microsoft Windows13377
+Ref: psview14087
+Node: Configuring15008
+Node: Search paths19228
+Node: Compiling from UNIX source20025
+Ref: multisampling20614
+Node: Editing modes23032
+Node: Subversion25464
+Node: Uninstall25927
+Node: Tutorial26277
+Ref: unitcircle30503
+Node: Drawing commands32484
+Node: draw34195
+Ref: arrows35343
+Node: fill40586
+Ref: gradient shading41630
+Node: clip45823
+Node: label46415
+Ref: Label47114
+Node: Bezier curves52839
+Node: Programming56416
+Ref: array iteration57230
+Node: Data types58312
+Ref: format67213
+Node: Paths and guides70677
+Ref: circle70931
+Ref: arctime76288
+Ref: extension80153
+Node: Pens86836
+Ref: fillrule94080
+Ref: basealign94977
+Ref: transparency97802
+Ref: makepen101245
+Ref: overwrite102083
+Node: Transforms103293
+Node: Frames and pictures105084
+Ref: envelope106225
+Ref: size107308
+Ref: unitsize108295
+Ref: shipout109355
+Ref: filltype111688
+Ref: add114657
+Ref: add about115603
+Ref: tex118548
+Node: Files119422
+Ref: cd120387
+Ref: scroll124856
+Node: Variable initializers127929
+Node: Structures130224
+Node: Operators137676
+Node: Arithmetic & logical137990
+Node: Self & prefix operators139887
+Node: User-defined operators140675
+Node: Implicit scaling141586
+Node: Functions142149
+Ref: stack overflow144902
+Node: Default arguments145466
+Node: Named arguments146205
+Node: Rest arguments148367
+Node: Mathematical functions151177
+Node: Arrays155782
+Ref: sort162842
+Ref: tridiagonal165133
+Ref: solve166361
+Node: Slices170558
+Node: Casts174451
+Node: Import176417
+Node: Static181647
+Node: LaTeX usage184543
+Node: Base modules189988
+Node: plain192488
+Node: simplex193140
+Node: math193413
+Node: interpolate194512
+Node: geometry194791
+Node: trembling195385
+Node: stats195736
+Node: patterns195996
+Node: markers196232
+Node: tree198015
+Node: binarytree198203
+Node: drawtree198792
+Node: syzygy198996
+Node: feynman199270
+Node: roundedpath199545
+Node: animation199828
+Ref: animate200245
+Node: embed201384
+Node: slide203173
+Node: MetaPost203513
+Node: unicode204229
+Node: latin1205117
+Node: babel205485
+Node: labelpath205714
+Node: labelpath3206534
+Node: annotate206845
+Node: CAD207316
+Node: graph207626
+Ref: ticks214450
+Ref: pathmarkers227558
+Ref: marker228023
+Ref: markuniform228374
+Ref: errorbars230165
+Ref: automatic scaling234221
+Node: palette244867
+Ref: images244985
+Ref: image249156
+Ref: logimage249634
+Ref: penimage250440
+Node: three250884
+Ref: PostScript3D273456
+Node: obj275148
+Node: graph3275400
+Ref: GaussianSurface280525
+Node: grid3281610
+Node: solids282350
+Node: tube283298
+Node: flowchart285533
+Node: contour290032
+Node: contour3295063
+Node: slopefield295370
+Node: ode296807
+Node: Options297067
+Ref: configuration file302880
+Ref: settings302880
+Ref: convert303975
+Node: Interactive mode306764
+Ref: history308429
+Node: GUI309734
+Node: GUI installation310237
+Node: GUI usage311375
+Node: PostScript to Asymptote312278
+Node: Help313034
+Node: Debugger314770
+Node: Credits316555
+Node: Index317468
 
 End Tag Table

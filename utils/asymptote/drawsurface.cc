@@ -141,17 +141,40 @@ void drawSurface::ratio(pair &b, double (*m)(double, double), bool &first)
   }
 }
 
-bool drawSurface::write(prcfile *out)
+bool drawSurface::write(prcfile *out, unsigned int *count, array *index,
+                        array *origin)
 {
   if(invisible)
     return true;
 
+  ostringstream buf;
+  if(name == "") 
+    buf << "surface-" << count[SURFACE]++;
+  else
+    buf << name;
+  
+  if(interaction == BILLBOARD) {
+    triple Center=center*scale3D;
+    size_t n=origin->size();
+    
+    if(n == 0 || Center != vm::read<triple>(origin,n-1)) {
+      origin->push(Center);
+      ++n;
+    }
+    
+    unsigned int i=count[BILLBOARD_SURFACE]++;
+    buf << "-" << i << "\001";
+    index->push((Int) (n-1));
+  }
+  
   PRCMaterial m(ambient,diffuse,emissive,specular,opacity,PRCshininess);
 
   if(straight)
-    out->add(new PRCBezierSurface(out,1,1,2,2,vertices,m,granularity,name));
+    out->add(new PRCBezierSurface(out,1,1,2,2,vertices,m,granularity,
+                                  buf.str()));
   else
-    out->add(new PRCBezierSurface(out,3,3,4,4,controls,m,granularity,name));
+    out->add(new PRCBezierSurface(out,3,3,4,4,controls,m,granularity,
+                                  buf.str()));
   
   return true;
 }
@@ -216,6 +239,7 @@ inline double fraction(const triple& d, const triple& size)
              fraction(d.getz(),size.getz()));
 }
 
+#ifdef HAVE_LIBGL
 struct billboard 
 {
   triple u,v,w;
@@ -242,6 +266,7 @@ struct billboard
 };
 
 billboard BB;
+#endif
 
 void drawSurface::render(GLUnurbs *nurb, double size2,
                          const triple& Min, const triple& Max,
@@ -250,59 +275,58 @@ void drawSurface::render(GLUnurbs *nurb, double size2,
 #ifdef HAVE_LIBGL
   if(invisible || ((colors ? colors[3]+colors[7]+colors[11]+colors[15] < 4.0
                     : diffuse.A < 1.0) ^ transparent)) return;
-  
-  bool havebillboard=name.size() >= 1 && name[0] == ' ';
   double s;
   static GLfloat Normal[3];
 
-  if(havebillboard) BB.init();
-  else {
-    static GLfloat v[16];
-    static GLfloat v1[16];
-    static GLfloat v2[16];
+  static GLfloat v[16];
+  static GLfloat v1[16];
+  static GLfloat v2[16];
   
-    initMatrix(v1,Min.getx(),Min.gety(),Min.getz(),Max.gety(),Max.getz());
-    initMatrix(v2,Max.getx(),Min.gety(),Min.getz(),Max.gety(),Max.getz());
+  initMatrix(v1,Min.getx(),Min.gety(),Min.getz(),Max.gety(),Max.getz());
+  initMatrix(v2,Max.getx(),Min.gety(),Min.getz(),Max.gety(),Max.getz());
 
-    glPushMatrix();
-    glMultMatrixf(v1);
-    glGetFloatv(GL_MODELVIEW_MATRIX,v);
-    glPopMatrix();
+  glPushMatrix();
+  glMultMatrixf(v1);
+  glGetFloatv(GL_MODELVIEW_MATRIX,v);
+  glPopMatrix();
   
-    bbox3 B(v[0],v[1],v[2]);
-    B.addnonempty(v[4],v[5],v[6]);
-    B.addnonempty(v[8],v[9],v[10]);
-    B.addnonempty(v[12],v[13],v[14]);
+  bbox3 B(v[0],v[1],v[2]);
+  B.addnonempty(v[4],v[5],v[6]);
+  B.addnonempty(v[8],v[9],v[10]);
+  B.addnonempty(v[12],v[13],v[14]);
   
-    glPushMatrix();
-    glMultMatrixf(v2);
-    glGetFloatv(GL_MODELVIEW_MATRIX,v);
-    glPopMatrix();
+  glPushMatrix();
+  glMultMatrixf(v2);
+  glGetFloatv(GL_MODELVIEW_MATRIX,v);
+  glPopMatrix();
   
-    B.addnonempty(v[0],v[1],v[2]);
-    B.addnonempty(v[4],v[5],v[6]);
-    B.addnonempty(v[8],v[9],v[10]);
-    B.addnonempty(v[12],v[13],v[14]);
+  B.addnonempty(v[0],v[1],v[2]);
+  B.addnonempty(v[4],v[5],v[6]);
+  B.addnonempty(v[8],v[9],v[10]);
+  B.addnonempty(v[12],v[13],v[14]);
   
-    triple M=B.Max();
-    triple m=B.Min();
+  triple M=B.Max();
+  triple m=B.Min();
   
-    if(perspective) {
-      double f=m.getz()*perspective;
-      double F=M.getz()*perspective;
-      s=max(f,F);
-      if(M.getx() < min(f*Min.getx(),F*Min.getx()) || 
-         m.getx() > max(f*Max.getx(),F*Max.getx()) ||
-         M.gety() < min(f*Min.gety(),F*Min.gety()) ||
-         m.gety() > max(f*Max.gety(),F*Max.gety()) ||
-         M.getz() < Min.getz() ||
-         m.getz() > Max.getz()) return;
-    } else {
-      s=1.0;
-      if(M.getx() < Min.getx() || m.getx() > Max.getx() ||
-         M.gety() < Min.gety() || m.gety() > Max.gety() ||
-         M.getz() < Min.getz() || m.getz() > Max.getz()) return;
-    }
+  bool havebillboard=interaction == BILLBOARD;
+  
+  if(perspective) {
+    double f=m.getz()*perspective;
+    double F=M.getz()*perspective;
+    s=max(f,F);
+    if(!havebillboard && (M.getx() < min(f*Min.getx(),F*Min.getx()) || 
+                          m.getx() > max(f*Max.getx(),F*Max.getx()) ||
+                          M.gety() < min(f*Min.gety(),F*Min.gety()) ||
+                          m.gety() > max(f*Max.gety(),F*Max.gety()) ||
+                          M.getz() < Min.getz() ||
+                          m.getz() > Max.getz()))
+      return;
+  } else {
+    s=1.0;
+    if(!havebillboard && (M.getx() < Min.getx() || m.getx() > Max.getx() ||
+                          M.gety() < Min.gety() || m.gety() > Max.gety() ||
+                          M.getz() < Min.getz() || m.getz() > Max.getz()))
+      return;
   }
     
   bool ambientdiffuse=true;
@@ -341,6 +365,7 @@ void drawSurface::render(GLUnurbs *nurb, double size2,
                       Max.getz()-Min.getz());
   
   bool havenormal=normal != zero;
+  if(havebillboard) BB.init();
 
   if(!havenormal || (!straight && (fraction(d,size3)*size2 >= pixel || 
                                    granularity == 0))) {
@@ -418,8 +443,15 @@ drawElement *drawSurface::transformed(const array& t)
   return new drawSurface(t,this);
 }
   
-bool drawNurbs::write(prcfile *out)
+bool drawNurbs::write(prcfile *out, unsigned int *count, array *index,
+                      array *origin)
 {
+  ostringstream buf;
+  if(name == "") 
+    buf << "surface-" << count[SURFACE]++;
+  else
+    buf << name;
+  
   if(invisible)
     return true;
 

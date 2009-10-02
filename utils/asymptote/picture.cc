@@ -15,6 +15,7 @@
 
 using std::ifstream;
 using std::ofstream;
+using vm::array;
 
 using namespace settings;
 using namespace gl;
@@ -291,6 +292,8 @@ bool picture::texprocess(const string& texname, const string& outname,
   ifstream outfile;
   
   outfile.open(texname.c_str());
+  bool keep=getSetting<bool>("keep");
+  
   if(outfile) {
     outfile.close();
     
@@ -298,9 +301,9 @@ bool picture::texprocess(const string& texname, const string& outname,
     
     string texengine=getSetting<string>("tex");
     string dviname=auxname(prefix,"dvi");
+    mem::vector<string> cmd;
     
     if(svgformat) {
-      mem::vector<string> cmd;
       cmd.push_back(getSetting<string>("dvisvgm"));
       cmd.push_back("-n");
       cmd.push_back("--verbosity=3");
@@ -309,6 +312,8 @@ bool picture::texprocess(const string& texname, const string& outname,
       cmd.push_back(dviname);
       status=System(cmd,0,true,"dvisvgm");
       if(status != 0) return false;
+      if(!keep)
+        unlink(dviname.c_str());
     } else {
       if(!pdf) {
         string psname=auxname(prefix,"ps");
@@ -329,19 +334,18 @@ bool picture::texprocess(const string& texname, const string& outname,
         setenv("DVIPSRC",dvipsrc.c_str(),1);
         string papertype=getSetting<string>("papertype") == "letter" ?
           "letterSize" : "a4size";
-        mem::vector<string> dcmd;
-        dcmd.push_back(getSetting<string>("dvips"));
-        dcmd.push_back("-R");
-        dcmd.push_back("-Pdownload35");
-        dcmd.push_back("-D600");
-        dcmd.push_back("-O"+String(hoffset)+"bp,"+String(voffset)+"bp");
-        dcmd.push_back("-T"+String(paperWidth)+"bp,"+String(paperHeight)+"bp");
-        push_split(dcmd,getSetting<string>("dvipsOptions"));
-        dcmd.push_back("-t"+papertype);
-        if(verbose <= 1) dcmd.push_back("-q");
-        dcmd.push_back("-o"+psname);
-        dcmd.push_back(dviname);
-        status=System(dcmd,0,true,"dvips");
+        cmd.push_back(getSetting<string>("dvips"));
+        cmd.push_back("-R");
+        cmd.push_back("-Pdownload35");
+        cmd.push_back("-D600");
+        cmd.push_back("-O"+String(hoffset)+"bp,"+String(voffset)+"bp");
+        cmd.push_back("-T"+String(paperWidth)+"bp,"+String(paperHeight)+"bp");
+        push_split(cmd,getSetting<string>("dvipsOptions"));
+        cmd.push_back("-t"+papertype);
+        if(verbose <= 1) cmd.push_back("-q");
+        cmd.push_back("-o"+psname);
+        cmd.push_back(dviname);
+        status=System(cmd,0,true,"dvips");
         if(status != 0) return false;
     
         ifstream fin(psname.c_str());
@@ -373,14 +377,14 @@ bool picture::texprocess(const string& texname, const string& outname,
           } else
             fout.verbatimline(s);
         }
-        if(!getSetting<bool>("keep")) { // Delete temporary files.
+        if(!keep) {
           unlink(dviname.c_str());
           unlink(psname.c_str());
         }
       }
     }
-      
-    if(!getSetting<bool>("keep")) { // Delete temporary files.
+    
+    if(!keep) {
       unlink(texname.c_str());
       if(!getSetting<bool>("keepaux"))
         unlink(auxname(prefix,"aux").c_str());
@@ -923,21 +927,24 @@ bool picture::shipout3(const string& prefix, const string& format,
   return true;
 #endif  
 #else
-  reportError("Cannot render image; please install glut, run ./configure, and recompile"); 
+  reportError("Cannot render image; please install glut, run ./configure, and recompile");
 #endif
   return false;
 }
 
-bool picture::shipout3(const string& prefix)
+bool picture::shipout3(const string& prefix, array *index, array *center)
 {
   bounds3();
   bool status = true;
   
   string prcname=buildname(prefix,"prc");
   prcfile prc(prcname);
+  unsigned int count[nENTITY];
+  for(unsigned int i=0; i < nENTITY; ++i)
+    count[i]=0;
   for(nodelist::iterator p=nodes.begin(); p != nodes.end(); ++p) {
     assert(*p);
-    (*p)->write(&prc);
+    (*p)->write(&prc,count,index,center);
   }
   if(status)
     status=prc.finish();
@@ -963,7 +970,7 @@ picture *picture::transformed(const transform& t)
   return pic;
 }
 
-picture *picture::transformed(const vm::array& t)
+picture *picture::transformed(const array& t)
 {
   picture *pic = new picture;
 

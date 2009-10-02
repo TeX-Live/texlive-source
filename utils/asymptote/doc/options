@@ -7,13 +7,13 @@ Options (negate by replacing - with -no):
 -antialias n          Antialiasing width for rasterized output [2]
 -arcballradius pixels Arcball radius [750]
 -auto3D               Automatically activate 3D scene [true]
+-autobillboard        3D labels always face viewer by default [true]
 -autoimport string    Module to automatically import
 -autoplain            Enable automatic importing of plain [true]
 -autoplay             Autoplay 3D animations [false]
 -autorotate           Enable automatic PDF page rotation [false]
 -batchMask            Mask fpu exceptions in batch mode [false]
 -batchView            View output in batch mode [false]
--billboard            Force unnamed labels to always face viewer [false]
 -bw                   Convert all colors to black and white [false]
 -cd directory         Set current directory; command-line only
 -cmyk                 Convert rgb colors to cmyk [false]

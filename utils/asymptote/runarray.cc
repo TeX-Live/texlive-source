@@ -2194,8 +2194,9 @@ void gen_runarray72(stack *Stack)
 void gen_runarray73(stack *Stack)
 {
 #line 1838 "runarray.in"
-  gl::projection P=gl::camera();
+#ifdef HAVE_LIBGL
   array *a=new array(14);
+  gl::projection P=gl::camera();
   size_t k=0;
   (*a)[k++]=P.orthographic ? 1.0 : 0.0;
   
@@ -2219,7 +2220,8 @@ void gen_runarray73(stack *Stack)
   
   (*a)[k++]=P.viewportshift.getx();
   (*a)[k++]=P.viewportshift.gety();
-  {Stack->push<realarray*>(a); return;}
+#endif
+  {Stack->push<realarray*>(new array(0)); return;}
 }
 
 } // namespace run

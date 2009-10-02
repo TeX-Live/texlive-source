@@ -1,3 +1,14 @@
+Release Notes for Version 1.88
+
+Compilation without OpenGL was fixed. PRC billboard labels were
+implemented; settings.billboard was renamed to settings.autobillboard
+and by default enabled for all 3D labels. The surface constructor for
+embedding labels on surfaces now draws both the top and bottom faces by
+default. The meshpen, knot, weight, and color arrays are now properly cached.
+The example fequlogo.asy illustrates how to draw an arbitrary 3D background
+plane. The intermediate dvi file is now removed when producing SVG output.
+Improvements were made to the tutorial.
+
 Release Notes for Version 1.87
 
 Support for SVG output was added (requires dvisvgm-0.8.4). Billboard

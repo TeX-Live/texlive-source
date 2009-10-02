@@ -23,17 +23,9 @@ string defaultembed3Doptions;
 string defaultembed3Dscript;
 real defaulteyetoview=63mm/1000mm;
 
-string defaultlabelname="label";
-string Billboard=" "+defaultlabelname;
-
-string defaultlabelname() 
-{
-  return settings.billboard ? Billboard : defaultlabelname;
-}
-
 string partname(string s, int i=0) 
 {
-  return s == "" ? s : s+"-"+string(i);
+  return s == "" ? "" : s+"-"+string(i);
 }
 
 triple O=(0,0,0);
@@ -331,7 +323,7 @@ projection projection()
 {
   projection P;
   real[] a=_projection();
-  if(a[10] == 0.0) return currentprojection;
+  if(a.length == 0 || a[10] == 0.0) return currentprojection;
   int k=0;
   return a[0] == 1 ?
     orthographic((a[++k],a[++k],a[++k]),(a[++k],a[++k],a[++k]),
@@ -2349,6 +2341,11 @@ private string Format(real[] c)
   return Format((c[0],c[1],c[2]));
 }
 
+private string format(triple v, string sep=" ")
+{
+  return string(v.x)+sep+string(v.y)+sep+string(v.z);
+}
+
 private string[] file3;
 
 private string projection(bool infinity, real viewplanesize)
@@ -2372,6 +2369,97 @@ handler.onEvent=function(event)
 }";
 }
 
+private string projection(bool infinity, real viewplanesize)
+{
+  return "activeCamera=scene.cameras.getByIndex(0);
+function asyProjection() {"+
+    (infinity ? "activeCamera.projectionType=activeCamera.TYPE_ORTHOGRAPHIC;" :
+     "activeCamera.projectionType=activeCamera.TYPE_PERSPECTIVE;")+"
+activeCamera.viewPlaneSize="+string(viewplanesize)+";
+activeCamera.binding=activeCamera.BINDING_"+(infinity ? "MAX" : "VERTICAL")+";
+}
+
+asyProjection();
+
+handler=new CameraEventHandler();
+runtime.addEventHandler(handler);
+handler.onEvent=function(event) 
+{
+  asyProjection();
+  scene.update();
+}";
+}
+
+private string billboard(int[] index, triple[] center)
+{
+  if(index.length == 0) return "";
+  string s="
+var zero=new Vector3(0,0,0);
+var meshes=scene.meshes;
+var count=meshes.count;
+
+var index=new Array();
+for(i=0; i < count; i++) {
+  var mesh=meshes.getByIndex(i); 
+  var name=mesh.name;
+  end=name.lastIndexOf(\".\")-1;
+  if(end > 0) {
+    if(name.substr(end,1) == \"\001\") {
+      start=name.lastIndexOf(\"-\")+1;
+      n=end-start;
+      if(n > 0) {
+        index[name.substr(start,n)]=i;
+        mesh.name=name.substr(0,start-1);
+      }
+    }
+  }
+}
+
+var center=new Array(
+";
+  for(int i=0; i < center.length; ++i)
+    s += "Vector3("+format(center[i],",")+"),
+";
+  s += ");
+
+billboardHandler=new RenderEventHandler();
+billboardHandler.onEvent=function(event)
+{
+  var camera=scene.cameras.getByIndex(0); 
+  var position=camera.position;
+  var direction=position.subtract(camera.targetPosition);
+  var up=camera.up.subtract(position);
+
+  function f(i,k) {
+    j=index[i];
+    if(j >= 0) {
+      var mesh=meshes.getByIndex(j);
+      var name=mesh.name;
+      var R=Matrix4x4();
+      R.setView(zero,direction,up);
+      var c=center[k];
+      var T=mesh.transform;
+      T.setIdentity();
+      T.translateInPlace(c.scale(-1));
+      T.multiplyInPlace(R);
+      T.translateInPlace(c);
+    }
+  }
+";
+  for(int i=0; i < index.length; ++i)
+    s += "f("+string(i)+","+string(index[i])+");
+";
+  s += "
+  runtime.refresh(); 
+}
+ 
+runtime.addEventHandler(billboardHandler); 
+
+runtime.refresh(); 
+";
+return s;
+}
+
 string lightscript(light light) {
   string script="for(var i=scene.lights.count-1; i >= 0; i--)
   scene.lights.removeByIndex(i);"+'\n\n';
@@ -2379,8 +2467,8 @@ string lightscript(light light) {
     string Li="L"+string(i);
     real[] diffuse=light.diffuse[i];
     script += Li+"=scene.createLight();"+'\n'+
-      Li+".direction.set("+Format(-light.position[i],",")+");"+'\n'+
-      Li+".color.set("+Format((diffuse[0],diffuse[1],diffuse[2]),",")+");"+'\n';
+      Li+".direction.set("+format(-light.position[i],",")+");"+'\n'+
+      Li+".color.set("+format((diffuse[0],diffuse[1],diffuse[2]),",")+");"+'\n';
   }
   // Work around initialization bug in Adobe Reader 8.0:
   return script +"
@@ -2437,10 +2525,13 @@ string embed3D(string label="", string text=label, string prefix,
   } else
     if(!P.absolute) P.angle=2*aTan(Tan(0.5*P.angle));
 
-  string name=prefix+".js";
-  writeJavaScript(name,lightscript+projection(P.infinity,viewplanesize),script);
+  int[] index;
+  triple[] center;
+  shipout3(prefix,f,index,center);
 
-  shipout3(prefix,f);
+  string name=prefix+".js";
+  writeJavaScript(name,lightscript+projection(P.infinity,viewplanesize)+
+                  billboard(index,center),script);
 
   prefix += ".prc";
   if(!settings.inlinetex)
