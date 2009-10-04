@@ -13,12 +13,12 @@ When reporting bugs, please include an input file and command line
 options so the problem can be reproduced.
 
 -------------------------------------------------------------------------
-The test-binary file was supplied by Akira Kakuto.  It contains binary
-data.  It is public domain.
+The test-binary and test-bin2 files were supplied by Akira Kakuto and
+Reinhard Kotucha.  They contain binary data.  They are public domain.
 
 The test-binhdr* files were supplied by Martin von Gagern, constructed
 as follows.  They contain binary junk before the EPS starts.  We also
-use this to test different line endings.  These files are public domain.
+use these to test different line endings.  These files are public domain.
 
 { echo -e '%Some\000binary\001comment'; dot -Tps <<< 'digraph{a->b}'; }
   > test-binhdr-lf.eps

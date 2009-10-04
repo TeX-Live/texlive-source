@@ -9,7 +9,7 @@ default: check
 # making sure we don't crash.
 check: check-help check-version \
        check-write-error check-gscmd \
-       check-simple check-atend check-binary \
+       check-simple check-atend check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
 
 check-help:
@@ -32,6 +32,9 @@ check-atend:
 
 check-binary:
 	$(MAKE) file=test-binary check1
+
+check-bin2:
+	$(MAKE) file=test-bin2 check1
 
 check-binhdr-lf:
 	$(MAKE) file=test-binhdr-lf check1
