@@ -1,6 +1,0 @@
-The MSWindows executable file included in this directory can only be
-released under the GNU General Public License (GPL) as it is linked against
-the GNU Scientific Library, GNU Readline library and other GPL
-libraries. The Asymptote source itself is released under the GNU Lesser
-General Public License.
-
