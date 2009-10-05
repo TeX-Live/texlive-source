@@ -16,7 +16,6 @@ bin_SCRIPTS =
 scriptxdir = ${prefix}/texmf/scripts
 nobase_dist_scriptx_SCRIPTS = \
 	a2ping/a2ping.pl \
-	epstopdf/epstopdf.pl \
 	getnonfreefonts/getnonfreefonts.pl \
 	simpdftex/simpdftex \
 	tetex/e2pall.pl \
@@ -54,6 +53,7 @@ nobase_dist_script_SCRIPTS = \
 	dviasm/dviasm.py \
 	epspdf/epspdf \
 	epspdf/epspdftk \
+	epstopdf/epstopdf.pl \
 	fig4latex/fig4latex \
 	findhyph/findhyph \
 	fontools/afm2afm \

@@ -1,3 +1,8 @@
+2009-10-05  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_script_SCRIPTS): move epstopdf.pl here,
+	from nobase_dist_scriptx_SCRIPTS.
+
 2009-09-05  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (install-links): we want listings-ext.sh in the
