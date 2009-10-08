@@ -1,3 +1,7 @@
+2009-10-09  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXDOC): omit now-unneeded man for texdoc (from mpg).
+
 2009-09-21  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): remove pygmentize, as intended.
