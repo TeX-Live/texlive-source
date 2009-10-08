@@ -1,0 +1,46 @@
+2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS): enable compiler warnings.
+	* bibtex-3.c (str_lookup): silence 'used uninitialized' warning.
+	* datatype.h, gblvars.h: in various places replace Integer8_T
+	(i.e., char) by UChar_T (i.e., unsigned char).
+	* utils.c (c8read_csf): avoid unused variable.
+	* remove rcsid's.
+
+	* FIXME: still needs careful checking for signed/unsigned char.
+
+2009-06-04  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (AM_CPPFLAGS): move -funsigned-char here,
+	since we don't want to pass it to the loader.
+	peb tlbuild mail 3 Jun 2009 17:37:38 +0200.
+
+2009-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+
+2008-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* sysdep.h: avoid redefinition of TRUE and FALSE.
+
+2008-02-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.in: added AC_CONFIG_HEADERS (moved
+	from ../kpathsea/common.ac to here).
+
+2008-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c: Fix a typo (relevant for non-kpathsea version).
+
+2008-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Convert from autoconf-2.13 to autoconf-2.59+:
+	* Makefile.in: Add @configure_input@ line.
+	* aclocal.m4 (new): Generated (aclocal -I ../m4).
+	* configure: Regenerated (autoconf).
+
+2007-07-16  Karl Berry  <karl@tug.org>
+
+	* bibtex.h (BUF_SIZE, MAX_CITES, MAX_ENT_INTS, MAX_ENT_STRS,
+	MAX_STRS): increase.  From panov, 12 Jul 2007 12:13:38.
+

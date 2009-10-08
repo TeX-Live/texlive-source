@@ -1,0 +1,65 @@
+******************************************************************************
+FILE: $RCSfile: HISTORY,v $
+      $Revision: 3.71 $
+      $Date: 1996/08/18 20:42:32 $
+******************************************************************************
+
+
+8-Bit BibTeX CHANGE HISTORY
+---------------------------
+
+31-May-2005	Karl Berry
+  - Applied utils.c patch from Arne J\"orgensen for space character
+    sorting weight, sent to tex-live@tug.org 31 May 2005 15:52:07 +0200.
+
+v3.71   18-August-1996     Niel Kempson <snowyowl.co.uk>
+
+  - Changed default environment variables used for consistency across OS
+    implementations and better compatibility with emTeX.  Now uses
+    BIBINPUT, BSTINPUT & CSFINPUT as the default environment variables
+    for .bib, .bst and .csf files respectively.
+
+    "Hard-coded" fallback search paths can now be specified for use if
+    the chosen environment variables are not defined.  The environment
+    variables and the fallback paths are now defined in the Makefile
+    rather than in sysdep.h.
+
+    Thanks to Lars Frellesen <frelle@math-tech.dk> for spotting the
+    inconsistency and his Makefile suggestions.
+
+  - Fixed bug in handling of CSF \order section.  Any alpha or numeric
+    character may now be specified in the sort order - previously only
+    alphas were allowed and BibTeX didn't correctly sort citations like
+    Knuth89, Knuth92 because the digits were ignored during sort
+    comparisons.  Corrected example CS files to include digits in the
+    sort orders.  Thanks to Andrei Grinkevitch <grin@bals.usr.pu.ru> for
+    spotting this one.
+
+  - Included the first contributed CS file: for codepage 866 with a Russian
+    sorting order.  Thanks again to Andrei Grinkevitch <grin@bals.usr.pu.ru>.
+
+  - Added the missing 'd' to the sort section of 88591lat.csf.  Thanks to 
+    Tim Geisler <geisler@pms.informatik.uni-muenchen.de>.
+
+  - Removed CS files from all but the bt371csf.zip distribution file.
+
+  - Clarified 00readme.txt, specifically sections dealing with environment 
+    variables and CS files.  Moved 8-bit section describing CS files into
+    a separate csfile.txt because some people were having problems when
+    they tried to view the 8-bit 00readme.txt file on a 7-bit Unix
+    system.  Thanks to Ken Smith <kgs@maths.uq.oz.au> for highlighting
+    this issue.
+
+  - Reinstated the -W option (--wolfgang did work).  Thanks to Thomas
+    Plagwitz <tplagiwt@ix.urz.uni-heidelberg.de> for spotting this.
+  
+  - Fixed str_lookup() to work with a hash size > 32767.
+
+  - Created new HISTORY file.
+
+
+v3.70   29-Apr-1996     Niel Kempson <snowyowl.co.uk>
+
+    Final documentation & cosmetic changes for official release 3.70.
+
+******************************** END OF FILE *******************************
