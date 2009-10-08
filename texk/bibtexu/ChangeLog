@@ -1,3 +1,17 @@
+2009-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+Avoid various compiler warnings:
+	* bibtex-[234].c: unused vars, decl. after stmt., return with
+	value in void function.
+	* bibtex-[23].c: #include "unicode/ustring.h".
+
+2009-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.[ch] (getopt_str): Declare string as const.
+	(debug_msg): Declare param2 string as const.
+	(usage): Declare param string as const.
+	* datatype.h (PdsType_T): Declare char array as const.
+
 2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

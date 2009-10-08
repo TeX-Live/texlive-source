@@ -142,7 +142,13 @@
 #include "utils.h"
 #include "version.h"
 
-
+/*
+Include the ICU heads. 23/sep/2009
+*/
+#include "unicode/ustdio.h"
+#include "unicode/uchar.h"
+#include "unicode/ucnv.h"
+#include "unicode/ucol.h"
 /*
 ** Useful macros to keep the code nicely formatted.
 */
@@ -165,16 +171,18 @@
 #define VALUE_NONE      0
 #define VALUE_REQD      1
 #define VALUE_OPT       2
-
+/*
+Add the option "-l" for language, and "-o" for location. 23/sep/2009
+*/
 static struct option long_options[] = {
-    {"8bit",            VALUE_NONE, 0, '8'},
-    {"csfile",          VALUE_REQD, 0, 'c'},
     {"debug",           VALUE_REQD,  0, 'd'},
     {"help",            VALUE_NONE, 0, '?'},
     {"statistics",      VALUE_NONE, 0, 's'},
     {"trace",           VALUE_NONE, 0, 't'},
-    {"traditional",     VALUE_NONE, 0, '7'},
     {"version",         VALUE_NONE, 0, 'v'},
+
+    {"language",         VALUE_REQD, 0, 'l'},
+    {"location",         VALUE_REQD, 0, 'o'},
 
     {"big",             VALUE_NONE, 0, 'B'},
     {"huge",            VALUE_NONE, 0, 'H'},
@@ -191,7 +199,7 @@ static struct option long_options[] = {
     {0, 0, 0, 0}
 };
 
-static char *getopt_str = "78c:d:?stvBHM:W";
+static const char *getopt_str = ":d:?stvl:o:BHM:W";
 
 
 
@@ -438,7 +446,15 @@ void close_file (const AlphaFile_T file_pointer)
         fclose (file_pointer);
 }                               /* close_file() */
 
+/*
 
+*/
+/*void close_u_file (const UFILE * u_file_pointer)
+{
+    if (u_file_pointer != NULL)
+        u_fclose (u_file_pointer);
+}  
+*/
 
 /*-
 **============================================================================
@@ -448,10 +464,10 @@ void close_file (const AlphaFile_T file_pointer)
 **  appropriate debugging option has been selected.
 **============================================================================
 */
-void debug_msg (const int status, char *printf_fmt, ...)
+void debug_msg (const int status, const char *printf_fmt, ...)
 {
     va_list             printf_args;
-    char               *prefix;    
+    const char         *prefix;    
 
     switch (status) {
         case DBG_CSF:
@@ -758,7 +774,6 @@ FILE *open_ip_file (Integer_T search_path)
 }                               /* open_ip_file() */
 
 
-
 /*-
 **============================================================================
 ** open_op_file()
@@ -804,6 +819,7 @@ FILE *open_op_file (void)
     }
     return (fptr);
 }                               /* open_op_file() */
+
 
 
 
@@ -856,6 +872,14 @@ void parse_cmd_line (int argc, char **argv)
     Flag_trace = FALSE;
     Str_auxfile = NULL;
     Str_csfile = NULL;
+	
+/*
+For the input of the option language and location. 23/sep/2009
+*/
+	Flag_language = FALSE;
+	Str_language = NULL;
+	Flag_location = FALSE;
+	Str_location = NULL;
 
     while (1) {
         int             option_index = 0;
@@ -865,25 +889,16 @@ void parse_cmd_line (int argc, char **argv)
         if (c == EOF)
             break;
 
+
         switch (c) {
+		
+	
             case '?':       /**************** -?, --help ***************/
                 usage (NULL);
                 break;
 
-            case '7':       /**************** -7, --traditional ********/
-                Flag_7bit = TRUE;
-                break;
-
-            case '8':       /**************** -8, --8bit ***************/
-                Flag_8bit = TRUE;
-                break;
-
             case 'B':       /**************** -B, --big ****************/
                 Flag_big = TRUE;
-                break;
-
-            case 'c':       /**************** -C, --csfile *************/
-                Str_csfile = optarg;
                 break;
 
             case 'd':       /**************** -d, --debug **************/
@@ -921,6 +936,19 @@ void parse_cmd_line (int argc, char **argv)
                            "calling longjmp (Exit_Program_Flag) ... ");
                 longjmp (Exit_Program_Flag, 1);
                 break;
+/*
+Get the option, and change the flag. 23/sep/2009
+*/
+	case 'l':
+		Flag_language =TRUE;
+                Str_language = optarg;
+		break;
+
+	case 'o':
+		Flag_location =TRUE;
+                Str_location = optarg;
+		break;
+
 
             case 'W':       /**************** -W, --wolfgang ***********/
                 Flag_wolfgang = TRUE;
@@ -1322,25 +1350,21 @@ void set_array_sizes (void)
 **  provided, this is displayed first.
 **============================================================================
 */
-void usage (char *printf_fmt, ...)
+void usage (const char *printf_fmt, ...)
 {
     va_list             printf_args;
     
     if (printf_fmt != NULL) {
-        fprintf (stderr, "BibTeX: ");
+        fprintf (stderr, "BibTeXu: ");
         va_start (printf_args, printf_fmt);
         vfprintf (stderr, printf_fmt, printf_args);
         va_end (printf_args);
         fprintf (stderr, "\n");
     }
 
-    FSO ("\nUsage: bibtex [options] aux-file\n\n");
+    FSO ("\nUsage: bibtexu [options] aux-file\n\n");
     FSO ("  Valid options are:\n\n");
     FSO ("  -?  --help              display this help text\n");
-    FSO ("  -7  --traditional       operate in the original 7-bit mode\n");
-    FSO ("  -8  --8bit              force 8-bit mode, no CS file used\n");
-    FSO ("  -c  --csfile FILE       read FILE as the BibTeX character set\n");
-    FSO ("                          and sort definition file\n");
 
 #ifdef DEBUG
     FSO ("  -d  --debug TYPE        report debugging information.  TYPE is one\n");
@@ -1356,6 +1380,9 @@ void usage (char *printf_fmt, ...)
 #endif                          /* TRACE */
 
     FSO ("  -v  --version           report BibTeX version\n\n");
+	
+	FSO ("  -l  --language      input the option language, ex: -l fr\n");
+	FSO ("  -o  --location      input the option location, ex: -o fr\n\n");
 
     FSO ("  -B  --big               set large BibTeX capacity\n");
     FSO ("  -H  --huge              set huge BibTeX capacity\n");

@@ -1,12 +1,12 @@
-## Makefile.am for the TeX Live subdirectory texk/bibtex8/
+## Makefile.am for the TeX Live subdirectory texk/bibtexu/
 ##
 ## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT
+INCLUDES = $(KPATHSEA_INCLUDES) $(ICU_INCLUDES)
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT 
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 ## FIXME: (1) this should go away once the code has been carefully
@@ -15,9 +15,12 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 ## FIXME: accepts this flag when compiling, not when linking.
 AM_CPPFLAGS += -funsigned-char
 
-bin_PROGRAMS = bibtex8
+bin_PROGRAMS = bibtexu
 
-bibtex8_SOURCES = \
+# Force Automake to use CXXLD for linking
+nodist_EXTRA_bibtexu_SOURCES = dummy.cxx
+
+bibtexu_SOURCES = \
 	bibtex-1.c \
 	bibtex-2.c \
 	bibtex-3.c \
@@ -32,12 +35,14 @@ bibtex8_SOURCES = \
 	version.h \
 	sysdep.h
 
-bibtex8_DEPENDENCIES = $(KPATHSEA_DEPEND)
+bibtexu_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ICU_DEPEND)
 
-LDADD = $(KPATHSEA_LIBS)	
+LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) -lm
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
+## Rebuild libsicuxxx
+@ICU_RULE@
 
 csfdir = ${prefix}/texmf-dist/bibtex/csf/base
 
@@ -51,7 +56,7 @@ dist_csf_DATA = \
 	csf/cp866rus.csf \
 	csf/csfile.txt
 
-btdocdir = ${prefix}/texmf/doc/bibtex8
+btdocdir = ${prefix}/texmf/doc/bibtexu
 
 dist_btdoc_DATA = \
 	00readme.txt \

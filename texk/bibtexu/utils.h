@@ -99,7 +99,10 @@
 #  define CDECL
 #endif /* WIN32 */
 
-
+#include "unicode/uchar.h"
+#include "unicode/ustdio.h"
+#include "unicode/ucnv.h"
+#include "unicode/ucol.h"
 /*
 ** Declaration of public functions defined in utils.c
 */
@@ -107,21 +110,24 @@ void                    allocate_arrays (void);
 int                     checkdbg (char *str);
 long                    checklong (char *str);
 void                    close_file (const AlphaFile_T file_pointer);
-void CDECL            debug_msg (const int status, char *printf_fmt, ...);
+//void 	close_u_file (const UFILE * u_file_pointer);
+void CDECL            debug_msg (const int status, const char *printf_fmt, ...);
 #ifndef KPATHSEA
 int                     find_file (const char *envvar,
                                 const char *fallback_path,
                                 const char *filename, char *full_file_spec);
 #endif
 FILE                   *open_ip_file (Integer_T search_path);
+//UFILE	*open_ip_u_file (Integer_T search_path);
 FILE                   *open_op_file (void);
+//UFILE	*open_op_u_file (void);
 void                   *mymalloc (const unsigned long bytes_required,
 				const char *var_name);
 void                    parse_cmd_line (int argc, char **argv);
 void                    report_bibtex_capacity (void);
 void                    report_search_paths (void);
 void		        set_array_sizes (void);
-void CDECL            usage (char *printf_fmt, ...);
+void CDECL            usage (const char *printf_fmt, ...);
                                                               
 
 #ifdef SUPPORT_8BIT

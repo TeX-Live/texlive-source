@@ -100,7 +100,7 @@
  * is modified.
  ***************************************************************************/
 #ifdef SUPPORT_8BIT
-# define BANNER     "This is 8-bit Big BibTeX version 0.99c"
+# define BANNER     "This is BibTeXu: a UTF-8 Big BibTeX version 0.99c"
 #else                           /* NOT SUPPORT_8BIT */
 # define BANNER     "This is Big BibTeX version 0.99c"
 #endif                          /* SUPPORT_8BIT */
@@ -467,7 +467,7 @@
  * of |pool_ptr| is too high; this test is supposed to be made before
  * |append_char| is used.
  ***************************************************************************/
-#define APPEND_CHAR(X)              {str_pool[pool_ptr] = (X);\
+#define APPEND_CHAR(X)              {	str_pool[pool_ptr] = (X);\
                                      INCR(pool_ptr);}
 #define STR_ROOM(X)                 {if((pool_ptr+(X))>Pool_Size)\
                                         pool_overflow();}

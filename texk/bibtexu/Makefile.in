@@ -35,9 +35,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = bibtex8$(EXEEXT)
+bin_PROGRAMS = bibtexu$(EXEEXT)
 subdir = .
-DIST_COMMON = $(am__configure_deps) $(dist_btdoc_DATA) \
+DIST_COMMON = README $(am__configure_deps) $(dist_btdoc_DATA) \
 	$(dist_csf_DATA) $(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -45,7 +45,7 @@ DIST_COMMON = $(am__configure_deps) $(dist_btdoc_DATA) \
 	$(srcdir)/../../build-aux/ltmain.sh \
 	$(srcdir)/../../build-aux/missing \
 	$(srcdir)/../../build-aux/mkinstalldirs $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(top_srcdir)/configure \
+	$(srcdir)/Makefile.in $(srcdir)/README $(top_srcdir)/configure \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
@@ -53,6 +53,8 @@ DIST_COMMON = $(am__configure_deps) $(dist_btdoc_DATA) \
 	../../build-aux/ylwrap COPYING ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
+	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
@@ -66,16 +68,16 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(SHELL) $(top_srcdir)/../../build-aux/mkinstalldirs
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = CXXLD.sh
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(btdocdir)" \
 	"$(DESTDIR)$(csfdir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_bibtex8_OBJECTS = bibtex-1.$(OBJEXT) bibtex-2.$(OBJEXT) \
+am_bibtexu_OBJECTS = bibtex-1.$(OBJEXT) bibtex-2.$(OBJEXT) \
 	bibtex-3.$(OBJEXT) bibtex-4.$(OBJEXT) bibtex.$(OBJEXT) \
 	utils.$(OBJEXT)
-bibtex8_OBJECTS = $(am_bibtex8_OBJECTS)
-bibtex8_LDADD = $(LDADD)
+bibtexu_OBJECTS = $(am_bibtexu_OBJECTS)
+bibtexu_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -90,8 +92,16 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(bibtex8_SOURCES)
-DIST_SOURCES = $(bibtex8_SOURCES)
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+SOURCES = $(bibtexu_SOURCES) $(nodist_EXTRA_bibtexu_SOURCES)
+DIST_SOURCES = $(bibtexu_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -139,6 +149,13 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+CXXDEPMODE = @CXXDEPMODE@
+CXXFLAGS = @CXXFLAGS@
+CXXLD = @CXXLD@
+CXX_HACK_DEPS = @CXX_HACK_DEPS@
+CXX_HACK_LIBS = @CXX_HACK_LIBS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -151,6 +168,9 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+ICU_DEPEND = @ICU_DEPEND@
+ICU_INCLUDES = @ICU_INCLUDES@
+ICU_LIBS = @ICU_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -181,6 +201,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -190,11 +211,13 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
+WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
+ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
@@ -243,10 +266,13 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = $(KPATHSEA_INCLUDES)
+INCLUDES = $(KPATHSEA_INCLUDES) $(ICU_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT -funsigned-char
 AM_CFLAGS = $(WARNING_CFLAGS)
-bibtex8_SOURCES = \
+
+# Force Automake to use CXXLD for linking
+nodist_EXTRA_bibtexu_SOURCES = dummy.cxx
+bibtexu_SOURCES = \
 	bibtex-1.c \
 	bibtex-2.c \
 	bibtex-3.c \
@@ -261,8 +287,8 @@ bibtex8_SOURCES = \
 	version.h \
 	sysdep.h
 
-bibtex8_DEPENDENCIES = $(KPATHSEA_DEPEND)
-LDADD = $(KPATHSEA_LIBS)	
+bibtexu_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ICU_DEPEND)
+LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) -lm
 csfdir = ${prefix}/texmf-dist/bibtex/csf/base
 dist_csf_DATA = \
 	csf/88591lat.csf \
@@ -274,7 +300,7 @@ dist_csf_DATA = \
 	csf/cp866rus.csf \
 	csf/csfile.txt
 
-btdocdir = ${prefix}/texmf/doc/bibtex8
+btdocdir = ${prefix}/texmf/doc/bibtexu
 dist_btdoc_DATA = \
 	00readme.txt \
 	HISTORY \
@@ -298,7 +324,7 @@ EXTRA_DIST = \
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .cxx .lo .o .obj
 am--refresh:
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -333,6 +359,8 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
+CXXLD.sh: $(top_builddir)/config.status $(srcdir)/README
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -376,9 +404,9 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-bibtex8$(EXEEXT): $(bibtex8_OBJECTS) $(bibtex8_DEPENDENCIES) 
-	@rm -f bibtex8$(EXEEXT)
-	$(LINK) $(bibtex8_OBJECTS) $(bibtex8_LDADD) $(LIBS)
+bibtexu$(EXEEXT): $(bibtexu_OBJECTS) $(bibtexu_DEPENDENCIES) 
+	@rm -f bibtexu$(EXEEXT)
+	$(CXXLINK) $(bibtexu_OBJECTS) $(bibtexu_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -391,6 +419,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex-3.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex-4.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bibtex.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
 
 .c.o:
@@ -413,6 +442,27 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+.cxx.o:
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
+
+.cxx.obj:
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cxx.lo:
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -789,6 +839,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_btdocDATA \
 
 
 @KPATHSEA_RULE@
+@ICU_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -97,6 +97,13 @@
 */
 
 #define __BIBTEX_C__
+/*
+Include the ICU heads. 23/sep/2009
+*/
+#include "unicode/uchar.h"
+#include "unicode/ustdio.h"
+#include "unicode/ucnv.h"
+#include "unicode/ucol.h"
 
 #include "sysdep.h"
 #include "bibtex.h"
@@ -105,6 +112,8 @@
 #include "gblvars.h"
 #include "utils.h"
 #include "version.h"
+
+
 
 #ifdef KPATHSEA
 #include <kpathsea/config.h>
@@ -195,6 +204,7 @@ BEGIN
     return (FALSE);
   END
 END
+
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  47 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
@@ -224,6 +234,7 @@ END
  ***************************************************************************/
 int                     main (int argc, char **argv)
 BEGIN
+
     extern Integer8_T       history;
     int			    exit_status;
 
