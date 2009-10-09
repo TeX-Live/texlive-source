@@ -22,8 +22,8 @@ $^W=1; # turn warning on
 #
 my $file        = "pdfcrop.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.19";
-my $date        = "2009/09/24";
+my $version     = "1.20";
+my $date        = "2009/10/06";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2002-2009 by $author.";
 #
@@ -63,6 +63,7 @@ my $copyright   = "Copyright (c) 2002-2009 by $author.";
 #                     * Option --version added.
 #   2009/09/24 v1.19: * Ghostscript detection rewritten.
 #                     * Cygwin: `gs' is preferred to `gswin32c'.
+#   2009/10/06 v1.20: * File name sanitizing in .tex file.
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -448,6 +449,13 @@ push @unlink_files, $tmpfile;
 open(TMP, ">$tmpfile") or
     die "$Error Cannot write tmp file `$tmpfile'!\n";
 print TMP "\\def\\pdffile{$inputfilesafe}\n";
+print TMP <<'END_TMP';
+\def\stripprefix#1>{}
+\def\onelevelsanitize#1{%
+  \edef#1{\expandafter\stripprefix\meaning#1}%
+}
+\onelevelsanitize\pdffile
+END_TMP
 if ($::opt_tex eq 'pdftex') {
     print TMP <<'END_TMP_HEAD';
 \csname pdfmapfile\endcsname{}
