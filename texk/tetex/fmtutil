@@ -58,7 +58,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 progname=fmtutil
 argv0=$0
-version=20090815.0056
+version=20091009.0222
 
 cnf=fmtutil.cnf   # name of the config file
 export PATH
@@ -736,17 +736,44 @@ run_initex()
     fulldestdir="$destdir"
   fi
   mkdir -p "$fulldestdir"
-  if test -f $fmtfile; then
+  if test -f "$fmtfile"; then
     grep '^! ' $format.log >/dev/null 2>&1 &&
       log_warning "\`$engine -ini $tcxflag $jobswitch $prgswitch $texargs' possibly failed."
 
     # We don't want user-interaction for the following "mv" commands:
     mv "$format.log" "$fulldestdir/$format.log" </dev/null
-    if mv "$fmtfile" "$fulldestdir/$fmtfile" </dev/null; then
-      verboseMsg "$progname: $fulldestdir/$fmtfile installed."
+    #
+    destfile=$fulldestdir/$fmtfile
+    if mv "$fmtfile" "$destfile" </dev/null; then
+      verboseMsg "$progname: $destfile installed."
       #
+      # As a special special case, we create mplib-luatex.mem for use by
+      # the mplib embedded in luatex if it doesn't already exist.  (We
+      # never update it if it does exist.)
+      # 
+      # This is used by the luamplib package.  This way, an expert user
+      # who wants to try a new version of luatex (hence with a new
+      # version of mplib) can manually update mplib-luatex.mem without
+      # having to tamper with mpost itself.
+      # 
+      if test "x$format" = xmpost && test "x$engine" = xmpost; then
+        mplib_mem_name=mplib-luatex.mem
+        mplib_mem_file=$fulldestdir/$mplib_mem_name
+        if test \! -f $mplib_mem_file; then
+          verboseMsg "$progname: copying $destfile to $mplib_mem_file"
+          if cp "$destfile" "$mplib_mem_file" </dev/null; then
+            mktexupd "$fulldestdir" "$mplib_mem_name"
+          else
+            log_warning "cp $destfile $mplib_mem_file failed."
+          fi
+        else
+          verboseMsg "$progname: $mplib_mem_file already exists, not updating."
+        fi
+      fi
+      #
+      # Echo the (main) output filename for our caller.
       $mktexfmtMode && $mktexfmtFirst \
-      && echo "$fulldestdir/$fmtfile" && mktexfmtFirst=false
+      && echo "$destfile" && mktexfmtFirst=false
       #
       mktexupd "$fulldestdir" "$fmtfile"
     fi

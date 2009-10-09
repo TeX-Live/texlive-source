@@ -1,3 +1,8 @@
+2009-10-09  Karl Berry  <karl@tug.org>
+
+	* fmtutil (run_initex): if it doesn't already exist, create
+	mplib-luatex.mem when we create mpost.mem.
+
 2009-08-24  Reinhard Kotucha  <reinhard.kotucha@web.de>
 
 	* updmap.pl (mkMaps): replace dir/ls shell commands by Perl code.
