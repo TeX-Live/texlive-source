@@ -1,5 +1,6 @@
-This file records noteworthy changes.
-5.0.0 (for TeX Collection 2009)
+This file records noteworthy changes.  (Public domain.)
+
+5.0.0 (for TeX Collection 2009, 13 October 2009)
 * Make shared library version and general package version the same.
 * Make library re-entrant, thus unavoidable binary API changes.
 * Change build system to Automake.

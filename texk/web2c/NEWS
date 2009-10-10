@@ -1,6 +1,6 @@
 This file records noteworthy changes.  (Public domain.)
 
-2009 (for TeX Collection 2009)
+2009 (for TeX Collection 2009, 13 October 2009)
 * --shell-restricted aka shell_escape=p for restricted shell access.
 * --enable-write18 and --disable-write18 accepted as synonyms for
   --shell-escape and --no-shell-escape, for compatibility with MiKTeX.
