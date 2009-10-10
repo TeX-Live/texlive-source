@@ -10,5 +10,6 @@ DISTCLEANFILES = $(noinst_DATA)
 all-local: $(noinst_DATA)
 
 ../icusubdir-configure:
-	echo "${srcdir}/configure" | sed 's,icu/dummy/,icu/icu-xetex/,' >$@
+	d=$(srcdir); test "x$$d" = x. && d=../../icu/dummy; \
+	echo "$$d/configure" | sed 's,icu/dummy/,icu/icu-xetex/,' >$@
 

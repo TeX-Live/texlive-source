@@ -17,6 +17,8 @@ AM_MAINTAINER_MODE
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
+test "x$srcdir" = x. && srcdir=../icu
+
 AC_CONFIG_SUBDIRS([dummy])
 
 AC_CONFIG_FILES([Makefile])

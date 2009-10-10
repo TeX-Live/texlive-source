@@ -2311,6 +2311,8 @@ else
 fi
 
 
+test "x$srcdir" = x. && srcdir=../icu
+
 
 
 subdirs="$subdirs dummy"

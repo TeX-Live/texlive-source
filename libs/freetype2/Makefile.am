@@ -53,5 +53,5 @@ libfreetype.a: ft-build/Makefile $(ZLIB_DEPEND)
 	@for f in libfreetype.*; do touch $$f; done
 
 clean-local:
-	rm -rf freetype* ft2build.h ft-* libfreetype.* pkgconfig
+	rm -rf freetype2 ft2build.h ft-* libfreetype.* pkgconfig
 
