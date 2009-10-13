@@ -491,16 +491,12 @@ try_std_extension_first = t
 % enable it for everything but bare tex.
 shell_escape = p
 
-% Special: convert is the standard command name for ImageMagick, but it
-% is also the name of a dangerous filesystem-changing command on
-% Windows.  So enable imgconvert (used in w32tex), but not convert.
-
-% No spaces in this command list.
+% No spaces in this command list.  These programs either do not write
+% any output files or respect openout_any.  And have no features to
+% invoke other programs.
 shell_escape_commands = \
-bibtex,bibtex8,epstopdf,epspdf,fc-match,\
+bibtex,bibtex8,fc-match,\
 kpsewhich,makeindex,\
-ps2pdf,pstopdf,\
-rpdfcrop,\
 
 % we'd like to allow:
 % dvips - but external commands can be executed, need at least -R1.
@@ -508,6 +504,7 @@ rpdfcrop,\
 %   without Unix convert it hardly seems worth it, and Windows convert
 %   is something completely different that destroys filesystems, so
 %   skip it.
+% epspdf, epstopdf, ps2pdf, pstopdf, rpdfcrop - need to respect openout_any.
 % pygmentize - but is the filter feature insecure?
 % ps4pdf - but it calls an unrestricted latex.
 % texindy,xindy - but is the module feature insecure?

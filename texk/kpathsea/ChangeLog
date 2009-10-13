@@ -1,3 +1,8 @@
+2009-10-13  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape_commands): remove the ps-to-pdf programs
+	for now, they don't respect openout_any.
+
 2009-10-09  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXDOC): omit now-unneeded man for texdoc (from mpg).
