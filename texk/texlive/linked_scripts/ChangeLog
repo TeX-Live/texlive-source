@@ -1,3 +1,7 @@
+2009-10-15  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+
+	* Makefile.am (install-links): create repstopdf as a link to epstopdf.
+
 2009-10-05  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): move epstopdf.pl here,

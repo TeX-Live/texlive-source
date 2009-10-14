@@ -568,6 +568,9 @@ install-links:
 	  rm -f rpdfcrop && \
 	  echo "creating link 'rpdfcrop' -> 'pdfcrop'" && \
 	  $(LN_S) pdfcrop rpdfcrop && \
+	  rm -f repstopdf && \
+	  echo "creating link 'repstopdf' -> 'epstopdf'" && \
+	  $(LN_S) epstopdf repstopdf && \
 	  rm -f getnonfreefonts-sys && \
 	  echo "creating link 'getnonfreefonts-sys' -> 'getnonfreefonts'" && \
 	  $(LN_S) getnonfreefonts getnonfreefonts-sys && \

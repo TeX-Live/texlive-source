@@ -17,7 +17,7 @@ use strict;
 #    products derived from this software without specific prior written
 #    permission. 
 # 
-# THIS SOFTWARE IS PROVIDED BY THE AUTHOR [AS IS'' AND ANY EXPRESS OR
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
 # DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
@@ -47,6 +47,8 @@ use strict;
 # 
 # emacs-page
 # History
+#  2009/10/14 v2.12 (Manuel Pégourié-Gonnard)
+#    * Added restricted mode.
 #  2009/09/27 v2.11 (Karl Berry)
 #    * Fixed two bugs in the (atend) handling code (Martin von Gagern)
 #    * Improved handling of CR line ending (Martin von Gagern)
@@ -137,6 +139,10 @@ my $title = "$program $ident\n";
 my $GS = "gs";
 $GS = "gswin32c" if $^O eq 'MSWin32';
 
+### restricted mode
+my $restricted = 0;
+$restricted = 1 if $0 =~ /repstopdf/;
+
 ### options
 $::opt_outfile="";
 $::opt_compress=1;
@@ -176,6 +182,7 @@ Options:
   --autorotate=VAL   set AutoRotatePages   (default: $rotmsg)
                       Recognized VAL choices: None, All, PageByPage
                       For EPS files, PageByPage is equivalent to All
+  --restricted       use restricted mode   (default: $bool[$restricted])
 
 Examples for producing 'test.pdf':
   * $program test.eps
@@ -197,7 +204,7 @@ use Getopt::Long;
 GetOptions (
   "help",
   "version",
-  "outfile=s",
+  "outfile=s", 		# \ref{openout_any}
   "compress!",
   "debug!",
   "embed!",
@@ -205,9 +212,10 @@ GetOptions (
   "filter!",
   "gs!",
   "hires!",
-  "gscmd=s",
-  "res=i",
-  "autorotate=s",
+  "gscmd=s", 		# \ref{val_gscmd}
+  "res=i",		# validated by Getopt ('i' specifier)
+  "autorotate=s",	# \ref{val_autorotate}
+  "restricted",
 ) or die $usage;
 
 ### help functions
@@ -224,6 +232,10 @@ sub errorUsage {
   die "$usage\n!!! Error: @_\n";
 }
 
+### restricted option
+$restricted = 1 if $::opt_restricted;
+debug "Restricted mode activated" if $restricted;
+
 ### help, version options.
 if ($::opt_help) {
   print $usage;
@@ -235,7 +247,6 @@ if ($::opt_version) {
   print $copyright;
   exit (0);
 }
-
 
 ### get input filename
 my $InputFilename = "";
@@ -253,7 +264,7 @@ else {
   debug "Input filename:", $InputFilename;
 }
 
-### option compress & embed
+### options compress, embed, res, autorotate
 my $GSOPTS = "-dSAFER ";
 $GSOPTS .= (" -dPDFSETTINGS=/prepress -dMaxSubsetPct=100 "
            . "-dSubsetFonts=true -dEmbedAllFonts=true ")
@@ -262,10 +273,11 @@ $GSOPTS .= "-dUseFlateCompression=false " unless $::opt_compress;
 $GSOPTS .= "-r$::opt_res " if $::opt_res;
 $resmsg= $::opt_res ? $::opt_res : "[use gs default]";
 $GSOPTS .= "-dAutoRotatePages=/$::opt_autorotate " if $::opt_autorotate;
+$rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
+# \label{val_autorotate}
 die "Invalid value for autorotate: '$::opt_autorotate' (use 'All', 'None' or 'PageByPage').\n"
     if ($::opt_autorotate and 
         not $::opt_autorotate =~ /^(None|All|PageByPage)$/);
-$rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
 
 ### option BoundingBox types
 my $BBName = "%%BoundingBox:";
@@ -296,10 +308,37 @@ else {
   debug "Output filename:", $OutputFilename;
 }
 
+### validate output file name in restricted mode \label{openout_any}
+use File::Spec::Functions qw(splitpath file_name_is_absolute);
+if ($restricted) {
+  # use the equivalent of openout_any = p
+  # (see opennameok() web2c/lib/texmfmp.c)
+  # Well, for now, be even more paranoid: don't allow absolute path at all
+  my $ok = 1;
+  # disallow opening dot-files on Unix
+  unless ($^O eq "MSWin32") {
+    my ($drive, $path, $basename) = splitpath($OutputFilename);
+    $ok = 0 if $basename =~ /^\./;
+  }
+  # disallow absolute path
+  $ok = 0 if file_name_is_absolute($OutputFilename);
+  # disallow going to parent directory
+  my $ds = ($^O eq "MSWin32") ? qr([\\/]) : qr(/);
+  $ok = 0 if $OutputFilename =~ /^\.\.$ds|$ds\.\.$ds/;
+  # we passed all tests
+  die error "Output filename '$OutputFilename' not allowed in restricted mode." unless $ok;
+}
+
 ### option gscmd
 if ($::opt_gscmd) {
   debug "Switching from $GS to $::opt_gscmd";
   $GS = $::opt_gscmd;
+  # validate GS \label{val_gscmd}
+  if ($restricted) {
+    $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)$/
+      or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?$/
+      or die error "Value of gscmd '$GS' not allowed in restricted mode.";
+  }
 }
 
 ### option gs
