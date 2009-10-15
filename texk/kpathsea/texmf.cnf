@@ -494,10 +494,9 @@ shell_escape = p
 % No spaces in this command list.  These programs either do not write
 % any output files, respect openout_any, or have hard-coded restrictions similar
 % or higher to openout_any=p.  And have no features (nor, to the best of our
-% knowledge, security holes) to invoke arbitrary other programs.
+% knowledge, obvious security holes) to invoke arbitrary other programs.
 shell_escape_commands = \
 kpsewhich,fc-match,\
-bibtex,bibtex8,makeindex,\
 repstopdf,\
 
 % we'd like to allow:
@@ -513,6 +512,7 @@ repstopdf,\
 % texindy,xindy - but is the module feature insecure?
 % ulqda - but requires optional SHA1.pm, so why bother.
 % tex, latex, etc - but need to forbid --shell-escape, and inherit openout_any
+% bibtex,bibtex8,makeindex, - don't respect openout_any
 
 % plain TeX should remain unenhanced.
 shell_escape.tex = f

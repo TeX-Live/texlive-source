@@ -2,6 +2,7 @@
 
 	* texmf.cnf (shell_escape_commands): add repstopdf, a version of
 	epstopdf with restrictions intended to make it safer.
+	Remove bibtex & makeindex for now, they don't respect openout_any.
 
 2009-10-13  Karl Berry  <karl@tug.org>
 
