@@ -1,3 +1,8 @@
+2009-10-15  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+
+	* texmf.cnf (shell_escape_commands): add repstopdf, a version of
+	epstopdf with restrictions intended to make it safer.
+
 2009-10-13  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): remove the ps-to-pdf programs
