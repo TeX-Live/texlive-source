@@ -4,19 +4,19 @@ use strict;
 
 # $Id: epstopdf.pl 15569 2009-09-30 00:21:49Z karl $
 # (Copyright lines below.)
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 # 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer. 
+#    notice, this list of conditions and the following disclaimer.
 # 2. Redistributions in binary form must reproduce the above copyright
 #    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution. 
+#    documentation and/or other materials provided with the distribution.
 # 3. The name of the author may not be used to endorse or promote
 #    products derived from this software without specific prior written
-#    permission. 
-# 
+#    permission.
+#
 # THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 # IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -28,9 +28,9 @@ use strict;
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-# 
+#
 # ----------------------------------------------------------------
-# 
+#
 # This is a script to transform an EPS file such that:
 #   a) it is guaranteed to start at the 0,0 coordinate.
 #   b) it sets a page size exactly corresponding to the BoundingBox
@@ -44,9 +44,14 @@ use strict;
 # One thing not allowed for is the case of
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 # which is more complicated.
-# 
+#
 # emacs-page
 # History
+#  2009/10/18 v2.13 (Manuel Pégourié-Gonnard)
+#    * Better argument validation, from Alexander Cherepanov.
+#    * Use the list form of pipe open() (resp. system()) to prevent injection.
+#    Since Perl's fork() emulation doesn't work on Windows with Perl 5.8.8 from
+#    TeX Live 2009, use a temporary file instead of a pipe on Windows.
 #  2009/10/14 v2.12 (Manuel Pégourié-Gonnard)
 #    * Added restricted mode.
 #  2009/09/27 v2.11 (Karl Berry)
@@ -113,7 +118,7 @@ use strict;
 #    * using of $bbxpat in all BoundingBox cases,
 #      correct the first white space to '...Box:\s*$bb...'
 #    * corrected first line (one line instead of two before 'if 0;';
-# 
+#
 # Thomas Esser, Sept. 1998: change initial lines to find
 # perl along $PATH rather than guessing a fixed location. The above
 # construction should work with most shells.
@@ -168,7 +173,7 @@ Convert EPS to PDF, by default using Ghostscript.
 Options:
   --help             display this help and exit
   --version          display version information and exit
-  
+ 
   --outfile=FILE     write result to FILE
   --(no)compress     use compression       (default: $bool[$::opt_compress])
   --(no)debug        write debugging info  (default: $bool[$::opt_debug])
@@ -264,20 +269,35 @@ else {
   debug "Input filename:", $InputFilename;
 }
 
+### option gscmd
+if ($::opt_gscmd) {
+  debug "Switching from $GS to $::opt_gscmd";
+  $GS = $::opt_gscmd;
+  # validate GS \label{val_gscmd}
+  if ($restricted) {
+    $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)\z/
+      or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?\z/
+      or die error "Value of gscmd '$GS' not allowed in restricted mode.";
+  }
+}
+
+### start building GS command line for the pipe
+my @GS = ($GS);
+push @GS, qw(-q -dNOPAUSE -dSAFER -sDEVICE=pdfwrite);
+
 ### options compress, embed, res, autorotate
-my $GSOPTS = "-dSAFER ";
-$GSOPTS .= (" -dPDFSETTINGS=/prepress -dMaxSubsetPct=100 "
-           . "-dSubsetFonts=true -dEmbedAllFonts=true ")
-   if $::opt_embed; 
-$GSOPTS .= "-dUseFlateCompression=false " unless $::opt_compress;
-$GSOPTS .= "-r$::opt_res " if $::opt_res;
+push @GS, ('-dPDFSETTINGS=/prepress', '-dMaxSubsetPct=100',
+  '-dSubsetFonts=true', '-dEmbedAllFonts=true') if $::opt_embed;
+push @GS, '-dUseFlateCompression=false' unless $::opt_compress;
+push @GS, "-r$::opt_res" if $::opt_res;
 $resmsg= $::opt_res ? $::opt_res : "[use gs default]";
-$GSOPTS .= "-dAutoRotatePages=/$::opt_autorotate " if $::opt_autorotate;
+push @GS, "-dAutoRotatePages=/$::opt_autorotate" if $::opt_autorotate;
 $rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
 # \label{val_autorotate}
-die "Invalid value for autorotate: '$::opt_autorotate' (use 'All', 'None' or 'PageByPage').\n"
-    if ($::opt_autorotate and 
-        not $::opt_autorotate =~ /^(None|All|PageByPage)$/);
+error "Invalid value for autorotate: '$::opt_autorotate' "
+  . "(use 'All', 'None' or 'PageByPage')."
+  if ($::opt_autorotate and
+    not $::opt_autorotate =~ /^(None|All|PageByPage)\z/);
 
 ### option BoundingBox types
 my $BBName = "%%BoundingBox:";
@@ -307,6 +327,7 @@ if ($::opt_filter) {
 else {
   debug "Output filename:", $OutputFilename;
 }
+push @GS, "-sOutputFile=$OutputFilename";
 
 ### validate output file name in restricted mode \label{openout_any}
 use File::Spec::Functions qw(splitpath file_name_is_absolute);
@@ -322,23 +343,17 @@ if ($restricted) {
   }
   # disallow absolute path
   $ok = 0 if file_name_is_absolute($OutputFilename);
+  # disallow colon on Windows. It could be used either after a drive
+  # (like "a:dir\file") or for an alternate data stream (like
+  # "file:ads").
+  if ($^O eq "MSWin32" || $^O eq "cygwin") {
+    $ok = 0 if $OutputFilename =~ /:/;
+  }
   # disallow going to parent directory
-  my $ds = ($^O eq "MSWin32") ? qr([\\/]) : qr(/);
+  my $ds = ($^O eq "MSWin32" || $^O eq "cygwin") ? qr([\\/]) : qr(/);
   $ok = 0 if $OutputFilename =~ /^\.\.$ds|$ds\.\.$ds/;
   # we passed all tests
   die error "Output filename '$OutputFilename' not allowed in restricted mode." unless $ok;
-}
-
-### option gscmd
-if ($::opt_gscmd) {
-  debug "Switching from $GS to $::opt_gscmd";
-  $GS = $::opt_gscmd;
-  # validate GS \label{val_gscmd}
-  if ($restricted) {
-    $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)$/
-      or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?$/
-      or die error "Value of gscmd '$GS' not allowed in restricted mode.";
-  }
 }
 
 ### option gs
@@ -352,24 +367,32 @@ if ($::opt_gs) {
 
 ### emacs-page
 ### open input file
-open(IN, "<$InputFilename") or error "Cannot open",
+open(IN, '<', $InputFilename) or error "Cannot open",
   ($::opt_filter) ? "standard input" : "\"$InputFilename\": $!";
 binmode IN;
 
 ### open output file
 my $outname;  # used in error message at end
+my $tmp_filename; # temporary file for windows
+my $OUT; # filehandle for output (GS pipe or temporary file)
+use File::Temp 'tempfile';
 if ($::opt_gs) {
-  my $pipe = "$GS -q -sDEVICE=pdfwrite $GSOPTS" .
-          " -sOutputFile=\"$OutputFilename\" - -c quit";
-  debug "Ghostscript pipe:", $pipe;
-  open(OUT,"|$pipe") or error "Cannot open Ghostscript for piped input";
+  unless ($^O eq 'MSWin32' || $^O eq 'cygwin') { # list piped open works
+    push @GS, qw(- -c -quit);
+    debug "Ghostscript pipe:", join(' ', @GS);
+    open($OUT, '|-', @GS) or error "Cannot open Ghostscript for piped input";
+  }
+  else { # use a temporary file
+    ($OUT, $tmp_filename) = tempfile(UNLINK => 1);
+    debug "Using temporary file '$tmp_filename'";
+  }
   $outname = $GS;
 }
 else {
-  open(OUT,">$OutputFilename") or error "Cannot write \"$OutputFilename\"";
+  open($OUT, '>', $OutputFilename) or error "Cannot write \"$OutputFilename\"";
   $outname = $OutputFilename;
 }
-binmode OUT;
+binmode $OUT;
 
 # reading a cr-eol file on a lf-eol system makes it impossible to parse
 # the header and besides it will read the intire file into yor line by line
@@ -453,7 +476,7 @@ if (/%!/) {
 }
 $header = 1 if /^%/;
 debug "Scanning header for BoundingBox";
-print OUT;
+print $OUT $_;
 
 ### variables and pattern for BoundingBox search
 my $bbxpatt = '[0-9eE\.\-]';
@@ -470,9 +493,9 @@ sub CorrectBoundingBox
   debug "New BoundingBox: 0 0", $width, $height;
   debug "Offset:", $xoffset, $yoffset;
 
-  print OUT "%%BoundingBox: 0 0 $width $height$/";
-  print OUT "<< /PageSize [$width $height] >> setpagedevice$/";
-  print OUT "gsave $xoffset $yoffset translate$/";
+  print $OUT "%%BoundingBox: 0 0 $width $height$/";
+  print $OUT "<< /PageSize [$width $height] >> setpagedevice$/";
+  print $OUT "gsave $xoffset $yoffset translate$/";
 }
 
 ### emacs-page
@@ -484,7 +507,7 @@ if ($header) {
 
     ### end of header
     if (!/^%/ or /^%%EndComments/) {
-      print OUT;
+      print $OUT $_;
       last;
     }
 
@@ -525,20 +548,28 @@ if ($header) {
     }
 
     # print header line
-    print OUT;
+    print $OUT $_;
   }
 }
 
 ### print rest of file
 while (getline()) {
-  print OUT;
+  print $OUT $_;
 }
 
 ### emacs-page
 ### close files
 close(IN);
-print OUT "$/grestore$/" if $BBCorrected;
-close(OUT);
+print $OUT "$/grestore$/" if $BBCorrected;
+close($OUT);
+
+### actually run GS if we were writing to a temporary file
+if (defined $tmp_filename) {
+  push @GS, $tmp_filename;
+  push @GS, qw(-c quit);
+  debug "Ghostscript command:", join(' ', @GS);
+  system @GS;
+}
 
 # if ghostscript exited badly, we should too.
 if ($? & 127) {
