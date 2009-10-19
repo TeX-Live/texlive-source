@@ -1,3 +1,7 @@
+2009-10-20  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape): doc fixes to discourage shell_escape=p.
+
 2009-10-19  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
 
 	* texmf.cnf: set shell_escape back to 'f': 'p' is broken on Unix.
