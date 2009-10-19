@@ -489,7 +489,7 @@ try_std_extension_first = t
 % commands listed in shell_escape_commands are allowed.  Although this
 % is not fully secure either, it is much better, and so useful that we
 % enable it for everything but bare tex.
-shell_escape = p
+shell_escape = f
 
 % No spaces in this command list.  These programs either do not write
 % any output files, respect openout_any, or have hard-coded restrictions similar
