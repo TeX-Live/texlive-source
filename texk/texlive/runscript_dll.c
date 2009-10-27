@@ -102,7 +102,14 @@ PROGRAM_FOUND:
 
   if ( !cmdline[0] ) {
     // batch file has to be executed through the call command in order to propagate its exit code
-    strcpy(cmdline, "cmd.exe /c call \"");
+    // command interpreter is taken from the COMSPEC variable 
+    // to prevent attacks through writing ./cmd.exe
+    cmdline[0] = '"';
+    if ( !GetEnvironmentVariableA("COMSPEC", &cmdline[1], MAX_PATH) ) {
+      fprintf(stderr, "runscript: failed to read COMSPEC variable\n");
+      return -1;
+    }
+    strcat(cmdline, "\" /c call \"");
     strcat(cmdline, path);
     strcat(cmdline, "\" ");
   }
