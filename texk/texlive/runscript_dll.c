@@ -44,6 +44,7 @@ static char dirname[MAX_PATH];
 static char basename[MAX_PATH];
 static char progname[MAX_PATH];
 static char cmdline[MAX_CMD];
+char *envpath;
 
 __declspec(dllexport) int dllrunscript( int argc, char *argv[] ) {
   int i;
@@ -102,11 +103,21 @@ PROGRAM_FOUND:
 
   if ( !cmdline[0] ) {
     // batch file has to be executed through the call command in order to propagate its exit code
-    // command interpreter is taken from the COMSPEC variable 
-    // to prevent attacks through writing ./cmd.exe
+    // cmd.exe is searched for only on PATH to prevent attacks through writing ./cmd.exe
+    envpath = (char *) getenv("PATH");
+    if ( !envpath ) {
+      fprintf(stderr, "runscript: failed to read PATH variable\n");
+      return -1;
+    }
     cmdline[0] = '"';
-    if ( !GetEnvironmentVariableA("COMSPEC", &cmdline[1], MAX_PATH) ) {
-      fprintf(stderr, "runscript: failed to read COMSPEC variable\n");
+    if ( !SearchPathA( envpath,  /* Address of search path */
+      "cmd.exe",  /* Address of filename */
+      NULL,  /* Address of extension */
+      MAX_PATH,  /* Size of destination buffer */
+      &cmdline[1],  /* Address of destination buffer */
+      NULL) /* File part of the full path */
+    )	{
+      fprintf(stderr, "runscript: cmd.exe not found on PATH\n");
       return -1;
     }
     strcat(cmdline, "\" /c call \"");
