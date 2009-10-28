@@ -1,0 +1,22 @@
+Changes applied to the gd-2.0.35/ tree as obtained from:
+	http://www.libgd.org/releases/gd-2.0.35.tar.bz2
+
+Removed:
+	aclocal.m4
+	config/config.guess
+	config/config.rpath
+	config/config.sub
+	config/depcomp
+	config/install-sh
+	config/ltmain.sh
+	config/missing
+	config/mkinstalldirs
+	depcomp
+	install-sh
+	missing
+	mkinstalldirs
+
+Executed the command:
+	find -type f -perm /111 ! -name bdftogd ! -name configure -exec chmod -c a-x {} \;
+i.e., removed execute permissions from all files except bdftogd and configure.
+
