@@ -1,0 +1,382 @@
+	Avoid compiler warnings:
+	ANSI C function definitions.
+	Declare various (param and other) strings as const.
+	* special.c (SetSpecial): Avoid assigning a literal string to
+	the non-const string variable 'special' (somewhat clumsy).
+
+diff -ur dvipng-1.12.orig/color.c dvipng-1.12/color.c
+--- dvipng-1.12.orig/color.c	2009-06-09 12:58:51.000000000 +0200
++++ dvipng-1.12/color.c	2009-10-01 11:14:12.000000000 +0200
+@@ -39,11 +39,11 @@
+   char              name[1];
+ } *colornamep=NULL,*xcp=NULL;
+ 
+-char *colordef[]={"xcolor.sty","dvipsnam.def",
+-		  "svgnam.def","x11nam.def",NULL};
++const char *colordef[]={"xcolor.sty","dvipsnam.def",
++			"svgnam.def","x11nam.def",NULL};
+ char *xcpname=NULL;
+ 
+-void initcolor() 
++void initcolor(void) 
+ {
+    csp = 1;
+    cstack[0].red=255; 
+@@ -54,7 +54,7 @@
+    cstack[1].blue=0; 
+ }
+ 
+-static struct colorname * NewColor(char* prefix, int nprefix,
++static struct colorname * NewColor(const char* prefix, int nprefix,
+               char* name, int nname,
+ 	      char* model, int nmodel,
+ 	      char* values, int nvalues)
+@@ -92,11 +92,12 @@
+ #define FINDPSNAMEEND(s,n) n=0; while(s<max && *s!='{') { s++; n++; }
+ #define BLANKCOMMAS(s) 
+ 
+-static struct colorname* LoadColornameFile(char* filename)
++static struct colorname* LoadColornameFile(const char* filename)
+ {
+   struct colorname *list=NULL,*tmp=NULL; 
+   char *filepath,*pos,*max;
+-  char *prefix="",*name,*values,*model;
++  const char *prefix="";
++  char *name,*values,*model;
+   int nprefix=0,nname,nvalues,nmodel;
+   struct filemmap fmmap;
+ 
+@@ -190,7 +191,7 @@
+   ClearXColorPrologue();
+ }
+ 
+-void InitXColorPrologue(char* name)
++void InitXColorPrologue(const char* name)
+ {
+   ClearXColorPrologue();
+   xcpname=malloc(strlen(name)+1);
+@@ -203,7 +204,8 @@
+ {
+   struct colorname *list=NULL,*tmp=NULL; 
+   char *filepath,*pos,*max;
+-  char *prefix="",*name,*values,*model;
++  const char *prefix="";
++  char *name,*values,*model;
+   int nprefix=0,nname,nvalues,nmodel;
+   struct filemmap fmmap;
+ 
+@@ -244,7 +246,7 @@
+ #define NEXTINT(c) strtol(c,&end,10); WARN_IF_FAILED(c,end); c=end
+ #define NEXTHEX(c) strtol(c,&end,16); WARN_IF_FAILED(c,end); c=end
+ 
+-void stringrgb(char* color,int *r,int *g,int *b)
++void stringrgb(const char* color,int *r,int *g,int *b)
+ {
+   char* end;
+   static int unloaded=1;
+@@ -364,14 +366,14 @@
+   DEBUG_PRINT(DEBUG_COLOR,("%d %d %d) ",*r,*g,*b))
+ }
+ 
+-void background(char* p)
++void background(const char* p)
+ {
+   stringrgb(p, &cstack[0].red, &cstack[0].green, &cstack[0].blue);
+   DEBUG_PRINT(DEBUG_COLOR,("\n  BACKGROUND:\t(%d %d %d) ",
+ 			   cstack[0].red, cstack[0].green, cstack[0].blue));
+ }
+ 
+-void pushcolor(char * p)
++void pushcolor(const char * p)
+ {
+   if ( ++csp == STACK_SIZE )
+     Fatal("out of color stack space") ;
+@@ -380,13 +382,13 @@
+ 			   cstack[csp].red, cstack[csp].green, cstack[csp].blue))
+ }
+ 
+-void popcolor()
++void popcolor(void)
+ {
+   if (csp > 1) csp--; /* Last color is global */
+   DEBUG_PRINT(DEBUG_COLOR,("\n  COLOR POP\t"))
+ }
+ 
+-void resetcolorstack(char * p)
++void resetcolorstack(const char * p)
+ {
+   if ( csp > 1 )
+     Warning("global color change within nested colors");
+diff -ur dvipng-1.12.orig/dvi.c dvipng-1.12/dvi.c
+--- dvipng-1.12.orig/dvi.c	2009-06-09 12:36:50.000000000 +0200
++++ dvipng-1.12/dvi.c	2009-10-01 00:45:04.000000000 +0200
+@@ -38,7 +38,7 @@
+ 
+ bool followmode=0;
+ 
+-bool DVIFollowToggle()
++bool DVIFollowToggle(void)
+ {
+   return followmode = ! followmode;
+ }
+diff -ur dvipng-1.12.orig/dvipng.h dvipng-1.12/dvipng.h
+--- dvipng-1.12.orig/dvipng.h	2009-03-25 14:04:41.000000000 +0100
++++ dvipng-1.12/dvipng.h	2009-10-01 11:14:10.000000000 +0200
+@@ -223,9 +223,9 @@
+ bool    MmapFile (char *filename,struct filemmap *fmmap);
+ void    UnMmapFile(struct filemmap* fmmap);
+ 
+-void    Message(int, char *fmt, ...);
+-void    Warning(char *fmt, ...);
+-void    Fatal(char *fmt, ...);
++void    Message(int, const char *fmt, ...);
++void    Warning(const char *fmt, ...);
++void    Fatal(const char *fmt, ...);
+ 
+ int32_t   SNumRead(unsigned char*, register int);
+ uint32_t   UNumRead(unsigned char*, register int);
+@@ -354,10 +354,10 @@
+ #endif
+ 
+ /********************************************************/
+-/*********************  pplist.h  ***********************/
++/*********************  ppagelist.h  ********************/
+ /********************************************************/
+ 
+-bool    ParsePages(char*);
++bool    ParsePages(const char*);
+ void    FirstPage(int32_t,bool);
+ void    LastPage(int32_t,bool);
+ void    ClearPpList(void);
+@@ -396,19 +396,19 @@
+ void      EndVFMacro(void);
+ 
+ /**************************************************/
+-void handlepapersize(char*,int32_t*,int32_t*);
++void handlepapersize(const char*,int32_t*,int32_t*);
+ 
+-void stringrgb(char* colorstring,int *r,int *g,int *b);
+-void background(char *);
++void stringrgb(const char* colorstring,int *r,int *g,int *b);
++void background(const char *);
+ void initcolor(void);
+ void popcolor(void);
+-void pushcolor(char *);
+-void resetcolorstack(char *);
++void pushcolor(const char *);
++void resetcolorstack(const char *);
+ void StoreColorStack(struct page_list *tpagep);
+ void ReadColorStack(struct page_list *tpagep);
+ void StoreBackgroundColor(struct page_list *tpagep);
+ void ClearColorNames(void);
+-void InitXColorPrologue(char* prologuename);
++void InitXColorPrologue(const char* prologuename);
+ 
+ /**********************************************************************/
+ /*************************  Global Variables  *************************/
+diff -ur dvipng-1.12.orig/fontmap.c dvipng-1.12/fontmap.c
+--- dvipng-1.12.orig/fontmap.c	2009-06-09 12:55:27.000000000 +0200
++++ dvipng-1.12/fontmap.c	2009-10-01 00:44:57.000000000 +0200
+@@ -55,7 +55,7 @@
+   return(word);
+ }
+ 
+-static char* find_format(char* name)
++static char* find_format(const char* name)
+ {
+   /* Cater for both new (first case) and old (second case) kpathsea */
+   char* format =
+diff -ur dvipng-1.12.orig/misc.c dvipng-1.12/misc.c
+--- dvipng-1.12.orig/misc.c	2009-03-25 14:05:54.000000000 +0100
++++ dvipng-1.12/misc.c	2009-10-01 00:39:28.000000000 +0200
+@@ -690,7 +690,7 @@
+ /**********************************************************************/
+ /******************************  Fatal  *******************************/
+ /**********************************************************************/
+-void Fatal (char *fmt, ...)
++void Fatal (const char *fmt, ...)
+ {
+   va_list args;
+ 
+@@ -719,7 +719,7 @@
+ /**********************************************************************/
+ /*****************************  Warning  ******************************/
+ /**********************************************************************/
+-void Warning(char *fmt, ...)
++void Warning(const char *fmt, ...)
+ {
+   va_list args;
+ 
+@@ -738,7 +738,7 @@
+ /**********************************************************************/
+ /*****************************  Message  ******************************/
+ /**********************************************************************/
+-void Message(int activeflags, char *fmt, ...)
++void Message(int activeflags, const char *fmt, ...)
+ {
+   va_list args;
+ 
+diff -ur dvipng-1.12.orig/papersiz.c dvipng-1.12/papersiz.c
+--- dvipng-1.12.orig/papersiz.c	2009-06-09 12:59:23.000000000 +0200
++++ dvipng-1.12/papersiz.c	2009-10-01 01:49:36.000000000 +0200
+@@ -36,20 +36,21 @@
+  *   Advance the passed pointer as well.
+  */
+ 
+-static int32_t myatodim(char ** p)
++static int32_t myatodim(const char ** p)
+ { 
+   double tmp; /* double accuracy is enough, I think */
+   int i=0;
++  char *q;
+ 
+-  tmp = strtod(*p,p);
+-  while (**p == ' ') 
+-    (*p)++;
+-  while (i<8 && ((*p)[0]!=lengthnames[i][0] || (*p)[1]!=lengthnames[i][1]))
++  tmp = strtod(*p,&q);
++  while (*q == ' ') 
++    q++;
++  while (i<8 && (q[0]!=lengthnames[i][0] || q[1]!=lengthnames[i][1]))
+     i++; 
+-  if (i==8 && ((*p)[0]!=lengthnames[i][0] || (*p)[1]!=lengthnames[i][1]))
+-    Warning("unrecognized length unit \"%.2s\", assuming inches",*p);
+-  while (**p != ',' && **p !='\0')
+-    (*p)++;
++  if (i==8 && (q[0]!=lengthnames[i][0] || q[1]!=lengthnames[i][1]))
++    Warning("unrecognized length unit \"%.2s\", assuming inches",q);
++  while (*q != ',' && *q !='\0')
++    q++;
+   tmp = tmp*lengthsp[i]*dpi/4736286L; /*   sp * dots/in / (sp/in), convert sp to pixels   */
+   return((int32_t) tmp);
+ }
+@@ -60,7 +61,7 @@
+  *   the string after the `papersize=' specification.
+  */
+ 
+-void handlepapersize(char * p, int32_t * x, int32_t * y)
++void handlepapersize(const char * p, int32_t * x, int32_t * y)
+ { 
+    while (*p == ' ')
+       p++ ;
+diff -ur dvipng-1.12.orig/ppagelist.c dvipng-1.12/ppagelist.c
+--- dvipng-1.12.orig/ppagelist.c	2009-06-09 12:45:06.000000000 +0200
++++ dvipng-1.12/ppagelist.c	2009-10-01 10:40:01.000000000 +0200
+@@ -130,9 +130,10 @@
+ /* Parse a string representing a list of pages.  Return 0 iff ok.  As a
+    side effect, the page selection(s) is (are) prepended to ppages. */
+ 
+-bool ParsePages(char *s)
++bool ParsePages(const char *s)
+ {
+-  char *c;		/* conversion start */
++  const char *c;	/* conversion start */
++  char *t;
+   long int ps_low = PAGE_MINPAGE, ps_high = PAGE_MAXPAGE;
+ 
+   while (*s==' ' || *s=='\t') s++;
+@@ -140,23 +141,27 @@
+     if (*s=='-' || *s==':') { /* range with no starting value */
+       ps_low = PAGE_MINPAGE;
+       c=s+1;
+-      ps_high = strtol(c,&s,10);
++      ps_high = strtol(c,&t,10);
++      s = t;
+       if (c==s) ps_high=PAGE_MAXPAGE; /* no number */
+       while (*s==' ' || *s=='\t') s++;
+       if (*s=='-' || *s==':') { /* Oh, range with negative starting value */
+ 	ps_low = -ps_high;
+ 	c=s+1;
+-	ps_high = strtol(c,&s,10);
++	ps_high = strtol(c,&t,10);
++	s = t;
+ 	if (c==s) ps_high=PAGE_MAXPAGE; /* no number */
+       }
+     } else { /* range with starting value, or singleton */
+       c=s;
+-      ps_low = ps_high = strtol(c,&s,10);
++      ps_low = ps_high = strtol(c,&t,10);
++      s = t;
+       if (c==s) 
+ 	return(true);
+       if (*s=='-' || *s==':') { /* range */
+ 	c=s+1;
+-	ps_high = strtol(c,&s,10);
++	ps_high = strtol(c,&t,10);
++	s = t;
+ 	if (c==s) ps_high=PAGE_MAXPAGE; /* no number */
+       }
+     }
+diff -ur dvipng-1.12.orig/special.c dvipng-1.12/special.c
+--- dvipng-1.12.orig/special.c	2009-06-09 13:01:45.000000000 +0200
++++ dvipng-1.12/special.c	2009-10-01 14:43:06.000000000 +0200
+@@ -132,7 +132,7 @@
+ 
+ 
+ static gdImagePtr
+-ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution, 
++ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolution, 
+        int llx, int lly, int urx, int ury, int bgred, int bggreen, int bgblue)
+ {
+ #ifndef MIKTEX
+@@ -305,7 +305,7 @@
+   return(scaledimage);
+ }
+ 
+-static void newpsheader(char* special) {
++static void newpsheader(const char* special) {
+   struct pscode* tmp;
+   char* txt;
+ 
+@@ -669,6 +669,7 @@
+       struct pscode *tmp;
+       gdImagePtr psimage=NULL;
+       char *txt;
++      const char *newspecial=NULL; /* Avoid warning from special="..." */
+       
+       /* Some packages split their literal PostScript code into
+ 	 several specials. Check for those, and concatenate them so
+@@ -694,9 +695,9 @@
+ 	   specials. The first numbers are generally valid for the bop
+ 	   instruction, and the latter code is to move the origin to
+ 	   the right place. */
+-	special="ps:: 39139632 55387786 1000 600 600 (tikzdefault.dvi) @start 1 0 bop pgfo 0 0 matrix defaultmatrix transform itransform translate";
++	newspecial="ps:: 39139632 55387786 1000 600 600 (tikzdefault.dvi) @start 1 0 bop pgfo 0 0 matrix defaultmatrix transform itransform translate";
+       else if (strcmp(special,"ps:: pgfc")==0)
+-	special="ps:: pgfc eop end";
++	newspecial="ps:: pgfc eop end";
+       nextisps=DVIIsNextPSSpecial(dvi);
+       if (psenvironment || nextisps) {
+ 	if (!nextisps) {
+@@ -705,12 +706,20 @@
+ 	}
+ 	/* Don't use alloca, we do not want to run out of stack space */
+ 	DEBUG_PRINT(DEBUG_GS,("\n  PS SPECIAL "));
+-	txt=malloc(strlen(special)+1);
+-	strcpy(txt,special);
++	if (newspecial == NULL)
++	  newspecial=special;
++	if ((txt=malloc(strlen(newspecial)+1))==NULL)
++	  Fatal("cannot allocate space for raw PostScript special");
++	strcpy(txt,newspecial);
+ 	PSCodeInit(tmp,txt);
+ 	return;
+       }
+       DEBUG_PRINT(DEBUG_DVI,("\n  LAST PS SPECIAL "));
++      if (newspecial != NULL) {
++	if ((special=malloc(strlen(newspecial)+1))==NULL)
++	  Fatal("cannot allocate space for raw PostScript special");
++	strcpy(special,newspecial);
++      }
+       PSCodeInit(tmp,special);
+       /* Now, render image */
+       if (option_flags & NO_GHOSTSCRIPT)
+@@ -752,6 +761,8 @@
+       }
+       free(pscodep);
+       pscodep=NULL;
++      if (newspecial != NULL)
++	free(special);
+       if (psimage==NULL) 
+ 	page_flags |= PAGE_GAVE_WARN;
+       Message(BE_NONQUIET,">");

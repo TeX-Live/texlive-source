@@ -1,0 +1,122 @@
+	Avoid compiler warnings:
+	ANSI C function definitions.
+	Declare various (param and other) strings as const.
+
+diff -ur t1utils-1.34.orig/t1ascii.c t1utils-1.34/t1ascii.c
+--- t1utils-1.34.orig/t1ascii.c	2009-08-19 15:02:19.000000000 +0200
++++ t1utils-1.34/t1ascii.c	2009-08-23 14:48:59.000000000 +0200
+@@ -172,7 +172,7 @@
+ }
+ 
+ static void
+-pfa_output_end()
++pfa_output_end(void)
+ {
+ }
+ 
+diff -ur t1utils-1.34.orig/t1asm.c t1utils-1.34/t1asm.c
+--- t1utils-1.34.orig/t1asm.c	2009-08-19 15:02:19.000000000 +0200
++++ t1utils-1.34/t1asm.c	2009-08-23 14:49:03.000000000 +0200
+@@ -266,7 +266,7 @@
+    charstring. We use the heuristic that it should start with `/' (a name) or
+    `dup' (a subroutine). Previous heuristic caused killa bad output. */
+ 
+-static int check_line_charstring()
++static int check_line_charstring(void)
+ {
+   char *p = line;
+   while (isspace(*p))
+@@ -280,7 +280,7 @@
+    the newline is put into line[]. When terminated by '{', the '{' is not put
+    into line[], and the flag start_charstring is set to 1. */
+ 
+-static void texlive_getline()
++static void texlive_getline(void)
+ {
+   int c;
+   char *p = line;
+@@ -367,7 +367,7 @@
+ /* This function initializes charstring encryption.  Note that this is called
+    at the beginning of every charstring. */
+ 
+-static void charstring_start()
++static void charstring_start(void)
+ {
+   int i;
+ 
+@@ -390,7 +390,7 @@
+ /* This function outputs buffered, encrypted charstring data through possible
+    eexec encryption. */
+ 
+-static void charstring_end()
++static void charstring_end(void)
+ {
+   byte *bp;
+ 
+@@ -433,7 +433,7 @@
+ 
+ /* This function returns one charstring token. It ignores comments. */
+ 
+-static void get_charstring_token()
++static void get_charstring_token(void)
+ {
+   int c = getc(ifp);
+   while (isspace(c))
+@@ -466,7 +466,7 @@
+ /* This function parses an entire charstring into integers and commands,
+    outputting bytes through the charstring buffer. */
+ 
+-static void parse_charstring()
++static void parse_charstring(void)
+ {
+   struct command *cp;
+ 
+diff -ur t1utils-1.34.orig/t1binary.c t1utils-1.34/t1binary.c
+--- t1utils-1.34.orig/t1binary.c	2009-08-19 15:02:19.000000000 +0200
++++ t1utils-1.34/t1binary.c	2009-08-23 14:49:01.000000000 +0200
+@@ -85,7 +85,7 @@
+ }
+ 
+ static void
+-pfb_output_end()
++pfb_output_end(void)
+ {
+   pfb_writer_end(&w);
+ }
+diff -ur t1utils-1.34.orig/t1disasm.c t1utils-1.34/t1disasm.c
+--- t1utils-1.34.orig/t1disasm.c	2009-08-19 15:02:19.000000000 +0200
++++ t1utils-1.34/t1disasm.c	2009-08-23 15:04:37.000000000 +0200
+@@ -332,11 +332,11 @@
+ /* 23.Feb.2004 - use 'memstr', not strstr, because the strings input to
+    eexec_line aren't null terminated! Reported by Werner Lemberg. */
+ 
+-static const unsigned char *
+-oog_memstr(const unsigned char *line, int line_len, const char *pattern, int pattern_len)
++static unsigned char *
++oog_memstr(unsigned char *line, int line_len, const char *pattern, int pattern_len)
+ {
+-    const unsigned char *try;
+-    const unsigned char *last = line + line_len - pattern_len + 1;
++    unsigned char *try;
++    unsigned char *last = line + line_len - pattern_len + 1;
+     while (line < last
+ 	   && (try = memchr(line, (unsigned char)*pattern, last - line))) {
+ 	if (memcmp(try, pattern, pattern_len) == 0)
+@@ -432,7 +432,7 @@
+        badly: a charstring definition follows "/Charstrings ... begin", ON THE
+        SAME LINE. */
+     {
+-	const char *CharStrings = (const char *)
++	char *CharStrings = (char *)
+ 	    oog_memstr(line, line_len, "/CharStrings ", 13);
+ 	int crap, n;
+ 	char should_be_slash = 0;
+@@ -595,7 +595,7 @@
+ }
+ 
+ static void
+-disasm_output_end()
++disasm_output_end(void)
+ {
+     /* take care of leftover saved data */
+     static char crap[1] = "";

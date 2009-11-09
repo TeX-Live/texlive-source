@@ -1,0 +1,79 @@
+	Avoid to rebuild libsicudata.a again and again.
+
+diff -ur icu-4.2.1.orig/source/data/Makefile.in icu-4.2.1/source/data/Makefile.in
+--- icu-4.2.1.orig/source/data/Makefile.in	2009-07-01 20:51:20.000000000 +0200
++++ icu-4.2.1/source/data/Makefile.in	2009-10-26 12:10:19.000000000 +0100
+@@ -90,7 +90,7 @@
+ .PHONY : all all-local all-recursive install install-local install-files	\
+ install-recursive clean clean-local clean-recursive distclean		\
+ distclean-local distclean-recursive dist dist-local dist-recursive	\
+-check check-local check-recursive build-local clean-resindex build-dir
++check check-local check-recursive clean-resindex
+ 
+ ## Clear suffix list
+ .SUFFIXES :
+@@ -115,6 +115,7 @@
+ 	-test -z *.map || $(RMV) *.map
+ 
+ clean-local: cleanpackage cleanfiles clean-map
++	$(RMV) build-dir* build-local packagedata uni-core-data
+ 
+ cleanfiles:
+ 	test -z "$(CLEANFILES)" || $(RMV) $(CLEANFILES)
+@@ -159,6 +160,7 @@
+ else
+ 	$(INSTALL_DATA) $(ICUDATA_SOURCE_ARCHIVE) $(OUTDIR)
+ endif
++	echo timestamp > $@
+ 
+ ## Install ICU data.
+ install-local: $(PKGDATA_LIST) ./icupkg.inc packagedata $(OS390INSTALL)
+@@ -345,6 +347,7 @@
+ ifneq ($(INCLUDE_UNI_CORE_DATA),)
+ ALL_FILES_LIST+=$(UNI_CORE_DATA)
+ build-local: uni-core-data
++	echo timestamp > $@
+ endif
+ 
+ #####################################################
+@@ -355,6 +358,7 @@
+ 
+ ifeq ($(ICUDATA_SOURCE_ARCHIVE),)
+ build-local: build-dir $(SO_VERSION_DATA) $(ALL_FILES) $(PKGDATA_LIST) $(OS390LIST)
++	echo timestamp > $@
+ $(PKGDATA_LIST): $(SRCLISTDEPS)
+ 	@echo "generating $@ (list of data files)"
+ 	@-$(RMV) $@
+@@ -363,6 +367,7 @@
+ 	done;
+ else
+ build-local: build-dir $(SO_VERSION_DATA) $(PKGDATA_LIST) $(OS390LIST)
++	echo timestamp > $@
+ $(PKGDATA_LIST): $(SRCLISTDEPS) $(ICUDATA_SOURCE_ARCHIVE)
+ ifneq ($(ICUDATA_SOURCE_IS_NATIVE_TARGET),YES)
+ 	@echo "Unpacking $(ICUDATA_SOURCE_ARCHIVE) and generating $@ (list of data files)"
+@@ -377,6 +382,8 @@
+ $(BUILD_DIRS): build-dir
+ 
+ build-dir:
++	@-$(RMV) $@
++	echo timestamp > $@.tmp
+ 	@list='$(BUILD_DIRS)'; \
+ 	for dir in $$list; do \
+ 	  if ! test -d $$dir; then \
+@@ -384,6 +391,7 @@
+ 	    $(MKINSTALLDIRS) $(BUILD_DIRS); \
+ 	  fi; \
+ 	done
++	mv $@.tmp $@
+ 
+ # The | is an order-only prerequisite. This helps when the -j option is used,
+ # and we don't want the files to be built before the directories are built.
+@@ -599,6 +607,7 @@
+ uni-core-data: build-dir $(UNI_CORE_TARGET_DATA)
+ 	@echo Unicode .icu files built to $(BUILDDIR)
+ 	@echo Unicode .c source files built to $(OUTTMPDIR)
++	echo timestamp > $@
+ 
+ build-icu4j: all
+ 	$(MAKE) -C ../tools/genrb $@

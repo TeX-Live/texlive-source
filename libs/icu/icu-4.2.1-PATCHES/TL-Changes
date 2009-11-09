@@ -1,0 +1,15 @@
+Changes applied to the icu-4.2.1/ tree as obtained from:
+	http://download.icu-project.org/files/icu4c/4.2.1/icu4c-4_2_1-src.tgz
+
+Rebuilt source/configure with Autoconf 2.63.
+
+Updated:
+	source/config.guess
+	source/config.sub
+	source/install-sh
+	source/mkinstalldirs
+
+Run the shell script fix-case-insensitive to rename
+	source/layout/Features.h => ICUFeatures.h
+and modify references to that file accordingly.
+

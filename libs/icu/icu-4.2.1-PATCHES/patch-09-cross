@@ -1,0 +1,22 @@
+	Replace AC_RUN_IFELSE by AC_CHECK_SIZEOF for cross compilation.
+
+diff -ur icu-4.2.1.orig/source/aclocal.m4 icu-4.2.1/source/aclocal.m4
+--- icu-4.2.1.orig/source/aclocal.m4	2009-07-01 20:51:26.000000000 +0200
++++ icu-4.2.1/source/aclocal.m4	2009-10-28 20:38:09.000000000 +0100
+@@ -149,10 +149,13 @@
+     if test "$cross_compiling" = "yes" -a "${BITS_REQ}" != "nochange"; then
+         AC_MSG_ERROR([Don't specify bitness when cross compiling. See readme.html for help with cross compilation., and set compiler options manually.])
+     fi
+-    DEFAULT_64BIT=no
++    AC_CHECK_SIZEOF([void *])
+     AC_MSG_CHECKING([whether runnable 64 bit binaries are built by default])
+-    AC_RUN_IFELSE(int main(void) {return (sizeof(void*)*8==64)?0:1;},
+-       DEFAULT_64BIT=yes, DEFAULT_64BIT=no, DEFAULT_64BIT=unknown)
++    case $ac_cv_sizeof_void_p in
++        8) DEFAULT_64BIT=yes ;;
++        4) DEFAULT_64BIT=no ;;
++        *) DEFAULT_64BIT=unknown
++    esac
+     BITS_GOT=unknown
+     
+     # 'OK' here means, we can exit any further checking, everything's copa

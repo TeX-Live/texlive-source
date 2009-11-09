@@ -1,0 +1,24 @@
+2009-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-05-warnings (new): Avoid more compiler warnings.
+
+2009-06-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-static (new): Avoid warnings when compiling with
+	'gcc --Wmissing-prototypes'.
+
+2009-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-have-ft2 (new): Bug fix - skip FT2 code when
+	compiling without FT2 library.
+
+2009-03-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-use-ifdef (new): Use #ifdef instead of #if to avoid
+	preprocessor warnings.
+
+2009-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-portability (new): Portability fix - put variable
+	declarations at the beginning of the block.
+

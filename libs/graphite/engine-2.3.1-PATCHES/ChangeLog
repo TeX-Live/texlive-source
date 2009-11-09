@@ -1,0 +1,16 @@
+2009-10-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-virtual (new): Declare destructors as virtual to
+	avoid compiler warnings.
+
+2009-10-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* TL-changes (new): Modifications applied to the distribution.
+	* patch-[0-9][0-9]-*: Patches applied to the distribution.
+
+2009-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-warnings (new): Avoid maximal compiler warnings.
+	* src/segment/GrEngine.{cpp,h}, src/segment/FileInput.{cpp,h},
+	src/segment/FontFace.cpp, src/font/TtfUtil.cpp: Constify.
+
