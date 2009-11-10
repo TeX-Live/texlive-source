@@ -124,7 +124,9 @@
 @define function kpsefindtex ();
 @define function kpsefindtfm ();
 @define function kpsefindvf ();
+@define function kpseinnameok ();
 @define function kpseopenfile ();
+@define function kpseoutnameok ();
 @define function kpsevarvalue ();
 @define function inputint ();
 @define function intcast ();
@@ -191,8 +193,9 @@
 
 @define type boolean = 0..1;
 @define type cinttype;
-@define type cstring;
 @define type constcstring;
+@define type constw2custring;
+@define type cstring;
 @define type char = 0..255;
 @define type getoptstruct;
 @define type integer;
@@ -201,6 +204,7 @@
 @define type pointertobyte;
 @define type real;
 @define type text;
+@define type w2custring;
 
 @define var argc;
 @define var argv;

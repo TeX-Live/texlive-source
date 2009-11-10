@@ -133,7 +133,6 @@ print_measures(void)
 
 int next_d;
 int excess;
-int delta;
 
 static int
 min_cover(int h, int d)

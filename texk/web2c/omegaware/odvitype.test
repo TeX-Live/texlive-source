@@ -1,0 +1,15 @@
+#! /bin/sh
+
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+tests=omegaware/tests
+
+test -d $tests || mkdir -p $tests
+
+TEXMFCNF=$srcdir/../kpathsea \
+  OFMFONTS=$srcdir/$tests \
+  ./odvitype $srcdir/$tests/ofontd0 | sed '1s/ (.*)$//' >$tests/xofontd0.typ || exit 1
+
+diff $srcdir/$tests/ofontd0.typ $tests/xofontd0.typ || exit 1
+

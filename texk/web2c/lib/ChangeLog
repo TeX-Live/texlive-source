@@ -1,3 +1,62 @@
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (openinnameok, openoutnameok): Moved to Kpathsea
+	and renamed kpse_{in,out}_name_ok.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (last_lineno): MAYBE_STATIC for luaTeX.
+	(srcspecialsoption, parse_src_specials_option): static but not
+	used for luaTeX.
+
+2009-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (runpopen): Used only for pdfTeX and luaTeX.
+	(last_source_name etc): Not used by MF.
+	(ipcpage): Avoid unconstifying cast.
+	(compare_paths): Declare as static.
+	(mfwin_sw): Constify member string.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (initscreen): Add explicit braces.
+	(getrandomseed, makefullnamestring): ANSI C definition.
+
+2009-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lib.h (NOT_WEB2C): New preprocessor macro, if defined prevents
+	declaration of argc, argv, cmdline, and mainbody (from main.c).
+
+2009-08-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* openclose.c (open_output): Bugfix? local var 'fname' was
+	shadowed by a second one.  Avoid memory leak.
+
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lib.h, texmfmp.c, version.c: Constify ptexbanner and
+	versionstring.
+
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* openclose.c (recorder_record_name): Constify string param1.
+	(recorder_record_{name,input,output}): Rename param
+	nameoffile=>name, not to shadow global var.
+
+2009-08-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lib.h (ptexbanner): Add decl for pdfTeX and luaTeX.
+	* texmfmp.c (ptexbanner): Drop decl but keep initializer.
+	* printversion.c (kpathsea_version_string):
+	#include <kpathsea/version.h> and drop extern declaration.
+
+2009-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (shell_cmd_is_allowed): Change param1 from 'char **'
+	to 'const char *'.
+	(runsystem, runpopen): Constify string params.
+
 2009-07-24  Martin Schröder  <martin@oneiros.de>
 
 	* printversion.c: don't nest extern declarations
@@ -17,7 +76,7 @@
 	input2int.c, inputint.c, main.c, openclose.c, printversion.c,
 	zround.c: #include "lib.h" to declare function prototypes.
 	* openclose.c: declare internal function recorder_record_name as
-	static; declare arg of recorder_record_input and
+	static; declare param of recorder_record_input and
 	recorder_record_output as const_string as from ../cpascal.h.
 
 2009-06-01  Karl Berry  <karl@tug.org>

@@ -1,0 +1,64 @@
+#! @SHELL@
+# tangle-sh: shell script to invoke tangle (or ctangle, etc).
+#
+#   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+#
+#   This file is free software; the copyright holder
+#   gives unlimited permission to copy and/or distribute it,
+#   with or without modifications, as long as this notice is preserved.
+#
+# Tangle may create several files, e.g., tex.p and tex.pool from tex.web
+# and tex.ch.  The naive rule
+#	tex.p tex.pool: tex.web tex.ch tangle$(EXEEXT)
+#		$(tangle) tex tex
+# could run 'tangle tex tex' twice in parallel and fail.  To avoid this
+# and yet recover from removal of tex.p and/or tex.pool, we use an
+# auxiliary stamp file tex-tangle and the two rules
+#	tex.p tex.pool: tex-tangle
+#		WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(TANGLE) tex tex
+#	tex-tangle: tex.web tex.ch tangle$(EXEEXT) tangle-sh
+#		WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(TANGLE) tex tex
+# Compare Automake manual (info Automake) 27.9: Multiple Outputs
+#
+TEXMFCNF=@srcdir@/../kpathsea; export TEXMFCNF
+
+env="TEXMFCNF=$TEXMFCNF"
+test "x$WEBINPUTS" = x || env="WEBINPUTS=$WEBINPUTS $env"
+test "x$CWEBINPUTS" = x || env="CWEBINPUTS=$CWEBINPUTS $env"
+
+target=$1; shift
+tangle=$1; shift
+base=$1
+stamp=$base-tangle
+case $target in
+  $stamp)
+    # Normal build.
+    rm -f $stamp.tmp
+    echo timestamp >$stamp.tmp
+    echo "$env $tangle $@"
+    $tangle "$@" || exit 1
+    mv -f $stamp.tmp $stamp
+  ;;
+  *)
+    # Recover from removal of $target
+    test -f $target && exit 0
+    trap "rm -rf $stamp $stamp.lock" 1 2 13 15
+    if mkdir $stamp.lock 2>/dev/null; then
+      # Code executed by the first process.
+      rm -f $stamp $stamp.tmp
+      echo timestamp >$stamp.tmp
+      echo "$env $tangle $@"
+      $tangle "$@" || exit 1
+      mv -f $stamp.tmp $stamp
+      rmdir $stamp.lock
+    else
+      # Code executed by the follower processes.
+      # Wait until the first process is done.
+      while test -d $stamp.lock; do sleep 1; done
+      # Succeed if and only if the first process succeeded.
+      test -f $stamp; exit $?
+    fi
+  ;;
+esac
+
+exit 0

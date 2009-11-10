@@ -40,6 +40,15 @@
 @z
 
 @x
+@!m,@!n:text_char; {characters input from |pool_file|}
+@!g:str_number; {garbage}
+@!a:integer; {accumulator for check sum}
+@!c:boolean; {check sum has been checked}
+@y
+@!g:str_number; {garbage}
+@z
+
+@x
 @ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
   a_close(pool_file); get_strings_started:=false; return;
   end
@@ -459,6 +468,15 @@ end;
 
 font_ptr:=null_font; fmem_ptr:=7;
 make_pdftex_banner;
+@z
+
+% i, j, q, and r are unused by TeX but required for pdfTeX
+@x [53.1348] (do_extension)
+var k:integer; {all-purpose integers}
+@!p:pointer; {all-purpose pointers}
+@y
+var i,@!j,@!k:integer; {all-purpose integers}
+@!p,@!q,@!r:pointer; {all-purpose pointers}
 @z
 
 @x [53a.1379] l.??? -etex command line switch

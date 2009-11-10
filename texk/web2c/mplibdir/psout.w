@@ -3569,6 +3569,7 @@ boolean cs_parse (MP mp, mp_ps_font *f, const char *cs_name, int subr);
 
 @c 
 
+#if 0 /* unused */
 void cs_do_debug (MP mp, mp_ps_font *f, int i, char *s) {
    int n = cc_tab[i].nargs;
    (void)mp; /* for -Wall */
@@ -3579,6 +3580,7 @@ void cs_do_debug (MP mp, mp_ps_font *f, int i, char *s) {
    }
    fprintf (stdout,"%s\n", s);
 }
+#endif
 
 boolean cs_parse (MP mp, mp_ps_font *f, const char *cs_name, int subr)
 {
@@ -4926,6 +4928,7 @@ All node types are assumed to be |endpoint| or |explicit| only.
 This function is currenly unused.
 
 @c 
+#if 0 /* unused */
 mp_knot * mp_gr_htap_ypoc (MP mp,  mp_knot *p) {
   mp_knot *q, *pp, *qq, *rr; /* for list manipulation */
   q=mp_xmalloc(mp, 1, sizeof (mp_knot)); /* this will correspond to |p| */
@@ -4951,6 +4954,7 @@ mp_knot * mp_gr_htap_ypoc (MP mp,  mp_knot *p) {
     pp=gr_next_knot(pp);
   }
 }
+#endif
 
 @ When a cyclic list of knot nodes is no longer needed, it can be recycled by
 calling the following subroutine.

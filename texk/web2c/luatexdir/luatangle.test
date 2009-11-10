@@ -4,7 +4,7 @@
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea WEBINPUTS=$srcdir/cftests \
-  ./luatangle  cftest cftest || exit 1
+  ./luatangle cftest cftest || exit 1
 
 diff cftest.p $srcdir/cftests/lcftest.p || exit 1
 

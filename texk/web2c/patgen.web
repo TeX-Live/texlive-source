@@ -4,6 +4,7 @@
 % Version 2.1 allows left/right_hypen_min from terminal (April, 1992).
 % Version 2.2 added `close_in(dictionary)' (August, 1996).
 % Version 2.3 avoided division by zero - Karl Berry (October, 1996).
+% Version 2.4 avoided use of uninitialized variables (September, 2009).
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -20,7 +21,7 @@
   \vskip 8pt
   \centerline{\titlefont for the \TeX 82 hyphenator}
   \vskip 15pt
-  \centerline{(Version 2.3, August 2004)}
+  \centerline{(Version 2.4, September 2009)}
   \vfill}
 \pageno=\contentspagenumber \advance\pageno by 1
 
@@ -51,7 +52,7 @@ state machine.  For further details, see the \TeX 82 source.
 The |banner| string defined here should be changed whenever \.{PATGEN}
 gets modified.
 
-@d banner=='This is PATGEN, Version 2.3' {printed when the program starts}
+@d banner=='This is PATGEN, Version 2.4' {printed when the program starts}
 
 @ The original version~1 of \.{PATGEN} was written by Frank~M. Liang
 @^Liang, Franklin Mark@>
@@ -1134,13 +1135,15 @@ are invalid (e.g., blank) new values are read from the terminal.
 
 @<Set up hyphenation...@>=
 bad:=false;
-if buf[1]=' ' then n:=0
+n:=0;
+if buf[1]=' ' then do_nothing
 else if xclass[buf[1]]=digit_class then n:=xint[buf[1]]@+
 else bad:=true;
 if xclass[buf[2]]=digit_class then n:=10*n+xint[buf[2]]@+
 else bad:=true;
 if (n>=1)and(n<max_dot) then left_hyphen_min:=n@+else bad:=true;
-if buf[3]=' ' then n:=0
+n:=0;
+if buf[3]=' ' then do_nothing
 else if xclass[buf[3]]=digit_class then n:=xint[buf[3]]@+
 else bad:=true;
 if xclass[buf[4]]=digit_class then n:=10*n+xint[buf[4]]@+

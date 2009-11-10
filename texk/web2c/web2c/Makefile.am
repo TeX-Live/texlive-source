@@ -38,6 +38,8 @@ web2c_SOURCES = \
 	main.c \
 	web2c.h
 
+$(web2c_OBJECTS): web2c-parser.h
+
 DISTCLEANFILES += web2c-parser.output
 
 fixwrites_SOURCES = \

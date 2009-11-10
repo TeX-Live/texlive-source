@@ -801,7 +801,7 @@ void pdfmapline(integer t)
     flushstr(lasttokensstring);
 }
 
-void pdfinitmapfile(string map_name)
+void pdfinitmapfile(const_string map_name)
 {
     assert(mitem == NULL);
     mitem = xtalloc(1, mapitem);

@@ -30,6 +30,14 @@ This change can not be applied when `tie' is  used
 %\let\maybe=\iffalse % print only changed modules
 %@z
 
+Section 1.
+
+@x l.63
+@<Predeclaration of procedures@>@/
+@y
+#include "cweb.h"
+@<Predeclaration of procedures@>@/
+@z
 
 Section 2. 
 We use the definition from `kpathsea/types.h':
@@ -82,17 +90,21 @@ char alt_web_file_name[max_file_name_length]; /* alternate name to try */
 
 Section 12.
 
-@x l.254
+@x l.252
+void
 prime_the_change_buffer()
 @y
+static void
 prime_the_change_buffer (void)
 @z
 
 Section 16.
 
-@x l.322
+@x l.321
+void
 check_change() /* switches to |change_file| if the buffers match */
 @y
+static void
 check_change (void) /* switches to |change_file| if the buffers match */
 @z
 
@@ -254,10 +266,12 @@ check_complete (void) {
 
 Section 33.
 
-@x l.651
+@x l.650
+@ @<Predec...@>=
 extern int names_match();
 @y
-extern int names_match (name_pointer, char*, int, char);
+@ @<External functions@>=
+extern int names_match (name_pointer, const char*, int, char);
 @z
 
 Section 35.
@@ -269,14 +283,52 @@ char *last; /* last character of string plus one */
 char t; /* the |ilk|; used by \.{CWEAVE} only */
 @y
 /* looks up a string in the identifier table */
-id_lookup (char *first, char *last, char t)
+id_lookup (const char *first, const char *last, char t)
+@z
+
+@x l.667
+  char *i=first; /* position in |buffer| */
+@y
+  const char *i=first; /* position in |buffer| */
+@z
+
+@x l.668 - rename local var, not to shadow global
+  int h; /* hash code */
+@y
+  int h; /* hash code */
+@z
+
+Section 36.
+
+@x l.684 - use renamed local var
+h=(unsigned char)*i;
+while (++i<last) h=(h+h+(int)((unsigned char)*i)) % hash_size;
+@y
+h=(unsigned char)*i;
+while (++i<last) h=(h+h+(int)((unsigned char)*i)) % hash_size;
+@z
+
+Section 37.
+
+@x l.692 - use renamed local var
+p=hash[h];
+@y
+p=hash[h];
+@z
+
+@x l.696 - use renamed local var
+  p->link=hash[h]; hash[h]=p; /* insert |p| at beginning of hash list */
+@y
+  p->link=hash[h]; hash[h]=p; /* insert |p| at beginning of hash list */
 @z
 
 Section 38.
 
-@x l.704
+@x l.703
+@<Pred...@>=
 void init_p();
 @y
+@<External functions@>=
 extern void init_p (name_pointer p, char t);
 @z
 
@@ -301,10 +353,12 @@ sprint_section_name (char *dest, name_pointer p)
 
 Section 44.
 
-@x l.806
+@x l.805
+void
 print_prefix_name(p)
 name_pointer p;
 @y
+static void
 print_prefix_name (name_pointer p)
 @z
 
@@ -316,20 +370,38 @@ int web_strcmp(j,j_len,k,k_len) /* fuller comparison than |strcmp| */
   int j_len, k_len; /* length of strings */
 @y
 /* fuller comparison than |strcmp| */
-int web_strcmp (char *j, int j_len, char *k, int k_len)
+static int
+web_strcmp (char *j, int j_len, char *k, int k_len)
+@z
+
+@x l.830 -- rename local vars, not to shadow math function
+  char *j1=j+j_len, *k1=k+k_len;
+  while (k<k1 && j<j1 && *j==*k) k++, j++;
+  if (k==k1) if (j==j1) return equal;
+    else return extension;
+  else if (j==j1) return prefix;
+@y
+  char *j1=j+j_len, *k1=k+k_len;
+  while (k<k1 && j<j1 && *j==*k) k++, j++;
+  if (k==k1) if (j==j1) return equal;
+    else return extension;
+  else if (j==j1) return prefix;
 @z
 
 Section 46.
 
-@x l.853
+@x l.852
+@<Prede...@>=
 extern void init_node();
 @y
+@<External functions@>=
 extern void init_node (name_pointer node);
 @z
 
 Section 47.
 
-@x l.857
+@x l.856
+name_pointer
 add_section_name(par,c,first,last,ispref) /* install a new node in the tree */
 name_pointer par; /* parent of new node */
 int c; /* right or left? */
@@ -337,20 +409,22 @@ char *first; /* first character of section name */
 char *last; /* last character of section name, plus one */
 int ispref; /* are we adding a prefix or a full name? */
 @y
-/* install a new node in the tree */
+static name_pointer
 add_section_name (name_pointer par, int c, char *first, char *last,
-                  int ispref)
+                  int ispref)  /* install a new node in the tree */
 @z
 
 Section 48.
 
-@x l.886
+@x l.885
+void
 extend_section_name(p,first,last,ispref)
 name_pointer p; /* name to be extended */
 char *first; /* beginning of extension text */
 char *last; /* one beyond end of extension text */
 int ispref; /* are we adding a prefix or a full name? */
 @y
+static void
 extend_section_name (name_pointer p, char *first, char *last, int ispref)
 @z
 
@@ -370,7 +444,7 @@ Section 53.
 @x l.1018
 int section_name_cmp();
 @y
-int section_name_cmp (char**, int, name_pointer);
+static int section_name_cmp (char**, int, name_pointer);
 @z
 
 Section 54.
@@ -381,15 +455,18 @@ char **pfirst; /* pointer to beginning of comparison string */
 int len; /* length of string */
 name_pointer r; /* section name being compared */
 @y
-int section_name_cmp (char **pfirst, int len, name_pointer r)
+static int
+section_name_cmp (char **pfirst, int len, name_pointer r)
 @z
 
 Section 57.
 
-@x l.1093
+@x l.1092
+@<Predecl...@>=
 void  err_print();
 @y
-void  err_print (char*);
+@<External functions@>=
+extern void  err_print (const char*);
 @z
 
 Section 58.
@@ -398,16 +475,18 @@ Section 58.
 err_print(s) /* prints `\..' and location of error message */
 char *s;
 @y
-err_print (char *s) /* prints `\..' and location of error message */
+err_print (const char *s) /* prints `\..' and location of error message */
 @z
 
 Section 60.
 
-@x l.1141
+@x l.1140
+@<Prede...@>=
 int wrap_up();
 extern void print_stats();
 @y
-int wrap_up (void);
+@<External functions@>=
+extern int wrap_up (void);
 extern void print_stats (void);
 @z
 
@@ -421,11 +500,13 @@ int wrap_up (void) {
 
 Section 63.
 
-@x l.1174
+@x l.1173
+@<Predec...@>=
 void fatal(), overflow();
 @y
-void fatal (char*, char*);
-void overflow (char*);
+@<External functions@>=
+extern void fatal (const char*, const char*);
+extern void overflow (const char*);
 @z
 
 Section 64.
@@ -434,7 +515,7 @@ Section 64.
 fatal(s,t)
   char *s,*t;
 @y
-fatal (char *s, char *t)
+fatal (const char *s, const char *t)
 @z
 
 Section 65.
@@ -443,7 +524,7 @@ Section 65.
 overflow(t)
   char *t;
 @y
-overflow (char *t)
+overflow (const char *t)
 @z
 
 Section 67.
@@ -492,15 +573,17 @@ Section 69.
 @x l.1252
 void scan_args();
 @y
-void scan_args (void);
+static void scan_args (void);
 @z
 
 
 Section 70.
 
-@x l.1257
+@x l.1255
+void
 scan_args()
 @y
+static void
 scan_args (void)
 @z
 
@@ -578,7 +661,7 @@ char *found_filename; /* filename found by |kpse_find_file| */
 @z
 
 
-Section 81. (removed)
+Section 81. (reused)
 
 @x l.1403
 @ We predeclare several standard system functions here instead of including
@@ -593,11 +676,34 @@ extern char* strcpy(); /* copy one string to another */
 extern int strncmp(); /* compare up to $n$ string characters */
 extern char* strncpy(); /* copy up to $n$ string characters */
 @y
+@ We declare some more prototypes for exported function in cases where this
+could not be done easily without changing section numbers.
+
+@<External functions@>=
+extern void common_init (void);
+extern int input_ln (FILE *fp);
+extern void reset_input (void);
+extern int get_line (void);
+extern void check_complete (void);
+extern name_pointer id_lookup (const char *first, const char *last, char t);
+extern void print_section_name (name_pointer p);
+extern void sprint_section_name (char *dest, name_pointer p);
+extern name_pointer section_lookup (char *first, char *last, int ispref);
 @z
 
 @x
 @** Index.
 @y
+@** External functions.  In order to allow for type checking we create a
+header file \.{cweb.h} containing the declaration of all functions defined
+in \.{common.w} and used in \.{ctangle.w} and \.{cweave.w} or vice versa.
+
+@(cweb.h@>=
+@=/* Prototypes for functions, either@>
+@= * declared in common.w and used in ctangle.w and cweave.w, or@>
+@= * used in common.w and declared in ctangle.w and cweave.w.  */@>
+@<External functions@>@;
+
 @** System dependent changes.
 
 @ Modules for dealing with help messages and version info.

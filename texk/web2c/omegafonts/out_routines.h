@@ -21,8 +21,8 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
-extern string extensible_pieces[];
-extern string ligature_commands[];
+extern const_string extensible_pieces[];
+extern const_string ligature_commands[];
 
 extern void out_character_measure(unsigned);
 extern void out_extensible_piece(unsigned);
@@ -41,7 +41,7 @@ extern void out_as_fix(fix);
 extern void out_fix(fix);
 extern void out_hex(unsigned char);
 extern void out_digits(unsigned);
-extern void out(string);
+extern void out(const_string);
 extern void right(void);
 extern void left(void);
 extern void print_xerox_face(int);

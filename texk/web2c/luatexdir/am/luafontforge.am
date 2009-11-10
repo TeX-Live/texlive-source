@@ -18,6 +18,7 @@ libff_a_CPPFLAGS = \
 	-I$(top_srcdir)/luatexdir/lua51 \
 	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/inc \
 	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/fontforge
+libff_a_CFLAGS = # $(WARNING_CFLAGS)
 
 libff_a_SOURCES = \
 	luatexdir/luafontloader/fontforge/Unicode/ArabicForms.c \

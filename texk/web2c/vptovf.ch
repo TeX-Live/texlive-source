@@ -39,7 +39,7 @@ procedure initialize; {this procedure gets things started properly}
   the \.{TFM} file header block, must be 1024 or less}
 @!vf_size=100000; {maximum length of |vf| data, in bytes}
 @!max_stack=100; {maximum depth of simulated \.{DVI} stack}
-@!max_param_words=300; {the maximum number of \.{fontdimen} parameters allowed}
+@!max_param_words=254; {the maximum number of \.{fontdimen} parameters allowed}
 @!max_lig_steps=32510;
   {maximum length of ligature program, must be at most $32767-257=32510$}
 @!max_kerns=5000; {the maximum number of distinct kern values}
@@ -74,6 +74,13 @@ packed file of bytes.
 @<Set init...@>=
 rewritebin (vf_file, vf_name);
 rewritebin (tfm_file, tfm_name);
+@z
+
+@x [24] Pascal Web's char
+@d first_ord=0 {ordinal number of the smallest element of |char|}
+@y
+@d char == 0..255
+@d first_ord=0 {ordinal number of the smallest element of |char|}
 @z
 
 % [89] `index' is not a good choice for an identifier on Unix systems.

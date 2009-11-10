@@ -37,7 +37,7 @@ authorization from the copyright holders.
 
 #ifdef XETEX_OT_MATH_IMPLEMENTATION
 #include "MathTable.h"
-#include "LEFontInstance.h"
+#include "layout/LEFontInstance.h"
 #else
 #define GlyphAssembly void /* used when we're just declaring the functions for xetex.ch */
 #endif

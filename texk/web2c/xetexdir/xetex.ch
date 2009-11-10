@@ -3349,11 +3349,11 @@ if translate_filename then begin
 @z
 
 @x
-  if open_in_name_ok(stringcast(name_of_file+1))
+  if kpse_in_name_ok(stringcast(name_of_file+1))
      and a_open_in(cur_file, kpse_tex_format) then
     goto done;
 @y
-  if open_in_name_ok(stringcast(name_of_file+1))
+  if kpse_in_name_ok(stringcast(name_of_file+1))
      and u_open_in(cur_file, kpse_tex_format, XeTeX_default_input_mode, XeTeX_default_input_encoding) then
     {At this point |name_of_file| contains the actual name found, as a UTF8 string.
      We convert to UTF16, then extract the |cur_area|, |cur_name|, and |cur_ext| from it.}
@@ -7079,6 +7079,13 @@ primitive("pdfsavepos",extension,pdf_save_pos_node);@/
   XeTeX_input_encoding_extension_code:print_esc("XeTeXinputencoding");
   XeTeX_default_encoding_extension_code:print_esc("XeTeXdefaultencoding");
   pdf_save_pos_node: print_esc("pdfsavepos");
+@z
+
+% i and j are unused by TeX but required for XeTeX
+@x [53.1348] (do_extension)
+var k:integer; {all-purpose integers}
+@y
+var i,@!j,@!k:integer; {all-purpose integers}
 @z
 
 @x

@@ -3,12 +3,14 @@
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+tests=omegaware/tests
 
-./opl2ofm -verbose $srcdir/tests/level1 tests/xlevel1 || exit 1
+test -d $tests || mkdir -p $tests
+
+./opl2ofm -verbose $srcdir/$tests/level1 $tests/xlevel1 || exit 1
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./ofm2opl -verbose tests/xlevel1 tests/xlevel1 || exit 1
+  ./ofm2opl -verbose $tests/xlevel1 $tests/xlevel1 || exit 1
 
-diff $srcdir/tests/level1.opl tests/xlevel1.opl || exit 1
+diff $srcdir/$tests/level1.opl $tests/xlevel1.opl || exit 1
 

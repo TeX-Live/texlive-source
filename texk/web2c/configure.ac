@@ -35,6 +35,7 @@ AC_SUBST([WEB2CVERSION])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([web2c programs])
+KPSE_CANONICAL_HOST
 
 AC_PROG_CXX
 KPSE_CXX_HACK
@@ -77,16 +78,11 @@ AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 AM_CONDITIONAL([MINGW32], [test "x$kpse_cv_have_win32" = xmingw32])
 
 KPSE_CHECK_SOCKET_LIBS
-AS_IF([test "x$enable_luatex:$enable_ipc" != xno:no],
-      [AS_CASE([$ac_cv_search_connect],
-               ["none required"], [],
-               [no], [AS_IF([test "x$enable_luatex" = xyes],
-                            [KPSE_MSG_WARN([Sorry, no socket library: can not build luaTeX])
-                             enable_luatex=no])
-                      AS_IF([test "x$enable_ipc" = xyes],
-                            [KPSE_MSG_WARN([no socket library: disabling ipc])
-                             enable_ipc=no])],
-                   [socketlibs=$ac_cv_search_connect])])
+AS_CASE([$ac_cv_search_connect],
+        ["none required"], [],
+        [no], [WEB2C_DISABLE([luatex], [no socket library])
+               WEB2C_DISABLE([ipc], [no socket library])],
+            [socketlibs=$ac_cv_search_connect])
 if test "x$enable_ipc" = xyes; then
    ipc_socketlibs=$socketlibs
    AC_DEFINE([IPC], 1, [tex: Define to enable --ipc.])
@@ -104,21 +100,15 @@ if test "x$kpse_cv_have_win32" = xno; then
   LIBS=$kpse_save_LIBS
   AS_CASE([$ac_cv_search_inet_aton],
           ["none required"], [],
-          [no], [AS_IF([test "x$enable_luatex" = xyes],
-                       [KPSE_MSG_WARN([Sorry, no inet_aton(): can not build luaTeX])
-                        enable_luatex=no])],
+          [no], [WEB2C_DISABLE([luatex], [no inet_aton()])],
               [lua_socketlibs="$lua_socketlibs $ac_cv_search_inet_aton"])
   AS_CASE([$ac_cv_search_gethostbyname],
           ["none required"], [],
-          [no], [AS_IF([test "x$enable_luatex" = xyes],
-                       [KPSE_MSG_WARN([Sorry, no gethostbyname(): can not build luaTeX])
-                        enable_luatex=no])],
+          [no], [WEB2C_DISABLE([luatex], [no gethostbyname()])],
               [lua_socketlibs="$lua_socketlibs $ac_cv_search_gethostbyname"])
   AS_CASE([$ac_cv_search_nanosleep],
           ["none required"], [],
-          [no], [AS_IF([test "x$enable_luatex" = xyes],
-                       [KPSE_MSG_WARN([Sorry, no nanosleep(): can not build luaTeX])
-                        enable_luatex=no])],
+          [no], [WEB2C_DISABLE([luatex], [no nanosleep()])],
               [lua_socketlibs="$lua_socketlibs $ac_cv_search_nanosleep"])
 fi
 AC_SUBST([lua_socketlibs])
@@ -126,9 +116,8 @@ AC_SUBST([ipc_socketlibs])
 
 KPSE_CHECK_FRAMEWORK([Carbon], [ATSUStyle style])
 KPSE_FONTCONFIG_FLAGS
-AS_IF([test "x$enable_xetex:$kpse_cv_have_Carbon:$kpse_cv_have_fontconfig" = xyes:no:no],
-      [KPSE_MSG_WARN([Sorry, can not build XeTeX without Carbon framework or fontconfig])
-       enable_xetex=no])
+AS_IF([test "x$kpse_cv_have_Carbon:$kpse_cv_have_fontconfig" = xno:no],
+      [WEB2C_DISABLE([xetex], [neither Carbon framework nor fontconfig library])])
 AM_CONDITIONAL([XETEX_MACOSX], [test "x$kpse_cv_have_Carbon" = xyes])
 AM_CONDITIONAL([XETEX_GRAPHITE], [test "x$with_graphite" != xno])
 
@@ -155,7 +144,7 @@ AS_CASE([$with_mf_x_toolkit],
         [''], [with_mf_x_toolkit=$enable_mf],
         [y|ye], [with_mf_x_toolkit=yes],
         [n], [with_mf_x_toolkit=no],
-            [KPSE_MSG_WARN([unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes.])
+            [AC_MSG_WARN([unknown --with-mf-x-toolkit argument \`$with_mf_x_toolkit'; using yes.])
              with_mf_x_toolkit=yes])
 test "x$with_x_toolkit" = xyes && with_x=yes
 test "x$with_x" = xno && with_x_toolkit=no
@@ -232,15 +221,12 @@ AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([long])
 AC_SEARCH_LIBS([pow], [m])
 AC_CHECK_FUNCS([access atoi strerror])
-AC_CHECK_HEADERS([errno.h langinfo.h sys/timeb.h sys/wait.h])
+AC_CHECK_HEADERS([errno.h langinfo.h sys/timeb.h sys/wait.h time.h])
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT
 
 dnl sharable format files.
 AC_C_BIGENDIAN
-
-dnl FIXME: needed for libpdf -> xpdf ?
-AC_CHECK_HEADERS([time.h])
 
 dnl FIXME: obsolete
 AC_TYPE_SIGNAL
@@ -252,8 +238,23 @@ KPSE_XPDF_FLAGS
 KPSE_GRAPHITE_FLAGS
 KPSE_FREETYPE2_FLAGS
 KPSE_TECKIT_FLAGS
-KPSE_ICU_FLAGS
+KPSE_ICU_XETEX_FLAGS([icule])
 KPSE_OBSDCOMPAT_FLAGS
+
+# Checks for xpdf (libpoppler) features.
+KPSE_ADD_FLAGS([xpdf])
+AC_LANG_PUSH([C++])
+AC_CACHE_CHECK([for PDFDoc::getPDFMajorVersion],
+               [kpse_cv_have_getPDFMajorVersion],
+               [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <PDFDoc.h>]],
+                                                   [[PDFDoc *pdfDoc; pdfDoc->getPDFMajorVersion();]])],
+                                  [kpse_cv_have_getPDFMajorVersion=yes],
+                                  [kpse_cv_have_getPDFMajorVersion=no])])
+AS_IF([test "x$kpse_cv_have_getPDFMajorVersion" = xyes],
+      [AC_DEFINE([HAVE_GETPDFMAJORVERSION], 1,
+                 [Define to 1 if class `PDFDoc' has the `getPDFMajorVersion' member.])])
+AC_LANG_POP([C++])
+KPSE_RESTORE_FLAGS
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
@@ -359,12 +360,15 @@ AC_CONFIG_SUBDIRS([web2c])
 
 AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile
                  omegafonts/Makefile otps/Makefile window/Makefile])
+AC_CONFIG_FILES([web2c-sh], [chmod +x web2c-sh])
+AC_CONFIG_FILES([tangle-sh], [chmod +x tangle-sh])
+AC_CONFIG_FILES([ctangleboot-sh], [chmod +x ctangleboot-sh])
 
 dnl The subdirectory web2c must be configured for the build system.
 dnl When cross compiling, can not share the cache file with the subdirectory!
 AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
 [cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$build' \
+ ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
  CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
  CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
 

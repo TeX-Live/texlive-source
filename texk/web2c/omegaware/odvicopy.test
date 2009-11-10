@@ -1,0 +1,56 @@
+#! /bin/sh
+
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+tests=omegaware/tests
+
+test -d $tests || mkdir -p $tests
+
+# First a straight copy
+#
+rm -f ofont*vf
+
+TEXMFCNF=$srcdir/../kpathsea \
+  OFMFONTS=$srcdir/$tests \
+  OVFFONTS=. \
+  ./odvicopy $srcdir/$tests/ofontd0 $tests/xofontd1 || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea \
+  OFMFONTS=$srcdir/$tests \
+  ./odvitype $tests/xofontd1 | sed '1s/ (.*)$//' >$tests/xofontd1.typ || exit 1
+
+diff $srcdir/$tests/ofontd1.typ $tests/xofontd1.typ || exit 1
+
+# Next with VF/OVF files for ofontv[4-6]
+#
+cp $srcdir/$tests/ofontv*vf .
+
+TEXMFCNF=$srcdir/../kpathsea \
+  OFMFONTS=$srcdir/$tests \
+  OVFFONTS=. \
+  ./odvicopy $tests/xofontd1 $tests/xofontd2 || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea \
+  OFMFONTS=$srcdir/$tests \
+  ./odvitype $tests/xofontd2 | sed '1s/ (.*)$//' >$tests/xofontd2.typ || exit 1
+
+diff $srcdir/$tests/ofontd2.typ $tests/xofontd2.typ || exit 1
+
+# Finally with OVF files for ofontr[1-3] and ofontv[4-6]
+#
+cp $srcdir/$tests/ofontr*vf .
+
+TEXMFCNF=$srcdir/../kpathsea \
+  OFMFONTS=$srcdir/$tests \
+  OVFFONTS=. \
+  ./odvicopy $srcdir/$tests/ofontd0 $tests/xofontd3 || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea \
+  OFMFONTS=$srcdir/$tests \
+  ./odvitype $tests/xofontd3 | sed '1s/ (.*)$//' >$tests/xofontd3.typ || exit 1
+
+diff $srcdir/$tests/ofontd3.typ $tests/xofontd3.typ || exit 1
+
+exit 0
+

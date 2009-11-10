@@ -11,23 +11,26 @@ endif ETEX
 EXTRA_PROGRAMS += etex
 
 etex_CPPFLAGS =
+etex_CFLAGS = $(WARNING_CFLAGS)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
 etex_LDADD = $(LDADD) $(ipc_socketlibs)
 
 # e-TeX C sources
-etex_c_h = etexini.c etex0.c etex1.c etex2.c etexcoerce.h etexd.h
+etex_c_h = etexini.c etex0.c etexcoerce.h etexd.h
 nodist_etex_SOURCES = $(etex_c_h) etex-pool.c etexextra.c etexdir/etexextra.h
 
-$(etex_c_h): etex-web2c
-etex-web2c: etex.p $(web2c_texmf)
-	$(web2c) etex
-	: $(synctex_convert_etex)
-	echo timestamp >$@
-	touch $(etex_c_h)
+# We must create etexd.h before building the etex_OBJECTS.
+etex_prereq = etexd.h
+$(etex_OBJECTS): $(etex_prereq)
 
-etex-pool.c: etex.pool $(makecpool_stamp) tmf-pool.h
-	$(makecpool) etex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+$(etex_c_h): etex-web2c
+	@$(web2c) etex
+etex-web2c: etex.p $(web2c_texmf)
+	@$(web2c) etex
+
+etex-pool.c: etex.pool etexd.h $(makecpool_stamp)
+	$(makecpool) etex >$@ || rm -f $@
 
 etexextra.c: etexdir/etexextra.h lib/texmfmp.c etexd.h
 	sed s/TEX-OR-MF-OR-MP/etex/ $(srcdir)/lib/texmfmp.c >$@
@@ -38,10 +41,9 @@ etexdir/etexextra.h: etexdir/etexextra.in etexdir/etex.version
 
 # Tangling e-TeX
 etex.p etex.pool: etex-tangle
-etex-tangle: tangle$(EXEEXT) etex.web etex.ch
-	$(tangle) etex etex
-	echo timestamp >$@
-	touch etex.p etex.pool
+	@$(texmf_tangle) etex etex
+etex-tangle: tangle$(EXEEXT) etex.web etex.ch tangle-sh
+	@$(texmf_tangle) etex etex
 
 # Extract etex version
 etexdir/etex.version: etexdir/etex.ch
@@ -80,8 +82,8 @@ EXTRA_DIST += \
 	etexdir/README \
 	etexdir/etex_gen.tex
 
-## e-TeX Tests
-##
+# e-TeX Tests
+#
 etex_tests = etexdir/etrip.test
 
 EXTRA_DIST += $(etex_tests)
@@ -93,7 +95,7 @@ endif ETEX
 
 .PHONY: etrip-clean
 clean-local:: etrip-clean
-## trip.test
+# etrip.test
 etrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
 	rm -f ctrip.fot ctrip.log trip.dvi ctrip.typ

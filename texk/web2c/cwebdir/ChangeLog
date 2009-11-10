@@ -1,3 +1,28 @@
+2009-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* {comm,ctang,cweav}-w2c.ch: Create a header file cweb.h with
+	prototypes for all functions declared in common.w and used in
+	ctangle.w and cweave.w or vice versa, and #include "cweb.h" in
+	cweb.c, ctangle.c, and cweave.c.
+
+	Avoid maximal compiler warnings.
+	* {comm,ctang,cweav}-w2c.ch (names_match, id_lookup, err_print,
+	fatal, overflow): Constify string params and local vars.
+	* ctang-w2c.ch (Insert the line): Rename inner local var a=>a_l,
+	not to shadow previous local.
+	* cweav-w2c.ch (out_str, app_str): Constify string params.
+	(Print a snapsh...): Rename local var k=>k_l, not to shadow
+	a param.
+	In main(), 'use' print_text() not used somewhere else.
+
+2009-08-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ../am/cweb.am (ctie_CFLAGS, cweave_CFLAGS, tie_CFLAGS),
+	../am/bootstrap.am (ctangle_CFLAGS): Enable compiler warnings.
+	* {comm,ctang,cweav}-w2c.ch: Declare most functions as static.
+	* ctang-w2c.ch, cweav-w2c.ch: Put explicit braces around
+	ambiguous else.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* comm-w2c.ch, ctang-w2c.ch, cweav-w2c.ch: drop P?C, P?H macros,

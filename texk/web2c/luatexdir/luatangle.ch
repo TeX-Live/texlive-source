@@ -53,6 +53,16 @@
 \def\title{TANGLE changes for C}
 @z
 
+@x [2] Eliminate the |end_of_TANGLE| label.
+@d end_of_TANGLE = 9999 {go here to wrap it up}
+
+@y
+@z
+@x
+label end_of_TANGLE; {go here to finish}
+@y
+@z
+
 @x [?] Define and call parse_arguments.
 procedure initialize;
   var @<Local variables for initialization@>@/
@@ -373,6 +383,11 @@ print_ln(banner); {print a ``banner line''}
 @y
 print (banner); {print a ``banner line''}
 print_ln (version_string);
+@z
+
+@x Eliminate the |end_of_TANGLE| label.
+end_of_TANGLE:
+@y
 @z
 
 @x

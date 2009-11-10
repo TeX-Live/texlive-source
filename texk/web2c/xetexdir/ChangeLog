@@ -1,3 +1,47 @@
+2009-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXOTLayoutEngine,{cpp,h}: Adjust to ICU-4.2.1.
+
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.ch: Use kpse_{in,out}_name_ok(), now in Kpathsea,
+	instead of open_{in,out}_name_ok().
+
+2009-10-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXOTLayoutEngine.h: Drop #include "layout/HanLayoutEngine.h".
+	Move #include "layout/{Arabic,Indic,Tibetan}LayoutEngine.h" and
+	declaration of class XeTeXHanLayoutEngine from here ...
+	* XeTeXOTLayoutEngine.cpp: ... to here.
+
+2009-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* FontTableCache.{cpp,h}, MathTable.h, XeTeXFontInst.{cpp,h},
+	XeTeXFontMgr.cpp, XeTeXLayoutInterface.cpp,
+	XeTeXOTLayoutEngine.{cpp,h}, XeTeXOTMath.{cpp,h}, cmaps.{cpp,h},
+	sfnt.h: Include, e.g., "layout/LETypes.h" instead of "LETypes.h"
+	for consistency with installed (system) headers.
+
+2009-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xetex.ch (do_extension): Recover variables unused by TeX.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am: Prepare compiler warnings.
+
+2009-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am: SyncTeX now integrated into ../texmfmp.h.
+
+2009-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am: Adapt to tangle-sh and web2c-sh.
+
+2009-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am (xetex_c_h): avoid to split the C code.
+
 2009-07-16  Peter Breitenlohner <peb@mppmu.mpg.de>
 
 	* am/xetex.am: Put ICU_INCLUDES first to avoid an installed

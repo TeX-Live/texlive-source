@@ -340,6 +340,20 @@ l:=3; init_str3(".")("g")("f")(gf_ext);@/
 l:=7; init_str7(".")("2")("6")("0")("2")("g")("f")(gf_ext);@/
 @z
 
+@x [81] Diagnose impossible cases.
+end; {there are no other cases}
+@y
+othercases abort('internal error');
+endcases;
+@z
+
+@x [85] Diagnose impossible cases.
+end; {there are no other cases}
+@y
+othercases abort('internal error');
+endcases;
+@z
+
 @x [88] Change home_font_area to null_string.
 l:=9; init_str9("T")("e")("X")("f")("o")("n")("t")("s")(":")(home_font_area);@/
 @y
@@ -421,7 +435,7 @@ some input is present; then it opens the output file.
 
 @p procedure start_gf;
 label done;
-var arg_buffer: ^char;
+var arg_buffer: w2c_u_string;
     arg_buf_ptr: integer;
 begin
   arg_buffer := cmdline (optind);

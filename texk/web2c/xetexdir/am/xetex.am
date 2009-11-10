@@ -10,12 +10,12 @@ bin_PROGRAMS += xetex
 endif XETEX
 EXTRA_PROGRAMS += xetex
 
-## Force Automake to use CXXLD for linking
+# Force Automake to use CXXLD for linking
 nodist_EXTRA_xetex_SOURCES = dummy.cxx
 
 libxetex = libxetex.a
 
-xetex_cppflags = -DU_STATIC_IMPLEMENTATION -I$(srcdir)/xetexdir
+xetex_cppflags = -I$(srcdir)/xetexdir
 ## Must add icu first to avoid an installed version.
 xetex_cppflags += $(ICU_INCLUDES)
 ## Must add freetype2 includes early to avoid
@@ -23,7 +23,7 @@ xetex_cppflags += $(ICU_INCLUDES)
 xetex_cppflags += $(FREETYPE2_INCLUDES)
 xetex_cppflags += $(TECKIT_INCLUDES)
 xetex_ldadd = $(libxetex) $(ICU_LIBS) $(TECKIT_LIBS)
-xetex_dependencies = $(proglib)
+xetex_dependencies = $(proglib) $(KPATHSEA_DEPEND)
 xetex_dependencies += $(ICU_DEPEND) $(TECKIT_DEPEND)
 
 if XETEX_MACOSX
@@ -56,22 +56,23 @@ xetex_ldadd += $(FREETYPE2_LIBS) $(ZLIB_LIBS)
 xetex_dependencies += $(FREETYPE2_DEPEND) $(ZLIB_DEPEND)
 
 xetex_CPPFLAGS = $(xetex_cppflags)
+xetex_CFLAGS = # $(WARNING_CFLAGS)
+xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 ## With --enable-ipc, XeTeX may need to link with -lsocket.
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
 
-xetex_DEPENDENCIES = $(xetex_dependencies) $(libxetex)
+xetex_prereq = $(libxetex)
+$(xetex_OBJECTS): $(xetex_prereq)
 
 ## XeTeX C sources
-xetex_c_h = xetexini.c xetex0.c xetex1.c xetex2.c xetexcoerce.h xetexd.h
+xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
 nodist_xetex_SOURCES = $(xetex_c_h) xetex_pool.c xetexextra.c xetexdir/xetexextra.h
 
 $(xetex_c_h): xetex-web2c
+	@$(web2c) xetex
 xetex-web2c: xetex.p $(web2c_texmf) xetexdir/xetex.defines
-	$(web2c) xetex
-	: $(synctex_convert_xetex)
-	echo timestamp >$@
-	touch $(xetex_c_h)
+	@$(web2c) xetex
 
 xetex_pool.c: xetex.pool xetexd.h
 	perl $(srcdir)/xetexdir/pool2c.pl $< $@
@@ -87,10 +88,9 @@ xetexdir/xetexextra.h: xetexdir/xetexextra.in xetexdir/xetex.version xetexdir/et
 
 ## Tangling XeTeX
 xetex.p xetex.pool: xetex-tangle
-xetex-tangle: ./otangle$(EXEEXT) xetex.web
-	$(otangle) xetex
-	echo timestamp >$@
-	touch xetex.p xetex.pool
+	@$(o_tangle) xetex
+xetex-tangle: ./otangle$(EXEEXT) xetex.web tangle-sh
+	@$(o_tangle) xetex
 
 ## Extract etex version
 xetexdir/etex.version: etexdir/etex.ch
@@ -134,6 +134,10 @@ EXTRA_DIST += \
 EXTRA_LIBRARIES += libxetex.a
 
 libxetex_a_CPPFLAGS = $(xetex_cppflags)
+libxetex_a_CFLAGS = # $(WARNING_CFLAGS)
+libxetex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
+## Not yet for ObjC++ (not yet implemented)
+libxetex_a_OBJCXXFLAGS = ## $(WARNING_OBJCXXFLAGS)
 
 libxetex_a_SOURCES = \
 	xetexdir/MathTable.h \
@@ -200,8 +204,9 @@ libxetex_a_SOURCES += \
 
 endif XETEX_GRAPHITE
 
-# We must create xetexd.h before building the libxetex_a_OBJECTS.
-$(libxetex_a_OBJECTS): xetexd.h
+# We must create xetexd.h etc. before building the libxetex_a_OBJECTS.
+libxetex_prereq = xetexd.h $(xetex_dependencies)
+$(libxetex_a_OBJECTS): $(libxetex_prereq)
 
 ## libxetexmm (Mac OS X only)
 ##

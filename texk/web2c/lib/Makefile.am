@@ -12,7 +12,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = lib.a
 
 ## We don't compile `texmfmp.c'; this file is converted into 'texextra.c'
-## for TeX, 'mfextra.c' for Metafont, 'mfextra.c' for MetaPost, ...
+## for TeX, 'mfextra.c' for Metafont, ...
 lib_a_SOURCES = \
 	basechsuffix.c \
 	chartostring.c \

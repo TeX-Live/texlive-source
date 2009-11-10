@@ -96,6 +96,13 @@ end;
 @.Bad GF file@>
 @z
 
+@x [9] Pascal Web's char
+@d text_char == char {the data type of characters in text files}
+@y
+@d char == 0..255
+@d text_char == char {the data type of characters in text files}
+@z
+
 @x [22] Redo open_gf_file to do path searching.
 @ To prepare this file for input, we |reset| it.
 
@@ -239,6 +246,13 @@ sixty_four_cases(new_row_0), sixty_four_cases(new_row_0+64),
 sixty_four_cases(new_row_0): first_par:=o-new_row_0;
 sixty_four_cases(new_row_0+64): first_par:=o-new_row_0;
 thirty_seven_cases(new_row_0+128): first_par:=o-new_row_0;
+@z
+
+@x [48] Diagnose impossible cases.
+end;
+@y
+othercases abort('internal error')
+endcases;
 @z
 
 @x [64] Break up the second oversized case statement.

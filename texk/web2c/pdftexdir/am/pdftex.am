@@ -11,7 +11,7 @@ pdftex_cppflags += -I$(srcdir)/pdftexdir
 pdftex_ldadd = $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
 pdftex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a
 
-pdftex_dependencies = $(proglib)
+pdftex_dependencies = $(proglib) $(KPATHSEA_DEPEND)
 pdftex_dependencies += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(XPDF_DEPEND)
 pdftex_dependencies += $(OBSDCOMPAT_DEPEND) libmd5.a
 
@@ -22,36 +22,35 @@ bin_PROGRAMS += pdftex
 endif PDFTEX
 EXTRA_PROGRAMS += pdftex
 
-## Force Automake to use CXXLD for linking
+# Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 
-pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(buildenv) $(TANGLE)
+pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir $(SHELL) ./tangle-sh $@ $(TANGLE)
 
 pdftex_CPPFLAGS = $(pdftex_cppflags)
+pdftex_CFLAGS = $(WARNING_CFLAGS)
+pdftex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
-## With --enable-ipc, pdfTeX may need to link with -lsocket.
+# With --enable-ipc, pdfTeX may need to link with -lsocket.
 pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
-pdftex_c_h = pdftexini.c pdftex0.c pdftex1.c pdftex2.c pdftex3.c pdftexcoerce.h pdftexd.h
+pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c pdftexdir/pdftexextra.h
 $(pdftex_c_h): pdftex-web2c
+	@$(web2c) pdftex
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
-	$(web2c) pdftex
-	: $(synctex_convert_pdftex)
-	echo timestamp >$@
-	touch $(pdftex_c_h)
+	@$(web2c) pdftex
 pdftexextra.c: pdftexd.h pdftexdir/pdftexextra.h lib/texmfmp.c pdftexd.h
 	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/lib/texmfmp.c >$@
 pdftex.p pdftex.pool: pdftex-tangle
-pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch
-	$(pdf_tangle) pdftex pdftex
-	echo timestamp >$@
-	touch pdftex.p pdftex.pool
-pdftex-pool.c: pdftex.pool $(makecpool_stamp) pdftexdir/ptexlib.h pdftexd.h
-	$(makecpool) pdftex.pool pdftexdir/ptexlib.h >$@ || rm -f $@
-## Extract pdftex version
+	@$(pdf_tangle) pdftex pdftex
+pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
+	@$(pdf_tangle) pdftex pdftex
+pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
+	$(makecpool) pdftex >$@ || rm -f $@
+# Extract pdftex version
 pdftexdir/pdftex.version: pdftexdir/pdftex.web
 	$(mkdir_p) pdftexdir
 	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
@@ -60,7 +59,7 @@ pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexd
 	sed -e s/PDFTEX-VERSION/`cat pdftexdir/pdftex.version`/ \
 	    -e s/ETEX-VERSION/`cat etexdir/etex.version`/ \
 	  $(srcdir)/pdftexdir/pdftexextra.in >$@
-## Generate pdftex.ch
+# Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
 pdftex_ch_srcs = \

@@ -1,3 +1,27 @@
+2009-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	synctex-e-mem.ch0 (just_reverse): Drop unused label found.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex.c (synctex_suffix*): Constify strings.
+	Add #include "synctex.h" for prototypes.
+	* synctex.h (synctexabort): Add prototype.
+	* synctex_main.c (synctex_help*): Constify string params.
+	(synctex_edit_proceed): Add a prototype (was a duplicate for
+	synctex_view_proceed). Drop cast.
+	* synctex_parser_utils.[ch] (_synctex_error): Constify string
+	param.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/synctex.am: Prepare compiler warnings.
+
+2009-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/synctex.am: SyncTeX now integrated into ../texmfmp.h.
+	* synctex-convert.sh (removed): Obsolete.
+
 2009-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex_main.c: re-#include "web2c/c-auto.h", needed for AIX.

@@ -38,8 +38,8 @@ authorization from the copyright holders.
 
 #include "XeTeXswap.h"
 
-#include "ICUFeatures.h"
-#include "GlyphPositioningTables.h"
+#include "layout/ICUFeatures.h"
+#include "layout/GlyphPositioningTables.h"
 
 #include "sfnt.h"
 

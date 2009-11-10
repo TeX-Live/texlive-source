@@ -49,13 +49,17 @@
 #include <string.h>
 #include "mplib.h"
 #include "mpmp.h" /* internal header */
+#include "mptfmin.h" /* internal header */
 @h
 
 @ The |font_ps_name| for a built-in font should be what PostScript expects.
 A preliminary name is obtained here from the \.{TFM} name as given in the
 |fname| argument.  This gets updated later from an external table if necessary.
 
-@c
+@(mptfmin.h@>=
+extern font_number mp_read_font_info (MP mp, char *fname);
+
+@ @c
 font_number mp_read_font_info (MP mp, char *fname) {
   boolean file_opened; /* has |tfm_infile| been opened? */
   font_number n; /* the number to return */

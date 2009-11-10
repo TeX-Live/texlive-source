@@ -11,6 +11,7 @@ liblua51_a_CPPFLAGS = -I$(top_srcdir)/luatexdir/lua51
 if !MINGW32
 liblua51_a_CPPFLAGS += -DLUA_USE_POSIX
 endif !MINGW32
+liblua51_a_CFLAGS = # $(WARNING_CFLAGS)
 
 liblua51_a_SOURCES = \
 	luatexdir/lua51/lapi.c \

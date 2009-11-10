@@ -118,14 +118,21 @@ end
     end;
 @z
 
+@x etex.ch l.4211 - Drop unused label
+procedure just_reverse(@!p:pointer);
+label found,done;
+@y
+procedure just_reverse(@!p:pointer);
+label done;
+@z
+
 @x etex.ch l.4234
 found:width(t):=width(p); link(t):=q; free_node(p,small_node_size);
-done:link(temp_head):=l;
-end;
+@y
+width(t):=width(p); link(t):=q; free_node(p,small_node_size);
+@z
 
-@ @<Adjust \(t)the LR stack for the |j...@>=
-if end_LR(p) then
-  if info(LR_ptr)<>end_LR_type(p) then
+@x etex.ch l.4241
     begin type(p):=kern_node; incr(LR_problems);
     end
   else  begin pop_LR;
@@ -144,14 +151,6 @@ else  begin push_LR(p);
     end;
   end
 @y
-found:width(t):=width(p); link(t):=q; free_node(p,small_node_size);
-                                               {{\sl Sync\TeX}: Unused label, see below}
-done:link(temp_head):=l;
-end;
-
-@ @<Adjust \(t)the LR stack for the |j...@>=
-if end_LR(p) then
-  if info(LR_ptr)<>end_LR_type(p) then
     begin type(p):=kern_node; incr(LR_problems);
         {{\sl Sync\TeX} node size watch point: |math_node| size == |kern_node| size}
     end

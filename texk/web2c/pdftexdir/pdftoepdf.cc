@@ -650,7 +650,11 @@ static void writeEncodings()
     }
     for (r = encodingList; r != 0; r = n) {
         n = r->next;
+#ifdef POPPLER_VERSION
+        r->font->decRefCnt();
+#else
         delete r->font;
+#endif
         delete r;
     }
 }
@@ -690,7 +694,11 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
     Page *page;
     int rotate;
     PDFRectangle *pagebox;
+#ifdef HAVE_GETPDFMAJORVERSION
+    int pdf_major_version_found, pdf_minor_version_found;
+#else
     float pdf_version_found, pdf_version_wanted;
+#endif
     // initialize
     if (!isInit) {
         globalParams = new GlobalParams();
@@ -705,9 +713,23 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
     // this works only for PDF 1.x -- but since any versions of PDF newer
     // than 1.x will not be backwards compatible to PDF 1.x, pdfTeX will
     // then have to changed drastically anyway.
+#ifdef HAVE_GETPDFMAJORVERSION
+    pdf_major_version_found = pdf_doc->doc->getPDFMajorVersion();
+    pdf_minor_version_found = pdf_doc->doc->getPDFMinorVersion();
+    if ((pdf_major_version_found > 1)
+     || (pdf_minor_version_found > minor_pdf_version_wanted)) {
+        const char *msg =
+            "PDF inclusion: found PDF version <%d.%d>, but at most version <1.%d> allowed";
+        if (pdf_inclusion_errorlevel > 0) {
+            pdftex_fail(msg, pdf_major_version_found, pdf_minor_version_found, minor_pdf_version_wanted);
+        } else {
+            pdftex_warn(msg, pdf_major_version_found, pdf_minor_version_found, minor_pdf_version_wanted);
+        }
+    }
+#else
     pdf_version_found = pdf_doc->doc->getPDFVersion();
     pdf_version_wanted = 1 + (minor_pdf_version_wanted * 0.1);
-    if (pdf_version_found > pdf_version_wanted) {
+    if (pdf_version_found > pdf_version_wanted + 0.01) {
         char msg[] =
             "PDF inclusion: found PDF version <%.1f>, but at most version <%.1f> allowed";
         if (pdf_inclusion_errorlevel > 0) {
@@ -716,6 +738,7 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
             pdftex_warn(msg, pdf_version_found, pdf_version_wanted);
         }
     }
+#endif
     epdf_num_pages = pdf_doc->doc->getCatalog()->getNumPages();
     if (page_name) {
         // get page by name

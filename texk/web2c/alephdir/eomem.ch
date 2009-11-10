@@ -77,6 +77,11 @@ cur_val_level:=m;
 @d ship_out_flag==(max_global_box_flag+1) {context code for `\.{\\shipout}'}
 @z
 %----------------------------------------
+@x
+@!a:small_number; {global prefix}
+@y
+@z
+%----------------------------------------
 @x eobase.ch l.2309
 begin if box_context<global_box_flag then
   begin cur_val:=box_context-box_flag; a:=0;

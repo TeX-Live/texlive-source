@@ -16,6 +16,7 @@ libluamisc_a_CPPFLAGS = \
 	$(ZLIB_INCLUDES) \
 	-I$(top_srcdir)/luatexdir/lua51 \
 	-I$(top_srcdir)/luatexdir/zziplib
+libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)
 
 libluamisc_a_SOURCES = \
 	luatexdir/luafilesystem/src/lfs.c \

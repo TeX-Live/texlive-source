@@ -8,6 +8,7 @@
 EXTRA_LIBRARIES += libmd5.a
 
 libmd5_a_CPPFLAGS = -I$(srcdir)/libmd5
+libmd5_a_CFLAGS = $(WARNING_CFLAGS)
 
 libmd5_a_SOURCES = libmd5/md5.c libmd5/md5.h
 
@@ -19,6 +20,7 @@ EXTRA_DIST += libmd5/md5.test
 TESTS += libmd5/md5.test
 
 md5main_CPPFLAGS = -I$(srcdir)/libmd5
+md5main_CFLAGS = $(WARNING_CFLAGS)
 
 md5main_SOURCES = libmd5/md5main.c
 

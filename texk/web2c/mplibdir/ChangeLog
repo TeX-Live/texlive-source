@@ -1,7 +1,52 @@
+2009-10-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libmplib.am, am/mplib.am: Enable compiler warnings.
+
+	* memio.w: Create and #include mpmemio.h (new internal header).
+	* tfmin.w: Create and #include mptfmin.h (new internal header).
+	* mp.w: #include mpmemio.h and mptfmin.h; drop extern decls for
+	functions from memio.w and tfmin.w.
+
+	Avoid many (--enable-...=max) compiler warnings.
+
+	* mp.w (mp_set_internal): Declare local string errid as const.
+	(mp_check_mem): Declare as static.
+	(mp_w_open_in, mp_print_word, mp_search_mem, mp_divide_scaled):
+	Comment out unused functions.
+	* psout.w (cs_do_debug, mp_gr_htap_ypoc): Comment out unused
+	functions.
+	* svgout.w: #include mplibsvg.h.
+	(mp_svg_font_pair_out, mp_svg_trans_pair_out,
+	mp_svg_print_glyph_defs): Declare as static.
+	(mp_svg_open_starttag, mp_svg_endtag, mp_svg_attribute): Declare
+	param strings as const.
+	(append_string): Declare local string ss as const.
+	(mp_svg_print): Drop useless (const *) cast.
+
+	* mpost.w (recorder_start, internal_set_option, run_set_list):
+	Declare as static.
+	(mpost_run_make_mpx, mpost_run_dvitomp): Declare local string
+	banner as const.
+	* mpxout.w (mpx_printf, mpx_report, mpx_warn, mpx_error,
+	mpx_abort, mpx_xfopen, mpx_match_str, mpx_def_named_color,
+	mpx_fsearch, mpx_read_fmap, mpx_read_char_adj, mpx_rename):
+	Declare param strings as const.
+	(progname): Declare global string as const.
+	(named_color_record): Declare member strings as const.
+
 2009-10-02  Taco Hoekwater <taco@elvenkind.com>
 	    
 	    * Released version of MPLib 1.208
 	
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpost.w (kpathsea_version_string): Drop extern decl.
+
+2009-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mplib.am (mplib_ctangle): Use tangle-sh.
+	* am/libmplib.am, am/mplib.am: Adapt to tangle-sh.
+
 2009-08-12  Taco Hoekwater <taco@elvenkind.com>
 	    
 	    * Released version of MPLib 1.207, including 

@@ -119,16 +119,10 @@ prepare_cmdline(lua_State * L, char **argv, int argc, int zero_offset)
     return;
 }
 
-extern string dump_name;
-extern const_string c_job_name;
-extern char *last_source_name;
-extern int last_lineno;
-
 string input_name = NULL;
 
-static string user_progname = NULL;
+static const_string user_progname = NULL;
 
-extern char *ptexbanner;
 extern int program_name_set;    /* in lkpselib.c */
 
 /* for topenin() */
@@ -550,7 +544,9 @@ void lua_initialize(int ac, char **av)
             get_lua_string("texconfig", "jobname", &input_name);
         }
         if (!dump_name) {
-            get_lua_string("texconfig", "formatname", &dump_name);
+            string temp;
+            get_lua_string("texconfig", "formatname", &temp);
+            dump_name = temp;
         }
         if ((lua_only) || ((!input_name) && (!dump_name))) {
             if (given_file)

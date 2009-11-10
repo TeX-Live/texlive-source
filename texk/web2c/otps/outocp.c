@@ -29,7 +29,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include <kpathsea/tex-file.h>
 #include "otp.h"
 
-char *otp_names[] = {
+const char *otp_names[] = {
   "                   ",
   "OTP_RIGHT_OUTPUT   ",
   "OTP_RIGHT_NUM      ",

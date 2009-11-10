@@ -30,7 +30,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #define YY_NO_UNPUT
 #define OTP_MAXCODE 0xFFFF
 int line_number = 1;
-int i,j,last;
 extern YYSTYPE yylval;
 %}
 
@@ -46,6 +45,7 @@ string		\"([^\"]|\"\")*\"
 "%".*\n		{ line_number++;}
 \r\n|\n|\r	{ line_number++;}
 {hexnumber}	{
+		int i, j;
 		yylval.yint=0;
 		for (i=2; i<yyleng; i++) {
 			j = yytext[i];
@@ -65,6 +65,7 @@ string		\"([^\"]|\"\")*\"
 		return(NUMBER);
 		}
 {octnumber}	{
+		int i, j;
 		yylval.yint=0;
 		for (i=2; i<yyleng; i++) {
 			j = yytext[i];
@@ -78,6 +79,7 @@ string		\"([^\"]|\"\")*\"
 		return(NUMBER);
 		}
 {decnumber}	{
+		int i, j;
 		yylval.yint=0;
 		for (i=0; i<yyleng; i++) {
 			j = yytext[i];
@@ -96,6 +98,7 @@ string		\"([^\"]|\"\")*\"
 		}
 {id}		{ yylval.ystring=xstrdup(yytext); return(ID); }
 {string}	{
+		int i, j, last;
 		char *newtext;
 		last=yyleng-2;
 		i=0;

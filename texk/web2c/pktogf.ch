@@ -93,6 +93,13 @@ end;
     end
 @z
 
+@x [10] Pascal Web's char
+@d text_char == char {the data type of characters in text files}
+@y
+@d char == 0..255
+@d text_char == char {the data type of characters in text files}
+@z
+
 @x [30] Remove an unused variable (de-linting)
 function pk_packed_num : integer ;
 var i, j, k : integer ;

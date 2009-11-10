@@ -1040,7 +1040,7 @@ begin
         file_ok:=false; {read failed}
       end
     else begin {no read callback}
-      if openinnameok(stringcast(nameoffile+1)) then begin
+      if kpse_in_name_ok(stringcast(nameoffile+1)) then begin
         lua_a_open_in := a_open_in(f,kpsetexformat);
         name_file_pointer := f;
         end
@@ -1074,7 +1074,7 @@ begin
       lua_a_open_out := false;
     end
   else begin
-        if openoutnameok(stringcast(nameoffile+1)) then begin
+        if kpse_out_name_ok(stringcast(nameoffile+1)) then begin
       lua_a_open_out := a_open_out(f);
       name_file_pointer := f;
       end
@@ -1102,7 +1102,7 @@ begin
       lua_b_open_out := false;
     end
   else begin
-        if openoutnameok(stringcast(nameoffile+1)) then begin
+        if kpse_out_name_ok(stringcast(nameoffile+1)) then begin
       lua_b_open_out := b_open_out(f);
       name_file_pointer := f;
       end

@@ -78,6 +78,13 @@ end;
 
 @z
 
+@x [10] Pascal Web's char
+@d text_char == char {the data type of characters in text files}
+@y
+@d char == 0..255
+@d text_char == char {the data type of characters in text files}
+@z
+
 @x [32] Remove typ_file from globals.
 @ @<Glob...@>=
 @!pk_file:byte_file;  {where the input comes from}
@@ -123,7 +130,7 @@ end;
     and output files}
 @!pk_loc:integer; {how many bytes have we read?}
 @y
-@!pk_name:^char; {name of input and output files}
+@!pk_name:c_string; {name of input and output files}
 @!cur_loc:integer; {how many bytes have we read?}
 @z
 

@@ -42,7 +42,7 @@ authorization from the copyright holders.
 #ifndef __SFNT_H
 #define __SFNT_H
 
-#include "LETypes.h"
+#include "layout/LETypes.h"
 
 
 #ifndef ANY_NUMBER

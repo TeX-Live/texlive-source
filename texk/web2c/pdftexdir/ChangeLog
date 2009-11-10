@@ -1,6 +1,59 @@
+2009-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftoepdf.cc: Adapt to poppler-0.12.
+
+	* FIXME: epdf.h, ptexlib.h: Multiple prototypes for pdftex_fail,
+	pdftex_warn, and probably others.
+
+2009-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am, am/ttf2afm.am: Enable compiler warnings.
+
+	* mapfile.c, ptexlib.h: Declare pdfinitmapfile() param string
+	as const.
+	* pdftex.ch (get_strings_started): Drop unused variables.
+	* ttf2afm.c: All functions: ANSI C definition, declare as static.
+	(ttf_fail): Declare as noreturn.
+	(ttf_fail, ttf_warn, name_lookup, ttf_seek_tab, ttf_seek_off):
+	Declare param strings as const.
+	(get_kern_value): Comment out unused function.
+
+2009-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.ch (do_extension): Recover variables unused by TeX.
+
 2009-09-16  Han The Thanh <hanthethanh@gmail.com>
 
 	* writettf.c: patch for TTC from Liu Yubao <yubao.liu@gmail.com>
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am: Adapt to new makecpool with one argument.
+
+2009-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libpdftex.am, am/pdftosrc.am: Prepare compiler warnings.
+
+2009-08-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c: #include <kpathsea/version.h> and drop extern decls.
+
+2009-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ttf2afm.am (ttf2afm_DEPENDENCIES): Use default_dependencies.
+
+2009-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am: SyncTeX now integrated into ../texmfmp.h.
+
+2009-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am (pdf_tangle): Use tangle-sh.
+	Adapt to tangle-sh and web2c-sh.
+
+2009-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am (pdftex_c_h): avoid to split the C code.
 
 2009-08-12  Karl Berry  <karl@tug.org>
 
@@ -19,13 +72,12 @@
         * pdftex.web: bugfix from Hartmut: fix \pdfobj file {foo} for files
 	          foo that don't end with '\n'
 
-
 2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* epdf.h, ttf2afm.c, writet1.c: 
 	removed #include <kpathsea/c-proto.h>.
 	* avlstuff.c, epdf.c: removed #include <kpathsea/c-proto.h> and
-	 #include <stdarg.h>.
+	#include <stdarg.h>.
 
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

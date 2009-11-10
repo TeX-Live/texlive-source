@@ -30,7 +30,6 @@ typedef struct statistic {
     void *value;
 } statistic;
 
-extern char *ptexbanner;
 extern void lua_nodelib_push_fast(lua_State * L, halfword n);
 
 typedef char *(*charfunc) (void);

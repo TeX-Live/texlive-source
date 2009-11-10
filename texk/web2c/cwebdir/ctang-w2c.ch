@@ -87,7 +87,7 @@ typedef short boolean;
 
 Section 6.
 
-@x l.36
+@x common.h l.36
 #include <stdio.h>
 @y
 #include <stdio.h>
@@ -98,22 +98,17 @@ extern char *versionstring;
 
 Section 9.
 
-@x common.h l.109
+@x common.h l.109 - protos now all in cweb.h.
 extern name_pointer id_lookup(); /* looks up a string in the identifier table */
 extern name_pointer section_lookup(); /* finds section name */
 extern void print_section_name(), sprint_section_name();
 @y
-/* looks up a string in the identifier table */
-extern name_pointer id_lookup (char*, char*, char);
-/* finds section name */
-extern name_pointer section_lookup (char*, char*, char);
-extern void print_section_name (name_pointer);
-extern void sprint_section_name (char*, name_pointer);
+#include "cweb.h"
 @z
 
 Section 10.
 
-@x common.h l.123 - explicit types.
+@x common.h l.123 - explicit types, protos now all in cweb.h.
 extern history; /* indicates how bad this run was */
 extern err_print(); /* print error message and context */
 extern wrap_up(); /* indicate |history| and exit */
@@ -121,10 +116,6 @@ extern void fatal(); /* issue error message and die */
 extern void overflow(); /* succumb because a table has overflowed */
 @y
 extern int history; /* indicates how bad this run was */
-extern void err_print (char*); /* print error message and context */
-extern int wrap_up (void); /* indicate |history| and exit */
-extern void fatal (char*, char*); /* issue error message and die */
-extern void overflow (char*); /* succumb because a table has overflowed */
 @z
 
 Section 11.
@@ -149,22 +140,18 @@ extern int line[]; /* number of current line in the stacked files */
 extern int change_line; /* number of current line in change file */
 @z
 
-@x common.h l.153 - explicit types.
+@x common.h l.153 - protos now all in cweb.h.
 extern reset_input(); /* initialize to read the web file and change file */
 extern get_line(); /* inputs the next line */
 extern check_complete(); /* checks that all changes were picked up */
 @y
-extern void reset_input (void); /* initialize to read the web file and change file */
-extern int get_line (void); /* inputs the next line */
-extern void check_complete (void); /* checks that all changes were picked up */
 @z
 
 Section 15.
 
-@x common.h l.192
+@x common.h l.192 - protos now all in cweb.h.
 extern void common_init();
 @y
-extern void common_init (void);
 @z
 
 Section 21.
@@ -175,7 +162,7 @@ name_pointer p; /* points to the proposed match */
 char *first; /* position of first character of string */
 int l; /* length of identifier */
 @y
-int names_match (name_pointer p, char *first, int l, char t)
+int names_match (name_pointer p, const char *first, int l, char t)
 @z
 
 Section 22.
@@ -195,44 +182,54 @@ init_p (name_pointer p, char t) {}
 
 Section 26.
 
-@x l.262
+@x l.261
+void
 store_two_bytes(x)
 sixteen_bits x;
 @y
+static void
 store_two_bytes (sixteen_bits x)
 @z
 
 Section 30.
 
-@x l.338
+@x l.337
+void
 push_level(p) /* suspends the current level */
 name_pointer p;
 @y
+static void
 push_level (name_pointer p) /* suspends the current level */
 @z
 
 Section 31.
 
-@x l.357
+@x l.356
+void
 pop_level(flag) /* do this when |cur_byte| reaches |cur_end| */
 int flag; /* |flag==0| means we are in |output_defs| */
 @y
+static void
 pop_level (int flag) /* do this when |cur_byte| reaches |cur_end| */
 @z
 
 Section 33.
 
-@x l.393
+@x l.392
+void
 get_output() /* sends next token to |out_char| */
 @y
+static void
 get_output (void) /* sends next token to |out_char| */
 @z
 
 Section 37.
 
-@x l.483
+@x l.482
+void
 flush_buffer() /* writes one line to output file */
 @y
+static void
 flush_buffer (void) /* writes one line to output file */
 @z
 
@@ -241,14 +238,16 @@ Section 41.
 @x l.534
 void phase_two();
 @y
-void phase_two (void);
+static void phase_two (void);
 @z
 
 Section 42.
 
-@x l.538
+@x l.537
+void
 phase_two () {
 @y
+static void
 phase_two (void) {
 @z
 
@@ -257,14 +256,16 @@ Section 46.
 @x l.603
 void output_defs();
 @y
-void output_defs (void);
+static void output_defs (void);
 @z
 
 Section 47.
 
-@x l.607
+@x l.606
+void
 output_defs()
 @y
+static void
 output_defs (void)
 @z
 
@@ -287,9 +288,11 @@ out_char (eight_bits cur_char)
 
 Section 58.
 
-@x l.815
+@x l.814
+eight_bits
 skip_ahead() /* skip to next control code */
 @y
+static eight_bits
 skip_ahead (void) /* skip to next control code */
 @z
 
@@ -299,7 +302,8 @@ Section 60.
 int skip_comment(is_long_comment) /* skips over comments */
 boolean is_long_comment;
 @y
-int skip_comment (boolean is_long_comment) /* skips over comments */
+static int
+skip_comment (boolean is_long_comment) /* skips over comments */
 @z
 
 Section 62
@@ -311,26 +315,52 @@ Section 62
 
 Section 63.
 
-@x l.902
+@x l.901
+eight_bits
 get_next() /* produces the next input token */
 @y
+static eight_bits
 get_next (void) /* produces the next input token */
+@z
+
+Section 63.
+
+@x l.954
+    else if (*loc=='>') if (*(loc+1)=='*') {loc++; compress(minus_gt_ast);}
+                        else compress(minus_gt); break;
+@y
+    else if (*loc=='>') {if (*(loc+1)=='*') {loc++; compress(minus_gt_ast);}
+                         else compress(minus_gt);} break;
 @z
 
 Section 76.
 
-@x l.1201
+@x l.1200
+void
 scan_repl(t) /* creates a replacement text */
 eight_bits t;
 @y
+static void
 scan_repl (eight_bits t) /* creates a replacement text */
+@z
+
+Section 77.
+
+@x l.1232 -- rename local var, not to shadow previous local
+{int a=id_lookup(id_first,id_loc,0)-name_dir; app_repl((a / 0400)+0200);
+  app_repl(a % 0400);}
+@y
+{int a_l=id_lookup(id_first,id_loc,0)-name_dir; app_repl((a_l / 0400)+0200);
+  app_repl(a_l % 0400);}
 @z
 
 Section 83.
 
-@x l.1359
+@x l.1358
+void
 scan_section()
 @y
+static void
 scan_section (void)
 @z
 
@@ -339,14 +369,16 @@ Section 90.
 @x l.1458
 void phase_one();
 @y
-void phase_one (void);
+static void phase_one (void);
 @z
 
 Section 91.
 
-@x l.1462
+@x l.1461
+void
 phase_one() {
 @y
+static void
 phase_one (void) {
 @z
 
@@ -355,14 +387,16 @@ Section 92.
 @x l.1476
 void skip_limbo();
 @y
-void skip_limbo (void);
+static void skip_limbo (void);
 @z
 
 Section 93.
 
-@x l.1480
+@x l.1479
+void
 skip_limbo()
 @y
+static void
 skip_limbo (void)
 @z
 

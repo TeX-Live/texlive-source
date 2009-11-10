@@ -3,9 +3,17 @@
 ## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-ACLOCAL_AMFLAGS = -I ../../m4
+ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
-INCLUDES = -I$(top_builddir)/.. $(KPATHSEA_INCLUDES)
+# First $(KPATHSEA_INCLUDES), then -I$(top_srcdir)/..
+# for the case of installed (system) kpathsea headers.
+INCLUDES = -I$(top_builddir)/.. $(KPATHSEA_INCLUDES) -I$(top_srcdir)/..
+AM_CPPFLAGS =
+## Not yet for C, C++, and ObjC++ (too many warnings or not yet implemented)
+AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CXXFLAGS = ## $(WARNING_CXXFLAGS)
+## Not yet for ObjC++ (not yet implemented)
+AM_OBJCXXFLAGS = ## $(WARNING_OBJCXXFLAGS)
 
 version = $(WEB2CVERSION)
 
@@ -31,7 +39,7 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 ## The sh script that does the conversion.
-web2c = srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert
+web2c = $(SHELL) ./web2c-sh $@
 
 ## We put this in the web2c directory because it runs on the build system, it
 ## is separate from (and simpler than) the actual web-to-C conversion programs.
@@ -43,30 +51,33 @@ web2c_common = web2c/convert web2c/common.defines
 # Thus we depend on the auxiliary files web2c/stamp-*.
 web2c_stamps = web2c/stamp-fixwrites web2c/stamp-splitup web2c/stamp-web2c
 makecpool_stamp = web2c/stamp-makecpool
-web2c_depend = $(web2c_common) $(web2c_stamps)
+web2c_depend = $(web2c_common) $(web2c_stamps) web2c-sh
 web2c_texmf = $(web2c_depend) web2c/texmf.defines web2c/coerce.h
 
-## This is right for most Web2C programs
+# This is right for most Web2C programs
 LDADD = $(proglib) $(KPATHSEA_LIBS)
-
-## Automake automatically uses $(proglib)=lib/lib.a as dependency.
-## This does not work for the configure substitution  $(KPATHSEA_LIBS),
-## thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
-
-# Rebuild $(proglib)
-$(proglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
-	cd lib && $(MAKE) $(AM_MAKEFLAGS)
+# Automake automatically uses $(proglib)=lib/lib.a as dependency.
+# This does not work for the configure substitution $(KPATHSEA_LIBS),
+# thus we must explicitly use these $(default_dependencies) for
+# programs that do not depend on tangle or ctangle.
+default_dependencies = $(proglib) $(KPATHSEA_DEPEND)
 
 # Rebuild Web2C programs
 web2c/stamp-fixwrites: $(web2c_common) ${srcdir}/web2c/*.[chly]
 	cd web2c && $(MAKE) $(AM_MAKEFLAGS) stamp-fixwrites
+	touch $@
 web2c/stamp-splitup: $(web2c_common) ${srcdir}/web2c/*.[chly]
 	cd web2c && $(MAKE) $(AM_MAKEFLAGS) stamp-splitup
+	touch $@
 web2c/stamp-web2c: $(web2c_common) ${srcdir}/web2c/*.[chly]
 	cd web2c && $(MAKE) $(AM_MAKEFLAGS) stamp-web2c
+	touch $@
 web2c/stamp-makecpool: $(web2c_common) ${srcdir}/web2c/makecpool.c
 	cd web2c && $(MAKE) $(AM_MAKEFLAGS) stamp-makecpool
 
+# Rebuild $(proglib)
+$(proglib): ${srcdir}/lib/*.c
+	cd lib && $(MAKE) $(AM_MAKEFLAGS)
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 ## Rebuild libz
@@ -86,26 +97,29 @@ web2c/stamp-makecpool: $(web2c_common) ${srcdir}/web2c/makecpool.c
 ## Rebuild libsicuxxx
 @ICU_RULE@
 
-## The environment for building.
+# The environment for building.
 buildenv = TEXMFCNF=$(srcdir)/../kpathsea
 
-## Calling tangle & Co.
+# Calling tangle & Co.
 tangle = WEBINPUTS=.:$(srcdir) $(buildenv) $(TANGLE)
 tangleboot = WEBINPUTS=.:$(srcdir) $(buildenv) $(TANGLEBOOT)
 otangle = WEBINPUTS=.:$(srcdir) $(buildenv) $(OTANGLE)
 ctangle = $(buildenv) $(CTANGLE)
-ctangleboot = $(buildenv) $(CTANGLEBOOT)
 tie = WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
 
-## For trip, trap, and other tests
+# Calling tangle & Co. via tangle-sh (several output files)
+texmf_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(TANGLE)
+o_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
+
+# For trip, trap, and other tests
 DIFF = diff
 DIFFFLAGS =
 TESTS_ENVIRONMENT = DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
 
-## The environment for making dumps.
-## No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain
-## suitable absolute paths at this point.  Those are converted to
-## SELFAUTO* paths on installation.
+# The environment for making dumps.
+# No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain
+# suitable absolute paths at this point.  Those are converted to
+# SELFAUTO* paths on installation.
 dumpenv = TEXMFCNF=../kpathsea
 
 ## ################################

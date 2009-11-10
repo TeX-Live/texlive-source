@@ -72,28 +72,28 @@ recorder_change_filename (string new_name)
 
 /* helper for recorder_record_* */
 static void
-recorder_record_name (string prefix, const_string nameoffile)
+recorder_record_name (const_string prefix, const_string name)
 {
     if (recorder_enabled) {
         if (!recorder_file)
             recorder_start();
-        fprintf(recorder_file, "%s %s\n", prefix, nameoffile);
+        fprintf(recorder_file, "%s %s\n", prefix, name);
         fflush(recorder_file);
     }
 }
 
-/* record an input file */
+/* record an input file name */
 void
-recorder_record_input (const_string nameoffile)
+recorder_record_input (const_string name)
 {
-    recorder_record_name ("INPUT", nameoffile);
+    recorder_record_name ("INPUT", name);
 }
 
-/* record an output file */
+/* record an output file name */
 void
-recorder_record_output (const_string nameoffile)
+recorder_record_output (const_string name)
 {
-    recorder_record_name ("OUTPUT", nameoffile);
+    recorder_record_name ("OUTPUT", name);
 }
 
 /* Open an input file F, using the kpathsea format FILEFMT and passing
@@ -241,7 +241,9 @@ open_output (FILE **f_ptr, const_string fopen_mode)
         string texmfoutput = kpse_var_value("TEXMFOUTPUT");
 
         if (texmfoutput && *texmfoutput && !absolute) {
-            string fname = concat3(texmfoutput, DIR_SEP_STRING, nameoffile+1);
+            if (fname != nameoffile + 1)
+                free(fname);
+            fname = concat3(texmfoutput, DIR_SEP_STRING, nameoffile+1);
             *f_ptr = fopen(fname, fopen_mode);
         }
     }

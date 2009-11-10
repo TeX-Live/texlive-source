@@ -1,4 +1,4 @@
-% 
+%
 % This file is part of the Omega project, which
 % is based in the web2c distribution of TeX.
 %
@@ -77,11 +77,11 @@ in 1989.
 
 Extensions to handle extended font metric files (``\.{OFM}'') were
 added by John Plaice in December 1995 and January 1996, resulting in the
-new program \.{OPLtoOFM}.  In the following documentation, all unchanged
+new program \.{OPL2OFM}.  In the following documentation, all unchanged
 references to the \.{PLtoTF} program and to \.{TFM} and \.{PL} files also
-apply to the \.{OPLtoOFM} program and to \.{OFM} and \.{OPL} files.
+apply to the \.{OPL2OFM} program and to \.{OFM} and \.{OPL} files.
 
-The |banner| string defined here should be changed whenever \.{OPLtoOFM}
+The |banner| string defined here should be changed whenever \.{OPL2OFM}
 gets modified.
 
 @d banner=='This is OPL2OFM, Version 1.12'
@@ -128,15 +128,15 @@ reduce \.{PLtoTF}'s capacity.
 @!hash_mult=16007; {another prime}
 @!tfm_size=2000000; {maximum length of |tfm| data, in bytes}
 @!lig_size=800000; {maximum length of |lig_kern| program, in words}
-@!max_char=65535; {the largest character number in a font} 
-@!xmax_char=65536; {|max_char|+1} 
-@!xxmax_char=65537;{|max_char|+2} 
-@!xxxmax_char=65538;{|max_char|+3} 
-@!mem_size=262144; {|max_char|*4+8} 
-@!max_width=65535; {the largest character width number} 
-@!max_height=255; {the largest character height number} 
-@!max_depth=255; {the largest character depth number} 
-@!max_italic=255; {the largest character italic correction number} 
+@!max_char=65535; {the largest character number in a font}
+@!xmax_char=65536; {|max_char|+1}
+@!xxmax_char=65537;{|max_char|+2}
+@!xxxmax_char=65538;{|max_char|+3}
+@!mem_size=262144; {|max_char|*4+8}
+@!max_width=65535; {the largest character width number}
+@!max_height=255; {the largest character height number}
+@!max_depth=255; {the largest character depth number}
+@!max_italic=255; {the largest character italic correction number}
 
 @ Here are some macros for common programming idioms.
 
@@ -865,6 +865,7 @@ dictionary is kept in |equiv[k]|. The numeric |equiv| codes are given
 symbolic meanings by the following definitions.
 
 @d comment_code=0
+@#{property names at the outer level}
 @d check_sum_code=1
 @d design_size_code=2
 @d design_units_code=3
@@ -876,10 +877,20 @@ symbolic meanings by the following definitions.
 @d font_dimen_code=9
 @d lig_table_code=10
 @d boundary_char_code=11
-@d font_dir_code=14
-@d n_font_dir_code=15
-@d character_code=16
+@d character_code=14
+@d font_dir_code=15
+@d n_font_dir_code=16
+@d ofm_level_code=17
+@d font_rule_code=18
+@d font_glue_code=19
+@d font_penalty_code=20
+@d font_mvalue_code=21
+@d font_fvalue_code=22
+@d font_ivalue_code=23
+@d char_repeat_code=24
+@#{property names in a FONTDIMEN list}
 @d parameter_code=30
+@#{property names in a CHARACTER list}
 @d char_info_code=70
 @d width=1
 @d height=2
@@ -928,27 +939,31 @@ symbolic meanings by the following definitions.
 @d sec_mid_vert_code=char_info_code+sec_mid_vert
 @d sec_base_slant_code=char_info_code+sec_base_slant
 @d next_larger_code=100
-@d var_char_code=102
+@d char_ivalue_code=111
+@d char_fvalue_code=112
+@d char_mvalue_code=113
+@d char_rule_code=114
+@d char_glue_code=115
+@d char_penalty_code=116
+@d var_char_code=117
+@#{property names in a LIGTABLE list}
 @d label_code=130
 @d stop_code=131
 @d skip_code=132
 @d krn_code=133
 @d lig_code=134
-@d ofm_level_code=140
-@d char_repeat_code=150
-@d char_ivalue_code=151
-@d char_fvalue_code=152
-@d char_mvalue_code=153
-@d char_rule_code=154
-@d char_glue_code=155
-@d char_penalty_code=156
-@d font_rule_code=160 
-@d rule_code=161   
+@d clabel_code=150
+@d cpen_code=151
+@d cglue_code=152
+@d cpenglue_code=153
+@d ckrn_code=154
+@#{property names in a FONTRULE list}
+@d rule_code=161
 @d rule_width_code=162
 @d rule_height_code=163
 @d rule_depth_code=164
-@d font_glue_code=170
-@d glue_code=171   
+@#{property names in a FONTGLUE list}
+@d glue_code=171
 @d glue_type_code=172
 @d glue_stretch_order_code=173
 @d glue_shrink_order_code=174
@@ -957,41 +972,18 @@ symbolic meanings by the following definitions.
 @d glue_shrink_code=177
 @d glue_char_code=178
 @d glue_rule_code=179
-@d order_unit_code=181
-@d order_fi_code=182
-@d order_fil_code=183
-@d order_fill_code=184
-@d order_filll_code=185
-@d type_normal_code=186
-@d type_aleaders_code=187
-@d type_cleaders_code=188
-@d type_xleaders_code=189
-@d font_penalty_code=190
-@d penalty_code=191   
+@#{property names in a FONTPENALTY list}
+@d penalty_code=191
 @d penalty_val_code=192
-@d font_mvalue_code=200
-@d mvalue_code=201   
-@d mvalue_val_code=202
-@d font_fvalue_code=210
-@d fvalue_code=211   
-@d fvalue_val_code=212
-@d font_ivalue_code=220
-@d ivalue_code=221   
-@d ivalue_val_code=222
-@d clabel_code=231  
-@d cpen_code=232
-@d cglue_code=233
-@d cpenglue_code=234
-@d ckrn_code=235
-@d TL_dir_code=240
-@d LT_dir_code=241
-@d TR_dir_code=242
-@d LB_dir_code=243
-@d BL_dir_code=244
-@d RT_dir_code=245
-@d BR_dir_code=246
-@d RB_dir_code=247
-
+@#{property names in a FONTMVALUE list}
+@d mvalue_code=193
+@d mvalue_val_code=194
+@#{property names in a FONTFVALUE list}
+@d fvalue_code=195
+@d fvalue_val_code=196
+@#{property names in a FONTIVALUE list}
+@d ivalue_code=197
+@d ivalue_val_code=198
 
 @<Glo...@>=
 @!equiv:array[0..max_name_index] of byte;
@@ -1157,15 +1149,6 @@ load8("G")("L")("U")("E")("C")("H")("A")("R")(glue_char_code);@/
 load6("G")("L")("U")("E")("W")("D")(glue_width_code);@/
 load11("G")("L")("U")("E")("S")("T")("R")("E")("T")("C")("H")(glue_stretch_code);@/
 load10("G")("L")("U")("E")("S")("H")("R")("I")("N")("K")(glue_shrink_code);@/
-load4("U")("N")("I")("T")(order_unit_code);@/
-load2("F")("I")(order_fi_code);@/
-load3("F")("I")("L")(order_fil_code);@/
-load4("F")("I")("L")("L")(order_fill_code);@/
-load5("F")("I")("L")("L")("L")(order_filll_code);@/
-load6("N")("O")("R")("M")("A")("L")(type_normal_code);@/
-load8("A")("L")("E")("A")("D")("E")("R")("S")(type_aleaders_code);@/
-load8("C")("L")("E")("A")("D")("E")("R")("S")(type_cleaders_code);@/
-load8("X")("L")("E")("A")("D")("E")("R")("S")(type_xleaders_code);@/
 load11("F")("O")("N")("T")("P")("E")("N")("A")("L")("T")("Y")(font_penalty_code);@/
 load7("P")("E")("N")("A")("L")("T")("Y")(penalty_code);@/
 load10("P")("E")("N")("A")("L")("T")("Y")("V")("A")("L")(penalty_val_code);@/
@@ -1178,14 +1161,6 @@ load9("F")("V")("A")("L")("U")("E")("V")("A")("L")(fvalue_val_code);@/
 load10("F")("O")("N")("T")("I")("V")("A")("L")("U")("E")(font_ivalue_code);@/
 load6("I")("V")("A")("L")("U")("E")(ivalue_code);@/
 load9("I")("V")("A")("L")("U")("E")("V")("A")("L")(ivalue_val_code);@/
-load2("T")("L")(TL_dir_code);
-load2("L")("T")(LT_dir_code);
-load2("T")("R")(TR_dir_code);
-load2("L")("B")(LB_dir_code);
-load2("B")("L")(BL_dir_code);
-load2("R")("T")(RT_dir_code);
-load2("B")("R")(BR_dir_code);
-load2("R")("B")(RB_dir_code);
 
 @ @<Enter the parameter names@>=
 load5("S")("L")("A")("N")("T")(parameter_code+1);@/
@@ -1787,9 +1762,7 @@ might arise.
 @<Read a font property value@>=
 begin get_name;
 if cur_code=comment_code then skip_to_end_of_item
-else if (cur_code<110) and (cur_code>character_code) then 
-  flush_error('This property name doesn''t belong on the outer level')
-else if (cur_code>=110) and ((cur_code mod 10)<>0) then
+else if cur_code>char_repeat_code then
   flush_error('This property name doesn''t belong on the outer level')
 @.This property name doesn't belong...@>
 else  begin @<Read the font property value specified by |cur_code|@>;
@@ -1964,7 +1937,10 @@ end
 @ @<Read a ligature/kern command@>=
 begin get_name;
 if cur_code=comment_code then skip_to_end_of_item
-else if (cur_code>=label_code) and (cur_code<=(lig_code+11)) then begin
+else if (cur_code<label_code)or(cur_code>ckrn_code) then
+  flush_error('This property name doesn''t belong in a LIGTABLE list')
+@.This property name doesn't belong...@>
+else begin
   case cur_code of
     label_code:@<Read a label step@>;
     stop_code:@<Read a stop step@>;
@@ -1972,21 +1948,14 @@ else if (cur_code>=label_code) and (cur_code<=(lig_code+11)) then begin
     krn_code:@<Read a kerning step@>;
     lig_code,lig_code+1,lig_code+2,lig_code+3,lig_code+5,
       lig_code+6,lig_code+7,lig_code+11:@<Read a ligature step@>;
-    end; {there are no other cases |>=label_code|}
-  finish_the_property;
-end
-else if (cur_code>=clabel_code) and (cur_code<=cpenglue_code) then begin
-  case cur_code of
     clabel_code:@<Read an extended label step@>;
     cpen_code:@<Read an extended penalty step@>;
     cglue_code:@<Read an extended glue step@>;
     cpenglue_code:@<Read an extended penalty/glue step@>;
     ckrn_code:@<Read an extended kern step@>;
-    end; {there are no other cases |>=label_code|}
+    end; {there are no other cases |>=label_code| and |<=ckrn_code|}
   finish_the_property;
-end
-else flush_error('This property name doesn''t belong in a LIGTABLE list');
-@.This property name doesn't belong...@>
+  end;
 end
 
 @ When a character is about to be tagged, we call the following
@@ -2157,27 +2126,27 @@ else incr(nl);
 lk_step_ended:=true;
 end
 
-@ @<Read an extended kern step@>= 
+@ @<Read an extended kern step@>=
 begin lig_kern[nl].b0:=256; lig_kern[nl].b1:=get_byte;
 lig_kern[nl].b2:=20;
-kern[nk]:=get_fix; krn_ptr:=0; 
-while kern[krn_ptr]<>kern[nk] do incr(krn_ptr);  
+kern[nk]:=get_fix; krn_ptr:=0;
+while kern[krn_ptr]<>kern[nk] do incr(krn_ptr);
 if krn_ptr=nk then begin
-  if nk<max_kerns then incr(nk) 
+  if nk<max_kerns then incr(nk)
   else begin
     err_print('Sorry, too many different kerns for me to handle');
-@.Sorry, too many different kerns...@> 
-    decr(krn_ptr); 
-    end; 
-  end; 
-if krn_ptr>65535 then 
-  err_print('Sorry, too many different kerns for me to handle'); 
+@.Sorry, too many different kerns...@>
+    decr(krn_ptr);
+    end;
+  end;
+if krn_ptr>65535 then
+  err_print('Sorry, too many different kerns for me to handle');
 lig_kern[nl].b3:=krn_ptr;
-if nl>=max_lig_steps-1 then 
-  err_print('Sorry, LIGTABLE too long for me to handle') 
-@.Sorry, LIGTABLE too long...@> 
-else incr(nl); 
-lk_step_ended:=true; 
+if nl>=max_lig_steps-1 then
+  err_print('Sorry, LIGTABLE too long for me to handle')
+@.Sorry, LIGTABLE too long...@>
+else incr(nl);
+lk_step_ended:=true;
 end
 
 @ @<Globals...@>=
@@ -2297,7 +2266,7 @@ for c:=(cprime+1) to (cprime+crange) do begin
   char_ht[c]:=char_ht[cprime];
   char_dp[c]:=char_dp[cprime];
   char_ic[c]:=char_ic[cprime];
-  for tab:=0 to (nki+nkf+nkr+nkg+nkp-1) do begin
+  for tab:=0 to (nki+nkf+nkm+nkr+nkg+nkp-1) do begin
     char_table[c,tab]:= char_table[cprime,tab];
     end;
   end;
@@ -2317,13 +2286,28 @@ for c:=0 to max_char do
   for ch_table:=0 to char_param_tables do
     char_table[c,ch_table]:=0;
 
-@ @<Read a character property@>=
+@ @d get_char_table_entry(#)==
+  begin ch_table:=get_integer;
+  if (ch_table<0)or(ch_table>=#) then
+    flush_error('Character property index out of range')
+@.Character property index...@>
+  else  begin get_char_table_entry_end
+@d get_char_table_entry_end(#)==
+    ch_table:=ch_table+#;
+    if ch_table>char_param_tables then
+      flush_error('Character property exceeds table size')
+@.Character property exceeds...@>
+    else  begin
+      if ch_table>npc then npc:=ch_table;
+      char_table[c,ch_table]:=get_integer;
+      end;
+    end;
+  end
+
+@<Read a character property@>=
 begin get_name;
 if cur_code=comment_code then skip_to_end_of_item
-else if (cur_code<char_wd_code)or
-        ((cur_code>var_char_code)and
-         ((cur_code<char_ivalue_code)or(cur_code>char_penalty_code)))
-then
+else if (cur_code<char_wd_code)or(cur_code>var_char_code) then
   flush_error('This property name doesn''t belong in a CHARACTER list')
 @.This property name doesn't belong...@>
 else begin
@@ -2332,65 +2316,35 @@ else begin
     char_ht_code:char_ht[c]:=sort_in(height,get_fix);
     char_dp_code:char_dp[c]:=sort_in(depth,get_fix);
     char_ic_code:char_ic[c]:=sort_in(italic,get_fix);
-    sec_width_code:temp_value:=get_fix;
-    sec_height_code:temp_value:=get_fix;
-    sec_depth_code:temp_value:=get_fix;
-    sec_italic_code:temp_value:=get_fix;
-    accent_code:temp_value:=get_fix;
-    prim_top_axis_code:temp_value:=get_fix;
-    prim_top_axis_bis_code:temp_value:=get_fix;
-    prim_bot_axis_code:temp_value:=get_fix;
-    prim_bot_axis_bis_code:temp_value:=get_fix;
-    prim_mid_hor_code:temp_value:=get_fix;
-    prim_mid_vert_code:temp_value:=get_fix;
-    prim_base_slant_code:temp_value:=get_fix;
-    sec_top_axis_code:temp_value:=get_fix;
-    sec_top_axis_bis_code:temp_value:=get_fix;
-    sec_bot_axis_code:temp_value:=get_fix;
-    sec_bot_axis_bis_code:temp_value:=get_fix;
-    sec_mid_hor_code:temp_value:=get_fix;
-    sec_mid_vert_code:temp_value:=get_fix;
+    sec_width_code,
+    sec_height_code,
+    sec_depth_code,
+    sec_italic_code,
+    accent_code,
+    prim_top_axis_code,
+    prim_top_axis_bis_code,
+    prim_bot_axis_code,
+    prim_bot_axis_bis_code,
+    prim_mid_hor_code,
+    prim_mid_vert_code,
+    prim_base_slant_code,
+    sec_top_axis_code,
+    sec_top_axis_bis_code,
+    sec_bot_axis_code,
+    sec_bot_axis_bis_code,
+    sec_mid_hor_code,
+    sec_mid_vert_code,
     sec_base_slant_code:temp_value:=get_fix;
     next_larger_code:begin check_tag(c); char_tag[c]:=list_tag;
       char_remainder[c]:=get_byte;
       end;
     var_char_code:@<Read an extensible recipe for |c|@>;
-    char_ivalue_code: begin
-      ch_table:=get_integer;
-      ch_entry:=get_integer;
-      char_table[c,ch_table]:=ch_entry;
-      if ch_table>nkci then nkci:=ch_table;
-      end;
-    char_fvalue_code: begin
-      ch_table:=get_integer+nki;
-      ch_entry:=get_integer;
-      char_table[c,ch_table]:=ch_entry;
-      if ch_table>nkcf then nkcf:=ch_table;
-      end;
-    char_mvalue_code: begin
-      ch_table:=get_integer+nki+nkf;
-      ch_entry:=get_integer;
-      char_table[c,ch_table]:=ch_entry;
-      if ch_table>nkcm then nkcm:=ch_table;
-      end;
-    char_rule_code: begin
-      ch_table:=get_integer+nki+nkf+nkm;
-      ch_entry:=get_integer;
-      char_table[c,ch_table]:=ch_entry;
-      if ch_table>nkcr then nkcr:=ch_table;
-      end;
-    char_glue_code: begin
-      ch_table:=get_integer+nki+nkf+nkm+nkr;
-      ch_entry:=get_integer;
-      char_table[c,ch_table]:=ch_entry;
-      if ch_table>nkcg then nkcg:=ch_table;
-      end;
-    char_penalty_code: begin
-      ch_table:=get_integer+nki+nkf+nkm+nkr+nkg;
-      ch_entry:=get_integer;
-      char_table[c,ch_table]:=ch_entry;
-      if ch_table>nkcp then nkcp:=ch_table;
-      end;
+    char_ivalue_code:  get_char_table_entry(nki)(0);
+    char_fvalue_code:  get_char_table_entry(nkf)(nki);
+    char_mvalue_code:  get_char_table_entry(nkm)(nki+nkf);
+    char_rule_code:    get_char_table_entry(nkr)(nki+nkf+nkm);
+    char_glue_code:    get_char_table_entry(nkg)(nki+nkf+nkm+nkr);
+    char_penalty_code: get_char_table_entry(nkp)(nki+nkf+nkm+nkr+nkg);
     end;@/
   finish_the_property;
   end;
@@ -2438,22 +2392,22 @@ which prints a progress report as the file is being read.
   {strings for output in the user's external character set}
 @!MBL_string,@!RI_string,@!RCE_string:packed array [1..3] of char;
   {handy string constants for |face| codes}
-     
+
 @ @<Set init...@>=
 ASCII_04:=' !"#$%&''()*+,-./0123456789:;<=>?';@/
 ASCII_10:='@@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_';@/
 ASCII_14:='`abcdefghijklmnopqrstuvwxyz{|}~ ';@/
 HEX:='0123456789ABCDEF';@/
 MBL_string:='MBL'; RI_string:='RI '; RCE_string:='RCE';
-      
+
 @ The array |dig| will hold a sequence of digits to be output.
-       
+
 @<Glob...@>=
 @!dig:array[0..32] of integer;
 
 @ Here, in fact, are two procedures that output
 |dig[j-1]|$\,\ldots\,$|dig[0]|, given $j>0$.
- 
+
 @p procedure out_digs(j:integer); {outputs |j| digits}
 begin repeat decr(j); out(HEX[1+dig[j]]);
 until j=0;
@@ -2467,11 +2421,11 @@ end;
 
 @ The |print_number| procedure indicates how |print_digs| can be used.
 This procedure can print in octal, decimal or hex notation.
- 
+
 @d print_hex(#)==print_number(#,16)
 @d print_octal(#)==print_number(#,8)
 @d print_decimal(#)==print_number(#,10)
- 
+
 @p procedure print_number(c:integer; form:integer); {prints value of |c|}
 var j:0..32; {index into |dig|}
 begin
@@ -2845,6 +2799,18 @@ First of all, it is convenient to have an abbreviation for output to the
 
 @d out(#)==write(tfm_file,#)
 
+@p procedure out_int(@!x:integer); {output a possibly negative value}
+begin if x<0 then  begin
+  x:=x+@"40000000;
+  x:=x+@"40000000;
+  out((x div @"1000000)+@"80);
+  end
+else out(x div @"1000000);
+out((x mod @"1000000) div @"10000);
+out((x mod @"10000) div @"100);
+out(x mod @"100);
+end;
+
 @ The general plan for producing \.{TFM} files is long but simple:
 
 @<Do the font metric output@>=
@@ -2873,6 +2839,9 @@ and the total number of words in the \.{TFM} file (|lf|).
 @!not_found:boolean; {has a font character been found?}
 @!temp_width:fix_word; {width being used to compute a check sum}
 @!ncw,@!nco,@!npc:integer;
+
+@ @<Set init...@>=
+npc:=-1;
 
 @ It might turn out that no characters exist at all. But \.{PLtoTF} keeps
 going and writes the \.{TFM} anyway. In this case |ec| will be~0 and |bc|
@@ -3020,18 +2989,7 @@ end
 @<Compute the character info size@>=
 if ofm_level=1 then begin
   ncw:=0;
-  if nkcp>-1 then
-    npc:=nki+nkf+nkr+nkg+nkcp+1
-  else if nkcg>-1 then
-    npc:=nki+nkf+nkr+nkcg+1
-  else if nkcr>-1 then
-    npc:=nki+nkf+nkcr+1
-  else if nkcf>-1 then
-    npc:=nki+nkcf+1
-  else if nkci>-1 then
-    npc:=nkci+1
-  else
-    npc:=0;
+  incr(npc);
   needed_space:=(12+npc*2) div 4;
   extra_bytes:=(needed_space*4) - (10+npc*2);
   for c:=bc to ec do begin
@@ -3521,7 +3479,6 @@ end;
 @!rules:array[rule_array_type,rule_entry_type] of rule_node;
 @!npr:array[rule_array_type] of integer;
 @!nkr:integer;
-@!nkcr:integer;
 @!nwr:integer;
 @!r_array:integer;
 @!r_number:integer;
@@ -3532,7 +3489,6 @@ for r_array := 0 to rule_arrays do begin
   @<Null out the rule@>;
   end;
 nkr:=-1;
-nkcr:=-1;
 
 @ @<Read font rule list@>=
 begin
@@ -3554,28 +3510,28 @@ else begin
   finish_inner_property_list;
   end;
 end
- 
-@ @<Read a rule@>= 
+
+@ @<Read a rule@>=
 begin
-get_name; 
-if cur_code=comment_code then skip_to_end_of_item 
-else if cur_code<>rule_code then 
-  flush_error('This property name doesn''t belong in a RULE list') 
+get_name;
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>rule_code then
+  flush_error('This property name doesn''t belong in a FONTRULE list')
 else begin
   r_number:=get_integer;
-  if r_number>rule_entries then 
-    flush_error('This RULE index is too big for my present table size') 
+  if r_number>rule_entries then
+    flush_error('This RULE index is too big for my present table size')
   else if r_number<0 then
     flush_error('This RULE index is negative')
   else begin
     while npr[r_array]<r_number do begin
       incr(npr[r_array]); @<Null out the rule@>;
-      end; 
+      end;
     @<Read all of a rule's values@>;
-    finish_the_property; 
+    finish_the_property;
     end;
-  end; 
-end 
+  end;
+end
 
 @ @<Null out the rule@>=
 begin
@@ -3598,15 +3554,20 @@ end
 @ @<Read a single rule value@>=
 begin
 get_name;
-case cur_code of
-  rule_width_code:
-    rules[r_array,r_number].rn_width:=get_fix; 
-  rule_height_code:
-    rules[r_array,r_number].rn_height:=get_fix; 
-  rule_depth_code:
-    rules[r_array,r_number].rn_depth:=get_fix; 
+if cur_code=comment_code then skip_to_end_of_item
+else if (cur_code<rule_width_code)or(cur_code>rule_depth_code) then
+  flush_error('This property name doesn''t belong in a RULE list')
+else begin
+  case cur_code of
+    rule_width_code:
+      rules[r_array,r_number].rn_width:=get_fix;
+    rule_height_code:
+      rules[r_array,r_number].rn_height:=get_fix;
+    rule_depth_code:
+      rules[r_array,r_number].rn_depth:=get_fix;
+    end;
+  finish_the_property;
   end;
-finish_the_property;
 end
 
 @ @<Header information for rules@>=
@@ -3640,7 +3601,7 @@ end
 @!glue_arrays=arrays_per_kind;
 @!glue_entries=entries_per_array;
 
-@ 
+@
 @d t_normal==0
 @d t_aleaders==1
 @d t_cleaders==2
@@ -3675,7 +3636,6 @@ end;
 @!glues:array[glue_array_type,glue_entry_type] of glue_node;
 @!npg:array[glue_array_type] of integer;
 @!nkg:integer;
-@!nkcg:integer;
 @!nwg:integer;
 @!g_array:integer;
 @!g_byte:integer;
@@ -3688,7 +3648,6 @@ begin
   @<Null out the glue@>;
 end;
 nkg:=-1;
-nkcg:=-1;
 
 @ @<Read font glue list@>=
 begin
@@ -3710,28 +3669,28 @@ else begin
   finish_inner_property_list;
   end;
 end
- 
-@ @<Read a glue@>= 
+
+@ @<Read a glue@>=
 begin
-get_name; 
-if cur_code=comment_code then skip_to_end_of_item 
-else if cur_code<>glue_code then 
-  flush_error('This property name doesn''t belong in a GLUE list') 
+get_name;
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>glue_code then
+  flush_error('This property name doesn''t belong in a FONTGLUE list')
 else begin
   g_number:=get_integer;
-  if g_number>glue_entries then 
-    flush_error('This GLUE index is too big for my present table size') 
+  if g_number>glue_entries then
+    flush_error('This GLUE index is too big for my present table size')
   else if g_number<0 then
     flush_error('This GLUE index is negative')
   else begin
     while npg[g_array]<g_number do begin
       incr(npg[g_array]); @<Null out the glue@>;
-      end; 
+      end;
     @<Read all of a glue's values@>;
-    finish_the_property; 
-    end; 
-  end; 
-end 
+    finish_the_property;
+    end;
+  end;
+end
 
 @ @<Null out the glue@>=
 begin
@@ -3759,44 +3718,49 @@ end
 @ @<Read a single glue value@>=
 begin
 get_name;
-case cur_code of
-  glue_width_code:
-    glues[g_array,g_number].gn_width:=get_fix; 
-  glue_stretch_code:
-    glues[g_array,g_number].gn_stretch:=get_fix; 
-  glue_shrink_code:
-    glues[g_array,g_number].gn_shrink:=get_fix; 
-  glue_type_code: begin
-    g_byte:=get_integer;
-    if (g_byte<0) or (g_byte>3) then begin
-      g_byte:=0;
+if cur_code=comment_code then skip_to_end_of_item
+else if (cur_code<glue_type_code)or(cur_code>glue_rule_code) then
+  flush_error('This property name doesn''t belong in a GLUE list')
+else begin
+  case cur_code of
+    glue_width_code:
+      glues[g_array,g_number].gn_width:=get_fix;
+    glue_stretch_code:
+      glues[g_array,g_number].gn_stretch:=get_fix;
+    glue_shrink_code:
+      glues[g_array,g_number].gn_shrink:=get_fix;
+    glue_type_code: begin
+      g_byte:=get_integer;
+      if (g_byte<0) or (g_byte>3) then begin
+        g_byte:=0;
+        end;
+      glues[g_array,g_number].gn_type:=g_byte;
       end;
-    glues[g_array,g_number].gn_type:=g_byte;
-    end;
-  glue_stretch_order_code: begin
-    g_byte:=get_integer;
-    if (g_byte<0) or (g_byte>4) then begin
-      g_byte:=0;
+    glue_stretch_order_code: begin
+      g_byte:=get_integer;
+      if (g_byte<0) or (g_byte>4) then begin
+        g_byte:=0;
+        end;
+      glues[g_array,g_number].gn_stretch_order:=g_byte;
       end;
-    glues[g_array,g_number].gn_stretch_order:=g_byte;
-    end;
-  glue_shrink_order_code: begin
-    g_byte:=get_integer;
-    if (g_byte<0) or (g_byte>4) then begin
-      g_byte:=0;
+    glue_shrink_order_code: begin
+      g_byte:=get_integer;
+      if (g_byte<0) or (g_byte>4) then begin
+        g_byte:=0;
+        end;
+      glues[g_array,g_number].gn_shrink_order:=g_byte;
       end;
-    glues[g_array,g_number].gn_shrink_order:=g_byte;
+    glue_char_code: begin
+      glues[g_array,g_number].gn_argument:=get_integer;
+      glues[g_array,g_number].gn_arg_type:=g_char;
+      end;
+    glue_rule_code: begin
+      glues[g_array,g_number].gn_argument:=get_integer;
+      glues[g_array,g_number].gn_arg_type:=g_rule;
+      end;
     end;
-  glue_char_code: begin
-    glues[g_array,g_number].gn_argument:=get_integer;
-    glues[g_array,g_number].gn_arg_type:=g_char;
-    end;
-  glue_rule_code: begin
-    glues[g_array,g_number].gn_argument:=get_integer;
-    glues[g_array,g_number].gn_arg_type:=g_rule;
-    end;
+  finish_the_property;
   end;
-finish_the_property;
 end
 
 @ @<Header information for glues@>=
@@ -3852,7 +3816,6 @@ end;
 @!penalties:array[penalty_array_type,penalty_entry_type] of penalty_node;
 @!npp:array[penalty_array_type] of integer;
 @!nkp:integer;
-@!nkcp:integer;
 @!nwp:integer;
 @!p_array:integer;
 @!p_number:integer;
@@ -3863,7 +3826,6 @@ for p_array := 0 to penalty_arrays do begin
   @<Null out the penalty@>;
   end;
 nkp:=-1;
-nkcp:=-1;
 
 @ @<Read font penalty list@>=
 begin
@@ -3885,28 +3847,28 @@ else begin
   finish_inner_property_list;
   end;
 end
- 
-@ @<Read a penalty@>= 
+
+@ @<Read a penalty@>=
 begin
-get_name; 
-if cur_code=comment_code then skip_to_end_of_item 
-else if cur_code<>penalty_code then 
-  flush_error('This property name doesn''t belong in a PENALTY list') 
+get_name;
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>penalty_code then
+  flush_error('This property name doesn''t belong in a FONTPENALTY list')
 else begin
   p_number:=get_integer;
-  if p_number>penalty_entries then 
-    flush_error('This PENALTY index is too big for my present table size') 
+  if p_number>penalty_entries then
+    flush_error('This PENALTY index is too big for my present table size')
   else if p_number<0 then
     flush_error('This PENALTY index is negative')
   else begin
     while npp[p_array]<p_number do begin
       incr(npp[p_array]); @<Null out the penalty@>;
-      end; 
+      end;
     @<Read all of a penalty's values@>;
-    finish_the_property; 
-    end; 
-  end; 
-end 
+    finish_the_property;
+    end;
+  end;
+end
 
 @ @<Null out the penalty@>=
 begin
@@ -3927,11 +3889,13 @@ end
 @ @<Read a single penalty value@>=
 begin
 get_name;
-case cur_code of
-  penalty_val_code:
-    penalties[p_array,p_number].pn_val:=get_integer; 
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>penalty_val_code then
+  flush_error('This property name doesn''t belong in a PENALTY list')
+else  begin
+  penalties[p_array,p_number].pn_val:=get_integer;
+  finish_the_property;
   end;
-finish_the_property;
 end
 
 @ @<Header information for penalties@>=
@@ -3948,7 +3912,7 @@ end
 begin
 for p_array:= 0 to nkp-1 do
   for p_number:=0 to npp[p_array]-1 do begin
-    out_integer(penalties[p_array,p_number].pn_val);
+    out_int(penalties[p_array,p_number].pn_val);
     end;
 end
 
@@ -3975,7 +3939,6 @@ end;
 @!mvalues:array[mvalue_array_type,mvalue_entry_type] of mvalue_node;
 @!npm:array[mvalue_array_type] of integer;
 @!nkm:integer;
-@!nkcm:integer;
 @!nwm:integer;
 @!m_array:integer;
 @!m_number:integer;
@@ -3986,7 +3949,6 @@ for m_array := 0 to mvalue_arrays do begin
   @<Null out the mvalue@>;
   end;
 nkm:=-1;
-nkcm:=-1;
 
 @ @<Read font mvalue list@>=
 begin
@@ -4008,28 +3970,28 @@ else begin
   finish_inner_property_list;
   end;
 end
- 
-@ @<Read an mvalue@>= 
+
+@ @<Read an mvalue@>=
 begin
-get_name; 
-if cur_code=comment_code then skip_to_end_of_item 
-else if cur_code<>mvalue_code then 
-  flush_error('This property name doesn''t belong in an MVALUE list') 
+get_name;
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>mvalue_code then
+  flush_error('This property name doesn''t belong in an FONTMVALUE list')
 else begin
   m_number:=get_integer;
-  if m_number>mvalue_entries then 
-    flush_error('This MVALUE index is too big for my present table size') 
+  if m_number>mvalue_entries then
+    flush_error('This MVALUE index is too big for my present table size')
   else if m_number<0 then
     flush_error('This MVALUE index is negative')
   else begin
     while npm[m_array]<m_number do begin
       incr(npm[m_array]); @<Null out the mvalue@>;
-      end; 
+      end;
     @<Read all of an mvalue's values@>;
-    finish_the_property; 
-    end; 
-  end; 
-end 
+    finish_the_property;
+    end;
+  end;
+end
 
 @ @<Null out the mvalue@>=
 begin
@@ -4050,11 +4012,13 @@ end
 @ @<Read a single mvalue value@>=
 begin
 get_name;
-case cur_code of
-  mvalue_val_code:
-    mvalues[m_array,m_number].fn_val:=get_fix; 
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>mvalue_val_code then
+  flush_error('This property name doesn''t belong in a MVALUE list')
+else  begin
+  mvalues[m_array,m_number].fn_val:=get_fix;
+  finish_the_property;
   end;
-finish_the_property;
 end
 
 @ @<Header information for mvalues@>=
@@ -4098,7 +4062,6 @@ end;
 @!fvalues:array[fvalue_array_type,fvalue_entry_type] of fvalue_node;
 @!npf:array[fvalue_array_type] of integer;
 @!nkf:integer;
-@!nkcf:integer;
 @!nwf:integer;
 @!f_array:integer;
 @!f_number:integer;
@@ -4109,7 +4072,6 @@ for f_array := 0 to fvalue_arrays do begin
   @<Null out the fvalue@>;
   end;
 nkf:=-1;
-nkcf:=-1;
 
 @ @<Read font fvalue list@>=
 begin
@@ -4131,28 +4093,28 @@ else begin
   finish_inner_property_list;
   end;
 end
- 
-@ @<Read an fvalue@>= 
+
+@ @<Read an fvalue@>=
 begin
-get_name; 
-if cur_code=comment_code then skip_to_end_of_item 
-else if cur_code<>fvalue_code then 
-  flush_error('This property name doesn''t belong in an FVALUE list') 
+get_name;
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>fvalue_code then
+  flush_error('This property name doesn''t belong in an FONTFVALUE list')
 else begin
   f_number:=get_integer;
-  if f_number>fvalue_entries then 
-    flush_error('This FVALUE index is too big for my present table size') 
+  if f_number>fvalue_entries then
+    flush_error('This FVALUE index is too big for my present table size')
   else if f_number<0 then
     flush_error('This FVALUE index is negative')
   else begin
     while npf[f_array]<f_number do begin
       incr(npf[f_array]); @<Null out the fvalue@>;
-      end; 
+      end;
     @<Read all of an fvalue's values@>;
-    finish_the_property; 
-    end; 
-  end; 
-end 
+    finish_the_property;
+    end;
+  end;
+end
 
 @ @<Null out the fvalue@>=
 begin
@@ -4173,11 +4135,13 @@ end
 @ @<Read a single fvalue value@>=
 begin
 get_name;
-case cur_code of
-  fvalue_val_code:
-    fvalues[f_array,f_number].fn_val:=get_fix; 
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>fvalue_val_code then
+  flush_error('This property name doesn''t belong in a FVALUE list')
+else  begin
+  fvalues[f_array,f_number].fn_val:=get_fix;
+  finish_the_property;
   end;
-finish_the_property;
 end
 
 @ @<Header information for fvalues@>=
@@ -4222,7 +4186,6 @@ end;
 @!npi:array[ivalue_array_type] of integer;
 @!font_i_array:boolean;
 @!nki:integer;
-@!nkci:integer;
 @!nwi:integer;
 @!i_array:integer;
 @!i_number:integer;
@@ -4233,7 +4196,6 @@ for i_array := 0 to ivalue_arrays do begin
   @<Null out the ivalue@>;
   end;
 nki:=-1;
-nkci:=-1;
 
 @ @<Read font ivalue list@>=
 begin
@@ -4255,28 +4217,28 @@ else begin
   finish_inner_property_list;
   end;
 end
- 
-@ @<Read an ivalue@>= 
+
+@ @<Read an ivalue@>=
 begin
-get_name; 
-if cur_code=comment_code then skip_to_end_of_item 
-else if cur_code<>ivalue_code then 
-  flush_error('This property name doesn''t belong in an IVALUE list') 
+get_name;
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>ivalue_code then
+  flush_error('This property name doesn''t belong in an FONTIVALUE list')
 else begin
   i_number:=get_integer;
-  if i_number>ivalue_entries then 
-    flush_error('This IVALUE index is too big for my present table size') 
+  if i_number>ivalue_entries then
+    flush_error('This IVALUE index is too big for my present table size')
   else if i_number<0 then
     flush_error('This IVALUE index is negative')
   else begin
     while npi[i_array]<i_number do begin
       incr(npi[i_array]); @<Null out the ivalue@>;
-      end; 
+      end;
     @<Read all of an ivalue's values@>;
-    finish_the_property; 
-    end; 
-  end; 
-end 
+    finish_the_property;
+    end;
+  end;
+end
 
 @ @<Null out the ivalue@>=
 begin
@@ -4297,11 +4259,13 @@ end
 @ @<Read a single ivalue value@>=
 begin
 get_name;
-case cur_code of
-  ivalue_val_code:
-    ivalues[i_array,i_number].in_val:=get_integer; 
+if cur_code=comment_code then skip_to_end_of_item
+else if cur_code<>ivalue_val_code then
+  flush_error('This property name doesn''t belong in a IVALUE list')
+else  begin
+  ivalues[i_array,i_number].in_val:=get_integer;
+  finish_the_property;
   end;
-finish_the_property;
 end
 
 @ @<Header information for ivalues@>=
@@ -4318,7 +4282,7 @@ end
 begin
 for i_array:= 0 to nki-1 do
   for i_number:=0 to npi[i_array]-1 do begin
-    out_integer(ivalues[i_array,i_number].in_val);
+    out_int(ivalues[i_array,i_number].in_val);
     end;
 end
 

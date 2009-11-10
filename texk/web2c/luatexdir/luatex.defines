@@ -595,8 +595,8 @@
 
 @define procedure seconds_and_micros ();
 @define function ocp_open_in ();
-@define function open_in_name_ok ();
-@define function open_out_name_ok ();
+@define function kpse_in_name_ok ();
+@define function kpse_out_name_ok ();
 
 @define function w_open_in ();
 @define function w_open_out ();

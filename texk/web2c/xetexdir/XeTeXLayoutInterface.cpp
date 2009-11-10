@@ -47,8 +47,8 @@ authorization from the copyright holders.
 #include "XeTeXGrLayout.h"
 #endif
 
-#include "ICUFeatures.h"
-#include "ScriptAndLanguage.h"
+#include "layout/ICUFeatures.h"
+#include "layout/ScriptAndLanguage.h"
 
 #include "unicode/ubidi.h"
 #include "unicode/utext.h"

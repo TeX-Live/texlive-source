@@ -901,7 +901,7 @@ end;
    end
 
 @<Error hand...@>=
-procedure jump_out;
+noreturn procedure jump_out;
 begin
 close_files_and_terminate;
 do_final_end;
@@ -956,6 +956,24 @@ been commented~out.
                       str_start[edit_file.name_field];
     edit_line:=line;
     jump_out;
+@z
+
+@x [6.93] l.2056 - Declare fatal_error as noreturn.
+procedure fatal_error(@!s:str_number); {prints |s|, and that's it}
+@y
+noreturn procedure fatal_error(@!s:str_number); {prints |s|, and that's it}
+@z
+
+@x [6.94] l.2065 - Declare overflow as noreturn.
+procedure overflow(@!s:str_number;@!n:integer); {stop due to finiteness}
+@y
+noreturn procedure overflow(@!s:str_number;@!n:integer); {stop due to finiteness}
+@z
+
+@x [6.95] l.2084 - Declare confusion as noreturn.
+procedure confusion(@!s:str_number);
+@y
+noreturn procedure confusion(@!s:str_number);
 @z
 
 % [7.104] `remainder' is a library routine on some systems, so change
@@ -2164,7 +2182,7 @@ length will be set in the main program.
 TEX_format_default:='TeXformats:plain.fmt';
 @y
 @!format_default_length: integer;
-@!TEX_format_default: ^char;
+@!TEX_format_default: w2c_u_string;
 
 @ We set the name of the default format file and the length of that name
 in C, instead of Pascal, since we want them to depend on the name of the
@@ -2428,7 +2446,7 @@ loop@+begin
   begin_file_reading; {set up |cur_file| and new level of input}
   tex_input_type := 1; {Tell |open_input| we are \.{\\input}.}
   {Kpathsea tries all the various ways to get the file.}
-  if open_in_name_ok(stringcast(name_of_file+1))
+  if kpse_in_name_ok(stringcast(name_of_file+1))
      and a_open_in(cur_file, kpse_tex_format) then
     goto done;
 @z
@@ -3900,7 +3918,7 @@ else kpse_make_tex_discard_errors := 0;
 @y
   pack_cur_name;
   tex_input_type:=0; {Tell |open_input| we are \.{\\openin}.}
-  if open_in_name_ok(stringcast(name_of_file+1))
+  if kpse_in_name_ok(stringcast(name_of_file+1))
      and a_open_in(read_file[n], kpse_tex_format) then
     read_open[n]:=just_open;
 @z
@@ -4891,6 +4909,14 @@ primitive("special",extension,special_node);@/
 text(frozen_special):="special"; eqtb[frozen_special]:=eqtb[cur_val];@/
 @z
 
+@x [53.1348] (do_extension) Remove unused variables
+var i,@!j,@!k:integer; {all-purpose integers}
+@!p,@!q,@!r:pointer; {all-purpose pointers}
+@y
+var k:integer; {all-purpose integers}
+@!p:pointer; {all-purpose pointers}
+@z
+
 % [53.1350] (new_write_whatsit) Allow 18 as a \write stream. We never
 % refer to an actual file, though, so we don't need to change the
 % write_file or write_open arrays. We provide for disabling this at
@@ -5085,7 +5111,7 @@ var j:small_number; {write stream number}
         prompt_file_name("output file name",".tex");
       write_open[j]:=true;
 @y
-      while not open_out_name_ok(stringcast(name_of_file+1))
+      while not kpse_out_name_ok(stringcast(name_of_file+1))
             or not a_open_out(write_file[j]) do
         prompt_file_name("output file name",".tex");
       write_open[j]:=true;

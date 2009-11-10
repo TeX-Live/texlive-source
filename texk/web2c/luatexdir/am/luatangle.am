@@ -12,10 +12,9 @@ EXTRA_PROGRAMS += luatangle
 
 nodist_luatangle_SOURCES = luatangle.c luatangle.h
 luatangle.c luatangle.h: luatangle-web2c
-luatangle-web2c: $(web2c_depend) luatangle.p
-	$(web2c) luatangle
-	echo timestamp >$@
-	touch luatangle.c luatangle.h
+	@$(web2c) luatangle
+luatangle-web2c: luatangle.p $(web2c_depend)
+	@$(web2c) luatangle
 
 EXTRA_DIST += $(luatangle_sources)
 

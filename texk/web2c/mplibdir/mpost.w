@@ -53,7 +53,6 @@ have our customary command-line interface.
 #include <process.h>
 #endif
 #include <kpathsea/kpathsea.h>
-extern KPSEDLL char *kpathsea_version_string;
 @= /*@@null@@*/ @> static char *mpost_tex_program = NULL;
 static int debug = 0; /* debugging for makempx */
 #ifdef WIN32
@@ -208,7 +207,7 @@ static string normalize_quotes (const char *name, const char *mesg) {
 @ Helpers for the filename recorder.
 
 @c
-void recorder_start(char *jobname) {
+static void recorder_start(char *jobname) {
     char cwd[1024];
     if (jobname==NULL) {
       recorder_name = mpost_xstrdup("mpout.fls");
@@ -359,7 +358,7 @@ static int mpost_run_make_mpx (MP mp, char *mpname, char *mpxname) {
       mpxopt->mpxname = qmpxname;
       mpxopt->find_file = makempx_find_file;
       {
-        char *banner = "% Written by metapost version ";
+        const char *banner = "% Written by metapost version ";
         mpxopt->banner = mpost_xmalloc(strlen(mpversion)+strlen(banner)+1);
         strcpy (mpxopt->banner, banner);
         strcat (mpxopt->banner, mpversion);
@@ -425,7 +424,7 @@ static int mpost_run_dvitomp (char *dviname, char *mpxname) {
 
     mpxopt->find_file = makempx_find_file;
     {
-      char *banner = "% Written by dvitomp version ";
+      const char *banner = "% Written by dvitomp version ";
       mpxopt->banner = mpost_xmalloc(strlen(mpversion)+strlen(banner)+1);
       strcpy (mpxopt->banner, banner);
       strcat (mpxopt->banner, mpversion);
@@ -585,7 +584,7 @@ As a special hidden feature, a missing right hand side is treated as if it
 was the integer value |1|. 
 
 @c
-void internal_set_option(const char *opt) {
+static void internal_set_option(const char *opt) {
    struct set_list_item *itm;
    char *s, *v;
    int isstring = 0;
@@ -625,7 +624,7 @@ runs thourgh the list of options and feeds them to the MPlib
 function |mp_set_internal|.
 
 @c
-void run_set_list (MP mp) {
+static void run_set_list (MP mp) {
   struct set_list_item *itm;
   itm = set_list;
   while (itm!=NULL) {

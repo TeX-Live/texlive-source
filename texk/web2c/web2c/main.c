@@ -53,7 +53,7 @@ FILE *out;
 FILE *coerce;
 int pf_count = 1;
 
-char *std_header = "null.h";	/* Default include filename */
+const char *std_header = "null.h";	/* Default include filename */
 
 char strings[max_strings];
 int hash_list[hash_prime];
@@ -61,9 +61,6 @@ short global = 1;
 struct sym_entry sym_table[sym_table_size];
 int next_sym_free = -1, next_string_free = 0;
 int mark_sym_free, mark_string_free;
-
-int argc;
-char **gargv;
 
 extern int yyleng;
 
@@ -100,7 +97,7 @@ new_line (void)
 /* Output the string S to the file `out'.  */
 
 void
-my_output (string s)
+my_output (const_string s)
 {
   int len = strlen (s);
   int less_indent = 0;

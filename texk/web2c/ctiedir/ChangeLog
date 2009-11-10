@@ -1,6 +1,21 @@
+2009-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* ctie-k.ch (err_print, pfatal_error, CTIEHELP, usage_help,
+	print_version_and_exit): Constify strings.
+
+2009-08-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ../am/cweb.am (ctie_CFLAGS): Enable compiler warnings.
+	* ctie-k.ch: Declare all functions (except main) as static.
+
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ctie-k.ch (kpathsea_version_string): Drop nested extern decls.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* ctie-k.ch: drop P?C, P?H, use ANSI C function declarations.
+	* ctie-k.ch: Drop P?C, P?H, use ANSI C function declarations.
 
 	* ctie-k.c (removed): obsolete, there still is ctie.c.
 

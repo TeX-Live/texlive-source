@@ -1,5 +1,5 @@
 % otangle.ch: web2c changes to file tangle.ch
-% 
+%
 % This file is part of the Omega project, which
 % is based in the web2c distribution of TeX.
 %
@@ -52,6 +52,16 @@
 \def\title{TANGLE changes for C}
 @z
 
+@x [2] Eliminate the |end_of_TANGLE| label.
+@d end_of_TANGLE = 9999 {go here to wrap it up}
+
+@y
+@z
+@x
+label end_of_TANGLE; {go here to finish}
+@y
+@z
+
 @x [?] Define and call parse_arguments.
 procedure initialize;
   var @<Local variables for initialization@>@/
@@ -97,7 +107,7 @@ procedure initialize;
 % [??] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d text_char == char {the data type of characters in text files}
 @y
@@ -185,7 +195,7 @@ begin goto end_of_TANGLE;
 end;
 @y
 @d jump_out==uexit(1)
-@d fatal_error(#)==begin new_line; write(stderr, #); 
+@d fatal_error(#)==begin new_line; write(stderr, #);
      error; mark_fatal; uexit(1);
   end
 @z
@@ -208,7 +218,7 @@ end;
 @x [63] Remove conversion to uppercase
     begin if c>="a" then c:=c-@'40; {merge lowercase with uppercase}
 @y
-    begin 
+    begin
 @z
 
 @x [64] Delayed pool file opening.
@@ -370,6 +380,11 @@ print (banner); {print a ``banner line''}
 print_ln (version_string);
 @z
 
+@x Eliminate the |end_of_TANGLE| label.
+end_of_TANGLE:
+@y
+@z
+
 @x
 @<Print the job |history|@>;
 @y
@@ -408,7 +423,7 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
-    
+
     end else if getopt_return_val = "?" then begin
       usage ('otangle');
 
@@ -427,13 +442,13 @@ begin
     write_ln (stderr, 'otangle: Need one or two file arguments.');
     usage ('otangle');
   end;
-  
+
   {Supply |".web"| and |".ch"| extensions if necessary.}
   web_name := extend_filename (cmdline (optind), 'web');
   if optind + 2 = argc then begin
     chg_name := extend_filename (cmdline (optind + 1), 'ch');
   end;
-  
+
   {Change |".web"| to |".p"| and use the current directory.}
   pascal_name := basename_change_suffix (web_name, '.web', '.p');
 end;

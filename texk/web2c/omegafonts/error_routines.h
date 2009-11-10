@@ -21,27 +21,25 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
-extern void lex_error_0(string);
-extern void lex_error_1(string, int);
-extern void lex_error_s(string, string);
-extern void lex_error_s_1(string, string, int);
+extern void lex_error_0(const_string);
+extern void lex_error_1(const_string, int);
+extern void lex_error_s(const_string, const_string);
+extern void lex_error_s_1(const_string, const_string, int);
 
-extern void fatal_error_0(string);
-extern void fatal_error_1(string, int);
-extern void fatal_error_2(string, int, int);
-extern void fatal_error_s(string, string);
+extern void fatal_error_0(const_string);
+extern void fatal_error_1(const_string, int);
+extern void fatal_error_2(const_string, int, int);
+extern void fatal_error_s(const_string, const_string);
 
-extern void yyerror(string);
+extern void yyerror(const_string);
 
-extern void warning_0(string);
-extern void warning_1(string, int);
-extern void warning_2(string, int, int);
-extern void warning_s(string, string);
-extern void warning_s_1(string, string, int);
-extern void warning_s_2(string, string, int, int);
+extern void warning_0(const_string);
+extern void warning_1(const_string, int);
+extern void warning_2(const_string, int, int);
+extern void warning_s(const_string, const_string);
+extern void warning_s_1(const_string, const_string, int);
+extern void warning_s_2(const_string, const_string, int, int);
 
-extern void internal_error_0(string);
-extern void internal_error_1(string, int);
-extern void internal_error_s(string, string);
-
-
+extern void internal_error_0(const_string);
+extern void internal_error_1(const_string, int);
+extern void internal_error_s(const_string, const_string);

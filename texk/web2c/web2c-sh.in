@@ -1,0 +1,58 @@
+#! @SHELL@
+# web2c-sh: shell script to invoke ${srcdir}/web2c/convert.
+#
+#   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+#
+#   This file is free software; the copyright holder
+#   gives unlimited permission to copy and/or distribute it,
+#   with or without modifications, as long as this notice is preserved.
+#
+# Convert creates several files, e.g., FOO.c and FOO.h from FOO.p.
+# The naive rule
+#	FOO.c FOO.h: FOO.p $(web2c_depend)
+#		srcdir=$(srcdir) $(SHELL) $(srcdir)/web2c/convert FOO
+# could run 'convert FOO' twice in parallel and fail.  To avoid this
+# and yet recover from removal of FOO.c and/or FOO.h, we use an auxiliary
+# stamp file FOO-web2c and the two rules
+#	FOO.c FOO.h: FOO-web2c
+#		$(SHELL) ./web2c-sh $@ FOO
+#	FOO-web2c: FOO.p $(web2c_depend)
+#		$(SHELL) ./web2c-sh $@ FOO
+# Compare Automake manual (info Automake) 27.9: Multiple Outputs
+#
+srcdir=@srcdir@; export srcdir
+target=$1
+base=$2
+stamp=$base-web2c
+case $target in
+  $stamp)
+    # Normal build.
+    rm -f $stamp.tmp
+    echo timestamp >$stamp.tmp
+    echo "@SHELL@ $srcdir/web2c/convert $base"
+    @SHELL@ $srcdir/web2c/convert $base || exit 1
+    mv -f $stamp.tmp $stamp
+  ;;
+  *)
+    # Recover from removal of $target
+    test -f $target && exit 0
+    trap "rm -rf $stamp $stamp.lock" 1 2 13 15
+    if mkdir $stamp.lock 2>/dev/null; then
+      # Code executed by the first process.
+      rm -f $stamp $stamp.tmp
+      echo timestamp >$stamp.tmp
+      echo "@SHELL@ $srcdir/web2c/convert $base"
+      @SHELL@ $srcdir/web2c/convert $base || exit 1
+      mv -f $stamp.tmp $stamp
+      rmdir $stamp.lock
+    else
+      # Code executed by the follower processes.
+      # Wait until the first process is done.
+      while test -d $stamp.lock; do sleep 1; done
+      # Succeed if and only if the first process succeeded.
+      test -f $stamp; exit $?
+    fi
+  ;;
+esac
+
+exit 0

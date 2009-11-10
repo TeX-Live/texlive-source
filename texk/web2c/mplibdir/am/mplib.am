@@ -10,11 +10,15 @@ bin_PROGRAMS += mpost
 endif MP
 EXTRA_PROGRAMS += mpost
 
-mp_ctangle = CWEBINPUTS=$(srcdir)/mplibdir $(ctangle)
-
 mpost_CPPFLAGS = -I$(srcdir)/mplibdir
+mpost_CFLAGS = $(WARNING_CFLAGS)
 mpost_DEPENDENCIES = libmplib.a
 mpost_LDADD = libmplib.a $(KPATHSEA_LIBS) -lm
+
+# Creating one file: just one rule
+mp_ctangle = CWEBINPUTS=$(srcdir)/mplibdir $(ctangle)
+# Creating several files: need stamp file and two identical rules
+mp_ctangle_sh = CWEBINPUTS=$(srcdir)/mplibdir $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 ## MetaPost C sources
 nodist_mpost_SOURCES = mpost.c $(mpxout_c_h)
@@ -23,11 +27,10 @@ mpxout_c_h = mpxout.c mpxout.h
 mpost.c: ctangle$(EXEEXT) mplibdir/mpost.w
 	$(mp_ctangle) mpost.w
 
-$(mpxout_c_h): mpxout-ctangle
-mpxout-ctangle: ctangle$(EXEEXT) mplibdir/mpxout.w
-	$(mp_ctangle) mpxout.w
-	echo timestamp >$@
-	touch $(mpxout_c_h)
+$(mpxout_c_h): mpxout-tangle
+	@$(mp_ctangle_sh) mpxout
+mpxout-tangle: ctangle$(EXEEXT) mplibdir/mpxout.w tangle-sh
+	@$(mp_ctangle_sh) mpxout
 
 ## MetaPost CWeb sources
 mpost_web = mplibdir/mpost.w mplibdir/mpxout.w
@@ -36,7 +39,7 @@ $(mpost_OBJECTS): $(nodist_mpost_SOURCES) libmplib.a
 
 EXTRA_DIST += mplibdir/ChangeLog $(mpost_web)
 
-DISTCLEANFILES += $(nodist_mpost_SOURCES) mpxout-ctangle
+DISTCLEANFILES += $(nodist_mpost_SOURCES) mpxout-tangle
 
 # Double-colon rules since we do something similar in luatexdir (maybe others).
 if MP

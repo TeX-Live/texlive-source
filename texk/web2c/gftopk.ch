@@ -95,6 +95,13 @@ end;
 @.Bad GF file@>
 @z
 
+@x [10] Pascal Web's char
+@d text_char == char {the data type of characters in text files}
+@y
+@d char == 0..255
+@d text_char == char {the data type of characters in text files}
+@z
+
 @x [40] Use paths in open_gf_file.
 @ To prepare the |gf_file| for input, we |reset| it.
 

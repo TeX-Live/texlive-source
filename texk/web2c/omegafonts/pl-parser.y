@@ -1,5 +1,5 @@
 %{
-/* pl.y: Grammar for reading property list files
+/* pl-parser.y: Grammar for reading property list files
 
 This file is part of Omega,
 which is based on the web2c distribution of TeX,

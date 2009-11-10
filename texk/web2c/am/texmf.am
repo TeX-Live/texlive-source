@@ -20,38 +20,37 @@ endif TEX
 EXTRA_PROGRAMS += tex
 
 tex_CPPFLAGS =
+tex_CFLAGS = $(WARNING_CFLAGS)
 
 # With --enable-ipc, TeX may need to link with -lsocket.
 tex_LDADD = $(LDADD) $(ipc_socketlibs)
 
 # TeX C sources
-tex_c_h = texini.c tex0.c tex1.c tex2.c texcoerce.h texd.h
+tex_c_h = texini.c tex0.c texcoerce.h texd.h
 nodist_tex_SOURCES = $(tex_c_h) tex-pool.c texextra.c
 
 # We must create texd.h before building the tex_OBJECTS.
-$(tex_OBJECTS): texd.h
+tex_prereq = texd.h
+$(tex_OBJECTS): $(tex_prereq)
 
 $(tex_c_h): tex-web2c
+	@$(web2c) tex
 tex-web2c: tex.p $(web2c_texmf)
-	$(web2c) tex
-	: $(synctex_convert_tex)
-	echo timestamp >$@
-	touch $(tex_c_h)
+	@$(web2c) tex
 
-tex-pool.c: tex.pool $(makecpool_stamp) tmf-pool.h
-	$(makecpool) tex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+tex-pool.c: tex.pool texd.h $(makecpool_stamp)
+	$(makecpool) tex >$@ || rm -f $@
 
 texextra.c: lib/texmfmp.c texd.h
 	sed s/TEX-OR-MF-OR-MP/tex/ $(srcdir)/lib/texmfmp.c >$@
 
 # Tangling TeX
 tex.p tex.pool: tex-tangle
-tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch
-	$(tangle) tex.web tex-final.ch
-	echo timestamp >$@
-	touch tex.p tex.pool
+	@$(texmf_tangle) tex tex-final
+tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
+	@$(texmf_tangle) tex tex-final
 
-## Generate tex-final.ch
+# Generate tex-final.ch
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
 	$(tie) -c $@ $(tex_ch_srcs)
 tex_ch_srcs = \
@@ -65,8 +64,8 @@ EXTRA_DIST += $(tex_ch_srcs) lib/texmfmp.c tmf-pool.h
 DISTCLEANFILES += $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
 	tex.p tex.pool tex-tangle
 
-## TeX Tests
-##
+# TeX Tests
+#
 tex_tests = trip.test
 
 EXTRA_DIST += $(tex_tests)
@@ -78,7 +77,7 @@ endif TEX
 
 .PHONY: trip-clean
 clean-local:: trip-clean
-## trip.test
+# trip.test
 trip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt tripin.fot tripin.log
 	rm -f trip.fot trip.log trip.dvi trip.typ tripos.tex 8terminal.tex
@@ -96,23 +95,23 @@ EXTRA_PROGRAMS += mf mf-nowin
 
 nodist_mf_SOURCES = mfextra.c
 mf_CPPFLAGS = $(X_CFLAGS)
+mf_CFLAGS = $(WARNING_CFLAGS)
 mf_LDADD = libmf.a $(LDADD) $(windowlib) $(mf_x_libs)
-if MFN
 nodist_mf_nowin_SOURCES = mfextra.c
 mf_nowin_CPPFLAGS = $(X_CFLAGS) -DMFNOWIN
+mf_nowin_CFLAGS = $(WARNING_CFLAGS)
 mf_nowin_LDADD = libmf.a $(LDADD) $(windowlib)
-endif MFN
 
 windowlib = window/libwindow.a
 $(windowlib): mfd.h $(srcdir)/window/*.c
 	cd window && $(MAKE) $(AM_MAKEFLAGS) libwindow.a
-## Make `#include <X11/...>' and `-lX...' work.
-## This matches xdvik.
-## wlibs is substituted by web2c's configure, LIBS by general configure
-## routines, and the others by AC_PATH_XTRA.
-## All the x_... and X_... variables will be empty if we aren't supporting X.
-## Follow the library order used in X11R6 itself:
-##   -lXaw -lXmu -lXt -lSM -lICE -lXext -lX11 (some may not be present).
+# Make `#include <X11/...>' and `-lX...' work.
+# This matches xdvik.
+# wlibs is substituted by web2c's configure, LIBS by general configure
+# routines, and the others by AC_PATH_XTRA.
+# All the x_... and X_... variables will be empty if we aren't supporting X.
+# Follow the library order used in X11R6 itself:
+#   -lXaw -lXmu -lXt -lSM -lICE -lXext -lX11 (some may not be present).
 mf_x_libs = $(X_LIBS) $(x_tool_libs) $(X_PRE_LIBS) $(x_ext_lib) $(wlibs) $(X_EXTRA_LIBS)
 
 ## mf and mf-nowin compile mfextra.c with different CPPFLAGS.
@@ -121,31 +120,30 @@ mf_x_libs = $(X_LIBS) $(x_tool_libs) $(X_PRE_LIBS) $(x_ext_lib) $(wlibs) $(X_EXT
 EXTRA_LIBRARIES += libmf.a
 
 # Metafont C sources
-mf_c_h = mfini.c mf0.c mf1.c mfcoerce.h mfd.h
+mf_c_h = mfini.c mf0.c mfcoerce.h mfd.h
 nodist_libmf_a_SOURCES = $(mf_c_h) mf-pool.c
 libmf_a_CPPFLAGS = -DMETA_FONT
+libmf_a_CFLAGS = $(WARNING_CFLAGS)
 
 # We must create mfd.h before building the libmf_a_OBJECTS.
 $(libmf_a_OBJECTS): mfd.h
 
 $(mf_c_h): mf-web2c
+	@$(web2c) mf
 mf-web2c: mf.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed
-	$(web2c) mf
-	echo timestamp >$@
-	touch $(mf_c_h)
+	@$(web2c) mf
 
-mf-pool.c: mf.pool $(makecpool_stamp) tmf-pool.h
-	$(makecpool) mf.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+mf-pool.c: mf.pool mfd.h $(makecpool_stamp)
+	$(makecpool) mf >$@ || rm -f $@
 
 mfextra.c: lib/texmfmp.c mfd.h
 	sed s/TEX-OR-MF-OR-MP/mf/ $(srcdir)/lib/texmfmp.c >$@
 
 # Tangling Metafont
 mf.p mf.pool: mf-tangle
-mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch
-	$(tangle) mf.web mf-final.ch
-	echo timestamp >$@
-	touch mf.p mf.pool
+	@$(texmf_tangle) mf mf-final
+mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
+	@$(texmf_tangle) mf mf-final
 
 # Generate mf-final.ch
 mf-final.ch: tie$(EXEEXT) mf.web mf.ch mf-binpool.ch
@@ -156,8 +154,8 @@ EXTRA_DIST += mf.web mf-binpool.ch mf.ch mftalk.h lib/texmfmp.c tmf-pool.h
 DISTCLEANFILES += $(nodist_libmf_a_SOURCES) mfextra.c mf-final.ch mf-web2c \
 	mf.p mf.pool mf-tangle
 
-## Metafont Tests
-##
+# Metafont Tests
+#
 mf_tests = trap.test
 
 EXTRA_DIST += $(mf_tests)
@@ -169,7 +167,7 @@ endif MF
 
 .PHONY: trap-clean
 clean-local:: trap-clean
-## trap.test
+# trap.test
 trap-clean:
 	rm -f trap.mf trap.base
 	rm -f mftrapin.fot mftrapin.log
@@ -227,4 +225,8 @@ EXTRA_DIST += \
 	triptrap/tripos.tex \
 	triptrap/writeo \
 	triptrap/writeo.2
+
+## Eventually delete these files
+##
+EXTRA_DIST += tmf-pool.h
 

@@ -1,23 +1,23 @@
-/* web2c.y -- parse some of Pascal, and output C, sort of.
+/* web2c-parser.y -- parse some of Pascal, and output C, sort of.
 
    This grammar has one shift/reduce conflict, from the
    if-then[-else] rules, which is unresolvable.  */
 
 /* The order of some of the tokens here is significant.  See the rules
-   for - and + in web2c.l.  */
+   for - and + in web2c-lexer.l.  */
 %token	array_tok begin_tok case_tok const_tok do_tok downto_tok else_tok
 	end_tok file_tok for_tok function_tok goto_tok if_tok label_tok
 	of_tok procedure_tok program_tok record_tok repeat_tok then_tok
-	to_tok type_tok until_tok var_tok while_tok 
+	to_tok type_tok until_tok var_tok while_tok noreturn_tok
 	others_tok r_num_tok i_num_tok string_literal_tok single_char_tok
 	assign_tok two_dots_tok undef_id_tok var_id_tok
 	proc_id_tok proc_param_tok fun_id_tok fun_param_tok const_id_tok
 	type_id_tok hhb0_tok hhb1_tok field_id_tok define_tok field_tok
 	break_tok
 
-%nonassoc '=' not_eq_tok '<' '>' less_eq_tok great_eq_tok 
+%nonassoc '=' not_eq_tok '<' '>' less_eq_tok great_eq_tok
 %left '+' '-' or_tok
-%right unary_plus_tok unary_minus_tok 
+%right unary_plus_tok unary_minus_tok
 %left '*' '/' div_tok mod_tok and_tok
 %right not_tok
 
@@ -33,6 +33,7 @@ static char fn_return_type[50], for_stack[300], control_var[50],
             relation[3];
 static char arg_type[MAX_ARGS][30];
 static int last_type = -1, ids_typed;
+static int proc_is_noreturn = 0;
 char my_routine[100];	/* Name of routine being parsed, if any */
 static char array_bounds[80], array_offset[80];
 static int uses_mem, uses_eqtb, lower_sym, upper_sym;
@@ -62,10 +63,10 @@ static boolean doreturn (string);
 PROGRAM:
 	DEFS
         PROGRAM_HEAD
- 	  { 
- 	    printf ("#define %s\n", uppercasify (program_name));
+	  {
+	    printf ("#define %s\n", uppercasify (program_name));
             block_level++;
- 	    printf ("#include \"%s\"\n", std_header);
+	    printf ("#include \"%s\"\n", std_header);
 	  }
 	LABEL_DEC_PART CONST_DEC_PART TYPE_DEC_PART
 	VAR_DEC_PART
@@ -81,44 +82,44 @@ DEFS:
 	| DEFS DEF
 	;
 DEF:
-	  define_tok field_tok undef_id_tok ';' 
+	  define_tok field_tok undef_id_tok ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = field_id_tok;
 	    }
 	| define_tok function_tok undef_id_tok ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = fun_id_tok;
 	    }
 	| define_tok const_tok undef_id_tok ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = const_id_tok;
 	    }
 	| define_tok function_tok undef_id_tok '(' ')' ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = fun_param_tok;
 	    }
 	| define_tok procedure_tok undef_id_tok ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = proc_id_tok;
 	    }
 	| define_tok procedure_tok undef_id_tok '(' ')' ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = proc_param_tok;
 	    }
 	| define_tok type_tok undef_id_tok ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = type_id_tok;
 	    }
 	| define_tok type_tok undef_id_tok '=' SUBRANGE_TYPE ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = type_id_tok;
 	      sym_table[ii].val = lower_bound;
 	      sym_table[ii].val_sym = lower_sym;
@@ -127,7 +128,7 @@ DEF:
 	    }
 	| define_tok var_tok undef_id_tok ';'
 	    {
-	      ii = add_to_table (last_id); 
+	      ii = add_to_table (last_id);
 	      sym_table[ii].typ = var_id_tok;
 	    }
 	;
@@ -203,7 +204,7 @@ BLOCK:
 	;
 
 LABEL_DEC_PART:		/* empty */
-        |	label_tok 
+        |	label_tok
                         { my_output("/*"); }
                 LABEL_LIST ';'
                         { my_output("*/"); }
@@ -217,7 +218,7 @@ LABEL:
 	i_num_tok { my_output(temp); }
 	;
 
-CONST_DEC_PART:		
+CONST_DEC_PART:
                 /* empty */
         |	const_tok CONST_DEC_LIST
                         { new_line(); }
@@ -304,13 +305,13 @@ CONST_FACTOR:
 
 STRING:
 	  string_literal_tok
-            { 
+            {
               char s[132];
               get_string_literal(s);
               my_output (s);
             }
 	| single_char_tok
-            { 
+            {
               char s[5];
               get_single_char(s);
               my_output (s);
@@ -329,22 +330,22 @@ TYPE_DEF_LIST:		TYPE_DEF
 		| TYPE_DEF_LIST TYPE_DEF
 		;
 
-TYPE_DEF: 
+TYPE_DEF:
           { my_output ("typedef"); }
-        undef_id_tok 
-          { 
+        undef_id_tok
+          {
             ii = add_to_table(last_id);
             sym_table[ii].typ = type_id_tok;
             strcpy(safe_string, last_id);
             last_type = ii;
           }
-        '=' 
+        '='
           {
             array_bounds[0] = 0;
             array_offset[0] = 0;
           }
         TYPE ';'
-          { 
+          {
             if (*array_offset) {
               yyerror ("Cannot typedef arrays with offsets");
             }
@@ -371,22 +372,19 @@ SIMPLE_TYPE:
                    sym_table[ii].upper_sym = upper_sym;
                    ii= -1;
                  }
-                 
+
               /* If the bounds on an integral type are known at
                  translation time, select the smallest ANSI C type which
-                 can represent it.  We avoid using unsigned char and
-                 unsigned short where possible, as ANSI compilers
-                 (typically) convert them to int, while traditional
-                 compilers convert them to unsigned int.  We also avoid
-                 schar if possible, since it also is different on
-                 different compilers (see config.h).  */
+                 can represent it.  We avoid using char as such variables
+                 are frequently used as array indices.  We avoid using
+                 schar and unsigned short where possible, since they are
+                 treated differently by different compilers
+                 (see also config.h).  */
               if (lower_sym == -1 && upper_sym == -1) {
-                if (0 <= lower_bound && upper_bound <= SCHAR_MAX)
-                  my_output ("char");
+                if (0 <= lower_bound && upper_bound <= UCHAR_MAX)
+                  my_output ("unsigned char");
                 else if (SCHAR_MIN <= lower_bound && upper_bound <= SCHAR_MAX)
                   my_output ("schar");
-                else if (0 <= lower_bound && upper_bound <= UCHAR_MAX)
-                  my_output ("unsigned char");
                 else if (SHRT_MIN <= lower_bound && upper_bound <= SHRT_MAX)
                   my_output ("short");
                 else if (0 <= lower_bound && upper_bound <= USHRT_MAX)
@@ -418,7 +416,7 @@ SUBRANGE_CONSTANT:
               upper_sym = -1; /* no sym table entry */
             }
         | const_id_tok
-            { 
+            {
               lower_bound = upper_bound;
               lower_sym = upper_sym;
               upper_bound = sym_table[l_s].val;
@@ -498,7 +496,7 @@ INDEX_TYPE:
 	  SUBRANGE_TYPE
 	    { compute_array_bounds(); }
         | type_id_tok
-            { 
+            {
               lower_bound = sym_table[l_s].val;
               lower_sym = sym_table[l_s].val_sym;
               upper_bound = sym_table[l_s].upper;
@@ -522,7 +520,7 @@ FIELD_LIST:		RECORD_SECTION
 
 RECORD_SECTION:
 				{ field_list[0] = 0; }
-		  	FIELD_ID_LIST ':'
+			FIELD_ID_LIST ':'
 				{
 				  /*array_bounds[0] = 0;
 				  array_offset[0] = 0;*/
@@ -573,7 +571,7 @@ FIELD_ID:		undef_id_tok
 		;
 
 FILE_TYPE:
-        file_tok of_tok 
+        file_tok of_tok
           { my_output ("text /* of "); }
         TYPE
           { my_output ("*/"); }
@@ -589,8 +587,8 @@ VAR_DEC_LIST:
 	| VAR_DEC_LIST VAR_DEC
 	;
 
-VAR_DEC: 
-          { 
+VAR_DEC:
+          {
             var_list[0] = 0;
             array_bounds[0] = 0;
             array_offset[0] = 0;
@@ -599,7 +597,7 @@ VAR_DEC:
           }
         VAR_ID_DEC_LIST ':'
           {
-            array_bounds[0] = 0;	
+            array_bounds[0] = 0;
             array_offset[0] = 0;
           }
         TYPE ';'
@@ -616,37 +614,37 @@ VAR_ID:			undef_id_tok
 				  sym_table[ii].typ = var_id_tok;
 				  sym_table[ii].var_formal = var_formals;
 				  param_id_list[ids_paramed++] = ii;
-	  			  while (var_list[i] == '!')
+				  while (var_list[i] == '!')
 					while(var_list[i++]);
 				  var_list[i++] = '!';
 				  while (last_id[j])
 					var_list[i++] = last_id[j++];
-	  			  var_list[i++] = 0;
+				  var_list[i++] = 0;
 				  var_list[i++] = 0;
 				}
 		| var_id_tok
 				{ int i=0, j=0;
 				  ii = add_to_table(last_id);
-	  			  sym_table[ii].typ = var_id_tok;
+				  sym_table[ii].typ = var_id_tok;
 				  sym_table[ii].var_formal = var_formals;
 				  param_id_list[ids_paramed++] = ii;
-	  			  while (var_list[i] == '!')
+				  while (var_list[i] == '!')
 					while (var_list[i++]);
-	  			  var_list[i++] = '!';
+				  var_list[i++] = '!';
 				  while (last_id[j])
 					var_list[i++] = last_id[j++];
-	  			  var_list[i++] = 0;
+				  var_list[i++] = 0;
 				  var_list[i++] = 0;
 				}
 		| field_id_tok
 				{ int i=0, j=0;
 				  ii = add_to_table(last_id);
-	  			  sym_table[ii].typ = var_id_tok;
+				  sym_table[ii].typ = var_id_tok;
 				  sym_table[ii].var_formal = var_formals;
 				  param_id_list[ids_paramed++] = ii;
-	  			  while (var_list[i] == '!')
+				  while (var_list[i] == '!')
 					while(var_list[i++]);
-	  			  var_list[i++] = '!';
+				  var_list[i++] = '!';
 				  while (last_id[j])
 					var_list[i++] = last_id[j++];
 				  var_list[i++] = 0;
@@ -656,8 +654,8 @@ VAR_ID:			undef_id_tok
 
 BODY:
 	  /* empty */
-	| begin_tok 
-		{ my_output ("void mainbody() {");
+	| begin_tok
+		{ my_output ("void mainbody( void ) {");
 		  indent++;
 		  new_line ();
 		}
@@ -682,8 +680,15 @@ P_F_DEC:		PROCEDURE_DEC ';'
 PROCEDURE_DEC:
 	PROCEDURE_HEAD BLOCK ;
 
+PROCEDURE_TOK:
+	  procedure_tok
+        | noreturn_tok
+	    { proc_is_noreturn = 1; }
+	  procedure_tok
+	;
+
 PROCEDURE_HEAD:
-	  procedure_tok undef_id_tok
+	  PROCEDURE_TOK undef_id_tok
 	    { ii = add_to_table(last_id);
 	      if (debug)
 	        fprintf(stderr, "%3d Procedure %s\n", pf_count++, last_id);
@@ -700,7 +705,7 @@ PROCEDURE_HEAD:
 	      do_proc_args();
 	      gen_function_head(); }
 	| procedure_tok DECLARED_PROC
-	    { ii = l_s; 
+	    { ii = l_s;
 	      if (debug)
 	        fprintf(stderr, "%3d Procedure %s\n", pf_count++, last_id);
 	      strcpy(my_routine, last_id);
@@ -766,8 +771,8 @@ DECLARED_PROC:
 FUNCTION_DEC: FUNCTION_HEAD BLOCK ;
 
 FUNCTION_HEAD:
-	  function_tok undef_id_tok 
-	    { 
+	  function_tok undef_id_tok
+	    {
               orig_out = out;
               out = 0;
               ii = add_to_table(last_id);
@@ -778,20 +783,20 @@ FUNCTION_HEAD:
               uses_eqtb = uses_mem = false;
             }
 	  PARAM ':'
-            { 
+            {
               normal();
               array_bounds[0] = 0;
               array_offset[0] = 0;
             }
           RESULT_TYPE
-            { 
+            {
               get_result_type(fn_return_type);
               do_proc_args();
               gen_function_head();
             }
           ';'
-	| function_tok DECLARED_FUN 
-            { 
+	| function_tok DECLARED_FUN
+            {
               orig_out = out;
               out = 0;
               ii = l_s;
@@ -815,7 +820,7 @@ FUNCTION_HEAD:
 
 DECLARED_FUN:		fun_id_tok
 		| fun_param_tok
-  		;
+		;
 
 RESULT_TYPE:		TYPE
 		;
@@ -823,7 +828,7 @@ RESULT_TYPE:		TYPE
 STAT_PART:		begin_tok STAT_LIST end_tok
 		;
 
-COMPOUND_STAT:		begin_tok 
+COMPOUND_STAT:		begin_tok
 				{ my_output ("{"); indent++; new_line(); }
 			STAT_LIST end_tok
 				{ indent--; my_output ("}"); new_line(); }
@@ -860,7 +865,7 @@ SIMPLE_STAT:		ASSIGN_STAT
 				{ my_output ("break"); }
 		;
 
-ASSIGN_STAT:		VARIABLE assign_tok 
+ASSIGN_STAT:		VARIABLE assign_tok
 				{ my_output ("="); }
 			EXPRESS
 		| FUNC_ID_AS assign_tok
@@ -928,7 +933,7 @@ VAR_DESIG1:		']'
 				{ my_output ("]["); }
 			EXPRESS	']'
 		;
-		
+
 EXPRESS:		UNARY_OP EXPRESS	%prec '*'
 				{ $$ = $2; }
 		| EXPRESS '+' { my_output ("+"); } EXPRESS
@@ -1002,7 +1007,7 @@ ACTUAL_PARAM:
 	  EXPRESS WIDTH_FIELD
 	| type_id_tok /* So we can pass type names to C macros.  */
 	    { my_output (last_id); }
-	; 
+	;
 
 WIDTH_FIELD:
 	  ':' i_num_tok
@@ -1014,7 +1019,7 @@ PROC_STAT:		proc_id_tok
 		| undef_id_tok
 				{ my_output (last_id);
 				  ii = add_to_table(last_id);
-	  			  sym_table[ii].typ = proc_id_tok;
+				  sym_table[ii].typ = proc_id_tok;
 				  my_output ("()");
 				}
 		| proc_param_tok
@@ -1048,25 +1053,36 @@ CONDIT_STAT:		IF_STATEMENT
 		| CASE_STATEMENT
 		;
 
-IF_STATEMENT:		BEGIN_IF_STAT
-		| BEGIN_IF_STAT ELSE_STAT
-		;
-
-BEGIN_IF_STAT:		if_tok 
+IF_STATEMENT:		if_tok
 				{ my_output ("if"); my_output ("("); }
-			EXPRESS 
-				{ my_output (")"); new_line (); }
-			then_tok STATEMENT
+			IF_THEN_ELSE_STAT
 		;
 
-ELSE_STAT:		else_tok
+IF_THEN_ELSE_STAT:	EXPRESS
+				{ my_output (")"); }
+			THEN_ELSE_STAT
+		;
+
+THEN_ELSE_STAT:		then_tok
+				{ new_line (); }
+			STATEMENT ELSE_STAT
+		| then_tok if_tok
+				{ my_output ("{"); indent++; new_line();
+				  my_output ("if"); my_output ("("); }
+			IF_THEN_ELSE_STAT
+				{ indent--; my_output ("}"); new_line(); }
+			ELSE_STAT
+		;
+
+ELSE_STAT:		/* empty */
+		| else_tok
 				{ my_output ("else"); }
 			STATEMENT
 		;
 
-CASE_STATEMENT:		case_tok 
+CASE_STATEMENT:		case_tok
 				{ my_output ("switch"); my_output ("("); }
-			EXPRESS of_tok 
+			EXPRESS of_tok
 				{ my_output (")"); new_line();
 				  my_output ("{"); indent++;
 				}
@@ -1074,7 +1090,7 @@ CASE_STATEMENT:		case_tok
 				{ indent--; my_output ("}"); new_line(); }
 		;
 
-CASE_EL_LIST:		CASE_ELEMENT 
+CASE_EL_LIST:		CASE_ELEMENT
 		| CASE_EL_LIST ';' CASE_ELEMENT
 		;
 
@@ -1087,7 +1103,7 @@ CASE_LAB_LIST:		CASE_LAB
 		;
 
 CASE_LAB:		i_num_tok
-				{ my_output ("case"); 
+				{ my_output ("case");
 				  my_output (temp);
 				  my_output (":"); new_line();
 				}
@@ -1104,26 +1120,26 @@ REPETIT_STAT:		WHILE_STATEMENT
 		| FOR_STATEMENT
 		;
 
-WHILE_STATEMENT:	while_tok 
+WHILE_STATEMENT:	while_tok
 				{ my_output ("while");
 				  my_output ("(");
 				}
-			EXPRESS 
+			EXPRESS
 				{ my_output (")"); }
 			do_tok STATEMENT
 		;
 
-REP_STATEMENT:		repeat_tok 
+REP_STATEMENT:		repeat_tok
 				{ my_output ("do"); my_output ("{"); indent++; }
-			STAT_LIST until_tok 
-				{ indent--; my_output ("}"); 
+			STAT_LIST until_tok
+				{ indent--; my_output ("}");
 				  my_output ("while"); my_output ("( ! (");
 				}
 			EXPRESS
 				{ my_output (") )"); }
 		;
 
-FOR_STATEMENT:		for_tok 
+FOR_STATEMENT:		for_tok
 				{
 				  my_output ("{");
 				  my_output ("register");
@@ -1132,7 +1148,7 @@ FOR_STATEMENT:		for_tok
 					my_output ("for_begin,");
 				  my_output ("for_end;");
 				 }
-			CONTROL_VAR assign_tok 
+			CONTROL_VAR assign_tok
 				{ if (strict_for)
 					my_output ("for_begin");
 				  else
@@ -1151,8 +1167,8 @@ FOR_STATEMENT:		for_tok
 					my_output ("for_begin");
 					semicolon();
 				  }
-				  my_output ("do"); 
-				  indent++; 
+				  my_output ("do");
+				  indent++;
 				  new_line();
 				  }
 			STATEMENT
@@ -1160,10 +1176,10 @@ FOR_STATEMENT:		for_tok
 				  char *top = strrchr (for_stack, '#');
 				  indent--;
                                   new_line();
-				  my_output ("while"); 
-				  my_output ("("); 
-				  my_output (top+1); 
-				  my_output (")"); 
+				  my_output ("while");
+				  my_output ("(");
+				  my_output (top+1);
+				  my_output (")");
 				  my_output (";");
 				  my_output ("}");
 				  if (strict_for)
@@ -1177,27 +1193,27 @@ CONTROL_VAR:		var_id_tok
 				{ strcpy(control_var, last_id); }
 		;
 
-FOR_LIST:		EXPRESS 
+FOR_LIST:		EXPRESS
 				{ my_output (";"); }
-			to_tok 
-				{ 
+			to_tok
+				{
 				  strcpy(relation, "<=");
 				  my_output ("for_end");
 				  my_output ("="); }
 			EXPRESS
-				{ 
+				{
 				  sprintf(for_stack + strlen(for_stack),
 				    "#%s++ < for_end", control_var);
 				}
-		| EXPRESS 
+		| EXPRESS
 				{ my_output (";"); }
-			downto_tok 
+			downto_tok
 				{
 				  strcpy(relation, ">=");
 				  my_output ("for_end");
 				  my_output ("="); }
 			EXPRESS
-				{ 
+				{
 				  sprintf(for_stack + strlen(for_stack),
 				    "#%s-- > for_end", control_var);
 				}
@@ -1257,7 +1273,7 @@ compute_array_bounds (void)
 /* Kludge around negative lower array bounds.  */
 
 static void
-fixup_var_list ()
+fixup_var_list (void)
 {
   int i, j;
   char output_string[100], real_symbol[100];
@@ -1289,7 +1305,7 @@ fixup_var_list ()
    return true if the label is "10" and we're not in one of four TeX
    routines where the line labeled "10" isn't the end of the routine.
    Otherwise, return 0.  */
-   
+
 static boolean
 doreturn (string label)
 {
@@ -1304,7 +1320,7 @@ doreturn (string label)
 
 
 /* Return the absolute value of a long.  */
-static long 
+static long
 my_labs (long x)
 {
     if (x < 0L) return(-x);
@@ -1331,6 +1347,10 @@ do_proc_args (void)
     z_id[0] = 'z';
   }
 
+  if (proc_is_noreturn) {
+    fprintf (coerce, "WEB2C_NORETURN ");
+    proc_is_noreturn = 0;
+  }
   /* We can't use our P?H macros here, since there might be an arbitrary
      number of function arguments.  */
   fprintf (coerce, "%s %s (", fn_return_type, z_id);
@@ -1369,16 +1389,7 @@ gen_function_head (void)
     }
     out = orig_out;
     new_line ();
-    /* We can't use our P?C macros here, since there might be an arbitrary
-       number of function arguments.  We have to include the #ifdef in the
-       generated code, or we'd generate different code with and without
-       prototypes, which might cause splitup to create different numbers
-       of files in each case. */
-    /* We now always use ANSI C prototypes, but keep the '#if 1' in the
-       generated code, to avoid different numbers of files.
-       Once we stop splitting the TeX and Metafont output files all this
-       can go away.  */
-    fputs ("#if 1\n", out);
+    /* We now always use ANSI C prototypes.  */
     my_output (z_id);
     my_output ("(");
     if (ids_paramed == 0) my_output ("void");
@@ -1389,21 +1400,4 @@ gen_function_head (void)
     }
     my_output (")");
     new_line ();
-    fputs ("#else\n", out);
-    my_output (z_id);
-    my_output ("(");
-    for (i=0; i<ids_paramed; i++) {
-        if (i > 0) my_output (",");
-        my_output (symbol (param_id_list[i]));
-    }
-    my_output (")");
-    new_line ();
-    indent++;
-    for (i=0; i<ids_paramed; i++) {
-        my_output (arg_type[i]);
-        my_output (symbol(param_id_list[i]));
-        semicolon ();
-    }
-    indent--;
-    fputs ("#endif\n", out);
 }

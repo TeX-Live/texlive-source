@@ -41,7 +41,8 @@ subdir = omegafonts
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in ChangeLog \
 	pl-lexer.c pl-parser.c pl-parser.h
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-asm.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
+	$(top_srcdir)/../../m4/kpse-asm.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cross.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
@@ -87,7 +88,6 @@ am_omfonts_OBJECTS = char_routines.$(OBJEXT) dimen_routines.$(OBJEXT) \
 omfonts_OBJECTS = $(am_omfonts_OBJECTS)
 omfonts_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-omfonts_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -205,6 +205,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
@@ -295,7 +296,7 @@ top_srcdir = @top_srcdir@
 wlibs = @wlibs@
 x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
-INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
+INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_YFLAGS = -d -v
 proglib = ../lib/lib.a
@@ -335,16 +336,15 @@ omfonts_SOURCES = \
 	print_routines.h
 
 LDADD = $(proglib) $(KPATHSEA_LIBS)
+omfonts_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND)
 DISTCLEANFILES = pl-parser.output tests/Cherokee.tfm \
 	tests/OCherokee.ofm tests/OCherokee.opl tests/OCherokee.ovf \
-	tests/xCherokee.pl tests/xOCherokee.ofm tests/xOCherokee.opl \
-	tests/xOCherokee.ovp tests/specialhex.ofm tests/specialhex.opl \
-	tests/specialhex.ovf tests/xspecialhex.ofm \
-	tests/xspecialhex.opl tests/xspecialhex.ovp
+	tests/xCherokee.* tests/xOCherokee.* tests/specialhex.ofm \
+	tests/specialhex.opl tests/specialhex.ovf tests/xspecialhex.*
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
+@OMFONTS_TRUE@@OTANGLE_TRUE@TESTS = omfonts.test specialhex.test
 EXTRA_DIST = omfonts.test specialhex.test tests/Cherokee.pl \
 	tests/OCherokee.ovp tests/specialhex.ovp
-@OMFONTS_TRUE@@OTANGLE_TRUE@TESTS = omfonts.test specialhex.test
 all: all-am
 
 .SUFFIXES:
@@ -700,6 +700,8 @@ maintainer-clean-generic:
 	-rm -f pl-parser.h
 @OMFONTS_FALSE@install-exec-hook:
 @OTANGLE_FALSE@install-exec-hook:
+@OMFONTS_FALSE@uninstall-hook:
+@OTANGLE_FALSE@uninstall-hook:
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
@@ -770,8 +772,9 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
-
-.MAKE: check-am install-am install-exec-am install-strip
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+.MAKE: check-am install-am install-exec-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS all all-am check check-TESTS check-am clean \
 	clean-binPROGRAMS clean-generic clean-libtool ctags distclean \
@@ -785,15 +788,12 @@ uninstall-am: uninstall-binPROGRAMS
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-hook
 
 
-# Automake automatically uses $(proglib)=../lib/lib.a as dependency.
-# This does not work for the configure substitution  $(KPATHSEA_LIBS),
-# thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
-#
 # Rebuild $(proglib)
-$(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
+$(proglib): ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
 @KPATHSEA_RULE@
@@ -804,7 +804,7 @@ $(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
 @OMFONTS_TRUE@@OTANGLE_TRUE@	    rm -f $$f$(EXEEXT) && \
 @OMFONTS_TRUE@@OTANGLE_TRUE@	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
 @OMFONTS_TRUE@@OTANGLE_TRUE@	  done
-@OMFONTS_TRUE@@OTANGLE_TRUE@unistall-hook:
+@OMFONTS_TRUE@@OTANGLE_TRUE@uninstall-hook:
 @OMFONTS_TRUE@@OTANGLE_TRUE@	for f in $(linked_programs); do \
 @OMFONTS_TRUE@@OTANGLE_TRUE@	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 @OMFONTS_TRUE@@OTANGLE_TRUE@	done

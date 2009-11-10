@@ -1,4 +1,4 @@
-% 
+%
 % This file is part of the Omega project, which
 % is based in the web2c distribution of TeX.
 %
@@ -151,7 +151,7 @@ MBL_string:=' MBL'; RI_string:=' RI '; RCE_string:=' RCE';
 
 % [118] Change the name of the variable `class', since AIX 3.1's <math.h>
 % defines a function by that name.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d pending=4 {$f(x,y)$ is being evaluated}
 @y
@@ -162,24 +162,24 @@ MBL_string:=' MBL'; RI_string:=' RI '; RCE_string:=' RCE';
 % [123] web2c can't handle these mutually recursive procedures.
 % But let's do a fake definition of f here, so that it gets into web2c's
 % symbol table...
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @p function f(@!h,@!x,@!y:indx):indx; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
-@p 
-ifdef('notdef') 
+@p
+ifdef('notdef')
 function f(@!h,@!x,@!y:indx):indx; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
 
 % [124] ... and then really define it now.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @p function f;
 @y
-@p function f(@!h,@!x,@!y:indx):indx; 
+@p function f(@!h,@!x,@!y:indx):indx;
 @z
 
 @x [127] Fix up output of bytes.
@@ -230,7 +230,7 @@ var @!krn_ptr:0..max_kerns; {an index into |kern|}
 @y
 @z
 
-@x [147?] Be quiet unless verbose. 
+@x [147?] Be quiet unless verbose.
 read_input; print('.');@/
 @y
 read_input;
@@ -286,7 +286,7 @@ begin
     write_ln (stderr, 'opl2ofm: Need one or two file arguments.');
     usage ('opl2ofm');
   end;
-  
+
   pl_name := extend_filename (cmdline (optind), 'opl');
 
   {If an explicit output filename isn't given, construct it from |pl_name|.}
@@ -327,7 +327,7 @@ long_options[current_option].flag := address_of (verbose);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@ 
+@
 @<Glob...@> =
 @!verbose: c_int_type;
 

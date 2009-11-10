@@ -1,5 +1,5 @@
 % Change file for BibTeX in C, originally by Howard Trickey.
-% 
+%
 % 05/28/84      Initial implementation, version 0.41 of BibTeX
 % 07/01/84      Version 0.41a of BibTeX.
 % 12/17/84      Version 0.97c of BibTeX.
@@ -81,6 +81,12 @@ standard_input, standard_output: text;
 @f ecart == end
 @z
 
+@x [10] Eliminate the |exit_program| label.
+label   close_up_shop,@!exit_program @<Labels in the outer block@>;
+@y
+label   close_up_shop @<Labels in the outer block@>;
+@z
+
 @x [10] Don't print the banner unless verbose, and initialize dynamic arrays.
 begin
 initialize;
@@ -134,7 +140,6 @@ end;
 exit_program:
 end.
 @y
-exit_program:
 if (history > 1) then uexit (history);
 end.
 @z
@@ -512,12 +517,40 @@ if (name_length + length(area) > file_name_size) then
 @!hash_used : hash_base..hash_maxp1;    {allocation pointer for hash table}
 @z
 
-@x [68] This is const now.
+@x [69] This is const now.
 @d max_hash_value = hash_prime+hash_prime-2+127         {|h|'s maximum value}
 @y
 @z
 
-@x [77] C strings start at zero instead of one.
+@x [69] str_lookup - Avoid 'uninitialized' warning.
+@!old_string:boolean;   {set to |true| if it's an already encountered string}
+@y
+@z
+
+@x [69] str_lookup - Avoid 'uninitialized' warning.
+old_string := false;
+@y
+str_num := 0;           {set to |>0| if it's an already encountered string}
+@z
+
+@x [71] str_lookup - Avoid 'uninitialized' warning.
+            old_string := true;
+@y
+@z
+
+@x [72] str_lookup - Avoid 'uninitialized' warning.
+if (old_string) then            {it's an already encountered string}
+@y
+if (str_num>0) then             {it's an already encountered string}
+@z
+
+@x [74] Pascal Web's char
+@!pds_type = packed array [pds_loc] of char;
+@y
+@!pds_type = const_w2c_u_string;
+@z
+
+@x [78] C strings start at zero instead of one.
 for i:=1 to len do
     buffer[i] := xord[pds[i]];
 @y
@@ -608,13 +641,12 @@ kpse_set_progname (argv[0]);
 parse_arguments;
 @z
 
-% [106] Don't use a path to find the aux file, and don't add the
+% [107] Don't use a path to find the aux file, and don't add the
 % extension if it's already there.
 @x
 add_extension (s_aux_extension);        {this also sets |name_length|}
 aux_ptr := 0;                           {initialize the \.{.aux} file stack}
 if (not a_open_in(cur_aux_file)) then
-    sam_you_made_the_file_name_wrong;
 @y
 if (name_length < 4) or
    (strcmp (stringcast(name_of_file + 1 + name_length - 4), '.aux') <> 0)
@@ -623,8 +655,22 @@ then
 else
   aux_name_length := aux_name_length - 4; {set to length without \.{.aux}}
 aux_ptr := 0;                           {initialize the \.{.aux} file stack}
-if (not a_open_in(cur_aux_file,no_file_path)) then
-    sam_you_made_the_file_name_wrong;
+if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+    not a_open_in(cur_aux_file,no_file_path)) then
+@z
+
+@x [107] - Check log_file name.
+if (not a_open_out(log_file)) then
+@y
+if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+    not a_open_out(log_file)) then
+@z
+
+@x [107] - Check bbl_file name
+if (not a_open_out(bbl_file)) then
+@y
+if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+    not a_open_out(bbl_file)) then
 @z
 
 @x [108] Add log_pr_aux_name.
@@ -724,7 +770,8 @@ if (not a_open_in(cur_bib_file)) then
         open_bibdata_aux_err ('I couldn''t open database file ');
     end;
 @y
-if (not a_open_in(cur_bib_file, kpse_bib_format)) then
+if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+    not a_open_in(cur_bib_file, kpse_bib_format)) then
         open_bibdata_aux_err ('I couldn''t open database file ');
 @z
 
@@ -742,7 +789,8 @@ if (not a_open_in(bst_file)) then
         end;
     end;
 @y
-if (not a_open_in(bst_file, kpse_bst_format)) then
+if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+    not a_open_in(bst_file, kpse_bst_format)) then
     begin
         print ('I couldn''t open style file ');
         print_bst_name;@/
@@ -799,7 +847,8 @@ while (name_ptr <= file_name_size) do   {pad with blanks}
 if (not a_open_in(cur_aux_file)) then
 @y
 name_of_file[name_ptr] := 0;
-if (not a_open_in(cur_aux_file, no_file_path)) then
+if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+    not a_open_in(cur_aux_file, no_file_path)) then
 @z
 
 % [151] This goto gets turned into a setjmp/longjmp by ./convert --
@@ -1136,7 +1185,7 @@ while ((ex_buf_xptr < ex_buf_ptr) and
 
 % Forgot to check for pool overflow here.  Triggered by test case linked
 % from http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=520920.
-@x 
+@x
 while (sp_ptr < sp_end) do                      {shift the substring}
 @y
 str_room(sp_end - sp_ptr);
@@ -1209,7 +1258,7 @@ begin
 
     end else if argument_is ('min-crossrefs') then begin
       min_crossrefs := atoi (optarg);
-      
+
     end else if argument_is ('help') then begin
       usage_help (BIBTEX_HELP, nil);
 

@@ -64,7 +64,6 @@ read_line (void)
   if (fgets (buffer, sizeof (buffer), stdin) == NULL)
     return false;
   if (strncmp (buffer, "#ifdef", 6) == 0
-      || strncmp (buffer, "#if 1", 5) == 0
       || strncmp (buffer, "#ifndef", 7) == 0)
     {
       ++ifdef_nesting;
@@ -79,7 +78,7 @@ read_line (void)
 int
 main (int argc, string *argv)
 {
-  string coerce;
+  const_string coerce;
   unsigned coerce_len;
   int option;
 
@@ -130,11 +129,8 @@ main (int argc, string *argv)
   } else if (STREQ (output_name, "xetex")) {
     fputs ("#define INITEX\n#define TeX\n#define XeTeX\n", out);
     coerce = "xetexcoerce.h";
-  } else if (STREQ (output_name, "mp")) {
-    fputs ("#define INIMP\n#define MP\n", out);
-    coerce = "mpcoerce.h";
   } else
-    FATAL1 ("Can only split mf, mp, tex, etex, aleph, luatex, pdftex, or xetex,\n not %s", output_name);
+    FATAL1 ("Can only split mf, tex, etex, aleph, luatex, pdftex, or xetex,\n not %s", output_name);
   
   coerce_len = strlen (coerce);
   

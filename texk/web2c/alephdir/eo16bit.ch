@@ -547,7 +547,7 @@ the |eqtb| array.
 
 @<Declare \eTeX\ procedures for tr...@>=
 @!stat procedure show_sa(@!p:pointer;@!s:str_number);
-var t:small_number; {the type of element}
+{|var t:small_number;|} {the type of element}
 begin begin_diagnostic; print_char("{"); print(s); print_char(" ");
 {
 |if p=null then print_char("?")| {this can't happen}

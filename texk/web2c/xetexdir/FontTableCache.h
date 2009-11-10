@@ -43,7 +43,7 @@ authorization from the copyright holders.
 
 #define __FONTTABLECACHE_H
 
-#include "LETypes.h"
+#include "layout/LETypes.h"
 
 struct FontTableCacheEntry;
 

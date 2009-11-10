@@ -16,10 +16,11 @@ synctex_SOURCES = \
 	synctexdir/synctex_parser_utils.c
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
+synctex_CFLAGS = # $(WARNING_CFLAGS)
 
 synctex_LDADD = $(ZLIB_LIBS)
 
-synctex_DEPENDENCIES = $(ZLIB_DEPEND)
+$(synctex_OBJECTS): $(ZLIB_DEPEND)
 
 dist_man_MANS += synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 
@@ -34,7 +35,6 @@ EXTRA_DIST += \
 
 EXTRA_DIST += \
 	synctexdir/synctex-common.h \
-	synctexdir/synctex-convert.sh \
 	synctexdir/synctex.c \
 	synctexdir/synctex.defines \
 	synctexdir/synctex.h
@@ -46,6 +46,7 @@ if TEX_SYNCTEX
 tex_CPPFLAGS += -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
 
 tex_LDADD += $(ZLIB_LIBS)
+tex_prereq += $(ZLIB_DEPEND)
 
 tex_ch_synctex = \
 	synctexdir/synctex-mem.ch0 \
@@ -63,13 +64,9 @@ dist_tex_SOURCES = \
 nodist_tex_SOURCES += \
 	synctex.c
 
-synctex_convert_tex = && $(SHELL) $(srcdir)/synctexdir/synctex-convert.sh tex
+tex_CPPFLAGS += -D__SyncTeX__
 
-else !TEX_SYNCTEX
-
-synctex_convert_tex = && echo "warning: SyncTeX for TeX is NOT enabled"
-
-endif !TEX_SYNCTEX
+endif TEX_SYNCTEX
 
 synctex.c: texd.h synctexdir/synctex.c $(dist_tex_SOURCES)
 	sed s/TEX-OR-MF-OR-MP/tex/ $(srcdir)/synctexdir/synctex.c >$@
@@ -89,6 +86,7 @@ if ETEX_SYNCTEX
 etex_CPPFLAGS += -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
 
 etex_LDADD += $(ZLIB_LIBS)
+etex_prereq += $(ZLIB_DEPEND)
 
 etex_ch_synctex = \
 	synctexdir/synctex-mem.ch0 \
@@ -108,13 +106,9 @@ dist_etex_SOURCES = \
 nodist_etex_SOURCES += \
 	synctex-e.c
 
-synctex_convert_etex = && $(SHELL) $(srcdir)/synctexdir/synctex-convert.sh etex
+etex_CPPFLAGS += -D__SyncTeX__
 
-else !ETEX_SYNCTEX
-
-synctex_convert_etex = && echo "warning: SyncTeX for e-TeX is NOT enabled"
-
-endif !ETEX_SYNCTEX
+endif ETEX_SYNCTEX
 
 synctex-e.c: etexd.h synctexdir/synctex.c $(dist_etex_SOURCES)
 	sed s/TEX-OR-MF-OR-MP/etex/ $(srcdir)/synctexdir/synctex.c >$@
@@ -150,13 +144,9 @@ dist_pdftex_SOURCES = \
 nodist_pdftex_SOURCES += \
 	synctex-pdf.c
 
-synctex_convert_pdftex = && $(SHELL) $(srcdir)/synctexdir/synctex-convert.sh pdftex
+pdftex_CPPFLAGS += -D__SyncTeX__
 
-else !PDFTEX_SYNCTEX
-
-synctex_convert_pdftex = && echo "warning: SyncTeX for pdfTeX is NOT enabled"
-
-endif !PDFTEX_SYNCTEX
+endif PDFTEX_SYNCTEX
 
 synctex-pdf.c: pdftexd.h synctexdir/synctex.c $(dist_pdftex_SOURCES)
 	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/synctexdir/synctex.c >$@
@@ -190,13 +180,9 @@ dist_xetex_SOURCES = \
 nodist_xetex_SOURCES += \
 	synctex-xe.c
 
-synctex_convert_xetex = && $(SHELL) $(srcdir)/synctexdir/synctex-convert.sh xetex
+xetex_CPPFLAGS += -D__SyncTeX__
 
-else !XETEX_SYNCTEX
-
-synctex_convert_xetex = && echo "warning: SyncTeX for XeTeX is NOT enabled"
-
-endif !XETEX_SYNCTEX
+endif XETEX_SYNCTEX
 
 synctex-xe.c: xetexd.h synctexdir/synctex.c $(dist_xetex_SOURCES)
 	sed s/TEX-OR-MF-OR-MP/xetex/ $(srcdir)/synctexdir/synctex.c >$@

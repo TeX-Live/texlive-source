@@ -120,7 +120,7 @@ init_character(unsigned c, char_entry *ready_made)
         planes[plane][i] = NULL;
     }
     if (plane>plane_max)       plane_max = plane;
-    if (index>char_max[plane]) char_max[plane] = index;
+    if (index>char_max[plane])   char_max[plane] = index;
 
     if (planes[plane][index] != NULL) {
         if (planes[plane][index]->defined == FALSE) {
@@ -292,7 +292,7 @@ clear_ligature_entries(void)
 }
 
 void
-check_existence_and_safety(unsigned c, unsigned g, string extra, string fmt)
+check_existence_and_safety(unsigned c, unsigned g, const_string extra, const_string fmt)
 {
     char_entry *gentry = planes[g/PLANE][g%PLANE];
 
@@ -309,7 +309,7 @@ check_existence_and_safety(unsigned c, unsigned g, string extra, string fmt)
 }
 
 void
-doublecheck_existence(unsigned g, string extra, char*fmt)
+doublecheck_existence(unsigned g, const_string extra, const_string fmt)
 {
     char_entry *gentry = planes[g/PLANE][g%PLANE];
 

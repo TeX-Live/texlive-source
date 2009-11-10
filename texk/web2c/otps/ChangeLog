@@ -1,3 +1,22 @@
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkocp.man, mkofm.man, otp2ocp.man, outocp.man: New files
+	moved from ../../tetex/ to here.
+	* Makefile.am (dist_man1_MANS): Adjusted.
+
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* otp-lexer.l: Replace global vars i, j, and last by locals.
+	* otp-parser.y (yyerror): Constify string param.
+	* outocp.c (otp_names): Constify strings.
+	* routines.[ch] (store_state): Constify string param.
+
+2009-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: otp2ocp and outocp must depend explicitly on
+	KPATHSEA_DEPEND, the implicit dependency via proglib is not enough.
+
 2009-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* otp2ocp.test, outocp.test, uni2lat.ocp, uni2lat.otp,

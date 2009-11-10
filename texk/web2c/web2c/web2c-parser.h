@@ -64,37 +64,38 @@
      until_tok = 280,
      var_tok = 281,
      while_tok = 282,
-     others_tok = 283,
-     r_num_tok = 284,
-     i_num_tok = 285,
-     string_literal_tok = 286,
-     single_char_tok = 287,
-     assign_tok = 288,
-     two_dots_tok = 289,
-     undef_id_tok = 290,
-     var_id_tok = 291,
-     proc_id_tok = 292,
-     proc_param_tok = 293,
-     fun_id_tok = 294,
-     fun_param_tok = 295,
-     const_id_tok = 296,
-     type_id_tok = 297,
-     hhb0_tok = 298,
-     hhb1_tok = 299,
-     field_id_tok = 300,
-     define_tok = 301,
-     field_tok = 302,
-     break_tok = 303,
-     great_eq_tok = 304,
-     less_eq_tok = 305,
-     not_eq_tok = 306,
-     or_tok = 307,
-     unary_minus_tok = 308,
-     unary_plus_tok = 309,
-     and_tok = 310,
-     mod_tok = 311,
-     div_tok = 312,
-     not_tok = 313
+     noreturn_tok = 283,
+     others_tok = 284,
+     r_num_tok = 285,
+     i_num_tok = 286,
+     string_literal_tok = 287,
+     single_char_tok = 288,
+     assign_tok = 289,
+     two_dots_tok = 290,
+     undef_id_tok = 291,
+     var_id_tok = 292,
+     proc_id_tok = 293,
+     proc_param_tok = 294,
+     fun_id_tok = 295,
+     fun_param_tok = 296,
+     const_id_tok = 297,
+     type_id_tok = 298,
+     hhb0_tok = 299,
+     hhb1_tok = 300,
+     field_id_tok = 301,
+     define_tok = 302,
+     field_tok = 303,
+     break_tok = 304,
+     great_eq_tok = 305,
+     less_eq_tok = 306,
+     not_eq_tok = 307,
+     or_tok = 308,
+     unary_minus_tok = 309,
+     unary_plus_tok = 310,
+     and_tok = 311,
+     mod_tok = 312,
+     div_tok = 313,
+     not_tok = 314
    };
 #endif
 /* Tokens.  */
@@ -123,37 +124,38 @@
 #define until_tok 280
 #define var_tok 281
 #define while_tok 282
-#define others_tok 283
-#define r_num_tok 284
-#define i_num_tok 285
-#define string_literal_tok 286
-#define single_char_tok 287
-#define assign_tok 288
-#define two_dots_tok 289
-#define undef_id_tok 290
-#define var_id_tok 291
-#define proc_id_tok 292
-#define proc_param_tok 293
-#define fun_id_tok 294
-#define fun_param_tok 295
-#define const_id_tok 296
-#define type_id_tok 297
-#define hhb0_tok 298
-#define hhb1_tok 299
-#define field_id_tok 300
-#define define_tok 301
-#define field_tok 302
-#define break_tok 303
-#define great_eq_tok 304
-#define less_eq_tok 305
-#define not_eq_tok 306
-#define or_tok 307
-#define unary_minus_tok 308
-#define unary_plus_tok 309
-#define and_tok 310
-#define mod_tok 311
-#define div_tok 312
-#define not_tok 313
+#define noreturn_tok 283
+#define others_tok 284
+#define r_num_tok 285
+#define i_num_tok 286
+#define string_literal_tok 287
+#define single_char_tok 288
+#define assign_tok 289
+#define two_dots_tok 290
+#define undef_id_tok 291
+#define var_id_tok 292
+#define proc_id_tok 293
+#define proc_param_tok 294
+#define fun_id_tok 295
+#define fun_param_tok 296
+#define const_id_tok 297
+#define type_id_tok 298
+#define hhb0_tok 299
+#define hhb1_tok 300
+#define field_id_tok 301
+#define define_tok 302
+#define field_tok 303
+#define break_tok 304
+#define great_eq_tok 305
+#define less_eq_tok 306
+#define not_eq_tok 307
+#define or_tok 308
+#define unary_minus_tok 309
+#define unary_plus_tok 310
+#define and_tok 311
+#define mod_tok 312
+#define div_tok 313
+#define not_tok 314
 
 
 

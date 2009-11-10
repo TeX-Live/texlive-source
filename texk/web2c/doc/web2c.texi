@@ -415,7 +415,7 @@ name.  @xref{Memory dumps}.
 @cindex file recorder
 Enable the filename recorder.  This makes the program save a list of the
 opened files into a file with (by default) extension @samp{.fls}.  For
-Omega, this option is always on, and the file has extension @samp{.ofl}.
+Aleph, this option is always on, and the file has extension @samp{.ofl}.
 
 @item -translate-file=@var{tcxfile}
 @opindex -translate-file=@var{tcxfile}
@@ -977,30 +977,22 @@ sake of the EC fonts, which can be generated at any size.
 @cindex Trojan horses and @TeX{} programs
 @cindex dot files, written by @TeX{} programs
 @cindex security, and output files
-@flindex texmfmp.c @r{and @code{openoutnameok}}
-@TeX{} can write output files, via the @code{\openout} primitive; this
-opens a security hole vulnerable to Trojan horse attack: an unwitting
-user could run a @TeX{} program that overwrites, say, @file{~/.rhosts}.
-(MetaPost has a @code{write} primitive with similar implications).  To
-alleviate this, there is a configuration variable @code{openout_any},
-which selects one of three levels of security.  When it is set to
-@samp{a} (for ``any''), no restrictions are imposed.  When it is set to
-@samp{r} (for ``restricted''), filenames beginning with @samp{.} are
-disallowed (except @file{.tex} because @LaTeX{} needs it).  When it is set
-to @samp{p} (for ``paranoid'') additional restrictions are imposed: an
-absolute filename must refer to a file in (a subdirectory) of
-@code{TEXMFOUTPUT}, and any attempt to go up a directory level is
-forbidden (that is, paths may not contain a @samp{..}  component).  The
-paranoid setting is the default.  (For backwards compatibility, @samp{y}
-and @samp{1} are synonyms of @samp{a}, while @samp{n} and @samp{0} are
-synonyms for @samp{r}.)
+@TeX{} can write output files, via the @code{\openout} primitive; this opens
+a security hole vulnerable to Trojan horse attack: an unwitting user could
+run a @TeX{} program that overwrites, say, @file{~/.rhosts}.  (MetaPost has
+a @code{write} primitive with similar implications).  To alleviate this and
+similar problems the functions @code{kpathsea_out_name_ok} and
+@code{kpathsea_in_name_ok} from the Kpathse library (@pxref{Calling
+sequence,,, kpathsea, Kpathsea}) are used to determine if a given filename
+is acceptable to be opened for output or input, depending on the setting of
+the configuration variables @code{openout_any} and @code{openin_any}:
+@samp{a} (for ``any'', the default for @code{openin_any}), @samp{r} (for
+``restricted''), or @samp{p} (for ``paranoid'', the default for
+@code{openout_any}).
 
 In any case, all @code{\openout} filenames are recorded in the log file,
 except those opened on the first line of input, which is processed when
-the log file has not yet been opened.  (If you as a @TeX{} administrator
-wish to implement more stringent rules on @code{\openout}, modifying the
-function @code{openoutnameok} in @file{web2c/lib/texmfmp.c} is intended
-to suffice.)
+the log file has not yet been opened.
 
 The program accepts the following options, as well as the standard
 @samp{-help} and @samp{-version} (@pxref{Common options}):
@@ -1741,13 +1733,12 @@ partial list.
 Adds many new primitives, including right-to-left typesetting and more
 registers.  Now frozen.
 
-@item Omega
-@itemx Aleph
-@cindex Omega
+@item Aleph
+@cindex Aleph
 @cindex Unicode
-These add Unicode support, right-to-left typesetting, and more.  Omega
+This adds Unicode support, right-to-left typesetting, and more.  Omega
 was the original program.  Aleph is an updated version with a variety
-of bug fixes, and includes e-@TeX{}.  Neither is actively maintained.
+of bug fixes, and includes e-@TeX{}.  Aleph is not actively maintained.
 
 @item pdf@TeX{}
 @cindex pdf@TeX{}
@@ -1765,6 +1756,12 @@ page: @url{http://pdftex.org}.
 Based on pdf@TeX{}, this also embeds the Lua programming language
 (@url{http://lua.org}) and opens up the @TeX{} typesetting engine to
 control from Lua.  Home page: @url{http://luatex.org}.
+
+@item Xe@TeX{}
+@cindex Xe@TeX{}
+@cindex Unicode
+This combines the capabilities of Aleph and pdf@TeX{}, and more.
+Home page: FIXME.
 
 @end table
 
@@ -2069,8 +2066,8 @@ and the corresponding @code{configure} option(s) in parentheses.
 @vtable @code
 @item epsf
 @cindex Herberts, Mathias
-@opindex --with-epsfwin
-(@samp{--with-epsfwin}) Pseudo-window server for Encapsulated
+@opindex --enable-epsfwin
+(@samp{--enable-epsfwin}) Pseudo-window server for Encapsulated
 PostScript (see @file{web2c/window/epsf.c}). This device produces an
 EPS file containing the graphics which would be displayed online on
 other devices. The name of the EPS file defaults to metafont.eps but
@@ -2078,59 +2075,56 @@ can be changed by setting the MFEPSF environment variable to the new
 filename.  Contributed by Mathias Herberts.
 
 @item hp2627
-@opindex --with-hp2627win
-(@samp{--with-hp2627win}) HP2627a color graphics terminals.
+@opindex --enable-hp2627win
+(@samp{--enable-hp2627win}) HP2627a color graphics terminals.
 
 @item mftalk
-@opindex --with-mftalkwin
-(@samp{--with-mftalkwin}) Generic window server (see
+@opindex --enable-mftalkwin
+(@samp{--enable-mftalkwin}) Generic window server (see
 @file{web2c/window/mftalk.c}).
 
 @item next
 @pindex DrawingServant
-@opindex --with-next
-(@samp{--with-next}) NeXT window system. This requires a separate
+@opindex --enable-next
+(@samp{--enable-next}) NeXT window system. This requires a separate
 program, called @code{DrawingServant}, available separately. See the
 @file{web2c/window/next.c}.
 
 @item regis
-@opindex --with-regiswin
+@opindex --enable-regiswin
 @cindex Regis graphics support
-(@samp{--with-regiswin}) Regis terminals.
+(@samp{--enable-regiswin}) Regis terminals.
 
 @item sun
 @cindex SunView
 @cindex Suntools
-@opindex --with-suntoolswin
+@opindex --enable-suntoolswin
 @flindex sun-gfx.c
-(@samp{--with-suntoolswin}) The old Suntools (not any flavor of X)
+(@samp{--enable-suntoolswin}) The old Suntools (not any flavor of X)
 window system. (You can get the even older SunWindows @code{gfx} system
 by using @file{sun-gfx.c}.)
 
 @item tek
 @cindex Tektronix
-@opindex --with-tektronixwin
-(@samp{--with-tektronixwin}) Tektronix terminals.
+@opindex --enable-tektronixwin
+(@samp{--enable-tektronixwin}) Tektronix terminals.
 
 @cindex Poole, Simon
 @item uniterm
 @cindex Tektronix 4014
-@opindex --with-unitermwin
-(@samp{--with-unitermwin}) Uniterm, Simon Poole's emulator of a smart
+@opindex --enable-unitermwin
+(@samp{--enable-unitermwin}) Uniterm, Simon Poole's emulator of a smart
 Tektronix 4014 terminal.  This may work with regular Tektronix terminals
-as well; it's faster than the driver @samp{--with-tek} selects.
+as well; it's faster than the driver @samp{--enable-tektronixwin} selects.
 
 @vindex NO_X11WIN
 @pindex Xt
 @pindex Xlib
 @item xterm
-@opindex --with-x11win
 @opindex --with-x
-@opindex --with-x11
-(@samp{--with-x11win}, @samp{--with-x}, @samp{--with-x11}) The X window
-system (version 11).
+@samp{--with-x} The X window system (version 11).
 
-@opindex --with-x-toolkit=@var{kit}
+@opindex --with-mf-x-toolkit=@var{kit}
 @cindex toolkits, X
 @cindex X toolkits and Metafont
 @cindex Xt support
@@ -2139,7 +2133,13 @@ There are two variants of the X11 support, one that works with the Xt
 toolkit, and another that works directly with Xlib. The Xt support is
 more efficient and has more functionality, so it is the default. If you
 must use the Xlib support, use @samp{configure --with-x
---with-x-toolkit=no}.
+--with-kf-x-toolkit=no}.
+
+@opindex --disable-mf-nowin
+@cindex non-windows-capable Metafont
+Specify @samp{--disable-mf-nowin} in order not to build a separate
+non-windows-capable Metafont executable @code{mf-nowin} (or
+@code{mf-nowin.exe}).
 
 @cindex X resources
 @cindex X class name for Metafont

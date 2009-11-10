@@ -45,6 +45,9 @@ Latest Revision: Wed Jul  1 08:17:50 UTC 2009
 
 #include "synctex-common.h"
 
+/*  Free all memory used, close and remove the file if any. */
+void synctexabort(boolean log_opened);
+
 /*  Send this message when starting a new input.  */
 extern void synctexstartinput(void);
 

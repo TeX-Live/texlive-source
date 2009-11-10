@@ -40,9 +40,9 @@ authorization from the copyright holders.
  */
 
 
-#include "LETypes.h"
-#include "LEFontInstance.h"
-#include "LESwaps.h"
+#include "layout/LETypes.h"
+#include "layout/LEFontInstance.h"
+#include "layout/LESwaps.h"
 
 #include "XeTeXFontInst.h"
 #include "XeTeXLayoutInterface.h"

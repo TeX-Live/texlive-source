@@ -44,6 +44,16 @@
 \def\title{TANGLE changes for C}
 @z
 
+@x [2] Eliminate the |end_of_TANGLE| label.
+@d end_of_TANGLE = 9999 {go here to wrap it up}
+
+@y
+@z
+@x
+label end_of_TANGLE; {go here to finish}
+@y
+@z
+
 @x [2] Define and call parse_arguments.
 procedure initialize;
   var @<Local variables for initialization@>@/
@@ -175,7 +185,7 @@ rewrite (Pascal_file, pascal_name);
       begin while not eoln(f) do vgetc(f);
 @z
 
-@x [??] Fix `jump_out'.
+@x [35] Fix `jump_out'.
 @d fatal_error(#)==begin new_line; print(#); error; mark_fatal; jump_out;
   end
 
@@ -615,6 +625,11 @@ print_ln(banner); {print a ``banner line''}
 @y
 print (banner); {print a ``banner line''}
 print_ln (version_string);
+@z
+
+@x Eliminate the |end_of_TANGLE| label.
+end_of_TANGLE:
+@y
 @z
 
 @x

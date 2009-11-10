@@ -1,4 +1,4 @@
-% 
+%
 % This file is part of the Omega project, which
 % is based in the web2c distribution of TeX.
 %
@@ -91,7 +91,7 @@ rewritebin (tfm_file, tfm_name);
 
 % [89] `index' is not a good choice for an identifier on Unix systems.
 % Neither is `class', on AIX.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 |k|th element of its list.
 @y
@@ -134,8 +134,8 @@ HEX:=' 0123456789ABCDEF';@/
 @p function f(@!h,@!x,@!y:indx):indx; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
-@p 
-ifdef('notdef') 
+@p
+ifdef('notdef')
 function f(@!h,@!x,@!y:indx):indx; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
@@ -144,7 +144,7 @@ endif('notdef')
 @x [153] Finish fixing up f.
 @p function f;
 @y
-@p function f(@!h,@!x,@!y:indx):indx; 
+@p function f(@!h,@!x,@!y:indx):indx;
 @z
 
 @x [156] Change TFM-byte output to fix ranges.
@@ -183,7 +183,7 @@ begin if fabs(x/design_units)>=16.0 then begin
 % [141] char_remainder[c] is unsigned, and label_table[sort_ptr].rr
 % might be -1, and if -1 is coerced to being unsigned, it will be bigger
 % than anything else.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
   while label_table[sort_ptr].rr>char_remainder[c] do begin
 @y
@@ -202,7 +202,7 @@ var @!krn_ptr:0..max_kerns; {an index into |kern|}
 @y
 @z
 
-@x [181?] Be quiet unless verbose. 
+@x [181?] Be quiet unless verbose.
 read_input; print_ln('.');@/
 @y
 read_input;
@@ -238,7 +238,7 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
-    
+
     end else if getopt_return_val = "?" then begin
       usage ('ovp2ovf'); {|getopt| has already given an error message.}
 
@@ -254,7 +254,7 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.
    We must have one to three remaining arguments.}
-  if (optind + 1 <> argc) and (optind + 2 <> argc) 
+  if (optind + 1 <> argc) and (optind + 2 <> argc)
      and (optind + 3 <> argc) then begin
     write_ln (stderr, 'ovp2ovf: Need one to three file arguments.');
     usage ('ovp2ovf');

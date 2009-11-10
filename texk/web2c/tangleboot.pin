@@ -1,6 +1,6 @@
 {2:}{4:}{$C-,A+,D-}{[$C+,D+]}
-{:4}program TANGLE(webfile,changefile,Pascalfile,pool);label 9999;
-const{8:}bufsize=3000;maxbytes=45000;maxtoks=60000;maxnames=10000;
+{:4}program TANGLE(webfile,changefile,Pascalfile,pool);
+const{8:}bufsize=3000;maxbytes=65535;maxtoks=65535;maxnames=10000;
 maxtexts=10000;hashsize=353;longestname=400;linelength=72;
 outbufsize=144;stacksize=100;maxidlength=50;defunambiglength=32;
 {:8}type{11:}ASCIIcode=0..255;
@@ -876,7 +876,7 @@ line:=1;{:96};sendtheoutput;{98:}breakptr:=outptr;semiptr:=0;
 flushbuffer;if bracelevel<>0 then begin writeln(stdout);
 write(stdout,'! Program ended at brace level ',bracelevel:1);error;end;
 {:98};begin writeln(stdout);write(stdout,'Done.');end;end{:112};
-9999:if stringptr>256 then{184:}begin begin writeln(stdout);
+if stringptr>256 then{184:}begin begin writeln(stdout);
 write(stdout,stringptr-256:1,' strings written to string pool file.');
 end;write(pool,'*');
 for ii:=1 to 9 do begin outbuf[ii]:=poolchecksum mod 10;

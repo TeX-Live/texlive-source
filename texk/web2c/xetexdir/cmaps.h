@@ -43,7 +43,7 @@ authorization from the copyright holders.
 #ifndef __CMAPS_H
 #define __CMAPS_H
 
-#include "LETypes.h"
+#include "layout/LETypes.h"
 #include "sfnt.h"
 
 class CMAPMapper

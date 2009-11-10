@@ -14,6 +14,7 @@ $(libzzip_a_OBJECTS): liblua51.a
 libzzip_a_CPPFLAGS = \
 	$(ZLIB_INCLUDES) \
 	-I$(top_srcdir)/luatexdir/zziplib
+libzzip_a_CFLAGS = $(WARNING_CFLAGS)
 
 libzzip_a_SOURCES = \
 	luatexdir/zziplib/zzip/__debug.h \

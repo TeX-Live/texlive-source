@@ -70,13 +70,13 @@ extern void check_charlist_infinite_loops(void);
 extern void adjust_labels(boolean);
 extern void print_labels(void);
 extern void set_extensible_piece(unsigned,unsigned);
-extern void check_existence_and_safety(unsigned,unsigned,string,string);
+extern void check_existence_and_safety(unsigned,unsigned,const_string,const_string);
 extern void clear_ligature_entries(void);
 extern void doublecheck_extens(void);
 extern void print_extens(void);
 extern void build_exten_table(void);
 extern void retrieve_exten_table(unsigned char *);
-extern void doublecheck_existence(unsigned, string,string);
+extern void doublecheck_existence(unsigned, const_string,const_string);
 extern void output_ovf_chars(void);
 extern void print_packet(unsigned char *, unsigned);
 

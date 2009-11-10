@@ -33,11 +33,16 @@ authorization from the copyright holders.
 #ifndef __XeTeXOTLayoutEngine_h
 #define __XeTeXOTLayoutEngine_h
 
-#include "OpenTypeLayoutEngine.h"
-#include "ArabicLayoutEngine.h"
-#include "IndicLayoutEngine.h"
-#include "HanLayoutEngine.h"
-#include "TibetanLayoutEngine.h"
+#include "layout/OpenTypeLayoutEngine.h"
+
+#include "unicode/uversion.h"
+#define U_ICU_VERSION_CODE (U_ICU_VERSION_MAJOR_NUM*10+U_ICU_VERSION_MINOR_NUM)
+/* ICU-4.2 added 'success' as last parameter to LayoutEngine constructors.  */
+#if U_ICU_VERSION_CODE >= 42
+#define XeTeX_success , success
+#else
+#define XeTeX_success
+#endif
 
 #include "XeTeXFontInst.h"
 
@@ -48,7 +53,11 @@ public:
                             const GlyphSubstitutionTableHeader* gsubTable,
                             const GlyphPositioningTableHeader* gposTable,
 							const LETag* addFeatures, const le_int32* addParams,
-							const LETag* removeFeatures);
+							const LETag* removeFeatures
+#if U_ICU_VERSION_CODE >= 42
+				, LEErrorCode &success
+#endif
+			);
 
     virtual ~XeTeXOTLayoutEngine();
 
@@ -68,21 +77,6 @@ protected:
 	const FeatureMap*	fDefaultFeatureMap;
 	
 private:
-};
-
-class XeTeXHanLayoutEngine : public XeTeXOTLayoutEngine
-{
-public:
-    XeTeXHanLayoutEngine(const XeTeXFontInst *fontInstance, LETag scriptTag, LETag languageTag,
-                            const GlyphSubstitutionTableHeader *gsubTable,
-                            const GlyphPositioningTableHeader* gposTable,
-							const LETag* addFeatures, const le_int32* addParams,
-							const LETag* removeFeatures);
-
-    virtual ~XeTeXHanLayoutEngine();
-
-    virtual UClassID getDynamicClassID() const;
-    static UClassID getStaticClassID();
 };
 
 #endif

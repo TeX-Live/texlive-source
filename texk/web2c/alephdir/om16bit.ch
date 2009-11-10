@@ -2125,7 +2125,7 @@ else  begin p:=new_noad; math_type(nucleus(p)):=math_char;
 end;
 @y
 procedure set_math_char(@!c:integer);
-var p,q,r:pointer; {the new noad}
+var p:pointer; {the new noad}
 begin if c>=@"8000000 then
   @<Treat |cur_chr|...@>
 else  begin p:=new_noad; math_type(nucleus(p)):=math_char;

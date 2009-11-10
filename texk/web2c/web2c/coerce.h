@@ -5,8 +5,7 @@
 /* The C compiler ignores most unnecessary casts (i.e., casts of
    something to its own type).  However, for structures, it doesn't.
    Therefore, we have to redefine these macros so they don't cast
-   cast their argument (of type memoryword or fourquarters,
-   respectively).  */
+   their argument (of type memoryword or fourquarters, respectively).  */
 
 #ifdef luaTeX
 
@@ -51,10 +50,6 @@
    point.  */
 extern strnumber getjobname (strnumber);
 
-#ifdef MP
-/* MP defined poolASCIIcode instead of packedASCIIcode, sigh. */
-typedef poolASCIIcode packedASCIIcode;
-#endif
 #ifdef XeTeX
 /* XeTeX redefines "ASCII" types.... */
 typedef packedUTF16code packedASCIIcode;
@@ -66,9 +61,10 @@ extern void blankrectangle (screencol, screencol, screenrow, screenrow);
 extern void paintrow (screenrow, pixelcolor, transspec, screencol);
 #endif
 
+extern strnumber makefullnamestring(void);
+
 #ifdef TeX
 /* Prototypes for source-specials functions... */
-extern strnumber makefullnamestring();
 extern boolean isnewsource (strnumber, int);
 extern poolpointer makesrcspecial (strnumber, int);
 extern void remembersourceinfo (strnumber, int);
@@ -88,7 +84,10 @@ extern void remembersourceinfo (strnumber, int);
 #include <xetexdir/xetex.h>
 #endif /* XeTeX */
 
-#ifdef MP
-#define MPOSTCOERCE
-#include <mpdir/mplib.h>
-#endif /* MP */
+#if defined(TeX) && defined(__SyncTeX__)
+#ifdef luaTeX
+#include <luatexdir/utils/synctex.h>
+#else
+#include <synctexdir/synctex.h>
+#endif
+#endif

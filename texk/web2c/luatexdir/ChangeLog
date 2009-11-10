@@ -1,3 +1,60 @@
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatex.web: Use kpse_{in,out}_name_ok(), now in Kpathsea,
+	instead of open{in,out}nameok().
+	* luatex.defines: Replace open_{in,out}_name_ok by
+	kpse_{in,out}_name_ok.
+
+2009-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/pdftoepdf.cc: Adapt to poppler-0.12.
+
+	* FIXME: image/epdf.h, utils/utils.h: Multiple prototypes for
+	pdftex_fail, pdftex_warn, and probably others.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/luatex.am: Adapt to new makecpool with one argument.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/luainit.c (dump_name, c_job_name, last_source_name,
+	last_lineno): Drop extern declarations (now in texmfmp.h).
+	(user_progname): Constify string.
+	(lua_initialize): Avoid modifying the const_string 'dump_name'.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils/synctex.c (synctex_suffix*): Constify strings.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatangle.ch: Eliminate the unused |end_of_TANGLE| label.
+
+2009-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libzzip.am: Enable compiler warnings.
+	* am/liblua51.am, am/libluatex.am, am/luafontforge.am,
+	am/luamisc.am, am/luasocket.am, am/luatex.am: Prepare compiler
+	warnings.
+
+2009-08-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/lstatslib.c, lua/luainit.c: Drop extern decl of ptexbanner.
+	* utils/utils.c: #include <kpathsea/version.h> and drop extern
+	decls.
+
+2009-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/liolib.c (io_popen): Changed Arg1 of shell_cmd_is_allowed().
+	* lua/loslibext.c (os_exec, os_spawn, os_execute): Same.
+
+2009-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/luatangle.am: Adapt to web2c-sh.
+	* am/luatex.am (luatex_tangle): Use tangle-sh.
+	Adapt to tangle-sh and web2c-sh.
+
 2009-06-26  Taco Hoekwater <taco@luatex.org>
 
         * lua51/lcoco.c, lua51/lcoco.h: disable the coco patch on

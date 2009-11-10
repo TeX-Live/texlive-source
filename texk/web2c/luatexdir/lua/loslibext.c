@@ -382,7 +382,7 @@ static int os_exec(lua_State * L)
     if (restrictedshell == 0)
         allow = 1;
     else
-        allow = shell_cmd_is_allowed(&runcmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(runcmd, &safecmd, &cmdname);
 
     if (allow > 0 && cmdline != NULL && runcmd != NULL) {
 #if defined(WIN32) && DONT_REALLY_EXIT
@@ -461,7 +461,7 @@ static int os_spawn(lua_State * L)
     if (restrictedshell == 0)
         allow = 1;
     else
-        allow = shell_cmd_is_allowed(&runcmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(runcmd, &safecmd, &cmdname);
     if (allow > 0 && cmdline != NULL && runcmd != NULL) {
         if (allow == 2)
             i = spawn_command(safecmd, cmdline, environ);
@@ -884,7 +884,7 @@ static int os_execute(lua_State * L)
     int ret = 1;
     char *safecmd = NULL;
     char *cmdname = NULL;
-    char *cmd = (char *) luaL_optstring(L, 1, NULL);
+    const char *cmd = luaL_optstring(L, 1, NULL);
 
     if (shellenabledp <= 0) {
         lua_pushnil(L);
@@ -895,7 +895,7 @@ static int os_execute(lua_State * L)
     if (restrictedshell == 0)
         allow = 1;
     else
-        allow = shell_cmd_is_allowed(&cmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(cmd, &safecmd, &cmdname);
 
     if (allow == 1) {
         lua_pushinteger(L, system(cmd));

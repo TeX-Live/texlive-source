@@ -45,8 +45,8 @@ authorization from the copyright holders.
 
 #include <stdio.h>
 
-#include "LETypes.h"
-#include "LEFontInstance.h"
+#include "layout/LETypes.h"
+#include "layout/LEFontInstance.h"
 
 #include "FontTableCache.h"
 

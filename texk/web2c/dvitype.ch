@@ -462,6 +462,15 @@ end;
 cur_name[r] := 0; {Append null byte for C.}
 @z
 
+@x [75] Diagnose impossible cases.
+sixty_four_cases(fnt_num_0): first_par:=o-fnt_num_0;
+end;
+@y
+sixty_four_cases(fnt_num_0): first_par:=o-fnt_num_0;
+othercases abort('internal error');
+endcases;
+@z
+
 @x [80] (major,minor) optionally show opcode
 @d show(#)==begin flush_text; showing:=true; print(a:1,': ',#);
   end

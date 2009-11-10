@@ -32,7 +32,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 /* Character measures */
 
-string character_measures[] =
+const_string character_measures[] =
      { "CHARWD",      "CHARHT",         "CHARDP",        "CHARIC",
        "SECWD",       "SECHT",          "SECDP",         "SECIC",
        "PRIMTOPAXIS", "PRIMTOPAXISBIS", "PRIMBOTAXIS",   "PRIMBOTAXISBIS",
@@ -52,7 +52,7 @@ out_character_measure(unsigned measure)
 
 /* Extensible pieces */
 
-string extensible_pieces[] =
+const_string extensible_pieces[] =
      { "TOP", "MID", "BOT", "REP", NULL };
 
 void
@@ -66,7 +66,7 @@ out_extensible_piece(unsigned piece)
 
 /* Ligature commands */
 
-string ligature_commands[] =
+const_string ligature_commands[] =
      { "LIG", "LIG/", "/LIG", "/LIG/", NULL,
        "LIG/>", "/LIG>", "/LIG/>", NULL, NULL,
        NULL, "/LIG/>>", NULL };
@@ -83,7 +83,7 @@ out_ligature_command(unsigned command)
 
 /* Xerox faces */
 
-string xerox_faces[] =
+const_string xerox_faces[] =
     { "MRR", "MIR", "BRR", "BIR", "LRR", "LIR",
       "MRC", "MIC", "BRC", "BIC", "LRC", "LIC",
       "MRE", "MIE", "BRE", "BIE", "LRE", "LIE", NULL };
@@ -99,7 +99,7 @@ print_xerox_face(int face)
 
 /* Named parameters */
 
-string named_parameters[] =
+const_string named_parameters[] =
     { NULL,      "SLANT",      "SPACE",  "STRETCH", "SHRINK",    "XHEIGHT",
       "QUAD",    "EXTRASPACE", NULL };
 
@@ -114,7 +114,7 @@ out_named_parameter(unsigned parameter)
 
 /* Named math symbol parameters */
 
-string named_mathsy_parameters[] =
+const_string named_mathsy_parameters[] =
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
       "NUM1",   "NUM2",    "NUM3",      "DENOM1",
       "DENOM2",  "SUP1",       "SUP2",   "SUP3",    "SUB1",      "SUB2",
@@ -132,7 +132,7 @@ out_named_mathsy_parameter(unsigned parameter)
 
 /* Named math extension parameters */
 
-string named_mathex_parameters[] =
+const_string named_mathex_parameters[] =
     { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
       "DEFAULTRULETHICKNESS", "BIGOPSPACING1",
       "BIGOPSPACING2",        "BIGOPSPACING3",
@@ -150,10 +150,10 @@ out_named_mathex_parameter(unsigned parameter)
 
 /* Typesetting directions */
 
-string type_directions[] =
+const_string type_directions[] =
      { "FONTDIR", "NATURALFONTDIR", NULL };
 
-string actual_directions[] =
+const_string actual_directions[] =
      { "TL", "LT", "TR", "RT", "LB", "BL", "BR", "RB", NULL };
 
 void
@@ -168,7 +168,7 @@ out_type_direction(unsigned direction)
 
 /* Kinds of accents */
 
-string accent_kinds[] =
+const_string accent_kinds[] =
      { NULL, "TOPACCENT", "MIDACCENT", "BOTACCENT", NULL };
 
 void
@@ -182,7 +182,7 @@ out_accent_kind(unsigned kind)
 
 /* Move directions */
 
-string move_directions[] =
+const_string move_directions[] =
      { "MOVERIGHT", "MOVELEFT", "MOVEUP", "MOVEDOWN", NULL };
 
 void
@@ -196,7 +196,7 @@ out_move_direction(unsigned direction)
 
 /* Rule measures */
 
-string rule_measures[] =
+const_string rule_measures[] =
      { "RULEWD", "RULEHT", "RULEDP", NULL };
 
 void
@@ -210,7 +210,7 @@ out_rule_measure(unsigned measure)
 
 /* Glue shrink or stretch */
 
-string glue_shrink_stretch[] =
+const_string glue_shrink_stretch[] =
      { "GLUESHRINK", "GLUESTRETCH", NULL };
 
 void
@@ -225,7 +225,7 @@ out_shrink_stretch(unsigned shrink_stretch)
 
 /* Glue orders */
 
-string glue_orders[] =
+const_string glue_orders[] =
      { "UNIT", "FI", "FIL", "FILL", "FILLL", NULL };
 
 void
@@ -239,7 +239,7 @@ out_glue_order(unsigned order)
 
 /* Glue kinds */
 
-string glue_kinds[] =
+const_string glue_kinds[] =
      { "NORMAL", "ALEADERS", "CLEADERS", "ALEADERS", "XLEADERS", NULL };
 
 void
@@ -381,7 +381,7 @@ out_digits(unsigned counter)
 }
 
 void
-out(string sval)
+out(const_string sval)
 {
 	fprintf(file_output, sval);
 }

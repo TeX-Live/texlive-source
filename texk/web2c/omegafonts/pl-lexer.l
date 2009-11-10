@@ -1,5 +1,5 @@
 %{
-/* pl.l: Lexical analysis of property list files.
+/* pl-lexer.l: Lexical analysis of property list files.
 
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
@@ -50,7 +50,7 @@ char saved_text[MAX_PTR];
 static void scan_int(unsigned);
 static void scan_char(void);
 static void scan_fix(void);
-static void scan_string(char *, unsigned, unsigned);
+static void scan_string(const char *, unsigned, unsigned);
 static void scan_hex_string(void);
 
 /* from kpathsea, but avoid including kpathsea header files */
@@ -239,6 +239,15 @@ NATURALFONTDIR{ws}BL	{yylval.yint = DIR_NAT+DIR_BL; return(FONTDIR);}
 NATURALFONTDIR{ws}RT	{yylval.yint = DIR_NAT+DIR_RT; return(FONTDIR);}
 NATURALFONTDIR{ws}BR	{yylval.yint = DIR_NAT+DIR_BR; return(FONTDIR);}
 NATURALFONTDIR{ws}RB	{yylval.yint = DIR_NAT+DIR_RB; return(FONTDIR);}
+	/* for compatibility with the omegaware versions */
+NFONTDIR{ws}TL		{yylval.yint = DIR_NAT+DIR_TL; return(FONTDIR);}
+NFONTDIR{ws}LT		{yylval.yint = DIR_NAT+DIR_LT; return(FONTDIR);}
+NFONTDIR{ws}TR		{yylval.yint = DIR_NAT+DIR_TR; return(FONTDIR);}
+NFONTDIR{ws}LB		{yylval.yint = DIR_NAT+DIR_LB; return(FONTDIR);}
+NFONTDIR{ws}BL		{yylval.yint = DIR_NAT+DIR_BL; return(FONTDIR);}
+NFONTDIR{ws}RT		{yylval.yint = DIR_NAT+DIR_RT; return(FONTDIR);}
+NFONTDIR{ws}BR		{yylval.yint = DIR_NAT+DIR_BR; return(FONTDIR);}
+NFONTDIR{ws}RB		{yylval.yint = DIR_NAT+DIR_RB; return(FONTDIR);}
 
 FONTIVALUE	return(FONTIVALUE);
 FONTFVALUE	return(FONTFVALUE);
@@ -415,7 +424,7 @@ scan_char(void)
 }
 
 static void
-scan_string(char *attribute, unsigned keep, unsigned length)
+scan_string(const char *attribute, unsigned keep, unsigned length)
 {
     register unsigned c, saved_ptr = 0, paren_level = 0;
     unsigned error_msg = FALSE;

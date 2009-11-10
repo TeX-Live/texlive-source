@@ -9,12 +9,12 @@ EXTRA_LIBRARIES += libluatex.a
 
 libluatex_a_DEPENDENCIES = libff.a
 
-$(libluatex_a_OBJECTS): libff.a $(nodist_luatex_SOURCES)
-
 libluatex_a_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
 libluatex_a_CPPFLAGS += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
 libluatex_a_CPPFLAGS += -Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51
 libluatex_a_CPPFLAGS += -DpdfTeX
+libluatex_a_CFLAGS = # $(WARNING_CFLAGS)
+libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 libluatex_a_SOURCES = \
 	luatexdir/commands.h \
@@ -126,7 +126,8 @@ libluatex_a_SOURCES = \
 ## included by luatexdir/font/writettf.c
 EXTRA_libluatex_a_SOURCES = luatexdir/font/macnames.c
 
-$(libluatex_a_OBJECTS): libff.a
+# We must create libff.a and luatexd.h before building the libluatex_a_OBJECTS
+$(libluatex_a_OBJECTS): libff.a luatexd.h luatexdir/luatexextra.h
 
 EXTRA_DIST += \
 	luatexdir/ChangeLog \

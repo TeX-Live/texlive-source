@@ -100,10 +100,6 @@ typedef void* voidpointer;
 /* Hacks for TeX that are better not to #ifdef, see texmfmp.c.  */
 extern int tfmtemp, texinputtype;
 
-/* TeX, MF and MetaPost use this.  */
-extern boolean openinnameok (const_string);
-extern boolean openoutnameok (const_string);
-
 /* pdfTeX uses these for pipe support */
 #if defined(pdfTeX)
 extern boolean open_in_or_pipe (FILE **, int, const_string fopen_mode);
@@ -114,8 +110,11 @@ extern void close_file_or_pipe (FILE *);
 /* Executing shell commands.  */
 extern void mk_shellcmdlist (char *);
 extern void init_shell_escape (void);
-extern int shell_cmd_is_allowed (char **cmd, char **safecmd, char **cmdname);
-extern int runsystem (char *cmd);
+extern int shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname);
+extern int runsystem (const char *cmd);
+
+/* The entry point.  */
+extern void TEXDLL maininit (int ac, string *av);
 
 /* All but the Omega family use this. */
 #if !defined(Aleph)
@@ -123,6 +122,8 @@ extern void readtcxfile (void);
 extern string translate_filename;
 #define translatefilename translate_filename
 #endif
+
+extern string normalize_quotes (const_string name, const_string mesg);
 
 #ifdef TeX
 /* The type `glueratio' should be a floating point type which won't
@@ -352,6 +353,12 @@ extern void do_undump (char *, int, int, FILE *);
 #define	undumpint generic_undump
 #endif
 
+/* Handle SyncTeX, if requested */
+#if defined(TeX) || defined(eTeX) || defined(pdfTeX) || defined(XeTeX)
+# if defined(__SyncTeX__)
+#  include "synctexdir/synctex-common.h"
+# endif
+#endif
 
 #else  /* this is for luaTeX */
 
@@ -375,10 +382,6 @@ extern void do_undump (char *, int, int, FILE *);
 /* Hacks for TeX that are better not to #ifdef, see texmfmp.c.  */
 extern int tfmtemp, texinputtype;
 
-/* TeX, MF and MetaPost use this.  */
-extern boolean openinnameok (const_string);
-extern boolean openoutnameok (const_string);
-
 /* pdfTeX uses these for pipe support */
 extern boolean open_in_or_pipe (FILE **, int, const_string fopen_mode);
 extern boolean open_out_or_pipe (FILE **, const_string fopen_mode);
@@ -387,8 +390,18 @@ extern void close_file_or_pipe (FILE *);
 /* Executing shell commands.  */
 extern void mk_shellcmdlist (char *);
 extern void init_shell_escape (void);
-extern int shell_cmd_is_allowed (char **cmd, char **safecmd, char **cmdname);
-extern int runsystem (char *cmd);
+extern int shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname);
+extern int runsystem (const char *cmd);
+
+extern const_string dump_name;
+extern const_string c_job_name;
+extern char *last_source_name;
+extern int last_lineno;
+
+/* The entry point.  */
+extern void TEXDLL maininit (int ac, string *av);
+
+extern string normalize_quotes (const_string name, const_string mesg);
 
 #ifndef GLUERATIO_TYPE
 #define GLUERATIO_TYPE double
@@ -516,6 +529,10 @@ extern void zwclose (FILE *);
       }                                                                 \
     }																	\
   } while (0)
+
+/* We define the routines to do the actual work in texmf.c.  */
+extern void do_dump (char *, int, int, FILE *);
+extern void do_undump (char *, int, int, FILE *);
 
 /* Use the above for all the other dumping and undumping.  */
 #define generic_dump(x) dump_things (x, 1)

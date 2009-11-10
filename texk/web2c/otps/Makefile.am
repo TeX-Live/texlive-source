@@ -9,12 +9,8 @@ AM_YFLAGS = -d -v
 
 proglib = ../lib/lib.a
 
-# Automake automatically uses $(proglib)=../lib/lib.a as dependency.
-# This does not work for the configure substitution  $(KPATHSEA_LIBS),
-# thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
-
 # Rebuild $(proglib)
-$(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
+$(proglib): ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
 ## Rebuild libkpathsea
@@ -28,6 +24,7 @@ noinst_HEADERS = otp.h routines.h yystype.h
 if OTANGLE
 bin_PROGRAMS = $(otps_programs)
 bin_SCRIPTS = $(otps_scripts)
+dist_man1_MANS = $(otps_programs:=.man) $(otps_scripts:=.man)
 endif OTANGLE
 EXTRA_PROGRAMS = $(otps_programs)
 
@@ -45,6 +42,8 @@ outocp_SOURCES = \
 	outocp.c
 
 LDADD = $(proglib) $(KPATHSEA_LIBS)
+otp2ocp_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND)
+outocp_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND)
 
 ## Tests
 ##

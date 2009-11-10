@@ -1,5 +1,5 @@
 % odvitype.web: Omega version of file dvitype.web
-% 
+%
 % This file is part of the Omega project, which
 % is based in the web2c distribution of TeX.
 %
@@ -1163,8 +1163,8 @@ else begin
   if width_ptr+font_ec[nf]-font_bc[nf]+1>max_widths then
     begin print_ln('---not loaded, ODVItype needs larger width table');
 @.ODVItype needs larger...@>
-      goto 9998; 
-    end; 
+      goto 9998;
+    end;
   wp:=width_ptr+font_ec[nf]-font_bc[nf]+1;
   read_tfm_word; nw:=((b0*256+b1)*256+b2)*256+b3;
   if (nw=0)or(nw>65536) then goto 9997;
@@ -1173,7 +1173,7 @@ else begin
     read_tfm_word;
     end;
   if ofm_level=1 then begin
-    read_tfm_word;  nco:=(((b0*256+b1)*256+b2)*256+b3) div 2;
+    read_tfm_word;  nco:=((b0*256+b1)*256+b2)*256+b3;
     read_tfm_word;
     read_tfm_word; extra_words:=(((b0*256+b1)*256+b2)*256+b3) div 2;
     for k:=1 to 12 do
@@ -1225,14 +1225,14 @@ case ofm_level of
         kprime:=k+(b0*256+b1);
         for j:=k+1 to kprime do
           width[j]:=width[k];
-        k:=kprime;
+        k:=kprime+1;
         for j:=1 to extra_words do
           read_tfm_word;
         end
       end
     end;
 end;
- 
+
 
 @ The most important part of |in_TFM| is the width computation, which
 involves multiplying the relative widths in the \.{TFM} file by the
@@ -2268,7 +2268,7 @@ while true do
     end;
   @<Skip until finding |eop|@>;
   bop_seen:=false;
-  end;  
+  end;
 9999:end;
 
 @ @<Skip until finding |eop|@>=

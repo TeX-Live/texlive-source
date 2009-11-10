@@ -137,7 +137,7 @@ extern void fill_in(list L);
 extern void out_int(int instr, int val);
 extern void out_right(int instr, int val);
 
-extern void store_state(string str);
+extern void store_state(const_string str);
 extern int lookup_state(string str);
 extern void store_table(string str, int len);
 extern int lookup_table(string str);

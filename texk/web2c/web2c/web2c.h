@@ -55,19 +55,18 @@ extern int mark_sym_free, mark_string_free;
 extern void find_next_temp (void);
 extern void normal (void);
 extern void new_line (void);
-extern void my_output (string);
+extern void my_output (const_string);
 extern void semicolon (void);
 extern void remove_locals (void);
 extern void mark (void);
 extern void initialize (void);
 extern int add_to_table (string);
 extern int search_table (const_string);
-extern int yyerror (string);
+extern int yyerror (const_string);
 
 extern void get_string_literal (char*);
 extern void get_single_char (char*);
 extern void get_result_type (char*);
 extern void get_return_type (char*);
 
-/* No prototypes for these two. As used, neither takes arguments. */
-extern int yylex(), yyparse();
+extern int yylex(void), yyparse(void);

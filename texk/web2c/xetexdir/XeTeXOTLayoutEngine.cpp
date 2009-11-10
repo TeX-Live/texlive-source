@@ -32,11 +32,38 @@ authorization from the copyright holders.
 
 #include "XeTeXOTLayoutEngine.h"
 
-#include "ThaiLayoutEngine.h"
-#include "KhmerLayoutEngine.h"
+/****************************************************************************\
+class XeTeXHanLayoutEngine
+  moved from XeTeXOTLayoutEngine.h to here in order not to include it into
+  XeTeXLayoutInterface.cpp.
+\****************************************************************************/
+class XeTeXHanLayoutEngine : public XeTeXOTLayoutEngine
+{
+public:
+    XeTeXHanLayoutEngine(const XeTeXFontInst *fontInstance, LETag scriptTag, LETag languageTag,
+                            const GlyphSubstitutionTableHeader *gsubTable,
+                            const GlyphPositioningTableHeader* gposTable,
+							const LETag* addFeatures, const le_int32* addParams,
+							const LETag* removeFeatures
+#if U_ICU_VERSION_CODE >= 42
+				, LEErrorCode &success
+#endif
+			);
 
-#include "LEScripts.h"
-#include "LELanguages.h"
+    virtual ~XeTeXHanLayoutEngine();
+
+    virtual UClassID getDynamicClassID() const;
+    static UClassID getStaticClassID();
+};
+
+#include "layout/ArabicLayoutEngine.h"
+#include "layout/IndicLayoutEngine.h"
+#include "layout/TibetanLayoutEngine.h"
+#include "layout/ThaiLayoutEngine.h"
+#include "layout/KhmerLayoutEngine.h"
+
+#include "layout/LEScripts.h"
+#include "layout/LELanguages.h"
 
 const LETag emptyTag = 0x00000000;
 
@@ -98,14 +125,18 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
         case teluScriptCode:
         case sinhScriptCode:
 //            result = new XeTeXIndicLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, removeFeatures);
-            result = new IndicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable);
+            result = new IndicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags,
+#if U_ICU_VERSION_CODE >= 42
+                                                   FALSE,
+#endif
+                                                   gsubTable XeTeX_success);
             break;
 
         case arabScriptCode:
         case syrcScriptCode:
         case mongScriptCode:
 //            result = new XeTeXArabicLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, addFeatures, removeFeatures);
-            result = new ArabicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable);
+            result = new ArabicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable XeTeX_success);
             break;
 
         case bopoScriptCode:
@@ -114,19 +145,19 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
         case hiraScriptCode:
         case kanaScriptCode:
         case hrktScriptCode:
-            result = new XeTeXHanLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, addFeatures, addParams, removeFeatures);
+            result = new XeTeXHanLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, addFeatures, addParams, removeFeatures XeTeX_success);
             break;
 
         case tibtScriptCode:
-            result = new TibetanOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable);
+            result = new TibetanOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable XeTeX_success);
             break;
 
         case khmrScriptCode:
-            result = new KhmerOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable);
+            result = new KhmerOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags, gsubTable XeTeX_success);
             break;
 
         default:
-            result = new XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, addFeatures, addParams, removeFeatures);
+            result = new XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, addFeatures, addParams, removeFeatures XeTeX_success);
             break;
         }
     }
@@ -142,26 +173,31 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
 		case tamlScriptCode:
 		case teluScriptCode:
 		case sinhScriptCode:
-			result = new IndicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags);
+			result = new IndicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags XeTeX_success);
 			break;
 
 		case arabScriptCode:
 //		case hebrScriptCode:
-			result = new UnicodeArabicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags);
+			result = new UnicodeArabicOpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags XeTeX_success);
 			break;
 
 		case thaiScriptCode:
-			result = new ThaiLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags);
+			result = new ThaiLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags XeTeX_success);
 			break;
 
 		default:
-			result = new OpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags);
+			result = new OpenTypeLayoutEngine(fontInstance, scriptCode, languageCode, typoFlags XeTeX_success);
 			break;
 		}
     }
 
+#if U_ICU_VERSION_CODE >= 42
+    if (LE_FAILURE(success))
+        return NULL;
+#else
     if (result == NULL)
         success = LE_MEMORY_ALLOCATION_ERROR;
+#endif
 
     return result;
 }
@@ -169,8 +205,12 @@ LayoutEngine* XeTeXOTLayoutEngine::LayoutEngineFactory
 XeTeXOTLayoutEngine::XeTeXOTLayoutEngine(
 	const LEFontInstance* fontInstance, LETag scriptTag, LETag languageTag,
 	const GlyphSubstitutionTableHeader* gsubTable, const GlyphPositioningTableHeader* gposTable,
-	const LETag* addFeatures, const le_int32* addParams, const LETag* removeFeatures)
-		: OpenTypeLayoutEngine(fontInstance, getScriptCode(scriptTag), getLanguageCode(languageTag), 3, gsubTable)
+	const LETag* addFeatures, const le_int32* addParams, const LETag* removeFeatures
+#if U_ICU_VERSION_CODE >= 42
+				, LEErrorCode &success
+#endif
+			)
+		: OpenTypeLayoutEngine(fontInstance, getScriptCode(scriptTag), getLanguageCode(languageTag), 3, gsubTable XeTeX_success)
 {
 	fDefaultFeatureMap = fFeatureMap;
 	
@@ -336,8 +376,12 @@ static const le_int32 featureMapCount = LE_ARRAY_SIZE(featureMap);
 XeTeXHanLayoutEngine::XeTeXHanLayoutEngine(const XeTeXFontInst *fontInstance, LETag scriptTag, LETag languageTag,
                             const GlyphSubstitutionTableHeader *gsubTable, const GlyphPositioningTableHeader *gposTable,
 							const LETag *addFeatures, const le_int32* addParams,
-							const LETag *removeFeatures)
-	: XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, NULL, NULL, NULL)
+							const LETag *removeFeatures
+#if U_ICU_VERSION_CODE >= 42
+				, LEErrorCode &success
+#endif
+			)
+	: XeTeXOTLayoutEngine(fontInstance, scriptTag, languageTag, gsubTable, gposTable, NULL, NULL, NULL XeTeX_success)
 {
 	// reset the feature map and default features
 	fFeatureMap = featureMap;

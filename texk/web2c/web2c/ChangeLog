@@ -1,3 +1,82 @@
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* common.defines: Add new functions kpse{in,out}nameok).
+	* texmf.defines: Remove open{in,out}nameok.
+
+2009-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* coerce.h: Remove all references to mp.
+	For TeX like engines #include <synctexdir/synctex.h>.
+
+2009-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fixwrites.c: Corrected a typo (ofm2opl=>opl2ofm).
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* web2c-lexer.l, web2c-parser.y: Handle noreturn procedures.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* makecpool.c: Reorganize to use just one argument BASE.
+	In BASE-pool.c created from BASE.pool, #include "BASEd.h" for
+	prototypes of loadpoolstrings() and makestring().
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* common.defines (w2custring, constw2custring): Add new types
+	of strings of unsigned chars used as array indices.
+
+2009-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* coerce.h (makefullnamestring): ANSI C prototype. Also for MF.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* web2c-parser.y (IF_STATEMENT): Reorganize to detect 'then if'
+	and manufacture explicit braces (with three s/r conflicts).
+
+2009-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* web2c-parser.y (SUBRANGE_TYPE): Output small integers in the
+	range 0..SCHAR_MAX as "unsigned char" instead of "char", since
+	they are often used as array indices.
+
+	* web2c-lexer.l, web2c-parser.y: Clean up white space.
+
+2009-08-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* web2c-parser.y (BODY): Output ANSI C definition for mainbody.
+
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* fixwrites.c (program_name): Constify global string.
+	Drop unused globals argc and argv.
+	* main.c (std_header): Constify global string.
+	(my_output): Constify string param.
+	Drop unused globals argc and argv.
+	* splitup.c (coerce): Constify global string.
+	* web2c-lexer.l (yyerror): Constify string param.
+	* web2c-parser.y (fixup_var_list): ANSI C function definition.
+	* web2c.h (my_output, yyerror): Constify string params.
+	(yylex, yyparse): ANSI C prototypes.
+
+2009-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* splitup.c: Remove all references to mp.
+
+2009-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* web2c-parser.y (gen_function_head): Drop unused K&R type
+	function definitions.
+	* splitup.c (read_line): Drop handling of '#if 1".
+
+2009-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert (splitup_options): avoid to split the C code for MF
+	and all TeX-like engines.
+
 2009-07-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines: recover definition of kpsesrccmdline.
@@ -18,7 +97,7 @@
 	definitions without AA macros.
 	(gen_function_head): replace '#ifdef HAVE_PROTOTYPES' by '#if 1',
 	but keep unused code, otherwise splitup might create less files.
-	* splitup.c (read_line): handle '#if 1".
+	* splitup.c (read_line): handle '#if 1'.
 
 2009-06-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -57,7 +136,7 @@
 
 2009-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* convert (splitup_options for luatex)): avoid to split the C
+	* convert (splitup_options for luatex): avoid to split the C
 	code (from Taco).
 
 2009-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>

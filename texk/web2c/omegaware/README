@@ -8,14 +8,10 @@ You may freely use, modify and/or distribute this file.
 This directory contains a new Web Version 1.12 of the Omega font conversion
 programs ofm2opl, opl2ofm, ovf2ovp, and ovp2ovf.
 
-After numerous bugfixes and with a slightly modification of one algorithm
-the programs are now able to process ofm_level=-1 (TFM/VF) as well as
-ofm_level=0,1 (OFM/OVF) files.  A virtual font and the local fonts can use
+After numerous bugfixes and with a slight modification of one algorithm the
+programs are now able to process ofm_level=-1 (TFM/VF) as well as
+ofm_level=0,1 (OFM/OVF) files.  A virtual font and the local fonts can have
 any combination of these ofm levels.
-
-For the moment VF/OVF files read by ovf2ovp must have the extension '.ovf',
-allowing '.vf' as alternative requires a modification of the Kpathsea
-library that will not be present in TL2009.
 
 Note, however, that all this is still somewhat preliminary.  In particular
 the programs still lack the thorough checking of all input data done in

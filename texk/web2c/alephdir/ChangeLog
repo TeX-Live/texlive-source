@@ -1,3 +1,45 @@
+2009-11-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch: Check for allowed filename before opening the
+	output file. Better diagnostic when input file not found.
+	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch: Use kpse_{in,out}_name_ok(), now in Kpathsea,
+	instead of open_{in,out}_name_ok().
+
+2009-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/aleph.am: Enable compiler warnings.
+
+	Avoid many (--enable-...=max) compiler warnings.
+	* aleph.c (getc_two_LE, ungetc_two_LE): Declare as static.
+	(createeqtbptr): Comment out unused function.
+	(zpnewinputln, ziniteqtbentry): Drop extern decls; instead use
+	pnewinputln and initeqtbentry as defined in alephcoerce.h.
+	* alephbis.c (runexternalocp): Declare in_file_fd, out_file_fd
+	only when used (HAVE_MKSTEMP).
+	* alephmem.h: ANSI C function prototypes.
+	* com16bit.ch (bound_name, months): Declare as const_cstring.
+	(get_strings_started, open_log_file): Drop unused variables.
+	* eo16bit.ch (show_sa): Drop unused variable.
+	* eomem.ch (box_end): Drop unused variable.
+	* om16bit.ch (set_math_char): Drop unused variables.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/aleph.am: Adapt to new makecpool with one argument,
+	obsoleting aleph-pool.h.
+
+2009-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/aleph.am: Adapt to tangle-sh and web2c-sh.
+
+2009-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/aleph.am (aleph_c_h): avoid to split the C code.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* aleph.c, alephbis.c: drop P?C, P?H, use ANSI C function

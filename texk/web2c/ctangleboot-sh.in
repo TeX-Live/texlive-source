@@ -1,0 +1,69 @@
+#! @SHELL@
+# ctangleboot-sh: shell script to invoke ctangleboot and if required
+#    update c{tangle,web}boot.[ch]in from c{tangle,web}.[ch].
+#    For details see tangle.sh.
+#
+#   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+#
+#   This file is free software; the copyright holder
+#   gives unlimited permission to copy and/or distribute it,
+#   with or without modifications, as long as this notice is preserved.
+#
+target=$1; shift
+base=$1
+case $base in
+  common) file=cweb; exts='c h';;
+  ctangle) file=ctangle; exts=c;;
+  *) echo "Usage: $0 TARGET {common|ctangle} [CHANGEFILE]" >&2; exit 1;;
+esac
+
+TEXMFCNF=@srcdir@/../kpathsea; export TEXMFCNF
+CWEBINPUTS=@srcdir@/cwebdir; export CWEBINPUTS
+
+stamp=$base-ctangle
+case $target in
+  $stamp)
+    # Normal build.
+    rm -f $stamp.tmp
+    echo timestamp >$stamp.tmp
+    echo "@CTANGLEBOOT@ $@"
+    @CTANGLEBOOT@ "$@" || exit 1
+    mv -f $stamp.tmp $stamp
+  ;;
+  *)
+    # Recover from removal of $target
+    test -f $target && exit 0
+    trap "rm -rf $stamp $stamp.lock" 1 2 13 15
+    if mkdir $stamp.lock 2>/dev/null; then
+      # Code executed by the first process.
+      rm -f $stamp $stamp.tmp
+      echo timestamp >$stamp.tmp
+      echo "@CTANGLEBOOT@ $@"
+      @CTANGLEBOOT@ "$@" || exit 1
+      mv -f $stamp.tmp $stamp
+      rmdir $stamp.lock
+    else
+      # Code executed by the follower processes.
+      # Wait until the first process is done.
+      while test -d $stamp.lock; do sleep 1; done
+      # Succeed if and only if the first process succeeded.
+      test -f $stamp; exit $?
+    fi
+  ;;
+esac
+
+for ext in $exts; do
+  src=$file.$ext
+  dst=@srcdir@/${file}boot.${ext}in
+  sed -e 's,@srcdir@/cwebdir,cwebdir,' \
+      -e 's,^#include "cweb.h",#include "cwebboot.h",' \
+      $src >$stamp.tmp
+  if cmp -s $stamp.tmp $dst; then
+    rm -f $stamp.tmp
+  else
+    echo "Updating $src => $dst"
+    mv -f $stamp.tmp $dst || exit 1
+  fi
+done
+
+exit 0

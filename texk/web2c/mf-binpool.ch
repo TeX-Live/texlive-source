@@ -2,6 +2,14 @@
 % pool in binary
 %
 @x
+@!m,@!n:text_char; {characters input from |pool_file|}
+@!g:str_number; {garbage}
+@!a:integer; {accumulator for check sum}
+@!c:boolean; {check sum has been checked}
+@y
+@!g:str_number; {garbage}
+@z
+@x
 @ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);
   a_close(pool_file); get_strings_started:=false; return;
   end

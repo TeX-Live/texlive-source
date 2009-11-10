@@ -76,7 +76,7 @@
 int k, len;
 
 static void
-yyerror(char * msg)
+yyerror(const char *msg)
 {
 fprintf(stderr, "line %d: %s\n", line_number, msg);
 }

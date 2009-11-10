@@ -1,3 +1,28 @@
+2009-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: Enable compiler warnings.
+	* etex-binpool.ch (get_strings_started): Drop unused variables.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: Adapt to new makecpool with one argument.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: Prepare compiler warnings.
+
+2009-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: SyncTeX now integrated into ../texmfmp.h.
+
+2009-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: Adapt to tangle-sh and web2c-sh.
+
+2009-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am (etex_c_h): avoid to split the C code.
+
 2009-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etrip.test (new): Shell script for e-TRIP tests.

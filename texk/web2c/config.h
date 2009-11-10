@@ -108,8 +108,15 @@ typedef off_t longinteger;
 extern long strtol (const char *, char **, int);
 #endif
 
+#if defined __GNUC__ && __GNUC__ >=3
+#define WEB2C_NORETURN __attribute__((__noreturn__))
+#else
+#define WEB2C_NORETURN
+#endif
+
 /* From uexit.c.  This is here because the lib/ and web2c/ routines
    themselves can use it, but they don't need cpascal.h.  */
+WEB2C_NORETURN
 extern void uexit (int status);
 
 /* usage.c */

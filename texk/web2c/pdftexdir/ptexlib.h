@@ -178,7 +178,7 @@ extern void fm_read_info(void);
 extern ff_entry *check_ff_exist(char *, boolean);
 extern void pdfmapfile(integer);
 extern void pdfmapline(integer);
-extern void pdfinitmapfile(string map_name);
+extern void pdfinitmapfile(const_string map_name);
 extern fm_entry *new_fm_entry(void);
 extern void delete_fm_entry(fm_entry *);
 extern int avl_do_entry(fm_entry *, int);

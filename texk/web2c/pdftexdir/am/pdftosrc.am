@@ -10,10 +10,11 @@ bin_PROGRAMS += pdftosrc
 endif PDFTEX
 EXTRA_PROGRAMS += pdftosrc
 
-## Force Automake to use CXXLD for linking
+# Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftosrc_SOURCES = dummy.cxx
 
 pdftosrc_CPPFLAGS = $(pdftex_cppflags)
+pdftosrc_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 pdftosrc_SOURCES = pdftexdir/pdftosrc.cc
 
@@ -21,5 +22,5 @@ pdftosrc_LDADD = $(pdftex_ldadd) $(LDADD)
 
 pdftosrc_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
-$(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libpdftex.a 
+$(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libpdftex.a
 

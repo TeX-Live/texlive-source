@@ -88,10 +88,10 @@ inline static double my_fmax(double x, double y) { return (x < y) ? y : x; }
 
 int main(int argc, char *argv[]);
 
-void synctex_help(char * error,...);
-void synctex_help_view(char * error,...);
-void synctex_help_edit(char * error,...);
-void synctex_help_update(char * error,...);
+void synctex_help(const char * error,...);
+void synctex_help_view(const char * error,...);
+void synctex_help_edit(const char * error,...);
+void synctex_help_update(const char * error,...);
 
 int synctex_view(int argc, char *argv[]);
 int synctex_edit(int argc, char *argv[]);
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void synctex_usage(char * error,va_list ap) {
+static void synctex_usage(const char * error,va_list ap) {
 	if(error) {
 		fprintf(stderr,"SyncTeX ERROR: ");
 		vfprintf(stderr,error,ap);
@@ -148,7 +148,7 @@ void synctex_usage(char * error,va_list ap) {
 	return;
 }
 
-void synctex_help(char * error,...) {
+void synctex_help(const char * error,...) {
 	va_list v;
 	va_start(v, error);
 	synctex_usage(error, v);
@@ -165,7 +165,7 @@ void synctex_help(char * error,...) {
 	return;
 }
 
-void synctex_help_view(char * error,...) {
+void synctex_help_view(const char * error,...) {
 	va_list v;
 	va_start(v, error);
 	synctex_usage(error, v);
@@ -486,7 +486,7 @@ int synctex_view_proceed(synctex_view_params_t * Ps) {
 	return 0;
 }
 
-void synctex_help_edit(char * error,...) {
+void synctex_help_edit(const char * error,...) {
 	va_list v;
 	va_start(v, error);
 	synctex_usage(error, v);
@@ -548,7 +548,7 @@ typedef struct {
 	char * context;
 } synctex_edit_params_t;
 
-int synctex_view_proceed(synctex_view_params_t * paramsRef);
+int synctex_edit_proceed(synctex_edit_params_t * Ps);
 
 /*	"usage: synctex edit -o page:x:y:output [-d directory] [-x editor-command] [-h offset:context]\n"  */
 int synctex_edit(int argc, char *argv[]) {
@@ -652,7 +652,7 @@ int synctex_edit_proceed(synctex_edit_params_t * Ps) {
 		synctex_node_t node = NULL;
 		const char * input = NULL;
 		if(NULL != (node = synctex_next_result(scanner))
-				&& NULL != (input = (char *)synctex_scanner_get_name(scanner,synctex_node_tag(node)))) {
+				&& NULL != (input = synctex_scanner_get_name(scanner,synctex_node_tag(node)))) {
 			/* filtering the command */
 			if(Ps->editor && strlen(Ps->editor)) {
 				size_t size = 0;
@@ -745,7 +745,7 @@ int synctex_edit_proceed(synctex_edit_params_t * Ps) {
 	return 0;
 }
 
-void synctex_help_update(char * error,...) {
+void synctex_help_update(const char * error,...) {
 	va_list v;
 	va_start(v, error);
 	synctex_usage(error, v);

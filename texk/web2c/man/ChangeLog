@@ -1,3 +1,14 @@
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (man1_links): New list of symlinks within man1dir.
+	Moved handling of lambda, ctangle, cweave, odvicopy, odvitype,
+	mf-nowin, and pdflatex symlinks from ../../tetex/ to here.
+	(install-data-hook, uninstall-hook): Use `man1_links'.
+
+	* ofm2opl.man, opl2ofm.man, ovf2ovp.man, ovp2ovf.man,
+	ttf2afm.man: New files moved from ../../tetex/ to here.
+	* Makefile.am (man_sources): Adjusted.
+
 2009-07-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: distribute luatex.man.

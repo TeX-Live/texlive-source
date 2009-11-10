@@ -172,7 +172,7 @@
 tini@/
 @#
 @!bound_default:integer; {temporary for setup}
-@!bound_name:^char; {temporary for setup}
+@!bound_name:const_cstring; {temporary for setup}
 @#
 @!main_memory:integer; {total memory words allocated in initex}
 @!mem_top:integer; {largest index in the |mem| array dumped by \.{INIMF};
@@ -629,7 +629,7 @@ end;
        uexit(0);
    end
 @<Error hand...@>=
-procedure jump_out;
+noreturn procedure jump_out;
 begin
 close_files_and_terminate;
 do_final_end;
@@ -684,6 +684,24 @@ not been commented out.
     		      str_start[edit_file.name_field];
     edit_line:=line;
     jump_out;
+@z
+
+@x [6.88] Declare fatal_error as noreturn.
+procedure fatal_error(@!s:str_number); {prints |s|, and that's it}
+@y
+noreturn procedure fatal_error(@!s:str_number); {prints |s|, and that's it}
+@z
+
+@x [6.89] Declare overflow as noreturn.
+procedure overflow(@!s:str_number;@!n:integer); {stop due to finiteness}
+@y
+noreturn procedure overflow(@!s:str_number;@!n:integer); {stop due to finiteness}
+@z
+
+@x [6.90] Declare confusion as noreturn.
+procedure confusion(@!s:str_number);
+@y
+noreturn procedure confusion(@!s:str_number);
 @z
 
 @x [7.96] Do half in cpascal.h. And add halfp as in MetaPost for speed.
@@ -1587,7 +1605,7 @@ name_of_file[name_length + 1] := 0;
 MF_base_default:='MFbases:plain.base';
 @y
 @!base_default_length: integer;
-@!MF_base_default: ^char;
+@!MF_base_default: w2c_u_string;
 
 @ We set the name of the default format file and the length of that name
 in \.{texmfmp.c}, since we want them to depend on the name of the
@@ -1699,7 +1717,7 @@ while ((buffer[k]=" ")or(buffer[k]=tab))and(k<last) do incr(k);
 @x [38.788] Adjust for C string conventions.
 @!months:packed array [1..36] of char; {abbreviations of month names}
 @y
-@!months:^char;
+@!months:const_cstring;
 @z
 
 @x [38.788] Set correct filename for recorder.
@@ -1750,7 +1768,6 @@ loop@+  begin begin_file_reading; {set up |cur_file| and new level of input}
     if a_open_in(cur_file) then goto done;
     end;
 @y Don't assume a single . in filenames.
-var temp_str: str_number; k: integer;
 begin @<Put the desired file name in |(cur_name,cur_ext,cur_area)|@>;
 pack_cur_name;
 loop@+begin
@@ -1760,7 +1777,7 @@ loop@+begin
     pack_cur_name;
     end;
   {Kpathsea tries all the various ways to get the file.}
-  if open_in_name_ok(stringcast(name_of_file+1))
+  if kpse_in_name_ok(stringcast(name_of_file+1))
      and a_open_in(cur_file, kpse_mf_format) then
     goto done;
 @z

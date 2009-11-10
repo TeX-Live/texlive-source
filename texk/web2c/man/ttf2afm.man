@@ -1,0 +1,74 @@
+.TH "ttf2afm" "1" "September 2000" "pdfTeX" "pdfTeX" 
+.PP 
+.SH "NAME" 
+ttf2afm \- utility to generate AFM files for TrueType fonts
+.PP 
+.SH "SYNOPSIS" 
+.PP 
+\fBttf2afm\fP [ \fIOPTION\fP\&.\&.\&. ]  \fIFONTFILE\fP
+.PP 
+.SH "DESCRIPTION" 
+.PP 
+\fBttf2afm\fP is used to generate Adobe Font Metrics (AFM) files for
+TrueType (TTF) fonts to allow them to be used with TeX\&.
+.PP 
+\fBttf2afm\fP takes the name of a TrueType font file as a required
+argument\&.  It may also take one or more options from the list below
+(note that \fB-d\fP and \fB-h\fP are mutually exclusive)\&.
+.PP 
+.SH "OPTIONS" 
+.PP 
+.IP "\fB-a\fP" 
+print all glyphs
+.IP "\fB-i\fP" 
+read names in encoding vector in form
+`index\fInum\fP\&'
+.IP "\fB-d\fP" 
+print glyph names in the form
+`index\fIdecimal_num\fP\&'
+.IP "\fB-h\fP" 
+print glyph names in the form
+`index\fIhex_num\fP\&'
+.IP "\fB-c\fP \fIname\fP" 
+print encoding tables to file
+\fIname\&.eMN\fP, where \fIM\fP is the platform
+number and \fIN\fP is the encoding
+.IP "\fB-e\fP \fIenc\fP" 
+use encoding from file \fIenc\fP
+.IP "\fB-o\fP \fIoutput\fP" 
+output to file \fIoutput\fP instead
+of stdout
+.PP 
+Platform numbers can be one of
+.IP "0" 
+Apple Unicode
+.IP "1" 
+Macintosh
+.IP "2" 
+ISO
+.IP "3" 
+Microsoft
+.PP 
+Encodings can be
+.IP "0" 
+Roman (if platform is Macintosh)
+.IP "0" 
+Symbol (if platform is Microsoft)
+.IP "1" 
+Unicode (if platform is Microsoft)
+.PP 
+.SH "BUGS" 
+.PP 
+None known, but submit bug reports to <pdftex@tug\&.org> (mailing list)\&.
+.PP 
+.SH "AUTHOR" 
+.PP 
+\fBttf2afm\fP is part of pdfTeX and was written by Han The Thanh
+<thanh@informatics\&.muni\&.cz>\&.
+.PP 
+This manual page was written by C\&.M\&. Connelly
+<cmc@debian\&.org>, for
+the Debian GNU/Linux system\&.  It may be used by other distributions
+without contacting the author\&.  Any mistakes or omissions in the
+manual page are my fault; inquiries about or corrections to this
+manual page should be directed to me (and not to the primary author)\&.

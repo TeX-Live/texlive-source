@@ -39,8 +39,10 @@ runexternalocp (string external_ocp_name)
   char *out_file_name;
   FILE *in_file;
   FILE *out_file;
+#if HAVE_MKSTEMP
   int in_file_fd;
   int out_file_fd;
+#endif
   char command_line[400];
   int i;
   unsigned c;

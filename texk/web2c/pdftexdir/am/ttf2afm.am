@@ -10,9 +10,12 @@ bin_PROGRAMS += ttf2afm
 endif PDFTEX
 EXTRA_PROGRAMS += ttf2afm
 
-ttf2afm_CPPFLAGS = -I$(srcdir)/pdftexdir 
+ttf2afm_CPPFLAGS = -I$(srcdir)/pdftexdir
+ttf2afm_CFLAGS = $(WARNING_CFLAGS)
 
 ttf2afm_SOURCES = pdftexdir/ttf2afm.c
+
+ttf2afm_DEPENDENCIES = $(default_dependencies)
 
 ## included by pdftexdir/ttf2afm.c
 EXTRA_ttf2afm_SOURCES = pdftexdir/macnames.c

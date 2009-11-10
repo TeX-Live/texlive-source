@@ -13,7 +13,7 @@
 \def\title{PATGEN changes for C}
 @z
 
-@x Terminal I/O
+@x Terminal I/O, Need standard input.
 @d get_input(#)==read(input,#)
 @d get_input_ln(#)==
   begin if eoln(input) then read_ln(input);
@@ -22,14 +22,18 @@
 @#
 @y
 @d get_input(#)==#:=input_int(std_input)
-@d get_input_ln(#)==begin #:=getc(std_input); read_ln(std_input); end @#
+@d get_input_ln(#)==begin #:=getc(std_input); read_ln(std_input); end
+@#
+@d std_input==stdin@z
 @z
 
-@x Need standard input.
-@p @<Compiler directives@>@/
+@x Eliminate the |end_of_PATGEN| label.
+@d end_of_PATGEN=9999
 @y
-@d std_input==stdin
-@p @<Compiler directives@>@/
+@z
+@x
+label end_of_PATGEN;
+@y
 @z
 
 @x Add file opening to initialization
@@ -181,6 +185,11 @@ f_name := cmdline (3);
 rewrite (patout, f_name);
 @z
 
+@x Eliminate the |end_of_PATGEN| label.
+end_of_PATGEN:
+@y
+@z
+
 @x System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{PATGEN} work at a particular installation.
@@ -209,10 +218,10 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       do_nothing;
-    
+
     end else if getopt_return_val = '?' then begin
       usage ('patgen');
-    
+
     end else if argument_is ('help') then begin
       usage_help (PATGEN_HELP, nil);
 

@@ -34,7 +34,7 @@ m4_define([kpse_tex_progs], [dnl
 [[aleph],  [yes], [no],  [Aleph],  []],
 [[pdftex], [yes], [yes], [pdfTeX], [xpdf libpng obsdcompat]],
 [[luatex], [yes], [no],  [luaTeX], [xpdf libpng obsdcompat]],
-[[xetex],  [yes], [yes], [XeTeX],  [xpdf libpng freetype2 icu teckit graphite]],
+[[xetex],  [yes], [yes], [XeTeX],  [xpdf libpng freetype2 icu-xetex teckit graphite]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
            [m4_ifset([Kpse_Prog],

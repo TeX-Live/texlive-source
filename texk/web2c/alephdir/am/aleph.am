@@ -10,42 +10,40 @@ bin_PROGRAMS += aleph
 endif ALEPH
 EXTRA_PROGRAMS += aleph
 
-## With --enable-ipc, Aleph may need to link with -lsocket.
+# With --enable-ipc, Aleph may need to link with -lsocket.
 aleph_LDADD = $(LDADD) $(ipc_socketlibs)
 
 aleph_CPPFLAGS = -I$(srcdir)/alephdir $(AM_CPPFLAGS)
+aleph_CFLAGS = $(WARNING_CFLAGS)
 
-## Aleph C sources
-aleph_c_h = alephini.c aleph0.c aleph1.c aleph2.c aleph3.c alephcoerce.h alephd.h
+# Aleph C sources
+aleph_c_h = alephini.c aleph0.c alephcoerce.h alephd.h
 nodist_aleph_SOURCES = $(aleph_c_h) aleph-pool.c alephextra.c
 aleph_SOURCES = \
 	alephdir/aleph.c \
 	alephdir/alephbis.c \
 	alephdir/alephextra.h \
-	alephdir/alephmem.h \
-	alephdir/aleph-pool.h
+	alephdir/alephmem.h
 
 # We must create alephd.h before building the aleph_OBJECTS.
 $(aleph_OBJECTS): alephd.h
 
 $(aleph_c_h): aleph-web2c
+	@$(web2c) aleph
 aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines
-	$(web2c) aleph
-	echo timestamp >$@
-	touch $(aleph_c_h)
-aleph-pool.c: aleph.pool $(makecpool_stamp) alephdir/aleph-pool.h
-	$(makecpool) aleph.pool $(srcdir)/alephdir/aleph-pool.h >$@ || rm -f $@
+	@$(web2c) aleph
+aleph-pool.c: aleph.pool alephd.h $(makecpool_stamp)
+	$(makecpool) aleph >$@ || rm -f $@
 alephextra.c: lib/texmfmp.c alephdir/alephextra.h alephd.h
 	sed s/TEX-OR-MF-OR-MP/aleph/ $(srcdir)/lib/texmfmp.c >$@
 
-## Tangling Aleph
+# Tangling Aleph
 aleph.p aleph.pool: aleph-tangle
-aleph-tangle: otangle$(EXEEXT) aleph.web aleph.ch
-	$(otangle) aleph aleph
-	echo timestamp >$@
-	touch aleph.p aleph.pool
+	@$(o_tangle) aleph aleph
+aleph-tangle: otangle$(EXEEXT) aleph.web aleph.ch tangle-sh
+	@$(o_tangle) aleph aleph
 
-## Generate aleph.web
+# Generate aleph.web
 aleph_web_srcs = \
 	tex.web \
 	alephdir/om16bit.ch \
@@ -73,7 +71,7 @@ aleph_web_srcs = \
 aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
 	$(tie) -m aleph.web $(aleph_web_srcs)
 
-## Generate aleph.ch
+# Generate aleph.ch
 aleph_ch_srcs = \
 	alephdir/com16bit.ch \
 	alephdir/comstr.ch \
@@ -110,5 +108,5 @@ EXTRA_DIST += \
 
 ## Eventually delete these files
 ##
-EXTRA_DIST += alephdir/aleph.mk
+EXTRA_DIST += alephdir/aleph-pool.h alephdir/aleph.mk
 

@@ -271,7 +271,7 @@ if ini_version then
 
 % [3.26] name_of_file is no longer an array.  And change the destination
 % type to text_char, which fixes:
-% 
+%
 % Date: 19 Sep 1994 10:38:24 +0200
 % From: thorinn@diku.dk (Lars Mathiesen)
 %	When echoed to the screen and in the log, character codes
@@ -420,7 +420,7 @@ We define |input_ln| in C, for efficiency.
 tini@/
 @#
 @!bound_default:integer; {temporary for setup}
-@!bound_name:^char; {temporary for setup}
+@!bound_name:const_cstring; {temporary for setup}
 @#
 @!main_memory:integer; {total memory words allocated in initex}
 @!extra_mem_bot:integer; {|mem_min:=mem_bot-extra_mem_bot| except in \.{INITEX}}
@@ -576,6 +576,16 @@ if last > first then
 @p @t\4@>@<Declare additional routines for string recycling@>@/
 
 @!init function get_strings_started:boolean; {initializes the string pool,
+@z
+
+@x - unused variables.
+var k,@!l:0..biggest_char; {small indices or counters}
+@!m,@!n:text_char; {characters input from |pool_file|}
+@!g:str_number; {garbage}
+@!a:integer; {accumulator for check sum}
+@!c:boolean; {check sum has been checked}
+@y
+var g:str_number; {garbage}
 @z
 
 @x
@@ -1403,10 +1413,10 @@ var k:0..buf_size; {index into |buffer|}
 if e=".tex" then show_context;
 @y
 if (e=".tex") or (e="") then show_context;
-print_ln; print("(Type <return> to retry, or <eof> to exit");
+print_ln; print_c_string(prompt_file_name_help_msg);
 if (e<>"") then
   begin
-    print(" Default file extension is `"); print(e); print("'");
+    print("; default file extension is `"); print(e); print("'");
   end;
 print(")"); print_ln;
 @z
@@ -1443,8 +1453,7 @@ ship out a box of stuff, we shall use the macro |ensure_dvi_open|.
 @x [29.534] l.10285 - Adjust for C string conventions.
 @!months:packed array [1..36] of char; {abbreviations of month names}
 @y
-@!months:^char;
-j:integer;
+@!months:const_cstring;
 @z
 
 @x [29.534] l. - Send the job_name to the file recorder.
@@ -1491,7 +1500,7 @@ pack_cur_name;
 loop@+  begin begin_file_reading; {set up |cur_file| and new level of input}
   tex_input_type := 1; {Tell |open_input| we are \.{\\input}.}
   {Kpathsea tries all the various ways to get the file.}
-  if open_in_name_ok(name_of_file+1)
+  if kpse_in_name_ok(name_of_file+1)
      and a_open_in(cur_file, kpse_tex_format) then
     goto done;
 @z
@@ -1658,7 +1667,7 @@ if abs(intcast(fit_class)-intcast(fitness(r)))>1 then d:=d+adj_demerits;
 @y
 @!trie_pointer=0..ssup_trie_size; {an index into |trie|}
 @z
- 
+
 @x [42.921] l.18075 - bigtrie: allow larger hyphenation tries.
 @!trie:array[trie_pointer] of two_halves; {|trie_link|, |trie_char|, |trie_op|}
 @y
@@ -2011,7 +2020,7 @@ else kpse_make_tex_discard_errors := 0;
 @y
   pack_cur_name;
   tex_input_type:=0; {Tell |open_input| we are \.{\\openin}.}
-  if open_in_name_ok(name_of_file+1)
+  if kpse_in_name_ok(name_of_file+1)
       and a_open_in(read_file[n], kpse_tex_format) then
      read_open[n]:=just_open;
 @z
@@ -2139,7 +2148,7 @@ if x<>mem_bot then goto bad_fmt;
 undump_int(mem_top); format_debug ('mem_top')(mem_top);
 if mem_bot+1100>mem_top then goto bad_fmt;
 
- 
+
 head:=contrib_head; tail:=contrib_head;
      page_tail:=page_head;  {page initialization}
 
@@ -2658,8 +2667,8 @@ var j:small_number; {write stream number}
         prompt_file_name("output file name",".tex");
       write_open[j]:=true;
 @y
-      while not a_open_out(write_file[j]) 
-            or not open_out_name_ok(name_of_file+1) do
+      while not kpse_out_name_ok(name_of_file+1)
+            or not a_open_out(write_file[j]) do
         prompt_file_name("output file name",".tex");
       write_open[j]:=true;
       {If on first line of input, log file is not ready yet, so don't log.}

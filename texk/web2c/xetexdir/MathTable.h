@@ -33,7 +33,7 @@ authorization from the copyright holders.
 #ifndef __MATHTABLE_H__
 #define __MATHTABLE_H__
 
-#include "OpenTypeTables.h"
+#include "layout/OpenTypeTables.h"
 
 typedef struct {
 	le_int16 value;

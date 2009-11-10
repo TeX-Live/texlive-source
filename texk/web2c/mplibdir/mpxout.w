@@ -206,7 +206,7 @@ int lnno ;           /* current line number */
 @ A set of basic reporting functions. 
 
 @c
-static void mpx_printf(MPX mpx, char *header, char *msg, va_list ap) {
+static void mpx_printf(MPX mpx, const char *header, const char *msg, va_list ap) {
   fprintf(mpx->errfile, "makempx %s: %s:", header, mpx->mpname);
   if (mpx->lnno!=0)
     fprintf(mpx->errfile, "%d:", mpx->lnno);
@@ -216,7 +216,7 @@ static void mpx_printf(MPX mpx, char *header, char *msg, va_list ap) {
 }
 
 @ @c
-static void mpx_report(MPX mpx, char *msg, ...) {
+static void mpx_report(MPX mpx, const char *msg, ...) {
   va_list ap;
   if (mpx->debug==0) return;
   va_start(ap, msg);
@@ -227,7 +227,7 @@ static void mpx_report(MPX mpx, char *msg, ...) {
 }
  
 @ @c
-static void mpx_warn(MPX mpx, char *msg, ...) {
+static void mpx_warn(MPX mpx, const char *msg, ...) {
   va_list ap;
   va_start(ap, msg);
   mpx_printf(mpx, "warning", msg, ap);
@@ -237,7 +237,7 @@ static void mpx_warn(MPX mpx, char *msg, ...) {
 }
 
 @ @c
-static void mpx_error(MPX mpx, char *msg, ...) {
+static void mpx_error(MPX mpx, const char *msg, ...) {
   va_list ap;
   va_start(ap, msg);
   mpx_printf(mpx, "error", msg, ap);
@@ -255,7 +255,7 @@ jmp_buf jump_buf;
 
 @ 
 @c
-static void mpx_abort(MPX mpx, char *msg, ...) {
+static void mpx_abort(MPX mpx, const char *msg, ...) {
   va_list ap;
   va_start(ap, msg);
   fprintf(stderr, "fatal: ");
@@ -279,7 +279,7 @@ if (setjmp(mpx->jump_buf) != 0) {
 }
 
 @ @c
-static FILE *mpx_xfopen (MPX mpx, char *fname, char *fmode) {
+static FILE *mpx_xfopen (MPX mpx, const char *fname, const char *fmode) {
   FILE *f  = fopen(fname,fmode);
   if (f == NULL)
     mpx_abort(mpx,"File open error for %s in mode %s", fname, fmode);
@@ -427,7 +427,7 @@ static char *mpx_getline(MPX mpx, FILE *mpfile) {
 and the next character is not a letter or an underscore.
 
 @c
-static int mpx_match_str(char *s, char *t) {
+static int mpx_match_str(const char *s, const char *t) {
     while (*t != 0) {
         if (*s != *t)
             return 0;
@@ -2158,8 +2158,8 @@ name, and decorate the relevant drawing commands with ``\.{withcolor
 
 @<Types...@>=
 typedef struct named_color_record {
-  char *name; /* color name */
-  char *value; /* text to pass to MetaPost */
+  const char *name; /* color name */
+  const char *value; /* text to pass to MetaPost */
 } named_color_record;
 
 @ Declare the named-color array itself.
@@ -2172,7 +2172,7 @@ web_integer num_named_colors; /* number of elements of |named_colors| that are v
 @ This function, used only during initialization, defines a named color.
 
 @c
-static void mpx_def_named_color (MPX mpx, char *n, char *v) {
+static void mpx_def_named_color (MPX mpx, const char *n, const char *v) {
   mpx->num_named_colors++;
   assert(mpx->num_named_colors<max_named_colors);
   mpx->named_colors[mpx->num_named_colors].name = n;
@@ -2180,7 +2180,7 @@ static void mpx_def_named_color (MPX mpx, char *n, char *v) {
 }
 
 @ @<Declarations@>=
-static void mpx_def_named_color (MPX mpx, char *n, char *v);
+static void mpx_def_named_color (MPX mpx, const char *n, const char *v);
 
 @ During the initialization phase, we define values for all the named
 colors defined in \.{colordvi.tex}. CMYK-to-RGB conversion by GhostScript.
@@ -2556,10 +2556,10 @@ static char *mpx_find_file (MPX mpx, const char *nam, const char *mode, int ftyp
 mpx->find_file = mpx_find_file;
 
 @ @<Declarations@>=
-static FILE *mpx_fsearch(MPX mpx, char *nam, int format);
+static FILE *mpx_fsearch(MPX mpx, const char *nam, int format);
 
 @ @c
-static FILE *mpx_fsearch(MPX mpx, char *nam, int format) {
+static FILE *mpx_fsearch(MPX mpx, const char *nam, int format) {
 	FILE *f = NULL;
 	char *fname = (mpx->find_file)(mpx, nam, "r", format);
 	if (fname) {
@@ -2752,7 +2752,7 @@ if the \TeX\ name matches the PostScript name. (|\t| means one or more tabs.)
 avl_tree trfonts;
 
 @ @c
-static void mpx_read_fmap(MPX mpx, char *dbase) {
+static void mpx_read_fmap(MPX mpx, const char *dbase) {
     FILE *fin;
     avl_entry *tmp;
     char *nam;			/* a font name being read */
@@ -2808,7 +2808,7 @@ becomes redundant.  Simply keeping an empty "trchars.adj" file
 around will do fine without requiring any changes to this program.
 
 @c 
-static void mpx_read_char_adj(MPX mpx, char *adjfile) {
+static void mpx_read_char_adj(MPX mpx, const char *adjfile) {
     FILE *fin;
     char buf[200];
     avl_entry tmp, *p;
@@ -3805,7 +3805,7 @@ There is a -debug switch, preventing the removal of tmp files
 #define TROFF_OUTERR "mpxerr.t"
 
 @ @c 
-static void mpx_rename (MPX mpx, char *a, char *b) {
+static void mpx_rename (MPX mpx, const char *a, const char *b) {
   mpx_report(mpx,"renaming %s to %s",a,b); 
   rename(a,b); 
 }
@@ -3813,7 +3813,7 @@ static void mpx_rename (MPX mpx, char *a, char *b) {
 @ @<Globals@>=
 char tex[15] ;
 int debug ;
-char *progname;
+const char *progname;
 
 @ Cleaning up
 @c

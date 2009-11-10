@@ -480,7 +480,7 @@ add_to_state((instr<<24)+val);
 }
 
 void
-store_state(string str)
+store_state(const_string str)
 {
 int i;
 for (i=0; i<no_states; i++) {

@@ -39,7 +39,7 @@ authorization from the copyright holders.
  **********************************************************************
  */
 
-#include "LETypes.h"
+#include "layout/LETypes.h"
 
 #include "FontTableCache.h"
 

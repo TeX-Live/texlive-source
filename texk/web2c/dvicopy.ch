@@ -23,7 +23,7 @@ procedure initialize; {this procedure gets things started properly}
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
-  begin 
+  begin
     kpse_set_progname (argv[0]);
     parse_arguments;
     print (banner); print_ln (version_string);
@@ -106,7 +106,7 @@ procedure initialize; {this procedure gets things started properly}
 @d last_text_char=255 {ordinal number of the largest element of |text_char|}
 @z
 
-@x [23] Remove non-local goto
+@x [23] Remove non-local goto, declare jump_out as noreturn
 @d abort(#)==begin print_ln(' ',#,'.'); jump_out;
     end
 
@@ -126,10 +126,22 @@ end;
 @<Basic printing procedures@>@;
 procedure close_files_and_terminate; forward;
 @#
-procedure jump_out;
+noreturn procedure jump_out;
 begin mark_fatal; close_files_and_terminate;
 uexit(1);
 end;
+@z
+
+@x [24] Declare confusion as noreturn
+procedure confusion(@!p:pckt_pointer);
+@y
+noreturn procedure confusion(@!p:pckt_pointer);
+@z
+
+@x [25] Declare overflow as noreturn
+procedure overflow(@!p:pckt_pointer;@!n:int_16u);
+@y
+noreturn procedure overflow(@!p:pckt_pointer;@!n:int_16u);
 @z
 
 @x [51] Fix casting problem in C.
@@ -188,9 +200,9 @@ To reduce the required changes we simply ignore the parameters given
 to |make_font_name|.
 @^system dependencies@>
 
-@d append_to_name(#)== begin 
+@d append_to_name(#)== begin
     cur_name[l_cur_name]:=#;
-    incr(l_cur_name); 
+    incr(l_cur_name);
     end
 @d make_font_name_end(#)==
   make_name
@@ -199,7 +211,12 @@ to |make_font_name|.
 @z
 
 % [67] No conversion of filenames in lower case, and initialize and
-% terminate for C strings.
+% terminate for C strings.  Eliminate now unused variable.
+@x
+@!c:char; {a character to be appended to |cur_name|}
+@y
+@z
+
 @x
 cur_loc:=pckt_start[n]; cur_limit:=pckt_start[n+1];
 @y
@@ -230,7 +247,7 @@ the default \.{TFM} directory, which is a system-dependent place where
 the \.{TFM} files for standard fonts are kept.
 The string variable |TFM_default_area| contains the name of this area.
 @^system dependencies@>
- 
+
 @d TFM_default_area_name=='TeXfonts:' {change this to the correct name}
 @d TFM_default_area_name_length=9 {change this to the correct length}
 
@@ -245,6 +262,18 @@ The string variable |TFM_default_area| contains the name of this area.
 TFM_default_area:=TFM_default_area_name;
 @y
 @ (No initialization to be done.  Keep this module to preserve numbering.)
+@z
+
+@x [94] Declare bad_tfm as noreturn
+procedure bad_tfm;
+@y
+noreturn procedure bad_tfm;
+@z
+
+@x [94] Declare bad_font as noreturn
+procedure bad_font;
+@y
+noreturn procedure bad_font;
 @z
 
 @x [96] Open TFM file
@@ -302,6 +331,12 @@ else #:=(((tfm_b0-intcast(256))*intcast(256)+tfm_b1)
 @!full_name: ^char;
 @z
 
+@x [109] Declare bad_dvi as noreturn
+procedure bad_dvi;
+@y
+noreturn procedure bad_dvi;
+@z
+
 @x [111] Fix up opening the binary files
 @ To prepare |dvi_file| for input, we |reset| it.
 
@@ -342,7 +377,7 @@ the default \.{VF} directory, which is a system-dependent place where
 the \.{VF} files for standard fonts are kept.
 The string variable |VF_default_area| contains the name of this area.
 @^system dependencies@>
- 
+
 @d VF_default_area_name=='TeXvfonts:' {change this to the correct name}
 @d VF_default_area_name_length=10 {change this to the correct length}
 
@@ -355,7 +390,7 @@ VF_default_area:=VF_default_area_name;
 @ If no font directory has been specified, \.{\title} is supposed to use
 the default \.{VF} directory, which is a system-dependent place where
 the \.{VF} files for standard fonts are kept.
- 
+
 Actually, under UNIX the standard area is defined in an external
 file \.{site.h}.  And the users have a path searched for fonts,
 by setting the \.{VFFONTS} environment variable.
@@ -379,7 +414,7 @@ if full_name then begin
   resetbin (vf_file, full_name);
   free (cur_name);
   free (full_name);
-end else 
+end else
 @z
 
 @x [163] copy elements of array piece by piece
@@ -466,7 +501,7 @@ rewrite(out_file); {prepares to write packed bytes to |out_file|}
 @x [250] String declaration.
 @!comment:packed array[1..comm_length] of char; {preamble comment prefix}
 @y
-@!comment:^char; {preamble comment prefix}
+@!comment:const_w2c_u_string; {preamble comment prefix}
 @z
 
 @x [251] Output the string from 0 to len-1, not 1 to len.
@@ -521,14 +556,14 @@ begin
 
     end else if argument_is ('magnification') then begin
       out_mag := atou (optarg);
-    
+
     end else if argument_is ('max-pages') then begin
       max_pages := atou (optarg);
       incr (cur_select);
-      
+
     end else if argument_is ('page-start') then begin
       @<Determine the desired |start_count| values from |optarg|@>;
-    
+
     end; {Else it was a flag; |getopt| has already done the assignment.}
   until getopt_return_val = -1;
 
@@ -538,17 +573,17 @@ begin
     dvi_file := make_binary_file (stdin);
     out_file := make_binary_file (stdout);
     term_out := stderr;
-    
+
   end else if optind + 1 = argc then begin
     resetbin (dvi_file, extend_filename (cmdline (optind), 'dvi'));
     out_file := make_binary_file (stdout);
     term_out := stderr;
-    
+
   end else if optind + 2 = argc then begin
     resetbin (dvi_file, extend_filename (cmdline (optind), 'dvi'));
     rewritebin (out_file, extend_filename (cmdline (optind + 1), 'dvi'));
     term_out := stdout;
-  
+
   end else begin
     write_ln (stderr, 'dvicopy: Need at most two file arguments.');
     usage ('dvicopy');
@@ -606,7 +641,7 @@ long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 incr (current_option);
 
-@ Parsing the starting page specification is a bit complicated. 
+@ Parsing the starting page specification is a bit complicated.
 (This is the same as in \.{DVItype}.)
 
 @<Determine the desired |start_count|...@> =
@@ -616,7 +651,7 @@ while optarg[m] do begin
   if optarg[m] = "*" then begin
     start_there[k] := false;
     incr (m);
-  
+
   end else if optarg[m] = "." then begin
     incr (k);
     if k >= 10 then begin
@@ -624,7 +659,7 @@ while optarg[m] do begin
       uexit (1);
     end;
     incr (m);
-  
+
   end else begin
     start_count[k] := strtol (optarg + m, address_of (end_num), 10);
     if end_num = optarg + m then begin

@@ -1,5 +1,5 @@
 %{
-/* web2c.l -- lexical analysis for Tangle output.  Public domain. */
+/* web2c-lexer.l -- lexical analysis for Tangle output.  Public domain. */
 
 #include "web2c.h"
 #include "web2c-parser.h"
@@ -133,6 +133,7 @@ HHB1		("hh"{WW}"."{WW}"b1")
 "if"		return last_tok=if_tok;
 "label"		return last_tok=label_tok;
 "mod"		return last_tok=mod_tok;
+"noreturn"	return last_tok=noreturn_tok;
 "not"		return last_tok=not_tok;
 "of"		return last_tok=of_tok;
 "or"		return last_tok=or_tok;
@@ -150,7 +151,7 @@ HHB1		("hh"{WW}"."{WW}"b1")
 "while"		return last_tok=while_tok;
 "others"	return last_tok=others_tok;
 
-{REAL}		{		
+{REAL}		{
 		  sprintf (temp, "%s%s", negbuf, yytext);
 		  negbuf[0] = '\0';
 		  return last_tok=r_num_tok;
@@ -186,7 +187,7 @@ HHB1		("hh"{WW}"."{WW}"b1")
 		  int c;
 		  while ((c = webinput()) == ' ' || c == '\t')
                     ;
-  		  unput(c);
+		  unput(c);
 		  if (c < '0' || c > '9') {
 			return last_tok = unary_minus_tok;
 		  }
@@ -270,7 +271,7 @@ get_result_type (char *s)
    bad status.  */
 
 int
-yyerror (string s)
+yyerror (const_string s)
 {
   /* This is so the convert script can delete the output file on error.  */
   puts ("@error@");

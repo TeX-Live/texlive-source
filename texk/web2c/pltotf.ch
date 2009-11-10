@@ -46,7 +46,7 @@ begin
 @!buf_size=3000; {length of lines displayed in error messages}
 @!max_header_bytes=1000; {four times the maximum number of words allowed in
   the \.{TFM} file header block, must be 1024 or less}
-@!max_param_words=300; {the maximum number of \.{fontdimen} parameters allowed}
+@!max_param_words=254; {the maximum number of \.{fontdimen} parameters allowed}
 @!max_lig_steps=32510;
   {maximum length of ligature program, must be at most $32767-257=32510$}
 @!max_kerns=5000; {the maximum number of distinct kern values}
@@ -80,6 +80,13 @@ packed file of bytes.  It's no problem in C.
 
 @<Set init...@>=
 rewritebin (tfm_file, tfm_name);
+@z
+
+@x [18] Pascal Web's char
+@d first_ord=0 {ordinal number of the smallest element of |char|}
+@y
+@d char == 0..255
+@d first_ord=0 {ordinal number of the smallest element of |char|}
 @z
 
 @x [79] `index' might be a library routine.

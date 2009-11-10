@@ -33,7 +33,7 @@ They
 */
 
 void
-lex_error_0(string fmt)
+lex_error_0(const_string fmt)
 {
     fprintf(stderr, "line %d (lexing): ", line_number);
     fprintf(stderr, fmt);
@@ -41,7 +41,7 @@ lex_error_0(string fmt)
 }
 
 void
-lex_error_1(string fmt, int item)
+lex_error_1(const_string fmt, int item)
 {
     fprintf(stderr, "line %d (lexing): ", line_number);
     fprintf(stderr, fmt, item);
@@ -49,7 +49,7 @@ lex_error_1(string fmt, int item)
 }
 
 void
-lex_error_s(string fmt, string item)
+lex_error_s(const_string fmt, const_string item)
 {
     fprintf(stderr, "line %d (lexing): ", line_number);
     fprintf(stderr, fmt, item);
@@ -57,7 +57,7 @@ lex_error_s(string fmt, string item)
 }
 
 void
-lex_error_s_1(string fmt, string item, int item1)
+lex_error_s_1(const_string fmt, const_string item, int item1)
 {
     fprintf(stderr, "line %d (lexing): ", line_number);
     fprintf(stderr, fmt, item, item1);
@@ -65,7 +65,7 @@ lex_error_s_1(string fmt, string item, int item1)
 }
 
 void
-yyerror(string fmt)
+yyerror(const_string fmt)
 {
     fprintf(stderr, "line %d (parsing): ", line_number);
     fprintf(stderr, fmt);
@@ -74,7 +74,7 @@ yyerror(string fmt)
 
 
 void
-warning_0(string fmt)
+warning_0(const_string fmt)
 {
     fprintf(stderr, "line %d (warning): ", line_number);
     fprintf(stderr, fmt);
@@ -82,7 +82,7 @@ warning_0(string fmt)
 }
 
 void
-warning_1(string fmt, int item)
+warning_1(const_string fmt, int item)
 {
     fprintf(stderr, "line %d (warning): ", line_number);
     fprintf(stderr, fmt, item);
@@ -90,7 +90,7 @@ warning_1(string fmt, int item)
 }
 
 void
-warning_2(string fmt, int item, int item2)
+warning_2(const_string fmt, int item, int item2)
 {
     fprintf(stderr, "line %d (warning): ", line_number);
     fprintf(stderr, fmt, item, item2);
@@ -98,7 +98,7 @@ warning_2(string fmt, int item, int item2)
 }
 
 void
-warning_s(string fmt, string item)
+warning_s(const_string fmt, const_string item)
 {
     fprintf(stderr, "line %d (warning): ", line_number);
     fprintf(stderr, fmt, item);
@@ -106,7 +106,7 @@ warning_s(string fmt, string item)
 }
 
 void
-warning_s_1(string fmt, string item, int item1)
+warning_s_1(const_string fmt, const_string item, int item1)
 {
     fprintf(stderr, "line %d (warning): ", line_number);
     fprintf(stderr, fmt, item, item1);
@@ -114,7 +114,7 @@ warning_s_1(string fmt, string item, int item1)
 }
 
 void
-warning_s_2(string fmt, string item, int item1, int item2)
+warning_s_2(const_string fmt, const_string item, int item1, int item2)
 {
     fprintf(stderr, "line %d (warning): ", line_number);
     fprintf(stderr, fmt, item, item1, item2);
@@ -122,7 +122,7 @@ warning_s_2(string fmt, string item, int item1, int item2)
 }
 
 void
-fatal_error_0(string fmt)
+fatal_error_0(const_string fmt)
 {
     fprintf(stderr, "line %d (fatal): ", line_number);
     fprintf(stderr, fmt);
@@ -131,7 +131,7 @@ fatal_error_0(string fmt)
 }
 
 void
-fatal_error_1(string fmt, int item)
+fatal_error_1(const_string fmt, int item)
 {
     fprintf(stderr, "line %d (fatal): ", line_number);
     fprintf(stderr, fmt, item);
@@ -140,7 +140,7 @@ fatal_error_1(string fmt, int item)
 }
 
 void
-fatal_error_2(string fmt, int item, int item2)
+fatal_error_2(const_string fmt, int item, int item2)
 {
     fprintf(stderr, "line %d (fatal): ", line_number);
     fprintf(stderr, fmt, item, item2);
@@ -149,7 +149,7 @@ fatal_error_2(string fmt, int item, int item2)
 }
 
 void
-fatal_error_s(string fmt, string  item)
+fatal_error_s(const_string fmt, const_string  item)
 {
     fprintf(stderr, "line %d (fatal): ", line_number);
     fprintf(stderr, fmt, item);
@@ -158,7 +158,7 @@ fatal_error_s(string fmt, string  item)
 }
 
 void
-internal_error_0(string fmt)
+internal_error_0(const_string fmt)
 {
     fprintf(stderr, "line %d (internal): ", line_number);
     fprintf(stderr, fmt);
@@ -167,7 +167,7 @@ internal_error_0(string fmt)
 }
 
 void
-internal_error_1(string fmt, int item)
+internal_error_1(const_string fmt, int item)
 {
     fprintf(stderr, "line %d (internal): ", line_number);
     fprintf(stderr, fmt, item);
@@ -176,7 +176,7 @@ internal_error_1(string fmt, int item)
 }
 
 void
-internal_error_s(string fmt, string item)
+internal_error_s(const_string fmt, const_string item)
 {
     fprintf(stderr, "line %d (internal): ", line_number);
     fprintf(stderr, fmt, item);

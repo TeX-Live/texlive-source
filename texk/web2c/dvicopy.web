@@ -1,4 +1,4 @@
-% Copyright (C) 1990,95 Peter Breitenlohner (peb@@mppmu.mpg.de)
+% Copyright (C) 1990,1991,1992,1995,2009 Peter Breitenlohner (peb@@mppmu.mpg.de)
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 %             don't load fonts that are never used (August 25, 1992).
 % Version 1.4 fixed a typo (March 28, 1995).
 % Version 1.5 avoided cur_name_length identifier conflict (October 15, 1995).
+% Version 1.6 minor cleanup: avoid unused or uninitialized variables,
+%             diagnose impossible cases (September 2009).
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -41,7 +43,7 @@
   \centerline{Copyright (C) 1990,95 Peter Breitenlohner}
   \centerline{Distributed under terms of GNU General Public License}
   \vskip 15pt
-  \centerline{(Version 1.5, October 1995)}
+  \centerline{(Version 1.6, September 2009)}
   \vfill}
 \def\botofcontents{\vfill
   \centerline{\hsize 5in\baselineskip9pt
@@ -89,11 +91,11 @@ included as conditional code not used by \.{DVIcopy}.
 The |banner| and |preamble_comment| strings defined here should be
 changed whenever \.{DVIcopy} gets modified.
 
-@d banner=='This is DVIcopy, Version 1.5' {printed when the program starts}
+@d banner=='This is DVIcopy, Version 1.6' {printed when the program starts}
 @d title=='DVIcopy' {the name of this program, used in some messages}
-@d copyright=='Copyright (C) 1990,95 Peter Breitenlohner'
+@d copyright=='Copyright (C) 1990,2009 Peter Breitenlohner'
 @#
-@d preamble_comment=='DVIcopy 1.5 output from '
+@d preamble_comment=='DVIcopy 1.6 output from '
 @d comm_length=24 {length of |preamble_comment|}
 @d from_length=6 {length of its |' from '| part}
 
@@ -1590,8 +1592,8 @@ label found,exit;
 var p,@!q:pckt_pointer; {current and next packet}
 @!f:eight_bits; {a flag byte}
 @!e:int_24; {extension for a packet}
-begin @<Locate a character packet and |goto found| if found@>;
-if font_packet(cur_fnt)(cur_res)=invalid_packet then
+begin q:=font_packet(cur_fnt)(cur_res);
+if q=invalid_packet then
   begin if pckt_m_msg<10 then {stop telling after first 10 times}
     begin print_ln('---missing character packet for character ',cur_res:1,
 @.missing character packet...@>
@@ -1601,6 +1603,7 @@ if font_packet(cur_fnt)(cur_res)=invalid_packet then
     end;
   find_packet:=false; return;
   end;
+@<Locate a character packet and |goto found| if found@>;
 if pckt_s_msg<10 then {stop telling after first 10 times}
   begin print_ln('---substituted character packet with extension ',
 @.substituted character packet...@>
@@ -1614,9 +1617,7 @@ found: cur_pckt:=p; cur_type:=f; find_packet:=true;
 exit: end;
 
 @ @<Locate a character packet and |goto found| if found@>=
-q:=font_packet(cur_fnt)(cur_res);
-while q<>invalid_packet do
-  begin p:=q; q:=invalid_packet;
+repeat p:=q; q:=invalid_packet;
   cur_loc:=pckt_start[p]; cur_limit:=pckt_start[p+1];
   if p=empty_packet then
     begin e:=0; f:=0;
@@ -1626,17 +1627,17 @@ while q<>invalid_packet do
     0: e:=0;
     1: e:=pckt_ubyte;
     2: e:=pckt_upair;
-    3: e:=pckt_strio;
-    end; {there are no other cases}
+    othercases e:=pckt_strio; {|f div ext_flag = 3|}
+    endcases;
     if (f mod ext_flag)>=chain_flag then q:=pckt_upair;
     f:=f mod chain_flag;
     end;
   if e=cur_ext then goto found;
-  end
+until q=invalid_packet
 
 @ The |start_packet| procedure is used to create the header bytes of a
 character packet for the character with residue~|cur_res| and
-extension~|cur_ext| from font~|cur_fnt|; if a previous such a packet
+extension~|cur_ext| from font~|cur_fnt|; if a previous such packet
 exists, we try to build an exact duplicate, i.e., use the chain field of
 that previous packet.
 
@@ -1647,7 +1648,8 @@ var p,@!q:pckt_pointer; {current and next packet}
 @!e:int_32; {extension for a packet}
 @!cur_loc: byte_pointer; {current location in a packet}
 @!cur_limit: byte_pointer; {start of next packet}
-begin @<Locate a character packet and |goto found| if found@>;
+begin q:=font_packet(cur_fnt)(cur_res);
+if q<>invalid_packet then @<Locate a character packet...@>;
 q:=font_packet(cur_fnt)(cur_res); pckt_dup:=false; goto not_found;
 found: pckt_dup:=true; pckt_prev:=p;
 not_found: pckt_ext:=cur_ext; pckt_res:=cur_res; pckt_room(6);
@@ -1743,7 +1745,8 @@ case font_type(cur_fnt) of
   defined_font: confusion(str_fonts);
   loaded_font: bad_tfm;
   @<Cases for |bad_font|@>@;@/
-  end; {there are no other cases}
+  othercases abort('internal error');
+  endcases;
 end;
 
 @ To prepare |tfm_file| for input we |reset| it.
@@ -2374,7 +2377,8 @@ rule_par:
   cur_upd:=(cur_cmd=set_rule);
   end;
 fnt_par:cur_parm:=cur_cmd-fnt_num_0;
-end; {there are no other cases}
+othercases abort('internal error');
+endcases;
 cur_class:=dvi_cl[cur_cmd];
 end;
 
@@ -2592,7 +2596,6 @@ begin x:=vf_squad; if x<=0 then bad_font @+ else vf_pquad:=x;
 end;
 @#
 function vf_fixp:int_31; {result must be positive}
-var x:int_32; {accumulator}
 begin vf_byte(tfm_b0); vf_byte(tfm_b1); vf_byte(tfm_b2); vf_byte(tfm_b3);
 Incr(vf_loc)(4);@/
 if tfm_b0>0 then bad_font;
@@ -2633,7 +2636,8 @@ rule_par:
   cur_upd:=(cur_cmd=set_rule);
   end;
 fnt_par:cur_parm:=cur_cmd-fnt_num_0;
-end; {there are no other cases}
+othercases abort('internal error');
+endcases;
 cur_class:=dvi_cl[cur_cmd];
 end;
 
@@ -2705,8 +2709,7 @@ font type is changed to |vf_font_type|.
 
 @p function do_vf:boolean; {read a \.{VF} file}
 label reswitch,done,not_found,exit;
-var temp_int:int_32; {integer for temporary variables}
-@!temp_byte:int_8u; {byte for temporary variables}
+var temp_byte:int_8u; {byte for temporary variables}
 @!k:byte_pointer; {index into |byte_mem|}
 @!l:int_15; {general purpose variable}
 @!save_ext:int_24; {used to save |cur_ext|}
@@ -2900,7 +2903,8 @@ reswitch:case cur_class of
   fnt_cl: vf_font;
   fnt_def_cl: bad_font;
   invalid_cl: if cur_cmd<>nop then bad_font;
-  end; {there are no other cases}
+  othercases abort('internal error');
+  endcases;
   if vf_loc<vf_limit then vf_first_par
   else if last_pop then goto done
   else  begin cur_class:=pop_cl; last_pop:=true; {final |pop|}
@@ -2943,7 +2947,8 @@ else case cur_class of
 char_cl: move_zero:=(not cur_upd)or(vf_cur_fnt<>vf_fnt);
 rule_cl: move_zero:=not cur_upd;
 xxx_cl: move_zero:=true;
-end; {there are no other cases}
+othercases abort('internal error');
+endcases;
 if move_zero then
   begin decr(byte_ptr); decr(vf_ptr);
   end;
@@ -3687,10 +3692,11 @@ and draw boxes or leave blank spaces in the output.
 
 @p procedure do_font;@/
 label done;@/
+var p:char_pointer; {index into |char_widths| and |char_pixels|}
 @<OUT: Declare additional local variables for |do_font|@>@;
-@!p:char_pointer; {index into |char_widths| and |char_pixels|}
 begin @!debug if font_type(cur_fnt)=defined_font then confusion(str_fonts);
 gubed@;
+p:=0; {such that |p| is used}
 @!device for p:=font_chars(cur_fnt)+font_bc(cur_fnt)
   to font_chars(cur_fnt)+font_ec(cur_fnt) do
     char_pixels[p]:=h_pixel_round(widths[char_widths[p]]);
@@ -3733,7 +3739,8 @@ rule_par:
   cur_upd:=(cur_cmd=set_rule);
   end;
 fnt_par:cur_parm:=cur_cmd-fnt_num_0;
-end; {there are no other cases}
+othercases abort('internal error');
+endcases;
 cur_class:=dvi_cl[cur_cmd];
 end;
 
@@ -4004,7 +4011,8 @@ loop begin
   fnt_cl: dvi_font;
   fnt_def_cl: dvi_do_font(random_reading);
   invalid_cl: goto done;
-  end; {there are no other cases}
+  othercases abort('internal error');
+  endcases;
 dvi_first_par; {get the next command}
 end
 
@@ -4383,7 +4391,6 @@ out_four(cur_v_dimen); out_four(cur_h_dimen);
 the variable |@!p| is already declared.
 
 @<OUT: Declare additional local variables for |do_font|@>=
-var
 
 @ And here is the device dependent code for |do_font|; if the \.{VF} file
 for a font could not be found, we simply assume this must be a real font.

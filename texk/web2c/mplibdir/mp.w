@@ -157,7 +157,8 @@ typedef struct MP_instance {
 #include "mpmp.h" /* internal header */
 #include "mppsout.h" /* internal header */
 #include "mpsvgout.h" /* internal header */
-extern font_number mp_read_font_info (MP mp, char *fname); /* tfmin.w */
+#include "mptfmin.h" /* internal header */
+#include "mpmemio.h" /* internal header */
 @h
 @<Declarations@>
 @<Basic printing procedures@>
@@ -700,11 +701,13 @@ static boolean mp_a_open_in (MP mp, void **f, int ftype) {
   OPEN_FILE("r");
 }
 @#
+#if 0 /* unused */
 boolean mp_w_open_in (MP mp, void **f) {
   /* open a word file for input */
   *f = (mp->open_file)(mp,mp->name_of_file,"r",mp_filetype_memfile); 
   return (*f ? true : false);
 }
+#endif
 @#
 static boolean mp_a_open_out (MP mp, void **f, int ftype) {
   /* open a text file for output */
@@ -3837,6 +3840,7 @@ what type it is; so we print it in all modes.
 @^debugging@>
 
 @c 
+#if 0 /* unused */
 void mp_print_word (MP mp,memory_word w) {
   /* prints |w| in all ways */
   mp_print_int(mp, w.cint); mp_print_char(mp, xord(' '));
@@ -3851,6 +3855,7 @@ void mp_print_word (MP mp,memory_word w) {
   mp_print_int(mp, w.qqqq.b2); mp_print_char(mp, xord(':')); 
   mp_print_int(mp, w.qqqq.b3);
 }
+#endif
 
 
 @* \[10] Dynamic memory allocation.
@@ -4504,7 +4509,7 @@ static void mp_reallocate_memory(MP mp, int l) {
 that are reserved now but were free the last time this procedure was called.
 
 @c 
-void mp_check_mem (MP mp,boolean print_locs ) {
+static void mp_check_mem (MP mp,boolean print_locs ) {
   pointer p,q,r; /* current locations of interest in |mem| */
   boolean clobbered; /* is something amiss? */
   for (p=0;p<=mp->lo_mem_max;p++) {
@@ -4626,6 +4631,7 @@ to rule out the places that do {\sl not\/} point to |p|, so a few false
 drops are tolerable.
 
 @c
+#if 0 /* unused */
 void mp_search_mem (MP mp, pointer p) { /* look for pointers to |p| */
   integer q; /* current position being searched */
   for (q=0;q<=mp->lo_mem_max;q++) { 
@@ -4646,6 +4652,7 @@ void mp_search_mem (MP mp, pointer p) { /* look for pointers to |p| */
   }
   @<Search |eqtb| for equivalents equal to |p|@>;
 }
+#endif
 
 @ Just before \.{INIMP} writes out the memory, it sorts the doubly linked
 available space list. The list is probably very short at such times, so a
@@ -22434,7 +22441,7 @@ it calls |atoi| to get an integer from the start of the string.
 void mp_set_internal (MP mp, char *n, char *v, int isstring) {
   integer l = strlen(n);
   char err[256];
-  char *errid = NULL;
+  const char *errid = NULL;
   if (l>0) {
     integer h = mp_compute_hash(mp, n,l);
     pointer p = h+hash_base; /* we start searching here */
@@ -25878,7 +25885,9 @@ for (i = 1;i<= 9; i++ ) {
 
 @ The following function divides |s| by |m|. |dd| is number of decimal digits.
 
-@c scaled mp_divide_scaled (MP mp,scaled s, scaled m, integer  dd) {
+@c
+#if 0 /* unused */
+scaled mp_divide_scaled (MP mp,scaled s, scaled m, integer  dd) {
   scaled q,r;
   integer sign,i;
   sign = 1;
@@ -25898,6 +25907,7 @@ for (i = 1;i<= 9; i++ ) {
   mp->scaled_out = sign*(s - (r / mp->ten_pow[dd]));
   return (sign*q);
 }
+#endif
 
 @* \[44] Shipping pictures out.
 The |ship_out| procedure, to be described below, is given a pointer to
@@ -26554,11 +26564,6 @@ mp->mem_ident=NULL;
 
 @ @<Initialize table entries...@>=
 mp->mem_ident=xstrdup(" (INIMP)");
-
-@ @<Declarations@>=
-extern void mp_store_mem_file (MP mp) ;
-extern boolean mp_load_mem_file (MP mp);
-extern int mp_undump_constants (MP mp);
 
 @ @<Dealloc variables@>=
 xfree(mp->mem_ident);

@@ -69,7 +69,7 @@ void *_synctex_malloc(size_t size) {
 	return (void *)ptr;
 }
 
-int _synctex_error(char * reason,...) {
+int _synctex_error(const char * reason,...) {
 	va_list arg;
 	int result;
 	va_start (arg, reason);

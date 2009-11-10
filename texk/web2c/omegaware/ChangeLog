@@ -1,3 +1,36 @@
+2009-09-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.web, ovp2ovf.web: Rearrange property name codes to
+	simplify checking for legal properties.
+
+2009-09-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* o*.web, o*.ch: Remove trailing blanks.
+
+2009-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.web, opl2ofm.web, ovf2ovp.web, ovp2ovf.web: Bugfix.
+	Don't forget to output the mvalues.
+
+	* opl2ofm.web, ovp2ovf.web: Bugfix. Check input parameters for
+	character tables (ivalue & Co), fix table size computation.
+	Use out_int() for values that might be negative.
+
+2009-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvicopy.test (new): Shell script to test odvicopy.
+	* odvitype.test (new): Shell script to test odvitype.
+	* ofonts.test (new): Shell script to test ofm2opl etc.
+	* tests/ofont* (new): Test data.
+	* am/omegaware.am: Add new tests and test data.
+
+	* odvicopy.{ch,web}: Correctly identify TFM/OFM files by their
+	ofm_level, not by being found via TFMFONTS/OFMFONTS.
+	When assembling VF chracter packets use type of local font.
+
+	* ovf2ovp.ch: Somewhat reorganize, avoiding to move a largish
+	section of code.
+
 2009-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ovf2ovp.{web,ch}: Bugfix in handling of local fonts with
@@ -10,6 +43,13 @@
 2009-09-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ovp2ovf.web: Bugfix in handling of ofm_level=-1.
+
+2009-09-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvicopy.web (load_font), odvitype.web (in_TFM): Bugfix in
+	handling of ofm_level=1 fonts.
+
+	* odvicopy.ch, odvitype.ch: Avoid compiler warnings.
 
 2009-09-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -45,6 +85,30 @@
 	* opl2ofm.web, ovp2ovf.web: Accept NATURALFONTDIR as alias for
 	NFONTDIR for compatibility with omegafonts (C) versions.
 
+2009-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/omegaware.am, ../am/web.am: Move test data from ../tests/
+	to tests.
+	* level1.test, omfonts.test, specialhex.test: Adjusted.
+
+2009-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvicopy.web: Version 1.6 (September 2009).
+	Import changes for dvicopy.web updating from V1.5 to V1.6:
+	Minor cleanup to avoid unused or uninitialized variables
+	and diagnose impossible cases.
+	(comp_char): Bugfix, 'o' was used uninitialized.
+
+	* odvicopy.ch (make_name): Eliminate unused variable.
+	(jump_out, confusion, overflow, bad_tfm, bad_font, bad_dvi):
+	Declare as noreturn procedures.
+
+	* odvitype.ch (first_par): Diagnose impossible cases.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvicopy.ch: Declare comment as const_w2c_u_string.
+
 2009-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ovf2ovp.ch (ASCII04 etc.): Declare as const_c_string.
@@ -56,6 +120,14 @@
 	* ovp2ovf.ch: Define char (used as array index) as 0..255.
 	(HEX): Declare as const_c_string.
 	(read_lig_kern): Eliminate unused variables.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* otangle.ch: Eliminate the unused |end_of_TANGLE| label.
+
+2009-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/omegaware.am: Adapt to web2c-sh.
 
 2009-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -3,18 +3,14 @@
 ## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-INCLUDES =  -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
+INCLUDES =  -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_YFLAGS = -d -v
 
 proglib = ../lib/lib.a
 
-# Automake automatically uses $(proglib)=../lib/lib.a as dependency.
-# This does not work for the configure substitution  $(KPATHSEA_LIBS),
-# thus we let $(proglib) artificially depend on $(KPATHSEA_LIBS).
-#
 # Rebuild $(proglib)
-$(proglib): $(KPATHSEA_DEPEND) ${top_srcdir}/lib/*.c
+$(proglib): ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
 ## Rebuild libkpathsea
@@ -64,6 +60,7 @@ omfonts_SOURCES = \
 	print_routines.h
 
 LDADD = $(proglib) $(KPATHSEA_LIBS)
+omfonts_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND)
 
 DISTCLEANFILES = pl-parser.output
 
@@ -77,7 +74,7 @@ install-exec-hook:
 	    rm -f $$f$(EXEEXT) && \
 	    $(LN_S) omfonts$(EXEEXT) $$f$(EXEEXT) || exit 1; \
 	  done
-unistall-hook:
+uninstall-hook:
 	for f in $(linked_programs); do \
 	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 	done
@@ -86,23 +83,21 @@ endif OTANGLE
 
 ## Tests
 ##
-EXTRA_DIST = omfonts.test specialhex.test
-
-## Test data
-##
-EXTRA_DIST += tests/Cherokee.pl tests/OCherokee.ovp tests/specialhex.ovp
-
 if OTANGLE
 if OMFONTS
 TESTS = omfonts.test specialhex.test
 endif OMFONTS
 endif OTANGLE
 
+EXTRA_DIST = omfonts.test specialhex.test
+
+## omfonts.test
+EXTRA_DIST += tests/Cherokee.pl tests/OCherokee.ovp
 DISTCLEANFILES += tests/Cherokee.tfm tests/OCherokee.ofm \
 	tests/OCherokee.opl tests/OCherokee.ovf \
-	tests/xCherokee.pl tests/xOCherokee.ofm \
-	tests/xOCherokee.opl tests/xOCherokee.ovp \
-	tests/specialhex.ofm tests/specialhex.opl \
-	tests/specialhex.ovf tests/xspecialhex.ofm \
-	tests/xspecialhex.opl tests/xspecialhex.ovp
+	tests/xCherokee.* tests/xOCherokee.*
+## specialhex.test
+EXTRA_DIST += tests/specialhex.ovp
+DISTCLEANFILES += tests/specialhex.ofm tests/specialhex.opl \
+	tests/specialhex.ovf tests/xspecialhex.*
 

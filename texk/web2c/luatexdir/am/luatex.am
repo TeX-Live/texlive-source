@@ -10,46 +10,47 @@ bin_PROGRAMS += luatex
 endif LUATEX
 EXTRA_PROGRAMS += luatex
 
-## Force Automake to use CXXLD for linking
+# Force Automake to use CXXLD for linking
 nodist_EXTRA_luatex_SOURCES = dummy.cxx
 
-luatex_tangle = WEBINPUTS=$(srcdir)/luatexdir $(buildenv) $(LUATANGLE)
+luatex_tangle = WEBINPUTS=$(srcdir)/luatexdir $(SHELL) ./tangle-sh $@ '$(LUATANGLE) --underlines'
 
 luatex_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
 luatex_CPPFLAGS += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
 luatex_CPPFLAGS += -Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51 -I$(srcdir)/mplibdir
 luatex_CPPFLAGS += -Dextra_version_info=`date +-%Y%m%d%H`
+luatex_CFLAGS = # $(WARNING_CFLAGS)
+luatex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 luatex_ldadd = libluatex.a libff.a libluamisc.a libzzip.a libluasocket.a liblua51.a
 luatex_ldadd += $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
-luatex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a libmplib.a 
+luatex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a libmplib.a
 
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(lua_socketlibs)
 
-luatex_DEPENDENCIES = $(proglib) libluatex.a
+luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a
 luatex_DEPENDENCIES += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(XPDF_DEPEND)
 luatex_DEPENDENCIES += $(OBSDCOMPAT_DEPEND) libmd5.a libmplib.a
 
+# We must create libluatex.a and libmplib.a before building the etex_OBJECTS.
 $(luatex_OBJECTS): libluatex.a libmplib.a
 
 luatex_c_h = luatexini.c luatex0.c luatexcoerce.h luatexd.h
 nodist_luatex_SOURCES = $(luatex_c_h) luatex-pool.c luatexextra.c luatexdir/luatexextra.h
 $(luatex_c_h): luatex-web2c
+	@$(web2c) luatex
 luatex-web2c: luatex.p $(web2c_texmf) luatexdir/luatex.defines
-	$(web2c) luatex
-	echo timestamp >$@
-	touch $(luatex_c_h)
+	@$(web2c) luatex
 luatexextra.c: luatexd.h luatexdir/luatexextra.h lib/texmfmp.c
 	sed s/TEX-OR-MF-OR-MP/luatex/ $(srcdir)/lib/texmfmp.c >$@
 luatex_sources = luatexdir/luatex.web luatexdir/luatex.ch
 luatex.p luatex.pool: luatex-tangle
-luatex-tangle: luatangle$(EXEEXT) $(luatex_sources)
-	$(luatex_tangle) --underlines luatex luatex
-	echo timestamp >$@
-	touch luatex.p luatex.pool
-luatex-pool.c: luatex.pool $(makecpool_stamp) luatexdir/ptexlib.h luatexd.h
-	$(makecpool) luatex.pool luatexdir/ptexlib.h >$@ || rm -f $@
-## Extract luatex version
+	@$(luatex_tangle) luatex luatex
+luatex-tangle: luatangle$(EXEEXT) $(luatex_sources) tangle-sh
+	@$(luatex_tangle) luatex luatex
+luatex-pool.c: luatex.pool luatexd.h $(makecpool_stamp)
+	$(makecpool) luatex >$@ || rm -f $@
+# Extract luatex version
 luatexdir/luatex.version: luatexdir/luatex.web
 	$(mkdir_p) luatexdir
 	grep '^@d luatex_version_string==' $(srcdir)/luatexdir/luatex.web \

@@ -57,6 +57,7 @@
 #include <string.h>
 #include "mplib.h"
 #include "mplibps.h" /* external header */
+#include "mplibsvg.h" /* external header */
 #include "mpmp.h" /* internal header */
 #include "mppsout.h" /* internal header */
 #include "mpsvgout.h" /* internal header */
@@ -128,7 +129,7 @@ not be an issue to any respectable XML processing tool.
 
 @c
 static void mp_svg_print (MP mp, const char *ss) {
-  (mp->write_ascii_file)(mp,mp->output_file,(char *)ss); 
+  (mp->write_ascii_file)(mp,mp->output_file,ss); 
   mp->svg->file_offset += strlen(ss);
 }
 
@@ -184,7 +185,7 @@ the end of the buffer.
 } while (0)
 
 @d append_string(A) do {
-   char *ss = (A);
+   const char *ss = (A);
    while (*ss != '\0') { append_char(*ss); ss++ ;}
 } while (0)
 
@@ -303,7 +304,7 @@ The close function is trivial of course, but it looks nicer in the source.
 @d mp_svg_starttag(A,B) { mp_svg_open_starttag (A,B); mp_svg_close_starttag(A); }
 
 @c 
-static void mp_svg_open_starttag (MP mp, char *s) { 
+static void mp_svg_open_starttag (MP mp, const char *s) { 
   int l = mp->svg->level * 2;
   mp_svg_print_ln(mp);
   while (l-->0) {
@@ -326,7 +327,7 @@ level. If it is false, the end tag will appear immediatelu after the
 preceding output.
 
 @c
-static void mp_svg_endtag (MP mp, char *s, boolean indent) { 
+static void mp_svg_endtag (MP mp, const char *s, boolean indent) { 
   mp->svg->level--;
   if (indent) {
     int l = mp->svg->level * 2;
@@ -345,7 +346,7 @@ static void mp_svg_endtag (MP mp, char *s, boolean indent) {
 that that is the |v| argument.
 
 @c
-static void mp_svg_attribute (MP mp, char *s, char *v) { 
+static void mp_svg_attribute (MP mp, const char *s, const char *v) { 
   mp_svg_print_char(mp, ' ');
   mp_svg_print(mp, s);
   mp_svg_print(mp,"=\"");
@@ -388,7 +389,7 @@ void mp_svg_pair_out (MP mp,scaled x, scaled y) {
 }
 
 @ @c
-void mp_svg_font_pair_out (MP mp,scaled x, scaled y) { 
+static void mp_svg_font_pair_out (MP mp,scaled x, scaled y) { 
   mp_svg_store_scaled(mp, (x));
   append_char(' ');
   mp_svg_store_scaled(mp, -(y));
@@ -406,7 +407,7 @@ have a specific helper to write such distorted pairs of coordinates out.
 @d double_from_scaled(a) (double)((a)/65536.0)
 
 @c 
-void mp_svg_trans_pair_out (MP mp, mp_pen_info *pen, scaled x, scaled y) { 
+static void mp_svg_trans_pair_out (MP mp, mp_pen_info *pen, scaled x, scaled y) { 
   double sx,sy, rx,ry, px, py, retval, divider;
   sx = double_from_scaled(pen->sx);
   sy = double_from_scaled(pen->sy);
@@ -793,7 +794,7 @@ static void mp_svg_font_path_out (MP mp, mp_knot *h) {
 } while (0)
 
 @c
-void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
+static void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
   mp_graphic_object *p; /* object index */
   int k, l; /* general purpose indices */
   int **mp_chars = NULL; /* a twodimensional array of used glyphs */

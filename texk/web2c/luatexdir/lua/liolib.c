@@ -190,7 +190,7 @@ static int io_popen(lua_State * L)
     char *safecmd = NULL;
     char *cmdname = NULL;
     int allow = 0;
-    char *cmd = (char *) luaL_checkstring(L, 1);
+    const char *cmd = luaL_checkstring(L, 1);
     const char *mode = luaL_optstring(L, 2, "r");
     FILE **pf = newfile(L);
 
@@ -203,7 +203,7 @@ static int io_popen(lua_State * L)
     if (restrictedshell == 0)
         allow = 1;
     else
-        allow = shell_cmd_is_allowed(&cmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(cmd, &safecmd, &cmdname);
 
     if (allow == 1) {
         *pf = lua_popen(L, cmd, mode);

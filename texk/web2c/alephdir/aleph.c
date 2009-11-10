@@ -94,7 +94,7 @@ getfilemode (FILE *f, int def)
     return m;
 }
 
-int
+static int
 getc_two_LE (FILE *f)
 {
     register int i,j;
@@ -105,7 +105,7 @@ getc_two_LE (FILE *f)
     return ((j<<8)|i);
 }
 
-void
+static void
 ungetc_two_LE (int c, FILE *f)
 {
     ungetc((c>>8), f);
@@ -130,15 +130,10 @@ ungetc_two (int c, FILE *f)
     ungetc((c>>8), f);
 }
  
-extern boolean zpnewinputln ();
-
 boolean
 newinputln (FILE *f, halfword themode, halfword translation, boolean bypass)
 {
-    return zpnewinputln((alphafile)f,
-                        (halfword)themode,
-                        (halfword)translation,
-                        (boolean) bypass);
+    return pnewinputln(f, themode, translation, bypass);
 }
  
 boolean
@@ -192,8 +187,6 @@ new_input_line (FILE *f, halfword themode)
     return true;
 }
 
-extern memoryword ziniteqtbentry () ;
-
 hashword hashtable[HASHTABLESIZE];
 
 void
@@ -216,12 +209,13 @@ createeqtbpos (int p)
       if (runner->p == p) return runner;
    } 
    runner->p = p;
-   runner->mw = ziniteqtbentry(p);
+   runner->mw = initeqtbentry(p);
    runner->ptr = (hashword *) xmalloc(sizeof(hashword));
    (runner->ptr)->p = -1;
    return runner;
 }
 
+#if 0 /* unused */
 memoryword *
 createeqtbptr (int p)
 {
@@ -237,6 +231,7 @@ createeqtbptr (int p)
    (runner->ptr)->p = -1;
    return (&(runner->mw));
 }
+#endif
 
 hashword *
 createxeqlevel (int p)

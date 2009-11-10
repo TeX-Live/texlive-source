@@ -1,11 +1,209 @@
+2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* doc/web2c.texi (tex invocation): Shorten the paragraph about
+	security holes due to writing arbitrary files, add reference
+	to kpathsea_{in,out}_name_ok in kpathsea.info, remove reference
+	to openoutnameok from lib/texmfmp.c.
+	(Common options): Replace reference to Omega by Aleph.
+	(TeX extensions): Remove Omega, add XeTeX. FIXME: Home page.
+	(Online Metafont graphics): Adjust configure options.
+
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h: Add kpse_{in,out}_name_ok().
+
+	* bibtex.ch: Check for legitimate output file names.
+	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+	Also check for legitimate input file names.
+
+	* mf.ch, tex.ch: Use kpse_{in,out}_name_ok(), now in Kpathsea,
+	instead of open_{in,out}_name_ok().
+	* texmfmp.h: Remove open{in,out}nameok.
+
+2009-10-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add a test for xpdf/poppler features.
+
+2009-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h (roundunscaled, roundfraction): Put parentheses
+	around macro parameter.
+	* mf-binpool.ch (get_strings_started): Drop unused variables.
+	* mf.ch (MF_base_default): Declare as w2c_u_string.
+	(jump_out, fatal_error, overflow, confusion): Declare noreturn.
+	(bound_name, months): Declare as const_cstring.
+	(start_input): Drop unused variables.
+
+	* bibtex.ch (str_lookup): Avoid 'uninitialized' warning.
+
+2009-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/texmf.am: Enable compiler warnings for TeX and MF.
+
+	* tex-binpool.ch (get_strings_started): Drop unused variables.
+	* tex.ch (TEX_format_default): Declare as w2c_u_string.
+	(jump_out, fatal_error, overflow, confusion): Declare noreturn.
+	(do_extension): Drop unused variables.
+
 2009-09-26  Karl Berry  <karl@tug.org>
 
 	* configure.ac (AC_C_BIGENDIAN): need this test for
 	sharable formats.
 
+2009-09-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* help.h (OVP2OVFHELP): Default OFMFILE is "basename of".
+	* help.h (VPTOVFHELP): Default TFMFILE is "basename of".
+
+2009-09-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* vftovp.ch: Somewhat reorganize, avoiding to move a largish
+	section of code (affected by a bugfix).
+	Fix a bug in vftovp.web to diagnose characters in VF packets
+	outside the allowed range 0..255.
+
+2009-09-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* vftovp.ch: Remove extra newline from BAD VF/TFM comment.
+
+2009-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pltotf.ch, vptovf.ch: Reduce max_param_words to 254.
+	Although the TFM format supports up to 0x7fff, the PL format
+	supports at most 255.  Staying below avoids compiler warnings.
+
+2009-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvicopy.web: Version 1.6 (September 2009).
+	Minor cleanup to avoid unused or uninitialized variables
+	and diagnose impossible cases.
+
+	* dvicopy.ch (make_name): Eliminate unused variable.
+	(jump_out, confusion, overflow, bad_tfm, bad_font, bad_dvi):
+	Declare as noreturn procedures.  Remove trailing blanks.
+
+	* patgen.web: Version 2.4 (September 2009).
+	Minor cleanup to avoid uninitialized variables.
+
+	* patgen.ch: Remove trailing blanks.
+
+	* dvitype.ch (first_par): Diagnose impossible cases.
+	* gftype.ch (first_par): Diagnose impossible cases.
+	* gftodvi.ch (interpret_xxx, skip_nop): Diagnose impossible cases.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/texmf.am: Adapt to new makecpool with one argument,
+	obsoleting tmf-pool.h.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h (dump_name, c_job_name, last_source_name,
+	last_lineno): Declare extern for luaTeX.
+
+2009-09-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h (w2custring, const_w2custring): Add new types of
+	strings of unsigned chars used as array indices.
+
+	* gftodvi.ch (gf_start): Declare arg_buffer as w2c_u_string.
+
+	* dvicopy.ch: Declare comment as const_w2c_u_string.
+
+	* bibtex.ch: Eliminate the unused |exit_program| label.
+	(pds_type): Declare as const_w2c_u_string.
+
+2009-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h (maininit, normalize_quotes): Add prototypes.
+	(do_dump, do_undump): Add prototypes also for luaTeX.
+
+2009-09-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* config.h (WEB2C_NORETURN): Define as attribute (gcc only).
+	(uexit): Declare as WEB2C_NORETURN.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Enable compiler warnings for non-engine Web2C.
+
+	* tangle.ch: Eliminate the unused |end_of_TANGLE| label.
+	* patgen.ch: Eliminate the unused |end_of_PATGEN| label.
+
+	* gftopk.ch, gftype.ch, pktogf.ch, pktype.ch, pltotf.ch,
+	vptovf.ch: Define char (used as array index) as 0..255.
+
+	* vftovp.ch (ASCII04 etc.): Declare as const_c_string.
+	(vf_input, organize, do_map): Eliminate unused labels.
+	* tftopl.ch (ASCII04 etc.): Declare as const_c_string.
+	* mft.ch (style_name): Declare as const_c_string.
+
+	* weave.ch (translate): Drop var 'k' unless debugging.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/texmf.am: Prepare compiler warnings for TeX and MF.
+
 2009-09-04  Karl Berry  <karl@tug.org>
 
 	* gftype.ch (line_length, max_row, max_col): increase to 500.
+
+2009-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* libmd5/am/md5.am: Enable compiler warnings.
+
+2009-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ctangleboot-sh: New shell script to run ctangleboot and if
+	required update ctangleboot.cin from ctangle.c (and similar).
+	* configure.ac: Create ctangleboot-sh.
+	* cwebboot.hin: New header file with prototypes for functions
+	from cwebdir/common.w, cwebdir/ctangle.w and cwebdir/weave.w.
+	* am/bootstrap.am, am/cweb.am: Adapt to these new files.
+
+2009-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (default_dependencies): Some programs must depend
+	explicitly on KPATHSEA_DEPEND, the implicit dependency via proglib
+	is not enough.
+	* am/bootstrap.am (tangleboot_DEPENDENCIES,
+	ctangleboot_DEPENDENCIES): Use default_dependencies.
+
+2009-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h, am/texmf.am: Integrate SyncTeX into texmfmp.h.
+
+2009-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (shell_cmd_is_allowed): Change arg1 from 'char **'
+	to 'const char *'.
+	(runsystem): Change arg from 'char *' to 'const char *'.
+
+2009-08-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Better handling of tools that produce many outputs
+	(compare Automake manual 27.9: Multiple Outputs).
+	* tangle-sh: New shell script to handle Tangle & Co.
+	* web2c-sh: New shell script to handle Web2C conversion.
+	* configure.ac: Create tangle-sh and web2c-sh.
+	* Makefile.am (texmf_tangle, o_tangle): Use tangle-sh.
+	(web2c): Use web2c-sh.
+	* am/bootstrap.am, am/web.am: Adapt to web2c-sh.
+	* am/texmf.am: Adapt to tangle-sh and web2c-sh.
+
+2009-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reorganize bootstrapping rules for tangle and ctangle, to
+	avoid circular dependencies.
+	tangleboot.p (removed): Renamed ...
+	tangleboot.pin (new): ... to this.
+	ctangleboot.c, cwebboot.c (removed): Renamed ...
+	ctangleboot.cin, cwebboot.cin (new): ... to these.
+	am/bootstrap.am: Adapted.
+
+2009-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/texmf.am (tex_c_h, mf_c_h): avoid to split the C code.
 
 2009-08-12  Karl Berry  <karl@tug.org>
 

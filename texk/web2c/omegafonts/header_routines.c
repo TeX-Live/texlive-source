@@ -252,7 +252,7 @@ calculate_check_sum(void)
 /* DESIGNSIZE */
 
 void
-init_design_size()
+init_design_size(void)
 {
     design_size = 10*UNITY;
     design_size_specified = FALSE;
@@ -314,7 +314,7 @@ set_design_units(fix du)
 void
 init_coding_scheme(void)
 {
-    coding_scheme = "UNSPECIFIED";
+    coding_scheme = xstrdup("UNSPECIFIED");
     coding_scheme_specified = FALSE;
 }
 
@@ -323,8 +323,8 @@ set_coding_scheme(string sval)
 {
     if (coding_scheme_specified==TRUE) {
 	warning_0("CODINGSCHEME previously defined; old value ignored");
-        free(coding_scheme); coding_scheme=NULL;
     }
+    free(coding_scheme);
     coding_scheme = sval;
     
     if (!strncmp(coding_scheme, "TEX MATH SY", 11) ||
@@ -379,7 +379,7 @@ retrieve_coding_scheme(void)
 void
 init_family(void)
 {
-    family = "UNSPECIFIED";
+    family = xstrdup("UNSPECIFIED");
     family_specified = FALSE;
 }
 
@@ -388,8 +388,8 @@ set_family(string sval)
 {
     if (family_specified==TRUE) {
 	warning_0("FAMILY previously defined; old value ignored");
-        free(family); family=NULL;
     }
+    free(family);
     family = sval;
     family_specified = TRUE;
 }
@@ -462,15 +462,12 @@ retrieve_face(void)
 
 /* OFMLEVEL */
 
-#if 0
-/* Not yet used */
 static void
 init_ofm_level(void)
 {
     ofm_level = OFM_TFM;
     ofm_level_specified = FALSE;
 }
-#endif
 
 void
 set_ofm_level(unsigned level)
@@ -562,6 +559,7 @@ calculate_seven_bit_safe_flag(void)
 void
 init_header(void)
 {
+    init_ofm_level();
     init_header_word();
     init_check_sum();
     init_design_size();

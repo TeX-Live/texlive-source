@@ -4,6 +4,7 @@
 
 #include "config.h"
 #include "lib.h"
+#include <kpathsea/version.h>
 
 /* We're passed in the original WEB banner string, which has the form
 This is PROGRAM, Version VERSION-NUMBER
@@ -15,9 +16,6 @@ This is PROGRAM, Version VERSION-NUMBER
    
    Maybe I should have just done it all inline in each individual
    program, but tangle doesn't allow multiline string constants ...  */
-
-extern string versionstring;           /* from web2c/lib/version.c */
-extern KPSEDLL string kpathsea_version_string;/* from kpathsea/version.c */
 
 void
 printversionandexit (const_string banner,

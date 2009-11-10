@@ -21,11 +21,11 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 
-extern boolean new_input_line ();
-extern boolean newinputln ();
-extern int getc_two ();
-extern int getfilemode ();
-extern void ungetc_two ();
+extern boolean new_input_line (FILE *, halfword);
+extern boolean newinputln (FILE *, halfword, halfword, boolean);
+extern int getc_two (FILE *);
+extern int getfilemode (FILE *, int);
+extern void ungetc_two (int, FILE *);
 extern int ocptemp;
 
 #define newinputline(stream, mode, flag)   new_input_line (stream, mode)
@@ -42,24 +42,24 @@ typedef struct hashw
 } hashword;
 
 extern hashword hashtable[];
-extern hashword *createhashpos();
-extern hashword *createeqtbpos();
-extern hashword *createxeqlevel();
-extern void inithhashtable();
-extern void dumphhashtable();
-extern void undumphhashtable();
-extern void allocatefonttable();
-extern void dumpfonttable();
-extern void undumpfonttable();
-extern void allocatefontsorttable();
-extern void dumpfontsorttable();
-extern void undumpfontsorttable();
-extern void allocateocptable();
-extern void dumpocptable();
-extern void undumpocptable();
-extern void odateandtime();
-extern void btestin();
-extern void runexternalocp();
+extern hashword *createhashpos(int);
+extern hashword *createeqtbpos(int);
+extern hashword *createxeqlevel(int);
+extern void inithhashtable(void);
+extern void dumphhashtable(void);
+extern void undumphhashtable(void);
+extern void allocatefonttable(int, int);
+extern void dumpfonttable(int, int);
+extern void undumpfonttable(int);
+extern void allocatefontsorttable(int, int);
+extern void dumpfontsorttable(int, int);
+extern void undumpfontsorttable(int);
+extern void allocateocptable(int, int);
+extern void dumpocptable(int);
+extern void undumpocptable(int);
+extern void odateandtime(int, int, int, int);
+extern void btestin(void);
+extern void runexternalocp(string);
 
 #define initeqtbtable()		inithhashtable();
 #define dumpeqtbtable()		dumphhashtable();

@@ -90,7 +90,7 @@ static const_string names_program[PROG_NUM] =
     { "ofm2opl", "opl2ofm", "ovf2ovp", "ovp2ovf", "omfonts" };
 static const_string *names_help[PROG_NUM] =
     { OFM2OPLHELP, OPL2OFMHELP, OVF2OVPHELP, OVP2OVFHELP, OMFONTSHELP };
-static string names_msg[PROG_NUM] = {
+static const_string names_msg[PROG_NUM] = {
     "This is ofm2opl, Version 2.0",
     "This is opl2ofm, Version 2.0",
     "This is ovf2ovp, Version 2.0",
@@ -100,8 +100,8 @@ static string names_msg[PROG_NUM] = {
 
 int no_files=0;
 string *files[3] = {NULL, NULL, NULL};
-string suffixes[3] = {NULL, NULL, NULL};
-string full_suffixes[3] = {NULL, NULL, NULL};
+const_string suffixes[3] = {NULL, NULL, NULL};
+const_string full_suffixes[3] = {NULL, NULL, NULL};
 
 static struct option long_options[] = {
     {"verbose", 0, &verbose_option, 1},
