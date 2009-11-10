@@ -19,7 +19,7 @@
 #include <kpathsea/config.h>
 
 void
-xfseek (FILE *f,  long offset,  int wherefrom,  string filename)
+xfseek (FILE *f,  long offset,  int wherefrom,  const_string filename)
 {
   if (fseek (f, offset, wherefrom) < 0) {
         FATAL_PERROR(filename);

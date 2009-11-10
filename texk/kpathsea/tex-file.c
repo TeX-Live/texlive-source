@@ -22,6 +22,7 @@
 #include <kpathsea/c-pathch.h>
 #include <stdarg.h>
 #include <kpathsea/cnf.h>
+#include <kpathsea/absolute.h>
 #include <kpathsea/concatn.h>
 #include <kpathsea/default.h>
 #include <kpathsea/expand.h>
@@ -214,14 +215,8 @@ kpse_maketex_option (const_string fmtname,  boolean value)
 #endif
 
 
-/* Macro subroutines for `init_path'.  TRY_ENV checks if an envvar ENAME
-   is set and non-null, and sets var to ENAME if so.  */
-#define TRY_ENV(ename) do { \
-  string evar = ename; \
-} while (0)
-
-/* And EXPAND_DEFAULT calls kpse_expand_default on try_path and the
-   present info->path.  */
+/* Macro subroutine for `init_path'.  EXPAND_DEFAULT calls
+   kpse_expand_default on try_path and the present info->path.  */
 #define EXPAND_DEFAULT(try_path, source_string)			\
   if (try_path) {						\
     info->raw_path = try_path;					\
@@ -607,7 +602,8 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
       break;
     case kpse_ovf_format:
       INIT_FORMAT ("ovf", DEFAULT_OVFFONTS, OVF_ENVS);
-      SUFFIXES (".ovf");
+#define OVF_SUFFIXES ".ovf", ".vf"
+      SUFFIXES (OVF_SUFFIXES);
       FMT_INFO.suffix_search_only = true;
       FMT_INFO.binmode = true;
       break;
@@ -1078,6 +1074,127 @@ kpse_find_file_generic (const_string name,  kpse_file_format_type format,
                         boolean must_exist,  boolean all)
 {
     return kpathsea_find_file_generic(kpse_def, name, format, must_exist, all);
+}
+#endif
+
+
+
+/* Return true if FNAME is acceptable to open for reading or writing.  */
+
+typedef enum ok_type {
+    ok_reading,
+    ok_writing
+} ok_type;
+
+static const_string ok_type_name[] = {
+    "reading from",
+    "writing to"
+};
+
+static boolean
+kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
+		  const_string default_choice, ok_type action)
+{
+  /* We distinguish three cases:
+     'a' (any)        allows any file to be opened.
+     'r' (restricted) means disallowing special file names.
+     'p' (paranoid)   means being really paranoid: disallowing special file
+                      names and restricting output files to be in or below
+                      the working directory or $TEXMFOUTPUT, while input files
+                      must be below the current directory, $TEXMFOUTPUT, or
+                      (implicitly) in the system areas.
+     We default to "paranoid".  The error messages from TeX will be somewhat
+     puzzling...
+     This function contains several return statements...  */
+
+  const_string open_choice = kpathsea_var_value (kpse, check_var);
+
+  if (!open_choice) open_choice = default_choice;
+
+  if (*open_choice == 'a' || *open_choice == 'y' || *open_choice == '1')
+    return true;
+
+#if defined (unix) && !defined (MSDOS)
+  {
+    const_string base = xbasename (fname);
+    /* Disallow .rhosts, .login, etc.  Allow .tex (for LaTeX).  */
+    if (base[0] == 0 ||
+        (base[0] == '.' && !IS_DIR_SEP(base[1]) && !STREQ (base, ".tex")))
+      goto not_ok;
+  }
+#else
+  /* Other OSs don't have special names? */
+#endif
+
+  if (*open_choice == 'r' || *open_choice == 'n' || *open_choice == '0')
+    return true;
+
+  /* Paranoia supplied by Charles Karney...  */
+  if (kpathsea_absolute_p (kpse, fname, false)) {
+    const_string texmfoutput = kpathsea_var_value (kpse, "TEXMFOUTPUT");
+    /* Absolute pathname is only OK if TEXMFOUTPUT is set, it's not empty,
+       fname begins the TEXMFOUTPUT, and is followed by / */
+    if (!texmfoutput || *texmfoutput == '\0'
+        || fname != strstr (fname, texmfoutput)
+        || !IS_DIR_SEP(fname[strlen(texmfoutput)]))
+      goto not_ok;
+  }
+  /* For all pathnames, we disallow "../" at the beginning or "/../"
+     anywhere.  */
+  if (fname[0] == '.' && fname[1] == '.' && IS_DIR_SEP(fname[2]))
+    goto not_ok;
+  else {
+    /* Check for "/../".  Since more than one characted can be matched
+       by IS_DIR_SEP, we cannot use "/../" itself. */
+    const_string dotpair = strstr(fname, "..");
+    while (dotpair) {
+      /* If dotpair[2] == DIR_SEP, then dotpair[-1] is well-defined,
+         because the "../" case was handled above. */
+      if (IS_DIR_SEP(dotpair[2]) && IS_DIR_SEP(dotpair[-1]))
+        goto not_ok;
+      /* Continue after the dotpair. */
+      dotpair = strstr(dotpair+2, "..");
+    }
+  }
+
+  /* We passed all tests.  */
+  return true;
+
+  /* Some test failed.  */
+  not_ok:
+  fprintf(stderr, "%s: Not %s %s (%s = %s).\n",
+          kpse->invocation_name, ok_type_name[action], fname,
+          check_var, open_choice);
+  return false;
+}
+
+boolean
+kpathsea_in_name_ok (kpathsea kpse, const_string fname)
+{
+    /* For input default to all. */
+    return kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading);
+}
+
+boolean
+kpathsea_out_name_ok (kpathsea kpse, const_string fname)
+{
+    /* For output, default to paranoid. */
+    return kpathsea_name_ok (kpse, fname, "openout_any", "p", ok_writing);
+}
+
+#if defined (KPSE_COMPAT_API)
+boolean
+kpse_in_name_ok (const_string fname)
+{
+    /* For input default to all. */
+    return kpathsea_in_name_ok (kpse_def, fname);
+}
+
+boolean
+kpse_out_name_ok (const_string fname)
+{
+    /* For output, default to paranoid. */
+    return kpathsea_out_name_ok (kpse_def, fname);
 }
 #endif
 

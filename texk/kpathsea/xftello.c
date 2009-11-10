@@ -20,7 +20,7 @@
 
 
 off_t
-xftello (FILE *f,  string filename)
+xftello (FILE *f,  const_string filename)
 {
     off_t where = ftello (f);
     

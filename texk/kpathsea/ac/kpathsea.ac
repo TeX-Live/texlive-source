@@ -3,6 +3,9 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system kpathsea
-KPSE_CHECK_LIB([kpathsea], [kpse_set_program_name],
-                           [kpathsea/kpathsea.h kpathsea/tex-file.h])
+## basic check of system kpathsea
+KPSE_TRY_LIB([kpathsea],
+             [#include <kpathsea/kpathsea.h>
+#include <kpathsea/version.h>],
+             [const char *version = kpathsea_version_string;
+kpse_set_program_name("prog", "name");])

@@ -20,7 +20,7 @@
 
 
 unsigned long
-xftell (FILE *f,  string filename)
+xftell (FILE *f,  const_string filename)
 {
     long where = ftello (f);
     

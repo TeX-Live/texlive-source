@@ -21,8 +21,8 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
-extern KPSEDLL char *kpathsea_version_string;
+extern KPSEDLL const char *kpathsea_version_string;
 
-extern KPSEDLL char *kpathsea_bug_address;
+extern KPSEDLL const char *kpathsea_bug_address;
 
 #endif /* not KPATHSEA_VERSION_H */

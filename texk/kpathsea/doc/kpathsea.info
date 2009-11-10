@@ -39,7 +39,7 @@ Kpathsea library
 ****************
 
 This manual documents how to install and use the Kpathsea library for
-filename lookup.  It corresponds to version 5.0.0, released in
+filename lookup.  It corresponds to version 5.1.0, released in
 June 2009.
 
 * Menu:
@@ -60,7 +60,7 @@ File: kpathsea.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: 
 1 Introduction
 **************
 
-This manual corresponds to version 5.0.0 of the Kpathsea library,
+This manual corresponds to version 5.1.0 of the Kpathsea library,
 released in June 2009.
 
    The library's fundamental purpose is to return a filename from a
@@ -3595,7 +3595,32 @@ this:
      etc.).  In other words, if you are looking up a VF or some other
      file that need not exist, don't use this.
 
-  9. To close the kpathsea library instance you are using, call
+  9. TeX can write output files, via the `\openout' primitive; this
+     opens a security hole vulnerable to Trojan horse attack: an
+     unwitting user could run a TeX program that overwrites, say,
+     `~/.rhosts'.  Analogous security holes exist for many other
+     programs.  To alleviate this, there is a configuration variable
+     `openout_any', which selects one of three levels of security.
+     When it is set to `a' (for "any"), no restrictions are imposed.
+     When it is set to `r' (for "restricted"), filenames beginning with
+     `.' are disallowed (except `.tex' because LaTeX needs it).  When
+     it is set to `p' (for "paranoid") additional restrictions are
+     imposed: an absolute filename must refer to a file in (a
+     subdirectory) of `TEXMFOUTPUT', and any attempt to go up a
+     directory level is forbidden (that is, paths may not contain a
+     `..' component).  The paranoid setting is the default.  (For
+     backwards compatibility, `y' and `1' are synonyms of `a', while
+     `n' and `0' are synonyms for `r'.) The function
+     `kpathsea_out_name_ok', with a filename as second argument,
+     returns `true' if that filename is acceptable to be opend for
+     output or `false' otherwise.
+
+ 10. Similarly, the function `kpathsea_in_name_ok', with a filename as
+     second argument, returns `true' if that filename is acceptable to
+     be opend for input or `false' otherwise, depending on the value of
+     the configuration variable `openin_any' (with `a' as default).
+
+ 11. To close the kpathsea library instance you are using, call
      `kpathsea_finish'.  This function closes any open log files and
      frees the memory used by the instance.
 
@@ -3608,10 +3633,10 @@ calls, etc. (Perhaps someday I'll move the former to a separate
 library.)
 
    The `c-*.h' header files can also help your program adapt to many
-different systems.  You will almost certainly want to use Autoconf for
-configuring your software if you use Kpathsea; I strongly recommend
-using Autoconf regardless.  It is available from
-`ftp://prep.ai.mit.edu/pub/gnu/'.
+different systems.  You will almost certainly want to use Autoconf and
+probably Automake for configuring and building your software if you use
+Kpathsea; I strongly recommend using Autoconf and Automake regardless.
+They are available from `ftp://ftp.gnu.og/pub/gnu/'.
 
 
 File: kpathsea.info,  Node: Program-specific files,  Next: Programming with config files,  Prev: Calling sequence,  Up: Programming
@@ -3875,7 +3900,7 @@ Index
                                                               (line   6)
 * argv[0]:                               Calling sequence.    (line  14)
 * ash, losing with configure:            configure shells.    (line  19)
-* autoconf, recommended:                 Calling sequence.    (line  94)
+* autoconf, recommended:                 Calling sequence.    (line 119)
 * automounter, and configuration:        configure scenarios. (line  29)
 * automounter, and ls-R:                 ls-R.                (line  40)
 * auxiliary tasks:                       Auxiliary tasks.     (line   6)
@@ -3903,7 +3928,7 @@ Index
 * bug checklist:                         Bug checklist.       (line   6)
 * bug mailing list:                      Mailing lists.       (line   6)
 * bugs, reporting:                       Reporting bugs.      (line   6)
-* c-*.h:                                 Calling sequence.    (line  94)
+* c-*.h:                                 Calling sequence.    (line 119)
 * c-auto.h:                              Programming overview.
                                                               (line  33)
 * c-auto.in:                             Running configure.   (line   6)
@@ -4176,7 +4201,7 @@ Index
 * group-writable directories:            Security.            (line  40)
 * GSFTOPK_DEBUG (128):                   Debugging.           (line  88)
 * hash table buckets, printing:          Debugging.           (line 105)
-* hash table routines:                   Calling sequence.    (line  87)
+* hash table routines:                   Calling sequence.    (line 112)
 * hash_summary_only variable for debugging: Debugging.        (line 105)
 * help, mailing list for general TeX:    Mailing lists.       (line  25)
 * HIER:                                  Default path features.
@@ -4193,7 +4218,7 @@ Index
 * INDEXSTYLE:                            Supported file formats.
                                                               (line  74)
 * info-tex@shsu.edu:                     Mailing lists.       (line  25)
-* input lines, reading:                  Calling sequence.    (line  87)
+* input lines, reading:                  Calling sequence.    (line 112)
 * install-data Make target:              Installing files.    (line  28)
 * install-exec Make target:              Installing files.    (line  23)
 * installation:                          Installation.        (line   6)
@@ -4237,11 +4262,13 @@ Index
 * kpathsea_find_file <1>:                Calling sequence.    (line  62)
 * kpathsea_find_file:                    File lookup.         (line  37)
 * kpathsea_find_glyph:                   Glyph lookup.        (line  26)
-* kpathsea_finish:                       Calling sequence.    (line  82)
+* kpathsea_finish:                       Calling sequence.    (line 107)
+* kpathsea_in_name_ok:                   Calling sequence.    (line 102)
 * kpathsea_init_prog <1>:                Calling sequence.    (line  53)
 * kpathsea_init_prog:                    Fallback font.       (line  15)
 * kpathsea_new:                          Calling sequence.    (line   9)
 * kpathsea_open_file:                    Calling sequence.    (line  74)
+* kpathsea_out_name_ok:                  Calling sequence.    (line  82)
 * kpathsea_set_program_name:             Calling sequence.    (line  14)
 * KPATHSEA_WARNING:                      Config files.        (line  18)
 * kpse->debug:                           Debugging.           (line   6)
@@ -4288,7 +4315,7 @@ Index
 * license for using the library:         Introduction.        (line  31)
 * LIGFONTS:                              Supported file formats.
                                                               (line  78)
-* lines, reading arbitrary-length:       Calling sequence.    (line  87)
+* lines, reading arbitrary-length:       Calling sequence.    (line 112)
 * Linux File System Standard:            mktex configuration. (line 114)
 * Linux shells and configure:            configure shells.    (line  19)
 * Linux, using Web2c:                    CD-ROM distribution. (line  16)
@@ -4324,7 +4351,7 @@ Index
 * MAKETEX_FINE_DEBUG (1024):             Debugging.           (line 100)
 * MAKETEX_MODE:                          Default path features.
                                                               (line  19)
-* memory allocation routines:            Calling sequence.    (line  87)
+* memory allocation routines:            Calling sequence.    (line 112)
 * metafont driver files:                 mktex configuration. (line  94)
 * Metafont failures:                     TeX or Metafont failing.
                                                               (line   6)
@@ -4516,7 +4543,7 @@ Index
                                                               (line  16)
 * readable:                              Suppressing warnings.
                                                               (line  26)
-* reading arbitrary-length lines:        Calling sequence.    (line  87)
+* reading arbitrary-length lines:        Calling sequence.    (line 112)
 * README.CONFIGURE:                      Running configure.   (line  15)
 * README.mirrors:                        Electronic distribution.
                                                               (line  13)
@@ -4583,7 +4610,7 @@ Index
 * startup time, excessive:               Slow path searching. (line   6)
 * static linking:                        ShellWidgetClass.    (line  39)
 * static linking and dlsym:              dlopen.              (line   6)
-* string routines:                       Calling sequence.    (line  87)
+* string routines:                       Calling sequence.    (line 112)
 * strip:                                 mktex configuration. (line 108)
 * stripsupplier:                         mktex configuration. (line 102)
 * striptypeface:                         mktex configuration. (line 105)
@@ -4885,8 +4912,8 @@ Node: Suppressing warnings136212
 Node: Programming137317
 Node: Programming overview137830
 Node: Calling sequence140524
-Node: Program-specific files145492
-Node: Programming with config files146534
-Node: Index147846
+Node: Program-specific files147047
+Node: Programming with config files148089
+Node: Index149401
 
 End Tag Table

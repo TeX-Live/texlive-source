@@ -5,6 +5,10 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
 SUBDIRS = . doc man
 
 EXTRA_DIST = BUGS HIER PROJECTS README.CONFIGURE
@@ -160,20 +164,20 @@ kpseinclude_HEADERS = \
 ## (but = and surrounding spaces are optional, hence can't remove all spaces).
 ## Change this to #ifndef DEFAULT_name@#define DEFAULT_name "value"@#endif,
 ## then change the @'s to newlines (sed isn't good at multiline replacements).
-## 
+##
 ## No backslash-newline escapes in the long sed replacement because that
 ## will turn into a space in the output.
-## 
+##
 ## We replace the $TEXMF* references with nonexisting directories.  These
 ## are the compile-time defaults and are not useful in the native TL
 ## builds; we rely completely on the self-location.  (Previously, the
 ## random build-time paths would get included in the binaries, to
 ## consequent confusion.)
-## 
+##
 ## We preserve the $SELFAUTO* references, since the selfauto-using
 ## compile-time path for cnf files is how texmf.cnf gets found, which
 ## determines everything else.
-## 
+##
 ## The definition of DEFAULT_TEXMF (and other variables)
 ## that winds up in the final paths.h will not be used.
 #
@@ -250,6 +254,10 @@ dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 
 dist_noinst_DATA = texmf.cnf
 
+# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
+bin_links = \
+	mktexlsr:texhash
+
 install-exec-hook:
 	@for f in $(dist_noinst_SCRIPTS); do \
 	  if grep "original $$f --" "$(DESTDIR)$(bindir)/$$f" >/dev/null 2>&1 \
@@ -258,6 +266,15 @@ install-exec-hook:
 	    $(INSTALL_SCRIPT) "$(srcdir)/$$f" "$(DESTDIR)$(bindir)/$$f"; \
 	  else :; fi; \
 	done
+	@cd $(DESTDIR)$(bindir) && \
+	  for s in $(bin_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`; \
+	    file=`echo $$s | sed 's,:.*,,'`; \
+	    rm -f $$link; \
+	    echo "creating link '$$link' -> '$$file'"; \
+	    $(LN_S) $$file $$link; \
+	  done
+
 
 install-data-hook:
 	@for f in $(dist_noinst_DATA); do \
@@ -275,6 +292,10 @@ uninstall-hook:
 	    echo " rm -f '$(DESTDIR)$(bindir)/$$f'"; \
 	    rm -f "$(DESTDIR)$(bindir)/$$f"; \
 	  else :; fi; \
+	done
+	@for s in $(bin_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(bindir)/$$link; \
 	done
 	@for f in $(dist_noinst_DATA); do \
 	  if grep "original $$f --" "$(DESTDIR)$(web2cdir)/$$f" >/dev/null 2>&1 \

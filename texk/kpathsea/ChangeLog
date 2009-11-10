@@ -1,3 +1,22 @@
+2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* doc/kpathsea.texi (Calling sequence): Document the new
+	functions kpathsea_out_name_ok and kpathsea_in_name_ok.
+	Recommend Automake in addition to Autoconf; update URL for both.
+
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-file[ch] ({kpathsea,kpse}_{in,out}_name_ok): New fuctions
+	renamed and moved from ../web2c/lib/texmfmp.c to here.
+
+	Update version numbers to 5.1.0.
+
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (bin_links, install-exec-hook, uninstall-hook),
+	man/Makefile.am (man1_links, install-data-hook, uninstall-hook):
+	Moved handling of texhash symlinks from ../tetex/ to here.
+
 2009-10-20  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape): doc fixes to discourage shell_escape=p.
@@ -21,14 +40,32 @@
 
 	* texmf.cnf (TEXDOC): omit now-unneeded man for texdoc (from mpg).
 
+2009-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-file.c: Add .vf to regcognized suffixes for kpse_ovf_format.
+
 2009-09-21  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): remove pygmentize, as intended.
+
+2009-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lib.h (xfseek, xfseeko, xftell, xftello), xfseek.c, xfseeko.c,
+	xftell.c, xftello.c: Constify string param filename.
 
 2009-09-03  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (find_format): remove dvipdfmx.cfg, since there is
 	no special path for it, and add texglyphlist.txt.
+
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.[ch] (kpathsea_version_string, kpathsea_bug_address):
+	Constify these strings.
+
+2009-08-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-file.c (TRY_ENV): remove unused macro.
 
 2009-08-15  Karl Berry  <karl@tug.org>
 
@@ -3435,9 +3472,9 @@ Wed Nov 12 16:20:02 1997  Olaf Weber  <infovore@xs4all.nl>
  	(kpse_program_name): New global.
 
 	* progname.c (kpse_set_program_name): New function, to replace
- 	kpse_set_progname.  This fixes the problem the we may want to
+ 	kpse_set_progname.  This fixes the problem that we may want to
  	pretend to be a different program, but need the name by which we
- 	were called because that is the one for an executable is
+ 	were called because that is the one for an executable and is
  	guaranteed to exist.  The pretend-name is stored in
  	kpse_program_name.
 	(kpse_reset_program_name): To reset kpse_program_name to a

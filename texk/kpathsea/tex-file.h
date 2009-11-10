@@ -63,6 +63,10 @@ extern KPSEDLL string *kpathsea_find_file_generic
   (kpathsea kpse, const_string name, kpse_file_format_type format,
       boolean must_exist, boolean all);
 
+/* Return true if FNAME is acceptable to open for reading or writing.  */
+extern KPSEDLL boolean kpathsea_in_name_ok (kpathsea kpse, const_string fname);
+extern KPSEDLL boolean kpathsea_out_name_ok (kpathsea kpse, const_string fname);
+
 /* Don't just look up the name, actually open the file.  */
 extern KPSEDLL FILE *kpathsea_open_file (kpathsea kpse, const_string name, 
                                          kpse_file_format_type format);
@@ -94,6 +98,9 @@ extern KPSEDLL string kpse_find_file (const_string name,
 extern KPSEDLL string *kpse_find_file_generic
   (const_string name, kpse_file_format_type format,
       boolean must_exist, boolean all);
+
+extern KPSEDLL boolean kpse_in_name_ok (const_string fname);
+extern KPSEDLL boolean kpse_out_name_ok (const_string fname);
 
 /* Here are some abbreviations.  */
 #define kpse_find_mf(name)   kpse_find_file (name, kpse_mf_format, true)
