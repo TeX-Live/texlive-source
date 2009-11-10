@@ -3,8 +3,10 @@
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+rm -f logo10.pl logo10.map
+
 TEXMFCNF=$srcdir/../kpathsea \
-  ./afm2pl -l 0 $srcdir/logo10 || exit 1
+  ./afm2pl -l 0 $srcdir/logo10 ./logo10.pl || exit 1
 
 diff $srcdir/xlogo10.pl logo10.pl || exit 1
 

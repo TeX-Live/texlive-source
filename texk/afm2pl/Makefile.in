@@ -75,6 +75,7 @@ am_afm2pl_OBJECTS = afm2pl.$(OBJEXT)
 afm2pl_OBJECTS = $(am_afm2pl_OBJECTS)
 afm2pl_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
+afm2pl_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -125,7 +126,7 @@ am__remove_distdir = \
   { test ! -d "$(distdir)" \
     || { find "$(distdir)" -type d ! -perm -200 -exec chmod u+w {} ';' \
          && rm -fr "$(distdir)"; }; }
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
@@ -183,6 +184,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -246,10 +248,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 afm2pl_SOURCES = afm2pl.c
-afm2pl_DEPENDENCIES = $(KPATHSEA_DEPEND)
+DISTCLEANFILES = config.force
 LDADD = $(KPATHSEA_LIBS)
 dist_man1_MANS = afm2pl.1
 TESTS = afm2pl.test
@@ -629,6 +630,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -656,7 +658,6 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then
@@ -764,6 +765,7 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -863,6 +865,12 @@ uninstall-man: uninstall-man1
 	uninstall-am uninstall-binPROGRAMS uninstall-man \
 	uninstall-man1
 
+
+$(afm2pl_OBJECTS): config.force
+
+config.force: $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
 
 @KPATHSEA_RULE@
 

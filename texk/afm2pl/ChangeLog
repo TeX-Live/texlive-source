@@ -1,3 +1,38 @@
+2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, afm2pl.c: Require recent kpathsea version.
+
+2009-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* afm2pl.c (lig.succ, lig.sub, kern.succ, adobeinfo.adobename,
+	encoding.name, encoding.vec, nstrings.names):
+	Constify struct member strings.
+	(codingscheme): Remove unused global string.
+	(fontname, ligoption, Ligoption, afmname, outname, encfilename,
+	ligfilename, boundaryname, interesting, plligops, encligops):
+	Constify global strings.
+	(error, newstring, findname, findadobe, findtfm, findindex,
+	concat, find_suffix, xbasename, openin, openout, interest,
+	expect, readadobe, writepl, getoutnames, conspsfonts):
+	Constify function parameter/result and local strings.
+	(checkligkern): Remove unnecessary inner declaration of 'ai',
+	not to shadow a previous local.
+
+	* afm2pl.c (writepl), afm2pl.test: Avoid FAMILY with directory
+	part in output .pl file.
+
+	* afm2pl.c: Enable standalone build:
+	Declare replacements functions exactly as they are in KPATHSEA
+	and '#define ISALNUM(c)'.
+	Always #include <string.h>, not <strings.h>.
+
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CPPFLAGS): Remove -DKPATHSEA (done in afm2pl.c).
+	* configure.ac: Check for <kpathsea/version.h>.
+	* afm2pl.c: #include <kpathsea/version.h> and drop nested extern.
+
 2009-06-21  Siep Kroonenberg  <siepo@cybercomm.nl>
 
 	* Makefile.am: remove references to afm2pl.[txt|html]

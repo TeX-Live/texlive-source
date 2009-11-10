@@ -72,20 +72,17 @@
 #include "c-auto.h"
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/progname.h>
-#else /* standalone compile */
+#include <kpathsea/version.h>
+#else /* HAVE_CONFIG_H */
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#if defined(SYSV) || defined(VMS) || defined(__THINK__) || defined(MSDOS) || defined(OS2) || defined(ATARIST) || defined(WIN32)
 #include <string.h>
-#else
-#include <strings.h>
-#endif
 #include <math.h>
 #ifdef ATARIST
 #include <float.h>
 #endif
-#endif /* KPATHSEA */
+#endif /* HAVE_CONFIG_H */
 
 #ifdef VMCMS
 #define interesting lookstr     /* for 8 character truncation conflicts */
@@ -141,20 +138,20 @@ typedef short Boolean ;
 
 struct lig {
   struct lig *next;
-  char *succ, *sub;
+  const char *succ, *sub;
   short op, boundright;         /* boundright: succ is rboundarychar */
 };
 
 struct kern {
   struct kern *next;
-  char *succ;
+  const char *succ;
   int delta;
 };
 
 /* metric info for one char */
 struct adobeinfo {
   int adobenum, tfmnum, width;
-  char *adobename;
+  const char *adobename;
   int llx, lly, urx, ury;
   int nonstd_lk; /* non-standard ligs and/or kerns */
   struct lig *ligs;
@@ -168,14 +165,14 @@ struct adobeinfo {
 
 /* encodings */
 struct encoding {
-  char *name;
-  char *vec[256];
+  const char *name;
+  const char *vec[256];
 };
 
 /* struct to store the names of files with extra ligkern info */
 struct nstrings {
   int n;
-  char **names;
+  const char **names;
 };
 
 /*************************************************************
@@ -186,21 +183,20 @@ char buffer[buflen];            /* input buffer (modified while parsing) */
 char obuffer[buflen];           /* unmodified copy of input buffer */
 char *param;                    /* current position in input buffer */
 
-char *fontname = "Unknown";
-char *codingscheme = "UNSPECIFIED";
+const char *fontname = "Unknown";
 
 struct encoding *afmencoding = NULL;
 struct encoding *outencoding = NULL;
-char *ligoption = "1";          /* which extra ligkerns? */
-char *Ligoption = "1";          /* extra ligkern info after letterspacing */
+const char *ligoption = "1";          /* which extra ligkerns? */
+const char *Ligoption = "1";          /* extra ligkern info after letterspacing */
 int based_on;                   /* name output file based on name afm file? */
 int no_prefix = 0;              /* don't look for afm2pl- prefixed filenames */
 FILE *infile, *outfile;
-char *afmname, *outname;        /* names of input and output files */
-char *encfilename;              /* encoding file */
+const char *afmname, *outname;  /* names of input and output files */
+const char *encfilename;        /* encoding file */
 struct nstrings *ligfilenames;  /* for files with extra ligkern info */
 struct nstrings *Ligfilenames;  /* same; for after letterspacing */
-char *ligfilename;
+const char *ligfilename;
 
 struct adobeinfo
 **adobechars,                   /* array of adobeinfo structs, from afm and in afm order */
@@ -229,7 +225,7 @@ int forceoctal = 0;
 int keepligs = 0;               /* retain afm ligs in spite of lspace>0 */
 
 int rboundarychar = -1;         /* the (right) boundary character */
-char *boundaryname = "||";      /* name of boundarychars for liginfo specs */
+const char *boundaryname = "||";      /* name of boundarychars for liginfo specs */
 struct adobeinfo *rbound, *lbound;
 char *boundglyph = NULL;
   /* glyph name of rboundarychar; non-null only if encoded */
@@ -244,12 +240,9 @@ int verbose = 0;
 /**************************************************************
  * general utility functions */
 
-/* see dvips.h about PnC and PnH: a trick to turn prototypes on or
- * off with one #define */
-
 /* little hack: error message is warning unless it starts with '!' */
 static void
-error(char *s)
+error(const char *s)
 {
   char *parasave;
   parasave = param;
@@ -286,7 +279,7 @@ mymalloc(unsigned long len)
 }
 
 static char *
-newstring(char *s)
+newstring(const char *s)
 {
   char *q = mymalloc ((unsigned long) (strlen (s) + 1));
   (void) strcpy (q, s);
@@ -295,7 +288,7 @@ newstring(char *s)
 
 /* find a glyph name in an adobeinfo array */
 static struct adobeinfo *
-findname(struct adobeinfo **achars, int n, char *p)
+findname(struct adobeinfo **achars, int n, const char *p)
 {
   register int i;
   for (i = 0; i < n; i++)
@@ -309,21 +302,21 @@ findname(struct adobeinfo **achars, int n, char *p)
  * separately for those.
  */
 static struct adobeinfo *
-findadobe(char *p)
+findadobe(const char *p)
 {
   return findname (adobechars, nglyphs, p);
 }
 
 /* Find glyph info by name in target encoding */
 static struct adobeinfo *
-findtfm(char *p)
+findtfm(const char *p)
 {
   return findname (tfmptrs, 256, p);
 }
 
 /* just for adobechars, we sometimes want the index instead */
 static int
-findindex(char *p)
+findindex(const char *p)
 {
   int i;
   for (i = 0; i < nglyphs; i++)
@@ -381,7 +374,7 @@ typedef enum {
 
 /* string concatenation with allocation */
 static char *
-concat(char *s1, char *s2)
+concat(const char *s1, const char *s2)
 {
   char *answer = (char *) malloc (strlen (s1) + strlen (s2) + 1);
   strcpy (answer, s1);
@@ -394,9 +387,9 @@ concat(char *s1, char *s2)
  * of NAME.  If the name is `foo' or `/foo.bar/baz', we have no extension.
  */
 static char *
-find_suffix(char *name)
+find_suffix(const char *name)
 {
-  char *slash_pos;
+  const char *slash_pos;
   char *dot_pos = (char *) strrchr (name, '.');
 
   if (dot_pos == NULL)
@@ -413,10 +406,10 @@ find_suffix(char *name)
 }
 
 /* Return pointer to filename with leading path stripped */
-static char *
-xbasename(char *name)
+static const char *
+xbasename(const char *name)
 {
-  char *base = NULL;
+  const char *base = NULL;
   unsigned len = strlen (name);
 
   for (len = strlen (name); len > 0; len--) {
@@ -430,6 +423,8 @@ xbasename(char *name)
     base = name;
   return base;
 }
+
+#define ISALNUM(c) (isascii (c) && isalnum(c))
 
 #endif
 /* end of KPATHSEA replacements */
@@ -446,12 +441,12 @@ xbasename(char *name)
  * kpse handling isn't so helpful in the enc- and lig cases,
  * so we add a suffix explicitly.
  */
-static char *
-openin(char *fname, kpse_file_format_type format, char *ext)
+static const char *
+openin(const char *fname, kpse_file_format_type format, const char *ext)
 {
+#ifdef KPATHSEA
   char *realfname;
 
-#ifdef KPATHSEA
   realfname = NULL;
   if (!no_prefix && (!strcmp(ext, ".enc") || !strcmp(ext, ".lig"))) {
     realfname = kpse_find_file (concat("afm2pl-", fname), format, false);
@@ -471,10 +466,12 @@ openin(char *fname, kpse_file_format_type format, char *ext)
     FATAL1 ("%s not found", fname);
   infile = kpse_open_file (realfname, format);
   if (infile)
-    return (char *)xbasename (realfname);
+    return xbasename (realfname);
   else
     FATAL1 ("couldn't open %s", realfname);
 #else
+  const char *realfname;
+
   realfname = fname;
   infile = fopen (realfname, "r");
   if (!infile && !find_suffix (realfname)) {
@@ -498,24 +495,27 @@ openin(char *fname, kpse_file_format_type format, char *ext)
  * In this function, kpathsea functions don't provide better
  * functionality, but they do improve portability.
  */
-static char *
-openout(char *fname, int based_on, char *outext)
+static const char *
+openout(const char *fname, int based_on, const char *outext)
 {
-  char *inext = ".afm";
+  const char *inext = ".afm";
   /* use inext+1 and outext+1 when the leading dot is not desired */
-  char *realfname, *suf;
+  const char *realfname;
+  char *suf;
 
   if (based_on) {  /* compute output filename */
     suf = find_suffix (fname);
     if (suf && !strcmp ((inext + 1), suf)) {    /* replace afm suffix */
-      realfname = newstring (fname);
-      suf = find_suffix (realfname);
+      char * q;
+      q = newstring (fname);
+      suf = find_suffix (q);
       suf[0] = 0;
-      strcat (realfname, (outext + 1));
+      strcat (q, (outext + 1));
+      realfname = q;
       /* no allocation required: new suffix not longer than old one */
     } else         /* append new suffix */
       realfname = concat (fname, outext);
-    realfname = (char *)xbasename (realfname);
+    realfname = xbasename (realfname);
   } else {
     suf = find_suffix (fname);
     if (suf)
@@ -536,7 +536,7 @@ openout(char *fname, int based_on, char *outext)
  * reading the afm
  */
 
-char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
+const char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
   "XHeight", "C", "KPX", "EncodingScheme",
   "StartCharMetrics", "CharWidth", NULL
 };
@@ -553,7 +553,7 @@ char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
 static int
 interest(char *s)
 {
-  register char **p;
+  register const char **p;
   register int n;
 
   for (p = interesting, n = 0; *p; p++, n++)
@@ -634,7 +634,7 @@ paramfloat(void)
 }
 
 static void
-expect(char *s)
+expect(const char *s)
 {
   if (strcmp (paramstring (), s) != 0) {
     (void) fprintf (stderr, "%s expected: ", s);
@@ -766,7 +766,7 @@ handlekern(void)
 static void
 readadobe(void)
 {
-  char *inname;
+  const char *inname;
   int i;
 
   /* open afm file */
@@ -1135,11 +1135,11 @@ readencoding(void)
 
 /* These are the eight ligature ops, in pl terms and in METAFONT terms.
  */
-char *plligops[] = {
+const char *plligops[] = {
   "LIG", "/LIG", "/LIG>", "LIG/", "LIG/>", "/LIG/", "/LIG/>",
   "/LIG/>>", 0
 };
-char *encligops[] = {
+const char *encligops[] = {
   "=:", "|=:", "|=:>", "=:|", "=:|>", "|=:|", "|=:|>", "|=:|>>", 0
 };
 
@@ -1424,7 +1424,6 @@ checkligkern(char *s, int isencfile)
       }
     } else if (n == 4) {        /* ligature: char succ lig_op result */
       int op = -1;
-      struct adobeinfo *ai;
 
       if (!lig_it)
         continue;
@@ -1788,11 +1787,15 @@ writepl(void)
   outname = openout (outname, based_on, ".pl");
 
   /* header */
-  pp = find_suffix (outname);
-  if (pp) { pp--; *pp = 0; }
-  (void) sprintf (obuffer, "%s%s%s", outname,
-                  (efactor == 1.0 ? "" : "-E"),
-                  (slant == 0.0 ? "" : "-S"));
+  {
+    char *outbase = newstring (xbasename (outname));
+    pp = find_suffix (outbase);
+    if (pp) { pp--; *pp = 0; }
+    (void) sprintf (obuffer, "%s%s%s", outbase,
+                    (efactor == 1.0 ? "" : "-E"),
+                    (slant == 0.0 ? "" : "-S"));
+    free (outbase);
+  }
   if (strlen (obuffer) > 19) {  /* too long, will retain first 9 and last 10 */
     register char *p, *q;
     for (p = &obuffer[9], q = &obuffer[strlen (obuffer) - 10];
@@ -1985,9 +1988,6 @@ writepl(void)
 static void
 version(FILE *f)
 {
-#ifdef KPATHSEA
-  extern KPSEDLL char *kpathsea_version_string;
-#endif
   fputs ("afm2pl(k) 0.7.1\n", f);
 #ifdef KPATHSEA
   fprintf (f, "%s\n", kpathsea_version_string);
@@ -2064,7 +2064,7 @@ getnums(char *st, int *nums, int num)
 
 /* split string on commas into strings; disregard empty strings */
 static struct nstrings *
-getoutnames(char *st, struct nstrings *onames)
+getoutnames(const char *st, struct nstrings *onames)
 {
   char *argcopy;
   unsigned i;
@@ -2082,7 +2082,7 @@ getoutnames(char *st, struct nstrings *onames)
     }
     /* !=',', inpart: do nothing */
   }
-  onames->names = (char **) malloc (onames->n * sizeof (char *));
+  onames->names = (const char **) malloc (onames->n * sizeof (char *));
   inpart = 0;
   for (i = 0, j = 0; i < strlen (st); i++) {
     if (argcopy[i] == 0)
@@ -2255,18 +2255,18 @@ readargs(int argc, char **argv)
 static void
 conspsfonts(void)
 {
-  char *base, *p, *q;
+  char *p, *q;
 
   /* TeX fontname is file basename without path or extension */
-  p = newstring (outname);
-  base = (char *)xbasename (p);
-  q = find_suffix (base);
-  if (q > base) {
+  p = newstring (xbasename (outname));
+  q = find_suffix (p);
+  if (q > p) {
     q--;
     *q = 0;
   }
-  openout (base, 0, ".map");
-  (void) fprintf (outfile, "%s %s", base, fontname);
+  openout (p, 0, ".map");
+  (void) fprintf (outfile, "%s %s", p, fontname);
+  free (p);
   if (slantparam || efactorparam || encfilename) {
     (void) fprintf (outfile, " \"");
     if (slantparam)
@@ -2277,18 +2277,18 @@ conspsfonts(void)
       (void) fprintf (outfile, " %s ReEncodeFont", outencoding->name);
     (void) fprintf (outfile, " \"");
     if (encfilename) {
-      base = (char *)xbasename (encfilename);
+      const char *base = xbasename (encfilename);
       (void) fprintf (outfile, " <%s", base);
     }
   }
-  p = newstring (afmname);
-  base = (char *)xbasename (p);
-  q = find_suffix (base);
-  if (q > base) {
+  p = newstring (xbasename (afmname));
+  q = find_suffix (p);
+  if (q > p) {
     q--;
     *q = 0;
   }
-  (void) fprintf (outfile, " <%s.pfb", base);
+  (void) fprintf (outfile, " <%s.pfb", p);
+  free (p);
   (void) fprintf (outfile, "\n");
   fclose (outfile);
 }

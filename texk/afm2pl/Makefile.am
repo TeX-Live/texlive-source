@@ -6,14 +6,19 @@
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = afm2pl
 
 afm2pl_SOURCES = afm2pl.c
 
-afm2pl_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(afm2pl_OBJECTS): config.force
+
+config.force: $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 LDADD = $(KPATHSEA_LIBS)
 
