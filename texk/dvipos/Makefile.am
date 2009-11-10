@@ -20,7 +20,7 @@ dvipos_SOURCES = \
 	utils.c \
 	utils.h
 
-dvipos_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(dvipos_OBJECTS): $(KPATHSEA_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS)
 

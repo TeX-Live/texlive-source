@@ -17,7 +17,7 @@ dist-hook:
 	rm -f $(distdir)/libttf/Makefile.in
 	rm -f $(distdir)/src/Makefile.in
 
-INCLUDES = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES)
+INCLUDES = -I$(top_srcdir)/include
 AM_CPPFLAGS = -Dlint
 AM_CFLAGS = $(WARNING_CFLAGS)
 
@@ -62,11 +62,6 @@ bin_PROGRAMS = ttfdump
 nodist_ttfdump_SOURCES = src/ttfdump.c
 
 LDADD = libttf.a
-
-$(ttfdump_OBJECTS): $(KPATHSEA_DEPEND)
-
-## Rebuild libkpathsea
-@KPATHSEA_RULE@
 
 nodist_man1_MANS = docs/ttfdump.1
 

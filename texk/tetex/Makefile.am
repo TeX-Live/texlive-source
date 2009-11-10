@@ -50,14 +50,6 @@ dist_man1_MANS = \
 	kpsetool.man \
 	kpsewhere.man \
 	mkjobtexmf.man \
-	mkocp.man \
-	mkofm.man \
-	ofm2opl.man \
-	opl2ofm.man \
-	otp2ocp.man \
-	outocp.man \
-	ovf2ovp.man \
-	ovp2ovf.man \
 	ps2frag.man \
 	pslatex.man \
 	rubibtex.man \
@@ -66,7 +58,6 @@ dist_man1_MANS = \
 	texdoctk.man \
 	texlinks.man \
 	thumbpdf.man \
-	ttf2afm.man \
 	updmap.man
 
 dist_man5_MANS = \
@@ -100,43 +91,48 @@ web2cdir = ${prefix}/texmf/web2c
 
 dist_web2c_DATA = fmtutil.cnf
 
+# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
+bin_links = \
+	allcm:allec \
+	fmtutil:mktexfmt \
+	kpsetool:kpsexpand \
+	kpsetool:kpsepath
+
+# Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
+man1_links = $(bin_links) \
+	fmtutil:fmtutil-sys \
+	texconfig:texconfig-sys \
+	updmap:updmap-sys
+
 install-exec-hook:
-	cd $(DESTDIR)$(bindir) \
-	  && rm -f allec kpsexpand kpsepath mktexfmt texhash \
-	  && $(LN_S) allcm allec \
-	  && $(LN_S) fmtutil mktexfmt \
-	  && $(LN_S) kpsetool kpsexpand \
-	  && $(LN_S) kpsetool kpsepath \
-	  && $(LN_S) mktexlsr texhash
+	@cd $(DESTDIR)$(bindir) && \
+	  for s in $(bin_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`; \
+	    file=`echo $$s | sed 's,:.*,,'`; \
+	    rm -f $$link; \
+	    echo "creating link '$$link' -> '$$file'"; \
+	    $(LN_S) $$file $$link; \
+	  done
 
 install-data-hook:
-	cd $(DESTDIR)$(man1dir) \
-	  && rm -f allec.1 ctangle.1 cweave.1 fmtutil-sys.1 kpsexpand.1 \
-	    kpsepath.1 lambda.1 mf-nowin.1 mktexfmt.1 odvicopy.1 \
-	    odvitype.1 pdflatex.1 texconfig-sys.1 texhash.1 updmap-sys.1 \
-	  && $(LN_S) aleph.1 lambda.1 \
-	  && $(LN_S) allcm.1 allec.1 \
-	  && $(LN_S) cweb.1 ctangle.1 \
-	  && $(LN_S) cweb.1 cweave.1 \
-	  && $(LN_S) dvicopy.1 odvicopy.1 \
-	  && $(LN_S) dvitype.1 odvitype.1 \
-	  && $(LN_S) fmtutil.1 fmtutil-sys.1 \
-	  && $(LN_S) fmtutil.1 mktexfmt.1 \
-	  && $(LN_S) kpsetool.1 kpsexpand.1 \
-	  && $(LN_S) kpsetool.1 kpsepath.1 \
-	  && $(LN_S) mf.1 mf-nowin.1 \
-	  && $(LN_S) mktexlsr.1 texhash.1  \
-	  && $(LN_S) pdftex.1 pdflatex.1 \
-	  && $(LN_S) texconfig.1 texconfig-sys.1 \
-	  && $(LN_S) updmap.1 updmap-sys.1
+	@cd $(DESTDIR)$(man1dir) && \
+	  for s in $(man1_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`; \
+	    file=`echo $$s | sed 's,:.*,,'`; \
+	    rm -f $$link.1; \
+	    echo "creating link '$$link.1' -> '$$file.1'"; \
+	    $(LN_S) $$file.1 $$link.1; \
+	  done
 
 uninstall-hook:
-	cd $(DESTDIR)$(bindir) \
-	  && rm -f allec kpsexpand kpsepath mktexfmt texhash
-	cd $(DESTDIR)$(man1dir) \
-	  && rm -f allec.1 ctangle.1 cweave.1 fmtutil-sys.1 kpsexpand.1 \
-	    kpsepath.1 lambda.1 mf-nowin.1 mktexfmt.1 odvicopy.1 \
-	    odvitype.1 pdflatex.1 texconfig-sys.1 texhash.1 updmap-sys.1
+	@for s in $(bin_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(bindir)/$$link; \
+	done
+	@for s in $(man1_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
+	done
 
 EXTRA_DIST = \
 	README.a2ping \

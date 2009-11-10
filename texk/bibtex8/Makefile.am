@@ -32,7 +32,7 @@ bibtex8_SOURCES = \
 	version.h \
 	sysdep.h
 
-bibtex8_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(bibtex8_OBJECTS): $(KPATHSEA_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS)	
 

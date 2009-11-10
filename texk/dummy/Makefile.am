@@ -9,6 +9,6 @@ DISTCLEANFILES = $(noinst_DATA)
 
 all-local: $(noinst_DATA)
 
-../subtexkdir-configure:
+../subtexkdir-configure: Makefile
 	echo "${srcdir}/configure" | sed 's,dummy/,SUBTEXKDIR/,' >$@
 

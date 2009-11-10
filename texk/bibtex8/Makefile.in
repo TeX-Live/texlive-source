@@ -77,6 +77,7 @@ am_bibtex8_OBJECTS = bibtex-1.$(OBJEXT) bibtex-2.$(OBJEXT) \
 bibtex8_OBJECTS = $(am_bibtex8_OBJECTS)
 bibtex8_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
+bibtex8_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -123,7 +124,7 @@ am__remove_distdir = \
   { test ! -d "$(distdir)" \
     || { find "$(distdir)" -type d ! -perm -200 -exec chmod u+w {} ';' \
          && rm -fr "$(distdir)"; }; }
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
@@ -181,6 +182,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -261,7 +263,6 @@ bibtex8_SOURCES = \
 	version.h \
 	sysdep.h
 
-bibtex8_DEPENDENCIES = $(KPATHSEA_DEPEND)
 LDADD = $(KPATHSEA_LIBS)	
 csfdir = ${prefix}/texmf-dist/bibtex/csf/base
 dist_csf_DATA = \
@@ -556,6 +557,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -583,7 +585,6 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then
@@ -787,6 +788,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_btdocDATA \
 	tags uninstall uninstall-am uninstall-binPROGRAMS \
 	uninstall-dist_btdocDATA uninstall-dist_csfDATA
 
+
+$(bibtex8_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
 

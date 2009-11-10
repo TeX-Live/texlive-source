@@ -75,13 +75,16 @@ am_mag_OBJECTS = basics.$(OBJEXT) mag.$(OBJEXT)
 mag_OBJECTS = $(am_mag_OBJECTS)
 mag_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
+mag_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pfb2pfa_OBJECTS = basics.$(OBJEXT) filenames.$(OBJEXT) \
 	pfb2pfa.$(OBJEXT)
 pfb2pfa_OBJECTS = $(am_pfb2pfa_OBJECTS)
 pfb2pfa_LDADD = $(LDADD)
+pfb2pfa_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pk2bm_OBJECTS = pk2bm.$(OBJEXT) pkin.$(OBJEXT)
 pk2bm_OBJECTS = $(am_pk2bm_OBJECTS)
 pk2bm_LDADD = $(LDADD)
+pk2bm_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_ps2pk_OBJECTS = arith.$(OBJEXT) basics.$(OBJEXT) bstring.$(OBJEXT) \
 	curves.$(OBJEXT) encoding.$(OBJEXT) filenames.$(OBJEXT) \
 	fontfcn.$(OBJEXT) hints.$(OBJEXT) lines.$(OBJEXT) \
@@ -92,6 +95,7 @@ am_ps2pk_OBJECTS = arith.$(OBJEXT) basics.$(OBJEXT) bstring.$(OBJEXT) \
 	token.$(OBJEXT) type1.$(OBJEXT) util.$(OBJEXT)
 ps2pk_OBJECTS = $(am_ps2pk_OBJECTS)
 ps2pk_LDADD = $(LDADD)
+ps2pk_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -142,7 +146,7 @@ am__remove_distdir = \
   { test ! -d "$(distdir)" \
     || { find "$(distdir)" -type d ! -perm -200 -exec chmod u+w {} ';' \
          && rm -fr "$(distdir)"; }; }
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
@@ -200,6 +204,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -269,7 +274,6 @@ mag_SOURCES = \
 	basics.h \
 	mag.c
 
-mag_DEPENDENCIES = $(KPATHSEA_DEPEND)
 pfb2pfa_SOURCES = \
 	basics.c \
 	basics.h \
@@ -277,13 +281,11 @@ pfb2pfa_SOURCES = \
 	filenames.h \
 	pfb2pfa.c
 
-pfb2pfa_DEPENDENCIES = $(KPATHSEA_DEPEND)
 pk2bm_SOURCES = \
 	pk2bm.c \
 	pkin.c \
 	pkin.h
 
-pk2bm_DEPENDENCIES = $(KPATHSEA_DEPEND)
 ps2pk_SOURCES = \
 	arith.c \
 	arith.h \
@@ -324,7 +326,6 @@ ps2pk_SOURCES = \
 	util.c \
 	util.h
 
-ps2pk_DEPENDENCIES = $(KPATHSEA_DEPEND)
 LDADD = $(KPATHSEA_LIBS)	
 dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
 EXTRA_DIST = \
@@ -685,6 +686,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -712,7 +714,6 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then
@@ -917,6 +918,8 @@ uninstall-man: uninstall-man1
 	uninstall-am uninstall-binPROGRAMS uninstall-man \
 	uninstall-man1
 
+
+$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(pk2bm_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
 

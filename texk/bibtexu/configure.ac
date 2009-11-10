@@ -18,8 +18,10 @@ KPSE_COMMON([bibtexu], [no-define])
 AC_PROG_CXX
 KPSE_CXX_HACK
 
+AC_SEARCH_LIBS([pow], [m])
+
 KPSE_KPATHSEA_FLAGS
-KPSE_ICU_FLAGS
+KPSE_ICU_FLAGS([icuio icui18n], [--ldflags-icuio])
 
 AC_CONFIG_FILES([Makefile])
 

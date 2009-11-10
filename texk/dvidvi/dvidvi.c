@@ -51,7 +51,7 @@
 #endif /* VMS */
 #define MAXPPERP (32)
 
-void error(char *);
+void error(const char *);
 
 /* defines READBIN, WRITEBIN, PATHSEP and IS_DIR_SEP*/
 
@@ -130,7 +130,7 @@ FILE *outfile ;      /* output dvi file */
 
 char *temp ;    /* a temporary place to put things */
 char *nextstring, *maxstring ;
-char *oname=NULL ;                 /* output dvi file name */
+const char *oname=NULL ;      /* output dvi file name */
 char *iname ;                 /* input dvi file name */
 char *strings ;               /* pointer of the string pool */
 
@@ -351,7 +351,7 @@ static void usage(void) {
 /*
  *   Print an error message, and exit if it is fatal.
  */
-void error(char *s)
+void error(const char *s)
 {
    (void)fprintf(stderr, "%s\n", s) ;    /* AKT: was dvidvi: %s */
    if (*s == '!')
@@ -982,7 +982,7 @@ static void putbuf(integer length)
 /*
  *   This routine outputs a string, terminated by null.
  */
-static void putstr(unsigned char *s)
+static void putstr(unsigned const char *s)
 {
    while (*s)
       outdvibyte(*s++) ;

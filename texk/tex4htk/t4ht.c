@@ -439,7 +439,7 @@ static FILE* lg_file;
 static long  begin_lg_file;
 
 
-static C_CHAR *warn_err_mssg[]={ 
+static const C_CHAR *warn_err_mssg[]={ 
 
 "\n--------------------------------------------------------------------\n"
 "t4ht [-f<dir char>]filename ...\n"
@@ -498,7 +498,7 @@ static char *  abs_addr( ARG_II( U_CHAR *, U_CHAR *) );
 
 
 static void execute_script(
-  ARG_V(struct script_struct*,Q_CHAR *,char *,Q_CHAR *,Q_CHAR *) );
+  ARG_V(struct script_struct*,const Q_CHAR *,const char *,const Q_CHAR *,const Q_CHAR *) );
 
 
 static struct script_struct  * filterGifScript(
@@ -515,13 +515,13 @@ static BOOL strpre( ARG_II(char *,char *) );
 static struct script_struct * add_script( ARG_I(struct script_struct *) );
 
 
-static FILE* f_open( ARG_II(char*,char*) );
+static FILE* f_open( ARG_II(const char*,const char*) );
 
 
-static FILE* f_home_open( ARG_II(char*,char*) );
+static FILE* f_home_open( ARG_II(const char*,const char*) );
 
 
-static FILE* open_file( ARG_II(C_CHAR *, C_CHAR *) );
+static FILE* open_file( const ARG_II(C_CHAR *, const C_CHAR *) );
 
 
 static void err_i( ARG_I(int) );
@@ -530,7 +530,7 @@ static void err_i( ARG_I(int) );
 static void err_arg( ARG_I(int) );
 
 
-static void warn_i_str( ARG_II(int,Q_CHAR *) );
+static void warn_i_str( ARG_II(int,const Q_CHAR *) );
 
 
 static void
@@ -551,7 +551,7 @@ static BOOL sigint_handler(ARG_I(DWORD));
 static void call_sys(ARG_I(Q_CHAR *));
 
 
-static void strct( ARG_II(C_CHAR *, C_CHAR *) );
+static void strct( ARG_II(C_CHAR *, const C_CHAR *) );
 
 
 static long int get_long_int( ARG_I(Q_CHAR *) );
@@ -563,13 +563,13 @@ static void* malloc_chk(ARG_I(int));
 static void* r_alloc(ARG_II(void *, size_t));
 
 
-static BOOL scan_until_end_str( ARG_IV(C_CHAR *, int, BOOL, FILE *) );
+static BOOL scan_until_end_str( ARG_IV(const C_CHAR *, int, BOOL, FILE *) );
 
 
-static BOOL scan_until_str( ARG_IV(C_CHAR *, int, BOOL, FILE *) );
+static BOOL scan_until_str( ARG_IV(const C_CHAR *, int, BOOL, FILE *) );
 
 
-static BOOL scan_str( ARG_III(C_CHAR *, BOOL, FILE *) );
+static BOOL scan_str( ARG_III(const C_CHAR *, BOOL, FILE *) );
 
 
 
@@ -642,10 +642,10 @@ static void execute_script
 #define SEP ,
 (
                     struct script_struct* script SEP 
-                    Q_CHAR * match_1 SEP 
-                    Q_CHAR * match_2 SEP 
-                    Q_CHAR * match_3 SEP 
-                    Q_CHAR * match_4
+                    const Q_CHAR * match_1 SEP 
+                    const Q_CHAR * match_2 SEP 
+                    const Q_CHAR * match_3 SEP 
+                    const Q_CHAR * match_4
 
 )
 #undef SEP
@@ -653,19 +653,20 @@ static void execute_script
 #define SEP ;
 (script,match_1,match_2,match_3,match_4)
                     struct script_struct* script SEP 
-                    Q_CHAR * match_1 SEP 
-                    Q_CHAR * match_2 SEP 
-                    Q_CHAR * match_3 SEP 
-                    Q_CHAR * match_4
+                    const Q_CHAR * match_1 SEP 
+                    const Q_CHAR * match_2 SEP 
+                    const Q_CHAR * match_3 SEP 
+                    const Q_CHAR * match_4
 
 ;
 #undef SEP
 #endif
 {                               struct script_struct* temp;
-                                 Q_CHAR *p, *q, *t;
+                                 Q_CHAR *p, *q;
+                                 const Q_CHAR *t;
   
 #ifdef KPATHSEA
-char * texmf = (char  *) kpse_var_value( "SELFAUTOPARENT" );
+const char * texmf = kpse_var_value( "SELFAUTOPARENT" );
 #endif
 
 
@@ -931,7 +932,7 @@ char *get_env_dir
   if(p == NULL)  return NULL;     
   strncpy(p, progname, i+1);                         
   (IGNORED) strcpy((char *) &p[i+1],
-                   (char *) "tex4ht.env");            
+                   "tex4ht.env");            
   return p;
 }
 
@@ -944,15 +945,15 @@ static FILE* f_open
 #ifdef ANSI
 #define SEP ,
 (
-                          char*  name  SEP 
-                          char*  flags
+                          const char*  name  SEP 
+                          const char*  flags
 )
 #undef SEP
 #else
 #define SEP ;
 ( name, flags )
-                          char*  name  SEP 
-                          char*  flags
+                          const char*  name  SEP 
+                          const char*  flags
 ;
 #undef SEP
 #endif
@@ -969,15 +970,15 @@ static FILE* f_home_open
 #ifdef ANSI
 #define SEP ,
 (
-                          char*  name  SEP 
-                          char*  flags
+                          const char*  name  SEP 
+                          const char*  flags
 )
 #undef SEP
 #else
 #define SEP ;
 ( name, flags )
-                          char*  name  SEP 
-                          char*  flags
+                          const char*  name  SEP 
+                          const char*  flags
 ;
 #undef SEP
 #endif
@@ -985,7 +986,7 @@ static FILE* f_home_open
                           U_CHAR *str;
   if( *name == '~' ){
      if( HOME_DIR ){
-         str = m_alloc(char, strlen((char *) HOME_DIR)+strlen((char *) name));
+         str = m_alloc(char, strlen((char *) HOME_DIR)+strlen(name));
          (IGNORED) sprintf(str,"%s%s", HOME_DIR, name+1);
          file = f_open(str,flags);
          free((void *)  str);
@@ -1000,13 +1001,13 @@ static FILE* open_file
 #ifdef ANSI
 #define SEP ,
 (
-                         Q_CHAR *name SEP  Q_CHAR *ext
+                         const Q_CHAR *name SEP  const Q_CHAR *ext
 )
 #undef SEP
 #else
 #define SEP ;
 (name,ext)
-                         Q_CHAR *name SEP  Q_CHAR *ext
+                         const Q_CHAR *name SEP  const Q_CHAR *ext
 ;
 #undef SEP
 #endif
@@ -1016,11 +1017,11 @@ static FILE* open_file
       (IGNORED) strcpy((char *) filename, (char *) job_name);
       (IGNORED) strct(filename, ext);
    } else {
-      (IGNORED) strcpy((char *)  filename, (char *) name );
+      (IGNORED) strcpy((char *)  filename, name );
       p = filename;
       while( TRUE ){
         if( *p == '.' ){  break; }
-        if( *p == '\0' ){ (IGNORED) strcpy((char *) p, (char *) ext); break; }
+        if( *p == '\0' ){ (IGNORED) strcpy((char *) p, ext); break; }
         p++;
       }
    }
@@ -1081,7 +1082,7 @@ static void warn_i_str
 #define SEP ,
 (
     int  n SEP 
-    Q_CHAR *str
+    const Q_CHAR *str
 
 )
 #undef SEP
@@ -1089,7 +1090,7 @@ static void warn_i_str
 #define SEP ;
 (n,str)
     int  n SEP 
-    Q_CHAR *str
+    const Q_CHAR *str
 
 ;
 #undef SEP
@@ -1191,7 +1192,7 @@ static void strct
 #define SEP ,
 (
      Q_CHAR * str1 SEP 
-     Q_CHAR * str2
+     const Q_CHAR * str2
 
 )
 #undef SEP
@@ -1199,14 +1200,14 @@ static void strct
 #define SEP ;
 ( str1, str2 )
      Q_CHAR * str1 SEP 
-     Q_CHAR * str2
+     const Q_CHAR * str2
 
 ;
 #undef SEP
 #endif
 {   Q_CHAR * ch;
    ch = str1 + (int) strlen((char *) str1);
-   (IGNORED) strcpy((char *)  ch, (char *) str2 );
+   (IGNORED) strcpy((char *)  ch, (const char *) str2 );
 }
 
 
@@ -1282,7 +1283,7 @@ static BOOL  scan_until_end_str
 #ifdef ANSI
 #define SEP ,
 (
-                         Q_CHAR   *str SEP 
+                         const Q_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1291,7 +1292,7 @@ static BOOL  scan_until_end_str
 #else
 #define SEP ;
 (str,n,flag,file)
-                         Q_CHAR   *str SEP 
+                         const Q_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1313,7 +1314,7 @@ static BOOL  scan_until_end_str
      i++;
    }
    p[i] = '\0';
-   i -= (int) strlen((char *) str);
+   i -= (int) strlen(str);
    if( i>= 0 ){  return eq_str(p+i,str);   }
    return FALSE;
 }
@@ -1324,7 +1325,7 @@ static BOOL  scan_until_str
 #ifdef ANSI
 #define SEP ,
 (
-                         Q_CHAR   *str SEP 
+                         const Q_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1333,7 +1334,7 @@ static BOOL  scan_until_str
 #else
 #define SEP ;
 (str,n,flag,file)
-                         Q_CHAR   *str SEP 
+                         const Q_CHAR   *str SEP 
                          int    n SEP 
                          BOOL   flag SEP 
                          FILE*  file
@@ -1353,7 +1354,7 @@ static BOOL  scan_until_str
                      r_alloc((void *) match[n], (size_t) max_match[n]);
      }
      p[i++] = ch;
-     j =  i - (int) strlen((char *) str);
+     j =  i - (int) strlen(str);
      if( j>= 0 ){
        p[i] = '\0';
        if( eq_str(p+j,str) ) { return TRUE;  }
@@ -1367,7 +1368,7 @@ static BOOL  scan_str
 #ifdef ANSI
 #define SEP ,
 (
-                         Q_CHAR   *str SEP 
+                         const Q_CHAR   *str SEP 
                          BOOL   flag SEP 
                          FILE*  file
 )
@@ -1375,13 +1376,13 @@ static BOOL  scan_str
 #else
 #define SEP ;
 (str,flag,file)
-                         Q_CHAR   *str SEP 
+                         const Q_CHAR   *str SEP 
                          BOOL   flag SEP 
                          FILE*  file
 ;
 #undef SEP
 #endif
-{                       Q_CHAR *p;
+{                        const Q_CHAR *p;
                          int temp_eoln_ch;
    if( !flag ) { return flag; }
    p = str;
@@ -1668,7 +1669,7 @@ if( !file ) {
       (IGNORED) printf("tex4ht.env?\n");
    }
    file = f_open("tex4ht.env", READ_TEXT_FLAGS);
-   (IGNORED) strcpy((char *) &env_loc[0], (char *) "tex4ht.env");
+   (IGNORED) strcpy((char *) &env_loc[0], "tex4ht.env");
    if( debug && file ){
       (IGNORED) printf(".......Open: ./tex4ht.env\n"); }
 }
@@ -1681,7 +1682,7 @@ if( !file ) {
           (IGNORED) printf(".tex4ht?\n");
        }
        file = f_open(".tex4ht", READ_TEXT_FLAGS);
-       (IGNORED) strcpy((char *) &env_loc[0], (char *) ".tex4ht");
+       (IGNORED) strcpy((char *) &env_loc[0], ".tex4ht");
        if( debug && file ){
          (IGNORED) printf(".......Open: ./.tex4ht\n"); }
    }
@@ -2085,7 +2086,7 @@ if( rec_op != No_op ){
             
 file_name = match[1];
 *(file_name + (int) strlen((char *) file_name) - 1) = '\0';
-strcpy((char *) file_mode, (char *) WRITE_TEXT_FLAGS);
+strcpy((char *) file_mode, WRITE_TEXT_FLAGS);
 for(i=1; i<=2; i++){
   
 for( p = opened_files; p != (struct files_rec*) 0;  p = p->right ){
@@ -2105,9 +2106,8 @@ to_rec = from_rec;  from_rec = p;
 
 
   file_name = match[5];
-  strcpy((char *) file_mode, (char *) 
+  strcpy((char *) file_mode, 
 READ_BIN_FLAGS
-
 );
 }
 
@@ -2535,7 +2535,7 @@ struct script_struct
       
                   Q_CHAR filename[255];
                   FILE* file;
-(IGNORED) strcpy((char *) filename, (char *) "");
+(IGNORED) strcpy((char *) filename, "");
 if( dir && !bitmaps_no_dm ){ (IGNORED) strct(filename, dir); }
 (IGNORED) strct(filename, match[3]);
 file  = fopen(filename, READ_TEXT_FLAGS);

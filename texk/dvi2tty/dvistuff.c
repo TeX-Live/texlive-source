@@ -49,7 +49,9 @@
 #define sget3()         snum(3)
 #define sget4()         snum(4)
 
+#if 0
 char *dvistuff = "@(#) dvistuff.c  4.1 27/03/90 M.J.E. Mol (c) 1989, 1990";
+#endif
 
 /*---------------------------------------------------------------------------*/
 
@@ -177,7 +179,7 @@ long		vms_ungetc	();
  * which is only used (in 'inlist()') when a page list is given.
  */
 
-void dvimain()
+void dvimain(void)
 {
 
     postamble();                            /* seek and process the postamble */
@@ -189,7 +191,7 @@ void dvimain()
 
 /*---------------------------------------------------------------------------*/
 
-void postamble()            /* find and process postamble, use random access */
+void postamble(void)        /* find and process postamble, use random access */
 {
     register long size;
     register int  count;
@@ -231,7 +233,7 @@ void postamble()            /* find and process postamble, use random access */
 
 /*---------------------------------------------------------------------------*/
 
-void preamble()                 /* process preamble, use random access       */
+void preamble(void)             /* process preamble, use random access       */
 {
 
     mseek(DVIfile, 0L, absolute);       /* read the dvifile from the start   */
@@ -247,7 +249,7 @@ void preamble()                 /* process preamble, use random access       */
 
 /*----------------------------------------------------------------------------*/
 
-void walkpages()                  /* process the pages in the DVI-file */
+void walkpages(void)              /* process the pages in the DVI-file */
 {
     register bool wantpage;
 
@@ -283,7 +285,7 @@ void walkpages()                  /* process the pages in the DVI-file */
 
 /*---------------------------------------------------------------------------*/
 
-void initpage()
+void initpage(void)
 {
 
     h = 0L;  v = 0L;                        /* initialize coordinates   */
@@ -315,7 +317,7 @@ void initpage()
 
 /*----------------------------------------------------------------------------*/
 
-void dopage()
+void dopage(void)
 {
 
     while ((opcode = (int) get1()) != EOP) {    /* process page until eop */
@@ -416,7 +418,7 @@ void dopage()
 
 /*----------------------------------------------------------------------------*/
 
-void skippage()                /* skip past one page */
+void skippage(void)            /* skip past one page */
 {
     register int opcode;
 
@@ -482,7 +484,7 @@ void skippage()                /* skip past one page */
 
 /*---------------------------------------------------------------------------*/
 
-void printpage()       /* 'end of page', writes lines of page to output file */
+void printpage(void)   /* 'end of page', writes lines of page to output file */
 {
     register int  i, j;
     register unsigned char ch;
@@ -527,8 +529,7 @@ void printpage()       /* 'end of page', writes lines of page to output file */
 
 /*----------------------------------------------------------------------------*/
 
-bool inlist(pagenr)                         /* ret true if in list of pages */
-register long pagenr;
+bool inlist(register long pagenr)                         /* ret true if in list of pages */
 {
 
     while ((currentpage->pag < 0) && (currentpage->pag != pagenr) &&
@@ -605,8 +606,7 @@ void ruleaux(long rulewt, long ruleht, char ch)     /* recursive  that does the 
 
 /*----------------------------------------------------------------------------*/
 
-long horizontalmove(amount)
-register long amount;
+long horizontalmove(register long amount)
 {
 
 #if defined(MSDOS)
@@ -633,7 +633,7 @@ register long amount;
 
 /*----------------------------------------------------------------------------*/
 
-int skipnops()                      /* skips by no-op commands  */
+int skipnops(void)                  /* skips by no-op commands  */
 {
     register int opcode;
 
@@ -644,7 +644,7 @@ int skipnops()                      /* skips by no-op commands  */
 
 /*----------------------------------------------------------------------------*/
 
-linetype *texlive_getline()             /* returns an initialized line-object */
+linetype *texlive_getline(void)         /* returns an initialized line-object */
 {
     register int  i;
     register linetype *temp;
@@ -663,7 +663,7 @@ linetype *texlive_getline()             /* returns an initialized line-object */
 
 /*----------------------------------------------------------------------------*/
 
-linetype *findline()            /* find best fit line were text should go */
+linetype *findline(void)        /* find best fit line were text should go */
 {                               /* and generate new line if needed        */
     register linetype *temp;
     register long topd, botd;
@@ -717,8 +717,7 @@ linetype *findline()            /* find best fit line were text should go */
 
 /*----------------------------------------------------------------------------*/
 
-unsigned long num(size)
-register int size;
+unsigned long num(register int size)
 {
     register int i;
     register long x = 0;
@@ -730,8 +729,7 @@ register int size;
 } /* num */
 
 
-long snum(size)
-register int size;
+long snum(register int size)
 {
     register int i;
     register long x = 0;
@@ -948,8 +946,7 @@ void outchar(unsigned char ch)                     /* output ch to appropriate l
 
 /*----------------------------------------------------------------------------*/
 
-void putcharacter(charnr)            /* output character, don't change h */
-register long charnr;
+void putcharacter(register long charnr)            /* output character, don't change h */
 {
     register long saveh;
 
@@ -964,8 +961,7 @@ register long charnr;
 
 /*----------------------------------------------------------------------------*/
 
-void setchar(charnr)
-long charnr;
+void setchar(long charnr)
 {    /* should print characters with character code>127 from current font */
      /* note that the parameter is a dummy, since ascii-chars are<=127    */
 
@@ -977,8 +973,7 @@ long charnr;
 /*----------------------------------------------------------------------------*/
 
 
-void fontdef(x)
-register int x;
+void fontdef(register int x)
 {
     register int i;
     char * name;
@@ -1025,8 +1020,7 @@ register int x;
 
 
 
-void setfont(fntnum)
-long fntnum;
+void setfont(long fntnum)
 {
     font * fnt;
     char * s;
@@ -1060,10 +1054,7 @@ long fntnum;
 
 
 #if defined(VMS)
-long vmsseek(fp,n,dir)
-FILE *fp;
-long n;
-long dir;
+long vmsseek(FILE *fp, long n, long dir)
 {
     long k,m,pos,val,oldpos;
     struct stat buffer;
@@ -1113,8 +1104,7 @@ long dir;
         
 
 
-long vms_ftell(fp)
-FILE *fp;
+long vms_ftell(FILE *fp)
 {
     char c;
     long pos;
@@ -1134,9 +1124,7 @@ FILE *fp;
 
 
 
-long vms_ungetc(c,fp)
-char c;
-FILE *fp;
+long vms_ungetc(char c, FILE *fp)
 {
     if ((c == EOF) && feof(fp))
         return (EOF);

@@ -1,3 +1,30 @@
+2009-08-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Cleanup: move extern declarations to header tfm.h.
+	* dvi2xx.h (Fatal, NoSignExtend, tfm_read_info, Warning),
+	tfm.c (TFMpath, Fatal, NoSignExtend, G_quiet, Warning),
+	config.h (tfm_info_type): Removed.
+	* tfm.h (tfm_info_type, TFMpath, G_quiet, Fatal, NoSignExtend,
+	Warning): Declared here as extern.
+	(tfm_read_info): Declared as extern.
+
+	* dvi2xx.c (VisChar): Although unused, declare as static with
+	ANSI C definition.
+
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid many maximal compiler warnings.
+	* dvi2xx.[ch], tfm.c: Constify string args of CopyFile(),
+	Fatal(), IsSame(), Warning(), and check_checksum().
+	* dvi2xx.[ch]: Constify various globals and avoid modifying them.
+	(ReadPostAmble): Declare den and num as local vars and drop the
+	now unused global ones.
+
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi2xx.h: #include <kpathsea/version.h> and ...
+	* dvi2xx.c: ... drop nested extern declarations.
+
 2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* config.h: define FMT_long4 as "%ld" or "%d" when long4 is

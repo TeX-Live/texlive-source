@@ -15,7 +15,7 @@ libdvilj_a_SOURCES = \
 	tfm.c \
 	tfm.h
 
-libdvilj_a_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(libdvilj_a_OBJECTS): $(KPATHSEA_DEPEND)
 
 dist_bin_SCRIPTS = dvihp
 
@@ -29,6 +29,8 @@ dvilj_SOURCES = \
 	dvi2xx.c \
 	dvi2xx.h
 
+$(dvilj_OBJECTS): libdvilj.a
+
 dvilj2p_CPPFLAGS = -DKPATHSEA -DLJ2P
 
 dvilj2p_SOURCES = \
@@ -36,6 +38,8 @@ dvilj2p_SOURCES = \
 	config.h \
 	dvi2xx.c \
 	dvi2xx.h
+
+$(dvilj2p_OBJECTS): libdvilj.a
 
 dvilj4_CPPFLAGS = -DKPATHSEA -DLJ4
 
@@ -45,6 +49,8 @@ dvilj4_SOURCES = \
 	dvi2xx.c \
 	dvi2xx.h
 
+$(dvilj4_OBJECTS): libdvilj.a
+
 dvilj4l_CPPFLAGS = -DKPATHSEA -DLJ4 -DLJ4L
 
 dvilj4l_SOURCES = \
@@ -52,6 +58,8 @@ dvilj4l_SOURCES = \
 	config.h \
 	dvi2xx.c \
 	dvi2xx.h
+
+$(dvilj4l_OBJECTS): libdvilj.a
 
 LDADD = libdvilj.a $(KPATHSEA_LIBS)	
 

@@ -70,7 +70,7 @@ extern char *make_suffix (const char *s, const char *suffix);
 #define M_DEBUG   0x08
 #define M_USAGE   0x10
 
-extern void msg_out (int level, char *fmt, ...);
+extern void msg_out (int level, const char *fmt, ...);
 
 /* Global Variables */
 extern int verbose, do_smashchars;

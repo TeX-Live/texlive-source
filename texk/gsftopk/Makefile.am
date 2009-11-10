@@ -15,7 +15,13 @@ gsftopk_SOURCES = \
 	gsftopk.c \
 	version.h
 
-gsftopk_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(gsftopk_OBJECTS): config.force
+
+config.force: $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 LDADD = $(KPATHSEA_LIBS)
 

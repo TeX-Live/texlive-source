@@ -8,9 +8,9 @@ ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS =
 AM_CFLAGS = $(WARNING_CFLAGS)
-## Not yet for ObjC and C++ (too many warnings)
-AM_OBJCFLAGS = ## $(WARNING_CFLAGS)
+## Not yet for C++ (too many warnings)
 AM_CXXFLAGS = ## $(WARNING_CXXFLAGS)
+AM_OBJCFLAGS = $(WARNING_OBJCFLAGS)
 
 if build
 bin_PROGRAMS = T1Wrap xdv2pdf
@@ -35,6 +35,14 @@ xdv2pdf_SOURCES = \
 EXTRA_xdv2pdf_SOURCES = appleGlyphNames.c
 
 xdv2pdf_LDFLAGS = -framework Carbon -framework QuickTime
+
+$(xdv2pdf_OBJECTS): config.force
+
+config.force: $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 xdv2pdf_LDADD = $(KPATHSEA_LIBS)
 

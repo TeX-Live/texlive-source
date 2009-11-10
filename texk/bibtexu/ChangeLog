@@ -1,6 +1,11 @@
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c (open_ip_file, open_op_file): Check for legitimate
+	file names via kpse_{in,out}_name_ok() before opening files.
+
 2009-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-Avoid various compiler warnings:
+	Avoid various compiler warnings:
 	* bibtex-[234].c: unused vars, decl. after stmt., return with
 	value in void function.
 	* bibtex-[23].c: #include "unicode/ustring.h".

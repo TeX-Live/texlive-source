@@ -12,7 +12,9 @@
 /*****************************************************************************/
 
 
+#if 0
 char *disdvi = "@(#) disdvi.c  2.1 19/01/90 M.J.E. Mol (c) 1989, 1990";
+#endif
 
 #include <stdio.h>
 #include <ctype.h>
@@ -60,7 +62,7 @@ extern void preamble(void);
 extern void postpostamble(void);
 extern void special(int x);
 extern void fontdef(int x);
-extern char *fontname(long fntnum);
+extern const char *fontname(long fntnum);
 extern void printnonprint(int ch);
 extern unsigned long num(int size);
 extern long snum(int size);
@@ -84,9 +86,7 @@ long            snum            ();
 
 /*---------------------------------------------------------------------------*/
 
-int main(argc, argv)
-int argc;
-char **argv;
+int main(int argc, char **argv)
 {
     register int opcode;                /* dvi opcode                        */
     register int i;
@@ -237,7 +237,7 @@ char **argv;
 /*----------------------------------------------------------------------------*/
 
 
-void bop()
+void bop(void)
 {
     int i;
 
@@ -255,7 +255,7 @@ void bop()
 
 /*---------------------------------------------------------------------------*/
 
-void postamble() 
+void postamble(void) 
 {
 
     printf("POST      last page offset : %06ld\n", sget4());
@@ -276,7 +276,7 @@ void postamble()
 
 } /* postamble */
 
-void preamble()
+void preamble(void)
 {
     register int i;
 
@@ -297,7 +297,7 @@ void preamble()
 } /* preamble */
 
 
-void postpostamble()
+void postpostamble(void)
 {
     register int i;
  
@@ -318,8 +318,7 @@ void postpostamble()
 
 
 
-void special(x)
-register int x;
+void special(register int x)
 {
     register long len;
     register long i;
@@ -335,8 +334,7 @@ register int x;
 
 
 
-void fontdef(x)
-register int x;
+void fontdef(register int x)
 {
     register int i;
     char * name;
@@ -389,8 +387,8 @@ register int x;
 
 
 
-char * fontname(fntnum)
-long fntnum;
+const char *
+fontname(long fntnum)
 {
     font * fnt;
 
@@ -406,8 +404,7 @@ long fntnum;
 
 
 
-void printnonprint(ch)
-register int ch;
+void printnonprint(register int ch)
 {
 
     printf("Char:     ");
@@ -459,8 +456,7 @@ register int ch;
 
 
 
-unsigned long num(size)
-register int size;
+unsigned long num(register int size)
 {
     register int i;
     register long x = 0;
@@ -474,8 +470,7 @@ register int size;
 
 
 
-long snum(size)
-register int size;
+long snum(register int size)
 {
     register int i;
     register long x = 0;

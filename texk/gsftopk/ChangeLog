@@ -1,3 +1,12 @@
+2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, gsftopk.c: Require recent kpathsea version.
+
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for <kpathsea/version.h> and ...
+	* gsftopk.c: ... skip extern decl if found.
+
 2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* gsftopk.c (pk_rll_cvt): cast ptr diff to long for printing.

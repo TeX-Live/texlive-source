@@ -188,6 +188,7 @@ char	*getenv();
 #include <kpathsea/tex-file.h>
 #include <kpathsea/tex-make.h>
 #include <kpathsea/variable.h>
+# include <kpathsea/version.h>
 #include <c-auto.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -2122,8 +2123,6 @@ Translate the PostScript Type 1 font FONT to PK bitmap format at DPI dpi.\n\
 		printf("gsftopk %s\n", version);
 #else
 		{
-		    extern KPSEDLL char *kpathsea_version_string;
-
 		    printf("gsftopk(k) %s\n", version);
 		    puts(kpathsea_version_string);
 		    puts("Copyright (C) 1993-1998 Paul Vojta.\n\

@@ -1,3 +1,14 @@
+2009-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac, ac/withenable.ac: Remove dependency
+	on kpathsea.
+
+2009-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* include/os2_P.h: Constify all global string arrays.
+	* include/ttfutil.h, src/ttfutil.c: Constify param of ttfError().
+
 2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cmap.c (ttfPrintCMAP4) cast USHORT/sizeof() to int for printing.

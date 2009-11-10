@@ -107,7 +107,7 @@ void                    allocate_arrays (void);
 int                     checkdbg (char *str);
 long                    checklong (char *str);
 void                    close_file (const AlphaFile_T file_pointer);
-void CDECL            debug_msg (const int status, char *printf_fmt, ...);
+void CDECL            debug_msg (const int status, const char *printf_fmt, ...);
 #ifndef KPATHSEA
 int                     find_file (const char *envvar,
                                 const char *fallback_path,
@@ -121,7 +121,7 @@ void                    parse_cmd_line (int argc, char **argv);
 void                    report_bibtex_capacity (void);
 void                    report_search_paths (void);
 void		        set_array_sizes (void);
-void CDECL            usage (char *printf_fmt, ...);
+void CDECL            usage (const char *printf_fmt, ...);
                                                               
 
 #ifdef SUPPORT_8BIT

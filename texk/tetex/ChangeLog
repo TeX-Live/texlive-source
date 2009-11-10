@@ -1,3 +1,19 @@
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (bin_links, man1_links):
+	New lists of symlinks within bindir and man1dir.
+	Moved handling of texhash symlinks to ../kpathsea/man/.
+	Moved handling of lambda, ctangle, cweave, odvicopy, odvitype,
+	mf-nowin, and pdflatex symlinks to ../web2c/man/.
+	(install-data-hook, install-exec-hook, uninstall-hook):
+	Use `bin_links' and `man1_links'.
+
+	* mkocp.man, mkofm.man, otp2ocp.man, outocp.man: Moved from
+	here to ../web2c/otps/.
+	* ofm2opl.man, opl2ofm.man, ovf2ovp.man, ovp2ovf.man,
+	ttf2afm.man: Moved from here to ../web2c/man/.
+	* Makefile.am (dist_man1_MANS): Adjusted.
+
 2009-10-09  Karl Berry  <karl@tug.org>
 
 	* fmtutil (run_initex): if it doesn't already exist, create

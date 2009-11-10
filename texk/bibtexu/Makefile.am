@@ -35,9 +35,9 @@ bibtexu_SOURCES = \
 	version.h \
 	sysdep.h
 
-bibtexu_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ICU_DEPEND)
+$(bibtexu_OBJECTS): $(KPATHSEA_DEPEND) $(ICU_DEPEND)
 
-LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) -lm
+LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@

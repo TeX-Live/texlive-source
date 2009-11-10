@@ -337,33 +337,6 @@ typedef SCHAR_TYPE signed_char;
 #endif
 */
 
-
-/* Information returned by tfm_read_info. */
-typedef struct {
-  /* These string lengths are imposed by the TFM format. Either of these
-     values may be the empty string.  */
-  unsigned char coding_scheme[40];
-  unsigned char family[20];
-
-  /* The second fontdimen. */
-  unsigned interword;
-
-  /* These values are what will work to select the font in PCL. If this
-     TFM file doesn't have the `KN' extensions (distinguishable by the
-     family == "HPAUTOTFM"). */
-#define SPACING_FIXED 0
-#define SPACING_PROPORTIONAL 1
-  unsigned spacing;
-  int weight;
-  unsigned style;
-  unsigned typeface_id;
-
-  /* TFM files can always have 256 characters, even if we're using the
-     old pixel format that only supports 128. The values are fix-words
-     scaled by the design size; i.e., straight from the TFM file. */
-  long4 widths[256];
-} tfm_info_type;
-
 #ifdef KPATHSEA
 #define BOPENCMD xfopen
 #else

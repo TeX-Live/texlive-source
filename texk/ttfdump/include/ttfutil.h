@@ -9,7 +9,7 @@ void FixedSplit(Fixed f, int b[]);
 void TwoByteSwap(unsigned char *buf, int nbytes);
 void FourByteSwap(unsigned char *buf, int nbytes);
 void FourByteSwap(unsigned char *buf, int nbytes);
-void ttfError(char *msg);
+void ttfError(const char *msg);
 
 #include "protos.h"
 

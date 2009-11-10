@@ -749,6 +749,8 @@ FILE *open_ip_file (Integer_T search_path)
         debug_msg (DBG_IO, "open_ip_file: trying to open `%s' ... ", 
                    full_filespec);
 #ifdef KPATHSEA
+	if (!kpse_in_name_ok(full_filespec))
+	    goto not_ok;
 	fptr = fopen (full_filespec, FOPEN_R_MODE);
 	free (full_filespec);
 #else
@@ -766,6 +768,7 @@ FILE *open_ip_file (Integer_T search_path)
     ** Otherwise, return a NULL pointer.
     */
     else {
+not_ok:
         debug_msg (DBG_IO, "open_ip_file: unable to open `%s' ... ", 
                    full_filespec);
         fptr = NULL;
@@ -799,7 +802,10 @@ FILE *open_op_file (void)
     ** varies according to the operating system.
     */
 #if defined(KPATHSEA)
-    fptr = fopen(tmp_file_name, FOPEN_W_MODE);
+    if (kpse_out_name_ok(tmp_file_name))
+	fptr = fopen(tmp_file_name, FOPEN_W_MODE);
+    else
+	fptr = NULL;
 #else
 # if defined(MSDOS) || defined(OS2)
     fptr = fopen (tmp_file_name, "wt");

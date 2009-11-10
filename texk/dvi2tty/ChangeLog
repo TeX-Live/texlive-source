@@ -1,3 +1,13 @@
+2009-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* disdvi.c, dvi2tty.c, dvistuff.c: Ignore RCS strings.
+	ANSI C function definitions.
+	* disdvi.c (fontname): Constify string return type.
+	* dvi2tty.c (path, OUTfilename): Constify global strings.
+	(getpages, getfname, getinteger, setoption, getargs):
+	Constify string params and local vars.
+
 2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi2tty.c (readable_file): declare as static.

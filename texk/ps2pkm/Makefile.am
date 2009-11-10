@@ -15,8 +15,6 @@ mag_SOURCES = \
 	basics.h \
 	mag.c
 
-mag_DEPENDENCIES = $(KPATHSEA_DEPEND)
-
 pfb2pfa_SOURCES = \
 	basics.c \
 	basics.h \
@@ -24,14 +22,10 @@ pfb2pfa_SOURCES = \
 	filenames.h \
 	pfb2pfa.c
 
-pfb2pfa_DEPENDENCIES = $(KPATHSEA_DEPEND)
-
 pk2bm_SOURCES = \
 	pk2bm.c \
 	pkin.c \
 	pkin.h
-
-pk2bm_DEPENDENCIES = $(KPATHSEA_DEPEND)
 
 ps2pk_SOURCES = \
 	arith.c \
@@ -73,7 +67,7 @@ ps2pk_SOURCES = \
 	util.c \
 	util.h
 
-ps2pk_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(pk2bm_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS)	
 

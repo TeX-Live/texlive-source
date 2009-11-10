@@ -11,7 +11,6 @@
 #else
 #include <stdio.h>
 #include <stdlib.h>
-extern char* TFMpath;
 #endif
 
 #include "config.h" /* for STRSIZE and tfm_info_type, at least */
@@ -19,22 +18,14 @@ extern char* TFMpath;
 
 #include "tfm.h"
 
-extern void Fatal(char *, ...);
-
 #ifdef vms
 #include <ssdef.h>
 #include <stsdef.h>
 #define getenv vms_getenv
 #endif
 
-/* Defined in dvi2xx.c. */
-extern long4 NoSignExtend(FILEPTR, int);
-
 #define TFM_GET_TWO()  NoSignExtend (tfm_fp, 2)
 #define TFM_GET_FOUR() NoSignExtend (tfm_fp, 4)
-
-extern bool G_quiet;
-extern void Warning();
 
 /* Read N words (N * 4 bytes) from TFM_FP and return it in *OUTBUF, unless
    OUTBUF==NULL, in which case throw them away. */

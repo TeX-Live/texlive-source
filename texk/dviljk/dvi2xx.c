@@ -107,9 +107,8 @@
 #ifdef SEVENBIT
 #define VIS   33
 #define VIS2  (VIS+32)
-unsigned char
-VisChar(c)
-unsigned char   c;
+static unsigned char
+VisChar(unsigned char c)
 {
   c &= 0xff;
   if (c < VIS)
@@ -712,7 +711,7 @@ b_oflush(FILEPTR spfp)
 /***************************** CopyFile ******************************/
 /*********************************************************************/
 void
-CopyFile(char *str )
+CopyFile(const char *str )
 {
   FILEPTR spfp;
   int     todo;
@@ -2733,9 +2732,7 @@ CompressedCharLine(struct char_entry *ce, int nbpl, unsigned char *buffer)
    the user hasn't turned it off.  */
 
 static void
-check_checksum (c1, c2, name)
-    unsigned c1, c2;
-    const char *name;
+check_checksum (unsigned c1, unsigned c2, const char *name)
 {
   if (c1 && c2 && c1 != c2
 #ifdef KPATHSEA
@@ -2788,6 +2785,7 @@ DecodeArgs(int argc, char *argv[])
   char    *curarea;	     /* current file area             */
   char    *curname;   	     /* current file name             */
   char    *tcp, *tcp1;       /* temporary character pointers  */
+  const char *ctcp;          /* temporary const char pointer  */
   char    *this_arg;
   double  x_offset = 0.0, y_offset = 0.0;
 #ifdef __riscos
@@ -2806,7 +2804,6 @@ DecodeArgs(int argc, char *argv[])
 #endif
 
   if (argc == 2 && EQ(argv[1], "--version")) {
-    extern KPSEDLL char *kpathsea_version_string;
     puts (VERSION);
     puts (kpathsea_version_string);
     puts ("Copyright (C) 1997 Gustaf Neumann.\n\
@@ -2894,17 +2891,18 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
         break;
 #endif
       case 'e':       /* emit file is specified */
-        EmitFileName = ++tcp;
+        tcp++;
 #ifdef MSDOS
         /* delete trailing ':' (causing hangup) */
-        if (EmitFileName[strlen(EmitFileName)-1] == ':')
-          EmitFileName[strlen(EmitFileName)-1] = '\0';
+        if (tcp[strlen(tcp)-1] == ':')
+          tcp[strlen(tcp)-1] = '\0';
 #endif
 #ifdef OS2  /* repeated to avoid problems with stupid c preprocessors  */
         /* delete trailing ':' (causing hangup) */
-        if (EmitFileName[strlen(EmitFileName)-1] == ':')
-          EmitFileName[strlen(EmitFileName)-1] = '\0';
+        if (tcp[strlen(tcp)-1] == ':')
+          tcp[strlen(tcp)-1] = '\0';
 #endif
+        EmitFileName = tcp;
         break;
       case 'f':       /* next arg is starting pagenumber */
         if ( sscanf(tcp + 1, FMT_long4, &FirstPage) != 1 )
@@ -3174,8 +3172,8 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
 #ifdef KPATHSEA
         /* split into directory + file name */
 	int tcplen, argvlen;
-	tcp = (char *)xbasename(argv[argind]);/* this knows about any kind of slashes */
-	tcplen = strlen(tcp);
+	ctcp = xbasename(argv[argind]);/* this knows about any kind of slashes */
+	tcplen = strlen(ctcp);
 	if ( tcplen == 0 ) {
 	  /* This happens when the DVI file name has a trailing slash; this
 	     is not a valid name. Then we terminate the argument parsing
@@ -3184,26 +3182,26 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
 	}
 	argvlen = strlen(argv[argind]);
 	if (tcplen == argvlen)
-	  curarea = "";
+	  curarea = xstrdup("");
 	else {
 	  curarea = xstrdup(argv[argind]);
 	  curarea[argvlen-tcplen] = '\0';
 	}
 #else
-        tcp = strrchr(argv[argind], '/');
+        ctcp = strrchr(argv[argind], '/');
         /* split into directory + file name */
-        if (tcp == NULL) {
-          curarea[0] = "";
-          tcp = argv[argind];
+        if (ctcp == NULL) {
+	  curarea = xstrdup("");
+          ctcp = argv[argind];
         } else {
 	  curarea = xstrdup(argv[argind]);
-          curarea[tcp-argv[argind]+1] = '\0';
-          tcp += 1;
+          curarea[ctcp-argv[argind]+1] = '\0';
+          ctcp += 1;
         }
 #endif
 
-        curname = (char *) xmalloc(strlen(tcp)+5);  /* + space for ".dvi" */
-	(void) strcpy(curname, tcp);
+        curname = (char *) xmalloc(strlen(ctcp)+5);  /* + space for ".dvi" */
+	(void) strcpy(curname, ctcp);
         /* split into file name + extension */
         tcp1 = strrchr(curname, '.');
         if (tcp1 == NULL) {
@@ -3335,7 +3333,6 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
     fprintf(ERR_STREAM,"\t-   ..... dvifile is stdin (must be seekable); implies -e-\n");
 #ifdef KPATHSEA
     {
-      extern KPSEDLL char *kpse_bug_address;
       putc ('\n', ERR_STREAM);
       fputs (kpse_bug_address, ERR_STREAM);
     }
@@ -3343,9 +3340,10 @@ Primary author of Dvi2xx: Gustaf Neumann; -k maintainer: K. Berry.");
     exit(1);
   }
   if (EQ(EmitFileName, "")) {
-    EmitFileName = (char *) xmalloc(strlen(rootname)+sizeof(EMITFILE_EXTENSION));
-    (void) strcpy(EmitFileName, rootname);
-    strcat(EmitFileName, EMITFILE_EXTENSION);
+    tcp = (char *) xmalloc(strlen(rootname)+sizeof(EMITFILE_EXTENSION));
+    (void) strcpy(tcp, rootname);
+    strcat(tcp, EMITFILE_EXTENSION);
+    EmitFileName = tcp;
   }
   if (G_quiet)
     G_verbose = _FALSE;
@@ -3986,10 +3984,10 @@ void DoSpecial(char *str, int n)
       int width  = urx - llx;
       int height = ury - lly;
       char cmd[255];
-      char *cmd_format = "%s -q -dSIMPLE -dSAFER -dNOPAUSE -sDEVICE=%s -sOutputFile=%s %s %s showpage.ps -c quit";
-      char *gs_cmd;
+      const char *cmd_format = "%s -q -dSIMPLE -dSAFER -dNOPAUSE -sDEVICE=%s -sOutputFile=%s %s %s showpage.ps -c quit";
+      const char *gs_cmd;
       int scale_factor, adjusted_height, adjusted_llx;
-      char *printer = "ljetplus"; /* use the most stupid one */
+      const char *printer = "ljetplus"; /* use the most stupid one */
 
       char pcl_file[STRSIZE];
       char scale_file[STRSIZE];
@@ -4015,7 +4013,7 @@ void DoSpecial(char *str, int n)
 	 We need to create the temporary directory only once per
 	 run; it will be deleted in AllDone(). */
       if ( tmp_dir[0] == '\0' ) {
-	char * base_dir;
+	const char * base_dir;
 	if ( (base_dir = getenv("TMPDIR")) == NULL ) {
 	  base_dir = "/tmp";
 	} else if ( strlen(base_dir) > STRSIZE - sizeof("/dviljkXXXXXX/include.pcl") ) {
@@ -4215,9 +4213,9 @@ bool GetKeyVal(KeyWord *kw, KeyDesc tab[], int nt, int *tno)
 /*******************************  IsSame  *****************************/
 /**********************************************************************/
 /* compare strings, ignore case */
-bool IsSame(char *a, char *b)
+bool IsSame(const char *a, const char *b)
 {
-  char *x, *y;
+  const char *x, *y;
 
   for (x = a, y = b; *a; a++, b++)
     if ( tolower(*a) != tolower(*b) )
@@ -4264,6 +4262,7 @@ void FindPostAmblePtr(long *postambleptr)
 ***********************************************************************/
 void ReadPostAmble(bool load)
 {
+  long4 den, num; /* denominator and numerator */
   FindPostAmblePtr(&postambleptr);
   if (NoSignExtend(dvifp, 1) != POST)
     Fatal("POST missing at head of postamble");
@@ -5374,7 +5373,7 @@ void SkipFontDef(void)
 /******************************  Fatal  *******************************/
 /**********************************************************************/
 void
-Fatal (char *fmt, ...)
+Fatal (const char *fmt, ...)
 {
   va_list args;
 
@@ -5400,7 +5399,7 @@ Fatal (char *fmt, ...)
 /*****************************  Warning  ******************************/
 /**********************************************************************/
 void                           /* issue a warning */
-Warning(char *fmt, ...)
+Warning(const char *fmt, ...)
 {
   va_list args;
 

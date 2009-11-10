@@ -9,10 +9,10 @@
 ##
 bin_SCRIPTS =
 
-## Copies of these scripts exist here for the sake of avoiding
-## dangling symlinks produced by `make install'.
-## The instances in texmf* are the masters (except when it is CTAN).
-
+# Copies of these scripts exist here for the sake of avoiding
+# dangling symlinks produced by `make install'.
+# The instances in texmf* are the masters (except when it is CTAN).
+#
 scriptxdir = ${prefix}/texmf/scripts
 nobase_dist_scriptx_SCRIPTS = \
 	a2ping/a2ping.pl \
@@ -91,26 +91,32 @@ nobase_dist_script_SCRIPTS = \
 	ulqda/ulqda.pl \
 	vpe/vpe.pl
 
-## The idea is to install the scripts themselves in texmf*/scripts, and
-## have bin/arch/foo be a symlink to, say,
-## ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk space,
-## but much more importantly omit duplication, and most importantly of
-## all make it possible to invoke the same Perl script on Windows (via
-## tl-w32-wrapper).
-##
-## The installation into texmf*/scripts is ideally done with ctan2tl.
-## The copy of the wrapper for Windows is also done by hand, but
-## could/should also be done by ctan2tl.  The check-wrapper-consistency
-## script at least checks after the fact for problems.
-##
-## We also keep a copy of all the scripts here and install into the runtime. 
-## This is purely for other distro builders, so symlinks are not dangling in
-## the inst/bin dir (it is meaningless in native TL).  We have not yet
-## written the auto-update to ensure linked_scripts is actually up to date
-## with the masters in Master/texmf*/scripts, but it will happen.
-##
-## We support both multiplatform and non-multiplatform builds.
-##
+# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
+bin_links = \
+	epstopdf:repstopdf \
+	pdfcrop:rpdfcrop \
+	getnonfreefonts:getnonfreefonts-sys
+
+# The idea is to install the scripts themselves in texmf*/scripts, and
+# have bin/arch/foo be a symlink to, say,
+# ../../texmf-dist/scripts/foo/foo.pl.  That way we save a bit of disk space,
+# but much more importantly omit duplication, and most importantly of
+# all make it possible to invoke the same Perl script on Windows (via
+# tl-w32-wrapper).
+#
+# The installation into texmf*/scripts is ideally done with ctan2tl.
+# The copy of the wrapper for Windows is also done by hand, but
+# could/should also be done by ctan2tl.  The check-wrapper-consistency
+# script at least checks after the fact for problems.
+#
+# We also keep a copy of all the scripts here and install into the runtime.
+# This is purely for other distro builders, so symlinks are not dangling in
+# the inst/bin dir (it is meaningless in native TL).  We have not yet
+# written the auto-update to ensure linked_scripts is actually up to date
+# with the masters in Master/texmf*/scripts, but it will happen.
+#
+# We support both multiplatform and non-multiplatform builds.
+#
 install-data-hook:
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
@@ -139,15 +145,13 @@ install-links:
 	    echo "creating link '$$target' -> '$(REL)/texmf-dist/scripts/$$s'"; \
 	    $(LN_S) $(REL)/texmf-dist/scripts/$$s $$target; \
 	  done && \
-	  rm -f rpdfcrop && \
-	  echo "creating link 'rpdfcrop' -> 'pdfcrop'" && \
-	  $(LN_S) pdfcrop rpdfcrop && \
-	  rm -f repstopdf && \
-	  echo "creating link 'repstopdf' -> 'epstopdf'" && \
-	  $(LN_S) epstopdf repstopdf && \
-	  rm -f getnonfreefonts-sys && \
-	  echo "creating link 'getnonfreefonts-sys' -> 'getnonfreefonts'" && \
-	  $(LN_S) getnonfreefonts getnonfreefonts-sys && \
+	  for s in $(bin_links); do \
+	    link=`echo $$s | sed 's,.*:,,'`; \
+	    file=`echo $$s | sed 's,:.*,,'`; \
+	    rm -f $$link; \
+	    echo "creating link '$$link' -> '$$file'"; \
+	    $(LN_S) $$file $$link; \
+	  done && \
 	  rm -f man && \
 	  echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
 	  (ln -s $(REL)/texmf/doc/man man || :)
@@ -155,9 +159,14 @@ install-links:
 
 uninstall-hook:
 	@for s in $(nobase_dist_scriptx_SCRIPTS) $(nobase_dist_script_SCRIPTS); do \
-	  target=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-	  target=$$target; \
+	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
+	  echo "$$s" | grep listings-ext.sh >/dev/null \
+	  || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$target; \
 	done
-	rm -f $(DESTDIR)$(bindir)/getnonfreefonts-sys $(DESTDIR)$(bindir)/man
+	@for s in $(bin_links); do \
+	  link=`echo $$s | sed 's,.*:,,'`; \
+	  rm -f $(DESTDIR)$(bindir)/$$link; \
+	done
+	rm -f $(DESTDIR)$(bindir)/man
 

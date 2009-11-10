@@ -1,3 +1,11 @@
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* detex.l (SetEnvIgnore, BeginEnv, EndEnv, ErrorExit, SafeMalloc,
+	Warning): Constify string args.
+	(main, SetInputPaths): Constify local strings.
+	(main, InputFile, IncludeFile): Drop redeclaration of TexOpen().
+
 2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): add -Dlint to ignore rcsid.

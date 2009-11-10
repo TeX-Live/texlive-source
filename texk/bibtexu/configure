@@ -748,6 +748,7 @@ ICU_RULE
 ICU_DEPEND
 ICU_LIBS
 ICU_INCLUDES
+ICU_CONFIG
 KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
@@ -889,6 +890,7 @@ enable_cxx_runtime_hack
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
+with_system_icu
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1549,6 +1551,8 @@ Optional Packages:
                           kpathsea headers installed in DIR
   --with-kpathsea-libdir=DIR
                           kpathsea library installed in DIR
+  --with-system-icu       use installed ICU headers and libraries (requires
+                          icu-config, not for XeTeX)
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -4954,13 +4958,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4957: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4961: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4960: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4964: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4963: output\"" >&5)
+  (eval echo "\"\$as_me:4967: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -6166,7 +6170,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6169 "configure"' > conftest.$ac_ext
+  echo '#line 6173 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -8316,11 +8320,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8319: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8323: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8323: \$? = $ac_status" >&5
+   echo "$as_me:8327: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8655,11 +8659,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8658: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8662: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8662: \$? = $ac_status" >&5
+   echo "$as_me:8666: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8760,11 +8764,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8763: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8767: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8767: \$? = $ac_status" >&5
+   echo "$as_me:8771: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8815,11 +8819,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8818: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8822: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8822: \$? = $ac_status" >&5
+   echo "$as_me:8826: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -11182,7 +11186,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11185 "configure"
+#line 11189 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11278,7 +11282,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11281 "configure"
+#line 11285 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13234,11 +13238,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13237: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13241: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:13241: \$? = $ac_status" >&5
+   echo "$as_me:13245: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -13333,11 +13337,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13336: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13340: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:13340: \$? = $ac_status" >&5
+   echo "$as_me:13344: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -13385,11 +13389,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:13388: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:13392: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:13392: \$? = $ac_status" >&5
+   echo "$as_me:13396: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -15145,7 +15149,7 @@ rm -f core conftest.err conftest.$ac_objext \
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kb_cv_var_program_inv_name" >&5
 $as_echo "$kb_cv_var_program_inv_name" >&6; }
-if test "$kb_cv_var_program_inv_name" = yes; then
+if test "x$kb_cv_var_program_inv_name" = xyes; then
 
 $as_echo "#define HAVE_PROGRAM_INVOCATION_NAME 1" >>confdefs.h
 
@@ -15603,6 +15607,63 @@ fi
 
 
 
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing pow" >&5
+$as_echo_n "checking for library containing pow... " >&6; }
+if test "${ac_cv_search_pow+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pow ();
+int
+main ()
+{
+return pow ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' m; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_pow=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if test "${ac_cv_search_pow+set}" = set; then :
+  break
+fi
+done
+if test "${ac_cv_search_pow+set}" = set; then :
+
+else
+  ac_cv_search_pow=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_pow" >&5
+$as_echo "$ac_cv_search_pow" >&6; }
+ac_res=$ac_cv_search_pow
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
 
 
 ## _KPSE_INIT: Initialize TL infrastructure
@@ -17274,26 +17335,132 @@ else
     -e 's,BLD/texk/,${top_builddir}/../,g'`
    KPATHSEA_RULE='# Rebuild libkpathsea
 $(KPATHSEA_DEPEND): ${top_srcdir}/../kpathsea/*.[ch] ${top_builddir}/../kpathsea/paths.h
-	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS)
+	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../kpathsea/paths.h:
-	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS)'
+	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
 
-## _KPSE_LIB_FLAGS: Setup icu (-lsicuxxx) flags
-  ICU_INCLUDES=`echo '-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/icu-build/common -ISRC/libs/icu/icu-xetex/common -ISRC/libs/icu/icu-xetex/i18n -ISRC/libs/icu/icu-xetex/io -ISRC/libs/icu/icu-xetex/layout' | sed \
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}icu-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}icu-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ICU_CONFIG+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ICU_CONFIG"; then
+  ac_cv_prog_ICU_CONFIG="$ICU_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ICU_CONFIG="${ac_tool_prefix}icu-config"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ICU_CONFIG=$ac_cv_prog_ICU_CONFIG
+if test -n "$ICU_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ICU_CONFIG" >&5
+$as_echo "$ICU_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_ICU_CONFIG"; then
+  ac_ct_ICU_CONFIG=$ICU_CONFIG
+  # Extract the first word of "icu-config", so it can be a program name with args.
+set dummy icu-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ac_ct_ICU_CONFIG+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_ICU_CONFIG"; then
+  ac_cv_prog_ac_ct_ICU_CONFIG="$ac_ct_ICU_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_ICU_CONFIG="icu-config"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_ICU_CONFIG=$ac_cv_prog_ac_ct_ICU_CONFIG
+if test -n "$ac_ct_ICU_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_ICU_CONFIG" >&5
+$as_echo "$ac_ct_ICU_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_ICU_CONFIG" = x; then
+    ICU_CONFIG="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    ICU_CONFIG=$ac_ct_ICU_CONFIG
+  fi
+else
+  ICU_CONFIG="$ac_cv_prog_ICU_CONFIG"
+fi
+
+## _KPSE_LIB_FLAGS: Setup icu (-licuxxx) flags
+
+# Check whether --with-system-icu was given.
+if test "${with_system_icu+set}" = set; then :
+  withval=$with_system_icu;
+fi
+if test "x$with_system_icu" = xyes; then
+  if $ICU_CONFIG --version >/dev/null 2>&1; then
+  ICU_INCLUDES=`$ICU_CONFIG --cppflags`
+  ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath --ldflags-icuio --ldflags-libsonly --ldflags-system`
+elif test "x$need_icu:$with_system_icu" = 'xyes:yes'; then
+  as_fn_error "did not find icu-config required for system icu libraries" "$LINENO" 5
+fi
+else
+  ICU_INCLUDES=`echo '-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/icu-incl' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
-  ICU_LIBS=`echo 'BLD/libs/icu/icu-build/lib/libsicuio.a BLD/libs/icu/icu-build/lib/libsicui18n.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicule.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
+  ICU_LIBS=`echo 'BLD/libs/icu/icu-build/lib/libsicuio.a BLD/libs/icu/icu-build/lib/libsicui18n.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
 
-  ICU_DEPEND=`echo 'BLD/libs/icu/icu-build/lib/libsicuio.a BLD/libs/icu/icu-build/lib/libsicui18n.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicule.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
+  ICU_DEPEND=`echo 'BLD/libs/icu/icu-build/lib/libsicuio.a BLD/libs/icu/icu-build/lib/libsicui18n.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
-   ICU_RULE='# Rebuild libsicuxxx
-$(ICU_DEPEND): ${top_builddir}/../../libs/icu/icu-build/common/unicode/platform.h
-	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS)
-${top_builddir}/../../libs/icu/icu-build/common/unicode/platform.h:
-	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS)'
+   ICU_RULE='# Rebuild libicuxxx
+$(ICU_DEPEND): ${top_builddir}/../../libs/icu/icu-incl/unicode/uversion.h
+	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/icu/icu-incl/unicode/uversion.h:
+	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
 
 
 ac_config_files="$ac_config_files Makefile"

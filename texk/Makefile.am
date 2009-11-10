@@ -7,17 +7,14 @@
 ##
 ACLOCAL_AMFLAGS = -I ../m4 --force
 
-SUBDIRS = dummy . $(SUBTEXK)
-DIST_SUBDIRS = dummy $(DIST_SUBTEXK)
+SUBDIRS = . $(SUBTEXK)
+DIST_SUBDIRS = $(DIST_SUBTEXK)
 
 # just in case a subdirectory has added directories
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-SUBTEXK_AUX = subtexkdir-configure subtexkdir-conf.args
-noinst_DATA = $(SUBTEXK_AUX)
-
-DISTCLEANFILES = $(noinst_DATA)
+CONFIG_AUX = ../subsubdir-conf.cmd
 
 all-local: subtexk
 
@@ -29,7 +26,7 @@ all-local: subtexk
 #
 # Sequentially configure and optionally build all texk subdirs;
 # code inspired by automake's way to handle recursive targets.
-subtexk: $(noinst_DATA)
+subtexk: $(CONFIG_AUX)
 	@failcom='exit 1'; \
 	for f in x $$MAKEFLAGS; do \
 	  case $$f in \
@@ -40,14 +37,16 @@ subtexk: $(noinst_DATA)
 	list='$(DIST_SUBTEXK)'; for subtexk in $$list; do \
 	  if test ! -f $$subtexk/Makefile; then \
 	    test -d $$subtexk || $(MKDIR_P) $$subtexk; \
-	    cmd=`cat $(SUBTEXK_AUX) | sed "s,SUBTEXKDIR,$$subtexk,g"`; \
+	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,texk/$$subtexk,g"`; \
 	    case " $(SUBTEXK) " in \
 	      *" $$subtexk "*) skip=;; \
 	      *) skip=' --disable-build';; \
 	    esac; \
 	    (cd $$subtexk && echo "=== configuring in $$subtexk (`pwd`)" && \
 	      echo "make: running $(SHELL) $$cmd$$skip" && \
-	      eval $(SHELL) $$cmd$$skip) && \
+	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
+	      eval $(SHELL) $$cmd$$skip || \
+	        { echo "=== configuring in $$subtexk failed"; exit 1; }) && \
 	    if test "x$$skip" = x; then \
 	      echo "Making all in $$subtexk" && \
 	      (cd $$subtexk && $(MAKE) $(AM_MAKEFLAGS) all); \
@@ -55,11 +54,7 @@ subtexk: $(noinst_DATA)
 	  fi; \
 	done; test -z "$$fail"
 
-subtexkdir-configure:
-	@echo "make in ./dummy failed to create the file $@"
-	exit 1
-
-subtexkdir-conf.args:
-	@echo "configure in ./dummy failed to create the file $@"
+../subsubdir-conf.cmd:
+	@echo "configure in ../auxdir/auxsub failed to create the file $@"
 	exit 1
 

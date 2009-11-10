@@ -33,6 +33,16 @@ fi
 
 KPSE_KPATHSEA_FLAGS
 
+if test "x$enable_build" != xno || test -f config.force; then
+
+KPSE_ADD_FLAGS([kpathsea])
+AC_CHECK_HEADER([kpathsea/version.h], [],
+                [AC_MSG_ERROR([Sorry, kpathsea too old])])
+KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
+
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT

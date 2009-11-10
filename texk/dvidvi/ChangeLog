@@ -1,3 +1,9 @@
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* dvidvi.c (oname): Constify global string.
+	(error, putstr): Constify string arg.
+
 2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): remove -DNeedFunctionPrototypes.

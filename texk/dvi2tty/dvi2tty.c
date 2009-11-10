@@ -139,7 +139,9 @@ It is released under the GNU GPL, version 2 or any later version.
 #define onepp  8                /* only one page list allowed        */
 #define noarg  9                /* argument expected                 */
 
+#if 0
 char *dvi2tty = "@(#) dvi2tty.c  4.1 27/03/90 M.J.E. Mol (c) 1989, 1990";
+#endif
 
 /*---------------------------------------------------------------------------*/
 
@@ -156,25 +158,25 @@ int             espace;         /* to fake calcs with ttywidth               */
 long            foo;            /* utility variable, "register"              */
 #if !defined(MSDOS) && !defined(VMS)
 bool            pager;          /* tells if output is piped to a pager       */
-char  *         path;           /* name of the pager to run                  */
+const char  *   path;           /* name of the pager to run                  */
 #endif
 char  *         progname;       /* our name                                  */
 int             Argc;
 char **         Argv;
 char            DVIfilename[MAXLEN];
-char *          OUTfilename;
+const char *    OUTfilename;
 char            optch;          /* for option handling                       */
 
 /*---------------------------------------------------------------------------*/
 
 #if defined(KPATHSEA) || defined(MSDOS)
 int     main       (int, char **); 
-void    setoption  (char *);
+void    setoption  (const char *);
 void    getargs    (void);
-void    getpages   (int, char *);
+void    getpages   (int, const char *);
 void    plcnxt     (int);
-void    getfname   (char *);
-int     getinteger (int *, int *, char *);
+void    getfname   (const char *);
+int     getinteger (int *, int *, const char *);
 void    usage      (int);
 #else
 char *  getenv    ();
@@ -196,9 +198,7 @@ void    usage     ();
 /*                                                                          */
 /****************************************************************************/
 
-int main(argc, argv)
-int argc;
-char ** argv;
+int main(int argc, char **argv)
 {
 
     progname = *argv;
@@ -249,8 +249,7 @@ char ** argv;
 
 /*----------------------------------------------------------------------------*/
 
-void setoption(optarg)
-char *optarg;
+void setoption(const char *optarg)
 {
     int j = 0;
    
@@ -313,9 +312,10 @@ char *optarg;
 
 /*----------------------------------------------------------------------------*/
 
-void getargs()
+void getargs(void)
 {
-    char *str, *envp;
+    const char *str;
+    char *envp;
     bool DVIfound;                      /* if a dvi filename found           */
 
     if (Argc <= 1)
@@ -397,9 +397,7 @@ void getargs()
 
 /*---------------------------------------------------------------------------*/
 
-void getpages(j, str)
-int j;
-char *str;
+void getpages(int j, const char *str)
 {
     int i, c;
     int num;
@@ -453,8 +451,7 @@ char *str;
 } /* getpages */
 
 
-void plcnxt(pagnr)      /* place page-nr next in list */
-int pagnr;
+void plcnxt(int pagnr)      /* place page-nr next in list */
 {
     currentpage = lastpage;
     currentpage->pag = pagnr;
@@ -511,8 +508,7 @@ readable_file(char *name)
 }
 #endif
 
-void getfname(str)
-char *str;
+void getfname(const char *str)
 {
     int   i;
 
@@ -537,10 +533,7 @@ char *str;
 
 /*----------------------------------------------------------------------------*/
 
-int getinteger(dest, j, str)
-int *dest;
-int *j;
-char *str;
+int getinteger(int *dest, int *j, const char *str)
 {
     int  cum;
     int  sgn;
@@ -568,8 +561,7 @@ char *str;
 
 /*----------------------------------------------------------------------------*/
 
-void errorexit(errorcode)
-int errorcode;
+void errorexit(int errorcode)
 {
 
     fprintf(stderr, "%s: ", progname);
@@ -633,8 +625,7 @@ int errorcode;
 
 /*----------------------------------------------------------------------------*/
 
-void usage(uerr)
-int uerr;
+void usage(int uerr)
 {
 
     if (uerr != ign) {

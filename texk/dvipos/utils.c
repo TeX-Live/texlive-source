@@ -200,7 +200,7 @@ char *make_suffix (const char *s, const char *suffix)
 }
 #endif
 
-void msg_out (int level, char *fmt, ...)
+void msg_out (int level, const char *fmt, ...)
 {
   va_list args;
   if (verbose & level) {

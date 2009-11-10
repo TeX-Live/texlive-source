@@ -1,3 +1,9 @@
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* devnag.c: Constify various global strings and string args.
+	Drop global variable nbsub.
+
 2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, Makefile.am, src/Makefile.am: enable compiler

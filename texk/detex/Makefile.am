@@ -20,7 +20,7 @@ detex_SOURCES = detex.h detex.l
 
 LDADD = $(KPATHSEA_LIBS)
 
-detex_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(detex_OBJECTS): $(KPATHSEA_DEPEND)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@

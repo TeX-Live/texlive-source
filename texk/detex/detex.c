@@ -782,9 +782,9 @@ char	*malloc();
 
 #endif
 
-void SetEnvIgnore(char *sbEnvList);
-int BeginEnv(char *sbEnv);
-int EndEnv(char *sbEnv);
+void SetEnvIgnore(const char *sbEnvList);
+int BeginEnv(const char *sbEnv);
+int EndEnv(const char *sbEnv);
 void InputFile(char *sbFile);
 void IncludeFile(char *sbFile);
 void AddInclude(char *sbFile);
@@ -792,9 +792,9 @@ int InList(char *sbFile);
 void SetInputPaths(void);
 int SeparateList(char *sbList, char **rgsbList ,char chSep,int csbMax);
 FILE * TexOpen(char *sbFile);
-char * SafeMalloc(int cch, char *sbMessage);
-void Warning(char *sb1, char *sb2);
-void ErrorExit(char *sb1);
+char * SafeMalloc(int cch, const char *sbMessage);
+void Warning(const char *sb1, const char *sb2);
+void ErrorExit(const char *sb1);
 
 #define	LaBEGIN		if (fLatex) BEGIN
 #define	CITEBEGIN	if (fLatex && !fCite) BEGIN
@@ -2642,8 +2642,8 @@ void yyfree (void * ptr )
 int
 main(int cArgs, char *rgsbArgs[])
 {
-	char	*pch, *sbEnvList = DEFAULTENV, sbBadOpt[2];
-	FILE	*TexOpen();
+	char	*pch, sbBadOpt[2];
+	const char	*sbEnvList = DEFAULTENV;
 	int	fSawFile = 0, iArgs = 1;
 	
 	/* get base name and decide what we are doing, detex or delatex */
@@ -2783,7 +2783,7 @@ yyless(int n)
 ******/
 
 void
-SetEnvIgnore(char *sbEnvList)
+SetEnvIgnore(const char *sbEnvList)
 {
 	char *sb;
 
@@ -2800,7 +2800,7 @@ SetEnvIgnore(char *sbEnvList)
 ******/
 
 int
-BeginEnv(char *sbEnv)
+BeginEnv(const char *sbEnv)
 {
 	int	i;
 
@@ -2818,7 +2818,7 @@ BeginEnv(char *sbEnv)
 ******/
 
 int
-EndEnv(char *sbEnv)
+EndEnv(const char *sbEnv)
 {
 	if (!fLatex) return(0);
 	if (strcmp(sbEnv, sbCurrentEnv) == 0)
@@ -2834,8 +2834,6 @@ EndEnv(char *sbEnv)
 void
 InputFile(char *sbFile)
 {
-	FILE	*TexOpen();
-
 	if (!fFollow)
 	    return;
 	rgfp[cfp++] = yyin;
@@ -2853,8 +2851,6 @@ InputFile(char *sbFile)
 void
 IncludeFile(char *sbFile)
 {
-	FILE	*TexOpen();
-
 	if (!fFollow)
 	    return;
 	if (!InList(sbFile))
@@ -2917,7 +2913,8 @@ InList(char *sbFile)
 void
 SetInputPaths(void)
 {
-	char *sb, *sbPaths;
+	const char *sb;
+	char *sbPaths;
 #ifndef WIN32
 	char *getenv();
 #endif
@@ -3053,7 +3050,7 @@ TexOpen(char *sbFile)
 ******/
 
 char *
-SafeMalloc(int cch, char *sbMessage)
+SafeMalloc(int cch, const char *sbMessage)
 {
 	char *sb;
 
@@ -3067,7 +3064,7 @@ SafeMalloc(int cch, char *sbMessage)
 ******/
 
 void
-Warning(char *sb1, char *sb2)
+Warning(const char *sb1, const char *sb2)
 {
 	(void)fprintf(stderr, "%s: warning: %s %s\n", sbProgName, sb1, sb2);
 }
@@ -3078,7 +3075,7 @@ Warning(char *sb1, char *sb2)
 ******/
 
 void
-ErrorExit(char *sb1)
+ErrorExit(const char *sb1)
 {
 	(void)fflush(stdout);
 	(void)fprintf(stderr, "%s: error: %s\n", sbProgName, sb1);

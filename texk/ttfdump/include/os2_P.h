@@ -3,7 +3,7 @@
 #ifndef __TTF_OS2_H
 #define __TTF_OS2_H
 
-static char *WeightClassName[] =
+static const char *WeightClassName[] =
 {
   "Thin",                   /* Ultra-light */
   "Extra-light",
@@ -16,7 +16,7 @@ static char *WeightClassName[] =
   "Black"                   /* Ultra-bold */
 };
 
-static char *WidthClassName[] =
+static const char *WidthClassName[] =
 {
   "Ultra-condensed",
   "Extra-condensed",
@@ -29,7 +29,7 @@ static char *WidthClassName[] =
   "Ultra-expanded"
 };
 
-static char *PanoseFamily[] =
+static const char *PanoseFamily[] =
 {
   "Any",
   "No Fit",
@@ -39,7 +39,7 @@ static char *PanoseFamily[] =
   "Pictorial"
 };
 
-static char *PanoseSerif[] =
+static const char *PanoseSerif[] =
 {
   "Any",
   "No Fit",
@@ -59,7 +59,7 @@ static char *PanoseSerif[] =
   "Rounded"
 };
 
-static char *PanoseWeight[] =
+static const char *PanoseWeight[] =
 {
   "Any",
   "No Fit",
@@ -75,7 +75,7 @@ static char *PanoseWeight[] =
   "Nord",
 };
 
-static char *PanoseProportion[] =
+static const char *PanoseProportion[] =
 {
   "Any",
   "No Fit",
@@ -89,7 +89,7 @@ static char *PanoseProportion[] =
   "Monospaced"
 };
 
-static char *PanoseContrast[] =
+static const char *PanoseContrast[] =
 {
   "Any",
   "No Fit",
@@ -103,7 +103,7 @@ static char *PanoseContrast[] =
   "Very High",
 };
 
-static char *PanoseStroke[] =
+static const char *PanoseStroke[] =
 {
   "Any",
   "No Fit",
@@ -116,7 +116,7 @@ static char *PanoseStroke[] =
   "Rapid/Vertical"
 };
 
-static char *PanoseArm[] =
+static const char *PanoseArm[] =
 {
   "Any",
   "No Fit"
@@ -132,7 +132,7 @@ static char *PanoseArm[] =
   "Non-Straight Arms/Double Serif"
 };
 
-static char *PanoseLetterform[] =
+static const char *PanoseLetterform[] =
 {
   "Any",
   "No Fit",
@@ -152,7 +152,7 @@ static char *PanoseLetterform[] =
   "Oblique/Square"
 };
 
-static char *PanoseMidline[] =
+static const char *PanoseMidline[] =
 {
   "Any",
   "No Fit",
@@ -170,7 +170,7 @@ static char *PanoseMidline[] =
   "Low/Serifed",
 };
 
-static char *PanoseXHeight[] =
+static const char *PanoseXHeight[] =
 {
   "Any",
   "No Fit",

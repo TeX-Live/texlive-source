@@ -1032,7 +1032,7 @@ static struct htf_4hf_rec *htf_4hf;
 static BOOL special_on = FALSE;
 
 
-static U_CHAR *warn_err_mssg[]={ 
+static const U_CHAR *warn_err_mssg[]={ 
 
 "improper command line\ntex4ht [-f<path-separator-ch>]in-file[.dvi]\n"
 "   [-.<ext>]            replacement to default file extension name .dvi\n"
@@ -1150,7 +1150,7 @@ static void* malloc_chk(ARG_I(int));
 static void* r_alloc(ARG_II(void *, size_t));
 
 
-static void strct( ARG_II(char *, U_CHAR *) );
+static void strct( ARG_II(char *, const U_CHAR *) );
 
 
 static void open_o_file( ARG_I(void) );
@@ -1245,7 +1245,7 @@ static int search_font_tbl( ARG_I(int) );
 static int get_html_ch( ARG_I(FILE*) );
 
 
-static FILE* f_open( ARG_II(char*,char*) );
+static FILE* f_open( ARG_II(const char*,const char*) );
 
 
 static void dump_htf( ARG_I(FILE*) );
@@ -1287,13 +1287,13 @@ static INTEGER set_ch_class( ARG_I(int) );
 static int math_class_of( ARG_II(int,int) );
 
 
-static char* get_script( ARG_III(char *, U_CHAR *, int) );
+static char* get_script( ARG_III(char *, const U_CHAR *, int) );
 
 
 static BOOL search_dot_file( ARG_I( int) );
 
 
-static struct env_var_rec * get_env_var( ARG_I(char *) );
+static struct env_var_rec * get_env_var( ARG_I(const char *) );
 
 
 static void com_dir( ARG_I(char*) );
@@ -1304,24 +1304,24 @@ static void export_htf( ARG_II(char**, char[]) );
 #endif
 
 
-static FILE*  search_in_dot_file( ARG_IV( int, U_CHAR *, U_CHAR *,
+static FILE*  search_in_dot_file( ARG_IV( int, const U_CHAR *, const U_CHAR *,
                                     struct env_var_rec *) );
 
 
-static FILE*  search_file_base( ARG_IV( U_CHAR *, U_CHAR *, U_CHAR *,
+static FILE*  search_file_base( ARG_IV( const U_CHAR *, const U_CHAR *, const U_CHAR *,
                                     struct env_var_rec *) );
 
 
-static char *  abs_addr( ARG_II( U_CHAR *, U_CHAR *) );
+static char *  abs_addr( ARG_II( const U_CHAR *, const U_CHAR *) );
 
 
-static FILE* search_file( ARG_III(char *, U_CHAR *, U_CHAR *) );
+static FILE* search_file( ARG_III(const char *, const U_CHAR *, const U_CHAR *) );
 
 
-static void add_to_cache( ARG_III(char*,char*,int) );
+static void add_to_cache( ARG_III(const char*,const char*,int) );
 
 
-static FILE* search_file_ext( ARG_III(char *, U_CHAR *, U_CHAR *) );
+static FILE* search_file_ext( ARG_III(const char *, const U_CHAR *, const U_CHAR *) );
 
 
 #if defined(DOS_WIN32) || defined(__DJGPP__)
@@ -1329,7 +1329,7 @@ static FILE* search_file_ext( ARG_III(char *, U_CHAR *, U_CHAR *) );
 #endif
 
 
-static FILE* f_open_pathed_filename( ARG_II(char*,char*) );
+static FILE* f_open_pathed_filename( ARG_II(const char*,const char*) );
 
 
 static INTEGER put_4ht_ch( ARG_II(int,FILE *) );
@@ -1344,10 +1344,10 @@ static INTEGER insert_ch( ARG_I(int) );
 static void put_char( ARG_I(int) );
 
 
-static void print_f( ARG_I(char*) );
+static void print_f( ARG_I(const char*) );
 
 
-static void print_f_4ht( ARG_I(char*) );
+static void print_f_4ht( ARG_I(const char*) );
 
 
 static int get_char( ARG_I(void) );
@@ -1377,10 +1377,10 @@ static void warn_i_int( ARG_II(int,int) );
 static void warn_i_int_2( ARG_III(int,int,int) );
 
 
-static void warn_i_str( ARG_II(int,char *) );
+static void warn_i_str( ARG_II(int,const char *) );
 
 
-static void warn_i_str2( ARG_III(int,char *,char *) );
+static void warn_i_str2( ARG_III(int,const char *,const char *) );
 
 
 static void err_i( ARG_I(int) );
@@ -1512,7 +1512,7 @@ static void strct
 #define SEP ,
 (
      U_CHAR * str1 SEP 
-     U_CHAR * str2
+     const U_CHAR * str2
 
 )
 #undef SEP
@@ -1520,14 +1520,14 @@ static void strct
 #define SEP ;
 ( str1, str2 )
      U_CHAR * str1 SEP 
-     U_CHAR * str2
+     const U_CHAR * str2
 
 ;
 #undef SEP
 #endif
 {   U_CHAR * ch;
    ch = str1 + (int) strlen((char *) str1);
-   (IGNORED) strcpy((char *)  ch, (char *) str2 );
+   (IGNORED) strcpy((char *)  ch, (const char *) str2 );
 }
 
 
@@ -2823,15 +2823,15 @@ static FILE* f_open
 #ifdef ANSI
 #define SEP ,
 (
-                          char*  name  SEP 
-                          char*  flags
+                          const char*  name  SEP 
+                          const char*  flags
 )
 #undef SEP
 #else
 #define SEP ;
 ( name, flags )
-                          char*  name  SEP 
-                          char*  flags
+                          const char*  name  SEP 
+                          const char*  flags
 ;
 #undef SEP
 #endif
@@ -3449,7 +3449,7 @@ static char* get_script
 #define SEP ,
 (
      U_CHAR * name SEP 
-     U_CHAR * inln SEP 
+     const U_CHAR * inln SEP 
      int x
 
 )
@@ -3458,7 +3458,7 @@ static char* get_script
 #define SEP ;
 (name, inln,x)
      U_CHAR * name SEP 
-     U_CHAR * inln SEP 
+     const U_CHAR * inln SEP 
      int x
 
 ;
@@ -3484,7 +3484,7 @@ do{                                       int int_ch;
 *ch = '\0';
 
 
-      } else  {(IGNORED)  strcpy((char *) str, (char *) inln); }
+      } else  {(IGNORED)  strcpy((char *) str, inln); }
       ch = m_alloc(char, (int) strlen((char *) str)+2);
       (IGNORED) strcpy((char *) ch, (char *) str);
       return ch;
@@ -3579,13 +3579,13 @@ static struct env_var_rec * get_env_var
 #ifdef ANSI
 #define SEP ,
 (
-    char *env_var
+    const char *env_var
 )
 #undef SEP
 #else
 #define SEP ;
 ( env_var )
-    char *env_var
+    const char *env_var
 ;
 #undef SEP
 #endif
@@ -3706,7 +3706,7 @@ static void export_htf
      *export_str = (char *) r_alloc((void *) *export_str,
      (int) strlen((char *) *export_str) + (int) strlen((char *) str) +  2 );
      if( (int) strlen((char *) *export_str) > 0 ){
-        (IGNORED) strcat((char *) *export_str, (char *) ",");
+        (IGNORED) strcat((char *) *export_str, ",");
      }
      (IGNORED) strcat((char *) *export_str, (char *) str);
   }
@@ -3720,8 +3720,8 @@ static FILE*  search_in_dot_file
 #define SEP ,
 (
                                                  int   typ SEP 
-                                                 U_CHAR  *name SEP 
-                                                 U_CHAR  *flags SEP 
+                                                 const U_CHAR  *name SEP 
+                                                 const U_CHAR  *flags SEP 
                                       struct env_var_rec *env_dirs
 
 )
@@ -3730,8 +3730,8 @@ static FILE*  search_in_dot_file
 #define SEP ;
 ( typ, name, flags, env_dirs)
                                                  int   typ SEP 
-                                                 U_CHAR  *name SEP 
-                                                 U_CHAR  *flags SEP 
+                                                 const U_CHAR  *name SEP 
+                                                 const U_CHAR  *flags SEP 
                                       struct env_var_rec *env_dirs
 
 ;
@@ -3856,9 +3856,9 @@ static FILE*  search_file_base
 #ifdef ANSI
 #define SEP ,
 (
-                                                 U_CHAR  *name SEP 
-                                                 U_CHAR  *dir SEP 
-                                                 U_CHAR  *flags SEP 
+                                                 const U_CHAR  *name SEP 
+                                                 const U_CHAR  *dir SEP 
+                                                 const U_CHAR  *flags SEP 
                                       struct env_var_rec *env_dirs
 
 )
@@ -3866,9 +3866,9 @@ static FILE*  search_file_base
 #else
 #define SEP ;
 ( name, dir, flags, env_dirs)
-                                                 U_CHAR  *name SEP 
-                                                 U_CHAR  *dir SEP 
-                                                 U_CHAR  *flags SEP 
+                                                 const U_CHAR  *name SEP 
+                                                 const U_CHAR  *dir SEP 
+                                                 const U_CHAR  *flags SEP 
                                       struct env_var_rec *env_dirs
 
 ;
@@ -3896,23 +3896,23 @@ static char *  abs_addr
 #ifdef ANSI
 #define SEP ,
 (
-                                                 U_CHAR  *dir SEP 
-                                                 U_CHAR  *base
+                                                 const U_CHAR  *dir SEP 
+                                                 const U_CHAR  *base
 
 )
 #undef SEP
 #else
 #define SEP ;
 ( dir, base)
-                                                 U_CHAR  *dir SEP 
-                                                 U_CHAR  *base
+                                                 const U_CHAR  *dir SEP 
+                                                 const U_CHAR  *base
 
 ;
 #undef SEP
 #endif
 {                                         U_CHAR  *p;
-   p = m_alloc(char, (int) strlen((char *)  dir )            +
-                     (base? (int) strlen((char *)  base ):0) +
+   p = m_alloc(char, (int) strlen( dir )            +
+                     (base? (int) strlen( base ):0) +
                      (int) strlen((char *)  HOME_DIR  )      + 1 );
    *p = '\0';
    if( (*(dir+1) == '~') && base ){
@@ -3936,18 +3936,18 @@ static FILE* search_file
 #ifdef ANSI
 #define SEP ,
 (
-     U_CHAR   *name SEP 
-     U_CHAR   *dir SEP 
-     U_CHAR   *flags
+     const U_CHAR   *name SEP 
+     const U_CHAR   *dir SEP 
+     const U_CHAR   *flags
 
 )
 #undef SEP
 #else
 #define SEP ;
 ( name, dir, flags )
-     U_CHAR   *name SEP 
-     U_CHAR   *dir SEP 
-     U_CHAR   *flags
+     const U_CHAR   *name SEP 
+     const U_CHAR   *dir SEP 
+     const U_CHAR   *flags
 
 ;
 #undef SEP
@@ -3961,7 +3961,7 @@ if( (file = f_open(name, flags)) != NULL ){
    return file; }
 
 
-      (IGNORED) strcpy((char *) str, (char *) dir);
+      (IGNORED) strcpy((char *) str, dir);
       i = (int) strlen((char *) str) - 1;
       subs = str[i] == '!';
       if( subs )  str[i] = '\0';  else i++;
@@ -3996,14 +3996,14 @@ static void add_to_cache
 #ifdef ANSI
 #define SEP ,
 (
-                         char*  dir SEP  char* name SEP  int n
+                         const char*  dir SEP  const char* name SEP  int n
 
 )
 #undef SEP
 #else
 #define SEP ;
 (dir,name,n)
-                         char*  dir SEP  char* name SEP  int n
+                         const char*  dir SEP  const char* name SEP  int n
 
 ;
 #undef SEP
@@ -4026,7 +4026,7 @@ cur_cache_font->cache_file = (struct cache_file_rec *) 0;
 
 
       cur_cache_font->dir = m_alloc(char, n+1);
-      (IGNORED) strcpy((char *) cur_cache_font->dir, (char *) dir);
+      (IGNORED) strcpy((char *) cur_cache_font->dir, dir);
       if( !cache_font ){
          cur_cache_font->next = cache_font;
          cache_font = cur_cache_font;
@@ -4065,8 +4065,8 @@ cur_cache_font->cache_file = (struct cache_file_rec *) 0;
     if( flag ) {
       
 file_entry = m_alloc(struct cache_file_rec, 1);
-file_entry->file = m_alloc(char, strlen((char *) name)+1);
-(IGNORED) strcpy((char *) file_entry->file, (char *) name);
+file_entry->file = m_alloc(char, strlen(name)+1);
+(IGNORED) strcpy((char *) file_entry->file, name);
 if( ! cur_cache_font->cache_file ){
   cur_cache_font->cache_file = file_entry;
  file_entry->next = (struct cache_file_rec *) 0;
@@ -4092,18 +4092,18 @@ static FILE* search_file_ext
 #ifdef ANSI
 #define SEP ,
 (
-    U_CHAR   *name SEP 
-    U_CHAR   *dir SEP 
-    U_CHAR   *flags
+    const U_CHAR   *name SEP 
+    const U_CHAR   *dir SEP 
+    const U_CHAR   *flags
 
 )
 #undef SEP
 #else
 #define SEP ;
 ( name, dir, flags )
-    U_CHAR   *name SEP 
-    U_CHAR   *dir SEP 
-    U_CHAR   *flags
+    const U_CHAR   *name SEP 
+    const U_CHAR   *dir SEP 
+    const U_CHAR   *flags
 
 ;
 #undef SEP
@@ -4111,7 +4111,7 @@ static FILE* search_file_ext
 {  U_CHAR   str[256];
     FILE*  file;
     int    n;
-  n = (int) strlen((char *) dir);
+  n = (int) strlen(dir);
   (IGNORED) sprintf(str,
 #if defined(DOS_WIN32) || defined(__DJGPP__)
  (( dir[n-1] == '/') ||  ( dir[n-1] == '\\'))
@@ -4239,15 +4239,15 @@ static FILE* f_open_pathed_filename
 #ifdef ANSI
 #define SEP ,
 (
-                          char*  name  SEP 
-                          char*  flags
+                          const char*  name  SEP 
+                          const char*  flags
 )
 #undef SEP
 #else
 #define SEP ;
 ( name, flags )
-                          char*  name  SEP 
-                          char*  flags
+                          const char*  name  SEP 
+                          const char*  flags
 ;
 #undef SEP
 #endif
@@ -4256,7 +4256,7 @@ static FILE* f_open_pathed_filename
   file = NULL;
   if( *name == '~' ){
      if( HOME_DIR ){
-         str = m_alloc(char, strlen((char *) HOME_DIR)+strlen((char *) name));
+         str = m_alloc(char, strlen((char *) HOME_DIR)+strlen(name));
          (IGNORED) sprintf(str,"%s%s", HOME_DIR, name+1);
          file = f_open(str,flags);
          free((void *)  str);
@@ -4784,9 +4784,7 @@ gif_open[gif_flag] = m_alloc(char,
 
 );
 (IGNORED) strcpy((char *) gif_open[gif_flag],
-(char *)   
 "<img src=\"+\" alt=\"+++++\" />+"
-
 );
 gif_alt[gif_flag] = gif_open[gif_flag]+11;
   *(gif_alt[gif_flag] - 1) = '\0';
@@ -5081,9 +5079,7 @@ gif_open[gif_flag] = m_alloc(char,
 
 );
 (IGNORED) strcpy((char *) gif_open[gif_flag],
-(char *)   
 "<img src=\"+\" alt=\"+++++\" />+"
-
 );
 gif_alt[gif_flag] = gif_open[gif_flag]+11;
   *(gif_alt[gif_flag] - 1) = '\0';
@@ -5479,12 +5475,12 @@ else { (IGNORED) put_4ht_ch( ch, cur_o_file ); }
 static void print_f
 #ifdef ANSI
 #define SEP ,
-(    char* str
+(    const char* str
 )
 #undef SEP
 #else
 #define SEP ;
-(str)    char* str
+(str)    const char* str
 ;
 #undef SEP
 #endif
@@ -5504,12 +5500,12 @@ if( no_root_file ){  open_o_file(); }
 static void print_f_4ht
 #ifdef ANSI
 #define SEP ,
-(    char* str
+(    const char* str
 )
 #undef SEP
 #else
 #define SEP ;
-(str)    char* str
+(str)    const char* str
 ;
 #undef SEP
 #endif
@@ -5710,7 +5706,7 @@ static void warn_i_str
 #define SEP ,
 (
     int  n SEP 
-    U_CHAR *str
+    const U_CHAR *str
 
 )
 #undef SEP
@@ -5718,7 +5714,7 @@ static void warn_i_str
 #define SEP ;
 (n,str)
     int  n SEP 
-    U_CHAR *str
+    const U_CHAR *str
 
 ;
 #undef SEP
@@ -5736,8 +5732,8 @@ static void warn_i_str2
 #define SEP ,
 (
     int  n SEP 
-    U_CHAR *str1 SEP 
-    U_CHAR *str2
+    const U_CHAR *str1 SEP 
+    const U_CHAR *str2
 
 )
 #undef SEP
@@ -5745,8 +5741,8 @@ static void warn_i_str2
 #define SEP ;
 (n,str1,str2)
     int  n SEP 
-    U_CHAR *str1 SEP 
-    U_CHAR *str2
+    const U_CHAR *str1 SEP 
+    const U_CHAR *str2
 
 ;
 #undef SEP
@@ -5991,7 +5987,7 @@ back_token->id = -1;
 
 pos_text = pos_line = end_pos_body = end_pos_text = pos_body =
                       m_alloc(char, (int) 1);
-(IGNORED) strcpy((char *) pos_text, (char *) "" );
+(IGNORED) strcpy((char *) pos_text, "" );
 
 
 margin_sp = (double) MARGINSP;     
@@ -6027,7 +6023,8 @@ HOME_DIR = getenv("HOME");
 {      long   file_len;
   
 {      int i;
-       U_CHAR *p, *in_name = "", *out_name = "";
+       U_CHAR *p;
+       const U_CHAR *in_name = "", *out_name = "";
   
 
 #ifdef KPATHSEA
@@ -6115,19 +6112,19 @@ if( !(   *trace_dvi_del_P || *end_trace_dvi_del_P
    trace_dvi_del_P =
             (char *)  r_alloc((void *) trace_dvi_del_P,
                               (size_t) 4);
-   (IGNORED) strcpy((char *) trace_dvi_del_P, (char *) "[G " );
+   (IGNORED) strcpy((char *) trace_dvi_del_P, "[G " );
    end_trace_dvi_del_P =
             (char *)  r_alloc((void *) end_trace_dvi_del_P,
                               (size_t) 2);
-   (IGNORED) strcpy((char *) end_trace_dvi_del_P, (char *) "]" );
+   (IGNORED) strcpy((char *) end_trace_dvi_del_P, "]" );
    trace_dvi_del_p =
             (char *)  r_alloc((void *) trace_dvi_del_p,
                               (size_t) 5);
-   (IGNORED) strcpy((char *) trace_dvi_del_p, (char *) "[/G " );
+   (IGNORED) strcpy((char *) trace_dvi_del_p, "[/G " );
    end_trace_dvi_del_p =
             (char *)  r_alloc((void *) end_trace_dvi_del_p,
                               (size_t) 2);
-   (IGNORED) strcpy((char *) end_trace_dvi_del_p, (char *) "]" );
+   (IGNORED) strcpy((char *) end_trace_dvi_del_p, "]" );
 }
 
   break;}
@@ -6244,9 +6241,9 @@ if( css_ext == (struct css_ext_rec *) 0 ){
   
 if( *in_name != '\0' ){ 
       BOOL tag;
-job_name_n = (int) strlen((char *)  in_name );
+job_name_n = (int) strlen( in_name );
 job_name = m_alloc(char, job_name_n+6);
-(IGNORED) strcpy((char *) job_name, (char *) in_name);
+(IGNORED) strcpy((char *) job_name, in_name);
 tag = job_name_n < 3;
 if( !tag ){
    tag = !eq_str( job_name+job_name_n-
@@ -6338,9 +6335,9 @@ name[n+4] ='\0';
   }
 else{ 
    int tag = 1;
-   int n = (int) strlen((char *)  out_name );
+   int n = (int) strlen( out_name );
 name = m_alloc(char, 6 + n);
-(IGNORED) strcpy((char *) name, (char *) out_name);
+(IGNORED) strcpy((char *) name, out_name);
 while( n-- )   tag = tag && (*(name+n) != '.') ;
 if( tag ) (IGNORED) strct(name,".html");
 #ifdef HTM
@@ -6637,7 +6634,7 @@ while ( search_dot_file( 'i' ) ){
         export_str = (char *) r_alloc((void *) export_str,
             (int) strlen((char *) export_str) + (int) strlen((char *) q) +  2);
         if( (int) strlen((char *) export_str) > 0 ){
-             (IGNORED) strcat((char *) export_str, (char *)  ",");
+             (IGNORED) strcat((char *) export_str, ",");
         }
         (IGNORED) strcat((char *) export_str, (char *)  q);
 } } }
@@ -6646,7 +6643,7 @@ while ( search_dot_file( 'i' ) ){
 
 
    if( (int) strlen((char *) export_str) > 0 ){
-      (IGNORED) strcpy((char *) str, (char *) "%%12");
+      (IGNORED) strcpy((char *) str, "%%12");
       export_str = (char *) r_alloc((void *) export_str,
           (int) strlen((char *) export_str) + (int) strlen((char *) str) +  1 );
       postfix = str - 1;
@@ -7501,9 +7498,9 @@ new_font.design_sz = (INTEGER) get_unt(4);
   tfmfile = kpse_find_file (file_name, kpse_tfm_format, 0);
   if( !tfmfile ){ 
 char s [256];
-(IGNORED) strcpy((char *) s, (char *) "kpsewhich ");
-(IGNORED) strcat((char *) s, (char *) file_name);
-(IGNORED) strcat((char *) s, (char *)  " > tex4ht.tmp ");
+(IGNORED) strcpy(s, "kpsewhich ");
+(IGNORED) strcat(s, file_name);
+(IGNORED) strcat(s, " > tex4ht.tmp ");
 if( system(s) == 0 ){
    
 char fileaddr [256];
@@ -11501,7 +11498,7 @@ while( p !=  (struct group_path *) 0 ){
 if( *(p->path) != '\0' ) {
    
             char str[256];
-(IGNORED) strcpy((char *) str, (char *) "...."); *(str+3) = p->action;
+(IGNORED) strcpy(str, "...."); *(str+3) = p->action;
 (IGNORED) strct(str,p->info); warn_i_str(38,str);
 
 
@@ -11511,7 +11508,7 @@ if( *(p->path) != '\0' ) {
       default:  {
           
             char str[256];
-(IGNORED) strcpy((char *) str, (char *) "...."); *(str+3) = p->action;
+(IGNORED) strcpy(str, "...."); *(str+3) = p->action;
 (IGNORED) strct(str,p->info); warn_i_str(38,str);
 
 
@@ -11539,7 +11536,7 @@ while( p !=  (struct group_path *) 0 ){
 if( *(p->path) != '\0' ) {
    
             char str[256];
-(IGNORED) strcpy((char *) str, (char *) "...."); *(str+3) = p->action;
+(IGNORED) strcpy(str, "...."); *(str+3) = p->action;
 (IGNORED) strct(str,p->info); warn_i_str(38,str);
 
 
@@ -11549,7 +11546,7 @@ if( *(p->path) != '\0' ) {
       default:  {
           
             char str[256];
-(IGNORED) strcpy((char *) str, (char *) "...."); *(str+3) = p->action;
+(IGNORED) strcpy(str, "...."); *(str+3) = p->action;
 (IGNORED) strct(str,p->info); warn_i_str(38,str);
 
 

@@ -3,8 +3,16 @@ ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
 DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
 
-SUBDIRS = $(SELECTED_SUBDIRS)
+SUBDIRS = . $(SELECTED_SUBDIRS)
 DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
+
+all-local: config.force
+
+config.force: $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 if texlive_build
 

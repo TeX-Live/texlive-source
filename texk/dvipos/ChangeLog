@@ -1,3 +1,10 @@
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* dvicore.c (clear_box): Use xstrdup'ed string literal to
+	initialize non-const string (once).
+	* utils.[ch] (msg_out): Constify string param.
+
 2009-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS): enable compiler warnings.

@@ -277,7 +277,7 @@
  (requested by Karl Berry)
 */
 
-char *version = "2.15";
+const char *version = "2.15";
 
 #include <stdio.h>
 #include <ctype.h>
@@ -354,7 +354,7 @@ unsigned char no_dn, wait_syll, do_hyphen, do_vconjuncts;
 unsigned char cons_seen, vow_seen, front_r, cmr_mode, num_mode;
 unsigned char lig_block;                   /* Kevin Carmody */
 short chr_idx, cons_code;
-char *banner =
+const char *banner =
 "Preprocessor for Devanagari for TeX package\n\
 Copyright (C) 1991-1998  University of Groningen, The Netherlands\n\
 Author     : Frans J. Velthuis <velthuis@rc.rug.nl>\n\
@@ -370,7 +370,7 @@ void put_word(void);
 void put_syll(void);
 void tst_half(void);
 void put_macro(short macro);
-void err_ill(char *str);
+void err_ill(const char *str);
 char inp_ch(void);
 void expand(void);
 char find_dn(void);
@@ -891,7 +891,7 @@ struct ligs lig_table[] = {
 /*
  * Table of the actual codes output by devnag
  */
-char *out_string[] = {
+const char *out_string[] = {
    "\\7{","\\8{","\\9{","\\?","\\<","\\305w","\\306w",        /*   0-6   */
    "\\307w","\\308w","\\309w","\\30Aw","\\30Bw","\\30Cw",     /*   7-12  */
    "\\0","\\qx{","\\30Fw","\\310w","\\311w","\\312w",         /*  13-18  */
@@ -973,7 +973,7 @@ short r_ligs[6][2] = {
 
 typedef struct {
    int Typ_Com;
-   char *Name_com;
+   const char *Name_com;
 } typcom;
 
 typcom TabCom[] = {
@@ -1045,7 +1045,6 @@ typcom TabSubCom[]= {
 char command[100];       /* the text of a current command to test */
 int nbchcomm;            /* the number of character of the curent command */
 char subcom [1000];      /* for debugging etc. */
-int nbsub = 0;           /* for debugging etc. */
 
 /*
  This fuction tests if the LaTeX command is one of the TabCom[]
@@ -1065,7 +1064,7 @@ int test_command(void) {
  is considered.
  */
 char test_sub_com(void) {
-   nbsub = 0;
+   int nbsub = 0;
    while (symbol != '}') {
       sendchar(symbol);
       subcom[nbsub++] = symbol;
@@ -1085,7 +1084,7 @@ char test_sub_com(void) {
  second time nesting of braces is considered.
  */
 char comm_double_args(void) {
-   nbsub = 0;
+   int nbsub = 0;
    while (symbol != '}') {
       sendchar(symbol);
       subcom[nbsub++] = symbol;
@@ -1112,7 +1111,7 @@ char comm_double_args(void) {
  where the second argument must be translated
  */
 char comm_special(void) {
-   nbsub = 0;
+   int nbsub = 0;
    while (symbol != '}') {
       sendchar(symbol);
       subcom[nbsub++] = symbol;
@@ -1134,7 +1133,7 @@ char comm_special(void) {
  one must be translated
  */
 char comm_opt(void) {
-   nbsub = 0;
+   int nbsub = 0;
    while (symbol != '{') {
       sendchar(symbol);
       subcom[nbsub++] = symbol;
@@ -1187,7 +1186,7 @@ char *getsubarg(void) {
 char comm_begin(void) {
    int i = 0, nbargs = 0;
    char *com;
-   nbsub = 0;
+   int nbsub = 0;
    while (symbol != '}') {
       sendchar(symbol);
       subcom[nbsub++] = symbol;
@@ -2393,7 +2392,7 @@ void put_macro(short macro) {
 /*
  * Exit with error message in the case of illegal input.
  */
-void err_ill(char *str) {
+void err_ill(const char *str) {
    fprintf(stderr, "Error: illegal character(s) \"%s\" detected at line %d:\n",
 	  str, linenumber);
    fprintf(stderr, inbuf);

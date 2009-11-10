@@ -43,7 +43,8 @@ AC_SUBST(SELECTED_SUBDIRS)
 AC_FOREACH([Kpse_Opt], kpse_otftotfm_auto_opts,
            [AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
                   [AC_DEFINE([HAVE_AUTO_]AS_TR_CPP(Kpse_Opt), 1,
-                             [Define to run ]Kpse_Opt[from otftotfm.])])])
+                             [Define to run ]Kpse_Opt[from otftotfm.])])
+])
 
 dnl
 dnl kpathsea
@@ -63,6 +64,8 @@ AC_ARG_WITH([kpathsea],
 
 KPSE_KPATHSEA_FLAGS
 
+if test "x$enable_build" != xno || test -f config.force; then
+
 KPSE_ADD_FLAGS([kpathsea])
 
 if test "x$with_kpathsea" != xno; then
@@ -76,7 +79,7 @@ if test "x$with_kpathsea" != xno; then
                   with_kpathsea=no])
 
   if test "x$with_kpathsea" = xno; then
-    KPSE_MSG_ERROR([lcdf-typetools], [
+    AC_MSG_ERROR([
 =========================================
 
 I can't find the kpathsea header and/or library files. Tell me where to look
@@ -88,9 +91,13 @@ disable support using --without-kpathsea.
   fi
   AC_DEFINE(HAVE_KPATHSEA, 1, [Define if you want to use kpathsea.])
 fi
-AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
 
 KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
+
+AM_CONDITIONAL([have_kpathsea], [test "x$with_kpathsea" != xno])
 
 AC_ARG_ENABLE(selfauto-set, [  --disable-selfauto-set  disable setting SELFAUTO variables from kpsewhich], :, enable_selfauto_set=yes)
 
@@ -249,7 +256,7 @@ ac_ntoh_defined=yes],
     fi
 fi
 if test $ac_ntoh_defined = no; then
-    KPSE_MSG_ERROR([lcdf-typetools], [
+    AC_MSG_ERROR([
 =========================================
 
 Cannot find a definition for ntohs and/or ntohl!

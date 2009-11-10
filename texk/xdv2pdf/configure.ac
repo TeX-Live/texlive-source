@@ -46,12 +46,16 @@ dnl Checks for library functions.
 AC_CHECK_FUNCS([strspn system])
 AC_SEARCH_LIBS([pow], [m])
 
+if test "x$enable_build" != xno || test -f config.force; then
+
 dnl Check that Kpathsea supports the opentype file format.
 KPSE_ADD_FLAGS([kpathsea])
-KPSE_CHECK_KPSE_FORMAT([opentype], ,
-                       [build=no
-KPSE_MSG_WARN([Kpathsea does not support opentype files, can not build xdv2pdf.])])
+KPSE_CHECK_KPSE_FORMAT([opentype], [],
+                       [AC_MSG_ERROR([Kpathsea does not support opentype files, can not build xdv2pdf.])])
 KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
 
 fi
 

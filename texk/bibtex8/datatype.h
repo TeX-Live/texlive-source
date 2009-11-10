@@ -167,7 +167,7 @@ typedef Integer8_T          LexType_T;
 typedef Integer16_T         LitStkLoc_T;
 typedef UChar_T             PdsLen_T;
 typedef Integer8_T          PdsLoc_T;
-typedef UChar_T             PdsType_T[FILE_NAME_SIZE + 1];
+typedef const UChar_T       PdsType_T[FILE_NAME_SIZE + 1];
 typedef Unsigned16_T        PoolPointer_T;
 typedef Integer8_T          StkType_T;
 typedef Integer16_T         StrEntLoc_T;

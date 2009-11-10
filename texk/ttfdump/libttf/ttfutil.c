@@ -51,7 +51,7 @@ FourByteSwap(unsigned char *buf, int nbytes)
 	}
 }
 
-void ttfError(char * msg)
+void ttfError(const char * msg)
 {
     fprintf(stderr,"%s",msg);
 }

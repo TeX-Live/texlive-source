@@ -19,6 +19,7 @@
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/tex-hush.h>
 #include <kpathsea/tex-make.h>
+#include <kpathsea/version.h>
 #include <stdarg.h>
 #include <c-auto.h>
 #else
@@ -222,10 +223,10 @@
 # ifdef LJ4
 #  ifdef LJ4L
 int   RESOLUTION = 300;
-char *MFMODE     = MFMODE300;
+const char *MFMODE     = MFMODE300;
 #  else
 int   RESOLUTION = 600;
-char *MFMODE     = MFMODE600;
+const char *MFMODE     = MFMODE600;
 #  endif
 # else
 #  define RESOLUTION 300
@@ -364,7 +365,7 @@ typedef struct {
 } KeyWord;
 typedef struct {
   int     KeyId;     /* the keyword ID */
-  char    *Entry;
+  const char    *Entry;
   ValTyp  Typ;
 } KeyDesc;
 
@@ -454,7 +455,7 @@ void    AllDone(bool);
 void    AssureBinary(FILEPTR);  /* DOS and Microsoft C dependent !!! */
 #endif
 void    CloseFiles(void);
-void    CopyFile(char *);
+void    CopyFile(const char *);
 void    CopyHPFile(char *);
 void    DecodeArgs(int, char *[]);
 #ifdef __riscos
@@ -466,15 +467,13 @@ void    DoBop(void);
 long4   DoConv(long4, long4, int);
 void    DoSpecial(char *, int);
 void    EmitChar(long4, struct char_entry *);
-void    Fatal(char *fmt, ...);
 void    FindPostAmblePtr(long *);
 void    FormFeed(void);
 void    GetFontDef(void);
 char    *GetKeyStr(char *, KeyWord *);
 bool    GetKeyVal(KeyWord *, KeyDesc[], int, int *);
-bool    IsSame(char *, char *);
+bool    IsSame(const char *, const char *);
 void    LoadAChar(long4, register struct char_entry *);
-long4   NoSignExtend(FILEPTR, int);
 void    OpenFontFile(void);
 long4   PixRound(long4, long4);
 void    PkRaster(struct char_entry *, int);
@@ -490,8 +489,6 @@ void    SetRule(long4, long4, int);
 void    SetString(short, int);
 long4   SignExtend(FILEPTR, int);
 void    SkipFontDef(void);
-bool    tfm_read_info (char *, tfm_info_type *);
-void    Warning(char *fmt, ...);
 unsigned char   skip_specials(long4 *);
 #ifdef LJ4
 int     CompressLine2(unsigned char *, unsigned char *, int);
@@ -527,8 +524,8 @@ char   *PXLpath = FONTAREA;
 char   *G_progname;		 /* program name                        */
 char   *filename;	         /* DVI file name                       */
 char   *rootname;		 /* DVI filename without extension      */
-char   *HeaderFileName = "";     /* file name & path of Headerfile      */
-char   *EmitFileName = "";       /* file name & path for output         */
+const char   *HeaderFileName = "";     /* file name & path of Headerfile      */
+const char   *EmitFileName = "";       /* file name & path for output         */
 char    tmp_dir[STRSIZE] = "";	 /* temporary directory for auxiliary files */
 enum   { Ignore, PSFile_dvilj /*, PSFile_dvips */ } PSFileSyntaxTyp = PSFile_dvilj;
 #ifdef IBM3812
@@ -581,8 +578,6 @@ short   x_goffset;              /* global x-offset in dots             */
 short   y_goffset;              /* global y-offset in dots             */
 unsigned short ncopies = 1;     /* number of copies to print           */
 long4    hconv, vconv;           /* converts DVI units to pixels        */
-long4    den;                    /* denominator specified in preamble   */
-long4    num;                    /* numerator specified in preamble     */
 long4    h;                      /* current horizontal position         */
 long4    hh = 0;                 /* current h on device                 */
 long4    v;                      /* current vertical position           */

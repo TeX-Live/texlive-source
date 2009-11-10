@@ -182,9 +182,11 @@ static void clear_bbox (int init)
 {
   /* calculate bounding box of each page */
   reset_bbox(&page_bbox);
-  page_bbox.tag = "pagebb";
   page_bbox.type = PAGE_TYPE;
-  if (init) page_bbox.next = NULL;
+  if (init) {
+    page_bbox.tag = xstrdup("pagebb");
+    page_bbox.next = NULL;
+  }
 }
 
 static void new_bbox (unsigned char *tag, int type)

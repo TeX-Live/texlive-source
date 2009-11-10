@@ -17,7 +17,7 @@ disdvi_SOURCES = \
 	commands.h \
 	disdvi.c
 
-disdvi_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(disdvi_OBJECTS): $(KPATHSEA_DEPEND)
 
 dvi2tty_SOURCES = \
 	commands.h \
@@ -25,7 +25,7 @@ dvi2tty_SOURCES = \
 	dvi2tty.h \
 	dvistuff.c
 	
-dvi2tty_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(dvi2tty_OBJECTS): $(KPATHSEA_DEPEND)
 
 dist_man1_MANS = dvi2tty.1
 
