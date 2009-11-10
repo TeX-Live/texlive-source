@@ -1,0 +1,23 @@
+2009-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapted to the ICU 4.2.1 distribution.
+
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapted to the ICU 4.0.1 distribution.
+
+2009-10-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Slightly rearranged the icu-xetex/ source tree and built
+	an equivalent icu-3.8.1/ tree from the ICU 3.8.1 distribution
+	with some modifications and patches  for XeTeX as described in
+	icu-3.8.1-PATCHES/TL-Changes and icu-3.8.1-PATCHES/ChangeLog.
+
+2009-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: ICU headers "installed" under icu-incl/.
+
+2009-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+

@@ -6,4 +6,4 @@ dnl
 dnl extra_dirs = libs/icu/dummy
 dnl
 ## configure options and TL libraries required for icu (modified for XeTeX)
-KPSE_WITH_LIB([icu], , [tree])
+KPSE_WITH_LIB([icu])
