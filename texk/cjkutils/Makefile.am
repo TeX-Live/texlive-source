@@ -5,13 +5,21 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-SUBDIRS = conv hbf2gf scripts
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
+SUBDIRS = . conv hbf2gf scripts
+
+all-local: config.force
+
+config.force: $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 ## Not used
 ##
 EXTRA_DIST = bat
-
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
 

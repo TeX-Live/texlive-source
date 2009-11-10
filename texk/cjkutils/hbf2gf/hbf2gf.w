@@ -71,8 +71,6 @@
 @s HBF_BBOX int
 
 @s __inline__ int
-@s DllImport int
-@s KPSEDLL int
 
 
 @* Introduction.
@@ -196,10 +194,7 @@ variables, |write_file()| writes the \.{GF} files, |write_pl()| and
 @<Global variables@>@;@#
 
 
-int main(argc, argv)
-  int argc; /* argument count */
-  char *argv[]; /* argument values */
-
+int main(int argc, char *argv[])
    {char *p;
 
     @<Initialize \TeX\ file searching@>@;@#
@@ -252,7 +247,7 @@ int main(argc, argv)
 
 
 @
-@d VERSION @/
+@d HBF2GF_VERSION @/
 "\n"@/
 "Copyright (C) 1996-1999 Werner Lemberg.\n"@/
 "There is NO warranty.  You may redistribute this software\n"@/
@@ -267,7 +262,7 @@ int main(argc, argv)
            {printf("\n");
             printf(banner);
             printf(" (%s)\n", TeX_search_version());
-            printf(VERSION);
+            printf(HBF2GF_VERSION);
             exit(0);
            }
 
@@ -411,6 +406,9 @@ and |max_numb| will be set to~|1|.
 
 @
 @<Include files@>=
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -839,10 +837,7 @@ void fputl(long, FILE *);
 
 @
 @c
-void fputl(num, f)
-  long num;
-  FILE *f;
-
+void fputl(long num, FILE *f)
    {fputc(num >> 24, f);
     fputc(num >> 16, f);
     fputc(num >> 8, f);
@@ -877,7 +872,7 @@ immediately.
 HBF_CHAR code;
 const unsigned char *bitmap;
             /* a proper input bitmap array will be allocated by the HBF API */
-unsigned char *bP;@#
+const unsigned char *bP;@#
 
 unsigned char out_char[MAX_CHAR_SIZE * MAX_CHAR_SIZE + 1];
                                                  /* the output bitmap array */
@@ -1031,7 +1026,7 @@ again:
     if(b2_codes[code & 0xFF]) /* a valid second byte? */
        {if(pk_files)
            {bitmap = hbfGetBitmap(hbf, code);
-            bP = (unsigned char *)bitmap;
+            bP = bitmap;
                                      /* will be increased by |read_row()| */@#
 
             if(!bitmap)
@@ -1236,9 +1231,7 @@ void read_row(unsigned char *);
 #ifdef __GNUC__
 __inline__
 #endif
-void read_row(pixelrow)
-  unsigned char *pixelrow;
-
+void read_row(unsigned char *pixelrow)
    {register int col, bitshift, offset;
     register unsigned char *xP;
     register unsigned char item = 0;
@@ -1246,7 +1239,7 @@ void read_row(pixelrow)
     if(rotation)
        {bitshift = 7 - (curr_row % 8);
         offset = (input_size_y + 7) / 8;
-        bP = (unsigned char *)bitmap + curr_row / 8;
+        bP = bitmap + curr_row / 8;
         for(col = 0, xP = pixelrow; col < input_size_x; ++col, ++xP)
            {*xP = ((*bP >> bitshift) & 1) == 1 ? PIXEL_MAXVAL : 0;
             bP += offset;
@@ -1288,9 +1281,7 @@ void write_row(unsigned char *);
 #ifdef __GNUC__
 __inline__
 #endif
-void write_row(pixelrow)
-  unsigned char *pixelrow;
-
+void write_row(unsigned char *pixelrow)
    {register int col;
     register unsigned char *xP;
 
@@ -2315,15 +2306,14 @@ character (|'\n'|). It also checks the presence of a parameter and fills
 |Buffer| if existent. |fsearch()| returns~1 on success.
 
 @<Prototypes@>=
-int fsearch(char *);
+int fsearch(const char *);
 
 
 @
 @c
-int fsearch(search_string)
-  char *search_string;
-
+int fsearch(const char *search_string)
    {char *P, p;
+    const char *Q;
     char temp_buffer[STRING_LENGTH + 1];
     char env_name[STRING_LENGTH + 1];
     char *env_p;
@@ -2335,8 +2325,8 @@ int fsearch(search_string)
     rewind(config); /* we start at offset~0 */@#
 
     do
-       {P = search_string;
-        p = tolower(*P);
+       {Q = search_string;
+        p = tolower(*Q);
         Ch = fgetc(config);
         ch = tolower(Ch);
         while(!(ch == p && old_ch == '\n') && Ch != EOF)
@@ -2348,12 +2338,12 @@ int fsearch(search_string)
            }@#
 
         for(;;)
-           {if(*(++P) == '\0')
+           {if(*(++Q) == '\0')
                 if((Ch = fgetc(config)) == ' ' || Ch == '\t')
                    /* there must be a space or a tab stop after the keyword */
                     goto success;
             Ch = fgetc(config);
-            if(tolower(Ch) != tolower(*P))
+            if(tolower(Ch) != tolower(*Q))
                 break;
            }
        }
@@ -2455,14 +2445,12 @@ If an error occurs, |config_error()| will leave the program with an error
 message.
 
 @<Prototypes@>=
-void config_error(char *);
+void config_error(const char *);
 
 
 @
 @c
-void config_error(message)
-  char *message;
-
+void config_error(const char *message)
    {fprintf(stderr, "Couldn't find `%s' entry in configuration file\n",
             message);
     exit(1);
@@ -2474,21 +2462,13 @@ void config_error(message)
 
 We support three searching engines: emtexdir, kpathsea, and MiKTeX (which is
 a Win32 port of kpathsea). For emtexdir, define |HAVE_EMTEXDIR| while
-compiling. For kpathsea, define |HAVE_LIBKPATHSEA|. If you have a version of
-kpathsea older than~3.2, define |OLD_KPATHSEA| additionally. For kpathsea
-older than~3.0, |VERY_OLD_KPATHSEA| must be also set. For MikTeX, define
+compiling. For kpathsea, define |HAVE_LIBKPATHSEA|. For MikTeX, define
 |HAVE_MIKTEX|. If none of these macros is defined, a simple |fopen()| will
 be used instead.
 
 @<Include files@>=
 #if defined(HAVE_LIBKPATHSEA)
-#ifdef VERY_OLD_KPATHSEA
-#include "kpathsea/proginit.h"
-#include "kpathsea/progname.h"
-#include "kpathsea/tex-glyph.h"
-#else
 #include "kpathsea/kpathsea.h"
-#endif@#
 
 #elif defined(HAVE_EMTEXDIR)
 #include "emtexdir.h"
@@ -2499,14 +2479,7 @@ be used instead.
 
 @
 @<Global variables@>=
-#if defined(HAVE_LIBKPATHSEA)
-#ifdef KPSEDLL
-/* this is kpathsea 3.3 and newer */
-extern KPSEDLL char *kpathsea_version_string;
-#else
-extern DllImport char *kpathsea_version_string;
-#endif
-#elif defined(HAVE_EMTEXDIR)
+#if defined(HAVE_EMTEXDIR)
 char emtex_version_string[] = "emTeXdir";
 #elif !defined(HAVE_MIKTEX)
 char no_version_string[] = "no search library";
@@ -2515,12 +2488,12 @@ char no_version_string[] = "no search library";
 
 @
 @<Prototypes@>=
-char *TeX_search_version(void);
+const char *TeX_search_version(void);
 
 
 @
 @c
-char *TeX_search_version(void)
+const char *TeX_search_version(void)
    {
 #if defined(HAVE_LIBKPATHSEA)
     return kpathsea_version_string;
@@ -2612,17 +2585,8 @@ configuration resp.\ HBF header files.
 
 @<Initialize \TeX\ file searching@>=
 #if defined(HAVE_LIBKPATHSEA)
-#ifdef OLD_KPATHSEA
-    kpse_set_progname(argv[0]);
-#else
     kpse_set_program_name(argv[0], "hbf2gf");
-#endif@#
-
-#ifdef VERY_OLD_KPATHSEA
-    kpse_init_prog("HBF2GF", 300, "cx", true, "cmr10");
-#else
     kpse_init_prog("HBF2GF", 300, "cx", "cmr10");@#
-#endif@#
 
 #elif defined(HAVE_EMTEXDIR)
     if(!dir_setup(&cfg_path, "HBFCFG", NULL, EDS_BANG))
@@ -2654,53 +2618,31 @@ char *TeX_search_hbf_file(char *);
 @
 @c
 #if defined(HAVE_LIBKPATHSEA)
-char *TeX_search_cfg_file(name)
-  char *name;
-
+char *TeX_search_cfg_file(char *name)
    {
-#ifdef OLD_KPATHSEA
-    return kpse_find_file(name, kpse_dvips_config_format, TRUE);
-#else
     return kpse_find_file(name, kpse_program_text_format, TRUE);
-#endif
    }@#
 
 
-char *TeX_search_hbf_file(name)
-  char *name;
-
+char *TeX_search_hbf_file(char *name)
    {
-#ifdef VERY_OLD_KPATHSEA
-    return kpse_find_file(name, kpse_dvips_header_format, TRUE);
-#else
-#ifndef KPSEDLL
-    return kpse_find_file(name, kpse_type1_format, TRUE);
-#else
     return kpse_find_file(name, kpse_miscfonts_format, TRUE);
-#endif
-#endif
    }@#
 
 
 #elif defined(HAVE_EMTEXDIR)
-char *TeX_search_cfg_file(name)
-  char *name;
-
+char *TeX_search_cfg_file(char *name)
    {return file_find(name, &cfg_path);
    }@#
 
 
-char *TeX_search_hbf_file(name)
-  char *name;
-
+char *TeX_search_hbf_file(char *name)
    {return file_find(name, &hbf_path);
    }@#
 
 
 #elif defined(HAVE_MIKTEX)
-char *TeX_search_cfg_file(name)
-  char *name;
-
+char *TeX_search_cfg_file(char *name)
    {char result[_MAX_PATH];
 
     if (!miktex_find_input_file("hbf2gf", *name, result))
@@ -2709,9 +2651,7 @@ char *TeX_search_cfg_file(name)
    }@#
 
 
-char *TeX_search_hbf_file(name)
-  char *name;
-
+char *TeX_search_hbf_file(char *name)
    {char result[_MAX_PATH];
 
 
@@ -2722,16 +2662,12 @@ char *TeX_search_hbf_file(name)
 
 
 #else
-char *TeX_search_cfg_file(name)
-  char *name;
-
+char *TeX_search_cfg_file(char *name)
    {return name;
    }@#
 
 
-char *TeX_search_hbf_file(name)
-  char *name;
-
+char *TeX_search_hbf_file(char *name)
    {return name;
    }
 #endif

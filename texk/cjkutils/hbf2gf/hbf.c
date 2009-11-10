@@ -283,16 +283,14 @@ eprintf(fmt, x1, x2, x3, x4, x5, x6, x7, x8, x9)
 #endif /* __STDC__ */
 
 static void
-clear_bbox(bbox)
-	HBF_BBOX *bbox;
+clear_bbox(HBF_BBOX *bbox)
 {
 	bbox->hbf_width = bbox->hbf_height = 0;
 	bbox->hbf_xDisplacement = bbox->hbf_yDisplacement = 0;
 }
 
 static void
-clear_record(hbf)
-	HBF_STRUCT *hbf;
+clear_record(HBF_STRUCT *hbf)
 {
 	clear_bbox(&(hbf->public.hbf_bitmap_bbox));
 	clear_bbox(&(hbf->public.hbf_font_bbox));
@@ -309,10 +307,7 @@ clear_record(hbf)
  */
 
 static void
-add_b2r(last_b2r, start, finish)
-reg	B2_RANGE **last_b2r;
-	int	start;
-	int	finish;
+add_b2r(reg B2_RANGE **last_b2r, int start, int finish)
 {
 reg	B2_RANGE *b2r;
 
@@ -326,9 +321,7 @@ reg	B2_RANGE *b2r;
 }
 
 static CHAR_INDEX
-b2_pos(hbf, code)
-	HBF_STRUCT	*hbf;
-	HBF_CHAR	code;
+b2_pos(HBF_STRUCT *hbf, HBF_CHAR code)
 {
 reg	B2_RANGE *b2r;
 reg	unsigned c;
@@ -345,8 +338,7 @@ reg	CHAR_INDEX	pos;
 }
 
 static int
-b2_size(b2r)
-reg	B2_RANGE *b2r;
+b2_size(reg B2_RANGE *b2r)
 {
 reg	int	size;
 
@@ -358,9 +350,7 @@ reg	int	size;
 
 /* map a position to a character code */
 static long
-code_of(hbf, pos)
-	HBF_STRUCT	*hbf;
-	long		pos;
+code_of(HBF_STRUCT *hbf, long pos)
 {
 	long	code;
 	int	residue;
@@ -382,9 +372,7 @@ reg	B2_RANGE *b2r;
  */
 
 static bool
-match(lp, sp)
-reg	const	char	*lp;
-reg	const	char	*sp;
+match(reg const char *lp, reg const char *sp)
 {
 	while (*lp == *sp && *sp != '\0') {
 		lp++;
@@ -395,8 +383,7 @@ reg	const	char	*sp;
 
 #ifdef NO_STRDUP
 char *
-strdup(s)
-	const	char	*s;
+strdup(const char *s)
 {
 	char	*new_s;
 
@@ -411,9 +398,7 @@ strdup(s)
  */
 
 static void
-add_property(hbf, lp)
-reg	HBF_STRUCT	*hbf;
-reg	const char	*lp;
+add_property(reg HBF_STRUCT *hbf, const char *lp)
 {
 reg	PROPERTY	*prop;
 	char	tmp[MAXLINE];
@@ -454,9 +439,7 @@ reg	char	*tp;
 }
 
 const char *
-hbfProperty(hbfFile, propName)
-	HBF		*hbfFile;
-	const	char	*propName;
+hbfProperty(HBF *hbfFile, const char *propName)
 {
 reg	HBF_STRUCT	*hbf;
 reg	PROPERTY	*prop;
@@ -473,20 +456,15 @@ reg	PROPERTY	*prop;
  */
 
 const char *
-HBF_GetProperty(handle, propertyName)
-	HBF		*handle;
-	const	char	*propertyName;
+HBF_GetProperty(HBF *handle, const char *propertyName)
 {
 	return hbfProperty(handle, propertyName);
 }
 
 int
-HBF_GetFontBoundingBox(handle, width, height, xDisplacement, yDisplacement)
-	HBF_Handle	handle;
-	unsigned int	*width;
-	unsigned int	*height;
-	int		*xDisplacement;
-	int		*yDisplacement;
+HBF_GetFontBoundingBox(HBF_Handle handle,
+		       unsigned int *width, unsigned int *height,
+		       int *xDisplacement, int *yDisplacement)
 {
 	if (width != NULL)
 		*width = hbfFontBBox(handle)->hbf_width;
@@ -500,12 +478,9 @@ HBF_GetFontBoundingBox(handle, width, height, xDisplacement, yDisplacement)
 }
 
 int
-HBF_GetBitmapBoundingBox(handle, width, height, xDisplacement, yDisplacement)
-	HBF_Handle	handle;
-	unsigned int	*width;
-	unsigned int	*height;
-	int		*xDisplacement;
-	int		*yDisplacement;
+HBF_GetBitmapBoundingBox(HBF_Handle handle,
+			 unsigned int *width, unsigned int *height,
+			 int *xDisplacement, int *yDisplacement)
 {
 	if (width != NULL)
 		*width = hbfBitmapBBox(handle)->hbf_width;
@@ -522,10 +497,9 @@ HBF_GetBitmapBoundingBox(handle, width, height, xDisplacement, yDisplacement)
  * Prepend a directory to a relative filename.
  */
 static char *
-concat(dir, dirlen, stem)
-	const	char	*dir;	/* not necessarily null-terminated */
-	int	dirlen;		/* number of significant chars in dir */
-	const	char	*stem;	/* relative filename */
+concat(const char *dir,		/* not necessarily null-terminated */
+       int dirlen,		/* number of significant chars in dir */
+       const char *stem)	/* relative filename */
 {
 	char	*fullname;
 
@@ -570,9 +544,7 @@ concat(dir, dirlen, stem)
  *	containing the HBF file.
  */
 static char *
-expand_filename(name, hbf_name)
-	const	char	*name;
-	const	char	*hbf_name;
+expand_filename(const char *name, const char *hbf_name)
 {
 #ifdef unix
 reg	char	*s;
@@ -639,9 +611,7 @@ reg	int	size;
 }
 
 static BM_FILE *
-find_file(hbf, filename)
-	HBF_STRUCT *hbf;
-	const char *filename;
+find_file(HBF_STRUCT *hbf, const char *filename)
 {
 	BM_FILE	**fp;
 reg	BM_FILE	*file;
@@ -721,9 +691,7 @@ reg	BM_FILE	*file;
 #define	GRAIN_SIZE	512
 
 static bool
-read_bitmap_file(bmf, f)
-	BM_FILE	*bmf;
-	FILE	*f;
+read_bitmap_file(BM_FILE *bmf, FILE *f)
 {
 	byte	*contents, *cp;
 	long	size;
@@ -760,9 +728,7 @@ read_bitmap_file(bmf, f)
 
 /* check that a code range fits within its bitmap file */
 static bool
-too_short(hbf, cp)
-	HBF_STRUCT	*hbf;
-	CODE_RANGE	*cp;
+too_short(HBF_STRUCT *hbf, CODE_RANGE *cp)
 {
 	int	bm_size;
 	long	offset, end_offset;
@@ -796,9 +762,7 @@ too_short(hbf, cp)
 }
 
 static const char *
-skip_word(n, s)
-	int	n;
-	const	char	*s;
+skip_word(int n, const char *s)
 {
 	for ( ; n > 0; n--) {
 		while (*s != '\0' && ! isspace(*s))
@@ -811,9 +775,7 @@ skip_word(n, s)
 
 /* optional keywords at the end of a CODE_RANGE line */
 static void
-parse_keywords(cp, s)
-	CODE_RANGE *cp;
-	const	char	*s;
+parse_keywords(CODE_RANGE *cp, const char *s)
 {
 	for (s = skip_word(4, s) ; *s != '\0'; s = skip_word(1, s)) {
 		switch (*s) {
@@ -829,9 +791,7 @@ parse_keywords(cp, s)
 }
 
 static bool
-add_code_range(hbf, line)
-	HBF_STRUCT	*hbf;
-	const char	*line;
+add_code_range(HBF_STRUCT *hbf, const char *line)
 {
 	CODE_RANGE *cp;
 	CODE_RANGE **cpp;
@@ -896,10 +856,7 @@ add_code_range(hbf, line)
 
 /* get line, truncating to len, and trimming trailing spaces */
 static bool
-get_line(buf, len, f)
-	char	*buf;
-	int	len;
-	FILE	*f;
+get_line(char *buf, int len, FILE *f)
 {
 	int	c;
 	char	*bp;
@@ -926,10 +883,7 @@ get_line(buf, len, f)
 
 /* get next non-COMMENT line */
 static bool
-get_text_line(buf, len, f)
-	char	*buf;
-	int	len;
-	FILE	*f;
+get_text_line(char *buf, int len, FILE *f)
 {
 	while (get_line(buf, len, f))
 		if (*buf != '\0' && ! match(buf, "COMMENT"))
@@ -938,10 +892,7 @@ get_text_line(buf, len, f)
 }
 
 static bool
-get_property(line, keyword, hbf)
-	const	char	*line;
-	const	char	*keyword;
-	HBF_STRUCT	*hbf;
+get_property(const char *line, const char *keyword, HBF_STRUCT *hbf)
 {
 	if (! match(line, keyword)) {
 		eprintf("%s expected", keyword);
@@ -952,10 +903,7 @@ get_property(line, keyword, hbf)
 }
 
 static bool
-get_bbox(line, keyword, bbox)
-	const	char	*line;
-	const	char	*keyword;
-	HBF_BBOX	*bbox;
+get_bbox(const char *line, const char *keyword, HBF_BBOX *bbox)
 {
 	int	w, h, xd, yd;
 
@@ -995,9 +943,7 @@ get_bbox(line, keyword, bbox)
  */
 
 static bool
-parse_file(f, hbf)
-	FILE	*f;
-reg	HBF_STRUCT *hbf;
+parse_file(FILE *f, reg HBF_STRUCT *hbf)
 {
 	char	line[MAXLINE];
 	int	start, finish;
@@ -1091,10 +1037,7 @@ reg	HBF_STRUCT *hbf;
 }
 
 static FILE *
-path_open(path, filename, fullp)
-	const	char	*path;
-	const	char	*filename;
-	char	**fullp;
+path_open(const char *path, const char *filename, char **fullp)
 {
 	if (LocalFileName(filename) && path != NULL) {
 #ifdef PATH_DELIMITER
@@ -1128,9 +1071,7 @@ path_open(path, filename, fullp)
 }
 
 static bool
-real_open(filename, hbf)
-	const	char	*filename;
-reg	HBF_STRUCT *hbf;
+real_open(const char *filename, reg HBF_STRUCT *hbf)
 {
 	FILE	*f;
 
@@ -1148,8 +1089,7 @@ reg	HBF_STRUCT *hbf;
 }
 
 HBF *
-hbfOpen(filename)
-	const	char	*filename;
+hbfOpen(const char *filename)
 {
 reg	HBF_STRUCT *hbf;
 
@@ -1165,9 +1105,7 @@ reg	HBF_STRUCT *hbf;
 }
 
 int
-HBF_OpenFont(filename, ptrHandleStorage)
-	const	char	*filename;
-	HBF	**ptrHandleStorage;
+HBF_OpenFont(const char *filename, HBF **ptrHandleStorage)
 {
 	return (*ptrHandleStorage = hbfOpen(filename)) == NULL ? -1 : 0;
 }
@@ -1177,8 +1115,7 @@ HBF_OpenFont(filename, ptrHandleStorage)
  */
 
 int
-HBF_CloseFont(hbfFile)
-	HBF	*hbfFile;
+HBF_CloseFont(HBF *hbfFile)
 {
 reg	HBF_STRUCT	*hbf;
 	PROPERTY	*prop_ptr, *prop_next;
@@ -1239,8 +1176,7 @@ reg	HBF_STRUCT	*hbf;
 }
 
 void
-hbfClose(hbfFile)
-	HBF	*hbfFile;
+hbfClose(HBF *hbfFile)
 {
 	(void)HBF_CloseFont(hbfFile);
 }
@@ -1250,18 +1186,13 @@ hbfClose(hbfFile)
  */
 
 const byte *
-hbfGetBitmap(hbf, code)
-	HBF		*hbf;
-	HBF_CHAR	code;
+hbfGetBitmap(HBF *hbf, HBF_CHAR code)
 {
 	return get_bitmap((HBF_STRUCT *)hbf, code, (byte *)NULL);
 }
 
 int
-HBF_GetBitmap(hbf, code, buffer)
-	HBF		*hbf;
-	HBF_CHAR	code;
-	byte		*buffer;
+HBF_GetBitmap(HBF *hbf, HBF_CHAR code, byte *buffer)
 {
 	return get_bitmap((HBF_STRUCT *)hbf, code, buffer) == NULL ? -1 : 0;
 }
@@ -1271,10 +1202,7 @@ HBF_GetBitmap(hbf, code, buffer)
  * If buffer is non-null, it must be used.
  */
 static const byte *
-get_bitmap(hbf, code, buffer)
-reg	HBF_STRUCT	*hbf;
-	HBF_CHAR	code;
-	byte		*buffer;
+get_bitmap(reg HBF_STRUCT *hbf, HBF_CHAR code, byte *buffer)
 {
 	CHAR_INDEX	pos, b2pos;
 reg	CODE_RANGE	*cp;
@@ -1331,8 +1259,7 @@ reg	CODE_RANGE	*cp;
 }
 
 static byte *
-local_buffer(hbf)
-	HBF_STRUCT	*hbf;
+local_buffer(HBF_STRUCT *hbf)
 {
 	if (hbf->bitmap_buffer == NULL &&
 	    (hbf->bitmap_buffer = (byte *)malloc(HBF_BitmapSize(&(hbf->public)))) == NULL) {
@@ -1343,9 +1270,7 @@ local_buffer(hbf)
 }
 
 static void
-invert(buffer, length)
-	byte	*buffer;
-	unsigned int	length;
+invert(byte *buffer, unsigned int length)
 {
 	for ( ; length > 0; length--)
 		*buffer++ ^= 0xff;
@@ -1353,10 +1278,7 @@ invert(buffer, length)
 
 #ifdef IN_MEMORY
 static bool
-copy_transposed(hbf, bitmap, source)
-	HBF	*hbf;
-reg	byte	*bitmap;
-reg	const	byte	*source;
+copy_transposed(HBF *hbf, reg byte *bitmap, reg const byte *source)
 {
 reg	byte	*pos;
 reg	byte	*bm_end;
@@ -1402,10 +1324,7 @@ end_column:
 }
 #else /* ! IN_MEMORY */
 static bool
-get_transposed(hbf, f, bitmap)
-	HBF	*hbf;
-	FILE	*f;
-reg	byte	*bitmap;
+get_transposed(HBF *hbf, FILE *f, reg byte *bitmap)
 {
 reg	byte	*pos;
 reg	byte	*bm_end;
@@ -1456,9 +1375,7 @@ end_column:
  * Call function on each valid code in ascending order.
  */
 void
-hbfForEach(hbfFile, func)
-reg	HBF	*hbfFile;
-reg	void	(*func)_((HBF *sameHbfFile, HBF_CHAR code));
+hbfForEach(reg HBF *hbfFile, void (*func)(HBF *, HBF_CHAR))
 {
 	HBF_STRUCT	*hbf;
 	CODE_RANGE	*cp;
@@ -1493,15 +1410,13 @@ reg	unsigned	finish;
 }
 
 const char *
-hbfFileName(hbf)
-	HBF	*hbf;
+hbfFileName(HBF *hbf)
 {
 	return ((HBF_STRUCT *)hbf)->filename;
 }
 
 long
-hbfChars(hbfFile)
-	HBF	*hbfFile;
+hbfChars(HBF *hbfFile)
 {
 	HBF_STRUCT	*hbf;
 	CODE_RANGE	*cp;
@@ -1527,8 +1442,7 @@ hbfChars(hbfFile)
 #endif
 
 HBF_BBOX *
-hbfBitmapBBox(hbf)
-	HBF	*hbf;
+hbfBitmapBBox(HBF *hbf)
 {
 	return &(hbf->hbf_bitmap_bbox);
 }
@@ -1538,52 +1452,45 @@ hbfBitmapBBox(hbf)
 #endif
 
 HBF_BBOX *
-hbfFontBBox(hbf)
-	HBF	*hbf;
+hbfFontBBox(HBF *hbf)
 {
 	return &(hbf->hbf_font_bbox);
 }
 
 const void *
-hbfGetByte2Range(hbfFile, b2r_pointer, startp, finishp)
-	HBF		*hbfFile;
-	const void	*b2r_pointer;
-	byte		*startp;
-	byte		*finishp;
+hbfGetByte2Range(HBF *hbfFile, const void *b2r_pointer,
+		 byte *startp, byte *finishp)
 {
 	HBF_STRUCT	*hbf;
-	B2_RANGE	*b2r;
+	const B2_RANGE	*b2r;
 
 	hbf = (HBF_STRUCT *)hbfFile;
 	if (b2r_pointer == NULL)
 		b2r = hbf->byte_2_range;
 	else
-		b2r = ((B2_RANGE *)b2r_pointer)->b2r_next;
+		b2r = ((const B2_RANGE *)b2r_pointer)->b2r_next;
 	if(b2r == NULL)
 		return NULL;
 	*startp = b2r->b2r_start;
 	*finishp = b2r->b2r_finish;
-	return (void *)b2r;
+	return (const void *)b2r;
 }
 
 const void *
-hbfGetCodeRange(hbfFile, code_pointer, startp, finishp)
-	HBF		*hbfFile;
-	const void	*code_pointer;
-	HBF_CHAR	*startp;
-	HBF_CHAR	*finishp;
+hbfGetCodeRange(HBF *hbfFile, const void *code_pointer,
+		HBF_CHAR *startp, HBF_CHAR *finishp)
 {
 	HBF_STRUCT	*hbf;
-	CODE_RANGE	*cp;
+	const CODE_RANGE	*cp;
 
 	hbf = (HBF_STRUCT *)hbfFile;
 	if (code_pointer == NULL)
 		cp = hbf->code_range;
 	else
-		cp = ((CODE_RANGE *)code_pointer)->code_next;
+		cp = ((const CODE_RANGE *)code_pointer)->code_next;
 	if(cp == NULL)
 		return NULL;
 	*startp = cp->code_start;
 	*finishp = cp->code_finish;
-	return (void *)cp;
+	return (const void *)cp;
 }

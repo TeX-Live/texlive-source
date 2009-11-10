@@ -10,7 +10,7 @@
 #define FILE_NAME_LENGTH 1024 \
  \
 
-#define VERSION  \
+#define HBF2GF_VERSION  \
 "\n" \
 "Copyright (C) 1996-1999 Werner Lemberg.\n" \
 "There is NO warranty.  You may redistribute this software\n" \
@@ -100,11 +100,14 @@
 #define VALID_SUBCODE 1 \
 
 /*4:*/
-#line 193 "hbf2gf.w"
+#line 191 "hbf2gf.w"
 
 /*10:*/
-#line 413 "hbf2gf.w"
+#line 408 "hbf2gf.w"
 
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
 #include <ctype.h> 
 #include <stdio.h> 
 #include <stdlib.h> 
@@ -118,16 +121,10 @@
 
 
 /*:10*//*69:*/
-#line 2483 "hbf2gf.w"
+#line 2469 "hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
-#ifdef VERY_OLD_KPATHSEA
-#include "kpathsea/proginit.h"
-#include "kpathsea/progname.h"
-#include "kpathsea/tex-glyph.h"
-#else
 #include "kpathsea/kpathsea.h"
-#endif
 
 #elif defined(HAVE_EMTEXDIR)
 #include "emtexdir.h"
@@ -137,46 +134,46 @@
 #endif
 
 /*:69*/
-#line 194 "hbf2gf.w"
+#line 192 "hbf2gf.w"
 
 /*11:*/
-#line 431 "hbf2gf.w"
+#line 429 "hbf2gf.w"
 
 void write_file(void);
 
 
 /*:11*//*13:*/
-#line 493 "hbf2gf.w"
+#line 491 "hbf2gf.w"
 
 void write_pre(void);
 
 
 /*:13*//*16:*/
-#line 581 "hbf2gf.w"
+#line 579 "hbf2gf.w"
 
 void write_data(void);
 
 
 /*:16*//*20:*/
-#line 692 "hbf2gf.w"
+#line 690 "hbf2gf.w"
 
 void write_post(void);
 
 
 /*:20*//*25:*/
-#line 836 "hbf2gf.w"
+#line 834 "hbf2gf.w"
 
 void fputl(long,FILE*);
 
 
 /*:25*//*29:*/
-#line 999 "hbf2gf.w"
+#line 994 "hbf2gf.w"
 
 void make_pixel_array(void);
 
 
 /*:29*//*36:*/
-#line 1227 "hbf2gf.w"
+#line 1222 "hbf2gf.w"
 
 #ifdef __GNUC__
 __inline__
@@ -185,7 +182,7 @@ void read_row(unsigned char*);
 
 
 /*:36*//*39:*/
-#line 1279 "hbf2gf.w"
+#line 1272 "hbf2gf.w"
 
 #ifdef __GNUC__
 __inline__
@@ -194,55 +191,55 @@ void write_row(unsigned char*);
 
 
 /*:39*//*41:*/
-#line 1334 "hbf2gf.w"
+#line 1325 "hbf2gf.w"
 
 void write_coding(void);
 
 
 /*:41*//*45:*/
-#line 1495 "hbf2gf.w"
+#line 1486 "hbf2gf.w"
 
 void write_pl(void);
 
 
 /*:45*//*47:*/
-#line 1592 "hbf2gf.w"
+#line 1583 "hbf2gf.w"
 
 void write_ovp(void);
 
 
 /*:47*//*50:*/
-#line 1737 "hbf2gf.w"
+#line 1728 "hbf2gf.w"
 
 void write_job(void);
 
 
 /*:50*//*54:*/
-#line 1986 "hbf2gf.w"
+#line 1977 "hbf2gf.w"
 
 void read_config(void);
 
 
 /*:54*//*64:*/
-#line 2317 "hbf2gf.w"
+#line 2308 "hbf2gf.w"
 
-int fsearch(char*);
+int fsearch(const char*);
 
 
 /*:64*//*67:*/
-#line 2457 "hbf2gf.w"
+#line 2447 "hbf2gf.w"
 
-void config_error(char*);
+void config_error(const char*);
 
 
 /*:67*//*71:*/
-#line 2517 "hbf2gf.w"
+#line 2490 "hbf2gf.w"
 
-char*TeX_search_version(void);
+const char*TeX_search_version(void);
 
 
 /*:71*//*74:*/
-#line 2552 "hbf2gf.w"
+#line 2525 "hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
 extern int setup_list(struct emtex_dir*,char*,const char*,unsigned);
@@ -252,17 +249,17 @@ char*file_find(char*,struct emtex_dir*);
 
 
 /*:74*//*79:*/
-#line 2649 "hbf2gf.w"
+#line 2613 "hbf2gf.w"
 
 char*TeX_search_cfg_file(char*);
 char*TeX_search_hbf_file(char*);
 
 
 /*:79*/
-#line 195 "hbf2gf.w"
+#line 193 "hbf2gf.w"
 
 /*2:*/
-#line 129 "hbf2gf.w"
+#line 127 "hbf2gf.w"
 
 int nmb_files= -1;
 int unicode= FALSE;
@@ -303,7 +300,7 @@ int end_of_file= FALSE;
 
 
 /*:2*//*15:*/
-#line 540 "hbf2gf.w"
+#line 538 "hbf2gf.w"
 
 long char_adr[256];
 long*char_adr_p;
@@ -345,7 +342,7 @@ int dot_count;
 
 
 /*:15*//*19:*/
-#line 669 "hbf2gf.w"
+#line 667 "hbf2gf.w"
 
 char coding[STRING_LENGTH+1];
 char comment[STRING_LENGTH+1];
@@ -364,12 +361,12 @@ double ppp_y;
 
 
 /*:19*//*27:*/
-#line 876 "hbf2gf.w"
+#line 871 "hbf2gf.w"
 
 HBF_CHAR code;
 const unsigned char*bitmap;
 
-unsigned char*bP;
+const unsigned char*bP;
 
 unsigned char out_char[MAX_CHAR_SIZE*MAX_CHAR_SIZE+1];
 
@@ -387,13 +384,13 @@ long s_mag_x,s_mag_y,s_slant;
 
 
 /*:27*//*38:*/
-#line 1274 "hbf2gf.w"
+#line 1267 "hbf2gf.w"
 
 int threshold= 128;
 
 
 /*:38*//*49:*/
-#line 1726 "hbf2gf.w"
+#line 1717 "hbf2gf.w"
 
 char job_extension[EXTENSION_LENGTH+1];
 char rm_command[STRING_LENGTH+1];
@@ -405,13 +402,13 @@ int ofm_file= FALSE;
 
 
 /*:49*//*53:*/
-#line 1981 "hbf2gf.w"
+#line 1972 "hbf2gf.w"
 
 char Buffer[STRING_LENGTH+1];
 
 
 /*:53*//*58:*/
-#line 2099 "hbf2gf.w"
+#line 2090 "hbf2gf.w"
 
 int offset_x;
 int offset_y;
@@ -420,13 +417,13 @@ HBF_CHAR user_min_char;
 int have_min_char= FALSE;
 
 /*:58*//*60:*/
-#line 2256 "hbf2gf.w"
+#line 2247 "hbf2gf.w"
 
 HBF_CHAR min_char,max_char;
 
 
 /*:60*//*62:*/
-#line 2283 "hbf2gf.w"
+#line 2274 "hbf2gf.w"
 
 char b2_codes[256];
 unsigned char min_2_byte,max_2_byte;
@@ -434,16 +431,9 @@ int nmb_2_bytes= 0;
 
 
 /*:62*//*70:*/
-#line 2501 "hbf2gf.w"
+#line 2481 "hbf2gf.w"
 
-#if defined(HAVE_LIBKPATHSEA)
-#ifdef KPSEDLL
-
-extern KPSEDLL char*kpathsea_version_string;
-#else
-extern DllImport char*kpathsea_version_string;
-#endif
-#elif defined(HAVE_EMTEXDIR)
+#if defined(HAVE_EMTEXDIR)
 char emtex_version_string[]= "emTeXdir";
 #elif !defined(HAVE_MIKTEX)
 char no_version_string[]= "no search library";
@@ -451,7 +441,7 @@ char no_version_string[]= "no search library";
 
 
 /*:70*//*73:*/
-#line 2545 "hbf2gf.w"
+#line 2518 "hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
 struct emtex_dir cfg_path,hbf_path;
@@ -459,37 +449,25 @@ struct emtex_dir cfg_path,hbf_path;
 
 
 /*:73*//*76:*/
-#line 2591 "hbf2gf.w"
+#line 2564 "hbf2gf.w"
 
 char name_buffer[FILE_NAME_LENGTH+1];
 
 
 /*:76*/
-#line 196 "hbf2gf.w"
+#line 194 "hbf2gf.w"
 
 
 
-int main(argc,argv)
-int argc;
-char*argv[];
-
+int main(int argc,char*argv[])
 {char*p;
 
 /*78:*/
-#line 2613 "hbf2gf.w"
+#line 2586 "hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
-#ifdef OLD_KPATHSEA
-kpse_set_progname(argv[0]);
-#else
 kpse_set_program_name(argv[0],"hbf2gf");
-#endif
-
-#ifdef VERY_OLD_KPATHSEA
-kpse_init_prog("HBF2GF",300,"cx",true,"cmr10");
-#else
 kpse_init_prog("HBF2GF",300,"cx","cmr10");
-#endif
 
 #elif defined(HAVE_EMTEXDIR)
 if(!dir_setup(&cfg_path,"HBFCFG",NULL,EDS_BANG))
@@ -506,16 +484,16 @@ exit(1);
 
 
 /*:78*/
-#line 205 "hbf2gf.w"
+#line 200 "hbf2gf.w"
 
 
 /*7:*/
-#line 312 "hbf2gf.w"
+#line 307 "hbf2gf.w"
 
 if(argc==2)
 {if(strcmp(argv[1],"--help")==0)
 /*6:*/
-#line 293 "hbf2gf.w"
+#line 288 "hbf2gf.w"
 
 {printf(USAGE);
 exit(0);
@@ -523,22 +501,22 @@ exit(0);
 
 
 /*:6*/
-#line 315 "hbf2gf.w"
+#line 310 "hbf2gf.w"
 
 else if(strcmp(argv[1],"--version")==0)
 /*5:*/
-#line 266 "hbf2gf.w"
+#line 261 "hbf2gf.w"
 
 {printf("\n");
 printf(banner);
 printf(" (%s)\n",TeX_search_version());
-printf(VERSION);
+printf(HBF2GF_VERSION);
 exit(0);
 }
 
 
 /*:5*/
-#line 317 "hbf2gf.w"
+#line 312 "hbf2gf.w"
 
 }
 
@@ -576,7 +554,7 @@ exit(1);
 
 
 /*:7*/
-#line 207 "hbf2gf.w"
+#line 202 "hbf2gf.w"
 
 
 if(!quiet)
@@ -605,7 +583,7 @@ read_config();
 
 if(mf_like)
 /*8:*/
-#line 357 "hbf2gf.w"
+#line 352 "hbf2gf.w"
 
 {if(unicode)
 file_number= (int)strtol(&argv[1][strlen(argv[1])-2],
@@ -633,11 +611,11 @@ y_scale= (double)x_resolution/y_scale;
 
 
 /*:8*/
-#line 234 "hbf2gf.w"
+#line 229 "hbf2gf.w"
 
 
 /*28:*/
-#line 908 "hbf2gf.w"
+#line 903 "hbf2gf.w"
 
 {int col,offset;
 
@@ -720,11 +698,11 @@ s_slant= slant*SCALE;
 
 
 /*:28*/
-#line 236 "hbf2gf.w"
+#line 231 "hbf2gf.w"
 
 
 /*9:*/
-#line 392 "hbf2gf.w"
+#line 387 "hbf2gf.w"
 
 {int j,max_numb;
 
@@ -746,7 +724,7 @@ nmb_files= j;
 
 
 /*:9*/
-#line 238 "hbf2gf.w"
+#line 233 "hbf2gf.w"
 
 
 if(tfm_files)
@@ -764,7 +742,7 @@ return 0;
 
 
 /*:4*//*12:*/
-#line 439 "hbf2gf.w"
+#line 437 "hbf2gf.w"
 
 void write_file(void)
 {char output_file[FILE_NAME_LENGTH+1];
@@ -808,7 +786,7 @@ write_data();
 
 
 /*:12*//*14:*/
-#line 500 "hbf2gf.w"
+#line 498 "hbf2gf.w"
 
 void write_pre(void)
 {char out_s[40],s[20];
@@ -831,7 +809,7 @@ fputs(out_s,out);
 
 
 /*:14*//*17:*/
-#line 586 "hbf2gf.w"
+#line 584 "hbf2gf.w"
 
 void write_data(void)
 {dot_count= 0;
@@ -839,7 +817,7 @@ char_adr_p= char_adr;
 
 for(last_char= 0;(last_char<256)&&!end_of_file;last_char++)
 /*18:*/
-#line 611 "hbf2gf.w"
+#line 609 "hbf2gf.w"
 
 {if(dot_count++%10==0)
 if(pk_files&&!quiet)
@@ -883,13 +861,13 @@ fputc(EOC,out);
 
 
 /*:18*/
-#line 592 "hbf2gf.w"
+#line 590 "hbf2gf.w"
 
 }
 
 
 /*:17*//*21:*/
-#line 697 "hbf2gf.w"
+#line 695 "hbf2gf.w"
 
 void write_post(void)
 {long special_adr;
@@ -917,7 +895,7 @@ tfm_width= (tfm_output_size_x+2*tfm_offset_x)*_2_20;
 
 
 /*22:*/
-#line 743 "hbf2gf.w"
+#line 741 "hbf2gf.w"
 
 special_adr= ftell(out);
 
@@ -935,10 +913,10 @@ fputs(comment,out);
 
 
 /*:22*/
-#line 723 "hbf2gf.w"
+#line 721 "hbf2gf.w"
 
 /*23:*/
-#line 772 "hbf2gf.w"
+#line 770 "hbf2gf.w"
 
 post_adr= ftell(out);
 fputc(POST,out);
@@ -977,10 +955,10 @@ fputl(*char_adr_p++,out);
 
 
 /*:23*/
-#line 724 "hbf2gf.w"
+#line 722 "hbf2gf.w"
 
 /*24:*/
-#line 823 "hbf2gf.w"
+#line 821 "hbf2gf.w"
 
 fputc(POSTPOST,out);
 fputl(post_adr,out);
@@ -992,18 +970,15 @@ fputc(POSTPOST_ID,out);
 
 
 /*:24*/
-#line 725 "hbf2gf.w"
+#line 723 "hbf2gf.w"
 
 }
 
 
 /*:21*//*26:*/
-#line 841 "hbf2gf.w"
+#line 839 "hbf2gf.w"
 
-void fputl(num,f)
-long num;
-FILE*f;
-
+void fputl(long num,FILE*f)
 {fputc(num>>24,f);
 fputc(num>>16,f);
 fputc(num>>8,f);
@@ -1012,7 +987,7 @@ fputc(num,f);
 
 
 /*:26*//*30:*/
-#line 1004 "hbf2gf.w"
+#line 999 "hbf2gf.w"
 
 void make_pixel_array(void)
 {unsigned char*prP;
@@ -1043,14 +1018,14 @@ again:
 if(b2_codes[code&0xFF])
 {if(pk_files)
 {bitmap= hbfGetBitmap(hbf,code);
-bP= (unsigned char*)bitmap;
+bP= bitmap;
 
 
 if(!bitmap)
 empty_char= TRUE;
 else
 /*31:*/
-#line 1063 "hbf2gf.w"
+#line 1058 "hbf2gf.w"
 
 {if(pk_output_size_y==input_size_y)
 temp_prP= prP;
@@ -1058,7 +1033,7 @@ temp_prP= prP;
 curr_row= input_size_y-1;
 for(row= 0;row<pk_output_size_y;++row)
 {/*32:*/
-#line 1077 "hbf2gf.w"
+#line 1072 "hbf2gf.w"
 
 if(pk_output_size_y==input_size_y)
 
@@ -1080,7 +1055,7 @@ need_to_read_row= 1;
 }
 
 /*33:*/
-#line 1104 "hbf2gf.w"
+#line 1099 "hbf2gf.w"
 
 if(need_to_read_row)
 if(rows_read<input_size_y)
@@ -1112,16 +1087,16 @@ frac_row_to_fill= SCALE;
 
 
 /*:33*/
-#line 1097 "hbf2gf.w"
+#line 1092 "hbf2gf.w"
 
 }
 
 
 /*:32*/
-#line 1069 "hbf2gf.w"
+#line 1064 "hbf2gf.w"
 
 /*34:*/
-#line 1145 "hbf2gf.w"
+#line 1140 "hbf2gf.w"
 
 if(pk_width==input_size_x&&s_slant==0)
 
@@ -1176,7 +1151,7 @@ frac_col_to_fill-= frac_col_left;
 }
 
 /*35:*/
-#line 1203 "hbf2gf.w"
+#line 1198 "hbf2gf.w"
 
 if(frac_col_to_fill> 0)
 {--xP;
@@ -1196,20 +1171,20 @@ write_row(new_prP);
 
 
 /*:35*/
-#line 1198 "hbf2gf.w"
+#line 1193 "hbf2gf.w"
 
 }
 
 
 /*:34*/
-#line 1071 "hbf2gf.w"
+#line 1066 "hbf2gf.w"
 
 }
 }
 
 
 /*:31*/
-#line 1040 "hbf2gf.w"
+#line 1035 "hbf2gf.w"
 
 }
 }
@@ -1233,14 +1208,12 @@ goto again;
 
 
 /*:30*//*37:*/
-#line 1235 "hbf2gf.w"
+#line 1230 "hbf2gf.w"
 
 #ifdef __GNUC__
 __inline__
 #endif
-void read_row(pixelrow)
-unsigned char*pixelrow;
-
+void read_row(unsigned char*pixelrow)
 {register int col,bitshift,offset;
 register unsigned char*xP;
 register unsigned char item= 0;
@@ -1248,7 +1221,7 @@ register unsigned char item= 0;
 if(rotation)
 {bitshift= 7-(curr_row%8);
 offset= (input_size_y+7)/8;
-bP= (unsigned char*)bitmap+curr_row/8;
+bP= bitmap+curr_row/8;
 for(col= 0,xP= pixelrow;col<input_size_x;++col,++xP)
 {*xP= ((*bP>>bitshift)&1)==1?PIXEL_MAXVAL:0;
 bP+= offset;
@@ -1270,14 +1243,12 @@ bitshift= 7;
 
 
 /*:37*//*40:*/
-#line 1287 "hbf2gf.w"
+#line 1280 "hbf2gf.w"
 
 #ifdef __GNUC__
 __inline__
 #endif
-void write_row(pixelrow)
-unsigned char*pixelrow;
-
+void write_row(unsigned char*pixelrow)
 {register int col;
 register unsigned char*xP;
 
@@ -1288,7 +1259,7 @@ for(col= 0,xP= pixelrow;col<pk_output_size_x;++col,++xP)
 
 
 /*:40*//*42:*/
-#line 1342 "hbf2gf.w"
+#line 1333 "hbf2gf.w"
 
 void write_coding(void)
 {register int count,skip;
@@ -1305,7 +1276,7 @@ goto start;
 
 while(y<pk_output_size_y)
 {/*43:*/
-#line 1366 "hbf2gf.w"
+#line 1357 "hbf2gf.w"
 
 count= 0;
 x= 0;
@@ -1374,11 +1345,11 @@ continue;
 
 
 /*:43*/
-#line 1357 "hbf2gf.w"
+#line 1348 "hbf2gf.w"
 
 start:
 /*44:*/
-#line 1434 "hbf2gf.w"
+#line 1425 "hbf2gf.w"
 
 while(x<pk_output_size_x)
 {if(*cp==paint)
@@ -1419,7 +1390,7 @@ paint= WHITE;
 
 
 /*:44*/
-#line 1359 "hbf2gf.w"
+#line 1350 "hbf2gf.w"
 
 y++;
 }
@@ -1427,7 +1398,7 @@ y++;
 
 
 /*:42*//*46:*/
-#line 1500 "hbf2gf.w"
+#line 1491 "hbf2gf.w"
 
 void write_pl(void)
 {int i,pos;
@@ -1517,7 +1488,7 @@ fclose(out);
 
 
 /*:46*//*48:*/
-#line 1597 "hbf2gf.w"
+#line 1588 "hbf2gf.w"
 
 void write_ovp(void)
 {int c,i,nmb_subfonts,remainder,count,pos;
@@ -1632,7 +1603,7 @@ fclose(out);
 
 
 /*:48*//*51:*/
-#line 1742 "hbf2gf.w"
+#line 1733 "hbf2gf.w"
 
 void write_job(void)
 {FILE*out;
@@ -1718,7 +1689,7 @@ fclose(out);
 
 
 /*:51*//*55:*/
-#line 1994 "hbf2gf.w"
+#line 1985 "hbf2gf.w"
 
 void read_config(void)
 {HBF_BBOX*boxp;
@@ -1726,7 +1697,7 @@ char*real_config_file;
 
 
 /*56:*/
-#line 2046 "hbf2gf.w"
+#line 2037 "hbf2gf.w"
 
 {int i,lastext= -1;
 
@@ -1744,7 +1715,7 @@ strcat(config_file,".cfg");
 
 
 /*:56*/
-#line 2000 "hbf2gf.w"
+#line 1991 "hbf2gf.w"
 
 
 real_config_file= TeX_search_cfg_file(config_file);
@@ -1779,7 +1750,7 @@ exit(0);
 }
 
 /*57:*/
-#line 2063 "hbf2gf.w"
+#line 2054 "hbf2gf.w"
 
 {char hbf_header[STRING_LENGTH+1];
 char*real_hbf_header;
@@ -1816,10 +1787,10 @@ strcpy(output_name,Buffer);
 
 
 /*:57*/
-#line 2033 "hbf2gf.w"
+#line 2024 "hbf2gf.w"
 
 /*59:*/
-#line 2107 "hbf2gf.w"
+#line 2098 "hbf2gf.w"
 
 {if(fsearch("nmb_files"))
 nmb_files= atoi(Buffer);
@@ -1961,11 +1932,11 @@ job_extension[EXTENSION_LENGTH]= '\0';
 
 
 /*:59*/
-#line 2034 "hbf2gf.w"
+#line 2025 "hbf2gf.w"
 
 
 /*61:*/
-#line 2261 "hbf2gf.w"
+#line 2252 "hbf2gf.w"
 
 {const void*cp;
 HBF_CHAR dummy;
@@ -1980,10 +1951,10 @@ min_char= user_min_char;
 
 
 /*:61*/
-#line 2036 "hbf2gf.w"
+#line 2027 "hbf2gf.w"
 
 /*63:*/
-#line 2290 "hbf2gf.w"
+#line 2281 "hbf2gf.w"
 
 {const void*b2r;
 unsigned char dummy;
@@ -2006,7 +1977,7 @@ nmb_2_bytes++;
 
 
 /*:63*/
-#line 2037 "hbf2gf.w"
+#line 2028 "hbf2gf.w"
 
 
 fclose(config);
@@ -2014,12 +1985,11 @@ fclose(config);
 
 
 /*:55*//*65:*/
-#line 2322 "hbf2gf.w"
+#line 2313 "hbf2gf.w"
 
-int fsearch(search_string)
-char*search_string;
-
+int fsearch(const char*search_string)
 {char*P,p;
+const char*Q;
 char temp_buffer[STRING_LENGTH+1];
 char env_name[STRING_LENGTH+1];
 char*env_p;
@@ -2031,8 +2001,8 @@ int count= STRING_LENGTH;
 rewind(config);
 
 do
-{P= search_string;
-p= tolower(*P);
+{Q= search_string;
+p= tolower(*Q);
 Ch= fgetc(config);
 ch= tolower(Ch);
 while(!(ch==p&&old_ch=='\n')&&Ch!=EOF)
@@ -2044,12 +2014,12 @@ ch= tolower(Ch);
 }
 
 for(;;)
-{if(*(++P)=='\0')
+{if(*(++Q)=='\0')
 if((Ch= fgetc(config))==' '||Ch=='\t')
 
 goto success;
 Ch= fgetc(config);
-if(tolower(Ch)!=tolower(*P))
+if(tolower(Ch)!=tolower(*Q))
 break;
 }
 }
@@ -2071,7 +2041,7 @@ Ch= fgetc(config);
 
 if(*temp_buffer)
 /*66:*/
-#line 2402 "hbf2gf.w"
+#line 2392 "hbf2gf.w"
 
 {P= temp_buffer;
 Buf_p= Buffer;
@@ -2124,7 +2094,7 @@ count--;
 
 
 /*:66*/
-#line 2377 "hbf2gf.w"
+#line 2367 "hbf2gf.w"
 
 else
 *Buffer= '\0';
@@ -2134,11 +2104,9 @@ return(*Buffer)?1:0;
 
 
 /*:65*//*68:*/
-#line 2462 "hbf2gf.w"
+#line 2452 "hbf2gf.w"
 
-void config_error(message)
-char*message;
-
+void config_error(const char*message)
 {fprintf(stderr,"Couldn't find `%s' entry in configuration file\n",
 message);
 exit(1);
@@ -2147,9 +2115,9 @@ exit(1);
 
 
 /*:68*//*72:*/
-#line 2522 "hbf2gf.w"
+#line 2495 "hbf2gf.w"
 
-char*TeX_search_version(void)
+const char*TeX_search_version(void)
 {
 #if defined(HAVE_LIBKPATHSEA)
 return kpathsea_version_string;
@@ -2169,7 +2137,7 @@ return no_version_string;
 
 
 /*:72*//*75:*/
-#line 2564 "hbf2gf.w"
+#line 2537 "hbf2gf.w"
 
 #ifdef HAVE_EMTEXDIR
 int dir_setup(ed,env,dir,flags)
@@ -2197,7 +2165,7 @@ return TRUE;
 
 
 /*:75*//*77:*/
-#line 2596 "hbf2gf.w"
+#line 2569 "hbf2gf.w"
 
 char*file_find(name,list)
 char*name;
@@ -2212,56 +2180,34 @@ return NULL;
 
 
 /*:77*//*80:*/
-#line 2655 "hbf2gf.w"
+#line 2619 "hbf2gf.w"
 
 #if defined(HAVE_LIBKPATHSEA)
-char*TeX_search_cfg_file(name)
-char*name;
-
+char*TeX_search_cfg_file(char*name)
 {
-#ifdef OLD_KPATHSEA
-return kpse_find_file(name,kpse_dvips_config_format,TRUE);
-#else
 return kpse_find_file(name,kpse_program_text_format,TRUE);
-#endif
 }
 
 
-char*TeX_search_hbf_file(name)
-char*name;
-
+char*TeX_search_hbf_file(char*name)
 {
-#ifdef VERY_OLD_KPATHSEA
-return kpse_find_file(name,kpse_dvips_header_format,TRUE);
-#else
-#ifndef KPSEDLL
-return kpse_find_file(name,kpse_type1_format,TRUE);
-#else
 return kpse_find_file(name,kpse_miscfonts_format,TRUE);
-#endif
-#endif
 }
 
 
 #elif defined(HAVE_EMTEXDIR)
-char*TeX_search_cfg_file(name)
-char*name;
-
+char*TeX_search_cfg_file(char*name)
 {return file_find(name,&cfg_path);
 }
 
 
-char*TeX_search_hbf_file(name)
-char*name;
-
+char*TeX_search_hbf_file(char*name)
 {return file_find(name,&hbf_path);
 }
 
 
 #elif defined(HAVE_MIKTEX)
-char*TeX_search_cfg_file(name)
-char*name;
-
+char*TeX_search_cfg_file(char*name)
 {char result[_MAX_PATH];
 
 if(!miktex_find_input_file("hbf2gf",*name,result))
@@ -2270,9 +2216,7 @@ return strdup(result);
 }
 
 
-char*TeX_search_hbf_file(name)
-char*name;
-
+char*TeX_search_hbf_file(char*name)
 {char result[_MAX_PATH];
 
 
@@ -2283,16 +2227,12 @@ return strdup(result);
 
 
 #else
-char*TeX_search_cfg_file(name)
-char*name;
-
+char*TeX_search_cfg_file(char*name)
 {return name;
 }
 
 
-char*TeX_search_hbf_file(name)
-char*name;
-
+char*TeX_search_hbf_file(char*name)
 {return name;
 }
 #endif

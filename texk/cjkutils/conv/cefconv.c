@@ -9,9 +9,7 @@
 #include <stdlib.h> 
 
 
-int main(argc,argv)
-int argc;
-char*argv[];
+int main(int argc, char *argv[])
 
 {int ch,i;
 unsigned char in[16];

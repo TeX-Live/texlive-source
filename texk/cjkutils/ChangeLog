@@ -1,3 +1,19 @@
+2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, hbf2gf/hbf2gf.w: Require recent kpathsea version.
+
+2009-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* hbf2gf/hbf.c, hbf2gf/hbf2gf.w: ANSI C function declarations.
+	Declare numerous param and local strings as const.
+
+	* conv/*conv.c: ANSI C function declarations.
+
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for <kpathsea/version.h> and ...
+	* hbf2gf/hbf2gf.w: ... skip extern decls if found.
+
 2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: enable compiler warnings (TeX Live style).

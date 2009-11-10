@@ -193,9 +193,8 @@ variables, \PB{\\{write\_file}(\,)} writes the \.{GF} files, \PB{\\{write\_pl}(%
 \Y\B\X10:Include files\X\6
 \X11:Prototypes\X\6
 \X2:Global variables\X\7
-\&{int} ${}\\{main}(\\{argc},\39\\{argv}){}$\1\1\6
-\&{int} \\{argc};\C{ argument count }\6
-\&{char} ${}{*}\\{argv}[\,]{}$;\C{ argument values }\2\2\6
+\&{int} \\{main}(\&{int} \\{argc}${},\39{}$\&{char} ${}{*}\\{argv}[\,]){}$\1\1%
+\2\2\6
 ${}\{{}$\1\6
 \&{char} ${}{*}\|p;{}$\7
 \X78:Initialize \TeX\ file searching\X\7
@@ -238,7 +237,7 @@ ${}\\{mf\_like}\K\.{TRUE};{}$\6
 \fi
 
 \M{5}
-\Y\B\4\D$\.{VERSION}$ \6
+\Y\B\4\D$\.{HBF2GF\_VERSION}$ \6
 \.{"\\n"}\6
 \.{"Copyright\ (C)\ 1996-}\)\.{1999\ Werner\ Lemberg.}\)\.{\\n"}\6
 \.{"There\ is\ NO\ warrant}\)\.{y.\ \ You\ may\ redistri}\)\.{bute\ this\
@@ -255,7 +254,7 @@ ${}\{{}$\1\6
 \\{printf}(\.{"\\n"});\6
 \\{printf}(\\{banner});\6
 ${}\\{printf}(\.{"\ (\%s)\\n"},\39\\{TeX\_search\_version}(\,));{}$\6
-\\{printf}(\.{VERSION});\6
+\\{printf}(\.{HBF2GF\_VERSION});\6
 \\{exit}(\T{0});\6
 \4${}\}{}$\2\par
 \U7.\fi
@@ -424,6 +423,9 @@ ${}\\{nmb\_files}\K\|j{}$;\C{ the real number of output font files }\6
 
 \M{10}
 \Y\B\4\X10:Include files\X${}\E{}$\6
+\8\#\&{ifdef} \.{HAVE\_CONFIG\_H}\6
+\8\#\&{include} \.{"c-auto.h"}\6
+\8\#\&{endif}\6
 \8\#\&{include} \.{<ctype.h>}\6
 \8\#\&{include} \.{<stdio.h>}\6
 \8\#\&{include} \.{<stdlib.h>}\6
@@ -873,9 +875,8 @@ ${}\\{fputc}(\.{POSTPOST\_ID},\39\\{out}){}$;\2\par
 \fi
 
 \M{26}
-\Y\B\&{void} ${}\\{fputl}(\\{num},\39\|f){}$\1\1\6
-\&{long} \\{num};\6
-\&{FILE} ${}{*}\|f;\2\2{}$\6
+\Y\B\&{void} \\{fputl}(\&{long} \\{num}${},\39{}$\&{FILE} ${}{*}\|f){}$\1\1\2\2%
+\6
 ${}\{{}$\1\6
 ${}\\{fputc}(\\{num}\GG\T{24},\39\|f);{}$\6
 ${}\\{fputc}(\\{num}\GG\T{16},\39\|f);{}$\6
@@ -916,7 +917,7 @@ immediately.
 \&{HBF\_CHAR} \\{code};\6
 \&{const} \&{unsigned} \&{char} ${}{*}\\{bitmap}{}$;\C{ a proper input bitmap
 array will be allocated by the HBF API }\6
-\&{unsigned} \&{char} ${}{*}\\{bP}{}$;\7
+\&{const} \&{unsigned} \&{char} ${}{*}\\{bP}{}$;\7
 \&{unsigned} \&{char} ${}\\{out\_char}[\.{MAX\_CHAR\_SIZE}*\.{MAX\_CHAR\_SIZE}+%
 \T{1}]{}$;\C{ the output bitmap array }\6
 \&{unsigned} \&{char} ${}{*}\\{out\_char\_p}{}$;\7
@@ -1073,8 +1074,7 @@ ${}\{{}$\1\6
 \&{if} (\\{pk\_files})\5
 ${}\{{}$\1\6
 ${}\\{bitmap}\K\\{hbfGetBitmap}(\\{hbf},\39\\{code});{}$\6
-${}\\{bP}\K{}$(\&{unsigned} \&{char} ${}{*}){}$ \\{bitmap};\C{ will be
-increased by \PB{\\{read\_row}(\,)} }\7
+${}\\{bP}\K\\{bitmap}{}$;\C{ will be increased by \PB{\\{read\_row}(\,)} }\7
 \&{if} ${}(\R\\{bitmap}){}$\1\5
 ${}\\{empty\_char}\K\.{TRUE};{}$\2\6
 \&{else}\1\5
@@ -1282,8 +1282,7 @@ glyph).
 \Y\B\8\#\&{ifdef} \.{\_\_GNUC\_\_}\6
 \&{\_\_inline\_\_}\6
 \8\#\&{endif}\6
-\&{void} \\{read\_row}(\\{pixelrow})\1\1\6
-\&{unsigned} \&{char} ${}{*}\\{pixelrow};\2\2{}$\6
+\&{void} \\{read\_row}(\&{unsigned} \&{char} ${}{*}\\{pixelrow}){}$\1\1\2\2\6
 ${}\{{}$\1\6
 \&{register} \&{int} \\{col}${},{}$ \\{bitshift}${},{}$ \\{offset};\6
 \&{register} \&{unsigned} \&{char} ${}{*}\\{xP};{}$\6
@@ -1292,8 +1291,7 @@ ${}\{{}$\1\6
 ${}\{{}$\1\6
 ${}\\{bitshift}\K\T{7}-(\\{curr\_row}\MOD\T{8});{}$\6
 ${}\\{offset}\K(\\{input\_size\_y}+\T{7})/\T{8};{}$\6
-${}\\{bP}\K{}$(\&{unsigned} \&{char} ${}{*}){}$ \\{bitmap}${}+\\{curr\_row}/%
-\T{8};{}$\6
+${}\\{bP}\K\\{bitmap}+\\{curr\_row}/\T{8};{}$\6
 \&{for} ${}(\\{col}\K\T{0},\39\\{xP}\K\\{pixelrow};{}$ ${}\\{col}<\\{input%
 \_size\_x};{}$ ${}\PP\\{col},\39\PP\\{xP}){}$\5
 ${}\{{}$\1\6
@@ -1342,8 +1340,7 @@ threshold.
 \Y\B\8\#\&{ifdef} \.{\_\_GNUC\_\_}\6
 \&{\_\_inline\_\_}\6
 \8\#\&{endif}\6
-\&{void} \\{write\_row}(\\{pixelrow})\1\1\6
-\&{unsigned} \&{char} ${}{*}\\{pixelrow};\2\2{}$\6
+\&{void} \\{write\_row}(\&{unsigned} \&{char} ${}{*}\\{pixelrow}){}$\1\1\2\2\6
 ${}\{{}$\1\6
 \&{register} \&{int} \\{col};\6
 \&{register} \&{unsigned} \&{char} ${}{*}\\{xP};{}$\7
@@ -2413,14 +2410,15 @@ fills
 \PB{\\{Buffer}} if existent. \PB{\\{fsearch}(\,)} returns~1 on success.
 
 \Y\B\4\X11:Prototypes\X${}\mathrel+\E{}$\6
-\&{int} \\{fsearch}(\&{char} ${}{*}){}$;\par
+\&{int} \\{fsearch}(\&{const} \&{char} ${}{*}){}$;\par
 \fi
 
 \M{65}
-\Y\B\&{int} \\{fsearch}(\\{search\_string})\1\1\6
-\&{char} ${}{*}\\{search\_string};\2\2{}$\6
+\Y\B\&{int} \\{fsearch}(\&{const} \&{char} ${}{*}\\{search\_string}){}$\1\1\2\2%
+\6
 ${}\{{}$\1\6
 \&{char} ${}{*}\|P,{}$ \|p;\6
+\&{const} \&{char} ${}{*}\|Q;{}$\6
 \&{char} ${}\\{temp\_buffer}[\.{STRING\_LENGTH}+\T{1}];{}$\6
 \&{char} ${}\\{env\_name}[\.{STRING\_LENGTH}+\T{1}];{}$\6
 \&{char} ${}{*}\\{env\_p};{}$\6
@@ -2431,8 +2429,8 @@ ${}\{{}$\1\6
 \\{rewind}(\\{config});\C{ we start at offset~0 }\7
 \&{do}\5
 ${}\{{}$\1\6
-${}\|P\K\\{search\_string};{}$\6
-${}\|p\K\\{tolower}({*}\|P);{}$\6
+${}\|Q\K\\{search\_string};{}$\6
+${}\|p\K\\{tolower}({*}\|Q);{}$\6
 ${}\\{Ch}\K\\{fgetc}(\\{config});{}$\6
 ${}\\{ch}\K\\{tolower}(\\{Ch});{}$\6
 \&{while} ${}(\R(\\{ch}\E\|p\W\\{old\_ch}\E\.{'\\n'})\W\\{Ch}\I\.{EOF}{}$)\C{
@@ -2445,12 +2443,12 @@ ${}\\{ch}\K\\{tolower}(\\{Ch});{}$\6
 \4${}\}{}$\2\7
 \&{for} ( ;  ; \,)\5
 ${}\{{}$\1\6
-\&{if} ${}({*}(\PP\|P)\E\.{'\\0'}){}$\1\6
+\&{if} ${}({*}(\PP\|Q)\E\.{'\\0'}){}$\1\6
 \&{if} ${}((\\{Ch}\K\\{fgetc}(\\{config}))\E\.{'\ '}\V\\{Ch}\E\.{'\\t'}{}$)\C{
 there must be a space or a tab stop after the keyword }\1\6
 \&{goto} \\{success};\2\2\6
 ${}\\{Ch}\K\\{fgetc}(\\{config});{}$\6
-\&{if} ${}(\\{tolower}(\\{Ch})\I\\{tolower}({*}\|P)){}$\1\5
+\&{if} ${}(\\{tolower}(\\{Ch})\I\\{tolower}({*}\|Q)){}$\1\5
 \&{break};\2\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\5
@@ -2562,12 +2560,12 @@ error
 message.
 
 \Y\B\4\X11:Prototypes\X${}\mathrel+\E{}$\6
-\&{void} \\{config\_error}(\&{char} ${}{*}){}$;\par
+\&{void} \\{config\_error}(\&{const} \&{char} ${}{*}){}$;\par
 \fi
 
 \M{68}
-\Y\B\&{void} \\{config\_error}(\\{message})\1\1\6
-\&{char} ${}{*}\\{message};\2\2{}$\6
+\Y\B\&{void} \\{config\_error}(\&{const} \&{char} ${}{*}\\{message}){}$\1\1\2\2%
+\6
 ${}\{{}$\1\6
 ${}\\{fprintf}(\\{stderr},\39\.{"Couldn't\ find\ `\%s'\ }\)\.{entry\ in\
 configurati}\)\.{on\ file\\n"},\39\\{message});{}$\6
@@ -2579,25 +2577,14 @@ configurati}\)\.{on\ file\\n"},\39\\{message});{}$\6
 
 We support three searching engines: emtexdir, kpathsea, and MiKTeX (which is
 a Win32 port of kpathsea). For emtexdir, define \PB{\.{HAVE\_EMTEXDIR}} while
-compiling. For kpathsea, define \PB{\.{HAVE\_LIBKPATHSEA}}. If you have a
-version of
-kpathsea older than~3.2, define \PB{\.{OLD\_KPATHSEA}} additionally. For
-kpathsea
-older than~3.0, \PB{\.{VERY\_OLD\_KPATHSEA}} must be also set. For MikTeX,
-define
+compiling. For kpathsea, define \PB{\.{HAVE\_LIBKPATHSEA}}. For MikTeX, define
 \PB{\.{HAVE\_MIKTEX}}. If none of these macros is defined, a simple \PB{%
 \\{fopen}(\,)} will
 be used instead.
 
 \Y\B\4\X10:Include files\X${}\mathrel+\E{}$\6
 \8\#\&{if} \&{defined} (\.{HAVE\_LIBKPATHSEA})\6
-\8\#\&{ifdef} \.{VERY\_OLD\_KPATHSEA}\6
-\8\#\&{include} \.{"kpathsea/proginit.h}\)\.{"}\6
-\8\#\&{include} \.{"kpathsea/progname.h}\)\.{"}\6
-\8\#\&{include} \.{"kpathsea/tex-glyph.}\)\.{h"}\6
-\8\#\&{else}\6
 \8\#\&{include} \.{"kpathsea/kpathsea.h}\)\.{"}\6
-\8\#\&{endif}\7
 \8\#\&{elif} \&{defined} (\.{HAVE\_EMTEXDIR})\6
 \8\#\&{include} \.{"emtexdir.h"}\6
 \8\#\&{elif} \&{defined} (\.{HAVE\_MIKTEX})\6
@@ -2607,13 +2594,7 @@ be used instead.
 
 \M{70}
 \Y\B\4\X2:Global variables\X${}\mathrel+\E{}$\6
-\8\#\&{if} \&{defined} (\.{HAVE\_LIBKPATHSEA})\6
-\8\#\&{ifdef} \&{KPSEDLL} \C{ this is kpathsea 3.3 and newer }\6
-\&{extern} \&{KPSEDLL} \&{char} ${}{*}\\{kpathsea\_version\_string};{}$\6
-\8\#\&{else}\6
-\&{extern} \&{DllImport} \&{char} ${}{*}\\{kpathsea\_version\_string};{}$\6
-\8\#\&{endif}\6
-\8\#\&{elif} \&{defined} (\.{HAVE\_EMTEXDIR})\6
+\8\#\&{if} \&{defined} (\.{HAVE\_EMTEXDIR})\6
 \&{char} \\{emtex\_version\_string}[\,]${}\K\.{"emTeXdir"};{}$\6
 \8\#\&{elif} ${}\R{}$\&{defined} (\.{HAVE\_MIKTEX})\6
 \&{char} \\{no\_version\_string}[\,]${}\K\.{"no\ search\ library"};{}$\6
@@ -2622,11 +2603,11 @@ be used instead.
 
 \M{71}
 \Y\B\4\X11:Prototypes\X${}\mathrel+\E{}$\6
-\&{char} ${}{*}\\{TeX\_search\_version}(\&{void}){}$;\par
+\&{const} \&{char} ${}{*}\\{TeX\_search\_version}(\&{void}){}$;\par
 \fi
 
 \M{72}
-\Y\B\&{char} ${}{*}\\{TeX\_search\_version}(\&{void}){}$\1\1\2\2\6
+\Y\B\&{const} \&{char} ${}{*}\\{TeX\_search\_version}(\&{void}){}$\1\1\2\2\6
 ${}\{{}$\6
 \8\#\&{if} \&{defined} (\.{HAVE\_LIBKPATHSEA})\1\6
 \&{return} \\{kpathsea\_version\_string};\6
@@ -2715,18 +2696,9 @@ configuration resp.\ HBF header files.
 
 \Y\B\4\X78:Initialize \TeX\ file searching\X${}\E{}$\6
 \8\#\&{if} \&{defined} (\.{HAVE\_LIBKPATHSEA})\6
-\8\#\&{ifdef} \.{OLD\_KPATHSEA}\6
-\\{kpse\_set\_progname}(\\{argv}[\T{0}]);\6
-\8\#\&{else}\6
-${}\\{kpse\_set\_program\_name}(\\{argv}[\T{0}],\39\.{"hbf2gf"});{}$\6
-\8\#\&{endif}\7
-\8\#\&{ifdef} \.{VERY\_OLD\_KPATHSEA}\6
-${}\\{kpse\_init\_prog}(\.{"HBF2GF"},\39\T{300},\39\.{"cx"},\39\\{true},\39%
-\.{"cmr10"});{}$\6
-\8\#\&{else}\6
+$\\{kpse\_set\_program\_name}(\\{argv}[\T{0}],\39\.{"hbf2gf"});{}$\6
 ${}\\{kpse\_init\_prog}(\.{"HBF2GF"},\39\T{300},\39\.{"cx"},\39\.{"cmr10"}){}$;%
 \7
-\8\#\&{endif}\7
 \8\#\&{elif} \&{defined} (\.{HAVE\_EMTEXDIR})\6
 \&{if} ${}(\R\\{dir\_setup}({\AND}\\{cfg\_path},\39\.{"HBFCFG"},\39\NULL,\39%
 \.{EDS\_BANG})){}$\5
@@ -2760,46 +2732,32 @@ versions, and within \.{HBF2GFINPUTS} for new versions.
 
 \M{80}
 \Y\B\8\#\&{if} \&{defined} (\.{HAVE\_LIBKPATHSEA})\6
-\&{char} ${}{*}\\{TeX\_search\_cfg\_file}(\\{name}){}$\1\1\6
-\&{char} ${}{*}\\{name};\2\2{}$\6
-${}\{{}$\6
-\8\#\&{ifdef} \.{OLD\_KPATHSEA}\1\6
-\&{return} \\{kpse\_find\_file}${}(\\{name},\39\\{kpse\_dvips\_config\_format},%
-\39\.{TRUE});{}$\6
-\8\#\&{else}\6
+\&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}\\{name}){}$\1\1\2%
+\2\6
+${}\{{}$\1\6
 \&{return} \\{kpse\_find\_file}${}(\\{name},\39\\{kpse\_program\_text\_format},%
 \39\.{TRUE});{}$\6
-\8\#\&{endif}\6
 \4${}\}{}$\2\7
-\&{char} ${}{*}\\{TeX\_search\_hbf\_file}(\\{name}){}$\1\1\6
-\&{char} ${}{*}\\{name};$ $\{{}$\6
-\8\#\&{ifdef} \.{VERY\_OLD\_KPATHSEA}\6
-\&{return} \\{kpse\_find\_file}${}(\\{name},\39\\{kpse\_dvips\_header\_format},%
-\39\.{TRUE});{}$\6
-\8\#\&{else}\6
-\8\#\&{ifndef} \&{KPSEDLL} \6
-\&{return} \\{kpse\_find\_file}${}(\\{name},\39\\{kpse\_type1\_format},\39%
-\.{TRUE});{}$\6
-\8\#\&{else}\6
+\&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}\\{name}){}$\1\1\2%
+\2\6
+${}\{{}$\1\6
 \&{return} \\{kpse\_find\_file}${}(\\{name},\39\\{kpse\_miscfonts\_format},\39%
 \.{TRUE});{}$\6
-\8\#\&{endif}\6
-\8\#\&{endif}\6
-$\}{}$\7
-\8\#\&{elif} \&{defined} (\.{HAVE\_EMTEXDIR})\6
-\&{char} ${}{*}\\{TeX\_search\_cfg\_file}(\\{name}){}$\1\1\6
-\&{char} ${}{*}\\{name};\2\2{}$\6
+\4${}\}{}$\2\7
+\8\#\&{elif} \&{defined} (\.{HAVE\_EMTEXDIR})\7
+\&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}\\{name}){}$\1\1\2%
+\2\6
 ${}\{{}$\1\6
 \&{return} \\{file\_find}${}(\\{name},\39{\AND}\\{cfg\_path});{}$\6
 \4${}\}{}$\2\7
-\&{char} ${}{*}\\{TeX\_search\_hbf\_file}(\\{name}){}$\1\1\6
-\&{char} ${}{*}\\{name};\2\2{}$\6
+\&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}\\{name}){}$\1\1\2%
+\2\6
 ${}\{{}$\1\6
 \&{return} \\{file\_find}${}(\\{name},\39{\AND}\\{hbf\_path});{}$\6
 \4${}\}{}$\2\7
 \8\#\&{elif} \&{defined} (\.{HAVE\_MIKTEX})\7
-\&{char} ${}{*}\\{TeX\_search\_cfg\_file}(\\{name}){}$\1\1\6
-\&{char} ${}{*}\\{name};\2\2{}$\6
+\&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}\\{name}){}$\1\1\2%
+\2\6
 ${}\{{}$\1\6
 \&{char} \\{result}[\.{\_MAX\_PATH}];\7
 \&{if} ${}(\R\\{miktex\_find\_input\_file}(\.{"hbf2gf"},\39{*}\\{name},\39%
@@ -2807,8 +2765,8 @@ ${}\{{}$\1\6
 \&{return} \T{0};\2\6
 \&{return} \\{strdup}(\\{result});\6
 \4${}\}{}$\2\7
-\&{char} ${}{*}\\{TeX\_search\_hbf\_file}(\\{name}){}$\1\1\6
-\&{char} ${}{*}\\{name};\2\2{}$\6
+\&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}\\{name}){}$\1\1\2%
+\2\6
 ${}\{{}$\1\6
 \&{char} \\{result}[\.{\_MAX\_PATH}];\7
 \&{if} ${}(\R\\{miktex\_find\_miscfont\_file}({*}\\{name},\39\\{result})){}$\1\5
@@ -2816,13 +2774,13 @@ ${}\{{}$\1\6
 \&{return} \\{strdup}(\\{result});\6
 \4${}\}{}$\2\7
 \8\#\&{else}\7
-\&{char} ${}{*}\\{TeX\_search\_cfg\_file}(\\{name}){}$\1\1\6
-\&{char} ${}{*}\\{name};\2\2{}$\6
+\&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}\\{name}){}$\1\1\2%
+\2\6
 ${}\{{}$\1\6
 \&{return} \\{name};\6
 \4${}\}{}$\2\7
-\&{char} ${}{*}\\{TeX\_search\_hbf\_file}(\\{name}){}$\1\1\6
-\&{char} ${}{*}\\{name};\2\2{}$\6
+\&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}\\{name}){}$\1\1\2%
+\2\6
 ${}\{{}$\1\6
 \&{return} \\{name};\6
 \4${}\}{}$\2\6

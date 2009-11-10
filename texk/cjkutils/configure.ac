@@ -36,6 +36,16 @@ AC_SUBST([XX_CPPFLAGS])
 
 KPSE_KPATHSEA_FLAGS
 
+if test "x$enable_build" != xno || test -f config.force; then
+
+KPSE_ADD_FLAGS([kpathsea])
+AC_CHECK_HEADER([kpathsea/version.h], [],
+                [AC_MSG_ERROR([Sorry, kpathsea too old])])
+KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
+
 dnl Rebuilding hbf2gf.c, hbf2gf.tex, and hbf2gf.tex requires ctangle, cweave, and tex
 do_cweb=$enable_maintainer_mode
 if test x"$do_cweb" = xyes; then

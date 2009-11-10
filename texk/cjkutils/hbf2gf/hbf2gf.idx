@@ -47,7 +47,6 @@
 \I\\{designsize}, \[21], 23.
 \I\\{dir}, \[75].
 \I\\{dir\_setup}, \[74], \[75], 78.
-\I\&{DllImport}, 70.
 \I\\{dot\_count}, \[15], 17, 18.
 \I\\{dpi\_x}, \[19], 21, 28, 51, 59.
 \I\\{dpi\_y}, \[19], 21, 28, 59.
@@ -98,8 +97,9 @@
 \I\\{grayrow}, \[27], 28, 30.
 \I\\{grP}, \[30], 32, 33.
 \I\.{HALFSCALE}, \[27], 28, 33, 34.
+\I\.{HAVE\_CONFIG\_H}, 10.
 \I\.{HAVE\_EMTEXDIR}, 69, 70, 72, 73, 74, 75, 78, 80.
-\I\.{HAVE\_LIBKPATHSEA}, 69, 70, 72, 78, 80.
+\I\.{HAVE\_LIBKPATHSEA}, 69, 72, 78, 80.
 \I\.{HAVE\_MIKTEX}, 69, 70, 72, 80.
 \I\\{have\_min\_char}, \[58], 59, 61.
 \I\&{HBF}, 2.
@@ -120,6 +120,7 @@
 \I\\{hbfGetCodeRange}, 60, 61.
 \I\\{hbfOpen}, 57.
 \I\\{hbfProperty}, 57.
+\I\.{HBF2GF\_VERSION}, \[5].
 \I\\{header}, \[13], 14.
 \I\|{i}, \[21], \[46], \[48], \[51], \[56], \[63].
 \I\\{input\_size\_x}, \[15], 28, 32, 33, 34, 36, 37, 57.
@@ -129,17 +130,12 @@
 \I\\{item}, \[37].
 \I\|{j}, \[9], \[51].
 \I\\{job\_extension}, \[49], 51, 59.
-\I\\{kpathsea\_version\_string}, \[70], 72.
-\I\\{kpse\_dvips\_config\_format}, 80.
-\I\\{kpse\_dvips\_header\_format}, 80.
+\I\\{kpathsea\_version\_string}, 72.
 \I\\{kpse\_find\_file}, 80.
 \I\\{kpse\_init\_prog}, 78.
 \I\\{kpse\_miscfonts\_format}, 80.
 \I\\{kpse\_program\_text\_format}, 80.
-\I\\{kpse\_set\_progname}, 78.
 \I\\{kpse\_set\_program\_name}, 78.
-\I\\{kpse\_type1\_format}, 80.
-\I\&{KPSEDLL}, 70, 80.
 \I\|{l}, \[4].
 \I\\{last\_char}, \[15], 17, 18, 23.
 \I\\{lastext}, \[56].
@@ -185,7 +181,6 @@
 \I\\{ofm\_file}, 4, \[49], 51, 59.
 \I\\{ofm\_header}, \[48].
 \I\\{old\_ch}, \[65].
-\I\.{OLD\_KPATHSEA}, 69, 78, 80.
 \I\\{out}, \[2], 12, 14, 18, 22, 23, 24, 43, 44, 46, 48, \[51].
 \I\\{out\_char}, \[27], 30, 42, 43.
 \I\\{out\_char\_p}, \[27], 30, 40.
@@ -228,6 +223,7 @@
 \I\.{PRINTER\_MIN\_RES\_Y}, \[53], 59.
 \I\\{printf}, 4, 5, 6, 12, 18, 46, 48, 51, 55.
 \I\\{prP}, \[30], 31, 32, 33.
+\I\|{Q}, \[65].
 \I\\{quiet}, \[2], 4, 7, 12, 18, 46, 48, 51, 55.
 \I\.{READ\_BIN}, \[2].
 \I\\{read\_config}, 4, \[54], \[55].
@@ -299,7 +295,6 @@
 \I\.{TM\_IN\_SYS\_TIME}, 10.
 \I\\{tmp}, \[28].
 \I\\{tolower}, 65.
-\I\\{true}, 78.
 \I\.{TRUE}, \[2], 4, 7, 9, 30, 59, 75, 80.
 \I\\{unicode}, \[2], 8, 9, 12, 28, 46, 51, 59.
 \I\.{USAGE}, \[6].
@@ -307,8 +302,6 @@
 \I\\{user\_min\_char}, \[58], 59, 61.
 \I\\{val}, \[75].
 \I\.{VALID\_SUBCODE}, 48, \[62], 63.
-\I\.{VERSION}, \[5].
-\I\.{VERY\_OLD\_KPATHSEA}, 69, 78, 80.
 \I\.{WHITE}, \[27], 42, 44.
 \I\.{WRITE\_BIN}, \[2], 12.
 \I\\{write\_coding}, 18, \[41], \[42].
