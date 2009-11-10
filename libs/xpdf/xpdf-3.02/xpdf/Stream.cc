@@ -323,6 +323,10 @@ ImageStream::ImageStream(Stream *strA, int widthA, int nCompsA, int nBitsA) {
   } else {
     imgLineSize = nVals;
   }
+  if (width > INT_MAX / nComps) {
+    // force a call to gmallocn(-1,...), which will throw an exception
+    imgLineSize = -1;
+  }
   imgLine = (Guchar *)gmallocn(imgLineSize, sizeof(Guchar));
   imgIdx = nVals;
 }

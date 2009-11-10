@@ -11,6 +11,7 @@
 #endif
 
 #include <stdio.h>
+#include <limits.h>
 #include "gmem.h"
 #include "SplashErrorCodes.h"
 #include "SplashBitmap.h"
@@ -27,30 +28,48 @@ SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPad,
   mode = modeA;
   switch (mode) {
   case splashModeMono1:
-    rowSize = (width + 7) >> 3;
+    if (width > 0) {
+      rowSize = (width + 7) >> 3;
+    } else {
+      rowSize = -1;
+    }
     break;
   case splashModeMono8:
-    rowSize = width;
+    if (width > 0) {
+      rowSize = width;
+    } else {
+      rowSize = -1;
+    }
     break;
   case splashModeRGB8:
   case splashModeBGR8:
-    rowSize = width * 3;
+    if (width > 0 && width <= INT_MAX / 3) {
+      rowSize = width * 3;
+    } else {
+      rowSize = -1;
+    }
     break;
 #if SPLASH_CMYK
   case splashModeCMYK8:
-    rowSize = width * 4;
+    if (width > 0 && width <= INT_MAX / 4) {
+      rowSize = width * 4;
+    } else {
+      rowSize = -1;
+    }
     break;
 #endif
   }
-  rowSize += rowPad - 1;
-  rowSize -= rowSize % rowPad;
-  data = (SplashColorPtr)gmalloc(rowSize * height);
+  if (rowSize > 0) {
+    rowSize += rowPad - 1;
+    rowSize -= rowSize % rowPad;
+  }
+  data = (SplashColorPtr)gmallocn(height, rowSize);
   if (!topDown) {
     data += (height - 1) * rowSize;
     rowSize = -rowSize;
   }
   if (alphaA) {
-    alpha = (Guchar *)gmalloc(width * height);
+    alpha = (Guchar *)gmallocn(width, height);
   } else {
     alpha = NULL;
   }

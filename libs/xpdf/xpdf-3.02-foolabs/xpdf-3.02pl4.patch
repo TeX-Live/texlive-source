@@ -1,0 +1,282 @@
+*** xpdf-3.02.orig/xpdf/Stream.cc	Fri Jul 24 14:30:46 2009
+--- xpdf-3.02/xpdf/Stream.cc	Mon Oct  5 11:07:49 2009
+***************
+*** 323,328 ****
+--- 323,332 ----
+    } else {
+      imgLineSize = nVals;
+    }
++   if (width > INT_MAX / nComps) {
++     // force a call to gmallocn(-1,...), which will throw an exception
++     imgLineSize = -1;
++   }
+    imgLine = (Guchar *)gmallocn(imgLineSize, sizeof(Guchar));
+    imgIdx = nVals;
+  }
+*** xpdf-3.02.orig/xpdf/PSOutputDev.cc	Tue Feb 27 14:05:52 2007
+--- xpdf-3.02/xpdf/PSOutputDev.cc	Fri Oct  2 12:38:58 2009
+***************
+*** 4301,4307 ****
+  	     width, -height, height);
+  
+    // allocate a line buffer
+!   lineBuf = (Guchar *)gmalloc(4 * width);
+  
+    // set up to process the data stream
+    imgStr = new ImageStream(str, width, colorMap->getNumPixelComps(),
+--- 4301,4307 ----
+  	     width, -height, height);
+  
+    // allocate a line buffer
+!   lineBuf = (Guchar *)gmallocn(width, 4);
+  
+    // set up to process the data stream
+    imgStr = new ImageStream(str, width, colorMap->getNumPixelComps(),
+diff -r -c xpdf-3.02.orig/splash/Splash.cc xpdf-3.02/splash/Splash.cc
+*** xpdf-3.02.orig/splash/Splash.cc	Tue Feb 27 14:05:52 2007
+--- xpdf-3.02/splash/Splash.cc	Fri Aug 14 14:05:08 2009
+***************
+*** 12,17 ****
+--- 12,18 ----
+  
+  #include <stdlib.h>
+  #include <string.h>
++ #include <limits.h>
+  #include "gmem.h"
+  #include "SplashErrorCodes.h"
+  #include "SplashMath.h"
+***************
+*** 1912,1918 ****
+    xq = w % scaledWidth;
+  
+    // allocate pixel buffer
+!   pixBuf = (SplashColorPtr)gmalloc((yp + 1) * w);
+  
+    // initialize the pixel pipe
+    pipeInit(&pipe, 0, 0, state->fillPattern, NULL, state->fillAlpha,
+--- 1913,1922 ----
+    xq = w % scaledWidth;
+  
+    // allocate pixel buffer
+!   if (yp < 0 || yp > INT_MAX - 1) {
+!     return splashErrBadArg;
+!   }
+!   pixBuf = (SplashColorPtr)gmallocn(yp + 1, w);
+  
+    // initialize the pixel pipe
+    pipeInit(&pipe, 0, 0, state->fillPattern, NULL, state->fillAlpha,
+***************
+*** 2208,2216 ****
+    xq = w % scaledWidth;
+  
+    // allocate pixel buffers
+!   colorBuf = (SplashColorPtr)gmalloc((yp + 1) * w * nComps);
+    if (srcAlpha) {
+!     alphaBuf = (Guchar *)gmalloc((yp + 1) * w);
+    } else {
+      alphaBuf = NULL;
+    }
+--- 2212,2223 ----
+    xq = w % scaledWidth;
+  
+    // allocate pixel buffers
+!   if (yp < 0 || yp > INT_MAX - 1 || w > INT_MAX / nComps) {
+!     return splashErrBadArg;
+!   }
+!   colorBuf = (SplashColorPtr)gmallocn(yp + 1, w * nComps);
+    if (srcAlpha) {
+!     alphaBuf = (Guchar *)gmallocn(yp + 1, w);
+    } else {
+      alphaBuf = NULL;
+    }
+diff -r -c xpdf-3.02.orig/splash/SplashErrorCodes.h xpdf-3.02/splash/SplashErrorCodes.h
+*** xpdf-3.02.orig/splash/SplashErrorCodes.h	Tue Feb 27 14:05:52 2007
+--- xpdf-3.02/splash/SplashErrorCodes.h	Fri Aug 14 14:03:46 2009
+***************
+*** 29,32 ****
+--- 29,34 ----
+  
+  #define splashErrSingularMatrix  8	// matrix is singular
+  
++ #define splashErrBadArg          9	// bad argument
++ 
+  #endif
+*** xpdf-3.02.orig/splash/SplashBitmap.cc	Tue Feb 27 14:05:52 2007
+--- xpdf-3.02/splash/SplashBitmap.cc	Wed Aug 19 14:55:39 2009
+***************
+*** 11,16 ****
+--- 11,17 ----
+  #endif
+  
+  #include <stdio.h>
++ #include <limits.h>
+  #include "gmem.h"
+  #include "SplashErrorCodes.h"
+  #include "SplashBitmap.h"
+***************
+*** 27,56 ****
+    mode = modeA;
+    switch (mode) {
+    case splashModeMono1:
+!     rowSize = (width + 7) >> 3;
+      break;
+    case splashModeMono8:
+!     rowSize = width;
+      break;
+    case splashModeRGB8:
+    case splashModeBGR8:
+!     rowSize = width * 3;
+      break;
+  #if SPLASH_CMYK
+    case splashModeCMYK8:
+!     rowSize = width * 4;
+      break;
+  #endif
+    }
+!   rowSize += rowPad - 1;
+!   rowSize -= rowSize % rowPad;
+!   data = (SplashColorPtr)gmalloc(rowSize * height);
+    if (!topDown) {
+      data += (height - 1) * rowSize;
+      rowSize = -rowSize;
+    }
+    if (alphaA) {
+!     alpha = (Guchar *)gmalloc(width * height);
+    } else {
+      alpha = NULL;
+    }
+--- 28,75 ----
+    mode = modeA;
+    switch (mode) {
+    case splashModeMono1:
+!     if (width > 0) {
+!       rowSize = (width + 7) >> 3;
+!     } else {
+!       rowSize = -1;
+!     }
+      break;
+    case splashModeMono8:
+!     if (width > 0) {
+!       rowSize = width;
+!     } else {
+!       rowSize = -1;
+!     }
+      break;
+    case splashModeRGB8:
+    case splashModeBGR8:
+!     if (width > 0 && width <= INT_MAX / 3) {
+!       rowSize = width * 3;
+!     } else {
+!       rowSize = -1;
+!     }
+      break;
+  #if SPLASH_CMYK
+    case splashModeCMYK8:
+!     if (width > 0 && width <= INT_MAX / 4) {
+!       rowSize = width * 4;
+!     } else {
+!       rowSize = -1;
+!     }
+      break;
+  #endif
+    }
+!   if (rowSize > 0) {
+!     rowSize += rowPad - 1;
+!     rowSize -= rowSize % rowPad;
+!   }
+!   data = (SplashColorPtr)gmallocn(height, rowSize);
+    if (!topDown) {
+      data += (height - 1) * rowSize;
+      rowSize = -rowSize;
+    }
+    if (alphaA) {
+!     alpha = (Guchar *)gmallocn(width, height);
+    } else {
+      alpha = NULL;
+    }
+*** xpdf-3.02.orig/xpdf/XRef.cc	Tue Feb 27 14:05:52 2007
+--- xpdf-3.02/xpdf/XRef.cc	Tue Oct 13 11:57:24 2009
+***************
+*** 52,57 ****
+--- 52,59 ----
+    // generation 0.
+    ObjectStream(XRef *xref, int objStrNumA);
+  
++   GBool isOk() { return ok; }
++ 
+    ~ObjectStream();
+  
+    // Return the object number of this object stream.
+***************
+*** 67,72 ****
+--- 69,75 ----
+    int nObjects;			// number of objects in the stream
+    Object *objs;			// the objects (length = nObjects)
+    int *objNums;			// the object numbers (length = nObjects)
++   GBool ok;
+  };
+  
+  ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
+***************
+*** 80,85 ****
+--- 83,89 ----
+    nObjects = 0;
+    objs = NULL;
+    objNums = NULL;
++   ok = gFalse;
+  
+    if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
+      goto err1;
+***************
+*** 105,110 ****
+--- 109,121 ----
+      goto err1;
+    }
+  
++   // this is an arbitrary limit to avoid integer overflow problems
++   // in the 'new Object[nObjects]' call (Acrobat apparently limits
++   // object streams to 100-200 objects)
++   if (nObjects > 1000000) {
++     error(-1, "Too many objects in an object stream");
++     goto err1;
++   }
+    objs = new Object[nObjects];
+    objNums = (int *)gmallocn(nObjects, sizeof(int));
+    offsets = (int *)gmallocn(nObjects, sizeof(int));
+***************
+*** 161,170 ****
+    }
+  
+    gfree(offsets);
+  
+   err1:
+    objStr.free();
+-   return;
+  }
+  
+  ObjectStream::~ObjectStream() {
+--- 172,181 ----
+    }
+  
+    gfree(offsets);
++   ok = gTrue;
+  
+   err1:
+    objStr.free();
+  }
+  
+  ObjectStream::~ObjectStream() {
+***************
+*** 837,842 ****
+--- 848,858 ----
+  	delete objStr;
+        }
+        objStr = new ObjectStream(this, e->offset);
++       if (!objStr->isOk()) {
++ 	delete objStr;
++ 	objStr = NULL;
++ 	goto err;
++       }
+      }
+      objStr->getObject(e->gen, num, obj);
+      break;

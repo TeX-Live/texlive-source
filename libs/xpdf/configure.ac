@@ -13,7 +13,7 @@ AC_CONFIG_SRCDIR([xpdf-]xpdf_version[/xpdf/Array.cc])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2 no-define])
+AM_INIT_AUTOMAKE([foreign no-define])
 AM_MAINTAINER_MODE
 
 dnl ##### Optional features.

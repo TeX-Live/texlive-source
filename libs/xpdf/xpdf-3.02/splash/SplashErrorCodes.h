@@ -29,4 +29,6 @@
 
 #define splashErrSingularMatrix  8	// matrix is singular
 
+#define splashErrBadArg          9	// bad argument
+
 #endif

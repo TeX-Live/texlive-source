@@ -1,3 +1,9 @@
+2009-09-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-pl4 (new): Official 3.02pl4 patch plus change of
+	xpdfVersion "3.02pl3" -> "3.02pl4"
+	* patch-40-*: Adapted to presence of patch-04-pl4.
+
 2009-05-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-16-size-of-struct (removed): unnecessary.
@@ -38,9 +44,9 @@
 
 2009-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* patch-02-pl3 (new): Official 3.02pl3 patch plus change of
+	* patch-03-pl3 (new): Official 3.02pl3 patch plus change of
 	xpdfVersion "3.02pl2" -> "3.02pl3"
-	* patch-[12]?-*: adapted to presence of patch-01-pl3.
+	* patch-[12]?-*: adapted to presence of patch-03-pl3.
 
 2009-04-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

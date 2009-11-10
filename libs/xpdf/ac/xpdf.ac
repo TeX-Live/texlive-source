@@ -3,5 +3,7 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system xpdf
-KPSE_CHECK_LIB([xpdf], [free], [goo/gtypes.h])
+## basic check of system xpdf (poppler)
+KPSE_TRY_LIBXX([xpdf],
+               [#include <GfxFont.h>],
+               [GfxFont *gfxFont; gfxFont->decRefCnt();])

@@ -19,6 +19,10 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
 ## We want to re-distribute the whole original xpdf source tree.
 ##
 ## With current automake (1.10.2) 'make distcheck' fails when
@@ -36,7 +40,7 @@ EXTRA_DIST +=  $(XPDF_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(XPDF_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 	rm -f $(distdir)/$(XPDF_TREE)/install-sh
 
 SUBDIRS = goo fofi xpdf

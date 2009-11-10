@@ -59,6 +59,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   objs = NULL;
   objNums = NULL;
   offsets = NULL;
+  ok = gFalse;
 
   if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
     goto err1;
@@ -85,6 +86,13 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     goto err1;
   }
 
+  // this is an arbitrary limit to avoid integer overflow problems
+  // in the 'new Object[nObjects]' call (Acrobat apparently limits
+  // object streams to 100-200 objects)
+  if (nObjects > 1000000) {
+    error(-1, "Too many objects in an object stream");
+    goto err1;
+  }
   objs = new Object[nObjects];
   objNums = (int *)gmallocn(nObjects, sizeof(int));
   offsets = (int *)gmallocn(nObjects, sizeof(int));
@@ -101,7 +109,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
       obj1.free();
       obj2.free();
       delete parser;
-//       gfree(offsets);
+//    gfree(offsets);
       goto err1;
     }
     objNums[i] = obj1.getInt();
@@ -111,7 +119,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     if (objNums[i] < 0 || offsets[i] < 0 ||
 	(i > 0 && offsets[i] < offsets[i-1])) {
       delete parser;
-//       gfree(offsets);
+//    gfree(offsets);
       goto err1;
     }
   }
@@ -140,11 +148,11 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
     delete parser;
   }
 
-//   gfree(offsets);
+//gfree(offsets);
+  ok = gTrue;
 
  err1:
   objStr.free();
-  return;
 }
 
 ObjectStream::~ObjectStream() {
@@ -818,6 +826,11 @@ Object *XRef::fetch(int num, int gen, Object *obj) {
 	delete objStr;
       }
       objStr = new ObjectStream(this, e->offset);
+      if (!objStr->isOk()) {
+	delete objStr;
+	objStr = NULL;
+	goto err;
+      }
     }
     objStr->getObject(e->gen, num, obj);
     break;

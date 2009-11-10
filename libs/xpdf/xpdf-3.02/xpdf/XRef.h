@@ -32,6 +32,8 @@ public:
   // generation 0.
   ObjectStream(XRef *xref, int objStrNumA);
 
+  GBool isOk() { return ok; }
+
   ~ObjectStream();
 
   // Return the object number of this object stream.
@@ -46,12 +48,13 @@ public:
 
 private:
 
-  int objStrNum;             // object number of the object stream
-  int nObjects;                      // number of objects in the stream
-  Object *objs;                      // the objects (length = nObjects)
-  int *objNums;                      // the object numbers (length = nObjects)
-  int *offsets;                      // the object offsets (length = nObjects)
+  int objStrNum;		// object number of the object stream
+  int nObjects;			// number of objects in the stream
+  Object *objs;			// the objects (length = nObjects)
+  int *objNums;			// the object numbers (length = nObjects)
+  int *offsets;			// the object offsets (length = nObjects)
   Guint firstOffset;
+  GBool ok;
 };
 
 
