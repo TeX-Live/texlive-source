@@ -19,7 +19,7 @@ icu - as with graphite-engine, modified for xetex
 
 jpeg - ?
 
-libpng 1.2.38 - http://www.libpng.org/ - used by many
+libpng 1.2.40 - http://www.libpng.org/ - used by many
 
 md5 - used by pdftex, provenance unknown
 

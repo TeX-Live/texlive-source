@@ -8,7 +8,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_define([libpng_major], [1])[]dnl
 m4_define([libpng_minor], [2])[]dnl
-m4_define([libpng_micro], [39])[]dnl using unmodified libpng source tree
+m4_define([libpng_micro], [40])[]dnl using unmodified libpng source tree
 m4_define([libpng_version], libpng_major.libpng_minor.libpng_micro)[]dnl
 AC_INIT([libpng for TeX Live], libpng_version, [tex-k@tug.org])
 AC_PREREQ([2.63])

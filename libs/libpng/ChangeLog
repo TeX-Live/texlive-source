@@ -1,6 +1,10 @@
+2009-07-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpng-1.2.40.
+
 2009-08-13  Martin Schröder <martin@oneiros.de>
 
-	Import libpng-1.2.39
+	Import libpng-1.2.39.
 
 	* libpng-1.2.38-PATCHES: Remove our one patch
 
