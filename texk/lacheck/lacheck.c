@@ -2115,7 +2115,7 @@ char *strstr();
 
   /* macros */
 
-#define CG_NAME (char *)gstack[gstackp-1].s_name
+#define CG_NAME gstack[gstackp-1].s_name
 #define CG_TYPE gstack[gstackp-1].s_type
 #define CG_LINE gstack[gstackp-1].s_line
 #define CG_ITALIC gstack[gstackp-1].italic
@@ -2123,7 +2123,7 @@ char *strstr();
 
 char *bg_command(char *name);
 void pop(void);
-void push(unsigned char *p_name, int p_type, int p_line);
+void push(const char *p_name, int p_type, int p_line);
 void linecount(void);
 void g_checkend(int n);
 void e_checkend(int n, char *name);
@@ -2144,7 +2144,7 @@ char verb_char;
 
 typedef struct tex_group 
  {
-    unsigned char *s_name;
+    char *s_name;
     int s_type;
     int s_line;
     int italic;
@@ -2887,7 +2887,7 @@ YY_RULE_SETUP
 #line 471 "lacheck.l"
 {
  {
-    push((unsigned char *)"\\begingroup", 1, line_count); 
+    push("\\begingroup", 1, line_count); 
  }}
 	YY_BREAK
 case 46:
@@ -4434,7 +4434,7 @@ strstr(string, substring)
 }
 #endif /* NEED_STRSTR */
 
-void push(unsigned char *p_name, int p_type, int p_line)
+void push(const char *p_name, int p_type, int p_line)
 {
     if ( gstackp == gstack_size ) {	/* extend stack */
 	gstack_size *= 2;
@@ -4446,14 +4446,14 @@ void push(unsigned char *p_name, int p_type, int p_line)
     }
     
     if ( (gstack[gstackp].s_name =
-		(unsigned char *)malloc(strlen((char *)p_name) + 1)) == NULL ||
+		(char *)malloc(strlen(p_name) + 1)) == NULL ||
          (gstack[gstackp].s_file =
 		(char *)malloc(strlen(file_name) + 1)) == NULL ) {
 	fprintf(stderr, "%s: out of memory\n", PROGNAME);
 	exit(3);
     }
 
-    strcpy((char *)gstack[gstackp].s_name,(char *)p_name);
+    strcpy(gstack[gstackp].s_name, p_name);
     gstack[gstackp].s_type = p_type;
     gstack[gstackp].s_line = p_line;	
     gstack[gstackp].italic = (  (p_type == 4 || p_type == 5)

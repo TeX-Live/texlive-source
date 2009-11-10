@@ -1,3 +1,11 @@
+2009-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* lacheck.l (push): Change param1 from 'unsigned char *' to
+	'const char *'.
+	(struct tex_group}: Change member s_name from 'unsigned char *'
+	to 'char *' and drop or adjust casts accordingly.
+
 2009-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: lacheck.l provides yywrap, no need for $(LEXLIB).
