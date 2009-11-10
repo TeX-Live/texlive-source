@@ -1,3 +1,16 @@
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* dt2dv.c: Constify various global, stuct member, arg, and
+	local strings.
+	(progname, nfile, {dtl,dvi}_{fp,filename}):  Drop global
+	initializers, they are initialized in main().
+	(dvi_stdout, open_dtl, open_dvi, process, read_line_char,
+	unread_char): Drop nested extern declarations for globals.
+	(free_cmds): Rename arg cmd_table=>cmds, not to shadow a global.
+	* dv2dt.c (struct op_info_st, struct op_table_st): Constify
+	strings members.
+
 2009-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): remove -DNeedFunctionPrototypes.

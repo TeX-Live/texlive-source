@@ -48,7 +48,7 @@ extern int isatty (int );
      number of args,
      string of arguments.
 */
-struct op_info_st {int code; char * name; int nargs; char * args; };
+struct op_info_st {int code; const char * name; int nargs; const char * args; };
 
 typedef  struct op_info_st  op_info;
 
@@ -59,7 +59,7 @@ typedef  struct op_info_st  op_info;
      last opcode,
      pointer to opcode info.
 */
-struct op_table_st {char * name; int first; int last; op_info * list; };
+struct op_table_st {const char * name; int first; int last; op_info * list; };
 
 typedef  struct op_table_st  op_table;
 

@@ -91,7 +91,7 @@ typedef char Boolean;
 typedef struct
 {
     Byte first_code;
-    char * name;
+    const char * name;
     Boolean has_suffix;
     Byte first_suffix, last_suffix;
 } CmdPrefix;
@@ -138,15 +138,15 @@ CmdTable cmd_table;
 typedef struct
 {
   int code;
-  char * name;
+  const char * name;
   int nargs;
-  char * args;
+  const char * args;
 } op_info;
 
 /* name of table, first opcode, last opcode, pointer to opcode info. */
 typedef struct
 {
-  char * name;
+  const char * name;
   int first;
   int last;
   op_info * list;
@@ -223,15 +223,15 @@ op_table  fnt  =  {FONT, 235, 238, fnt_n};
 
 Void mem_viol ARGS((int sig));
 Void give_help (VOID);
-int parse ARGS((char * s));
-Void process ARGS((char * s));
+int parse ARGS((const char * s));
+Void process ARGS((const char * s));
 
 Void no_op (VOID);
 Void dtl_stdin (VOID);
 Void dvi_stdout (VOID);
 
-int open_dtl ARGS((char * dtl_file, FILE ** pdtl));
-int open_dvi ARGS((char * dvi_file, FILE ** pdvi));
+int open_dtl ARGS((const char * dtl_file, FILE ** pdtl));
+int open_dvi ARGS((const char * dvi_file, FILE ** pdvi));
 
 int dt2dv ARGS((FILE * dtl, FILE * dvi));
 
@@ -241,7 +241,7 @@ Void dinfo (VOID);
 Void dexit ARGS((int n));
 
 int cons_cmds ARGS((int nprefixes, CmdPrefix * prefix, CmdTable cmds));
-Void free_cmds ARGS((CmdTable cmd_table));
+Void free_cmds ARGS((CmdTable cmds));
 
 int get_line ARGS((FILE * fp, Line * line, int max));
 int read_line_char ARGS((FILE * fp, int * ch));
@@ -302,9 +302,9 @@ int post_post ARGS((FILE * dtl,  FILE * dvi));
 
 typedef struct
 {
-  char * keyword;  /* command line option keyword */
-  int * p_var;     /* pointer to option variable */
-  char * desc;     /* description of keyword and value */
+  const char * keyword;  /* command line option keyword */
+  int * p_var;           /* pointer to option variable */
+  const char * desc;     /* description of keyword and value */
   Void (* p_fn) (VOID);  /* pointer to function called when option is set */
 } Options;
 
@@ -318,8 +318,8 @@ Options opts[] =
 };
 /* opts[] */
 
-char * progname = "";  /* intended for name of this program */
-int nfile = 0;  /* number of filename arguments on the command line */
+const char * progname;  /* intended for name of this program */
+int nfile;  /* number of filename arguments on the command line */
 
 #define PRINT_PROGNAME  fprintf (stderr, "%s ", progname)
 
@@ -328,11 +328,11 @@ int nfile = 0;  /* number of filename arguments on the command line */
 #define gfree(p) {if (p) free (p);}
 
 
-FILE * dtl_fp = NULL;
-FILE * dvi_fp = NULL;
+FILE * dtl_fp;
+FILE * dvi_fp;
 
-char * dtl_filename = "";
-char * dvi_filename = "";
+const char * dtl_filename;
+const char * dvi_filename;
 
 
 int
@@ -434,7 +434,7 @@ Void
 give_help (VOID)
 {
   int i;
-  char * keyword;
+  const char * keyword;
   fprintf (stderr, "usage:   ");
   PRINT_PROGNAME;
   fprintf (stderr, "[options]  dtl_file  dvi_file");
@@ -459,9 +459,6 @@ Void no_op (VOID)
 
 Void dtl_stdin (VOID)
 {
-  extern FILE * dtl_fp;
-  extern int nfile;
-
   dtl_fp = stdin;
   dtl_filename = "Standard Input";
   ++ nfile;
@@ -469,9 +466,6 @@ Void dtl_stdin (VOID)
 
 Void dvi_stdout (VOID)
 {
-  extern FILE * dvi_fp;
-  extern int nfile;
-
   /* ! Perilous to monitors! */
   dvi_fp = stdout;
   dvi_filename = "Standard Output";
@@ -484,15 +478,15 @@ Void dvi_stdout (VOID)
 int
 parse
 #ifdef STDC
-  (char * s)
+  (const char * s)
 #else
   (s)
-  char * s;
+  const char * s;
 #endif
 /* parse one command-line argument, `s' */
 {
   int i;
-  char * keyword;
+  const char * keyword;
   for (i=0; (keyword = opts[i].keyword) != NULL; i++)
   {
     if (strncmp (s, keyword, strlen (keyword)) == 0)
@@ -514,16 +508,14 @@ parse
 int
 open_dtl
 #ifdef STDC
-  (char * dtl_file, FILE ** pdtl)
+  (const char * dtl_file, FILE ** pdtl)
 #else
   (dtl_file, pdtl)
-  char * dtl_file;
+  const char * dtl_file;
   FILE ** pdtl;
 #endif
 /* I:  dtl_file;  I:  pdtl;  O:  *pdtl. */
 {
-  extern char * dtl_filename;
-
   dtl_filename = dtl_file;
 
   if (dtl_filename == NULL)
@@ -561,16 +553,14 @@ open_dtl
 int
 open_dvi
 #ifdef STDC
-  (char * dvi_file, FILE ** pdvi)
+  (const char * dvi_file, FILE ** pdvi)
 #else
   (dvi_file, pdvi)
-  char * dvi_file;
+  const char * dvi_file;
   FILE ** pdvi;
 #endif
 /* I:  dvi_file;  I:  pdvi;  O:  *pdvi. */
 {
-  extern char * dvi_filename;
-
   dvi_filename = dvi_file;
 
   if (dvi_filename == NULL)
@@ -608,14 +598,12 @@ open_dvi
 Void
 process
 #ifdef STDC
-  (char * s)
+  (const char * s)
 #else
   (s)
-  char * s;
+  const char * s;
 #endif
 {
-  extern FILE * dtl_fp, * dvi_fp;
-  extern int nfile;
   if (dtl_fp == NULL)  /* first filename assumed to be DTL input */
   {
     open_dtl (s, &dtl_fp);
@@ -1002,15 +990,15 @@ cons_cmds
 Void
 free_cmds
 #ifdef STDC
-  (CmdTable cmd_table)
+  (CmdTable cmds)
 #else
-  (cmd_table)
-  CmdTable cmd_table;
+  (cmds)
+  CmdTable cmds;
 #endif
 {
   int i;
   for (i=0; i < NCMDS; i++)
-    gfree (cmd_table[i]);
+    gfree (cmds[i]);
 }
 /* free_cmds */
 
@@ -1054,7 +1042,6 @@ read_line_char
 /* otherwise read another dtl_line from fp */
 /* return 1 if a character is read, 0 if at end of fp file */
 {
-  extern Line dtl_line;
   if (dtl_line.wrote == 0 || dtl_line.read >= dtl_line.wrote)
   {
     int line_status;
@@ -1447,7 +1434,6 @@ unread_char (VOID)
 /* wind input back, to allow rereading of one character */
 /* return 1 if this works, 0 on error */
 {
-  extern Line dtl_line;
   int status;
   if (dtl_line.read > 0)
   {
