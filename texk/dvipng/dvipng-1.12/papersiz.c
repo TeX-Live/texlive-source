@@ -36,20 +36,21 @@ const int32_t lengthsp[]={ 1L, 65536L, 65782L,
  *   Advance the passed pointer as well.
  */
 
-static int32_t myatodim(char ** p)
+static int32_t myatodim(const char ** p)
 { 
   double tmp; /* double accuracy is enough, I think */
   int i=0;
+  char *q;
 
-  tmp = strtod(*p,p);
-  while (**p == ' ') 
-    (*p)++;
-  while (i<8 && ((*p)[0]!=lengthnames[i][0] || (*p)[1]!=lengthnames[i][1]))
+  tmp = strtod(*p,&q);
+  while (*q == ' ') 
+    q++;
+  while (i<8 && (q[0]!=lengthnames[i][0] || q[1]!=lengthnames[i][1]))
     i++; 
-  if (i==8 && ((*p)[0]!=lengthnames[i][0] || (*p)[1]!=lengthnames[i][1]))
-    Warning("unrecognized length unit \"%.2s\", assuming inches",*p);
-  while (**p != ',' && **p !='\0')
-    (*p)++;
+  if (i==8 && (q[0]!=lengthnames[i][0] || q[1]!=lengthnames[i][1]))
+    Warning("unrecognized length unit \"%.2s\", assuming inches",q);
+  while (*q != ',' && *q !='\0')
+    q++;
   tmp = tmp*lengthsp[i]*dpi/4736286L; /*   sp * dots/in / (sp/in), convert sp to pixels   */
   return((int32_t) tmp);
 }
@@ -60,7 +61,7 @@ static int32_t myatodim(char ** p)
  *   the string after the `papersize=' specification.
  */
 
-void handlepapersize(char * p, int32_t * x, int32_t * y)
+void handlepapersize(const char * p, int32_t * x, int32_t * y)
 { 
    while (*p == ' ')
       p++ ;

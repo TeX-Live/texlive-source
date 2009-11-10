@@ -223,9 +223,9 @@ void    DecodeString(char *);
 bool    MmapFile (char *filename,struct filemmap *fmmap);
 void    UnMmapFile(struct filemmap* fmmap);
 
-void    Message(int, char *fmt, ...);
-void    Warning(char *fmt, ...);
-void    Fatal(char *fmt, ...);
+void    Message(int, const char *fmt, ...);
+void    Warning(const char *fmt, ...);
+void    Fatal(const char *fmt, ...);
 
 int32_t   SNumRead(unsigned char*, register int);
 uint32_t   UNumRead(unsigned char*, register int);
@@ -354,10 +354,10 @@ void    LoadT1(int32_t, struct char_entry *);
 #endif
 
 /********************************************************/
-/*********************  pplist.h  ***********************/
+/*********************  ppagelist.h  ********************/
 /********************************************************/
 
-bool    ParsePages(char*);
+bool    ParsePages(const char*);
 void    FirstPage(int32_t,bool);
 void    LastPage(int32_t,bool);
 void    ClearPpList(void);
@@ -396,19 +396,19 @@ void      BeginVFMacro(struct font_entry*);
 void      EndVFMacro(void);
 
 /**************************************************/
-void handlepapersize(char*,int32_t*,int32_t*);
+void handlepapersize(const char*,int32_t*,int32_t*);
 
-void stringrgb(char* colorstring,int *r,int *g,int *b);
-void background(char *);
+void stringrgb(const char* colorstring,int *r,int *g,int *b);
+void background(const char *);
 void initcolor(void);
 void popcolor(void);
-void pushcolor(char *);
-void resetcolorstack(char *);
+void pushcolor(const char *);
+void resetcolorstack(const char *);
 void StoreColorStack(struct page_list *tpagep);
 void ReadColorStack(struct page_list *tpagep);
 void StoreBackgroundColor(struct page_list *tpagep);
 void ClearColorNames(void);
-void InitXColorPrologue(char* prologuename);
+void InitXColorPrologue(const char* prologuename);
 
 /**********************************************************************/
 /*************************  Global Variables  *************************/

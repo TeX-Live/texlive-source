@@ -132,7 +132,7 @@ static void writepscode(struct pscode* pscodep, FILE* psstream)
 
 
 static gdImagePtr
-ps2png(struct pscode* pscodep, char *device, int hresolution, int vresolution, 
+ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolution, 
        int llx, int lly, int urx, int ury, int bgred, int bggreen, int bgblue)
 {
 #ifndef MIKTEX
@@ -305,7 +305,7 @@ rescale(gdImagePtr psimage, int pngwidth, int pngheight)
   return(scaledimage);
 }
 
-static void newpsheader(char* special) {
+static void newpsheader(const char* special) {
   struct pscode* tmp;
   char* txt;
 
@@ -669,6 +669,7 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
       struct pscode *tmp;
       gdImagePtr psimage=NULL;
       char *txt;
+      const char *newspecial=NULL; /* Avoid warning from special="..." */
       
       /* Some packages split their literal PostScript code into
 	 several specials. Check for those, and concatenate them so
@@ -694,9 +695,9 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
 	   specials. The first numbers are generally valid for the bop
 	   instruction, and the latter code is to move the origin to
 	   the right place. */
-	special="ps:: 39139632 55387786 1000 600 600 (tikzdefault.dvi) @start 1 0 bop pgfo 0 0 matrix defaultmatrix transform itransform translate";
+	newspecial="ps:: 39139632 55387786 1000 600 600 (tikzdefault.dvi) @start 1 0 bop pgfo 0 0 matrix defaultmatrix transform itransform translate";
       else if (strcmp(special,"ps:: pgfc")==0)
-	special="ps:: pgfc eop end";
+	newspecial="ps:: pgfc eop end";
       nextisps=DVIIsNextPSSpecial(dvi);
       if (psenvironment || nextisps) {
 	if (!nextisps) {
@@ -705,12 +706,20 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
 	}
 	/* Don't use alloca, we do not want to run out of stack space */
 	DEBUG_PRINT(DEBUG_GS,("\n  PS SPECIAL "));
-	txt=malloc(strlen(special)+1);
-	strcpy(txt,special);
+	if (newspecial == NULL)
+	  newspecial=special;
+	if ((txt=malloc(strlen(newspecial)+1))==NULL)
+	  Fatal("cannot allocate space for raw PostScript special");
+	strcpy(txt,newspecial);
 	PSCodeInit(tmp,txt);
 	return;
       }
       DEBUG_PRINT(DEBUG_DVI,("\n  LAST PS SPECIAL "));
+      if (newspecial != NULL) {
+	if ((special=malloc(strlen(newspecial)+1))==NULL)
+	  Fatal("cannot allocate space for raw PostScript special");
+	strcpy(special,newspecial);
+      }
       PSCodeInit(tmp,special);
       /* Now, render image */
       if (option_flags & NO_GHOSTSCRIPT)
@@ -752,6 +761,8 @@ void SetSpecial(char * special, int32_t hh, int32_t vv)
       }
       free(pscodep);
       pscodep=NULL;
+      if (newspecial != NULL)
+	free(special);
       if (psimage==NULL) 
 	page_flags |= PAGE_GAVE_WARN;
       Message(BE_NONQUIET,">");

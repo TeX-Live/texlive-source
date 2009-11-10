@@ -9,7 +9,7 @@ TEXMFLOCAL=$(kpsewhich --expand-var='$TEXMFLOCAL')
 
 export TEXMFCNF TEXFONTMAPS ENCFONTS TEXMFMAIN TEXMFDIST TEXMFLOCAL
 
-latex $srcdir/test_dvipng.tex || exit 77
+latex $srcdir/$DVIPNG_TREE/test_dvipng.tex || exit 77
 
 ./dvipng -T tight -strict test_dvipng || exit 1
 

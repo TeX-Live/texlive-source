@@ -121,6 +121,7 @@ DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
+DVIPNG_TREE = @DVIPNG_TREE@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -145,7 +146,6 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
 KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
-KPSEWHICH = @KPSEWHICH@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -171,6 +171,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 POW_LIB = @POW_LIB@
@@ -241,8 +242,15 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 #
-info_TEXINFOS = dvipng.texi
-dvipng_TEXINFOS = readme.texi install.texi macros.texi dvipng.help
+info_TEXINFOS = \
+	dvipng.texi
+
+dvipng_TEXINFOS = \
+	readme.texi \
+	install.texi \
+	macros.texi \
+	dvipng.help
+
 dist_noinst_SCRIPTS = texi2pod.pl
 dist_man1_MANS = dvipng.1
 all: all-am
@@ -559,7 +567,7 @@ clean-am: clean-aminfo clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-local
+distclean-am: clean-am distclean-generic
 
 dvi: dvi-am
 
@@ -706,19 +714,18 @@ uninstall-man: uninstall-man1
 
 .PHONY: all all-am check check-am clean clean-aminfo clean-generic \
 	clean-libtool dist-info distclean distclean-generic \
-	distclean-libtool distclean-local distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-data-hook install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-aminfo \
-	maintainer-clean-generic mostlyclean mostlyclean-aminfo \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	uninstall uninstall-am uninstall-dvi-am uninstall-hook \
-	uninstall-html-am uninstall-info-am uninstall-man \
-	uninstall-man1 uninstall-pdf-am uninstall-ps-am
+	distclean-libtool distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am \
+	install-data-hook install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-aminfo maintainer-clean-generic mostlyclean \
+	mostlyclean-aminfo mostlyclean-generic mostlyclean-libtool pdf \
+	pdf-am ps ps-am uninstall uninstall-am uninstall-dvi-am \
+	uninstall-hook uninstall-html-am uninstall-info-am \
+	uninstall-man uninstall-man1 uninstall-pdf-am uninstall-ps-am
 
 dvipng.1: dvipng.texi readme.texi
 	$(srcdir)/texi2pod.pl -D man $(srcdir)/dvipng.texi | \
@@ -727,42 +734,12 @@ dvipng.1: dvipng.texi readme.texi
 		dvipng.pod > dvipng.1
 	rm dvipng.pod
 
-www: dvipng.texi $(dvipng_TEXINFOS)
-	$(mkdir_p) www
-	$(TEXI2HTML) -split chapter -nosec-nav -subdir html \
-	   -I $(srcdir) $(srcdir)/dvipng.texi
-	(cd html; for i in *; do \
-	   sed -e "s/Jan-A/Jan-\&Aring\;/g" $$i > ../www/$$i; \
-	done) 
-	cp www/dvipng.html www/index.html
-	rm -rf html
-
-dvipng_mono.html: dvipng.texi $(dvipng_TEXINFOS)
-	$(TEXI2HTML) --monolithic -nomenu -nosec_nav -o dvipng_mono.html \
-		 -I $(srcdir) $(srcdir)/dvipng.texi
-
-distclean-local:
-	rm -rf www
-	rm -f dvipng_mono.html
-
 @have_gif_TRUE@install-data-hook:
 @have_gif_TRUE@	cd $(DESTDIR)$(man1dir) && \
 @have_gif_TRUE@	  rm -f dvigif.1 && \
 @have_gif_TRUE@	  $(LN_S) dvipng.1 dvigif.1
 @have_gif_TRUE@uninstall-hook:
 @have_gif_TRUE@	rm -f $(DESTDIR)$(man1dir)/dvigif.1
-
-am-local: ../INSTALL ../README RELEASE
-
-../INSTALL: install.texi
-	-$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
-	  -D rawfile --no-headers --no-validate --no-number-sections \
-	  -o $@ $<
-
-../README: readme.texi
-	-$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
-	  -D rawfile --no-headers --no-validate --no-number-sections \
-	  -o $@ $<
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

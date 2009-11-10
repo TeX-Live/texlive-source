@@ -39,11 +39,11 @@ struct colorname {
   char              name[1];
 } *colornamep=NULL,*xcp=NULL;
 
-char *colordef[]={"xcolor.sty","dvipsnam.def",
-		  "svgnam.def","x11nam.def",NULL};
+const char *colordef[]={"xcolor.sty","dvipsnam.def",
+			"svgnam.def","x11nam.def",NULL};
 char *xcpname=NULL;
 
-void initcolor() 
+void initcolor(void) 
 {
    csp = 1;
    cstack[0].red=255; 
@@ -54,7 +54,7 @@ void initcolor()
    cstack[1].blue=0; 
 }
 
-static struct colorname * NewColor(char* prefix, int nprefix,
+static struct colorname * NewColor(const char* prefix, int nprefix,
               char* name, int nname,
 	      char* model, int nmodel,
 	      char* values, int nvalues)
@@ -92,11 +92,12 @@ static struct colorname * NewColor(char* prefix, int nprefix,
 #define FINDPSNAMEEND(s,n) n=0; while(s<max && *s!='{') { s++; n++; }
 #define BLANKCOMMAS(s) 
 
-static struct colorname* LoadColornameFile(char* filename)
+static struct colorname* LoadColornameFile(const char* filename)
 {
   struct colorname *list=NULL,*tmp=NULL; 
   char *filepath,*pos,*max;
-  char *prefix="",*name,*values,*model;
+  const char *prefix="";
+  char *name,*values,*model;
   int nprefix=0,nname,nvalues,nmodel;
   struct filemmap fmmap;
 
@@ -190,7 +191,7 @@ void ClearColorNames(void)
   ClearXColorPrologue();
 }
 
-void InitXColorPrologue(char* name)
+void InitXColorPrologue(const char* name)
 {
   ClearXColorPrologue();
   xcpname=malloc(strlen(name)+1);
@@ -203,7 +204,8 @@ static struct colorname* LoadXColorPrologue(void)
 {
   struct colorname *list=NULL,*tmp=NULL; 
   char *filepath,*pos,*max;
-  char *prefix="",*name,*values,*model;
+  const char *prefix="";
+  char *name,*values,*model;
   int nprefix=0,nname,nvalues,nmodel;
   struct filemmap fmmap;
 
@@ -244,7 +246,7 @@ static struct colorname* LoadXColorPrologue(void)
 #define NEXTINT(c) strtol(c,&end,10); WARN_IF_FAILED(c,end); c=end
 #define NEXTHEX(c) strtol(c,&end,16); WARN_IF_FAILED(c,end); c=end
 
-void stringrgb(char* color,int *r,int *g,int *b)
+void stringrgb(const char* color,int *r,int *g,int *b)
 {
   char* end;
   static int unloaded=1;
@@ -364,14 +366,14 @@ void stringrgb(char* color,int *r,int *g,int *b)
   DEBUG_PRINT(DEBUG_COLOR,("%d %d %d) ",*r,*g,*b))
 }
 
-void background(char* p)
+void background(const char* p)
 {
   stringrgb(p, &cstack[0].red, &cstack[0].green, &cstack[0].blue);
   DEBUG_PRINT(DEBUG_COLOR,("\n  BACKGROUND:\t(%d %d %d) ",
 			   cstack[0].red, cstack[0].green, cstack[0].blue));
 }
 
-void pushcolor(char * p)
+void pushcolor(const char * p)
 {
   if ( ++csp == STACK_SIZE )
     Fatal("out of color stack space") ;
@@ -380,13 +382,13 @@ void pushcolor(char * p)
 			   cstack[csp].red, cstack[csp].green, cstack[csp].blue))
 }
 
-void popcolor()
+void popcolor(void)
 {
   if (csp > 1) csp--; /* Last color is global */
   DEBUG_PRINT(DEBUG_COLOR,("\n  COLOR POP\t"))
 }
 
-void resetcolorstack(char * p)
+void resetcolorstack(const char * p)
 {
   if ( csp > 1 )
     Warning("global color change within nested colors");

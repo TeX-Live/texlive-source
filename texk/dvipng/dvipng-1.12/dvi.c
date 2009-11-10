@@ -38,7 +38,7 @@
 
 bool followmode=0;
 
-bool DVIFollowToggle()
+bool DVIFollowToggle(void)
 {
   return followmode = ! followmode;
 }

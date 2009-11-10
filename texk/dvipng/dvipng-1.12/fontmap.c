@@ -55,7 +55,7 @@ char* copyword(char* orig)
   return(word);
 }
 
-static char* find_format(char* name)
+static char* find_format(const char* name)
 {
   /* Cater for both new (first case) and old (second case) kpathsea */
   char* format =
