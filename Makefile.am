@@ -15,6 +15,7 @@ distcleancheck_listfiles = find . -type f -o -type l -print
 
 EXTRA_DIST = \
 	Build \
+	README.coding \
 	README.config \
 	README.cross \
 	README.hacking \
