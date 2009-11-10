@@ -1,3 +1,21 @@
+2009-10-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Reorganize the graphite build system:
+	Import and sanitize silgraphite-2.3.1/engine/ to engine-2.3.1/.
+	* Makefile.am, configure.ac: Adjust.
+	* engine-2.3.1-PATCHES: New directory with patches applied to
+	the silgraphite-2.3.1 distribution.
+	* include/graphite/Makefile.am (new): Create header symlinks in
+	build tree.
+
+2009-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* src/segment/GrEngine.{cpp,h}, src/segment/FileInput.{cpp,h},
+	src/segment/FontFace.cpp, src/font/TtfUtil.cpp: Constify.
+	* graphite-patches (new): Modifications.
+	* Makefile.am: Add graphite-patches.
+
 2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: enable compiler warnings.

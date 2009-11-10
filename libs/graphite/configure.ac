@@ -6,13 +6,14 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([silgraphite for TeX Live], [2.3], [tex-k@tug.org])
+m4_define([silgraphite_version], [2.3.1])[]dnl using unmodified silgraphite/engine source tree
+AC_INIT([silgraphite for TeX Live], silgraphite_version, [tex-k@tug.org])
 AC_PREREQ([2.63])
-AC_CONFIG_SRCDIR([src/segment/GrEngine.cpp])
+AC_CONFIG_SRCDIR([engine-]silgraphite_version[/src/segment/GrEngine.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2 no-define])
+AM_INIT_AUTOMAKE([foreign no-define])
 AM_MAINTAINER_MODE
 
 AC_CANONICAL_HOST
@@ -40,6 +41,9 @@ AC_CHECK_FUNCS([fabsf])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-AC_CONFIG_FILES([Makefile])
+GRAPHITE_TREE=[engine-]silgraphite_version
+AC_SUBST([GRAPHITE_TREE])
+
+AC_CONFIG_FILES([Makefile include/graphite/Makefile])
 
 AC_OUTPUT

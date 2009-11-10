@@ -3,5 +3,8 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system graphite
-KPSE_CHECK_LIBXX([graphite], [free], [graphite/GrClient.h])
+## basic check of system graphite
+KPSE_TRY_LIBXX([graphite],
+               [#include <graphite/GrClient.h>
+#include <graphite/Font.h>],
+               [gr::Font *font; font->getDPIx();])

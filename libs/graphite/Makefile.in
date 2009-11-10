@@ -15,7 +15,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -36,7 +35,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(noinst_HEADERS) \
+DIST_COMMON = $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -48,7 +47,7 @@ DIST_COMMON = README $(am__configure_deps) $(noinst_HEADERS) \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/mkinstalldirs ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap COPYING ChangeLog INSTALL TODO
+	../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/configure.ac
@@ -64,7 +63,7 @@ AR = ar
 ARFLAGS = cru
 libgraphite_a_AR = $(AR) $(ARFLAGS)
 libgraphite_a_LIBADD =
-am_libgraphite_a_OBJECTS = FileFont.$(OBJEXT) Font.$(OBJEXT) \
+nodist_libgraphite_a_OBJECTS = FileFont.$(OBJEXT) Font.$(OBJEXT) \
 	TtfUtil.$(OBJEXT) Debug.$(OBJEXT) Util.$(OBJEXT) \
 	SegmentPainter.$(OBJEXT) FileInput.$(OBJEXT) \
 	FontCache.$(OBJEXT) FontFace.$(OBJEXT) GrCharStream.$(OBJEXT) \
@@ -75,7 +74,7 @@ am_libgraphite_a_OBJECTS = FileFont.$(OBJEXT) Font.$(OBJEXT) \
 	MemoryUsage.$(OBJEXT) Platform.$(OBJEXT) Segment.$(OBJEXT) \
 	SegmentAux.$(OBJEXT) TestFSM.$(OBJEXT) TestPasses.$(OBJEXT) \
 	TransductionLog.$(OBJEXT)
-libgraphite_a_OBJECTS = $(am_libgraphite_a_OBJECTS)
+libgraphite_a_OBJECTS = $(nodist_libgraphite_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -85,15 +84,23 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libgraphite_a_SOURCES)
-DIST_SOURCES = $(libgraphite_a_SOURCES)
-HEADERS = $(noinst_HEADERS)
+SOURCES = $(nodist_libgraphite_a_SOURCES)
+DIST_SOURCES =
+RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
+	html-recursive info-recursive install-data-recursive \
+	install-dvi-recursive install-exec-recursive \
+	install-html-recursive install-info-recursive \
+	install-pdf-recursive install-ps-recursive install-recursive \
+	installcheck-recursive installdirs-recursive pdf-recursive \
+	ps-recursive uninstall-recursive
+RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
+  distclean-recursive maintainer-clean-recursive
+AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
+	$(RECURSIVE_CLEAN_TARGETS:-recursive=) tags TAGS ctags CTAGS \
+	distdir dist dist-all distcheck
 ETAGS = etags
 CTAGS = ctags
+DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -101,7 +108,32 @@ am__remove_distdir = \
   { test ! -d "$(distdir)" \
     || { find "$(distdir)" -type d ! -perm -200 -exec chmod u+w {} ';' \
          && rm -fr "$(distdir)"; }; }
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+am__relativize = \
+  dir0=`pwd`; \
+  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
+  sed_rest='s,^[^/]*/*,,'; \
+  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
+  sed_butlast='s,/*[^/]*$$,,'; \
+  while test -n "$$dir1"; do \
+    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
+    if test "$$first" != "."; then \
+      if test "$$first" = ".."; then \
+        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
+        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
+      else \
+        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
+        if test "$$first2" = "$$first"; then \
+          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
+        else \
+          dir2="../$$dir2"; \
+        fi; \
+        dir0="$$dir0"/"$$first"; \
+      fi; \
+    fi; \
+    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
+  done; \
+  reldir="$$dir2"
+DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
@@ -127,6 +159,7 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
+GRAPHITE_TREE = @GRAPHITE_TREE@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -147,6 +180,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -209,101 +243,46 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = -I$(top_srcdir)/include/graphite \
-	-I$(top_srcdir)/src/generic -I$(top_srcdir)/src/font \
-	-I$(top_srcdir)/src/segment
+EXTRA_DIST = $(GRAPHITE_TREE) $(GRAPHITE_TREE)-PATCHES
+SUBDIRS = include/graphite
+INCLUDES = -I$(top_srcdir)/$(GRAPHITE_TREE)/include/graphite \
+	-I$(top_srcdir)/$(GRAPHITE_TREE)/src/generic \
+	-I$(top_srcdir)/$(GRAPHITE_TREE)/src/font \
+	-I$(top_srcdir)/$(GRAPHITE_TREE)/src/segment
 AM_CPPFLAGS = -DNDEBUG
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 noinst_LIBRARIES = libgraphite.a
-noinst_HEADERS = \
-	include/graphite/FileFont.h \
-	include/graphite/Font.h \
-	include/graphite/GrAppData.h \
-	include/graphite/GrClient.h \
-	include/graphite/GrCommon.h \
-	include/graphite/GrConstants.h \
-	include/graphite/GrData.h \
-	include/graphite/GrDebug.h \
-	include/graphite/GrExt.h \
-	include/graphite/GrFeature.h \
-	include/graphite/GrMstypes.h \
-	include/graphite/GrPlatform.h \
-	include/graphite/GrResult.h \
-	include/graphite/GrStructs.h \
-	include/graphite/GrWrappers.h \
-	include/graphite/GraphiteProcess.h \
-	include/graphite/IGrEngine.h \
-	include/graphite/IGrJustifier.h \
-	include/graphite/IGraphiteProcess.h \
-	include/graphite/ITextSource.h \
-	include/graphite/MemoryUsage.h \
-	include/graphite/Segment.h \
-	include/graphite/SegmentAux.h \
-	include/graphite/SegmentPainter.h
+nodist_libgraphite_a_SOURCES = \
+	$(GRAPHITE_TREE)/src/font/FileFont.cpp \
+	$(GRAPHITE_TREE)/src/font/Font.cpp \
+	$(GRAPHITE_TREE)/src/font/TtfUtil.cpp \
+	$(GRAPHITE_TREE)/src/generic/Debug.cpp \
+	$(GRAPHITE_TREE)/src/generic/Util.cpp \
+	$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp \
+	$(GRAPHITE_TREE)/src/segment/FileInput.cpp \
+	$(GRAPHITE_TREE)/src/segment/FontCache.cpp \
+	$(GRAPHITE_TREE)/src/segment/FontFace.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrEngine.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrFSM.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrFeature.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrPass.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp \
+	$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp \
+	$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp \
+	$(GRAPHITE_TREE)/src/segment/Platform.cpp \
+	$(GRAPHITE_TREE)/src/segment/Segment.cpp \
+	$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp \
+	$(GRAPHITE_TREE)/src/segment/TestFSM.cpp \
+	$(GRAPHITE_TREE)/src/segment/TestPasses.cpp \
+	$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp
 
-EXTRA_DIST = build.bat build_d.bat debian doc installed-top.pc.in \
-	license makefile.vc silgraphite.pc.in test \
-	uninstalled-top.pc.in include/Makefile.am \
-	include/graphite/BinTree.h include/graphite/GenericResource.h \
-	include/graphite/HashMap.h src/Makefile.am src/Makefile.in \
-	src/font/Makefile.am src/generic/BinTree_i.cpp \
-	src/generic/HashMap_i.cpp src/generic/Makefile.am \
-	src/painter/Makefile.am src/segment/Makefile.am \
-	src/segment/XmlTransductionLog.cpp Makefile.am.orig \
-	configure.ac.orig
-libgraphite_a_SOURCES = \
-	src/font/FileFont.cpp \
-	src/font/Font.cpp \
-	src/font/FontTableCache.h \
-	src/font/TtfTypes.h \
-	src/font/TtfUtil.cpp \
-	src/font/TtfUtil.h \
-	src/generic/BinTree.h \
-	src/generic/Debug.cpp \
-	src/generic/GenericResource.h \
-	src/generic/HashMap.h \
-	src/generic/Util.cpp \
-	src/painter/SegmentPainter.cpp \
-	src/segment/FileInput.cpp \
-	src/segment/FileInput.h \
-	src/segment/FontCache.cpp \
-	src/segment/FontCache.h \
-	src/segment/FontFace.cpp \
-	src/segment/FontFace.h \
-	src/segment/GrCharStream.cpp \
-	src/segment/GrCharStream.h \
-	src/segment/GrClassTable.cpp \
-	src/segment/GrClassTable.h \
-	src/segment/GrEngine.cpp \
-	src/segment/GrEngine.h \
-	src/segment/GrFSM.cpp \
-	src/segment/GrFSM.h \
-	src/segment/GrFeature.cpp \
-	src/segment/GrFeatureValues.h \
-	src/segment/GrGlyphTable.cpp \
-	src/segment/GrGlyphTable.h \
-	src/segment/GrPass.cpp \
-	src/segment/GrPass.h \
-	src/segment/GrPassActionCode.cpp \
-	src/segment/GrPseudoMap.h \
-	src/segment/GrSlotState.cpp \
-	src/segment/GrSlotState.h \
-	src/segment/GrSlotStream.cpp \
-	src/segment/GrSlotStream.h \
-	src/segment/GrTableManager.cpp \
-	src/segment/GrTableManager.h \
-	src/segment/Main.h \
-	src/segment/MemoryUsage.cpp \
-	src/segment/Platform.cpp \
-	src/segment/Segment.cpp \
-	src/segment/SegmentAux.cpp \
-	src/segment/TestFSM.cpp \
-	src/segment/TestPasses.cpp \
-	src/segment/TransductionLog.cpp \
-	src/segment/resource.h
-
-all: all-am
+all: all-recursive
 
 .SUFFIXES:
 .SUFFIXES: .cpp .o .obj
@@ -397,383 +376,453 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-FileFont.o: src/font/FileFont.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileFont.o -MD -MP -MF $(DEPDIR)/FileFont.Tpo -c -o FileFont.o `test -f 'src/font/FileFont.cpp' || echo '$(srcdir)/'`src/font/FileFont.cpp
+FileFont.o: $(GRAPHITE_TREE)/src/font/FileFont.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileFont.o -MD -MP -MF $(DEPDIR)/FileFont.Tpo -c -o FileFont.o `test -f '$(GRAPHITE_TREE)/src/font/FileFont.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/font/FileFont.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FileFont.Tpo $(DEPDIR)/FileFont.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/font/FileFont.cpp' object='FileFont.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/font/FileFont.cpp' object='FileFont.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileFont.o `test -f 'src/font/FileFont.cpp' || echo '$(srcdir)/'`src/font/FileFont.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileFont.o `test -f '$(GRAPHITE_TREE)/src/font/FileFont.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/font/FileFont.cpp
 
-FileFont.obj: src/font/FileFont.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileFont.obj -MD -MP -MF $(DEPDIR)/FileFont.Tpo -c -o FileFont.obj `if test -f 'src/font/FileFont.cpp'; then $(CYGPATH_W) 'src/font/FileFont.cpp'; else $(CYGPATH_W) '$(srcdir)/src/font/FileFont.cpp'; fi`
+FileFont.obj: $(GRAPHITE_TREE)/src/font/FileFont.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileFont.obj -MD -MP -MF $(DEPDIR)/FileFont.Tpo -c -o FileFont.obj `if test -f '$(GRAPHITE_TREE)/src/font/FileFont.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/font/FileFont.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/font/FileFont.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FileFont.Tpo $(DEPDIR)/FileFont.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/font/FileFont.cpp' object='FileFont.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/font/FileFont.cpp' object='FileFont.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileFont.obj `if test -f 'src/font/FileFont.cpp'; then $(CYGPATH_W) 'src/font/FileFont.cpp'; else $(CYGPATH_W) '$(srcdir)/src/font/FileFont.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileFont.obj `if test -f '$(GRAPHITE_TREE)/src/font/FileFont.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/font/FileFont.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/font/FileFont.cpp'; fi`
 
-Font.o: src/font/Font.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Font.o -MD -MP -MF $(DEPDIR)/Font.Tpo -c -o Font.o `test -f 'src/font/Font.cpp' || echo '$(srcdir)/'`src/font/Font.cpp
+Font.o: $(GRAPHITE_TREE)/src/font/Font.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Font.o -MD -MP -MF $(DEPDIR)/Font.Tpo -c -o Font.o `test -f '$(GRAPHITE_TREE)/src/font/Font.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/font/Font.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Font.Tpo $(DEPDIR)/Font.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/font/Font.cpp' object='Font.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/font/Font.cpp' object='Font.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Font.o `test -f 'src/font/Font.cpp' || echo '$(srcdir)/'`src/font/Font.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Font.o `test -f '$(GRAPHITE_TREE)/src/font/Font.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/font/Font.cpp
 
-Font.obj: src/font/Font.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Font.obj -MD -MP -MF $(DEPDIR)/Font.Tpo -c -o Font.obj `if test -f 'src/font/Font.cpp'; then $(CYGPATH_W) 'src/font/Font.cpp'; else $(CYGPATH_W) '$(srcdir)/src/font/Font.cpp'; fi`
+Font.obj: $(GRAPHITE_TREE)/src/font/Font.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Font.obj -MD -MP -MF $(DEPDIR)/Font.Tpo -c -o Font.obj `if test -f '$(GRAPHITE_TREE)/src/font/Font.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/font/Font.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/font/Font.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Font.Tpo $(DEPDIR)/Font.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/font/Font.cpp' object='Font.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/font/Font.cpp' object='Font.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Font.obj `if test -f 'src/font/Font.cpp'; then $(CYGPATH_W) 'src/font/Font.cpp'; else $(CYGPATH_W) '$(srcdir)/src/font/Font.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Font.obj `if test -f '$(GRAPHITE_TREE)/src/font/Font.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/font/Font.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/font/Font.cpp'; fi`
 
-TtfUtil.o: src/font/TtfUtil.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TtfUtil.o -MD -MP -MF $(DEPDIR)/TtfUtil.Tpo -c -o TtfUtil.o `test -f 'src/font/TtfUtil.cpp' || echo '$(srcdir)/'`src/font/TtfUtil.cpp
+TtfUtil.o: $(GRAPHITE_TREE)/src/font/TtfUtil.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TtfUtil.o -MD -MP -MF $(DEPDIR)/TtfUtil.Tpo -c -o TtfUtil.o `test -f '$(GRAPHITE_TREE)/src/font/TtfUtil.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/font/TtfUtil.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TtfUtil.Tpo $(DEPDIR)/TtfUtil.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/font/TtfUtil.cpp' object='TtfUtil.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/font/TtfUtil.cpp' object='TtfUtil.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TtfUtil.o `test -f 'src/font/TtfUtil.cpp' || echo '$(srcdir)/'`src/font/TtfUtil.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TtfUtil.o `test -f '$(GRAPHITE_TREE)/src/font/TtfUtil.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/font/TtfUtil.cpp
 
-TtfUtil.obj: src/font/TtfUtil.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TtfUtil.obj -MD -MP -MF $(DEPDIR)/TtfUtil.Tpo -c -o TtfUtil.obj `if test -f 'src/font/TtfUtil.cpp'; then $(CYGPATH_W) 'src/font/TtfUtil.cpp'; else $(CYGPATH_W) '$(srcdir)/src/font/TtfUtil.cpp'; fi`
+TtfUtil.obj: $(GRAPHITE_TREE)/src/font/TtfUtil.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TtfUtil.obj -MD -MP -MF $(DEPDIR)/TtfUtil.Tpo -c -o TtfUtil.obj `if test -f '$(GRAPHITE_TREE)/src/font/TtfUtil.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/font/TtfUtil.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/font/TtfUtil.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TtfUtil.Tpo $(DEPDIR)/TtfUtil.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/font/TtfUtil.cpp' object='TtfUtil.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/font/TtfUtil.cpp' object='TtfUtil.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TtfUtil.obj `if test -f 'src/font/TtfUtil.cpp'; then $(CYGPATH_W) 'src/font/TtfUtil.cpp'; else $(CYGPATH_W) '$(srcdir)/src/font/TtfUtil.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TtfUtil.obj `if test -f '$(GRAPHITE_TREE)/src/font/TtfUtil.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/font/TtfUtil.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/font/TtfUtil.cpp'; fi`
 
-Debug.o: src/generic/Debug.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Debug.o -MD -MP -MF $(DEPDIR)/Debug.Tpo -c -o Debug.o `test -f 'src/generic/Debug.cpp' || echo '$(srcdir)/'`src/generic/Debug.cpp
+Debug.o: $(GRAPHITE_TREE)/src/generic/Debug.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Debug.o -MD -MP -MF $(DEPDIR)/Debug.Tpo -c -o Debug.o `test -f '$(GRAPHITE_TREE)/src/generic/Debug.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/generic/Debug.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Debug.Tpo $(DEPDIR)/Debug.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/generic/Debug.cpp' object='Debug.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/generic/Debug.cpp' object='Debug.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Debug.o `test -f 'src/generic/Debug.cpp' || echo '$(srcdir)/'`src/generic/Debug.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Debug.o `test -f '$(GRAPHITE_TREE)/src/generic/Debug.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/generic/Debug.cpp
 
-Debug.obj: src/generic/Debug.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Debug.obj -MD -MP -MF $(DEPDIR)/Debug.Tpo -c -o Debug.obj `if test -f 'src/generic/Debug.cpp'; then $(CYGPATH_W) 'src/generic/Debug.cpp'; else $(CYGPATH_W) '$(srcdir)/src/generic/Debug.cpp'; fi`
+Debug.obj: $(GRAPHITE_TREE)/src/generic/Debug.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Debug.obj -MD -MP -MF $(DEPDIR)/Debug.Tpo -c -o Debug.obj `if test -f '$(GRAPHITE_TREE)/src/generic/Debug.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/generic/Debug.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/generic/Debug.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Debug.Tpo $(DEPDIR)/Debug.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/generic/Debug.cpp' object='Debug.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/generic/Debug.cpp' object='Debug.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Debug.obj `if test -f 'src/generic/Debug.cpp'; then $(CYGPATH_W) 'src/generic/Debug.cpp'; else $(CYGPATH_W) '$(srcdir)/src/generic/Debug.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Debug.obj `if test -f '$(GRAPHITE_TREE)/src/generic/Debug.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/generic/Debug.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/generic/Debug.cpp'; fi`
 
-Util.o: src/generic/Util.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Util.o -MD -MP -MF $(DEPDIR)/Util.Tpo -c -o Util.o `test -f 'src/generic/Util.cpp' || echo '$(srcdir)/'`src/generic/Util.cpp
+Util.o: $(GRAPHITE_TREE)/src/generic/Util.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Util.o -MD -MP -MF $(DEPDIR)/Util.Tpo -c -o Util.o `test -f '$(GRAPHITE_TREE)/src/generic/Util.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/generic/Util.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Util.Tpo $(DEPDIR)/Util.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/generic/Util.cpp' object='Util.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/generic/Util.cpp' object='Util.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Util.o `test -f 'src/generic/Util.cpp' || echo '$(srcdir)/'`src/generic/Util.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Util.o `test -f '$(GRAPHITE_TREE)/src/generic/Util.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/generic/Util.cpp
 
-Util.obj: src/generic/Util.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Util.obj -MD -MP -MF $(DEPDIR)/Util.Tpo -c -o Util.obj `if test -f 'src/generic/Util.cpp'; then $(CYGPATH_W) 'src/generic/Util.cpp'; else $(CYGPATH_W) '$(srcdir)/src/generic/Util.cpp'; fi`
+Util.obj: $(GRAPHITE_TREE)/src/generic/Util.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Util.obj -MD -MP -MF $(DEPDIR)/Util.Tpo -c -o Util.obj `if test -f '$(GRAPHITE_TREE)/src/generic/Util.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/generic/Util.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/generic/Util.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Util.Tpo $(DEPDIR)/Util.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/generic/Util.cpp' object='Util.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/generic/Util.cpp' object='Util.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Util.obj `if test -f 'src/generic/Util.cpp'; then $(CYGPATH_W) 'src/generic/Util.cpp'; else $(CYGPATH_W) '$(srcdir)/src/generic/Util.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Util.obj `if test -f '$(GRAPHITE_TREE)/src/generic/Util.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/generic/Util.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/generic/Util.cpp'; fi`
 
-SegmentPainter.o: src/painter/SegmentPainter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SegmentPainter.o -MD -MP -MF $(DEPDIR)/SegmentPainter.Tpo -c -o SegmentPainter.o `test -f 'src/painter/SegmentPainter.cpp' || echo '$(srcdir)/'`src/painter/SegmentPainter.cpp
+SegmentPainter.o: $(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SegmentPainter.o -MD -MP -MF $(DEPDIR)/SegmentPainter.Tpo -c -o SegmentPainter.o `test -f '$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SegmentPainter.Tpo $(DEPDIR)/SegmentPainter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/painter/SegmentPainter.cpp' object='SegmentPainter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp' object='SegmentPainter.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentPainter.o `test -f 'src/painter/SegmentPainter.cpp' || echo '$(srcdir)/'`src/painter/SegmentPainter.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentPainter.o `test -f '$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp
 
-SegmentPainter.obj: src/painter/SegmentPainter.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SegmentPainter.obj -MD -MP -MF $(DEPDIR)/SegmentPainter.Tpo -c -o SegmentPainter.obj `if test -f 'src/painter/SegmentPainter.cpp'; then $(CYGPATH_W) 'src/painter/SegmentPainter.cpp'; else $(CYGPATH_W) '$(srcdir)/src/painter/SegmentPainter.cpp'; fi`
+SegmentPainter.obj: $(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SegmentPainter.obj -MD -MP -MF $(DEPDIR)/SegmentPainter.Tpo -c -o SegmentPainter.obj `if test -f '$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SegmentPainter.Tpo $(DEPDIR)/SegmentPainter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/painter/SegmentPainter.cpp' object='SegmentPainter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp' object='SegmentPainter.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentPainter.obj `if test -f 'src/painter/SegmentPainter.cpp'; then $(CYGPATH_W) 'src/painter/SegmentPainter.cpp'; else $(CYGPATH_W) '$(srcdir)/src/painter/SegmentPainter.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentPainter.obj `if test -f '$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/painter/SegmentPainter.cpp'; fi`
 
-FileInput.o: src/segment/FileInput.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileInput.o -MD -MP -MF $(DEPDIR)/FileInput.Tpo -c -o FileInput.o `test -f 'src/segment/FileInput.cpp' || echo '$(srcdir)/'`src/segment/FileInput.cpp
+FileInput.o: $(GRAPHITE_TREE)/src/segment/FileInput.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileInput.o -MD -MP -MF $(DEPDIR)/FileInput.Tpo -c -o FileInput.o `test -f '$(GRAPHITE_TREE)/src/segment/FileInput.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/FileInput.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FileInput.Tpo $(DEPDIR)/FileInput.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/FileInput.cpp' object='FileInput.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/FileInput.cpp' object='FileInput.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileInput.o `test -f 'src/segment/FileInput.cpp' || echo '$(srcdir)/'`src/segment/FileInput.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileInput.o `test -f '$(GRAPHITE_TREE)/src/segment/FileInput.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/FileInput.cpp
 
-FileInput.obj: src/segment/FileInput.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileInput.obj -MD -MP -MF $(DEPDIR)/FileInput.Tpo -c -o FileInput.obj `if test -f 'src/segment/FileInput.cpp'; then $(CYGPATH_W) 'src/segment/FileInput.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/FileInput.cpp'; fi`
+FileInput.obj: $(GRAPHITE_TREE)/src/segment/FileInput.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FileInput.obj -MD -MP -MF $(DEPDIR)/FileInput.Tpo -c -o FileInput.obj `if test -f '$(GRAPHITE_TREE)/src/segment/FileInput.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/FileInput.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/FileInput.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FileInput.Tpo $(DEPDIR)/FileInput.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/FileInput.cpp' object='FileInput.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/FileInput.cpp' object='FileInput.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileInput.obj `if test -f 'src/segment/FileInput.cpp'; then $(CYGPATH_W) 'src/segment/FileInput.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/FileInput.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FileInput.obj `if test -f '$(GRAPHITE_TREE)/src/segment/FileInput.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/FileInput.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/FileInput.cpp'; fi`
 
-FontCache.o: src/segment/FontCache.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontCache.o -MD -MP -MF $(DEPDIR)/FontCache.Tpo -c -o FontCache.o `test -f 'src/segment/FontCache.cpp' || echo '$(srcdir)/'`src/segment/FontCache.cpp
+FontCache.o: $(GRAPHITE_TREE)/src/segment/FontCache.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontCache.o -MD -MP -MF $(DEPDIR)/FontCache.Tpo -c -o FontCache.o `test -f '$(GRAPHITE_TREE)/src/segment/FontCache.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/FontCache.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FontCache.Tpo $(DEPDIR)/FontCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/FontCache.cpp' object='FontCache.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/FontCache.cpp' object='FontCache.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontCache.o `test -f 'src/segment/FontCache.cpp' || echo '$(srcdir)/'`src/segment/FontCache.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontCache.o `test -f '$(GRAPHITE_TREE)/src/segment/FontCache.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/FontCache.cpp
 
-FontCache.obj: src/segment/FontCache.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontCache.obj -MD -MP -MF $(DEPDIR)/FontCache.Tpo -c -o FontCache.obj `if test -f 'src/segment/FontCache.cpp'; then $(CYGPATH_W) 'src/segment/FontCache.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/FontCache.cpp'; fi`
+FontCache.obj: $(GRAPHITE_TREE)/src/segment/FontCache.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontCache.obj -MD -MP -MF $(DEPDIR)/FontCache.Tpo -c -o FontCache.obj `if test -f '$(GRAPHITE_TREE)/src/segment/FontCache.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/FontCache.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/FontCache.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FontCache.Tpo $(DEPDIR)/FontCache.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/FontCache.cpp' object='FontCache.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/FontCache.cpp' object='FontCache.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontCache.obj `if test -f 'src/segment/FontCache.cpp'; then $(CYGPATH_W) 'src/segment/FontCache.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/FontCache.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontCache.obj `if test -f '$(GRAPHITE_TREE)/src/segment/FontCache.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/FontCache.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/FontCache.cpp'; fi`
 
-FontFace.o: src/segment/FontFace.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontFace.o -MD -MP -MF $(DEPDIR)/FontFace.Tpo -c -o FontFace.o `test -f 'src/segment/FontFace.cpp' || echo '$(srcdir)/'`src/segment/FontFace.cpp
+FontFace.o: $(GRAPHITE_TREE)/src/segment/FontFace.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontFace.o -MD -MP -MF $(DEPDIR)/FontFace.Tpo -c -o FontFace.o `test -f '$(GRAPHITE_TREE)/src/segment/FontFace.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/FontFace.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FontFace.Tpo $(DEPDIR)/FontFace.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/FontFace.cpp' object='FontFace.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/FontFace.cpp' object='FontFace.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontFace.o `test -f 'src/segment/FontFace.cpp' || echo '$(srcdir)/'`src/segment/FontFace.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontFace.o `test -f '$(GRAPHITE_TREE)/src/segment/FontFace.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/FontFace.cpp
 
-FontFace.obj: src/segment/FontFace.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontFace.obj -MD -MP -MF $(DEPDIR)/FontFace.Tpo -c -o FontFace.obj `if test -f 'src/segment/FontFace.cpp'; then $(CYGPATH_W) 'src/segment/FontFace.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/FontFace.cpp'; fi`
+FontFace.obj: $(GRAPHITE_TREE)/src/segment/FontFace.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT FontFace.obj -MD -MP -MF $(DEPDIR)/FontFace.Tpo -c -o FontFace.obj `if test -f '$(GRAPHITE_TREE)/src/segment/FontFace.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/FontFace.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/FontFace.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/FontFace.Tpo $(DEPDIR)/FontFace.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/FontFace.cpp' object='FontFace.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/FontFace.cpp' object='FontFace.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontFace.obj `if test -f 'src/segment/FontFace.cpp'; then $(CYGPATH_W) 'src/segment/FontFace.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/FontFace.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o FontFace.obj `if test -f '$(GRAPHITE_TREE)/src/segment/FontFace.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/FontFace.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/FontFace.cpp'; fi`
 
-GrCharStream.o: src/segment/GrCharStream.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrCharStream.o -MD -MP -MF $(DEPDIR)/GrCharStream.Tpo -c -o GrCharStream.o `test -f 'src/segment/GrCharStream.cpp' || echo '$(srcdir)/'`src/segment/GrCharStream.cpp
+GrCharStream.o: $(GRAPHITE_TREE)/src/segment/GrCharStream.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrCharStream.o -MD -MP -MF $(DEPDIR)/GrCharStream.Tpo -c -o GrCharStream.o `test -f '$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrCharStream.Tpo $(DEPDIR)/GrCharStream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrCharStream.cpp' object='GrCharStream.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp' object='GrCharStream.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrCharStream.o `test -f 'src/segment/GrCharStream.cpp' || echo '$(srcdir)/'`src/segment/GrCharStream.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrCharStream.o `test -f '$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp
 
-GrCharStream.obj: src/segment/GrCharStream.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrCharStream.obj -MD -MP -MF $(DEPDIR)/GrCharStream.Tpo -c -o GrCharStream.obj `if test -f 'src/segment/GrCharStream.cpp'; then $(CYGPATH_W) 'src/segment/GrCharStream.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrCharStream.cpp'; fi`
+GrCharStream.obj: $(GRAPHITE_TREE)/src/segment/GrCharStream.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrCharStream.obj -MD -MP -MF $(DEPDIR)/GrCharStream.Tpo -c -o GrCharStream.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrCharStream.Tpo $(DEPDIR)/GrCharStream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrCharStream.cpp' object='GrCharStream.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp' object='GrCharStream.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrCharStream.obj `if test -f 'src/segment/GrCharStream.cpp'; then $(CYGPATH_W) 'src/segment/GrCharStream.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrCharStream.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrCharStream.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrCharStream.cpp'; fi`
 
-GrClassTable.o: src/segment/GrClassTable.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrClassTable.o -MD -MP -MF $(DEPDIR)/GrClassTable.Tpo -c -o GrClassTable.o `test -f 'src/segment/GrClassTable.cpp' || echo '$(srcdir)/'`src/segment/GrClassTable.cpp
+GrClassTable.o: $(GRAPHITE_TREE)/src/segment/GrClassTable.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrClassTable.o -MD -MP -MF $(DEPDIR)/GrClassTable.Tpo -c -o GrClassTable.o `test -f '$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrClassTable.Tpo $(DEPDIR)/GrClassTable.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrClassTable.cpp' object='GrClassTable.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp' object='GrClassTable.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrClassTable.o `test -f 'src/segment/GrClassTable.cpp' || echo '$(srcdir)/'`src/segment/GrClassTable.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrClassTable.o `test -f '$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp
 
-GrClassTable.obj: src/segment/GrClassTable.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrClassTable.obj -MD -MP -MF $(DEPDIR)/GrClassTable.Tpo -c -o GrClassTable.obj `if test -f 'src/segment/GrClassTable.cpp'; then $(CYGPATH_W) 'src/segment/GrClassTable.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrClassTable.cpp'; fi`
+GrClassTable.obj: $(GRAPHITE_TREE)/src/segment/GrClassTable.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrClassTable.obj -MD -MP -MF $(DEPDIR)/GrClassTable.Tpo -c -o GrClassTable.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrClassTable.Tpo $(DEPDIR)/GrClassTable.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrClassTable.cpp' object='GrClassTable.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp' object='GrClassTable.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrClassTable.obj `if test -f 'src/segment/GrClassTable.cpp'; then $(CYGPATH_W) 'src/segment/GrClassTable.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrClassTable.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrClassTable.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrClassTable.cpp'; fi`
 
-GrEngine.o: src/segment/GrEngine.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrEngine.o -MD -MP -MF $(DEPDIR)/GrEngine.Tpo -c -o GrEngine.o `test -f 'src/segment/GrEngine.cpp' || echo '$(srcdir)/'`src/segment/GrEngine.cpp
+GrEngine.o: $(GRAPHITE_TREE)/src/segment/GrEngine.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrEngine.o -MD -MP -MF $(DEPDIR)/GrEngine.Tpo -c -o GrEngine.o `test -f '$(GRAPHITE_TREE)/src/segment/GrEngine.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrEngine.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrEngine.Tpo $(DEPDIR)/GrEngine.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrEngine.cpp' object='GrEngine.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrEngine.cpp' object='GrEngine.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrEngine.o `test -f 'src/segment/GrEngine.cpp' || echo '$(srcdir)/'`src/segment/GrEngine.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrEngine.o `test -f '$(GRAPHITE_TREE)/src/segment/GrEngine.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrEngine.cpp
 
-GrEngine.obj: src/segment/GrEngine.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrEngine.obj -MD -MP -MF $(DEPDIR)/GrEngine.Tpo -c -o GrEngine.obj `if test -f 'src/segment/GrEngine.cpp'; then $(CYGPATH_W) 'src/segment/GrEngine.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrEngine.cpp'; fi`
+GrEngine.obj: $(GRAPHITE_TREE)/src/segment/GrEngine.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrEngine.obj -MD -MP -MF $(DEPDIR)/GrEngine.Tpo -c -o GrEngine.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrEngine.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrEngine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrEngine.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrEngine.Tpo $(DEPDIR)/GrEngine.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrEngine.cpp' object='GrEngine.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrEngine.cpp' object='GrEngine.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrEngine.obj `if test -f 'src/segment/GrEngine.cpp'; then $(CYGPATH_W) 'src/segment/GrEngine.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrEngine.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrEngine.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrEngine.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrEngine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrEngine.cpp'; fi`
 
-GrFSM.o: src/segment/GrFSM.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrFSM.o -MD -MP -MF $(DEPDIR)/GrFSM.Tpo -c -o GrFSM.o `test -f 'src/segment/GrFSM.cpp' || echo '$(srcdir)/'`src/segment/GrFSM.cpp
+GrFSM.o: $(GRAPHITE_TREE)/src/segment/GrFSM.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrFSM.o -MD -MP -MF $(DEPDIR)/GrFSM.Tpo -c -o GrFSM.o `test -f '$(GRAPHITE_TREE)/src/segment/GrFSM.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrFSM.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrFSM.Tpo $(DEPDIR)/GrFSM.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrFSM.cpp' object='GrFSM.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrFSM.cpp' object='GrFSM.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrFSM.o `test -f 'src/segment/GrFSM.cpp' || echo '$(srcdir)/'`src/segment/GrFSM.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrFSM.o `test -f '$(GRAPHITE_TREE)/src/segment/GrFSM.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrFSM.cpp
 
-GrFSM.obj: src/segment/GrFSM.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrFSM.obj -MD -MP -MF $(DEPDIR)/GrFSM.Tpo -c -o GrFSM.obj `if test -f 'src/segment/GrFSM.cpp'; then $(CYGPATH_W) 'src/segment/GrFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrFSM.cpp'; fi`
+GrFSM.obj: $(GRAPHITE_TREE)/src/segment/GrFSM.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrFSM.obj -MD -MP -MF $(DEPDIR)/GrFSM.Tpo -c -o GrFSM.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrFSM.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrFSM.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrFSM.Tpo $(DEPDIR)/GrFSM.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrFSM.cpp' object='GrFSM.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrFSM.cpp' object='GrFSM.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrFSM.obj `if test -f 'src/segment/GrFSM.cpp'; then $(CYGPATH_W) 'src/segment/GrFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrFSM.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrFSM.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrFSM.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrFSM.cpp'; fi`
 
-GrFeature.o: src/segment/GrFeature.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrFeature.o -MD -MP -MF $(DEPDIR)/GrFeature.Tpo -c -o GrFeature.o `test -f 'src/segment/GrFeature.cpp' || echo '$(srcdir)/'`src/segment/GrFeature.cpp
+GrFeature.o: $(GRAPHITE_TREE)/src/segment/GrFeature.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrFeature.o -MD -MP -MF $(DEPDIR)/GrFeature.Tpo -c -o GrFeature.o `test -f '$(GRAPHITE_TREE)/src/segment/GrFeature.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrFeature.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrFeature.Tpo $(DEPDIR)/GrFeature.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrFeature.cpp' object='GrFeature.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrFeature.cpp' object='GrFeature.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrFeature.o `test -f 'src/segment/GrFeature.cpp' || echo '$(srcdir)/'`src/segment/GrFeature.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrFeature.o `test -f '$(GRAPHITE_TREE)/src/segment/GrFeature.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrFeature.cpp
 
-GrFeature.obj: src/segment/GrFeature.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrFeature.obj -MD -MP -MF $(DEPDIR)/GrFeature.Tpo -c -o GrFeature.obj `if test -f 'src/segment/GrFeature.cpp'; then $(CYGPATH_W) 'src/segment/GrFeature.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrFeature.cpp'; fi`
+GrFeature.obj: $(GRAPHITE_TREE)/src/segment/GrFeature.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrFeature.obj -MD -MP -MF $(DEPDIR)/GrFeature.Tpo -c -o GrFeature.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrFeature.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrFeature.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrFeature.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrFeature.Tpo $(DEPDIR)/GrFeature.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrFeature.cpp' object='GrFeature.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrFeature.cpp' object='GrFeature.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrFeature.obj `if test -f 'src/segment/GrFeature.cpp'; then $(CYGPATH_W) 'src/segment/GrFeature.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrFeature.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrFeature.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrFeature.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrFeature.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrFeature.cpp'; fi`
 
-GrGlyphTable.o: src/segment/GrGlyphTable.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrGlyphTable.o -MD -MP -MF $(DEPDIR)/GrGlyphTable.Tpo -c -o GrGlyphTable.o `test -f 'src/segment/GrGlyphTable.cpp' || echo '$(srcdir)/'`src/segment/GrGlyphTable.cpp
+GrGlyphTable.o: $(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrGlyphTable.o -MD -MP -MF $(DEPDIR)/GrGlyphTable.Tpo -c -o GrGlyphTable.o `test -f '$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrGlyphTable.Tpo $(DEPDIR)/GrGlyphTable.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrGlyphTable.cpp' object='GrGlyphTable.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp' object='GrGlyphTable.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrGlyphTable.o `test -f 'src/segment/GrGlyphTable.cpp' || echo '$(srcdir)/'`src/segment/GrGlyphTable.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrGlyphTable.o `test -f '$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp
 
-GrGlyphTable.obj: src/segment/GrGlyphTable.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrGlyphTable.obj -MD -MP -MF $(DEPDIR)/GrGlyphTable.Tpo -c -o GrGlyphTable.obj `if test -f 'src/segment/GrGlyphTable.cpp'; then $(CYGPATH_W) 'src/segment/GrGlyphTable.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrGlyphTable.cpp'; fi`
+GrGlyphTable.obj: $(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrGlyphTable.obj -MD -MP -MF $(DEPDIR)/GrGlyphTable.Tpo -c -o GrGlyphTable.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrGlyphTable.Tpo $(DEPDIR)/GrGlyphTable.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrGlyphTable.cpp' object='GrGlyphTable.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp' object='GrGlyphTable.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrGlyphTable.obj `if test -f 'src/segment/GrGlyphTable.cpp'; then $(CYGPATH_W) 'src/segment/GrGlyphTable.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrGlyphTable.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrGlyphTable.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrGlyphTable.cpp'; fi`
 
-GrPass.o: src/segment/GrPass.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrPass.o -MD -MP -MF $(DEPDIR)/GrPass.Tpo -c -o GrPass.o `test -f 'src/segment/GrPass.cpp' || echo '$(srcdir)/'`src/segment/GrPass.cpp
+GrPass.o: $(GRAPHITE_TREE)/src/segment/GrPass.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrPass.o -MD -MP -MF $(DEPDIR)/GrPass.Tpo -c -o GrPass.o `test -f '$(GRAPHITE_TREE)/src/segment/GrPass.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrPass.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrPass.Tpo $(DEPDIR)/GrPass.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrPass.cpp' object='GrPass.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrPass.cpp' object='GrPass.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrPass.o `test -f 'src/segment/GrPass.cpp' || echo '$(srcdir)/'`src/segment/GrPass.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrPass.o `test -f '$(GRAPHITE_TREE)/src/segment/GrPass.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrPass.cpp
 
-GrPass.obj: src/segment/GrPass.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrPass.obj -MD -MP -MF $(DEPDIR)/GrPass.Tpo -c -o GrPass.obj `if test -f 'src/segment/GrPass.cpp'; then $(CYGPATH_W) 'src/segment/GrPass.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrPass.cpp'; fi`
+GrPass.obj: $(GRAPHITE_TREE)/src/segment/GrPass.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrPass.obj -MD -MP -MF $(DEPDIR)/GrPass.Tpo -c -o GrPass.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrPass.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrPass.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrPass.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrPass.Tpo $(DEPDIR)/GrPass.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrPass.cpp' object='GrPass.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrPass.cpp' object='GrPass.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrPass.obj `if test -f 'src/segment/GrPass.cpp'; then $(CYGPATH_W) 'src/segment/GrPass.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrPass.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrPass.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrPass.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrPass.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrPass.cpp'; fi`
 
-GrPassActionCode.o: src/segment/GrPassActionCode.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrPassActionCode.o -MD -MP -MF $(DEPDIR)/GrPassActionCode.Tpo -c -o GrPassActionCode.o `test -f 'src/segment/GrPassActionCode.cpp' || echo '$(srcdir)/'`src/segment/GrPassActionCode.cpp
+GrPassActionCode.o: $(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrPassActionCode.o -MD -MP -MF $(DEPDIR)/GrPassActionCode.Tpo -c -o GrPassActionCode.o `test -f '$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrPassActionCode.Tpo $(DEPDIR)/GrPassActionCode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrPassActionCode.cpp' object='GrPassActionCode.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp' object='GrPassActionCode.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrPassActionCode.o `test -f 'src/segment/GrPassActionCode.cpp' || echo '$(srcdir)/'`src/segment/GrPassActionCode.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrPassActionCode.o `test -f '$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp
 
-GrPassActionCode.obj: src/segment/GrPassActionCode.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrPassActionCode.obj -MD -MP -MF $(DEPDIR)/GrPassActionCode.Tpo -c -o GrPassActionCode.obj `if test -f 'src/segment/GrPassActionCode.cpp'; then $(CYGPATH_W) 'src/segment/GrPassActionCode.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrPassActionCode.cpp'; fi`
+GrPassActionCode.obj: $(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrPassActionCode.obj -MD -MP -MF $(DEPDIR)/GrPassActionCode.Tpo -c -o GrPassActionCode.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrPassActionCode.Tpo $(DEPDIR)/GrPassActionCode.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrPassActionCode.cpp' object='GrPassActionCode.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp' object='GrPassActionCode.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrPassActionCode.obj `if test -f 'src/segment/GrPassActionCode.cpp'; then $(CYGPATH_W) 'src/segment/GrPassActionCode.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrPassActionCode.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrPassActionCode.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrPassActionCode.cpp'; fi`
 
-GrSlotState.o: src/segment/GrSlotState.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrSlotState.o -MD -MP -MF $(DEPDIR)/GrSlotState.Tpo -c -o GrSlotState.o `test -f 'src/segment/GrSlotState.cpp' || echo '$(srcdir)/'`src/segment/GrSlotState.cpp
+GrSlotState.o: $(GRAPHITE_TREE)/src/segment/GrSlotState.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrSlotState.o -MD -MP -MF $(DEPDIR)/GrSlotState.Tpo -c -o GrSlotState.o `test -f '$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrSlotState.Tpo $(DEPDIR)/GrSlotState.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrSlotState.cpp' object='GrSlotState.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp' object='GrSlotState.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrSlotState.o `test -f 'src/segment/GrSlotState.cpp' || echo '$(srcdir)/'`src/segment/GrSlotState.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrSlotState.o `test -f '$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp
 
-GrSlotState.obj: src/segment/GrSlotState.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrSlotState.obj -MD -MP -MF $(DEPDIR)/GrSlotState.Tpo -c -o GrSlotState.obj `if test -f 'src/segment/GrSlotState.cpp'; then $(CYGPATH_W) 'src/segment/GrSlotState.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrSlotState.cpp'; fi`
+GrSlotState.obj: $(GRAPHITE_TREE)/src/segment/GrSlotState.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrSlotState.obj -MD -MP -MF $(DEPDIR)/GrSlotState.Tpo -c -o GrSlotState.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrSlotState.Tpo $(DEPDIR)/GrSlotState.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrSlotState.cpp' object='GrSlotState.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp' object='GrSlotState.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrSlotState.obj `if test -f 'src/segment/GrSlotState.cpp'; then $(CYGPATH_W) 'src/segment/GrSlotState.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrSlotState.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrSlotState.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrSlotState.cpp'; fi`
 
-GrSlotStream.o: src/segment/GrSlotStream.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrSlotStream.o -MD -MP -MF $(DEPDIR)/GrSlotStream.Tpo -c -o GrSlotStream.o `test -f 'src/segment/GrSlotStream.cpp' || echo '$(srcdir)/'`src/segment/GrSlotStream.cpp
+GrSlotStream.o: $(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrSlotStream.o -MD -MP -MF $(DEPDIR)/GrSlotStream.Tpo -c -o GrSlotStream.o `test -f '$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrSlotStream.Tpo $(DEPDIR)/GrSlotStream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrSlotStream.cpp' object='GrSlotStream.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp' object='GrSlotStream.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrSlotStream.o `test -f 'src/segment/GrSlotStream.cpp' || echo '$(srcdir)/'`src/segment/GrSlotStream.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrSlotStream.o `test -f '$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp
 
-GrSlotStream.obj: src/segment/GrSlotStream.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrSlotStream.obj -MD -MP -MF $(DEPDIR)/GrSlotStream.Tpo -c -o GrSlotStream.obj `if test -f 'src/segment/GrSlotStream.cpp'; then $(CYGPATH_W) 'src/segment/GrSlotStream.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrSlotStream.cpp'; fi`
+GrSlotStream.obj: $(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrSlotStream.obj -MD -MP -MF $(DEPDIR)/GrSlotStream.Tpo -c -o GrSlotStream.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrSlotStream.Tpo $(DEPDIR)/GrSlotStream.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrSlotStream.cpp' object='GrSlotStream.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp' object='GrSlotStream.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrSlotStream.obj `if test -f 'src/segment/GrSlotStream.cpp'; then $(CYGPATH_W) 'src/segment/GrSlotStream.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrSlotStream.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrSlotStream.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrSlotStream.cpp'; fi`
 
-GrTableManager.o: src/segment/GrTableManager.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrTableManager.o -MD -MP -MF $(DEPDIR)/GrTableManager.Tpo -c -o GrTableManager.o `test -f 'src/segment/GrTableManager.cpp' || echo '$(srcdir)/'`src/segment/GrTableManager.cpp
+GrTableManager.o: $(GRAPHITE_TREE)/src/segment/GrTableManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrTableManager.o -MD -MP -MF $(DEPDIR)/GrTableManager.Tpo -c -o GrTableManager.o `test -f '$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrTableManager.Tpo $(DEPDIR)/GrTableManager.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrTableManager.cpp' object='GrTableManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp' object='GrTableManager.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrTableManager.o `test -f 'src/segment/GrTableManager.cpp' || echo '$(srcdir)/'`src/segment/GrTableManager.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrTableManager.o `test -f '$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp
 
-GrTableManager.obj: src/segment/GrTableManager.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrTableManager.obj -MD -MP -MF $(DEPDIR)/GrTableManager.Tpo -c -o GrTableManager.obj `if test -f 'src/segment/GrTableManager.cpp'; then $(CYGPATH_W) 'src/segment/GrTableManager.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrTableManager.cpp'; fi`
+GrTableManager.obj: $(GRAPHITE_TREE)/src/segment/GrTableManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GrTableManager.obj -MD -MP -MF $(DEPDIR)/GrTableManager.Tpo -c -o GrTableManager.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/GrTableManager.Tpo $(DEPDIR)/GrTableManager.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/GrTableManager.cpp' object='GrTableManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp' object='GrTableManager.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrTableManager.obj `if test -f 'src/segment/GrTableManager.cpp'; then $(CYGPATH_W) 'src/segment/GrTableManager.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/GrTableManager.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GrTableManager.obj `if test -f '$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/GrTableManager.cpp'; fi`
 
-MemoryUsage.o: src/segment/MemoryUsage.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MemoryUsage.o -MD -MP -MF $(DEPDIR)/MemoryUsage.Tpo -c -o MemoryUsage.o `test -f 'src/segment/MemoryUsage.cpp' || echo '$(srcdir)/'`src/segment/MemoryUsage.cpp
+MemoryUsage.o: $(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MemoryUsage.o -MD -MP -MF $(DEPDIR)/MemoryUsage.Tpo -c -o MemoryUsage.o `test -f '$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/MemoryUsage.Tpo $(DEPDIR)/MemoryUsage.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/MemoryUsage.cpp' object='MemoryUsage.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp' object='MemoryUsage.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MemoryUsage.o `test -f 'src/segment/MemoryUsage.cpp' || echo '$(srcdir)/'`src/segment/MemoryUsage.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MemoryUsage.o `test -f '$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp
 
-MemoryUsage.obj: src/segment/MemoryUsage.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MemoryUsage.obj -MD -MP -MF $(DEPDIR)/MemoryUsage.Tpo -c -o MemoryUsage.obj `if test -f 'src/segment/MemoryUsage.cpp'; then $(CYGPATH_W) 'src/segment/MemoryUsage.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/MemoryUsage.cpp'; fi`
+MemoryUsage.obj: $(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT MemoryUsage.obj -MD -MP -MF $(DEPDIR)/MemoryUsage.Tpo -c -o MemoryUsage.obj `if test -f '$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/MemoryUsage.Tpo $(DEPDIR)/MemoryUsage.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/MemoryUsage.cpp' object='MemoryUsage.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp' object='MemoryUsage.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MemoryUsage.obj `if test -f 'src/segment/MemoryUsage.cpp'; then $(CYGPATH_W) 'src/segment/MemoryUsage.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/MemoryUsage.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MemoryUsage.obj `if test -f '$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/MemoryUsage.cpp'; fi`
 
-Platform.o: src/segment/Platform.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Platform.o -MD -MP -MF $(DEPDIR)/Platform.Tpo -c -o Platform.o `test -f 'src/segment/Platform.cpp' || echo '$(srcdir)/'`src/segment/Platform.cpp
+Platform.o: $(GRAPHITE_TREE)/src/segment/Platform.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Platform.o -MD -MP -MF $(DEPDIR)/Platform.Tpo -c -o Platform.o `test -f '$(GRAPHITE_TREE)/src/segment/Platform.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/Platform.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Platform.Tpo $(DEPDIR)/Platform.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/Platform.cpp' object='Platform.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/Platform.cpp' object='Platform.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Platform.o `test -f 'src/segment/Platform.cpp' || echo '$(srcdir)/'`src/segment/Platform.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Platform.o `test -f '$(GRAPHITE_TREE)/src/segment/Platform.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/Platform.cpp
 
-Platform.obj: src/segment/Platform.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Platform.obj -MD -MP -MF $(DEPDIR)/Platform.Tpo -c -o Platform.obj `if test -f 'src/segment/Platform.cpp'; then $(CYGPATH_W) 'src/segment/Platform.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/Platform.cpp'; fi`
+Platform.obj: $(GRAPHITE_TREE)/src/segment/Platform.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Platform.obj -MD -MP -MF $(DEPDIR)/Platform.Tpo -c -o Platform.obj `if test -f '$(GRAPHITE_TREE)/src/segment/Platform.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/Platform.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/Platform.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Platform.Tpo $(DEPDIR)/Platform.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/Platform.cpp' object='Platform.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/Platform.cpp' object='Platform.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Platform.obj `if test -f 'src/segment/Platform.cpp'; then $(CYGPATH_W) 'src/segment/Platform.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/Platform.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Platform.obj `if test -f '$(GRAPHITE_TREE)/src/segment/Platform.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/Platform.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/Platform.cpp'; fi`
 
-Segment.o: src/segment/Segment.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Segment.o -MD -MP -MF $(DEPDIR)/Segment.Tpo -c -o Segment.o `test -f 'src/segment/Segment.cpp' || echo '$(srcdir)/'`src/segment/Segment.cpp
+Segment.o: $(GRAPHITE_TREE)/src/segment/Segment.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Segment.o -MD -MP -MF $(DEPDIR)/Segment.Tpo -c -o Segment.o `test -f '$(GRAPHITE_TREE)/src/segment/Segment.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/Segment.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Segment.Tpo $(DEPDIR)/Segment.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/Segment.cpp' object='Segment.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/Segment.cpp' object='Segment.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Segment.o `test -f 'src/segment/Segment.cpp' || echo '$(srcdir)/'`src/segment/Segment.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Segment.o `test -f '$(GRAPHITE_TREE)/src/segment/Segment.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/Segment.cpp
 
-Segment.obj: src/segment/Segment.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Segment.obj -MD -MP -MF $(DEPDIR)/Segment.Tpo -c -o Segment.obj `if test -f 'src/segment/Segment.cpp'; then $(CYGPATH_W) 'src/segment/Segment.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/Segment.cpp'; fi`
+Segment.obj: $(GRAPHITE_TREE)/src/segment/Segment.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Segment.obj -MD -MP -MF $(DEPDIR)/Segment.Tpo -c -o Segment.obj `if test -f '$(GRAPHITE_TREE)/src/segment/Segment.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/Segment.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/Segment.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Segment.Tpo $(DEPDIR)/Segment.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/Segment.cpp' object='Segment.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/Segment.cpp' object='Segment.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Segment.obj `if test -f 'src/segment/Segment.cpp'; then $(CYGPATH_W) 'src/segment/Segment.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/Segment.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Segment.obj `if test -f '$(GRAPHITE_TREE)/src/segment/Segment.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/Segment.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/Segment.cpp'; fi`
 
-SegmentAux.o: src/segment/SegmentAux.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SegmentAux.o -MD -MP -MF $(DEPDIR)/SegmentAux.Tpo -c -o SegmentAux.o `test -f 'src/segment/SegmentAux.cpp' || echo '$(srcdir)/'`src/segment/SegmentAux.cpp
+SegmentAux.o: $(GRAPHITE_TREE)/src/segment/SegmentAux.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SegmentAux.o -MD -MP -MF $(DEPDIR)/SegmentAux.Tpo -c -o SegmentAux.o `test -f '$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SegmentAux.Tpo $(DEPDIR)/SegmentAux.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/SegmentAux.cpp' object='SegmentAux.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp' object='SegmentAux.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentAux.o `test -f 'src/segment/SegmentAux.cpp' || echo '$(srcdir)/'`src/segment/SegmentAux.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentAux.o `test -f '$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp
 
-SegmentAux.obj: src/segment/SegmentAux.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SegmentAux.obj -MD -MP -MF $(DEPDIR)/SegmentAux.Tpo -c -o SegmentAux.obj `if test -f 'src/segment/SegmentAux.cpp'; then $(CYGPATH_W) 'src/segment/SegmentAux.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/SegmentAux.cpp'; fi`
+SegmentAux.obj: $(GRAPHITE_TREE)/src/segment/SegmentAux.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SegmentAux.obj -MD -MP -MF $(DEPDIR)/SegmentAux.Tpo -c -o SegmentAux.obj `if test -f '$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SegmentAux.Tpo $(DEPDIR)/SegmentAux.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/SegmentAux.cpp' object='SegmentAux.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp' object='SegmentAux.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentAux.obj `if test -f 'src/segment/SegmentAux.cpp'; then $(CYGPATH_W) 'src/segment/SegmentAux.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/SegmentAux.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SegmentAux.obj `if test -f '$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/SegmentAux.cpp'; fi`
 
-TestFSM.o: src/segment/TestFSM.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestFSM.o -MD -MP -MF $(DEPDIR)/TestFSM.Tpo -c -o TestFSM.o `test -f 'src/segment/TestFSM.cpp' || echo '$(srcdir)/'`src/segment/TestFSM.cpp
+TestFSM.o: $(GRAPHITE_TREE)/src/segment/TestFSM.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestFSM.o -MD -MP -MF $(DEPDIR)/TestFSM.Tpo -c -o TestFSM.o `test -f '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TestFSM.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestFSM.Tpo $(DEPDIR)/TestFSM.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/TestFSM.cpp' object='TestFSM.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TestFSM.cpp' object='TestFSM.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestFSM.o `test -f 'src/segment/TestFSM.cpp' || echo '$(srcdir)/'`src/segment/TestFSM.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestFSM.o `test -f '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TestFSM.cpp
 
-TestFSM.obj: src/segment/TestFSM.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestFSM.obj -MD -MP -MF $(DEPDIR)/TestFSM.Tpo -c -o TestFSM.obj `if test -f 'src/segment/TestFSM.cpp'; then $(CYGPATH_W) 'src/segment/TestFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/TestFSM.cpp'; fi`
+TestFSM.obj: $(GRAPHITE_TREE)/src/segment/TestFSM.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestFSM.obj -MD -MP -MF $(DEPDIR)/TestFSM.Tpo -c -o TestFSM.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestFSM.Tpo $(DEPDIR)/TestFSM.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/TestFSM.cpp' object='TestFSM.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TestFSM.cpp' object='TestFSM.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestFSM.obj `if test -f 'src/segment/TestFSM.cpp'; then $(CYGPATH_W) 'src/segment/TestFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/TestFSM.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestFSM.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TestFSM.cpp'; fi`
 
-TestPasses.o: src/segment/TestPasses.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestPasses.o -MD -MP -MF $(DEPDIR)/TestPasses.Tpo -c -o TestPasses.o `test -f 'src/segment/TestPasses.cpp' || echo '$(srcdir)/'`src/segment/TestPasses.cpp
+TestPasses.o: $(GRAPHITE_TREE)/src/segment/TestPasses.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestPasses.o -MD -MP -MF $(DEPDIR)/TestPasses.Tpo -c -o TestPasses.o `test -f '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TestPasses.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestPasses.Tpo $(DEPDIR)/TestPasses.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/TestPasses.cpp' object='TestPasses.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TestPasses.cpp' object='TestPasses.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestPasses.o `test -f 'src/segment/TestPasses.cpp' || echo '$(srcdir)/'`src/segment/TestPasses.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestPasses.o `test -f '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TestPasses.cpp
 
-TestPasses.obj: src/segment/TestPasses.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestPasses.obj -MD -MP -MF $(DEPDIR)/TestPasses.Tpo -c -o TestPasses.obj `if test -f 'src/segment/TestPasses.cpp'; then $(CYGPATH_W) 'src/segment/TestPasses.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/TestPasses.cpp'; fi`
+TestPasses.obj: $(GRAPHITE_TREE)/src/segment/TestPasses.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TestPasses.obj -MD -MP -MF $(DEPDIR)/TestPasses.Tpo -c -o TestPasses.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TestPasses.Tpo $(DEPDIR)/TestPasses.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/TestPasses.cpp' object='TestPasses.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TestPasses.cpp' object='TestPasses.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestPasses.obj `if test -f 'src/segment/TestPasses.cpp'; then $(CYGPATH_W) 'src/segment/TestPasses.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/TestPasses.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TestPasses.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TestPasses.cpp'; fi`
 
-TransductionLog.o: src/segment/TransductionLog.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TransductionLog.o -MD -MP -MF $(DEPDIR)/TransductionLog.Tpo -c -o TransductionLog.o `test -f 'src/segment/TransductionLog.cpp' || echo '$(srcdir)/'`src/segment/TransductionLog.cpp
+TransductionLog.o: $(GRAPHITE_TREE)/src/segment/TransductionLog.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TransductionLog.o -MD -MP -MF $(DEPDIR)/TransductionLog.Tpo -c -o TransductionLog.o `test -f '$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TransductionLog.Tpo $(DEPDIR)/TransductionLog.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/TransductionLog.cpp' object='TransductionLog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp' object='TransductionLog.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TransductionLog.o `test -f 'src/segment/TransductionLog.cpp' || echo '$(srcdir)/'`src/segment/TransductionLog.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TransductionLog.o `test -f '$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp' || echo '$(srcdir)/'`$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp
 
-TransductionLog.obj: src/segment/TransductionLog.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TransductionLog.obj -MD -MP -MF $(DEPDIR)/TransductionLog.Tpo -c -o TransductionLog.obj `if test -f 'src/segment/TransductionLog.cpp'; then $(CYGPATH_W) 'src/segment/TransductionLog.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/TransductionLog.cpp'; fi`
+TransductionLog.obj: $(GRAPHITE_TREE)/src/segment/TransductionLog.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TransductionLog.obj -MD -MP -MF $(DEPDIR)/TransductionLog.Tpo -c -o TransductionLog.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TransductionLog.Tpo $(DEPDIR)/TransductionLog.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/segment/TransductionLog.cpp' object='TransductionLog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp' object='TransductionLog.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TransductionLog.obj `if test -f 'src/segment/TransductionLog.cpp'; then $(CYGPATH_W) 'src/segment/TransductionLog.cpp'; else $(CYGPATH_W) '$(srcdir)/src/segment/TransductionLog.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TransductionLog.obj `if test -f '$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp'; then $(CYGPATH_W) '$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp'; else $(CYGPATH_W) '$(srcdir)/$(GRAPHITE_TREE)/src/segment/TransductionLog.cpp'; fi`
+
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run `make' without going through this Makefile.
+# To change the values of `make' variables: instead of editing Makefiles,
+# (1) if the variable is set in `config.status', edit `config.status'
+#     (which will cause the Makefiles to be regenerated when you run `make');
+# (2) otherwise, pass the desired values on the `make' command line.
+$(RECURSIVE_TARGETS):
+	@failcom='exit 1'; \
+	for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=* | --[!k]*);; \
+	    *k*) failcom='fail=yes';; \
+	  esac; \
+	done; \
+	dot_seen=no; \
+	target=`echo $@ | sed s/-recursive//`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    dot_seen=yes; \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	  || eval $$failcom; \
+	done; \
+	if test "$$dot_seen" = "no"; then \
+	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
+	fi; test -z "$$fail"
+
+$(RECURSIVE_CLEAN_TARGETS):
+	@failcom='exit 1'; \
+	for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=* | --[!k]*);; \
+	    *k*) failcom='fail=yes';; \
+	  esac; \
+	done; \
+	dot_seen=no; \
+	case "$@" in \
+	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
+	  *) list='$(SUBDIRS)' ;; \
+	esac; \
+	rev=''; for subdir in $$list; do \
+	  if test "$$subdir" = "."; then :; else \
+	    rev="$$subdir $$rev"; \
+	  fi; \
+	done; \
+	rev="$$rev ."; \
+	target=`echo $@ | sed s/-recursive//`; \
+	for subdir in $$rev; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	  || eval $$failcom; \
+	done && test -z "$$fail"
+tags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test "$$subdir" = . || ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
+	done
+ctags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test "$$subdir" = . || ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) ctags); \
+	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -785,10 +834,23 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	set x; \
 	here=`pwd`; \
+	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
+	  include_option=--etags-include; \
+	  empty_fix=.; \
+	else \
+	  include_option=--include; \
+	  empty_fix=; \
+	fi; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    test ! -f $$subdir/TAGS || \
+	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
+	  fi; \
+	done; \
 	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
@@ -807,7 +869,7 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+CTAGS: ctags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
@@ -859,6 +921,34 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    test -d "$(distdir)/$$subdir" \
+	    || $(MKDIR_P) "$(distdir)/$$subdir" \
+	    || exit 1; \
+	  fi; \
+	done
+	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
+	    $(am__relativize); \
+	    new_distdir=$$reldir; \
+	    dir1=$$subdir; dir2="$(top_distdir)"; \
+	    $(am__relativize); \
+	    new_top_distdir=$$reldir; \
+	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
+	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
+	    ($(am__cd) $$subdir && \
+	      $(MAKE) $(AM_MAKEFLAGS) \
+	        top_distdir="$$new_top_distdir" \
+	        distdir="$$new_distdir" \
+		am__remove_distdir=: \
+		am__skip_length_check=: \
+		am__skip_mode_fix=: \
+	        distdir) \
+	      || exit 1; \
+	  fi; \
+	done
 	$(MAKE) $(AM_MAKEFLAGS) \
 	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
 	  dist-hook
@@ -871,6 +961,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -898,7 +989,6 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then
@@ -977,18 +1067,19 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
-check: check-am
-all-am: Makefile $(LIBRARIES) $(HEADERS)
-installdirs:
-install: install-am
-install-exec: install-exec-am
-install-data: install-data-am
-uninstall: uninstall-am
+check: check-recursive
+all-am: Makefile $(LIBRARIES)
+installdirs: installdirs-recursive
+installdirs-am:
+install: install-recursive
+install-exec: install-exec-recursive
+install-data: install-data-recursive
+uninstall: uninstall-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-am
+installcheck: installcheck-recursive
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
 	  install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
@@ -1005,82 +1096,84 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-am
+clean: clean-recursive
 
 clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
-distclean: distclean-am
+distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
 
-dvi: dvi-am
+dvi: dvi-recursive
 
 dvi-am:
 
-html: html-am
+html: html-recursive
 
 html-am:
 
-info: info-am
+info: info-recursive
 
 info-am:
 
 install-data-am:
 
-install-dvi: install-dvi-am
+install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
 install-exec-am:
 
-install-html: install-html-am
+install-html: install-html-recursive
 
 install-html-am:
 
-install-info: install-info-am
+install-info: install-info-recursive
 
 install-info-am:
 
 install-man:
 
-install-pdf: install-pdf-am
+install-pdf: install-pdf-recursive
 
 install-pdf-am:
 
-install-ps: install-ps-am
+install-ps: install-ps-recursive
 
 install-ps-am:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-am
+maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-am
+mostlyclean: mostlyclean-recursive
 
 mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
-pdf: pdf-am
+pdf: pdf-recursive
 
 pdf-am:
 
-ps: ps-am
+ps: ps-recursive
 
 ps-am:
 
 uninstall-am:
 
-.MAKE: install-am install-strip
+.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) ctags-recursive \
+	install-am install-strip tags-recursive
 
-.PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
-	clean-generic clean-noinstLIBRARIES ctags dist dist-all \
+.PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
+	all all-am am--refresh check check-am clean clean-generic \
+	clean-noinstLIBRARIES ctags ctags-recursive dist dist-all \
 	dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar dist-tarZ \
 	dist-xz dist-zip distcheck distclean distclean-compile \
 	distclean-generic distclean-tags distcleancheck distdir \
@@ -1090,10 +1183,14 @@ uninstall-am:
 	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am
 
+
+# Rebuild
+.PHONY: rebuild
+rebuild: all
 
 # in case of an SVN repository
 dist-hook:
