@@ -1,3 +1,7 @@
+2009-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import freetype-2.3.11.
+
 2009-04-17  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (ft-build/Makefile): use --without-zlib instead
