@@ -117,7 +117,7 @@ protected:
 
 	UInt32				match(int index, int repeats, int textLoc);
 								// returns 0 for no match, 1 for match, or kNeedMoreInput/kInvalidChar
-	MatchElem*			pattern;
+	const MatchElem*			pattern;
 	int					patternLength;
 	int					direction;
 	MatchInfo			info[256];

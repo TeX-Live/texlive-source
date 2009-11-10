@@ -16,7 +16,6 @@
 @SET_MAKE@
 
 
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -38,7 +37,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = teckit_compile$(EXEEXT)
 subdir = .
-DIST_COMMON = README $(am__configure_deps) $(noinst_HEADERS) \
+DIST_COMMON = README $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
 	$(srcdir)/../../build-aux/config.sub \
 	$(srcdir)/../../build-aux/depcomp \
@@ -50,8 +49,7 @@ DIST_COMMON = README $(am__configure_deps) $(noinst_HEADERS) \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/mkinstalldirs \
-	../../build-aux/texinfo.tex ../../build-aux/ylwrap AUTHORS \
-	COPYING ChangeLog INSTALL NEWS
+	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
@@ -71,18 +69,20 @@ AR = ar
 ARFLAGS = cru
 libTECkit_a_AR = $(AR) $(ARFLAGS)
 libTECkit_a_LIBADD =
-am_libTECkit_a_OBJECTS = Engine.$(OBJEXT)
-libTECkit_a_OBJECTS = $(am_libTECkit_a_OBJECTS)
+nodist_libTECkit_a_OBJECTS = Engine.$(OBJEXT)
+libTECkit_a_OBJECTS = $(nodist_libTECkit_a_OBJECTS)
 libTECkit_Compiler_a_AR = $(AR) $(ARFLAGS)
 libTECkit_Compiler_a_LIBADD =
-am_libTECkit_Compiler_a_OBJECTS = Compiler.$(OBJEXT) \
+nodist_libTECkit_Compiler_a_OBJECTS = Compiler.$(OBJEXT) \
 	UnicodeNames.$(OBJEXT)
-libTECkit_Compiler_a_OBJECTS = $(am_libTECkit_Compiler_a_OBJECTS)
+libTECkit_Compiler_a_OBJECTS = $(nodist_libTECkit_Compiler_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_teckit_compile_OBJECTS = TECkit_Compile.$(OBJEXT)
-teckit_compile_OBJECTS = $(am_teckit_compile_OBJECTS)
+nodist_teckit_compile_OBJECTS = TECkit_Compile.$(OBJEXT)
+teckit_compile_OBJECTS = $(nodist_teckit_compile_OBJECTS)
 am__DEPENDENCIES_1 =
+teckit_compile_DEPENDENCIES = libTECkit_Compiler.a \
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -91,15 +91,27 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(libTECkit_a_SOURCES) $(libTECkit_Compiler_a_SOURCES) \
-	$(teckit_compile_SOURCES)
-DIST_SOURCES = $(libTECkit_a_SOURCES) $(libTECkit_Compiler_a_SOURCES) \
-	$(teckit_compile_SOURCES)
-HEADERS = $(noinst_HEADERS)
+SOURCES = $(nodist_libTECkit_a_SOURCES) \
+	$(nodist_libTECkit_Compiler_a_SOURCES) \
+	$(nodist_teckit_compile_SOURCES)
+DIST_SOURCES =
+RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
+	html-recursive info-recursive install-data-recursive \
+	install-dvi-recursive install-exec-recursive \
+	install-html-recursive install-info-recursive \
+	install-pdf-recursive install-ps-recursive install-recursive \
+	installcheck-recursive installdirs-recursive pdf-recursive \
+	ps-recursive uninstall-recursive
+RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
+  distclean-recursive maintainer-clean-recursive
+AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
+	$(RECURSIVE_CLEAN_TARGETS:-recursive=) tags TAGS ctags CTAGS \
+	distdir dist dist-all distcheck
 ETAGS = etags
 CTAGS = ctags
 am__tty_colors = \
 red=; grn=; lgn=; blu=; std=
+DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -107,7 +119,32 @@ am__remove_distdir = \
   { test ! -d "$(distdir)" \
     || { find "$(distdir)" -type d ! -perm -200 -exec chmod u+w {} ';' \
          && rm -fr "$(distdir)"; }; }
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+am__relativize = \
+  dir0=`pwd`; \
+  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
+  sed_rest='s,^[^/]*/*,,'; \
+  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
+  sed_butlast='s,/*[^/]*$$,,'; \
+  while test -n "$$dir1"; do \
+    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
+    if test "$$first" != "."; then \
+      if test "$$first" = ".."; then \
+        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
+        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
+      else \
+        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
+        if test "$$first2" = "$$first"; then \
+          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
+        else \
+          dir2="../$$dir2"; \
+        fi; \
+        dir0="$$dir0"/"$$first"; \
+      fi; \
+    fi; \
+    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
+  done; \
+  reldir="$$dir2"
+DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
@@ -157,12 +194,14 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TECKIT_TREE = @TECKIT_TREE@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
@@ -221,57 +260,36 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = -I$(top_srcdir)/source/Public-headers $(ZLIB_INCLUDES)
+EXTRA_DIST = $(TECKIT_TREE) $(TECKIT_TREE)-PATCHES teckit.test \
+	tex-text.map tex-text.tec
+SUBDIRS = teckit
+INCLUDES = -I$(top_srcdir)/$(TECKIT_TREE)/source/Public-headers $(ZLIB_INCLUDES)
 AM_CPPFLAGS = -DNDEBUG
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 noinst_LIBRARIES = libTECkit_Compiler.a libTECkit.a
-teckit_compile_SOURCES = \
-	source/Sample-tools/TECkit_Compile.cpp
+
+# teckit_compile
+#
+nodist_teckit_compile_SOURCES = \
+	$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
 
 teckit_compile_LDADD = libTECkit_Compiler.a $(ZLIB_LIBS)
-teckit_compile_DEPENDENCIES = libTECkit_Compiler.a $(ZLIB_DEPEND)
-libTECkit_Compiler_a_SOURCES = \
-	source/Compiler.cpp \
-	source/UnicodeNames.cpp
 
-libTECkit_Compiler_a_DEPENDENCIES = $(ZLIB_DEPEND)
-libTECkit_a_SOURCES = \
-	source/Engine.cpp
+# libTECkit_Compiler.a and libTECkit.a
+#
+nodist_libTECkit_Compiler_a_SOURCES = \
+	$(TECKIT_TREE)/source/Compiler.cpp \
+	$(TECKIT_TREE)/source/UnicodeNames.cpp
 
-EXTRA_DIST = source/NormalizationData.c teckit.test tex-text.map \
-	tex-text.tec SFconv autogen.sh ax_misc.m4 ax_prog_rc.m4 bin \
-	docs/Calling_TECkit_from_VB.doc docs/Makefile.am \
-	docs/Makefile.in docs/TECkit_Binary_Format.doc \
-	docs/TECkit_Binary_Format.doc.pdf docs/TECkit_Language_2.1.doc \
-	docs/TECkit_Language_2.1.doc.pdf docs/TECkit_version_2.1.doc \
-	docs/TECkit_version_2.1.doc.pdf lib license/LICENSING.txt \
-	license/License_CPLv05.txt license/License_LGPLv21.txt \
-	source/Carbon.r source/Compiler_ver.rc source/Engine_ver.rc \
-	source/MakeNormData.pl source/MakeUnicodeNames.pl \
-	source/Makefile.am source/Perl source/Prefix_Mac.h \
-	source/Prefix_Win32.h source/Public-headers/Makefile.am \
-	source/REALplugin.cp source/Sample-tools/TECkit_Compile_ver.rc \
-	source/Sample-tools/TxtConv.cpp \
-	source/Sample-tools/TxtConv_ver.rc \
-	source/Sample-tools/version_defs.h source/TECkit_Compiler.cmd \
-	source/TECkit_Compiler.exp source/TECkit_Engine.cmd \
-	source/TECkit_Engine.exp source/test.cp source/version_defs.h \
-	test Makefile.am.orig configure.ac.orig
-libTECkit_a_DEPENDENCIES = $(ZLIB_DEPEND)
-noinst_HEADERS = \
-	source/Compiler.h \
-	source/Engine.h \
-	source/Public-headers/TECkit_Common.h \
-	source/Public-headers/TECkit_Compiler.h \
-	source/Public-headers/TECkit_Engine.h \
-	source/TECkit_Format.h \
-	source/ulong_chartraits.h
+nodist_libTECkit_a_SOURCES = \
+	$(TECKIT_TREE)/source/Engine.cpp
 
+DISTCLEANFILES = config.force
 @build_TRUE@TESTS = teckit.test
 CLEANFILES = xtex-text.tec
 all: config.h
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
 .SUFFIXES: .cpp .o .obj
@@ -405,61 +423,131 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-Engine.o: source/Engine.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Engine.o -MD -MP -MF $(DEPDIR)/Engine.Tpo -c -o Engine.o `test -f 'source/Engine.cpp' || echo '$(srcdir)/'`source/Engine.cpp
+Engine.o: $(TECKIT_TREE)/source/Engine.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Engine.o -MD -MP -MF $(DEPDIR)/Engine.Tpo -c -o Engine.o `test -f '$(TECKIT_TREE)/source/Engine.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Engine.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Engine.Tpo $(DEPDIR)/Engine.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='source/Engine.cpp' object='Engine.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Engine.cpp' object='Engine.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.o `test -f 'source/Engine.cpp' || echo '$(srcdir)/'`source/Engine.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.o `test -f '$(TECKIT_TREE)/source/Engine.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Engine.cpp
 
-Engine.obj: source/Engine.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Engine.obj -MD -MP -MF $(DEPDIR)/Engine.Tpo -c -o Engine.obj `if test -f 'source/Engine.cpp'; then $(CYGPATH_W) 'source/Engine.cpp'; else $(CYGPATH_W) '$(srcdir)/source/Engine.cpp'; fi`
+Engine.obj: $(TECKIT_TREE)/source/Engine.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Engine.obj -MD -MP -MF $(DEPDIR)/Engine.Tpo -c -o Engine.obj `if test -f '$(TECKIT_TREE)/source/Engine.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Engine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Engine.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Engine.Tpo $(DEPDIR)/Engine.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='source/Engine.cpp' object='Engine.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Engine.cpp' object='Engine.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.obj `if test -f 'source/Engine.cpp'; then $(CYGPATH_W) 'source/Engine.cpp'; else $(CYGPATH_W) '$(srcdir)/source/Engine.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Engine.obj `if test -f '$(TECKIT_TREE)/source/Engine.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Engine.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Engine.cpp'; fi`
 
-Compiler.o: source/Compiler.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Compiler.o -MD -MP -MF $(DEPDIR)/Compiler.Tpo -c -o Compiler.o `test -f 'source/Compiler.cpp' || echo '$(srcdir)/'`source/Compiler.cpp
+Compiler.o: $(TECKIT_TREE)/source/Compiler.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Compiler.o -MD -MP -MF $(DEPDIR)/Compiler.Tpo -c -o Compiler.o `test -f '$(TECKIT_TREE)/source/Compiler.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Compiler.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Compiler.Tpo $(DEPDIR)/Compiler.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='source/Compiler.cpp' object='Compiler.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Compiler.cpp' object='Compiler.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Compiler.o `test -f 'source/Compiler.cpp' || echo '$(srcdir)/'`source/Compiler.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Compiler.o `test -f '$(TECKIT_TREE)/source/Compiler.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Compiler.cpp
 
-Compiler.obj: source/Compiler.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Compiler.obj -MD -MP -MF $(DEPDIR)/Compiler.Tpo -c -o Compiler.obj `if test -f 'source/Compiler.cpp'; then $(CYGPATH_W) 'source/Compiler.cpp'; else $(CYGPATH_W) '$(srcdir)/source/Compiler.cpp'; fi`
+Compiler.obj: $(TECKIT_TREE)/source/Compiler.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Compiler.obj -MD -MP -MF $(DEPDIR)/Compiler.Tpo -c -o Compiler.obj `if test -f '$(TECKIT_TREE)/source/Compiler.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Compiler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Compiler.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Compiler.Tpo $(DEPDIR)/Compiler.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='source/Compiler.cpp' object='Compiler.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Compiler.cpp' object='Compiler.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Compiler.obj `if test -f 'source/Compiler.cpp'; then $(CYGPATH_W) 'source/Compiler.cpp'; else $(CYGPATH_W) '$(srcdir)/source/Compiler.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Compiler.obj `if test -f '$(TECKIT_TREE)/source/Compiler.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Compiler.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Compiler.cpp'; fi`
 
-UnicodeNames.o: source/UnicodeNames.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeNames.o -MD -MP -MF $(DEPDIR)/UnicodeNames.Tpo -c -o UnicodeNames.o `test -f 'source/UnicodeNames.cpp' || echo '$(srcdir)/'`source/UnicodeNames.cpp
+UnicodeNames.o: $(TECKIT_TREE)/source/UnicodeNames.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeNames.o -MD -MP -MF $(DEPDIR)/UnicodeNames.Tpo -c -o UnicodeNames.o `test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/UnicodeNames.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/UnicodeNames.Tpo $(DEPDIR)/UnicodeNames.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='source/UnicodeNames.cpp' object='UnicodeNames.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/UnicodeNames.cpp' object='UnicodeNames.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeNames.o `test -f 'source/UnicodeNames.cpp' || echo '$(srcdir)/'`source/UnicodeNames.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeNames.o `test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/UnicodeNames.cpp
 
-UnicodeNames.obj: source/UnicodeNames.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeNames.obj -MD -MP -MF $(DEPDIR)/UnicodeNames.Tpo -c -o UnicodeNames.obj `if test -f 'source/UnicodeNames.cpp'; then $(CYGPATH_W) 'source/UnicodeNames.cpp'; else $(CYGPATH_W) '$(srcdir)/source/UnicodeNames.cpp'; fi`
+UnicodeNames.obj: $(TECKIT_TREE)/source/UnicodeNames.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT UnicodeNames.obj -MD -MP -MF $(DEPDIR)/UnicodeNames.Tpo -c -o UnicodeNames.obj `if test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/UnicodeNames.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/UnicodeNames.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/UnicodeNames.Tpo $(DEPDIR)/UnicodeNames.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='source/UnicodeNames.cpp' object='UnicodeNames.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/UnicodeNames.cpp' object='UnicodeNames.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeNames.obj `if test -f 'source/UnicodeNames.cpp'; then $(CYGPATH_W) 'source/UnicodeNames.cpp'; else $(CYGPATH_W) '$(srcdir)/source/UnicodeNames.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o UnicodeNames.obj `if test -f '$(TECKIT_TREE)/source/UnicodeNames.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/UnicodeNames.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/UnicodeNames.cpp'; fi`
 
-TECkit_Compile.o: source/Sample-tools/TECkit_Compile.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.o -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.o `test -f 'source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`source/Sample-tools/TECkit_Compile.cpp
+TECkit_Compile.o: $(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.o -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.o `test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TECkit_Compile.Tpo $(DEPDIR)/TECkit_Compile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.o `test -f 'source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`source/Sample-tools/TECkit_Compile.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.o `test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
 
-TECkit_Compile.obj: source/Sample-tools/TECkit_Compile.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.obj -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.obj `if test -f 'source/Sample-tools/TECkit_Compile.cpp'; then $(CYGPATH_W) 'source/Sample-tools/TECkit_Compile.cpp'; else $(CYGPATH_W) '$(srcdir)/source/Sample-tools/TECkit_Compile.cpp'; fi`
+TECkit_Compile.obj: $(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.obj -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.obj `if test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TECkit_Compile.Tpo $(DEPDIR)/TECkit_Compile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp' object='TECkit_Compile.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.obj `if test -f 'source/Sample-tools/TECkit_Compile.cpp'; then $(CYGPATH_W) 'source/Sample-tools/TECkit_Compile.cpp'; else $(CYGPATH_W) '$(srcdir)/source/Sample-tools/TECkit_Compile.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TECkit_Compile.obj `if test -f '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; then $(CYGPATH_W) '$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; else $(CYGPATH_W) '$(srcdir)/$(TECKIT_TREE)/source/Sample-tools/TECkit_Compile.cpp'; fi`
+
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run `make' without going through this Makefile.
+# To change the values of `make' variables: instead of editing Makefiles,
+# (1) if the variable is set in `config.status', edit `config.status'
+#     (which will cause the Makefiles to be regenerated when you run `make');
+# (2) otherwise, pass the desired values on the `make' command line.
+$(RECURSIVE_TARGETS):
+	@failcom='exit 1'; \
+	for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=* | --[!k]*);; \
+	    *k*) failcom='fail=yes';; \
+	  esac; \
+	done; \
+	dot_seen=no; \
+	target=`echo $@ | sed s/-recursive//`; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    dot_seen=yes; \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	  || eval $$failcom; \
+	done; \
+	if test "$$dot_seen" = "no"; then \
+	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
+	fi; test -z "$$fail"
+
+$(RECURSIVE_CLEAN_TARGETS):
+	@failcom='exit 1'; \
+	for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=* | --[!k]*);; \
+	    *k*) failcom='fail=yes';; \
+	  esac; \
+	done; \
+	dot_seen=no; \
+	case "$@" in \
+	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
+	  *) list='$(SUBDIRS)' ;; \
+	esac; \
+	rev=''; for subdir in $$list; do \
+	  if test "$$subdir" = "."; then :; else \
+	    rev="$$subdir $$rev"; \
+	  fi; \
+	done; \
+	rev="$$rev ."; \
+	target=`echo $@ | sed s/-recursive//`; \
+	for subdir in $$rev; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	  || eval $$failcom; \
+	done && test -z "$$fail"
+tags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test "$$subdir" = . || ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
+	done
+ctags-recursive:
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  test "$$subdir" = . || ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) ctags); \
+	done
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -471,10 +559,23 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS:  $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
+TAGS: tags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	set x; \
 	here=`pwd`; \
+	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
+	  include_option=--etags-include; \
+	  empty_fix=.; \
+	else \
+	  include_option=--include; \
+	  empty_fix=; \
+	fi; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    test ! -f $$subdir/TAGS || \
+	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
+	  fi; \
+	done; \
 	list='$(SOURCES) $(HEADERS) config.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
@@ -493,7 +594,7 @@ TAGS:  $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
+CTAGS: ctags-recursive $(HEADERS) $(SOURCES) config.h.in $(TAGS_DEPENDENCIES) \
 		$(TAGS_FILES) $(LISP)
 	list='$(SOURCES) $(HEADERS) config.h.in $(LISP) $(TAGS_FILES)'; \
 	unique=`for i in $$list; do \
@@ -637,6 +738,34 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    test -d "$(distdir)/$$subdir" \
+	    || $(MKDIR_P) "$(distdir)/$$subdir" \
+	    || exit 1; \
+	  fi; \
+	done
+	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
+	    $(am__relativize); \
+	    new_distdir=$$reldir; \
+	    dir1=$$subdir; dir2="$(top_distdir)"; \
+	    $(am__relativize); \
+	    new_top_distdir=$$reldir; \
+	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
+	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
+	    ($(am__cd) $$subdir && \
+	      $(MAKE) $(AM_MAKEFLAGS) \
+	        top_distdir="$$new_top_distdir" \
+	        distdir="$$new_distdir" \
+		am__remove_distdir=: \
+		am__skip_length_check=: \
+		am__skip_mode_fix=: \
+	        distdir) \
+	      || exit 1; \
+	  fi; \
+	done
 	$(MAKE) $(AM_MAKEFLAGS) \
 	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
 	  dist-hook
@@ -649,6 +778,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -676,7 +806,6 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then
@@ -756,21 +885,22 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(HEADERS) config.h
-installdirs:
+check: check-recursive
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) config.h
+installdirs: installdirs-recursive
+installdirs-am:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
-install-exec: install-exec-am
-install-data: install-data-am
-uninstall: uninstall-am
+install: install-recursive
+install-exec: install-exec-recursive
+install-data: install-data-recursive
+uninstall: uninstall-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-am
+installcheck: installcheck-recursive
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
 	  install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
@@ -784,90 +914,93 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-am
+clean: clean-recursive
 
 clean-am: clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
 	mostlyclean-am
 
-distclean: distclean-am
+distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
 
-dvi: dvi-am
+dvi: dvi-recursive
 
 dvi-am:
 
-html: html-am
+html: html-recursive
 
 html-am:
 
-info: info-am
+info: info-recursive
 
 info-am:
 
 install-data-am:
 
-install-dvi: install-dvi-am
+install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
 install-exec-am: install-binPROGRAMS
 
-install-html: install-html-am
+install-html: install-html-recursive
 
 install-html-am:
 
-install-info: install-info-am
+install-info: install-info-recursive
 
 install-info-am:
 
 install-man:
 
-install-pdf: install-pdf-am
+install-pdf: install-pdf-recursive
 
 install-pdf-am:
 
-install-ps: install-ps-am
+install-ps: install-ps-recursive
 
 install-ps-am:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-am
+maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-am
+mostlyclean: mostlyclean-recursive
 
 mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
-pdf: pdf-am
+pdf: pdf-recursive
 
 pdf-am:
 
-ps: ps-am
+ps: ps-recursive
 
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
 
-.MAKE: all check-am install-am install-strip
+.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check-am \
+	ctags-recursive install-am install-strip tags-recursive
 
-.PHONY: CTAGS GTAGS all all-am am--refresh check check-TESTS check-am \
-	clean clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
-	ctags dist dist-all dist-bzip2 dist-gzip dist-hook dist-lzma \
-	dist-shar dist-tarZ dist-xz dist-zip distcheck distclean \
-	distclean-compile distclean-generic distclean-hdr \
+.PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
+	all all-am am--refresh check check-TESTS check-am clean \
+	clean-binPROGRAMS clean-generic clean-noinstLIBRARIES ctags \
+	ctags-recursive dist dist-all dist-bzip2 dist-gzip dist-hook \
+	dist-lzma dist-shar dist-tarZ dist-xz dist-zip distcheck \
+	distclean distclean-compile distclean-generic distclean-hdr \
 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
 	dvi-am html html-am info info-am install install-am \
 	install-binPROGRAMS install-data install-data-am install-dvi \
@@ -875,16 +1008,29 @@ uninstall-am: uninstall-binPROGRAMS
 	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am \
+	uninstall-binPROGRAMS
 
 
-@ZLIB_RULE@
+# Rebuild
+.PHONY: rebuild
+rebuild: all
 
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+
+$(teckit_compile_OBJECTS): libTECkit_Compiler.a
+
+$(libTECkit_Compiler_a_OBJECTS) $(libTECkit_a_OBJECTS): config.force
+
+config.force: $(ZLIB_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+@ZLIB_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

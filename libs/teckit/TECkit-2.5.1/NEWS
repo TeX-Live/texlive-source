@@ -1,0 +1,9 @@
+2008-04-07
+    updated Unicode character names and normalization data to 5.1
+    now building Windows release with mingw32-gcc instead of CodeWarrior
+    minor compiler bugfixes and code cleanup for portability
+
+2006-03-16
+	updated Unicode character names and normalization data to 5.0
+	added license files and docs to subversion repository
+	released new Windows binary package, supporting -x option in teckit_compile

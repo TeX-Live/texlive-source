@@ -3,5 +3,7 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system teckit
-KPSE_CHECK_LIB([teckit], [TECkit_CreateConverter], [TECkit_Engine.h])
+## basic check of system teckit
+KPSE_TRY_LIBXX([teckit],
+               [#include <TECkit_Engine.h>],
+               [TECkit_Converter converter; TECkit_DisposeConverter(converter);])

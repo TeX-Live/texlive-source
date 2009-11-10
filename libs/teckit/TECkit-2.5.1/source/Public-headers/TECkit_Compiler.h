@@ -56,7 +56,7 @@ extern "C" {
 #define kCompilerOpts_Compress	0x00000010	/* generate compressed mapping table */
 #define kCompilerOpts_XML		0x00000020	/* instead of a compiled binary table, generate an XML representation of the mapping */
 
-typedef void (CALLBACK *TECkit_ErrorFn)(void* userData, char* msg, char* param, UInt32 line);
+typedef void (CALLBACK *TECkit_ErrorFn)(void* userData, const char* msg, const char* param, UInt32 line);
 
 TECkit_Status
 WINAPI EXPORTED
@@ -75,7 +75,7 @@ WINAPI EXPORTED
 TECkit_GetCompilerVersion();
 
 /* new APIs for looking up Unicode names (as NUL-terminated C strings) */
-char*
+const char*
 WINAPI EXPORTED
 TECkit_GetUnicodeName(UInt32 usv);
 	/* returns the Unicode name of usv, if available, else NULL */

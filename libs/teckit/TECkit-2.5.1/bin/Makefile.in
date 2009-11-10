@@ -33,13 +33,18 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-bin_PROGRAMS = teckit_compile$(EXEEXT) txtconv$(EXEEXT)
+bin_PROGRAMS = teckit_compile$(EXEEXT) txtconv$(EXEEXT) \
+	sfconv$(EXEEXT)
+@OLD_LIB_NAMES_FALSE@teckit_compile_DEPENDENCIES = $(top_builddir)/lib/libTECkit_Compiler.la
+@OLD_LIB_NAMES_FALSE@txtconv_DEPENDENCIES =  \
+@OLD_LIB_NAMES_FALSE@	$(top_builddir)/lib/libTECkit.la
+@OLD_LIB_NAMES_FALSE@sfconv_DEPENDENCIES =  \
+@OLD_LIB_NAMES_FALSE@	$(top_builddir)/lib/libTECkit.la
 subdir = bin
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../libs/zlib/withenable.ac \
-	$(top_srcdir)/../../libs/zlib/zlib.ac \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_misc.m4 \
+	$(top_srcdir)/m4/ax_prog_rc.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -48,16 +53,43 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am__sfconv_SOURCES_DIST = $(top_srcdir)/SFconv/SFconv.cpp \
+	$(top_srcdir)/SFconv/ConvertUTF.c \
+	$(expatdir)/xmlparse/xmlparse.c \
+	$(expatdir)/xmlparse/hashtable.c $(expatdir)/xmltok/xmlrole.c \
+	$(expatdir)/xmltok/xmltok.c
+@SYSTEM_EXPAT_FALSE@am__objects_1 = sfconv-xmlparse.$(OBJEXT) \
+@SYSTEM_EXPAT_FALSE@	sfconv-hashtable.$(OBJEXT) \
+@SYSTEM_EXPAT_FALSE@	sfconv-xmlrole.$(OBJEXT) \
+@SYSTEM_EXPAT_FALSE@	sfconv-xmltok.$(OBJEXT)
+am_sfconv_OBJECTS = sfconv-SFconv.$(OBJEXT) \
+	sfconv-ConvertUTF.$(OBJEXT) $(am__objects_1)
+sfconv_OBJECTS = $(am_sfconv_OBJECTS)
+sfconv_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(sfconv_LDFLAGS) $(LDFLAGS) -o $@
 am_teckit_compile_OBJECTS = TECkit_Compile.$(OBJEXT)
 teckit_compile_OBJECTS = $(am_teckit_compile_OBJECTS)
-teckit_compile_DEPENDENCIES =  \
-	$(top_builddir)/lib/libTECkit_Compiler.la
+teckit_compile_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(teckit_compile_LDFLAGS) $(LDFLAGS) -o $@
 am_txtconv_OBJECTS = TxtConv.$(OBJEXT)
 txtconv_OBJECTS = $(am_txtconv_OBJECTS)
-txtconv_DEPENDENCIES = $(top_builddir)/lib/libTECkit.la
+txtconv_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(txtconv_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -67,13 +99,16 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(teckit_compile_SOURCES) $(txtconv_SOURCES)
-DIST_SOURCES = $(teckit_compile_SOURCES) $(txtconv_SOURCES)
+SOURCES = $(sfconv_SOURCES) $(teckit_compile_SOURCES) \
+	$(txtconv_SOURCES)
+DIST_SOURCES = $(am__sfconv_SOURCES_DIST) $(teckit_compile_SOURCES) \
+	$(txtconv_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_RCFLAGS = @AM_RCFLAGS@
 AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
@@ -107,7 +142,6 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
-LDZLIB = @LDZLIB@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -126,13 +160,13 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
+RC = @RC@
+RCFLAGS = @RCFLAGS@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-ZLIBCPPFLAGS = @ZLIBCPPFLAGS@
-ZLIBDEP = @ZLIBDEP@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -191,34 +225,43 @@ target_vendor = @target_vendor@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = 1.6
-
-#if SYSTEM_EXPAT
-#EXPAT_CFLAGS = -DXML_DTD
-#EXPAT_SOURCES =
-#else
-#EXPAT_CFLAGS = -I$(expatdir)/xmlparse -I$(expatdir)/xmltok -DXML_DTD
-#EXPAT_SOURCES  = $(expatdir)/xmlparse/xmlparse.c
-#EXPAT_SOURCES += $(expatdir)/xmlparse/hashtable.c
-#EXPAT_SOURCES += $(expatdir)/xmltok/xmlrole.c
-#EXPAT_SOURCES += $(expatdir)/xmltok/xmltok.c
-#endif
-AM_CPPFLAGS = -I$(top_srcdir)/source/Public-headers $(EXPAT_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/source/Public-headers
 expatdir = $(top_srcdir)/SFconv/expat
-ZLIBSRCDIR = $(top_srcdir)/../zlib
-ZLIBDIR = $(top_builddir)/../zlib
+tool_src = $(top_srcdir)/source/Sample-tools
+@SYSTEM_EXPAT_FALSE@EXPAT_CFLAGS = -I$(expatdir)/xmlparse -I$(expatdir)/xmltok -DXML_DTD
+@SYSTEM_EXPAT_TRUE@EXPAT_CFLAGS = -DXML_DTD @expat_CFLAGS@
+@SYSTEM_EXPAT_FALSE@EXPAT_SOURCES = $(expatdir)/xmlparse/xmlparse.c \
+@SYSTEM_EXPAT_FALSE@	$(expatdir)/xmlparse/hashtable.c \
+@SYSTEM_EXPAT_FALSE@	$(expatdir)/xmltok/xmlrole.c \
+@SYSTEM_EXPAT_FALSE@	$(expatdir)/xmltok/xmltok.c
+@SYSTEM_EXPAT_TRUE@EXPAT_SOURCES = 
+
+# AM_CPPFLAGS  += $(EXPAT_CFLAGS)
 AM_CFLAGS = $(AM_CPPFLAGS)
 teckit_compile_SOURCES = $(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
 txtconv_SOURCES = $(top_srcdir)/source/Sample-tools/TxtConv.cpp
+sfconv_SOURCES = $(top_srcdir)/SFconv/SFconv.cpp \
+	$(top_srcdir)/SFconv/ConvertUTF.c $(EXPAT_SOURCES)
+sfconv_CPPFLAGS = $(AM_CPPFLAGS) $(EXPAT_CFLAGS)
+sfconv_CFLAGS = $(AM_CPPFLAGS) $(EXPAT_CFLAGS)
+@OLD_LIB_NAMES_FALSE@teckit_compile_LDADD = $(top_builddir)/lib/libTECkit_Compiler.la
+@OLD_LIB_NAMES_TRUE@teckit_compile_LDADD = $(top_builddir)/lib/TECkit_Compiler_x86.la
+@OLD_LIB_NAMES_FALSE@txtconv_LDADD = $(top_builddir)/lib/libTECkit.la
+@OLD_LIB_NAMES_TRUE@txtconv_LDADD = $(top_builddir)/lib/TECkit_x86.la
+@OLD_LIB_NAMES_FALSE@sfconv_LDADD = $(top_builddir)/lib/libTECkit.la @expat_LIBS@
+@OLD_LIB_NAMES_TRUE@sfconv_LDADD = $(top_builddir)/lib/TECkit_x86.la @expat_LIBS@
 
-# sfconv_SOURCES  = $(top_srcdir)/SFconv/SFconv.cpp
-# sfconv_SOURCES += $(top_srcdir)/SFconv/ConvertUTF.c
-# sfconv_SOURCES += $(EXPAT_SOURCES)
-teckit_compile_LDADD = $(top_builddir)/lib/libTECkit_Compiler.la @LDZLIB@
-txtconv_LDADD = $(top_builddir)/lib/libTECkit.la @LDZLIB@
+# --> RC Support
+@OLD_LIB_NAMES_TRUE@teckit_compile_DEPENDENCIES = TECkit_Compile_ver.o
+@OLD_LIB_NAMES_TRUE@teckit_compile_LDFLAGS = -Wl,TECkit_Compile_ver.o
+@OLD_LIB_NAMES_TRUE@txtconv_DEPENDENCIES = TxtConv_ver.o
+@OLD_LIB_NAMES_TRUE@txtconv_LDFLAGS = -Wl,TxtConv_ver.o
+@OLD_LIB_NAMES_TRUE@sfconv_DEPENDENCIES = SFconv_ver.o
+@OLD_LIB_NAMES_TRUE@sfconv_LDFLAGS = -Wl,SFconv_ver.o
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .o .obj
+.SUFFIXES: .c .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -276,12 +319,15 @@ clean-binPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+sfconv$(EXEEXT): $(sfconv_OBJECTS) $(sfconv_DEPENDENCIES) 
+	@rm -f sfconv$(EXEEXT)
+	$(sfconv_LINK) $(sfconv_OBJECTS) $(sfconv_LDADD) $(LIBS)
 teckit_compile$(EXEEXT): $(teckit_compile_OBJECTS) $(teckit_compile_DEPENDENCIES) 
 	@rm -f teckit_compile$(EXEEXT)
-	$(CXXLINK) $(teckit_compile_OBJECTS) $(teckit_compile_LDADD) $(LIBS)
+	$(teckit_compile_LINK) $(teckit_compile_OBJECTS) $(teckit_compile_LDADD) $(LIBS)
 txtconv$(EXEEXT): $(txtconv_OBJECTS) $(txtconv_DEPENDENCIES) 
 	@rm -f txtconv$(EXEEXT)
-	$(CXXLINK) $(txtconv_OBJECTS) $(txtconv_LDADD) $(LIBS)
+	$(txtconv_LINK) $(txtconv_OBJECTS) $(txtconv_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -291,6 +337,103 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TECkit_Compile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TxtConv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfconv-ConvertUTF.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfconv-SFconv.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfconv-hashtable.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfconv-xmlparse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfconv-xmlrole.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfconv-xmltok.Po@am__quote@
+
+.c.o:
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(COMPILE) -c $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+sfconv-ConvertUTF.o: $(top_srcdir)/SFconv/ConvertUTF.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-ConvertUTF.o -MD -MP -MF $(DEPDIR)/sfconv-ConvertUTF.Tpo -c -o sfconv-ConvertUTF.o `test -f '$(top_srcdir)/SFconv/ConvertUTF.c' || echo '$(srcdir)/'`$(top_srcdir)/SFconv/ConvertUTF.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-ConvertUTF.Tpo $(DEPDIR)/sfconv-ConvertUTF.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/SFconv/ConvertUTF.c' object='sfconv-ConvertUTF.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-ConvertUTF.o `test -f '$(top_srcdir)/SFconv/ConvertUTF.c' || echo '$(srcdir)/'`$(top_srcdir)/SFconv/ConvertUTF.c
+
+sfconv-ConvertUTF.obj: $(top_srcdir)/SFconv/ConvertUTF.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-ConvertUTF.obj -MD -MP -MF $(DEPDIR)/sfconv-ConvertUTF.Tpo -c -o sfconv-ConvertUTF.obj `if test -f '$(top_srcdir)/SFconv/ConvertUTF.c'; then $(CYGPATH_W) '$(top_srcdir)/SFconv/ConvertUTF.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/SFconv/ConvertUTF.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-ConvertUTF.Tpo $(DEPDIR)/sfconv-ConvertUTF.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/SFconv/ConvertUTF.c' object='sfconv-ConvertUTF.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-ConvertUTF.obj `if test -f '$(top_srcdir)/SFconv/ConvertUTF.c'; then $(CYGPATH_W) '$(top_srcdir)/SFconv/ConvertUTF.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/SFconv/ConvertUTF.c'; fi`
+
+sfconv-xmlparse.o: $(expatdir)/xmlparse/xmlparse.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-xmlparse.o -MD -MP -MF $(DEPDIR)/sfconv-xmlparse.Tpo -c -o sfconv-xmlparse.o `test -f '$(expatdir)/xmlparse/xmlparse.c' || echo '$(srcdir)/'`$(expatdir)/xmlparse/xmlparse.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-xmlparse.Tpo $(DEPDIR)/sfconv-xmlparse.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(expatdir)/xmlparse/xmlparse.c' object='sfconv-xmlparse.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-xmlparse.o `test -f '$(expatdir)/xmlparse/xmlparse.c' || echo '$(srcdir)/'`$(expatdir)/xmlparse/xmlparse.c
+
+sfconv-xmlparse.obj: $(expatdir)/xmlparse/xmlparse.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-xmlparse.obj -MD -MP -MF $(DEPDIR)/sfconv-xmlparse.Tpo -c -o sfconv-xmlparse.obj `if test -f '$(expatdir)/xmlparse/xmlparse.c'; then $(CYGPATH_W) '$(expatdir)/xmlparse/xmlparse.c'; else $(CYGPATH_W) '$(srcdir)/$(expatdir)/xmlparse/xmlparse.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-xmlparse.Tpo $(DEPDIR)/sfconv-xmlparse.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(expatdir)/xmlparse/xmlparse.c' object='sfconv-xmlparse.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-xmlparse.obj `if test -f '$(expatdir)/xmlparse/xmlparse.c'; then $(CYGPATH_W) '$(expatdir)/xmlparse/xmlparse.c'; else $(CYGPATH_W) '$(srcdir)/$(expatdir)/xmlparse/xmlparse.c'; fi`
+
+sfconv-hashtable.o: $(expatdir)/xmlparse/hashtable.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-hashtable.o -MD -MP -MF $(DEPDIR)/sfconv-hashtable.Tpo -c -o sfconv-hashtable.o `test -f '$(expatdir)/xmlparse/hashtable.c' || echo '$(srcdir)/'`$(expatdir)/xmlparse/hashtable.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-hashtable.Tpo $(DEPDIR)/sfconv-hashtable.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(expatdir)/xmlparse/hashtable.c' object='sfconv-hashtable.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-hashtable.o `test -f '$(expatdir)/xmlparse/hashtable.c' || echo '$(srcdir)/'`$(expatdir)/xmlparse/hashtable.c
+
+sfconv-hashtable.obj: $(expatdir)/xmlparse/hashtable.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-hashtable.obj -MD -MP -MF $(DEPDIR)/sfconv-hashtable.Tpo -c -o sfconv-hashtable.obj `if test -f '$(expatdir)/xmlparse/hashtable.c'; then $(CYGPATH_W) '$(expatdir)/xmlparse/hashtable.c'; else $(CYGPATH_W) '$(srcdir)/$(expatdir)/xmlparse/hashtable.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-hashtable.Tpo $(DEPDIR)/sfconv-hashtable.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(expatdir)/xmlparse/hashtable.c' object='sfconv-hashtable.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-hashtable.obj `if test -f '$(expatdir)/xmlparse/hashtable.c'; then $(CYGPATH_W) '$(expatdir)/xmlparse/hashtable.c'; else $(CYGPATH_W) '$(srcdir)/$(expatdir)/xmlparse/hashtable.c'; fi`
+
+sfconv-xmlrole.o: $(expatdir)/xmltok/xmlrole.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-xmlrole.o -MD -MP -MF $(DEPDIR)/sfconv-xmlrole.Tpo -c -o sfconv-xmlrole.o `test -f '$(expatdir)/xmltok/xmlrole.c' || echo '$(srcdir)/'`$(expatdir)/xmltok/xmlrole.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-xmlrole.Tpo $(DEPDIR)/sfconv-xmlrole.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(expatdir)/xmltok/xmlrole.c' object='sfconv-xmlrole.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-xmlrole.o `test -f '$(expatdir)/xmltok/xmlrole.c' || echo '$(srcdir)/'`$(expatdir)/xmltok/xmlrole.c
+
+sfconv-xmlrole.obj: $(expatdir)/xmltok/xmlrole.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-xmlrole.obj -MD -MP -MF $(DEPDIR)/sfconv-xmlrole.Tpo -c -o sfconv-xmlrole.obj `if test -f '$(expatdir)/xmltok/xmlrole.c'; then $(CYGPATH_W) '$(expatdir)/xmltok/xmlrole.c'; else $(CYGPATH_W) '$(srcdir)/$(expatdir)/xmltok/xmlrole.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-xmlrole.Tpo $(DEPDIR)/sfconv-xmlrole.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(expatdir)/xmltok/xmlrole.c' object='sfconv-xmlrole.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-xmlrole.obj `if test -f '$(expatdir)/xmltok/xmlrole.c'; then $(CYGPATH_W) '$(expatdir)/xmltok/xmlrole.c'; else $(CYGPATH_W) '$(srcdir)/$(expatdir)/xmltok/xmlrole.c'; fi`
+
+sfconv-xmltok.o: $(expatdir)/xmltok/xmltok.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-xmltok.o -MD -MP -MF $(DEPDIR)/sfconv-xmltok.Tpo -c -o sfconv-xmltok.o `test -f '$(expatdir)/xmltok/xmltok.c' || echo '$(srcdir)/'`$(expatdir)/xmltok/xmltok.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-xmltok.Tpo $(DEPDIR)/sfconv-xmltok.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(expatdir)/xmltok/xmltok.c' object='sfconv-xmltok.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-xmltok.o `test -f '$(expatdir)/xmltok/xmltok.c' || echo '$(srcdir)/'`$(expatdir)/xmltok/xmltok.c
+
+sfconv-xmltok.obj: $(expatdir)/xmltok/xmltok.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -MT sfconv-xmltok.obj -MD -MP -MF $(DEPDIR)/sfconv-xmltok.Tpo -c -o sfconv-xmltok.obj `if test -f '$(expatdir)/xmltok/xmltok.c'; then $(CYGPATH_W) '$(expatdir)/xmltok/xmltok.c'; else $(CYGPATH_W) '$(srcdir)/$(expatdir)/xmltok/xmltok.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sfconv-xmltok.Tpo $(DEPDIR)/sfconv-xmltok.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(expatdir)/xmltok/xmltok.c' object='sfconv-xmltok.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(sfconv_CFLAGS) $(CFLAGS) -c -o sfconv-xmltok.obj `if test -f '$(expatdir)/xmltok/xmltok.c'; then $(CYGPATH_W) '$(expatdir)/xmltok/xmltok.c'; else $(CYGPATH_W) '$(srcdir)/$(expatdir)/xmltok/xmltok.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -312,6 +455,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+sfconv-SFconv.o: $(top_srcdir)/SFconv/SFconv.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sfconv-SFconv.o -MD -MP -MF $(DEPDIR)/sfconv-SFconv.Tpo -c -o sfconv-SFconv.o `test -f '$(top_srcdir)/SFconv/SFconv.cpp' || echo '$(srcdir)/'`$(top_srcdir)/SFconv/SFconv.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/sfconv-SFconv.Tpo $(DEPDIR)/sfconv-SFconv.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(top_srcdir)/SFconv/SFconv.cpp' object='sfconv-SFconv.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sfconv-SFconv.o `test -f '$(top_srcdir)/SFconv/SFconv.cpp' || echo '$(srcdir)/'`$(top_srcdir)/SFconv/SFconv.cpp
+
+sfconv-SFconv.obj: $(top_srcdir)/SFconv/SFconv.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sfconv-SFconv.obj -MD -MP -MF $(DEPDIR)/sfconv-SFconv.Tpo -c -o sfconv-SFconv.obj `if test -f '$(top_srcdir)/SFconv/SFconv.cpp'; then $(CYGPATH_W) '$(top_srcdir)/SFconv/SFconv.cpp'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/SFconv/SFconv.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/sfconv-SFconv.Tpo $(DEPDIR)/sfconv-SFconv.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(top_srcdir)/SFconv/SFconv.cpp' object='sfconv-SFconv.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sfconv_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sfconv-SFconv.obj `if test -f '$(top_srcdir)/SFconv/SFconv.cpp'; then $(CYGPATH_W) '$(top_srcdir)/SFconv/SFconv.cpp'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/SFconv/SFconv.cpp'; fi`
 
 TECkit_Compile.o: $(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TECkit_Compile.o -MD -MP -MF $(DEPDIR)/TECkit_Compile.Tpo -c -o TECkit_Compile.o `test -f '$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp' || echo '$(srcdir)/'`$(top_srcdir)/source/Sample-tools/TECkit_Compile.cpp
@@ -525,8 +682,12 @@ uninstall-am: uninstall-binPROGRAMS
 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
 	uninstall-binPROGRAMS
 
-
-# sfconv_LDADD = $(top_builddir)/lib/libTECkit.la
+@OLD_LIB_NAMES_TRUE@TECkit_Compile_ver.o: $(tool_src)/TECkit_Compile_ver.rc
+@OLD_LIB_NAMES_TRUE@	$(RC) $(AM_RCFLAGS) $(RCFLAGS) -o $@ $<
+@OLD_LIB_NAMES_TRUE@TxtConv_ver.o: $(tool_src)/TxtConv_ver.rc
+@OLD_LIB_NAMES_TRUE@	$(RC) $(AM_RCFLAGS) $(RCFLAGS) -o $@ $<
+@OLD_LIB_NAMES_TRUE@SFconv_ver.o: $(top_srcdir)/SFconv/SFconv_ver.rc
+@OLD_LIB_NAMES_TRUE@	$(RC) $(AM_RCFLAGS) $(RCFLAGS) -I$(tool_src) -o $@ $<
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

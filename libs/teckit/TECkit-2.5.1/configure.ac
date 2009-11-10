@@ -11,6 +11,7 @@ AM_MAINTAINER_MODE
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
@@ -27,14 +28,9 @@ AC_ARG_WITH(old-lib-names,
 esac],[oldnames=false])
 AM_CONDITIONAL(OLD_LIB_NAMES, test x$oldnames = xtrue)
 
-sinclude(../../libs/zlib/withenable.ac)
-sinclude(../../libs/zlib/zlib.ac)
-
 # Checks for libraries.
-## NO! see above
-## AC_CHECK_LIB(z, compress)
-## AM_CONDITIONAL(SYSTEM_ZLIB, test x$ac_cv_lib_z_compress = xyes)
-## SYSTEM_ZLIB=no
+AC_CHECK_LIB(z, compress)
+AM_CONDITIONAL(SYSTEM_ZLIB, test x$ac_cv_lib_z_compress = xyes)
 
 # Checks for header files.
 AC_HEADER_STDC

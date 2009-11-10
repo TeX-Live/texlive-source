@@ -191,14 +191,14 @@ TECkit_DisposeCompiled(Byte* table)
 		free(table);
 }
 
-char*
+const char*
 WINAPI
 TECkit_GetUnicodeName(UInt32 usv)
 {
 	const CharName	*c = &gUnicodeNames[0];
 	while (c->name != 0)
 		if (c->usv == usv)
-			return (char*)c->name;
+			return c->name;
 		else
 			++c;
 	return NULL;
@@ -2133,7 +2133,7 @@ Compiler::Error(const char* msg, const char* s, UInt32 line)
 		cout << " at line " << line << endl;
 	}
 	else
-		(*errorFunction)(errFuncUserData, (char*)msg, (char*)s, line);
+		(*errorFunction)(errFuncUserData, msg, s, line);
 	errorState = true;
 	++errorCount;
 }

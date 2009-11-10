@@ -24,13 +24,13 @@
 #endif
 
 extern "C" {
-	static void CALLBACK errFunc(void* userData, char* msg, char* param, UInt32 line);
+	static void CALLBACK errFunc(void* userData, const char* msg, const char* param, UInt32 line);
 };
 
 static
 void
 CALLBACK
-errFunc(void* userData, char* msg, char* param, UInt32 line)
+errFunc(void* userData, const char* msg, const char* param, UInt32 line)
 {
 #pragma unused(userData)
 

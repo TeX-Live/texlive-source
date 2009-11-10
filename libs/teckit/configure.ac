@@ -6,13 +6,14 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([teckit for TeX Live], [2.5.1], [tex-k@tug.org])
+m4_define([TECkit_version], [2.5.1])[]dnl using unmodified TECkit source tree
+AC_INIT([TECkit for TeX Live], TECkit_version, [tex-k@tug.org])
 AC_PREREQ([2.63])
-AC_CONFIG_SRCDIR([source/UnicodeNames.cpp])
+AC_CONFIG_SRCDIR([TECkit-]TECkit_version[/source/UnicodeNames.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 # Checks for programs.
@@ -37,9 +38,7 @@ KPSE_ZLIB_FLAGS
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-# Configure must not fail, or 'make dist' will fail as well; thus
-# don't run any tests for '--disable-build', there may be no zlib.
-if test "x$enable_build" != xno; then
+if test "x$enable_build" != xno || test -f config.force; then
 
 KPSE_ADD_FLAGS([zlib])
 
@@ -49,8 +48,12 @@ AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
 
 KPSE_RESTORE_FLAGS
 
+echo timestamp >config.force
 fi
 
-AC_CONFIG_FILES([Makefile])
+TECKIT_TREE=TECkit-[]TECkit_version
+AC_SUBST([TECKIT_TREE])
+
+AC_CONFIG_FILES([Makefile teckit/Makefile])
 
 AC_OUTPUT
