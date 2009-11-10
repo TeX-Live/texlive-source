@@ -30,12 +30,11 @@ libtex_a_SOURCES = \
 	tempfile.h \
 	types.h
 
+$(libtex_a_OBJECTS): $(KPATHSEA_DEPEND)
+
 bin_PROGRAMS = dvibook dviconcat dviselect dvitodvi
 
-dvibook_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)
-dviconcat_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)
-dviselect_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)
-dvitodvi_DEPENDENCIES = libtex.a $(KPATHSEA_DEPEND)
+$(dvibook_OBJECTS) $(dviconcat_OBJECTS) $(dviselect_OBJECTS) $(dvitodvi_OBJECTS): libtex.a
 
 LDADD = libtex.a $(KPATHSEA_LIBS)
 

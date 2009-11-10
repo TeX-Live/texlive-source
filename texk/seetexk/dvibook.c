@@ -76,7 +76,7 @@ i32	NextOutputFontIndex;	/* generates output indicies */
 i32	CurrentFontIndex;	/* current (old) index in input */
 i32	OutputFontIndex;	/* current (new) index in ouput */
 
-char	*DVIFileName;		/* name of input DVI file */
+const char	*DVIFileName;		/* name of input DVI file */
 FILE	*inf;			/* the input file itself */
 FILE	*outf;			/* the output DVI file */
 
@@ -134,7 +134,7 @@ static void PutEmptyPage(void);
  * long line wraps.
  */
 static void
-message(int space, char *str, int len)
+message(int space, const char *str, int len)
 {
 	static int beenhere;
 	static int col;
@@ -883,7 +883,7 @@ PutEmptyPage(void)
 	PutLong(outf, StartOfLastPage);
 	putbyte(outf, DVI_EOP);
 	if (!SFlag) {		/* write nice page usage messages */
-		char *msg = "[*]";
+		const char *msg = "[*]";
 		message(1, msg, strlen(msg));
 	}
 	if (ferror(outf))

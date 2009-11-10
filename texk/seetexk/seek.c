@@ -74,7 +74,7 @@ CopyFile(FILE *f)
 #if defined(WIN32) || defined(MSDOS) || defined(__CYGWIN32__)
 	int orig_fdmode;
 #endif
-	char *open_mode;
+	const char *open_mode;
 
 	/* get a read/write temp file which will vanish when closed */
 	if ((tf = MakeRWTempFile(stackbuf)) < 0) {

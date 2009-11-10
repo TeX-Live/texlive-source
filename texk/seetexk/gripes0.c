@@ -22,7 +22,7 @@ extern int errno;
  * Cannot allocate memory.
  */
 void
-GripeOutOfMemory(int n, char *why)
+GripeOutOfMemory(int n, const char *why)
 {
 
 	error(1, -1, "ran out of memory allocating %d bytes for %s", n, why);
@@ -34,7 +34,7 @@ GripeOutOfMemory(int n, char *why)
  * RETURNS TO CALLER
  */
 void
-GripeCannotGetFont(char *name, i32 mag, i32 dsz, char *dev, char *fullname)
+GripeCannotGetFont(const char *name, i32 mag, i32 dsz, const char *dev, const char *fullname)
 {
 	int e = errno;
 	char scale[40];
@@ -63,7 +63,7 @@ GripeCannotGetFont(char *name, i32 mag, i32 dsz, char *dev, char *fullname)
  * RETURNS TO CALLER
  */
 void
-GripeDifferentChecksums(char *font, i32 tfmsum, i32 fontsum)
+GripeDifferentChecksums(const char *font, i32 tfmsum, i32 fontsum)
 {
 
 	error(0, 0, "\

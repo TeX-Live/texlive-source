@@ -57,7 +57,7 @@ struct	search *FontFinder;	/* input indicies to ptr-to-fontinfo */
 i32	NextOutputFontIndex;	/* generates output indicies */
 i32	OutputFontIndex;	/* current (new) index in ouput */
 
-char	*DVIFileName;		/* the current input file name */
+const char	*DVIFileName;		/* the current input file name */
 FILE	*inf;			/* the current input DVI file */
 FILE	*outf;			/* the output DVI file */
 
@@ -358,7 +358,7 @@ HandlePreAmble(int firstone)
  * or starting up the output file (otherwise).
  */
 static void
-doit(char *name, FILE *fp)
+doit(const char *name, FILE *fp)
 {
 	static int started;
 

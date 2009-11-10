@@ -1,3 +1,18 @@
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* error.c (readback), gripes1.c (dfn): Constify return type.
+	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c:
+	Constify global string DVIFileName and param2 of message().
+	* error.[ch]: Constify param2 of trap_fn().
+	* gripes.h, gripes[01].c: Constify extern string DVIFileName
+	and move declaration to header.
+	Constify string params of all functions.
+	* dviconcat.c (doit): Constify string param.
+	* dvibook.c (PutEmptyPage), dviconcat.c (PutEmptyPage),
+	seek.c (CopyFile), tempfile.c (MakeRWTempFile): Constify local
+	string vars.
+
 2009-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* seek.c (__CYGWIN32__): #include <io.h> for setmode.

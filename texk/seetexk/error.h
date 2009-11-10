@@ -14,4 +14,4 @@
 void	error(int quit, int e, const char *fmt, ...);
 void	panic(const char *fmt, ...);
 
-void	SetErrorTrap(void (*fn)(int quit, char *text));
+void	SetErrorTrap(void (*fn)(int quit, const char *text));

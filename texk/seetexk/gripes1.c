@@ -15,9 +15,7 @@
 #include "font.h"
 #include "gripes.h"
 
-extern char *DVIFileName;
-
-static char *
+static const char *
 dfn(void)
 {
 
@@ -74,7 +72,7 @@ GripeUnexpectedDVIEOF(void)
  * Unexpected DVI opcode.
  */
 void
-GripeUnexpectedOp(char *s)
+GripeUnexpectedOp(const char *s)
 {
 
 	error(0, 0, "unexpected %s in %s", s, dfl);
@@ -86,7 +84,7 @@ GripeUnexpectedOp(char *s)
  * Missing DVI opcode.
  */
 void
-GripeMissingOp(char *s)
+GripeMissingOp(const char *s)
 {
 
 	error(0, 0, "missing %s in %s", s, dfl);
@@ -110,7 +108,7 @@ GripeCannotFindPostamble(void)
  * Inconsistent DVI value.
  */
 void
-GripeMismatchedValue(char *s)
+GripeMismatchedValue(const char *s)
 {
 
 	error(0, 0, "mismatched %s in %s", s, dfl);

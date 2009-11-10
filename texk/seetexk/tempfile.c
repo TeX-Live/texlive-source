@@ -79,7 +79,7 @@ MakeRWTempFile(char *name)
 {
 	register int tf, n;
 	int mypid, tries;
-	char *tmpdir;
+	const char *tmpdir;
 
 	if ((tmpdir = getenv("TMP")) == NULL
 	    && (tmpdir = getenv("TEMP")) == NULL

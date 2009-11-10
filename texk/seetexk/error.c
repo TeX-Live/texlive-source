@@ -28,7 +28,7 @@ extern int errno;
 #endif
 
 static FILE *trap_file;		/* error diversion file, if any */
-static void (*trap_fn)(int, char *);	/* trap function */
+static void (*trap_fn)(int, const char *);	/* trap function */
 static char *trap_buf;		/* buffer for trapped error strings */
 static int trap_size;		/* size of trap_buf */
 
@@ -53,7 +53,7 @@ strerror (int errnum)
  * Return a pointer to the (NUL-terminated) text.
  * If something goes wrong, return something else printable.
  */
-static char *
+static const char *
 readback(void)
 {
 	int nbytes = ftell(trap_file) + 1;
@@ -145,7 +145,7 @@ panic(const char *fmt, ...)
  * If fn is NULL, stop trapping.
  */
 void
-SetErrorTrap(void (*fn)(int, char *))
+SetErrorTrap(void (*fn)(int, const char *))
 {
 	int tempfd;
 	char fname[BUFSIZ];

@@ -117,7 +117,7 @@ i32	OutputFontIndex;	/* current (new) index in ouput */
 
 struct	pagelist *PageList;	/* the list of allowed pages */
 
-char	*DVIFileName;		/* name of input DVI file */
+const char	*DVIFileName;		/* name of input DVI file */
 FILE	*inf;			/* the input file itself */
 FILE	*outf;			/* the output DVI file */
 
@@ -234,7 +234,7 @@ DesiredPageP(void)
  * long line wraps.
  */
 static void
-message(int space, char *str, int len)
+message(int space, const char *str, int len)
 {
 	static int beenhere;
 	static int col;
