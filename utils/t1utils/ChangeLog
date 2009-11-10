@@ -1,3 +1,31 @@
+2009-11-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Proxy build system for TeX Live,
+	using the t1utils-1.34 distribution tree.
+	* t1utils-1.34-PATCHES: New directory with patches applied to
+	the t1utils-1.34 distribution.
+
+2009-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* configure.ac: Check for strtoul().
+	* t1ascii.c (pfa_output_end), t1binary.c (pfb_output_end),
+	t1asm.c (check_line_charstring, texlive_getline, charstring_start,
+	charstring_end, get_charstring_token, parse_charstring),
+	t1disasm.c (disasm_output_end): ANSI C function definitions.
+	* t1disasm.c (oog_memstr): Unconstify arg1 and result strings.
+	(eexec_line): Unconstify CharStrings resulting from oog_memstr().
+
+2009-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS), configure.ac: Enable TL style
+	compiler warnings.
+	* clp.c (finish_string_list), t1ascii.c (short_usage, usage),
+	t1asm.c (short_usage, usage), t1binary.c (short_usage, usage),
+	t1disasm.c (short_usage, usage), t1mac.c (short_usage, usage),
+	t1unmac.c (short_usage, usage, check_appledouble, translate_binhex,
+	check_binhex_crc, check_binhex): Declare as static.
+
 2009-06-12  Francois Charette  <firmicus@ankabut.net>
 
 	* t1asm.c: rename getline to texlive_getline.

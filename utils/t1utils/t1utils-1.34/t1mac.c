@@ -778,7 +778,7 @@ error(const char *message, ...)
 }
 
 
-void
+static void
 short_usage(void)
 {
   fprintf(stderr, "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n\
@@ -787,7 +787,7 @@ Try `%s --help' for more information.\n",
 }
 
 
-void
+static void
 usage(void)
 {
   printf("\

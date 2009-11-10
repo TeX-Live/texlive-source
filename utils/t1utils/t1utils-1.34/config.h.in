@@ -1,4 +1,4 @@
-/* config.h.in.  Generated from configure.ac by autoheader.  */
+/* config.h.in.  Generated from configure.in by autoheader.  */
 
 #ifndef T1UTILS_CONFIG_H
 #define T1UTILS_CONFIG_H
@@ -26,9 +26,6 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
-
-/* Define to 1 if you have the `strtoul' function. */
-#undef HAVE_STRTOUL
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
@@ -60,9 +57,6 @@
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
 
-/* Define to the home page for this package. */
-#undef PACKAGE_URL
-
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
@@ -93,6 +87,12 @@ extern "C" {
 /* Prototype strerror if we don't have it. */
 #if !HAVE_STRERROR
 char *strerror(int errno);
+#endif
+
+#ifdef __cplusplus
+}
+/* Get rid of a possible inline macro under C++. */
+# define inline inline
 #endif
 
 #endif /* T1UTILS_CONFIG_H */

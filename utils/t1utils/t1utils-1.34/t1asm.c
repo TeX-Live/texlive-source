@@ -266,7 +266,7 @@ static void eexec_start(char *string)
    charstring. We use the heuristic that it should start with `/' (a name) or
    `dup' (a subroutine). Previous heuristic caused killa bad output. */
 
-static int check_line_charstring()
+static int check_line_charstring(void)
 {
   char *p = line;
   while (isspace(*p))
@@ -280,7 +280,7 @@ static int check_line_charstring()
    the newline is put into line[]. When terminated by '{', the '{' is not put
    into line[], and the flag start_charstring is set to 1. */
 
-static void texlive_getline()
+static void texlive_getline(void)
 {
   int c;
   char *p = line;
@@ -367,7 +367,7 @@ static int is_integer(char *string)
 /* This function initializes charstring encryption.  Note that this is called
    at the beginning of every charstring. */
 
-static void charstring_start()
+static void charstring_start(void)
 {
   int i;
 
@@ -390,7 +390,7 @@ static void charstring_byte(int v)
 /* This function outputs buffered, encrypted charstring data through possible
    eexec encryption. */
 
-static void charstring_end()
+static void charstring_end(void)
 {
   byte *bp;
 
@@ -433,7 +433,7 @@ static void charstring_int(int num)
 
 /* This function returns one charstring token. It ignores comments. */
 
-static void get_charstring_token()
+static void get_charstring_token(void)
 {
   int c = getc(ifp);
   while (isspace(c))
@@ -466,7 +466,7 @@ static void get_charstring_token()
 /* This function parses an entire charstring into integers and commands,
    outputting bytes through the charstring buffer. */
 
-static void parse_charstring()
+static void parse_charstring(void)
 {
   struct command *cp;
 
@@ -572,7 +572,7 @@ error(const char *message, ...)
   putc('\n', stderr);
 }
 
-void
+static void
 short_usage(void)
 {
   fprintf(stderr, "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n\
@@ -580,7 +580,7 @@ Try `%s --help' for more information.\n",
 	  program_name, program_name);
 }
 
-void
+static void
 usage(void)
 {
   printf("\

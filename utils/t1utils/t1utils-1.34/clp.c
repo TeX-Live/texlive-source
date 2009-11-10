@@ -680,7 +680,7 @@ parse_string_list(Clp_Parser *clp, const char *arg, int complain, void *thunk)
 }
 
 
-int
+static int
 finish_string_list(Clp_Parser *clp, int type_id, int flags,
 		   Clp_Option *items, int nitems, int itemscap)
 {

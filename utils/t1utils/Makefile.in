@@ -35,7 +35,7 @@ POST_UNINSTALL = :
 bin_PROGRAMS = t1ascii$(EXEEXT) t1binary$(EXEEXT) t1asm$(EXEEXT) \
 	t1disasm$(EXEEXT) t1unmac$(EXEEXT) t1mac$(EXEEXT)
 subdir = .
-DIST_COMMON = README $(am__configure_deps) \
+DIST_COMMON = $(am__configure_deps) $(dist_man_MANS) \
 	$(srcdir)/../../build-aux/depcomp \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/missing \
@@ -46,9 +46,10 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/mkinstalldirs \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog \
-	INSTALL NEWS strerror.c
+	strerror.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-warnings.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -118,7 +119,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 man1dir = $(mandir)/man1
 NROFF = nroff
-MANS = $(man_MANS)
+MANS = $(dist_man_MANS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -128,7 +129,7 @@ am__remove_distdir = \
   { test ! -d "$(distdir)" \
     || { find "$(distdir)" -type d ! -perm -200 -exec chmod u+w {} ';' \
          && rm -fr "$(distdir)"; }; }
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
@@ -170,12 +171,15 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+T1UTILS_TREE = @T1UTILS_TREE@
 VERSION = @VERSION@
+WARNING_CFLAGS = @WARNING_CFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -218,29 +222,55 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-man_MANS = t1ascii.1 t1binary.1 t1asm.1 t1disasm.1 t1unmac.1 t1mac.1
-t1ascii_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1ascii.c
 
-t1binary_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1binary.c
+#************************************************************************
+#
+#  Adapted for TeX Live from t1utils/Makefile.am
+#
+#************************************************************************
+ACLOCAL_AMFLAGS = -I ../../m4
+EXTRA_DIST = $(T1UTILS_TREE) $(T1UTILS_TREE)-PATCHES
+INCLUDES = -I$(top_srcdir)/$(T1UTILS_TREE)/include
+AM_CFLAGS = $(WARNING_CFLAGS)
+dist_man_MANS = \
+	$(T1UTILS_TREE)/t1ascii.1 \
+	$(T1UTILS_TREE)/t1binary.1 \
+	$(T1UTILS_TREE)/t1asm.1 \
+	$(T1UTILS_TREE)/t1disasm.1 \
+	$(T1UTILS_TREE)/t1unmac.1 \
+	$(T1UTILS_TREE)/t1mac.1
 
-t1asm_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1asm.c
+t1ascii_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1ascii.c
 
-t1disasm_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1disasm.c
+t1binary_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1binary.c
 
-t1unmac_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1unmac.c
+t1asm_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1asm.c
 
-t1mac_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1mac.c
+t1disasm_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1disasm.c
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+t1unmac_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1unmac.c
+
+t1mac_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1mac.c
+
 LDADD = @LIBOBJS@
-EXTRA_DIST = $(man_MANS) t1utils.spec Makefile.am.orig \
-	configure.in.orig
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -382,12 +412,124 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-install-man1: $(man_MANS)
+
+clp.o: $(T1UTILS_TREE)/clp.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT clp.o -MD -MP -MF $(DEPDIR)/clp.Tpo -c -o clp.o `test -f '$(T1UTILS_TREE)/clp.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/clp.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/clp.Tpo $(DEPDIR)/clp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/clp.c' object='clp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o clp.o `test -f '$(T1UTILS_TREE)/clp.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/clp.c
+
+clp.obj: $(T1UTILS_TREE)/clp.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT clp.obj -MD -MP -MF $(DEPDIR)/clp.Tpo -c -o clp.obj `if test -f '$(T1UTILS_TREE)/clp.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/clp.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/clp.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/clp.Tpo $(DEPDIR)/clp.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/clp.c' object='clp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o clp.obj `if test -f '$(T1UTILS_TREE)/clp.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/clp.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/clp.c'; fi`
+
+t1lib.o: $(T1UTILS_TREE)/t1lib.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1lib.o -MD -MP -MF $(DEPDIR)/t1lib.Tpo -c -o t1lib.o `test -f '$(T1UTILS_TREE)/t1lib.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1lib.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1lib.Tpo $(DEPDIR)/t1lib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1lib.c' object='t1lib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1lib.o `test -f '$(T1UTILS_TREE)/t1lib.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1lib.c
+
+t1lib.obj: $(T1UTILS_TREE)/t1lib.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1lib.obj -MD -MP -MF $(DEPDIR)/t1lib.Tpo -c -o t1lib.obj `if test -f '$(T1UTILS_TREE)/t1lib.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1lib.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1lib.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1lib.Tpo $(DEPDIR)/t1lib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1lib.c' object='t1lib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1lib.obj `if test -f '$(T1UTILS_TREE)/t1lib.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1lib.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1lib.c'; fi`
+
+t1ascii.o: $(T1UTILS_TREE)/t1ascii.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1ascii.o -MD -MP -MF $(DEPDIR)/t1ascii.Tpo -c -o t1ascii.o `test -f '$(T1UTILS_TREE)/t1ascii.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1ascii.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1ascii.Tpo $(DEPDIR)/t1ascii.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1ascii.c' object='t1ascii.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1ascii.o `test -f '$(T1UTILS_TREE)/t1ascii.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1ascii.c
+
+t1ascii.obj: $(T1UTILS_TREE)/t1ascii.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1ascii.obj -MD -MP -MF $(DEPDIR)/t1ascii.Tpo -c -o t1ascii.obj `if test -f '$(T1UTILS_TREE)/t1ascii.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1ascii.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1ascii.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1ascii.Tpo $(DEPDIR)/t1ascii.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1ascii.c' object='t1ascii.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1ascii.obj `if test -f '$(T1UTILS_TREE)/t1ascii.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1ascii.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1ascii.c'; fi`
+
+t1asm.o: $(T1UTILS_TREE)/t1asm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1asm.o -MD -MP -MF $(DEPDIR)/t1asm.Tpo -c -o t1asm.o `test -f '$(T1UTILS_TREE)/t1asm.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1asm.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1asm.Tpo $(DEPDIR)/t1asm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1asm.c' object='t1asm.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1asm.o `test -f '$(T1UTILS_TREE)/t1asm.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1asm.c
+
+t1asm.obj: $(T1UTILS_TREE)/t1asm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1asm.obj -MD -MP -MF $(DEPDIR)/t1asm.Tpo -c -o t1asm.obj `if test -f '$(T1UTILS_TREE)/t1asm.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1asm.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1asm.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1asm.Tpo $(DEPDIR)/t1asm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1asm.c' object='t1asm.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1asm.obj `if test -f '$(T1UTILS_TREE)/t1asm.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1asm.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1asm.c'; fi`
+
+t1binary.o: $(T1UTILS_TREE)/t1binary.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1binary.o -MD -MP -MF $(DEPDIR)/t1binary.Tpo -c -o t1binary.o `test -f '$(T1UTILS_TREE)/t1binary.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1binary.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1binary.Tpo $(DEPDIR)/t1binary.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1binary.c' object='t1binary.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1binary.o `test -f '$(T1UTILS_TREE)/t1binary.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1binary.c
+
+t1binary.obj: $(T1UTILS_TREE)/t1binary.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1binary.obj -MD -MP -MF $(DEPDIR)/t1binary.Tpo -c -o t1binary.obj `if test -f '$(T1UTILS_TREE)/t1binary.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1binary.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1binary.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1binary.Tpo $(DEPDIR)/t1binary.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1binary.c' object='t1binary.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1binary.obj `if test -f '$(T1UTILS_TREE)/t1binary.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1binary.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1binary.c'; fi`
+
+t1disasm.o: $(T1UTILS_TREE)/t1disasm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1disasm.o -MD -MP -MF $(DEPDIR)/t1disasm.Tpo -c -o t1disasm.o `test -f '$(T1UTILS_TREE)/t1disasm.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1disasm.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1disasm.Tpo $(DEPDIR)/t1disasm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1disasm.c' object='t1disasm.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1disasm.o `test -f '$(T1UTILS_TREE)/t1disasm.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1disasm.c
+
+t1disasm.obj: $(T1UTILS_TREE)/t1disasm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1disasm.obj -MD -MP -MF $(DEPDIR)/t1disasm.Tpo -c -o t1disasm.obj `if test -f '$(T1UTILS_TREE)/t1disasm.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1disasm.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1disasm.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1disasm.Tpo $(DEPDIR)/t1disasm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1disasm.c' object='t1disasm.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1disasm.obj `if test -f '$(T1UTILS_TREE)/t1disasm.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1disasm.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1disasm.c'; fi`
+
+t1mac.o: $(T1UTILS_TREE)/t1mac.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1mac.o -MD -MP -MF $(DEPDIR)/t1mac.Tpo -c -o t1mac.o `test -f '$(T1UTILS_TREE)/t1mac.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1mac.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1mac.Tpo $(DEPDIR)/t1mac.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1mac.c' object='t1mac.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1mac.o `test -f '$(T1UTILS_TREE)/t1mac.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1mac.c
+
+t1mac.obj: $(T1UTILS_TREE)/t1mac.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1mac.obj -MD -MP -MF $(DEPDIR)/t1mac.Tpo -c -o t1mac.obj `if test -f '$(T1UTILS_TREE)/t1mac.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1mac.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1mac.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1mac.Tpo $(DEPDIR)/t1mac.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1mac.c' object='t1mac.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1mac.obj `if test -f '$(T1UTILS_TREE)/t1mac.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1mac.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1mac.c'; fi`
+
+t1unmac.o: $(T1UTILS_TREE)/t1unmac.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1unmac.o -MD -MP -MF $(DEPDIR)/t1unmac.Tpo -c -o t1unmac.o `test -f '$(T1UTILS_TREE)/t1unmac.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1unmac.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1unmac.Tpo $(DEPDIR)/t1unmac.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1unmac.c' object='t1unmac.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1unmac.o `test -f '$(T1UTILS_TREE)/t1unmac.c' || echo '$(srcdir)/'`$(T1UTILS_TREE)/t1unmac.c
+
+t1unmac.obj: $(T1UTILS_TREE)/t1unmac.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT t1unmac.obj -MD -MP -MF $(DEPDIR)/t1unmac.Tpo -c -o t1unmac.obj `if test -f '$(T1UTILS_TREE)/t1unmac.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1unmac.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1unmac.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/t1unmac.Tpo $(DEPDIR)/t1unmac.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(T1UTILS_TREE)/t1unmac.c' object='t1unmac.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o t1unmac.obj `if test -f '$(T1UTILS_TREE)/t1unmac.c'; then $(CYGPATH_W) '$(T1UTILS_TREE)/t1unmac.c'; else $(CYGPATH_W) '$(srcdir)/$(T1UTILS_TREE)/t1unmac.c'; fi`
+install-man1: $(dist_man_MANS)
 	@$(NORMAL_INSTALL)
 	test -z "$(man1dir)" || $(MKDIR_P) "$(DESTDIR)$(man1dir)"
 	@list=''; test -n "$(man1dir)" || exit 0; \
 	{ for i in $$list; do echo "$$i"; done; \
-	l2='$(man_MANS)'; for i in $$l2; do echo "$$i"; done | \
+	l2='$(dist_man_MANS)'; for i in $$l2; do echo "$$i"; done | \
 	  sed -n '/\.1[a-z]*$$/p'; \
 	} | while read p; do \
 	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
@@ -413,7 +555,7 @@ uninstall-man1:
 	@$(NORMAL_UNINSTALL)
 	@list=''; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
-	l2='$(man_MANS)'; for i in $$l2; do echo "$$i"; done | \
+	l2='$(dist_man_MANS)'; for i in $$l2; do echo "$$i"; done | \
 	  sed -n '/\.1[a-z]*$$/p'; \
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
@@ -474,12 +616,6 @@ distclean-tags:
 	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
-	@case `sed 15q $(srcdir)/NEWS` in \
-	*"$(VERSION)"*) : ;; \
-	*) \
-	  echo "NEWS not updated; not releasing" 1>&2; \
-	  exit 1;; \
-	esac
 	@list='$(MANS)'; if test -n "$$list"; then \
 	  list=`for p in $$list; do \
 	    if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
@@ -524,6 +660,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 	-test -n "$(am__skip_mode_fix)" \
 	|| find "$(distdir)" -type d ! -perm -777 -exec chmod a+rwx {} \; -o \
 	  ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
@@ -533,6 +672,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -560,7 +700,6 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then
@@ -748,11 +887,11 @@ uninstall-man: uninstall-man1
 
 .PHONY: CTAGS GTAGS all all-am am--refresh check check-am clean \
 	clean-binPROGRAMS clean-generic ctags dist dist-all dist-bzip2 \
-	dist-gzip dist-lzma dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-compile distclean-generic \
-	distclean-hdr distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
+	dist-gzip dist-hook dist-lzma dist-shar dist-tarZ dist-xz \
+	dist-zip distcheck distclean distclean-compile \
+	distclean-generic distclean-hdr distclean-tags distcleancheck \
+	distdir distuninstallcheck dvi dvi-am html html-am info \
+	info-am install install-am install-binPROGRAMS install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-html install-html-am install-info \
 	install-info-am install-man install-man1 install-pdf \
@@ -764,31 +903,9 @@ uninstall-man: uninstall-man1
 	uninstall-man1
 
 
-srclinks:
-	cd $(top_srcdir); test -d include/lcdf || mkdir -p include/lcdf
-	cd $(top_srcdir); for i in clp.h inttypes.h; do \
-	ln -sf ~/src/liblcdf/include/lcdf/$$i include/lcdf/$$i; done
-	cd $(top_srcdir); for i in clp.c strerror.c; do \
-	ln -sf ~/src/liblcdf/liblcdf/$$i $$i; done
-
-versionize:
-	perl -pi -e "s/^\\.ds V.*/.ds V $(VERSION)/;" t1ascii.1 t1binary.1 t1disasm.1 t1asm.1 t1unmac.1 t1mac.1
-	perl -pi -e 's/^Version:(\s*).*/Version:$${1}$(VERSION)/; s/$(PACKAGE)-[\w.]+\.tar\.gz/$(PACKAGE)-$(VERSION).tar.gz/;' t1utils.spec
-	perl -pi -e 's/VERSION [\d.ab]+/VERSION $(VERSION)/;' README
-
-rpm: dist
-	buildarch=`rpm --showrc | awk '/^build arch/ { print $$4; }'` ; \
-	mkdir -p /tmp/rpm-t1u/SOURCES /tmp/rpm-t1u/RPMS/$$buildarch \
-	/tmp/rpm-t1u/BUILD ; \
-	echo 'include: /usr/lib/rpm/rpmrc' > /tmp/rpm-t1u/rc ; \
-	echo 'macrofiles: /usr/lib/rpm/macros:/tmp/rpm-t1u/macros' >> /tmp/rpm-t1u/rc ; \
-	echo '%_topdir /tmp/rpm-t1u' > /tmp/rpm-t1u/macros ; \
-	cp $(PACKAGE)-$(VERSION).tar.gz /tmp/rpm-t1u/SOURCES ; \
-	rpmbuild --rcfile /tmp/rpm-t1u/rc -bb t1utils.spec ; \
-	cp /tmp/rpm-t1u/RPMS/$$buildarch/*.rpm .
-	rm -rf /tmp/rpm-t1u
-
-.PHONY: srclinks versionize rpm
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

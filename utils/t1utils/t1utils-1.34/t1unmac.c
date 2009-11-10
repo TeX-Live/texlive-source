@@ -259,7 +259,7 @@ error(const char *message, ...)
   putc('\n', stderr);
 }
 
-void
+static void
 short_usage(void)
 {
   fprintf(stderr, "Usage: %s [OPTION]... INPUT [OUTPUT]\n\
@@ -267,7 +267,7 @@ Try `%s --help' for more information.\n",
 	  program_name, program_name);
 }
 
-void
+static void
 usage(void)
 {
   printf("\
@@ -388,7 +388,7 @@ check_macbinary(FILE *ifp)
 #define APPLESINGLE_MAGIC 0x00051600
 #define APPLEDOUBLE_MAGIC 0x00051607
 
-const char *
+static const char *
 check_appledouble(FILE *ifp)
 {
   int i;
@@ -400,7 +400,7 @@ check_appledouble(FILE *ifp)
   return 0;
 }
 
-const char *
+static const char *
 translate_binhex(FILE *f, FILE *tmpf)
 {
   int i, c = 0, last_char, after_x90, bits, bitpos;
@@ -486,7 +486,7 @@ translate_binhex(FILE *f, FILE *tmpf)
   return 0;
 }
 
-int
+static int
 check_binhex_crc(FILE *f, int offset, int length)
 {
   int crc = 0;
@@ -501,7 +501,7 @@ check_binhex_crc(FILE *f, int offset, int length)
   return crc == 0;
 }
 
-const char *
+static const char *
 check_binhex(FILE *f)
 {
   int fname_len, data_len, rsrc_len, off;

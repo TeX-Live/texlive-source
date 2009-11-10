@@ -1,53 +1,73 @@
-## Process this file with automake to produce Makefile.in
+## Makefile.am for the TeX Live subdirectory utils/t1utils/
+##
+## Copyright (C) 2008, 2009 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+#************************************************************************
+#
+#  Adapted for TeX Live from t1utils/Makefile.am
+#
+#************************************************************************
+##
+ACLOCAL_AMFLAGS = -I ../../m4
+
+## We want to re-distribute the whole original t1utils source tree.
+##
+## With current automake (1.10.2) 'make distcheck' fails when
+## DISTFILES contains a directory and files in that directory.
+## Thus nodist_* for all files in $(T1UTILS_TREE).
+EXTRA_DIST = $(T1UTILS_TREE)
+
+## Patches applied to the original source tree
+##
+EXTRA_DIST +=  $(T1UTILS_TREE)-PATCHES
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn`
+
+INCLUDES = -I$(top_srcdir)/$(T1UTILS_TREE)/include
+AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = t1ascii t1binary t1asm t1disasm t1unmac t1mac
-man_MANS = t1ascii.1 t1binary.1 t1asm.1 t1disasm.1 t1unmac.1 t1mac.1
 
-t1ascii_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1ascii.c
-t1binary_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1binary.c
-t1asm_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1asm.c
-t1disasm_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1disasm.c
-t1unmac_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1unmac.c
-t1mac_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1mac.c
+dist_man_MANS = \
+	$(T1UTILS_TREE)/t1ascii.1 \
+	$(T1UTILS_TREE)/t1binary.1 \
+	$(T1UTILS_TREE)/t1asm.1 \
+	$(T1UTILS_TREE)/t1disasm.1 \
+	$(T1UTILS_TREE)/t1unmac.1 \
+	$(T1UTILS_TREE)/t1mac.1
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+t1ascii_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1ascii.c
+
+t1binary_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1binary.c
+
+t1asm_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1asm.c
+
+t1disasm_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1disasm.c
+
+t1unmac_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1unmac.c
+
+t1mac_SOURCES = \
+	$(T1UTILS_TREE)/clp.c \
+	$(T1UTILS_TREE)/t1lib.c \
+	$(T1UTILS_TREE)/t1mac.c
+
 LDADD = @LIBOBJS@
-
-EXTRA_DIST = $(man_MANS) t1utils.spec
-
-srclinks:
-	cd $(top_srcdir); test -d include/lcdf || mkdir -p include/lcdf
-	cd $(top_srcdir); for i in clp.h inttypes.h; do \
-	ln -sf ~/src/liblcdf/include/lcdf/$$i include/lcdf/$$i; done
-	cd $(top_srcdir); for i in clp.c strerror.c; do \
-	ln -sf ~/src/liblcdf/liblcdf/$$i $$i; done
-
-versionize:
-	perl -pi -e "s/^\\.ds V.*/.ds V $(VERSION)/;" t1ascii.1 t1binary.1 t1disasm.1 t1asm.1 t1unmac.1 t1mac.1
-	perl -pi -e 's/^Version:(\s*).*/Version:$${1}$(VERSION)/; s/$(PACKAGE)-[\w.]+\.tar\.gz/$(PACKAGE)-$(VERSION).tar.gz/;' t1utils.spec
-	perl -pi -e 's/VERSION [\d.ab]+/VERSION $(VERSION)/;' README
-
-rpm: dist
-	buildarch=`rpm --showrc | awk '/^build arch/ { print $$4; }'` ; \
-	mkdir -p /tmp/rpm-t1u/SOURCES /tmp/rpm-t1u/RPMS/$$buildarch \
-	/tmp/rpm-t1u/BUILD ; \
-	echo 'include: /usr/lib/rpm/rpmrc' > /tmp/rpm-t1u/rc ; \
-	echo 'macrofiles: /usr/lib/rpm/macros:/tmp/rpm-t1u/macros' >> /tmp/rpm-t1u/rc ; \
-	echo '%_topdir /tmp/rpm-t1u' > /tmp/rpm-t1u/macros ; \
-	cp $(PACKAGE)-$(VERSION).tar.gz /tmp/rpm-t1u/SOURCES ; \
-	rpmbuild --rcfile /tmp/rpm-t1u/rc -bb t1utils.spec ; \
-	cp /tmp/rpm-t1u/RPMS/$$buildarch/*.rpm .
-	rm -rf /tmp/rpm-t1u
-
-.PHONY: srclinks versionize rpm
-
-## Original files from t1utils distribution
-##
-EXTRA_DIST += Makefile.am.orig configure.in.orig
 

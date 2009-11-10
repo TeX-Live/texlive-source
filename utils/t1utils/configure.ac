@@ -6,25 +6,26 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([t1utils for TeX Live], [1.34], [tex-k@tug.org])
+dnl *********************************************************************
+dnl
+dnl  Adapted for TeX Live from t1utils-1.34/configure.in
+dnl
+dnl *********************************************************************
+dnl
+m4_define([t1utils_version], [1.34])[]dnl using unmodified t1utils source tree
+AC_INIT([t1utils for TeX Live], t1utils_version, [tex-k@tug.org])
 AC_PREREQ([2.63])
-AC_CONFIG_SRCDIR([t1ascii.c])
+AC_CONFIG_SRCDIR([t1utils-]t1utils_version[/t1ascii.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2 check-news])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
 AC_C_CONST
 
-AC_ARG_ENABLE([warnings],
-              AS_HELP_STRING([--enable-warnings],
-                             [compile with -Wall]))
-
-if test "x$enable_warnings" = xyes ; then
-  CFLAGS="$CFLAGS -W -Wall"
-fi
-
+KPSE_COMPILER_WARNINGS
 
 dnl
 dnl strerror()?
@@ -32,40 +33,35 @@ dnl
 
 AC_REPLACE_FUNCS([strerror])
 
+AC_CHECK_FUNCS([strtoul])
 
 dnl
 dnl integer types
 dnl
 
-AC_CHECK_HEADERS([inttypes.h],
-                 [have_inttypes_h=yes],
-                 [have_inttypes_h=no])
-AC_CHECK_HEADERS([sys/types.h],
-                 [have_sys_types_h=yes],
-                 [have_sys_types_h=no])
+AC_CHECK_HEADERS([inttypes.h sys/types.h])
 
-if test "x$have_inttypes_h" = xno && test "x$have_sys_types_h" = xyes; then
+if test "x$ac_cv_header_inttypes_h:$ac_cv_header_sys_types_h" = xno:yes; then
   AC_CACHE_CHECK([for uintXX_t typedefs],
-                 [ac_cv_uint_t],
+                 [lcdf_cv_uint_t],
                  [AC_EGREP_HEADER([(^|[^a-zA-Z_0-9])uint32_t[^a-zA-Z_0-9]],
                                   [sys/types.h],
-                                  [ac_cv_uint_t=yes],
-                                  [ac_cv_uint_t=no])])
-  if test "x$ac_cv_uint_t" = xno; then
+                                  [lcdf_cv_uint_t=yes],
+                                  [lcdf_cv_uint_t=no])])
+  if test "x$lcdf_cv_uint_t" = xno; then
     AC_CACHE_CHECK([for u_intXX_t typedefs],
-                   [ac_cv_u_int_t],
+                   [lcdf_cv_u_int_t],
                    [AC_EGREP_HEADER([(^|[^a-zA-Z_0-9])u_int32_t[^a-zA-Z_0-9]],
                                     [sys/types.h],
-                                    [ac_cv_u_int_t=yes],
-                                    [ac_cv_u_int_t=no])])
+                                    [lcdf_cv_u_int_t=yes],
+                                    [lcdf_cv_u_int_t=no])])
   fi
 fi
-if test "x$have_inttypes_h" = xyes || test "x$ac_cv_uint_t" = xyes; then
-    :
-elif test "x$ac_cv_u_int_t" = xyes; then
+if test "x$ac_cv_header_inttypes_h:$lcdf_cv_uint_t" = xno:no; then
+  if test "x$lcdf_cv_u_int_t" = xyes; then
     AC_DEFINE([HAVE_U_INT_TYPES], 1,
               [Define if you have u_intXX_t types but not uintXX_t types.])
-else
+  else
     AC_MSG_WARN([
 =========================================
 
@@ -75,6 +71,7 @@ Assuming "short" has 16 bits and "int" has 32 bits.
 =========================================])
     AC_DEFINE([HAVE_FAKE_INT_TYPES], 1,
               [Define if intXX_t types are not available.])
+  fi
 fi
 
 AC_CHECK_TYPES([uintptr_t], [], [],
@@ -111,14 +108,10 @@ extern "C" {
 char *strerror(int errno);
 #endif
 
-#ifdef __cplusplus
-}
-/* Get rid of a possible inline macro under C++. */
-# define inline inline
-#endif
-
 #endif /* T1UTILS_CONFIG_H */])
 
+T1UTILS_TREE=[t1utils-]t1utils_version
+AC_SUBST([T1UTILS_TREE])
 
 dnl
 dnl Output

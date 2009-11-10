@@ -332,11 +332,11 @@ append_save(const unsigned char *line, int len)
 /* 23.Feb.2004 - use 'memstr', not strstr, because the strings input to
    eexec_line aren't null terminated! Reported by Werner Lemberg. */
 
-static const unsigned char *
-oog_memstr(const unsigned char *line, int line_len, const char *pattern, int pattern_len)
+static unsigned char *
+oog_memstr(unsigned char *line, int line_len, const char *pattern, int pattern_len)
 {
-    const unsigned char *try;
-    const unsigned char *last = line + line_len - pattern_len + 1;
+    unsigned char *try;
+    unsigned char *last = line + line_len - pattern_len + 1;
     while (line < last
 	   && (try = memchr(line, (unsigned char)*pattern, last - line))) {
 	if (memcmp(try, pattern, pattern_len) == 0)
@@ -432,7 +432,7 @@ eexec_line(unsigned char *line, int line_len)
        badly: a charstring definition follows "/Charstrings ... begin", ON THE
        SAME LINE. */
     {
-	const char *CharStrings = (const char *)
+	char *CharStrings = (char *)
 	    oog_memstr(line, line_len, "/CharStrings ", 13);
 	int crap, n;
 	char should_be_slash = 0;
@@ -595,7 +595,7 @@ disasm_output_binary(unsigned char *data, int len)
 }
 
 static void
-disasm_output_end()
+disasm_output_end(void)
 {
     /* take care of leftover saved data */
     static char crap[1] = "";
@@ -640,7 +640,7 @@ error(const char *message, ...)
   error_count++;
 }
 
-void
+static void
 short_usage(void)
 {
   fprintf(stderr, "Usage: %s [INPUT [OUTPUT]]\n\
@@ -648,7 +648,7 @@ Try `%s --help' for more information.\n",
 	  program_name, program_name);
 }
 
-void
+static void
 usage(void)
 {
   printf("\
