@@ -62,7 +62,7 @@ handlereencoding(Font *fnt)
 {
   int i;
   ttfinfo *ti;
-  char *p;
+  const char *p;
 
 
   if (fnt->inencname)
@@ -140,7 +140,7 @@ handlereencoding(Font *fnt)
 static void
 assignchars(Font *fnt)
 {
-  register char **p;
+  register const char **p;
   register int i, j, k;
   register ttfinfo *ti;
   int nextfree = 0x80;
@@ -825,7 +825,7 @@ main(int argc, char *argv[])
   {
     while (get_sfd(&font, True))
     {
-      char *temp;
+      char *temp, *ttemp;
       int i, start, end, len;
 
 
@@ -855,8 +855,9 @@ main(int argc, char *argv[])
         }
       temp[end] = '\0';
 
-      font.codingscheme = (char *)mymalloc(strlen(temp + start) + 4 + 1);
-      sprintf(font.codingscheme, "CJK-%s", temp + start);
+      ttemp = (char *)mymalloc(strlen(temp + start) + 4 + 1);
+      sprintf(ttemp, "CJK-%s", temp + start);
+      font.codingscheme = ttemp;
       free(temp);
 
       readttf(&font, quiet, True);

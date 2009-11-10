@@ -153,7 +153,7 @@ texlive_getline(char **bufferp, FILE *f)
 
 
 char *
-newstring(char *s)
+newstring(const char *s)
 {
   char *q;
 

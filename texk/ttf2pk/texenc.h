@@ -15,10 +15,10 @@
 
 
 extern encoding staticencoding;
-extern char *staticligkern[];
-extern char *vplligops[];
-extern char *encligops[];
-extern char *accents[];
+extern const char *staticligkern[];
+extern const char *vplligops[];
+extern const char *encligops[];
+extern const char *accents[];
 
 extern char default_codingscheme[];
 

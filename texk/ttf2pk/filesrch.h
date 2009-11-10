@@ -19,14 +19,14 @@
  */
 
 void TeX_search_init(char *exec_name,
-                     char *program_identifier,
-                     char *env_identifier);
+                     const char *program_identifier,
+                     const char *env_identifier);
 
 /*
  *   The next function returns a version string.
  */
 
-char *TeX_search_version(void);
+const char *TeX_search_version(void);
 
 /*
  *   The following functions take a file name (either relative or absolute),
@@ -39,12 +39,12 @@ char *TeX_search_encoding_file(char **name);
 char *TeX_search_replacement_file(char **name);
 char *TeX_search_sfd_file(char **name);
 char *TeX_search_map_file(char **name);
-char *TeX_search_config_file(char **name);
+char *TeX_search_config_file(const char **name);
 char *TeX_search_ttf_file(char **name);
 
 void get_tfm_fullname(Font *fnt);
 void handle_extension(char **stringp,
-                      char *extension);
+                      const char *extension);
 
 #endif /* FILESRCH_H */
 

@@ -477,7 +477,7 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
 
   for (k = 0; k <= max_k; k++)
   {
-    char *an;
+    const char *an;
 
 
     if (fnt->PSnames != Only)
@@ -538,8 +538,11 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
                                                        grid-fitted bbox */
     if (!error)
     {
-      if (fnt->PSnames)
-        (void)TT_Get_PS_Name(face, Num, &an);
+      if (fnt->PSnames) {
+        char *tn;
+        (void)TT_Get_PS_Name(face, Num, &tn);
+        an = tn;
+      }
       else
         an = code_to_adobename(index);
 
@@ -616,7 +619,7 @@ readttf(Font *fnt, Boolean quiet, Boolean only_range)
   {
     for (i = 1; i <= properties.num_Glyphs; i++)
     {
-      char *an;
+      const char *an;
 
 
       if (index_array[i] == 0)

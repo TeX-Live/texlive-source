@@ -53,7 +53,7 @@ static int unsort[257];
 static int XCDECL
 compare_sf(const void *a, const void *b)
 {
-  return (int)(((struct sf *)b)->sf_code - ((struct sf *)a)->sf_code);
+  return (int)(((const struct sf *)b)->sf_code - ((const struct sf *)a)->sf_code);
 }
 
 
@@ -210,7 +210,7 @@ writesarr(long *what,
 
 static long *
 makebcpl(register long *p,
-         register char *s,
+         register const char *s,
          register int n)
 {
   register long t;
@@ -224,7 +224,7 @@ makebcpl(register long *p,
 
   while (n > 0)
   {
-    t |= ((long)(*(unsigned char *)s++)) << sc;
+    t |= ((long)(*(unsigned const char *)s++)) << sc;
     sc -= 8;
     if (sc < 0)
     {
@@ -246,7 +246,7 @@ checksum(ttfinfo **array)
 {
   int i;
   unsigned long s1 = 0, s2 = 0;
-  char *p;
+  const char *p;
   ttfinfo *ti;
 
 

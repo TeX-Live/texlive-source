@@ -1,3 +1,22 @@
+2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, filesrch.c: Require recent kpathsea version.
+
+2009-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* case.h, filesrch.[ch], newobj.[ch], texenc.[ch], tfmaux.c,
+	ttf2pk.c, ttf2tfm.[ch], ttfaux.c, ttfenc.[ch], ttflib.c,
+	vplaux.c: Constify many global, struct member, param, and local
+	strings.
+	ttfaux.c (readttf), ttflib.c (TTFget_first_glyphs): Use new
+	non-const string, not to modify const string.
+
+2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for <kpathsea/version.h> and ...
+	* filesrch.c: ... skip extern decls if found.
+
 2009-07-27  Karl Berry  <karl@tug.org>
 
 	* data/ttfonts.map: new version from zhmetrics package.

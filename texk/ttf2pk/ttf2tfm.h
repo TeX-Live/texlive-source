@@ -32,8 +32,8 @@ typedef enum PSstate_ PSstate;
 
 struct _encoding
 {
-  char *name;
-  char *vec[256];
+  const char *name;
+  const char *vec[256];
 };
 typedef struct _encoding encoding;
 
@@ -65,7 +65,7 @@ struct _ttfinfo
   unsigned short glyphindex;    /* the TTF glyph number */
   short incode;                 /* the code position in the raw TeX font */
   short outcode;                /* the code position in the virtual font */
-  char *adobename;
+  const char *adobename;
 
   short width;
   short llx, lly, urx, ury;
@@ -83,7 +83,7 @@ struct _ttfinfo
 struct _lig
 {
   lig *next;
-  char *succ, *sub;
+  const char *succ, *sub;
   short op, boundleft;
 };
 
@@ -91,7 +91,7 @@ struct _lig
 struct _kern
 {
   kern *next;
-  char *succ;
+  const char *succ;
   short delta;
 };
 
@@ -106,7 +106,7 @@ struct _ttfptr
 struct _pcc
 {
   pcc *next;
-  char *partname;
+  const char *partname;
   short xoffset, yoffset;
 };
 
@@ -184,7 +184,7 @@ struct _Font
   ttfinfo *lowercase[256];          /* ditto */
 
   short boundarychar;               /* the boundary character */
-  char *codingscheme;               /* coding scheme for TeX */
+  const char *codingscheme;         /* coding scheme for TeX */
   char *titlebuf;
 
   /*

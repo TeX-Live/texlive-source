@@ -13,8 +13,8 @@
 
 struct _Case
 {
-  char *upper;
-  char *lower;
+  const char *upper;
+  const char *lower;
 };
 typedef struct _Case Case;
 

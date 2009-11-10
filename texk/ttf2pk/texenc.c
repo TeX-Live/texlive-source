@@ -107,7 +107,7 @@ encoding staticencoding =
  *   The semicolons in the LIGKERN lines must be left isolated.
  */
 
-char *staticligkern[] =
+const char *staticligkern[] =
 {
   "% LIGKERN space l =: lslash ; space L =: Lslash ;",
   "% LIGKERN question quoteleft =: questiondown ;",
@@ -174,12 +174,12 @@ char *staticligkern[] =
  *   These are the eight ligature ops, in VPL terms and in METAFONT terms.
  */
 
-char *vplligops[] =
+const char *vplligops[] =
 {
   "LIG", "/LIG", "/LIG>", "LIG/", "LIG/>", "/LIG/", "/LIG/>", "/LIG/>>", 0
 };
 
-char *encligops[] =
+const char *encligops[] =
 {
   "=:", "|=:", "|=:>", "=:|", "=:|>", "|=:|", "|=:|>", "|=:|>>", 0
 };
@@ -195,7 +195,7 @@ char *encligops[] =
  *   We only do this if the xheight has a reasonable value (>50).
  */
 
-char *accents[] = {"acute", "tilde", "caron", "dieresis", NULL};
+const char *accents[] = {"acute", "tilde", "caron", "dieresis", NULL};
 
 char default_codingscheme[] = "Unspecified";
 

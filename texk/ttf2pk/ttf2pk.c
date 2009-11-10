@@ -33,7 +33,7 @@
 char ident[] = "ttf2pk version 1.5";
 char progname[] = "ttf2pk";             /* for error/warning messages */
 
-static char *cfg_filename = "ttf2pk.cfg";
+static const char *cfg_filename = "ttf2pk.cfg";
 char *mapfiles;
 
 Boolean have_sfd = False;
@@ -633,7 +633,7 @@ font_found:
   enc = readencoding(&enc_filename, &font, True);
   if (enc)
   {
-    char *name;
+    const char *name;
 
 
     restore_glyph(enc, &font);

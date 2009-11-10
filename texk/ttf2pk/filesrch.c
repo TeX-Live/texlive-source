@@ -12,6 +12,10 @@
  *   Interface to the system specific TeX file search routines.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "c-auto.h"
+#endif
+
 #include <stddef.h>         /* for size_t */
 #include <stdlib.h>
 #include <string.h>
@@ -26,20 +30,7 @@
 
 #if defined(HAVE_LIBKPATHSEA)
 
-#ifdef VERY_OLD_KPATHSEA
-#include "kpathsea/proginit.h"
-#include "kpathsea/progname.h"
-#include "kpathsea/tex-glyph.h"
-#else
 #include "kpathsea/kpathsea.h"
-#endif
-
-#ifdef KPSEDLL
-/* this is kpathsea 3.3 and newer */
-extern KPSEDLL char *kpathsea_version_string;
-#else
-extern DllImport char *kpathsea_version_string;
-#endif
 
 /*
  *   Initialize kpathsea library; arguments are the full name of the
@@ -51,24 +42,15 @@ extern DllImport char *kpathsea_version_string;
 
 void
 TeX_search_init(char *exec_name,
-                char *program_identifier,
-                char *env_identifier)
+                const char *program_identifier,
+                const char *env_identifier)
 {
-#ifdef OLD_KPATHSEA
-  kpse_set_progname(exec_name);
-#else
   kpse_set_program_name(exec_name, program_identifier);
-#endif
-
-#ifdef VERY_OLD_KPATHSEA
-  kpse_init_prog(env_identifier, 300, "cx", true, "cmr10");
-#else
   kpse_init_prog(env_identifier, 300, "cx", "cmr10");
-#endif
 }
 
 
-char *
+const char *
 TeX_search_version(void)
 {
   return kpathsea_version_string;
@@ -88,16 +70,7 @@ char *
 TeX_search_encoding_file(char **name)
 {
   handle_extension(name, ".enc");
-
-#ifdef OLD_KPATHSEA
-#ifdef VERY_OLD_KPATHSEA
-  return kpse_find_file(*name, kpse_dvips_header_format, True);
-#else
-  return kpse_find_file(*name, kpse_tex_ps_header_format, True);
-#endif
-#else
   return kpse_find_file(*name, kpse_enc_format, True);
-#endif
 }
 
 
@@ -105,16 +78,7 @@ char *
 TeX_search_replacement_file(char **name)
 {
   handle_extension(name, ".rpl");
-
-#ifdef OLD_KPATHSEA
-#ifdef VERY_OLD_KPATHSEA
-  return kpse_find_file(*name, kpse_dvips_header_format, True);
-#else
-  return kpse_find_file(*name, kpse_tex_ps_header_format, True);
-#endif
-#else
   return kpse_find_file(*name, kpse_program_text_format, True);
-#endif
 }
 
 
@@ -122,16 +86,7 @@ char *
 TeX_search_sfd_file(char **name)
 {
   handle_extension(name, ".sfd");
-
-#ifdef OLD_KPATHSEA
-#ifdef VERY_OLD_KPATHSEA
-  return kpse_find_file(*name, kpse_dvips_header_format, True);
-#else
-  return kpse_find_file(*name, kpse_tex_ps_header_format, True);
-#endif
-#else
   return kpse_find_file(*name, kpse_sfd_format, True);
-#endif
 }
 
 
@@ -139,69 +94,23 @@ char *
 TeX_search_map_file(char **name)
 {
   handle_extension(name, ".map");
-
-#ifdef OLD_KPATHSEA
-#ifdef VERY_OLD_KPATHSEA
-  return kpse_find_file(*name, kpse_dvips_header_format, True);
-#else
-  return kpse_find_file(*name, kpse_tex_ps_header_format, True);
-#endif
-#else
   return kpse_find_file(*name, kpse_fontmap_format, True);
-#endif
 }
 
 
 char *
-TeX_search_config_file(char **name)
+TeX_search_config_file(const char **name)
 {
   /* no extra extension handling necessary */
-
-#ifdef OLD_KPATHSEA
-  return kpse_find_file(*name, kpse_dvips_config_format, True);
-#else
   return kpse_find_file(*name, kpse_program_text_format, True);
-#endif
 }
 
 
 char *
 TeX_search_ttf_file(char **name)
 {
-#ifdef OLD_KPATHSEA
-
-  size_t l;
-  char* real_name;
-
-
-  l = strlen(*name);
-  handle_extension(name, ".ttf");
-#ifdef VERY_OLD_KPATHSEA
-  real_name = kpse_find_file(*name, kpse_dvips_header_format, True);
-#else
-  real_name = kpse_find_file(*name, kpse_type1_format, True);
-#endif
-
-  /* test for .ttc, but only if no extension was given initially */
-  if (!real_name && l != strlen(*name))
-  {
-    (*name)[strlen(*name) - 1] = 'c';
-#ifdef VERY_OLD_KPATHSEA
-    real_name = kpse_find_file(*name, kpse_dvips_header_format, True);
-#else
-    real_name = kpse_find_file(*name, kpse_type1_format, True);
-#endif
-  }
-
-  return real_name;
-
-#else /* OLD_KPATHSEA */
-
   /* no extra extension handling necessary */
-
   return kpse_find_file(*name, kpse_truetype_format, True);
-
-#endif
 }
 
 
@@ -278,8 +187,8 @@ file_find(char *name, struct emtex_dir *list)
 
 void
 TeX_search_init(char *exec_name,
-                char *program_identifier,
-                char *env_identifier)
+                const char *program_identifier,
+                const char *env_identifier)
 {
   if (!dir_setup(&tfm_path, "TEXTFM", NULL, EDS_BANG))
     oops("Cannot setup search path for tfm files");
@@ -302,7 +211,7 @@ TeX_search_init(char *exec_name,
 }
 
 
-char *
+const char *
 TeX_search_version(void)
 {
   return emtex_version_string;
@@ -350,7 +259,7 @@ TeX_search_map_file(char **name)
 
 
 char *
-TeX_search_config_file(char **name)
+TeX_search_config_file(const char **name)
 {
   /* no extra extension handling necessary */
   return file_find(*name, &cfg_path);
@@ -389,14 +298,14 @@ TeX_search_ttf_file(char **name)
 
 void
 TeX_search_init(char *exec_name,
-                char *program_identifier,
-                char *env_identifier)
+                const char *program_identifier,
+                const char *env_identifier)
 {
   /* empty */
 }
 
 
-char *
+const char *
 TeX_search_version(void)
 {
   static char buf[200];
@@ -476,7 +385,7 @@ TeX_search_map_file(char **name)
 
 
 char *
-TeX_search_config_file(char **name)
+TeX_search_config_file(const char **name)
 {
   char result[_MAX_PATH];
 
@@ -511,14 +420,14 @@ char version_string[] = "no search library";
 
 void
 TeX_search_init(char *exec_name,
-                char *program_identifier,
-                char *env_identifier)
+                const char *program_identifier,
+                const char *env_identifier)
 {
   /* empty */
 }
 
 
-char *
+const char *
 TeX_search_version(void)
 {
   return version_string;
@@ -566,7 +475,7 @@ TeX_search_map_file(char **name)
 
 
 char *
-TeX_search_config_file(char **name)
+TeX_search_config_file(const char **name)
 {
   /* no extra extension handling necessary */
   return *name;
@@ -626,7 +535,7 @@ get_tfm_fullname(Font *fnt)
 
 void
 handle_extension(char **stringp,
-                 char *extension)
+                 const char *extension)
 {
   int i, lastext = -1;
 

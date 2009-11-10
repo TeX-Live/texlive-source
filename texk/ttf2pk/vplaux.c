@@ -109,7 +109,7 @@ texheight(register ttfinfo *ti,
           ttfinfo *ac,
           int xh)
 {
-  register char **p;
+  register const char **p;
   register ttfinfo *aci, *acci;
   char buffer[200];
 
@@ -138,7 +138,8 @@ void
 upmap(Font *fnt)
 {
   register ttfinfo *ti, *Ti;
-  register char *p, *q;
+  register const char *p;
+  register char *q;
   register pcc *np, *nq;
   int i, j;
   char lwr[50];
@@ -259,7 +260,7 @@ writevpl(Font *fnt, char makevpl, Boolean forceoctal)
 
   {
     char tbuf[300];
-    char *base_encoding = fnt->codingscheme;
+    const char *base_encoding = fnt->codingscheme;
 
       
     if (strcmp(fnt->outencoding->name, base_encoding) == 0)

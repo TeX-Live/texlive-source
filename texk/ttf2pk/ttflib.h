@@ -23,7 +23,7 @@ Boolean TTFprocess(Font *fnt, long Code, byte **bitmap,
 encoding *TTFget_first_glyphs(Font *fnt, long *array);
 void TTFget_subfont(Font *fnt, long *array);
 
-long TTFsearch_PS_name(char *name);
+long TTFsearch_PS_name(const char *name);
 
 #endif /* TTFLIB_H */
 

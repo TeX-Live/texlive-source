@@ -34,8 +34,6 @@ ttf2pk_SOURCES = \
 	ttflib.c \
 	ttflib.h
 
-ttf2pk_DEPENDENCIES = $(KPATHSEA_DEPEND) $(FREETYPE_DEPEND)
-
 ttf2tfm_SOURCES = \
 	case.c \
 	case.h \
@@ -64,7 +62,13 @@ ttf2tfm_SOURCES = \
 	vplaux.c \
 	vplaux.h
 
-ttf2tfm_DEPENDENCIES = $(KPATHSEA_DEPEND) $(FREETYPE_DEPEND)
+$(ttf2pk_OBJECTS) $(ttf2tfm_OBJECTS): config.force
+
+config.force: $(KPATHSEA_DEPEND) $(FREETYPE_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 LDADD = $(KPATHSEA_LIBS) $(FREETYPE_LIBS)
 

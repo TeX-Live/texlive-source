@@ -23,7 +23,7 @@ EncodingScheme current_encoding_scheme;
 struct encoding_table
 {
   long code;
-  char *adobename;
+  const char *adobename;
 };
 
 struct encoding_table unicode_table[] =
@@ -1044,7 +1044,7 @@ set_encoding_scheme(EncodingScheme e, Font *fnt)
  *   if it's a glyph index (code >= 0x1000000).
  */
 
-char *
+const char *
 code_to_adobename(long code)
 {
   unsigned int n, n1 = 0, n2 = current_table_len - 1;
@@ -1082,11 +1082,12 @@ code_to_adobename(long code)
  */
 
 long
-adobename_to_code(char *s)
+adobename_to_code(const char *s)
 {
   size_t i;
   long j;
   char p;
+  char *e;
 
 
   if (s == NULL)
@@ -1101,8 +1102,8 @@ adobename_to_code(char *s)
     if (!(p == 'c' || p == 'g'))
       return -1;
 
-    j = strtol(s, &s, 0);
-    if (*s == '\0')
+    j = strtol(s, &e, 0);
+    if (*e == '\0')
       return (p == 'g') ? (j | 0x1000000) : j;
     else
       return -1;
@@ -1121,8 +1122,8 @@ adobename_to_code(char *s)
   if (!(p == 'c' || p == 'g'))
     return -1;
 
-  j = strtol(s, &s, 0);
-  if (*s == '\0')
+  j = strtol(s, &e, 0);
+  if (*e == '\0')
     return (p == 'g') ? (j | 0x1000000) : j;
   else
     return -1;
@@ -1147,7 +1148,7 @@ findglyph(unsigned short g, ttfinfo *p)
 
 
 ttfinfo *
-findadobe(char *p, ttfinfo *ap)
+findadobe(const char *p, ttfinfo *ap)
 {
   register ttfinfo *ti;
   register long l = -1;
@@ -1186,7 +1187,7 @@ findadobe(char *p, ttfinfo *ap)
 
 
 ttfinfo *
-findmappedadobe(char *p, ttfinfo **array)
+findmappedadobe(const char *p, ttfinfo **array)
 {
   register int i;
   register ttfinfo *ti;

@@ -554,7 +554,7 @@ TTFget_first_glyphs(Font *fnt, long *array)
 {
   unsigned int i, j, Num;
   unsigned int index_array[257];     /* we ignore glyph index 0 */
-  char *n;
+  const char *n;
   encoding *e = (encoding *)mymalloc(sizeof (encoding));
 
 
@@ -577,8 +577,11 @@ TTFget_first_glyphs(Font *fnt, long *array)
       if (Num <= 256)
         index_array[Num] = 1;
 
-      if (fnt->PSnames)
-        (void)TT_Get_PS_Name(face, Num, &n);
+      if (fnt->PSnames) {
+        char *tn;
+        (void)TT_Get_PS_Name(face, Num, &tn);
+        n = tn;
+      }
       else
         n = code_to_adobename(i);
       if (strcmp(n, ".notdef") == 0)
@@ -680,7 +683,7 @@ TTFget_subfont(Font *fnt, long *array)
 
 
 long
-TTFsearch_PS_name(char *name)
+TTFsearch_PS_name(const char *name)
 {
   unsigned int i;
   char *n;
