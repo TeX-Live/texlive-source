@@ -128,8 +128,8 @@ static struct mime_map default_mimemap[] = {
 
 struct mailcap_map {
     char *content_type;
-    char *command;	/* command string */
-    char *testcmd;	/* value of the `test=' field, or NULL if no test field present */
+    const char *command;	/* command string */
+    const char *testcmd;	/* value of the `test=' field, or NULL if no test field present */
     Boolean needsterminal;	/* whether the `needsterminal' flag has been specified for this entry */
     const char *format_string;	/* format specifier ("%s" or "%u" or "") */
 };

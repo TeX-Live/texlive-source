@@ -75,7 +75,6 @@ if test "x$xdvi_have_xaw" = xyes; then
   prog_extension="xaw"
   AC_DEFINE([XAW], 1, [Define to use the Xaw toolkit.])
 else
-  KPSE_MSG_ERROR([xdvik],
-                 [Sorry, you will need at least the Xaw header/library files to compile xdvik.])
+  AC_MSG_ERROR([Sorry, you will need at least the Xaw header/library files to compile xdvik.])
 fi
 ]) # XDVI_CHECK_XAW_LIBRARY

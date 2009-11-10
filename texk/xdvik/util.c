@@ -331,7 +331,7 @@ xdvi_exit(int status)
  *	X server here (the code can also be triggered by X errors).
  */
 void
-do_abort()
+do_abort(void)
 {
 #if PS
     ps_destroy();

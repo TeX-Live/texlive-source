@@ -1,5 +1,5 @@
 /* XPM */
-static char * toolbar_xpm[] = {
+static const char * toolbar_xpm[] = {
 /* width height colors colordepth */
 " 378    18     16     1 0 0",
 " 	 s none c None",

@@ -70,8 +70,8 @@
 #include <X11/Xaw/Scrollbar.h>
 
 typedef struct {
-    char *name;
-    char *dir;
+    const char *name;
+    const char *dir;
 } SFLogin;
 
 SFDir *SFdirs = NULL;
@@ -93,7 +93,7 @@ static SFLogin *SFlogins;
 static int SFtwiddle = 0;
 
 int
-SFchdir(char *path)
+SFchdir(const char *path)
 {
     int result;
 
@@ -131,20 +131,21 @@ SFfree(int i)
     dir->dir = NULL;
 }
 
-static void
-SFstrdup(char **s1, char *s2)
+static char *
+SFstrdup(const char *s2)
 {
-    *s1 = strcpy(XtMalloc((unsigned)(strlen(s2) + 1)), s2);
+    char *s1 = strcpy(XtMalloc((unsigned)(strlen(s2) + 1)), s2);
+    return s1;
 }
 
 static void
 SFunreadableDir(SFDir *dir)
 {
-    char *cannotOpen = "<cannot open> ";
+    const char *cannotOpen = "<cannot open> ";
 
     dir->entries = (SFEntry *) XtMalloc(sizeof(SFEntry));
     dir->entries[0].statDone = 1;
-    SFstrdup(&dir->entries[0].real, cannotOpen);
+    dir->entries[0].real = SFstrdup(cannotOpen);
     dir->entries[0].shown = dir->entries[0].real;
     dir->nEntries = 1;
     dir->nChars = strlen(cannotOpen);
@@ -231,7 +232,7 @@ SFexpand(char *str)
     dir = &(SFdirs[SFdirEnd - 1]);
 
     if (dir->beginSelection == -1) {
-	SFstrdup(&str, str);
+	str = SFstrdup(str);
 	SFreplaceText(dir, str);
 	XtFree(str);
 	return;
@@ -244,7 +245,7 @@ SFexpand(char *str)
     max = &(dir->entries[dir->endSelection + 1]);
 
     name = dir->entries[dir->beginSelection].shown;
-    SFstrdup(&growing, name);
+    growing = SFstrdup(name);
 
     cmp = 0;
     while (!cmp) {
@@ -417,7 +418,7 @@ SFgetHomeDirs(void)
 	entries[0].statDone = 1;
 	SFlogins[0].name = "";
 	pw = getpwuid((int)getuid());
-	SFstrdup(&SFlogins[0].dir, pw ? pw->pw_dir : "/");
+	SFlogins[0].dir = SFstrdup(pw ? pw->pw_dir : "/");
 	maxChars = 0;
     }
 
@@ -443,8 +444,8 @@ SFgetHomeDirs(void)
 	if (len > maxChars) {
 	    maxChars = len;
 	}
-	SFstrdup(&SFlogins[i].name, pw->pw_name);
-	SFstrdup(&SFlogins[i].dir, pw->pw_dir);
+	SFlogins[i].name = SFstrdup(pw->pw_name);
+	SFlogins[i].dir = SFstrdup(pw->pw_dir);
 	i++;
     }
 
@@ -486,7 +487,7 @@ SFfindHomeDir(char *begin, char *end)
     for (i = SFhomeDir.nEntries - 1; i >= 0; i--) {
 	if (!strcmp(SFhomeDir.entries[i].real, begin)) {
 	    *end = save;
-	    SFstrdup(&theRest, end);
+	    theRest = SFstrdup(end);
 	    (void)strcat(strcat(strcpy(SFcurrentPath,
 				       SFlogins[i].dir), "/"), theRest);
 	    XtFree(theRest);
@@ -515,7 +516,7 @@ SFupdatePath(void)
     if (!SFdirs) {
 	SFdirs = (SFDir *) XtMalloc((alloc = 10) * sizeof(SFDir));
 	dir = &(SFdirs[0]);
-	SFstrdup(&dir->dir, "/");
+	dir->dir = SFstrdup("/");
 	(void)SFchdir("/");
 	(void)SFgetDir(dir);
 	for (j = 1; j < alloc; j++) {
@@ -611,7 +612,7 @@ SFupdatePath(void)
 			SFfree(i);
 		    }
 		    prevChange = 1;
-		    SFstrdup(&dir->dir, begin);
+		    dir->dir = SFstrdup(begin);
 		    dir->path = end;
 		    dir->vOrigin = 0;
 		    dir->hOrigin = 0;
@@ -902,5 +903,5 @@ SFstatChar(struct stat *statBuf)
 
 #else
 /* silence `empty compilation unit' warnings */
-static void bar(void); static void foo() { bar(); } static void bar(void) { foo(); }
+static void bar(void); static void foo(void) { bar(); } static void bar(void) { foo(); }
 #endif /* !defined(MOTIF) */

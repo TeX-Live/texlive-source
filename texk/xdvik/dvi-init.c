@@ -1102,7 +1102,7 @@ init_page(void)
 static char *m_tmp_dvi_name = NULL; /* name of backup file for useTempFp */
 
 /* access function for backup file name */
-char *get_tmp_dvi_name() {
+char *get_tmp_dvi_name(void) {
     return m_tmp_dvi_name;
 }
 

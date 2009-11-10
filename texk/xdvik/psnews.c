@@ -402,7 +402,7 @@ waitack(void)
 
   +----------------------------------------------------------------------------*/
 
-Boolean initNeWS()
+Boolean initNeWS(void)
 {
     static NeWStoken newstoken;
 
@@ -947,5 +947,5 @@ newdocNeWS(void)
 }
 #else
 /* silence `empty compilation unit' warnings */
-static void bar(void); static void foo() { bar(); } static void bar(void) { foo(); }
+static void bar(void); static void foo(void) { bar(); } static void bar(void) { foo(); }
 #endif /* PS_NEWS */

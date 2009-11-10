@@ -169,7 +169,7 @@ free_ximage(XImage * ximage)
 }
 
 static void
-clear_cache()
+clear_cache(void)
 {
     XDviImage *c;
     if (!ncached)
@@ -1438,5 +1438,5 @@ Magick_parse_special(char *cp)
 
 #else
 /* silence `empty compilation unit' warnings */
-static void bar(void); static void foo() { bar(); } static void bar(void) { foo(); }
+static void bar(void); static void foo(void) { bar(); } static void bar(void) { foo(); }
 #endif /* MAGICK */

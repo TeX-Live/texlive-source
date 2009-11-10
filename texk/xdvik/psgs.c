@@ -729,7 +729,7 @@ toggle_gs(int flag)	/* this routine is callable from within read_events().  */
 }
 
 void
-gs_resume_prescan()
+gs_resume_prescan(void)
 {
     if (globals.debug & DBG_PS)
 	puts("Resuming prescan");
@@ -1097,5 +1097,5 @@ void erasepage_gs(void)
 
 #else
 /* silence `empty compilation unit' warnings */
-static void bar(void); static void foo() { bar(); } static void bar(void) { foo(); }
+static void bar(void); static void foo(void) { bar(); } static void bar(void) { foo(); }
 #endif /* PS_GS */

@@ -4557,7 +4557,7 @@ static struct itimerval itv = {{0, 0}, {0, 0}};
 
 
 static void
-show_timers(char *what)
+show_timers(const char *what)
 {
     struct xtimer *tp;
     fprintf(stderr, "=======%s; timers:\n", what);

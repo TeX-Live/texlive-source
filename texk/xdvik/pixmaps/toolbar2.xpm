@@ -1,5 +1,5 @@
 /* XPM */
-static char * tools2_xpm[] = {
+static const char * tools2_xpm[] = {
 /* width height colors colordepth */
 " 378    18     15     1 0 0",
 " 	 m none c None",

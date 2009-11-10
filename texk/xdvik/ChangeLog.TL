@@ -1,6 +1,51 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, xdvi.h: Require recent kpathsea version.
+
+2009-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid some maximal compiler warnings.
+	* encodings.c (cjk2unicode): Unconstify string arg.
+	* events.c (show_timers): Constify string arg.
+	* gui/sfPath.c (SFLogin): Constify string members.
+	(SFstrdup): Convert arg1 to result that can be assigned to const
+	strings, constify remaining arg.
+	(SFunreadableDir): Constify local var.
+	* gui/sfPath.[ch] (SFchdir): Constify string arg.
+	* hypertex.c (remote_URL_schemes): 'char *const'=>'const char*'.
+	* main.c (compare_strings): 'const char**'=>'const char*const*'.
+	* mime.c (mailcap_map): Constify string members.
+	* pixmaps/toolbar.xpm, pixmaps/toolbar2.xpm: Constify pixmaps.
+
+
+2009-08-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid some maximal compiler warnings.
+	* dvi-init.c (get_tmp_dvi_name), gui/Tip.c (foo),
+	gui/sfDir.c (foo), gui/sfDraw.c (foo), gui/sfPath.c (foo),
+	gui/sfSelFile.c (foo), gui/xaw_menu.c (foo),
+	gui/xlwradio.c (foo), gui/xm_colorsel.c (foo),
+	gui/xm_filesel.c (foo), gui/xm_menu.c (foo),
+	gui/xm_prefs.c (foo), gui/xm_prefs_appearance.c (foo),
+	gui/xm_prefs_fonts.c (foo), gui/xm_prefs_helpers.c (foo),
+	gui/xm_prefs_page.c (foo), gui/xm_prefs_scroll.c (foo),
+	gui/xm_toolbar.c (foo), image-magick.c (clear_cache, foo),
+	pagehist.c (page_history_clear),
+	psdps.c (DPSErrorProcHandler, foo),
+	psgs.c (gs_resume_prescan, foo),
+	psnews.c (initNeWS, foo), util.c (do_abort):
+	ANSI C function definitions, i.e., '()'=>'(void)'.
+	* xserver-info.c (print_display_info, print_visual_info,
+	print_screen_info, foo): ANSI C function definitions.
+
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for <kpathsea/version.h> and ...
+	* xdvi.h: ... skip extern decl if found.
+
 2009-06-29  Karl Berry  <karl@tug.org>
 
 	* gui/help-window.c (default_help_general): avoid embedding
@@ -35,9 +80,6 @@ ChangeLog.TL: Changes for xdvik (TeX Live)
 
 2009-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* CHANGES: fixed version/relase-date such that mksedscript can
-	extract them.
-
 	* xdvi.1.in (warnspecials): fixed duplicate entry, removing
 	an #ifkpathsea without matching #endif.
 
@@ -51,6 +93,11 @@ ChangeLog.TL: Changes for xdvik (TeX Live)
 	* squeeze/squeeze.c (new): ... to here. Don't include
 	any system dependent kpathsea headers, such that squeeze/
 	can be configured separately for the build system.
+
+2009-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* CHANGES: fixed version/relase-date such that mksedscript can
+	extract them.
 
 2008-07-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -34,8 +34,7 @@
 #ifdef XSERVER_INFO
 
 static void
-print_display_info (dpy)
-    Display *dpy;
+print_display_info (Display *dpy)
 {
     char dummybuf[40];
     char *cp;
@@ -135,8 +134,7 @@ print_display_info (dpy)
 }
 
 static void
-print_visual_info (vip)
-    XVisualInfo *vip;
+print_visual_info (XVisualInfo *vip)
 {
     char errorbuf[40];			/* for sprintfing into */
     char *class = NULL;			/* for printing */
@@ -172,9 +170,7 @@ print_visual_info (vip)
 }
 
 static void
-print_screen_info (dpy, scr)
-    Display *dpy;
-    int scr;
+print_screen_info (Display *dpy, int scr)
 {
     Screen *s = ScreenOfDisplay (dpy, scr);  /* opaque structure */
     XVisualInfo viproto;		/* fill in for getting info */
@@ -279,5 +275,5 @@ print_xserver_info(void)
 
 #else
 /* silence `empty compilation unit' warnings */
-static void bar(void); static void foo() { bar(); } static void bar(void) { foo(); }
+static void bar(void); static void foo(void) { bar(); } static void bar(void) { foo(); }
 #endif /* XSERVER_INFO */

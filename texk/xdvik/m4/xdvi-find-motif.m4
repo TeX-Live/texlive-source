@@ -94,7 +94,7 @@ if test "x$xdvi_have_motif" = xyes; then
   # Check whether to compile for Motif with Xaw Panner.
   _XDVI_CHECK_PANNER
 elif test "x$default_toolkit" = xnone; then
-  KPSE_MSG_ERROR([xdvik], [No Motif.])
+  AC_MSG_ERROR([No Motif.])
 else
   # Restore previous X_CFLAGS
   X_CFLAGS=$xdvi_motif_save_X_CFLAGS

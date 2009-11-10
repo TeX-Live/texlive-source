@@ -449,7 +449,7 @@ page_history_update_toolbar_navigation(void)
 }
 
 void
-page_history_clear()
+page_history_clear(void)
 {
     struct dl_list *pos, *curr;
 

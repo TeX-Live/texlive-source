@@ -28,7 +28,7 @@
 
 #ifndef MOTIF
 
-extern int SFchdir(char *path);
+extern int SFchdir(const char *path);
 extern void SFupdatePath(void);
 extern void SFsetText(char *path);
 extern void SFbuttonPressList(Widget w, int n, XButtonPressedEvent *event);

@@ -857,5 +857,5 @@ create_tips(Widget toplevel)
 
 #else /* MOTIF */
 /* silence "empty compilation unit" and "`toolbar_xpm' defined but not used" warnings */
-static void bar(void); static void foo() { UNUSED(toolbar_xpm); bar(); } static void bar(void) { foo(); }
+static void bar(void); static void foo(void) { UNUSED(toolbar_xpm); bar(); } static void bar(void) { foo(); }
 #endif /* MOTIF */

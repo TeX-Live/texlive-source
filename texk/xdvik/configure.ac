@@ -15,6 +15,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([xdvik])
+KPSE_CANONICAL_HOST
 
 dnl Include additional code for xdvik.
 m4_include([ac/xdvik.ac])
@@ -29,7 +30,7 @@ AS_CASE([$with_ps],
         [no],            [PS_DEF=],
         [dps],           [PS_DEF=-DPS_DPS],
         [news],          [PS_DEF=-DPS_NEWS],
-                         [KPSE_MSG_WARN([unknown--with-ps argument `$with_ps'; using gs.])
+                         [AC_MSG_WARN([unknown--with-ps argument `$with_ps'; using gs.])
                           PS_DEF=-DPS_GS])
 AC_SUBST([PS_DEF])
 
@@ -193,6 +194,8 @@ AC_CHECK_LIB([Xp], [XpQueryVersion],
              [x_xp_lib='-lXp'], [],
              [$x_ext_lib -lX11 $X_EXTRA_LIBS $XLFLAG])
 
+if test "x$enable_build" != xno || test -f config.force; then
+
 # Check which toolkit was specified
 AS_CASE([$with_xdvi_x_toolkit],
         [next | nextaw | neXtaw],      [val=neXtaw],
@@ -200,7 +203,7 @@ AS_CASE([$with_xdvi_x_toolkit],
         ["" | x | xa | xaw],           [val=xaw],
         [y | ye | yes],                [val=yes],
         [m | mo | mot | moti | motif], [val=motif],
-                                       [KPSE_MSG_WARN([unknown --with-xdvi-x-toolkit argument 
+                                       [AC_MSG_WARN([unknown --with-xdvi-x-toolkit argument 
                                                        `$with_xdvi_x_toolkit'; using xaw.])
                                         val=xaw])
 with_xdvi_x_toolkit=$val
@@ -269,11 +272,15 @@ KPSE_T1LIB_FLAGS
 
 KPSE_ADD_FLAGS([kpathsea])
 
-KPSE_CHECK_KPSE_FORMAT([enc], ,
-                       [KPSE_MSG_ERROR([xdvik],
-                                       [your kpathsea has no kpse_enc_format.])])
+KPSE_CHECK_KPSE_FORMAT([enc], [],
+                       [AC_MSG_ERROR([your kpathsea has no kpse_enc_format.])])
+AC_CHECK_HEADER([kpathsea/version.h], [],
+                [AC_MSG_ERROR([Sorry, kpathsea too old])])
 
 KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
 
 AC_ARG_WITH([default-dvips-path],
             AS_HELP_STRING([--with-default-dvips-path=CMD],
@@ -302,7 +309,7 @@ dnl The subdirectory squeeze must be configured for the build system.
 dnl When cross compiling, can not share the cache file with the subdirectory!
 AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
 [cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$build' \
+ ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
  CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
  CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
 

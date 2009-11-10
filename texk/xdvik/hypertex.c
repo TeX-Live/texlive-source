@@ -546,7 +546,7 @@ static struct htex_anchor_stack stack = { 0, 0, NULL };
    are considered remote.
    (i.e. not accessible via the ordinary Unix file system)
 */
-static char *const remote_URL_schemes[] = {
+static const char *remote_URL_schemes[] = {
     "http:",            /* Hypertext Transfer Protocol                    [RFC2068] */
     "ftp:",             /* File Transfer Protocol                         [RFC1738] */
     "https:",           /* Hypertext Transfer Protocol Secure             [RFC2818] */

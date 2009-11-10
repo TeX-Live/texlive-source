@@ -3026,7 +3026,7 @@ close_iconv(void *dummy)
 
 /* convert a CJK char to unicode (UCS-4) using iconv() */
 static uint32_t
-cjk2unicode(const unsigned char *cjk)
+cjk2unicode(unsigned char *cjk)
 {
 #if HAVE_ICONV_H
     uint32_t u = 0;

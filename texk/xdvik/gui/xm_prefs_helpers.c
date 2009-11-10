@@ -893,6 +893,6 @@ prefs_helpers(struct topic_info *tinfo)
 
 #else
 /* silence `empty compilation unit' warnings */
-static void bar(void); static void foo() { bar(); } static void bar(void) { foo(); }
+static void bar(void); static void foo(void) { bar(); } static void bar(void) { foo(); }
 #endif /* MOTIF */
 

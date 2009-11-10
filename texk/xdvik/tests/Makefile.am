@@ -20,7 +20,7 @@ run_tests_SOURCES = \
 	test_string_utils.c \
 	test_util.c
 
-run_tests_DEPENDENCIES = ../libxdvi.a $(common_dependencies)
+$(run_tests_OBJECTS): ../libxdvi.a $(common_dependencies)
 
 LDADD = ../libxdvi.a $(common_ldadd)
 

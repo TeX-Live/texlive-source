@@ -243,10 +243,9 @@ typedef unsigned long xuint32;
 
 #include "kpathsea/c-dir.h" /* dirent.h, NAMLEN */
 
-extern KPSEDLL char *kpathsea_version_string;
-
 #include <stdarg.h>
 #include "kpathsea/c-fopen.h"
+#include "kpathsea/version.h"
 
 #ifndef	_XFUNCPROTOBEGIN
 #  define _XFUNCPROTOBEGIN

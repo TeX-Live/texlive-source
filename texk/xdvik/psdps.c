@@ -159,7 +159,7 @@ static int DPS_ev_mask = DPS_MASK_NORMAL; /* events for which we'll stop */
 
 
 #if	0
-static void DPSErrorProcHandler();
+static void DPSErrorProcHandler(void);
 #else
 #define	DPSErrorProcHandler	DPSDefaultErrorProc
 #endif
@@ -865,5 +865,5 @@ newdocDPS(void)
 
 #else
 /* silence `empty compilation unit' warnings */
-static void bar(void); static void foo() { bar(); } static void bar(void) { foo(); }
+static void bar(void); static void foo(void) { bar(); } static void bar(void) { foo(); }
 #endif /* PS_DPS */

@@ -162,13 +162,21 @@ libxdvi_a_SOURCES += \
 	gui/xm_toolbar.c \
 	gui/xm_toolbar.h
 
+$(libxdvi_a_OBJECTS): config.force
+
+config.force: $(common_dependencies)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
+
 bin_SCRIPTS = xdvi
 
 bin_PROGRAMS = xdvi-bin
 
 xdvi_bin_SOURCES = main.c
 
-xdvi_bin_DEPENDENCIES = libxdvi.a $(common_dependencies)
+$(xdvi_bin_OBJECTS): libxdvi.a $(common_dependencies)
 
 LDADD = libxdvi.a $(common_ldadd)
 

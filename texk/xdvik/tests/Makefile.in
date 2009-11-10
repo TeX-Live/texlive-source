@@ -84,6 +84,7 @@ am__DEPENDENCIES_4 = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_3)
 am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_4)
+run_tests_DEPENDENCIES = ../libxdvi.a $(am__DEPENDENCIES_5)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -159,6 +160,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PS_DEF = @PS_DEF@
@@ -260,7 +262,6 @@ run_tests_SOURCES = \
 	test_string_utils.c \
 	test_util.c
 
-run_tests_DEPENDENCIES = ../libxdvi.a $(common_dependencies)
 LDADD = ../libxdvi.a $(common_ldadd)
 EXTRA_DIST = test1.c
 all: all-am
@@ -644,6 +645,8 @@ uninstall-am:
 
 @KPATHSEA_RULE@
 @T1LIB_RULE@
+
+$(run_tests_OBJECTS): ../libxdvi.a $(common_dependencies)
 
 ../libxdvi.a: $(libxdvi_dependencies)
 	cd .. && $(MAKE) $(AM_MAKEFLAGS) libxdvi.a

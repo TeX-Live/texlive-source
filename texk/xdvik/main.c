@@ -288,8 +288,8 @@ static const char *SUBST_VAL[] = { "-mgs[n] <size>" };
 static int
 compare_strings(const void *s, const void *t)
 {
-    const char **ss = (const char**)s;
-    const char **tt = (const char**)t;
+    const char *const *ss = (const char *const *)s;
+    const char *const *tt = (const char *const *)t;
 
     return memicmp(*ss, *tt, strlen(*tt) + 1); /* also check for final 0 */
 }
