@@ -21,33 +21,33 @@
 #define DISPLAYMODE 2
 #define VERBMODE 3
 /*1:*/
-#line 19 "../vlna-1.3/vlna.w"
+#line 19 "vlna.w"
 
 /*3:*/
-#line 39 "../vlna-1.3/vlna.w"
+#line 39 "vlna.w"
 
 #include <stdio.h> 
 #include <string.h> 
 #include <stdlib.h> 
 
 /*:3*/
-#line 20 "../vlna-1.3/vlna.w"
+#line 20 "vlna.w"
 
 /*4:*/
-#line 56 "../vlna-1.3/vlna.w"
+#line 56 "vlna.w"
 
 char*prog_name;
 int status;
 
 /*:4*//*7:*/
-#line 133 "../vlna-1.3/vlna.w"
+#line 131 "vlna.w"
 
 int isfilter= 0,silent= 0,rmbackup= 0,nomath= 0,noverb= 0,web= 0,latex= 0;
 char charsetdefault[]= "KkSsVvZzOoUuAI";
 char*charset= charsetdefault;
 
 /*:7*//*15:*/
-#line 292 "../vlna-1.3/vlna.w"
+#line 289 "vlna.w"
 
 typedef struct PATITEM{
 char*str;
@@ -56,36 +56,36 @@ struct PATITEM*next;
 }PATITEM;
 typedef struct PATTERN{
 PATITEM*patt;
-void(*proc)();
+void(*proc)(void);
 struct PATTERN*next;
 }PATTERN;
 
 /*:15*//*16:*/
-#line 344 "../vlna-1.3/vlna.w"
+#line 341 "vlna.w"
 
 PATITEM*lapi[MAXPATT];
 PATTERN*lapt[MAXPATT];
 PATTERN*listpatt,*normallist,*commentlist,*pt,*lastpt= NULL;
-PATITEM*pi,*lastpi= NULL;
+PATITEM*lastpi= NULL;
 char c;
 char buff[MAXBUFF];
 int ind;
 
 /*:16*//*20:*/
-#line 418 "../vlna-1.3/vlna.w"
+#line 411 "vlna.w"
 
 char strings[512];
 int i;
 
 /*:20*//*25:*/
-#line 506 "../vlna-1.3/vlna.w"
+#line 496 "vlna.w"
 
 char*filename;
 long int numline,numchanges;
 int mode;
 
 /*:25*//*33:*/
-#line 637 "../vlna-1.3/vlna.w"
+#line 626 "vlna.w"
 
 char tblanks[]= " ~\t";
 char blanks[]= " \t";
@@ -101,12 +101,12 @@ char letters[]= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 PATTERN*vlnkalist,*mathlist,*parcheck,*verblist;
 
 /*:33*/
-#line 21 "../vlna-1.3/vlna.w"
+#line 21 "vlna.w"
 
 /*6:*/
-#line 110 "../vlna-1.3/vlna.w"
+#line 108 "vlna.w"
 
-void printusage()
+static void printusage(void)
 {
 fprintf(stderr,
 "usage: vlna [opt] [filenames]\n"
@@ -124,19 +124,17 @@ fprintf(stderr,
 }
 
 /*:6*//*10:*/
-#line 168 "../vlna-1.3/vlna.w"
+#line 166 "vlna.w"
 
-void ioerr(f)
-char*f;
+static void ioerr(char*f)
 {
 fprintf(stderr,"%s: cannot open file %s\n",prog_name,f);
 }
 
 /*:10*//*17:*/
-#line 357 "../vlna-1.3/vlna.w"
+#line 354 "vlna.w"
 
-void*myalloc(size)
-int size;
+static void*myalloc(int size)
 {
 void*p;
 p= malloc(size);
@@ -149,10 +147,9 @@ return p;
 }
 
 /*:17*//*18:*/
-#line 375 "../vlna-1.3/vlna.w"
+#line 371 "vlna.w"
 
-PATTERN*setpattern(proc)
-void(*proc)();
+static PATTERN*setpattern(void(*proc)(void))
 {
 PATTERN*pp;
 pp= myalloc(sizeof(PATTERN));
@@ -166,11 +163,9 @@ return pp;
 }
 
 /*:18*//*19:*/
-#line 394 "../vlna-1.3/vlna.w"
+#line 389 "vlna.w"
 
-void setpi(str,flag)
-char*str;
-int flag;
+static void setpi(char*str,int flag)
 {
 PATITEM*p;
 p= myalloc(sizeof(PATITEM));
@@ -182,11 +177,9 @@ lastpi= p;
 }
 
 /*:19*//*22:*/
-#line 429 "../vlna-1.3/vlna.w"
+#line 422 "vlna.w"
 
-PATTERN*normalpattern(proc,str)
-void(*proc)();
-char*str;
+static PATTERN*normalpattern(void(*proc)(void),const char*str)
 {
 PATTERN*pp;
 int j= 0;
@@ -206,10 +199,9 @@ return pp;
 }
 
 /*:22*//*23:*/
-#line 467 "../vlna-1.3/vlna.w"
+#line 458 "vlna.w"
 
-int match(p)
-PATITEM*p;
+static int match(PATITEM*p)
 {
 int m;
 if(strchr(p->str,c)!=NULL)m= 1;
@@ -220,7 +212,7 @@ case ONE:if(p->next==NULL)return FOUND;
 return 1;
 case ONE_NOT:return NOFOUND;
 case ANY_NOT:/*24:*/
-#line 486 "../vlna-1.3/vlna.w"
+#line 476 "vlna.w"
 
 switch(m= match(p->next)){
 case NOFOUND:return NOFOUND;
@@ -229,16 +221,16 @@ default:return 1+m;
 }
 
 /*:24*/
-#line 479 "../vlna-1.3/vlna.w"
+#line 469 "vlna.w"
 ;
 }
 return 0;
 }
 
 /*:23*//*36:*/
-#line 670 "../vlna-1.3/vlna.w"
+#line 659 "vlna.w"
 
-void vlnkain()
+static void vlnkain(void)
 {
 char p;
 ind--;
@@ -251,9 +243,9 @@ numchanges++;
 }
 
 /*:36*//*38:*/
-#line 709 "../vlna-1.3/vlna.w"
+#line 698 "vlna.w"
 
-void vlnkacr()
+static void vlnkacr(void)
 {
 char p;
 int i,j;
@@ -274,17 +266,17 @@ numchanges++;
 }
 
 /*:38*//*41:*/
-#line 775 "../vlna-1.3/vlna.w"
+#line 764 "vlna.w"
 
-void tielock()
+static void tielock(void)
 {
 c= 1;
 }
 
 /*:41*//*42:*/
-#line 784 "../vlna-1.3/vlna.w"
+#line 773 "vlna.w"
 
-void printwarning()
+static void printwarning(void)
 {
 if(!silent)
 fprintf(stderr,
@@ -294,15 +286,15 @@ status= WARNING;
 }
 
 /*:42*//*44:*/
-#line 809 "../vlna-1.3/vlna.w"
+#line 798 "vlna.w"
 
-void mathin()
+static void mathin(void)
 {
 if(mode!=TEXTMODE)printwarning();
 mode= MATHMODE;
 normallist= listpatt= mathlist;
 }
-void mathout()
+static void mathout(void)
 {
 if(mode!=MATHMODE)printwarning();
 mode= TEXTMODE;
@@ -310,9 +302,9 @@ normallist= listpatt= vlnkalist;
 }
 
 /*:44*//*45:*/
-#line 827 "../vlna-1.3/vlna.w"
+#line 816 "vlna.w"
 
-void onedollar()
+static void onedollar(void)
 {
 if(buff[ind-3]=='\\'||(buff[ind-3]=='$'&&buff[ind-4]!='\\'))return;
 if(mode==DISPLAYMODE)printwarning();
@@ -323,9 +315,9 @@ else mathout();
 }
 
 /*:45*//*47:*/
-#line 846 "../vlna-1.3/vlna.w"
+#line 835 "vlna.w"
 
-void checkmode()
+static void checkmode(void)
 {
 if(mode!=TEXTMODE){
 printwarning();
@@ -335,19 +327,19 @@ normallist= listpatt= vlnkalist;
 }
 
 /*:47*//*49:*/
-#line 872 "../vlna-1.3/vlna.w"
+#line 861 "vlna.w"
 
-void displayin()
+static void displayin(void)
 {
 if(mode!=TEXTMODE)printwarning();
 mode= DISPLAYMODE;normallist= listpatt= parcheck;
 }
-void displayout()
+static void displayout(void)
 {
 if(mode!=DISPLAYMODE)printwarning();
 mode= TEXTMODE;normallist= listpatt= vlnkalist;
 }
-void twodollars()
+static void twodollars(void)
 {
 if(buff[ind-3]=='\\')return;
 if(mode==DISPLAYMODE)displayout();
@@ -355,12 +347,12 @@ else displayin();
 }
 
 /*:49*//*51:*/
-#line 921 "../vlna-1.3/vlna.w"
+#line 910 "vlna.w"
 
 int prevmode;
 PATTERN*prevlist,*verboutlist[4];
 char verbchar[2];
-void verbinchar()
+static void verbinchar(void)
 {
 prevmode= mode;
 verbchar[0]= c;
@@ -372,9 +364,9 @@ mode= VERBMODE;
 }
 
 /*:51*//*52:*/
-#line 942 "../vlna-1.3/vlna.w"
+#line 931 "vlna.w"
 
-void verbin()
+static void verbin(void)
 {
 int i;
 i= 0;
@@ -394,9 +386,9 @@ mode= VERBMODE;
 }
 
 /*:52*//*53:*/
-#line 962 "../vlna-1.3/vlna.w"
+#line 951 "vlna.w"
 
-void verbout()
+static void verbout(void)
 {
 if(mode!=VERBMODE)return;
 if(web&&buff[ind-2]=='@'&&buff[ind-3]=='@')return;
@@ -410,25 +402,24 @@ case TEXTMODE:normallist= listpatt= vlnkalist;break;
 }
 
 /*:53*//*55:*/
-#line 984 "../vlna-1.3/vlna.w"
+#line 973 "vlna.w"
 
-void tieoff()
+static void tieoff(void)
 {
 normallist= NULL;
 }
-void tieon()
+static void tieon(void)
 {
 normallist= vlnkalist;
 }
 
 /*:55*/
-#line 22 "../vlna-1.3/vlna.w"
+#line 22 "vlna.w"
 
 /*26:*/
-#line 515 "../vlna-1.3/vlna.w"
+#line 505 "vlna.w"
 
-void tie(input,output)
-FILE*input,*output;
+static void tie(FILE*input,FILE*output)
 {
 int ap;
 register int k,m,n;
@@ -437,7 +428,7 @@ PATTERN*pp;
 PATITEM*pi;
 
 /*27:*/
-#line 546 "../vlna-1.3/vlna.w"
+#line 535 "vlna.w"
 
 for(k= 0;k<MAXPATT;k++)lapi[k]= NULL;
 c= '\n';
@@ -446,17 +437,17 @@ numline= 1;numchanges= 0;
 mode= TEXTMODE;
 
 /*:27*//*35:*/
-#line 667 "../vlna-1.3/vlna.w"
+#line 656 "vlna.w"
 
 listpatt= normallist= vlnkalist;
 
 /*:35*/
-#line 525 "../vlna-1.3/vlna.w"
+#line 514 "vlna.w"
 ;
 
 while(!feof(input)){
 /*30:*/
-#line 591 "../vlna-1.3/vlna.w"
+#line 580 "vlna.w"
 
 pp= listpatt;
 while(pp!=NULL){
@@ -464,7 +455,7 @@ switch(m= match(pp->patt)){
 case FOUND:(*pp->proc)();
 case NOFOUND:break;
 default:/*31:*/
-#line 606 "../vlna-1.3/vlna.w"
+#line 595 "vlna.w"
 
 pi= pp->patt;
 while(m--)pi= pi->next;
@@ -484,17 +475,17 @@ lapt[k]= pp;lapi[k]= pi;ap++;
 }
 
 /*:31*/
-#line 597 "../vlna-1.3/vlna.w"
+#line 586 "vlna.w"
 ;
 }
 pp= pp->next;
 }
 
 /*:30*/
-#line 528 "../vlna-1.3/vlna.w"
+#line 517 "vlna.w"
 ;
 if(ap==0&&ind> BUFI&&c!='\\')/*28:*/
-#line 561 "../vlna-1.3/vlna.w"
+#line 550 "vlna.w"
 
 {
 buff[ind]= 0;
@@ -503,7 +494,7 @@ ind= 1;
 }
 
 /*:28*/
-#line 529 "../vlna-1.3/vlna.w"
+#line 518 "vlna.w"
 ;
 if(ind>=MAXBUFF){
 fprintf(stderr,"Operating buffer overflow, is anything wrong?\n");
@@ -515,7 +506,7 @@ buff[ind++]= c= ic;
 if(c=='\n')numline++,listpatt= normallist;
 if(c=='%'&&mode!=VERBMODE&&buff[ind-2]!='\\')listpatt= commentlist;
 /*29:*/
-#line 574 "../vlna-1.3/vlna.w"
+#line 563 "vlna.w"
 
 n= ap;k= 0;
 while(n){
@@ -530,11 +521,11 @@ k++;n--;
 }
 
 /*:29*/
-#line 539 "../vlna-1.3/vlna.w"
+#line 528 "vlna.w"
 ;
 }
 /*28:*/
-#line 561 "../vlna-1.3/vlna.w"
+#line 550 "vlna.w"
 
 {
 buff[ind]= 0;
@@ -543,43 +534,41 @@ ind= 1;
 }
 
 /*:28*/
-#line 541 "../vlna-1.3/vlna.w"
+#line 530 "vlna.w"
 ;
 if(!web)checkmode();
 if(!silent)/*32:*/
-#line 625 "../vlna-1.3/vlna.w"
+#line 614 "vlna.w"
 
 fprintf(stderr,"~~~ file: %s\t  lines: %ld, changes: %ld\n",
 filename,numline,numchanges);
 
 /*:32*/
-#line 543 "../vlna-1.3/vlna.w"
+#line 532 "vlna.w"
 ;
 }
 
 /*:26*/
-#line 23 "../vlna-1.3/vlna.w"
+#line 23 "vlna.w"
 
 /*5:*/
-#line 61 "../vlna-1.3/vlna.w"
+#line 61 "vlna.w"
 
-int main(argc,argv)
-int argc;
-char**argv;
+int main(int argc,char**argv)
 {
 /*9:*/
-#line 161 "../vlna-1.3/vlna.w"
+#line 159 "vlna.w"
 
 FILE*infile,*outfile;
 char backup[MAXLEN];
 int j;
 
 /*:9*/
-#line 66 "../vlna-1.3/vlna.w"
+#line 64 "vlna.w"
 ;
 prog_name= argv[0];status= OK;
 /*8:*/
-#line 138 "../vlna-1.3/vlna.w"
+#line 136 "vlna.w"
 
 while(argc> 1&&argv[1][0]=='-'){
 if(argv[1][2]!=0)printusage(),exit(BAD_OPTIONS);
@@ -600,18 +589,18 @@ argc--;argv++;
 }
 
 /*:8*/
-#line 68 "../vlna-1.3/vlna.w"
+#line 66 "vlna.w"
 ;
 if(!silent)fprintf(stderr,BANNER);
 /*21:*/
-#line 423 "../vlna-1.3/vlna.w"
+#line 416 "vlna.w"
 
 for(i= 0;i<256;i++){
 strings[2*i]= (char)i;strings[2*i+1]= 0;
 }
 
 /*:21*//*34:*/
-#line 657 "../vlna-1.3/vlna.w"
+#line 646 "vlna.w"
 
 vlnkalist= setpattern(vlnkain);
 setpi(tblankscr,ONE);
@@ -623,7 +612,7 @@ setpi(blanks,ANY);
 setpi(nochar,ONE_NOT);
 
 /*:34*//*37:*/
-#line 685 "../vlna-1.3/vlna.w"
+#line 674 "vlna.w"
 
 setpattern(vlnkacr);
 setpi(tblankscr,ONE);
@@ -636,7 +625,7 @@ setpi(blanks,ANY);
 setpi(nochar,ONE_NOT);
 
 /*:37*//*39:*/
-#line 731 "../vlna-1.3/vlna.w"
+#line 720 "vlna.w"
 
 setpattern(vlnkain);
 setpi(tblankscr,ONE);
@@ -666,7 +655,7 @@ setpi(nochar,ONE_NOT);
 
 
 /*:39*//*40:*/
-#line 764 "../vlna-1.3/vlna.w"
+#line 753 "vlna.w"
 
 normalpattern(tielock,"\\TeX");
 setpi(blankscr,ONE);
@@ -674,7 +663,7 @@ normalpattern(tielock,"\\LaTeX");
 setpi(blankscr,ONE);
 
 /*:40*//*43:*/
-#line 798 "../vlna-1.3/vlna.w"
+#line 787 "vlna.w"
 
 if(!nomath){
 mathlist= setpattern(onedollar);
@@ -687,7 +676,7 @@ normalpattern(mathout,"\\end.{math}");
 }
 
 /*:43*//*46:*/
-#line 840 "../vlna-1.3/vlna.w"
+#line 829 "vlna.w"
 
 parcheck= setpattern(checkmode);
 setpi(cr,ONE);
@@ -695,7 +684,7 @@ setpi(blanks,ANY);
 setpi(cr,ONE);
 
 /*:46*//*48:*/
-#line 861 "../vlna-1.3/vlna.w"
+#line 850 "vlna.w"
 
 if(!nomath){
 normalpattern(twodollars,"$$");
@@ -708,7 +697,7 @@ normalpattern(displayout,"\\end.{equation");
 }
 
 /*:48*//*50:*/
-#line 893 "../vlna-1.3/vlna.w"
+#line 882 "vlna.w"
 
 if(!noverb){
 verblist= normalpattern(verbinchar,"\\verb");
@@ -735,20 +724,20 @@ normalpattern(verbout,"@>|");
 
 
 /*:50*//*54:*/
-#line 979 "../vlna-1.3/vlna.w"
+#line 968 "vlna.w"
 
 lastpt= 0;
 commentlist= normalpattern(tieoff,"%.~.-");
 normalpattern(tieon,"%.~.+");
 
 /*:54*/
-#line 70 "../vlna-1.3/vlna.w"
+#line 68 "vlna.w"
 ;
 /*11:*/
-#line 176 "../vlna-1.3/vlna.w"
+#line 173 "vlna.w"
 
 if(isfilter)/*12:*/
-#line 188 "../vlna-1.3/vlna.w"
+#line 185 "vlna.w"
 
 {
 if(argc> 3)printusage(),exit(BAD_OPTIONS);
@@ -765,17 +754,17 @@ if(infile!=stdin)fclose(infile);
 }
 
 /*:12*/
-#line 177 "../vlna-1.3/vlna.w"
+#line 174 "vlna.w"
 
 else/*13:*/
-#line 211 "../vlna-1.3/vlna.w"
+#line 208 "vlna.w"
 
 {
 if(argc==1)printusage(),exit(BAD_OPTIONS);
 while(argc> 1){
 argc--;argv++;
 /*14:*/
-#line 242 "../vlna-1.3/vlna.w"
+#line 239 "vlna.w"
 
 infile= NULL;
 j= strlen(argv[0])-1;
@@ -792,7 +781,7 @@ if(j==0)infile= fopen(backup,"r");
 }
 
 /*:14*/
-#line 216 "../vlna-1.3/vlna.w"
+#line 213 "vlna.w"
 ;
 if(infile==NULL){
 ioerr(argv[0]);continue;
@@ -812,17 +801,17 @@ if(rmbackup)remove(backup);
 }
 
 /*:13*/
-#line 178 "../vlna-1.3/vlna.w"
+#line 175 "vlna.w"
 
 
 /*:11*/
-#line 71 "../vlna-1.3/vlna.w"
+#line 69 "vlna.w"
 ;
 return status;
 }
 
 /*:5*/
-#line 24 "../vlna-1.3/vlna.w"
+#line 24 "vlna.w"
 
 
 /*:1*/

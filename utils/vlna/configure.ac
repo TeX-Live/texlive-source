@@ -10,12 +10,15 @@ AC_INIT([vlna for TeX Live], [1.3], [tex-live@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([vlna.w])
 AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2 no-define])
+AM_INIT_AUTOMAKE([foreign no-define])
 AM_MAINTAINER_MODE
 
 # Checks for programs.
 AC_PROG_CC
+
+KPSE_COMPILER_WARNINGS
 
 # With --enable-maintainer-mode we may want to regenerate
 # vlna.c, vlna.tex, and vlna.dvi, this requires ctangle, cweave, and csplain.

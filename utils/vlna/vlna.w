@@ -59,9 +59,7 @@ int status;
 
 @ Základní rozvr¾ení funkce |main|.
 @<Hlavní program@>=
-int main (argc,argv)
-    int argc;
-    char **argv;
+int main (int argc, char **argv)
 {
   @<Lokální promìnné funkce |main|@>;
   prog_name=argv[0]; status = OK;
@@ -108,7 +106,7 @@ mo¾ných parametrù. Nepodaøilo se mi zjistit, jak se ve WEBu napí¹e
 kulturnì dlouhý string obsahující \.{\char92n} s formátovacími
 po¾adavky. Byl jsem nucen to takto nehezky zapsat.
 @<Pomocné funkce@>=
-void printusage ()
+static void printusage (void)
 {
   fprintf(stderr,
     "usage: vlna [opt] [filenames]\n"
@@ -166,8 +164,7 @@ int j;
 @ Definujeme funkci pro výpis chybového hlá¹ení pøi neúspì¹ném otevøení
 souboru.
 @<Pomocné funkce@>=
-void ioerr (f)
-  char *f;
+static void ioerr (char *f)
 {
    fprintf(stderr, "%s: cannot open file %s\n", prog_name, f);
 }
@@ -297,7 +294,7 @@ typedef struct PATITEM {     /* jedna pozice patternu */
 } PATITEM;
 typedef struct PATTERN {     /* jeden pattern */
    PATITEM *patt;            /* ukazatel na prvni pozici */
-   void (*proc)();           /* procedura spustena pri souhlasu patternu */
+   void (*proc)(void);       /* procedura spustena pri souhlasu patternu */
    struct PATTERN *next ;    /* nasledujici v seznamu vsech patternu */
 } PATTERN;
 
@@ -345,7 +342,7 @@ výstupního proudu neaktivovali zbyteènì èasto.
 PATITEM *lapi[MAXPATT];      /* pole ukazatelu na aktualni pozice */
 PATTERN *lapt[MAXPATT];      /* pole odpovidajicich ukazatelu na patterny */
 PATTERN *listpatt, *normallist, *commentlist, *pt, *lastpt=NULL;
-PATITEM *pi, *lastpi=NULL;
+PATITEM *lastpi=NULL;
 char c;             /* zrovna nacetny znak */
 char buff[MAXBUFF]; /* prechodny buffer */
 int ind;            /* aktualni pozice prechodneho bufferu */
@@ -355,8 +352,7 @@ Tyto funkce alokují pamì» pomocí standardní funkce |malloc|. Abychom mohli
 ohlídat pøípadnou chybu pøi alokaci, budeme allokovat pamì» zprostøedkovanì
 pomocí funkce |myalloc|.
 @<Pomocné funkce@>=
-void *myalloc (size)
-  int size;
+static void *myalloc (int size)
 {
   void *p;
   p = malloc (size);
@@ -373,8 +369,7 @@ ji pomocí promìnné |lastpt| na u¾ alokovaný øetìz patternù.
 Vrátí ukazatel na novì alokované místo. Jednotlivé pozice patternu se musí
 následovnì alokovat pomocí |setpi|.
 @<Pomocné funkce@>=
-PATTERN *setpattern (proc) @/
-  void (*proc)();
+static PATTERN *setpattern (void (*proc)(void))
 {
   PATTERN *pp;
   pp = myalloc (sizeof (PATTERN));
@@ -392,9 +387,7 @@ zøetìzení tak, aby první pozice øetìzu pozic byla zaznamenána v polo¾ce
 |patt| ve struktuøe |PATTERN| a dal¹í byly provázány polo¾kou |next| ve
 struktuøe |PATITEM|. Poslední pozice má |next==NULL|.
 @<Pomocné funkce@>=
-void setpi (str, flag)
-  char *str;
-  int flag;
+static void setpi (char *str, int flag)
 {
   PATITEM* p;
   p = myalloc (sizeof (PATITEM));
@@ -427,9 +420,7 @@ for (i=0; i<256; i++) {
 
 @ Definujme funkci |normalpattern|.
 @<Pomocné funkce@>=
-PATTERN *normalpattern (proc, str) @/
-  void (*proc)();
-  char *str;
+static PATTERN *normalpattern (void (*proc)(void), const char *str)
 {
   PATTERN *pp;
   int j=0;
@@ -465,8 +456,7 @@ symetrické podle nuly, napø. |ANY==-ANY_NOT|.
 @d FOUND   -1
 @d NOFOUND -2
 @<Pomocné funkce@>=
-int match (p)
-  PATITEM *p;
+static int match (PATITEM *p)
 {
   int m;
   if (strchr (p->str, c) != NULL) m = 1;  /* Znak nalezen */
@@ -513,8 +503,7 @@ strukturu patternù. Výhodné je (z dùvodu rychlosti) \uv{natvrdo} zde
 implementovat jen pøepínání mezi stavem ètení z oblasti komentáøe
 (|listpatt==commentlist|) a mimo komentáø (|listpatt==normallist|);
 @<Vlnkovací funkce |tie|@>=
-void tie (input, output)
-  FILE *input, *output;
+static void tie (FILE *input, FILE *output)
 {
   int ap;  /* ap je pocet otevrenych patternu */
   register int k, m, n;
@@ -668,7 +657,7 @@ setpi (nochar,    ONE_NOT);
 listpatt = normallist = vlnkalist;
 
 @ @<Pomocné funkce@>=
-void vlnkain()
+static void vlnkain(void)
 {
   char p;
   ind--;
@@ -707,7 +696,7 @@ o¹etøení tohoto fenoménu mù¾eme dokonce narazit na situaci
 situaci pouze zru¹íme stávající (v poøadí druhé) \uv{\.{\char92n}} a
 nebudeme vytváøet nové. Na výstupu bude soubor o jeden øádek krat¹í.
 @<Pomocné funkce@>=
-void vlnkacr()
+static void vlnkacr(void)
 {
   char p;
   int i, j;
@@ -773,7 +762,7 @@ nových patternù pro tento znak teprve budou následovat a testují se na
 hodnotu promìnné |c|. Staèí tedy zmìnit hodnotu |c| a vlnkovací patterny se
 neotevøou.
 @<Pomocné funkce@>=
-void tielock ()
+static void tielock (void)
 {
   c = 1;
 }
@@ -782,7 +771,7 @@ void tielock ()
 módu vlnky nedìláme. Pøi zji¹tìném nesouladu v pøechodech mezi
 math-módy spustíme následující proceduru.
 @<Pomocné funkce@>=
-void printwarning ()
+static void printwarning (void)
 {
   if (!silent)
     fprintf (stderr, 
@@ -807,13 +796,13 @@ if (!nomath) {
 }
 
 @ @<Pomocné funkce@>=
-void mathin ()
+static void mathin (void)
 {
   if (mode!=TEXTMODE) printwarning ();
   mode = MATHMODE;
   normallist = listpatt = mathlist;
 }
-void mathout ()
+static void mathout (void)
 {
   if (mode!=MATHMODE) printwarning ();
   mode = TEXTMODE;
@@ -825,7 +814,7 @@ sekvence \.{\char92\$}. V tom pøípadì akci ignorujeme. Podobnì u sekvence
 \.{\$\$} souhlasí ten druhý dolar s na¹ím patternem, ale to u¾ jsme uvnitø
 display módu. V takovém pøípadì také nic nedìláme.
 @<Pomocné funkce@>=
-void onedollar ()
+static void onedollar (void)
 {
   if (buff[ind-3]=='\\' || (buff[ind-3]=='$' && buff[ind-4]!='\\')) return;
   if (mode==DISPLAYMODE) printwarning ();
@@ -844,7 +833,7 @@ setpi (blanks, ANY);
 setpi (cr, ONE);
 
 @ @<Pomocné funkce@>=
-void checkmode ()
+static void checkmode (void)
 {
   if (mode!=TEXTMODE) {
     printwarning ();
@@ -870,17 +859,17 @@ if (!nomath) {
 }
 
 @ @<Pomocné funkce@>=
-void displayin ()
+static void displayin (void)
 {
   if (mode!=TEXTMODE) printwarning ();
   mode = DISPLAYMODE; normallist = listpatt = parcheck;
 }
-void displayout ()
+static void displayout (void)
 {
   if (mode!=DISPLAYMODE) printwarning();
   mode = TEXTMODE; normallist =  listpatt = vlnkalist;
 }
-void twodollars ()
+static void twodollars (void)
 {
   if (buff[ind-3]=='\\') return;
   if (mode==DISPLAYMODE) displayout ();
@@ -922,7 +911,7 @@ Proto druhý výskyt této hodnoty verbatim re¾im ukonèí.
 int prevmode;
 PATTERN *prevlist, *verboutlist[4];
 char verbchar[2];
-void verbinchar ()
+static void verbinchar (void)
 {
   prevmode = mode;
   verbchar[0] = c;
@@ -940,7 +929,7 @@ oblasti vstoupili, abychom se k nìmu mohli vrátit (napø. uvnitø
 math. módu mù¾e být
 \.{\char92hbox} a v nìm lokálnì verbatim konstrukce).
 @<Pomocné funkce@>=
-void verbin ()
+static void verbin (void)
 { 
   int i;
   i = 0;
@@ -960,7 +949,7 @@ void verbin ()
 }
 
 @ @<Pomocné funkce@>=
-void verbout ()
+static void verbout (void)
 {
   if (mode!=VERBMODE) return;
   if (web && buff[ind-2] == '@@' && buff[ind-3] == '@@') return;
@@ -982,11 +971,11 @@ commentlist = normalpattern (tieoff, "%.~.-");
 normalpattern (tieon, "%.~.+");
 
 @ @<Pomocné funkce@>=
-void tieoff ()
+static void tieoff (void)
 {
   normallist = NULL;
 }
-void tieon ()
+static void tieon (void)
 {
   normallist = vlnkalist;
 }

@@ -73,9 +73,8 @@ nultého parametru pøíkazové øádky.
 
 \M{5}Základní rozvr¾ení funkce \PB{\\{main}}.
 \Y\B\4\X5:Hlavní program\X${}\E{}$\6
-\&{int} ${}\\{main}(\\{argc},\39\\{argv}){}$\1\1\6
-\&{int} \\{argc};\6
-\&{char} ${}{*}{*}\\{argv};\2\2{}$\6
+\&{int} \\{main}(\&{int} \\{argc}${},\39{}$\&{char} ${}{*}{*}\\{argv}){}$\1\1\2%
+\2\6
 ${}\{{}$\1\6
 \X9:Lokální promìnné funkce \PB{\\{main}}\X;\6
 ${}\\{prog\_name}\K\\{argv}[\T{0}];{}$\6
@@ -125,7 +124,7 @@ mo¾ných parametrù. Nepodaøilo se mi zjistit, jak se ve WEBu napí¹e
 kulturnì dlouhý string obsahující \.{\char92n} s formátovacími
 po¾adavky. Byl jsem nucen to takto nehezky zapsat.
 \Y\B\4\X6:Pomocné funkce\X${}\E{}$\6
-\&{void} \\{printusage}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{printusage}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{fprintf}(\\{stderr},\39\.{"usage:\ vlna\ [opt]\ [}\)\.{filenames]\\n"}%
 \.{"\ \ opt\ -f\ :\ \ filter\ }\)\.{mode:\ file1\ file2\ ..}\)\.{.\
@@ -218,8 +217,7 @@ Dále deklarujeme promìnné typu \uv{stream}.
 \M{10}Definujeme funkci pro výpis chybového hlá¹ení pøi neúspì¹ném otevøení
 souboru.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{ioerr}(\|f)\1\1\6
-\&{char} ${}{*}\|f;\2\2{}$\6
+\&{static} \&{void} \\{ioerr}(\&{char} ${}{*}\|f){}$\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{fprintf}(\\{stderr},\39\.{"\%s:\ cannot\ open\ fil}\)\.{e\ \%s\\n"},\39%
 \\{prog\_name},\39\|f);{}$\6
@@ -387,7 +385,8 @@ ${-}{}$\T{2}\C{ flag: nula nebo vice, znak nesmi byt v mnozine }\par
 ${}\}{}$ \&{PATITEM};\6
 \&{typedef} \&{struct} \&{PATTERN} ${}\{{}$\C{ jeden pattern }\1\6
 \&{PATITEM} ${}{*}\\{patt}{}$;\C{ ukazatel na prvni pozici }\7
-${}\&{void}({*}\\{proc})(\,){}$;\C{ procedura spustena pri souhlasu patternu }\7
+${}\&{void}({*}\\{proc})(\&{void}){}$;\C{ procedura spustena pri souhlasu
+patternu }\7
 \&{struct} \&{PATTERN} ${}{*}\\{next}{}$;\C{ nasledujici v seznamu vsech
 patternu }\2\6
 ${}\}{}$ \&{PATTERN};\par
@@ -448,7 +447,7 @@ pozice }\6
 patterny }\6
 \&{PATTERN} ${}{*}\\{listpatt},{}$ ${}{*}\\{normallist},{}$ ${}{*}%
 \\{commentlist},{}$ ${}{*}\\{pt},{}$ ${}{*}\\{lastpt}\K\NULL;{}$\6
-\&{PATITEM} ${}{*}\\{pi},{}$ ${}{*}\\{lastpi}\K\NULL;{}$\6
+\&{PATITEM} ${}{*}\\{lastpi}\K\NULL;{}$\6
 \&{char} \|c;\C{ zrovna nacetny znak }\6
 \&{char} \\{buff}[\.{MAXBUFF}];\C{ prechodny buffer }\6
 \&{int} \\{ind};\C{ aktualni pozice prechodneho bufferu }\par
@@ -461,8 +460,7 @@ mohli
 ohlídat pøípadnou chybu pøi alokaci, budeme allokovat pamì» zprostøedkovanì
 pomocí funkce \PB{\\{myalloc}}.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} ${}{*}\\{myalloc}(\\{size}){}$\1\1\6
-\&{int} \\{size};\2\2\6
+\&{static} \&{void} ${}{*}{}$\\{myalloc}(\&{int} \\{size})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{void} ${}{*}\|p;{}$\7
 ${}\|p\K\\{malloc}(\\{size});{}$\6
@@ -482,8 +480,8 @@ ji pomocí promìnné \PB{\\{lastpt}} na u¾ alokovaný øetìz patternù.
 Vrátí ukazatel na novì alokované místo. Jednotlivé pozice patternu se musí
 následovnì alokovat pomocí \PB{\\{setpi}}.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{PATTERN} ${}{*}{}$\\{setpattern}(\\{proc})\6
-${}\&{void}({*}\\{proc})(\,);{}$\7
+\&{static} \&{PATTERN} ${}{*}\\{setpattern}(\&{void}({*}\\{proc})(\&{void})){}$%
+\1\1\2\2\6
 ${}\{{}$\1\6
 \&{PATTERN} ${}{*}\\{pp};{}$\7
 ${}\\{pp}\K\\{myalloc}(\&{sizeof}(\&{PATTERN}));{}$\6
@@ -505,9 +503,8 @@ zøetìzení tak, aby první pozice øetìzu pozic byla zaznamenána v polo¾ce
 \PB{\\{next}} ve
 struktuøe \PB{\&{PATITEM}}. Poslední pozice má \PB{$\\{next}\E\NULL$}.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} ${}\\{setpi}(\\{str},\39\\{flag}){}$\1\1\6
-\&{char} ${}{*}\\{str};{}$\6
-\&{int} \\{flag};\2\2\6
+\&{static} \&{void} \\{setpi}(\&{char} ${}{*}\\{str},\39{}$\&{int} \\{flag})\1%
+\1\2\2\6
 ${}\{{}$\1\6
 \&{PATITEM} ${}{*}\|p;{}$\7
 ${}\|p\K\\{myalloc}(\&{sizeof}(\&{PATITEM}));{}$\6
@@ -550,9 +547,8 @@ ${}\\{strings}[\T{2}*\|i+\T{1}]\K\T{0};{}$\6
 
 \M{22}Definujme funkci \PB{\\{normalpattern}}.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{PATTERN} ${}{*}\\{normalpattern}(\\{proc},\39\\{str}{}$)\6
-${}\&{void}({*}\\{proc})(\,);{}$\6
-\&{char} ${}{*}\\{str};{}$\7
+\&{static} \&{PATTERN} ${}{*}\\{normalpattern}(\&{void}({*}\\{proc})(\&{void}),%
+\39{}$\&{const} \&{char} ${}{*}\\{str}){}$\1\1\2\2\6
 ${}\{{}$\1\6
 \&{PATTERN} ${}{*}\\{pp};{}$\6
 \&{int} \|j${}\K\T{0};{}$\7
@@ -601,8 +597,7 @@ ${-}{}$\T{1}\par
 \B\4\D$\.{NOFOUND}$ \5
 ${-}{}$\T{2}\par
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{int} \\{match}(\|p)\1\1\6
-\&{PATITEM} ${}{*}\|p;\2\2{}$\6
+\&{static} \&{int} \\{match}(\&{PATITEM} ${}{*}\|p){}$\1\1\2\2\6
 ${}\{{}$\1\6
 \&{int} \|m;\7
 \&{if} ${}(\\{strchr}(\|p\MG\\{str},\39\|c)\I\NULL){}$\1\5
@@ -675,8 +670,8 @@ implementovat jen pøepínání mezi stavem ètení z oblasti komentáøe
 (\PB{$\\{listpatt}\E\\{commentlist}$}) a mimo komentáø (\PB{$\\{listpatt}\E%
 \\{normallist}$});
 \Y\B\4\X26:Vlnkovací funkce \PB{\\{tie}}\X${}\E{}$\6
-\&{void} ${}\\{tie}(\\{input},\39\\{output}){}$\1\1\6
-\&{FILE} ${}{*}\\{input},{}$ ${}{*}\\{output};\2\2{}$\6
+\&{static} \&{void} \\{tie}(\&{FILE} ${}{*}\\{input},\39{}$\&{FILE} ${}{*}%
+\\{output}){}$\1\1\2\2\6
 ${}\{{}$\1\6
 \&{int} \\{ap};\C{ ap je pocet otevrenych patternu }\6
 \&{register} \&{int} \|k${},{}$ \|m${},{}$ \|n;\6
@@ -892,7 +887,7 @@ $\\{listpatt}\K\\{normallist}\K\\{vlnkalist}{}$;\par
 \fi
 
 \M{36}\B\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{vlnkain}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{vlnkain}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{char} \|p;\7
 ${}\\{ind}\MM;{}$\6
@@ -934,7 +929,7 @@ o¹etøení tohoto fenoménu mù¾eme dokonce narazit na situaci
 situaci pouze zru¹íme stávající (v poøadí druhé) \uv{\.{\char92n}} a
 nebudeme vytváøet nové. Na výstupu bude soubor o jeden øádek krat¹í.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{vlnkacr}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{vlnkacr}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{char} \|p;\6
 \&{int} \|i${},{}$ \|j;\7
@@ -1011,7 +1006,7 @@ hodnotu promìnné \PB{\|c}. Staèí tedy zmìnit hodnotu \PB{\|c} a vlnkovací
 patterny se
 neotevøou.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{tielock}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{tielock}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\|c\K\T{1};{}$\6
 \4${}\}{}$\2\par
@@ -1021,7 +1016,7 @@ ${}\|c\K\T{1};{}$\6
 módu vlnky nedìláme. Pøi zji¹tìném nesouladu v pøechodech mezi
 math-módy spustíme následující proceduru.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{printwarning}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{printwarning}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\R\\{silent}){}$\1\5
 ${}\\{fprintf}(\\{stderr},\39\.{"\~!\~\ warning:\ text/m}\)\.{ath/verb\ mode\
@@ -1050,14 +1045,14 @@ ${}\\{normalpattern}(\\{mathout},\39\.{"\\\\end.\{math\}"});{}$\6
 \fi
 
 \M{44}\B\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{mathin}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{mathin}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\\{mode}\I\.{TEXTMODE}){}$\1\5
 \\{printwarning}(\,);\2\6
 ${}\\{mode}\K\.{MATHMODE};{}$\6
 ${}\\{normallist}\K\\{listpatt}\K\\{mathlist};{}$\6
 \4${}\}{}$\2\7
-\&{void} \\{mathout}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{mathout}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\\{mode}\I\.{MATHMODE}){}$\1\5
 \\{printwarning}(\,);\2\6
@@ -1072,7 +1067,7 @@ sekvence \.{\char92\$}. V tom pøípadì akci ignorujeme. Podobnì u sekvence
 \.{\$\$} souhlasí ten druhý dolar s na¹ím patternem, ale to u¾ jsme uvnitø
 display módu. V takovém pøípadì také nic nedìláme.
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{onedollar}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{onedollar}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\\{buff}[\\{ind}-\T{3}]\E\.{'\\\\'}\V(\\{buff}[\\{ind}-\T{3}]\E\.{'%
 \$'}\W\\{buff}[\\{ind}-\T{4}]\I\.{'\\\\'})){}$\1\5
@@ -1099,7 +1094,7 @@ ${}\\{setpi}(\\{cr},\39\.{ONE}){}$;\par
 \fi
 
 \M{47}\B\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{checkmode}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{checkmode}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\\{mode}\I\.{TEXTMODE}){}$\5
 ${}\{{}$\1\6
@@ -1130,21 +1125,21 @@ ${}\\{normalpattern}(\\{displayout},\39\.{"\\\\end.\{equation"});{}$\6
 \fi
 
 \M{49}\B\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{displayin}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{displayin}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\\{mode}\I\.{TEXTMODE}){}$\1\5
 \\{printwarning}(\,);\2\6
 ${}\\{mode}\K\.{DISPLAYMODE};{}$\6
 ${}\\{normallist}\K\\{listpatt}\K\\{parcheck};{}$\6
 \4${}\}{}$\2\7
-\&{void} \\{displayout}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{displayout}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\\{mode}\I\.{DISPLAYMODE}){}$\1\5
 \\{printwarning}(\,);\2\6
 ${}\\{mode}\K\.{TEXTMODE};{}$\6
 ${}\\{normallist}\K\\{listpatt}\K\\{vlnkalist};{}$\6
 \4${}\}{}$\2\7
-\&{void} \\{twodollars}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{twodollars}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\\{buff}[\\{ind}-\T{3}]\E\.{'\\\\'}){}$\1\5
 \&{return};\2\6
@@ -1201,7 +1196,7 @@ Proto druhý výskyt této hodnoty verbatim re¾im ukonèí.
 \&{int} \\{prevmode};\6
 \&{PATTERN} ${}{*}\\{prevlist},{}$ ${}{*}\\{verboutlist}[\T{4}];{}$\6
 \&{char} \\{verbchar}[\T{2}];\7
-\&{void} \\{verbinchar}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{verbinchar}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{prevmode}\K\\{mode};{}$\6
 ${}\\{verbchar}[\T{0}]\K\|c;{}$\6
@@ -1221,7 +1216,7 @@ oblasti vstoupili, abychom se k nìmu mohli vrátit (napø. uvnitø
 math. módu mù¾e být
 \.{\char92hbox} a v nìm lokálnì verbatim konstrukce).
 \Y\B\4\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{verbin}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{verbin}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{int} \|i;\7
 ${}\|i\K\T{0};{}$\6
@@ -1251,7 +1246,7 @@ ${}\\{mode}\K\.{VERBMODE};{}$\6
 \fi
 
 \M{53}\B\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{verbout}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{verbout}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 \&{if} ${}(\\{mode}\I\.{VERBMODE}){}$\1\5
 \&{return};\2\6
@@ -1285,11 +1280,11 @@ ${}\\{normalpattern}(\\{tieon},\39\.{"\%.\~.+"}){}$;\par
 \fi
 
 \M{55}\B\X6:Pomocné funkce\X${}\mathrel+\E{}$\6
-\&{void} \\{tieoff}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{tieoff}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{normallist}\K\NULL;{}$\6
 \4${}\}{}$\2\7
-\&{void} \\{tieon}(\,)\1\1\2\2\6
+\&{static} \&{void} \\{tieon}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{normallist}\K\\{vlnkalist};{}$\6
 \4${}\}{}$\2\par

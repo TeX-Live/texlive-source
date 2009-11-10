@@ -1,3 +1,14 @@
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* vlna.w (normalpattern): Constify string arg.
+	Drop unused global 'pi'.
+
+2009-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS), configure.ac: Enable compiler warnings.
+	* vlna.c: Use ANSI C function definitions, all static except main.
+
 2009-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
