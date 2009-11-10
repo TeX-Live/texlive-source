@@ -49,19 +49,19 @@ static int ind_lc = 0;			/* overall line count */
 static int ind_ec = 0;			/* erroneous line count */
 static int ind_indent;
 
-static	void	flush_line ARGS((int print));
-static	void	insert_page ARGS((void));
-static	int	make_entry ARGS((int n));
-static	void	make_item ARGS((char* term));
-static  unsigned char first_letter ARGS((char* term));
-static	void	new_entry ARGS((void));
-static	void	old_entry ARGS((void));
-static	int	page_diff ARGS((struct KFIELD *a,struct KFIELD *b));
-static	void	put_header ARGS((int let));
-static	void	wrap_line ARGS((int print));
+static	void	flush_line (int print);
+static	void	insert_page (void);
+static	int	make_entry (int n);
+static	void	make_item (const char* term);
+static  unsigned char first_letter (char* term);
+static	void	new_entry (void);
+static	void	old_entry (void);
+static	int	page_diff (struct KFIELD *a,struct KFIELD *b);
+static	void	put_header (int let);
+static	void	wrap_line (int print);
 
 void
-gen_ind(VOID_ARG)
+gen_ind(void)
 {
     int     n;
     int     tmp_lc;
@@ -99,12 +99,7 @@ gen_ind(VOID_ARG)
 
 
 static int
-#if STDC
 make_entry(int n)
-#else
-make_entry(n)
-int     n;
-#endif
 {
     int     let;
 
@@ -162,12 +157,7 @@ IND_ERROR1("Range closing operator has an inconsistent encapsulator %s.\n",
 
 
 static void
-#if STDC
-make_item(char *term)
-#else
-make_item(term)
-char   *term;
-#endif
+make_item(const char *term)
 {
     int     i;
 
@@ -205,12 +195,7 @@ char   *term;
 }
 
 static unsigned char
-#if STDC
 first_letter(char *term)
-#else
-first_letter(term)
-char   *term;
-#endif
 {
     if (thai_sort)
         return strchr("אבגדה", term[0]) ? term[1] : term[0];
@@ -219,7 +204,7 @@ char   *term;
 }
 
 static void
-new_entry(VOID_ARG)
+new_entry(void)
 {
     int let = -1; /* see comment below */
     FIELD_PTR ptr;
@@ -267,7 +252,7 @@ new_entry(VOID_ARG)
 
 
 static void
-old_entry(VOID_ARG)
+old_entry(void)
 {
     int     diff;
 
@@ -309,13 +294,7 @@ IND_ERROR(
 
 
 static int
-#if STDC
 page_diff(FIELD_PTR a,FIELD_PTR b)
-#else
-page_diff(a, b)
-FIELD_PTR a;
-FIELD_PTR b;
-#endif
 {
     short   i;
 
@@ -328,12 +307,7 @@ FIELD_PTR b;
 }
 
 static void
-#if STDC
 put_header(int let)
-#else
-put_header(let)
-int	let;
-#endif
 {
     if (headings_flag)
     {
@@ -385,12 +359,7 @@ int	let;
    multiple page ranges (when defined) */
 
 static void
-#if STDC
 flush_line(int print)
-#else
-flush_line(print)
-int     print;
-#endif
 {
     char    tmp[sizeof(buff)];
 
@@ -428,12 +397,7 @@ int     print;
 }
 
 static void
-#if STDC
 wrap_line(int print)
-#else
-wrap_line(print)
-int     print;
-#endif
 {
     int     len;
 
@@ -460,7 +424,7 @@ int     print;
 
 
 static void
-insert_page(VOID_ARG)
+insert_page(void)
 {
     int     i = 0;
     int     j = 0;

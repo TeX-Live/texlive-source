@@ -52,40 +52,34 @@ FILE   *idx_fp;
 FILE   *ind_fp;
 FILE   *ilg_fp;
 
-char   *pgm_fn;
+const char   *pgm_fn;
 char    sty_fn[STRING_MAX];
-char   *idx_fn;
+const char   *idx_fn;
 char    ind[STRING_MAX];
-char   *ind_fn;
+const char   *ind_fn;
 char    ilg[STRING_MAX];
-char   *ilg_fn;
+const char   *ilg_fn;
 char    pageno[NUMBER_MAX];
 
 static char log_fn[STRING_MAX];
 static char base[STRING_MAX];
 static int need_version = TRUE;
 
-static	void	check_all ARGS((char *fn,int ind_given,int ilg_given,
-			int log_given));
-static	void	check_idx ARGS((char *fn,int open_fn));
-static	void	find_pageno ARGS((void));
-static	void	open_sty ARGS((char *fn));
-static	void	prepare_idx ARGS((void));
-static	void	process_idx ARGS((char * *fn,int use_stdin,int sty_given,
-			int ind_given,int ilg_given,int log_given));
+static	void	check_all (char *fn,int ind_given,int ilg_given,
+			int log_given);
+static	void	check_idx (char *fn,int open_fn);
+static	void	find_pageno (void);
+static	void	open_sty (char *fn);
+static	void	prepare_idx (void);
+static	void	process_idx (char * *fn,int use_stdin,int sty_given,
+			int ind_given,int ilg_given,int log_given);
 
 #ifdef DEBUG
 long totmem = 0L;			/* for debugging memory usage */
 #endif /* DEBUG */
 
 int
-#if STDC
 main(int argc, char *argv[])
-#else
-main(argc, argv)
-int     argc;
-char   *argv[];
-#endif
 {
     char   *fns[ARRAY_MAX];
     char   *ap;
@@ -261,7 +255,7 @@ char   *argv[];
 
 
 static void
-prepare_idx(VOID_ARG)
+prepare_idx(void)
 {
     NODE_PTR ptr = head;
     int     i = 0;
@@ -286,18 +280,8 @@ prepare_idx(VOID_ARG)
 
 
 static void
-#if STDC
 process_idx(char *fn[], int use_stdin, int sty_given, int ind_given,
 	    int ilg_given, int log_given)
-#else
-process_idx(fn, use_stdin, sty_given, ind_given, ilg_given, log_given)
-char   *fn[];
-int     use_stdin;
-int     sty_given;
-int     ind_given;
-int     ilg_given;
-int     log_given;
-#endif
 {
     int     i;
 
@@ -326,7 +310,8 @@ FATAL1("Option -g invalid, quote character must be different from '%c'.\n",
 	idx_fp = stdin;
 
 	if (ind_given) {
-	    if (!ind_fp && ((ind_fp = OPEN_OUT(ind_fn)) == NULL))
+	    if (!kpse_out_name_ok(ind_fn) ||
+	         (!ind_fp && ((ind_fp = OPEN_OUT(ind_fn)) == NULL)))
 		FATAL1("Can't create output index file %s.\n", ind_fn);
 	} else {
 	    ind_fn = "stdout";
@@ -334,7 +319,8 @@ FATAL1("Option -g invalid, quote character must be different from '%c'.\n",
 	}
 
 	if (ilg_given) {
-	    if (!ilg_fp && ((ilg_fp = OPEN_OUT(ilg_fn)) == NULL))
+	    if (!kpse_out_name_ok(ilg_fn) ||
+	         (!ilg_fp && ((ilg_fp = OPEN_OUT(ilg_fn)) == NULL)))
 		FATAL1("Can't create transcript file %s.\n", ilg_fn);
 	} else {
 	    ilg_fn = "stderr";
@@ -359,13 +345,7 @@ FATAL1("Option -g ignored, quote character must be different from '%c'.\n",
 
 
 static void
-#if STDC
 check_idx(char *fn, int open_fn)
-#else
-check_idx(fn, open_fn)
-char   *fn;
-int     open_fn;
-#endif
 {
     char   *ptr = fn;
     char   *ext;
@@ -394,12 +374,14 @@ int     open_fn;
     idx_fn = fn;
 
     if ( ( open_fn && 
-	 ((idx_fp = OPEN_IN(idx_fn)) == NULL)
+	   (!kpse_in_name_ok(idx_fn) ||
+	     (idx_fp = OPEN_IN(idx_fn)) == NULL)
 	 ) ||
 	((!open_fn) && (access(idx_fn, R_OK) != 0))) {
 	if (with_ext) {
 	    FATAL1("Input index file %s not found.\n", idx_fn);
 	} else {
+	    char *tmp_fn;
 
 #ifdef DEBUG
 	    totmem += STRING_MAX;
@@ -407,11 +389,13 @@ int     open_fn;
 		    STRING_MAX,totmem);
 #endif /* DEBUG */
 
-	    if ((idx_fn = (char *) malloc(STRING_MAX+5)) == NULL)
+	    if ((tmp_fn = (char *) malloc(STRING_MAX+5)) == NULL)
 		FATAL("Not enough core...abort.\n");
-	    snprintf(idx_fn, STRING_MAX+5, "%s%s", base, INDEX_IDX);
+	    snprintf(tmp_fn, STRING_MAX+5, "%s%s", base, INDEX_IDX);
+	    idx_fn = tmp_fn;
 	    if ((open_fn && 
-		((idx_fp = OPEN_IN(idx_fn)) == NULL)
+		 (!kpse_in_name_ok(idx_fn) ||
+		   (idx_fp = OPEN_IN(idx_fn)) == NULL)
 		) ||
 		((!open_fn) && (access(idx_fn, R_OK) != 0))) {
 		FATAL2("Couldn't find input index file %s nor %s.\n", base,
@@ -423,15 +407,7 @@ int     open_fn;
 
 
 static void
-#if STDC
 check_all(char *fn, int ind_given, int ilg_given, int log_given)
-#else
-check_all(fn, ind_given, ilg_given, log_given)
-char   *fn;
-int     ind_given;
-int     ilg_given;
-int     log_given;
-#endif
 {
     check_idx(fn, TRUE);
 
@@ -440,7 +416,8 @@ int     log_given;
 	snprintf(ind, sizeof(ind), "%s%s", base, INDEX_IND);
 	ind_fn = ind;
     }
-    if ((ind_fp = OPEN_OUT(ind_fn)) == NULL)
+    if (!kpse_out_name_ok(ind_fn) ||
+         ((ind_fp = OPEN_OUT(ind_fn)) == NULL))
 	FATAL1("Can't create output index file %s.\n", ind_fn);
 
     /* index transcript file */
@@ -448,12 +425,14 @@ int     log_given;
 	snprintf(ilg, sizeof(ilg), "%s%s", base, INDEX_ILG);
 	ilg_fn = ilg;
     }
-    if ((ilg_fp = OPEN_OUT(ilg_fn)) == NULL)
+    if (!kpse_out_name_ok(ilg_fn) ||
+         ((ilg_fp = OPEN_OUT(ilg_fn)) == NULL))
 	FATAL1("Can't create transcript file %s.\n", ilg_fn);
 
     if (log_given) {
 	snprintf(log_fn, sizeof(log_fn), "%s%s", base, INDEX_LOG);
-	if ((log_fp = OPEN_IN(log_fn)) == NULL) {
+	if (!kpse_in_name_ok(log_fn) ||
+	     (log_fp = OPEN_IN(log_fn)) == NULL) {
 	    FATAL1("Source log file %s not found.\n", log_fn);
 	} else {
 	    find_pageno();
@@ -464,7 +443,7 @@ int     log_given;
 
 
 static void
-find_pageno(VOID_ARG)
+find_pageno(void)
 {
     int     i = 0;
     int     p, c;
@@ -491,12 +470,7 @@ find_pageno(VOID_ARG)
 }
 
 static void
-#if STDC
 open_sty(char *fn)
-#else
-open_sty(fn)
-char   *fn;
-#endif
 {
 #if USE_KPATHSEA
     char   *found;
@@ -508,7 +482,8 @@ char   *fn;
       FATAL1("Style file name %s too long.\n", found);
     }
     strcpy(sty_fn,found);
-    if ((sty_fp = OPEN_IN(sty_fn)) == NULL) {
+    if (!kpse_in_name_ok(sty_fn) ||
+         (sty_fp = OPEN_IN(sty_fn)) == NULL) {
       FATAL1("Could not open style file %s.\n", sty_fn);
     }
   }
@@ -563,12 +538,7 @@ char   *fn;
 
 
 int
-#if STDC
 strtoint(char *str)
-#else
-strtoint(str)
-char   *str;
-#endif
 {
     int     val = 0;
 

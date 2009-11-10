@@ -25,7 +25,7 @@ makeindex_SOURCES = \
 	scanst.h \
 	sortid.c
 
-makeindex_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(makeindex_OBJECTS): $(KPATHSEA_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS)	
 

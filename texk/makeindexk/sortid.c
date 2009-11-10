@@ -33,16 +33,16 @@
 
 static	long	idx_gc;
 
-static	int	check_mixsym ARGS((char *x,char *y));
-static	int	compare ARGS((struct KFIELD * *a,struct KFIELD * *b));
-static	int	compare_one ARGS((char *x,char *y));
-static	int	compare_page ARGS((struct KFIELD * *a,struct KFIELD * *b));
-static	int	compare_string ARGS((unsigned char *a,unsigned char *b));
-static	int	new_strcmp ARGS((unsigned char *a, unsigned char *b,
-				 int option));
+static	int	check_mixsym (char *x,char *y);
+static	int	compare (struct KFIELD * *a,struct KFIELD * *b);
+static	int	compare_one (char *x,char *y);
+static	int	compare_page (struct KFIELD * *a,struct KFIELD * *b);
+static	int	compare_string (unsigned char *a,unsigned char *b);
+static	int	new_strcmp (unsigned char *a, unsigned char *b,
+				 int option);
 
 void
-sort_idx(VOID_ARG)
+sort_idx(void)
 {
 #ifdef HAVE_SETLOCALE
     char *prev_locale;
@@ -56,7 +56,7 @@ sort_idx(VOID_ARG)
     idx_dc = 0;
     idx_gc = 0L;
     qqsort((char *) idx_key, (int) idx_gt, (int) sizeof(FIELD_PTR), 
-	(int (*) ARGS((char*,char*)))compare);
+	(int (*)(char*,char*))compare);
 #ifdef HAVE_SETLOCALE
     setlocale(LC_COLLATE, prev_locale);
 #endif
@@ -64,13 +64,7 @@ sort_idx(VOID_ARG)
 }
 
 static int
-#if STDC
 compare(FIELD_PTR *a, FIELD_PTR *b)
-#else
-compare(a, b)
-FIELD_PTR *a;
-FIELD_PTR *b;
-#endif
 {
     int     i;
     int     dif;
@@ -95,13 +89,7 @@ FIELD_PTR *b;
 }
 
 static int
-#if STDC
 compare_one(char *x,char *y)
-#else
-compare_one(x, y)
-char   *x;
-char   *y;
-#endif
 {
     int     m;
     int     n;
@@ -153,13 +141,7 @@ char   *y;
 }
 
 static int
-#if STDC
 check_mixsym(char *x, char *y)
-#else
-check_mixsym(x, y)
-char   *x;
-char   *y;
-#endif
 {
     int     m;
     int     n;
@@ -178,13 +160,7 @@ char   *y;
 
 
 static int
-#if STDC
 compare_string(unsigned char *a, unsigned char *b)
-#else
-compare_string(a, b)
-unsigned char   *a;
-unsigned char   *b;
-#endif
 {
     int     i = 0;
     int     j = 0;
@@ -219,13 +195,7 @@ unsigned char   *b;
 }
 
 static int
-#if STDC
 compare_page(FIELD_PTR *a, FIELD_PTR *b)
-#else
-compare_page(a, b)
-FIELD_PTR *a;
-FIELD_PTR *b;
-#endif
 {
     int     m = 0;
     short   i = 0;
@@ -323,14 +293,7 @@ FIELD_PTR *b;
 
 
 static int
-#if STDC
 new_strcmp(unsigned char *s1, unsigned char *s2, int option)
-#else
-new_strcmp(s1, s2, option)
-unsigned char   *s1;
-unsigned char   *s2;
-int     option;
-#endif
 {
     int     i;
 

@@ -52,16 +52,10 @@
 
    If no OS_xxxx symbol is defined, OS_BSD is assumed.
 
-   If Standard C prototypes are supported, define the symbol
-   STDC_PROTOTYPES in the appropriate OS_xxxx section below, and insert
-   #include's for the standard system files which define library
-   prototypes.  STDC_PROTOTYPES will be defined automatically if
-   __STDC__ is; the latter must be defined by all Standard C conformant
-   implementations.
+   Standard C prototypes are now required.
 
    All function declarations in MakeIndex are contained at the end of
-   this file.  If 185STDC_PROTOTYPES is not selected, then all the standard
-   library functions must be declared explicitly.
+   this file.
 
    If the host system restricts external names to 6 characters, set
    SHORTNAMES non-zero in the appropriate OS_xxxx section below.
@@ -75,8 +69,6 @@
 
 /**********************************************************************/
 
-#define STDC	(__STDC__ || __cplusplus)
-
 /*
  * Establish needed operating symbols (defaulting to OS_BSD if none
  * specified at compile time).  If you add one, add it to the check
@@ -84,7 +76,6 @@
  */
 
 #define SHORTNAMES 0
-#define STDC_PROTOTYPES STDC
 
 /**********************************************************************/
 
@@ -409,7 +400,7 @@ typedef struct KFIELD
     short   count;			/* page field count */
     short   type;			/* page number type */
     char    *encap;			/* encapsulator */
-    char    *fn;			/* input filename */
+    const char    *fn;			/* input filename */
     int     lc;				/* line number */
 }	FIELD, *FIELD_PTR;
 
@@ -491,10 +482,10 @@ extern FILE *sty_fp;
 extern FILE *ind_fp;
 extern FILE *ilg_fp;
 
-extern char *idx_fn;
-extern char *pgm_fn;
-extern char *ind_fn;
-extern char *ilg_fn;
+extern const char *idx_fn;
+extern const char *pgm_fn;
+extern const char *ind_fn;
+extern const char *ilg_fn;
 
 #ifndef MKIND_C
 extern char sty_fn[];
@@ -551,51 +542,26 @@ fprintf(ilg_fp, \
     fprintf(ilg_fp, "done (%d %s, %d %s).\n", (A), B, C, D); \
 }
 
-#if    STDC_PROTOTYPES
-#define ARGS(arg_list)	arg_list
-#define VOIDP		void*
-#define VOID_ARG	void
-#else
-#define ARGS(arg_list)	()
-#define const
-#define VOIDP		char*
-#define VOID_ARG
-#endif
+extern void gen_ind (void);
+extern int group_type (char *str);
+extern int main (int argc, char **argv);
+extern void qqsort (char *base, int n, int size,
+		int (*compar)(char*,char*));
+extern void scan_idx (void);
+extern void scan_sty (void);
+extern void sort_idx (void);
+extern int strtoint (char *str);
 
-extern void gen_ind ARGS((void));
-extern int group_type ARGS((char *str));
-extern int main ARGS((int argc, char **argv));
-extern void qqsort ARGS((char *base, int n, int size,
-		int (*compar)ARGS((char*,char*))));
-extern void scan_idx ARGS((void));
-extern void scan_sty ARGS((void));
-extern void sort_idx ARGS((void));
-extern int strtoint ARGS((char *str));
-
-#if STDC
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
 #if __NeXT__
-int	access ARGS((const char *, int));
+int	access (const char *, int);
 #else
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #endif
-#else
-/* Miscellaneous standard library routines */
-int	access ARGS((const char *, int));
-
-char   *getenv ARGS((const char *name));
-
-char   *strchr ARGS((const char *s,int c));
-char   *strrchr ARGS((const char *s,int c));
-#ifndef USE_KPATHSEA
-VOIDP	calloc ARGS((size_t nitems,size_t size));
-VOIDP	malloc ARGS((size_t size));
-#endif
-#endif /* __STDC__ */
 
 #ifndef    R_OK
 #define R_OK 4                         /* only symbol from sys/file.h */

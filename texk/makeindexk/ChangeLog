@@ -1,3 +1,26 @@
+2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.c (process_idx, check_all): Check for legitimate file
+	names via kpse_out_name_ok() before opening output files.
+	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* mkind.c (check_idx, check_all, open_sty): Check for legitimate
+	file names via kpse_in_name_ok() before opening input files.
+
+2009-08-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* genind.c, mkind.[ch], qsort.c, scanid.c, scanst.c, sortid.c:
+	Remove all pre-ANSI C stuff.
+
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* genind.c (make_item): Constify string param.
+	* mkind.[ch] (pgm_fn, idx_fn, ind_fn, ilg_fn): Constify globals
+	and corrsponding struct member.
+	(check_idx): Avoid modifying const string.
+	* scanid.c (search_quote): Constify local var 'sort'.
+
 2009-06-18  Karl Berry  <karl@tug.org>
 
 	* mkind.h (VERSION) [USE_KPATHSEA]: use TeX Live 2009 in version

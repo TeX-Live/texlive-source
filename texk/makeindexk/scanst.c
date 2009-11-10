@@ -105,15 +105,15 @@ static char page_prec[ARRAY_MAX] = PRECEDENCE_DEF;
 
 static int put_dot;
 
-static	int	count_lfd ARGS((char *str));
-static	int	next_nonblank ARGS((void));
-static	int	process_precedence ARGS((void));
-static	int	scan_char ARGS((char *c));
-static	int	scan_spec ARGS((char *spec));
-static	int	scan_string ARGS((char *str));
+static	int	count_lfd (char *str);
+static	int	next_nonblank (void);
+static	int	process_precedence (void);
+static	int	scan_char (char *c);
+static	int	scan_spec (char *spec);
+static	int	scan_string (char *str);
 
 void
-scan_sty(VOID_ARG)
+scan_sty(void)
 {
     char    spec[STRING_MAX];
     int     tmp;
@@ -274,12 +274,7 @@ scan_sty(VOID_ARG)
 }
 
 static int
-#if STDC
 scan_spec(char spec[])
-#else
-scan_spec(spec)
-char    spec[];
-#endif
 {
     int     i = 0;
     int     c;
@@ -316,7 +311,7 @@ char    spec[];
 
 
 static int
-next_nonblank(VOID_ARG)
+next_nonblank(void)
 {
     int     c;
 
@@ -338,12 +333,7 @@ next_nonblank(VOID_ARG)
 
 
 static int
-#if STDC
 scan_string(char str[])
-#else
-scan_string(str)
-char    str[];
-#endif
 {
     char    clone[ARRAY_MAX];
     int     i = 0;
@@ -403,12 +393,7 @@ char    str[];
 
 
 static int
-#if STDC
 scan_char(char *c)
-#else
-scan_char(c)
-char   *c;
-#endif
 {
     int     clone;
 
@@ -449,12 +434,7 @@ char   *c;
 
 
 static int
-#if STDC
 count_lfd(char *str)
-#else
-count_lfd(str)
-char   *str;
-#endif
 {
     int     i = 0;
     int     n = 0;
@@ -469,7 +449,7 @@ char   *str;
 
 
 static int
-process_precedence(VOID_ARG)
+process_precedence(void)
 {
     int     order[PAGETYPE_MAX];
     int     type[PAGETYPE_MAX];

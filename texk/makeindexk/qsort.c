@@ -25,8 +25,8 @@ static int qsz;			       /* size of each record */
 static int thresh;		       /* THRESHold in chars */
 static int mthresh;		       /* MTHRESHold in chars */
 
-static int	(*qcmp) ARGS((char*,char*)); /* the comparison routine */
-static void	qst ARGS((char *base, char *max));
+static int	(*qcmp) (char*,char*); /* the comparison routine */
+static void	qst (char *base, char *max);
 /*
  * qqsort: First, set up some global parameters for qst to share.  Then,
  * quicksort with qst(), and then a cleanup insertion sort ourselves.  Sound
@@ -34,15 +34,7 @@ static void	qst ARGS((char *base, char *max));
  */
 
 void
-#if STDC
-qqsort(char *base, int n, int size, int (*compar) ARGS((char*,char*)))
-#else
-qqsort(base, n, size, compar)
-char   *base;
-int     n;
-int     size;
-int     (*compar) ARGS((char*,char*));
-#endif
+qqsort(char *base, int n, int size, int (*compar)(char*,char*))
 {
     register char *i;
     register char *j;
@@ -119,13 +111,7 @@ int     (*compar) ARGS((char*,char*));
  */
 
 static void
-#if STDC
 qst(char *base, char *max)
-#else
-qst(base, max)
-char   *base;
-char   *max;
-#endif
 {
     register char *i;
     register char *j;
