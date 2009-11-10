@@ -153,29 +153,30 @@ AC_FOREACH([Kpse_Lib], [$2], [  need_[]AS_TR_SH(Kpse_Lib)=yes
 # Initialize the list of potential system libraries.
 m4_define([kpse_syslib_pkgs], [])
 
-# KPSE_CHECK_LIB(LIB, REQUIRED-FUNCTION..., REQUIRED-HEADER...)
-# -------------------------------------------------------------
+# KPSE_TRY_LIB(LIB, PROLOGUE, BODY)
+# ---------------------------------
 # When the user requests to use an installed version of a required library,
 # check that the flags derived from --with-LIB-includes and --with-LIB-libdir
-# provide the required functions and headers.
-AC_DEFUN([KPSE_CHECK_LIB],
+# or determined otherwise provide the required functionality.
+AC_DEFUN([KPSE_TRY_LIB],
 [if test "x$need_[]AS_TR_SH($1):$with_system_[]AS_TR_SH($1)" = 'xyes:yes'; then
-  AC_MSG_NOTICE([checking requested system `$1' library...])
+  AC_MSG_CHECKING([requested system `$1' library])
   CPPFLAGS="$AS_TR_CPP($1)_INCLUDES $CPPFLAGS"
   LIBS="$AS_TR_CPP($1)_LIBS $LIBS"
-  AC_CHECK_FUNCS([$2], , [syslib_status=no])
-  AC_CHECK_HEADERS([$3], , [syslib_status=no])
-  syslib_used=yes
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[$2]], [[$3]])],
+                 [syslib_used=yes kpse_res=ok],
+                 [syslib_status=no kpse_res=failed])
+  AC_MSG_RESULT([$kpse_res])
 fi
-]) # KPSE_CHECK_LIB
+]) # KPSE_TRY_LIB
 
-# KPSE_CHECK_LIBXX(LIB, REQUIRED-FUNCTION..., REQUIRED-HEADER...)
-# -------------------------------------------------------------
+# KPSE_TRY_LIBXX(LIB, PROLOGUE, BODY)
+# -----------------------------------
 # As above, but for C++.
-AC_DEFUN([KPSE_CHECK_LIBXX],
+AC_DEFUN([KPSE_TRY_LIBXX],
 [AC_REQUIRE([AC_PROG_CXX])[]dnl
 AC_LANG_PUSH([C++])[]dnl
-KPSE_CHECK_LIB($@)[]dnl
+KPSE_TRY_LIB($@)[]dnl
 AC_LANG_POP([C++])[]dnl
-]) # KPSE_CHECK_LIBXX
+]) # KPSE_TRY_LIBXX
 

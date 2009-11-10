@@ -35,7 +35,7 @@ m4_ifdef([kpse_TL], [dnl For xindy as part of the TL tree
 AC_CONFIG_AUX_DIR([../../build-aux])
 ])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 # Checks for programs.

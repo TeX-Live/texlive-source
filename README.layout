@@ -1,18 +1,34 @@
 Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
-	Layout of the TeX Live (TL) build system
+	Design of the TeX Live (TL) build system
 	========================================
 
-The TL 2009 build system has been completely restructured, using Autoconf,
-Automake, and Libtool.  The main purpose was to configure and build each
-library before configuring any module (program or other library) depending
-on that library.  This allows to check for properties and features of a
-library built as part of the TL tree in much the same way as for an
-installed (system) version of that library.
+The TL 2009 build system has been completely redesigned, using Autoconf,
+Automake, and Libtool.  The main components are program modules (directories
+texk/*/ and utils/*/) and library modules (directories tex/kpathsea/ and
+libs/*/) providing libraries required by the program modules.
 
-This should simplify upgrading of modules maintained independently and/or
-integrating new modules into the TL build system.
+The primary design goal was modularity.  Each module specifies its own
+requirements and properties, such as required libraries, whether an
+installed (system) version of a library can be used, configure options to be
+seen at the top-level, and more.  Consequently an explicit list of all
+available modules is kept only in one central place.
+
+A second, related goal was to configure and build each library before
+configuring any (program or other library) module depending on that library. 
+This allows to check for properties and features of a library built as part
+of the TL tree in much the same way as for a system version of that library.
+
+Most libraries and several programs that are mintained independently use the
+distributed source tree, any modifications of that source tree are kept as
+patches.
+
+All this should simplify upgrading of modules maintained independently
+and/or integrating new modules into the TL build system.
+
+	Layout of the TeX Live (TL) build system
+	========================================
 
 1. Layout of directories
 ========================
@@ -20,33 +36,29 @@ integrating new modules into the TL build system.
 1.1. Overall layout
 -------------------
 
-texk/kpathsea/*		the Kpathsea library
-libs/*/*		various other libraries
+texk/kpathsea/*/	the Kpathsea library
+libs/*/*/		various other libraries
 
-texk/*/*		programs (mostly using Kpathsea)
-utils/*/*		utility programs (not using Kpathsea)
+texk/*/*/		programs (mostly using Kpathsea)
+utils/*/*/		utility programs (not using Kpathsea)
 
-texk/am/*		Makefile.am fragments
-texk/web2c/am/*		  for the Kpathsea library
-texk/web2c/*/am/*	  and the Web2C programs
+texk/am/*.am		Makefile.am fragments
+texk/web2c/am/*.am	  for the Kpathsea library
+texk/web2c/*/am/*.am	  and the Web2C programs
 
-libs/Lib/*		library Lib (zlib, libpng, t1lib, etc.)
-texk/Prog/*		program package Prog (web2c, afm2pl, bibtex8, etc.)
-utils/Util/*		utility program package Util (dialog, pdfopen, ps2eps, etc.)
+libs/Lib/*/		library Lib (zlib, libpng, t1lib, etc.)
+texk/Prog/*/		program package Prog (web2c, afm2pl, bibtex8, etc.)
+utils/Util/*/		utility program package Util (dialog, pdfopen, ps2eps, etc.)
 
-libs/dummy/*		dummy modules
-texk/dummy/*		  used to configure
-utils/dummy/*		  the real modules
+auxdir/auxsub/		dummy module used to configure the real modules
 
-ac/*			various configure.ac fragments (configure options)
-*/ac/*			  for the whole TL tree
-*/*/ac/*		  or for a particular component
+*/*/ac/*.ac		various configure.ac fragments (configure options)
 
 build-aux/*		auxiliary build scripts (config.guess etc.)
 
 m4/kpse-pkgs.m4		Autoconf macros defining the lists of Lib, Prog, and Util
 			  modules and handling loops over these lists
-m4/*			other Autoconf macros
+m4/*.m4			other Autoconf macros
 
 1.2. A library `Lib'
 --------------------
@@ -60,7 +72,7 @@ m4/kpse-Lib-flags.m4		defines Autoconf macros for configure options
 Several libraries use an (almost) unmodified source tree supplemented by a
 proxy build system (bypassing that of the source tree), e.g.,
 
-libs/zlib/zlib-1.2.3/*		(almost) unmodified source tree
+libs/zlib/zlib-1.2.3/		(almost) unmodified source tree
 libs/zlib/Makefile.am		proxy Makefile.am
 libs/zlib/configure.ac		  and configure.ac
 
@@ -82,10 +94,10 @@ utils/Util/ac/withenable.ac	defines libraries required by Util, provides the
 ======================
 
 Running 'configure' for the top-level directory will in addition configure
-the directories texk/kpathsea/, libs/, libs/dummy/, utils/, utils/dummy/,
-texk/, and texk/dummy/.  This will determine the programs (utils/Util/ and
-texk/Prog) to be built and libraries from the TL tree (texk/kpathsea/ and
-libs/Lib) required by these programs.
+the directories auxdir/auxsub/, texk/kpathsea/, libs/, utils/, and texk/. 
+This will determine the programs (utils/Util/ and texk/Prog/) to be built
+and libraries from the TL tree (texk/kpathsea/ and libs/Lib/) required by
+these programs.
 
 3. Running `make'
 =================
@@ -115,8 +127,8 @@ directory.  Subsequently, this recurses into all required subdirectories to
 The TL build system allows for parallel builds ('make -j n' with n>1),
 carefully formulating Make rules when a tool (such as 'tangle' or 'convert')
 creates several output files.  This can considerably speed up a TL build on
-multi core systems.  I usually use 'make -j 4 -l 8.0'; please report any
-failures.
+multi core systems.  I usually use 'make -j 4 -l 8.0' or even 'make -j' with
+up to 50 compilations in parallel; please report any failures.
 
 3.4 Using a Configure Cache File
 --------------------------------
@@ -132,12 +144,10 @@ some initial problem have been fixed; please report any failures.
 ---------------
 
 After successfully running 'make' from the top-level, as second 'make'
-should not have to rebuild anything.
+has nothing to rebuild.
 
-When configure scripts have been modified, it may take several iterations of
-'make' (only in in tekx/web2c/) until everything has stabilized.  This is a
-problem that still needs investigation, but I believe that after the first
-iteration everything is up to date, except for some bad timestamps.
+When configure scripts or source files have been modified, a second 'make'
+will rebuild only as required.
 
 3.5.2 Comment 2
 ---------------
@@ -151,7 +161,7 @@ fix the problem, and once again run 'make' from the top-level.
 
 The build system allows to successfully run 'make dist' and 'make distcheck'
 (at least on my {i686,x86_64}-linux-gnu systems), producing tarballs
-tex-live-2009-MM-DD.tar.{bz2,gz} from which everything can be (re-)built;
+tex-live-20YY-MM-DD.tar.{gz,xz} from which everything can be (re-)built;
 please keep it that way!
 
 3.5.4 Comment 4
@@ -160,17 +170,23 @@ please keep it that way!
 The process described above configures all directories, even for libraries
 and programs not to be built.  This is necessary for Make targets such as
 `dist' or `distcheck' that have to recurse into all subdirectories, whereas
-normal targets such as `all', `check', or `install' only recurse into the
+thw normal targets `all', `check', or `install' only recurse into the
 required subdirectories.
 
-As a side effect, if building in utils/Util/ or texk/Prog/ has been
-disabled, the Makefile in that directory still contains all the rules to
-build everything.  Thus running 'make' and 'make install' in that
-subdirectory will build and install everything, unless some configure tests
-have failed because required libraries from the TL tree where missing when
-that subdirectory has been configured.
+As a side effect, this allows to build all programs 'on demand'.  If, e.g.,
+building in utils/Util/ or texk/Prog/ has been disabled, the Makefile in
+that directory still contains all the rules to build everything.  Thus
+running 'make' and 'make install' in that directory will build and install
+everything.
 
 Similarly, when, e.g., building e-TeX has been disabled (as by default), you
 can run 'make etex' (or 'make etex.exe') in the subdirectory texk/web2c/ to
 build e-TeX (although there is no simple way to have e-TeX installed).
+
+Consider the extreme case of running configure with '--disable-all-pkgs',
+i.e., no programs and consequently no libraries are to be built.  Running
+'make' will then configure all library and program directories but build
+nothing; similarly 'make install' will install nothing.  Nevertheless next
+running, e.g., 'make tex' in the subdirectory texk/web2c/ will build first
+the Kpathsea library, then tangle, and finally tex.
 

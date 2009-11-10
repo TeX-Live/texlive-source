@@ -97,7 +97,7 @@ do_it () {
 }
 
 if test "x$list" = x; then
-  list=". libs utils texk `find libs utils texk -type d -name ac |
+  list=". auxdir/auxsub libs utils texk `find libs utils texk -type d -name ac |
     sed 's,/ac\$,,'`"
 fi
 
@@ -113,17 +113,13 @@ for dir in $list; do
     echo "$0: $dir/configure.ac: no such file, skipping." >&2
     continue
   fi
-  extra_dirs=
-  case $dir in
-    .) ;;
-    libs | utils | texk)
-       extra_dirs=$dir/dummy ;;
-    *) if test -f "$dir/ac/withenable.ac"; then
-         extra_dirs=`grep 'dnl extra_dirs = ' $dir/ac/withenable.ac |
-           sed 's,^.*= ,,'`
-       fi ;;
-  esac
-  do_it "autoreconf $verbose --no-recursive $dir $extra_dirs"
+  if test -f "$dir/ac/withenable.ac"; then
+    extra_dirs=`grep 'dnl extra_dirs = ' $dir/ac/withenable.ac |
+      sed 's,^.*= ,,'`
+  else
+    extra_dirs=
+  fi
+  do_it autoreconf $verbose --no-recursive $dir $extra_dirs
 done
 
 echo "$0: done."

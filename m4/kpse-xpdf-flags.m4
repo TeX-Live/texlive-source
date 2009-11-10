@@ -9,6 +9,8 @@
 
 # KPSE_XPDF_FLAGS
 # ---------------
+# Provide the configure option '--with-system-xpdf' (if in the TL tree).
+#
 # Set the make variables XPDF_INCLUDES and XPDF_LIBS to the CPPFLAGS and
 # LIBS required for the `-lxpdf' library in libs/xpdf/ of the TL tree.
 AC_DEFUN([KPSE_XPDF_FLAGS],

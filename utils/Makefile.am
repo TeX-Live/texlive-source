@@ -7,17 +7,14 @@
 ##
 ACLOCAL_AMFLAGS = -I ../m4 --force
 
-SUBDIRS = dummy . $(SUBUTILS)
-DIST_SUBDIRS = dummy $(DIST_SUBUTILS)
+SUBDIRS = . $(SUBUTILS)
+DIST_SUBDIRS = $(DIST_SUBUTILS)
 
 # just in case a subdirectory has added directories
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-SUBUTILS_AUX = subutilsdir-configure subutilsdir-conf.args
-noinst_DATA = $(SUBUTILS_AUX)
-
-DISTCLEANFILES = $(noinst_DATA)
+CONFIG_AUX = ../subsubdir-conf.cmd
 
 all-local: subutils
 
@@ -29,7 +26,7 @@ all-local: subutils
 #
 # Sequentially configure and optionally build all utils subdirs;
 # code inspired by automake's way to handle recursive targets.
-subutils: $(noinst_DATA)
+subutils: $(CONFIG_AUX)
 	@failcom='exit 1'; \
 	for f in x $$MAKEFLAGS; do \
 	  case $$f in \
@@ -40,14 +37,16 @@ subutils: $(noinst_DATA)
 	list='$(DIST_SUBUTILS)'; for subutils in $$list; do \
 	  if test ! -f $$subutils/Makefile; then \
 	    test -d $$subutils || $(MKDIR_P) $$subutils; \
-	    cmd=`cat $(SUBUTILS_AUX) | sed "s,SUBUTILSDIR,$$subutils,g"`; \
+	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,utils/$$subutils,g"`; \
 	    case " $(SUBUTILS) " in \
 	      *" $$subutils "*) skip=;; \
 	      *) skip=' --disable-build';; \
 	    esac; \
 	    (cd $$subutils && echo "=== configuring in $$subutils (`pwd`)" && \
 	      echo "make: running $(SHELL) $$cmd$$skip" && \
-	      eval $(SHELL) $$cmd$$skip) && \
+	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
+	      eval $(SHELL) $$cmd$$skip || \
+	        { echo "=== configuring in $$subutils failed"; exit 1; }) && \
 	    if test "x$$skip" = x; then \
 	      echo "Making all in $$subutils" && \
 	      (cd $$subutils && $(MAKE) $(AM_MAKEFLAGS) all); \
@@ -55,11 +54,7 @@ subutils: $(noinst_DATA)
 	  fi; \
 	done; test -z "$$fail"
 
-subutilsdir-configure:
-	@echo "make in ./dummy failed to create the file $@"
-	exit 1
-
-subutilsdir-conf.args:
-	@echo "configure in ./dummy failed to create the file $@"
+../subsubdir-conf.cmd:
+	@echo "configure in ../auxdir/auxsub failed to create the file $@"
 	exit 1
 

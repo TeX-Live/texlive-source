@@ -122,6 +122,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PDFLATEX = @PDFLATEX@
@@ -414,6 +415,7 @@ maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 @TETEX_BUILD_FALSE@install-exec-hook:
+@TETEX_BUILD_FALSE@uninstall-hook:
 clean: clean-am
 
 clean-am: clean-generic mostlyclean-am
@@ -481,10 +483,11 @@ ps-am:
 
 uninstall-am: uninstall-binSCRIPTS uninstall-dist_binSCRIPTS \
 	uninstall-man
-
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
 
-.MAKE: install-am install-exec-am install-strip
+.MAKE: install-am install-exec-am install-strip uninstall-am
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
@@ -497,7 +500,7 @@ uninstall-man: uninstall-man1
 	installdirs maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
 	uninstall-am uninstall-binSCRIPTS uninstall-dist_binSCRIPTS \
-	uninstall-man uninstall-man1
+	uninstall-hook uninstall-man uninstall-man1
 
 
 @TETEX_BUILD_TRUE@install-exec-hook: xindy
@@ -515,6 +518,10 @@ uninstall-man: uninstall-man1
 @TETEX_BUILD_TRUE@	  echo "Error: texmf/scripts/xindy directory not found" >&2; \
 @TETEX_BUILD_TRUE@	  exit 1; \
 @TETEX_BUILD_TRUE@	fi
+@TETEX_BUILD_TRUE@uninstall-hook:
+@TETEX_BUILD_TRUE@	rm -f $(DESTDIR)$(bindir)/xindy $(DESTDIR)$(bindir)/texindy \
+@TETEX_BUILD_TRUE@	  $(DESTDIR)$(prefix)/texmf/scripts/xindy/xindy.pl \
+@TETEX_BUILD_TRUE@	  $(DESTDIR)$(prefix)/texmf/scripts/xindy/texindy.pl
 
 xindy: xindy.in
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy

@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 ======================================================
 
+2009-10-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* user-commands/Makefile.am: Add uninstall-hook.
+
 2009-08-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* rte/Makefile.am (XINDY_RUN): For clisp Version 2.48 use

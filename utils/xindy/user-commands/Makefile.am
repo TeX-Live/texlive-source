@@ -36,6 +36,10 @@ install-exec-hook: xindy
 	  echo "Error: texmf/scripts/xindy directory not found" >&2; \
 	  exit 1; \
 	fi
+uninstall-hook:
+	rm -f $(DESTDIR)$(bindir)/xindy $(DESTDIR)$(bindir)/texindy \
+	  $(DESTDIR)$(prefix)/texmf/scripts/xindy/xindy.pl \
+	  $(DESTDIR)$(prefix)/texmf/scripts/xindy/texindy.pl
 else
     bin_SCRIPTS = xindy
     dist_bin_SCRIPTS = texindy

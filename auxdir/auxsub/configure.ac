@@ -6,13 +6,15 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([tpic2pdftex for TeX Live], [1.94], [tex-k@tug.org])
+AC_INIT([TeX Live auxdir auxsub], [2009], [tex-k@tug.org])
 AC_PREREQ([2.63])
-AC_CONFIG_SRCDIR([tpic2pdftex])
+AC_CONFIG_SRCDIR([../../build-aux/missing])
 AC_CONFIG_AUX_DIR([../../build-aux])
 
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
+
+echo "'$srcdir/configure' $ac_configure_args" >../../subsubdir-conf.cmd
 
 AC_CONFIG_FILES([Makefile])
 

@@ -2,6 +2,22 @@
 
 	* Build: show Build command itself in build.log.
 
+2009-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* m4/kpse-warnings.m4: Additional level 'all' of compiler
+	warnings, 'max' now without the extremely noisy -Wshadow.
+	* configure.ac: Report level of compiler warnings used.
+
+2009-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (dist*check_listfiles): Stricter checking for
+	'make distcheck': check for leftover files and symlinks.
+	This really ought to be the Automake default.
+
+2009-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* m4/kpse-warnings.m4: Implement Objective C compiler warnings.
+
 2009-06-18  Karl Berry  <karl@tug.org>
 
 	* Build: eradicate -Wdecl stuff, peb has implemented something

@@ -15,12 +15,10 @@ AC_CONFIG_MACRO_DIR([../m4])
 dnl See comment in ../configure.ac
 KPSE_SETUP([../])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 AC_PROG_MKDIR_P
-
-AC_CONFIG_SUBDIRS([dummy])
 
 AC_MSG_CHECKING([for Utils programs to build])
 SUBUTILS=

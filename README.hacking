@@ -4,10 +4,10 @@ You may freely use, modify and/or distribute this file.
 	Modifying the TeX Live (TL) build system
 	========================================
 
-1. Versions of Tools
-====================
+1. Currently used versions of Tools
+===================================
 
-autoconf (GNU Autoconf) 2.63
+autoconf (GNU Autoconf) 2.65
 
 automake (GNU automake) 1.11
 
@@ -22,13 +22,13 @@ flex 2.5.35
 
 When anything in the TL build system (configure.ac and Makefile.am files
 with their fragments or M4 macros in m4/) has been modified you have to
-rebuild the coresponding configure, Makefile.in, and config.h or c-auto,h
-files. 
+rebuild the coresponding configure, Makefile.in, config.h or c-auto,h, or
+other generated files.  You should use the versions mentioned above.  This
+is most easily done automatically using maintainer-mode.
 
-This is most easily done automatically using maintainer-mode.  The files in
-the SVN repository are all up to date, but some of them may be rebuilt in
-maintainer-mode due to their relative timestamps.  This will eventually be
-fixed, once everything has stabilized.
+The files in the SVN repository are all up to date, but some of them may be
+rebuilt in maintainer-mode due to their timestamps (this is somewhat tedious
+to avoid due to SVN's handling of timestamps).
 
 Alternatively, you can run the 'reautoconf' script from the top-level.
 
@@ -64,8 +64,8 @@ As example, the file texk/dvipdfmx/ac/withenable.ac contains
 where KPSE_ENABLE_PROG, defined in m4/kpse-setup.m4, has one required
 argument -- the name of the subdirectory -- and three optional arguments: a
 list of required TL libraries (zlib is implied by libpng and need not be
-mentioned), a list of options ('disable' if this program is not built by
-default), and a comment added to the help text for the disable or enable
+mentioned), a list of options ('disable' if this program is not to be built
+by default), and a comment added to the help text for the disable or enable
 configure option for this program.
 
 3.2 Adding a new library directory
@@ -76,20 +76,22 @@ the M4 list kpse_libs_pkgs defined in m4/kpse-pkgs.m4.  In addition you must
 create a configure.ac fragment libs/Lib/ac/witheanble.ac defining any
 required libraries from the TL tree and whether an installed (system)
 version of this library can be used.  If that is the case, another
-configure.ac fragment libs/Lib/ac/Lib.ac must define (AC_CHECK_FUNCS and
-AC_CHECK_HEADERS) tests for a system version to be acceptable.  Finally you
-must create a file m4/kpse-Lib-flags.m4 defining the M4 macro KPSE_LIB_FLAGS
-(where 'LIB' is a sanitized uppercase version of 'Lib') setting up the Make
-variables LIB_INCLUDES, LIB_LIBS, and LIB_DEPEND with the required values
-for CPPFLAGS, LDADD, and dependencies, as well as LIB_RULE with a
-(multiline) Make rule to rebuild that library when necessary.
+configure.ac fragment libs/Lib/ac/Lib.ac should specify a small program as
+test for a system version to be acceptable.  Finally you must create a file
+m4/kpse-Lib-flags.m4 defining the M4 macro KPSE_LIB_FLAGS (where 'LIB' is a
+sanitized uppercase version of 'Lib') setting up the Make variables
+LIB_INCLUDES, LIB_LIBS, and LIB_DEPEND with the required values for
+CPPFLAGS, LDADD, and dependencies, as well as LIB_RULE with a (multiline)
+Make rule to rebuild that library when necessary.
 
 If a system version of the library can be used, another M4 macro
 KPSE_LIB_SYSTEM_FLAGS in m4/kpse-Lib-flags.m4 must define values for
-LIB_INCLUDES and LIB_LIBS, usually depending on values for the configure
-options '--with-Lib-includes' and/or '--with-Lib-libdir', and you must add
-the line 'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])' to the definition of the M4
-macro KPSE_ALL_SYSTEM_FLAGS in m4/kpse-pkgs.m4.
+LIB_INCLUDES and LIB_LIBS, and you must add the line
+'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])' to the definition of the M4 macro
+KPSE_ALL_SYSTEM_FLAGS in m4/kpse-pkgs.m4.  In many cases LIB_INCLUDES and
+LIB_LIBS are constructed from values for the configure options
+'--with-Lib-includes' and/or '--with-Lib-libdir'; alternatively they may
+result from running pkg-config, freetype-config, or similar.
 
 As example, the file libs/libpng/kpse/withenable.ac contains
 	KPSE_WITH_LIB([libpng], [zlib])
@@ -97,11 +99,20 @@ where KPSE_WITH_LIB, defined in m4/kpse-setup.m4, has one required argument
 -- the name of the subdirectory -- and two optional arguments: a list of
 required TL libraries, and a list of options ('tree' if only the library
 from the TL can be used).  The file libs/libpng/ac/libpng.ac contains
-	KPSE_CHECK_LIB([libpng], [png_set_read_fn], [png.h])
-indicating that the Autoconf macro calls
-	AC_CHECK_FUNCS([png_set_read_fn])
-	AC_CHECK_HEADERS([png.h])
-shall be used as sanity check for using an installed PNG library.
+	KPSE_TRY_LIB([libpng],
+	             [#include <png.h>],
+	             [png_structp png; png_voidp io; png_rw_ptr fn;
+	png_set_read_fn(png, io, fn);])
+where KPSE_TRY_LIB, defined in m4/kpse-setup.m4, has three required
+arguments -- the name of the subdirectory and two AC_LANG_PROGRAM arguments.
+This causes Autoconf to compile and link the program
+	#include <png.h>
+	int main ()
+	{ png_structp png; png_voidp io; png_rw_ptr fn;
+	  png_set_read_fn(png, io, fn);
+	  return 0; }
+as sanity check for using an installed PNG library.  The analogous macro
+KPSE_TRY_LIBXX uses the C++ compiler.
 
 4. Using libraries from the TL tree
 ===================================
@@ -118,7 +129,7 @@ AC_CHECK_HEADERS for header files).
 In order to use, e.g., libpng (either an installed version or from the TL
 tree) configure.ac must use KPSE_ZLIB_FLAGS and KPSE_LIBPNG_FLAGS.  As a
 consequence the Make variables LIBPNG_DEPEND, LIBPNG_INCLUDES, LIBPNG_LIBS,
-and LIBPNG_RULE will be defined.
+and LIBPNG_RULE (and analogous ZLIB_* variables) will be defined.
 
 A program may wish to examine features of the PNG library.  To do so
 configure.ac must use
@@ -144,6 +155,6 @@ $(LIBPNG_LIBS) $(ZLIB_LIBS) must be added to LDADD or target_LDADD.
 $(LIBPNG_DEPEND) $(ZLIB_DEPEND) should be added to target_DEPENDENCIES such
 that rebuilding zlib and/or libpng causes the target to be rebuilt.
 
-Two lines containing @ZLIB_RULE@ and @LIBPNG_RULE@ create rules to
-(re-)build zlib and libpng when necessary.
+Two lines containing @ZLIB_RULE@ and @LIBPNG_RULE@ create the rules required
+to (re-)build zlib and libpng when necessary.
 

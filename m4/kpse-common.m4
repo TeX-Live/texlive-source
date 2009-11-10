@@ -116,17 +116,17 @@ else
    AS_TR_CPP($1)[_RULE='# Rebuild lib$2
 $(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
                                     [[ $7]])m4_ifval([$8], [[ $8
-	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS)
+	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild
 $8:]])[
-	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS)']],
+	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']],
   [AS_TR_CPP($1)[_DEPEND=`echo '$5' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`]
    AS_TR_CPP($1)[_RULE='# Rebuild lib$2
 $(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
                                     [[ $7]])m4_ifval([$8], [[ $8
-	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS)
+	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild
 $8:]])[
-	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS)']])
+	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']])
 m4_if(m4_index([ $3 ], [ tree ]), [-1],
       [fi
 ])[]dnl m4_if
@@ -194,8 +194,8 @@ LIBS=$kpse_save_LIBS
 # Add flags for LIBDIR to values of CPPFLAGS and LIBS.
 AC_DEFUN([KPSE_ADD_FLAGS],
 [AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
-CPPFLAGS="$CPPFLAGS $[]AS_TR_CPP($1)_INCLUDES"
-LIBS="$[]AS_TR_CPP($1)_LIBS $LIBS"
+eval CPPFLAGS=\"$[]AS_TR_CPP($1)_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$[]AS_TR_CPP($1)_LIBS \$LIBS\"
 ]) # KPSE_ADD_FLAGS
 
 # KPSE_COMMON(PACKAGE-NAME, [MORE-AUTOMAKE-OPTIONS])
@@ -208,7 +208,7 @@ AC_DEFUN([KPSE_COMMON],
 [dnl Remember PACKAGE-NAME as Kpse_Package (for future messages)
 m4_define([Kpse_Package], [$1])
 dnl
-AM_INIT_AUTOMAKE([foreign dist-bzip2]m4_ifval([$2], [ $2]))
+AM_INIT_AUTOMAKE([foreign]m4_ifval([$2], [ $2]))
 AM_MAINTAINER_MODE
 dnl
 LT_PREREQ([2.2.6])
@@ -227,7 +227,7 @@ dnl Replacement functions that may be required on ancient broken system.
 AC_CHECK_FUNCS([putenv strcasecmp strtol strstr])
 dnl
 dnl More common functions
-AC_CHECK_FUNCS([bcmp bcopy bzero getcwd getwd index memcmp memcpy rindex strchr strrchr])
+AC_CHECK_FUNCS([bcmp bcopy bzero getcwd getwd index memcmp memcpy mkstemp mktemp rindex strchr strrchr])
 dnl
 AC_C_CONST
 AC_C_INLINE
@@ -254,7 +254,7 @@ AC_CACHE_CHECK([whether program_invocation_name is predefined],
                                                   program_invocation_name = "love";]])],
                                [kb_cv_var_program_inv_name=yes],
                                [kb_cv_var_program_inv_name=no])])
-if test "$kb_cv_var_program_inv_name" = yes; then
+if test "x$kb_cv_var_program_inv_name" = xyes; then
   AC_DEFINE([HAVE_PROGRAM_INVOCATION_NAME], 1,
             [Define to 1 if you are using GNU libc or otherwise have global variables
              `program_invocation_name' and `program_invocation_short_name'.])
@@ -263,22 +263,6 @@ dnl
 dnl Enable flags for compiler warnings
 KPSE_COMPILER_WARNINGS
 ]) # KPSE_COMMON
-
-# KPSE_MSG_ERROR(PACKAGE, ERROR, [EXIT-STATUS = 1])
-# -------------------------------------------------
-# Same as AC_MSG_ERROR(ERROR, EXIT-STATUS), except when building this
-# package PACKAGE has been disabled.
-#
-# The new (2009) TL build system requires all directories to be configured
-# for the benefit of 'dist*' Make targets.  When building PACKAGE has been
-# disabled, configuring that package must not fail because building required
-# libraries from the TL tree has been disabled as a consequence.
-AC_DEFUN([KPSE_MSG_ERROR],
-[AS_IF([test "x$enable_build" = xno],
-       [AC_MSG_WARN([building $1 has been disabled and would fail because
-$2])],
-       [AC_MSG_ERROR([$2], m4_default([$3], 1))])
-]) # KPSE_MSG_ERROR
 
 # KPSE_MSG_WARN(PROBLEM)
 # ----------------------
@@ -307,4 +291,14 @@ AC_DEFUN([_KPSE_CHECK_PKG_CONFIG],
 [AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
 ]) # _KPSE_CHECK_PKG_CONFIG
+
+# KPSE_CANONICAL_HOST
+# -------------------
+# Require both --host and --build for cross compilations; set kpse_build_alias.
+AC_DEFUN([KPSE_CANONICAL_HOST],
+[AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+AS_IF([test "x$host_alias" != x && test "x$build_alias" = x],
+      [AC_MSG_ERROR([when cross-compiling you must specify both --host and --build.])])
+eval kpse_build_alias=\${build_alias-$build}
+]) # KPSE_CANONICAL_HOST
 

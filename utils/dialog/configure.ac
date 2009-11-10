@@ -13,7 +13,7 @@ AC_CONFIG_SRCDIR([dialog-]dialog_version[/dialog.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 # Checks for programs.
@@ -21,29 +21,17 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 
-DIALOG_TREE=dialog-[]dialog_version
+DIALOG_TREE=[dialog-]dialog_version
 AC_SUBST([DIALOG_TREE])
-
-if test "x$srcdir" = x.; then
-  DIALOG_BUILD=$DIALOG_TREE
-else
-  DIALOG_BUILD=dialog-build
-fi
-AC_SUBST([DIALOG_BUILD])
 
 # Initialize the subdir machinery
 AC_CONFIG_SUBDIRS([])
 
-# when building dialog, configure the original source tree,
-# prevent autoreconf from recursing into subdir.
+# when building dialog, configure the subdir $DIALOG_TREE
+# but prevent autoreconf from recursing into this subdir.
 test "x$enable_dialog" = xyes && subdirs=$DIALOG_TREE
 AM_CONDITIONAL([build], [test "x$enable_dialog" = xyes])
 
 AC_CONFIG_FILES([Makefile])
 
 AC_OUTPUT
-
-# Rename the subdirectory $DIALOG_TREE just crated into $DIALOG_BUILD
-if test -d "$DIALOG_TREE" && test "x$DIALOG_BUILD" != "x$DIALOG_TREE"; then
-  rm -rf "$DIALOG_BUILD" && mv "$DIALOG_TREE" "$DIALOG_BUILD" || exit 1
-fi

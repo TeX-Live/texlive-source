@@ -18,7 +18,7 @@ AC_DEFUN([KPSE_KPATHSEA_FLAGS],
 [_KPSE_LIB_FLAGS([kpathsea], [kpathsea], [lt],
                  [-IBLD/texk -ISRC/texk], [BLD/texk/kpathsea/libkpathsea.la], [],
                  [${top_srcdir}/../kpathsea/*.[ch]],
-                 [${top_builddir}/../kpathsea/paths.h])[]dnl
+                 [${top_builddir}/../kpathsea/paths.h])
 ]) # KPSE_KPATHSEA_FLAGS
 
 # KPSE_KPATHSEA_OPTIONS([WITH-SYSTEM])
@@ -40,7 +40,7 @@ AC_DEFUN([KPSE_CHECK_KPSE_FORMAT],
                                                  [[kpse_$1_format]])],
                                 [kpse_cv_have_$1_format=yes],
                                 [kpse_cv_have_$1_format=no])])
-AS_IF([test "x$kpse_cv_have_$1_format" = xyes], [$2], [$3])[]dnl
+AS_IF([test "x$kpse_cv_have_$1_format" = xyes], [$2], [$3])
 ]) # KPSE_CHECK_KPSE_FORMAT
 
 # KPSE_CHECK_XBASENAME([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])

@@ -22,7 +22,7 @@ m4_define([KPSE_WITH_MKTEX],
                                     [do not ])[run $1 if $3 missing],
                               kpse_indent_26+2))[]dnl
 AS_CASE([$enable_$1_default], [yes|no], ,
-                            [enable_$1_default=$2])[]dnl
+                            [enable_$1_default=$2])
 ]) # KPSE_WITH_MKTEX
 
 # KPSE_MKTEX_DEFINE(PROG, YES-OR-NO, TEXT, STEM)
@@ -33,7 +33,7 @@ m4_define([KPSE_MKTEX_DEFINE],
        [AC_DEFINE([MAKE_$4_BY_DEFAULT], 1,
                   [Define to 1 if you want to run $1 if $3 is missing,
                    and to 0 if you don't])],
-       [AC_DEFINE([MAKE_$4_BY_DEFAULT], 0)])[]dnl
+       [AC_DEFINE([MAKE_$4_BY_DEFAULT], 0)])
 ]) # KPSE_MKTEX_DEFINE
 
 # KPSE_WITH_XTEX(PROG, BUILD-OR-NO, SYNC-OR-NO, TEXT, REQUIRED-LIBS)
@@ -46,7 +46,7 @@ m4_define([KPSE_WITH_XTEX],
                                     [do not ])[compile and install $4],
                               kpse_indent_26+2))[]dnl
 AS_CASE([$enable_$1], [yes|no], ,
-                    [enable_$1=$2])[]dnl
+                    [enable_$1=$2])
 m4_ifval([$5], [
 test "x$enable_web2c:$enable_$1" = xyes:yes && {
 AC_FOREACH([Kpse_Lib], [$5], [  need_[]AS_TR_SH(Kpse_Lib)=yes
@@ -78,5 +78,5 @@ m4_define([KPSE_WITH_MFWIN],
 m4_define([KPSE_MFWIN_DEFINE],
 [AS_IF([test "x$enable_$1win" = xyes],
        [AC_DEFINE([$2WIN], ,
-                  [metafont: Define to include $3 window support.])])[]dnl
+                  [metafont: Define to include $3 window support.])])
 ]) # KPSE_MFWIN_DEFINE

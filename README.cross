@@ -9,20 +9,30 @@ i386-pc-mingw32 on a (different) BUILD system, e.g, x86_64-linux-gnu specify
 the configure options
 	--host=i386-pc-mingw32 --build=x86_64-linux-gnu
 
-You may need `cross' tools properly installed as, e.g., i386-pc-mingw32-cc
-in your PATH.  Configure arguments such as CFLAGS=...  refer to this cross
-compiler.
+You should have `cross' tools properly installed as, e.g.,
+i386-pc-mingw32-cc in your PATH or specify them as configure arguments,
+e.g., CC=<mingw32-cross-compiler>; arguments such as CFLAGS=...  refer to
+this cross compiler.  Here a preliminary list of such tools and
+corresponding variables:
+	ar		AR
+	freetype-config	FT2_CONFIG
+	g++		CXX
+	gcc		CC
+	icu-config	ICU_CONFIG
+	objdump		OBJDUMP
+	pkg-config	PKG_CONFIG
+	ranlib		RANLIB
+	strip		STRIP
 
-If necessary, you can specify a compiler and flags for the few auxiliary C
-programs required for the build process as configure arguments
+If necessary, you can specify compilers and flags for the few auxiliary C
+and C++ programs required for the build process as configure arguments
 	BUILDCC=...
 	BUILDCPPFLAGS=...
 	BUILDCFLAGS=...
+	BUILDCXX=...
+	BUILDCXXFLAGS=...
 	BUILDLDFLAGS=...
 
-Building the Web2C programs requires installed versions of tangle, ctangle,
-and tie (and possibly otangle and/or luatangle).
-
-At the moment a cross compilation of xetex is not possible, because the
-icu-xetex library does not support cross compilation.
+Building the Web2C programs requires sufficiently recent installed versions
+of tangle, ctangle, and tie (and possibly otangle and/or luatangle).
 

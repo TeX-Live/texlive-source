@@ -30,6 +30,10 @@ fi
 # make flags
 : ${TL_MAKE_FLAGS=}
 
+# set MAKE to $TL_MAKE for configure
+: ${MAKE=${TL_MAKE}}
+export MAKE
+
 # and then also set GNUMAKE to that, for the sake of freetype2/configure.
 : ${GNUMAKE=${TL_MAKE}}
 export GNUMAKE

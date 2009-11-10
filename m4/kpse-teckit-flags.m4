@@ -17,8 +17,8 @@
 AC_DEFUN([KPSE_TECKIT_FLAGS],
 [AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([teckit], [TECkit], [],
-                [-ISRC/libs/teckit/source/Public-headers], [BLD/libs/teckit/libTECkit.a], [],
-                [], [])[]dnl
+                [-IBLD/libs/teckit/teckit], [BLD/libs/teckit/libTECkit.a], [],
+                [], [${top_builddir}/../../libs/teckit/teckit/TECkit_Common.h])[]dnl
 ]) # KPSE_TECKIT_FLAGS
 
 # KPSE_TECKIT_OPTIONS([WITH-SYSTEM])

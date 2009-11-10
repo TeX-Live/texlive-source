@@ -9,7 +9,7 @@
 
 # KPSE_FREETYPE2_FLAGS
 # --------------------
-# Provide the configure options '--with-system-freetype2' (if in the TL tree).
+# Provide the configure option '--with-system-freetype2' (if in the TL tree).
 #
 # Set the make variables FREETYPE2_INCLUDES and FREETYPE2_LIBS to the CPPFLAGS and
 # LIBS required for the `-lfreetype' library in libs/freetype2/ of the TL tree.
@@ -19,8 +19,8 @@ AC_REQUIRE([_KPSE_CHECK_FT2_CONFIG])[]dnl
 _KPSE_LIB_FLAGS([freetype2], [freetype], [],
                 [BLD/libs/freetype2],
                 [BLD/libs/freetype2/libfreetype.a],
-                [FREETYPE2_LIBS=`cat $FREETYPE2_INCLUDES/ft-libs`
-  FREETYPE2_INCLUDES=`cat $FREETYPE2_INCLUDES/ft-includes`],
+                [FREETYPE2_LIBS="\`cat $FREETYPE2_INCLUDES/ft-libs\`"
+  FREETYPE2_INCLUDES="\`cat $FREETYPE2_INCLUDES/ft-includes\`"],
                 [], [${top_builddir}/../../libs/freetype2/ft2build.h])[]dnl
 ]) # KPSE_FREETYPE2_FLAGS
 

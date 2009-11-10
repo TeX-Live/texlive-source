@@ -21,5 +21,5 @@ AC_DEFUN([KPSE_CHECK_FRAMEWORK],
                                    [kpse_cv_have_$1=no])])
 AS_IF([test "x$kpse_cv_have_$1" = xyes],
       [AC_DEFINE([HAVE_]AS_TR_CPP([$1]), 1,
-                 [Define to 1 if you have the Mac OS X $1 framework.])])[]dnl
+                 [Define to 1 if you have the Mac OS X $1 framework.])])
 ]) # KPSE_CHECK_FRAMEWORK

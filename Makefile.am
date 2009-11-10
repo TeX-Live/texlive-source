@@ -9,6 +9,9 @@ ACLOCAL_AMFLAGS = -I m4 --force
 
 ## speed up distcheck
 DISTCHECK_CONFIGURE_FLAGS = -C
+## check as well for symlinks
+distuninstallcheck_listfiles = find . -type f -o -type l -print
+distcleancheck_listfiles = find . -type f -o -type l -print
 
 EXTRA_DIST = \
 	Build \
@@ -26,15 +29,15 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 if build_kpathsea
-SUBDIRS = texk/kpathsea
+SUBDIRS = texk/kpathsea libs utils texk
 else !build_kpathsea
-SUBDIRS =
+SUBDIRS = libs utils texk
 endif !build_kpathsea
-SUBDIRS += libs utils texk
+DIST_SUBDIRS = auxdir/auxsub texk/kpathsea libs utils texk
 
 # This is the default target for the Build script in TeX Live.
 .PHONY: world
-# Run texlinks here since the binaries won't be there 
+# Run texlinks here since the binaries won't be there
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
 world: all

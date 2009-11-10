@@ -14,35 +14,34 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## DIALOG_TREE is the unmodified source tree,
 ## DIALOG_BUILD is the build tree (renamed after configure).
 
-## install dialog as tcdialog
+# install dialog as tcdialog
 program_transform_name = 's,^,tc,'
 
-## We want to re-distribute the whole original dialog source tree.
-##
-## With current automake (1.10.2) 'make distcheck' fails when
-## DISTFILES contains a directory and files in that directory.
-## Thus nodist_* for all files in $(DIALOG_TREE).
+# We want to re-distribute the whole original dialog source tree.
 EXTRA_DIST = $(DIALOG_TREE)
 
-# in case of an SVN repository
+# Files not to distribute, also in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(DIALOG_TREE) -name .svn`
+	cd $(distdir)/$(DIALOG_TREE) && \
+	  rm -rf config.log config.status dialog$(EXEEXT) dialog-config \
+	    dlg_config.h headers-sh makefile samples/install/makefile \
+	    *.a *.o  `find -name .svn`
 
 if build
 
 nodist_man1_MANS = $(DIALOG_TREE)/dialog.1
 
-bin_PROGRAMS = $(DIALOG_BUILD)/dialog
+bin_PROGRAMS = $(DIALOG_TREE)/dialog
 
-$(DIALOG_BUILD)/dialog$(EXEEXT):
-	cd $(DIALOG_BUILD) && $(MAKE) $(AM_MAKEFLAGS) all
+$(DIALOG_TREE)/dialog$(EXEEXT):
+	cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) all
 
 distclean-local:
-	cd $(DIALOG_BUILD) && $(MAKE) $(AM_MAKEFLAGS) distclean
+	cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) distclean
 
 else !build
 distclean-local:
 endif !build
 
-__DIALOG_BUILD__dialog_SOURCES =
+__DIALOG_TREE__dialog_SOURCES =
 

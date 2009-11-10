@@ -9,6 +9,6 @@ DISTCLEANFILES = $(noinst_DATA)
 
 all-local: $(noinst_DATA)
 
-../subutilsdir-configure:
+../subutilsdir-configure: Makefile
 	echo "${srcdir}/configure" | sed 's,dummy/,SUBUTILSDIR/,' >$@
 

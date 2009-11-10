@@ -1,0 +1,8 @@
+Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+You may freely use, modify and/or distribute this file.
+
+This directory auxdir/auxsub/ of the TL tree does not build or install
+anything.  Its purpose is to record the command line used to invoke
+auxdir/auxsub/configure.  This information is then used by the Makefiles in
+libs, texk, and utils to invoke configure in their subdirectories without
+the need to adjust any absolute or relative paths.
