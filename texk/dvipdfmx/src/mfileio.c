@@ -64,7 +64,7 @@ int mfclose(FILE *file, const char *function, int line)
 }
 #endif
 
-static void os_error()
+static void os_error(void)
 {
   ERROR ("io:  An OS command failed that should not have.\n");
 }

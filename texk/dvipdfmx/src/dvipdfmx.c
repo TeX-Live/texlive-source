@@ -183,9 +183,10 @@ usage (void)
 
 
 static int
-read_length (double *vp, char **pp, char *endptr)
+read_length (double *vp, const char **pp, const char *endptr)
 {
-  char   *q, *p = *pp;
+  char   *q;
+  const char *p = *pp;
   double  v, u = 1.0;
   const char *_ukeys[] = {
 #define K_UNIT__PT  0
@@ -243,7 +244,7 @@ select_paper (const char *paperspec)
     paper_width  = paperpswidth (pi);
     paper_height = paperpsheight(pi);
   } else {
-    char  *p = (char *) paperspec, *endptr, *comma;
+    const char  *p = paperspec, *endptr, *comma;
     comma  = strchr(p, ',');
     endptr = p + strlen(p);
     if (!comma)
@@ -267,7 +268,8 @@ int max_page_ranges = 0;
 static void
 select_pages (const char *pagespec)
 {
-  char  *q, *p = (char *) pagespec;
+  char  *q;
+  const char *p = pagespec;
 
   while (*p != '\0') {
     /* Enlarge page range table if necessary */
@@ -387,19 +389,19 @@ do_args (int argc, char *argv[])
       case 'g':
         CHECK_ARG(1, "annotation \"grow\" amount");
         nextptr = argv[1];
-        read_length(&annot_grow, &nextptr, nextptr + strlen(nextptr));
+        read_length(&annot_grow, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'x':
         CHECK_ARG(1, "horizontal offset value");
         nextptr = argv[1];
-        read_length(&x_offset, &nextptr, nextptr + strlen(nextptr));
+        read_length(&x_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'y':
         CHECK_ARG(1, "vertical offset value");
         nextptr = argv[1];
-        read_length(&y_offset, &nextptr, nextptr + strlen(nextptr));
+        read_length(&y_offset, (const char **) &nextptr, nextptr + strlen(nextptr));
         POP_ARG();
         break;
       case 'o':
@@ -584,7 +586,8 @@ cleanup (void)
 static void
 read_config_file (const char *config)
 {
-  char *start, *end, *option;
+  const char *start, *end;
+  char *option;
   FILE *fp;
 
   fp = DPXFOPEN(config, DPX_RES_TYPE_TEXT);

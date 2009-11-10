@@ -168,7 +168,8 @@ readline (char *buf, int buf_len, FILE *fp)
 static int
 read_sfd_record (struct sfd_rec_ *rec, const char *lbuf)
 {
-  char  *p = (char *) lbuf, *q;
+  const char *p = lbuf, *q;
+  char  *r;
   int    repos  = 0;
   long   c,  v1 = 0, v2 = 0;
   int    curpos = 0;
@@ -178,7 +179,8 @@ read_sfd_record (struct sfd_rec_ *rec, const char *lbuf)
   for ( ; *p && isspace(*p); p++);
   while (!error && *p) {
     repos = 0; q = p;
-    v1    = strtol(p, &q, 0);
+    v1    = strtol(p, &r, 0);
+    q = r;
     if (q == p ||
         (!IS_TOKSEP(*q) && *q != ':' && *q != '_')) {
       WARN("Unknown token in subfont mapping table: %c", *q);
@@ -196,7 +198,8 @@ read_sfd_record (struct sfd_rec_ *rec, const char *lbuf)
       break;
     case  '_':
       p  = q + 1;
-      v2 = strtol(p, &q, 0);
+      v2 = strtol(p, &r, 0);
+      q = r;
       if (v1 < 0 || v1 > 0xffffL ||
           v2 < 0 || v2 > 0xffffL) {
         WARN("Invalid value in subfont mapping table: 0x%x_0x%x", v1, v2);

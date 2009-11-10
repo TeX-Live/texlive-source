@@ -67,9 +67,9 @@
 #endif
 
 static void
-skip_blank (char **pp, char *endptr)
+skip_blank (const char **pp, const char *endptr)
 {
-  char  *p = *pp;
+  const char  *p = *pp;
   for ( ; p < endptr && ISBLANK(*p); p++);
   *pp = p;
 }
@@ -984,10 +984,11 @@ int
 spc_tpic_check_special (const char *buf, long len)
 {
   int    istpic = 0;
-  char  *q, *p, *endptr;
+  char  *q;
+  const char *p, *endptr;
   int    i, hasnsp = 0;
 
-  p      = (char *) buf;
+  p      = buf;
   endptr = p + len;
 
   skip_blank(&p, endptr);
@@ -1047,8 +1048,8 @@ spc_tpic_setup_handler (struct spc_handler *sph,
     error = -1;
   else if (q && hasnsp && !strcmp(q, "__setopt__")) {
 #if  DEBUG
-    ap->command = (char *) "__setopt__";
-    sph->key    = (char *) "tpic:";
+    ap->command = "__setopt__";
+    sph->key    = "tpic:";
     sph->exec   = spc_handler_tpic__setopts;
     skip_blank(&ap->curptr, ap->endptr);
     error = 0;
@@ -1058,8 +1059,8 @@ spc_tpic_setup_handler (struct spc_handler *sph,
     for (i = 0;
          i < sizeof(tpic_handlers)/sizeof(struct spc_handler); i++) {
       if (!strcmp(q, tpic_handlers[i].key)) {
-        ap->command = (char *) tpic_handlers[i].key;
-        sph->key    = (char *) "tpic:";
+        ap->command = tpic_handlers[i].key;
+        sph->key    = "tpic:";
         sph->exec   = tpic_handlers[i].exec;
         skip_blank(&ap->curptr, ap->endptr);
         error = 0;

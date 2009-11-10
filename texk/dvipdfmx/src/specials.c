@@ -332,7 +332,7 @@ init_special (struct spc_handler *special,
   spe->mag    = mag;
   spe->pg     = pdf_doc_current_page_number(); /* _FIXME_ */
 
-  args->curptr = (char *) p;
+  args->curptr = p;
   args->endptr = args->curptr + size;
   args->base   = args->curptr;
   args->command = NULL;
@@ -495,7 +495,8 @@ spc_exec_at_end_document (void)
 static void
 print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
 {
-  char      *p, ebuf[64];
+  const char *p;
+  char      ebuf[64];
   int       i;
   long      pg = spe->pg;
   pdf_coord c;
@@ -553,7 +554,7 @@ spc_exec_special (const char *buffer, long size,
   struct spc_handler special;
 
   if (verbose > 3) {
-    dump((char *) buffer, (char *) buffer + size);
+    dump(buffer, buffer + size);
   }
 
   init_special(&special, &spe, &args, buffer, size, x_user, y_user, mag);

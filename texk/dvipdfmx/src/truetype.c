@@ -444,6 +444,7 @@ static int
 selectglyph (USHORT in, const char *suffix, struct glyph_mapper *gm, USHORT *out)
 {
   char  *s, *q, t[5];
+  const char *r;
   int    n, error = 0;
 
   ASSERT(suffix && gm && out);
@@ -456,9 +457,9 @@ selectglyph (USHORT in, const char *suffix, struct glyph_mapper *gm, USHORT *out
    * agl.c currently only knows less ambiguos cases;
    * e.g., 'sc', 'superior', etc.
    */
-  q = (char *) agl_suffix_to_otltag(s);
-  if (q) { /* We found feature tag for 'suffix'. */
-    error = select_gsub(q, gm); /* no fallback for this */
+  r = agl_suffix_to_otltag(s);
+  if (r) { /* We found feature tag for 'suffix'. */
+    error = select_gsub(r, gm); /* no fallback for this */
     if (!error)
       error = otl_gsub_apply(gm->gsub, &in);
   } else { /* 'suffix' may represent feature tag. */

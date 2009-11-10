@@ -5,7 +5,15 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-SUBDIRS = data src
+SUBDIRS = . data src
+
+all-local: config.force
+
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 EXTRA_DIST = ChangeLog.TL
 

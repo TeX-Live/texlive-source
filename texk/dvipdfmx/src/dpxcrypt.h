@@ -34,7 +34,7 @@ typedef struct {
 } MD5_CONTEXT;
 
 void MD5_init (MD5_CONTEXT *ctx);
-void MD5_write (MD5_CONTEXT *ctx, unsigned char *inbuf, unsigned long inlen);
+void MD5_write (MD5_CONTEXT *ctx, const unsigned char *inbuf, unsigned long inlen);
 void MD5_final (unsigned char *outbuf, MD5_CONTEXT *ctx);
 
 /* libgcrypt arcfour */

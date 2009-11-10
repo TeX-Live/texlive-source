@@ -55,9 +55,10 @@ static double pending_y     = 0.0;
 static int    position_set  = 0;
 
 static char *
-parse_filename (char **pp, char *endptr)
+parse_filename (const char **pp, const char *endptr)
 {
-  char  *r, *q = NULL, *p = *pp;
+  char  *r;
+  const char *q = NULL, *p = *pp;
   char   qchar;
   int    n;
 
@@ -302,11 +303,11 @@ spc_dvips_at_end_page (void)
 int
 spc_dvips_check_special (const char *buf, long len)
 {
-  char *p, *endptr;
+  const char *p, *endptr;
   int   i;
 
-  p      = (char *) buf;
-  endptr =  p + len;
+  p      = buf;
+  endptr = p + len;
 
   skip_white(&p, endptr);
   if (p >= endptr)
@@ -329,7 +330,7 @@ int
 spc_dvips_setup_handler (struct spc_handler *handle,
 			 struct spc_env *spe, struct spc_arg *args)
 {
-  char *key;
+  const char *key;
   int   i, keylen;
 
   ASSERT(handle && spe && args);
@@ -363,9 +364,9 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 
       skip_white(&args->curptr, args->endptr);
 
-      args->command = (char *) dvips_handlers[i].key;
+      args->command = dvips_handlers[i].key;
 
-      handle->key  = (char *) "ps:";
+      handle->key  = "ps:";
       handle->exec = dvips_handlers[i].exec;
 
       return  0;

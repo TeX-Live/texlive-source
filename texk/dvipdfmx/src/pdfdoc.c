@@ -193,7 +193,7 @@ typedef struct pdf_article
 
 struct name_dict
 {
-  char  *category;
+  const char  *category;
   struct ht_table *data;
 };
 
@@ -1417,7 +1417,7 @@ pdf_doc_init_names (pdf_doc *p, int check_gotos)
   
   p->names = NEW(NUM_NAME_CATEGORY + 1, struct name_dict);
   for (i = 0; i < NUM_NAME_CATEGORY; i++) {
-    p->names[i].category = (char *) name_dict_categories[i];
+    p->names[i].category = name_dict_categories[i];
     p->names[i].data     = strcmp(name_dict_categories[i], "Dests") ?
                              NULL : pdf_new_name_tree();
     /*
@@ -1461,7 +1461,7 @@ static void
 pdf_doc_add_goto (pdf_obj *annot_dict)
 {
   pdf_obj *subtype = NULL, *A = NULL, *S = NULL, *D = NULL, *D_new, *dict;
-  char *dest, *key;
+  const char *dest, *key;
 
   if (!pdoc.check_gotos)
     return;

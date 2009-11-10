@@ -68,7 +68,7 @@ typedef struct {
 /* Dictionary */
 typedef struct {
   int     id;     /* encoded data value (as card8 or card16) */
-  char   *key;    /* opname                                  */
+  const char *key; /* opname                                 */
   int     count;  /* number of values                        */
   double *values; /* values                                  */
 } cff_dict_entry;

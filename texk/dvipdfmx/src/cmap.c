@@ -254,10 +254,11 @@ CMap_decode_char (CMap *cmap,
 		  unsigned char **outbuf, long *outbytesleft)
 {
   mapDef *t;
-  unsigned char *p, c = 0, *save;
+  const unsigned char *p, *save;
+  unsigned char c = 0;
   long    count = 0;
 
-  p = save = (unsigned char *) *inbuf;
+  p = save = *inbuf;
   /*
    * First handle some special cases:
    */

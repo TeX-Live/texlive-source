@@ -482,7 +482,7 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
 }
 
 static pdf_obj *
-my_parse_pdf_dict (char **pp, char *endptr, struct tounicode *cd)
+my_parse_pdf_dict (const char **pp, const char *endptr, struct tounicode *cd)
 {
   pdf_obj  *dict;
 
@@ -1950,9 +1950,9 @@ int
 spc_pdfm_check_special (const char *buf, long len)
 {
   int    r = 0;
-  char  *p, *endptr;
+  const char *p, *endptr;
 
-  p      = (char *) buf;
+  p      = buf;
   endptr = p + len;
 
   skip_white(&p, endptr);
@@ -1987,8 +1987,8 @@ spc_pdfm_setup_handler (struct spc_handler *sph,
     for (i = 0;
          i < sizeof(pdfm_handlers) / sizeof(struct spc_handler); i++) {
       if (!strcmp(q, pdfm_handlers[i].key)) {
-        ap->command = (char *) pdfm_handlers[i].key;
-        sph->key   = (char *) "pdf:";
+        ap->command = pdfm_handlers[i].key;
+        sph->key   = "pdf:";
         sph->exec  = pdfm_handlers[i].exec;
         skip_white(&ap->curptr, ap->endptr);
         error = 0;

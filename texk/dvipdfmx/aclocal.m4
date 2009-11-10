@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.63],,
-[m4_warning([this file was generated for autoconf 2.63.
+m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.64],,
+[m4_warning([this file was generated for autoconf 2.64.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -989,7 +989,6 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
-m4_include([../../m4/cho-kpse.m4])
 m4_include([../../m4/cho-libs.m4])
 m4_include([../../m4/kpse-common.m4])
 m4_include([../../m4/kpse-kpathsea-flags.m4])
@@ -1001,4 +1000,3 @@ m4_include([../../m4/ltoptions.m4])
 m4_include([../../m4/ltsugar.m4])
 m4_include([../../m4/ltversion.m4])
 m4_include([../../m4/lt~obsolete.m4])
-m4_include([../../m4/maw-time.m4])

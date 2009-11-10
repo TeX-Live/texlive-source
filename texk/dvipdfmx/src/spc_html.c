@@ -72,7 +72,7 @@ static struct spc_html_ _html_state = {
 
 
 #ifdef  ENABLE_HTML_SVG_TRANSFORM
-static int cvt_a_to_tmatrix (pdf_tmatrix *M, const char *ptr, char **nextptr);
+static int cvt_a_to_tmatrix (pdf_tmatrix *M, const char *ptr, const char **nextptr);
 #endif /* ENABLE_HTML_SVG_TRANSFORM */
 
 #define \
@@ -88,9 +88,10 @@ if ((s)) { \
 }
 
 static int
-parse_key_val (char **pp, char *endptr, char **kp, char **vp)
+parse_key_val (const char **pp, const char *endptr, char **kp, char **vp)
 {
-  char  *q, *p, *k, *v;
+  const char *q, *p;
+  char  *k, *v;
   int    n, error = 0;
 
   for (p = *pp ; p < endptr && isspace(*p); p++);
@@ -157,9 +158,9 @@ parse_key_val (char **pp, char *endptr, char **kp, char **vp)
 #define  HTML_TAG_TYPE_CLOSE  2
 
 static int
-read_html_tag (char *name, pdf_obj *attr, int *type, char **pp, char *endptr)
+read_html_tag (char *name, pdf_obj *attr, int *type, const char **pp, const char *endptr)
 {
-  char  *p = *pp;
+  const char *p = *pp;
   int    n = 0, error = 0;
 
   for ( ; p < endptr && isspace(*p); p++);
@@ -477,7 +478,8 @@ spc_html__base_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
 static double
 atopt (const char *a)
 {
-  char   *q, *p = (char *) a;
+  char   *q;
+  const char *p = a;
   double  v, u = 1.0;
   const char *_ukeys[] = {
 #define K_UNIT__PT  0
@@ -613,7 +615,7 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr, struct spc_html_ *sd)
 #ifdef  ENABLE_HTML_SVG_TRANSFORM
   obj = pdf_lookup_dict(attr, "svg:transform");
   if (obj) {
-    char  *p = (char *) pdf_string_value(obj);
+    const char *p = pdf_string_value(obj);
     pdf_tmatrix  N;
     for ( ; *p && isspace(*p); p++);
     while (*p && !error) {
@@ -760,9 +762,10 @@ spc_handler_html_default (struct spc_env *spe, struct spc_arg *ap)
 #ifdef  ENABLE_HTML_SVG_TRANSFORM
 /* translate wsp* '(' wsp* number (comma-wsp number)? wsp* ')' */
 static int
-cvt_a_to_tmatrix (pdf_tmatrix *M, const char *ptr, char **nextptr)
+cvt_a_to_tmatrix (pdf_tmatrix *M, const char *ptr, const char **nextptr)
 {
-  char        *q, *p = (char *) ptr;
+  char        *q;
+  const char  *p = ptr;
   int          n;
   double       v[6];
   static const char *_tkeys[] = {
@@ -899,9 +902,9 @@ spc_html_at_end_document (void)
 int
 spc_html_check_special (const char *buffer, long size)
 {
-  char  *p, *endptr;
+  const char *p, *endptr;
 
-  p      = (char *) buffer;
+  p      = buffer;
   endptr = p + size;
 
   for ( ; p < endptr && isspace(*p); p++);
@@ -927,9 +930,9 @@ spc_html_setup_handler (struct spc_handler *sph,
     return  -1;
   }
 
-  ap->command = (char *) "";
+  ap->command = "";
 
-  sph->key    = (char *) "html:";
+  sph->key    = "html:";
   sph->exec   = &spc_handler_html_default;
 
   ap->curptr += strlen("html:");

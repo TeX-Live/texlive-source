@@ -46,7 +46,7 @@ otl_conf_set_verbose (void)
 }
 
 static pdf_obj *
-parse_uc_coverage (pdf_obj *gclass, char **pp, char *endptr)
+parse_uc_coverage (pdf_obj *gclass, const char **pp, const char *endptr)
 {
   pdf_obj *coverage;
   pdf_obj *value;
@@ -126,7 +126,7 @@ parse_uc_coverage (pdf_obj *gclass, char **pp, char *endptr)
   return coverage;
 }
 
-static pdf_obj *parse_block (pdf_obj *gclass, char **pp, char *endptr);
+static pdf_obj *parse_block (pdf_obj *gclass, const char **pp, const char *endptr);
 
 static void
 add_rule (pdf_obj *rule, pdf_obj *gclass,
@@ -234,7 +234,7 @@ add_rule (pdf_obj *rule, pdf_obj *gclass,
 }
 
 static pdf_obj *
-parse_substrule (pdf_obj *gclass, char **pp, char *endptr)
+parse_substrule (pdf_obj *gclass, const char **pp, const char *endptr)
 {
   pdf_obj *substrule;
   char    *token;
@@ -319,7 +319,7 @@ parse_substrule (pdf_obj *gclass, char **pp, char *endptr)
 }
 
 static pdf_obj *
-parse_block (pdf_obj *gclass, char **pp, char *endptr)
+parse_block (pdf_obj *gclass, const char **pp, const char *endptr)
 {
   pdf_obj *rule;
   char    *token, *tmp;
@@ -495,7 +495,7 @@ otl_read_conf (const char *conf_name)
   
   p      = wbuf;
   gclass = pdf_new_dict();
-  rule   = parse_block(gclass, &p, endptr);
+  rule   = parse_block(gclass, (const char **) &p, endptr);
   pdf_release_obj(gclass);
 
   RELEASE(wbuf);

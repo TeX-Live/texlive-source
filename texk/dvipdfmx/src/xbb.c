@@ -78,7 +78,7 @@ static void do_time(FILE *file)
   fprintf(file, "%%%%CreationDate: %s\n", asctime(bd_time));
 }
 
-char *extensions[] = {
+const char *extensions[] = {
   ".jpeg", ".JPEG", ".jpg", ".JPG", ".pdf", ".PDF", ".png", ".PNG"
 };
 

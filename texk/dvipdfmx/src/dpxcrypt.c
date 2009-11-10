@@ -87,7 +87,7 @@ void MD5_init (MD5_CONTEXT *ctx)
 #define FI(b, c, d) (c ^ (b | ~d))
 
 /* transform n*64 bytes */
-static void transform (MD5_CONTEXT *ctx, unsigned char *data)
+static void transform (MD5_CONTEXT *ctx, const unsigned char *data)
 {
   unsigned long correct_words[16];
   register unsigned long A = ctx->A;
@@ -97,7 +97,7 @@ static void transform (MD5_CONTEXT *ctx, unsigned char *data)
   unsigned long *cwp = correct_words;
 
 #ifdef WORDS_BIGENDIAN
-  { int i; unsigned char *p1, *p2;
+  { int i; const unsigned char *p1; unsigned char *p2;
     for (i = 0, p1 = data, p2 = (unsigned char *)correct_words; i < 16; i++, p2 += 4 ) {
       p2[3] = *p1++; p2[2] = *p1++; p2[1] = *p1++; p2[0] = *p1++;
     }
@@ -201,7 +201,7 @@ static void transform (MD5_CONTEXT *ctx, unsigned char *data)
 /* The routine updates the message-digest context to
  * account for the presence of each of the characters inBuf[0..inLen-1]
  * in the message whose digest is being computed. */
-void MD5_write (MD5_CONTEXT *hd, unsigned char *inbuf, unsigned long inlen)
+void MD5_write (MD5_CONTEXT *hd, const unsigned char *inbuf, unsigned long inlen)
 {
   if (hd->count == 64) { /* flush the buffer */
     transform(hd, hd->buf);

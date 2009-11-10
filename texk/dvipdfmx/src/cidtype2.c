@@ -184,7 +184,7 @@ find_tocode_cmap (const char *reg, const char *ord, int select)
 {
   int   cmap_id = -1, i;
   char *cmap_name;
-  char *append;
+  const char *append;
 
   if (!reg || !ord ||
       select < 0 || select > KNOWN_ENCODINGS_MAX)
@@ -195,7 +195,7 @@ find_tocode_cmap (const char *reg, const char *ord, int select)
     return NULL;
 
   for (i = 0; cmap_id < 0 && i < 5; i++) {
-    append = (char *) known_encodings[select].pdfnames[i];
+    append = known_encodings[select].pdfnames[i];
     if (!append)
       break;
     cmap_name = NEW(strlen(reg) + strlen(ord) + strlen(append) + 3, char);
@@ -207,7 +207,7 @@ find_tocode_cmap (const char *reg, const char *ord, int select)
     WARN("Could not find CID-to-Code mapping for \"%s-%s\".", reg, ord);
     WARN("I tried to load (one of) the following file(s):");
     for (i = 0; i < 5; i++) {
-      append = (char *) known_encodings[select].pdfnames[i];
+      append = known_encodings[select].pdfnames[i];
       if (!append)
 	break;
       MESG(" %s-%s-%s", reg, ord, append);

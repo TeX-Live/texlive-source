@@ -69,7 +69,7 @@ static struct {
 
 static int xtoi (char ch);
 
-static char *save = NULL;
+static const char *save = NULL;
 
 void
 dump (const char *start, const char *end)
@@ -94,7 +94,7 @@ dump (const char *start, const char *end)
  } while (0)
 
 void
-skip_line (char **start, char *end)
+skip_line (const char **start, const char *end)
 {
   while (*start < end && **start != '\n' && **start != '\r')
     (*start)++;
@@ -110,7 +110,7 @@ skip_line (char **start, char *end)
 }
 
 void
-skip_white (char **start, char *end)
+skip_white (const char **start, const char *end)
 {
   /*
    * The null (NUL; 0x00) character is a white-space character in PDF spec
@@ -144,9 +144,10 @@ parsed_string (const char *start, const char *end)
 }
 
 char *
-parse_number (char **start, char *end)
+parse_number (const char **start, const char *end)
 {
-  char *number, *p;
+  char *number;
+  const char *p;
 
   skip_white(start, end);
   p = *start;
@@ -166,9 +167,10 @@ parse_number (char **start, char *end)
 }
 
 char *
-parse_unsigned (char **start, char *end)
+parse_unsigned (const char **start, const char *end)
 {
-  char *number, *p;
+  char *number;
+  const char *p;
 
   skip_white(start, end);
   for (p = *start; p < end; p++) {
@@ -182,9 +184,10 @@ parse_unsigned (char **start, char *end)
 }
 
 static char *
-parse_gen_ident (char **start, char *end, const char *valid_chars)
+parse_gen_ident (const char **start, const char *end, const char *valid_chars)
 {
-  char *ident, *p;
+  char *ident;
+  const char *p;
 
   /* No skip_white(start, end)? */
   for (p = *start; p < end; p++) {
@@ -198,7 +201,7 @@ parse_gen_ident (char **start, char *end, const char *valid_chars)
 }
 
 char *
-parse_ident (char **start, char *end)
+parse_ident (const char **start, const char *end)
 {
   static const char *valid_chars =
     "!\"#$&'*+,-.0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz|~";
@@ -207,7 +210,7 @@ parse_ident (char **start, char *end)
 }
 
 char *
-parse_val_ident (char **start, char *end)
+parse_val_ident (const char **start, const char *end)
 {
   static const char *valid_chars =
     "!\"#$&'*+,-./0123456789:;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\\^_`abcdefghijklmnopqrstuvwxyz|~";
@@ -216,7 +219,7 @@ parse_val_ident (char **start, char *end)
 }
 
 char *
-parse_opt_ident (char **start, char *end)
+parse_opt_ident (const char **start, const char *end)
 {
   if (*start < end && **start == '@') {
     (*start)++;
@@ -228,9 +231,9 @@ parse_opt_ident (char **start, char *end)
 
 #define DDIGITS_MAX 10
 pdf_obj *
-parse_pdf_number (char **pp, char *endptr)
+parse_pdf_number (const char **pp, const char *endptr)
 {
-  char    *p;
+  const char *p;
   unsigned long ipart = 0, dpart = 0;
   int      nddigits = 0, sign = 1;
   int      has_dot = 0;
@@ -309,10 +312,10 @@ parse_pdf_number (char **pp, char *endptr)
  *  PDF-1.2+: Two hexadecimal digits preceded by a number sign.
  */
 static int
-pn_getc (char **pp, char *endptr)
+pn_getc (const char **pp, const char *endptr)
 {
   int   ch = 0;
-  char *p;
+  const char *p;
 
   p  = *pp;
   if (p[0] == '#') {
@@ -348,7 +351,7 @@ static char sbuf[PDF_STRING_LEN_MAX+1];
 
 
 pdf_obj *
-parse_pdf_name (char **pp, char *endptr)
+parse_pdf_name (const char **pp, const char *endptr)
 {
   char  name[PDF_NAME_LEN_MAX+1];
   int   ch, len = 0;
@@ -386,7 +389,7 @@ parse_pdf_name (char **pp, char *endptr)
 }
 
 pdf_obj *
-parse_pdf_boolean (char **pp, char *endptr)
+parse_pdf_boolean (const char **pp, const char *endptr)
 {
   skip_white(pp, endptr);
   if (*pp + 4 <= endptr &&
@@ -411,7 +414,7 @@ parse_pdf_boolean (char **pp, char *endptr)
 }
 
 pdf_obj *
-parse_pdf_null (char **pp, char *endptr)
+parse_pdf_null (const char **pp, const char *endptr)
 {
   skip_white(pp, endptr);
   if (*pp + 4 > endptr) {
@@ -438,10 +441,10 @@ parse_pdf_null (char **pp, char *endptr)
 #define isodigit(c) ((c) >= '0' && (c) <= '7')
 #endif
 static int
-ps_getescc (char **pp, char *endptr)
+ps_getescc (const char **pp, const char *endptr)
 {
   int   ch, i;
-  char  *p;
+  const char *p;
 
   p = *pp + 1; /* backslash assumed. */
   switch (p[0]) {
@@ -489,10 +492,10 @@ ps_getescc (char **pp, char *endptr)
 }
 
 static pdf_obj *
-parse_pdf_literal_string (char **pp, char *endptr)
+parse_pdf_literal_string (const char **pp, const char *endptr)
 {
   int    ch, op_count = 0, len = 0;
-  char  *p;
+  const char  *p;
 
   p = *pp;
 
@@ -594,9 +597,9 @@ xtoi (char ch)
 }
 
 static pdf_obj *
-parse_pdf_hex_string (char **pp, char *endptr)
+parse_pdf_hex_string (const char **pp, const char *endptr)
 {
-  char  *p;
+  const char  *p;
   long   len;
 
   p = *pp;
@@ -643,7 +646,7 @@ parse_pdf_hex_string (char **pp, char *endptr)
 }
 
 pdf_obj *
-parse_pdf_string (char **pp, char *endptr)
+parse_pdf_string (const char **pp, const char *endptr)
 {
   skip_white(pp, endptr);
   if (*pp + 2 <= endptr) {
@@ -662,7 +665,7 @@ parse_pdf_string (char **pp, char *endptr)
 
 #ifndef PDF_PARSE_STRICT
 pdf_obj *
-parse_pdf_tainted_dict (char **pp, char *endptr)
+parse_pdf_tainted_dict (const char **pp, const char *endptr)
 {
   pdf_obj *result;
 
@@ -674,17 +677,17 @@ parse_pdf_tainted_dict (char **pp, char *endptr)
 }
 #else /* PDF_PARSE_STRICT */
 pdf_obj *
-parse_pdf_tainted_dict (char **pp, char *endptr)
+parse_pdf_tainted_dict (const char **pp, const char *endptr)
 {
   return parse_pdf_dict(pp, endptr, NULL);
 }
 #endif /* !PDF_PARSE_STRICT */
 
 pdf_obj *
-parse_pdf_dict (char **pp, char *endptr, pdf_file *pf)
+parse_pdf_dict (const char **pp, const char *endptr, pdf_file *pf)
 {
   pdf_obj *result = NULL;
-  char    *p;
+  const char *p;
 
   p = *pp;
 
@@ -738,10 +741,10 @@ parse_pdf_dict (char **pp, char *endptr, pdf_file *pf)
 }
 
 pdf_obj *
-parse_pdf_array (char **pp, char *endptr, pdf_file *pf)
+parse_pdf_array (const char **pp, const char *endptr, pdf_file *pf)
 {
   pdf_obj *result;
-  char    *p;
+  const char *p;
 
   p = *pp;
 
@@ -781,10 +784,10 @@ parse_pdf_array (char **pp, char *endptr, pdf_file *pf)
 }
 
 static pdf_obj *
-parse_pdf_stream (char **pp, char *endptr, pdf_obj *dict, pdf_file *pf)
+parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict, pdf_file *pf)
 {
   pdf_obj *result = NULL;
-  char    *p;
+  const char *p;
   pdf_obj *stream_dict;
   long     stream_length;
 
@@ -886,7 +889,7 @@ parse_pdf_stream (char **pp, char *endptr, pdf_obj *dict, pdf_file *pf)
 
 /* This is not PDF indirect reference. */
 static pdf_obj *
-parse_pdf_reference (char **start, char *end)
+parse_pdf_reference (const char **start, const char *end)
 {
   pdf_obj *result = NULL;
   char    *name;
@@ -913,7 +916,7 @@ parse_pdf_reference (char **start, char *end)
 #endif /* !PDF_PARSE_STRICT */
 
 static pdf_obj *
-try_pdf_reference (char *start, char *end, char **endptr, pdf_file *pf)
+try_pdf_reference (const char *start, const char *end, const char **endptr, pdf_file *pf)
 {
   unsigned long id = 0;
   unsigned short gen = 0;
@@ -959,11 +962,11 @@ try_pdf_reference (char *start, char *end, char **endptr, pdf_file *pf)
 }
 
 pdf_obj *
-parse_pdf_object (char **pp, char *endptr, pdf_file *pf)
+parse_pdf_object (const char **pp, const char *endptr, pdf_file *pf)
 /* If pf is NULL, then indirect references are not allowed */
 {
   pdf_obj *result = NULL;
-  char    *nextptr;
+  const char *nextptr;
 
   skip_white(pp, endptr);
   if (*pp >= endptr) {

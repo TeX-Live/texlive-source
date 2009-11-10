@@ -93,7 +93,7 @@ typedef struct pdf_encoding
 static int      pdf_encoding_new_encoding (const char *enc_name,
 					   const char *ident,
 					   const char **encoding_vec,
-					   char *baseenc_name,
+					   const char *baseenc_name,
 					   int flags);
 
 static void
@@ -286,7 +286,8 @@ load_encoding_file (const char *filename)
   FILE    *fp;
   pdf_obj *enc_name = NULL;
   pdf_obj *encoding_array = NULL;
-  char    *wbuf, *p, *endptr;
+  char    *wbuf;
+  const char *p, *endptr;
   char    *enc_vec[256];
   int      code, fsize, enc_id;
 
@@ -307,12 +308,12 @@ load_encoding_file (const char *filename)
   fsize = file_size(fp);
 
   wbuf = NEW(fsize + 1, char); 
+  wbuf[fsize] = '\0';
   fread(wbuf, sizeof(char), fsize, fp);
   DPXFCLOSE(fp);
 
   p        = wbuf;
   endptr   = wbuf + fsize;
-  p[fsize] = '\0';
 
   skip_white(&p, endptr);
 
@@ -405,7 +406,7 @@ pdf_init_encodings (void)
 static int
 pdf_encoding_new_encoding (const char *enc_name, const char *ident,
 			   const char **encoding_vec,
-			   char *baseenc_name, int flags)
+			   const char *baseenc_name, int flags)
 {
   int      enc_id, code;
 
@@ -458,7 +459,7 @@ pdf_encoding_new_encoding (const char *enc_name, const char *ident,
 /* Creates Encoding resource and ToUnicode CMap 
  * for all non-predefined encodings.
  */
-void pdf_encoding_complete ()
+void pdf_encoding_complete (void)
 {
   int  enc_id;
 
@@ -507,7 +508,7 @@ pdf_close_encodings (void)
 }
 
 int
-pdf_encoding_findresource (char *enc_name)
+pdf_encoding_findresource (const char *enc_name)
 {
   int           enc_id;
   pdf_encoding *encoding;

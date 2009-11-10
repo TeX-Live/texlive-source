@@ -83,6 +83,9 @@
 /* Define to 1 if you have the `mkstemp' function. */
 #undef HAVE_MKSTEMP
 
+/* Define to 1 if you have the `mktemp' function. */
+#undef HAVE_MKTEMP
+
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #undef HAVE_NDIR_H
 
@@ -132,10 +135,10 @@
 /* Define to 1 if you have the `strtol' function. */
 #undef HAVE_STRTOL
 
-/* Define to 1 if `st_mtim' is member of `struct stat'. */
+/* Define to 1 if `struct stat' is a member of `st_mtim'. */
 #undef HAVE_STRUCT_STAT_ST_MTIM
 
-/* Define to 1 if `tm_zone' is member of `struct tm'. */
+/* Define to 1 if `struct tm' is a member of `tm_zone'. */
 #undef HAVE_STRUCT_TM_TM_ZONE
 
 /* Define to 1 if you have the `system' function. */
@@ -200,6 +203,9 @@
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
 
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
@@ -244,10 +250,6 @@
 
 /* Define for large files, on AIX-style hosts. */
 #undef _LARGE_FILES
-
-/* Define as 0x200406L if your libkpathsea supports enc formats, or as
-   0x200302L otherwise. */
-#undef __TDS_VERSION__
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const

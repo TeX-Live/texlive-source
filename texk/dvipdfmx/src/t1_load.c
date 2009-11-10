@@ -1073,13 +1073,13 @@ get_pfb_segment (FILE *fp, int expected_type, long *length)
   return buffer;
 }
 
-char *
+const char *
 t1_get_standard_glyph (int code)
 {
   if (!StandardEncoding[code])
     return NULL;
 
-  return (char *) StandardEncoding[code];
+  return StandardEncoding[code];
 }
 
 int

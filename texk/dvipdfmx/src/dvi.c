@@ -459,7 +459,7 @@ void
 dvi_do_special (const void *buffer, UNSIGNED_QUAD size)
 {
   double x_user, y_user, mag;
-  char   *p;
+  const char *p;
 
   if (size > 0x7fffffffUL) {
     WARN("Special more than %ul bytes???", size);
@@ -468,7 +468,7 @@ dvi_do_special (const void *buffer, UNSIGNED_QUAD size)
 
   graphics_mode();
 
-  p = (char *) buffer;
+  p = (const char *) buffer;
 
   x_user =  dvi_state.h * dvi2pts;
   y_user = -dvi_state.v * dvi2pts;
@@ -1634,9 +1634,10 @@ dvi_vf_finish (void)
  * length value must be divided by current magnification.
  */
 static int
-read_length (double *vp, double mag, char **pp, char *endptr)
+read_length (double *vp, double mag, const char **pp, const char *endptr)
 {
-  char   *q, *p = *pp;
+  char   *q;
+  const char *p = *pp;
   double  v, u = 1.0;
   const char *_ukeys[] = {
 #define K_UNIT__PT  0
@@ -1689,8 +1690,8 @@ read_length (double *vp, double mag, char **pp, char *endptr)
 static int
 scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const char *buf, UNSIGNED_QUAD size)
 {
-  char  *q, *p = (char *) buf;
-  char  *endptr;
+  char  *q;
+  const char *p = buf, *endptr;
   int    ns_pdf = 0, error = 0;
 
   endptr = p + size;
