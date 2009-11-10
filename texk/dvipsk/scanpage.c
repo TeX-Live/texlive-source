@@ -8,29 +8,10 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 
 /*
- *   These are the external routines we need.
+ *   The external declarations:
  */
 #include "protos.h"
 
-extern integer firstboploc ;
-/*
- *   And, of course, the globals it uses.
- */
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern fontdesctype *curfnt ;
-extern fontmaptype *ffont ;
-extern quarterword *curpos, *curlim ;
-extern integer fontmem ;
-extern integer pagecount ;
-extern integer pagenum ;
-extern Boolean compressed ;
-extern FILE *dvifile ;
-extern char errbuf[] ;
-extern frametype frames[] ;
-extern integer pagecost ;
-extern Boolean noomega ;
 /*
  * Charge pagecost for the cost of showing the character that *cd refers to
  * and charge fontmem for the cost of downloading the character if necessary.

@@ -79,8 +79,6 @@
 #endif
 #endif
 
-extern void error() ;
-
 /* paths are all in the Makefile; by not supplying defaults, we force
    the installer to set them up. */
 #endif /* ! KPATHSEA */

@@ -6,29 +6,19 @@
 #include <kpathsea/c-pathmx.h>
 #endif
 /*
- *   These are the external routines it calls:
+ *   The external declarations:
  */
 #include "protos.h"
-/*
- *   Here are the external variables we use:
- */
-extern real conv ;
-extern real vconv ;
-extern real alpha ;
-#ifndef KPATHSEA
-extern char *tfmpath ;
-#endif
-extern char errbuf[] ;
-extern integer fsizetol ;
-extern Boolean noomega ;
+
+FILE *tfmfile ; 
+
 /*
  *   Our static variables:
  */
-FILE *tfmfile ; 
 static char name[50] ;
 
 void
-badtfm(char *s)
+badtfm(const char *s)
 {
    (void)sprintf(errbuf,"! Bad TFM file %s: %s",name,s) ;
    error(errbuf);

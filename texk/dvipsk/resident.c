@@ -25,78 +25,10 @@
  */
 struct resfont *reshash[RESHASHPRIME] ;
 /*
- *   These are the external routines we use.
+ *   The external declarations:
  */
 #include "protos.h"
-/*
- *   These are the external variables we use.
- */
-extern char *realnameoffile ;
-extern int prettycolumn ;
-extern int dvips_debug_flag ;
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern integer pagecopies ;
-extern int overridemag ;
-extern long bytesleft ;
-extern quarterword *raster ;
-extern FILE *pkfile ;
-extern char *oname ;
-extern integer swmem, fontmem ;
-#ifndef KPATHSEA
-extern char *tfmpath, *pictpath ;
-extern char *pkpath ;
-extern char *vfpath ;
-extern char *figpath ;
-extern char *configpath ;
-extern char *headerpath ;
-#ifdef SEARCH_SUBDIRECTORIES
-extern char *fontsubdirpath ;
-#endif
-#endif
-extern Boolean noenv ;
-extern Boolean downloadpspk ;
-#ifdef FONTLIB
-extern char *flipath, *fliname ;
-#endif
-extern char *paperfmt ; 
-extern char *nextstring ;
-extern char *maxstring ;
-extern char *warningmsg ;
-extern Boolean disablecomments ;
-extern Boolean compressed ;
-extern Boolean partialdownload ;
-extern int quiet ;
-extern int filter ;
-extern Boolean reverse ;
-extern Boolean usesPSfonts ;
-extern Boolean nosmallchars ;
-extern Boolean removecomments ;
-extern Boolean safetyenclose ;
-extern Boolean dopprescan ;
-extern integer maxsecsize ;
-extern double mag ;
-extern Boolean sepfiles ;
-extern int actualdpi ;
-extern int vactualdpi ;
-extern int maxdrift ;
-extern int vmaxdrift ;
-extern char *printer ;
-extern char *mfmode, *mflandmode ;
-extern int mfmode_option;
-extern int secure_option;
-extern int oname_option;
-extern Boolean sendcontrolD ;
-#ifdef SHIFTLOWCHARS
-extern Boolean shiftlowchars ;
-#endif
-extern unsigned lastresortsizes[] ;
-extern integer hoff, voff ;
-extern struct papsiz *papsizes ;
-extern int secure ;
-extern integer hpapersize, vpapersize ;
-extern int landscape ;
+
 /*
  *   To maintain a list of document fonts, we use the following
  *   pointer.
@@ -195,7 +127,6 @@ add_entry(char *TeXname, char *PSname, char *Fontfile,
  *   Now our residentfont routine.  Returns the number of characters in
  *   this font, based on the TFM file.
  */
-extern char *infont ;
 int
 residentfont(register fontdesctype *curfnt)
 {
@@ -284,7 +215,7 @@ residentfont(register fontdesctype *curfnt)
 static char was_inline[INLINE_SIZE] ;
 static unsigned c_lineno;
 void
-bad_config(char *err)
+bad_config(const char *err)
 {
    fprintf (stderr, "%s:%d:", realnameoffile, c_lineno);
    error (err);
@@ -364,9 +295,9 @@ configstring(char *s, int nullok)
 /*
  *   Now we have the getdefaults routine.
  */
-char *psmapfile = PSMAPFILE ;
+const char *psmapfile = PSMAPFILE ;
 Boolean
-getdefaults(char *s)
+getdefaults(const char *s)
 {
    FILE *deffile ;
    char PSname[INLINE_SIZE] ;
@@ -504,21 +435,21 @@ case '@' :
             }
          } else {
             struct papsiz *ps ;
+            char *q ;
             
             ps = (struct papsiz *)mymalloc((integer)sizeof(struct papsiz)) ;
             ps->next = papsizes ;
             papsizes = ps ;
-            ps->name = p ;
+            q = p ;
             while (*p && *p > ' ')
                p++ ;
             *p++ = 0 ;
-            ps->name = newstring(ps->name) ;
+            ps->name = newstring(q) ;
             while (*p && *p <= ' ') p++ ;
             handlepapersize(p, &hsiz, &vsiz) ;
             ps->xsize = hsiz ;
             ps->ysize = vsiz ;
-            ps->specdat = nextstring++ ;
-            *(ps->specdat) = 0 ;
+            ps->specdat = newstring("") ;
             canaddtopaper = 1 ;
          }
          break ;
@@ -566,14 +497,16 @@ case 'M' :
 case 'o' :
 	 if (!oname_option) {
            struct stat st_buf;
-           oname = configstring(was_inline+1, 1) ;
-           if ((*oname && oname[strlen(oname)-1] == ':')
-               || (stat(oname, &st_buf) == 0 && S_ISCHR(st_buf.st_mode))) {
+           char *tmp_oname ;
+           tmp_oname = configstring(was_inline+1, 1) ;
+           if ((*tmp_oname && tmp_oname[strlen(tmp_oname)-1] == ':')
+               || (stat(tmp_oname, &st_buf) == 0 && S_ISCHR(st_buf.st_mode))) {
               sendcontrolD = 1 ; /* if we send to a device, *we* are spooler */
 #if defined(MSDOS) || defined(OS2)
-              oname[strlen(oname)-1] = 0 ;
+              tmp_oname[strlen(tmp_oname)-1] = 0 ;
 #endif
            }
+           oname = tmp_oname ;
 	 }
          break ;
 case 'F' :
@@ -587,7 +520,6 @@ case 'O' :
 case 'L' : 
          {
             char tempname[INLINE_SIZE] ;
-            extern char *fliparse() ;
             if (sscanf(was_inline+1, "%s", PSname) != 1) bad_config("missing arg to L") ;
             else {
                flipath = getpath(fliparse(PSname,tempname), flipath);
@@ -856,7 +788,7 @@ default:
 *   default (possibly set) name, psfonts.map.
 */
 void
-getpsinfo(char *name)
+getpsinfo(const char *name)
 {
    FILE *deffile ;
    register char *p ;

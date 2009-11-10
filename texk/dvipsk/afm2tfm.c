@@ -26,6 +26,7 @@
 #include "config.h"
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/progname.h>
+#include <kpathsea/version.h>
 #include <math.h>
 #else /* ! KPATHSEA */
 #include <stdio.h>
@@ -71,8 +72,8 @@ extern FILE *fopen ();
 #endif
 
 struct encoding {
-   char *name ;
-   char *vec[256] ;
+   const char *name ;
+   const char *vec[256] ;
 } ;
 struct encoding staticencoding = {
   "TeX text",
@@ -102,7 +103,7 @@ struct encoding staticencoding = {
  *   It's easier to put this in static storage and parse it as we go
  *   than to build the structures ourselves.
  */
-char *staticligkern[] = {
+const char *staticligkern[] = {
    "% LIGKERN space l =: lslash ; space L =: Lslash ;",
    "% LIGKERN question quoteleft =: questiondown ;",
    "% LIGKERN exclam quoteleft =: exclamdown ;",
@@ -169,7 +170,7 @@ int ignoreligkern ;         /* do we look at ligkern info in the encoding? */
 struct adobeinfo {
    struct adobeinfo *next ;
    int adobenum, texnum, width ;
-   char *adobename ;
+   const char *adobename ;
    int llx, lly, urx, ury ;
    struct lig *ligs ;
    struct kern *kerns ;
@@ -182,20 +183,20 @@ int nexttex[256] ; /* for characters encoded multiple times in output */
 /*
  *   These are the eight ligature ops, in VPL terms and in METAFONT terms.
  */
-char *vplligops[] = {
+const char *vplligops[] = {
    "LIG", "/LIG", "/LIG>", "LIG/", "LIG/>", "/LIG/", "/LIG/>", "/LIG/>>", 0
 } ;
-char *encligops[] = {
+const char *encligops[] = {
    "=:", "|=:", "|=:>", "=:|", "=:|>", "|=:|", "|=:|>", "|=:|>>", 0
 } ;
 struct lig {
    struct lig *next ;
-   char *succ, *sub ;
+   const char *succ, *sub ;
    short op, boundleft ;
 } ;
 struct kern {
    struct kern *next ;
-   char *succ ;
+   const char *succ ;
    int delta ;
 } ;
 struct adobeptr {
@@ -204,7 +205,7 @@ struct adobeptr {
 };
 struct pcc {
    struct pcc *next ;
-   char * partname ;
+   const char * partname ;
    int xoffset, yoffset ;
 } ;
 
@@ -215,8 +216,8 @@ char tmpstr[200] ; /* a buffer for one string */
 char buffer[INBUFSIZE+10]; /* input buffer (modified while parsing) */
 char obuffer[INBUFSIZE+10] ; /* unmodified copy of input buffer */
 char *param ; /* current position in input buffer */
-char *fontname = "Unknown" ;
-char *codingscheme = "Unspecified" ;
+const char *fontname = "Unknown" ;
+const char *codingscheme = "Unspecified" ;
 #ifdef VMCMS
 char *ebfontname ;
 char *ebcodingscheme ;
@@ -236,7 +237,7 @@ double newslant ;
 char titlebuf[500] ;
 
 static void
-error(register char *s)
+error(const char *s)
 {
    (void)fprintf(stderr, "%s\n", s) ;
    if (obuffer[0]) {
@@ -291,7 +292,7 @@ texlive_getline(void) {
       return(1) ;
 }
 
-char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
+const char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
    "XHeight", "C", "KPX", "CC", "EncodingScheme", NULL} ;
 #define FontName (0)
 #define ItalicAngle (1)
@@ -303,9 +304,9 @@ char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
 #define EncodingScheme (7)
 #define NONE (-1)
 static int
-interest(char *s)
+interest(const char *s)
 {
-   register char **p ;
+   register const char **p ;
    register int n ;
 
    for (p=interesting, n=0; *p; p++, n++)
@@ -453,7 +454,7 @@ newlig(void) {
 }
 
 static void
-expect(char *s)
+expect(const char *s)
 {
    if (strcmp(paramstring(), s) != 0) {
       (void)fprintf(stderr, "%s expected: ", s) ;
@@ -511,7 +512,7 @@ handlechar(void) { /* an input line beginning with C */
 }
 
 static struct adobeinfo *
-findadobe(char *p)
+findadobe(const char *p)
 {
    register struct adobeinfo *ai ;
 
@@ -682,7 +683,7 @@ handlereencoding(void) {
    if (inenname) {
       int i ;
       struct adobeinfo *ai ;
-      char *p ;
+      const char *p ;
 
       ignoreligkern = 1 ;
       inencoding = readencoding(inenname) ;
@@ -730,7 +731,7 @@ revlist (struct adobeinfo *p)
 
 static void
 assignchars(void) {
-   register char **p ;
+   register const char **p ;
    register int i, j ;
    register struct adobeinfo *ai, *pai ;
    int nextfree = 128 ;
@@ -814,7 +815,8 @@ finishup:
 static void
 upmap(void) { /* Compute uppercase mapping, when making a small caps font */
    register struct adobeinfo *ai, *Ai ;
-   register char *p, *q ;
+   register const char *p ;
+   register char *q ;
    register struct pcc *np, *nq ;
    int i ;
    char lwr[50] ;
@@ -895,7 +897,7 @@ writearr(register long *p, register int n)
 }
 
 static void
-makebcpl(register long *p, register char *s, register int n)
+makebcpl(register long *p, register const char *s, register int n)
 {
    register long t ;
    register long sc ;
@@ -905,7 +907,7 @@ makebcpl(register long *p, register char *s, register int n)
    t = ((long)n) << 24 ;
    sc = 16 ;
    while (n > 0) {
-      t |= ((long)(*(unsigned char *)s++)) << sc ;
+      t |= ((long)(*(unsigned const char *)s++)) << sc ;
       sc -= 8 ;
       if (sc < 0) {
          *p++ = t ;
@@ -992,7 +994,7 @@ static long
 checksum(void) {
    int i ;
    unsigned long s1 = 0, s2 = 0 ;
-   char *p ;
+   const char *p ;
    struct adobeinfo *ai ;
 
    for (i=0; i<256; i++)
@@ -1191,11 +1193,11 @@ writetfm(void) {
  *   We only do this if the xheight has a reasonable value.
  *   (>50)
  */
-char *accents[] = { "acute", "tilde", "caron", "dieresis", NULL} ;
+const char *accents[] = { "acute", "tilde", "caron", "dieresis", NULL} ;
 static int
 texheight(register struct adobeinfo *ai)
 {
-   register char **p;
+   register const char **p;
    register struct adobeinfo *aci, *acci ;
    if (xheight <= 50 || *(ai->adobename + 1)) return (ai->ury) ;
                                            /* that was the simple case */
@@ -1214,12 +1216,14 @@ texheight(register struct adobeinfo *ai)
 #define vout(s)  fprintf(vplout, s)
 int level ; /* the depth of parenthesis nesting in VPL file being written */
 static void
-vlevout() {
+vlevout(void)
+{
    register int l = level ;
    while (l--) vout("   ") ;
 }
 static void
-vlevnlout() {
+vlevnlout(void)
+{
    vout("\n") ;
    vlevout() ;
 }
@@ -1297,7 +1301,7 @@ writevpl(void)
    voutln2("(FAMILY %s)" , obuffer) ;
    {
       char tbuf[300] ;
-      char *base_encoding = 
+      const char *base_encoding = 
 #ifndef VMCMS
          codingscheme ;
 #else
@@ -1499,7 +1503,6 @@ writevpl(void)
 static void
 version(FILE *f)
 {
-  extern KPSEDLL char *kpathsea_version_string;
   fputs ("afm2tfm(k) (dvips(k) 5.98) 8.1\n", f);
   fprintf (f, "%s\n", kpathsea_version_string);
   fputs ("Copyright 2009 Radical Eye Software.\n\
@@ -1531,8 +1534,6 @@ Original author of afm2tfm: T. Rokicki.\n", f);
 static void
 usage(FILE *f)
 {
-   extern KPSEDLL char *kpse_bug_address;
-   
    fputs ("Usage: afm2tfm FILE[.afm] [OPTION]... [FILE[.tfm]]\n", f);
    fputs (USAGE, f);
    putc ('\n', f);
@@ -1560,6 +1561,8 @@ openfiles(int argc, char **argv)
 {
 #ifndef KPATHSEA
    register int lastext ;
+#else
+   const char *q;
 #endif
    register int i ;
    char *p ;
@@ -1706,8 +1709,8 @@ default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
      p = find_suffix(outname);
    *(p-1) = 0;
 
-   p = (char *)xbasename(outname) ;
-   strcpy(tmpstr, p);        /* be careful, p and outname are overlapping */
+   q = xbasename(outname) ;
+   strcpy(tmpstr, q);        /* be careful, q and outname are overlapping */
    strcpy(outname, tmpstr);
 #else
    lastext = -1 ;

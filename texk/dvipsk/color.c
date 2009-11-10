@@ -17,11 +17,10 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #include <stdio.h>
 /*
- *   Externals we use.
+ *   The external declarations:
  */
 #include "protos.h"
-extern integer pagenum ;
-extern FILE *dvifile ;
+
 /*
  *   Here we set some limits on some color stuff.
  */

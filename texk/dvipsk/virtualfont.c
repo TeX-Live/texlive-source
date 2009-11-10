@@ -7,30 +7,9 @@
 #include <kpathsea/c-pathmx.h>
 #endif
 /*
- *   These are the external routines we use.
+ *   The external declarations:
  */
 #include "protos.h"
-/*
- *   These are the external variables we use.
- */
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern long bytesleft ;
-extern quarterword *raster ;
-#ifndef KPATHSEA
-extern char *vfpath ;
-#endif
-extern char errbuf[200] ;
-extern real conv ;
-extern real vconv ;
-extern real alpha ;
-extern int actualdpi ;
-extern int vactualdpi ;
-extern char *nextstring, *maxstring ;
-extern fontdesctype *fonthead ;
-extern real alpha ;
-extern Boolean noomega ;
 /*
  *   Now we have some routines to get stuff from the VF file.
  *   Subroutine vfbyte returns the next byte.
@@ -38,7 +17,7 @@ extern Boolean noomega ;
 static FILE *vffile ;
 static char name[50] ;
 void
-badvf(char *s)
+badvf(const char *s)
 {
    (void)sprintf(errbuf,"! Bad VF file %s: %s",name,s) ;
    error(errbuf);

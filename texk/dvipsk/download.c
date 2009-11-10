@@ -12,28 +12,11 @@
 #endif
 #define DVIPS
 /*
- *   These are the external routines we call.
+ *   The external declarations:
  */
 #include "protos.h"
-/*
- *   These are the external variables we access.
- */
-extern char *nextstring, *infont ;
-extern FILE *bitfile ;
-extern fontdesctype *curfnt ;
-extern long bytesleft ;
-extern long mbytesleft ;
-extern quarterword *raster ;
-extern quarterword *mraster ;
-extern Boolean compressed ;
-extern Boolean partialdownload ;
-extern double mag ;
-extern int actualdpi ;
+
 static unsigned char dummyend[8] = { 252 } ;
-extern int prettycolumn ;
-extern int quiet ;
-extern Boolean disablecomments ;
-extern real conv ;
 
 /*
  *   We have a routine that downloads an individual character.
@@ -351,15 +334,15 @@ download(charusetype *p, int psfont)
  */
 static struct seenEncodings {
    struct seenEncodings *next ;
-   char *name ;
-   char **glyphs ;
+   const char *name ;
+   const char **glyphs ;
 } *seenEncodings ;
 #define MAX_CHAR_CODE 256
 /*
  *   Load a new encoding and return the array of glyphs as a vector.
  *   Linear search.
  */
-static char **getEncoding(char *encoding) {
+static const char **getEncoding(char *encoding) {
    struct seenEncodings *p = seenEncodings ;
    while (p != 0)
       if (strcmp(encoding, p->name) == 0)
@@ -372,7 +355,7 @@ static char **getEncoding(char *encoding) {
       p->next = seenEncodings ;
       seenEncodings = p ;
       p->name = xstrdup(encoding) ;
-      p->glyphs = (char **)mymalloc((MAX_CHAR_CODE+1) * sizeof(char *)) ;
+      p->glyphs = (const char **)mymalloc((MAX_CHAR_CODE+1) * sizeof(char *)) ;
       for (i=0; i<MAX_CHAR_CODE; i++)
          p->glyphs[i] = ".notdef" ;
       load_enc(encoding, p->glyphs) ;
@@ -398,7 +381,7 @@ static int glyphSizeUsed = 0 ;
 /*
  *   We want to make sure we pass in null or "/" but never "".  
  */
-static void clearExtraGlyphList() {
+static void clearExtraGlyphList(void) {
    glyphSizeUsed = 0 ;
    extraGlyphs = 0 ;
 }
@@ -407,7 +390,7 @@ static void clearExtraGlyphList() {
  *   We do this by adding it, so we can get the // around it,
  *   and *then* see if it's already there and if it is un-add it.
  */
-static void addGlyph(char *glyphName) {
+static void addGlyph(const char *glyphName) {
    int len = strlen(glyphName) ;
    char *startOfAdd = 0 ;
    if (len + glyphSizeUsed + 3 > extraGlyphSize) {
@@ -431,13 +414,11 @@ static void addGlyph(char *glyphName) {
    }
 }
 #endif
+
 /*
  *   Download a PostScript font, using partial font downloading if
  *   necessary.
  */
-extern char *downloadedpsnames[];
-extern int unused_top_of_psnames;
-
 static void
 downpsfont(charusetype *p, charusetype *all)
 {
@@ -450,7 +431,6 @@ downpsfont(charusetype *p, charusetype *all)
     register chardesctype *c ;
     struct resfont *rf ;
     int cc;
-    extern char *realnameoffile ;
     int j;
 
     curfnt = p->fd ;
@@ -489,7 +469,7 @@ downpsfont(charusetype *p, charusetype *all)
         curfnt = all->fd ;
 #ifdef DOWNLOAD_USING_PDFTEX
         if (curfnt->resfont->Vectfile) {
-	   char **glyphs = getEncoding(curfnt->resfont->Vectfile) ;
+	   const char **glyphs = getEncoding(curfnt->resfont->Vectfile) ;
            c = curfnt->chardesc + 255 ;
            cc = 255 ;
            for (b=15; b>=0; b--) {

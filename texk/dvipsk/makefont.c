@@ -1,12 +1,10 @@
 /* makefont.c */
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #include <math.h>
+/*
+ *   The external declarations:
+ */
 #include "protos.h"
-extern int quiet ;
-extern int filter ;
-extern int dontmakefont ;
-extern int secure ;
-extern char *mfmode ;
 #ifdef OS2
 #include <stdlib.h>
 #endif
@@ -15,11 +13,6 @@ extern char *getenv();
 extern int system();
 #endif
 #if defined MSDOS || defined OS2
-extern char *mfjobname ;
-extern FILE *mfjobfile ;
-extern char *pkpath ;
-extern int actualdpi ;
-extern int vactualdpi ;
 /*
  *  Write mfjob file
  */

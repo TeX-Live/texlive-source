@@ -4,6 +4,90 @@
 	nonstandard paper sizes, e.g., with the geometry package,
 	end up unrecognized.
 
+2009-08-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* testdata/dvipstst.xps, pfbincl.xps: Update for version 5.98.
+
+2009-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings. Done in steps.
+
+	Step 1: Move all extern decls for global variables to headers.
+	* Makefile.am: Additional file 'protos_add.h'.
+	* protos.h: Add prototype for fliparse() from flib.c.
+	Remove prototypes from squeeze.c (now in squeeze/).
+	Add extern decls for globals from dopage.c, dosection.c,
+	dvips.c, flib.c, hps.c, loadfont.c, output.c, pprescan.c,
+	repack.c, resident.c, search.c, and tfmload.c.
+	* color.c, dosection.c, dospecial.c, download.c, dpicheck.c,
+	drawPS.c, dviinput.c, emspecial.c, finclude.c, fontdef.c,
+	header.c, makefont.c, output.c, paths.h, pprescan.c,
+	prescan.c, repack.c, resident.c, scanpage.c, skippage.c,
+	tfmload.c, virtualfont.c: Drop extern declarations.
+	* writet1.c: Remove '#ifndef pdfTeX' sections of code.
+	Drop extern declarations.
+	* dvips.c, hps.c: #include "protos.h" before defining globals.
+	Drop extern declarations.
+	* protos_add.h (new): First #include "protos.h", then add
+	extern decls for stack from dopage.c and name from loadfont.c.
+	* bbox.c, dopage.c, flib.c, loadfont.c, search.c:
+	#include "protos_add.h" (instead of protos.h). Drop externs.
+
+	Step 2: Avoid warnings: declaration of 'xxx' shadows a parameter
+	or previous local:
+	* dospecial.c (predospecial): Rename local numbytes=>num_bytes,
+	not to shadow function param.
+	Drop inner local j, not to shadow previous local.
+
+	Step 3:
+	* afm2tfm.c (vlevout, vlevnlout), download.c (clearExtraGlyphList):
+	ANSI C function definitions, i.e., '()'=>'(void)'.
+
+	Step 4: Constification of strings:
+	Step 4a: Struct members
+	* afm2tfm.c (encoding.name, encoding.vec, adobeinfo.adobename,
+	lig.succ, lig.sub, kern.succ, pcc.partname),
+	dospecial.c (KeyDesc.Entry),
+	download.c (seenEncodings.name, seenEncodings.glyphs),
+	dvips.h (header_list.Hname, papsiz.name, papsiz.specdat),
+	emspecial.c (emunit.unit), t1part.c (tablecommand.command,
+	typefonts.extension, type_key.name).
+	Step 4b: Global or static variables
+	* afm2tfm.c (staticligkern, vplligops, encligops, fontname,
+	codingscheme, interesting, accents), dospecial.c (ValStr, tasks),
+	dvips.c (oname, infont, headerfile, helparr),
+	emspecial.c (extarr), output.c (hxdata), papersiz.c (scalenames),
+	resident.c (psmapfile),
+	t1part.c (RefKey, hexstr, AfmKey, InfoKey),
+	writet1.c (hexdigits), protos.h.
+	Step 4c: Function parameter/results and local variables
+	* afm2tfm.c (error, interest, expect, findadobe, makebcpl,
+	checksum, texheight),
+	dospecial.c (specerror, IsSame, dospecial, fil2ps),
+	download.c (getEncoding, addGlyph, downpsfont),
+	dvips.c (help, error_with_perror, error, initialize, newstring,
+	main),
+	finclude.c (scan_fontnames, scanfontusage, scanfontcomments),
+	header.c (add_name, add_name_general, checkhmem, add_header,
+	add_header), hps.c (set_bitfile), loadfont.c (badpk),
+	output.c (copyfile_general, copyfile, cmdout, mhexout, nlcmdout,
+	ncstrcmp, paperspec), papersiz.c (myatodim[B
+	resident.c (bad_config, getdefaults, getpsinfo),
+	search.c (search, pksearch, my_real_fopen), tfmload.c (badtfm),
+	unpack.c (unpack), virtualfont.c (badvf),
+	writet1.c (pdftex_fail, pdftex_warn, load_enc, t1_open_fontfile,
+	t1_subset), protos.h.
+	Step 4d: Work around modifying const strings (e.g., modify
+	malloc'ed or strdup'ed strings before assigning them to a const
+	string variable):
+	* afm2tfm.c (openfiles), dvips.c (newstring, newoutname),
+	resident.c (getdefaults).
+
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* afm2tfm.c, dvips.c: #include <kpathsea/version.h> and drop
+	nested extern decls.
+
 2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c (t1_flush_cs): cast ptr diff to unsigned long for

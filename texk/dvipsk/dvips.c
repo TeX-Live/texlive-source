@@ -8,6 +8,7 @@
 #include <kpathsea/progname.h>
 #include <kpathsea/tex-hush.h>
 #include <kpathsea/tex-make.h>
+#include <kpathsea/version.h>
 #include <kpathsea/lib.h>
 #ifdef strdup
 #undef strdup
@@ -46,6 +47,11 @@ extern char *strtok() ; /* some systems don't have this in strings.h */
 #endif
 
 /*
+ *   The external declarations:
+ */
+#include "protos.h"
+
+/*
  *   First we define some globals.
  */
 #ifdef VMS
@@ -63,8 +69,7 @@ Boolean partialdownload = 1 ; /* turn on partial downloading */
 Boolean manualfeed ;          /* manual feed? */
 Boolean compressed ;          /* compressed? */
 Boolean downloadpspk ;        /* use PK for downloaded PS fonts? */
-Boolean safetyenclose ;
-                          /* enclose in save/restore for stupid spoolers? */
+Boolean safetyenclose ;       /* enclose in save/restore for stupid spoolers? */
 Boolean removecomments = 0 ;  /* remove comments from included PS? */
 Boolean nosmallchars ;        /* disable small char optimization for X4045? */
 Boolean cropmarks ;           /* add cropmarks? */
@@ -92,7 +97,7 @@ integer maxsecsize = 0;       /* the maximum size of a section */
 integer firstboploc ;         /* where the first bop is */
 Boolean sepfiles ;            /* each section in its own file? */
 int numcopies ;               /* number of copies of each page to print */
-char *oname ;                 /* output file name */
+const char *oname ;           /* output file name */
 char *iname ;                 /* dvi file name */
 char *fulliname ;             /* same, with current working directory */
 char *strings ;               /* strings for program */
@@ -129,7 +134,7 @@ Boolean noomega = 0 ;         /* Omega extensions are enabled */
 #include "vms_gcc_paths.h"
 #endif
 
-char *infont ;                /* is the file we are downloading a font? */
+const char *infont ;                /* is the file we are downloading a font? */
 #ifndef KPATHSEA
 #ifdef ATARIST
 #   define TFMPATH "."
@@ -175,7 +180,7 @@ Boolean usesPSfonts ;         /* do we use local PostScript fonts? */
 Boolean usesspecial ;         /* do we use \special? */
 Boolean headers_off ;         /* do we send headers or not? */
 Boolean usescolor ;           /* IBM: color - do we use colors? */
-char *headerfile ;            /* default header file */
+const char *headerfile ;      /* default header file */
 char *warningmsg ;            /* a message to write, if set in config file */
 Boolean multiplesects ;       /* more than one section? */
 Boolean disablecomments ;     /* should we suppress any EPSF comments? */
@@ -196,7 +201,6 @@ char banner[] = BANNER ;        /* our startup message */
 char banner2[] = BANNER2 ;      /* our second startup message */
 Boolean noenv = 0 ;             /* ignore PRINTER envir variable? */
 Boolean dopprescan = 0 ;        /* do we do a scan before the prescan? */
-extern int dontmakefont ;
 struct papsiz *papsizes ;       /* all available paper size */
 int headersready ;              /* ready to check headers? */
 #if defined(MSDOS) || defined(OS2) || defined(ATARIST)
@@ -210,15 +214,9 @@ char queryline[256];                /* interactive query of options */
 int qargc;
 char *qargv[32];
 char queryoptions;
-/*
- *   This routine calls the following externals:
- */
-#include "protos.h"
 #ifdef HPS
 Boolean HPS_FLAG = 0 ;
 #endif
-extern int lastresortsizes[];
-extern char errbuf[];
 
 /* Declare the routine to get the current working directory.  */
 
@@ -245,7 +243,7 @@ extern char *getcwd ();
 #endif
 #endif /* not IGNORE_CWD */
 
-static char *helparr[] = {
+static const char *helparr[] = {
 #ifndef VMCMS
 "Usage: dvips [OPTION]... FILENAME[.dvi]",
 #else
@@ -304,11 +302,8 @@ static char *helparr[] = {
 void
 help(int status)
 {
-   char **p;
+   const char **p;
    FILE *f = status == 0 ? stdout : stderr;
-#ifdef KPATHSEA
-   extern KPSEDLL char *kpse_bug_address;
-#endif   
    for (p=helparr; *p; p++)
       fprintf (f, "%s\n", *p);
 
@@ -335,7 +330,7 @@ freememforpsnames(void)
 static char *progname ;
 
 void
-error_with_perror(char *s, char *fname)
+error_with_perror(const char *s, const char *fname)
 {
    if (prettycolumn > 0)
         fprintf(stderr,"\n");
@@ -362,7 +357,7 @@ error_with_perror(char *s, char *fname)
  *   character is !, it aborts the job.
  */
 void
-error(char *s)
+error(const char *s)
 {
    error_with_perror (s, NULL);
 }
@@ -453,7 +448,7 @@ void
 initialize(void)
 {
    int i;
-   char *s;
+   const char *s;
 
    nextfonthd = 0;
    for (i=0; i<256; i++)
@@ -487,9 +482,10 @@ initialize(void)
  *   This routine copies a string into the string `pool', safely.
  */
 char *
-newstring(char *s)
+newstring(const char *s)
 {
    int l ;
+   char *q ;
 
    if (s == NULL)
       return(NULL) ;
@@ -499,23 +495,22 @@ newstring(char *s)
    if (nextstring + l >= maxstring)
       error("! out of string space") ;
    (void)strcpy(nextstring, s) ;
-   s = nextstring ;
+   q = nextstring ;
    nextstring += l + 1 ;
-   return(s) ;
+   return(q) ;
 }
 void
 newoutname(void) {
    static int seq = 0 ;
    static char *seqptr = 0 ;
-   char *p ;
+   char *p, *q ;
 
    if (oname == 0 || *oname == 0)
       error("! need an output file name to specify separate files") ;
    if (*oname != '!' && *oname != '|') {
       if (seqptr == 0) {
-         oname = newstring(oname) ;
-         seqptr = 0 ;
-         for (p = oname; *p; p++)    /* find last dot after last slash */
+         q = newstring(oname) ;
+         for (p = q; *p; p++)    /* find last dot after last slash */
             if (*p == '.')
                seqptr = p + 1 ;
             else if (*p == '/')
@@ -527,6 +522,7 @@ newoutname(void) {
          if (seqptr == 0)
             seqptr = p ;
          nextstring += 5 ; /* make room for the number, up to five digits */
+         oname = q ;
       }
       sprintf(seqptr, "%03d", ++seq) ;
    }
@@ -569,7 +565,6 @@ queryargs(void)
 /*
  *   Finally, our main routine.
  */
-extern void handlepapersize() ;
 #ifdef VMS
 main(void)
 #else
@@ -635,7 +630,6 @@ main(int argc, char **argv)
         help (0);
         exit (0);
       } else if (strcmp (argv[1], "--version") == 0) {
-        extern KPSEDLL char *kpathsea_version_string;
         puts (BANNER);
         puts (kpathsea_version_string);
         puts ("Copyright 2009 Radical Eye Software.\n\
@@ -754,7 +748,6 @@ case 'f' :
                break ;
 case 'u' :
                {
-                  extern char *psmapfile;
                   char PSname[300] ;               
                   if (*p == 0 && argv[i+1])
                      p = argv[++i] ;
@@ -1178,7 +1171,7 @@ default:
       }
    }
    if (oname[0] == '-' && oname[1] == 0)
-      oname[0] = 0 ;
+      oname = "" ;
    else if (*oname == 0 && ! filter && *iname) {
       /* determine output name from input name */
       oname = nextstring ;
@@ -1231,7 +1224,7 @@ default:
  *   or slash.
  */
       {
-         char *p = NAME_BEGINS_WITH_DEVICE(oname) ? oname + 2 : oname ;
+         const char *p = NAME_BEGINS_WITH_DEVICE(oname) ? oname + 2 : oname ;
 
          for (oname=p; *p && p[1]; p++)
             if (IS_DIR_SEP(*p))
@@ -1263,7 +1256,7 @@ default:
    if (!quiet && warningmsg)
       error(warningmsg) ;
    headersready = 1 ;
-   headerfile = (char *) (compressed? CHEADERFILE : HEADERFILE) ;
+   headerfile = (compressed? CHEADERFILE : HEADERFILE) ;
    (void)add_header(headerfile) ;
    if (*iname != 0) {
       fulliname = nextstring ;

@@ -7,7 +7,7 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 
 /*
- * external procedures
+ *   The external declarations:
  */
 #include "protos.h"
 

@@ -8,15 +8,10 @@
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #include <math.h>
-#include "protos.h"
-
-extern char *nextstring, errbuf[] ;
-extern FILE *tfmfile, *dvifile ;
-extern fontmaptype *ffont ;
-extern integer firstboploc, num, den ;
-extern double mag ;
-extern integer hoff, voff ;
-extern Boolean noomega ;
+/*
+ *   The external declarations:
+ */
+#include "protos_add.h"
 
 typedef struct {
   integer llx, lly, urx, ury ;
@@ -173,10 +168,6 @@ bbtfmload(register fontdesctype *curfnt)
    free(chardat) ;
    free(scaled) ;
 }
-extern struct dvistack {
-  integer hh, vv ;
-  integer h, v, w, x, y, z ;
-} stack[] ;
 static integer llx, lly, urx, ury ;
 void
 bbspecial(integer h, integer v, int nbytes)

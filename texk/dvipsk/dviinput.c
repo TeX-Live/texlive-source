@@ -6,9 +6,10 @@
  *   updating the current position as necessary.
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
+/*
+ *   The external declarations:
+ */
 #include "protos.h"
-extern FILE *dvifile ;
-extern quarterword *curpos, *curlim ;
 
 void
 abortpage(void)

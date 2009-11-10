@@ -15,7 +15,7 @@ bin_PROGRAMS = afm2tfm dvips
 
 afm2tfm_SOURCES = afm2tfm.c
 
-afm2tfm_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(afm2tfm_OBJECTS): $(KPATHSEA_DEPEND)
 
 dvips_SOURCES = \
 	bbox.c \
@@ -43,6 +43,7 @@ dvips_SOURCES = \
 	pprescan.c \
 	prescan.c \
 	protos.h \
+	protos_add.h \
 	ptexmac.h \
 	repack.c \
 	resident.c \
@@ -57,7 +58,7 @@ dvips_SOURCES = \
 	virtualfont.c \
 	writet1.c
 
-dvips_DEPENDENCIES = $(KPATHSEA_DEPEND)
+$(dvips_OBJECTS): $(KPATHSEA_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS)
 

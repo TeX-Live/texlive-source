@@ -28,37 +28,9 @@ double atof();
 #endif
 
 /*
- *   These are the external routines we call.
+ *   The external declarations:
  */
 #include "protos.h"
-
-/*
- *   These are the external variables we access.
- */
-extern struct header_list *ps_fonts_used;
-extern char *infont ;
-extern fontdesctype *curfnt ;
-extern fontdesctype *fonthead ;
-extern integer fontmem ;
-extern fontdesctype *fonthd[MAXFONTHD] ;
-extern int nextfonthd ;
-extern char *nextstring ;
-extern char xdig[256] ;
-extern real conv ;
-extern integer pagecost ;
-extern int actualdpi ;
-extern double mag ;
-extern Boolean includesfonts ;
-#ifndef KPATHSEA
-extern char *figpath ;
-#endif
-extern int to_close ;
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-
-extern char *downloadedpsnames[];
-extern int unused_top_of_psnames;
 
 /*
  * Create a font descriptor for a font included in a psfile.  There will be
@@ -250,7 +222,7 @@ scanvm(char *p)
  * is added with add_header.
  */
 void
-scan_fontnames(char *str, char *psfile)
+scan_fontnames(char *str, const char *psfile)
 {
   char *p,*pe;
   struct resfont *re;
@@ -349,7 +321,7 @@ static int fc_state = 0;
 static int check_atend = 0;
 
 void
-scanfontusage(char *p, char *psfile)
+scanfontusage(char *p, const char *psfile)
 {
   if (strncmp(p, "%%DocumentFonts: ",17) == 0) {
     p += 17 ;
@@ -401,7 +373,7 @@ scanfontusage(char *p, char *psfile)
  * usage specifications.  This does not handle the "atend" construction.
  */
 void
-scanfontcomments(char *filename)
+scanfontcomments(const char *filename)
 {
    char p[500];
    char *r;

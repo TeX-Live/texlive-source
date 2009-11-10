@@ -3,34 +3,15 @@
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
 /*
- *   These are the external routines we call.
+ *   The external declarations:
  */
 #include "protos.h"
 
-/*
- *   These are the external variables we access.
- */
-extern shalfword linepos ;
-extern FILE *dvifile ;
-extern FILE *bitfile ;
-extern integer pagenum ;
-extern long bytesleft ;
-extern quarterword *raster ;
-extern int quiet ;
-extern Boolean reverse, multiplesects, disablecomments ;
-extern Boolean evenpages, oddpages, pagelist ;
-extern int actualdpi ;
-extern int vactualdpi ;
-extern int prettycolumn ;
-extern integer hpapersize, vpapersize ;
-extern integer pagecopies ;
 static int psfont ;
-extern double mag ;
-extern char *fulliname ;
 #ifdef HPS
 int pagecounter ;
-extern Boolean HPS_FLAG ;
 #endif
+
 /*
  *   Now we have the main procedure.
  */

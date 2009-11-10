@@ -14,26 +14,12 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 struct header_list *header_head ;
 /*
- *   The external routines we use.
+ *   The external declarations:
  */
 #include "protos.h"
-extern char errbuf[] ;
-extern integer fontmem, swmem ;
-#ifndef KPATHSEA
-extern char *headerpath ;
-#endif
-extern char *infont ;
-extern int headersready ;
-#ifdef DEBUG
-extern integer debug_flag ;
-#endif
-#ifdef HPS
-extern Boolean noprocset ;
-extern Boolean HPS_FLAG ;
-#endif
 
 int
-add_name(char *s, struct header_list **what)
+add_name(const char *s, struct header_list **what)
 {
   return (int) add_name_general (s, what, NULL, NULL);
 }
@@ -43,7 +29,7 @@ add_name(char *s, struct header_list **what)
  *   names.
  */
 int
-add_name_general(char *s, struct header_list **what, char *pre, char *post)
+add_name_general(const char *s, struct header_list **what, char *pre, char *post)
 {
    struct header_list *p, *q ;
 
@@ -71,7 +57,7 @@ add_name_general(char *s, struct header_list **what, char *pre, char *post)
  *   length of the file.
  */
 void
-checkhmem(char *s, char *pre, char *post)
+checkhmem(const char *s, char *pre, char *post)
 {
    FILE *f ;
 
@@ -121,13 +107,13 @@ checkhmem(char *s, char *pre, char *post)
  *   use that; otherwise, we use the length of the file.
  */
 int
-add_header(char *s)
+add_header(const char *s)
 {
   return (int) add_header_general (s, NULL, NULL);
 }
 
 int
-add_header_general(char *s, char *pre, char *post)
+add_header_general(const char *s, char *pre, char *post)
 {
    int r ;
 
@@ -183,5 +169,5 @@ send_headers(void) {
 #endif
       copyfile_general(q, CUR_head) ;
    }
-   infont = 0 ;
+   infont = NULL ;
 }

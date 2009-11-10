@@ -9,24 +9,10 @@
 #endif
 
 /*
- *   These are the external routines we call.
+ *   The external declarations:
  */
 #include "protos.h"
 
-/*
- *   The external variables we use:
- */
-extern char *nextstring, *maxstring ;
-extern double mag ;
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern int actualdpi ;
-extern real alpha ;
-extern fontmaptype *ffont ;
-extern quarterword *curpos ;
-extern fontdesctype *fonthead ;
-extern integer fsizetol ;
 /*
  * newfontdesc creates a new font descriptor with the given parameters and
  * returns a pointer to the new object.
@@ -128,7 +114,6 @@ fontdef(int siz)
    register fontmaptype *cfnt ;
    char *name, *area ;
    integer cksum, scsize, dssize ;
-   extern void skipover(int) ;
 
    fn = dvibyte() ;
    while (siz-- > 1)

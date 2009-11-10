@@ -12,6 +12,9 @@
  *      0 <= whole
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
+/*
+ *   The external declarations:
+ */
 #include "protos.h"
 static long
 scale(long whole, long num, long den, long sf)
@@ -62,12 +65,12 @@ myatol(char **s)
  */
 static long scalevals[] = { 1864680L, 65536L, 786432L, 186468L,
                             1L, 65782L, 70124L, 841489L, 4736286L } ;
-static char *scalenames = "cmptpcmmspbpddccin" ;
+static const char *scalenames = "cmptpcmmspbpddccin" ;
 long
 myatodim(char **s)
 {
    register long w, num, den, sc ;
-   register char *q ;
+   register const char *q ;
    char *p ;
    int negative = 0, i ;
 

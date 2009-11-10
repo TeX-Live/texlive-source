@@ -85,21 +85,10 @@ char RCSid[] =
 
 #include <math.h>		/* used in function "arc" */
 
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-
 /*
- * external functions used here
+ *   The external declarations:
  */
 #include "protos.h"
-/*
- * external variables used here
- */
-extern integer hh,vv;           /* the current x,y position in pixel units */
-extern int actualdpi ;
-extern int vactualdpi ;
-extern double mag ;
 
 #define convRESOLUTION DPI
 #define convVRESOLUTION VDPI

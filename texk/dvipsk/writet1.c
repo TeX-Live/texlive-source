@@ -15,38 +15,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see  <http://www.gnu.org/licenses/>.  */
 
-#ifdef pdfTeX /* writet1 used with pdfTeX */
-#include "ptexlib.h"           
-#define t1_log(s)           tex_printf(s)
-#define t1_open()           \
-    open_input(&t1_file, kpse_type1_format, FOPEN_RBIN_MODE)
-#define enc_open()      \
-    open_input(&enc_file, kpse_enc_format, FOPEN_RBIN_MODE)
-#define external_enc()      (fm_cur->encoding)->glyph_names
-#define full_file_name()    (char*)nameoffile + 1
-#define get_length1()       t1_length1 = t1_offset() - t1_save_offset
-#define get_length2()       t1_length2 = t1_offset() - t1_save_offset
-#define get_length3()       t1_length3 = t1_offset() - t1_save_offset
-#define is_used_char(c)     pdfcharmarked(tex_font, c)
-#define t1_putchar          fb_putchar
-#define t1_offset           fb_offset  
-#define out_eexec_char      t1_putchar
-#define save_offset()       t1_save_offset = t1_offset()
-#define end_last_eexec_line()   \
-    t1_eexec_encrypt = false
-#define t1_char(c)          c
-#define embed_all_glyphs(tex_font)  fm_cur->all_glyphs
-#define extra_charset()     fm_cur->charset
-#define update_subset_tag() \
-    strncpy(fb_array + t1_fontname_offset, fm_cur->subset_tag, 6)
-
-integer t1_length1, t1_length2, t1_length3;
-static integer t1_save_offset;
-static integer t1_fontname_offset;
-extern char *fb_array;
-
-#else /* writet1 used with dvips */
 #include "dvips.h"
+/*
+ *   The external declarations:
+ */
 #include "protos.h"
 #include "ptexmac.h"
 #undef  fm_extend
@@ -85,8 +57,6 @@ extern char *fb_array;
 #define embed_all_glyphs(tex_font)  false
 #undef pdfmovechars
 #ifdef SHIFTLOWCHARS
-extern char errbuf[];
-extern Boolean shiftlowchars;
 #define pdfmovechars shiftlowchars
 #define t1_char(c)          T1Char(c)
 #else /* SHIFTLOWCHARS */
@@ -98,8 +68,6 @@ extern Boolean shiftlowchars;
 #define update_subset_tag()
 
 static char *dvips_extra_charset ;
-extern FILE *bitfile ;
-extern FILE *search();
 static char *cur_file_name;
 static char *cur_enc_name;
 static unsigned char *grid;
@@ -108,7 +76,6 @@ static char print_buf[PRINTF_BUF_SIZE];
 static int  hexline_length;
 static char notdef[] = ".notdef";
 static size_t last_ptr_index;
-#endif /* pdfTeX */
 
 #include <stdarg.h>
 
@@ -271,8 +238,7 @@ static FILE *enc_file;
 #define t1_end_eexec()      t1_suffix("mark currentfile closefile")
 #define t1_cleartomark()    t1_prefix("cleartomark")
 
-#ifndef pdfTeX
-static void pdftex_fail(char *fmt,...)
+static void pdftex_fail(const char *fmt,...)
 {
     va_list args;
     va_start(args, fmt);
@@ -287,7 +253,7 @@ static void pdftex_fail(char *fmt,...)
     exit(-1);
 }
 
-static void pdftex_warn(char *fmt,...)
+static void pdftex_warn(const char *fmt,...)
 {
     va_list args;
     va_start(args, fmt);
@@ -313,13 +279,12 @@ static void end_hexline(void)
 
 static void t1_outhex(byte b)
 {
-    static char *hexdigits = "0123456789ABCDEF";
+    static const char *hexdigits = "0123456789ABCDEF";
     t1_putchar(hexdigits[b/16]);
     t1_putchar(hexdigits[b%16]);
     hexline_length += 2;
     end_hexline();
 }
-#endif /* pdfTeX */
 
 
 static void enc_getline(void)
@@ -339,7 +304,7 @@ restart:
         goto restart;
 }
 
-void load_enc(char *enc_name, char **glyph_names)
+void load_enc(char *enc_name, const char **glyph_names)
 {
     char buf[ENC_BUF_SIZE], *p, *r;
     int names_count;
@@ -673,170 +638,6 @@ static void t1_stop_eexec(void)
     t1_in_eexec = 2;
 }
 
-#ifdef pdfTeX
-static void t1_modify_fm(void)
-{
- /*
-  * font matrix is given as six numbers a0..a5, which stands for the matrix
-  * 
-  *           a0 a1 0
-  *     M =   a2 a3 0
-  *           a4 a5 1
-  * 
-  * ExtendFont is given as
-  * 
-  *           e 0 0
-  *     E =   0 1 0
-  *           0 0 1
-  * 
-  * SlantFont is given as
-  * 
-  *           1 0 0
-  *     S =   s 1 0
-  *           0 0 1
-  * 
-  * and the final transformation is
-  * 
-  *                    e*a0        e*a1       0
-  *     F =  E.S.M  =  s*e*a0+a2   s*e*a1+a3  0
-  *                    a4          a5         1
-  */
-    float e, s, a[6], b[6];
-    int i, c;
-    char *p, *q, *r;
-    if ((p = strchr(t1_line_array, '[')) == 0)
-        if ((p = strchr(t1_line_array, '{')) == 0) {
-            remove_eol(p, t1_line_array);
-            pdftex_fail("FontMatrix: an array expected: `%s'", t1_line_array);
-        }
-    c = *p++; /* save the character '[' resp. '{' */
-    strncpy(t1_buf_array, t1_line_array, (unsigned)(p - t1_line_array));
-    r = t1_buf_array + (p - t1_line_array);
-    for (i = 0; i < 6; i++) {
-        a[i] = t1_scan_num(p, &q);
-        p = q;
-    }
-    if (fm_extend(fm_cur) != 0)
-        e = fm_extend(fm_cur)*1E-3;
-    else
-        e = 1;
-    s = fm_slant(fm_cur)*1E-3;
-    b[0] = e*a[0];
-    b[1] = e*a[1];
-    b[2] = s*e*a[0] + a[2];
-    b[3] = s*e*a[1] + a[3];
-    b[4] = a[4];
-    b[5] = a[5];
-    for (i = 0; i < 6; i++) {
-        sprintf(r, "%g ", b[i]);
-        r = strend(r);
-    }
-    if (c == '[') {
-        while (*p != ']' && *p != 0)
-            p++;
-    }
-    else {
-        while (*p != '}' && *p != 0)
-            p++;
-    }
-    if (*p == 0) {
-        remove_eol(p, t1_line_array);
-        pdftex_fail("FontMatrix: cannot find the corresponding character to '%c': `%s'",  c, t1_line_array);
-    }
-    strcpy(r, p);
-    strcpy(t1_line_array, t1_buf_array);
-    t1_line_ptr = eol(t1_line_array);
-}
-
-static void t1_modify_italic(void)
-{
-    float a;
-    char *p, *r;
-    if (fm_slant(fm_cur) == 0)
-        return;
-    p = strchr(t1_line_array, ' ');
-    strncpy(t1_buf_array, t1_line_array, (unsigned)(p - t1_line_array + 1));
-    a = t1_scan_num(p + 1, &r);
-    a -= atan(fm_slant(fm_cur)*1E-3)*(180/M_PI);
-    sprintf(t1_buf_array + (p - t1_line_array + 1), "%g", a);
-    strcpy(strend(t1_buf_array), r);
-    strcpy(t1_line_array, t1_buf_array);
-    t1_line_ptr = eol(t1_line_array);
-    font_keys[ITALIC_ANGLE_CODE].value = round(a);
-    font_keys[ITALIC_ANGLE_CODE].valid = true;
-}
-
-static void t1_scan_keys(void)
-{
-    int i, k;
-    char *p, *q, *r;
-    key_entry *key;
-    if (fm_extend(fm_cur) != 0 || fm_slant(fm_cur) != 0) {
-        if (t1_prefix("/FontMatrix")) {
-            t1_modify_fm();
-            return;
-        }
-        if (t1_prefix("/ItalicAngle")) {
-            t1_modify_italic();
-            return;
-        }
-    }
-    if (t1_prefix("/FontType")) {
-        p = t1_line_array + strlen("FontType") + 1;
-        if ((i = t1_scan_num(p, 0)) != 1)
-            pdftex_fail("Type%d fonts unsupported by pdfTeX", i);
-        return;
-    }
-    for (key = font_keys; key - font_keys  < MAX_KEY_CODE; key++)
-        if (strncmp(t1_line_array + 1, key->t1name, strlen(key->t1name)) == 0)
-          break;
-    if (key - font_keys == MAX_KEY_CODE)
-        return;
-    key->valid = true;
-    p = t1_line_array + strlen(key->t1name) + 1;
-    skip(p, ' ');
-    if ((k = key - font_keys) == FONTNAME_CODE) {
-        if (*p != '/') {
-            remove_eol(p, t1_line_array);
-            pdftex_fail("a name expected: `%s'", t1_line_array);
-        }
-        r = ++p; /* skip the slash */
-        for (q = t1_buf_array; *p != ' ' && *p != 10; *q++ = *p++);
-        *q = 0;
-        if (fm_slant(fm_cur) != 0) {
-            sprintf(q, "-Slant_%i", (int)fm_slant(fm_cur));
-            q = strend(q);
-        }
-        if (fm_extend(fm_cur) != 0) {
-            sprintf(q, "-Extend_%i", (int)fm_extend(fm_cur));
-        }
-        strncpy(fontname_buf, t1_buf_array, FONTNAME_BUF_SIZE);
-        /* at this moment we cannot call make_subset_tag() yet, as the encoding 
-         * is not read; thus we mark the offset of the subset tag and write it
-         * later */
-        if (is_included(fm_cur) && is_subsetted(fm_cur)) {
-            t1_fontname_offset = t1_offset() + (r - t1_line_array);
-            strcpy(t1_buf_array, p);
-            sprintf(r, "ABCDEF+%s%s", fontname_buf, t1_buf_array);
-            t1_line_ptr = eol(r);
-        }
-        return;
-    }
-    if ((k == STEMV_CODE ||  k == FONTBBOX1_CODE) &&
-        (*p == '[' || *p == '{'))
-        p++;
-    if (k == FONTBBOX1_CODE) {
-        for (i = 0; i < 4; i++) {
-            key[i].value = t1_scan_num(p, &r);
-            p = r;
-        }
-        return;
-    }
-    key->value = t1_scan_num(p, 0);
-}
-
-#endif /* pdfTeX */
-
 static void t1_scan_param(void) 
 {
     static const char *lenIV = "/lenIV";
@@ -997,66 +798,7 @@ static void t1_check_end(void)
         t1_putline();
 }
 
-#ifdef pdfTeX
 static boolean t1_open_fontfile(const char *open_name_prefix)
-{
-    char *ex_ffname = NULL;
-    ff_entry *ff;
-    ff = check_ff_exist(fm_cur);
-    if (ff->ff_path != NULL)
-        t1_file = xfopen(cur_file_name = ff->ff_path, FOPEN_RBIN_MODE);
-    else {
-        set_cur_file_name(fm_cur->ff_name);
-        pdftex_warn("cannot open Type 1 font file for reading");
-        return false;
-    }
-    t1_init_params(open_name_prefix);
-    fontfile_found = true;
-    return true;
-}
-
-static void t1_scan_only(void)
-{
-    do {
-        t1_getline();
-        t1_scan_param(); 
-    } while (t1_in_eexec == 0);
-    t1_start_eexec();
-    do {
-        t1_getline();
-        t1_scan_param();
-    } while (!(t1_charstrings() || t1_subrs()));
-}
-
-static void t1_include(void)
-{
-    do {
-        t1_getline();
-        t1_scan_param();
-        t1_putline();
-    } while (t1_in_eexec == 0);
-    t1_start_eexec();
-    do {
-        t1_getline();
-        t1_scan_param();
-        t1_putline();
-    } while (!(t1_charstrings() || t1_subrs()));
-    t1_cs = true;
-    do {
-        t1_getline();
-        t1_putline();
-    } while (!t1_end_eexec());
-    t1_stop_eexec();
-    do {
-        t1_getline();
-        t1_putline();
-    } while (!t1_cleartomark());
-    t1_check_end(); /* write "{restore}if" if found */
-    get_length3();
-}
-
-#else /* not pdfTeX */
-static boolean t1_open_fontfile(char *open_name_prefix)
 {
     if (!t1_open()) {
         (void)sprintf(errbuf, "! Couldn't find font file %s", cur_file_name);
@@ -1065,7 +807,6 @@ static boolean t1_open_fontfile(char *open_name_prefix)
     t1_init_params(open_name_prefix);
     return true;
 }
-#endif /* pdfTeX */
 
 #define check_subr(subr) \
     if (subr >= subr_size || subr < 0) \
@@ -1733,16 +1474,6 @@ static void t1_subset_end(void)
 void writet1(void)
 {
     read_encoding_only = false;
-#ifdef pdfTeX
-    t1_save_offset = 0;
-    if (strcasecmp(strend(fm_fontfile(fm_cur)) - 4, ".otf") == 0) {
-        if (!is_included(fm_cur) || is_subsetted(fm_cur))
-            pdftex_fail("OTF fonts must be included entirely");
-        writeotf();
-        is_otf_font = true;
-        return;
-    }
-#endif
     if (!is_included(fm_cur)) { /* scan parameters from font file */
         if (!t1_open_fontfile("{"))
             return;
@@ -1776,7 +1507,6 @@ void t1_free(void)
     xfree(t1_buf_array);
 }
 
-#ifndef pdfTeX
 boolean t1_subset(char *fontfile, char *encfile, unsigned char *g)
 {
     int i;
@@ -1784,7 +1514,7 @@ boolean t1_subset(char *fontfile, char *encfile, unsigned char *g)
     for (i = 0; i <= MAX_CHAR_CODE; i++)
         ext_glyph_names[i] = (char*) notdef;
     if (cur_enc_name != NULL)
-        load_enc(cur_enc_name, ext_glyph_names);
+        load_enc(cur_enc_name, (const char **) ext_glyph_names);
     grid = g;
     cur_file_name = fontfile;
     hexline_length = 0;
@@ -1810,4 +1540,3 @@ boolean t1_subset_2(char *fontfile, unsigned char *g, char *extraGlyphs)
             free(ext_glyph_names[i]);
     return 1 ; /* note:  there *is* no unsuccessful return */
 }
-#endif /* not pdfTeX */

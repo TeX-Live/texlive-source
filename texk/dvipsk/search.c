@@ -5,7 +5,10 @@
  *   indicate substitution of the default path list at that point.
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
-#include "protos.h"
+/*
+ *   The external declarations:
+ */
+#include "protos_add.h"
 
 #ifdef KPATHSEA
 #include <kpathsea/c-ctype.h>
@@ -13,7 +16,6 @@
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/absolute.h>
 #include <kpathsea/c-pathch.h>
-extern char name[];
 #else
 #include <ctype.h>
 #if !defined(WIN32)
@@ -50,14 +52,6 @@ FILE *fat_fopen();
  *   We hope MAXPATHLEN is enough -- only rudimentary checking is done!
  */
 
-#ifndef SECURE
-extern int secure ;
-#endif
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern char *mfmode ;
-extern int actualdpi ;
 int to_close ;
 
 #ifdef KPATHSEA
@@ -79,7 +73,7 @@ int to_close ;
 char *realnameoffile ;
 
 FILE *
-search(kpse_file_format_type format, char *file, char *mode)
+search(kpse_file_format_type format, const char *file, const char *mode)
 {
   FILE *ret;
   string found_name;
@@ -97,7 +91,7 @@ search(kpse_file_format_type format, char *file, char *mode)
       return NULL;
     } else {
       /* a relative path containing /../ is denied */
-      char *p;
+      const char *p;
 
       if (file[0] != '\0') {
        for(p = file + 1; *p && ((p = strstr(p, "..")) != NULL); p += 2) {
@@ -149,7 +143,7 @@ search(kpse_file_format_type format, char *file, char *mode)
 }               /* end search */
 
 FILE *
-pksearch(char *file, char *mode, halfword dpi, char **name_ret, int *dpi_ret)
+pksearch(const char *file, const char *mode, halfword dpi, char **name_ret, int *dpi_ret)
 {
   FILE *ret;
   kpse_glyph_file_type font_file;
@@ -179,9 +173,8 @@ pksearch(char *file, char *mode, halfword dpi, char **name_ret, int *dpi_ret)
 #else /* ! KPATHSEA */
 char realnameoffile[MAXPATHLEN] ;
 
-extern char *figpath, *pictpath, *headerpath ;
 FILE *
-search(char *path, char *file, char *mode)
+search(char *path, const char *file, const char *mode)
 {
    register char *nam ;                 /* index into fname */
    register FILE *fd ;                  /* file desc of file */
@@ -377,7 +370,7 @@ if (strchr(nam,'=') != NULL) {
 }               /* end search */
 
 FILE *
-pksearch(char *path, char *file, char *mode,
+pksearch(char *path, const char *file, const char *mode,
 	 char *n, halfword dpi, halfword vdpi)
 {
    register char *nam ;                 /* index into fname */
@@ -538,7 +531,7 @@ pksearch(char *path, char *file, char *mode,
 #    define fopen cmsfopen
 #  endif /* IBM: VM/CMS */
 FILE *
-my_real_fopen(register char *n, register char *t)
+my_real_fopen(register const char *n, register const char *t)
 {
    FILE *tf ;
    if (dd(D_FILES)) {

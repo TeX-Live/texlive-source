@@ -16,47 +16,9 @@ extern int system();
 #endif /* WIN32*/
 #endif
 /*
- *   These are the external routines called:
+ *   The external declarations:
  */
-/**/
 #include "protos.h"
-
-/* IBM: color - end */
-#ifdef HPS
-extern Boolean PAGEUS_INTERUPPTUS ;
-extern integer HREF_COUNT ;
-extern Boolean NEED_NEW_BOX ;
-extern Boolean HPS_FLAG ;
-#endif
-extern char errbuf[] ;
-extern shalfword linepos;
-extern Boolean usesspecial ;
-extern Boolean usescolor ;   /* IBM: color */
-extern int landscape ;
-extern char *paperfmt ;
-extern char *nextstring;
-extern char *maxstring;
-extern char *oname;
-extern FILE *bitfile;
-extern int quiet;
-extern fontdesctype *curfnt ;
-extern int actualdpi ;
-extern int vactualdpi ;
-extern integer hh, vv;
-extern int lastfont ;
-extern real conv ;
-extern real vconv ;
-extern integer hpapersize, vpapersize ;
-extern Boolean pprescan ;
-#ifndef KPATHSEA
-extern char *figpath ;
-#endif
-extern int prettycolumn ;
-extern Boolean disablecomments ;
-
-#ifdef DEBUG
-extern integer debug_flag;
-#endif
 
 static int specialerrors = 20 ;
 
@@ -66,7 +28,7 @@ struct bangspecial {
 } *bangspecials = NULL ;
 
 void
-specerror(char *s)
+specerror(const char *s)
 {
    if (specialerrors > 0 
 #ifdef KPATHSEA
@@ -175,7 +137,7 @@ outbangspecials(void) {
 
 typedef enum {None, String, Integer, Number, Dimension} ValTyp;
 typedef struct {
-   char    *Entry;
+   const char    *Entry;
    ValTyp  Type;
 } KeyDesc;
 
@@ -228,7 +190,7 @@ Tolower(register char c)
 #endif
 #endif /* !KPATHSEA */
 int
-IsSame(char *a, char *b)
+IsSame(const char *a, const char *b)
 {
    for( ; *a != '\0'; ) {
       if( TOLOWER(*a) != TOLOWER(*b) ) 
@@ -239,7 +201,8 @@ IsSame(char *a, char *b)
    return( *b == '\0' );
 }
 
-char *KeyStr, *ValStr ; /* Key and String values found */
+char *KeyStr ;       /* Key and ... */
+const char *ValStr ; /* ... String values found */
 long ValInt ; /* Integer value found */
 float ValNum ; /* Number or Dimension value found */
 
@@ -431,7 +394,7 @@ case 'h':
 	 while ((*p <= ' ' || *p == '=' || *p == '(') && *p != 0)
 	    p++ ;
 	 if(strncmp(p, "pre", 3) == 0) {
-	    int bracecount = 1, numbytes = 0, j ;
+	    int bracecount = 1, num_bytes = 0 ;
 	    while(*p != '{' && *p != 0)
 	       p++ ;
 	    if (*p != 0) p++;
@@ -439,11 +402,11 @@ case 'h':
 	       if (*r == '{') bracecount++ ;
 	       else if (*r == '}') bracecount-- ;
 	       if (bracecount == 0) break ;
-	       numbytes++ ;
+	       num_bytes++ ;
 	    }
-	    pre = (char *)malloc(numbytes+1);
+	    pre = (char *)malloc(num_bytes+1);
 	    r = pre ;
-	    for (j=0; j < numbytes; j++)
+	    for (j=0; j < num_bytes; j++)
 	       *r++ = *p++;
 	    *r = 0;
 	    if (*p != 0) p++;
@@ -451,7 +414,7 @@ case 'h':
 	 while ((*p <= ' ' || *p == '=' || *p == '(') && *p != 0)
 	    p++ ;
 	 if(strncmp(p, "post", 4) == 0) {
-	    int bracecount = 1, numbytes = 0, j ;
+	    int bracecount = 1, num_bytes = 0 ;
 	    while(*p != '{' && *p != 0)
 	       p++ ;
 	    if (*p != 0) p++;
@@ -459,11 +422,11 @@ case 'h':
 	       if (*r == '{') bracecount++ ;
 	       else if (*r == '}') bracecount-- ;
 	       if (bracecount == 0) break ;
-	       numbytes++ ;
+	       num_bytes++ ;
 	    }
-	    post = (char *)malloc(numbytes+1);
+	    post = (char *)malloc(num_bytes+1);
 	    r = post ;
-	    for (j=0; j < numbytes; j++)
+	    for (j=0; j < num_bytes; j++)
 	       *r++ = *p++;
 	    *r = 0;
 	 }
@@ -547,7 +510,7 @@ maccess(char *s)
    return (f != 0) ;
 }
 
-char *tasks[] = { 0, "iff2ps", "tek2ps" } ;
+const char *tasks[] = { 0, "iff2ps", "tek2ps" } ;
 
 static char psfile[511] ; 
 void
@@ -556,9 +519,9 @@ dospecial(integer numbytes)
    register char *p = nextstring ;
    register int i = 0 ;
    int j, systemtype = 0 ;
-   register char *q ;
+   register const char *q ;
    Boolean psfilewanted = 1 ;
-   char *task = 0 ;
+   const char *task = 0 ;
    char cmdbuf[111] ; 
 #ifdef HPS
 if (HPS_FLAG && PAGEUS_INTERUPPTUS) {
@@ -867,14 +830,8 @@ default:
    cmdout("@endspecial");
 }
 
-#ifdef KPATHSEA
-extern char *realnameoffile;
-#else
-extern char realnameoffile[] ;
-extern char *pictpath ;
-#endif
 void
-fil2ps(char *task, char *iname)
+fil2ps(const char *task, char *iname)
 {
    char cmd[400] ;
    FILE *f ;

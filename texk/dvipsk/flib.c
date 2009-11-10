@@ -6,12 +6,11 @@
 #ifdef FONTLIB
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #include "paths.h"
-#include "protos.h"
-extern int debug_flag ;
-extern char errbuf[] ;
-extern char *flipath ;
-extern char *fliname ;
-extern FILE *pkfile ;
+/*
+ *   The external declarations:
+ */
+#include "protos_add.h"
+
 /*
  * font library structures
  */
@@ -53,7 +52,6 @@ pkdouble(void)
    i = i * 256 + pkbyte() ;
    return(i) ;
 }
-extern char name[] ;
 /*
  *   fliload opens each font library, then reads in its
  *   directory for later use.

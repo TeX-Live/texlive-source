@@ -22,32 +22,12 @@
 #endif
 #endif
 /*
- *   These are the external routines we use.
+ *   The external declarations:
  */
-#include "protos.h"
-/*
- *   These are the external variables we use.
- */
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern long bytesleft ;
-extern quarterword *raster ;
-extern real conv ;
-extern int actualdpi, vactualdpi ;
-extern real alpha ;
-#ifndef KPATHSEA
-extern char *pkpath ;
-#endif
+#include "protos_add.h"
+
 char errbuf[512] ;
 int lastresortsizes[40] ;
-extern integer fsizetol ;
-extern Boolean nosmallchars ;
-extern Boolean compressed ;
-extern Boolean dopprescan ;
-#ifdef FONTLIB
-extern Boolean flib ;
-#endif
 /*
  *   Now we have some routines to get stuff from the PK file.
  *   Subroutine pkbyte returns the next byte.
@@ -55,7 +35,7 @@ extern Boolean flib ;
 FILE *pkfile ;
 char name[MAXPATHLEN] ;
 void
-badpk(char *s)
+badpk(const char *s)
 {
    (void)sprintf(errbuf,"! Bad PK file %s: %s",name,s) ;
    error(errbuf);
@@ -333,9 +313,6 @@ loadfont(register fontdesctype *curfnt)
    register chardesctype *cd = 0 ;
    int maxcc = 0 ;
    int munged = 0 ;
-   extern int prettycolumn ;
-   extern int quiet ;
-   extern char *realnameoffile ;
 /*
  *   We clear out some pointers:
  */

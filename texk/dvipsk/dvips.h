@@ -239,7 +239,7 @@ typedef struct t {
  */
 struct header_list {
    struct header_list *next ;
-   char *Hname ;
+   const char *Hname ;
    char *precode ;
    char *postcode ;
    char name[1] ;
@@ -255,8 +255,8 @@ struct header_list {
 struct papsiz {
    struct papsiz *next ;
    integer xsize, ysize ;
-   char *name ;
-   char *specdat ;
+   const char *name ;
+   const char *specdat ;
 } ;
 #ifdef MVSXA /* IBM: MVS/XA */
 /* this is where we fix problems with conflicts for truncation

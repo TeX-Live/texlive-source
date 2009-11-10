@@ -22,56 +22,11 @@
 #endif
 
 /*
- *   The external routines called here:
+ *   The external declarations:
  */
 #include "protos.h"
 
-/*
- *   These are the external variables used by these routines.
- */
-extern integer hh, vv ;
-extern fontdesctype *curfnt ;
-extern FILE *bitfile ;
-extern char *oname ;
-extern int secure ;
-extern Boolean reverse ;
-extern Boolean removecomments ;
-extern Boolean sendcontrolD, disablecomments, multiplesects ;
-extern Boolean shiftlowchars ;
-extern Boolean usesPSfonts, headers_off ;
-extern Boolean safetyenclose ;
-extern Boolean cropmarks ;
-extern Boolean tryepsf ;
-extern Boolean compressed ;
-extern Boolean sepfiles ;
-extern int numcopies ;
-extern int collatedcopies ;
-extern integer pagecopies ;
-extern int totalpages ;
-extern integer pagenum ;
-extern Boolean manualfeed ;
-extern int landscape ;
-extern int quiet ;
-extern int prettycolumn ;
-extern int actualdpi, vactualdpi ;
-extern char *iname, *nextstring ;
-extern char *paperfmt ;
-#ifndef KPATHSEA
-extern char *headerpath ;
-extern char *figpath ;
-#endif
-extern char errbuf[] ;
-extern shalfword linepos ;
-extern struct header_list *ps_fonts_used ;
-extern char banner[], banner2[] ;
-extern int gargc ;
-extern char **gargv ;
-extern struct papsiz *papsizes ;
-extern integer hpapersize, vpapersize ;
 char preamblecomment[256] ; /* usually "TeX output ..." */
-#ifdef HPS
-extern Boolean noprocset, HPS_FLAG ;
-#endif
 /*
  *   We need a few statics to take care of things.
  */
@@ -105,15 +60,13 @@ static time_t jobtime;
  *   Format:  80 {01,02} four byte length in littleendian order data
  *   repeated possibly multiple times.
  */
-static char *hxdata = "0123456789ABCDEF" ;
+static const char *hxdata = "0123456789ABCDEF" ;
 static int infigure ;
-extern char *infont ;
 static char possibleDSCLine[81],
        *dscLinePointer = possibleDSCLine, *dscLineEnd = possibleDSCLine + 80 ;
 void
-copyfile_general(char *s, struct header_list *cur_header)
+copyfile_general(const char *s, struct header_list *cur_header)
 {
-   extern char *realnameoffile ;
    FILE *f = NULL ;
    int c, prevc = '\n' ;
    long len ;
@@ -121,7 +74,7 @@ copyfile_general(char *s, struct header_list *cur_header)
    int doseps = 0;
    unsigned long dosepsbegin, dosepsend = 0;
    int removingBytes = 0 ;
-   char *scanForEnd = 0 ;
+   const char *scanForEnd = 0 ;
    int scanningFont = 0;
 
    /* end DOS EPS code */
@@ -489,10 +442,10 @@ msdosdone:
                                 in the rest of the file, and pretend it
                                 worked; this works around various Illustrator
                                 bugs.   -tgr, 14 June 2003                  */
-                           char *m1 = "%%EndData" ;
-                           char *m2 = "%%EndBinary" ;
-                           char *p1 = m1 ;
-                           char *p2 = m2 ;
+                           const char *m1 = "%%EndData" ;
+                           const char *m2 = "%%EndBinary" ;
+                           const char *p1 = m1 ;
+                           const char *p2 = m2 ;
                            error(
                " expected to see %%EndBinary at end of data; struggling on") ;
                            while (1) {
@@ -657,7 +610,7 @@ msdosdone:
 }
 
 void
-copyfile(char *s)
+copyfile(const char *s)
 {
    copyfile_general(s, NULL) ;
 }
@@ -788,7 +741,7 @@ scout2(int c)
 }
 
 void
-cmdout(char *s)
+cmdout(const char *s)
 {
    int l ;
 
@@ -865,7 +818,7 @@ void
 mhexout(register unsigned char *p,
         register long len)
 {
-   register char *hexchar = hxdata ;
+   register const char *hexchar = hxdata ;
    register int n, k ;
 
    while (len > 0) {
@@ -969,7 +922,7 @@ newline(void)
 }
 
 void
-nlcmdout(char *s)
+nlcmdout(const char *s)
 {
    newline() ;
    cmdout(s) ;
@@ -998,7 +951,7 @@ mlower(int c)
       return c ;
 }
 int
-ncstrcmp(char *a, char *b)
+ncstrcmp(const char *a, const char *b)
 {
    while (*a && (*a == *b ||
                        mlower(*a) == mlower(*b)))
@@ -1191,7 +1144,7 @@ topoints(integer i)
  *   send out lines starting with `!' else send all other lines out.
  */
 void
-paperspec(char *s, int hed)
+paperspec(const char *s, int hed)
 {
    int sendit ;
 

@@ -5,31 +5,9 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #include <math.h>
 /*
- *   The external routines we use:
+ *   The external declarations:
  */
-#include "protos.h"
-/*
- *   Now the external variables.
- */
-extern fontdesctype *curfnt ;
-extern fontmaptype *ffont ;
-extern quarterword *curpos, *curlim ;
-extern integer hh, vv ;
-extern integer hoff, voff ;
-extern Boolean noomega ;
-/*
- * CONVENTION:  conv -> horizontial converter
- *		vconv -> vertical converter
- */
-extern real conv ;
-extern real vconv ;
-
-extern FILE *bitfile ;
-extern int actualdpi ;
-extern int vactualdpi ;
-extern frametype frames[] ;
-extern int maxdrift ;
-extern int vmaxdrift ;
+#include "protos_add.h"
 
 #ifdef XENIX
 #define PixRound(x) ((integer)(x + (iconv >> 1)) / iconv)
@@ -48,20 +26,12 @@ extern int vmaxdrift ;
  *   Most error checking is suppressed because the prescan has already
  *   verified that the DVI data is OK....except for stack over/underflow.
  */
-struct dvistack {
-  integer hh, vv ;
-  integer h, v, w, x, y, z ;
-} stack[STACKSIZE] ;
+struct dvistack stack[STACKSIZE] ;
 #ifdef HPS
-extern int pagecounter ;
-extern Boolean HPS_FLAG ;
-extern Boolean inHTMLregion ;
-integer vvmem, hhmem ;
+integer hhmem, vvmem ;
 integer pushcount = 0 ;
 Boolean PAGEUS_INTERUPPTUS = 0 ;
 Boolean NEED_NEW_BOX = 0 ;
-extern integer HREF_COUNT ;
-extern int current_pushcount ;
 integer H_BREAK ; /* An empirical parameter for guessing line breaks; needs
                      dpi dependence */
 #endif 

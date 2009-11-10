@@ -7,27 +7,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 /*
- *   These are the external routines called:
+ *   The external declarations:
  */
 #include "protos.h"
-
-extern char errbuf[] ;
-extern shalfword linepos;
-extern FILE *bitfile;
-extern int actualdpi ;
-extern int vactualdpi ;
-extern integer hh, vv;
-#ifndef KPATHSEA
-extern char *figpath ;
-#endif
-extern int prettycolumn ;
-extern int quiet;
-extern Boolean disablecomments ;
-
-#ifdef DEBUG
-extern integer debug_flag;
-#endif
-
 
 #ifdef EMTEX
 /* emtex specials, added by rjl */
@@ -61,7 +43,7 @@ boolean emused = FALSE;  /* true if em points used on this page */
 integer emx, emy;
 
 struct emunit {
-   char *unit;
+   const char *unit;
    float factor;
 };
 struct emunit emtable[] = {
@@ -1381,7 +1363,7 @@ bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 #define PCX 0
 #define MSP 1
 #define BMP 2
-char *extarr[]=
+const char *extarr[]=
 { ".pcx", ".msp", ".bmp", NULL };
 
 void

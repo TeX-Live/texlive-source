@@ -209,7 +209,7 @@ static int flg_seac=0;
 
 typedef struct
 {
-    char *command;
+    const char *command;
     int code;
 }
 tablecommand;
@@ -222,7 +222,7 @@ tablecommand TableCommand[] =
 
 typedef struct
 {
-    char *extension;
+    const char *extension;
     int num;
 }
 typefonts;
@@ -256,7 +256,7 @@ int subrs, char_str;
 
 typedef struct
 {
-    char *name;
+    const char *name;
     int num;
 }
 type_key;
@@ -1670,7 +1670,7 @@ EndOfEncoding(int err_num)
     int flg_get_word=0;
 
 
-    static char *RefKey[] =
+    static const char *RefKey[] =
     {
        "readonly",
        "getinterval",
@@ -2311,7 +2311,7 @@ OutHEX(FILE *fout)
 {
     int i=0;
     int num;
-    static char *hexstr = "0123456789abcdef" ;
+    static const char *hexstr = "0123456789abcdef" ;
     int bin;
 
     line=tmpline;
@@ -2366,14 +2366,14 @@ Afm(void)
     int i,j,k,num=0;
     unsigned char name[40];
 
-    static char *AfmKey[] =
+    static const char *AfmKey[] =
     {
         "StartCharMetrics",
         "EndCharMetrics",
             ""
     };
 
-    static char *InfoKey[] =
+    static const char *InfoKey[] =
     {
         "C",
         "N",

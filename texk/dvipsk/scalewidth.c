@@ -14,6 +14,9 @@
  *   place in the program where such accuracy is required.
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
+/*
+ *   The external declarations:
+ */
 #include "protos.h"
 
 integer

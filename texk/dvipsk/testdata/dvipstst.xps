@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0
-%%Creator: dvips(k) 5.97 Copyright 2008 Radical Eye Software
+%%Creator: dvips(k) 5.98 Copyright 2009 Radical Eye Software
 %%Title: ./testdata/dvipstst.xdv
-%%CreationDate: Thu May 28 15:21:11 2009
+%%CreationDate: Tue Aug 25 23:42:55 2009
 %%Pages: 1
 %%PageOrder: Ascend
 %%BoundingBox: 0 0 596 842
@@ -4198,9 +4198,9 @@ Fe(\031)h Fd(or)534 1030 y(some)c(other)g(transcenden)o(tal)i(n)o(um)o
 @urx 814 @ury 2796 @rwi @setspecial
 %%BeginDocument: mtest.ps
 %!PS-Adobe-2.0
-%%Creator: dvips(k) 5.97 Copyright 2008 Radical Eye Software
+%%Creator: dvips(k) 5.98 Copyright 2009 Radical Eye Software
 %%Title: ./testdata/dvipstst.xdv
-%%CreationDate: Thu May 28 15:21:11 2009
+%%CreationDate: Tue Aug 25 23:42:55 2009
 %%Pages: 1
 %%PageOrder: Ascend
 %%BoundingBox: 0 0 596 842

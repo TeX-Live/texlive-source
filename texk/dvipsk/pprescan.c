@@ -4,31 +4,10 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 
 /*
- *   These are all the external routines it calls:
+ *   The external declarations:
  */
 #include "protos.h"
 
-/*
- *   These are the globals it accesses.
- */
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern fontdesctype *fonthead ;
-extern integer firstpage, lastpage ;
-extern integer firstseq, lastseq ;
-extern Boolean notfirst, notlast ;
-extern Boolean evenpages, oddpages, pagelist ;
-extern integer maxpages ;
-extern Boolean abspage ;
-extern FILE *dvifile ;
-extern fontdesctype *curfnt ;
-extern fontmaptype *ffont ;
-extern quarterword *curpos, *curlim ;
-extern integer pagenum ;
-extern char errbuf[] ;
-extern frametype frames[] ;
-extern Boolean noomega ;
 /*
  *  We declare this to tell everyone we are prescanning early.
  */

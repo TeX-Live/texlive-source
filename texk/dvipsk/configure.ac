@@ -14,6 +14,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([dvipsk])
+KPSE_CANONICAL_HOST
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
@@ -31,7 +32,7 @@ dnl The subdirectory squeeze must be configured for the build system.
 dnl When cross compiling, can not share the cache file with the subdirectory!
 AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
 [cache_file=/dev/null
- ac_configure_args="$ac_configure_args --host='$build' \
+ ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
  CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
  CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
 

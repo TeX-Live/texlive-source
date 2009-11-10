@@ -6,19 +6,10 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 
 /*
- *   These are the external routines called.
+ *   The external declarations:
  */
 #include "protos.h"
 
-/*
- *   These are the external variables accessed.
- */
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern integer pagenum ;
-extern char errbuf[] ;
-extern FILE *dvifile ;
 /*
  *   And now the big routine.
  */

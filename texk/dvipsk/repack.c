@@ -4,9 +4,10 @@
  *   (Slight mods by Don Knuth in December 89.)
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
-#ifdef DEBUG
-extern integer debug_flag;
-#endif /* DEBUG */
+/*
+ *   The external declarations:
+ */
+#include "protos.h"
 
 /*   Given a raster that has been unpacked from PK format,
  *   we compress it by another scheme that is suitable for
@@ -32,8 +33,6 @@ extern integer debug_flag;
 #define ADVXCHG2 CMD(12)
 #define ADVXCHG2END CMD(13)
 #define END CMD(14)
-
-#include "protos.h"
 
 static int rowlength = -1 ;
 static unsigned char *specdata ;
@@ -319,8 +318,6 @@ dochar(unsigned char *from, short width, short height)
    }
 }
 
-extern long bytesleft ;
-extern quarterword *raster ;
 long mbytesleft ;
 quarterword *mraster ;
 

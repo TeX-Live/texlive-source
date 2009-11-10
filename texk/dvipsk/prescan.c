@@ -4,45 +4,10 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 
 /*
- *   These are all the external routines it calls:
+ *   The external declarations:
  */
 #include "protos.h"
 
-/*
- *   These are the globals it accesses.
- */
-#ifdef DEBUG
-extern integer debug_flag;
-#endif  /* DEBUG */
-extern fontdesctype *fonthead ;
-extern real conv ;
-extern real vconv ;
-extern real alpha ;
-extern integer firstpage, lastpage ;
-extern integer firstseq, lastseq ;
-extern integer maxsecsize ;
-extern Boolean notfirst, notlast ;
-extern Boolean evenpages, oddpages, pagelist ;
-extern integer fontmem ;
-extern integer pagecount ;
-extern integer pagenum ;
-extern integer maxpages ;
-extern sectiontype *sections ;
-extern FILE *dvifile ;
-extern integer num, den ;
-extern double mag ;
-extern int overridemag ;
-extern integer swmem ;
-extern int quiet ;
-extern int actualdpi ;
-extern int vactualdpi ;
-extern Boolean reverse ;
-extern int totalpages ;
-extern integer fsizetol ;
-extern char *oname ;
-extern Boolean pprescan ;
-extern Boolean abspage ;
-extern char preamblecomment[] ;
 /*
  *   This routine handles the processing of the preamble in the dvi file.
  */

@@ -9,6 +9,8 @@ struct Char;
 struct String;
 struct tcd;
 
+/******* prototypes for functions *******/
+
 /* prototypes for functions from bbox.c */
 extern void bbtfmload(fontdesctype *curfnt);
 extern void bbspecial(int h, int v, int nbytes);
@@ -24,7 +26,6 @@ extern void bopcolor(int outtops);
 extern void pushcolor(char *p, Boolean outtops);
 extern void popcolor(Boolean outtops);
 
-
 /* prototypes for functions from dopage.c */
 extern void dopage(void);
 
@@ -35,14 +36,14 @@ extern void InstallPL(int pslow, int pshigh);
 extern int ParsePages(char *s);
 
 /* prototypes for functions from dospecial.c */
-extern void specerror(char *s);
+extern void specerror(const char *s);
 extern void outbangspecials(void);
-extern int IsSame(char *a, char *b);
+extern int IsSame(const char *a, const char *b);
 extern char *GetKeyVal(char *str, int *tno);
 extern void predospecial(int numbytes, Boolean scanning);
 extern int maccess(char *s);
 extern void dospecial(int numbytes);
-extern void fil2ps(char *task, char *iname);
+extern void fil2ps(const char *task, char *iname);
 extern float *bbdospecial(int nbytes);
 
 /* prototypes for functions from download.c */
@@ -84,14 +85,14 @@ extern void skipover(int i);
 
 /* prototypes for functions from dvips.c */
 extern void help(int status);
-extern void error_with_perror(char *s, char *fname);
-extern void error(char *s);
+extern void error_with_perror(const char *s, const char *fname);
+extern void error(const char *s);
 extern void check_checksum(unsigned int c1, unsigned int c2, const char *name);
 extern char *mymalloc(int n);
 extern void morestrings(void);
 extern void checkstrings(void);
 extern void initialize(void);
-extern char *newstring(char *s);
+extern char *newstring(const char *s);
 extern void newoutname(void);
 extern void *revlist(void *p);
 extern void queryargs(void);
@@ -125,9 +126,9 @@ extern char *getname(char *s);
 extern void includechars(fontdesctype *f, char *s);
 extern void scan1fontcomment(char *p);
 extern int scanvm(char *p);
-extern void scan_fontnames(char *str, char *psfile);
-extern void scanfontusage(char *p, char *psfile);
-extern void scanfontcomments(char *filename);
+extern void scan_fontnames(char *str, const char *psfile);
+extern void scanfontusage(char *p, const char *psfile);
+extern void scanfontcomments(const char *filename);
 extern Boolean okascmd(char *ss);
 extern void nameout(char *area, char *name);
 extern void fonttableout(void);
@@ -135,6 +136,7 @@ extern void fonttableout(void);
 /* prototypes for functions from flib.c */
 #ifdef FONTLIB
 extern void fliload(void);
+extern char *fliparse(char *path, char *name)
 #endif
 
 /* prototypes for functions from fontdef.c */
@@ -144,12 +146,12 @@ extern void fontdef(int siz);
 extern int skipnop(void);
 
 /* prototypes for functions from header.c */
-extern int add_name(char *s, struct header_list **what );
-extern int add_name_general(char *s, struct header_list **what,
+extern int add_name(const char *s, struct header_list **what );
+extern int add_name_general(const char *s, struct header_list **what,
                             char *pre, char *post);
-extern void checkhmem(char *s, char *p, char *q);
-extern int add_header(char *s);
-extern int add_header_general(char *s, char *pre, char* post);
+extern void checkhmem(const char *s, char *p, char *q);
+extern int add_header(const char *s);
+extern int add_header_general(const char *s, char *pre, char* post);
 extern char *get_name(struct header_list **what );
 extern void send_headers(void);
 
@@ -174,7 +176,7 @@ extern int href_name_match(char *h, char *n);
 extern void stamp_hps(struct hps_link *pl);
 extern void stamp_external(char *s, struct hps_link *pl);
 extern void finish_hps(void);
-extern void set_bitfile(char *s, int mode);
+extern void set_bitfile(const char *s, int mode);
 extern void vertical_in_hps(void);
 extern void print_rect_list(void);
 extern void end_current_box(void);
@@ -182,7 +184,7 @@ extern void start_new_box(void);
 #endif /* HPS */
 
 /* prototypes for functions from loadfont.c */
-extern void badpk(char *s);
+extern void badpk(const char *s);
 extern short pkbyte(void);
 extern int pkquad(void);
 extern int pktrio(void);
@@ -194,8 +196,8 @@ extern void loadfont(fontdesctype *curfnt);
 extern void makefont(char *name, int dpi, int bdpi);
 
 /* prototypes for functions from output.c */
-extern void copyfile(char *s);
-extern void copyfile_general(char *s, struct header_list *h);
+extern void copyfile(const char *s);
+extern void copyfile_general(const char *s, struct header_list *h);
 extern void figcopyfile(char *s, int systemtype);
 extern void specialout(char c);
 extern void stringend(void);
@@ -203,7 +205,7 @@ extern void stringend(void);
 extern int T1Char(int c);
 #endif
 extern void scout(unsigned char c);
-extern void cmdout(char *s);
+extern void cmdout(const char *s);
 extern void floatout(float n);
 extern void doubleout(double n);
 extern void numout(int n);
@@ -211,11 +213,11 @@ extern void mhexout(unsigned char *p, long len);
 extern void fontout(int n);
 extern void hvpos(void);
 extern void newline(void);
-extern void nlcmdout(char *s);
+extern void nlcmdout(const char *s);
 extern int mlower(int c);
-extern int ncstrcmp(char *a, char *b);
+extern int ncstrcmp(const char *a, const char *b);
 extern void findpapersize(void);
-extern void paperspec(char *s, int hed);
+extern void paperspec(const char *s, int hed);
 extern char *epsftest(int bop);
 extern void open_output(void);
 extern void initprinter(sectiontype *sect);
@@ -255,10 +257,10 @@ extern struct resfont *lookup(char *name);
 extern struct resfont *findPSname(char *name);
 extern void add_entry(char *TeXname, char *PSname, char *Fontfile, char *Vectfile, char *specinfo, char *downloadinfo);
 extern int residentfont(fontdesctype *curfnt);
-extern void bad_config(char *err);
+extern void bad_config(const char *err);
 extern char *configstring(char *s, int nullok);
-extern Boolean getdefaults(char *s);
-extern void getpsinfo(char *name);
+extern Boolean getdefaults(const char *s);
+extern void getpsinfo(const char *name);
 extern void checkenv(int which);
 
 /* prototypes for functions from scalewidth.c */
@@ -271,22 +273,17 @@ extern short scanpage(void);
 
 /* prototypes for functions from search.c */
 #ifdef KPATHSEA
-extern FILE *search(kpse_file_format_type format, char *file, char *mode);
-extern FILE *pksearch(char *file, char *mode, halfword dpi, char **name_ret, int *dpi_ret);
+extern FILE *search(kpse_file_format_type format, const char *file, const char *mode);
+extern FILE *pksearch(const char *file, const char *mode, halfword dpi, char **name_ret, int *dpi_ret);
 #else /* !KPATSHEA */
-extern FILE *search(char *path, char *file, char *mode);
-extern FILE *pksearch(char *path, char *file, char *mode, char *n, halfword dpi, halfword vdpi);
+extern FILE *search(char *path, const char *file, const char *mode);
+extern FILE *pksearch(char *path, const char *file, const char *mode, char *n, halfword dpi, halfword vdpi);
 #endif /* KPATHSEA */
-extern FILE *my_real_fopen(char *n, char *t);
+extern FILE *my_real_fopen(const char *n, const char *t);
 extern int close_file(FILE *f);
 
 /* prototypes for functions from skippage.c */
 extern void skippage(void);
-
-/* prototypes for functions from squeeze.c */
-extern void specialout(char c);
-extern void strout(char *s);
-extern void cmdout(char *s);
 
 /* prototypes for functions from t1part.c */
 extern int DefTypeFont(unsigned char *name);
@@ -343,7 +340,7 @@ extern void ErrorOfScan(int err);
 extern void NameOfProgram(void);
 
 /* prototypes for functions from tfmload.c */
-extern void badtfm(char *s);
+extern void badtfm(const char *s);
 extern void tfmopen(fontdesctype *fd);
 extern short tfmbyte(void);
 extern unsigned short tfm16(void);
@@ -355,10 +352,11 @@ extern short getnyb(void);
 extern Boolean getbit(void);
 extern long pkpackednum(void);
 extern void flip(char *s, long howmany);
-extern long unpack(unsigned char *pack, unsigned short *raster, unsigned short cwidth, unsigned short cheight, unsigned short cmd);
+extern long unpack(unsigned char *pack, unsigned short *raster,
+                    unsigned short cwidth, unsigned short cheight, unsigned short cmd);
 
 /* prototypes for functions from virtualfont.c */
-extern void badvf(char *s);
+extern void badvf(const char *s);
 extern short vfbyte(void);
 extern int vfquad(void);
 extern int vftrio(void);
@@ -367,10 +365,188 @@ extern struct tft *vfontdef(int s, int siz);
 extern Boolean virtualfont(fontdesctype *curfnt);
 
 /* prototypes for functions from writet1.c */
-extern void load_enc(char *, char **);
+extern void load_enc(char *, const char **);
 extern void writet1(void);
 extern void t1_free(void);
 extern boolean t1_subset(char *, char *, unsigned char *);
 extern boolean t1_subset_2(char *, unsigned char *, char *);
+
+/*********** global variables ***********/
+
+/* global variables from dopage.c */
+#ifdef HPS
+extern integer hhmem, vvmem ;
+extern integer pushcount ;
+extern Boolean PAGEUS_INTERUPPTUS ;
+extern Boolean NEED_NEW_BOX ;
+#endif
+
+/* global variables from dosection.c */
+#ifdef HPS
+extern int pagecounter ;
+#endif
+
+/* global variables from dvips.c */
+extern char *downloadedpsnames[] ;
+extern int unused_top_of_psnames ;
+extern fontdesctype *fonthead ;
+extern fontdesctype *curfnt ;
+extern sectiontype *sections ;
+extern Boolean partialdownload ;
+extern Boolean manualfeed ;
+extern Boolean compressed ;
+extern Boolean downloadpspk ;
+extern Boolean safetyenclose ;
+extern Boolean removecomments ;
+extern Boolean nosmallchars ;
+extern Boolean cropmarks ;
+extern Boolean abspage ;
+extern Boolean tryepsf ;
+extern int secure ;
+extern int secure_option ;
+extern int collatedcopies ;
+extern integer pagecopies ;
+extern shalfword linepos ;
+extern integer maxpages ;
+extern Boolean notfirst, notlast ;
+extern Boolean evenpages, oddpages, pagelist ;
+extern Boolean sendcontrolD ;
+extern Boolean shiftlowchars ;
+extern integer firstpage, lastpage ;
+extern integer firstseq, lastseq ;
+extern integer hpapersize, vpapersize ;
+extern integer hoff, voff ;
+extern integer maxsecsize ;
+extern integer firstboploc ;
+extern Boolean sepfiles ;
+extern int numcopies ; 
+extern const char *oname ;
+extern char *iname ;
+extern char *fulliname ;
+extern char *nextstring, *maxstring ;
+extern FILE *dvifile, *bitfile ;
+extern quarterword *curpos, *curlim ;
+extern fontmaptype *ffont ;
+extern real conv ;
+extern real vconv ;
+extern real alpha ;
+extern double mag ;
+extern integer num, den ;
+extern int overridemag ;
+extern int actualdpi, vactualdpi ;
+extern int maxdrift, vmaxdrift ;
+extern char *paperfmt ;
+extern int landscape ;
+extern integer fontmem ;
+extern integer pagecount ;
+extern integer pagenum ;
+extern long bytesleft ;
+extern quarterword *raster ;
+extern integer hh, vv ;
+extern Boolean noomega ;
+extern const char *infont ;
+#ifndef KPATHSEA
+extern char *tfmpath ;
+extern char *pkpath ;
+extern char *vfpath ;
+extern char *figpath ;
+extern char *headerpath ;
+extern char *configpath ;
+extern char *pictpath ;
+#ifdef SEARCH_SUBDIRECTORIES
+extern char *fontsubdirpath ;
+#endif
+#endif /* ! KPATHSEA */
+#ifdef FONTLIB
+extern char *flipath ;
+extern char *fliname ;
+#endif
+extern integer swmem ;
+extern int quiet ;
+extern int filter ;
+extern int dvips_debug_flag ;
+extern int prettycolumn ;
+extern int gargc ;
+extern char **gargv ;
+extern int totalpages ;
+extern Boolean reverse ; 
+extern Boolean usesPSfonts ;
+extern Boolean usesspecial ;
+extern Boolean headers_off ;
+extern Boolean usescolor ;
+extern char *warningmsg ;
+extern Boolean multiplesects ;
+extern Boolean disablecomments ;
+extern char *printer ;
+extern char *mfmode ;
+extern char *mflandmode ;
+extern int mfmode_option;
+extern int oname_option;
+extern frametype frames[] ;
+extern integer pagecost ;
+extern integer fsizetol ;
+extern Boolean includesfonts ;
+extern fontdesctype *fonthd[MAXFONTHD] ;
+extern int nextfonthd ;
+extern char xdig[256] ;
+extern char banner[], banner2[] ;
+extern Boolean noenv ;
+extern Boolean dopprescan ;
+extern int dontmakefont ;
+extern struct papsiz *papsizes ;
+extern int headersready ;
+#if defined(MSDOS) || defined(OS2) || defined(ATARIST)
+extern char *mfjobname ;
+extern FILE *mfjobfile ;
+#endif
+#ifdef DEBUG
+extern integer debug_flag ;
+#endif
+#ifdef HPS
+extern Boolean HPS_FLAG ;
+#endif
+
+/* global variables from flib.c */
+#ifdef FONTLIB
+extern Boolean flib ;
+#endif
+
+/* global variables from hps.c */
+#ifdef HPS
+extern Boolean inHTMLregion ;
+extern integer HREF_COUNT ;
+extern int current_pushcount ;
+extern Boolean noprocset ;
+#endif
+
+/* global variables from loadfont.c */
+extern char errbuf[512] ;
+extern int lastresortsizes[40] ;
+extern FILE *pkfile ;
+
+/* global variables from output.c */
+extern char preamblecomment[256] ;
+
+/* global variables from pprescan.c */
+extern Boolean pprescan ;
+
+/* global variables from repack.c */
+extern long mbytesleft ;
+extern quarterword *mraster ;
+
+/* global variables from resident.c */
+extern struct header_list *ps_fonts_used ;
+extern const char *psmapfile ;
+
+/* global variables from search.c */
+extern int to_close ;
+#ifdef KPATHSEA
+extern char *realnameoffile ;
+#else
+extern char realnameoffile[] ;
+#endif
+
+/* global variables from tfmload.c */
+extern FILE *tfmfile ;
 
 #endif

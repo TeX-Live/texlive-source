@@ -4,6 +4,12 @@
  * your heart's content.  
  */
 #include "dvips.h"
+
+/*
+ *   The external declarations:
+ */
+#include "protos.h"
+
 #ifdef HPS
 #include <stdlib.h>
 #ifdef KPATHSEA
@@ -35,8 +41,6 @@ Boolean PUSHED = 0 ;
 char *current_name ;
 int current_type ;
 int current_pushcount ;
-extern integer pushcount ;
-extern shalfword linepos ;
 
 
 #define GoTo 0
@@ -85,14 +89,7 @@ static struct nlist *link_sources[HASHSIZE] ; /* hrefs .... */
 char *dup_str() ; /* duplicate a string */
 #endif
 
-#include "protos.h"
-
-extern Boolean removecomments ;
 Boolean noprocset ; /* Leave out BeginProc and EndProc comments */
-extern int vactualdpi ; 
-extern int pagecounter ;
-extern integer hhmem, vvmem ;
-extern integer vpapersize ;
 /* This was hardcoded to letter size.  The denominator converts scaled
    points to big points (65536*72.27/72). */
 #undef PAGESIZE /* HP-UX 10 defines for itself.  */
@@ -106,13 +103,6 @@ extern integer vpapersize ;
 * static char *dest_key[9] = {"Fit", "FitB", "FitW", "FitH", "FitBH"
                "FitR", "FitV", "FitBV", "XYZ"} ; 
 */
-
-extern FILE *bitfile  ; 
-extern char *oname  ; 
-
-extern integer pagenum ;
-extern integer hh ;
-extern integer vv ;
 
 char *hs = NULL ; /* html string to be handled */
 char *url_name = NULL ; /* url between double quotes */
@@ -513,9 +503,6 @@ stamp_external(char *s, Hps_link *pl)
 
 void
 finish_hps(void) {
-  extern int dvips_debug_flag;
-  extern int debug_flag;
-
   fclose(bitfile) ;
   set_bitfile("head.tmp",1);
   do_targets() ;
@@ -535,7 +522,7 @@ finish_hps(void) {
 }
 
 void
-set_bitfile(char *s, int mode)
+set_bitfile(const char *s, int mode)
 {  
 if ((bitfile=fopen(s, mode ? FOPEN_ABIN_MODE : FOPEN_WBIN_MODE))==NULL) {
    error(s) ;

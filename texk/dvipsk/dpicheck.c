@@ -4,9 +4,11 @@
  *   magnifications.
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
+/*
+ *   The external declarations:
+ */
 #include "protos.h"
 
-extern int actualdpi ;
 static integer existsizes[30] = { 0 , 99999999 } ;
 static int checkdpi ;
 /*
