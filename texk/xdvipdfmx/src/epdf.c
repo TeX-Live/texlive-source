@@ -344,7 +344,7 @@ pdf_get_page_content (pdf_obj* page)
     /*
      * Concatenate all content streams.
      */
-    pdf_obj *content_seg, *content_new;
+    pdf_obj *content_seg;
     int      idx = 0;
     content_new = pdf_new_stream(STREAM_COMPRESS);
     for (;;) {
@@ -565,7 +565,8 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
 {
   pdf_obj *page_tree, *contents;
   int depth = 0, top = -1;
-  char *clip_path, *temp, *end_path;
+  const char *clip_path, *end_path;
+  char *save_path, *temp;
   pdf_tmatrix M;
   double stack[6];
   pdf_file *pf;
@@ -592,8 +593,9 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
 
   pdf_doc_add_page_content(" ", 1);
 
-  clip_path = malloc(pdf_stream_length(contents) + 1);
-  strncpy(clip_path, (char*)pdf_stream_dataptr(contents),  pdf_stream_length(contents));
+  save_path = malloc(pdf_stream_length(contents) + 1);
+  strncpy(save_path, (const char *) pdf_stream_dataptr(contents),  pdf_stream_length(contents));
+  clip_path = save_path;
   end_path = clip_path + pdf_stream_length(contents);
   depth = 0;
 
@@ -796,9 +798,7 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
       }
     }
   }
-  clip_path = end_path;
-  clip_path -= pdf_stream_length(contents);
-  free(clip_path);
+  free(save_path);
 
   pdf_release_obj(contents);
   pdf_close(pf);

@@ -6,6 +6,6 @@
 extern cff_font *t1_load_font (char **enc_vec, int mode, FILE *fp);
 extern int   is_pfb (FILE *fp);
 extern int   t1_get_fontname (FILE *fp, char *fontname);
-extern char *t1_get_standard_glyph (int code);
+extern const char *t1_get_standard_glyph (int code);
 
 #endif /* _T1_LOAD_H_ */

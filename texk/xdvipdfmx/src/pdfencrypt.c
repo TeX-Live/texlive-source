@@ -323,7 +323,7 @@ static void compute_user_password (void)
     break;
   case 3:
     MD5_init(&md5_ctx);
-    MD5_write(&md5_ctx, (unsigned char *)padding_string, MAX_STR_LEN);
+    MD5_write(&md5_ctx, padding_string, MAX_STR_LEN);
 
     MD5_write(&md5_ctx, id_string, MAX_KEY_LEN);
     MD5_final(md5_buf, &md5_ctx);

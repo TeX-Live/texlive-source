@@ -111,7 +111,7 @@ bt_release_tree (struct bt_node *tree)
 }
 
 static struct bt_node *
-parse_expr (char **pp, char *endptr)
+parse_expr (const char **pp, const char *endptr)
 {
   struct bt_node *root, *curr;
   
@@ -318,12 +318,12 @@ check_uc_coverage (struct uc_coverage *coverage)
 int
 otl_parse_optstring (otl_opt *opt, const char *optstr)
 {
-  char  *p, *endptr;
+  const char *p, *endptr;
 
   ASSERT(opt);
 
   if (optstr) {
-    p      = (char *) optstr;
+    p      = optstr;
     endptr = p + strlen(optstr);
     opt->rule = parse_expr(&p, endptr);
   }

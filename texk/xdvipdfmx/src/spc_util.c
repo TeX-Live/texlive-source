@@ -45,9 +45,9 @@
 #define ISBLANK(c) ((c) == ' ' || (c) == '\t')
 #endif
 static void
-skip_blank (char **pp, char *endptr)
+skip_blank (const char **pp, const char *endptr)
 {
-  char  *p = *pp;
+  const char  *p = *pp;
   for ( ; p < endptr && ISBLANK(*p); p++);
   *pp = p;
 }

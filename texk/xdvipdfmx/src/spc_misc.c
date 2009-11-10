@@ -124,7 +124,7 @@ spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)
   ti.flags |= (INFO_HAS_WIDTH|INFO_HAS_HEIGHT);
 
   for (;;) {
-    char  *p = mfgets(buf, 512, fp);
+    const char *p = mfgets(buf, 512, fp);
     if (!p)
       break;
     if (mps_scan_bbox(&p, p + strlen(p), &ti.bbox) >= 0) {
@@ -166,10 +166,10 @@ static struct spc_handler misc_handlers[] = {
 int
 spc_misc_check_special (const char *buffer, long size)
 {
-  char  *p, *endptr;
+  const char *p, *endptr;
   int    i;
 
-  p      = (char *) buffer;
+  p      = buffer;
   endptr = p + size;
 
   skip_white(&p, endptr);
@@ -190,7 +190,7 @@ int
 spc_misc_setup_handler (struct spc_handler *handle,
 			struct spc_env *spe, struct spc_arg *args)
 {
-  char  *key;
+  const char *key;
   int    i, keylen;
 
   ASSERT(handle && spe && args);
@@ -220,9 +220,9 @@ spc_misc_setup_handler (struct spc_handler *handle,
 
       skip_white(&args->curptr, args->endptr);
 
-      args->command = (char *) misc_handlers[i].key;
+      args->command = misc_handlers[i].key;
 
-      handle->key   = (char *) "???:";
+      handle->key   = "???:";
       handle->exec  = misc_handlers[i].exec;
 
       return 0;

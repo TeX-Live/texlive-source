@@ -315,11 +315,11 @@ struct named_object
 static int CDECL
 cmp_key (const void *d1, const void *d2)
 {
-  struct named_object *sd1, *sd2;
+  const struct named_object *sd1, *sd2;
   int    keylen, cmp;
 
-  sd1 = (struct named_object *) d1;
-  sd2 = (struct named_object *) d2;
+  sd1 = (const struct named_object *) d1;
+  sd2 = (const struct named_object *) d2;
 
   if (!sd1->key)
     cmp = -1;

@@ -123,7 +123,11 @@ pst_new_obj (pst_type type, void *data)
 pst_obj *
 pst_new_mark (void)
 {
-  return pst_new_obj(PST_TYPE_MARK, (void *)pst_const_mark);
+  char *q;
+
+  q = NEW(strlen(pst_const_mark)+1, char);
+  strcpy(q, pst_const_mark);
+  return pst_new_obj(PST_TYPE_MARK, (void *)q);
 }
 
 void
@@ -138,7 +142,6 @@ pst_release_obj (pst_obj *obj)
   case PST_TYPE_STRING:  pst_string_release(obj->data);  break;
   case PST_TYPE_NULL:
   case PST_TYPE_MARK:
-    break;
   case PST_TYPE_UNKNOWN:
     if (obj->data)
       RELEASE(obj->data);
@@ -388,8 +391,12 @@ pst_parse_null (unsigned char **inbuf, unsigned char *inbufend)
   if (*inbuf + 4 <= inbufend &&
       memcmp(*inbuf, "null", 4) == 0 &&
       PST_TOKEN_END(*inbuf+4, inbufend)) {
+    char *q;
+
     *inbuf += 4;
-    return pst_new_obj(PST_TYPE_NULL, (void*)pst_const_null);
+    q = NEW(strlen(pst_const_null)+1, char);
+    strcpy(q, pst_const_null);
+    return pst_new_obj(PST_TYPE_NULL, (void*)q);
   } else
     return NULL;
 }

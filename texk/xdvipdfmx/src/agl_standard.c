@@ -1,6 +1,6 @@
 #include "agl.h"
 
-char* agl_standard_names[] = {
+const char* agl_standard_names[] = {
   "spacehackarabic;0020",
   "visiblespace;0020",
   "space;0020",

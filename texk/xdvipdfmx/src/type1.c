@@ -706,7 +706,7 @@ pdf_font_load_type1 (pdf_font *font)
       cstring->offset[gid + 1] = offset + 1;
       if (gm.use_seac) {
 	long  bchar_gid, achar_gid, i;
-	char *bchar_name, *achar_name;
+	const char *bchar_name, *achar_name;
 
 	/*
 	 * NOTE:

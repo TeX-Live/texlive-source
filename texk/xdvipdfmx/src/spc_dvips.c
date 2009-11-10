@@ -95,9 +95,10 @@ spc_handler_ps_header (struct spc_env *spe, struct spc_arg *args)
 }
 
 static char *
-parse_filename (char **pp, char *endptr)
+parse_filename (const char **pp, const char *endptr)
 {
-  char  *r, *q = NULL, *p = *pp;
+  char  *r;
+  const char *q = NULL, *p = *pp;
   char   qchar;
   int    n;
 
@@ -426,8 +427,8 @@ spc_handler_ps_tricks_brotate (struct spc_env *spe, struct spc_arg *args)
   char *cmd, *RotBegin;
   int i, l = args->endptr - args->curptr;
 
-  static char *pre = "tx@Dict begin /RAngle { %f } def\n";
-  static char *post = "= end";
+  static const char *pre = "tx@Dict begin /RAngle { %f } def\n";
+  static const char *post = "= end";
 
   if (!(++RAngleCount & 0x0f))
     RAngles = realloc(RAngles, (RAngleCount + 16) * sizeof(double));
@@ -466,7 +467,7 @@ spc_handler_ps_tricks_transform (struct spc_env *spe, struct spc_arg *args)
   char *cmd, *concat;
   int l = args->endptr - args->curptr;
 
-  static char *post = "concat matrix currentmatrix ==";
+  static const char *post = "concat matrix currentmatrix ==";
 
   cmd = calloc(l + 41, 1);
   strncpy(cmd, "matrix setmatrix ", 17);
@@ -487,7 +488,7 @@ spc_handler_ps_tricks_transform (struct spc_env *spe, struct spc_arg *args)
 }
 
 static int
-check_next_obj(unsigned char * buffer)
+check_next_obj(const unsigned char * buffer)
 {
   switch (buffer[0]) {
     case XXX1:
@@ -508,7 +509,7 @@ check_next_obj(unsigned char * buffer)
       return 0;
   }
 
-  if (strncmp((char*)buffer, "pst:", 4))
+  if (strncmp((const char*)buffer, "pst:", 4))
     return 0;
   return 1;
 }
@@ -522,7 +523,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args,
   pdf_tmatrix M;
   char *distiller_template = get_distiller_template();
   char *gs_out;
-  char *clip;
+  const char *clip;
   int error;
 
   if (!distiller_template)
@@ -643,7 +644,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
   fwrite(args->curptr, 1, args->endptr - args->curptr, fp);
   fprintf(fp, "\ncount 1 sub {pop} repeat restore\n");
 
-  if (check_next_obj((unsigned char*)args->endptr)) {
+  if (check_next_obj((const unsigned char*)args->endptr)) {
     fclose(fp);
   } else {
     char *distiller_template = get_distiller_template();
@@ -719,7 +720,7 @@ typedef enum {
 /*	ToDo: all the substring search must be centralized so that	*
  *	keys can be read from external configuration.			*/
 struct pstricks_key_ {
-  char * key;
+  const char * key;
   Operation exec;
 } pstricks_key[] = {
   /* The first 5 are hard-coded here. */
@@ -902,11 +903,11 @@ spc_dvips_at_end_document (void)
 int
 spc_dvips_check_special (const char *buf, long len)
 {
-  char *p, *endptr;
+  const char *p, *endptr;
   int   i;
 
-  p      = (char *) buf;
-  endptr =  p + len;
+  p      = buf;
+  endptr = p + len;
 
   skip_white(&p, endptr);
   if (p >= endptr)
@@ -929,7 +930,7 @@ int
 spc_dvips_setup_handler (struct spc_handler *handle,
 			 struct spc_env *spe, struct spc_arg *args)
 {
-  char *key;
+  const char *key;
   int   i, keylen;
 
   ASSERT(handle && spe && args);
@@ -963,9 +964,9 @@ spc_dvips_setup_handler (struct spc_handler *handle,
 
       skip_white(&args->curptr, args->endptr);
 
-      args->command = (char *) dvips_handlers[i].key;
+      args->command = dvips_handlers[i].key;
 
-      handle->key  = (char *) "ps:";
+      handle->key  = "ps:";
       handle->exec = dvips_handlers[i].exec;
 
       return  0;

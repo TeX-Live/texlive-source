@@ -875,9 +875,9 @@ static unsigned char sbuf1[FORMAT_BUF_SIZE];
 
 static int
 handle_multibyte_string (struct dev_font *font,
-                         unsigned char **str_ptr, int *str_len, int ctype)
+                         const unsigned char **str_ptr, int *str_len, int ctype)
 {
-  unsigned char *p;
+  const unsigned char *p;
   int            i, length;
 
   p      = *str_ptr;
@@ -887,7 +887,7 @@ handle_multibyte_string (struct dev_font *font,
   if (ctype == -1) { /* freetype glyph indexes */
     if (font->ft_to_gid) {
       /* convert freetype glyph indexes to physical GID */
-      unsigned char *inbuf = p;
+      const unsigned char *inbuf = p;
       unsigned char *outbuf = sbuf0;
       for (i = 0; i < length; i += 2) {
         unsigned int gid;
@@ -953,7 +953,8 @@ handle_multibyte_string (struct dev_font *font,
    * TODO: A character decomposed to multiple characters.
    */
   if (ctype != -1 && font->enc_id >= 0) {
-    unsigned char *inbuf, *outbuf;
+    const unsigned  char *inbuf;
+    unsigned  char *outbuf;
     long           inbytesleft, outbytesleft;
     CMap          *cmap;
 
@@ -964,7 +965,7 @@ handle_multibyte_string (struct dev_font *font,
     outbytesleft = FORMAT_BUF_SIZE;
 
     CMap_decode(cmap,
-                (const unsigned char **) &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+                &inbuf, &inbytesleft, &outbuf, &outbytesleft);
     if (inbytesleft != 0) {
       WARN("CMap conversion failed. (%d bytes remains)", inbytesleft);
       return -1;
@@ -1030,7 +1031,7 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
 {
   struct dev_font *font;
   struct dev_font *real_font;
-  unsigned char   *str_ptr; /* Pointer to the reencoded string. */
+  const unsigned char *str_ptr; /* Pointer to the reencoded string. */
   int              length, i, len = 0;
   spt_t            kern, delh, delv;
   spt_t            text_xorigin;
@@ -1058,7 +1059,7 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
   text_xorigin = text_state.ref_x;
   text_yorigin = text_state.ref_y;
 
-  str_ptr = (unsigned char *) instr_ptr;
+  str_ptr = instr_ptr;
   length  = instr_len;
 
   if (font->format == PDF_FONTTYPE_COMPOSITE) {

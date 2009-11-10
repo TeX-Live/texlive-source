@@ -193,7 +193,7 @@ typedef struct pdf_article
 
 struct name_dict
 {
-  char  *category;
+  const char  *category;
   struct ht_table *data;
 };
 
@@ -1168,7 +1168,7 @@ pdf_doc_init_names (pdf_doc *p)
   
   p->names = NEW(NUM_NAME_CATEGORY + 1, struct name_dict);
   for (i = 0; i < NUM_NAME_CATEGORY; i++) {
-    p->names[i].category = (char *) name_dict_categories[i];
+    p->names[i].category = name_dict_categories[i];
     p->names[i].data     = NULL;
   }
   p->names[NUM_NAME_CATEGORY].category = NULL;

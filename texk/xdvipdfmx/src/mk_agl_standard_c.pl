@@ -19,7 +19,7 @@
 print << "__EOT__";
 #include "agl.h"
 
-char* agl_standard_names[] = {
+const char* agl_standard_names[] = {
 __EOT__
 
 my %knownNames;

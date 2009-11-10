@@ -40,7 +40,7 @@ extern void      pdf_encoding_complete       (void);
 /* enc_name here is .enc file name or the name of predefined
  * encodings.
  */
-extern int       pdf_encoding_findresource   (char *enc_name);
+extern int       pdf_encoding_findresource   (const char *enc_name);
 
 /* Returns the Encoding resource object.
  */

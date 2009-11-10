@@ -39,7 +39,7 @@ struct tt_post_table
 
   USHORT   numberOfGlyphs;
 
-  char   **glyphNamePtr; /* Glyph names (pointer to C string) */
+  const char **glyphNamePtr; /* Glyph names (pointer to C string) */
   char   **names;        /* Non-standard glyph names */
 
   USHORT   count;        /* Number of glyph names in names[] */

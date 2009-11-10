@@ -559,7 +559,7 @@ void pdf_out (FILE *file, const void *buffer, long length)
       pdf_output_line_position += length;
       /* "foo\nbar\n "... */
       if (length > 0 &&
-	((char *)buffer)[length-1] == '\n')
+	((const char *)buffer)[length-1] == '\n')
         pdf_output_line_position = 0;
     }
   }
@@ -2243,7 +2243,8 @@ find_xref (FILE *pdf_input_file)
   mfgets(work_buffer, WORK_BUFFER_SIZE, pdf_input_file);
 
   {
-    char *start, *end, *number;
+    const char *start, *end;
+    char *number;
 
     start = work_buffer;
     end   = start + strlen(work_buffer);
@@ -2275,7 +2276,7 @@ parse_trailer (pdf_file *pf)
     WARN("buffer:\n->%s<-\n", work_buffer);
     result = NULL;
   } else {
-    char *p = work_buffer + strlen("trailer");
+    const char *p = work_buffer + strlen("trailer");
     skip_white(&p, work_buffer + WORK_BUFFER_SIZE);
     result = parse_pdf_dict(&p, work_buffer + WORK_BUFFER_SIZE, pf);
   }
@@ -2335,7 +2336,8 @@ pdf_read_object (unsigned long obj_num, unsigned short obj_gen,
 		pdf_file *pf, long offset, long limit)
 {
   long     length;
-  char    *buffer, *p, *endptr;
+  char    *buffer;
+  const char *p, *endptr;
   pdf_obj *result;
 
   length = limit - offset;
@@ -2353,7 +2355,7 @@ pdf_read_object (unsigned long obj_num, unsigned short obj_gen,
 
   /* Check for obj_num and obj_gen */
   {
-    char         *q = p; /* <== p */
+    const char   *q = p; /* <== p */
     char         *sp;
     unsigned long n, g;
 
@@ -2412,7 +2414,8 @@ read_objstm (pdf_file *pf, unsigned long num)
   unsigned long offset = pf->xref_table[num].field2;
   unsigned short gen = pf->xref_table[num].field3;
   long limit = next_object_offset(pf, num), n, first, *header = NULL;
-  char *data, data1, *p, *q;
+  char *data = NULL, *q;
+  const char *p, *endptr;
   int i;
 
   pdf_obj *objstm, *dict, *type, *n_obj, *first_obj;
@@ -2455,13 +2458,13 @@ read_objstm (pdf_file *pf, unsigned long num)
   *(header++) = n;
   *(header++) = first;
 
-  data = (char *) pdf_stream_dataptr(objstm);
-
-  /* hack to avoid parsing beyond offset table */
-  data1 = data[first];
+  /* avoid parsing beyond offset table */
+  data = NEW(first + 1, char);
+  memcpy(data, pdf_stream_dataptr(objstm), first);
   data[first] = 0;
 
-  p = data;
+  p      = data;
+  endptr = p + first;
   i = 2*n;
   while (i--) {
     *(header++) = strtoul(p, &q, 10);
@@ -2469,17 +2472,19 @@ read_objstm (pdf_file *pf, unsigned long num)
       goto error;
     p = q;
   }
-  data[first] = data1;
 
   /* Any garbage after last entry? */
-  skip_white(&p, data+first);
-  if (p != data+first)
+  skip_white(&p, endptr);
+  if (p != endptr)
     goto error;
+  RELEASE(data);
   
   return pf->xref_table[num].direct = objstm;
 
  error:
   WARN("Cannot parse object stream.");
+  if (data)
+    RELEASE(data);
   if (objstm)
     pdf_release_obj(objstm);
   return NULL;
@@ -2517,7 +2522,7 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
     unsigned short index = pf->xref_table[obj_num].field3;
     pdf_obj *objstm;
     long *data, n, first, length;
-    char *p, *q;
+    const char *p, *q;
 
     if (objstm_num >= pf->num_obj ||
 	pf->xref_table[objstm_num].type != 1 ||
@@ -2533,7 +2538,7 @@ pdf_get_object (pdf_file *pf, unsigned long obj_num, unsigned short obj_gen)
       goto error;
 
     length = pdf_stream_length(objstm);
-    p = (char *) pdf_stream_dataptr(objstm) + first + data[2*index+1];
+    p = (const char *) pdf_stream_dataptr(objstm) + first + data[2*index+1];
     q = p + (index == n-1 ? length : first+data[2*index+3]);
     result = parse_pdf_object(&p, q, pf);
     if (!result)
@@ -2779,12 +2784,12 @@ parse_xref_stream (pdf_file *pf, long xref_pos, pdf_obj **trailer)
     i = 0;
     while (i < index_len) {
       pdf_obj *first = pdf_get_array(index, i++);
-      pdf_obj *size  = pdf_get_array(index, i++);
+      size_obj  = pdf_get_array(index, i++);
       if (!PDF_OBJ_NUMBERTYPE(first) ||
-	  !PDF_OBJ_NUMBERTYPE(size) ||
+	  !PDF_OBJ_NUMBERTYPE(size_obj) ||
 	  parse_xrefstm_subsec(pf, &p, &length, W, wsum,
 			       (long) pdf_number_value(first),
-			       (long) pdf_number_value(size)))
+			       (long) pdf_number_value(size_obj)))
 	goto error;
     }
   } else if (parse_xrefstm_subsec(pf, &p, &length, W, wsum, 0, size))

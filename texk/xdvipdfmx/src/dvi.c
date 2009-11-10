@@ -296,12 +296,12 @@ static void get_and_buffer_bytes(FILE *file, unsigned int count)
 
 /* functions to fetch values from dvi_page_buffer */
 
-static UNSIGNED_BYTE get_buffered_unsigned_byte ()
+static UNSIGNED_BYTE get_buffered_unsigned_byte (void)
 {
   return dvi_page_buffer[dvi_page_buf_index++];
 }
 
-static SIGNED_BYTE get_buffered_signed_byte ()
+static SIGNED_BYTE get_buffered_signed_byte (void)
 {
   int byte;
   byte = dvi_page_buffer[dvi_page_buf_index++];
@@ -310,7 +310,7 @@ static SIGNED_BYTE get_buffered_signed_byte ()
   return (SIGNED_BYTE) byte;
 }
 
-static UNSIGNED_PAIR get_buffered_unsigned_pair ()
+static UNSIGNED_PAIR get_buffered_unsigned_pair (void)
 {
   int i;
   UNSIGNED_BYTE byte;
@@ -322,7 +322,7 @@ static UNSIGNED_PAIR get_buffered_unsigned_pair ()
   return pair;
 }
 
-static SIGNED_PAIR get_buffered_signed_pair ()
+static SIGNED_PAIR get_buffered_signed_pair (void)
 {
   int i;
   long pair = 0;
@@ -335,7 +335,7 @@ static SIGNED_PAIR get_buffered_signed_pair ()
   return (SIGNED_PAIR) pair;
 }
 
-static UNSIGNED_TRIPLE get_buffered_unsigned_triple()
+static UNSIGNED_TRIPLE get_buffered_unsigned_triple(void)
 {
   int i;
   long triple = 0;
@@ -345,7 +345,7 @@ static UNSIGNED_TRIPLE get_buffered_unsigned_triple()
   return (UNSIGNED_TRIPLE) triple;
 }
 
-static SIGNED_TRIPLE get_buffered_signed_triple()
+static SIGNED_TRIPLE get_buffered_signed_triple(void)
 {
   int i;
   long triple = 0;
@@ -357,7 +357,7 @@ static SIGNED_TRIPLE get_buffered_signed_triple()
   return (SIGNED_TRIPLE) triple;
 }
 
-static SIGNED_QUAD get_buffered_signed_quad()
+static SIGNED_QUAD get_buffered_signed_quad(void)
 {
   int byte, i;
   long quad = 0;
@@ -373,7 +373,7 @@ static SIGNED_QUAD get_buffered_signed_quad()
   return (SIGNED_QUAD) quad;
 }
 
-static UNSIGNED_QUAD get_buffered_unsigned_quad()
+static UNSIGNED_QUAD get_buffered_unsigned_quad(void)
 {
   int i;
   unsigned long quad = 0;
@@ -871,7 +871,7 @@ void
 dvi_do_special (const void *buffer, UNSIGNED_QUAD size)
 {
   double x_user, y_user, mag;
-  char   *p;
+  const char *p;
 
   if (size > 0x7fffffffUL) {
     WARN("Special more than %ul bytes???", size);
@@ -880,7 +880,7 @@ dvi_do_special (const void *buffer, UNSIGNED_QUAD size)
 
   graphics_mode();
 
-  p = (char *) buffer;
+  p = (const char *) buffer;
 
   x_user =  dvi_state.h * dvi2pts;
   y_user = -dvi_state.v * dvi2pts;
@@ -2012,7 +2012,7 @@ do_glyph_array (int yLocsPresent)
 }
 
 static void
-do_pic_file()
+do_pic_file(void)
   /* parameters for XDV_PIC_FILE opcode: pdf_box[1] t[4][6] p[2] len[2] path[l] */
 {
   UNSIGNED_BYTE  pdf_box;
@@ -2424,9 +2424,10 @@ dvi_vf_finish (void)
  * length value must be divided by current magnification.
  */
 static int
-read_length (double *vp, double mag, char **pp, char *endptr)
+read_length (double *vp, double mag, const char **pp, const char *endptr)
 {
-  char   *q, *p = *pp;
+  char   *q;
+  const char *p = *pp;
   double  v, u = 1.0;
   const char *_ukeys[] = {
 #define K_UNIT__PT  0
@@ -2491,8 +2492,8 @@ read_length (double *vp, double mag, char **pp, char *endptr)
 static int
 scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const char *buf, UNSIGNED_QUAD size)
 {
-  char  *q, *p = (char *) buf;
-  char  *endptr;
+  char  *q;
+  const char *p =  buf, *endptr;
   int    ns_pdf = 0, ns_xtx = 0, error = 0;
   double tmp;
   extern double paper_width, paper_height;

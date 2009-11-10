@@ -209,7 +209,7 @@ get_hash (const void *key, int keylen)
   int      i;
 
   for (i = 0; i < keylen; i++) {
-    hkey = (hkey << 5) + hkey + ((char *)key)[i];
+    hkey = (hkey << 5) + hkey + ((const char *)key)[i];
   }
 
   return (hkey % HASH_TABLE_SIZE);
@@ -425,10 +425,10 @@ ht_iter_next (struct ht_iter *iter)
 
 
 static int
-read_c_escchar (char *r, char **pp, char *endptr)
+read_c_escchar (char *r, const char **pp, const char *endptr)
 {
   int   c = 0, l = 1;
-  char *p = *pp;
+  const char *p = *pp;
 
   switch (p[0]) {
   case 'a' : c = '\a'; p++; break;
@@ -487,9 +487,9 @@ read_c_escchar (char *r, char **pp, char *endptr)
 #define C_QUOTE  '"'
 #define C_ESCAPE '\\'
 static int
-read_c_litstrc (char *q, int len, char **pp, char *endptr)
+read_c_litstrc (char *q, int len, const char **pp, const char *endptr)
 {
-  char  *p;
+  const char *p;
   int    l = 0;
 #define Q_TERM          0
 #define Q_CONT         -1
@@ -540,10 +540,10 @@ read_c_litstrc (char *q, int len, char **pp, char *endptr)
 }
 
 char *
-parse_c_string (char **pp, char *endptr)
+parse_c_string (const char **pp, const char *endptr)
 {
   char  *q = NULL;
-  char  *p = *pp;
+  const char *p = *pp;
   int    l = 0;
 
   if (p >= endptr || p[0] != C_QUOTE)
@@ -572,10 +572,10 @@ parse_c_string (char **pp, char *endptr)
 )
 
 char *
-parse_c_ident (char **pp, char *endptr)
+parse_c_ident (const char **pp, const char *endptr)
 {
   char  *q = NULL;
-  char  *p = *pp;
+  const char *p = *pp;
   int    n;
 
   if (p >= endptr || !ISCNONDIGITS(*p))
@@ -590,10 +590,10 @@ parse_c_ident (char **pp, char *endptr)
 }
 
 char *
-parse_float_decimal (char **pp, char *endptr)
+parse_float_decimal (const char **pp, const char *endptr)
 {
   char  *q = NULL;
-  char  *p = *pp;
+  const char *p = *pp;
   int    s = 0, n = 0;
 
   if (p >= endptr)

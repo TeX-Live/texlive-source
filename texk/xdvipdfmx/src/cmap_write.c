@@ -344,7 +344,7 @@ CMap_create_stream (CMap *cmap, int flags) /* flags unused */
     2 * (cmap->profile.maxBytesIn + cmap->profile.maxBytesOut) + 16;
 
   /* Start CMap */
-  pdf_add_stream(stream, (void *) CMAP_BEGIN, strlen(CMAP_BEGIN));
+  pdf_add_stream(stream, (const void *) CMAP_BEGIN, strlen(CMAP_BEGIN));
 
   wbuf.curptr += sprintf(wbuf.curptr, "/CMapName /%s def\n", cmap->name);
   wbuf.curptr += sprintf(wbuf.curptr, "/CMapType %d def\n" , cmap->type);

@@ -32,11 +32,11 @@ struct spc_env {
 };
 
 struct spc_arg {
-  char  *curptr;
-  char  *endptr;
-  char  *base;
+  const char  *curptr;
+  const char  *endptr;
+  const char  *base;
 
-  char  *command;
+  const char  *command;
 };
 
 typedef int  (*spc_handler_fn_ptr) (struct spc_env *, struct spc_arg *);

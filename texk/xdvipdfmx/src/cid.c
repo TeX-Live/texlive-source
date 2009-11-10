@@ -447,10 +447,10 @@ CIDFont_base_open (CIDFont *font, const char *name, CIDSysInfo *cmap_csi, cid_op
 
     start = cid_basefont[idx].fontdict;
     end   = start + strlen(start);
-    fontdict   = parse_pdf_dict((char **)&start, (char *)end, NULL);
+    fontdict   = parse_pdf_dict(&start, end, NULL);
     start = cid_basefont[idx].descriptor;
     end   = start + strlen(start);
-    descriptor = parse_pdf_dict((char **)&start, (char *)end, NULL);
+    descriptor = parse_pdf_dict(&start, end, NULL);
 
     ASSERT(fontdict && descriptor);
   }

@@ -5,9 +5,15 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-if build
-SUBDIRS = src
-endif build
+SUBDIRS = . src
+
+all-local: config.force
+
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBPNG_FREETYPE2) $(KPATHSEA_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 EXTRA_DIST = \
 	BUGS \

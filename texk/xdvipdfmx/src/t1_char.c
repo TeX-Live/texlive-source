@@ -265,10 +265,10 @@ static int CDECL
 stem_compare (const void *v1, const void *v2)
 {
   int cmp = 0;
-  t1_stem *s1, *s2;
+  const t1_stem *s1, *s2;
 
-  s1 = (t1_stem *) v1;
-  s2 = (t1_stem *) v2;
+  s1 = (const t1_stem *) v1;
+  s2 = (const t1_stem *) v2;
   if (s1->dir == s2->dir) {
     if (s1->pos == s2->pos) {
       if (s1->del == s2->del)

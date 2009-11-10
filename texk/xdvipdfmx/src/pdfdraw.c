@@ -1584,7 +1584,7 @@ pdf_dev_vcurveto  (double x0, double y0,
 }
 
 int
-pdf_dev_ycurveto  (double x0, double y0,
+pdf_dev_ycurveto (double x0, double y0,
                   double x1, double y1)
 {
   m_stack    *gss = &gs_stack;

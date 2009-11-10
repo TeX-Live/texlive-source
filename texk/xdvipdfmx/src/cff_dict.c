@@ -309,7 +309,7 @@ static void add_dict (cff_dict *dict,
   }
 
   (dict->entries)[dict->count].id = id;
-  (dict->entries)[dict->count].key = (char *) dict_operator[id].opname;
+  (dict->entries)[dict->count].key = dict_operator[id].opname;
   if (argtype == CFF_TYPE_NUMBER ||
       argtype == CFF_TYPE_BOOLEAN ||
       argtype == CFF_TYPE_SID ||
@@ -610,7 +610,7 @@ void cff_dict_add (cff_dict *dict, const char *key, int count)
   }
 
   (dict->entries)[dict->count].id    = id;
-  (dict->entries)[dict->count].key   = (char *) dict_operator[id].opname;
+  (dict->entries)[dict->count].key   = dict_operator[id].opname;
   (dict->entries)[dict->count].count = count;
   if (count > 0) {
     (dict->entries)[dict->count].values = NEW(count, double);

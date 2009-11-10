@@ -30,7 +30,7 @@
 
 #include "tt_post.h"
 
-static const char *const macglyphorder[258];
+static const char *macglyphorder[258];
 
 /* offset from begenning of the post table */
 #define NAME_STR_OFFSET  32
@@ -81,11 +81,11 @@ read_v2_post_names (struct tt_post_table *post, sfnt *sfont)
     }
   }
 
-  post->glyphNamePtr = NEW(post->numberOfGlyphs, char *);
+  post->glyphNamePtr = NEW(post->numberOfGlyphs, const char *);
   for (i = 0; i < post->numberOfGlyphs; i++) {
     idx = indices[i];
     if (idx < 258) {
-      post->glyphNamePtr[i] = (char *) macglyphorder[idx];
+      post->glyphNamePtr[i] = macglyphorder[idx];
     } else if (idx - 258 < post->count) {
       post->glyphNamePtr[i] = post->names[idx - 258];
     } else {
@@ -127,7 +127,7 @@ tt_read_post_table (sfnt *sfont)
 
   if (post->Version == 0x00010000UL) {
     post->numberOfGlyphs  = 258; /* wrong */
-    post->glyphNamePtr    = (char **) macglyphorder;
+    post->glyphNamePtr    = macglyphorder;
     post->count           = 0;
     post->names           = NULL;
   } else if (post->Version == 0x00025000UL) {
@@ -204,7 +204,7 @@ tt_release_post_table (struct tt_post_table *post)
 }
 
 /* Macintosh glyph order - from apple's TTRefMan */
-static const char *const
+static const char *
 macglyphorder[258] = {
   /* 0x0000 */
   ".notdef", ".null", "nonmarkingreturn", "space", "exclam", "quotedbl",

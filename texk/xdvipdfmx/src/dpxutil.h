@@ -94,8 +94,8 @@ extern char *ht_iter_getkey (struct ht_iter *iter, int *keylen);
 extern void *ht_iter_getval (struct ht_iter *iter);
 extern int   ht_iter_next   (struct ht_iter *iter);
 
-extern char *parse_float_decimal (char **pp, char *endptr);
-extern char *parse_c_string      (char **pp, char *endptr);
-extern char *parse_c_ident       (char **pp, char *endptr);
+extern char *parse_float_decimal (const char **pp, const char *endptr);
+extern char *parse_c_string      (const char **pp, const char *endptr);
+extern char *parse_c_ident       (const char **pp, const char *endptr);
 
 #endif /* _DPXUTIL_H_ */

@@ -69,7 +69,7 @@ static void do_time(FILE *file)
   fprintf(file, "%%%%CreationDate: %s\n", asctime(bd_time));
 }
 
-char *extensions[] = {
+const char *extensions[] = {
   ".jpeg", ".JPEG", ".jpg", ".JPG", ".pdf", ".PDF", ".png", ".PNG"
 };
 
@@ -98,7 +98,7 @@ static char *make_xbb_filename(const char *name)
   return result;
 }
 
-static char *xbb_file_mode = FOPEN_W_MODE;
+static const char *xbb_file_mode = FOPEN_W_MODE;
 
 static void write_xbb(char *fname, int bbllx, int bblly, int bburx, int bbury) 
 {

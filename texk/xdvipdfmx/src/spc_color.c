@@ -134,9 +134,9 @@ spc_handler_background (struct spc_env *spe, struct spc_arg *args)
 #define ISBLANK(c) ((c) == ' ' || (c) == '\t' || (c) == '\v')
 #endif
 static void 
-skip_blank (char **pp, char *endptr)
+skip_blank (const char **pp, const char *endptr)
 {
-  char  *p = *pp;
+  const char  *p = *pp;
   for ( ; p < endptr && ISBLANK(*p); p++);
   *pp = p;
 }
@@ -145,9 +145,10 @@ int
 spc_color_check_special (const char *buf, long len)
 {
   int   r = 0;
-  char *q, *p, *endptr;
+  char *q;
+  const char *p, *endptr;
 
-  p      = (char *) buf;
+  p      = buf;
   endptr = p + len;
 
   skip_blank(&p, endptr);
@@ -168,7 +169,8 @@ extern int
 spc_color_setup_handler (struct spc_handler *sph,
 			 struct spc_env *spe, struct spc_arg *ap)
 {
-  char  *p, *q;
+  const char *p;
+  char *q;
 
   ASSERT(sph && spe && ap);
 
@@ -179,7 +181,7 @@ spc_color_setup_handler (struct spc_handler *sph,
   skip_blank(&ap->curptr, ap->endptr);
 
   if (!strcmp(q, "background")) {
-    ap->command = (char *) "background";
+    ap->command = "background";
     sph->exec   = &spc_handler_background;
     RELEASE(q);
   } else if (!strcmp(q, "color")) { /* color */
@@ -190,15 +192,15 @@ spc_color_setup_handler (struct spc_handler *sph,
     if (!q)
       return  -1;
     else if (!strcmp(q, "push")) {
-      ap->command = (char *) "push";
+      ap->command = "push";
       sph->exec   = &spc_handler_color_push;
       ap->curptr  = p;
     } else if (!strcmp(q, "pop")) {
-      ap->command = (char *) "pop";
+      ap->command = "pop";
       sph->exec   = &spc_handler_color_pop;
       ap->curptr  = p;
     } else { /* cmyk, rgb, ... */
-      ap->command = (char *) "";
+      ap->command = "";
       sph->exec   = &spc_handler_color_default;
     }
     RELEASE(q);

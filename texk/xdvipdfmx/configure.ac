@@ -31,8 +31,16 @@ AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_C_BIGENDIAN
 
-MAW_EXT_TIMEZONE
-MAW_TM_HAS_TM_GMTOFF
+AC_CHECK_DECL([timezone],
+              [AC_DEFINE([HAVE_TIMEZONE], 1,
+                         [Define if <time.h> has timezone as an external variable.])],
+              [],
+              [[#include <time.h>]])
+AC_CHECK_MEMBER([struct tm.tm_gmtoff],
+                [AC_DEFINE([HAVE_TM_GMTOFF], 1,
+                           [Define if struct tm has tm_gmtoff as a member.])],
+                [],
+                [[#include <time.h>]])
 
 AC_CHECK_SIZEOF([char])
 AC_CHECK_SIZEOF([short])
@@ -46,9 +54,11 @@ KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_FREETYPE2_FLAGS
 
+if test "x$enable_build" != xno || test -f config.force; then
+
 KPSE_ADD_FLAGS([kpathsea])
-CHO_CHECK_KPSE_SUPPORT([xdvipdfmx])
-CHO_CHECK_KPSE_TDS_VERSION
+AC_CHECK_HEADER([kpathsea/version.h], [],
+                [AC_MSG_ERROR([Sorry, kpathsea too old])])
 
 KPSE_ADD_FLAGS([zlib])
 CHO_CHECK_ZLIB
@@ -60,6 +70,9 @@ KPSE_ADD_FLAGS([freetype2])
 CHO_CHECK_LIBFREETYPE([xdvipdfmx])
 
 KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
 
 dnl Check for additional libraries.
 
@@ -82,7 +95,7 @@ fi
 if test "x$build" = xyes; then
   AC_DEFINE([XETEX], 1, [Define if part of a teTeX/TeX Live build.])
 else
-  KPSE_MSG_WARN([fontconfig library or ApplicationServices framework not found.
+  AC_MSG_ERROR([fontconfig library or ApplicationServices framework not found.
 This version of xdvipdfmx requires either ApplicationServices (on Mac OS X)
 or the fontconfig library (on other platforms) to be available, otherwise it
 cannot support XeTeX output using standard system-installed fonts.])

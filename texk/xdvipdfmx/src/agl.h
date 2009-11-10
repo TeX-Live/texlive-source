@@ -29,7 +29,7 @@
 #define AGL_PREDEF_LISTFILE "pdfglyphlist.txt"
 #define AGL_EXTRA_LISTFILE "texglyphlist.txt"
 
-extern char* agl_standard_names[];
+extern const char* agl_standard_names[];
 
 #define AGL_MAX_UNICODES 16
 struct agl_name {

@@ -534,9 +534,9 @@ typedef unsigned long iccSig;
 static iccSig
 str2iccSig (const void *s)
 {
-  char  *p;
+  const char  *p;
 
-  p = (char *) s;
+  p = (const char *) s;
 
   return (iccSig) ((p[0]<<24)|(p[1]<<16)|(p[2]<<8)|p[3]);
 }
@@ -700,12 +700,12 @@ int
 iccp_check_colorspace (int colortype, const void *profile, long proflen)
 {
   iccSig  colorspace;
-  unsigned char  *p;
+  const unsigned char  *p;
 
   if (!profile || proflen < 128)
     return -1;
 
-  p = (unsigned char *) profile;
+  p = (const unsigned char *) profile;
 
   colorspace = str2iccSig(p + 16);
 
@@ -739,13 +739,13 @@ pdf_obj *
 iccp_get_rendering_intent (const void *profile, long proflen)
 {
   pdf_obj       *ri = NULL;
-  unsigned char *p;
+  const unsigned char *p;
   long           intent;
 
   if (!profile || proflen < 128)
     return NULL;
 
-  p = (unsigned char *) profile;
+  p = (const unsigned char *) profile;
 
   intent = (p[64] << 24)|(p[65] << 16)|(p[66] << 8)|p[67];
   switch (ICC_INTENT_TYPE(intent)) {
@@ -777,7 +777,7 @@ static int
 iccp_unpack_header (iccHeader *icch,
 		    const void *profile, long proflen, int check_size)
 {
-  unsigned char *p, *endptr;
+  const unsigned char *p, *endptr;
 
   if (check_size) {
     if (!profile || proflen < 128 ||
@@ -787,7 +787,7 @@ iccp_unpack_header (iccHeader *icch,
     }
   }
 
-  p      = (unsigned char *) profile;
+  p      = (const unsigned char *) profile;
   endptr = p + 128;
 
   icch->size = sget_signed_long(p);
@@ -870,10 +870,10 @@ iccp_unpack_header (iccHeader *icch,
 static void
 iccp_get_checksum (unsigned char *checksum, const void *profile, long proflen)
 {
-  unsigned char *p;
+  const unsigned char *p;
   MD5_CONTEXT    md5;
 
-  p = (unsigned char *) profile;
+  p = (const unsigned char *) profile;
 
   MD5_init (&md5);
   MD5_write(&md5, p + ICC_HEAD_SECT1_START, ICC_HEAD_SECT1_LENGTH);

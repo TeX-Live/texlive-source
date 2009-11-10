@@ -429,9 +429,9 @@ int
 spc_xtx_check_special (const char *buf, long len)
 {
   int    r = 0;
-  char  *p, *endptr;
+  const char *p, *endptr;
 
-  p      = (char *) buf;
+  p      = buf;
   endptr = p + len;
 
   skip_white(&p, endptr);
@@ -466,8 +466,8 @@ spc_xtx_setup_handler (struct spc_handler *sph,
     for (i = 0;
          i < sizeof(xtx_handlers) / sizeof(struct spc_handler); i++) {
       if (!strcmp(q, xtx_handlers[i].key)) {
-        ap->command = (char *) xtx_handlers[i].key;
-        sph->key   = (char *) "x:";
+        ap->command = xtx_handlers[i].key;
+        sph->key   = "x:";
         sph->exec  = xtx_handlers[i].exec;
         skip_white(&ap->curptr, ap->endptr);
         error = 0;

@@ -70,7 +70,7 @@
  * immediately and forget about it but remember current path.
  */
 
-static int mp_parse_body (char **start, char *end, double x_user, double y_user);
+static int mp_parse_body (const char **start, const char *end, double x_user, double y_user);
 
 static struct mp_font
 {
@@ -207,7 +207,7 @@ is_fontname (const char *token)
 }
 
 int
-mps_scan_bbox (char **pp, char *endptr, pdf_rect *bbox)
+mps_scan_bbox (const char **pp, const char *endptr, pdf_rect *bbox)
 {
   char  *number;
   double values[4];
@@ -253,10 +253,10 @@ mps_scan_bbox (char **pp, char *endptr, pdf_rect *bbox)
 }
 
 static void
-skip_prolog (char **start, char *end)
+skip_prolog (const char **start, const char *end)
 {
   int   found_prolog = 0;
-  char *save;
+  const char *save;
 
   save = *start;
   while (*start < end) {
@@ -833,9 +833,9 @@ static int
 do_mpost_bind_def (const char *ps_code, double x_user, double y_user)
 {
   int   error = 0;
-  char *start, *end;
+  const char *start, *end;
 
-  start = (char *) ps_code;
+  start = ps_code;
   end   = start + strlen(start);
 
   error = mp_parse_body(&start, end, x_user, y_user);
@@ -1394,7 +1394,7 @@ do_operator (const char *token, double x_user, double y_user)
  * dealing with texfig.
  */
 static int
-mp_parse_body (char **start, char *end, double x_user, double y_user)
+mp_parse_body (const char **start, const char *end, double x_user, double y_user)
 {
   char    *token;
   pdf_obj *obj;
@@ -1464,7 +1464,7 @@ mps_stack_depth (void)
 }
 
 int
-mps_exec_inline (char **p, char *endptr,
+mps_exec_inline (const char **p, const char *endptr,
 		 double x_user, double y_user)
 {
   int  error;
@@ -1515,7 +1515,8 @@ mps_include_page (const char *ident, FILE *fp)
   int        form_id;
   xform_info info;
   int        st_depth, gs_depth;
-  char      *buffer, *p, *endptr;
+  char      *buffer;
+  const char *p, *endptr;
   long       length, nb_read;
   int        dirmode, autorotate, error;
 
@@ -1528,9 +1529,9 @@ mps_include_page (const char *ident, FILE *fp)
   }
 
   buffer = NEW(length + 1, char);
+  buffer[length] = '\0';
   p      = buffer;
   endptr = p + length;
-  endptr[0] = '\0';
 
   while (length > 0) {
     nb_read = fread(buffer, sizeof(char), length, fp);
@@ -1592,7 +1593,8 @@ mps_do_page (FILE *image_file)
 {
   int       error = 0;
   pdf_rect  bbox;
-  char     *buffer, *start, *end;
+  char     *buffer;
+  const char *start, *end;
   long      size;
   int       dir_mode;
 
