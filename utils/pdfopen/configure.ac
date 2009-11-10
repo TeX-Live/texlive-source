@@ -10,11 +10,14 @@ AC_INIT([pdfopen for TeX Live], [0.51], [tex-k@tug.org])
 AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([pdfopen.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
+AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
+
+KPSE_COMPILER_WARNINGS
 
 dnl Find Xlibs.
 AC_PATH_XTRA

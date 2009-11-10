@@ -7,6 +7,8 @@
 #include <X11/keysym.h>
 #include <X11/cursorfont.h>
 
+#include "sendx.h"
+
 static char *display_name = NULL;
 static Display *display;
 static Window root;
@@ -17,19 +19,19 @@ static char error_message[256];
 static int error_status = 0;
 
 static void 
-throw_exception3(char *msg, char *s, int i) {
+throw_exception3(const char *msg, const char *s, int i) {
     sprintf(error_message, msg, s, i);
     error_status = 1;
 }
 
 static void 
-throw_exception3s(char *msg1, char *msg2, char *msg3) {
+throw_exception3s(const char *msg1, const char *msg2, const char *msg3) {
     sprintf(error_message, msg1, msg2, msg3);
     error_status = 1;
 }
 
 static void 
-throw_exception(char *msg) {
+throw_exception(const char *msg) {
     strncpy(error_message,msg,256);
     error_status = 1;
 }
@@ -55,15 +57,14 @@ GetRootWindow (Display * disp, int scrn)
       Atom actual_type;
       int actual_format;
       unsigned long nitems, bytesafter;
-      Window *newRoot = (Window) 0;
+      unsigned char *prop_return = NULL;
       
       if (XGetWindowProperty (disp, children[i], __SWM_VROOT, 0, 1,
 			      False, XA_WINDOW, &actual_type, &actual_format,
-			      &nitems, &bytesafter, 
-			      (unsigned char**) &newRoot) ==
-	  Success && newRoot)
+			      &nitems, &bytesafter, &prop_return) ==
+	  Success && prop_return)
 	{
-	  root = *newRoot;
+	  root = *(Window *)prop_return;
 	  break;
 	}
     }
@@ -87,7 +88,7 @@ GetRootWindow (Display * disp, int scrn)
  *                   are looked at.  Normally, top should be the Root Window.
  */
 static Window
-Window_With_Name (Display * dpy, Window top, char *name)
+Window_With_Name (Display * dpy, Window top, const char *wname)
 {
   Window *children, dummy;
   unsigned int nchildren;
@@ -95,7 +96,7 @@ Window_With_Name (Display * dpy, Window top, char *name)
   Window w = 0;
   char *window_name;
 
-  if (XFetchName (dpy, top, &window_name) && !strcmp (window_name, name))
+  if (XFetchName (dpy, top, &window_name) && !strcmp (window_name, wname))
     return (top);
 
   if (!XQueryTree (dpy, top, &dummy, &dummy, &children, &nchildren))
@@ -103,7 +104,7 @@ Window_With_Name (Display * dpy, Window top, char *name)
 
   for (i = 0; i < nchildren; i++)
     {
-      w = Window_With_Name (dpy, children[i], name);
+      w = Window_With_Name (dpy, children[i], wname);
       if (w)
 	break;
     }
@@ -115,7 +116,7 @@ Window_With_Name (Display * dpy, Window top, char *name)
 
 
 static int
-open_channel (char *wname)
+open_channel (const char *wname)
 {
 /* display_name = ":0.0"; */
   if ((display = XOpenDisplay (display_name)) == NULL)
@@ -160,7 +161,7 @@ open_channel (char *wname)
 }
 
 static void
-close_channel ()
+close_channel (void)
 {
 /* XFlush(display); */
   XCloseDisplay (display);
@@ -215,10 +216,10 @@ sendx_channel (KeySym ks, int km)
 }
 
 int
-sendx_string (char *string, char *window)
+sendx_string (const char *string, const char *wname)
 {
-  char *p;
-  if (open_channel (window))
+  const char *p;
+  if (open_channel (wname))
     return error_status;
   p = string;
   while (*p)
@@ -228,9 +229,9 @@ sendx_string (char *string, char *window)
 }
 
 int
-sendx_token (char *string, char *window)
+sendx_token (const char *string, const char *wname)
 {
-  if (open_channel (window))
+  if (open_channel (wname))
     return error_status;
   sendx_channel (XStringToKeysym (string),0);
   close_channel ();
@@ -239,9 +240,9 @@ sendx_token (char *string, char *window)
 
 
 int
-sendx_alt_token (char *string, char *window)
+sendx_alt_token (const char *string, const char *wname)
 {
-  if (open_channel (window))
+  if (open_channel (wname))
     return error_status;
   sendx_channel (XStringToKeysym (string),Mod1Mask);
   close_channel ();
@@ -249,9 +250,9 @@ sendx_alt_token (char *string, char *window)
 }
 
 int
-sendx_controlalt_token (char *string, char *window)
+sendx_controlalt_token (const char *string, const char *wname)
 {
-  if (open_channel (window))
+  if (open_channel (wname))
     return error_status;
   sendx_channel (XStringToKeysym (string), Mod1Mask | ControlMask);
   close_channel ();
@@ -260,9 +261,9 @@ sendx_controlalt_token (char *string, char *window)
 
 
 int
-sendx_control_token (char *string, char *window)
+sendx_control_token (const char *string, const char *wname)
 {
-  if (open_channel (window))
+  if (open_channel (wname))
     return error_status;
   sendx_channel (XStringToKeysym (string),ControlMask);
   close_channel ();

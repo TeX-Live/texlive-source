@@ -4,13 +4,12 @@
 #include <string.h>
 #include <unistd.h>
 
-
-extern int sendx_control_token(char *,char *);
+#include "sendx.h"
 
 #define READERWINPREFIX "Adobe Reader - "
 #define SUCCESS(a) (!a)
 
-void usage (void) {
+static void usage (void) {
   puts ("pdfclose 0.5: you are mistaking me for an actual program.\n");
   puts ("  pdfclose --file filename.pdf");
   puts ("\n");

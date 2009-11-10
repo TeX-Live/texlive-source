@@ -6,11 +6,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-/* returns 1 on failure */
-extern int sendx_control_token(char *,char *);
-extern int sendx_alt_token(char *,char *);
+#include "sendx.h"
 
-void usage (void) {
+static void usage (void) {
   puts ("pdfopen 0.51: you are mistaking me for an actual program.\n");
   puts("  pdfopen [--file filename.pdf]");
   puts ("\nusing no arguments tells the Reader to 'go back'.\n");
@@ -64,7 +62,12 @@ int main (int argc, char **argv){
 		if (reader) {
 		  waitpid(reader,NULL,WNOHANG);
 		} else {
-		  newargv[0] = "acroread";
+		  newargv[0] = malloc(strlen("acroread")+1);
+		  if (newargv[0] == NULL) {
+		    puts ("out of memory\n");
+		    exit(EXIT_FAILURE);
+		  }
+		  strcpy(newargv[0], "acroread");
 		  newargv[1] = filename;
 		  newargv[2] = NULL;
 		  if(execvp("acroread",newargv)) {

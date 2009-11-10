@@ -1,3 +1,24 @@
+2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* pdfopen.c: Use strdup'ed literal string (malloc+strcpy) to
+	initialize non-constant string.
+	* sendx.[ch]: Constify string args of all functions.
+	Consistently use wname for window name string param.
+	(close_channel): ANSI C function definition.
+
+2009-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (AM_CFLAGS), configure.ac: Enable compiler warnings.
+	* pdfopen.c (usage), pdfclose.c (usage): Declare as static.
+
+	* sendx.h (new): Declare prototypes for functions in sendx.c.
+	* Makefile.am (pdfopen_SOURCES, pdfclose_SOURCES): Add sendx.h.
+	* pdfopen.c, pdfclose.c, sendx.c: #include "sendx.h".
+
+	* sendx.c (GetRootWindow): Slightly reformulate to avoid compiler
+	warning (strict-aliasing rules).
+
 2009-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
