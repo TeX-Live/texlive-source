@@ -15,16 +15,17 @@ AC_CONFIG_MACRO_DIR([../m4])
 dnl See comment in ../configure.ac
 KPSE_SETUP([../])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 AC_PROG_MKDIR_P
 
-AC_CONFIG_SUBDIRS([dummy])
-
 AC_MSG_CHECKING([for libraries to build])
 SUBLIBS=
 DIST_SUBLIBS=
+dnl XeTeX needs the ICU headers and libraries from the TL tree,
+dnl whereas bibtexu may use installed ICU headers and libraries.
+test "x$need_icu_xetex" = xyes && need_icu=yes && with_system_icu=no
 KPSE_FOR_PKGS([libs], [
 if test -x $srcdir/Kpse_Pkg/configure; then
   if test "x$with_system_[]Kpse_pkg" != xyes && \

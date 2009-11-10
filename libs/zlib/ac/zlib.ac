@@ -3,5 +3,9 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system zlib
-KPSE_CHECK_LIB([zlib], [inflate], [zlib.h])
+## basic check of system zlib
+KPSE_TRY_LIB([zlib],
+             [#include <zlib.h>],
+             [z_stream stream;
+const char *version = zlibVersion();
+deflate(&stream, 0);])

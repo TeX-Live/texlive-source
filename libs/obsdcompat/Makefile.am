@@ -5,6 +5,10 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
 noinst_LIBRARIES = libopenbsd-compat.a
 
 compat_sources = \

@@ -25,7 +25,7 @@ AC_CONFIG_SRCDIR([openbsd-compat.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])

@@ -7,17 +7,14 @@
 ##
 ACLOCAL_AMFLAGS = -I ../m4 --force
 
-SUBDIRS = dummy . $(SUBLIBS)
-DIST_SUBDIRS = dummy $(DIST_SUBLIBS)
+SUBDIRS = . $(SUBLIBS)
+DIST_SUBDIRS = $(DIST_SUBLIBS)
 
 # just in case a subdirectory has added directories
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-SUBLIBS_AUX = sublibsdir-configure sublibsdir-conf.args
-noinst_DATA = $(SUBLIBS_AUX)
-
-DISTCLEANFILES = $(noinst_DATA)
+CONFIG_AUX = ../subsubdir-conf.cmd
 
 all-local: sublibs
 
@@ -29,7 +26,7 @@ all-local: sublibs
 #
 # Sequentially configure and optionally build all libs subdirs;
 # code inspired by automake's way to handle recursive targets.
-sublibs: $(noinst_DATA)
+sublibs: $(CONFIG_AUX)
 	@failcom='exit 1'; \
 	for f in x $$MAKEFLAGS; do \
 	  case $$f in \
@@ -40,14 +37,16 @@ sublibs: $(noinst_DATA)
 	list='$(DIST_SUBLIBS)'; for sublibs in $$list; do \
 	  if test ! -f $$sublibs/Makefile; then \
 	    test -d $$sublibs || $(MKDIR_P) $$sublibs; \
-	    cmd=`cat $(SUBLIBS_AUX) | sed "s,SUBLIBSDIR,$$sublibs,g"`; \
+	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,libs/$$sublibs,g"`; \
 	    case " $(SUBLIBS) " in \
 	      *" $$sublibs "*) skip=;; \
 	      *) skip=' --disable-build';; \
 	    esac; \
 	    (cd $$sublibs && echo "=== configuring in $$sublibs (`pwd`)" && \
 	      echo "make: running $(SHELL) $$cmd$$skip" && \
-	      eval $(SHELL) $$cmd$$skip) && \
+	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
+	      eval $(SHELL) $$cmd$$skip || \
+	        { echo "=== configuring in $$sublibs failed"; exit 1; }) && \
 	    if test "x$$skip" = x; then \
 	      echo "Making all in $$sublibs" && \
 	      (cd $$sublibs && $(MAKE) $(AM_MAKEFLAGS) all); \
@@ -55,11 +54,7 @@ sublibs: $(noinst_DATA)
 	  fi; \
 	done; test -z "$$fail"
 
-sublibsdir-configure:
-	@echo "make in ./dummy failed to create the file $@"
-	exit 1
-
-sublibsdir-conf.args:
-	@echo "configure in ./dummy failed to create the file $@"
+../subsubdir-conf.cmd:
+	@echo "configure in ../auxdir/auxsub failed to create the file $@"
 	exit 1
 

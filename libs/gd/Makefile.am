@@ -8,6 +8,10 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
 ## We want to re-distribute the whole original libpng source tree.
 ##
 ## With current automake (1.10.2) 'make distcheck' fails when
@@ -15,9 +19,13 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## Thus nodist_* for all files in $(GD_TREE).
 EXTRA_DIST = $(GD_TREE)
 
+## Changes applied to the original source tree
+##
+EXTRA_DIST +=  $(GD_TREE)-PATCHES
+
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(GD_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 	rm -f $(distdir)/$(GD_TREE)/config/config.guess \
 	  $(distdir)/$(GD_TREE)/config/config.rpath \
 	  $(distdir)/$(GD_TREE)/config/config.sub \
@@ -29,7 +37,7 @@ dist-hook:
 	  $(distdir)/$(GD_TREE)/depcomp \
 	  $(distdir)/$(GD_TREE)/install-sh \
 	  $(distdir)/$(GD_TREE)/missing \
-	  $(distdir)/$(GD_TREE)/mkinstalldirs 
+	  $(distdir)/$(GD_TREE)/mkinstalldirs
 
 INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 
@@ -80,7 +88,13 @@ BUILT_SOURCES = \
 	jisx0208.h \
 	wbmp.h
 
-$(libgd_a_OBJECTS): $(BUILT_SOURCES) $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
+$(libgd_a_OBJECTS): $(BUILT_SOURCES) config.force
+
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 ## Rebuild zlib
 @ZLIB_RULE@

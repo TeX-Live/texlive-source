@@ -9,6 +9,6 @@ DISTCLEANFILES = $(noinst_DATA)
 
 all-local: $(noinst_DATA)
 
-../sublibsdir-configure:
+../sublibsdir-configure: Makefile
 	echo "${srcdir}/configure" | sed 's,dummy/,SUBLIBSDIR/,' >$@
 

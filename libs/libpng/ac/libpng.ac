@@ -3,5 +3,8 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system libpng
-KPSE_CHECK_LIB([libpng], [png_set_read_fn], [png.h])
+## basic check of system libpng
+KPSE_TRY_LIB([libpng],
+             [#include <png.h>],
+             [png_structp png; png_voidp io; png_rw_ptr fn;
+png_set_read_fn(png, io, fn);])

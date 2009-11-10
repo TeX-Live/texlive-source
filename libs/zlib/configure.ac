@@ -16,7 +16,7 @@ AC_CONFIG_SRCDIR([zlib-]zlib_version[/zconf.in.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 AC_PROG_CC

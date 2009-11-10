@@ -3,5 +3,7 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system freetype
-KPSE_CHECK_LIB([freetype], [TT_Init_FreeType], [freetype.h])
+## basic check of system freetype
+KPSE_TRY_LIB([freetype],
+             [#include <freetype.h>],
+             [TT_Engine engine; TT_Init_FreeType(&engine);])

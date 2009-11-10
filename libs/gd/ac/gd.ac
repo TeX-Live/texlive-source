@@ -3,5 +3,7 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system gd
-KPSE_CHECK_LIB([gd], [gdImageCreate], [gd.h])
+## basic check of system gd
+KPSE_TRY_LIB([gd],
+             [#include <gd.h>],
+             [gdImageCreate(1, 2);])

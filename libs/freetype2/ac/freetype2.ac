@@ -3,5 +3,8 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system freetype2
-KPSE_CHECK_LIB([freetype2], [FT_Init_FreeType], [ft2build.h])
+## basic check of system freetype2
+KPSE_TRY_LIB([freetype2],
+             [#include <ft2build.h>
+#include FT_FREETYPE_H],
+             [FT_Library library; FT_Init_FreeType(&library);])

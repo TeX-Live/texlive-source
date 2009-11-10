@@ -3,6 +3,7 @@ dnl
 dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## define required functions and headers from system t1lib
-KPSE_CHECK_LIB([t1lib], [T1_AddFont T1_CheckForInit],
-                        [t1lib.h])
+## basic check of system t1lib
+KPSE_TRY_LIB([t1lib],
+             [#include <t1lib.h>],
+             [T1_InitLib(NO_LOGFILE); T1_CheckForInit(); T1_AddFont("font");])

@@ -8,6 +8,10 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
 ## We want to re-distribute the whole original libpng source tree.
 ##
 ## With current automake (1.10.2) 'make distcheck' fails when
@@ -21,7 +25,7 @@ EXTRA_DIST +=  $(LIBPNG_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(LIBPNG_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 	rm -f $(distdir)/$(LIBPNG_TREE)/config.sub \
 	  $(distdir)/$(LIBPNG_TREE)/config.guess \
 	  $(distdir)/$(LIBPNG_TREE)/depcomp \
@@ -52,7 +56,13 @@ nodist_libpng_a_SOURCES = \
 	$(LIBPNG_TREE)/pngerror.c \
 	$(LIBPNG_TREE)/pngpread.c
 
-$(libpng_a_OBJECTS): $(ZLIB_DEPEND)
+$(libpng_a_OBJECTS): config.force
+
+config.force: $(ZLIB_DEPEND)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 ## Rebuild zlib
 @ZLIB_RULE@

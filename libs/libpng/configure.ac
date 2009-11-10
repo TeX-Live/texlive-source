@@ -16,7 +16,7 @@ AC_CONFIG_SRCDIR([libpng-]libpng_version)
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 PNGLIB_MAJOR=libpng_major()
@@ -51,16 +51,13 @@ KPSE_ZLIB_FLAGS
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-# Configure must not fail, or 'make dist' will fail as well; thus
-# don't run any tests for '--disable-build', there may be no zlib.
-if test "x$enable_build" != xno; then
+if test "x$enable_build" != xno || test -f config.force; then
 
 KPSE_ADD_FLAGS([zlib])
-
 AC_CHECK_FUNC([zlibVersion], , [AC_ERROR([zlib not found])])
-
 KPSE_RESTORE_FLAGS
 
+echo timestamp >config.force
 fi
 
 LIBPNG_TREE=libpng-[]libpng_version

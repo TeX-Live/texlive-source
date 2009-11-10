@@ -101,7 +101,7 @@ am__remove_distdir = \
   { test ! -d "$(distdir)" \
     || { find "$(distdir)" -type d ! -perm -200 -exec chmod u+w {} ';' \
          && rm -fr "$(distdir)"; }; }
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.bz2
+DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
@@ -143,6 +143,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -203,7 +204,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(T1LIB_TREE) l047016t.pfa l047016t.xafm
+EXTRA_DIST = $(T1LIB_TREE) $(T1LIB_TREE)-PATCHES l047016t.pfa \
+	l047016t.xafm
 INCLUDES = -Ilib -I$(top_srcdir)/$(T1LIB_TREE)
 AM_CPPFLAGS = $(T1LIB_DEFINES) -DT1LIB_IDENT=\"@T1LIB_VERSIONSTRING@\" \
 	-DGLOBAL_CONFIG_DIR=\"@T1LIB_DATA_DIR@\"
@@ -994,6 +996,7 @@ distdir: $(DISTFILES)
 dist-gzip: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
 	$(am__remove_distdir)
+
 dist-bzip2: distdir
 	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
@@ -1021,7 +1024,6 @@ dist-zip: distdir
 
 dist dist-all: distdir
 	tardir=$(distdir) && $(am__tar) | GZIP=$(GZIP_ENV) gzip -c >$(distdir).tar.gz
-	tardir=$(distdir) && $(am__tar) | bzip2 -9 -c >$(distdir).tar.bz2
 	$(am__remove_distdir)
 
 # This target untars the dist file and tries a VPATH configuration.  Then
@@ -1224,9 +1226,13 @@ uninstall-am:
 	uninstall-am
 
 
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(T1LIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 	rm -f $(distdir)/$(T1LIB_TREE)/ac-tools/config.guess \
 	  $(distdir)/$(T1LIB_TREE)/ac-tools/config.sub \
 	  $(distdir)/$(T1LIB_TREE)/ac-tools/install-sh \

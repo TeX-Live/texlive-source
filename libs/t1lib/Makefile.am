@@ -8,6 +8,10 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
 ## We want to re-distribute the whole original t1lib source tree.
 ##
 ## With current automake (1.10.2) 'make distcheck' fails when
@@ -15,9 +19,13 @@ ACLOCAL_AMFLAGS = -I ../../m4
 ## Thus nodist_* for all files in $(T1LIB_TREE).
 EXTRA_DIST = $(T1LIB_TREE)
 
+## Changes applied to the original source tree
+##
+EXTRA_DIST +=  $(T1LIB_TREE)-PATCHES
+
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(T1LIB_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 	rm -f $(distdir)/$(T1LIB_TREE)/ac-tools/config.guess \
 	  $(distdir)/$(T1LIB_TREE)/ac-tools/config.sub \
 	  $(distdir)/$(T1LIB_TREE)/ac-tools/install-sh \

@@ -16,7 +16,7 @@ AC_CONFIG_SRCDIR([t1lib-]t1lib_version[/lib/t1lib/t1base.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2 no-define])
+AM_INIT_AUTOMAKE([foreign no-define])
 AM_MAINTAINER_MODE
 
 T1LIB_VERSION=t1lib_major()

@@ -16,7 +16,7 @@ AC_CONFIG_SRCDIR([gd-]gd_version[/gd.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AM_INIT_AUTOMAKE([foreign dist-bzip2])
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE
 
 PNGLIB_MAJOR=gd_major()
@@ -49,9 +49,7 @@ KPSE_LIBPNG_FLAGS
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-# Configure must not fail, or 'make dist' will fail as well; thus
-# don't run any tests for '--disable-build', there may be no zlib.
-if test "x$enable_build" != xno; then
+if test "x$enable_build" != xno || test -f config.force; then
 
 KPSE_ADD_FLAGS([zlib])
 
@@ -67,6 +65,7 @@ AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have the png library.])
 
 KPSE_RESTORE_FLAGS
 
+echo timestamp >config.force
 fi
 
 GD_TREE=gd-[]gd_version

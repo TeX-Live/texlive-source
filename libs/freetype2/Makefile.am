@@ -8,15 +8,23 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
 ## We want to re-distribute the whole original FreeType source tree.
 ##
 ## With current automake (1.10.2) 'make distcheck' fails when
 ## DISTFILES contains a directory and files in that directory.
 EXTRA_DIST = $(FREETYPE_TREE)
 
+## Changes applied to the original source tree
+##
+EXTRA_DIST +=  $(FREETYPE_TREE)-PATCHES
+
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir)/$(FREETYPE_TREE) -name .svn`
+	rm -rf `find $(distdir) -name .svn`
 
 noinst_DATA = libfreetype.a
 
