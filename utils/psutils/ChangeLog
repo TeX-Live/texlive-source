@@ -1,9 +1,19 @@
+2009-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid maximal compiler warnings.
+	* pserror.[ch] (message): Constify string arg.
+	* psspec.c (prologue): Constify global strings.
+	(pstops): Drop inner local var 'buffer', not to shadow previous.
+	Constify local var 'pro'.
+	* psutil.[ch] (struct papersize): constify string member 'name'.
+	(findpaper, writepageheader, writestring): Constify string args.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS), configure.ac: enable compiler warnings.
 	* epsffit.c (main): avoid uninitialized warnings.
 	* psnup.c (main): avoid uninitialized warnings.
-	* pstops.c (void): declare as static.
+	* pstops.c (usage): declare as static.
 
 2009-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

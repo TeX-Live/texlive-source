@@ -65,7 +65,7 @@ static Paper papersizes[] = {
 };
 
 /* return pointer to paper size struct or NULL */
-Paper* findpaper(char *name)
+Paper* findpaper(const char *name)
 {
    Paper *pp;
    for (pp = papersizes; PaperName(pp); pp++) {
@@ -233,14 +233,14 @@ void seekpage(int p)
 
 /* Output routines. These all update the global variable bytes with the number
  * of bytes written */
-void writestring(char *s)
+void writestring(const char *s)
 {
    fputs(s, outfile);
    bytes += strlen(s);
 }
 
 /* write page comment */
-void writepageheader(char *label, int page)
+void writepageheader(const char *label, int page)
 {
    if (verbose)
       message(LOG, "[%d] ", page);

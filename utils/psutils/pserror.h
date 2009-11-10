@@ -17,4 +17,4 @@
 #define WARN		(MESSAGE_NL|MESSAGE_PROGRAM)
 #define LOG		0
 
-extern void message(int flags, char *format, ...) ;
+extern void message(int flags, const char *format, ...) ;

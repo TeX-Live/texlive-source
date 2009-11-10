@@ -91,7 +91,7 @@ double singledimen(char *str, void (*errorfn)(void), void (*usagefn)(void))
    return (num);
 }
 
-static char *prologue[] = { /* PStoPS procset */
+static const char *prologue[] = { /* PStoPS procset */
 #ifndef SHOWPAGE_LOAD
    "userdict begin",
    "[/showpage/erasepage/copypage]{dup where{pop dup load",	/* prevent */
@@ -138,7 +138,7 @@ void pstops(int modulo, int pps, int nobind, PageSpec *specs, double draw)
 {
    int thispg, maxpage;
    int pageindex = 0;
-   char **pro;
+   const char **pro;
 
    scanpages();
 
@@ -214,7 +214,6 @@ void pstops(int modulo, int pps, int nobind, PageSpec *specs, double draw)
 	    }
 	    writestring("userdict/PStoPSmatrix matrix currentmatrix put\n");
 	    if (width > 0 && height > 0) {
-	       char buffer[BUFSIZ];
 	       writestring("userdict/PStoPSclip{0 0 moveto\n");
 	       sprintf(buffer, " %f 0 rlineto 0 %f rlineto -%f 0 rlineto\n",
 		       width, height, width);

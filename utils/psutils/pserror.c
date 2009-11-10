@@ -21,7 +21,7 @@ extern char *program ;	/* Defined by main program, giving program name */
 #define MAX_FORMAT	16	/* maximum format length */
 #define MAX_COLUMN	78	/* maximum column to print upto */
 
-void message(int flags, char *format, ...)
+void message(int flags, const char *format, ...)
 {
   va_list args ;
   static int column = 0 ;	/* current screen column for message wrap */
