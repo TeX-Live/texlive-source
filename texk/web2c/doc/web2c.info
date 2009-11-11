@@ -1581,8 +1581,9 @@ luaTeX
      control from Lua.  Home page: `http://luatex.org'.
 
 XeTeX
-     This combines the capabilities of Aleph and pdfTeX, and more.
-     Home page: FIXME.
+     Combines support for Unicode input and OpenType- and system fonts
+     with the capabilities of pdfTeX.  Home page:
+     `http://tug.org/xetex'.
 
 
 
@@ -4489,41 +4490,41 @@ Node: patgen invocation59478
 Node: Shell escapes60195
 Node: IPC and TeX63759
 Node: TeX extensions64329
-Node: Metafont65401
-Node: mf invocation66689
-Node: Initial Metafont70572
-Node: Modes72325
-Node: Online Metafont graphics74581
-Node: gftodvi invocation77996
-Node: mft invocation80818
-Node: MetaPost84873
-Node: mpost invocation85635
-Node: Initial MetaPost90543
-Node: dvitomp invocation92354
-Node: BibTeX93019
-Node: bibtex invocation93380
-Node: Basic BibTeX style files95705
-Node: WEB97047
-Node: tangle invocation98255
-Node: weave invocation100378
-Node: pooltype invocation101786
-Node: DVI utilities102916
-Node: dvicopy invocation103860
-Node: dvitype invocation105158
-Node: dvitype output example107513
-Node: Font utilities110564
-Node: Font file formats111744
-Node: gftopk invocation115043
-Node: pktogf invocation116247
-Node: pktype invocation117426
-Node: gftype invocation120261
-Node: tftopl invocation124777
-Node: pltotf invocation129411
-Node: vftovp invocation130476
-Node: vptovf invocation132760
-Node: Font utilities available elsewhere133814
-Node: Legalisms136222
-Node: References138393
-Node: Index142775
+Node: Metafont65461
+Node: mf invocation66749
+Node: Initial Metafont70632
+Node: Modes72385
+Node: Online Metafont graphics74641
+Node: gftodvi invocation78056
+Node: mft invocation80878
+Node: MetaPost84933
+Node: mpost invocation85695
+Node: Initial MetaPost90603
+Node: dvitomp invocation92414
+Node: BibTeX93079
+Node: bibtex invocation93440
+Node: Basic BibTeX style files95765
+Node: WEB97107
+Node: tangle invocation98315
+Node: weave invocation100438
+Node: pooltype invocation101846
+Node: DVI utilities102976
+Node: dvicopy invocation103920
+Node: dvitype invocation105218
+Node: dvitype output example107573
+Node: Font utilities110624
+Node: Font file formats111804
+Node: gftopk invocation115103
+Node: pktogf invocation116307
+Node: pktype invocation117486
+Node: gftype invocation120321
+Node: tftopl invocation124837
+Node: pltotf invocation129471
+Node: vftovp invocation130536
+Node: vptovf invocation132820
+Node: Font utilities available elsewhere133874
+Node: Legalisms136282
+Node: References138453
+Node: Index142835
 
 End Tag Table

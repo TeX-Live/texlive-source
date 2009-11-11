@@ -1760,8 +1760,9 @@ control from Lua.  Home page: @url{http://luatex.org}.
 @item Xe@TeX{}
 @cindex Xe@TeX{}
 @cindex Unicode
-This combines the capabilities of Aleph and pdf@TeX{}, and more.
-Home page: FIXME.
+Combines support for Unicode input and OpenType- and system fonts
+with the capabilities of pdf@TeX{}.
+Home page: @url{http://tug.org/xetex}.
 
 @end table
 

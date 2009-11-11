@@ -1,9 +1,0 @@
-Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-You may freely use, modify and/or distribute this file.
-
-This directory libs/icu/dummy does not build or install anything.  Its
-purpose is to record the command line used to invoke
-libs/icu/dummy/configure from libs/icu/configure.  This information is then
-used by libs/icu/Makefile to invoke libs/icu/icu-xetex/configure from the
-subdirectory libs/icu/icu-build without the need to adjust any absolute or
-relative paths.

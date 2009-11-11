@@ -14,7 +14,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -67,7 +66,6 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	install-pdf-recursive install-ps-recursive install-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
-DATA = $(noinst_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -75,7 +73,7 @@ AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
 	distdir dist dist-all distcheck
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = dummy . icu-incl
+DIST_SUBDIRS = . icu-incl
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -173,6 +171,9 @@ host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
 htmldir = @htmldir@
+icu_build_args = @icu_build_args@
+icu_config = @icu_config@
+icu_native_args = @icu_native_args@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
@@ -190,18 +191,14 @@ psdir = @psdir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
-subdirs = @subdirs@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-SUBDIRS = dummy . $(am__append_1)
+SUBDIRS = . $(am__append_1)
 EXTRA_DIST = $(ICU_TREE) license.html $(ICU_TREE)-PATCHES
-ICUSUB_AUX = icusubdir-configure icusubdir-conf.args
-noinst_DATA = $(ICUSUB_AUX)
-DISTCLEANFILES = $(noinst_DATA) icu-build.args icu-native.args
 @cross_TRUE@ICU_NATIVE = icu-native/config/icucross.mk
 all: all-recursive
 
@@ -555,7 +552,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(DATA) all-local
+all-am: Makefile all-local
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -579,7 +576,6 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -686,9 +682,9 @@ dist-hook:
 @build_TRUE@all-local: icubuild
 @build_FALSE@all-local: icu-build/Makefile
 
-icu-build/Makefile: $(ICUSUB_AUX) icu-build.args $(ICU_NATIVE)
+icu-build/Makefile: $(ICU_NATIVE)
 	$(mkdir_p) icu-build
-	@cmd=`cat $(ICUSUB_AUX) icu-build.args | sed 's,ICUSUBDIR,$(ICU_TREE),g'`; \
+	@cmd="$(icu_config) $(icu_build_args)"; \
 	(cd icu-build && echo "=== configuring in icu-build (`pwd`)" && \
 	  echo "make: running $(SHELL) $$cmd" && \
 	  CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
@@ -697,9 +693,9 @@ icu-build/Makefile: $(ICUSUB_AUX) icu-build.args $(ICU_NATIVE)
 icu-native/config/icucross.mk: icu-native/Makefile
 	cd icu-native && $(MAKE) $(AM_MAKEFLAGS) config/icucross.mk
 
-icu-native/Makefile: $(ICUSUB_AUX) icu-native.args
+icu-native/Makefile:
 	$(mkdir_p) icu-native
-	@cmd=`cat $(ICUSUB_AUX) icu-native.args | sed 's,ICUSUBDIR,$(ICU_TREE),g'`; \
+	@cmd="$(icu_config) $(icu_native_args)"; \
 	(cd icu-native && echo "=== configuring in icu-native (`pwd`)" && \
 	  echo "make: running $(SHELL) $$cmd" && \
 	  CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
@@ -715,20 +711,13 @@ check-makeflags:
 	@for f in x $$MAKEFLAGS; do \
 	  case $$f in \
 	    CFLAGS=* | CPPFLAGS=* | CXXFLAGS=* | LDFLAGS=*) \
-	      echo "Sorry, the icu-xetex build systems disallows \`make $$f'."; \
+	      echo "Sorry, the icu build systems disallows \`make $$f'."; \
 	      exit 1;; \
 	  esac; \
 	done
 
 distclean-local:
 	rm -rf icu-build icu-native
-
-icusubdir-configure:
-	cd dummy && $(MAKE) $(AM_MAKEFLAGS) ../$@
-
-icusubdir-conf.args icu-build.args icu-native.args:
-	@echo "configure in ./dummy failed to create the file $@"
-	exit 1
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

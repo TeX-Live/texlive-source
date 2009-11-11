@@ -13,7 +13,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 rebuild: icubuild
 	cd icu-incl && $(MAKE) $(AM_MAKEFLAGS) all
 
-SUBDIRS = dummy .
+SUBDIRS = .
 
 ## We want to re-distribute the whole ICU source tree.
 EXTRA_DIST = $(ICU_TREE)
@@ -28,11 +28,6 @@ EXTRA_DIST +=  $(ICU_TREE)-PATCHES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-ICUSUB_AUX = icusubdir-configure icusubdir-conf.args
-noinst_DATA = $(ICUSUB_AUX)
-
-DISTCLEANFILES = $(noinst_DATA) icu-build.args icu-native.args
-
 if build
 all-local: icubuild
 SUBDIRS += icu-incl
@@ -44,9 +39,9 @@ if cross
 ICU_NATIVE = icu-native/config/icucross.mk
 endif cross
 
-icu-build/Makefile: $(ICUSUB_AUX) icu-build.args $(ICU_NATIVE)
+icu-build/Makefile: $(ICU_NATIVE)
 	$(mkdir_p) icu-build
-	@cmd=`cat $(ICUSUB_AUX) icu-build.args | sed 's,ICUSUBDIR,$(ICU_TREE),g'`; \
+	@cmd="$(icu_config) $(icu_build_args)"; \
 	(cd icu-build && echo "=== configuring in icu-build (`pwd`)" && \
 	  echo "make: running $(SHELL) $$cmd" && \
 	  CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
@@ -55,9 +50,9 @@ icu-build/Makefile: $(ICUSUB_AUX) icu-build.args $(ICU_NATIVE)
 icu-native/config/icucross.mk: icu-native/Makefile
 	cd icu-native && $(MAKE) $(AM_MAKEFLAGS) config/icucross.mk
 
-icu-native/Makefile: $(ICUSUB_AUX) icu-native.args
+icu-native/Makefile:
 	$(mkdir_p) icu-native
-	@cmd=`cat $(ICUSUB_AUX) icu-native.args | sed 's,ICUSUBDIR,$(ICU_TREE),g'`; \
+	@cmd="$(icu_config) $(icu_native_args)"; \
 	(cd icu-native && echo "=== configuring in icu-native (`pwd`)" && \
 	  echo "make: running $(SHELL) $$cmd" && \
 	  CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
@@ -75,18 +70,11 @@ check-makeflags:
 	@for f in x $$MAKEFLAGS; do \
 	  case $$f in \
 	    CFLAGS=* | CPPFLAGS=* | CXXFLAGS=* | LDFLAGS=*) \
-	      echo "Sorry, the icu-xetex build systems disallows \`make $$f'."; \
+	      echo "Sorry, the icu build systems disallows \`make $$f'."; \
 	      exit 1;; \
 	  esac; \
 	done
 
 distclean-local:
 	rm -rf icu-build icu-native
-
-icusubdir-configure:
-	cd dummy && $(MAKE) $(AM_MAKEFLAGS) ../$@
-
-icusubdir-conf.args icu-build.args icu-native.args:
-	@echo "configure in ./dummy failed to create the file $@"
-	exit 1
 
