@@ -1,3 +1,10 @@
+2009-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (shell_cmd_is_allowed): Check for invalid single
+	quote also within quoted arguments.
+	Reported by Akira Kakuto <kakuto@fuk.kindai.ac.jp>,
+	diagnosed by Manuel P\'egouri\'e-Gonnard <mpg@elzevir.fr>.
+
 2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (openinnameok, openoutnameok): Moved to Kpathsea

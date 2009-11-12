@@ -2,7 +2,7 @@
 
 	* com16bit.ch: Check for allowed filename before opening the
 	output file. Better diagnostic when input file not found.
-	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>.
 
 2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

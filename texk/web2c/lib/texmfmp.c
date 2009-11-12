@@ -330,7 +330,7 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
     pre = 1;
     while (*s) {
       /* Quotation given by a user.  " should always be used; we
-         transform it below.  On Unix, if ' is used, simply immediately
+         transform it below.  If ' is used, simply immediately
          return a quotation error.  */
       if (*s == '\'') {
         return -1;
@@ -343,7 +343,7 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
            example:
            --format="other text files" becomes
            '--format=''other text files' (Unix)
-           "--format=""other test files" (Windows) */
+           "--format=""other text files" (Windows) */
 
         if (pre == 0)
           *d++ = QUOTE;
@@ -354,8 +354,8 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
         s++;
 
         while (*s != '"') {
-          /* Closing quotation mark is missing */
-          if (*s == '\0')
+          /* Illegal use of ', or closing quotation mark is missing */
+          if (*s == '\'' || *s == '\0')
             return -1;
 #ifdef WIN32
           if (char_needs_quote (*s))

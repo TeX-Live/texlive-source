@@ -13,7 +13,7 @@
 	* cpascal.h: Add kpse_{in,out}_name_ok().
 
 	* bibtex.ch: Check for legitimate output file names.
-	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>.
 	Also check for legitimate input file names.
 
 	* mf.ch, tex.ch: Use kpse_{in,out}_name_ok(), now in Kpathsea,
