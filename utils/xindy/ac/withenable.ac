@@ -4,5 +4,5 @@ dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for xindy
-KPSE_ENABLE_PROG([xindy], , [disable])
+KPSE_ENABLE_PROG([xindy], , [disable native])
 m4_include(kpse_TL[utils/xindy/ac/xindy.ac])

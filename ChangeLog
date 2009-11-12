@@ -1,3 +1,10 @@
+2009-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, m4/kpse-setup.m4: Disable cross compilation
+	of xindy.
+	* configure.ac: Report absolute build and source dir; reject
+	paths with embedded spaces.
+
 2009-09-17  Karl Berry  <karl@tug.org>
 
 	* Build: show Build command itself in build.log.

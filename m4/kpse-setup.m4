@@ -75,6 +75,7 @@ KPSE_FOR_PKGS([libs], [m4_sinclude(kpse_TL[libs/]Kpse_Pkg[/ac/withenable.ac])])
 # Define the list of libraries required from the TL tree (if any).
 # Options:
 #          disable - do not build by default
+#          native - impossible to cross compile
 AC_DEFUN([KPSE_ENABLE_PROG],
 [m4_pushdef([Kpse_enable], m4_if(m4_index([ $3 ], [ disable ]), [-1], [yes], [no]))[]dnl
 AC_ARG_ENABLE([$1],
@@ -82,12 +83,21 @@ AC_ARG_ENABLE([$1],
                               m4_if(Kpse_enable, [yes],
                                     [do not ])[build the $1 ]m4_ifval([$4],
                                                                       [($4) ])[package]))[]dnl
-case $enable_[]AS_TR_SH($1) in #(
-  yes|no);; #(
-  *) enable_[]AS_TR_SH($1)=m4_if(Kpse_enable, [yes], [$enable_all_pkgs], [no])
+AS_CASE([$enable_[]AS_TR_SH($1)],
+  m4_if(m4_index([ $3 ], [ native ]), [-1],
+        [[yes|no], []],
+        [[yes], [AS_IF([test "x$cross_compiling" = xyes],
+                       [AC_MSG_ERROR([Unable to cross compile $1])])],
+         [no], []]),
+  [m4_if(m4_index([ $3 ], [ native ]), [-1], ,
+         [if test "x$cross_compiling" = xyes; then
+            enable_[]AS_TR_SH($1)=no
+            AC_MSG_NOTICE([Cross compiling -> `--disable-$1'])
+          else])
+   enable_[]AS_TR_SH($1)=m4_if(Kpse_enable, [yes], [$enable_all_pkgs], [no])
      AC_MSG_NOTICE([Assuming `--enable-$1=$enable_]AS_TR_SH($1)['])
-     ac_configure_args="$ac_configure_args '--enable-$1=$enable_[]AS_TR_SH($1)'";;
-esac
+     ac_configure_args="$ac_configure_args '--enable-$1=$enable_[]AS_TR_SH($1)'"
+   m4_if(m4_index([ $3 ], [ native ]), [-1], , [fi])])
 m4_popdef([Kpse_enable])[]dnl
 m4_ifval([$2], [
 test "x$enable_[]AS_TR_SH($1)" = xno || {

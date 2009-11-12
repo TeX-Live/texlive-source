@@ -2990,11 +2990,15 @@ if test "${enable_dialog+set}" = set; then :
   enableval=$enable_dialog;
 fi
 case $enable_dialog in #(
-  yes|no);; #(
-  *) enable_dialog=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dialog=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dialog=$enable_dialog'" >&5
 $as_echo "$as_me: Assuming \`--enable-dialog=$enable_dialog'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dialog=$enable_dialog'";;
+     ac_configure_args="$ac_configure_args '--enable-dialog=$enable_dialog'"
+    ;;
 esac
 
 
@@ -3018,11 +3022,15 @@ if test "${enable_pdfopen+set}" = set; then :
   enableval=$enable_pdfopen;
 fi
 case $enable_pdfopen in #(
-  yes|no);; #(
-  *) enable_pdfopen=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_pdfopen=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-pdfopen=$enable_pdfopen'" >&5
 $as_echo "$as_me: Assuming \`--enable-pdfopen=$enable_pdfopen'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-pdfopen=$enable_pdfopen'";;
+     ac_configure_args="$ac_configure_args '--enable-pdfopen=$enable_pdfopen'"
+    ;;
 esac
 
 
@@ -3033,11 +3041,15 @@ if test "${enable_ps2eps+set}" = set; then :
   enableval=$enable_ps2eps;
 fi
 case $enable_ps2eps in #(
-  yes|no);; #(
-  *) enable_ps2eps=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_ps2eps=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ps2eps=$enable_ps2eps'" >&5
 $as_echo "$as_me: Assuming \`--enable-ps2eps=$enable_ps2eps'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-ps2eps=$enable_ps2eps'";;
+     ac_configure_args="$ac_configure_args '--enable-ps2eps=$enable_ps2eps'"
+    ;;
 esac
 
 
@@ -3048,11 +3060,15 @@ if test "${enable_psutils+set}" = set; then :
   enableval=$enable_psutils;
 fi
 case $enable_psutils in #(
-  yes|no);; #(
-  *) enable_psutils=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_psutils=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-psutils=$enable_psutils'" >&5
 $as_echo "$as_me: Assuming \`--enable-psutils=$enable_psutils'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-psutils=$enable_psutils'";;
+     ac_configure_args="$ac_configure_args '--enable-psutils=$enable_psutils'"
+    ;;
 esac
 
 
@@ -3063,11 +3079,15 @@ if test "${enable_t1utils+set}" = set; then :
   enableval=$enable_t1utils;
 fi
 case $enable_t1utils in #(
-  yes|no);; #(
-  *) enable_t1utils=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_t1utils=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-t1utils=$enable_t1utils'" >&5
 $as_echo "$as_me: Assuming \`--enable-t1utils=$enable_t1utils'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-t1utils=$enable_t1utils'";;
+     ac_configure_args="$ac_configure_args '--enable-t1utils=$enable_t1utils'"
+    ;;
 esac
 
 
@@ -3078,11 +3098,15 @@ if test "${enable_tpic2pdftex+set}" = set; then :
   enableval=$enable_tpic2pdftex;
 fi
 case $enable_tpic2pdftex in #(
-  yes|no);; #(
-  *) enable_tpic2pdftex=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_tpic2pdftex=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-tpic2pdftex=$enable_tpic2pdftex'" >&5
 $as_echo "$as_me: Assuming \`--enable-tpic2pdftex=$enable_tpic2pdftex'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-tpic2pdftex=$enable_tpic2pdftex'";;
+     ac_configure_args="$ac_configure_args '--enable-tpic2pdftex=$enable_tpic2pdftex'"
+    ;;
 esac
 
 
@@ -3093,11 +3117,15 @@ if test "${enable_vlna+set}" = set; then :
   enableval=$enable_vlna;
 fi
 case $enable_vlna in #(
-  yes|no);; #(
-  *) enable_vlna=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_vlna=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-vlna=$enable_vlna'" >&5
 $as_echo "$as_me: Assuming \`--enable-vlna=$enable_vlna'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-vlna=$enable_vlna'";;
+     ac_configure_args="$ac_configure_args '--enable-vlna=$enable_vlna'"
+    ;;
 esac
 
 
@@ -3108,11 +3136,23 @@ if test "${enable_xindy+set}" = set; then :
   enableval=$enable_xindy;
 fi
 case $enable_xindy in #(
-  yes|no);; #(
-  *) enable_xindy=no
+  yes) :
+    if test "x$cross_compiling" = xyes; then :
+  as_fn_error "Unable to cross compile xindy" "$LINENO" 5
+fi ;; #(
+  no) :
+     ;; #(
+  *) :
+    if test "x$cross_compiling" = xyes; then
+            enable_xindy=no
+            { $as_echo "$as_me:${as_lineno-$LINENO}: Cross compiling -> \`--disable-xindy'" >&5
+$as_echo "$as_me: Cross compiling -> \`--disable-xindy'" >&6;}
+          else
+   enable_xindy=no
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xindy=$enable_xindy'" >&5
 $as_echo "$as_me: Assuming \`--enable-xindy=$enable_xindy'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-xindy=$enable_xindy'";;
+     ac_configure_args="$ac_configure_args '--enable-xindy=$enable_xindy'"
+   fi ;;
 esac
 
 ## utils/xindy/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
@@ -3140,11 +3180,15 @@ if test "${enable_web2c+set}" = set; then :
   enableval=$enable_web2c;
 fi
 case $enable_web2c in #(
-  yes|no);; #(
-  *) enable_web2c=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_web2c=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-web2c=$enable_web2c'" >&5
 $as_echo "$as_me: Assuming \`--enable-web2c=$enable_web2c'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-web2c=$enable_web2c'";;
+     ac_configure_args="$ac_configure_args '--enable-web2c=$enable_web2c'"
+    ;;
 esac
 
 test "x$enable_web2c" = xno || {
@@ -3327,11 +3371,15 @@ if test "${enable_afm2pl+set}" = set; then :
   enableval=$enable_afm2pl;
 fi
 case $enable_afm2pl in #(
-  yes|no);; #(
-  *) enable_afm2pl=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_afm2pl=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-afm2pl=$enable_afm2pl'" >&5
 $as_echo "$as_me: Assuming \`--enable-afm2pl=$enable_afm2pl'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-afm2pl=$enable_afm2pl'";;
+     ac_configure_args="$ac_configure_args '--enable-afm2pl=$enable_afm2pl'"
+    ;;
 esac
 
 test "x$enable_afm2pl" = xno || {
@@ -3346,11 +3394,15 @@ if test "${enable_bibtex8+set}" = set; then :
   enableval=$enable_bibtex8;
 fi
 case $enable_bibtex8 in #(
-  yes|no);; #(
-  *) enable_bibtex8=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_bibtex8=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-bibtex8=$enable_bibtex8'" >&5
 $as_echo "$as_me: Assuming \`--enable-bibtex8=$enable_bibtex8'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-bibtex8=$enable_bibtex8'";;
+     ac_configure_args="$ac_configure_args '--enable-bibtex8=$enable_bibtex8'"
+    ;;
 esac
 
 test "x$enable_bibtex8" = xno || {
@@ -3365,11 +3417,15 @@ if test "${enable_bibtexu+set}" = set; then :
   enableval=$enable_bibtexu;
 fi
 case $enable_bibtexu in #(
-  yes|no);; #(
-  *) enable_bibtexu=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_bibtexu=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-bibtexu=$enable_bibtexu'" >&5
 $as_echo "$as_me: Assuming \`--enable-bibtexu=$enable_bibtexu'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-bibtexu=$enable_bibtexu'";;
+     ac_configure_args="$ac_configure_args '--enable-bibtexu=$enable_bibtexu'"
+    ;;
 esac
 
 test "x$enable_bibtexu" = xno || {
@@ -3385,11 +3441,15 @@ if test "${enable_cjkutils+set}" = set; then :
   enableval=$enable_cjkutils;
 fi
 case $enable_cjkutils in #(
-  yes|no);; #(
-  *) enable_cjkutils=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_cjkutils=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-cjkutils=$enable_cjkutils'" >&5
 $as_echo "$as_me: Assuming \`--enable-cjkutils=$enable_cjkutils'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-cjkutils=$enable_cjkutils'";;
+     ac_configure_args="$ac_configure_args '--enable-cjkutils=$enable_cjkutils'"
+    ;;
 esac
 
 test "x$enable_cjkutils" = xno || {
@@ -3404,11 +3464,15 @@ if test "${enable_detex+set}" = set; then :
   enableval=$enable_detex;
 fi
 case $enable_detex in #(
-  yes|no);; #(
-  *) enable_detex=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_detex=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-detex=$enable_detex'" >&5
 $as_echo "$as_me: Assuming \`--enable-detex=$enable_detex'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-detex=$enable_detex'";;
+     ac_configure_args="$ac_configure_args '--enable-detex=$enable_detex'"
+    ;;
 esac
 
 test "x$enable_detex" = xno || {
@@ -3423,11 +3487,15 @@ if test "${enable_devnag+set}" = set; then :
   enableval=$enable_devnag;
 fi
 case $enable_devnag in #(
-  yes|no);; #(
-  *) enable_devnag=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_devnag=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-devnag=$enable_devnag'" >&5
 $as_echo "$as_me: Assuming \`--enable-devnag=$enable_devnag'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-devnag=$enable_devnag'";;
+     ac_configure_args="$ac_configure_args '--enable-devnag=$enable_devnag'"
+    ;;
 esac
 
 
@@ -3438,11 +3506,15 @@ if test "${enable_dtl+set}" = set; then :
   enableval=$enable_dtl;
 fi
 case $enable_dtl in #(
-  yes|no);; #(
-  *) enable_dtl=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dtl=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dtl=$enable_dtl'" >&5
 $as_echo "$as_me: Assuming \`--enable-dtl=$enable_dtl'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dtl=$enable_dtl'";;
+     ac_configure_args="$ac_configure_args '--enable-dtl=$enable_dtl'"
+    ;;
 esac
 
 test "x$enable_dtl" = xno || {
@@ -3457,11 +3529,15 @@ if test "${enable_dvi2tty+set}" = set; then :
   enableval=$enable_dvi2tty;
 fi
 case $enable_dvi2tty in #(
-  yes|no);; #(
-  *) enable_dvi2tty=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dvi2tty=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dvi2tty=$enable_dvi2tty'" >&5
 $as_echo "$as_me: Assuming \`--enable-dvi2tty=$enable_dvi2tty'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dvi2tty=$enable_dvi2tty'";;
+     ac_configure_args="$ac_configure_args '--enable-dvi2tty=$enable_dvi2tty'"
+    ;;
 esac
 
 test "x$enable_dvi2tty" = xno || {
@@ -3476,11 +3552,15 @@ if test "${enable_dvidvi+set}" = set; then :
   enableval=$enable_dvidvi;
 fi
 case $enable_dvidvi in #(
-  yes|no);; #(
-  *) enable_dvidvi=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dvidvi=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dvidvi=$enable_dvidvi'" >&5
 $as_echo "$as_me: Assuming \`--enable-dvidvi=$enable_dvidvi'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dvidvi=$enable_dvidvi'";;
+     ac_configure_args="$ac_configure_args '--enable-dvidvi=$enable_dvidvi'"
+    ;;
 esac
 
 test "x$enable_dvidvi" = xno || {
@@ -3495,11 +3575,15 @@ if test "${enable_dviljk+set}" = set; then :
   enableval=$enable_dviljk;
 fi
 case $enable_dviljk in #(
-  yes|no);; #(
-  *) enable_dviljk=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dviljk=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dviljk=$enable_dviljk'" >&5
 $as_echo "$as_me: Assuming \`--enable-dviljk=$enable_dviljk'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dviljk=$enable_dviljk'";;
+     ac_configure_args="$ac_configure_args '--enable-dviljk=$enable_dviljk'"
+    ;;
 esac
 
 test "x$enable_dviljk" = xno || {
@@ -3514,11 +3598,15 @@ if test "${enable_dvipdfmx+set}" = set; then :
   enableval=$enable_dvipdfmx;
 fi
 case $enable_dvipdfmx in #(
-  yes|no);; #(
-  *) enable_dvipdfmx=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dvipdfmx=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dvipdfmx=$enable_dvipdfmx'" >&5
 $as_echo "$as_me: Assuming \`--enable-dvipdfmx=$enable_dvipdfmx'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dvipdfmx=$enable_dvipdfmx'";;
+     ac_configure_args="$ac_configure_args '--enable-dvipdfmx=$enable_dvipdfmx'"
+    ;;
 esac
 
 test "x$enable_dvipdfmx" = xno || {
@@ -3534,11 +3622,15 @@ if test "${enable_dvipng+set}" = set; then :
   enableval=$enable_dvipng;
 fi
 case $enable_dvipng in #(
-  yes|no);; #(
-  *) enable_dvipng=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dvipng=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dvipng=$enable_dvipng'" >&5
 $as_echo "$as_me: Assuming \`--enable-dvipng=$enable_dvipng'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dvipng=$enable_dvipng'";;
+     ac_configure_args="$ac_configure_args '--enable-dvipng=$enable_dvipng'"
+    ;;
 esac
 
 test "x$enable_dvipng" = xno || {
@@ -3575,11 +3667,15 @@ if test "${enable_dvipos+set}" = set; then :
   enableval=$enable_dvipos;
 fi
 case $enable_dvipos in #(
-  yes|no);; #(
-  *) enable_dvipos=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dvipos=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dvipos=$enable_dvipos'" >&5
 $as_echo "$as_me: Assuming \`--enable-dvipos=$enable_dvipos'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dvipos=$enable_dvipos'";;
+     ac_configure_args="$ac_configure_args '--enable-dvipos=$enable_dvipos'"
+    ;;
 esac
 
 test "x$enable_dvipos" = xno || {
@@ -3594,11 +3690,15 @@ if test "${enable_dvipsk+set}" = set; then :
   enableval=$enable_dvipsk;
 fi
 case $enable_dvipsk in #(
-  yes|no);; #(
-  *) enable_dvipsk=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dvipsk=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dvipsk=$enable_dvipsk'" >&5
 $as_echo "$as_me: Assuming \`--enable-dvipsk=$enable_dvipsk'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-dvipsk=$enable_dvipsk'";;
+     ac_configure_args="$ac_configure_args '--enable-dvipsk=$enable_dvipsk'"
+    ;;
 esac
 
 test "x$enable_dvipsk" = xno || {
@@ -3613,11 +3713,15 @@ if test "${enable_gsftopk+set}" = set; then :
   enableval=$enable_gsftopk;
 fi
 case $enable_gsftopk in #(
-  yes|no);; #(
-  *) enable_gsftopk=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_gsftopk=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-gsftopk=$enable_gsftopk'" >&5
 $as_echo "$as_me: Assuming \`--enable-gsftopk=$enable_gsftopk'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-gsftopk=$enable_gsftopk'";;
+     ac_configure_args="$ac_configure_args '--enable-gsftopk=$enable_gsftopk'"
+    ;;
 esac
 
 test "x$enable_gsftopk" = xno || {
@@ -3632,11 +3736,15 @@ if test "${enable_lacheck+set}" = set; then :
   enableval=$enable_lacheck;
 fi
 case $enable_lacheck in #(
-  yes|no);; #(
-  *) enable_lacheck=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_lacheck=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-lacheck=$enable_lacheck'" >&5
 $as_echo "$as_me: Assuming \`--enable-lacheck=$enable_lacheck'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-lacheck=$enable_lacheck'";;
+     ac_configure_args="$ac_configure_args '--enable-lacheck=$enable_lacheck'"
+    ;;
 esac
 
 
@@ -3647,11 +3755,15 @@ if test "${enable_lcdf_typetools+set}" = set; then :
   enableval=$enable_lcdf_typetools;
 fi
 case $enable_lcdf_typetools in #(
-  yes|no);; #(
-  *) enable_lcdf_typetools=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_lcdf_typetools=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-lcdf-typetools=$enable_lcdf_typetools'" >&5
 $as_echo "$as_me: Assuming \`--enable-lcdf-typetools=$enable_lcdf_typetools'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-lcdf-typetools=$enable_lcdf_typetools'";;
+     ac_configure_args="$ac_configure_args '--enable-lcdf-typetools=$enable_lcdf_typetools'"
+    ;;
 esac
 
 test "x$enable_lcdf_typetools" = xno || {
@@ -3727,11 +3839,15 @@ if test "${enable_makeindexk+set}" = set; then :
   enableval=$enable_makeindexk;
 fi
 case $enable_makeindexk in #(
-  yes|no);; #(
-  *) enable_makeindexk=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_makeindexk=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-makeindexk=$enable_makeindexk'" >&5
 $as_echo "$as_me: Assuming \`--enable-makeindexk=$enable_makeindexk'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-makeindexk=$enable_makeindexk'";;
+     ac_configure_args="$ac_configure_args '--enable-makeindexk=$enable_makeindexk'"
+    ;;
 esac
 
 test "x$enable_makeindexk" = xno || {
@@ -3746,11 +3862,15 @@ if test "${enable_musixflx+set}" = set; then :
   enableval=$enable_musixflx;
 fi
 case $enable_musixflx in #(
-  yes|no);; #(
-  *) enable_musixflx=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_musixflx=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-musixflx=$enable_musixflx'" >&5
 $as_echo "$as_me: Assuming \`--enable-musixflx=$enable_musixflx'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-musixflx=$enable_musixflx'";;
+     ac_configure_args="$ac_configure_args '--enable-musixflx=$enable_musixflx'"
+    ;;
 esac
 
 
@@ -3761,11 +3881,15 @@ if test "${enable_ps2pkm+set}" = set; then :
   enableval=$enable_ps2pkm;
 fi
 case $enable_ps2pkm in #(
-  yes|no);; #(
-  *) enable_ps2pkm=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_ps2pkm=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ps2pkm=$enable_ps2pkm'" >&5
 $as_echo "$as_me: Assuming \`--enable-ps2pkm=$enable_ps2pkm'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-ps2pkm=$enable_ps2pkm'";;
+     ac_configure_args="$ac_configure_args '--enable-ps2pkm=$enable_ps2pkm'"
+    ;;
 esac
 
 test "x$enable_ps2pkm" = xno || {
@@ -3780,11 +3904,15 @@ if test "${enable_seetexk+set}" = set; then :
   enableval=$enable_seetexk;
 fi
 case $enable_seetexk in #(
-  yes|no);; #(
-  *) enable_seetexk=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_seetexk=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-seetexk=$enable_seetexk'" >&5
 $as_echo "$as_me: Assuming \`--enable-seetexk=$enable_seetexk'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-seetexk=$enable_seetexk'";;
+     ac_configure_args="$ac_configure_args '--enable-seetexk=$enable_seetexk'"
+    ;;
 esac
 
 test "x$enable_seetexk" = xno || {
@@ -3799,11 +3927,15 @@ if test "${enable_tex4htk+set}" = set; then :
   enableval=$enable_tex4htk;
 fi
 case $enable_tex4htk in #(
-  yes|no);; #(
-  *) enable_tex4htk=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_tex4htk=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-tex4htk=$enable_tex4htk'" >&5
 $as_echo "$as_me: Assuming \`--enable-tex4htk=$enable_tex4htk'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-tex4htk=$enable_tex4htk'";;
+     ac_configure_args="$ac_configure_args '--enable-tex4htk=$enable_tex4htk'"
+    ;;
 esac
 
 test "x$enable_tex4htk" = xno || {
@@ -3818,11 +3950,15 @@ if test "${enable_ttf2pk+set}" = set; then :
   enableval=$enable_ttf2pk;
 fi
 case $enable_ttf2pk in #(
-  yes|no);; #(
-  *) enable_ttf2pk=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_ttf2pk=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ttf2pk=$enable_ttf2pk'" >&5
 $as_echo "$as_me: Assuming \`--enable-ttf2pk=$enable_ttf2pk'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-ttf2pk=$enable_ttf2pk'";;
+     ac_configure_args="$ac_configure_args '--enable-ttf2pk=$enable_ttf2pk'"
+    ;;
 esac
 
 test "x$enable_ttf2pk" = xno || {
@@ -3838,11 +3974,15 @@ if test "${enable_ttfdump+set}" = set; then :
   enableval=$enable_ttfdump;
 fi
 case $enable_ttfdump in #(
-  yes|no);; #(
-  *) enable_ttfdump=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_ttfdump=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ttfdump=$enable_ttfdump'" >&5
 $as_echo "$as_me: Assuming \`--enable-ttfdump=$enable_ttfdump'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-ttfdump=$enable_ttfdump'";;
+     ac_configure_args="$ac_configure_args '--enable-ttfdump=$enable_ttfdump'"
+    ;;
 esac
 
 
@@ -3853,11 +3993,15 @@ if test "${enable_xdv2pdf+set}" = set; then :
   enableval=$enable_xdv2pdf;
 fi
 case $enable_xdv2pdf in #(
-  yes|no);; #(
-  *) enable_xdv2pdf=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_xdv2pdf=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xdv2pdf=$enable_xdv2pdf'" >&5
 $as_echo "$as_me: Assuming \`--enable-xdv2pdf=$enable_xdv2pdf'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-xdv2pdf=$enable_xdv2pdf'";;
+     ac_configure_args="$ac_configure_args '--enable-xdv2pdf=$enable_xdv2pdf'"
+    ;;
 esac
 
 test "x$enable_xdv2pdf" = xno || {
@@ -3885,11 +4029,15 @@ if test "${enable_xdvik+set}" = set; then :
   enableval=$enable_xdvik;
 fi
 case $enable_xdvik in #(
-  yes|no);; #(
-  *) enable_xdvik=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_xdvik=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xdvik=$enable_xdvik'" >&5
 $as_echo "$as_me: Assuming \`--enable-xdvik=$enable_xdvik'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-xdvik=$enable_xdvik'";;
+     ac_configure_args="$ac_configure_args '--enable-xdvik=$enable_xdvik'"
+    ;;
 esac
 
 test "x$enable_xdvik" = xno || {
@@ -3914,11 +4062,15 @@ if test "${enable_xdvipdfmx+set}" = set; then :
   enableval=$enable_xdvipdfmx;
 fi
 case $enable_xdvipdfmx in #(
-  yes|no);; #(
-  *) enable_xdvipdfmx=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_xdvipdfmx=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xdvipdfmx=$enable_xdvipdfmx'" >&5
 $as_echo "$as_me: Assuming \`--enable-xdvipdfmx=$enable_xdvipdfmx'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-xdvipdfmx=$enable_xdvipdfmx'";;
+     ac_configure_args="$ac_configure_args '--enable-xdvipdfmx=$enable_xdvipdfmx'"
+    ;;
 esac
 
 test "x$enable_xdvipdfmx" = xno || {
@@ -3935,11 +4087,15 @@ if test "${enable_tetex+set}" = set; then :
   enableval=$enable_tetex;
 fi
 case $enable_tetex in #(
-  yes|no);; #(
-  *) enable_tetex=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_tetex=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-tetex=$enable_tetex'" >&5
 $as_echo "$as_me: Assuming \`--enable-tetex=$enable_tetex'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-tetex=$enable_tetex'";;
+     ac_configure_args="$ac_configure_args '--enable-tetex=$enable_tetex'"
+    ;;
 esac
 
 
@@ -3950,11 +4106,15 @@ if test "${enable_texlive+set}" = set; then :
   enableval=$enable_texlive;
 fi
 case $enable_texlive in #(
-  yes|no);; #(
-  *) enable_texlive=$enable_all_pkgs
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_texlive=$enable_all_pkgs
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-texlive=$enable_texlive'" >&5
 $as_echo "$as_me: Assuming \`--enable-texlive=$enable_texlive'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-texlive=$enable_texlive'";;
+     ac_configure_args="$ac_configure_args '--enable-texlive=$enable_texlive'"
+    ;;
 esac
 
 
@@ -6504,13 +6664,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:6507: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:6667: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:6510: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:6670: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:6513: output\"" >&5)
+  (eval echo "\"\$as_me:6673: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -7716,7 +7876,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 7719 "configure"' > conftest.$ac_ext
+  echo '#line 7879 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9348,11 +9508,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9351: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9511: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9355: \$? = $ac_status" >&5
+   echo "$as_me:9515: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9687,11 +9847,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9690: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9850: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9694: \$? = $ac_status" >&5
+   echo "$as_me:9854: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -9792,11 +9952,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9795: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9955: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9799: \$? = $ac_status" >&5
+   echo "$as_me:9959: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -9847,11 +10007,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9850: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10010: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:9854: \$? = $ac_status" >&5
+   echo "$as_me:10014: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12214,7 +12374,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12217 "configure"
+#line 12377 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12310,7 +12470,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12313 "configure"
+#line 12473 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -16783,11 +16943,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16786: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:16946: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:16790: \$? = $ac_status" >&5
+   echo "$as_me:16950: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -16882,11 +17042,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16885: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17045: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16889: \$? = $ac_status" >&5
+   echo "$as_me:17049: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16934,11 +17094,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:16937: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17097: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:16941: \$? = $ac_status" >&5
+   echo "$as_me:17101: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -21297,10 +21457,24 @@ if test "x$cross_compiling" = xyes; then :
 else
   msg_compiling="compiling for $kpse_build_alias"
 fi
+kpse_bld=`pwd`
+kpse_src=`cd "$srcdir" && pwd`
+msg_compiling="$msg_compiling
+      in $kpse_bld"
+test "x$srcdir" = x. || msg_compiling="$msg_compiling
+      from sources in $kpse_src"
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:
 ** Configuration summary for $PACKAGE_STRING:
 
-   $msg_compiling
+   $msg_compiling" >&5
+$as_echo "
+** Configuration summary for $PACKAGE_STRING:
+
+   $msg_compiling" >&6; }
+case $kpse_bld$kpse_bld in
+  *' '*) as_fn_error "Absolute source and/or build path with embedded spaces" "$LINENO" 5;;
+esac
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:
    prefix:                    $prefix
    enable_shared:             $enable_shared
    enable_multiplatform:      $enable_multiplatform
@@ -21310,9 +21484,6 @@ fi
 ** Next run \`make' to configure and build each library and program.
 " >&5
 $as_echo "
-** Configuration summary for $PACKAGE_STRING:
-
-   $msg_compiling
    prefix:                    $prefix
    enable_shared:             $enable_shared
    enable_multiplatform:      $enable_multiplatform

@@ -131,10 +131,20 @@ fi
 AS_IF([test "x$cross_compiling" = xyes],
       [msg_compiling="cross-compiling on $build_alias for $host_alias"],
       [msg_compiling="compiling for $kpse_build_alias"])
+kpse_bld=`pwd`
+kpse_src=`cd "$srcdir" && pwd`
+msg_compiling="$msg_compiling
+      in $kpse_bld"
+test "x$srcdir" = x. || msg_compiling="$msg_compiling
+      from sources in $kpse_src"
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE_STRING:
 
-   $msg_compiling
+   $msg_compiling])
+case $kpse_bld$kpse_bld in
+  *' '*) AC_MSG_ERROR([Absolute source and/or build path with embedded spaces]);;
+esac
+AC_MSG_RESULT([
    prefix:                    $prefix
    enable_shared:             $enable_shared
    enable_multiplatform:      $enable_multiplatform
