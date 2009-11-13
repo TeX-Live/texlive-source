@@ -59,6 +59,9 @@ dvipos - ?
 
 dvipsk - maintained here by Tom Rokicki, Karl Berry, Akira Kakuto, ...
 
+dvisvgm - checked 13nov09
+  http://downloads.sourceforge.net/dvisvgm/dvisvgm-0.8.7.tar.gz
+
 gsftopk - from Paul Vojta's xdvi?
 
 kpathsea - maintained here by Karl Berry, Akira Kakuto, ...

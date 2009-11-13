@@ -694,6 +694,7 @@ enable_timing
 with_gs
 enable_dvipos
 enable_dvipsk
+enable_dvisvgm
 enable_gsftopk
 enable_lacheck
 enable_lcdf_typetools
@@ -1447,6 +1448,7 @@ Optional Features:
   --enable-timing           Output execution time of dvipng
   --disable-dvipos        do not build the dvipos package
   --disable-dvipsk        do not build the dvipsk package
+  --disable-dvisvgm       do not build the dvisvgm package
   --disable-gsftopk       do not build the gsftopk package
   --disable-lacheck       do not build the lacheck package
   --disable-lcdf-typetools
@@ -2881,6 +2883,31 @@ test "x$enable_dvipsk" = xno || {
 }
 
 
+## texk/dvisvgm/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvisvgm/
+## configure options and TL libraries required for dvisvgm
+# Check whether --enable-dvisvgm was given.
+if test "${enable_dvisvgm+set}" = set; then :
+  enableval=$enable_dvisvgm;
+fi
+case $enable_dvisvgm in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_dvisvgm=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-dvisvgm=$enable_dvisvgm'" >&5
+$as_echo "$as_me: Assuming \`--enable-dvisvgm=$enable_dvisvgm'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-dvisvgm=$enable_dvisvgm'"
+    ;;
+esac
+
+test "x$enable_dvisvgm" = xno || {
+  need_kpathsea=yes
+  need_freetype2=yes
+  need_zlib=yes
+}
+
+
 ## texk/gsftopk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/gsftopk/
 ## configure options and TL libraries required for gsftopk
 # Check whether --enable-gsftopk was given.
@@ -3570,6 +3597,7 @@ test "x$need_gd" = xyes && {
 
 
 ## libs/freetype2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype2/
+## configure options and TL libraries required for freetype2
 
 # Check whether --with-system-freetype2 was given.
 if test "${with_system_freetype2+set}" = set; then :

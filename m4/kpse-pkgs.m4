@@ -88,6 +88,7 @@ dvipdfmx
 dvipng
 dvipos
 dvipsk
+dvisvgm
 gsftopk
 lacheck
 lcdf-typetools

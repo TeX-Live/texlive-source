@@ -1,0 +1,30 @@
+	Avoid compiler warnings.
+
+diff -ur dvisvgm-0.8.7.orig/src/PsSpecialHandler.cpp dvisvgm-0.8.7/src/PsSpecialHandler.cpp
+--- dvisvgm-0.8.7.orig/src/PsSpecialHandler.cpp	2009-11-09 17:36:55.000000000 +0100
++++ dvisvgm-0.8.7/src/PsSpecialHandler.cpp	2009-11-13 14:12:39.000000000 +0100
+@@ -558,8 +558,8 @@
+ void PsSpecialHandler::setdash (vector<double> &p) {
+ 	_dashpattern.clear();
+ 	for (size_t i=0; i < p.size()-1; i++)
+-		_dashpattern.push_back(p[i]*1.00375);
+-	_dashoffset = p.back()*1.00375;
++		_dashpattern.push_back((int) (p[i]*1.00375));
++	_dashoffset = (int) (p.back()*1.00375);
+ }
+ 
+ 
+diff -ur dvisvgm-0.8.7.orig/src/PsSpecialHandler.h dvisvgm-0.8.7/src/PsSpecialHandler.h
+--- dvisvgm-0.8.7.orig/src/PsSpecialHandler.h	2009-11-09 17:36:55.000000000 +0100
++++ dvisvgm-0.8.7/src/PsSpecialHandler.h	2009-11-13 14:08:37.000000000 +0100
+@@ -82,8 +82,8 @@
+ 		void setdash (std::vector<double> &p);
+ 		void setgray (std::vector<double> &p);
+ 		void sethsbcolor (std::vector<double> &hsb);
+-		void setlinecap (std::vector<double> &p)     {_linecap = p[0];}
+-		void setlinejoin (std::vector<double> &p)    {_linejoin = p[0];}
++		void setlinecap (std::vector<double> &p)     {_linecap = (unsigned int) p[0];}
++		void setlinejoin (std::vector<double> &p)    {_linejoin = (unsigned int) p[0];}
+ 		void setlinewidth (std::vector<double> &p)   {_linewidth = p[0] ? p[0]*1.00375 : 0.5;}
+ 		void setmatrix (std::vector<double> &p);
+ 		void setmiterlimit (std::vector<double> &p)  {_miterlimit = p[0]*1.00375;}

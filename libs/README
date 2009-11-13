@@ -3,9 +3,11 @@ Public domain.  Originally created by Karl Berry, 2005.
 
 Libraries we compile for TeX Live.
 
-See comments in ../texk/README.
+All libraries except obsdcompat use the original source tree with all
+modifications maintained as patches and use a proxy build system, either
+bypassing or using the original one.
 
-expat - ?
+See also comments in ../texk/README.
 
 freetype 1.5 - ?
 
@@ -13,225 +15,21 @@ freetype2 2.3.11 - http://savannah.nongnu.org/download/freetype/
 
 gd 2.0.35 - http://www.libgd.org/releases/
 
-graphite-engine - used by xetex, maintained here+upstream by Jonathan Kew
+graphite 2.3.1 - the directory silgraphite-2.3.1/engine/ from
+  http://sourceforge.net/projects/silgraphite/
 
-icu - as with graphite-engine, modified for xetex
-
-jpeg - ?
+icu 4.2.1 - http://download.icu-project.org/files/icu4c/
+  with modifications required for xetex, also used by bibtexu
 
 libpng 1.2.40 - http://www.libpng.org/ - used by many
 
-md5 - used by pdftex, provenance unknown
-
-obsdcompat - used by pdftex
+obsdcompat - used by pdftex and luatex
 
 t1lib 5.1.2 - ftp://sunsite.unc.edu/pub/Linux/libs/graphics/
 
-teckit - as with graphite-engine
+teckit 2.5.1 - http://scripts.sil.org/svn-view/teckit/
 
-unzip - ?
-
-xpdf 3.02pl3 - http://www.foolabs.com/xpdf/
+xpdf 3.02pl4 - http://www.foolabs.com/xpdf/
+  with modifications for pdftex, luatex, and xetex
 
 zlib 1.2.3 - http://www.zlib.net/ - used by many
-
-
-
-This info used to be in a howto/ subdirectory; it was written a long
-time ago, by Sebastian Rahtz and/or Thomas Esser, maybe?
-
-==> freetype <==
-The following files have been added:
-  freeetype.ac withenable.ac
-
-Modifications:
-  configure.in:
-    disable AM_DISABLE_STATIC
-    add AM_DISABLE_SHARED
-
-==> freetype2 <==
-The freetype2 directory contains Freetype 2.3.7 sources from:
-
-  http://download.savannah.gnu.org/releases/freetype/freetype-2.3.7.tar.bz2
-
-The following files have been added:
-
-  freetype2.ac
-  withenable.ac
-
-Modifications:
-
-  freetype2/builds/unix/configure
-    - edited to ignore the --srcdir argument, as this doesn't work properly
-      in the tex-live build
-
-
-==> icu-xetex <==
-The icu-xetex directory contains a *MODIFIED* copy of ICU release 3.8.1,
-used in building xetex.
-
-The following files have been added:
-
-  icu-xetex.ac
-  withenable.ac
-
-See libs/icu-xetex/README for more information.
-
-==> libpng <==
-Downloading:
-  http://www.libpng.org/
-  http://libpng.sourceforge.net/
-
-libpng is the original distribution, but with added
-  Makefile.in libpng.ac withenable.ac
-
-The directories
-  contrib projects scripts
-are not needed for teTeX and can be removed.
-
-libpng is configured by libs/configure, so the (original)
-libs/libpng/configure is not used by teTeX.
-
-==> libtiff <==
-Downloading:
-  http://www.libtiff.org/
-  http://freshmeat.net/projects/libtiff/
-
-Which files are in libtiff:
-  from the original distribution:
-    COPYRIGHT RELEASE-DATE VERSION libtiff/* dist/tiff.alpha
-
-  added for teTeX:
-    acconfig.h aclocal.m4 configure.in libtiff.ac withenable.ac port.h
-    Makefile.in (replacing the original file)
-  added for fpTeX:
-    win32 win32.mak
-
-Generated files:
-  the commands
-    autoheader -m ../../texk/etc/autoconf
-    autoconf -m ../../texk/etc/autoconf
-  have generated
-    c-auto.in configure
-
-  by make depend:
-    depend.mak
-
-==> ncurses <==
-Downloading:
-  http://www.gnu.org/software/ncurses/ncurses.html
-  ftp://ftp.gnu.org/pub/gnu/ncurses/
-  ftp://dickey.his.com/ncurses/
-
-The ncurses directory contains the original distribution except:
-  Ada95 c++ doc form menu misc panel progs tack test 
-
-The following files have been added:
-  ncurses.ac withenable.ac
-
-Modifications:
-  Makefile.in:
-    remove install from the list in the end. Create an empty install::
-    target somewhere earlier in the file.
-
-    protect "test ... || ..." in Makefile.in with - 
-
-  aclocal.m4, remove the following lines (thus disabling misc test
-  c++ subdirs):
-    SRC_SUBDIRS="$SRC_SUBDIRS test"
-    test -z "$MAKE_TERMINFO" && SRC_SUBDIRS="$SRC_SUBDIRS misc"
-    test "$cf_with_cxx_binding" != no && SRC_SUBDIRS="$SRC_SUBDIRS c++"
-
-  include/Makefile.in
-    add symlink to AUTO_SRC variable
-    add a rule
-      symlink:
-        @test -d ncurses || ln -s . ncurses
-    add the line
-      -rm -f ncurses
-    to the clean:: target
-
-  configure.in:
-     remove that ldconfig stuff
-     remove that cxx stuff
-     remove that ada stuff
-     cf_with_progs=no (instead of yes)
-     remove the line
-       modules_to_build="$modules_to_build panel menu form"
-     with_debug=no (instead of yes)
-     move one line below (after CF_DIRS_TO_MAKE):
-       CF_SRC_MODULES($modules_to_build) 
-     remove the line
-       test "$use_database" = yes && SUB_MAKEFILES="$SUB_MAKEFILES misc/run_tic.sh:misc/run_tic.in"
-
-Run autoconf with version 2.52.20011227. Patch available at
-  http://invisible-island.net/autoconf/
-
-==> ncurses-fix <==
-#!/bin/sh
-
-mv aclocal.m4 aclocal.m4-$$
-sed \
-  -e "s/: .{BUILD_\(.*\):='\(.*\)'}/: \${BUILD_\1=\`echo '\2'\`}/" \
-  -e "s/\`echo ''\`//" < aclocal.m4-$$ > aclocal.m4
-rm -f aclocal.m4-$$
-
-==> t1lib <==
-Downloading:
-  ftp://sunsite.unc.edu/pub/Linux/libs/graphics/t1lib-5.0.2.tar.gz
-
-==> teckit <==
-The teckit directory contains the source of the TECkit (Text Encoding Conversion
-toolkit) library and tools. See http://scripts.sil.org/teckit.
-
-The TECkit library is needed to build xetex.
-
-The subtrees teckit/source/teckitjni and teckit/perl_binaries have been removed
-as these are not relevant to building xetex or using the basic TECkit library.
-The copy of zlib source code found in the teckit tree has also been removed.
-
-The following files have been added:
-
-  teckit.ac
-  withenable.ac (currently empty)
-
-==> xpdf <==
-Downloading:
-  http://www.foolabs.com/xpdf/download.html
-
-Files in xpdf directory:
-  the files of the xpdf distribution, except
-    ltk misc/hello.pdf
-
-Replaced files:
-  Makefile.in
-  configure.in
-  xpdf/Makefile.in
-  goo/Makefile.in
-
-Added files:
-  libxpdf.ac
-
-==> zlib <==
-Downloading:
-  http://www.gzip.org/zlib/
-
-Files in zlib:
-  From the distribution:
-    everything, except:
-      INDEX Make_vms.com Makefile Makefile.riscos algorithm.txt amiga
-      configure descrip.mms msdos nt os2 zlib.html
-
-    Replaced file:
-      Makefile.in
-
-  Added for teTeX:
-    withenable.ac zlib.ac
-
-  Added for fpTeX:
-    win32.mak
-    contrib/minizip/win32.mak
-    contrib/untgz/win32.mak
-
-  Automatically generated:
-    depend.mak

@@ -1,0 +1,12 @@
+2009-11-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Added patch-01-potracelib-warning.
+	* potracelib/potracelib.[ch]: Change return type of
+	potrace_version() from 'char *' to 'const char *'.
+
+	Added patch-02-libdvisvgm-warnings.
+	* src/PsSpecialHandler.cpp (PsSpecialHandler::setdash): Casts
+	from double to int.
+	* src/PsSpecialHandler.h (setlinecap, setlinejoin): Casts from
+	double to unsigned int.
+

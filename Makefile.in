@@ -86,6 +86,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/texk/dvipng/ac/dvipng.ac \
 	$(top_srcdir)/texk/dvipos/ac/withenable.ac \
 	$(top_srcdir)/texk/dvipsk/ac/withenable.ac \
+	$(top_srcdir)/texk/dvisvgm/ac/withenable.ac \
 	$(top_srcdir)/texk/gsftopk/ac/withenable.ac \
 	$(top_srcdir)/texk/lacheck/ac/withenable.ac \
 	$(top_srcdir)/texk/lcdf-typetools/ac/withenable.ac \
