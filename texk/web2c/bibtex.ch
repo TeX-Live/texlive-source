@@ -655,7 +655,7 @@ then
 else
   aux_name_length := aux_name_length - 4; {set to length without \.{.aux}}
 aux_ptr := 0;                           {initialize the \.{.aux} file stack}
-if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+if (not kpse_in_name_ok(stringcast(name_of_file+1)) or
     not a_open_in(cur_aux_file,no_file_path)) then
 @z
 
@@ -770,7 +770,7 @@ if (not a_open_in(cur_bib_file)) then
         open_bibdata_aux_err ('I couldn''t open database file ');
     end;
 @y
-if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+if (not kpse_in_name_ok(stringcast(name_of_file+1)) or
     not a_open_in(cur_bib_file, kpse_bib_format)) then
         open_bibdata_aux_err ('I couldn''t open database file ');
 @z
@@ -789,7 +789,7 @@ if (not a_open_in(bst_file)) then
         end;
     end;
 @y
-if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+if (not kpse_in_name_ok(stringcast(name_of_file+1)) or
     not a_open_in(bst_file, kpse_bst_format)) then
     begin
         print ('I couldn''t open style file ');
@@ -847,7 +847,7 @@ while (name_ptr <= file_name_size) do   {pad with blanks}
 if (not a_open_in(cur_aux_file)) then
 @y
 name_of_file[name_ptr] := 0;
-if (not kpse_out_name_ok(stringcast(name_of_file+1)) or
+if (not kpse_in_name_ok(stringcast(name_of_file+1)) or
     not a_open_in(cur_aux_file, no_file_path)) then
 @z
 

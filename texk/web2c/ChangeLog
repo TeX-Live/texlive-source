@@ -1,3 +1,8 @@
+2009-11-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.ch: Replace kpse_out_name_ok by kpse_in_name_ok for
+	input files.  From Akira Kakuto <kakuto@fuk.kindai.ac.jp>.
+
 2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* doc/web2c.texi (tex invocation): Shorten the paragraph about
