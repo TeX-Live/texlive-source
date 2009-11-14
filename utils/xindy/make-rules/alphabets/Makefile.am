@@ -128,7 +128,6 @@ DUTCH = \
 	dutch/ij-as-ij-utf8-lang.xdy \
 	dutch/ij-as-ij-utf8-test.xdy \
 	dutch/ij-as-ij-utf8.xdy \
-	dutch/ij-as-y-utf8.xdy \
 	dutch/ij-as-y-utf8-lang.xdy \
 	dutch/ij-as-y-utf8-test.xdy \
 	dutch/ij-as-y-utf8.xdy
