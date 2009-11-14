@@ -36,6 +36,8 @@ AC_DEFINE([DISABLE_GS], 1,
 AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"],
                    [The machine triplet of the target system])
 
+AC_SEARCH_LIBS([sqrt], [m])
+
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_FREETYPE2_FLAGS

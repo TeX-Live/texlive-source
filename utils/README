@@ -33,13 +33,6 @@ tpic2pdftex
 vlna 1.2 - checked 26jun08
   ftp://math.feld.cvut.cz/pub/olsak/vlna
 
-xz 4.999.9beta - checked 28aug09
-  http://tukaani.org/xz/
-  not done as part of normal build, here to provide sources for the
-  binaries we distribute.  Also so we can provide exactly the same
-  version on all platforms; even if a newer version has been released,
-  it should not be used without discussion.
-
 
 xindy 2.3 - checked 24mar08
   (with numerous adaptations for TL by Vladimir)

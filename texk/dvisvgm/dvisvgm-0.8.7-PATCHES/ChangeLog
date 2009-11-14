@@ -1,3 +1,17 @@
+2009-11-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Added patch-03-libdvisvgm-uninitialized.
+	* src/InputReader.cpp (skipUntil): Avoid uninitialized variable.
+
+	Added patch-04-libdvisvgm-virtual.
+	* src/CmdLineParserBase.h, src/CommandLine.h: Added virtual
+	destructors because there are virtual functions.
+
+	Added patch-10-TL-help.
+	* src/dvisvgm.cpp (show_help): With our proxy configure.ac
+	PACKAGE_BUGREPORT is "tex-k@tug.org" and can't be used as email
+	for the copyright.
+
 2009-11-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Added patch-01-potracelib-warning.
@@ -5,8 +19,13 @@
 	potrace_version() from 'char *' to 'const char *'.
 
 	Added patch-02-libdvisvgm-warnings.
-	* src/PsSpecialHandler.cpp (PsSpecialHandler::setdash): Casts
-	from double to int.
+	* src/Color.cpp (float_to_byte): Cast from double to UInt8.
+	* src/Color.cpp (HSB2RGB),
+	src/ColorSpecialHandler.cpp (hsb_to_rgb),
+	src/PsSpecialHandler.cpp (setdash),
+	src/TpicSpecialHandler.cpp (drawArc): Casts from double to int.
 	* src/PsSpecialHandler.h (setlinecap, setlinejoin): Casts from
 	double to unsigned int.
+	* src/FontManager.cpp (vfFirstFontNum): Cast from unsigned int
+	to int.
 

@@ -1,3 +1,8 @@
+2009-11-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-file.c (kpathsea_out_name_ok): Allow writing of .pl files.
+	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>.
+
 2009-11-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex-file.c (kpathsea_out_name_ok): On Windows disallow writing

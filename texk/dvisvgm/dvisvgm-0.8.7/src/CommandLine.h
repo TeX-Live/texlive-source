@@ -14,6 +14,7 @@ class CommandLine : public CmdLineParserBase
    public:
       CommandLine () {init();}
       CommandLine (int argc, char **argv, bool printErrors) {parse(argc, argv, printErrors);}
+      virtual ~CommandLine () {}
       void help () const;
       void status () const;
       int numOptions () const {return 22;}

@@ -1182,6 +1182,9 @@ Isspace (char c)
     return (c == ' ' || c == '\t');
 }
 
+/* Create a list of executable suffixes of files not to be written.  */
+#define EXE_SUFFIXES ".com;.exe;.bat;.cmd;.vbs;.vbe;.js;.jse;.wsf;.wsh;.ws;.tcl;.py;.pyw"
+
 static void
 mk_suffixlist (char ***ext)
 {
@@ -1190,15 +1193,15 @@ mk_suffixlist (char ***ext)
     int  n;
 
 #if defined(__CYGWIN__)
-    v = (char *) xmalloc (71);
-    strcpy (v, ".com;.exe;.bat;.cmd;.vbs;.vbe;.js;.jse;.wsf;.wsh;.ws;.tcl;.py;.pyw;.pl");
+    v = (char *) xmalloc (strlen (EXE_SUFFIXES) + 1);
+    strcpy (v, EXE_SUFFIXES);
 #else
     v = (char *) getenv ("PATHEXT");
     if (v) /* strlwr() exists also in MingW */
       (void) strlwr (v);
     else {
-      v = (char *) xmalloc (71);
-      strcpy (v, ".com;.exe;.bat;.cmd;.vbs;.vbe;.js;.jse;.wsf;.wsh;.ws;.tcl;.py;.pyw;.pl");
+      v = (char *) xmalloc (strlen (EXE_SUFFIXES) + 1);
+      strcpy (v, EXE_SUFFIXES);
     }
 #endif
 
