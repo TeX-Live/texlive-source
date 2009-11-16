@@ -17,6 +17,8 @@ KPSE_COMMON([xdvipdfmx])
 
 AC_CONFIG_HEADERS([config.h])
 
+KPSE_LT_HACK
+
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdint.h inttypes.h sys/types.h])
@@ -83,24 +85,24 @@ fi
 KPSE_CHECK_FRAMEWORK([ApplicationServices], [ATSFontRef fontRef])
 KPSE_FONTCONFIG_FLAGS
 if test "x$kpse_cv_have_ApplicationServices" = xyes; then
-  build=yes
-  AC_DEFINE([XETEX_MAC], 1, [Define if part of a teTeX/TeX Live build for Mac OS X.])
+  can_build=yes
+  AC_DEFINE([XETEX_MAC], 1, [Define if part of a TeX Live build for Mac OS X.])
 else
   KPSE_ADD_FLAGS([fontconfig])
   CHO_CHECK_LIBFONTCONFIG
   KPSE_RESTORE_FLAGS
-  build=$cho_cv_have_fontconfig
+  can_build=$cho_cv_have_fontconfig
 fi
 
-if test "x$build" = xyes; then
-  AC_DEFINE([XETEX], 1, [Define if part of a teTeX/TeX Live build.])
+if test "x$can_build" = xyes; then
+  AC_DEFINE([XETEX], 1, [Define if part of a TeX Live build.])
 else
   AC_MSG_ERROR([fontconfig library or ApplicationServices framework not found.
 This version of xdvipdfmx requires either ApplicationServices (on Mac OS X)
 or the fontconfig library (on other platforms) to be available, otherwise it
 cannot support XeTeX output using standard system-installed fonts.])
 fi
-AM_CONDITIONAL([build], [test "x$build" = xyes])
+AM_CONDITIONAL([build], [test "x$can_build" = xyes])
 AM_CONDITIONAL([build_MacOsX], [test "x$kpse_cv_have_ApplicationServices" = xyes])
 
 AC_CONFIG_FILES([Makefile src/Makefile])

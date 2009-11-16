@@ -29,13 +29,13 @@ KPSE_CHECK_FRAMEWORK([Carbon], [ATSUStyle style])
 KPSE_CHECK_FRAMEWORK([QuickTime], [ImageDescriptionHandle h])
 
 if test "x$kpse_cv_have_Carbon:$kpse_cv_have_QuickTime" = xyes:yes; then
-  build=yes
+  can_build=yes
 else
   AC_MSG_WARN([Carbon or QuickTime framework not found, can not build xdv2pdf.])
-  build=no
+  can_build=no
 fi
 
-if test "x$build" = xyes; then
+if test "x$can_build" = xyes; then
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
@@ -59,7 +59,7 @@ fi
 
 fi
 
-AM_CONDITIONAL([build], [test "x$build" = xyes])
+AM_CONDITIONAL([build], [test "x$can_build" = xyes])
 
 AC_CONFIG_FILES([Makefile])
 

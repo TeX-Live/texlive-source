@@ -41,6 +41,13 @@ if test "x$enable_native_texlive_build" = xyes; then
           [enable_cxx_runtime_hack=yes
            ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack'"])
 fi
+AS_CASE([$enable_libtool_hack],
+        [yes | no], [:],
+        [AS_CASE([$host_os],
+                 [linux* | solaris*],
+                   [enable_libtool_hack=yes],
+                 [enable_libtool_hack=no])
+         ac_configure_args="$ac_configure_args '--enable-libtool-hack=$enable_libtool_hack'"])
 AS_CASE([$enable_shared],
         [no], [:],
         [yes ], [AS_IF([test "x$enable_native_texlive_build" = xyes],
@@ -55,6 +62,7 @@ AS_CASE([$enable_texlive_build],
          ac_configure_args="$ac_configure_args '--enable-texlive-build'"])
 KPSE_OPTIONS
 KPSE_ENABLE_CXX_HACK
+KPSE_ENABLE_LT_HACK
 KPSE_LIBS_PREPARE
 KPSE_WEB2C_PREPARE
 AS_CASE([$with_x],

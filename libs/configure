@@ -640,6 +640,7 @@ enable_all_pkgs
 enable_native_texlive_build
 enable_multiplatform
 enable_cxx_runtime_hack
+enable_libtool_hack
 enable_dialog
 enable_pdfopen
 enable_ps2eps
@@ -1398,6 +1399,7 @@ Optional Features:
   --enable-multiplatform  put executables into bin/PLATFORM and libraries into
                           lib/PLATFORM
   --enable-cxx-runtime-hack  link C++ runtime statically
+  --enable-libtool-hack   ignore libtool dependency_libs
   --disable-dialog        do not build the dialog package
   --disable-pdfopen       do not build the pdfopen package
   --disable-ps2eps        do not build the ps2eps package
@@ -2112,6 +2114,18 @@ esac
            ac_configure_args="$ac_configure_args '--enable-cxx-runtime-hack'" ;;
 esac
 fi
+case $enable_libtool_hack in #(
+  yes | no) :
+    : ;; #(
+  *) :
+    case $host_os in #(
+  linux* | solaris*) :
+    enable_libtool_hack=yes ;; #(
+  *) :
+    enable_libtool_hack=no ;;
+esac
+         ac_configure_args="$ac_configure_args '--enable-libtool-hack=$enable_libtool_hack'" ;;
+esac
 case $enable_shared in #(
   no) :
     : ;; #(
@@ -2150,6 +2164,11 @@ fi
 # Check whether --enable-cxx-runtime-hack was given.
 if test "${enable_cxx_runtime_hack+set}" = set; then :
   enableval=$enable_cxx_runtime_hack;
+fi
+
+# Check whether --enable-libtool-hack was given.
+if test "${enable_libtool_hack+set}" = set; then :
+  enableval=$enable_libtool_hack;
 fi
 
 

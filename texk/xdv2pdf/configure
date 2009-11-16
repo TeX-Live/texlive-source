@@ -17540,14 +17540,14 @@ fi
 
 
 if test "x$kpse_cv_have_Carbon:$kpse_cv_have_QuickTime" = xyes:yes; then
-  build=yes
+  can_build=yes
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Carbon or QuickTime framework not found, can not build xdv2pdf." >&5
 $as_echo "$as_me: WARNING: Carbon or QuickTime framework not found, can not build xdv2pdf." >&2;}
-  build=no
+  can_build=no
 fi
 
-if test "x$build" = xyes; then
+if test "x$can_build" = xyes; then
 
 ac_fn_c_check_type "$LINENO" "size_t" "ac_cv_type_size_t" "$ac_includes_default"
 if test "x$ac_cv_type_size_t" = x""yes; then :
@@ -17939,7 +17939,7 @@ fi
 
 fi
 
- if test "x$build" = xyes; then
+ if test "x$can_build" = xyes; then
   build_TRUE=
   build_FALSE='#'
 else

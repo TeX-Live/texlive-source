@@ -145,11 +145,13 @@ case $kpse_bld$kpse_bld in
   *' '*) AC_MSG_ERROR([Absolute source and/or build path with embedded spaces]);;
 esac
 AC_MSG_RESULT([
-   prefix:                    $prefix
-   enable_shared:             $enable_shared
-   enable_multiplatform:      $enable_multiplatform
-   enable_cxx_runtime_hack:   $enable_cxx_runtime_hack
-   enable_compiler_warnings:  $enable_compiler_warnings
+   prefix:                       $prefix
+   enable_native_texlive_build:  $enable_native_texlive_build
+   enable_shared:                $enable_shared
+   enable_multiplatform:         $enable_multiplatform
+   enable_cxx_runtime_hack:      $enable_cxx_runtime_hack
+   enable_libtool_hack:          $enable_libtool_hack
+   enable_compiler_warnings:     $enable_compiler_warnings
 
 ** Next run `make' to configure and build each library and program.
 ])

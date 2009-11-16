@@ -39,6 +39,7 @@ KPSE_CANONICAL_HOST
 
 AC_PROG_CXX
 KPSE_CXX_HACK
+KPSE_LT_HACK
 
 dnl Include additional code for web2c.
 KPSE_WEB2C_PREPARE

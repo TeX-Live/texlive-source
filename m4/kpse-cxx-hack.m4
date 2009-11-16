@@ -55,7 +55,7 @@ AC_SUBST([CXX_HACK_LIBS])
 
 # _KPSE_CXX_HACK()
 # ----------------
-# internal subroutine
+# Internal subroutine.
 m4_define([_KPSE_CXX_HACK], [
 AC_LANG_PUSH([C++])
 AC_CHECK_HEADERS([iostream])

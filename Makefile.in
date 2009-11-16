@@ -49,6 +49,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/m4/kpse-libpng-flags.m4 \
+	$(top_srcdir)/m4/kpse-lt-hack.m4 \
 	$(top_srcdir)/m4/kpse-options.m4 $(top_srcdir)/m4/kpse-pkgs.m4 \
 	$(top_srcdir)/m4/kpse-setup.m4 \
 	$(top_srcdir)/m4/kpse-t1lib-flags.m4 \

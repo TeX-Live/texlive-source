@@ -13,3 +13,8 @@ Run the shell script fix-case-insensitive to rename
 	source/layout/Features.h => ICUFeatures.h
 and modify references to that file accordingly.
 
+Removed empty dirs:
+	layout/unicode
+	test/perf/results
+	tools/cpysearch
+

@@ -257,10 +257,10 @@
 # endif
 #endif
 
-/* Define if part of a teTeX/TeX Live build. */
+/* Define if part of a TeX Live build. */
 #undef XETEX
 
-/* Define if part of a teTeX/TeX Live build for Mac OS X. */
+/* Define if part of a TeX Live build for Mac OS X. */
 #undef XETEX_MAC
 
 /* Number of bits in a file offset, on hosts where this is settable. */
