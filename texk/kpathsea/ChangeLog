@@ -1,3 +1,14 @@
+2009-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* types.h (kpathsea_instance): For Win/Mingw/Cygwin declare
+	suffixlist, listing the executable file suffixes.
+	* progname.c (kpathsea_set_program_name): Build suffixlist.
+	* tex-file.c (kpathsea_out_name_ok): Use suffixlist.
+	From  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>.
+
+	* kpathsea.c: Remove obsolete initializer.
+	(kpathsea_finish): Destroy suffixlist (not yet used).
+
 2009-11-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex-file.c (kpathsea_out_name_ok): Allow writing of .pl files.

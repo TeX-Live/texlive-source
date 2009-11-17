@@ -1,0 +1,10 @@
+## texk/dvisvgm/ac/dvisvgm.ac: configure.ac fragment for the TeX Live subdirectory texk/dvisvgm/
+dnl
+dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## configure options for dvisvgm
+AC_ARG_WITH([system-libgs],
+            AS_HELP_STRING([--with-system-libgs],
+                           [build dvisvgm with installed gs headers and library
+                            @<:@default: no, may require CPPFLAGS and LDFLAGS@:>@]))

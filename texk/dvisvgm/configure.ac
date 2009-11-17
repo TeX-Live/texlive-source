@@ -23,6 +23,9 @@ AC_CONFIG_MACRO_DIR([../../m4])
 # Common code for all programs using libkpathsea.
 KPSE_COMMON([dvisvgm])
 
+dnl Include additional code for dvisvgm.
+m4_include([ac/dvisvgm.ac])
+
 AC_CONFIG_HEADERS([config.h])
 
 AC_PROG_CXX
@@ -46,11 +49,16 @@ if test "x$enable_build" != xno || test -f config.force; then
 
 # Checks for more libraries.
 KPSE_ADD_FLAGS([zlib])
-AC_CHECK_FUNC([deflate],
+AC_CHECK_FUNC([gzopen],
               [AC_DEFINE([HAVE_LIBZ], 1,
-                         [Define to 1 if you have the `z' library (-lz).])])
+                         [Define to 1 if you have the `z' library (-lz).])],
+              [AC_MSG_ERROR([cannot find/use zlib])])
 
 KPSE_ADD_FLAGS([freetype2])
+AC_CHECK_FUNC([FT_Init_FreeType],
+              [AC_DEFINE([HAVE_LIBFREETYPE], 1,
+                         [Define to 1 if you have the `freetype2' library (-lfreetype).])],
+              [AC_MSG_ERROR([cannot find/use libfreetype])])
 
 KPSE_ADD_FLAGS([kpathsea])
 AC_CHECK_FUNC([kpse_set_progname],
@@ -65,6 +73,16 @@ fi
 
 DVISVGM_TREE=[dvisvgm-]dvisvgm_version
 AC_SUBST([DVISVGM_TREE])
+
+AC_LANG_PUSH([C++])
+CPPFLAGS="-I$srcdir/$DVISVGM_TREE/src $CPPFLAGS"
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "iapi.h"]],
+                                   [[typedef struct gs_main_inst_s gs_main_inst; gs_main_inst *inst;]])],
+                  [gs_old_api=yes],
+                  [gs_old_api=no])
+AC_MSG_RESULT([gs_old_api=$gs_old_api])
+AC_LANG_POP([C++])
 
 AC_CONFIG_FILES([Makefile])
 

@@ -5,3 +5,5 @@ dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for dvisvgm
 KPSE_ENABLE_PROG([dvisvgm], [kpathsea freetype2 zlib])
+m4_include(kpse_TL[texk/dvisvgm/ac/dvisvgm.ac])
+m4_include(kpse_TL[texk/dvisvgm/ac/libgs.ac])

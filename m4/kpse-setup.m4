@@ -44,9 +44,9 @@ fi
 AS_CASE([$enable_libtool_hack],
         [yes | no], [:],
         [AS_CASE([$host_os],
-                 [linux* | solaris*],
-                   [enable_libtool_hack=yes],
-                 [enable_libtool_hack=no])
+                 [do-not-match],
+                   [enable_libtool_hack=no],
+                 [enable_libtool_hack=yes])
          ac_configure_args="$ac_configure_args '--enable-libtool-hack=$enable_libtool_hack'"])
 AS_CASE([$enable_shared],
         [no], [:],

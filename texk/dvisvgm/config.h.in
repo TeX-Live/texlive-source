@@ -46,6 +46,9 @@
 /* Define to 1 if you have the <iostream> header file. */
 #undef HAVE_IOSTREAM
 
+/* Define to 1 if you have the `freetype2' library (-lfreetype). */
+#undef HAVE_LIBFREETYPE
+
 /* Define to 1 if you have the `kpathsea' library (-lkpathsea). */
 #undef HAVE_LIBKPATHSEA
 

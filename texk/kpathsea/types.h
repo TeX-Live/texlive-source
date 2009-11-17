@@ -254,6 +254,9 @@ typedef struct kpathsea_instance {
      */
     char **saved_env;       /* these keep track of changed items */
     int saved_count;
+#if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+    char **suffixlist;
+#endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
 } kpathsea_instance;
 
 /* these come from kpathsea.c */
