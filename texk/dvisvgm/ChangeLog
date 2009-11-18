@@ -1,3 +1,8 @@
+2009-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Allow to link with libgs, load
+	libgs.so at runtime, or disable PostScript support.
+
 2009-11-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 0.8.7.

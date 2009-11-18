@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2009-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Suppress some compiler warnings (too many).
+
 2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, xdvi.h: Require recent kpathsea version.

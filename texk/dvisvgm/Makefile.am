@@ -29,7 +29,8 @@ dist-hook:
 
 INCLUDES = -I$(top_srcdir)/$(DVISVGM_TREE)/src
 INCLUDES += -I$(top_srcdir)/$(DVISVGM_TREE)/potracelib
-INCLUDES += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES)
+INCLUDES += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES)
+INCLUDES += $(ZLIB_INCLUDES) $(LIBGS_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 
@@ -52,7 +53,8 @@ config.force: $(dvisvgm_dependencies)
 
 DISTCLEANFILES = config.force
 
-LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(ZLIB_LIBS)
+LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS)
+LDADD += $(ZLIB_LIBS) $(LIBGS_LIBS)
 
 noinst_LIBRARIES = libdvisvgm.a libpotrace.a
 
@@ -67,7 +69,6 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/ColorSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/CommandLine.cpp \
 	$(DVISVGM_TREE)/src/Directory.cpp \
-	$(DVISVGM_TREE)/src/DLLoader.cpp \
 	$(DVISVGM_TREE)/src/DVIActions.cpp \
 	$(DVISVGM_TREE)/src/DVIReader.cpp \
 	$(DVISVGM_TREE)/src/DvisvgmSpecialHandler.cpp \
@@ -107,6 +108,11 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/XMLDocument.cpp \
 	$(DVISVGM_TREE)/src/XMLNode.cpp \
 	$(DVISVGM_TREE)/src/XMLString.cpp
+
+if dlloader
+nodist_libdvisvgm_a_SOURCES += \
+	$(DVISVGM_TREE)/src/DLLoader.cpp
+endif dlloader
 
 $(libdvisvgm_a_OBJECTS): libpotrace.a
 

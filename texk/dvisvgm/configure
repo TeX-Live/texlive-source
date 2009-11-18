@@ -745,6 +745,10 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 DVISVGM_TREE
+dlloader_FALSE
+dlloader_TRUE
+LIBGS_LIBS
+LIBGS_INCLUDES
 FREETYPE2_RULE
 FREETYPE2_DEPEND
 FREETYPE2_LIBS
@@ -892,6 +896,8 @@ enable_libtool_lock
 enable_largefile
 enable_compiler_warnings
 with_system_libgs
+with_libgs_includes
+with_libgs_libdir
 enable_cxx_runtime_hack
 with_system_kpathsea
 with_kpathsea_includes
@@ -1555,7 +1561,10 @@ Optional Packages:
                           both]
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-system-libgs     build dvisvgm with installed gs headers and library
-                          [default: no, may require CPPFLAGS and LDFLAGS]
+                          [default: no]
+  --with-libgs-includes=DIR
+                          libgs headers installed in DIR
+  --with-libgs-libdir=DIR libgs library installed in DIR
   --with-system-kpathsea  use installed kpathsea headers and library
   --with-kpathsea-includes=DIR
                           kpathsea headers installed in DIR
@@ -4716,13 +4725,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4719: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4728: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4722: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4731: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4725: output\"" >&5)
+  (eval echo "\"\$as_me:4734: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5928,7 +5937,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5931 "configure"' > conftest.$ac_ext
+  echo '#line 5940 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7560,11 +7569,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7563: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7572: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7567: \$? = $ac_status" >&5
+   echo "$as_me:7576: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -7899,11 +7908,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7902: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7911: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7906: \$? = $ac_status" >&5
+   echo "$as_me:7915: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8004,11 +8013,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8007: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8016: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8011: \$? = $ac_status" >&5
+   echo "$as_me:8020: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8059,11 +8068,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8062: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8071: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8066: \$? = $ac_status" >&5
+   echo "$as_me:8075: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10426,7 +10435,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10429 "configure"
+#line 10438 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10522,7 +10531,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10525 "configure"
+#line 10534 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11620,6 +11629,18 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 # Check whether --with-system-libgs was given.
 if test "${with_system_libgs+set}" = set; then :
   withval=$with_system_libgs;
+fi
+
+
+# Check whether --with-libgs-includes was given.
+if test "${with_libgs_includes+set}" = set; then :
+  withval=$with_libgs_includes;
+fi
+
+
+# Check whether --with-libgs-libdir was given.
+if test "${with_libgs_libdir+set}" = set; then :
+  withval=$with_libgs_libdir;
 fi
 
 
@@ -14319,11 +14340,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14322: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14343: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14326: \$? = $ac_status" >&5
+   echo "$as_me:14347: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14418,11 +14439,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14421: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14442: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14425: \$? = $ac_status" >&5
+   echo "$as_me:14446: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14470,11 +14491,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14473: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14494: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14477: \$? = $ac_status" >&5
+   echo "$as_me:14498: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -15648,11 +15669,6 @@ fi
 
 
 
-
-
-# For the moment we just disable the PostScript support.
-
-$as_echo "#define DISABLE_GS 1" >>confdefs.h
 
 
 
@@ -17556,12 +17572,116 @@ ${top_builddir}/../../libs/freetype2/ft2build.h:
 fi
 
 
-if test "x$enable_build" != xno || test -f config.force; then
-
-# Checks for more libraries.
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
+
+if test "x$with_system_libgs" = xyes; then
+  HAVE_LIBGS=1
+  case $with_libgs_includes in #(
+  "" | yes | no) :
+    LIBGS_INCLUDES= ;; #(
+  *) :
+    LIBGS_INCLUDES="-I$with_libgs_includes" ;;
+esac
+  case $with_libgs_libdir in #(
+  "" | yes | no) :
+    LIBGS_LIBS=-lgs ;; #(
+  *) :
+    LIBGS_LIBS="-L$with_libgs_libdir -lgs" ;;
+esac
+  eval CPPFLAGS=\"$LIBGS_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$LIBGS_LIBS \$LIBS\"
+
+  ac_fn_c_check_header_mongrel "$LINENO" "ghostscript/iapi.h" "ac_cv_header_ghostscript_iapi_h" "$ac_includes_default"
+if test "x$ac_cv_header_ghostscript_iapi_h" = x""yes; then :
+
+fi
+
+
+  ac_fn_c_check_func "$LINENO" "gsapi_new_instance" "ac_cv_func_gsapi_new_instance"
+if test "x$ac_cv_func_gsapi_new_instance" = x""yes; then :
+
+fi
+
+  if test "x$ac_cv_header_ghostscript_iapi_h:$ac_cv_func_gsapi_new_instance" != xyes:yes; then
+    as_fn_error "cannot find/use libgs" "$LINENO" 5
+  fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Ghostscript version 8.31 or later" >&5
+$as_echo_n "checking for Ghostscript version 8.31 or later... " >&6; }
+if test "${kpse_cv_new_gsapi+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <ghostscript/iapi.h>
+int
+main ()
+{
+gs_main_inst *inst;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_new_gsapi=no
+else
+  kpse_cv_new_gsapi=yes
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_new_gsapi" >&5
+$as_echo "$kpse_cv_new_gsapi" >&6; }
+  if test "x$kpse_cv_new_gsapi" != xyes; then
+    as_fn_error "dvisvgm requires Ghostscript version 8.31 or later" "$LINENO" 5
+  fi
+else
+  HAVE_LIBGS=0
+  LIBGS_INCLUDES=
+  LIBGS_LIBS=-ldl
+  eval CPPFLAGS=\"$LIBGS_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$LIBGS_LIBS \$LIBS\"
+
+  ac_fn_c_check_header_mongrel "$LINENO" "dlfcn.h" "ac_cv_header_dlfcn_h" "$ac_includes_default"
+if test "x$ac_cv_header_dlfcn_h" = x""yes; then :
+
+fi
+
+
+  ac_fn_c_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
+if test "x$ac_cv_func_dlopen" = x""yes; then :
+
+fi
+
+  if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
+    CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
+
+$as_echo "#define DISABLE_GS 1" >>confdefs.h
+
+    LIBGS_LIBS=
+  fi
+fi
+
+
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBGS $HAVE_LIBGS
+_ACEOF
+
+ if test "x$HAVE_LIBGS" = x0 && test -n "$LIBGS_LIBS"; then
+  dlloader_TRUE=
+  dlloader_FALSE='#'
+else
+  dlloader_TRUE='#'
+  dlloader_FALSE=
+fi
+
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+# Checks for more libraries.
 eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$ZLIB_LIBS \$LIBS\"
 
@@ -17601,50 +17721,14 @@ else
 fi
 
 
+echo timestamp >config.force
+fi
+
 CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
 
-echo timestamp >config.force
-fi
-
 DVISVGM_TREE=dvisvgm-0.8.7
-
-
-ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-ac_link="./libtool --mode=link --tag=CXX $ac_link"
-
-CPPFLAGS="-I$srcdir/$DVISVGM_TREE/src $CPPFLAGS"
-
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include "iapi.h"
-int
-main ()
-{
-typedef struct gs_main_inst_s gs_main_inst; gs_main_inst *inst;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"; then :
-  gs_old_api=yes
-else
-  gs_old_api=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: gs_old_api=$gs_old_api" >&5
-$as_echo "gs_old_api=$gs_old_api" >&6; }
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-ac_link="./libtool --mode=link --tag=CC $ac_link"
 
 
 ac_config_files="$ac_config_files Makefile"
@@ -17773,6 +17857,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${dlloader_TRUE}" && test -z "${dlloader_FALSE}"; then
+  as_fn_error "conditional \"dlloader\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

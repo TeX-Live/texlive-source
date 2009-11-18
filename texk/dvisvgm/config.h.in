@@ -3,7 +3,7 @@
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
 
-/* Set to 1 if PostScript support should be disabled */
+/* Set to 1 if PostScript support should be disabled. */
 #undef DISABLE_GS
 
 /* Define to 1 if you have the <assert.h> header file. */
@@ -48,6 +48,9 @@
 
 /* Define to 1 if you have the `freetype2' library (-lfreetype). */
 #undef HAVE_LIBFREETYPE
+
+/* Define to 1 if you have the `gs' library (-lgs), and to 0 otherwise. */
+#undef HAVE_LIBGS
 
 /* Define to 1 if you have the `kpathsea' library (-lkpathsea). */
 #undef HAVE_LIBKPATHSEA
@@ -167,7 +170,7 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
-/* The machine triplet of the target system */
+/* The machine triplet of the target system. */
 #undef TARGET_SYSTEM
 
 /* Version number of package */

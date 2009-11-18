@@ -32,18 +32,60 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 KPSE_CXX_HACK
 
-# For the moment we just disable the PostScript support.
-AC_DEFINE([DISABLE_GS], 1,
-          [Set to 1 if PostScript support should be disabled])
-
 AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"],
-                   [The machine triplet of the target system])
+                   [The machine triplet of the target system.])
 
 AC_SEARCH_LIBS([sqrt], [m])
 
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_FREETYPE2_FLAGS
+
+KPSE_SAVE_FLAGS
+
+if test "x$with_system_libgs" = xyes; then
+  HAVE_LIBGS=1
+  AS_CASE([$with_libgs_includes],
+          ["" | yes | no], [LIBGS_INCLUDES=],
+            [LIBGS_INCLUDES="-I$with_libgs_includes"])
+  AS_CASE([$with_libgs_libdir],
+          ["" | yes | no], [LIBGS_LIBS=-lgs],
+            [LIBGS_LIBS="-L$with_libgs_libdir -lgs"])
+  KPSE_ADD_FLAGS([libgs])
+  AC_CHECK_HEADER([ghostscript/iapi.h])
+  AC_CHECK_FUNC([gsapi_new_instance])
+  if test "x$ac_cv_header_ghostscript_iapi_h:$ac_cv_func_gsapi_new_instance" != xyes:yes; then
+    AC_MSG_ERROR([cannot find/use libgs])
+  fi
+  AC_CACHE_CHECK([for Ghostscript version 8.31 or later],
+                 [kpse_cv_new_gsapi],
+                 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <ghostscript/iapi.h>]],
+                                                     [[gs_main_inst *inst;]])],
+                                    [kpse_cv_new_gsapi=no],
+                                    [kpse_cv_new_gsapi=yes])])
+  if test "x$kpse_cv_new_gsapi" != xyes; then
+    AC_MSG_ERROR([dvisvgm requires Ghostscript version 8.31 or later])
+  fi
+else
+  HAVE_LIBGS=0
+  LIBGS_INCLUDES=
+  LIBGS_LIBS=-ldl
+  KPSE_ADD_FLAGS([libgs])
+  AC_CHECK_HEADER([dlfcn.h])
+  AC_CHECK_FUNC([dlopen])
+  if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
+    KPSE_RESTORE_FLAGS
+    AC_DEFINE([DISABLE_GS], 1,
+              [Set to 1 if PostScript support should be disabled.])
+    LIBGS_LIBS=
+  fi
+fi
+AC_SUBST([LIBGS_INCLUDES])
+AC_SUBST([LIBGS_LIBS])
+AC_DEFINE_UNQUOTED([HAVE_LIBGS], [$HAVE_LIBGS],
+                   [Define to 1 if you have the `gs' library (-lgs),
+                    and to 0 otherwise.])
+AM_CONDITIONAL([dlloader], [test "x$HAVE_LIBGS" = x0 && test -n "$LIBGS_LIBS"])
 
 if test "x$enable_build" != xno || test -f config.force; then
 
@@ -66,23 +108,13 @@ AC_CHECK_FUNC([kpse_set_progname],
                          [Define to 1 if you have the `kpathsea' library (-lkpathsea).])],
               [AC_MSG_ERROR([cannot find/use libkpathsea])])
 
-KPSE_RESTORE_FLAGS
-
 echo timestamp >config.force
 fi
 
+KPSE_RESTORE_FLAGS
+
 DVISVGM_TREE=[dvisvgm-]dvisvgm_version
 AC_SUBST([DVISVGM_TREE])
-
-AC_LANG_PUSH([C++])
-CPPFLAGS="-I$srcdir/$DVISVGM_TREE/src $CPPFLAGS"
-
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "iapi.h"]],
-                                   [[typedef struct gs_main_inst_s gs_main_inst; gs_main_inst *inst;]])],
-                  [gs_old_api=yes],
-                  [gs_old_api=no])
-AC_MSG_RESULT([gs_old_api=$gs_old_api])
-AC_LANG_POP([C++])
 
 AC_CONFIG_FILES([Makefile])
 

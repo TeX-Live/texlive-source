@@ -20,6 +20,9 @@ KPSE_CANONICAL_HOST
 dnl Include additional code for xdvik.
 m4_include([ac/xdvik.ac])
 
+# Reduce compiler warnings, there are just too many.
+WARNING_CFLAGS=`echo $WARNING_CFLAGS | sed -e 's/ -Wcast-qual/ /' -e 's/ -Wwrite-strings/ /'`
+
 AC_SEARCH_LIBS([pow], [m])
 
 AC_ARG_WITH([ps],

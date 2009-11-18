@@ -11730,6 +11730,9 @@ fi
 
 
 
+# Reduce compiler warnings, there are just too many.
+WARNING_CFLAGS=`echo $WARNING_CFLAGS | sed -e 's/ -Wcast-qual/ /' -e 's/ -Wwrite-strings/ /'`
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing pow" >&5
 $as_echo_n "checking for library containing pow... " >&6; }
 if test "${ac_cv_search_pow+set}" = set; then :

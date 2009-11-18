@@ -697,6 +697,8 @@ enable_dvipos
 enable_dvipsk
 enable_dvisvgm
 with_system_libgs
+with_libgs_includes
+with_libgs_libdir
 enable_gsftopk
 enable_lacheck
 enable_lcdf_typetools
@@ -1507,7 +1509,10 @@ Optional Packages:
   --without-mf-x-toolkit  do not use X toolkit for METAFONT
   --with-gs=/PATH/TO/gs   Hard-wire the location of GhostScript
   --with-system-libgs     build dvisvgm with installed gs headers and library
-                          [default: no, may require CPPFLAGS and LDFLAGS]
+                          [default: no]
+  --with-libgs-includes=DIR
+                          libgs headers installed in DIR
+  --with-libgs-libdir=DIR libgs library installed in DIR
   --with-xdvi-x-toolkit=KIT
                           Use toolkit KIT (motif/xaw/xaw3d/neXtaw) for xdvi
                           [default: Motif if available, else Xaw]
@@ -2938,6 +2943,18 @@ test "x$enable_dvisvgm" = xno || {
 # Check whether --with-system-libgs was given.
 if test "${with_system_libgs+set}" = set; then :
   withval=$with_system_libgs;
+fi
+
+
+# Check whether --with-libgs-includes was given.
+if test "${with_libgs_includes+set}" = set; then :
+  withval=$with_libgs_includes;
+fi
+
+
+# Check whether --with-libgs-libdir was given.
+if test "${with_libgs_libdir+set}" = set; then :
+  withval=$with_libgs_libdir;
 fi
 
 

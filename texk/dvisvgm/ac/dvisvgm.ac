@@ -7,4 +7,10 @@ dnl
 AC_ARG_WITH([system-libgs],
             AS_HELP_STRING([--with-system-libgs],
                            [build dvisvgm with installed gs headers and library
-                            @<:@default: no, may require CPPFLAGS and LDFLAGS@:>@]))
+                            @<:@default: no@:>@]))
+AC_ARG_WITH([libgs-includes],
+            AS_HELP_STRING([--with-libgs-includes=DIR],
+                           [libgs headers installed in DIR]))
+AC_ARG_WITH([libgs-libdir],
+            AS_HELP_STRING([--with-libgs-libdir=DIR],
+                           [libgs library installed in DIR]))

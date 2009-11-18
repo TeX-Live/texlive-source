@@ -36,6 +36,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dvisvgm$(EXEEXT)
+@dlloader_TRUE@am__append_1 = \
+@dlloader_TRUE@	$(DVISVGM_TREE)/src/DLLoader.cpp
+
 subdir = .
 DIST_COMMON = README $(am__configure_deps) \
 	$(srcdir)/../../build-aux/config.guess \
@@ -76,19 +79,20 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libdvisvgm_a_AR = $(AR) $(ARFLAGS)
 libdvisvgm_a_LIBADD =
+@dlloader_TRUE@am__objects_1 = DLLoader.$(OBJEXT)
 nodist_libdvisvgm_a_OBJECTS = BgColorSpecialHandler.$(OBJEXT) \
 	Bitmap.$(OBJEXT) BoundingBox.$(OBJEXT) Calculator.$(OBJEXT) \
 	CharmapTranslator.$(OBJEXT) CmdLineParserBase.$(OBJEXT) \
 	Color.$(OBJEXT) ColorSpecialHandler.$(OBJEXT) \
-	CommandLine.$(OBJEXT) Directory.$(OBJEXT) DLLoader.$(OBJEXT) \
-	DVIActions.$(OBJEXT) DVIReader.$(OBJEXT) \
-	DvisvgmSpecialHandler.$(OBJEXT) DVIToSVG.$(OBJEXT) \
-	DVIToSVGActions.$(OBJEXT) EmSpecialHandler.$(OBJEXT) \
-	FileFinder.$(OBJEXT) FileSystem.$(OBJEXT) Font.$(OBJEXT) \
-	FontCache.$(OBJEXT) FontEncoding.$(OBJEXT) \
-	FontEngine.$(OBJEXT) FontGlyph.$(OBJEXT) FontManager.$(OBJEXT) \
-	FontMap.$(OBJEXT) GFReader.$(OBJEXT) GFGlyphTracer.$(OBJEXT) \
-	GFTracer.$(OBJEXT) Ghostscript.$(OBJEXT) InputBuffer.$(OBJEXT) \
+	CommandLine.$(OBJEXT) Directory.$(OBJEXT) DVIActions.$(OBJEXT) \
+	DVIReader.$(OBJEXT) DvisvgmSpecialHandler.$(OBJEXT) \
+	DVIToSVG.$(OBJEXT) DVIToSVGActions.$(OBJEXT) \
+	EmSpecialHandler.$(OBJEXT) FileFinder.$(OBJEXT) \
+	FileSystem.$(OBJEXT) Font.$(OBJEXT) FontCache.$(OBJEXT) \
+	FontEncoding.$(OBJEXT) FontEngine.$(OBJEXT) \
+	FontGlyph.$(OBJEXT) FontManager.$(OBJEXT) FontMap.$(OBJEXT) \
+	GFReader.$(OBJEXT) GFGlyphTracer.$(OBJEXT) GFTracer.$(OBJEXT) \
+	Ghostscript.$(OBJEXT) InputBuffer.$(OBJEXT) \
 	InputReader.$(OBJEXT) Length.$(OBJEXT) Matrix.$(OBJEXT) \
 	Message.$(OBJEXT) MetafontWrapper.$(OBJEXT) PageSize.$(OBJEXT) \
 	PSInterpreter.$(OBJEXT) PsSpecialHandler.$(OBJEXT) \
@@ -96,7 +100,7 @@ nodist_libdvisvgm_a_OBJECTS = BgColorSpecialHandler.$(OBJEXT) \
 	SVGFontEmitter.$(OBJEXT) SVGFontTraceEmitter.$(OBJEXT) \
 	SVGTree.$(OBJEXT) TFM.$(OBJEXT) TpicSpecialHandler.$(OBJEXT) \
 	VFReader.$(OBJEXT) XMLDocument.$(OBJEXT) XMLNode.$(OBJEXT) \
-	XMLString.$(OBJEXT)
+	XMLString.$(OBJEXT) $(am__objects_1)
 libdvisvgm_a_OBJECTS = $(nodist_libdvisvgm_a_OBJECTS)
 libpotrace_a_AR = $(AR) $(ARFLAGS)
 libpotrace_a_LIBADD =
@@ -110,7 +114,8 @@ dvisvgm_OBJECTS = $(nodist_dvisvgm_OBJECTS)
 dvisvgm_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -218,6 +223,8 @@ KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
+LIBGS_INCLUDES = @LIBGS_INCLUDES@
+LIBGS_LIBS = @LIBGS_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -316,7 +323,8 @@ ACLOCAL_AMFLAGS = -I ../../m4
 EXTRA_DIST = $(DVISVGM_TREE) $(DVISVGM_TREE)-PATCHES
 INCLUDES = -I$(top_srcdir)/$(DVISVGM_TREE)/src \
 	-I$(top_srcdir)/$(DVISVGM_TREE)/potracelib \
-	$(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES)
+	$(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) \
+	$(LIBGS_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = $(WARNING_CXXFLAGS)
 nodist_man_MANS = \
@@ -328,9 +336,10 @@ nodist_dvisvgm_SOURCES = \
 
 dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 DISTCLEANFILES = config.force
-LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(ZLIB_LIBS)
+LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) \
+	$(ZLIB_LIBS) $(LIBGS_LIBS)
 noinst_LIBRARIES = libdvisvgm.a libpotrace.a
-nodist_libdvisvgm_a_SOURCES = \
+nodist_libdvisvgm_a_SOURCES =  \
 	$(DVISVGM_TREE)/src/BgColorSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/Bitmap.cpp \
 	$(DVISVGM_TREE)/src/BoundingBox.cpp \
@@ -341,7 +350,6 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/ColorSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/CommandLine.cpp \
 	$(DVISVGM_TREE)/src/Directory.cpp \
-	$(DVISVGM_TREE)/src/DLLoader.cpp \
 	$(DVISVGM_TREE)/src/DVIActions.cpp \
 	$(DVISVGM_TREE)/src/DVIReader.cpp \
 	$(DVISVGM_TREE)/src/DvisvgmSpecialHandler.cpp \
@@ -350,8 +358,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/EmSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/FileFinder.cpp \
 	$(DVISVGM_TREE)/src/FileSystem.cpp \
-	$(DVISVGM_TREE)/src/Font.cpp \
-	$(DVISVGM_TREE)/src/FontCache.cpp \
+	$(DVISVGM_TREE)/src/Font.cpp $(DVISVGM_TREE)/src/FontCache.cpp \
 	$(DVISVGM_TREE)/src/FontEncoding.cpp \
 	$(DVISVGM_TREE)/src/FontEngine.cpp \
 	$(DVISVGM_TREE)/src/FontGlyph.cpp \
@@ -363,8 +370,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/Ghostscript.cpp \
 	$(DVISVGM_TREE)/src/InputBuffer.cpp \
 	$(DVISVGM_TREE)/src/InputReader.cpp \
-	$(DVISVGM_TREE)/src/Length.cpp \
-	$(DVISVGM_TREE)/src/Matrix.cpp \
+	$(DVISVGM_TREE)/src/Length.cpp $(DVISVGM_TREE)/src/Matrix.cpp \
 	$(DVISVGM_TREE)/src/Message.cpp \
 	$(DVISVGM_TREE)/src/MetafontWrapper.cpp \
 	$(DVISVGM_TREE)/src/PageSize.cpp \
@@ -374,14 +380,12 @@ nodist_libdvisvgm_a_SOURCES = \
 	$(DVISVGM_TREE)/src/StreamReader.cpp \
 	$(DVISVGM_TREE)/src/SVGFontEmitter.cpp \
 	$(DVISVGM_TREE)/src/SVGFontTraceEmitter.cpp \
-	$(DVISVGM_TREE)/src/SVGTree.cpp \
-	$(DVISVGM_TREE)/src/TFM.cpp \
+	$(DVISVGM_TREE)/src/SVGTree.cpp $(DVISVGM_TREE)/src/TFM.cpp \
 	$(DVISVGM_TREE)/src/TpicSpecialHandler.cpp \
 	$(DVISVGM_TREE)/src/VFReader.cpp \
 	$(DVISVGM_TREE)/src/XMLDocument.cpp \
 	$(DVISVGM_TREE)/src/XMLNode.cpp \
-	$(DVISVGM_TREE)/src/XMLString.cpp
-
+	$(DVISVGM_TREE)/src/XMLString.cpp $(am__append_1)
 nodist_libpotrace_a_SOURCES = \
 	$(DVISVGM_TREE)/potracelib/curve.c \
 	$(DVISVGM_TREE)/potracelib/decompose.c \
@@ -804,20 +808,6 @@ Directory.obj: $(DVISVGM_TREE)/src/Directory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/Directory.cpp' object='Directory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Directory.obj `if test -f '$(DVISVGM_TREE)/src/Directory.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/Directory.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/Directory.cpp'; fi`
-
-DLLoader.o: $(DVISVGM_TREE)/src/DLLoader.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DLLoader.o -MD -MP -MF $(DEPDIR)/DLLoader.Tpo -c -o DLLoader.o `test -f '$(DVISVGM_TREE)/src/DLLoader.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/DLLoader.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/DLLoader.Tpo $(DEPDIR)/DLLoader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/DLLoader.cpp' object='DLLoader.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DLLoader.o `test -f '$(DVISVGM_TREE)/src/DLLoader.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/DLLoader.cpp
-
-DLLoader.obj: $(DVISVGM_TREE)/src/DLLoader.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DLLoader.obj -MD -MP -MF $(DEPDIR)/DLLoader.Tpo -c -o DLLoader.obj `if test -f '$(DVISVGM_TREE)/src/DLLoader.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/DLLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/DLLoader.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/DLLoader.Tpo $(DEPDIR)/DLLoader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/DLLoader.cpp' object='DLLoader.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DLLoader.obj `if test -f '$(DVISVGM_TREE)/src/DLLoader.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/DLLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/DLLoader.cpp'; fi`
 
 DVIActions.o: $(DVISVGM_TREE)/src/DVIActions.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DVIActions.o -MD -MP -MF $(DEPDIR)/DVIActions.Tpo -c -o DVIActions.o `test -f '$(DVISVGM_TREE)/src/DVIActions.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/DVIActions.cpp
@@ -1364,6 +1354,20 @@ XMLString.obj: $(DVISVGM_TREE)/src/XMLString.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/XMLString.cpp' object='XMLString.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o XMLString.obj `if test -f '$(DVISVGM_TREE)/src/XMLString.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/XMLString.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/XMLString.cpp'; fi`
+
+DLLoader.o: $(DVISVGM_TREE)/src/DLLoader.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DLLoader.o -MD -MP -MF $(DEPDIR)/DLLoader.Tpo -c -o DLLoader.o `test -f '$(DVISVGM_TREE)/src/DLLoader.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/DLLoader.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/DLLoader.Tpo $(DEPDIR)/DLLoader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/DLLoader.cpp' object='DLLoader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DLLoader.o `test -f '$(DVISVGM_TREE)/src/DLLoader.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/DLLoader.cpp
+
+DLLoader.obj: $(DVISVGM_TREE)/src/DLLoader.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DLLoader.obj -MD -MP -MF $(DEPDIR)/DLLoader.Tpo -c -o DLLoader.obj `if test -f '$(DVISVGM_TREE)/src/DLLoader.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/DLLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/DLLoader.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/DLLoader.Tpo $(DEPDIR)/DLLoader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(DVISVGM_TREE)/src/DLLoader.cpp' object='DLLoader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DLLoader.obj `if test -f '$(DVISVGM_TREE)/src/DLLoader.cpp'; then $(CYGPATH_W) '$(DVISVGM_TREE)/src/DLLoader.cpp'; else $(CYGPATH_W) '$(srcdir)/$(DVISVGM_TREE)/src/DLLoader.cpp'; fi`
 
 dvisvgm.o: $(DVISVGM_TREE)/src/dvisvgm.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dvisvgm.o -MD -MP -MF $(DEPDIR)/dvisvgm.Tpo -c -o dvisvgm.o `test -f '$(DVISVGM_TREE)/src/dvisvgm.cpp' || echo '$(srcdir)/'`$(DVISVGM_TREE)/src/dvisvgm.cpp
