@@ -1116,11 +1116,19 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
 
 #if defined (unix) && !defined (MSDOS)
   {
-    const_string base = xbasename (fname);
-    /* Disallow .rhosts, .login, etc.  Allow .tex (for LaTeX).  */
-    if (base[0] == 0 ||
-        (base[0] == '.' && !IS_DIR_SEP(base[1]) && !STREQ (base, ".tex")))
-      goto not_ok;
+    /* Disallow .rhosts, .login, .ssh/, etc.  Allow .tex (for LaTeX).  */
+    string q, qq = fname;
+    while ((q = strchr (qq, '.'))) {
+      if ((q == fname || IS_DIR_SEP (*(q - 1))) &&
+          !IS_DIR_SEP (*(q + 1)) &&
+          *(q + 1) != '.' &&
+          !STREQ (q, ".tex")) {
+        goto not_ok;
+      }
+      qq = q + 1;
+      if (*(qq) == '.')
+        qq++;
+    }
   }
 #else
   /* Other OSs don't have special names? */

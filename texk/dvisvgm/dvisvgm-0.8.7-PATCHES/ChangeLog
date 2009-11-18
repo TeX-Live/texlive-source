@@ -5,6 +5,9 @@
 	* src/DVIToSVG.cpp, src/Ghostscript.{cpp,h}:
 	Use defined(DISABLE_GS) instead of DISABLE_GS.
 
+	Added patch-06-libdvisvgm-HAVE_LIBGS.
+	* src/Ghostscript.{cpp,h}: Use defined(HAVE_LIBGS).
+
 2009-11-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Added patch-03-libdvisvgm-uninitialized.

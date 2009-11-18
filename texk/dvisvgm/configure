@@ -17577,7 +17577,7 @@ kpse_save_LIBS=$LIBS
 
 
 if test "x$with_system_libgs" = xyes; then
-  HAVE_LIBGS=1
+  libgs_mode=link
   case $with_libgs_includes in #(
   "" | yes | no) :
     LIBGS_INCLUDES= ;; #(
@@ -17635,8 +17635,11 @@ $as_echo "$kpse_cv_new_gsapi" >&6; }
   if test "x$kpse_cv_new_gsapi" != xyes; then
     as_fn_error "dvisvgm requires Ghostscript version 8.31 or later" "$LINENO" 5
   fi
+
+$as_echo "#define HAVE_LIBGS 1" >>confdefs.h
+
 else
-  HAVE_LIBGS=0
+  libgs_mode=load
   LIBGS_INCLUDES=
   LIBGS_LIBS=-ldl
   eval CPPFLAGS=\"$LIBGS_INCLUDES \$CPPFLAGS\"
@@ -17654,6 +17657,7 @@ if test "x$ac_cv_func_dlopen" = x""yes; then :
 fi
 
   if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
+    libgs_mode=no
     CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
@@ -17665,12 +17669,7 @@ $as_echo "#define DISABLE_GS 1" >>confdefs.h
 fi
 
 
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGS $HAVE_LIBGS
-_ACEOF
-
- if test "x$HAVE_LIBGS" = x0 && test -n "$LIBGS_LIBS"; then
+ if test "x$libgs_mode" = xload; then
   dlloader_TRUE=
   dlloader_FALSE='#'
 else

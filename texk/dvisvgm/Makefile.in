@@ -335,7 +335,6 @@ nodist_dvisvgm_SOURCES = \
 	$(DVISVGM_TREE)/src/gzstream.cpp
 
 dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
-DISTCLEANFILES = config.force
 LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) \
 	$(ZLIB_LIBS) $(LIBGS_LIBS)
 noinst_LIBRARIES = libdvisvgm.a libpotrace.a
@@ -392,6 +391,7 @@ nodist_libpotrace_a_SOURCES = \
 	$(DVISVGM_TREE)/potracelib/potracelib.c \
 	$(DVISVGM_TREE)/potracelib/trace.c
 
+DISTCLEANFILES = config.force
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -1792,13 +1792,15 @@ uninstall-man: uninstall-man1
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-$(dvisvgm_OBJECTS): config.force
+$(dvisvgm_OBJECTS): libdvisvgm.a
+
+$(libdvisvgm_a_OBJECTS): libpotrace.a
+
+$(libpotrace_a_OBJECTS): config.force
 
 config.force: $(dvisvgm_dependencies)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
-
-$(libdvisvgm_a_OBJECTS): libpotrace.a
 
 @KPATHSEA_RULE@
 @FREETYPE2_RULE@

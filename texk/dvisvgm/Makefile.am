@@ -45,13 +45,7 @@ nodist_dvisvgm_SOURCES = \
 
 dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 
-$(dvisvgm_OBJECTS): config.force
-
-config.force: $(dvisvgm_dependencies)
-	echo timestamp >config.force
-	$(SHELL) ./config.status --recheck
-
-DISTCLEANFILES = config.force
+$(dvisvgm_OBJECTS): libdvisvgm.a
 
 LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS)
 LDADD += $(ZLIB_LIBS) $(LIBGS_LIBS)
@@ -121,6 +115,14 @@ nodist_libpotrace_a_SOURCES = \
 	$(DVISVGM_TREE)/potracelib/decompose.c \
 	$(DVISVGM_TREE)/potracelib/potracelib.c \
 	$(DVISVGM_TREE)/potracelib/trace.c
+
+$(libpotrace_a_OBJECTS): config.force
+
+config.force: $(dvisvgm_dependencies)
+	echo timestamp >config.force
+	$(SHELL) ./config.status --recheck
+
+DISTCLEANFILES = config.force
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@

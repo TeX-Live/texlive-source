@@ -44,7 +44,7 @@ KPSE_FREETYPE2_FLAGS
 KPSE_SAVE_FLAGS
 
 if test "x$with_system_libgs" = xyes; then
-  HAVE_LIBGS=1
+  libgs_mode=link
   AS_CASE([$with_libgs_includes],
           ["" | yes | no], [LIBGS_INCLUDES=],
             [LIBGS_INCLUDES="-I$with_libgs_includes"])
@@ -66,14 +66,17 @@ if test "x$with_system_libgs" = xyes; then
   if test "x$kpse_cv_new_gsapi" != xyes; then
     AC_MSG_ERROR([dvisvgm requires Ghostscript version 8.31 or later])
   fi
+  AC_DEFINE([HAVE_LIBGS], 1,
+            [Define to 1 if you have the `gs' library (-lgs).])
 else
-  HAVE_LIBGS=0
+  libgs_mode=load
   LIBGS_INCLUDES=
   LIBGS_LIBS=-ldl
   KPSE_ADD_FLAGS([libgs])
   AC_CHECK_HEADER([dlfcn.h])
   AC_CHECK_FUNC([dlopen])
   if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
+    libgs_mode=no
     KPSE_RESTORE_FLAGS
     AC_DEFINE([DISABLE_GS], 1,
               [Set to 1 if PostScript support should be disabled.])
@@ -82,10 +85,7 @@ else
 fi
 AC_SUBST([LIBGS_INCLUDES])
 AC_SUBST([LIBGS_LIBS])
-AC_DEFINE_UNQUOTED([HAVE_LIBGS], [$HAVE_LIBGS],
-                   [Define to 1 if you have the `gs' library (-lgs),
-                    and to 0 otherwise.])
-AM_CONDITIONAL([dlloader], [test "x$HAVE_LIBGS" = x0 && test -n "$LIBGS_LIBS"])
+AM_CONDITIONAL([dlloader], [test "x$libgs_mode" = xload])
 
 if test "x$enable_build" != xno || test -f config.force; then
 

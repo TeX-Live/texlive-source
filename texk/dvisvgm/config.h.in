@@ -49,7 +49,7 @@
 /* Define to 1 if you have the `freetype2' library (-lfreetype). */
 #undef HAVE_LIBFREETYPE
 
-/* Define to 1 if you have the `gs' library (-lgs), and to 0 otherwise. */
+/* Define to 1 if you have the `gs' library (-lgs). */
 #undef HAVE_LIBGS
 
 /* Define to 1 if you have the `kpathsea' library (-lkpathsea). */
