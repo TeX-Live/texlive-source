@@ -851,7 +851,7 @@ kpse_init_format (kpse_file_format_type format)
    the support working nonetheless.  */
 
 static void
-target_fontmaps (kpathsea kpse, const_string **target, unsigned *count, const_string name)
+target_fontmaps (kpathsea kpse, string **target, unsigned *count, const_string name)
 {
   string *mapped_names = kpathsea_fontmap_lookup (kpse, name);
   
@@ -861,7 +861,7 @@ target_fontmaps (kpathsea kpse, const_string **target, unsigned *count, const_st
     while ((mapped_name = *mapped_names++) != NULL) {
       (*target)[(*count)] = xstrdup (mapped_name);
       (*count)++;
-      XRETALLOC ((*target), (*count)+1, const_string);
+      XRETALLOC ((*target), (*count)+1, string);
     }
   }
 }
@@ -871,7 +871,7 @@ target_fontmaps (kpathsea kpse, const_string **target, unsigned *count, const_st
    in TARGET, depending on the various other parameters.  */
 
 static void
-target_asis_name (kpathsea kpse, const_string **target, unsigned *count,
+target_asis_name (kpathsea kpse, string **target, unsigned *count,
     kpse_file_format_type format,
     const_string name, boolean use_fontmaps, boolean has_potential_suffix,
     string has_any_suffix)
@@ -882,7 +882,7 @@ target_asis_name (kpathsea kpse, const_string **target, unsigned *count,
   if (has_potential_suffix || !FMT_INFO.suffix_search_only) {
     (*target)[(*count)] = xstrdup (name);
     (*count)++;
-    XRETALLOC ((*target), (*count)+1, const_string);
+    XRETALLOC ((*target), (*count)+1, string);
 
     if (use_fontmaps) {
         target_fontmaps (kpse, target, count, name);
@@ -896,7 +896,7 @@ target_asis_name (kpathsea kpse, const_string **target, unsigned *count,
    of the potential suffixes for FORMAT.  */
 
 static void
-target_suffixed_names (kpathsea kpse, const_string **target, unsigned *count,
+target_suffixed_names (kpathsea kpse, string **target, unsigned *count,
     kpse_file_format_type format,
     const_string name, boolean use_fontmaps, boolean has_potential_suffix)
 {
@@ -909,7 +909,7 @@ target_suffixed_names (kpathsea kpse, const_string **target, unsigned *count,
     string name_with_suffix = concat (name, *ext);
     (*target)[(*count)] = name_with_suffix;
     (*count)++;
-    XRETALLOC ((*target), (*count)+1, const_string);
+    XRETALLOC ((*target), (*count)+1, string);
     
     if (use_fontmaps) {
         target_fontmaps (kpse, target, count, name_with_suffix);
@@ -945,10 +945,10 @@ kpse_find_file (const_string name,  kpse_file_format_type format,
    hence we always return a NULL-terminated list.  */
 
 string *
-kpathsea_find_file_generic (kpathsea kpse, const_string name,  kpse_file_format_type format,
+kpathsea_find_file_generic (kpathsea kpse, const_string const_name,  kpse_file_format_type format,
                             boolean must_exist,  boolean all)
 {
-  const_string *target;
+  string *target, name;
   const_string *ext;
   unsigned count;
   unsigned name_len = 0;
@@ -963,17 +963,17 @@ kpathsea_find_file_generic (kpathsea kpse, const_string name,  kpse_file_format_
 
   /* NAME being NULL is a programming bug somewhere.  NAME can be empty,
      though; this happens with constructs like `\input\relax'.  */
-  assert (name);
+  assert (const_name);
   
   if (FMT_INFO.path == NULL)
     kpathsea_init_format (kpse, format);
 
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
     DEBUGF3 ("kpse_find_file: searching for %s of type %s (from %s)\n",
-             name, FMT_INFO.type, FMT_INFO.path_source);
+             const_name, FMT_INFO.type, FMT_INFO.path_source);
 
   /* Do variable and tilde expansion. */
-  name = kpathsea_expand (kpse, name);
+  name = kpathsea_expand (kpse, const_name);
    
   try_std_extension_first = kpathsea_var_value (kpse, "try_std_extension_first");
   has_any_suffix = strrchr (name, '.');
@@ -1004,7 +1004,7 @@ kpathsea_find_file_generic (kpathsea kpse, const_string name,  kpse_file_format_
   /* Set up list of target names to search for, the order depending on
      try_std_extension_first.  */
   count = 0;
-  target = XTALLOC1 (const_string);
+  target = XTALLOC1 (string);
 
   if (has_any_suffix
       && (try_std_extension_first == NULL || *try_std_extension_first == 'f'
@@ -1028,11 +1028,11 @@ kpathsea_find_file_generic (kpathsea kpse, const_string name,  kpse_file_format_
   }
 
   /* Search, trying to minimize disk-pounding.  */
-  ret = kpathsea_path_search_list_generic (kpse, FMT_INFO.path, target, false, all);
+  ret = kpathsea_path_search_list_generic (kpse, FMT_INFO.path, (const_string*)target, false, all);
   /* Do we need to pound the disk? */
   if (! *ret && must_exist) {
     for (count = 0; target[count]; count++)
-      free ((void *) target[count]);
+      free (target[count]);
     count = 0;
     /* We look for a subset of the previous set of names, so the
        target array is large enough.  In particular, we don't pound
@@ -1045,12 +1045,12 @@ kpathsea_find_file_generic (kpathsea kpse, const_string name,  kpse_file_format_
       target[count++] = xstrdup (name);
     }
     target[count] = NULL;
-    ret = kpathsea_path_search_list_generic (kpse, FMT_INFO.path, target, true, all);
+    ret = kpathsea_path_search_list_generic (kpse, FMT_INFO.path, (const_string*)target, true, all);
   }
   
   /* Free the list we created. */
   for (count = 0; target[count]; count++)
-    free ((void *) target[count]);
+    free (target[count]);
   free (target);
   
   /* If nothing was found, call mktex* to create a missing file.  Since
@@ -1063,7 +1063,7 @@ kpathsea_find_file_generic (kpathsea kpse, const_string name,  kpse_file_format_
     }
   }
 
-  free ((void *) name);
+  free (name);
 
   return ret;
 }
@@ -1117,7 +1117,7 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
 #if defined (unix) && !defined (MSDOS)
   {
     /* Disallow .rhosts, .login, .ssh/, etc.  Allow .tex (for LaTeX).  */
-    string q, qq = fname;
+    const_string q, qq = fname;
     while ((q = strchr (qq, '.'))) {
       if ((q == fname || IS_DIR_SEP (*(q - 1))) &&
           !IS_DIR_SEP (*(q + 1)) &&
