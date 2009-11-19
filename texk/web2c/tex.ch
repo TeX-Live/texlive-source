@@ -2698,7 +2698,29 @@ metric information in this font, and character accesses in math mode.
 function read_font_info(@!u:pointer;@!nom,@!aire:str_number;
 @z
 
-@x [30.563] l.10943 - Don't use TEX_font_area.
+@x [30.560] l.10898 - Check lengths
+@!file_opened:boolean; {was |tfm_file| successfully opened?}
+@y
+@!name_too_long:boolean; {|nom| or |aire| exceeds 255 bytes}
+@!file_opened:boolean; {was |tfm_file| successfully opened?}
+@z
+
+@x [30.561] l.10939 - Check lengths
+else print(" not loadable: Metric (TFM) file not found");
+@y
+else if name_too_long then print(" not loadable: Metric (TFM) name too long")
+else print(" not loadable: Metric (TFM) file not found");
+@z
+
+@x [30.563] l.10960 - Check lengths
+file_opened:=false;
+@y
+file_opened:=false;
+name_too_long:=(length(nom)>255)or(length(aire)>255);
+if name_too_long then abort;
+@z
+
+@x [30.563] l.10961 - Don't use TEX_font_area.
 if aire="" then pack_file_name(nom,TEX_font_area,".tfm")
 else pack_file_name(nom,aire,".tfm");
 @y

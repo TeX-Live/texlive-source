@@ -1,3 +1,8 @@
+2009-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch read_font_info: Check font name length to avoid
+	broken .dvi files.
+
 2009-11-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch: Check for allowed filename before opening the
