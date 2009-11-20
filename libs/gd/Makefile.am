@@ -39,6 +39,8 @@ dist-hook:
 	  $(distdir)/$(GD_TREE)/missing \
 	  $(distdir)/$(GD_TREE)/mkinstalldirs
 
+SUBDIRS = include
+
 INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 
 noinst_LIBRARIES=libgd.a
@@ -73,22 +75,7 @@ nodist_libgd_a_SOURCES = \
 	$(GD_TREE)/gdxpm.c \
 	$(GD_TREE)/wbmp.c
 
-BUILT_SOURCES = \
-	entities.h \
-	gd.h \
-	gd_io.h \
-	gdcache.h \
-	gdfontg.h \
-	gdfontl.h \
-	gdfontmb.h \
-	gdfonts.h \
-	gdfontt.h \
-	gdfx.h \
-	gdhelpers.h \
-	jisx0208.h \
-	wbmp.h
-
-$(libgd_a_OBJECTS): $(BUILT_SOURCES) config.force
+$(libgd_a_OBJECTS): config.force
 
 config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 	echo timestamp >config.force
@@ -100,17 +87,4 @@ DISTCLEANFILES = config.force
 @ZLIB_RULE@
 ## Rebuild libpng
 @LIBPNG_RULE@
-
-$(BUILT_SOURCES): stamp-gd
-
-stamp-gd:
-	@for file in $(BUILT_SOURCES); do \
-	  test -f $$file || { \
-	    echo "$(LN_S) $(srcdir)/$(GD_TREE)/$$file $$file"; \
-	    $(LN_S) $(srcdir)/$(GD_TREE)/$$file $$file; } || exit 1; \
-	done
-	echo timestamp >$@
-
-distclean-local:
-	rm -f stamp-gd $(BUILT_SOURCES)
 

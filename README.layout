@@ -76,6 +76,10 @@ libs/zlib/zlib-1.2.3/		(almost) unmodified source tree
 libs/zlib/Makefile.am		proxy Makefile.am
 libs/zlib/configure.ac		  and configure.ac
 
+The header files for many libraries are `installed' (as symlinks) under
+libs/Lib/include/ in the build tree exactly as they are for a system version
+under, e.g., /usr/include/.
+
 1.3. A program `Prog'
 ---------------------
 

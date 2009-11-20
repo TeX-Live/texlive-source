@@ -71,6 +71,6 @@ fi
 GD_TREE=gd-[]gd_version
 AC_SUBST([GD_TREE])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile include/Makefile])
 
 AC_OUTPUT

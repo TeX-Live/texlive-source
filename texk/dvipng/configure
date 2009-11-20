@@ -14930,7 +14930,7 @@ if test "x$with_gd_libdir" != x && test "x$with_gd_libdir" != xyes; then
   GD_LIBS="-L$with_gd_libdir $GD_LIBS"
 fi
 else
-  GD_INCLUDES=`echo '-IBLD/libs/gd' | sed \
+  GD_INCLUDES=`echo '-IBLD/libs/gd/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   GD_LIBS=`echo 'BLD/libs/gd/libgd.a' | sed \
@@ -14939,9 +14939,9 @@ else
   GD_DEPEND=`echo 'BLD/libs/gd/libgd.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    GD_RULE='# Rebuild libgd
-$(GD_DEPEND): ${top_builddir}/../../libs/gd/gd.h
+$(GD_DEPEND): ${top_builddir}/../../libs/gd/include/gd.h
 	cd ${top_builddir}/../../libs/gd && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/gd/gd.h:
+${top_builddir}/../../libs/gd/include/gd.h:
 	cd ${top_builddir}/../../libs/gd && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 

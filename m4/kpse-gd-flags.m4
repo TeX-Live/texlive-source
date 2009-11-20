@@ -18,8 +18,8 @@ AC_DEFUN([KPSE_GD_FLAGS],
 [AC_REQUIRE([KPSE_LIBPNG_FLAGS])[]dnl
 AC_REQUIRE([KPSE_FREETYPE2_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([gd], [gd], [],
-                [-IBLD/libs/gd], [BLD/libs/gd/libgd.a], [],
-                [], [${top_builddir}/../../libs/gd/gd.h])[]dnl
+                [-IBLD/libs/gd/include], [BLD/libs/gd/libgd.a], [],
+                [], [${top_builddir}/../../libs/gd/include/gd.h])[]dnl
 ]) # KPSE_GD_FLAGS
 
 # KPSE_GD_OPTIONS([WITH-SYSTEM])
