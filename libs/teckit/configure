@@ -5597,7 +5597,7 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib' | sed \
+  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
@@ -5606,9 +5606,9 @@ else
   ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ZLIB_RULE='# Rebuild libz
-$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h
+$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h:
+${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
@@ -5666,7 +5666,7 @@ fi
 TECKIT_TREE=TECkit-2.5.1
 
 
-ac_config_files="$ac_config_files Makefile teckit/Makefile"
+ac_config_files="$ac_config_files Makefile include/teckit/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -6393,7 +6393,7 @@ do
     "CXXLD.sh") CONFIG_FILES="$CONFIG_FILES CXXLD.sh:README" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "teckit/Makefile") CONFIG_FILES="$CONFIG_FILES teckit/Makefile" ;;
+    "include/teckit/Makefile") CONFIG_FILES="$CONFIG_FILES include/teckit/Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

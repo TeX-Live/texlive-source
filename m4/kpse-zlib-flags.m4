@@ -16,8 +16,8 @@
 # LIBS required for the `-lz' library in libs/zlib/ of the TL tree.
 AC_DEFUN([KPSE_ZLIB_FLAGS],
 [_KPSE_LIB_FLAGS([zlib], [z], [],
-                 [-IBLD/libs/zlib], [BLD/libs/zlib/libz.a], [],
-                 [], [${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h])[]dnl
+                 [-IBLD/libs/zlib/include], [BLD/libs/zlib/libz.a], [],
+                 [], [${top_builddir}/../../libs/zlib/include/zconf.h])[]dnl
 ]) # KPSE_ZLIB_FLAGS
 
 # KPSE_ZLIB_OPTIONS([WITH-SYSTEM])

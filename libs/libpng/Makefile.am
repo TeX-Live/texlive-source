@@ -33,6 +33,8 @@ dist-hook:
 	  $(distdir)/$(LIBPNG_TREE)/missing \
 	  $(distdir)/$(LIBPNG_TREE)/mkinstalldirs
 
+SUBDIRS = include
+
 INCLUDES = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES)
 AM_CPPFLAGS = $(LIBPNG_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)

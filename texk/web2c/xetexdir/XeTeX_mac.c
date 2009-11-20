@@ -47,7 +47,7 @@ authorization from the copyright holders.
 #include <Carbon/Carbon.h>
 #include <QuickTime/QuickTime.h>
 
-#include "TECkit_Engine.h"
+#include <teckit/TECkit_Engine.h>
 #include "XeTeX_ext.h"
 #include "XeTeXLayoutInterface.h"
 

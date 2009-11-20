@@ -18808,7 +18808,7 @@ $as_echo_n "checking requested system \`teckit' library... " >&6; }
   LIBS="$TECKIT_LIBS $LIBS"
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include <TECkit_Engine.h>
+#include <teckit/TECkit_Engine.h>
 int
 main ()
 {

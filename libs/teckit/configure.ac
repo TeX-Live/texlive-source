@@ -54,6 +54,6 @@ fi
 TECKIT_TREE=TECkit-[]TECkit_version
 AC_SUBST([TECKIT_TREE])
 
-AC_CONFIG_FILES([Makefile teckit/Makefile])
+AC_CONFIG_FILES([Makefile include/teckit/Makefile])
 
 AC_OUTPUT

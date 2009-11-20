@@ -608,6 +608,7 @@ EGREP
 GREP
 CPP
 WARNING_CFLAGS
+LN_S
 RANLIB
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
@@ -3775,6 +3776,17 @@ else
   RANLIB="$ac_cv_prog_RANLIB"
 fi
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ln -s works" >&5
+$as_echo_n "checking whether ln -s works... " >&6; }
+LN_S=$as_ln_s
+if test "$LN_S" = "ln -s"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no, using $LN_S" >&5
+$as_echo "no, using $LN_S" >&6; }
+fi
+
 
 # Check whether --enable-compiler-warnings was given.
 if test "${enable_compiler_warnings+set}" = set; then :
@@ -4603,7 +4615,7 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib' | sed \
+  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
@@ -4612,9 +4624,9 @@ else
   ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ZLIB_RULE='# Rebuild libz
-$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h
+$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h:
+${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
@@ -4656,10 +4668,7 @@ LIBPNG_TREE=libpng-1.2.40
 LIBPNG_DEFINES='-DPNG_CONFIGURE_LIBPNG -DPNG_NO_MMX_CODE'
 
 
-ac_config_links="$ac_config_links png.h:$LIBPNG_TREE/png.h pngconf.h:$LIBPNG_TREE/pngconf.h"
-
-
-ac_config_files="$ac_config_files Makefile"
+ac_config_files="$ac_config_files Makefile include/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -5218,7 +5227,6 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # Files that config.status was made for.
 config_files="$ac_config_files"
 config_headers="$ac_config_headers"
-config_links="$ac_config_links"
 config_commands="$ac_config_commands"
 
 _ACEOF
@@ -5247,9 +5255,6 @@ $config_files
 
 Configuration headers:
 $config_headers
-
-Configuration links:
-$config_links
 
 Configuration commands:
 $config_commands
@@ -5382,9 +5387,8 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
-    "png.h") CONFIG_LINKS="$CONFIG_LINKS png.h:$LIBPNG_TREE/png.h" ;;
-    "pngconf.h") CONFIG_LINKS="$CONFIG_LINKS pngconf.h:$LIBPNG_TREE/pngconf.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "include/Makefile") CONFIG_FILES="$CONFIG_FILES include/Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -5398,7 +5402,6 @@ done
 if $ac_need_defaults; then
   test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
   test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
-  test "${CONFIG_LINKS+set}" = set || CONFIG_LINKS=$config_links
   test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
 fi
 
@@ -5686,7 +5689,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 fi # test -n "$CONFIG_HEADERS"
 
 
-eval set X "  :F $CONFIG_FILES  :H $CONFIG_HEADERS  :L $CONFIG_LINKS  :C $CONFIG_COMMANDS"
+eval set X "  :F $CONFIG_FILES  :H $CONFIG_HEADERS    :C $CONFIG_COMMANDS"
 shift
 for ac_tag
 do
@@ -5962,38 +5965,7 @@ $as_echo X"$_am_arg" |
 	  }
 	  s/.*/./; q'`/stamp-h$_am_stamp_count
  ;;
-  :L)
-  #
-  # CONFIG_LINK
-  #
 
-  if test "$ac_source" = "$ac_file" && test "$srcdir" = '.'; then
-    :
-  else
-    # Prefer the file from the source tree if names are identical.
-    if test "$ac_source" = "$ac_file" || test ! -r "$ac_source"; then
-      ac_source=$srcdir/$ac_source
-    fi
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: linking $ac_source to $ac_file" >&5
-$as_echo "$as_me: linking $ac_source to $ac_file" >&6;}
-
-    if test ! -r "$ac_source"; then
-      as_fn_error "$ac_source: file not found" "$LINENO" 5
-    fi
-    rm -f "$ac_file"
-
-    # Try a relative symlink, then a hard link, then a copy.
-    case $srcdir in
-    [\\/$]* | ?:[\\/]* ) ac_rel_source=$ac_source ;;
-	*) ac_rel_source=$ac_top_build_prefix$ac_source ;;
-    esac
-    ln -s "$ac_rel_source" "$ac_file" 2>/dev/null ||
-      ln "$ac_source" "$ac_file" 2>/dev/null ||
-      cp -p "$ac_source" "$ac_file" ||
-      as_fn_error "cannot link or copy $ac_source to $ac_file" "$LINENO" 5
-  fi
- ;;
   :C)  { $as_echo "$as_me:${as_lineno-$LINENO}: executing $ac_file commands" >&5
 $as_echo "$as_me: executing $ac_file commands" >&6;}
  ;;

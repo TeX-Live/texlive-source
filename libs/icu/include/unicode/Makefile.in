@@ -35,7 +35,7 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/hdrs.am
-subdir = icu-incl/layout
+subdir = include/unicode
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/configure.ac
@@ -134,10 +134,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-# ICU headers to be installed in icu-incl/layout/
+# ICU headers to be installed in include/unicode/
 ICU_HDRS = \
-	$(ICU_SRC)/layout/*.h \
-	$(ICU_SRC)/layoutex/*.h
+	$(ICU_BLD)/common/unicode/*.h \
+	$(ICU_SRC)/common/unicode/*.h \
+	$(ICU_SRC)/i18n/unicode/*.h \
+	$(ICU_SRC)/io/unicode/*.h
 
 ICU_SRC = $(top_srcdir)/$(ICU_TREE)
 ICU_BLD = $(top_builddir)/icu-build
@@ -153,9 +155,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign icu-incl/layout/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign include/unicode/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign icu-incl/layout/Makefile
+	  $(AUTOMAKE) --foreign include/unicode/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

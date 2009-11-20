@@ -101,6 +101,6 @@ void* getotassemblyptr(int f, int g, int horiz); /* function in XeTeXOTMath.cpp 
 
 #include "trans.h"	/* functions for affine transform operations */
 #define Byte my_Byte /* hack to work around typedef conflict with zlib */
-#include "TECkit_Common.h" /* include this before XeTeX_ext.h */
+#include <teckit/TECkit_Common.h> /* include this before XeTeX_ext.h */
 #undef Byte
 #include "XeTeX_ext.h" /* other extension functions */

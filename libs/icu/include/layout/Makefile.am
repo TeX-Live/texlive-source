@@ -6,11 +6,10 @@
 ##   gives unlimited permission to copy and/or distribute it,
 ##   with or without modifications, as long as this notice is preserved.
 ##
-SUBDIRS = layout unicode
-
-# ICU headers to be installed in icu-incl/
+# ICU headers to be installed in include/layout/
 ICU_HDRS = \
-	$(ICU_SRC)/common/cmemory.h
+	$(ICU_SRC)/layout/*.h \
+	$(ICU_SRC)/layoutex/*.h
 
 include $(top_srcdir)/hdrs.am
 

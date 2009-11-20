@@ -11,7 +11,7 @@ ACLOCAL_AMFLAGS = -I ../../m4
 # Rebuild
 .PHONY: rebuild
 rebuild: icubuild
-	cd icu-incl && $(MAKE) $(AM_MAKEFLAGS) all
+	cd include && $(MAKE) $(AM_MAKEFLAGS) all
 
 SUBDIRS = .
 
@@ -30,7 +30,7 @@ dist-hook:
 
 if build
 all-local: icubuild
-SUBDIRS += icu-incl
+SUBDIRS += include
 else !build
 all-local: icu-build/Makefile
 endif !build

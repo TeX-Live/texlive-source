@@ -1,3 +1,10 @@
+2009-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeX_ext.c, XeTeX_mac.c: #include <teckit/TECkit_Engine.h>
+	instead of "TECkit_Engine.h".
+	* xetex.h: #include <teckit/TECkit_Common.h> instead of
+	"TECkit_Common.h".
+
 2009-10-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXOTLayoutEngine,{cpp,h}: Adjust to ICU-4.2.1.

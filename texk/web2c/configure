@@ -20337,7 +20337,7 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib' | sed \
+  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
@@ -20346,9 +20346,9 @@ else
   ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ZLIB_RULE='# Rebuild libz
-$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h
+$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h:
+${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
@@ -20377,7 +20377,7 @@ if test "x$with_libpng_libdir" != x && test "x$with_libpng_libdir" != xyes; then
   LIBPNG_LIBS="-L$with_libpng_libdir $LIBPNG_LIBS"
 fi
 else
-  LIBPNG_INCLUDES=`echo '-IBLD/libs/libpng' | sed \
+  LIBPNG_INCLUDES=`echo '-IBLD/libs/libpng/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   LIBPNG_LIBS=`echo 'BLD/libs/libpng/libpng.a' | sed \
@@ -20386,9 +20386,9 @@ else
   LIBPNG_DEPEND=`echo 'BLD/libs/libpng/libpng.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    LIBPNG_RULE='# Rebuild libpng
-$(LIBPNG_DEPEND): ${top_builddir}/../../libs/libpng/png.h ${top_builddir}/../../libs/libpng/pngconf.h
+$(LIBPNG_DEPEND): ${top_builddir}/../../libs/libpng/include/png.h
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/libpng/png.h ${top_builddir}/../../libs/libpng/pngconf.h:
+${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
@@ -20598,7 +20598,7 @@ if test "x$with_teckit_libdir" != x && test "x$with_teckit_libdir" != xyes; then
   TECKIT_LIBS="-L$with_teckit_libdir $TECKIT_LIBS"
 fi
 else
-  TECKIT_INCLUDES=`echo '-IBLD/libs/teckit/teckit' | sed \
+  TECKIT_INCLUDES=`echo '-IBLD/libs/teckit/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   TECKIT_LIBS=`echo 'BLD/libs/teckit/libTECkit.a' | sed \
@@ -20607,14 +20607,14 @@ else
   TECKIT_DEPEND=`echo 'BLD/libs/teckit/libTECkit.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    TECKIT_RULE='# Rebuild libTECkit
-$(TECKIT_DEPEND): ${top_builddir}/../../libs/teckit/teckit/TECkit_Common.h
+$(TECKIT_DEPEND): ${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h
 	cd ${top_builddir}/../../libs/teckit && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/teckit/teckit/TECkit_Common.h:
+${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h:
 	cd ${top_builddir}/../../libs/teckit && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
 ## _KPSE_LIB_FLAGS: Setup icu (-lsicuxxx) flags
-  ICU_INCLUDES=`echo '-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/icu-incl' | sed \
+  ICU_INCLUDES=`echo '-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   ICU_LIBS=`echo 'BLD/libs/icu/icu-build/lib/libsicule.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
@@ -20623,9 +20623,9 @@ fi
   ICU_DEPEND=`echo 'BLD/libs/icu/icu-build/lib/libsicule.a BLD/libs/icu/icu-build/lib/libsicuuc.a BLD/libs/icu/icu-build/lib/libsicudata.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ICU_RULE='# Rebuild libsicuxxx
-$(ICU_DEPEND): ${top_builddir}/../../libs/icu/icu-incl/unicode/uversion.h
+$(ICU_DEPEND): ${top_builddir}/../../libs/icu/include/unicode/uversion.h
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/icu/icu-incl/unicode/uversion.h:
+${top_builddir}/../../libs/icu/include/unicode/uversion.h:
 	cd ${top_builddir}/../../libs/icu && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
 ## _KPSE_LIB_FLAGS: Setup obsdcompat (-lopenbsd-compat) flags

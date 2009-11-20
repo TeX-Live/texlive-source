@@ -28,6 +28,8 @@ dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 	rm -f $(distdir)/$(ZLIB_TREE)/zconf.h
 
+SUBDIRS = . include
+
 INCLUDES = -I$(top_srcdir)/$(ZLIB_TREE)
 AM_CPPFLAGS = $(ZLIB_DEFINES)
 

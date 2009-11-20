@@ -17,8 +17,8 @@
 AC_DEFUN([KPSE_LIBPNG_FLAGS],
 [AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([libpng], [png], [],
-                [-IBLD/libs/libpng], [BLD/libs/libpng/libpng.a], [],
-                [], [${top_builddir}/../../libs/libpng/png.h ${top_builddir}/../../libs/libpng/pngconf.h])[]dnl
+                [-IBLD/libs/libpng/include], [BLD/libs/libpng/libpng.a], [],
+                [], [${top_builddir}/../../libs/libpng/include/png.h])[]dnl
 ]) # KPSE_LIBPNG_FLAGS
 
 # KPSE_LIBPNG_OPTIONS([WITH-SYSTEM])

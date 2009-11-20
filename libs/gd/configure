@@ -4427,7 +4427,7 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 else
-  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib' | sed \
+  ZLIB_INCLUDES=`echo '-IBLD/libs/zlib/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   ZLIB_LIBS=`echo 'BLD/libs/zlib/libz.a' | sed \
@@ -4436,9 +4436,9 @@ else
   ZLIB_DEPEND=`echo 'BLD/libs/zlib/libz.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    ZLIB_RULE='# Rebuild libz
-$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h
+$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/zlib/zlib.h ${top_builddir}/../../libs/zlib/zconf.h:
+${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
@@ -4467,7 +4467,7 @@ if test "x$with_libpng_libdir" != x && test "x$with_libpng_libdir" != xyes; then
   LIBPNG_LIBS="-L$with_libpng_libdir $LIBPNG_LIBS"
 fi
 else
-  LIBPNG_INCLUDES=`echo '-IBLD/libs/libpng' | sed \
+  LIBPNG_INCLUDES=`echo '-IBLD/libs/libpng/include' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
   LIBPNG_LIBS=`echo 'BLD/libs/libpng/libpng.a' | sed \
@@ -4476,9 +4476,9 @@ else
   LIBPNG_DEPEND=`echo 'BLD/libs/libpng/libpng.a' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    LIBPNG_RULE='# Rebuild libpng
-$(LIBPNG_DEPEND): ${top_builddir}/../../libs/libpng/png.h ${top_builddir}/../../libs/libpng/pngconf.h
+$(LIBPNG_DEPEND): ${top_builddir}/../../libs/libpng/include/png.h
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/libpng/png.h ${top_builddir}/../../libs/libpng/pngconf.h:
+${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 

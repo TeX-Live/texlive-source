@@ -37,12 +37,12 @@ AC_DEFUN([KPSE_ICU_XETEX_FLAGS],
 # MORE-ICU-LIBS: icu libraries from the TL in addition to icuuc and icudata.
 m4_define([_KPSE_ICU_FLAGS],
 [_KPSE_LIB_FLAGS([icu], [$1], [$2],
-                 [-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/icu-incl],
+                 [-DU_STATIC_IMPLEMENTATION -IBLD/libs/icu/include],
                  m4_bpatsubst([$3 icuuc icudata],
                               [icu\([18a-z]*\)],
                               [BLD/libs/icu/icu-build/lib/libsicu\1.a]),
                  [],
-                 [], [${top_builddir}/../../libs/icu/icu-incl/unicode/uversion.h])[]dnl
+                 [], [${top_builddir}/../../libs/icu/include/unicode/uversion.h])[]dnl
 ]) # _KPSE_ICU_FLAGS
 
 # KPSE_ICU_OPTIONS([WITH-SYSTEM])

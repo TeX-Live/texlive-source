@@ -63,7 +63,7 @@ authorization from the copyright holders.
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "TECkit_Engine.h"
+#include <teckit/TECkit_Engine.h>
 
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/line.h>
