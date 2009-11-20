@@ -15,6 +15,8 @@ AC_CONFIG_MACRO_DIR([../../m4])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([bibtex8], [no-define])
 
+AC_CONFIG_HEADERS([config.h])
+
 KPSE_KPATHSEA_FLAGS
 
 AC_CONFIG_FILES([Makefile])

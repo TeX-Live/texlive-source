@@ -97,13 +97,10 @@
 */
 
 #define __BIBTEX_C__
-/*
-Include the ICU heads. 23/sep/2009
-*/
-#include "unicode/uchar.h"
-#include "unicode/ustdio.h"
-#include "unicode/ucnv.h"
-#include "unicode/ucol.h"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include "sysdep.h"
 #include "bibtex.h"
@@ -113,6 +110,13 @@ Include the ICU heads. 23/sep/2009
 #include "utils.h"
 #include "version.h"
 
+/*
+Include the ICU heads. 23/sep/2009
+*/
+#include "unicode/uchar.h"
+#include "unicode/ustdio.h"
+#include "unicode/ucnv.h"
+#include "unicode/ucol.h"
 
 
 #ifdef KPATHSEA

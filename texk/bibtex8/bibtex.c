@@ -98,6 +98,10 @@
 
 #define __BIBTEX_C__
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "sysdep.h"
 #include "bibtex.h"
 #include "datatype.h"

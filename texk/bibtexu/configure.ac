@@ -11,10 +11,12 @@ AC_PREREQ([2.63])
 AC_CONFIG_SRCDIR([bibtex-1.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
-AC_PROG_CXX
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([bibtexu], [no-define])
+
+AC_CONFIG_HEADERS([config.h])
+
 AC_PROG_CXX
 KPSE_CXX_HACK
 
