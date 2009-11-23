@@ -8,7 +8,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_define([TECkit_version], [2.5.1])[]dnl using unmodified TECkit source tree
 AC_INIT([TECkit for TeX Live], TECkit_version, [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([TECkit-]TECkit_version[/source/UnicodeNames.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

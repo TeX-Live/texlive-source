@@ -28,6 +28,10 @@ AC_PROVIDE_IFELSE([AC_PROG_OBJC],
                   [_KPSE_WARNING_OBJCFLAGS],
                   [m4_define([AC_PROG_OBJC],
                              m4_defn([AC_PROG_OBJC])[_KPSE_WARNING_OBJCFLAGS])])
+AC_PROVIDE_IFELSE([AC_PROG_OBJCXX],
+                  [_KPSE_WARNING_OBJCXXFLAGS],
+                  [m4_define([AC_PROG_OBJCXX],
+                             m4_defn([AC_PROG_OBJCXX])[_KPSE_WARNING_OBJCXXFLAGS])])
 ]) # KPSE_COMPILER_WARNINGS
 
 # _KPSE_COMPILER_WARNINGS_OPTION
@@ -62,7 +66,7 @@ if test "x$enable_compiler_warnings" = xno; then
 elif test "x$GCC" = xyes; then
   _KPSE_WARNING_GNU_CFLAGS([CC], [cflags])[]dnl
 else
-  : # FIXME: warning flags for non-GNU C compilers
+  kpse_cv_warning_cflags= # FIXME: warning flags for non-GNU C compilers
 fi])
 WARNING_CFLAGS=$kpse_cv_warning_cflags
 AC_SUBST([WARNING_CFLAGS])
@@ -82,7 +86,7 @@ if test "x$enable_compiler_warnings" = xno; then
 elif test "x$GXX" = xyes; then
   _KPSE_WARNING_GNU_CXXFLAGS([CXX], [cxxflags])[]dnl
 else
-  : # FIXME: warning flags for non-GNU C++ compilers
+  kpse_cv_warning_cxxflags= # FIXME: warning flags for non-GNU C++ compilers
 fi])
 WARNING_CXXFLAGS=$kpse_cv_warning_cxxflags
 AC_SUBST([WARNING_CXXFLAGS])
@@ -104,12 +108,34 @@ if test "x$enable_compiler_warnings" = xno; then
 elif test "x$GOBJC" = xyes; then
   _KPSE_WARNING_GNU_CFLAGS([OBJC], [objcflags])[]dnl
 else
-  : # FIXME: warning flags for non-GNU C compilers
+  kpse_cv_warning_objcflags= # FIXME: warning flags for non-GNU Objective C compilers
 fi])
 WARNING_OBJCFLAGS=$kpse_cv_warning_objcflags
 AC_SUBST([WARNING_OBJCFLAGS])
 m4_define([_KPSE_WARNING_OBJCFLAGS], [])[]dnl
 ]) # _KPSE_WARNING_OBJCFLAGS
+
+_KPSE_WARNING_OBJCXXFLAGS
+# -----------------------
+# Internal subroutine.
+# Determine and substitute WARNING_OBJCXXFLAGS for Objective C++ compiler.
+AC_DEFUN([_KPSE_WARNING_OBJCXXFLAGS],
+[AC_REQUIRE([_KPSE_COMPILER_WARNINGS_OPTION])[]dnl
+AC_REQUIRE([AC_PROG_OBJCXX])[]dnl
+AC_CACHE_CHECK([what warning flags to pass to the Objective C++ compiler],
+               [kpse_cv_warning_objcxxflags],
+               [dnl
+if test "x$enable_compiler_warnings" = xno; then
+  kpse_cv_warning_objcxxflags=
+elif test "x$GOBJCXX" = xyes; then
+  _KPSE_WARNING_GNU_CXXFLAGS([OBJCXX], [objcxxflags])[]dnl
+else
+  kpse_cv_warning_objcxxflags= # FIXME: warning flags for non-GNU Objective C++ compilers
+fi])
+WARNING_OBJCXXFLAGS=$kpse_cv_warning_objcxxflags
+AC_SUBST([WARNING_OBJCXXFLAGS])
+m4_define([_KPSE_WARNING_OBJCXXFLAGS], [])[]dnl
+]) # _KPSE_WARNING_OBJCXXFLAGS
 
 # _KPSE_WARNING_GNU_CFLAGS(COMPILER, TAG)
 # ---------------------------------------

@@ -29,7 +29,7 @@ dnl the TeX Live (TL) tree; first distinguish these two cases.
 m4_syscmd([test -f ../../texk/kpathsea/doc/kpathsea.texi])[]dnl
 m4_if(m4_sysval, [0], [m4_define([kpse_TL], [])])[]dnl
 
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_INIT([xindy], [2.3], [xindy-discuss@lists.sourceforge.net])
 m4_ifdef([kpse_TL], [dnl For xindy as part of the TL tree
 AC_CONFIG_AUX_DIR([../../build-aux])

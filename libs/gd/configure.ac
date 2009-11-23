@@ -11,7 +11,7 @@ m4_define([gd_minor], [0])[]dnl
 m4_define([gd_micro], [35])[]dnl using unmodified gd-2.0.35 source tree
 m4_define([gd_version], gd_major.gd_minor.gd_micro)[]dnl
 AC_INIT([gd for TeX Live], gd_version, [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([gd-]gd_version[/gd.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

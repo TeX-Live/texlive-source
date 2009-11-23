@@ -11,7 +11,7 @@ m4_define([zlib_minor], [2])[]dnl
 m4_define([zlib_micro], [3])[]dnl using unmodified zlib-1.2.3 source tree
 m4_define([zlib_version], zlib_major.zlib_minor.zlib_micro)[]dnl
 AC_INIT([zlib for TeX Live], zlib_version, [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([zlib-]zlib_version[/zconf.in.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

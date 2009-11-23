@@ -7,7 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 AC_INIT([detex for TeX Live], [20070107], [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvipos.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

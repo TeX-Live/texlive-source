@@ -8,7 +8,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_define([freetype_version], [2.3.11])[]dnl unmodified freetype source tree
 AC_INIT([FreeType for TeX Live], freetype_version, [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([freetype-]freetype_version[/builds/unix/ftconfig.in])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

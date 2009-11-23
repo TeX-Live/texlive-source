@@ -21,7 +21,7 @@ dnl them configurable.
 dnl
 m4_define([web2_version], [2009])
 AC_INIT([Web2C], web2_version(), [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 dnl 
 dnl We don't use (for example) tex/tex.web because people who only want
 dnl to build part of the distribution may not have any given program.
@@ -38,6 +38,7 @@ KPSE_COMMON([web2c programs])
 KPSE_CANONICAL_HOST
 
 AC_PROG_CXX
+AC_PROG_OBJCXX
 KPSE_CXX_HACK
 KPSE_LT_HACK
 

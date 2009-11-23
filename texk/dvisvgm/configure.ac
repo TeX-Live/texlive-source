@@ -15,7 +15,7 @@ dnl *********************************************************************
 dnl
 m4_define([dvisvgm_version], [0.8.7])[]dnl using unmodified dvisvgm source tree
 AC_INIT([dvisvgm], dvisvgm_version, [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvisvgm-]dvisvgm_version[/src/dvisvgm.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

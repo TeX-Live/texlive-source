@@ -11,7 +11,7 @@ m4_define([t1lib_minor], [1])[]dnl
 m4_define([t1lib_micro], [2])[]dnl using unmodified t1lib-5.1.2 source tree
 m4_define([t1lib_version], t1lib_major.t1lib_minor.t1lib_micro)[]dnl
 AC_INIT([T1lib for TeX Live], t1lib_version, [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([t1lib-]t1lib_version[/lib/t1lib/t1base.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

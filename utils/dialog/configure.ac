@@ -7,7 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_define([dialog_version], [1.1-20080819])[]dnl using unmodified dialog-1.1-20080819 source tree
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_INIT([dialog for TeX Live], dialog_version, [peb@mppmu.mpg.de])
 AC_CONFIG_SRCDIR([dialog-]dialog_version[/dialog.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

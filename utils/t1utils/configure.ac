@@ -14,7 +14,7 @@ dnl *********************************************************************
 dnl
 m4_define([t1utils_version], [1.34])[]dnl using unmodified t1utils source tree
 AC_INIT([t1utils for TeX Live], t1utils_version, [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([t1utils-]t1utils_version[/t1ascii.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

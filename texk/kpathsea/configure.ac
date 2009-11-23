@@ -27,7 +27,7 @@ m4_define([kpse_lib_devel], [])[]dnl or "dev"
 m4_define([kpse_version], [kpse_lib_major.kpse_lib_minor.kpse_lib_micro[]kpse_lib_devel])[]dnl
 
 AC_INIT([Kpathsea], [kpse_version], [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([pathsearch.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])

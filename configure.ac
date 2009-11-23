@@ -7,7 +7,7 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 AC_INIT([TeX Live], [2009-11-10], [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([m4/kpse-pkgs.m4])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -38,8 +38,9 @@ dnl 5. For each library Lib in the list of TL libraries:
 dnl    sinclude libs/Lib/ac/withenable.ac
 dnl      usually providing the configure options --with-system-Lib,
 dnl        --with-Lib-includes=DIR, and --with-Lib-libdir=DIR
-dnl     for each required TL library SubLib (if any):
-dnl        disallow with_system_Lib=yes and with_system_SubLib=no
+dnl    for each required TL library SubLib (if any):
+dnl      disallow with_system_Lib=yes and with_system_SubLib=no
+dnl      if $need_Lib=yes then set need_SubLib=yes 
 dnl
 KPSE_SETUP([])
 

@@ -8,7 +8,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_define([xpdf_version], [3.02])[]dnl using unmodified xpdf-3.02 (pl2) source tree
 AC_INIT([xpdf for TeX Live], xpdf_version, [tex-k@tug.org])
-AC_PREREQ([2.63])
+AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xpdf-]xpdf_version[/xpdf/Array.cc])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
