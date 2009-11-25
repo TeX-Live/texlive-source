@@ -1,3 +1,8 @@
+2009-11-25  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (dist_man1_MANS): remove this, as getnonfreefonts
+	will now be separate from TeX Live.
+
 2009-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* runscript*, Makefile.am: New version of Win32 wrapper.

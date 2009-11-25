@@ -7,8 +7,6 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 SUBDIRS = linked_scripts
 
-dist_man1_MANS = getnonfreefonts-sys.man getnonfreefonts.man
-
 ## Win32 wrapper
 ##
 EXTRA_DIST = runscript_dll.c runscript_exe.c runscript.dll runscript.exe

@@ -16,7 +16,6 @@ bin_SCRIPTS =
 scriptxdir = ${prefix}/texmf/scripts
 nobase_dist_scriptx_SCRIPTS = \
 	a2ping/a2ping.pl \
-	getnonfreefonts/getnonfreefonts.pl \
 	simpdftex/simpdftex \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
