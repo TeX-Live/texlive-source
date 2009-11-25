@@ -47,6 +47,8 @@ use strict;
 #
 # emacs-page
 # History
+#  2009/11/25 v2.14 (Manuel P\'egouri\'e-Gonnard)
+#	   * Better exentension detection, suggested by A. Cherepanov.
 #  2009/10/18 v2.13 (Manuel P\'egouri\'e-Gonnard)
 #    * Better argument validation, from Alexander Cherepanov.
 #    * Use the list form of pipe open() (resp. system()) to prevent injection.
@@ -313,7 +315,8 @@ if ($OutputFilename eq "") {
   if ($::opt_gs) {
     $OutputFilename = $InputFilename;
     if (!$::opt_filter) {
-      $OutputFilename =~ s/\.[^\.]*$//;
+			my $ds = ($^O eq "MSWin32" || $^O eq "cygwin") ? '\\/' : '/';
+      $OutputFilename =~ s/\.[^\.$ds]*$//;
       $OutputFilename .= ".pdf";
     }
   }
