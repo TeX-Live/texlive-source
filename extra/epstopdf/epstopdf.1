@@ -1,8 +1,8 @@
-.TH EPSTOPDF 1 "27 September 2009"
+.TH EPSTOPDF 1 "15 October 2009"
 .\" $Id$
 .\" man page originally by Jim Van Zandt
 .SH NAME
-epstopdf \- convert an EPS file to PDF
+epstopdf, repstopdf \- convert an EPS file to PDF
 .SH SYNOPSIS
 \fBepstopdf\fP [\fIoptions\fP] [\fIepsfile\fP]
 .SH DESCRIPTION
@@ -40,6 +40,10 @@ set image resolution (default: [use gs default])
 .IP "\fB--autorotate\fP=\fIval\fP"
 set AutoRotatePages (default: None); recognized \fIval\fP choices:
 None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
+.IP "\fB--restricted\fP=\fIval\fP"
+turn on restricted mode (default: [on for resptopdf, else off]);
+this restricts the values accepted by \fB--gscmd\fP and impose restrictions
+on the output file name similar to web2c's openout_any=p.
 .IP "\fB--help\fP
 display help message and exit
 .IP "\fB--version\fP
