@@ -93,8 +93,7 @@ nobase_dist_script_SCRIPTS = \
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	epstopdf:repstopdf \
-	pdfcrop:rpdfcrop \
-	getnonfreefonts:getnonfreefonts-sys
+	pdfcrop:rpdfcrop
 
 # The idea is to install the scripts themselves in texmf*/scripts, and
 # have bin/arch/foo be a symlink to, say,

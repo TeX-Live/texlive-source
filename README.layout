@@ -37,24 +37,24 @@ and/or integrating new modules into the TL build system.
 -------------------
 
 texk/kpathsea/*/	the Kpathsea library
-libs/*/*/		various other libraries
+libs/*/			various other libraries
 
-texk/*/*/		programs (mostly using Kpathsea)
-utils/*/*/		utility programs (not using Kpathsea)
+texk/*/			programs (mostly using Kpathsea)
+utils/*/		utility programs (not using Kpathsea)
 
 texk/am/*.am		Makefile.am fragments
 texk/web2c/am/*.am	  for the Kpathsea library
 texk/web2c/*/am/*.am	  and the Web2C programs
 
-libs/Lib/*/		library Lib (zlib, libpng, t1lib, etc.)
-texk/Prog/*/		program package Prog (web2c, afm2pl, bibtex8, etc.)
-utils/Util/*/		utility program package Util (dialog, pdfopen, ps2eps, etc.)
+libs/Lib/		library Lib (zlib, libpng, t1lib, etc.)
+texk/Prog/		program package Prog (web2c, afm2pl, bibtex8, etc.)
+utils/Util/		utility program package Util (dialog, pdfopen, ps2eps, etc.)
 
 auxdir/auxsub/		dummy module used to configure the real modules
 
 */*/ac/*.ac		various configure.ac fragments (configure options)
 
-build-aux/*		auxiliary build scripts (config.guess etc.)
+build-aux/		auxiliary build scripts (config.guess etc.)
 
 m4/kpse-pkgs.m4		Autoconf macros defining the lists of Lib, Prog, and Util
 			  modules and handling loops over these lists
@@ -174,14 +174,13 @@ please keep it that way!
 The process described above configures all directories, even for libraries
 and programs not to be built.  This is necessary for Make targets such as
 `dist' or `distcheck' that have to recurse into all subdirectories, whereas
-thw normal targets `all', `check', or `install' only recurse into the
+the normal targets `all', `check', or `install' only recurse into the
 required subdirectories.
 
 As a side effect, this allows to build all programs 'on demand'.  If, e.g.,
 building in utils/Util/ or texk/Prog/ has been disabled, the Makefile in
-that directory still contains all the rules to build everything.  Thus
-running 'make' and 'make install' in that directory will build and install
-everything.
+that directory still contains all build rules.  Thus running 'make' and
+'make install' in that directory will build and install everything.
 
 Similarly, when, e.g., building e-TeX has been disabled (as by default), you
 can run 'make etex' (or 'make etex.exe') in the subdirectory texk/web2c/ to

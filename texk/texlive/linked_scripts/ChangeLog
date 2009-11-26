@@ -1,3 +1,7 @@
+2009-11-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (bin_links): Remove getnonfreefonts-sys.
+
 2009-11-25  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_scriptx_SCRIPTS): remove getnonfreefonts.

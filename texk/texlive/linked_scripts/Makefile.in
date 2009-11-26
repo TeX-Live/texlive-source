@@ -243,8 +243,7 @@ nobase_dist_script_SCRIPTS = \
 # Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
 bin_links = \
 	epstopdf:repstopdf \
-	pdfcrop:rpdfcrop \
-	getnonfreefonts:getnonfreefonts-sys
+	pdfcrop:rpdfcrop
 
 all: all-am
 
