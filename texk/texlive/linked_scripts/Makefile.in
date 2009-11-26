@@ -221,7 +221,7 @@ nobase_dist_script_SCRIPTS = \
 	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
-	perltex/perltex \
+	perltex/perltex.pl \
 	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
 	ppower4/pdfthumb.tlu \

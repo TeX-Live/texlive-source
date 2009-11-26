@@ -39,6 +39,8 @@ use Pod::Usage;
 use File::Basename;
 use Fcntl;
 use POSIX;
+use Cwd qw(abs_path);
+use IO::Handle;
 use warnings;
 use strict;
 my $latexprog;
@@ -103,15 +105,49 @@ $latexcmdline[$firstcmd] =
     '\plmac@doneflag', $doneflag,
     '\plmac@pipe', $pipe,
     $latexcmdline[$firstcmd];
-foreach my $file ($toperl, $fromperl, $toflag, $fromflag, $doneflag, $pipe) {
-    unlink $file while -e $file;
+$toperl = abs_path $toperl;
+$fromperl = abs_path $fromperl;
+$toflag = abs_path $toflag;
+$fromflag = abs_path $fromflag;
+$doneflag = abs_path $doneflag;
+$logfile = abs_path $logfile;
+$pipe = abs_path $pipe;
+$SIG{"ALRM"} = sub {
+    undef $latexpid;
+    exit 0;
+};
+$SIG{"PIPE"} = "IGNORE";
+sub delete_files (@)
+{
+    foreach my $filename (@_) {
+        unlink $filename;
+        while (-e $filename) {
+            unlink $filename;
+            sleep 0;
+        }
+    }
 }
+sub awaitexists ($)
+{
+    while (!-e $_[0]) {
+        sleep 0;
+        if (waitpid($latexpid, &WNOHANG)==-1) {
+            delete_files($toperl, $fromperl, $toflag,
+                         $fromflag, $doneflag, $pipe);
+            undef $latexpid;
+            exit 0;
+        }
+    }
+}
+delete_files($toperl, $fromperl, $toflag, $fromflag, $doneflag, $pipe);
 open (LOGFILE, ">$logfile") || die "open(\"$logfile\"): $!\n";
+autoflush LOGFILE 1;
 if (defined $styfile) {
     open (STYFILE, ">$styfile") || die "open(\"$styfile\"): $!\n";
 }
 if (!$usepipe || !eval {mkfifo($pipe, 0600)}) {
     sysopen PIPE, $pipe, O_WRONLY|O_CREAT, 0755;
+    autoflush PIPE 1;
     print PIPE $pipestring;
     close PIPE;
     $usepipe = 0;
@@ -131,20 +167,7 @@ else {
     $sandbox_eval = \&top_level_eval;
 }
 while (1) {
-    my $awaitexists = sub {
-      while (!-e $_[0]) {
-          sleep 0;
-          if (waitpid($latexpid, &WNOHANG)==-1) {
-              foreach my $file ($toperl, $fromperl, $toflag,
-                                $fromflag, $doneflag, $pipe) {
-                  unlink $file while -e $file;
-              }
-              undef $latexpid;
-              exit 0;
-          }
-      }
-    };
-    $awaitexists->($toflag);
+    awaitexists($toflag);
     my $entirefile;
     {
         local $/ = undef;
@@ -197,6 +220,7 @@ while (1) {
     if ($@) {
         my $msg = $@;
         $msg =~ s/at \(eval \d+\) line \d+\W+//;
+        $msg =~ s/\n/\\MessageBreak\n/g;
         $msg =~ s/\s+/ /;
         $result = "\\PackageError{perltex}{$msg}";
         my @helpstring;
@@ -229,23 +253,25 @@ while (1) {
     open (FROMPERL, ">$fromperl") || die "open($fromperl): $!\n";
     syswrite FROMPERL, $result;
     close FROMPERL;
-    unlink $toflag while -e $toflag;
-    unlink $toperl while -e $toperl;
-    unlink $doneflag while -e $doneflag;
+    delete_files($toflag, $toperl, $doneflag);
     open (FROMFLAG, ">$fromflag") || die "open($fromflag): $!\n";
     close FROMFLAG;
     if (open (PIPE, ">$pipe")) {
+        autoflush PIPE 1;
         print PIPE $pipestring;
         close PIPE;
     }
-    $awaitexists->($toperl);
-    unlink $fromflag while -e $fromflag;
+    awaitexists($toperl);
+    delete_files($fromflag);
     open (DONEFLAG, ">$doneflag") || die "open($doneflag): $!\n";
     close DONEFLAG;
+    alarm 1;
     if (open (PIPE, ">$pipe")) {
+        autoflush PIPE 1;
         print PIPE $pipestring;
         close PIPE;
     }
+    alarm 0;
 }
 END {
     close LOGFILE;
