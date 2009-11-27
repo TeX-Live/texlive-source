@@ -339,11 +339,9 @@ BEGIN {
     } elsif ( -d "/usr/share/xindy" ) { # FSH style
 	$modules_dir = "/usr/share/xindy";
     } elsif (-l $0) { # binaries may be symlinks e.g. in /usr/local/bin
-      my $try_dir = dirname(readlink($0));
-      if (-d "$try_dir/../../texmf/xindy") {
-        $modules_dir = "$try_dir/../../texmf/xindy"; # texlive multiplatform style
-      } elsif (-d "$try_dir/../texmf/xindy") {
-        $modules_dir = "$try_dir/../texmf/xindy"; # texlive non-multiplatform style
+      my $try_dir = dirname(Cwd::realpath($0));
+      if ($try_dir =~ m,/texmf/scripts/xindy$, && -d "$try_dir/../../xindy") {
+        $modules_dir = "$try_dir/../../xindy";
       } else {
 	die "$cmd: Cannot locate xindy modules directory";
       }
