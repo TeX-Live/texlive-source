@@ -1,3 +1,7 @@
+2009-11-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex.ch (read_font_info): Better wording of error message.
+
 2009-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex.ch (read_font_info): Check font name length to avoid

@@ -2701,14 +2701,14 @@ function read_font_info(@!u:pointer;@!nom,@!aire:str_number;
 @x [30.560] l.10898 - Check lengths
 @!file_opened:boolean; {was |tfm_file| successfully opened?}
 @y
-@!name_too_long:boolean; {|nom| or |aire| exceeds 255 bytes}
+@!name_too_long:boolean; {|nom| or |aire| exceeds 255 bytes?}
 @!file_opened:boolean; {was |tfm_file| successfully opened?}
 @z
 
 @x [30.561] l.10939 - Check lengths
 else print(" not loadable: Metric (TFM) file not found");
 @y
-else if name_too_long then print(" not loadable: Metric (TFM) name too long")
+else if name_too_long then print(" not loadable: Metric (TFM) file name too long")
 else print(" not loadable: Metric (TFM) file not found");
 @z
 
