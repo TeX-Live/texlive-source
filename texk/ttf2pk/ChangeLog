@@ -1,3 +1,11 @@
+2009-11-27  Karl Berry  <karl@tug.org>
+
+	* ttf2pk.c (USAGE): mention email address, update copyrights.
+
+2009-11-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ttf2pk.c (main): do not dereference argv[1] if it's nonexistent.
+
 2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, filesrch.c: Require recent kpathsea version.
@@ -46,4 +54,3 @@
 	* Makefile.in: Add @configure_input@ line.
 	* aclocal.m4 (new): Generated (aclocal -I ../m4).
 	* configure: Regenerated (autoconf).
-

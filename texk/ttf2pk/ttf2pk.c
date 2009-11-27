@@ -1,11 +1,13 @@
 /*
  *   ttf2pk.c
  *
- *   This file is part of the ttf2pk package.
+ *   This file is part of the ttf2pk package, released under the
+ *   GNU GPL version 2 or any later version.
  *
  *   Copyright 1997-1999, 2000, 2002 by
  *     Frederic Loyer <loyer@ensta.fr>
  *     Werner Lemberg <wl@gnu.org>
+ *   Copyright 2009 Peter Breitenlohner
  */
 
 #include <stdio.h>
@@ -67,6 +69,8 @@ strip_equal(char *s, char *os, char *p)
 -t                  test for <font> (returns 0 on success)\n\
 --help              print this message and exit\n\
 --version           print version number and exit\n\
+
+Report bugs to tex-k@tug.org.
 "
 
 static void
@@ -80,7 +84,7 @@ usage(void)
 
 
 #define VERSION "\
-Copyright (C) 1997-1999, 2000, 2002 Frederic Loyer and Werner Lemberg.\n\
+Copyright (C) 1997-1999, 2000, 2002, 2009 Frederic Loyer and Werner Lemberg.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the gsftopk copyright.\n\
@@ -93,6 +97,7 @@ Primary authors of ttf2pk: F. Loyer and W. Lemberg.\n\
 ttf2pk is partially based on gsftopk from P. Vojta\n\
 and the FreeType project from\n\
 David Turner, Robert Wilhelm, and Werner Lemberg\n\
+
 "
 
 static void
@@ -323,7 +328,7 @@ main(int argc, char** argv)
       version();
   }
 
-  while (argv[1][0] == '-')
+  while (argv[1] && argv[1][0] == '-')
   {
     if (argv[1][1] == 'q')
       quiet = True;
