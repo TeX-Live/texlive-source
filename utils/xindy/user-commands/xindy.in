@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: xindy.pl,v 1.11 2009/03/22 11:08:18 jschrod Exp $
+# $Id: xindy.pl,v 1.13 2009/03/29 11:14:04 jschrod Exp $
 #------------------------------------------------------------
 # (history at end)
 
@@ -276,7 +276,7 @@ use strict;
 
 BEGIN {
     use vars qw($Revision $VERSION);
-    q$Revision: 1.11 $ =~ /: (\d+)\.(\d+)/ ;	# q wg. Emacs indent!
+    q$Revision: 1.13 $ =~ /: (\d+)\.(\d+)/ ;	# q wg. Emacs indent!
     my ($major, $minor) = ($1, $2);
     $VERSION = "$major." . ($minor<10 ? '0' : '') . $minor;
 }
@@ -338,6 +338,15 @@ BEGIN {
 	$modules_dir = "$lib_dir/../texmf/xindy";
     } elsif ( -d "/usr/share/xindy" ) { # FSH style
 	$modules_dir = "/usr/share/xindy";
+    } elsif (-l $0) { # binaries may be symlinks e.g. in /usr/local/bin
+      my $try_dir = dirname(readlink($0));
+      if (-d "$try_dir/../../texmf/xindy") {
+        $modules_dir = "$try_dir/../../texmf/xindy"; # texlive multiplatform style
+      } elsif (-d "$try_dir/../texmf/xindy") {
+        $modules_dir = "$try_dir/../texmf/xindy"; # texlive non-multiplatform style
+      } else {
+	die "$cmd: Cannot locate xindy modules directory";
+      }
     } else {
 	die "$cmd: Cannot locate xindy modules directory";
     }
@@ -809,6 +818,12 @@ sub quotify ( $ ) {
 #======================================================================
 #
 # $Log: xindy.pl,v $
+# Revision 1.13  2009/03/29 11:14:04  jschrod
+#     xindy.run does not exist any more, call clisp directly.
+#
+# Revision 1.12  2009/03/26 17:27:28  jschrod
+#  Checking for variant name din needs to take trailing hyphen into account.
+#
 # Revision 1.11  2009/03/22 11:08:18  jschrod
 #     man page: --v is --verbose, not --version.
 #
