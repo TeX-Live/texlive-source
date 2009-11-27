@@ -47,14 +47,16 @@ use strict;
 #
 # emacs-page
 # History
-#  2009/11/25 v2.14 (Manuel P\'egouri\'e-Gonnard)
-#	   * Better exentension detection, suggested by A. Cherepanov.
-#  2009/10/18 v2.13 (Manuel P\'egouri\'e-Gonnard)
-#    * Better argument validation, from Alexander Cherepanov.
-#    * Use the list form of pipe open() (resp. system()) to prevent injection.
+#  2009/11/27 v2.12 (Karl Berry)
+#    * Make --filter work again
+#  2009/11/25       (Manuel P\'egouri\'e-Gonnard)
+#    * Better extension detection, suggested by A. Cherepanov.
+#  2009/10/18       (Manuel P\'egouri\'e-Gonnard)
+#    * Better argument validation (Alexander Cherepanov).
+#    * Use list form of pipe open() (resp. system()) to prevent injection.
 #    Since Perl's fork() emulation doesn't work on Windows with Perl 5.8.8 from
 #    TeX Live 2009, use a temporary file instead of a pipe on Windows.
-#  2009/10/14 v2.12 (Manuel P\'egouri\'e-Gonnard)
+#  2009/10/14       (Manuel P\'egouri\'e-Gonnard)
 #    * Added restricted mode.
 #  2009/09/27 v2.11 (Karl Berry)
 #    * Fixed two bugs in the (atend) handling code (Martin von Gagern)
@@ -131,7 +133,7 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id$) 2.11';
+my $ident = '($Id$) 2.12';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 1998-2001 Sebastian Rahtz et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -260,10 +262,8 @@ my $InputFilename = "";
 if ($::opt_filter) {
   @ARGV == 0 or
     die errorUsage "Input file cannot be used with filter option";
-  $InputFilename = "-";
-  debug "Input file: standard input";
-}
-else {
+  debug "Filtering: will read standard input";
+} else {
   @ARGV > 0 or die errorUsage "Input filename missing";
   @ARGV < 2 or die errorUsage "Unknown option or too many input files";
   $InputFilename = $ARGV[0];
@@ -287,6 +287,28 @@ if ($::opt_gscmd) {
 my @GS = ($GS);
 push @GS, qw(-q -dNOPAUSE -dSAFER -sDEVICE=pdfwrite);
 
+### option outfile
+my $OutputFilename = $::opt_outfile;
+if ($OutputFilename eq "") {
+  if ($::opt_gs) {
+    $OutputFilename = $InputFilename;
+    if (!$::opt_filter) {
+      my $ds = ($^O eq "MSWin32" || $^O eq "cygwin") ? '\\/' : '/';
+      $OutputFilename =~ s/\.[^\.$ds]*$//;
+      $OutputFilename .= ".pdf";
+    }
+  } else {
+    $OutputFilename = "-"; # no ghostscript, write to standard output
+  }
+}
+if ($::opt_filter) {
+  debug "Filtering: will write standard output";
+  $OutputFilename = "-";
+} else {
+  debug "Output filename:", $OutputFilename;
+}
+push @GS, "-sOutputFile=$OutputFilename";
+
 ### options compress, embed, res, autorotate
 push @GS, ('-dPDFSETTINGS=/prepress', '-dMaxSubsetPct=100',
   '-dSubsetFonts=true', '-dEmbedAllFonts=true') if $::opt_embed;
@@ -308,29 +330,6 @@ my $BBName = "%%BoundingBox:";
 $BBName = "%%HiResBoundingBox:" if $::opt_hires;
 $BBName = "%%ExactBoundingBox:" if $::opt_exact;
 debug "BoundingBox comment:", $BBName;
-
-### option outfile
-my $OutputFilename = $::opt_outfile;
-if ($OutputFilename eq "") {
-  if ($::opt_gs) {
-    $OutputFilename = $InputFilename;
-    if (!$::opt_filter) {
-			my $ds = ($^O eq "MSWin32" || $^O eq "cygwin") ? '\\/' : '/';
-      $OutputFilename =~ s/\.[^\.$ds]*$//;
-      $OutputFilename .= ".pdf";
-    }
-  }
-  else {
-    $OutputFilename = "-"; # standard output
-  }
-}
-if ($::opt_filter) {
-  debug "Output file: standard output";
-}
-else {
-  debug "Output filename:", $OutputFilename;
-}
-push @GS, "-sOutputFile=$OutputFilename";
 
 ### validate output file name in restricted mode \label{openout_any}
 use File::Spec::Functions qw(splitpath file_name_is_absolute);
@@ -370,8 +369,11 @@ if ($::opt_gs) {
 
 ### emacs-page
 ### open input file
-open(IN, '<', $InputFilename) or error "Cannot open",
-  ($::opt_filter) ? "standard input" : "\"$InputFilename\": $!";
+if ($::opt_filter) {
+  open(IN, '<-') || error("Cannot open stdin: $!");
+} else {
+  open(IN, '<', $InputFilename) || error("Cannot open $InputFilename: $!");
+}
 binmode IN;
 
 ### open output file
@@ -381,11 +383,10 @@ my $OUT; # filehandle for output (GS pipe or temporary file)
 use File::Temp 'tempfile';
 if ($::opt_gs) {
   unless ($^O eq 'MSWin32' || $^O eq 'cygwin') { # list piped open works
-    push @GS, qw(- -c -quit);
+    push @GS, qw(-c quit);
     debug "Ghostscript pipe:", join(' ', @GS);
     open($OUT, '|-', @GS) or error "Cannot open Ghostscript for piped input";
-  }
-  else { # use a temporary file
+  } else { # use a temporary file on Windows/Cygwin.
     ($OUT, $tmp_filename) = tempfile(UNLINK => 1);
     debug "Using temporary file '$tmp_filename'";
   }

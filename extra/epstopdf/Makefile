@@ -1,7 +1,7 @@
 # $Id$
 # This file is public domain.  (Originally written by Karl Berry, 2009.)
 
-e2p = ./epstopdf.pl #--debug
+e2p = ./epstopdf.pl --debug
 
 default: check
 
@@ -17,6 +17,10 @@ check-help:
 
 check-version:
 	$(e2p) --version
+
+check-filter:
+	cat test-simple.eps | $(e2p) --filter >test-filter.pdf
+	pdfinfo test-filter.pdf | grep "Page size:"
 
 check-write-error:
 	-$(e2p) test-simple.eps --outfile=/dev/full
