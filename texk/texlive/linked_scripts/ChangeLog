@@ -1,6 +1,10 @@
+2009-11-28  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_script_SCRIPTS): add bibexport.sh.
+
 2009-11-26  Karl Berry  <karl@tug.org>
 
-	* Makefile.am (nobase_dist_script_SCRIPTS): perltex is now perltex.pl
+	* Makefile.am (nobase_dist_script_SCRIPTS): perltex is now perltex.pl.
 
 2009-11-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

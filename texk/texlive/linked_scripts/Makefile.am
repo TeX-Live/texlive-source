@@ -29,6 +29,7 @@ nobase_dist_script_SCRIPTS = \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
 	bengali/ebong.py \
+	bibexport/bibexport.sh \
 	cachepic/cachepic.tlu \
 	context/lua/luatools.lua \
 	context/lua/mtxrun.lua \
