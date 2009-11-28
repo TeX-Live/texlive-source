@@ -69,8 +69,8 @@ strip_equal(char *s, char *os, char *p)
 -t                  test for <font> (returns 0 on success)\n\
 --help              print this message and exit\n\
 --version           print version number and exit\n\
-
-Report bugs to tex-k@tug.org.
+\n\
+Report bugs to tex-k@tug.org.\n\
 "
 
 static void
@@ -97,7 +97,6 @@ Primary authors of ttf2pk: F. Loyer and W. Lemberg.\n\
 ttf2pk is partially based on gsftopk from P. Vojta\n\
 and the FreeType project from\n\
 David Turner, Robert Wilhelm, and Werner Lemberg\n\
-
 "
 
 static void
