@@ -2,13 +2,15 @@
 # This file is public domain.  (Originally written by Karl Berry, 2009.)
 
 e2p = ./epstopdf.pl --debug
+re2p = repstopdf
 
 default: check
 
 # These are not comprehensive tests by any means.  Mostly we're just
 # making sure we don't crash.
 check: check-help check-version \
-       check-write-error check-gscmd \
+       check-help-r \
+       check-filter check-write-error check-gscmd \
        check-simple check-atend check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
 
@@ -17,6 +19,12 @@ check-help:
 
 check-version:
 	$(e2p) --version
+
+check-help-r: $(re2p)
+	$(re2p) --help | grep restricted  # should have default=true
+
+$(re2p):
+	ln -s epstopdf.pl $@
 
 check-filter:
 	cat test-simple.eps | $(e2p) --filter >test-filter.pdf
