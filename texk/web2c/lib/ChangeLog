@@ -1,3 +1,8 @@
+2009-12-01  Alexander Cherepanov  <cherepan@mccme.ru>
+
+	* texmfmp.c (parse_first_line): initialize s to NULL.
+	* usage.c: doc fix.
+
 2009-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (shell_cmd_is_allowed): Check for invalid single

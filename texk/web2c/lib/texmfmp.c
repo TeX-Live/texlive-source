@@ -1642,6 +1642,7 @@ parse_first_line (const_string filename)
       /* The tcx stuff, if any.  Should we support the -translate-file
          form as well as --translate-file?  */
       if (*parse) {
+        s = NULL;
         if (translate_filename) {
           /* TCX file already set, do nothing. */
         } else if (STREQ (*parse, "--translate-file")) {

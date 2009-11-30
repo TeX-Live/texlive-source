@@ -594,7 +594,7 @@ Pascal arrays have a lower index other than 0, and the C code will take
 the pointer to the allocated memory, subtract the lower index, and use
 the resulting pointer for the array.  While this trick often works, ANSI
 C doesn't guarantee that it will.  It it known to fail on HP-UX 10
-mchines when the native compiler is used, unless the @samp{+u} compiler
+machines when the native compiler is used, unless the @samp{+u} compiler
 switch was specified.  Using GCC will work on this platform as well.
 
 @node Empty Makefiles

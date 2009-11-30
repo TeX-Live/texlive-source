@@ -1,3 +1,8 @@
+2009-12-01  Alexander Cherepanov  <cherepan@mccme.ru>
+
+	* BUGS,
+	* doc/bugs.texi: typo fix.
+
 2009-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex-file.c (target_fontmaps, target_asis_name,
