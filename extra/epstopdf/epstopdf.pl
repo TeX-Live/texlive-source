@@ -135,9 +135,9 @@ use strict;
 my $program = "epstopdf";
 my $ident = '($Id$) 2.12';
 my $copyright = <<END_COPYRIGHT ;
-Copyright 1998-2001 Sebastian Rahtz et al.
-Copyright 2002-2009 Gerben Wierda et al.
 Copyright 2009 Karl Berry et al.
+Copyright 2002-2009 Gerben Wierda et al.
+Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
@@ -383,7 +383,7 @@ my $OUT; # filehandle for output (GS pipe or temporary file)
 use File::Temp 'tempfile';
 if ($::opt_gs) {
   unless ($^O eq 'MSWin32' || $^O eq 'cygwin') { # list piped open works
-    push @GS, qw(-c quit);
+    push @GS, qw(- -c quit);
     debug "Ghostscript pipe:", join(' ', @GS);
     open($OUT, '|-', @GS) or error "Cannot open Ghostscript for piped input";
   } else { # use a temporary file on Windows/Cygwin.
@@ -583,4 +583,4 @@ if ($? & 127) {
 }
 
 warning "BoundingBox not found" unless $BBCorrected;
-debug "Ready.";
+debug "Done.";
