@@ -1874,7 +1874,7 @@ the Pascal arrays have a lower index other than 0, and the C code will
 take the pointer to the allocated memory, subtract the lower index, and
 use the resulting pointer for the array.  While this trick often works,
 ANSI C doesn't guarantee that it will.  It it known to fail on HP-UX 10
-mchines when the native compiler is used, unless the `+u' compiler
+machines when the native compiler is used, unless the `+u' compiler
 switch was specified.  Using GCC will work on this platform as well.
 
 
@@ -4876,44 +4876,44 @@ Node: Unable to find files71070
 Node: Slow path searching73481
 Node: Unable to generate fonts74858
 Node: TeX or Metafont failing77367
-Node: Empty Makefiles79245
-Node: XtStrings80475
-Node: dlopen81311
-Node: ShellWidgetClass82129
-Node: Pointer combination warnings83761
-Node: Path searching84150
-Node: Searching overview84797
-Node: Path sources88193
-Node: Config files89264
-Node: Path expansion92909
-Node: Default expansion93858
-Node: Variable expansion95928
-Node: Tilde expansion97331
-Node: Brace expansion98311
-Node: KPSE_DOT expansion99416
-Node: Subdirectory expansion99929
-Node: Filename database102280
-Node: ls-R103334
-Node: Filename aliases106228
-Node: Database format107406
-Node: Invoking kpsewhich108419
-Node: Path searching options109364
-Node: Specially-recognized files116639
-Node: Auxiliary tasks117995
-Node: Standard options119820
-Node: TeX support120140
-Node: Supported file formats121431
-Node: File lookup128947
-Node: Glyph lookup130679
-Node: Basic glyph lookup131803
-Node: Fontmap132682
-Node: Fallback font135299
-Node: Suppressing warnings136212
-Node: Programming137317
-Node: Programming overview137830
-Node: Calling sequence140524
-Node: Program-specific files147047
-Node: Programming with config files148089
-Node: Index149401
+Node: Empty Makefiles79246
+Node: XtStrings80476
+Node: dlopen81312
+Node: ShellWidgetClass82130
+Node: Pointer combination warnings83762
+Node: Path searching84151
+Node: Searching overview84798
+Node: Path sources88194
+Node: Config files89265
+Node: Path expansion92910
+Node: Default expansion93859
+Node: Variable expansion95929
+Node: Tilde expansion97332
+Node: Brace expansion98312
+Node: KPSE_DOT expansion99417
+Node: Subdirectory expansion99930
+Node: Filename database102281
+Node: ls-R103335
+Node: Filename aliases106229
+Node: Database format107407
+Node: Invoking kpsewhich108420
+Node: Path searching options109365
+Node: Specially-recognized files116640
+Node: Auxiliary tasks117996
+Node: Standard options119821
+Node: TeX support120141
+Node: Supported file formats121432
+Node: File lookup128948
+Node: Glyph lookup130680
+Node: Basic glyph lookup131804
+Node: Fontmap132683
+Node: Fallback font135300
+Node: Suppressing warnings136213
+Node: Programming137318
+Node: Programming overview137831
+Node: Calling sequence140525
+Node: Program-specific files147048
+Node: Programming with config files148090
+Node: Index149402
 
 End Tag Table

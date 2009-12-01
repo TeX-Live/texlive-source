@@ -1,3 +1,9 @@
+2009-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tl-w32-starter.bat (removed): Replaced ...
+	* tl-w32-wrapper.cmd (new): ... by this.
+	* Makefile.am (EXTRA_DIST): Adapted.
+
 2009-11-25  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (dist_man1_MANS): remove this, as getnonfreefonts

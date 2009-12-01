@@ -9,7 +9,12 @@ SUBDIRS = linked_scripts
 
 ## Win32 wrapper
 ##
-EXTRA_DIST = runscript_dll.c runscript_exe.c runscript.dll runscript.exe
+EXTRA_DIST = \
+	runscript_dll.c \
+	runscript_exe.c \
+	runscript.dll \
+	runscript.exe \
+	tl-w32-wrapper.cmd
 
 ## Not used
 ##
@@ -80,7 +85,6 @@ EXTRA_DIST += \
 	texinfo texinfo.bat \
 	texsis texsis.bat \
 	text1 text1.bat \
-	tl-w32-starter.bat \
 	virmf \
 	virmpost \
 	viromega \
