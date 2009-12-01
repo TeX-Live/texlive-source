@@ -64,6 +64,7 @@ psutils
 t1utils
 tpic2pdftex
 vlna
+xindy-new
 xindy
 ])]) # KPSE_UTILS_PKGS
 

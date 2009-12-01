@@ -1,0 +1,20 @@
+;; $Id: din5007.xdy,v 1.1 1996/07/03 18:44:46 kehr Exp $
+;;
+;; This file contains the basic sort-rules that are necessary to sort
+;; a german index.
+
+;; Die folgenden Regeln entsprechen der DIN 5007.
+
+(sort-rule "ä" "ae")
+(sort-rule "ö" "oe")
+(sort-rule "ü" "ue")
+
+(sort-rule "Ä" "ae")
+(sort-rule "Ö" "oe")
+(sort-rule "Ü" "ue")
+
+(sort-rule "ß" "ss")
+
+(require "lang/latin/caseisrt.xdy")
+
+;; End

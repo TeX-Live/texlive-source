@@ -1,0 +1,80 @@
+;; This is another example using `xindy'.
+
+(mapc #'(lambda (x)
+	  (pushnew x *features*))
+      '(:STEP1 :STEP2 :STEP3 :STEP4 :STEP5 :STEP6 :STEP7 :STEP8 :STEP9 :STEP10))
+
+#+:STEP1
+(progn
+  (define-location-class "page-numbers" ("arabic-numbers"))
+  (define-attributes (("definition" "usage")))
+  )
+
+
+#+:STEP2
+(progn
+  (markup-index :open  "~n\begin{theindex}~n"
+		:close "~n~n\end{theindex}~n"
+		:tree)
+
+  (markup-locref :class "page-numbers" :attr "definition"
+		 :open  "{\bf " :close "}")
+
+  (markup-locref-list :sep ", ")
+  (markup-locclass-list :open "\quad{}")
+  )
+
+#+:STEP3
+(progn
+  (markup-indexentry :open "~n \item "            :depth 0)
+  (markup-indexentry :open "~n    \subitem "      :depth 1)
+  (markup-indexentry :open "~n      \subsubitem " :depth 2)
+  )
+
+#+:STEP4
+(progn
+  (sort-rule "à" "a")
+  (sort-rule "á" "a")
+  (sort-rule "ã" "a")
+  (sort-rule "è" "e")
+  (sort-rule "é" "e")
+  (sort-rule "ç" "c")
+
+  (sort-rule "\\texttt{(.*)}" "\1" :again :bregexp)
+  )
+
+#+:STEP5
+(progn
+  (define-letter-groups
+      ("a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m"
+	   "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z"))
+
+  (markup-letter-group-list :sep "~n~n \indexspace~n")
+  )
+
+#+:STEP6
+(progn
+  (define-location-class "roman-pages" ("roman-numbers-lowercase"))
+  #-:STEP8
+  (define-location-class "appendices" ("ALPHA" :sep "-" "arabic-numbers"))
+  )
+
+#+:STEP7
+(markup-range :sep "--")
+
+#+:STEP8
+(progn
+  (define-location-class "appendices" ("ALPHA" :sep "-" "arabic-numbers")
+    :hierdepth 2)
+  (markup-locref-list            :sep "; " :depth 0  :class "appendices")
+  (markup-locref-list :open "~~" :sep ", " :depth 1  :class "appendices")
+  )
+
+#+:STEP9
+(progn
+  (define-letter-group "ly" :after "l" :before "m")
+  (define-letter-group "ny" :after "n" :before "o")
+
+  (markup-letter-group :open-head "~n {\bf " :close-head "}"
+		       :capitalize)
+  )

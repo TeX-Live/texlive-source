@@ -1,0 +1,13 @@
+
+(require "tex/inputenc/latin1.xdy")
+
+;; map special German TeX letters (german.sty) to 8-bit characters
+
+(merge-rule "~"A" "Ä" :string)
+(merge-rule "~"O" "Ö" :string)
+(merge-rule "~"U" "Ü" :string)
+(merge-rule "~"a" "ä" :string)
+(merge-rule "~"o" "ö" :string)
+(merge-rule "~"u" "ü" :string)
+(merge-rule "~"s" "ß" :string)
+

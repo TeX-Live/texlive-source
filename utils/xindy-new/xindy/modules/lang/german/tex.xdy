@@ -1,0 +1,21 @@
+;; $Id: tex.xdy,v 1.2 1996/07/18 16:03:55 kehr Exp $
+;;
+;; This file contains some rules to process TeX-letters with xindy.
+;;
+;; It should be used in conjunction with the `din5007' or the `duden'
+;; modules.
+;;
+
+;; We first map them to the ISO-Latin counterpart and then use the
+;; mappings in on of the two other modules to map them to the actual
+;; postition.
+
+(sort-rule "\\\"a" "ä" :again)
+(sort-rule "\\\"o" "ö" :again)
+(sort-rule "\\\"u" "ü" :again)
+(sort-rule "\\\"A" "Ä" :again)
+(sort-rule "\\\"O" "Ö" :again)
+(sort-rule "\\\"U" "Ü" :again)
+(sort-rule "\\ss({})?" "ß" :again)
+
+;; End

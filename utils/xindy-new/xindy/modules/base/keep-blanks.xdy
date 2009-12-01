@@ -1,0 +1,40 @@
+;; $Id: keep-blanks.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; keep blanks
+;;;
+;;; Don't trim white space at start or end, and don't collapse white
+;;; space in an index key.
+;;;
+
+;; This does not work currently. White space compression is
+;; implemented by merge rules in tex.xdy; and we would need to undo
+;; these rules. An implementation possibility is the postponing of
+;; these merge rules and our ability to stop their activation. But
+;; this is not implemented yet. Either we need a method to delete a
+;; merge rule, or we need a hook in the kernel.
+
+;; FIXME: I must coerce the error string to a simple-string because we
+;; use a special reader syntax in index styles. This reader syntax
+;; parses C-like strings and creates character arrays, but not simple
+;; strings. Frankly, I don't know how I may code this more easily,
+;; perhaps by a reader macro?
+
+(base:oops (coerce "
+
+Module keep-blanks does not work currently, due to a missing
+functionality in the xindy kernel. Please contact the xindy mailing
+list for more information.
+
+" 'simple-string))
+
+(base:error-exit)
+
+
+;;======================================================================
+;;
+;; $Log: keep-blanks.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

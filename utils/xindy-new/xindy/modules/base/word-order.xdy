@@ -1,0 +1,20 @@
+;; $Id: word-order.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; word order scheme
+;;;
+;;; a space comes before any letter in the alphabet: "index style" is
+;;; listed before "indexing".
+
+; This is the default, we don't need any code for this behaviour.
+; In fact, this module just exists to satisfy the Companion
+; description... ;-)
+
+
+;;======================================================================
+;;
+;; $Log: word-order.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

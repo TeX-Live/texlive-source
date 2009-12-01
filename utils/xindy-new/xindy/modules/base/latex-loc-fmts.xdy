@@ -1,0 +1,25 @@
+;; $Id: latex-loc-fmts.xdy,v 1.2 2006/08/31 00:10:59 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; Define default location attributes, and their markup.
+;;;
+
+;; Default attributes are all merged into one location group.
+(define-attributes (("default" "textbf" "textit" "hyperpage")))
+
+(markup-locref :open "\textbf{" :close "}" :attr "textbf")
+(markup-locref :open "\textit{" :close "}" :attr "textit")
+(markup-locref :open "\hyperpage{" :close "}" :attr "hyperpage")
+
+
+
+;;======================================================================
+;;
+;; $Log: latex-loc-fmts.xdy,v $
+;; Revision 1.2  2006/08/31 00:10:59  jschrod
+;;   Ticket 1549661: Default attributes should be in the same location group.
+;;
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

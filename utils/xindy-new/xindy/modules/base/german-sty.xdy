@@ -1,0 +1,24 @@
+;; $Id: german-sty.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; german sty
+;;;
+;;; Map special German TeX letters (german.sty) to 8-bit characters.
+;;;
+
+(merge-rule "~"A" "Ä" :again :string)
+(merge-rule "~"O" "Ö" :again :string)
+(merge-rule "~"U" "Ü" :again :string)
+(merge-rule "~"a" "ä" :again :string)
+(merge-rule "~"o" "ö" :again :string)
+(merge-rule "~"u" "ü" :again :string)
+(merge-rule "~"s" "ß" :again :string)
+
+
+;;======================================================================
+;;
+;; $Log: german-sty.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

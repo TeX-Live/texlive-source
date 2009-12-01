@@ -1,0 +1,25 @@
+;; $Id: numeric-sort.xdy,v 1.1 2004/05/24 21:53:27 jschrod Exp $
+;;------------------------------------------------------------
+
+;;;
+;;; numerically sorting
+;;;
+;;; "V64" appears before "V128".
+;;;
+
+;; FIXME: Works only for up to 7 digits.
+
+(merge-rule "[0-9][0-9][0-9][0-9][0-9][0-9]" "0&" :eregexp)
+(merge-rule "[0-9][0-9][0-9][0-9][0-9]" "00&" :eregexp)
+(merge-rule "[0-9][0-9][0-9][0-9]" "000&" :eregexp)
+(merge-rule "[0-9][0-9][0-9]" "0000&" :eregexp)
+(merge-rule "[0-9][0-9]" "00000&" :eregexp)
+(merge-rule "[0-9]" "000000&" :eregexp)
+
+
+;;======================================================================
+;;
+;; $Log: numeric-sort.xdy,v $
+;; Revision 1.1  2004/05/24 21:53:27  jschrod
+;;     Standard modules, introduced in "LaTeX Companion Release".
+;;

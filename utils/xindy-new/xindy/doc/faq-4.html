@@ -1,0 +1,668 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.9">
+ <TITLE>XINDY FAQ: Style Files</TITLE>
+ <LINK HREF="faq-3.html" REL=previous>
+ <LINK HREF="faq.html#toc4" REL=contents>
+</HEAD>
+<BODY>
+Next
+<A HREF="faq-3.html">Previous</A>
+<A HREF="faq.html#toc4">Contents</A>
+<HR>
+<H2><A NAME="s4">4. Style Files</A></H2>
+
+<H2><A NAME="ss4.1">4.1 Eventually, I decided to write my first index style. How can I start?</A>
+</H2>
+
+<P>
+<P>Congratulations! You have made a good decision, indeed.
+<P>For a first impression, how a style file can be written from scratch
+reference the <EM>tutorial</EM> that comes with this distribution. It is
+written as a guided step-by-step practicing exercise and you can learn
+the basic concepts quite easily.
+<P>Afterwards, the best starting point is to make a copy of the template
+file that contains all the necessary commands that are needed to make
+a <CODE>makeindex</CODE>-like index. You can find it in the subdirectory
+<CODE>markup/tex</CODE> of the module library. Starting from this template
+you can remove or add commands as necessary.
+<P>Additionally, consult the library of predefined <EM>index style
+modules</EM> that comes with this distribution. Solutions for most of the
+typical problems can be found there, such as a module for doing
+case-insensitive sorting rules, or a typical TeX-like markup. Most
+of the time is is enough to include some of these modules and add a
+few additional commands.
+<P>Maybe some of the examples coming with the <EM>test-suite</EM> are good
+examples of how unusual index style files can be written.
+<P>Thus, there are many ways to learn writing an index style file. But it
+is very easy and after some experience you can process indexes your
+friends will be jealous of.
+<P>
+<P>
+<H2><A NAME="ss4.2">4.2 How to write my first index style?</A>
+</H2>
+
+<P>
+<P>Copy the file <CODE>tex/makeidx.xdy</CODE> from the library to your
+local directory. It is documented in in a way that should make it easy
+to fill in new commands or remove or modify others.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.3">4.3 How works the actual key feature of <CODE>makeindex</CODE> with <SF>xindy</SF>?</A>
+</H2>
+
+<P>
+<P>The treatment of the actual key (usually denoted with <CODE>@</CODE>, the
+at-sign) has changed with <SF>xindy</SF>. Specifying index entries with a
+specific markup can be done in <CODE>makeindex</CODE> with the actual key. The
+<CODE>makeindex-3</CODE> system and <SF>xindy</SF> offer the <EM>merge-</EM> and
+<EM>sort-rules</EM> to transform a key into different representations,
+limiting the need to specify an actual key. For example they support a
+style of writing
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+\index{\bf{VIP}}
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>which can be transformed with a rule like
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(merge-rule "\bf{\(.*\)}" "\1" :again :bregexp)
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>which removes the macro definition for merging and sorting keywords,
+but keeping the original definition for markup purposes. Therefore we
+don't need any actual keys for all keywords written in boldface.
+<P>The <CODE>makeindex</CODE> behaviour, that the two keywords
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+\index{VIP}
+\index{VIP@\bf{VIP}}
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>are seen as two distinct index entries, can be simulated using the
+following definition:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(merge-rule "\bf{\(.*\)}" "\1~e" :again :bregexp)
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This rule tells <SF>xindy</SF> to remove the boldface macro for merging
+and sorting purposes but defines the replacement to include the
+special character <CODE>~e</CODE>, which is the last character in the
+alphabet (ISO-Latin in our case). This makes <SF>xindy</SF> treat them as
+different keywords and positions the boldface keyword right behind the
+one without any markup. Thus we receive the following mapping:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+Keyword:    Merged and sorted as:   Appears in the index as:
+VIP              VIP                     VIP
+\bf{VIP}         VIP~e                   \bf{VIP}
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>With this new style of writing keywords and defining their markup, the
+need to explicitly specifying the print key (aka. actual key) has
+convinced us to remove the <CODE>makeindex</CODE> way of defining keywords.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.4">4.4 I want to process an index for my native language. What must I do?</A>
+</H2>
+
+<P>
+<P>What makes <CODE>makeindex</CODE> hardly usable in non-English speaking
+countries is its lack of support of language specific alphabets and
+sort orderings. For example, many roman languages such as Italian,
+French, Portuguese or Spanish contain accented letters such as
+&Agrave;, &Aacute;, &ntilde;. Other languages from northern Europe
+have letters like &Auml;, &Oslash;, &aelig; or &szlig; which often
+can't even be processed by many index processors let alone sorting
+them correctly into an index.
+<P>Two problems must be solved when processing indexes with a new
+languages:
+<P>
+<OL>
+<LI> The <EM>sort ordering</EM> of the indexed terms must be specified
+in an appropriate manner. This problem can be solved using the
+so-called <EM>keyword mappings</EM>.
+</LI>
+<LI> The <EM>letter groups</EM> that partition the indexed terms into
+separate sections must be specified.</LI>
+</OL>
+<P>The <SF>xindy</SF> system can be configured to process these alphabets by
+defining <EM>sort</EM> and <EM>merge rules</EM> that allow expressing language
+specific rules.
+<P>The keyword mappings are as follows: The <EM>merge key</EM> is generated
+from the <EM>main key</EM> with the so called <EM>merge mapping</EM>. The
+merge mapping can be specified with the command <CODE>merge-rule</CODE>. The
+<EM>sort key</EM> is derived from the merge key using the <EM>sort
+mapping</EM> specified with the <CODE>sort-rule</CODE> command. The following
+scheme shows this mapping process:
+<P>
+<FIGURE>
+<EPS FILE="mappings.eps">
+<IMG SRC="mappings.gif">
+</FIGURE>
+<P>
+<P>The index style commands accomplishing this task are
+<CODE>sort-rule</CODE> and <CODE>merge-rule</CODE>. One example of such a rule would
+be
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(sort-rule "ä" "ae")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>defining that a word containing the umlaut-a will be sorted as if it
+contained the letters <CODE>ae</CODE> instead. This is one form of how the
+umlaut-a (ä) is sorted into german indexes. With an appropriate set of
+rules on can express the complete rules of a specific language.
+<P>An example of how an appropriate mapping for some of the Roman
+languages could look like is:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(sort-rule "à" "a")
+(sort-rule "á" "a")
+(sort-rule "ã" "a")
+(sort-rule "è" "e")
+(sort-rule "é" "e")
+(sort-rule "ç" "c")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This makes the accented letters be sorted as their unaccented
+counterparts, yielding the desired sort ordering.
+<P>Sometimes it is necessary to specify keyword mappings that tell the
+system to put something <EM>behind</EM> something else. For instance, we'd
+like to map the character <EM>ö</EM> behind the letter <EM>o</EM>. No problem
+if you use the special characters <CODE>~b</CODE> and <CODE>~e</CODE> which
+are called the <EM>beginning</EM> and <EM>ending</EM> characters. The first
+letter lexicographically precedes all other letters whereas the latter
+one comes after all others. Our mapping problem can now be specified
+as follows.
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(sort-rule "ö" "o~e")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>Now the <EM>ö</EM> is directly positioned after the <EM>o</EM> but before
+<EM>p</EM>.
+<P>
+<P>See the manual for a detailed description of this feature.
+Also be informed that the keyword mappings can be specified with
+regular expressions. Rules of the form
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(merge-rule "[-$()]" "")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>are possible. This on removes all letters of the defined letter class.
+Regular expression substitutions are possible as well. Refer to the
+manual for an exact description.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.5">4.5 In my index the capitalized words appear after the lowercase words. Why?</A>
+</H2>
+
+<P>
+<P>The default sort ordering sorts letters according to their ordinal
+number in the ISO Latin alphabet. As a consequence the lowercase
+letters appear before the uppercase letters. To sort them
+case-insensitively use the command
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(require "lang/latin/caseisrt.xdy")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This module defines the appropriate sort rules for the letters `A-Z'
+for latin-based alphabets. If your language has more letters simply
+add the missing ones into your style file. Have a look at the module
+to see how to the sort rules are defined.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.6">4.6 In my index there are no letter groups, yet!</A>
+</H2>
+
+<P>
+<P>Letter groups for latin based alphabets can be defined with the command
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(require "lang/latin/letgroup.xdy")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>If your language needs additional letter groups you can insert them
+into the previously defined letter group with inserting definitions of
+the following form:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(define-letter-group "ly" :after "l" :before "m")
+(define-letter-group "ny" :after "n" :before "o")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This adds two more letter groups to the latin alphabet. Group <EM>ly</EM>
+is inserted between <EM>l</EM> and <EM>m</EM>, and <EM>ny</EM> is inserted between
+<EM>n</EM> and <EM>o</EM>. This is how two additional letters of the Hungarian
+alphabet can be inserted.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.7">4.7 How can I get rid of any formatting information in the keyword?</A>
+</H2>
+
+<P>
+<P>Assume you have index entries containing arbitrary formatting
+information. For example you write your index entries in TeX in the
+following form:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+\index{\bf{In boldface please}}
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>To avoid specifying for each index entry the print key separately as
+can be done with the following command
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+\index{In boldface please@\bf{In boldface please}}
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>you can instead define a rule doing this task for you:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(merge-rule "\\bf *{(.*)}" "\1" :eregexp :again)
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This extended regular expression matches all strings that are
+surrounded by this formatting command and in the <EM>merge phase</EM> the
+formatting command is simply stripped off. Thus, you don't need to
+write an explicit print key anymore.
+<P>If for some reason the same word appears more than once in the index,
+each time having another markup tag as in the following example
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+index
+{\tt index}
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>you must be warned that a rule like
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(merge-rule "{\\tt *(.*)}" "\1" :eregexp :again)
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>is probably not correct. In this case the above strings are both
+mapped into the string <CODE>index</CODE> thus joining their location
+references into one index entry. This happens because the result of
+the merge mapping is used as the equality citerium which views both
+keywords as equal. To avoid this you should specify instead
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(merge-rule "{\\tt *(.*)}" "\1~e" :eregexp :again)
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>With the additional meta character <CODE>~e</CODE> the substitution of the
+second key word is placed <EM>after</EM> the first one making them
+different index entries. If the second keyword should appear first,
+use <CODE>~b</CODE> instead.
+<P>
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.8">4.8 In my index the word <EM>-foo</EM> appears before <EM>bar</EM>. What must I do?</A>
+</H2>
+
+<P>
+<P>Especially for hierarchical indexes sometimes the result is not as
+expected due to special characters appearing in the keyword. In the
+following example the word `card' should appear before `-eyed' since
+the hyphen should not count as an ordinary character by means of
+sorting.
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+  green
+     -eyed  12
+     card   15
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This is especially problematic if the list of words on the second
+level is very long. To make the hyphen be simply ignored during the
+sorting process you should specify the following command in the index
+style:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+  (sort-rule "-" "")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This makes `-eyed' be sorted as `eyed' thus making it appear
+<EM>after</EM> `card' as desired.
+<P>
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.9">4.9 I want to use letter ordering instead of word ordering in my index.</A>
+</H2>
+
+<P>
+<P>According to the <EM>Chicago Manual of Style</EM> there exist two
+different schemes of sorting word lists. In <EM>word ordering</EM>
+a blank precedes any letter in the alphabet, whereas in <EM>letter
+ordering</EM> it does not count at all. The following example borrowed
+from the <CODE>makeindex</CODE> man-page illustrates the difference:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+ Word Order:         Letter Order:
+  sea lion            seal
+  seal                sea lion
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>By default, <SF>xindy</SF> uses word ordering. To use letter ordering
+include the appropriate module with the following command:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(require "ord/letorder.xdy")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>It actually defines the following command:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(sort-rule " " "")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This simply removes all blanks from the keyword resulting in the
+desired behaviour.
+<P>
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.10">4.10 My document does not have page numbers, but a different scheme. What must I do?</A>
+</H2>
+
+<P>
+<P>The ability to deal with user-definable location structures is one of
+the most important new features of <SF>xindy</SF>. Many documents have a
+document structure that is not based on page numbers. Typical examples
+are manuals or appendices that come with a
+<EM>chapter/page-per-chapter</EM> numbering scheme, URLs, Bible verses,
+etc. One can even imagine the Greek alphabet as possibly appearing in
+a location reference. In our analysis we have found many interesting
+examples of location references that made us to develop the concept of
+<EM>location classes</EM>.
+<P>A location class is defined by a sequence of alphabets. An alphabet
+can be the set of arabic numbers (0, 1, 2, ...) or the roman numerals
+(i, ii, iii, ...). These are built-in alphabets in <SF>xindy</SF>.
+Addtionally, one can define more alphabets in the index style with a
+command like
+<P>
+<PRE>
+  (define-alphabet "weekdays"
+         ("mon" "tue" "wed" "thu" "fri" "sat" "sun"))
+</PRE>
+<P>Based on alphabets one can now compose a location class as follows:
+<P>
+<PRE>
+  (define-location-class "weekday-hours"
+         ("weekday" :sep ":" "arabic-numbers"))
+</PRE>
+<P>This class description indicates that all location refernces matching
+this template are viewed as correct instances of this class. Here
+<CODE>:sep</CODE> makes the dot serving as a <EM>separation string</EM> separation
+the alphabets from each other. Example instances of this class are:
+<P>
+<PRE>
+mon:23, thu:45, sun:17
+</PRE>
+<P>For more detailed information consult the description of the command
+<CODE>define-location-class</CODE> in the reference manual.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.11">4.11 I don't want to have ranges in my index. What can I do?</A>
+</H2>
+
+<P>
+<P>By default, <SF>xindy</SF> joins three successive location references into a
+<EM>range</EM>. Ranges are used as an abbrevation for a long sequence of
+location references. For exmaple the sequence
+<P>
+<PRE>
+12, 13, 14, 15, 16
+</PRE>
+<P>would be shorter represented as
+<P>
+<PRE>
+12-16
+</PRE>
+<P>If you don't want to have ranges, simply define your location class in
+the form
+<P>
+<PRE>
+  (define-location-class ... :min-range-length none)
+</PRE>
+<P>The argument <CODE>:min-range-length none</CODE> avoids forming of ranges.
+Arbitrary numbers instead of <CODE>none</CODE> define the minimum length of a
+sequence of location references that are needed to form a range.
+<SF>xindy</SF>s default value is&nbsp;2.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.12">4.12 I want to markup ranges of different length differently. How do I accomplish this?</A>
+</H2>
+
+<P>
+<P>A common way of tagging ranges is as follows: a range of length 1 is
+printed with the starting page number and the suffix `f.', those of
+length 2 with suffix `ff.', and all others in the form `<EM>X--Y</EM>'.
+<P>Assume we want to do this for the location class <EM>pagenums</EM> we can
+specify the markup as follows:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(markup-range :class "pagenums" :close "f."  :length 1 :ignore-end)
+(markup-range :class "pagenums" :close "ff." :length 2 :ignore-end)
+(markup-range :class "pagenums" :sep "--")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>The first command indicates that a range <EM>(X,Y)</EM> of length 1 should
+be printed in the form <EM>Xf.</EM>, a range of length 2 as <EM>Xff.</EM> and
+all others in the form <EM>X--Y</EM>. The switch <CODE>:ignore-end</CODE> causes
+the end of range location reference Y to be suppressed in the
+resulting output.
+<P>
+<P>
+<H2><A NAME="ss4.13">4.13 I need to suppress some of the markup tags. How can I do this?</A>
+</H2>
+
+<P>Sometimes it is necessary to hide some of the parts of the index. If
+you have a text formatter that allows comments or macros that possibly
+expand to nothing, just define appropriate markup that makes things
+invisible to the formatter. For example, with TeX you can define a
+macro like this
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+\def\ignore#1{}
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>If you additionally define markup like this
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(markup-index :open "\ignore{" :close "}")
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>you can throw away the complete index if you like, which would be a
+real pity!
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.14">4.14 Whats it all about those cross references?</A>
+</H2>
+
+<P>
+<P>Cross references are references pointing to an item in the index
+itself. Typical examples are:
+<P>
+<BLOCKQUOTE><CODE>
+foo-bar <EM>see</EM> baz
+</CODE></BLOCKQUOTE>
+<P>With <CODE>makeindex</CODE> cross references could be specified with the
+encapsulation mechanism. This has completely been removed in <SF>xindy</SF>
+and we have made cross references real first-class objects.
+<P>In <SF>xindy</SF> one can declare different cross reference classes, whose
+purpose is (a) to make all instances of a certain class appear next to
+each other, and (b) to specify appropriate markup with them.
+<P>@begin-comment
+One very interesting feature is the ability to <EM>check</EM> the validity
+of cross-references.
+@end-comment
+<P><CODE>tex2xindy</CODE> recognises all index entries of the form
+<P>
+<PRE>
+  \index{...|\macro{where}}
+</PRE>
+<P>as cross references. Here <CODE>macro</CODE> stands for an arbitrary macro
+name and <CODE>where</CODE> is interpreted as the target keyword of the cross
+references.
+<P>If you want to use these cross references with <SF>xindy</SF>; add the
+following line to your style file.
+<P>
+<PRE>
+  (define-crossref-class "macro")
+</PRE>
+<P>Additionally, you can assign specific markup to cross references using
+the <CODE>markup-crossref</CODE>-commands.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.15">4.15 The keyword mappings don't work as expected!</A>
+</H2>
+
+<P>
+<P>Sometimes the keyword mappings don't work as expected. Especially in
+cases with several regular expressions one might get confused about
+what rule matches exactly when. We have incorporated a detailed
+logging mechanism that lets one step by step follow the rules that
+accomplish the keyword mapping.
+<P>When running <SF>xindy</SF> you can turn on this feature with the command
+line option `<CODE>-L</CODE>'. This option followed by one of the numbers 1,
+2, or 3 turns on the appropriate debugging level. Turning on level 2
+or 3 and specifying a log-file with the command line option `<CODE>-l</CODE>'
+a trace of the mappings is recorded in the log-file. A sample output
+looks like the following:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+Mappings: (add (merge-rule :eregexp `^\\bf{(.*)}' `\1' :again)).
+Mappings: (add (merge-rule :eregexp `^\\"([AEOUaeou])' `\1')).
+ ...
+Mappings: (compare `\"A\"a' :eregexp `^\\bf{(.*)}')
+Mappings: (compare `\"A\"a' :eregexp `^\\"([AEOUaeou])') match!
+Mappings: (compare `\"a' :eregexp `^\\bf{(.*)}')
+Mappings: (compare `\"a' :eregexp `^\\"([AEOUaeou])') match!
+Mappings: (merge-mapping `\"A\"a') -> `Aa'.
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>This trace shows that initially two regular expression mappings have
+been added to the rule set. The second section shows how the keyword
+`<CODE>\"A\"a</CODE>' is compared to these rules and substitutions are
+applied as matches are found. In the last line the result of the
+keyword mapping is reported.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.16">4.16 I'm totally confused by the markup scheme!</A>
+</H2>
+
+<P>
+<P>A very important feature is the ability to <EM>trace</EM> all markup tags
+<SF>xindy</SF> emits in the markup phase. Simply use the command line
+switch <CODE>-t</CODE> or insert the command
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+(markup-trace :on)
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>into the index style. This informs <SF>xindy</SF> to emit additional
+pseudo markup that can be used to understand and debug the
+markup phase. An example output might look like the following:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+&lt;INDEX:OPEN>
+  &lt;LETTER-GROUP-LIST:OPEN>
+    &lt;LETTER-GROUP:OPEN ["a"]>
+      &lt;INDEXENTRY-LIST:OPEN [0]>
+        &lt;INDEXENTRY:OPEN [0]>
+          &lt;KEYWORD-LIST:OPEN [0]>
+            &lt;KEYWORD:OPEN [0]>
+ ...
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>The symbolic tags directly lead one to the command that is responsible
+for the definition of that markup tag. For example, the tag
+<CODE>LETTER-GROUP-LIST:OPEN</CODE> indicates that the command
+<CODE>markup-letter-group-list</CODE> is responsible for replacing this
+symbolic tag by a real one.
+Give it a try if you find yourself confused by your own markup
+specification.
+<P>
+<P>
+<P>
+<H2><A NAME="ss4.17">4.17 What editor should I use when writing xindy style files?</A>
+</H2>
+
+<P>
+<P>Use <CODE>Emacs</CODE> or <CODE>XEmacs</CODE>. Turn on the Lisp-mode with
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+M-x lisp-mode
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>and you can properly indent commands using <CODE>M-q</CODE>. To enter this
+mode automatically add the following lines to the end of the style
+file:
+<P>
+<BLOCKQUOTE><CODE>
+<PRE>
+^L
+;; Local Variables:
+;; mode: lisp
+;; End:
+</PRE>
+</CODE></BLOCKQUOTE>
+<P>The <CODE>^L</CODE> (Control-L) can be entered with <CODE>C-q C-l</CODE>.
+<P>
+<P>
+<P>
+<HR>
+Next
+<A HREF="faq-3.html">Previous</A>
+<A HREF="faq.html#toc4">Contents</A>
+</BODY>
+</HTML>

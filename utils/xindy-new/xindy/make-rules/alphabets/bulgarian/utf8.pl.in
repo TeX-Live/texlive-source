@@ -1,0 +1,72 @@
+#!/usr/bin/perl
+
+$language = "Bulgarian";
+$prefix = "bg";
+$script = "cyrillic";
+
+$alphabet = [
+['А',  ['а','А']],
+['Б',  ['б','Б']],
+['В',  ['в','В']],
+['Г',  ['г','Г']],
+                   [], # ghe with upturn (ukrainian)
+['Д',  ['д','Д']],
+                   [], # dje (serbian)
+                   [], # gje (macedonian)
+['Е',  ['е','Е']],
+                   [], # io (mongolian)
+                   [], # ukrainian ie
+['Ж',  ['ж','Ж']],
+['З',  ['з','З']],
+                   [], # dze (macedonian)
+['И',  ['и','И']],
+                   [], # belarusian-ukrainian i
+                   [], # yi (ukrainian)
+['Й',  ['й','Й']],
+                   [], # je (macedonian, serbian)
+['К',  ['к','К']],
+['Л',  ['л','Л']],
+                   [], # lje (macedonian, serbian)
+['М',  ['м','М']],
+['Н',  ['н','Н']],
+                   [], # nje (macedonian, serbian)
+['О',  ['о','О']],
+                   [], # barred o (mongolian)
+['П',  ['п','П']],
+['Р',  ['р','Р']],
+['С',  ['с','С']],
+['Т',  ['т','Т']],
+                   [], # tshe (serbian)
+                   [], # kje (macedonian)
+['У',  ['у','У']],
+                   [], # short u (belarusian)
+                   [], # straight u (mongolian)
+['Ф',  ['ф','Ф']],
+['Х',  ['х','Х']],
+['Ц',  ['ц','Ц']],
+['Ч',  ['ч','Ч']],
+                   [], # dzhe (macedonian, serbian)
+['Ш',  ['ш','Ш']],
+['Щ',  ['щ','Щ']],
+['Ъ',  ['ъ','Ъ']],
+                   [], # yeru (belarusian, russian)
+['Ь',  ['ь','Ь']],
+                   [],
+                   [], # e (belarusian, russian)
+['Ю',  ['ю','Ю']],
+['Я',  ['я','Я']],
+                   [],
+[@u{'Ѫ',  ['ѫ','Ѫ']}],
+                   [],
+                   []
+];
+
+$sortcase = 'Aa';
+#$sortcase = 'aA';
+
+$ligatures = [
+];
+
+@special = ('?', '!', '.', 'letters', '-', '\'');
+
+do 'make-rules.pl';
