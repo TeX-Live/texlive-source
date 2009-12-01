@@ -1,3 +1,8 @@
+2009-12-01  Karl Berry  <karl@tug.org>
+
+	* tex-file.c (kpathsea_name_ok): formatting, doc fixes, start
+	error message on a new line.
+
 2009-12-01  Alexander Cherepanov  <cherepan@mccme.ru>
 
 	* BUGS,

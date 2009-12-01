@@ -1103,26 +1103,28 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
                       the working directory or $TEXMFOUTPUT, while input files
                       must be below the current directory, $TEXMFOUTPUT, or
                       (implicitly) in the system areas.
-     We default to "paranoid".  The error messages from TeX will be somewhat
-     puzzling...
-     This function contains several return statements...  */
+     We default to "paranoid".  The error messages from TeX may be puzzling.
+     This function contains several return and goto statements, be careful.  */
 
   const_string open_choice = kpathsea_var_value (kpse, check_var);
 
-  if (!open_choice) open_choice = default_choice;
+  if (!open_choice)
+    open_choice = default_choice;
 
   if (*open_choice == 'a' || *open_choice == 'y' || *open_choice == '1')
     return true;
 
 #if defined (unix) && !defined (MSDOS)
   {
-    /* Disallow .rhosts, .login, .ssh/, etc.  Allow .tex (for LaTeX).  */
-    const_string q, qq = fname;
+    /* Disallow .rhosts, .login, .ssh/, ..somefile, ..somedir/somefile,
+       etc.  But allow .tex (for base LaTeX).  */
+    const_string q;
+    const_string qq = fname;
     while ((q = strchr (qq, '.'))) {
-      if ((q == fname || IS_DIR_SEP (*(q - 1))) &&
-          !IS_DIR_SEP (*(q + 1)) &&
-          *(q + 1) != '.' &&
-          !STREQ (q, ".tex")) {
+      if ((q == fname || IS_DIR_SEP (*(q - 1)))
+          && !IS_DIR_SEP (*(q + 1))
+          && *(q + 1) != '.'
+          && !STREQ (q, ".tex")) {
         goto not_ok;
       }
       qq = q + 1;
@@ -1137,14 +1139,14 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   if (*open_choice == 'r' || *open_choice == 'n' || *open_choice == '0')
     return true;
 
-  /* Paranoia supplied by Charles Karney...  */
+  /* Paranoia originally supplied by Charles Karney.  */
   if (kpathsea_absolute_p (kpse, fname, false)) {
     const_string texmfoutput = kpathsea_var_value (kpse, "TEXMFOUTPUT");
     /* Absolute pathname is only OK if TEXMFOUTPUT is set, it's not empty,
        fname begins the TEXMFOUTPUT, and is followed by / */
     if (!texmfoutput || *texmfoutput == '\0'
         || fname != strstr (fname, texmfoutput)
-        || !IS_DIR_SEP(fname[strlen(texmfoutput)]))
+        || !IS_DIR_SEP (fname[strlen (texmfoutput)]))
       goto not_ok;
   }
   /* For all pathnames, we disallow "../" at the beginning or "/../"
@@ -1152,27 +1154,26 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   if (fname[0] == '.' && fname[1] == '.' && IS_DIR_SEP(fname[2]))
     goto not_ok;
   else {
-    /* Check for "/../".  Since more than one characted can be matched
+    /* Check for "/../".  Since more than one character can be matched
        by IS_DIR_SEP, we cannot use "/../" itself. */
-    const_string dotpair = strstr(fname, "..");
+    const_string dotpair = strstr (fname, "..");
     while (dotpair) {
       /* If dotpair[2] == DIR_SEP, then dotpair[-1] is well-defined,
          because the "../" case was handled above. */
-      if (IS_DIR_SEP(dotpair[2]) && IS_DIR_SEP(dotpair[-1]))
+      if (IS_DIR_SEP (dotpair[2]) && IS_DIR_SEP (dotpair[-1]))
         goto not_ok;
       /* Continue after the dotpair. */
-      dotpair = strstr(dotpair+2, "..");
+      dotpair = strstr (dotpair+2, "..");
     }
   }
 
   /* We passed all tests.  */
   return true;
 
-  /* Some test failed.  */
-  not_ok:
-  fprintf(stderr, "%s: Not %s %s (%s = %s).\n",
-          kpse->invocation_name, ok_type_name[action], fname,
-          check_var, open_choice);
+ not_ok: /* Some test failed.  */
+  fprintf (stderr, "\n%s: Not %s %s (%s = %s).\n",
+           kpse->invocation_name, ok_type_name[action], fname,
+           check_var, open_choice);
   return false;
 }
 
