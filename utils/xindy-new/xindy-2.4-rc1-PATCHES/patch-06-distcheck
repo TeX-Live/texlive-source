@@ -1,0 +1,107 @@
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/Makefile.am xindy/Makefile.am
+--- xindy.orig/Makefile.am	2009-11-24 13:51:59.000000000 +0100
++++ xindy/Makefile.am	2009-11-24 21:21:06.000000000 +0100
+@@ -38,7 +38,7 @@
+   SUBDIRS += doc
+ endif
+ 
+-EXTRA_DIST = setup.sh ChangeLog.Gour VERSION
++EXTRA_DIST = setup.sh ChangeLog.Gour VERSION TODO.autoconf
+ 
+ versiondir = ${pkglibdir}
+ version_DATA = VERSION
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/configure.ac xindy/configure.ac
+--- xindy.orig/configure.ac	2009-11-23 23:13:08.000000000 +0100
++++ xindy/configure.ac	2009-11-24 21:12:44.000000000 +0100
+@@ -33,7 +33,7 @@
+ # Automake's dist target needs all to-be-distributed files flagged in
+ # Makefile.am files; we have not done that yet. Since we don't do C
+ # programs, automake's defaults are not usable for us, too.
+-AM_INIT_AUTOMAKE([foreign no-dist no-define])
++AM_INIT_AUTOMAKE([foreign no-define])
+ 
+ # Test for building make-rules
+ AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules ],[build and install make-rules package (default is YES)]),[BUILDRULES=$enableval],[BUILDRULES=yes])
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/doc/Makefile.am xindy/doc/Makefile.am
+--- xindy.orig/doc/Makefile.am	2009-03-29 12:43:49.000000000 +0200
++++ xindy/doc/Makefile.am	2009-11-24 22:01:19.000000000 +0100
+@@ -52,7 +52,7 @@
+ 	toc.gif \
+ 	xindy.pdf
+ 
+-EXTRA_DIST = $(FILES)
++EXTRA_DIST = $(FILES) xindy.v2.pdf
+ 
+ doc_DATA = $(FILES)
+ 
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/make-rules/alphabets/Makefile.am xindy/make-rules/alphabets/Makefile.am
+--- xindy.orig/make-rules/alphabets/Makefile.am	2009-11-24 19:38:01.000000000 +0100
++++ xindy/make-rules/alphabets/Makefile.am	2009-11-24 21:26:44.000000000 +0100
+@@ -803,7 +803,6 @@
+ DISTCLEANFILES += \
+ 	vietnamese/utf8.pl
+ 
+-
+ %utf8.pl : %utf8.pl.in
+ 	sed -e 's/@.{\([^}]*\)}/\1/g;' <$< >$@
+ 
+@@ -819,6 +818,9 @@
+ 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
+ 	$(CONVERT_FROM_UTF8)ISO8859-2 >$@
+ 
++DISTCLEANFILES += \
++	romanian/latin2.pl
++
+ %latin2.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+ 	$(CONVERT_FROM_UTF8)ISO8859-2 >$@
+@@ -855,6 +857,9 @@
+ 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
+ 	$(CONVERT_FROM_UTF8)CP1250 >$@
+ 
++DISTCLEANFILES += \
++	romanian/cp1250.pl
++
+ %cp1250.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+ 	$(CONVERT_FROM_UTF8)CP1250 >$@
+@@ -1255,7 +1260,7 @@
+ 	alphabets-inc.tex \
+ 	alphabets-doc.toc
+ 
+-EXTRA_DIST = $(SCRS) test.xdy
++EXTRA_DIST = $(SCRS) test.xdy rom-comma-kludge.sed
+ 
+ CLEANFILES = $(ALPHABETS) $(DOC_CLEAN)
+ 
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/src/Makefile.am xindy/src/Makefile.am
+--- xindy.orig/src/Makefile.am	2009-11-20 23:59:25.000000000 +0100
++++ xindy/src/Makefile.am	2009-11-24 21:24:31.000000000 +0100
+@@ -56,13 +56,13 @@
+ $(DEFAULTS): $(DEFAULTS).in Makefile
+ 	sed 's|@MODULEDIR[@]|$(MODULEDIR)|g' <$(srcdir)/$(DEFAULTS).in >$(DEFAULTS)
+ 
+-EXTRA_DIST = $(DEFAULTS).in $(dist_xindy_mem_sources)
++EXTRA_DIST = $(DEFAULTS).in $(dist_xindy_mem_sources) dump-xindy.lsp
+ 
+ SUFFIXES = .fas .lsp
+ .lsp.fas:
+ 	$(CLISP) -c $< -o $@
+ 
+ 
+-CLEANFILES = $(FAS) $(FASLIBS) $(DEFAULTS)
++CLEANFILES = $(FAS) $(FASLIBS) $(DEFAULTS) xindy.mem
+ 
+ 
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
+--- xindy.orig/user-commands/Makefile.am	2009-11-20 23:12:03.000000000 +0100
++++ xindy/user-commands/Makefile.am	2009-11-24 21:16:54.000000000 +0100
+@@ -31,7 +31,7 @@
+ 
+ man_MANS = texindy.1 xindy.1 xindy.v2.1
+ 
+-EXTRA_DIST = $(man_MANS)
++EXTRA_DIST = $(man_MANS) texindy xindy.in xindy.v2.in
+ 
+ CLEANFILES = xindy xindy.v2
+ 

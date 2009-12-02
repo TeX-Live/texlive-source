@@ -1,0 +1,121 @@
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/configure.ac xindy/configure.ac
+--- xindy.orig/configure.ac	2009-03-29 14:24:33.000000000 +0200
++++ xindy/configure.ac	2009-11-23 23:13:08.000000000 +0100
+@@ -56,6 +56,20 @@
+ AM_PROG_LEX
+ AC_PROG_CC
+ 
++# On some systems without working iconv, we must use recode.
++AC_ARG_WITH([xindy-recode],
++            AS_HELP_STRING([--with-xindy-recode],
++                           [Use `recode' instead of `iconv' @<:@default is NO@:>@]))
++if test "x$with_xindy_recode" != xyes; then
++  CONVERT_FROM_UTF8='iconv -f UTF-8 -t #' # May need the trailing blank
++else
++  AC_CHECK_PROG(CONVERT_FROM_UTF8, recode, [recode UTF-8..])
++  if test "x$CONVERT_FROM_UTF8" != 'xrecode UTF-8..'; then
++    AC_MSG_ERROR([--with-xindy-recode specified, but `recode' not found])
++  fi
++fi
++AC_SUBST([CONVERT_FROM_UTF8])
++
+ # Check that CLISP was found.
+ # FIXME: Should we also check for latex in the buildrules case?
+ # What about a C compiler? install?
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/make-rules/alphabets/Makefile.am xindy/make-rules/alphabets/Makefile.am
+--- xindy.orig/make-rules/alphabets/Makefile.am	2009-11-21 00:21:54.000000000 +0100
++++ xindy/make-rules/alphabets/Makefile.am	2009-11-23 22:36:01.000000000 +0100
+@@ -721,75 +721,75 @@
+ 
+ %latin1.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO8859-1 >$@
++	$(CONVERT_FROM_UTF8)ISO8859-1 >$@
+ 
+ %cp850.pl : %utf8.pl.in
+ 	sed -e 's/@.{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t CP850 >$@
++	$(CONVERT_FROM_UTF8)CP850 >$@
+ 
+ romanian/latin2.pl : romanian/utf8.pl
+ 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
+-	iconv -f UTF-8 -t ISO8859-2 >$@
++	$(CONVERT_FROM_UTF8)ISO8859-2 >$@
+ 
+ %latin2.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO8859-2 >$@
++	$(CONVERT_FROM_UTF8)ISO8859-2 >$@
+ 
+ %latin3.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO8859-3 >$@
++	$(CONVERT_FROM_UTF8)ISO8859-3 >$@
+ 
+ %latin4.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO8859-4 >$@
++	$(CONVERT_FROM_UTF8)ISO8859-4 >$@
+ 
+ %iso88595.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO-8859-5 >$@
++	$(CONVERT_FROM_UTF8)ISO-8859-5 >$@
+ 
+ %iso88597.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO-8859-7 >$@
++	$(CONVERT_FROM_UTF8)ISO-8859-7 >$@
+ 
+ %iso88598.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO-8859-8 >$@
++	$(CONVERT_FROM_UTF8)ISO-8859-8 >$@
+ 
+ %latin5.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO8859-5 >$@
++	$(CONVERT_FROM_UTF8)ISO8859-5 >$@
+ 
+ %latin9.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;s/@9{\([^}]*\)}/\1/g;' <$< | \
+-	iconv -f UTF-8 -t ISO-8859-15 >$@
++	$(CONVERT_FROM_UTF8)ISO-8859-15 >$@
+ 
+ romanian/cp1250.pl : romanian/utf8.pl
+ 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
+-	iconv -f UTF-8 -t CP1250 >$@
++	$(CONVERT_FROM_UTF8)CP1250 >$@
+ 
+ %cp1250.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t CP1250 >$@
++	$(CONVERT_FROM_UTF8)CP1250 >$@
+ 
+ %cp1251.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t CP1251 >$@
++	$(CONVERT_FROM_UTF8)CP1251 >$@
+ 
+ %cp1252.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;s/@9{\([^}]*\)}/\1/g;' <$< | \
+-	iconv -f UTF-8 -t CP1252 >$@
++	$(CONVERT_FROM_UTF8)CP1252 >$@
+ 
+ %isoir111.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t ISO-IR-111 >$@
++	$(CONVERT_FROM_UTF8)ISO-IR-111 >$@
+ 
+ %koi8-r.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t KOI8-R >$@
++	$(CONVERT_FROM_UTF8)KOI8-R >$@
+ 
+ %koi8-u.pl : %utf8.pl.in
+ 	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
+-	iconv -f UTF-8 -t KOI8-U >$@
++	$(CONVERT_FROM_UTF8)KOI8-U >$@
+ 
+ # %tex.pl : %utf8.pl utf8-to-tex.sed
+ #	sed -f $(srcdir)/utf8-to-tex.sed <$< >$@

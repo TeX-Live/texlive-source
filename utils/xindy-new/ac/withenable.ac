@@ -1,0 +1,9 @@
+## utils/xindy-new/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy-new/
+dnl
+dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## configure options and TL libraries required for xindy-new
+KPSE_ENABLE_PROG([xindy-new], , [disable native])
+m4_include(kpse_TL[utils/xindy-new/ac/xindy.ac])
+m4_include(kpse_TL[utils/xindy-new/ac/clisp.ac])

@@ -1,0 +1,14 @@
+diff -ur -x Makefile.in xindy.orig/src/Makefile.am xindy/src/Makefile.am
+--- xindy.orig/src/Makefile.am	2009-11-24 21:24:31.000000000 +0100
++++ xindy/src/Makefile.am	2009-11-29 17:37:35.000000000 +0100
+@@ -23,10 +23,6 @@
+ # Where the modules are found at runtime.
+ MODULEDIR = $(pkglibdir)/modules
+ 
+-# XXX
+-AUTOMAKE_OPTIONS = no-exeext
+-
+-
+ # Since automake has no CLISP support, we need to explicitly add make
+ # rules to create the xindy kernel below and stop automake from
+ # looking for C sources.

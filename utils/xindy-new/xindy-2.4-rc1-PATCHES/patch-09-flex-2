@@ -1,0 +1,53 @@
+	Even better define a dummy yywrap() to be independent of `libfl.a'.
+
+	Having flex or Unix lex is a minor issue, as long as an
+	up to date version of tex2xindy.c is distributed.
+
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/tex2xindy/Makefile.am xindy/tex2xindy/Makefile.am
+--- xindy.orig/tex2xindy/Makefile.am	2009-11-26 20:34:37.000000000 +0100
++++ xindy/tex2xindy/Makefile.am	2009-11-26 20:52:03.000000000 +0100
+@@ -23,8 +23,6 @@
+ 
+ tex2xindy_SOURCES = tex2xindy.l
+ 
+-tex2xindy_LDADD = $(LEXLIB)
+-
+ man_MANS = tex2xindy.1
+ 
+ EXTRA_DIST = $(man_MANS)
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/tex2xindy/tex2xindy.c xindy/tex2xindy/tex2xindy.c
+--- xindy.orig/tex2xindy/tex2xindy.c	2009-03-29 13:49:12.000000000 +0200
++++ xindy/tex2xindy/tex2xindy.c	2009-11-26 20:56:54.000000000 +0100
+@@ -2311,6 +2311,14 @@
+ 
+ 
+ 
++/*
++ *  Define dummy yywrap so we no longer depend on `libfl.a'.
++ */
++int yywrap (void)
++{
++    return 1;
++}
++
+ void usage ()
+ {
+     fputs("This is tex2xindy, $Revision: 1.21 $.\n", stderr);
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/tex2xindy/tex2xindy.l xindy/tex2xindy/tex2xindy.l
+--- xindy.orig/tex2xindy/tex2xindy.l	2006-07-30 11:44:04.000000000 +0200
++++ xindy/tex2xindy/tex2xindy.l	2009-11-26 20:56:49.000000000 +0100
+@@ -362,6 +362,14 @@
+ 
+ %%
+ 
++/*
++ *  Define dummy yywrap so we no longer depend on `libfl.a'.
++ */
++int yywrap (void)
++{
++    return 1;
++}
++
+ void usage ()
+ {
+     fputs("This is tex2xindy, $Revision: 1.21 $.\n", stderr);

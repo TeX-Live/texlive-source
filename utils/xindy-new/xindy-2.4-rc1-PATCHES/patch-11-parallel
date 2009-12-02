@@ -1,0 +1,13 @@
+diff -ur -x Makefile.in xindy.orig/src/Makefile.am xindy/src/Makefile.am
+--- xindy.orig/src/Makefile.am	2009-11-29 17:37:35.000000000 +0100
++++ xindy/src/Makefile.am	2009-11-29 17:39:57.000000000 +0100
+@@ -61,4 +61,9 @@
+ 
+ CLEANFILES = $(FAS) $(FASLIBS) $(DEFAULTS) xindy.mem
+ 
++# Dependencies required for parallel make.
++markup.fas: index.fas version.fas
++index.fas: idxstyle.fas ordrules.fas
++idxstyle.fas: locref.fas
++locref.fas: base.fas
+ 

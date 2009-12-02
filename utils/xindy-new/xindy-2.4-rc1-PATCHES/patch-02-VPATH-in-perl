@@ -1,0 +1,13 @@
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/make-rules/alphabets/make-rules.pl xindy/make-rules/alphabets/make-rules.pl
+--- xindy.orig/make-rules/alphabets/make-rules.pl	2009-03-26 01:04:22.000000000 +0100
++++ xindy/make-rules/alphabets/make-rules.pl	2009-11-23 23:12:55.000000000 +0100
+@@ -23,7 +23,8 @@
+ print TESTXDY "(use-rule-set :run 3\n";
+ print TESTXDY "	      :rule-set (\"".$prefix."resolve-special\"))\n";
+ close TESTXDY;
+-system("cat test.xdy >> $ARGV[0]-test.xdy");
++$fn = "test.xdy"; $fn = "$INC[0]/$fn" if ! -f $fn && -f "$INC[0]/$fn"; die "$fn: $!" if ! -f $fn;
++system("cat $fn >> $ARGV[0]-test.xdy");
+ 
+ $begin = 128;
+ # $begin =  97 if ($script eq "cyrillic");

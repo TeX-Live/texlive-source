@@ -1,0 +1,83 @@
+	Installation paths for TL and standalone builds.
+
+	ToDo: determination of libdir and moduledir in the
+	texindy, xindy, and xindy.v2 perl script.
+
+diff -ur -x Makefile.in xindy.orig/configure.ac xindy/configure.ac
+--- xindy.orig/configure.ac	2009-11-26 20:34:35.000000000 +0100
++++ xindy/configure.ac	2009-11-29 20:47:57.000000000 +0100
+@@ -35,6 +35,11 @@
+ # programs, automake's defaults are not usable for us, too.
+ AM_INIT_AUTOMAKE([foreign no-define])
+ 
++# Installation directories for standalone xindy.
++memdir='$(pkglibdir)'
++AC_SUBST([memdir])
++AM_CONDITIONAL([TEXLIVE_BUILD], [false])
++
+ # Test for building make-rules
+ AC_ARG_ENABLE(make-rules, AS_HELP_STRING([--enable-make-rules ],[build and install make-rules package (default is YES)]),[BUILDRULES=$enableval],[BUILDRULES=yes])
+ test "$BUILDRULES" = "yes"  &&  AC_PROG_LATEX
+@@ -56,6 +61,7 @@
+ # FIXME: lex actually must really be flex. But there is no AC_PROG_FLEX!?
+ AC_PROG_LEX
+ AC_PROG_CC
++AC_PROG_LN_S
+ 
+ # On some systems without working iconv, we must use recode.
+ AC_ARG_WITH([xindy-recode],
+diff -ur -x Makefile.in xindy.orig/src/Makefile.am xindy/src/Makefile.am
+--- xindy.orig/src/Makefile.am	2009-11-29 17:39:57.000000000 +0100
++++ xindy/src/Makefile.am	2009-11-29 17:44:05.000000000 +0100
+@@ -26,7 +26,7 @@
+ # Since automake has no CLISP support, we need to explicitly add make
+ # rules to create the xindy kernel below and stop automake from
+ # looking for C sources.
+-pkglib_DATA = xindy.mem
++mem_DATA = xindy.mem
+ 
+ # Tell the dist target about our sources, define the object files for
+ # our own rule and the .lib files for the clean definition. Don't use
+diff -ur -x Makefile.in xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
+--- xindy.orig/user-commands/Makefile.am	2009-11-25 14:00:59.000000000 +0100
++++ xindy/user-commands/Makefile.am	2009-11-29 23:30:23.000000000 +0100
+@@ -20,7 +20,38 @@
+ ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ ## Boston, MA 02110-1301 USA.
+ 
+-bin_SCRIPTS = texindy xindy xindy.v2
++bin_SCRIPTS =
++scripts = texindy xindy xindy.v2
++
++if TEXLIVE_BUILD
++noinst_SCRIPTS = $(scripts)
++scriptspath = texmf/scripts/xindy
++scriptsdir = ${prefix}/$(scriptspath)
++install-exec-hook: $(scripts)
++	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
++	@for f in $(scripts); do \
++	  $(INSTALL_SCRIPT) `test -f "$$f" || echo "$(srcdir)/"`$$f $(DESTDIR)$(scriptsdir)/$$f.pl; \
++	done
++	case "$(bindir)" in \
++	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
++	  */bin/*) $(MAKE) $(AM_MAKEFLAGS) REL=../.. install-links;; \
++	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
++	     exit 1;; \
++	esac
++install-links:
++	@cd $(DESTDIR)$(bindir) && \
++	for f in $(scripts); do \
++	  echo "creating link '$$f -> '$(REL)/$(scriptspath)/$$f.pl"; \
++	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f; \
++	done
++uninstall-hook:
++	@for f in $(scripts); do \
++	  rm -f $(DESTDIR)$(bindir)/$$f; \
++	  rm -f $(DESTDIR)$(scriptsdir)/$$f.pl; \
++	done
++else !TEXLIVE_BUILD
++bin_SCRIPTS += $(scripts)
++endif !TEXLIVE_BUILD
+ 
+ xindy: xindy.in Makefile
+ 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy

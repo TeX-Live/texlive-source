@@ -1,0 +1,29 @@
+	AC_PROG_LEX automatically checks for the (f)lex library
+	and sets LEXLIB accordingly.
+
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/configure.ac xindy/configure.ac
+--- xindy.orig/configure.ac	2009-11-25 13:52:19.000000000 +0100
++++ xindy/configure.ac	2009-11-26 20:34:35.000000000 +0100
+@@ -76,10 +76,6 @@
+ # What about a C compiler? install?
+ test "$CLISP"  ||  AC_MSG_ERROR([CLISP is needed to build and run xindy])
+ 
+-# Check for flex library, the function to test for in this lib is main().
+-# FIXME: Is this really needed; ain't that done by AM_PROG_LEX automatically?
+-AC_CHECK_LIB([fl], [main])
+-
+ # No checks for header files. We use stdio.h, unistd.h, and string.h.
+ # Today, they are universally available if a C compiler is installed.
+ 
+diff -ur -x Makefile.in -x aclocal.m4 -x configure -x autom4te.cache xindy.orig/tex2xindy/Makefile.am xindy/tex2xindy/Makefile.am
+--- xindy.orig/tex2xindy/Makefile.am	2009-03-29 13:23:50.000000000 +0200
++++ xindy/tex2xindy/Makefile.am	2009-11-26 20:34:37.000000000 +0100
+@@ -23,7 +23,7 @@
+ 
+ tex2xindy_SOURCES = tex2xindy.l
+ 
+-## tex2xindy_LDADD = @LEXLIB@
++tex2xindy_LDADD = $(LEXLIB)
+ 
+ man_MANS = tex2xindy.1
+ 
