@@ -1,0 +1,55 @@
+
+[Check]		FIXMEs in configure.ac
+
+ -- flex for tex2indy?
+ -- Does one really need to look for -fl?
+
+ -- Are the canonical system type defs needed for TeX Live?
+    They're commented out at the moment.
+
+Sat Mar 28 18:07:07 2009   schrod
+----------------------------------------------------------------------
+
+[Missing]	Changes from Vladimir for TeX Live
+
+Review and apply.
+
+Sun Mar 29 13:50:45 2009   schrod
+----------------------------------------------------------------------
+
+[Change]	Determine path of Perl by autoconf
+
+AC_PATH_PROG
+and substitute it
+
+Windozify the Perl scripts
+
+Sat Mar 28 18:15:05 2009   schrod
+----------------------------------------------------------------------
+
+[Change]	strtoul() might not exist
+
+Replace it with function from gnulib.
+AC_REPLACE_FUNCS
+
+Sun Mar 29 13:46:35 2009   schrod
+----------------------------------------------------------------------
+
+[Change]	No need to insist on GNU make any more
+
+pattern rules
+variable subtitutions
+
+OK: src user-commands tex2xindy
+TBD: make-rules
+
+Sat Mar 28 18:18:03 2009   schrod
+----------------------------------------------------------------------
+
+[Proposal]	make dist via automake
+
+Don't know if that's worth the hassle...
+
+Sun Mar 29 12:39:52 2009   schrod
+----------------------------------------------------------------------
+
