@@ -465,6 +465,7 @@ uninstall-man: uninstall-man1
 @TEXLIVE_BUILD_TRUE@install-links:
 @TEXLIVE_BUILD_TRUE@	@cd $(DESTDIR)$(bindir) && \
 @TEXLIVE_BUILD_TRUE@	for f in $(scripts); do \
+@TEXLIVE_BUILD_TRUE@	  rm -f $$f; \
 @TEXLIVE_BUILD_TRUE@	  echo "creating link '$$f -> '$(REL)/$(scriptspath)/$$f.pl"; \
 @TEXLIVE_BUILD_TRUE@	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f; \
 @TEXLIVE_BUILD_TRUE@	done

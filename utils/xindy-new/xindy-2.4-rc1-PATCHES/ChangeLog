@@ -1,3 +1,7 @@
+2009-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-parallel (new): More parallel build problems.
+
 2009-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-10-superfluous (new): Remove superfluous part.

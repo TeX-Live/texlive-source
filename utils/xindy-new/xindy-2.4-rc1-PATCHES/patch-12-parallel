@@ -1,0 +1,20 @@
+	More problems with aggressive parallel builds (make -j).
+
+	The three rules:
+		%-test.xdy : %.pl
+			$(PERL) -I$(srcdir) $< $*
+		%-doc.tex : %.pl
+			$(PERL) -I$(srcdir) $< $*
+		%.xdy :	%.pl
+			$(PERL) -I$(srcdir) $< $*
+	must not run simultaneously or %-test.xdy could be destroyed.
+
+diff -ur -x Makefile.in xindy.orig/make-rules/alphabets/Makefile.am xindy/make-rules/alphabets/Makefile.am
+--- xindy.orig/make-rules/alphabets/Makefile.am	2009-11-25 14:01:03.000000000 +0100
++++ xindy/make-rules/alphabets/Makefile.am	2009-12-02 16:42:50.000000000 +0100
+@@ -1264,3 +1264,5 @@
+ 
+ CLEANFILES = $(ALPHABETS) $(DOC_CLEAN)
+ 
++.NOTPARALLEL:
++

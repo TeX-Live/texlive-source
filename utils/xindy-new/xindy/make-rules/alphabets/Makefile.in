@@ -2594,6 +2594,8 @@ alphabets-inc.tex : $(DOCS)
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
 
+.NOTPARALLEL:
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

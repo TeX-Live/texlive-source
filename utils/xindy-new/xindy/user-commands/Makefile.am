@@ -41,6 +41,7 @@ install-exec-hook: $(scripts)
 install-links:
 	@cd $(DESTDIR)$(bindir) && \
 	for f in $(scripts); do \
+	  rm -f $$f; \
 	  echo "creating link '$$f -> '$(REL)/$(scriptspath)/$$f.pl"; \
 	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f; \
 	done

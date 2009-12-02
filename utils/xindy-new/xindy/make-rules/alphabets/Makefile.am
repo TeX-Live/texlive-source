@@ -1264,3 +1264,5 @@ EXTRA_DIST = $(SCRS) test.xdy rom-comma-kludge.sed
 
 CLEANFILES = $(ALPHABETS) $(DOC_CLEAN)
 
+.NOTPARALLEL:
+
