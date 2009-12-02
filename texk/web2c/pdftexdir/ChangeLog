@@ -1,3 +1,7 @@
+2009-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* NEWS, README: Update to version 3.1415926-1.40.10.
+
 2009-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftoepdf.cc: Adapt to poppler-0.12.
@@ -69,7 +73,7 @@
 
 2009-06-26  Han The Thanh <hanthethanh@gmail.com>
 
-        * pdftex.web: bugfix from Hartmut: fix \pdfobj file {foo} for files
+	* pdftex.web: bugfix from Hartmut: fix \pdfobj file {foo} for files
 	          foo that don't end with '\n'
 
 2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>

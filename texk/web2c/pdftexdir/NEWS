@@ -1,16 +1,26 @@
-- \pdfshellescape is 2 if restricted shell escapes are enabled.
-- sync with TL new build system
-- update to libpng 1.2.35
-- update to xpdf-3.02pl3
-- applied patch #2087: Support for CMap namespace
+---------------------------------------------------
+pdfTeX 3.1415926-1.40.10 was released on 2009-11-30
+---------------------------------------------------
+- sync with TL09
+- changes:
+  - increased sup_dest_names_size
+  - partial support for TTC
+  - enable mktexpk by default
+  - patch #2087: Support for CMap namespace
+  - \pdfshellescape is 2 if restricted shell escapes are enabled.
 - bugfixes:
+  - segfault when processing certain TTF fonts
+  - jpg image resolution not set in some cases
+  - \pdfobj file {foo} for files foo that don't end with '\n'
+  - bugfix #4289: \primitive\pdfoutput cannot be queried
+  - bugfix #4288: character width mismatch in font XY.vf ignored
   - bugfix #993: "/Names array not sorted correctly"
   - bugfix #606: "Forbidden ... while scanning ???"
   - bugfix #3253: Bug in Type1 font subsetting
+  - \show\pdfstartlink is wrong 
+  - pdf_set_rule() uses incorrect variables
   - bugfix #2090: enabling LFS breaks PDF inclusion on some systems (warning: not heavily-tested yet)
-  - bugfix #4288: character width mismatch in font XY.vf ignored
-  - bugfix #4289: \primitive\pdfoutput cannot be queried
-  - various minor fixes
+  - t1_log() macro caused problem with some compilers
 
 --------------------------------------------------
 pdfTeX 3.1415926-1.40.9 was released on 2008-08-16
