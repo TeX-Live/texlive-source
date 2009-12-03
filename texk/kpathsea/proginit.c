@@ -43,7 +43,7 @@ kpathsea_init_prog (kpathsea kpse, const_string prefix,  unsigned dpi,
   if (getenv (makepk_var)) {
   /* If we did, we want to enable the program, I think.  */
     kpathsea_set_program_enabled (kpse, kpse_pk_format, 1, kpse_src_env);
-    kpathsea_set_program_enabled (kpse, kpse_any_glyph_format, 1, kpse_src_env);
+    kpathsea_set_program_enabled (kpse, kpse_any_glyph_format, 1,kpse_src_env);
 
     kpse->format_info[kpse_pk_format].program
       = kpse->format_info[kpse_any_glyph_format].program
@@ -80,6 +80,6 @@ void
 kpse_init_prog (const_string prefix,  unsigned dpi,  
                 const_string mode, const_string fallback)
 {
-    kpathsea_init_prog(kpse_def,prefix,dpi,mode,fallback);
+  kpathsea_init_prog(kpse_def,prefix,dpi,mode,fallback);
 }
 #endif

@@ -149,7 +149,7 @@ find_format (kpathsea kpse, string name, boolean is_filename)
       for (ext = kpse->format_info[f].suffix; !found && ext && *ext; ext++) {
         found = TRY_SUFFIX (*ext);
       }      
-      for (ext = kpse->format_info[f].alt_suffix; !found && ext && *ext; ext++){
+      for (ext=kpse->format_info[f].alt_suffix; !found && ext && *ext; ext++) {
         found = TRY_SUFFIX (*ext);
       }
 
@@ -269,8 +269,8 @@ lookup (kpathsea kpse, string name)
           unsigned local_dpi = find_dpi (name);
           if (!local_dpi)
             local_dpi = dpi;
-          ret = kpathsea_find_glyph (kpse, remove_suffix (name), local_dpi, fmt,
-                                     &glyph_ret);
+          ret = kpathsea_find_glyph (kpse, remove_suffix (name),
+                                     local_dpi, fmt, &glyph_ret);
         }
         break;
 
@@ -281,7 +281,8 @@ lookup (kpathsea kpse, string name)
 
       default:
         if (show_all) {
-          ret_list = kpathsea_find_file_generic (kpse, name, fmt, must_exist, true);
+          ret_list = kpathsea_find_file_generic (kpse, name, fmt,
+                                                 must_exist, true);
         } else {
           ret = kpathsea_find_file (kpse, name, fmt, must_exist);
         }

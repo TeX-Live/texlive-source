@@ -1,6 +1,6 @@
 /* pathsearch.h: mostly-generic path searching.
 
-   Copyright 1993, 1994, 1996, 1997, 2007, 2008 Karl Berry.
+   Copyright 1993, 1994, 1996, 1997, 2007, 2008, 2009 Karl Berry.
    Copyright 1999-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -49,7 +49,8 @@ extern unsigned kpathsea_normalize_path (kpathsea kpse, string elt);
    It's up to the caller to expand ELT.  This is because this routine is
    most likely only useful to be called from `kpathsea_path_search', which
    has already assumed expansion has been done.  */
-extern KPSEDLL str_llist_type *kpathsea_element_dirs (kpathsea kpse, string elt);
+extern KPSEDLL str_llist_type *kpathsea_element_dirs (kpathsea kpse,
+                                                      string elt);
 
 
 /* Call `kpathsea_expand' on NAME.  If the result is an absolute or
@@ -85,8 +86,8 @@ extern KPSEDLL string *kpathsea_all_path_search
 
 /* Search for any of the NAMES in PATH, and allow specifying both
    MUST_EXIST and ALL.  */
-extern KPSEDLL string *kpathsea_path_search_list_generic
-  (kpathsea kpse, const_string path, const_string* names, boolean must_exist, boolean all);
+extern KPSEDLL string *kpathsea_path_search_list_generic (kpathsea kpse,
+      const_string path, const_string* names, boolean must_exist, boolean all);
 
 /* Search for any of NAMES, with MUST_EXIST and ALL true.  */
 extern KPSEDLL string *kpathsea_all_path_search_list

@@ -1,6 +1,6 @@
 /* absolute.c: test if a filename is absolute or explicitly relative.
 
-   Copyright 1993, 1994, 1995, 2008 Karl Berry.
+   Copyright 1993, 1994, 1995, 2008, 2009 Karl Berry.
    Copyright 1997, 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
    to usefully generalize.  */
 
 boolean
-kpathsea_absolute_p (kpathsea kpse, const_string filename,  boolean relative_ok)
+kpathsea_absolute_p (kpathsea kpse, const_string filename, boolean relative_ok)
 {
 /*    (void)kpse; */ /* currenty not used */
 #ifdef VMS
@@ -74,7 +74,8 @@ int main()
   char *t[] = { "./foo", "\\\\server\\foo\\bar", "ftp://localhost/foo" };
 
   for (name = t; name - t < sizeof(t)/sizeof(char*); name++) {
-    printf("Path `%s' %s absolute.\n", *name, (kpse_absolute_p(*name, true) ? "is" : "is not"));
+    printf ("Path `%s' %s absolute.\n", *name,
+            kpse_absolute_p(*name, true) ? "is" : "is not");
   }
 }
 #endif /* TEST */

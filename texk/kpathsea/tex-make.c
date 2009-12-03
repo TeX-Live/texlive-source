@@ -1,6 +1,6 @@
 /* tex-make.c: run external programs to make TeX-related files.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009 Karl Berry.
    Copyright 1997, 1998, 2001-05 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -114,10 +114,11 @@ misstex (kpathsea kpse, kpse_file_format_type format,  string *args)
       missfont_name = NULL; /* user requested no missfont.log */
     } /* else use user's name */
 
-    kpse->missfont = missfont_name ? fopen (missfont_name, FOPEN_A_MODE) : NULL;
+    kpse->missfont
+      = missfont_name ? fopen (missfont_name, FOPEN_A_MODE) : NULL; 
     if (!kpse->missfont && kpathsea_var_value (kpse, "TEXMFOUTPUT")) {
-      missfont_name = concat3 (kpathsea_var_value (kpse, "TEXMFOUTPUT"), DIR_SEP_STRING,
-                               missfont_name);
+      missfont_name = concat3 (kpathsea_var_value (kpse, "TEXMFOUTPUT"),
+                               DIR_SEP_STRING, missfont_name);
       kpse->missfont = fopen (missfont_name, FOPEN_A_MODE);
     }
 
@@ -271,7 +272,8 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
                       &si,      /* pointer to STARTUPINFO */
                       &pi               /* pointer to PROCESS_INFORMATION */
                       ) == 0) {
-      LIB_FATAL2("kpathsea: CreateProcess() failed for `%s' (Error %x)\n", new_cmd, GetLastError());
+      LIB_FATAL2 ("kpathsea: CreateProcess() failed for `%s' (Error %x)\n",
+                  new_cmd, GetLastError()); 
     }
 
     CloseHandle(child_in);
@@ -287,7 +289,8 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
            && num > 0) {
       if (num <= 0) {
         if (GetLastError() != ERROR_BROKEN_PIPE) {
-          LIB_FATAL2("kpathsea: read() error code for `%s' (Error %d)", new_cmd, GetLastError());
+          LIB_FATAL2 ("kpathsea: read() error code for `%s' (Error %d)",
+                      new_cmd, GetLastError()); 
           break;
         }
       } else {
@@ -302,8 +305,8 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
     CloseHandle(father_in);
 
     if (WaitForSingleObject(pi.hProcess, INFINITE) != WAIT_OBJECT_0) {
-      WARNING2("kpathsea: failed to wait for process termination: %s (Error %d)\n",
-               new_cmd, GetLastError());
+      WARNING2 ("kpathsea: process termination wait failed: %s (Error %d)\n",
+                new_cmd, GetLastError());
     }
 
     CloseHandle(pi.hProcess);
@@ -472,7 +475,8 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
    return NULL.  */
 
 string
-kpathsea_make_tex (kpathsea kpse, kpse_file_format_type format,  const_string base)
+kpathsea_make_tex (kpathsea kpse, kpse_file_format_type format,
+                   const_string base)
 {
   kpse_format_info_type spec; /* some compilers lack struct initialization */
   string ret = NULL;

@@ -1,6 +1,6 @@
 /* db.c: an external database to avoid filesystem lookups.
 
-   Copyright 1994, 1995, 1996, 1997, 2008 Karl Berry.
+   Copyright 1994, 1995, 1996, 1997, 2008, 2009 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -99,7 +99,8 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
          and explicitly relative (./...) names here.  It's a kludge to
          pass in the directory name with the trailing : still attached,
          but it doesn't actually hurt.  */
-      if (len > 0 && line[len - 1] == ':' && kpathsea_absolute_p (kpse, line, true)) {
+      if (len > 0 && line[len - 1] == ':'
+          && kpathsea_absolute_p (kpse, line, true)) {
         /* New directory line.  */
         if (!ignore_dir_p (line)) {
           /* If they gave a relative name, prepend full directory name now.  */
@@ -196,7 +197,7 @@ kpathsea_db_insert (kpathsea kpse, const_string passed_fname)
 void
 kpse_db_insert (const_string passed_fname)
 {
-    kpathsea_db_insert(kpse_def, passed_fname);
+  kpathsea_db_insert(kpse_def, passed_fname);
 }
 #endif
 
@@ -293,7 +294,8 @@ elt_in_db (const_string db_dir,  const_string path_elt)
 /* If ALIAS_FILENAME exists, read it into TABLE.  */
 
 static boolean
-alias_build (kpathsea kpse, hash_table_type *table,  const_string alias_filename)
+alias_build (kpathsea kpse, hash_table_type *table,
+             const_string alias_filename)
 {
   string line, real, alias;
   unsigned count = 0;
@@ -344,7 +346,7 @@ alias_build (kpathsea kpse, hash_table_type *table,  const_string alias_filename
 }
 
 /* Initialize the path for ls-R files, and read them all into the hash
-   table `db'.  If no usable ls-R's are found, set kpse->db.buckets to NULL.  */
+   table `db'.  If no usable ls-R's found, set kpse->db.buckets to NULL.  */
 
 void
 kpathsea_init_db (kpathsea kpse)
@@ -408,7 +410,7 @@ kpathsea_init_db (kpathsea kpse)
 void
 kpse_init_db (void)
 {
-    kpathsea_init_db(kpse_def);
+  kpathsea_init_db(kpse_def);
 }
 #endif
 
@@ -634,7 +636,7 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
           aliases = XTALLOC1 (string);
           aliases[0] = NULL;
       } 
-      {  /* Push aliases up by one and insert the original name at the front.  */
+      {  /* Push aliases up by one and insert the original name at front.  */
           unsigned i;
           unsigned len = 1; /* Have NULL element already allocated.  */
           for (r = aliases; *r; r++)
@@ -659,53 +661,53 @@ kpathsea_db_search_list (kpathsea kpse, const_string* names,
              example, if we have .../cx/cmr10.300pk and .../ricoh/cmr10.300pk,
              and the path looks like .../cx, we don't want the ricoh file.  */
           while (!done && db_dirs && *db_dirs) {
-              string db_file = concat (*db_dirs, ctry);
-              boolean matched = match (db_file, path);
-              
+            string db_file = concat (*db_dirs, ctry);
+            boolean matched = match (db_file, path);
+
 #ifdef KPSE_DEBUG
-              if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
-                DEBUGF3 ("db:match(%s,%s) = %d\n", db_file, path, matched);
+            if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
+              DEBUGF3 ("db:match(%s,%s) = %d\n", db_file, path, matched);
 #endif
 
-              /* We got a hit in the database.  Now see if the file actually
-                 exists, possibly under an alias.  */
-              if (matched) {
-                  string found = NULL;
-                  if (kpathsea_readable_file (kpse, db_file)) {
-                      found = db_file;
-                      
-                  } else {
-                      string *a;
-                      
-                      free (db_file); /* `db_file' wasn't on disk.  */
-                      
-                      /* The hit in the DB doesn't exist in disk.  Now try all its
-                         aliases.  For example, suppose we have a hierarchy on CD,
-                         thus `mf.bas', but ls-R contains `mf.base'.  Find it anyway.
-                         Could probably work around this with aliases, but
-                         this is pretty easy and shouldn't hurt.  The upshot is that
-                         if one of the aliases actually exists, we use that.  */
-                      for (a = aliases + 1; *a && !found; a++) {
-                          string atry = concat (*db_dirs, *a);
-                          if (kpathsea_readable_file (kpse, atry))
-                              found = atry;
-                          else
-                              free (atry);
-                      }
-                  }
-                  
-                  /* If we have a real file, add it to the list, maybe done.  */
-                  if (found) {
-                      str_list_add (ret, found);
-                      if (!all && found)
-                          done = true;
-                  }
-              } else { /* no match in the db */
-                  free (db_file);
+            /* We got a hit in the database.  Now see if the file actually
+               exists, possibly under an alias.  */
+            if (matched) {
+              string found = NULL;
+              if (kpathsea_readable_file (kpse, db_file)) {
+                found = db_file;
+
+              } else {
+                string *a;
+
+                free (db_file); /* `db_file' wasn't on disk.  */
+
+                /* The hit in the DB doesn't exist in disk.  Now try all its
+                   aliases.  For example, suppose we have a hierarchy on CD,
+                   thus `mf.bas', but ls-R contains `mf.base'.  Find it anyway.
+                   Could probably work around this with aliases, but
+                   this is pretty easy and shouldn't hurt.  The upshot is that
+                   if one of the aliases actually exists, we use that.  */
+                for (a = aliases + 1; *a && !found; a++) {
+                  string atry = concat (*db_dirs, *a);
+                  if (kpathsea_readable_file (kpse, atry))
+                    found = atry;
+                  else
+                    free (atry);
+                }
               }
-              
-              /* On to the next directory, if any.  */
-              db_dirs++;
+
+              /* If we have a real file, add it to the list, maybe done.  */
+              if (found) {
+                str_list_add (ret, found);
+                if (!all && found)
+                  done = true;
+              }
+          } else { /* no match in the db */
+            free (db_file);
+          }
+
+          /* On to the next directory, if any.  */
+          db_dirs++;
           }
           
           /* This is just the space for the pointers, not the strings.  */

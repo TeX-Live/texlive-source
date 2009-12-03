@@ -49,12 +49,13 @@ typedef struct
 
 /* Search first for the font named FONT_NAME at resolution DPI in the
    glyph format FORMAT (see `try_size' for details of format searching).
-   Then try resolutions within KPSE_BITMAP_TOLERANCE of DPI.  Then try
-   the resolutions in `kpse_fallback_sizes', then within the tolerance
-   of each of those.  Then if FONT_NAME is an alias defined in a
-   texfonts.map do all the above for its real name.  Then try the above
-   for kpse_fallback_name.  Then fail.  Return either the filename
-   found, or NULL.  Also return information about the file found in
+   Then try resolutions within KPSE_BITMAP_TOLERANCE of DPI.  Then if
+   FONT_NAME is an alias defined in a texfonts.map do all the above for
+   its real name.  If not an alias, try creating it on the fly with
+   mktexpk.  Then try the resolutions in `kpse_fallback_sizes', then
+   within the tolerance of each of those.  Then try the above for
+   kpse_fallback_name.  Then fail.  Return either the filename found, or
+   NULL.  Also return information about the file found in
    *GLYPH_FILE.  */
 extern KPSEDLL string kpathsea_find_glyph (kpathsea kpse,
                                   const_string font_name, unsigned dpi, 

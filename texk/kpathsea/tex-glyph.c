@@ -1,6 +1,6 @@
 /* tex-glyph.c: search for GF/PK files.
 
-   Copyright 1993, 1994, 1995, 1996, 2008 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 2008, 2009 Karl Berry.
    Copyright 1997, 1998, 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -121,23 +121,23 @@ try_resolution (kpathsea kpse, const_string fontname,  unsigned dpi,
                 kpse_file_format_type format,
                 kpse_glyph_file_type *glyph_file)
 {
-    string ret = try_size (kpse, fontname, dpi, format, glyph_file);
+  string ret = try_size (kpse, fontname, dpi, format, glyph_file);
   
-  if (!ret)
-    {
-      unsigned r;
-      unsigned tolerance = KPSE_BITMAP_TOLERANCE (dpi);
-      /* Cast to unsigned to shut up stupid compilers. */
-      unsigned lower_bound = (int) (dpi - tolerance) < 0 ? 0 : (unsigned)(dpi - tolerance);
-      unsigned upper_bound = (unsigned)(dpi + tolerance);
-      
-      /* Prefer scaling up to scaling down, since scaling down can omit
-         character features (Tom did this in dvips).  */
-      for (r = lower_bound; !ret && r <= upper_bound; r++)
-        if (r != dpi)
-          ret = try_size (kpse, fontname, r, format, glyph_file);
-    }
-  
+  if (!ret) {
+    unsigned r;
+    unsigned tolerance = KPSE_BITMAP_TOLERANCE (dpi);
+    /* Cast to unsigned to shut up stupid compilers. */
+    unsigned lower_bound = (int) (dpi - tolerance) < 0
+                           ? 0 : (unsigned)(dpi - tolerance);
+    unsigned upper_bound = (unsigned)(dpi + tolerance);
+
+    /* Prefer scaling up to scaling down, since scaling down can omit
+       character features (Tom did this in dvips).  */
+    for (r = lower_bound; !ret && r <= upper_bound; r++)
+      if (r != dpi)
+        ret = try_size (kpse, fontname, r, format, glyph_file);
+  }
+
   return ret;
 }
 
@@ -291,7 +291,7 @@ kpathsea_find_glyph (kpathsea kpse,
     /* If mktex... failed, try any fallback resolutions.  */
     else {
       if (kpse->fallback_resolutions)
-          ret = try_fallback_resolutions (kpse, fontname, dpi, format, glyph_file);
+        ret = try_fallback_resolutions (kpse, fontname, dpi,format,glyph_file);
 
       /* We're down to the font of last resort.  */
       if (!ret && kpse->fallback_font) {
@@ -304,7 +304,7 @@ kpathsea_find_glyph (kpathsea kpse,
 
         /* The fallback font at the fallback resolutions.  */
         if (!ret && kpse->fallback_resolutions)
-            ret = try_fallback_resolutions (kpse, name, dpi, format, glyph_file);
+          ret = try_fallback_resolutions (kpse, name, dpi, format, glyph_file);
       }
     }
   }
@@ -329,7 +329,8 @@ kpse_find_glyph (const_string passed_fontname,  unsigned dpi,
                  kpse_file_format_type format,
                  kpse_glyph_file_type *glyph_file)
 {
-    return kpathsea_find_glyph(kpse_def, passed_fontname, dpi, format, glyph_file);
+    return kpathsea_find_glyph (kpse_def, passed_fontname, dpi, format,
+                                glyph_file); 
 }
 #endif
 
@@ -385,7 +386,7 @@ main (int argc, char **argv)
 {
   kpathsea kpse = xcalloc(1,sizeof(kpathsea_instance));
   kpathsea_set_program_name(kpse, argv[0], NULL);
-  test_find_glyph (kpse, "/usr/local/lib/tex/fonts/cm/cmr10", 300); /* absolute */
+  test_find_glyph (kpse, "/usr/local/lib/tex/fonts/cm/cmr10", 300); /* abs. */
   test_find_glyph (kpse, "cmr10", 300);     /* normal */
   test_find_glyph (kpse, "logo10", 300);    /* find gf */
   test_find_glyph (kpse, "cmr10", 299);     /* find 300 */
@@ -394,7 +395,7 @@ main (int argc, char **argv)
   kpse->kpse_fallback_font = "cmr10";
   test_find_glyph (kpse, "fallback", 300);  /* find fallback font cmr10 */
   kpathsea_init_fallback_resolutions (kpse, "KPATHSEA_TEST_SIZES");
-  test_find_glyph (kpse, "fallbackdpi", 759); /* find fallback font cmr10@300 */
+  test_find_glyph (kpse, "fallbackdpi", 759); /* find fallback cmr10@300 */
   
   kpathsea_xputenv (kpse,"GFFONTS", ".");
   test_find_glyph (kpse, "cmr10", 300);     /* different GFFONTS/TEXFONTS */

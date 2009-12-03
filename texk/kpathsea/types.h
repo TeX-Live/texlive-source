@@ -195,7 +195,7 @@ typedef struct kpathsea_instance {
     hash_table_type cnf_hash;           /* used by read_all_cnf */
     boolean doing_cnf_init;             /* for kpse_cnf_get */
     /* from db.c */
-    hash_table_type db;                 /* The hash table for all the ls-R's.  */
+    hash_table_type db;                 /* The hash table for all ls-R's */
     hash_table_type alias_db;           /* The hash table for the aliases */
     str_list_type db_dir_list;          /* list of ls-R's */
     /* from debug.c */
@@ -207,14 +207,14 @@ typedef struct kpathsea_instance {
     unsigned cache_length;
     /* from fontmap.c */
     hash_table_type map;                /* the font mapping hash */
-    const_string map_path;              /* holds the format path for kpse_fontmap_format */
+    const_string map_path;              /* path for kpse_fontmap_format */
     /* from hash.c */
     /* Print the hash values as integers if this is nonzero.  */
     boolean debug_hash_lookup_int;
     /* from path-elt.c */
-    string elt;                         /* statically created buffer for return value of |element| */
+    string elt;                         /* static buffer for return value */
     unsigned elt_alloc;
-    const_string path;                  /* The path we're currently working on.  */
+    const_string path;                  /* path we're currently working on */
     /* from pathsearch.c */
     boolean followup_search;
     FILE *log_file;

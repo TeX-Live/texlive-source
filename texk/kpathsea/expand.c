@@ -1,7 +1,7 @@
 /* expand.c: general expansion.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 1998, 2005, 2008 Karl Berry &
-   Olaf Weber.
+   Copyright 1993, 1994, 1995, 1996, 1997, 1998, 2005, 2008, 2009
+   Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -93,7 +93,8 @@ kpathsea_expand_kpse_dot (kpathsea kpse, string path)
     boolean ret_copied = true;
     /* We assume that the !! magic is only used on absolute components.
        Single "." gets special treatment, as does "./" or its equivalent. */
-    if (kpathsea_absolute_p (kpse, elt, false) || (elt[0] == '!' && elt[1] == '!')) {
+    if (kpathsea_absolute_p (kpse, elt, false)
+        || (elt[0] == '!' && elt[1] == '!')) {
       ret = concat3(ret, elt, ENV_SEP_STRING);
     } else if (elt[0] == '.' && elt[1] == 0) {
       ret = concat3 (ret, kpse_dot, ENV_SEP_STRING);

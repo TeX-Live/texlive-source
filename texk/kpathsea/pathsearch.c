@@ -1,6 +1,6 @@
 /* pathsearch.c: look up a filename in a path.
 
-   Copyright 1993, 1994, 1995, 1997, 2007 Karl Berry.
+   Copyright 1993, 1994, 1995, 1997, 2007, 2009 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -152,8 +152,8 @@ dir_list_search (kpathsea kpse, str_llist_type *dirs,  const_string name,
 }
 
 static str_list_type
-dir_list_search_list (kpathsea kpse, str_llist_type *dirs,  const_string* names,
-                         boolean search_all)
+dir_list_search_list (kpathsea kpse, str_llist_type *dirs, const_string* names,
+                      boolean search_all)
 {
   str_llist_elt_type *elt;
   str_list_type ret;
@@ -263,7 +263,8 @@ path_search (kpathsea kpse, const_string path,  string name,
     
     /* Try ls-R, unless we're searching for texmf.cnf.  Our caller
        (search), also tests first_search, and does the resetting.  */
-    found = kpse->followup_search ? kpathsea_db_search (kpse, name, elt, all) : NULL;
+    found = kpse->followup_search ? kpathsea_db_search (kpse, name, elt, all)
+                                  : NULL;
 
     /* Search the filesystem if (1) the path spec allows it, and either
          (2a) we are searching for texmf.cnf ; or
@@ -471,10 +472,11 @@ search_list (kpathsea kpse, const_string path,  const_string* names,
     }
 
     /* See elt-dirs.c for side effects of this function. */
-    kpathsea_normalize_path(kpse, elt);
+    kpathsea_normalize_path (kpse, elt);
 
     /* Try ls-R, unless we're searching for texmf.cnf. */
-    found = kpse->followup_search ? kpathsea_db_search_list(kpse, names, elt, all) : NULL;
+    found = kpse->followup_search
+            ? kpathsea_db_search_list (kpse, names, elt, all) : NULL;
 
     /* Search the filesystem if (1) the path spec allows it, and either
          (2a) we are searching for texmf.cnf ; or
@@ -554,11 +556,11 @@ kpathsea_path_search (kpathsea kpse, const_string path,  const_string name,
 /* Many inputs, return (more or less indeterminate) one matching string.  */
 
 string
-kpathsea_path_search_list (kpathsea kpse, const_string path,  const_string* names,
-                           boolean must_exist)
+kpathsea_path_search_list (kpathsea kpse, const_string path,
+                           const_string* names, boolean must_exist)
 {
-  string *ret_list
-      = kpathsea_path_search_list_generic (kpse, path, names, must_exist, false);
+  string *ret_list = kpathsea_path_search_list_generic (kpse, path, names,
+                                                        must_exist, false); 
   string ret = *ret_list;
   free (ret_list);
   return ret;
@@ -605,7 +607,8 @@ kpse_path_search (const_string path,  const_string name, boolean must_exist)
 }
 
 string
-kpse_path_search_list (const_string path,  const_string* names, boolean must_exist)
+kpse_path_search_list (const_string path,  const_string* names,
+                       boolean must_exist)
 {
     return kpathsea_path_search_list (kpse_def, path, names, must_exist);
 }
@@ -620,7 +623,8 @@ string *
 kpse_path_search_list_generic (const_string path,  const_string* names,
                                boolean must_exist,  boolean all)
 {
-  return kpathsea_path_search_list_generic (kpse_def, path, names, must_exist, all);
+  return kpathsea_path_search_list_generic (kpse_def, path, names,
+                                            must_exist, all);
 }    
 
 string *

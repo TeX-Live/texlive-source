@@ -3,7 +3,7 @@
    make a program `default' from it, since we have a target `default';
    and OSF/1 make doesn't understand .PHONY.)
 
-   Copyright 1993, 1994, 1996, 2008 Karl Berry.
+   Copyright 1993, 1994, 1996, 2008, 2009 Karl Berry.
    Copyright 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -29,7 +29,8 @@
    that is fastest.  Usually it will be leading or trailing.  */
 
 string 
-kpathsea_expand_default (kpathsea kpse, const_string path,  const_string fallback)
+kpathsea_expand_default (kpathsea kpse,  const_string path,
+                         const_string fallback)
 {
   unsigned path_length;
   string expansion;
@@ -115,7 +116,8 @@ main ()
   test_expand_default (ENV_SEP_STRING, default_path);
   test_expand_default (ENV_SEP_STRING "first", default_path);
   test_expand_default ("last" ENV_SEP_STRING, default_path);
-  test_expand_default ("middle" ENV_SEP_STRING ENV_SEP_STRING "elddim", default_path);
+  test_expand_default ("middle" ENV_SEP_STRING ENV_SEP_STRING "elddim",
+                       default_path); 
   
   return 0;
 }

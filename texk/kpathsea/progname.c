@@ -1,6 +1,6 @@
 /* progname.c: the executable name we were invoked as; general initialization.
 
-   Copyright 1994, 1996, 1997, 2008 Karl Berry.
+   Copyright 1994, 1996, 1997, 2008, 2009 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -473,7 +473,8 @@ mk_suffixlist (kpathsea kpse)
 #endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
 
 void
-kpathsea_set_program_name (kpathsea kpse,  const_string argv0, const_string progname)
+kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
+                           const_string progname)
 {
   string ext, sdir, sdir_parent, sdir_grandparent;
   string s = getenv ("KPATHSEA_DEBUG");
@@ -634,7 +635,8 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0, const_string prog
   free (sdir_parent);
   free (sdir_grandparent);
 
-  kpse->invocation_short_name = xstrdup((string)xbasename (kpse->invocation_name));
+  kpse->invocation_short_name
+    = xstrdup ((string) xbasename (kpse->invocation_name));
 
   if (progname) {
     kpse->program_name = xstrdup (progname);
@@ -675,13 +677,13 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0, const_string prog
 void
 kpse_set_program_name (const_string argv0, const_string progname)
 {
-    kpathsea_set_program_name (kpse_def, argv0, progname);
+  kpathsea_set_program_name (kpse_def, argv0, progname);
 }
 
 void
 kpse_set_progname (const_string argv0)
 {
-    kpathsea_set_program_name (kpse_def, argv0, NULL);
+  kpathsea_set_program_name (kpse_def, argv0, NULL);
 }
 #endif
 

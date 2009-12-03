@@ -1,6 +1,6 @@
 /* xputenv.c: set an environment variable without return. */
 
-/* Copyright 1993-98, 2008 Karl Berry.
+/* Copyright 1993-98, 2008, 2009 Karl Berry.
    Copyright 2003-05 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -82,15 +82,14 @@ kpathsea_xputenv(kpathsea kpse, const char *var, const char *value)
     }
 
     /* If we get here, it means getenv() returned a reference to cur_item.
-     * So we save cur_item, and free the old string we also owned.
-     */
+       So we save cur_item, and free the old string we also owned.  */
     if (cur_loc == kpse->saved_count) {
-        /* No old string. */
-        kpse->saved_count++;
-        kpse->saved_env = XRETALLOC(kpse->saved_env, kpse->saved_count, char *);
+      /* No old string. */
+      kpse->saved_count++;
+      kpse->saved_env = XRETALLOC(kpse->saved_env, kpse->saved_count, char *);
     } else {
-        /* We owned the old string. */
-        free(kpse->saved_env[cur_loc]);
+      /* We owned the old string. */
+      free(kpse->saved_env[cur_loc]);
     }
     kpse->saved_env[cur_loc] = cur_item;
 
@@ -115,12 +114,12 @@ kpathsea_xputenv_int (kpathsea kpse, const_string var_name,  int num)
 void
 xputenv(const char *var, const char *value)
 {
-    kpathsea_xputenv(kpse_def, var, value);
+  kpathsea_xputenv(kpse_def, var, value);
 }
 
 void
 xputenv_int (const_string var_name,  int num)
 {
-    kpathsea_xputenv_int(kpse_def, var_name, num);
+  kpathsea_xputenv_int(kpse_def, var_name, num);
 }
 #endif

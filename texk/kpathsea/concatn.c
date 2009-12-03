@@ -1,7 +1,7 @@
 /* concatn.c: concatenate an arbitrary number of strings.
 
+   Copyright 1993, 1995, 2008, 2009 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
-   Copyright 1993, 1995, 2008 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

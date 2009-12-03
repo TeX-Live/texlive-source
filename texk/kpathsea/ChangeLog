@@ -1,3 +1,11 @@
+2009-12-03  Karl Berry  <karl@tug.org>
+
+	* absolute.c, * absolute.h, * cnf.c, * db.c, * dir.c, * elt-dirs.c,
+	* expand.c, * kdefault.c, * kpsewhich.c, * lib.h, * magstep.h,
+        * pathsearch.c, * pathsearch.h, * proginit.c, * progname.c,
+	* readable.h, * tex-file.c, * tex-file.h, * tex-glyph.c, * tex-glyph.h,
+        * tex-make.c, * types.h, * xputenv.c: formatting/doc fixes. 
+
 2009-12-01  Karl Berry  <karl@tug.org>
 
 	* tex-file.c (kpathsea_name_ok): formatting, doc fixes, start
@@ -22,7 +30,7 @@
 
 2009-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* types.h (kpathsea_instance): For Win/Mingw/Cygwin declare
+	* types.h (kpathsea_instance): For W32/Mingw/Cygwin declare
 	suffixlist, listing the executable file suffixes.
 	* progname.c (kpathsea_set_program_name): Build suffixlist.
 	* tex-file.c (kpathsea_out_name_ok): Use suffixlist.
@@ -348,7 +356,7 @@
 	Added a preprocessor define KPSE_COMPAT_API, used throughout the
 	library.  If it is undefined then the old-style functions and
 	definitions are not compiled.
-	Removed the win32-specific 'cached_home_directory' and 'volumes'
+	Removed the w32-specific 'cached_home_directory' and 'volumes'
 	variables from the instance structure.
 	Added 'invocation_name' and 'invocation_short_name' variables to
 	the instance structure.

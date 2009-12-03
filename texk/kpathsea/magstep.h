@@ -1,6 +1,6 @@
 /* magstep.h: declaration for magstep fixing.
 
-   Copyright 1994, 2008 Karl Berry.
+   Copyright 1994, 2008, 2009 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -44,7 +44,8 @@ extern KPSEDLL unsigned kpathsea_magstep_fix (kpathsea kpse, unsigned dpi,
                                               unsigned bdpi, int *m_ret);
 
 #if defined (KPSE_COMPAT_API)
-extern KPSEDLL unsigned kpse_magstep_fix (unsigned dpi, unsigned bdpi, int *m_ret);
+extern KPSEDLL unsigned kpse_magstep_fix (unsigned dpi, unsigned bdpi,
+                                          int *m_ret); 
 #endif
 
 #endif /* not KPATHSEA_MAGSTEP_H */
