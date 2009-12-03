@@ -9,12 +9,7 @@ SUBDIRS = linked_scripts
 
 ## Win32 wrapper
 ##
-EXTRA_DIST = \
-	runscript_dll.c \
-	runscript_exe.c \
-	runscript.dll \
-	runscript.exe \
-	tl-w32-wrapper.cmd
+EXTRA_DIST = w32_wrapper
 
 ## Not used
 ##
