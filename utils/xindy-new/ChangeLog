@@ -1,3 +1,8 @@
+2009-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported http://www.xindy.org/xindy-2.4-pre2.tar.gz.
+	* xindy-2.4-rc1-PATCHES/ renamed to xindy-2.4-pre2-PATCHES/.
+
 2009-11-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported xindy-2.4-rc1.

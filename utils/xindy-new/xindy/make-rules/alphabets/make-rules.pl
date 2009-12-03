@@ -23,7 +23,10 @@ print TESTXDY "	      :rule-set (\"".$prefix."resolve-case\" \"".$prefix."ignore
 print TESTXDY "(use-rule-set :run 3\n";
 print TESTXDY "	      :rule-set (\"".$prefix."resolve-special\"))\n";
 close TESTXDY;
-$fn = "test.xdy"; $fn = "$INC[0]/$fn" if ! -f $fn && -f "$INC[0]/$fn"; die "$fn: $!" if ! -f $fn;
+
+$fn = "test.xdy";
+! -f $fn && -f "$INC[0]/$fn"  and  $fn = "$INC[0]/$fn";
+-f $fn  or  die "$fn: $!";
 system("cat $fn >> $ARGV[0]-test.xdy");
 
 $begin = 128;

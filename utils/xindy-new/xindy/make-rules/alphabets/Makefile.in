@@ -31,6 +31,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = @build@
+host_triplet = @host@
 subdir = xindy/make-rules/alphabets
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -215,14 +217,22 @@ am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -2535,14 +2545,24 @@ romanian/cp1250.pl : romanian/utf8.pl
 %-lang.xdy : %-test.xdy
 	sed -n '1,10 p' <$< >$@
 
+# Running "$(PERL) -I$(srcdir) $< $*" creates %-test.xdy, %-doc.tex, %.raw,
+# and %.xdy; %-test.xdy is finished first.  We must not run this command
+# several times simultaneously (for details see Automake manual 27.9).
 %-test.xdy : %.pl
 	$(PERL) -I$(srcdir) $< $*
 
-%-doc.tex : %.pl
-	$(PERL) -I$(srcdir) $< $*
-
-%.xdy :	%.pl
-	$(PERL) -I$(srcdir) $< $*
+%-doc.tex %.xdy : %-test.xdy
+	@if test -f $@; then :; else \
+	  trap 'rm -rf $*.lock $<' 1 2 13 15; \
+	  if mkdir $*.lock 2>/dev/null; then \
+	    rm -f $<; \
+	    $(MAKE) $(AM_MAKEFLAGS) $<; \
+	    result=$$?; rm -rf $*.lock; exit $$result; \
+	  else \
+	    while test -d $*.lock; do sleep 1; done; \
+	    test -f $<; \
+	  fi; \
+	fi
 
 alphabets-inc.tex : $(DOCS)
 	$(RM) $@
@@ -2593,8 +2613,6 @@ alphabets-inc.tex : $(DOCS)
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@alphabets-doc.pdf : alphabets-doc.tex alphabets-inc.tex
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
 @BUILDDOCS_TRUE@@BUILDRULES_TRUE@	pdflatex -interaction batchmode $(srcdir)/alphabets-doc.tex
-
-.NOTPARALLEL:
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

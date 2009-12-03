@@ -31,6 +31,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = @build@
+host_triplet = @host@
 subdir = xindy/src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -132,14 +134,22 @@ am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
+build = @build@
 build_alias = @build_alias@
+build_cpu = @build_cpu@
+build_os = @build_os@
+build_vendor = @build_vendor@
 builddir = @builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
+host = @host@
 host_alias = @host_alias@
+host_cpu = @host_cpu@
+host_os = @host_os@
+host_vendor = @host_vendor@
 htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
@@ -168,15 +178,14 @@ top_srcdir = @top_srcdir@
 # Where the modules are found at runtime.
 MODULEDIR = $(pkglibdir)/modules
 
-# Since automake has no CLISP support, we need to explicitly add make
-# rules to create the xindy kernel below and stop automake from
-# looking for C sources.
+# Automake has no CLISP support; moreover xindy.mem is not a binary
+# to be stripped upon 'make install-strip'.  We define it as DATA.
 mem_DATA = xindy.mem
 
 # Tell the dist target about our sources, define the object files for
 # our own rule and the .lib files for the clean definition. Don't use
 # gmake-isms.
-dist_xindy_mem_sources = base.lsp ordrules.lsp locref.lsp idxstyle.lsp \
+FASSRC = base.lsp ordrules.lsp locref.lsp idxstyle.lsp \
 			 index.lsp version.lsp markup.lsp
 
 FAS = base.fas ordrules.fas locref.fas idxstyle.fas \
@@ -188,7 +197,7 @@ FASLIBS = base.lib ordrules.lib locref.lib idxstyle.lib \
 DEFAULTS = defaults.xdy
 DUMP_XINDY = dump-xindy.lsp
 MEMFILE = xindy.mem
-EXTRA_DIST = $(DEFAULTS).in $(dist_xindy_mem_sources) dump-xindy.lsp
+EXTRA_DIST = $(DEFAULTS).in $(FASSRC) dump-xindy.lsp
 SUFFIXES = .fas .lsp
 CLEANFILES = $(FAS) $(FASLIBS) $(DEFAULTS) xindy.mem
 all: all-am
@@ -398,8 +407,10 @@ uninstall-am: uninstall-memDATA
 xindy.mem: $(DEFAULTS) $(FAS) $(DUMP_XINDY)
 	rm -f $(MEMFILE)
 	$(CLISP) $(srcdir)/$(DUMP_XINDY)
-	gzip $(MEMFILE)
-	mv $(MEMFILE).gz $(MEMFILE)
+	if test "$(host_os)" != "mingw32"; then \
+	  gzip -9n $@; \
+	  mv $@.gz $@; \
+	fi
 
 $(DEFAULTS): $(DEFAULTS).in Makefile
 	sed 's|@MODULEDIR[@]|$(MODULEDIR)|g' <$(srcdir)/$(DEFAULTS).in >$(DEFAULTS)

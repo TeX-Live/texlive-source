@@ -892,14 +892,24 @@ DISTCLEANFILES += \
 %-lang.xdy : %-test.xdy
 	sed -n '1,10 p' <$< >$@
 
+# Running "$(PERL) -I$(srcdir) $< $*" creates %-test.xdy, %-doc.tex, %.raw,
+# and %.xdy; %-test.xdy is finished first.  We must not run this command
+# several times simultaneously (for details see Automake manual 27.9).
 %-test.xdy : %.pl
 	$(PERL) -I$(srcdir) $< $*
 
-%-doc.tex : %.pl
-	$(PERL) -I$(srcdir) $< $*
-
-%.xdy :	%.pl
-	$(PERL) -I$(srcdir) $< $*
+%-doc.tex %.xdy : %-test.xdy
+	@if test -f $@; then :; else \
+	  trap 'rm -rf $*.lock $<' 1 2 13 15; \
+	  if mkdir $*.lock 2>/dev/null; then \
+	    rm -f $<; \
+	    $(MAKE) $(AM_MAKEFLAGS) $<; \
+	    result=$$?; rm -rf $*.lock; exit $$result; \
+	  else \
+	    while test -d $*.lock; do sleep 1; done; \
+	    test -f $<; \
+	  fi; \
+	fi
 
 SUBDIRS = \
 	albanian \
@@ -1263,6 +1273,4 @@ DOC_CLEAN = \
 EXTRA_DIST = $(SCRS) test.xdy rom-comma-kludge.sed
 
 CLEANFILES = $(ALPHABETS) $(DOC_CLEAN)
-
-.NOTPARALLEL:
 

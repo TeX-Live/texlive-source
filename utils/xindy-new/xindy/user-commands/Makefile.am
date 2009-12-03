@@ -20,10 +20,10 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-bin_SCRIPTS =
-scripts = texindy xindy xindy.v2
+scripts = texindy xindy
 
 if TEXLIVE_BUILD
+bin_SCRIPTS =
 noinst_SCRIPTS = $(scripts)
 scriptspath = texmf/scripts/xindy
 scriptsdir = ${prefix}/$(scriptspath)
@@ -51,7 +51,7 @@ uninstall-hook:
 	  rm -f $(DESTDIR)$(scriptsdir)/$$f.pl; \
 	done
 else !TEXLIVE_BUILD
-bin_SCRIPTS += $(scripts)
+bin_SCRIPTS = $(scripts) xindy.v2
 endif !TEXLIVE_BUILD
 
 xindy: xindy.in Makefile

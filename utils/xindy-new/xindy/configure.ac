@@ -63,6 +63,9 @@ AC_PROG_LEX
 AC_PROG_CC
 AC_PROG_LN_S
 
+# Check system type
+AC_CANONICAL_HOST
+
 # On some systems without working iconv, we must use recode.
 AC_ARG_WITH([xindy-recode],
             AS_HELP_STRING([--with-xindy-recode],
@@ -84,12 +87,6 @@ test "$CLISP"  ||  AC_MSG_ERROR([CLISP is needed to build and run xindy])
 
 # No checks for header files. We use stdio.h, unistd.h, and string.h.
 # Today, they are universally available if a C compiler is installed.
-
-dnl # Check system type
-dnl # FIXME: Is that needed for TeX Live compilation? Leave it in comments...
-dnl AC_CANONICAL_HOST
-dnl AC_SUBST(host_cpu)
-dnl AC_SUBST(host_os)
 
 # Checks for typedefs, structures, and compiler characteristics.
 

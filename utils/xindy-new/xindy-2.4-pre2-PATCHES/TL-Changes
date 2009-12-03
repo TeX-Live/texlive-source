@@ -1,5 +1,5 @@
 Changes applied to the xindy source tree as obtained from:
-	http://www.xindy.org/xindy-2.4-SNAPSHOT.tar.gz
+	http://www.xindy.org/xindy-2.4-pre2.tar.gz
 
 Removed:
 	aclocal.m4
@@ -8,6 +8,7 @@ Removed:
 	configure
 	depcomp
 	install-sh
+	make-dist
 	missing
 	ylwrap
 

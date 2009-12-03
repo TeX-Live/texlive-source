@@ -1,0 +1,42 @@
+diff -ur -x Makefile.in xindy.orig/configure.ac xindy/configure.ac
+--- xindy.orig/configure.ac	2009-12-03 01:34:16.000000000 +0100
++++ xindy/configure.ac	2009-12-03 11:52:02.000000000 +0100
+@@ -57,6 +57,9 @@
+ AC_PROG_LEX
+ AC_PROG_CC
+ 
++# Check system type
++AC_CANONICAL_HOST
++
+ # On some systems without working iconv, we must use recode.
+ AC_ARG_WITH([xindy-recode],
+             AS_HELP_STRING([--with-xindy-recode],
+@@ -79,12 +82,6 @@
+ # No checks for header files. We use stdio.h, unistd.h, and string.h.
+ # Today, they are universally available if a C compiler is installed.
+ 
+-dnl # Check system type
+-dnl # FIXME: Is that needed for TeX Live compilation? Leave it in comments...
+-dnl AC_CANONICAL_HOST
+-dnl AC_SUBST(host_cpu)
+-dnl AC_SUBST(host_os)
+-
+ # Checks for typedefs, structures, and compiler characteristics.
+ 
+ # Checks for library functions.
+diff -ur -x Makefile.in xindy.orig/src/Makefile.am xindy/src/Makefile.am
+--- xindy.orig/src/Makefile.am	2009-12-03 01:38:20.000000000 +0100
++++ xindy/src/Makefile.am	2009-12-03 11:53:59.000000000 +0100
+@@ -46,8 +46,10 @@
+ xindy.mem: $(DEFAULTS) $(FAS) $(DUMP_XINDY)
+ 	rm -f $(MEMFILE)
+ 	$(CLISP) $(srcdir)/$(DUMP_XINDY)
+-	gzip $(MEMFILE)
+-	mv $(MEMFILE).gz $(MEMFILE)
++	if test "$(host_os)" != "mingw32"; then \
++	  gzip -9n $@; \
++	  mv $@.gz $@; \
++	fi
+ 
+ $(DEFAULTS): $(DEFAULTS).in Makefile
+ 	sed 's|@MODULEDIR[@]|$(MODULEDIR)|g' <$(srcdir)/$(DEFAULTS).in >$(DEFAULTS)

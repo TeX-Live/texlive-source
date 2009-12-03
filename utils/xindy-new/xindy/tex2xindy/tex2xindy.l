@@ -1,5 +1,5 @@
 %{
-  /* $Id: tex2xindy.l,v 1.21 2006/07/30 09:44:04 jschrod Exp $
+  /* $Id: tex2xindy.l,v 1.23 2009/12/03 00:42:14 jschrod Exp $
      ============================================================
      (history at end)
 
@@ -129,7 +129,7 @@ static void qc( char ch ) {
 
 /* Quote an entire string. */
 
-static void qs( const char* str ) {
+static void qs( char* str ) {
   while ( *str ) {
     qc( *str++ );
   }
@@ -362,17 +362,9 @@ HATHAT32BIT	\^{8}[0-9a-fA-F]{8}
 
 %%
 
-/*
- *  Define dummy yywrap so we no longer depend on `libfl.a'.
- */
-int yywrap (void)
-{
-    return 1;
-}
-
 static void usage (void)
 {
-    fputs("This is tex2xindy, $Revision: 1.21 $.\n", stderr);
+    fputs("This is tex2xindy, $Revision: 1.23 $.\n", stderr);
     fputs("usage: tex2xindy [-o] [attr_file]\n", stderr);
     exit (1);
 }
@@ -416,9 +408,24 @@ main(int argc, char* argv[])
 }
 
 
+/*
+ *  Define dummy yywrap so we no longer depend on `libfl.a'.
+ */
+int yywrap (void)
+{
+    return 1;
+}
+
+
 /* ============================================================
 
   $Log: tex2xindy.l,v $
+  Revision 1.23  2009/12/03 00:42:14  jschrod
+      Define internal functions as static to silence gcc warnings.
+
+  Revision 1.22  2009/12/03 00:36:09  jschrod
+      Define yywrap(), to be independent from libfl.
+
   Revision 1.21  2006/07/30 09:44:04  jschrod
       While quote is not output, escape+quote *is* output.
 
