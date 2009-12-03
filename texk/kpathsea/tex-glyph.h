@@ -1,6 +1,6 @@
 /* tex-glyph.h: look for a TeX glyph font (GF or PK).
 
-   Copyright 1993, 2008 Karl Berry.
+   Copyright 1993, 2008, 2009 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or

@@ -1217,7 +1217,6 @@
 	just dump all font-related files in a single directory and set a
 	single variable to point to it.  It doesn't have a default.
 	Suggested by Karl Berry, Hans Hagen, Akira Kakuto.
-
 	
 2004-08-17  Olaf Weber  <olaf@infovore.xs4all.nl>
 

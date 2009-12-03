@@ -29,8 +29,8 @@
    that's not set either, a compile-time default is used.  */
 extern void kpathsea_init_fallback_resolutions (kpathsea kpse, string envvar);
 
-/* If LEVEL is higher than `program_enabled_level' for FMT, set
-   `program_enabled_p' to VALUE.  */
+/* If LEVEL is >= FMT's `program_enable_level', set `program_enabled_p'
+   for FMT to VALUE.  */ 
 extern KPSEDLL void kpathsea_set_program_enabled (kpathsea kpse, 
     kpse_file_format_type fmt, boolean value, kpse_src_type level);
 
@@ -39,8 +39,8 @@ extern KPSEDLL void kpathsea_set_program_enabled (kpathsea kpse,
 extern KPSEDLL void kpathsea_maketex_option (kpathsea kpse,
     const_string fmtname, boolean value);
 
-/* Change the list of searched suffixes (alternate suffixes if alternate is
-   true).  */
+/* Change the list of searched suffixes for FORMAT to ... (alternate
+   suffixes if ALTERNATE is true).  */
 extern KPSEDLL void kpathsea_set_suffixes (kpathsea kpse, 
     kpse_file_format_type format, boolean alternate, ...);
 

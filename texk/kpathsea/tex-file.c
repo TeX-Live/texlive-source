@@ -408,8 +408,8 @@ init_maketex (kpathsea kpse, kpse_file_format_type fmt,
   if (progval && *progval) {
     /* This might actually be from an environment variable value, but in
        that case, we'll have previously set it from kpse_init_prog.  */
-      kpathsea_set_program_enabled (kpse, fmt, *progval == '1',
-                                    kpse_src_client_cnf); 
+    kpathsea_set_program_enabled (kpse, fmt, *progval == '1',
+                                  kpse_src_client_cnf); 
   }
   
   free (PROG);

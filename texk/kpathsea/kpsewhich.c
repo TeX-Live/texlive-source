@@ -446,7 +446,6 @@ read_command_line (kpathsea kpse, int argc,  string *argv)
         }
         putchar ('\n');
       }
-
       exit (0);
 
     } else if (ARGUMENT_IS ("mktex")) {
@@ -506,28 +505,36 @@ main (int argc,  string *argv)
 {
   unsigned unfound = 0;
   kpathsea kpse = kpathsea_new();
+  
+  /* Read options.  */
   read_command_line (kpse, argc, argv);
 
+
+  /* Initializations that may depend on the options.  */
+  /* kpathsea_maketex_option (kpse, "pk", false); */
   kpathsea_set_program_name (kpse, argv[0], progname);
 
   if (engine)
-      kpathsea_xputenv (kpse, "engine", engine);
+    kpathsea_xputenv (kpse, "engine", engine);
   
   /* NULL for no fallback font.  */
   kpathsea_init_prog (kpse, uppercasify (kpse->program_name), dpi, mode, NULL);
   
   /* Have to do this after setting the program name.  */
   if (user_format_string) {  
-      user_format = find_format (kpse, user_format_string, false);
+    user_format = find_format (kpse, user_format_string, false);
     if (user_format == kpse_last_format) {
       WARNING1 ("kpsewhich: Ignoring unknown file type `%s'",
                 user_format_string);
     }
   }
   
+  
+  /* Perform actions.  */
+  
   /* Variable expansion.  */
   if (var_to_expand)
-      puts (kpathsea_var_expand (kpse, var_to_expand));
+    puts (kpathsea_var_expand (kpse, var_to_expand));
 
   /* Brace expansion. */
   if (braces_to_expand)
@@ -553,7 +560,7 @@ main (int argc,  string *argv)
     const_string value = kpathsea_var_value (kpse, var_to_value);
     if (!value) {
       unfound++;
-      value="";
+      value = "";
     }
     puts (value);
   }
@@ -565,17 +572,18 @@ main (int argc,  string *argv)
   }
   
   for (; optind < argc; optind++) {
-      unfound += lookup (kpse, argv[optind]);
+    unfound += lookup (kpse, argv[optind]);
   }
 
   if (interactive) {
     for (;;) {
       string name = read_line (stdin);
-      if (!name || STREQ (name, "q") || STREQ (name, "quit")) break;
+      if (!name || STREQ (name, "q") || STREQ (name, "quit"))
+        break;
       unfound += lookup (kpse, name);
       free (name);
     }
   }
-  kpathsea_finish(kpse);
+  kpathsea_finish (kpse);
   return unfound > 255 ? 1 : unfound;
 }
