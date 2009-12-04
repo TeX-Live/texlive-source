@@ -1,0 +1,327 @@
+
+--[===================================================================[--
+
+
+  Script and program wrappers in TeX Live on Windows
+  
+  License
+  
+    Public Domain
+    
+    Originally written 2009 by Tomasz M. Trzeciak.
+    
+    Prior work:
+    'tl-w32-wrapper.texlua' by Reinhard Kotucha and Norbert Preining.
+    'tl-w32-wrapper.cmd' by Tomasz M. Trzeciak.
+  
+  Rationale
+  
+    Wrappers enable to use scripts on Windows as regular programs. 
+    They are also required for some binary programs to set-up the 
+    right environment for them. 
+    
+    Batch scripts can be used as wrappers but they are not as universal 
+    as binaries (there are some odd cases where they don't work) and 
+    it is hard to make them robust and secure. Compiled binary wrappers 
+    don't suffer from these problems but they are harder to write, debug
+    and maintain compared to scritps. For these reasons a hybrid 
+    approach was adopted that offers the best of both worlds - a binary 
+    stub combined with a wrapper script.
+  
+  Structure of the wrapper
+  
+    Wrappers consist of small binary stubs and a common texlua script. 
+    The binary stubs are all the same, just different names (but CLI 
+    and GUI stubs differ, see below, and GUI wrappers are actually all 
+    different due to different embedded icons).
+    
+    The job of the binary stub is twofold: (a) call the texlua wrapper
+    script 'runscript.tlu' from the same directory and (b) pass to it 
+    argv[0] and the unparsed argument string as the last two arguments 
+    (after adding a sentinel argument, which ends with a new line 
+    character). Arbitrary C strings can be passed, because the script 
+    is executed by linking with luatex.dll and calling its lua 
+    interpreter directly rather than by spawning a new process.
+    
+    There are two variants of the binary stub: one for CLI programs 
+    and another one for GUI programs. The GUI variant does not open 
+    a console window nor does it block the command promt if started 
+    from there. It also uses a dialog to display an error message in 
+    addition to stderr output.
+    
+    The CLI stub is further split into a common DLL and an EXE proxy 
+    to it. This is for maintenance reasons - upgrades can be done by 
+    replacement of a single DLL rather than all binary stubs (the 
+    number of GUI stubs is much smaller, so this is much less of
+    a problem).
+    
+    The wrapper script knows, which variant has been used to invoke it 
+    based on the sentinel argument. The lack of this argument means 
+    that it was invoked in a standard way. 
+    
+    All the hard work of locating a script/program to execute happens 
+    in this wrapper script. Once located, the script or program is 
+    always executed directly by spawning its interpreter or binary in 
+    a new process. The system shell (cmd.exe) is never called except 
+    for batch scripts, where it happens to be their interpreter. If the 
+    located script happens to be a (tex)lua script, for increased 
+    performance it is converted to a function with Lua's loadfile and 
+    called without spawning a new process.
+ 
+--]===================================================================]--
+
+-- quotes string with spaces
+local function _q(str)
+  if str then 
+    str = string.gsub(str, '"', '') -- disallow embedded double quotes
+    if string.find(str, "%s") then
+      return  '"'..str..'"' 
+    else 
+      return str 
+    end
+  else
+    return str 
+  end
+end
+
+-- checks if path is absolute (but not if it actually exists)
+local function is_abs_path(fpath)
+  if string.find(fpath, '^[/\\]') or string.find(fpath, '^[a-zA-Z]:[/\\]') then
+    return true
+  else
+    return false
+  end
+end
+
+-- prepends directories to path if they are not already there
+local function prepend_path(path, ...)
+  if (string.sub(path, -1) ~= ';') then path = path..';' end
+  for k = 1, select('#', ...) do 
+    local dir = string.gsub(select(k, ...), '/', '\\')..';'
+    if not string.find(path, dir, 1, true) then path = dir..path end
+  end
+  return path
+end
+
+-- searches the PATH variable for a file
+local function search_path(fname, PATH, PATHEXT)
+  if is_abs_path(fname) then return fname end
+  PATH = PATH or os.getenv('PATH')
+  PATHEXT = PATHEXT or '.'
+  for dir in string.gmatch(PATH, '[^;]+') do
+    for ext in string.gmatch(PATHEXT, '[^;]+') do
+      local dirsep = (string.find(dir, '\\') and '\\' or '/')
+      local e = ((ext == '.') and '' or ext)
+      local f = dir..dirsep..fname..e
+      if lfs.isfile(f) then return f, e end
+    end
+  end
+  return nil, "file not found: "..fname
+end
+
+-- locates texmfscript to execute
+local function find_texmfscript(progname, ext_list)
+  for ext in string.gmatch(ext_list, '[^;]+') do
+    local progfullname = kpse.find_file(progname..ext, 'texmfscripts')
+    if progfullname then return progfullname, ext end
+  end
+  return nil, "no appropriate script or program found: "..progname
+end
+
+-- converts the #! line to arg table 
+-- used for scripts w/o extension
+-- only the two most common cases are considered:
+-- #! /path/to/command [options]
+-- #! /usr/bin/env command [options]
+-- ([options] after the command are retained as well)
+local function shebang_to_argv(progfullname)
+  local fid, errmsg = io.open(progfullname, 'r')
+  if not fid then return nil, errmsg end
+  local fstln = fid:read('*line')
+  fid:close()
+  if (string.sub(fstln, 1, 2) ~= '#!') then
+    return nil, "don't know how to execute script: "..progfullname
+  end
+  local argv = string.explode( string.sub(fstln, 3) ) -- split on spaces
+  argv[1] = string.match(argv[1], '[^/]+$')
+  if (argv[1] == 'env') then table.remove(argv, 1) end
+  return argv
+end
+
+-- checks if command exist on the path and return it
+local function check_command(cmd, PATH)
+  local cmdext = cmd..(string.find(cmd, '%.[^\\/.]*$') and '' or '.exe')
+  local fullcmd = is_abs_path(cmdext) and lfs.isfile(cmdext) and 
+                  cmdext or search_path(cmdext, PATH)
+  if fullcmd then 
+    return fullcmd
+  else
+    return nil, 'program not found (not part of TeX Live): '..cmd
+  end
+end
+
+--  localize the assert function (it will be replaced in gui mode)
+local assert = assert 
+local guimode = false
+local argline = ''
+-- check for the sentinel argment coming from the .exe stub 
+if arg[#arg-2] and ( string.sub(arg[#arg-2], -1) == '\n' ) then
+  -- argv[0] and unparsed argument line are passed 
+  -- from the .exe stub as the two last arguments 
+  -- pop them up from the arg table
+  argline = table.remove(arg) -- pop unparsed arguments
+  arg[0] = table.remove(arg) -- pop C stub's argv[0]
+  guimode = (table.remove(arg) == 'GUI_MODE\n') -- pop sentinel argument
+  if guimode then
+    -- replace the assert function, if we are running w/o console window
+    function assert(...)
+      if select(1, ...) then return ... end
+      local error_msg = select(2, ...)
+      if type(error_msg) ~= 'string' then 
+        error_msg = "assertion failed!" 
+      end
+      -- store the error message in an env var and throw an error 
+      -- it will be catched on the C side at exit and displayed 
+      -- in a message box
+      os.setenv('RUNSCRIPT_ERROR_MESSAGE', error_msg)
+      error(error_msg, 2)
+    end
+  end
+elseif (string.lower(string.match(arg[0], '[^\\/]+$')) == 'runscript.tlu') then
+  -- we are called directly as: texlua runscript.tlu progname ...
+  arg[0] = arg[1]
+  table.remove(arg, 1)
+  for k = 1, #arg do argline = argline..' '.._q(arg[k]) end
+end
+
+-- program name
+local progname = string.match(arg[0], '[^\\/]+$')
+progname = string.gsub(progname, '%.[^.]*$', '') -- remove extension
+local progext = string.match(arg[0], '%.[^\\/.]*$') or ''
+-- kpathsea 
+local lua_binary = 'texlua'
+for k = -1, -1024*1024 do 
+  if not arg[k] then break end
+  lua_binary = arg[k]
+end
+kpse.set_program_name(lua_binary, progname)
+-- vars
+local TEXDIR = kpse.var_value('SELFAUTOPARENT')
+local BINDIR = kpse.var_value('SELFAUTOLOC')
+local PATH = os.getenv('PATH') or ''
+-- perl stuff
+local script_for_tlperl = {
+  ['updmap-sys'] = true, 
+  updmap = true, 
+}
+local PERLEXE = search_path('perl.exe', PATH)
+if not PERLEXE or guimode or script_for_tlperl[progname] then 
+  PERLEXE = TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
+  os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')--[[
+  local PERL5SHELL = os.getenv('COMSPEC')
+  PERL5SHELL = string.gsub(PERL5SHELL, '\\', '\\\\') 
+  PERL5SHELL = string.gsub(PERL5SHELL, ' ', '\\ ') 
+  os.setenv('PERL5SHELL', PERL5SHELL..' /x /c')--]]
+  PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlperl/bin')
+end
+-- gs stuff
+os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts')
+os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
+-- path
+PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlgs/bin', BINDIR)
+os.setenv('PATH', PATH);
+
+local alias_table = {
+  --['fmtutil-sys'] = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil-sys', argline},
+  ['updmap-sys'] = 
+    function ()
+      os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
+      os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
+      return {[0]=PERLEXE, 'perl', 
+      _q(TEXDIR..'/texmf/scripts/tetex/updmap.pl'), argline}
+    end,
+  asy = 
+    function ()
+      -- TODO: check if ASYMPTOTE_GS requires quoting of names with spaces
+      --os.setenv('ASYMPTOTE_GS', _q(TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'))
+      os.setenv('ASYMPTOTE_GS', 'gswin32c.exe')
+      os.setenv('CYGWIN', 'nodosfilewarning')
+      return {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy', argline}
+    end,--[[
+  dvigif = {[0]=BINDIR..'/dvipng.exe', 'dvigif', argline},
+  dviout = 
+    function ()
+      return {[0]=assert(check_command('wscript', PATH)), 
+        'wscript', _q(BINDIR..'/dviout.vbs'), argline}
+    end
+  psv = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
+    '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
+    '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'), '-sINPUT='..argline},--]]
+  rpdfcrop = {PERLEXE, 'perl', 
+    _q(TEXDIR..'/texmf-dist/scripts/pdfcrop/pdfcrop.pl'), 
+    '--restricted', argline},
+  runscript = -- prevent recursive calls to this script
+    function ()
+      assert(nil, "oops! wrapping the wrapper?")
+    end,
+  sam2p = {[0]=TEXDIR..'/tlpkg/sam2p/sam2p.exe', 'sam2p', argline},--[[
+  texworks = 
+    function ()
+      -- TODO: add to texmf/web2c/texmf.cnf
+      -- TW_INIPATH = $TEXMFCONFIG/texworks
+      -- TW_LIBPATH = $TW_INIPATH
+      local TW_INIPATH = kpse.var_value('TW_INIPATH') or 
+                         kpse.var_value('TEXMFCONFIG')..'/texworks'
+      os.setenv('TW_INIPATH', TW_INIPATH)
+      os.setenv('TW_LIBPATH', kpse.var_value('TW_LIBPATH') or TW_INIPATH)
+      if (TW_INIPATH and lfs.attributes(TW_INIPATH, 'mode') ~= 'directory') then
+        assert(lfs.mkdir(TW_INIPATH))
+      end
+      return {[0]=TEXDIR..'/tlpkg/texworks/texworks.exe', 'texworks', argline}
+    end,--]]
+}
+
+local extension_map = { -- map script extension to command
+  ['.bat'] = {'cmd', '/c', 'call'},
+  ['.cmd'] = {'cmd', '/c', 'call'},
+  ['.jar'] = {'java', '-jar'},
+  ['.js']  = {guimode and 'wscript' or 'cscript', '-nologo'},
+  ['.pl']  = {guimode and 'wperl' or 'perl'},
+  ['.py']  = {'python'},
+  ['.rb']  = {'ruby'},
+  ['.vbs'] = {guimode and 'wscript' or 'cscript', '-nologo'},
+}
+
+local program = alias_table[progname]
+if program then -- special case (alias)
+  if (type(program) == 'function') then 
+    program = program() 
+  end
+else -- general case (no alias)
+  local progfullname, ext = search_path(progname, PATH, ".tlu;.bat;.cmd")
+  if not progfullname then
+    progfullname, ext = assert(find_texmfscript(progname, 
+      ".tlu;.texlua;.lua;.pl;.rb;.py;.jar;.bat;.cmd;.vbs;.js;."))
+  end
+  if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then
+    -- lua script
+    arg[0] = progfullname
+    program = progfullname
+  else
+    program = (ext ~= '') and extension_map[ext] or 
+              assert(shebang_to_argv(progfullname)) 
+    table.insert(program, _q(progfullname))
+    table.insert(program, argline)
+    program[0] = program[0] or assert(check_command(program[1], PATH))
+  end
+end
+
+local atype = type(program)
+if (atype == 'table') then
+  os.exit(assert(os.spawn(program)))
+elseif (atype == 'string') then
+  program = assert(loadfile(program))
+  program() 
+else
+  assert(nil, "unexpected argument type: "..atype)
+end
