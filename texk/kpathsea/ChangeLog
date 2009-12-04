@@ -1,3 +1,8 @@
+2009-12-04  Karl Berry  <karl@tug.org>
+
+	* tex-file.c (kpathsea_name_ok): not_ok if /..foobar.
+	Report/patches from Alexander and Akira.
+
 2009-12-03  Karl Berry  <karl@tug.org>
 
 	* absolute.c, * absolute.h, * cnf.c, * db.c, * dir.c, * elt-dirs.c,
