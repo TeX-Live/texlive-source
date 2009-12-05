@@ -1,5 +1,5 @@
-This is kpathsea.info, produced by makeinfo version 4.13 from
-kpathsea.texi.
+This is ../../../../texk/kpathsea/doc/kpathsea.info, produced by
+makeinfo version 4.13 from ../../../../texk/kpathsea/doc/kpathsea.texi.
 
 This file documents the Kpathsea library for path searching.
 
@@ -2739,12 +2739,12 @@ filename, and returns the first file found.
      After processing the command line, read additional filenames to
      look up from standard input.
 
-`-mktex=FILETYPE'
-`-no-mktex=FILETYPE'
-     Turn on or off the `mktex' script associated with FILETYPE.  The
-     only values that make sense for FILETYPE are `pk', `mf', `tex',
-     and `tfm'. By default, all are off in Kpsewhich.  *Note mktex
-     scripts::.
+`--mktex=FILETYPE'
+`--no-mktex=FILETYPE'
+     Turn on or off the `mktex' script associated with FILETYPE.  Usual
+     values for FILETYPE are `pk', `mf', `tex', and `tfm'.  By default,
+     all are off in Kpsewhich, even if they are enabled for TeX.  This
+     option implies setting `--must-exist'.  *Note mktex scripts::.
 
 `--mode=STRING'
      Set the mode name to STRING; this also only affects `gf' and `pk'
@@ -2753,8 +2753,8 @@ filename, and returns the first file found.
 
 `--must-exist'
      Do everything possible to find the files, notably including
-     searching the disk.  By default, only the `ls-R' database is
-     checked, in the interest of efficiency.
+     searching the disk and running the `mktex' scripts.  By default,
+     only the `ls-R' database is checked, in the interest of efficiency.
 
 `--path=STRING'
      Search along the path STRING (colon-separated as usual), instead
@@ -3723,10 +3723,14 @@ Index
 * --help:                                Standard options.    (line   8)
 * --interactive:                         Path searching options.
                                                               (line 110)
+* --mktex=FILETYPE:                      Path searching options.
+                                                              (line 115)
 * --mode=STRING:                         Path searching options.
                                                               (line 121)
 * --must-exist:                          Path searching options.
                                                               (line 126)
+* --no-mktex=FILETYPE:                   Path searching options.
+                                                              (line 115)
 * --path=STRING:                         Path searching options.
                                                               (line 131)
 * --progname=NAME:                       Path searching options.
@@ -3755,10 +3759,6 @@ Index
 * -dynamic:                              ShellWidgetClass.    (line  43)
 * -g, compiling without:                 configure scenarios. (line  32)
 * -L option to ls:                       ls-R.                (line  38)
-* -mktex=FILETYPE:                       Path searching options.
-                                                              (line 115)
-* -no-mktex=FILETYPE:                    Path searching options.
-                                                              (line 115)
 * -O, compiling with:                    configure scenarios. (line  32)
 * -static:                               ShellWidgetClass.    (line  43)
 * . directories, ignored:                ls-R.                (line  33)
@@ -4834,86 +4834,86 @@ Index
 
 
 Tag Table:
-Node: Top1549
-Node: Introduction2192
-Node: History4014
-Node: Installation8106
-Node: Simple installation8896
-Node: Custom installation12479
-Node: Disk space13653
-Node: Kpathsea application distributions14537
-Node: Changing search paths15652
-Node: Default path features16834
-Node: Default path generation18970
-Node: Running configure20413
-Node: configure shells21464
-Node: configure options22516
-Node: configure environment24023
-Node: configure scenarios25825
-Node: Shared library27411
-Node: Running make28425
-Node: Installing files30472
-Node: Cleaning up32419
-Node: Filename database generation33467
-Node: mktex scripts34034
-Node: mktex configuration35311
-Node: mktex script names41130
-Node: mktex script arguments42521
-Node: Installation testing43411
-Node: Security43775
-Node: TeX directory structure46342
-Node: unixtex.ftp50764
-Node: Electronic distribution52774
-Node: CD-ROM distribution55539
-Node: Other TeX packages56354
-Node: Reporting bugs57650
-Node: Bug checklist58385
-Node: Mailing lists62082
-Node: Debugging63291
-Node: Logging68369
-Node: Common problems70239
-Node: Unable to find files71070
-Node: Slow path searching73481
-Node: Unable to generate fonts74858
-Node: TeX or Metafont failing77367
-Node: Empty Makefiles79246
-Node: XtStrings80476
-Node: dlopen81312
-Node: ShellWidgetClass82130
-Node: Pointer combination warnings83762
-Node: Path searching84151
-Node: Searching overview84798
-Node: Path sources88194
-Node: Config files89265
-Node: Path expansion92910
-Node: Default expansion93859
-Node: Variable expansion95929
-Node: Tilde expansion97332
-Node: Brace expansion98312
-Node: KPSE_DOT expansion99417
-Node: Subdirectory expansion99930
-Node: Filename database102281
-Node: ls-R103335
-Node: Filename aliases106229
-Node: Database format107407
-Node: Invoking kpsewhich108420
-Node: Path searching options109365
-Node: Specially-recognized files116640
-Node: Auxiliary tasks117996
-Node: Standard options119821
-Node: TeX support120141
-Node: Supported file formats121432
-Node: File lookup128948
-Node: Glyph lookup130680
-Node: Basic glyph lookup131804
-Node: Fontmap132683
-Node: Fallback font135300
-Node: Suppressing warnings136213
-Node: Programming137318
-Node: Programming overview137831
-Node: Calling sequence140525
-Node: Program-specific files147048
-Node: Programming with config files148090
-Node: Index149402
+Node: Top1609
+Node: Introduction2252
+Node: History4074
+Node: Installation8166
+Node: Simple installation8956
+Node: Custom installation12539
+Node: Disk space13713
+Node: Kpathsea application distributions14597
+Node: Changing search paths15712
+Node: Default path features16894
+Node: Default path generation19030
+Node: Running configure20473
+Node: configure shells21524
+Node: configure options22576
+Node: configure environment24083
+Node: configure scenarios25885
+Node: Shared library27471
+Node: Running make28485
+Node: Installing files30532
+Node: Cleaning up32479
+Node: Filename database generation33527
+Node: mktex scripts34094
+Node: mktex configuration35371
+Node: mktex script names41190
+Node: mktex script arguments42581
+Node: Installation testing43471
+Node: Security43835
+Node: TeX directory structure46402
+Node: unixtex.ftp50824
+Node: Electronic distribution52834
+Node: CD-ROM distribution55599
+Node: Other TeX packages56414
+Node: Reporting bugs57710
+Node: Bug checklist58445
+Node: Mailing lists62142
+Node: Debugging63351
+Node: Logging68429
+Node: Common problems70299
+Node: Unable to find files71130
+Node: Slow path searching73541
+Node: Unable to generate fonts74918
+Node: TeX or Metafont failing77427
+Node: Empty Makefiles79306
+Node: XtStrings80536
+Node: dlopen81372
+Node: ShellWidgetClass82190
+Node: Pointer combination warnings83822
+Node: Path searching84211
+Node: Searching overview84858
+Node: Path sources88254
+Node: Config files89325
+Node: Path expansion92970
+Node: Default expansion93919
+Node: Variable expansion95989
+Node: Tilde expansion97392
+Node: Brace expansion98372
+Node: KPSE_DOT expansion99477
+Node: Subdirectory expansion99990
+Node: Filename database102341
+Node: ls-R103395
+Node: Filename aliases106289
+Node: Database format107467
+Node: Invoking kpsewhich108480
+Node: Path searching options109425
+Node: Specially-recognized files116795
+Node: Auxiliary tasks118151
+Node: Standard options119976
+Node: TeX support120296
+Node: Supported file formats121587
+Node: File lookup129103
+Node: Glyph lookup130835
+Node: Basic glyph lookup131959
+Node: Fontmap132838
+Node: Fallback font135455
+Node: Suppressing warnings136368
+Node: Programming137473
+Node: Programming overview137986
+Node: Calling sequence140680
+Node: Program-specific files147203
+Node: Programming with config files148245
+Node: Index149557
 
 End Tag Table

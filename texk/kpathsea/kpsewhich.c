@@ -54,7 +54,7 @@ string user_path;
 /* Interactively ask for names to look up?  (-interactive) */
 boolean interactive = false;
 
-/* Search the disk as well as ls-R?  (-must-exist) */
+/* Search the disk as well as ls-R?  (-must-exist, -mktex) */
 boolean must_exist = false;
 
 /* Return all matches, not just the first one?  (-all) */
@@ -450,12 +450,14 @@ read_command_line (kpathsea kpse, int argc,  string *argv)
 
     } else if (ARGUMENT_IS ("mktex")) {
       kpathsea_maketex_option (kpse, optarg, true);
+      must_exist = 1;  /* otherwise it never gets called */
 
     } else if (ARGUMENT_IS ("mode")) {
       mode = optarg;
 
     } else if (ARGUMENT_IS ("no-mktex")) {
       kpathsea_maketex_option (kpse, optarg, false);
+      must_exist = 0;
 
     } else if (ARGUMENT_IS ("path")) {
       user_path = optarg;

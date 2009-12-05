@@ -1178,14 +1178,15 @@ This option and @samp{--path} are mutually exclusive.
 After processing the command line, read additional filenames to look up
 from standard input.
 
-@item -mktex=@var{filetype}
-@itemx -no-mktex=@var{filetype}
-@opindex -mktex=@var{filetype}
-@opindex -no-mktex=@var{filetype}
+@item --mktex=@var{filetype}
+@itemx --no-mktex=@var{filetype}
+@opindex --mktex=@var{filetype}
+@opindex --no-mktex=@var{filetype}
 Turn on or off the @samp{mktex} script associated with @var{filetype}.
-The only values that make sense for @var{filetype} are @samp{pk},
-@samp{mf}, @samp{tex}, and @samp{tfm}. By default, all are off in
-Kpsewhich.  @xref{mktex scripts}.
+Usual values for @var{filetype} are @samp{pk}, @samp{mf}, @samp{tex},
+and @samp{tfm}.  By default, all are off in Kpsewhich, even if they
+are enabled for @TeX{}.  This option implies setting
+@code{--must-exist}.  @xref{mktex scripts}.
 
 @item --mode=@var{string}
 @opindex --mode=@var{string}
@@ -1196,8 +1197,8 @@ script arguments}.
 @item --must-exist
 @opindex --must-exist
 Do everything possible to find the files, notably including searching
-the disk.  By default, only the @file{ls-R} database is checked, in the
-interest of efficiency.
+the disk and running the @samp{mktex} scripts.  By default, only the
+@file{ls-R} database is checked, in the interest of efficiency.
 
 @item --path=@var{string}
 @opindex --path=@var{string}
