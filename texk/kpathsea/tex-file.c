@@ -385,7 +385,7 @@ init_maketex (kpathsea kpse, kpse_file_format_type fmt,
   kpse_format_info_type *f = &(kpse->format_info[fmt]);
   const_string prog = f->program ? f->program : dflt_prog; /* mktexpk */
   string PROG = uppercasify (prog);                  /* MKTEXPK */
-  string progval = kpathsea_var_value (kpse, PROG);  /* ENV/cnf{"MKTEXPK"} */
+  string progval = kpathsea_var_value (kpse, PROG);  /* $ENV/cnf{"MKTEXPK"} */
   const_string arg;
   va_list ap;
 

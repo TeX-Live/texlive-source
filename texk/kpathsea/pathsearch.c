@@ -51,7 +51,7 @@ static void
 log_search (kpathsea kpse, str_list_type filenames)
 {
   
-  if (kpse->log_opened==false) {
+  if (kpse->log_opened == false) {
     /* Get name from either envvar or config file.  */
       string log_name = kpathsea_var_value (kpse, "TEXMFLOG");
     kpse->log_opened = true;
@@ -368,7 +368,7 @@ search (kpathsea kpse, const_string path,  const_string original_name,
 
   /* The very first search is for texmf.cnf.  We can't log that, since
      we want to allow setting TEXMFLOG in texmf.cnf.  */
-  if (kpse->followup_search==false) {
+  if (kpse->followup_search == false) {
     kpse->followup_search = true;
   } else {
     /* Record the filenames we found, if desired.  And wrap them in a
@@ -442,16 +442,15 @@ search_list (kpathsea kpse, const_string path,  const_string* names,
 
   /* First catch any absolute or explicit relative names. */
   for (namep = names; *namep; namep++) {
-      if (kpathsea_absolute_p(kpse, *namep, true)) {
-          if (kpathsea_readable_file(kpse, *namep)) {
-          str_list_add(&ret_list, xstrdup(*namep));
-          /* I know, I know... */
-          if (!all)
-              goto out;
-          }
-      } else {
-          all_absolute = false;
+    if (kpathsea_absolute_p (kpse, *namep, true)) {
+      if (kpathsea_readable_file (kpse, *namep)) {
+        str_list_add (&ret_list, xstrdup(*namep));
+        if (!all)
+          goto out;
       }
+    } else {
+      all_absolute = false;
+    }
   }
   /* Shortcut: if we were only given absolute/explicit relative names,
      we can skip the rest.  Typically, if one name is absolute, they
@@ -515,7 +514,7 @@ search_list (kpathsea kpse, const_string path,  const_string* names,
       || (all && STR_LIST_LAST_ELT (ret_list) != NULL))
     str_list_add (&ret_list, NULL);
 
-  if (kpse->followup_search==false) {
+  if (kpse->followup_search == false) {
     kpse->followup_search = true;
   } else {
     /* Record the filenames we found, if desired.  And wrap them in a
