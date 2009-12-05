@@ -1,3 +1,10 @@
+2009-12-05  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (init_more): split out lengthier initializations
+	to own fn.  Initialize all mktex programs to false, so that
+        cnf/env settings such as MKTEXPK=1 don't apply to kpsewhich.
+        Suggested by Daniel Luecking, 16 Nov 2009 11:58:00.
+
 2009-12-04  Karl Berry  <karl@tug.org>
 
 	* tex-file.c (kpathsea_name_ok): not_ok if /..foobar.

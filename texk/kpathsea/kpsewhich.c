@@ -257,7 +257,7 @@ lookup (kpathsea kpse, string name)
     
   } else {
     /* No user-specified search path, check user format or guess from NAME.  */
-      kpse_file_format_type fmt = find_format (kpse, name, true);
+    kpse_file_format_type fmt = find_format (kpse, name, true);
 
     switch (fmt) {
       case kpse_pk_format:
@@ -499,24 +499,29 @@ There is NO WARRANTY, to the extent permitted by law.\n");
     exit (1);
   }
 }
+
+
 
-int
-main (int argc,  string *argv)
+/* Initializations that may depend on the options.  */
+
+static void
+init_more (kpathsea kpse)
 {
-  unsigned unfound = 0;
-  kpathsea kpse = kpathsea_new();
-  
-  /* Read options.  */
-  read_command_line (kpse, argc, argv);
-
-
-  /* Initializations that may depend on the options.  */
-  /* kpathsea_maketex_option (kpse, "pk", false); */
-  kpathsea_set_program_name (kpse, argv[0], progname);
-
   if (engine)
     kpathsea_xputenv (kpse, "engine", engine);
   
+  /* Disable all mktex programs unless they were explicitly enabled on our
+     command line.  */
+#define DISABLE_MKTEX(fmt) \
+kpathsea_set_program_enabled (kpse, fmt, false, kpse_src_cmdline - 1)
+  DISABLE_MKTEX (kpse_pk_format);
+  DISABLE_MKTEX (kpse_mf_format);
+  DISABLE_MKTEX (kpse_tex_format);
+  DISABLE_MKTEX (kpse_tfm_format);
+  DISABLE_MKTEX (kpse_fmt_format);
+  DISABLE_MKTEX (kpse_ofm_format);
+  DISABLE_MKTEX (kpse_ocp_format);
+
   /* NULL for no fallback font.  */
   kpathsea_init_prog (kpse, uppercasify (kpse->program_name), dpi, mode, NULL);
   
@@ -528,8 +533,23 @@ main (int argc,  string *argv)
                 user_format_string);
     }
   }
+}
+
+
+
+int
+main (int argc,  string *argv)
+{
+  unsigned unfound = 0;
+  kpathsea kpse = kpathsea_new();
   
+  /* Read options, then dependent initializations.  */
+  read_command_line (kpse, argc, argv);
+
+  kpathsea_set_program_name (kpse, argv[0], progname);
+  init_more (kpse);
   
+
   /* Perform actions.  */
   
   /* Variable expansion.  */
@@ -571,6 +591,7 @@ main (int argc,  string *argv)
     show_all = 1;
   }
   
+  /* Usual case: look up each given filename.  */
   for (; optind < argc; optind++) {
     unfound += lookup (kpse, argv[optind]);
   }
@@ -584,6 +605,7 @@ main (int argc,  string *argv)
       free (name);
     }
   }
+
   kpathsea_finish (kpse);
   return unfound > 255 ? 1 : unfound;
 }
