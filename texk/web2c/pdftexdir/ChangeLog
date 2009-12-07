@@ -1,3 +1,7 @@
+2009-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.c: Drop #ifdef HAVE_ASPRINTF and #include <stdio.h>.
+
 2009-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* NEWS, README: Update to version 3.1415926-1.40.10.

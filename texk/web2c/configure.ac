@@ -222,8 +222,8 @@ dnl
 AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([long])
 AC_SEARCH_LIBS([pow], [m])
-AC_CHECK_FUNCS([access atoi strerror gettimeofday ftime])
-AC_CHECK_HEADERS([errno.h langinfo.h sys/timeb.h sys/wait.h time.h])
+AC_CHECK_FUNCS([access atoi fmax setlocale strerror strlcat strlcpy gettimeofday ftime])
+AC_CHECK_HEADERS([errno.h langinfo.h locale.h sys/time.h sys/timeb.h sys/wait.h time.h])
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT
 

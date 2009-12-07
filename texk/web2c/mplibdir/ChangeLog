@@ -1,3 +1,12 @@
+2009-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mpxout.w: Convert CRLF to native line endings.
+
+	* mpost.w, mpxout.w: Use HAVE_STRUCT_STAT_ST_MTIM as define by
+	configure instead of (the undefined) HAVE_ST_MTIM.
+	* mp.w (mp_do_snprintf): Declare and define only when used.
+	FIXME: Should unconditionally assume snprintf() exists.
+
 2009-10-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libmplib.am, am/mplib.am: Enable compiler warnings.

@@ -1,3 +1,8 @@
+2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex.c: Remove extern declaration of gettexstring(),
+	now in ../web2c/coerce.h.
+
 2009-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	synctex-e-mem.ch0 (just_reverse): Drop unused label found.

@@ -242,7 +242,6 @@ void initversionstring(char **versions)
 }
 
 
-extern char*	gettexstring(integer strNumber);
 void
 setinputfileencoding(UFILE* f, integer mode, integer encodingData)
 {

@@ -1,3 +1,8 @@
+2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeX_ext.c: Remove extern declaration of gettexstring(),
+	now in ../web2c/coerce.h.
+
 2009-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeX_ext.c, XeTeX_mac.c: #include <teckit/TECkit_Engine.h>

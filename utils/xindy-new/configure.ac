@@ -72,6 +72,30 @@ if test "x$CLISP" = xno; then
   AC_MSG_ERROR([CLISP is required to build and run xindy])
 fi
 
+if test "x$EXEEXT" = x.exe; then
+  XINDY_RUN=xindy-lisp.exe
+  LISP_RUN=lisp.exe
+else
+  XINDY_RUN=xindy.run
+  LISP_RUN=lisp.run
+fi
+
+if test "x$with_clisp_runtime" != xsystem; then
+  AC_MSG_CHECKING([for clisp runtime])
+  if test "x$with_clisp_runtime" = xdefault; then
+    LISP_RUN="`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`base/$LISP_RUN"
+  else
+    LISP_RUN=$with_clisp_runtime
+  fi
+  AC_MSG_RESULT([$LISP_RUN])
+  if test ! -f "$LISP_RUN"; then
+    AC_MSG_ERROR([no such file: "$LISP_RUN"])
+  fi
+fi
+
+AC_SUBST([XINDY_RUN])
+AC_SUBST([LISP_RUN])
+
 if test "x$enable_xindy_rules:$PERL" = xyes:no; then
   AC_MSG_ERROR([PERL is required to build xindy rules])
 fi
@@ -102,8 +126,9 @@ AC_CHECK_FUNCS([strrchr strtoul])
 echo timestamp >config.force
 fi
 
-AM_CONDITIONAL([BUILDRULES], test "x$enable_xindy_rules" = xyes)
-AM_CONDITIONAL([BUILDDOCS], test "x$enable_xindy_docs" = xyes)
+AM_CONDITIONAL([CLISP_RUNTIME], [test "x$with_clisp_runtime" != xsystem])
+AM_CONDITIONAL([BUILDRULES], [test "x$enable_xindy_rules" = xyes])
+AM_CONDITIONAL([BUILDDOCS], [test "x$enable_xindy_docs" = xyes])
 
 AC_CONFIG_FILES([Makefile \
 		xindy/Makefile \
@@ -121,6 +146,8 @@ AC_CONFIG_FILES([Makefile \
 		xindy/user-commands/Makefile \
 		xindy/make-rules/Makefile \
 		xindy/make-rules/alphabets/Makefile \
+])m4_ignore([
+])AC_CONFIG_FILES([
 		xindy/make-rules/alphabets/albanian/Makefile \
 		xindy/make-rules/alphabets/belarusian/Makefile \
 		xindy/make-rules/alphabets/bulgarian/Makefile \
@@ -166,6 +193,7 @@ AC_CONFIG_FILES([Makefile \
 		xindy/make-rules/alphabets/ukrainian/Makefile \
 		xindy/make-rules/alphabets/upper-sorbian/Makefile \
 		xindy/make-rules/alphabets/vietnamese/Makefile \
+])AC_CONFIG_FILES([
 		xindy/make-rules/inputenc/Makefile \
 		xindy/make-rules/styles/Makefile \
 		xindy/doc/Makefile \

@@ -1,3 +1,7 @@
+2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* coerce.h: Declare gettexstring().
+
 2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines: Add new functions kpse{in,out}nameok).

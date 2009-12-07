@@ -64,6 +64,9 @@ extern void paintrow (screenrow, pixelcolor, transspec, screencol);
 extern strnumber makefullnamestring(void);
 
 #ifdef TeX
+#ifndef luaTeX
+extern string gettexstring (strnumber);
+#endif
 /* Prototypes for source-specials functions... */
 extern boolean isnewsource (strnumber, int);
 extern poolpointer makesrcspecial (strnumber, int);

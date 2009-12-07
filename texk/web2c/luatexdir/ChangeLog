@@ -1,3 +1,13 @@
+2009-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdf/pagetree.c, utils/utils.c: Drop #ifdef HAVE_ASPRINTF and
+	#include <stdio.h>.
+
+2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils/synctex.c: Remove (already commented) extern declaration
+	of gettexstring().
+
 2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatex.web: Use kpse_{in,out}_name_ok(), now in Kpathsea,

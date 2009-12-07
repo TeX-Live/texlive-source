@@ -19,9 +19,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "openbsd-compat.h"
-#ifdef HAVE_ASPRINTF            /* asprintf is not defined in openbsd-compat.h, but in stdio.h */
-#  include <stdio.h>
-#endif
+
 #include <sys/types.h>
 #ifdef WIN32
 #define EX_SOFTWARE EXIT_FAILURE

@@ -3923,7 +3923,9 @@ extern @= /*@@only@@*/ @> void *mp_xrealloc (MP mp, void *p, size_t nmem, size_t
 extern @= /*@@only@@*/ @> void *mp_xmalloc (MP mp, size_t nmem, size_t size) ;
 extern @= /*@@only@@*/ @> char *mp_xstrdup(MP mp, const char *s);
 extern @= /*@@only@@*/ @> char *mp_xstrldup(MP mp, const char *s, size_t l);
+#ifndef HAVE_SNPRINTF
 extern void mp_do_snprintf(char *str, int size, const char *fmt, ...);
+#endif
 
 @ The |max_size_test| guards against overflow, on the assumption that
 |size_t| is at least 31bits wide.
@@ -3999,6 +4001,7 @@ char *mp_xstrdup(MP mp, const char *s) {
 @ This internal version is rather stupid, but good enough for its purpose.
 
 @c
+#ifndef HAVE_SNPRINTF
 static char *mp_itoa (int i) {
   char res[32] ;
   unsigned idx = 30;
@@ -4134,6 +4137,7 @@ void mp_do_snprintf (char *str, int size, const char *format, ...) {
   *res = '\0';
   va_end(ap);
 }
+#endif
 
 @ 
 @<Allocate or initialize ...@>=

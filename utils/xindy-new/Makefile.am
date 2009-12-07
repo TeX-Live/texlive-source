@@ -37,3 +37,11 @@ config.force:
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
+bin_PROGRAMS =
+if CLISP_RUNTIME
+install-exec-hook:
+	$(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) "$(LISP_RUN)" "$(DESTDIR)$(bindir)/$(XINDY_RUN)"
+uninstall-hook:
+	rm -f "$(DESTDIR)$(bindir)/$(XINDY_RUN)"
+endif CLISP_RUNTIME
+

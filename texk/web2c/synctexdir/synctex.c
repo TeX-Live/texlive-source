@@ -128,8 +128,6 @@ Latest Revision: Wed Jul  1 08:15:44 UTC 2009
 #       define SYNCTEX_FREE(x) free(x)
 #   endif
 
-EXTERN char *gettexstring(int n);
-
 /*  the macros defined below do the same job than their almost eponym
  *  counterparts of *tex.web, the memory access is sometimes more direct
  *  because *tex.web won't share its own constants the main purpose is to

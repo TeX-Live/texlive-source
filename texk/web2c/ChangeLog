@@ -1,3 +1,13 @@
+2009-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add checks for <locale.h>, fmax(), setlocale(),
+	strlcat(), and strlcpy() for synctex.
+
+2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add check for <sys/time.h>, erroneously omitted
+	in transition to TL2009 build system.
+
 2009-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Add checks for gettimeofday() and ftime(),

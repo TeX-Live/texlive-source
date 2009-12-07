@@ -113,7 +113,6 @@ Tue Jul 1 15:23:00 UTC 2008
 #define namefield name_field
 
 #define gettexstring(a) xstrdup(makecstring(a))
-/*EXTERN char *gettexstring(int n);*/
 
 /*  the macros defined below do the same job than their almost eponym
  *  counterparts of *tex.web, the memory access is sometimes more direct

@@ -565,7 +565,11 @@ BUILDDOCS_FALSE
 BUILDDOCS_TRUE
 BUILDRULES_FALSE
 BUILDRULES_TRUE
+CLISP_RUNTIME_FALSE
+CLISP_RUNTIME_TRUE
 CONVERT_FROM_UTF8
+LISP_RUN
+XINDY_RUN
 PDFLATEX
 LATEX
 PERL
@@ -673,7 +677,7 @@ enable_option_checking
 enable_maintainer_mode
 enable_xindy_rules
 enable_xindy_docs
-with_system_clisp
+with_clisp_runtime
 with_xindy_recode
 enable_dependency_tracking
 enable_compiler_warnings
@@ -1319,7 +1323,9 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-system-clisp     do not install `clisp' for `xindy', use the
+  --with-clisp-runtime=PATH
+                          pathname of clisp runtime to install for `xindy',
+                          `default' to derive from clisp, or `system' to use
                           installed version
   --with-recode           use `recode' instead of `iconv' to build xindy-new
                           [default: no]
@@ -2445,9 +2451,9 @@ if test "${enable_xindy_docs+set}" = set; then :
   enableval=$enable_xindy_docs;
 fi
 
-# Check whether --with-system-clisp was given.
-if test "${with_system_clisp+set}" = set; then :
-  withval=$with_system_clisp;
+# Check whether --with-clisp-runtime was given.
+if test "${with_clisp_runtime+set}" = set; then :
+  withval=$with_clisp_runtime;
 fi
 
 # Check whether --with-xindy-recode was given.
@@ -3962,6 +3968,32 @@ if test "x$CLISP" = xno; then
   as_fn_error "CLISP is required to build and run xindy" "$LINENO" 5
 fi
 
+if test "x$EXEEXT" = x.exe; then
+  XINDY_RUN=xindy-lisp.exe
+  LISP_RUN=lisp.exe
+else
+  XINDY_RUN=xindy.run
+  LISP_RUN=lisp.run
+fi
+
+if test "x$with_clisp_runtime" != xsystem; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for clisp runtime" >&5
+$as_echo_n "checking for clisp runtime... " >&6; }
+  if test "x$with_clisp_runtime" = xdefault; then
+    LISP_RUN="`$CLISP -q -norc -x '(progn (princ *lib-directory*) (values))'`base/$LISP_RUN"
+  else
+    LISP_RUN=$with_clisp_runtime
+  fi
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $LISP_RUN" >&5
+$as_echo "$LISP_RUN" >&6; }
+  if test ! -f "$LISP_RUN"; then
+    as_fn_error "no such file: \"$LISP_RUN\"" "$LINENO" 5
+  fi
+fi
+
+
+
+
 if test "x$enable_xindy_rules:$PERL" = xyes:no; then
   as_fn_error "PERL is required to build xindy rules" "$LINENO" 5
 fi
@@ -4040,6 +4072,14 @@ done
 echo timestamp >config.force
 fi
 
+ if test "x$with_clisp_runtime" != xsystem; then
+  CLISP_RUNTIME_TRUE=
+  CLISP_RUNTIME_FALSE='#'
+else
+  CLISP_RUNTIME_TRUE='#'
+  CLISP_RUNTIME_FALSE=
+fi
+
  if test "x$enable_xindy_rules" = xyes; then
   BUILDRULES_TRUE=
   BUILDRULES_FALSE='#'
@@ -4057,7 +4097,9 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile xindy/Makefile xindy/src/Makefile xindy/tex2xindy/Makefile xindy/modules/Makefile xindy/modules/base/Makefile xindy/modules/class/Makefile xindy/modules/lang/Makefile xindy/modules/lang/german/Makefile xindy/modules/lang/latin/Makefile xindy/modules/ord/Makefile xindy/modules/rules/Makefile xindy/modules/styles/Makefile xindy/user-commands/Makefile xindy/make-rules/Makefile xindy/make-rules/alphabets/Makefile xindy/make-rules/alphabets/albanian/Makefile xindy/make-rules/alphabets/belarusian/Makefile xindy/make-rules/alphabets/bulgarian/Makefile xindy/make-rules/alphabets/croatian/Makefile xindy/make-rules/alphabets/czech/Makefile xindy/make-rules/alphabets/danish/Makefile xindy/make-rules/alphabets/dutch/Makefile xindy/make-rules/alphabets/english/Makefile xindy/make-rules/alphabets/esperanto/Makefile xindy/make-rules/alphabets/estonian/Makefile xindy/make-rules/alphabets/finnish/Makefile xindy/make-rules/alphabets/french/Makefile xindy/make-rules/alphabets/general/Makefile xindy/make-rules/alphabets/georgian/Makefile xindy/make-rules/alphabets/german/Makefile xindy/make-rules/alphabets/greek/Makefile xindy/make-rules/alphabets/gypsy/Makefile xindy/make-rules/alphabets/hausa/Makefile xindy/make-rules/alphabets/hebrew/Makefile xindy/make-rules/alphabets/hungarian/Makefile xindy/make-rules/alphabets/icelandic/Makefile xindy/make-rules/alphabets/italian/Makefile xindy/make-rules/alphabets/klingon/Makefile xindy/make-rules/alphabets/kurdish/Makefile xindy/make-rules/alphabets/latin/Makefile xindy/make-rules/alphabets/latvian/Makefile xindy/make-rules/alphabets/lithuanian/Makefile xindy/make-rules/alphabets/lower-sorbian/Makefile xindy/make-rules/alphabets/macedonian/Makefile xindy/make-rules/alphabets/mongolian/Makefile xindy/make-rules/alphabets/norwegian/Makefile xindy/make-rules/alphabets/polish/Makefile xindy/make-rules/alphabets/portuguese/Makefile xindy/make-rules/alphabets/romanian/Makefile xindy/make-rules/alphabets/russian/Makefile xindy/make-rules/alphabets/serbian/Makefile xindy/make-rules/alphabets/slovak/Makefile xindy/make-rules/alphabets/slovenian/Makefile xindy/make-rules/alphabets/spanish/Makefile xindy/make-rules/alphabets/swedish/Makefile xindy/make-rules/alphabets/test1/Makefile xindy/make-rules/alphabets/turkish/Makefile xindy/make-rules/alphabets/ukrainian/Makefile xindy/make-rules/alphabets/upper-sorbian/Makefile xindy/make-rules/alphabets/vietnamese/Makefile xindy/make-rules/inputenc/Makefile xindy/make-rules/styles/Makefile xindy/doc/Makefile xindy/doc/style-tutorial/Makefile"
+ac_config_files="$ac_config_files Makefile xindy/Makefile xindy/src/Makefile xindy/tex2xindy/Makefile xindy/modules/Makefile xindy/modules/base/Makefile xindy/modules/class/Makefile xindy/modules/lang/Makefile xindy/modules/lang/german/Makefile xindy/modules/lang/latin/Makefile xindy/modules/ord/Makefile xindy/modules/rules/Makefile xindy/modules/styles/Makefile xindy/user-commands/Makefile xindy/make-rules/Makefile xindy/make-rules/alphabets/Makefile"
+ac_config_files="$ac_config_files xindy/make-rules/alphabets/albanian/Makefile xindy/make-rules/alphabets/belarusian/Makefile xindy/make-rules/alphabets/bulgarian/Makefile xindy/make-rules/alphabets/croatian/Makefile xindy/make-rules/alphabets/czech/Makefile xindy/make-rules/alphabets/danish/Makefile xindy/make-rules/alphabets/dutch/Makefile xindy/make-rules/alphabets/english/Makefile xindy/make-rules/alphabets/esperanto/Makefile xindy/make-rules/alphabets/estonian/Makefile xindy/make-rules/alphabets/finnish/Makefile xindy/make-rules/alphabets/french/Makefile xindy/make-rules/alphabets/general/Makefile xindy/make-rules/alphabets/georgian/Makefile xindy/make-rules/alphabets/german/Makefile xindy/make-rules/alphabets/greek/Makefile xindy/make-rules/alphabets/gypsy/Makefile xindy/make-rules/alphabets/hausa/Makefile xindy/make-rules/alphabets/hebrew/Makefile xindy/make-rules/alphabets/hungarian/Makefile xindy/make-rules/alphabets/icelandic/Makefile xindy/make-rules/alphabets/italian/Makefile xindy/make-rules/alphabets/klingon/Makefile xindy/make-rules/alphabets/kurdish/Makefile xindy/make-rules/alphabets/latin/Makefile xindy/make-rules/alphabets/latvian/Makefile xindy/make-rules/alphabets/lithuanian/Makefile xindy/make-rules/alphabets/lower-sorbian/Makefile xindy/make-rules/alphabets/macedonian/Makefile xindy/make-rules/alphabets/mongolian/Makefile xindy/make-rules/alphabets/norwegian/Makefile xindy/make-rules/alphabets/polish/Makefile xindy/make-rules/alphabets/portuguese/Makefile xindy/make-rules/alphabets/romanian/Makefile xindy/make-rules/alphabets/russian/Makefile xindy/make-rules/alphabets/serbian/Makefile xindy/make-rules/alphabets/slovak/Makefile xindy/make-rules/alphabets/slovenian/Makefile xindy/make-rules/alphabets/spanish/Makefile xindy/make-rules/alphabets/swedish/Makefile xindy/make-rules/alphabets/test1/Makefile xindy/make-rules/alphabets/turkish/Makefile xindy/make-rules/alphabets/ukrainian/Makefile xindy/make-rules/alphabets/upper-sorbian/Makefile xindy/make-rules/alphabets/vietnamese/Makefile"
+ac_config_files="$ac_config_files xindy/make-rules/inputenc/Makefile xindy/make-rules/styles/Makefile xindy/doc/Makefile xindy/doc/style-tutorial/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -4215,6 +4257,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error "conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${CLISP_RUNTIME_TRUE}" && test -z "${CLISP_RUNTIME_FALSE}"; then
+  as_fn_error "conditional \"CLISP_RUNTIME\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILDRULES_TRUE}" && test -z "${BUILDRULES_FALSE}"; then

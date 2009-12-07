@@ -294,7 +294,7 @@ static int mpost_run_make_mpx (MP mp, char *mpname, char *mpxname) {
         int nothingtodo = 0;       
         if ((stat(qmpxname, &target_stat) >= 0) &&
             (stat(qmpname, &source_stat) >= 0)) {
-#if HAVE_ST_MTIM
+#if HAVE_STRUCT_STAT_ST_MTIM
           if (source_stat.st_mtim.tv_sec <= target_stat.st_mtim.tv_sec || 
              (source_stat.st_mtim.tv_sec  == target_stat.st_mtim.tv_sec && 
               source_stat.st_mtim.tv_nsec <= target_stat.st_mtim.tv_nsec))
@@ -492,7 +492,7 @@ static char *mpost_find_file(MP mp, const char *fname, const char *fmode, int ft
           printf("statting %s and %s\n", mpname, f);
           if ((stat(f, &target_stat) >= 0) &&
               (stat(mpname, &source_stat) >= 0)) {
-#if HAVE_ST_MTIM
+#if HAVE_STRUCT_STAT_ST_MTIM
             if (source_stat.st_mtim.tv_sec <= target_stat.st_mtim.tv_sec || 
                (source_stat.st_mtim.tv_sec  == target_stat.st_mtim.tv_sec && 
                 source_stat.st_mtim.tv_nsec <= target_stat.st_mtim.tv_nsec))

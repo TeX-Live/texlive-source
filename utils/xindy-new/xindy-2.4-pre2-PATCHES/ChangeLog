@@ -1,3 +1,7 @@
+2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-50-reorg-alphabets (new): Reorganize alphabets.
+
 2009-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported xindy-2.4-pre2 source tree from:

@@ -13,9 +13,10 @@ AC_ARG_ENABLE([xindy-docs],
               AS_HELP_STRING([--enable-xindy-docs],
                              [build and install documentation],
                              kpse_indent_26))[]dnl
-AC_ARG_WITH([system-clisp],
-            AS_HELP_STRING([--with-system-clisp],
-                           [do not install `clisp' for `xindy', use the installed version]))[]dnl
+AC_ARG_WITH([clisp-runtime],
+            AS_HELP_STRING([--with-clisp-runtime=PATH],
+                           [pathname of clisp runtime to install for `xindy', `default' to derive
+                            from clisp, or `system' to use installed version]))[]dnl
 AC_ARG_WITH([xindy-recode],
             AS_HELP_STRING([--with-recode],
                            [use `recode' instead of `iconv' to build xindy-new @<:@default: no@:>@]))[]dnl
