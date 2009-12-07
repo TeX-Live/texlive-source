@@ -1,3 +1,8 @@
+2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/loslibext.c (do_mkdtemp): Declare as static and skip
+	compilation when not used.
+
 2009-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdf/pagetree.c, utils/utils.c: Drop #ifdef HAVE_ASPRINTF and

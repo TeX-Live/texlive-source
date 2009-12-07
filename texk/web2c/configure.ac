@@ -217,12 +217,10 @@ if test `(uname) 2>/dev/null` = aux; then
   AC_CHECK_LIB([posix], [sigemptyset])
 fi
 
-dnl FIXME: luaTeX requires <unistd.h>, access, and atoi
-dnl
 AC_CHECK_SIZEOF([int])
 AC_CHECK_SIZEOF([long])
 AC_SEARCH_LIBS([pow], [m])
-AC_CHECK_FUNCS([access atoi fmax setlocale strerror strlcat strlcpy gettimeofday ftime])
+AC_CHECK_FUNCS([access atoi fmax ftime gettimeofday mkdtemp setlocale snprintf stat64 strerror strlcat strlcpy])
 AC_CHECK_HEADERS([errno.h langinfo.h locale.h sys/time.h sys/timeb.h sys/wait.h time.h])
 AC_TYPE_LONG_DOUBLE
 AC_TYPE_LONG_LONG_INT

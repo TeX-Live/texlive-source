@@ -1,3 +1,8 @@
+2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Add checks for mkdtemp(), snprintf(), and
+	stat64().
+
 2009-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Add checks for <locale.h>, fmax(), setlocale(),
