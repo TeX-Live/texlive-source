@@ -286,10 +286,43 @@ BEGIN {
 # Determine environment. Where is our library directory, and our modules?
 
 use File::Basename;
-our ($cmd_dir, $cmd, $lib_dir, $modules_dir);
+use Cwd;
+our ($cmd_dir, $cmd, $rcmd_dir, $rcmd, $xindy_run, $lib_dir, $modules_dir, $path_sep);
 BEGIN {
     $cmd_dir = dirname($0);
     $cmd = basename($0);
+
+    my $rcmd_path = Cwd::realpath($0);
+    $rcmd_dir = dirname($rcmd_path);
+    $rcmd = basename($rcmd_path);
+
+    if ($rcmd eq "xindy.pl") { # TL2010
+
+	if ($^O eq "MSWin32" || $^O eq "cygwin") {
+	    $xindy_run = "xindy-lisp.exe";
+	    $path_sep = ";";
+	} else {
+	    $xindy_run = "xindy.run";
+	    $path_sep = ":";
+	}
+	$modules_dir = "$rcmd_dir/../../xindy/modules";
+	die "$cmd: Cannot locate xindy modules directory" if ! -d $modules_dir;
+
+	if ($^O eq "MSWin32") {
+	    $lib_dir = "$cmd_dir/../../../bin/win32"; # TL2010 woe32
+	} else {
+	    # FIXME: this fails for symlink -> bin/ARCH/xindy
+	    # should follow all but last symlink and recompute $cmd_dir
+	    $lib_dir = $cmd_dir;
+	}
+	die "$cmd: Cannot locate xindy.mem" if ! -f "$lib_dir/xindy.mem";
+
+	# TODO: drop xindy.v2 (only for TL?)
+	# TODO: modify call_xindy() to use "$lib_dir/$xindy_run" if it exists
+	# TODO: maybe drop $path_sep
+	# TODO: maybe two subroutines for TL2010 and !TL2010 part
+
+    } else { # !TL2010
 
     # library directory
     if ( $ENV{XINDY_LIBDIR} ) {
@@ -316,6 +349,7 @@ BEGIN {
     } else {
 	die "$cmd: Cannot locate xindy modules directory";
     }
+    } # !TL2010
 }
 
 
@@ -711,7 +745,9 @@ sub output_version ( ;$ ) {		# optional arg: internal-version flag
 sub output_xindy_release () {
     my $version = 'unknown';
     my $version_file;
-    if ( -f "$cmd_dir/../VERSION" ) {
+    if ( -f "$modules_dir/../VERSION" ) {
+	$version_file = "$modules_dir/../VERSION";
+    } elsif ( -f "$cmd_dir/../VERSION" ) {
 	$version_file = "$cmd_dir/../VERSION";
     } elsif ( -f "$lib_dir/VERSION" ) {
 	$version_file = "$lib_dir/VERSION";

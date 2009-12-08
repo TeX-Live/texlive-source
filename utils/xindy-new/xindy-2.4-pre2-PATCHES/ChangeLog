@@ -1,3 +1,7 @@
+2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-21-TL-no-date (new): Avoid date in latin.xdy.
+
 2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-50-reorg-alphabets (new): Reorganize alphabets.

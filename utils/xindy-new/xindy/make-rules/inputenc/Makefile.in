@@ -487,7 +487,8 @@ uninstall-am: uninstall-nodist_inputencDATA
 
 
 latin.xdy : latin1.xdy latin2.xdy latin3.xdy
-	echo ';; Generated at' `date` 'from latin?.xdy' >latin.xdy
+@TEXLIVE_BUILD_TRUE@	echo ';; Generated for TeX Live from $+' >latin.xdy
+@TEXLIVE_BUILD_FALSE@	echo ';; Generated at' `date` 'from latin?.xdy' >latin.xdy
 	echo >>latin.xdy
 	sort -u latin?.xdy | grep -v '^;' >>latin.xdy
 

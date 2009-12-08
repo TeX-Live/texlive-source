@@ -41,7 +41,11 @@ INPUTENCS = \
 	latin3.xdy
 
 latin.xdy : latin1.xdy latin2.xdy latin3.xdy
+if TEXLIVE_BUILD
+	echo ';; Generated for TeX Live from $+' >latin.xdy
+else !TEXLIVE_BUILD
 	echo ';; Generated at' `date` 'from latin?.xdy' >latin.xdy
+endif !TEXLIVE_BUILD
 	echo >>latin.xdy
 	sort -u latin?.xdy | grep -v '^;' >>latin.xdy
 
