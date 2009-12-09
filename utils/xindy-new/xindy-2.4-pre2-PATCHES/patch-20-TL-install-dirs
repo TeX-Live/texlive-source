@@ -1,9 +1,11 @@
 	Installation paths for TL and standalone builds.
 
-	ToDo:
-	Determination of libdir and moduledir in the xindy perl script.
+	For TL we do not want to substitute the value of $(libdir).
 
-diff -ur -x Makefile.in xindy.orig/configure.ac xindy/configure.ac
+	ToDo:
+	Determination of lib_dir and modules_dir in the xindy perl script.
+
+diff -ur -x Makefile.in -x autom4te.cache xindy.orig/configure.ac xindy/configure.ac
 --- xindy.orig/configure.ac	2009-12-03 11:52:02.000000000 +0100
 +++ xindy/configure.ac	2009-12-03 11:59:47.000000000 +0100
 @@ -35,6 +35,11 @@
@@ -26,7 +28,7 @@ diff -ur -x Makefile.in xindy.orig/configure.ac xindy/configure.ac
  
  # Check system type
  AC_CANONICAL_HOST
-diff -ur -x Makefile.in xindy.orig/src/Makefile.am xindy/src/Makefile.am
+diff -ur -x Makefile.in -x autom4te.cache xindy.orig/src/Makefile.am xindy/src/Makefile.am
 --- xindy.orig/src/Makefile.am	2009-12-03 11:53:59.000000000 +0100
 +++ xindy/src/Makefile.am	2009-12-03 12:00:48.000000000 +0100
 @@ -26,7 +26,7 @@
@@ -38,18 +40,19 @@ diff -ur -x Makefile.in xindy.orig/src/Makefile.am xindy/src/Makefile.am
  
  # Tell the dist target about our sources, define the object files for
  # our own rule and the .lib files for the clean definition. Don't use
-diff -ur -x Makefile.in xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
+diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
 --- xindy.orig/user-commands/Makefile.am	2009-12-03 01:31:28.000000000 +0100
-+++ xindy/user-commands/Makefile.am	2009-12-03 11:59:47.000000000 +0100
-@@ -20,7 +20,39 @@
++++ xindy/user-commands/Makefile.am	2009-12-08 22:55:09.000000000 +0100
+@@ -20,10 +20,46 @@
  ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  ## Boston, MA 02110-1301 USA.
  
 -bin_SCRIPTS = texindy xindy xindy.v2
 +scripts = texindy xindy
 +
-+if TEXLIVE_BUILD
 +bin_SCRIPTS =
++
++if TEXLIVE_BUILD
 +noinst_SCRIPTS = $(scripts)
 +scriptspath = texmf/scripts/xindy
 +scriptsdir = ${prefix}/$(scriptspath)
@@ -76,9 +79,15 @@ diff -ur -x Makefile.in xindy.orig/user-commands/Makefile.am xindy/user-commands
 +	  rm -f $(DESTDIR)$(bindir)/$$f; \
 +	  rm -f $(DESTDIR)$(scriptsdir)/$$f.pl; \
 +	done
++
++xindy: xindy.in
++	cat $(srcdir)/xindy.in >xindy
 +else !TEXLIVE_BUILD
 +bin_SCRIPTS = $(scripts) xindy.v2
-+endif !TEXLIVE_BUILD
  
  xindy: xindy.in Makefile
  	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
++endif !TEXLIVE_BUILD
+ 
+ xindy.v2: xindy.v2.in
+ 	cat $(srcdir)/xindy.v2.in >xindy.v2

@@ -22,8 +22,9 @@
 
 scripts = texindy xindy
 
-if TEXLIVE_BUILD
 bin_SCRIPTS =
+
+if TEXLIVE_BUILD
 noinst_SCRIPTS = $(scripts)
 scriptspath = texmf/scripts/xindy
 scriptsdir = ${prefix}/$(scriptspath)
@@ -50,12 +51,15 @@ uninstall-hook:
 	  rm -f $(DESTDIR)$(bindir)/$$f; \
 	  rm -f $(DESTDIR)$(scriptsdir)/$$f.pl; \
 	done
+
+xindy: xindy.in
+	cat $(srcdir)/xindy.in >xindy
 else !TEXLIVE_BUILD
 bin_SCRIPTS = $(scripts) xindy.v2
-endif !TEXLIVE_BUILD
 
 xindy: xindy.in Makefile
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
+endif !TEXLIVE_BUILD
 
 xindy.v2: xindy.v2.in
 	cat $(srcdir)/xindy.v2.in >xindy.v2

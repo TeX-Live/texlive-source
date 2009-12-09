@@ -1,3 +1,11 @@
+2009-12-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-20-TL-install-dirs: For TL, do not substitute @libdir@.
+	* patch-22-TL-xindy_pl (new): Adapt xindy perl script for use
+	in TL (still incomplete).  Adapting code from
+	Vladimir Volovich <vvv@vsu.ru> (TL2008/09 version) and
+	Tomek T <t34www@googlemail.com>.
+
 2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-21-TL-no-date (new): Avoid date in latin.xdy.

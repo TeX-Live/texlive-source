@@ -181,7 +181,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 scripts = texindy xindy
 @TEXLIVE_BUILD_FALSE@bin_SCRIPTS = $(scripts) xindy.v2
-@TEXLIVE_BUILD_TRUE@bin_SCRIPTS = 
+bin_SCRIPTS = 
 @TEXLIVE_BUILD_TRUE@noinst_SCRIPTS = $(scripts)
 @TEXLIVE_BUILD_TRUE@scriptspath = texmf/scripts/xindy
 @TEXLIVE_BUILD_TRUE@scriptsdir = ${prefix}/$(scriptspath)
@@ -487,8 +487,11 @@ uninstall-man: uninstall-man1
 @TEXLIVE_BUILD_TRUE@	  rm -f $(DESTDIR)$(scriptsdir)/$$f.pl; \
 @TEXLIVE_BUILD_TRUE@	done
 
-xindy: xindy.in Makefile
-	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
+@TEXLIVE_BUILD_TRUE@xindy: xindy.in
+@TEXLIVE_BUILD_TRUE@	cat $(srcdir)/xindy.in >xindy
+
+@TEXLIVE_BUILD_FALSE@xindy: xindy.in Makefile
+@TEXLIVE_BUILD_FALSE@	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
 
 xindy.v2: xindy.v2.in
 	cat $(srcdir)/xindy.v2.in >xindy.v2

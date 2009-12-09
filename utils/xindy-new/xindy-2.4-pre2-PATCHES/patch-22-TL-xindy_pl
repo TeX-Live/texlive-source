@@ -1,0 +1,132 @@
+	Determine lib_dir and modules_dir in the xindy perl script.
+
+	ToDo:
+	Modify call_xindy() to use "$xindy_run" if it exists.
+
+diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xindy/user-commands/xindy.in
+--- xindy.orig/user-commands/xindy.in	2009-12-03 01:27:06.000000000 +0100
++++ xindy/user-commands/xindy.in	2009-12-09 11:50:09.000000000 +0100
+@@ -286,10 +286,58 @@
+ # Determine environment. Where is our library directory, and our modules?
+ 
+ use File::Basename;
++use Cwd;
++our ($isW32, $r0, $xindy_run);
+ our ($cmd_dir, $cmd, $lib_dir, $modules_dir);
+ BEGIN {
+-    $cmd_dir = dirname($0);
+-    $cmd = basename($0);
++    $isW32 = ($^O =~ /^MSWin/i) ? 1 : 0;
++    $r0 = Cwd::realpath($0);
++    $cmd = basename($r0);
++
++    # FIXME: make two subroutines for TL2010 and !TL2010 part
++
++    if ($cmd eq "xindy.pl") { # TL2010
++
++	$r0 = $0;
++	my $rcmd_dir = dirname($0);
++	$cmd = basename($0);
++
++	if ($isW32) {
++	     $cmd_dir = "$rcmd_dir/../../../bin/win32";
++	} else {
++	    $cmd_dir = $rcmd_dir;
++	    my $rcmd = $cmd;
++	    # Follow symlinks, but remember last one
++	    while (-l $r0) {
++		$cmd_dir = $rcmd_dir;
++		$cmd = $rcmd;
++		$r0 = readlink($r0);
++		$r0 = "$cmd_dir/$r0" unless $r0 =~ m,^[\\/],; # relative link
++		$rcmd_dir = dirname($r0);
++		$rcmd = basename($r0);
++	    }
++	    # Now $r0 = $rcmd_dir/$rcmd is a real file (no symlink) and
++	    # $cmd_dir/$cmd is either = $0 = $r0, or a symlink -> $r0.
++	}
++
++	$modules_dir = "$rcmd_dir/../../xindy/modules";
++	die "$cmd: Cannot locate xindy modules directory" unless -d $modules_dir;
++
++        $lib_dir = $cmd_dir;
++
++	if ($isW32 || $^O eq "cygwin") {
++	    $xindy_run = "$lib_dir/xindy-lisp.exe";
++	} else {
++	    $xindy_run = "$lib_dir/xindy.run";
++	}
++	# FIXME: what I really want to do is 'undefine' or 'delete'
++	$xindy_run = "" unless -e $xindy_run;
++
++	# FIXME: modify call_xindy() to use "$xindy_run" if it exists
++
++    } else { # !TL2010
++
++	$cmd_dir = dirname($r0);
+ 
+     # library directory
+     if ( $ENV{XINDY_LIBDIR} ) {
+@@ -316,6 +364,7 @@
+     } else {
+ 	die "$cmd: Cannot locate xindy modules directory";
+     }
++    } # !TL2010
+ }
+ 
+ 
+@@ -324,6 +373,7 @@
+ use Getopt::Long qw(:config bundling);
+ use File::Temp qw(tempfile tmpnam);
+ use File::Spec;
++use POSIX qw(uname);
+ 
+ 
+ # Check arguments, store them in proper variables.
+@@ -368,15 +418,31 @@
+      $outfile, $logfile, $language, @codepages, @modules, $input_markup,
+      $interactive, $mem_file);
+ $input_markup = 'latex';
++
+ $mem_file = "$lib_dir/xindy.mem";
++if ($^O eq 'darwin' && ! -e $mem_file) { # support universal binary on mac
++    my @uname = POSIX::uname();
++    if ($uname[4] eq 'Power Macintosh') {
++	$mem_file = "$lib_dir/xindy-ppc.mem";
++    } else {
++	$mem_file = "$lib_dir/xindy-i386.mem";
++    }
++}
++die "$cmd: Cannot locate $mem_file" unless -e $mem_file;
+ 
+ my @orig_argv = @ARGV;
+ parse_options();
+ 
+-if ( @ARGV == 2 ) {
+-    if ( $ARGV[0] =~ /\.xdy$/ ) {
+-	exec "$cmd_dir/xindy.v2", @orig_argv;
+-    }
++if ( @ARGV == 2 && $ARGV[0] =~ /\.xdy$/ ) {
++    print STDERR <<EOF;
++$cmd: deprecated calling convention detected.
++Please change your command to
++
++$cmd -I xindy -M $ARGV[0] $ARGV[1]
++
++Run "$cmd --help" for full list of options, or read the documentation.
++EOF
++    exit 1;
+ }
+ 
+ 
+@@ -711,7 +777,9 @@
+ sub output_xindy_release () {
+     my $version = 'unknown';
+     my $version_file;
+-    if ( -f "$cmd_dir/../VERSION" ) {
++    if ( -f "$modules_dir/../VERSION" ) {
++	$version_file = "$modules_dir/../VERSION";
++    } elsif ( -f "$cmd_dir/../VERSION" ) {
+ 	$version_file = "$cmd_dir/../VERSION";
+     } elsif ( -f "$lib_dir/VERSION" ) {
+ 	$version_file = "$lib_dir/VERSION";
