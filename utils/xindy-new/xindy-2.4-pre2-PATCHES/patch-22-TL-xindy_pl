@@ -83,7 +83,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xind
  
  
  # Check arguments, store them in proper variables.
-@@ -368,15 +418,31 @@
+@@ -368,7 +418,17 @@
       $outfile, $logfile, $language, @codepages, @modules, $input_markup,
       $interactive, $mem_file);
  $input_markup = 'latex';
@@ -101,25 +101,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xind
  
  my @orig_argv = @ARGV;
  parse_options();
- 
--if ( @ARGV == 2 ) {
--    if ( $ARGV[0] =~ /\.xdy$/ ) {
--	exec "$cmd_dir/xindy.v2", @orig_argv;
--    }
-+if ( @ARGV == 2 && $ARGV[0] =~ /\.xdy$/ ) {
-+    print STDERR <<EOF;
-+$cmd: deprecated calling convention detected.
-+Please change your command to
-+
-+$cmd -I xindy -M $ARGV[0] $ARGV[1]
-+
-+Run "$cmd --help" for full list of options, or read the documentation.
-+EOF
-+    exit 1;
- }
- 
- 
-@@ -711,7 +777,9 @@
+@@ -711,7 +771,9 @@
  sub output_xindy_release () {
      my $version = 'unknown';
      my $version_file;

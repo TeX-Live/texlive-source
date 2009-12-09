@@ -55,18 +55,19 @@ uninstall-hook:
 xindy: xindy.in
 	cat $(srcdir)/xindy.in >xindy
 else !TEXLIVE_BUILD
-bin_SCRIPTS = $(scripts) xindy.v2
+bin_SCRIPTS += $(scripts)
 
 xindy: xindy.in Makefile
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
 endif !TEXLIVE_BUILD
 
-xindy.v2: xindy.v2.in
-	cat $(srcdir)/xindy.v2.in >xindy.v2
+man_MANS = texindy.1 xindy.1
 
-man_MANS = texindy.1 xindy.1 xindy.v2.1
+EXTRA_DIST = $(man_MANS) texindy xindy.in
 
-EXTRA_DIST = $(man_MANS) texindy xindy.in xindy.v2.in
+## Obsolete files
+##
+EXTRA_DIST += xindy.v2.1 xindy.v2.in
 
-CLEANFILES = xindy xindy.v2
+CLEANFILES = xindy
 

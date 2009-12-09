@@ -5,6 +5,7 @@
 	in TL (still incomplete).  Adapting code from
 	Vladimir Volovich <vvv@vsu.ru> (TL2008/09 version) and
 	Tomek T <t34www@googlemail.com>.
+	* patch-23-drop-v2 (new): Completely drop xindy.v2.
 
 2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

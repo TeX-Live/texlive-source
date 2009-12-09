@@ -83,7 +83,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am x
 +xindy: xindy.in
 +	cat $(srcdir)/xindy.in >xindy
 +else !TEXLIVE_BUILD
-+bin_SCRIPTS = $(scripts) xindy.v2
++bin_SCRIPTS += $(scripts) xindy.v2
  
  xindy: xindy.in Makefile
  	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy

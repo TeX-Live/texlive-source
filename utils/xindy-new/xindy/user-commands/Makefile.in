@@ -33,6 +33,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@TEXLIVE_BUILD_FALSE@am__append_1 = $(scripts)
 subdir = xindy/user-commands
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -180,14 +181,13 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 scripts = texindy xindy
-@TEXLIVE_BUILD_FALSE@bin_SCRIPTS = $(scripts) xindy.v2
-bin_SCRIPTS = 
+bin_SCRIPTS = $(am__append_1)
 @TEXLIVE_BUILD_TRUE@noinst_SCRIPTS = $(scripts)
 @TEXLIVE_BUILD_TRUE@scriptspath = texmf/scripts/xindy
 @TEXLIVE_BUILD_TRUE@scriptsdir = ${prefix}/$(scriptspath)
-man_MANS = texindy.1 xindy.1 xindy.v2.1
-EXTRA_DIST = $(man_MANS) texindy xindy.in xindy.v2.in
-CLEANFILES = xindy xindy.v2
+man_MANS = texindy.1 xindy.1
+EXTRA_DIST = $(man_MANS) texindy xindy.in xindy.v2.1 xindy.v2.in
+CLEANFILES = xindy
 all: all-am
 
 .SUFFIXES:
@@ -492,9 +492,6 @@ uninstall-man: uninstall-man1
 
 @TEXLIVE_BUILD_FALSE@xindy: xindy.in Makefile
 @TEXLIVE_BUILD_FALSE@	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
-
-xindy.v2: xindy.v2.in
-	cat $(srcdir)/xindy.v2.in >xindy.v2
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
