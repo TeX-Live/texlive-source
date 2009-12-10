@@ -67,7 +67,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
-SCRIPTS = $(bin_SCRIPTS) $(noinst_SCRIPTS)
+SCRIPTS = $(bin_SCRIPTS)
 SOURCES =
 DIST_SOURCES =
 man1dir = $(mandir)/man1
@@ -182,12 +182,11 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 scripts = texindy xindy
 bin_SCRIPTS = $(am__append_1)
-@TEXLIVE_BUILD_TRUE@noinst_SCRIPTS = $(scripts)
 @TEXLIVE_BUILD_TRUE@scriptspath = texmf/scripts/xindy
 @TEXLIVE_BUILD_TRUE@scriptsdir = ${prefix}/$(scriptspath)
 man_MANS = texindy.1 xindy.1
-EXTRA_DIST = $(man_MANS) texindy xindy.in xindy.v2.1 xindy.v2.in
-CLEANFILES = xindy
+EXTRA_DIST = $(man_MANS) texindy.in xindy.in xindy.v2.1 xindy.v2.in
+CLEANFILES = $(scripts)
 all: all-am
 
 .SUFFIXES:
@@ -463,10 +462,10 @@ uninstall-man: uninstall-man1
 	uninstall-binSCRIPTS uninstall-hook uninstall-man \
 	uninstall-man1
 
-@TEXLIVE_BUILD_TRUE@install-exec-hook: $(scripts)
+@TEXLIVE_BUILD_TRUE@install-exec-hook:
 @TEXLIVE_BUILD_TRUE@	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
 @TEXLIVE_BUILD_TRUE@	@for f in $(scripts); do \
-@TEXLIVE_BUILD_TRUE@	  $(INSTALL_SCRIPT) `test -f "$$f" || echo "$(srcdir)/"`$$f $(DESTDIR)$(scriptsdir)/$$f.pl; \
+@TEXLIVE_BUILD_TRUE@	  $(INSTALL_SCRIPT) "$(srcdir)/$$f.in" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 @TEXLIVE_BUILD_TRUE@	done
 @TEXLIVE_BUILD_TRUE@	case "$(bindir)" in \
 @TEXLIVE_BUILD_TRUE@	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
@@ -475,20 +474,20 @@ uninstall-man: uninstall-man1
 @TEXLIVE_BUILD_TRUE@	     exit 1;; \
 @TEXLIVE_BUILD_TRUE@	esac
 @TEXLIVE_BUILD_TRUE@install-links:
-@TEXLIVE_BUILD_TRUE@	@cd $(DESTDIR)$(bindir) && \
+@TEXLIVE_BUILD_TRUE@	@cd "$(DESTDIR)$(bindir)" && \
 @TEXLIVE_BUILD_TRUE@	for f in $(scripts); do \
 @TEXLIVE_BUILD_TRUE@	  rm -f $$f; \
-@TEXLIVE_BUILD_TRUE@	  echo "creating link '$$f -> '$(REL)/$(scriptspath)/$$f.pl"; \
+@TEXLIVE_BUILD_TRUE@	  echo "creating link '$$f' -> '$(REL)/$(scriptspath)/$$f.pl'"; \
 @TEXLIVE_BUILD_TRUE@	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f; \
 @TEXLIVE_BUILD_TRUE@	done
 @TEXLIVE_BUILD_TRUE@uninstall-hook:
 @TEXLIVE_BUILD_TRUE@	@for f in $(scripts); do \
-@TEXLIVE_BUILD_TRUE@	  rm -f $(DESTDIR)$(bindir)/$$f; \
-@TEXLIVE_BUILD_TRUE@	  rm -f $(DESTDIR)$(scriptsdir)/$$f.pl; \
+@TEXLIVE_BUILD_TRUE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+@TEXLIVE_BUILD_TRUE@	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 @TEXLIVE_BUILD_TRUE@	done
 
-@TEXLIVE_BUILD_TRUE@xindy: xindy.in
-@TEXLIVE_BUILD_TRUE@	cat $(srcdir)/xindy.in >xindy
+@TEXLIVE_BUILD_FALSE@texindy: texindy.in Makefile
+@TEXLIVE_BUILD_FALSE@	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/texindy.in >texindy
 
 @TEXLIVE_BUILD_FALSE@xindy: xindy.in Makefile
 @TEXLIVE_BUILD_FALSE@	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy

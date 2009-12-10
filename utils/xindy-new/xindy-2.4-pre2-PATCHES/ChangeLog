@@ -1,10 +1,17 @@
+2009-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-24-TL-use-xindy_run (new): Invoke either 'xindy.run'
+	(actually 'lisp.run') or 'clisp'.
+	* patch-25-subst-in-texindy (new): Except for TL, substitute
+	the value of $(libdir) also in texindy and adapt Makefile.am.
+
 2009-12-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-20-TL-install-dirs: For TL, do not substitute @libdir@.
 	* patch-22-TL-xindy_pl (new): Adapt xindy perl script for use
 	in TL (still incomplete).  Adapting code from
 	Vladimir Volovich <vvv@vsu.ru> (TL2008/09 version) and
-	Tomek T <t34www@googlemail.com>.
+	Tomasz M. Trzeciak <t34www@googlemail.com>.
 	* patch-23-drop-v2 (new): Completely drop xindy.v2.
 
 2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>

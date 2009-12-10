@@ -32,7 +32,19 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am x
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xindy/user-commands/xindy.in
 --- xindy.orig/user-commands/xindy.in	2009-12-09 11:50:09.000000000 +0100
 +++ xindy/user-commands/xindy.in	2009-12-09 12:25:35.000000000 +0100
-@@ -433,10 +433,16 @@
+@@ -377,11 +377,6 @@
+ 
+ 
+ # Check arguments, store them in proper variables.
+-#
+-# Do also something for backward compatibility: Check if this is an
+-# old-style call. If it is, we have two arguments at the end, and the
+-# second-to-last has the extension ".xdy". Then, call the old driver
+-# script with the original arguments...
+ 
+ sub usage ( ;$ )
+ {
+@@ -433,12 +428,6 @@
  my @orig_argv = @ARGV;
  parse_options();
  
@@ -40,16 +52,8 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xind
 -    if ( $ARGV[0] =~ /\.xdy$/ ) {
 -	exec "$cmd_dir/xindy.v2", @orig_argv;
 -    }
-+if ( @ARGV == 2 && $ARGV[0] =~ /\.xdy$/ ) {
-+    print STDERR <<EOF;
-+$cmd: deprecated calling convention detected.
-+Please change your command to
-+
-+$cmd -I xindy -M $ARGV[0] $ARGV[1]
-+
-+Run "$cmd --help" for full list of options, or read the documentation.
-+EOF
-+    exit 1;
- }
+-}
+-
  
- 
+ # This script creates temporary files. Whenever a file is created, its
+ # name is added to @temp_files. In an END handler, the temporary files

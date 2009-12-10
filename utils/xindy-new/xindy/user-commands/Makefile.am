@@ -25,13 +25,12 @@ scripts = texindy xindy
 bin_SCRIPTS =
 
 if TEXLIVE_BUILD
-noinst_SCRIPTS = $(scripts)
 scriptspath = texmf/scripts/xindy
 scriptsdir = ${prefix}/$(scriptspath)
-install-exec-hook: $(scripts)
+install-exec-hook:
 	$(MKDIR_P) "$(DESTDIR)$(scriptsdir)"
 	@for f in $(scripts); do \
-	  $(INSTALL_SCRIPT) `test -f "$$f" || echo "$(srcdir)/"`$$f $(DESTDIR)$(scriptsdir)/$$f.pl; \
+	  $(INSTALL_SCRIPT) "$(srcdir)/$$f.in" "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 	done
 	case "$(bindir)" in \
 	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
@@ -40,22 +39,22 @@ install-exec-hook: $(scripts)
 	     exit 1;; \
 	esac
 install-links:
-	@cd $(DESTDIR)$(bindir) && \
+	@cd "$(DESTDIR)$(bindir)" && \
 	for f in $(scripts); do \
 	  rm -f $$f; \
-	  echo "creating link '$$f -> '$(REL)/$(scriptspath)/$$f.pl"; \
+	  echo "creating link '$$f' -> '$(REL)/$(scriptspath)/$$f.pl'"; \
 	  $(LN_S) $(REL)/$(scriptspath)/$$f.pl $$f; \
 	done
 uninstall-hook:
 	@for f in $(scripts); do \
-	  rm -f $(DESTDIR)$(bindir)/$$f; \
-	  rm -f $(DESTDIR)$(scriptsdir)/$$f.pl; \
+	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
+	  rm -f "$(DESTDIR)$(scriptsdir)/$$f.pl"; \
 	done
-
-xindy: xindy.in
-	cat $(srcdir)/xindy.in >xindy
 else !TEXLIVE_BUILD
 bin_SCRIPTS += $(scripts)
+
+texindy: texindy.in Makefile
+	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/texindy.in >texindy
 
 xindy: xindy.in Makefile
 	sed -e 's:@libdir\@:$(libdir):' $(srcdir)/xindy.in >xindy
@@ -63,11 +62,11 @@ endif !TEXLIVE_BUILD
 
 man_MANS = texindy.1 xindy.1
 
-EXTRA_DIST = $(man_MANS) texindy xindy.in
+EXTRA_DIST = $(man_MANS) texindy.in xindy.in
 
 ## Obsolete files
 ##
 EXTRA_DIST += xindy.v2.1 xindy.v2.in
 
-CLEANFILES = xindy
+CLEANFILES = $(scripts)
 

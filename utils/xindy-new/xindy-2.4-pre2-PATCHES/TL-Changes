@@ -12,3 +12,6 @@ Removed:
 	missing
 	ylwrap
 
+Moved user-commands/texindy => user-commands/texindy.in and removed
+	execute permissions.
+
