@@ -37,10 +37,10 @@ struct header_list *ps_fonts_used ;
 /*
  *   Our hash routine.
  */
-int
+unsigned int
 hash(char *s)
 {
-   int h = 12 ;
+   unsigned h = 12 ;
 
    while (*s != 0)
       h = (h + h + *s++) % RESHASHPRIME ;

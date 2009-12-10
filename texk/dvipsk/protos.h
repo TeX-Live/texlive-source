@@ -250,7 +250,7 @@ extern char *makecopy(unsigned char *what, long len, unsigned char *p);
 extern void repack(struct tcd *cp);
 
 /* prototypes for functions from resident.c */
-extern int hash(char *s);
+extern unsigned int hash(char *s);
 extern void revpslists(void);
 extern void cleanres(void);
 extern struct resfont *lookup(char *name);

@@ -1,3 +1,9 @@
+2009-12-11  Alexander Cherepanov  <cherepan@mccme.ru>
+
+	* protos.h (hash): change decl.
+	* resident.c (hash): return and use unsigned instead of int.
+	tlsec mail, 05 Dec 2009 19:09:56.
+
 2009-09-26  Karl Berry  <karl@tug.org>
 
 	* config/config.ps (unknown): move to before nopaper; else
