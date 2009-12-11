@@ -326,8 +326,8 @@ BEGIN {
 	    # Now $cmd_dir/$cmd -> $r0 = $rcmd_dir/$rcmd (not a symlink).
 	}
 
-	$modules_dir = "$rcmd_dir/../../xindy/modules";
-	die "$cmd: Cannot locate xindy modules directory" unless -d $modules_dir;
+	$modules_dir = Cwd::realpath("$rcmd_dir/../../xindy/modules");
+	die "$cmd: Cannot locate xindy modules directory"  unless -d $modules_dir;
 
         $lib_dir = $cmd_dir;
 
