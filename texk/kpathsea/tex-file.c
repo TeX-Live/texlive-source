@@ -1134,16 +1134,11 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
     while ((q = strchr (qq, '.'))) {            /* at each dot */
       if ((q == fname || IS_DIR_SEP (*(q - 1))) /* start or / precedes dot? */
           && !IS_DIR_SEP (*(q + 1))             /* ok if /./ */
-          && *(q + 1) != '.'                    /* ok (for now) if /.. */
+          && !(*(q + 1) == '.' && IS_DIR_SEP (*(q + 2))) /* ok  if /../ */
           && !STREQ (q, ".tex")) {              /* specially allow .tex */
         goto not_ok;
       }
       qq = q + 1;
-      if (*(qq) == '.') {                       /* further checks if .. */
-        qq++;
-        if (!IS_DIR_SEP (*qq))                  /* ../ ok, all else bad */
-          goto not_ok;
-      }
     }
   }
 #else

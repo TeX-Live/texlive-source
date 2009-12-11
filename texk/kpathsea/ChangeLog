@@ -1,3 +1,9 @@
+2009-12-11  Alexander Cherepanov  <cherepan@mccme.ru>
+
+	* tex-file.c (kpathsea_name_ok): correct check for /../ so that
+        "file..txt" is still allowed.
+	tlsec mail, 05 Dec 2009 12:33:35.
+
 2009-12-05  Karl Berry  <karl@tug.org>
 
         Suggested/reported by Daniel Luecking, 16 Nov 2009 11:58:00:
