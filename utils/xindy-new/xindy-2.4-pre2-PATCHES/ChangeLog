@@ -1,3 +1,10 @@
+2009-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-26-TL-texindy_pl (new): Adapt texindy perl script for
+	use in TL.
+	* patch-27-check-exist (new): Check existence of input files
+	(from TL2008).
+
 2009-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-24-TL-use-xindy_run (new): Invoke either 'xindy.run'

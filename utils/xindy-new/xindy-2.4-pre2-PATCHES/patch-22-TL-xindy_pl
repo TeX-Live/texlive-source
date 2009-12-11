@@ -1,5 +1,8 @@
 	Determine lib_dir and modules_dir in the xindy perl script.
 
+	Also implement symlinks, e.g., in /usr/local/bin/ for
+	standalone version.
+
 	ToDo:
 	Modify call_xindy() to use "$xindy_run" if it exists.
 
@@ -29,8 +32,9 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xind
 +	$cmd = basename($0);
 +
 +	if ($isW32) {
-+	     $cmd_dir = "$rcmd_dir/../../../bin/win32";
++	    $cmd_dir = "$rcmd_dir/../../../bin/win32";
 +	} else {
++	    die "$cmd: not a symlink as required for TeX Live"  unless -l $0;
 +	    $cmd_dir = $rcmd_dir;
 +	    my $rcmd = $cmd;
 +	    # Follow symlinks, but remember last one
@@ -38,12 +42,11 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xind
 +		$cmd_dir = $rcmd_dir;
 +		$cmd = $rcmd;
 +		$r0 = readlink($r0);
-+		$r0 = "$cmd_dir/$r0" unless $r0 =~ m,^[\\/],; # relative link
++		$r0 = "$cmd_dir/$r0"  unless $r0 =~ m,^[\\/],; # relative link
 +		$rcmd_dir = dirname($r0);
 +		$rcmd = basename($r0);
 +	    }
-+	    # Now $r0 = $rcmd_dir/$rcmd is a real file (no symlink) and
-+	    # $cmd_dir/$cmd is either = $0 = $r0, or a symlink -> $r0.
++	    # Now $cmd_dir/$cmd -> $r0 = $rcmd_dir/$rcmd (not a symlink).
 +	}
 +
 +	$modules_dir = "$rcmd_dir/../../xindy/modules";

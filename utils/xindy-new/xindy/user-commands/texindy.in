@@ -306,10 +306,44 @@ BEGIN {
 # Determine environment. Where is our library directory, and our modules?
 
 use File::Basename;
+use Cwd;
+our ($isW32, $isTL, $lib_dir);
+our $xindy;
 our ($cmd_dir, $cmd);
 BEGIN {
-    $cmd_dir = dirname($0);
+    $isW32 = ($^O =~ /^MSWin/i) ? 1 : 0;
+    my $r0 = Cwd::realpath($0);
+    $cmd_dir = dirname($r0);
+    $isTL = (basename($r0) =~ /\.pl/) ? 1 : 0;
+
     $cmd = basename($0);
+
+    if ($isTL) {
+	if ($isW32) {
+	    $xindy = "$cmd_dir/../../../bin/win32/xindy.exe";
+	} else {
+	    die "$cmd: not a symlink as required for TeX Live"  unless -l $0;
+	    $r0 = $0;
+	    $cmd_dir = dirname($r0);
+	    # Follow symlinks, but remember last one
+	    my $lcmd_dir;
+	    while ( -l $r0 ) {
+		$lcmd_dir = $cmd_dir;
+		$r0 = readlink($r0);
+		$r0 = "$lcmd_dir/$r0"  unless $r0 =~ m,^[\\/],; # relative link
+		$cmd_dir = dirname($r0);
+	    }
+	    $xindy = "$lcmd_dir/xindy";
+	}
+	$lib_dir = "$cmd_dir/../../xindy";
+    } elsif ($isW32) {
+	# FIXME: For win32 we should have a wrapper script,
+	# FIXME: e.g., 'xindy.bat' invoking 'perl xindy'
+	die "$cmd: not yet implemented";
+    } else {
+	$xindy = "$cmd_dir/xindy";
+    }
+    die "$cmd: cannot locate xindy\n"  unless -f $xindy && ($isW32 || -x $xindy);
 }
 
 
@@ -359,15 +393,6 @@ $language = 'general';
 $codepage = 'latin';
 $input_markup = 'latex';
 
-our $xindy;
-if ( -f "$cmd_dir/xindy" && -x _ ) {
-    $xindy = "$cmd_dir/xindy";
-} elsif ( -f "$cmd_dir/xindy.pl" && -x _ ) {
-    $xindy = "$cmd_dir/xindy.pl";
-} else {
-    die "$cmd: cannot locate xindy\n";
-}
-
 parse_options();
 output_version()  if $output_version;	# will not return
 usage(1)  if ( ! $stdin && @ARGV == 0 ); # brain damaged, but like makeindex
@@ -388,7 +413,7 @@ push (@opt, map { ('-M', $_) } ($ENV{TEXINDY_AUTO_MODULE} || 'texindy',
 				@modules));
 push (@opt, '-I', $input_markup);
 
-print "Calling xindy as: $cmd_dir/xindy @opt @ARGV\n"  if (grep /^script$/, @debug);
+print "Calling xindy as: $xindy @opt @ARGV\n"  if (grep /^script$/, @debug);
 
 exec $xindy, @opt, @ARGV;
 die "$cmd: could not execute xindy: $!\n";
@@ -459,7 +484,9 @@ sub output_version () {
 sub output_xindy_release () {
     my $version = 'unknown';
     my $version_file;
-    if ( -f "$cmd_dir/../VERSION" ) {
+    if ( $isTL && -f "$lib_dir/VERSION" ) {
+	$version_file = "$lib_dir/VERSION";
+    } elsif ( -f "$cmd_dir/../VERSION" ) {
 	$version_file = "$cmd_dir/../VERSION";
     } else {
 	# Where is the library directory?

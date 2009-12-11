@@ -1,0 +1,11 @@
+diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xindy/user-commands/xindy.in
+--- xindy.orig/user-commands/xindy.in	2009-12-10 10:57:20.000000000 +0100
++++ xindy/user-commands/xindy.in	2009-12-11 11:13:31.000000000 +0100
+@@ -453,6 +453,7 @@
+ 
+ our $raw_index = File::Spec->devnull;
+ unless ( $interactive ) {
++    for my $f (@ARGV) { die "$cmd: input file $f does not exist"  unless -f $f }
+     $raw_index = create_raw_index();	# processes @ARGV
+     my $filter_cmd = '';
+     if ( $input_markup eq 'latex' ) {

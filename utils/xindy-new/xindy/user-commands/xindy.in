@@ -309,8 +309,9 @@ BEGIN {
 	$cmd = basename($0);
 
 	if ($isW32) {
-	     $cmd_dir = "$rcmd_dir/../../../bin/win32";
+	    $cmd_dir = "$rcmd_dir/../../../bin/win32";
 	} else {
+	    die "$cmd: not a symlink as required for TeX Live"  unless -l $0;
 	    $cmd_dir = $rcmd_dir;
 	    my $rcmd = $cmd;
 	    # Follow symlinks, but remember last one
@@ -318,12 +319,11 @@ BEGIN {
 		$cmd_dir = $rcmd_dir;
 		$cmd = $rcmd;
 		$r0 = readlink($r0);
-		$r0 = "$cmd_dir/$r0" unless $r0 =~ m,^[\\/],; # relative link
+		$r0 = "$cmd_dir/$r0"  unless $r0 =~ m,^[\\/],; # relative link
 		$rcmd_dir = dirname($r0);
 		$rcmd = basename($r0);
 	    }
-	    # Now $r0 = $rcmd_dir/$rcmd is a real file (no symlink) and
-	    # $cmd_dir/$cmd is either = $0 = $r0, or a symlink -> $r0.
+	    # Now $cmd_dir/$cmd -> $r0 = $rcmd_dir/$rcmd (not a symlink).
 	}
 
 	$modules_dir = "$rcmd_dir/../../xindy/modules";
@@ -453,6 +453,7 @@ END {
 
 our $raw_index = File::Spec->devnull;
 unless ( $interactive ) {
+    for my $f (@ARGV) { die "$cmd: input file $f does not exist"  unless -f $f }
     $raw_index = create_raw_index();	# processes @ARGV
     my $filter_cmd = '';
     if ( $input_markup eq 'latex' ) {
