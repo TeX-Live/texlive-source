@@ -1,8 +1,7 @@
 2009-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-26-TL-texindy_pl (new): Adapt texindy perl script for
-	use in TL, using code for W32 from
-	Tomasz M. Trzeciak <t34www@googlemail.com>.
+	use in TL, using code from Tomasz M. Trzeciak.
 	* patch-27-check-exist (new): Check existence of input files
 	(from TL2008).
 

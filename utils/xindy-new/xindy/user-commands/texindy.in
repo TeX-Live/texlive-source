@@ -414,25 +414,27 @@ push (@opt, map { ('-M', $_) } ($ENV{TEXINDY_AUTO_MODULE} || 'texindy',
 push (@opt, '-I', $input_markup);
 
 print "Calling xindy as: $xindy @opt @ARGV\n"  if (grep /^script$/, @debug);
-
-# FIXME: There ought to be be a subroutine call_xindy used here and in output_version.
-
-if ($isW32) {
-    system ($^X, $xindy, @opt, @ARGV);
-    if ($? == -1) {
-	die "$cmd: could not execute xindy: $!\n";
-    } elsif ($? & 127) {
-	die "xindy died with signal " . ($? & 127) ."\n";
-    } else {
-	exit ($? >> 8);
-    }
-} else {
-    exec $xindy, @opt, @ARGV;
-    die "$cmd: could not execute xindy: $!\n";
-}
+call_xindy(@opt, @ARGV);
 
 
 # ------------------------------------------------------------
+
+
+sub call_xindy {
+    if ($isW32) {
+	system ($^X, $xindy, @_);
+	if ($? == -1) {
+	    die "$cmd: could not execute xindy: $!\n";
+	} elsif ($? & 127) {
+	    die "xindy died with signal " . ($? & 127) ."\n";
+	} else {
+	    exit ($? >> 8);
+	}
+    } else {
+	exec ($xindy, @_);
+	die "$cmd: could not execute xindy: $!\n";
+    }
+}
 
 
 sub parse_options() {
@@ -440,7 +442,7 @@ sub parse_options() {
     my ($german, $letter_ordering, $no_ranges);
     GetOptions(
 	       'version|V'          => \$output_version,
-	       'help|h|?'           => \&usage,
+
 	       'quiet|q'            => \$quiet,
 	       'verbose|v'          => \$verbose,
 	       'stdin|i'            => \$stdin,
@@ -488,21 +490,9 @@ sub parse_options() {
 sub output_version () {
     output_xindy_release();
     print "$cmd script version: $VERSION\n";
-    my @xindy_cmd = ($xindy, '--internal-version');
+    my @xindy_cmd = ('--internal-version');
     push (@xindy_cmd, qw(-d script --foobar))  if grep(/^script$/, @debug);
-    if ($isW32) {
-	system ($^X, @xindy_cmd);
-	if ($? == -1) {
-	    die "$cmd: could not execute xindy: $!\n";
-	} elsif ($? & 127) {
-	    die "xindy died with signal " . ($? & 127) ."\n";
-	} else {
-	    exit ($? >> 8);
-	}
-    } else {
-	exec @xindy_cmd;
-	die "$cmd: could not execute xindy: $!\n";
-    }
+    call_xindy(@xindy_cmd);
 }
 
 
