@@ -38,6 +38,8 @@ dnl **** Check for some programs and libraries ****
 AC_PROG_CC
 AC_PROG_RANLIB
 
+AC_SEARCH_LIBS([sqrt], [m])
+
 dnl **** Check for some compiler/system characteristics
 
 AC_C_CHAR_UNSIGNED

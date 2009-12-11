@@ -3,7 +3,7 @@
 # Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-rm -f l047016t.afm
+rm -f l047016t.afm x047016t.afm
 
 test -f x047016t.pfa \
 	|| cp $srcdir/l047016t.pfa x047016t.pfa \
@@ -11,7 +11,7 @@ test -f x047016t.pfa \
 
 ./type1afm ./x047016t.pfa || exit 1
 
-sed x047016t.afm -e '/^Comment File creation date:/d' >l047016t.afmx \
+sed -e '/^Comment File creation date:/d' x047016t.afm >l047016t.afmx \
 	&& diff l047016t.afmx $srcdir/l047016t.xafm \
 	|| exit 1
 

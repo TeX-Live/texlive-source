@@ -1,3 +1,9 @@
+2009-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tpic2pdftex.test: Ignore diffs in generated .tex files
+	(due to floating point rounding?).
+	Reported by Nikola Lecic <nikola.lecic@anthesphoria.net>.
+
 2009-05-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system and add a test case.
