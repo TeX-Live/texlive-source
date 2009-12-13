@@ -276,7 +276,7 @@ init_path (kpathsea kpse, kpse_format_info_type *info,
     /* If we are initializing the cnf path, don't try to get any
        values from the cnf files; that's infinite loop time.  */
     if (!info->cnf_path && info != &(kpse->format_info[kpse_cnf_format]))
-        info->cnf_path = kpathsea_cnf_get (kpse, env_name);
+      info->cnf_path = kpathsea_cnf_get (kpse, env_name);
       
     if (var && info->cnf_path)
       break;
@@ -329,9 +329,9 @@ kpathsea_set_suffixes (kpathsea kpse, kpse_file_format_type format,
   va_list ap;
 
   if (alternate) {
-      list = &(kpse->format_info[format].alt_suffix);
+    list = &(kpse->format_info[format].alt_suffix);
   } else {
-      list = &(kpse->format_info[format].suffix);
+    list = &(kpse->format_info[format].suffix);
   }
 
   va_start (ap, alternate);
@@ -843,7 +843,7 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
 const_string
 kpse_init_format (kpse_file_format_type format)
 {
-    return kpathsea_init_format (kpse_def, format);
+  return kpathsea_init_format (kpse_def, format);
 }
 #endif
 
@@ -882,7 +882,7 @@ target_asis_name (kpathsea kpse, string **target, unsigned *count,
     const_string name, boolean use_fontmaps, boolean has_potential_suffix,
     string has_any_suffix)
 {
-    (void)has_any_suffix; /* -Wunused */
+  (void) has_any_suffix; /* -Wunused */
   /* Look for the name we've been given, provided non-suffix
      searches are allowed or the name already includes a suffix. */
   if (has_potential_suffix || !FMT_INFO.suffix_search_only) {
@@ -891,7 +891,7 @@ target_asis_name (kpathsea kpse, string **target, unsigned *count,
     XRETALLOC ((*target), (*count)+1, string);
 
     if (use_fontmaps) {
-        target_fontmaps (kpse, target, count, name);
+      target_fontmaps (kpse, target, count, name);
     }
   }
 }
@@ -918,7 +918,7 @@ target_suffixed_names (kpathsea kpse, string **target, unsigned *count,
     XRETALLOC ((*target), (*count)+1, string);
     
     if (use_fontmaps) {
-        target_fontmaps (kpse, target, count, name_with_suffix);
+      target_fontmaps (kpse, target, count, name_with_suffix);
     }    
   }
 }
@@ -944,7 +944,7 @@ string
 kpse_find_file (const_string name,  kpse_file_format_type format,
                 boolean must_exist)
 {
-    return kpathsea_find_file(kpse_def, name, format, must_exist);
+  return kpathsea_find_file(kpse_def, name, format, must_exist);
 }
 #endif
 
@@ -1017,15 +1017,15 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
   if (has_any_suffix
       && (try_std_extension_first == NULL || *try_std_extension_first == 'f'
           || *try_std_extension_first == '0')) {
-      target_asis_name (kpse, &target, &count, format, name, use_fontmaps,
-                           has_potential_suffix, has_any_suffix);
-      target_suffixed_names (kpse, &target, &count, format, name, use_fontmaps,
+    target_asis_name (kpse, &target, &count, format, name, use_fontmaps,
+                      has_potential_suffix, has_any_suffix);
+    target_suffixed_names (kpse, &target, &count, format, name, use_fontmaps,
                            has_potential_suffix);
   } else {
-      target_suffixed_names (kpse, &target, &count, format, name, use_fontmaps,
+    target_suffixed_names (kpse, &target, &count, format, name, use_fontmaps,
                            has_potential_suffix);
-      target_asis_name (kpse, &target, &count, format, name, use_fontmaps,
-                           has_potential_suffix, has_any_suffix );
+    target_asis_name (kpse, &target, &count, format, name, use_fontmaps,
+                      has_potential_suffix, has_any_suffix);
   }
 
   /* Terminate list. */
@@ -1084,7 +1084,7 @@ string *
 kpse_find_file_generic (const_string name,  kpse_file_format_type format,
                         boolean must_exist,  boolean all)
 {
-    return kpathsea_find_file_generic(kpse_def, name, format, must_exist, all);
+  return kpathsea_find_file_generic(kpse_def, name, format, must_exist, all);
 }
 #endif
 
@@ -1220,7 +1220,7 @@ executable_filep (kpathsea kpse, const_string fname)
         strcpy (base, p);
       }
       p = strrchr (base, '\\');
-      if(p) {
+      if (p) {
         p++;
         strcpy (base, p);
       }
@@ -1260,27 +1260,27 @@ boolean
 kpathsea_out_name_ok (kpathsea kpse, const_string fname)
 {
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
-    /* Output of an executable file is restricted on Windows */
-    if (executable_filep (kpse, fname))
-      return false;
+  /* Output of an executable file is restricted on Windows */
+  if (executable_filep (kpse, fname))
+    return false;
 #endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
-    /* For output, default to paranoid. */
-    return kpathsea_name_ok (kpse, fname, "openout_any", "p", ok_writing);
+  /* For output, default to paranoid. */
+  return kpathsea_name_ok (kpse, fname, "openout_any", "p", ok_writing);
 }
 
 #if defined (KPSE_COMPAT_API)
 boolean
 kpse_in_name_ok (const_string fname)
 {
-    /* For input default to all. */
-    return kpathsea_in_name_ok (kpse_def, fname);
+  /* For input default to all. */
+  return kpathsea_in_name_ok (kpse_def, fname);
 }
 
 boolean
 kpse_out_name_ok (const_string fname)
 {
-    /* For output, default to paranoid. */
-    return kpathsea_out_name_ok (kpse_def, fname);
+  /* For output, default to paranoid. */
+  return kpathsea_out_name_ok (kpse_def, fname);
 }
 #endif
 
@@ -1328,6 +1328,7 @@ kpse_open_file (const_string name,  kpse_file_format_type type)
    This function is defined here, and not in progname.c, because it
    need format_info, and would cause all of tex-file to be pulled
    in by programs that do not need it. */
+
 void
 kpathsea_reset_program_name (kpathsea kpse, const_string progname)
 {
