@@ -66,6 +66,9 @@ nobase_dist_script_SCRIPTS = \
 	fragmaster/fragmaster.pl \
 	glossaries/makeglossaries \
 	latex2man/latex2man \
+	latexdiff/latexdiff.pl \
+	latexdiff/latexdiff-vc \
+	latexdiff/latexrevise \
 	latexmk/latexmk.pl \
 	listings-ext/listings-ext.sh \
 	mkjobtexmf/mkjobtexmf.pl \
