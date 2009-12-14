@@ -1,3 +1,0 @@
-#!/bin/sh
-test -f "`kpsewhich pdflatex.fmt`" || fmtutil --byfmt pdflatex
-exec pdftex -fmt=pdflatex -progname=pdflatex "$@"

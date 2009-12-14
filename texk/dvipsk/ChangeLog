@@ -1,3 +1,8 @@
+2009-12-14  Karl Berry  <karl@tug.org>
+
+	* pc: remove obsolete subdir.
+	* Makefile.am (EXTRA_DIST): rm.
+
 2009-12-11  Alexander Cherepanov  <cherepan@mccme.ru>
 
 	* protos.h (hash): change decl.

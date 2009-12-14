@@ -1,3 +1,8 @@
+2009-12-14  Karl Berry  <karl@tug.org>
+
+	* convert.bat: remove, obsolete.
+	* Makefile.am: don't distribute it.
+
 2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* coerce.h: Declare gettexstring().

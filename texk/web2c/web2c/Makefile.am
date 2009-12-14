@@ -68,8 +68,3 @@ stamp-makecpool: makecpool$(EXEEXT)
 	echo timestamp >$@
 
 CLEANFILES = $(nodist_noinst_DATA)
-
-## Obsolete ??
-##
-EXTRA_DIST = convert.bat
-

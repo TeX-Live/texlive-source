@@ -176,7 +176,6 @@ EXTRA_DIST += \
 	lafonts.map \
 	makefont.c \
 	mvs \
-	pc \
 	psfonts.map \
 	reencode \
 	tex \
@@ -186,4 +185,3 @@ EXTRA_DIST += \
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
-

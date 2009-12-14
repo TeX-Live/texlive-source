@@ -1,3 +1,0 @@
-#!/bin/sh
-test -f "`kpsewhich platex.fmt`" || fmtutil --byfmt platex
-exec tex -fmt=platex -progname=latex "$@"

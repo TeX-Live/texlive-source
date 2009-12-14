@@ -1,3 +1,0 @@
-#!/bin/sh
-test -f "`kpsewhich pdfjadetex.fmt`" || fmtutil --byfmt pdfjadetex
-exec pdftex -fmt=pdfjadetex -progname=pdfjadetex "$@"

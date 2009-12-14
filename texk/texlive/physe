@@ -1,3 +1,0 @@
-#!/bin/sh
-test -f "`kpsewhich physe.fmt`" || fmtutil --byfmt physe
-exec tex -fmt=physe "$@"

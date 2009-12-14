@@ -1,3 +1,0 @@
-#!/bin/sh
-test -f "`kpsewhich eplain.fmt`" || fmtutil --byfmt eplain
-exec tex -fmt=eplain -progname=tex "$@"

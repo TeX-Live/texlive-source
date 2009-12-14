@@ -1,3 +1,0 @@
-#!/bin/sh
-test -f "`kpsewhich startex.fmt`" || fmtutil --byfmt startex
-exec tex -fmt=startex ${1+"$@"}

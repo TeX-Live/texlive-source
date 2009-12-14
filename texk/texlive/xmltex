@@ -1,3 +1,0 @@
-#!/bin/sh
-test -f "`kpsewhich xmltex.fmt`" || fmtutil --byfmt xmltex
-exec tex -fmt=xmltex -progname=xmltex "$@"
