@@ -3,7 +3,7 @@
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
 --- xindy.orig/user-commands/Makefile.am	2009-12-08 22:55:09.000000000 +0100
 +++ xindy/user-commands/Makefile.am	2009-12-09 14:17:56.000000000 +0100
-@@ -55,18 +55,19 @@
+@@ -56,18 +56,19 @@
  xindy: xindy.in
  	cat $(srcdir)/xindy.in >xindy
  else !TEXLIVE_BUILD
@@ -29,31 +29,3 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am x
 -CLEANFILES = xindy xindy.v2
 +CLEANFILES = xindy
  
-diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/xindy.in xindy/user-commands/xindy.in
---- xindy.orig/user-commands/xindy.in	2009-12-09 11:50:09.000000000 +0100
-+++ xindy/user-commands/xindy.in	2009-12-09 12:25:35.000000000 +0100
-@@ -377,11 +377,6 @@
- 
- 
- # Check arguments, store them in proper variables.
--#
--# Do also something for backward compatibility: Check if this is an
--# old-style call. If it is, we have two arguments at the end, and the
--# second-to-last has the extension ".xdy". Then, call the old driver
--# script with the original arguments...
- 
- sub usage ( ;$ )
- {
-@@ -433,12 +428,6 @@
- my @orig_argv = @ARGV;
- parse_options();
- 
--if ( @ARGV == 2 ) {
--    if ( $ARGV[0] =~ /\.xdy$/ ) {
--	exec "$cmd_dir/xindy.v2", @orig_argv;
--    }
--}
--
- 
- # This script creates temporary files. Whenever a file is created, its
- # name is added to @temp_files. In an END handler, the temporary files

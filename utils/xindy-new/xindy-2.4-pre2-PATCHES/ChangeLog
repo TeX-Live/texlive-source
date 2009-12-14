@@ -1,16 +1,19 @@
+2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-20-TL-install-dirs: Declare install-links as PHONY.
+	* patch-22-TL-xindy_pl: Simplify the environment setup (for TL).
+
 2009-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* patch-22-TL-xindy_pl: Verify input files exist (from TL2008).
 	* patch-26-TL-texindy_pl (new): Adapt texindy perl script for
 	use in TL, using code from Tomasz M. Trzeciak.
-	* patch-27-check-exist (new): Check existence of input files
-	(from TL2008).
 
 2009-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* patch-24-TL-use-xindy_run (new): Invoke either 'xindy.run'
-	(actually 'lisp.run') or 'clisp'.
+	* patch-22-TL-xindy_pl: Invoke either 'xindy.run' or 'clisp'.
 	* patch-25-subst-in-texindy (new): Except for TL, substitute
-	the value of $(libdir) also in texindy and adapt Makefile.am.
+	@libdir@ also in texindy and adapt Makefile.am.
 
 2009-12-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

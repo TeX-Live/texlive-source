@@ -473,6 +473,7 @@ uninstall-man: uninstall-man1
 @TEXLIVE_BUILD_TRUE@	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 @TEXLIVE_BUILD_TRUE@	     exit 1;; \
 @TEXLIVE_BUILD_TRUE@	esac
+@TEXLIVE_BUILD_TRUE@.PHONY: install-links
 @TEXLIVE_BUILD_TRUE@install-links:
 @TEXLIVE_BUILD_TRUE@	@cd "$(DESTDIR)$(bindir)" && \
 @TEXLIVE_BUILD_TRUE@	for f in $(scripts); do \

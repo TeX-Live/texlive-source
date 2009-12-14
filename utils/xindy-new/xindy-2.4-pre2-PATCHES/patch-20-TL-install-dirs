@@ -43,7 +43,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/src/Makefile.am xindy/src/M
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am xindy/user-commands/Makefile.am
 --- xindy.orig/user-commands/Makefile.am	2009-12-03 01:31:28.000000000 +0100
 +++ xindy/user-commands/Makefile.am	2009-12-08 22:55:09.000000000 +0100
-@@ -20,10 +20,46 @@
+@@ -20,10 +20,47 @@
  ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  ## Boston, MA 02110-1301 USA.
  
@@ -67,6 +67,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am x
 +	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 +	     exit 1;; \
 +	esac
++.PHONY: install-links
 +install-links:
 +	@cd $(DESTDIR)$(bindir) && \
 +	for f in $(scripts); do \

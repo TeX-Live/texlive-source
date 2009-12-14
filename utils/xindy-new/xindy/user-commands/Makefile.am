@@ -38,6 +38,7 @@ install-exec-hook:
 	  *) echo "strange directory '$(bindir)' for linked scripts" >&2; \
 	     exit 1;; \
 	esac
+.PHONY: install-links
 install-links:
 	@cd "$(DESTDIR)$(bindir)" && \
 	for f in $(scripts); do \

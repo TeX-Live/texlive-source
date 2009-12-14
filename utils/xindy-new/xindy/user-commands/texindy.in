@@ -314,7 +314,7 @@ BEGIN {
     $isW32 = ($^O =~ /^MSWin/i) ? 1 : 0;
     my $r0 = Cwd::realpath($0);
     $cmd_dir = dirname($r0);
-    $isTL = (basename($r0) =~ /\.pl/) ? 1 : 0;
+    $isTL = (basename($r0) =~ /\.pl$/) ? 1 : 0;
 
     $cmd = basename($0);
 
@@ -338,7 +338,7 @@ BEGIN {
 	$cmd_dir = Cwd::realpath("$cmd_dir/../../xindy/modules");
 	die "Cannot locate xindy modules directory"  unless -f "$cmd_dir/../VERSION";
     } else {
-	# FIXME: For win32 there should be wrapper scripts 'xindy.bat' or 'xindy.cmd'
+	# FIXME: For MSWin there should be wrapper scripts 'xindy.bat' or 'xindy.cmd'
 	# FIXME: invoking 'perl xindy' and similar for texindy.
 	# FIXME: When calling xindy from texindy we bypass this wrapper.
 	$xindy = "$cmd_dir/xindy";

@@ -287,61 +287,45 @@ BEGIN {
 
 use File::Basename;
 use Cwd;
-our ($isW32, $r0, $clisp);
+our ($isW32, $clisp);
 our ($cmd_dir, $cmd, $lib_dir, $modules_dir);
 BEGIN {
     $isW32 = ($^O =~ /^MSWin/i) ? 1 : 0;
-    $r0 = Cwd::realpath($0);
-    $cmd = basename($r0);
+    $clisp = ($isW32 || $^O eq "cygwin") ? 'clisp.exe' : 'clisp';
 
-    if ($isW32 || $^O eq "cygwin") {
-	$clisp = "clisp.exe";
-    } else {
-	$clisp = "clisp";
-    }
+    my $r0 = Cwd::realpath($0);
+    $cmd_dir = dirname($r0);
+    $cmd = basename($0);
 
-    # FIXME: make two subroutines for TL2010 and !TL2010 part
+    if (basename($r0) =~ /\.pl$/) { # TL2010
 
-    if ($cmd eq "xindy.pl") { # TL2010
-
-	$r0 = $0;
-	my $rcmd_dir = dirname($0);
-	$cmd = basename($0);
-
-	if ($isW32) {
-	    $cmd_dir = "$rcmd_dir/../../../bin/win32";
-	} else {
-	    die "$cmd: not a symlink as required for TeX Live"  unless -l $0;
-	    $cmd_dir = $rcmd_dir;
-	    my $rcmd = $cmd;
-	    # Follow symlinks, but remember last one
-	    while (-l $r0) {
-		$cmd_dir = $rcmd_dir;
-		$cmd = $rcmd;
-		$r0 = readlink($r0);
-		$r0 = "$cmd_dir/$r0"  unless $r0 =~ m,^[\\/],; # relative link
-		$rcmd_dir = dirname($r0);
-		$rcmd = basename($r0);
-	    }
-	    # Now $cmd_dir/$cmd -> $r0 = $rcmd_dir/$rcmd (not a symlink).
-	}
-
-	$modules_dir = Cwd::realpath("$rcmd_dir/../../xindy/modules");
+	# modules directory
+	$modules_dir = Cwd::realpath("$cmd_dir/../../xindy/modules");
 	die "$cmd: Cannot locate xindy modules directory"  unless -d $modules_dir;
 
+	if ($isW32) {
+	    $cmd_dir = "$cmd_dir/../../../bin/win32";
+	} else {
+	    die "$cmd: not a symlink as required for TeX Live"  unless -l $0;
+	    # Follow symlinks and determine $cmd_dir such that
+	    # $cmd_dir/xindy -> $r0 = XINDY_SCRIPTDIR/xindy.pl
+	    $r0 = $0;
+	    while (-l $r0) {
+		$cmd_dir = dirname($r0);
+		$r0 = readlink($r0);
+		$r0 = "$cmd_dir/$r0"  unless $r0 =~ m,^[\\/],; # relative link
+	    }
+	}
+
+	# library directory
         $lib_dir = $cmd_dir;
 
-	my $xindy_run;
-	if ($isW32 || $^O eq "cygwin") {
-	    $xindy_run = "$lib_dir/xindy-lisp.exe";
-	} else {
-	    $xindy_run = "$lib_dir/xindy.run";
-	}
-	$clisp = $xindy_run if -e $xindy_run;
+	# clisp runtime
+	my $xindy_run = ($isW32 || $^O eq "cygwin")
+		      ? "$lib_dir/xindy-lisp.exe" : "$lib_dir/xindy.run";
+	$clisp = $xindy_run  if -e $xindy_run;
 
     } else { # !TL2010
-
-	$cmd_dir = dirname($r0);
 
     # library directory
     if ( $ENV{XINDY_LIBDIR} ) {
@@ -368,6 +352,7 @@ BEGIN {
     } else {
 	die "$cmd: Cannot locate xindy modules directory";
     }
+
     } # !TL2010
 }
 
@@ -427,7 +412,7 @@ if ($^O eq 'darwin' && ! -e $mem_file) { # support universal binary on mac
 	$mem_file = "$lib_dir/xindy-i386.mem";
     }
 }
-die "$cmd: Cannot locate $mem_file" unless -e $mem_file;
+die "$cmd: Cannot locate $mem_file"  unless -e $mem_file;
 
 my @orig_argv = @ARGV;
 parse_options();

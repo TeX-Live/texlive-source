@@ -23,9 +23,9 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/user-commands/Makefile.am x
  	done
  	case "$(bindir)" in \
  	  */bin) $(MAKE) $(AM_MAKEFLAGS) REL=.. install-links;; \
-@@ -40,34 +39,34 @@
- 	     exit 1;; \
+@@ -41,34 +40,34 @@
  	esac
+ .PHONY: install-links
  install-links:
 -	@cd $(DESTDIR)$(bindir) && \
 +	@cd "$(DESTDIR)$(bindir)" && \
