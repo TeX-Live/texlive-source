@@ -37,6 +37,9 @@ AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"],
 
 AC_SEARCH_LIBS([sqrt], [m])
 
+AC_CHECK_FUNCS([ftime gettimeofday])
+AC_CHECK_HEADERS([sys/time.h sys/timeb.h])
+
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_FREETYPE2_FLAGS

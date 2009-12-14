@@ -23,7 +23,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <sys/timeb.h>
 #include <time.h>
 #include "gzstream.h"
 #include "CommandLine.h"
@@ -44,6 +43,12 @@
 #define EMAIL " <" PACKAGE_BUGREPORT ">"
 #else
 #define EMAIL "Martin Gieseking <martin.gieseking@uos.de>"
+#endif
+
+#if defined (HAVE_SYS_TIME_H)
+#include <sys/time.h>
+#elif defined (HAVE_SYS_TIMEB_H)
+#include <sys/timeb.h>
 #endif
 
 using namespace std;
@@ -106,9 +111,18 @@ static string remove_suffix (string fname) {
 
 /** Returns timestamp (wall time) in seconds. */
 static double get_time () {
+#if defined (HAVE_SYS_TIME_H)
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return tv.tv_sec + tv.tv_usec/1000000.0;
+#elif defined (HAVE_SYS_TIMEB_H)
 	struct timeb tb;
 	ftime(&tb);
 	return tb.time + tb.millitm/1000.0;
+#else
+	time_t myclock = time((time_t*)NULL);
+	return myclock;
+#endif
 }
 
 

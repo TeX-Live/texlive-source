@@ -1,3 +1,9 @@
+2009-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Added patch-20-gettimeofday-or-ftime.
+	* configure.ac, src/dvisvgm.cpp: Check for gettimeofday()
+	and <sys/time.h> or ftime() and <sys/timeb.h>.
+
 2009-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Added patch-05-libdvisvgm-dlfcn.
