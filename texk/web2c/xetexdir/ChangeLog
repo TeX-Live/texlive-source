@@ -1,3 +1,7 @@
+2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).
+
 2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeX_ext.c: Remove extern declaration of gettexstring(),

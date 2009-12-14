@@ -1,3 +1,7 @@
+2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).
+
 2009-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import freetype-2.3.11.

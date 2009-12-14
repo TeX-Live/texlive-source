@@ -8,7 +8,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 AC_INIT([TeX Live], [2009], [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([hugetex])
+AC_CONFIG_SRCDIR([linked_scripts/ChangeLog])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 

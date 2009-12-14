@@ -21,7 +21,6 @@ EXTRA_DIST = \
 	README.hacking \
 	README.layout \
 	build-aux/README.TL \
-	build-aux/mkinstalldirs \
 	m4/README \
 	reautoconf
 

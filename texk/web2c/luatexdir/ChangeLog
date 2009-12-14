@@ -1,3 +1,7 @@
+2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/luatex.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).
+
 2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/loslibext.c (do_mkdtemp): Declare as static and skip

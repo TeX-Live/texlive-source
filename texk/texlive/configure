@@ -556,7 +556,7 @@ PACKAGE_STRING='TeX Live 2009'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="hugetex"
+ac_unique_file="linked_scripts/ChangeLog"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS

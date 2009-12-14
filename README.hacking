@@ -9,7 +9,7 @@ You may freely use, modify and/or distribute this file.
 
 autoconf (GNU Autoconf) 2.65
 
-automake (GNU automake) 1.11
+automake (GNU automake) 1.11.1
 
 ltmain.sh (GNU libtool) 2.2.6
 

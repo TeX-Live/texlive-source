@@ -1,3 +1,7 @@
+2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).
+
 2009-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am: Enable compiler warnings.

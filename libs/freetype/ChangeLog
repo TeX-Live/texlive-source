@@ -1,3 +1,7 @@
+2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).
+
 2009-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* freetype-1.5/configure.in, freetype-1.5/configure: avoid lots

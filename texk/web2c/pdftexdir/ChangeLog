@@ -1,3 +1,7 @@
+2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).
+
 2009-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.c: Drop #ifdef HAVE_ASPRINTF and #include <stdio.h>.

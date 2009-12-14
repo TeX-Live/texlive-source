@@ -27,7 +27,7 @@ all-local: sublibs
 # Sequentially configure and optionally build all libs subdirs;
 # code inspired by automake's way to handle recursive targets.
 sublibs: $(CONFIG_AUX)
-	@failcom='exit 1'; \
+	@fail= failcom='exit 1'; \
 	for f in x $$MAKEFLAGS; do \
 	  case $$f in \
 	    *=* | --[!k]*);; \

@@ -40,7 +40,7 @@ ICU_NATIVE = icu-native/config/icucross.mk
 endif cross
 
 icu-build/Makefile: $(ICU_NATIVE)
-	$(mkdir_p) icu-build
+	$(MKDIR_P) icu-build
 	@cmd="$(icu_config) $(icu_build_args)"; \
 	(cd icu-build && echo "=== configuring in icu-build (`pwd`)" && \
 	  echo "make: running $(SHELL) $$cmd" && \
@@ -51,7 +51,7 @@ icu-native/config/icucross.mk: icu-native/Makefile
 	cd icu-native && $(MAKE) $(AM_MAKEFLAGS) config/icucross.mk
 
 icu-native/Makefile:
-	$(mkdir_p) icu-native
+	$(MKDIR_P) icu-native
 	@cmd="$(icu_config) $(icu_native_args)"; \
 	(cd icu-native && echo "=== configuring in icu-native (`pwd`)" && \
 	  echo "make: running $(SHELL) $$cmd" && \

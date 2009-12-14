@@ -52,7 +52,7 @@ pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 # Extract pdftex version
 pdftexdir/pdftex.version: pdftexdir/pdftex.web
-	$(mkdir_p) pdftexdir
+	$(MKDIR_P) pdftexdir
 	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-//;s/'.*$$//" >pdftexdir/pdftex.version
 pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexdir/etex.version

@@ -146,7 +146,7 @@ EXTRA_DIST += \
 	doc/TETEXDOC.tex \
 	fontinst.bat \
 	pdfetex-pl.pool \
-	updmap.pl \
+	updmap.pl
 
 ## 
 ## This target is invoked by the top-level make,

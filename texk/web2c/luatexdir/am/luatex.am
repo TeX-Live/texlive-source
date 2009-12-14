@@ -52,7 +52,7 @@ luatex-pool.c: luatex.pool luatexd.h $(makecpool_stamp)
 	$(makecpool) luatex >$@ || rm -f $@
 # Extract luatex version
 luatexdir/luatex.version: luatexdir/luatex.web
-	$(mkdir_p) luatexdir
+	$(MKDIR_P) luatexdir
 	grep '^@d luatex_version_string==' $(srcdir)/luatexdir/luatex.web \
 	  | sed "s/^.*=='//;s/'.*$$//" >luatexdir/luatex.version
 luatexdir/luatexextra.h: luatexdir/luatexextra.in luatexdir/luatex.version

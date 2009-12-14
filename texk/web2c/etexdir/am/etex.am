@@ -47,7 +47,7 @@ etex-tangle: tangle$(EXEEXT) etex.web etex.ch tangle-sh
 
 # Extract etex version
 etexdir/etex.version: etexdir/etex.ch
-	$(mkdir_p) etexdir
+	$(MKDIR_P) etexdir
 	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
 	  | sed "s/^.*'-//;s/'.*$$//" >etexdir/etex.version
 

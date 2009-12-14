@@ -26,7 +26,7 @@ noinst_DATA = libttf.a
 
 ft-build/Makefile:
 	rm -rf ft-build
-	$(mkdir_p) ft-build
+	$(MKDIR_P) ft-build
 	cd ft-build && \
 	  CC='$(CC)' \
 	  $(abs_srcdir)/$(FREETYPE_TREE)/configure \
