@@ -32,16 +32,34 @@
 #include <kpathsea/version.h>
 
 
-/* Base resolution. (-D, -dpi) */
-unsigned dpi = 600;
-
 /* For variable and path expansion.  (-expand-var, -expand-path,
-   -show-path, -separator) */
+   -show-path) */
 string var_to_expand = NULL;
 string braces_to_expand = NULL;
 string path_to_expand = NULL;
 string path_to_show = NULL;
 string var_to_value = NULL;
+
+/* Base resolution. (-D, -dpi) */
+unsigned dpi = 600;
+
+/* The engine name, for '$engine' construct in texmf.cnf.  (-engine) */
+string engine = NULL;
+
+/* Interactively ask for names to look up?  (-interactive) */
+boolean interactive = false;
+
+/* The device name, for $MAKETEX_MODE.  (-mode) */
+string mode = NULL;
+
+/* Search the disk as well as ls-R?  (-must-exist, -mktex) */
+boolean must_exist = false;
+
+/* The program name, for `.PROG' construct in texmf.cnf.  (-program) */
+string progname = NULL;
+
+/* Return all matches, not just the first one?  (-all) */
+boolean show_all = false;
 
 /* Only match files in given subdirs.  (-subdir) */
 str_list_type subdir_paths;
@@ -50,24 +68,6 @@ str_list_type subdir_paths;
 kpse_file_format_type user_format = kpse_last_format;
 string user_format_string;
 string user_path;
-
-/* Interactively ask for names to look up?  (-interactive) */
-boolean interactive = false;
-
-/* Search the disk as well as ls-R?  (-must-exist, -mktex) */
-boolean must_exist = false;
-
-/* Return all matches, not just the first one?  (-all) */
-boolean show_all = false;
-
-/* The device name, for $MAKETEX_MODE.  (-mode) */
-string mode = NULL;
-
-/* The program name, for `.PROG' construct in texmf.cnf.  (-program) */
-string progname = NULL;
-
-/* The engine name, for '$engine' construct in texmf.cnf.  (-engine) */
-string engine = NULL;
 
 /* Return the <number> substring in `<name>.<number><stuff>', if S has
    that form.  If it doesn't, return 0.  */
@@ -355,7 +355,6 @@ static struct option long_options[]
       { "path",			1, 0, 0 },
       { "no-mktex",		1, 0, 0 },
       { "progname",		1, 0, 0 },
-      { "separator",		1, 0, 0 },
       { "subdir",		1, 0, 0 },
       { "show-path",		1, 0, 0 },
       { "var-value",		1, 0, 0 },
