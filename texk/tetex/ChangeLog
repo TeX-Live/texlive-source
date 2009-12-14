@@ -1,7 +1,3 @@
-2009-12-14  Karl Berry  <karl@tug.org>
-
-	* Makefile.am (EXTRA_DIST): rm fontinst.bat and win32 subdir.
-
 2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (bin_links, man1_links):

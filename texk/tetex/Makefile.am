@@ -144,6 +144,7 @@ EXTRA_DIST += \
 	doc/Makefile \
 	doc/TETEXDOC.bib \
 	doc/TETEXDOC.tex \
+	fontinst.bat \
 	pdfetex-pl.pool \
 	updmap.pl \
 
