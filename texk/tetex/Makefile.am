@@ -144,11 +144,8 @@ EXTRA_DIST += \
 	doc/Makefile \
 	doc/TETEXDOC.bib \
 	doc/TETEXDOC.tex \
-	fontinst.bat \
 	pdfetex-pl.pool \
 	updmap.pl \
-	win32/epstopdf.c \
-	win32/epstopdf.txt
 
 ## 
 ## This target is invoked by the top-level make,
