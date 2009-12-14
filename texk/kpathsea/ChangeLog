@@ -1,3 +1,9 @@
+2009-12-14  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (find_format): remove rearrangement of checking
+	kpse_fmt_format last, since it doesn't have any special extensions
+	now (what were they?).
+
 2009-12-11  Alexander Cherepanov  <cherepan@mccme.ru>
 
 	* tex-file.c (kpathsea_name_ok): correct check for /../ so that
