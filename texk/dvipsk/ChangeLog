@@ -1,5 +1,11 @@
 2009-12-14  Karl Berry  <karl@tug.org>
 
+	* emspecial.c (emspecial):
+	Increase size of emunit to 30.
+	Increase size of emstr to 250.
+	Attempt to check that we don't overflow emstr.	
+	Report from Alexander, tlsec 02 Dec 2009 00:28:33.
+
 	* pc: remove obsolete subdir.
 	* Makefile.am (EXTRA_DIST): rm.
 

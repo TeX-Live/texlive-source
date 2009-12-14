@@ -140,8 +140,8 @@ emspecial(char *p)
 float emwidth, emheight;
 shalfword empoint1, empoint2;
 struct empt *empoint;
-char emunit[3];
-char emstr[80];
+char emunit[30];
+char emstr[250];
 char *emp;
 #ifndef KPATHSEA
 void emgraph();
@@ -277,8 +277,13 @@ void emgraph();
 	else if (strncmp(emp, "graph", 5) == 0) {
 	   int i;
 	   for (emp = emp+5; *emp && isspace(*emp); emp++); /* skip blanks */
-	   for (i=0; *emp && !isspace(*emp) && !(*emp==',') ; emp++)
+	   for (i=0; *emp && !isspace(*emp) && !(*emp==',') ; emp++) {
+	      if (strlen(emstr) - 2 >= sizeof(emstr)) {
+                fprintf(stderr, "em:graph: special too long, truncating\n") ;
+                break;
+	      }
 	      emstr[i++] = *emp; /* copy filename */
+	   }
 	   emstr[i] = '\0';
 	   /* now get optional width and height */
 	   emwidth = emheight = -1.0;	/* no dimension is <= 0 */
