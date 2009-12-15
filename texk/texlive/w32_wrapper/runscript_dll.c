@@ -21,15 +21,12 @@
 #include <stdio.h>
 #include <windows.h>
 #define IS_WHITESPACE(c) ((c == ' ') || (c == '\t'))
-#define DIE(...) {\
-  fprintf(stdout, header_fmt, module_name);\
-  fprintf(stdout, __VA_ARGS__);\
-  return 1;\
-}
+#define MAX_MSG 512
+#define DIE(...) { _snprintf( msg_buf, MAX_MSG - 1, __VA_ARGS__ ); goto DIE; }
 
 const char module_name[] = "runscript.dll";
 const char script_name[] = "runscript.tlu";
-const char header_fmt[]  = "%s: ";
+static char msg_buf[MAX_MSG];
 
 __declspec(dllimport) int dllluatexmain( int argc, char *argv[] );
 
@@ -57,23 +54,29 @@ __declspec(dllexport) int dllrunscript( int argc, char *argv[] )
   // get command line of this process
   argline = GetCommandLine();
   // skip over argv[0] (it can contain embedded double quotes if launched from cmd.exe!)
-  quoted = 0;
-  for ( ; (*argline) && ( !IS_WHITESPACE(*argline) || quoted ); argline++ )
+  for ( quoted = 0; (*argline) && ( !IS_WHITESPACE(*argline) || quoted ); argline++ )
     if ( *argline == '"' ) quoted = !quoted;
   while ( IS_WHITESPACE(*argline) ) argline++; // remove leading whitespace if any
 
   // set up argument list for texlua script
   lua_argc = argc + 4;
   lua_argv = (char **) malloc( (lua_argc + 1) * sizeof(char *) );
-  lua_argv[0] = "texlua"; // just a bare name, luatex strips the rest anyway
+  lua_argv[0] = strdup("texlua"); // just a bare name, luatex strips the rest anyway
   lua_argv[1] = fpath; // script to execute
   for ( k = 1; k < argc; k++ ) lua_argv[k+1] = argv[k];
-  lua_argv[lua_argc - 3] = "CLI_MODE\n"; // sentinel argument
+  lua_argv[lua_argc - 3] = strdup("CLI_MODE\n"); // sentinel argument
   lua_argv[lua_argc - 2] = argv[0]; // original argv[0]
   lua_argv[lua_argc - 1] = argline; // unparsed arguments
   lua_argv[lua_argc] = NULL;
 
   // call texlua interpreter
-  // NOTE: dllluatexmain  never returns, it exits instead
-  return dllluatexmain( lua_argc, lua_argv );
+  // dllluatexmain  never returns, but we pretend that it does
+  k = dllluatexmain( lua_argc, lua_argv );
+  if (lua_argv) free(lua_argv);
+  return k;
+
+DIE:
+  fprintf(stderr, "%s: ", module_name);
+  fprintf(stderr, msg_buf);
+  return 1;
 }

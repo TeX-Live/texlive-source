@@ -24,7 +24,7 @@
     as binaries (there are some odd cases where they don't work) and 
     it is hard to make them robust and secure. Compiled binary wrappers 
     don't suffer from these problems but they are harder to write, debug
-    and maintain compared to scritps. For these reasons a hybrid 
+    and maintain in comparison to scripts. For these reasons a hybrid 
     approach was adopted that offers the best of both worlds - a binary 
     stub combined with a wrapper script.
   
@@ -43,11 +43,11 @@
     is executed by linking with luatex.dll and calling its lua 
     interpreter directly rather than by spawning a new process.
     
-    There are two variants of the binary stub: one for CLI programs 
+    There are two flavours of the binary stub: one for CLI programs 
     and another one for GUI programs. The GUI variant does not open 
     a console window nor does it block the command promt if started 
-    from there. It also uses a dialog to display an error message in 
-    addition to stderr output.
+    from there. It also uses a dialog box to display an error message 
+    in addition to outputting to stderr.
     
     The CLI stub is further split into a common DLL and an EXE proxy 
     to it. This is for maintenance reasons - upgrades can be done by 
@@ -62,58 +62,47 @@
     All the hard work of locating a script/program to execute happens 
     in this wrapper script. Once located, the script or program is 
     always executed directly by spawning its interpreter or binary in 
-    a new process. The system shell (cmd.exe) is never called except 
-    for batch scripts, where it happens to be their interpreter. If the 
-    located script happens to be a (tex)lua script, for increased 
-    performance it is converted to a function with Lua's loadfile and 
-    called without spawning a new process.
+    a new process. The system shell (cmd.exe) is never called (except 
+    for batch scripts, of course). If the located script happens to be 
+    a (tex)lua script, for increased performance it is converted to 
+    a function with Lua's loadfile and called without spawning a new 
+    process.
  
 --]===================================================================]--
 
 -- quotes string with spaces
 local function _q(str)
-  if str then 
-    str = string.gsub(str, '"', '') -- disallow embedded double quotes
-    if string.find(str, "%s") then
-      return  '"'..str..'"' 
-    else 
-      return str 
-    end
-  else
-    return str 
-  end
+  str = string.gsub(str, '"', '') -- disallow embedded double quotes
+  return string.find(str, "%s") and '"'..str..'"' or str
 end
 
 -- checks if path is absolute (but not if it actually exists)
 local function is_abs_path(fpath)
-  if string.find(fpath, '^[/\\]') or string.find(fpath, '^[a-zA-Z]:[/\\]') then
-    return true
-  else
-    return false
-  end
+  return string.find(fpath, '^[a-zA-Z]:[/\\]') and true or false
 end
 
 -- prepends directories to path if they are not already there
 local function prepend_path(path, ...)
-  if (string.sub(path, -1) ~= ';') then path = path..';' end
+  local pathcmp = string.lower(string.gsub(path, '/', '\\'))..';'
   for k = 1, select('#', ...) do 
-    local dir = string.gsub(select(k, ...), '/', '\\')..';'
-    if not string.find(path, dir, 1, true) then path = dir..path end
+    local dir = string.lower(string.gsub(select(k, ...), '/', '\\'))..';'
+    if not string.find(pathcmp, dir, 1, true) then path = dir..path end
   end
   return path
 end
 
 -- searches the PATH variable for a file
 local function search_path(fname, PATH, PATHEXT)
-  if is_abs_path(fname) then return fname end
+  if string.find(fname, '[/\\]') then 
+    return nil, "not searching absolute or relative path: "..fname 
+  end
   PATH = PATH or os.getenv('PATH')
-  PATHEXT = PATHEXT or '.'
+  PATHEXT = PATHEXT or '\0'
   for dir in string.gmatch(PATH, '[^;]+') do
+    local dirsep = (string.find(dir, '\\') and '\\' or '/')
     for ext in string.gmatch(PATHEXT, '[^;]+') do
-      local dirsep = (string.find(dir, '\\') and '\\' or '/')
-      local e = ((ext == '.') and '' or ext)
-      local f = dir..dirsep..fname..e
-      if lfs.isfile(f) then return f, e end
+      local f = dir..dirsep..fname..ext
+      if lfs.isfile(f) then return f, ext end
     end
   end
   return nil, "file not found: "..fname
@@ -199,23 +188,21 @@ local progname = string.match(arg[0], '[^\\/]+$')
 progname = string.gsub(progname, '%.[^.]*$', '') -- remove extension
 local progext = string.match(arg[0], '%.[^\\/.]*$') or ''
 -- kpathsea 
-local lua_binary = 'texlua'
-for k = -1, -1024*1024 do 
-  if not arg[k] then break end
-  lua_binary = arg[k]
-end
+local k = -1 
+while arg[k-1] do k = k - 1 end -- in case of call as: luatex --luaonly ...
+local lua_binary = arg[k]
 kpse.set_program_name(lua_binary, progname)
 -- vars
 local TEXDIR = kpse.var_value('SELFAUTOPARENT')
 local BINDIR = kpse.var_value('SELFAUTOLOC')
 local PATH = os.getenv('PATH') or ''
 -- perl stuff
-local script_for_tlperl = {
+local scripts4tlperl = {
   ['updmap-sys'] = true, 
   updmap = true, 
 }
 local PERLEXE = search_path('perl.exe', PATH)
-if not PERLEXE or guimode or script_for_tlperl[progname] then 
+if not PERLEXE or guimode or scripts4tlperl[progname] then 
   PERLEXE = TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
   os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')--[[
   local PERL5SHELL = os.getenv('COMSPEC')
@@ -231,7 +218,10 @@ os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
 PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlgs/bin', BINDIR)
 os.setenv('PATH', PATH);
 
-local alias_table = {
+local alias_table = {--[[
+  cmd = {'cmd'},
+  printargv = {'..\\print_argv.exe', argline},
+  scratch = 'scratch.lua',--]]
   --['fmtutil-sys'] = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil-sys', argline},
   ['updmap-sys'] = 
     function ()
@@ -284,11 +274,11 @@ local alias_table = {
 local extension_map = { -- map script extension to command
   ['.bat'] = {'cmd', '/c', 'call'},
   ['.cmd'] = {'cmd', '/c', 'call'},
-  ['.jar'] = {'java', '-jar'},
+  ['.jar'] = {guimode and 'javaw' or 'java', '-jar'},
   ['.js']  = {guimode and 'wscript' or 'cscript', '-nologo'},
   ['.pl']  = {guimode and 'wperl' or 'perl'},
-  ['.py']  = {'python'},
-  ['.rb']  = {'ruby'},
+  ['.py']  = {guimode and 'pythonw' or 'python'},
+  ['.rb']  = {guimode and 'rubyw' or 'ruby'},
   ['.vbs'] = {guimode and 'wscript' or 'cscript', '-nologo'},
 }
 
@@ -298,10 +288,10 @@ if program then -- special case (alias)
     program = program() 
   end
 else -- general case (no alias)
-  local progfullname, ext = search_path(progname, PATH, ".tlu;.bat;.cmd")
+  local progfullname, ext = search_path(progname, BINDIR, ".tlu;.bat;.cmd")
   if not progfullname then
     progfullname, ext = assert(find_texmfscript(progname, 
-      ".tlu;.texlua;.lua;.pl;.rb;.py;.jar;.bat;.cmd;.vbs;.js;."))
+      ".tlu;.texlua;.lua;.pl;.rb;.py;.jar;.bat;.cmd;.vbs;.js;\0"))
   end
   if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then
     -- lua script
