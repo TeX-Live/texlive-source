@@ -94,7 +94,7 @@ end
 -- searches the PATH variable for a file
 local function search_path(fname, PATH, PATHEXT)
   if string.find(fname, '[/\\]') then 
-    return nil, "not searching absolute or relative path: "..fname 
+    return nil, "directory part not allowed for PATH search: "..fname 
   end
   PATH = PATH or os.getenv('PATH')
   PATHEXT = PATHEXT or '\0'
@@ -105,7 +105,7 @@ local function search_path(fname, PATH, PATHEXT)
       if lfs.isfile(f) then return f, ext end
     end
   end
-  return nil, "file not found: "..fname
+  return nil, "file not on PATH: "..fname
 end
 
 -- locates texmfscript to execute
@@ -298,8 +298,7 @@ else -- general case (no alias)
     arg[0] = progfullname
     program = progfullname
   else
-    program = (ext ~= '') and extension_map[ext] or 
-              assert(shebang_to_argv(progfullname)) 
+    program = extension_map[ext] or assert(shebang_to_argv(progfullname)) 
     table.insert(program, _q(progfullname))
     table.insert(program, argline)
     program[0] = program[0] or assert(check_command(program[1], PATH))
