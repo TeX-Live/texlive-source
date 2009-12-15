@@ -1104,7 +1104,7 @@ static const_string ok_type_name[] = {
 
 static boolean
 kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
-		  const_string default_choice, ok_type action)
+		  const_string default_choice, ok_type action, boolean silent)
 {
   /* We distinguish three cases:
      'a' (any)        allows any file to be opened.
@@ -1180,28 +1180,37 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   return true;
 
  not_ok: /* Some test failed.  */
-  fprintf (stderr, "\n%s: Not %s %s (%s = %s).\n",
-           kpse->invocation_name, ok_type_name[action], fname,
-           check_var, open_choice);
+  if (!silent)
+    fprintf (stderr, "\n%s: Not %s %s (%s = %s).\n",
+             kpse->invocation_name, ok_type_name[action], fname,
+             check_var, open_choice);
   return false;
+}
+
+/* For input default to all. */
+
+boolean
+kpathsea_in_name_ok_silent (kpathsea kpse, const_string fname)
+{
+  return kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, true);
 }
 
 boolean
 kpathsea_in_name_ok (kpathsea kpse, const_string fname)
 {
-    /* For input default to all. */
-    return kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading);
+  return kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, false);
 }
+
 
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
 static int
 Isspace (char c)
 {
-    return (c == ' ' || c == '\t');
+  return (c == ' ' || c == '\t');
 }
 
 static boolean
-executable_filep (kpathsea kpse, const_string fname)
+executable_filep (kpathsea kpse, const_string fname, boolean silent)
 {
     string p, q, base;
     string *pp;
@@ -1240,8 +1249,8 @@ executable_filep (kpathsea kpse, const_string fname)
       if (pp && q) {
         while (*pp) {
           if (strchr (fname, ':') || !strcmp (q, *pp)) {
-            fprintf (stderr, "\n%s: Forbidden to open for writing\n",
-                     fname);
+            if (!silent)
+              fprintf (stderr, "\n%s: Forbidden to open for writing\n", fname);
             free (base);
             return true;
           }
@@ -1256,16 +1265,28 @@ executable_filep (kpathsea kpse, const_string fname)
 }
 #endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
 
-boolean
-kpathsea_out_name_ok (kpathsea kpse, const_string fname)
+static boolean
+kpathsea_out_name_ok_1 (kpathsea kpse, const_string fname, boolean silent)
 {
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
   /* Output of an executable file is restricted on Windows */
-  if (executable_filep (kpse, fname))
+  if (executable_filep (kpse, fname, silent))
     return false;
 #endif /* WIN32 || __MINGW32__ || __CYGWIN__ */
   /* For output, default to paranoid. */
-  return kpathsea_name_ok (kpse, fname, "openout_any", "p", ok_writing);
+  return kpathsea_name_ok (kpse, fname, "openout_any", "p", ok_writing,silent);
+}
+
+boolean
+kpathsea_out_name_ok_silent (kpathsea kpse, const_string fname)
+{
+  return kpathsea_out_name_ok_1 (kpse, fname, true);
+}
+
+boolean
+kpathsea_out_name_ok (kpathsea kpse, const_string fname)
+{
+  return kpathsea_out_name_ok_1 (kpse, fname, false);
 }
 
 #if defined (KPSE_COMPAT_API)

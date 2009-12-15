@@ -1,3 +1,12 @@
+2009-12-15  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (-safe-in-name, -safe-out-name): new options.
+	* doc/kpathsea.texi: document them.
+	* tex-file.c (kpathsea_name_ok): introduce silent argument;
+	change callers.
+	* tex-file.h (kpathsea_{in,out}_name_ok_silent): declare these,
+	now used in kpsewhich.
+
 2009-12-14  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (separator): remove never-used variable/option.

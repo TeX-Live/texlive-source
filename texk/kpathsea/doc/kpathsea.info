@@ -2770,6 +2770,13 @@ filename, and returns the first file found.
      affect the search paths via the `.PROGNAM' feature in
      configuration files (*note Config files::).
 
+`--safe-in-name=NAME'
+`--safe-out-name=NAME'
+     Exit successfully if NAME is safe to open for reading or writing,
+     respectively, else unsuccessfully.  No output is written.  These
+     tests take account of the related Kpathsea configuration settings
+     (*note Calling sequence::).
+
 `--subdir=STRING'
      Report only those matches whose directory part _ends_ with STRING
      (compared literally, except case is ignored on a case-insensitive
@@ -3735,11 +3742,15 @@ Index
                                                               (line 131)
 * --progname=NAME:                       Path searching options.
                                                               (line 140)
+* --safe-in-name=NAME:                   Path searching options.
+                                                              (line 146)
+* --safe-out-name=NAME:                  Path searching options.
+                                                              (line 146)
 * --show-path=NAME:                      Auxiliary tasks.     (line  41)
 * --srcdir, for building multiple architectures: configure scenarios.
                                                               (line  18)
 * --subdir=STRING:                       Path searching options.
-                                                              (line 145)
+                                                              (line 152)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
 * --version:                             Standard options.    (line  10)
 * --with options:                        configure options.   (line  16)
@@ -4898,22 +4909,22 @@ Node: Filename aliases106289
 Node: Database format107467
 Node: Invoking kpsewhich108480
 Node: Path searching options109425
-Node: Specially-recognized files116795
-Node: Auxiliary tasks118151
-Node: Standard options119976
-Node: TeX support120296
-Node: Supported file formats121587
-Node: File lookup129103
-Node: Glyph lookup130835
-Node: Basic glyph lookup131959
-Node: Fontmap132838
-Node: Fallback font135455
-Node: Suppressing warnings136368
-Node: Programming137473
-Node: Programming overview137986
-Node: Calling sequence140680
-Node: Program-specific files147203
-Node: Programming with config files148245
-Node: Index149557
+Node: Specially-recognized files117086
+Node: Auxiliary tasks118442
+Node: Standard options120267
+Node: TeX support120587
+Node: Supported file formats121878
+Node: File lookup129394
+Node: Glyph lookup131126
+Node: Basic glyph lookup132250
+Node: Fontmap133129
+Node: Fallback font135746
+Node: Suppressing warnings136659
+Node: Programming137764
+Node: Programming overview138277
+Node: Calling sequence140971
+Node: Program-specific files147494
+Node: Programming with config files148536
+Node: Index149848
 
 End Tag Table

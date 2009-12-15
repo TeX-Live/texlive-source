@@ -58,6 +58,10 @@ boolean must_exist = false;
 /* The program name, for `.PROG' construct in texmf.cnf.  (-program) */
 string progname = NULL;
 
+/* Safe input and output names to check.  (-safe-in-name and -safe-out-name) */
+string safe_in_name = NULL;
+string safe_out_name = NULL;
+
 /* Return all matches, not just the first one?  (-all) */
 boolean show_all = false;
 
@@ -325,6 +329,8 @@ will return matching format files for any engine.\n\
 -must-exist            search the disk as well as ls-R if necessary.\n\
 -path=STRING           search in the path STRING.\n\
 -progname=STRING       set program name to STRING.\n\
+-safe-in-name=STRING   check if STRING is ok to open for input.\n\
+-safe-out-name=STRING  check if STRING is ok to open for output.\n\
 -show-path=NAME        output search path for file type NAME (list below).\n\
 -subdir=STRING         only output matches whose directory ends with STRING.\n\
 -var-value=STRING      output the value of variable $STRING.\n\
@@ -355,6 +361,8 @@ static struct option long_options[]
       { "path",			1, 0, 0 },
       { "no-mktex",		1, 0, 0 },
       { "progname",		1, 0, 0 },
+      { "safe-in-name",		1, 0, 0 },
+      { "safe-out-name",		1, 0, 0 },
       { "subdir",		1, 0, 0 },
       { "show-path",		1, 0, 0 },
       { "var-value",		1, 0, 0 },
@@ -448,6 +456,12 @@ read_command_line (kpathsea kpse, int argc,  string *argv)
     } else if (ARGUMENT_IS ("progname")) {
       progname = optarg;
 
+    } else if (ARGUMENT_IS ("safe-in-name")) {
+      safe_in_name = optarg;
+
+    } else if (ARGUMENT_IS ("safe-out-name")) {
+      safe_out_name = optarg;
+
     } else if (ARGUMENT_IS ("show-path")) {
       path_to_show = optarg;
       user_format_string = optarg;
@@ -477,8 +491,10 @@ There is NO WARRANTY, to the extent permitted by law.\n");
     exit (1);
   }
 
-  if (optind == argc && !var_to_expand && !braces_to_expand && !path_to_expand
-                     && !path_to_show && !var_to_value) {
+  if (optind == argc
+      && !var_to_expand && !braces_to_expand && !path_to_expand
+      && !path_to_show && !var_to_value
+      && !safe_in_name && !safe_out_name) {
     fputs ("Missing argument. Try `kpsewhich --help' for more information.\n",
            stderr);
     exit (1);
@@ -568,6 +584,16 @@ main (int argc,  string *argv)
       value = "";
     }
     puts (value);
+  }
+  
+  if (safe_in_name) {
+    if (!kpathsea_in_name_ok_silent (kpse, safe_in_name))
+      unfound++;
+  }
+  
+  if (safe_out_name) {
+    if (!kpathsea_out_name_ok_silent (kpse, safe_out_name))
+      unfound++;
   }
   
   /* --subdir must imply --all, since we filter here after doing the

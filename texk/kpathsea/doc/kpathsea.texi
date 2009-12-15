@@ -1215,6 +1215,15 @@ Set the program name to @var{name}; default is @samp{kpsewhich}.  This
 can affect the search paths via the @samp{.@var{prognam}} feature in
 configuration files (@pxref{Config files}).
 
+@item --safe-in-name=@var{name}
+@itemx --safe-out-name=@var{name}
+@opindex --safe-in-name=@var{name}
+@opindex --safe-out-name=@var{name}
+Exit successfully if @var{name} is safe to open for reading or
+writing, respectively, else unsuccessfully.  No output is written.
+These tests take account of the related Kpathsea configuration
+settings (@pxref{Calling sequence}).
+
 @item --subdir=@var{string}
 @opindex --subdir=@var{string}
 Report only those matches whose directory part @emph{ends} with
