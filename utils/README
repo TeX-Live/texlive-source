@@ -71,6 +71,7 @@ cd $clisp_basedir
 wget http://ftp.gnu.org/gnu/clisp/release/2.48/clisp-2.48.tar.gz
 gzip -dc clisp-2.48.tar.gz | tar xf -
 cd clisp-2.48
+# On FreeBSD/amd64, add --disable-mmap.
 ./configure --with-ffcall --with-libffcall-prefix=$clisp_toolsdir \
   --with-libsigsegv-prefix=$clisp_toolsdir --without-readline \
   $clisp_builddir \
