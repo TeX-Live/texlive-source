@@ -1,3 +1,8 @@
+2009-12-16  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_script_SCRIPTS): .pl for latexrevise
+	and latexdiff-vc.
+
 2009-11-28  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): add bibexport.sh.

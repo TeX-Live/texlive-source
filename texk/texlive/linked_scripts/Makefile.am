@@ -67,8 +67,8 @@ nobase_dist_script_SCRIPTS = \
 	glossaries/makeglossaries \
 	latex2man/latex2man \
 	latexdiff/latexdiff.pl \
-	latexdiff/latexdiff-vc \
-	latexdiff/latexrevise \
+	latexdiff/latexdiff-vc.pl \
+	latexdiff/latexrevise.pl \
 	latexmk/latexmk.pl \
 	listings-ext/listings-ext.sh \
 	mkjobtexmf/mkjobtexmf.pl \
