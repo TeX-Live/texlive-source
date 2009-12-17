@@ -1,6 +1,6 @@
 /* c-proto.h: macros to include or discard prototypes.
 
-   Copyright 1992, 1993, 1995, 1996, 2008 Karl Berry.
+   Copyright 1992, 1993, 1995, 1996, 2008, 2009 Karl Berry.
    Copyright 1999, 2000, 2001, 2003, 2004, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -18,6 +18,10 @@
 
 #ifndef KPATHSEA_C_PROTO_H
 #define KPATHSEA_C_PROTO_H
+
+#if defined (WIN32)
+#define KPSE_DLL 1
+#endif /* WIN32 */
 
 #if defined (KPSE_DLL) && (defined (WIN32) || defined (__CYGWIN__))
 #ifdef MAKE_KPSE_DLL

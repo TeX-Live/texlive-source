@@ -1,3 +1,7 @@
+2009-12-17  Karl Berry  <karl@tug.org>
+
+	* c-proto.h (KPSE_DLL) [WIN32]: #define in this case, per Akira.
+
 2009-12-15  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (-safe-in-name, -safe-out-name): new options.
