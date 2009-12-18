@@ -130,8 +130,8 @@ if test -f $srcdir/$T1LIB_TREE/lib/t1lib/t1lib.h; then
 fi
 
 dnl Use $T1LIB_TREE to exclude $T1LIB_TREE/lib/t1lib/t1lib.h.in from DIST_COMMON
-AC_CONFIG_FILES([t1lib.h:$T1LIB_TREE/lib/t1lib/t1lib.h.in])
-AC_CONFIG_LINKS([lib/t1lib/t1lib.h:t1lib.h])
+AC_CONFIG_FILES([lib/t1lib/t1lib.h:$T1LIB_TREE/lib/t1lib/t1lib.h.in])
+AC_CONFIG_LINKS([t1lib.h:lib/t1lib/t1lib.h])
 
 AC_CONFIG_FILES([Makefile])
 

@@ -4831,9 +4831,9 @@ if test -f $srcdir/$T1LIB_TREE/lib/t1lib/t1lib.h; then
   as_fn_error "Sorry, you must remove the file $T1LIB_TREE/lib/t1lib/t1lib.h" "$LINENO" 5
 fi
 
-ac_config_files="$ac_config_files t1lib.h:$T1LIB_TREE/lib/t1lib/t1lib.h.in"
+ac_config_files="$ac_config_files lib/t1lib/t1lib.h:$T1LIB_TREE/lib/t1lib/t1lib.h.in"
 
-ac_config_links="$ac_config_links lib/t1lib/t1lib.h:t1lib.h"
+ac_config_links="$ac_config_links t1lib.h:lib/t1lib/t1lib.h"
 
 
 ac_config_files="$ac_config_files Makefile"
@@ -5563,8 +5563,8 @@ do
   case $ac_config_target in
     "lib/t1lib/sysconf.h") CONFIG_HEADERS="$CONFIG_HEADERS lib/t1lib/sysconf.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
-    "t1lib.h") CONFIG_FILES="$CONFIG_FILES t1lib.h:$T1LIB_TREE/lib/t1lib/t1lib.h.in" ;;
-    "lib/t1lib/t1lib.h") CONFIG_LINKS="$CONFIG_LINKS lib/t1lib/t1lib.h:t1lib.h" ;;
+    "lib/t1lib/t1lib.h") CONFIG_FILES="$CONFIG_FILES lib/t1lib/t1lib.h:$T1LIB_TREE/lib/t1lib/t1lib.h.in" ;;
+    "t1lib.h") CONFIG_LINKS="$CONFIG_LINKS t1lib.h:lib/t1lib/t1lib.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
 
   *) as_fn_error "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

@@ -53,7 +53,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/lib/t1lib/sysconf.h
-CONFIG_CLEAN_FILES = t1lib.h lib/t1lib/t1lib.h
+CONFIG_CLEAN_FILES = lib/t1lib/t1lib.h t1lib.h
 CONFIG_CLEAN_VPATH_FILES =
 LIBRARIES = $(noinst_LIBRARIES)
 AR = ar
@@ -304,7 +304,7 @@ $(top_srcdir)/lib/t1lib/sysconf.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_dep
 
 distclean-hdr:
 	-rm -f lib/t1lib/sysconf.h lib/t1lib/stamp-h1
-t1lib.h: $(top_builddir)/config.status 
+lib/t1lib/t1lib.h: $(top_builddir)/config.status 
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:

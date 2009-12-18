@@ -1,3 +1,9 @@
+2009-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Exchange role of t1lib.h and lib/t1lib/t1lib.h
+	to work around an Autoconf bug when srcdir as an absolute path.
+	Bug reported by Nikola Lecic <nikola.lecic@anthesphoria.net>.
+
 2009-12-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check if libm is required for sqrt().
