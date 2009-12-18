@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for danish.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,19 +18,27 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-    cp1252.pl latin9.pl utf8.pl.in \
-    latin1.xdy
+subdirs += danish
 
+nobase_nodist_lang_DATA += \
+	danish/cp1252-lang.xdy danish/cp1252-test.xdy danish/cp1252.xdy \
+	danish/latin9-lang.xdy danish/latin9-test.xdy danish/latin9.xdy \
+	danish/utf8-lang.xdy danish/utf8-test.xdy danish/utf8.xdy
 
-CLEANFILES = \
-	cp1252.raw \
-	cp1252-doc.tex \
-	latin9.raw \
-	latin9-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+DOCS_CP1252 += \
+	danish/cp1252-doc.tex
 
+DOCS_LATIN9 += \
+	danish/latin9-doc.tex
 
+DOCS_UTF8_LAT += \
+	danish/utf8-doc.tex
 
+EXTRA_DIST += \
+	danish/utf8.pl.in
+
+CLEANFILES += \
+	danish/cp1252.pl danish/cp1252.raw \
+	danish/latin9.pl danish/latin9.raw \
+	danish/utf8.pl danish/utf8.raw
 

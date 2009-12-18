@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for gypsy.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,11 +18,17 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = northrussian-utf8.pl.in
+subdirs += gypsy
 
-CLEANFILES = \
-	northrussian-utf8.raw \
-	northrussian-utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	gypsy/northrussian-utf8-lang.xdy gypsy/northrussian-utf8-test.xdy gypsy/northrussian-utf8.xdy
 
+DOCS_UTF8_LAT += \
+	gypsy/northrussian-utf8-doc.tex
 
+EXTRA_DIST += \
+	gypsy/northrussian-utf8.pl.in
+
+CLEANFILES += \
+	gypsy/northrussian-utf8.pl gypsy/northrussian-utf8.raw
 

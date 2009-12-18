@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for croatian.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,16 +18,27 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = cp1250.pl latin2.pl utf8.pl.in
+subdirs += croatian
 
-CLEANFILES = \
-	cp1250.raw \
-	cp1250-doc.tex \
-	latin2.raw \
-	latin2-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	croatian/cp1250-lang.xdy croatian/cp1250-test.xdy croatian/cp1250.xdy \
+	croatian/latin2-lang.xdy croatian/latin2-test.xdy croatian/latin2.xdy \
+	croatian/utf8-lang.xdy croatian/utf8-test.xdy croatian/utf8.xdy
 
+DOCS_CP1250 += \
+	croatian/cp1250-doc.tex
 
+DOCS_LATIN2 += \
+	croatian/latin2-doc.tex
 
+DOCS_UTF8_LAT += \
+	croatian/utf8-doc.tex
+
+EXTRA_DIST += \
+	croatian/utf8.pl.in
+
+CLEANFILES += \
+	croatian/cp1250.pl croatian/cp1250.raw \
+	croatian/latin2.pl croatian/latin2.raw \
+	croatian/utf8.pl croatian/utf8.raw
 

@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for test1.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,10 +18,8 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = test1.pl
+subdirs += test1
 
-
-
-
-
+EXTRA_DIST += \
+	test1/test1.pl
 

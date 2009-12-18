@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for italian.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,14 +18,22 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = latin1.pl utf8.pl.in
+subdirs += italian
 
-CLEANFILES = \
-	latin1.raw \
-	latin1-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	italian/latin1-lang.xdy italian/latin1-test.xdy italian/latin1.xdy \
+	italian/utf8-lang.xdy italian/utf8-test.xdy italian/utf8.xdy
 
+DOCS_LATIN1 += \
+	italian/latin1-doc.tex
 
+DOCS_UTF8_LAT += \
+	italian/utf8-doc.tex
 
+EXTRA_DIST += \
+	italian/utf8.pl.in
+
+CLEANFILES += \
+	italian/latin1.pl italian/latin1.raw \
+	italian/utf8.pl italian/utf8.raw
 

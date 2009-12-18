@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for icelandic.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,19 +18,27 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-	cp1252.pl latin9.pl utf8.pl.in \
-	latin1.xdy
+subdirs += icelandic
 
+nobase_nodist_lang_DATA += \
+	icelandic/cp1252-lang.xdy icelandic/cp1252-test.xdy icelandic/cp1252.xdy \
+	icelandic/latin9-lang.xdy icelandic/latin9-test.xdy icelandic/latin9.xdy \
+	icelandic/utf8-lang.xdy icelandic/utf8-test.xdy icelandic/utf8.xdy
 
-CLEANFILES = \
-	cp1252.raw \
-	cp1252-doc.tex \
-	latin9.raw \
-	latin9-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+DOCS_CP1252 += \
+	icelandic/cp1252-doc.tex
 
+DOCS_LATIN9 += \
+	icelandic/latin9-doc.tex
 
+DOCS_UTF8_LAT += \
+	icelandic/utf8-doc.tex
 
+EXTRA_DIST += \
+	icelandic/utf8.pl.in
+
+CLEANFILES += \
+	icelandic/cp1252.pl icelandic/cp1252.raw \
+	icelandic/latin9.pl icelandic/latin9.raw \
+	icelandic/utf8.pl icelandic/utf8.raw
 

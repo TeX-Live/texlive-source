@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for latvian.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,14 +18,22 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = latin4.pl utf8.pl.in
+subdirs += latvian
 
-CLEANFILES = \
-	latin4.raw \
-	latin4-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	latvian/latin4-lang.xdy latvian/latin4-test.xdy latvian/latin4.xdy \
+	latvian/utf8-lang.xdy latvian/utf8-test.xdy latvian/utf8.xdy
 
+DOCS_LATIN4 += \
+	latvian/latin4-doc.tex
 
+DOCS_UTF8_LAT += \
+	latvian/utf8-doc.tex
 
+EXTRA_DIST += \
+	latvian/utf8.pl.in
+
+CLEANFILES += \
+	latvian/latin4.pl latvian/latin4.raw \
+	latvian/utf8.pl latvian/utf8.raw
 

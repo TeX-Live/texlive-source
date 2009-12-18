@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for esperanto.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,14 +18,22 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = latin3.pl utf8.pl.in
+subdirs += esperanto
 
-CLEANFILES = \
-	latin3.raw \
-	latin3-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	esperanto/latin3-lang.xdy esperanto/latin3-test.xdy esperanto/latin3.xdy \
+	esperanto/utf8-lang.xdy esperanto/utf8-test.xdy esperanto/utf8.xdy
 
+DOCS_LATIN3 += \
+	esperanto/latin3-doc.tex
 
+DOCS_UTF8_LAT += \
+	esperanto/utf8-doc.tex
 
+EXTRA_DIST += \
+	esperanto/utf8.pl.in
+
+CLEANFILES += \
+	esperanto/latin3.pl esperanto/latin3.raw \
+	esperanto/utf8.pl esperanto/utf8.raw
 

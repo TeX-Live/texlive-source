@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for .
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,16 +18,27 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = cp1250.pl latin2.pl utf8.pl.in
+subdirs += lower-sorbian
 
-CLEANFILES = \
-	cp1250.raw \
-	cp1250-doc.tex \
-	latin2.raw \
-	latin2-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	lower-sorbian/cp1250-lang.xdy lower-sorbian/cp1250-test.xdy lower-sorbian/cp1250.xdy \
+	lower-sorbian/latin2-lang.xdy lower-sorbian/latin2-test.xdy lower-sorbian/latin2.xdy \
+	lower-sorbian/utf8-lang.xdy lower-sorbian/utf8-test.xdy lower-sorbian/utf8.xdy
 
+DOCS_CP1250 += \
+	lower-sorbian/cp1250-doc.tex
 
+DOCS_LATIN2 += \
+	lower-sorbian/latin2-doc.tex
 
+DOCS_UTF8_LAT += \
+	lower-sorbian/utf8-doc.tex
+
+EXTRA_DIST += \
+	lower-sorbian/utf8.pl.in
+
+CLEANFILES += \
+	lower-sorbian/cp1250.pl lower-sorbian/cp1250.raw \
+	lower-sorbian/latin2.pl lower-sorbian/latin2.raw \
+	lower-sorbian/utf8.pl lower-sorbian/utf8.raw
 

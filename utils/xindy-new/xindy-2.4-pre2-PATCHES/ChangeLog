@@ -1,3 +1,8 @@
+2009-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-iconv-typo (new): Fix typo in iconv-or-recode patch.
+	* patch-50-reorg-alphabets: Remove generated and unused files.
+
 2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-20-TL-install-dirs: Declare install-links as PHONY.

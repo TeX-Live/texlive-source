@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for turkish.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,16 +18,27 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = latin3.pl latin5.pl utf8.pl.in
+subdirs += turkish
 
-CLEANFILES = \
-	latin3.raw \
-	latin3-doc.tex \
-	latin5.raw \
-	latin5-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	turkish/latin3-lang.xdy turkish/latin3-test.xdy turkish/latin3.xdy \
+	turkish/latin5-lang.xdy turkish/latin5-test.xdy turkish/latin5.xdy \
+	turkish/utf8-lang.xdy turkish/utf8-test.xdy turkish/utf8.xdy
 
+DOCS_LATIN3 += \
+	turkish/latin3-doc.tex
 
+DOCS_LATIN5 += \
+	turkish/latin5-doc.tex
 
+DOCS_UTF8_LAT += \
+	turkish/utf8-doc.tex
+
+EXTRA_DIST += \
+	turkish/utf8.pl.in
+
+CLEANFILES += \
+	turkish/latin3.pl turkish/latin3.raw \
+	turkish/latin5.pl turkish/latin5.raw \
+	turkish/utf8.pl turkish/utf8.raw
 

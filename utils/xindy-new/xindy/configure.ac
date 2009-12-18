@@ -110,51 +110,6 @@ AC_CONFIG_FILES([Makefile \
 		user-commands/Makefile \
 		make-rules/Makefile \
 		make-rules/alphabets/Makefile \
-		make-rules/alphabets/albanian/Makefile \
-		make-rules/alphabets/belarusian/Makefile \
-		make-rules/alphabets/bulgarian/Makefile \
-		make-rules/alphabets/croatian/Makefile \
-		make-rules/alphabets/czech/Makefile \
-		make-rules/alphabets/danish/Makefile \
-		make-rules/alphabets/dutch/Makefile \
-		make-rules/alphabets/english/Makefile \
-		make-rules/alphabets/esperanto/Makefile \
-		make-rules/alphabets/estonian/Makefile \
-		make-rules/alphabets/finnish/Makefile \
-		make-rules/alphabets/french/Makefile \
-		make-rules/alphabets/general/Makefile \
-		make-rules/alphabets/georgian/Makefile \
-		make-rules/alphabets/german/Makefile \
-		make-rules/alphabets/greek/Makefile \
-		make-rules/alphabets/gypsy/Makefile \
-		make-rules/alphabets/hausa/Makefile \
-		make-rules/alphabets/hebrew/Makefile \
-		make-rules/alphabets/hungarian/Makefile \
-		make-rules/alphabets/icelandic/Makefile \
-		make-rules/alphabets/italian/Makefile \
-		make-rules/alphabets/klingon/Makefile \
-		make-rules/alphabets/kurdish/Makefile \
-		make-rules/alphabets/latin/Makefile \
-		make-rules/alphabets/latvian/Makefile \
-		make-rules/alphabets/lithuanian/Makefile \
-		make-rules/alphabets/lower-sorbian/Makefile \
-		make-rules/alphabets/macedonian/Makefile \
-		make-rules/alphabets/mongolian/Makefile \
-		make-rules/alphabets/norwegian/Makefile \
-		make-rules/alphabets/polish/Makefile \
-		make-rules/alphabets/portuguese/Makefile \
-		make-rules/alphabets/romanian/Makefile \
-		make-rules/alphabets/russian/Makefile \
-		make-rules/alphabets/serbian/Makefile \
-		make-rules/alphabets/slovak/Makefile \
-		make-rules/alphabets/slovenian/Makefile \
-		make-rules/alphabets/spanish/Makefile \
-		make-rules/alphabets/swedish/Makefile \
-		make-rules/alphabets/test1/Makefile \
-		make-rules/alphabets/turkish/Makefile \
-		make-rules/alphabets/ukrainian/Makefile \
-		make-rules/alphabets/upper-sorbian/Makefile \
-		make-rules/alphabets/vietnamese/Makefile \
 		make-rules/inputenc/Makefile \
 		make-rules/styles/Makefile \
 		doc/Makefile \

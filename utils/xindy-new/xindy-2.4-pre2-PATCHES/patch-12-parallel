@@ -10,7 +10,7 @@
 	must not run simultaneously or %-test.xdy could be destroyed.
 
 diff -ur -x Makefile.in xindy.orig/make-rules/alphabets/Makefile.am xindy/make-rules/alphabets/Makefile.am
---- xindy.orig/make-rules/alphabets/Makefile.am	2009-12-03 01:45:51.000000000 +0100
+--- xindy/make-rules/alphabets/Makefile.am	2009-12-17 14:53:07.000000000 +0100
 +++ xindy/make-rules/alphabets/Makefile.am	2009-12-02 20:34:28.000000000 +0100
 @@ -892,14 +892,24 @@
  %-lang.xdy : %-test.xdy

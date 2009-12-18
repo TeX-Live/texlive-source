@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for mongolian.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,12 +18,17 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = cyrillic-utf8.pl.in
+subdirs += mongolian
 
-CLEANFILES = \
-	cyrillic-utf8.raw \
-	cyrillic-utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	mongolian/cyrillic-utf8-lang.xdy mongolian/cyrillic-utf8-test.xdy mongolian/cyrillic-utf8.xdy
 
+DOCS_UTF8_CYR += \
+	mongolian/cyrillic-utf8-doc.tex
 
+EXTRA_DIST += \
+	mongolian/cyrillic-utf8.pl.in
 
+CLEANFILES += \
+	mongolian/cyrillic-utf8.pl mongolian/cyrillic-utf8.raw
 

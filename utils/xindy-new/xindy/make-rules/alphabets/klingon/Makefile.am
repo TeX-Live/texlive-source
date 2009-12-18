@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for klingon.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,15 +18,21 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-	utf8.pl.in \
-	translit-ascii.pl
+subdirs += klingon
+
+nobase_nodist_lang_DATA += \
+	klingon/utf8-lang.xdy klingon/utf8-test.xdy klingon/utf8.xdy
+
+DOCS_UTF8_OTHER += \
+	klingon/utf8-doc.tex
+
+EXTRA_DIST += \
+	klingon/utf8.pl.in
+
+EXTRA_DIST += \
+	klingon/translit-ascii.pl
 
 
-CLEANFILES = \
-	utf8.raw \
-	utf8-doc.tex
-
-
-
+CLEANFILES += \
+	klingon/utf8.pl klingon/utf8.raw
 

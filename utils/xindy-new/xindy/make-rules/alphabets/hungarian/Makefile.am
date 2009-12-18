@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for hungarian.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,16 +18,27 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = cp1250.pl latin2.pl utf8.pl.in
+subdirs += hungarian
 
-CLEANFILES = \
-	cp1250.raw \
-	cp1250-doc.tex \
-	latin2.raw \
-	latin2-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	hungarian/cp1250-lang.xdy hungarian/cp1250-test.xdy hungarian/cp1250.xdy \
+	hungarian/latin2-lang.xdy hungarian/latin2-test.xdy hungarian/latin2.xdy \
+	hungarian/utf8-lang.xdy hungarian/utf8-test.xdy hungarian/utf8.xdy
 
+DOCS_CP1250 += \
+	hungarian/cp1250-doc.tex
 
+DOCS_LATIN2 += \
+	hungarian/latin2-doc.tex
 
+DOCS_UTF8_LAT += \
+	hungarian/utf8-doc.tex
+
+EXTRA_DIST += \
+	hungarian/utf8.pl.in
+
+CLEANFILES += \
+	hungarian/cp1250.pl hungarian/cp1250.raw \
+	hungarian/latin2.pl hungarian/latin2.raw \
+	hungarian/utf8.pl hungarian/utf8.raw
 

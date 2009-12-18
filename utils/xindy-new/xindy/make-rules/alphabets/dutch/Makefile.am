@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for dutch.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,18 +18,26 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-	ij-as-ij-latin1.pl ij-as-y-utf8.pl.in ij-as-ij-utf8.pl.in \
-	latin1.xdy tex-latin1.xdy
+subdirs += dutch
 
-CLEANFILES = \
-	ij-as-ij-latin1.raw \
-	ij-as-ij-latin1-doc.tex \
-	ij-as-ij-utf8.raw \
-	ij-as-ij-utf8-doc.tex \
-	ij-as-y-utf8.raw \
-	ij-as-y-utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	dutch/ij-as-ij-latin1-lang.xdy dutch/ij-as-ij-latin1-test.xdy dutch/ij-as-ij-latin1.xdy \
+	dutch/ij-as-ij-utf8-lang.xdy dutch/ij-as-ij-utf8-test.xdy dutch/ij-as-ij-utf8.xdy \
+	dutch/ij-as-y-utf8-lang.xdy dutch/ij-as-y-utf8-test.xdy dutch/ij-as-y-utf8.xdy
 
+DOCS_LATIN1 += \
+	dutch/ij-as-ij-latin1-doc.tex
 
+DOCS_UTF8_LAT += \
+	dutch/ij-as-ij-utf8-doc.tex \
+	dutch/ij-as-y-utf8-doc.tex
 
+EXTRA_DIST += \
+	dutch/ij-as-ij-utf8.pl.in \
+	dutch/ij-as-y-utf8.pl.in
+
+CLEANFILES += \
+	dutch/ij-as-ij-latin1.pl dutch/ij-as-ij-latin1.raw \
+	dutch/ij-as-ij-utf8.pl dutch/ij-as-ij-utf8.raw \
+	dutch/ij-as-y-utf8.pl dutch/ij-as-y-utf8.raw
 

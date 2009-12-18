@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for swedish.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,18 +18,27 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = \
-    cp1252.pl latin9.pl utf8.pl.in \
-    latin1.xdy
+subdirs += swedish
 
-CLEANFILES = \
-	cp1252.raw \
-	cp1252-doc.tex \
-	latin9.raw \
-	latin9-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	swedish/cp1252-lang.xdy swedish/cp1252-test.xdy swedish/cp1252.xdy \
+	swedish/latin9-lang.xdy swedish/latin9-test.xdy swedish/latin9.xdy \
+	swedish/utf8-lang.xdy swedish/utf8-test.xdy swedish/utf8.xdy
 
+DOCS_CP1252 += \
+	swedish/cp1252-doc.tex
 
+DOCS_LATIN9 += \
+	swedish/latin9-doc.tex
 
+DOCS_UTF8_LAT += \
+	swedish/utf8-doc.tex
+
+EXTRA_DIST += \
+	swedish/utf8.pl.in
+
+CLEANFILES += \
+	swedish/cp1252.pl swedish/cp1252.raw \
+	swedish/latin9.pl swedish/latin9.raw \
+	swedish/utf8.pl swedish/utf8.raw
 

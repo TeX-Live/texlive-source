@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for serbian.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,18 +18,32 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = cp1251.pl iso88595.pl isoir111.pl utf8.pl.in
+subdirs += serbian
 
-CLEANFILES = \
-	cp1251.raw \
-	cp1251-doc.tex \
-	iso88595.raw \
-	iso88595-doc.tex \
-	isoir111.raw \
-	isoir111-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	serbian/cp1251-lang.xdy serbian/cp1251-test.xdy serbian/cp1251.xdy \
+	serbian/iso88595-lang.xdy serbian/iso88595-test.xdy serbian/iso88595.xdy \
+	serbian/isoir111-lang.xdy serbian/isoir111-test.xdy serbian/isoir111.xdy \
+	serbian/utf8-lang.xdy serbian/utf8-test.xdy serbian/utf8.xdy
 
+DOCS_CYR_1251 += \
+	serbian/cp1251-doc.tex
 
+DOCS_CYR_ISO88595 += \
+	serbian/iso88595-doc.tex
 
+DOCS_CYR_ISOIR111 += \
+	serbian/isoir111-doc.tex
+
+DOCS_UTF8_CYR += \
+	serbian/utf8-doc.tex
+
+EXTRA_DIST += \
+	serbian/utf8.pl.in
+
+CLEANFILES += \
+	serbian/cp1251.pl serbian/cp1251.raw \
+	serbian/iso88595.pl serbian/iso88595.raw \
+	serbian/isoir111.pl serbian/isoir111.raw \
+	serbian/utf8.pl serbian/utf8.raw
 

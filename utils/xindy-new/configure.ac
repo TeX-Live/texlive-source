@@ -146,54 +146,6 @@ AC_CONFIG_FILES([Makefile \
 		xindy/user-commands/Makefile \
 		xindy/make-rules/Makefile \
 		xindy/make-rules/alphabets/Makefile \
-])m4_ignore([
-])AC_CONFIG_FILES([
-		xindy/make-rules/alphabets/albanian/Makefile \
-		xindy/make-rules/alphabets/belarusian/Makefile \
-		xindy/make-rules/alphabets/bulgarian/Makefile \
-		xindy/make-rules/alphabets/croatian/Makefile \
-		xindy/make-rules/alphabets/czech/Makefile \
-		xindy/make-rules/alphabets/danish/Makefile \
-		xindy/make-rules/alphabets/dutch/Makefile \
-		xindy/make-rules/alphabets/english/Makefile \
-		xindy/make-rules/alphabets/esperanto/Makefile \
-		xindy/make-rules/alphabets/estonian/Makefile \
-		xindy/make-rules/alphabets/finnish/Makefile \
-		xindy/make-rules/alphabets/french/Makefile \
-		xindy/make-rules/alphabets/general/Makefile \
-		xindy/make-rules/alphabets/georgian/Makefile \
-		xindy/make-rules/alphabets/german/Makefile \
-		xindy/make-rules/alphabets/greek/Makefile \
-		xindy/make-rules/alphabets/gypsy/Makefile \
-		xindy/make-rules/alphabets/hausa/Makefile \
-		xindy/make-rules/alphabets/hebrew/Makefile \
-		xindy/make-rules/alphabets/hungarian/Makefile \
-		xindy/make-rules/alphabets/icelandic/Makefile \
-		xindy/make-rules/alphabets/italian/Makefile \
-		xindy/make-rules/alphabets/klingon/Makefile \
-		xindy/make-rules/alphabets/kurdish/Makefile \
-		xindy/make-rules/alphabets/latin/Makefile \
-		xindy/make-rules/alphabets/latvian/Makefile \
-		xindy/make-rules/alphabets/lithuanian/Makefile \
-		xindy/make-rules/alphabets/lower-sorbian/Makefile \
-		xindy/make-rules/alphabets/macedonian/Makefile \
-		xindy/make-rules/alphabets/mongolian/Makefile \
-		xindy/make-rules/alphabets/norwegian/Makefile \
-		xindy/make-rules/alphabets/polish/Makefile \
-		xindy/make-rules/alphabets/portuguese/Makefile \
-		xindy/make-rules/alphabets/romanian/Makefile \
-		xindy/make-rules/alphabets/russian/Makefile \
-		xindy/make-rules/alphabets/serbian/Makefile \
-		xindy/make-rules/alphabets/slovak/Makefile \
-		xindy/make-rules/alphabets/slovenian/Makefile \
-		xindy/make-rules/alphabets/spanish/Makefile \
-		xindy/make-rules/alphabets/swedish/Makefile \
-		xindy/make-rules/alphabets/test1/Makefile \
-		xindy/make-rules/alphabets/turkish/Makefile \
-		xindy/make-rules/alphabets/ukrainian/Makefile \
-		xindy/make-rules/alphabets/upper-sorbian/Makefile \
-		xindy/make-rules/alphabets/vietnamese/Makefile \
-])AC_CONFIG_FILES([
 		xindy/make-rules/inputenc/Makefile \
 		xindy/make-rules/styles/Makefile \
 		xindy/doc/Makefile \

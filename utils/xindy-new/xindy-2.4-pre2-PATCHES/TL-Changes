@@ -15,3 +15,14 @@ Removed:
 Moved user-commands/texindy => user-commands/texindy.in and removed
 	execute permissions.
 
+Removed:
+	make-rules/alphabets/*/Makefile.in
+	make-rules/alphabets/*/*.xdy
+
+Removed:
+	make-rules/alphabets/*/*.xdy
+except
+	make-rules/alphabets/general/template.pl
+	make-rules/alphabets/klingon/translit-ascii.pl
+	make-rules/alphabets/test1/test1.pl
+

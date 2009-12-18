@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for portuguese.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,14 +18,22 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = latin1.pl utf8.pl.in
+subdirs += portuguese
 
-CLEANFILES = \
-	latin1.raw \
-	latin1-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	portuguese/latin1-lang.xdy portuguese/latin1-test.xdy portuguese/latin1.xdy \
+	portuguese/utf8-lang.xdy portuguese/utf8-test.xdy portuguese/utf8.xdy
 
+DOCS_LATIN1 += \
+	portuguese/latin1-doc.tex
 
+DOCS_UTF8_LAT += \
+	portuguese/utf8-doc.tex
 
+EXTRA_DIST += \
+	portuguese/utf8.pl.in
+
+CLEANFILES += \
+	portuguese/latin1.pl portuguese/latin1.raw \
+	portuguese/utf8.pl portuguese/utf8.raw
 

@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for hebrew.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,14 +18,22 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = iso88598.pl utf8.pl.in
+subdirs += hebrew
 
-CLEANFILES = \
-	iso88598.raw \
-	iso88598-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	hebrew/iso88598-lang.xdy hebrew/iso88598-test.xdy hebrew/iso88598.xdy \
+	hebrew/utf8-lang.xdy hebrew/utf8-test.xdy hebrew/utf8.xdy
 
+DOCS_OTHER += \
+	hebrew/iso88598-doc.tex
 
+DOCS_UTF8_OTHER += \
+	hebrew/utf8-doc.tex
 
+EXTRA_DIST += \
+	hebrew/utf8.pl.in
+
+CLEANFILES += \
+	hebrew/iso88598.pl hebrew/iso88598.raw \
+	hebrew/utf8.pl hebrew/utf8.raw
 

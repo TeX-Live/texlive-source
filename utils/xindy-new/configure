@@ -4097,9 +4097,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile xindy/Makefile xindy/src/Makefile xindy/tex2xindy/Makefile xindy/modules/Makefile xindy/modules/base/Makefile xindy/modules/class/Makefile xindy/modules/lang/Makefile xindy/modules/lang/german/Makefile xindy/modules/lang/latin/Makefile xindy/modules/ord/Makefile xindy/modules/rules/Makefile xindy/modules/styles/Makefile xindy/user-commands/Makefile xindy/make-rules/Makefile xindy/make-rules/alphabets/Makefile"
-ac_config_files="$ac_config_files xindy/make-rules/alphabets/albanian/Makefile xindy/make-rules/alphabets/belarusian/Makefile xindy/make-rules/alphabets/bulgarian/Makefile xindy/make-rules/alphabets/croatian/Makefile xindy/make-rules/alphabets/czech/Makefile xindy/make-rules/alphabets/danish/Makefile xindy/make-rules/alphabets/dutch/Makefile xindy/make-rules/alphabets/english/Makefile xindy/make-rules/alphabets/esperanto/Makefile xindy/make-rules/alphabets/estonian/Makefile xindy/make-rules/alphabets/finnish/Makefile xindy/make-rules/alphabets/french/Makefile xindy/make-rules/alphabets/general/Makefile xindy/make-rules/alphabets/georgian/Makefile xindy/make-rules/alphabets/german/Makefile xindy/make-rules/alphabets/greek/Makefile xindy/make-rules/alphabets/gypsy/Makefile xindy/make-rules/alphabets/hausa/Makefile xindy/make-rules/alphabets/hebrew/Makefile xindy/make-rules/alphabets/hungarian/Makefile xindy/make-rules/alphabets/icelandic/Makefile xindy/make-rules/alphabets/italian/Makefile xindy/make-rules/alphabets/klingon/Makefile xindy/make-rules/alphabets/kurdish/Makefile xindy/make-rules/alphabets/latin/Makefile xindy/make-rules/alphabets/latvian/Makefile xindy/make-rules/alphabets/lithuanian/Makefile xindy/make-rules/alphabets/lower-sorbian/Makefile xindy/make-rules/alphabets/macedonian/Makefile xindy/make-rules/alphabets/mongolian/Makefile xindy/make-rules/alphabets/norwegian/Makefile xindy/make-rules/alphabets/polish/Makefile xindy/make-rules/alphabets/portuguese/Makefile xindy/make-rules/alphabets/romanian/Makefile xindy/make-rules/alphabets/russian/Makefile xindy/make-rules/alphabets/serbian/Makefile xindy/make-rules/alphabets/slovak/Makefile xindy/make-rules/alphabets/slovenian/Makefile xindy/make-rules/alphabets/spanish/Makefile xindy/make-rules/alphabets/swedish/Makefile xindy/make-rules/alphabets/test1/Makefile xindy/make-rules/alphabets/turkish/Makefile xindy/make-rules/alphabets/ukrainian/Makefile xindy/make-rules/alphabets/upper-sorbian/Makefile xindy/make-rules/alphabets/vietnamese/Makefile"
-ac_config_files="$ac_config_files xindy/make-rules/inputenc/Makefile xindy/make-rules/styles/Makefile xindy/doc/Makefile xindy/doc/style-tutorial/Makefile"
+ac_config_files="$ac_config_files Makefile xindy/Makefile xindy/src/Makefile xindy/tex2xindy/Makefile xindy/modules/Makefile xindy/modules/base/Makefile xindy/modules/class/Makefile xindy/modules/lang/Makefile xindy/modules/lang/german/Makefile xindy/modules/lang/latin/Makefile xindy/modules/ord/Makefile xindy/modules/rules/Makefile xindy/modules/styles/Makefile xindy/user-commands/Makefile xindy/make-rules/Makefile xindy/make-rules/alphabets/Makefile xindy/make-rules/inputenc/Makefile xindy/make-rules/styles/Makefile xindy/doc/Makefile xindy/doc/style-tutorial/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -4865,51 +4863,6 @@ do
     "xindy/user-commands/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/user-commands/Makefile" ;;
     "xindy/make-rules/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/Makefile" ;;
     "xindy/make-rules/alphabets/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/Makefile" ;;
-    "xindy/make-rules/alphabets/albanian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/albanian/Makefile" ;;
-    "xindy/make-rules/alphabets/belarusian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/belarusian/Makefile" ;;
-    "xindy/make-rules/alphabets/bulgarian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/bulgarian/Makefile" ;;
-    "xindy/make-rules/alphabets/croatian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/croatian/Makefile" ;;
-    "xindy/make-rules/alphabets/czech/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/czech/Makefile" ;;
-    "xindy/make-rules/alphabets/danish/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/danish/Makefile" ;;
-    "xindy/make-rules/alphabets/dutch/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/dutch/Makefile" ;;
-    "xindy/make-rules/alphabets/english/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/english/Makefile" ;;
-    "xindy/make-rules/alphabets/esperanto/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/esperanto/Makefile" ;;
-    "xindy/make-rules/alphabets/estonian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/estonian/Makefile" ;;
-    "xindy/make-rules/alphabets/finnish/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/finnish/Makefile" ;;
-    "xindy/make-rules/alphabets/french/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/french/Makefile" ;;
-    "xindy/make-rules/alphabets/general/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/general/Makefile" ;;
-    "xindy/make-rules/alphabets/georgian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/georgian/Makefile" ;;
-    "xindy/make-rules/alphabets/german/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/german/Makefile" ;;
-    "xindy/make-rules/alphabets/greek/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/greek/Makefile" ;;
-    "xindy/make-rules/alphabets/gypsy/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/gypsy/Makefile" ;;
-    "xindy/make-rules/alphabets/hausa/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/hausa/Makefile" ;;
-    "xindy/make-rules/alphabets/hebrew/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/hebrew/Makefile" ;;
-    "xindy/make-rules/alphabets/hungarian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/hungarian/Makefile" ;;
-    "xindy/make-rules/alphabets/icelandic/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/icelandic/Makefile" ;;
-    "xindy/make-rules/alphabets/italian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/italian/Makefile" ;;
-    "xindy/make-rules/alphabets/klingon/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/klingon/Makefile" ;;
-    "xindy/make-rules/alphabets/kurdish/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/kurdish/Makefile" ;;
-    "xindy/make-rules/alphabets/latin/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/latin/Makefile" ;;
-    "xindy/make-rules/alphabets/latvian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/latvian/Makefile" ;;
-    "xindy/make-rules/alphabets/lithuanian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/lithuanian/Makefile" ;;
-    "xindy/make-rules/alphabets/lower-sorbian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/lower-sorbian/Makefile" ;;
-    "xindy/make-rules/alphabets/macedonian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/macedonian/Makefile" ;;
-    "xindy/make-rules/alphabets/mongolian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/mongolian/Makefile" ;;
-    "xindy/make-rules/alphabets/norwegian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/norwegian/Makefile" ;;
-    "xindy/make-rules/alphabets/polish/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/polish/Makefile" ;;
-    "xindy/make-rules/alphabets/portuguese/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/portuguese/Makefile" ;;
-    "xindy/make-rules/alphabets/romanian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/romanian/Makefile" ;;
-    "xindy/make-rules/alphabets/russian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/russian/Makefile" ;;
-    "xindy/make-rules/alphabets/serbian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/serbian/Makefile" ;;
-    "xindy/make-rules/alphabets/slovak/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/slovak/Makefile" ;;
-    "xindy/make-rules/alphabets/slovenian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/slovenian/Makefile" ;;
-    "xindy/make-rules/alphabets/spanish/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/spanish/Makefile" ;;
-    "xindy/make-rules/alphabets/swedish/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/swedish/Makefile" ;;
-    "xindy/make-rules/alphabets/test1/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/test1/Makefile" ;;
-    "xindy/make-rules/alphabets/turkish/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/turkish/Makefile" ;;
-    "xindy/make-rules/alphabets/ukrainian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/ukrainian/Makefile" ;;
-    "xindy/make-rules/alphabets/upper-sorbian/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/upper-sorbian/Makefile" ;;
-    "xindy/make-rules/alphabets/vietnamese/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/alphabets/vietnamese/Makefile" ;;
     "xindy/make-rules/inputenc/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/inputenc/Makefile" ;;
     "xindy/make-rules/styles/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/make-rules/styles/Makefile" ;;
     "xindy/doc/Makefile") CONFIG_FILES="$CONFIG_FILES xindy/doc/Makefile" ;;

@@ -1,7 +1,6 @@
-## Use `autoreconf' in top-level directory to recreate all
-## autoconf/automake files.
-## Or, call `automake Makefile' to create only Makefile.in.
+## Makefile fragment for ukrainian.
 
+## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -19,16 +18,27 @@
 ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ## Boston, MA 02110-1301 USA.
 
-EXTRA_DIST = cp1251.pl koi8-u.pl utf8.pl.in
+subdirs += ukrainian
 
-CLEANFILES = \
-	cp1251.raw \
-	cp1251-doc.tex \
-	koi8-u.raw \
-	koi8-u-doc.tex \
-	utf8.raw \
-	utf8-doc.tex
+nobase_nodist_lang_DATA += \
+	ukrainian/cp1251-lang.xdy ukrainian/cp1251-test.xdy ukrainian/cp1251.xdy \
+	ukrainian/koi8-u-lang.xdy ukrainian/koi8-u-test.xdy ukrainian/koi8-u.xdy \
+	ukrainian/utf8-lang.xdy ukrainian/utf8-test.xdy ukrainian/utf8.xdy
 
+DOCS_CYR_1251 += \
+	ukrainian/cp1251-doc.tex
 
+DOCS_CYR_KOI8_U += \
+	ukrainian/koi8-u-doc.tex
 
+DOCS_UTF8_CYR += \
+	ukrainian/utf8-doc.tex
+
+EXTRA_DIST += \
+	ukrainian/utf8.pl.in
+
+CLEANFILES += \
+	ukrainian/cp1251.pl ukrainian/cp1251.raw \
+	ukrainian/koi8-u.pl ukrainian/koi8-u.raw \
+	ukrainian/utf8.pl ukrainian/utf8.raw
 
