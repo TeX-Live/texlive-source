@@ -321,8 +321,13 @@ static Boolean test_expand_filename(int verbose)
     globals.dvi_file.dirname = xstrcat(globals.dvi_file.dirname, "/");
     testpath2 = expand_filename(__FILE__, USE_DVI_PATH);
 
-    currpath = xstrcat(currpath, "/");
-    currpath = xstrcat(currpath, __FILE__);
+    if (__FILE__[0] == '/') {
+	free(currpath);
+	currpath = xstrdup(__FILE__);
+    } else {
+	currpath = xstrcat(currpath, "/");
+	currpath = xstrcat(currpath, __FILE__);
+    }
 
     return test_str_equality(verbose, testpath1, currpath) \
 	&& test_str_equality(verbose, testpath2, currpath);

@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2009-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/test_string_utils.c (test_expand_filename):
+	Do not prepend cwd to absolute filenames.
+
 2009-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Suppress some compiler warnings (too many).
