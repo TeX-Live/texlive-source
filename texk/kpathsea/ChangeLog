@@ -1,3 +1,9 @@
+2009-12-20  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (find_format): restore checking of kpse_fmt_format
+	last, since a hang was reported by Angelo Graziosi,
+	http://tug.org/pipermail/tlbuild/2009q4/001222.html.
+
 2009-12-17  Karl Berry  <karl@tug.org>
 
 	* c-proto.h (KPSE_DLL) [WIN32]: #define in this case, per Akira.
