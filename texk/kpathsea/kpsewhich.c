@@ -159,24 +159,10 @@ find_format (kpathsea kpse, string name, boolean is_filename)
 
       if (found)
         break;
-
-      /* Some trickery here: the extensions for kpse_fmt_format (which
-         is just .fmt) can clash with other extensions in use (how?),
-         and we prefer for those others to be preferred.  And we don't
-         want to change the integer value of kpse_fmt_format.  So skip
-         it when first encountered, then use it when we've done
-         everything else, and use it as the end-guard.  */
-      if (f == kpse_fmt_format) {
-        f = kpse_last_format;
-      } else if (++f == kpse_fmt_format) {
-        f++;
-      } else if (f == kpse_last_format) {
-        f = kpse_fmt_format;
-      }
-
-      /* If there was a match, f will be one past the correct value.  */
-      ret = f;
+      f++;
     }
+
+    ret = f;
   }
   
   return ret;
