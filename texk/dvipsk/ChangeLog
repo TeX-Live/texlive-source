@@ -1,3 +1,12 @@
+2009-12-21  Karl Berry  <karl@tug.org>
+
+	* protos.h (fil2ps): remove decl.
+	* dospecial.c (fil2ps): remove fn.
+	(dospecial): warn if iff2ps or tek2ps specials are noticed.
+	The goal here was to avoid executing external programs, with that
+	inhererent security risk, when (we believe) no one is actually
+	using the functionality.
+
 2009-12-14  Karl Berry  <karl@tug.org>
 
 	* emspecial.c (emspecial):

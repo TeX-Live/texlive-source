@@ -43,7 +43,6 @@ extern char *GetKeyVal(char *str, int *tno);
 extern void predospecial(int numbytes, Boolean scanning);
 extern int maccess(char *s);
 extern void dospecial(int numbytes);
-extern void fil2ps(const char *task, char *iname);
 extern float *bbdospecial(int nbytes);
 
 /* prototypes for functions from download.c */

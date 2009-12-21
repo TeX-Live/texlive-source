@@ -816,9 +816,9 @@ default:
    if(psfile[0]) {
       if (task == 0) {
          systemtype = (psfile[0]=='`') ;
-         figcopyfile(psfile+systemtype, systemtype);
+         figcopyfile(psfile+systemtype, systemtype) ;
       } else {
-         fil2ps(task, psfile) ;
+         fprintf (stderr, "dvips: iff2ps and tek2ps are not supported.\n") ;
       }
    } else if (psfilewanted 
 #ifdef KPATHSEA
@@ -827,38 +827,7 @@ default:
 	      )
       specerror("No \\special psfile was given; figure will be blank") ;
 
-   cmdout("@endspecial");
-}
-
-void
-fil2ps(const char *task, char *iname)
-{
-   char cmd[400] ;
-   FILE *f ;
-   if (0 != (f=search(pictpath, iname, "r"))) {
-      close_file(f) ;
-   } else {
-      fprintf(stderr, " couldn't open %s\n", iname) ;
-      return ;
-   }
-   if (!quiet) {
-      fprintf(stderr, " [%s", realnameoffile) ;
-      fflush(stderr) ;
-   }
-   if (oname && oname[0] && oname[0] != '-') {
-      putc(10, bitfile) ;
-      close_file(bitfile) ;
-      sprintf(cmd, "%s -f %s %s", task, realnameoffile, oname) ;
-      system(cmd) ;
-      if ((bitfile=fopen(oname, FOPEN_ABIN_MODE))==NULL)
-         error_with_perror ("! couldn't reopen PostScript file", oname) ;
-      linepos = 0 ;
-   } else {
-      sprintf(cmd, "%s -f %s", task, realnameoffile) ;
-      system(cmd) ;
-   }
-   if (!quiet)
-      fprintf(stderr, "]") ;
+   cmdout("@endspecial") ;
 }
 
 /*
