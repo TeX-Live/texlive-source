@@ -163,14 +163,16 @@ static Boolean test_my_stristr(int verbose)
     size_t i;
     Boolean result = True;
     for (i = 0; i < (sizeof tests / sizeof tests[0]); i++) {
+	char *res = my_stristr(tests[i].str1, tests[i].str2);
 	if (verbose) {
 	    INFO((stderr, "my_stristr(%s, %s) -> %s == %s?\n",
 		  tests[i].str1,
 		  tests[i].str2,
-		  my_stristr(tests[i].str1, tests[i].str2),
+		  res,
 		  tests[i].result));
 	}
-	if (my_stristr(tests[i].str1, tests[i].str2) != tests[i].result) {
+	if (res != tests[i].result &&
+	  (res == NULL || tests[i].result == NULL || strcmp(res, tests[i].result))) {
 	    result = False;
 	}
     }

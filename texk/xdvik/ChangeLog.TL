@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2009-12-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/test_string_utils.c (test_my_stristr): Make test result
+	independent of compiler optimizations (constant folding).
+
 2009-12-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/test_string_utils.c (test_expand_filename):

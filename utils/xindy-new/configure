@@ -4052,19 +4052,24 @@ else
 fi
 
 
+# No checks for header files. We use stdio.h, unistd.h, and string.h.
+# Today, they are universally available if a C compiler is installed.
+
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-for ac_func in strrchr strtoul
+# The code in tex2indy.l simply assumes that strtoul() is there, would
+# need a replacement.
+for ac_func in strtoul
 do :
-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
-ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
-eval as_val=\$$as_ac_var
-   if test "x$as_val" = x""yes; then :
+  ac_fn_c_check_func "$LINENO" "strtoul" "ac_cv_func_strtoul"
+if test "x$ac_cv_func_strtoul" = x""yes; then :
   cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+#define HAVE_STRTOUL 1
 _ACEOF
 
+else
+  as_fn_error "strtoul() is needed" "$LINENO" 5
 fi
 done
 

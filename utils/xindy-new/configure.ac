@@ -118,10 +118,16 @@ else
 fi
 AC_SUBST([CONVERT_FROM_UTF8])
 
+# No checks for header files. We use stdio.h, unistd.h, and string.h.
+# Today, they are universally available if a C compiler is installed.
+
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-AC_CHECK_FUNCS([strrchr strtoul])
+# The code in tex2indy.l simply assumes that strtoul() is there, would
+# need a replacement.
+AC_CHECK_FUNCS([strtoul], [],
+               [AC_MSG_ERROR([strtoul() is needed])])
 
 echo timestamp >config.force
 fi

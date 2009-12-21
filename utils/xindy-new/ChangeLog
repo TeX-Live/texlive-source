@@ -1,3 +1,12 @@
+2009-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Remove test for strrchr(), require strtoul().
+
+2009-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac (AC_CONFIG_FILES):
+	Remove make-rules/alphabets/*/Makefile (compare patch-50).
+
 2009-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported http://www.xindy.org/xindy-2.4-pre2.tar.gz.

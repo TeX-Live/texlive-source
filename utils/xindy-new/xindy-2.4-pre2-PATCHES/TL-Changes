@@ -16,8 +16,8 @@ Moved user-commands/texindy => user-commands/texindy.in and removed
 	execute permissions.
 
 Removed:
-	make-rules/alphabets/*/Makefile.in
 	make-rules/alphabets/*/*.xdy
+	modules/*/{,*/}Makefile.{am,in}
 
 Removed:
 	make-rules/alphabets/*/*.xdy
