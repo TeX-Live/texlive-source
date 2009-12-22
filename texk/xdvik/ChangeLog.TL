@@ -1,6 +1,11 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2009-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/test_string_utils.c (test_my_stristr): Make the test
+	more stringent (and closer to the original code).
+
 2009-12-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/test_string_utils.c (test_my_stristr): Make test result

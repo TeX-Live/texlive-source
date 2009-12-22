@@ -163,16 +163,21 @@ static Boolean test_my_stristr(int verbose)
     size_t i;
     Boolean result = True;
     for (i = 0; i < (sizeof tests / sizeof tests[0]); i++) {
-	char *res = my_stristr(tests[i].str1, tests[i].str2);
+	char *res_str = my_stristr(tests[i].str1, tests[i].str2);
+	/* We want to verify that my_stristr(STR1, STR2) is either NULL or
+	 * a substring of STR1, but, e.g., `"oozah" == "paloozah" + 3' may
+	 * or may not be true (depending on compiler optimizations).  */
+	char *test_str = tests[i].result ?
+			 tests[i].str1 + strlen(tests[i].str1) - strlen(tests[i].result) :
+			 NULL;
 	if (verbose) {
 	    INFO((stderr, "my_stristr(%s, %s) -> %s == %s?\n",
 		  tests[i].str1,
 		  tests[i].str2,
-		  res,
-		  tests[i].result));
+		  res_str,
+		  test_str));
 	}
-	if (res != tests[i].result &&
-	  (res == NULL || tests[i].result == NULL || strcmp(res, tests[i].result))) {
+	if (res_str != test_str) {
 	    result = False;
 	}
     }
