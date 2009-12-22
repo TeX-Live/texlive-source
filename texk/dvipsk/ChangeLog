@@ -1,3 +1,8 @@
+2009-12-22  Karl Berry  <karl@tug.org>
+
+	* debug.h (D_MEM): disable completely by defining to 0.
+	Memory allocations just don't seem to be interesting.
+
 2009-12-21  Karl Berry  <karl@tug.org>
 
 	* protos.h (fil2ps): remove decl.
