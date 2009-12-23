@@ -1,3 +1,8 @@
+2009-12-23  Norbert Preining  <preining@logic.at>
+
+	* fmtutil: check for infinite loop only in mktexfmt mode so that
+	multiple defined format/engine combinations are accepted.
+
 2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (bin_links, man1_links):

@@ -58,7 +58,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
 progname=fmtutil
 argv0=$0
-version=20091009.0222
+version=20091223.1047
 
 cnf=fmtutil.cnf   # name of the config file
 export PATH
@@ -714,6 +714,9 @@ run_initex()
   rm -f $fmtfile
 
   # Check for infinite recursion before running the iniTeX:
+  # We do this check only if we are running in mktexfmt mode
+  # otherwise double format definitions will create an infinite loop, too
+  $mktexfmtMode || mktexfmt_loop=
   case :$mktexfmt_loop: in
   *:"$format/$engine":*)
     abort "Infinite recursion detected, giving up!" ;;
