@@ -42,14 +42,14 @@ DIST_SUBDIRS = auxdir/auxsub texk/kpathsea libs utils texk
 # and there is no install-hook or install-local.
 world: all
 ## Serialize 'make all' and 'make install-strip'.
-	@echo "top-level make $@: running $(check_target)..."
-	$(MAKE) $(AM_MAKEFLAGS) $(check_target)
-##
 	@echo "top-level make $@: running install-strip..."
 	$(MAKE) $(AM_MAKEFLAGS) install-strip
 ##
 	@echo "top-level make $@: running texlinks in texk/tetex..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
+##
+	@echo "top-level make $@: running $(check_target)..."
+	$(MAKE) $(AM_MAKEFLAGS) $(check_target)
 ##
 	@echo "make $@ done."
 
