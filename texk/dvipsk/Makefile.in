@@ -50,7 +50,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man1_MANS) \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap AUTHORS ChangeLog INSTALL
+	../../build-aux/ylwrap AUTHORS ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
@@ -393,9 +393,10 @@ EXTRA_DIST = $(dist_prologues) texc.script dvips.test pfbincl.test \
 	testdata/texps.pro INSTALLATION atari cmfonts.map config.ps \
 	contrib/PSTricks contrib/afm-extra contrib/colorsep.lpro \
 	contrib/configs contrib/crop.lpr contrib/latex209 \
-	contrib/volker contrib/whichinpath cyrfonts.map eufonts.map \
-	flib.c hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map \
-	makefont.c mvs psfonts.map reencode tex vmcms vms
+	contrib/treen.sh contrib/treen2.sh contrib/volker \
+	contrib/whichinpath cyrfonts.map eufonts.map flib.c \
+	hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map makefont.c \
+	mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro dvipstst.ps missfont.log mtest.ps \
 	pfbincl.ps
 TESTS = dvips.test pfbincl.test

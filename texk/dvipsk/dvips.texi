@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.98
-@set month-year September 2009
+@set month-year December 2009
 
 @copying
 This manual documents Dvips version @value{version}
@@ -145,14 +145,13 @@ Tom Rokicki wrote and maintains the original Dvips program.
 @cindex compilation
 @cindex installation, of Dvips
 
-@ifset version
-(A copy of this chapter is in the distribution file @file{dvipsk/INSTALL}.)
-@end ifset
+@c ifset version
+@c (A copy of this chapter is in the distribution file @file{dvipsk/INSTALL}.)
+@c end ifset
 
 Installing Dvips is mostly the same as installing any Kpathsea-using
 program.  Therefore, for the basic steps involved,
-@pxref{Installation,,, kpathsea, Kpathsea}.  (A copy is in the file
-@file{kpathsea/INSTALL}.)
+@pxref{Installation,,, kpathsea, Kpathsea}.
 
 For solutions to common installation problems and information on how to
 report a bug, see the file @file{kpathsea/BUGS} (@pxref{Bugs,,,
@@ -3398,15 +3397,15 @@ place of the default encoding vector for a particular PostScript font.
 @flindex texmsym.enc
 @flindex reencode/*.enc
 Examples of encodings: the @file{dvips.enc} encoding file that comes
-with Dvips in the @samp{reencode} directory is a good (but not perfect)
-approximation to the @TeX{} encoding for @TeX{}'s Computer Modern text
-fonts.  This is the encoding of the fonts that originated with Dvips,
-such as @file{ptmr.tfm}.  The distribution includes many other encoding
-files; for example, @file{8r.enc}, which is the base font for the
-current PostScript font distribution, and three corresponding to the
-@TeX{} mathematics fonts: @file{texmext.enc} for math extensions,
-@file{texmital.enc} for math italics, and @file{texmsym.enc} for math
-symbols.
+with the Fontname distribution (@url{http://tug.org/fontname}) is a
+good (but not perfect) approximation to the @TeX{} encoding for
+@TeX{}'s Computer Modern text fonts.  This is the encoding of the
+fonts that originated with Dvips, such as @file{ptmr.tfm}.  The
+distribution includes many other encoding files; for example,
+@file{8r.enc}, which is the base font for the current PostScript font
+distribution, and three corresponding to the @TeX{} mathematics fonts:
+@file{texmext.enc} for math extensions, @file{texmital.enc} for math
+italics, and @file{texmsym.enc} for math symbols.
 
 
 @node PostScript typesetting

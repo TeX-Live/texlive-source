@@ -1,5 +1,10 @@
 2009-12-24  Karl Berry  <karl@tug.org>
 
+	* INSTALLATION: rm stale file.
+	* reencode: remove stale dir, except ...
+	* contrib/treen.sh, contrib.treen2.sh: ... preserve this.
+	* Makefile.am (EXTRA_DIST): update
+
 	* AUTHORS, README, dvips.1, contrib/config.proto: doc updates.
 	* INSTALL: remove, completely stale.
 

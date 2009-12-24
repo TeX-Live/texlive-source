@@ -1,7 +1,7 @@
 This is ../../../texk/dvipsk/dvips.info, produced by makeinfo version
 4.13 from ../../../texk/dvipsk/dvips.texi.
 
-This manual documents Dvips version 5.98 (September 2009), a program to
+This manual documents Dvips version 5.98 (December 2009), a program to
 translate a DVI file into PostScript.  You may freely use, modify
 and/or distribute this file.
 
@@ -18,7 +18,7 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 5.98 (September 2009), a program to
+This manual documents Dvips version 5.98 (December 2009), a program to
 translate a DVI file into PostScript.  You may freely use, modify
 and/or distribute this file.
 
@@ -109,11 +109,9 @@ File: dvips.info,  Node: Installation,  Next: Invoking Dvips,  Prev: Why Dvips, 
 2 Installation
 **************
 
-(A copy of this chapter is in the distribution file `dvipsk/INSTALL'.)
-
 Installing Dvips is mostly the same as installing any Kpathsea-using
 program.  Therefore, for the basic steps involved, *note Installation:
-(kpathsea)Installation.  (A copy is in the file `kpathsea/INSTALL'.)
+(kpathsea)Installation.
 
    For solutions to common installation problems and information on how
 to report a bug, see the file `kpathsea/BUGS' (*note Bugs:
@@ -2742,14 +2740,14 @@ interpreter in your printer if you use one of them in place of the
 default encoding vector for a particular PostScript font.
 
    Examples of encodings: the `dvips.enc' encoding file that comes with
-Dvips in the `reencode' directory is a good (but not perfect)
-approximation to the TeX encoding for TeX's Computer Modern text fonts.
-This is the encoding of the fonts that originated with Dvips, such as
-`ptmr.tfm'.  The distribution includes many other encoding files; for
-example, `8r.enc', which is the base font for the current PostScript
-font distribution, and three corresponding to the TeX mathematics
-fonts: `texmext.enc' for math extensions, `texmital.enc' for math
-italics, and `texmsym.enc' for math symbols.
+the Fontname distribution (`http://tug.org/fontname') is a good (but
+not perfect) approximation to the TeX encoding for TeX's Computer
+Modern text fonts.  This is the encoding of the fonts that originated
+with Dvips, such as `ptmr.tfm'.  The distribution includes many other
+encoding files; for example, `8r.enc', which is the base font for the
+current PostScript font distribution, and three corresponding to the
+TeX mathematics fonts: `texmext.enc' for math extensions,
+`texmital.enc' for math italics, and `texmsym.enc' for math symbols.
 
 
 File: dvips.info,  Node: PostScript typesetting,  Prev: Encodings,  Up: Font concepts
@@ -4703,82 +4701,82 @@ Index
 
 
 Tag Table:
-Node: Top564
-Node: Why Dvips1313
-Node: Installation4761
-Node: config.ps installation5899
-Node: PostScript font installation8436
-Node: Ghostscript installation11310
-Node: Diagnosing problems12407
-Node: Debug options13502
-Node: No output14705
-Node: Small or inverted16173
-Node: Printer errors16892
-Node: Long documents fail18224
-Node: Including graphics fails18565
-Node: Invoking Dvips19803
-Node: Basic usage20394
-Node: Command-line options21378
-Node: Option summary21827
-Node: Option details23989
-Node: Environment variables42993
-Node: Config files45952
-Node: Configuration file searching46635
-Node: Configuration file commands49935
-Node: Paper size and landscape57048
-Node: papersize special58646
-Node: Config file paper sizes60055
-Node: Paper trays64210
-Node: Interaction with PostScript65544
-Node: PostScript figures66197
-Node: Bounding box66923
-Node: \includegraphics70294
-Node: EPSF macros72585
-Node: EPSF scaling74555
-Node: EPSF clipping77125
-Node: psfile special77767
-Node: Dynamic creation of graphics80160
-Node: Fonts in figures81478
-Node: Header files83138
-Node: Including headers from TeX84344
-Node: Including headers from the command line86378
-Node: Headers and memory usage87478
-Node: Literal PS88188
-Node: " special88770
-Node: ps special89511
-Node: Literal headers91009
-Node: PostScript hooks91724
-Node: Literal examples93814
-Node: Hypertext95266
-Node: Hypertext caveats96824
-Node: Hypertext specials101221
-Node: PostScript fonts103855
-Node: Font concepts104971
-Node: Metric files106138
-Node: Glyph files108964
-Node: Virtual fonts111320
-Node: Encodings113210
-Node: PostScript typesetting115592
-Node: Making a font available118674
-Node: Invoking afm2tfm123704
-Node: Changing font encodings124674
-Node: Changing TeX encodings125464
-Node: Changing PostScript encodings126564
-Node: Changing both encodings127908
-Node: Reencoding with Afm2tfm128581
-Node: Encoding file format131685
-Node: Special font effects135888
-Node: Afm2tfm options138151
-Node: psfonts.map141136
-Node: Color145868
-Node: Color macro files146912
-Node: User-definable colors150110
-Node: Color subtleties151385
-Node: Ted Turner153036
-Node: Color device configuration154261
-Node: Color support details156703
-Node: Color specifications157081
-Node: Color specials158484
-Node: Index160613
+Node: Top563
+Node: Why Dvips1311
+Node: Installation4759
+Node: config.ps installation5780
+Node: PostScript font installation8317
+Node: Ghostscript installation11191
+Node: Diagnosing problems12288
+Node: Debug options13383
+Node: No output14586
+Node: Small or inverted16054
+Node: Printer errors16773
+Node: Long documents fail18105
+Node: Including graphics fails18446
+Node: Invoking Dvips19684
+Node: Basic usage20275
+Node: Command-line options21259
+Node: Option summary21708
+Node: Option details23870
+Node: Environment variables42874
+Node: Config files45833
+Node: Configuration file searching46516
+Node: Configuration file commands49816
+Node: Paper size and landscape56929
+Node: papersize special58527
+Node: Config file paper sizes59936
+Node: Paper trays64091
+Node: Interaction with PostScript65425
+Node: PostScript figures66078
+Node: Bounding box66804
+Node: \includegraphics70175
+Node: EPSF macros72466
+Node: EPSF scaling74436
+Node: EPSF clipping77006
+Node: psfile special77648
+Node: Dynamic creation of graphics80041
+Node: Fonts in figures81359
+Node: Header files83019
+Node: Including headers from TeX84225
+Node: Including headers from the command line86259
+Node: Headers and memory usage87359
+Node: Literal PS88069
+Node: " special88651
+Node: ps special89392
+Node: Literal headers90890
+Node: PostScript hooks91605
+Node: Literal examples93695
+Node: Hypertext95147
+Node: Hypertext caveats96705
+Node: Hypertext specials101102
+Node: PostScript fonts103736
+Node: Font concepts104852
+Node: Metric files106019
+Node: Glyph files108845
+Node: Virtual fonts111201
+Node: Encodings113091
+Node: PostScript typesetting115494
+Node: Making a font available118576
+Node: Invoking afm2tfm123606
+Node: Changing font encodings124576
+Node: Changing TeX encodings125366
+Node: Changing PostScript encodings126466
+Node: Changing both encodings127810
+Node: Reencoding with Afm2tfm128483
+Node: Encoding file format131587
+Node: Special font effects135790
+Node: Afm2tfm options138053
+Node: psfonts.map141038
+Node: Color145770
+Node: Color macro files146814
+Node: User-definable colors150012
+Node: Color subtleties151287
+Node: Ted Turner152938
+Node: Color device configuration154163
+Node: Color support details156605
+Node: Color specifications156983
+Node: Color specials158386
+Node: Index160515
 
 End Tag Table

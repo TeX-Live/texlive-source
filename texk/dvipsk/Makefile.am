@@ -156,7 +156,6 @@ CLEANFILES += dvipstst.ps missfont.log mtest.ps pfbincl.ps
 ## Not used
 ##
 EXTRA_DIST += \
-	INSTALLATION \
 	atari \
 	cmfonts.map \
 	config.ps \
@@ -166,6 +165,8 @@ EXTRA_DIST += \
 	contrib/configs \
 	contrib/crop.lpr \
 	contrib/latex209 \
+	contrib/treen.sh \
+	contrib/treen2.sh \
 	contrib/volker \
 	contrib/whichinpath \
 	cyrfonts.map \
@@ -177,7 +178,6 @@ EXTRA_DIST += \
 	makefont.c \
 	mvs \
 	psfonts.map \
-	reencode \
 	tex \
 	vmcms \
 	vms
