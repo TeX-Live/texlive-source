@@ -20,7 +20,7 @@
 #   Bounding box does not care for line thickness (groff pic feature).
 #   Splines might be outside bounding box.
 #
-# Copyright (C) 2002--2004 by Hartmut Henkel
+# Copyright (C) 2002--2004, 2009 by Hartmut Henkel
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -33,15 +33,14 @@
 # See the GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the
-# Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-# MA  02111-1307  USA
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # The author may be contacted via the e-mail address
 #
 #         hartmut_henkel@gmx.de
 #
 # NEWS:
+    24 Dec. 2009 - use gawk for default awk only if it exists.
 #   14 Jan. 2007 - make it executable shell script, calling awk
 #   16 Dec. 2004 - Replaced // {print} by {print} (some AWKs did choke)
 #   09 Apr. 2004 - Locale check: Decimal point in float numbers?
@@ -65,7 +64,53 @@
 #
 ########################################################################
 
-AWK=${AWK:-gawk}
+# In case someone pedantic insists on using grep -E.
+: ${EGREP=egrep}}
+
+# Systems which define $COMSPEC or $ComSpec use semicolons to separate
+# directories in TEXINPUTS -- except for Cygwin et al., where COMSPEC
+# might be inherited, but : is used.
+if test -n "$COMSPEC$ComSpec" \
+   && uname | $EGREP -iv 'cygwin|mingw|djgpp' >/dev/null; then
+  path_sep=";"
+else
+  path_sep=":"
+fi
+
+# findprog PROG
+# -------------
+# Return true if PROG is somewhere in PATH, else false.
+findprog ()
+{
+  local saveIFS="$IFS"
+  IFS=$path_sep  # break path components at the path separator
+  for dir in $PATH; do
+    IFS=$saveIFS
+    # The basic test for an executable is `test -f $f && test -x $f'.
+    # (`test -x' is not enough, because it can also be true for directories.)
+    # We have to try this both for $1 and $1.exe.
+    #
+    # Note: On Cygwin and DJGPP, `test -x' also looks for .exe.  On Cygwin,
+    # also `test -f' has this enhancement, bot not on DJGPP.  (Both are
+    # design decisions, so there is little chance to make them consistent.)
+    # Thusly, it seems to be difficult to make use of these enhancements.
+    #
+    if  { test -f "$dir/$1"	&& test -x "$dir/$1"; } ||
+	{ test -f "$dir/$1.exe"	&& test -x "$dir/$1.exe"; }; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+if test -z "$AWK"; then  # if set by user, leave it.
+  if findprog gawk; then
+    AWK=gawk
+  else
+    AWK=awk
+  fi
+fi
+  
 export LANG="C"
 
 AWKPROG='
