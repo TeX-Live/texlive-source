@@ -1,7 +1,8 @@
 2009-12-24  Karl Berry  <karl@tug.org>
 
-	* README.CONFIGURE: remove, stale.
-	* README,
+	* HIER, INSTALL, README.CONFIGURE: remove, stale.
+	* Makefile.am (EXTRA_DIST): change accordingly.
+	* README, PROJECTS,
 	access.c, readlink.c,
 	mktex.opt, mktexdir, mktexdir.opt, mktexmf, mktexnam,
 	mktexnam.opt, mktextfm, mktexupd: doc/email updates.

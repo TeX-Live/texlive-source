@@ -56,7 +56,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_noinst_DATA) \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap AUTHORS ChangeLog INSTALL NEWS putenv.c \
+	../../build-aux/ylwrap AUTHORS ChangeLog NEWS putenv.c \
 	strcasecmp.c strstr.c strtol.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -350,9 +350,8 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 SUBDIRS = . doc man
-EXTRA_DIST = BUGS HIER PROJECTS README.CONFIGURE putenv.c strcasecmp.c \
-	strtol.c strstr.c mktex.cnf Makefile.in.orig common.ac.orig \
-	withenable.ac
+EXTRA_DIST = BUGS PROJECTS putenv.c strcasecmp.c strtol.c strstr.c \
+	mktex.cnf Makefile.in.orig common.ac.orig withenable.ac
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libkpathsea.la

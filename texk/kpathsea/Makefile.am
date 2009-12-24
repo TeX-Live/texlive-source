@@ -11,7 +11,7 @@ rebuild: all
 
 SUBDIRS = . doc man
 
-EXTRA_DIST = BUGS HIER PROJECTS README.CONFIGURE
+EXTRA_DIST = BUGS PROJECTS
 
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)

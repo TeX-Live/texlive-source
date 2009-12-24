@@ -332,12 +332,11 @@ To make the paths independent of the mode, simply edit
 
 @xref{mktex script arguments}, for how this interacts with @code{mktexpk}.
 
-@flindex HIER
-@flindex kpathsea/HIER
+@cindex TDS
+@cindex @TeX{} directory structure
 @xref{TeX directory structure,, @TeX{} directory structure}, for a
 description of the default arrangement of the input files that comprise
-the @TeX{} system.  The file @file{kpathsea/HIER} is a copy of that
-section.
+the @TeX{} system. 
 
 
 @node Default path generation
