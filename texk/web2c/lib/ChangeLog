@@ -1,3 +1,8 @@
+2009-12-23  Karl Berry  <karl@tug.org>
+
+	* usage.c (usagehelp)
+	* texmfmp.c (BUG_ADDRESS): default to tex-k@tug.org, no @mail.
+
 2009-12-01  Alexander Cherepanov  <cherepan@mccme.ru>
 
 	* texmfmp.c (parse_first_line): initialize s to NULL.

@@ -15,13 +15,16 @@ Richard Furuta initially ported some of the TeXware programs.
 Ulrik Vieth initially adapted MetaPost to Kpathsea.
 
 Tomas Rokicki wrote the original TeX to C program.
-Tim Morgan made most of the subsequent changes.
+Tim Morgan made many subsequent changes.
 
 Dozens of other people have contributed to porting, bug fixes, and other
 improvements.  (The names are recorded in the ChangeLogs to the best of
-my knowledgement. Do not hesitate to contact me with corrections.)
+my knowledgement. Do not hesitate to send corrections.)
 
-Karl Berry <kb@mail.tug.org> maintained the distribution for several
-years.  Version 7.0 was the last to be released by him.
+Karl Berry maintained the distribution for several years, ending his
+first tenure with version 7.0, whereupon Olaf Weber took over.  Karl
+reentered the scene some years later, in collaboration with Olaf and
+others.
 
-Olaf Weber <olaf@infovore.xs4all.nl> is the current maintainer.
+Peter Breitenlohner has made pervasive improvements to the build
+structure and tests.

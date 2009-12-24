@@ -25,7 +25,7 @@ O 0pt,0pt
 
 % Partially download Type 1 fonts by default.  Only reason not to do
 % this is if you encounter bugs.  (Please report them to
-% @email{tex-k@@mail.tug.org} if you do.)
+% @email{tex-k@@tug.org} if you do.)
 j
 
 % Also look for fonts at these resolutions.

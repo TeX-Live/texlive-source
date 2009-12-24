@@ -1,8 +1,8 @@
 # mktexnam.opt to determine various manipulations of the filenames.
 # Sourced from mktexnam.
 # 
-# te@dbs.uni-hannover.de and kb@mail.tug.org. Public domain.
-# $Id: mktexnam.opt,v 1.14 2004/12/28 20:58:18 olaf Exp $
+# Primarily written by Thomas Esser, Karl Berry, and Olaf Weber.
+# $Id$
 
 # Get 8.3 filenames like dpiNNN/NAME.pk.
 case "$MT_FEATURES" in

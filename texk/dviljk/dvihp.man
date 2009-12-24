@@ -1,4 +1,4 @@
-.TH DVIHP 1 "October 30, 1999"
+.TH DVIHP 1 "December 24, 2009"
 .\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
 .SH NAME
 dvihp \- convert a TeX DVI file to Hewlett-Packard PCL
@@ -44,6 +44,6 @@ write usage summary.
 .P
 Other options are passed to the dvilj program.
 .SH BUGS
-Email bug reports to tex-k@mail.tug.org.
+Email bug reports to tex-k@tug.org.
 .SH SEE ALSO
 \fBdvicopy\fP(1), \fBdvilj4\fP(1).

@@ -1,8 +1,8 @@
 # mktex.opt -- common mktex* options, etc.
 # Meant to be sourced after $usage, $version, and $MT_TEXMFMAIN have been set.
 # 
-# te@dbs.uni-hannover.de and kb@mail.tug.org. Public domain.
-# $Id: mktex.opt,v 1.36 2005/01/21 19:17:01 olaf Exp $
+# Originally written by Thomas Esser.
+# $Id$
  
 if test "x$1" = x--help || test "x$1" = x-help; then
   echo "$usage"

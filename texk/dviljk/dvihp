@@ -1,6 +1,7 @@
 #!/bin/sh
 # $Id: dvihp,v 1.3 1996/12/03 19:53:56 karl Exp karl $
-# Run dvicopy, then dvilj[k].  kb@mail.tug.org, 1994.  Public domain.
+# Run dvicopy, then dvilj[k].  Originally written by Karl Berry.
+# Public domain.
 # Try to accept arguments a la dvips, from Thomas Esser.
 
 : ${DVILJ=dvilj4}       # the dvilj variant to run
@@ -43,7 +44,7 @@ usage="Usage: `basename $0` [OPTIONS] [DVIFILE[.dvi]].
 
 Other options are passed to the dvilj program.
 
-Email bug reports to tex-k@mail.tug.org."
+Email bug reports to tex-k@tug.org."
 
 
 if test $# -eq 0; then

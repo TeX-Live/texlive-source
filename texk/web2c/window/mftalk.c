@@ -1,6 +1,6 @@
 /* mftalk.c -- generic Metafont window server.
    Copyright (C) 1994 Ralph Schleicher
-   Slightly modified for Web2c 7.0 by kb@mail.tug.org.
+   Slightly modified for Web2c 7.0 by Karl Berry.
    Further modifications for Web2C 7.2 by Mathias.Herberts@irisa.fr  */
 
 /* This library is free software; you can redistribute it and/or

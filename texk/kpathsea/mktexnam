@@ -1,9 +1,9 @@
 #!/bin/sh
 # maketexnam -- find PK and TFM names.
-# te@dbs.uni-hannover.de, kb@mail.tug.org, and infovore@xs4all.nl.
+# Primarily written by Thomas Esser, Karl Berry, and Olaf Weber.
 # Public domain.
 
-version='$Id: mktexnam,v 1.30 2004/12/28 20:55:56 olaf Exp $'
+version='$Id$'
 usage="Usage: $0 NAME [DPI MODE] [DESTDIR].
   Output the PK, TFM, and MF names for a font NAME."
 mt_max_args=4

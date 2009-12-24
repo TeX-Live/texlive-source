@@ -1,31 +1,17 @@
-This directory contains Dvipsk, my (kb@mail.tug.org) modified version of
-Tom Rokicki's dvips, a DVI-to-PostScript translator.
+This directory contains Dvipsk, a modified version of
+Tom Rokicki's dvips, a DVI-to-PostScript translator.  This has become
+the only maintained Dvips, and functions as the original.
 
-See `NEWS' for major changes by release, `ChangeLog` for all changes.
-See `INSTALL' for installation instructions.
+See `ChangeLog` for all changes.
 See `../kpathsea/BUGS' for details on reporting bugs.
-AT LEAST NEWS, ChangeLog, AND INSTALL ARE WOEFULLY OUT OF DATE.
 
-Aside from configuration, this differs from the original primarily in
-that it uses the same code for path searching as TeX and my other
-distributions.
-
-Dvipsk does not install any default config.ps file, since no one file is
-generally suitable. Sample Dvips config files are in the contrib/
-directory. See ./INSTALL.
-
-The documentation is now in Texinfo format.  I've removed the font
-naming section, since it was an old version of the font naming document
-(which you can get from ftp://ftp.tug.org/tex/fontname/).
+Dvipsk does not install by itself any default config.ps file, since no
+one file is generally suitable. Sample Dvips config files are in the
+contrib/ directory.
 
 Dvipsk is free software; Tom's original files are public domain.  The
-files I wrote (originally for the Free Software Foundation) are covered
-by the GNU General Public License -- see the files COPYING*.
-
-You can get the original dvips from ftp://labrea.stanford.edu/pub/dvips*.
-
-kb@mail.tug.org
-Member of the League for Programming Freedom -- write lpf@uunet.uu.net.
+files Karl wrote (originally for the Free Software Foundation) are
+covered by the GNU General Public License -- see the files COPYING*.
 -------------------------------------------------------------------------
 dvips 5.86 notes:
 

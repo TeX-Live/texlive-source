@@ -25,7 +25,7 @@ void
 usagehelp (const_string *message, const_string bug_email)
 {
     if (!bug_email)
-        bug_email = "tex-k@mail.tug.org";
+        bug_email = "tex-k@tug.org";
     while (*message) {
         printf("%s\n", *message);
         ++message;

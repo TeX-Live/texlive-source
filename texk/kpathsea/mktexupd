@@ -1,9 +1,9 @@
 #!/bin/sh
 # mktexupd -- update ls-R with a new entry.
 # 
-# te@dbs.uni-hannover.de and kb@mail.tug.org. Public domain.
+# Primarily written by Thomas Esser, Karl Berry, and Olaf Weber.
 
-version='$Id: mktexupd,v 1.20 2004/12/19 12:41:13 olaf Exp $'
+version='$Id$'
 usage="Usage: $0 DIR FILE.
   Update the ls-R file with an entry for FILE in DIR."
 mt_min_args=2

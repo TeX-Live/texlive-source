@@ -1,4 +1,4 @@
-This directory contains Dviljk, my (kb@mail.tug.org) modified version of
+This directory contains Dviljk, a modified version of
 Gustaf Neumann's dvi2xx, a DVI-to-PCL translator.
 
 This program does not work with DeskJet printers; instead, try

@@ -3,7 +3,7 @@
    This is included by e-TeX, from ../etexextra.c
    (generated from ../lib/texmfmp.c).
 
-Copyright (C) 1995, 96 Karl Berry.
+Copyright (C) 1995, 1996, 2009 Karl Berry.
 Copyright (C) 2004 Olaf Weber.
 
 This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #define COPYRIGHT_HOLDER "Peter Breitenlohner"
 #define AUTHOR NULL
 #define PROGRAM_HELP ETEXHELP
-#define BUG_ADDRESS "tex-k@mail.tug.org"
+#define BUG_ADDRESS "tex-k@tug.org"
 #define DUMP_VAR TEXformatdefault
 #define DUMP_LENGTH_VAR formatdefaultlength
 #define DUMP_OPTION "fmt"

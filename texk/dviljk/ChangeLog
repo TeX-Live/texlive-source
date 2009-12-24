@@ -1,3 +1,7 @@
+2009-12-24  Karl Berry  <karl@tug.org>
+
+	* AUTHORS, dviljk.pod, README, dvihp: doc/email fixes.
+
 2009-08-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Cleanup: move extern declarations to header tfm.h.

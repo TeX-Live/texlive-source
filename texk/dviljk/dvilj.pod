@@ -594,10 +594,9 @@ sequences are supported on which HP printers.
 
 =head1 AUTHOR
 
-dvi2xx by Gustaf Neumann <neumann@wu-wien.ac.at>,
-Wirtschaftsuniversitaet Wien
+dvi2xx by Gustaf Neumann, Wirtschaftsuniversitaet Wien.
 
-dviljk fork by kb@mail.tug.org
+dviljk fork by Karl Berry.
 
 Joachim Schrod <jschrod@acm.org> supplied security fixes and updated
 this man page.

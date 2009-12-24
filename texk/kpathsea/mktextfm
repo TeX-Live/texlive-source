@@ -4,10 +4,10 @@
 # (If you change or delete the word `original' on the previous line,
 # installation won't write this script over yours.)
 # 
-# te@dbs.uni-hannover.de, kb@mail.tug.org, and infovore@xs4all.nl.
+# Primarily written by Thomas Esser, Karl Berry, and Olaf Weber.
 # Public domain.
 
-version='$Id: mktextfm,v 1.27 2004/07/03 19:25:15 olaf Exp $'
+version='$Id$'
 progname=`echo $0 | sed 's%.*/%%'`
 usage="Usage: $progname [--destdir DESTDIR] FONT.
 

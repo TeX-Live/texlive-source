@@ -1,3 +1,7 @@
+2009-12-23  Karl Berry  <karl@tug.org>
+
+	* etexextra.in (BUG_ADDRESS): tex-k@tug.org, not @mail.
+
 2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).

@@ -4,10 +4,10 @@
 # (If you change or delete the word `original' on the previous line,
 # installation won't write this script over yours.)
 # 
-# te@dbs.uni-hannover.de, kb@mail.tug.org, and infovore@xs4all.nl.
+# Originally written by Thomas Esser.
 # Public domain.
 
-version='$Id: mktexmf,v 1.27 2005/01/25 17:39:21 olaf Exp $'
+version='$Id$'
 progname=`echo $0 | sed 's%.*/%%'`
 usage="Usage: $progname FONT.
 

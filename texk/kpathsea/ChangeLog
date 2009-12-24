@@ -1,3 +1,11 @@
+2009-12-24  Karl Berry  <karl@tug.org>
+
+	* README.CONFIGURE: remove, stale.
+	* README,
+	access.c, readlink.c,
+	mktex.opt, mktexdir, mktexdir.opt, mktexmf, mktexnam,
+	mktexnam.opt, mktextfm, mktexupd: doc/email updates.
+
 2009-12-21  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (find_format): had forgotten to increment the loop

@@ -1,3 +1,7 @@
+2009-12-23  Karl Berry  <karl@tug.org>
+
+	* mftalk.c: doc fix.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* epsf.c, hp2627.c, mftalk.c, next.c, regis.c, suntools.c,

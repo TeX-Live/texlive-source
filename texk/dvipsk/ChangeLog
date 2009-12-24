@@ -1,3 +1,8 @@
+2009-12-24  Karl Berry  <karl@tug.org>
+
+	* AUTHORS, README, dvips.1, contrib/config.proto: doc updates.
+	* INSTALL: remove, completely stale.
+
 2009-12-22  Karl Berry  <karl@tug.org>
 
 	* debug.h (D_MEM): disable completely by defining to 0.

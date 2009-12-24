@@ -1,6 +1,6 @@
 /* access -- test for access permissions of a file.
 
-   Copyright 2008 Karl Berry.
+   Copyright 2008, 2009 Karl Berry.
    Copyright 1997-2001, 2005 Olaf Weber.
 
    This program is free software; you can redistribute it and/or modify
@@ -41,11 +41,11 @@ main (int argc, char **argv)
 \n\
 --help      display this help and exit\n\
 --version   output version information and exit\n\n", argv[0]);
-        fputs ("Email bug reports to tex-k@mail.tug.org.\n", stdout);
+        fputs ("Email bug reports to tex-k@tug.org.\n", stdout);
         exit(0);
     } else if (argc > 1 && strcmp (argv[1], "--version") == 0) {
         printf ("%s (%s)\n\
-Copyright (C) 1997 Olaf Weber.\n\
+Copyright (C) 2009 Olaf Weber & Karl Berry.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 For more information about these matters, see the file named COPYING.\n\
