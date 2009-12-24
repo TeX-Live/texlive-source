@@ -338,6 +338,9 @@ EXTRA_DIST = \
 @build_kpathsea_FALSE@SUBDIRS = libs utils texk
 @build_kpathsea_TRUE@SUBDIRS = texk/kpathsea libs utils texk
 DIST_SUBDIRS = auxdir/auxsub texk/kpathsea libs utils texk
+
+# Allow for skipping make check if needed.
+check_target = check
 all: all-recursive
 
 .SUFFIXES:
@@ -828,10 +831,15 @@ dist-hook:
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
 world: all
+	@echo "top-level make $@: running $(check_target)..."
+	$(MAKE) $(AM_MAKEFLAGS) $(check_target)
+	@echo "top-level make $@: running install-strip..."
 	$(MAKE) $(AM_MAKEFLAGS) install-strip
 	@echo "top-level make $@: running texlinks in texk/tetex..."
 	cd texk/tetex && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 	@echo "make $@ done."
+skip:
+.PHONY: skip
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

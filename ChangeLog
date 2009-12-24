@@ -1,5 +1,9 @@
 2009-12-24  Karl Berry  <karl@tug.org>
 
+	* Makefile.am (world): also run make check.
+	(check_target): new variable.
+	(skip): new target, to do nothing.
+
 	* Build (TL_CONF_BANNER): add /dev.
 
 2009-12-22  Karl Berry  <karl@tug.org>
