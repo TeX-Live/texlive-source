@@ -1,3 +1,7 @@
+2009-12-24  Karl Berry  <karl@tug.org>
+
+	* Build (TL_CONF_BANNER): add /dev.
+
 2009-12-22  Karl Berry  <karl@tug.org>
 
 	* build-aux/ylwrap: update from current automake (no real changes).
