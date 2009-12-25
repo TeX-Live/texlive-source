@@ -1,5 +1,8 @@
 2009-12-25  Karl Berry  <karl@tug.org>
 
+	* Makefile.am (EXTRA_DIST): eliminate it.
+	* fmtutil.in: rm obsolete (now Build/source/texk/tetex/fmtutil.cnf).
+
 	* tests/bibtex-openout-test.pl: new file.
 	* am/web.am (bibtex_tests): new var.
 	(TESTS): add $(bibtex_tests).

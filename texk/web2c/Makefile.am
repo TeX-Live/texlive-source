@@ -186,10 +186,6 @@ include $(srcdir)/synctexdir/am/synctex.am
 ## libmd5
 include $(srcdir)/libmd5/am/md5.am
 
-## Not used
-##
-EXTRA_DIST += fmtutil.in
-
 ## Eventually delete these files
 ##
 EXTRA_DIST += Makefile.in.orig configure.in.orig metapost.mk
