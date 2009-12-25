@@ -48,7 +48,7 @@ bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_5) \
 noinst_PROGRAMS = tangleboot$(EXEEXT) ctangleboot$(EXEEXT)
 check_PROGRAMS = $(am__EXEEXT_17) $(am__EXEEXT_18) $(am__EXEEXT_19) \
 	$(am__EXEEXT_20) $(am__EXEEXT_21) md5main$(EXEEXT)
-TESTS = tangle.test $(am__EXEEXT_24) ctiedir/ctie.test \
+TESTS = tangle.test $(bibtex_tests) $(am__EXEEXT_24) ctiedir/ctie.test \
 	cwebdir/cweave.test tiedir/tie.test $(am__append_4) \
 	$(am__append_8) $(am__append_11) $(am__append_14) \
 	$(am__append_19) $(am__append_35) $(am__append_36) \
@@ -1105,46 +1105,47 @@ EXTRA_LIBRARIES = libmf.a libmplib.a libpdftex.a liblua51.a libzzip.a \
 EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	tangle.ch tangleboot.pin cwebdir ctangleboot.cin cwebboot.cin \
 	cwebboot.hin tangle.test $(web_programs:=.web) \
-	$(web_programs:=.ch) $(web_tests) tests/allbib.aux \
-	tests/allbib.tex tests/apalike.bst tests/batch.tex \
-	tests/check.log tests/cmr10.600gf tests/cmr10.pk \
-	tests/cmr10.pl tests/cmr10.tfm tests/cmr7.tfm tests/cmr8.tfm \
-	tests/cmti10.tfm tests/cmtt10.tfm tests/cmtt8.tfm tests/dict \
-	tests/eight.tex tests/end.tex tests/exampl.aux \
-	tests/exampl.tex tests/gray.tfm tests/hello.tex tests/io.mf \
-	tests/just.texi tests/label.mp tests/label.mpx tests/logo8.tfm \
-	tests/longtfm.tex tests/magic.tex tests/memtest.tex \
-	tests/mltextst.tex tests/mptest.mp tests/mptest.mpx \
-	tests/one.two.mf tests/one.two.mp tests/one.two.tex \
-	tests/online.mf tests/openout.mp tests/openout.tex \
-	tests/pagenum.dvi tests/pagenum.tex tests/patgen.in \
-	tests/patterns tests/plain.mft tests/pplr.dvi tests/pplr.tfm \
-	tests/ptmr.dvi tests/ptmr.tfm tests/ptmr.vf tests/ptmr.vpl \
-	tests/rpsyr.tfm tests/rptmr.tfm tests/story.dvi \
-	tests/testex.err tests/testex.mp tests/testex.tex \
-	tests/translate tests/uno.dos tests/write18.tex \
-	tests/xampl.bib ctiedir tiedir lib/mfmpi386.asm lib/mfmpw32.c \
-	lib/texmfmp.c texmfmem.h texmfmp-help.h texmfmp.h \
-	$(tex_ch_srcs) lib/texmfmp.c tmf-pool.h $(tex_tests) mf.web \
-	mf-binpool.ch mf.ch mftalk.h lib/texmfmp.c tmf-pool.h \
-	$(mf_tests) triptrap/README triptrap/mftrap.diffs \
-	triptrap/mftrap.fot triptrap/mftrap.log triptrap/mftrap.pl \
-	triptrap/mftrap1.in triptrap/mftrap2.in triptrap/mftrapin.log \
-	triptrap/mptrap.diffs triptrap/mptrap.fot triptrap/mptrap.log \
-	triptrap/mptrap.pl triptrap/mptrap.readme triptrap/mptrap1.in \
-	triptrap/mptrap2.in triptrap/mptrapin.log triptrap/mtrap.0 \
-	triptrap/mtrap.1 triptrap/mtrap.log triptrap/mtrap.mp \
-	triptrap/texmf.cnf triptrap/trap.148 triptrap/trap.149 \
-	triptrap/trap.150 triptrap/trap.151 triptrap/trap.197 \
-	triptrap/trap.200 triptrap/trap.5 triptrap/trap.6 \
-	triptrap/trap.mf triptrap/trap.mp triptrap/trap.mpx \
-	triptrap/trap.typ triptrap/trapf.pl triptrap/trapman.tex \
-	triptrap/trip.diffs triptrap/trip.fot triptrap/trip.log \
-	triptrap/trip.pl triptrap/trip.tex triptrap/trip.typ \
-	triptrap/trip1.in triptrap/trip2.in triptrap/tripin.log \
-	triptrap/tripman.tex triptrap/tripos.tex triptrap/writeo \
-	triptrap/writeo.2 tmf-pool.h mplibdir/ChangeLog $(mpost_web) \
-	$(mp_tests) $(libmplib_web) mplibdir/lmplib.c $(etex_web_srcs) \
+	$(web_programs:=.ch) $(bibtex_tests) $(web_tests) \
+	tests/allbib.aux tests/allbib.tex tests/apalike.bst \
+	tests/batch.tex tests/check.log tests/cmr10.600gf \
+	tests/cmr10.pk tests/cmr10.pl tests/cmr10.tfm tests/cmr7.tfm \
+	tests/cmr8.tfm tests/cmti10.tfm tests/cmtt10.tfm \
+	tests/cmtt8.tfm tests/dict tests/eight.tex tests/end.tex \
+	tests/exampl.aux tests/exampl.tex tests/gray.tfm \
+	tests/hello.tex tests/io.mf tests/just.texi tests/label.mp \
+	tests/label.mpx tests/logo8.tfm tests/longtfm.tex \
+	tests/magic.tex tests/memtest.tex tests/mltextst.tex \
+	tests/mptest.mp tests/mptest.mpx tests/one.two.mf \
+	tests/one.two.mp tests/one.two.tex tests/online.mf \
+	tests/openout.mp tests/openout.tex tests/pagenum.dvi \
+	tests/pagenum.tex tests/patgen.in tests/patterns \
+	tests/plain.mft tests/pplr.dvi tests/pplr.tfm tests/ptmr.dvi \
+	tests/ptmr.tfm tests/ptmr.vf tests/ptmr.vpl tests/rpsyr.tfm \
+	tests/rptmr.tfm tests/story.dvi tests/testex.err \
+	tests/testex.mp tests/testex.tex tests/translate tests/uno.dos \
+	tests/write18.tex tests/xampl.bib ctiedir tiedir \
+	lib/mfmpi386.asm lib/mfmpw32.c lib/texmfmp.c texmfmem.h \
+	texmfmp-help.h texmfmp.h $(tex_ch_srcs) lib/texmfmp.c \
+	tmf-pool.h $(tex_tests) mf.web mf-binpool.ch mf.ch mftalk.h \
+	lib/texmfmp.c tmf-pool.h $(mf_tests) triptrap/README \
+	triptrap/mftrap.diffs triptrap/mftrap.fot triptrap/mftrap.log \
+	triptrap/mftrap.pl triptrap/mftrap1.in triptrap/mftrap2.in \
+	triptrap/mftrapin.log triptrap/mptrap.diffs \
+	triptrap/mptrap.fot triptrap/mptrap.log triptrap/mptrap.pl \
+	triptrap/mptrap.readme triptrap/mptrap1.in triptrap/mptrap2.in \
+	triptrap/mptrapin.log triptrap/mtrap.0 triptrap/mtrap.1 \
+	triptrap/mtrap.log triptrap/mtrap.mp triptrap/texmf.cnf \
+	triptrap/trap.148 triptrap/trap.149 triptrap/trap.150 \
+	triptrap/trap.151 triptrap/trap.197 triptrap/trap.200 \
+	triptrap/trap.5 triptrap/trap.6 triptrap/trap.mf \
+	triptrap/trap.mp triptrap/trap.mpx triptrap/trap.typ \
+	triptrap/trapf.pl triptrap/trapman.tex triptrap/trip.diffs \
+	triptrap/trip.fot triptrap/trip.log triptrap/trip.pl \
+	triptrap/trip.tex triptrap/trip.typ triptrap/trip1.in \
+	triptrap/trip2.in triptrap/tripin.log triptrap/tripman.tex \
+	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
+	tmf-pool.h mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
+	$(libmplib_web) mplibdir/lmplib.c $(etex_web_srcs) \
 	$(etex_ch_srcs) etexdir/etexextra.in lib/texmfmp.c tmf-pool.h \
 	etexdir/ChangeLog etexdir/INSTALL etexdir/README \
 	etexdir/etex_gen.tex $(etex_tests) etexdir/etrip/etrip.diffs \
@@ -1429,6 +1430,7 @@ web_programs = bibtex dvicopy dvitype gftodvi gftopk gftype mft \
 	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf weave
 
 nodist_bibtex_SOURCES = bibtex.c bibtex.h
+bibtex_tests = tests/bibtex-openout-test.pl
 nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
 nodist_dvitype_SOURCES = dvitype.c dvitype.h
 nodist_gftodvi_SOURCES = gftodvi.c gftodvi.h

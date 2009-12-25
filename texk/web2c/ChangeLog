@@ -1,3 +1,18 @@
+2009-12-25  Karl Berry  <karl@tug.org>
+
+	* tests/bibtex-openout-test.pl: new file.
+	* am/web.am (bibtex_tests): new var.
+	(TESTS): add $(bibtex_tests).
+	(EXTRA_DIST): likewise.
+
+2009-12-24  Karl Berry  <karl@tug.org>
+
+	* AUTHORS, Makefile.in, README, help.h: doc/email updates.
+
+2009-12-23  Karl Berry  <karl@tug.org>
+
+	* help.h (BIBTEXHELP): tweaks.
+
 2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Add checks for mkdtemp(), snprintf(), and

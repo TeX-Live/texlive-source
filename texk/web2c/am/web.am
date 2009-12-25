@@ -22,6 +22,9 @@ bibtex-web2c: bibtex.p $(web2c_depend) web2c/cvtbib.sed
 	@$(web2c) bibtex
 bibtex.p: tangle$(EXEEXT) bibtex.web bibtex.ch
 	$(tangle) bibtex bibtex
+bibtex_tests = tests/bibtex-openout-test.pl
+TESTS += $(bibtex_tests)
+EXTRA_DIST += $(bibtex_tests)
 
 nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
 dvicopy.c dvicopy.h: dvicopy-web2c
@@ -144,7 +147,7 @@ weave-web2c: weave.p $(web2c_depend)
 weave.p: tangle$(EXEEXT) weave.web weave.ch
 	$(tangle) weave weave
 
-## Tests
+## Tests (basic test for each program, named foo.test).
 ##
 web_tests = $(web_programs:=.test)
 
