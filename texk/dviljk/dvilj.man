@@ -132,7 +132,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DVILJ 1"
-.TH DVILJ 1 "2007-07-05" "Version 2.6p5" "TeX-Live"
+.TH DVILJ 1 "2009-12-24" "Version 2.6p5" "TeX-Live"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -676,10 +676,9 @@ Comparison Guide (and addendum) that documents which \s-1PCL\s0 escape
 sequences are supported on which \s-1HP\s0 printers.
 .SH "AUTHOR"
 .IX Header "AUTHOR"
-dvi2xx by Gustaf Neumann <neumann@wu\-wien.ac.at>,
-Wirtschaftsuniversitaet Wien
+dvi2xx by Gustaf Neumann, Wirtschaftsuniversitaet Wien.
 .PP
-dviljk fork by kb@mail.tug.org
+dviljk fork by Karl Berry.
 .PP
 Joachim Schrod <jschrod@acm.org> supplied security fixes and updated
 this man page.

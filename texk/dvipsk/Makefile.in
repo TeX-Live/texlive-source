@@ -390,7 +390,7 @@ EXTRA_DIST = $(dist_prologues) texc.script dvips.test pfbincl.test \
 	testdata/psfonts.map testdata/ptmbi.vf testdata/ptmbi8r.tfm \
 	testdata/ptmr.vf testdata/ptmr8r.tfm testdata/ptmri.vf \
 	testdata/ptmri8r.tfm testdata/special.pro testdata/texc.pro \
-	testdata/texps.pro INSTALLATION atari cmfonts.map config.ps \
+	testdata/texps.pro atari cmfonts.map config.ps \
 	contrib/PSTricks contrib/afm-extra contrib/colorsep.lpro \
 	contrib/configs contrib/crop.lpr contrib/latex209 \
 	contrib/treen.sh contrib/treen2.sh contrib/volker \
