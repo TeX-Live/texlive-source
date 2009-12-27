@@ -19949,9 +19949,9 @@ else
 @<Build a linked list of free objects@>;
 pdf_print_ln("/Type /XRef");
 pdf_print("/Index [0 ");
-pdf_print_int(obj_ptr);
+pdf_print_int(obj_ptr + 1);
 pdf_print_ln("]");
-pdf_int_entry_ln("Size", obj_ptr);
+pdf_int_entry_ln("Size", obj_ptr + 1);
 pdf_print("/W [1 ");
 pdf_print_int(xref_offset_width);
 pdf_print_ln(" 1]");

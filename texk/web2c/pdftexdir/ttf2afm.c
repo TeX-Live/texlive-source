@@ -49,7 +49,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #define enc_eof()       feof(encfile)
 #define pdftex_fail     ttf_fail
 
-#define print_str(S)    if (S != NULL) fprintf(outfile, #S " %s\n", S)
 #define print_dimen(N)  if (N != 0) fprintf(outfile, #N " %i\n", (int)get_ttf_funit(N))
 
 #define get_ttf_funit(n) \
@@ -750,6 +749,23 @@ static void print_char_metric(FILE * f, int charcode, long glyph_index)
             (int) get_ttf_funit(mtx_tab[glyph_index].bbox[3]));
 }
 
+static void print_str(char *s)
+{
+    char *p, *e;
+
+    if (s == NULL)
+        return;
+
+    e = strend(s);
+    for (p = s; p < e; p++) {
+        if (*p == 10 || *p == 13)
+            fputs("\\n", outfile);
+        else
+            fputc(*p, outfile);
+    }
+    fputs("\n", outfile);
+}
+
 static void print_afm(char *date, char *fontname)
 {
     int ncharmetrics;
@@ -758,6 +774,9 @@ static void print_afm(char *date, char *fontname)
     unsigned int index;
     char **pe;
     kern_entry *pk, *qk;
+    char *p;
+    double d;
+    long l;
     fputs("StartFontMetrics 2.0\n", outfile);
     fprintf(outfile,
             "Comment Converted at %s by ttf2afm from font file `%s'\n", date,
@@ -766,10 +785,14 @@ static void print_afm(char *date, char *fontname)
     print_str(FullName);
     print_str(FamilyName);
     print_str(Weight);
-    fprintf(outfile, "ItalicAngle %i", (int) (ItalicAngle / 0x10000));
-    if (ItalicAngle % 0x10000 > 0)
-        fprintf(outfile, ".%i",
-                (int) ((ItalicAngle % 0x10000) * 1000) / 0x10000);
+    l = ItalicAngle >> 16;
+    if (l > 0x8000)
+        l = l - 0x10000;
+    d = (ItalicAngle & 0xffff)/65536.0;
+    if (d >= 0.1)
+        fprintf(outfile, "ItalicAngle %.1f", d + l);
+    else
+        fprintf(outfile, "ItalicAngle %li", l);
     fputs("\n", outfile);
     fprintf(outfile, "IsFixedPitch %s\n", IsFixedPitch ? "true" : "false");
     fprintf(outfile, "FontBBox %i %i %i %i\n",
@@ -779,6 +802,11 @@ static void print_afm(char *date, char *fontname)
     print_dimen(UnderlinePosition);
     print_dimen(UnderlineThickness);
     print_str(Version);
+    /* remove trailing whitespaces from Notice */
+    if (Notice != NULL) {
+        for (p = strend(Notice); p > Notice && isspace(*p); p--);
+        *p = 0;
+    }
     print_str(Notice);
     fputs("EncodingScheme FontSpecific\n", outfile);
     print_dimen(CapHeight);
