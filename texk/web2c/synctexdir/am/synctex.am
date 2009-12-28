@@ -123,7 +123,7 @@ EXTRA_DIST += \
 
 if PDFTEX_SYNCTEX
 
-pdftex_CPPFLAGS += -I$(srcdir)/synctexdir
+pdftex_CPPFLAGS += -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
 
 pdftex_ch_synctex = \
 	synctexdir/synctex-mem.ch0 \
@@ -148,7 +148,7 @@ pdftex_CPPFLAGS += -D__SyncTeX__
 
 endif PDFTEX_SYNCTEX
 
-synctex-pdf.c: pdftexd.h synctexdir/synctex.c $(dist_pdftex_SOURCES)
+synctex-pdf.c: pdftexd.h synctexdir/synctex.c $(dist_pdftex_SOURCES) $(ZLIB_DEPEND)
 	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/synctexdir/synctex.c >$@
 
 EXTRA_DIST += \
