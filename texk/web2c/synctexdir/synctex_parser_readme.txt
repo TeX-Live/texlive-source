@@ -16,11 +16,45 @@ synctex_parser_local.h
 synctex_parser.h
 synctex_parser.c
 
-This file contains more informations about the SyncTeX parser history.
+The file you are reading contains more informations about the SyncTeX parser history.
 
 In order to support SyncTeX in a viewer, it is sufficient to include
 in the source the files synctex_parser.h and synctex_parser.c.
 The synctex parser usage is described in synctex_parser.h header file.
+
+The other files are used by tex engines or by the synctex command line utility:
+
+ChangeLog
+README.txt
+am
+man1
+man5
+synctex-common.h
+synctex-convert.sh
+synctex-e-mem.ch0
+synctex-e-mem.ch1
+synctex-e-rec.ch0
+synctex-e-rec.ch1
+synctex-etex.h
+synctex-mem.ch0
+synctex-mem.ch1
+synctex-mem.ch2
+synctex-pdf-rec.ch2
+synctex-pdftex.h
+synctex-rec.ch0
+synctex-rec.ch1
+synctex-rec.ch2
+synctex-tex.h
+synctex-xe-mem.ch2
+synctex-xe-rec.ch2
+synctex-xe-rec.ch3
+synctex-xetex.h
+synctex.c
+synctex.defines
+synctex.h
+synctex_main.c
+tests
+
 
 Version:
 --------
@@ -61,6 +95,10 @@ Note that version 1.7 was delivered privately.
 - enhancement: the pdf output file and the associated .synctex file no longer need to live in the same directory.
                The new -d option of the synctex command line tool manages this situation.
                This is handy when using something like tex -output-directory=DIR ...
+1.9: Wed Nov  4 11:52:35 UTC 2009
+- Various typo fixed
+- OutputDebugString replaced by OutputDebugStringA to deliberately disable unicode preprocessing
+- New conditional created because OutputDebugStringA is only available since Windows 2K professional
 
 Acknowledgments:
 ----------------
@@ -72,5 +110,5 @@ Nota Bene:
 If you include or use a significant part of the synctex package into a software,
 I would appreciate to be listed as contributor and see "SyncTeX" highlighted.
 
-Copyright (c) 2008 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2008-2009 jerome DOT laurens AT u-bourgogne DOT fr
 

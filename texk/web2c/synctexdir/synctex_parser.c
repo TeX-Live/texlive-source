@@ -3,7 +3,7 @@ Copyright (c) 2008, 2009 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Version: 1.8
+Version: 1.9
 See synctex_parser_readme.txt for more details
 
 Latest Revision: Wed Jul  1 11:18:18 UTC 2009
@@ -4071,7 +4071,6 @@ struct __synctex_updater_t {
 synctex_updater_t synctex_updater_new_with_output_file(const char * output, const char * build_directory) {
 	synctex_updater_t updater = NULL;
 	char * synctex = NULL;
-	size_t size = 0;
 	synctex_io_mode_t io_mode = synctex_io_mode_read;
 	const char * mode;
 	/*  prepare the updater */

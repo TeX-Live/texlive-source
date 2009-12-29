@@ -1,3 +1,13 @@
+2009-12-30  Jérôme Laurens  <jerome.laurens@u-bourgogne.fr>
+
+	* synctex_parser_utils.c: in the _synctex_malloc() function,
+            memset() is used unconditionally (suggested by J. Kew).
+	* synctex_parser_utils.c: in the _synctex_error() function,
+            - all 3 instances of OutputDebugString() replaced with OutputDebugStringA()
+            such that unicode is ignored (also suggested by J. Kew).
+            - _WIN32 flag replaced by SYNCTEX_RECENT_WINDOWS because older windows systems
+            may have _WIN32 defined but no OutputDebugString().
+
 2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex.c: Remove extern declaration of gettexstring(),
