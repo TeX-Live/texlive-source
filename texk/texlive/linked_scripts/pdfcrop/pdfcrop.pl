@@ -22,8 +22,8 @@ $^W=1; # turn warning on
 #
 my $file        = "pdfcrop.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.20";
-my $date        = "2009/10/06";
+my $version     = "1.22";
+my $date        = "2009/12/29";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2002-2009 by $author.";
 #
@@ -64,6 +64,10 @@ my $copyright   = "Copyright (c) 2002-2009 by $author.";
 #   2009/09/24 v1.19: * Ghostscript detection rewritten.
 #                     * Cygwin: `gs' is preferred to `gswin32c'.
 #   2009/10/06 v1.20: * File name sanitizing in .tex file.
+#   2009/12/21 v1.21: * Option --ini added for IniTeX mode.
+#                     * Option --luatex and --luatexcmd added for LuaTeX.
+#   2009/12/29 v1.22: * Syntax description for option --bbox fixed
+#                       (Lukas Prochazka).
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -175,6 +179,7 @@ $::opt_debug      = 0;
 $::opt_verbose    = 0;
 $::opt_pdftexcmd  = "pdftex";
 $::opt_xetexcmd   = "xetex";
+$::opt_luatexcmd  = "luatex";
 $::opt_tex        = "pdftex";
 $::opt_margins    = "0 0 0 0";
 $::opt_clip       = 0;
@@ -182,6 +187,7 @@ $::opt_hires      = 0;
 $::opt_papersize  = "";
 $::opt_resolution = "";
 $::opt_bbox       = "";
+$::opt_initex     = 0;
 
 sub usage ($) {
     my $ret = shift;
@@ -189,32 +195,36 @@ sub usage ($) {
     my $usage = <<"END_OF_USAGE";
 ${title}Syntax:   \L$program\E [options] <input[.pdf]> [output file]
 Function: Margins are calculated and removed for each page in the file.
-Options:                                                    (defaults:)
+Options:                                                     (defaults:)
   --help              print usage
   --version           print version number
-  --(no)verbose       verbose printing                      ($bool[$::opt_verbose])
-  --(no)debug         debug informations                    ($bool[$::opt_debug])
-  --gscmd <name>      call of ghostscript                   ($::opt_gscmd)
-  --pdftex | --xetex  use pdfTeX | use XeTeX                ($::opt_tex)
-  --pdftexcmd <name>  call of pdfTeX                        ($::opt_pdftexcmd)
-  --xetexcmd <name>   call of XeTeX                         ($::opt_xetexcmd)
-  --margins "<left> <top> <right> <bottom>"                 ($::opt_margins)
+  --(no)verbose       verbose printing                       ($bool[$::opt_verbose])
+  --(no)debug         debug informations                     ($bool[$::opt_debug])
+  --gscmd <name>      call of ghostscript                    ($::opt_gscmd)
+  --pdftex | --xetex | --luatex
+                      use pdfTeX | use XeTeX | use LuaTeX    ($::opt_tex)
+  --pdftexcmd <name>  call of pdfTeX                         ($::opt_pdftexcmd)
+  --xetexcmd <name>   call of XeTeX                          ($::opt_xetexcmd)
+  --luatexcmd <name>  call of LuaTeX                         ($::opt_luatexcmd)
+  --margins "<left> <top> <right> <bottom>"                  ($::opt_margins)
                       add extra margins, unit is bp. If only one number is
                       given, then it is used for all margins, in the case
                       of two numbers they are also used for right and bottom.
-  --(no)clip          clipping support, if margins are set  ($bool[$::opt_clip])
+  --(no)clip          clipping support, if margins are set   ($bool[$::opt_clip])
                       (not available for --xetex)
-  --(no)hires         using `%%HiResBoundingBox'            ($bool[$::opt_hires])
+  --(no)hires         using `%%HiResBoundingBox'             ($bool[$::opt_hires])
                       instead of `%%BoundingBox'
+  --(no)ini           use iniTeX variant of the TeX compiler ($bool[$::opt_initex])
 Expert options:
-  --restricted        turn on restricted mode               ($bool[$restricted])
+  --restricted        turn on restricted mode                ($bool[$restricted])
   --papersize <foo>   parameter for gs's -sPAPERSIZE=<foo>,
-                      use only with older gs versions <7.32 ($::opt_papersize)
-  --resolution <xres>x<yres>                                ()
+                      use only with older gs versions <7.32  ($::opt_papersize)
+  --resolution <xres>x<yres>                                 ()
   --resolution <res>  pass argument to ghostscript's option -r
                       Example: --resolution 72
-  --bbox "<left> <top> <right> <bottom>"                    ()
+  --bbox "<left> <bottom> <right> <top>"                     ()
                       override bounding box found by ghostscript
+                      with origin at the lower left corner
 Examples:
   \L$program\E --margins 10 input.pdf output.pdf
   \L$program\E --margins '5 10 5 20' --clip input.pdf output.pdf
@@ -243,8 +253,11 @@ GetOptions(
   "gscmd=s",
   "pdftexcmd=s",
   "xetexcmd=s",
+  "luatexcmd=s",
   "pdftex" => sub { $::opt_tex = 'pdftex'; },
   "xetex"  => sub { $::opt_tex = 'xetex'; },
+  "luatex" => sub { $::opt_tex = 'luatex'; },
+  "initex!",
   "margins=s",
   "clip!",
   "hires!",
@@ -353,6 +366,7 @@ if ($::opt_resolution ne '') {
 my %cmd = (
     'gscmd' => \$::opt_gscmd,
     'pdftexcmd' => \$::opt_pdftexcmd,
+    'luatexcmd' => \$::opt_luatexcmd,
     'xetexcmd' => \$::opt_xetexcmd
 );
 foreach my $cmd (keys %cmd) {
@@ -374,6 +388,9 @@ if ($restricted) {
     }
     if ($::opt_xetexcmd and $::opt_xetexcmd ne 'xetex') {
         die "$Error XeTeX program name must not be changed in restricted mode!\n";
+    }
+    if ($::opt_luatexcmd and $::opt_luatexcmd ne 'luatex') {
+        die "$Error LuaTeX program name must not be changed in restricted mode!\n";
     }
     if ($::opt_gscmd) {
         $::opt_gscmd =~ /^(gs|mgs|gswin32c|gs386|gsos2)$/
@@ -448,6 +465,11 @@ my $tmpfile = "$tmp.tex";
 push @unlink_files, $tmpfile;
 open(TMP, ">$tmpfile") or
     die "$Error Cannot write tmp file `$tmpfile'!\n";
+print TMP <<'END_TMP';
+\catcode`\{=1 %
+\catcode`\}=2 %
+\catcode`\#=6 %
+END_TMP
 print TMP "\\def\\pdffile{$inputfilesafe}\n";
 print TMP <<'END_TMP';
 \def\stripprefix#1>{}
@@ -456,8 +478,60 @@ print TMP <<'END_TMP';
 }
 \onelevelsanitize\pdffile
 END_TMP
-if ($::opt_tex eq 'pdftex') {
+if ($::opt_tex eq 'luatex') {
+    print TMP <<'END_TMP';
+\begingroup\expandafter\expandafter\expandafter\endgroup
+\expandafter\ifx\csname directlua\endcsname\relax
+  \errmessage{LuaTeX not found!}%
+\else
+  \begingroup
+    \newlinechar=10 %
+    \endlinechar=\newlinechar %
+    \ifnum0%
+        \directlua{%
+          if tex.enableprimitives then
+            tex.enableprimitives('TEST', {
+              'luatexversion',
+              'pdfoutput',
+              'pdfcompresslevel',
+              'pdfhorigin',
+              'pdfvorigin',
+              'pdfpagewidth',
+              'pdfpageheight',
+              'pdfmapfile',
+              'pdfximage',
+              'pdflastximage',
+              'pdfrefximage'
+            })
+            tex.print('1')
+          end
+        }%
+        \ifx\TESTluatexversion\UnDeFiNeD\else 1\fi %
+        =11 %
+      \global\let\luatexversion\luatexversion
+      \global\let\pdfoutput\TESTpdfoutput
+      \global\let\pdfcompresslevel\TESTpdfcompresslevel
+      \global\let\pdfhorigin\TESTpdfhorigin
+      \global\let\pdfvorigin\TESTpdfvorigin
+      \global\let\pdfpagewidth\TESTpdfpagewidth
+      \global\let\pdfpageheight\TESTpdfpageheight
+      \global\let\pdfmapfile\TESTpdfmapfile
+      \global\let\pdfximage\TESTpdfximage
+      \global\let\pdflastximage\TESTpdflastximage
+      \global\let\pdfrefximage\TESTpdfrefximage
+    \else %
+      \errmessage{%
+        Missing \string\luatexversion %
+      }%
+    \fi %
+  \endgroup %
+\fi
+END_TMP
+}
+if ($::opt_tex eq 'pdftex' or $::opt_tex eq 'luatex') {
     print TMP <<'END_TMP_HEAD';
+\pdfoutput=1 %
+\pdfcompresslevel=9 %
 \csname pdfmapfile\endcsname{}
 \def\page #1 [#2 #3 #4 #5]{%
   \count0=#1\relax
@@ -516,11 +590,7 @@ END_TMP_HEAD
 else { # XeTeX
     print TMP <<'END_TMP_HEAD';
 \expandafter\ifx\csname XeTeXpdffile\endcsname\relax
-  \expandafter\ifx\csname pdffile\endcsname\relax
-    \errmessage{XeTeX not found!}%
-  \else
-    \errmessage{XeTeX is too old!}%
-  \fi
+  \errmessage{XeTeX not found or too old!}%
 \fi
 \def\page #1 [#2 #3 #4 #5]{%
   \count0=#1\relax
@@ -640,11 +710,18 @@ if ($::opt_tex eq 'pdftex') {
     $cmd = $::opt_pdftexcmd;
     $texname = 'pdfTeX';
 }
+elsif ($::opt_tex eq 'luatex') {
+    $cmd =$::opt_luatexcmd;
+    $texname = 'LuaTeX';
+}
 else {
     $cmd = $::opt_xetexcmd;
     $texname = 'XeTeX';
 }
 $cmd .= ' -no-shell-escape';
+if ($::opt_initex) {
+    $cmd .= ' --ini --etex';
+}
 if ($::opt_verbose) {
     $cmd .= " -interaction=nonstopmode $tmp";
 }
