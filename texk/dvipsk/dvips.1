@@ -1,4 +1,4 @@
-.TH DVIPS 1 "24 December 2009"
+.TH DVIPS 1 "1 January 2010"
 .SH NAME
 dvips \- convert a TeX DVI file to PostScript
 .SH SYNOPSIS
@@ -13,7 +13,7 @@ See the Texinfo documentation instead.
 You can read it either in Emacs or with the standalone 
 .B info
 program which comes with the GNU texinfo distribution as
-ftp.gnu.org:pub/gnu/texinfo*.tar.gz.
+ftp.gnu.org:pub/gnu/texinfo/texinfo*.tar.gz.
 .PP
 The program
 .B dvips
@@ -78,14 +78,8 @@ Set the debug flags.  This is intended only for emergencies or for
 unusual fact-finding expeditions; it will work only if
 .B dvips
 has been compiled with the DEBUG option.  If nonzero, prints additional
-information on standard error.  The number is taken as a set of
-independent bits.  The meaning of each bit follows.  1=specials;
-2=paths; 4=fonts; 8=pages; 16=headers; 32=font compression; 64=files;
-128=memory; 256=Kpathsea stat(2) calls; 512=Kpathsea hash table lookups;
-1024=Kpathsea path element expansion; 2048=Kpathsea searches.  To trace
-everything having to do with file searching and opening, use 3650 (2048
-+ 1024 + 512 + 64 + 2). To track all classes, you can use `-1' (output
-is extremely voluminous).
+information on standard error.  For maximum information, you can use
+`-1'.  See the Dvips Texinfo manual for more details.
 .TP
 .B -D num
 Set the resolution in dpi (dots per inch) to
@@ -506,7 +500,8 @@ fonts are used.  Will slow down printing somewhat, especially on early
 68000-based PostScript printers.
 .SH "SEE ALSO"
 mf(1), afm2tfm(1), tex(1), latex(1), lpr(1), 
-.IR dvips.texi .
+.IR dvips.texi ,
+http://tug.org/dvips.
 .SH ENVIRONMENT
 Dvipsk uses the same environment variables and algorithms for finding
 font files as TeX and its friends do.  See the documentation for the
