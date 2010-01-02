@@ -1,3 +1,9 @@
+2010-01-02  Karl Berry  <karl@tug.org>
+
+	* tex.ch (\write18): say "executed safely" instead of just
+	"executed", since the command may have been quoted before it was
+	actually executed.
+
 2009-12-25  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (EXTRA_DIST): eliminate it.

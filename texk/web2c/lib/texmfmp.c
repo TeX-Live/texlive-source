@@ -414,7 +414,8 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
    0 if CMD is not allowed; given shellenabledp==1, this is because
       shell escapes are restricted and CMD is not allowed.
    1 if shell escapes are not restricted, hence any command is allowed.
-   2 if shell escapes are restricted and CMD is allowed.  */
+   2 if shell escapes are restricted and CMD is allowed (possibly after
+      quoting).  */
    
 int
 runsystem (const char *cmd)

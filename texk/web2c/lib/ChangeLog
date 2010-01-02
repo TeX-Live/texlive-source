@@ -1,3 +1,7 @@
+2010-01-02  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (runsystem): doc fix.
+
 2009-12-23  Karl Berry  <karl@tug.org>
 
 	* usage.c (usagehelp)
