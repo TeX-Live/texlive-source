@@ -375,22 +375,19 @@ settings you expect.
 @cindex debugging options
 @cindex options, debugging
 
-The @samp{-d} flag to Dvips helps in tracking down certain errors.  The
-parameter to this flag is an integer that tells what errors are
+The @samp{-d} flag to Dvips helps in tracking down certain errors.
+The parameter to this flag is an integer that tells what errors are
 currently being tracked.  To track a certain class of debug messages,
-simply provide the appropriate number given below; if you wish to track
-multiple classes, sum the numbers of the classes you wish to track.  To
-track all classes, you can use @code{-1}.  Another useful value is
-@code{3650}, which tracks everything having to do with file searching
-and opening.
+specify the appropriate number given below; if you wish to track
+multiple classes, sum the numbers of the classes you wish to track.
+To track all classes, you can use @code{-1}.
 
-You can also set the environment variable @env{KPATHSEA_DEBUG} to any
-of these values.
-
-Some of these debugging options are actually provided by Kpathsea
-(@pxref{Debugging, , , kpathsea, Kpathsea}).
+You can also set the environment variable @env{KPATHSEA_DEBUG} instead
+of using @samp{-d}.  Some of these debugging options are actually
+provided by Kpathsea (@pxref{Debugging, , , kpathsea, Kpathsea}).
 
 The classes are:
+
 @table @asis
 @item 1 
 specials
@@ -407,18 +404,16 @@ font compression
 @item 64
 files
 @item 128
-config files
+(omitted)
 @item 256
-Partial Type 1 font encoding vectors
+config files
 @item 512
-Partial Type 1 subr calls
-@item 1024
 Kpathsea @code{stat} calls
-@item 2048
+@item 1024
 Kpathsea hash table lookups
-@item 4096
+@item 2048
 Kpathsea path element expansion
-@item 8192
+@item 4096
 Kpathsea path searches
 @end table
 

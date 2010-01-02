@@ -336,18 +336,16 @@ File: dvips.info,  Node: Debug options,  Next: No output,  Up: Diagnosing proble
 The `-d' flag to Dvips helps in tracking down certain errors.  The
 parameter to this flag is an integer that tells what errors are
 currently being tracked.  To track a certain class of debug messages,
-simply provide the appropriate number given below; if you wish to track
+specify the appropriate number given below; if you wish to track
 multiple classes, sum the numbers of the classes you wish to track.  To
-track all classes, you can use `-1'.  Another useful value is `3650',
-which tracks everything having to do with file searching and opening.
+track all classes, you can use `-1'.
 
-   You can also set the environment variable `KPATHSEA_DEBUG' to any of
-these values.
-
-   Some of these debugging options are actually provided by Kpathsea
-(*note Debugging: (kpathsea)Debugging.).
+   You can also set the environment variable `KPATHSEA_DEBUG' instead
+of using `-d'.  Some of these debugging options are actually provided
+by Kpathsea (*note Debugging: (kpathsea)Debugging.).
 
    The classes are:
+
 1
      specials
 
@@ -370,24 +368,21 @@ these values.
      files
 
 128
-     config files
+     (omitted)
 
 256
-     Partial Type 1 font encoding vectors
+     config files
 
 512
-     Partial Type 1 subr calls
-
-1024
      Kpathsea `stat' calls
 
-2048
+1024
      Kpathsea hash table lookups
 
-4096
+2048
      Kpathsea path element expansion
 
-8192
+4096
      Kpathsea path searches
 
 
@@ -4709,74 +4704,74 @@ Node: PostScript font installation8317
 Node: Ghostscript installation11191
 Node: Diagnosing problems12288
 Node: Debug options13383
-Node: No output14586
-Node: Small or inverted16054
-Node: Printer errors16773
-Node: Long documents fail18105
-Node: Including graphics fails18446
-Node: Invoking Dvips19684
-Node: Basic usage20275
-Node: Command-line options21259
-Node: Option summary21708
-Node: Option details23870
-Node: Environment variables42874
-Node: Config files45833
-Node: Configuration file searching46516
-Node: Configuration file commands49816
-Node: Paper size and landscape56929
-Node: papersize special58527
-Node: Config file paper sizes59936
-Node: Paper trays64091
-Node: Interaction with PostScript65425
-Node: PostScript figures66078
-Node: Bounding box66804
-Node: \includegraphics70175
-Node: EPSF macros72466
-Node: EPSF scaling74436
-Node: EPSF clipping77006
-Node: psfile special77648
-Node: Dynamic creation of graphics80041
-Node: Fonts in figures81359
-Node: Header files83019
-Node: Including headers from TeX84225
-Node: Including headers from the command line86259
-Node: Headers and memory usage87359
-Node: Literal PS88069
-Node: " special88651
-Node: ps special89392
-Node: Literal headers90890
-Node: PostScript hooks91605
-Node: Literal examples93695
-Node: Hypertext95147
-Node: Hypertext caveats96705
-Node: Hypertext specials101102
-Node: PostScript fonts103736
-Node: Font concepts104852
-Node: Metric files106019
-Node: Glyph files108845
-Node: Virtual fonts111201
-Node: Encodings113091
-Node: PostScript typesetting115494
-Node: Making a font available118576
-Node: Invoking afm2tfm123606
-Node: Changing font encodings124576
-Node: Changing TeX encodings125366
-Node: Changing PostScript encodings126466
-Node: Changing both encodings127810
-Node: Reencoding with Afm2tfm128483
-Node: Encoding file format131587
-Node: Special font effects135790
-Node: Afm2tfm options138053
-Node: psfonts.map141038
-Node: Color145770
-Node: Color macro files146814
-Node: User-definable colors150012
-Node: Color subtleties151287
-Node: Ted Turner152938
-Node: Color device configuration154163
-Node: Color support details156605
-Node: Color specifications156983
-Node: Color specials158386
-Node: Index160515
+Node: No output14409
+Node: Small or inverted15877
+Node: Printer errors16596
+Node: Long documents fail17928
+Node: Including graphics fails18269
+Node: Invoking Dvips19507
+Node: Basic usage20098
+Node: Command-line options21082
+Node: Option summary21531
+Node: Option details23693
+Node: Environment variables42697
+Node: Config files45656
+Node: Configuration file searching46339
+Node: Configuration file commands49639
+Node: Paper size and landscape56752
+Node: papersize special58350
+Node: Config file paper sizes59759
+Node: Paper trays63914
+Node: Interaction with PostScript65248
+Node: PostScript figures65901
+Node: Bounding box66627
+Node: \includegraphics69998
+Node: EPSF macros72289
+Node: EPSF scaling74259
+Node: EPSF clipping76829
+Node: psfile special77471
+Node: Dynamic creation of graphics79864
+Node: Fonts in figures81182
+Node: Header files82842
+Node: Including headers from TeX84048
+Node: Including headers from the command line86082
+Node: Headers and memory usage87182
+Node: Literal PS87892
+Node: " special88474
+Node: ps special89215
+Node: Literal headers90713
+Node: PostScript hooks91428
+Node: Literal examples93518
+Node: Hypertext94970
+Node: Hypertext caveats96528
+Node: Hypertext specials100925
+Node: PostScript fonts103559
+Node: Font concepts104675
+Node: Metric files105842
+Node: Glyph files108668
+Node: Virtual fonts111024
+Node: Encodings112914
+Node: PostScript typesetting115317
+Node: Making a font available118399
+Node: Invoking afm2tfm123429
+Node: Changing font encodings124399
+Node: Changing TeX encodings125189
+Node: Changing PostScript encodings126289
+Node: Changing both encodings127633
+Node: Reencoding with Afm2tfm128306
+Node: Encoding file format131410
+Node: Special font effects135613
+Node: Afm2tfm options137876
+Node: psfonts.map140861
+Node: Color145593
+Node: Color macro files146637
+Node: User-definable colors149835
+Node: Color subtleties151110
+Node: Ted Turner152761
+Node: Color device configuration153986
+Node: Color support details156428
+Node: Color specifications156806
+Node: Color specials158209
+Node: Index160338
 
 End Tag Table

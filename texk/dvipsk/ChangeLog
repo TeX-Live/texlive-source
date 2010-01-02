@@ -1,3 +1,7 @@
+2010-01-02  Karl Berry  <karl@tug.org>
+
+	* dvips.texi (Debug options): update 
+
 2009-12-24  Karl Berry  <karl@tug.org>
 
 	* INSTALLATION: rm stale file.
