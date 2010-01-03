@@ -1,3 +1,7 @@
+2010-01-03  Karl Berry  <karl@tug.org>
+
+	* luatex.ch: propagate "executed safely" wording change.
+
 2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/luatex.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).
