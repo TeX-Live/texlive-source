@@ -2664,7 +2664,7 @@ if j=18 then
       if runsystem_ret = -1 then print("quotation error in system command")
       else if runsystem_ret = 0 then print("disabled (restricted)")
       else if runsystem_ret = 1 then print("executed")
-      else if runsystem_ret = 2 then print("executed (allowed)")
+      else if runsystem_ret = 2 then print("executed safely (allowed)")
     end;
   end else begin
     print("disabled"); {|shellenabledp| false}

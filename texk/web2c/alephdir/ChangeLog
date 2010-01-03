@@ -1,3 +1,7 @@
+2010-01-03  Karl Berry  <karl@tug.org>
+
+	* com16bit.ch: propagate "executed safely" wording change.
+
 2009-11-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch (read_font_info): Better wording of error message.
