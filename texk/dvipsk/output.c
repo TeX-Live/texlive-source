@@ -310,8 +310,10 @@ msdosdone:
                      char *p = possibleDSCLine ;
                      *dscLinePointer = 0 ;
                      *dscLineEnd = 0 ;
-                     if (scanForEnd == 0 && removecomments)
+                     if (scanForEnd == 0 && removecomments) {
                         (void)fputs(possibleDSCLine, bitfile) ;
+                        (void)putc('\n', bitfile) ;
+                     }
 
                      if (strncmp(possibleDSCLine, "%%BeginFont:", 12) == 0) {
 

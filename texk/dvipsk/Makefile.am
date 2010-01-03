@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipsk/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -111,17 +111,21 @@ CLEANFILES = $(prologues) texc.lpro
 
 ## dvips test
 ##
-TESTS = dvips.test pfbincl.test
+TESTS = beginfontk1.test dvips.test pfbincl.test
 
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea TEXCONFIG=$(srcdir)/testdata
-TESTS_ENVIRONMENT += TFMFONTS=$(srcdir)/testdata VFFONTS=$(srcdir)/testdata
-TESTS_ENVIRONMENT += TEXFONTMAPS=$(srcdir)/testdata TEXPSHEADERS=$(srcdir)/testdata
+TESTS_ENVIRONMENT += TEXFONTS=$(srcdir)/testdata
+TESTS_ENVIRONMENT += TEXPSHEADERS=$(srcdir)/testdata
 
 EXTRA_DIST += \
+	beginfontk1.test \
 	dvips.test \
 	pfbincl.test \
 	testdata/8r.enc \
 	testdata/ad.enc \
+	testdata/beginfontk1.dvi \
+	testdata/beginfontk1.eps \
+	testdata/beginfontk1.tex \
 	testdata/cmex10.pfb \
 	testdata/cmex10.tfm \
 	testdata/cmmi10.pfb \

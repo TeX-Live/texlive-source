@@ -1,3 +1,15 @@
+2010-01-03  Karl Berry  <karl@tug.org>
+
+	* output.c (copyfile_general) <default>: write newline
+	after writing possibleDSCLine.
+	* beginfontk1.test,
+	* testdata/beginfontk1.{tex,eps}: new test.	
+	Report from T S, 1 Jan 2010 16:32:16,
+	fix from Akira Kakuto, 02 Jan 2010 09:07:19.
+
+	* Makefile.am (TESTS_ENVIRONMENT): set TEXFONTS instead of
+	TFMFONTS, VFFONTS, and TEXFONTMAPS.
+
 2010-01-02  Karl Berry  <karl@tug.org>
 
 	* dvips.texi (Debug options),

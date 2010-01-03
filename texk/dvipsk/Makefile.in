@@ -379,8 +379,10 @@ dist_prologues = \
 prologdir = ${prefix}/texmf/dvips/base
 prologues = $(dist_prologues:.lpro=.pro) texc.pro
 SUFFIXES = .pro .lpro
-EXTRA_DIST = $(dist_prologues) texc.script dvips.test pfbincl.test \
-	testdata/8r.enc testdata/ad.enc testdata/cmex10.pfb \
+EXTRA_DIST = $(dist_prologues) texc.script beginfontk1.test dvips.test \
+	pfbincl.test testdata/8r.enc testdata/ad.enc \
+	testdata/beginfontk1.dvi testdata/beginfontk1.eps \
+	testdata/beginfontk1.tex testdata/cmex10.pfb \
 	testdata/cmex10.tfm testdata/cmmi10.pfb testdata/cmmi10.tfm \
 	testdata/cmr10.pfb testdata/cmr10.tfm testdata/cmsy10.pfb \
 	testdata/cmsy10.tfm testdata/cmtt10.pfb testdata/cmtt10.tfm \
@@ -399,10 +401,9 @@ EXTRA_DIST = $(dist_prologues) texc.script dvips.test pfbincl.test \
 	mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro dvipstst.ps missfont.log mtest.ps \
 	pfbincl.ps
-TESTS = dvips.test pfbincl.test
+TESTS = beginfontk1.test dvips.test pfbincl.test
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
-	TEXCONFIG=$(srcdir)/testdata TFMFONTS=$(srcdir)/testdata \
-	VFFONTS=$(srcdir)/testdata TEXFONTMAPS=$(srcdir)/testdata \
+	TEXCONFIG=$(srcdir)/testdata TEXFONTS=$(srcdir)/testdata \
 	TEXPSHEADERS=$(srcdir)/testdata
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
