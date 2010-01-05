@@ -3,7 +3,7 @@
 # Report from T S, 1 Jan 2010 16:32:16.
 
 tst=beginfontk1
-dvips -K1 $srcdir/testdata/$tst.dvi -o || exit 1
+./dvips -K1 $srcdir/testdata/$tst.dvi -o || exit 1
 grep '^%%BeginFont: /MC1_ArialBold$' $tst.ps || exit 1
 
 exit 0
