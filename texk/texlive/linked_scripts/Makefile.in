@@ -231,7 +231,7 @@ nobase_dist_script_SCRIPTS = \
 	ppower4/pdfthumb.tlu \
 	ppower4/ppower4.tlu \
 	pst-pdf/ps4pdf \
-	pst2pdf/pst2pdf.pl \
+	pst2pdf/pst2pdf \
 	purifyeps/purifyeps \
 	splitindex/perl/splitindex.pl \
 	svn-multi/svn-multi.pl \

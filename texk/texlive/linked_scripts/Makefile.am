@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## TeX Live's extra scripts.
@@ -82,7 +82,7 @@ nobase_dist_script_SCRIPTS = \
 	ppower4/pdfthumb.tlu \
 	ppower4/ppower4.tlu \
 	pst-pdf/ps4pdf \
-	pst2pdf/pst2pdf.pl \
+	pst2pdf/pst2pdf \
 	purifyeps/purifyeps \
 	splitindex/perl/splitindex.pl \
 	svn-multi/svn-multi.pl \
