@@ -598,6 +598,7 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
     case kpse_opl_format:
       INIT_FORMAT ("opl", DEFAULT_OPLFONTS, OPL_ENVS);
       SUFFIXES (".opl");
+      ALT_SUFFIXES (".pl");
       FMT_INFO.suffix_search_only = true;
       break;
     case kpse_otp_format:
@@ -615,6 +616,7 @@ kpathsea_init_format (kpathsea kpse, kpse_file_format_type format)
     case kpse_ovp_format:
       INIT_FORMAT ("ovp", DEFAULT_OVPFONTS, OVP_ENVS);
       SUFFIXES (".ovp");
+      ALT_SUFFIXES (".vpl");
       FMT_INFO.suffix_search_only = true;
       break;
     case kpse_pict_format:

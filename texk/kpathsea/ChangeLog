@@ -1,3 +1,8 @@
+2010-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-file.c: Add alt_suffix ".pl" for kpse_opl_format and
+	".vpl" for kpse_ovp_format (for C version of opl2ofm/ovp2ovf).
+
 2009-12-24  Karl Berry  <karl@tug.org>
 
 	* HIER, INSTALL, README.CONFIGURE: remove, stale.
