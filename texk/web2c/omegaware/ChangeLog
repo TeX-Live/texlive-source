@@ -1,3 +1,18 @@
+2010-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* repeat.test (new): Shell script to test repeat_char handling.
+	* tests/repeat.opl, tests/repeated.opl (new): Test data.
+	* am/omegaware.am: Add the new test.
+
+2010-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.web (font direction code): Fix typo in error message.
+
+2010-01-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.ch, ovp2ovf.ch (read_repeated_character_info): No
+	output (except errors) unless verbose.
+
 2009-09-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* opl2ofm.web, ovp2ovf.web: Rearrange property name codes to

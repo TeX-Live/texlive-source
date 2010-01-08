@@ -3419,7 +3419,7 @@ case cur_char of
   end;
 while cur_char<>")" do get_next;
 if font_dir = -1 then begin
-  flush_error('FONTDIR must be valid direction, -- TR assumed');
+  flush_error('FONTDIR must be valid direction, -- TL assumed');
   font_dir:=0;
   end;
 end
@@ -3449,7 +3449,7 @@ case cur_char of
   end;
 while cur_char<>")" do get_next;
 if font_dir = -1 then begin
-  flush_error('NFONTDIR must be valid direction, -- TR assumed');
+  flush_error('NFONTDIR must be valid direction, -- TL assumed');
   font_dir:=8;
   end;
 end

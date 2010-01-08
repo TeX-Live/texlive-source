@@ -100,10 +100,23 @@ rewritebin (tfm_file, tfm_name);
 @d index == index_var
 @z
 
-@x [103] No output (except errors) unless verbose.
+@x [116] No output (except errors) unless verbose.
 @<Print |c| in hex notation@>;
 @y
 if verbose then @<Print |c| in hex notation@>;
+@z
+
+@x [119] No output (except errors) unless verbose.
+@<Print |c| in hex notation@>;
+@y
+if verbose then @<Print |c| in hex notation@>;
+@z
+@x
+print('-'); print_hex(c+crange);
+@y
+if verbose then begin
+  print('-'); print_hex(c+crange);
+  end;
 @z
 
 % [27, 28] Change strings to C char pointers. The Pascal strings are

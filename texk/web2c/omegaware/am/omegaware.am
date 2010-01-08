@@ -93,17 +93,17 @@ ovp2ovf.p: tangle$(EXEEXT) $(ovp2ovf_sources)
 
 ## Tests
 ##
-EXTRA_DIST += omegaware/level1.test \
-	omegaware/odvicopy.test omegaware/odvitype.test \
-	omegaware/ofonts.test omegaware/omfonts.test \
-	omegaware/otangle.test omegaware/specialhex.test
+OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
+	omegaware/otangle.test
+OMFONTS_tests = omegaware/level1.test omegaware/ofonts.test \
+	omegaware/omfonts.test omegaware/repeat.test \
+	omegaware/specialhex.test
+EXTRA_DIST += $(OTANGLE_tests) $(OMFONTS_tests)
 
 if OTANGLE
-TESTS += omegaware/odvicopy.test omegaware/odvitype.test \
-	omegaware/otangle.test
+TESTS += $(OTANGLE_tests)
 if !OMFONTS
-TESTS += omegaware/level1.test omegaware/ofonts.test \
-	omegaware/omfonts.test omegaware/specialhex.test
+TESTS += $(OMFONTS_tests)
 endif !OMFONTS
 endif OTANGLE
 
@@ -141,6 +141,9 @@ DISTCLEANFILES += omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
 	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.*
 ## omegaware/otangle.test
 DISTCLEANFILES += cftest.p
+## omegaware/repeat.test
+EXTRA_DIST += omegaware/tests/repeat.opl omegaware/tests/repeated.opl
+DISTCLEANFILES += omegaware/tests/xrepeated.*
 ## omegaware/specialhex.test
 EXTRA_DIST += omegaware/tests/specialhex.ovp
 DISTCLEANFILES += omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \

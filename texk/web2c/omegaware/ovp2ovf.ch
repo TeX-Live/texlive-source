@@ -101,10 +101,23 @@ rewritebin (tfm_file, tfm_name);
 @d class == class_var
 @z
 
-@x [118] No output unless verbose.
+@x [130] No output (except errors) unless verbose.
 @<Print |c| in hex notation@>;
 @y
 if verbose then @<Print |c| in hex notation@>;
+@z
+
+@x [133] No output (except errors) unless verbose.
+@<Print |c| in hex notation@>;
+@y
+if verbose then @<Print |c| in hex notation@>;
+@z
+@x
+print('-'); print_hex(c+crange);
+@y
+if verbose then begin
+  print('-'); print_hex(c+crange);
+  end;
 @z
 
 @x
