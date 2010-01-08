@@ -32,7 +32,7 @@ luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a
 luatex_DEPENDENCIES += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(XPDF_DEPEND)
 luatex_DEPENDENCIES += $(OBSDCOMPAT_DEPEND) libmd5.a libmplib.a
 
-# We must create libluatex.a and libmplib.a before building the etex_OBJECTS.
+# We must create libluatex.a and libmplib.a before building the luatex_OBJECTS.
 $(luatex_OBJECTS): libluatex.a libmplib.a
 
 luatex_c_h = luatexini.c luatex0.c luatexcoerce.h luatexd.h

@@ -150,12 +150,8 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 
 @OTANGLE_TRUE@am__append_33 = $(omegaware_tools)
 @OMFONTS_FALSE@@OTANGLE_TRUE@am__append_34 = $(omegaware_font_tools)
-@OTANGLE_TRUE@am__append_35 = omegaware/odvicopy.test omegaware/odvitype.test \
-@OTANGLE_TRUE@	omegaware/otangle.test
-
-@OMFONTS_FALSE@@OTANGLE_TRUE@am__append_36 = omegaware/level1.test omegaware/ofonts.test \
-@OMFONTS_FALSE@@OTANGLE_TRUE@	omegaware/omfonts.test omegaware/specialhex.test
-
+@OTANGLE_TRUE@am__append_35 = $(OTANGLE_tests)
+@OMFONTS_FALSE@@OTANGLE_TRUE@am__append_36 = $(OMFONTS_tests)
 @OTANGLE_TRUE@am__append_37 = pltotf tftopl
 @ALEPH_TRUE@am__append_38 = aleph
 @TEX_SYNCTEX_TRUE@am__append_39 = -I$(srcdir)/synctexdir \
@@ -173,7 +169,7 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 @ETEX_SYNCTEX_TRUE@	synctex-e.c
 
 @PDFTEX_SYNCTEX_TRUE@am__append_47 = -I$(srcdir)/synctexdir \
-@PDFTEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__
+@PDFTEX_SYNCTEX_TRUE@	-D__SyncTeX__
 @PDFTEX_SYNCTEX_TRUE@am__append_48 = \
 @PDFTEX_SYNCTEX_TRUE@	synctex-pdf.c
 
@@ -1288,32 +1284,30 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	xetexdir/LICENSE.txt xetexdir/xetex.mk omegaware/README \
 	omegaware/ChangeLog $(odvicopy_sources) $(odvitype_sources) \
 	$(ofm2opl_sources) $(opl2ofm_sources) $(otangle_sources) \
-	$(ovf2ovp_sources) $(ovp2ovf_sources) omegaware/level1.test \
-	omegaware/odvicopy.test omegaware/odvitype.test \
-	omegaware/ofonts.test omegaware/omfonts.test \
-	omegaware/otangle.test omegaware/specialhex.test \
-	omegaware/tests/level1.opl omegaware/tests/ofontd1.dvi \
-	omegaware/tests/ofontd1.typ omegaware/tests/ofontd2.dvi \
-	omegaware/tests/ofontd2.typ omegaware/tests/ofontd3.dvi \
-	omegaware/tests/ofontd3.typ omegaware/tests/ofontr1.vf \
-	omegaware/tests/ofontr2.ovf omegaware/tests/ofontr3.ovf \
-	omegaware/tests/ofontv4.vf omegaware/tests/ofontv5.ovf \
-	omegaware/tests/ofontv6.ovf omegaware/tests/ofontd0.dtl \
-	omegaware/tests/ofontd0.dvi omegaware/tests/ofontd0.typ \
-	omegaware/tests/ofontr0.tfm omegaware/tests/ofontr1.tfm \
-	omegaware/tests/ofontr2.ofm omegaware/tests/ofontr3.ofm \
-	omegaware/tests/ofontv4.tfm omegaware/tests/ofontv5.ofm \
-	omegaware/tests/ofontv6.ofm omegaware/tests/ofontr0.pl \
-	omegaware/tests/ofontr1.pl omegaware/tests/ofontr1.vpl \
-	omegaware/tests/ofontr2.opl omegaware/tests/ofontr2.ovp \
-	omegaware/tests/ofontr3.opl omegaware/tests/ofontr3.ovp \
-	omegaware/tests/ofontv4.pl omegaware/tests/ofontv4.vpl \
-	omegaware/tests/ofontv5.opl omegaware/tests/ofontv5.ovp \
-	omegaware/tests/ofontv6.opl omegaware/tests/ofontv6.ovp \
-	omegaware/tests/Cherokee.pl omegaware/tests/OCherokee.ovp \
-	omegaware/tests/specialhex.ovp $(aleph_web_srcs) \
-	$(aleph_ch_srcs) lib/texmfmp.c alephdir/ChangeLog \
-	alephdir/Makefile alephdir/aleph.defines \
+	$(ovf2ovp_sources) $(ovp2ovf_sources) $(OTANGLE_tests) \
+	$(OMFONTS_tests) omegaware/tests/level1.opl \
+	omegaware/tests/ofontd1.dvi omegaware/tests/ofontd1.typ \
+	omegaware/tests/ofontd2.dvi omegaware/tests/ofontd2.typ \
+	omegaware/tests/ofontd3.dvi omegaware/tests/ofontd3.typ \
+	omegaware/tests/ofontr1.vf omegaware/tests/ofontr2.ovf \
+	omegaware/tests/ofontr3.ovf omegaware/tests/ofontv4.vf \
+	omegaware/tests/ofontv5.ovf omegaware/tests/ofontv6.ovf \
+	omegaware/tests/ofontd0.dtl omegaware/tests/ofontd0.dvi \
+	omegaware/tests/ofontd0.typ omegaware/tests/ofontr0.tfm \
+	omegaware/tests/ofontr1.tfm omegaware/tests/ofontr2.ofm \
+	omegaware/tests/ofontr3.ofm omegaware/tests/ofontv4.tfm \
+	omegaware/tests/ofontv5.ofm omegaware/tests/ofontv6.ofm \
+	omegaware/tests/ofontr0.pl omegaware/tests/ofontr1.pl \
+	omegaware/tests/ofontr1.vpl omegaware/tests/ofontr2.opl \
+	omegaware/tests/ofontr2.ovp omegaware/tests/ofontr3.opl \
+	omegaware/tests/ofontr3.ovp omegaware/tests/ofontv4.pl \
+	omegaware/tests/ofontv4.vpl omegaware/tests/ofontv5.opl \
+	omegaware/tests/ofontv5.ovp omegaware/tests/ofontv6.opl \
+	omegaware/tests/ofontv6.ovp omegaware/tests/Cherokee.pl \
+	omegaware/tests/OCherokee.ovp omegaware/tests/repeat.opl \
+	omegaware/tests/repeated.opl omegaware/tests/specialhex.ovp \
+	$(aleph_web_srcs) $(aleph_ch_srcs) lib/texmfmp.c \
+	alephdir/ChangeLog alephdir/Makefile alephdir/aleph.defines \
 	alephdir/aleph.version alephdir/eomega.ech alephdir/etex.ch \
 	alephdir/omega.ch0 alephdir/omega.ch1 alephdir/omega.ch2 \
 	alephdir/omxml.ch alephdir/aleph-pool.h alephdir/aleph.mk \
@@ -1366,10 +1360,11 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
 	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
 	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
-	cftest.p omegaware/tests/specialhex.ofm \
-	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
-	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
-	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
+	cftest.p omegaware/tests/xrepeated.* \
+	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
+	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
+	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
+	aleph.pool aleph-tangle
 CLEANFILES = 
 web2c = $(SHELL) ./web2c-sh $@
 makecpool = web2c/makecpool
@@ -2105,6 +2100,13 @@ nodist_ovf2ovp_SOURCES = ovf2ovp.c ovf2ovp.h
 ovf2ovp_sources = omegaware/ovf2ovp.web omegaware/ovf2ovp.ch
 nodist_ovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
 ovp2ovf_sources = omegaware/ovp2ovf.web omegaware/ovp2ovf.ch
+OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
+	omegaware/otangle.test
+
+OMFONTS_tests = omegaware/level1.test omegaware/ofonts.test \
+	omegaware/omfonts.test omegaware/repeat.test \
+	omegaware/specialhex.test
+
 
 # With --enable-ipc, Aleph may need to link with -lsocket.
 aleph_LDADD = $(LDADD) $(ipc_socketlibs)
@@ -8274,6 +8276,9 @@ etrip-clean:
 	rm -f etrip.fot etrip.log etrip.dvi etrip.out etrip.typ
 	rm -f tripos.tex 8terminal.tex
 	rm -rf tfm
+
+# We must create libpdftex.a (and zlib) before building the pdftex_OBJECTS.
+$(pdftex_OBJECTS): libpdftex.a $(ZLIB_DEPEND)
 $(pdftex_c_h): pdftex-web2c
 	@$(web2c) pdftex
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
@@ -8304,7 +8309,7 @@ $(libpdftex_a_OBJECTS): pdftexd.h
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libpdftex.a
 
-# We must create libluatex.a and libmplib.a before building the etex_OBJECTS.
+# We must create libluatex.a and libmplib.a before building the luatex_OBJECTS.
 $(luatex_OBJECTS): libluatex.a libmplib.a
 $(luatex_c_h): luatex-web2c
 	@$(web2c) luatex
@@ -8463,7 +8468,7 @@ synctex.c: texd.h synctexdir/synctex.c $(dist_tex_SOURCES)
 synctex-e.c: etexd.h synctexdir/synctex.c $(dist_etex_SOURCES)
 	sed s/TEX-OR-MF-OR-MP/etex/ $(srcdir)/synctexdir/synctex.c >$@
 
-synctex-pdf.c: pdftexd.h synctexdir/synctex.c $(dist_pdftex_SOURCES) $(ZLIB_DEPEND)
+synctex-pdf.c: pdftexd.h synctexdir/synctex.c $(dist_pdftex_SOURCES)
 	sed s/TEX-OR-MF-OR-MP/pdftex/ $(srcdir)/synctexdir/synctex.c >$@
 
 synctex-xe.c: xetexd.h synctexdir/synctex.c $(dist_xetex_SOURCES)
