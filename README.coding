@@ -53,7 +53,7 @@ however, that a `char **' value is not assignment compatible with a `const
 char **' variable.  Getting all `const's right often is quite involved but
 usually can be done.  There are, however, a few notable exceptions: the X11
 headers are full of declarations that ought to use const but do not and the
-same is true to some extent for zlib.
+same is true to some extent for zlib and freetype2.
 
 2.2. What must be avoided
 -------------------------
