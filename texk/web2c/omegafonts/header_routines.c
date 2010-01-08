@@ -534,7 +534,7 @@ set_seven_bit_safe_flag(unsigned f)
 void
 store_seven_bit_safe_flag(void)
 {
-    store_header_byte(LOC_SEVEN_FLAG, seven_bit);
+    store_header_byte(LOC_SEVEN_FLAG, seven_bit ? 0x80 : 0);
 }
 
 void
@@ -636,7 +636,7 @@ output_ofm_header(void)
     for (j=0; j<k2; j++) out_ofm(family[j]);
     for (j=k2; j<LEN_FAMILY; j++) out_ofm(0); 
     if ((ofm_level==OFM_TFM) && (seven_bit_specified==TRUE))
-      out_ofm(seven_bit);
+      out_ofm(seven_bit ? 0x80 : 0);
     else
       out_ofm(0);
     out_ofm(0); out_ofm(0); out_ofm(face);

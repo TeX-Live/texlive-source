@@ -95,6 +95,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 #include "cpascal.h"
 #include "parser.h"
+#include "pl-parser.h"
 #include "manifests.h"
 #include "list_routines.h"
 #include "error_routines.h"
@@ -111,7 +112,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 
 /* Line 189 of yacc.c  */
-#line 115 "pl-parser.c"
+#line 116 "pl-parser.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -323,7 +324,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 327 "pl-parser.c"
+#line 328 "pl-parser.c"
 
 #ifdef short
 # undef short
@@ -672,22 +673,22 @@ static const yytype_int16 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   155,   155,   158,   160,   168,   170,   172,   174,   176,
-     178,   180,   182,   185,   184,   188,   187,   190,   193,   192,
-     195,   199,   202,   201,   207,   209,   212,   211,   216,   215,
-     219,   218,   222,   221,   225,   224,   228,   227,   231,   230,
-     235,   237,   242,   244,   246,   249,   251,   256,   258,   260,
-     262,   264,   266,   268,   272,   274,   276,   278,   280,   284,
-     286,   291,   293,   296,   295,   298,   303,   302,   309,   311,
-     313,   315,   317,   319,   321,   326,   328,   333,   335,   341,
-     343,   348,   350,   352,   354,   356,   358,   361,   363,   368,
-     370,   372,   374,   376,   378,   380,   382,   388,   390,   396,
-     395,   398,   401,   403,   408,   410,   413,   415,   421,   420,
-     423,   426,   428,   433,   435,   438,   440,   446,   445,   448,
-     451,   453,   458,   460,   463,   465,   471,   470,   473,   476,
-     478,   483,   485,   488,   490,   496,   495,   498,   501,   503,
-     508,   510,   513,   515,   521,   520,   523,   526,   528,   533,
-     535,   537,   539,   541,   543
+       0,   156,   156,   159,   161,   169,   171,   173,   175,   177,
+     179,   181,   183,   186,   185,   189,   188,   191,   194,   193,
+     196,   200,   203,   202,   208,   210,   213,   212,   217,   216,
+     220,   219,   223,   222,   226,   225,   229,   228,   232,   231,
+     236,   238,   243,   245,   247,   250,   252,   257,   259,   261,
+     263,   265,   267,   269,   273,   275,   277,   279,   281,   285,
+     287,   292,   294,   297,   296,   299,   304,   303,   310,   312,
+     314,   316,   318,   320,   322,   327,   329,   334,   336,   342,
+     344,   349,   351,   353,   355,   357,   359,   362,   364,   369,
+     371,   373,   375,   377,   379,   381,   383,   389,   391,   397,
+     396,   399,   402,   404,   409,   411,   414,   416,   422,   421,
+     424,   427,   429,   434,   436,   439,   441,   447,   446,   449,
+     452,   454,   459,   461,   464,   466,   472,   471,   474,   477,
+     479,   484,   486,   489,   491,   497,   496,   499,   502,   504,
+     509,   511,   514,   516,   522,   521,   524,   527,   529,   534,
+     536,   538,   540,   542,   544
 };
 #endif
 
@@ -1783,560 +1784,560 @@ yyreduce:
         case 5:
 
 /* Line 1455 of yacc.c  */
-#line 169 "pl-parser.y"
+#line 170 "pl-parser.y"
     { set_check_sum((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 171 "pl-parser.y"
+#line 172 "pl-parser.y"
     { set_design_size((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 173 "pl-parser.y"
+#line 174 "pl-parser.y"
     { set_design_units((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 175 "pl-parser.y"
+#line 176 "pl-parser.y"
     { set_coding_scheme((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 9:
 
 /* Line 1455 of yacc.c  */
-#line 177 "pl-parser.y"
+#line 178 "pl-parser.y"
     { set_family((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 10:
 
 /* Line 1455 of yacc.c  */
-#line 179 "pl-parser.y"
+#line 180 "pl-parser.y"
     { set_face((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 11:
 
 /* Line 1455 of yacc.c  */
-#line 181 "pl-parser.y"
+#line 182 "pl-parser.y"
     { set_seven_bit_safe_flag((yyvsp[(1) - (1)]).yint); }
     break;
 
   case 12:
 
 /* Line 1455 of yacc.c  */
-#line 183 "pl-parser.y"
+#line 184 "pl-parser.y"
     { set_header_word((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 13:
 
 /* Line 1455 of yacc.c  */
-#line 185 "pl-parser.y"
+#line 186 "pl-parser.y"
     { init_parameters(); }
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 188 "pl-parser.y"
+#line 189 "pl-parser.y"
     { init_ligkern(); }
     break;
 
   case 17:
 
 /* Line 1455 of yacc.c  */
-#line 191 "pl-parser.y"
+#line 192 "pl-parser.y"
     { set_boundary_character((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 18:
 
 /* Line 1455 of yacc.c  */
-#line 193 "pl-parser.y"
+#line 194 "pl-parser.y"
     { init_character((yyvsp[(2) - (2)]).yint, NULL); }
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 200 "pl-parser.y"
+#line 201 "pl-parser.y"
     { set_vtitle((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 202 "pl-parser.y"
+#line 203 "pl-parser.y"
     { init_map_font((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 208 "pl-parser.y"
+#line 209 "pl-parser.y"
     { set_ofm_level((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 210 "pl-parser.y"
+#line 211 "pl-parser.y"
     { set_font_dir((yyvsp[(1) - (1)]).yint); }
     break;
 
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 212 "pl-parser.y"
+#line 213 "pl-parser.y"
     { init_character((yyvsp[(2) - (3)]).yint,NULL); }
     break;
 
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 214 "pl-parser.y"
+#line 215 "pl-parser.y"
     { copy_characters((yyvsp[(2) - (5)]).yint,(yyvsp[(3) - (5)]).yint); }
     break;
 
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 216 "pl-parser.y"
+#line 217 "pl-parser.y"
     {init_font_ivalue((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 30:
 
 /* Line 1455 of yacc.c  */
-#line 219 "pl-parser.y"
+#line 220 "pl-parser.y"
     { init_font_mvalue((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 32:
 
 /* Line 1455 of yacc.c  */
-#line 222 "pl-parser.y"
+#line 223 "pl-parser.y"
     { init_font_fvalue((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 34:
 
 /* Line 1455 of yacc.c  */
-#line 225 "pl-parser.y"
+#line 226 "pl-parser.y"
     { init_font_penalty((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 36:
 
 /* Line 1455 of yacc.c  */
-#line 228 "pl-parser.y"
+#line 229 "pl-parser.y"
     { init_font_rule((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 231 "pl-parser.y"
+#line 232 "pl-parser.y"
     { init_font_glue((yyvsp[(2) - (2)]).yint);}
     break;
 
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 243 "pl-parser.y"
+#line 244 "pl-parser.y"
     { set_param_word((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 245 "pl-parser.y"
+#line 246 "pl-parser.y"
     { set_param_word((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yfix); }
     break;
 
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 257 "pl-parser.y"
+#line 258 "pl-parser.y"
     { set_label_command((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 259 "pl-parser.y"
+#line 260 "pl-parser.y"
     { set_label_command(CHAR_BOUNDARY); }
     break;
 
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 261 "pl-parser.y"
+#line 262 "pl-parser.y"
     { set_ligature_command((yyvsp[(1) - (3)]).yint, (yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 263 "pl-parser.y"
+#line 264 "pl-parser.y"
     { set_kerning_command((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yfix); }
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 265 "pl-parser.y"
+#line 266 "pl-parser.y"
     { set_stop_command(); }
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 267 "pl-parser.y"
+#line 268 "pl-parser.y"
     { set_skip_command((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 273 "pl-parser.y"
+#line 274 "pl-parser.y"
     { set_c_label_command((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 275 "pl-parser.y"
+#line 276 "pl-parser.y"
     { set_c_kerning_command((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yfix); }
     break;
 
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 277 "pl-parser.y"
+#line 278 "pl-parser.y"
     { set_c_glue_command((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 279 "pl-parser.y"
+#line 280 "pl-parser.y"
     { set_c_penalty_command((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 281 "pl-parser.y"
+#line 282 "pl-parser.y"
     { set_c_penglue_command((yyvsp[(2) - (4)]).yint, (yyvsp[(3) - (4)]).yint, (yyvsp[(4) - (4)]).yint); }
     break;
 
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 292 "pl-parser.y"
+#line 293 "pl-parser.y"
     { set_character_measure((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 294 "pl-parser.y"
+#line 295 "pl-parser.y"
     { set_next_larger((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 296 "pl-parser.y"
+#line 297 "pl-parser.y"
     { init_var_character(); }
     break;
 
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 303 "pl-parser.y"
+#line 304 "pl-parser.y"
     { init_map(); }
     break;
 
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 305 "pl-parser.y"
+#line 306 "pl-parser.y"
     { end_map(); }
     break;
 
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 310 "pl-parser.y"
+#line 311 "pl-parser.y"
     { set_accent((yyvsp[(1) - (1)]).yint); }
     break;
 
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 312 "pl-parser.y"
+#line 313 "pl-parser.y"
     { set_character_ivalue((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 314 "pl-parser.y"
+#line 315 "pl-parser.y"
     { set_character_mvalue((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 316 "pl-parser.y"
+#line 317 "pl-parser.y"
     { set_character_fvalue((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 72:
 
 /* Line 1455 of yacc.c  */
-#line 318 "pl-parser.y"
+#line 319 "pl-parser.y"
     { set_character_penalty((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 73:
 
 /* Line 1455 of yacc.c  */
-#line 320 "pl-parser.y"
+#line 321 "pl-parser.y"
     { set_character_rule((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 74:
 
 /* Line 1455 of yacc.c  */
-#line 322 "pl-parser.y"
+#line 323 "pl-parser.y"
     { set_character_glue((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 77:
 
 /* Line 1455 of yacc.c  */
-#line 334 "pl-parser.y"
+#line 335 "pl-parser.y"
     { set_extensible_piece((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yint); }
     break;
 
   case 81:
 
 /* Line 1455 of yacc.c  */
-#line 349 "pl-parser.y"
+#line 350 "pl-parser.y"
     { set_font_name((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 82:
 
 /* Line 1455 of yacc.c  */
-#line 351 "pl-parser.y"
+#line 352 "pl-parser.y"
     { set_font_area((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 83:
 
 /* Line 1455 of yacc.c  */
-#line 353 "pl-parser.y"
+#line 354 "pl-parser.y"
     { set_font_check_sum((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 84:
 
 /* Line 1455 of yacc.c  */
-#line 355 "pl-parser.y"
+#line 356 "pl-parser.y"
     { set_font_at((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 85:
 
 /* Line 1455 of yacc.c  */
-#line 357 "pl-parser.y"
+#line 358 "pl-parser.y"
     { set_font_design_size((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 89:
 
 /* Line 1455 of yacc.c  */
-#line 369 "pl-parser.y"
+#line 370 "pl-parser.y"
     { set_select_font((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 90:
 
 /* Line 1455 of yacc.c  */
-#line 371 "pl-parser.y"
+#line 372 "pl-parser.y"
     { set_set_char((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 91:
 
 /* Line 1455 of yacc.c  */
-#line 373 "pl-parser.y"
+#line 374 "pl-parser.y"
     { set_set_rule((yyvsp[(2) - (3)]).yfix, (yyvsp[(3) - (3)]).yfix); }
     break;
 
   case 92:
 
 /* Line 1455 of yacc.c  */
-#line 375 "pl-parser.y"
+#line 376 "pl-parser.y"
     { set_move((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 93:
 
 /* Line 1455 of yacc.c  */
-#line 377 "pl-parser.y"
+#line 378 "pl-parser.y"
     { set_push(); }
     break;
 
   case 94:
 
 /* Line 1455 of yacc.c  */
-#line 379 "pl-parser.y"
+#line 380 "pl-parser.y"
     { set_pop(); }
     break;
 
   case 95:
 
 /* Line 1455 of yacc.c  */
-#line 381 "pl-parser.y"
+#line 382 "pl-parser.y"
     { set_special((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 96:
 
 /* Line 1455 of yacc.c  */
-#line 383 "pl-parser.y"
+#line 384 "pl-parser.y"
     { set_special_hex((yyvsp[(1) - (1)]).ystring); }
     break;
 
   case 99:
 
 /* Line 1455 of yacc.c  */
-#line 396 "pl-parser.y"
+#line 397 "pl-parser.y"
     { init_font_ivalue_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 104:
 
 /* Line 1455 of yacc.c  */
-#line 409 "pl-parser.y"
+#line 410 "pl-parser.y"
     { set_font_ivalue_definition((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 108:
 
 /* Line 1455 of yacc.c  */
-#line 421 "pl-parser.y"
+#line 422 "pl-parser.y"
     { init_font_mvalue_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 113:
 
 /* Line 1455 of yacc.c  */
-#line 434 "pl-parser.y"
+#line 435 "pl-parser.y"
     { set_font_mvalue_definition((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 117:
 
 /* Line 1455 of yacc.c  */
-#line 446 "pl-parser.y"
+#line 447 "pl-parser.y"
     { init_font_fvalue_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 122:
 
 /* Line 1455 of yacc.c  */
-#line 459 "pl-parser.y"
+#line 460 "pl-parser.y"
     { set_font_fvalue_definition((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 126:
 
 /* Line 1455 of yacc.c  */
-#line 471 "pl-parser.y"
+#line 472 "pl-parser.y"
     { init_font_penalty_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 131:
 
 /* Line 1455 of yacc.c  */
-#line 484 "pl-parser.y"
+#line 485 "pl-parser.y"
     { set_font_penalty_definition((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 135:
 
 /* Line 1455 of yacc.c  */
-#line 496 "pl-parser.y"
+#line 497 "pl-parser.y"
     { init_font_rule_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 140:
 
 /* Line 1455 of yacc.c  */
-#line 509 "pl-parser.y"
+#line 510 "pl-parser.y"
     { set_font_rule_measure((yyvsp[(1) - (2)]).yint, (yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 144:
 
 /* Line 1455 of yacc.c  */
-#line 521 "pl-parser.y"
+#line 522 "pl-parser.y"
     { init_font_glue_entry((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 149:
 
 /* Line 1455 of yacc.c  */
-#line 534 "pl-parser.y"
+#line 535 "pl-parser.y"
     { set_font_glue_type((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 150:
 
 /* Line 1455 of yacc.c  */
-#line 536 "pl-parser.y"
+#line 537 "pl-parser.y"
     { set_font_glue_width((yyvsp[(2) - (2)]).yfix); }
     break;
 
   case 151:
 
 /* Line 1455 of yacc.c  */
-#line 538 "pl-parser.y"
+#line 539 "pl-parser.y"
     { set_font_glue_character((yyvsp[(2) - (2)]).yint); }
     break;
 
   case 152:
 
 /* Line 1455 of yacc.c  */
-#line 540 "pl-parser.y"
+#line 541 "pl-parser.y"
     { set_font_glue_rule((yyvsp[(2) - (3)]).yint, (yyvsp[(3) - (3)]).yint); }
     break;
 
   case 153:
 
 /* Line 1455 of yacc.c  */
-#line 542 "pl-parser.y"
+#line 543 "pl-parser.y"
     { set_font_glue_shrink_stretch((yyvsp[(1) - (3)]).yint, (yyvsp[(2) - (3)]).yfix, (yyvsp[(3) - (3)]).yint); }
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 2340 "pl-parser.c"
+#line 2341 "pl-parser.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

@@ -24,6 +24,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 #include "cpascal.h"
 #include "parser.h"
+#include "pl-parser.h"
 #include "manifests.h"
 #include "list_routines.h"
 #include "error_routines.h"

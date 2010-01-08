@@ -1,3 +1,78 @@
+2010-01-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* char_routines.c (check_existence_and_safety,
+	doublecheck_existence): Avoid segfault.
+	(check_and_correct): Call build_dimen_tables() after
+	check_existence_all_character_fields(), which may add a width.
+	(check_existence_all_character_fields): Print "" instead of NULL.
+
+	* extra_routines.c: Fix various bugs and glitches in handling of
+	extra font parameters (ivalues etc).  Add warnings in case they
+	are used with OFMLEVEL<1.
+
+2010-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Implement basic functionality for OFMLEVEL=1 (CHARREPEAT only).
+
+	Part 1: ofm => opl:
+	* char_routines.c (print_characters), parse_ofm.c (ofm_organize):
+	Handle repeated characters..
+
+	Part 2: opl => ofm:
+	* char_routines.h (num_char_info, words_per_entry): New globals.
+	* char_routines.c (compute_ofm_character_info): Count char_infos.
+	(output_ofm_character_info): Output char_infos.
+	* out_ofm.c (compute_ofm_subsizes): Compute char_info size.
+	(output_ofm_file): Call compute_ofm_extra_stuff() much earlier.
+	(compute_ofm_subsizes): Move final check of bc, ec and related
+	error messages to char_routines.c (compute_ofm_character_info).
+	* extra_routines.c (output_ofm_extra_stuff): Allow OFMLEVEL=1
+	unless nki+nkp+nkm+nkf+nkr+nkg>0.
+
+	* omfonts.c: Version 2.1.
+
+	* level1.test, repeat.test, tests/level1.opl, tests/repeat.opl,
+	tests/repeated.opl (new): Shell scripts and data for new tests.
+	* Makefile.am: Add the new tests.
+
+2010-01-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Cleanup extern declarations:
+	char_routines.c (character_measures): Remove unused extern.
+	(bchar): Remove extern and #include "parse_ofm.h".
+	* parse_ofm.h: Extern decl of bchar (defined in parse_ofm.c).
+	* omfonts.h (file_ofm): Extern decl (defined in omfonts.c).
+	(output_ofm_header): Remove duplicate (in out_ofm.h).
+	* omfonts.c (yyin): Remove extern (declared in parser.h).
+	(output_ofm_header): #include "parse_ofm.h".
+	* out_ofm.c (header_ptr,mw,mh,md,mi): Remove unused externs.
+	(file_ofm): Remove extern and #include "omfonts.h".
+	* font_routines.h (cur_packet): Remove duplicate extern.
+	* header_routines.h (output_ofm_header): Remove duplicate extern.
+	* parser.h (yylval): Remove extern, declared in the generated
+	header pl-parser.h.
+	* pl-parser.y: #include "pl-parser.h" (for yylval).
+	* out_ofm.h (output_ofm_header): Remove (in header_routines.h).
+	(output_ofm_extra_stuff): Remove (in extra_routines.h).
+	(compute_ofm_character_info, output_ofm_character_info):
+	Remove (in char_routines.h).
+
+2010-01-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Minor bug fixes:
+	* char_routines.c (init_character): Fix a typo (bug?).
+	(init_planes): Drop initialization of char_max[plane_max].
+	(copy_characters, ensure_existence): Add check for non-existent
+	plane (plane>plane_max).
+	* dimen_routines.c (build_dimen_tables, retrieve_dimen_tables):
+	Replace malloc() by xmalloc().
+	* list_routines.c (in_cons, in_list1): Initialize index field.
+	(in_list2): Fix a typo (bug) and initialize index fields.
+	* parse_ofm.c (ofm_organize): Give correct OFMLEVEL in error
+	messages.
+	* header_routines.c (store_seven_bit_safe_flag,
+	output_ofm_header): Store as 0x80 (as does PLtoTF) and not 0x01.
+
 2009-09-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* header_routines.c (init_header): Call init_ofm_level() to

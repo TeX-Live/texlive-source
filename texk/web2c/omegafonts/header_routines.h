@@ -104,4 +104,3 @@ extern void output_ofm_header(void);
 
 extern void set_ofm_level(unsigned);
 extern void set_font_dir(unsigned);
-extern void output_ofm_header(void);

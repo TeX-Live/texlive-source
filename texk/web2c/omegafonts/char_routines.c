@@ -34,6 +34,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "font_routines.h"
 #include "out_ofm.h"
 #include "omfonts.h"
+#include "parse_ofm.h"
 #include "dvi.h"
 
 #define PLANE		0x10000
@@ -85,14 +86,11 @@ int label_ptr, sort_ptr;
 int lk_offset;
 boolean extra_loc_needed;
 
-extern unsigned bchar;
-
 void
 init_planes(void)
 {
     plane_max = 0;
     planes[plane_max] = NULL;
-    char_max[plane_max] = 0;
 }
 
 void
@@ -109,7 +107,7 @@ init_character(unsigned c, char_entry *ready_made)
     plane = c / PLANE;
     index = c % PLANE;
     for (i=plane_max+1; i<=plane; i++) {
-	    planes[plane] = NULL;
+	    planes[i] = NULL;
     }
     if (planes[plane]==NULL) {
         planes[plane] = (char_entry **)xmalloc(PLANE * sizeof(char_entry *));
@@ -170,7 +168,7 @@ copy_characters(unsigned c, unsigned copies)
     }
     plane = c / PLANE;
     index = c % PLANE;
-    if (planes[plane]==NULL)
+    if ((plane>plane_max) || (planes[plane]==NULL))
         internal_error_1("copy_characters (plane %d)", plane);
     the_entry = planes[plane][index];
     if (the_entry==NULL)
@@ -187,7 +185,7 @@ ensure_existence(unsigned c)
     plane = c / PLANE;
     index = c % PLANE;
 
-    if ((planes[plane]==NULL) || (planes[plane][index]==NULL)) {
+    if ((plane>plane_max) || (planes[plane]==NULL) || (planes[plane][index]==NULL)) {
         init_character(c, NULL);
         planes[plane][index]->defined = FALSE;
     }
@@ -257,7 +255,7 @@ check_existence_all_character_fields(void)
                 break;
             }
             case TAG_LIST:{
-                check_existence_and_safety(c, entry->remainder, NULL,
+                check_existence_and_safety(c, entry->remainder, "",
                     "%sCharacter (H %X) NEXTLARGER than (H %X) "
                     "has no CHARACTER spec");
                 break;
@@ -294,29 +292,32 @@ clear_ligature_entries(void)
 void
 check_existence_and_safety(unsigned c, unsigned g, const_string extra, const_string fmt)
 {
-    char_entry *gentry = planes[g/PLANE][g%PLANE];
+    char_entry *gentry;
 
     if ((g<CHAR_MINIMUM) || (g>CHAR_MAXIMUM))
         internal_error_1("check_existence_and_safety (g=%d)", g);
-    gentry = planes[g/PLANE][g%PLANE];
+    ensure_existence(g);
+    gentry = current_secondary_character;
     if ((g>=128) && (c<128))
         seven_bit_calculated = 0;
-    if ((gentry==NULL) || (gentry->defined == FALSE)) {
+    if (gentry->defined == FALSE) {
         warning_s_2(fmt, extra, g, c);
         current_character = gentry;
         set_character_measure(C_WD, 0);
+        gentry->defined = TRUE;
     }
 }
 
 void
 doublecheck_existence(unsigned g, const_string extra, const_string fmt)
 {
-    char_entry *gentry = planes[g/PLANE][g%PLANE];
+    char_entry *gentry;
 
     if ((g<CHAR_MINIMUM) || (g>CHAR_MAXIMUM))
         internal_error_1("doublecheck_existence (g=%d)", g);
-    gentry = planes[g/PLANE][g%PLANE];
-    if ((gentry==NULL) || (gentry->defined == FALSE)) {
+    ensure_existence(g);
+    gentry = current_secondary_character;
+    if (gentry->defined == FALSE) {
         warning_s_1(fmt, extra, g);
         current_character = gentry;
 /*
@@ -324,8 +325,6 @@ doublecheck_existence(unsigned g, const_string extra, const_string fmt)
 */
     }
 }
-
-extern string character_measures[];
 
 void
 print_characters(boolean read_ovf)
@@ -335,10 +334,18 @@ print_characters(boolean read_ovf)
     four_pieces *exten;
     four_entries *lentry;
     unsigned j,k;
+    unsigned copies = 0;
 
     FOR_ALL_CHARACTERS(
+      if (copies > 0)
+        copies--;
+      else {
         if (entry->index_indices[C_WD] != 0) {
-        print_character(c);
+        copies = entry->copies;
+        if (copies > 0)
+            print_character_repeat(c, copies);
+        else
+            print_character(c);
         for (k=C_MIN; k<C_MAX; k++) {
             if (entry->index_indices[k] != 0) {
                 print_character_measure(k,
@@ -390,6 +397,7 @@ print_characters(boolean read_ovf)
         right();
         fflush(file_output);
         }
+      }
     )
 }
 
@@ -689,13 +697,13 @@ print_labels(void)
 void
 check_and_correct(void)
 {
+    check_existence_all_character_fields();
     build_kern_table();
     build_dimen_tables();
     build_exten_table();
     check_ligature_ends_properly();
     compute_ofm_character_info();
     adjust_labels(TRUE);
-    check_existence_all_character_fields();
     calculate_seven_bit_safe_flag();
     check_ligature_infinite_loops();
     check_charlist_infinite_loops();
@@ -825,6 +833,8 @@ output_ofm_extensible(void)
     }
 }
 
+unsigned num_char_info, words_per_entry;
+
 void
 compute_ofm_character_info(void)
 {
@@ -839,6 +849,10 @@ compute_ofm_character_info(void)
                 if (c < bc) bc = c;
                 if (c > ec) ec = c;
             )
+            if (bc > ec) bc = 1;
+            if (ec>255)
+                fatal_error_1(
+                   "Char (%x) too big for TFM (max ff); use OFM file",ec);
             break;
         }
         case OFM_LEVEL0: {
@@ -846,14 +860,32 @@ compute_ofm_character_info(void)
                 if (c < bc) bc = c;
                 if (c > ec) ec = c;
             )
+            if (ec>65535)
+                fatal_error_1(
+                "Char (%x) too big for OFM level-0 (max ffff); use level-2",
+                ec);
+            if (bc > ec) bc = 1;
             break;
         }
-/* Level 1 only uses plane 0.  Take advantage of this fact. */
         case OFM_LEVEL1: {
+            unsigned copies = 0, repeats = 0;
             FOR_ALL_CHARACTERS(
                 if (c < bc) bc = c;
                 if (c > ec) ec = c;
+                if (copies > 0)
+                    copies--;
+                else {
+                    copies = entry->copies;
+                    repeats += copies;
+                }
             )
+            if (ec>65535)
+                fatal_error_1(
+                "Char (%x) too big for OFM level-1 (max ffff); use level-2",
+                ec);
+            if (bc > ec) bc = 1;
+            num_char_info = ec + 1 - bc - repeats;
+            /* Level 1 only uses plane 0.  Take advantage of this fact. */
             break;
         }
         default: { internal_error_0("compute_ofm_character_info"); }
@@ -928,7 +960,45 @@ output_ofm_character_info(void)
             break;
         }
         case OFM_LEVEL1: {
-            internal_error_0("OFM level 1 not currently supported");
+            unsigned i;
+            plane=0;
+            for (index = bc; index <=ec; index++) {
+                entry = planes[plane][index]; 
+                c = plane*PLANE + index;
+                if (entry == NULL) { 
+                    for (i=0; i<words_per_entry; i++)
+                        out_ofm_4(0);
+                } else {
+                    unsigned copies = entry->copies;
+                    if (entry->indices[C_WD] != NULL)
+                        wd = entry->indices[C_WD]->index;
+                    else wd = 0;
+                    if (entry->indices[C_HT] != NULL)
+                        ht = entry->indices[C_HT]->index;
+                    else ht = 0;
+                    if (entry->indices[C_DP] != NULL)
+                        dp = entry->indices[C_DP]->index;
+                    else dp = 0;
+                    if (entry->indices[C_IC] != NULL)
+                        ic = entry->indices[C_IC]->index;
+                    else ic = 0;
+                    out_ofm_2(wd);
+                    out_ofm(ht);
+                    out_ofm(dp);
+                    out_ofm(ic);
+                    /* assume no ctag */
+                    out_ofm(entry->tag);
+                    out_ofm_2(entry->remainder);
+                    out_ofm_2(copies);
+                    /* assume no character params */
+                    for (i=0; i<npc; i++)
+                        out_ofm_2(0);
+                    /* padding */
+                    if (0 == npc % 2)
+                        out_ofm_2(0);
+                    index += copies;
+                }
+            }
             break;
         }
         default: { internal_error_0("compute_ofm_character_info"); }

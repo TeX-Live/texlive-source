@@ -25,6 +25,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "list_routines.h"
 #include "header_routines.h"
 #include "manifests.h"
+#include "omfonts.h"
 #include "char_routines.h"
 #include "ligkern_routines.h"
 #include "out_ofm.h"
@@ -38,11 +39,11 @@ void
 output_ofm_file(void)
 {
     check_and_correct();
+    compute_ofm_extra_stuff();
     compute_ofm_character_info();
     compute_ofm_subsizes();
     output_ofm_subsizes();
     output_ofm_header();
-    compute_ofm_extra_stuff();
     output_ofm_extra_stuff();
     output_ofm_character_info();
     output_ofm_dimension();
@@ -51,32 +52,19 @@ output_ofm_file(void)
     output_ofm_parameter();
 }
 
-extern unsigned header_ptr;
-extern unsigned mw,mh,md,mi;
-
 void
 compute_ofm_subsizes(void)
 {
     switch(ofm_level) {
         case OFM_TFM: {
             lh = header_max + 1;
-            if (bc > ec) bc = 1;
-            if (ec>255)
-                fatal_error_1(
-                   "Char (%x) too big for TFM (max ff); use OFM file",ec);
             nw++; nh++; nd++; ni++;
             compute_ligkern_offset();
             lf = 6+lh+(ec-bc+1)+nw+nh+nd+ni+nl+lk_offset+nk+ne+np;
-            /*lf = 6+lh+(ec-bc+1)+nw+nh+nd+ni+nl-1+lk_offset+nk+ne+np;*/
             break;
         }
         case OFM_LEVEL0: {
             lh = header_max + 1;
-            if (ec>65535)
-                fatal_error_1(
-                "Char (%x) too big for OFM level-0 (max ffff); use level-2",
-                ec);
-            if (bc > ec) bc = 1;
             nw++; nh++; nd++; ni++;
             compute_ligkern_offset();
             lf = 14+lh+2*(ec-bc+1)+nw+nh+nd+ni+2*(nl+lk_offset)+nk+2*ne+np;
@@ -84,13 +72,10 @@ compute_ofm_subsizes(void)
         }
         case OFM_LEVEL1: {
             lh = header_max + 1;
-            if (ec>65535)
-                fatal_error_1(
-                "Char (%x) too big for OFM level-1 (max ffff); use level-2",
-                ec);
-            if (bc > ec) bc = 1;
             nw++; nh++; nd++; ni++;
             compute_ligkern_offset();
+            words_per_entry = (12 + 2*npc) / 4;
+            ncw = num_char_info * words_per_entry;
             lf = 29+lh+ncw+nw+nh+nd+ni+2*(nl+lk_offset)+nk+2*ne+np+
                  nki+nwi+nkf+nwf+nkm+nwm+nkr+nwr+nkg+nwg+nkp+nwp;
             nco = 29+lh+nki+nwi+nkf+nwf+nkm+nwm+nkr+nwr+nkg+nwg+nkp+nwp;
@@ -138,7 +123,6 @@ output_ofm_subsizes(void)
     }
 }
 
-extern FILE *file_ofm;
 unsigned file_ofm_count = 0;
 
 void

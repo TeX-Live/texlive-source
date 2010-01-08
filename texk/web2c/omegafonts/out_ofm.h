@@ -30,7 +30,3 @@ extern void out_ofm(unsigned);
 
 extern void compute_ofm_subsizes(void);
 extern void output_ofm_subsizes(void);
-extern void output_ofm_header(void);
-extern void output_ofm_extra_stuff(void);
-extern void compute_ofm_character_info(void);
-extern void output_ofm_character_info(void);

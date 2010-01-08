@@ -131,6 +131,7 @@ in_cons (int val, in_list N, in_list L)
 {
 in_list temp;
 temp = (in_list) xmalloc(sizeof(in_cell));
+temp->index = 0;
 temp->value = val;
 temp->actual = N;
 temp->ptr = L;
@@ -142,6 +143,7 @@ in_list1 (int val, in_list N)
 {
 in_list temp;
 temp = (in_list) xmalloc(sizeof(in_cell));
+temp->index = 0;
 temp->value = val;
 temp->actual = N;
 temp->ptr = NULL;
@@ -154,11 +156,13 @@ in_list2 (int val, in_list N, int val1, in_list N1)
 in_list temp, temp1;
 temp = (in_list) xmalloc(sizeof(in_cell));
 temp1 = (in_list) xmalloc(sizeof(in_cell));
+temp->index = 0;
 temp->value = val;
-temp->ptr = temp1;
 temp->actual = N;
+temp->ptr = temp1;
+temp1->index = 0;
 temp1->value = val1;
-temp->actual = N1;
+temp1->actual = N1;
 temp1->ptr = NULL;
 return temp;
 }

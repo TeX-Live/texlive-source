@@ -103,7 +103,7 @@ parse_ofm(boolean read_ovf)
 void
 ofm_organize(void)
 {
-    unsigned char_ptr,copies,i,j;
+    unsigned copies,i;
 
     ofm_on = false; ofm_level = OFM_NOLEVEL; lf = 0; lh = 0;
     nco = 0; ncw = 0; npc = 0;
@@ -139,7 +139,7 @@ ofm_organize(void)
         case OFM_TFM: { start_pos = 2; check_sum_pos = 24;  break; }
         case OFM_LEVEL0: { start_pos = 8; check_sum_pos = 56;  break; }
         case OFM_LEVEL1: { start_pos = 8; check_sum_pos = 116; break; }
-        default: { fatal_error_1("OFMLEVEL %d not supported", ofm_level-1);
+        default: { fatal_error_1("OFMLEVEL %d not supported", ofm_level-OFM_LEVEL0);
                    break; }
     }
     design_size_pos = check_sum_pos+4;
@@ -281,24 +281,38 @@ ofm_organize(void)
       break;
     }
     case OFM_LEVEL1: {
-      char_ptr = 4*char_base;
+      char_start = 4*char_base;
       i = bc;
       while (i<=ec) {
         init_character(i,NULL);
-        copies = 1+256*ofm[char_ptr+8]+ofm[char_ptr+9];
-        for (j=1; j<=copies; j++) {
-          char_start = char_ptr;
-          i++;
-        }
-        char_ptr = char_ptr + bytes_per_entry;
+        current_character->index_indices[C_WD] =
+           ((ofm[char_start] & 0xff) << 8) |
+           (ofm[char_start+1] & 0xff);
+        current_character->index_indices[C_HT] =
+           ofm[char_start+2] & 0xff;
+        current_character->index_indices[C_DP] =
+	   ofm[char_start+3] & 0xff;
+        current_character->index_indices[C_IC] =
+           ofm[char_start+4] & 0xff;
+        current_character->tag = 
+           ofm[char_start+5] & 0x3;
+        if (current_character->tag == TAG_LIG) no_labels++;
+        current_character->remainder = 
+           ((ofm[char_start+6] & 0xff) << 8) |
+           (ofm[char_start+7] & 0xff);
+        copies = 256*ofm[char_start+8]+ofm[char_start+9];
+        /* Handle character params */
+        copy_characters(i, copies);
+        i += copies + 1;
+        char_start += bytes_per_entry;
       }
-      if (char_ptr != (4*(char_base+ncw)))
+      if (char_start != (4*(char_base+ncw)))
           fatal_error_0("Length of char info table does not "
                         "correspond to specification");
       break;
     }
     default: {
-      fatal_error_1("Inappropriate font level (%d)", ofm_level-1);
+      fatal_error_1("Inappropriate font level (%d)", ofm_level-OFM_LEVEL0);
     }
     }
     width_base    = char_base+ncw;
@@ -306,17 +320,9 @@ ofm_organize(void)
     depth_base    = height_base+nh;
     italic_base   = depth_base+nd;
     lig_kern_base = italic_base+ni;
-    if (ofm_level==OFM_TFM) {
-       kern_base     = lig_kern_base+nl;
-    } else {
-       kern_base     = lig_kern_base+2*nl;
-    }
+    kern_base     = lig_kern_base+ncl;
     exten_base    = kern_base+nk;
-    if (ofm_level==OFM_TFM) {
-       param_base    = exten_base+ne-1;
-    } else {
-       param_base    = exten_base+2*ne-1;
-    }
+    param_base    = exten_base+nce-1;
 }
 
 void

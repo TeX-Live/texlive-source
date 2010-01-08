@@ -48,7 +48,6 @@ extern font *font_table;
 extern unsigned no_fonts;
 extern unsigned cur_font_index;
 extern font *cur_font;
-extern unsigned char *cur_packet;
 
 extern string vtitle;
 

@@ -232,7 +232,7 @@ build_dimen_tables(void)
         if (measure_max_entries[i] != 0) {
             delta=shorten(i,measure_max_entries[i]);
             set_indices(i,delta);
-            dimen_tables[i] = (int *) malloc((measure_max[i]+1)*sizeof(int));
+            dimen_tables[i] = (int *) xmalloc((measure_max[i]+1)*sizeof(int));
             L1 = measure_list[i];
             j=0;
             while (lval(L1) != WEB_INFINITY) {
@@ -268,7 +268,7 @@ retrieve_dimen_tables(void)
         dimen_tables[i] = NULL;
     }
     for (i=C_MIN; i<=C_MAX; i++) {
-        dimen_tables[i] = (int *) malloc((measure_max[i]+1)*sizeof(int));
+        dimen_tables[i] = (int *) xmalloc((measure_max[i]+1)*sizeof(int));
         for (j=0; j<measure_max[i]; j++) {
             k = measure_base[i]+4*j;
             dimen_tables[i][j] = (((*k)&0xff) << 24) |

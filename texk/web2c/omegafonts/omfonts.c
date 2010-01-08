@@ -37,6 +37,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "char_routines.h"
 #include "dimen_routines.h"
 #include "parse_ofm.h"
+#include "out_ofm.h"
 
 #define PROG_MIN		0
 #define PROG_OFM2OPL	0
@@ -45,8 +46,6 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #define PROG_OVP2OVF	3
 #define PROG_OMFONTS	4
 #define PROG_NUM		5
-
-extern FILE *yyin;
 
 #define cmdline(i) (argv[i])
 
@@ -91,11 +90,11 @@ static const_string names_program[PROG_NUM] =
 static const_string *names_help[PROG_NUM] =
     { OFM2OPLHELP, OPL2OFMHELP, OVF2OVPHELP, OVP2OVFHELP, OMFONTSHELP };
 static const_string names_msg[PROG_NUM] = {
-    "This is ofm2opl, Version 2.0",
-    "This is opl2ofm, Version 2.0",
-    "This is ovf2ovp, Version 2.0",
-    "This is ovp2ovf, Version 2.0",
-    "This is omfomts, Version 2.0"
+    "This is ofm2opl, Version 2.1",
+    "This is opl2ofm, Version 2.1",
+    "This is ovf2ovp, Version 2.1",
+    "This is ovp2ovf, Version 2.1",
+    "This is omfomts, Version 2.1"
 };
 
 int no_files=0;

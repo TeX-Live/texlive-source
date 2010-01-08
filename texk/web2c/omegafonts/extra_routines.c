@@ -89,32 +89,63 @@ unsigned nwg=0;
 void
 compute_ofm_extra_stuff(void)
 {
-    unsigned i=0;
+    unsigned i;
 
-    if (ofm_level >= OFM_LEVEL1) {
-        nki = no_ivalue_tables;
-        nkp = no_penalty_tables;
-        nkm = no_mvalue_tables;
-        nkf = no_fvalue_tables;
-        nkr = no_rule_tables;
-        nkg = no_glue_tables;
-        for (i=0; i<nki; i++) {
+    /* discard trailing empty tables */
+    for (i=0; i<no_ivalue_tables; i++)
+        if (max_ivalue_entry[i] > 0) {
+            nki = i + 1;
             nwi += max_ivalue_entry[i];
         }
-        for (i=0; i<nkp; i++) {
+    for (i=0; i<no_penalty_tables; i++)
+        if (max_penalty_entry[i] > 0) {
+            nkp = i + 1;
             nwp += max_penalty_entry[i];
         }
-        for (i=0; i<nkm; i++) {
+    for (i=0; i<no_mvalue_tables; i++)
+        if (max_mvalue_entry[i] > 0) {
+            nkm = i + 1;
             nwm += max_mvalue_entry[i];
         }
-        for (i=0; i<nkf; i++) {
+    for (i=0; i<no_fvalue_tables; i++)
+        if (max_fvalue_entry[i] > 0) {
+            nkf = i + 1;
             nwf += max_fvalue_entry[i];
         }
-        for (i=0; i<nkr; i++) {
+    for (i=0; i<no_rule_tables; i++)
+        if (max_rule_entry[i] > 0) {
+            nkr = i + 1;
             nwr += 3 * max_rule_entry[i];
         }
-        for (i=0; i<nkg; i++) {
+    for (i=0; i<no_glue_tables; i++)
+        if (max_glue_entry[i] > 0) {
+            nkg = i + 1;
             nwg += 4 * max_glue_entry[i];
+        }
+    if (ofm_level < OFM_LEVEL1) {
+        if (no_ivalue_tables > 0) {
+            warning_2("Ignoring %d words in %d IVALUE tables", nwi, nki);
+            nki = nwi = 0;
+        }
+        if (no_penalty_tables > 0) {
+            warning_2("Ignoring %d words in %d PENALTY tables", nwp, nkp);
+            nkp = nwp = 0;
+        }
+        if (no_mvalue_tables > 0) {
+            warning_2("Ignoring %d words in %d MVALUE tables", nwm, nkm);
+            nkm = nwm = 0;
+        }
+        if (no_fvalue_tables > 0) {
+            warning_2("Ignoring %d words in %d FVALUE tables", nwf, nkf);
+            nkf = nwf = 0;
+        }
+        if (no_rule_tables > 0) {
+            warning_2("Ignoring %d words in %d RULE tables", nwr, nkr);
+            nkr = nwr = 0;
+        }
+        if (no_glue_tables > 0) {
+            warning_2("Ignoring %d words in %d GLUE tables", nwg, nkg);
+            nkg = nwg = 0;
         }
     }
 }
@@ -123,7 +154,9 @@ void
 output_ofm_extra_stuff(void)
 {
     if (ofm_level >= OFM_LEVEL1) {
+      if (nki+nkp+nkm+nkf+nkr+nkg > 0) {
         fatal_error_0("OFM level 1 not currently supported");
+      }
     }
 }
 
@@ -148,148 +181,114 @@ init_all_tables(void)
 void
 init_font_ivalue(unsigned tab)
 {
-     unsigned j;
-
      if (tab>=MAX_EXTRA_TABLES)
          internal_error_1("init_font_ivalue (tab=%d)", tab);
      if (ivalue_tables[tab] != NULL) {
          warning_1("IVALUE table (D %d) previously defined; "
                    "old value ignored", tab);
-         cur_ivalue_table = ivalue_tables[tab];
-         for (j=0; j<MAX_TABLE_ENTRIES; j++) {
-              cur_ivalue_table[j] = 0;
-         }
-     } else {
-         no_ivalue_tables++;
-         ivalue_tables[tab] =
-             (unsigned *) xmalloc(MAX_TABLE_ENTRIES*sizeof(unsigned));
-         cur_ivalue_table = ivalue_tables[tab];
+         free(ivalue_tables[tab]);
      }
+     ivalue_tables[tab] =
+         (unsigned *) xcalloc(MAX_TABLE_ENTRIES, sizeof(unsigned));
+     if (tab >= no_ivalue_tables)
+         no_ivalue_tables = tab + 1;
+     cur_ivalue_table_index = tab;
+     cur_ivalue_table = ivalue_tables[tab];
      max_ivalue_entry[tab] = 0;
 }
 
 void
 init_font_penalty(unsigned tab)
 {
-     unsigned j;
-
      if (tab>=MAX_EXTRA_TABLES)
          internal_error_1("init_font_penalty (tab=%d)", tab);
      if (penalty_tables[tab] != NULL) {
-         warning_1("IVALUE table (D %d) previously defined; "
+         warning_1("PENALTY table (D %d) previously defined; "
                    "old value ignored", tab);
-         cur_penalty_table = ivalue_tables[tab];
-         for (j=0; j<MAX_TABLE_ENTRIES; j++) {
-              cur_penalty_table[j] = 0;
-         }
-     } else {
-         no_penalty_tables++;
-         penalty_tables[tab] =
-             (unsigned *) xmalloc(MAX_TABLE_ENTRIES*sizeof(unsigned));
-         cur_penalty_table = ivalue_tables[tab];
+         free(penalty_tables[tab]);
      }
+     penalty_tables[tab] =
+         (unsigned *) xcalloc(MAX_TABLE_ENTRIES, sizeof(unsigned));
+     cur_penalty_table_index = tab;
+     cur_penalty_table = penalty_tables[tab];
+     if (tab >= no_penalty_tables)
+         no_penalty_tables = tab + 1;
      max_penalty_entry[tab] = 0;
 }
 
 void
 init_font_mvalue(unsigned tab)
 {
-     unsigned j;
-
      if (tab>=MAX_EXTRA_TABLES)
          internal_error_1("init_font_mvalue (tab=%d)", tab);
      if (mvalue_tables[tab] != NULL) {
          warning_1("MVALUE table (D %d) previously defined; "
                    "old value ignored", tab);
-         cur_mvalue_table = mvalue_tables[tab];
-         for (j=0; j<MAX_TABLE_ENTRIES; j++) {
-              cur_mvalue_table[j] = 0;
-         }
-     } else {
-         no_mvalue_tables++;
-         mvalue_tables[tab] =
-             (fix *) xmalloc(MAX_TABLE_ENTRIES*sizeof(unsigned));
-         cur_mvalue_table = mvalue_tables[tab];
+         free(mvalue_tables[tab]);
      }
+     mvalue_tables[tab] =
+         (fix *) xcalloc(MAX_TABLE_ENTRIES, sizeof(fix));
+     if (tab >= no_mvalue_tables)
+         no_mvalue_tables = tab + 1;
+     cur_mvalue_table_index = tab;
+     cur_mvalue_table = mvalue_tables[tab];
      max_mvalue_entry[tab] = 0;
 }
 
 void
 init_font_fvalue(unsigned tab)
 {
-     unsigned j;
-
      if (tab>=MAX_EXTRA_TABLES)
          internal_error_1("init_font_fvalue (tab=%d)", tab);
      if (fvalue_tables[tab] != NULL) {
          warning_1("FVALUE table (D %d) previously defined; "
                    "old value ignored", tab);
-         cur_fvalue_table = fvalue_tables[tab];
-         for (j=0; j<MAX_TABLE_ENTRIES; j++) {
-              cur_fvalue_table[j] = 0;
-         }
-     } else {
-         no_fvalue_tables++;
-         fvalue_tables[tab] =
-             (fix *) xmalloc(MAX_TABLE_ENTRIES*sizeof(unsigned));
-         cur_fvalue_table = fvalue_tables[tab];
+         free(fvalue_tables[tab]);
      }
+     fvalue_tables[tab] =
+         (fix *) xcalloc(MAX_TABLE_ENTRIES, sizeof(fix));
+     if (tab >= no_fvalue_tables)
+         no_fvalue_tables = tab + 1;
+     cur_fvalue_table_index = tab;
+     cur_fvalue_table = fvalue_tables[tab];
      max_fvalue_entry[tab] = 0;
 }
 
 void
 init_font_rule(unsigned tab)
 {
-     unsigned j;
-
      if (tab>=MAX_EXTRA_TABLES)
          internal_error_1("init_font_rule (tab=%d)", tab);
      if (rule_tables[tab] != NULL) {
          warning_1("RULE table (D %d) previously defined; "
                    "old value ignored", tab);
-         cur_rule_table = rule_tables[tab];
-         for (j=0; j<MAX_TABLE_ENTRIES; j++) {
-              cur_rule_table[j].rule_wd = 0;
-              cur_rule_table[j].rule_dp = 0;
-              cur_rule_table[j].rule_ht = 0;
-         }
-     } else {
-         no_rule_tables++;
-         rule_tables[tab] =
-             (rule *) xmalloc(MAX_TABLE_ENTRIES*sizeof(rule));
-         cur_rule_table = rule_tables[tab];
+         free(rule_tables[tab]);
      }
+     rule_tables[tab] =
+         (rule *) xcalloc(MAX_TABLE_ENTRIES, sizeof(rule));
+     if (tab >= no_rule_tables)
+         no_rule_tables = tab + 1;
+     cur_rule_table_index = tab;
+     cur_rule_table = rule_tables[tab];
      max_rule_entry[tab] = 0;
 }
 
 void
 init_font_glue(unsigned tab)
 {
-     unsigned j;
-
      if (tab>=MAX_EXTRA_TABLES)
          internal_error_1("init_font_glue (tab=%d)", tab);
      if (glue_tables[tab] != NULL) {
          warning_1("GLUE table (D %d) previously defined; "
                    "old value ignored", tab);
-         cur_glue_table = glue_tables[tab];
-         for (j=0; j<MAX_TABLE_ENTRIES; j++) {
-              cur_glue_table[j].glue_width = 0;
-              cur_glue_table[j].glue_stretch = 0;
-              cur_glue_table[j].glue_shrink = 0;
-              cur_glue_table[j].glue_stretch_order = 0;
-              cur_glue_table[j].glue_shrink_order = 0;
-              cur_glue_table[j].glue_type = 0;
-              cur_glue_table[j].glue_arg_type = GLUEARG_NONE;
-              cur_glue_table[j].glue_arg1 = 0;
-              cur_glue_table[j].glue_arg2 = 0;
-         }
-     } else {
-         no_glue_tables++;
-         glue_tables[tab] =
-             (glue *) xmalloc(MAX_TABLE_ENTRIES*sizeof(glue));
-         cur_glue_table = glue_tables[tab];
+         free(glue_tables[tab]);
      }
+     glue_tables[tab] =
+         (glue *) xcalloc(MAX_TABLE_ENTRIES, sizeof(glue));
+     if (tab >= no_glue_tables)
+         no_glue_tables = tab + 1;
+     cur_glue_table_index = tab;
+     cur_glue_table = glue_tables[tab];
      max_glue_entry[tab] = 0;
 }
 
@@ -300,8 +299,8 @@ init_font_ivalue_entry(unsigned index)
      if (index>=MAX_TABLE_ENTRIES)
          internal_error_1("init_font_ivalue_entry (index=%d)", index);
      cur_ivalue_entry = &cur_ivalue_table[index];
-     if (max_ivalue_entry[cur_ivalue_table_index]<index)
-         max_ivalue_entry[cur_ivalue_table_index] = index;
+     if (max_ivalue_entry[cur_ivalue_table_index] <= index)
+         max_ivalue_entry[cur_ivalue_table_index] = index + 1;
 }
 
 void
@@ -310,8 +309,8 @@ init_font_penalty_entry(unsigned index)
      if (index>=MAX_TABLE_ENTRIES)
          internal_error_1("init_font_penalty_entry (index=%d)", index);
      cur_penalty_entry = &cur_penalty_table[index];
-     if (max_penalty_entry[cur_penalty_table_index]<index)
-         max_penalty_entry[cur_penalty_table_index] = index;
+     if (max_penalty_entry[cur_penalty_table_index] <= index)
+         max_penalty_entry[cur_penalty_table_index] = index + 1;
 }
 
 void
@@ -320,8 +319,8 @@ init_font_mvalue_entry(unsigned index)
      if (index>=MAX_TABLE_ENTRIES)
          internal_error_1("init_font_mvalue_entry (index=%d)", index);
      cur_mvalue_entry = &cur_mvalue_table[index];
-     if (max_mvalue_entry[cur_mvalue_table_index]<index)
-         max_mvalue_entry[cur_mvalue_table_index] = index;
+     if (max_mvalue_entry[cur_mvalue_table_index] <= index)
+         max_mvalue_entry[cur_mvalue_table_index] = index + 1;
 }
 
 void
@@ -330,8 +329,8 @@ init_font_fvalue_entry(unsigned index)
      if (index>=MAX_TABLE_ENTRIES)
          internal_error_1("init_font_fvalue_entry (index=%d)", index);
      cur_fvalue_entry = &cur_fvalue_table[index];
-     if (max_fvalue_entry[cur_fvalue_table_index]<index)
-         max_fvalue_entry[cur_fvalue_table_index] = index;
+     if (max_fvalue_entry[cur_fvalue_table_index] <= index)
+         max_fvalue_entry[cur_fvalue_table_index] = index + 1;
 }
 
 void
@@ -340,8 +339,8 @@ init_font_rule_entry(unsigned index)
      if (index>=MAX_TABLE_ENTRIES)
          internal_error_1("init_font_rule_entry (index=%d)", index);
      cur_rule_entry = &cur_rule_table[index];
-     if (max_rule_entry[cur_rule_table_index]<index)
-         max_rule_entry[cur_rule_table_index] = index;
+     if (max_rule_entry[cur_rule_table_index] <= index)
+         max_rule_entry[cur_rule_table_index] = index + 1;
 }
 
 void
@@ -350,8 +349,8 @@ init_font_glue_entry(unsigned index)
      if (index>=MAX_TABLE_ENTRIES)
          internal_error_1("init_font_glue_entry (index=%d)", index);
      cur_glue_entry = &cur_glue_table[index];
-     if (max_glue_entry[cur_glue_table_index]<index)
-         max_glue_entry[cur_glue_table_index] = index;
+     if (max_glue_entry[cur_glue_table_index] <= index)
+         max_glue_entry[cur_glue_table_index] = index + 1;
 }
 
 
@@ -411,10 +410,11 @@ set_font_glue_shrink_stretch(unsigned shrink_stretch,
 {
      switch (shrink_stretch) {
          case GLUE_SHRINK: {
-             cur_glue_entry->glue_shrink = width; break;
+             cur_glue_entry->glue_shrink = width;
              cur_glue_entry->glue_shrink_order = order; break;
          }
          case GLUE_STRETCH: {
+             cur_glue_entry->glue_stretch = width;
              cur_glue_entry->glue_stretch_order = order; break;
          }
          default: {

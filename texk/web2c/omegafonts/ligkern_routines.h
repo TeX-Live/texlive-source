@@ -21,6 +21,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
+extern unsigned bchar;
 extern four_entries lig_kern_table[100000];
 
 extern void init_ligkern_entry(void);

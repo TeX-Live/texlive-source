@@ -38,6 +38,8 @@ typedef struct char_entry_struct {
 extern char_entry *current_character;
 extern char_entry *current_secondary_character;
 
+extern unsigned num_char_info, words_per_entry;
+
 extern void print_characters(boolean);
 extern void init_character(unsigned, char_entry *);
 extern void copy_characters(unsigned, unsigned);

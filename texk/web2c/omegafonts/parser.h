@@ -28,7 +28,6 @@ typedef union {
 	char *ystring ;
 } yystype;
 
-extern YYSTYPE yylval;
 extern int line_number;
 extern FILE *yyin;
 extern int yylex(void);

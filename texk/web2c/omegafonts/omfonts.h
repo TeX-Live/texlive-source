@@ -28,6 +28,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #define TEXT_CODE_UPPER 0
 #define TEXT_CODE_MIXED 1
 
+extern FILE *file_ofm;
 extern FILE *file_ovf;
 extern FILE *file_output;
 extern int verbose_option;
@@ -44,7 +45,6 @@ extern unsigned char *ovf;
 extern int main(int, string *);
 extern void read_in_whole(unsigned char **, unsigned *, FILE *, string );
 extern void init_tables(void);
-extern void output_ofm_file(void);
 extern void output_ovf_file(void);
 extern void output_text_file(FILE *);
 

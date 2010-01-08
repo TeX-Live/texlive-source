@@ -83,19 +83,26 @@ endif OTANGLE
 
 ## Tests
 ##
+OMFONTS_tests = level1.test omfonts.test repeat.test specialhex.test
 if OTANGLE
 if OMFONTS
-TESTS = omfonts.test specialhex.test
+TESTS = $(OMFONTS_tests)
 endif OMFONTS
 endif OTANGLE
 
-EXTRA_DIST = omfonts.test specialhex.test
+EXTRA_DIST = $(OMFONTS_tests)
 
+## level1.test
+EXTRA_DIST += tests/level1.opl
+DISTCLEANFILES += tests/xlevel1.ofm tests/xlevel1.opl
 ## omfonts.test
 EXTRA_DIST += tests/Cherokee.pl tests/OCherokee.ovp
 DISTCLEANFILES += tests/Cherokee.tfm tests/OCherokee.ofm \
 	tests/OCherokee.opl tests/OCherokee.ovf \
 	tests/xCherokee.* tests/xOCherokee.*
+## repeat.test
+EXTRA_DIST += tests/repeat.opl tests/repeated.opl
+DISTCLEANFILES += tests/xrepeated.*
 ## specialhex.test
 EXTRA_DIST += tests/specialhex.ovp
 DISTCLEANFILES += tests/specialhex.ofm tests/specialhex.opl \
