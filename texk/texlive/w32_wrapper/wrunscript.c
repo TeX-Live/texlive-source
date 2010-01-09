@@ -19,13 +19,15 @@
 
 #include <stdio.h>
 #include <windows.h>
-#define MAX_MSG 1024
+#define MAX_MSG 512
 #define IS_WHITESPACE(c) ((c == ' ') || (c == '\t'))
 #define DIE(...) { _snprintf( msg_buf, MAX_MSG - 1, __VA_ARGS__ ); goto DIE; }
 
-const char err_env_var[] = "RUNSCRIPT_ERROR_MESSAGE";
-const char script_name[] = "runscript.tlu";
-static char own_path[MAX_PATH] = "(NULL)";
+char err_env_var[] = "RUNSCRIPT_ERROR_MESSAGE";
+char script_name[] = "runscript.tlu";
+char texlua_name[] = "texlua";
+char sentinel_arg[] = "GUI_MODE\n";
+static char own_path[MAX_PATH] = "runscript";
 static char msg_buf[MAX_MSG];
 
 void finalize( void )
@@ -44,7 +46,6 @@ int APIENTRY WinMain(
   char *argline,
   int winshow 
 ){
-  char argv0[MAX_PATH];
   char fpath[MAX_PATH];
   char *fname, *fext, **lua_argv;
   int k, lua_argc;
@@ -80,10 +81,10 @@ int APIENTRY WinMain(
   // set up argument list for texlua script
   lua_argc = argc ? argc + 4 : 5;
   lua_argv = (char **) malloc( (lua_argc + 1) * sizeof(char *) );
-  lua_argv[0] = strdup("texlua"); // just a bare name, luatex strips the rest anyway
+  lua_argv[0] = texlua_name; // just a bare name, luatex strips the rest anyway
   lua_argv[1] = fpath; // script to execute
   for ( k = 1; k < argc; k++ ) lua_argv[k+1] = argv[k];
-  lua_argv[lua_argc - 3] = strdup("GUI_MODE\n"); // sentinel argument
+  lua_argv[lua_argc - 3] = sentinel_arg; // sentinel argument
   lua_argv[lua_argc - 2] = argc ? argv[0] : own_path; // original argv[0]
   lua_argv[lua_argc - 1] = argline; // unparsed arguments
   lua_argv[lua_argc] = NULL;

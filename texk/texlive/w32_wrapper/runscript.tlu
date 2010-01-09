@@ -49,24 +49,21 @@
     from there. It also uses a dialog box to display an error message 
     in addition to outputting to stderr.
     
-    The CLI stub is further split into a common DLL and an EXE proxy 
+    The stubs are further split into a common DLL and an EXE proxies 
     to it. This is for maintenance reasons - upgrades can be done by 
-    replacement of a single DLL rather than all binary stubs (the 
-    number of GUI stubs is much smaller, so this is much less of
-    a problem).
+    replacement of a single DLL rather than all binary stubs.
     
     The wrapper script knows, which variant has been used to invoke it 
     based on the sentinel argument. The lack of this argument means 
-    that it was invoked in a standard way. 
+    that it was invoked in a standard way, i.e. through texlua.exe. 
     
     All the hard work of locating a script/program to execute happens 
     in this wrapper script. Once located, the script or program is 
     always executed directly by spawning its interpreter or binary in 
     a new process. The system shell (cmd.exe) is never called (except 
     for batch scripts, of course). If the located script happens to be 
-    a (tex)lua script, for increased performance it is converted to 
-    a function with Lua's loadfile and called without spawning a new 
-    process.
+    a (tex)lua script, it is loaded and called directly from within 
+    this script, i.e. no new process is spawned.
  
 --]===================================================================]--
 
@@ -91,13 +88,13 @@ local function prepend_path(path, ...)
   return path
 end
 
--- searches the PATH variable for a file
+-- searches the PATH for a file
 local function search_path(fname, PATH, PATHEXT)
   if string.find(fname, '[/\\]') then 
     return nil, "directory part not allowed for PATH search: "..fname 
   end
   PATH = PATH or os.getenv('PATH')
-  PATHEXT = PATHEXT or '\0'
+  PATHEXT = PATHEXT or '\0' -- '\0' for no extension
   for dir in string.gmatch(PATH, '[^;]+') do
     local dirsep = (string.find(dir, '\\') and '\\' or '/')
     for ext in string.gmatch(PATHEXT, '[^;]+') do
@@ -145,7 +142,7 @@ local function check_command(cmd, PATH)
   if fullcmd then 
     return fullcmd
   else
-    return nil, 'program not found (not part of TeX Live): '..cmd
+    return nil, 'program not found (not part of TeX Live): '..cmdext
   end
 end
 
@@ -186,10 +183,12 @@ end
 -- program name
 local progname = string.match(arg[0], '[^\\/]+$')
 progname = string.gsub(progname, '%.[^.]*$', '') -- remove extension
-local progext = string.match(arg[0], '%.[^\\/.]*$') or ''
+if (progname == 'runscript') then -- prevent recursive calls to this script
+  assert(nil, "oops! wrapping the wrapper?")
+end
 -- kpathsea 
 local k = -1 
-while arg[k-1] do k = k - 1 end -- in case of call as: luatex --luaonly ...
+while arg[k-1] do k = k - 1 end -- in case of a call: luatex --luaonly ...
 local lua_binary = arg[k]
 kpse.set_program_name(lua_binary, progname)
 -- vars
@@ -218,7 +217,7 @@ os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
 PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlgs/bin', BINDIR)
 os.setenv('PATH', PATH);
 
-local alias_table = {--[[
+local alias_table = {---[[
   cmd = {'cmd'},
   printargv = {'..\\print_argv.exe', argline},
   scratch = 'scratch.lua',--]]
@@ -243,23 +242,19 @@ local alias_table = {--[[
     function ()
       return {[0]=assert(check_command('wscript', PATH)), 
         'wscript', _q(BINDIR..'/dviout.vbs'), argline}
-    end
+    end,--]--]
   psv = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
     '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
     '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'), '-sINPUT='..argline},--]]
   rpdfcrop = {PERLEXE, 'perl', 
     _q(TEXDIR..'/texmf-dist/scripts/pdfcrop/pdfcrop.pl'), 
     '--restricted', argline},
-  runscript = -- prevent recursive calls to this script
-    function ()
-      assert(nil, "oops! wrapping the wrapper?")
-    end,
   sam2p = {[0]=TEXDIR..'/tlpkg/sam2p/sam2p.exe', 'sam2p', argline},--[[
   texworks = 
     function ()
       -- TODO: add to texmf/web2c/texmf.cnf
-      -- TW_INIPATH = $TEXMFCONFIG/texworks
-      -- TW_LIBPATH = $TW_INIPATH
+      -- TW_LIBPATH = $TEXMFCONFIG/texworks
+      -- TW_INIPATH = $TW_LIBPATH
       local TW_INIPATH = kpse.var_value('TW_INIPATH') or 
                          kpse.var_value('TEXMFCONFIG')..'/texworks'
       os.setenv('TW_INIPATH', TW_INIPATH)
@@ -291,7 +286,7 @@ else -- general case (no alias)
   local progfullname, ext = search_path(progname, BINDIR, ".tlu;.bat;.cmd")
   if not progfullname then
     progfullname, ext = assert(find_texmfscript(progname, 
-      ".tlu;.texlua;.lua;.pl;.rb;.py;.jar;.bat;.cmd;.vbs;.js;\0"))
+      ".tlu;.texlua;.lua;.pl;.rb;.py;.jar;.vbs;.js;.bat;.cmd;\0"))
   end
   if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then
     -- lua script
