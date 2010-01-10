@@ -1,3 +1,11 @@
+2010-01-10  Jérôme Laurens  <jerome.laurens@u-bourgogne.fr>
+
+	* synctex_parser.c: in the _synctex_smallest_container() function,
+			SYNCTEX_WIDTH is replaced with SYNCTEX_ABS_WIDTH
+            to take into account h boxes with negative width.
+            Solves a problem with amsmath's gather environment
+	* synctex_parser.c: enhancements in comments to better explain the code
+
 2009-12-30  Jérôme Laurens  <jerome.laurens@u-bourgogne.fr>
 
 	* synctex_parser_utils.c: in the _synctex_malloc() function,
