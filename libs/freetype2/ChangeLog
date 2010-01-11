@@ -1,3 +1,7 @@
+2010-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (ft-libs): Use '--libtool' instead of '--libs'.
+
 2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).

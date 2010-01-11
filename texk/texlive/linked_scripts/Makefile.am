@@ -155,8 +155,10 @@ install-links:
 	    $(LN_S) $$file $$link; \
 	  done && \
 	  rm -f man && \
-	  echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
-	  (ln -s $(REL)/texmf/doc/man man || :)
+	  if test -d $(REL)/texmf/doc/man; then \
+	    echo "creating link 'man' -> '$(REL)/texmf/doc/man'" && \
+	    (ln -s $(REL)/texmf/doc/man man || :); \
+	  else :; fi
 ## man dir link for those mans which can use it.
 
 uninstall-hook:

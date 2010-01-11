@@ -32,7 +32,6 @@ EXTRA_DIST += \
 EXTRA_DIST += \
 	klingon/translit-ascii.pl
 
-
 CLEANFILES += \
 	klingon/utf8.pl klingon/utf8.raw
 

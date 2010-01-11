@@ -424,7 +424,8 @@ DOCS_CYR_ISOIR111 = belarusian/isoir111-doc.tex \
 	macedonian/isoir111-doc.tex serbian/isoir111-doc.tex
 DOCS_CYR_KOI8_R = bulgarian/koi8-r-doc.tex russian/koi8-r-doc.tex
 DOCS_CYR_KOI8_U = ukrainian/koi8-u-doc.tex
-DOCS_OTHER = greek/iso88597-doc.tex hebrew/iso88598-doc.tex
+DOCS_ISO88597 = greek/iso88597-doc.tex
+DOCS_ISO88598 = hebrew/iso88598-doc.tex
 DOCS_UTF8_LAT = albanian/utf8-doc.tex croatian/utf8-doc.tex \
 	czech/utf8-doc.tex danish/utf8-doc.tex \
 	dutch/ij-as-ij-utf8-doc.tex dutch/ij-as-y-utf8-doc.tex \
@@ -607,6 +608,10 @@ DOCS_LAT = \
 	$(DOCS_LATIN4) \
 	$(DOCS_LATIN5) \
 	$(DOCS_LATIN9)
+
+DOCS_OTHER = \
+	$(DOCS_ISO88597) \
+	$(DOCS_ISO88598)
 
 DOCS_UTF8 = \
 	$(DOCS_UTF8_LAT) \

@@ -20,7 +20,7 @@ Removed:
 	modules/*/{,*/}Makefile.{am,in}
 
 Removed:
-	make-rules/alphabets/*/*.xdy
+	make-rules/alphabets/*/*.pl
 except
 	make-rules/alphabets/general/template.pl
 	make-rules/alphabets/klingon/translit-ascii.pl

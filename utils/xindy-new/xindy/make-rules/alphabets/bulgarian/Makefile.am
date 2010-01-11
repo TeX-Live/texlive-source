@@ -41,7 +41,6 @@ DOCS_UTF8_CYR += \
 EXTRA_DIST += \
 	bulgarian/utf8.pl.in
 
-
 CLEANFILES += \
 	bulgarian/cp1251.pl bulgarian/cp1251.raw \
 	bulgarian/iso88595.pl bulgarian/iso88595.raw \

@@ -1,4 +1,4 @@
-## Makefile fragment for .
+## Makefile fragment for georgian.
 
 ## Copyright (C) 2009 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.

@@ -24,7 +24,7 @@ nobase_nodist_lang_DATA += \
 	hebrew/iso88598-lang.xdy hebrew/iso88598-test.xdy hebrew/iso88598.xdy \
 	hebrew/utf8-lang.xdy hebrew/utf8-test.xdy hebrew/utf8.xdy
 
-DOCS_OTHER += \
+DOCS_ISO88598 += \
 	hebrew/iso88598-doc.tex
 
 DOCS_UTF8_OTHER += \

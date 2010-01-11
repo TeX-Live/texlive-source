@@ -69,8 +69,8 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/configure.ac xindy/configur
  		doc/Makefile \
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefile.am xindy/make-rules/alphabets/Makefile.am
 --- xindy.orig/make-rules/alphabets/Makefile.am	2009-12-02 20:34:28.000000000 +0100
-+++ xindy/make-rules/alphabets/Makefile.am	2009-12-17 19:57:46.000000000 +0100
-@@ -21,787 +21,86 @@
++++ xindy/make-rules/alphabets/Makefile.am	2010-01-10 18:40:52.000000000 +0100
+@@ -21,787 +21,88 @@
  
  langdir	= $(pkglibdir)/modules/lang
  
@@ -872,7 +872,9 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefi
 +DOCS_CYR_KOI8_R =
 +DOCS_CYR_KOI8_U =
 +
-+DOCS_OTHER =
++DOCS_ISO88597 =
++DOCS_ISO88598 =
++
 +DOCS_UTF8_LAT =
 +DOCS_UTF8_CYR =
 +DOCS_UTF8_OTHER =
@@ -937,7 +939,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefi
  
  %utf8.pl : %utf8.pl.in
  	sed -e 's/@.{\([^}]*\)}/\1/g;' <$< >$@
-@@ -814,13 +113,6 @@
+@@ -814,13 +115,6 @@
  	sed -e 's/@.{\([^}]*\)}//g;' <$< | \
  	$(CONVERT_FROM_UTF8)CP850 >$@
  
@@ -951,7 +953,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefi
  %latin2.pl : %utf8.pl.in
  	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
  	$(CONVERT_FROM_UTF8)ISO8859-2 >$@
-@@ -853,13 +145,6 @@
+@@ -853,13 +147,6 @@
  	sed -e 's/@u{\([^}]*\)}//g;s/@9{\([^}]*\)}/\1/g;' <$< | \
  	$(CONVERT_FROM_UTF8)ISO-8859-15 >$@
  
@@ -965,7 +967,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefi
  %cp1250.pl : %utf8.pl.in
  	sed -e 's/@u{\([^}]*\)}//g;' <$< | \
  	$(CONVERT_FROM_UTF8)CP1250 >$@
-@@ -911,203 +196,11 @@
+@@ -911,203 +198,11 @@
  	  fi; \
  	fi
  
@@ -1169,7 +1171,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefi
  DOCS_CYR = \
  	$(DOCS_CYR_1251) \
  	$(DOCS_CYR_ISO88595) \
-@@ -1115,72 +208,6 @@
+@@ -1115,72 +210,6 @@
  	$(DOCS_CYR_KOI8_R) \
  	$(DOCS_CYR_KOI8_U)
  
@@ -1242,7 +1244,18 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/Makefi
  DOCS_CPS = \
  	$(DOCS_CP1250) \
  	$(DOCS_CP1252) \
-@@ -1270,7 +297,7 @@
+@@ -1194,6 +223,10 @@
+ 	$(DOCS_LATIN5) \
+ 	$(DOCS_LATIN9)
+ 
++DOCS_OTHER = \
++	$(DOCS_ISO88597) \
++	$(DOCS_ISO88598)
++
+ DOCS_UTF8 = \
+ 	$(DOCS_UTF8_LAT) \
+ 	$(DOCS_UTF8_CYR) \
+@@ -1270,7 +303,7 @@
  	alphabets-inc.tex \
  	alphabets-doc.toc
  
@@ -1356,7 +1369,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/belaru
  
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/bulgarian/Makefile.am xindy/make-rules/alphabets/bulgarian/Makefile.am
 --- xindy.orig/make-rules/alphabets/bulgarian/Makefile.am	2008-01-09 15:01:30.000000000 +0100
-+++ xindy/make-rules/alphabets/bulgarian/Makefile.am	2009-12-17 20:43:40.000000000 +0100
++++ xindy/make-rules/alphabets/bulgarian/Makefile.am	2010-01-10 23:24:40.000000000 +0100
 @@ -1,7 +1,6 @@
 -## Use `autoreconf' in top-level directory to recreate all
 -## autoconf/automake files.
@@ -1367,19 +1380,13 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/bulgar
  ## Copyright (C) 2004-2005 by Gour.
  ##
  ## This program is free software; you can redistribute it and/or
-@@ -19,19 +18,33 @@
+@@ -19,19 +18,32 @@
  ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  ## Boston, MA 02110-1301 USA.
  
 -EXTRA_DIST = cp1251.pl iso88595.pl koi8-r.pl utf8.pl.in
-+subdirs += bulgarian
- 
-+nobase_nodist_lang_DATA += \
-+	bulgarian/cp1251-lang.xdy bulgarian/cp1251-test.xdy bulgarian/cp1251.xdy \
-+	bulgarian/iso88595-lang.xdy bulgarian/iso88595-test.xdy bulgarian/iso88595.xdy \
-+	bulgarian/koi8-r-lang.xdy bulgarian/koi8-r-test.xdy bulgarian/koi8-r.xdy \
-+	bulgarian/utf8-lang.xdy bulgarian/utf8-test.xdy bulgarian/utf8.xdy
- 
+-
+-
 -CLEANFILES = \
 -	cp1251.raw \
 -	cp1251-doc.tex \
@@ -1389,21 +1396,30 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/bulgar
 -	koi8-r-doc.tex \
 -	utf8.raw \
 -	utf8-doc.tex
+-
+-
++subdirs += bulgarian
+ 
++nobase_nodist_lang_DATA += \
++	bulgarian/cp1251-lang.xdy bulgarian/cp1251-test.xdy bulgarian/cp1251.xdy \
++	bulgarian/iso88595-lang.xdy bulgarian/iso88595-test.xdy bulgarian/iso88595.xdy \
++	bulgarian/koi8-r-lang.xdy bulgarian/koi8-r-test.xdy bulgarian/koi8-r.xdy \
++	bulgarian/utf8-lang.xdy bulgarian/utf8-test.xdy bulgarian/utf8.xdy
++
 +DOCS_CYR_1251 += \
 +	bulgarian/cp1251-doc.tex
- 
++
 +DOCS_CYR_ISO88595 += \
 +	bulgarian/iso88595-doc.tex
- 
++
 +DOCS_CYR_KOI8_R += \
 +	bulgarian/koi8-r-doc.tex
- 
++
 +DOCS_UTF8_CYR += \
 +	bulgarian/utf8-doc.tex
 +
 +EXTRA_DIST += \
 +	bulgarian/utf8.pl.in
-+
 +
 +CLEANFILES += \
 +	bulgarian/cp1251.pl bulgarian/cp1251.raw \
@@ -1920,12 +1936,12 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/genera
  
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/georgian/Makefile.am xindy/make-rules/alphabets/georgian/Makefile.am
 --- xindy.orig/make-rules/alphabets/georgian/Makefile.am	2008-01-09 15:01:24.000000000 +0100
-+++ xindy/make-rules/alphabets/georgian/Makefile.am	2009-12-17 20:55:26.000000000 +0100
++++ xindy/make-rules/alphabets/georgian/Makefile.am	2010-01-09 00:52:50.000000000 +0100
 @@ -1,7 +1,6 @@
 -## Use `autoreconf' in top-level directory to recreate all
 -## autoconf/automake files.
 -## Or, call `automake Makefile' to create only Makefile.in.
-+## Makefile fragment for .
++## Makefile fragment for georgian.
  
 +## Copyright (C) 2009 by Peter Breitenlohner.
  ## Copyright (C) 2004-2005 by Gour.
@@ -2022,7 +2038,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/german
  
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/greek/Makefile.am xindy/make-rules/alphabets/greek/Makefile.am
 --- xindy.orig/make-rules/alphabets/greek/Makefile.am	2008-01-09 15:01:22.000000000 +0100
-+++ xindy/make-rules/alphabets/greek/Makefile.am	2009-12-17 21:02:59.000000000 +0100
++++ xindy/make-rules/alphabets/greek/Makefile.am	2010-01-10 23:27:26.000000000 +0100
 @@ -1,7 +1,6 @@
 -## Use `autoreconf' in top-level directory to recreate all
 -## autoconf/automake files.
@@ -2033,7 +2049,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/greek/
  ## Copyright (C) 2004-2005 by Gour.
  ##
  ## This program is free software; you can redistribute it and/or
-@@ -19,24 +18,39 @@
+@@ -19,24 +18,38 @@
  ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  ## Boston, MA 02110-1301 USA.
  
@@ -2068,7 +2084,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/greek/
 +DOCS_LATIN4 += \
 +	greek/translit-latin4-doc.tex
 +
-+DOCS_OTHER += \
++DOCS_ISO88597 += \
 +	greek/iso88597-doc.tex
 +
 +DOCS_UTF8_LAT += \
@@ -2083,7 +2099,6 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/greek/
 +	greek/polytonic-utf8.pl.in \
 +	greek/translit-utf8.pl.in \
 +	greek/utf8.pl.in
-+
 +
 +CLEANFILES += \
 +	greek/iso88597.pl greek/iso88597.raw \
@@ -2164,7 +2179,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/hausa/
  
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/hebrew/Makefile.am xindy/make-rules/alphabets/hebrew/Makefile.am
 --- xindy.orig/make-rules/alphabets/hebrew/Makefile.am	2008-01-09 15:01:21.000000000 +0100
-+++ xindy/make-rules/alphabets/hebrew/Makefile.am	2009-12-17 21:03:49.000000000 +0100
++++ xindy/make-rules/alphabets/hebrew/Makefile.am	2010-01-09 01:00:32.000000000 +0100
 @@ -1,7 +1,6 @@
 -## Use `autoreconf' in top-level directory to recreate all
 -## autoconf/automake files.
@@ -2191,7 +2206,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/hebrew
 +	hebrew/iso88598-lang.xdy hebrew/iso88598-test.xdy hebrew/iso88598.xdy \
 +	hebrew/utf8-lang.xdy hebrew/utf8-test.xdy hebrew/utf8.xdy
  
-+DOCS_OTHER += \
++DOCS_ISO88598 += \
 +	hebrew/iso88598-doc.tex
  
 +DOCS_UTF8_OTHER += \
@@ -2348,7 +2363,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/italia
  
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/klingon/Makefile.am xindy/make-rules/alphabets/klingon/Makefile.am
 --- xindy.orig/make-rules/alphabets/klingon/Makefile.am	2008-01-09 15:01:19.000000000 +0100
-+++ xindy/make-rules/alphabets/klingon/Makefile.am	2009-12-17 21:28:22.000000000 +0100
++++ xindy/make-rules/alphabets/klingon/Makefile.am	2010-01-10 23:28:48.000000000 +0100
 @@ -1,7 +1,6 @@
 -## Use `autoreconf' in top-level directory to recreate all
 -## autoconf/automake files.
@@ -2359,7 +2374,7 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/klingo
  ## Copyright (C) 2004-2005 by Gour.
  ##
  ## This program is free software; you can redistribute it and/or
-@@ -19,15 +18,21 @@
+@@ -19,15 +18,20 @@
  ## Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  ## Boston, MA 02110-1301 USA.
  
@@ -2383,10 +2398,9 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/klingo
 +EXTRA_DIST += \
 +	klingon/translit-ascii.pl
  
- 
 +CLEANFILES += \
 +	klingon/utf8.pl klingon/utf8.raw
-+
+ 
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/kurdish/Makefile.am xindy/make-rules/alphabets/kurdish/Makefile.am
 --- xindy.orig/make-rules/alphabets/kurdish/Makefile.am	2008-01-09 15:01:18.000000000 +0100
 +++ xindy/make-rules/alphabets/kurdish/Makefile.am	2009-12-17 21:07:54.000000000 +0100
@@ -2566,12 +2580,12 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/lithua
  
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/lower-sorbian/Makefile.am xindy/make-rules/alphabets/lower-sorbian/Makefile.am
 --- xindy.orig/make-rules/alphabets/lower-sorbian/Makefile.am	2008-01-09 15:01:16.000000000 +0100
-+++ xindy/make-rules/alphabets/lower-sorbian/Makefile.am	2009-12-17 21:09:55.000000000 +0100
++++ xindy/make-rules/alphabets/lower-sorbian/Makefile.am	2010-01-09 00:52:52.000000000 +0100
 @@ -1,7 +1,6 @@
 -## Use `autoreconf' in top-level directory to recreate all
 -## autoconf/automake files.
 -## Or, call `automake Makefile' to create only Makefile.in.
-+## Makefile fragment for .
++## Makefile fragment for lower-sorbian.
  
 +## Copyright (C) 2009 by Peter Breitenlohner.
  ## Copyright (C) 2004-2005 by Gour.
@@ -3379,12 +3393,12 @@ diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/ukrain
  
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/make-rules/alphabets/upper-sorbian/Makefile.am xindy/make-rules/alphabets/upper-sorbian/Makefile.am
 --- xindy.orig/make-rules/alphabets/upper-sorbian/Makefile.am	2008-01-09 15:01:09.000000000 +0100
-+++ xindy/make-rules/alphabets/upper-sorbian/Makefile.am	2009-12-17 21:24:19.000000000 +0100
++++ xindy/make-rules/alphabets/upper-sorbian/Makefile.am	2010-01-09 00:52:48.000000000 +0100
 @@ -1,7 +1,6 @@
 -## Use `autoreconf' in top-level directory to recreate all
 -## autoconf/automake files.
 -## Or, call `automake Makefile' to create only Makefile.in.
-+## Makefile fragment for .
++## Makefile fragment for upper-sorbian.
  
 +## Copyright (C) 2009 by Peter Breitenlohner.
  ## Copyright (C) 2004-2005 by Gour.

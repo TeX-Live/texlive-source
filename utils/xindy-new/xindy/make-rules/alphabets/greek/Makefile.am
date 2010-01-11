@@ -30,7 +30,7 @@ nobase_nodist_lang_DATA += \
 DOCS_LATIN4 += \
 	greek/translit-latin4-doc.tex
 
-DOCS_OTHER += \
+DOCS_ISO88597 += \
 	greek/iso88597-doc.tex
 
 DOCS_UTF8_LAT += \
@@ -45,7 +45,6 @@ EXTRA_DIST += \
 	greek/polytonic-utf8.pl.in \
 	greek/translit-utf8.pl.in \
 	greek/utf8.pl.in
-
 
 CLEANFILES += \
 	greek/iso88597.pl greek/iso88597.raw \
