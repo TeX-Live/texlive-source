@@ -429,6 +429,9 @@ TEX4HTINPUTS = .;$TEXMF/tex4ht/base//;$TEXMF/tex4ht/ht-fonts/{$TEX4HTFONTSET}//
 % Lua needs to look in TEXINPUTS for lua scripts distributed with packages.
 LUAINPUTS = .;$TEXMF/scripts/{$progname,$engine,}/lua//;$TEXINPUTS
 
+% Lua needs to look for lua libraries distributed with packages.
+CLUAINPUTS = .;$SELFAUTOLOC/lib/{$progname,$engine,}/lua//
+
 % Architecture independent executables.
 TEXMFSCRIPTS = $TEXMF/scripts/{$engine,$progname,}//
 

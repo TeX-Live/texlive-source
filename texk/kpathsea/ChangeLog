@@ -1,3 +1,13 @@
+2010-01-11  Taco Hoekwater <taco@metapost.org>
+
+	* types.h (kpse_clua_format): new type.
+	(kpse_def, kpse_def_inst): need KPSEDLL (from Akira).
+	* tex-file.c (CLUA_ENVS): new define.
+	(kpse_init_format): initialize it.
+	* texmf.cnf (CLUAINPUTS): new definition.
+	This implies using, e.g., bin/i386-linux/lib/luatex/lua/*.so
+	in TL.
+
 2010-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex-file.c: Add alt_suffix ".pl" for kpse_opl_format and

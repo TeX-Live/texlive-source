@@ -1,6 +1,6 @@
 /* types.h: general types for kpathsea.
 
-   Copyright 1993, 1995, 1996, 2005, 2008, 2009 Karl Berry.
+   Copyright 1993, 1995, 1996, 2005, 2008, 2009, 2010 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -140,6 +140,7 @@ typedef enum
   kpse_cid_format,
   kpse_mlbib_format,
   kpse_mlbst_format,
+  kpse_clua_format,
   kpse_last_format /* one past last index */
 } kpse_file_format_type;
 
@@ -267,8 +268,8 @@ extern KPSEDLL void kpathsea_finish (kpathsea kpse) ;
 
 #define kpse_bug_address kpathsea_bug_address
 
-extern kpathsea_instance kpse_def_inst;
-extern kpathsea kpse_def;
+extern KPSEDLL kpathsea_instance kpse_def_inst;
+extern KPSEDLL kpathsea kpse_def;
 
 #define kpathsea_debug               kpse_def_inst.debug
 #define kpse_program_name            kpse_def_inst.program_name
