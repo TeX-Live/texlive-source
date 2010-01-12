@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build libpng for TeX Live.
 ##
-##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -41,7 +41,7 @@ dist-hook:
 
 SUBDIRS = include
 
-INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
+INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(FREETYPE2_INCLUDES)
 
 noinst_LIBRARIES=libgd.a
 
@@ -77,7 +77,7 @@ nodist_libgd_a_SOURCES = \
 
 $(libgd_a_OBJECTS): config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
@@ -87,4 +87,6 @@ DISTCLEANFILES = config.force
 @ZLIB_RULE@
 ## Rebuild libpng
 @LIBPNG_RULE@
+## Rebuild libfreetype
+@FREETYPE2_RULE@
 

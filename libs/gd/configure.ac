@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -32,6 +32,9 @@ AC_PROG_LN_S
 
 AC_CONFIG_HEADERS([config.h:config.hin])
 
+LT_PREREQ([2.2.6])
+LT_INIT
+
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([errno.h limits.h stddef.h stdlib.h string.h unistd.h])
@@ -46,6 +49,7 @@ AC_SEARCH_LIBS([sin], [m], , [AC_ERROR([cannot find sin])])
 
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
+KPSE_FREETYPE2_FLAGS
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
@@ -62,6 +66,12 @@ KPSE_ADD_FLAGS([libpng])
 AC_CHECK_FUNC([png_create_read_struct], , [AC_ERROR([libpng not found])])
 AC_CHECK_HEADERS([png.h], , [AC_ERROR([libpng not found])])
 AC_DEFINE([HAVE_LIBPNG], 1, [Define if you have the png library.])
+
+KPSE_ADD_FLAGS([freetype2])
+
+AC_CHECK_FUNC([FT_Init_FreeType], , [AC_ERROR([libfreetype2 not found])])
+AC_CHECK_HEADERS([ft2build.h], , [AC_ERROR([libfreetype2 not found])])
+AC_DEFINE([HAVE_LIBFREETYPE], 1, [ Define if you have the freetype library.])
 
 KPSE_RESTORE_FLAGS
 

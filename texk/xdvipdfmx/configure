@@ -14077,11 +14077,11 @@ else
   FREETYPE2_INCLUDES=`echo 'BLD/libs/freetype2' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
-  FREETYPE2_LIBS=`echo 'BLD/libs/freetype2/libfreetype.a' | sed \
+  FREETYPE2_LIBS=`echo 'BLD/libs/freetype2/libfreetype.la' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
   FREETYPE2_LIBS="\`cat $FREETYPE2_INCLUDES/ft-libs\`"
   FREETYPE2_INCLUDES="\`cat $FREETYPE2_INCLUDES/ft-includes\`"
-  FREETYPE2_DEPEND=`echo 'BLD/libs/freetype2/libfreetype.a' | sed \
+  FREETYPE2_DEPEND=`echo 'BLD/libs/freetype2/libfreetype.la' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`
    FREETYPE2_RULE='# Rebuild libfreetype
 $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/ft2build.h
