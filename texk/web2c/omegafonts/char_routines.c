@@ -835,6 +835,21 @@ output_ofm_extensible(void)
 
 unsigned num_char_info, words_per_entry;
 
+#define XX_ENTRY(key) (entry->indices[key] != NULL ? entry->indices[key]->index : 0)
+#define WD_ENTRY XX_ENTRY(C_WD)
+#define HT_ENTRY XX_ENTRY(C_HT)
+#define DP_ENTRY XX_ENTRY(C_DP)
+#define IC_ENTRY XX_ENTRY(C_IC)
+
+#define XX_NEXT(key) ((next != NULL) && (next->indices[key] != NULL) ? next->indices[key]->index : 0)
+#define WD_NEXT XX_NEXT(C_WD)
+#define HT_NEXT XX_NEXT(C_HT)
+#define DP_NEXT XX_NEXT(C_DP)
+#define IC_NEXT XX_NEXT(C_IC)
+#define YY_NEXT(field) (next != NULL ? next->field : 0)
+#define RM_NEXT YY_NEXT(remainder)
+#define TG_NEXT YY_NEXT(tag)
+
 void
 compute_ofm_character_info(void)
 {
@@ -843,49 +858,65 @@ compute_ofm_character_info(void)
     char_entry *entry;
 
     bc = 0x7fffffff; ec=0;
+    FOR_ALL_EXISTING_CHARACTERS(
+        if (c < bc) bc = c;
+        if (c > ec) ec = c;
+    )
+    if (bc > ec) bc = 1;
     switch (ofm_level) {
         case OFM_TFM: {
-            FOR_ALL_EXISTING_CHARACTERS(
-                if (c < bc) bc = c;
-                if (c > ec) ec = c;
-            )
-            if (bc > ec) bc = 1;
             if (ec>255)
                 fatal_error_1(
                    "Char (%x) too big for TFM (max ff); use OFM file",ec);
             break;
         }
         case OFM_LEVEL0: {
-            FOR_ALL_EXISTING_CHARACTERS(
-                if (c < bc) bc = c;
-                if (c > ec) ec = c;
-            )
             if (ec>65535)
                 fatal_error_1(
                 "Char (%x) too big for OFM level-0 (max ffff); use level-2",
                 ec);
-            if (bc > ec) bc = 1;
             break;
         }
         case OFM_LEVEL1: {
-            unsigned copies = 0, repeats = 0;
-            FOR_ALL_CHARACTERS(
-                if (c < bc) bc = c;
-                if (c > ec) ec = c;
-                if (copies > 0)
-                    copies--;
-                else {
-                    copies = entry->copies;
-                    repeats += copies;
-                }
-            )
             if (ec>65535)
                 fatal_error_1(
                 "Char (%x) too big for OFM level-1 (max ffff); use level-2",
                 ec);
-            if (bc > ec) bc = 1;
-            num_char_info = ec + 1 - bc - repeats;
             /* Level 1 only uses plane 0.  Take advantage of this fact. */
+            plane=0;
+            num_char_info = 0;
+            for (index = bc; index <=ec; index++) {
+                unsigned saved_index = index;
+                char_entry *next;
+
+                entry = planes[plane][index]; 
+                c = plane*PLANE + index;
+                if ((entry != NULL) && (WD_ENTRY != 0)) {
+                    unsigned wd = WD_ENTRY, ht = HT_ENTRY, dp = DP_ENTRY, ic = IC_ENTRY;
+
+                    index += entry->copies;
+                    for (; index < ec; index++) {
+                        next = planes[plane][index+1];
+                        if ((WD_NEXT != wd) || (HT_NEXT != ht) ||
+                            (DP_NEXT != dp) || (IC_NEXT != ic) ||
+                            (RM_NEXT != entry->remainder) || (TG_NEXT != entry->tag))
+                            break;
+                        planes[plane][index+1] = entry;
+                    }
+                } else {
+                    planes[plane][index] = NULL;
+                    init_character(c, NULL);
+                    entry = current_character;
+                    for (; index < ec; index++) {
+                        next = planes[plane][index+1];
+                        if (WD_NEXT != 0)
+                            break;
+                        planes[plane][index+1] = entry;
+                    }
+                }
+                entry->copies = index - saved_index;
+                num_char_info++;
+            }
             break;
         }
         default: { internal_error_0("compute_ofm_character_info"); }
@@ -898,7 +929,6 @@ output_ofm_character_info(void)
     unsigned plane, index;
     unsigned c;
     char_entry *entry;
-    unsigned wd, ht, dp, ic;
 
     switch (ofm_level) {
         case OFM_TFM: {
@@ -909,21 +939,9 @@ output_ofm_character_info(void)
                 if (entry == NULL) { 
                     out_ofm_4(0);
                 } else {
-                    if (entry->indices[C_WD] != NULL)
-                        wd = entry->indices[C_WD]->index;
-                    else wd = 0;
-                    if (entry->indices[C_HT] != NULL)
-                        ht = entry->indices[C_HT]->index;
-                    else ht = 0;
-                    if (entry->indices[C_DP] != NULL)
-                        dp = entry->indices[C_DP]->index;
-                    else dp = 0;
-                    if (entry->indices[C_IC] != NULL)
-                        ic = entry->indices[C_IC]->index;
-                    else ic = 0;
-                    out_ofm(wd);
-                    out_ofm(ht*16 + dp);
-                    out_ofm(ic*4 + entry->tag);
+                    out_ofm(WD_ENTRY);
+                    out_ofm(HT_ENTRY*16 + DP_ENTRY);
+                    out_ofm(IC_ENTRY*4 + entry->tag);
                     out_ofm(entry->remainder);
                 }
             }
@@ -937,22 +955,10 @@ output_ofm_character_info(void)
                 if (entry == NULL) { 
                     out_ofm_4(0); out_ofm_4(0);
                 } else {
-                    if (entry->indices[C_WD] != NULL)
-                        wd = entry->indices[C_WD]->index;
-                    else wd = 0;
-                    if (entry->indices[C_HT] != NULL)
-                        ht = entry->indices[C_HT]->index;
-                    else ht = 0;
-                    if (entry->indices[C_DP] != NULL)
-                        dp = entry->indices[C_DP]->index;
-                    else dp = 0;
-                    if (entry->indices[C_IC] != NULL)
-                        ic = entry->indices[C_IC]->index;
-                    else ic = 0;
-                    out_ofm_2(wd);
-                    out_ofm(ht);
-                    out_ofm(dp);
-                    out_ofm(ic);
+                    out_ofm_2(WD_ENTRY);
+                    out_ofm(HT_ENTRY);
+                    out_ofm(DP_ENTRY);
+                    out_ofm(IC_ENTRY);
                     out_ofm(entry->tag);
                     out_ofm_2(entry->remainder);
                 }
@@ -970,22 +976,11 @@ output_ofm_character_info(void)
                         out_ofm_4(0);
                 } else {
                     unsigned copies = entry->copies;
-                    if (entry->indices[C_WD] != NULL)
-                        wd = entry->indices[C_WD]->index;
-                    else wd = 0;
-                    if (entry->indices[C_HT] != NULL)
-                        ht = entry->indices[C_HT]->index;
-                    else ht = 0;
-                    if (entry->indices[C_DP] != NULL)
-                        dp = entry->indices[C_DP]->index;
-                    else dp = 0;
-                    if (entry->indices[C_IC] != NULL)
-                        ic = entry->indices[C_IC]->index;
-                    else ic = 0;
-                    out_ofm_2(wd);
-                    out_ofm(ht);
-                    out_ofm(dp);
-                    out_ofm(ic);
+
+                    out_ofm_2(WD_ENTRY);
+                    out_ofm(HT_ENTRY);
+                    out_ofm(DP_ENTRY);
+                    out_ofm(IC_ENTRY);
                     /* assume no ctag */
                     out_ofm(entry->tag);
                     out_ofm_2(entry->remainder);

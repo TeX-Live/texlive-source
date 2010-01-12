@@ -1,3 +1,8 @@
+2010-01-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* char_routines.c (compute_ofm_character_info): Fix CHARREPEAT.
+	* tests/repeated.opl: Ajusted.
+
 2010-01-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* char_routines.c (check_existence_and_safety,
