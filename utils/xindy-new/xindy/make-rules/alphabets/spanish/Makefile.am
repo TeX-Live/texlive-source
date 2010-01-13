@@ -1,6 +1,6 @@
 ## Makefile fragment for spanish.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,10 +21,18 @@
 subdirs += spanish
 
 nobase_nodist_lang_DATA += \
-	spanish/modern-latin1-lang.xdy spanish/modern-latin1-test.xdy spanish/modern-latin1.xdy \
-	spanish/modern-utf8-lang.xdy spanish/modern-utf8-test.xdy spanish/modern-utf8.xdy \
-	spanish/traditional-latin1-lang.xdy spanish/traditional-latin1-test.xdy spanish/traditional-latin1.xdy \
-	spanish/traditional-utf8-lang.xdy spanish/traditional-utf8-test.xdy spanish/traditional-utf8.xdy
+	spanish/modern-utf8-lang.xdy \
+	spanish/modern-utf8-test.xdy \
+	spanish/modern-utf8.xdy \
+	spanish/modern-latin1-lang.xdy \
+	spanish/modern-latin1-test.xdy \
+	spanish/modern-latin1.xdy \
+	spanish/traditional-utf8-lang.xdy \
+	spanish/traditional-utf8-test.xdy \
+	spanish/traditional-utf8.xdy \
+	spanish/traditional-latin1-lang.xdy \
+	spanish/traditional-latin1-test.xdy \
+	spanish/traditional-latin1.xdy
 
 DOCS_LATIN1 += \
 	spanish/modern-latin1-doc.tex \
@@ -38,9 +46,15 @@ EXTRA_DIST += \
 	spanish/modern-utf8.pl.in \
 	spanish/traditional-utf8.pl.in
 
+dist_noinst_DATA += \
+	spanish/modern-latin1.pl \
+	spanish/traditional-latin1.pl
+
 CLEANFILES += \
-	spanish/modern-latin1.pl spanish/modern-latin1.raw \
-	spanish/modern-utf8.pl spanish/modern-utf8.raw \
-	spanish/traditional-latin1.pl spanish/traditional-latin1.raw \
-	spanish/traditional-utf8.pl spanish/traditional-utf8.raw
+	spanish/modern-utf8.pl \
+	spanish/modern-utf8.raw \
+	spanish/modern-latin1.raw \
+	spanish/traditional-utf8.pl \
+	spanish/traditional-utf8.raw \
+	spanish/traditional-latin1.raw
 

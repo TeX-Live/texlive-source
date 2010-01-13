@@ -1,6 +1,6 @@
 ## Makefile fragment for georgian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,7 +21,9 @@
 subdirs += georgian
 
 nobase_nodist_lang_DATA += \
-	georgian/utf8-lang.xdy georgian/utf8-test.xdy georgian/utf8.xdy
+	georgian/utf8-lang.xdy \
+	georgian/utf8-test.xdy \
+	georgian/utf8.xdy
 
 DOCS_UTF8_OTHER += \
 	georgian/utf8-doc.tex
@@ -30,5 +32,6 @@ EXTRA_DIST += \
 	georgian/utf8.pl.in
 
 CLEANFILES += \
-	georgian/utf8.pl georgian/utf8.raw
+	georgian/utf8.pl \
+	georgian/utf8.raw
 

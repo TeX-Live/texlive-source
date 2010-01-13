@@ -1,6 +1,6 @@
 ## Makefile fragment for croatian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += croatian
 
 nobase_nodist_lang_DATA += \
-	croatian/cp1250-lang.xdy croatian/cp1250-test.xdy croatian/cp1250.xdy \
-	croatian/latin2-lang.xdy croatian/latin2-test.xdy croatian/latin2.xdy \
-	croatian/utf8-lang.xdy croatian/utf8-test.xdy croatian/utf8.xdy
+	croatian/utf8-lang.xdy \
+	croatian/utf8-test.xdy \
+	croatian/utf8.xdy \
+	croatian/cp1250-lang.xdy \
+	croatian/cp1250-test.xdy \
+	croatian/cp1250.xdy \
+	croatian/latin2-lang.xdy \
+	croatian/latin2-test.xdy \
+	croatian/latin2.xdy
 
 DOCS_CP1250 += \
 	croatian/cp1250-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	croatian/utf8.pl.in
 
+dist_noinst_DATA += \
+	croatian/cp1250.pl \
+	croatian/latin2.pl
+
 CLEANFILES += \
-	croatian/cp1250.pl croatian/cp1250.raw \
-	croatian/latin2.pl croatian/latin2.raw \
-	croatian/utf8.pl croatian/utf8.raw
+	croatian/utf8.pl \
+	croatian/utf8.raw \
+	croatian/cp1250.raw \
+	croatian/latin2.raw
 

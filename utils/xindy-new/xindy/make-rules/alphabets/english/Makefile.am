@@ -1,6 +1,6 @@
 ## Makefile fragment for english.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,24 +21,35 @@
 subdirs += english
 
 nobase_nodist_lang_DATA += \
-	english/cp1252-lang.xdy english/cp1252-test.xdy english/cp1252.xdy \
-	english/latin9-lang.xdy  english/latin9-test.xdy english/latin9.xdy \
-	english/utf8-lang.xdy english/utf8-test.xdy english/utf8.xdy
+	english/utf8-lang.xdy \
+	english/utf8-test.xdy \
+	english/utf8.xdy \
+	english/cp1252-lang.xdy \
+	english/cp1252-test.xdy \
+	english/cp1252.xdy \
+	english/latin9-lang.xdy \
+	english/latin9-test.xdy \
+	english/latin9.xdy
 
 DOCS_CP1252 += \
 	english/cp1252-doc.tex
 
-DOCS_UTF8_LAT += \
-	english/utf8-doc.tex
-
 DOCS_LATIN9 += \
 	english/latin9-doc.tex
+
+DOCS_UTF8_LAT += \
+	english/utf8-doc.tex
 
 EXTRA_DIST += \
 	english/utf8.pl.in
 
+dist_noinst_DATA += \
+	english/cp1252.pl \
+	english/latin9.pl
+
 CLEANFILES += \
-	english/cp1252.pl english/cp1252.raw \
-	english/latin9.pl english/latin9.raw  \
-	english/utf8.pl english/utf8.raw
+	english/utf8.pl \
+	english/utf8.raw \
+	english/cp1252.raw \
+	english/latin9.raw
 

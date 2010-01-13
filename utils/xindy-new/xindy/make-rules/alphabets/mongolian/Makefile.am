@@ -1,6 +1,6 @@
 ## Makefile fragment for mongolian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,7 +21,9 @@
 subdirs += mongolian
 
 nobase_nodist_lang_DATA += \
-	mongolian/cyrillic-utf8-lang.xdy mongolian/cyrillic-utf8-test.xdy mongolian/cyrillic-utf8.xdy
+	mongolian/cyrillic-utf8-lang.xdy \
+	mongolian/cyrillic-utf8-test.xdy \
+	mongolian/cyrillic-utf8.xdy
 
 DOCS_UTF8_CYR += \
 	mongolian/cyrillic-utf8-doc.tex
@@ -30,5 +32,6 @@ EXTRA_DIST += \
 	mongolian/cyrillic-utf8.pl.in
 
 CLEANFILES += \
-	mongolian/cyrillic-utf8.pl mongolian/cyrillic-utf8.raw
+	mongolian/cyrillic-utf8.pl \
+	mongolian/cyrillic-utf8.raw
 

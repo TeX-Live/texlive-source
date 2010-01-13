@@ -1,6 +1,6 @@
 ## Makefile fragment for estonian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += estonian
 
 nobase_nodist_lang_DATA += \
-	estonian/cp1252-lang.xdy estonian/cp1252-test.xdy estonian/cp1252.xdy \
-	estonian/latin9-lang.xdy estonian/latin9-test.xdy estonian/latin9.xdy \
-	estonian/utf8-lang.xdy estonian/utf8-test.xdy estonian/utf8.xdy
+	estonian/utf8-lang.xdy \
+	estonian/utf8-test.xdy \
+	estonian/utf8.xdy \
+	estonian/cp1252-lang.xdy \
+	estonian/cp1252-test.xdy \
+	estonian/cp1252.xdy \
+	estonian/latin9-lang.xdy \
+	estonian/latin9-test.xdy \
+	estonian/latin9.xdy
 
 DOCS_CP1252 += \
 	estonian/cp1252-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	estonian/utf8.pl.in
 
+dist_noinst_DATA += \
+	estonian/cp1252.pl \
+	estonian/latin9.pl
+
 CLEANFILES += \
-	estonian/cp1252.pl estonian/cp1252.raw \
-	estonian/latin9.pl estonian/latin9.raw \
-	estonian/utf8.pl estonian/utf8.raw
+	estonian/utf8.pl \
+	estonian/utf8.raw \
+	estonian/cp1252.raw \
+	estonian/latin9.raw
 

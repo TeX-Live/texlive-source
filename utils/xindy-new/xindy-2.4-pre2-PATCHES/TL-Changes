@@ -17,12 +17,11 @@ Moved user-commands/texindy => user-commands/texindy.in and removed
 
 Removed:
 	make-rules/alphabets/*/*.xdy
-	modules/*/{,*/}Makefile.{am,in}
 
-Removed:
-	make-rules/alphabets/*/*.pl
-except
-	make-rules/alphabets/general/template.pl
-	make-rules/alphabets/klingon/translit-ascii.pl
-	make-rules/alphabets/test1/test1.pl
+Added :
+	make-rules/alphabets/mk-lang.sh
+	make-rules/alphabets/lang.defs
+
+Executed 'sh mk-lang.sh' to rebuild the Makefile fragments
+	make-rules/alphabets/*/Makefile.am
 

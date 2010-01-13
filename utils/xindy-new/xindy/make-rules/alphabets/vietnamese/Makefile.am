@@ -1,6 +1,6 @@
 ## Makefile fragment for vietnamese.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,7 +21,9 @@
 subdirs += vietnamese
 
 nobase_nodist_lang_DATA += \
-	vietnamese/utf8-lang.xdy vietnamese/utf8-test.xdy vietnamese/utf8.xdy
+	vietnamese/utf8-lang.xdy \
+	vietnamese/utf8-test.xdy \
+	vietnamese/utf8.xdy
 
 DOCS_UTF8_LAT += \
 	vietnamese/utf8-doc.tex
@@ -30,5 +32,6 @@ EXTRA_DIST += \
 	vietnamese/utf8.pl.in
 
 CLEANFILES += \
-	vietnamese/utf8.pl vietnamese/utf8.raw
+	vietnamese/utf8.pl \
+	vietnamese/utf8.raw
 

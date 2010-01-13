@@ -1,6 +1,6 @@
 ## Makefile fragment for lithuanian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,8 +21,12 @@
 subdirs += lithuanian
 
 nobase_nodist_lang_DATA += \
-	lithuanian/latin4-lang.xdy lithuanian/latin4-test.xdy lithuanian/latin4.xdy \
-	lithuanian/utf8-lang.xdy lithuanian/utf8-test.xdy lithuanian/utf8.xdy
+	lithuanian/utf8-lang.xdy \
+	lithuanian/utf8-test.xdy \
+	lithuanian/utf8.xdy \
+	lithuanian/latin4-lang.xdy \
+	lithuanian/latin4-test.xdy \
+	lithuanian/latin4.xdy
 
 DOCS_LATIN4 += \
 	lithuanian/latin4-doc.tex
@@ -33,7 +37,11 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	lithuanian/utf8.pl.in
 
+dist_noinst_DATA += \
+	lithuanian/latin4.pl
+
 CLEANFILES += \
-	lithuanian/latin4.pl lithuanian/latin4.raw \
-	lithuanian/utf8.pl lithuanian/utf8.raw
+	lithuanian/utf8.pl \
+	lithuanian/utf8.raw \
+	lithuanian/latin4.raw
 

@@ -33,8 +33,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
-	$(srcdir)/albanian/Makefile.am \
+DIST_COMMON = $(dist_noinst_DATA) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in $(srcdir)/albanian/Makefile.am \
 	$(srcdir)/belarusian/Makefile.am \
 	$(srcdir)/bulgarian/Makefile.am $(srcdir)/croatian/Makefile.am \
 	$(srcdir)/czech/Makefile.am $(srcdir)/danish/Makefile.am \
@@ -95,7 +95,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(docdir)" "$(DESTDIR)$(langdir)"
-DATA = $(doc_DATA) $(nobase_nodist_lang_DATA)
+DATA = $(dist_noinst_DATA) $(doc_DATA) $(nobase_nodist_lang_DATA)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 pkglibdir = @pkglibdir@
 ACLOCAL = @ACLOCAL@
@@ -204,187 +204,218 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 langdir = $(pkglibdir)/modules/lang
-nobase_nodist_lang_DATA = albanian/latin1-lang.xdy \
-	albanian/latin1-test.xdy albanian/latin1.xdy \
-	albanian/utf8-lang.xdy albanian/utf8-test.xdy \
-	albanian/utf8.xdy belarusian/cp1251-lang.xdy \
-	belarusian/cp1251-test.xdy belarusian/cp1251.xdy \
+nobase_nodist_lang_DATA = albanian/utf8-lang.xdy \
+	albanian/utf8-test.xdy albanian/utf8.xdy \
+	albanian/latin1-lang.xdy albanian/latin1-test.xdy \
+	albanian/latin1.xdy belarusian/utf8-lang.xdy \
+	belarusian/utf8-test.xdy belarusian/utf8.xdy \
 	belarusian/iso88595-lang.xdy belarusian/iso88595-test.xdy \
 	belarusian/iso88595.xdy belarusian/isoir111-lang.xdy \
 	belarusian/isoir111-test.xdy belarusian/isoir111.xdy \
-	belarusian/utf8-lang.xdy belarusian/utf8-test.xdy \
-	belarusian/utf8.xdy bulgarian/cp1251-lang.xdy \
-	bulgarian/cp1251-test.xdy bulgarian/cp1251.xdy \
+	belarusian/cp1251-lang.xdy belarusian/cp1251-test.xdy \
+	belarusian/cp1251.xdy bulgarian/utf8-lang.xdy \
+	bulgarian/utf8-test.xdy bulgarian/utf8.xdy \
 	bulgarian/iso88595-lang.xdy bulgarian/iso88595-test.xdy \
 	bulgarian/iso88595.xdy bulgarian/koi8-r-lang.xdy \
 	bulgarian/koi8-r-test.xdy bulgarian/koi8-r.xdy \
-	bulgarian/utf8-lang.xdy bulgarian/utf8-test.xdy \
-	bulgarian/utf8.xdy croatian/cp1250-lang.xdy \
-	croatian/cp1250-test.xdy croatian/cp1250.xdy \
-	croatian/latin2-lang.xdy croatian/latin2-test.xdy \
-	croatian/latin2.xdy croatian/utf8-lang.xdy \
-	croatian/utf8-test.xdy croatian/utf8.xdy czech/cp1250-lang.xdy \
-	czech/cp1250-test.xdy czech/cp1250.xdy czech/latin2-lang.xdy \
-	czech/latin2-test.xdy czech/latin2.xdy czech/utf8-lang.xdy \
-	czech/utf8-test.xdy czech/utf8.xdy danish/cp1252-lang.xdy \
-	danish/cp1252-test.xdy danish/cp1252.xdy \
-	danish/latin9-lang.xdy danish/latin9-test.xdy \
-	danish/latin9.xdy danish/utf8-lang.xdy danish/utf8-test.xdy \
-	danish/utf8.xdy dutch/ij-as-ij-latin1-lang.xdy \
-	dutch/ij-as-ij-latin1-test.xdy dutch/ij-as-ij-latin1.xdy \
+	bulgarian/cp1251-lang.xdy bulgarian/cp1251-test.xdy \
+	bulgarian/cp1251.xdy croatian/utf8-lang.xdy \
+	croatian/utf8-test.xdy croatian/utf8.xdy \
+	croatian/cp1250-lang.xdy croatian/cp1250-test.xdy \
+	croatian/cp1250.xdy croatian/latin2-lang.xdy \
+	croatian/latin2-test.xdy croatian/latin2.xdy \
+	czech/utf8-lang.xdy czech/utf8-test.xdy czech/utf8.xdy \
+	czech/cp1250-lang.xdy czech/cp1250-test.xdy czech/cp1250.xdy \
+	czech/latin2-lang.xdy czech/latin2-test.xdy czech/latin2.xdy \
+	danish/utf8-lang.xdy danish/utf8-test.xdy danish/utf8.xdy \
+	danish/cp1252-lang.xdy danish/cp1252-test.xdy \
+	danish/cp1252.xdy danish/latin9-lang.xdy \
+	danish/latin9-test.xdy danish/latin9.xdy \
 	dutch/ij-as-ij-utf8-lang.xdy dutch/ij-as-ij-utf8-test.xdy \
-	dutch/ij-as-ij-utf8.xdy dutch/ij-as-y-utf8-lang.xdy \
-	dutch/ij-as-y-utf8-test.xdy dutch/ij-as-y-utf8.xdy \
-	english/cp1252-lang.xdy english/cp1252-test.xdy \
-	english/cp1252.xdy english/latin9-lang.xdy \
-	english/latin9-test.xdy english/latin9.xdy \
-	english/utf8-lang.xdy english/utf8-test.xdy english/utf8.xdy \
-	esperanto/latin3-lang.xdy esperanto/latin3-test.xdy \
-	esperanto/latin3.xdy esperanto/utf8-lang.xdy \
+	dutch/ij-as-ij-utf8.xdy dutch/ij-as-ij-latin1-lang.xdy \
+	dutch/ij-as-ij-latin1-test.xdy dutch/ij-as-ij-latin1.xdy \
+	dutch/ij-as-y-utf8-lang.xdy dutch/ij-as-y-utf8-test.xdy \
+	dutch/ij-as-y-utf8.xdy english/utf8-lang.xdy \
+	english/utf8-test.xdy english/utf8.xdy english/cp1252-lang.xdy \
+	english/cp1252-test.xdy english/cp1252.xdy \
+	english/latin9-lang.xdy english/latin9-test.xdy \
+	english/latin9.xdy esperanto/utf8-lang.xdy \
 	esperanto/utf8-test.xdy esperanto/utf8.xdy \
+	esperanto/latin3-lang.xdy esperanto/latin3-test.xdy \
+	esperanto/latin3.xdy estonian/utf8-lang.xdy \
+	estonian/utf8-test.xdy estonian/utf8.xdy \
 	estonian/cp1252-lang.xdy estonian/cp1252-test.xdy \
 	estonian/cp1252.xdy estonian/latin9-lang.xdy \
 	estonian/latin9-test.xdy estonian/latin9.xdy \
-	estonian/utf8-lang.xdy estonian/utf8-test.xdy \
-	estonian/utf8.xdy finnish/cp1252-lang.xdy \
-	finnish/cp1252-test.xdy finnish/cp1252.xdy \
-	finnish/latin9-lang.xdy finnish/latin9-test.xdy \
-	finnish/latin9.xdy finnish/utf8-lang.xdy finnish/utf8-test.xdy \
-	finnish/utf8.xdy french/cp1252-lang.xdy french/cp1252-test.xdy \
+	finnish/utf8-lang.xdy finnish/utf8-test.xdy finnish/utf8.xdy \
+	finnish/cp1252-lang.xdy finnish/cp1252-test.xdy \
+	finnish/cp1252.xdy finnish/latin9-lang.xdy \
+	finnish/latin9-test.xdy finnish/latin9.xdy \
+	french/utf8-lang.xdy french/utf8-test.xdy french/utf8.xdy \
+	french/cp1252-lang.xdy french/cp1252-test.xdy \
 	french/cp1252.xdy french/latin9-lang.xdy \
-	french/latin9-test.xdy french/latin9.xdy french/utf8-lang.xdy \
-	french/utf8-test.xdy french/utf8.xdy general/cp1252-lang.xdy \
+	french/latin9-test.xdy french/latin9.xdy general/utf8-lang.xdy \
+	general/utf8-test.xdy general/utf8.xdy general/cp1252-lang.xdy \
 	general/cp1252-test.xdy general/cp1252.xdy \
 	general/cp850-lang.xdy general/cp850-test.xdy \
 	general/cp850.xdy general/latin9-lang.xdy \
 	general/latin9-test.xdy general/latin9.xdy \
-	general/utf8-lang.xdy general/utf8-test.xdy general/utf8.xdy \
 	georgian/utf8-lang.xdy georgian/utf8-test.xdy \
 	georgian/utf8.xdy german/braille-utf8-lang.xdy \
 	german/braille-utf8-test.xdy german/braille-utf8.xdy \
-	german/din5007-latin1-lang.xdy german/din5007-latin1-test.xdy \
-	german/din5007-latin1.xdy german/din5007-utf8-lang.xdy \
-	german/din5007-utf8-test.xdy german/din5007-utf8.xdy \
-	german/duden-latin1-lang.xdy german/duden-latin1-test.xdy \
-	german/duden-latin1.xdy german/duden-utf8-lang.xdy \
-	german/duden-utf8-test.xdy german/duden-utf8.xdy \
+	german/din5007-utf8-lang.xdy german/din5007-utf8-test.xdy \
+	german/din5007-utf8.xdy german/din5007-latin1-lang.xdy \
+	german/din5007-latin1-test.xdy german/din5007-latin1.xdy \
+	german/duden-utf8-lang.xdy german/duden-utf8-test.xdy \
+	german/duden-utf8.xdy german/duden-latin1-lang.xdy \
+	german/duden-latin1-test.xdy german/duden-latin1.xdy \
+	greek/utf8-lang.xdy greek/utf8-test.xdy greek/utf8.xdy \
 	greek/iso88597-lang.xdy greek/iso88597-test.xdy \
 	greek/iso88597.xdy greek/polytonic-utf8-lang.xdy \
 	greek/polytonic-utf8-test.xdy greek/polytonic-utf8.xdy \
-	greek/translit-latin4-lang.xdy greek/translit-latin4-test.xdy \
-	greek/translit-latin4.xdy greek/translit-utf8-lang.xdy \
-	greek/translit-utf8-test.xdy greek/translit-utf8.xdy \
-	greek/utf8-lang.xdy greek/utf8-test.xdy greek/utf8.xdy \
+	greek/translit-utf8-lang.xdy greek/translit-utf8-test.xdy \
+	greek/translit-utf8.xdy greek/translit-latin4-lang.xdy \
+	greek/translit-latin4-test.xdy greek/translit-latin4.xdy \
 	gypsy/northrussian-utf8-lang.xdy \
 	gypsy/northrussian-utf8-test.xdy gypsy/northrussian-utf8.xdy \
 	hausa/utf8-lang.xdy hausa/utf8-test.xdy hausa/utf8.xdy \
+	hebrew/utf8-lang.xdy hebrew/utf8-test.xdy hebrew/utf8.xdy \
 	hebrew/iso88598-lang.xdy hebrew/iso88598-test.xdy \
-	hebrew/iso88598.xdy hebrew/utf8-lang.xdy hebrew/utf8-test.xdy \
-	hebrew/utf8.xdy hungarian/cp1250-lang.xdy \
-	hungarian/cp1250-test.xdy hungarian/cp1250.xdy \
-	hungarian/latin2-lang.xdy hungarian/latin2-test.xdy \
-	hungarian/latin2.xdy hungarian/utf8-lang.xdy \
+	hebrew/iso88598.xdy hungarian/utf8-lang.xdy \
 	hungarian/utf8-test.xdy hungarian/utf8.xdy \
-	icelandic/cp1252-lang.xdy icelandic/cp1252-test.xdy \
-	icelandic/cp1252.xdy icelandic/latin9-lang.xdy \
-	icelandic/latin9-test.xdy icelandic/latin9.xdy \
+	hungarian/cp1250-lang.xdy hungarian/cp1250-test.xdy \
+	hungarian/cp1250.xdy hungarian/latin2-lang.xdy \
+	hungarian/latin2-test.xdy hungarian/latin2.xdy \
 	icelandic/utf8-lang.xdy icelandic/utf8-test.xdy \
-	icelandic/utf8.xdy italian/latin1-lang.xdy \
+	icelandic/utf8.xdy icelandic/cp1252-lang.xdy \
+	icelandic/cp1252-test.xdy icelandic/cp1252.xdy \
+	icelandic/latin9-lang.xdy icelandic/latin9-test.xdy \
+	icelandic/latin9.xdy italian/utf8-lang.xdy \
+	italian/utf8-test.xdy italian/utf8.xdy italian/latin1-lang.xdy \
 	italian/latin1-test.xdy italian/latin1.xdy \
-	italian/utf8-lang.xdy italian/utf8-test.xdy italian/utf8.xdy \
 	klingon/utf8-lang.xdy klingon/utf8-test.xdy klingon/utf8.xdy \
-	kurdish/bedirxan-latin5-lang.xdy \
-	kurdish/bedirxan-latin5-test.xdy kurdish/bedirxan-latin5.xdy \
 	kurdish/bedirxan-utf8-lang.xdy kurdish/bedirxan-utf8-test.xdy \
-	kurdish/bedirxan-utf8.xdy kurdish/turkish-i-latin5-lang.xdy \
-	kurdish/turkish-i-latin5-test.xdy kurdish/turkish-i-latin5.xdy \
+	kurdish/bedirxan-utf8.xdy kurdish/bedirxan-latin5-lang.xdy \
+	kurdish/bedirxan-latin5-test.xdy kurdish/bedirxan-latin5.xdy \
 	kurdish/turkish-i-utf8-lang.xdy \
 	kurdish/turkish-i-utf8-test.xdy kurdish/turkish-i-utf8.xdy \
+	kurdish/turkish-i-latin5-lang.xdy \
+	kurdish/turkish-i-latin5-test.xdy kurdish/turkish-i-latin5.xdy \
 	latin/utf8-lang.xdy latin/utf8-test.xdy latin/utf8.xdy \
+	latvian/utf8-lang.xdy latvian/utf8-test.xdy latvian/utf8.xdy \
 	latvian/latin4-lang.xdy latvian/latin4-test.xdy \
-	latvian/latin4.xdy latvian/utf8-lang.xdy latvian/utf8-test.xdy \
-	latvian/utf8.xdy lithuanian/latin4-lang.xdy \
-	lithuanian/latin4-test.xdy lithuanian/latin4.xdy \
-	lithuanian/utf8-lang.xdy lithuanian/utf8-test.xdy \
-	lithuanian/utf8.xdy lower-sorbian/cp1250-lang.xdy \
-	lower-sorbian/cp1250-test.xdy lower-sorbian/cp1250.xdy \
-	lower-sorbian/latin2-lang.xdy lower-sorbian/latin2-test.xdy \
-	lower-sorbian/latin2.xdy lower-sorbian/utf8-lang.xdy \
+	latvian/latin4.xdy lithuanian/utf8-lang.xdy \
+	lithuanian/utf8-test.xdy lithuanian/utf8.xdy \
+	lithuanian/latin4-lang.xdy lithuanian/latin4-test.xdy \
+	lithuanian/latin4.xdy lower-sorbian/utf8-lang.xdy \
 	lower-sorbian/utf8-test.xdy lower-sorbian/utf8.xdy \
-	macedonian/cp1251-lang.xdy macedonian/cp1251-test.xdy \
-	macedonian/cp1251.xdy macedonian/iso88595-lang.xdy \
+	lower-sorbian/cp1250-lang.xdy lower-sorbian/cp1250-test.xdy \
+	lower-sorbian/cp1250.xdy lower-sorbian/latin2-lang.xdy \
+	lower-sorbian/latin2-test.xdy lower-sorbian/latin2.xdy \
+	macedonian/utf8-lang.xdy macedonian/utf8-test.xdy \
+	macedonian/utf8.xdy macedonian/iso88595-lang.xdy \
 	macedonian/iso88595-test.xdy macedonian/iso88595.xdy \
 	macedonian/isoir111-lang.xdy macedonian/isoir111-test.xdy \
-	macedonian/isoir111.xdy macedonian/utf8-lang.xdy \
-	macedonian/utf8-test.xdy macedonian/utf8.xdy \
+	macedonian/isoir111.xdy macedonian/cp1251-lang.xdy \
+	macedonian/cp1251-test.xdy macedonian/cp1251.xdy \
 	mongolian/cyrillic-utf8-lang.xdy \
 	mongolian/cyrillic-utf8-test.xdy mongolian/cyrillic-utf8.xdy \
-	norwegian/latin1-lang.xdy norwegian/latin1-test.xdy \
-	norwegian/latin1.xdy norwegian/utf8-lang.xdy \
-	norwegian/utf8-test.xdy norwegian/utf8.xdy \
+	norwegian/utf8-lang.xdy norwegian/utf8-test.xdy \
+	norwegian/utf8.xdy norwegian/latin1-lang.xdy \
+	norwegian/latin1-test.xdy norwegian/latin1.xdy \
+	polish/utf8-lang.xdy polish/utf8-test.xdy polish/utf8.xdy \
 	polish/cp1250-lang.xdy polish/cp1250-test.xdy \
 	polish/cp1250.xdy polish/latin2-lang.xdy \
-	polish/latin2-test.xdy polish/latin2.xdy polish/utf8-lang.xdy \
-	polish/utf8-test.xdy polish/utf8.xdy \
-	portuguese/latin1-lang.xdy portuguese/latin1-test.xdy \
-	portuguese/latin1.xdy portuguese/utf8-lang.xdy \
-	portuguese/utf8-test.xdy portuguese/utf8.xdy \
-	romanian/latin2-lang.xdy romanian/latin2-test.xdy \
-	romanian/latin2.xdy romanian/utf8-lang.xdy \
-	romanian/utf8-test.xdy romanian/utf8.xdy \
+	polish/latin2-test.xdy polish/latin2.xdy \
+	portuguese/utf8-lang.xdy portuguese/utf8-test.xdy \
+	portuguese/utf8.xdy portuguese/latin1-lang.xdy \
+	portuguese/latin1-test.xdy portuguese/latin1.xdy \
+	romanian/utf8-lang.xdy romanian/utf8-test.xdy \
+	romanian/utf8.xdy romanian/latin2-lang.xdy \
+	romanian/latin2-test.xdy romanian/latin2.xdy \
+	russian/utf8-lang.xdy russian/utf8-test.xdy russian/utf8.xdy \
+	russian/iso88595-lang.xdy russian/iso88595-test.xdy \
+	russian/iso88595.xdy russian/koi8-r-lang.xdy \
+	russian/koi8-r-test.xdy russian/koi8-r.xdy \
 	russian/cp1251-lang.xdy russian/cp1251-test.xdy \
-	russian/cp1251.xdy russian/iso88595-lang.xdy \
-	russian/iso88595-test.xdy russian/iso88595.xdy \
-	russian/koi8-r-lang.xdy russian/koi8-r-test.xdy \
-	russian/koi8-r.xdy russian/translit-iso-utf8-lang.xdy \
+	russian/cp1251.xdy russian/translit-iso-utf8-lang.xdy \
 	russian/translit-iso-utf8-test.xdy \
-	russian/translit-iso-utf8.xdy russian/utf8-lang.xdy \
-	russian/utf8-test.xdy russian/utf8.xdy serbian/cp1251-lang.xdy \
-	serbian/cp1251-test.xdy serbian/cp1251.xdy \
+	russian/translit-iso-utf8.xdy serbian/utf8-lang.xdy \
+	serbian/utf8-test.xdy serbian/utf8.xdy \
 	serbian/iso88595-lang.xdy serbian/iso88595-test.xdy \
 	serbian/iso88595.xdy serbian/isoir111-lang.xdy \
 	serbian/isoir111-test.xdy serbian/isoir111.xdy \
-	serbian/utf8-lang.xdy serbian/utf8-test.xdy serbian/utf8.xdy \
+	serbian/cp1251-lang.xdy serbian/cp1251-test.xdy \
+	serbian/cp1251.xdy slovak/large-utf8-lang.xdy \
+	slovak/large-utf8-test.xdy slovak/large-utf8.xdy \
 	slovak/large-cp1250-lang.xdy slovak/large-cp1250-test.xdy \
 	slovak/large-cp1250.xdy slovak/large-latin2-lang.xdy \
 	slovak/large-latin2-test.xdy slovak/large-latin2.xdy \
-	slovak/large-utf8-lang.xdy slovak/large-utf8-test.xdy \
-	slovak/large-utf8.xdy slovak/small-cp1250-lang.xdy \
+	slovak/small-utf8-lang.xdy slovak/small-utf8-test.xdy \
+	slovak/small-utf8.xdy slovak/small-cp1250-lang.xdy \
 	slovak/small-cp1250-test.xdy slovak/small-cp1250.xdy \
 	slovak/small-latin2-lang.xdy slovak/small-latin2-test.xdy \
-	slovak/small-latin2.xdy slovak/small-utf8-lang.xdy \
-	slovak/small-utf8-test.xdy slovak/small-utf8.xdy \
+	slovak/small-latin2.xdy slovenian/utf8-lang.xdy \
+	slovenian/utf8-test.xdy slovenian/utf8.xdy \
 	slovenian/cp1250-lang.xdy slovenian/cp1250-test.xdy \
 	slovenian/cp1250.xdy slovenian/latin2-lang.xdy \
 	slovenian/latin2-test.xdy slovenian/latin2.xdy \
-	slovenian/utf8-lang.xdy slovenian/utf8-test.xdy \
-	slovenian/utf8.xdy spanish/modern-latin1-lang.xdy \
-	spanish/modern-latin1-test.xdy spanish/modern-latin1.xdy \
 	spanish/modern-utf8-lang.xdy spanish/modern-utf8-test.xdy \
-	spanish/modern-utf8.xdy spanish/traditional-latin1-lang.xdy \
-	spanish/traditional-latin1-test.xdy \
-	spanish/traditional-latin1.xdy \
+	spanish/modern-utf8.xdy spanish/modern-latin1-lang.xdy \
+	spanish/modern-latin1-test.xdy spanish/modern-latin1.xdy \
 	spanish/traditional-utf8-lang.xdy \
 	spanish/traditional-utf8-test.xdy spanish/traditional-utf8.xdy \
-	swedish/cp1252-lang.xdy swedish/cp1252-test.xdy \
-	swedish/cp1252.xdy swedish/latin9-lang.xdy \
-	swedish/latin9-test.xdy swedish/latin9.xdy \
-	swedish/utf8-lang.xdy swedish/utf8-test.xdy swedish/utf8.xdy \
-	turkish/latin3-lang.xdy turkish/latin3-test.xdy \
-	turkish/latin3.xdy turkish/latin5-lang.xdy \
-	turkish/latin5-test.xdy turkish/latin5.xdy \
-	turkish/utf8-lang.xdy turkish/utf8-test.xdy turkish/utf8.xdy \
-	ukrainian/cp1251-lang.xdy ukrainian/cp1251-test.xdy \
-	ukrainian/cp1251.xdy ukrainian/koi8-u-lang.xdy \
-	ukrainian/koi8-u-test.xdy ukrainian/koi8-u.xdy \
-	ukrainian/utf8-lang.xdy ukrainian/utf8-test.xdy \
-	ukrainian/utf8.xdy upper-sorbian/cp1250-lang.xdy \
+	spanish/traditional-latin1-lang.xdy \
+	spanish/traditional-latin1-test.xdy \
+	spanish/traditional-latin1.xdy swedish/utf8-lang.xdy \
+	swedish/utf8-test.xdy swedish/utf8.xdy swedish/cp1252-lang.xdy \
+	swedish/cp1252-test.xdy swedish/cp1252.xdy \
+	swedish/latin9-lang.xdy swedish/latin9-test.xdy \
+	swedish/latin9.xdy turkish/utf8-lang.xdy turkish/utf8-test.xdy \
+	turkish/utf8.xdy turkish/latin3-lang.xdy \
+	turkish/latin3-test.xdy turkish/latin3.xdy \
+	turkish/latin5-lang.xdy turkish/latin5-test.xdy \
+	turkish/latin5.xdy ukrainian/utf8-lang.xdy \
+	ukrainian/utf8-test.xdy ukrainian/utf8.xdy \
+	ukrainian/koi8-u-lang.xdy ukrainian/koi8-u-test.xdy \
+	ukrainian/koi8-u.xdy ukrainian/cp1251-lang.xdy \
+	ukrainian/cp1251-test.xdy ukrainian/cp1251.xdy \
+	upper-sorbian/utf8-lang.xdy upper-sorbian/utf8-test.xdy \
+	upper-sorbian/utf8.xdy upper-sorbian/cp1250-lang.xdy \
 	upper-sorbian/cp1250-test.xdy upper-sorbian/cp1250.xdy \
 	upper-sorbian/latin2-lang.xdy upper-sorbian/latin2-test.xdy \
-	upper-sorbian/latin2.xdy upper-sorbian/utf8-lang.xdy \
-	upper-sorbian/utf8-test.xdy upper-sorbian/utf8.xdy \
-	vietnamese/utf8-lang.xdy vietnamese/utf8-test.xdy \
-	vietnamese/utf8.xdy
+	upper-sorbian/latin2.xdy vietnamese/utf8-lang.xdy \
+	vietnamese/utf8-test.xdy vietnamese/utf8.xdy
+dist_noinst_DATA = albanian/latin1.pl belarusian/iso88595.pl \
+	belarusian/isoir111.pl belarusian/cp1251.pl \
+	bulgarian/iso88595.pl bulgarian/koi8-r.pl bulgarian/cp1251.pl \
+	croatian/cp1250.pl croatian/latin2.pl czech/cp1250.pl \
+	czech/latin2.pl danish/cp1252.pl danish/latin9.pl \
+	dutch/ij-as-ij-latin1.pl english/cp1252.pl english/latin9.pl \
+	esperanto/latin3.pl estonian/cp1252.pl estonian/latin9.pl \
+	finnish/cp1252.pl finnish/latin9.pl french/cp1252.pl \
+	french/latin9.pl general/cp1252.pl general/cp850.pl \
+	general/latin9.pl general/template.pl german/din5007-latin1.pl \
+	german/duden-latin1.pl greek/iso88597.pl \
+	greek/translit-latin4.pl hebrew/iso88598.pl \
+	hungarian/cp1250.pl hungarian/latin2.pl icelandic/cp1252.pl \
+	icelandic/latin9.pl italian/latin1.pl \
+	klingon/translit-ascii.pl kurdish/bedirxan-latin5.pl \
+	kurdish/turkish-i-latin5.pl latvian/latin4.pl \
+	lithuanian/latin4.pl lower-sorbian/cp1250.pl \
+	lower-sorbian/latin2.pl macedonian/iso88595.pl \
+	macedonian/isoir111.pl macedonian/cp1251.pl \
+	norwegian/latin1.pl polish/cp1250.pl polish/latin2.pl \
+	portuguese/latin1.pl romanian/latin2.pl russian/iso88595.pl \
+	russian/koi8-r.pl russian/cp1251.pl serbian/iso88595.pl \
+	serbian/isoir111.pl serbian/cp1251.pl slovak/large-cp1250.pl \
+	slovak/large-latin2.pl slovak/small-cp1250.pl \
+	slovak/small-latin2.pl slovenian/cp1250.pl slovenian/latin2.pl \
+	spanish/modern-latin1.pl spanish/traditional-latin1.pl \
+	swedish/cp1252.pl swedish/latin9.pl test1/test1.pl \
+	turkish/latin3.pl turkish/latin5.pl ukrainian/koi8-u.pl \
+	ukrainian/cp1251.pl upper-sorbian/cp1250.pl \
+	upper-sorbian/latin2.pl
 DOCS_CP1250 = croatian/cp1250-doc.tex czech/cp1250-doc.tex \
 	hungarian/cp1250-doc.tex lower-sorbian/cp1250-doc.tex \
 	polish/cp1250-doc.tex slovak/large-cp1250-doc.tex \
@@ -403,7 +434,7 @@ DOCS_LATIN1 = albanian/latin1-doc.tex dutch/ij-as-ij-latin1-doc.tex \
 DOCS_LATIN2 = croatian/latin2-doc.tex czech/latin2-doc.tex \
 	hungarian/latin2-doc.tex lower-sorbian/latin2-doc.tex \
 	polish/latin2-doc.tex romanian/latin2-doc.tex \
-	slovak/small-latin2-doc.tex slovak/large-latin2-doc.tex \
+	slovak/large-latin2-doc.tex slovak/small-latin2-doc.tex \
 	slovenian/latin2-doc.tex upper-sorbian/latin2-doc.tex
 DOCS_LATIN3 = esperanto/latin3-doc.tex turkish/latin3-doc.tex
 DOCS_LATIN4 = greek/translit-latin4-doc.tex latvian/latin4-doc.tex \
@@ -433,19 +464,19 @@ DOCS_UTF8_LAT = albanian/utf8-doc.tex croatian/utf8-doc.tex \
 	estonian/utf8-doc.tex finnish/utf8-doc.tex french/utf8-doc.tex \
 	general/utf8-doc.tex german/din5007-utf8-doc.tex \
 	german/duden-utf8-doc.tex greek/translit-utf8-doc.tex \
-	greek/utf8-doc.tex gypsy/northrussian-utf8-doc.tex \
-	hausa/utf8-doc.tex hungarian/utf8-doc.tex \
-	icelandic/utf8-doc.tex italian/utf8-doc.tex \
-	kurdish/bedirxan-utf8-doc.tex kurdish/turkish-i-utf8-doc.tex \
-	latin/utf8-doc.tex latvian/utf8-doc.tex \
-	lithuanian/utf8-doc.tex lower-sorbian/utf8-doc.tex \
-	norwegian/utf8-doc.tex polish/utf8-doc.tex \
-	portuguese/utf8-doc.tex romanian/utf8-doc.tex \
-	russian/translit-iso-utf8-doc.tex slovak/small-utf8-doc.tex \
-	slovak/large-utf8-doc.tex slovenian/utf8-doc.tex \
-	spanish/modern-utf8-doc.tex spanish/traditional-utf8-doc.tex \
-	swedish/utf8-doc.tex turkish/utf8-doc.tex \
-	upper-sorbian/utf8-doc.tex vietnamese/utf8-doc.tex
+	gypsy/northrussian-utf8-doc.tex hausa/utf8-doc.tex \
+	hungarian/utf8-doc.tex icelandic/utf8-doc.tex \
+	italian/utf8-doc.tex kurdish/bedirxan-utf8-doc.tex \
+	kurdish/turkish-i-utf8-doc.tex latin/utf8-doc.tex \
+	latvian/utf8-doc.tex lithuanian/utf8-doc.tex \
+	lower-sorbian/utf8-doc.tex norwegian/utf8-doc.tex \
+	polish/utf8-doc.tex portuguese/utf8-doc.tex \
+	romanian/utf8-doc.tex russian/translit-iso-utf8-doc.tex \
+	slovak/large-utf8-doc.tex slovak/small-utf8-doc.tex \
+	slovenian/utf8-doc.tex spanish/modern-utf8-doc.tex \
+	spanish/traditional-utf8-doc.tex swedish/utf8-doc.tex \
+	turkish/utf8-doc.tex upper-sorbian/utf8-doc.tex \
+	vietnamese/utf8-doc.tex
 DOCS_UTF8_CYR = belarusian/utf8-doc.tex bulgarian/utf8-doc.tex \
 	macedonian/utf8-doc.tex mongolian/cyrillic-utf8-doc.tex \
 	russian/utf8-doc.tex serbian/utf8-doc.tex \
@@ -453,128 +484,99 @@ DOCS_UTF8_CYR = belarusian/utf8-doc.tex bulgarian/utf8-doc.tex \
 DOCS_UTF8_OTHER = georgian/utf8-doc.tex german/braille-utf8-doc.tex \
 	greek/utf8-doc.tex greek/polytonic-utf8-doc.tex \
 	hebrew/utf8-doc.tex klingon/utf8-doc.tex
-EXTRA_DIST = albanian/utf8.pl.in belarusian/utf8.pl.in \
-	bulgarian/utf8.pl.in croatian/utf8.pl.in czech/utf8.pl.in \
-	danish/utf8.pl.in dutch/ij-as-ij-utf8.pl.in \
+EXTRA_DIST = mk-lang.sh lang.defs albanian/utf8.pl.in \
+	belarusian/utf8.pl.in bulgarian/utf8.pl.in croatian/utf8.pl.in \
+	czech/utf8.pl.in danish/utf8.pl.in dutch/ij-as-ij-utf8.pl.in \
 	dutch/ij-as-y-utf8.pl.in english/utf8.pl.in \
 	esperanto/utf8.pl.in estonian/utf8.pl.in finnish/utf8.pl.in \
-	french/utf8.pl.in general/template.pl general/utf8.pl.in \
-	georgian/utf8.pl.in german/braille-utf8.pl.in \
-	german/duden-utf8.pl.in german/din5007-utf8.pl.in \
+	french/utf8.pl.in general/utf8.pl.in georgian/utf8.pl.in \
+	german/braille-utf8.pl.in german/din5007-utf8.pl.in \
+	german/duden-utf8.pl.in greek/utf8.pl.in \
 	greek/polytonic-utf8.pl.in greek/translit-utf8.pl.in \
-	greek/utf8.pl.in gypsy/northrussian-utf8.pl.in \
-	hausa/utf8.pl.in hebrew/utf8.pl.in hungarian/utf8.pl.in \
-	icelandic/utf8.pl.in italian/utf8.pl.in klingon/utf8.pl.in \
-	klingon/translit-ascii.pl kurdish/bedirxan-utf8.pl.in \
-	kurdish/turkish-i-utf8.pl.in latin/utf8.pl.in \
-	latvian/utf8.pl.in lithuanian/utf8.pl.in \
+	gypsy/northrussian-utf8.pl.in hausa/utf8.pl.in \
+	hebrew/utf8.pl.in hungarian/utf8.pl.in icelandic/utf8.pl.in \
+	italian/utf8.pl.in klingon/utf8.pl.in \
+	kurdish/bedirxan-utf8.pl.in kurdish/turkish-i-utf8.pl.in \
+	latin/utf8.pl.in latvian/utf8.pl.in lithuanian/utf8.pl.in \
 	lower-sorbian/utf8.pl.in macedonian/utf8.pl.in \
 	mongolian/cyrillic-utf8.pl.in norwegian/utf8.pl.in \
 	polish/utf8.pl.in portuguese/utf8.pl.in rom-comma-kludge.sed \
-	romanian/utf8.pl.in russian/translit-iso-utf8.pl.in \
-	russian/utf8.pl.in serbian/utf8.pl.in slovak/large-utf8.pl.in \
-	slovak/small-utf8.pl.in slovenian/utf8.pl.in \
-	spanish/modern-utf8.pl.in spanish/traditional-utf8.pl.in \
-	swedish/utf8.pl.in test1/test1.pl turkish/utf8.pl.in \
-	ukrainian/utf8.pl.in upper-sorbian/utf8.pl.in \
-	vietnamese/utf8.pl.in $(SCRS) test.xdy
-CLEANFILES = albanian/latin1.pl albanian/latin1.raw albanian/utf8.pl \
-	albanian/utf8.raw belarusian/cp1251.pl belarusian/cp1251.raw \
-	belarusian/iso88595.pl belarusian/iso88595.raw \
-	belarusian/isoir111.pl belarusian/isoir111.raw \
-	belarusian/utf8.pl belarusian/utf8.raw bulgarian/cp1251.pl \
-	bulgarian/cp1251.raw bulgarian/iso88595.pl \
-	bulgarian/iso88595.raw bulgarian/koi8-r.pl \
-	bulgarian/koi8-r.raw bulgarian/utf8.pl bulgarian/utf8.raw \
-	croatian/cp1250.pl croatian/cp1250.raw croatian/latin2.pl \
-	croatian/latin2.raw croatian/utf8.pl croatian/utf8.raw \
-	czech/cp1250.pl czech/cp1250.raw czech/latin2.pl \
-	czech/latin2.raw czech/utf8.pl czech/utf8.raw danish/cp1252.pl \
-	danish/cp1252.raw danish/latin9.pl danish/latin9.raw \
-	danish/utf8.pl danish/utf8.raw dutch/ij-as-ij-latin1.pl \
-	dutch/ij-as-ij-latin1.raw dutch/ij-as-ij-utf8.pl \
-	dutch/ij-as-ij-utf8.raw dutch/ij-as-y-utf8.pl \
-	dutch/ij-as-y-utf8.raw english/cp1252.pl english/cp1252.raw \
-	english/latin9.pl english/latin9.raw english/utf8.pl \
-	english/utf8.raw esperanto/latin3.pl esperanto/latin3.raw \
-	esperanto/utf8.pl esperanto/utf8.raw estonian/cp1252.pl \
-	estonian/cp1252.raw estonian/latin9.pl estonian/latin9.raw \
-	estonian/utf8.pl estonian/utf8.raw finnish/cp1252.pl \
-	finnish/cp1252.raw finnish/latin9.pl finnish/latin9.raw \
-	finnish/utf8.pl finnish/utf8.raw french/cp1252.pl \
-	french/cp1252.raw french/latin9.pl french/latin9.raw \
-	french/utf8.pl french/utf8.raw general/cp1252.pl \
-	general/cp1252.raw general/cp850.pl general/cp850.raw \
-	general/latin9.pl general/latin9.raw general/utf8.pl \
-	general/utf8.raw georgian/utf8.pl georgian/utf8.raw \
-	german/braille-utf8.pl german/braille-utf8.raw \
-	german/din5007-latin1.pl german/din5007-latin1.raw \
-	german/din5007-utf8.pl german/din5007-utf8.raw \
-	german/duden-latin1.pl german/duden-latin1.raw \
-	german/duden-utf8.pl german/duden-utf8.raw greek/iso88597.pl \
+	romanian/utf8.pl.in russian/utf8.pl.in \
+	russian/translit-iso-utf8.pl.in serbian/utf8.pl.in \
+	slovak/large-utf8.pl.in slovak/small-utf8.pl.in \
+	slovenian/utf8.pl.in spanish/modern-utf8.pl.in \
+	spanish/traditional-utf8.pl.in swedish/utf8.pl.in \
+	turkish/utf8.pl.in ukrainian/utf8.pl.in \
+	upper-sorbian/utf8.pl.in vietnamese/utf8.pl.in $(SCRS) \
+	test.xdy
+CLEANFILES = albanian/utf8.pl albanian/utf8.raw albanian/latin1.raw \
+	belarusian/utf8.pl belarusian/utf8.raw belarusian/iso88595.raw \
+	belarusian/isoir111.raw belarusian/cp1251.raw \
+	bulgarian/utf8.pl bulgarian/utf8.raw bulgarian/iso88595.raw \
+	bulgarian/koi8-r.raw bulgarian/cp1251.raw croatian/utf8.pl \
+	croatian/utf8.raw croatian/cp1250.raw croatian/latin2.raw \
+	czech/utf8.pl czech/utf8.raw czech/cp1250.raw czech/latin2.raw \
+	danish/utf8.pl danish/utf8.raw danish/cp1252.raw \
+	danish/latin9.raw dutch/ij-as-ij-utf8.pl \
+	dutch/ij-as-ij-utf8.raw dutch/ij-as-ij-latin1.raw \
+	dutch/ij-as-y-utf8.pl dutch/ij-as-y-utf8.raw english/utf8.pl \
+	english/utf8.raw english/cp1252.raw english/latin9.raw \
+	esperanto/utf8.pl esperanto/utf8.raw esperanto/latin3.raw \
+	estonian/utf8.pl estonian/utf8.raw estonian/cp1252.raw \
+	estonian/latin9.raw finnish/utf8.pl finnish/utf8.raw \
+	finnish/cp1252.raw finnish/latin9.raw french/utf8.pl \
+	french/utf8.raw french/cp1252.raw french/latin9.raw \
+	general/utf8.pl general/utf8.raw general/cp1252.raw \
+	general/cp850.raw general/latin9.raw georgian/utf8.pl \
+	georgian/utf8.raw german/braille-utf8.pl \
+	german/braille-utf8.raw german/din5007-utf8.pl \
+	german/din5007-utf8.raw german/din5007-latin1.raw \
+	german/duden-utf8.pl german/duden-utf8.raw \
+	german/duden-latin1.raw greek/utf8.pl greek/utf8.raw \
 	greek/iso88597.raw greek/polytonic-utf8.pl \
-	greek/polytonic-utf8.raw greek/translit-latin4.pl \
-	greek/translit-latin4.raw greek/translit-utf8.pl \
-	greek/translit-utf8.raw greek/utf8.pl greek/utf8.raw \
+	greek/polytonic-utf8.raw greek/translit-utf8.pl \
+	greek/translit-utf8.raw greek/translit-latin4.raw \
 	gypsy/northrussian-utf8.pl gypsy/northrussian-utf8.raw \
-	hausa/utf8.pl hausa/utf8.raw hebrew/iso88598.pl \
-	hebrew/iso88598.raw hebrew/utf8.pl hebrew/utf8.raw \
-	hungarian/cp1250.pl hungarian/cp1250.raw hungarian/latin2.pl \
-	hungarian/latin2.raw hungarian/utf8.pl hungarian/utf8.raw \
-	icelandic/cp1252.pl icelandic/cp1252.raw icelandic/latin9.pl \
-	icelandic/latin9.raw icelandic/utf8.pl icelandic/utf8.raw \
-	italian/latin1.pl italian/latin1.raw italian/utf8.pl \
-	italian/utf8.raw klingon/utf8.pl klingon/utf8.raw \
-	kurdish/bedirxan-latin5.pl kurdish/bedirxan-latin5.raw \
-	kurdish/bedirxan-utf8.pl kurdish/bedirxan-utf8.raw \
-	kurdish/turkish-i-latin5.pl kurdish/turkish-i-latin5.raw \
+	hausa/utf8.pl hausa/utf8.raw hebrew/utf8.pl hebrew/utf8.raw \
+	hebrew/iso88598.raw hungarian/utf8.pl hungarian/utf8.raw \
+	hungarian/cp1250.raw hungarian/latin2.raw icelandic/utf8.pl \
+	icelandic/utf8.raw icelandic/cp1252.raw icelandic/latin9.raw \
+	italian/utf8.pl italian/utf8.raw italian/latin1.raw \
+	klingon/utf8.pl klingon/utf8.raw kurdish/bedirxan-utf8.pl \
+	kurdish/bedirxan-utf8.raw kurdish/bedirxan-latin5.raw \
 	kurdish/turkish-i-utf8.pl kurdish/turkish-i-utf8.raw \
-	latin/utf8.pl latin/utf8.raw latvian/latin4.pl \
-	latvian/latin4.raw latvian/utf8.pl latvian/utf8.raw \
-	lithuanian/latin4.pl lithuanian/latin4.raw lithuanian/utf8.pl \
-	lithuanian/utf8.raw lower-sorbian/cp1250.pl \
-	lower-sorbian/cp1250.raw lower-sorbian/latin2.pl \
-	lower-sorbian/latin2.raw lower-sorbian/utf8.pl \
-	lower-sorbian/utf8.raw macedonian/cp1251.pl \
-	macedonian/cp1251.raw macedonian/iso88595.pl \
-	macedonian/iso88595.raw macedonian/isoir111.pl \
-	macedonian/isoir111.raw macedonian/utf8.pl macedonian/utf8.raw \
+	kurdish/turkish-i-latin5.raw latin/utf8.pl latin/utf8.raw \
+	latvian/utf8.pl latvian/utf8.raw latvian/latin4.raw \
+	lithuanian/utf8.pl lithuanian/utf8.raw lithuanian/latin4.raw \
+	lower-sorbian/utf8.pl lower-sorbian/utf8.raw \
+	lower-sorbian/cp1250.raw lower-sorbian/latin2.raw \
+	macedonian/utf8.pl macedonian/utf8.raw macedonian/iso88595.raw \
+	macedonian/isoir111.raw macedonian/cp1251.raw \
 	mongolian/cyrillic-utf8.pl mongolian/cyrillic-utf8.raw \
-	norwegian/latin1.pl norwegian/latin1.raw norwegian/utf8.pl \
-	norwegian/utf8.raw polish/cp1250.pl polish/cp1250.raw \
-	polish/latin2.pl polish/latin2.raw polish/utf8.pl \
-	polish/utf8.raw portuguese/latin1.pl portuguese/latin1.raw \
-	portuguese/utf8.pl portuguese/utf8.raw romanian/cp1250.raw \
-	romanian/cp1250.pl romanian/latin2.pl romanian/latin2.raw \
-	romanian/utf8.pl romanian/utf8.raw russian/cp1251.pl \
-	russian/cp1251.raw russian/iso88595.pl russian/iso88595.raw \
-	russian/koi8-r.pl russian/koi8-r.raw \
+	norwegian/utf8.pl norwegian/utf8.raw norwegian/latin1.raw \
+	polish/utf8.pl polish/utf8.raw polish/cp1250.raw \
+	polish/latin2.raw portuguese/utf8.pl portuguese/utf8.raw \
+	portuguese/latin1.raw romanian/utf8.pl romanian/utf8.raw \
+	romanian/latin2.raw russian/utf8.pl russian/utf8.raw \
+	russian/iso88595.raw russian/koi8-r.raw russian/cp1251.raw \
 	russian/translit-iso-utf8.pl russian/translit-iso-utf8.raw \
-	russian/utf8.pl russian/utf8.raw serbian/cp1251.pl \
-	serbian/cp1251.raw serbian/iso88595.pl serbian/iso88595.raw \
-	serbian/isoir111.pl serbian/isoir111.raw serbian/utf8.pl \
-	serbian/utf8.raw slovak/large-cp1250.pl \
-	slovak/large-cp1250.raw slovak/large-latin2.pl \
-	slovak/large-latin2.raw slovak/large-utf8.pl \
-	slovak/large-utf8.raw slovak/small-cp1250.pl \
-	slovak/small-cp1250.raw slovak/small-latin2.pl \
-	slovak/small-latin2.raw slovak/small-utf8.pl \
-	slovak/small-utf8.raw slovenian/cp1250.pl slovenian/cp1250.raw \
-	slovenian/latin2.pl slovenian/latin2.raw slovenian/utf8.pl \
-	slovenian/utf8.raw spanish/modern-latin1.pl \
-	spanish/modern-latin1.raw spanish/modern-utf8.pl \
-	spanish/modern-utf8.raw spanish/traditional-latin1.pl \
-	spanish/traditional-latin1.raw spanish/traditional-utf8.pl \
-	spanish/traditional-utf8.raw swedish/cp1252.pl \
-	swedish/cp1252.raw swedish/latin9.pl swedish/latin9.raw \
-	swedish/utf8.pl swedish/utf8.raw turkish/latin3.pl \
-	turkish/latin3.raw turkish/latin5.pl turkish/latin5.raw \
-	turkish/utf8.pl turkish/utf8.raw ukrainian/cp1251.pl \
-	ukrainian/cp1251.raw ukrainian/koi8-u.pl ukrainian/koi8-u.raw \
-	ukrainian/utf8.pl ukrainian/utf8.raw upper-sorbian/cp1250.pl \
-	upper-sorbian/cp1250.raw upper-sorbian/latin2.pl \
-	upper-sorbian/latin2.raw upper-sorbian/utf8.pl \
-	upper-sorbian/utf8.raw vietnamese/utf8.pl vietnamese/utf8.raw \
+	serbian/utf8.pl serbian/utf8.raw serbian/iso88595.raw \
+	serbian/isoir111.raw serbian/cp1251.raw slovak/large-utf8.pl \
+	slovak/large-utf8.raw slovak/large-cp1250.raw \
+	slovak/large-latin2.raw slovak/small-utf8.pl \
+	slovak/small-utf8.raw slovak/small-cp1250.raw \
+	slovak/small-latin2.raw slovenian/utf8.pl slovenian/utf8.raw \
+	slovenian/cp1250.raw slovenian/latin2.raw \
+	spanish/modern-utf8.pl spanish/modern-utf8.raw \
+	spanish/modern-latin1.raw spanish/traditional-utf8.pl \
+	spanish/traditional-utf8.raw spanish/traditional-latin1.raw \
+	swedish/utf8.pl swedish/utf8.raw swedish/cp1252.raw \
+	swedish/latin9.raw turkish/utf8.pl turkish/utf8.raw \
+	turkish/latin3.raw turkish/latin5.raw ukrainian/utf8.pl \
+	ukrainian/utf8.raw ukrainian/koi8-u.raw ukrainian/cp1251.raw \
+	upper-sorbian/utf8.pl upper-sorbian/utf8.raw \
+	upper-sorbian/cp1250.raw upper-sorbian/latin2.raw \
+	vietnamese/utf8.pl vietnamese/utf8.raw \
 	$(nobase_nodist_lang_DATA) $(DOCS) $(DOC_CLEAN)
 subdirs = albanian belarusian bulgarian croatian czech danish dutch \
 	english esperanto estonian finnish french general georgian \
@@ -860,11 +862,7 @@ uninstall-am: uninstall-docDATA uninstall-nobase_nodist_langDATA
 	uninstall-docDATA uninstall-nobase_nodist_langDATA
 
 
-romanian/cp1250.pl : romanian/utf8.pl
-	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
-	$(CONVERT_FROM_UTF8)CP1250 >$@
-
-romanian/latin2.pl : romanian/utf8.pl
+romanian/latin2.pl : romanian/utf8.pl.in
 	sed -e 's/@u{\([^}]*\)}//g;' -f $(srcdir)/rom-comma-kludge.sed <$< | \
 	$(CONVERT_FROM_UTF8)ISO8859-2 >$@
 subdirs:

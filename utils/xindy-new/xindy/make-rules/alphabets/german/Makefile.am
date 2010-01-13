@@ -1,6 +1,6 @@
 ## Makefile fragment for german.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,11 +21,21 @@
 subdirs += german
 
 nobase_nodist_lang_DATA += \
-	german/braille-utf8-lang.xdy german/braille-utf8-test.xdy german/braille-utf8.xdy \
-	german/din5007-latin1-lang.xdy german/din5007-latin1-test.xdy german/din5007-latin1.xdy \
-	german/din5007-utf8-lang.xdy german/din5007-utf8-test.xdy german/din5007-utf8.xdy \
-	german/duden-latin1-lang.xdy german/duden-latin1-test.xdy german/duden-latin1.xdy \
-	german/duden-utf8-lang.xdy german/duden-utf8-test.xdy german/duden-utf8.xdy
+	german/braille-utf8-lang.xdy \
+	german/braille-utf8-test.xdy \
+	german/braille-utf8.xdy \
+	german/din5007-utf8-lang.xdy \
+	german/din5007-utf8-test.xdy \
+	german/din5007-utf8.xdy \
+	german/din5007-latin1-lang.xdy \
+	german/din5007-latin1-test.xdy \
+	german/din5007-latin1.xdy \
+	german/duden-utf8-lang.xdy \
+	german/duden-utf8-test.xdy \
+	german/duden-utf8.xdy \
+	german/duden-latin1-lang.xdy \
+	german/duden-latin1-test.xdy \
+	german/duden-latin1.xdy
 
 DOCS_LATIN1 += \
 	german/din5007-latin1-doc.tex \
@@ -40,13 +50,20 @@ DOCS_UTF8_OTHER += \
 
 EXTRA_DIST += \
 	german/braille-utf8.pl.in \
-	german/duden-utf8.pl.in \
-	german/din5007-utf8.pl.in
+	german/din5007-utf8.pl.in \
+	german/duden-utf8.pl.in
+
+dist_noinst_DATA += \
+	german/din5007-latin1.pl \
+	german/duden-latin1.pl
 
 CLEANFILES += \
-	german/braille-utf8.pl german/braille-utf8.raw \
-	german/din5007-latin1.pl german/din5007-latin1.raw \
-	german/din5007-utf8.pl german/din5007-utf8.raw \
-	german/duden-latin1.pl german/duden-latin1.raw \
-	german/duden-utf8.pl german/duden-utf8.raw
+	german/braille-utf8.pl \
+	german/braille-utf8.raw \
+	german/din5007-utf8.pl \
+	german/din5007-utf8.raw \
+	german/din5007-latin1.raw \
+	german/duden-utf8.pl \
+	german/duden-utf8.raw \
+	german/duden-latin1.raw
 

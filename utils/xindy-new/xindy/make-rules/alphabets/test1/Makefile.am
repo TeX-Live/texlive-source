@@ -1,6 +1,6 @@
 ## Makefile fragment for test1.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -20,6 +20,6 @@
 
 subdirs += test1
 
-EXTRA_DIST += \
+dist_noinst_DATA += \
 	test1/test1.pl
 

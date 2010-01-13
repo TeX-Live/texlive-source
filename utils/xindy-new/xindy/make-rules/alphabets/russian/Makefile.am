@@ -1,6 +1,6 @@
 ## Makefile fragment for russian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,11 +21,21 @@
 subdirs += russian
 
 nobase_nodist_lang_DATA += \
-	russian/cp1251-lang.xdy russian/cp1251-test.xdy russian/cp1251.xdy \
-	russian/iso88595-lang.xdy russian/iso88595-test.xdy russian/iso88595.xdy \
-	russian/koi8-r-lang.xdy russian/koi8-r-test.xdy russian/koi8-r.xdy \
-	russian/translit-iso-utf8-lang.xdy russian/translit-iso-utf8-test.xdy russian/translit-iso-utf8.xdy \
-	russian/utf8-lang.xdy russian/utf8-test.xdy russian/utf8.xdy
+	russian/utf8-lang.xdy \
+	russian/utf8-test.xdy \
+	russian/utf8.xdy \
+	russian/iso88595-lang.xdy \
+	russian/iso88595-test.xdy \
+	russian/iso88595.xdy \
+	russian/koi8-r-lang.xdy \
+	russian/koi8-r-test.xdy \
+	russian/koi8-r.xdy \
+	russian/cp1251-lang.xdy \
+	russian/cp1251-test.xdy \
+	russian/cp1251.xdy \
+	russian/translit-iso-utf8-lang.xdy \
+	russian/translit-iso-utf8-test.xdy \
+	russian/translit-iso-utf8.xdy
 
 DOCS_CYR_1251 += \
 	russian/cp1251-doc.tex
@@ -43,13 +53,20 @@ DOCS_UTF8_CYR += \
 	russian/utf8-doc.tex
 
 EXTRA_DIST += \
-	russian/translit-iso-utf8.pl.in \
-	russian/utf8.pl.in
+	russian/utf8.pl.in \
+	russian/translit-iso-utf8.pl.in
+
+dist_noinst_DATA += \
+	russian/iso88595.pl \
+	russian/koi8-r.pl \
+	russian/cp1251.pl
 
 CLEANFILES += \
-	russian/cp1251.pl russian/cp1251.raw \
-	russian/iso88595.pl russian/iso88595.raw \
-	russian/koi8-r.pl russian/koi8-r.raw \
-	russian/translit-iso-utf8.pl russian/translit-iso-utf8.raw \
-	russian/utf8.pl russian/utf8.raw
+	russian/utf8.pl \
+	russian/utf8.raw \
+	russian/iso88595.raw \
+	russian/koi8-r.raw \
+	russian/cp1251.raw \
+	russian/translit-iso-utf8.pl \
+	russian/translit-iso-utf8.raw
 

@@ -1,6 +1,6 @@
 ## Makefile fragment for italian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,8 +21,12 @@
 subdirs += italian
 
 nobase_nodist_lang_DATA += \
-	italian/latin1-lang.xdy italian/latin1-test.xdy italian/latin1.xdy \
-	italian/utf8-lang.xdy italian/utf8-test.xdy italian/utf8.xdy
+	italian/utf8-lang.xdy \
+	italian/utf8-test.xdy \
+	italian/utf8.xdy \
+	italian/latin1-lang.xdy \
+	italian/latin1-test.xdy \
+	italian/latin1.xdy
 
 DOCS_LATIN1 += \
 	italian/latin1-doc.tex
@@ -33,7 +37,11 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	italian/utf8.pl.in
 
+dist_noinst_DATA += \
+	italian/latin1.pl
+
 CLEANFILES += \
-	italian/latin1.pl italian/latin1.raw \
-	italian/utf8.pl italian/utf8.raw
+	italian/utf8.pl \
+	italian/utf8.raw \
+	italian/latin1.raw
 

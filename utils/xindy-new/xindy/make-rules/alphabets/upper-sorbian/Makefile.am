@@ -1,6 +1,6 @@
 ## Makefile fragment for upper-sorbian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += upper-sorbian
 
 nobase_nodist_lang_DATA += \
-	upper-sorbian/cp1250-lang.xdy upper-sorbian/cp1250-test.xdy upper-sorbian/cp1250.xdy \
-	upper-sorbian/latin2-lang.xdy upper-sorbian/latin2-test.xdy upper-sorbian/latin2.xdy \
-	upper-sorbian/utf8-lang.xdy upper-sorbian/utf8-test.xdy upper-sorbian/utf8.xdy
+	upper-sorbian/utf8-lang.xdy \
+	upper-sorbian/utf8-test.xdy \
+	upper-sorbian/utf8.xdy \
+	upper-sorbian/cp1250-lang.xdy \
+	upper-sorbian/cp1250-test.xdy \
+	upper-sorbian/cp1250.xdy \
+	upper-sorbian/latin2-lang.xdy \
+	upper-sorbian/latin2-test.xdy \
+	upper-sorbian/latin2.xdy
 
 DOCS_CP1250 += \
 	upper-sorbian/cp1250-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	upper-sorbian/utf8.pl.in
 
+dist_noinst_DATA += \
+	upper-sorbian/cp1250.pl \
+	upper-sorbian/latin2.pl
+
 CLEANFILES += \
-	upper-sorbian/cp1250.pl upper-sorbian/cp1250.raw \
-	upper-sorbian/latin2.pl upper-sorbian/latin2.raw \
-	upper-sorbian/utf8.pl upper-sorbian/utf8.raw
+	upper-sorbian/utf8.pl \
+	upper-sorbian/utf8.raw \
+	upper-sorbian/cp1250.raw \
+	upper-sorbian/latin2.raw
 

@@ -1,6 +1,6 @@
 ## Makefile fragment for kurdish.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,10 +21,18 @@
 subdirs += kurdish
 
 nobase_nodist_lang_DATA += \
-	kurdish/bedirxan-latin5-lang.xdy kurdish/bedirxan-latin5-test.xdy kurdish/bedirxan-latin5.xdy \
-	kurdish/bedirxan-utf8-lang.xdy kurdish/bedirxan-utf8-test.xdy kurdish/bedirxan-utf8.xdy \
-	kurdish/turkish-i-latin5-lang.xdy kurdish/turkish-i-latin5-test.xdy kurdish/turkish-i-latin5.xdy \
-	kurdish/turkish-i-utf8-lang.xdy kurdish/turkish-i-utf8-test.xdy kurdish/turkish-i-utf8.xdy
+	kurdish/bedirxan-utf8-lang.xdy \
+	kurdish/bedirxan-utf8-test.xdy \
+	kurdish/bedirxan-utf8.xdy \
+	kurdish/bedirxan-latin5-lang.xdy \
+	kurdish/bedirxan-latin5-test.xdy \
+	kurdish/bedirxan-latin5.xdy \
+	kurdish/turkish-i-utf8-lang.xdy \
+	kurdish/turkish-i-utf8-test.xdy \
+	kurdish/turkish-i-utf8.xdy \
+	kurdish/turkish-i-latin5-lang.xdy \
+	kurdish/turkish-i-latin5-test.xdy \
+	kurdish/turkish-i-latin5.xdy
 
 DOCS_LATIN5 += \
 	kurdish/bedirxan-latin5-doc.tex \
@@ -38,9 +46,15 @@ EXTRA_DIST += \
 	kurdish/bedirxan-utf8.pl.in \
 	kurdish/turkish-i-utf8.pl.in
 
+dist_noinst_DATA += \
+	kurdish/bedirxan-latin5.pl \
+	kurdish/turkish-i-latin5.pl
+
 CLEANFILES += \
-	kurdish/bedirxan-latin5.pl kurdish/bedirxan-latin5.raw \
-	kurdish/bedirxan-utf8.pl kurdish/bedirxan-utf8.raw \
-	kurdish/turkish-i-latin5.pl kurdish/turkish-i-latin5.raw \
-	kurdish/turkish-i-utf8.pl kurdish/turkish-i-utf8.raw
+	kurdish/bedirxan-utf8.pl \
+	kurdish/bedirxan-utf8.raw \
+	kurdish/bedirxan-latin5.raw \
+	kurdish/turkish-i-utf8.pl \
+	kurdish/turkish-i-utf8.raw \
+	kurdish/turkish-i-latin5.raw
 

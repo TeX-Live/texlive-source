@@ -1,6 +1,6 @@
 ## Makefile fragment for finnish.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += finnish
 
 nobase_nodist_lang_DATA += \
-	finnish/cp1252-lang.xdy finnish/cp1252-test.xdy finnish/cp1252.xdy \
-	finnish/latin9-lang.xdy finnish/latin9-test.xdy finnish/latin9.xdy \
-	finnish/utf8-lang.xdy finnish/utf8-test.xdy finnish/utf8.xdy
+	finnish/utf8-lang.xdy \
+	finnish/utf8-test.xdy \
+	finnish/utf8.xdy \
+	finnish/cp1252-lang.xdy \
+	finnish/cp1252-test.xdy \
+	finnish/cp1252.xdy \
+	finnish/latin9-lang.xdy \
+	finnish/latin9-test.xdy \
+	finnish/latin9.xdy
 
 DOCS_CP1252 += \
 	finnish/cp1252-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	finnish/utf8.pl.in
 
+dist_noinst_DATA += \
+	finnish/cp1252.pl \
+	finnish/latin9.pl
+
 CLEANFILES += \
-	finnish/cp1252.pl finnish/cp1252.raw \
-	finnish/latin9.pl finnish/latin9.raw \
-	finnish/utf8.pl finnish/utf8.raw
+	finnish/utf8.pl \
+	finnish/utf8.raw \
+	finnish/cp1252.raw \
+	finnish/latin9.raw
 

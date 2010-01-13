@@ -1,6 +1,6 @@
 ## Makefile fragment for belarusian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,10 +21,18 @@
 subdirs += belarusian
 
 nobase_nodist_lang_DATA += \
-	belarusian/cp1251-lang.xdy belarusian/cp1251-test.xdy belarusian/cp1251.xdy \
-	belarusian/iso88595-lang.xdy belarusian/iso88595-test.xdy belarusian/iso88595.xdy \
-	belarusian/isoir111-lang.xdy belarusian/isoir111-test.xdy belarusian/isoir111.xdy \
-	belarusian/utf8-lang.xdy belarusian/utf8-test.xdy belarusian/utf8.xdy
+	belarusian/utf8-lang.xdy \
+	belarusian/utf8-test.xdy \
+	belarusian/utf8.xdy \
+	belarusian/iso88595-lang.xdy \
+	belarusian/iso88595-test.xdy \
+	belarusian/iso88595.xdy \
+	belarusian/isoir111-lang.xdy \
+	belarusian/isoir111-test.xdy \
+	belarusian/isoir111.xdy \
+	belarusian/cp1251-lang.xdy \
+	belarusian/cp1251-test.xdy \
+	belarusian/cp1251.xdy
 
 DOCS_CYR_1251 += \
 	belarusian/cp1251-doc.tex
@@ -41,9 +49,15 @@ DOCS_UTF8_CYR += \
 EXTRA_DIST += \
 	belarusian/utf8.pl.in
 
+dist_noinst_DATA += \
+	belarusian/iso88595.pl \
+	belarusian/isoir111.pl \
+	belarusian/cp1251.pl
+
 CLEANFILES += \
-	belarusian/cp1251.pl belarusian/cp1251.raw \
-	belarusian/iso88595.pl belarusian/iso88595.raw \
-	belarusian/isoir111.pl belarusian/isoir111.raw \
-	belarusian/utf8.pl belarusian/utf8.raw
+	belarusian/utf8.pl \
+	belarusian/utf8.raw \
+	belarusian/iso88595.raw \
+	belarusian/isoir111.raw \
+	belarusian/cp1251.raw
 

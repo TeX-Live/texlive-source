@@ -1,6 +1,6 @@
 ## Makefile fragment for norwegian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,8 +21,12 @@
 subdirs += norwegian
 
 nobase_nodist_lang_DATA += \
-	norwegian/latin1-lang.xdy norwegian/latin1-test.xdy norwegian/latin1.xdy \
-	norwegian/utf8-lang.xdy norwegian/utf8-test.xdy norwegian/utf8.xdy
+	norwegian/utf8-lang.xdy \
+	norwegian/utf8-test.xdy \
+	norwegian/utf8.xdy \
+	norwegian/latin1-lang.xdy \
+	norwegian/latin1-test.xdy \
+	norwegian/latin1.xdy
 
 DOCS_LATIN1 += \
 	norwegian/latin1-doc.tex
@@ -33,7 +37,11 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	norwegian/utf8.pl.in
 
+dist_noinst_DATA += \
+	norwegian/latin1.pl
+
 CLEANFILES += \
-	norwegian/latin1.pl norwegian/latin1.raw \
-	norwegian/utf8.pl norwegian/utf8.raw
+	norwegian/utf8.pl \
+	norwegian/utf8.raw \
+	norwegian/latin1.raw
 

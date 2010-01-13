@@ -1,6 +1,6 @@
 ## Makefile fragment for serbian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,10 +21,18 @@
 subdirs += serbian
 
 nobase_nodist_lang_DATA += \
-	serbian/cp1251-lang.xdy serbian/cp1251-test.xdy serbian/cp1251.xdy \
-	serbian/iso88595-lang.xdy serbian/iso88595-test.xdy serbian/iso88595.xdy \
-	serbian/isoir111-lang.xdy serbian/isoir111-test.xdy serbian/isoir111.xdy \
-	serbian/utf8-lang.xdy serbian/utf8-test.xdy serbian/utf8.xdy
+	serbian/utf8-lang.xdy \
+	serbian/utf8-test.xdy \
+	serbian/utf8.xdy \
+	serbian/iso88595-lang.xdy \
+	serbian/iso88595-test.xdy \
+	serbian/iso88595.xdy \
+	serbian/isoir111-lang.xdy \
+	serbian/isoir111-test.xdy \
+	serbian/isoir111.xdy \
+	serbian/cp1251-lang.xdy \
+	serbian/cp1251-test.xdy \
+	serbian/cp1251.xdy
 
 DOCS_CYR_1251 += \
 	serbian/cp1251-doc.tex
@@ -41,9 +49,15 @@ DOCS_UTF8_CYR += \
 EXTRA_DIST += \
 	serbian/utf8.pl.in
 
+dist_noinst_DATA += \
+	serbian/iso88595.pl \
+	serbian/isoir111.pl \
+	serbian/cp1251.pl
+
 CLEANFILES += \
-	serbian/cp1251.pl serbian/cp1251.raw \
-	serbian/iso88595.pl serbian/iso88595.raw \
-	serbian/isoir111.pl serbian/isoir111.raw \
-	serbian/utf8.pl serbian/utf8.raw
+	serbian/utf8.pl \
+	serbian/utf8.raw \
+	serbian/iso88595.raw \
+	serbian/isoir111.raw \
+	serbian/cp1251.raw
 

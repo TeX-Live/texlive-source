@@ -1120,8 +1120,8 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	tests/rptmr.tfm tests/story.dvi tests/testex.err \
 	tests/testex.mp tests/testex.tex tests/translate tests/uno.dos \
 	tests/write18.tex tests/xampl.bib ctiedir tiedir \
-	lib/mfmpi386.asm lib/mfmpw32.c tests/common-test.pl \
-	lib/texmfmp.c texmfmem.h texmfmp-help.h texmfmp.h \
+	lib/mfmpi386.asm lib/mfmpw32.c lib/texmfmp.c \
+	tests/common-test.pl texmfmem.h texmfmp-help.h texmfmp.h \
 	$(tex_ch_srcs) lib/texmfmp.c tmf-pool.h $(tex_tests) \
 	tests/write18-quote.tex mf.web mf-binpool.ch mf.ch mftalk.h \
 	lib/texmfmp.c tmf-pool.h $(mf_tests) triptrap/README \

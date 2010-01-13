@@ -1,6 +1,6 @@
 ## Makefile fragment for gypsy.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,7 +21,9 @@
 subdirs += gypsy
 
 nobase_nodist_lang_DATA += \
-	gypsy/northrussian-utf8-lang.xdy gypsy/northrussian-utf8-test.xdy gypsy/northrussian-utf8.xdy
+	gypsy/northrussian-utf8-lang.xdy \
+	gypsy/northrussian-utf8-test.xdy \
+	gypsy/northrussian-utf8.xdy
 
 DOCS_UTF8_LAT += \
 	gypsy/northrussian-utf8-doc.tex
@@ -30,5 +32,6 @@ EXTRA_DIST += \
 	gypsy/northrussian-utf8.pl.in
 
 CLEANFILES += \
-	gypsy/northrussian-utf8.pl gypsy/northrussian-utf8.raw
+	gypsy/northrussian-utf8.pl \
+	gypsy/northrussian-utf8.raw
 

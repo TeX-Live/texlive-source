@@ -1,6 +1,6 @@
 ## Makefile fragment for klingon.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,7 +21,9 @@
 subdirs += klingon
 
 nobase_nodist_lang_DATA += \
-	klingon/utf8-lang.xdy klingon/utf8-test.xdy klingon/utf8.xdy
+	klingon/utf8-lang.xdy \
+	klingon/utf8-test.xdy \
+	klingon/utf8.xdy
 
 DOCS_UTF8_OTHER += \
 	klingon/utf8-doc.tex
@@ -29,9 +31,10 @@ DOCS_UTF8_OTHER += \
 EXTRA_DIST += \
 	klingon/utf8.pl.in
 
-EXTRA_DIST += \
+dist_noinst_DATA += \
 	klingon/translit-ascii.pl
 
 CLEANFILES += \
-	klingon/utf8.pl klingon/utf8.raw
+	klingon/utf8.pl \
+	klingon/utf8.raw
 

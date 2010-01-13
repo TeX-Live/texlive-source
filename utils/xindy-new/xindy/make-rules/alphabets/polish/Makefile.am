@@ -1,6 +1,6 @@
 ## Makefile fragment for polish.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += polish
 
 nobase_nodist_lang_DATA += \
-	polish/cp1250-lang.xdy polish/cp1250-test.xdy polish/cp1250.xdy \
-	polish/latin2-lang.xdy polish/latin2-test.xdy polish/latin2.xdy \
-	polish/utf8-lang.xdy polish/utf8-test.xdy polish/utf8.xdy
+	polish/utf8-lang.xdy \
+	polish/utf8-test.xdy \
+	polish/utf8.xdy \
+	polish/cp1250-lang.xdy \
+	polish/cp1250-test.xdy \
+	polish/cp1250.xdy \
+	polish/latin2-lang.xdy \
+	polish/latin2-test.xdy \
+	polish/latin2.xdy
 
 DOCS_CP1250 += \
 	polish/cp1250-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	polish/utf8.pl.in
 
+dist_noinst_DATA += \
+	polish/cp1250.pl \
+	polish/latin2.pl
+
 CLEANFILES += \
-	polish/cp1250.pl polish/cp1250.raw \
-	polish/latin2.pl polish/latin2.raw \
-	polish/utf8.pl polish/utf8.raw
+	polish/utf8.pl \
+	polish/utf8.raw \
+	polish/cp1250.raw \
+	polish/latin2.raw
 

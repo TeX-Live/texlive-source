@@ -1,6 +1,6 @@
 ## Makefile fragment for hungarian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += hungarian
 
 nobase_nodist_lang_DATA += \
-	hungarian/cp1250-lang.xdy hungarian/cp1250-test.xdy hungarian/cp1250.xdy \
-	hungarian/latin2-lang.xdy hungarian/latin2-test.xdy hungarian/latin2.xdy \
-	hungarian/utf8-lang.xdy hungarian/utf8-test.xdy hungarian/utf8.xdy
+	hungarian/utf8-lang.xdy \
+	hungarian/utf8-test.xdy \
+	hungarian/utf8.xdy \
+	hungarian/cp1250-lang.xdy \
+	hungarian/cp1250-test.xdy \
+	hungarian/cp1250.xdy \
+	hungarian/latin2-lang.xdy \
+	hungarian/latin2-test.xdy \
+	hungarian/latin2.xdy
 
 DOCS_CP1250 += \
 	hungarian/cp1250-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	hungarian/utf8.pl.in
 
+dist_noinst_DATA += \
+	hungarian/cp1250.pl \
+	hungarian/latin2.pl
+
 CLEANFILES += \
-	hungarian/cp1250.pl hungarian/cp1250.raw \
-	hungarian/latin2.pl hungarian/latin2.raw \
-	hungarian/utf8.pl hungarian/utf8.raw
+	hungarian/utf8.pl \
+	hungarian/utf8.raw \
+	hungarian/cp1250.raw \
+	hungarian/latin2.raw
 

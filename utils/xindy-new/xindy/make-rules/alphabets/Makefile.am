@@ -22,6 +22,7 @@
 langdir	= $(pkglibdir)/modules/lang
 
 nobase_nodist_lang_DATA =
+dist_noinst_DATA =
 
 DOCS_CP1250 =
 DOCS_CP1252 =
@@ -46,7 +47,7 @@ DOCS_UTF8_LAT =
 DOCS_UTF8_CYR =
 DOCS_UTF8_OTHER =
 
-EXTRA_DIST =
+EXTRA_DIST = mk-lang.sh lang.defs
 CLEANFILES =
 
 subdirs =

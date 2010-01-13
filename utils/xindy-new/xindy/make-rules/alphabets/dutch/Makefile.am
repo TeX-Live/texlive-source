@@ -1,6 +1,6 @@
 ## Makefile fragment for dutch.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += dutch
 
 nobase_nodist_lang_DATA += \
-	dutch/ij-as-ij-latin1-lang.xdy dutch/ij-as-ij-latin1-test.xdy dutch/ij-as-ij-latin1.xdy \
-	dutch/ij-as-ij-utf8-lang.xdy dutch/ij-as-ij-utf8-test.xdy dutch/ij-as-ij-utf8.xdy \
-	dutch/ij-as-y-utf8-lang.xdy dutch/ij-as-y-utf8-test.xdy dutch/ij-as-y-utf8.xdy
+	dutch/ij-as-ij-utf8-lang.xdy \
+	dutch/ij-as-ij-utf8-test.xdy \
+	dutch/ij-as-ij-utf8.xdy \
+	dutch/ij-as-ij-latin1-lang.xdy \
+	dutch/ij-as-ij-latin1-test.xdy \
+	dutch/ij-as-ij-latin1.xdy \
+	dutch/ij-as-y-utf8-lang.xdy \
+	dutch/ij-as-y-utf8-test.xdy \
+	dutch/ij-as-y-utf8.xdy
 
 DOCS_LATIN1 += \
 	dutch/ij-as-ij-latin1-doc.tex
@@ -36,8 +42,13 @@ EXTRA_DIST += \
 	dutch/ij-as-ij-utf8.pl.in \
 	dutch/ij-as-y-utf8.pl.in
 
+dist_noinst_DATA += \
+	dutch/ij-as-ij-latin1.pl
+
 CLEANFILES += \
-	dutch/ij-as-ij-latin1.pl dutch/ij-as-ij-latin1.raw \
-	dutch/ij-as-ij-utf8.pl dutch/ij-as-ij-utf8.raw \
-	dutch/ij-as-y-utf8.pl dutch/ij-as-y-utf8.raw
+	dutch/ij-as-ij-utf8.pl \
+	dutch/ij-as-ij-utf8.raw \
+	dutch/ij-as-ij-latin1.raw \
+	dutch/ij-as-y-utf8.pl \
+	dutch/ij-as-y-utf8.raw
 

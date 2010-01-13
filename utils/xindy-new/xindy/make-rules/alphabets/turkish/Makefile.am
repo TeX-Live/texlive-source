@@ -1,6 +1,6 @@
 ## Makefile fragment for turkish.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += turkish
 
 nobase_nodist_lang_DATA += \
-	turkish/latin3-lang.xdy turkish/latin3-test.xdy turkish/latin3.xdy \
-	turkish/latin5-lang.xdy turkish/latin5-test.xdy turkish/latin5.xdy \
-	turkish/utf8-lang.xdy turkish/utf8-test.xdy turkish/utf8.xdy
+	turkish/utf8-lang.xdy \
+	turkish/utf8-test.xdy \
+	turkish/utf8.xdy \
+	turkish/latin3-lang.xdy \
+	turkish/latin3-test.xdy \
+	turkish/latin3.xdy \
+	turkish/latin5-lang.xdy \
+	turkish/latin5-test.xdy \
+	turkish/latin5.xdy
 
 DOCS_LATIN3 += \
 	turkish/latin3-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	turkish/utf8.pl.in
 
+dist_noinst_DATA += \
+	turkish/latin3.pl \
+	turkish/latin5.pl
+
 CLEANFILES += \
-	turkish/latin3.pl turkish/latin3.raw \
-	turkish/latin5.pl turkish/latin5.raw \
-	turkish/utf8.pl turkish/utf8.raw
+	turkish/utf8.pl \
+	turkish/utf8.raw \
+	turkish/latin3.raw \
+	turkish/latin5.raw
 

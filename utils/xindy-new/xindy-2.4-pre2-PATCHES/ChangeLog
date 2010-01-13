@@ -1,3 +1,11 @@
+2010-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ../xindy/make-rules/alphabets/{mk-lang.sh,lang.defs}:
+	New files to automatically generate the
+	../xindy/make-rules/alphabets/*/Makefile.am fragments.
+	* patch-50-reorg-alphabets: Reintroduce generated .pl files.
+	* patch-50-reorg-alphabets-generated (new): Generated fragments.
+
 2009-12-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-03-iconv-typo (new): Fix typo in iconv-or-recode patch.

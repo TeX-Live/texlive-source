@@ -1,6 +1,6 @@
 ## Makefile fragment for latin.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,7 +21,9 @@
 subdirs += latin
 
 nobase_nodist_lang_DATA += \
-	latin/utf8-lang.xdy latin/utf8-test.xdy latin/utf8.xdy
+	latin/utf8-lang.xdy \
+	latin/utf8-test.xdy \
+	latin/utf8.xdy
 
 DOCS_UTF8_LAT += \
 	latin/utf8-doc.tex
@@ -30,5 +32,6 @@ EXTRA_DIST += \
 	latin/utf8.pl.in
 
 CLEANFILES += \
-	latin/utf8.pl latin/utf8.raw
+	latin/utf8.pl \
+	latin/utf8.raw
 

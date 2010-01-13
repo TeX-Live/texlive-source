@@ -1,6 +1,6 @@
 ## Makefile fragment for macedonian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,10 +21,18 @@
 subdirs += macedonian
 
 nobase_nodist_lang_DATA += \
-	macedonian/cp1251-lang.xdy macedonian/cp1251-test.xdy macedonian/cp1251.xdy \
-	macedonian/iso88595-lang.xdy macedonian/iso88595-test.xdy macedonian/iso88595.xdy \
-	macedonian/isoir111-lang.xdy macedonian/isoir111-test.xdy macedonian/isoir111.xdy \
-	macedonian/utf8-lang.xdy macedonian/utf8-test.xdy macedonian/utf8.xdy
+	macedonian/utf8-lang.xdy \
+	macedonian/utf8-test.xdy \
+	macedonian/utf8.xdy \
+	macedonian/iso88595-lang.xdy \
+	macedonian/iso88595-test.xdy \
+	macedonian/iso88595.xdy \
+	macedonian/isoir111-lang.xdy \
+	macedonian/isoir111-test.xdy \
+	macedonian/isoir111.xdy \
+	macedonian/cp1251-lang.xdy \
+	macedonian/cp1251-test.xdy \
+	macedonian/cp1251.xdy
 
 DOCS_CYR_1251 += \
 	macedonian/cp1251-doc.tex
@@ -41,9 +49,15 @@ DOCS_UTF8_CYR += \
 EXTRA_DIST += \
 	macedonian/utf8.pl.in
 
+dist_noinst_DATA += \
+	macedonian/iso88595.pl \
+	macedonian/isoir111.pl \
+	macedonian/cp1251.pl
+
 CLEANFILES += \
-	macedonian/cp1251.pl macedonian/cp1251.raw \
-	macedonian/iso88595.pl macedonian/iso88595.raw \
-	macedonian/isoir111.pl macedonian/isoir111.raw \
-	macedonian/utf8.pl macedonian/utf8.raw
+	macedonian/utf8.pl \
+	macedonian/utf8.raw \
+	macedonian/iso88595.raw \
+	macedonian/isoir111.raw \
+	macedonian/cp1251.raw
 

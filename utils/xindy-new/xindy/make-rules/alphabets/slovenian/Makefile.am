@@ -1,6 +1,6 @@
 ## Makefile fragment for slovenian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += slovenian
 
 nobase_nodist_lang_DATA += \
-	slovenian/cp1250-lang.xdy slovenian/cp1250-test.xdy slovenian/cp1250.xdy \
-	slovenian/latin2-lang.xdy slovenian/latin2-test.xdy slovenian/latin2.xdy \
-	slovenian/utf8-lang.xdy slovenian/utf8-test.xdy slovenian/utf8.xdy
+	slovenian/utf8-lang.xdy \
+	slovenian/utf8-test.xdy \
+	slovenian/utf8.xdy \
+	slovenian/cp1250-lang.xdy \
+	slovenian/cp1250-test.xdy \
+	slovenian/cp1250.xdy \
+	slovenian/latin2-lang.xdy \
+	slovenian/latin2-test.xdy \
+	slovenian/latin2.xdy
 
 DOCS_CP1250 += \
 	slovenian/cp1250-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	slovenian/utf8.pl.in
 
+dist_noinst_DATA += \
+	slovenian/cp1250.pl \
+	slovenian/latin2.pl
+
 CLEANFILES += \
-	slovenian/cp1250.pl slovenian/cp1250.raw \
-	slovenian/latin2.pl slovenian/latin2.raw \
-	slovenian/utf8.pl slovenian/utf8.raw
+	slovenian/utf8.pl \
+	slovenian/utf8.raw \
+	slovenian/cp1250.raw \
+	slovenian/latin2.raw
 

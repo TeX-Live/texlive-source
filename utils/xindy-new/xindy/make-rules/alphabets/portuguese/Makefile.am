@@ -1,6 +1,6 @@
 ## Makefile fragment for portuguese.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,8 +21,12 @@
 subdirs += portuguese
 
 nobase_nodist_lang_DATA += \
-	portuguese/latin1-lang.xdy portuguese/latin1-test.xdy portuguese/latin1.xdy \
-	portuguese/utf8-lang.xdy portuguese/utf8-test.xdy portuguese/utf8.xdy
+	portuguese/utf8-lang.xdy \
+	portuguese/utf8-test.xdy \
+	portuguese/utf8.xdy \
+	portuguese/latin1-lang.xdy \
+	portuguese/latin1-test.xdy \
+	portuguese/latin1.xdy
 
 DOCS_LATIN1 += \
 	portuguese/latin1-doc.tex
@@ -33,7 +37,11 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	portuguese/utf8.pl.in
 
+dist_noinst_DATA += \
+	portuguese/latin1.pl
+
 CLEANFILES += \
-	portuguese/latin1.pl portuguese/latin1.raw \
-	portuguese/utf8.pl portuguese/utf8.raw
+	portuguese/utf8.pl \
+	portuguese/utf8.raw \
+	portuguese/latin1.raw
 

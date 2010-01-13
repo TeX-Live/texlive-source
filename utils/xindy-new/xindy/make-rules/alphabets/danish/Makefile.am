@@ -1,6 +1,6 @@
 ## Makefile fragment for danish.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += danish
 
 nobase_nodist_lang_DATA += \
-	danish/cp1252-lang.xdy danish/cp1252-test.xdy danish/cp1252.xdy \
-	danish/latin9-lang.xdy danish/latin9-test.xdy danish/latin9.xdy \
-	danish/utf8-lang.xdy danish/utf8-test.xdy danish/utf8.xdy
+	danish/utf8-lang.xdy \
+	danish/utf8-test.xdy \
+	danish/utf8.xdy \
+	danish/cp1252-lang.xdy \
+	danish/cp1252-test.xdy \
+	danish/cp1252.xdy \
+	danish/latin9-lang.xdy \
+	danish/latin9-test.xdy \
+	danish/latin9.xdy
 
 DOCS_CP1252 += \
 	danish/cp1252-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	danish/utf8.pl.in
 
+dist_noinst_DATA += \
+	danish/cp1252.pl \
+	danish/latin9.pl
+
 CLEANFILES += \
-	danish/cp1252.pl danish/cp1252.raw \
-	danish/latin9.pl danish/latin9.raw \
-	danish/utf8.pl danish/utf8.raw
+	danish/utf8.pl \
+	danish/utf8.raw \
+	danish/cp1252.raw \
+	danish/latin9.raw
 

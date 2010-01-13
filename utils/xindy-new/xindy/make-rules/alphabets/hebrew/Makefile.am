@@ -1,6 +1,6 @@
 ## Makefile fragment for hebrew.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,8 +21,12 @@
 subdirs += hebrew
 
 nobase_nodist_lang_DATA += \
-	hebrew/iso88598-lang.xdy hebrew/iso88598-test.xdy hebrew/iso88598.xdy \
-	hebrew/utf8-lang.xdy hebrew/utf8-test.xdy hebrew/utf8.xdy
+	hebrew/utf8-lang.xdy \
+	hebrew/utf8-test.xdy \
+	hebrew/utf8.xdy \
+	hebrew/iso88598-lang.xdy \
+	hebrew/iso88598-test.xdy \
+	hebrew/iso88598.xdy
 
 DOCS_ISO88598 += \
 	hebrew/iso88598-doc.tex
@@ -33,7 +37,11 @@ DOCS_UTF8_OTHER += \
 EXTRA_DIST += \
 	hebrew/utf8.pl.in
 
+dist_noinst_DATA += \
+	hebrew/iso88598.pl
+
 CLEANFILES += \
-	hebrew/iso88598.pl hebrew/iso88598.raw \
-	hebrew/utf8.pl hebrew/utf8.raw
+	hebrew/utf8.pl \
+	hebrew/utf8.raw \
+	hebrew/iso88598.raw
 

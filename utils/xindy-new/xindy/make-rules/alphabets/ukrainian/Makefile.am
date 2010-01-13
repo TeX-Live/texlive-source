@@ -1,6 +1,6 @@
 ## Makefile fragment for ukrainian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += ukrainian
 
 nobase_nodist_lang_DATA += \
-	ukrainian/cp1251-lang.xdy ukrainian/cp1251-test.xdy ukrainian/cp1251.xdy \
-	ukrainian/koi8-u-lang.xdy ukrainian/koi8-u-test.xdy ukrainian/koi8-u.xdy \
-	ukrainian/utf8-lang.xdy ukrainian/utf8-test.xdy ukrainian/utf8.xdy
+	ukrainian/utf8-lang.xdy \
+	ukrainian/utf8-test.xdy \
+	ukrainian/utf8.xdy \
+	ukrainian/koi8-u-lang.xdy \
+	ukrainian/koi8-u-test.xdy \
+	ukrainian/koi8-u.xdy \
+	ukrainian/cp1251-lang.xdy \
+	ukrainian/cp1251-test.xdy \
+	ukrainian/cp1251.xdy
 
 DOCS_CYR_1251 += \
 	ukrainian/cp1251-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_CYR += \
 EXTRA_DIST += \
 	ukrainian/utf8.pl.in
 
+dist_noinst_DATA += \
+	ukrainian/koi8-u.pl \
+	ukrainian/cp1251.pl
+
 CLEANFILES += \
-	ukrainian/cp1251.pl ukrainian/cp1251.raw \
-	ukrainian/koi8-u.pl ukrainian/koi8-u.raw \
-	ukrainian/utf8.pl ukrainian/utf8.raw
+	ukrainian/utf8.pl \
+	ukrainian/utf8.raw \
+	ukrainian/koi8-u.raw \
+	ukrainian/cp1251.raw
 

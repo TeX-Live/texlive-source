@@ -1,6 +1,6 @@
 ## Makefile fragment for hausa.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,7 +21,9 @@
 subdirs += hausa
 
 nobase_nodist_lang_DATA += \
-	hausa/utf8-lang.xdy hausa/utf8-test.xdy hausa/utf8.xdy
+	hausa/utf8-lang.xdy \
+	hausa/utf8-test.xdy \
+	hausa/utf8.xdy
 
 DOCS_UTF8_LAT += \
 	hausa/utf8-doc.tex
@@ -30,5 +32,6 @@ EXTRA_DIST += \
 	hausa/utf8.pl.in
 
 CLEANFILES += \
-	hausa/utf8.pl hausa/utf8.raw
+	hausa/utf8.pl \
+	hausa/utf8.raw
 

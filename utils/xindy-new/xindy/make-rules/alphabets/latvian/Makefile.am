@@ -1,6 +1,6 @@
 ## Makefile fragment for latvian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,8 +21,12 @@
 subdirs += latvian
 
 nobase_nodist_lang_DATA += \
-	latvian/latin4-lang.xdy latvian/latin4-test.xdy latvian/latin4.xdy \
-	latvian/utf8-lang.xdy latvian/utf8-test.xdy latvian/utf8.xdy
+	latvian/utf8-lang.xdy \
+	latvian/utf8-test.xdy \
+	latvian/utf8.xdy \
+	latvian/latin4-lang.xdy \
+	latvian/latin4-test.xdy \
+	latvian/latin4.xdy
 
 DOCS_LATIN4 += \
 	latvian/latin4-doc.tex
@@ -33,7 +37,11 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	latvian/utf8.pl.in
 
+dist_noinst_DATA += \
+	latvian/latin4.pl
+
 CLEANFILES += \
-	latvian/latin4.pl latvian/latin4.raw \
-	latvian/utf8.pl latvian/utf8.raw
+	latvian/utf8.pl \
+	latvian/utf8.raw \
+	latvian/latin4.raw
 

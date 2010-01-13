@@ -1,6 +1,6 @@
 ## Makefile fragment for esperanto.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,8 +21,12 @@
 subdirs += esperanto
 
 nobase_nodist_lang_DATA += \
-	esperanto/latin3-lang.xdy esperanto/latin3-test.xdy esperanto/latin3.xdy \
-	esperanto/utf8-lang.xdy esperanto/utf8-test.xdy esperanto/utf8.xdy
+	esperanto/utf8-lang.xdy \
+	esperanto/utf8-test.xdy \
+	esperanto/utf8.xdy \
+	esperanto/latin3-lang.xdy \
+	esperanto/latin3-test.xdy \
+	esperanto/latin3.xdy
 
 DOCS_LATIN3 += \
 	esperanto/latin3-doc.tex
@@ -33,7 +37,11 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	esperanto/utf8.pl.in
 
+dist_noinst_DATA += \
+	esperanto/latin3.pl
+
 CLEANFILES += \
-	esperanto/latin3.pl esperanto/latin3.raw \
-	esperanto/utf8.pl esperanto/utf8.raw
+	esperanto/utf8.pl \
+	esperanto/utf8.raw \
+	esperanto/latin3.raw
 

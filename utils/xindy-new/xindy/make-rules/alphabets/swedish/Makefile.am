@@ -1,6 +1,6 @@
 ## Makefile fragment for swedish.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,9 +21,15 @@
 subdirs += swedish
 
 nobase_nodist_lang_DATA += \
-	swedish/cp1252-lang.xdy swedish/cp1252-test.xdy swedish/cp1252.xdy \
-	swedish/latin9-lang.xdy swedish/latin9-test.xdy swedish/latin9.xdy \
-	swedish/utf8-lang.xdy swedish/utf8-test.xdy swedish/utf8.xdy
+	swedish/utf8-lang.xdy \
+	swedish/utf8-test.xdy \
+	swedish/utf8.xdy \
+	swedish/cp1252-lang.xdy \
+	swedish/cp1252-test.xdy \
+	swedish/cp1252.xdy \
+	swedish/latin9-lang.xdy \
+	swedish/latin9-test.xdy \
+	swedish/latin9.xdy
 
 DOCS_CP1252 += \
 	swedish/cp1252-doc.tex
@@ -37,8 +43,13 @@ DOCS_UTF8_LAT += \
 EXTRA_DIST += \
 	swedish/utf8.pl.in
 
+dist_noinst_DATA += \
+	swedish/cp1252.pl \
+	swedish/latin9.pl
+
 CLEANFILES += \
-	swedish/cp1252.pl swedish/cp1252.raw \
-	swedish/latin9.pl swedish/latin9.raw \
-	swedish/utf8.pl swedish/utf8.raw
+	swedish/utf8.pl \
+	swedish/utf8.raw \
+	swedish/cp1252.raw \
+	swedish/latin9.raw
 

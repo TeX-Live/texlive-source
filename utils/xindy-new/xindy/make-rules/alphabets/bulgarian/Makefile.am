@@ -1,6 +1,6 @@
 ## Makefile fragment for bulgarian.
 
-## Copyright (C) 2009 by Peter Breitenlohner.
+## Copyright (C) 2009, 2010 by Peter Breitenlohner.
 ## Copyright (C) 2004-2005 by Gour.
 ##
 ## This program is free software; you can redistribute it and/or
@@ -21,10 +21,18 @@
 subdirs += bulgarian
 
 nobase_nodist_lang_DATA += \
-	bulgarian/cp1251-lang.xdy bulgarian/cp1251-test.xdy bulgarian/cp1251.xdy \
-	bulgarian/iso88595-lang.xdy bulgarian/iso88595-test.xdy bulgarian/iso88595.xdy \
-	bulgarian/koi8-r-lang.xdy bulgarian/koi8-r-test.xdy bulgarian/koi8-r.xdy \
-	bulgarian/utf8-lang.xdy bulgarian/utf8-test.xdy bulgarian/utf8.xdy
+	bulgarian/utf8-lang.xdy \
+	bulgarian/utf8-test.xdy \
+	bulgarian/utf8.xdy \
+	bulgarian/iso88595-lang.xdy \
+	bulgarian/iso88595-test.xdy \
+	bulgarian/iso88595.xdy \
+	bulgarian/koi8-r-lang.xdy \
+	bulgarian/koi8-r-test.xdy \
+	bulgarian/koi8-r.xdy \
+	bulgarian/cp1251-lang.xdy \
+	bulgarian/cp1251-test.xdy \
+	bulgarian/cp1251.xdy
 
 DOCS_CYR_1251 += \
 	bulgarian/cp1251-doc.tex
@@ -41,9 +49,15 @@ DOCS_UTF8_CYR += \
 EXTRA_DIST += \
 	bulgarian/utf8.pl.in
 
+dist_noinst_DATA += \
+	bulgarian/iso88595.pl \
+	bulgarian/koi8-r.pl \
+	bulgarian/cp1251.pl
+
 CLEANFILES += \
-	bulgarian/cp1251.pl bulgarian/cp1251.raw \
-	bulgarian/iso88595.pl bulgarian/iso88595.raw \
-	bulgarian/koi8-r.pl bulgarian/koi8-r.raw \
-	bulgarian/utf8.pl bulgarian/utf8.raw
+	bulgarian/utf8.pl \
+	bulgarian/utf8.raw \
+	bulgarian/iso88595.raw \
+	bulgarian/koi8-r.raw \
+	bulgarian/cp1251.raw
 
