@@ -1,0 +1,16 @@
+% $Id$
+% Copyright 2010 Karl Berry <tex-live@tug.org>.
+% You may freely use, modify and/or distribute this file.
+
+\catcode`\{=1 \catcode`\}=2  % allow for running with initex.
+
+% This filename is used in the test code.
+\def\newfile{write18-quote-newfile.tex}  % tex expansion happens first.
+
+\immediate\write18{false "`touch \newfile`"}
+\immediate\write18{false "story.tex'; touch '\newfile"}
+
+% xxtodo: something about pipes.
+%\message{\input |printf /etc/issue}
+
+\end

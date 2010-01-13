@@ -1120,9 +1120,10 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	tests/rptmr.tfm tests/story.dvi tests/testex.err \
 	tests/testex.mp tests/testex.tex tests/translate tests/uno.dos \
 	tests/write18.tex tests/xampl.bib ctiedir tiedir \
-	lib/mfmpi386.asm lib/mfmpw32.c lib/texmfmp.c texmfmem.h \
-	texmfmp-help.h texmfmp.h $(tex_ch_srcs) lib/texmfmp.c \
-	tmf-pool.h $(tex_tests) mf.web mf-binpool.ch mf.ch mftalk.h \
+	lib/mfmpi386.asm lib/mfmpw32.c tests/common-test.pl \
+	lib/texmfmp.c texmfmem.h texmfmp-help.h texmfmp.h \
+	$(tex_ch_srcs) lib/texmfmp.c tmf-pool.h $(tex_tests) \
+	tests/write18-quote.tex mf.web mf-binpool.ch mf.ch mftalk.h \
 	lib/texmfmp.c tmf-pool.h $(mf_tests) triptrap/README \
 	triptrap/mftrap.diffs triptrap/mftrap.fot triptrap/mftrap.log \
 	triptrap/mftrap.pl triptrap/mftrap1.in triptrap/mftrap2.in \
@@ -1468,9 +1469,9 @@ tex_ch_srcs = \
 	tex-binpool.ch
 
 
-# TeX Tests
+# TeX tests
 #
-tex_tests = trip.test
+tex_tests = trip.test tests/write18-quote-test.pl
 nodist_mf_SOURCES = mfextra.c
 mf_CPPFLAGS = $(X_CFLAGS)
 mf_CFLAGS = $(WARNING_CFLAGS)
@@ -1495,7 +1496,7 @@ nodist_libmf_a_SOURCES = $(mf_c_h) mf-pool.c
 libmf_a_CPPFLAGS = -DMETA_FONT
 libmf_a_CFLAGS = $(WARNING_CFLAGS)
 
-# Metafont Tests
+# Metafont tests
 #
 mf_tests = trap.test
 mpost_CPPFLAGS = -I$(srcdir)/mplibdir
