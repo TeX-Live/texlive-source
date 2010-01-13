@@ -250,6 +250,5 @@ EXTRA_DIST += \
 	tests/testex.tex \
 	tests/translate \
 	tests/uno.dos \
-	tests/write18.tex \
 	tests/xampl.bib
 
