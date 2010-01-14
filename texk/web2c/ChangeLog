@@ -1,3 +1,8 @@
+2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/web.am (EXTRA_DIST, TESTS, bibtex_tests, web_tests):
+	Reorganize to run tests only when building the programs (if WEB).
+
 2010-01-04  Karl Berry  <karl@tug.org>
 
 	* am/texmf.am (tex_tests): add tests/write18-quote-test.pl.
