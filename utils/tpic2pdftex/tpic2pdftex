@@ -40,7 +40,7 @@
 #         hartmut_henkel@gmx.de
 #
 # NEWS:
-    24 Dec. 2009 - use gawk for default awk only if it exists.
+#   24 Dec. 2009 - use gawk for default awk only if it exists.
 #   14 Jan. 2007 - make it executable shell script, calling awk
 #   16 Dec. 2004 - Replaced // {print} by {print} (some AWKs did choke)
 #   09 Apr. 2004 - Locale check: Decimal point in float numbers?

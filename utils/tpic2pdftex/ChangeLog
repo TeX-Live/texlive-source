@@ -1,3 +1,7 @@
+2010-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tpic2pdftex: Add missing '#' in comment line.
+
 2009-12-24  Karl Berry  <karl@tug.org>
 
 	* tpic2pdftex: use gawk for default awk only if it exists.
