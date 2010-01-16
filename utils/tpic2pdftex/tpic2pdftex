@@ -1,6 +1,6 @@
 #!/bin/sh -
 #
-# $Id: tpic2pdftex,v 1.94 2007/01/14 19:05:32 hahe Exp $
+# $Id: tpic2pdftex,v 1.97 2010/01/16 11:51:43 hahe Exp $
 #
 # Experimental awk-script for conversion of tpic \specials as produced
 # by (groff-)pic into pdfTeX \pdfliteral sections for further processing
@@ -20,7 +20,7 @@
 #   Bounding box does not care for line thickness (groff pic feature).
 #   Splines might be outside bounding box.
 #
-# Copyright (C) 2002--2004, 2009 by Hartmut Henkel
+# Copyright (C) 2002--2010 by Hartmut Henkel
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@
 #         hartmut_henkel@gmx.de
 #
 # NEWS:
-#   24 Dec. 2009 - use gawk for default awk only if it exists.
+#   24 Dec. 2009 - use gawk for default awk only if it exists
+#   (patch by Karl Berry).
 #   14 Jan. 2007 - make it executable shell script, calling awk
 #   16 Dec. 2004 - Replaced // {print} by {print} (some AWKs did choke)
 #   09 Apr. 2004 - Locale check: Decimal point in float numbers?
@@ -70,6 +71,7 @@
 # Systems which define $COMSPEC or $ComSpec use semicolons to separate
 # directories in TEXINPUTS -- except for Cygwin et al., where COMSPEC
 # might be inherited, but : is used.
+
 if test -n "$COMSPEC$ComSpec" \
    && uname | $EGREP -iv 'cygwin|mingw|djgpp' >/dev/null; then
   path_sep=";"
@@ -80,6 +82,7 @@ fi
 # findprog PROG
 # -------------
 # Return true if PROG is somewhere in PATH, else false.
+
 findprog ()
 {
   local saveIFS="$IFS"
@@ -110,7 +113,7 @@ if test -z "$AWK"; then  # if set by user, leave it.
     AWK=awk
   fi
 fi
-  
+
 export LANG="C"
 
 AWKPROG='
