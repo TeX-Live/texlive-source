@@ -1,3 +1,8 @@
+2010-01-16  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (do_dump, do_undump): give full name of file
+	in fatal message when something cannot be (un)dumped.
+
 2010-01-02  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (runsystem): doc fix.

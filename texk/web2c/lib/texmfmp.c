@@ -2165,8 +2165,8 @@ do_dump (char *p, int item_size, int nitems,  FILE *out_file)
   if (fwrite (p, item_size, nitems, out_file) != nitems)
 #endif
     {
-      fprintf (stderr, "! Could not write %d %d-byte item(s).\n",
-               nitems, item_size);
+      fprintf (stderr, "! Could not write %d %d-byte item(s) to %s.\n",
+               nitems, item_size, nameoffile+1);
       uexit (1);
     }
 
@@ -2192,7 +2192,8 @@ do_undump (char *p, int item_size, int nitems, FILE *in_file)
 #else
   if (fread (p, item_size, nitems, in_file) != (size_t) nitems)
 #endif
-    FATAL2 ("Could not undump %d %d-byte item(s)", nitems, item_size);
+    FATAL3 ("Could not undump %d %d-byte item(s) from %s",
+            nitems, item_size, nameoffile+1);
 
 #if !defined (WORDS_BIGENDIAN) && !defined (NO_DUMP_SHARE)
   swap_items (p, nitems, item_size);
