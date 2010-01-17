@@ -899,7 +899,7 @@ setupCfgFile()
   case "$cnfFile" in
     "") cnfFile=`locateWeb2c $cnfFileShort`
         case "$cnfFile" in
-          "") abort "config file $cnfFileShort not found"
+          "") abort "config file $cnfFileShort not found (ls-R missing?)"
         esac;;
   esac
   setupLog

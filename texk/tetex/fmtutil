@@ -482,7 +482,7 @@ main()
   esac
 
   if test -n "$cfgparam"; then
-    test -f "$cnf_file" || abort "config file \`$cnf_file' not found"
+    test -f "$cnf_file" || abort "config file \`$cnf_file' not found (ls-R missing?)"
   fi
 
   if test -n "$cfgmaint"; then

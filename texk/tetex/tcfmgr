@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 
 # invoke the right shell:
 
@@ -50,7 +51,7 @@ setupMap()
   esac
 
   case $TFC_MAP in
-    "") abort "config file \`tcfmgr.map' (usually in \$TEXMFMAIN/texconfig) not found";;
+    "") abort "config file \`tcfmgr.map' (usually in \$TEXMFMAIN/texconfig) not found (ls-R missing?)";;
   esac
 
   if test ! -f "$TFC_MAP"; then
