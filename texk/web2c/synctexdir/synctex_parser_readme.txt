@@ -99,6 +99,12 @@ Note that version 1.7 was delivered privately.
 - Various typo fixed
 - OutputDebugString replaced by OutputDebugStringA to deliberately disable unicode preprocessing
 - New conditional created because OutputDebugStringA is only available since Windows 2K professional
+1.10: Sun Jan  10 10:12:32 UTC 2010 
+- Bug fix in synctex_parser.c to solve a synchronization problem with amsmath's gather environment.
+  Concerns the synctex tool.
+1.11: Sun Jan  17 09:12:31 UTC 2010
+- Bug fix in synctex_parser.c, function synctex_node_box_visible_v: 'x' replaced by 'y'.
+  Only 3rd party tools are concerned.
 
 Acknowledgments:
 ----------------
