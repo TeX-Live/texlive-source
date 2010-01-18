@@ -52,8 +52,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 /*
 static FILE *pkfile ;
 */
-
-extern FILE *t3_file;
 #define pkfile t3_file
 
 static shalfword pkbyte(void)

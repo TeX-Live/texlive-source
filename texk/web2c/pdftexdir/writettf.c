@@ -106,9 +106,6 @@ integer ttf_length;
 
 #include "macnames.c"
 
-extern char *fb_array;
-extern char charsetstr[];
-
 static const char *newtabnames[] = {
     "OS/2",
     "PCLT",

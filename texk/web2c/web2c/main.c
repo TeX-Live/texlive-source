@@ -62,8 +62,6 @@ struct sym_entry sym_table[sym_table_size];
 int next_sym_free = -1, next_string_free = 0;
 int mark_sym_free, mark_string_free;
 
-extern int yyleng;
-
 void
 find_next_temp (void)
 {

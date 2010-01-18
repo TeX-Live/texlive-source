@@ -1,3 +1,13 @@
+2010-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* epdf.c: Remove extern delaration of register_fd_entry().
+	* pkin.c: Remove extern delaration of t3_file.
+	* writet1.c: Remove extern delaration of fb_array.
+	* writettf.c: Remove extern delarations of fb_array and
+	charsetstr.
+	* ptexlib.h: Add extern delarations of fb_array, t3_file, and
+	register_fd_entry().
+
 2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/pdftex.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).

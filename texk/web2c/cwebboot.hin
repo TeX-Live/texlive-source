@@ -60,5 +60,6 @@ extern name_pointer section_lookup(char*first,char*last,int ispref);
 /*:83*/
 #line 705 "cwebdir/comm-w2c.ch"
 
+extern const char*versionstring;
 
 /*:84*/

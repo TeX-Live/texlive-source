@@ -91,8 +91,6 @@ Section 6.
 #include <stdio.h>
 @y
 #include <stdio.h>
-/* #include "cpascal.h" ??? */
-extern char *versionstring;
 #include <kpathsea/kpathsea.h>
 @z
 

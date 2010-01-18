@@ -22,7 +22,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <string.h>
 
 extern void epdf_check_mem(void);
-extern void register_fd_entry(fd_entry *);
 
 
 int is_subsetable(fm_entry * fm)

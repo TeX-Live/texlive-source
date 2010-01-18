@@ -1122,7 +1122,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*76:*/
 {
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 /*86:*/
-#line 711 "cwebdir/comm-w2c.ch"
+#line 712 "cwebdir/comm-w2c.ch"
 
 usagehelp(program==ctangle?CTANGLEHELP:CWEAVEHELP,NULL);
 
@@ -1132,7 +1132,7 @@ usagehelp(program==ctangle?CTANGLEHELP:CWEAVEHELP,NULL);
 ;
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 /*87:*/
-#line 720 "cwebdir/comm-w2c.ch"
+#line 721 "cwebdir/comm-w2c.ch"
 
 printversionandexit((program==ctangle?ctangle_banner:cweave_banner),
 "Silvio Levy and Donald E. Knuth",NULL,NULL);

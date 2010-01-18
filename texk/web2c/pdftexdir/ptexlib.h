@@ -162,6 +162,8 @@ extern integer t1_length1, t1_length2, t1_length3;
 extern integer ttf_length;
 extern strnumber last_tex_string;
 extern size_t last_ptr_index;
+extern char *fb_array;
+extern FILE *t3_file;
 
 /* pdftexlib function prototypes */
 
@@ -289,6 +291,7 @@ extern void dopdffont(integer, internalfontnumber);
 extern fd_entry *lookup_fd_entry(char *, integer, integer);
 extern fd_entry *new_fd_entry(void);
 extern void writefontstuff();
+extern void register_fd_entry(fd_entry *);
 
 /* writeimg.c */
 extern boolean checkimageb(integer);

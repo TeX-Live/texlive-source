@@ -703,6 +703,7 @@ in \.{common.w} and used in \.{ctangle.w} and \.{cweave.w} or vice versa.
 @= * declared in common.w and used in ctangle.w and cweave.w, or@>
 @= * used in common.w and declared in ctangle.w and cweave.w.  */@>
 @<External functions@>@;
+extern const char *versionstring;
 
 @** System dependent changes.
 

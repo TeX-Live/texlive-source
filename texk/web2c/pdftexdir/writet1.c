@@ -113,7 +113,6 @@ static const char *standard_glyph_names[256] = {
 integer t1_length1, t1_length2, t1_length3;
 static integer t1_save_offset;
 static integer t1_fontname_offset;
-extern char *fb_array;
 static fd_entry *fd_cur;
 
 static char charstringname[] = "/CharStrings";
