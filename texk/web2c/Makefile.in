@@ -1611,7 +1611,7 @@ pdftosrc_CPPFLAGS = $(pdftex_cppflags)
 pdftosrc_CXXFLAGS = # $(WARNING_CXXFLAGS)
 pdftosrc_SOURCES = pdftexdir/pdftosrc.cc
 pdftosrc_LDADD = $(pdftex_ldadd) $(LDADD)
-pdftosrc_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
+pdftosrc_DEPENDENCIES = $(pdftex_dependencies)
 
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_luatex_SOURCES = dummy.cxx
@@ -8303,10 +8303,10 @@ pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexd
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
 
-# We must create pdftexd.h before building the libpdftex_a_OBJECTS.
-$(libpdftex_a_OBJECTS): pdftexd.h
+# We must create pdftexd.h (and xpdf) before building the libpdftex_a_OBJECTS.
+$(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND)
 
-$(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND) libpdftex.a
+$(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND)
 
 # We must create libluatex.a and libmplib.a before building the luatex_OBJECTS.
 $(luatex_OBJECTS): libluatex.a libmplib.a

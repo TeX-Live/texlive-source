@@ -1,3 +1,7 @@
+2010-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Rearrange for 'on demand' build.
+
 2009-11-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, configure.ac: Proxy build system for TeX Live,

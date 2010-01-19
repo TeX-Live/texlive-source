@@ -15034,8 +15034,31 @@ else
 fi
 
 
+eval CPPFLAGS=\"$T1LIB_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$T1LIB_LIBS \$LIBS\"
+
+ac_fn_c_check_func "$LINENO" "T1_InitLib" "ac_cv_func_T1_InitLib"
+if test "x$ac_cv_func_T1_InitLib" = x""yes; then :
+  have_ft2_or_t1=yes
+
+$as_echo "#define HAVE_LIBT1 1" >>confdefs.h
+
+else
+  have_ft2_or_t1=no
+fi
+
+
 eval CPPFLAGS=\"$FREETYPE2_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$FREETYPE2_LIBS \$LIBS\"
+
+ac_fn_c_check_func "$LINENO" "FT_Init_FreeType" "ac_cv_func_FT_Init_FreeType"
+if test "x$ac_cv_func_FT_Init_FreeType" = x""yes; then :
+  have_ft2_or_t1=yes
+
+$as_echo "#define HAVE_FT2 1" >>confdefs.h
+
+fi
+
 
 eval CPPFLAGS=\"$GD_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$GD_LIBS \$LIBS\"
@@ -15099,32 +15122,6 @@ $as_echo "#define HAVE_KPSE_ENC_FORMATS 1" >>confdefs.h
 fi
 
 
-eval CPPFLAGS=\"$T1LIB_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$T1LIB_LIBS \$LIBS\"
-
-ac_fn_c_check_func "$LINENO" "T1_InitLib" "ac_cv_func_T1_InitLib"
-if test "x$ac_cv_func_T1_InitLib" = x""yes; then :
-  have_ft2_or_t1=yes
-
-$as_echo "#define HAVE_LIBT1 1" >>confdefs.h
-
-else
-  have_ft2_or_t1=no
-fi
-
-
-eval CPPFLAGS=\"$FREETYPE2_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$FREETYPE2_LIBS \$LIBS\"
-
-ac_fn_c_check_func "$LINENO" "FT_Init_FreeType" "ac_cv_func_FT_Init_FreeType"
-if test "x$ac_cv_func_FT_Init_FreeType" = x""yes; then :
-  have_ft2_or_t1=yes
-
-$as_echo "#define HAVE_FT2 1" >>confdefs.h
-
-fi
-
-
 # Checks for more header files.
 for ac_header in gd.h png.h kpathsea/kpathsea.h
 do :
@@ -15175,6 +15172,28 @@ LIBS=$kpse_save_LIBS
 
 
 echo timestamp >config.force
+
+else
+
+# For TeX Live we always have t1lib and freetype2.
+ if true; then
+  have_t1_TRUE=
+  have_t1_FALSE='#'
+else
+  have_t1_TRUE='#'
+  have_t1_FALSE=
+fi
+
+ if true; then
+  have_ft2_TRUE=
+  have_ft2_FALSE='#'
+else
+  have_ft2_TRUE='#'
+  have_ft2_FALSE=
+fi
+
+have_ft2_or_t1=yes
+
 fi
 
  if test "x$ac_cv_func_T1_InitLib" = xyes; then
@@ -15379,6 +15398,14 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error "conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${have_t1_TRUE}" && test -z "${have_t1_FALSE}"; then
+  as_fn_error "conditional \"have_t1\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${have_ft2_TRUE}" && test -z "${have_ft2_FALSE}"; then
+  as_fn_error "conditional \"have_ft2\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${have_t1_TRUE}" && test -z "${have_t1_FALSE}"; then

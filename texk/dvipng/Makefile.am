@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -83,10 +83,11 @@ $(dvipng_OBJECTS): config.force
 config.force: $(dvipng_dependencies)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
+	$(SHELL) ./config.status Makefile config.h
 
 DISTCLEANFILES = config.force
 
-LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(GD_LIBS)
+LDADD = $(KPATHSEA_LIBS) $(GD_LIBS) $(FREETYPE2_LIBS)
 LDADD += $(T1LIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)
 
 ## Rebuild libkpathsea

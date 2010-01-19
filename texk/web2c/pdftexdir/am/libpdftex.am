@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/libpdftex.am: Makefile fragment for libpdftex.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libpdftex
@@ -48,8 +48,8 @@ libpdftex_a_SOURCES += \
 	pdftexdir/regex/regex.h
 endif MINGW32
 
-# We must create pdftexd.h before building the libpdftex_a_OBJECTS.
-$(libpdftex_a_OBJECTS): pdftexd.h
+# We must create pdftexd.h (and xpdf) before building the libpdftex_a_OBJECTS.
+$(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND)
 
 ## included by pdftexdir/writettf.c
 EXTRA_libpdftex_a_SOURCES = pdftexdir/macnames.c

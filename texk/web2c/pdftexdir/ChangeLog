@@ -1,3 +1,8 @@
+2010-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libpdftex.am: Add dependency on $(XPDF_DEPEND).
+	* am/pdftosrc.am: Remove dependency on libpdftex.a.
+
 2010-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* epdf.c: Remove extern delaration of register_fd_entry().

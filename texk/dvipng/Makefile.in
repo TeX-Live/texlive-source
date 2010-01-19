@@ -340,7 +340,7 @@ dvipng_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) \
 	$(LIBPNG_DEPEND) $(T1LIB_DEPEND) $(FREETYPE2_DEPEND) \
 	$(GD_DEPEND)
 DISTCLEANFILES = config.force
-LDADD = $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(GD_LIBS) $(T1LIB_LIBS) \
+LDADD = $(KPATHSEA_LIBS) $(GD_LIBS) $(FREETYPE2_LIBS) $(T1LIB_LIBS) \
 	$(LIBPNG_LIBS) $(ZLIB_LIBS)
 TESTS = dvipng.test
 TESTS_ENVIRONMENT = DVIPNG_TREE='$(DVIPNG_TREE)'
@@ -1306,6 +1306,7 @@ $(dvipng_OBJECTS): config.force
 config.force: $(dvipng_dependencies)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
+	$(SHELL) ./config.status Makefile config.h
 
 @KPATHSEA_RULE@
 @FREETYPE2_RULE@

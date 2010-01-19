@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -110,7 +110,19 @@ AC_CHECK_FUNC([png_read_image],
                          [Define to 1 if you have the `png' library (-lpng).])],
               [AC_MSG_ERROR([cannot find/use libpng])])
 
+KPSE_ADD_FLAGS([t1lib])
+AC_CHECK_FUNC([T1_InitLib],
+              [have_ft2_or_t1=yes
+               AC_DEFINE([HAVE_LIBT1], 1,
+                         [Define to 1 if you have the `t1' library (-lt1).])],
+              [have_ft2_or_t1=no])
+
 KPSE_ADD_FLAGS([freetype2])
+AC_CHECK_FUNC([FT_Init_FreeType],
+              [have_ft2_or_t1=yes
+               AC_DEFINE([HAVE_FT2], 1,
+                         [Define to 1 if you have freetype2.])])
+
 KPSE_ADD_FLAGS([gd])
 AC_CHECK_FUNC([gdImageCreate],
               [AC_DEFINE([HAVE_LIBGD], 1,
@@ -130,19 +142,6 @@ KPSE_CHECK_KPSE_FORMAT([opentype],
                        [AC_DEFINE([HAVE_KPSE_ENC_FORMATS], 1,
                                   [Define to 1 if your kpathsea has kpse_enc_format.])])
 
-KPSE_ADD_FLAGS([t1lib])
-AC_CHECK_FUNC([T1_InitLib],
-              [have_ft2_or_t1=yes
-               AC_DEFINE([HAVE_LIBT1], 1,
-                         [Define to 1 if you have the `t1' library (-lt1).])],
-              [have_ft2_or_t1=no])
-
-KPSE_ADD_FLAGS([freetype2])
-AC_CHECK_FUNC([FT_Init_FreeType],
-              [have_ft2_or_t1=yes
-               AC_DEFINE([HAVE_FT2], 1,
-                         [Define to 1 if you have freetype2.])])
-
 # Checks for more header files.
 AC_CHECK_HEADERS([gd.h png.h kpathsea/kpathsea.h], ,
                  [AC_MSG_ERROR([cannot find/use $ac_header])])
@@ -154,6 +153,14 @@ AC_CHECK_FUNCS([gdImageCreateTrueColor gdImageCreateFromJpeg gdImagePngEx gdImag
 KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
+
+else
+
+# For TeX Live we always have t1lib and freetype2.
+AM_CONDITIONAL([have_t1], [true])
+AM_CONDITIONAL([have_ft2], [true])
+have_ft2_or_t1=yes
+
 fi
 
 AM_CONDITIONAL([have_t1], [test "x$ac_cv_func_T1_InitLib" = xyes])
