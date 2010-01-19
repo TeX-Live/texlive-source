@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build dialog for TeX Live.
 ##
-##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -27,21 +27,23 @@ dist-hook:
 	    dlg_config.h headers-sh makefile samples/install/makefile \
 	    *.a *.o  `find -name .svn`
 
-if build
-
 nodist_man1_MANS = $(DIALOG_TREE)/dialog.1
 
 bin_PROGRAMS = $(DIALOG_TREE)/dialog
 
-$(DIALOG_TREE)/dialog$(EXEEXT):
+$(DIALOG_TREE)/dialog$(EXEEXT): config.force
 	cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) all
 
-distclean-local:
-	cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) distclean
+config.force:
+	echo timestamp >config.force
+	eval $(srcdir)/configure "`./config.status --config`"
 
-else !build
 distclean-local:
-endif !build
+	if test -f "$(DIALOG_TREE)/Makefile"; then \
+	  cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) distclean; \
+	else :; fi
 
 __DIALOG_TREE__dialog_SOURCES =
+
+DISTCLEANFILES = config.force
 

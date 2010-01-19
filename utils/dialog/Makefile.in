@@ -32,7 +32,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-@build_TRUE@bin_PROGRAMS = $(DIALOG_TREE)/dialog$(EXEEXT)
+bin_PROGRAMS = $(DIALOG_TREE)/dialog$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) \
 	$(srcdir)/../../build-aux/install-sh \
@@ -191,8 +191,9 @@ ACLOCAL_AMFLAGS = -I ../../m4
 
 # We want to re-distribute the whole original dialog source tree.
 EXTRA_DIST = $(DIALOG_TREE)
-@build_TRUE@nodist_man1_MANS = $(DIALOG_TREE)/dialog.1
+nodist_man1_MANS = $(DIALOG_TREE)/dialog.1
 __DIALOG_TREE__dialog_SOURCES = 
+DISTCLEANFILES = config.force
 all: all-am
 
 .SUFFIXES:
@@ -270,9 +271,6 @@ clean-binPROGRAMS:
 $(DIALOG_TREE)/$(am__dirstamp):
 	@$(MKDIR_P) $(DIALOG_TREE)
 	@: > $(DIALOG_TREE)/$(am__dirstamp)
-@build_FALSE@$(DIALOG_TREE)/dialog$(EXEEXT): $(__DIALOG_TREE__dialog_OBJECTS) $(__DIALOG_TREE__dialog_DEPENDENCIES) $(DIALOG_TREE)/$(am__dirstamp)
-@build_FALSE@	@rm -f $(DIALOG_TREE)/dialog$(EXEEXT)
-@build_FALSE@	$(LINK) $(__DIALOG_TREE__dialog_OBJECTS) $(__DIALOG_TREE__dialog_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -512,6 +510,7 @@ distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-test -z "$(DIALOG_TREE)/$(am__dirstamp)" || rm -f $(DIALOG_TREE)/$(am__dirstamp)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -614,13 +613,17 @@ dist-hook:
 	    dlg_config.h headers-sh makefile samples/install/makefile \
 	    *.a *.o  `find -name .svn`
 
-@build_TRUE@$(DIALOG_TREE)/dialog$(EXEEXT):
-@build_TRUE@	cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) all
+$(DIALOG_TREE)/dialog$(EXEEXT): config.force
+	cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) all
 
-@build_TRUE@distclean-local:
-@build_TRUE@	cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) distclean
+config.force:
+	echo timestamp >config.force
+	eval $(srcdir)/configure "`./config.status --config`"
 
-@build_FALSE@distclean-local:
+distclean-local:
+	if test -f "$(DIALOG_TREE)/Makefile"; then \
+	  cd $(DIALOG_TREE) && $(MAKE) $(AM_MAKEFLAGS) distclean; \
+	else :; fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

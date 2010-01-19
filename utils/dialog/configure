@@ -562,8 +562,6 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-build_FALSE
-build_TRUE
 subdirs
 DIALOG_TREE
 am__fastdepCC_FALSE
@@ -3309,17 +3307,12 @@ DIALOG_TREE=dialog-1.1-20080819
 subdirs="$subdirs "
 
 
-# when building dialog, configure the subdir $DIALOG_TREE
-# but prevent autoreconf from recursing into this subdir.
-test "x$enable_dialog" = xyes && subdirs=$DIALOG_TREE
- if test "x$enable_dialog" = xyes; then
-  build_TRUE=
-  build_FALSE='#'
-else
-  build_TRUE='#'
-  build_FALSE=
+if test "x$enable_build" != xno || test -f config.force; then
+  # when building dialog, configure the subdir $DIALOG_TREE
+  # but prevent autoreconf from recursing into this subdir.
+  subdirs=$DIALOG_TREE
+  echo timestamp >config.force
 fi
-
 
 ac_config_files="$ac_config_files Makefile"
 
@@ -3475,10 +3468,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error "conditional \"am__fastdepCC\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then
-  as_fn_error "conditional \"build\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
