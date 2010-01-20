@@ -81,6 +81,10 @@
  *   - Yet another change in my address, now it's a UNIX CIP pool:
  *     <scherer@physik.rwth-aachen.de>
  *   - Cleanup for the new web2c release.
+ *
+ *   January 20, 2010:
+ *
+ *   - MetaFont has the new version number 2.718281.
  */
 
 #define EXTERN extern
@@ -207,7 +211,7 @@ boolean mf_amiga_initscreen(void)
     WA_InnerHeight, scaledheight/lacefactor,
     WA_Flags,       WFLG_DRAGBAR|WFLG_DEPTHGADGET,
     WA_AutoAdjust,  FALSE,
-    WA_Title,       (ULONG)" MetaFont V2.718 Online Display",
+    WA_Title,       (ULONG)" MetaFont V2.718281 Online Display",
     WA_PubScreen,   (ULONG)Scr,
     TAG_DONE)))
   {

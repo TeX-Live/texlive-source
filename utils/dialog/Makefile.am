@@ -36,7 +36,8 @@ $(DIALOG_TREE)/dialog$(EXEEXT): config.force
 
 config.force:
 	echo timestamp >config.force
-	eval $(srcdir)/configure "`./config.status --config`"
+	CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
+	  eval $(SHELL) $(srcdir)/configure "`./config.status --config`"
 
 distclean-local:
 	if test -f "$(DIALOG_TREE)/Makefile"; then \

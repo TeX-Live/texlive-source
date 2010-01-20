@@ -1,3 +1,7 @@
+2010-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* amiga.c, win32.c: Current METAFONT Version is 2.718281.
+
 2009-12-23  Karl Berry  <karl@tug.org>
 
 	* mftalk.c: doc fix.

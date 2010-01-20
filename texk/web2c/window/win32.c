@@ -24,7 +24,7 @@
 /* #define DEBUG 1 */
 
 static char szAppName[] = "MF";
-static char szTitle[] = " MetaFont V2.718 Online Display";
+static char szTitle[] = " MetaFont V2.718281 Online Display";
 static HWND my_window;
 static HDC my_dc;
 static HDC drawing_dc;
