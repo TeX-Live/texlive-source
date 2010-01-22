@@ -503,6 +503,6 @@ long_options[current_option].val := 0;
 @ Global filenames.
 
 @<Globals...@>=
-@!web_name,@!chg_name,@!pascal_name,@!pool_name:c_string;
+@!web_name,@!chg_name,@!pascal_name,@!pool_name:const_c_string;
 @!@!allow_underlines:boolean;
 @z

@@ -433,5 +433,5 @@ long_options[current_option].val := 0;
 @ Global filenames.
 
 @<Global...@> =
-@!web_name,@!chg_name,@!tex_name:c_string;
+@!web_name,@!chg_name,@!tex_name:const_c_string;
 @z

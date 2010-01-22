@@ -1,3 +1,11 @@
+2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatangle.ch: Declare web_name, chg_name, pascal_name, and
+	pool_name as const_c_string.
+
+	* lua/lkpselib.c (readable_file, lua_kpathsea_readable_file):
+	Drop non-const cast of {kpse,kpathsea}_readable_file() result.
+
 2010-01-03  Karl Berry  <karl@tug.org>
 
 	* luatex.ch: propagate "executed safely" wording change.

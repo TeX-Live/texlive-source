@@ -122,8 +122,7 @@ end;
 @y
 @p procedure open_dvi_file; {prepares to read packed bytes in |dvi_file|}
 begin
-  cur_name := extend_filename (cmdline (optind), 'dvi');
-  resetbin (dvi_file, cur_name);
+  resetbin (dvi_file, extend_filename (cmdline (optind), 'dvi'));
   cur_loc := 0;
 end;
 @#

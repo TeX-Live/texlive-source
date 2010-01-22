@@ -1,3 +1,8 @@
+2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex-make.c (maketex): Replace kpse_readable_file(fn) by
+	kpathsea_readable_file(kpse,fn) also for WIN32.
+
 2010-01-11  Taco Hoekwater <taco@metapost.org>
 
 	* types.h (kpse_clua_format): new type.

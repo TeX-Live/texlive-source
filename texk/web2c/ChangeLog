@@ -1,3 +1,14 @@
+2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvitype.ch (open_dvi_file): Skip use of cur_name.
+	(parse_arguments): Rearrange out_mode to avoid compiler warning.
+	* mft.ch (change_name, tex_name), pltotf.ch (tfm_name, pl_name),
+	pooltype.ch (pool_name), tftopl.ch (tfm_name, pl_name),
+	tangle.ch (web_name, chg_name, pascal_name, pool_name),
+	vftovp.ch (vf_name, vpl_name), vptovf.ch (vpl_name, tfm_name,
+	vf_name), weave.ch (web_name, chg_name, tex_name): Declare as
+	const_c_string.
+
 2009-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/web.am (EXTRA_DIST, TESTS, bibtex_tests, web_tests):

@@ -114,8 +114,7 @@ end;
 @y
 @p procedure open_dvi_file; {prepares to read packed bytes in |dvi_file|}
 begin
-  cur_name := extend_filename (cmdline (optind), 'dvi');
-  resetbin (dvi_file, cur_name);
+  resetbin (dvi_file, extend_filename (cmdline (optind), 'dvi'));
   cur_loc := 0;
 end;
 @#
@@ -547,11 +546,11 @@ begin
       print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
     
     end else if argument_is ('output-level') then begin
-      out_mode := optarg[0] - '0';
-      if (out_mode < 0) or (out_mode > 4) or (optarg[1] <> 0) then begin
+      if (optarg[0] < '0') or (optarg[0] > '4') or (optarg[1] <> 0) then begin
         write_ln (stderr, 'Value for --output-level must be >= 0 and <= 4.');
         uexit (1);
       end;
+      out_mode := optarg[0] - '0';
     
     end else if argument_is ('page-start') then begin
       @<Determine the desired |start_count| values from |optarg|@>;

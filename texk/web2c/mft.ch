@@ -1052,7 +1052,7 @@ files, as UNIX knows them.
 @d max_style_name = 32
 
 @<Globals...@>=
-@!change_name,@!tex_name:c_string;
+@!change_name,@!tex_name:const_c_string;
 @!style_name:array[0..max_style_name-1] of const_c_string;
 @!n_style_name:c_int_type;  {Number of values in |style_name| array.}
 @!i_style_name:c_int_type;  {The next |style_name|.}

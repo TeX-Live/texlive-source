@@ -1,3 +1,11 @@
+2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvitype.ch (open_dvi_file): Skip use of cur_name.
+	* ofm2opl.ch (tfm_name, pl_name), opl2ofm.ch (tfm_name, pl_name),
+	otangle.ch (web_name, chg_name, pascal_name, pool_name),
+	ovf2ovp.ch (vf_name, vpl_name), ovp2ovf.ch (vpl_name, tfm_name,
+	vf_name): Declare as const_c_string.
+
 2010-01-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* repeat.test (new): Shell script to test repeat_char handling.

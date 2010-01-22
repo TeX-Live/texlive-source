@@ -68,7 +68,7 @@ end.
 @y
 @!pool_file:packed file of text_char;
   {the string-pool file output by \.{TANGLE}}
-@!pool_name:^char;
+@!pool_name:const_c_string;
 @z
 
 % The name of the pool file is dynamically determined. We open it at the

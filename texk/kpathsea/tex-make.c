@@ -1,6 +1,6 @@
 /* tex-make.c: run external programs to make TeX-related files.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010 Karl Berry.
    Copyright 1997, 1998, 2001-05 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -323,7 +323,7 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
         len--;
       }
 
-      ret = len == 0 ? NULL : kpse_readable_file (fn);
+      ret = len == 0 ? NULL : kpathsea_readable_file (kpse, fn);
       if (!ret && len > 1) {
         WARNING2 ("kpathsea: %s output `%s' instead of a filename",
                   new_cmd, fn);

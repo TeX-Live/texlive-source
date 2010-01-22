@@ -1,3 +1,8 @@
+2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* omfonts.[ch] (read_in_whole, name_ofm, name_opl, name_ovp,
+	name_ovf, files): Declare file names as const_string.
+
 2010-01-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* char_routines.c (compute_ofm_character_info): Fix CHARREPEAT.

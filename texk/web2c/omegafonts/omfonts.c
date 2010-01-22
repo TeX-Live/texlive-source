@@ -56,10 +56,10 @@ int text_format = TEXT_CODE_MIXED;
 
 int program;
 
-string name_ofm = NULL;
-string name_opl = NULL;
-string name_ovp = NULL;
-string name_ovf = NULL;
+const_string name_ofm = NULL;
+const_string name_opl = NULL;
+const_string name_ovp = NULL;
+const_string name_ovf = NULL;
 
 FILE *file_ofm = NULL;
 FILE *file_opl = NULL;
@@ -98,7 +98,7 @@ static const_string names_msg[PROG_NUM] = {
 };
 
 int no_files=0;
-string *files[3] = {NULL, NULL, NULL};
+const_string *files[3] = {NULL, NULL, NULL};
 const_string suffixes[3] = {NULL, NULL, NULL};
 const_string full_suffixes[3] = {NULL, NULL, NULL};
 
@@ -321,7 +321,7 @@ void
 read_in_whole(unsigned char **contents_loc,
               unsigned *length_loc,
               FILE *file,
-              string name)
+              const_string name)
 {
     unsigned no_read;
     unsigned no_total_read = 0;

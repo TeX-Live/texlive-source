@@ -829,7 +829,7 @@ long_options[current_option].val := 0;
 @ Global filenames.
 
 @<Globals...@>=
-@!web_name,@!chg_name,@!pascal_name,@!pool_name:c_string;
+@!web_name,@!chg_name,@!pascal_name,@!pool_name:const_c_string;
 @!force_uppercase,@!force_lowercase,@!allow_underlines,@!strict_mode:boolean;
 @!unambig_length:0..max_id_length;
 @z

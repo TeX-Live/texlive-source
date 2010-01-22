@@ -304,5 +304,5 @@ long_options[current_option].val := 0;
 @ Global filenames.
 
 @<Global...@> =
-@!vpl_name, @!tfm_name, @!vf_name:c_string;
+@!vpl_name, @!tfm_name, @!vf_name:const_c_string;
 @z

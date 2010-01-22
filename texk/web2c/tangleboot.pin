@@ -45,7 +45,7 @@ scanninghex:boolean;{:143}{156:}nextcontrol:eightbits;
 {:156}{164:}currepltext:textpointer;{:164}{171:}modulecount:0..12287;
 {:171}{179:}{troubleshooting:boolean;ddt:integer;dd:integer;
 debugcycle:integer;debugskipped:integer;}{:179}{185:}{wo:0..2;}
-{:185}{199:}webname,chgname,pascalname,poolname:cstring;
+{:185}{199:}webname,chgname,pascalname,poolname:constcstring;
 forceuppercase,forcelowercase,allowunderlines,strictmode:boolean;
 unambiglength:0..maxidlength;{:199}{30:}{procedure debughelp;forward;}
 {:30}{31:}procedure error;var j:0..outbufsize;k,l:0..bufsize;
