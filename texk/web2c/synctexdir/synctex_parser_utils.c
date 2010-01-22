@@ -185,24 +185,24 @@ synctex_bool_t _synctex_path_is_absolute(const char * name) {
 }
 
 /*  We do not take care of UTF-8 */
-char * _synctex_last_path_component(const char * name) {
+const char * _synctex_last_path_component(const char * name) {
 	const char * c = name+strlen(name);
 	if(c>name) {
 		if(!SYNCTEX_IS_PATH_SEPARATOR(*c)) {
 			do {
 				--c;
 				if(SYNCTEX_IS_PATH_SEPARATOR(*c)) {
-					return (char *)c+1;
+					return c+1;
 				}
 			} while(c>name);
 		}
-		return (char *)c;/* the last path component is the void string*/
+		return c;/* the last path component is the void string*/
 	}
-	return (char *)c;
+	return c;
 }
 
 int _synctex_copy_with_quoting_last_path_component(const char * src, char ** dest_ref, size_t size) {
-  char * lpc;
+  const char * lpc;
   if(src && dest_ref) {
 #		define dest (*dest_ref)
 		dest = NULL;	/*	Default behavior: no change and sucess. */
@@ -215,17 +215,17 @@ int _synctex_copy_with_quoting_last_path_component(const char * src, char ** des
 				 *	or equivalently: strlen(dest)+2<size (see below) */
 				if(strlen(src)<size) {
 					if((dest = (char *)malloc(size+2))) {
+						char * dpc = dest + (lpc-src);	/*	dpc is the last path component of dest.	*/
 						if(dest != strncpy(dest,src,size)) {
 							_synctex_error("!  _synctex_copy_with_quoting_last_path_component: Copy problem");
 							free(dest);
 							dest = NULL;/*  Don't forget to reinitialize. */
 							return -2;
 						}
-						lpc += dest - src;	/*	Now lpc is the last path component of dest.	*/
-						memmove(lpc+1,lpc,strlen(lpc)+1);	/*	Also move the null terminating character. */
-						lpc[0]='"';
-						lpc[strlen(lpc)+1]='\0';/*	Consistency test */
-						lpc[strlen(lpc)]='"';
+						memmove(dpc+1,dpc,strlen(dpc)+1);	/*	Also move the null terminating character. */
+						dpc[0]='"';
+						dpc[strlen(dpc)+1]='\0';/*	Consistency test */
+						dpc[strlen(dpc)]='"';
 						return 0;	/*	Success. */
 					}
 					return -1;	/*	Memory allocation error.	*/
@@ -309,7 +309,7 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 		/*  Do we have a real base name ? */
 		if((size = strlen(basename))>0) {
 			/*  Yes, we do. */
-			char * temp = NULL;
+			const char * temp = NULL;
 			char * corename = NULL; /*  base name of output without path extension. */
 			char * dirname = NULL; /*  dir name of output */
 			char * quoted_corename = NULL;
@@ -385,7 +385,7 @@ int _synctex_get_name(const char * output, const char * build_directory, char **
 				}
 			}
 			if(!_synctex_path_is_absolute(output) && build_directory && (size = strlen(build_directory))) {
-				temp = (char *)build_directory + size - 1;
+				temp = build_directory + size - 1;
 				if(_synctex_path_is_absolute(temp)) {
 					build = _synctex_merge_strings(build_directory,none,NULL);
 					if(quoted_corename && strlen(quoted_corename)>0) {

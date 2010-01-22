@@ -1,6 +1,6 @@
 ## texk/web2c/synctexdir/am/synctex.am: Makefile fragment for SyncTeX.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## The SyncTeX tool
@@ -16,7 +16,7 @@ synctex_SOURCES = \
 	synctexdir/synctex_parser_utils.c
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
-synctex_CFLAGS = # $(WARNING_CFLAGS)
+synctex_CFLAGS = $(WARNING_CFLAGS)
 
 synctex_LDADD = $(ZLIB_LIBS)
 
