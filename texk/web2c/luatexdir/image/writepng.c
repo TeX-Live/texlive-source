@@ -21,6 +21,7 @@
 #include <assert.h>
 #include "ptexlib.h"
 #include "image.h"
+#include "writepng.h"
 
 static const char _svn_version[] =
     "$Id: writepng.c 2317 2009-04-18 00:12:18Z hhenkel $ "

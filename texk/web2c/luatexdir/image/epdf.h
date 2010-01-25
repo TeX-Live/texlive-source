@@ -102,13 +102,10 @@ extern "C" {
     extern void zpdf_os_get_os_buf(integer);
 
 /* epdf.c */
-    extern void epdf_mark_glyphs(struct fd_entry *, char *);
-    extern struct fd_entry *epdf_create_fontdescriptor(struct fm_entry *, int);
     extern int get_fd_objnum(struct fd_entry *);
     extern int get_fn_objnum(struct fd_entry *);
 
-/* write_enc.c */
-    extern void epdf_write_enc(char **, integer);
+#include "../inc-epdf.h"
 
 /* utils.c */
     extern char *convertStringToPDFString(char *in, int len);

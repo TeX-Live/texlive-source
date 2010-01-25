@@ -75,9 +75,9 @@ extern pdfstructure *pstruct;
 /**********************************************************************/
 
 boolean calc_pdfpos(pdfstructure * p, scaledpos * pos);
-void pdf_end_string_nl();
-void pdf_goto_pagemode();
-void pdf_page_init();
+void pdf_end_string_nl(void);
+void pdf_goto_pagemode(void);
+void pdf_page_init(void);
 void pdf_place_form(scaled h, scaled v, integer i);
 void pdf_place_glyph(internal_font_number f, integer c);
 void pdf_place_rule(scaled h, scaled v, scaled wd, scaled ht);

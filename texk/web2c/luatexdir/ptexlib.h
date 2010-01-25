@@ -62,13 +62,13 @@ int loadpoolstrings(integer spare_size);
 
 /* tex/filename.c */
 extern void scan_file_name(void);
-extern void pack_job_name(char *s);
-extern void prompt_file_name(char *s, char *e);
+extern void pack_job_name(const char *s);
+extern void prompt_file_name(const char *s, const char *e);
 extern str_number make_name_string(void);
 extern void print_file_name(str_number, str_number, str_number);
 
 /* lua/luainit.c */
-extern void write_svnversion(char *a);
+extern void write_svnversion(const char *a);
 
 /* utils/writezip.c */
 extern void write_zip(boolean);
@@ -110,14 +110,14 @@ struct tex_language {
 
 extern struct tex_language *new_language(int n);
 extern struct tex_language *get_language(int n);
-extern void load_patterns(struct tex_language *lang, unsigned char *buf);
-extern void load_hyphenation(struct tex_language *lang, unsigned char *buf);
+extern void load_patterns(struct tex_language *lang, const unsigned char *buf);
+extern void load_hyphenation(struct tex_language *lang, const unsigned char *buf);
 extern int hyphenate_string(struct tex_language *lang, char *w, char **ret);
 
 extern void new_hyphenation(halfword h, halfword t);
 extern void clear_patterns(struct tex_language *lang);
 extern void clear_hyphenation(struct tex_language *lang);
-extern char *clean_hyphenation(char *buffer, char **cleaned);
+extern const char *clean_hyphenation(const char *buffer, char **cleaned);
 extern void hnj_hyphenation(halfword head, halfword tail);
 
 extern void set_pre_hyphen_char(integer lan, integer val);
@@ -236,7 +236,7 @@ void lua_node_filter(int filterid, int extrainfo, halfword head_node,
                      halfword * tail_node);
 halfword lua_vpack_filter(halfword head_node, scaled size, int pack_type,
                           scaled maxd, int extrainfo);
-void lua_node_filter_s(int filterid, char *extrainfo);
+void lua_node_filter_s(int filterid, const char *extrainfo);
 int lua_linebreak_callback(int is_broken, halfword head_node,
                            halfword * new_head);
 
@@ -376,10 +376,10 @@ void pdf_print_real(integer m, integer d);
 #  define  NO_CAT_TABLE      -2
 #  define  DEFAULT_CAT_TABLE -1
 
-extern boolean str_eq_cstr(str_number, char *, size_t);
+extern boolean str_eq_cstr(str_number, const char *, size_t);
 void get_next(void);
 extern void check_outer_validity(void);
-boolean scan_keyword(char *);
+boolean scan_keyword(const char *);
 void scan_direction(void);
 halfword active_to_cs(int, int);
 void get_token_lua(void);
@@ -389,7 +389,11 @@ int get_char_cat_code(int);
 
 void tex_def_font(small_number a);
 
-/* lcallbacklib.c */
+/* lua/ltokenlib.c */
+
+extern int get_command_id(const char *);
+
+/* lua/lcallbacklib.c */
 
 #  include <../lua51/lua.h>
 
@@ -435,19 +439,19 @@ extern int lua_active;
 
 #  define callback_defined(a) callback_set[a]
 
-extern int run_callback(int i, char *values, ...);
-extern int run_saved_callback(int i, char *name, char *values, ...);
-extern int run_and_save_callback(int i, char *values, ...);
+extern int run_callback(int i, const char *values, ...);
+extern int run_saved_callback(int i, const char *name, const char *values, ...);
+extern int run_and_save_callback(int i, const char *values, ...);
 extern void destroy_saved_callback(int i);
 extern boolean get_callback(lua_State * L, int i);
 
-extern void get_saved_lua_boolean(int i, char *name, boolean * target);
-extern void get_saved_lua_number(int i, char *name, integer * target);
-extern void get_saved_lua_string(int i, char *name, char **target);
+extern void get_saved_lua_boolean(int i, const char *name, boolean * target);
+extern void get_saved_lua_number(int i, const char *name, integer * target);
+extern void get_saved_lua_string(int i, const char *name, const char **target);
 
-extern void get_lua_boolean(char *table, char *name, boolean * target);
-extern void get_lua_number(char *table, char *name, integer * target);
-extern void get_lua_string(char *table, char *name, char **target);
+extern void get_lua_boolean(const char *table, const char *name, boolean * target);
+extern void get_lua_number(const char *table, const char *name, integer * target);
+extern void get_lua_string(const char *table, const char *name, const char **target);
 
 extern char *get_lua_name(int i);
 

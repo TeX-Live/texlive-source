@@ -94,119 +94,119 @@ int copy_error(halfword p);     /* define below */
 #define variable_node_size 2
 
 
-char *node_fields_list[] = { "attr", "width", "depth", "height", "dir", "shift",
+const char *node_fields_list[] = { "attr", "width", "depth", "height", "dir", "shift",
     "glue_order", "glue_sign", "glue_set", "list", NULL
 };
-char *node_fields_rule[] = { "attr", "width", "depth", "height", "dir", NULL };
-char *node_fields_insert[] =
+const char *node_fields_rule[] = { "attr", "width", "depth", "height", "dir", NULL };
+const char *node_fields_insert[] =
     { "attr", "cost", "depth", "height", "spec", "list", NULL };
-char *node_fields_mark[] = { "attr", "class", "mark", NULL };
-char *node_fields_adjust[] = { "attr", "list", NULL };
-char *node_fields_disc[] = { "attr", "pre", "post", "replace", NULL };
-char *node_fields_math[] = { "attr", "surround", NULL };
-char *node_fields_glue[] = { "attr", "spec", "leader", NULL };
-char *node_fields_kern[] = { "attr", "kern", NULL };
-char *node_fields_penalty[] = { "attr", "penalty", NULL };
-char *node_fields_unset[] =
+const char *node_fields_mark[] = { "attr", "class", "mark", NULL };
+const char *node_fields_adjust[] = { "attr", "list", NULL };
+const char *node_fields_disc[] = { "attr", "pre", "post", "replace", NULL };
+const char *node_fields_math[] = { "attr", "surround", NULL };
+const char *node_fields_glue[] = { "attr", "spec", "leader", NULL };
+const char *node_fields_kern[] = { "attr", "kern", NULL };
+const char *node_fields_penalty[] = { "attr", "penalty", NULL };
+const char *node_fields_unset[] =
     { "attr", "width", "depth", "height", "dir", "shrink",
     "glue_order", "glue_sign", "stretch", "span", "list", NULL
 };
-char *node_fields_margin_kern[] = { "attr", "width", "glyph", NULL };
-char *node_fields_glyph[] =
+const char *node_fields_margin_kern[] = { "attr", "width", "glyph", NULL };
+const char *node_fields_glyph[] =
     { "attr", "char", "font", "lang", "left", "right", "uchyph",
     "components", "xoffset", "yoffset", NULL
 };
-char *node_fields_style[] = { "attr", "style", NULL };
-char *node_fields_choice[] =
+const char *node_fields_style[] = { "attr", "style", NULL };
+const char *node_fields_choice[] =
     { "attr", "display", "text", "script", "scriptscript", NULL };
-char *node_fields_ord[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_op[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_bin[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_rel[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_open[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_close[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_punct[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_inner[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_under[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_over[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_vcenter[] = { "attr", "nucleus", "sub", "sup", NULL };
-char *node_fields_radical[] =
+const char *node_fields_ord[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_op[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_bin[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_rel[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_open[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_close[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_punct[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_inner[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_under[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_over[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_vcenter[] = { "attr", "nucleus", "sub", "sup", NULL };
+const char *node_fields_radical[] =
     { "attr", "nucleus", "sub", "sup", "left", "degree", NULL };
-char *node_fields_fraction[] =
+const char *node_fields_fraction[] =
     { "attr", "width", "num", "denom", "left", "right", NULL };
-char *node_fields_accent[] =
+const char *node_fields_accent[] =
     { "attr", "nucleus", "sub", "sup", "accent", "bot_accent", NULL };
-char *node_fields_fence[] = { "attr", "delim", NULL };
-char *node_fields_math_char[] = { "attr", "fam", "char", NULL };
-char *node_fields_sub_box[] = { "attr", "list", NULL };
-char *node_fields_sub_mlist[] = { "attr", "list", NULL };
-char *node_fields_math_text_char[] = { "attr", "fam", "char", NULL };
-char *node_fields_delim[] =
+const char *node_fields_fence[] = { "attr", "delim", NULL };
+const char *node_fields_math_char[] = { "attr", "fam", "char", NULL };
+const char *node_fields_sub_box[] = { "attr", "list", NULL };
+const char *node_fields_sub_mlist[] = { "attr", "list", NULL };
+const char *node_fields_math_text_char[] = { "attr", "fam", "char", NULL };
+const char *node_fields_delim[] =
     { "attr", "small_fam", "small_char", "large_fam", "large_char", NULL };
 
-char *node_fields_inserting[] =
+const char *node_fields_inserting[] =
     { "height", "last_ins_ptr", "best_ins_ptr", NULL };
 
-char *node_fields_splitup[] = { "height", "last_ins_ptr", "best_ins_ptr",
+const char *node_fields_splitup[] = { "height", "last_ins_ptr", "best_ins_ptr",
     "broken_ptr", "broken_ins", NULL
 };
 
-char *node_fields_action[] = { "action_type", "named_id", "action_id",
+const char *node_fields_action[] = { "action_type", "named_id", "action_id",
     "file", "new_window", "data", "ref_count", NULL
 };
-char *node_fields_attribute[] = { "number", "value", NULL };
-char *node_fields_glue_spec[] = { "width", "stretch", "shrink",
+const char *node_fields_attribute[] = { "number", "value", NULL };
+const char *node_fields_glue_spec[] = { "width", "stretch", "shrink",
     "stretch_order", "shrink_order", "ref_count", NULL
 };
-char *node_fields_attribute_list[] = { NULL };
+const char *node_fields_attribute_list[] = { NULL };
 
-char *node_fields_whatsit_open[] =
+const char *node_fields_whatsit_open[] =
     { "attr", "stream", "name", "area", "ext", NULL };
-char *node_fields_whatsit_write[] = { "attr", "stream", "data", NULL };
-char *node_fields_whatsit_close[] = { "attr", "stream", NULL };
-char *node_fields_whatsit_special[] = { "attr", "data", NULL };
+const char *node_fields_whatsit_write[] = { "attr", "stream", "data", NULL };
+const char *node_fields_whatsit_close[] = { "attr", "stream", NULL };
+const char *node_fields_whatsit_special[] = { "attr", "data", NULL };
 
-char *node_fields_whatsit_local_par[] =
+const char *node_fields_whatsit_local_par[] =
     { "attr", "pen_inter", "pen_broken", "dir",
     "box_left", "box_left_width", "box_right", "box_right_width", NULL
 };
-char *node_fields_whatsit_dir[] =
+const char *node_fields_whatsit_dir[] =
     { "attr", "dir", "level", "dvi_ptr", "dvi_h", NULL };
 
-char *node_fields_whatsit_pdf_literal[] = { "attr", "mode", "data", NULL };
-char *node_fields_whatsit_pdf_refobj[] = { "attr", "objnum", NULL };
-char *node_fields_whatsit_pdf_refxform[] =
+const char *node_fields_whatsit_pdf_literal[] = { "attr", "mode", "data", NULL };
+const char *node_fields_whatsit_pdf_refobj[] = { "attr", "objnum", NULL };
+const char *node_fields_whatsit_pdf_refxform[] =
     { "attr", "width", "height", "depth", "objnum", NULL };
-char *node_fields_whatsit_pdf_refximage[] =
+const char *node_fields_whatsit_pdf_refximage[] =
     { "attr", "width", "height", "depth", "objnum", NULL };
-char *node_fields_whatsit_pdf_annot[] =
+const char *node_fields_whatsit_pdf_annot[] =
     { "attr", "width", "height", "depth", "objnum", "data", NULL };
-char *node_fields_whatsit_pdf_start_link[] =
+const char *node_fields_whatsit_pdf_start_link[] =
     { "attr", "width", "height", "depth",
     "objnum", "link_attr", "action", NULL
 };
-char *node_fields_whatsit_pdf_end_link[] = { "attr", NULL };
-char *node_fields_whatsit_pdf_dest[] = { "attr", "width", "height", "depth",
+const char *node_fields_whatsit_pdf_end_link[] = { "attr", NULL };
+const char *node_fields_whatsit_pdf_dest[] = { "attr", "width", "height", "depth",
     "named_id", "dest_id", "dest_type", "xyz_zoom", "objnum", NULL
 };
-char *node_fields_whatsit_pdf_thread[] = { "attr", "width", "height", "depth",
+const char *node_fields_whatsit_pdf_thread[] = { "attr", "width", "height", "depth",
     "named_id", "thread_id", "thread_attr", NULL
 };
-char *node_fields_whatsit_pdf_start_thread[] =
+const char *node_fields_whatsit_pdf_start_thread[] =
     { "attr", "width", "height", "depth",
     "named_id", "thread_id", "thread_attr", NULL
 };
-char *node_fields_whatsit_pdf_end_thread[] = { "attr", NULL };
-char *node_fields_whatsit_pdf_save_pos[] = { "attr", NULL };
-char *node_fields_whatsit_late_lua[] = { "attr", "reg", "data", "name", NULL };
-char *node_fields_whatsit_close_lua[] = { "attr", "reg", NULL };
-char *node_fields_whatsit_pdf_colorstack[] =
+const char *node_fields_whatsit_pdf_end_thread[] = { "attr", NULL };
+const char *node_fields_whatsit_pdf_save_pos[] = { "attr", NULL };
+const char *node_fields_whatsit_late_lua[] = { "attr", "reg", "data", "name", NULL };
+const char *node_fields_whatsit_close_lua[] = { "attr", "reg", NULL };
+const char *node_fields_whatsit_pdf_colorstack[] =
     { "attr", "stack", "cmd", "data", NULL };
-char *node_fields_whatsit_pdf_setmatrix[] = { "attr", "data", NULL };
-char *node_fields_whatsit_pdf_save[] = { "attr", NULL };
-char *node_fields_whatsit_pdf_restore[] = { "attr", NULL };
-char *node_fields_whatsit_cancel_boundary[] = { "attr", NULL };
-char *node_fields_whatsit_user_defined[] =
+const char *node_fields_whatsit_pdf_setmatrix[] = { "attr", "data", NULL };
+const char *node_fields_whatsit_pdf_save[] = { "attr", NULL };
+const char *node_fields_whatsit_pdf_restore[] = { "attr", NULL };
+const char *node_fields_whatsit_cancel_boundary[] = { "attr", NULL };
+const char *node_fields_whatsit_user_defined[] =
     { "attr", "user_id", "type", "value", NULL };
 
 node_info node_data[] = {
@@ -743,7 +743,7 @@ static void do_free_error(halfword p)
 {
     halfword r;
     char errstr[255] = { 0 };
-    char *errhlp[] = {
+    const char *errhlp[] = {
         "When I tried to free the node mentioned in the error message, it turned",
         "out it was not (or no longer) actually in use.",
         "Errors such as these are often caused by Lua node list alteration,",
@@ -830,7 +830,7 @@ static void do_free_error(halfword p)
 #endif
 }
 
-int free_error(halfword p)
+static int free_error(halfword p)
 {
     assert(p > my_prealloc);
     assert(p < var_mem_max);
@@ -847,7 +847,7 @@ int free_error(halfword p)
 static void do_copy_error(halfword p)
 {
     char errstr[255] = { 0 };
-    char *errhlp[] = {
+    const char *errhlp[] = {
         "When I tried to copy the node mentioned in the error message, it turned",
         "out it was not (or no longer) actually in use.",
         "Errors such as these are often caused by Lua node list alteration,",
@@ -1007,7 +1007,7 @@ void flush_node(halfword p)
                 break;
             default:
                 {
-                    char *hlp[] = {
+                    const char *hlp[] = {
                         "The type of the value in a user defined whatsit node should be one",
                         "of 'a' (attribute list), 'd' (number), 'n' (node list), 's' (string),",
                         "or 't' (tokenlist). Yours has an unknown type, and therefore I don't",
@@ -1330,7 +1330,7 @@ void check_node(halfword p)
     }
 }
 
-void check_static_node_mem(void)
+static void check_static_node_mem(void)
 {
     dotest(zero_glue, width(zero_glue), 0);
     dotest(zero_glue, type(zero_glue), glue_spec_node);
@@ -1430,7 +1430,8 @@ halfword get_node(integer s)
     return slow_get_node(s);
 }
 
-void print_free_chain(int c)
+#if 0 /* unused */
+static void print_free_chain(int c)
 {
     halfword p = free_chain[c];
     fprintf(stdout, "\nfree chain[%d] =\n  ", c);
@@ -1440,6 +1441,7 @@ void print_free_chain(int c)
     }
     fprintf(stdout, "null;\n");
 }
+#endif
 
 void free_node(halfword p, integer s)
 {
@@ -1467,7 +1469,7 @@ void free_node(halfword p, integer s)
     var_used -= s;              /* maintain statistics */
 }
 
-void free_node_chain(halfword q, integer s)
+static void free_node_chain(halfword q, integer s)
 {
     register halfword p = q;
     while (vlink(p) != null) {
@@ -2202,7 +2204,7 @@ void print_short_node_contents(halfword p)
 }
 
 
-void show_pdftex_whatsit_rule_spec(integer p)
+static void show_pdftex_whatsit_rule_spec(integer p)
 {
     tprint("(");
     print_rule_dimen(pdf_height(p));
@@ -2221,7 +2223,7 @@ other extensions might, of course, involve more subtlety here.
 */
 
 
-void print_write_whatsit(char *s, pointer p)
+static void print_write_whatsit(const char *s, pointer p)
 {
     tprint_esc(s);
     if (write_stream(p) < 16)
@@ -2233,7 +2235,7 @@ void print_write_whatsit(char *s, pointer p)
 }
 
 
-void show_whatsit_node(integer p)
+static void show_whatsit_node(integer p)
 {
     switch (subtype(p)) {
     case open_node:

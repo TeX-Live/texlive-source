@@ -19,8 +19,8 @@ luatex_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
 luatex_CPPFLAGS += $(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5
 luatex_CPPFLAGS += -Iluatexdir -I$(srcdir)/luatexdir -I$(srcdir)/luatexdir/lua51 -I$(srcdir)/mplibdir
 luatex_CPPFLAGS += -Dextra_version_info=`date +-%Y%m%d%H`
-luatex_CFLAGS = # $(WARNING_CFLAGS)
-luatex_CXXFLAGS = # $(WARNING_CXXFLAGS)
+luatex_CFLAGS = $(WARNING_CFLAGS)
+luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 luatex_ldadd = libluatex.a libff.a libluamisc.a libzzip.a libluasocket.a liblua51.a
 luatex_ldadd += $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)

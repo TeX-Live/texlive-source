@@ -45,7 +45,7 @@ extern "C" {
 #  include "ptexlib.h"
 #  include "nodes.h"
 
-    HyphenDict *hnj_hyphen_new();
+    HyphenDict *hnj_hyphen_new(void);
     void hnj_hyphen_load(HyphenDict * dict, const unsigned char *fn);
     void hnj_hyphen_free(HyphenDict * dict);
     void hnj_hyphen_clear(HyphenDict * dict);

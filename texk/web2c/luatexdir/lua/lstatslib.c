@@ -32,16 +32,16 @@ typedef struct statistic {
 
 extern void lua_nodelib_push_fast(lua_State * L, halfword n);
 
-typedef char *(*charfunc) (void);
+typedef const char *(*charfunc) (void);
 typedef integer(*intfunc) (void);
 
-char *getbanner(void)
+static const char *getbanner(void)
 {
     return ptexbanner;
 }
 
 /* hack, I really should implement the makecstring */
-char *getfilename(void)
+static char *getfilename(void)
 {
     integer t;
     t = get_current_name();
@@ -51,12 +51,12 @@ char *getfilename(void)
         return xstrdup("");
 }
 
-char *getlasterror(void)
+static char *getlasterror(void)
 {
     return makecstring(last_error);
 }
 
-char *luatexrevision(void)
+static char *luatexrevision(void)
 {
     return makecstring(get_luatexrevision());
 }
@@ -144,7 +144,7 @@ static struct statistic stats[] = {
 };
 
 
-static int stats_name_to_id(char *name)
+static int stats_name_to_id(const char *name)
 {
     int i;
     for (i = 0; stats[i].name != NULL; i++) {
@@ -157,7 +157,7 @@ static int stats_name_to_id(char *name)
 static int do_getstat(lua_State * L, int i)
 {
     int t;
-    char *st;
+    const char *st;
     charfunc f;
     intfunc g;
     int str;
@@ -204,10 +204,10 @@ static int do_getstat(lua_State * L, int i)
 
 static int getstats(lua_State * L)
 {
-    char *st;
+    const char *st;
     int i;
     if (lua_isstring(L, -1)) {
-        st = (char *) lua_tostring(L, -1);
+        st = lua_tostring(L, -1);
         i = stats_name_to_id(st);
         if (i > 0) {
             return do_getstat(L, i);

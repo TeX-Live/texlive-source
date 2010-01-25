@@ -87,7 +87,7 @@ typedef struct {
 /* Dictionary */
 typedef struct {
     int id;                     /* encoded data value (as card8 or card16) */
-    char *key;                  /* opname                                  */
+    const char *key;            /* opname                                  */
     int count;                  /* number of values                        */
     double *values;             /* values                                  */
 } cff_dict_entry;
@@ -280,8 +280,8 @@ extern long cff_read_private(cff_font * cff);
 /* String */
 extern int cff_match_string(cff_font * cff, const char *str, s_SID sid);
 extern char *cff_get_string(cff_font * cff, s_SID id);
-extern long cff_get_sid(cff_font * cff, char *str);
-extern s_SID cff_add_string(cff_font * cff, char *str);
+extern long cff_get_sid(cff_font * cff, const char *str);
+extern s_SID cff_add_string(cff_font * cff, const char *str);
 extern void cff_update_string(cff_font * cff);
 
 #  define cff_is_stdstr(s) (cff_get_sid(NULL, (s)) >= 0)

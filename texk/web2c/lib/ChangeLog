@@ -1,3 +1,13 @@
+2010-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (mk_shellcmdlist): Declare string param as const.
+
+2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (maininit) [__SyncTeX__]: omit warning about no
+	SyncTeX for luaTeX.
+	(gettexstring): Declare as static for luaTeX.
+
 2010-01-16  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (do_dump, do_undump): give full name of file

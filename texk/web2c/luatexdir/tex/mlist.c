@@ -166,10 +166,10 @@ Also still TODO for OpenType Math:
 
 /* this is not really a math parameter at all */
 
-void math_param_error(char *param, int style)
+static void math_param_error(const char *param, int style)
 {
     char s[256];
-    char *hlp[] = {
+    const char *hlp[] = {
         "Sorry, but I can't typeset math unless various parameters have",
         "been set. This is normally done by loading special math fonts",
         "into the math family slots. Your font set is lacking at least",
@@ -1178,7 +1178,7 @@ void fixup_math_parameters(integer fam_id, integer size_id, integer f,
 }
 
 /* this needs to be called just at the start of |mlist_to_hlist| */
-void finalize_math_parameters(void)
+static void finalize_math_parameters(void)
 {
     integer saved_trace = int_par(param_tracing_assigns_code);
     int_par(param_tracing_assigns_code) = 0;
@@ -1218,7 +1218,7 @@ larger as the type gets smaller.)
 */
 
 
-char *math_size_string(integer s)
+static const char *math_size_string(integer s)
 {
     if (s == text_size)
         return "textfont";
@@ -1246,7 +1246,7 @@ char *math_size_string(integer s)
 
 /* a simple routine that creates a flat copy of a nucleus */
 
-pointer math_clone(pointer q)
+static pointer math_clone(pointer q)
 {
     pointer x;
     if (q == null)
@@ -1271,7 +1271,7 @@ pointer math_clone(pointer q)
   that eventually contains it.
 */
 
-pointer do_fraction_rule(scaled t, pointer att)
+static pointer do_fraction_rule(scaled t, pointer att)
 {
     pointer p;                  /* the new node */
     p = new_rule();
@@ -1288,7 +1288,7 @@ pointer do_fraction_rule(scaled t, pointer att)
   fraction rule of thickness |t| under additional space of height |ht|.
 */
 
-pointer overbar(pointer b, scaled k, scaled t, scaled ht, pointer att)
+static pointer overbar(pointer b, scaled k, scaled t, scaled ht, pointer att)
 {
     pointer p, q;               /* nodes being constructed */
     p = new_kern(k);
@@ -1332,7 +1332,7 @@ static pointer char_box(internal_font_number f, integer c, pointer bb)
  a given character:
 */
 
-scaled height_plus_depth(internal_font_number f, integer c)
+static scaled height_plus_depth(internal_font_number f, integer c)
 {
     return (char_height(f, c) + char_depth(f, c));
 }
@@ -1344,7 +1344,7 @@ scaled height_plus_depth(internal_font_number f, integer c)
   of the characters already in box |b|:
 */
 
-scaled stack_into_box(pointer b, internal_font_number f, integer c)
+static scaled stack_into_box(pointer b, internal_font_number f, integer c)
 {
     pointer p;                  /* new node placed into |b| */
     p = char_box(f, c, node_attr(b));
@@ -1355,7 +1355,7 @@ scaled stack_into_box(pointer b, internal_font_number f, integer c)
 }
 
 
-scaled stack_into_hbox(pointer b, internal_font_number f, integer c)
+static scaled stack_into_hbox(pointer b, internal_font_number f, integer c)
 {
     pointer p, q;               /* new node placed into |b| */
     p = char_box(f, c, node_attr(b));
@@ -1376,7 +1376,7 @@ scaled stack_into_hbox(pointer b, internal_font_number f, integer c)
 
 
 
-void add_delim_kern(pointer b, scaled s)
+static void add_delim_kern(pointer b, scaled s)
 {
     pointer p;                  /* new node placed into |b| */
     p = new_kern(s);
@@ -1385,7 +1385,7 @@ void add_delim_kern(pointer b, scaled s)
     list_ptr(b) = p;
 }
 
-void add_delim_hkern(pointer b, scaled s)
+static void add_delim_hkern(pointer b, scaled s)
 {
     pointer p, q;               /* new node placed into |b| */
     p = new_kern(s);
@@ -1404,7 +1404,7 @@ void add_delim_hkern(pointer b, scaled s)
 
 /* */
 
-pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
+static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
                       pointer att, int boxtype)
 {
     pointer b;
@@ -1431,7 +1431,7 @@ pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
     cur = ext;
     while (cur != NULL) {
         if (!char_exists(f, cur->glyph)) {
-            char *hlp[] = {
+            const char *hlp[] = {
                 "Each glyph part in an extensible item should exist in the font.",
                 "I will give up trying to find a suitable size for now. Fix your font!",
                 NULL
@@ -1446,7 +1446,7 @@ pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
             num_normal++;
         /* no negative overlaps or advances are allowed */
         if (cur->start_overlap < 0 || cur->end_overlap < 0 || cur->advance < 0) {
-            char *hlp[] = {
+            const char *hlp[] = {
                 "All measurements in extensible items should be positive.",
                 "To get around this problem, I have changed the font metrics.",
                 "Fix your font!",
@@ -1463,7 +1463,7 @@ pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
         cur = cur->next;
     }
     if (num_normal == 0) {
-        char *hlp[] = {
+        const char *hlp[] = {
             "Each extensible recipe should have at least one non-repeatable part.",
             "To get around this problem, I have changed the first part to be",
             "non-repeatable. Fix your font!",
@@ -1732,13 +1732,13 @@ pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
     return b;
 }
 
-pointer get_delim_vbox(extinfo * ext, internal_font_number f, scaled v,
+static pointer get_delim_vbox(extinfo * ext, internal_font_number f, scaled v,
                        pointer att)
 {
     return get_delim_box(ext, f, v, att, vlist_node);
 }
 
-pointer get_delim_hbox(extinfo * ext, internal_font_number f, scaled v,
+static pointer get_delim_hbox(extinfo * ext, internal_font_number f, scaled v,
                        pointer att)
 {
     return get_delim_box(ext, f, v, att, hlist_node);
@@ -1763,10 +1763,10 @@ pointer get_delim_hbox(extinfo * ext, internal_font_number f, scaled v,
   will be the height of its topmost component.
 */
 
-void endless_loop_error(internal_font_number g, integer y)
+static void endless_loop_error(internal_font_number g, integer y)
 {
     char s[256];
-    char *hlp[] = {
+    const char *hlp[] = {
         "You managed to create a seemingly endless charlist chain in the current",
         "font. I have counted until 10000 already and still have not escaped, so"
             "I will jump out of the loop all by myself now. Fix your font!",
@@ -1777,7 +1777,7 @@ void endless_loop_error(internal_font_number g, integer y)
     tex_error(s, hlp);
 }
 
-pointer var_delimiter(pointer d, integer s, scaled v)
+static pointer var_delimiter(pointer d, integer s, scaled v)
 {
     /* label found,continue; */
     pointer b;                  /* the box that will be constructed */
@@ -1869,7 +1869,7 @@ pointer var_delimiter(pointer d, integer s, scaled v)
     return b;
 }
 
-pointer flat_var_delimiter(pointer d, integer s, scaled v)
+static pointer flat_var_delimiter(pointer d, integer s, scaled v)
 {
     /* label found,continue; */
     pointer b;                  /* the box that will be constructed */
@@ -1977,7 +1977,7 @@ has been added to the width of the box; in this case a compensating
 kern is inserted.
 */
 
-pointer rebox(pointer b, scaled w)
+static pointer rebox(pointer b, scaled w)
 {
     pointer p, q, r, att;       /* temporary registers for list manipulation */
     internal_font_number f;     /* font in a one-character box */
@@ -2028,7 +2028,7 @@ one that is expressed in `\.{mu}', given the value of the math unit.
 
 #define mu_mult(A) mult_and_add(n,(A),xn_over_d((A),f,unity),max_dimen)
 
-pointer math_glue(pointer g, scaled m)
+static pointer math_glue(pointer g, scaled m)
 {
     pointer p;                  /* the new glue specification */
     integer n;                  /* integer part of |m| */
@@ -2059,7 +2059,7 @@ The |math_kern| subroutine removes |mu_glue| from a kern node, given
 the value of the math unit.
 */
 
-void math_kern(pointer p, scaled m)
+static void math_kern(pointer p, scaled m)
 {
     integer n;                  /* integer part of |m| */
     scaled f;                   /* fraction part of |m| */
@@ -2150,7 +2150,7 @@ The box returned by |clean_box| is ``clean'' in the
 sense that its |shift_amount| is zero.
 */
 
-pointer clean_box(pointer p, integer s)
+static pointer clean_box(pointer p, integer s)
 {
     pointer q;                  /* beginning of a list to be boxed */
     integer save_style;         /* |cur_style| to be restored */
@@ -2222,13 +2222,13 @@ after |fetch| has acted, and the field will also have been reset to |null|.
 internal_font_number cur_f;     /* the |font| field of a |math_char| */
 integer cur_c;                  /* the |character| field of a |math_char| */
 
-void fetch(pointer a)
+static void fetch(pointer a)
 {                               /* unpack the |math_char| field |a| */
     cur_c = math_character(a);
     cur_f = fam_fnt(math_fam(a), cur_size);
     if (cur_f == null_font) {
         char *msg;
-        char *hlp[] = {
+        const char *hlp[] = {
             "Somewhere in the math formula just ended, you used the",
             "stated character from an undefined font family. For example,",
             "plain TeX doesn't allow \\it or \\sl in subscripts. Proceed,",
@@ -2266,7 +2266,7 @@ The second pass eliminates all noads and inserts the correct glue and
 penalties between nodes.
 */
 
-void assign_new_hlist(pointer q, pointer r)
+static void assign_new_hlist(pointer q, pointer r)
 {
     switch (type(q)) {
     case fraction_noad:
@@ -2300,7 +2300,7 @@ the general setup of such procedures, let's begin with a couple of
 simple ones.
 */
 
-void make_over(pointer q)
+static void make_over(pointer q)
 {
     pointer p;
     p = overbar(clean_box(nucleus(q), cramped_style(cur_style)),
@@ -2311,7 +2311,7 @@ void make_over(pointer q)
     type(nucleus(q)) = sub_box_node;
 }
 
-void make_under(pointer q)
+static void make_under(pointer q)
 {
     pointer p, x, y, r;         /* temporary registers for box construction */
     scaled delta;               /* overall height plus depth */
@@ -2331,7 +2331,7 @@ void make_under(pointer q)
     type(nucleus(q)) = sub_box_node;
 }
 
-void make_vcenter(pointer q)
+static void make_vcenter(pointer q)
 {
     pointer v;                  /* the box that should be centered vertically */
     scaled delta;               /* its height plus depth */
@@ -2354,7 +2354,7 @@ of the nucleus plus a certain minimum clearance~|psi|. The symbol will be
 placed so that the actual clearance is |psi| plus half the excess.
 */
 
-void make_radical(pointer q)
+static void make_radical(pointer q)
 {
     pointer x, y, p;            /* temporary registers for box construction */
     scaled delta, clr, theta, h;        /* dimensions involved in the calculation */
@@ -2441,7 +2441,7 @@ wrapup_delimiter(pointer x, pointer y, pointer q,
 
 /* this has the |nucleus| box |x| as a limit above an extensible delimiter |y| */
 
-void make_over_delimiter(pointer q)
+static void make_over_delimiter(pointer q)
 {
     pointer x, y, v;            /* temporary registers for box construction */
     scaled shift_up, shift_down, clr, delta;
@@ -2464,7 +2464,7 @@ void make_over_delimiter(pointer q)
 
 /* this has the extensible delimiter |x| as a limit above |nucleus| box |y|  */
 
-void make_delimiter_over(pointer q)
+static void make_delimiter_over(pointer q)
 {
     pointer x, y, v;            /* temporary registers for box construction */
     scaled shift_up, shift_down, clr, delta;
@@ -2490,7 +2490,7 @@ void make_delimiter_over(pointer q)
 
 /* this has the extensible delimiter |y| as a limit below a |nucleus| box |x| */
 
-void make_delimiter_under(pointer q)
+static void make_delimiter_under(pointer q)
 {
     pointer x, y, v;            /* temporary registers for box construction */
     scaled shift_up, shift_down, clr, delta;
@@ -2516,7 +2516,7 @@ void make_delimiter_under(pointer q)
 
 /* this has the extensible delimiter |x| as a limit below |nucleus| box |y| */
 
-void make_under_delimiter(pointer q)
+static void make_under_delimiter(pointer q)
 {
     pointer x, y, v;            /* temporary registers for box construction */
     scaled shift_up, shift_down, clr, delta;
@@ -2547,7 +2547,7 @@ respect to the size of the final box.
 #define TOP_CODE 1
 #define BOT_CODE 2
 
-void do_make_math_accent(pointer q, internal_font_number f, integer c,
+static void do_make_math_accent(pointer q, internal_font_number f, integer c,
                          int top_or_bot)
 {
     pointer p, r, x, y;         /* temporary registers for box construction */
@@ -2686,7 +2686,7 @@ void do_make_math_accent(pointer q, internal_font_number f, integer c,
     type(nucleus(q)) = sub_box_node;
 }
 
-void make_math_accent(pointer q)
+static void make_math_accent(pointer q)
 {
     if (accent_chr(q) != null) {
         fetch(accent_chr(q));
@@ -2711,7 +2711,7 @@ The |make_fraction| procedure is a bit different because it sets
 |new_hlist(q)| directly rather than making a sub-box.
 */
 
-void make_fraction(pointer q)
+static void make_fraction(pointer q)
 {
     pointer p, v, x, y, z;      /* temporary registers for box construction */
     scaled delta, delta1, delta2, shift_up, shift_down, clr;
@@ -2811,7 +2811,7 @@ the limits have been set above and below the operator. In that case,
 |new_hlist(q)| will already contain the desired final box.
 */
 
-scaled make_op(pointer q)
+static scaled make_op(pointer q)
 {
     scaled delta;               /* offset between subscript and superscript */
     pointer p, v, x, y, z;      /* temporary registers for box construction */
@@ -2957,7 +2957,7 @@ to a math font (i.e., a font with |space=0|).
 No boundary characters enter into these ligatures.
 */
 
-void make_ord(pointer q)
+static void make_ord(pointer q)
 {
     integer a;                  /* the left-side character for lig/kern testing */
     pointer p, r, s;            /* temporary registers for list manipulation */
@@ -3067,7 +3067,7 @@ void make_ord(pointer q)
    actual images say 
 */
 
-scaled math_kern_at(internal_font_number f, integer c, int side, int v)
+static scaled math_kern_at(internal_font_number f, integer c, int side, int v)
 {
     int h, k, numkerns;
     scaled *kerns_heights;
@@ -3111,7 +3111,7 @@ scaled math_kern_at(internal_font_number f, integer c, int side, int v)
 }
 
 
-scaled
+static scaled
 find_math_kern(internal_font_number l_f, integer l_c,
                internal_font_number r_f, integer r_c, int cmd, scaled shift)
 {
@@ -3165,7 +3165,7 @@ find_math_kern(internal_font_number l_f, integer l_c,
 }
 
 /* just a small helper */
-pointer attach_hkern_to_new_hlist(pointer q, scaled delta2)
+static pointer attach_hkern_to_new_hlist(pointer q, scaled delta2)
 {
     pointer y;
     pointer z = new_kern(delta2);
@@ -3194,7 +3194,7 @@ baseline of subscripts and superscripts based on the given nucleus.
 */
 
 
-void make_scripts(pointer q, pointer p, scaled it)
+static void make_scripts(pointer q, pointer p, scaled it)
 {
     pointer x, y, z;            /* temporary registers for box construction */
     scaled shift_up, shift_down, clr;   /* dimensions in the calculation */
@@ -3371,7 +3371,7 @@ the required size and returns the value |open_noad| or |close_noad|. The
 so they will have consistent sizes.
 */
 
-small_number make_left_right(pointer q, integer style, scaled max_d,
+static small_number make_left_right(pointer q, integer style, scaled max_d,
                              scaled max_hv)
 {
     scaled delta, delta1, delta2;       /* dimensions used in the calculation */
@@ -3501,7 +3501,7 @@ void initialize_math_spacing(void)
 
 #define both_types(A,B) ((A)*16+(B))
 
-pointer math_spacing_glue(int l_type, int r_type, int mstyle)
+static pointer math_spacing_glue(int l_type, int r_type, int mstyle)
 {
     int x = -1;
     pointer z = null;

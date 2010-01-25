@@ -30,9 +30,7 @@ static const char _svn_version[] =
 #  include <sys/time.h>
 #endif
 
-
-/* this function is in vfovf.c for the moment */
-extern int make_vf_table(lua_State * L, char *name, scaled s);
+#include "inc-vfovf.h"
 
 static int get_fontid(void)
 {
@@ -47,9 +45,9 @@ static int font_read_tfm(lua_State * L)
     internalfontnumber f;
     scaled s;
     int k;
-    char *cnom;
+    const char *cnom;
     if (lua_isstring(L, 1)) {
-        cnom = (char *) lua_tostring(L, 1);
+        cnom = lua_tostring(L, 1);
         if (lua_isnumber(L, 2)) {
             s = (integer) lua_tonumber(L, 2);
             if (strlen(cnom)) {
@@ -82,9 +80,9 @@ static int font_read_tfm(lua_State * L)
 static int font_read_vf(lua_State * L)
 {
     scaled s;
-    char *cnom;
+    const char *cnom;
     if (lua_isstring(L, 1)) {
-        cnom = (char *) lua_tostring(L, 1);
+        cnom = lua_tostring(L, 1);
         if (strlen(cnom)) {
             if (lua_isnumber(L, 2)) {
                 s = lua_tonumber(L, 2);

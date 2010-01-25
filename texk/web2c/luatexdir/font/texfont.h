@@ -198,9 +198,9 @@ typedef enum {
     full_embedding,
 } font_embedding_option;
 
-extern char *font_type_strings[];
-extern char *font_format_strings[];
-extern char *font_embedding_strings[];
+extern const char *font_type_strings[];
+extern const char *font_format_strings[];
+extern const char *font_embedding_strings[];
 
 
 #  define font_checksum(a)          font_tables[a]->_font_checksum
@@ -572,13 +572,13 @@ extern void set_lp_code(internal_font_number f, integer c, integer i);
 extern void set_rp_code(internal_font_number f, integer c, integer i);
 extern void set_ef_code(internal_font_number f, integer c, integer i);
 
-int read_tfm_info(internal_font_number f, char *nom, scaled s);
+int read_tfm_info(internal_font_number f, const char *nom, scaled s);
 
 
 /* from dofont.c */
 
 extern int read_font_info(pointer u, str_number nom, scaled s, integer ndir);
-extern int find_font_id(char *nom, scaled s);
+extern int find_font_id(const char *nom, scaled s);
 
 /* for and from vfpacket.c */
 

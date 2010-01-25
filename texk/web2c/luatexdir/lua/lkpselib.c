@@ -163,7 +163,7 @@ int program_name_set = 0;
 static int find_file(lua_State * L)
 {
     int i;
-    char *st;
+    const char *st;
     int ftype = kpse_tex_format;
     int mexist = 0;
     TEST_PROGRAM_NAME_SET;
@@ -171,7 +171,7 @@ static int find_file(lua_State * L)
         lua_pushstring(L, "not a file name");
         lua_error(L);
     }
-    st = (char *) lua_tostring(L, 1);
+    st = lua_tostring(L, 1);
     i = lua_gettop(L);
     while (i > 1) {
         if (lua_isboolean(L, i)) {
@@ -206,7 +206,7 @@ static int lua_kpathsea_find_file(lua_State * L)
     int ftype = kpse_tex_format;
     int mexist = 0;
     kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
-    char *st = (char *) luaL_checkstring(L, 2);
+    const char *st = luaL_checkstring(L, 2);
     i = lua_gettop(L);
     while (i > 2) {
         if (lua_isboolean(L, i)) {
@@ -403,8 +403,8 @@ static int lua_kpathsea_new(lua_State * L)
 {
     kpathsea kpse = NULL;
     kpathsea *kp = NULL;
-    char *argv = (char *) luaL_checkstring(L, 1);
-    char *liar = (char *) luaL_optstring(L, 2, argv);
+    const char *argv = luaL_checkstring(L, 1);
+    const char *liar = luaL_optstring(L, 2, argv);
     kpse = kpathsea_new();
     kpathsea_set_program_name(kpse, argv, liar);
     kp = (kpathsea *) lua_newuserdata(L, sizeof(kpathsea *));

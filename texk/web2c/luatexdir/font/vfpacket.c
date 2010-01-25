@@ -117,10 +117,12 @@ int vf_packet_bytes(charinfo * co)
 /* typeset the \.{DVI} commands in the
    character packet for character |c| in current font |f| */
 
-char *packet_command_names[] = {
+#if 0 /* unused */
+static char *packet_command_names[] = {
     "char", "font", "pop", "push", "special", "image",
     "right", "down", "rule", "node", "nop", "end", NULL
 };
+#endif
 
 
 void do_vf_packet(internal_font_number vf_f, integer c)

@@ -21,6 +21,7 @@
 #include "ptexlib.h"
 #include "luatex-api.h"
 #include "luatexfont.h"
+#include "inc-vfovf.h"
 
 static const char _svn_version[] =
     "$Id: vfovf.c 2448 2009-06-08 07:43:50Z taco $ "
@@ -186,7 +187,7 @@ void pdf_check_vf_cur_val(void)
 }
 
 static void
-vf_local_font_warning(internal_font_number f, internal_font_number k, char *s,
+vf_local_font_warning(internal_font_number f, internal_font_number k, const char *s,
                       integer a, integer b)
 {
     print_nlp();
@@ -205,7 +206,7 @@ vf_local_font_warning(internal_font_number f, internal_font_number k, char *s,
 
 /* process a local font in \.{VF} file */
 
-internal_font_number
+static internal_font_number
 vf_def_font(internal_font_number f, unsigned char *vf_buffer, integer * vf_cr)
 {
     internal_font_number k;
@@ -286,7 +287,7 @@ vf_def_font(internal_font_number f, unsigned char *vf_buffer, integer * vf_cr)
 }
 
 
-int open_vf_file(char *fn, unsigned char **vbuffer, integer * vsize)
+static int open_vf_file(const char *fn, unsigned char **vbuffer, integer * vsize)
 {
     boolean res;                /* was the callback successful? */
     integer callback_id;
@@ -393,7 +394,7 @@ int open_vf_file(char *fn, unsigned char **vbuffer, integer * vsize)
     }                                                  \
 }
 
-int count_packet_bytes(real_eight_bits * vf_buf, int cur_bute, int count)
+static int count_packet_bytes(real_eight_bits * vf_buf, int cur_bute, int count)
 {
     int k = 0;
     int ff = 0;
@@ -1049,7 +1050,7 @@ void do_vf(internal_font_number f)
     K++; }
 
 
-int make_vf_table(lua_State * L, char *cnom, scaled atsize)
+int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
 {
     integer cmd, k, i;
     integer cc, cmd_length, packet_length;
@@ -1603,7 +1604,8 @@ letter_space_font(halfword u, internal_font_number f, integer e)
 
 /* the fontname has [+-]\d+ls at the end */
 
-boolean is_letterspaced_font(internal_font_number f)
+#if 0 /* unused */
+static boolean is_letterspaced_font(internal_font_number f)
 {
     char *i, *j;
     if (font_type(f) != virtual_font_type)
@@ -1624,6 +1626,7 @@ boolean is_letterspaced_font(internal_font_number f)
         return false;
     return true;
 }
+#endif
 
 /* TODO */
 

@@ -38,6 +38,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "hnjalloc.h"
+
 void *
 hnj_malloc (int size)
 {

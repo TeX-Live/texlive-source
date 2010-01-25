@@ -19,6 +19,7 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "ptexlib.h"
+#include "inc-epdf.h"
 
 #include <string.h>
 

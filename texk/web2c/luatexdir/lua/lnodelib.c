@@ -29,13 +29,13 @@ static const char _svn_version[] =
 
 #define init_luaS_index(a) do {                                         \
     lua_pushliteral(L,#a);                                              \
-    luaS_##a##_ptr = (char *)lua_tostring(L,-1);                        \
+    luaS_##a##_ptr = lua_tostring(L,-1);                        \
     luaS_##a##_index = luaL_ref (L,LUA_REGISTRYINDEX);                  \
   } while (0)
 
 #define make_luaS_index(a)                                              \
   static int luaS_##a##_index = 0;                                      \
-  static char * luaS_##a##_ptr = NULL
+  static const char * luaS_##a##_ptr = NULL
 
 #define luaS_index(a)   luaS_##a##_index
 
@@ -70,7 +70,7 @@ int do_get_node_type_id(lua_State * L, int n, node_info * data)
 {
     register int j;
     if (lua_type(L, n) == LUA_TSTRING) {
-        char *s = (char *) lua_tostring(L, n);
+        const char *s = lua_tostring(L, n);
         for (j = 0; data[j].id != -1; j++) {
             if (strcmp(s, data[j].name) == 0)
                 return j;
@@ -95,7 +95,7 @@ int get_valid_node_type_id(lua_State * L, int n)
     if (i == -1) {
         if (lua_type(L, n) == LUA_TSTRING) {
             lua_pushfstring(L, "Invalid node type id: %s",
-                            (char *) lua_tostring(L, n));
+                            (const char *) lua_tostring(L, n));
         } else {
             lua_pushfstring(L, "Invalid node type id: %d",
                             (int) lua_tonumber(L, n));
@@ -112,7 +112,7 @@ int get_valid_node_subtype_id(lua_State * L, int n)
     if (i == -1) {
         if (lua_type(L, n) == LUA_TSTRING) {
             lua_pushfstring(L, "Invalid whatsit node id: %s",
-                            (char *) lua_tostring(L, n));
+                            (const char *) lua_tostring(L, n));
         } else {
             lua_pushfstring(L, "Invalid whatsit node id: %d",
                             (int) lua_tonumber(L, n));
@@ -476,7 +476,7 @@ static int lua_nodelib_last_node(lua_State * L)
 static int lua_nodelib_hpack(lua_State * L)
 {
     halfword n, p;
-    char *s;
+    const char *s;
     integer w = 0;
     int m = 1;
     n = *(check_isnode(L, 1));
@@ -484,7 +484,7 @@ static int lua_nodelib_hpack(lua_State * L)
         w = lua_tointeger(L, 2);
         if (lua_gettop(L) > 2) {
             if (lua_type(L, 3) == LUA_TSTRING) {
-                s = (char *) lua_tostring(L, 3);
+                s = lua_tostring(L, 3);
                 if (strcmp(s, "additional") == 0)
                     m = 1;
                 else if (strcmp(s, "exactly") == 0)
@@ -513,7 +513,7 @@ static int lua_nodelib_hpack(lua_State * L)
 static int lua_nodelib_vpack(lua_State * L)
 {
     halfword n, p;
-    char *s;
+    const char *s;
     integer w = 0;
     int m = 1;
     n = *(check_isnode(L, 1));
@@ -521,7 +521,7 @@ static int lua_nodelib_vpack(lua_State * L)
         w = lua_tointeger(L, 2);
         if (lua_gettop(L) > 2) {
             if (lua_type(L, 3) == LUA_TSTRING) {
-                s = (char *) lua_tostring(L, 3);
+                s = lua_tostring(L, 3);
                 if (strcmp(s, "additional") == 0)
                     m = 1;
                 else if (strcmp(s, "exactly") == 0)
@@ -606,7 +606,7 @@ make_luaS_index(xoffset);
 make_luaS_index(yoffset);
 
 
-void initialize_luaS_indexes(lua_State * L)
+static void initialize_luaS_indexes(lua_State * L)
 {
     init_luaS_index(id);
     init_luaS_index(next);
@@ -627,7 +627,7 @@ void initialize_luaS_indexes(lua_State * L)
 static int get_node_field_id(lua_State * L, int n, int node)
 {
     register int t = type(node);
-    register char *s = (char *) lua_tostring(L, n);
+    register const char *s = lua_tostring(L, n);
     if (luaS_ptr_eq(s, next)) {
         return 0;
     } else if (luaS_ptr_eq(s, id)) {
@@ -664,7 +664,7 @@ static int get_node_field_id(lua_State * L, int n, int node)
         return 2;
     } else {
         int j;
-        char **fields = node_data[t].fields;
+        const char **fields = node_data[t].fields;
         if (t == whatsit_node)
             fields = whatsit_node_data[subtype(node)].fields;
         for (j = 0; fields[j] != NULL; j++) {
@@ -681,7 +681,7 @@ static int get_valid_node_field_id(lua_State * L, int n, int node)
 {
     int i = get_node_field_id(L, n, node);
     if (i == -2) {
-        char *s = (char *) lua_tostring(L, n);
+        const char *s = lua_tostring(L, n);
         lua_pushfstring(L, "Invalid field id %s for node type %s (%d)", s,
                         node_data[type(node)].name, subtype(node));
         lua_error(L);
@@ -729,7 +729,7 @@ static int lua_nodelib_whatsits(lua_State * L)
 static int lua_nodelib_fields(lua_State * L)
 {
     int i = -1;
-    char **fields;
+    const char **fields;
     int t = get_valid_node_type_id(L, 1);
     if (t == whatsit_node) {
         t = get_valid_node_subtype_id(L, 2);
@@ -1971,11 +1971,11 @@ static int nodelib_getlist(lua_State * L, int n)
 
 static int nodelib_getdir(lua_State * L, int n)
 {
-    char *s = NULL;
+    const char *s = NULL;
     int d = 32;                 /* invalid number */
     int a = -1, b = -1, c = -1;
     if (lua_type(L, n) == LUA_TSTRING) {
-        s = (char *) lua_tostring(L, n);
+        s = lua_tostring(L, n);
         if (strlen(s) == 3) {
             d = 0;
         }
@@ -2021,7 +2021,7 @@ static int nodelib_getdir(lua_State * L, int n)
     if ((d > 31) || (d < -64) || (d < 0 && (d + 64) > 31)) {
         d = 0;
         lua_pushfstring(L, "Bad direction specifier %s",
-                        (char *) lua_tostring(L, n));
+                        (const char *) lua_tostring(L, n));
         lua_error(L);
     }
     return d;
@@ -2035,7 +2035,7 @@ static int nodelib_getdir(lua_State * L, int n)
 static str_number nodelib_getstring(lua_State * L, int a)
 {
     size_t k;
-    char *s = (char *) lua_tolstring(L, a, &k);
+    const char *s = lua_tolstring(L, a, &k);
     return maketexlstring(s, k);
 }
 
@@ -3177,7 +3177,7 @@ static int lua_nodelib_first_character(lua_State * L)
 
 /* this is too simplistic, but it helps Hans to get going */
 
-halfword do_ligature_n(halfword prev, halfword stop, halfword lig)
+static halfword do_ligature_n(halfword prev, halfword stop, halfword lig)
 {
     vlink(lig) = vlink(stop);
     vlink(stop) = null;

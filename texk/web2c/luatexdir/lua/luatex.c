@@ -331,7 +331,7 @@ void zwclose(FILE * f)
 
 /* create the dvi or pdf file */
 
-int open_outfile(FILE ** f, char *name, char *mode)
+int open_outfile(FILE ** f, const char *name, const char *mode)
 {
     FILE *res;
     res = fopen(name, mode);

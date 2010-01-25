@@ -177,10 +177,12 @@ void unsave_cat_codes(integer h, quarterword gl)
     }
 }
 
-void clearcatcodestack(integer h)
+#if 0 /* unused */
+static void clearcatcodestack(integer h)
 {
     clear_sa_stack(catcode_heads[h]);
 }
+#endif
 
 static void initializecatcodes(void)
 {

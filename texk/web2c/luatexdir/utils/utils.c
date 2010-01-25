@@ -36,6 +36,7 @@
 #include <float.h>              /* for DBL_EPSILON */
 #include "zlib.h"
 #include "ptexlib.h"
+#include "utils.h"
 
 #include "png.h"
 #ifdef POPPLER_VERSION
@@ -137,7 +138,7 @@ void make_subset_tag(fd_entry * fd)
             for (glyph = (char *) avl_t_first(&t, fd->gl_tree); glyph != NULL;
                  glyph = (char *) avl_t_next(&t)) {
                 md5_append(&pms, (md5_byte_t *) glyph, strlen(glyph));
-                md5_append(&pms, (md5_byte_t *) " ", 1);
+                md5_append(&pms, (const md5_byte_t *) " ", 1);
             }
         }
         md5_append(&pms, (md5_byte_t *) fd->fontname, strlen(fd->fontname));
@@ -198,7 +199,7 @@ str_number maketexlstring(const char *s, size_t l)
 }
 
 /* print a C string through TeX */
-void print_string(char *j)
+void print_string(const char *j)
 {
     while (*j) {
         print_char(*j);
@@ -207,7 +208,7 @@ void print_string(char *j)
 }
 
 /* append a C string to a TeX string */
-void append_string(char *s)
+void append_string(const char *s)
 {
     if (s == NULL || *s == 0)
         return;
@@ -298,7 +299,7 @@ void pdftex_warn(const char *fmt, ...)
     print_ln();
 }
 
-void tex_error(char *msg, char **hlp)
+void tex_error(const char *msg, const char **hlp)
 {
     str_number aa = 0, bb = 0, cc = 0, dd = 0, ee = 0;
     int k = 0;
@@ -548,7 +549,7 @@ scaled ext_xn_over_d(scaled x, scaled n, scaled d)
     return (scaled) r;
 }
 
-void libpdffinish()
+void libpdffinish(void)
 {
     xfree(fb_array);
     xfree(char_array);
@@ -994,7 +995,7 @@ static void makepdftime(time_t t, char *time_str)
     }
 }
 
-void init_start_time()
+void init_start_time(void)
 {
     if (start_time == 0) {
         start_time = time((time_t *) NULL);
@@ -1002,19 +1003,19 @@ void init_start_time()
     }
 }
 
-void print_creation_date()
+void print_creation_date(void)
 {
     init_start_time();
     pdf_printf("/CreationDate (%s)\n", start_time_str);
 }
 
-void print_mod_date()
+void print_mod_date(void)
 {
     init_start_time();
     pdf_printf("/ModDate (%s)\n", start_time_str);
 }
 
-void getcreationdate()
+void getcreationdate(void)
 {
     /* put creation date on top of string pool and update pool_ptr */
     size_t len = strlen(start_time_str);
@@ -1188,7 +1189,7 @@ static int colstacks_used = 0;
     procedure calls.
 */
 #define init_colorstacks() if (colstacks_size == 0) colstacks_first_init();
-void colstacks_first_init()
+static void colstacks_first_init(void)
 {
     colstacks_size = STACK_INCREMENT;
     colstacks = xtalloc(colstacks_size, colstack_type);
@@ -1206,7 +1207,7 @@ void colstacks_first_init()
     colstacks[0].page_start = true;
 }
 
-int colorstackused()
+int colorstackused(void)
 {
     init_colorstacks();
     return colstacks_used;
@@ -1367,7 +1368,7 @@ integer colorstackpop(int colstack_no)
     return colstack->literal_mode;
 }
 
-static void colorstackpagestart()
+static void colorstackpagestart(void)
 {
     int i, j;
     colstack_type *colstack;
@@ -1422,7 +1423,7 @@ static matrix_entry *matrix_stack = 0;
 static int matrix_stack_size = 0;
 static int matrix_stack_used = 0;
 
-boolean matrixused()
+boolean matrixused(void)
 {
     return matrix_stack_used > 0;
 }
@@ -1436,7 +1437,7 @@ static pos_entry *pos_stack = 0;        /* the stack */
 static int pos_stack_size = 0;  /* initially empty */
 static int pos_stack_used = 0;  /* used entries */
 
-void matrix_stack_room()
+static void matrix_stack_room(void)
 {
     matrix_entry *new_stack;
 
@@ -1591,22 +1592,22 @@ static scaled ret_lly;
 static scaled ret_urx;
 static scaled ret_ury;
 
-scaled getllx()
+scaled getllx(void)
 {
     return ret_llx;
 }
 
-scaled getlly()
+scaled getlly(void)
 {
     return ret_lly;
 }
 
-scaled geturx()
+scaled geturx(void)
 {
     return ret_urx;
 }
 
-scaled getury()
+scaled getury(void)
 {
     return ret_ury;
 }
@@ -1620,7 +1621,7 @@ static int last_ury;
 #define DO_MIN(a, b) ((a < b) ? a : b)
 #define DO_MAX(a, b) ((a > b) ? a : b)
 
-void do_matrixtransform(scaled x, scaled y, scaled * retx, scaled * rety)
+static void do_matrixtransform(scaled x, scaled y, scaled * retx, scaled * rety)
 {
     matrix_entry *m = &matrix_stack[matrix_stack_used - 1];
     double x_old = x;
@@ -1755,14 +1756,14 @@ scaled divide_scaled_n(double sd, double md, double n)
 
 /* C print interface */
 
-void tprint(char *s)
+void tprint(const char *s)
 {
-    unsigned char *ss = (unsigned char*) s;
+    const unsigned char *ss = (const unsigned char*) s;
     while (*ss)
         print_char(*ss++);
 }
 
-void tprint_nl(char *s)
+void tprint_nl(const char *s)
 {
     print_nlp();
     tprint(s);
@@ -1772,7 +1773,7 @@ void tprint_nl(char *s)
 #define int_par(a) zeqtb[static_int_base+(a)].cint      /* an integer parameter */
 #define escape_char int_par(escape_char_code)
 
-void tprint_esc(char *s)
+void tprint_esc(const char *s)
 {                               /* prints escape character, then |s| */
     int c = -1;                 /* the escape character code */
     if (zeqtb != NULL) {
@@ -1783,7 +1784,7 @@ void tprint_esc(char *s)
     tprint(s);
 }
 
-void tconfusion(char *s)
+void tconfusion(const char *s)
 {
     confusion(maketexstring(s));
 }

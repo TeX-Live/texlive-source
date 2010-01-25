@@ -158,10 +158,10 @@ void tt_build_finish(struct tt_glyphs *g)
 static int glyf_cmp(const void *v1, const void *v2)
 {
     int cmp = 0;
-    struct tt_glyph_desc *sv1, *sv2;
+    const struct tt_glyph_desc *sv1, *sv2;
 
-    sv1 = (struct tt_glyph_desc *) v1;
-    sv2 = (struct tt_glyph_desc *) v2;
+    sv1 = (const struct tt_glyph_desc *) v1;
+    sv2 = (const struct tt_glyph_desc *) v2;
 
     if (sv1->gid == sv2->gid)
         cmp = 0;

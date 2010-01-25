@@ -118,7 +118,7 @@ static const char *newtabnames[] = {
     "prep"
 };
 
-ttf_cmap_entry *new_ttf_cmap_entry(void)
+static ttf_cmap_entry *new_ttf_cmap_entry(void)
 {
     ttf_cmap_entry *e;
     e = xtalloc(1, ttf_cmap_entry);
@@ -1129,7 +1129,7 @@ static void ttf_reindex_glyphs(void)
     }
 }
 
-static void ttf_write_head()
+static void ttf_write_head(void)
 {
     dirtab_entry *tab;
     tab = ttf_seek_tab("head", 0);
@@ -1419,7 +1419,7 @@ void writettf(fd_entry * fd)
     cur_file_name = NULL;
 }
 
-void do_writeotf(fd_entry * fd)
+static void do_writeotf(fd_entry * fd)
 {
     long i;
     dirtab_entry *tab;

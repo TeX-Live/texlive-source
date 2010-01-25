@@ -196,7 +196,7 @@ void init_image(image * p)
     img_dictref(p) = LUA_NOREF;
 }
 
-image *new_image()
+image *new_image(void)
 {
     image *p = xtalloc(1, image);
     init_image(p);
@@ -237,14 +237,14 @@ void init_image_dict(image_dict * p)
     img_png_ptr(p) = NULL;      /* union */
 }
 
-image_dict *new_image_dict()
+image_dict *new_image_dict(void)
 {
     image_dict *p = xtalloc(1, image_dict);
     init_image_dict(p);
     return p;
 }
 
-void free_dict_strings(image_dict * p)
+static void free_dict_strings(image_dict * p)
 {
     if (img_filename(p) != NULL)
         xfree(img_filename(p));
@@ -297,7 +297,7 @@ void free_image_dict(image_dict * p)
 
 /**********************************************************************/
 
-void pdf_print_resname_prefix()
+void pdf_print_resname_prefix(void)
 {
     if (pdf_resname_prefix != 0)
         pdf_printf(makecstring(pdf_resname_prefix));
@@ -457,7 +457,7 @@ void scale_img(image * img)
     img_set_scaled(img);
 }
 
-void out_img(image * img, pdfstructure * p, scaledpos * pos)
+static void out_img(image * img, pdfstructure * p, scaledpos * pos)
 {
     float a[6];                 /* transformation matrix */
     float xoff, yoff, tmp;
@@ -874,10 +874,12 @@ integer image_colordepth(integer ref)
     return img_colordepth(img_dict(img_array[ref]));
 }
 
-integer image_group_ref(integer ref)
+#if 0 /* unused */
+static integer image_group_ref(integer ref)
 {
     return img_group_ref(img_dict(img_array[ref]));
 }
+#endif
 
 /* The following five functions are for \pdfximagebbox */
 

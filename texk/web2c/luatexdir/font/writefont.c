@@ -72,7 +72,7 @@ static int comp_fd_entry(const void *pa, const void *pb, void *p)
 /**********************************************************************/
 /* initialize data structure for /Type /Font */
 
-fo_entry *new_fo_entry(void)
+static fo_entry *new_fo_entry(void)
 {
     fo_entry *fo;
     fo = xtalloc(1, fo_entry);
@@ -207,7 +207,7 @@ static void preset_fontname(fo_entry * fo)
         fo->fd->fontname = xstrdup(fo->fm->tfm_name);
 }
 
-static void write_fontname(fd_entry * fd, char *key)
+static void write_fontname(fd_entry * fd, const char *key)
 {
     assert(fd->fontname != NULL);
     pdf_puts("/");
@@ -244,7 +244,7 @@ fd_entry *lookup_fd_entry(char *s, integer slant, integer extend)
     return (fd_entry *) avl_find(fd_tree, &fd);
 }
 
-fd_entry *lookup_fontdescriptor(fo_entry * fo)
+static fd_entry *lookup_fontdescriptor(fo_entry * fo)
 {
     assert(fo != NULL);
     assert(fo->fm != NULL);
@@ -265,7 +265,7 @@ void register_fd_entry(fd_entry * fd)
     assert(aa != NULL);
 }
 
-void create_fontdescriptor(fo_entry * fo, internalfontnumber f)
+static void create_fontdescriptor(fo_entry * fo, internalfontnumber f)
 {
     assert(fo != NULL);
     assert(fo->fm != NULL);
@@ -304,7 +304,7 @@ void embed_whole_font(fd_entry * fd)
  * tree gl_tree of font descriptor fd referenced by font dictionary fo.
  */
 
-void mark_reenc_glyphs(fo_entry * fo, internalfontnumber f)
+static void mark_reenc_glyphs(fo_entry * fo, internalfontnumber f)
 {
     int i;
     char **g;
@@ -330,7 +330,7 @@ void mark_reenc_glyphs(fo_entry * fo, internalfontnumber f)
  * 2. Mark encoding pairs used by TeX to optimize encoding vector.
  */
 
-struct avl_table *mark_chars(fo_entry * fo, struct avl_table *tx_tree,
+static struct avl_table *mark_chars(fo_entry * fo, struct avl_table *tx_tree,
                              internalfontnumber f)
 {
     int i, *j;
@@ -352,7 +352,7 @@ struct avl_table *mark_chars(fo_entry * fo, struct avl_table *tx_tree,
 
 /**********************************************************************/
 
-void get_char_range(fo_entry * fo, internalfontnumber f)
+static void get_char_range(fo_entry * fo, internalfontnumber f)
 {
     int i;
     assert(fo != NULL);
@@ -420,7 +420,7 @@ static void write_charwidth_array(fo_entry * fo, internalfontnumber f)
  * into fo_tree; they are individually written out.
  */
 
-fo_entry *lookup_fo_entry(char *s)
+static fo_entry *lookup_fo_entry(char *s)
 {
     fo_entry fo;
     fm_entry fm;
@@ -434,7 +434,7 @@ fo_entry *lookup_fo_entry(char *s)
     return (fo_entry *) avl_find(fo_tree, &fo);
 }
 
-void register_fo_entry(fo_entry * fo)
+static void register_fo_entry(fo_entry * fo)
 {
     void **aa;
     if (fo_tree == NULL) {
@@ -597,7 +597,7 @@ static void write_fontdescriptor(fd_entry * fd)
     pdf_end_dict();
 }
 
-void write_fontdescriptors()
+static void write_fontdescriptors(void)
 {
     fd_entry *fd;
     struct avl_traverser t;
@@ -611,7 +611,7 @@ void write_fontdescriptors()
 
 /**********************************************************************/
 
-void write_fontdictionary(fo_entry * fo)
+static void write_fontdictionary(fo_entry * fo)
 {
     assert(fo != NULL);
     assert(fo->fm != NULL);
@@ -658,7 +658,7 @@ void write_fontdictionary(fo_entry * fo)
     pdf_end_dict();
 }
 
-void write_fontdictionaries()
+static void write_fontdictionaries(void)
 {
     fo_entry *fo;
     struct avl_traverser t;
@@ -676,7 +676,7 @@ void write_fontdictionaries()
  * @<Output fonts definition@>= in pdftex.web.
  */
 
-void write_fontstuff()
+void write_fontstuff(void)
 {
     write_fontdescriptors();
     write_fontencodings();      /* see writeenc.c */
@@ -685,7 +685,7 @@ void write_fontstuff()
 
 /**********************************************************************/
 
-void create_fontdictionary(fm_entry * fm, integer font_objnum,
+static void create_fontdictionary(fm_entry * fm, integer font_objnum,
                            internalfontnumber f)
 {
     fo_entry *fo = new_fo_entry();
@@ -839,17 +839,17 @@ void do_pdf_font(integer font_objnum, internalfontnumber f)
    at this point in the program.
 */
 
-int comp_glw_entry(const void *pa, const void *pb, void *p)
+static int comp_glw_entry(const void *pa, const void *pb, void *p)
 {
     unsigned short i, j;
     (void) p;
-    i = (*(glw_entry *) pa).id;
-    j = (*(glw_entry *) pb).id;
+    i = (*(const glw_entry *) pa).id;
+    j = (*(const glw_entry *) pb).id;
     cmp_return(i, j);
     return 0;
 }
 
-void create_cid_fontdescriptor(fo_entry * fo, internalfontnumber f)
+static void create_cid_fontdescriptor(fo_entry * fo, internalfontnumber f)
 {
     assert(fo != NULL);
     assert(fo->fm != NULL);

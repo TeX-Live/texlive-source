@@ -222,6 +222,8 @@ Tue Jul 1 15:23:00 UTC 2008
 
 #define __SyncTeX__ 1
 
+#   include "synctex.h"
+
 #   if defined(__SyncTeX__)
 
 #   include <stdio.h>
@@ -300,7 +302,7 @@ void synctex_init_command(void)
 
 /*  Free all memory used and close the file,
  *  It is sent locally when there is a problem with synctex output. */
-void synctex_abort(void)
+static void synctex_abort(void)
 {
 	SYNCTEX_RETURN_IF_DISABLED;
 #if SYNCTEX_DEBUG
@@ -967,7 +969,7 @@ void synctex_kern(halfword p, halfword this_box)
 void synctex_char_recorder(halfword p);
 
 /*  this message is sent whenever a char node ships out    */
-void synctexchar(halfword p, halfword this_box)
+void synctex_char(halfword p, halfword this_box)
 {
     (void)this_box;
 	SYNCTEX_RETURN_IF_DISABLED;
@@ -996,7 +998,7 @@ void synctex_node_recorder(halfword p);
 
 /*  this message should be sent to record information
          for a node of an unknown type    */
-void synctexnode(halfword p, halfword this_box)
+void synctex_node(halfword p, halfword this_box)
 {
     (void)this_box;
 	SYNCTEX_RETURN_IF_DISABLED;

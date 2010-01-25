@@ -166,7 +166,7 @@ will be added).
 */
 
 
-void unsave_math(void)
+static void unsave_math(void)
 {
     unsave();
     decr(save_ptr);
@@ -220,7 +220,7 @@ void def_fam_fnt(integer fam_id, integer size_id, integer f, integer lvl)
     }
 }
 
-void unsave_math_fam_data(integer gl)
+static void unsave_math_fam_data(integer gl)
 {
     sa_stack_item st;
     if (math_fam_head->stack == NULL)
@@ -283,7 +283,7 @@ scaled get_math_param(int param_id, int style_id)
 }
 
 
-void unsave_math_param_data(integer gl)
+static void unsave_math_param_data(integer gl)
 {
     sa_stack_item st;
     if (math_param_head->stack == NULL)
@@ -516,7 +516,7 @@ and |script_script_mlist| pointing to the mlists for each style.
 */
 
 
-pointer new_choice(void)
+static pointer new_choice(void)
 {                               /* create a choice node */
     return new_node(choice_node, 0);    /* the |subtype| is not used */
 }
@@ -584,7 +584,7 @@ void show_math_node(pointer p)
 
 /* Here are some simple routines used in the display of noads. */
 
-void print_fam_and_char(pointer p)
+static void print_fam_and_char(pointer p)
 {                               /* prints family and character */
     tprint_esc("fam");
     print_int(math_fam(p));
@@ -592,7 +592,7 @@ void print_fam_and_char(pointer p)
     print(math_character(p));
 }
 
-void print_delimiter(pointer p)
+static void print_delimiter(pointer p)
 {
     integer a;
     if (small_fam(p) < 0) {
@@ -627,7 +627,7 @@ distinguished from a missing field, because these are not equivalent
 */
 
 
-void print_subsidiary_data(pointer p, ASCII_code c)
+static void print_subsidiary_data(pointer p, ASCII_code c)
 {                               /* display a noad field */
     if (cur_length >= depth_threshold) {
         if (p != null)
@@ -796,7 +796,7 @@ Here is a little routine that needs to be done whenever a subformula
 is about to be processed. The parameter is a code like |math_group|.
 */
 
-void new_save_level_math(group_code c)
+static void new_save_level_math(group_code c)
 {
     saved(0) = text_dir_ptr;
     text_dir_ptr = new_dir(math_direction);
@@ -808,7 +808,7 @@ void new_save_level_math(group_code c)
     eq_word_define(static_int_base + param_level_local_dir_code, cur_level);
 }
 
-void push_math(group_code c, int mstyle)
+static void push_math(group_code c, int mstyle)
 {
     if (math_direction != text_direction)
         dir_math_save = true;
@@ -819,7 +819,7 @@ void push_math(group_code c, int mstyle)
     new_save_level_math(c);
 }
 
-void enter_ordinary_math(void)
+static void enter_ordinary_math(void)
 {
     push_math(math_shift_group, text_style);
     eq_word_define(static_int_base + param_cur_fam_code, -1);
@@ -827,7 +827,7 @@ void enter_ordinary_math(void)
         begin_token_list(every_math, every_math_text);
 }
 
-void enter_display_math(void);
+static void enter_display_math(void);
 
 /* We get into math mode from horizontal mode when a `\.\$' (i.e., a
 |math_shift| character) is scanned. We must check to see whether this
@@ -908,7 +908,7 @@ display. Then we can set the proper values of |display_width| and
 */
 
 
-void enter_display_math(void)
+static void enter_display_math(void)
 {
     scaled w;                   /* new or partial |pre_display_size| */
     scaled l;                   /* new |display_width| */
@@ -971,9 +971,9 @@ void enter_display_math(void)
 
 #define fam_in_range ((cur_fam>=0)&&(cur_fam<256))
 
-delcodeval do_scan_extdef_del_code(int extcode, boolean doclass)
+static delcodeval do_scan_extdef_del_code(int extcode, boolean doclass)
 {
-    char *hlp[] = {
+    const char *hlp[] = {
         "I'm going to use 0 instead of that illegal code value.",
         NULL
     };
@@ -1076,7 +1076,7 @@ void scan_extdef_del_code(int level, int extcode)
 
 mathcodeval scan_mathchar(int extcode)
 {
-    char *hlp[] = {
+    const char *hlp[] = {
         "I'm going to use 0 instead of that illegal code value.",
         NULL
     };
@@ -1378,7 +1378,7 @@ void math_math_comp(void)
 
 void math_limit_switch(void)
 {
-    char *hlp[] = {
+    const char *hlp[] = {
         "I'm ignoring this misplaced \\limits or \\nolimits command.",
         NULL
     };
@@ -1399,7 +1399,7 @@ delimiter is to be placed; the second tells if this delimiter follows
 */
 
 
-void scan_delimiter(pointer p, integer r)
+static void scan_delimiter(pointer p, integer r)
 {
     delcodeval dval;
     if (r == tex_mathcode) {    /* \radical */
@@ -1435,7 +1435,7 @@ void scan_delimiter(pointer p, integer r)
     if (p == null)
         return;
     if (dval.small_family_value < 0) {
-        char *hlp[] = {
+        const char *hlp[] = {
             "I was expecting to see something like `(' or `\\{' or",
             "`\\}' here. If you typed, e.g., `{' instead of `\\{', you",
             "should probably delete the `{' by typing `1' now, so that",
@@ -1512,7 +1512,7 @@ void math_ac(void)
     b.character_value = 0;
     b.family_value = 0;
     if (cur_cmd == accent_cmd) {
-        char *hlp[] = {
+        const char *hlp[] = {
             "I'm changing \\accent to \\mathaccent here; wish me luck.",
             "(Accents are not the same in formulas as they are in text.)",
             NULL
@@ -1624,7 +1624,7 @@ void sub_sup(void)
     }
     if (cur_cmd == sup_mark_cmd || cur_chr == sup_mark_cmd) {   /* super_sub_script */
         if (supscr(tail) != null) {
-            char *hlp[] = {
+            const char *hlp[] = {
                 "I treat `x^1^2' essentially like `x^1{}^2'.", NULL
             };
             tail_append(new_noad());
@@ -1637,7 +1637,7 @@ void sub_sup(void)
         (void) scan_math(supscr(tail), sup_style(m_style));
     } else if (cur_cmd == sub_mark_cmd || cur_chr == sub_mark_cmd) {
         if (subscr(tail) != null) {
-            char *hlp[] = {
+            const char *hlp[] = {
                 "I treat `x_1_2' essentially like `x_1{}_2'.", NULL
             };
             tail_append(new_noad());
@@ -1667,7 +1667,7 @@ void math_fraction(void)
     pointer q;
     c = cur_chr;
     if (incompleat_noad != null) {
-        char *hlp[] = {
+        const char *hlp[] = {
             "I'm ignoring this fraction specification, since I don't",
             "know whether a construction like `x \\over y \\over z'",
             "means `{x \\over y} \\over z' or `x \\over {y \\over z}'.",
@@ -1835,13 +1835,13 @@ void math_left_right(void)
         if (cur_group == math_shift_group) {
             scan_delimiter(null, no_mathcode);
             if (t == middle_noad_side) {
-                char *hlp[] = {
+                const char *hlp[] = {
                     "I'm ignoring a \\middle that had no matching \\left.",
                     NULL
                 };
                 tex_error("Extra \\middle", hlp);
             } else {
-                char *hlp[] = {
+                const char *hlp[] = {
                     "I'm ignoring a \\right that had no matching \\left.",
                     NULL
                 };
@@ -1887,7 +1887,7 @@ static void check_second_math_shift(void)
 {
     get_x_token();
     if (cur_cmd != math_shift_cmd) {
-        char *hlp[] = {
+        const char *hlp[] = {
             "The `$' that I just saw supposedly matches a previous `$$'.",
             "So I shall assume that you typed `$$' both times.",
             NULL
@@ -1899,7 +1899,7 @@ static void check_second_math_shift(void)
 static void check_display_math_end(void)
 {
     if (cur_chr != cramped_display_style) {
-        char *hlp[] = {
+        const char *hlp[] = {
             "I shall assume that you typed that.",
             NULL
         };
@@ -1910,7 +1910,7 @@ static void check_display_math_end(void)
 static void check_inline_math_end(void)
 {
     if (cur_chr != cramped_text_style) {
-        char *hlp[] = {
+        const char *hlp[] = {
             "I shall assume that you typed that.",
             NULL
         };
@@ -1991,7 +1991,7 @@ void after_math(void)
 }
 
 
-void resume_after_display(void)
+static void resume_after_display(void)
 {
     if (cur_group != math_shift_group)
         tconfusion("display");
@@ -2163,7 +2163,7 @@ void finish_display_alignment(pointer p, pointer q, memory_word aux_save)
 {
     do_assignments();
     if (cur_cmd != math_shift_cmd) {
-        char *hlp[] = {
+        const char *hlp[] = {
             "Displays can use special alignments (like \\eqalignno)",
             "only if nothing but the alignment itself is between $$'s.",
             NULL

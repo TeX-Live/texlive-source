@@ -118,7 +118,7 @@ void ini_init_primitives(void)
    @^Vitter, Jeffrey Scott@>
 */
 
-static halfword compute_hash(char *j, pool_pointer l, halfword prime_number)
+static halfword compute_hash(const char *j, pool_pointer l, halfword prime_number)
 {
     pool_pointer k;
     halfword h = (unsigned char) *j;
@@ -294,7 +294,7 @@ void primitive_def(char *s, size_t l, quarterword c, halfword o)
    needed, but it helps catch errors of this kind.
 */
 
-void
+static void
 store_primitive_name(str_number s, quarterword c, halfword o, halfword offset)
 {
     int idx;
@@ -357,10 +357,10 @@ primitive(str_number ss, quarterword c, halfword o, halfword off,
  * Here is a helper that does the actual hash insertion.
  */
 
-static halfword insert_id(halfword p, unsigned char *j, pool_pointer l)
+static halfword insert_id(halfword p, const unsigned char *j, pool_pointer l)
 {
     integer d;
-    unsigned char *k;
+    const unsigned char *k;
     /* This code far from ideal: the existance of |hash_extra| changes
        all the potential (short) coalesced lists into a single (long)
        one. This will create a slowdown. */
@@ -440,7 +440,7 @@ pointer id_lookup(integer j, integer l)
  */
 
 
-pointer string_lookup(char *s, size_t l)
+pointer string_lookup(const char *s, size_t l)
 {                               /* search the hash table */
     integer h;                  /* hash code */
     pointer p;                  /* index in |hash| array */
@@ -454,7 +454,7 @@ pointer string_lookup(char *s, size_t l)
             if (no_new_control_sequence) {
                 p = static_undefined_control_sequence;
             } else {
-                p = insert_id(p, (unsigned char *) s, l);
+                p = insert_id(p, (const unsigned char *) s, l);
             }
             goto FOUND;
         }
@@ -480,7 +480,7 @@ pointer string_lookup(char *s, size_t l)
 
 #define chr_cmd(A) do { tprint(A); print(chr_code); } while (0)
 
-void prim_cmd_chr(quarterword cmd, halfword chr_code)
+static void prim_cmd_chr(quarterword cmd, halfword chr_code)
 {
     int idx = chr_code - prim_data[cmd].offset;
     if (cmd <= last_cmd &&

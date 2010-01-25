@@ -1,3 +1,92 @@
+2010-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/luatex (luatex_CFLAGS, luatex_CXXFLAGS),
+	am/libluatex.am (libluatex_a_CFLAGS): Enable compiler warnings.
+
+	Avoid most compiler warnings:
+
+	* font/luatexfont.h, luatexdir/hyphen.h, image/writeimg.h,
+	image/writejbig2.h, luatex.h, pdf/pagetree.h, pdf/pdfpage.h,
+	utils/avlstuff.h, utils/utils.h: ANSI C function prototypes.
+	* font/mapfile.c, font/writeenc.c, font/writefont.c,
+	font/writet1.c, font/writettf.c, image/writeimg.c,
+	image/writejbig2.c, lang/hyphen.c, pdf/pagetree.c,
+	pdf/pdfpage.c, utils/avlstuff.c, utils/utils.c: ANSI C function
+	definitions.
+
+	* font/luafont.c, lang/texlang.c, lua/lcallbacklib.c,
+	lua/lfontlib.c, lua/limglib.c, lua/lkpselib.c, lua/llualib.c,
+	lua/lnodelib.c, lua/loslibext.c, lua/lpdflib.c, lua/lstatslib.c,
+	lua/ltexiolib.c, lua/ltexlib.c, lua/ltokenlib.c, lua/luanode.c,
+	lua/luatoken.c: Remove 'char *' or 'unsigned char *'  casts of
+	Lua strings.
+
+	* font/texfont.h, font/writecff.h, luatex-api.h, luatex.h,
+	nodes.h, primitive.h, ptexlib.h, utils/utils.h, font/dofont.c,
+	font/luafont.c, font/tfmofm.c, font/vfovf.c, font/writecff.c,
+	font/writefont.c, font/writet1.c, lang/hyphen.c, lang/texlang.c,
+	lua/lcallbacklib.c, lua/lfontlib.c, lua/limglib.c,
+	lua/lkpselib.c, lua/llualib.c, lua/lnodelib.c, lua/loslibext.c,
+	lua/lpdflib.c, lua/lstatslib.c, lua/ltexiolib.c, lua/ltexlib.c,
+	lua/ltokenlib.c, lua/luainit.c, lua/luanode.c, lua/luastuff.c,
+	lua/luatex.c, lua/luatoken.c, luatex.ch, tex/filename.c,
+	tex/linebreak.c, tex/math.c, tex/mlist.c, tex/primitive.c,
+	tex/texdeffont.c, tex/texnodes.c, tex/textoken.c, utils/utils.c:
+	Declare various function params and args, local and global vars,
+	and struct members as const.
+
+	* font/luafont.c, font/texfont.c, font/tfmofm.c, font/vfovf.c,
+	font/writeenc.c, font/writefont.c, font/writet1.c,
+	font/vfpacket.c, font/writettf.c, font/writetype2.c,
+	image/writeimg.c, lang/hyphen.c, lang/texlang.c, lua/limglib.c,
+	lua/llualib.c, lua/lnodelib.c, lua/loslibext.c, lua/lpdflib.c,
+	lua/lstatslib.c, lua/ltexlib.c, lua/luainit.c, lua/luanode.c,
+	lua/luastuff.c, mathcodes.c, tex/linebreak.c, tex/math.c,
+	tex/mlist.c, tex/primitive.c, tex/texdeffont.c, tex/texnodes.c,
+	tex/textoken.c, utils/synctex.c, utils/utils.c:
+	Declare functions and global vars as static.
+
+	* font/texfont.c: #include "luatexfont.h" and remove externs.
+	* image/writejpg.c: #include "writejpg.h".
+	* image/writepng.c: #include "writepng.h".
+	* lang/hnjalloc.c: #include "hnjalloc.h".
+	* lua/texluac.c: #include "luatex-api.h".
+	* utils/synctex.c: #include "synctex.h".
+	* utils/utils.c: #include "utils.h".
+
+	* ptexlib.h: Add prototype for get_command_id() ...
+	* lua/ltokenlib.c: ... removed from here.
+	* inc-epdf.h: New file with prototypes for epdf_mark_glyphs(),
+	epdf_create_fontdescriptor(), and epdf_write_enc() ...
+	* image/epdf.h: ... removed from here.
+	* image/epdf.h, font/writeenc.c: #include inc-epdf.h.
+	* inc-vfovf.h: New file with prototype for make_vf_table() ...
+	* lua/lfontlib.c: ... removed from here.
+	* font/vfovf.c, lua/lfontlib.c: #include inc-vfovf.h.
+	* am/libluatex.am (libluatex_a_SOURCES): Add the new files.
+
+	* font/texfont.c (lua_char_exists_callback),
+	font/vfovf.c (is_letterspaced_font),
+	font/vfpacket.c (packet_command_names),
+	font/writet1.c (free_glyph_names),
+	image/writeimg.c (image_group_ref),
+	lua/ltexlib.c (get_something_internal),
+	tex/texnodes.c (print_free_chain),
+	textcodes.c (clearcatcodestack):
+	Skip unused static funcs and vars (via #if 0 ... #endif).
+
+	* lua/luainit.c (lua_initialize): Replace string constant
+	arguments of putenv() by non-const static string variables.
+
+	* utils/avl.c (avl_delete): Don't reuse const input param for
+	non-const return value.
+
+	* utils/synctex.c: Rename synctexchar => synctex_char and
+	synctexnode => synctex_node as declared in utils/synctex.h.
+
+	* font/luatexfont.h, font/macnames.c: Declare notdef as
+	non-const to avoid cast warnings. FIXME?
+
 2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatangle.ch: Declare web_name, chg_name, pascal_name, and

@@ -166,7 +166,7 @@ static void destroy_oentry(void *pa, void *pb)
     xfree(p);
 }
 
-void PdfObjTree_free()
+void PdfObjTree_free(void)
 {
     int i;
 

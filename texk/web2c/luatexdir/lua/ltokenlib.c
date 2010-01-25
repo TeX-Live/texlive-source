@@ -24,8 +24,6 @@
 static const char _svn_version[] =
     "$Id: ltokenlib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/ltokenlib.c $";
 
-extern int get_command_id(char *);
-
 static int max_command = 0;
 static int null_cs = 0;
 
@@ -46,7 +44,7 @@ static int test_expandable(lua_State * L)
         if (lua_isnumber(L, -1)) {
             cmd = lua_tointeger(L, -1);
         } else if (lua_isstring(L, -1)) {
-            cmd = get_command_id((char *) lua_tostring(L, -1));
+            cmd = get_command_id(lua_tostring(L, -1));
         }
         if (cmd > max_command) {
             lua_pushboolean(L, 1);
@@ -68,7 +66,7 @@ static int test_protected(lua_State * L)
         if (lua_isnumber(L, -1)) {
             chr = lua_tointeger(L, -1);
         } else if (lua_isstring(L, -1)) {
-            chr = get_command_id((char *) lua_tostring(L, -1));
+            chr = get_command_id(lua_tostring(L, -1));
         }
         if (fixmem[fixmem[chr].hhrh].hhlh == protected_token) {
             lua_pushboolean(L, 1);
@@ -160,7 +158,7 @@ static int run_get_command_id(lua_State * L)
 {
     int cs = -1;
     if (lua_isstring(L, -1)) {
-        cs = get_command_id((char *) lua_tostring(L, -1));
+        cs = get_command_id(lua_tostring(L, -1));
     }
     lua_pushnumber(L, cs);
     return 1;
@@ -169,10 +167,10 @@ static int run_get_command_id(lua_State * L)
 
 static int run_get_csname_id(lua_State * L)
 {
-    char *s;
+    const char *s;
     size_t k, cs = 0;
     if (lua_isstring(L, -1)) {
-        s = (char *) lua_tolstring(L, -1, &k);
+        s = lua_tolstring(L, -1, &k);
         cs = string_lookup(s, k);
     }
     lua_pushnumber(L, cs);
@@ -212,12 +210,12 @@ static int run_expand(lua_State * L)
 
 static int run_lookup(lua_State * L)
 {
-    char *s;
+    const char *s;
     size_t l;
     integer cs, cmd, chr;
     int save_nncs;
     if (lua_isstring(L, -1)) {
-        s = (char *) lua_tolstring(L, -1, &l);
+        s = lua_tolstring(L, -1, &l);
         if (l > 0) {
             save_nncs = no_new_control_sequence;
             no_new_control_sequence = true;

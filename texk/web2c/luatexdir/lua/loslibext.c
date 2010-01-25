@@ -244,10 +244,10 @@ static int spawn_command(const char *file, char *const *argv, char *const *envp)
 
 extern char **environ;
 
-static char **do_split_command(char *maincmd)
+static char **do_split_command(const char *maincmd)
 {
     char *piece, *start_piece;
-    char *cmd;
+    const char *cmd;
     char **cmdline = NULL;
     unsigned int i, j;
     int ret = 0;
@@ -304,7 +304,7 @@ static char **do_split_command(char *maincmd)
 static char **do_flatten_command(lua_State * L, char **runcmd)
 {
     unsigned int i, j;
-    char *s;
+    const char *s;
     char **cmdline = NULL;
     *runcmd = NULL;
 
@@ -322,7 +322,7 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
     for (i = 1; i <= j; i++) {
         cmdline[i] = NULL;
         lua_rawgeti(L, -1, i);
-        if (lua_isnil(L, -1) || (s = (char *) lua_tostring(L, -1)) == NULL) {
+        if (lua_isnil(L, -1) || (s = lua_tostring(L, -1)) == NULL) {
             lua_pop(L, 1);
             if (i == 1) {
                 xfree(cmdline);
@@ -338,7 +338,7 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
     cmdline[i] = NULL;
 
     lua_rawgeti(L, -1, 0);
-    if (lua_isnil(L, -1) || (s = (char *) lua_tostring(L, -1)) == NULL) {
+    if (lua_isnil(L, -1) || (s = lua_tostring(L, -1)) == NULL) {
         *runcmd = cmdline[0];
     } else {
         *runcmd = xstrdup(s);
@@ -352,7 +352,8 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
 static int os_exec(lua_State * L)
 {
     int allow = 0;
-    char *maincmd = NULL, *runcmd = NULL;
+    const char *maincmd = NULL;
+    char *runcmd = NULL;
     char *safecmd = NULL, *cmdname = NULL;
     char **cmdline = NULL;
 
@@ -367,7 +368,7 @@ static int os_exec(lua_State * L)
         return 2;
     }
     if (lua_type(L, 1) == LUA_TSTRING) {
-        maincmd = (char *) lua_tostring(L, 1);
+        maincmd = lua_tostring(L, 1);
         cmdline = do_split_command(maincmd);
         runcmd = cmdline[0];
     } else if (lua_type(L, 1) == LUA_TTABLE) {
@@ -430,7 +431,8 @@ static int os_exec(lua_State * L)
 static int os_spawn(lua_State * L)
 {
     int allow = 0;
-    char *maincmd = NULL, *runcmd = NULL;
+    const char *maincmd = NULL;
+    char *runcmd = NULL;
     char *safecmd = NULL, *cmdname = NULL;
     char **cmdline = NULL;
     int i;
@@ -446,7 +448,7 @@ static int os_spawn(lua_State * L)
         return 2;
     }
     if (lua_type(L, 1) == LUA_TSTRING) {
-        maincmd = (char *) lua_tostring(L, 1);
+        maincmd = lua_tostring(L, 1);
         cmdline = do_split_command(maincmd);
         runcmd = cmdline[0];
     } else if (lua_type(L, 1) == LUA_TTABLE) {
@@ -516,9 +518,10 @@ static int os_spawn(lua_State * L)
 
 static int os_setenv(lua_State * L)
 {
-    char *value, *key, *val;
-    key = (char *) luaL_optstring(L, 1, NULL);
-    val = (char *) luaL_optstring(L, 2, NULL);
+    char *value;
+    const char *key, *val;
+    key = luaL_optstring(L, 1, NULL);
+    val = luaL_optstring(L, 2, NULL);
     if (key) {
         if (val) {
             value = xmalloc(strlen(key) + strlen(val) + 2);
@@ -543,7 +546,7 @@ static int os_setenv(lua_State * L)
 }
 
 
-void find_env(lua_State * L)
+static void find_env(lua_State * L)
 {
     char *envitem, *envitem_orig;
     char *envkey;
@@ -854,7 +857,7 @@ static char *do_mkdtemp(char *tmpl)
 static int os_tmpdir(lua_State * L)
 {
     char *s, *tempdir;
-    char *tmp = (char *) luaL_optstring(L, 1, "luatex.XXXXXX");
+    const char *tmp = luaL_optstring(L, 1, "luatex.XXXXXX");
     if (tmp == NULL ||
         strlen(tmp) < 6 || (strcmp(tmp + strlen(tmp) - 6, "XXXXXX") != 0)) {
         lua_pushnil(L);

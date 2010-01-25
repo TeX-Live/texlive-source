@@ -106,7 +106,7 @@ void show_mathcode_value(mathcodeval c)
 }
 
 
-void show_mathcode(integer n)
+static void show_mathcode(integer n)
 {
     mathcodeval c = get_math_code(n);
     if (c.origin_value == aleph_mathcode) {
@@ -123,7 +123,7 @@ void show_mathcode(integer n)
     show_mathcode_value(c);
 }
 
-void unsavemathcode(quarterword gl)
+static void unsavemathcode(quarterword gl)
 {
     sa_stack_item st;
     if (mathcode_head->stack == NULL)
@@ -214,13 +214,13 @@ integer get_math_code_num(integer n)
     return 0;
 }
 
-void initializemathcode(void)
+static void initializemathcode(void)
 {
     mathcode_head = new_sa_tree(MATHCODESTACK, MATHCODEDEFAULT);
     mathcode_heap = Mxmalloc_array(mathcodeval, MATHCODEHEAP);
 }
 
-void dumpmathcode(void)
+static void dumpmathcode(void)
 {
     integer k;
     mathcodeval d;
@@ -236,7 +236,7 @@ void dumpmathcode(void)
     }
 }
 
-void undumpmathcode(void)
+static void undumpmathcode(void)
 {
     integer k, x;
     mathcodeval d;
@@ -265,7 +265,7 @@ void undumpmathcode(void)
 }
 
 
-void show_delcode(integer n)
+static void show_delcode(integer n)
 {
     delcodeval c;
     c = get_del_code(n);
@@ -313,7 +313,7 @@ void show_delcode(integer n)
 
 /* TODO: clean up the heap */
 
-void unsavedelcode(quarterword gl)
+static void unsavedelcode(quarterword gl)
 {
     sa_stack_item st;
     if (delcode_head->stack == NULL)
@@ -390,13 +390,13 @@ delcodeval get_del_code(integer n)
     }
 }
 
-void initializedelcode(void)
+static void initializedelcode(void)
 {
     delcode_head = new_sa_tree(DELCODESTACK, DELCODEDEFAULT);
     delcode_heap = Mxmalloc_array(delcodeval, DELCODEHEAP);
 }
 
-void dumpdelcode(void)
+static void dumpdelcode(void)
 {
     integer k;
     delcodeval d;
@@ -414,7 +414,7 @@ void dumpdelcode(void)
     }
 }
 
-void undumpdelcode(void)
+static void undumpdelcode(void)
 {
     integer k;
     delcodeval d;

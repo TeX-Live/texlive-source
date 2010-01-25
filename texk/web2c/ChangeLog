@@ -1,3 +1,7 @@
+2010-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h (mk_shellcmdlist): Declare string param as const.
+
 2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvitype.ch (open_dvi_file): Skip use of cur_name.

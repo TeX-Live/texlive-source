@@ -63,7 +63,7 @@ static unsigned char * hnj_strdup(
   unsigned char *new;
   int l;
 
-  l = strlen ((char*)s);
+  l = strlen ((const char*)s);
   new = hnj_malloc (l + 1);
   memcpy (new, s, l);
   new[l] = 0;
@@ -173,7 +173,7 @@ static char *combine(
  * --------------------------------------------------------------------
  */
 
-HashIter* new_HashIter(
+static HashIter* new_HashIter(
   HashTab* h
 ) {
   HashIter* i = hnj_malloc(sizeof(HashIter));
@@ -184,7 +184,7 @@ HashIter* new_HashIter(
 }
 
 
-int nextHashStealPattern(
+static int nextHashStealPattern(
   HashIter*i,
   unsigned char**word,
   char **pattern
@@ -201,7 +201,7 @@ int nextHashStealPattern(
 }
 
 
-int nextHash(
+static int nextHash(
   HashIter*i,
   unsigned char**word
 ) {
@@ -215,7 +215,7 @@ int nextHash(
 }
 
 
-int eachHash(
+static int eachHash(
   HashIter*i,
   unsigned char**word,
            char**pattern
@@ -231,7 +231,7 @@ int eachHash(
 }
 
 
-void delete_HashIter(
+static void delete_HashIter(
   HashIter*i
 ) {
   hnj_free(i);
@@ -318,7 +318,7 @@ static int state_lookup(
 
   i = hnj_string_hash (key) % HASH_SIZE;
   for (e = hashtab->entries[i]; e; e = e->next) {
-    if (!strcmp ((char*)key, (char*)e->key)) {
+    if (!strcmp ((const char*)key, (const char*)e->key)) {
       return e->u.state;
     }
   }
@@ -335,7 +335,7 @@ static char* hyppat_lookup(
   int i;
   HashEntry *e;
   unsigned char key[128]; /* should be ample*/
-  strncpy((char*)key,(char*)chars,l); key[l]=0;
+  strncpy((char*)key,(const char*)chars,l); key[l]=0;
   i = hnj_string_hash (key) % HASH_SIZE;
   for (e = hashtab->entries[i]; e; e = e->next) {
     if (!strcmp ((char*)key, (char*)e->key)) {
@@ -526,7 +526,7 @@ static void clear_dict(
 
 
 
-HyphenDict* hnj_hyphen_new() {
+HyphenDict* hnj_hyphen_new(void) {
   HyphenDict* dict = hnj_malloc (sizeof(HyphenDict));
   init_dict(dict);
   return dict;
@@ -695,7 +695,7 @@ void hnj_hyphen_load(
   delete_HashIter(v);
 
   init_hash(&dict->state_num);
-  state_insert(dict->state_num, hnj_strdup((unsigned char*)""), 0);
+  state_insert(dict->state_num, hnj_strdup((const unsigned char*)""), 0);
   v = new_HashIter(dict->merged);
   while (nextHashStealPattern(v,&word,&pattern)) {
     static unsigned char mask[] = {0x3F,0x1F,0xF,0x7};

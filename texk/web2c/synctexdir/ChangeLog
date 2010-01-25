@@ -1,7 +1,9 @@
 2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* am/synctex.am: Enable compiler warnings.
+	* am/synctex.am (synctex_CFLAGS): Enable compiler warnings.
+
 	Avoid compiler warnings:
+
 	* synctex_main.c: Define _ISOC99_SOURCE to get fmax() prototype
 	FIXME: Linux only?
 	* synctex_parser_utils.h: Move declaration of synctex_io_modes ...

@@ -31,7 +31,7 @@ static boolean get_selector_value(lua_State * L, int i, char *l)
 {
     boolean r = false;
     if (lua_isstring(L, i)) {
-        char *s = (char *) lua_tostring(L, i);
+        const char *s = lua_tostring(L, i);
         if (strcmp(s, "log") == 0) {
             *l = log_only;
             r = true;
@@ -52,7 +52,7 @@ static boolean get_selector_value(lua_State * L, int i, char *l)
 static int do_texio_print(lua_State * L, texio_printer printfunction)
 {
     str_number texs;
-    char *s;
+    const char *s;
     size_t k;
     int i = 1;
     str_number u = 0;
@@ -75,7 +75,7 @@ static int do_texio_print(lua_State * L, texio_printer printfunction)
         u = make_string();
     for (; i <= n; i++) {
         if (lua_isstring(L, i)) {
-            s = (char *) lua_tolstring(L, i, &k);
+            s = lua_tolstring(L, i, &k);
             texs = maketexlstring(s, k);
             printfunction(texs);
             flush_str(texs);
@@ -90,9 +90,9 @@ static int do_texio_print(lua_State * L, texio_printer printfunction)
     return 0;
 }
 
-static void do_texio_ini_print(lua_State * L, char *extra)
+static void do_texio_ini_print(lua_State * L, const char *extra)
 {
-    char *s;
+    const char *s;
     int i = 1;
     char l = term_and_log;
     int n = lua_gettop(L);
@@ -102,7 +102,7 @@ static void do_texio_ini_print(lua_State * L, char *extra)
     }
     for (; i <= n; i++) {
         if (lua_isstring(L, i)) {
-            s = (char *) lua_tostring(L, i);
+            s = lua_tostring(L, i);
             if (l == term_and_log || l == term_only)
                 fprintf(stdout, "%s%s", extra, s);
             if (l == log_only || l == term_and_log) {

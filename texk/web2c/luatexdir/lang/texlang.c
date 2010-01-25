@@ -221,9 +221,9 @@ integer get_post_exhyphen_char(integer n)
     return (integer) l->post_exhyphen_char;
 }
 
-void load_patterns(struct tex_language *lang, unsigned char *buffer)
+void load_patterns(struct tex_language *lang, const unsigned char *buffer)
 {
-    if (lang == NULL || buffer == NULL || strlen((char *) buffer) == 0)
+    if (lang == NULL || buffer == NULL || strlen((const char *) buffer) == 0)
         return;
     if (lang->patterns == NULL) {
         lang->patterns = hnj_hyphen_new();
@@ -243,7 +243,7 @@ void clear_patterns(struct tex_language *lang)
 void load_tex_patterns(int curlang, halfword head)
 {
     char *s = tokenlist_to_cstring(head, 1, NULL);
-    load_patterns(get_language(curlang), (unsigned char *) s);
+    load_patterns(get_language(curlang), (const unsigned char *) s);
 }
 
 
@@ -254,12 +254,12 @@ void load_tex_patterns(int curlang, halfword head)
 
 /* todo change this! */
 
-char *clean_hyphenation(char *buffer, char **cleaned)
+const char *clean_hyphenation(const char *buffer, char **cleaned)
 {
     int items;
     unsigned char word[MAX_WORD_LEN + 1];
     int w = 0;
-    char *s = buffer;
+    const char *s = buffer;
     while (*s && !isspace(*s)) {
         if (*s == '-') {        /* skip */
         } else if (*s == '=') {
@@ -310,9 +310,10 @@ char *clean_hyphenation(char *buffer, char **cleaned)
     return s;
 }
 
-void load_hyphenation(struct tex_language *lang, unsigned char *buffer)
+void load_hyphenation(struct tex_language *lang, const unsigned char *buffer)
 {
-    char *s, *value, *cleaned;
+    const char *s, *value;
+    char *cleaned;
     lua_State *L = Luas;
     if (lang == NULL)
         return;
@@ -321,7 +322,7 @@ void load_hyphenation(struct tex_language *lang, unsigned char *buffer)
         lang->exceptions = luaL_ref(L, LUA_REGISTRYINDEX);
     }
     lua_rawgeti(L, LUA_REGISTRYINDEX, lang->exceptions);
-    s = (char *) buffer;
+    s = (const char *) buffer;
     while (*s) {
         while (isspace(*s))
             s++;
@@ -359,7 +360,7 @@ void clear_hyphenation(struct tex_language *lang)
 void load_tex_hyphenation(int curlang, halfword head)
 {
     char *s = tokenlist_to_cstring(head, 1, NULL);
-    load_hyphenation(get_language(curlang), (unsigned char *) s);
+    load_hyphenation(get_language(curlang), (const unsigned char *) s);
 }
 
 /* TODO: clean this up. The delete_attribute_ref() statements are not very 
@@ -511,7 +512,7 @@ void set_disc_field(halfword f, halfword t)
 
 
 
-char *hyphenation_exception(int exceptions, char *w)
+static char *hyphenation_exception(int exceptions, char *w)
 {
     char *ret = NULL;
     lua_State *L = Luas;
@@ -521,7 +522,7 @@ char *hyphenation_exception(int exceptions, char *w)
         lua_pushstring(L, w);   /* word table */
         lua_rawget(L, -2);
         if (lua_isstring(L, -1)) {
-            ret = xstrdup((char *) lua_tostring(L, -1));
+            ret = xstrdup(lua_tostring(L, -1));
         }
         lua_pop(L, 2);
     } else {
@@ -533,7 +534,7 @@ char *hyphenation_exception(int exceptions, char *w)
 
 char *exception_strings(struct tex_language *lang)
 {
-    char *value;
+    const char *value;
     size_t size = 0, current = 0;
     size_t l = 0;
     char *ret = NULL;
@@ -546,7 +547,7 @@ char *exception_strings(struct tex_language *lang)
         /* iterate and join */
         lua_pushnil(L);         /* first key */
         while (lua_next(L, -2) != 0) {
-            value = (char *) lua_tolstring(L, -1, &l);
+            value = lua_tolstring(L, -1, &l);
             if (current + 2 + l > size) {
                 ret = xrealloc(ret, (1.2 * size) + current + l + 1024);
                 size = (1.2 * size) + current + l + 1024;
@@ -564,7 +565,7 @@ char *exception_strings(struct tex_language *lang)
 /* the sequence from |wordstart| to |r| can contain only normal characters */
 /* it could be faster to modify a halfword pointer and return an integer */
 
-halfword find_exception_part(unsigned int *j, int *uword, int len)
+static halfword find_exception_part(unsigned int *j, int *uword, int len)
 {
     halfword g = null, gg = null;
     register int i = *j;
@@ -584,7 +585,7 @@ halfword find_exception_part(unsigned int *j, int *uword, int len)
     return gg;
 }
 
-int count_exception_part(unsigned int *j, int *uword, int len)
+static int count_exception_part(unsigned int *j, int *uword, int len)
 {
     int ret = 0;
     register int i = *j;
@@ -598,13 +599,13 @@ int count_exception_part(unsigned int *j, int *uword, int len)
 }
 
 
-static char *PAT_ERROR[] = {
+static const char *PAT_ERROR[] = {
     "Exception discretionaries should contain three pairs of braced items.",
     "No intervening spaces are allowed.",
     NULL
 };
 
-void do_exception(halfword wordstart, halfword r, char *replacement)
+static void do_exception(halfword wordstart, halfword r, char *replacement)
 {
     unsigned i;
     halfword t;
@@ -741,7 +742,7 @@ using an algorithm due to Frank~M. Liang.
  * prohibiting hyphenation there was not the best idea ever.
  */
 
-halfword find_next_wordstart(halfword r)
+static halfword find_next_wordstart(halfword r)
 {
     register int l;
     register int start_ok = 1;
@@ -781,7 +782,7 @@ halfword find_next_wordstart(halfword r)
     return r;
 }
 
-int valid_wordend(halfword s)
+static int valid_wordend(halfword s)
 {
     register halfword r = s;
     register int clang = char_lang(s);
@@ -946,7 +947,7 @@ void new_hyphenation(halfword head, halfword tail)
   }
 
 
-void dump_one_language(int i)
+static void dump_one_language(int i)
 {
     char *s = NULL;
     integer x = 0;
@@ -989,7 +990,7 @@ void dump_language_data(void)
 }
 
 
-void undump_one_language(int i)
+static void undump_one_language(int i)
 {
     char *s = NULL;
     integer x = 0;
@@ -1009,7 +1010,7 @@ void undump_one_language(int i)
     if (x > 0) {
         s = xmalloc(x);
         undump_things(*s, x);
-        load_patterns(lang, (unsigned char *) s);
+        load_patterns(lang, (const unsigned char *) s);
         free(s);
     }
     /* exceptions */
@@ -1017,7 +1018,7 @@ void undump_one_language(int i)
     if (x > 0) {
         s = xmalloc(x);
         undump_things(*s, x);
-        load_hyphenation(lang, (unsigned char *) s);
+        load_hyphenation(lang, (const unsigned char *) s);
         free(s);
     }
 }

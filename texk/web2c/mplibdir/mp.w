@@ -22882,7 +22882,7 @@ if ( mp->start_sym>0 ) { /* insert the `\&{everyjob}' symbol */
 }
 
 @ @c
-int mp_execute (MP mp, char *s, size_t l) {
+int mp_execute (MP mp, const char *s, size_t l) {
   mp_reset_stream(&(mp->run_data.term_out));
   mp_reset_stream(&(mp->run_data.log_out));
   mp_reset_stream(&(mp->run_data.error_out));
@@ -22963,7 +22963,7 @@ char * mp_metapost_version (void) {
 
 @ @<Exported function headers@>=
 int mp_run (MP mp);
-int mp_execute (MP mp, char *s, size_t l);
+int mp_execute (MP mp, const char *s, size_t l);
 int mp_finish (MP mp);
 char * mp_metapost_version (void);
 
@@ -25723,7 +25723,7 @@ font_number mp_find_font (MP mp, char *f) {
 @ This is an interface function for getting the width of character,
 as a double in ps units
 
-@c double mp_get_char_dimension (MP mp, char *fname, int c, int t) {
+@c double mp_get_char_dimension (MP mp, const char *fname, int c, int t) {
   unsigned n;
   four_quarters cc;
   font_number f = 0;
@@ -25749,7 +25749,7 @@ as a double in ps units
 }
 
 @ @<Exported function ...@>=
-double mp_get_char_dimension (MP mp, char *fname, int n, int t);
+double mp_get_char_dimension (MP mp, const char *fname, int n, int t);
 
 
 @ One simple application of |find_font| is the implementation of the |font_size|

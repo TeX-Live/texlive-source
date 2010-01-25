@@ -35,8 +35,8 @@ __attribute__ ((format(printf, 1, 2)))
 void pdf_printf(const char *, ...);
 str_number maketexstring(const char *);
 str_number maketexlstring(const char *, size_t);
-void print_string(char *j);
-void append_string(char *s);
+void print_string(const char *j);
+void append_string(const char *s);
 __attribute__ ((format(printf, 1, 2)))
 void tex_printf(const char *, ...);
 void remove_pdffile(void);
@@ -44,7 +44,7 @@ __attribute__ ((noreturn, format(printf, 1, 2)))
 void pdftex_fail(const char *, ...);
 __attribute__ ((format(printf, 1, 2)))
 void pdftex_warn(const char *, ...);
-void tex_error(char *msg, char **hlp);
+void tex_error(const char *msg, const char **hlp);
 void garbage_warning(void);
 char *makecstring(integer);
 char *makeclstring(integer, size_t *);
@@ -64,9 +64,9 @@ void escapename(poolpointer in);
 void escapehex(poolpointer in);
 void unescapehex(poolpointer in);
 void print_ID(str_number);
-void init_start_time();
-void print_creation_date();
-void print_mod_date();
+void init_start_time(void);
+void print_creation_date(void);
+void print_mod_date(void);
 void getcreationdate(void);
 char *makecfilename(str_number s);
 char *stripzeros(char *);
@@ -82,7 +82,7 @@ extern size_t last_ptr_index;
 /* color stack and matrix transformation support */
 
 int newcolorstack(integer s, integer literal_mode, boolean pagestart);
-int colorstackused();
+int colorstackused(void);
 integer colorstackset(int colstack_no, integer s);
 integer colorstackpush(int colstack_no, integer s);
 integer colorstackpop(int colstack_no);
@@ -93,17 +93,17 @@ void checkpdfrestore(scaledpos pos);
 void pdfshipoutbegin(boolean shipping_page);
 void pdfshipoutend(boolean shipping_page);
 void pdfsetmatrix(poolpointer in, scaledpos pos);
-scaled getllx();
-scaled getlly();
-scaled geturx();
-scaled getury();
-void tconfusion(char *s);
-void tprint(char *s);
-void tprint_nl(char *s);
-void tprint_esc(char *s);
+scaled getllx(void);
+scaled getlly(void);
+scaled geturx(void);
+scaled getury(void);
+void tconfusion(const char *s);
+void tprint(const char *s);
+void tprint_nl(const char *s);
+void tprint_esc(const char *s);
 void matrixtransformpoint(scaled x, scaled y);
 void matrixtransformrect(scaled llx, scaled lly, scaled urx, scaled ury);
-boolean matrixused();
+boolean matrixused(void);
 void matrixrecalculate(scaled urx);
 
 #endif                          /* UTILS_H */

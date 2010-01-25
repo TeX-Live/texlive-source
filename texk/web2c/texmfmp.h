@@ -108,7 +108,7 @@ extern void close_file_or_pipe (FILE *);
 #endif
 
 /* Executing shell commands.  */
-extern void mk_shellcmdlist (char *);
+extern void mk_shellcmdlist (const char *);
 extern void init_shell_escape (void);
 extern int shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname);
 extern int runsystem (const char *cmd);
@@ -388,7 +388,7 @@ extern boolean open_out_or_pipe (FILE **, const_string fopen_mode);
 extern void close_file_or_pipe (FILE *);
 
 /* Executing shell commands.  */
-extern void mk_shellcmdlist (char *);
+extern void mk_shellcmdlist (const char *);
 extern void init_shell_escape (void);
 extern int shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname);
 extern int runsystem (const char *cmd);

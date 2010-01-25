@@ -38,9 +38,7 @@ static bytecode *lua_bytecode_registers = NULL;
 integer luabytecode_max = -1;
 unsigned int luabytecode_bytes = 0;
 
-char *luanames[65536] = { NULL };
-
-extern char *luanames[];
+static char *luanames[65536] = { NULL };
 
 char *get_lua_name(int i)
 {
@@ -159,7 +157,7 @@ static int bytecode_register_shadow_get(lua_State * L, int k)
 }
 
 
-int writer(lua_State * L, const void *b, size_t size, void *B)
+static int writer(lua_State * L, const void *b, size_t size, void *B)
 {
     bytecode *buf = (bytecode *) B;
     (void) L;                   /* for -Wunused */
@@ -173,7 +171,7 @@ int writer(lua_State * L, const void *b, size_t size, void *B)
     return 0;
 }
 
-const char *reader(lua_State * L, void *ud, size_t * size)
+static const char *reader(lua_State * L, void *ud, size_t * size)
 {
     bytecode *buf = (bytecode *) ud;
     (void) L;                   /* for -Wunused */
@@ -187,7 +185,7 @@ const char *reader(lua_State * L, void *ud, size_t * size)
     return (const char *) buf->buf;
 }
 
-int get_bytecode(lua_State * L)
+static int get_bytecode(lua_State * L)
 {
     int k;
     k = (int) luaL_checkinteger(L, -1);
@@ -211,7 +209,7 @@ int get_bytecode(lua_State * L)
     return 1;
 }
 
-int set_bytecode(lua_State * L)
+static int set_bytecode(lua_State * L)
 {
     int k, ltype;
     unsigned int i;
@@ -265,10 +263,10 @@ int set_bytecode(lua_State * L)
 }
 
 
-int set_luaname(lua_State * L)
+static int set_luaname(lua_State * L)
 {
     int k;
-    char *s;
+    const char *s;
     if (lua_gettop(L) == 3) {
         k = (int) luaL_checkinteger(L, 2);
         if (k > 65535 || k < 0) {
@@ -279,7 +277,7 @@ int set_luaname(lua_State * L)
                 luanames[k] = NULL;
             }
             if (lua_isstring(L, 3)) {
-                s = (char *) lua_tostring(L, 3);
+                s = lua_tostring(L, 3);
                 if (s != NULL)
                     luanames[k] = xstrdup(s);
             }
@@ -288,7 +286,7 @@ int set_luaname(lua_State * L)
     return 0;
 }
 
-int get_luaname(lua_State * L)
+static int get_luaname(lua_State * L)
 {
     int k;
     k = (int) luaL_checkinteger(L, 2);
@@ -316,7 +314,7 @@ static const struct luaL_reg lualib[] = {
     {NULL, NULL}                /* sentinel */
 };
 
-int luaopen_lua(lua_State * L, char *fname)
+int luaopen_lua(lua_State * L, const char *fname)
 {
     luaL_register(L, "lua", lualib);
     make_table(L, "bytecode", "getbytecode", "setbytecode");

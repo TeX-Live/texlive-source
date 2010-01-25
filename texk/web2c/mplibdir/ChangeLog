@@ -1,3 +1,11 @@
+2010-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mp.w (mp_execute, mp_get_char_dimension): Declare string params
+	as const.
+	* lmplib.c: #include "../luatex-api.h".
+	Remove 'char *' casts of Lua strings.
+	Declare various string variables as const.
+
 2009-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mpxout.w: Convert CRLF to native line endings.

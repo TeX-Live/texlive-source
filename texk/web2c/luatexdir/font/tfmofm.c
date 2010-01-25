@@ -375,7 +375,7 @@ additional parameter information, which is explained later.
           xfree(xligs);  xfree(xkerns); return 1; }
 
 
-int open_tfm_file(char *nom, unsigned char **tfm_buf, integer * tfm_siz)
+static int open_tfm_file(const char *nom, unsigned char **tfm_buf, integer * tfm_siz)
 {
     boolean res;                /* was the callback successful? */
     boolean opened;             /* was |tfm_file| successfully opened? */
@@ -575,7 +575,7 @@ typedef struct tfmcharacterinfo {
     unsigned char _tag;
 } tfmcharacterinfo;
 
-int read_tfm_info(internalfontnumber f, char *cnom, scaled s)
+int read_tfm_info(internalfontnumber f, const char *cnom, scaled s)
 {
     integer k;                  /* index into |font_info| */
     halfword lf, lh, bc, ec, nw, nh, nd, ni, nl, nk, ne, np, slh;       /* sizes of subfiles */

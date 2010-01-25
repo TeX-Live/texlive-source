@@ -32,6 +32,7 @@
 #  include <../lua51/lauxlib.h>
 #  include <../lua51/lualib.h>
 #endif
+#include "../luatex-api.h"
 
 #include "mplib.h"
 #include "mplibps.h"
@@ -54,7 +55,7 @@
 
 #define mplib_init_S(a) do {                                            \
     lua_pushliteral(L,#a);                                              \
-    mplib_##a##_ptr = (char *)lua_tostring(L,-1);                       \
+    mplib_##a##_ptr = lua_tostring(L,-1);                       \
     mplib_##a##_index = luaL_ref (L,LUA_REGISTRYINDEX);                 \
   } while (0)
 
@@ -62,11 +63,11 @@
     lua_rawgeti(L,LUA_REGISTRYINDEX,mplib_##a##_index);         \
   } while (0)
 
-#define mplib_is_S(a,i) (mplib_##a##_ptr==(char *)lua_tostring(L,i))
+#define mplib_is_S(a,i) (mplib_##a##_ptr==lua_tostring(L,i))
 
 #define mplib_make_S(a)                                                 \
   static int mplib_##a##_index = 0;                                     \
-  static char *mplib_##a##_ptr = NULL
+  static const char *mplib_##a##_ptr = NULL
 
 static int mplib_type_Ses[mp_special_code + 1] = { 0 }; /* [0] is not used */
 
@@ -235,7 +236,8 @@ static char *mplib_find_file(MP mp, const char *fname, const char *fmode, int ft
     lua_checkstack(L, 4);
     lua_getfield(L, LUA_REGISTRYINDEX, "mplib_file_finder");
     if (lua_isfunction(L, -1)) {
-        char *s = NULL, *x = NULL;
+        char *s = NULL;
+        const char *x = NULL;
         lua_pushstring(L, fname);
         lua_pushstring(L, fmode);
         if (ftype >= mp_filetype_text) {
@@ -245,10 +247,10 @@ static char *mplib_find_file(MP mp, const char *fname, const char *fmode, int ft
         }
         if (lua_pcall(L, 3, 1, 0) != 0) {
             fprintf(stdout, "Error in mp.find_file: %s\n",
-                    (char *) lua_tostring(L, -1));
+                    lua_tostring(L, -1));
             return NULL;
         }
-        x = (char *) lua_tostring(L, -1);
+        x = lua_tostring(L, -1);
         if (x != NULL)
             s = strdup(x);
         lua_pop(L, 1);          /* pop the string */
@@ -328,10 +330,10 @@ static int mplib_new(lua_State * L)
                     options->ini_version = lua_toboolean(L, -1);
                     break;
                 case P_MEM_NAME:
-                    options->mem_name = strdup((char *) lua_tostring(L, -1));
+                    options->mem_name = strdup(lua_tostring(L, -1));
                     break;
                 case P_JOB_NAME:
-                    options->job_name = strdup((char *) lua_tostring(L, -1));
+                    options->job_name = strdup(lua_tostring(L, -1));
                     break;
                 case P_FIND_FILE:
                     if (mplib_find_file_function(L)) {  /* error here */
@@ -422,7 +424,7 @@ static int mplib_execute(lua_State * L)
     MP *mp_ptr = is_mp(L, 1);
     if (*mp_ptr != NULL && lua_isstring(L, 2)) {
         size_t l;
-        char *s = (char *) lua_tolstring(L, 2, &l);
+        const char *s = lua_tolstring(L, 2, &l);
         int h = mp_execute(*mp_ptr, s, l);
         mp_run_data *res = mp_rundata(*mp_ptr);
         return mplib_wrapresults(L, res, h);
@@ -453,7 +455,7 @@ static int mplib_char_dimension(lua_State * L, int t)
 {
   MP *mp_ptr = is_mp(L, 1);
   if (*mp_ptr != NULL) {
-    char *fname = (char *)luaL_checkstring(L,2);
+    const char *fname = luaL_checkstring(L,2);
     int charnum = (int)luaL_checkinteger(L,3);
     if (charnum<0 || charnum>255) {
       lua_pushnumber(L, (lua_Number)0);

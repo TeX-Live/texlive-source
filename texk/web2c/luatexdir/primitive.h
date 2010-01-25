@@ -75,7 +75,7 @@ extern void primitive(str_number ss, quarterword c, halfword o, halfword off,
 extern void primitive_def(char *s, size_t l, quarterword c, halfword o);
 extern void print_cmd_chr(quarterword cmd, halfword chr_code);
 
-extern pointer string_lookup(char *s, size_t l);
+extern pointer string_lookup(const char *s, size_t l);
 extern pointer id_lookup(integer j, integer l);
 
 

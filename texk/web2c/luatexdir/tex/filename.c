@@ -194,7 +194,7 @@ void scan_file_name(void)
 
 #define pack_cur_name() pack_file_name(cur_name,cur_area,cur_ext)
 
-void pack_job_name(char *s)
+void pack_job_name(const char *s)
 {                               /* |s = ".log"|, |".dvi"|, or |format_extension| */
     cur_area = get_nullstr();
     cur_ext = maketexstring(s);
@@ -210,7 +210,7 @@ void pack_job_name(char *s)
    ready for another attempt at file opening.
 */
 
-void prompt_file_name(char *s, char *e)
+void prompt_file_name(const char *s, const char *e)
 {
     int k;                      /* index into |buffer| */
     str_number saved_cur_name;  /* to catch empty terminal input */

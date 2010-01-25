@@ -177,7 +177,7 @@ command_item command_names[] = {
 };
 
 
-int get_command_id(char *s)
+int get_command_id(const char *s)
 {
     int i;
     int cmd = -1;
@@ -242,7 +242,7 @@ static int token_from_lua(lua_State * L)
 
 static int get_cur_cs(lua_State * L)
 {
-    char *s;
+    const char *s;
     unsigned j;
     size_t l;
     integer cs;
@@ -252,7 +252,7 @@ static int get_cur_cs(lua_State * L)
     cur_cs = 0;
     lua_getfield(L, -1, "name");
     if (lua_isstring(L, -1)) {
-        s = (char *) lua_tolstring(L, -1, &l);
+        s = lua_tolstring(L, -1, &l);
         if (l > 0) {
             if ((int) (last + l) > buf_size)
                 check_buffer_overflow(last + l);
@@ -307,7 +307,7 @@ static int get_cur_cs(lua_State * L)
 
 
 #define Print_esc(b) {                                          \
-    char *v = b;                                                \
+    const char *v = b;                                                \
     if (e>0 && e<string_offset) {                               \
       Print_uchar (e); Print_uchar (e);                         \
     }                                                           \
@@ -501,7 +501,7 @@ void tokenlist_to_luastring(lua_State * L, int p)
 
 int tokenlist_from_lua(lua_State * L)
 {
-    char *s;
+    const char *s;
     int tok;
     size_t i, j;
     halfword p, q, r;
@@ -523,7 +523,7 @@ int tokenlist_from_lua(lua_State * L)
         }
         return r;
     } else if (lua_isstring(L, -1)) {
-        s = (char *) lua_tolstring(L, -1, &j);
+        s = lua_tolstring(L, -1, &j);
         for (i = 0; i < j; i++) {
             if (s[i] == 32) {
                 tok = (10 * string_offset) + s[i];
@@ -549,7 +549,7 @@ void do_get_token_lua(integer callback_id)
             break;
         }
         if (lua_pcall(L, 0, 1, 0) != 0) {       /* no arg, 1 result */
-            tex_error((char *) lua_tostring(L, -1), NULL);
+            tex_error(lua_tostring(L, -1), NULL);
             lua_pop(L, 2);      /* container and result */
             break;
         }

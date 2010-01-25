@@ -23,7 +23,7 @@
 static const char _svn_version[] =
     "$Id: lcallbacklib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
-extern int do_run_callback(int special, char *values, va_list vl);
+static int do_run_callback(int special, const char *values, va_list vl);
 extern int lua_traceback(lua_State * L);
 
 int callback_count = 0;
@@ -71,7 +71,7 @@ static const char *const callbacknames[] = {
 
 int callback_callbacks_id = 0;
 
-void get_lua_boolean(char *table, char *name, boolean * target)
+void get_lua_boolean(const char *table, const char *name, boolean * target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -89,7 +89,7 @@ void get_lua_boolean(char *table, char *name, boolean * target)
     return;
 }
 
-void get_saved_lua_boolean(int r, char *name, boolean * target)
+void get_saved_lua_boolean(int r, const char *name, boolean * target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -107,7 +107,7 @@ void get_saved_lua_boolean(int r, char *name, boolean * target)
     return;
 }
 
-void get_lua_number(char *table, char *name, integer * target)
+void get_lua_number(const char *table, const char *name, integer * target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -123,7 +123,7 @@ void get_lua_number(char *table, char *name, integer * target)
     return;
 }
 
-void get_saved_lua_number(int r, char *name, integer * target)
+void get_saved_lua_number(int r, const char *name, integer * target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -140,7 +140,7 @@ void get_saved_lua_number(int r, char *name, integer * target)
 }
 
 
-void get_lua_string(char *table, char *name, char **target)
+void get_lua_string(const char *table, const char *name, const char **target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -149,14 +149,14 @@ void get_lua_string(char *table, char *name, char **target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isstring(Luas, -1)) {
-            *target = (char *) lua_tostring(Luas, -1);
+            *target = lua_tostring(Luas, -1);
         }
     }
     lua_settop(Luas, stacktop);
     return;
 }
 
-void get_saved_lua_string(int r, char *name, char **target)
+void get_saved_lua_string(int r, const char *name, const char **target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -165,7 +165,7 @@ void get_saved_lua_string(int r, char *name, char **target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isstring(Luas, -1)) {
-            *target = (char *) lua_tostring(Luas, -1);
+            *target = lua_tostring(Luas, -1);
         }
     }
     lua_settop(Luas, stacktop);
@@ -181,7 +181,7 @@ void get_saved_lua_string(int r, char *name, char **target)
 #define CALLBACK_CHARNUM        'c'
 
 
-int run_saved_callback(int r, char *name, char *values, ...)
+int run_saved_callback(int r, const char *name, const char *values, ...)
 {
     va_list args;
     int ret = 0;
@@ -216,7 +216,7 @@ boolean get_callback(lua_State * L, int i)
     }
 }
 
-int run_and_save_callback(int i, char *values, ...)
+int run_and_save_callback(int i, const char *values, ...)
 {
     va_list args;
     int ret = 0;
@@ -235,7 +235,7 @@ int run_and_save_callback(int i, char *values, ...)
 }
 
 
-int run_callback(int i, char *values, ...)
+int run_callback(int i, const char *values, ...)
 {
     va_list args;
     int ret = 0;
@@ -250,7 +250,7 @@ int run_callback(int i, char *values, ...)
     return ret;
 }
 
-int do_run_callback(int special, char *values, va_list vl)
+int do_run_callback(int special, const char *values, va_list vl)
 {
     int ret;
     size_t len;
@@ -429,7 +429,7 @@ void destroy_saved_callback(int i)
 static int callback_register(lua_State * L)
 {
     int cb;
-    char *s;
+    const char *s;
     if (!lua_isstring(L, 1) ||
         ((!lua_isfunction(L, 2)) &&
          (!lua_isnil(L, 2)) &&
@@ -438,7 +438,7 @@ static int callback_register(lua_State * L)
         lua_pushstring(L, "Invalid arguments to callback.register.");
         return 2;
     }
-    s = (char *) lua_tostring(L, 1);
+    s = lua_tostring(L, 1);
     for (cb = 0; cb < total_callbacks; cb++) {
         if (strcmp(callbacknames[cb], s) == 0)
             break;
@@ -467,13 +467,13 @@ static int callback_register(lua_State * L)
 static int callback_find(lua_State * L)
 {
     int cb;
-    char *s;
+    const char *s;
     if (!lua_isstring(L, 1)) {
         lua_pushnil(L);
         lua_pushstring(L, "Invalid arguments to callback.find.");
         return 2;
     }
-    s = (char *) lua_tostring(L, 1);
+    s = lua_tostring(L, 1);
     for (cb = 0; cb < total_callbacks; cb++) {
         if (strcmp(callbacknames[cb], s) == 0)
             break;

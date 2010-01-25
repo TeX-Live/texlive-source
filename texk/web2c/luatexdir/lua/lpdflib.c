@@ -40,7 +40,7 @@ static int findcurh(lua_State * L)
     return 1;
 }
 
-int luapdfprint(lua_State * L)
+static int luapdfprint(lua_State * L)
 {
     int n;
     unsigned i;
@@ -58,7 +58,7 @@ int luapdfprint(lua_State * L)
             lua_pushstring(L, "invalid argument for print literal mode");
             lua_error(L);
         } else {
-            outputstr = (char *) lua_tostring(L, -2);
+            outputstr = lua_tostring(L, -2);
             if (strcmp(outputstr, "direct") == 0)
                 literal_mode = direct_always;
             else if (strcmp(outputstr, "page") == 0)
@@ -123,9 +123,9 @@ static int l_immediateobj(lua_State * L)
 
 static int getpdf(lua_State * L)
 {
-    char *st;
+    const char *st;
     if (lua_isstring(L, 2)) {
-        st = (char *) lua_tostring(L, 2);
+        st = lua_tostring(L, 2);
         if (st && *st) {
             if (*st == 'h')
                 return findcurh(L);

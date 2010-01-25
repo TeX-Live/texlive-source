@@ -365,7 +365,8 @@ char **load_enc_file(char *enc_name)
     return glyph_names;
 }
 
-void free_glyph_names(char **glyph_names)
+#if 0 /* unused */
+static void free_glyph_names(char **glyph_names)
 {
     int i;
     assert(glyph_names != NULL);
@@ -374,6 +375,7 @@ void free_glyph_names(char **glyph_names)
             xfree(glyph_names[i]);
     xfree(glyph_names);
 }
+#endif
 
 
 static void t1_check_pfa(void)
@@ -758,7 +760,7 @@ static void t1_scan_keys(void)
 {
     int i, k;
     char *p, *q, *r;
-    key_entry *key;
+    const key_entry *key;
     if (fm_extend(fd_cur->fm) != 0 || fm_slant(fd_cur->fm) != 0) {
         if (t1_prefix("/FontMatrix")) {
             t1_modify_fm();
@@ -775,7 +777,7 @@ static void t1_scan_keys(void)
             pdftex_fail("Type%d fonts unsupported by pdfTeX", i);
         return;
     }
-    for (key = (key_entry *) font_key; key - font_key < FONT_KEYS_NUM; key++) {
+    for (key = font_key; key - font_key < FONT_KEYS_NUM; key++) {
         if (key->t1name[0] != '\0' &&
             str_prefix(t1_line_array + 1, key->t1name))
             break;
@@ -855,7 +857,7 @@ static void copy_glyph_names(char **glyph_names, int a, int b)
 
 /* read encoding from Type1 font file, return glyph_names array, or pdffail() */
 
-char **t1_builtin_enc(void)
+static char **t1_builtin_enc(void)
 {
     int i, a, b, c, counter = 0;
     char *r, *p, **glyph_names;
@@ -1071,7 +1073,7 @@ static void t1_include(void)
     if (subr >= subr_size || subr < 0) \
         pdftex_fail("Subrs array: entry index out of range (%i)",  subr);
 
-static const char **check_cs_token_pair()
+static const char **check_cs_token_pair(void)
 {
     const char **p = (const char **) cs_token_pairs_list;
     for (; p[0] != NULL; ++p)
@@ -1406,10 +1408,10 @@ static void cs_mark(const char *cs_name, int subr)
 static int comp_t1_glyphs(const void *pa, const void *pb, void *p)
 {
     (void) p;
-    return strcmp(*((const char **) pa), *((const char **) pb));
+    return strcmp(*((const char * const *) pa), *((const char * const *) pb));
 }
 
-struct avl_table *create_t1_glyph_tree(char **glyph_names)
+static struct avl_table *create_t1_glyph_tree(char **glyph_names)
 {
     int i;
     void **aa;
@@ -1427,7 +1429,7 @@ struct avl_table *create_t1_glyph_tree(char **glyph_names)
     return gl_tree;
 }
 
-void destroy_t1_glyph_tree(struct avl_table *gl_tree)
+static void destroy_t1_glyph_tree(struct avl_table *gl_tree)
 {
     assert(gl_tree != NULL);
     avl_destroy(gl_tree, NULL);
@@ -1806,7 +1808,7 @@ void writet1(fd_entry * fd)
     xfree(t1_buffer);
 }
 
-void t1_free()
+void t1_free(void)
 {
     xfree(t1_line_array);
     xfree(t1_buf_array);

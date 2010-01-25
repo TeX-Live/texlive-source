@@ -38,10 +38,10 @@ static const char _svn_version[] =
 
 static boolean no_shrink_error_yet;     /*have we complained about infinite shrinkage? */
 
-halfword finite_shrink(halfword p)
+static halfword finite_shrink(halfword p)
 {                               /* recovers from infinite shrinkage */
     halfword q;                 /*new glue specification */
-    char *hlp[] = {
+    const char *hlp[] = {
         "The paragraph just ended includes some glue that has",
         "infinite shrinkability, e.g., `\\hskip 0pt minus 1fil'.",
         "Such glue doesn't belong there---it allows a paragraph",
@@ -127,14 +127,14 @@ static halfword hlist_stack[max_hlist_stack];
 /* fill level for |hlist_stack| */
 static short hlist_stack_level = 0;
 
-void push_node(halfword p)
+static void push_node(halfword p)
 {
     if (hlist_stack_level >= max_hlist_stack)
         pdf_error(maketexstring("push_node"), maketexstring("stack overflow"));
     hlist_stack[hlist_stack_level++] = p;
 }
 
-halfword pop_node(void)
+static halfword pop_node(void)
 {
     if (hlist_stack_level <= 0) /* would point to some bug */
         pdf_error(maketexstring("pop_node"),
@@ -149,7 +149,7 @@ static integer max_shrink_ratio = 0;    /*maximal shrink ratio of expanded fonts
 static integer cur_font_step = 0;       /*the current step of expanded fonts */
 
 
-boolean check_expand_pars(internal_font_number f)
+static boolean check_expand_pars(internal_font_number f)
 {
     internal_font_number k;
 
@@ -606,7 +606,7 @@ static scaled best_pl_glue[4];  /*corresponding glue stretch or shrink */
  * only character nodes, kern nodes, and box or rule nodes. 
  */
 
-void add_to_widths(halfword s, integer line_break_dir,
+static void add_to_widths(halfword s, integer line_break_dir,
                    integer pdf_adjust_spacing, scaled * widths)
 {
     while (s != null) {
@@ -656,7 +656,7 @@ void add_to_widths(halfword s, integer line_break_dir,
  * with the |add_to_widths| function.
  */
 
-void sub_from_widths(halfword s, integer line_break_dir,
+static void sub_from_widths(halfword s, integer line_break_dir,
                      integer pdf_adjust_spacing, scaled * widths)
 {
     while (s != null) {

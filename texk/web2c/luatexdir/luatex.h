@@ -32,12 +32,12 @@ extern int readbinfile(FILE * f, unsigned char **b, integer * s);
 
 extern int **ocp_tables;
 
-extern void allocate_ocp_table();
-extern void dump_ocp_table();
-extern void undump_ocp_table();
+extern void allocate_ocp_table(int ocp_number, int ocp_size);
+extern void dump_ocp_table(int ocp_number);
+extern void undump_ocp_table(int ocp_number);
 
-extern void run_external_ocp();
-extern void b_test_in();
+extern void run_external_ocp(string external_ocp_name);
+extern void b_test_in(void);
 
 /* Additions to texmfmp.h for pdfTeX */
 
@@ -59,10 +59,10 @@ extern void b_test_in();
 #define vf_b_open_in(f) \
     open_input (&(f), kpse_vf_format, FOPEN_RBIN_MODE)
 
-extern int open_outfile(FILE ** f, char *name, char *mode);
+extern int open_outfile(FILE ** f, const char *name, const char *mode);
 
-#define do_a_open_out(f) open_outfile(&(f),(char *)(nameoffile+1),FOPEN_W_MODE)
-#define do_b_open_out(f) open_outfile(&(f),(char *)(nameoffile+1),FOPEN_WBIN_MODE)
+#define do_a_open_out(f) open_outfile(&(f),(const char *)(nameoffile+1),FOPEN_W_MODE)
+#define do_b_open_out(f) open_outfile(&(f),(const char *)(nameoffile+1),FOPEN_WBIN_MODE)
 
 #define pdfassert assert
 #define voidcast(a) (void *)(a)

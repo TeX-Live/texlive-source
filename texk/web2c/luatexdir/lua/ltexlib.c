@@ -55,10 +55,11 @@ static int spindle_index = 0;
 
 static void luac_store(lua_State * L, int i, int partial, integer cattable)
 {
-    char *st, *sttemp;
+    char *st;
+    const char *sttemp;
     size_t tsize;
     rope *rn = NULL;
-    sttemp = (char *) lua_tolstring(L, i, &tsize);
+    sttemp = lua_tolstring(L, i, &tsize);
     st = xmalloc((tsize + 1));
     memcpy(st, sttemp, (tsize + 1));
     if (st) {
@@ -115,17 +116,17 @@ static int do_luacprint(lua_State * L, int partial, int deftable)
     return 0;
 }
 
-int luacwrite(lua_State * L)
+static int luacwrite(lua_State * L)
 {
     return do_luacprint(L, FULL_LINE, NO_CAT_TABLE);
 }
 
-int luacprint(lua_State * L)
+static int luacprint(lua_State * L)
 {
     return do_luacprint(L, FULL_LINE, DEFAULT_CAT_TABLE);
 }
 
-int luacsprint(lua_State * L)
+static int luacsprint(lua_State * L)
 {
     return do_luacprint(L, PARTIAL_LINE, DEFAULT_CAT_TABLE);
 }
@@ -233,7 +234,7 @@ void luacstring_close(int n)
      lua_error(L);  }
 
 
-int dimen_to_number(lua_State * L, char *s)
+int dimen_to_number(lua_State * L, const char *s)
 {
     double v;
     char *d;
@@ -270,14 +271,14 @@ int dimen_to_number(lua_State * L, char *s)
 }
 
 
-integer get_item_index(lua_State * L, int i, integer base)
+static integer get_item_index(lua_State * L, int i, integer base)
 {
     size_t kk;
     integer k;
     int cur_cs;
-    char *s;
+    const char *s;
     if (lua_type(L, i) == LUA_TSTRING) {
-        s = (char *) lua_tolstring(L, i, &kk);
+        s = lua_tolstring(L, i, &kk);
         cur_cs = string_lookup(s, kk);
         if (cur_cs == static_undefined_control_sequence ||
             is_undefined_cs(cur_cs)) {
@@ -304,7 +305,7 @@ static int vsetdimen(lua_State * L, int is_global)
     /* find the value */
     if (!lua_isnumber(L, i))
         if (lua_isstring(L, i)) {
-            j = dimen_to_number(L, (char *) lua_tostring(L, i));
+            j = dimen_to_number(L, lua_tostring(L, i));
         } else {
             lua_pushstring(L, "unsupported value type");
             lua_error(L);
@@ -326,7 +327,7 @@ static int setdimen(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
@@ -370,14 +371,14 @@ static int setskip(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
     return vsetskip(L, isglobal);
 }
 
-int getskip(lua_State * L)
+static int getskip(lua_State * L)
 {
     halfword j;
     integer k;
@@ -415,7 +416,7 @@ static int setcount(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
@@ -459,7 +460,7 @@ static int setattribute(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
@@ -477,12 +478,12 @@ static int getattribute(lua_State * L)
     return 1;
 }
 
-int vsettoks(lua_State * L, int is_global)
+static int vsettoks(lua_State * L, int is_global)
 {
     int i, j, err;
     size_t len;
     integer k;
-    char *st;
+    const char *st;
     integer save_global_defs = int_par(param_global_defs_code);
     if (is_global)
         int_par(param_global_defs_code) = 1;
@@ -491,7 +492,7 @@ int vsettoks(lua_State * L, int is_global)
         lua_pushstring(L, "unsupported value type");
         lua_error(L);
     }
-    st = (char *) lua_tolstring(L, i, &len);
+    st = lua_tolstring(L, i, &len);
     k = get_item_index(L, (i - 1), get_toks_base());
     check_index_range(k, "settoks");
     j = maketexlstring(st, len);
@@ -510,7 +511,7 @@ static int settoks(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
@@ -531,12 +532,12 @@ static int gettoks(lua_State * L)
 
 static int get_box_id(lua_State * L, int i)
 {
-    char *s;
+    const char *s;
     integer cur_cs, cur_cmd;
     size_t k = 0;
     int j = -1;
     if (lua_type(L, i) == LUA_TSTRING) {
-        s = (char *) lua_tolstring(L, i, &k);
+        s = lua_tolstring(L, i, &k);
         cur_cs = string_lookup(s, k);
         cur_cmd = zget_eq_type(cur_cs);
         if (cur_cmd == char_given_cmd ||
@@ -591,7 +592,7 @@ static int setbox(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
@@ -621,17 +622,17 @@ static int getboxdim(lua_State * L, int whichdim)
     return 1;
 }
 
-int getboxwd(lua_State * L)
+static int getboxwd(lua_State * L)
 {
     return getboxdim(L, width_offset);
 }
 
-int getboxht(lua_State * L)
+static int getboxht(lua_State * L)
 {
     return getboxdim(L, height_offset);
 }
 
-int getboxdp(lua_State * L)
+static int getboxdp(lua_State * L)
 {
     return getboxdim(L, depth_offset);
 }
@@ -644,7 +645,7 @@ static int vsetboxdim(lua_State * L, int whichdim, int is_global)
         int_par(param_global_defs_code) = 1;
     i = lua_gettop(L);
     if (!lua_isnumber(L, i)) {
-        j = dimen_to_number(L, (char *) lua_tostring(L, i));
+        j = dimen_to_number(L, lua_tostring(L, i));
     } else {
         j = (int) lua_tonumber(L, i);
     }
@@ -678,7 +679,7 @@ static int setboxwd(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
@@ -690,7 +691,7 @@ static int setboxht(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
@@ -702,16 +703,16 @@ static int setboxdp(lua_State * L)
     int isglobal = 0;
     int n = lua_gettop(L);
     if (n == 3 && lua_isstring(L, 1)) {
-        char *s = (char *) lua_tostring(L, 1);
+        const char *s = lua_tostring(L, 1);
         if (strcmp(s, "global") == 0)
             isglobal = 1;
     }
     return vsetboxdim(L, depth_offset, isglobal);
 }
 
-int settex(lua_State * L)
+static int settex(lua_State * L)
 {
-    char *st;
+    const char *st;
     int i, j, texstr;
     size_t k;
     int cur_cs, cur_cmd;
@@ -719,11 +720,11 @@ int settex(lua_State * L)
     j = 0;
     i = lua_gettop(L);
     if (lua_isstring(L, (i - 1))) {
-        st = (char *) lua_tolstring(L, (i - 1), &k);
+        st = lua_tolstring(L, (i - 1), &k);
         texstr = maketexlstring(st, k);
         if (is_primitive(texstr)) {
             if (i == 3 && lua_isstring(L, 1)) {
-                char *s = (char *) lua_tostring(L, 1);
+                const char *s = lua_tostring(L, 1);
                 if (strcmp(s, "global") == 0)
                     isglobal = 1;
             }
@@ -742,7 +743,7 @@ int settex(lua_State * L)
             } else if (is_dim_assign(cur_cmd)) {
                 if (!lua_isnumber(L, i)) {
                     if (lua_isstring(L, i)) {
-                        j = dimen_to_number(L, (char *) lua_tostring(L, i));
+                        j = dimen_to_number(L, lua_tostring(L, i));
                     } else {
                         lua_pushstring(L, "unsupported value type");
                         lua_error(L);
@@ -765,7 +766,8 @@ int settex(lua_State * L)
     return 0;
 }
 
-char *get_something_internal(int cur_cmd, int cur_code)
+#if 0 /* unused */
+static char *get_something_internal(int cur_cmd, int cur_code)
 {
     int texstr;
     char *str;
@@ -780,8 +782,9 @@ char *get_something_internal(int cur_cmd, int cur_code)
     flush_str(texstr);
     return str;
 }
+#endif
 
-int do_convert(lua_State * L, int cur_code)
+static int do_convert(lua_State * L, int cur_code)
 {
     int texstr;
     integer i = -1;
@@ -830,7 +833,7 @@ int do_convert(lua_State * L, int cur_code)
 }
 
 
-int do_scan_internal(lua_State * L, int cur_cmd, int cur_code)
+static int do_scan_internal(lua_State * L, int cur_cmd, int cur_code)
 {
     int texstr;
     char *str = NULL;
@@ -858,7 +861,7 @@ int do_scan_internal(lua_State * L, int cur_cmd, int cur_code)
     return 1;
 }
 
-int do_lastitem(lua_State * L, int cur_code)
+static int do_lastitem(lua_State * L, int cur_code)
 {
     int retval = 1;
     switch (cur_code) {
@@ -945,7 +948,7 @@ static int tex_setmathparm(lua_State * L)
 
     if ((n == 3) || (n == 4)) {
         if (n == 4 && lua_isstring(L, 1)) {
-            char *s = (char *) lua_tostring(L, 1);
+            const char *s = lua_tostring(L, 1);
             if (strcmp(s, "global") == 0)
                 l = 1;
         }
@@ -1021,7 +1024,7 @@ static int getpdfxformname(lua_State * L)
 }
 
 
-int get_parshape(lua_State * L)
+static int get_parshape(lua_State * L)
 {
     int n;
     halfword par_shape_ptr = get_par_shape_ptr();
@@ -1045,7 +1048,7 @@ int get_parshape(lua_State * L)
 }
 
 
-int gettex(lua_State * L)
+static int gettex(lua_State * L)
 {
     int cur_cs = -1;
     int retval = 1;             /* default is to return nil  */
@@ -1053,7 +1056,7 @@ int gettex(lua_State * L)
     if (lua_isstring(L, 2)) {   /* 1 == 'tex' */
         int texstr;
         size_t k;
-        char *st = (char *) lua_tolstring(L, 2, &k);
+        const char *st = lua_tolstring(L, 2, &k);
         texstr = maketexlstring(st, k);
         cur_cs = prim_lookup(texstr);   /* not found == relax == 0 */
         flush_str(texstr);
@@ -1099,11 +1102,11 @@ int gettex(lua_State * L)
 }
 
 
-int getlist(lua_State * L)
+static int getlist(lua_State * L)
 {
-    char *str;
+    const char *str;
     if (lua_isstring(L, 2)) {
-        str = (char *) lua_tostring(L, 2);
+        str = lua_tostring(L, 2);
         if (strcmp(str, "page_ins_head") == 0) {
             if (vlink(page_ins_head) == page_ins_head)
                 lua_pushnumber(L, null);
@@ -1147,13 +1150,13 @@ int getlist(lua_State * L)
     return 1;
 }
 
-int setlist(lua_State * L)
+static int setlist(lua_State * L)
 {
     halfword *n_ptr;
-    char *str;
+    const char *str;
     halfword n = 0;
     if (lua_isstring(L, 2)) {
-        str = (char *) lua_tostring(L, 2);
+        str = lua_tostring(L, 2);
         if (strcmp(str, "best_size") == 0) {
             best_size = lua_tointeger(L, 3);
         } else if (strcmp(str, "least_page_cost") == 0) {
@@ -1207,7 +1210,7 @@ int setlist(lua_State * L)
 
 static int do_integer_error(double m)
 {
-    char *help[] = { "I can only go up to 2147483647='17777777777=" "7FFFFFFF,",
+    const char *help[] = { "I can only go up to 2147483647='17777777777=" "7FFFFFFF,",
         "so I'm using that number instead of yours.",
         NULL
     };
@@ -1261,14 +1264,14 @@ static int tex_scaletable(lua_State * L)
 
 static int tex_definefont(lua_State * L)
 {
-    char *csname;
+    const char *csname;
     int f, u;
     str_number t;
     size_t l;
     int i = 1;
     int a = 0;
     if (!no_new_control_sequence) {
-        char *help[] =
+        const char *help[] =
             { "You can't create a new font inside a \\csname\\endcsname pair",
             NULL
         };
@@ -1278,7 +1281,7 @@ static int tex_definefont(lua_State * L)
         a = lua_toboolean(L, 1);
         i = 2;
     }
-    csname = (char *) luaL_checklstring(L, i, &l);
+    csname = luaL_checklstring(L, i, &l);
     f = luaL_checkinteger(L, (i + 1));
     t = maketexlstring(csname, l);
     no_new_control_sequence = 0;
@@ -1347,7 +1350,7 @@ static int tex_extraprimitives(lua_State * L)
     } else {
         for (i = 1; i <= n; i++) {
             if (lua_isstring(L, i)) {
-                char *s = (char *) lua_tostring(L, i);
+                const char *s = lua_tostring(L, i);
                 if (strcmp(s, "etex") == 0) {
                     mask |= etex_command;
                 } else if (strcmp(s, "tex") == 0) {
@@ -1390,7 +1393,7 @@ static int tex_enableprimitives(lua_State * L)
     } else {
         size_t l;
         int i;
-        char *pre = (char *) luaL_checklstring(L, 1, &l);
+        const char *pre = luaL_checklstring(L, 1, &l);
         if (lua_istable(L, 2)) {
             int nncs = no_new_control_sequence;
             no_new_control_sequence = true;
@@ -1398,7 +1401,7 @@ static int tex_enableprimitives(lua_State * L)
             while (1) {
                 lua_rawgeti(L, 2, i);
                 if (lua_isstring(L, 3)) {
-                    char *prim = (char *) lua_tostring(L, 3);
+                    const char *prim = lua_tostring(L, 3);
                     str_number s = maketexstring(prim);
                     halfword prim_val = prim_lookup(s);
                     if (prim_val != undefined_primitive) {

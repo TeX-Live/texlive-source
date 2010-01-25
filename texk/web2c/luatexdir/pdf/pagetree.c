@@ -69,7 +69,7 @@ static int comp_divert_list_entry(const void *pa, const void *pb, void *p)
     return 0;
 }
 
-static pages_entry *new_pages_entry()
+static pages_entry *new_pages_entry(void)
 {
     pages_entry *p;
     int i;
@@ -83,7 +83,7 @@ static pages_entry *new_pages_entry()
     return p;
 }
 
-static divert_list_entry *new_divert_list_entry()
+static divert_list_entry *new_divert_list_entry(void)
 {
     divert_list_entry *d;
     d = xtalloc(1, divert_list_entry);
@@ -91,7 +91,7 @@ static divert_list_entry *new_divert_list_entry()
     return d;
 }
 
-static void ensure_list_tree()
+static void ensure_list_tree(void)
 {
     if (divert_list_tree == NULL) {
         divert_list_tree =
@@ -257,7 +257,7 @@ static integer output_pages_list(pages_entry * pe)
     return output_pages_list(r);        /* recurse through next higher level */
 }
 
-integer output_pages_tree()
+integer output_pages_tree(void)
 {
     divert_list_entry *d;
     pdf_do_page_undivert(0, 0); /* concatenate all diversions into diversion 0 */

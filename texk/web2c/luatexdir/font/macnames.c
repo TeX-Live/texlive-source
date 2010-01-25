@@ -21,7 +21,7 @@
 static const char __svn_version[] =
     "$Id: macnames.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/font/macnames.c $";
 
-const char notdef[] = ".notdef";
+char notdef[] = ".notdef";
 
 const char *mac_glyph_names[] = {
 /* 0x00 */

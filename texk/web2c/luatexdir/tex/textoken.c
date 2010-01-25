@@ -73,7 +73,7 @@ extern void insert_vj_template(void);
 
 /* string compare */
 
-boolean str_eq_cstr(str_number r, char *s, size_t l)
+boolean str_eq_cstr(str_number r, const char *s, size_t l)
 {
     if (l != (size_t) length(r))
         return false;
@@ -91,7 +91,7 @@ int get_char_cat_code(int cur_chr)
 
 static void invalid_character_error(void)
 {
-    char *hlp[] = { "A funny symbol that I can't read has just been input.",
+    const char *hlp[] = { "A funny symbol that I can't read has just been input.",
         "Continue, and I'll forget that it ever happened.",
         NULL
     };
@@ -114,7 +114,7 @@ static next_line_retval next_line(void);        /* below */
 
 static void utf_error(void)
 {
-    char *hlp[] = { "A funny symbol that I can't read has just been input.",
+    const char *hlp[] = { "A funny symbol that I can't read has just been input.",
         "Just continue, I'll change it to 0xFFFD.",
         NULL
     };
@@ -162,7 +162,7 @@ static integer qbuffer_to_unichar(integer * k)
 
 /* This is a very basic helper */
 
-char *u2s(unsigned unic)
+static char *u2s(unsigned unic)
 {
     char *buf = xmalloc(5);
     char *pt = buf;
@@ -211,11 +211,11 @@ char *u2s(unsigned unic)
    @^inner loop@>
 */
 
-boolean scan_keyword(char *s)
+boolean scan_keyword(const char *s)
 {                               /* look for a given string */
     pointer p;                  /* tail of the backup list */
     pointer q;                  /* new node being added to the token list via |store_new_token| */
-    char *k;                    /* index into |str_pool| */
+    const char *k;              /* index into |str_pool| */
     pointer save_cur_cs = cur_cs;
     if (strlen(s) == 1) {
         /* @<Get the next non-blank non-call token@>; */
@@ -340,9 +340,9 @@ halfword active_to_cs(int curchr, int force)
                          (str_pool[str_start_macro(a)+2] == 0xBF))
 
 
-char *cs_to_string(pointer p)
+static char *cs_to_string(pointer p)
 {                               /* prints a control sequence */
-    char *s;
+    const char *s;
     int k = 0;
     static char ret[256] = { 0 };
     if (p == null_cs) {
@@ -380,7 +380,7 @@ char *cs_to_string(pointer p)
 
 /* TODO this is a quick hack, will be solved differently soon */
 
-char *cmd_chr_to_string(int cmd, int chr)
+static char *cmd_chr_to_string(int cmd, int chr)
 {
     char *s;
     str_number str;
@@ -429,14 +429,14 @@ void check_outer_validity(void)
             cur_chr = ' ';      /* replace it by a space */
         }
         if (scanner_status > skipping) {
-            char *errhlp[] = { "I suspect you have forgotten a `}', causing me",
+            const char *errhlp[] = { "I suspect you have forgotten a `}', causing me",
                 "to read past where you wanted me to stop.",
                 "I'll try to recover; but if the error is serious,",
                 "you'd better type `E' or `X' now and fix your file.",
                 NULL
             };
             char errmsg[256];
-            char *startmsg, *scannermsg;
+            const char *startmsg, *scannermsg;
             /* @<Tell the user what has run away and try to recover@> */
             runaway();          /* print a definition, argument, or preamble */
             if (cur_cs == 0) {
@@ -487,19 +487,19 @@ void check_outer_validity(void)
             tex_error(errmsg, errhlp);
         } else {
             char errmsg[256];
-            char *errhlp_no[] =
+            const char *errhlp_no[] =
                 { "The file ended while I was skipping conditional text.",
                 "This kind of error happens when you say `\\if...' and forget",
                 "the matching `\\fi'. I've inserted a `\\fi'; this might work.",
                 NULL
             };
-            char *errhlp_cs[] =
+            const char *errhlp_cs[] =
                 { "A forbidden control sequence occurred in skipped text.",
                 "This kind of error happens when you say `\\if...' and forget",
                 "the matching `\\fi'. I've inserted a `\\fi'; this might work.",
                 NULL
             };
-            char **errhlp = (char **) errhlp_no;
+            const char **errhlp = (const char **) errhlp_no;
             if (cur_cs != 0) {
                 errhlp = errhlp_cs;
                 cur_cs = 0;

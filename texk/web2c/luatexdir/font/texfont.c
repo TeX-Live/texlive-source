@@ -33,6 +33,7 @@
 
 #include "ptexlib.h"
 #include "luatex-api.h"
+#include "luatexfont.h"
 
 #define noDEBUG
 
@@ -47,14 +48,6 @@ texfont **font_tables = NULL;
 
 static integer font_arr_max = 0;
 static integer font_id_maxval = 0;
-
-extern extinfo *get_charinfo_vert_variants(charinfo * ci);
-extern extinfo *get_charinfo_hor_variants(charinfo * ci);
-extern void set_charinfo_hor_variants(charinfo * ci, extinfo * ext);
-extern void set_charinfo_vert_variants(charinfo * ci, extinfo * ext);
-
-extern extinfo *copy_variants(extinfo * o);
-
 
 static void grow_font_table(integer id)
 {
@@ -177,7 +170,7 @@ charinfo *get_charinfo(internal_font_number f, integer c)
     return &(font_tables[f]->charinfo[0]);
 }
 
-void set_charinfo(internal_font_number f, integer c, charinfo * ci)
+static void set_charinfo(internal_font_number f, integer c, charinfo * ci)
 {
     sa_tree_item glyph;
     if (proper_char_index(c)) {
@@ -348,7 +341,8 @@ integer char_exists(internal_font_number f, integer c)
     return 0;
 }
 
-int lua_char_exists_callback(internal_font_number f, integer c)
+#if 0 /* unused */
+static int lua_char_exists_callback(internal_font_number f, integer c)
 {
     integer callback_id;
     lua_State *L = Luas;
@@ -371,6 +365,7 @@ int lua_char_exists_callback(internal_font_number f, integer c)
     }
     return ret;
 }
+#endif
 
 
 extinfo *new_variant(int glyph, int startconnect, int endconnect,
@@ -388,7 +383,7 @@ extinfo *new_variant(int glyph, int startconnect, int endconnect,
 }
 
 
-extinfo *copy_variant(extinfo * old)
+static extinfo *copy_variant(extinfo * old)
 {
     extinfo *ext;
     ext = xmalloc(sizeof(extinfo));
@@ -401,7 +396,7 @@ extinfo *copy_variant(extinfo * old)
     return ext;
 }
 
-void dump_variant(extinfo * ext)
+static void dump_variant(extinfo * ext)
 {
     dump_int(ext->glyph);
     dump_int(ext->start_overlap);
@@ -412,7 +407,7 @@ void dump_variant(extinfo * ext)
 }
 
 
-extinfo *undump_variant(void)
+static extinfo *undump_variant(void)
 {
     integer x;
     extinfo *ext;
@@ -476,7 +471,7 @@ extinfo *copy_variants(extinfo * o)
 }
 
 
-void dump_charinfo_variants(extinfo * o)
+static void dump_charinfo_variants(extinfo * o)
 {
     while (o != NULL) {
         dump_variant(o);
@@ -486,7 +481,7 @@ void dump_charinfo_variants(extinfo * o)
     return;
 }
 
-extinfo *undump_charinfo_variants(void)
+static extinfo *undump_charinfo_variants(void)
 {
     extinfo *c, *t, *h = NULL;
     c = undump_variant();
@@ -1427,7 +1422,7 @@ scaled get_kern(internal_font_number f, integer lc, integer rc)
     x = 0; dump_int(x);       \
   }
 
-void dump_charinfo(int f, int c)
+static void dump_charinfo(int f, int c)
 {
     charinfo *co;
     integer x;
@@ -1490,7 +1485,7 @@ void dump_charinfo(int f, int c)
     dump_math_kerns(co);
 }
 
-void dump_font_entry(texfont * f)
+static void dump_font_entry(texfont * f)
 {
     dump_int(f->_font_size);
     dump_int(f->_font_dsize);
@@ -1567,7 +1562,7 @@ void dump_font(int f)
     }
 }
 
-int undump_charinfo(int f)
+static int undump_charinfo(int f)
 {
     charinfo *co;
     integer x, i;
@@ -1662,7 +1657,7 @@ int undump_charinfo(int f)
     a(f,s); }
 
 
-void undump_font_entry(texfont * f)
+static void undump_font_entry(texfont * f)
 {
     integer x = 0;
     /* *INDENT-OFF* */  

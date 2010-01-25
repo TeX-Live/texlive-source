@@ -136,10 +136,11 @@
 static char **cmdlist = NULL;
 
 void 
-mk_shellcmdlist (char *v)
+mk_shellcmdlist (const char *v)
 {
   char **p;
-  char *q, *r;
+  const char *q, *r1;
+  char *r;
   int  n;
 
   q = v;
@@ -148,10 +149,10 @@ mk_shellcmdlist (char *v)
 /* analyze the variable shell_escape_commands = foo,bar,...
    spaces before and after (,) are not allowed. */
 
-  while ((r = strchr (q, ',')) != 0) {
+  while ((r1 = strchr (q, ',')) != 0) {
     n++;
-    r++;
-    q = r;
+    r1++;
+    q = r1;
   }
   if (*q)
     n++;
@@ -203,7 +204,7 @@ init_shell_escape (void)
     if (shellenabledp && restrictedshell == 1) {
       char *v2 = kpse_var_value ("shell_escape_commands");
       if (v2) {
-        mk_shellcmdlist (v2);
+        mk_shellcmdlist ((const char *)v2);
         free (v2);
       }
     }
@@ -616,7 +617,7 @@ maininit (int ac, string *av)
   synctexoption = SYNCTEX_NO_OPTION;
 #else
 # /* Omit warning for Aleph and non-TeX.  */
-# if defined(TeX) && !defined(Aleph)
+# if defined(TeX) && !defined(Aleph) && !defined(luaTeX)
 #  warning SyncTeX: -synctex command line option NOT available
 # endif
 #endif
@@ -2364,6 +2365,9 @@ gettexstring (strnumber s)
 
 #else
 
+#ifdef luaTeX
+static
+#endif
 string
 gettexstring (strnumber s)
 {

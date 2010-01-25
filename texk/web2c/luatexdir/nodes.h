@@ -722,8 +722,8 @@ extern pointer actual_box_width(pointer r, scaled base_width);
 typedef struct _node_info {
     int id;
     int size;
-    char **fields;
-    char *name;
+    const char **fields;
+    const char *name;
 } node_info;
 
 extern node_info node_data[];

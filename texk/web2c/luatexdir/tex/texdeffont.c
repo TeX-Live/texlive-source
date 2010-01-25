@@ -31,7 +31,7 @@ static const char _svn_version[] =
 #define null_cs 1               /* equivalent of \.{\\csname\\endcsname} */
 #define scan_normal_dimen() scan_dimen(false,false,false)
 
-char *scaled_to_string(scaled s)
+static char *scaled_to_string(scaled s)
 {                               /* prints scaled real, rounded to five digits */
     static char result[16];
     int n, k;
@@ -140,7 +140,7 @@ void tex_def_font(small_number a)
         s = cur_val;
         if ((s <= 0) || (s >= 01000000000)) {
             char err[256];
-            char *errhelp[] =
+            const char *errhelp[] =
                 { "I can only handle fonts at positive sizes that are",
                 "less than 2048pt, so I've changed what you said to 10pt.",
                 NULL
@@ -155,7 +155,7 @@ void tex_def_font(small_number a)
         s = -cur_val;
         if ((cur_val <= 0) || (cur_val > 32768)) {
             char err[256];
-            char *errhelp[] =
+            const char *errhelp[] =
                 { "The magnification ratio must be between 1 and 32768.",
                 NULL
             };
@@ -171,7 +171,7 @@ void tex_def_font(small_number a)
         offset = cur_val;
         if (cur_val < 0) {
             char err[256];
-            char *errhelp[] = { "The offset must be bigger than 0.", NULL };
+            const char *errhelp[] = { "The offset must be bigger than 0.", NULL };
             snprintf(err, 255, "Illegal offset has been changed to 0 (%d)",
                      (int) cur_val);
             tex_error(err, errhelp);

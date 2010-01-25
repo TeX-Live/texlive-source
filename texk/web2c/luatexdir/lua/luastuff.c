@@ -25,7 +25,7 @@ static const char _svn_version[] =
 
 lua_State *Luas = NULL;
 
-extern char *startup_filename;
+extern const char *startup_filename;
 extern int safer_option;
 extern int nosocket_option;
 
@@ -33,7 +33,7 @@ int luastate_bytes = 0;
 
 int lua_active = 0;
 
-void make_table(lua_State * L, char *tab, char *getfunc, char *setfunc)
+void make_table(lua_State * L, const char *tab, const char *getfunc, const char *setfunc)
 {
     /* make the table *//* [{<tex>}] */
     lua_pushstring(L, tab);     /* [{<tex>},"dimen"] */
@@ -68,7 +68,7 @@ const char *getS(lua_State * L, void *ud, size_t * size)
     return ls->s;
 }
 
-void *my_luaalloc(void *ud, void *ptr, size_t osize, size_t nsize)
+static void *my_luaalloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
     void *ret = NULL;
     (void) ud;                  /* for -Wunused */
@@ -213,7 +213,7 @@ void luainterpreter(void)
     Luas = L;
 }
 
-int hide_lua_table(lua_State * L, char *name)
+int hide_lua_table(lua_State * L, const char *name)
 {
     int r = 0;
     lua_getglobal(L, name);
@@ -225,14 +225,14 @@ int hide_lua_table(lua_State * L, char *name)
     return r;
 }
 
-void unhide_lua_table(lua_State * L, char *name, int r)
+void unhide_lua_table(lua_State * L, const char *name, int r)
 {
     lua_rawgeti(L, LUA_REGISTRYINDEX, r);
     lua_setglobal(L, name);
     luaL_unref(L, LUA_REGISTRYINDEX, r);
 }
 
-int hide_lua_value(lua_State * L, char *name, char *item)
+int hide_lua_value(lua_State * L, const char *name, const char *item)
 {
     int r = 0;
     lua_getglobal(L, name);
@@ -245,7 +245,7 @@ int hide_lua_value(lua_State * L, char *name, char *item)
     return r;
 }
 
-void unhide_lua_value(lua_State * L, char *name, char *item, int r)
+void unhide_lua_value(lua_State * L, const char *name, const char *item, int r)
 {
     lua_getglobal(L, name);
     if (lua_istable(L, -1)) {

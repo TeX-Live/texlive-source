@@ -77,7 +77,7 @@ const_string LUATEX_IHELP[] = {
     NULL
 };
 
-char *ex_selfdir(char *argv0)
+static char *ex_selfdir(char *argv0)
 {
 #if defined(WIN32)
     char short_path[PATH_MAX], path[PATH_MAX], *fp;
@@ -119,7 +119,7 @@ prepare_cmdline(lua_State * L, char **argv, int argc, int zero_offset)
     return;
 }
 
-string input_name = NULL;
+const_string input_name = NULL;
 
 static const_string user_progname = NULL;
 
@@ -129,7 +129,7 @@ extern int program_name_set;    /* in lkpselib.c */
 extern char **argv;
 extern int argc;
 
-char *startup_filename = NULL;
+const char *startup_filename = NULL;
 int lua_only = 0;
 int lua_offset = 0;
 
@@ -378,7 +378,7 @@ static void parse_options(int argc, char **argv)
 #define is_readable(a) (stat(a,&finfo)==0) && S_ISREG(finfo.st_mode) &&  \
   (f=fopen(a,"r")) != NULL && !fclose(f)
 
-char *find_filename(char *name, char *envkey)
+static const char *find_filename(const char *name, const char *envkey)
 {
     struct stat finfo;
     char *dirname = NULL;
@@ -406,7 +406,7 @@ char *find_filename(char *name, char *envkey)
 }
 
 
-char *cleaned_invocation_name(char *arg)
+static char *cleaned_invocation_name(char *arg)
 {
     char *ret, *dot;
     const char *start = xbasename(arg);
@@ -418,7 +418,7 @@ char *cleaned_invocation_name(char *arg)
     return ret;
 }
 
-void init_kpse(void)
+static void init_kpse(void)
 {
 
     if (!user_progname) {
@@ -447,7 +447,7 @@ void init_kpse(void)
     program_name_set = 1;
 }
 
-void fix_dumpname(void)
+static void fix_dumpname(void)
 {
     int dist;
     if (dump_name) {
@@ -474,6 +474,11 @@ void lua_initialize(int ac, char **av)
     int pdf_table_id;
     int token_table_id;
     int node_table_id;
+    /* Non-const initialized variables for putenv(). */ 
+    static char LC_CTYPE_C[] = "LC_CTYPE=C";
+    static char LC_COLLATE_C[] = "LC_COLLATE=C";
+    static char LC_NUMERIC_C[] = "LC_NUMERIC=C";
+    static char engine_luatex[] = "engine=luatex";
     /* Save to pass along to topenin.  */
     argc = ac;
     argv = av;
@@ -507,12 +512,12 @@ void lua_initialize(int ac, char **av)
         shellenabledp = true;
 
     /* make sure that the locale is 'sane' (for lua) */
-    putenv("LC_CTYPE=C");
-    putenv("LC_COLLATE=C");
-    putenv("LC_NUMERIC=C");
+    putenv(LC_CTYPE_C);
+    putenv(LC_COLLATE_C);
+    putenv(LC_NUMERIC_C);
 
     /* this is sometimes needed */
-    putenv("engine=luatex");
+    putenv(engine_luatex);
 
     luainterpreter();
 
@@ -524,7 +529,7 @@ void lua_initialize(int ac, char **av)
     }
     /* now run the file */
     if (startup_filename != NULL) {
-        char *v1;
+        const char *v1;
         /* hide the 'tex' and 'pdf' table */
         tex_table_id = hide_lua_table(Luas, "tex");
         token_table_id = hide_lua_table(Luas, "token");
@@ -544,9 +549,7 @@ void lua_initialize(int ac, char **av)
             get_lua_string("texconfig", "jobname", &input_name);
         }
         if (!dump_name) {
-            string temp;
-            get_lua_string("texconfig", "formatname", &temp);
-            dump_name = temp;
+            get_lua_string("texconfig", "formatname", &dump_name);
         }
         if ((lua_only) || ((!input_name) && (!dump_name))) {
             if (given_file)
@@ -641,7 +644,7 @@ void check_texconfig_init(void)
     }
 }
 
-void write_svnversion(char *v)
+void write_svnversion(const char *v)
 {
     char *a_head, *n;
     char *a = strdup(v);

@@ -354,7 +354,7 @@ We define |input_ln| in C, for efficiency. Nevertheless we quote the module
 tini@/
 @#
 @!bound_default:integer; {temporary for setup}
-@!bound_name:^char; {temporary for setup}
+@!bound_name:constcstring; {temporary for setup}
 @#
 @!error_line:integer; {width of context lines on terminal error messages}
 @!half_error_line:integer; {width of first lines of contexts in terminal
@@ -1032,7 +1032,7 @@ nameoffile[namelength+1]:=0;
 @x
 @!months:packed array [1..36] of char; {abbreviations of month names}
 @y
-@!months:^char;
+@!months:constcstring;
 @z
 
 @x
@@ -1353,7 +1353,7 @@ dump_int(@"57325458);  {Web2C \TeX's magic constant: "W2TX"}
 {Align engine to 4 bytes with one or more trailing NUL}
 x:=strlen(engine_name);
 format_engine:=xmallocarray(packed_ASCII_code,x+4);
-strcpy(stringcast(format_engine), stringcast(engine_name));
+strcpy(stringcast(format_engine), conststringcast(engine_name));
 for k:=x to x+3 do format_engine[k]:=0;
 x:=x+4-(x mod 4);
 dump_int(x);dump_things(format_engine[0], x);
@@ -1380,7 +1380,7 @@ if (x<0) or (x>256) then goto bad_fmt; {corrupted format file}
 format_engine:=xmallocarray(packed_ASCII_code, x);
 undump_things(format_engine[0], x);
 format_engine[x-1]:=0; {force string termination, just in case}
-if strcmp(stringcast(engine_name), stringcast(format_engine)) then
+if strcmp(conststringcast(engine_name), stringcast(format_engine)) then
   begin wake_up_terminal;
   wterm_ln('---! ', stringcast(nameoffile+1), ' was written by ', format_engine);
   libcfree(format_engine);

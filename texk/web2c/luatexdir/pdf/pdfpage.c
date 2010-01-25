@@ -45,7 +45,7 @@ static long *exp10_arr = NULL;
 
 /**********************************************************************/
 
-static pdfstructure *new_pdfstructure()
+static pdfstructure *new_pdfstructure(void)
 {
     return xmalloc(sizeof(pdfstructure));
 }
@@ -65,7 +65,7 @@ static void calc_k2(pdfstructure * p)
                               pdf2double(p->tm[0]));
 }
 
-void pdf_page_init()
+void pdf_page_init(void)
 {
     pdfstructure *p;
     int i, decimal_digits = fixed_decimal_digits;
@@ -350,7 +350,7 @@ static void end_chararray(pdfstructure * p)
     p->mode = PMODE_TEXT;
 }
 
-void pdf_end_string_nl()
+void pdf_end_string_nl(void)
 {
     if (is_charmode(pstruct))
         end_charmode(pstruct);
@@ -374,7 +374,7 @@ static void goto_pagemode(pdfstructure * p)
     }
 }
 
-void pdf_goto_pagemode()
+void pdf_goto_pagemode(void)
 {
     goto_pagemode(pstruct);
 }

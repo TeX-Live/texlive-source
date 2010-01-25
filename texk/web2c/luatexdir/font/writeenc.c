@@ -19,6 +19,7 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 #include "ptexlib.h"
+#include "inc-epdf.h"
 
 static const char _svn_version[] =
     "$Id: writeenc.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/font/writeenc.c $";
@@ -36,7 +37,7 @@ static int comp_fe_entry(const void *pa, const void *pb, void *p)
     return strcmp(((const fe_entry *) pa)->name, ((const fe_entry *) pb)->name);
 }
 
-fe_entry *new_fe_entry()
+static fe_entry *new_fe_entry(void)
 {
     fe_entry *fe;
     fe = xtalloc(1, fe_entry);
@@ -47,7 +48,7 @@ fe_entry *new_fe_entry()
     return fe;
 }
 
-fe_entry *lookup_fe_entry(char *s)
+static fe_entry *lookup_fe_entry(char *s)
 {
     fe_entry fe;
     assert(s != NULL);
@@ -59,7 +60,7 @@ fe_entry *lookup_fe_entry(char *s)
     return (fe_entry *) avl_find(fe_tree, &fe);
 }
 
-void register_fe_entry(fe_entry * fe)
+static void register_fe_entry(fe_entry * fe)
 {
     void **aa;
     if (fe_tree == NULL) {
@@ -112,7 +113,7 @@ void epdf_write_enc(char **glyph_names, integer fe_objnum)
     pdf_end_dict();
 }
 
-void write_enc(char **glyph_names, struct avl_table *tx_tree, integer fe_objnum)
+static void write_enc(char **glyph_names, struct avl_table *tx_tree, integer fe_objnum)
 {
     int i_old, *p;
     struct avl_traverser t;
@@ -139,13 +140,13 @@ void write_enc(char **glyph_names, struct avl_table *tx_tree, integer fe_objnum)
     pdf_end_dict();
 }
 
-void write_fontencoding(fe_entry * fe)
+static void write_fontencoding(fe_entry * fe)
 {
     assert(fe != NULL);
     write_enc(fe->glyph_names, fe->tx_tree, fe->fe_objnum);
 }
 
-void write_fontencodings()
+void write_fontencodings(void)
 {
     fe_entry *fe;
     struct avl_traverser t;
@@ -176,7 +177,7 @@ static void destroy_fe_entry(void *pa, void *pb)
     xfree(p);
 }
 
-void enc_free()
+void enc_free(void)
 {
     if (fe_tree != NULL)
         avl_destroy(fe_tree, destroy_fe_entry);

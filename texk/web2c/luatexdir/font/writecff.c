@@ -754,7 +754,7 @@ static void add_dict(cff_dict * dict,
     }
 
     (dict->entries)[dict->count].id = id;
-    (dict->entries)[dict->count].key = (char *) dict_operator[id].opname;
+    (dict->entries)[dict->count].key = dict_operator[id].opname;
     if (argtype == CFF_TYPE_NUMBER ||
         argtype == CFF_TYPE_BOOLEAN ||
         argtype == CFF_TYPE_SID || argtype == CFF_TYPE_OFFSET) {
@@ -1439,7 +1439,7 @@ void cff_dict_add(cff_dict * dict, const char *key, int count)
     }
 
     (dict->entries)[dict->count].id = id;
-    (dict->entries)[dict->count].key = (char *) dict_operator[id].opname;
+    (dict->entries)[dict->count].key = dict_operator[id].opname;
     (dict->entries)[dict->count].count = count;
     if (count > 0) {
         (dict->entries)[dict->count].values = xcalloc(count, sizeof(double));
@@ -1512,7 +1512,7 @@ char *cff_get_string(cff_font * cff, s_SID id)
     return result;
 }
 
-long cff_get_sid(cff_font * cff, char *str)
+long cff_get_sid(cff_font * cff, const char *str)
 {
     card16 i;
 
@@ -1550,7 +1550,7 @@ void cff_update_string(cff_font * cff)
 }
 
 
-s_SID cff_add_string(cff_font * cff, char *str)
+s_SID cff_add_string(cff_font * cff, const char *str)
 {
     card16 idx;
     cff_index *strings;
@@ -3116,8 +3116,8 @@ void write_cff(cff_font * cffont, fd_entry * fd)
         cff_dict_remove((cffont->private)[0], "Subrs"); /* no Subrs */
     }
 
-    cff_add_string(cffont, (char *) "Adobe");
-    cff_add_string(cffont, (char *) "Identity");
+    cff_add_string(cffont, "Adobe");
+    cff_add_string(cffont, "Identity");
 
     cff_dict_update(cffont->topdict, cffont);
     cff_dict_update(cffont->private[0], cffont);
@@ -3126,9 +3126,9 @@ void write_cff(cff_font * cffont, fd_entry * fd)
     /* CFF code need to be rewrote... */
     cff_dict_add(cffont->topdict, "ROS", 3);
     cff_dict_set(cffont->topdict, "ROS", 0,
-                 (double) cff_get_sid(cffont, (char *) "Adobe"));
+                 (double) cff_get_sid(cffont, "Adobe"));
     cff_dict_set(cffont->topdict, "ROS", 1,
-                 (double) cff_get_sid(cffont, (char *) "Identity"));
+                 (double) cff_get_sid(cffont, "Identity"));
     cff_dict_set(cffont->topdict, "ROS", 2, 0.0);
 
     write_fontfile(cffont, fullname);

@@ -161,7 +161,7 @@ void writetype0(fd_entry * fd);
 void do_pdf_font(integer, internalfontnumber);
 fd_entry *lookup_fd_entry(char *, integer, integer);
 fd_entry *new_fd_entry(void);
-void write_fontstuff();
+void write_fontstuff(void);
 integer get_fd_objnum(fd_entry * fd);
 integer get_fn_objnum(fd_entry * fd);
 void embed_whole_font(fd_entry * fd);
@@ -200,7 +200,7 @@ extern integer ttf_length;
 int readchar(boolean, chardesc *);
 
 /* macnames.c */
-extern const char notdef[];
+extern char notdef[];
 
 /* vfovf.c */
 void vf_expand_local_fonts(internal_font_number f);

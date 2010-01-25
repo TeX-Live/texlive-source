@@ -45,6 +45,8 @@
 #include <../lua51/lstring.h>
 #include <../lua51/lundump.h>
 
+#include "luatex-api.h"
+
 static const char _svn_version[] =
     "$Id: texluac.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/texluac.c $";
 
