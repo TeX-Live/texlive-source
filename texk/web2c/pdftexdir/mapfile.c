@@ -108,7 +108,7 @@ static void delete_ff_entry(ff_entry * ff)
     xfree(ff);
 }
 
-static fm_entry *dummy_fm_entry()
+static fm_entry *dummy_fm_entry(void)
 {
     static const fm_entry const_fm_entry;
     return (fm_entry *) & const_fm_entry;
@@ -151,7 +151,7 @@ static int comp_ff_entry(const void *pa, const void *pb, void *p)
                   ((const ff_entry *) pb)->ff_name);
 }
 
-static void create_avl_trees()
+static void create_avl_trees(void)
 {
     assert(tfm_tree == NULL);
     tfm_tree = avl_create(comp_fm_entry_tfm, NULL, &avl_xallocator);
@@ -256,7 +256,7 @@ int avl_do_entry(fm_entry * fm, int mode)
 
 /* add the encoding name to an AVL tree. this has nothing to do with writeenc.c */
 
-char *add_encname(char *s)
+static char *add_encname(char *s)
 {
     char *p;
     void **aa;
@@ -273,7 +273,7 @@ char *add_encname(char *s)
 /**********************************************************************/
 /* consistency check for map entry, with warn flag */
 
-int check_fm_entry(fm_entry * fm, boolean warn)
+static int check_fm_entry(fm_entry * fm, boolean warn)
 {
     int a = 0;
     assert(fm != NULL);
@@ -398,7 +398,7 @@ int check_std_t1font(char *s)
 
 /**********************************************************************/
 
-static void fm_scan_line()
+static void fm_scan_line(void)
 {
     int a, b, c, j, u = 0, v = 0;
     float d;
@@ -555,7 +555,7 @@ static void fm_scan_line()
 
 /**********************************************************************/
 
-void fm_read_info()
+void fm_read_info(void)
 {
     if (tfm_tree == NULL)
         create_avl_trees();
@@ -742,7 +742,7 @@ fm_entry *lookup_fontmap(char *ps_name)
  * ignored.
  */
 
-void process_map_item(char *s, int type)
+static void process_map_item(char *s, int type)
 {
     char *p;
     int mode;

@@ -1,3 +1,49 @@
+2010-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libpdftex.am (libpdftex_a_CFLAGS): Enable compiler warnings.
+
+	Avoid most compiler warnings:
+
+	* ptexlib.h, writejbig2.h: ANSI C function prototypes.
+	* avlstuff.c, mapfile.c, utils.c, vfpacket.c, writeenc.c,
+	writefont.c, writeimg.c, writejbig2.c, writet1.c, writettf.c:
+	ANSI C function definitions.
+
+	* avlstuff.c, mapfile.c, utils.c, writeenc.c, writefont.c,
+	writejbig2.c, writepng.c, writet1.c, writettf.c: Declare
+	functions as static.
+
+	* ptexlib.h: Add prototype for imagecolor().
+	* inc-epdf.h: New file with prototypes for is_subsetable(),
+	epdf_check_mem(), epdf_create_fontdescriptor(),
+	epdf_mark_glyphs(), get_fd_objnum(), get_fn_objnum(), and
+	embed_whole_font() ...
+	* epdf.[ch]: ... removed from here.
+	* epdf.[ch]: #include "inc-epdf.h".
+	* inc-extra.h: New file with prototypes for stripzeros() and
+	epdf_write_enc() ...
+	* epdf.h: ... removed from here.
+	* epdf.c, utils.c, writeenc.c: #include "inc-extra.h".
+	* am/libpdftex.am (libpdftex_a_SOURCES): Add the new files.
+
+	* writejbig2.c: Avoid use of possibly uninitialized variables.
+
+	* utils.c, writefont.c, writet1.c, writettf.c:
+	Declare various function params and args, local vars, and struct
+	members as const.
+
+	* writet1.c (append_cs_return): Drop unused local variable 'k'.
+
+	* avlstuff.c (destroy_oentry, PdfObjTree_free), 
+	writet1.c (free_glyph_names):
+	Skip unused static functions (via #if 0 ... #endif).
+
+	* utils.c (newcolorstack): Don't use value of xretalloc(),
+	xretalloc(addr, n, t) already assigns the new pointer to addr.
+
+	* avl.c (avl_delete): Don't reuse const input param for
+	non-const return value.
+
 2010-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libpdftex.am: Add dependency on $(XPDF_DEPEND).

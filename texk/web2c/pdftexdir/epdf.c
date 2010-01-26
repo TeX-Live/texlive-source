@@ -19,9 +19,8 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "ptexlib.h"
+#include "inc-epdf.h"
 #include <string.h>
-
-extern void epdf_check_mem(void);
 
 
 int is_subsetable(fm_entry * fm)

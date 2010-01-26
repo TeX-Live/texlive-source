@@ -74,15 +74,12 @@ extern "C" {
 
     extern char notdef[];
 
-    extern int is_subsetable(struct fm_entry *);
     extern struct fm_entry *lookup_fontmap(char *);
     extern integer get_fontfile(struct fm_entry *);
     extern integer get_fontname(struct fm_entry *);
     extern integer pdfnewobjnum(void);
     extern integer read_pdf_info(char *, char *, integer, integer, integer,
                                  integer);
-    extern void embed_whole_font(struct fd_entry *);
-    extern void epdf_check_mem(void);
     extern void epdf_delete(void);
     extern void epdf_free(void);
     __attribute__ ((format(printf, 1, 2)))
@@ -106,18 +103,8 @@ extern "C" {
     extern void zpdfnewdict(integer, integer, bool);
     extern void zpdfosgetosbuf(integer);
 
-/* epdf.c */
-    extern void epdf_mark_glyphs(struct fd_entry *, char *);
-    extern struct fd_entry *epdf_create_fontdescriptor(struct fm_entry *, int);
-    extern int get_fd_objnum(struct fd_entry *);
-    extern int get_fn_objnum(struct fd_entry *);
-
-/* write_enc.c */
-    extern void epdf_write_enc(char **, integer);
-
 /* utils.c */
     extern char *convertStringToPDFString(char *in, int len);
-    extern char *stripzeros(char *a);
 
 /* config.c */
     extern integer cfgpar(integer);
@@ -125,4 +112,7 @@ extern "C" {
 /* avlstuff.c */
     extern void avl_put_obj(integer, integer);
     extern integer avl_find_obj(integer, integer, integer);
+
+#include "inc-epdf.h"
+#include "inc-extra.h"
 }

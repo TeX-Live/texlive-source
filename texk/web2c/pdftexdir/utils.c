@@ -41,6 +41,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "md5.h"
 #include "zlib.h"
 #include "ptexlib.h"
+#include "inc-extra.h"
 #include "png.h"
 #ifdef POPPLER_VERSION
 #include "poppler-config.h"
@@ -136,7 +137,7 @@ void make_subset_tag(fd_entry * fd)
         for (glyph = (char *) avl_t_first(&t, fd->gl_tree); glyph != NULL;
              glyph = (char *) avl_t_next(&t)) {
             md5_append(&pms, (md5_byte_t *) glyph, strlen(glyph));
-            md5_append(&pms, (md5_byte_t *) " ", 1);
+            md5_append(&pms, (const md5_byte_t *) " ", 1);
         }
         md5_append(&pms, (md5_byte_t *) fd->fontname, strlen(fd->fontname));
         md5_append(&pms, (md5_byte_t *) & j, sizeof(int));      /* to resolve collision */
@@ -433,7 +434,7 @@ scaled extxnoverd(scaled x, scaled n, scaled d)
     return (scaled) r;
 }
 
-void libpdffinish()
+void libpdffinish(void)
 {
     xfree(fb_array);
     xfree(char_array);
@@ -883,7 +884,7 @@ static void makepdftime(time_t t, char *time_str)
     }
 }
 
-void initstarttime()
+void initstarttime(void)
 {
     if (start_time == 0) {
         start_time = time((time_t *) NULL);
@@ -891,19 +892,19 @@ void initstarttime()
     }
 }
 
-void printcreationdate()
+void printcreationdate(void)
 {
     initstarttime();
     pdf_printf("/CreationDate (%s)\n", start_time_str);
 }
 
-void printmoddate()
+void printmoddate(void)
 {
     initstarttime();
     pdf_printf("/ModDate (%s)\n", start_time_str);
 }
 
-void getcreationdate()
+void getcreationdate(void)
 {
     /* put creation date on top of string pool and update poolptr */
     size_t len = strlen(start_time_str);
@@ -1338,7 +1339,7 @@ static int colstacks_used = 0;
     procedure calls.
 */
 #define init_colorstacks() if (colstacks_size == 0) colstacks_first_init();
-void colstacks_first_init()
+static void colstacks_first_init(void)
 {
     colstacks_size = STACK_INCREMENT;
     colstacks = xtalloc(colstacks_size, colstack_type);
@@ -1356,7 +1357,7 @@ void colstacks_first_init()
     colstacks[0].page_start = true;
 }
 
-int colorstackused()
+int colorstackused(void)
 {
     init_colorstacks();
     return colstacks_used;
@@ -1383,7 +1384,7 @@ int newcolorstack(integer s, integer literal_mode, boolean page_start)
         colstacks_size += STACK_INCREMENT;
         /* If (MAX_COLORSTACKS mod STACK_INCREMENT = 0) then we don't
            need to check the case that size overruns MAX_COLORSTACKS. */
-        colstacks = xretalloc(colstacks, colstacks_size, colstack_type);
+        xretalloc(colstacks, colstacks_size, colstack_type);
     }
     /* claim new color stack */
     colstack_num = colstacks_used++;
@@ -1415,7 +1416,7 @@ int newcolorstack(integer s, integer literal_mode, boolean page_start)
 /*
     Puts a string on top of the string pool and updates poolptr.
 */
-void put_cstring_on_strpool(poolpointer start, char *str)
+static void put_cstring_on_strpool(poolpointer start, char *str)
 {
     size_t len;
 
@@ -1467,8 +1468,7 @@ integer colorstackpush(int colstack_no, integer s)
     if (page_mode) {
         if (colstack->page_used == colstack->page_size) {
             colstack->page_size += STACK_INCREMENT;
-            colstack->page_stack = xretalloc(colstack->page_stack,
-                                             colstack->page_size, char *);
+            xretalloc(colstack->page_stack, colstack->page_size, char *);
         }
         colstack->page_stack[colstack->page_used++] = colstack->page_current;
         str = makecstring(s);
@@ -1480,8 +1480,7 @@ integer colorstackpush(int colstack_no, integer s)
     } else {
         if (colstack->form_used == colstack->form_size) {
             colstack->form_size += STACK_INCREMENT;
-            colstack->form_stack = xretalloc(colstack->form_stack,
-                                             colstack->form_size, char *);
+            xretalloc(colstack->form_stack, colstack->form_size, char *);
         }
         colstack->form_stack[colstack->form_used++] = colstack->form_current;
         str = makecstring(s);
@@ -1520,7 +1519,7 @@ integer colorstackpop(int colstack_no)
     return colstack->literal_mode;
 }
 
-void colorstackpagestart()
+static void colorstackpagestart(void)
 {
     int i, j;
     colstack_type *colstack;
@@ -1576,7 +1575,7 @@ static matrix_entry *matrix_stack = 0;
 static int matrix_stack_size = 0;
 static int matrix_stack_used = 0;
 
-boolean matrixused()
+boolean matrixused(void)
 {
     return matrix_stack_used > 0;
 }
@@ -1591,7 +1590,7 @@ static pos_entry *pos_stack = 0;        /* the stack */
 static int pos_stack_size = 0;  /* initially empty */
 static int pos_stack_used = 0;  /* used entries */
 
-void matrix_stack_room()
+static void matrix_stack_room(void)
 {
     matrix_entry *new_stack;
 
@@ -1746,22 +1745,22 @@ static scaled ret_lly;
 static scaled ret_urx;
 static scaled ret_ury;
 
-scaled getllx()
+scaled getllx(void)
 {
     return ret_llx;
 }
 
-scaled getlly()
+scaled getlly(void)
 {
     return ret_lly;
 }
 
-scaled geturx()
+scaled geturx(void)
 {
     return ret_urx;
 }
 
-scaled getury()
+scaled getury(void)
 {
     return ret_ury;
 }
@@ -1775,7 +1774,7 @@ static int last_ury;
 #define DO_MIN(a, b) ((a < b) ? a : b)
 #define DO_MAX(a, b) ((a > b) ? a : b)
 
-void do_matrixtransform(scaled x, scaled y, scaled * retx, scaled * rety)
+static void do_matrixtransform(scaled x, scaled y, scaled * retx, scaled * rety)
 {
     matrix_entry *m = &matrix_stack[matrix_stack_used - 1];
     double x_old = x;

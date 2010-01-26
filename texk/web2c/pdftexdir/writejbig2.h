@@ -122,8 +122,8 @@ static int comp_file_entry(const void *, const void *, void *);
 static int comp_page_entry(const void *, const void *, void *);
 static int comp_segment_entry(const void *, const void *, void *);
 int ygetc(FILE *);
-FILEINFO *new_fileinfo();
-PAGEINFO *new_pageinfo();
+FILEINFO *new_fileinfo(void);
+PAGEINFO *new_pageinfo(void);
 void initseginfo(SEGINFO *);
 void initlinkedlist(LIST *);
 LIST *litem_append(LIST *);
@@ -145,6 +145,6 @@ void rd_jbig2_info(FILEINFO *);
 void wr_jbig2(FILEINFO *, unsigned long);
 void read_jbig2_info(integer);
 void write_jbig2(integer);
-void flushjbig2page0objects();
+void flushjbig2page0objects(void);
 
 /**********************************************************************/

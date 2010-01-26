@@ -232,13 +232,13 @@ extern void tex_printf(const char *, ...);
 extern void writestreamlength(integer, longinteger);
 extern char *convertStringToPDFString(const char *in, int len);
 extern void printID(strnumber);
-extern void printcreationdate();
-extern void printmoddate();
+extern void printcreationdate(void);
+extern void printmoddate(void);
 extern void escapename(poolpointer in);
 extern void escapestring(poolpointer in);
 extern void escapehex(poolpointer in);
 extern void unescapehex(poolpointer in);
-extern void getcreationdate();
+extern void getcreationdate(void);
 extern void getfilemoddate(strnumber s);
 extern void getfilesize(strnumber s);
 extern void getmd5sum(strnumber s, boolean file);
@@ -246,12 +246,12 @@ extern void getfiledump(strnumber s, int offset, int length);
 extern void matchstrings(strnumber s, strnumber t, int subcount, boolean icase);
 extern void getmatch(int i);
 extern void makepdftexbanner(void);
-extern void initstarttime();
+extern void initstarttime(void);
 extern void removepdffile(void);
 extern void garbagewarning(void);
 extern void initversionstring(char **versions);
 extern int newcolorstack(integer s, integer literal_mode, boolean pagestart);
-extern int colorstackused();
+extern int colorstackused(void);
 extern integer colorstackset(int colstack_no, integer s);
 extern integer colorstackpush(int colstack_no, integer s);
 extern integer colorstackpop(int colstack_no);
@@ -264,13 +264,13 @@ extern void pdfshipoutend(boolean shipping_page);
 extern void pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v);
 extern void matrixtransformpoint(scaled x, scaled y);
 extern void matrixtransformrect(scaled llx, scaled lly, scaled urx, scaled ury);
-extern boolean matrixused();
+extern boolean matrixused(void);
 extern void matrixrecalculate(scaled urx);
-extern scaled getllx();
-extern scaled getlly();
-extern scaled geturx();
-extern scaled getury();
-extern void allocvffnts();
+extern scaled getllx(void);
+extern scaled getlly(void);
+extern scaled geturx(void);
+extern scaled getury(void);
+extern void allocvffnts(void);
 
 /* vfpacket.c */
 extern integer newvfpacket(internalfontnumber);
@@ -290,7 +290,7 @@ extern void write_fontencodings(void);
 extern void dopdffont(integer, internalfontnumber);
 extern fd_entry *lookup_fd_entry(char *, integer, integer);
 extern fd_entry *new_fd_entry(void);
-extern void writefontstuff();
+extern void writefontstuff(void);
 extern void register_fd_entry(fd_entry *);
 
 /* writeimg.c */
@@ -301,6 +301,7 @@ extern boolean ispdfimage(integer);
 extern boolean ispngimage(integer);
 extern integer epdforigx(integer);
 extern integer epdforigy(integer);
+extern integer imagecolor(integer);
 extern integer imageheight(integer);
 extern integer imagepages(integer);
 extern integer imagewidth(integer);
@@ -314,11 +315,11 @@ extern void deleteimage(integer);
 extern void img_free(void);
 extern void updateimageprocset(integer);
 extern void writeimage(integer);
-extern void dumpimagemeta();
+extern void dumpimagemeta(void);
 extern void undumpimagemeta(integer, integer);
 
 /* writejbig2.c */
-extern void flushjbig2page0objects();
+extern void flushjbig2page0objects(void);
 
 /* writet1.c */
 extern boolean t1_subset(char *, char *, unsigned char *);

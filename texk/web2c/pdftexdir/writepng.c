@@ -155,7 +155,7 @@ void read_png_info(integer img)
         }
 
 
-void write_png_palette(integer img)
+static void write_png_palette(integer img)
 {
     int i, j, k, l;
     png_bytep row, r, *rows;
@@ -199,7 +199,7 @@ void write_png_palette(integer img)
     }
 }
 
-void write_png_gray(integer img)
+static void write_png_gray(integer img)
 {
     int i, j, k, l;
     png_bytep row, r, *rows;
@@ -229,7 +229,7 @@ void write_png_gray(integer img)
 
 
 
-void write_png_gray_alpha(integer img)
+static void write_png_gray_alpha(integer img)
 {
     int i, j, k, l;
     png_bytep row, r, *rows;
@@ -297,7 +297,7 @@ void write_png_gray_alpha(integer img)
     }
 }
 
-void write_png_rgb(integer img)
+static void write_png_rgb(integer img)
 {
     int i, j, k, l;
     png_bytep row, r, *rows;
@@ -325,7 +325,7 @@ void write_png_rgb(integer img)
     pdfendstream();
 }
 
-void write_png_rgb_alpha(integer img)
+static void write_png_rgb_alpha(integer img)
 {
     int i, j, k, l;
     png_bytep row, r, *rows;
@@ -418,7 +418,7 @@ static int spng_getint(FILE * fp)
 #define SPNG_CHUNK_IDAT 0x49444154
 #define SPNG_CHUNK_IEND 0x49454E44
 
-void copy_png(integer img)
+static void copy_png(integer img)
 {
     FILE *fp = (FILE *) png_ptr(img)->io_ptr;
     int i, len, type, streamlength = 0;

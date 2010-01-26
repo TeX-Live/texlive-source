@@ -68,13 +68,13 @@ void startpacket(internalfontnumber f, eightbits c)
     vfpacketlength = vf_array[vfpacketbase[f]].len[c - fontbc[f]];
 }
 
-eightbits packetbyte()
+eightbits packetbyte(void)
 {
     vfpacketlength--;
     return *packet_data_ptr++;
 }
 
-void pushpacketstate()
+void pushpacketstate(void)
 {
     alloc_array(packet, 1, SMALL_ARRAY_SIZE);
     packet_ptr->dataptr = packet_data_ptr;
@@ -82,7 +82,7 @@ void pushpacketstate()
     packet_ptr++;
 }
 
-void poppacketstate()
+void poppacketstate(void)
 {
     if (packet_ptr == packet_array)
         pdftex_fail("packet stack empty, impossible to pop");

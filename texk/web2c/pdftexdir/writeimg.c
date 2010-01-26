@@ -405,7 +405,7 @@ void deleteimage(integer img)
     return;
 }
 
-void img_free()
+void img_free(void)
 {
     xfree(image_array);
 }
@@ -466,7 +466,7 @@ void img_free()
 
 
 
-void dumpimagemeta()
+void dumpimagemeta(void)
 {
     int cur_image, img;
 

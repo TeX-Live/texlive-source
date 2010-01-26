@@ -27,13 +27,13 @@ static struct avl_table *PdfObjTree[pdfobjtypemax + 1] =
 /**********************************************************************/
 /* memory management functions for AVL */
 
-void *avl_xmalloc(struct libavl_allocator *allocator, size_t size)
+static void *avl_xmalloc(struct libavl_allocator *allocator, size_t size)
 {
     assert(allocator != NULL && size > 0);
     return xmalloc(size);
 }
 
-void avl_xfree(struct libavl_allocator *allocator, void *block)
+static void avl_xfree(struct libavl_allocator *allocator, void *block)
 {
     assert(allocator != NULL && block != NULL);
     xfree(block);
@@ -69,7 +69,7 @@ typedef struct oentry_ {
 
 /* AVL sort oentry into avl_table[] */
 
-int compare_info(const void *pa, const void *pb, void *param)
+static int compare_info(const void *pa, const void *pb, void *param)
 {
     integer a, b;
     int as, ae, bs, be, al, bl;
@@ -152,13 +152,14 @@ typedef struct {
 /**********************************************************************/
 /* cleaning up... */
 
+#if 0 /* unused */
 static void destroy_oentry(void *pa, void *pb)
 {
     oentry *p = (oentry *) pa;
     xfree(p);
 }
 
-void PdfObjTree_free()
+static void PdfObjTree_free(void)
 {
     int i;
 
@@ -167,5 +168,6 @@ void PdfObjTree_free()
             avl_destroy(PdfObjTree[i], destroy_oentry);
     }
 }
+#endif
 
 /**********************************************************************/

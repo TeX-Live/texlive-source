@@ -8,7 +8,7 @@
 EXTRA_LIBRARIES += libpdftex.a
 
 libpdftex_a_CPPFLAGS = $(pdftex_cppflags)
-libpdftex_a_CFLAGS = # $(WARNING_CFLAGS)
+libpdftex_a_CFLAGS = $(WARNING_CFLAGS)
 libpdftex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 libpdftex_a_SOURCES = \
@@ -47,6 +47,11 @@ libpdftex_a_SOURCES += \
 	pdftexdir/regex/regex.c \
 	pdftexdir/regex/regex.h
 endif MINGW32
+
+## FIXME: temporary additional headers:
+libpdftex_a_SOURCES += \
+	pdftexdir/inc-epdf.h \
+	pdftexdir/inc-extra.h
 
 # We must create pdftexd.h (and xpdf) before building the libpdftex_a_OBJECTS.
 $(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND)

@@ -118,7 +118,7 @@ int ygetc(FILE * stream)
 
 /**********************************************************************/
 
-FILEINFO *new_fileinfo()
+FILEINFO *new_fileinfo(void)
 {
     FILEINFO *fip;
     fip = xtalloc(1, FILEINFO);
@@ -136,7 +136,7 @@ FILEINFO *new_fileinfo()
     return fip;
 }
 
-PAGEINFO *new_pageinfo()
+PAGEINFO *new_pageinfo(void)
 {
     PAGEINFO *pip;
     pip = xtalloc(1, PAGEINFO);
@@ -152,7 +152,7 @@ PAGEINFO *new_pageinfo()
     return pip;
 }
 
-void init_seginfo(SEGINFO * sip)
+static void init_seginfo(SEGINFO * sip)
 {
     sip->segnum = 0;
     sip->isrefered = false;
@@ -375,7 +375,7 @@ boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
 void writeseghdr(FILEINFO * fip, SEGINFO * sip)
 {
     unsigned int i;
-    unsigned long referedseg;
+    unsigned long referedseg = 0;
     /* 7.2.2 Segment number */
     /* 7.2.3 Segment header flags */
     /* 7.2.4 Referred-to segment count and retention flags */
@@ -426,7 +426,7 @@ void writeseghdr(FILEINFO * fip, SEGINFO * sip)
 void checkseghdr(FILEINFO * fip, SEGINFO * sip)
 {
     unsigned int i;
-    unsigned long referedseg;
+    unsigned long referedseg = 0;
     /* 7.2.2 Segment number */
     /* 7.2.3 Segment header flags */
     /* 7.2.4 Referred-to segment count and retention flags */
@@ -544,7 +544,7 @@ void rd_jbig2_info(FILEINFO * fip)
     unsigned long currentpage = 0;
     boolean sipavail = false;
     PAGEINFO *pip;
-    SEGINFO *sip;
+    SEGINFO *sip = NULL;
     LIST *plp, *slp;
     fip->file = xfopen(fip->filename, FOPEN_RBIN_MODE);
     readfilehdr(fip);
@@ -730,7 +730,7 @@ void write_jbig2(integer img)
 
 /**********************************************************************/
 
-void flushjbig2page0objects()
+void flushjbig2page0objects(void)
 {
     FILEINFO *fip;
     struct avl_traverser t;
