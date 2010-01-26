@@ -4,7 +4,7 @@
 #   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
 #   Free Software Foundation, Inc.
 
-timestamp='2009-12-31'
+timestamp='2010-01-22'
 
 # This file is (in principle) common to ALL GNU software.
 # The presence of a machine in this file suggests that SOME GNU software
@@ -381,7 +381,8 @@ case $basic_machine in
 	| sparclite-* \
 	| sparcv8-* | sparcv9-* | sparcv9b-* | sparcv9v-* | strongarm-* | sv1-* | sx?-* \
 	| tahoe-* | thumb-* \
-	| tic30-* | tic4x-* | tic54x-* | tic55x-* | tic6x-* | tic80-* | tile-* \
+	| tic30-* | tic4x-* | tic54x-* | tic55x-* | tic6x-* | tic80-* \
+	| tile-* | tilegx-* \
 	| tron-* \
 	| ubicom32-* \
 	| v850-* | v850e-* | vax-* \
@@ -1085,6 +1086,11 @@ case $basic_machine in
 	tic6x | c6x*)
 		basic_machine=tic6x-unknown
 		os=-coff
+		;;
+        # This must be matched before tile*.
+        tilegx*)
+		basic_machine=tilegx-unknown
+		os=-linux-gnu
 		;;
 	tile*)
 		basic_machine=tile-unknown
