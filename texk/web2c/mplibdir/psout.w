@@ -1769,7 +1769,6 @@ static const char charstringname[] = "/CharStrings";
 @ @<Glob...@>=
 char **t1_glyph_names;
 char *t1_builtin_glyph_names[256];
-char charsetstr[0x4000];
 boolean read_encoding_only;
 int t1_encoding;
 

@@ -1,3 +1,8 @@
+2010-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xputenv.c (kpathsea_xputenv): Don't use value of XRETALLOC(),
+	XRETALLOC(addr, n, t) already assigns the new pointer to addr.
+
 2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tex-make.c (maketex): Replace kpse_readable_file(fn) by

@@ -23,8 +23,6 @@
 #include "managed-sa.h"
 #include "commands.h"
 
-extern void rawset_sa_item(sa_tree head, integer n, integer v);
-
 static const char __svn_version[] =
     "$Id$ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.5/source/texk/web2c/luatexdir/mathcodes.c $";
 

@@ -137,7 +137,7 @@ typedef struct {
     TTF_LONG newoffset;
     TTF_UFWORD advWidth;
     TTF_FWORD lsb;
-    char *name;                 /* name of glyph */
+    const char *name;           /* name of glyph */
     TTF_SHORT newindex;         /* new index of glyph in output file */
     TTF_USHORT name_index;      /* index of name as read from font file */
 } glyph_entry;

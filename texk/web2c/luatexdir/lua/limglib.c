@@ -23,7 +23,8 @@
 #include <../lua51/lua.h>
 #include <../lua51/lauxlib.h>
 #include <ptexlib.h>
-#include "../luatex-api.h"
+#include "luatex-api.h"
+#include "inc-extra.h"
 
 static const char _svn_version[] =
     "$Id: limglib.c 2329 2009-04-18 14:25:30Z hhenkel $ "
@@ -587,8 +588,6 @@ static halfword img_to_node(image * a, integer ref)
 typedef enum { WR_WRITE, WR_IMMEDIATEWRITE, WR_NODE, WR_VF_IMG } wrtype_e;
 const char *wrtype_s[] =
     { "img.write()", "img.immediatewrite()", "img.node()", "write vf image" };
-
-extern void lua_nodelib_push_fast(lua_State * L, halfword n);
 
 static void setup_image(lua_State * L, image * a, wrtype_e writetype)
 {

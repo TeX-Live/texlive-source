@@ -24,7 +24,6 @@ static const char _svn_version[] =
     "$Id: lcallbacklib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
 static int do_run_callback(int special, const char *values, va_list vl);
-extern int lua_traceback(lua_State * L);
 
 int callback_count = 0;
 int saved_callback_count = 0;

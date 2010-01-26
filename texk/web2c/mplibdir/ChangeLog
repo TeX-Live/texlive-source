@@ -1,3 +1,7 @@
+2010-01-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* psout.w: Remove charsetstr[].
+
 2010-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mp.w (mp_execute, mp_get_char_dimension): Declare string params

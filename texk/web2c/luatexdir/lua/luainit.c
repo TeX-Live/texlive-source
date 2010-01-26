@@ -44,8 +44,6 @@ static const char _svn_version[] =
  *
  */
 
-extern string normalize_quotes(const_string name, const_string mesg);
-
 const_string LUATEX_IHELP[] = {
     "Usage: luatex --lua=FILE [OPTION]... [TEXNAME[.tex]] [COMMANDS]",
     "   or: luatex --lua=FILE [OPTION]... \\FIRST-LINE",
@@ -122,12 +120,6 @@ prepare_cmdline(lua_State * L, char **argv, int argc, int zero_offset)
 const_string input_name = NULL;
 
 static const_string user_progname = NULL;
-
-extern int program_name_set;    /* in lkpselib.c */
-
-/* for topenin() */
-extern char **argv;
-extern int argc;
 
 const char *startup_filename = NULL;
 int lua_only = 0;

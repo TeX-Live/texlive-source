@@ -20,14 +20,12 @@
 #include "luatex-api.h"
 #include <ptexlib.h>
 #include "nodes.h"
+#include "inc-extra.h"
 #include "commands.h"
 #include "tokens.h"
 
 static const char _svn_version[] =
     "$Id: ltexlib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/ltexlib.c $";
-
-extern halfword *check_isnode(lua_State * L, int ud);
-extern void lua_nodelib_push_fast(lua_State * L, halfword n);
 
 typedef struct {
     char *text;

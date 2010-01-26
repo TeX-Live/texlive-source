@@ -60,8 +60,6 @@ static const char _svn_version[] =
 
 #define detokenized_line() (line_catcode_table==NO_CAT_TABLE)
 
-extern void insert_vj_template(void);
-
 #define do_get_cat_code(a) do {                                         \
     if (line_catcode_table!=DEFAULT_CAT_TABLE)                          \
       a=get_cat_code(line_catcode_table,cur_chr);                       \

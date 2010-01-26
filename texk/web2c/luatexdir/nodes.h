@@ -771,5 +771,8 @@ typedef enum {
 #  define end_point       begin_point+glyph_node_size
 #  define var_mem_stat_max (end_point+glyph_node_size-1)
 
+/* from tex/texnodes.c */
+
+extern halfword list_node_mem_usage(void);
 
 #endif

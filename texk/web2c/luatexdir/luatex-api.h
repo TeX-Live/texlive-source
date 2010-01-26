@@ -126,3 +126,15 @@ extern command_item command_names[];
 extern int callback_callbacks_id;
 
 extern void luainterpreter(void);
+
+extern int program_name_set;
+
+extern const char *startup_filename;
+extern int safer_option;
+extern int nosocket_option;
+
+extern int luabytecode_max;
+extern unsigned int luabytecode_bytes;
+extern int luastate_bytes;
+extern int callback_count;
+extern int saved_callback_count;

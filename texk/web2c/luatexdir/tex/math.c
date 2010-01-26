@@ -60,8 +60,6 @@ static const char _svn_version[] =
 
 #define var_code 7
 
-extern void rawset_sa_item(sa_tree hed, integer n, integer v);
-
 /* TODO: not sure if this is the right order */
 #define back_error(A,B) do {                    \
     OK_to_interrupt=false;                      \

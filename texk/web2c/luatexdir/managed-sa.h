@@ -71,4 +71,6 @@ extern sa_tree undump_sa_tree(void);
 extern void restore_sa_stack(sa_tree a, integer gl);
 extern void clear_sa_stack(sa_tree a);
 
+extern void rawset_sa_item(sa_tree hed, integer n, integer v);
+
 #endif

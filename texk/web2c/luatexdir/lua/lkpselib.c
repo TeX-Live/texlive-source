@@ -329,8 +329,6 @@ static int lua_kpathsea_var_value(lua_State * L)
  * Current approach: run |os.setenv()| if you have to.
  */
 
-extern int luainit;
-
 static int set_program_name(lua_State * L)
 {
     const char *exe_name = luaL_checkstring(L, 1);

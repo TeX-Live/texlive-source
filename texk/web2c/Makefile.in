@@ -371,7 +371,8 @@ am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writejbig2.h pdftexdir/writejpg.c \
 	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
-	pdftexdir/regex/regex.c pdftexdir/regex/regex.h
+	pdftexdir/regex/regex.c pdftexdir/regex/regex.h \
+	pdftexdir/inc-epdf.h pdftexdir/inc-extra.h
 @MINGW32_TRUE@am__objects_7 = libpdftex_a-regex.$(OBJEXT)
 am_libpdftex_a_OBJECTS = libpdftex_a-avl.$(OBJEXT) \
 	libpdftex_a-avlstuff.$(OBJEXT) libpdftex_a-epdf.$(OBJEXT) \
@@ -1582,7 +1583,7 @@ pdftex_ch_srcs = \
 	pdftexdir/pdftex.ch
 
 libpdftex_a_CPPFLAGS = $(pdftex_cppflags)
-libpdftex_a_CFLAGS = # $(WARNING_CFLAGS)
+libpdftex_a_CFLAGS = $(WARNING_CFLAGS)
 libpdftex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/avlstuff.c pdftexdir/avlstuff.h pdftexdir/epdf.c \
@@ -1595,7 +1596,7 @@ libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writejbig2.h pdftexdir/writejpg.c \
 	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
-	$(am__append_17)
+	$(am__append_17) pdftexdir/inc-epdf.h pdftexdir/inc-extra.h
 EXTRA_libpdftex_a_SOURCES = pdftexdir/macnames.c \
 	pdftexdir/regex/regcomp.c pdftexdir/regex/regex_internal.c \
 	pdftexdir/regex/regex_internal.h pdftexdir/regex/regexec.c
@@ -1966,7 +1967,8 @@ libluatex_a_SOURCES = luatexdir/commands.h luatexdir/font/dofont.c \
 	luatexdir/utils/synctex.h luatexdir/utils/synctex.c \
 	luatexdir/utils/utils.c luatexdir/utils/utils.h \
 	luatexdir/utils/writezip.c mplibdir/lmplib.c \
-	luatexdir/inc-epdf.h luatexdir/inc-vfovf.h
+	luatexdir/inc-epdf.h luatexdir/inc-extra.h \
+	luatexdir/inc-vfovf.h
 EXTRA_libluatex_a_SOURCES = luatexdir/font/macnames.c
 
 # Force Automake to use CXXLD for linking

@@ -86,7 +86,7 @@ kpathsea_xputenv(kpathsea kpse, const char *var, const char *value)
     if (cur_loc == kpse->saved_count) {
       /* No old string. */
       kpse->saved_count++;
-      kpse->saved_env = XRETALLOC(kpse->saved_env, kpse->saved_count, char *);
+      XRETALLOC(kpse->saved_env, kpse->saved_count, char *);
     } else {
       /* We owned the old string. */
       free(kpse->saved_env[cur_loc]);

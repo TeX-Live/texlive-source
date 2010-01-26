@@ -1,6 +1,26 @@
+2010-01-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* font/writettf.c: Remove extern charsetstr[].
+	* lua/lkpselib.c: Remove extern luainit.
+	* lua/luainit.c: Remove extern normalize_quotes(), argc, argv.
+	* tex/textoken.c: Remove extern insert_vj_template().
+
+	* utils/utils.h: Add extern declaration of fb_array ...
+	* font/writet1.c, font/writettf.c: ... removed from here.
+	* luatex-api.h: Add extern declaration of program_name_set ...
+	* lua/luainit.c, lua/luatex.c: ... removed from here.
+	* luatex-api.h: Add extern declaration of startup_filename,
+	safer_option, and nosocket_option ...
+	* lua/luastuff.c: ... removed from here.
+	* lua/llualib.c (luabytecode_max): Change integer=>int.
+	* luatex-api.h: Add extern declaration of luabytecode_max,
+	luabytecode_bytes, luastate_bytes, callback_count, and
+	saved_callback_count ...
+	* lstatslib.c: ... removed from here.
+
 2010-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* am/luatex (luatex_CFLAGS, luatex_CXXFLAGS),
+	* am/luatex.am (luatex_CFLAGS, luatex_CXXFLAGS),
 	am/libluatex.am (libluatex_a_CFLAGS): Enable compiler warnings.
 
 	Avoid most compiler warnings:
@@ -24,16 +44,16 @@
 	* font/texfont.h, font/writecff.h, luatex-api.h, luatex.h,
 	nodes.h, primitive.h, ptexlib.h, utils/utils.h, font/dofont.c,
 	font/luafont.c, font/tfmofm.c, font/vfovf.c, font/writecff.c,
-	font/writefont.c, font/writet1.c, lang/hyphen.c, lang/texlang.c,
-	lua/lcallbacklib.c, lua/lfontlib.c, lua/limglib.c,
-	lua/lkpselib.c, lua/llualib.c, lua/lnodelib.c, lua/loslibext.c,
-	lua/lpdflib.c, lua/lstatslib.c, lua/ltexiolib.c, lua/ltexlib.c,
-	lua/ltokenlib.c, lua/luainit.c, lua/luanode.c, lua/luastuff.c,
-	lua/luatex.c, lua/luatoken.c, luatex.ch, tex/filename.c,
-	tex/linebreak.c, tex/math.c, tex/mlist.c, tex/primitive.c,
-	tex/texdeffont.c, tex/texnodes.c, tex/textoken.c, utils/utils.c:
-	Declare various function params and args, local and global vars,
-	and struct members as const.
+	font/writefont.c, font/writet1.c, font/writettf.[ch],
+	lang/hyphen.c, lang/texlang.c, lua/lcallbacklib.c,
+	lua/lfontlib.c, lua/limglib.c, lua/lkpselib.c, lua/llualib.c,
+	lua/lnodelib.c, lua/loslibext.c, lua/lpdflib.c, lua/lstatslib.c,
+	lua/ltexiolib.c, lua/ltexlib.c, lua/ltokenlib.c, lua/luainit.c,
+	lua/luanode.c, lua/luastuff.c, lua/luatex.c, lua/luatoken.c,
+	luatex.ch, tex/filename.c, tex/linebreak.c, tex/math.c,
+	tex/mlist.c, tex/primitive.c, tex/texdeffont.c, tex/texnodes.c,
+	tex/textoken.c, utils/utils.c: Declare various function params
+	and args, local and global vars, and struct members as const.
 
 	* font/luafont.c, font/texfont.c, font/tfmofm.c, font/vfovf.c,
 	font/writeenc.c, font/writefont.c, font/writet1.c,
@@ -54,8 +74,14 @@
 	* utils/synctex.c: #include "synctex.h".
 	* utils/utils.c: #include "utils.h".
 
+	* lua/lcallbacklib.c: Remove prototype for lua_traceback().
 	* ptexlib.h: Add prototype for get_command_id() ...
 	* lua/ltokenlib.c: ... removed from here.
+	* nodes.h: Add prototype for list_node_mem_usage() ...
+	* lua/lnodelib.c: ... removed from here.
+	* managed-sa.h: Add prototype for rawset_sa_item() ...
+	* mathcodes.c, tex/math.c: ... removed from here.
+
 	* inc-epdf.h: New file with prototypes for epdf_mark_glyphs(),
 	epdf_create_fontdescriptor(), and epdf_write_enc() ...
 	* image/epdf.h: ... removed from here.
@@ -63,6 +89,12 @@
 	* inc-vfovf.h: New file with prototype for make_vf_table() ...
 	* lua/lfontlib.c: ... removed from here.
 	* font/vfovf.c, lua/lfontlib.c: #include inc-vfovf.h.
+	* inc-extra.h: New file with prototypes for check_isnode()
+	and lua_nodelib_push_fast() ...
+	* lua/limglib.c, lua/llanglib.c, lua/lstatslib.c, lua/ltexlib.c:
+	... removed from here.
+	* lua/limglib.c, lua/llanglib.c, lua/lnodelib.c,
+	lua/lstatslib.c, lua/ltexlib.c: #include "inc-extra.h".
 	* am/libluatex.am (libluatex_a_SOURCES): Add the new files.
 
 	* font/texfont.c (lua_char_exists_callback),
@@ -83,9 +115,6 @@
 
 	* utils/synctex.c: Rename synctexchar => synctex_char and
 	synctexnode => synctex_node as declared in utils/synctex.h.
-
-	* font/luatexfont.h, font/macnames.c: Declare notdef as
-	non-const to avoid cast warnings. FIXME?
 
 2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

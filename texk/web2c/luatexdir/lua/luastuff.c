@@ -25,10 +25,6 @@ static const char _svn_version[] =
 
 lua_State *Luas = NULL;
 
-extern const char *startup_filename;
-extern int safer_option;
-extern int nosocket_option;
-
 int luastate_bytes = 0;
 
 int lua_active = 0;
@@ -256,7 +252,7 @@ void unhide_lua_value(lua_State * L, const char *name, const char *item, int r)
 }
 
 
-int lua_traceback(lua_State * L)
+static int lua_traceback(lua_State * L)
 {
     lua_getfield(L, LUA_GLOBALSINDEX, "debug");
     if (!lua_istable(L, -1)) {

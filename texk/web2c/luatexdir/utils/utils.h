@@ -77,6 +77,7 @@ extern void check_pool_overflow(int wsize);
 extern str_number last_tex_string;
 extern char *cur_file_name;
 extern size_t last_ptr_index;
+extern char *fb_array;
 
 /**********************************************************************/
 /* color stack and matrix transformation support */

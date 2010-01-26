@@ -21,6 +21,7 @@
 #include <ptexlib.h>
 
 #include "nodes.h"
+#include "inc-extra.h"
 
 static const char _svn_version[] =
     "$Id: llanglib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/llanglib.c $";
@@ -28,8 +29,6 @@ static const char _svn_version[] =
 #define LANG_METATABLE "luatex.lang"
 
 #define check_islang(L,b) (struct tex_language **)luaL_checkudata(L,b,LANG_METATABLE)
-
-extern halfword *check_isnode(lua_State * L, int ud);
 
 
 static int lang_new(lua_State * L)

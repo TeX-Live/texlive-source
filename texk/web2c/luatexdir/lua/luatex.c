@@ -26,8 +26,6 @@ static const char _svn_version[] =
 
 /* do this aleph stuff here, for now */
 
-extern int program_name_set;    /* in lkpselib.c */
-
 void b_test_in(void)
 {
     if (program_name_set) {

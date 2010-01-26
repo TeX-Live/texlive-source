@@ -21,6 +21,7 @@
 #include <ptexlib.h>
 
 #include "nodes.h"
+#include "inc-extra.h"
 
 #include "commands.h"
 
@@ -3207,8 +3208,6 @@ static int lua_nodelib_do_ligature_n(lua_State * L)
     lua_nodelib_push(L);
     return 1;
 }
-
-extern halfword list_node_mem_usage(void);
 
 static int lua_nodelib_usedlist(lua_State * L)
 {

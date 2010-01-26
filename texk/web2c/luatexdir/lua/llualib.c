@@ -35,7 +35,7 @@ typedef struct {
 
 static bytecode *lua_bytecode_registers = NULL;
 
-integer luabytecode_max = -1;
+int luabytecode_max = -1;
 unsigned int luabytecode_bytes = 0;
 
 static char *luanames[65536] = { NULL };

@@ -19,6 +19,7 @@
 
 #include "luatex-api.h"
 #include <ptexlib.h>
+#include "inc-extra.h"
 
 
 static const char _svn_version[] =
@@ -29,8 +30,6 @@ typedef struct statistic {
     char type;
     void *value;
 } statistic;
-
-extern void lua_nodelib_push_fast(lua_State * L, halfword n);
 
 typedef const char *(*charfunc) (void);
 typedef integer(*intfunc) (void);
@@ -61,12 +60,7 @@ static char *luatexrevision(void)
     return makecstring(get_luatexrevision());
 }
 
-extern int luabytecode_max;
-extern int luabytecode_bytes;
 static int luastate_max = 1;    /* fixed value */
-extern int luastate_bytes;
-extern int callback_count;
-extern int saved_callback_count;
 
 static struct statistic stats[] = {
     {"pdf_gone", 'g', &pdf_gone},

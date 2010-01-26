@@ -39,10 +39,9 @@ integer ttf_size = 0;
 integer ttf_curbyte = 0;
 
 typedef struct {
-    char *name;                 /* name of glyph */
+    const char *name;           /* name of glyph */
     long code;                  /* charcode in case of subfonts */
     long newindex;              /* new index of glyph in output file */
-
 } ttfenc_entry;
 
 typedef struct {
@@ -97,9 +96,6 @@ static struct avl_table *ttf_cmap_tree = NULL;
 integer ttf_length;
 
 #include "macnames.c"
-
-extern char *fb_array;          /* from luatexdir/utils.c */
-extern char charsetstr[];       /* from mpdir/psout.w */
 
 static const char *newtabnames[] = {
     "OS/2",
@@ -263,7 +259,7 @@ static void ttf_copy_encoding(void)
         assert(glyph_names != NULL);
 
         for (i = 0; i < 256; i++)
-            ttfenc_tab[i].name = (char *) notdef;
+            ttfenc_tab[i].name = notdef;
 
         /* a workaround for a bug of AcroReader 4.0 */
         if (strcmp(glyph_names[97], "a") == 0) {
@@ -399,7 +395,7 @@ static void ttf_read_mapx(void)
         glyph->newindex = -1;
         glyph->newoffset = 0;
         glyph->name_index = 0;
-        glyph->name = (char *) notdef;
+        glyph->name = notdef;
     }
     glyph_index = xtalloc(glyphs_count, long);
     glyph_index[0] = 0;         /* index of ".notdef" glyph */
@@ -493,7 +489,7 @@ void ttf_read_post(void)
     switch (post_format) {
     case 0x10000:
         for (glyph = glyph_tab; glyph - glyph_tab < NMACGLYPHS; glyph++) {
-            glyph->name = (char *) mac_glyph_names[glyph - glyph_tab];
+            glyph->name = mac_glyph_names[glyph - glyph_tab];
             glyph->name_index = glyph - glyph_tab;
         }
         break;
@@ -511,7 +507,7 @@ void ttf_read_post(void)
         }
         for (glyph = glyph_tab; glyph - glyph_tab < nnames; glyph++) {
             if (glyph->name_index < NMACGLYPHS)
-                glyph->name = (char *) mac_glyph_names[glyph->name_index];
+                glyph->name = mac_glyph_names[glyph->name_index];
             else {
                 p = glyph_name_buf;
                 k = glyph->name_index - NMACGLYPHS;
@@ -1233,7 +1229,7 @@ static void ttf_write_OS2(void)
     ttf_set_chksm(tab);
 }
 
-static boolean unsafe_name(char *s)
+static boolean unsafe_name(const char *s)
 {
     const char **p;
     for (p = ambiguous_names; *p != NULL; p++)
@@ -1246,7 +1242,7 @@ static void ttf_write_post(void)
 {
     dirtab_entry *tab = ttf_seek_tab("post", TTF_FIXED_SIZE);
     glyph_entry *glyph;
-    char *s;
+    const char *s;
     long *id;
     int l;
     ttf_reset_chksm(tab);
