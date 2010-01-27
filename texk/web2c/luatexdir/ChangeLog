@@ -1,5 +1,9 @@
 2010-01-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* utils/avl.c (avl_copy): Proper handling of const.
+
+2010-01-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* luafontloader/src/luafflib.h: New file with prototypes used
 	by libluatex.
 	* luafontloader/src/luafflib.c: #include "luafflib.h".

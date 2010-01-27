@@ -1,3 +1,7 @@
+2010-01-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* avl.c (avl_copy): Proper handling of const.
+
 2010-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libpdftex.am (libpdftex_a_CFLAGS): Enable compiler warnings.
