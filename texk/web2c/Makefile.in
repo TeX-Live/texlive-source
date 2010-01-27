@@ -1906,7 +1906,8 @@ libff_a_SOURCES = \
 	luatexdir/luafontloader/fontforge/inc/ustring.h \
 	luatexdir/luafontloader/fontforge/inc/utype.h \
 	luatexdir/luafontloader/src/ffdummies.c \
-	luatexdir/luafontloader/src/luafflib.c
+	luatexdir/luafontloader/src/luafflib.c \
+	luatexdir/luafontloader/src/luafflib.h
 
 libluatex_a_DEPENDENCIES = libff.a
 libluatex_a_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) \

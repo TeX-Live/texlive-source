@@ -121,7 +121,8 @@ libff_a_SOURCES = \
 	luatexdir/luafontloader/fontforge/inc/ustring.h \
 	luatexdir/luafontloader/fontforge/inc/utype.h \
 	luatexdir/luafontloader/src/ffdummies.c \
-	luatexdir/luafontloader/src/luafflib.c
+	luatexdir/luafontloader/src/luafflib.c \
+	luatexdir/luafontloader/src/luafflib.h
 
 EXTRA_DIST += \
 	luatexdir/luafontloader/ChangeLog \

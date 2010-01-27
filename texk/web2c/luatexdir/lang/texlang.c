@@ -29,23 +29,13 @@
 static const char _svn_version[] =
     "$Id: texlang.c 2596 2009-06-25 09:26:59Z taco $ $URL: http://scm.foundry.supelec.fr/svn/luatex/trunk/src/texk/web2c/luatexdir/lang/texlang.c $";
 
-/* functions from the fontforge unicode library */
+/* functions copied from the fontforge unicode library */
 
-#if 0
-extern unsigned int *utf82u_strcpy(unsigned int *ubuf, const char *utf8buf);
-extern unsigned int u_strlen(unsigned int *ubuf);
-extern char *utf8_idpb(char *w, unsigned int i);
-#else
-
-typedef unsigned int unichar_t;
-typedef unsigned char uint8;
-typedef unsigned int uint32;
-
-static unichar_t *utf82u_strcpy(unichar_t * ubuf, const char *utf8buf)
+static unsigned int *utf82u_strcpy(unsigned int * ubuf, const char *utf8buf)
 {
     int len = strlen(utf8buf) + 1;
-    unichar_t *upt = ubuf, *uend = ubuf + len - 1;
-    const uint8 *pt = (const uint8 *) utf8buf, *end = pt + strlen(utf8buf);
+    unsigned int *upt = ubuf, *uend = ubuf + len - 1;
+    const unsigned char *pt = (const unsigned char *) utf8buf, *end = pt + strlen(utf8buf);
     int w, w2;
 
     while (pt < end && *pt != '\0' && upt < uend) {
@@ -70,7 +60,7 @@ static unichar_t *utf82u_strcpy(unichar_t * ubuf, const char *utf8buf)
     return (ubuf);
 }
 
-static char *utf8_idpb(char *utf8_text, uint32 ch)
+char *utf8_idpb(char *utf8_text, unsigned int ch)
 {
     /* Increment and deposit character */
     if (ch >= 17 * 65536)
@@ -86,7 +76,7 @@ static char *utf8_idpb(char *utf8_text, uint32 ch)
         *utf8_text++ = 0x80 | ((ch >> 6) & 0x3f);
         *utf8_text++ = 0x80 | (ch & 0x3f);
     } else {
-        uint32 val = ch - 0x10000;
+        unsigned int val = ch - 0x10000;
         int u = ((val & 0xf0000) >> 16) + 1, z = (val & 0x0f000) >> 12, y =
             (val & 0x00fc0) >> 6, x = val & 0x0003f;
         *utf8_text++ = 0xf0 | (u >> 2);
@@ -97,15 +87,13 @@ static char *utf8_idpb(char *utf8_text, uint32 ch)
     return (utf8_text);
 }
 
-static int u_strlen(register unichar_t * str)
+static int u_strlen(register unsigned int * str)
 {
     register int len = 0;
     while (*str++ != '\0')
         ++len;
     return (len);
 }
-
-#endif
 
 #define noVERBOSE
 

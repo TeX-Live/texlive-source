@@ -1,3 +1,21 @@
+2010-01-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luafontloader/src/luafflib.h: New file with prototypes used
+	by libluatex.
+	* luafontloader/src/luafflib.c: #include "luafflib.h".
+	* font/writecff.c, font/writetype2.c: Remove the extern decls
+	and #include <luafontloader/src/luafflib.h>.
+	* font/writecff.c (writetype1w): Change tfm_size integer=>int.
+	* am/luafontforge.am: Add the new file.
+
+	* luatex-api.h: Add prototype for utf8_idpb(), renamed
+	lua_utf8_idpb to avoid name conflicts with fontforge library.
+	* lang/texlang.c: Declare utf8_idpb() as non-static.
+	* tex/filename.c: Remove prototype for utf8_idpb().
+
+	* tex/filename.c (scan_file_name): Don't assume a null byte
+	after string created by utf8_idpb().
+
 2010-01-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* font/writettf.c: Remove extern charsetstr[].

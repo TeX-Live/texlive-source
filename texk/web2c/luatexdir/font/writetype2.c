@@ -269,7 +269,7 @@ static unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
     return offset;
 }
 
-extern int ff_get_ttc_index(char *ffname, char *psname);        /* libs/luafontforge/src/luafflib.c */
+#include <luafontloader/src/luafflib.h>
 
 void make_tt_subset(fd_entry * fd, unsigned char *buffer, integer buflen)
 {

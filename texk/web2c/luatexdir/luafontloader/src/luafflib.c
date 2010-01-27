@@ -2270,7 +2270,8 @@ static void ff_do_cff (SplineFont *sf, char *filename, unsigned char **buf, int 
 
 }
 
-/* exported for writecff.c */
+
+#include "luafflib.h"
 
 int ff_createcff (char *file, unsigned char **buf, int *bufsiz) {
   SplineFont *sf;
@@ -2300,7 +2301,7 @@ int ff_get_ttc_index(char *ffname, char*psname) {
   int openflags = 1;
   int index = 0;
 
-  sf = ReadSplineFontInfo((char *)ffname,openflags);
+  sf = ReadSplineFontInfo(ffname,openflags);
   if (sf==NULL) {
     perror("font loading failed unexpectedly\n");
     exit(EXIT_FAILURE);

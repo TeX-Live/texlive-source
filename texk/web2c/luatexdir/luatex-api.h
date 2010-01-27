@@ -138,3 +138,6 @@ extern unsigned int luabytecode_bytes;
 extern int luastate_bytes;
 extern int callback_count;
 extern int saved_callback_count;
+
+#define utf8_idpb lua_utf8_idpb /* avoid name conflict with fontforge library */
+extern char *utf8_idpb(char *utf8_text, unsigned int ch);
