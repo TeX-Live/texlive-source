@@ -15,7 +15,7 @@ ZLIB_HDRS = \
 
 all-local:
 	@for file in $(ZLIB_HDRS); do \
-	  test -f $$f || continue; \
+	  test -f $$file || continue; \
 	  inst=`echo $$file | sed -e 's/^.*\///'`; \
 	  test -f $$inst || { \
 	    echo "$(LN_S) $$file $$inst"; \
