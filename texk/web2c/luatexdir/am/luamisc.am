@@ -8,9 +8,9 @@
 ## and slnunicode)
 EXTRA_LIBRARIES += libluamisc.a
 
-libluamisc_a_DEPENDENCIES = libluasocket.a
+libluamisc_a_DEPENDENCIES = libzzip.a libluasocket.a
 
-$(libluamisc_a_OBJECTS): libluasocket.a
+$(libluamisc_a_OBJECTS): libzzip.a libluasocket.a
 
 libluamisc_a_CPPFLAGS = \
 	$(ZLIB_INCLUDES) \

@@ -1,3 +1,10 @@
+2010-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Clarify dependencies between luaTeX libraries:
+	* am/libzzip.am: Remove dependency on liblua51.a.
+	* am/luamisc.am: Add dependency on libzzip.a.
+	* am/luasocket.am: Replace dependency on libzzip.a by liblua51.a.
+
 2010-01-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils/avl.c (avl_copy): Proper handling of const.

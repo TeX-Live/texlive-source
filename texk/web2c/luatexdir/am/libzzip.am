@@ -7,10 +7,6 @@
 ##
 EXTRA_LIBRARIES += libzzip.a
 
-libzzip_a_DEPENDENCIES = liblua51.a
-
-$(libzzip_a_OBJECTS): liblua51.a
-
 libzzip_a_CPPFLAGS = \
 	$(ZLIB_INCLUDES) \
 	-I$(top_srcdir)/luatexdir/zziplib
