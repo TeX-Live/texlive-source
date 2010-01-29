@@ -1,3 +1,7 @@
+2010-01-29  Karl Berry  <karl@tug.org>
+
+	* test_dvipng.tex: do use \usepackage{mathptmx}.
+
 2009-02-23  Jan-Ake Larsson  <jalar@mai.liu.se>
 
 	* Release 1.12
