@@ -1,4 +1,4 @@
-/* This file is public domain. */
+/* Public domain.  */
 
 #ifndef _WIN32LIB_H_
 #define _WIN32LIB_H_
@@ -43,10 +43,10 @@
 
 #endif /*__STDC__*/
 
-//This is not defined even if !__STDC__
+/*This is not defined even if !__STDC__*/
 #define snprintf _snprintf
 
-//The gnu name is different
+/*The gnu name is different*/
 #define strcasecmp stricmp
 
 #endif
