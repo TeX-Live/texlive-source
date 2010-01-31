@@ -1,6 +1,6 @@
 /* strstr.c - search for a substring in string.
 
-   Copyright 2008 Karl Berry.
+   Copyright 2008, 2010 Karl Berry.
    Copyright 1994, 1995 Free Software Foundation, Inc.
    This file was part of the GNU C Library.
    Modified for kpathsea by Karl Berry.
@@ -27,12 +27,8 @@
  *
  * Stephen R. van den Berg, berg@pool.informatik.rwth-aachen.de	*/
 
-#if !defined (__STDC__) || !__STDC__
-/* This is a separate conditional since some stdc systems
-   reject `defined (const)'.  */
-#ifndef const
-#define const
-#endif
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
 typedef unsigned chartype;

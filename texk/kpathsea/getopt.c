@@ -1,7 +1,7 @@
 /* Getopt for GNU.
 
-   Copyright 2008, 2009 Karl Berry.
-   Copyright (C) 1987, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 2000
+   Copyright 2008, 2009, 2010 Karl Berry.
+   Copyright (C) 1987, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 2000, 2010
    	Free Software Foundation, Inc.
 
    The original version of this file was part of the GNU C Library.
@@ -31,14 +31,6 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
-
-#if !defined (__STDC__) || !__STDC__
-/* This is a separate conditional since some stdc systems
-   reject `defined (const)'.  */
-#ifndef const
-#define const
-#endif
 #endif
 
 #include <stdio.h>

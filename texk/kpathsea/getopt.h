@@ -1,6 +1,6 @@
 /* Declarations for getopt.
 
-   Copyright 2008 Karl Berry.
+   Copyright 2008, 2010 Karl Berry.
    Copyright 1989,90,91,92,93,94,96,97,2000,05 Free Software Foundation, Inc.
 
    The original version of this file was part of the GNU C Library.
@@ -23,14 +23,6 @@
 
 #ifndef _GETOPT_H
 #define _GETOPT_H 1
-
-#if !defined (__STDC__) || !__STDC__
-/* This is a separate conditional since some stdc systems
-   reject `defined (const)'.  */
-#ifndef const
-#define const
-#endif
-#endif
 
 #if defined (KPSE_DLL) && (defined (WIN32) || defined (__CYGWIN__))
 #ifdef MAKE_KPSE_DLL

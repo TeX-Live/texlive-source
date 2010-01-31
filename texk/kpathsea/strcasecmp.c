@@ -1,6 +1,6 @@
 /* strcasecmp.c - case-insensitive strcmp
 
-   Copyright 2008 Karl Berry.
+   Copyright 2008, 2010 Karl Berry.
    Copyright 1991, 1992, 1995 Free Software Foundation, Inc.
    This file was part of the GNU C Library.
    Modified by Karl Berry for kpathsea.
@@ -20,14 +20,6 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
-
-#if !defined (__STDC__) || !__STDC__
-/* This is a separate conditional since some stdc systems
-   reject `defined (const)'.  */
-#ifndef const
-#define const
-#endif
 #endif
 
 #include <ctype.h>
