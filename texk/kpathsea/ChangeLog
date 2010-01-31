@@ -1,3 +1,14 @@
+2010-01-31  Javier Mugica  <javier@digi21.eu>
+
+	Support compilation with MSVC 7.1:
+	* config.h (win32lib.h) [_WIN32 && !__MINGW32__]: include.
+	(__STDC__) [WIN32]: do not define ourselves.
+	* getopt.h (__STDC__): do not define ourselves.  Instead, define
+	const.
+	* c-stat.h (oldnames.h) [WIN32]: is gone.	
+	* c-ctype.h (isascii): no oldnames.h here either.
+	* win32lib.h: reinstate.
+
 2010-01-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xputenv.c (kpathsea_xputenv): Don't use value of XRETALLOC(),

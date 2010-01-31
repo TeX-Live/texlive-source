@@ -1,6 +1,6 @@
 /* c-stat.h: declarations for using stat(2).
 
-   Copyright 1993, 1996, 2008 Karl Berry.
+   Copyright 1993, 1996, 2008, 2010 Karl Berry.
    Copyright 1998, 2000, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -21,10 +21,6 @@
 
 #include <kpathsea/systypes.h>
 #include <sys/stat.h>
-
-#if defined (WIN32) && !defined (__MINGW32__)
-#include <oldnames.h>
-#endif
 
 /* POSIX predicates for testing file attributes.  */
 

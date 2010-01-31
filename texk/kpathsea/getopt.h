@@ -24,9 +24,11 @@
 #ifndef _GETOPT_H
 #define _GETOPT_H 1
 
-#if defined(WIN32)
-#ifndef __STDC__
-#define __STDC__ 1
+#if !defined (__STDC__) || !__STDC__
+/* This is a separate conditional since some stdc systems
+   reject `defined (const)'.  */
+#ifndef const
+#define const
 #endif
 #endif
 
@@ -98,11 +100,7 @@ extern KPSEDLL int optopt;
 
 struct option
 {
-#if defined (__STDC__) && __STDC__
   const char *name;
-#else
-  char *name;
-#endif
   /* has_arg can't be an enum because some compilers complain about
      type mismatches in all the code that assumes it is an int.  */
   int has_arg;

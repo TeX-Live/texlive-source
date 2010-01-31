@@ -1,7 +1,7 @@
 /* config.h: master configuration file, included first by all compilable
    source files (not headers).
 
-   Copyright 1993, 1995, 1996, 1997, 2008 Karl Berry.
+   Copyright 1993, 1995, 1996, 1997, 2008, 2010 Karl Berry.
    Copyright 2000, 2003, 2004, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 /* System defines are for non-Unix systems only.  (Testing for all Unix
    variations should be done in configure.)  Presently the defines used
    are: AMIGA DOS OS2 WIN32.  I do not use any of these systems myself;
-   if you do, I'd be grateful for any changes. --olaf@infovore.xs4all.nl */
+   if you do, I'd be grateful for any changes.  */
 
 #if defined(DJGPP)    || defined(__DJGPP__)     || \
     defined(CYGWIN)   || defined(__CYGWIN__)    || \
@@ -33,8 +33,7 @@
 #endif
 
 /* If we have either DOS or OS2, we are DOSISH.  Cygwin pretends to be
- * unix, mostly, so don't include it here.
- */
+   Unix, mostly, so don't include it here.  */
 #if defined(OS2)     || \
     defined(MSDOS)   || defined(__MSDOS__) || defined(DOS)    || \
     defined(WIN32)   || defined(__WIN32__) || defined(_WIN32) || \
@@ -53,10 +52,6 @@
 #define DEV_NULL "NUL"
 #else
 #define DEV_NULL "/dev/null"
-#endif
-
-#if defined (WIN32) && !defined (__STDC__)
-#define __STDC__ 1
 #endif
 
 /* System dependencies that are figured out by `configure'.  */
@@ -95,7 +90,7 @@
   This must be included after "c-proto.h"
   but before "lib.h". FP.
 */
-#ifdef WIN32
+#if defined (WIN32) || defined (_WIN32)
 #ifdef __MINGW32__
 #include <kpathsea/mingw32.h>
 #else
