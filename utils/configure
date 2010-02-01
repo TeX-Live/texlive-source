@@ -748,6 +748,7 @@ with_teckit_includes
 with_teckit_libdir
 with_graphite
 with_system_graphite
+with_system_zziplib
 with_system_xpdf
 with_system_gd
 with_gd_includes
@@ -1541,6 +1542,8 @@ Optional Packages:
   --without-graphite      build XeTeX without graphite support
   --with-system-graphite  use installed silgraphite headers and library
                           (requires pkg-config)
+  --with-system-zziplib   use installed zziplib headers and library (requires
+                          pkg-config)
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf (requires pkg-config)
   --with-system-gd        use installed gd headers and library
@@ -2575,6 +2578,7 @@ test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
   need_obsdcompat=yes
+  need_zziplib=yes
 }
 # Check whether --enable-xetex was given.
 if test "${enable_xetex+set}" = set; then :
@@ -3660,6 +3664,41 @@ $as_echo "$as_me: Assuming installed \`graphite' headers and library" >&6;}
 fi
 
 
+## libs/zziplib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/zziplib/
+## configure options and TL libraries required for zziplib
+
+# Check whether --with-system-zziplib was given.
+if test "${with_system_zziplib+set}" = set; then :
+  withval=$with_system_zziplib;
+fi
+if test "x$with_system_zziplib" = x; then
+  if test -f $srcdir/../libs/zziplib/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`zziplib' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`zziplib' headers and library from TL tree" >&6;}
+    with_system_zziplib=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`zziplib' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`zziplib' headers and library" >&6;}
+    with_system_zziplib=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-zziplib=$with_system_zziplib'"
+fi
+if test "x$with_system_zziplib" = xyes; then
+  if test "x$with_system_zlib" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`zlib' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`zlib' headers and library" >&6;}
+    with_system_zlib=yes
+    ac_configure_args="$ac_configure_args '--with-system-zlib'"
+  elif test "x$with_system_zlib" != xyes; then
+    as_fn_error "Sorry, \`--with-system-zziplib' requires \`--with-system-zlib'" "$LINENO" 5
+  fi
+fi
+
+test "x$need_zziplib" = xyes && {
+  need_zlib=yes
+}
+
+
 ## libs/xpdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 ## configure options and TL libraries required for xpdf
 
@@ -3681,7 +3720,7 @@ $as_echo "$as_me: Assuming installed \`xpdf' headers and library" >&6;}
 fi
 
 
-## libs/gd/kpse/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
+## libs/gd/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
 ## configure options and TL libraries required for gd
 
 # Check whether --with-system-gd was given.
@@ -3836,7 +3875,7 @@ fi
 ## configure options and TL libraries required for obsdcompat
 
 
-## libs/libpng/kpse/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
+## libs/libpng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
 ## configure options and TL libraries required for libpng
 
 # Check whether --with-system-libpng was given.

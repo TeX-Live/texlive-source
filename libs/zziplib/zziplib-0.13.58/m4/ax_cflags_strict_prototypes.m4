@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_cflags_strict_prototypes.m4
 dnl @synopsis AX_CFLAGS_STRICT_PROTOTYPES [(shellvar [,default, [A/NA]]
 dnl
 dnl Try to find a compiler option that requires strict prototypes.
@@ -20,8 +21,8 @@ dnl  - $3 action-if-found : add value to shellvariable
 dnl  - $4 action-if-not-found : nothing
 dnl
 dnl @category C
-dnl @author Guido Draheim <guidod@gmx.de>
-dnl @version 2003-05-21
+dnl @author Guido U. Draheim <guidod@gmx.de>
+dnl @version 2006-12-12
 dnl @license GPLWithACException
 
 AC_DEFUN([AX_CFLAGS_STRICT_PROTOTYPES],[dnl
@@ -33,8 +34,11 @@ VAR,[VAR="no, unknown"
  AC_LANG_C
  ac_save_[]FLAGS="$[]FLAGS"
 for ac_arg dnl
-in "-Wall     % -fstrict-prototypes -Wstrict-prototypes" dnl   GCC
-   "-Wall     % -Wstrict-prototypes" dnl try to warn atleast
+in "-pedantic % -fstrict-prototypes -Wstrict-prototypes" dnl   GCC
+   "-pedantic % -Wstrict-prototypes" dnl try to warn atleast
+   "-pedantic % -Wmissing-prototypes" dnl or another warning
+   "-pedantic % -Werror-implicit-function-declaration" dnl
+   "-pedantic % -Wimplicit-function-declaration" dnl
    #
 do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
    AC_TRY_COMPILE([],[return 0;],
@@ -82,11 +86,15 @@ AS_VAR_PUSHDEF([VAR],[ac_cv_cxxflags_strict_prototypes])dnl
 AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for strict prototypes],
 VAR,[VAR="no, unknown"
  AC_LANG_SAVE
- AC_LANG_CXX
+ AC_LANG_CPLUSPLUS
  ac_save_[]FLAGS="$[]FLAGS"
 for ac_arg dnl
-in "-Wall     % -fstrict-prototypes -Wstrict-prototypes" dnl   GCC
-   "-Wall     % -Wstrict-prototypes" dnl try to warn atleast
+in "-pedantic -Werror % -fstrict-prototypes -Wstrict-prototypes" dnl   GCC
+   "-pedantic -Werror % -Wstrict-prototypes" dnl try to warn atleast
+   "-pedantic -Werror % -Wmissing-prototypes" dnl try to warn atleast
+   "-pedantic -Werror % -Werror-implicit-function-declaration" dnl
+   "-pedantic -Werror % -Wimplicit-function-declaration" dnl
+   "-pedantic % -Wstrict-prototypes %% no, unsupported in C++" dnl oops
    #
 do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
    AC_TRY_COMPILE([],[return 0;],
@@ -125,3 +133,4 @@ esac
 AS_VAR_POPDEF([VAR])dnl
 AS_VAR_POPDEF([FLAGS])dnl
 ])
+

@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ac_set_default_paths_system.m4
 dnl @synopsis AC_SET_DEFAULT_PATHS_SYSTEM
 dnl
 dnl the most interesting changes go about windows-targets - where the
@@ -10,7 +11,7 @@ dnl which is either defined as being prefix or datadir. not SUBSTed
 dnl here.
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2001-08-25
 dnl @license GPLWithACException
 
@@ -102,3 +103,4 @@ esac
 AC_MSG_RESULT($result)
 # --------------------------------------------------------
 ])
+

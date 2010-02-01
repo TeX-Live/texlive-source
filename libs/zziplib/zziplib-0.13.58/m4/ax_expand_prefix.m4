@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_expand_prefix.m4
 dnl @synopsis AX_EXPAND_PREFIX
 dnl
 dnl when $prefix and $exec_prefix are still set to NONE then set them
@@ -21,7 +22,7 @@ dnl explicit instead. Probably, any command to compute installation
 dnl directories should be run _after_ AM_INIT_AUTOMAKE
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2005-01-21
 dnl @license GPLWithACException
 
@@ -31,3 +32,4 @@ AC_DEFUN([AX_EXPAND_PREFIX],[dnl
   # Let make expand exec_prefix. Allows to override the makevar 'prefix' later
   test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 ])
+

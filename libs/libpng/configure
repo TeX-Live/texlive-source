@@ -557,7 +557,7 @@ PACKAGE_STRING='libpng for TeX Live 1.2.40'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="libpng-1.2.40"
+ac_unique_file="libpng-1.2.40/pngget.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>

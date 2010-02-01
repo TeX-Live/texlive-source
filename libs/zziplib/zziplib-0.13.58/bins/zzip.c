@@ -8,7 +8,7 @@
 
 #define _ZZIP_WRITE_SOURCE
 
-#include <zzip/zzip.h>
+#include <zzip/write.h>
 #include <stdio.h>
 #include <string.h>
 

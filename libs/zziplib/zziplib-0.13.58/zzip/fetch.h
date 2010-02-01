@@ -2,46 +2,74 @@
 #define _ZZIP_FORMATS_H
 
 #include <zzip/types.h>
-#include <zzip/format.h> 
+#include <zzip/format.h>
 #include <zzip/stdint.h>
+#include <zzip/__hints.h>
 
 /* linux knows "byteswap.h" giving us an optimized variant */
 #ifdef ZZIP_HAVE_BYTESWAP_H
 #include <byteswap.h>
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* get 16/32 bits from little-endian zip-file to host byteorder */
-extern uint32_t __zzip_get32(zzip_byte_t * s) __zzip_attribute__((const));
-extern uint16_t __zzip_get16(zzip_byte_t * s) __zzip_attribute__((const));
+extern uint32_t __zzip_get32(zzip_byte_t * s) ZZIP_GNUC_CONST;
+extern uint16_t __zzip_get16(zzip_byte_t * s) ZZIP_GNUC_CONST;
 extern void     __zzip_set32(zzip_byte_t * s, uint32_t v);
 extern void     __zzip_set16(zzip_byte_t * s, uint16_t v);
 
-extern uint64_t __zzip_get64(zzip_byte_t * s) __zzip_attribute__((const));
+extern uint64_t __zzip_get64(zzip_byte_t * s) ZZIP_GNUC_CONST;
 extern void     __zzip_set64(zzip_byte_t * s, uint64_t v);
 
-#ifdef ZZIP_WORDS_BIGENDIAN
-# if defined bswap_16 && defined bswap_32 && defined bswap_64 /* i.e. linux */
-# define ZZIP_GET16(__p)                        bswap_16(*(uint16_t*)(__p))
-# define ZZIP_GET32(__p)                        bswap_32(*(uint32_t*)(__p))
-# define ZZIP_GET64(__p)                        bswap_64(*(uint64_t*)(__p))
-# define ZZIP_SET16(__p,__x) (*(uint16_t*)(__p) = bswap_16((uint16_t)(__x)))
-# define ZZIP_SET32(__p,__x) (*(uint32_t*)(__p) = bswap_32((uint32_t)(__x)))
-# define ZZIP_SET64(__p,__x) (*(uint64_t*)(__p) = bswap_64((uint64_t)(__x)))
-# else
-# define ZZIP_GET64(__p)     (__zzip_get64((__p)))
-# define ZZIP_GET32(__p)     (__zzip_get32((__p)))
-# define ZZIP_GET16(__p)     (__zzip_get16((__p)))
-# define ZZIP_SET64(__p,__x) (__zzip_set64((__p),(__x)))
-# define ZZIP_SET32(__p,__x) (__zzip_set32((__p),(__x)))
-# define ZZIP_SET16(__p,__x) (__zzip_set16((__p),(__x)))
+/* just in case that you use a non-configure-d setup (e.g. MSVC) */
+#ifndef ZZIP_HAVE_ALIGNED_ACCESS_REQUIRED
+# if defined __mips__ || defined __sparc__ || defined __powerpc__ || defined __arm__ || defined __ia64__
+# define ZZIP_HAVE_ALIGNED_ACCESS_REQUIRED 11
 # endif
-#else /* little endian is the original zip format byteorder */
-# define ZZIP_GET16(__p)     (*(uint16_t*)(__p))
-# define ZZIP_GET32(__p)     (*(uint32_t*)(__p))
-# define ZZIP_GET64(__p)     (*(uint64_t*)(__p))
-# define ZZIP_SET16(__p,__x) (*(uint16_t*)(__p) = (uint16_t)(__x))
-# define ZZIP_SET32(__p,__x) (*(uint32_t*)(__p) = (uint32_t)(__x))
-# define ZZIP_SET64(__p,__x) (*(uint64_t*)(__p) = (uint64_t)(__x))
+#endif
+
+/* on linux with a cisc processor we can use the bswap for some extra speed */
+#ifdef ZZIP_WORDS_BIGENDIAN
+# ifndef ZZIP_HAVE_ALIGNED_ACCESS_REQUIRED
+#  if defined bswap_16 && defined bswap_32 && defined bswap_64 /* i.e. linux */
+#  define _ZZIP_USE_BSWAP
+#  endif
+# endif
+#endif
+
+/* little endian on intel cisc processors is the original zip format byteorder */
+#ifndef ZZIP_WORDS_BIGENDIAN
+# ifndef ZZIP_HAVE_ALIGNED_ACCESS_REQUIRED
+#  if defined __i386__ || defined __x86_64__
+#  define _ZZIP_USE_DEREF
+# endif
+#endif
+
+#ifdef _ZZIP_USE_BSWAP
+#define ZZIP_GET16(__p)                        bswap_16(*(uint16_t*)(__p))
+#define ZZIP_GET32(__p)                        bswap_32(*(uint32_t*)(__p))
+#define ZZIP_GET64(__p)                        bswap_64(*(uint64_t*)(__p))
+#define ZZIP_SET16(__p,__x) (*(uint16_t*)(__p) = bswap_16((uint16_t)(__x)))
+#define ZZIP_SET32(__p,__x) (*(uint32_t*)(__p) = bswap_32((uint32_t)(__x)))
+#define ZZIP_SET64(__p,__x) (*(uint64_t*)(__p) = bswap_64((uint64_t)(__x)))
+#elif defined _ZZIP_USE_DEREF
+#define ZZIP_GET16(__p)     (*(uint16_t*)(__p))
+#define ZZIP_GET32(__p)     (*(uint32_t*)(__p))
+#define ZZIP_GET64(__p)     (*(uint64_t*)(__p))
+#define ZZIP_SET16(__p,__x) (*(uint16_t*)(__p) = (uint16_t)(__x))
+#define ZZIP_SET32(__p,__x) (*(uint32_t*)(__p) = (uint32_t)(__x))
+#define ZZIP_SET64(__p,__x) (*(uint64_t*)(__p) = (uint64_t)(__x))
+#else
+#define ZZIP_GET64(__p)     (__zzip_get64((__p)))
+#define ZZIP_GET32(__p)     (__zzip_get32((__p)))
+#define ZZIP_GET16(__p)     (__zzip_get16((__p)))
+#define ZZIP_SET64(__p,__x) (__zzip_set64((__p),(__x)))
+#define ZZIP_SET32(__p,__x) (__zzip_set32((__p),(__x)))
+#define ZZIP_SET16(__p,__x) (__zzip_set16((__p),(__x)))
+#endif
 #endif
 
 /* ..................... bitcorrect physical access .................... */
@@ -340,4 +368,7 @@ extern void     __zzip_set64(zzip_byte_t * s, uint64_t v);
         (zzip_disk_entry_data_deflated(__p) && \
 	 zzip_disk_entry_data_comprlevel(__p) == ZZIP_DEFLATED_MIN_COMPR)
 
+#ifdef __cplusplus
+}
+#endif
 #endif

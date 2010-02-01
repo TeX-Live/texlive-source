@@ -24,6 +24,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="del $(ConfigurationName)\vc80.idb"
+				CommandLine="del $(ConfigurationName)\vc80.idb"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -40,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;../zlib/include;&quot;$(MSSdk)/Include&quot;"
+				AdditionalIncludeDirectories="..;../msvc/zlib/include;&quot;$(MSSdk)/Include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,6 +108,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="del $(ConfigurationName)\vc80.idb"
+				CommandLine="del $(ConfigurationName)\vc80.idb"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -124,7 +128,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="..;../zlib/include;&quot;$(MSSdk)/Include&quot;"
+				AdditionalIncludeDirectories="..;../msvc/zlib/include;&quot;$(MSSdk)/Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
 				RuntimeLibrary="0"

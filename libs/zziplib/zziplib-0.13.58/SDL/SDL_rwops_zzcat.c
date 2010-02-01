@@ -12,7 +12,7 @@
 
 int main (int argc, char** argv)
 {
-    static const char usage[] = 
+    static const char usage[] =
 	" zzcat <file>... \n"
 	"  - prints the file to stdout. the file can be a normal file\n"
 	"  or an inflated part of a zip-archive \n"
@@ -24,7 +24,7 @@ int main (int argc, char** argv)
         printf (usage);
         exit (0);
     }
-    
+
     for (argn=1; argn < argc; argn++)
     {
 	SDL_RWops* rwops;
@@ -39,7 +39,7 @@ int main (int argc, char** argv)
             int n;
 
             /* read chunks of 16 bytes into buf and print them to stdout */
-            while (0 < (n = SDL_RWread(rwops, buf, 16, 1)))
+            while (0 < (n = SDL_RWread(rwops, buf, 1, 16)))
             {
                 buf[n] = '\0';
 #             ifdef STDOUT_FILENO
@@ -49,13 +49,13 @@ int main (int argc, char** argv)
 #             endif
             }
 
-            if (n == -1) 
+            if (n == -1)
                 perror (argv[argn]);
 
 	    SDL_RWclose (rwops);
         }
     }
-    
+
     return 0;
 }
 

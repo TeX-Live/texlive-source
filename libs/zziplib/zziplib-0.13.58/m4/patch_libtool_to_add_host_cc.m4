@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/patch_libtool_to_add_host_cc.m4
 dnl @synopsis PATCH_LIBTOOL_TO_ADD_HOST_CC
 dnl
 dnl The libtool 1.4.x processing (and patched 1.3.5) uses a little
@@ -38,7 +39,7 @@ dnl for maximum compatibility and portability.
 dnl
 dnl @category Misc
 dnl @category C
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2005-01-21
 dnl @license GPLWithACException
 
@@ -62,3 +63,4 @@ HOST_CC=$HOST_CC" libtool >libtool.new
   fi
 fi
 ])
+

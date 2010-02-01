@@ -52,7 +52,7 @@
 /* we (ab)use the "*user" variable to store the FileMapping handle */
                  /* which assumes (sizeof(long) == sizeof(HANDLE)) */
 
-static size_t win32_getpagesize ()
+static size_t win32_getpagesize (void)
 { 
     SYSTEM_INFO si; GetSystemInfo (&si); 
     return si.dwAllocationGranularity; 

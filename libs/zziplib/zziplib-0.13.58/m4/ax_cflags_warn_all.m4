@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_cflags_warn_all.m4
 dnl @synopsis AX_CFLAGS_WARN_ALL [(shellvar [,default, [A/NA]])]
 dnl
 dnl Try to find a compiler option that enables most reasonable
@@ -19,8 +20,8 @@ dnl  - $3 action-if-found : add value to shellvariable
 dnl  - $4 action-if-not-found : nothing
 dnl
 dnl @category C
-dnl @author Guido Draheim <guidod@gmx.de>
-dnl @version 2003-01-06
+dnl @author Guido U. Draheim <guidod@gmx.de>
+dnl @version 2006-12-12
 dnl @license GPLWithACException
 
 AC_DEFUN([AX_CFLAGS_WARN_ALL],[dnl
@@ -72,7 +73,7 @@ AS_VAR_PUSHDEF([VAR],[ac_cv_cxxflags_warn_all])dnl
 AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for maximum warnings],
 VAR,[VAR="no, unknown"
  AC_LANG_SAVE
- AC_LANG_CXX
+ AC_LANG_CPLUSPLUS
  ac_save_[]FLAGS="$[]FLAGS"
 for ac_arg dnl
 in "-pedantic  % -Wall"       dnl   GCC
@@ -115,4 +116,6 @@ dnl   compilers will fail about it. That was needed since a lot of
 dnl   compilers will give false positives for some option-syntax
 dnl   like -Woption or -Xoption as they think of it is a pass-through
 dnl   to later compile stages or something. The "%" is used as a
-dnl   delimimiter. A non-option comment can be given after "%%" marks.
+dnl   delimimiter. A non-option comment can be given after "%%" marks
+dnl   which will be shown but not added to the respective C/CXXFLAGS.
+

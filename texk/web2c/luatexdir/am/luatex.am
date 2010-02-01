@@ -22,8 +22,8 @@ luatex_CPPFLAGS += -Dextra_version_info=`date +-%Y%m%d%H`
 luatex_CFLAGS = $(WARNING_CFLAGS)
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
-luatex_ldadd = libluatex.a libff.a libluamisc.a libzzip.a libluasocket.a liblua51.a
-luatex_ldadd += $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
+luatex_ldadd = libluatex.a libff.a libluamisc.a libluasocket.a liblua51.a
+luatex_ldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(XPDF_LIBS)
 luatex_ldadd += $(OBSDCOMPAT_LIBS) libmd5.a libmplib.a
 
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(lua_socketlibs)

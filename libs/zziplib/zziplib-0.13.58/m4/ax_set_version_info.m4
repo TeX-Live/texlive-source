@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_set_version_info.m4
 dnl @synopsis AX_SET_VERSION_INFO [(VERSION [,PREFIX])]
 dnl @synopsis default $1 = $PACKAGE_VERSION
 dnl @synopsis default $2 = <none>
@@ -60,7 +61,7 @@ dnl TEST_MAJOR_VERSION=2... and of course $TEST_RELEASE_INFO etc. (for
 dnl the moment, it needs to be a literal prefix *sigh*)
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2005-01-21
 dnl @license GPLWithACException
 
@@ -176,3 +177,4 @@ AS_VAR_POPDEF([MICRO])dnl
 AS_VAR_POPDEF([MINOR])dnl
 AS_VAR_POPDEF([MAJOR])dnl
 ])
+

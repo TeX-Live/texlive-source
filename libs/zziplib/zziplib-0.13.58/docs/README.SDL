@@ -1,3 +1,12 @@
+WARNING:
+  The following instructions are outdated. 
+  They refer back to 16. Dezember 2002 with zziplib version 0.10.66.
+  Most things refer to MSVC which have a different README 
+    (and there are msvc project files being shipped along)
+  The rest is mainly an example program that you can use as a
+    boilerplate in your souce code - may be just copy and use.
+
+---------------------------------------------------------------------
 16122002, Thomas.Eder@nmi.at, Using the zziplib library with SDL
 
 

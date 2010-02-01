@@ -1,5 +1,5 @@
 /*
- * Author: 
+ * Author:
  *	Guido Draheim <guidod@gmx.de>
  *	Tomi Ollila <Tomi.Ollila@iki.fi>
  *
@@ -7,20 +7,20 @@
  * 	    All rights reserved,
  *	    use under the restrictions of the
  *	    Lesser GNU General Public License
- *          or alternatively the restrictions 
+ *          or alternatively the restrictions
  *          of the Mozilla Public License 1.1
  */
 
 #include <stdio.h>
 #include <string.h>
 
-#if defined _MSC_VER /* Win32*/
+#include <zzip/lib.h>
+
+#if defined ZZIP_HAVE_WINDOWS_H
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #define sleep Sleep
 #endif
-
-#include <zzip/lib.h>
 
 #ifdef ZZIP_HAVE_UNISTD_H
 #include <unistd.h> /* sleep */
@@ -46,7 +46,7 @@ int main(int argc, char ** argv)
     const char * name = "test.zip";
     zzip_error_t rv;
     int i;
-  
+
     if (argc > 1 && argv[1] != NULL)
     {
 	if (! strcmp (argv[1], "--help")) {
@@ -70,15 +70,15 @@ int main(int argc, char ** argv)
             return 0;
         }
     } printf("OK.\n");
-  
+
 #if 1
     printf("{check...\n");
     { struct zzip_dir_hdr * hdr = dir->hdr0;
-    
-        if (hdr == NULL) 
+
+        if (hdr == NULL)
           { printf ("could not find first header in dir_hdr"); }
         else
-        {   
+        {
             while (1)
             {
                 printf("\ncompression method: %d", hdr->d_compr);
@@ -90,7 +90,7 @@ int main(int argc, char ** argv)
                 printf("uncompressed size: %d\n", hdr->d_usize);
                 printf("offset of file in archive: %d\n", hdr->d_off);
                 printf("filename: %s\n\n", hdr->d_name);
-    
+
                 if (hdr->d_reclen == 0) break;
                 I_(char *, hdr, += hdr->d_reclen);
                 sleep(1);
@@ -98,16 +98,16 @@ int main(int argc, char ** argv)
         }
     } printf ("\n}\n");
 #endif
-#if 1  
+#if 1
     { 	printf("{contents...\n");
         for (i = 0; i < 2; i++)
         {
             ZZIP_DIRENT* d;
-    
+
             while((d=zzip_readdir(dir)))
             {
-                printf(" name \"%s\", compr %d, size %d, ratio %2d\n", 
-                    d->d_name, d->d_compr, d->st_size, 
+                printf(" name \"%s\", compr %d, size %d, ratio %2d\n",
+                    d->d_name, d->d_compr, d->st_size,
                     100 - (d->d_csize|1)*100/(d->st_size|1));
             }
             printf(" %d. time ---------------\n", i + 1);
@@ -116,13 +116,13 @@ int main(int argc, char ** argv)
         printf("}...OK\n");
     }
 #endif
-  
+
     {   ZZIP_FILE * fp;
         char buf[17];
         const char * name = argv[1]? argv[1]: "README";
 
 
-        printf("Opening file `%s' in zip archive... ", name);    
+        printf("Opening file `%s' in zip archive... ", name);
         fp = zzip_file_open(dir, (char *)name, ZZIP_CASEINSENSITIVE);
 
         if (! fp)
@@ -141,12 +141,12 @@ int main(int argc, char ** argv)
             }
             if (i < 0) printf("error %d\n", zzip_error(dir));
         }
-    }  
-    
-    return 0;
-} 
+    }
 
-/* 
+    return 0;
+}
+
+/*
  * Local variables:
  * c-file-style: "stroustrup"
  * End:

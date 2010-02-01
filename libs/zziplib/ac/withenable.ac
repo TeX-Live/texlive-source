@@ -1,0 +1,7 @@
+## libs/zziplib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/zziplib/
+dnl
+dnl Copyright (C) 2010, 2010 Peter Breitenlohner <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## configure options and TL libraries required for zziplib
+KPSE_WITH_LIB([zziplib], [zlib])

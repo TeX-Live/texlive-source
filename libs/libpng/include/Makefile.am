@@ -24,5 +24,3 @@ all-local:
 distclean-local:
 	rm -f *.h
 
-
-

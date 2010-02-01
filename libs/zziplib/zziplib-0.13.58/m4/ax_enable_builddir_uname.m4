@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_enable_builddir_uname.m4
 dnl @synopsis AX_ENABLE_BUILDDIR_UNAME [(dirstring-or-command [,Makefile.mk])]
 dnl
 dnl if the current configure was run within the srcdir then we move all
@@ -43,7 +44,9 @@ dnl @author Guido U. Draheim
 dnl @version 2005-12-03
 dnl @license GPLWithACException
 
-AC_DEFUN([AX_ENABLE_BUILDDIR_UNAME],[AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+AC_DEFUN([AX_ENABLE_BUILDDIR_UNAME],[
+AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+AC_REQUIRE([AX_CONFIGURE_ARGS])[]dnl
 AC_BEFORE([$0],[AM_INIT_AUTOMAKE])dnl
 AS_VAR_PUSHDEF([SUB],[ax_enable_builddir])dnl
 AS_VAR_PUSHDEF([SED],[ax_enable_builddir_sed])dnl
@@ -77,11 +80,11 @@ if test ".$srcdir" = ".." ; then
       test -f $srcdir/confdefs.h   && mv $srcdir/confdefs.h   .
       test -f $srcdir/conftest.log && mv $srcdir/conftest.log .
       test -f $srcdir/$cache_file  && mv $srcdir/$cache_file  .
-      AC_MSG_RESULT(....exec $SHELL $srcdir/[$]0 "--srcdir=$srcdir" "--enable-builddir=$SUB" ${1+"[$]@"})
+      AC_MSG_RESULT(....exec $SHELL "$srcdir/[$]0" "--srcdir=$srcdir" "--enable-builddir=$SUB" $ac_configure_args)
       case "[$]0" in # restart
-       [/\\]) exec $SHELL [$]0 "--srcdir=$srcdir" "--enable-builddir=$SUB" ${1+"[$]@"} ;;
-       *) exec $SHELL $srcdir/[$]0 "--srcdir=$srcdir" "--enable-builddir=$SUB" ${1+"[$]@"} ;;
-      esac
+       [/\\]*) eval $SHELL "'[$]0'" "'--srcdir=$srcdir'" "'--enable-builddir=$SUB'" $ac_configure_args ;;
+       *) eval $SHELL "'$srcdir/[$]0'" "'--srcdir=$srcdir'" "'--enable-builddir=$SUB'" $ac_configure_args ;;
+      esac ; exit $?
     fi
   fi
 fi fi
@@ -158,3 +161,4 @@ ax_enable_builddir_sed="$ax_enable_builddir_sed"       # $SED
 ax_enable_builddir="$ax_enable_builddir"               # $SUB
 ])dnl
 ])
+

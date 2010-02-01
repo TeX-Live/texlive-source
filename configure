@@ -989,6 +989,7 @@ with_teckit_includes
 with_teckit_libdir
 with_graphite
 with_system_graphite
+with_system_zziplib
 with_system_xpdf
 with_system_gd
 with_gd_includes
@@ -1811,6 +1812,8 @@ Optional Packages:
   --without-graphite      build XeTeX without graphite support
   --with-system-graphite  use installed silgraphite headers and library
                           (requires pkg-config)
+  --with-system-zziplib   use installed zziplib headers and library (requires
+                          pkg-config)
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf (requires pkg-config)
   --with-system-gd        use installed gd headers and library
@@ -3399,6 +3402,7 @@ test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_xpdf=yes
   need_libpng=yes
   need_obsdcompat=yes
+  need_zziplib=yes
 }
 # Check whether --enable-xetex was given.
 if test "${enable_xetex+set}" = set; then :
@@ -4524,6 +4528,51 @@ $as_echo "$as_me: Using \`graphite' headers and library from TL tree" >&6;}
 fi
 
 
+## libs/zziplib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/zziplib/
+## configure options and TL libraries required for zziplib
+
+# Check whether --with-system-zziplib was given.
+if test "${with_system_zziplib+set}" = set; then :
+  withval=$with_system_zziplib;
+fi
+if test "x$with_system_zziplib" = x; then
+  if test -f $srcdir/libs/zziplib/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`zziplib' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`zziplib' headers and library from TL tree" >&6;}
+    with_system_zziplib=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`zziplib' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`zziplib' headers and library" >&6;}
+    with_system_zziplib=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-zziplib=$with_system_zziplib'"
+elif test "x$with_system_zziplib" = xyes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`zziplib' headers and library" >&5
+$as_echo "$as_me: Using installed \`zziplib' headers and library" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`zziplib' headers and library from TL tree" >&5
+$as_echo "$as_me: Using \`zziplib' headers and library from TL tree" >&6;}
+  if test "x$with_system_zziplib" != xno; then
+    with_system_zziplib=no
+    ac_configure_args="$ac_configure_args '--without-system-zziplib'"
+  fi
+fi
+if test "x$with_system_zziplib" = xyes; then
+  if test "x$with_system_zlib" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`zlib' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`zlib' headers and library" >&6;}
+    with_system_zlib=yes
+    ac_configure_args="$ac_configure_args '--with-system-zlib'"
+  elif test "x$with_system_zlib" != xyes; then
+    as_fn_error "Sorry, \`--with-system-zziplib' requires \`--with-system-zlib'" "$LINENO" 5
+  fi
+fi
+
+test "x$need_zziplib" = xyes && {
+  need_zlib=yes
+}
+
+
 ## libs/xpdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 ## configure options and TL libraries required for xpdf
 
@@ -4555,7 +4604,7 @@ $as_echo "$as_me: Using \`xpdf' headers and library from TL tree" >&6;}
 fi
 
 
-## libs/gd/kpse/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
+## libs/gd/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
 ## configure options and TL libraries required for gd
 
 # Check whether --with-system-gd was given.
@@ -4750,7 +4799,7 @@ fi
 ## configure options and TL libraries required for obsdcompat
 
 
-## libs/libpng/kpse/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
+## libs/libpng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
 ## configure options and TL libraries required for libpng
 
 # Check whether --with-system-libpng was given.
@@ -6854,13 +6903,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:6857: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:6906: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:6860: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:6909: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:6863: output\"" >&5)
+  (eval echo "\"\$as_me:6912: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -8066,7 +8115,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 8069 "configure"' > conftest.$ac_ext
+  echo '#line 8118 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -9698,11 +9747,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:9701: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:9750: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:9705: \$? = $ac_status" >&5
+   echo "$as_me:9754: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -10037,11 +10086,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10040: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10089: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10044: \$? = $ac_status" >&5
+   echo "$as_me:10093: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -10142,11 +10191,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10145: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10194: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10149: \$? = $ac_status" >&5
+   echo "$as_me:10198: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10197,11 +10246,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10200: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10249: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10204: \$? = $ac_status" >&5
+   echo "$as_me:10253: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12564,7 +12613,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12567 "configure"
+#line 12616 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12660,7 +12709,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12663 "configure"
+#line 12712 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17134,11 +17183,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17137: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17186: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:17141: \$? = $ac_status" >&5
+   echo "$as_me:17190: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17233,11 +17282,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17236: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17285: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17240: \$? = $ac_status" >&5
+   echo "$as_me:17289: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17285,11 +17334,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17288: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17337: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17292: \$? = $ac_status" >&5
+   echo "$as_me:17341: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -18403,7 +18452,7 @@ fi
 if $FT2_CONFIG --ftversion >/dev/null 2>&1; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
-elif test "x$need_freetype2:$with_system_freetype2" = 'xyes:yes'; then
+elif test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
   as_fn_error "did not find freetype-config required for system freetype2 library" "$LINENO" 5
 fi
 
@@ -18511,14 +18560,14 @@ if $PKG_CONFIG poppler --atleast-version=0.10; then
   POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
   XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
   XPDF_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_xpdf:$with_system_xpdf" = 'xyes:yes'; then
+elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
   as_fn_error "did not find poppler-0.10 or better" "$LINENO" 5
 fi
 
 if $PKG_CONFIG silgraphite --atleast-version=2.3; then
   GRAPHITE_INCLUDES="`$PKG_CONFIG silgraphite --cflags`"
   GRAPHITE_LIBS=`$PKG_CONFIG silgraphite --libs`
-elif test "x$need_graphite:$with_system_graphite" = 'xyes:yes'; then
+elif test "x$need_graphite:$with_system_graphite" = xyes:yes; then
   as_fn_error "did not find silgraphite 2.3 or better" "$LINENO" 5
 fi
 
@@ -18625,7 +18674,7 @@ fi
 if $ICU_CONFIG --version >/dev/null 2>&1; then
   ICU_INCLUDES=`$ICU_CONFIG --cppflags`
   ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath --ldflags-libsonly --ldflags-system`
-elif test "x$need_icu:$with_system_icu" = 'xyes:yes'; then
+elif test "x$need_icu:$with_system_icu" = xyes:yes; then
   as_fn_error "did not find icu-config required for system icu libraries" "$LINENO" 5
 fi
 
@@ -18637,10 +18686,17 @@ if test "x$with_kpathsea_libdir" != x && test "x$with_kpathsea_libdir" != xyes; 
   KPATHSEA_LIBS="-L$with_kpathsea_libdir $KPATHSEA_LIBS"
 fi
 
+if $PKG_CONFIG zziplib --atleast-version=0.12; then
+  ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
+  ZZIPLIB_LIBS=`$PKG_CONFIG zziplib --libs`
+elif test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
+  as_fn_error "did not find zziplib-0.12 or better" "$LINENO" 5
+fi
+
 
 ## libs/zlib/ac/zlib.ac: configure.ac fragment for the TeX Live subdirectory libs/zlib/
 ## basic check of system zlib
-if test "x$need_zlib:$with_system_zlib" = 'xyes:yes'; then
+if test "x$need_zlib:$with_system_zlib" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`zlib' library" >&5
 $as_echo_n "checking requested system \`zlib' library... " >&6; }
   CPPFLAGS="$ZLIB_INCLUDES $CPPFLAGS"
@@ -18672,7 +18728,7 @@ fi
 
 ## libs/libpng/ac/libpng.ac: configure.ac fragment for the TeX Live subdirectory libs/libpng/
 ## basic check of system libpng
-if test "x$need_libpng:$with_system_libpng" = 'xyes:yes'; then
+if test "x$need_libpng:$with_system_libpng" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`libpng' library" >&5
 $as_echo_n "checking requested system \`libpng' library... " >&6; }
   CPPFLAGS="$LIBPNG_INCLUDES $CPPFLAGS"
@@ -18703,7 +18759,7 @@ fi
 
 ## libs/t1lib/ac/t1lib.ac: configure.ac fragment for the TeX Live subdirectory libs/t1lib/
 ## basic check of system t1lib
-if test "x$need_t1lib:$with_system_t1lib" = 'xyes:yes'; then
+if test "x$need_t1lib:$with_system_t1lib" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`t1lib' library" >&5
 $as_echo_n "checking requested system \`t1lib' library... " >&6; }
   CPPFLAGS="$T1LIB_INCLUDES $CPPFLAGS"
@@ -18733,7 +18789,7 @@ fi
 
 ## libs/freetype/ac/freetype.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype/
 ## basic check of system freetype
-if test "x$need_freetype:$with_system_freetype" = 'xyes:yes'; then
+if test "x$need_freetype:$with_system_freetype" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`freetype' library" >&5
 $as_echo_n "checking requested system \`freetype' library... " >&6; }
   CPPFLAGS="$FREETYPE_INCLUDES $CPPFLAGS"
@@ -18763,7 +18819,7 @@ fi
 
 ## libs/freetype2/ac/freetype2.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype2/
 ## basic check of system freetype2
-if test "x$need_freetype2:$with_system_freetype2" = 'xyes:yes'; then
+if test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`freetype2' library" >&5
 $as_echo_n "checking requested system \`freetype2' library... " >&6; }
   CPPFLAGS="$FREETYPE2_INCLUDES $CPPFLAGS"
@@ -18794,7 +18850,7 @@ fi
 
 ## libs/gd/ac/gd.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
 ## basic check of system gd
-if test "x$need_gd:$with_system_gd" = 'xyes:yes'; then
+if test "x$need_gd:$with_system_gd" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`gd' library" >&5
 $as_echo_n "checking requested system \`gd' library... " >&6; }
   CPPFLAGS="$GD_INCLUDES $CPPFLAGS"
@@ -18829,7 +18885,7 @@ ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-if test "x$need_xpdf:$with_system_xpdf" = 'xyes:yes'; then
+if test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`xpdf' library" >&5
 $as_echo_n "checking requested system \`xpdf' library... " >&6; }
   CPPFLAGS="$XPDF_INCLUDES $CPPFLAGS"
@@ -18862,6 +18918,36 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+## libs/zziplib/ac/zziplib.ac: configure.ac fragment for the TeX Live subdirectory libs/zziplib/
+## basic check of system zziplib
+if test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`zziplib' library" >&5
+$as_echo_n "checking requested system \`zziplib' library... " >&6; }
+  CPPFLAGS="$ZZIPLIB_INCLUDES $CPPFLAGS"
+  LIBS="$ZZIPLIB_LIBS $LIBS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <zzip/zzip.h>
+int
+main ()
+{
+ZZIP_FILE *z_FILE = zzip_open("file_name", 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  syslib_used=yes kpse_res=ok
+else
+  syslib_status=no kpse_res=failed
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
+$as_echo "$kpse_res" >&6; }
+fi
+
+
 ## libs/graphite/ac/graphite.ac: configure.ac fragment for the TeX Live subdirectory libs/graphite/
 ## basic check of system graphite
 ac_ext=cpp
@@ -18869,7 +18955,7 @@ ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-if test "x$need_graphite:$with_system_graphite" = 'xyes:yes'; then
+if test "x$need_graphite:$with_system_graphite" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`graphite' library" >&5
 $as_echo_n "checking requested system \`graphite' library... " >&6; }
   CPPFLAGS="$GRAPHITE_INCLUDES $CPPFLAGS"
@@ -18910,7 +18996,7 @@ ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-if test "x$need_teckit:$with_system_teckit" = 'xyes:yes'; then
+if test "x$need_teckit:$with_system_teckit" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`teckit' library" >&5
 $as_echo_n "checking requested system \`teckit' library... " >&6; }
   CPPFLAGS="$TECKIT_INCLUDES $CPPFLAGS"
@@ -18950,7 +19036,7 @@ ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-if test "x$need_icu:$with_system_icu" = 'xyes:yes'; then
+if test "x$need_icu:$with_system_icu" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`icu' library" >&5
 $as_echo_n "checking requested system \`icu' library... " >&6; }
   CPPFLAGS="$ICU_INCLUDES $CPPFLAGS"
@@ -18986,7 +19072,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 ## texk/kpathsea/ac/kpathsea.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
 ## basic check of system kpathsea
-if test "x$need_kpathsea:$with_system_kpathsea" = 'xyes:yes'; then
+if test "x$need_kpathsea:$with_system_kpathsea" = xyes:yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`kpathsea' library" >&5
 $as_echo_n "checking requested system \`kpathsea' library... " >&6; }
   CPPFLAGS="$KPATHSEA_INCLUDES $CPPFLAGS"

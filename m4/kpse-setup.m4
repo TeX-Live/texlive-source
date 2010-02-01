@@ -1,5 +1,5 @@
 # Private macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -177,7 +177,7 @@ m4_define([kpse_syslib_pkgs], [])
 # check that the flags derived from --with-LIB-includes and --with-LIB-libdir
 # or determined otherwise provide the required functionality.
 AC_DEFUN([KPSE_TRY_LIB],
-[if test "x$need_[]AS_TR_SH($1):$with_system_[]AS_TR_SH($1)" = 'xyes:yes'; then
+[if test "x$need_[]AS_TR_SH($1):$with_system_[]AS_TR_SH($1)" = xyes:yes; then
   AC_MSG_CHECKING([requested system `$1' library])
   CPPFLAGS="$AS_TR_CPP($1)_INCLUDES $CPPFLAGS"
   LIBS="$AS_TR_CPP($1)_LIBS $LIBS"

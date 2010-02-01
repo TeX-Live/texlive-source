@@ -6,14 +6,17 @@ WANT_AUTOCONF = 2.57
 DIST_SUBDIRS = zzip zzipwrap bins test docs  SDL
 SUBDIRS =      zzip zzipwrap bins test docs @SDL@
 
-# see Makefile.mk for the "make rpm" target
-rpm2: dist-bzip2 $(PACKAGE).spec
+rpm: dist-bzip2 $(PACKAGE).spec
 	rpmbuild -ta $(PACKAGE)-$(VERSION).tar.bz2
+	test -d ../pub && cp $(PACKAGE)-$(VERSION).tar.bz2 ../pub/
 
-zzip.html zzip.xml zzip.pdf \
-doc docu clean-doc clean-docs clean-docu \
-man manpages htmpages unpack clean-unpack \
-omf install-omf install-doc install-sfnet install-man3 x :
+indent-check:
+	(cd zzip && $(MAKE) `basename $@`)
+
+doc docs docu clean-doc clean-docs clean-docu   zzip.html zzip.xml zzip.pdf \
+man mans manpages htmpages unpack clean-unpack  changes.htm pdfs \
+omf install-omf install-doc install-docs install-man3 install-mans \
+upload-sourceforge www:
 	(cd docs && $(MAKE) `basename $@`)
 
 sdl testsdl test-sdl install-sdl :
@@ -30,7 +33,8 @@ msvc8/zziplib.sln     msvc8/zzipsetstub.sln     msvc8/zzobfuscated.sln \
 msvc8/zziplib.vcproj  msvc8/zzipsetstub.vcproj  msvc8/zzobfuscated.vcproj \
 msvc8/zzcat.sln       msvc8/zzipself.bat        msvc8/zzip.sln \
 msvc8/zzcat.vcproj    msvc8/zzipself.sln        msvc8/zziptest.sln \
-msvc8/zzdir.sln       msvc8/zzipself.txt        msvc8/zziptest.vcproj
+msvc8/zzdir.sln       msvc8/zzipself.txt        msvc8/zziptest.vcproj \
+                      msvc8/zzipfseeko.vcproj   msvc8/zzipmmapped.vcproj 
 
 MSVC7 =   msvc7/pkzip.exe msvc7/test1.zip msvc7/test.zip \
 msvc7/zzdir.vcproj    msvc7/zzipself.vcproj     msvc7/zzip.vcproj \
@@ -50,7 +54,6 @@ EXTRA_DIST =   zziplib.spec zzipback.sed Makefile.mk \
 
 PHONY = auto boottrap rpm doc docs man manpages htmpages sdl testsdl \
 	comp compats msvc6 msvc7
-docs : docu
 # ------------------------------------------------------------------------
 
 test-comp:
@@ -76,3 +79,49 @@ msvc :
 	zip -9r $(srcdir)/$(PACKAGE)-$(VERSION)-msvc6-bin.zip bin/
 	zip -9r $(srcdir)/$(PACKAGE)-$(VERSION)-msvc6-lib.zip lib/ include/
 	rm -r bin lib include
+
+# ------------------------------------------------------------------ zzip64
+_FILE_OFFSET64 = -D_ZZIP_LARGEFILE -D_FILE_OFFSET_BITS=64
+_RELEASEINFO64 = "RELEASE_INFO=-release 0-64"
+
+zzip64-setup: zzip64-setup.tmp
+zzip64-setup.tmp : zzip/Makefile zzip/_config.h zzip/.deps/* zzip/zziplib.pc
+	- mkdir zzip64
+	cp -a zzip/Makefile zzip/_config.h zzip/.deps/ zzip/zziplib.pc zzip64/
+	date > zzip64.dir
+zzip64-build: zzip64-build.tmp
+zzip64-build.tmp : zzip64-setup.tmp $(top_srcdir)/zzip/*
+	cd zzip64 && $(MAKE) "AM_CFLAGS=$(_FILE_OFFSET64)" $(_RELEASEINFO64)
+zzip64-install: zzip64-install.tmp
+zzip64-install.tmp : zzip64-build.tmp
+	cd zzip64 && $(MAKE) install $(_RELEASEINFO64)
+	cd $(DESTDIR)$(libdir) && mv    libzzip.so   libzzip64.so
+	cd $(DESTDIR)$(libdir) && mv    libzzip.a    libzzip64.a
+	cd $(DESTDIR)$(libdir) && \
+        sed -e 's/zzip.so/zzip64.so/' \
+            -e 's/zzip.a/zzip64.a/'     libzzip.la > libzzip64.la
+	cd $(DESTDIR)$(libdir)/pkgconfig && \
+	sed -e 's/largefile=/largefile= %_FILE_OFFSET64/' \
+	    -e 's/-lzzip/-lzzip64/' \
+	    -e 's/zziplib/zziplib64/'   zziplib.pc > zziplib64.pc
+zzip32-postinstall:
+	cd $(DESTDIR)$(libdir) && mv    libzzip.so   libzzip32.so
+	cd $(DESTDIR)$(libdir) && mv    libzzip.a    libzzip32.a
+	cd $(DESTDIR)$(libdir) && ln -s libzzip32.so libzzip.so
+	cd $(DESTDIR)$(libdir) && ln -s libzzip32.a  libzzip.a
+	cd $(DESTDIR)$(libdir) && \
+	sed -e 's/zzip.so/zzip32.so/' \
+	    -e 's/zzip.a/zzip32.a/'     libzzip.la > libzzip32.la
+	cd $(DESTDIR)$(libdir)/pkgconfig && \
+	sed -e 's/-lzzip/-lzzip32/' \
+	     -e 's/zziplib/zziplib32/'  zziplib.pc > zziplib32.pc
+zzip-postinstall:
+	: "the 12.8x and 11.8x and 10.8x packages are all the same actually"
+	cd $(DESTDIR)$(libdir) || exit 1 \
+	; for i in libzzip*.so.1? ; do : \
+	; v10=`echo $$i | sed -e "s/.so.../.so.10/"` \
+	; v11=`echo $$i | sed -e "s/.so.../.so.11/"` \
+	; v12=`echo $$i | sed -e "s/.so.../.so.12/"` \
+	; test ! -e "$$v10" && test -e "$$v12" && test "$$v10" != "$$v12" && ln -s "$$v12" "$$v10" \
+	; test ! -e "$$v12" && test -e "$$v10" && test "$$v12" != "$$v10" && ln -s "$$v10" "$$v12" \
+	; test "$$v10" != "$$v11" && ln -s "$$v10" "$$v11" || true; done

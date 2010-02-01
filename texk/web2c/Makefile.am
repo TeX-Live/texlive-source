@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
@@ -88,6 +88,8 @@ $(proglib): ${srcdir}/lib/*.c
 @XPDF_RULE@
 ## Rebuild libopenbsd-compat
 @OBSDCOMPAT_RULE@
+## Rebuild libzzip
+@ZZIPLIB_RULE@
 ## Rebuild libgraphite
 @GRAPHITE_RULE@
 ## Rebuild libfreetype
@@ -160,7 +162,6 @@ include $(srcdir)/pdftexdir/am/pdftosrc.am
 include $(srcdir)/luatexdir/am/luatex.am
 include $(srcdir)/luatexdir/am/luatangle.am
 include $(srcdir)/luatexdir/am/liblua51.am
-include $(srcdir)/luatexdir/am/libzzip.am
 include $(srcdir)/luatexdir/am/luasocket.am
 include $(srcdir)/luatexdir/am/luamisc.am
 include $(srcdir)/luatexdir/am/luafontforge.am

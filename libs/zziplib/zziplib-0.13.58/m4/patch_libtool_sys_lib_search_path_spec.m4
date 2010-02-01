@@ -1,3 +1,5 @@
+dnl /usr/share/aclocal/guidod-cvs/patch_libtool_sys_lib_search_path_spec.m4
+dnl ______ /usr/share/aclocal/guidod-cvs/patch_libtool_sys_lib_search_path_spec.m4 ______
 dnl @synopsis PATCH_LIBTOOL_SYS_LIB_SEARCH_PATH_SPEC
 dnl
 dnl Cross-compiling to win32 from a unix system reveals a bug - the
@@ -18,7 +20,7 @@ dnl $PATH_SEPARATOR in the first place as the original path delimiter
 dnl that will be scanned for and replaced into spaces.
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2005-01-21
 dnl @license GPLWithACException
 
@@ -35,3 +37,5 @@ AC_MSG_RESULT(patching libtool to fix sys_lib_search_path_spec)
   fi
 fi
 ])
+
+

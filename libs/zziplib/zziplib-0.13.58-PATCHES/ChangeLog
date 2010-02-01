@@ -1,0 +1,4 @@
+2010-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-old-style-parameter (new): Avoid compiler warning.
+

@@ -12,10 +12,16 @@
  *          or alternatively the restrictions 
  *          of the Mozilla Public License 1.1
  *
- * if you see "unknown symbol" errors, check first that `-I ..` is part of
- * your compiler options - a special hint to VC/IDE users who tend to make up
- * their own workspace files. All includes look like #include <zzip|*.h>, so
- * you need to add an include path to the dir containing (!!) the ./zzip/ dir
+ * This file is usually the first to define some real symbols. If you do
+ * see some errors here then it is most likely the includepath is wrong
+ * or some includeheader is missing / unreadable on your system.
+ * (a) we include local headers with a "zzip/" prefix just to be sure
+ *     to not actually get the wrong one. Consider to add `-I..` somewhere
+ *     and especially VC/IDE users (who make up their own workspace files)
+ *     should include the root source directory of this project.
+ * (b) size_t and ssize_t are sometimes found be `configure` but they are
+ *     not in the usual places (ANSI C = stddef.h; UNIX = sys/types.h), so
+ *     be sure to look for them and add the respective header as an #include.
  */
 
 #ifndef _ZZIP_TYPES_H_
@@ -33,8 +39,8 @@ typedef unsigned char zzip_byte_t; // especially zlib decoding data
 
 typedef       _zzip_off64_t     zzip_off64_t;
 typedef       _zzip_off_t       zzip_off_t;
-typedef       _zzip_size_t      zzip_size_t;
-typedef       _zzip_ssize_t     zzip_ssize_t;
+typedef       _zzip_size_t      zzip_size_t;      /* Some error here? */
+typedef       _zzip_ssize_t     zzip_ssize_t;     /* See notes above! */
 
 /* in <zzip/format.h> */
 typedef struct zzip_disk64_trailer ZZIP_DISK64_TRAILER;

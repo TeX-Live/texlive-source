@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/luafontforge.am: Makefile fragment for libff.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## luafontforge
@@ -9,7 +9,7 @@ EXTRA_LIBRARIES += libff.a
 
 libff_a_DEPENDENCIES = libluamisc.a
 
-$(libff_a_OBJECTS): libluamisc.a
+$(libff_a_OBJECTS): $(libff_a_DEPENDENCIES)
 
 libff_a_CPPFLAGS = \
 	-DFONTFORGE_CONFIG_NO_WINDOWING_UI=1 -DLUA_FF_LIB=1 \

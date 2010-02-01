@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_warning_default_pkgconfig.m4
 dnl @synopsis AX_WARNING_DEFAULT_PKGCONFIGDIR [(dirvariable [,[defsetting][,[A][,[N/A]]]])]
 dnl @synopsis AX_ENABLE_DEFAULT_PKGCONFIGDIR [(dirvariable [,defsetting])]
 dnl
@@ -27,7 +28,7 @@ dnl default is set to the primary path where `pkg-config` looks for .pc
 dnl files. The user may also override the default on the command line.
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2005-01-21
 dnl @license GPLWithACException
 
@@ -125,3 +126,4 @@ AS_VAR_POPDEF([DEF])dnl
 AS_VAR_POPDEF([DIR])dnl
 AS_VAR_POPDEF([BIN])dnl
 ])
+

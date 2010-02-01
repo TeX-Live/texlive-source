@@ -1,3 +1,4 @@
+dnl ______ /usr/share/aclocal/guidod-cvs/ax_create_pkgconfig_info.m4 ______
 dnl @synopsis AX_CREATE_PKGCONFIG_INFO [(outputfile, [requires [,libs [,summary [,cflags [, ldflags]]]]])]
 dnl
 dnl defaults:
@@ -22,7 +23,7 @@ dnl whole project.
 dnl
 dnl @category InstalledPackages
 dnl @author Sven Verdoolaege <skimo*liacs.nl>
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2003-10-19
 dnl @license GPLWithACException
 
@@ -146,7 +147,7 @@ PKGCONFIG_src_headers=`pwd`
 v="$ac_top_srcdir" ;
 test ".$v" != "." || v="$ax_spec_dir"
 test ".$v" != "." || v="$srcdir"
-case "$v" in /*) PKG_CONFIG_src_headers="" ;; esac
+case "$v" in /*) PKGCONFIG_src_headers="" ;; esac
 PKGCONFIG_src_headers=`AS_DIRNAME("$PKGCONFIG_src_headers/$v/x")`
 test ! -d $PKGCONFIG_src_headers/incl[]ude || \
 PKGCONFIG_src_headers="$PKGCONFIG_src_headers/incl[]ude"
@@ -171,6 +172,7 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 bindir=@bindir@
 libdir=@libdir@
+datarootdir=@datarootdir@
 datadir=@datadir@
 sysconfdir=@sysconfdir@
 includedir=@includedir@
@@ -191,6 +193,7 @@ s|@prefix@|${pkgconfig_prefix}|
 s|@exec_prefix@|${pkgconfig_execprefix}|
 s|@bindir@|${pkgconfig_bindir}|
 s|@libdir@|${pkgconfig_libdir}|
+s|@datarootdir@|${pkgconfig_datarootdir}|
 s|@datadir@|${pkgconfig_datadir}|
 s|@sysconfdir@|${pkgconfig_sysconfdir}|
 s|@includedir@|${pkgconfig_includedir}|
@@ -215,6 +218,7 @@ s|@prefix@|${pkgconfig_prefix}|
 s|@exec_prefix@|${pkgconfig_execprefix}|
 s|@bindir@|${pkgconfig_bindir}|
 s|@libdir@|${pkgconfig_src_libdir}|
+s|@datarootdir@|${pkgconfig_datarootdir}|
 s|@datadir@|${pkgconfig_datadir}|
 s|@sysconfdir@|${pkgconfig_sysconfdir}|
 s|@includedir@|${pkgconfig_src_headers}|
@@ -243,6 +247,7 @@ s|@prefix@|\"${pkgconfig_prefix}\"|
 s|@exec_prefix@|\"${pkgconfig_execprefix}\"|
 s|@bindir@|\"${pkgconfig_bindir}\"|
 s|@libdir@|\"${pkgconfig_src_libdir}\"|
+s|@datarootdir@|\"${pkgconfig_datarootdir}\"|
 s|@datadir@|\"${pkgconfig_datadir}\"|
 s|@sysconfdir@|\"${pkgconfig_sysconfdir}\"|
 s|@includedir@|\"${pkgconfig_src_headers}\"|
@@ -281,6 +286,7 @@ pkgconfig_execprefix='$exec_prefix'
 pkgconfig_bindir='$bindir'
 pkgconfig_libdir='$libdir'
 pkgconfig_includedir='$includedir'
+pkgconfig_datarootdir='$datarootdir'
 pkgconfig_datadir='$datadir'
 pkgconfig_sysconfdir='$sysconfdir'
 pkgconfig_suffix='$ax_create_pkgconfig_suffix'
@@ -310,3 +316,4 @@ AS_VAR_POPDEF([PKGCONFIG_generate])dnl
 AS_VAR_POPDEF([PKGCONFIG_src_libdir])dnl
 AS_VAR_POPDEF([PKGCONFIG_src_headers])dnl
 ])
+

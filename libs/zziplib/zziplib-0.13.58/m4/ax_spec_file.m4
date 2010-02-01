@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_spec_file.m4
 dnl @synopsis AX_SPEC_FILE [(rpmspecfile [,subdirpath])]
 dnl
 dnl set the specfile - if no argument has been given then check whether
@@ -11,7 +12,7 @@ dnl
 dnl AX_SPEC_EXTRACT(shellvar [,specvar [,defaultvalue]])
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2005-01-21
 dnl @license GPLWithACException
 
@@ -96,3 +97,4 @@ AC_DEFUN([AX_SPEC_EXTRACT],
   m4_ifval([$3],[test ".$[]$1" = "." && $1="$3"])
     fi # test ".$[]$1" = "."
 ])
+

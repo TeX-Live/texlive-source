@@ -1,0 +1,12 @@
+diff -ur zziplib-0.13.58.orig/zzip/plugin.c zziplib-0.13.58/zzip/plugin.c
+--- zziplib-0.13.58.orig/zzip/plugin.c	2009-08-23 13:38:22.000000000 +0200
++++ zziplib-0.13.58/zzip/plugin.c	2010-01-30 18:42:31.000000000 +0100
+@@ -58,7 +58,7 @@
+  * wrapping the posix io file functions for actual file access.
+  */
+ zzip_plugin_io_t
+-zzip_get_default_io()
++zzip_get_default_io(void)
+ {
+     return (zzip_plugin_io_t) & default_io;
+ }

@@ -1,10 +1,10 @@
+# norootforbuild
 %define lib   lib010
 Summary:      ZZipLib - libZ-based ZIP-access Library
 Name:         zziplib
-Version:      0.13.47
-Release:      1.suse100
-Serial:       1
-Copyright:    LGPL
+Version:      0.13.58
+Release:      1
+License:      LGPL
 Group:        Development/Libraries
 URL:          http://zziplib.sf.net
 Vendor:       Guido Draheim <guidod@gmx.de>
@@ -16,6 +16,7 @@ Packager:     Guido Draheim <guidod@gmx.de>
 Requires:      zlib
 BuildRequires: zlib-devel
 BuildRequires: SDL-devel
+BuildRequires: zip
 
 #Begin3
 # Author1:        too@iki.fi (Tomi Ollila)
@@ -30,19 +31,29 @@ BuildRequires: SDL-devel
 %package %lib
 Summary:      ZZipLib - Documentation Files
 Group:        Development/Libraries
-Provides:     zziplib
-Provides:     libzzip0
+Provides:     zziplib = %version
+Provides:     libzzip0 = %version
 Provides:     libzzip-0.so.10
 
 %package doc
 Summary:      ZZipLib - Documentation Files
 Group:        Development/Libraries
+BuildRequires: python
+BuildRequires: xmlto
+PreReq: scrollkeeper
 
 %package devel
 Summary:      ZZipLib - Development Files
 Group:        Development/Libraries
 Requires:     zziplib-%lib = %version
-# Requires: pkgconfig (not yet)
+Requires:     pkgconfig
+
+%package SDL_rwops-devel
+Summary:      ZZipLib - Development Files for SDL_rwops
+Group:        Development/Libraries
+Requires:     zziplib-%lib = %version
+Requires:     pkgconfig
+BuildRequires: SDL-devel
 
 %description
  : zziplib provides read access to zipped files in a zip-archive,
@@ -57,7 +68,7 @@ Requires:     zziplib-%lib = %version
  zip file - as it is sometimes used with gamedata or script repositories.
  The library itself is fully multithreaded, and it is namespace clean
  using the zzip_ prefix for its exports and declarations.
- 
+
 %description doc
  : zziplib provides read access to zipped files in a zip-archive,
  : using compression based solely on free algorithms provided by zlib.
@@ -69,73 +80,61 @@ Requires:     zziplib-%lib = %version
  these are the header files needed to develop programs using zziplib.
  there are test binaries to hint usage of the library in user programs.
 
+%description SDL_rwops-devel
+ : zziplib provides read access to zipped files in a zip-archive,
+ : using compression based solely on free algorithms provided by zlib.
+ these are example headers and implementation along with a pkgconfig
+ script that allows to easily use zziplib through SDL_rwops calls.
+
 %prep
 #'
 %setup
-# fixing relink problems during install too
-LDFLAGS="-L%buildroot%_libdir" \
+
+
 CFLAGS="$RPM_OPT_FLAGS" \
-sh configure --prefix=%{_prefix} --enable-sdl --disable-builddir \
-  --with-docdir=%{_docdir} --mandir=%{_mandir} TIMEOUT=9
-cp -a zzip zzip64
+sh configure --prefix=%{_prefix} \
+             --with-docdir=%{_docdir} \
+             --mandir=%{_mandir} \
+             --bindir=%{_bindir} \
+             --libdir=%{_libdir} \
+             --enable-sdl  TIMEOUT=9
+%__make zzip64-setup
 
 %build
-%define _FILE_OFFSET64 -D_ZZIP_LARGEFILE -D_FILE_OFFSET_BITS=64
-%define _RELEASEINFO64 "RELEASE_INFO=-release 0-64"
-%define _CFLAGS_OFFSET64 "AM_CFLAGS=%_FILE_OFFSET64"
-make
-(cd zzip64 && make %_CFLAGS_OFFSET64 %_RELEASEINFO64)
-make doc
+%__make %{?jobs:-j%jobs}
+%__make check
+%__make test-sdl
+%__make %{?jobs:-j%jobs} zzip64-build
+%__make %{?jobs:-j%jobs} doc
 
 %install
-rm -rf %{buildroot}
-(cd zzip64 && make install %_RELEASEINFO64 DESTDIR=%{buildroot})
-(cd %buildroot/%_libdir && mv    libzzip.so   libzzip64.so)
-(cd %buildroot/%_libdir && mv    libzzip.a    libzzip64.a)
-(cd %buildroot/%_libdir && \
-sed -e 's/zzip.so/zzip64.so/' -e 's/zzip.a/zzip64.a/' libzzip.la >libzzip64.la)
-(cd %buildroot/%_libdir/pkgconfig && \
-sed -e 's/largefile=/largefile= %_FILE_OFFSET64/' \
-    -e 's/-lzzip/-lzzip64/' -e 's/zziplib/zziplib64/' zziplib.pc >zziplib64.pc)
-
-make install DESTDIR=%{buildroot}
-(cd %buildroot/%_libdir && mv    libzzip.so   libzzip32.so)
-(cd %buildroot/%_libdir && mv    libzzip.a    libzzip32.a)
-(cd %buildroot/%_libdir && ln -s libzzip32.so libzzip.so)
-(cd %buildroot/%_libdir && ln -s libzzip32.a  libzzip.a)
-(cd %buildroot/%_libdir && \
-sed -e 's/zzip.so/zzip32.so/' -e 's/zzip.a/zzip32.a/' libzzip.la >libzzip32.la)
-(cd %buildroot/%_libdir/pkgconfig && \
-sed -e 's/-lzzip/-lzzip32/' -e 's/zziplib/zziplib32/' zziplib.pc >zziplib32.pc)
-
-# the 12.8x and 11.8x and 10.8x packages are all the same actually
-(cd %buildroot/%_libdir && \
-(for i in libzzip*.so.1? ; do : \
-; v10=`echo $i | sed -e "s/.so.../.so.10/"` \
-; v11=`echo $i | sed -e "s/.so.../.so.11/"` \
-; v12=`echo $i | sed -e "s/.so.../.so.12/"` \
-; test ! -e $v10 && test -e $v12 && ln -s $v12 $v10 \
-; test ! -e $v12 && test -e $v10 && ln -s $v10 $v12 \
-; ln -s $v10 $v11 || true; done))
-
-make install-doc DESTDIR=%{buildroot}
-make install-man3 DESTDIR=%{buildroot}
-
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
+%__rm -rf %{buildroot}
+%__make zzip64-install DESTDIR=%{buildroot}
+%__make install DESTDIR=%{buildroot}
+%__make zzip32-postinstall DESTDIR=%{buildroot}
+%__make zzip-postinstall
+%__make install-doc DESTDIR=%{buildroot}
+%__make install-mans DESTDIR=%{buildroot}
+%__make install-sdl DESTDIR=%{buildroot}
 
 %clean
-rm -rf %{buildroot}
+%__rm -rf %{buildroot}
 
 %files %lib
       %defattr(-,root,root)
       %{_libdir}/lib*.so.*
 
+%post %lib
+/sbin/ldconfig || true
+%postun %lib
+/sbin/ldconfig || true
+
 %files doc
       %defattr(-,root,root)
-      %{_datadir}/groups/*
+      %{_datadir}/doc/*
 %dir  %{_datadir}/omf/%{name}
       %{_datadir}/omf/%{name}/*
+
 %post doc
 test ! -f %_bindir/scrollkeeper-update || %_bindir/scrollkeeper-update
 %postun doc
@@ -150,8 +149,13 @@ test ! -f %_bindir/scrollkeeper-update || %_bindir/scrollkeeper-update
       %{_libdir}/lib*.so
       %{_libdir}/lib*.a
       %{_libdir}/lib*.la
-      %{_libdir}/pkgconfig/*
-%dir  %{_datadir}/%{name}
-      %{_datadir}/%{name}/*
+      %{_libdir}/pkgconfig/zzip*
       %{_datadir}/aclocal/%{name}*.m4
-      %{_mandir}/man3/*	
+      %{_mandir}/man3/*
+
+%files SDL_rwops-devel
+      %defattr(-,root,root)
+      %{_libdir}/pkgconfig/SDL*zzip*
+%dir  %{_includedir}/SDL_rwops_zzip
+      %{_includedir}/SDL_rwops_zzip/*
+

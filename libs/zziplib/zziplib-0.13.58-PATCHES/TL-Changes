@@ -1,0 +1,43 @@
+Changes applied to the zziplib-0.13.58/ tree as obtained from:
+	http://zziplib.sourceforge.net/
+
+Copied:
+	m4/ax_prefix_config_h.m4 -> ../m4 (without AC_BEFORE)
+
+Removed:
+	aclocal.m4
+	uses/
+	zzip/_config.h
+	zzip/_msvc.h
+
+Converted Dos/Win line ends to native:
+	docs/README.MSVC6
+	docs/sdocbook.css
+	msvc6/zzcat.dsp
+	msvc6/zzdir.dsp
+	msvc6/zzip.dsp
+	msvc6/zziplib.dsp
+	msvc6/zziplib.dsw
+	msvc6/zziptest.dsp
+	msvc6/zzipwrap.dsp
+	msvc6/zzobfuscated.dsp
+	msvc7/zzcat.sln
+	msvc7/zzdir.sln
+	msvc7/zzip.sln
+	msvc7/zziplib.sln
+	msvc7/zzipself.sln
+	msvc7/zzipsetstub.sln
+	msvc7/zziptest.sln
+	msvc7/zzobfuscated.sln
+	msvc8/zzcat.sln
+	msvc8/zzdir.sln
+	msvc8/zzip.sln
+	msvc8/zziplib.sln
+	msvc8/zzipself.sln
+	msvc8/zzipsetstub.sln
+	msvc8/zziptest.sln
+	msvc8/zzobfuscated.sln
+	zzip/file.h
+	zzip/stdint.h
+	zzip/zziplib.wpj
+

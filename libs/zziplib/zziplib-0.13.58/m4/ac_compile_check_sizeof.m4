@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/ac-archive-cvs/ac_compile_check_sizeof.m4
 dnl @synopsis AC_COMPILE_CHECK_SIZEOF(TYPE [, HEADERS [, EXTRA_SIZES...]])
 dnl
 dnl This macro checks for the size of TYPE using compile checks, not
@@ -76,3 +77,4 @@ AC_DEFINE_UNQUOTED(AC_TYPE_NAME, $AC_CV_NAME, [The number of bytes in type $1])
 undefine([AC_TYPE_NAME])dnl
 undefine([AC_CV_NAME])dnl
 ])
+

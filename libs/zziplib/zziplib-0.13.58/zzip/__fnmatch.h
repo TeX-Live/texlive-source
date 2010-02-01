@@ -3,6 +3,7 @@
 /** included by fseeko.c, mmapped.c, memdisk.c */
 
 #include <zzip/conf.h>
+#include <stdio.h>
 
 #ifdef ZZIP_HAVE_FNMATCH_H
 #include <fnmatch.h>
@@ -20,7 +21,7 @@
 /* if your system does not have fnmatch, we fall back to strcmp: */
 static int _zzip_fnmatch(char* pattern, char* string, int flags)
 { 
-    puts ("<zzip:mmapped:strcmp>");
+    fprintf (stderr, "<zzip:mmapped:strcmp>");
     return strcmp (pattern, string); 
 }
 #endif

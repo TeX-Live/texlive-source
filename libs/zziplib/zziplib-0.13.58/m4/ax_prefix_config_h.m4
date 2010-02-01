@@ -82,10 +82,11 @@ dnl   #define _testpkg_const const
 dnl   #endif
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2003-07-03
 dnl @license GPLWithACException
-AC_DEFUN([AX_PREFIX_CONFIG_H],[AC_REQUIRE([AC_CONFIG_HEADER])
+AC_DEFUN([AX_PREFIX_CONFIG_H],[dnl
+AC_BEFORE([AC_CONFIG_HEADERS],[$0])dnl
 AC_CONFIG_COMMANDS([ifelse($1,,$PACKAGE-config.h,$1)],[dnl
 AS_VAR_PUSHDEF([_OUT],[ac_prefix_conf_OUT])dnl
 AS_VAR_PUSHDEF([_DEF],[ac_prefix_conf_DEF])dnl
@@ -128,12 +129,12 @@ else
   fi fi
   AC_MSG_NOTICE(creating $_OUT - prefix $_UPP for $_INP defines)
   if test -f $_INP ; then
-    echo "s/@%:@undef  *\\(@<:@m4_cr_LETTERS[]_@:>@\\)/@%:@undef $_UPP""_\\1/" > _script
-    echo "s/@%:@undef  *\\(@<:@m4_cr_letters@:>@\\)/@%:@undef $_LOW""_\\1/" >> _script
-    echo "s/@%:@def[]ine  *\\(@<:@m4_cr_LETTERS[]_@:>@@<:@_symbol@:>@*\\)\\(.*\\)/@%:@ifndef $_UPP""_\\1 \\" >> _script
+    echo "s/^@%:@undef  *\\(@<:@m4_cr_LETTERS[]_@:>@\\)/@%:@undef $_UPP""_\\1/" > _script
+    echo "s/^@%:@undef  *\\(@<:@m4_cr_letters@:>@\\)/@%:@undef $_LOW""_\\1/" >> _script
+    echo "s/^@%:@def[]ine  *\\(@<:@m4_cr_LETTERS[]_@:>@@<:@_symbol@:>@*\\)\\(.*\\)/@%:@ifndef $_UPP""_\\1 \\" >> _script
     echo "@%:@def[]ine $_UPP""_\\1 \\2 \\" >> _script
     echo "@%:@endif/" >>_script
-    echo "s/@%:@def[]ine  *\\(@<:@m4_cr_letters@:>@@<:@_symbol@:>@*\\)\\(.*\\)/@%:@ifndef $_LOW""_\\1 \\" >> _script
+    echo "s/^@%:@def[]ine  *\\(@<:@m4_cr_letters@:>@@<:@_symbol@:>@*\\)\\(.*\\)/@%:@ifndef $_LOW""_\\1 \\" >> _script
     echo "@%:@define $_LOW""_\\1 \\2 \\" >> _script
     echo "@%:@endif/" >> _script
     # now executing _script on _DEF input to create _OUT output file
@@ -169,3 +170,13 @@ AS_VAR_POPDEF([_PKG])dnl
 AS_VAR_POPDEF([_DEF])dnl
 AS_VAR_POPDEF([_OUT])dnl
 ],[PACKAGE="$PACKAGE"])])
+
+dnl implementation note: a bug report (31.5.2005) from Marten Svantesson points 
+dnl out a problem where `echo "\1"` results in a Control-A. The unix standard
+dnl    http://www.opengroup.org/onlinepubs/000095399/utilities/echo.html
+dnl defines all backslash-sequences to be inherently non-portable asking
+dnl for replacement mit printf. Some old systems had problems with that
+dnl one either. However, the latest libtool (!) release does export an $ECHO 
+dnl (and $echo) that does the right thing - just one question is left: what 
+dnl was the first version to have it? Is it greater 2.58 ? 
+

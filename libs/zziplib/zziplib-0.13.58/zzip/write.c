@@ -1,9 +1,18 @@
+
 /*
  * The write-support in zziplib is not a full-flegded interface to the
  * internals that zip file-header or zip archive an contain. It's
  * primary use goes for savegames or transfer `pack-n-go` archives
  * where time-stamps are rather unimportant. Here we can create an 
  * archive with filenames and their data portions, possibly obfuscated.
+ *
+ * DONT USE THIS
+ *
+ * The write support is supposed to be added directly into the main
+ * zziplib but it has not been implemented so far. It does however
+ * export the relevant call entries which will return EROFS (read-only
+ * filesystem) in case they are being called. That allows later programs
+ * to start up with earlier versions of zziplib that can only read ZIPs.
  *
  * Author: 
  *      Guido Draheim <guidod@gmx.de>
@@ -18,13 +27,13 @@
 
 #define _ZZIP_WRITE_SOURCE
 
-#if defined DDDD || defined DDDDD || defined DDDDDD || defined DDDDDDD 
+#if defined DDDD || defined DDDDD || defined DDDDDD || defined DDDDDDD
 #define _ZZIP_ENABLE_WRITE
 #else /* per default, we add support for passthrough to posix write */
 #define _ZZIP_POSIX_WRITE
 #endif
 
-#include <zzip/lib.h>                                         /* exported...*/
+#include <zzip/write.h>         /* #includes <zzip/lib.h> */
 #include <zzip/file.h>
 
 #include <string.h>
@@ -88,10 +97,10 @@
  * EEXIST errors from => mkdir(2) are suppressed. (fixme: delete the
  * given subtree? like suggested by O_TRUNC? not done so far!)
  */
-ZZIP_DIR*
-zzip_dir_creat(zzip_char_t* name, int o_mode)
+ZZIP_DIR *
+zzip_dir_creat(zzip_char_t * name, int o_mode)
 {
-    return zzip_dir_creat_ext_io (name, o_mode, 0, 0);
+    return zzip_dir_creat_ext_io(name, o_mode, 0, 0);
 }
 
 /** => zzip_dir_creat
@@ -108,58 +117,72 @@ zzip_dir_creat(zzip_char_t* name, int o_mode)
  * Write-support will extend => zzip_closedir with semantics to finalize the
  * zip-archive by writing the zip-trailer and closing the archive file.
  */
-ZZIP_DIR*
-zzip_dir_creat_ext_io(zzip_char_t* name, int o_mode, 
-                      zzip_strings_t* ext, zzip_plugin_io_t io)
+ZZIP_DIR *
+zzip_dir_creat_ext_io(zzip_char_t * name, int o_mode,
+                      zzip_strings_t * ext, zzip_plugin_io_t io)
 {
-    if (! io) io = zzip_get_default_io ();
+    if (! io)
+        io = zzip_get_default_io();
 
     if (io != zzip_get_default_io())
-    {  /* the current io-structure does not contain a "write" entry,
-        * and therefore this parameter is useless. Anyone to expect
-        * some behavior should be warned, so here we let the function
-        * fail bluntly - and leaving the recovery to the application
-        */
+    {
+        /* the current io-structure does not contain a "write" entry,
+         * and therefore this parameter is useless. Anyone to expect
+         * some behavior should be warned, so here we let the function
+         * fail bluntly - and leaving the recovery to the application
+         */
         errno = EINVAL;
         return 0;
     }
 
 
-    if (!_ZZIP_TRY)
-    {  /* not implemented - however, we respect that a null argument to 
-        * zzip_mkdir and zzip_creat works, so we silently still do the mkdir 
-        */
-        if (! _mkdir (name, o_mode) || errno == EEXIST)
+    if (! _ZZIP_TRY)
+    {
+        /* not implemented - however, we respect that a null argument to 
+         * zzip_mkdir and zzip_creat works, so we silently still do the mkdir 
+         */
+        if (! _mkdir(name, o_mode) || errno == EEXIST)
             errno = EROFS;
         return 0;
-    } else {
+    } else
+    {
 #       define MAX_EXT_LEN 10
-        ZZIP_DIR* dir = zzip_dir_alloc (ext);
+        ZZIP_DIR *dir = zzip_dir_alloc(ext);
         int name_len = strlen(name);
-        dir->realname = malloc (name_len+MAX_EXT_LEN); 
-        if (! dir->realname) goto error;
+        dir->realname = malloc(name_len + MAX_EXT_LEN);
+        if (! dir->realname)
+            goto error;
 
-        memcpy (dir->realname, name, name_len+1);
-        ___ int fd = __zzip_try_open (
-            dir->realname, O_EXCL|O_TRUNC|O_WRONLY, ext, io);
-        if (fd != -1) { dir->fd = fd; return dir; }
+        memcpy(dir->realname, name, name_len + 1);
+        ___ int fd =
+            __zzip_try_open(dir->realname, O_EXCL | O_TRUNC | O_WRONLY, ext,
+                            io);
+        if (fd != -1)
+            { dir->fd = fd; return dir; }
 
-        ___ zzip_strings_t* exx = ext; int exx_len;
-        for (; *exx ; exx++)
+        ___ zzip_strings_t *exx = ext;
+        int exx_len;
+        for (; *exx; exx++)
         {
-            if ((exx_len = strlen (*exx)+1) <= name_len &&
-                !memcmp (dir->realname+(name_len-exx_len), *exx, exx_len))
-                break; /* keep unmodified */
-            exx++; if (*exx) continue;
+            if ((exx_len = strlen(*exx) + 1) <= name_len &&
+                ! memcmp(dir->realname + (name_len - exx_len), *exx, exx_len))
+                break;          /* keep unmodified */
+            exx++;
+            if (*exx)
+                continue;
 
-            if (! (exx_len = strlen (*exx)) || exx_len >= MAX_EXT_LEN) break; 
-            memcpy (dir->realname+name_len, exx, exx_len); /* append! */
-        }____;
-        fd  = io->fd.open (dir->realname, O_CREAT|O_TRUNC|O_WRONLY, o_mode);
+            if (! (exx_len = strlen(*exx)) || exx_len >= MAX_EXT_LEN)
+                break;
+            memcpy(dir->realname + name_len, exx, exx_len);     /* append! */
+        }
+        ____;
+        fd = io->fd.open(dir->realname, O_CREAT | O_TRUNC | O_WRONLY, o_mode);
         dir->realname[name_len] = '\0'; /* keep ummodified */
-        if (fd != -1) { dir->fd = fd; return dir; } 
-     error:
-        zzip_dir_free (dir); return 0;
+        if (fd != -1)
+            { dir->fd = fd; return dir; }
+      error:
+        zzip_dir_free(dir);
+        return 0;
         ____;
     }
 }
@@ -195,19 +218,19 @@ zzip_dir_creat_ext_io(zzip_char_t* name, int o_mode,
  * EEXIST errors from => mkdir(2) are suppressed. (fixme: delete the
  * given subtree? like suggested by O_TRUNC? not done so far!)
  */
-ZZIP_DIR*
-zzip_createdir(zzip_char_t* name, int o_mode)
+ZZIP_DIR *
+zzip_createdir(zzip_char_t * name, int o_mode)
 {
     if (o_mode & S_IWGRP)
     {
-        if (-1 == _mkdir(name, o_mode) && errno != EEXIST) /* fail */
+        if (-1 == _mkdir(name, o_mode) && errno != EEXIST)      /* fail */
             return 0;
-        return zzip_opendir (name);
+        return zzip_opendir(name);
     } else
-        return zzip_dir_creat (name, o_mode);
+        return zzip_dir_creat(name, o_mode);
 }
 
-/** => zzip_file_creat                   => mkdir(2), creat(2), zzip_dir_creat
+/** => zzip_file_creat              also: mkdir(2), creat(2), zzip_dir_creat
  *
  * This function has an additional primary argument over the posix
  * mkdir(2) - if it is null then this function behaves just like
@@ -240,16 +263,17 @@ zzip_createdir(zzip_char_t* name, int o_mode)
    zzip_closedir (zip_savefile);
  */
 int
-zzip_file_mkdir(ZZIP_DIR* dir, zzip_char_t* name, int o_mode)
+zzip_file_mkdir(ZZIP_DIR * dir, zzip_char_t * name, int o_mode)
 {
     if (! dir)
         return _mkdir(name, o_mode);
 
-    if (!_ZZIP_TRY)
-    {/* not implemented */
+    if (! _ZZIP_TRY)
+    {                           /* not implemented */
         errno = EROFS;
         return -1;
-    } else {
+    } else
+    {
         errno = EROFS;
         return -1;
     }
@@ -271,17 +295,18 @@ zzip_file_mkdir(ZZIP_DIR* dir, zzip_char_t* name, int o_mode)
  * a zip archive using O_RDONLY (and similar stuff) will surely lead to 
  * an error.
  */
-ZZIP_FILE*
-zzip_file_creat(ZZIP_DIR* dir, zzip_char_t* name, int o_mode)
+ZZIP_FILE *
+zzip_file_creat(ZZIP_DIR * dir, zzip_char_t * name, int o_mode)
 {
     if (! dir)
-        return zzip_open (name, o_mode);
+        return zzip_open(name, o_mode);
 
-    if (!_ZZIP_TRY)
-    {/* not implemented */
+    if (! _ZZIP_TRY)
+    {                           /* not implemented */
         errno = EROFS;
         return 0;
-    } else {
+    } else
+    {
         errno = EROFS;
         return 0;
     }
@@ -296,12 +321,12 @@ zzip_file_creat(ZZIP_DIR* dir, zzip_char_t* name, int o_mode)
  * using => zlib(3) and appended to the zip archive file.
  */
 zzip_ssize_t
-zzip_write(ZZIP_FILE* file, const void* ptr, zzip_size_t len) 
+zzip_write(ZZIP_FILE * file, const void *ptr, zzip_size_t len)
 {
     if (zzip_file_real(file))
-        return write (zzip_realfd (file), ptr, len);
+        return write(zzip_realfd(file), ptr, len);
     else
-        return zzip_file_write (file, ptr, len);
+        return zzip_file_write(file, ptr, len);
 }
 
 /** => zzip_write                            also: zzip_file_creat
@@ -315,13 +340,14 @@ zzip_write(ZZIP_FILE* file, const void* ptr, zzip_size_t len)
  * It returns immediately -1 and sets errno=EROFS for indication.
  */
 zzip_ssize_t
-zzip_file_write(ZZIP_FILE* file, const void* ptr, zzip_size_t len) 
+zzip_file_write(ZZIP_FILE * file, const void *ptr, zzip_size_t len)
 {
-    if (!_ZZIP_TRY)
-    {/* not implemented */
+    if (! _ZZIP_TRY)
+    {                           /* not implemented */
         errno = EROFS;
         return -1;
-    } else {
+    } else
+    {
         /* add calls to zlib here... */
         errno = EROFS;
         return -1;
@@ -340,16 +366,17 @@ zzip_file_write(ZZIP_FILE* file, const void* ptr, zzip_size_t len)
  * the (still-open) ZZIP_DIR handle.
  */
 zzip_size_t
-zzip_fwrite(const void* ptr, zzip_size_t len, zzip_size_t multiply, 
-	    ZZIP_FILE* file) 
+zzip_fwrite(const void *ptr, zzip_size_t len, zzip_size_t multiply,
+            ZZIP_FILE * file)
 {
-    zzip_ssize_t value = zzip_write (file, ptr, len * multiply);
-    if (value == -1) 
+    zzip_ssize_t value = zzip_write(file, ptr, len * multiply);
+    if (value == -1)
         value = 0;
     return (zzip_size_t) value;
 }
 
-#if 0 /* pure documentation */
+#if 0                           /* pure documentation */
+
 /** create a zipped file/directory            also: zzip_dir_creat, mkdir(2)
  *
  * This function creates a directory entry in the default zip-archive. 
@@ -368,13 +395,14 @@ zzip_fwrite(const void* ptr, zzip_size_t len, zzip_size_t multiply,
  *
  */
 int inline
-zzip_mkdir(zzip_char_t* name, int o_mode)
+zzip_mkdir(zzip_char_t * name, int o_mode)
 {
     return zzip_file_creat(zzip_savefile, name, mode);
 }
 #endif
 
-#if 0 /* pure documentation */
+#if 0                           /* pure documentation */
+
 /** => zzip_mkdir                 also: creat(2), zzip_start
  *
  * This function creates a file in the default zip-archive. 
@@ -390,15 +418,16 @@ zzip_mkdir(zzip_char_t* name, int o_mode)
  #define zzip_creat(name,mode) \ -
          zzip_file_creat(zzip_savefile,name,mode)
  */
-ZZIP_FILE* inline
-zzip_creat(zzip_char_t* name, int o_mode)
+ZZIP_FILE *inline
+zzip_creat(zzip_char_t * name, int o_mode)
 {
     return zzip_file_creat(zzip_savefile, name, mode);
 }
 #endif
 
 
-#if 0 /* pure documentation */
+#if 0                           /* pure documentation */
+
 /** start writing to the magic zzip_savefile   also: zzip_creat, zzip_write
  * 
  * open a zip archive for writing via the magic zzip_savefile macro
@@ -423,14 +452,16 @@ zzip_creat(zzip_char_t* name, int o_mode)
  * on the real filesystem.
  */
 void inline
-zzip_mkfifo(zzip_char_t* name, int o_mode)
-{   
-    if (zzip_savefile) zzip_closedir (zzip_savefile); 
+zzip_mkfifo(zzip_char_t * name, int o_mode)
+{
+    if (zzip_savefile)
+        zzip_closedir(zzip_savefile);
     zzip_savefile = zzip_createdir(name, o_mode);
 }
 #endif
 
-#if 0 /* pure documentation */
+#if 0                           /* pure documentation */
+
 /** => zzip_mkfifo                        also: zzip_closedir, sync(2)
  * 
  * finalize a zip archive thereby writing the central directory to
@@ -448,9 +479,10 @@ zzip_mkfifo(zzip_char_t* name, int o_mode)
  *
  */
 void inline
-zzip_sync(void) 
-{   
-    zzip_closedir (zzip_savefile); zzip_savefile = 0; 
+zzip_sync(void)
+{
+    zzip_closedir(zzip_savefile);
+    zzip_savefile = 0;
 }
 #endif
 

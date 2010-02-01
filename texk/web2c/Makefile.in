@@ -60,14 +60,12 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/README \
-	$(srcdir)/alephdir/am/aleph.am $(srcdir)/am/bootstrap.am \
-	$(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/am/web.am \
-	$(srcdir)/c-auto.in $(srcdir)/ctangleboot-sh.in \
-	$(srcdir)/etexdir/am/etex.am $(srcdir)/libmd5/am/md5.am \
-	$(srcdir)/luatexdir/am/liblua51.am \
+	$(srcdir)/Makefile.in $(srcdir)/alephdir/am/aleph.am \
+	$(srcdir)/am/bootstrap.am $(srcdir)/am/cweb.am \
+	$(srcdir)/am/texmf.am $(srcdir)/am/web.am $(srcdir)/c-auto.in \
+	$(srcdir)/ctangleboot-sh.in $(srcdir)/etexdir/am/etex.am \
+	$(srcdir)/libmd5/am/md5.am $(srcdir)/luatexdir/am/liblua51.am \
 	$(srcdir)/luatexdir/am/libluatex.am \
-	$(srcdir)/luatexdir/am/libzzip.am \
 	$(srcdir)/luatexdir/am/luafontforge.am \
 	$(srcdir)/luatexdir/am/luamisc.am \
 	$(srcdir)/luatexdir/am/luasocket.am \
@@ -202,6 +200,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-xpdf-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-zziplib-flags.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
@@ -214,7 +213,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = c-auto.h ff-config.h
-CONFIG_CLEAN_FILES = CXXLD.sh web2c-sh tangle-sh ctangleboot-sh
+CONFIG_CLEAN_FILES = web2c-sh tangle-sh ctangleboot-sh
 CONFIG_CLEAN_VPATH_FILES =
 ARFLAGS = cru
 libff_a_AR = $(AR) $(ARFLAGS)
@@ -439,15 +438,6 @@ libxetexmm_a_AR = $(AR) $(ARFLAGS)
 libxetexmm_a_LIBADD =
 am_libxetexmm_a_OBJECTS = libxetexmm_a-XeTeXFontMgr_Mac.$(OBJEXT)
 libxetexmm_a_OBJECTS = $(am_libxetexmm_a_OBJECTS)
-libzzip_a_AR = $(AR) $(ARFLAGS)
-libzzip_a_LIBADD =
-am_libzzip_a_OBJECTS = libzzip_a-dir.$(OBJEXT) libzzip_a-err.$(OBJEXT) \
-	libzzip_a-fetch.$(OBJEXT) libzzip_a-file.$(OBJEXT) \
-	libzzip_a-info.$(OBJEXT) libzzip_a-memdisk.$(OBJEXT) \
-	libzzip_a-mmapped.$(OBJEXT) libzzip_a-plugin.$(OBJEXT) \
-	libzzip_a-stat.$(OBJEXT) libzzip_a-write.$(OBJEXT) \
-	libzzip_a-zip.$(OBJEXT)
-libzzip_a_OBJECTS = $(am_libzzip_a_OBJECTS)
 am__EXEEXT_1 = bibtex$(EXEEXT) dvicopy$(EXEEXT) dvitype$(EXEEXT) \
 	gftodvi$(EXEEXT) gftopk$(EXEEXT) gftype$(EXEEXT) mft$(EXEEXT) \
 	patgen$(EXEEXT) pktogf$(EXEEXT) pktype$(EXEEXT) \
@@ -563,8 +553,8 @@ am__objects_14 = luatex-luatexini.$(OBJEXT) luatex-luatex0.$(OBJEXT)
 nodist_luatex_OBJECTS = $(am__objects_14) luatex-luatex-pool.$(OBJEXT) \
 	luatex-luatexextra.$(OBJEXT)
 luatex_OBJECTS = $(nodist_luatex_OBJECTS)
-am__DEPENDENCIES_4 = libluatex.a libff.a libluamisc.a libzzip.a \
-	libluasocket.a liblua51.a $(am__DEPENDENCIES_1) \
+am__DEPENDENCIES_4 = libluatex.a libff.a libluamisc.a libluasocket.a \
+	liblua51.a $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) libmd5.a libmplib.a
 luatex_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -775,7 +765,7 @@ SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(nodist_libmf_a_SOURCES) $(libmplib_a_SOURCES) \
 	$(nodist_libmplib_a_SOURCES) $(libpdftex_a_SOURCES) \
 	$(EXTRA_libpdftex_a_SOURCES) $(libxetex_a_SOURCES) \
-	$(libxetexmm_a_SOURCES) $(libzzip_a_SOURCES) $(aleph_SOURCES) \
+	$(libxetexmm_a_SOURCES) $(aleph_SOURCES) \
 	$(nodist_aleph_SOURCES) $(nodist_bibtex_SOURCES) \
 	$(nodist_ctangle_SOURCES) $(nodist_ctangleboot_SOURCES) \
 	$(nodist_ctie_SOURCES) $(nodist_cweave_SOURCES) \
@@ -809,7 +799,7 @@ DIST_SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(EXTRA_libluatex_a_SOURCES) $(libmd5_a_SOURCES) \
 	$(libmplib_a_SOURCES) $(am__libpdftex_a_SOURCES_DIST) \
 	$(EXTRA_libpdftex_a_SOURCES) $(am__libxetex_a_SOURCES_DIST) \
-	$(libxetexmm_a_SOURCES) $(libzzip_a_SOURCES) $(aleph_SOURCES) \
+	$(libxetexmm_a_SOURCES) $(aleph_SOURCES) \
 	$(am__dist_etex_SOURCES_DIST) $(gftodvi_SOURCES) \
 	$(md5main_SOURCES) $(am__dist_pdftex_SOURCES_DIST) \
 	$(pdftosrc_SOURCES) $(synctex_SOURCES) \
@@ -918,8 +908,6 @@ CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CXXLD = @CXXLD@
-CXX_HACK_DEPS = @CXX_HACK_DEPS@
-CXX_HACK_LIBS = @CXX_HACK_LIBS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -1022,6 +1010,9 @@ YFLAGS = @YFLAGS@
 ZLIB_DEPEND = @ZLIB_DEPEND@
 ZLIB_INCLUDES = @ZLIB_INCLUDES@
 ZLIB_LIBS = @ZLIB_LIBS@
+ZZIPLIB_DEPEND = @ZZIPLIB_DEPEND@
+ZZIPLIB_INCLUDES = @ZZIPLIB_INCLUDES@
+ZZIPLIB_LIBS = @ZZIPLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -1096,7 +1087,7 @@ SUBDIRS = doc lib man web2c . window omegafonts otps
 proglib = lib/lib.a
 dist_man_MANS = synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 nodist_man_MANS = ctiedir/ctie.1 tiedir/tie.1
-EXTRA_LIBRARIES = libmf.a libmplib.a libpdftex.a liblua51.a libzzip.a \
+EXTRA_LIBRARIES = libmf.a libmplib.a libpdftex.a liblua51.a \
 	libluasocket.a libluamisc.a libff.a libluatex.a libxetex.a \
 	libxetexmm.a libmd5.a
 EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
@@ -1164,26 +1155,6 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	luatexdir/luatangle.test luatexdir/lua51/Makefile \
 	luatexdir/lua51/liolib.c luatexdir/lua51/lua.c \
 	luatexdir/lua51/luac.c luatexdir/lua51/print.c \
-	luatexdir/zziplib/COPYING.LIB luatexdir/zziplib/ChangeLog \
-	luatexdir/zziplib/README luatexdir/zziplib/TODO \
-	luatexdir/zziplib/zziplib.spec luatexdir/zziplib/Makefile.am \
-	luatexdir/zziplib/Makefile.in luatexdir/zziplib/Makefile.mk \
-	luatexdir/zziplib/SDL luatexdir/zziplib/aclocal.m4 \
-	luatexdir/zziplib/bins luatexdir/zziplib/config.h.in \
-	luatexdir/zziplib/configure luatexdir/zziplib/configure.ac \
-	luatexdir/zziplib/docs luatexdir/zziplib/m4 \
-	luatexdir/zziplib/msvc6 luatexdir/zziplib/msvc7 \
-	luatexdir/zziplib/msvc8 luatexdir/zziplib/test \
-	luatexdir/zziplib/zzip/Makefile \
-	luatexdir/zziplib/zzip/Makefile.am \
-	luatexdir/zziplib/zzip/Makefile.in \
-	luatexdir/zziplib/zzip/_msvc.h \
-	luatexdir/zziplib/zzip/_msvc.sed \
-	luatexdir/zziplib/zzip/autoconf.h \
-	luatexdir/zziplib/zzip/fseeko.c \
-	luatexdir/zziplib/zzip/fseeko.h \
-	luatexdir/zziplib/zzip/zziplib.wpj \
-	luatexdir/zziplib/zzipback.sed luatexdir/zziplib/zzipwrap \
 	luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
@@ -1623,8 +1594,8 @@ luatex_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES) \
 	-I$(srcdir)/mplibdir -Dextra_version_info=`date +-%Y%m%d%H`
 luatex_CFLAGS = $(WARNING_CFLAGS)
 luatex_CXXFLAGS = $(WARNING_CXXFLAGS)
-luatex_ldadd = libluatex.a libff.a libluamisc.a libzzip.a \
-	libluasocket.a liblua51.a $(LIBPNG_LIBS) $(ZLIB_LIBS) \
+luatex_ldadd = libluatex.a libff.a libluamisc.a libluasocket.a \
+	liblua51.a $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) \
 	$(XPDF_LIBS) $(OBSDCOMPAT_LIBS) libmd5.a libmplib.a
 luatex_LDADD = $(luatex_ldadd) $(LDADD) $(lua_socketlibs)
 luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a \
@@ -1692,42 +1663,6 @@ liblua51_a_SOURCES = \
 	luatexdir/lua51/lzio.c \
 	luatexdir/lua51/lzio.h
 
-libzzip_a_CPPFLAGS = \
-	$(ZLIB_INCLUDES) \
-	-I$(top_srcdir)/luatexdir/zziplib
-
-libzzip_a_CFLAGS = $(WARNING_CFLAGS)
-libzzip_a_SOURCES = \
-	luatexdir/zziplib/zzip/__debug.h \
-	luatexdir/zziplib/zzip/__dirent.h \
-	luatexdir/zziplib/zzip/__fnmatch.h \
-	luatexdir/zziplib/zzip/__hints.h \
-	luatexdir/zziplib/zzip/__mmap.h \
-	luatexdir/zziplib/zzip/_config.h \
-	luatexdir/zziplib/zzip/conf.h \
-	luatexdir/zziplib/zzip/dir.c \
-	luatexdir/zziplib/zzip/err.c \
-	luatexdir/zziplib/zzip/fetch.c \
-	luatexdir/zziplib/zzip/fetch.h \
-	luatexdir/zziplib/zzip/file.c \
-	luatexdir/zziplib/zzip/file.h \
-	luatexdir/zziplib/zzip/format.h \
-	luatexdir/zziplib/zzip/info.c \
-	luatexdir/zziplib/zzip/info.h \
-	luatexdir/zziplib/zzip/lib.h \
-	luatexdir/zziplib/zzip/memdisk.c \
-	luatexdir/zziplib/zzip/memdisk.h \
-	luatexdir/zziplib/zzip/mmapped.c \
-	luatexdir/zziplib/zzip/mmapped.h \
-	luatexdir/zziplib/zzip/plugin.c \
-	luatexdir/zziplib/zzip/plugin.h \
-	luatexdir/zziplib/zzip/stdint.h \
-	luatexdir/zziplib/zzip/stat.c \
-	luatexdir/zziplib/zzip/types.h \
-	luatexdir/zziplib/zzip/write.c \
-	luatexdir/zziplib/zzip/zip.c \
-	luatexdir/zziplib/zzip/zzip.h
-
 libluasocket_a_DEPENDENCIES = $(ZLIB_DEPEND) liblua51.a
 libluasocket_a_CPPFLAGS = \
 	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket -I$(srcdir)/luatexdir/lua51
@@ -1763,7 +1698,7 @@ libluasocket_a_SOURCES = \
 	luatexdir/luasocket/src/udp.h \
 	luatexdir/luasocket/src/usocket.h
 
-libluamisc_a_DEPENDENCIES = libzzip.a libluasocket.a
+libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a
 libluamisc_a_CPPFLAGS = \
 	$(ZLIB_INCLUDES) \
 	-I$(top_srcdir)/luatexdir/lua51 \
@@ -2198,7 +2133,7 @@ all: c-auto.h ff-config.h
 .SUFFIXES: .c .cc .cpp .cxx .lo .o .obj
 am--refresh:
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/luatangle.am $(srcdir)/luatexdir/am/liblua51.am $(srcdir)/luatexdir/am/libzzip.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/luatangle.am $(srcdir)/luatexdir/am/liblua51.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -2256,8 +2191,6 @@ stamp-h2: $(top_srcdir)/luatexdir/luafontloader/ff-config.in $(top_builddir)/con
 
 distclean-hdr:
 	-rm -f c-auto.h stamp-h1 ff-config.h stamp-h2
-CXXLD.sh: $(top_builddir)/config.status $(srcdir)/README
-	cd $(top_builddir) && $(SHELL) ./config.status $@
 web2c-sh: $(top_builddir)/config.status $(srcdir)/web2c-sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 tangle-sh: $(top_builddir)/config.status $(srcdir)/tangle-sh.in
@@ -2308,10 +2241,6 @@ libxetexmm.a: $(libxetexmm_a_OBJECTS) $(libxetexmm_a_DEPENDENCIES)
 	-rm -f libxetexmm.a
 	$(libxetexmm_a_AR) libxetexmm.a $(libxetexmm_a_OBJECTS) $(libxetexmm_a_LIBADD)
 	$(RANLIB) libxetexmm.a
-libzzip.a: $(libzzip_a_OBJECTS) $(libzzip_a_DEPENDENCIES) 
-	-rm -f libzzip.a
-	$(libzzip_a_AR) libzzip.a $(libzzip_a_OBJECTS) $(libzzip_a_LIBADD)
-	$(RANLIB) libzzip.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -2781,17 +2710,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-pngimage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetex_a-trans.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxetexmm_a-XeTeXFontMgr_Mac.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-dir.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-err.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-fetch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-file.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-info.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-memdisk.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-mmapped.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-plugin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-stat.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-write.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libzzip_a-zip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/luatangle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/luatex-dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/luatex-luatex-pool.Po@am__quote@
@@ -6089,160 +6007,6 @@ libxetex_a-pngimage.obj: xetexdir/pngimage.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CFLAGS) $(CFLAGS) -c -o libxetex_a-pngimage.obj `if test -f 'xetexdir/pngimage.c'; then $(CYGPATH_W) 'xetexdir/pngimage.c'; else $(CYGPATH_W) '$(srcdir)/xetexdir/pngimage.c'; fi`
 
-libzzip_a-dir.o: luatexdir/zziplib/zzip/dir.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-dir.o -MD -MP -MF $(DEPDIR)/libzzip_a-dir.Tpo -c -o libzzip_a-dir.o `test -f 'luatexdir/zziplib/zzip/dir.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/dir.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-dir.Tpo $(DEPDIR)/libzzip_a-dir.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/dir.c' object='libzzip_a-dir.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-dir.o `test -f 'luatexdir/zziplib/zzip/dir.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/dir.c
-
-libzzip_a-dir.obj: luatexdir/zziplib/zzip/dir.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-dir.obj -MD -MP -MF $(DEPDIR)/libzzip_a-dir.Tpo -c -o libzzip_a-dir.obj `if test -f 'luatexdir/zziplib/zzip/dir.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/dir.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/dir.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-dir.Tpo $(DEPDIR)/libzzip_a-dir.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/dir.c' object='libzzip_a-dir.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-dir.obj `if test -f 'luatexdir/zziplib/zzip/dir.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/dir.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/dir.c'; fi`
-
-libzzip_a-err.o: luatexdir/zziplib/zzip/err.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-err.o -MD -MP -MF $(DEPDIR)/libzzip_a-err.Tpo -c -o libzzip_a-err.o `test -f 'luatexdir/zziplib/zzip/err.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/err.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-err.Tpo $(DEPDIR)/libzzip_a-err.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/err.c' object='libzzip_a-err.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-err.o `test -f 'luatexdir/zziplib/zzip/err.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/err.c
-
-libzzip_a-err.obj: luatexdir/zziplib/zzip/err.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-err.obj -MD -MP -MF $(DEPDIR)/libzzip_a-err.Tpo -c -o libzzip_a-err.obj `if test -f 'luatexdir/zziplib/zzip/err.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/err.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/err.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-err.Tpo $(DEPDIR)/libzzip_a-err.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/err.c' object='libzzip_a-err.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-err.obj `if test -f 'luatexdir/zziplib/zzip/err.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/err.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/err.c'; fi`
-
-libzzip_a-fetch.o: luatexdir/zziplib/zzip/fetch.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-fetch.o -MD -MP -MF $(DEPDIR)/libzzip_a-fetch.Tpo -c -o libzzip_a-fetch.o `test -f 'luatexdir/zziplib/zzip/fetch.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/fetch.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-fetch.Tpo $(DEPDIR)/libzzip_a-fetch.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/fetch.c' object='libzzip_a-fetch.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-fetch.o `test -f 'luatexdir/zziplib/zzip/fetch.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/fetch.c
-
-libzzip_a-fetch.obj: luatexdir/zziplib/zzip/fetch.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-fetch.obj -MD -MP -MF $(DEPDIR)/libzzip_a-fetch.Tpo -c -o libzzip_a-fetch.obj `if test -f 'luatexdir/zziplib/zzip/fetch.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/fetch.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/fetch.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-fetch.Tpo $(DEPDIR)/libzzip_a-fetch.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/fetch.c' object='libzzip_a-fetch.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-fetch.obj `if test -f 'luatexdir/zziplib/zzip/fetch.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/fetch.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/fetch.c'; fi`
-
-libzzip_a-file.o: luatexdir/zziplib/zzip/file.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-file.o -MD -MP -MF $(DEPDIR)/libzzip_a-file.Tpo -c -o libzzip_a-file.o `test -f 'luatexdir/zziplib/zzip/file.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/file.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-file.Tpo $(DEPDIR)/libzzip_a-file.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/file.c' object='libzzip_a-file.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-file.o `test -f 'luatexdir/zziplib/zzip/file.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/file.c
-
-libzzip_a-file.obj: luatexdir/zziplib/zzip/file.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-file.obj -MD -MP -MF $(DEPDIR)/libzzip_a-file.Tpo -c -o libzzip_a-file.obj `if test -f 'luatexdir/zziplib/zzip/file.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/file.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/file.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-file.Tpo $(DEPDIR)/libzzip_a-file.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/file.c' object='libzzip_a-file.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-file.obj `if test -f 'luatexdir/zziplib/zzip/file.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/file.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/file.c'; fi`
-
-libzzip_a-info.o: luatexdir/zziplib/zzip/info.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-info.o -MD -MP -MF $(DEPDIR)/libzzip_a-info.Tpo -c -o libzzip_a-info.o `test -f 'luatexdir/zziplib/zzip/info.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/info.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-info.Tpo $(DEPDIR)/libzzip_a-info.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/info.c' object='libzzip_a-info.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-info.o `test -f 'luatexdir/zziplib/zzip/info.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/info.c
-
-libzzip_a-info.obj: luatexdir/zziplib/zzip/info.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-info.obj -MD -MP -MF $(DEPDIR)/libzzip_a-info.Tpo -c -o libzzip_a-info.obj `if test -f 'luatexdir/zziplib/zzip/info.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/info.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/info.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-info.Tpo $(DEPDIR)/libzzip_a-info.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/info.c' object='libzzip_a-info.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-info.obj `if test -f 'luatexdir/zziplib/zzip/info.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/info.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/info.c'; fi`
-
-libzzip_a-memdisk.o: luatexdir/zziplib/zzip/memdisk.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-memdisk.o -MD -MP -MF $(DEPDIR)/libzzip_a-memdisk.Tpo -c -o libzzip_a-memdisk.o `test -f 'luatexdir/zziplib/zzip/memdisk.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/memdisk.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-memdisk.Tpo $(DEPDIR)/libzzip_a-memdisk.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/memdisk.c' object='libzzip_a-memdisk.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-memdisk.o `test -f 'luatexdir/zziplib/zzip/memdisk.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/memdisk.c
-
-libzzip_a-memdisk.obj: luatexdir/zziplib/zzip/memdisk.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-memdisk.obj -MD -MP -MF $(DEPDIR)/libzzip_a-memdisk.Tpo -c -o libzzip_a-memdisk.obj `if test -f 'luatexdir/zziplib/zzip/memdisk.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/memdisk.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/memdisk.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-memdisk.Tpo $(DEPDIR)/libzzip_a-memdisk.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/memdisk.c' object='libzzip_a-memdisk.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-memdisk.obj `if test -f 'luatexdir/zziplib/zzip/memdisk.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/memdisk.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/memdisk.c'; fi`
-
-libzzip_a-mmapped.o: luatexdir/zziplib/zzip/mmapped.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-mmapped.o -MD -MP -MF $(DEPDIR)/libzzip_a-mmapped.Tpo -c -o libzzip_a-mmapped.o `test -f 'luatexdir/zziplib/zzip/mmapped.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/mmapped.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-mmapped.Tpo $(DEPDIR)/libzzip_a-mmapped.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/mmapped.c' object='libzzip_a-mmapped.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-mmapped.o `test -f 'luatexdir/zziplib/zzip/mmapped.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/mmapped.c
-
-libzzip_a-mmapped.obj: luatexdir/zziplib/zzip/mmapped.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-mmapped.obj -MD -MP -MF $(DEPDIR)/libzzip_a-mmapped.Tpo -c -o libzzip_a-mmapped.obj `if test -f 'luatexdir/zziplib/zzip/mmapped.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/mmapped.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/mmapped.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-mmapped.Tpo $(DEPDIR)/libzzip_a-mmapped.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/mmapped.c' object='libzzip_a-mmapped.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-mmapped.obj `if test -f 'luatexdir/zziplib/zzip/mmapped.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/mmapped.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/mmapped.c'; fi`
-
-libzzip_a-plugin.o: luatexdir/zziplib/zzip/plugin.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-plugin.o -MD -MP -MF $(DEPDIR)/libzzip_a-plugin.Tpo -c -o libzzip_a-plugin.o `test -f 'luatexdir/zziplib/zzip/plugin.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/plugin.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-plugin.Tpo $(DEPDIR)/libzzip_a-plugin.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/plugin.c' object='libzzip_a-plugin.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-plugin.o `test -f 'luatexdir/zziplib/zzip/plugin.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/plugin.c
-
-libzzip_a-plugin.obj: luatexdir/zziplib/zzip/plugin.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-plugin.obj -MD -MP -MF $(DEPDIR)/libzzip_a-plugin.Tpo -c -o libzzip_a-plugin.obj `if test -f 'luatexdir/zziplib/zzip/plugin.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/plugin.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/plugin.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-plugin.Tpo $(DEPDIR)/libzzip_a-plugin.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/plugin.c' object='libzzip_a-plugin.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-plugin.obj `if test -f 'luatexdir/zziplib/zzip/plugin.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/plugin.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/plugin.c'; fi`
-
-libzzip_a-stat.o: luatexdir/zziplib/zzip/stat.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-stat.o -MD -MP -MF $(DEPDIR)/libzzip_a-stat.Tpo -c -o libzzip_a-stat.o `test -f 'luatexdir/zziplib/zzip/stat.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/stat.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-stat.Tpo $(DEPDIR)/libzzip_a-stat.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/stat.c' object='libzzip_a-stat.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-stat.o `test -f 'luatexdir/zziplib/zzip/stat.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/stat.c
-
-libzzip_a-stat.obj: luatexdir/zziplib/zzip/stat.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-stat.obj -MD -MP -MF $(DEPDIR)/libzzip_a-stat.Tpo -c -o libzzip_a-stat.obj `if test -f 'luatexdir/zziplib/zzip/stat.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/stat.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/stat.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-stat.Tpo $(DEPDIR)/libzzip_a-stat.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/stat.c' object='libzzip_a-stat.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-stat.obj `if test -f 'luatexdir/zziplib/zzip/stat.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/stat.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/stat.c'; fi`
-
-libzzip_a-write.o: luatexdir/zziplib/zzip/write.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-write.o -MD -MP -MF $(DEPDIR)/libzzip_a-write.Tpo -c -o libzzip_a-write.o `test -f 'luatexdir/zziplib/zzip/write.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/write.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-write.Tpo $(DEPDIR)/libzzip_a-write.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/write.c' object='libzzip_a-write.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-write.o `test -f 'luatexdir/zziplib/zzip/write.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/write.c
-
-libzzip_a-write.obj: luatexdir/zziplib/zzip/write.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-write.obj -MD -MP -MF $(DEPDIR)/libzzip_a-write.Tpo -c -o libzzip_a-write.obj `if test -f 'luatexdir/zziplib/zzip/write.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/write.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/write.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-write.Tpo $(DEPDIR)/libzzip_a-write.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/write.c' object='libzzip_a-write.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-write.obj `if test -f 'luatexdir/zziplib/zzip/write.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/write.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/write.c'; fi`
-
-libzzip_a-zip.o: luatexdir/zziplib/zzip/zip.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-zip.o -MD -MP -MF $(DEPDIR)/libzzip_a-zip.Tpo -c -o libzzip_a-zip.o `test -f 'luatexdir/zziplib/zzip/zip.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/zip.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-zip.Tpo $(DEPDIR)/libzzip_a-zip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/zip.c' object='libzzip_a-zip.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-zip.o `test -f 'luatexdir/zziplib/zzip/zip.c' || echo '$(srcdir)/'`luatexdir/zziplib/zzip/zip.c
-
-libzzip_a-zip.obj: luatexdir/zziplib/zzip/zip.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -MT libzzip_a-zip.obj -MD -MP -MF $(DEPDIR)/libzzip_a-zip.Tpo -c -o libzzip_a-zip.obj `if test -f 'luatexdir/zziplib/zzip/zip.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/zip.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/zip.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libzzip_a-zip.Tpo $(DEPDIR)/libzzip_a-zip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/zziplib/zzip/zip.c' object='libzzip_a-zip.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzzip_a_CPPFLAGS) $(CPPFLAGS) $(libzzip_a_CFLAGS) $(CFLAGS) -c -o libzzip_a-zip.obj `if test -f 'luatexdir/zziplib/zzip/zip.c'; then $(CYGPATH_W) 'luatexdir/zziplib/zzip/zip.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/zziplib/zzip/zip.c'; fi`
-
 aleph-aleph.o: alephdir/aleph.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(aleph_CPPFLAGS) $(CPPFLAGS) $(aleph_CFLAGS) $(CFLAGS) -MT aleph-aleph.o -MD -MP -MF $(DEPDIR)/aleph-aleph.Tpo -c -o aleph-aleph.o `test -f 'alephdir/aleph.c' || echo '$(srcdir)/'`alephdir/aleph.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/aleph-aleph.Tpo $(DEPDIR)/aleph-aleph.Po
@@ -7902,6 +7666,7 @@ $(proglib): ${srcdir}/lib/*.c
 @LIBPNG_RULE@
 @XPDF_RULE@
 @OBSDCOMPAT_RULE@
+@ZZIPLIB_RULE@
 @GRAPHITE_RULE@
 @FREETYPE2_RULE@
 @TECKIT_RULE@
@@ -8297,9 +8062,9 @@ luatangle.p: tangle$(EXEEXT) $(luatangle_sources)
 
 $(libluasocket_a_OBJECTS): liblua51.a
 
-$(libluamisc_a_OBJECTS): libzzip.a libluasocket.a
+$(libluamisc_a_OBJECTS): $(libluamisc_a_DEPENDENCIES)
 
-$(libff_a_OBJECTS): libluamisc.a
+$(libff_a_OBJECTS): $(libff_a_DEPENDENCIES)
 
 # We must create libff.a and luatexd.h before building the libluatex_a_OBJECTS
 $(libluatex_a_OBJECTS): libff.a luatexd.h luatexdir/luatexextra.h

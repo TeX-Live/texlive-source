@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_cflags_no_writable_strings.m4
 dnl @synopsis AX_CFLAGS_NO_WRITABLE_STRINGS [(shellvar [,default, [A/NA]])]
 dnl
 dnl Try to find a compiler option that makes all stringliteral
@@ -19,8 +20,8 @@ dnl  - $3 action-if-found : add value to shellvariable
 dnl  - $4 action-if-not-found : nothing
 dnl
 dnl @category C
-dnl @author Guido Draheim <guidod@gmx.de>
-dnl @version 2003-05-21
+dnl @author Guido U. Draheim <guidod@gmx.de>
+dnl @version 2006-12-12
 dnl @license GPLWithACException
 
 AC_DEFUN([AX_CFLAGS_NO_WRITABLE_STRINGS],[dnl
@@ -37,7 +38,8 @@ VAR,[VAR="no, unknown"
 #       need to be "-G0 -rdatashared" for strictmode but
 #       I am not sure what effect that has really.         - guidod
 for ac_arg dnl
-in "-Wall     % -fno-writable-strings -Wwrite-strings" dnl   GCC
+in "-pedantic % -fno-writable-strings -Wwrite-strings" dnl   GCC
+   "-pedantic % -fconst-strings -Wwrite-strings" dnl newer  GCC
    "-v -Xc    % -xstrconst" dnl Solaris C - strings go into readonly segment
    "+w1 -Aa   % +ESlit"      dnl HP-UX C - strings go into readonly segment
    "-w0 -std1 % -readonly_strings" dnl Digital Unix - again readonly segment
@@ -88,7 +90,7 @@ AS_VAR_PUSHDEF([VAR],[ac_cv_cxxflags_no_writable_strings])dnl
 AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) making strings readonly],
 VAR,[VAR="no, unknown"
  AC_LANG_SAVE
- AC_LANG_CXX
+ AC_LANG_CPLUSPLUS
  ac_save_[]FLAGS="$[]FLAGS"
 # IRIX C compiler:
 #      -use_readonly_const is the default for IRIX C,
@@ -96,7 +98,9 @@ VAR,[VAR="no, unknown"
 #       need to be "-G0 -rdatashared" for strictmode but
 #       I am not sure what effect that has really.         - guidod
 for ac_arg dnl
-in "-Wall     % -fno-writable-strings -Wwrite-strings" dnl   GCC
+in "-pedantic -Werror % -fno-writable-strings -Wwrite-strings" dnl   GCC
+   "-pedantic -Werror % -fconst-strings -Wwrite-strings" dnl newer  GCC
+   "-pedantic % -fconst-strings %% no, const-strings is default" dnl newer  GCC
    "-v -Xc    % -xstrconst" dnl Solaris C - strings go into readonly segment
    "+w1 -Aa   % +ESlit"      dnl HP-UX C - strings go into readonly segment
    "-w0 -std1 % -readonly_strings" dnl Digital Unix - again readonly segment
@@ -110,9 +114,9 @@ case ".$VAR" in
    .|.no|.no,*) ;;
    *) # sanity check - testing strcpy() from string.h
       cp config.log config.tmp
-      AC_TRY_COMPILE([#include <string.h>],[[
+      AC_TRY_COMPILE([#include <string.h>],[
       char test[16];
-      if (strcpy (test, "test")) return 1;]],
+      if (strcpy (test, "test")) return 1;],
       dnl the original did use test -n `$CC testprogram.c`
       [if test `diff config.log config.tmp | grep -i warning | wc -l` != 0
   then VAR="no, suppressed, string.h," ; fi],
@@ -138,3 +142,4 @@ esac
 AS_VAR_POPDEF([VAR])dnl
 AS_VAR_POPDEF([FLAGS])dnl
 ])
+

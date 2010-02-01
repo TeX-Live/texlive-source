@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_cflags_gcc_option.m4
 dnl @synopsis AX_CFLAGS_GCC_OPTION (optionflag [,[shellvar][,[A][,[NA]]])
 dnl
 dnl AX_CFLAGS_GCC_OPTION(-fvomit-frame) would show a message as like
@@ -40,8 +41,8 @@ dnl       AX_CFLAGS_SUN_OPTION               AX_CFLAGS_HPUX_OPTION
 dnl       AX_CFLAGS_AIX_OPTION               AX_CFLAGS_IRIX_OPTION
 dnl
 dnl @category C
-dnl @author Guido Draheim <guidod@gmx.de>
-dnl @version 2003-11-04
+dnl @author Guido U. Draheim <guidod@gmx.de>
+dnl @version 2006-12-12
 dnl @license GPLWithACException
 
 AC_DEFUN([AX_CFLAGS_GCC_OPTION_OLD], [dnl
@@ -53,7 +54,8 @@ VAR,[VAR="no, unknown"
  AC_LANG_C
  ac_save_[]FLAGS="$[]FLAGS"
 for ac_arg dnl
-in "-pedantic  % m4_ifval($2,$2,-option)"  dnl   GCC
+in "-pedantic -Werror % m4_ifval($2,$2,-option)"  dnl   GCC
+   "-pedantic % m4_ifval($2,$2,-option) %% no, obsolete"  dnl new GCC
    #
 do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
    AC_TRY_COMPILE([],[return 0;],
@@ -85,10 +87,11 @@ AS_VAR_PUSHDEF([VAR],[ac_cv_cxxflags_gcc_option_$2])dnl
 AC_CACHE_CHECK([m4_ifval($1,$1,FLAGS) for gcc m4_ifval($2,$2,-option)],
 VAR,[VAR="no, unknown"
  AC_LANG_SAVE
- AC_LANG_CXX
+ AC_LANG_CPLUSPLUS
  ac_save_[]FLAGS="$[]FLAGS"
 for ac_arg dnl
-in "-pedantic  % m4_ifval($2,$2,-option)"  dnl   GCC
+in "-pedantic -Werror % m4_ifval($2,$2,-option)"  dnl   GCC
+   "-pedantic % m4_ifval($2,$2,-option) %% no, obsolete"  dnl new GCC
    #
 do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
    AC_TRY_COMPILE([],[return 0;],
@@ -122,7 +125,8 @@ VAR,[VAR="no, unknown"
  AC_LANG_C
  ac_save_[]FLAGS="$[]FLAGS"
 for ac_arg dnl
-in "-pedantic  % m4_ifval($1,$1,-option)"  dnl   GCC
+in "-pedantic -Werror % m4_ifval($1,$1,-option)"  dnl   GCC
+   "-pedantic % m4_ifval($1,$1,-option) %% no, obsolete"  dnl new GCC
    #
 do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
    AC_TRY_COMPILE([],[return 0;],
@@ -154,10 +158,11 @@ AS_VAR_PUSHDEF([VAR],[ac_cv_cxxflags_gcc_option_$1])dnl
 AC_CACHE_CHECK([m4_ifval($2,$2,FLAGS) for gcc m4_ifval($1,$1,-option)],
 VAR,[VAR="no, unknown"
  AC_LANG_SAVE
- AC_LANG_CXX
+ AC_LANG_CPLUSPLUS
  ac_save_[]FLAGS="$[]FLAGS"
 for ac_arg dnl
-in "-pedantic  % m4_ifval($1,$1,-option)"  dnl   GCC
+in "-pedantic -Werror % m4_ifval($1,$1,-option)"  dnl   GCC
+   "-pedantic % m4_ifval($1,$1,-option) %% no, obsolete"  dnl new GCC
    #
 do FLAGS="$ac_save_[]FLAGS "`echo $ac_arg | sed -e 's,%%.*,,' -e 's,%,,'`
    AC_TRY_COMPILE([],[return 0;],
@@ -185,3 +190,4 @@ AC_DEFUN([AX_CFLAGS_GCC_OPTION],[ifelse(m4_bregexp([$2],[-]),-1,
 
 AC_DEFUN([AX_CXXFLAGS_GCC_OPTION],[ifelse(m4_bregexp([$2],[-]),-1,
 [AX_CXXFLAGS_GCC_OPTION_NEW($@)],[AX_CXXFLAGS_GCC_OPTION_OLD($@)])])
+

@@ -1,3 +1,9 @@
+2010-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Moved luatexdir/zziplib/ to ../../libs/zziplib.
+	* configure.ac: Add KPSE_ZZIPLIB_FLAGS.
+	* Makefile.am: Add ZZIPLIB_RULE, remove luatexdir/am/libzzip.am.
+
 2010-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.h (mk_shellcmdlist): Declare string param as const.

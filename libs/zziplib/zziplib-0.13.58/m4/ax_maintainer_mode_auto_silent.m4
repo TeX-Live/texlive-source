@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_maintainer_mode_auto_silent.m4
 dnl @synopsis AX_MAINTAINER_MODE_AUTO_SILENT
 dnl
 dnl Set autotools to error/sleep settings so that they are not run when
@@ -14,7 +15,7 @@ dnl I did not put an AC-REQUIRE(MAINTAINER_MODE) in here - should I?
 dnl
 dnl @category Misc
 dnl @category Automake
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2005-01-21
 dnl @license GPLWithACException
 
@@ -36,3 +37,4 @@ else
       AC_MSG_RESULT([no])
 fi
 ])
+

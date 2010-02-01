@@ -74,6 +74,18 @@ test3.zip : # will not be shipped in source tarball
 	; else echo cp $(testdatadir)/$@ .; cp $(testdatadir)/$@ . \
 	; fi ; echo test -s $@ ; test -s $@
 
+test4.zip : # will not be shipped in source tarball
+	@ echo $(MKZIP) $@ ... "(1000 files)" \
+	; mkdir test.tmp ; for h in 1 2 3 4 5 6 7 8 9 ; do : \
+	; for i in 1 2 3 4 5 6 8 9 ; do for j in 1 2 3 4 5 6 7 8 9 \
+	; do echo "file-$i" >test.tmp/file.$$h$$j$$i ; done done done \
+	; (cd test.tmp && $(MKZIP) -n : ../$@ file.* >$(NULL)) \
+	; rm -rf test.tmp
+	@      test -d $(testdatadir) || mkdir $(testdatadir); if test -s $@ \
+	; then echo cp $@ $(testdatadir)/ ; cp $@ $(testdatadir)/ \
+	; else echo cp $(testdatadir)/$@ .; cp $(testdatadir)/$@ . \
+	; fi ; echo test -s $@ ; test -s $@
+
 test.dat : test.zip
 	$(zzxorcopy) $? $@
 test1.dat : test1.zip
@@ -116,6 +128,8 @@ test2: $(zzcat)
 	$(zzcat) test/README
 test3: $(zzdir)
 	$(zzdir) test1.zip
+test4: $(zzdir) test4.zip
+	$(zzcat) test4/file.113
 
 check-test0 : $(zziptest)
 	@ echo :$@: quick selftest

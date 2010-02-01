@@ -31,6 +31,7 @@ libzzip_la_headers = \
 	plugin.h \
 	lib.h \
 	zzip.h \
+        write.h \
 	fetch.h \
 	format.h \
         info.h \
@@ -61,7 +62,7 @@ WCC10_CLEAN = *.obj *.lk1 *.mk1 *.mk *.sym *.tgt
 EXTRA_DIST =  $(WCC10_DIST) _msvc.sed 
 CONFIG_CLEAN_FILES = _config.h 
 MAINTAINERCLEANFILES = _msvc.h
-CLEANFILES = $(WCC10_CLEAN)  *.pc *.omf
+CLEANFILES = $(WCC10_CLEAN)  *.pc *.omf *~ *.tmp *.tmp.*
 
 # here is some backward compatibility with version 0.10.* of zziplib
 install-data-local : install-zzipHEADERS
@@ -95,6 +96,58 @@ install-exec-local:
 uninstall-local :
 	(cd $(DESTDIR)$(includedir) && rm zziplib.h  zzip.h  zzip-io.h)
 
+
+INDENT = indent
+INDENTFLAGS = \
+--blank-lines-after-procedures \
+--blank-lines-before-block-comments \
+--brace-indent0 \
+--braces-after-if-line \
+--case-indentation0 \
+--cuddle-else \
+--space-after-cast \
+--honour-newlines \
+--indent-level4 \
+--line-length80 \
+--continue-at-parentheses \
+--leave-preprocessor-space \
+--dont-break-function-decl-args \
+--dont-cuddle-do-while \
+--dont-format-first-column-comments \
+--no-space-after-function-call-names \
+--no-space-after-parentheses \
+--no-tabs \
+--ignore-profile \
+--procnames-start-lines \
+--space-after-for \
+--space-after-if \
+--space-after-while \
+--space-special-semicolon 
+
+DIFF_U0 = diff -U0
+# __indent1 = "s|^\\([^{};]*if[^{};]*\\)\\(return[^{};]*;\\)|\\1 { \\2 }|" 
+__indent1 = ":begin"
+__indent2 = "s|^\\([^{}';]*\\)\\({[^{}']*}\\)\\([^{}';]*\\)$$|\\1(' \\2 ');\\3|"
+__indent3 = "s|___+[;].*|/*&*/|"
+__indent4 = ":end"
+__indent6 = "s|!\\([^ !=)]\\)|! \\1|g"
+__indent7 = "s|(' \\({[^{}']*}\\) ');|\\1|"
+__indent8 = "s|/[*]\\(___+[;].*\\)[*]/$$|\\1|"
+__indent9 = ":end"
+indent-check:
+	for file in $(srcdir)/*.c ; do f=`basename "$$file"`  \
+	; sed -e $(__indent1) -e $(__indent2) -e $(__indent3) -e $(__indent4) \
+          $(INDENTBEFORE) $$file \
+	| $(INDENT) $(INDENTFLAGS) $(INDENTOPTS) -st - \
+	| sed -e $(__indent6) -e $(__indent7) -e $(__indent8) -e $(__indent9) \
+          $(INDENTAFTER) > $$f.tmp \
+	; echo $(DIFF_U0) "$$file" "$$f.tmp" \
+	; $(DIFF_U0) "$$file" "$$f.tmp" ; done
+
+i:
+	@ f=`basename $(file) .tmp` \
+	; echo cp $(file) $(srcdir)/$$f ; sleep 2 \
+	; cp $(file) $(srcdir)/$$f
 
 # ----------------------------------------------------------------------
 pkgconfigdir=$(libdir)/pkgconfig

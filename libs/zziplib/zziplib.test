@@ -1,0 +1,13 @@
+#! /bin/sh
+
+# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -rf test
+mkdir test
+cp $srcdir/$ZZIPLIB_TREE/test/test.zip test
+
+(cd test && ../unzzip test.zip || exit 1) || exit 1
+
+diff $srcdir/$ZZIPLIB_TREE/README test/README || exit 1
+

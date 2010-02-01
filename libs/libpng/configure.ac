@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -12,7 +12,7 @@ m4_define([libpng_micro], [40])[]dnl using unmodified libpng source tree
 m4_define([libpng_version], libpng_major.libpng_minor.libpng_micro)[]dnl
 AC_INIT([libpng for TeX Live], libpng_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([libpng-]libpng_version)
+AC_CONFIG_SRCDIR([libpng-]libpng_version[/pngget.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 

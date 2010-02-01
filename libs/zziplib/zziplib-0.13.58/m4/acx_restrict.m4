@@ -1,13 +1,18 @@
+dnl /usr/share/aclocal/ac-archive-cvs/acx_restrict.m4
 dnl @synopsis ACX_C_RESTRICT
 dnl
-dnl This macro determines whether the C compiler supports the "restrict"
-dnl keyword introduced in ANSI C99, or an equivalent.  Does nothing if
-dnl the compiler accepts the keyword.  Otherwise, if the compiler supports
-dnl an equivalent (like gcc's __restrict__) defines "restrict" to be that.
-dnl Otherwise, defines "restrict" to be empty.
+dnl @obsoleted Replaced by AC_C_RESTRICT in Autoconf 2.58
 dnl
-dnl @version $Id: acx_restrict.m4,v 1.1 2005/12/09 07:47:34 guidod Exp $
+dnl This macro determines whether the C compiler supports the
+dnl "restrict" keyword introduced in ANSI C99, or an equivalent. Does
+dnl nothing if the compiler accepts the keyword. Otherwise, if the
+dnl compiler supports an equivalent (like gcc's __restrict__) defines
+dnl "restrict" to be that. Otherwise, defines "restrict" to be empty.
+dnl
+dnl @category Obsolete
 dnl @author Steven G. Johnson <stevenj@alum.mit.edu>
+dnl @version 2005-05-31
+dnl @license GPLWithACException
 
 AC_DEFUN([ACX_C_RESTRICT],
 [AC_CACHE_CHECK([for C restrict keyword], acx_cv_c_restrict,
@@ -30,3 +35,4 @@ AC_DEFUN([ACX_C_RESTRICT],
    AC_DEFINE_UNQUOTED(restrict, $acx_kw, [Define to equivalent of C99 restrict keyword, or to nothing if this is not supported.  Do not define if restrict is supported directly.])
  fi
 ])
+

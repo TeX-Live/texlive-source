@@ -22,6 +22,10 @@
 #include <zzip/plugin.h>
 #include <zzip/stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * this structure cannot be wildly enlarged... (see zzip-zip.c)
  */
@@ -79,5 +83,8 @@ zzip_dir_fdopen_ext_io(int fd, zzip_error_t * errorcode_p,
 ZZIP_DIR* /*depracated*/
 zzip_dir_alloc_ext_io (zzip_strings_t* ext, const zzip_plugin_io_t io);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _ZZIP_H */
 

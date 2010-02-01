@@ -63,6 +63,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../m4/kpse-web2c.m4 \
 	$(top_srcdir)/../m4/kpse-xpdf-flags.m4 \
 	$(top_srcdir)/../m4/kpse-zlib-flags.m4 \
+	$(top_srcdir)/../m4/kpse-zziplib-flags.m4 \
 	$(top_srcdir)/../utils/dialog/ac/withenable.ac \
 	$(top_srcdir)/../utils/pdfopen/ac/withenable.ac \
 	$(top_srcdir)/../utils/ps2eps/ac/withenable.ac \
@@ -117,6 +118,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../libs/icu/ac/withenable.ac \
 	$(top_srcdir)/../libs/teckit/ac/withenable.ac \
 	$(top_srcdir)/../libs/graphite/ac/withenable.ac \
+	$(top_srcdir)/../libs/zziplib/ac/withenable.ac \
 	$(top_srcdir)/../libs/xpdf/ac/withenable.ac \
 	$(top_srcdir)/../libs/gd/ac/withenable.ac \
 	$(top_srcdir)/../libs/freetype2/ac/withenable.ac \

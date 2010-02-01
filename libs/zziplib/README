@@ -1,0 +1,16 @@
+	Building zziplib-0.13.58 as part of the TL tree
+	===============================================
+
+This directory libs/zziplib/ uses a proxy Makefile.am to build the zziplib
+library from the unmodified (*) source tree in libs/zziplib/zziplib-x.y.z/,
+bypassing the original build system.
+
+(*) The directory zziplib-x.y.z-PATCHES contains patches (if any) applied to
+the original source tree.
+
+As far as applicable, the tests in libs/zziplib-x.y.z/configure.ac have been
+copied to libs/zziplib/configure.ac.
+
+=============================
+
+2010-01-30	Peter Breitenlohner <peb@mppmu.mpg.de>

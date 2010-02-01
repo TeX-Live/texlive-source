@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/ax_spec_package_version.m4
 dnl @synopsis AX_SPEC_PACKAGE_AND_VERSION ([specfile])
 dnl @synopsis AX_SPEC_PACKAGE_NAME ([shellvar],[defaultvalue])
 dnl @synopsis AX_SPEC_PACKAGE_VERSION ([shellvar],[defaultvalue])
@@ -47,7 +48,7 @@ dnl the final AX_SPEC_INIT(specfile) will initialize all variables to
 dnl its defaults according to the spec file given.
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2005-01-21
 dnl @license GPLWithACException
 
@@ -225,3 +226,4 @@ AC_DEFUN([AX_SPEC_DEFAULTS],[
   AX_SPEC_PACKAGE_CATEGORY
   AX_SPEC_PACKAGE_ICON
 ])
+

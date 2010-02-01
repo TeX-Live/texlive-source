@@ -1,7 +1,15 @@
+2010-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Moved zziplib/ to ../../../libs/zziplib.
+	* am/luamisc.am (libluamisc_a_DEPENDENCIES): Adapt.
+	* am/luatex.am (luatex_ldadd): Adapt.
+
 2010-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Clarify dependencies between luaTeX libraries:
 	* am/libzzip.am: Remove dependency on liblua51.a.
+	Remove memdisk.[ch] and mmapped.[ch] from libzzip_a_SOURCES and
+	add them to EXTRA_DIST.
 	* am/luamisc.am: Add dependency on libzzip.a.
 	* am/luasocket.am: Replace dependency on libzzip.a by liblua51.a.
 

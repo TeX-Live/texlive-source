@@ -1,3 +1,4 @@
+dnl /usr/share/aclocal/guidod-cvs/patch_libtool_on_darwin_zsh_overquoting.m4
 dnl @synopsis PATCH_LIBTOOL_ON_DARWIN_ZSH_OVERQUOTING
 dnl
 dnl libtool 1.4.x has a bug on darwin where the "zsh" is installed as
@@ -15,7 +16,7 @@ dnl replace a sequence of triple-backslash-and-doublequote with
 dnl single-backslash-and-doublequote.
 dnl
 dnl @category Misc
-dnl @author Guido Draheim <guidod@gmx.de>
+dnl @author Guido U. Draheim <guidod@gmx.de>
 dnl @version 2003-03-23
 dnl @license GPLWithACException
 
@@ -34,3 +35,4 @@ AC_MSG_RESULT(patching libtool on .so-sharedlib creation (zsh overquoting))
   ;;
 esac
 ])
+
