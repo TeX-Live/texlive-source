@@ -1,3 +1,7 @@
+2010-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (kpseinclude_HEADERS): Add win32lib.h.
+
 2010-02-01  Karl Berry  <karl@tug.org>
 
 	* strstr.c,

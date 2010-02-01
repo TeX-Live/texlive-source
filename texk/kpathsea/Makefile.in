@@ -424,6 +424,7 @@ kpseinclude_HEADERS = \
 	types.h \
 	variable.h \
 	version.h \
+	win32lib.h \
 	xopendir.h \
 	xstat.h
 

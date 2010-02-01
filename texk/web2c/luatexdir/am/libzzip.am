@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/libzzip.am: Makefile fragment for libzzip.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## zziplib
@@ -30,10 +30,6 @@ libzzip_a_SOURCES = \
 	luatexdir/zziplib/zzip/info.c \
 	luatexdir/zziplib/zzip/info.h \
 	luatexdir/zziplib/zzip/lib.h \
-	luatexdir/zziplib/zzip/memdisk.c \
-	luatexdir/zziplib/zzip/memdisk.h \
-	luatexdir/zziplib/zzip/mmapped.c \
-	luatexdir/zziplib/zzip/mmapped.h \
 	luatexdir/zziplib/zzip/plugin.c \
 	luatexdir/zziplib/zzip/plugin.h \
 	luatexdir/zziplib/zzip/stdint.h \
@@ -76,6 +72,10 @@ EXTRA_DIST += \
 	luatexdir/zziplib/zzip/autoconf.h \
 	luatexdir/zziplib/zzip/fseeko.c \
 	luatexdir/zziplib/zzip/fseeko.h \
+	luatexdir/zziplib/zzip/memdisk.c \
+	luatexdir/zziplib/zzip/memdisk.h \
+	luatexdir/zziplib/zzip/mmapped.c \
+	luatexdir/zziplib/zzip/mmapped.h \
 	luatexdir/zziplib/zzip/zziplib.wpj \
 	luatexdir/zziplib/zzipback.sed \
 	luatexdir/zziplib/zzipwrap

@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -37,7 +37,7 @@ AC_DEFUN([KPSE_GRAPHITE_SYSTEM_FLAGS],
 if $PKG_CONFIG silgraphite --atleast-version=2.3; then
   GRAPHITE_INCLUDES="`$PKG_CONFIG silgraphite --cflags`"
   GRAPHITE_LIBS=`$PKG_CONFIG silgraphite --libs`
-elif test "x$need_graphite:$with_system_graphite" = 'xyes:yes'; then
+elif test "x$need_graphite:$with_system_graphite" = xyes:yes; then
   AC_MSG_ERROR([did not find silgraphite 2.3 or better])
 fi
 ]) # KPSE_GRAPHITE_SYSTEM_FLAGS

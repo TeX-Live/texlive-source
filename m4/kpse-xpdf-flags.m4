@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -38,7 +38,7 @@ if $PKG_CONFIG poppler --atleast-version=0.10; then
   POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
   XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
   XPDF_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_xpdf:$with_system_xpdf" = 'xyes:yes'; then
+elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
   AC_MSG_ERROR([did not find poppler-0.10 or better])
 fi
 ]) # KPSE_XPDF_SYSTEM_FLAGS

@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -62,7 +62,7 @@ if $ICU_CONFIG --version >/dev/null 2>&1; then
   ICU_INCLUDES=`$ICU_CONFIG --cppflags`
   ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath m4_ifset([kpse_icu_config_args],
                                                       [kpse_icu_config_args] )--ldflags-libsonly --ldflags-system`
-elif test "x$need_icu:$with_system_icu" = 'xyes:yes'; then
+elif test "x$need_icu:$with_system_icu" = xyes:yes; then
   AC_MSG_ERROR([did not find icu-config required for system icu libraries])
 fi
 ]) # KPSE_ICU_SYSTEM_FLAGS
