@@ -1,3 +1,14 @@
+2010-02-01  Karl Berry  <karl@tug.org>
+
+	* etex.man,
+	* aleph.man,
+	* bibtex.man,
+	* pdftex.man,
+	* tex.man: say a few more words about TEXMFOUTPUT.
+	* pdfetex.man: just refer to pdftex.man.
+
+	* Makefile.am (EXTRA_DIST): rm pdftexman.m4.
+
 2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (man1_links): New list of symlinks within man1dir.
@@ -68,6 +79,7 @@
 	AUTHORS for eTeX contributions.
 
 2007-01-08  Martin Schröder <martin@pdftex.org>
+
         * pdfetex.man, pdftex.man: Document -etex and -draftmode switches.
 
         * pdftosrc.man: New man page for pdftosrc

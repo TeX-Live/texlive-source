@@ -1,4 +1,4 @@
-.TH ALEPH 1 "5 April 2009" "Web2C @VERSION@"
+.TH ALEPH 1 "1 February 2010" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -19,7 +19,7 @@
 .if n .ds AY AmSLaTeX
 .\"=====================================================================
 .SH NAME
-aleph \- extended unicode TeX
+aleph \- extended Unicode TeX
 .SH SYNOPSIS
 .B aleph
 .RI [ options ]
@@ -45,24 +45,13 @@ it is usually better to use the
 option instead.
 .PP
 Aleph is a version of the \*(TX program modified for multilingual
-typesetting.  It uses unicode, and has additional primitives for
+typesetting.  It uses Unicode, and has additional primitives for
 (among other things) bidirectional typesetting.
-.PP
-The
-.B inialeph
-and
-.B viraleph
-commands are Aleph's analogues to the
-.B initex
-and
-.B virtex
-commands.  In this installation, they are symlinks to the
-.B aleph
-executable.
 .PP
 Aleph's command line options are similar to those of \*(TX.
 .PP
-Aleph is experimental software.
+Aleph is no longer being actively developed; see LuaTeX for current
+activity.
 .\"=====================================================================
 .SH OPTIONS
 Run aleph --help to see the complete list of options; this is not
@@ -204,7 +193,10 @@ Aleph attempts to create
 .I /tmp/paper.log
 (and
 .IR /tmp/paper.dvi ,
-if any output is produced.)
+if any output is produced.)  TEXMFOUTPUT is also checked for input
+files, as \*(TX often generates files that need to be subsequently
+read; for input, no suffixes (such as ``.tex'') are added by default,
+the input name is simply checked as given.
 .TP
 TEXINPUTS
 Search path for
@@ -212,11 +204,11 @@ Search path for
 and
 .I \eopenin
 files.
-This should probably start with ``.'', so
+This should start with ``.'', so
 that user files are found before system files.  An empty path
 component will be replaced with the paths defined in the
 .I texmf.cnf
-file.  For example, set TEXINPUTS to ".:/home/usr/tex:" to prepend the
+file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
 current direcory and ``/home/user/tex'' to the standard search path.
 .TP
 TEXEDIT

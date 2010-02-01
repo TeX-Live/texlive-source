@@ -1,4 +1,4 @@
-.TH ETEX 1 "22 March 2009" "pdftex 1.40" "Web2C @VERSION@"
+.TH ETEX 1 "1 February 2010" "pdftex 1.40" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -23,7 +23,7 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-etex, einitex, evirtex \- extended TeX
+etex \- extended (plain) TeX
 .SH SYNOPSIS
 .B etex
 .RI [ options ]
@@ -316,7 +316,10 @@ e-\*(TX attempts to create
 .I /tmp/paper.log
 (and
 .IR /tmp/paper.dvi ,
-if any output is produced.)
+if any output is produced.)  TEXMFOUTPUT is also checked for input
+files, as \*(TX often generates files that need to be subsequently
+read; for input, no suffixes (such as ``.tex'') are added by default,
+the input name is simply checked as given.
 .TP
 TEXINPUTS
 Search path for
@@ -324,11 +327,11 @@ Search path for
 and
 .I \eopenin
 files.
-This should probably start with ``.'', so
+This should start with ``.'', so
 that user files are found before system files.  An empty path
 component will be replaced with the paths defined in the
 .I texmf.cnf
-file.  For example, set TEXINPUTS to ".:/home/usr/tex:" to prepend the
+file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
 current direcory and ``/home/user/tex'' to the standard search path.
 .TP
 TEXFORMATS

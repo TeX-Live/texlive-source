@@ -104,7 +104,6 @@ EXTRA_DIST += \
 	amslatex.min \
 	initex.min \
 	lamstex.min \
-	pdftexman.m4 \
 	slitex.min \
 	spell.add \
 	virtex.min

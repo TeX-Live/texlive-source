@@ -1,3 +1,8 @@
+2010-02-01  Karl Berry  <karl@tug.org>
+
+	* openclose.c (open_input): do not try prepending TEXMFOUTPUT for
+	reading if the filename is absolute.
+
 2010-01-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (mk_shellcmdlist): Declare string param as const.

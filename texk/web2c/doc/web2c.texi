@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2009
-@set month-year July 2009
+@set month-year February 2010
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -503,6 +503,11 @@ Bib@TeX{}) make an exception: if the config file value
 @code{TEXMFOUTPUT} is set (it is not by default), output files are
 written to the directory specified. 
 
+@vindex TEXMFOUTPUT@r{, used for reading}
+@code{TEXMFOUTPUT} is also checked for input files, as @TeX{} often
+generates files that need to be subsequently read; for input, no
+suffixes (such as @samp{.tex}) are added by default, the input name is
+simply checked as given.
 
 @node Three programs
 @section Three programs: Metafont, MetaPost, and @TeX{}

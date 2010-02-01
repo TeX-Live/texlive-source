@@ -121,24 +121,21 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
         free(fullnameoffile);
     fullnameoffile = NULL;
     
-    /* Handle -output-directory.
-       FIXME: We assume that it is OK to look here first.  Possibly it
-       would be better to replace lookups in "." with lookups in the
-       output_directory followed by "." but to do this requires much more
-       invasive surgery in libkpathsea.  */
-    /* FIXME: This code assumes that the filename of the input file is
-       not an absolute filename. */
-    if (output_directory) {
-        fname = concat3(output_directory, DIR_SEP_STRING, nameoffile + 1);
-        *f_ptr = fopen(fname, fopen_mode);
+    /* Look in -output-directory first, if the filename is not
+       absolute.  This is because .aux and other such files will get
+       written to the output directory, and we have to be able to read
+       them from there.  We only look for the name as-is.  */
+    if (output_directory && kpse_absolute_p (nameoffile+1, false)) {
+        fname = concat3 (output_directory, DIR_SEP_STRING, nameoffile + 1);
+        *f_ptr = fopen (fname, fopen_mode);
         if (*f_ptr) {
-            free(nameoffile);
+            free (nameoffile);
             namelength = strlen (fname);
-            nameoffile = (string)xmalloc (namelength + 2);
+            nameoffile = (string) xmalloc (namelength + 2);
             strcpy (nameoffile + 1, fname);
             fullnameoffile = fname;
         } else {
-            free(fname);
+            free (fname);
         }
     }
 
