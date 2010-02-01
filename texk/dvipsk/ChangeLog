@@ -1,3 +1,7 @@
+2010-02-01  Karl Berry  <karl@tug.org>
+
+	* writet1.c (append_cs_return): cast to byte * to avoid warning.
+
 2010-01-03  Karl Berry  <karl@tug.org>
 
 	* output.c (copyfile_general) <default>: write newline
