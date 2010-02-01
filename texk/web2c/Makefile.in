@@ -7989,8 +7989,8 @@ etrip-clean:
 	rm -f tripos.tex 8terminal.tex
 	rm -rf tfm
 
-# We must create libpdftex.a (and zlib) before building the pdftex_OBJECTS.
-$(pdftex_OBJECTS): libpdftex.a $(ZLIB_DEPEND)
+# We must create libpdftex.a before building the pdftex_OBJECTS.
+$(pdftex_OBJECTS): libpdftex.a
 $(pdftex_c_h): pdftex-web2c
 	@$(web2c) pdftex
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
@@ -8016,8 +8016,8 @@ pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexd
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
 
-# We must create pdftexd.h (and xpdf) before building the libpdftex_a_OBJECTS.
-$(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND)
+# We must create pdftexd.h (and xpdf...) before building the libpdftex_a_OBJECTS.
+$(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND) $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND)
 

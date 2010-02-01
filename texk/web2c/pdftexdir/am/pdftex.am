@@ -36,8 +36,8 @@ pdftex_LDADD = libpdftex.a $(pdftex_ldadd) $(LDADD) $(ipc_socketlibs)
 
 pdftex_DEPENDENCIES = $(pdftex_dependencies) libpdftex.a
 
-# We must create libpdftex.a (and zlib) before building the pdftex_OBJECTS.
-$(pdftex_OBJECTS): libpdftex.a $(ZLIB_DEPEND)
+# We must create libpdftex.a before building the pdftex_OBJECTS.
+$(pdftex_OBJECTS): libpdftex.a
 
 pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c pdftexextra.c pdftexdir/pdftexextra.h

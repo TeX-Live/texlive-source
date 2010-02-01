@@ -13,30 +13,11 @@ Removed:
 Converted Dos/Win line ends to native:
 	docs/README.MSVC6
 	docs/sdocbook.css
-	msvc6/zzcat.dsp
-	msvc6/zzdir.dsp
-	msvc6/zzip.dsp
-	msvc6/zziplib.dsp
-	msvc6/zziplib.dsw
-	msvc6/zziptest.dsp
-	msvc6/zzipwrap.dsp
-	msvc6/zzobfuscated.dsp
-	msvc7/zzcat.sln
-	msvc7/zzdir.sln
-	msvc7/zzip.sln
-	msvc7/zziplib.sln
-	msvc7/zzipself.sln
-	msvc7/zzipsetstub.sln
-	msvc7/zziptest.sln
-	msvc7/zzobfuscated.sln
-	msvc8/zzcat.sln
-	msvc8/zzdir.sln
-	msvc8/zzip.sln
-	msvc8/zziplib.sln
-	msvc8/zzipself.sln
-	msvc8/zzipsetstub.sln
-	msvc8/zziptest.sln
-	msvc8/zzobfuscated.sln
+	msvc6/*.dsp
+	msvc6/*.dsw
+	msvc7/*.sln
+	msvc8/*.sln
+	msvc8/*.vcproj
 	zzip/file.h
 	zzip/stdint.h
 	zzip/zziplib.wpj

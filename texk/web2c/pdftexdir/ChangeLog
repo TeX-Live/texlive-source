@@ -1,3 +1,10 @@
+2010-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libpdftex.am (libpdftex_a_OBJECTS): Add dependency on
+	$(ZLIB_DEPEND) and $(LIBPNG_DEPEND).
+	* am/pdftex.am (pdftex_OBJECTS): Remove explicit dependency on
+	$(ZLIB_DEPEND) alread implied by libpdftex.a.
+
 2010-01-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* avl.c (avl_copy): Proper handling of const.

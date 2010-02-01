@@ -53,8 +53,8 @@ libpdftex_a_SOURCES += \
 	pdftexdir/inc-epdf.h \
 	pdftexdir/inc-extra.h
 
-# We must create pdftexd.h (and xpdf) before building the libpdftex_a_OBJECTS.
-$(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND)
+# We must create pdftexd.h (and xpdf...) before building the libpdftex_a_OBJECTS.
+$(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND) $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 
 ## included by pdftexdir/writettf.c
 EXTRA_libpdftex_a_SOURCES = pdftexdir/macnames.c
