@@ -60,12 +60,11 @@ DIST_COMMON = README $(am__configure_deps) $(dist_man_MANS) \
 	$(srcdir)/../../build-aux/install-sh \
 	$(srcdir)/../../build-aux/ltmain.sh \
 	$(srcdir)/../../build-aux/missing $(srcdir)/Makefile.am \
-	$(srcdir)/Makefile.in $(srcdir)/README \
-	$(srcdir)/alephdir/am/aleph.am $(srcdir)/am/bootstrap.am \
-	$(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/am/web.am \
-	$(srcdir)/c-auto.in $(srcdir)/ctangleboot-sh.in \
-	$(srcdir)/etexdir/am/etex.am $(srcdir)/libmd5/am/md5.am \
-	$(srcdir)/luatexdir/am/liblua51.am \
+	$(srcdir)/Makefile.in $(srcdir)/alephdir/am/aleph.am \
+	$(srcdir)/am/bootstrap.am $(srcdir)/am/cweb.am \
+	$(srcdir)/am/texmf.am $(srcdir)/am/web.am $(srcdir)/c-auto.in \
+	$(srcdir)/ctangleboot-sh.in $(srcdir)/etexdir/am/etex.am \
+	$(srcdir)/libmd5/am/md5.am $(srcdir)/luatexdir/am/liblua51.am \
 	$(srcdir)/luatexdir/am/libluatex.am \
 	$(srcdir)/luatexdir/am/luafontforge.am \
 	$(srcdir)/luatexdir/am/luamisc.am \
@@ -201,6 +200,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-xpdf-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-zziplib-flags.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
@@ -213,7 +213,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = c-auto.h ff-config.h
-CONFIG_CLEAN_FILES = CXXLD.sh web2c-sh tangle-sh ctangleboot-sh
+CONFIG_CLEAN_FILES = web2c-sh tangle-sh ctangleboot-sh
 CONFIG_CLEAN_VPATH_FILES =
 ARFLAGS = cru
 libff_a_AR = $(AR) $(ARFLAGS)
@@ -555,8 +555,8 @@ nodist_luatex_OBJECTS = $(am__objects_14) luatex-luatex-pool.$(OBJEXT) \
 luatex_OBJECTS = $(nodist_luatex_OBJECTS)
 am__DEPENDENCIES_4 = libluatex.a libff.a libluamisc.a libluasocket.a \
 	liblua51.a $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libmd5.a \
-	libmplib.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) libmd5.a libmplib.a
 luatex_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(luatex_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -908,8 +908,6 @@ CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CXXLD = @CXXLD@
-CXX_HACK_DEPS = @CXX_HACK_DEPS@
-CXX_HACK_LIBS = @CXX_HACK_LIBS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -1012,6 +1010,9 @@ YFLAGS = @YFLAGS@
 ZLIB_DEPEND = @ZLIB_DEPEND@
 ZLIB_INCLUDES = @ZLIB_INCLUDES@
 ZLIB_LIBS = @ZLIB_LIBS@
+ZZIPLIB_DEPEND = @ZZIPLIB_DEPEND@
+ZZIPLIB_INCLUDES = @ZZIPLIB_INCLUDES@
+ZZIPLIB_LIBS = @ZZIPLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -2190,8 +2191,6 @@ stamp-h2: $(top_srcdir)/luatexdir/luafontloader/ff-config.in $(top_builddir)/con
 
 distclean-hdr:
 	-rm -f c-auto.h stamp-h1 ff-config.h stamp-h2
-CXXLD.sh: $(top_builddir)/config.status $(srcdir)/README
-	cd $(top_builddir) && $(SHELL) ./config.status $@
 web2c-sh: $(top_builddir)/config.status $(srcdir)/web2c-sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 tangle-sh: $(top_builddir)/config.status $(srcdir)/tangle-sh.in

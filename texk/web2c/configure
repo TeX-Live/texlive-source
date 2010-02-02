@@ -777,6 +777,10 @@ GRAPHITE_RULE
 GRAPHITE_DEPEND
 GRAPHITE_LIBS
 GRAPHITE_INCLUDES
+ZZIPLIB_RULE
+ZZIPLIB_DEPEND
+ZZIPLIB_LIBS
+ZZIPLIB_INCLUDES
 XPDF_RULE
 XPDF_DEPEND
 XPDF_LIBS
@@ -859,8 +863,6 @@ MINGW32_TRUE
 WIN32_FALSE
 WIN32_TRUE
 KPSEWHICH
-CXX_HACK_LIBS
-CXX_HACK_DEPS
 CXXLD
 WARNING_OBJCXXFLAGS
 ac_ct_OBJCXX
@@ -1038,6 +1040,7 @@ with_system_libpng
 with_libpng_includes
 with_libpng_libdir
 with_system_xpdf
+with_system_zziplib
 with_system_graphite
 with_system_freetype2
 with_system_teckit
@@ -1756,6 +1759,8 @@ Optional Packages:
                           libpng library installed in DIR
   --with-system-xpdf      use installed poppler headers and library instead of
                           xpdf (requires pkg-config)
+  --with-system-zziplib   use installed zziplib headers and library (requires
+                          pkg-config)
   --with-system-graphite  use installed silgraphite headers and library
                           (requires pkg-config)
   --with-system-freetype2 use installed freetype2 headers and library
@@ -5164,13 +5169,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:5167: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:5172: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5170: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:5175: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5173: output\"" >&5)
+  (eval echo "\"\$as_me:5178: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -6376,7 +6381,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6379 "configure"' > conftest.$ac_ext
+  echo '#line 6384 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -8008,11 +8013,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8011: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8016: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8015: \$? = $ac_status" >&5
+   echo "$as_me:8020: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8347,11 +8352,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8350: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8355: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8354: \$? = $ac_status" >&5
+   echo "$as_me:8359: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8452,11 +8457,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8455: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8460: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8459: \$? = $ac_status" >&5
+   echo "$as_me:8464: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8507,11 +8512,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8510: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8515: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8514: \$? = $ac_status" >&5
+   echo "$as_me:8519: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10874,7 +10879,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10877 "configure"
+#line 10882 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10970,7 +10975,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10973 "configure"
+#line 10978 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -12018,7 +12023,7 @@ else
   if test "x$enable_compiler_warnings" = xno; then
   kpse_cv_warning_cflags=
 elif test "x$GCC" = xyes; then
-  kpse_cv_warning_cflags="-Wall -Wunused"
+  kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
 case `$CC -dumpversion` in #(
   3.4.* | 4.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
@@ -12032,10 +12037,10 @@ case `$CC -dumpversion` in #(
      ;;
 esac
 if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_cflags="-Wall -Wunused -Wimplicit $kpse_cv_warning_cflags"
   kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
   if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wimplicit -Wparentheses -Wreturn-type"
-    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
     case `$CC -dumpversion` in #(
   3.4.* | 4.*) :
@@ -12844,7 +12849,7 @@ else
   if test "x$enable_compiler_warnings" = xno; then
   kpse_cv_warning_cxxflags=
 elif test "x$GXX" = xyes; then
-  kpse_cv_warning_cxxflags="-Wall -Wunused"
+  kpse_cv_warning_cxxflags="-Wimplicit -Wreturn-type"
 case `$CXX -dumpversion` in #(
   3.[234].* | 4.*) :
     kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wno-unknown-pragmas" ;; #(
@@ -12852,9 +12857,9 @@ case `$CXX -dumpversion` in #(
      ;;
 esac
 if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_cxxflags="-Wall -Wunused $kpse_cv_warning_cxxflags"
   if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wimplicit -Wparentheses -Wreturn-type"
-    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
     kpse_cv_warning_cxxflags="$kpse_cv_warning_cxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
   fi
     if test "x$enable_compiler_warnings" != xmax; then
@@ -14760,11 +14765,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14763: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14768: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14767: \$? = $ac_status" >&5
+   echo "$as_me:14772: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14859,11 +14864,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14862: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14867: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14866: \$? = $ac_status" >&5
+   echo "$as_me:14871: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14911,11 +14916,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14914: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14919: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14918: \$? = $ac_status" >&5
+   echo "$as_me:14923: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16102,7 +16107,7 @@ else
   if test "x$enable_compiler_warnings" = xno; then
   kpse_cv_warning_objcxxflags=
 elif test "x$GOBJCXX" = xyes; then
-  kpse_cv_warning_objcxxflags="-Wall -Wunused"
+  kpse_cv_warning_objcxxflags="-Wimplicit -Wreturn-type"
 case `$OBJCXX -dumpversion` in #(
   3.[234].* | 4.*) :
     kpse_cv_warning_objcxxflags="$kpse_cv_warning_objcxxflags -Wno-unknown-pragmas" ;; #(
@@ -16110,9 +16115,9 @@ case `$OBJCXX -dumpversion` in #(
      ;;
 esac
 if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_objcxxflags="-Wall -Wunused $kpse_cv_warning_objcxxflags"
   if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_objcxxflags="$kpse_cv_warning_objcxxflags -Wimplicit -Wparentheses -Wreturn-type"
-    kpse_cv_warning_objcxxflags="$kpse_cv_warning_objcxxflags -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_objcxxflags="$kpse_cv_warning_objcxxflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
     kpse_cv_warning_objcxxflags="$kpse_cv_warning_objcxxflags -Wcast-qual -Wcast-align -Wwrite-strings"
   fi
     if test "x$enable_compiler_warnings" != xmax; then
@@ -16225,20 +16230,16 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 fi
 if test "x$kpse_cv_cxx_hack" = xok; then
   CXXLD='$(top_builddir)/CXXLD.sh'
-  CXX_HACK_DEPS=$CXXLD
-  CXX_HACK_LIBS=$kpse_cv_cxx_flags
   cxxld_sh="#! ${CONFIG_SHELL-/bin/sh}
 # CXXLD.sh.  Generated by configure.
-set -- $CXX \"\$@\" $CXX_HACK_LIBS
+set -- $CXX \"\$@\" $kpse_cv_cxx_flags
 echo \"\$0:\" \"\$@\"
 exec \"\$@\""
-  ac_config_files="$ac_config_files CXXLD.sh:README"
+  ac_config_commands="$ac_config_commands CXXLD.sh"
 
 else
   CXXLD='$(CXX)'
 fi
-
-
 
 
 # Check whether --enable-libtool-hack was given.
@@ -20762,7 +20763,7 @@ if test "x$with_system_xpdf" = xyes; then
   POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
   XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
   XPDF_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_xpdf:$with_system_xpdf" = 'xyes:yes'; then
+elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
   as_fn_error "did not find poppler-0.10 or better" "$LINENO" 5
 fi
 else
@@ -20781,7 +20782,35 @@ ${top_builddir}/../../libs/xpdf/xpdf/Stream.h:
 	cd ${top_builddir}/../../libs/xpdf && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-KPSE_ZZIPLIB_FLAGS
+## _KPSE_LIB_FLAGS: Setup zziplib (-lzzip) flags
+
+# Check whether --with-system-zziplib was given.
+if test "${with_system_zziplib+set}" = set; then :
+  withval=$with_system_zziplib;
+fi
+if test "x$with_system_zziplib" = xyes; then
+  if $PKG_CONFIG zziplib --atleast-version=0.12; then
+  ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
+  ZZIPLIB_LIBS=`$PKG_CONFIG zziplib --libs`
+elif test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
+  as_fn_error "did not find zziplib-0.12 or better" "$LINENO" 5
+fi
+else
+  ZZIPLIB_INCLUDES=`echo '-IBLD/libs/zziplib/include' | sed \
+    -e "s,SRC/,$kpse_SRC/,g" \
+    -e "s,BLD/,$kpse_BLD/,g"`
+  ZZIPLIB_LIBS=`echo 'BLD/libs/zziplib/libzzip.a' | sed \
+    -e "s,BLD/,$kpse_BLD/,g"`
+
+  ZZIPLIB_DEPEND=`echo 'BLD/libs/zziplib/libzzip.a' | sed \
+    -e 's,BLD/,${top_builddir}/../../,g'`
+   ZZIPLIB_RULE='# Rebuild libzzip
+$(ZZIPLIB_DEPEND): ${top_builddir}/../../libs/zziplib/include/zzip/zzip.h
+	cd ${top_builddir}/../../libs/zziplib && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/zziplib/include/zzip/zzip.h:
+	cd ${top_builddir}/../../libs/zziplib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
 ## _KPSE_LIB_FLAGS: Setup graphite (-lgraphite) flags
 
 # Check whether --with-system-graphite was given.
@@ -20792,7 +20821,7 @@ if test "x$with_system_graphite" = xyes; then
   if $PKG_CONFIG silgraphite --atleast-version=2.3; then
   GRAPHITE_INCLUDES="`$PKG_CONFIG silgraphite --cflags`"
   GRAPHITE_LIBS=`$PKG_CONFIG silgraphite --libs`
-elif test "x$need_graphite:$with_system_graphite" = 'xyes:yes'; then
+elif test "x$need_graphite:$with_system_graphite" = xyes:yes; then
   as_fn_error "did not find silgraphite 2.3 or better" "$LINENO" 5
 fi
 else
@@ -20913,7 +20942,7 @@ if test "x$with_system_freetype2" = xyes; then
   if $FT2_CONFIG --ftversion >/dev/null 2>&1; then
   FREETYPE2_INCLUDES=`$FT2_CONFIG --cflags`
   FREETYPE2_LIBS=`$FT2_CONFIG --libs`
-elif test "x$need_freetype2:$with_system_freetype2" = 'xyes:yes'; then
+elif test "x$need_freetype2:$with_system_freetype2" = xyes:yes; then
   as_fn_error "did not find freetype-config required for system freetype2 library" "$LINENO" 5
 fi
 else
@@ -22661,7 +22690,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
-    "CXXLD.sh") CONFIG_FILES="$CONFIG_FILES CXXLD.sh:README" ;;
+    "CXXLD.sh") CONFIG_COMMANDS="$CONFIG_COMMANDS CXXLD.sh" ;;
     "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
     "ff-config.h") CONFIG_HEADERS="$CONFIG_HEADERS ff-config.h:luatexdir/luafontloader/ff-config.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
@@ -24162,7 +24191,7 @@ if test "x$enable_libtool_hack" = xyes; then
   chmod +x "$ofile"
 fi
  ;;
-    "CXXLD.sh":F) echo "$cxxld_sh" >CXXLD.sh; chmod +x CXXLD.sh ;;
+    "CXXLD.sh":C) echo "$cxxld_sh" >CXXLD.sh; chmod +x CXXLD.sh ;;
     "c-auto.h":H) sed -e 's/^#define PACKAGE/#define WEB2C_PACKAGE/' \
       -e 's/^#define VERSION/#define WEB2C_VERSION/' c-auto.h >c-auto.tmp && mv -f c-auto.tmp c-auto.h ;;
     "web2c-sh":F) chmod +x web2c-sh ;;

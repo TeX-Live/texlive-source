@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -142,7 +142,7 @@ m4_define([_KPSE_WARNING_OBJCXXFLAGS], [])[]dnl
 # Internal subroutine.
 # Determine warning flags for GNU (Objective) C compiler.
 m4_define([_KPSE_WARNING_GNU_CFLAGS],
-[kpse_cv_warning_$2="-Wall -Wunused"
+[kpse_cv_warning_$2="-Wimplicit -Wreturn-type"
 AS_CASE([`$[]$1 -dumpversion`],
         [3.4.* | 4.*],
         [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wdeclaration-after-statement"])
@@ -150,10 +150,10 @@ AS_CASE([`$[]$1 -dumpversion`],
         [3.@<:@234@:>@.* | 4.*],
         [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
 if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_$2="-Wall -Wunused -Wimplicit $kpse_cv_warning_$2"
   kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wmissing-prototypes -Wmissing-declarations"
   if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wimplicit -Wparentheses -Wreturn-type"
-    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
     kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wcast-qual -Wcast-align -Wwrite-strings"
     AS_CASE([`$[]$1 -dumpversion`],
             [3.4.* | 4.*],
@@ -170,14 +170,14 @@ fi
 # Internal subroutine.
 # Determine warning flags for GNU (Objective) C++ compiler.
 m4_define([_KPSE_WARNING_GNU_CXXFLAGS],
-[kpse_cv_warning_$2="-Wall -Wunused"
+[kpse_cv_warning_$2="-Wimplicit -Wreturn-type"
 AS_CASE([`$[]$1 -dumpversion`],
         [3.@<:@234@:>@.* | 4.*],
         [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
 if test "x$enable_compiler_warnings" != xmin; then
+  kpse_cv_warning_$2="-Wall -Wunused $kpse_cv_warning_$2"
   if test "x$enable_compiler_warnings" != xyes; then
-    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wimplicit -Wparentheses -Wreturn-type"
-    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wswitch -Wtrigraphs -Wpointer-arith"
+    kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
     kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wcast-qual -Wcast-align -Wwrite-strings"
   fi
     if test "x$enable_compiler_warnings" != xmax; then

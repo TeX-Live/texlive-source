@@ -1,3 +1,8 @@
+2010-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* m4/kpse-warnings.m4: Redefine compiler warning levels to
+	reduce the number of 'min' warnings.
+
 2009-12-24  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (world): also run make check.
