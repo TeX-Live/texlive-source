@@ -150,7 +150,7 @@ AS_CASE([`$[]$1 -dumpversion`],
         [3.@<:@234@:>@.* | 4.*],
         [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
 if test "x$enable_compiler_warnings" != xmin; then
-  kpse_cv_warning_$2="-Wall -Wunused -Wimplicit $kpse_cv_warning_$2"
+  kpse_cv_warning_$2="-Wall -Wunused $kpse_cv_warning_$2"
   kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wmissing-prototypes -Wmissing-declarations"
   if test "x$enable_compiler_warnings" != xyes; then
     kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"

@@ -96,6 +96,10 @@ KPSE_T1LIB_FLAGS
 KPSE_FREETYPE2_FLAGS
 KPSE_GD_FLAGS
 
+# Assume we have t1lib and freetype2.
+have_t1=yes
+have_ft2=yes
+
 if test "x$enable_build" != xno || test -f config.force; then
 
 # Checks for more libraries.
@@ -112,16 +116,15 @@ AC_CHECK_FUNC([png_read_image],
 
 KPSE_ADD_FLAGS([t1lib])
 AC_CHECK_FUNC([T1_InitLib],
-              [have_ft2_or_t1=yes
-               AC_DEFINE([HAVE_LIBT1], 1,
+              [AC_DEFINE([HAVE_LIBT1], 1,
                          [Define to 1 if you have the `t1' library (-lt1).])],
-              [have_ft2_or_t1=no])
+              [have_t1=no])
 
 KPSE_ADD_FLAGS([freetype2])
 AC_CHECK_FUNC([FT_Init_FreeType],
-              [have_ft2_or_t1=yes
-               AC_DEFINE([HAVE_FT2], 1,
-                         [Define to 1 if you have freetype2.])])
+              [AC_DEFINE([HAVE_FT2], 1,
+                         [Define to 1 if you have freetype2.])],
+              [have_ft2=no])
 
 KPSE_ADD_FLAGS([gd])
 AC_CHECK_FUNC([gdImageCreate],
@@ -154,18 +157,11 @@ KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
 
-else
-
-# For TeX Live we always have t1lib and freetype2.
-AM_CONDITIONAL([have_t1], [true])
-AM_CONDITIONAL([have_ft2], [true])
-have_ft2_or_t1=yes
-
 fi
 
-AM_CONDITIONAL([have_t1], [test "x$ac_cv_func_T1_InitLib" = xyes])
-AM_CONDITIONAL([have_ft2], [test "x$ac_cv_func_FT_Init_FreeType" = xyes])
-AM_CONDITIONAL([have_ft2_or_t1], [test "x$have_ft2_or_t1" = xyes])
+AM_CONDITIONAL([have_t1], [test "x$have_t1" = xyes])
+AM_CONDITIONAL([have_ft2], [test "x$have_ft2" = xyes])
+AM_CONDITIONAL([have_ft2_or_t1], [test "x$have_ft2:$have_t1" != xno:no])
 AM_CONDITIONAL([have_gif], [test "x$ac_cv_func_gdImageGif" = xyes])
 
 AC_MSG_RESULT([

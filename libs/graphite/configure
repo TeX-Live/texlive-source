@@ -4421,7 +4421,7 @@ case `$CC -dumpversion` in #(
      ;;
 esac
 if test "x$enable_compiler_warnings" != xmin; then
-  kpse_cv_warning_cflags="-Wall -Wunused -Wimplicit $kpse_cv_warning_cflags"
+  kpse_cv_warning_cflags="-Wall -Wunused $kpse_cv_warning_cflags"
   kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wmissing-prototypes -Wmissing-declarations"
   if test "x$enable_compiler_warnings" != xyes; then
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
