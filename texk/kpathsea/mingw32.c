@@ -1,6 +1,6 @@
 /* mingw32.c: bits and pieces for mingw32
 
-   Copyright 2009 Taco Hoekwater <taco@luatex.org>.
+   Copyright 2009, 2010 Taco Hoekwater <taco@luatex.org>.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -400,25 +400,18 @@ win32_get_long_filename (char * name, char * buf, int size)
 */
 
 BOOL 
-#if 0
-look_for_cmd(const char *cmd, char **app, char **new)
-#else
 look_for_cmd(const char *cmd, char **app)
-#endif
 {
   char *env_path;
   char *p, *q;
   char pname[MAXPATHLEN], *fp;
   char *suffixes[] = { ".bat", ".cmd", ".com", ".exe", NULL };
   char **s;
-#if 1
-  char **new;
-#endif
   char *app_name, *new_cmd;
 
   BOOL go_on;
 
-  *new = *app = NULL;
+  *app = NULL;
   new_cmd = app_name = NULL;
 
   /* We should look for the application name along the PATH,
@@ -493,7 +486,6 @@ look_for_cmd(const char *cmd, char **app)
   }
   if (env_path) free(env_path);
 
-  *new = new_cmd;
   *app = app_name;
 
   return TRUE;

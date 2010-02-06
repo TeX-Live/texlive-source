@@ -1,3 +1,9 @@
+2010-02-07  Taco Hoekwater  <taco@elvenkind.com>
+
+	* mingw32.c (look_for_cmd): remove unused variable new,
+	clean up preprocessor conditionals.
+	Report by Hib Eris, tex-k 3 Feb 2010 12:11:42.
+
 2010-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (kpseinclude_HEADERS): Add win32lib.h.
