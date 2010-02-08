@@ -1,3 +1,8 @@
+2010-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mingw32.c (look_for_cmd): remove unused variable new_cmd,
+	declare p and q as const and remove cast.
+
 2010-02-07  Taco Hoekwater  <taco@elvenkind.com>
 
 	* mingw32.c (look_for_cmd): remove unused variable new,

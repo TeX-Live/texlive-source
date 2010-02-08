@@ -403,16 +403,16 @@ BOOL
 look_for_cmd(const char *cmd, char **app)
 {
   char *env_path;
-  char *p, *q;
+  const char *p, *q;
   char pname[MAXPATHLEN], *fp;
   char *suffixes[] = { ".bat", ".cmd", ".com", ".exe", NULL };
   char **s;
-  char *app_name, *new_cmd;
+  char *app_name;
 
   BOOL go_on;
 
   *app = NULL;
-  new_cmd = app_name = NULL;
+  app_name = NULL;
 
   /* We should look for the application name along the PATH,
      and decide to prepend "%COMSPEC% /c " or not to the command line.
@@ -424,7 +424,7 @@ look_for_cmd(const char *cmd, char **app)
   */
 
   /* Look for the application name */
-  for (p = (char *)cmd; *p && isspace(*p); p++);
+  for (p = cmd; *p && isspace(*p); p++);
   if (*p == '"') {
     q = ++p;
     while(*p && *p != '"') p++;
@@ -466,7 +466,6 @@ look_for_cmd(const char *cmd, char **app)
 #ifdef TRACE
       fprintf(stderr, "%s found with suffix %s\nin %s\n", app_name, *s, pname);
 #endif
-      new_cmd = xstrdup(cmd);
       free(app_name);
       app_name = xstrdup(pname);
       break;
@@ -478,11 +477,8 @@ look_for_cmd(const char *cmd, char **app)
 #ifdef TRACE
     fprintf(stderr, "%s not found, concatenating comspec\n", app_name);
 #endif
-    new_cmd = concatn(getenv("COMSPEC"), " /c ", cmd, NULL);
     free(app_name);
     app_name = NULL;
-  }
-  else {
   }
   if (env_path) free(env_path);
 
