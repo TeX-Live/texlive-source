@@ -10,6 +10,9 @@
 	quote_args(), use explicit 'extern'.
 	* tex-make.c (maketex): Drop nested extern decl of quote_args().	
 
+	* tex-make.h ({kpathsea,kpse}_make_tex),
+	str-list.h (str_list_add): need KPSEDLL (from Akira).
+
 2010-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.c (look_for_cmd): remove unused variable new_cmd,

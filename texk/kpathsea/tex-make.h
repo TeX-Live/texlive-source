@@ -28,12 +28,12 @@
    the file is passed through environment variables.  See the mktexpk
    stuff in `tex-make.c' for an example. */
 
-extern string kpathsea_make_tex (kpathsea kpse, 
+extern KPSEDLL string kpathsea_make_tex (kpathsea kpse, 
                                  kpse_file_format_type format,
                                  const_string base_file);
 
 #if defined (KPSE_COMPAT_API)
-extern string kpse_make_tex (kpse_file_format_type format,
+extern KPSEDLL string kpse_make_tex (kpse_file_format_type format,
                              const_string base_file);
 #endif
 

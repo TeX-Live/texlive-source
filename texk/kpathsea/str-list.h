@@ -42,7 +42,7 @@ extern str_list_type str_list_init (void);
 /* Append the string S to the list L.  It's up to the caller to not
    deallocate S; we don't copy it.  Also up to the caller to terminate
    the list with a null entry.  */
-extern void str_list_add (str_list_type *l, string s);
+extern KPSEDLL void str_list_add (str_list_type *l, string s);
 
 /* Append all the elements from MORE to TARGET.  */
 extern void str_list_concat (str_list_type * target, str_list_type more);
