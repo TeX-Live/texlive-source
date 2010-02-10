@@ -1,3 +1,9 @@
+2010-02-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* getopt.[ch], getopt1.h: Removed, use libkpathsea.
+	* utils.c: #include <kpathsea/getopt.h> instead of "getopt.h".
+	* Makefile.am (EXTRA_DIST): remove getopt.[ch] and getopt1.h.
+
 2009-11-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex*.c, utils.c: #include <config.h>.

@@ -1,3 +1,15 @@
+2010-02-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mingw32.c (get_home_directory, _parse_root,
+	normalize_filename, dostounix_filename, unixtodos_filename,
+	crlf_to_lf, parse_cmdline, build_cmdline, win32_system):
+	Declare as static.
+	(dostounix_filename, crlf_to_lf): Drop unused functions.
+	(win32_system): Drop unused code for look_for_cmd() with 3 args.
+	* mingw32.h: Remove decl of get_home_directory(), add
+	quote_args(), use explicit 'extern'.
+	* tex-make.c (maketex): Drop nested extern decl of quote_args().	
+
 2010-02-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.c (look_for_cmd): remove unused variable new_cmd,

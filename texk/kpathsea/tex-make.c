@@ -199,7 +199,6 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
 #else
     int num;
 #endif
-    extern char *quote_args(char **argv);
 
     if (look_for_cmd(args[0], &app_name) == FALSE) {
       ret = NULL;

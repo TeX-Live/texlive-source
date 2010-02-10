@@ -127,7 +127,6 @@
 #ifdef WIN32
 #include <getopt.h>
 #else
-#include "getopt.h"
 #include <unistd.h>
 #endif
 
@@ -136,6 +135,7 @@
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/lib.h>
+#include <kpathsea/getopt.h>
 #endif
 
 #include "sysdep.h"

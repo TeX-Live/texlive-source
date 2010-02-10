@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/bibtexu/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -70,9 +70,6 @@ EXTRA_DIST = \
 	bt371csf.zip \
 	dos-dj.mak \
 	dos-emx.mak \
-	getopt.c \
-	getopt.h \
-	getopt1.c \
 	os2.mak \
 	unix.mak \
 	csf/00readme.txt \
