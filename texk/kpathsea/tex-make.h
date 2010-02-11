@@ -1,6 +1,6 @@
 /* tex-make.h: declarations for executing external scripts.
 
-   Copyright 1993, 1994, 2008 Karl Berry.
+   Copyright 1993, 1994, 2008, 2010 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or

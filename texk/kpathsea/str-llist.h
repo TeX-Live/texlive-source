@@ -4,7 +4,7 @@
    that C cannot express iterators very well, and I don't want to change
    all the for loops.
 
-   Copyright 1993, 1994, 2008 Karl Berry.
+   Copyright 1993, 1994, 2008, 2010 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,7 @@ typedef struct str_llist_elt *str_llist_type;
 #define STR_LLIST_MOVED(sl) ((sl).moved)
 #define STR_LLIST_NEXT(sl) ((sl).next)
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Add the new string E to the end of the list L.  */
 extern void str_llist_add (str_llist_type *l, string e);
@@ -51,5 +52,7 @@ extern void str_llist_add (str_llist_type *l, string e);
 /* Reorganize L so that E is below only other elements that have already
    been moved.  Set `moved' member for E.  */
 extern void str_llist_float (str_llist_type *l, str_llist_elt_type *e);
+
+#endif /* MAKE_KPSE_DLL */
 
 #endif /* not STR_LLIST_H */

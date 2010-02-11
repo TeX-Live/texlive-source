@@ -1,6 +1,6 @@
 /* xopendir.h: declare checked directory operations.
 
-   Copyright 1994, 1996, 2008 Karl Berry.
+   Copyright 1994, 1996, 2008, 2010 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -22,8 +22,12 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* Like opendir and closedir, but abort on error.  */
 extern DIR *xopendir (string dirname);
 extern void xclosedir (DIR *);
+
+#endif /* MAKE_KPSE_DLL */
 
 #endif /* not (KPATHSEA_XOPENDIR_H or WIN32) */

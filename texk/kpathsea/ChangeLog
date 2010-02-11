@@ -1,3 +1,27 @@
+2010-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* db.h (kpathsea_init_db, kpse_init_db, kpathsea_db_search,
+	kpse_db_search, kpathsea_db_search_list, kpse_db_search_list),
+	* fontmap.h (kpathsea_fontmap_lookup, kpse_fontmap_lookup),
+	* getopt.h (_getopt_internal),
+	* hash.h (hash_print, hash_free),
+	* mingw32.h (init_user_info, set_home_warning,
+	win32_get_long_filename, look_for_cmd, quote_args),
+	* pathsearch.h (kpathsea_filename_component,
+	kpse_filename_component, kpathsea_normalize_path,
+	kpse_normalize_path),
+	* str-list.h (str_list_init, str_list_concat, str_list_free,
+	* str_list_concat_elements, str_list_uniqify),
+	* str-llist.h (str_llist_add, str_llist_float),
+	* tex-file.h (kpathsea_init_fallback_resolutions,
+	kpse_init_fallback_resolutions),
+	* tilde.h (kpathsea_tilde_expand, kpse_tilde_expand),
+	* truncate.h (kpathsea_truncate_filename,
+	kpse_truncate_filename),
+	* xopendir.h (xopendir, xclosedir),
+	* xstat.h (xstat, xlstat): Declare prototypes only within
+	libkpathsea.
+
 2010-02-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.c (get_home_directory, _parse_root,

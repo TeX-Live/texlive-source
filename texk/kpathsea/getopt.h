@@ -123,17 +123,25 @@ extern KPSEDLL int getopt_long_only (int argc, char *const *argv,
 			     const char *shortopts,
 		             const struct option *longopts, int *longind);
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* Internal only.  Users should not call this directly.  */
 extern int _getopt_internal (int argc, char *const *argv,
 			     const char *shortopts,
 		             const struct option *longopts, int *longind,
 			     int long_only);
+
+#endif /* MAKE_KPSE_DLL */
 #else /* not __STDC__ */
 extern KPSEDLL int getopt ();
 extern KPSEDLL int getopt_long ();
 extern KPSEDLL int getopt_long_only ();
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 extern int _getopt_internal ();
+
+#endif /* MAKE_KPSE_DLL */
 #endif /* __STDC__ */
 
 #ifdef	__cplusplus

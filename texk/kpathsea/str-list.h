@@ -1,6 +1,6 @@
 /* str-list.h: declarations for string lists.
 
-   Copyright 1993, 1994, 2007, 2008 Karl Berry.
+   Copyright 1993, 1994, 2007, 2008, 2010 Karl Berry.
    Copyright 1999, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -36,13 +36,19 @@ typedef struct
 #define STR_LIST_ELT(l, n) STR_LIST (l)[n]
 #define STR_LIST_LAST_ELT(l) STR_LIST_ELT (l, STR_LIST_LENGTH (l) - 1)
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* Return a new, empty, list.  */
 extern str_list_type str_list_init (void);
+
+#endif /* MAKE_KPSE_DLL */
 
 /* Append the string S to the list L.  It's up to the caller to not
    deallocate S; we don't copy it.  Also up to the caller to terminate
    the list with a null entry.  */
 extern KPSEDLL void str_list_add (str_list_type *l, string s);
+
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Append all the elements from MORE to TARGET.  */
 extern void str_list_concat (str_list_type * target, str_list_type more);
@@ -57,5 +63,7 @@ extern void str_list_concat_elements
 
 /* Remove duplicate elements from L, freeing their space.  */
 extern void str_list_uniqify (str_list_type *l);
+
+#endif /* MAKE_KPSE_DLL */
 
 #endif /* not KPATHSEA_STR_LIST_H */

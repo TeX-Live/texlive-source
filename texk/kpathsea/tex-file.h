@@ -1,6 +1,6 @@
 /* tex-file.h: find files in a particular format.
 
-   Copyright 1993, 1994, 1995, 1996, 2007, 2008, 2009 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 2007, 2008, 2009, 2010 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -23,11 +23,14 @@
 #include <stdarg.h>
 #include <kpathsea/types.h>
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* This initializes the fallback resolution list.  If ENVVAR
    is set, it is used; otherwise, the envvar `TEXSIZES' is looked at; if
    that's not set either, a compile-time default is used.  */
 extern void kpathsea_init_fallback_resolutions (kpathsea kpse, string envvar);
+
+#endif /* MAKE_KPSE_DLL */
 
 /* If LEVEL is >= FMT's `program_enable_level', set `program_enabled_p'
    for FMT to VALUE.  */ 

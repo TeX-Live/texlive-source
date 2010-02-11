@@ -1,6 +1,6 @@
 /* truncate.h: truncate too-long components in a filename.
 
-   Copyright 1993, 2008 Karl Berry.
+   Copyright 1993, 2008, 2010 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,8 @@
 #include <kpathsea/c-proto.h>
 #include <kpathsea/types.h>
 
+#ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
+
 /* Truncate any component in NAME longer than the system NAME_MAX, and
    return the result as a malloced string.  If none, return a copy of
    NAME.  */
@@ -29,5 +31,7 @@ extern string kpathsea_truncate_filename (kpathsea kpse, const_string name);
 #if defined (KPSE_COMPAT_API)
 extern string kpse_truncate_filename (const_string name);
 #endif
+
+#endif /* MAKE_KPSE_DLL */
 
 #endif /* not KPATHSEA_TRUNCATE_H */
