@@ -369,7 +369,7 @@ static	const struct option	options[]	= {
 		{"interpreter",	'i',	True,	&gspath, 0},
 		{"dosnames",	0,	False,	&dosnames, True},
 		{"quiet",	'q',	False,	&quiet,	True},
-#ifdef KPATHSEA
+#if defined(KPATHSEA) && defined (KPSE_DEBUG)
 		{"debug",	OPT_DBG,True,	NULL,	0},
 #endif
 		{"version",	'v',	False,	NULL,	0},
@@ -1513,7 +1513,7 @@ trim_bitmap(void)
 	height -= skip;
 	voff -= skip;
 #if DEBUG
-#ifdef KPATHSEA
+#if defined(KPATHSEA) && defined (KPSE_DEBUG)
      if (KPSE_DEBUG_P (GSPK_DEBUG_PK))
 #endif
 	if (skip < 2 || skip > 3)
@@ -1532,7 +1532,7 @@ trim_bitmap(void)
 	}
 	height -= skip;
 #if DEBUG
-#ifdef KPATHSEA
+#if defined(KPATHSEA) && defined (KPSE_DEBUG)
      if (KPSE_DEBUG_P (GSPK_DEBUG_PK))
 #endif
 	if (skip < 2 || skip > 3)
@@ -1552,7 +1552,7 @@ trim_bitmap(void)
 	}
 	++width;
 #if DEBUG
-#ifdef KPATHSEA
+#if defined(KPATHSEA) && defined (KPSE_DEBUG)
      if (KPSE_DEBUG_P (GSPK_DEBUG_PK))
 #endif
 	if (skip < 2 || skip > 3)
@@ -1571,7 +1571,7 @@ trim_bitmap(void)
 	width -= skip;
 	hoff -= skip;
 #if DEBUG
-#ifdef KPATHSEA
+#if defined(KPATHSEA) && defined (KPSE_DEBUG)
      if (KPSE_DEBUG_P (GSPK_DEBUG_PK))
 #endif
 	if (skip < 2 || skip > 3)
@@ -1680,7 +1680,7 @@ pk_rll_cvt(void)
 	}
 
 #if DEBUG
-#ifdef KPATHSEA
+#if defined(KPATHSEA) && defined (KPSE_DEBUG)
 	if (KPSE_DEBUG_P (GSPK_DEBUG_BITMAP))
 #endif
 	{
@@ -2083,7 +2083,7 @@ main(int argc, char **argv)
 	    }
 
 	    switch (opt->shortname) {
-#ifdef KPATHSEA
+#if defined(KPATHSEA) && defined (KPSE_DEBUG)
 	    case OPT_DBG:
 		kpathsea_debug |= atoi(arg);
 		break;

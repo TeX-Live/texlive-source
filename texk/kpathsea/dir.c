@@ -1,6 +1,6 @@
 /* dir.c: directory operations.
 
-   Copyright 1992, 1993, 1994, 1995, 2008, 2009 Karl Berry.
+   Copyright 1992, 1993, 1994, 1995, 2008, 2009, 2010 Karl Berry.
    Copyright 2000, 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -36,9 +36,10 @@ kpathsea_dir_p (kpathsea kpse, const_string fn)
 #ifdef WIN32
   int fa;
 
-  kpse_normalize_path((string)fn);
+  kpathsea_normalize_path(kpse, (string)fn);
   fa = GetFileAttributes(fn);
 
+#ifdef KPSE_DEBUG
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_STAT)) {
     if (fa == 0xFFFFFFFF) {
       fprintf(stderr, "failed to get file attributes for %s (%d)\n",
@@ -49,18 +50,19 @@ kpathsea_dir_p (kpathsea kpse, const_string fn)
 	      "is"  : "is not");
     }
   }
+#endif /* KPSE_DEBUG */
   return (fa != 0xFFFFFFFF && (fa & FILE_ATTRIBUTE_DIRECTORY));
-#else
+#else /* !WIN32 */
   struct stat stats;
   return stat (fn, &stats) == 0 && S_ISDIR (stats.st_mode);
-#endif
+#endif /* !WIN32 */
 }
 
 #if defined(KPSE_COMPAT_API)
 boolean
 dir_p (const_string fn)
 {
-    return kpathsea_dir_p(kpse_def,fn);
+    return kpathsea_dir_p(kpse_def, fn);
 }
 #endif
 

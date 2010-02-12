@@ -1,6 +1,6 @@
 /* pathsearch.c: look up a filename in a path.
 
-   Copyright 1993, 1994, 1995, 1997, 2007, 2009 Karl Berry.
+   Copyright 1993, 1994, 1995, 1997, 2007, 2009, 2010 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -63,7 +63,11 @@ log_search (kpathsea kpse, str_list_type filenames)
     }
   }
 
-  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH) || kpse->log_file) {
+  if (
+#ifdef KPSE_DEBUG
+      KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH) ||
+#endif /* KPSE_DEBUG */
+      kpse->log_file) {
     unsigned e;
 
     /* FILENAMES should never be null, but safety doesn't hurt.  */
@@ -76,6 +80,7 @@ log_search (kpathsea kpse, str_list_type filenames)
         fprintf (kpse->log_file, "%lu %s\n", (long unsigned) time (NULL),
                  filename);
 
+#ifdef KPSE_DEBUG
       /* And show them online, if debugging.  We've already started
          the debugging line in `search', where this is called, so
          just print the filename here, don't use DEBUGF.  */
@@ -83,6 +88,7 @@ log_search (kpathsea kpse, str_list_type filenames)
         putc (' ', stderr);
         fputs (filename, stderr);
       }
+#endif /* KPSE_DEBUG */
     }
   }
 }
@@ -352,9 +358,11 @@ search (kpathsea kpse, const_string path,  const_string original_name,
      consider PATH at all.  */
   absolute_p = kpathsea_absolute_p (kpse, name, true);
   
+#ifdef KPSE_DEBUG
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
     DEBUGF4 ("start search(file=%s, must_exist=%d, find_all=%d, path=%s).\n",
              name, must_exist, all, path);
+#endif /* KPSE_DEBUG */
 
   /* Find the file(s). */
   ret_list = absolute_p ? absolute_search (kpse, name)
@@ -373,11 +381,15 @@ search (kpathsea kpse, const_string path,  const_string original_name,
   } else {
     /* Record the filenames we found, if desired.  And wrap them in a
        debugging line if we're doing that.  */
+#ifdef KPSE_DEBUG
     if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
       DEBUGF1 ("search(%s) =>", original_name);
+#endif /* KPSE_DEBUG */
     log_search (kpse, ret_list);
+#ifdef KPSE_DEBUG
     if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
       putc ('\n', stderr);
+#endif /* KPSE_DEBUG */
   }  
 
 #ifdef __DJGPP__
@@ -428,6 +440,7 @@ search_list (kpathsea kpse, const_string path,  const_string* names,
 
   ret_list = str_list_init();
 
+#ifdef KPSE_DEBUG
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH)) {
     DEBUGF1  ("start search(files=[%s", *names);
     for (namep = names+1; *namep != NULL; namep++) {
@@ -437,6 +450,7 @@ search_list (kpathsea kpse, const_string path,  const_string* names,
     fprintf (stderr, "], must_exist=%d, find_all=%d, path=%s).\n",
              must_exist, all, path);
   }
+#endif /* KPSE_DEBUG */
   
   /* FIXME: is this really true?  No need to do any expansion on names.  */
 
@@ -519,6 +533,7 @@ search_list (kpathsea kpse, const_string path,  const_string* names,
   } else {
     /* Record the filenames we found, if desired.  And wrap them in a
        debugging line if we're doing that.  */
+#ifdef KPSE_DEBUG
     if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH)) {
       DEBUGF1 ("search([%s", *names);
       for (namep = names+1; *namep != NULL; namep++) {
@@ -527,9 +542,12 @@ search_list (kpathsea kpse, const_string path,  const_string* names,
       }
       fputs ("]) =>", stderr);
     }
+#endif /* KPSE_DEBUG */
     log_search (kpse, ret_list);
+#ifdef KPSE_DEBUG
     if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
       putc ('\n', stderr);
+#endif /* KPSE_DEBUG */
   }
 
 #ifdef __DJGPP__

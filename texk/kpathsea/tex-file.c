@@ -984,9 +984,11 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
   if (FMT_INFO.path == NULL)
     kpathsea_init_format (kpse, format);
 
+#ifdef KPSE_DEBUG
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH))
     DEBUGF3 ("kpse_find_file: searching for %s of type %s (from %s)\n",
              const_name, FMT_INFO.type, FMT_INFO.path_source);
+#endif /* KPSE_DEBUG */
 
   /* Do variable and tilde expansion. */
   name = kpathsea_expand (kpse, const_name);

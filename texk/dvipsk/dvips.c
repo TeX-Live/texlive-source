@@ -615,14 +615,14 @@ main(int argc, char **argv)
             debug_flag = 0 ;
       }
    }
-#ifdef KPATHSEA
+#if defined(KPATHSEA) && defined(KPSE_DEBUG)
    if (dd(D_FILES)) KPSE_DEBUG_SET (KPSE_DEBUG_FOPEN);
    if (dd(D_PATHS)) KPSE_DEBUG_SET (KPSE_DEBUG_PATHS);
    if (dd(D_STAT)) KPSE_DEBUG_SET (KPSE_DEBUG_STAT);
    if (dd(D_HASH)) KPSE_DEBUG_SET (KPSE_DEBUG_HASH);
    if (dd(D_EXPAND)) KPSE_DEBUG_SET (KPSE_DEBUG_EXPAND);
    if (dd(D_SEARCH)) KPSE_DEBUG_SET (KPSE_DEBUG_SEARCH);
-#endif /* KPATHSEA */
+#endif /* KPATHSEA && KPSE_DEBUG */
 #endif /* DEBUG */
 #ifdef KPATHSEA
    if (argc > 1) {
@@ -1128,14 +1128,14 @@ default:
       }
    } while (queryoptions != 0) ;
 #endif
-#if (defined(KPATHSEA) && defined(DEBUG)) /* this should really be part of a subroutine */
+#if defined(KPATHSEA) && defined(KPSE_DEBUG) && defined(DEBUG) /* this should really be part of a subroutine */
    if (dd(D_FILES)) KPSE_DEBUG_SET (KPSE_DEBUG_FOPEN);
    if (dd(D_PATHS)) KPSE_DEBUG_SET (KPSE_DEBUG_PATHS);
    if (dd(D_STAT)) KPSE_DEBUG_SET (KPSE_DEBUG_STAT);
    if (dd(D_HASH)) KPSE_DEBUG_SET (KPSE_DEBUG_HASH);
    if (dd(D_EXPAND)) KPSE_DEBUG_SET (KPSE_DEBUG_EXPAND);
    if (dd(D_SEARCH)) KPSE_DEBUG_SET (KPSE_DEBUG_SEARCH);
-#endif /* DEBUG */
+#endif /* KPATHSEA && KPSE_DEBUG && DEBUG */
    checkenv(1) ;
 #ifdef KPATHSEA
    kpse_init_prog ("DVIPS", actualdpi, mfmode, "cmr10");

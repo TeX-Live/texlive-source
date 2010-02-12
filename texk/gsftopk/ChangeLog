@@ -1,3 +1,8 @@
+2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gsftopk.c: Add '#if defined(KPSE_DEBUG)' to allow compilation
+	with '-DNO_DEBUG'.
+
 2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, gsftopk.c: Require recent kpathsea version.

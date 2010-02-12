@@ -1,6 +1,6 @@
 /* elt-dirs.c: Translate a path element to its corresponding director{y,ies}.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010 Karl Berry.
    Copyright 1997, 1998, 1999, 2000, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -377,8 +377,10 @@ kpathsea_normalize_path (kpathsea kpse, string elt)
       ;
   }
   
+#ifdef KPSE_DEBUG
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_STAT) && ret != 1)
     DEBUGF2 ("kpse_normalize_path (%s) => %u\n", elt, ret);
+#endif /* KPSE_DEBUG */
 
   return ret;
 }

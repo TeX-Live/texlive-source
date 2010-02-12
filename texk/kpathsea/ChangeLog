@@ -1,3 +1,13 @@
+2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dir.c (kpathsea_dir_p), elt-dirs.c (kpathsea_normalize_path),
+	pathsearch.c (log_search, search, search_list),
+	tex-file.c (kpathsea_find_file_generic):
+	Add '#ifdef KPSE_DEBUG' to allow compilation with '-DNO_DEBUG'.
+
+	* dir.c (kpathsea_dir_p): Replace kpse_normalize_path() by
+	kpathsea_normalize_path().
+
 2010-02-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* db.h (kpathsea_init_db, kpse_init_db, kpathsea_db_search,
