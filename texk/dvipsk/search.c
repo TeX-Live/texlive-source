@@ -3,75 +3,88 @@
  *   tries to open a file.  Null directory components indicate current
  *   directory.  In an environment variable, null directory components
  *   indicate substitution of the default path list at that point.
+ *   This source file assumes KPATHSEA is defined.
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
-/*
- *   The external declarations:
- */
-#include "protos_add.h"
 
-#ifdef KPATHSEA
+#include "protos_add.h" /* external declarations */
+
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/absolute.h>
 #include <kpathsea/c-pathch.h>
-#else
-#include <ctype.h>
-#if !defined(WIN32)
-extern int fclose();         /* these added to keep SunOS happy */
-extern int pclose();
-extern char *getenv();
-#endif
-#ifdef OS2
-#include <stdlib.h>
-FILE *fat_fopen();
-#endif
-
-#if defined(SYSV) || defined(VMS) || defined(__THINK__) || defined(MSDOS) || defined(OS2) || defined(ATARIST) || defined(WIN32)
-#define MAXPATHLEN (2000)
-#else
-#include <sys/param.h>          /* for MAXPATHLEN */
-#endif
-#if !defined(MSDOS) && !defined(OS2) && !defined(WIN32)
-#ifndef VMS
-#ifndef MVSXA
-#ifndef VMCMS /* IBM: VM/CMS */
-#ifndef __THINK__
-#ifndef ATARIST
-#include <pwd.h>
-#endif
-#endif
-#endif
-#endif  /* IBM: VM/CMS */
-#endif
-#endif
-#endif /* KPATHSEA */
-/*
- *
- *   We hope MAXPATHLEN is enough -- only rudimentary checking is done!
- */
-
-int to_close ;
-
-#ifdef KPATHSEA
-#ifndef UNCOMPRESS
-#define UNCOMPRESS      "uncompress"
-#endif
 
 #ifndef GUNZIP
 #define GUNZIP          "gzip -d"
 #endif
 
-#ifndef BUNZIP2
-#define BUNZIP2         "bzip2 -d"
-#endif
-
-#endif
-
-#ifdef KPATHSEA
+int to_close ;  /* use fclose or pclose? */
 char *realnameoffile ;
 
+/* Return safely quoted version of NAME.  That means as "..." on Windows
+   and '...' on Unix, with any occurrences of the quote char quoted with
+   a \.  Result is always in new memory, and NAME is unchanged.  */
+
+#ifdef WIN32
+#define QUOTE '"'
+#else
+#define QUOTE '\''
+#endif
+
+static char *
+kpse_quote_name (const char *name)
+{
+  char *quoted = xmalloc (strlen (name) * 2 + 3);
+  char *q = quoted;
+  const char *p = name;  
+  
+  *q++ = QUOTE;
+  while (*p) {
+    if (*p == QUOTE)
+      *q++ = QUOTE;
+    *q++ = *p++;
+  }
+  *q++ = QUOTE;
+  *q = 0;
+  
+  return q;
+}
+
+
+/* On Windows, return PROG with SELFAUTOLOC prepended, and / separators
+   changed to \.  On Unix, return a copy of PROG.  Result is always in
+   new memory.  No safeness or other quoting is done on PROG.
+   
+   This is necessary because Windows always wants to run programs out of
+   the current directory.  So for security, we want to ensure that we
+   are invoking programs from our own binary directory, not via PATH.  */
+
+static char *
+kpse_selfautoloc_prog (const char *prog)
+{
+  char *ret;
+#ifdef WIN32
+  const char *p;
+  /* Get value of SELFAUTOLOC, but \ works better for path separator.  */
+  char *selfautoloc = kpse_var_value ("SELFAUTOLOC");
+  for (p = selfautoloc; *p; p++) {
+    if (*p == '/')
+      *p = '\\';
+  }
+  
+  /* Prepend that to PROG.  */
+  ret = concat3 (selfautoloc, "\\", prog);
+  
+#else /* not WIN32 */
+  ret = xstrdup (prog);
+#endif
+
+  return ret;
+}
+
+
+
 FILE *
 search(kpse_file_format_type format, const char *file, const char *mode)
 {
@@ -108,32 +121,36 @@ search(kpse_file_format_type format, const char *file, const char *mode)
 #endif
   /* Most file looked for through here must exist -- the exception is
      VF's. Bitmap fonts go through pksearch. */
-  found_name = kpse_find_file (file, format, format != vfpath &&
-                                                format != ofmpath);
+  found_name = kpse_find_file (file, format,
+                               format != vfpath && format != ofmpath);
   if (found_name) {
     unsigned len = strlen (found_name);
-#ifndef AMIGA
     if ((format == figpath || format == headerpath)
         && ((len > 2 && FILESTRCASEEQ (found_name + len - 2, ".Z"))
             || (len > 3 && FILESTRCASEEQ (found_name + len - 3, ".gz")))) {
-/* FIXME : use zlib instead of gzip ! */
-      char *cmd = concat3 (GUNZIP, " -c ", found_name);
+      /* automatically but safely decompress.  */
+/*      char *quoted_name = kpse_quote_name (found_name); */
+      char *cmd;
+      char *prog = kpse_selfautoloc_prog (GUNZIP);
+      cmd = concat3 (prog, " -c ", found_name);
       ret = popen (cmd, "r");
-      to_close = USE_PCLOSE ;
+      to_close = USE_PCLOSE;
+      free (cmd);
+/*      free (quoted_name); */
+      free (prog);
     } else {
-#endif /* not AMIGA */
       ret = fopen (found_name, mode);
-      to_close = USE_FCLOSE ;
-#ifndef AMIGA
+      to_close = USE_FCLOSE;
     }
-#endif /* not AMIGA */
     if (!ret)
       FATAL_PERROR (found_name);
+
     /* Free result of previous search.  */
     if (realnameoffile)
       free (realnameoffile);
+
     /* Save in `name' and `realnameoffile' because other routines
-       access those globals.  Sigh.  */
+       access those globals.  */
     realnameoffile = found_name;
     strcpy(name, realnameoffile);
   } else
@@ -142,6 +159,7 @@ search(kpse_file_format_type format, const char *file, const char *mode)
   return ret;
 }               /* end search */
 
+
 FILE *
 pksearch(const char *file, const char *mode, halfword dpi, char **name_ret, int *dpi_ret)
 {
@@ -170,357 +188,8 @@ pksearch(const char *file, const char *mode, halfword dpi, char **name_ret, int 
 
   return ret;
 }               /* end search */
-#else /* ! KPATHSEA */
-char realnameoffile[MAXPATHLEN] ;
 
-FILE *
-search(char *path, const char *file, const char *mode)
-{
-   register char *nam ;                 /* index into fname */
-   register FILE *fd ;                  /* file desc of file */
-   char fname[MAXPATHLEN] ;             /* to store file name */
-   static char *home = 0 ;              /* home is where the heart is */
-   int len = strlen(file) ;
-   int tryz = 0 ;
-   if (len>=3 &&
-        ((file[len-2] == '.' && file[len-1] == 'Z') ||
-         (file[len-3] == '.' && file[len-2] == 'g' && file[len-1] == 'z')) &&
-        (path==figpath || path==pictpath || path==headerpath))
-      tryz = file[len-1] ;
-   to_close = USE_FCLOSE ;
-#ifdef MVSXA
-char fname_safe[256];
-register int i, firstext, lastext, lastchar;
-#endif
-#ifdef VMCMS /* IBM: VM/CMS - we don't have paths or dirsep's but we strip off
-                             filename if there is a Unix path dirsep    */
-   register char *lastdirsep ;
-   lastdirsep = strrchr(file, '/') ;
-   if ( NULL != lastdirsep ) file = lastdirsep + 1 ;
-   if ((fd=fopen(file,mode)) != NULL) {
-      return(fd) ;
-   } else {
-      return(NULL) ;
-   }
-#else
-   if (*file == DIRSEP 
-       || NAME_BEGINS_WITH_DEVICE(file)) {               /* if full path name */
-      if ((fd=fopen(file,mode)) != NULL) {
-         strcpy(realnameoffile, file) ;
-         if (tryz) {
-            char *cmd = mymalloc(strlen(file) + 20) ;
-            strcpy(cmd, (tryz=='z' ? "gzip -d <" : "compress -d <")) ;
-            strcat(cmd, file) ;
-            fclose(fd) ;
-            fd = popen(cmd, "r") ;
-            to_close = USE_PCLOSE ;
-            free(cmd) ;
-         }
-         return(fd) ;
-      } else
-         return(NULL) ;
-   }
-#endif   /* IBM: VM/CMS */
-
-#if defined MSDOS || defined OS2 || defined(ATARIST) || defined(WIN32)
-   if ( isalpha(file[0]) && file[1]==':' ) {   /* if full path name */
-      if ((fd=fopen(file,mode)) != NULL) {
-         strcpy(realnameoffile, file) ;
-         return(fd) ;
-      } else
-         return(NULL) ;
-   }
-   if (*file == '/') {/* if full path name with unix DIRSEP less drive code */
-      if ((fd=fopen(file,mode)) != NULL) {
-         strcpy(realnameoffile, file) ;
-         return(fd) ;
-      } else
-         return(NULL) ;
-   }
-#endif
-
-   do {
-      /* copy the current directory into fname */
-      nam = fname;
-      /* copy till PATHSEP */
-      if (*path == '~') {
-         char *p = nam ;
-         path++ ;
-         while (*path && *path != PATHSEP && *path != DIRSEP)
-            *p++ = *path++ ;
-         *p = 0 ;
-         if (*nam == 0) {
-            if (home == 0) {
-               if (0 != (home = getenv("HOME")))
-                  home = newstring(home) ;
-               else
-                  home = "." ;
-            }
-            strcpy(fname, home) ;
-         } else {
-#if defined MSDOS || defined OS2
-            error("! ~username in path???") ;
-#else
-#ifdef WIN32
-	    /* FIXME: at least under NT, it should be possible to 
-	       retrieve the HOME DIR for a given user */
-            error("! ~username in path???") ;
-#else
-#ifdef VMS
-            error("! ~username in path???") ;
-#else
-#ifdef ATARIST
-            error("! ~username in path???") ;
-#else
-#ifdef VMCMS  /* IBM: VM/CMS */
-            error("! ~username in path???") ;
-#else
-#ifdef MVSXA  /* IBM: MVS/XA */
-            error("! ~username in path???") ;
-#else
-#ifdef __THINK__
-            error("! ~username in path???") ;
-#else
-            struct passwd *pw = getpwnam(fname) ;
-            if (pw)
-               strcpy(fname, pw->pw_dir) ;
-            else
-               error("no such user") ;
-#endif
-#endif  /* IBM: VM/CMS */
-#endif
-#endif
-#endif
-#endif
-#endif
-         }
-         nam = fname + strlen(fname) ;
-      }
-      while (*path != PATHSEP && *path) *nam++ = *path++;
-      *nam = 0 ;
-#ifndef VMS
-#ifndef __THINK__
-      if (nam == fname) *nam++ = '.';   /* null component is current dir */
-
-      if (*file != '\0') {
-         if ((nam != fname) && *(nam-1) != DIRSEP) /* GNW 1992.07.09 */
-            *nam++ = DIRSEP;                  /* add separator */
-         (void)strcpy(nam,file);                   /* tack the file on */
-      }
-      else
-         *nam = '\0' ;
-#else
-      (void)strcpy(nam,file);                   /* tack the file on */
-#endif
-#else
-      (void)strcpy(nam,file);                   /* tack the file on */
-#endif
-#ifdef MVSXA
-nam = fname;
-if (strchr(nam,'=') != NULL) {
-   (void) strcpy(fname_safe,fname);  /* save fname */
-   firstext = strchr(nam, '=') - nam + 2;
-   lastext = strrchr(nam, '.') - nam + 1;
-   lastchar  = strlen(nam) - 1;
-
-   (void) strcpy(fname,"dd:");  /* initialize fname */
-   nam=&fname[3];
-   for (i=lastext; i<=lastchar; i++) *nam++ = fname_safe[i] ;
-           *nam++  = '(' ;
-   for (i=firstext; i<lastext-1; i++) *nam++ = fname_safe[i] ;
-           *nam++  = ')' ;
-           *nam++  = 0   ;
-   }
-   else {
-      if (fname[0] == '/') {
-         fname[0] = '\'';
-         strcat(&fname[strlen(fname)],"\'");
-      }
-      if (fname[0] == '.') fname[0] = ' ';
-      if (fname[1] == '.') fname[1] = ' ';
-   }
-#endif
-
-      /* belated check -- bah! */
-      if ((nam - fname) + strlen(file) + 1 > MAXPATHLEN)
-         error("! overran allocated storage in search()");
-
-#ifdef DEBUG
-      if (dd(D_PATHS))
-         (void)fprintf(stderr,"search: Trying to open %s\n", fname) ;
-#endif
-      if ((fd=fopen(fname,mode)) != NULL) {
-         strcpy(realnameoffile, fname) ;
-         if (tryz) {
-            char *cmd = mymalloc(strlen(file) + 20) ;
-            strcpy(cmd, (tryz=='z' ? "gzip -d <" : "compress -d <")) ;
-            strcat(cmd, file) ;
-            fclose(fd) ;
-            fd = popen(cmd, "r") ;
-            to_close = USE_PCLOSE ;
-         }
-         return(fd);
-      }
-
-   /* skip over PATHSEP and try again */
-   } while (*(path++));
-
-   return(NULL);
-
-}               /* end search */
-
-FILE *
-pksearch(char *path, const char *file, const char *mode,
-	 char *n, halfword dpi, halfword vdpi)
-{
-   register char *nam ;                 /* index into fname */
-   register FILE *fd ;                  /* file desc of file */
-   char fname[MAXPATHLEN] ;             /* to store file name */
-   static char *home = 0 ;              /* home is where the heart is */
-   int sub ;
-
-   if (*file == DIRSEP) {               /* if full path name */
-      if ((fd=fopen(file,mode)) != NULL)
-         return(fd) ;
-      else
-         return(NULL) ;
-   }
-#if defined MSDOS || defined OS2 || defined(WIN32)
-   if ( isalpha(file[0]) && file[1]==':' ) {  /* if full path name */
-      if ((fd=fopen(file,mode)) != NULL)
-         return(fd) ;
-      else
-         return(NULL) ;
-   }
-#endif
-   do {
-      /* copy the current directory into fname */
-      nam = fname;
-      sub = 0 ;
-      /* copy till PATHSEP */
-      if (*path == '~') {
-         char *p = nam ;
-         path++ ;
-         while (*path && *path != PATHSEP && *path != DIRSEP)
-            *p++ = *path++ ;
-         *p = 0 ;
-         if (*nam == 0) {
-            if (home == 0) {
-               if (0 != (home = getenv("HOME")))
-                  home = newstring(home) ;
-               else
-                  home = "." ;
-            }
-            strcpy(fname, home) ;
-         } else {
-#if defined MSDOS || defined OS2
-            error("! ~username in path???") ;
-#else
-#ifdef WIN32
-            error("! ~username in path???") ;
-#else
-#ifdef VMS
-            error("! ~username in path???") ;
-#else
-#ifdef ATARIST
-            error("! ~username in path???") ;
-#else
-#ifdef VMCMS  /* IBM: VM/CMS */
-            error("! ~username in path???") ;
-#else
-#ifdef MVSXA  /* IBM: MVS/XA */
-            error("! ~username in path???") ;
-#else
-#ifdef __THINK__
-            error("! ~username in path???") ;
-#else
-            struct passwd *pw = getpwnam(fname) ;
-            if (pw)
-               strcpy(fname, pw->pw_dir) ;
-            else
-               error("no such user") ;
-#endif
-#endif /* IBM: VM/CMS */
-#endif
-#endif
-#endif
-#endif
-#endif
-         }
-         nam = fname + strlen(fname) ;
-      }
-      /* copy till PATHSEP */
-      while (*path != PATHSEP && *path) {
-         if (*path == '%') {
-            sub = 1 ;
-            path++ ;
-            switch(*path) {
-               case 'b': sprintf(nam, "%d", actualdpi) ; break ;
-               case 'd': sprintf(nam, "%d", dpi) ; break ;
-               case 'f': strcpy(nam, n) ; break ;
-               case 'm': if (mfmode == 0)
-                            if (actualdpi == 300) mfmode = "imagen" ;
-                            else if (actualdpi == 400) mfmode = "nexthi" ;
-                            else if (actualdpi == 635) mfmode = "linolo" ;
-                            else if (actualdpi == 1270) mfmode = "linohi" ;
-                            else if (actualdpi == 2540) mfmode = "linosuper" ;
-                         if (mfmode == 0)
-                            error("! MF mode not set, but used in pk path") ;
-                         strcpy(nam, mfmode) ;
-                         break ;
-               case 'p': strcpy(nam, "pk") ; break ;
-               case '%': strcpy(nam, "%") ; break ;
-               default:  fprintf(stderr, "Format character: %c\n", *path) ;
-                         error("! bad format character in pk path") ;
-            }
-            nam = fname + strlen(fname) ;
-            if (*path)
-               path++ ;
-         } else
-            *nam++ = *path++;
-      }
-#ifndef VMS
-#ifndef __THINK__
-      if (nam == fname) *nam++ = '.';   /* null component is current dir */
-#endif
-#endif /* VMS */
-      if (sub == 0 && *file) {
-#ifndef VMS
-         /* change suggested by MG */
-         if ((nam != fname) && *(nam-1) != DIRSEP) /* GNW 1992.07.09 */
-            *nam++ = DIRSEP ;
-#endif
-         strcpy(nam, file) ;
-      } else
-         *nam = 0 ;
-
-#ifdef MVSXA   /* IBM: MVS/XA */
-      if (fname[0] == '/') {
-         fname[0] = '\'';
-         strcat(&fname[strlen(fname)],"\'");
-      }
-      if (fname[0] == '.') fname[0] = ' ';
-      if (fname[1] == '.') fname[1] = ' ';
-#endif         /* IBM: MVS/XA */
-      /* belated check -- bah! */
-      if (strlen(fname) + 1 > MAXPATHLEN)
-         error("! overran allocated storage in search()");
-
-#ifdef DEBUG
-      if (dd(D_PATHS))
-         (void)fprintf(stderr,"pksearch: Trying to open %s\n", fname) ;
-#endif
-      if ((fd=fopen(fname,mode)) != NULL)
-         return(fd);
-
-   /* skip over PATHSEP and try again */
-   } while (*(path++));
-
-   return(NULL);
-
-}               /* end search */
-#endif /* KPATHSEA */
-
+
 /* do we report file openings? */
 
 #ifdef DEBUG

@@ -1,5 +1,12 @@
+2010-02-12  Karl Berry  <karl@tug.org>
+
+	* search.c: remove non-KPATHSEA code.  It just got too confusing
+	to keep track of which conditional we were in.  (And non-KPATHSEA
+	hasn't actually worked or been used for many years, as far as I know.)
+
 2010-02-01  Karl Berry  <karl@tug.org>
 
+	* dvips.h: switch banner to 5.98dev
 	* writet1.c (append_cs_return): cast to byte * to avoid warning.
 
 2010-01-03  Karl Berry  <karl@tug.org>
