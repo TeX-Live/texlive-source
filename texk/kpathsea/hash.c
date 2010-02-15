@@ -41,12 +41,12 @@ static unsigned
 hash (hash_table_type table,  const_string key)
 {
   unsigned n = 0;
-  
+
   /* Our keys aren't often anagrams of each other, so no point in
      weighting the characters.  */
   while (*key != 0)
     n = (n + n + TRANSFORM (*key++)) % table.size;
-  
+
   return n;
 }
 
@@ -55,35 +55,35 @@ static unsigned
 hash_normalized (hash_table_type table,  const_string key)
 {
   unsigned n = 0;
-  
+
   /* Our keys aren't often anagrams of each other, so no point in
      weighting the characters.  */
   while (*key != 0)
     n = (n + n + (*key++)) % table.size;
-  
+
   return n;
 }
 
 hash_table_type
-hash_create (unsigned size) 
+hash_create (unsigned size)
 {
   /* The was "static ..." since Oct3, 1997 to work around a gcc
      optimizer bug for Alpha. That particular optimization bug
      should be gone by now (Mar4, 2009).
   */
-  hash_table_type ret; 
+  hash_table_type ret;
   unsigned b;
   ret.buckets = XTALLOC (size, hash_element_type *);
   ret.size = size;
-  
+
   /* calloc's zeroes aren't necessarily NULL, so be safe.  */
   for (b = 0; b <ret.size; b++)
     ret.buckets[b] = NULL;
-    
+
   return ret;
 }
 
-/* Whether or not KEY is already in MAP, insert it and VALUE.  Do not
+/* Whether or not KEY is already in TABLE, insert it and VALUE.  Do not
    duplicate the strings, in case they're being purposefully shared.  */
 
 void
@@ -97,7 +97,7 @@ hash_insert (hash_table_type *table,
   new_elt->key = key;
   new_elt->value = value;
   new_elt->next = NULL;
-  
+
   /* Insert the new element at the end of the list.  */
   if (!table->buckets[n])
     /* first element in bucket is a special case.  */
@@ -123,7 +123,7 @@ hash_insert_normalized (hash_table_type *table,
   new_elt->key = key;
   new_elt->value = value;
   new_elt->next = NULL;
-  
+
   /* Insert the new element at the end of the list.  */
   if (!table->buckets[n])
     /* first element in bucket is a special case.  */
@@ -159,8 +159,8 @@ hash_remove (hash_table_type *table,  const_string key,
   }
 }
 
-/* Look up STR in MAP.  Return a (dynamically-allocated) list of the
-   corresponding strings or NULL if no match.  */ 
+/* Look up KEY in TABLE, and return NULL-terminated list of all matching
+   values (not copies), in insertion order.  If none, return NULL.  */
 
 string *
 hash_lookup (hash_table_type table,  const_string key)
@@ -169,13 +169,13 @@ hash_lookup (hash_table_type table,  const_string key)
   str_list_type ret;
   unsigned n = hash (table, key);
   ret = str_list_init ();
-  
+
   /* Look at everything in this bucket.  */
   for (p = table.buckets[n]; p != NULL; p = p->next)
     if (FILESTRCASEEQ (key, p->key))
       /* Cast because the general str_list_type shouldn't force const data.  */
       str_list_add (&ret, (string) p->value);
-  
+
   /* If we found anything, mark end of list with null.  */
   if (STR_LIST (ret))
     str_list_add (&ret, NULL);
@@ -218,7 +218,7 @@ hash_print (hash_table_type table,  boolean summary_only)
 {
   unsigned b;
   unsigned total_elements = 0, total_buckets = 0;
-  
+
   for (b = 0; b < table.size; b++) {
     hash_element_type *bucket = table.buckets[b];
 
@@ -241,7 +241,7 @@ hash_print (hash_table_type table,  boolean summary_only)
       }
     }
   }
-  
+
   fprintf (stderr,
           "%u buckets, %u nonempty (%u%%); %u entries, average chain %.1f.\n",
           table.size,
@@ -264,4 +264,3 @@ hash_free (hash_table_type table)
         p = q;
     }
 }
-    

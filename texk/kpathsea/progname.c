@@ -488,11 +488,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
 
 #if defined(WIN32)
   /* Set various info about user. Among many things,
-     ensure that HOME is set. If debug_paths is on, 
-     turn on some message if $HOME is not found. */
-  if (KPATHSEA_DEBUG_P (KPSE_DEBUG_PATHS)) {
-    set_home_warning();
-  }
+     ensure that HOME is set.  */
   init_user_info();
 
   /* redirect stderr to debug_output. Easier to send logfiles. */

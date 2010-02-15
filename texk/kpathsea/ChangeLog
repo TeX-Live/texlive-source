@@ -8,6 +8,19 @@
 	(<kpathsea/c-pathmx.h>) [__DJGPP__]: change conditional from DJGPP.
 	Suggestion from Javier Mugica, 13 Feb 2010 20:46:12.	
 
+2010-02-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* variable.c (kpathsea_var_value, expand): Treat strings
+	returned by getenv() and kpathsea_cnf_get() as const.
+	Replace kpathsea_var_expand() plus kpathsea_tilde_expand() by
+	kpathsea_expand() and include expand.h instead of tilde.h.
+
+	* tilde.[ch] (kpathsea_tilde_expand): Now used only in expand.c
+	by kpathsea_expand().  Declare string param as non-const.
+	(kpse_tilde_expand): Removed.
+
+	* hash.[ch]: Adjust comments and remove trailing whitespace.
+
 2010-02-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xopendir.c [WIN32]: Define neither xopendir nor xclosedir.

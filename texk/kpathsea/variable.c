@@ -12,7 +12,7 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
     Lesser General Public License for more details.
- 
+
     You should have received a copy of the GNU Lesser General Public License
     along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
@@ -21,7 +21,7 @@
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/cnf.h>
 #include <kpathsea/fn.h>
-#include <kpathsea/tilde.h>
+#include <kpathsea/expand.h>
 #include <kpathsea/variable.h>
 
 
@@ -31,44 +31,36 @@ string
 kpathsea_var_value (kpathsea kpse, const_string var)
 {
   string vtry, ret;
+  const_string value;
 
   assert (kpse->program_name);
 
   /* First look for VAR.progname. */
   vtry = concat3 (var, ".", kpse->program_name);
-  ret = getenv (vtry);
+  value = getenv (vtry);
   free (vtry);
 
-  if (!ret || !*ret) {
+  if (!value || !*value) {
     /* Now look for VAR_progname. */
     vtry = concat3 (var, "_", kpse->program_name);
-    ret = getenv (vtry);
+    value = getenv (vtry);
     free (vtry);
   }
 
   /* Just plain VAR.  */
-  if (!ret || !*ret)
-    ret = getenv (var);
+  if (!value || !*value)
+    value = getenv (var);
 
   /* Not in the environment; check a config file.  */
-  if (!ret || !*ret)
-      ret = kpathsea_cnf_get (kpse, var);
+  if (!value || !*value)
+      value = kpathsea_cnf_get (kpse, var);
 
   /* We have a value; do variable and tilde expansion.  We want to use ~
      in the cnf files, to adapt nicely to Windows and to avoid extra /'s
      (see tilde.c), but we also want kpsewhich -var-value=foo to not
      have any literal ~ characters, so our shell scripts don't have to
      worry about doing the ~ expansion.  */
-  if (ret) {
-    string tmp = kpathsea_var_expand (kpse, ret);
-    /* We don't want to free the previous value of ret here; apparently
-       it's used later, somewhere, somehow.  (The end result was a crash
-       when making tex.fmt.)  Sigh.  */
-    ret = kpathsea_tilde_expand (kpse, tmp);
-    if (ret != tmp) {
-      free (tmp);
-    }
-  }
+  ret = value ? kpathsea_expand (kpse, value) : NULL;
 
 #ifdef KPSE_DEBUG
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_VARS))
@@ -122,7 +114,7 @@ expanding_p (kpathsea kpse, const_string var)
     if (STREQ (kpse->expansions[e].var, var))
       return kpse->expansions[e].expanding;
   }
-  
+
   return false;
 }
 
@@ -136,12 +128,12 @@ expand (kpathsea kpse, fn_type *expansion,
         const_string start, const_string end)
 {
   boolean ret = false;
-  string value;
+  const_string value;
   unsigned len = end - start + 1;
   string var = (string)xmalloc (len + 1);
   strncpy (var, start, len);
   var[len] = 0;
-  
+
   if (expanding_p (kpse, var)) {
     WARNING1 ("kpathsea: variable `%s' references itself (eventually)", var);
   } else {
@@ -149,7 +141,7 @@ expand (kpathsea kpse, fn_type *expansion,
     /* Check for an environment variable.  */
     value = getenv (vtry);
     free (vtry);
-    
+
     if (!value || !*value)
       value = getenv (var);
 
@@ -158,25 +150,18 @@ expand (kpathsea kpse, fn_type *expansion,
       value = kpathsea_cnf_get (kpse, var);
 
     if (value) {
+      string tmp;
       ret = true;
       expanding (kpse, var, true);
-      value = kpathsea_var_expand (kpse, value);
+      tmp = kpathsea_expand (kpse, value);
       expanding (kpse, var, false);
-      
-      { /* Do tilde expansion; see explanation above in kpse_var_value.  */
-        string tmp = kpathsea_tilde_expand (kpse, value);
-        if (value != tmp) {
-          free (value);
-          value = tmp;
-        }
-      }
-      
-      fn_grow (expansion, value, strlen (value));
-      free (value);
-    }
 
-    free (var);
+      fn_grow (expansion, tmp, strlen (tmp));
+      free (tmp);
+    }
   }
+
+  free (var);
   return ret;
 }
 
@@ -206,7 +191,7 @@ kpathsea_var_expand (kpathsea kpse, const_string src)
   string ret;
   fn_type expansion;
   expansion = fn_init ();
-  
+
   /* Copy everything but variable constructs.  */
   for (s = src; *s; s++) {
     if (IS_VAR_START (*s)) {
@@ -247,7 +232,7 @@ kpathsea_var_expand (kpathsea kpse, const_string src)
         }
 
       } else {
-        /* $<something-else>: warn, but preserve characters; again, so 
+        /* $<something-else>: warn, but preserve characters; again, so
            filenames containing dollar signs can be read.  */
         WARNING2 ("%s: Unrecognized variable construct `$%c'", src, *s);
         fn_grow (&expansion, s - 1, 2);  /* moved past the $  */
@@ -256,7 +241,7 @@ kpathsea_var_expand (kpathsea kpse, const_string src)
      fn_1grow (&expansion, *s);
   }
   fn_1grow (&expansion, 0);
-          
+
   ret = FN_STRING (expansion);
   return ret;
 }
@@ -276,7 +261,7 @@ static void
 test_var (string test, string right_answer)
 {
   string result = kpse_var_expand (test);
-  
+
   printf ("expansion of `%s'\t=> %s", test, result);
   if (!STREQ (result, right_answer))
     printf (" [should be `%s']", right_answer);

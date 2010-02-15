@@ -36,12 +36,12 @@
    <pwd.h>, just return NAME.  */
 
 string
-kpathsea_tilde_expand (kpathsea kpse, const_string name)
+kpathsea_tilde_expand (kpathsea kpse, string name)
 {
-  const_string expansion;
+  string expansion;
   const_string home;
   const_string prefix;
-  
+
   (void)kpse; /* currenty not used */
   assert (name);
 
@@ -55,13 +55,13 @@ kpathsea_tilde_expand (kpathsea kpse, const_string name)
   } else {
     prefix = "";
   }
-  
+
   /* If no leading tilde, do nothing, and return the original string.  */
   if (*name != '~') {
     if (*prefix)
       name -= 2;
     expansion = name;
-  
+
   /* If a bare tilde, return the home directory or `.'.  (Very unlikely
      that the directory name will do anyone any good, but ...  */
   } else if (name[1] == 0) {
@@ -70,7 +70,7 @@ kpathsea_tilde_expand (kpathsea kpse, const_string name)
       home = ".";
     }
     expansion = concat (prefix, home);
-  
+
   /* If `~/', remove any trailing / or replace leading // in $HOME.
      Should really check for doubled intermediate slashes, too.  */
   } else if (IS_DIR_SEP (name[1])) {
@@ -86,7 +86,7 @@ kpathsea_tilde_expand (kpathsea kpse, const_string name)
       c++;
     }
     expansion = concat3 (prefix, home, name + c);
-  
+
   /* If `~user' or `~user/', look up user in the passwd database (but
      OS/2 doesn't have this concept.  */
   } else {
@@ -96,11 +96,11 @@ kpathsea_tilde_expand (kpathsea kpse, const_string name)
       unsigned c = 2;
       while (!IS_DIR_SEP (name[c]) && name[c] != 0) /* find user name */
         c++;
-      
+
       user = (string) xmalloc (c);
       strncpy (user, name + 1, c - 1);
       user[c - 1] = 0;
-      
+
       /* We only need the cast here for (deficient) systems
          which do not declare `getpwnam' in <pwd.h>.  */
       p = (struct passwd *) getpwnam (user);
@@ -125,16 +125,8 @@ kpathsea_tilde_expand (kpathsea kpse, const_string name)
   }
   /* We may return the same thing as the original, and then we might not
      be returning a malloc-ed string.  Callers beware.  Sorry.  */
-  return (string) expansion;
+  return expansion;
 }
-
-#if defined (KPSE_COMPAT_API)
-string
-kpse_tilde_expand (const_string name)
-{
-    return kpathsea_tilde_expand (kpse_def, name);
-}
-#endif
 
 #ifdef TEST
 
@@ -142,9 +134,9 @@ void
 test_expand_tilde (const_string filename)
 {
   string answer;
-  
+
   printf ("Tilde expansion of `%s':\t", filename ? filename : "(nil)");
-  answer = kpse_tilde_expand (filename);
+  answer = kpathsea_tilde_expand (kpse_def, (string)filename);
   puts (answer);
 }
 
@@ -164,7 +156,7 @@ main (int argc, char **argv)
   test_expand_tilde ("!!~root");
   test_expand_tilde ("!!~");
   test_expand_tilde ("!!foo~bar");
-  
+
   return 0;
 }
 

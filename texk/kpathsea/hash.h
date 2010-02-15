@@ -59,7 +59,7 @@ extern KPSEDLL void hash_insert_normalized (hash_table_type *table,
 extern KPSEDLL void hash_remove (hash_table_type *table,  const_string key,
                                     const_string value);
 
-/* Look up KEY in MAP, and return NULL-terminated list of all matching
+/* Look up KEY in TABLE, and return NULL-terminated list of all matching
    values (not copies), in insertion order.  If none, return NULL.  */
 extern KPSEDLL string *hash_lookup (hash_table_type table, const_string key);
 
