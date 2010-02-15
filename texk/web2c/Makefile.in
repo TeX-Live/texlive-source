@@ -1701,8 +1701,8 @@ libluasocket_a_SOURCES = \
 libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a
 libluamisc_a_CPPFLAGS = \
 	$(ZLIB_INCLUDES) \
-	-I$(top_srcdir)/luatexdir/lua51 \
-	-I$(top_srcdir)/luatexdir/zziplib
+	$(ZZIPLIB_INCLUDES) \
+	-I$(top_srcdir)/luatexdir/lua51
 
 libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)
 libluamisc_a_SOURCES = \

@@ -1,3 +1,8 @@
+2010-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/luamisc.am (libluamisc_a_CPPFLAGS): Adapt to zziplib now
+	in ../../../libs/zziplib/.
+
 2010-01-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Moved zziplib/ to ../../../libs/zziplib.
