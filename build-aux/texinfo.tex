@@ -3,11 +3,11 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2009-08-14.15}
+\def\texinfoversion{2010-02-13.09}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
-% 2007, 2008, 2009 Free Software Foundation, Inc.
+% 2007, 2008, 2009, 2010 Free Software Foundation, Inc.
 %
 % This texinfo.tex file is free software: you can redistribute it and/or
 % modify it under the terms of the GNU General Public License as
@@ -93,14 +93,13 @@
 \let\ptexnewwrite\newwrite
 \let\ptexnoindent=\noindent
 \let\ptexplus=+
+\let\ptexraggedright=\raggedright
 \let\ptexrbrace=\}
 \let\ptexslash=\/
 \let\ptexstar=\*
 \let\ptext=\t
 \let\ptextop=\top
-{\catcode`\'=\active
-\global\let\ptexquoteright'}% Math-mode def from plain.tex.
-\let\ptexraggedright=\raggedright
+{\catcode`\'=\active \global\let\ptexquoteright'}% active in plain's math mode
 
 % If this character appears in an error message or help string, it
 % starts a new line in the output.
@@ -5947,6 +5946,10 @@ end
   \catcode`\`=\other
   \catcode`\'=\other
   \escapechar=`\\
+  %
+  % ' is active in math mode (mathcode"8000).  So reset it, and all our
+  % other math active characters (just in case), to plain's definitions.
+  \mathactive
   %
   \let\b=\ptexb
   \let\bullet=\ptexbullet
