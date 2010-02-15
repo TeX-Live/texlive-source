@@ -1,3 +1,13 @@
+2010-02-15  Karl Berry  <karl@tug.org>
+
+	* tex-make.c [DJGPP]: change conditionals to __DJGPP__ for
+	consistency.
+
+	* progname.c (<kpathsea/mingw32.h>) [__MINGW32__]: remove
+	#include, it's redundant with kpathsea/config.h.
+	(<kpathsea/c-pathmx.h>) [__DJGPP__]: change conditional from DJGPP.
+	Suggestion from Javier Mugica, 13 Feb 2010 20:46:12.	
+
 2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dir.c (kpathsea_dir_p), elt-dirs.c (kpathsea_normalize_path),

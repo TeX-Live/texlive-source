@@ -1,6 +1,6 @@
 /* progname.c: the executable name we were invoked as; general initialization.
 
-   Copyright 1994, 1996, 1997, 2008, 2009 Karl Berry.
+   Copyright 1994, 1996, 1997, 2008, 2009, 2010 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -24,12 +24,8 @@
 /* For kpse_reset_progname */
 #include <kpathsea/tex-file.h>
 
-#if defined (WIN32) || defined (DJGPP)
+#if defined (WIN32) || defined (__DJGPP__)
 #include <kpathsea/c-pathmx.h>
-#endif
-
-#ifdef __MINGW32__
-#include <kpathsea/mingw32.h>
 #endif
 
 #if defined(__i386_pc_gnu__)

@@ -27,7 +27,7 @@
 #include <kpathsea/tex-make.h>
 #include <kpathsea/variable.h>
 
-#if !defined (AMIGA) && !(defined (MSDOS) && !defined(DJGPP)) && !defined (WIN32)
+#if !defined (AMIGA) && !(defined (MSDOS) && !defined(__DJGPP__)) && !defined (WIN32)
 #include <sys/wait.h>
 #endif
 
@@ -174,7 +174,7 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
     ret = system(cmd) == 0 ? getenv ("LAST_FONT_CREATED"): NULL;
     free (cmd);
   }
-#elif defined (MSDOS) && !defined(DJGPP)
+#elif defined (MSDOS) && !defined(__DJGPP__)
 #error Implement new MSDOS mktex call interface here
 #elif defined (WIN32)
 
