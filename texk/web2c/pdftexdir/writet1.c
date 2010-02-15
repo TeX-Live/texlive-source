@@ -1127,7 +1127,7 @@ static void append_cs_return(cs_entry *ptr)
     assert(ptr != NULL && ptr->valid && ptr->used);
 
     /* decrypt the cs data to t1_buf_array, append CS_RETURN */
-    p = t1_buf_array;
+    p = (byte *) t1_buf_array;
     data = ptr->data + 4;
     cr = 4330;
     for (i = 0; i < ptr->cslen; i++)
@@ -1138,7 +1138,7 @@ static void append_cs_return(cs_entry *ptr)
     new_data = xtalloc(ptr->len + 1, byte);
     memcpy(new_data, ptr->data, 4);
     p = new_data + 4;
-    q = t1_buf_array;
+    q = (byte *) t1_buf_array;
     cr = 4330;
     for (i = 0; i < ptr->cslen + 1; i++)
         *p++ = cencrypt(*q++, &cr);

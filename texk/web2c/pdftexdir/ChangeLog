@@ -1,3 +1,7 @@
+2010-02-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* writet1.c (append_cs_return): Cast to byte * to avoid warning.
+
 2010-02-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libpdftex.am (libpdftex_a_OBJECTS): Add dependency on
