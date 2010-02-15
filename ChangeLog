@@ -1,3 +1,8 @@
+2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* m4/kpse-kpathsea-flags.m4: Detect if libkpathsea was compiled
+	without debugging support and add '-DNODEBUG' if necessary.
+
 2010-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* m4/kpse-warnings.m4: Redefine compiler warning levels to

@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -7,23 +7,45 @@
 
 # serial 0
 
-# KPSE_KPATHSEA_FLAGS
-# -------------------
+# KPSE_KPATHSEA_FLAGS([OPTIONS])
+# ------------------------------
 # Provide the configure options '--with-system-kpathsea' (if in the TL tree),
 # '--with-kpathsea-includes', and '--with-kpathsea-libdir'.
+# Options:
+#          no-debug - add '-DNO_DEBUG' to KPATHSEA_INCLUDES even if not needed
 #
 # Set the make variables KPATHSEA_INCLUDES and KPATHSEA_LIBS to the CPPFLAGS and
 # LIBS required for the `-lkpathsea' library in texk/kpathsea/ of the TL tree.
 AC_DEFUN([KPSE_KPATHSEA_FLAGS],
-[_KPSE_LIB_FLAGS([kpathsea], [kpathsea], [lt],
-                 [-IBLD/texk -ISRC/texk], [BLD/texk/kpathsea/libkpathsea.la], [],
-                 [${top_srcdir}/../kpathsea/*.[ch]],
-                 [${top_builddir}/../kpathsea/paths.h])
+[AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
+_KPSE_LIB_FLAGS([kpathsea], [kpathsea], [lt],
+                [-IBLD/texk -ISRC/texk], [BLD/texk/kpathsea/libkpathsea.la], [],
+                [${top_srcdir}/../kpathsea/*.[ch]],
+                [${top_builddir}/../kpathsea/paths.h])
+m4_if(m4_index([ $1 ], [ no-debug ]), [-1],
+      [_KPSE_CHECK_KPSE_DEBUG],
+      [KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"])
 ]) # KPSE_KPATHSEA_FLAGS
 
 # KPSE_KPATHSEA_OPTIONS([WITH-SYSTEM])
 # ------------------------------------
 AC_DEFUN([KPSE_KPATHSEA_OPTIONS], [_KPSE_LIB_OPTIONS([kpathsea], [$1])])
+
+# _KPSE_CHECK_KPSE_DEBUG
+# ----------------------
+# Internal subroutine to check if libkpathsea supports debugging.
+m4_define([_KPSE_CHECK_KPSE_DEBUG],
+[AC_CACHE_CHECK([if libkpathsea supports debugging],
+                [kpse_cv_kpse_debug],
+                [KPSE_ADD_FLAGS([kpathsea])
+                 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <kpathsea/kpathsea.h>]],
+                                                 [[FILE *f = fopen("f", "r")]])],
+                                [kpse_cv_kpse_debug=yes],
+                                [kpse_cv_kpse_debug=no])
+                 KPSE_RESTORE_FLAGS])
+AS_IF([test "x$kpse_cv_kpse_debug" != xyes],
+      [KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"])[]dnl
+]) # _KPSE_CHECK_KPSE_DEBUG
 
 # KPSE_KPATHSEA_SYSTEM_FLAGS
 # --------------------------
