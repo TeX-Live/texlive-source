@@ -84,8 +84,8 @@
 #endif
 
 #if USE_KPATHSEA
-#ifndef DEBUG     /* strange logic: makeindex uses DEBUG to force debugging */
-#define NO_DEBUG  /* kpathsea uses NO_DEBUG to suppress it.                 */
+#ifndef DEBUG       /* strange logic: makeindex uses DEBUG to force debugging */
+#define NO_DEBUG 1  /* kpathsea uses NO_DEBUG to suppress it.                 */
 #endif
 #include <kpathsea/config.h>
 #include <kpathsea/c-limits.h>

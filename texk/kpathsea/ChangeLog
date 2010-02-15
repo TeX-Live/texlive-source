@@ -8,6 +8,18 @@
 	(<kpathsea/c-pathmx.h>) [__DJGPP__]: change conditional from DJGPP.
 	Suggestion from Javier Mugica, 13 Feb 2010 20:46:12.	
 
+2010-02-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xopendir.c [WIN32]: Define neither xopendir nor xclosedir.
+	* mingw32.[ch], progname.c: Remove set_home_warning().
+	From Akira.
+
+	* xopendir.[ch] (xopendir): Declare string param as const.
+	Declare prototypes if and only if functions are defined.
+
+	* kdefault.c, tex-file.h, xputenv.c:
+	Formatting, trailing whitespace.
+
 2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dir.c (kpathsea_dir_p), elt-dirs.c (kpathsea_normalize_path),

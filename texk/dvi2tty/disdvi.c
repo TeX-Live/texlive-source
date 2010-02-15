@@ -21,7 +21,7 @@ char *disdvi = "@(#) disdvi.c  2.1 19/01/90 M.J.E. Mol (c) 1989, 1990";
 #include "commands.h"
 
 #if defined(KPATHSEA)
-#define NO_DEBUG
+#define NO_DEBUG 1
 #include <kpathsea/config.h>
 #include <kpathsea/lib.h>
 #else

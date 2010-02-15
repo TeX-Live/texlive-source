@@ -15,7 +15,7 @@
    You should have received a copy of the GNU Lesser General Public License
    along with this library; if not, see <http://www.gnu.org/licenses/>.  */
 
-#if !defined (KPATHSEA_XOPENDIR_H) && !defined (WIN32)
+#if !defined (KPATHSEA_XOPENDIR_H) && (!defined (WIN32) || defined(__MINGW32__))
 #define KPATHSEA_XOPENDIR_H
 
 #include <kpathsea/c-dir.h>
@@ -25,7 +25,7 @@
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 /* Like opendir and closedir, but abort on error.  */
-extern DIR *xopendir (string dirname);
+extern DIR *xopendir (const_string dirname);
 extern void xclosedir (DIR *);
 
 #endif /* MAKE_KPSE_DLL */

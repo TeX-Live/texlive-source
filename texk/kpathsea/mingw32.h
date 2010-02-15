@@ -45,7 +45,6 @@
 #ifdef MAKE_KPSE_DLL /* libkpathsea internal only */
 
 extern void init_user_info (void);
-extern void set_home_warning (void);
 extern BOOL win32_get_long_filename (char *, char *, int);
 extern BOOL look_for_cmd (const char *, char **);
 extern char *quote_args(char **);

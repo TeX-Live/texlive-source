@@ -14,7 +14,7 @@ Copyright (C) 1988 M.J.E. Mol 1989, 1990"
 #endif
 
 #if defined(KPATHSEA)
-#define NO_DEBUG
+#define NO_DEBUG 1
 #include <kpathsea/config.h>
 #endif
 

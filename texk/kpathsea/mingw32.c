@@ -74,12 +74,6 @@ init_user_info (void)
   }
 }
 
-/* This function could go away */
-void 
-set_home_warning (void) 
-{
-}
-
 /* Returns the home directory, in external format */
 static char *
 get_home_directory (void)

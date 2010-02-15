@@ -1,3 +1,7 @@
+2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.h: #define NO_DEBUG as 1, to avoid warning.
+
 2009-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.c (process_idx, check_all): Check for legitimate file

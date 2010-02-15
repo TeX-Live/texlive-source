@@ -47,12 +47,12 @@ kpathsea_xputenv(kpathsea kpse, const char *var, const char *value)
     int    cur_loc;
 
     /* kpse_debug2(KPSE_DEBUG_VARS, "kpse_putenv($%s,%s)", var, value); */
-    
+
     old_item = NULL;
     cur_item = concat3(var, "=", value);
     /* Include '=' in length. */
     var_lim = strlen(var) + 1;
-    
+
     /* Have we stored something for this value already?  */
     for (cur_loc = 0; cur_loc != kpse->saved_count; ++cur_loc) {
         if (strncmp(kpse->saved_env[cur_loc], cur_item, var_lim) == 0) {
@@ -106,15 +106,15 @@ kpathsea_xputenv_int (kpathsea kpse, const_string var_name,  int num)
 {
   char str[MAX_INT_LENGTH];
   sprintf (str, "%d", num);
-  
+
   kpathsea_xputenv (kpse, var_name, str);
 }
 
 #if defined (KPSE_COMPAT_API)
 void
-xputenv(const char *var, const char *value)
+xputenv (const char *var, const char *value)
 {
-  kpathsea_xputenv(kpse_def, var, value);
+  kpathsea_xputenv (kpse_def, var, value);
 }
 
 void

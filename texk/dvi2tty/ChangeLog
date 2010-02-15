@@ -1,3 +1,7 @@
+2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* disdvi.c, dvi2tty.h: #define NO_DEBUG as 1, to avoid warning.
+
 2009-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid maximal compiler warnings.

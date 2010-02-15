@@ -1,14 +1,12 @@
 ## Makefile.am for the TeX Live subdirectory texk/dtl/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
 INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA
-## We don't use libpathsea, so don't overload fopen and stuff
-AM_CPPFLAGS += -DNO_DEBUG
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = dt2dv dv2dt
