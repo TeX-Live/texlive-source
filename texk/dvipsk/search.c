@@ -7,6 +7,10 @@
  */
 #include "dvips.h" /* The copyright notice in that file is included too! */
 
+#ifndef KPATHSEA
+"goodbye, search.c can only be compiled with -DKPATHSEA"
+#endif
+
 #include "protos_add.h" /* external declarations */
 
 #include <kpathsea/c-ctype.h>
@@ -22,9 +26,9 @@
 int to_close ;  /* use fclose or pclose? */
 char *realnameoffile ;
 
-/* Return safely quoted version of NAME.  That means as "..." on Windows
-   and '...' on Unix, with any occurrences of the quote char quoted with
-   a \.  Result is always in new memory, and NAME is unchanged.  */
+/* Return safely quoted version of NAME.  That means using "..." on
+   Windows and '...' on Unix, with any occurrences of the quote char
+   quoted with a \.  Result is always in new memory; NAME is unchanged.  */
 
 #ifdef WIN32
 #define QUOTE '"'
@@ -48,7 +52,7 @@ kpse_quote_name (const char *name)
   *q++ = QUOTE;
   *q = 0;
   
-  return q;
+  return quoted;
 }
 
 
@@ -56,9 +60,9 @@ kpse_quote_name (const char *name)
    changed to \.  On Unix, return a copy of PROG.  Result is always in
    new memory.  No safeness or other quoting is done on PROG.
    
-   This is necessary because Windows always wants to run programs out of
-   the current directory.  So for security, we want to ensure that we
-   are invoking programs from our own binary directory, not via PATH.  */
+   This is necessary because Windows likes to run programs out of the
+   current directory.  So for security, we want to ensure that we are
+   invoking programs from our own binary directory, not via PATH.  */
 
 static char *
 kpse_selfautoloc_prog (const char *prog)
@@ -75,6 +79,7 @@ kpse_selfautoloc_prog (const char *prog)
   
   /* Prepend that to PROG.  */
   ret = concat3 (selfautoloc, "\\", prog);
+  free (selfautoloc);
   
 #else /* not WIN32 */
   ret = xstrdup (prog);
@@ -97,7 +102,8 @@ search(kpse_file_format_type format, const char *file, const char *mode)
   if (secure == 2) {
 #endif
     /* an absolute path is denied */
-    if (kpse_absolute_p (file, false)) return NULL;
+    if (kpse_absolute_p (file, false))
+      return NULL;
 
     if (file[0] == '.' && file[1] == '.' && IS_DIR_SEP(file[2])) {
       /* a relative path starting with ../ is denied */
@@ -129,14 +135,14 @@ search(kpse_file_format_type format, const char *file, const char *mode)
         && ((len > 2 && FILESTRCASEEQ (found_name + len - 2, ".Z"))
             || (len > 3 && FILESTRCASEEQ (found_name + len - 3, ".gz")))) {
       /* automatically but safely decompress.  */
-/*      char *quoted_name = kpse_quote_name (found_name); */
+      char *quoted_name = kpse_quote_name (found_name);
       char *cmd;
       char *prog = kpse_selfautoloc_prog (GUNZIP);
-      cmd = concat3 (prog, " -c ", found_name);
+      cmd = concat3 (prog, " -c ", quoted_name);
       ret = popen (cmd, "r");
       to_close = USE_PCLOSE;
       free (cmd);
-/*      free (quoted_name); */
+      free (quoted_name);
       free (prog);
     } else {
       ret = fopen (found_name, mode);
@@ -161,7 +167,8 @@ search(kpse_file_format_type format, const char *file, const char *mode)
 
 
 FILE *
-pksearch(const char *file, const char *mode, halfword dpi, char **name_ret, int *dpi_ret)
+pksearch(const char *file, const char *mode, halfword dpi,
+         char **name_ret, int *dpi_ret)
 {
   FILE *ret;
   kpse_glyph_file_type font_file;

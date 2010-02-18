@@ -109,9 +109,8 @@ EXTRA_DIST = $(dist_prologues) texc.script
 
 CLEANFILES = $(prologues) texc.lpro
 
-## dvips test
-##
-TESTS = beginfontk1.test dvips.test pfbincl.test
+## dvips tests
+TESTS = beginfontk1.test dvips.test pfbincl.test quotecmd-test.pl
 
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea TEXCONFIG=$(srcdir)/testdata
 TESTS_ENVIRONMENT += TEXFONTS=$(srcdir)/testdata

@@ -1,3 +1,9 @@
+2010-02-18  Karl Berry  <karl@tug.org>
+
+	* tests/common-test.pl: moved to texk/tests.
+	* tests/write18-quote-test.pl,
+	* tests/bibtex-openout-test.pl: change calls.
+
 2010-02-01  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi (Output file location): mention that TEXMFOUTPUT

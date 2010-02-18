@@ -1,3 +1,14 @@
+2010-02-18  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (TESTS): add quotecmd-test.pl.
+	* quotecmd-test.pl,
+	* testdata/quotecmd.tex: new files.
+	* search.c (search): selfautoloc gunzip, and quote name before
+	calling popen.
+	(kpse_quote_name, kpse_self_autoloc_prog): new fns,
+	only temporarily here until we factor out the common code from
+	texmfmp.c.
+
 2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvips.c (main): Add '#if defined(KPSE_DEBUG)' to allow

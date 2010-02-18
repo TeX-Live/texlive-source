@@ -1,3 +1,7 @@
+2010-02-18  Karl Berry  <karl@tug.org>
+
+	* tests: new subdir for common test files.
+
 2009-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Import bibtexu (static icu libs only).

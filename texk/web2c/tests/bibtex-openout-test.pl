@@ -1,11 +1,10 @@
 #!/usr/bin/env perl
 # $Id$
-# Copyright 2009, 2010 Karl Berry <tex-live@tug.org>.
-# You may freely use, modify and/or distribute this file.
+# Public domain.  Originally written 2010, Karl Berry.
 # Check that bibtex respects openout_any.
 
-BEGIN { chomp ($srcdir = $ENV{"srcdir"} || `pwd`); }
-require "$srcdir/tests/common-test.pl";
+BEGIN { chomp ($srcdir = $ENV{"srcdir"} || `dirname $0`); }
+require "$srcdir/../tests/common-test.pl";
 
 exit (&main ());
 

@@ -1,7 +1,7 @@
-# $Id$
-# Copyright 2010 Karl Berry <tex-live@tug.org>.
-# You may freely use, modify and/or distribute this file.
-# Common definitions for Perl tests in TeX Live.
+# $Id: common-test.pl 16695 2010-01-13 01:18:02Z karl $
+# Public domain.  Originally written 2010, Karl Berry.
+# Common definitions for Perl tests in TeX Live.  We want to use Perl to
+# have a chance of running the tests on Windows.
 
 $ENV{"TEXMFCNF"} = "$srcdir/../kpathsea";
 $ENV{"BIBINPUTS"} = "$srcdir/tests";
