@@ -28,10 +28,6 @@
    NAME.  */
 extern string kpathsea_truncate_filename (kpathsea kpse, const_string name);
 
-#if defined (KPSE_COMPAT_API)
-extern string kpse_truncate_filename (const_string name);
-#endif
-
 #endif /* MAKE_KPSE_DLL */
 
 #endif /* not KPATHSEA_TRUNCATE_H */

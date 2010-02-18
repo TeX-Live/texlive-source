@@ -1,3 +1,8 @@
+2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* absolute.c (kpathsea_absolute_p): Unused param.
+	* truncate.[ch] (kpse_truncate_filename): Removed.
+
 2010-02-15  Karl Berry  <karl@tug.org>
 
 	* tex-make.c [DJGPP]: change conditionals to __DJGPP__ for
