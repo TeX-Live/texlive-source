@@ -1,3 +1,7 @@
+2010-02-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): Add tests/common-test.pl.
+
 2010-02-18  Karl Berry  <karl@tug.org>
 
 	* tests: new subdir for common test files.

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Use 'aclocal --force' (for "computed m4_sinclude")
@@ -57,4 +57,7 @@ subtexk: $(CONFIG_AUX)
 ../subsubdir-conf.cmd:
 	@echo "configure in ../auxdir/auxsub failed to create the file $@"
 	exit 1
+
+# Common infrastructure for tests
+EXTRA_DIST = tests/common-test.pl
 

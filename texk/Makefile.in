@@ -275,6 +275,9 @@ ACLOCAL_AMFLAGS = -I ../m4 --force
 SUBDIRS = . $(SUBTEXK)
 DIST_SUBDIRS = $(DIST_SUBTEXK)
 CONFIG_AUX = ../subsubdir-conf.cmd
+
+# Common infrastructure for tests
+EXTRA_DIST = tests/common-test.pl
 all: all-recursive
 
 .SUFFIXES:

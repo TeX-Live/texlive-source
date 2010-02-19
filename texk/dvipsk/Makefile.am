@@ -120,6 +120,7 @@ EXTRA_DIST += \
 	beginfontk1.test \
 	dvips.test \
 	pfbincl.test \
+	quotecmd-test.pl \
 	testdata/8r.enc \
 	testdata/ad.enc \
 	testdata/beginfontk1.dvi \
@@ -150,6 +151,7 @@ EXTRA_DIST += \
 	testdata/ptmr8r.tfm \
 	testdata/ptmri.vf \
 	testdata/ptmri8r.tfm \
+	testdata/quotecmd.tex \
 	testdata/special.pro \
 	testdata/texc.pro \
 	testdata/texps.pro
