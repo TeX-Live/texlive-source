@@ -60,6 +60,8 @@ string progname = NULL;
 
 extern int	xdv2pdf(int argc, char** argv);
 
+#ifdef XDV2PDF_OLD_FORMATS
+
 #ifndef DEFAULT_OTFFONTS
 #define DEFAULT_OTFFONTS ".:/usr/local/teTeX/share/texmf/fonts/otf//:/usr/TeX/texmf/fonts/otf//"
 #endif
@@ -195,18 +197,22 @@ init_path(kpse_format_info_type *info, const_string default_path, ...)
   info->path = kpse_brace_expand (info->path);
 }
 
+#endif /* XDV2PDF_OLD_FORMATS */
+
 int
 main(int argc, char** argv)
 {
+#ifdef XDV2PDF_OLD_FORMATS
+
 	kpse_file_format_type	format;
 
 	kpse_set_program_name (argv[0], progname);
-    
+
     /* It seems to be critical that I do a kpse_cnf_get to trigger the reading of texmf.cnf files
         BEFORE the INIT_FORMAT stuff below. I don't really understand all the interactions
         of search paths, config files, etc., but for now this is working for me. */
     kpse_cnf_get("TETEXDIR");
-    
+
     format = kpse_cnf_format;
     INIT_FORMAT ("cnf", DEFAULT_TEXMFCNF, CNF_ENVS);
     SUFFIXES (".cnf");
@@ -215,7 +221,7 @@ main(int argc, char** argv)
     INIT_FORMAT ("ls-R", DEFAULT_TEXMFDBS, DB_ENVS);
     SUFFIXES ("ls-R");
     FMT_INFO.path = remove_dbonly (FMT_INFO.path);
-    
+
     format = xdv_kpse_pfb_format;
 	INIT_FORMAT ("type1 fonts", DEFAULT_T1FONTS, TYPE1_ENVS);
 	FMT_INFO.binmode = true;
@@ -243,6 +249,29 @@ main(int argc, char** argv)
 	INIT_FORMAT ("enc files", DEFAULT_ENCFONTS, ENC_ENVS);
 	FMT_INFO.suffix_search_only = true;
 	SUFFIXES (".enc");
+
+#else /* not XDV2PDF_OLD_FORMATS */
+
+    kpse_set_program_name (argv[0], progname);
+    
+    /* It seems to be critical that I do a kpse_cnf_get to trigger the reading of texmf.cnf files
+        BEFORE the INIT_FORMAT stuff below. I don't really understand all the interactions
+        of search paths, config files, etc., but for now this is working for me. */
+    kpse_cnf_get("TETEXDIR");
+
+    /* Initialize search paths.  */
+    kpse_init_format (kpse_cnf_format);
+    kpse_init_format (kpse_db_format);
+    kpse_init_format (kpse_type1_format);
+    kpse_init_format (kpse_opentype_format);
+    kpse_init_format (kpse_tfm_format);
+    kpse_init_format (kpse_fontmap_format);
+    kpse_init_format (kpse_enc_format);
+
+    /* Re-initialize type1 suffix list (without ".pfa").  */
+    kpse_set_suffixes (kpse_type1_format, false, ".pfb", NULL);
+
+#endif /* not XDV2PDF_OLD_FORMATS */
 
 	return xdv2pdf(argc, argv);
 }
