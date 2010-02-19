@@ -1,3 +1,7 @@
+2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+        * common.defines (makesuffix, removesuffix): Remove these.
+
 2010-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* main.c: Remove unused extern declaration of yylen.

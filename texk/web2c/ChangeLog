@@ -1,3 +1,10 @@
+2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h (makesuffix, removesuffix): Remove these from the
+	underscore list.
+
+	* am/texmf.am (EXTRA_DIST): Remove tests/common-test.pl.
+
 2010-02-18  Karl Berry  <karl@tug.org>
 
 	* tests/common-test.pl: moved to texk/tests.
