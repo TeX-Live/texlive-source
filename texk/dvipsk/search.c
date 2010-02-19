@@ -69,7 +69,7 @@ kpse_selfautoloc_prog (const char *prog)
 {
   char *ret;
 #ifdef WIN32
-  const char *p;
+  char *p;
   /* Get value of SELFAUTOLOC, but \ works better for path separator.  */
   char *selfautoloc = kpse_var_value ("SELFAUTOLOC");
   for (p = selfautoloc; *p; p++) {
