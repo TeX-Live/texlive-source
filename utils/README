@@ -52,9 +52,9 @@ clisp_builddir=$clisp_basedir/clisp-build
 mkdir $clisp_toolsdir
 
 cd $clisp_basedir
-wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.7.tar.gz
-gzip -dc libsigsegv-2.7.tar.gz | tar xf -
-cd libsigsegv-2.7
+wget http://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.8.tar.gz
+gzip -dc libsigsegv-2.8.tar.gz | tar xf -
+cd libsigsegv-2.8
 ./configure --prefix=$clisp_toolsdir && make && make check && make install
 
 cd $clisp_basedir
