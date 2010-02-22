@@ -518,10 +518,8 @@ EXTERN int    dpi                  INIT(100);
 #ifdef HAVE_GDIMAGEPNGEX
 EXTERN int   compression INIT(1);
 #endif
-#ifdef MIKTEX
 #undef min
 #undef max
-#endif        /* MIKTEX */
 # define  max(x,y)       if ((y)>(x)) x = y
 # define  min(x,y)       if ((y)<(x)) x = y
 

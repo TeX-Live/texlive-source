@@ -212,6 +212,9 @@
 /* Define to 1 if you have the `waitpid' function. */
 #undef HAVE_WAITPID
 
+/* Define to 1 if you have the <winsock2.h> header file. */
+#undef HAVE_WINSOCK2_H
+
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #undef LT_OBJDIR
@@ -291,7 +294,11 @@
 
 /* Allow compilation on Windows (thanks, Fabrice Popineau). */
 #ifdef WIN32
-# include <win32lib.h>
+# ifdef __MINGW32__
+#  include <windows.h>
+# else
+#  include <win32lib.h>
+# endif
 #else
 # define CDECL /* nothing */
 #endif

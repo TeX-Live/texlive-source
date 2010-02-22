@@ -26,6 +26,8 @@
 char	screen_pixel[WIDTHINBYTES*HEIGHT];
 char	zero_array[WIDTHINBYTES];
 
+#include <mfdisplay.h>
+
 /* 
  *	function init_screen: boolean;
  *

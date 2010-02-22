@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/window/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 INCLUDES = -I$(top_srcdir) $(KPATHSEA_INCLUDES)
@@ -18,6 +18,7 @@ libwindow_a_SOURCES = \
 	amiga.c \
 	epsf.c \
 	hp2627.c \
+	mfdisplay.h \
 	mftalk.c \
 	next.c \
 	regis.c \

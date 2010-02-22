@@ -38,6 +38,8 @@ char outstring[1024];	/* the longest string pushed though a pipe */
 #undef read
 #endif
 
+#include <mfdisplay.h>
+
 int mf_next_initscreen(void)
 {
 	int i;

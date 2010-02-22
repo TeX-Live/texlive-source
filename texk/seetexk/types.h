@@ -13,11 +13,9 @@
 #ifndef _MCTEX_TYPES_
 #define _MCTEX_TYPES_
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
 #include <win32lib.h>
 #undef index
-#undef DT_RIGHT
-#define EndPage DviEndPage
 #endif
 
 /*
@@ -77,6 +75,13 @@
 #define index(s, c) strchr(s, c)
 
 #endif /* KPATHSEA */
+
+/*
+ * Conflicting WIN32 declarations.
+ */
+#undef DT_RIGHT
+#define EndPage DviEndPage
+
 /*
  * Define the following types and macros as required by your system.
  */

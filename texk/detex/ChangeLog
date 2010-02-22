@@ -1,3 +1,8 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* detex.l: #undef IGNORE after #including kpathsea headers.
+	#define NOFILE if not defined by <sys/param.h>.
+
 2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid maximal compiler warnings.

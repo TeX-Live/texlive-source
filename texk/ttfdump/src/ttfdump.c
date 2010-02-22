@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef WIN32
-#include <kpathsea/getopt.h>
+#include <getopt.h>
 #else
 #include <unistd.h>
 #endif

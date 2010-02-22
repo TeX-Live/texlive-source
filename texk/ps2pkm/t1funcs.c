@@ -411,11 +411,11 @@ void Type1CloseFont(pFont)
  
  
  
-static void fill(dest, h, w, area, byte, bit, wordsize)
+static void fill(dest, h, w, area, Byte, bit, wordsize)
        register char *dest;  /* destination bitmap                           */
        int h,w;              /* dimensions of 'dest', w padded               */
        register struct region *area;  /* region to write to 'dest'           */
-       int byte,bit;         /* flags; LSBFirst or MSBFirst                  */
+       int Byte,bit;         /* flags; LSBFirst or MSBFirst                  */
        int wordsize;         /* number of bits per word for LSB/MSB purposes */
 {
        register struct edgelist *edge;  /* for looping through edges         */
@@ -441,7 +441,7 @@ static void fill(dest, h, w, area, byte, bit, wordsize)
 Now, as an afterthought, we'll go reorganize if odd byte order requires
 it:
 */
-       if (byte == LSBFirst && wordsize != 8) {
+       if (Byte == LSBFirst && wordsize != 8) {
                register int i;
  
                switch (wordsize) {

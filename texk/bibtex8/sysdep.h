@@ -132,6 +132,8 @@
 #ifdef WIN32
 # ifdef _MSC_VER
 #  define IMPLEMENTATION            "Microsoft(R) C/C++ for Win32"
+# elif defined(__MINGW32__)
+#  define IMPLEMENTATION            "MinGW32 C/C++ for Win32"
 # else
 #  define IMPLEMENTATION            "Unknown C/C++ for Win32"
 # endif				/* _MSC_VER */
@@ -154,7 +156,9 @@
 #endif				/* OS2 */
 
 #ifdef  UNIX
-# define IMPLEMENTATION             "C for Unix"
+# ifndef IMPLEMENTATION
+#  define IMPLEMENTATION            "C for Unix"
+# endif
 # define PATH_DELIM                 ':'
 #endif				/* UNIX */
 

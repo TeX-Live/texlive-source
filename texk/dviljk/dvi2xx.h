@@ -267,6 +267,7 @@ const char *MFMODE     = MFMODE600;
 # define  XDEFAULTOFF   RESOLUTION   /*x default offset on page 1in (LJ2)*/
 # define  YDEFAULTOFF   RESOLUTION    /* y default offset on page 1inch */
 #endif
+# undef max
 # define  max(x,y)       if ((y)>(x)) x = y
 # ifndef vms
 #  define  INT_ASCII(b,i) \
@@ -330,6 +331,7 @@ int     intdos();
 #include <stdlib.h>
 #undef CopyFile
 #define CopyFile LJCopyFile
+#undef ResetPrinter
 #define ResetPrinter LJResetPrinter
 #endif
 

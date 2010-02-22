@@ -1,0 +1,9 @@
+2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Test for <zlib.h> requires to set ZLIB flags.
+	Test for <winnt.h> and <winbase.h> needs #include <windows.h>.
+
+2010-01-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to TL2009 build system.
+

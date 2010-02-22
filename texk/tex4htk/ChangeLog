@@ -1,3 +1,9 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tex4ht.c [__MINGW32__]: #define HAVE_BOOLEAN in order to avoid
+	conflicting declaration for boolean from kpathsea/types.h.
+	Declare various param strings as const.
+
 2009-09-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* t4ht.c, tex4ht.c: Declare numerous param and local strings as

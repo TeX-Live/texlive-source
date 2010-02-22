@@ -1,3 +1,10 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi2xx.c (mkdtemp): Declare as static.  [WIN32] Define mkdir
+	as macro discarding the mode argument.
+	* dvi2xx.h (max): #undef before redefinition.
+	(ResetPrinter): #define as LJResetPrinter to avoid conflict.
+
 2009-12-24  Karl Berry  <karl@tug.org>
 
 	* AUTHORS, dviljk.pod, README, dvihp: doc/email fixes.

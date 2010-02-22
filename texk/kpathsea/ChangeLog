@@ -1,3 +1,11 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mingw32.c (win32_system): Declare as non-static, for web2c.
+	* mingw32.h (win32_system): Declare as extern KPSEDLL.
+
+	* c-proto.h, getopt.h (KPSE_DLL): Automatically #define for
+	native WIN32 but not for MinGW32.
+
 2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* absolute.c (kpathsea_absolute_p): Unused param.

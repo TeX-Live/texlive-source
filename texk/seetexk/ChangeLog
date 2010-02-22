@@ -1,3 +1,8 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* types.h: Do not #include <win32lib.h> for MinGW32.  Moved
+	#undef DT_RIGHT and #define EndPage after kpathsea includes.
+
 2009-08-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid maximal compiler warnings.

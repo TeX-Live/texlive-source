@@ -70,7 +70,9 @@ static int buf[8];			/* Temporary buffer. */
 static RETSIGTYPE (*old) ();		/* Old signal handler. */
 
 
-boolean
+#include <mfdisplay.h>
+
+int
 mf_mftalk_initscreen (void)
 {
   int app;				/* Client application type. */

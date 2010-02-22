@@ -12,6 +12,8 @@
 on a black background; undefined is the opposite */
 #undef WRITEWHITE
 
+#include <mfdisplay.h>
+
 /* 
  *	int init_screen 
  *		Put screen in graphics mode:<ESC>Pp

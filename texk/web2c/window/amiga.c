@@ -153,6 +153,8 @@ void close_all(void)
 
 } /* close_all() */
 
+#include <mfdisplay.h>
+
 /*
  * INITSCREEN: Initialize the physical display window on the WorkBench
  * screen of the Commodore Amiga.  Open the necessary libraries and open
@@ -162,7 +164,7 @@ void close_all(void)
  * The `WFLG_SIZEGADGET' window flag has been removed; resizing the
  * window kills the picture and never triggered an `updatescreen'.
  */
-boolean mf_amiga_initscreen(void)
+int mf_amiga_initscreen(void)
 {
 #ifdef DEBUG
   printf("\ninitscreen()\n");

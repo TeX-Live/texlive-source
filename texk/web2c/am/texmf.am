@@ -104,6 +104,9 @@ mf_nowin_LDADD = libmf.a $(LDADD) $(windowlib)
 windowlib = window/libwindow.a
 $(windowlib): mfd.h $(srcdir)/window/*.c
 	cd window && $(MAKE) $(AM_MAKEFLAGS) libwindow.a
+if WIN32
+mf_x_libs = -lgdi32
+else !WIN32
 # Make `#include <X11/...>' and `-lX...' work.
 # This matches xdvik.
 # wlibs is substituted by web2c's configure, LIBS by general configure
@@ -112,6 +115,7 @@ $(windowlib): mfd.h $(srcdir)/window/*.c
 # Follow the library order used in X11R6 itself:
 #   -lXaw -lXmu -lXt -lSM -lICE -lXext -lX11 (some may not be present).
 mf_x_libs = $(X_LIBS) $(x_tool_libs) $(X_PRE_LIBS) $(x_ext_lib) $(wlibs) $(X_EXTRA_LIBS)
+endif !WIN32
 
 ## mf and mf-nowin compile mfextra.c with different CPPFLAGS.
 ## Automake, however, does not support CPPFLAGS for individual source files.

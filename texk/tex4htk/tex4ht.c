@@ -201,6 +201,9 @@
 
 
 #ifdef KPATHSEA
+#ifdef __MINGW32__
+#define HAVE_BOOLEAN 1
+#endif /* __MINGW32__ */
 #include <kpathsea/config.h>
 #include <kpathsea/c-errno.h>
 #include <kpathsea/c-ctype.h>
@@ -1325,7 +1328,7 @@ static FILE* search_file_ext( ARG_III(const char *, const U_CHAR *, const U_CHAR
 
 
 #if defined(DOS_WIN32) || defined(__DJGPP__)
-   static BOOL is_forward_slash( ARG_I(char*) );
+   static BOOL is_forward_slash( ARG_I(const char*) );
 #endif
 
 
@@ -3409,7 +3412,7 @@ static  int math_class_of
 #if defined(DOS_WIN32) || defined(__MSDOS__)
 
 
-char *get_env_dir
+static char *get_env_dir
 #ifdef ANSI
 #define SEP ,
 (
@@ -3435,7 +3438,7 @@ char *get_env_dir
   p = (char *) malloc(i+12);
   if(p == NULL)  return NULL;      
   strncpy(p, progname, i+1);                        
-  (IGNORED) strcpy((char *) &p[i+1], (char *) "tex4ht.env");       
+  (IGNORED) strcpy((char *) &p[i+1], (const char *) "tex4ht.env");       
   return p;
 }
 
@@ -4217,13 +4220,13 @@ static BOOL is_forward_slash
 #ifdef ANSI
 #define SEP ,
 (
-                                    char* str
+                                    const char* str
 )
 #undef SEP
 #else
 #define SEP ;
 (str)
-                                    char* str
+                                    const char* str
 ;
 #undef SEP
 #endif

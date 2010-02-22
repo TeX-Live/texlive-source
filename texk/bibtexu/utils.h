@@ -94,6 +94,7 @@
 
 
 #ifdef WIN32
+#  undef CDECL
 #  define CDECL __cdecl
 #else
 #  define CDECL

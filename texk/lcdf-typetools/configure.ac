@@ -221,7 +221,8 @@ dnl ntohs, ntohl (need them in C++ code)
 dnl
 
 AC_LANG_CPLUSPLUS
-AC_CHECK_HEADERS(byteorder.h netinet/in.h sys/param.h)
+dnl MinGW32 has <sys/param.h> but also needs <winsock2.h>
+AC_CHECK_HEADERS(byteorder.h netinet/in.h sys/param.h winsock2.h)
 AC_MSG_CHECKING([whether ntohs and ntohl are defined])
 ac_ntoh_defined=no
 AC_COMPILE_IFELSE(
@@ -232,8 +233,16 @@ AC_COMPILE_IFELSE(
 # include <byteorder.h>
 #elif HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#elif HAVE_SYS_PARAM_H
-# include <sys/param.h>
+#elif defined(HAVE_SYS_PARAM_H) || defined(WIN32)
+# if defined(HAVE_SYS_PARAM_H)
+#  include <sys/param.h>
+# endif
+# if defined(WIN32)
+#  ifdef __MSC_VER
+#   pragma warning (disable: 4290)
+#  endif
+#  include <winsock2.h>
+# endif
 #endif
 ]], [[(void) ntohs(0x0020), (void) ntohl(0x03040020);]])],
 	[AC_MSG_RESULT(yes)
@@ -256,15 +265,22 @@ ac_ntoh_defined=yes],
     fi
 fi
 if test $ac_ntoh_defined = no; then
-    AC_MSG_ERROR([
+    AC_MSG_WARN([
 =========================================
 
 Cannot find a definition for ntohs and/or ntohl!
 
 =========================================])
+  if test "x$enable_build" != xno; then
+    AC_MSG_ERROR([exiting])
+  fi
 fi
 AC_LANG_C
 
+KPSE_CHECK_WIN32
+if test "x$kpse_cv_have_win32" != xno; then
+  LIBS="$LIBS -lwsock32"
+fi
 
 dnl
 dnl is va_list addressable?
@@ -303,7 +319,11 @@ AH_TOP([#ifndef LCDF_TYPETOOLS_CONFIG_H
 
 AH_BOTTOM([/* Allow compilation on Windows (thanks, Fabrice Popineau). */
 #ifdef WIN32
-# include <win32lib.h>
+# ifdef __MINGW32__
+#  include <windows.h>
+# else
+#  include <win32lib.h>
+# endif
 #else
 # define CDECL /* nothing */
 #endif

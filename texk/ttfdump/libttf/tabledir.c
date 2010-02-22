@@ -65,7 +65,7 @@ void ttfPrintTableDir(FILE *fp,TableDirPtr p)
     char tagname[5];
 
     /* make ULONG tag names more like a string */
-    bcopy(&(p->tag),tagname,4);
+    memcpy(tagname,&(p->tag),4);
     tagname[4] = '\0';
 #ifdef WORDS_BIGENDIAN
     FourByteSwap((unsigned char *)tagname,4);

@@ -24,6 +24,10 @@
 #ifndef _GETOPT_H
 #define _GETOPT_H 1
 
+#if defined (WIN32) && !defined(__MINGW32__)
+#define KPSE_DLL 1
+#endif /* WIN32 && ! __MINGW32__ */
+
 #if defined (KPSE_DLL) && (defined (WIN32) || defined (__CYGWIN__))
 #ifdef MAKE_KPSE_DLL
 #define KPSEDLL __declspec(dllexport)

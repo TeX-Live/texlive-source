@@ -25,8 +25,8 @@ Description:
 DEFINE_THIS_FILE
 #ifndef _WIN32
 #include <stdlib.h>
-#include <math.h>
 #endif
+#include <math.h>
 
 //:>********************************************************************************************
 //:>	Forward declarations

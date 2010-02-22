@@ -7,7 +7,7 @@ GNU Lesser General Public License, as specified in the LICENSING.txt file.
 
 // version_defs.h -- common pieces included in all the version resources
 
-#include <Windows.h>
+#include <windows.h>
 
 // version numbers that should be updated for each release
 #define VER_FILEVERSION             2,5,1,0

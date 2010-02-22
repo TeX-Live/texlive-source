@@ -1791,7 +1791,7 @@ close_file_or_pipe (FILE *f)
    variable `interrupt'; then they will do everything needed.  */
 #ifdef WIN32
 /* Win32 doesn't set SIGINT ... */
-BOOL WINAPI
+static BOOL WINAPI
 catch_interrupt (DWORD arg)
 {
   switch (arg) {
@@ -2048,7 +2048,7 @@ calledit (packedASCIIcode *filename,
   *temp = 0;
 
   /* Execute the command.  */
-#ifdef WIN32
+#ifdef __MINGW32__
   /* Win32 reimplementation of the system() command
      provides opportunity to call it asynchronously */
   if (win32_system(command, true) != 0 )
@@ -2645,77 +2645,9 @@ zmakescaled (integer p, integer q)		/* Approximate 2^16*p/q */
 #undef X11WIN
 #endif
 
-#ifdef AMIGAWIN
-extern int mf_amiga_initscreen (void);
-extern void mf_amiga_updatescreen (void);
-extern void mf_amiga_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_amiga_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef EPSFWIN
-extern int mf_epsf_initscreen (void);
-extern void mf_epsf_updatescreen (void);
-extern void mf_epsf_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_epsf_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef HP2627WIN
-extern int mf_hp2627_initscreen (void);
-extern void mf_hp2627_updatescreen (void);
-extern void mf_hp2627_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_hp2627_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef MFTALKWIN
-extern int mf_mftalk_initscreen (void);
-extern void mf_mftalk_updatescreen (void);
-extern void mf_mftalk_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_mftalk_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef NEXTWIN
-extern int mf_next_initscreen (void);
-extern void mf_next_updatescreen (void);
-extern void mf_next_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_next_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef REGISWIN
-extern int mf_regis_initscreen (void);
-extern void mf_regis_updatescreen (void);
-extern void mf_regis_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_regis_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef SUNWIN
-extern int mf_sun_initscreen (void);
-extern void mf_sun_updatescreen (void);
-extern void mf_sun_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_sun_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef TEKTRONIXWIN
-extern int mf_tektronix_initscreen (void);
-extern void mf_tektronix_updatescreen (void);
-extern void mf_tektronix_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_tektronix_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef UNITERMWIN
-extern int mf_uniterm_initscreen (void);
-extern void mf_uniterm_updatescreen (void);
-extern void mf_uniterm_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_uniterm_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef WIN32WIN
-extern int mf_win32_initscreen (void);
-extern void mf_win32_updatescreen (void);
-extern void mf_win32_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_win32_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-#ifdef X11WIN
-extern int mf_x11_initscreen (void);
-extern void mf_x11_updatescreen (void);
-extern void mf_x11_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_x11_paintrow (screenrow, pixelcolor, transspec, screencol);
-#endif
-extern int mf_trap_initscreen (void);
-extern void mf_trap_updatescreen (void);
-extern void mf_trap_blankrectangle (screencol, screencol, screenrow, screenrow);
-extern void mf_trap_paintrow (screenrow, pixelcolor, transspec, screencol);
-
+/* Prototypes for Metafont display routines: mf_XXX_initscreen,
+   mf_XXX_updatescreen, mf_XXX_blankrectangle, and mf_XXX_paintrow.  */
+#include <window/mfdisplay.h>
 
 /* This variable, `mfwsw', contains the dispatch tables for each
    terminal.  We map the Pascal calls to the routines `init_screen',

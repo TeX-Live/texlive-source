@@ -51,4 +51,6 @@ extern char *quote_args(char **);
 
 #endif /* MAKE_KPSE_DLL */
 
+extern KPSEDLL int win32_system(const char *, int);
+
 #endif

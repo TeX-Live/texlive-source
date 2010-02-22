@@ -31,16 +31,17 @@ KPSE_COMPILER_WARNINGS
 # Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_DIRENT
-AC_CHECK_HEADERS([stdint.h unistd.h windows.h winnt.h winbase.h sys/int_types.h])
+AC_CHECK_HEADERS([stdint.h unistd.h windows.h sys/int_types.h])
+AC_CHECK_HEADERS([winnt.h winbase.h], , , [#include <windows.h>])
 AC_CHECK_HEADERS([sys/types.h sys/mman.h sys/stat.h sys/param.h]) dnl posix'ish
-AC_CHECK_HEADERS([io.h direct.h zlib.h byteswap.h])
+AC_CHECK_HEADERS([io.h direct.h byteswap.h])
 AC_CHECK_HEADERS([fnmatch.h])
 
 # ---------------------------------------------------------------
 AC_MSG_CHECKING([whether can use mmap for file scanning])
 enable_mmap='no (just a bit slower)'
-test "$ac_cv_header_winbase_h"  && enable_mmap="yes, winbase.h"
-test "$ac_cv_header_sys_mman_h" && enable_mmap="yes, sys/mman.h"
+test "x$ac_cv_header_winbase_h" = xyes && enable_mmap="yes, winbase.h"
+test "x$ac_cv_header_sys_mman_h" = xyes && enable_mmap="yes, sys/mman.h"
 case "$enable_mmap" in
    yes*) ZZIPLIB_DEFINES='-D_USE_MMAP';;
 esac
@@ -71,6 +72,7 @@ AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 if test "x$enable_build" != xno || test -f config.force; then
 
 KPSE_ADD_FLAGS([zlib])
+AC_CHECK_HEADERS([zlib.h])
 AC_CHECK_FUNC([zlibVersion], , [AC_ERROR([zlib not found])])
 KPSE_RESTORE_FLAGS
 

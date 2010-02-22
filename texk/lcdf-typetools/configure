@@ -776,7 +776,6 @@ DSYMUTIL
 lt_ECHO
 RANLIB
 AR
-OBJDUMP
 LN_S
 NM
 ac_ct_DUMPBIN
@@ -811,6 +810,9 @@ build_vendor
 build_cpu
 build
 LIBTOOL
+OBJDUMP
+DLLTOOL
+AS
 MAINT
 MAINTAINER_MODE_FALSE
 MAINTAINER_MODE_TRUE
@@ -5027,13 +5029,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:5030: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:5032: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5033: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:5035: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:5036: output\"" >&5)
+  (eval echo "\"\$as_me:5038: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5373,9 +5375,6 @@ else
 fi
 
 test -z "$OBJDUMP" && OBJDUMP=objdump
-
-
-
 
 
 
@@ -6239,7 +6238,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 6242 "configure"' > conftest.$ac_ext
+  echo '#line 6241 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7372,13 +7371,311 @@ fi
 
 
 # Set options
+enable_win32_dll=yes
+
+case $host in
+*-*-cygwin* | *-*-mingw* | *-*-pw32* | *-cegcc*)
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}as", so it can be a program name with args.
+set dummy ${ac_tool_prefix}as; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_AS+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$AS"; then
+  ac_cv_prog_AS="$AS" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_AS="${ac_tool_prefix}as"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+AS=$ac_cv_prog_AS
+if test -n "$AS"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $AS" >&5
+$as_echo "$AS" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_AS"; then
+  ac_ct_AS=$AS
+  # Extract the first word of "as", so it can be a program name with args.
+set dummy as; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ac_ct_AS+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_AS"; then
+  ac_cv_prog_ac_ct_AS="$ac_ct_AS" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_AS="as"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_AS=$ac_cv_prog_ac_ct_AS
+if test -n "$ac_ct_AS"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_AS" >&5
+$as_echo "$ac_ct_AS" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_AS" = x; then
+    AS="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    AS=$ac_ct_AS
+  fi
+else
+  AS="$ac_cv_prog_AS"
+fi
+
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}dlltool", so it can be a program name with args.
+set dummy ${ac_tool_prefix}dlltool; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_DLLTOOL+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$DLLTOOL"; then
+  ac_cv_prog_DLLTOOL="$DLLTOOL" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_DLLTOOL="${ac_tool_prefix}dlltool"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+DLLTOOL=$ac_cv_prog_DLLTOOL
+if test -n "$DLLTOOL"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $DLLTOOL" >&5
+$as_echo "$DLLTOOL" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_DLLTOOL"; then
+  ac_ct_DLLTOOL=$DLLTOOL
+  # Extract the first word of "dlltool", so it can be a program name with args.
+set dummy dlltool; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ac_ct_DLLTOOL+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_DLLTOOL"; then
+  ac_cv_prog_ac_ct_DLLTOOL="$ac_ct_DLLTOOL" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_DLLTOOL="dlltool"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_DLLTOOL=$ac_cv_prog_ac_ct_DLLTOOL
+if test -n "$ac_ct_DLLTOOL"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_DLLTOOL" >&5
+$as_echo "$ac_ct_DLLTOOL" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_DLLTOOL" = x; then
+    DLLTOOL="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    DLLTOOL=$ac_ct_DLLTOOL
+  fi
+else
+  DLLTOOL="$ac_cv_prog_DLLTOOL"
+fi
+
+  if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}objdump", so it can be a program name with args.
+set dummy ${ac_tool_prefix}objdump; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_OBJDUMP+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$OBJDUMP"; then
+  ac_cv_prog_OBJDUMP="$OBJDUMP" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_OBJDUMP="${ac_tool_prefix}objdump"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+OBJDUMP=$ac_cv_prog_OBJDUMP
+if test -n "$OBJDUMP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $OBJDUMP" >&5
+$as_echo "$OBJDUMP" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_OBJDUMP"; then
+  ac_ct_OBJDUMP=$OBJDUMP
+  # Extract the first word of "objdump", so it can be a program name with args.
+set dummy objdump; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_prog_ac_ct_OBJDUMP+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_OBJDUMP"; then
+  ac_cv_prog_ac_ct_OBJDUMP="$ac_ct_OBJDUMP" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_ac_ct_OBJDUMP="objdump"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_OBJDUMP=$ac_cv_prog_ac_ct_OBJDUMP
+if test -n "$ac_ct_OBJDUMP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_OBJDUMP" >&5
+$as_echo "$ac_ct_OBJDUMP" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_OBJDUMP" = x; then
+    OBJDUMP="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    OBJDUMP=$ac_ct_OBJDUMP
+  fi
+else
+  OBJDUMP="$ac_cv_prog_OBJDUMP"
+fi
+
+  ;;
+esac
+
+test -z "$AS" && AS=as
+
+
+
+
+
+test -z "$DLLTOOL" && DLLTOOL=dlltool
+
+
+
+
+
+test -z "$OBJDUMP" && OBJDUMP=objdump
+
+
+
+
 
 
 
         enable_dlopen=no
 
-
-  enable_win32_dll=no
 
 
             # Check whether --enable-shared was given.
@@ -7871,11 +8168,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7874: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8171: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7878: \$? = $ac_status" >&5
+   echo "$as_me:8175: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8210,11 +8507,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8213: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8510: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8217: \$? = $ac_status" >&5
+   echo "$as_me:8514: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8315,11 +8612,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8318: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8615: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8322: \$? = $ac_status" >&5
+   echo "$as_me:8619: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8370,11 +8667,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8373: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8670: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8377: \$? = $ac_status" >&5
+   echo "$as_me:8674: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10737,7 +11034,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10740 "configure"
+#line 11037 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10833,7 +11130,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10836 "configure"
+#line 11133 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14621,11 +14918,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14624: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:14921: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:14628: \$? = $ac_status" >&5
+   echo "$as_me:14925: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -14720,11 +15017,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14723: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15020: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14727: \$? = $ac_status" >&5
+   echo "$as_me:15024: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -14772,11 +15069,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:14775: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:15072: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:14779: \$? = $ac_status" >&5
+   echo "$as_me:15076: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -16769,6 +17066,9 @@ double_quote_subst='$double_quote_subst'
 delay_variable_subst='$delay_variable_subst'
 macro_version='`$ECHO "X$macro_version" | $Xsed -e "$delay_single_quote_subst"`'
 macro_revision='`$ECHO "X$macro_revision" | $Xsed -e "$delay_single_quote_subst"`'
+AS='`$ECHO "X$AS" | $Xsed -e "$delay_single_quote_subst"`'
+DLLTOOL='`$ECHO "X$DLLTOOL" | $Xsed -e "$delay_single_quote_subst"`'
+OBJDUMP='`$ECHO "X$OBJDUMP" | $Xsed -e "$delay_single_quote_subst"`'
 enable_shared='`$ECHO "X$enable_shared" | $Xsed -e "$delay_single_quote_subst"`'
 enable_static='`$ECHO "X$enable_static" | $Xsed -e "$delay_single_quote_subst"`'
 pic_mode='`$ECHO "X$pic_mode" | $Xsed -e "$delay_single_quote_subst"`'
@@ -16795,7 +17095,6 @@ lt_SP2NL='`$ECHO "X$lt_SP2NL" | $Xsed -e "$delay_single_quote_subst"`'
 lt_NL2SP='`$ECHO "X$lt_NL2SP" | $Xsed -e "$delay_single_quote_subst"`'
 reload_flag='`$ECHO "X$reload_flag" | $Xsed -e "$delay_single_quote_subst"`'
 reload_cmds='`$ECHO "X$reload_cmds" | $Xsed -e "$delay_single_quote_subst"`'
-OBJDUMP='`$ECHO "X$OBJDUMP" | $Xsed -e "$delay_single_quote_subst"`'
 deplibs_check_method='`$ECHO "X$deplibs_check_method" | $Xsed -e "$delay_single_quote_subst"`'
 file_magic_cmd='`$ECHO "X$file_magic_cmd" | $Xsed -e "$delay_single_quote_subst"`'
 AR='`$ECHO "X$AR" | $Xsed -e "$delay_single_quote_subst"`'
@@ -16954,7 +17253,6 @@ LN_S \
 lt_SP2NL \
 lt_NL2SP \
 reload_flag \
-OBJDUMP \
 deplibs_check_method \
 file_magic_cmd \
 AR \
@@ -17171,6 +17469,15 @@ available_tags="CXX "
 macro_version=$macro_version
 macro_revision=$macro_revision
 
+# Assembler program.
+AS=$AS
+
+# DLL creation program.
+DLLTOOL=$DLLTOOL
+
+# Object dumper program.
+OBJDUMP=$OBJDUMP
+
 # Whether or not to build shared libraries.
 build_libtool_libs=$enable_shared
 
@@ -17235,9 +17542,6 @@ NL2SP=$lt_lt_NL2SP
 # How to create reloadable object files.
 reload_flag=$lt_reload_flag
 reload_cmds=$lt_reload_cmds
-
-# An object symbol dumper.
-OBJDUMP=$lt_OBJDUMP
 
 # Method to check whether dependent libraries are shared objects.
 deplibs_check_method=$lt_deplibs_check_method
@@ -18624,7 +18928,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 ac_link="./libtool --mode=link --tag=CXX $ac_link"
 
-for ac_header in byteorder.h netinet/in.h sys/param.h
+for ac_header in byteorder.h netinet/in.h sys/param.h winsock2.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_cxx_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -18650,8 +18954,16 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 # include <byteorder.h>
 #elif HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#elif HAVE_SYS_PARAM_H
-# include <sys/param.h>
+#elif defined(HAVE_SYS_PARAM_H) || defined(WIN32)
+# if defined(HAVE_SYS_PARAM_H)
+#  include <sys/param.h>
+# endif
+# if defined(WIN32)
+#  ifdef __MSC_VER
+#   pragma warning (disable: 4290)
+#  endif
+#  include <winsock2.h>
+# endif
 #endif
 
 int
@@ -18719,12 +19031,21 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     fi
 fi
 if test $ac_ntoh_defined = no; then
-    as_fn_error "
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
 =========================================
 
 Cannot find a definition for ntohs and/or ntohl!
 
-=========================================" "$LINENO" 5
+=========================================" >&5
+$as_echo "$as_me: WARNING:
+=========================================
+
+Cannot find a definition for ntohs and/or ntohl!
+
+=========================================" >&2;}
+  if test "x$enable_build" != xno; then
+    as_fn_error "exiting" "$LINENO" 5
+  fi
 fi
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -18734,6 +19055,55 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_link="./libtool --mode=link --tag=CC $ac_link"
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
+$as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
+if test "${kpse_cv_have_win32+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef WIN32
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef __MINGW32__
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_have_win32=mingw32
+else
+  kpse_cv_have_win32=native
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+else
+  kpse_cv_have_win32=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
+$as_echo "$kpse_cv_have_win32" >&6; }
+
+if test "x$kpse_cv_have_win32" != xno; then
+  LIBS="$LIBS -lwsock32"
+fi
 
 
 ac_ext=cpp
@@ -19566,6 +19936,9 @@ double_quote_subst='$double_quote_subst'
 delay_variable_subst='$delay_variable_subst'
 macro_version='`$ECHO "X$macro_version" | $Xsed -e "$delay_single_quote_subst"`'
 macro_revision='`$ECHO "X$macro_revision" | $Xsed -e "$delay_single_quote_subst"`'
+AS='`$ECHO "X$AS" | $Xsed -e "$delay_single_quote_subst"`'
+DLLTOOL='`$ECHO "X$DLLTOOL" | $Xsed -e "$delay_single_quote_subst"`'
+OBJDUMP='`$ECHO "X$OBJDUMP" | $Xsed -e "$delay_single_quote_subst"`'
 enable_shared='`$ECHO "X$enable_shared" | $Xsed -e "$delay_single_quote_subst"`'
 enable_static='`$ECHO "X$enable_static" | $Xsed -e "$delay_single_quote_subst"`'
 pic_mode='`$ECHO "X$pic_mode" | $Xsed -e "$delay_single_quote_subst"`'
@@ -19592,7 +19965,6 @@ lt_SP2NL='`$ECHO "X$lt_SP2NL" | $Xsed -e "$delay_single_quote_subst"`'
 lt_NL2SP='`$ECHO "X$lt_NL2SP" | $Xsed -e "$delay_single_quote_subst"`'
 reload_flag='`$ECHO "X$reload_flag" | $Xsed -e "$delay_single_quote_subst"`'
 reload_cmds='`$ECHO "X$reload_cmds" | $Xsed -e "$delay_single_quote_subst"`'
-OBJDUMP='`$ECHO "X$OBJDUMP" | $Xsed -e "$delay_single_quote_subst"`'
 deplibs_check_method='`$ECHO "X$deplibs_check_method" | $Xsed -e "$delay_single_quote_subst"`'
 file_magic_cmd='`$ECHO "X$file_magic_cmd" | $Xsed -e "$delay_single_quote_subst"`'
 AR='`$ECHO "X$AR" | $Xsed -e "$delay_single_quote_subst"`'
@@ -19751,7 +20123,6 @@ LN_S \
 lt_SP2NL \
 lt_NL2SP \
 reload_flag \
-OBJDUMP \
 deplibs_check_method \
 file_magic_cmd \
 AR \
@@ -20671,6 +21042,15 @@ available_tags="CXX "
 macro_version=$macro_version
 macro_revision=$macro_revision
 
+# Assembler program.
+AS=$AS
+
+# DLL creation program.
+DLLTOOL=$DLLTOOL
+
+# Object dumper program.
+OBJDUMP=$OBJDUMP
+
 # Whether or not to build shared libraries.
 build_libtool_libs=$enable_shared
 
@@ -20735,9 +21115,6 @@ NL2SP=$lt_lt_NL2SP
 # How to create reloadable object files.
 reload_flag=$lt_reload_flag
 reload_cmds=$lt_reload_cmds
-
-# An object symbol dumper.
-OBJDUMP=$lt_OBJDUMP
 
 # Method to check whether dependent libraries are shared objects.
 deplibs_check_method=$lt_deplibs_check_method

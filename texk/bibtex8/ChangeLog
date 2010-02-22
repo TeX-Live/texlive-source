@@ -1,3 +1,9 @@
+2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* sysdep.h (IMPLEMENTATION): Define for MinGW32.
+	* utils.c [WIN32]: Do not #include <kpathsea/getopt.h>.
+	* utils.h (CDECL) [WIN32]: #undef before re-#define.
+
 2010-02-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* getopt.[ch], getopt1.h: Removed, use libkpathsea.

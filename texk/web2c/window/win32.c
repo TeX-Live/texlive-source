@@ -11,6 +11,10 @@
 #ifdef WIN32WIN
 #include <windows.h>
 
+#ifdef __MINGW32__
+static void Win32Error(const char *caller);
+#endif
+
 /* 
    The following constant enables some hack that should allow the
    window to process its messages. Basically, the principle is to 
@@ -23,14 +27,11 @@
 #undef  DEBUG
 /* #define DEBUG 1 */
 
-static char szAppName[] = "MF";
 static char szTitle[] = " MetaFont V2.718281 Online Display";
 static HWND my_window;
 static HDC my_dc;
 static HDC drawing_dc;
 static HBITMAP hbm;
-static RGBQUAD black = {0,0,0,0};
-static RGBQUAD white = {255,255,255,0};
 static MSG msg;
 static HANDLE hAccelTable;
 static HANDLE hMutex;
@@ -49,6 +50,8 @@ static BOOL fSize;
 void __cdecl InitGui(void*);
 #endif
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+
+#include <mfdisplay.h>
 
 int
 mf_win32_initscreen(void)
@@ -209,8 +212,8 @@ mf_win32_paintrow (screenrow row,
     ReleaseMutex(hMutex);
 }
 
-#if 0
-void Win32Error(char *caller)
+#ifdef __MINGW32__
+static void Win32Error(const char *caller)
 {
   LPVOID lpMsgBuf;
 
@@ -233,7 +236,7 @@ void Win32Error(char *caller)
 LRESULT APIENTRY WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
   PAINTSTRUCT ps;
-  int retval;
+  int retval = 0;
 
 #ifdef DEBUG
   fprintf(stderr, "Message %x\n", iMsg);

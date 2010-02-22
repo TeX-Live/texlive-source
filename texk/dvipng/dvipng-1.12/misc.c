@@ -29,7 +29,7 @@
 #define basename xbasename
 #endif
 #include <fcntl.h> /* open/close */
-#ifndef MIKTEX
+#ifdef HAVE_MMAP
 #include <sys/mman.h>
 #endif
 #include <sys/stat.h>

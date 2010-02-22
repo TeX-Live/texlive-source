@@ -866,7 +866,7 @@ build_cmdline(char ***cmd, char *input, char *output)
   under Win9x. This is a workaround for this bug.
 */
 
-static int
+int
 win32_system(const char *cmd, int async)
 {
   STARTUPINFO si;

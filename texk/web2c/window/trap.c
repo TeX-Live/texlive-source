@@ -7,20 +7,11 @@
 
 /* No #ifdef for the whole file, because we always want to support this.  */
 
-boolean mf_trap_initscreen(void);
-void mf_trap_updatescreen(void);
-void mf_trap_blankrectangle(screencol left,
-                            screencol right,
-                            screenrow top,
-                            screenrow bottom);
-void mf_trap_paintrow(screenrow row,
-                      pixelcolor init_color,
-                      transspec transition_vector,
-                      screencol vector_size);
+#include <mfdisplay.h>
 
 /* This returns true if we can do window operations, else false.  */
 
-boolean
+int
 mf_trap_initscreen(void)
 {
   return 1;

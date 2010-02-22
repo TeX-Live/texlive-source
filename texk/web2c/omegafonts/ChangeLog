@@ -1,3 +1,8 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pl-lexer.l: #include <kpathsea/c-proto.h> for KPSEDLL used
+	by <kpathsea/mingw32.h>.
+
 2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* omfonts.[ch] (read_in_whole, name_ofm, name_opl, name_ovp,

@@ -68,6 +68,8 @@ static	char	mf_hp2627_pencolors[2] = {
  *		sense status or something masochistic like that)
  */
 
+#include <mfdisplay.h>
+
 int mf_hp2627_initscreen(void)
 {
 	(void) fflush(stdout);	/* make sure pascal-level output flushed */

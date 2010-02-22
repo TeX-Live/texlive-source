@@ -2,6 +2,11 @@
 
 	* Build (TL_CONF_BANNER): 2010/dev.
 
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* m4/kpse-common.m4 (KPSE_COMMON): Use LT_INIT([win32-dll]).
+	* m4/kpse-gd-flags.m4 (KPSE_GD_FLAGS): Add -DNONDLL.
+
 2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* m4/kpse-kpathsea-flags.m4: Detect if libkpathsea was compiled

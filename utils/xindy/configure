@@ -4647,7 +4647,12 @@ eval as_val=\$$as_ac_Header
 _ACEOF
 
 else
+  if test "x$enable_build" != xno; then :
   as_fn_error "required C header file is missing" "$LINENO" 5
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: required C header file is missing" >&5
+$as_echo "$as_me: WARNING: required C header file is missing" >&2;}
+fi
 fi
 
 done

@@ -19,7 +19,6 @@ static char	rcsid[] = "$Header: /p/src/local/bin/detex/RCS/detex.l,v 2.19 1997/0
 #ifdef FPTEX
 #include <win32lib.h>
 #undef ERROR
-#undef IGNORE
 #endif
 
 #include "detex.h"
@@ -59,6 +58,8 @@ char	*malloc();
 
 #endif
 
+#undef IGNORE
+
 void SetEnvIgnore(const char *sbEnvList);
 int BeginEnv(const char *sbEnv);
 int EndEnv(const char *sbEnv);
@@ -89,6 +90,9 @@ char	*rgsbIncList[MAXINCLIST];	/* list of includeonly files */
 char	*rgsbInputPaths[MAXINPUTPATHS];	/* list of input paths in order */
 char	sbCurrentEnv[CCHMAXENV];	/* current environment being ignored */
 char	*sbProgName;			/* name we were invoked with */
+#ifndef NOFILE /* might be defined in <sys/param.h> */
+#define NOFILE 256
+#endif
 FILE	*rgfp[NOFILE+1];		/* stack of input/include files */
 int	cfp = 0;			/* count of files in stack */
 int	cOpenBrace = 0;			/* count of `{' in <LaMacro2> */

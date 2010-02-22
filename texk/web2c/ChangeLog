@@ -1,6 +1,10 @@
 2010-02-22  Karl Berry  <karl@tug.org>
 
-	* configure.ac: (web2_version): move to 2010dev.
+	* configure.ac: (web2_version): move to 2010/dev.
+
+2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/texmf.am (mf_x_libs): Use libgdi32 for WIN32.
 
 2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

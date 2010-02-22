@@ -135,7 +135,9 @@
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/tex-file.h>
 #include <kpathsea/lib.h>
+#ifndef WIN32
 #include <kpathsea/getopt.h>
+#endif
 #endif
 
 #include "sysdep.h"

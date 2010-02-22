@@ -14,13 +14,17 @@
 # include <byteorder.h>
 #elif HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#elif HAVE_SYS_PARAM_H
-# include <sys/param.h>
-#elif defined(WIN32)
-# ifdef __MSC_VER
-#  pragma warning (disable: 4290)
+// MinGW32 has <sys/param.h> but also needs <winsock2.h>
+#elif defined(HAVE_SYS_PARAM_H) || defined(WIN32)
+# if defined(HAVE_SYS_PARAM_H)
+#  include <sys/param.h>
 # endif
-# include <winsock2.h>
+# if defined(WIN32)
+#  ifdef __MSC_VER
+#   pragma warning (disable: 4290)
+#  endif
+#  include <winsock2.h>
+# endif
 #else
 # error "configury disaster! Report this error to kohler@icir.org"
 #endif

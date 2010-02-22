@@ -43,6 +43,8 @@ SUBDIRS = include
 
 INCLUDES = -I$(top_srcdir)/$(GD_TREE) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(FREETYPE2_INCLUDES)
 
+AM_CPPFLAGS = -DNONDLL
+
 noinst_LIBRARIES=libgd.a
 
 nodist_libgd_a_SOURCES = \

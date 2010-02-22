@@ -27,7 +27,12 @@
 #include "gnu-miktex.h"
 #include "web2c-miktex.h"
 #else
-#include <kpathsea/kpathsea.h>
+#include <kpathsea/config.h>
+#include <kpathsea/c-auto.h>
+#include <kpathsea/tex-file.h>
+#ifndef WIN32
+#include <kpathsea/getopt.h>
+#endif
 #endif
 
 typedef int           UNSIGNED_BYTE, SIGNED_BYTE, SIGNED_PAIR;

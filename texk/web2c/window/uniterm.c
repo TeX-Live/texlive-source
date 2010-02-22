@@ -103,6 +103,9 @@ register unsigned     x, y;
  *    ESC FF          - clear graphics&alpha screen.
  */
 #define ALPHA_CLS();  (putchar('\33'), putchar('\14'))
+
+#include <mfdisplay.h>
+
 int
 mf_uniterm_initscreen(void)
 {

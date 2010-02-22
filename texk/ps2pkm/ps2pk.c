@@ -656,10 +656,10 @@ void add_option(char *option, char *value) {
 
 /* Next stuff is needed by type1 rendering functions */
 
-int CheckFSFormat(format, fmask, bit, byte, scan, glyph, image)
-       int format,fmask,*bit,*byte,*scan,*glyph,*image;
+int CheckFSFormat(format, fmask, bit, Byte, scan, glyph, image)
+       int format,fmask,*bit,*Byte,*scan,*glyph,*image;
 {
-       *bit = *byte = 1;
+       *bit = *Byte = 1;
        *glyph = *scan = *image = 1;
        return Successful;
  

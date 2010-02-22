@@ -97,10 +97,13 @@ fi
 if test "x$can_build" = xyes; then
   AC_DEFINE([XETEX], 1, [Define if part of a TeX Live build.])
 else
-  AC_MSG_ERROR([fontconfig library or ApplicationServices framework not found.
+  AC_MSG_WARN([fontconfig library or ApplicationServices framework not found.
 This version of xdvipdfmx requires either ApplicationServices (on Mac OS X)
 or the fontconfig library (on other platforms) to be available, otherwise it
 cannot support XeTeX output using standard system-installed fonts.])
+  if test "x$enable_build" != xno; then
+    AC_MSG_ERROR([exiting])
+  fi
 fi
 AM_CONDITIONAL([build], [test "x$can_build" = xyes])
 AM_CONDITIONAL([build_MacOsX], [test "x$kpse_cv_have_ApplicationServices" = xyes])

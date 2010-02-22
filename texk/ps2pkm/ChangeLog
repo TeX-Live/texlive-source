@@ -1,3 +1,9 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* basics.c: Don't #include <win32lib.h> for MinGW32.
+	ps2pk.c (CheckFSFormat), t1funcs.c (fill): Rename function
+	param byte => Byte to avoid conflicts.
+
 2009-07-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* regions.c (NewEdge): align to sizeof(long), as in t1lib.

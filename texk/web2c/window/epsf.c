@@ -76,7 +76,9 @@ mf_epsf_header ()
   epsf_page++;
 }
 
-boolean
+#include <mfdisplay.h>
+
+int
 mf_epsf_initscreen (void)
 {
   if (getenv ("MFEPSF") != (char *) NULL)

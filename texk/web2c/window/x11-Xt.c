@@ -78,23 +78,14 @@ static XrmOptionDescRec mf_optiondesclist[]
     { "-bg", "background", XrmoptionSepArg, (XPointer) NULL },
 };
 
-int mf_x11_initscreen(void);
-void mf_x11_updatescreen(void);
-void mf_x11_blankrectangle(screencol left,
-                           screencol right,
-                           screenrow top,
-                           screenrow bottom);
-void mf_x11_paintrow(screenrow row,
-                     pixelcolor init_color,
-                     transspec transition_vector,
-                     screencol vector_size);
-
 static void mf_events(void);
 static void mf_mapstatus(Widget w, XtPointer data, XEvent *ev);
 static void mf_newpixmap(unsigned int width, unsigned int height);
 static void mf_redraw(void);
 static void mf_repaint(Widget w, XtPointer data, XEvent *ev);
 
+#include <mfdisplay.h>
+
 /* Return 1 if display opened successfully, else 0.  */
 
 int

@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xindy (teTeX / TeX Live)
 ======================================================
 
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Don't fail configure if not building xindy.
+
 2009-10-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* user-commands/Makefile.am: Add uninstall-hook.

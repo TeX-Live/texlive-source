@@ -10,9 +10,9 @@
 #define OPEN_WRITE "wb"
 #include <fcntl.h>
 #include <io.h>
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
 #include <win32lib.h>
-#endif /* WIN32 */
+#endif /* WIN32 && !__MINGW32__ */
 #else /* ! MSDOS && ! WINNT && ! WIN32 */
 #if defined(OS2)
 #define TMPDIR "."

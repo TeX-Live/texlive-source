@@ -1,6 +1,11 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/sfnt.h: #define CHAR as SFNT_CHAR to avoid conflict with
+	CHAR from <winnt.h>.
+
 2009-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, src/dpxfile.c: Require recent kpathsea version.

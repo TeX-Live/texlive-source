@@ -1,3 +1,13 @@
+2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: #include <window/mfdisplay.h> instead of externs.
+
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (calledit): Use win32_system() with two args only
+	for MinGW32, native WIN32 uses only one arg.
+	(catch_interrupt) [WIN32]: Declare as static.
+
 2010-02-01  Karl Berry  <karl@tug.org>
 
 	* openclose.c (open_input): do not try prepending TEXMFOUTPUT for

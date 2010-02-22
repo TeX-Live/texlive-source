@@ -4693,10 +4693,25 @@ fi
 done
 
 
-for ac_header in stdint.h unistd.h windows.h winnt.h winbase.h sys/int_types.h
+for ac_header in stdint.h unistd.h windows.h sys/int_types.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+eval as_val=\$$as_ac_Header
+   if test "x$as_val" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+for ac_header in winnt.h winbase.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_compile "$LINENO" "$ac_header" "$as_ac_Header" "#include <windows.h>
+"
 eval as_val=\$$as_ac_Header
    if test "x$as_val" = x""yes; then :
   cat >>confdefs.h <<_ACEOF
@@ -4720,7 +4735,7 @@ _ACEOF
 fi
 
 done
- for ac_header in io.h direct.h zlib.h byteswap.h
+ for ac_header in io.h direct.h byteswap.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -4751,8 +4766,8 @@ done
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether can use mmap for file scanning" >&5
 $as_echo_n "checking whether can use mmap for file scanning... " >&6; }
 enable_mmap='no (just a bit slower)'
-test "$ac_cv_header_winbase_h"  && enable_mmap="yes, winbase.h"
-test "$ac_cv_header_sys_mman_h" && enable_mmap="yes, sys/mman.h"
+test "x$ac_cv_header_winbase_h" = xyes && enable_mmap="yes, winbase.h"
+test "x$ac_cv_header_sys_mman_h" = xyes && enable_mmap="yes, sys/mman.h"
 case "$enable_mmap" in
    yes*) ZZIPLIB_DEFINES='-D_USE_MMAP';;
 esac
@@ -5430,6 +5445,18 @@ kpse_save_LIBS=$LIBS
 
 eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$ZLIB_LIBS \$LIBS\"
+
+for ac_header in zlib.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "zlib.h" "ac_cv_header_zlib_h" "$ac_includes_default"
+if test "x$ac_cv_header_zlib_h" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_ZLIB_H 1
+_ACEOF
+
+fi
+
+done
 
 ac_fn_c_check_func "$LINENO" "zlibVersion" "ac_cv_func_zlibVersion"
 if test "x$ac_cv_func_zlibVersion" = x""yes; then :

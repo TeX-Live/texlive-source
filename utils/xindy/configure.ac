@@ -7,7 +7,7 @@
 ## Copyright (C) 2008 by Joachim Schrod.
 ##
 ## Adapted for TeX Live
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ##
 ## This program is free software; you can redistribute it and/or
 ## modify it under the terms of the GNU General Public License as
@@ -140,7 +140,10 @@ AC_SUBST(LISP_RUN)
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([stdlib.h string.h regex.h],[],[AC_MSG_ERROR([required C header file is missing])])
+AC_CHECK_HEADERS([stdlib.h string.h regex.h],[],
+                 [AS_IF([test "x$enable_build" != xno],
+                        [AC_MSG_ERROR([required C header file is missing])],
+                        [AC_MSG_WARN([required C header file is missing])])])
 
 dnl check system type
 AC_CANONICAL_HOST

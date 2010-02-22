@@ -3526,6 +3526,7 @@ void AllDone(bool PFlag)
 /*****************************  DoSpecial  ***************************/
 /*********************************************************************/
 
+#define PATTERN LJPATTERN
 typedef enum {
   ORIENTATION,
   RESETPOINTS,
@@ -3703,12 +3704,15 @@ bool ParseDiagram(char *str)
 #ifndef HAVE_MKTEMP
 #define mktemp tmpnam
 #endif
-char * mkdtemp ( char * template )
+static char * mkdtemp ( char * template )
 {
   if ( mktemp(template) == NULL  ||  template[0] == '\0' ) {
     if ( errno == 0 )  errno = EINVAL;	/* if it's tmpnam() */
     return NULL;
   }
+#ifdef WIN32
+#define mkdir(path, mode) mkdir(path)
+#endif
   if ( mkdir(template, 0700) == -1 ) {
     return NULL;
   }

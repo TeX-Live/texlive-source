@@ -208,10 +208,10 @@ FileFont::initializeFromFace()
 			}
 //		}
 #else
-		m_stuFaceName.assign(rgchwFace);
+		// m_stuFaceName.assign(rgchwFace);
 		// VS 2005 needs this:
-		//for (int cch16 = 0; cch16 < cchw; cch16++)
-		//	m_stuFaceName.push_back(rgchwFace[cch16]);
+		for (int cch16 = 0; cch16 < cchw; cch16++)
+			m_stuFaceName.push_back(rgchwFace[cch16]);
 #endif
 		pTable = readTable(ktiHead, lSize);
 		if (!m_fIsValid || !pTable) 

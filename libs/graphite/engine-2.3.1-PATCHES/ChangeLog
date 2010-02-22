@@ -1,3 +1,8 @@
+2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-SIZEOF_WCHAR_T (new): MinGW32 fix.
+	* patch-04-math_h-WIN32 (new): #include <math.h> also for WIN32.
+
 2009-10-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-virtual (new): Declare destructors as virtual to

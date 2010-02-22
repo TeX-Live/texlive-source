@@ -1,3 +1,9 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.h: Can't #include <kpathsea/kpathsea.h> for WIN32.
+	We need <kpathsea/config.h>, <kpathsea/c-auto.h>,
+	<kpathsea/tex-file.h>, and if not WIN32 <kpathsea/getopt.h>.
+
 2009-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid maximal compiler warnings.

@@ -39,10 +39,6 @@
 # include <fcntl.h>
 # include <io.h>
 #endif
-#ifdef WIN32
-/* According to Fabrice Popineau MSVCC doesn't handle std::min correctly. */
-# define std /* */
-#endif
 
 using namespace Efont;
 

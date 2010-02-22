@@ -1,3 +1,23 @@
+2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mfdisplay.h: New file with protos for display routines.
+	* Makefile.am: Add the new file.
+
+	* amiga.c, epsf.c, mftalk.c
+	#include <mfdisplay.h>, mf_*_initscreen returns int.
+
+	* hp2627.c, next.c, regis.c, suntools.c, tek.c, uniterm.c
+	#include <mfdisplay.h>.
+
+	* trap.c: mf_trap_initscreen() returns int.
+	#include <mfdisplay.h> and drop externs.
+
+	* win32.c: #include <mfdisplay.h>.
+	Do not skip Win32Error() for MinGW32, add static forward decl.
+	Drop unused variables szAppName, black, and white.
+
+	* x11-Xlib.c, x11-Xt.c: #include <mfdisplay.h> and drop externs.
+
 2010-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* amiga.c, win32.c: Current METAFONT Version is 2.718281.

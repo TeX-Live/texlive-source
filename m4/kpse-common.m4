@@ -1,6 +1,6 @@
 # Public macros for the TeX Live (TL) tree.
 # Copyright (C) 1995 - 2009 Karl Berry <tex-live@tug.org>
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -203,7 +203,7 @@ eval LIBS=\"$[]AS_TR_CPP($1)_LIBS \$LIBS\"
 # Common Autoconf code for all programs using libkpathsea.
 # Originally written by Karl Berry as texk/kpathsea/common.ac.
 #
-# Initializtion of Automake and Libtool, some common tests.
+# Initialization of Automake and Libtool, some common tests.
 AC_DEFUN([KPSE_COMMON],
 [dnl Remember PACKAGE-NAME as Kpse_Package (for future messages)
 m4_define([Kpse_Package], [$1])
@@ -212,7 +212,7 @@ AM_INIT_AUTOMAKE([foreign]m4_ifval([$2], [ $2]))
 AM_MAINTAINER_MODE
 dnl
 LT_PREREQ([2.2.6])
-LT_INIT
+LT_INIT([win32-dll])
 dnl
 AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO

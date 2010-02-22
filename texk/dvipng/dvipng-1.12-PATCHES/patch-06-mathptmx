@@ -1,0 +1,15 @@
+diff -ur dvipng-1.12.orig/test_dvipng.tex dvipng-1.12/test_dvipng.tex
+--- dvipng-1.12.orig/test_dvipng.tex	2008-02-08 14:45:23.000000000 +0100
++++ dvipng-1.12/test_dvipng.tex	2010-01-29 01:21:38.000000000 +0100
+@@ -16,10 +16,9 @@
+ %  License along with this program. If not, see
+ %  <http://www.gnu.org/licenses/>.
+ %
+-%  Copyright (C) 2002-2008 Jan-{\AA}ke Larsson
++%  Copyright (C) 2002-2010 Jan-{\AA}ke Larsson
+ 
+ \documentclass{article}
+-\usepackage{mathptmx}
+ %\usepackage[active,textmath]{preview}
+ \usepackage{color}
+ \pagestyle{empty}

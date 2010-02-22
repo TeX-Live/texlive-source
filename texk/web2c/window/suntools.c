@@ -80,6 +80,8 @@ Frame frame;
 Canvas canvas;
 Pixwin *pw;
 
+#include <mfdisplay.h>
+
 /*
  * init_screen: boolean;  return true if window operations legal
  */

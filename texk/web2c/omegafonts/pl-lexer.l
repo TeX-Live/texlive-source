@@ -24,6 +24,7 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 */
 
 #include <string.h>
+#include <kpathsea/c-proto.h>
 #ifdef WIN32
 #if defined __MINGW32__
 #include <kpathsea/mingw32.h>

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>   /* stat() */
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
 #include <win32lib.h>
 #endif
 

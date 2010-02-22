@@ -50,7 +50,7 @@ Description:
 #	define WIN32_LEAN_AND_MEAN
 #	define NOSERVICE
 #	define NOMCX
-#	include <Windows.h>
+#	include <windows.h>
 
 	BOOL WINAPI
 	DllMain(HINSTANCE /*hInst*/, DWORD /*wDataSeg*/, LPVOID /*lpReserved*/)

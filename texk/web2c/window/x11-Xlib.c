@@ -74,18 +74,9 @@ static XWMHints wm_hints = {
 #define DEFAULT_X_POSITION 0
 #define DEFAULT_Y_POSITION 0
 
-int mf_x11_initscreen(void);
-void mf_x11_updatescreen(void);
-void mf_x11_blankrectangle(screencol left,
-                           screencol right,
-                           screenrow top,
-                           screenrow bottom);
-void mf_x11_paintrow(screenrow row,
-                     pixelcolor init_color,
-                     transspec transition_vector,
-                     screencol vector_size);
-
 
+#include <mfdisplay.h>
+
 /* Return 1 (i.e., true) if display opened successfully, else 0.  */
 
 int

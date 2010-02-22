@@ -1,3 +1,8 @@
+2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* includes.h [__MINGW32__]: Temporarily #define eof as macro
+	while #including <fcntl.h>.
+
 2009-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Don't check LLONG_MAX twice, otherwise may use

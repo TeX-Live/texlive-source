@@ -27,6 +27,9 @@
 #include "numbers.h"
 #include "pdfobj.h"
 
+/* Acoid conflict with CHAR from <winnt.h>.  */
+#define CHAR SFNT_CHAR
+
 /* Data Types as described in Apple's TTRefMan */
 typedef unsigned char  BYTE;
 typedef signed char    CHAR;
