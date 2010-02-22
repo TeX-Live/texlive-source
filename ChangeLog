@@ -1,3 +1,7 @@
+2010-02-22  Karl Berry  <karl@tug.org>
+
+	* Build (TL_CONF_BANNER): 2010/dev.
+
 2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* m4/kpse-kpathsea-flags.m4: Detect if libkpathsea was compiled
