@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/pngimage.c (check_for_png): Replace png_check_sig() by
+	png_sig_cmp() for libpng-1.4.
+	From Hanno Boeck <hanno@hboeck,de>.
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/sfnt.h: #define CHAR as SFNT_CHAR to avoid conflict with

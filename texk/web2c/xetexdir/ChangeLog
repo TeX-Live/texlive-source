@@ -1,3 +1,9 @@
+2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pngimage.c (check_for_png): Replace png_check_sig() by
+	png_sig_cmp() for libpng-1.4.
+	From Hanno Boeck <hanno@hboeck,de>.
+
 2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/xetex.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).

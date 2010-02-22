@@ -246,7 +246,7 @@ static int check_for_png (FILE *png_file)
   unsigned char sigbytes[4];
   rewind (png_file);
   if (fread(sigbytes, 1, sizeof(sigbytes), png_file) != sizeof(sigbytes) ||
-      (!png_check_sig (sigbytes, sizeof(sigbytes)))) return 0;
+      (png_sig_cmp (sigbytes, 0, sizeof(sigbytes)))) return 0;
   else return 1;
 }             
 
