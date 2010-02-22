@@ -1,3 +1,7 @@
+2010-02-22  Karl Berry  <karl@tug.org>
+
+	* configure.ac: (web2_version): move to 2010dev.
+
 2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h (makesuffix, removesuffix): Remove these from the
