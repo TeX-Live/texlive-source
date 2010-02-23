@@ -1,3 +1,19 @@
+2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dir.c (kpathsea_dir_p), tex-make.c (maketex): [WIN32]: Cast
+	the result of GetLastError() to int (may be or is DWORD).
+	* tex-make.c (kpathsea_make_tex) [WIN32]: Avoid initialized ret.
+	* mingw32.c (look_for_cmd): Declare suffixes and s as const.
+
+	* config.h [WIN32]: Ensure that __STDC__ is #defined.
+	#include <kpathsea/win32lib.h>, not <win32lib.h>.
+	Diffs from Akira, 11 Feb 2010 11:03:39.
+
+	* strstr.c (str): Add empty statement after label at the end of
+	a block.  From Javier Mugica, 23 Feb 2010 12:25:55.
+
+	* mingw32.c (win32_get_long_filename): Declare extern KPSEDLL.
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.c (win32_system): Declare as non-static, for web2c.

@@ -43,7 +43,7 @@ kpathsea_dir_p (kpathsea kpse, const_string fn)
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_STAT)) {
     if (fa == 0xFFFFFFFF) {
       fprintf(stderr, "failed to get file attributes for %s (%d)\n",
-	      fn, GetLastError());
+	      fn, (int)(GetLastError()));
     } else {
       fprintf(stderr, "path %s %s a directory\n",
 	      fn , (fa & FILE_ATTRIBUTE_DIRECTORY) ? 

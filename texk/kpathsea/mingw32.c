@@ -404,8 +404,8 @@ look_for_cmd(const char *cmd, char **app)
   char *env_path;
   const char *p, *q;
   char pname[MAXPATHLEN], *fp;
-  char *suffixes[] = { ".bat", ".cmd", ".com", ".exe", NULL };
-  char **s;
+  const char *suffixes[] = { ".bat", ".cmd", ".com", ".exe", NULL };
+  const char **s;
   char *app_name;
 
   BOOL go_on;

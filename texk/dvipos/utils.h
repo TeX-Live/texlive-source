@@ -29,6 +29,7 @@
 #else
 #include <kpathsea/config.h>
 #include <kpathsea/c-auto.h>
+#include <kpathsea/c-ctype.h>
 #include <kpathsea/tex-file.h>
 #ifndef WIN32
 #include <kpathsea/getopt.h>

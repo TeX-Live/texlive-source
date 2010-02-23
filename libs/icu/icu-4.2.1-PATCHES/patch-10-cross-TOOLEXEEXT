@@ -1,0 +1,14 @@
+	This must, of course, be TOOLEXEEXT and not EXEEXT.
+
+diff -ur icu-4.2.1.orig/data/Makefile.in icu-4.2.1/data/Makefile.in
+--- icu-4.2.1.orig/data/Makefile.in	2009-10-26 12:10:19.000000000 +0100
++++ icu-4.2.1/data/Makefile.in	2010-02-22 21:59:13.005082641 +0100
+@@ -470,7 +470,7 @@
+ #          The $(word n, ...) selects the nth word from the following stuff.
+ #          There must be a nicer way to do this.
+ 
+-$(CFU_FILES): $(ALL_CFU_SOURCE) $(TOOLBINDIR)/gencfu$(EXEEXT) $(DAT_FILES)
++$(CFU_FILES): $(ALL_CFU_SOURCE) $(TOOLBINDIR)/gencfu$(TOOLEXEEXT) $(DAT_FILES)
+ 	$(INVOKE) echo ALL_CFU_SOURCE: $(ALL_CFU_SOURCE)
+ 	$(INVOKE) echo CFU_FILES: $(CFU_FILES)
+ 	$(INVOKE) echo CFU_FILES_SHORT: $(CFU_FILES_SHORT)

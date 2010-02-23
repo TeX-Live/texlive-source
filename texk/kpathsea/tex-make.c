@@ -271,8 +271,8 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
                       &si,      /* pointer to STARTUPINFO */
                       &pi               /* pointer to PROCESS_INFORMATION */
                       ) == 0) {
-      LIB_FATAL2 ("kpathsea: CreateProcess() failed for `%s' (Error %x)\n",
-                  new_cmd, GetLastError()); 
+      LIB_FATAL2 ("kpathsea: CreateProcess() failed for `%s' (Error %d)\n",
+                  new_cmd, (int)(GetLastError())); 
     }
 
     CloseHandle(child_in);
@@ -289,7 +289,7 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
       if (num <= 0) {
         if (GetLastError() != ERROR_BROKEN_PIPE) {
           LIB_FATAL2 ("kpathsea: read() error code for `%s' (Error %d)",
-                      new_cmd, GetLastError()); 
+                      new_cmd, (int)(GetLastError())); 
           break;
         }
       } else {
@@ -305,7 +305,7 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
 
     if (WaitForSingleObject(pi.hProcess, INFINITE) != WAIT_OBJECT_0) {
       WARNING2 ("kpathsea: process termination wait failed: %s (Error %d)\n",
-                new_cmd, GetLastError());
+                new_cmd, (int)(GetLastError()));
     }
 
     CloseHandle(pi.hProcess);
@@ -331,6 +331,8 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
       /* Free the name if we're not returning it.  */
       if (fn != ret)
         free (fn);
+    } else {
+      ret = NULL;
     }
   error_exit:
     ;

@@ -1,3 +1,7 @@
+2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.h (DUPLICATE) [WIN32]: #undef before #define.
+
 2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.h: #define NO_DEBUG as 1, to avoid warning.

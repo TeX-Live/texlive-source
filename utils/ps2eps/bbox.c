@@ -191,7 +191,7 @@ readppm_and_calcbb(const char *name,
 #if defined(_WIN32) && !defined(__CYGWIN__)  /* this is really braindead stuff for MSVC */
 	  i= _setmode( _fileno(stdin), _O_BINARY);
 	  if (i == -1)
-	    fprintf(stderr,"%s: ERROR - Cannot set binary mode for STDIN\n");
+	    fprintf(stderr,"%s: ERROR - Cannot set binary mode for STDIN\n", prgname);
 #endif
           for (y= 0; y<ymax-1; y++) /* for every image row */
           {

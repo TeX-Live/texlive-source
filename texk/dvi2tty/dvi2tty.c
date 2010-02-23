@@ -481,7 +481,7 @@ readable_file(char *name)
   char *ret;
 
 #ifdef WIN32
-  unsigned int fa, err;
+  unsigned int fa;
 
   fa = GetFileAttributes(name);
   if (fa == 0xFFFFFFFF) {

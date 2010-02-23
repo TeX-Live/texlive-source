@@ -30,17 +30,15 @@
 
 #include "objects.h"	/* get #define for t1_abort() */
  
-xiStub()
+xiStub(void)
 {
        printf("xiStub called\n");
        t1_abort("xiStub called");
 }
- 
-#ifdef WIN32
+
+struct segment;
+
 void t1_DumpText(struct segment * foo)
-#else
-void t1_DumpText()
-#endif
 {
        xiStub();
 }

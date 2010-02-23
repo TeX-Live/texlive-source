@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -33,6 +33,8 @@ icu_config="$icu_config --disable-extras --disable-samples --disable-tests"
 if test "x$cache_file" != x/dev/null; then
   icu_config="$icu_config -C"
 fi
+# Required for MinGW32, otherwise reduced warnings.
+icu_config="$icu_config --disable-strict"
 AC_SUBST([icu_config])
 
 if test "x$cross_compiling" = xyes; then

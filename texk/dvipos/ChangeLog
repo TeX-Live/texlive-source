@@ -1,3 +1,7 @@
+2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.h: Also need to #include <kpathsea/c-ctype.h>.
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.h: Can't #include <kpathsea/kpathsea.h> for WIN32.

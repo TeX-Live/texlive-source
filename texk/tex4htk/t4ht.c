@@ -905,7 +905,7 @@ static struct script_struct * add_script
 #if defined(DOS_WIN32) || defined(__MSDOS__)
 
 
-char *get_env_dir
+static char *get_env_dir
 #ifdef ANSI
 #define SEP ,
 (

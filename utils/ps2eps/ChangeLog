@@ -1,3 +1,7 @@
+2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bbox.c (readppm_and_calcbb) [WIN32]: Add missing fprintf arg.
+
 2009-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CFLAGS), configure.ac: enable compiler warnings.

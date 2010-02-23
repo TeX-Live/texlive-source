@@ -85,15 +85,7 @@ extern FILE *output;                   /* output file (dvi2tty.c)            */
 /*---------------------------------------------------------------------------*/
 
 /* dvi2tty.c */
-#if defined(KPATHSEA) || defined(MSDOS)
 void errorexit(int);
-#else
-void errorexit();
-#endif
 
 /* dvistuff.c */
-#if defined(KPATHSEA) || defined(MSDOS)
 void dvimain(void);
-#else
-void dvimain();
-#endif

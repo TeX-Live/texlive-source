@@ -1,3 +1,7 @@
+2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* search.c: #include <kpathsea/variable.h> for kpse_var_value.
+
 2010-02-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): Add the new files.

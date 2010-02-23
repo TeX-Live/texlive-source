@@ -269,7 +269,7 @@ ComputeStdProps(pInfo, Vals, Filename, Fontname)
     char       *ptr1,
                *ptr2;
     char *infostrP;
-    LONG rc;
+    int       rc;
     char      scaledName[MAXFONTNAMELEN];
  
     strcpy (scaledName, Fontname);

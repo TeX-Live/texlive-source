@@ -1,3 +1,12 @@
+2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Fixes for Linux => MinGW32 cross compilation.
+	* patch-10-cross-TOOLEXEEXT (new): Fix a cross compilation typo.
+	* patch-11-CURR_FULL_DIR (new): Fix for cross compilation on
+	a Unix like system.  Does MinGW32 have pwd?
+	* patch-12-mingw (new): Changes in config/mh-mingw (libraries
+	named as for everyone else).
+
 2009-10-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-09-cross (new): Modify AC_CHECK_64BIT_LIBS in aclocal.m4

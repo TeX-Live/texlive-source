@@ -1,3 +1,10 @@
+2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* t1info.c (ComputeStdProps): Declare rc as int, not LONG,
+	because they differ for WIN32.
+	* t1stub.c: Use ANSI C protos (not only for WIN32).
+	Declare struct segment (#include "paths.h" doesn't work).
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* basics.c: Don't #include <win32lib.h> for MinGW32.

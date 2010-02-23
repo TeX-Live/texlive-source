@@ -1,3 +1,8 @@
+2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Pass '--disable-strict' to ICU configure:
+	required for MinGW32, otherwise maybe reduced warnings.
+
 2009-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Replace the obsolete $(mkdir_p) by $(MKDIR_P).

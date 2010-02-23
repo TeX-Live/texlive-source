@@ -470,7 +470,7 @@ $(BRKBLDDIR)/%.ctd: $(BRKSRCDIR)/%.txt $(TOOLBINDIR)/genctd$(TOOLEXEEXT) $(DAT_F
 #          The $(word n, ...) selects the nth word from the following stuff.
 #          There must be a nicer way to do this.
 
-$(CFU_FILES): $(ALL_CFU_SOURCE) $(TOOLBINDIR)/gencfu$(EXEEXT) $(DAT_FILES)
+$(CFU_FILES): $(ALL_CFU_SOURCE) $(TOOLBINDIR)/gencfu$(TOOLEXEEXT) $(DAT_FILES)
 	$(INVOKE) echo ALL_CFU_SOURCE: $(ALL_CFU_SOURCE)
 	$(INVOKE) echo CFU_FILES: $(CFU_FILES)
 	$(INVOKE) echo CFU_FILES_SHORT: $(CFU_FILES_SHORT)

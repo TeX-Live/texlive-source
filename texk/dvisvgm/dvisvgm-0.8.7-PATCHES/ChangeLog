@@ -1,3 +1,9 @@
+2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Added patch-30-WIN32-warning.
+	* src/MetafontWrapper.cpp (execute) [WIN32]: Initialize the
+	DWORD exitcode with (DWORD)-1 to avoid warning.
+
 2009-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Added patch-20-gettimeofday-or-ftime.

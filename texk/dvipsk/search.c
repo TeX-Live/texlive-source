@@ -18,6 +18,7 @@
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/absolute.h>
 #include <kpathsea/c-pathch.h>
+#include <kpathsea/variable.h>
 
 #ifndef GUNZIP
 #define GUNZIP          "gzip -d"

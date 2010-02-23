@@ -383,6 +383,7 @@ ensuing.
 #define ARAB      2
 #define ALPL      3
 #define ALPU      4
+#undef DUPLICATE /* may already be defined for WIN32 */
 #define DUPLICATE 9999
 
 #define SYMBOL -1
