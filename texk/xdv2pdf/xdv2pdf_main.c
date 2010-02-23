@@ -254,21 +254,8 @@ main(int argc, char** argv)
 
     kpse_set_program_name (argv[0], progname);
     
-    /* It seems to be critical that I do a kpse_cnf_get to trigger the reading of texmf.cnf files
-        BEFORE the INIT_FORMAT stuff below. I don't really understand all the interactions
-        of search paths, config files, etc., but for now this is working for me. */
-    kpse_cnf_get("TETEXDIR");
-
-    /* Initialize search paths.  */
-    kpse_init_format (kpse_cnf_format);
-    kpse_init_format (kpse_db_format);
+    /* Initialize type1 search path and change the suffix list.  */
     kpse_init_format (kpse_type1_format);
-    kpse_init_format (kpse_opentype_format);
-    kpse_init_format (kpse_tfm_format);
-    kpse_init_format (kpse_fontmap_format);
-    kpse_init_format (kpse_enc_format);
-
-    /* Re-initialize type1 suffix list (without ".pfa").  */
     kpse_set_suffixes (kpse_type1_format, false, ".pfb", NULL);
 
 #endif /* not XDV2PDF_OLD_FORMATS */
