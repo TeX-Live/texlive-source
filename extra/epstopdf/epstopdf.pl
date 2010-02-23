@@ -584,3 +584,5 @@ if ($? & 127) {
 
 warning "BoundingBox not found" unless $BBCorrected;
 debug "Done.";
+
+# vim: ts=8 sw=2 expandtab:

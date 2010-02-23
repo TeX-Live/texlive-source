@@ -2,7 +2,7 @@
 # This file is public domain.  (Originally written by Karl Berry, 2009.)
 
 e2p = ./epstopdf.pl #--debug
-re2p = repstopdf
+re2p = ./repstopdf
 
 default: check
 
