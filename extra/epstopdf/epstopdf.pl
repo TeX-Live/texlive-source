@@ -245,6 +245,19 @@ sub errorUsage {
 $restricted = 1 if $::opt_restricted;
 debug "Restricted mode activated" if $restricted;
 
+### check if a name is "safe" according to kpse's open(in|out)_any
+# return true if name is ok, false otherwise
+sub safe_name {
+  my ($mode, $name) = @_;
+  my $option;
+  $option = '-safe-in-name'  if $mode eq 'in';
+  $option = '-safe-out-name' if $mode eq 'out';
+  error "Unkown check mode '$mode' in safe_name()." unless $option;
+  my @arg = ('kpsewhich', '-progname', 'repstopdf', $option, $name);
+  my $bad = system {$arg[0]} @arg;
+  return not $bad;
+}
+
 ### help, version options.
 if ($::opt_help) {
   print $usage;
@@ -257,7 +270,7 @@ if ($::opt_version) {
   exit (0);
 }
 
-### get input filename
+### get input filename (\ref{openin_any} for validation)
 my $InputFilename = "";
 if ($::opt_filter) {
   @ARGV == 0 or
@@ -331,31 +344,14 @@ $BBName = "%%HiResBoundingBox:" if $::opt_hires;
 $BBName = "%%ExactBoundingBox:" if $::opt_exact;
 debug "BoundingBox comment:", $BBName;
 
+### validate input file name in restricted mode \label{openin_any}
+if ($restricted and not $::opt_filter and not safe_name('in', $InputFilename)) {
+  error "Input filename '$InputFilename' not allowed in restricted mode.";
+}
+
 ### validate output file name in restricted mode \label{openout_any}
-use File::Spec::Functions qw(splitpath file_name_is_absolute);
-if ($restricted) {
-  # use the equivalent of openout_any = p
-  # (see opennameok() web2c/lib/texmfmp.c)
-  # Well, for now, be even more paranoid: don't allow absolute path at all
-  my $ok = 1;
-  # disallow opening dot-files on Unix
-  unless ($^O eq "MSWin32") {
-    my ($drive, $path, $basename) = splitpath($OutputFilename);
-    $ok = 0 if $basename =~ /^\./;
-  }
-  # disallow absolute path
-  $ok = 0 if file_name_is_absolute($OutputFilename);
-  # disallow colon on Windows. It could be used either after a drive
-  # (like "a:dir\file") or for an alternate data stream (like
-  # "file:ads").
-  if ($^O eq "MSWin32" || $^O eq "cygwin") {
-    $ok = 0 if $OutputFilename =~ /:/;
-  }
-  # disallow going to parent directory
-  my $ds = ($^O eq "MSWin32" || $^O eq "cygwin") ? qr([\\/]) : qr(/);
-  $ok = 0 if $OutputFilename =~ /^\.\.$ds|$ds\.\.$ds/;
-  # we passed all tests
-  error "Output filename '$OutputFilename' not allowed in restricted mode." unless $ok;
+if ($restricted and not safe_name('out', $OutputFilename)) {
+  error "Output filename '$OutputFilename' not allowed in restricted mode.";
 }
 
 ### option gs
