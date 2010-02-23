@@ -261,11 +261,11 @@ if ($::opt_version) {
 my $InputFilename = "";
 if ($::opt_filter) {
   @ARGV == 0 or
-    die errorUsage "Input file cannot be used with filter option";
+    errorUsage "Input file cannot be used with filter option";
   debug "Filtering: will read standard input";
 } else {
-  @ARGV > 0 or die errorUsage "Input filename missing";
-  @ARGV < 2 or die errorUsage "Unknown option or too many input files";
+  @ARGV > 0 or errorUsage "Input filename missing";
+  @ARGV < 2 or errorUsage "Unknown option or too many input files";
   $InputFilename = $ARGV[0];
   #-r $InputFilename or error "\"$InputFilename\" not readable";
   debug "Input filename:", $InputFilename;
@@ -279,7 +279,7 @@ if ($::opt_gscmd) {
   if ($restricted) {
     $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)\z/
       or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?\z/
-      or die error "Value of gscmd '$GS' not allowed in restricted mode.";
+      or error "Value of gscmd '$GS' not allowed in restricted mode.";
   }
 }
 
@@ -355,7 +355,7 @@ if ($restricted) {
   my $ds = ($^O eq "MSWin32" || $^O eq "cygwin") ? qr([\\/]) : qr(/);
   $ok = 0 if $OutputFilename =~ /^\.\.$ds|$ds\.\.$ds/;
   # we passed all tests
-  die error "Output filename '$OutputFilename' not allowed in restricted mode." unless $ok;
+  error "Output filename '$OutputFilename' not allowed in restricted mode." unless $ok;
 }
 
 ### option gs
