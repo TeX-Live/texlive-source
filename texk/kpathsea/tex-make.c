@@ -150,7 +150,7 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
    */
   unsigned len;
   string *s;
-  string ret;
+  string ret = NULL;
   string fn;
   
   if (!kpse->make_tex_discard_errors) {
@@ -201,7 +201,6 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
 #endif
 
     if (look_for_cmd(args[0], &app_name) == FALSE) {
-      ret = NULL;
       goto error_exit;
     }
 
@@ -331,8 +330,6 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
       /* Free the name if we're not returning it.  */
       if (fn != ret)
         free (fn);
-    } else {
-      ret = NULL;
     }
   error_exit:
     ;
@@ -457,8 +454,6 @@ maketex (kpathsea kpse, kpse_file_format_type format, string* args)
       /* Free the name if we're not returning it.  */
       if (fn != ret)
         free (fn);
-    } else {
-      ret = NULL;
     }
   }
 #endif
