@@ -399,7 +399,7 @@ $(DVIPNG_HELP):
 	$(MAKE) $(AM_MAKEFLAGS) help-stamp
 help-stamp: ../dvipng$(EXEEXT)
 @cross_FALSE@	-(cd .. && ./dvipng$(EXEEXT)) | \
-@cross_FALSE@	  sed -e's/dvipng.exe/dvipng' \
+@cross_FALSE@	  sed -e's/dvipng.exe/dvipng/' \
 @cross_FALSE@	      -e's/ (dvipng) / /' \
 @cross_FALSE@	      -e's,/lt-dvipng ,/dvipng ,' \
 @cross_FALSE@	      -e's,^This is .*/dvipng ,This is ./dvipng ,' \

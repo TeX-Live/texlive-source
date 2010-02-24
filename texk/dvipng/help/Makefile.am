@@ -15,7 +15,7 @@ $(DVIPNG_HELP):
 help-stamp: ../dvipng$(EXEEXT)
 if !cross
 	-(cd .. && ./dvipng$(EXEEXT)) | \
-	  sed -e's/dvipng.exe/dvipng' \
+	  sed -e's/dvipng.exe/dvipng/' \
 	      -e's/ (dvipng) / /' \
 	      -e's,/lt-dvipng ,/dvipng ,' \
 	      -e's,^This is .*/dvipng ,This is ./dvipng ,' \
