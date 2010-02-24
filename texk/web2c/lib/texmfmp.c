@@ -884,6 +884,9 @@ topenin (void)
    incrementally.  Shamim Mohamed adapted it for Web2c.  */
 #if defined (TeX) && defined (IPC)
 
+#ifdef WIN32
+#include <winsock2.h>
+#else
 #include <sys/socket.h>
 #include <fcntl.h>
 #ifndef O_NONBLOCK /* POSIX */
@@ -897,6 +900,7 @@ what the fcntl? cannot implement IPC without equivalent for O_NONBLOCK.
 #endif /* no FNDELAY */
 #endif /* no O_NDELAY */
 #endif /* no O_NONBLOCK */
+#endif /* !WIN32 */
 
 #ifndef IPC_PIPE_NAME /* $HOME is prepended to this.  */
 #define IPC_PIPE_NAME "/.TeXview_Pipe"
@@ -947,6 +951,12 @@ ipc_is_open (void)
 
 static void
 ipc_open_out (void) {
+#ifdef WIN32
+  u_long mode = 1;
+#define SOCK_NONBLOCK(s) ioctlsocket (s, FIONBIO, &mode)
+#else
+#define SOCK_NONBLOCK(s) fcntl (s, F_SETFL, O_NONBLOCK)
+#endif
 #ifdef IPC_DEBUG
   fputs ("tex: Opening socket for IPC output ...\n", stderr);
 #endif
@@ -962,7 +972,7 @@ ipc_open_out (void) {
   sock = socket (PF_UNIX, SOCK_STREAM, 0);
   if (sock >= 0) {
     if (connect (sock, ipc_addr, ipc_addr_len) != 0
-        || fcntl (sock, F_SETFL, O_NONBLOCK) < 0) {
+        || SOCK_NONBLOCK (sock) < 0) {
       close (sock);
       sock = -1;
       return;
@@ -1444,7 +1454,11 @@ parse_options (int argc, string *argv)
         if (system (IPC_SERVER_CMD) == 0) {
           unsigned i;
           for (i = 0; i < 20 && !ipc_is_open (); i++) {
+#ifdef WIN32
+            Sleep (2000);
+#else
             sleep (2);
+#endif
             ipc_open_out ();
           }
         }

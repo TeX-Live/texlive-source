@@ -1,3 +1,9 @@
+2010-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (IPC) [WIN32]: #include <winsock2.h> instead of
+	<sys/socket.h> and <fcntl.h>, use ioctlsocket() instead of
+	fcnt() for non-blocking, and use Sleep() instead of sleep().
+
 2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: #include <window/mfdisplay.h> instead of externs.
