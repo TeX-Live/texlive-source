@@ -24,6 +24,15 @@
 
 #include "dvipng.h"
 
+#ifndef MIKTEX
+#ifdef WIN32
+#include <fcntl.h>
+#include <io.h>
+#include <process.h>
+#define snprintf _snprintf
+#endif /* WIN32 */
+#endif
+
 #define SKIPSPACES(s) while(s && *s==' ' && *s!='\0') s++
 
 /* PostScript can come as a string (headers and raw specials) or 
@@ -132,13 +141,19 @@ static void writepscode(struct pscode* pscodep, FILE* psstream)
 
 
 static gdImagePtr
-ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolution, 
+ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolution,
        int llx, int lly, int urx, int ury, int bgred, int bggreen, int bgblue)
 {
 #ifndef MIKTEX
   int downpipe[2], uppipe[2];
+#ifdef WIN32
+  int nexitcode = STILL_ACTIVE;
+  HANDLE hchild;
+  int savestdin, savestdout;
+#else /* !WIN32 */
   pid_t pid;
-#else
+#endif /* !WIN32 */
+#else /* MIKTEX */
   HANDLE hPngStream;
   HANDLE hPsStream;
   HANDLE hStdErr;
@@ -147,7 +162,7 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
   _TCHAR szGsPath[_MAX_PATH];
 #define GS_PATH szGsPath
   int fd;
-#endif
+#endif /* MIKTEX */
   FILE *psstream=NULL, *pngstream=NULL;
   char resolution[STRSIZE]; 
   /*   char devicesize[STRSIZE];  */
@@ -170,6 +185,7 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
 	       (option_flags & NO_GSSAFER) ? "-": "-dSAFER", 
 	       (option_flags & NO_GSSAFER) ? "": "- "));
 #ifndef MIKTEX
+#ifndef WIN32
   if (pipe(downpipe) || pipe(uppipe)) return(NULL);
   /* Ready to fork */
   pid = fork ();
@@ -187,18 +203,51 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
 	   (option_flags & NO_GSSAFER) ? NULL: "-",
 	   NULL);
     _exit (EXIT_FAILURE);
+#else /* WIN32 */
+  if (_pipe(downpipe, 65536, O_BINARY | _O_NOINHERIT)==-1 ||
+      _pipe(uppipe, 65536, O_BINARY | _O_NOINHERIT)==-1) {
+     fprintf(stderr, "Pipe error.\n");
+     return NULL;
+#endif /* WIN32 */
   }
   /* Parent process. */
-  
+#ifdef WIN32
+  savestdin = _dup(fileno(stdin));
+  _dup2(downpipe[0], fileno(stdin));
+#endif /* WIN32 */
   close(downpipe[0]);
+#ifdef WIN32
+  savestdout = _dup(fileno(stdout));
+  _dup2(uppipe[1], fileno(stdout));
+  close(uppipe[1]);
+#endif /* WIN32 */
   psstream=fdopen(downpipe[1],"wb");
   /* fclose(psstream);  psstream=fopen("test.ps","wb"); */
+#ifndef WIN32
   if (psstream == NULL) 
     close(downpipe[1]);
   close(uppipe[1]);
   pngstream=fdopen(uppipe[0],"rb");
   if (pngstream == NULL) 
     close(uppipe[0]);
+#else /* WIN32 */
+  if (psstream == NULL) {
+     fprintf(stderr, "psstream == NULL\n");
+     close(downpipe[1]);
+  }
+  pngstream=fdopen(uppipe[0],"rb");
+  if (pngstream == NULL) {
+     fprintf(stderr, "pngstream == NULL\n");
+     close(uppipe[0]);
+  }
+  hchild=(HANDLE)spawnlp(_P_NOWAIT, GS_PATH, GS_PATH, device, resolution,
+         "-dBATCH", "-dNOPAUSE", "-q", "-sOutputFile=-", 
+         "-dTextAlphaBits=4", "-dGraphicsAlphaBits=4",
+         (option_flags & NO_GSSAFER) ? "-": "-dSAFER", 
+         (option_flags & NO_GSSAFER) ? NULL : "-", NULL);
+
+  if(hchild) {
+#endif /* WIN32 */
 #else /* MIKTEX */
   if (! miktex_find_miktex_executable("mgs.exe", szGsPath)) {
       Warning("Ghostscript could not be found");
@@ -228,7 +277,7 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
     if (pngstream == NULL) 
       _close (fd);
   }
-#endif 
+#endif /* MIKTEX */
   if (psstream) {
     writepscode(psheaderp,psstream);
     DEBUG_PRINT(DEBUG_GS,("\n  PS CODE:\t<</PageSize[%d %d]/PageOffset[%d %d[1 1 dtransform exch]{0 ge{neg}if exch}forall]>>setpagedevice",
@@ -254,7 +303,24 @@ ps2png(struct pscode* pscodep, const char *device, int hresolution, int vresolut
   }
 #ifdef MIKTEX
   CloseHandle(pi.hProcess);
-#endif
+#else /* !MIKTEX */
+#ifdef WIN32
+  }
+  while(nexitcode == STILL_ACTIVE)
+    GetExitCodeProcess((HANDLE)hchild, (unsigned long*)&nexitcode);
+
+  CloseHandle((HANDLE)hchild);
+  _dup2(savestdin, fileno(stdin));
+  _dup2(savestdout, fileno(stdout));
+  close(savestdin);
+  close(savestdout);
+  close(uppipe[0]);
+  close(uppipe[1]);
+  close(downpipe[0]);
+  close(downpipe[1]);
+#endif /* WIN32 */
+#endif /* !MIKTEX */
+
   if (psimage == NULL) {
     DEBUG_PRINT(DEBUG_GS,("\n  GS OUTPUT:\tNO IMAGE "));
     if (!showpage) {

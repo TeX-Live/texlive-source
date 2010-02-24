@@ -1,3 +1,8 @@
+2010-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac, help/Makefile.am: Do not even try to rebuild
+	doc/dvipng.help when cross compiling.
+
 2010-02-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Fix 'on demand' build.

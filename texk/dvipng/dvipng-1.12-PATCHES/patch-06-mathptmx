@@ -1,3 +1,14 @@
+diff -ur dvipng-1.12.orig/ChangeLog dvipng-1.12/ChangeLog
+--- dvipng-1.12.orig/ChangeLog	2009-03-18 20:02:23.000000000 +0100
++++ dvipng-1.12/ChangeLog	2010-02-21 19:15:27.000000000 +0100
+@@ -1,3 +1,7 @@
++2010-01-29  Karl Berry  <karl@tug.org>
++
++	* test_dvipng.tex: Do not use \usepackage{mathptmx}.
++
+ 2009-02-23  Jan-Ake Larsson  <jalar@mai.liu.se>
+ 
+ 	* Release 1.12
 diff -ur dvipng-1.12.orig/test_dvipng.tex dvipng-1.12/test_dvipng.tex
 --- dvipng-1.12.orig/test_dvipng.tex	2008-02-08 14:45:23.000000000 +0100
 +++ dvipng-1.12/test_dvipng.tex	2010-01-29 01:21:38.000000000 +0100

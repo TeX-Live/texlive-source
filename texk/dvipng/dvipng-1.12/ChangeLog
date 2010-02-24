@@ -1,3 +1,15 @@
+2010-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Support WIN32 builds (native or MinGW32).
+	* dvipng.h (min, max): Always undefine before defining.
+	* dvi.c: For WIN32 use Sleep(1000) instead of sleeep(1).
+	* misc.c: #include <sys/mman.h> depends on HAVE_MMAP.
+	* dvipng.h, font.c, misc.c: For mmap code use '#ifdef WIN32'
+	instead of '#ifdef MIKTEX'.
+
+	* special.c: WIN32 specific replacement for fork and pipe, using
+	code from Akira Kakuto, (e-mail from 23 Feb 2010 23:33:58).
+
 2010-01-29  Karl Berry  <karl@tug.org>
 
 	* test_dvipng.tex: Do not use \usepackage{mathptmx}.

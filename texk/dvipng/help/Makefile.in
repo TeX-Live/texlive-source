@@ -398,13 +398,15 @@ all-local: help-stamp $(DVIPNG_HELP)
 $(DVIPNG_HELP):
 	$(MAKE) $(AM_MAKEFLAGS) help-stamp
 help-stamp: ../dvipng$(EXEEXT)
-	-(cd .. && ./dvipng) | \
-	  sed -e's/ (dvipng) / /' -e's,/lt-dvipng ,/dvipng ,' \
-	      -e's,^This is .*/dvipng ,This is ./dvipng ,' \
-	      -e's,^Usage: .*/dvipng ,Usage: ./dvipng ,' > dvipng.tmp
-	( test -r $(DVIPNG_HELP) && diff dvipng.tmp $(DVIPNG_HELP) ) \
-		|| cp dvipng.tmp $(DVIPNG_HELP)
-	rm -f dvipng.tmp
+@cross_FALSE@	-(cd .. && ./dvipng$(EXEEXT)) | \
+@cross_FALSE@	  sed -e's/dvipng.exe/dvipng' \
+@cross_FALSE@	      -e's/ (dvipng) / /' \
+@cross_FALSE@	      -e's,/lt-dvipng ,/dvipng ,' \
+@cross_FALSE@	      -e's,^This is .*/dvipng ,This is ./dvipng ,' \
+@cross_FALSE@	      -e's,^Usage: .*/dvipng ,Usage: ./dvipng ,' > dvipng.tmp
+@cross_FALSE@	( test -r $(DVIPNG_HELP) && diff dvipng.tmp $(DVIPNG_HELP) ) \
+@cross_FALSE@		|| cp dvipng.tmp $(DVIPNG_HELP)
+@cross_FALSE@	rm -f dvipng.tmp
 	echo timestamp >$@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

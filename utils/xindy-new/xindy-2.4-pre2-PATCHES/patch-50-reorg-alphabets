@@ -12,7 +12,7 @@
 
 	========
 
-	Drop unused files (from TL2008 amd more).
+	Drop unused files (from TL2008 and more).
 
 diff -ur -x Makefile.in -x autom4te.cache xindy.orig/configure.ac xindy/configure.ac
 --- xindy.orig/configure.ac	2009-12-03 11:59:47.000000000 +0100

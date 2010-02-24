@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/help/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 DVIPNG_HELP = $(top_srcdir)/doc/dvipng.help
@@ -13,13 +13,17 @@ all-local: help-stamp $(DVIPNG_HELP)
 $(DVIPNG_HELP):
 	$(MAKE) $(AM_MAKEFLAGS) help-stamp
 help-stamp: ../dvipng$(EXEEXT)
-	-(cd .. && ./dvipng) | \
-	  sed -e's/ (dvipng) / /' -e's,/lt-dvipng ,/dvipng ,' \
+if !cross
+	-(cd .. && ./dvipng$(EXEEXT)) | \
+	  sed -e's/dvipng.exe/dvipng' \
+	      -e's/ (dvipng) / /' \
+	      -e's,/lt-dvipng ,/dvipng ,' \
 	      -e's,^This is .*/dvipng ,This is ./dvipng ,' \
 	      -e's,^Usage: .*/dvipng ,Usage: ./dvipng ,' > dvipng.tmp
 	( test -r $(DVIPNG_HELP) && diff dvipng.tmp $(DVIPNG_HELP) ) \
 		|| cp dvipng.tmp $(DVIPNG_HELP)
 	rm -f dvipng.tmp
+endif !cross
 	echo timestamp >$@
 
 DISTCLEANFILES = help-stamp

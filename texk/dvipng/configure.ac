@@ -25,6 +25,10 @@ KPSE_COMMON([dvipng])
 # Configure options for dvipng also shown at the TeX Live top-level.
 m4_include([ac/dvipng.ac])
 
+AC_CANONICAL_HOST
+
+AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
+
 if test "x$enable_debug" != xno; then
   enable_debug=yes
   AC_DEFINE([DEBUG], 1, [Define as 1 to get the debug (-d) option.])

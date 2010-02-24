@@ -752,13 +752,13 @@ void Message(int activeflags, const char *fmt, ...)
 
 bool MmapFile (char *filename,struct filemmap *fmmap)
 {
-#ifndef MIKTEX
+#ifndef WIN32
   struct stat stat;
 #endif
 
   DEBUG_PRINT(DEBUG_DVI,("\n  OPEN FILE:\t'%s'", filename));
   fmmap->data=NULL;
-#ifndef MIKTEX
+#ifndef WIN32
   if ((fmmap->fd = open(filename,O_RDONLY)) == -1) {
     Warning("cannot open file <%s>", filename);
     return(true);
@@ -789,7 +789,7 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
   }
   close(fmmap->fd);
 # endif /* HAVE_MMAP */
-#else /* MIKTEX */
+#else /* WIN32 */
   fmmap->hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, 0, 
 			    OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, 0);
   if (fmmap->hFile == INVALID_HANDLE_VALUE) {
@@ -810,14 +810,14 @@ bool MmapFile (char *filename,struct filemmap *fmmap)
     CloseHandle (fmmap->hFile);
     return(true);
   }
-#endif  /* MIKTEX */
+#endif  /* WIN32 */
   return(false);
 }
 
 void UnMmapFile(struct filemmap* fmmap)
 {
   if (fmmap->data!=NULL) {
-#ifndef MIKTEX
+#ifndef WIN32
 # ifdef HAVE_MMAP
     if (munmap(fmmap->data,fmmap->size))
       Warning("cannot munmap file at 0x%X",fmmap->data);
@@ -826,11 +826,11 @@ void UnMmapFile(struct filemmap* fmmap)
 # else /* HAVE_MMAP */
     free(fmmap->data);
 # endif /* HAVE_MMAP */
-#else  /* MIKTEX */
+#else  /* WIN32 */
     UnmapViewOfFile (fmmap->data);
     CloseHandle (fmmap->hMap);
     CloseHandle (fmmap->hFile);
-#endif	/* MIKTEX */
+#endif	/* WIN32 */
   }
   fmmap->data=NULL;
 }

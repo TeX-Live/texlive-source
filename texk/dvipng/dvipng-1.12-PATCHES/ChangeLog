@@ -1,3 +1,10 @@
+2010-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-10-mmap-for-WIN32 (new): Former MIKTEX code for mmap
+	from Fabrice Popineau (?) now used for all WIN32 variants.
+	* patch-11-win32-fork-and-pipe (new): WIN32 specific replacement
+	for fork and pipe, using code from Akira Kakuto.
+
 2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-07-always-undef (new): Always undefine min/max before

@@ -1,0 +1,119 @@
+	In these cases the MIKTEX code is generic for WIN32.
+
+diff -ur dvipng-1.12.orig/dvipng.h dvipng-1.12/dvipng.h
+--- dvipng-1.12.orig/dvipng.h	2010-02-20 18:20:53.000000000 +0100
++++ dvipng-1.12/dvipng.h	2010-02-24 15:15:02.318707946 +0100
+@@ -208,12 +208,12 @@
+ /********************************************************/
+ 
+ struct filemmap {
+-#ifdef MIKTEX
++#ifdef WIN32
+   HANDLE hFile;
+   HANDLE hMap;
+-#else  /* MIKTEX */
++#else  /* WIN32 */
+   int fd;
+-#endif	/* MIKTEX */
++#endif	/* WIN32 */
+   char* data;
+   size_t size;
+ };
+diff -ur dvipng-1.12.orig/font.c dvipng-1.12/font.c
+--- dvipng-1.12.orig/font.c	2009-06-09 12:40:10.000000000 +0200
++++ dvipng-1.12/font.c	2010-02-24 15:15:03.130693002 +0100
+@@ -161,9 +161,9 @@
+   tfontptr->next = hfontptr;
+   hfontptr = tfontptr;
+   tfontnump->fontp = tfontptr;
+-#ifndef MIKTEX
++#ifndef WIN32
+   tfontptr->fmmap.fd = 0;
+-#else  /* MIKTEX */
++#else  /* WIN32 */
+   tfontptr->fmmap.hFile = INVALID_HANDLE_VALUE;
+ #endif
+   tfontptr->c = c; /* checksum */
+@@ -268,9 +268,9 @@
+       Warning("font %s at %d dpi not found, characters will be left blank",
+ 	      tfontptr->n, tfontptr->dpi);
+       strcpy (tfontptr->name, "None");
+-#ifndef MIKTEX
++#ifndef WIN32
+       tfontptr->fmmap.fd = 0;
+-#else  /* MIKTEX */
++#else  /* WIN32 */
+       tfontptr->fmmap.hFile = INVALID_HANDLE_VALUE;
+ #endif
+       tfontptr->magnification = 0;
+@@ -287,9 +287,9 @@
+ 		 false,
+ 		 0))) {
+     Warning(tfontptr->name); /* contains error messsage */
+-#ifndef MIKTEX
++#ifndef WIN32
+     tfontptr->fmmap.fd = 0;
+-#else  /* MIKTEX */
++#else  /* WIN32 */
+     tfontptr->fmmap.hFile = INVALID_HANDLE_VALUE;
+ #endif
+ #ifdef __riscos
+diff -ur dvipng-1.12.orig/misc.c dvipng-1.12/misc.c
+--- dvipng-1.12.orig/misc.c	2010-02-20 18:38:56.000000000 +0100
++++ dvipng-1.12/misc.c	2010-02-24 15:15:05.838643539 +0100
+@@ -752,13 +752,13 @@
+ 
+ bool MmapFile (char *filename,struct filemmap *fmmap)
+ {
+-#ifndef MIKTEX
++#ifndef WIN32
+   struct stat stat;
+ #endif
+ 
+   DEBUG_PRINT(DEBUG_DVI,("\n  OPEN FILE:\t'%s'", filename));
+   fmmap->data=NULL;
+-#ifndef MIKTEX
++#ifndef WIN32
+   if ((fmmap->fd = open(filename,O_RDONLY)) == -1) {
+     Warning("cannot open file <%s>", filename);
+     return(true);
+@@ -789,7 +789,7 @@
+   }
+   close(fmmap->fd);
+ # endif /* HAVE_MMAP */
+-#else /* MIKTEX */
++#else /* WIN32 */
+   fmmap->hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, 0, 
+ 			    OPEN_EXISTING, FILE_FLAG_RANDOM_ACCESS, 0);
+   if (fmmap->hFile == INVALID_HANDLE_VALUE) {
+@@ -810,14 +810,14 @@
+     CloseHandle (fmmap->hFile);
+     return(true);
+   }
+-#endif  /* MIKTEX */
++#endif  /* WIN32 */
+   return(false);
+ }
+ 
+ void UnMmapFile(struct filemmap* fmmap)
+ {
+   if (fmmap->data!=NULL) {
+-#ifndef MIKTEX
++#ifndef WIN32
+ # ifdef HAVE_MMAP
+     if (munmap(fmmap->data,fmmap->size))
+       Warning("cannot munmap file at 0x%X",fmmap->data);
+@@ -826,11 +826,11 @@
+ # else /* HAVE_MMAP */
+     free(fmmap->data);
+ # endif /* HAVE_MMAP */
+-#else  /* MIKTEX */
++#else  /* WIN32 */
+     UnmapViewOfFile (fmmap->data);
+     CloseHandle (fmmap->hMap);
+     CloseHandle (fmmap->hFile);
+-#endif	/* MIKTEX */
++#endif	/* WIN32 */
+   }
+   fmmap->data=NULL;
+ }

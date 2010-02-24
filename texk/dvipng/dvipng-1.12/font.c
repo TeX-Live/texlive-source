@@ -161,9 +161,9 @@ void FontDef(unsigned char* command, void* parent)
   tfontptr->next = hfontptr;
   hfontptr = tfontptr;
   tfontnump->fontp = tfontptr;
-#ifndef MIKTEX
+#ifndef WIN32
   tfontptr->fmmap.fd = 0;
-#else  /* MIKTEX */
+#else  /* WIN32 */
   tfontptr->fmmap.hFile = INVALID_HANDLE_VALUE;
 #endif
   tfontptr->c = c; /* checksum */
@@ -268,9 +268,9 @@ static void FontFind(struct font_entry * tfontptr)
       Warning("font %s at %d dpi not found, characters will be left blank",
 	      tfontptr->n, tfontptr->dpi);
       strcpy (tfontptr->name, "None");
-#ifndef MIKTEX
+#ifndef WIN32
       tfontptr->fmmap.fd = 0;
-#else  /* MIKTEX */
+#else  /* WIN32 */
       tfontptr->fmmap.hFile = INVALID_HANDLE_VALUE;
 #endif
       tfontptr->magnification = 0;
@@ -287,9 +287,9 @@ static void FontFind(struct font_entry * tfontptr)
 		 false,
 		 0))) {
     Warning(tfontptr->name); /* contains error messsage */
-#ifndef MIKTEX
+#ifndef WIN32
     tfontptr->fmmap.fd = 0;
-#else  /* MIKTEX */
+#else  /* WIN32 */
     tfontptr->fmmap.hFile = INVALID_HANDLE_VALUE;
 #endif
 #ifdef __riscos

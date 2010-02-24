@@ -208,12 +208,12 @@ void             ClearPSHeaders(void);
 /********************************************************/
 
 struct filemmap {
-#ifdef MIKTEX
+#ifdef WIN32
   HANDLE hFile;
   HANDLE hMap;
-#else  /* MIKTEX */
+#else  /* WIN32 */
   int fd;
-#endif	/* MIKTEX */
+#endif	/* WIN32 */
   char* data;
   size_t size;
 };
