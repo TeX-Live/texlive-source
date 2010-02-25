@@ -34,6 +34,10 @@ authorization from the copyright holders.
  * additional plain C extensions for XeTeX - mostly platform-neutral
  */
 
+/* We must include this first to avoid conflicting eof() declarations
+   from mingw32's <io.h> and web2c/lib/lib.h.  */
+#include <kpathsea/config.h>
+
 #ifdef XETEX_OTHER
 #ifdef POPPLER_VERSION
 #define xpdfVersion POPPLER_VERSION

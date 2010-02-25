@@ -1,3 +1,8 @@
+2010-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeX_ext.c [MINGW32]: First #include <kpathsea/config.h> to
+	avoid conflicting eof() declarations.
+
 2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pngimage.c (check_for_png): Replace png_check_sig() by
