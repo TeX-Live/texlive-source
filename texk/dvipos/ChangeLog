@@ -1,3 +1,8 @@
+2010-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils.h: Revert the last changes from Feb 20 and 23.
+	* dvipos.c: Don't #include <getopt.h> with kpathsea or MinGW32.
+
 2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* utils.h: Also need to #include <kpathsea/c-ctype.h>.

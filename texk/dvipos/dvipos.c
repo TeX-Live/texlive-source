@@ -21,7 +21,7 @@
 #include "dvicore.h"
 
 #include <limits.h>
-#ifdef WIN32
+#if defined(MIKTEX) && defined(WIN32) && !defined(__MINGW32__)
 #include <getopt.h>
 #endif
 
