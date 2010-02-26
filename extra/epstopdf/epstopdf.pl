@@ -46,7 +46,7 @@ use strict;
 #
 # emacs-page
 # History
-#  2010/02/25 v2.13 (Karl Berry)
+#  2010/02/26 v2.13 (Karl Berry)
 #    * New release.
 #  2010/02/23       (Manuel P\'egouri\'e-Gonnard)
 #    * Use kpsewhich for filename validation in restricted mode, both input and
@@ -140,7 +140,7 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id$) 2.12';
+my $ident = '($Id$) 2.13';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2010 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -238,7 +238,7 @@ GetOptions (
 sub debug      { print STDERR "* @_\n" if $::opt_debug; }
 sub warning    { print STDERR "==> Warning: @_\n"; }
 sub error      { die "$title!!! Error: @_\n"; }
-sub errorUsage { die "$usage\n!!! Error: @_\n"; }
+sub errorUsage { die "Error: @_ (try --help for more information)\n"; }
 
 ### restricted option
 $restricted = 1 if $::opt_restricted;
@@ -316,7 +316,7 @@ if ($::opt_gscmd) {
   if ($restricted) {
     $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)\z/
       or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?\z/
-      or error "Value of gscmd not allowed in restricted mode: $GS";
+      or error "gscmd value not allowed in restricted mode: $GS";
   }
 }
 $GS = make_full_path_w32($GS) if $restricted and ($^O eq 'MSWin32');

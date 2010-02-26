@@ -1,4 +1,4 @@
-.TH EPSTOPDF 1 "30 November 2009"
+.TH EPSTOPDF 1 "26 February 2010"
 .\" $Id$
 .\" man page originally by Jim Van Zandt
 .SH NAME
@@ -41,15 +41,16 @@ set image resolution (default: [use gs default])
 set AutoRotatePages (default: None); recognized \fIval\fP choices:
 None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
 .IP "\fB--restricted\fP=\fIval\fP"
-turn on restricted mode (default: [on for resptopdf, else off]);
+turn on restricted mode (default: [on for repstopdf, else off]);
 this restricts the values accepted by \fB--gscmd\fP and impose restrictions
-on the output file name similar to web2c's openout_any=p.
+on the input and output file names similar to Web2c's openin_any=p and
+openout_any=p.
 .IP "\fB--help\fP
 display help message and exit
 .IP "\fB--version\fP
 display version information and exit
 .SH EXAMPLES
-Examples for producing "test.pdf":
+Examples which produce "test.pdf":
 .nf
 epstopdf test.eps
 produce postscript | epstopdf --filter >test.pdf
@@ -64,12 +65,15 @@ epstopdf -d --nogs --hires test.ps >testcorr.ps
 The case of "%%BoundingBox: (atend)"
 when input is not seekable (e.g., from a pipe) is not supported.
 .PP
-When reporting bugs, please include an input file and command line
-options so the problem can be reproduced.  Report bugs in
-the program or this man page to tex-k@tug.org.
+Report bugs in the program or this man page to tex-k@tug.org.  When
+reporting bugs, please include an input file and the command line
+options specified, so the problem can be reproduced.
 .SH SEE ALSO
 \fBgs\fP(1),
 \fBpdfcrop\fP(1).
+.PP
+The epstopdf LaTeX package, part of the oberdiek bundle, which automates
+running this script on the fly under TeX: http://ctan.org/pkg/epstopdf-pkg.
 .SH AUTHOR
 The script was originally written by Sebastian Rahtz, for Elsevier
 Science, with subsequent contributions from Gerben Wierda and many
@@ -77,6 +81,6 @@ others.  Currently maintained by Karl Berry.
 .PP
 Man page originally written by Jim Van Zandt.
 .PP
-epstopdf home page: http://tug.org/epstopdf/
+epstopdf home page: http://tug.org/epstopdf.
 .PP
 You may freely use, modify and/or distribute this file.

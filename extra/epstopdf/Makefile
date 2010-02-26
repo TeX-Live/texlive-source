@@ -2,7 +2,8 @@
 # This file is public domain.  (Originally written by Karl Berry, 2009.)
 
 e2p = ./epstopdf.pl #--debug
-re2p = ./repstopdf
+re2p = ./repstopdf --restricted
+re2p_script = ./repstopdf
 
 default: check
 
@@ -10,21 +11,33 @@ default: check
 # making sure we don't crash.
 check: check-help check-version \
        check-help-r \
+       check-restricted-gscmd \
        check-filter check-write-error check-gscmd \
        check-simple check-atend check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
 
+# needs new kpsewhich: check-restricted-safe-in check-restricted-safe-out
 check-help:
 	$(e2p) --help
 
 check-version:
 	$(e2p) --version
 
-check-help-r: $(re2p)
-	$(re2p) --help | grep restricted  # should have default=true
+check-help-r: $(re2p_script)
+	$(re2p_script) --help | grep restricted  # should have default=true
 
-$(re2p):
+$(re2p_script):
 	ln -s epstopdf.pl $@
+
+check-restricted-gscmd:
+	! $(re2p) --gscmd=/bin/unsafe test-simple.eps
+	! $(re2p) --gscmd=unsafe test-simple.eps
+
+check-restricted-safe-in:
+	! $(re2p) /unsafe/in.eps
+
+check-restricted-safe-out:
+	! $(re2p) test-simple.eps -o /unsafe/out.eps
 
 check-filter:
 	cat test-simple.eps | $(e2p) --filter >test-filter.pdf
