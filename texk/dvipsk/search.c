@@ -29,7 +29,9 @@ char *realnameoffile ;
 
 /* Return safely quoted version of NAME.  That means using "..." on
    Windows and '...' on Unix, with any occurrences of the quote char
-   quoted with a \.  Result is always in new memory; NAME is unchanged.  */
+   quoted with a \.  Result is always in new memory; NAME is unchanged.
+   This is a generic function; if we end up needing it in other
+   programs, we should move it to kpathsea.  */
 
 #ifdef WIN32
 #define QUOTE '"'
@@ -38,7 +40,7 @@ char *realnameoffile ;
 #endif
 
 static char *
-kpse_quote_name (const char *name)
+quote_name (const char *name)
 {
   char *quoted = xmalloc (strlen (name) * 2 + 3);
   char *q = quoted;
@@ -63,10 +65,13 @@ kpse_quote_name (const char *name)
    
    This is necessary because Windows likes to run programs out of the
    current directory.  So for security, we want to ensure that we are
-   invoking programs from our own binary directory, not via PATH.  */
+   invoking programs from our own binary directory, not via PATH.
+
+   This is a generic function; if we end up needing it in other
+   programs, we should move it to kpathsea.  */
 
 static char *
-kpse_selfautoloc_prog (const char *prog)
+selfautoloc_prog (const char *prog)
 {
   char *ret;
 #ifdef WIN32
@@ -136,9 +141,9 @@ search(kpse_file_format_type format, const char *file, const char *mode)
         && ((len > 2 && FILESTRCASEEQ (found_name + len - 2, ".Z"))
             || (len > 3 && FILESTRCASEEQ (found_name + len - 3, ".gz")))) {
       /* automatically but safely decompress.  */
-      char *quoted_name = kpse_quote_name (found_name);
+      char *quoted_name = quote_name (found_name);
       char *cmd;
-      char *prog = kpse_selfautoloc_prog (GUNZIP);
+      char *prog = selfautoloc_prog (GUNZIP);
       cmd = concat3 (prog, " -c ", quoted_name);
       ret = popen (cmd, "r");
       to_close = USE_PCLOSE;
@@ -175,23 +180,21 @@ pksearch(const char *file, const char *mode, halfword dpi,
   kpse_glyph_file_type font_file;
   string found_name = kpse_find_pk (file, dpi, &font_file);
   
-  if (found_name)
-    {
-      ret = fopen (found_name, mode);
-      if (!ret)
-        FATAL_PERROR (name);
+  if (found_name) {
+    ret = fopen (found_name, mode);
+    if (!ret)
+      FATAL_PERROR (name);
 
-      /* Free result of previous search.  */
-      if (realnameoffile)
-	free (realnameoffile);
-      /* Save in `name' and `realnameoffile' because other routines
-	 access those globals.  Sigh.  */
-      realnameoffile = found_name;
-      strcpy(name, realnameoffile);
-      *name_ret = font_file.name;
-      *dpi_ret = font_file.dpi;
-    }
-  else
+    /* Free result of previous search.  */
+    if (realnameoffile)
+      free (realnameoffile);
+    /* Save in `name' and `realnameoffile' because other routines
+       access those globals.  Sigh.  */
+    realnameoffile = found_name;
+    strcpy(name, realnameoffile);
+    *name_ret = font_file.name;
+    *dpi_ret = font_file.dpi;
+  } else
     ret = NULL;
 
   return ret;

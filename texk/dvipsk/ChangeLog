@@ -1,3 +1,9 @@
+2010-02-26  Karl Berry  <karl@tug.org>
+
+	* search.c (selfautoloc_prog, quote_name): remove kpse_ prefix for
+	the time being, since it seems web2c's safeness stuff can't be
+	easily factored into using them.
+
 2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* search.c: #include <kpathsea/variable.h> for kpse_var_value.
