@@ -39,14 +39,15 @@ use strict;
 #   c) the result is piped to Ghostscript and a PDF version written.
 #
 # It needs a Level 2 PS interpreter.
-# If the bounding box is not right, of course, there will be problems.
+# If the input bounding box is not right, of course there will be problems.
 #
-# One thing not allowed for is the case of
+# One thing not allowed for: the case of
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
-# which is more complicated.
 #
 # emacs-page
 # History
+#  2010/02/25 v2.13 (Karl Berry)
+#    * New release.
 #  2010/02/23       (Manuel P\'egouri\'e-Gonnard)
 #    * Use kpsewhich for filename validation in restricted mode, both input and
 #    output. Requires kpathsea 5.1.0 (TL2010), rejects the name with earlier
@@ -141,7 +142,7 @@ use strict;
 my $program = "epstopdf";
 my $ident = '($Id$) 2.12';
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009 Karl Berry et al.
+Copyright 2009-2010 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -159,17 +160,17 @@ my $restricted = 0;
 $restricted = 1 if $0 =~ /repstopdf/;
 
 ### options
-$::opt_outfile="";
-$::opt_compress=1;
-$::opt_debug=0;
-$::opt_embed=1;
-$::opt_exact=0;
-$::opt_filter=0;
-$::opt_gs=1;
-$::opt_hires=0;
-$::opt_gscmd="";
-$::opt_res=0;
-$::opt_autorotate="None";
+$::opt_autorotate = "None";
+$::opt_compress = 1;
+$::opt_debug = 0;
+$::opt_embed = 1;
+$::opt_exact = 0;
+$::opt_filter = 0;
+$::opt_gs = 1;
+$::opt_gscmd = "";
+$::opt_hires = 0;
+$::opt_outfile = "";
+$::opt_res = 0;
 
 ### usage
 my @bool = ("false", "true");
@@ -199,7 +200,7 @@ Options:
                       For EPS files, PageByPage is equivalent to All
   --restricted       use restricted mode   (default: $bool[$restricted])
 
-Examples for producing 'test.pdf':
+Examples producing test.pdf:
   * $program test.eps
   * produce postscript | $program --filter >test.pdf
   * produce postscript | $program -f -d -o=test.pdf
@@ -217,35 +218,27 @@ END_OF_USAGE
 ### process options
 use Getopt::Long;
 GetOptions (
-  "help",
-  "version",
-  "outfile=s", 		# \ref{openout_any}
+  "autorotate=s",	# \ref{val_autorotate}
   "compress!",
   "debug!",
   "embed!",
   "exact!",
   "filter!",
   "gs!",
-  "hires!",
   "gscmd=s", 		# \ref{val_gscmd}
-  "res=i",		# validated by Getopt ('i' specifier)
-  "autorotate=s",	# \ref{val_autorotate}
+  "help",
+  "hires!",
+  "outfile=s", 		# \ref{openout_any}
+  "res=i",		# validated by getopt ('i' specifier)
   "restricted",
+  "version",
 ) or die $usage;
 
 ### help functions
-sub debug {
-  print STDERR "* @_\n" if $::opt_debug;
-}
-sub warning {
-  print STDERR "==> Warning: @_\n";
-}
-sub error {
-  die "$title!!! Error: @_\n";
-}
-sub errorUsage {
-  die "$usage\n!!! Error: @_\n";
-}
+sub debug      { print STDERR "* @_\n" if $::opt_debug; }
+sub warning    { print STDERR "==> Warning: @_\n"; }
+sub error      { die "$title!!! Error: @_\n"; }
+sub errorUsage { die "$usage\n!!! Error: @_\n"; }
 
 ### restricted option
 $restricted = 1 if $::opt_restricted;
@@ -262,7 +255,8 @@ if ($restricted and ($^O eq 'MSWin32')) {
 debug "kpsewhich command: $kpsewhich";
 
 ### find a executable (.exe) in the PATH on windows, or bail out in error
-sub make_full_path_w32 {
+sub make_full_path_w32
+{
   my ($name) = @_;
   $name = "$name.exe" unless $name =~ /\.exe\z/;
   my $path = $ENV{'PATH'};
@@ -275,15 +269,16 @@ sub make_full_path_w32 {
 
 ### check if a name is "safe" according to kpse's open(in|out)_any
 # return true if name is ok, false otherwise
-sub safe_name {
+sub safe_name
+{
   my ($mode, $name) = @_;
-  my $option;
+  my $option = "";
   $option = '-safe-in-name'  if $mode eq 'in';
   $option = '-safe-out-name' if $mode eq 'out';
-  error "Unkown check mode '$mode' in safe_name()." unless $option;
-  my @arg = ($kpsewhich, '-progname', 'repstopdf', $option, $name);
-  my $bad = system {$arg[0]} @arg;
-  return not $bad;
+  error "Unknown check mode in safe_name(): $mode" unless $option;
+  my @args = ($kpsewhich, '-progname', 'repstopdf', $option, $name);
+  my $bad = system {$args[0]} @args;
+  return ! $bad;
 }
 
 ### help, version options.
@@ -312,6 +307,7 @@ if ($::opt_filter) {
   debug "Input filename:", $InputFilename;
 }
 
+### emacs-page
 ### option gscmd
 if ($::opt_gscmd) {
   debug "Switching from $GS to $::opt_gscmd";
@@ -320,7 +316,7 @@ if ($::opt_gscmd) {
   if ($restricted) {
     $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)\z/
       or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?\z/
-      or error "Value of gscmd '$GS' not allowed in restricted mode.";
+      or error "Value of gscmd not allowed in restricted mode: $GS";
   }
 }
 $GS = make_full_path_w32($GS) if $restricted and ($^O eq 'MSWin32');
@@ -374,7 +370,8 @@ $BBName = "%%ExactBoundingBox:" if $::opt_exact;
 debug "BoundingBox comment:", $BBName;
 
 ### validate input file name in restricted mode \label{openin_any}
-if ($restricted and not $::opt_filter and not safe_name('in', $InputFilename)) {
+if ($restricted and not $::opt_filter
+    and not safe_name('in', $InputFilename)) {
   error "Input filename '$InputFilename' not allowed in restricted mode.";
 }
 
