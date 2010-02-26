@@ -206,13 +206,11 @@ normalize_filename (char *fp, char path_sep)
 
 
 /* Destructively turn backslashes into slashes.  */
-#if 0 /* unused */
-static void
+void
 dostounix_filename (char *p)
 {
   normalize_filename (p, '/');
 }
-#endif
 
 /* Destructively turn slashes into backslashes.  */
 static void

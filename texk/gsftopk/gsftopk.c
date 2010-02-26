@@ -188,7 +188,7 @@ char	*getenv();
 #include <kpathsea/tex-file.h>
 #include <kpathsea/tex-make.h>
 #include <kpathsea/variable.h>
-# include <kpathsea/version.h>
+#include <kpathsea/version.h>
 #include <c-auto.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -230,12 +230,73 @@ char	*getenv();
 
 #if WIN32
 
-#include <win32lib.h>
-#include <gs32lib.h>
-#include <gsdll.h>
+/* code from Akira Kakuto */
+
+/* message values for callback */
+#define GSDLL_STDIN  1
+#define GSDLL_STDOUT 2
+#define GSDLL_DEVICE 3
+#define GSDLL_SYNC   4
+#define GSDLL_PAGE   5
+#define GSDLL_SIZE   6
+#define GSDLL_POLL   7
+/* return values from gsdll_init() */
+#define GSDLL_INIT_IN_USE  100
+#define GSDLL_INIT_QUIT    101
+
+#include <windows.h>
+
+HINSTANCE hgsdll = NULL;
+PROC pgsdll_init = NULL;
+PROC pgsdll_exit = NULL;
+PROC pgsdll_revision = NULL;
+
+#if 0 /* unused */
+static	long revision_n = 0;
+static	char product_str[128];
+static	char copyright_str[128];
+static	long revdate_n;
+#endif /* 0, unused */
+
+static void Win32Error(const char *s)
+{
+  fprintf(stderr, "%s\n", s);
+  exit(EXIT_FAILURE);
+}
+
+static HINSTANCE gs_locate(void)
+{
+  hgsdll = GetModuleHandle("GSDLL32.DLL");
+  if(hgsdll == NULL) {
+    hgsdll = LoadLibrary("GSDLL32.DLL");
+  }
+  return hgsdll;
+}
+
+static void gs_dll_release(void)
+{
+  FreeLibrary(hgsdll);
+}
+
+static void gs_dll_initialize(void)
+{
+  pgsdll_init = GetProcAddress(hgsdll, "gsdll_init");
+  pgsdll_exit = GetProcAddress(hgsdll, "gsdll_exit");
+  pgsdll_revision = GetProcAddress(hgsdll, "gsdll_revision");
+  if(pgsdll_init == NULL || pgsdll_exit == NULL ||
+     pgsdll_revision == NULL) {
+    fprintf(stderr, "Failed to get proc addresses in GSDLL32.\n");
+    gs_dll_release();
+    exit(100);
+  }
+}
+
+/* end of code from Akira Kakuto */
+
 HANDLE hGsThread = NULL;
 HANDLE hGsDataIn = 0, hGsDataOut = 0; /* Events to synchronize threads */
 /* Arguments to gs dll */
+const
 char *gs_argv[] = { "gswin32c.exe",		/* 0, */
 		    "-dNOGC",			/* 1, */
 		    "-dNODISPLAY",		/* 2, */
@@ -484,7 +545,7 @@ exit_toto_too(void)
 	    break;
 	  case WAIT_FAILED:
 	    fprintf(stderr, "WaitForSingleObject failed on Gs thread (Error code %d).\n",
-		    GetLastError());
+		    (int)GetLastError());
 	    break;
 	  default:
 	    break;
@@ -621,11 +682,9 @@ get_one_arg(const char *src)
  *	Signal handlers.
  */
 
-static	Boolean	got_sigchld	= False;
-
 #if WIN32
 
-BOOL WINAPI
+static BOOL WINAPI
 handle_sigterm(DWORD dwCtrlType)
 {
 
@@ -641,6 +700,11 @@ handle_sigterm(DWORD dwCtrlType)
 	    case CTRL_C_EVENT:
 	    case CTRL_BREAK_EVENT:
 		fprintf(stderr, "...exiting\n");
+		if (hGsThread) {
+		  if (TerminateThread(hGsThread, 1) == 0) {
+		    fprintf(stderr, "... couldn't terminate gs thread\n");
+		  }
+		}
 		exit_toto_too();
 		return FALSE;
 	    default:
@@ -650,6 +714,8 @@ handle_sigterm(DWORD dwCtrlType)
 }
 
 #else /* not WIN32 */
+
+static	Boolean	got_sigchld	= False;
 
 /* ARGSUSED */
 static RETSIGTYPE
@@ -676,7 +742,7 @@ typedef	int		gsf_wait_t;
 /* This is the callback function for gs. It is mainly used to read and
   write  data on   gs   stdin/stdout. Data exchanges   happen  through
   buffers.  */
-int __cdecl
+static int __cdecl
 gsdll_callback(int message, char *str, unsigned long count)
 {
   int n;
@@ -701,6 +767,13 @@ gsdll_callback(int message, char *str, unsigned long count)
 #endif
     data_out = buffer;
 
+    if (str == (char *)NULL || count == 0) {
+	data_eof = True;
+	data_end = data_out;
+	/* Tell data_fillbuf() */
+	SetEvent(hGsDataIn);
+	return 0;
+    }
     n = (count >= BUFSIZE ? BUFSIZE : count);
     memcpy(data_out, str, n);
     data_end = data_out + n;
@@ -735,9 +808,6 @@ gsdll_callback(int message, char *str, unsigned long count)
     break;
 
   case GSDLL_POLL:
-#if 0
-    fprintf(stderr, "GS: Poll sent (%d)!\n", 0);
-#endif
     return 0; /* no error ? */
   default:
     fprintf(stdout,"%s: gs callback: unknown message=%d\n",progname, message);
@@ -750,9 +820,14 @@ gsdll_callback(int message, char *str, unsigned long count)
   This is the thread function that will load the gs dll and
   send it the data.
 */
-DWORD WINAPI Win32GsSendData(LPVOID lpParam)
+static DWORD WINAPI Win32GsSendData(LPVOID lpParam)
 {
   int ret;
+
+  if (gs_locate() == NULL) {
+    fprintf(stderr, "Can't locate Ghostscript ! Exiting ...\n");
+    return EXIT_FAILURE;
+  }
 
   gs_dll_initialize();
 
@@ -761,23 +836,32 @@ DWORD WINAPI Win32GsSendData(LPVOID lpParam)
 		       gs_argc,
 		       gs_argv);
 
-  switch (ret) {
-  case 0:
+  if (ret == 0) {
     /* Should not happen : gs should quit
        right after being initialized. */
     (*pgsdll_exit)();
     /* FIXME: this is working, but we could expect something cleaner ! */
     /*  GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, 0); */
-    break;
-  case GSDLL_INIT_QUIT:
-    break;
-  default:
-    (*pgsdll_exit)();
-    break;
+    return EXIT_FAILURE;
   }
+
+  if (ret == GSDLL_INIT_QUIT) {
+    gs_dll_release();
+    return 0;
+  }
+
+  if (ret == GSDLL_INIT_IN_USE) {
+    fprintf(stderr, "gsdll_init returned %d\n", ret);
+    gs_dll_release();
+    return EXIT_FAILURE;
+  }
+
+  (*pgsdll_exit)();
+
 #if DEBUG  
   fprintf(stderr, "%s: gsdll_init returned %d\n", progname, ret);
 #endif
+
   WaitForSingleObject(hGsDataOut, INFINITE);
   data_eof = True;
   data_end = data_out;
@@ -1815,7 +1899,7 @@ pk_bm_cvt(void)
 }
 
 static void
-putshort(short w)
+putshort(int w)
 {
 	putc(w >> 8, pk_file);
 	putc(w, pk_file);
@@ -1994,6 +2078,7 @@ main(int argc, char **argv)
 #endif
 #if WIN32
 	DWORD idGsThread;
+	SECURITY_ATTRIBUTES sa = { sizeof(SECURITY_ATTRIBUTES), NULL, TRUE };
 #else /* not WIN32 */
 #if !_AMIGA
 	int		std_out[2];
@@ -2163,10 +2248,19 @@ Author of gsftopk: Paul Vojta.");
 	    opt_oops("no more than two arguments are allowed");
 
 #ifdef KPATHSEA
+#ifdef WIN32
+	setmode(fileno(stdout), _O_BINARY);
+#endif
 	kpse_set_progname(argv[0]);
 	kpse_init_prog("GSFTOPK", (int) (dpi + 0.5), NULL, "cmr10");
 	if (!test)
 	    xputenv_int("KPATHSEA_DPI", (int) (dpi + 0.5));
+
+#if defined(WIN32) && !defined(__MINGW32__)
+       /* TeXLive uses its own Ghostscript */  
+        texlive_gs_init();
+#endif /* WIN32 && !__MINGW32__ */
+
 #endif
 
 #if _AMIGA
@@ -2311,10 +2405,10 @@ Author of gsftopk: Paul Vojta.");
 		*p = '\0';
 #ifdef KPATHSEA
 		searchpath = kpse_find_file(q, kpse_tex_ps_header_format,true);
-#ifdef WIN32
+#ifdef __MINGW32__
 		/* Be safe for Ghostscript's sake */
 		dostounix_filename(searchpath);
-#endif /* WIN32 */
+#endif /* __MINGW32__ */
 		f = searchpath ? fopen(searchpath, FOPEN_R_MODE) : NULL;
 #else
 		f = search(config_file_header_path, "DVIPSHEADERS", q);
@@ -2563,16 +2657,10 @@ Author of gsftopk: Paul Vojta.");
 	close(std_in[1]);
 
 #else /* WIN32 */
-
-	if (gs_locate() == NULL) {
-	  fprintf(stderr, "\nCan't locate Ghostscript ! Exiting ...\n");
-	  return EXIT_FAILURE;
-	}
-
 	SetConsoleCtrlHandler(handle_sigterm, TRUE);
 
-	hGsDataIn = CreateEvent(NULL, FALSE, FALSE, "gsDataIn");
-	hGsDataOut = CreateEvent(NULL, FALSE, FALSE, "gsDataOut");
+	hGsDataIn = CreateEvent(&sa, FALSE, FALSE, "gsDataIn");
+	hGsDataOut = CreateEvent(&sa, FALSE, FALSE, "gsDataOut");
 
 	gs_argv[3] = substarg;
 	gs_argv[6] = searchpath;
@@ -2583,7 +2671,7 @@ Author of gsftopk: Paul Vojta.");
 
 	buffer_stdin = concat(designstr, charlist);
 
-	if ((hGsThread = CreateThread(NULL,            /* security attributes */
+	if ((hGsThread = CreateThread(&sa,             /* security attributes */
 				      0,               /* default stack size */
 				      Win32GsSendData, /* start address of thread */
 				      0,               /* parameter */
@@ -2687,7 +2775,7 @@ Author of gsftopk: Paul Vojta.");
 	    break;
 	  case WAIT_FAILED:
 	    fprintf(stderr, "WaitForSingleObject failed on Gs thread (Error code %d).\n",
-		    GetLastError());
+		    (int)GetLastError());
 	    break;
 	  default:
 	    break;

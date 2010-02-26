@@ -1,3 +1,8 @@
+2010-02-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mingw32.c (dostounix_filename): Reactivate as extern KPSEDLL,
+	used for gsftopk.
+
 2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dir.c (kpathsea_dir_p), tex-make.c (maketex): [WIN32]: Cast
