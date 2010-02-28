@@ -81,7 +81,7 @@ __declspec(dllexport) int dllrunscript( int argc, char *argv[] )
   // call texlua interpreter
   // dllluatexmain  never returns, but we pretend that it does
   k = dllluatexmain( lua_argc, lua_argv );
-  free(lua_argv);
+  if (lua_argv) free(lua_argv);
   return k;
 
 DIE:

@@ -20,7 +20,7 @@
     They are also required for some binary programs to set-up the 
     right environment for them. 
     
-    Batch scripts can be used as wrappers but they are not as universal 
+    Batch scripts can be used for wrapping but they are not as universal 
     as binaries (there are some odd cases where they don't work) and 
     it is hard to make them robust and secure. Compiled binary wrappers 
     don't suffer from these problems but they are harder to write, debug
@@ -49,7 +49,7 @@
     from there. It also uses a dialog box to display an error message 
     in addition to outputting to stderr.
     
-    The stubs are further split into a common DLL and an EXE proxies 
+    The stubs are further split into a common DLL and EXE proxies 
     to it. This is for maintenance reasons - upgrades can be done by 
     replacement of a single DLL rather than all binary stubs.
     
@@ -59,7 +59,7 @@
     
     All the hard work of locating a script/program to execute happens 
     in this wrapper script. Once located, the script or program is 
-    always executed directly by spawning its interpreter or binary in 
+    always executed directly by spawning its interpreter (or binary) in 
     a new process. The system shell (cmd.exe) is never called (except 
     for batch scripts, of course). If the located script happens to be 
     a (tex)lua script, it is loaded and called directly from within 
@@ -146,7 +146,9 @@ local function check_command(cmd, PATH)
   end
 end
 
---  localize the assert function (it will be replaced in gui mode)
+--#####################################################################--
+
+-- localize the assert function (it will be replaced in gui mode)
 local assert = assert 
 local guimode = false
 local argline = ''
@@ -181,17 +183,18 @@ elseif (string.lower(string.match(arg[0], '[^\\/]+$')) == 'runscript.tlu') then
 end
 
 -- program name
-local progname = string.match(arg[0], '[^\\/]+$')
-progname = string.gsub(progname, '%.[^.]*$', '') -- remove extension
+-- arg[0] : get file name part : remove extension : remove -sys suffix
+local progname, k = (arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', ''):gsub('%-sys$', '')
+local sysprog = (k > 0) -- sys type program/script (there was -sys suffix removed)
 if (progname == 'runscript') then -- prevent recursive calls to this script
   assert(nil, "oops! wrapping the wrapper?")
 end
--- kpathsea 
+-- init kpathsea 
 local k = -1 
 while arg[k-1] do k = k - 1 end -- in case of a call: luatex --luaonly ...
 local lua_binary = arg[k]
 kpse.set_program_name(lua_binary, progname)
--- vars
+-- various dir-vars
 local TEXDIR = kpse.var_value('SELFAUTOPARENT')
 local BINDIR = kpse.var_value('SELFAUTOLOC')
 local PATH = os.getenv('PATH') or ''
@@ -216,19 +219,22 @@ os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
 -- path
 PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlgs/bin', BINDIR)
 os.setenv('PATH', PATH);
+-- sys stuff
+if sysprog then
+  os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
+  os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
+end
 
-local alias_table = {---[[
-  cmd = {'cmd'},
-  printargv = {'..\\print_argv.exe', argline},
-  scratch = 'scratch.lua',--]]
-  --['fmtutil-sys'] = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil-sys', argline},
+-- program alias table (programs with special needs)
+local alias_table = {--[[
+  ['fmtutil-sys'] = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil-sys', argline},
   ['updmap-sys'] = 
     function ()
       os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
       os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
       return {[0]=PERLEXE, 'perl', 
       _q(TEXDIR..'/texmf/scripts/tetex/updmap.pl'), argline}
-    end,
+    end,--]]
   asy = 
     function ()
       -- TODO: check if ASYMPTOTE_GS requires quoting of names with spaces
@@ -236,29 +242,48 @@ local alias_table = {---[[
       os.setenv('ASYMPTOTE_GS', 'gswin32c.exe')
       os.setenv('CYGWIN', 'nodosfilewarning')
       return {[0]=TEXDIR..'/tlpkg/asymptote/asy.exe', 'asy', argline}
-    end,--[[
-  dvigif = {[0]=BINDIR..'/dvipng.exe', 'dvigif', argline},
+    end,
+  --dvigif = {[0]=BINDIR..'/dvipng.exe', 'dvigif', argline},
   dviout = 
     function ()
-      return {[0]=assert(check_command('wscript', PATH)), 
-        'wscript', _q(BINDIR..'/dviout.vbs'), argline}
-    end,--]--]
+      local fontsdir = kpse.var_value('TEXMFVAR') .. '/fonts'
+      if lfs.attributes(fontsdir, 'mode') ~= 'directory' then 
+        assert(lfs.mkdir(fontsdir))
+      end
+      local tfmpath = kpse.show_path('tfm')
+      tfmpath = string.gsub(tfmpath, '!!', '')
+      tfmpath = string.gsub(tfmpath, '/', '\\')
+      local texrt = {}
+      for d in string.gmatch(tfmpath, '([^;]+\\fonts)\\tfm[^;]*') do
+        if lfs.attributes(d, 'mode') == 'directory' then 
+          table.insert(texrt, d)
+        end
+      end
+      local dvioutpar = [[-NULL -dpi=600 "-gen=']] .. string.gsub(TEXDIR, '/', '\\') .. [[\tlpkg\dviout\gen_pk'" ]] ..
+      [["-TEXPK=^r\pk\\^s.^dpk;^r\tfm\\^s^tfm;^r\vf\\^s.vf;^r\ovf\\^s.ovf;^r\tfm\\^s.tfm" "-TEXROOT=']] ..
+      table.concat(texrt, ';') .. [['"]]
+      return {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', dvioutpar, argline}
+    end,---[[
   psv = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
     '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
     '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'), '-sINPUT='..argline},--]]
-  rpdfcrop = {PERLEXE, 'perl', 
+  repstopdf = {[0]=PERLEXE, 'perl', 
+    _q(TEXDIR..'/texmf-dist/scripts/epstopdf/epstopdf.pl'), 
+    '--restricted', argline},
+  rpdfcrop = {[0]=PERLEXE, 'perl', 
     _q(TEXDIR..'/texmf-dist/scripts/pdfcrop/pdfcrop.pl'), 
     '--restricted', argline},
-  sam2p = {[0]=TEXDIR..'/tlpkg/sam2p/sam2p.exe', 'sam2p', argline},--[[
+  sam2p = {[0]=TEXDIR..'/tlpkg/sam2p/sam2p.exe', 'sam2p', argline},---[[
   texworks = 
     function ()
       -- TODO: add to texmf/web2c/texmf.cnf
       -- TW_LIBPATH = $TEXMFCONFIG/texworks
       -- TW_INIPATH = $TW_LIBPATH
-      local TW_INIPATH = kpse.var_value('TW_INIPATH') or 
+      local TW_LIBPATH = kpse.var_value('TW_LIBPATH') or 
                          kpse.var_value('TEXMFCONFIG')..'/texworks'
+      local TW_INIPATH = kpse.var_value('TW_INIPATH') or TW_LIBPATH
+      os.setenv('TW_LIBPATH', TW_LIBPATH)
       os.setenv('TW_INIPATH', TW_INIPATH)
-      os.setenv('TW_LIBPATH', kpse.var_value('TW_LIBPATH') or TW_INIPATH)
       if (TW_INIPATH and lfs.attributes(TW_INIPATH, 'mode') ~= 'directory') then
         assert(lfs.mkdir(TW_INIPATH))
       end
@@ -266,7 +291,7 @@ local alias_table = {---[[
     end,--]]
 }
 
-local extension_map = { -- map script extension to command
+local extension_map = { -- maps script extension to command
   ['.bat'] = {'cmd', '/c', 'call'},
   ['.cmd'] = {'cmd', '/c', 'call'},
   ['.jar'] = {guimode and 'javaw' or 'java', '-jar'},
