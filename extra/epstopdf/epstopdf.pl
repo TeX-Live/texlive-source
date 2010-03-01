@@ -258,7 +258,7 @@ debug "kpsewhich command: $kpsewhich";
 sub make_full_path_w32
 {
   my ($name) = @_;
-  $name = "$name.exe" unless $name =~ /\.exe\z/;
+  $name = "$name.exe" unless $name =~ /\.exe$/;
   my $path = $ENV{'PATH'};
   for my $path_elt (split(/;/, $path)) {
     my $fullname = "$path_elt/$name";
@@ -314,8 +314,8 @@ if ($::opt_gscmd) {
   $GS = $::opt_gscmd;
   # validate GS \label{val_gscmd}
   if ($restricted) {
-    $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)\z/
-      or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?\z/
+    $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)$/
+      or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?$/
       or error "gscmd value not allowed in restricted mode: $GS";
   }
 }
@@ -359,7 +359,7 @@ $rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
 error "Invalid value for autorotate: '$::opt_autorotate' "
   . "(use 'All', 'None' or 'PageByPage')."
   if ($::opt_autorotate and
-    not $::opt_autorotate =~ /^(None|All|PageByPage)\z/);
+    not $::opt_autorotate =~ /^(None|All|PageByPage)$/);
 
 ### option BoundingBox types
 my $BBName = "%%BoundingBox:";
