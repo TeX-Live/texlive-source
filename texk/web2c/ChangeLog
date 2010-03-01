@@ -1,3 +1,13 @@
+2010-03-01  Karl Berry  <karl@tug.org>
+
+	* bibtex.web: 0.99d test 1 from Oren, breaking .bbl lines only at
+	whitespace.
+	* bibtex.ch: remove no-longer-needed workaround for \% break.
+
+	* tests/longline.tex,
+	* tests/longline.bib: new test files.
+	(Still working on their incorporation into make check.)
+
 2010-02-22  Karl Berry  <karl@tug.org>
 
 	* configure.ac: (web2_version): move to 2010/dev.
