@@ -248,6 +248,10 @@ check_existence_all_character_fields(void)
     unsigned j;
  
     FOR_ALL_EXISTING_CHARACTERS(
+        if (entry->indices[C_WD] == NULL) {
+            current_character = entry;
+            set_character_measure(C_WD, 0);
+        }
         switch(entry->tag) {
             case TAG_NONE: { break; }
             case TAG_LIG: {
