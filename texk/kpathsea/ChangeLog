@@ -1,3 +1,7 @@
+2010-03-01  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TW_LIBPATH, TW_INIPATH): TeXworks config/settings.
+
 2010-02-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mingw32.c (dostounix_filename): Reactivate as extern KPSEDLL,
