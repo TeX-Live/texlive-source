@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ps2pkm/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -28,18 +28,31 @@ pk2bm_SOURCES = \
 	pkin.h
 
 ps2pk_SOURCES = \
+	Xstuff.h \
 	arith.c \
 	arith.h \
 	basics.c \
 	basics.h \
+	blues.h \
 	bstring.c \
+	cluts.h \
 	curves.c \
 	curves.h \
+	digit.h \
 	encoding.c \
+	ffilest.h \
 	filenames.c \
 	filenames.h \
+	font.h \
 	fontfcn.c \
 	fontfcn.h \
+	fontfile.h \
+	fontmisc.h \
+	fonts.h \
+	fontstruct.h \
+	fontxlfd.h \
+	fsmasks.h \
+	hdigit.h \
 	hints.c \
 	hints.h \
 	lines.c \
@@ -48,22 +61,32 @@ ps2pk_SOURCES = \
 	objects.h \
 	paths.c \
 	paths.h \
+	pictures.h \
 	pkout.c \
 	pkout.h \
 	ps2pk.c \
+	psearch.h \
         regions.c \
         regions.h \
 	scanfont.c \
 	spaces.c \
 	spaces.h \
+	strokes.h \
 	t1funcs.c \
+	t1hdigit.h \
+	t1imager.h \
 	t1info.c \
+	t1intf.h \
 	t1io.c \
         t1snap.c \
+	t1stdio.h \
 	t1stub.c \
 	token.c \
 	token.h \
+	tokst.h \
+	trig.h \
 	type1.c \
+	types.h \
 	util.c \
 	util.h
 
@@ -83,39 +106,16 @@ EXTRA_DIST = \
 	INSTALLATION \
 	README.14m \
 	README.type1 \
-	Xstuff.h \
 	basename.c \
-	blues.h \
-	cluts.h \
-	digit.h \
-	ffilest.h \
 	flisearch.c \
-	font.h \
-	fontfile.h \
-	fontmisc.h \
-	fonts.h \
-	fontstruct.h \
-	fontxlfd.h \
-	fsmasks.h \
-	hdigit.h \
-	pictures.h \
 	pktest.c \
 	protos.h \
 	psearch.c \
-	psearch.h \
 	sexpr.c \
 	strexpr.c \
 	strexpr.h \
-	strokes.h \
-	t1hdigit.h \
-	t1imager.h \
-	t1intf.h \
-	t1stdio.h \
 	t1test.c \
 	texfiles.c \
 	texfiles.h \
-	tokst.h \
-	trig.h \
-	types.h \
 	usenet
 

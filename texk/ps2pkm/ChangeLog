@@ -1,3 +1,11 @@
+2010-02-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: List all used header files.
+
+2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* basics.c: #include "basics.h" and drop all others.
+
 2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* t1info.c (ComputeStdProps): Declare rc as int, not LONG,

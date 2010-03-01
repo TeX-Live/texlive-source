@@ -23,17 +23,8 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 
 */
 
-#include <string.h>
-#include <kpathsea/c-proto.h>
-#ifdef WIN32
-#if defined __MINGW32__
-#include <kpathsea/mingw32.h>
-#else
-#include <win32lib.h>
-#endif
-#endif
+#include <kpathsea/config.h>
 #include "parser.h"
-#include "kpathsea/types.h"
 #include "pl-parser.h"
 #include "manifests.h"
 #include "error_routines.h"

@@ -13,8 +13,17 @@
 #ifndef _MCTEX_TYPES_
 #define _MCTEX_TYPES_
 
+#ifdef KPATHSEA
+
+#include <kpathsea/config.h>
+#include <kpathsea/c-memstr.h>
+
+#define BLOCK_COPY(from, to, len) memmove(to, from, len)
+
+#else
+
 #if defined(WIN32) && !defined(__MINGW32__)
-#include <win32lib.h>
+#include <win32lib.h> /* not KPATHSEA */
 #undef index
 #endif
 
@@ -36,13 +45,6 @@
  */
 /* #define BLOCK_COPY(from, to, len) memmove(to, from, len) */
 #define BLOCK_COPY(from, to, len) bcopy(from, to, len)
-
-#ifdef KPATHSEA
-
-#include <kpathsea/config.h>
-#include <kpathsea/c-memstr.h>
-
-#else
 
 /*
  * Define void as int if your compiler does not support void,

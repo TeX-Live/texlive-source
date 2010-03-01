@@ -4,14 +4,7 @@
  * VERSION: 1.0 (September 1995)
  */
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>   /* stat() */
-#if defined(WIN32) && !defined(__MINGW32__)
-#include <win32lib.h>
-#endif
+#include "basics.h"
 
 /* Give up ... */
 void fatal(char *fmt, ...)

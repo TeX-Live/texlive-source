@@ -1,3 +1,7 @@
+2010-02-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* types.h: Don't #include <win32lib.h> for KPATHSEA.
+
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* types.h: Do not #include <win32lib.h> for MinGW32.  Moved
