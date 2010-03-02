@@ -218,6 +218,9 @@ EXTRA_DIST += \
 	tests/label.mp \
 	tests/label.mpx \
 	tests/logo8.tfm \
+	tests/longline.aux \
+	tests/longline.bib \
+	tests/longline.tex \
 	tests/longtfm.tex \
 	tests/magic.tex \
 	tests/memtest.tex \

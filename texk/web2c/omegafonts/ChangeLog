@@ -4,6 +4,10 @@
 	Avoid segfault (unspecified CHARWD defaults to 0.0).
 	Reported by Akira Kakuto, 28 Feb 2010 10:34:40.
 
+	* charwd.test, tests/charwd-r.pl, tests/charwd-v.vpl (new):
+	Shell script and data for a new test.
+	* Makefile.am: Add the new test.
+
 2010-02-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pl-lexer.l: #include <kpathsea/config.h> and drop some others.

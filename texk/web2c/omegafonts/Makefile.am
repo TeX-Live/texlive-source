@@ -83,7 +83,7 @@ endif OTANGLE
 
 ## Tests
 ##
-OMFONTS_tests = level1.test omfonts.test repeat.test specialhex.test
+OMFONTS_tests = charwd.test level1.test omfonts.test repeat.test specialhex.test
 if OTANGLE
 if OMFONTS
 TESTS = $(OMFONTS_tests)
@@ -92,6 +92,9 @@ endif OTANGLE
 
 EXTRA_DIST = $(OMFONTS_tests)
 
+## charwd.test
+EXTRA_DIST += tests/charwd-r.pl tests/charwd-v.vpl
+DISTCLEANFILES += tests/charwdr.* tests/charwdv.*
 ## level1.test
 EXTRA_DIST += tests/level1.opl
 DISTCLEANFILES += tests/xlevel1.ofm tests/xlevel1.opl

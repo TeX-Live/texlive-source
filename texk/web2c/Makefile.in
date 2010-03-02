@@ -1104,6 +1104,7 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h tangle.web \
 	tests/eight.tex tests/end.tex tests/exampl.aux \
 	tests/exampl.tex tests/gray.tfm tests/hello.tex tests/io.mf \
 	tests/just.texi tests/label.mp tests/label.mpx tests/logo8.tfm \
+	tests/longline.aux tests/longline.bib tests/longline.tex \
 	tests/longtfm.tex tests/magic.tex tests/memtest.tex \
 	tests/mltextst.tex tests/mptest.mp tests/mptest.mpx \
 	tests/one.two.mf tests/one.two.mp tests/one.two.tex \
