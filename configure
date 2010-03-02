@@ -1687,23 +1687,23 @@ Optional Features:
                             program
   --disable-omfonts         do not compile and install omfonts (use Web2C
                             versions)
-  --disable-tex             do not compile and install TeX
-  --enable-etex             compile and install e-TeX
-  --disable-aleph           do not compile and install Aleph
-  --disable-pdftex          do not compile and install pdfTeX
-  --disable-luatex          do not compile and install luaTeX
-  --disable-xetex           do not compile and install XeTeX
+  --disable-tex               do not compile and install TeX
+  --enable-etex               compile and install e-TeX
+  --disable-aleph             do not compile and install Aleph
+  --disable-pdftex            do not compile and install pdfTeX
+  --disable-luatex            do not compile and install luaTeX
+  --disable-xetex             do not compile and install XeTeX
   --disable-mf              do not build METAFONT
-  --disable-mf-nowin        do not build a separate non-windows-capable
-                            METAFONT
-  --enable-epsfwin          include EPSF pseudo window support
-  --enable-hp2627win        include HP 2627 window support
-  --enable-mftalkwin        include mftalk (generic server) window support
-  --enable-nextwin          include NeXT window support
-  --enable-regiswin         include Regis window support
-  --enable-suntoolswin      include old Suntools (not X) window support
-  --enable-tektronixwin     include Tektronix window support
-  --enable-unitermwin       include Uniterm window support
+  --disable-mf-nowin          do not build a separate non-windows-capable
+                              METAFONT
+  --enable-epsfwin            include EPSF pseudo window support
+  --enable-hp2627win          include HP 2627 window support
+  --enable-mftalkwin          include mftalk (generic server) window support
+  --enable-nextwin            include NeXT window support
+  --enable-regiswin           include Regis window support
+  --enable-suntoolswin        include old Suntools (not X) window support
+  --enable-tektronixwin       include Tektronix window support
+  --enable-unitermwin         include Uniterm window support
   --disable-mp              do not build METAPOST
   --disable-web-progs       do not build WEB programs bibtex ... weave
   --disable-afm2pl        do not build the afm2pl package
@@ -1753,15 +1753,13 @@ Optional Features:
   --disable-xdvipdfmx     do not build the xdvipdfmx package
   --disable-tetex         do not build the tetex (teTeX scripts) package
   --disable-texlive       do not build the texlive (TeX Live scripts) package
-  --disable-mktexmf-default do not run mktexmf if MF source missing
-  --disable-mktexpk-default do not run mktexpk if PK font missing
-  --disable-mktextfm-default
-                            do not run mktextfm if TFM file missing
-  --disable-mkocp-default   do not run mkocp if OCP file missing
-  --disable-mkofm-default   do not run mkofm if OFM file missing
-  --disable-mktexfmt-default
-                            do not run mktexfmt if format file missing
-  --enable-mktextex-default run mktextex if TeX source missing
+  --disable-mktexmf-default   do not run mktexmf if MF source missing
+  --disable-mktexpk-default   do not run mktexpk if PK font missing
+  --disable-mktextfm-default  do not run mktextfm if TFM file missing
+  --disable-mkocp-default     do not run mkocp if OCP file missing
+  --disable-mkofm-default     do not run mkofm if OFM file missing
+  --disable-mktexfmt-default  do not run mktexfmt if format file missing
+  --enable-mktextex-default   run mktextex if TeX source missing
   --enable-maintainer-mode  enable make rules and dependencies not useful
 			  (and sometimes confusing) to the casual installer
   --enable-shared[=PKGS]  build shared libraries [default=yes]
@@ -6905,13 +6903,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:6908: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:6906: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:6911: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:6909: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:6914: output\"" >&5)
+  (eval echo "\"\$as_me:6912: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -8114,7 +8112,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 8117 "configure"' > conftest.$ac_ext
+  echo '#line 8115 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -10044,11 +10042,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10047: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10045: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10051: \$? = $ac_status" >&5
+   echo "$as_me:10049: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -10383,11 +10381,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10386: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10384: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10390: \$? = $ac_status" >&5
+   echo "$as_me:10388: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -10488,11 +10486,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10491: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10489: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10495: \$? = $ac_status" >&5
+   echo "$as_me:10493: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10543,11 +10541,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10546: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10544: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10550: \$? = $ac_status" >&5
+   echo "$as_me:10548: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -12910,7 +12908,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 12913 "configure"
+#line 12911 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13006,7 +13004,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 13009 "configure"
+#line 13007 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17480,11 +17478,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17483: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17481: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:17487: \$? = $ac_status" >&5
+   echo "$as_me:17485: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17579,11 +17577,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17582: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17580: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17586: \$? = $ac_status" >&5
+   echo "$as_me:17584: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17631,11 +17629,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17634: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17632: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17638: \$? = $ac_status" >&5
+   echo "$as_me:17636: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized

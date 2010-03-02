@@ -1,6 +1,6 @@
 ## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options for TeX and MF
@@ -47,7 +47,7 @@ AC_ARG_ENABLE([mf],
 AC_ARG_ENABLE([mf-nowin],
               AS_HELP_STRING([--disable-mf-nowin],
                              [do not build a separate non-windows-capable METAFONT],
-                             kpse_indent_26+2))[]dnl
+                             m4_eval(kpse_indent_26+2)))[]dnl
 AC_ARG_WITH([mf-x-toolkit],
             AS_HELP_STRING([--without-mf-x-toolkit],
                            [do not use X toolkit for METAFONT]))[]dnl
