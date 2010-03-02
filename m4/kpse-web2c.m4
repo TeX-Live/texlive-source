@@ -44,7 +44,7 @@ m4_define([KPSE_WITH_XTEX],
                AS_HELP_STRING([--]m4_if($2, [yes], [dis], [en])[able-$1],
                               m4_if($2, [yes],
                                     [do not ])[compile and install $4],
-                              m4_eval(kpse_indent_26+2)))[]dnl
+                              kpse_indent_26))[]dnl
 AS_CASE([$enable_$1], [yes|no], ,
                     [enable_$1=$2])
 m4_ifval([$5], [

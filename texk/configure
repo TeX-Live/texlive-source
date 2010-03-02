@@ -1448,12 +1448,12 @@ Optional Features:
                             program
   --disable-omfonts         do not compile and install omfonts (use Web2C
                             versions)
-  --disable-tex               do not compile and install TeX
-  --enable-etex               compile and install e-TeX
-  --disable-aleph             do not compile and install Aleph
-  --disable-pdftex            do not compile and install pdfTeX
-  --disable-luatex            do not compile and install luaTeX
-  --disable-xetex             do not compile and install XeTeX
+  --disable-tex             do not compile and install TeX
+  --enable-etex             compile and install e-TeX
+  --disable-aleph           do not compile and install Aleph
+  --disable-pdftex          do not compile and install pdfTeX
+  --disable-luatex          do not compile and install luaTeX
+  --disable-xetex           do not compile and install XeTeX
   --disable-mf              do not build METAFONT
   --disable-mf-nowin          do not build a separate non-windows-capable
                               METAFONT
