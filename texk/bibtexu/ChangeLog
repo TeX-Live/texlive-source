@@ -1,3 +1,8 @@
+2010-03-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex-1.c, bibtex.h: Adapt to bibtex.web 0.99d test 1
+	from Oren, breaking .bbl lines only at whitespace.
+
 2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* sysdep.h (IMPLEMENTATION): Define for MinGW32.

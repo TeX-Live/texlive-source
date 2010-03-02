@@ -297,14 +297,15 @@ END
  * length of the current string in |out_buf|, and thus also gives the
  * location for the next character.  If there are enough characters
  * present in the output buffer, it writes one or more lines out to the
- * .bbl file.  It may break a line at any |white_space| character it
- * likes, but if it does, it will add two |space|s to the next output
- * line.
+ * .bbl file.  It breaks a line only at a |white_space| character,
+ * and when it does, it adds two |space|s to the next output line.
  ***************************************************************************/
 void          add_out_pool (StrNumber_T p_str)
 BEGIN
   BufPointer_T      break_ptr;
   BufPointer_T      end_ptr;
+  Boolean_T         break_pt_found;
+  Boolean_T         unbreakable_tail;
 
   p_ptr1 = str_start[p_str];
   p_ptr2 = str_start[p_str + 1];
@@ -320,7 +321,8 @@ BEGIN
     INCR (out_buf_ptr);
   END
   out_buf_length = out_buf_ptr;
-  while (out_buf_length > MAX_PRINT_LINE)
+  unbreakable_tail = FALSE;
+  while ((out_buf_length > MAX_PRINT_LINE) && ! unbreakable_tail)
 
 /***************************************************************************
  * WEB section number:	 323
@@ -329,11 +331,15 @@ BEGIN
  * backwards from |out_buf[max_print_line]| until
  * |out_buf[min_print_line]|; we break at the |white_space| and indent
  * the next line two |space|s.  The next module handles things when
- * there's no |white_space| character to break at.
+ * there's no |white_space| character to break at.  (It seems that the
+ * annoyances to the average user of a warning message when there's an
+ * output line longer than |max_print_line| outweigh the benefits, so we
+ * don't issue such warnings in the current code.)
  ***************************************************************************/
   BEGIN
     end_ptr = out_buf_length;
     out_buf_ptr = MAX_PRINT_LINE;
+    break_pt_found = FALSE;
     while ((lex_class[out_buf[out_buf_ptr]] != WHITE_SPACE)
         && (out_buf_ptr >= MIN_PRINT_LINE))
     BEGIN
@@ -344,30 +350,56 @@ BEGIN
 /***************************************************************************
  * WEB section number:	 324
  * ~~~~~~~~~~~~~~~~~~~
- * If there's no |white_space| character to break the line at, we break
- * it at |out_buf[max_print_line-1]|, append a |comment| character, and
- * don't indent the next line.
+ * If there's no |white_space| character up through
+ * |out_buf[max_print_line]|, we instead break the line at the first
+ * following |white_space| character, if one exists.  And if, starting
+ * with that |white_space| character, there are multiple consecutive
+ * |white_space| characters, |out_buf_ptr| points to the last of them.
+ * If no |white_space| character exists, we haven't found a viable break
+ * point, so we don't break the line (yet).
  ***************************************************************************/
     BEGIN
-      out_buf[end_ptr] = out_buf[MAX_PRINT_LINE - 1];
-      out_buf[MAX_PRINT_LINE - 1] = COMMENT;
-      out_buf_length = MAX_PRINT_LINE;
-      break_ptr = out_buf_length - 1;
-      output_bbl_line ();
-      out_buf[MAX_PRINT_LINE - 1] = out_buf[end_ptr];
-      out_buf_ptr = 0;
-      tmp_ptr = break_ptr;
-      while (tmp_ptr < end_ptr)
+      out_buf_ptr = MAX_PRINT_LINE + 1;
+      while (out_buf_ptr < end_ptr)
       BEGIN
-        out_buf[out_buf_ptr] = out_buf[tmp_ptr];
-        INCR (out_buf_ptr);
-        INCR (tmp_ptr);
+        if (lex_class[out_buf[out_buf_ptr]] != WHITE_SPACE)
+        BEGIN
+          INCR (out_buf_ptr);
+        END
+        else
+        BEGIN
+          goto Loop1_Exit;
+        END
       END
-      out_buf_length = end_ptr - break_ptr;
+Loop1_Exit:
+      if (out_buf_ptr == end_ptr)
+      BEGIN
+        unbreakable_tail = TRUE;
+      END
+      else
+      BEGIN
+        break_pt_found = TRUE;
+        while (out_buf_ptr + 1 < end_ptr)
+        BEGIN
+          if (lex_class[out_buf[out_buf_ptr + 1]] == WHITE_SPACE)
+          BEGIN
+            INCR (out_buf_ptr);
+          END
+          else
+          BEGIN
+            goto Loop2_Exit;
+          END
+        END
+Loop2_Exit: DO_NOTHING;
+      END
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 324 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
     else
+    BEGIN
+      break_pt_found = TRUE;
+    END
+    if (break_pt_found)
     BEGIN
       out_buf_length = out_buf_ptr;
       break_ptr = out_buf_length + 1;

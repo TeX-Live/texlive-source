@@ -100,9 +100,9 @@
  * is modified.
  ***************************************************************************/
 #ifdef SUPPORT_8BIT
-# define BANNER     "This is BibTeXu: a UTF-8 Big BibTeX version 0.99c"
+# define BANNER     "This is BibTeXu: a UTF-8 Big BibTeX version 0.99dtest"
 #else                           /* NOT SUPPORT_8BIT */
-# define BANNER     "This is Big BibTeX version 0.99c"
+# define BANNER     "This is Big BibTeX version 0.99dtest"
 #endif                          /* SUPPORT_8BIT */
 
 
