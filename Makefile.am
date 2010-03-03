@@ -54,6 +54,10 @@ world: all
 	@echo "make $@ done."
 
 # Allow for skipping make check if needed.
+if cross_compiling
+check_target = skip
+else !cross_compiling
 check_target = check
+endif !cross_compiling
 skip:
 .PHONY: skip

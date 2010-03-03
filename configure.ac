@@ -114,6 +114,8 @@ KPSE_RESTORE_FLAGS
 AM_CONDITIONAL([build_kpathsea],
                [test "x$need_kpathsea" = xyes && test "x$with_system_kpathsea" != xyes])
 
+AM_CONDITIONAL([cross_compiling], [test "x$cross_compiling" = xyes])
+
 AC_CONFIG_SUBDIRS([auxdir/auxsub texk/kpathsea libs utils texk])
 
 AC_CONFIG_FILES([Makefile])
@@ -142,7 +144,7 @@ AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE_STRING:
 
    $msg_compiling])
-case $kpse_bld$kpse_bld in
+case $kpse_src$kpse_bld in
   *' '*) AC_MSG_ERROR([Absolute source and/or build path with embedded spaces]);;
 esac
 AC_MSG_RESULT([

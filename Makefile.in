@@ -343,9 +343,10 @@ EXTRA_DIST = \
 @build_kpathsea_FALSE@SUBDIRS = libs utils texk
 @build_kpathsea_TRUE@SUBDIRS = texk/kpathsea libs utils texk
 DIST_SUBDIRS = auxdir/auxsub texk/kpathsea libs utils texk
+@cross_compiling_FALSE@check_target = check
 
 # Allow for skipping make check if needed.
-check_target = check
+@cross_compiling_TRUE@check_target = skip
 all: all-recursive
 
 .SUFFIXES:
