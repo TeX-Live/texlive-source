@@ -182,9 +182,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PNGLIB_MAJOR = @PNGLIB_MAJOR@
-PNGLIB_MINOR = @PNGLIB_MINOR@
-PNGLIB_RELEASE = @PNGLIB_RELEASE@
 POW_LIB = @POW_LIB@
 RANLIB = @RANLIB@
 SET_MAKE = @SET_MAKE@
@@ -1144,6 +1141,7 @@ dist-hook:
 	  $(distdir)/$(LIBPNG_TREE)/config.guess \
 	  $(distdir)/$(LIBPNG_TREE)/depcomp \
 	  $(distdir)/$(LIBPNG_TREE)/install-sh \
+	  $(distdir)/$(LIBPNG_TREE)/ltmain.sh \
 	  $(distdir)/$(LIBPNG_TREE)/missing \
 	  $(distdir)/$(LIBPNG_TREE)/mkinstalldirs
 

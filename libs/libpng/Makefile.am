@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build libpng for TeX Live.
 ##
-##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -30,6 +30,7 @@ dist-hook:
 	  $(distdir)/$(LIBPNG_TREE)/config.guess \
 	  $(distdir)/$(LIBPNG_TREE)/depcomp \
 	  $(distdir)/$(LIBPNG_TREE)/install-sh \
+	  $(distdir)/$(LIBPNG_TREE)/ltmain.sh \
 	  $(distdir)/$(LIBPNG_TREE)/missing \
 	  $(distdir)/$(LIBPNG_TREE)/mkinstalldirs
 
