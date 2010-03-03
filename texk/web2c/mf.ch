@@ -100,11 +100,11 @@
 @y
 @d file_name_size == maxint
 @d ssup_error_line = 255
+@d ssup_screen_width = 32767
+@d ssup_screen_depth = 32767
 
 @<Constants...@>=
 @!max_internal=300; {maximum number of internal quantities}
-@!screen_width=1664; {number of pixels in each row of screen display}
-@!screen_depth=1200; {number of pixels in each column of screen display}
 @!stack_size=300; {maximum number of simultaneous input sources}
 @!max_strings=7500; {maximum number of strings; must not exceed |max_halfword|}
 @!string_vacancies=74000; {the minimum number of characters that should be
@@ -188,6 +188,8 @@ tini@/
   error messages; should be between 30 and |error_line-15|}
 @!max_print_line:integer; {width of longest text lines output;
   should be at least 60}
+@!screen_width:integer; {number of pixels in each row of screen display}
+@!screen_depth:integer; {number of pixels in each column of screen display}
 @!gf_buf_size:integer; {size of the output buffer, must be a multiple of 8}
 @!parse_first_line_p:c_int_type; {parse the first line for options}
 @!file_line_error_style_p:c_int_type; {output file:line:error style errors.}
@@ -1312,6 +1314,16 @@ end;
 {These functions/procedures are defined externally in C.}
 @z
 
+@x [27.565] screen_row, screen_col are variables, so can't be subrange array bounds.
+@!screen_row=0..screen_depth; {a row number on the screen}
+@!screen_col=0..screen_width; {a column number on the screen}
+@!trans_spec=array[screen_col] of screen_col; {a transition spec, see below}
+@y
+@!screen_row=0..ssup_screen_depth; {a row number on the screen}
+@!screen_col=0..ssup_screen_width; {a column number on the screen}
+@!trans_spec=^screen_col; {a transition spec, see below}
+@z
+
 @x [27.567]
 @p procedure blank_rectangle(@!left_col,@!right_col:screen_col;
   @!top_row,@!bot_row:screen_row);
@@ -2118,8 +2130,12 @@ print(" (base="); print(job_name); print_char(" ");
   setup_bound_var (79)('error_line')(error_line);
   setup_bound_var (50)('half_error_line')(half_error_line);
   setup_bound_var (79)('max_print_line')(max_print_line);
+  setup_bound_var (768)('screen_width')(screen_width);
+  setup_bound_var (1024)('screen_depth')(screen_depth);
   setup_bound_var (16384)('gf_buf_size')(gf_buf_size);
   if error_line > ssup_error_line then error_line := ssup_error_line;
+  if screen_width > ssup_screen_width then screen_width := ssup_screen_width;
+  if screen_depth > ssup_screen_depth then screen_depth := ssup_screen_depth;
   
   const_chk (main_memory);
   {|mem_top| is an index, |main_memory| is a size}
@@ -2128,6 +2144,7 @@ print(" (base="); print(job_name); print_char(" ");
   const_chk (buf_size);
 
   buffer:=xmalloc_array (ASCII_code, buf_size);
+  row_transition:=xmalloc_array (screen_col, screen_width);
   gf_buf:=xmalloc_array (eight_bits, gf_buf_size);
   source_filename_stack:=xmalloc_array (str_number, max_in_open);
   full_source_filename_stack:=xmalloc_array (str_number, max_in_open);

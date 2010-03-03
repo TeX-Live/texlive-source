@@ -48,11 +48,8 @@ dvi_buf_size = 800
 % Metafont only.
 gf_buf_size = 8   % trapman.tex says to use this.
 MFTERM = trap     % get the right screen output
-% trapman.tex says these values will help reduce the diffs, but it
-% actually only gives us one extra hunk (a BLANKRECTANGLE), so they
-% don't seem worth dynamicizing.
-%screen_width = 100
-%screen_depth = 200
+screen_width = 100
+screen_depth = 200
 
 % MetaPost only.  Turn off callmakempx, i.e., makempx,
 % since we can only test tex and dvitomp, and we'll test those in other

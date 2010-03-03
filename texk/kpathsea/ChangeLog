@@ -1,3 +1,8 @@
+2010-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf (screen_width, screen_depth): Increase Metafont
+	screen size (used to be fixed values in mf.ch).
+
 2010-03-01  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TW_LIBPATH, TW_INIPATH): TeXworks config/settings.

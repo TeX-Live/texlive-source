@@ -1,3 +1,10 @@
+2010-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mf.ch: Make screen size settable at runtime; move the previous
+	increased values (768x1024 => 1664x1200) into texmf.cnf.
+	* triptrap/texmf.cnf: Use screen size 100x200 for trap test as
+	recommended in trapman.tex.
+
 2010-03-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/web.am: New bibtex test data.
