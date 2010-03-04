@@ -497,7 +497,8 @@ libfreetype.a: ft-build/Makefile $(ZLIB_DEPEND)
 	  && $(MAKE) $(AM_MAKEFLAGS) \
 	  && $(MAKE) $(AM_MAKEFLAGS) install
 	ft-install/bin/freetype-config --cflags >ft-includes
-	ft-install/bin/freetype-config --libtool >ft-libs
+	ft-install/bin/freetype-config --libs \
+	  | sed -e 's,-L\(.*\) -lfreetype,\1/libfreetype.la,' >ft-libs
 	sleep 1
 	@for f in libfreetype.*; do touch $$f; done
 

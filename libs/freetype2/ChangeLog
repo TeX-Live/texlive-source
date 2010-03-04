@@ -1,3 +1,10 @@
+2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (ft-libs): Use again '--libs' instead of
+	'--libtool', because otherwise required Mac OS X libraries are
+	absent. Use sed to convert '-L$(abs_builddir) -lfreetype' into
+	'$(abs_builddir)/libfreetype.la'.
+
 2010-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (ft-libs): Use '--libtool' instead of '--libs'.
