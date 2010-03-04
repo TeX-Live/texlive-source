@@ -1,3 +1,11 @@
+2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (triptrap): New target to run TRIP and TRAP tests
+	and create diff files.
+	(TRIPTRAP): New make var to collect diffs files to build.
+	* triptrap-sh (new): Shell script.
+	* am/texmf.am (TRIPTRAP): Add trip.diffs and mftrap.diffs.
+
 2010-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mf.ch: Make screen size settable at runtime; move the previous

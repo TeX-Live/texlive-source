@@ -33,6 +33,7 @@ EXTRA_LIBRARIES =
 EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h
 DISTCLEANFILES = $(EXTRA_LIBRARIES)
 CLEANFILES =
+TRIPTRAP =
 
 # in case of an SVN repository
 dist-hook:
@@ -117,6 +118,12 @@ o_tangle = WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(OTANGLE)
 DIFF = diff
 DIFFFLAGS =
 TESTS_ENVIRONMENT = DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
+
+.PHONY: triptrap
+triptrap:
+	srcdir=$(srcdir) MAKE=$(MAKE) \
+	  $(SHELL) $(srcdir)/triptrap-sh $(TRIPTRAP)
+EXTRA_DIST += triptrap-sh
 
 # The environment for making dumps.
 # No need to specify TEXMF, as ../kpathsea/texmf.cnf should contain

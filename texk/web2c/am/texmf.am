@@ -72,7 +72,9 @@ EXTRA_DIST += tests/write18-quote.tex
 if TEX
 TESTS += $(tex_tests)
 check_PROGRAMS += dvitype pltotf tftopl
+TRIPTRAP += trip.diffs
 endif TEX
+DISTCLEANFILES += trip.diffs
 
 .PHONY: trip-clean
 clean-local:: trip-clean
@@ -89,8 +91,10 @@ bin_PROGRAMS += mf
 if MFN
 bin_PROGRAMS += mf-nowin
 endif MFN
+TRIPTRAP += mftrap.diffs
 endif MF
 EXTRA_PROGRAMS += mf mf-nowin
+DISTCLEANFILES += mftrap.diffs
 
 nodist_mf_SOURCES = mfextra.c
 mf_CPPFLAGS = $(X_CFLAGS)

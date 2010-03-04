@@ -1,3 +1,7 @@
+2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am (TRIPTRAP): Add etrip.diffs.
+
 2009-12-23  Karl Berry  <karl@tug.org>
 
 	* etexextra.in (BUG_ADDRESS): tex-k@tug.org, not @mail.

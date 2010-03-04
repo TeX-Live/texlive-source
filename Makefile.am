@@ -61,3 +61,8 @@ check_target = check
 endif !cross_compiling
 skip:
 .PHONY: skip
+
+# Special target to run TRIP and TRAP tests and create diffs.
+.PHONY: triptrap
+triptrap:
+	cd texk/web2c && $(MAKE) $(AM_MAKEFLAGS) $@

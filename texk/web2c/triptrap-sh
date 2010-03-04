@@ -1,0 +1,43 @@
+#! /bin/sh
+# shell script to run TRIP and TRAP tests and create diffs.
+#
+#   Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+#
+#   This file is free software; the copyright holder
+#   gives unlimited permission to copy and/or distribute it,
+#   with or without modifications, as long as this notice is preserved.
+#
+# Due to filename conflicts, these tests must be run sequentially.
+
+me=`basename $0`
+
+tmp=$me.$$
+
+trap "rm -f $tmp" 1 2 13 15
+
+echo "$me: Running TRIP and TRAP tests and creating diffs."
+for file
+do
+  case $file in
+  trip.diffs) tst=trip; msg='TRIP test for TeX';;
+  mftrap.diffs) tst=trap; msg='TRAP test for Metafont';;
+  mptrap.diffs) tst=mplibdir/mptrap; msg='MPTRAP test for MetaPost';;
+  etrip.diffs) tst=etexdir/etrip; msg='e-TRIP test for e-TeX';;
+  *) echo "$me: Bad argument \`$file'"; exit 1;;
+  esac
+  echo ">>> Running $msg."
+  $MAKE TESTS=$tst.test check-am >$tmp 2>&1 \
+    && grep "PASS: $tst\.test" $tmp >/dev/null 2>&1 \
+    || { echo "FAIL: $tst.test"; exit 1; }
+  echo ">>> Running $msg." >$file
+  sed -e "1,/^>>> Running $msg.\$/d" \
+      -e "/^PASS: /,\$d" \
+      -e "s%$srcdir/triptrap%SRCDIR/triptrap%" \
+      -e "s%$srcdir/etexdir%SRCDIR/etexdir%" \
+      $tmp >>$file
+  echo "PASS: $tst.test" >>$file
+  rm -f $tmp
+  echo "PASS: $tst.test"
+done
+echo "$me: All done"
+

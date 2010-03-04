@@ -1,3 +1,7 @@
+2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mplib.am (TRIPTRAP): Add mptrap.diffs.
+
 2010-01-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* psout.w: Remove charsetstr[].

@@ -847,6 +847,11 @@ world: all
 skip:
 .PHONY: skip
 
+# Special target to run TRIP and TRAP tests and create diffs.
+.PHONY: triptrap
+triptrap:
+	cd texk/web2c && $(MAKE) $(AM_MAKEFLAGS) $@
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

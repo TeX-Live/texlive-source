@@ -1,3 +1,13 @@
+2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (triptrap): New target to run TRIP and TRAP tests.
+	Do not automatically run 'make check' when cross compiling.
+
+2010-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Do not automatically run tests as
+	part of 'make world' when cross compiling.
+
 2010-02-22  Karl Berry  <karl@tug.org>
 
 	* Build (TL_CONF_BANNER): 2010/dev.

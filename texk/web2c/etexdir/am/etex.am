@@ -1,6 +1,6 @@
 ## texk/web2c/etexdir/am/etex.am: Makefile fragment for e-TeX.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-TeX
@@ -91,7 +91,9 @@ EXTRA_DIST += $(etex_tests)
 if ETEX
 TESTS += $(etex_tests)
 check_PROGRAMS += dvitype pltotf tftopl
+TRIPTRAP += etrip.diffs
 endif ETEX
+DISTCLEANFILES += etrip.diffs
 
 .PHONY: etrip-clean
 clean-local:: etrip-clean
