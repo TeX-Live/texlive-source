@@ -1,3 +1,8 @@
+2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (triptrap): Run intermediate triptrap target in
+	 texk/, texk/web2c/Makefile might not yet exist.
+
 2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (triptrap): New target to run TRIP and TRAP tests.

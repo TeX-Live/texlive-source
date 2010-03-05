@@ -1,3 +1,8 @@
+2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (triptrap): New target to first ensure that
+	web2c/Makefile exists and then run TRIP and TRAP tests.
+
 2010-02-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): Add tests/common-test.pl.

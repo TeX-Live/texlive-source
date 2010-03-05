@@ -61,3 +61,9 @@ subtexk: $(CONFIG_AUX)
 # Common infrastructure for tests
 EXTRA_DIST = tests/common-test.pl
 
+# Special target to run TRIP and TRAP tests and create diffs.
+.PHONY: triptrap
+triptrap: web2c/Makefile
+	cd web2c && $(MAKE) $(AM_MAKEFLAGS) $@
+web2c/Makefile:
+	$(MAKE) $(AM_MAKEFLAGS) DIST_SUBTEXK=web2c subtexk

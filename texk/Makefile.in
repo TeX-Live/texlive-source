@@ -793,6 +793,13 @@ subtexk: $(CONFIG_AUX)
 	@echo "configure in ../auxdir/auxsub failed to create the file $@"
 	exit 1
 
+# Special target to run TRIP and TRAP tests and create diffs.
+.PHONY: triptrap
+triptrap: web2c/Makefile
+	cd web2c && $(MAKE) $(AM_MAKEFLAGS) $@
+web2c/Makefile:
+	$(MAKE) $(AM_MAKEFLAGS) DIST_SUBTEXK=web2c subtexk
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

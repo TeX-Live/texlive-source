@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live top-level
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Use 'aclocal --force' (for "computed m4_sinclude")
@@ -65,4 +65,4 @@ skip:
 # Special target to run TRIP and TRAP tests and create diffs.
 .PHONY: triptrap
 triptrap:
-	cd texk/web2c && $(MAKE) $(AM_MAKEFLAGS) $@
+	cd texk && $(MAKE) $(AM_MAKEFLAGS) $@
