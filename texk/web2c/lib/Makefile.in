@@ -80,8 +80,9 @@ lib_a_LIBADD =
 am_lib_a_OBJECTS = basechsuffix.$(OBJEXT) chartostring.$(OBJEXT) \
 	coredump.$(OBJEXT) eofeoln.$(OBJEXT) fprintreal.$(OBJEXT) \
 	inputint.$(OBJEXT) input2int.$(OBJEXT) main.$(OBJEXT) \
-	openclose.$(OBJEXT) printversion.$(OBJEXT) uexit.$(OBJEXT) \
-	usage.$(OBJEXT) version.$(OBJEXT) zround.$(OBJEXT)
+	openclose.$(OBJEXT) printversion.$(OBJEXT) setupvar.$(OBJEXT) \
+	uexit.$(OBJEXT) usage.$(OBJEXT) version.$(OBJEXT) \
+	zround.$(OBJEXT)
 lib_a_OBJECTS = $(am_lib_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -302,6 +303,7 @@ lib_a_SOURCES = \
 	main.c \
 	openclose.c \
 	printversion.c \
+	setupvar.c \
 	uexit.c \
 	usage.c \
 	version.c \
@@ -366,6 +368,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openclose.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/printversion.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setupvar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uexit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/version.Po@am__quote@

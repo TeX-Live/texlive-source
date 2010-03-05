@@ -86,3 +86,8 @@ TEXPOOL = .
 MFPOOL = .
 % mp.pool:
 MPPOOL = .
+
+% GFtype only.
+line_length = 79
+max_rows = 79
+max_cols = 79

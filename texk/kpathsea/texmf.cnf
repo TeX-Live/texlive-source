@@ -690,3 +690,8 @@ max_print_line = 79
 % Metafont only.
 screen_width = 1664
 screen_depth = 1200
+
+% GFtype only.
+line_length = 500
+max_rows = 8191
+max_cols = 8191

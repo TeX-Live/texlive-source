@@ -159,6 +159,8 @@ typedef unsigned char *pointertobyte;
 #define xmallocarray(type,size) ((type*)xmalloc((size+1)*sizeof(type)))
 /* Same for reallocating an array. */
 #define xreallocarray(ptr,type,size) ((type*)xrealloc(ptr,(size+1)*sizeof(type)))
+/* Allocate and clear an array of a given type. Add 1 to nmemb and size. */
+#define xcallocarray(type,nmemb,size) ((type*)xcalloc(nmemb+1,(size+1)*sizeof(type)))
 
 /* BibTeX needs this to dynamically reallocate arrays.  Too bad we can't
    rely on stringification, or we could avoid the ARRAY_NAME arg.

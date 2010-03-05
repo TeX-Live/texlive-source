@@ -1,0 +1,33 @@
+/* setupvar.c: Look up a value in texmf.cnf or use default.
+
+   Adapted in 2010 by Peter Breitenlohner.  Public domain.
+   Written in 1995 by Karl Berry.  Public domain.  */
+
+#include "config.h"
+#include "lib.h"
+#include <kpathsea/variable.h>
+
+/* Look up VAR_NAME in texmf.cnf; assign either the value found there or
+   DFLT to *VAR.  */
+
+void
+setupboundvariable (integer *var, const_string var_name, integer dflt)
+{
+  string expansion = kpse_var_value (var_name);
+  *var = dflt;
+
+  if (expansion) {
+    integer conf_val = atoi (expansion);
+    /* It's ok if the cnf file specifies 0 for extra_mem_{top,bot}, etc.
+       But negative numbers are always wrong.  */
+    if (conf_val < 0 || (conf_val == 0 && dflt > 0)) {
+      fprintf (stderr,
+               "%s: Bad value (%ld) in texmf.cnf for %s, keeping %ld.\n",
+               program_invocation_name,
+               (long) conf_val, var_name + 1, (long) dflt);
+    } else {
+      *var = conf_val; /* We'll make further checks later.  */
+    }
+    free (expansion);
+  }
+}

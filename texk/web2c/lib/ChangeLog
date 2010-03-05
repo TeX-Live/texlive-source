@@ -1,3 +1,10 @@
+2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c (setupboundvariable): Moved from here ...
+	* setupvar.c (new): ... to here for use in non-engine programs.
+	* lib.h (setupboundvariable): Moved from ../texmfmp.h to here.
+	* Makefile.am (lib_a_SOURCES): Added setupvar.c.
+
 2010-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (IPC) [WIN32]: #include <winsock2.h> instead of

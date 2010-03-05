@@ -1,3 +1,8 @@
+2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf (line_length, max_rows, max_cols): GFtype parameters
+	settable at runtime (used to be fixed values in gftype.ch).
+
 2010-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf (screen_width, screen_depth): Increase Metafont

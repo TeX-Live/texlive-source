@@ -48,6 +48,8 @@ var @<Globals in the outer block@>@/
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
+  @!bound_default:integer; {temporary for setup}
+  @!bound_name:const_cstring; {temporary for setup}
 begin
   kpse_set_progname (argv[0]);
   kpse_init_prog ('GFTYPE', 0, nil, nil);
@@ -65,6 +67,21 @@ begin
 @y
 @ This module is deleted, because it is only useful for
 a non-local goto, which we can't use in C.
+
+Instead, we define parameters settable at runtime.
+
+@<Glob...@>=
+@!line_length:integer; {\\{xxx} strings will not produce lines longer than this}
+@!max_rows:integer; {largest possible vertical extent of pixel image array}
+@!max_cols:integer; {largest possible horizontal extent of pixel image array}
+@!max_row:integer; {current vertical extent of pixel image array}
+@!max_col:integer; {current horizontal extent of pixel image array}
+@z
+
+@x [5] Parameters settable at runtime.
+@ Four parameters can be changed at compile time to extend or
+@y
+@ Three parameters can be changed at run time to extend or
 @z
 
 @x [5] Remove |terminal_line_length|, increase others.
@@ -75,10 +92,39 @@ a non-local goto, which we can't use in C.
 @!max_row=79; {vertical extent of pixel image array}
 @!max_col=79; {horizontal extent of pixel image array}
 @y
+@d def_line_length = 500 {default |line_length| value}
+@d max_image = 8191 {largest possible extent of \MF's pixel image array}
+
 @<Constants...@>=
-@!line_length=500; {\\{xxx} strings will not produce lines longer than this}
-@!max_row=500; {vertical extent of pixel image array}
-@!max_col=500; {horizontal extent of pixel image array}
+@!inf_line_length=20;
+@!sup_line_length=1023;
+@z
+
+@x [6] Parameters settable at runtime, dynamic allocation.
+@d negate(#) == #:=-# {change the sign of a variable}
+@y
+@d negate(#) == #:=-# {change the sign of a variable}
+@#
+@d const_chk(#) == begin if # < inf@&# then # := inf@&# else
+                         if # > sup@&# then # := sup@&# end
+{|setup_bound_var| stuff duplicated in \.{tex.ch}.}
+@d setup_bound_var(#) == bound_default := #; setup_bound_var_end
+@d setup_bound_var_end(#) == bound_name := #; setup_bound_var_end_end
+@d setup_bound_var_end_end(#) ==
+  setup_bound_variable (address_of (#), bound_name, bound_default);
+
+@<Set init...@>=
+{See comments in \.{tex.ch} for why the name has to be duplicated.}
+setup_bound_var (def_line_length)('line_length')(line_length);
+  {\\{xxx} strings will not produce lines longer than this}
+setup_bound_var (max_image)('max_rows')(max_rows);
+  {largest allowed vertical extent of pixel image array}
+setup_bound_var (max_image)('max_cols')(max_cols);
+  {largest allowed horizontal extent of pixel image array}
+const_chk (line_length);
+if max_rows > max_image then max_rows := max_image;
+if max_cols > max_image then max_cols := max_image;
+image_array := nil;
 @z
 
 @x [7] Remove jump_out, and make `abort' end with a newline.
@@ -231,6 +277,62 @@ can see what \.{GFtype} thought was specified.
 @ After the command-line switches have been processed, 
 we print the options so that the user
 can see what \.{GFtype} thought was specified.
+@z
+
+@x [37] Dynamic allocation.
+@d image==image_array[m,n]
+
+@<Glob...@>=
+@!image_array: packed array [0..max_col,0..max_row] of pixel;
+@y
+@d image==image_array[m + (max_col + 1) * n]
+
+@<Glob...@>=
+@!image_array:^pixel;
+@z
+
+@x [38] Dynamic allocation.
+begin max_subcol:=max_m_stated-min_m_stated-1;
+if max_subcol>max_col then max_subcol:=max_col;
+max_subrow:=max_n_stated-min_n_stated;
+if max_subrow>max_row then max_subrow:=max_row;
+n:=0;
+while n<=max_subrow do
+  begin m:=0;
+  while m<=max_subcol do
+    begin image:=white; incr(m);
+    end;
+  incr(n);
+  end;
+end
+@y
+begin max_col:=max_m_stated-min_m_stated-1;
+if max_col>max_cols then max_col:=max_cols;
+max_row:=max_n_stated-min_n_stated;
+if max_row>max_rows then max_row:=max_rows;
+if (max_row >= 0) and (max_col >= 0) then
+  image_array := xcalloc_array (pixel, max_col, max_row);
+end
+@z
+
+@x [39] Dynamic allocation.
+@ @<Glob...@>=
+@!max_subrow,@!max_subcol:integer; {size of current subarray of interest}
+@y
+@ With |image_array| allocated dynamically these are the same.
+
+@d max_subrow == max_row {vertical size of current subarray of interest}
+@d max_subcol == max_col {horizontal size of current subarray of interest}
+@z
+
+@x [40] Dynamic allocation.
+else print_ln('(The character is entirely blank.)');
+@y
+else print_ln('(The character is entirely blank.)');
+if (max_row >= 0) and (max_col >= 0) then
+  begin libc_free (image_array);
+  image_array := nil;
+  end;
 @z
 
 @x [45] Change chr to xchr (should be changed in the web source).

@@ -201,9 +201,6 @@ extern void topenin (void);
    to the *coerce.h files. */
 /* extern void calledit (); */
 
-/* Set an array size from texmf.cnf.  */
-extern void setupboundvariable (integer *, const_string, integer);
-
 /* These defines reroute the file i/o calls to the new pipe-enabled 
    functions in texmfmp.c*/
 

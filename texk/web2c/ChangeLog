@@ -1,3 +1,13 @@
+2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h (xcallocarray): Added.
+	* texmfmp.h (setupboundvariable): Moved to lib/lib.h from here.
+	* gftype.ch: Dynamically allocated pixel image array.
+	Parameters settable at runtime; move the previous increased
+	value (line_length=500) into texmf.cnf.
+	* triptrap/texmf.cnf: GFtype parameters for trap test.
+	* triptrap/mftrap.diffs: Updated.
+
 2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (triptrap): New target to run TRIP and TRAP tests

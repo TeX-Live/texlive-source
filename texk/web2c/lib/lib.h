@@ -52,6 +52,10 @@ extern void printversionandexit (const_string, const_string, const_string, char*
 extern const char *ptexbanner;
 #endif
 
+/* setupvar.c */
+/* Set an array size from texmf.cnf.  */
+extern void setupboundvariable (integer *, const_string, integer);
+
 /* version.c */
 extern const char *versionstring;
 

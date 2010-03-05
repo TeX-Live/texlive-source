@@ -57,7 +57,6 @@
 @define procedure put4bytes ();
 @define procedure readtcxfile;
 @define procedure remembersourceinfo ();
-@define procedure setupboundvariable ();
 @define procedure topenin;
 @define procedure undumphh ();
 @define procedure undumpint ();

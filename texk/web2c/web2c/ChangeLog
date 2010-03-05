@@ -1,3 +1,9 @@
+2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.defines: Moved setupboundvariable from here ...
+	* common.defines: ... to here for use in non-engine programs.
+	* common.defines (xcalloc, xcallocarray): Declare these.
+
 2010-02-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
         * common.defines (makesuffix, removesuffix): Remove these.
