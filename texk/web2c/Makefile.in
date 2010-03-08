@@ -855,7 +855,8 @@ am__EXEEXT_22 = bibtex.test dvicopy.test dvitype.test gftodvi.test \
 	gftopk.test gftype.test mft.test patgen.test pktogf.test \
 	pktype.test pltotf.test pooltype.test tftopl.test vftovp.test \
 	vptovf.test weave.test
-am__EXEEXT_23 = $(am__EXEEXT_22) tests/bibtex-openout-test.pl
+am__EXEEXT_23 = $(am__EXEEXT_22) tests/bibtex-openout-test.pl \
+	tests/bibtex-longline-test.pl
 @WEB_TRUE@am__EXEEXT_24 = $(am__EXEEXT_23)
 DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -1404,7 +1405,8 @@ ctangleboot_DEPENDENCIES = $(default_dependencies)
 web_programs = bibtex dvicopy dvitype gftodvi gftopk gftype mft \
 	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf weave
 
-web_tests = $(web_programs:=.test) tests/bibtex-openout-test.pl
+web_tests = $(web_programs:=.test) tests/bibtex-openout-test.pl \
+	tests/bibtex-longline-test.pl
 nodist_bibtex_SOURCES = bibtex.c bibtex.h
 nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
 nodist_dvitype_SOURCES = dvitype.c dvitype.h

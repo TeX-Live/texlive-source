@@ -3,10 +3,13 @@
 # Common definitions for Perl tests in TeX Live.  We want to use Perl to
 # have a chance of running the tests on Windows.
 
+# srcdir must be a sibling dir to kpathsea, e.g., web2c.
 $ENV{"TEXMFCNF"} = "$srcdir/../kpathsea";
-$ENV{"BIBINPUTS"} = "$srcdir/tests";
-$ENV{"BSTINPUTS"} = "$srcdir/tests";
-$ENV{"TEXINPUTS"} = "$srcdir/tests";
+$ENV{"BIBINPUTS"}
+  = $ENV{"BSTINPUTS"}
+  = $ENV{"TEXINPUTS"}
+  = ".:$srcdir/tests:$srcdir/../tests/texmf//";
+
 
 # Run PROG with ARGS.  Return the exit status.
 # Die if PROG is not executable.
@@ -21,4 +24,31 @@ sub test_run
   
   my $ret = system ($prog, @args);  
   return $ret;
+}
+
+sub test_file_copy
+{
+  my ($srcfile,$dstfile) = @_;
+  
+  # don't copy onto itself.
+  chomp (my $srcdir = `dirname $srcfile`);
+  chomp ($srcdir = `cd $srcdir && pwd`);
+  #
+  chomp (my $dstdir = `dirname $dstfile`);
+  chomp ($dstdir = `cd $dstdir && pwd`);
+  return if $srcdir eq $dstdir;
+  
+  local *IN;
+  $IN = "<$srcfile";
+  open (IN) || die "open($srcfile) failed: $!";
+  my @in = <IN>;
+  close (IN) || warn "close($srcfile) failed: $!";
+  
+  local *OUT;
+  $OUT = ">$dstfile";
+  open (OUT) || die "open($dstfile) failed: $!";
+  print (OUT @in) || die "print($dstfile) failed: $!";
+  close (OUT) || warn "close($dstfile) failed: $!";
+  
+  return 0;
 }

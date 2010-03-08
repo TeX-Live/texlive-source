@@ -1,3 +1,9 @@
+2010-03-08  Karl Berry  <karl@tug.org>
+
+	* tests/bibtex-openout-test.pl: allow running standalone.
+	* tests/bibtex-longline-test.pl: new test.
+	* am/web.am (web_tests): add it.
+
 2010-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mf.ch (end_name, print_file_name): Make quoting of file names

@@ -1,0 +1,5 @@
+2010-03-08  Karl Berry  <karl@tug.org>
+
+	* texmf/: new subdir.
+	* common-test.pl (BSTINPUTS, et al.): search it.
+	 (test_file_copy): new fn.

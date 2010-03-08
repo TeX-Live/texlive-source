@@ -26,7 +26,7 @@ bibtex-web2c: bibtex.p $(web2c_depend) web2c/cvtbib.sed
 	@$(web2c) bibtex
 bibtex.p: tangle$(EXEEXT) bibtex.web bibtex.ch
 	$(tangle) bibtex bibtex
-web_tests += tests/bibtex-openout-test.pl
+web_tests += tests/bibtex-openout-test.pl tests/bibtex-longline-test.pl
 
 nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
 dvicopy.c dvicopy.h: dvicopy-web2c
