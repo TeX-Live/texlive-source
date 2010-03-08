@@ -132,7 +132,7 @@
 @!sup_main_memory = 8000000;
 
 @!inf_buf_size = 500;
-@!sup_buf_size = 300000;
+@!sup_buf_size = 30000000;
 @z
 
 @x [1.12] Constants defined as WEB macros.
@@ -1464,119 +1464,103 @@ else  begin
   else if c="." then ext_delimiter:=pool_ptr;
 @z
 
-@x [38.772] end_name
+@x [38.772] end_name: quote if spaces in names.
 @p procedure end_name;
-begin if str_ptr+3>max_str_ptr then
-  begin if str_ptr+3>max_strings then
-    overflow("number of strings",max_strings-init_str_ptr);
-@:METAFONT capacity exceeded number of strings}{\quad number of strings@>
-  max_str_ptr:=str_ptr+3;
-  end;
 @y
+@d pool_seq_check(#) == {set |s:=str_start[str_ptr]| and |t:=#|,
+      then check if sequence of pool bytes |s<=j<t| needs quoting}
+   must_quote:=false;
+   s:=str_start[str_ptr];
+   t:=#;
+   j:=s;
+   while (not must_quote) and (j<t) do begin
+     must_quote:=str_pool[j]=" "; incr(j);
+     end
+@d pool_seq_quote_move == {quote sequence of pool bytes |s<=j<t|,
+      first moving up pool bytes |t<=j<pool_ptr|}
+   for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
+   pool_seq_quote
+@d pool_seq_quote == {quote sequence of pool bytes |s<=j<t|}
+   str_pool[t+1]:="""";
+   for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
+   str_pool[s]:="""";
+   pool_ptr:=pool_ptr+2
+
 @p procedure end_name;
 var must_quote:boolean; {whether we need to quote a string}
 @!j,@!s,@!t: pool_pointer; {running indices}
-begin if str_ptr+3>max_str_ptr then
-  begin if str_ptr+3>max_strings then
-    overflow("number of strings",max_strings-init_str_ptr);
-@:METAFONT capacity exceeded number of strings}{\quad number of strings@>
-  max_str_ptr:=str_ptr+3;
+@z
+
+@x [38.772] end_name: quote if spaces in names.
+if area_delimiter=0 then cur_area:=""
+else  begin cur_area:=str_ptr; incr(str_ptr);
+  str_start[str_ptr]:=area_delimiter+1;
   end;
-str_room(6); {room for quotes, if they are needed}
-if area_delimiter<>0 then begin
-  {maybe quote |cur_area|}
-  must_quote:=false;
-  s:=str_start[str_ptr];
-  t:=area_delimiter+1;
-  j:=s;
-  while (not must_quote) and (j<>t) do begin
-    must_quote:=str_pool[j]=' '; incr(j);
-    end;
-  if must_quote then begin
-    for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
-    str_pool[t+1]:="""";
-    for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
-    str_pool[s]:="""";
-    if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
-    area_delimiter:=area_delimiter+2;
-    pool_ptr:=pool_ptr+2;
-    end;
-  s:=area_delimiter+1;
+if ext_delimiter=0 then
+  begin cur_ext:=""; cur_name:=make_string;
   end
-else begin
-  s:=str_start[str_ptr];
+else  begin cur_name:=str_ptr; incr(str_ptr);
+  str_start[str_ptr]:=ext_delimiter; cur_ext:=make_string;
   end;
-{maybe quote |cur_name|}
-if ext_delimiter=0 then t:=pool_ptr else t:=ext_delimiter;
-must_quote:=false;
-j:=s;
-while (not must_quote) and (j<>t) do begin
-  must_quote:=str_pool[j]=" "; incr(j);
-  end;
-if must_quote then begin
-  for j:=pool_ptr-1 downto t do str_pool[j+2]:=str_pool[j];
-  str_pool[t+1]:="""";
-  for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
-  str_pool[s]:="""";
-  if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
-  pool_ptr:=pool_ptr+2;
-  end;
-if ext_delimiter<>0 then begin
-  {maybe quote |cur_ext|}
-  s:=ext_delimiter;
-  t:=pool_ptr;
-  must_quote:=false;
-  j:=s;
-  while (not must_quote) and (j<>t) do begin
-    must_quote:=str_pool[j]=' '; incr(j);
-    end;
+@y
+str_room(6); {room for quotes, if they are needed}
+if area_delimiter=0 then cur_area:=""
+else  begin {maybe quote |cur_area|}
+  pool_seq_check(area_delimiter+1);
   if must_quote then begin
-    str_pool[t+1]:="""";
-    for j:=t-1 downto s do str_pool[j+1]:=str_pool[j];
-    str_pool[s]:="""";
-    pool_ptr:=pool_ptr+2;
+    pool_seq_quote_move;
+    area_delimiter:=area_delimiter+2;
+    if ext_delimiter<>0 then ext_delimiter:=ext_delimiter+2;
     end;
+  cur_area:=str_ptr; incr(str_ptr);
+  str_start[str_ptr]:=area_delimiter+1;
   end;
+if ext_delimiter=0 then cur_ext:=""
+else  begin {maybe quote |cur_name| followed by |cur_ext|}
+  pool_seq_check(ext_delimiter);
+  if must_quote then begin
+    pool_seq_quote_move;
+    ext_delimiter:=ext_delimiter+2;
+    end;
+  cur_name:=str_ptr; incr(str_ptr);
+  str_start[str_ptr]:=ext_delimiter;
+  end;
+{maybe quote |cur_ext| if present or |cur_name| otherwise}
+pool_seq_check(pool_ptr);
+if must_quote then begin
+  pool_seq_quote;
+  end;
+if ext_delimiter=0 then cur_name:=make_string
+else cur_ext:=make_string;
 @z
 
 @x [38.773] print_file_name: quote if spaces in names.
+@<Basic printing...@>=
+procedure print_file_name(@!n,@!a,@!e:integer);
 begin slow_print(a); slow_print(n); slow_print(e);
 @y
+@d string_check(#) == {check if string |#| needs quoting}
+   if #<>0 then begin
+     j:=str_start[#];
+     while (not must_quote) and (j<str_start[#+1]) do begin
+       must_quote:=str_pool[j]=" "; incr(j);
+     end;
+   end
+@d print_quoted(#) == {print string |#|, omitting quotes}
+   if #<>0 then
+     for j:=str_start[#] to str_start[#+1]-1 do
+       if so(str_pool[j])<>"""" then
+         print(so(str_pool[j]))
+
+@<Basic printing...@>=
+procedure print_file_name(@!n,@!a,@!e:integer);
 var must_quote: boolean; {whether to quote the filename}
 @!j:pool_pointer; {index into |str_pool|}
 begin
 must_quote:=false;
-if a<>0 then begin
-  j:=str_start[a];
-  while (not must_quote) and (j<>str_start[a+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-if n<>0 then begin
-  j:=str_start[n];
-  while (not must_quote) and (j<>str_start[n+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
-if e<>0 then begin
-  j:=str_start[e];
-  while (not must_quote) and (j<>str_start[e+1]) do begin
-    must_quote:=str_pool[j]=" "; incr(j);
-  end;
-end;
+string_check(a); string_check(n); string_check(e);
 if must_quote then slow_print("""");
-if a<>0 then
-  for j:=str_start[a] to str_start[a+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if n<>0 then
-  for j:=str_start[n] to str_start[n+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
-if e<>0 then
-  for j:=str_start[e] to str_start[e+1]-1 do
-    if so(str_pool[j])<>"""" then
-      print(so(str_pool[j]));
+print_quoted(a); print_quoted(n); print_quoted(e);
 if must_quote then slow_print("""");
 @z
 

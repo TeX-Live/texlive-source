@@ -1,6 +1,6 @@
 /* xrealloc.c: realloc with error checking.
 
-   Copyright 1992, 1993, 2008 Karl Berry.
+   Copyright 1992, 1993, 2008, 2010 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ xrealloc (void *old_ptr, unsigned size)
     if (old_ptr == NULL) {
         new_mem = xmalloc(size);
     } else {
-        new_mem = (void *)realloc(old_ptr, size);
+        new_mem = (void *)realloc(old_ptr, size ? size : 1);
         if (new_mem == NULL) {
             /* We used to print OLD_PTR here using %x, and casting its
                value to unsigned, but that lost on the Alpha, where

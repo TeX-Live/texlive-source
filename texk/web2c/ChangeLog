@@ -1,3 +1,10 @@
+2010-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mf.ch (end_name, print_file_name): Make quoting of file names
+	more robust.  Increase sup_buf_size.
+	Diffs from Akira, 04 Mar 2010 21:47:33.
+	Slightly reorganize and cast repeated code into Web macros.
+
 2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h (xcallocarray): Added.
