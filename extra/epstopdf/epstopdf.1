@@ -42,9 +42,9 @@ set AutoRotatePages (default: None); recognized \fIval\fP choices:
 None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
 .IP "\fB--restricted\fP=\fIval\fP"
 turn on restricted mode (default: [on for repstopdf, else off]);
-this restricts the values accepted by \fB--gscmd\fP and impose restrictions
-on the input and output file names similar to Web2c's openin_any=p and
-openout_any=p.
+this forbids the use of \fB--gscmd\fP and imposes restrictions on the input and
+output file names according to the values of openin_any and openout_any (see
+Web2c's manual).
 .IP "\fB--help\fP
 display help message and exit
 .IP "\fB--version\fP

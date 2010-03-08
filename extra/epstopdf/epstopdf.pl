@@ -46,6 +46,9 @@ use strict;
 #
 # emacs-page
 # History
+#  2010/03/08       (Manuel P\'egouri\'e-Gonnard)
+#    * In restricted mode, forbid --gscmd (all platforms) and call GS with full
+#    path relative to self location (windows).
 #  2010/02/26 v2.13 (Karl Berry)
 #    * New release.
 #  2010/02/23       (Manuel P\'egouri\'e-Gonnard)
@@ -244,28 +247,16 @@ sub errorUsage { die "Error: @_ (try --help for more information)\n"; }
 $restricted = 1 if $::opt_restricted;
 debug "Restricted mode activated" if $restricted;
 
-### safe kpsewhich command for windows
+### safer external commands for windows in restricted mode
 my $kpsewhich = 'kpsewhich';
 if ($restricted and ($^O eq 'MSWin32')) {
   use File::Basename;
   my $mydirname = dirname $0;
   # $mydirname is the location of the Perl script
   $kpsewhich = "$mydirname/../../../bin/win32/$kpsewhich";
+  $GS = "$mydirname/../../../tlpkg/tlgs/bin/$GS";
 }
 debug "kpsewhich command: $kpsewhich";
-
-### find a executable (.exe) in the PATH on windows, or bail out in error
-sub make_full_path_w32
-{
-  my ($name) = @_;
-  $name = "$name.exe" unless $name =~ /\.exe$/;
-  my $path = $ENV{'PATH'};
-  for my $path_elt (split(/;/, $path)) {
-    my $fullname = "$path_elt/$name";
-    return $fullname if -e $fullname;
-  }
-  error "Program $name not found in PATH\n($path)";
-}
 
 ### check if a name is "safe" according to kpse's open(in|out)_any
 # return true if name is ok, false otherwise
@@ -310,16 +301,13 @@ if ($::opt_filter) {
 ### emacs-page
 ### option gscmd
 if ($::opt_gscmd) {
-  debug "Switching from $GS to $::opt_gscmd";
-  $GS = $::opt_gscmd;
-  # validate GS \label{val_gscmd}
-  if ($restricted) {
-    $GS =~ /^(gs|mgs|gswin32c|gs386|gsos2)$/
-      or $GS =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?$/
-      or error "gscmd value not allowed in restricted mode: $GS";
+  if ($restricted) { # \label{val_gscmd}
+    error "Option forbidden in restricted mode: --gscmd";
+  } else {
+    debug "Switching from $GS to $::opt_gscmd";
+    $GS = $::opt_gscmd;
   }
 }
-$GS = make_full_path_w32($GS) if $restricted and ($^O eq 'MSWin32');
 
 ### start building GS command line for the pipe
 my @GS = ($GS);
