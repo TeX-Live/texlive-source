@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-02-13.09}
+\def\texinfoversion{2010-03-07.08}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2504,27 +2504,40 @@ end
 % Count depth in font-changes, for error checks
 \newcount\fontdepth \fontdepth=0
 
-%% Add scribe-like font environments, plus @l for inline lisp (usually sans
-%% serif) and @ii for TeX italic
+% Font commands.
 
-% \smartitalic{ARG} outputs arg in italics, followed by an italic correction
-% unless the following character is such as not to need one.
-\def\smartitalicx{\ifx\next,\else\ifx\next-\else\ifx\next.\else
-                    \ptexslash\fi\fi\fi}
-\def\smartslanted#1{{\ifusingtt\ttsl\sl #1}\futurelet\next\smartitalicx}
-\def\smartitalic#1{{\ifusingtt\ttsl\it #1}\futurelet\next\smartitalicx}
+% #1 is the font command (\sl vs. \it), #2 is the text to slant.
+% If we are in a monospaced environment, however, 1) always use \ttsl,
+% and 2) do not add an italic correction.
+\def\dosmartslant#1#2{%
+  \ifusingtt 
+    {\ttsl #2\let\next=\relax}%
+    {\def\next{{#1#2}\futurelet\next\smartitaliccorrection}}%
+  \next
+}
+\def\smartslanted{\dosmartslant\sl}
+\def\smartitalic{\dosmartslant\it}
 
-% like \smartslanted except unconditionally uses \ttsl.
+% Output an italic correction unless \next (presumed to be the following
+% character) is such as not to need one.
+\def\smartitaliccorrection{%
+  \ifx\next,%
+  \else\ifx\next-%
+  \else\ifx\next.%
+  \else\ptexslash
+  \fi\fi\fi}
+
+% like \smartslanted except unconditionally uses \ttsl, and no ic.
 % @var is set to this for defun arguments.
-\def\ttslanted#1{{\ttsl #1}\futurelet\next\smartitalicx}
+\def\ttslanted#1{{\ttsl #1}}
 
 % @cite is like \smartslanted except unconditionally use \sl.  We never want
 % ttsl for book titles, do we?
-\def\cite#1{{\sl #1}\futurelet\next\smartitalicx}
+\def\cite#1{{\sl #1}\futurelet\next\smartitaliccorrection}
 
 \let\i=\smartitalic
 \let\slanted=\smartslanted
-\def\var#1{{\setupmarkupstyle{var}\smartslanted{#1}}}
+\def\var#1{\smartslanted{#1}}
 \let\dfn=\smartslanted
 \let\emph=\smartitalic
 
