@@ -1,3 +1,7 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): Distribute the whole tests/ tree.
+
 2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (triptrap): New target to first ensure that

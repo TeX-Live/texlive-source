@@ -2622,7 +2622,7 @@ BEGIN
       FN_INFO[fn_loc] = num_glb_strs;
       if (num_glb_strs == MAX_GLOB_STRS)
       BEGIN
-	BIBTEX_OVERFLOW ("number of string global-variables %ld", MAX_GLOB_STRS);
+	BIBTEX_OVERFLOW ("number of string global-variables ", MAX_GLOB_STRS);
       END
       INCR (num_glb_strs);
     END

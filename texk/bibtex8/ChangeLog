@@ -1,3 +1,7 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex-1.c: Remove spurious format spec in BIBTEX_OVERFLOW.
+
 2010-03-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex-1.c, bibtex.h: Adapt to bibtex.web 0.99d test 1

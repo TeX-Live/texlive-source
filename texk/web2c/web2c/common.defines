@@ -153,6 +153,7 @@
 
 @define procedure aclose ();
 @define procedure BIBXRETALLOC (); {For BibTeX.}
+@define procedure BIBXRETALLOCNOSET ();
 @define procedure decr ();
 @define procedure fflush (); {can't keep |break|, since it's a reserved word}
 @define procedure free ();

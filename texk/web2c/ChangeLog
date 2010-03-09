@@ -1,3 +1,12 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h (BIBXRETALLOCNOSET): New macro to resize BibTeX
+	arrays but not increasing the size parameter.
+	* bibtex.ch: Use BIB_XRETALLOC_NOSET when resizing several
+	arrays with the same size, to obtain accurate log entries.
+	(add_out_pool): Dynamic output buffer, don't call overflow().
+	(add_area): Remove unused procedure.
+
 2010-03-08  Karl Berry  <karl@tug.org>
 
 	* tests/bibtex-openout-test.pl: allow running standalone.

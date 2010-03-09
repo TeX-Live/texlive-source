@@ -388,29 +388,20 @@ File closing will be done in C, too.
 @z
 
 @x [46] Dynamic buf_size.
-procedure buffer_overflow;
-begin
 overflow('buffer size ',buf_size);
-end;
 @y
-procedure buffer_overflow;
-var cur_size:integer;
-begin
-cur_size := buf_size;
-BIB_XRETALLOC('buffer', buffer, ASCII_code, cur_size, cur_size + BUF_SIZE);
-cur_size := buf_size;
-BIB_XRETALLOC('sv_buffer', sv_buffer, ASCII_code, cur_size, cur_size+BUF_SIZE);
-cur_size := buf_size;
-BIB_XRETALLOC('ex_buf', ex_buf, ASCII_code, cur_size, cur_size+BUF_SIZE);
-cur_size := buf_size;
-BIB_XRETALLOC('out_buf', out_buf, ASCII_code, cur_size, cur_size+BUF_SIZE);
-cur_size := buf_size;
-BIB_XRETALLOC('name_tok', name_tok, buf_pointer, cur_size, cur_size+BUF_SIZE);
-cur_size := buf_size;
-BIB_XRETALLOC('name_sep_char', name_sep_char, ASCII_code, cur_size,
-                                                           cur_size+BUF_SIZE);
-buf_size := cur_size;
-end;
+BIB_XRETALLOC_NOSET ('buffer', buffer, ASCII_code,
+                     buf_size, buf_size + BUF_SIZE);
+BIB_XRETALLOC_NOSET ('sv_buffer', sv_buffer, ASCII_code,
+                     buf_size, buf_size + BUF_SIZE);
+BIB_XRETALLOC_NOSET ('ex_buf', ex_buf, ASCII_code,
+                     buf_size, buf_size + BUF_SIZE);
+BIB_XRETALLOC_NOSET ('out_buf', out_buf, ASCII_code,
+                     buf_size, buf_size + BUF_SIZE);
+BIB_XRETALLOC_NOSET ('name_tok', name_tok, buf_pointer,
+                     buf_size, buf_size + BUF_SIZE);
+BIB_XRETALLOC ('name_sep_char', name_sep_char, ASCII_code,
+               buf_size, buf_size + BUF_SIZE);
 @z
 
 @x [47] web2c doesn't understand f^.
@@ -456,7 +447,7 @@ BIB_XRETALLOC ('str_pool', str_pool, ASCII_code, pool_size,
                pool_size + POOL_SIZE);
 @z
 
-% [58] (start_name) reallocate name_of_file for the new name and
+% [59] (start_name) reallocate name_of_file for the new name and
 % terminate with null.
 @x
 name_ptr := 1;
@@ -496,13 +487,32 @@ while (name_ptr <= file_name_size) do   {pad with blanks}
 name_of_file[name_length + 1] := 0;
 @z
 
-@x [61] (add_area) Delete this print of name_of_file as well.
+@x [62] (add_area) This function is not used.
+@<Procedures and functions for file-system interacting@>=
+procedure add_area(@!area:str_number);
+var p_ptr: pool_pointer;        {running index}
+begin
 if (name_length + length(area) > file_name_size) then
     begin
     print ('File=');
     print_pool_str (area); print (name_of_file,',');
     file_nm_size_overflow;
     end;
+name_ptr := name_length;
+while (name_ptr > 0) do         {shift up name}
+    begin
+    name_of_file[name_ptr+length(area)] := name_of_file[name_ptr];
+    decr(name_ptr);
+    end;
+name_ptr := 1;
+p_ptr := str_start[area];
+while (p_ptr < str_start[area+1]) do
+    begin
+    name_of_file[name_ptr] := chr (str_pool[p_ptr]);
+    incr(name_ptr); incr(p_ptr);
+    end;
+name_length := name_length + length(area);
+end;
 @y
 @z
 
@@ -751,13 +761,13 @@ end;
     overflow('number of database files ',max_bib_files);
 @y
 begin
-  BIB_XRETALLOC ('bib_list', bib_list, str_number, max_bib_files,
+  {Keep old value of |max_bib_files| for the last array.}
+  BIB_XRETALLOC_NOSET ('bib_list', bib_list, str_number, max_bib_files,
                  max_bib_files + MAX_BIB_FILES);
-  {Already increased |max_bib_files|, so don't need to do it again.}
-  BIB_XRETALLOC ('bib_file', bib_file, alpha_file, max_bib_files,
-                 max_bib_files);
+  BIB_XRETALLOC_NOSET ('bib_file', bib_file, alpha_file, max_bib_files,
+                 max_bib_files + MAX_BIB_FILES);
   BIB_XRETALLOC ('s_preamble', s_preamble, str_number, max_bib_files,
-                 max_bib_files);
+                 max_bib_files + MAX_BIB_FILES);
 end;
 @z
 
@@ -996,13 +1006,13 @@ if (total_fields > max_fields) then
     bib_err ('You''ve exceeded ',max_bib_files:0,' preamble commands');
 @y
 begin
-  BIB_XRETALLOC ('bib_list', bib_list, str_number, max_bib_files,
+  {Keep old value of |max_bib_files| for the last array.}
+  BIB_XRETALLOC_NOSET ('bib_list', bib_list, str_number, max_bib_files,
                  max_bib_files + MAX_BIB_FILES);
-  {Already increased |max_bib_files|, so don't need to do it again.}
-  BIB_XRETALLOC ('bib_file', bib_file, alpha_file, max_bib_files,
-                 max_bib_files);
+  BIB_XRETALLOC_NOSET ('bib_file', bib_file, alpha_file, max_bib_files,
+                 max_bib_files + MAX_BIB_FILES);
   BIB_XRETALLOC ('s_preamble', s_preamble, str_number, max_bib_files,
-                 max_bib_files);
+                 max_bib_files + MAX_BIB_FILES);
 end;
 @z
 
@@ -1094,6 +1104,12 @@ end;
 @y
     char1 := x_entry_strs(ptr1)(char_ptr);
     char2 := x_entry_strs(ptr2)(char_ptr);
+@z
+
+@x [323] Dynamic buf_size.
+    overflow('output buffer size ',buf_size);
+@y
+    buffer_overflow;
 @z
 
 % We shouldn't try to split a \% combo, as the result is an escaped % at

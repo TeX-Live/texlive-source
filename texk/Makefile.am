@@ -59,7 +59,7 @@ subtexk: $(CONFIG_AUX)
 	exit 1
 
 # Common infrastructure for tests
-EXTRA_DIST = tests/common-test.pl
+EXTRA_DIST = tests
 
 # Special target to run TRIP and TRAP tests and create diffs.
 .PHONY: triptrap
