@@ -46,7 +46,7 @@ use strict;
 #
 # emacs-page
 # History
-#  2010/03/08       (Manuel P\'egouri\'e-Gonnard)
+#  2010/03/08 v2.14 (Manuel P\'egouri\'e-Gonnard)
 #    * In restricted mode, forbid --gscmd (all platforms) and call GS with full
 #    path relative to self location (windows).
 #  2010/02/26 v2.13 (Karl Berry)
@@ -143,7 +143,7 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id$) 2.13';
+my $ident = '($Id$) 2.14';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2010 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
