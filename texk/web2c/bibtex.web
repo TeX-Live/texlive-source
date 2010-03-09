@@ -36,7 +36,6 @@
 % Version 0.99d was released in March 2010.  It made output lines breakable
 %       only at white_space (so that, for example, URLs would not be broken).
 %       Other known bugs (all minor) will be fixed in a subsequent release.
-%   THIS IS BibTeX 0.99d TEST VERSION 1;    PLEASE DO NOT RELEASE
 
 % Please report any bugs to biblio@@tug.org
 
@@ -136,7 +135,7 @@ style writers would be eternally grateful, if only they knew.
 The |banner| string defined here should be changed whenever \BibTeX\
 gets modified.
 
-@d banner=='This is BibTeX, Version 0.99dtest' {printed when the program starts}
+@d banner=='This is BibTeX, Version 0.99d' {printed when the program starts}
 
 
 @
@@ -7587,7 +7586,7 @@ label loop1_exit,loop2_exit;
 var break_ptr : buf_pointer;    {the first character following the line break}
 @!end_ptr : buf_pointer;        {temporary end-of-buffer pointer}
 break_pt_found : boolean;       {a suitable |white_space| character}
-unbreakable_tail : boolean;     {because it contains no |white_space| character}
+unbreakable_tail : boolean;     {as it contains no |white_space| character}
 begin
 p_ptr1 := str_start[p_str];
 p_ptr2 := str_start[p_str+1];
@@ -7669,7 +7668,7 @@ while (out_buf_ptr < end_ptr) do
 loop1_exit:
 if (out_buf_ptr = end_ptr) then
     unbreakable_tail := true            {because no |white_space| character}
-else                            {hit |white_space|, and |out_buf_ptr < end_ptr|}
+else                            {at |white_space|, and |out_buf_ptr < end_ptr|}
     begin
     break_pt_found := true;
     while (out_buf_ptr+1 < end_ptr) do  {look for more |white_space|}

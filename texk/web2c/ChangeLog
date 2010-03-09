@@ -1,3 +1,7 @@
+2010-03-09  Karl Berry  <karl@tug.org>
+
+	* bibtex.web: final 0.99d, from Oren.
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h (BIBXRETALLOCNOSET): New macro to resize BibTeX
