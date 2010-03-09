@@ -199,6 +199,7 @@ nobase_dist_script_SCRIPTS = \
 	context/stubs/unix/texutil \
 	context/stubs/unix/tmftools \
 	context/stubs/unix/xmltools \
+	de-macro/de-macro \
 	dviasm/dviasm.py \
 	epspdf/epspdf \
 	epspdf/epspdftk \
