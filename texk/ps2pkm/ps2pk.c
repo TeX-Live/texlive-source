@@ -352,7 +352,7 @@ int argc; char *argv[];
    psname = argv[0]; argc--; argv++;
 
 #ifdef KPATHSEA
-   kpse_set_progname(myname);
+   kpse_set_program_name(myname, NULL);
 #endif
 
 #ifndef KPATHSEA

@@ -138,7 +138,7 @@ AC_CHECK_FUNC([gdImageCreate],
 This drawing library can be downloaded at http://www.boutell.com/gd])])
 
 KPSE_ADD_FLAGS([kpathsea])
-AC_CHECK_FUNC([kpse_set_progname],
+AC_CHECK_FUNC([kpse_set_program_name],
               [AC_DEFINE([HAVE_LIBKPATHSEA], 1,
                          [Define to 1 if you have the `kpathsea' library (-lkpathsea).])],
               [AC_MSG_ERROR([cannot find/use libkpathsea])])

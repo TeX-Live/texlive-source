@@ -105,7 +105,7 @@ main(int argc, char *argv[])
 	pgm_fn++;
 
 #if USE_KPATHSEA
-    kpse_set_progname (pgm_fn);  /* use the same name as the intro message */
+    kpse_set_program_name (pgm_fn, NULL);  /* use the same name as the intro message */
 #endif
 
 

@@ -1,3 +1,9 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf: Add '.gftype' to GFtype specific parameters.
+	* progname.h: Remove kpse_set_progname from exported API.
+	Deprecated since 1998.  Kept in library for Versions 5.x.y.
+
 2010-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xrealloc.c (xrealloc): Allocate 1 byte if passed size 0.

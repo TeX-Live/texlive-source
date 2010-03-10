@@ -246,7 +246,6 @@ typedef const unsigned char *const_w2custring;
 #define kpsefindvf	kpse_find_vf
 #define kpseinnameok	kpse_in_name_ok
 #define kpseinitprog	kpse_init_prog
-#define kpsesetprogname kpse_set_progname
 #define kpsesetprogramname kpse_set_program_name
 #define kpseresetprogramname kpse_reset_program_name
 #define kpsegfformat	kpse_gf_format

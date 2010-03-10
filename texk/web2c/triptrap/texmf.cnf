@@ -46,10 +46,10 @@ dvi_buf_size = 800
 % and the original trip setting is 307, so no point in changing the default.
 
 % Metafont only.
-gf_buf_size = 8   % trapman.tex says to use this.
-MFTERM = trap     % get the right screen output
-screen_width = 100
-screen_depth = 200
+gf_buf_size.inimf = 8   % trapman.tex says to use this.
+MFTERM.inimf = trap     % get the right screen output
+screen_width.inimf = 100
+screen_depth.inimf = 200
 
 % MetaPost only.  Turn off callmakempx, i.e., makempx,
 % since we can only test tex and dvitomp, and we'll test those in other
@@ -88,6 +88,6 @@ MFPOOL = .
 MPPOOL = .
 
 % GFtype only.
-line_length = 79
-max_rows = 79
-max_cols = 79
+line_length.gftype = 79
+max_rows.gftype = 79
+max_cols.gftype = 79

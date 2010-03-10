@@ -47,7 +47,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
   begin
-  kpse_set_progname (argv[0]);
+  kpse_set_program_name (argv[0], nil);
   parse_arguments;
   print (banner);
   print_ln (version_string);

@@ -1,3 +1,8 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ttf2afm.c: Use kpse_set_program_name(argv[0], NULL) instead of
+	kpse_set_progname(argv[0]).
+
 2010-02-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* writet1.c (append_cs_return): Cast to byte * to avoid warning.

@@ -692,6 +692,6 @@ screen_width = 1664
 screen_depth = 1200
 
 % GFtype only.
-line_length = 500
-max_rows = 8191
-max_cols = 8191
+line_length.gftype = 500
+max_rows.gftype = 8191
+max_cols.gftype = 8191

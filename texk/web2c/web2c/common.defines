@@ -163,7 +163,6 @@
 @define procedure input2ints ();
 @define procedure input3ints ();
 @define procedure kpseinitprog ();
-@define procedure kpsesetprogname ();
 @define procedure kpsesetprogramname ();
 @define procedure kpseresetprogramname ();
 @define procedure kpsesetprogramenabled ();

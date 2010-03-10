@@ -1,3 +1,8 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gsftopk.c: Use kpse_set_program_name() instead of
+	kpse_set_progname().
+
 2010-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* gsftopk.c [WIN32]: Patches for MinGW32 build

@@ -15433,8 +15433,8 @@ fi
 eval CPPFLAGS=\"$KPATHSEA_INCLUDES \$CPPFLAGS\"
 eval LIBS=\"$KPATHSEA_LIBS \$LIBS\"
 
-ac_fn_c_check_func "$LINENO" "kpse_set_progname" "ac_cv_func_kpse_set_progname"
-if test "x$ac_cv_func_kpse_set_progname" = x""yes; then :
+ac_fn_c_check_func "$LINENO" "kpse_set_program_name" "ac_cv_func_kpse_set_program_name"
+if test "x$ac_cv_func_kpse_set_program_name" = x""yes; then :
 
 $as_echo "#define HAVE_LIBKPATHSEA 1" >>confdefs.h
 

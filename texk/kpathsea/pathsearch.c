@@ -343,7 +343,7 @@ search (kpathsea kpse, const_string path,  const_string original_name,
      signature); that we do NOT need time stamp of root directories;
      and that we do NOT need the write access bit in st_mode.
 
-     Note that `kpse_set_progname' needs the EXEC bits,
+     Note that `kpse_set_program_name' needs the EXEC bits,
      but it was already called by the time we get here.  */
   unsigned short save_djgpp_flags  = _djstat_flags;
 
@@ -430,7 +430,7 @@ search_list (kpathsea kpse, const_string path,  const_string* names,
      signature); that we do NOT need time stamp of root directories;
      and that we do NOT need the write access bit in st_mode.
 
-     Note that `kpse_set_progname' needs the EXEC bits,
+     Note that `kpse_set_program_name' needs the EXEC bits,
      but it was already called by the time we get here.  */
   unsigned short save_djgpp_flags  = _djstat_flags;
 

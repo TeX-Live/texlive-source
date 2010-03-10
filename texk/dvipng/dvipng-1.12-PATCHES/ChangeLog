@@ -1,3 +1,8 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-12-set_program_name: Replace kpse_set_progname() by
+	kpse_set_program_name().
+
 2010-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-10-mmap-for-WIN32 (new): Former MIKTEX code for mmap

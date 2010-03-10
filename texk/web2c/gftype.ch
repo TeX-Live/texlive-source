@@ -51,7 +51,7 @@ procedure initialize; {this procedure gets things started properly}
   @!bound_default:integer; {temporary for setup}
   @!bound_name:const_cstring; {temporary for setup}
 begin
-  kpse_set_progname (argv[0]);
+  kpse_set_program_name (argv[0], 'gftype');
   kpse_init_prog ('GFTYPE', 0, nil, nil);
   parse_arguments;
   print(banner);print_ln(version_string);

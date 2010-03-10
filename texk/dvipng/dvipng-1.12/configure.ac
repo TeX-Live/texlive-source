@@ -69,7 +69,7 @@ AC_CHECK_LIB([png], [png_read_image],,
 AC_CHECK_LIB([gd], [gdImageCreate],,
              [AC_MSG_ERROR([cannot find/use libgd
 This drawing library can be downloaded at http://www.boutell.com/gd])])
-AC_CHECK_LIB([kpathsea], [kpse_set_progname],, 
+AC_CHECK_LIB([kpathsea], [kpse_set_program_name],, 
              AC_MSG_ERROR([cannot find/use libkpathsea]))
 AC_CHECK_LIB([t1], [T1_InitLib])
 PSFONTS_O=""

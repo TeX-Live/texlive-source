@@ -35,7 +35,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
 begin
-  kpse_set_progname (argv[0]);
+  kpse_set_program_name (argv[0], nil);
   parse_arguments;
 @z
 

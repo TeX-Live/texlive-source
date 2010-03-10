@@ -672,6 +672,8 @@ kpse_set_program_name (const_string argv0, const_string progname)
   kpathsea_set_program_name (kpse_def, argv0, progname);
 }
 
+/* DEPRECATED since 1998 -- To be removed in Version 6.0.0.  */
+
 void
 kpse_set_progname (const_string argv0)
 {

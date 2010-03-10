@@ -1,6 +1,7 @@
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines (BIBXRETALLOCNOSET): New procedure.
+	(kpsesetprogname): Removed.
 
 2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

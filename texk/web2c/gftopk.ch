@@ -55,7 +55,7 @@ var @<Globals in the outer block@>@/
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
 begin 
-  kpse_set_progname (argv[0]);
+  kpse_set_program_name (argv[0], nil);
   kpse_init_prog ('GFTOPK', 0, nil, nil);
   parse_arguments;
   print(banner); print_ln(version_string);

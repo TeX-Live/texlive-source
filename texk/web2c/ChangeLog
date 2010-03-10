@@ -1,3 +1,16 @@
+2010-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h (kpsesetprogname): Removed.
+	* bibtex.ch, dvicopy.ch, dvitype.ch, gftodvi.ch, gftopk.ch,
+	patgen.ch, pktogf.ch, pktype.ch, pltotf.ch, pooltype.ch,
+	tangle.ch, tftopl.ch, vftovp.ch, vptovf.ch, weave.ch:
+	Use kpse_set_program_name(argv[0], nil) instead of
+	kpse_set_progname(argv[0]).
+	* gftype.ch: Use kpse_set_program_name(argv[0], 'gftype')
+	instead of kpse_set_progname(argv[0]).
+	* triptrap/texmf.cnf: Add '.inimf' to Metafont specific, and
+	'.gftype' to GFtype specific parameters.
+
 2010-03-09  Karl Berry  <karl@tug.org>
 
 	* bibtex.web: final 0.99d, from Oren.

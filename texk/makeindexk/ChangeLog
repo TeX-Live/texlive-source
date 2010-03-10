@@ -1,3 +1,8 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mkind.c: Use kpse_set_program_name() instead of
+	kpse_set_progname().
+
 2010-02-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mkind.h (DUPLICATE) [WIN32]: #undef before #define.

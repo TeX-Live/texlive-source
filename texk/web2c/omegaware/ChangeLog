@@ -1,3 +1,9 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvicopy.ch, odvitype.ch, ofm2opl.ch, opl2ofm.ch, otangle.ch,
+	ovf2ovp.ch, ovp2ovf: Use kpse_set_program_name(argv[0], nil)
+	instead of kpse_set_progname(argv[0]).
+
 2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* odvitype.ch (open_dvi_file): Skip use of cur_name.

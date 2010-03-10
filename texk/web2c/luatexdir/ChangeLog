@@ -1,3 +1,8 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luatangle.ch: Use kpse_set_program_name(argv[0], nil) instead
+	of kpse_set_progname(argv[0]).
+
 2010-02-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/luamisc.am (libluamisc_a_CPPFLAGS): Adapt to zziplib now

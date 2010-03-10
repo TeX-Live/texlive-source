@@ -1,3 +1,8 @@
+2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for kpse_set_program_name() as used in
+	dvipng.c instead of kpse_set_progname().
+
 2010-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, help/Makefile.am: Do not even try to rebuild

@@ -49,7 +49,7 @@ procedure initialize; {this procedure gets things started properly}
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   begin
-    kpse_set_progname (argv[0]);
+    kpse_set_program_name (argv[0], nil);
     kpse_init_prog ('OFM2OPL', 0, nil, nil);
     {We |xrealloc| when we know how big the file is.  The 1000 comes
      from the negative lower bound.}

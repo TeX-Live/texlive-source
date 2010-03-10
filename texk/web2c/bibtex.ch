@@ -647,7 +647,7 @@ do_nothing;             {the ``default system'' doesn't use the command line}
 end
 @y
 @<Process a possible command line@>=
-kpse_set_progname (argv[0]);
+kpse_set_program_name (argv[0], nil);
 parse_arguments;
 @z
 

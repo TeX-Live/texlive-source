@@ -28,7 +28,7 @@ procedure initialize; {this procedure gets things started properly}
 procedure initialize; {this procedure gets things started properly}
   var @!k:integer; {all-purpose index for initialization}
   begin
-    kpse_set_progname (argv[0]);
+    kpse_set_program_name (argv[0], nil);
     kpse_init_prog ('VFTOVP', 0, nil, nil);
     parse_arguments;
 @z
