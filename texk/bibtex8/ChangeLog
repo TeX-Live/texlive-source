@@ -1,3 +1,7 @@
+2010-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.h: Adapt to bibtex.web final 0.99d from Oren.
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex-1.c: Remove spurious format spec in BIBTEX_OVERFLOW.
