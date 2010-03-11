@@ -691,6 +691,9 @@ max_print_line = 79
 screen_width.mf = 1664
 screen_depth.mf = 1200
 
+% BibTeX only (also used for hash_size and hash_prime).
+max_strings.bibtex = 35307
+
 % GFtype only.
 line_length.gftype = 500
 max_rows.gftype = 8191

@@ -1,10 +1,11 @@
 2010-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* texmf.cnf: Add '.mf' to Metafont specific parameters.
+	* texmf.cnf: Append '.mf' to Metafont specific parameters.
+	Add 'max_strings.bibtex', also for hash_size and hash_prime.
 
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* texmf.cnf: Add '.gftype' to GFtype specific parameters.
+	* texmf.cnf: Append '.gftype' to GFtype specific parameters.
 	* progname.h: Remove kpse_set_progname from exported API.
 	Deprecated since 1998.  Kept in library for Versions 5.x.y.
 

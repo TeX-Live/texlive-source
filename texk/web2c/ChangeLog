@@ -3,8 +3,10 @@
 	am/bootstrap.am: Use suffix rules to create tangleboot.p,
 	ctangleboot.c, and cwebboot.[ch] from distributed `in' files.
 
-	* bibtex.ch: Check and correct module numbers.
-	Prepare for |max_strings=hash_size| settable at runtime.
+	* bibtex.ch: Check and correct module numbers.  Parameter
+	|max_strings| settable at runtime, |hash_size| and |hash_prime|
+	are determined from |max_strings|.  Affected arrays are
+	allocated at runtime, but can't be resized.
 
 2010-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
