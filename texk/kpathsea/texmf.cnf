@@ -688,8 +688,8 @@ half_error_line = 50
 max_print_line = 79
 
 % Metafont only.
-screen_width = 1664
-screen_depth = 1200
+screen_width.mf = 1664
+screen_depth.mf = 1200
 
 % GFtype only.
 line_length.gftype = 500
