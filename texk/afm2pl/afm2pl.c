@@ -862,6 +862,11 @@ changeadobe(void)
   newslant = (double) slant -
     efactor * tan (italicangle * (3.1415926535 / 180.0));
 
+  /* Avoid output of '(SLANT R -0.000000)' due to floating point
+   * rounding; neither round() nor fabs() need be defined.  */
+  if ((newslant < 0.0) && (newslant*2000000.0 > 0.0))
+    newslant = 0.0;
+   
   /* if !keepligs, remove native ligatures */
   if (!keepligs && lspace>0) {
     for (i = 0; i < nglyphs; i++)
