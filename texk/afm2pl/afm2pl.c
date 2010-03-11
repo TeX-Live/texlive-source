@@ -864,7 +864,7 @@ changeadobe(void)
 
   /* Avoid output of '(SLANT R -0.000000)' due to floating point
    * rounding; neither round() nor fabs() need be defined.  */
-  if ((newslant < 0.0) && (newslant*2000000.0 > 0.0))
+  if ((newslant < 0.0) && (newslant*2000000.0 >= -1.0))
     newslant = 0.0;
    
   /* if !keepligs, remove native ligatures */
