@@ -1455,7 +1455,7 @@ var hash_want: integer; {85\% of |hash_size|}
 @!square: integer; {${\it prime}_{\it order}^2$}
 @!n: integer; {loop index}
 @!jprime: boolean; {is |j| a prime?}
-begin hash_want := (hash_size / 20) * 17;
+begin hash_want := (hash_size div 20) * 17;
 j := 1;
 k := 1;
 hash_prime := 2;
