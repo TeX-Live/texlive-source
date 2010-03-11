@@ -86,10 +86,21 @@ help()
   cat <<eof
 $version
 Usage: fmtutil [OPTION]... CMD [ARG]...
+Usage: mktexfmt FMT.fmt|BASE.base|MEM.mem|FMTNAME
 
 Rebuild and manage TeX formats (and Metafont bases and MetaPost mems).
 
-Valid options:
+If the command name ends in mktexfmt, only one format can be created.
+The only options supported are --help and --version, and the command
+line must consist of either a format name, with its extension, or a
+plain name that is passed as the argument to --byfmt (see below).  The
+full name of the generated file (if any) is written to stdout, and
+nothing else.
+
+If not operating in mktexfmt mode, the command line can be more general,
+and multiple formats can be generated, as follows.
+
+Valid options for fmtutil:
   --cnffile FILE
   --fmtdir DIRECTORY
   --no-engine-subdir         don't use engine-specific subdir of the fmtdir
@@ -98,7 +109,7 @@ Valid options:
   --dolinks                  (not implemented, just for compatibility)
   --force                    (not implemented, just for compatibility)
 
-Valid commands:
+Valid commands for fmtutil:
   --all                      recreate all format files
   --missing                  create all missing format files
   --refresh                  recreate only existing format files
@@ -118,7 +129,8 @@ Valid commands:
 The config file is named fmtutil.cnf, and
 running  kpsewhich fmtutil.cnf  should show the active file.
 
-Report bugs to <tex-k@tug.org>.
+Report bugs to: tex-k@tug.org
+TeX Live home page: <http://tug.org/texlive/>
 eof
   cleanup 0
 }
@@ -401,18 +413,15 @@ main()
       mktexfmtMode=true
       fullfmt=$1; shift
       case $fullfmt in
+        ""|--help) help ;;
+        --version) version ;;
+              --*) abort "unknown option $fullfmt, try --help" ;;
         *.fmt|*.mem|*.base)
-           set x --byfmt `echo $fullfmt | sed 's@\.[a-z]*$@@'` ${1+"$@"}; shift
-           ;;
-        *.*)
-           abort "unknown format type: $fullfmt"
-           ;;
-        "")
-           help
-           ;;
-        *)
-           set x --byfmt $fullfmt; shift
-           ;;
+          set x --byfmt `echo $fullfmt | sed 's@\.[a-z]*$@@'` ${1+"$@"}
+          shift
+          ;;
+        *.*) abort "unknown format type: $fullfmt" ;;
+          *) set x --byfmt $fullfmt; shift ;;
       esac
       ;;
   esac

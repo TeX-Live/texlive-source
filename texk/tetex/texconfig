@@ -25,7 +25,7 @@ test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 progname=texconfig
 
 # the version string
-version=20080708.1050
+version='$Id$'
 
 envVars="
   AFMFONTS BIBINPUTS BSTINPUTS CMAPFONTS CWEBINPUTS ENCFONTS GFFONTS
@@ -586,8 +586,9 @@ Get more help with:
        $progname pdftex
        $progname xdvi
 
-See http://tug.org/texlive/ for other documentation, etc.
-Report bugs to <tex-k@tug.org>."
+Report bugs to: tex-k@tug.org
+TeX Live home page: <http://tug.org/texlive/>
+"
 
   case $1 in
     # texconfig conf

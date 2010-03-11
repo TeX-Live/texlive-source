@@ -39,7 +39,7 @@ export PATH
 # hack around a bug in zsh:
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
-version=20090623.0228
+version='$Id$
 progname=texlinks
 cnf=fmtutil.cnf   # name of the config file
 
@@ -65,7 +65,9 @@ operate.  If no directories are specified and --multiplatform is
 likewise not specified, the directory of this script itself is used.
 With --multiplatform, all child dirs of an upper-level bin/ dir are used.
 
-Report bugs to tex-k@tug.org.'
+Report bugs to: tex-k@tug.org
+TeX Live home page: <http://tug.org/texlive/>
+'
 
 ###############################################################################
 # abort(errmsg)

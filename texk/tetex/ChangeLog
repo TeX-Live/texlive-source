@@ -1,3 +1,13 @@
+2010-03-11  Karl Berry  <karl@tug.org>
+
+	* updmap,
+	* texlinks,
+	* texconfig (version): use svn id.
+	(help): regularize info at end of msg.
+
+	* fmtutil (help): describe mktexfmt operation.
+	(main): give more error message in mktexfmt mode.
+
 2010-01-17  Karl Berry  <karl@tug.org>
 
 	* updmap,

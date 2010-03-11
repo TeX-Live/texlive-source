@@ -161,7 +161,8 @@ written, run updmap -n.
 For step-by-step instructions on making new fonts known to TeX, see
 http://tug.org/fonts/fontinstall.html.
 
-Report bugs to <tex-k@tug.org>.
+Report bugs to: tex-k@tug.org
+TeX Live home page: <http://tug.org/texlive/>
 eof
   (exit 0); exit
 }
