@@ -1,6 +1,6 @@
 ## texk/web2c/am/bootstrap.am: Makefile fragment for tangle and ctangle.
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 # Bootstrapping tangle requires making it with itself.  We use the opportunity
@@ -38,8 +38,8 @@ tangleboot.c tangleboot.h: tangleboot-web2c
 tangleboot-web2c: tangleboot.p $(web2c_depend)
 	@$(web2c) tangleboot
 # tangleboot.pin is in the distribution
-tangleboot.p:
-	cp -f $(srcdir)/$@in $@
+.pin.p:
+	cp -f $< $@
 tangleboot_DEPENDENCIES = $(default_dependencies)
 EXTRA_DIST += tangleboot.pin
 DISTCLEANFILES += tangleboot.c tangleboot.h tangleboot.p tangleboot-web2c
@@ -70,8 +70,10 @@ noinst_PROGRAMS += ctangleboot
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
 $(ctangleboot_OBJECTS): cwebboot.h
 # ctangleboot.cin and cwebboot.[ch]in are in the distribution
-ctangleboot.c cwebboot.c cwebboot.h:
-	cp -f $(srcdir)/$@in $@
+.cin.c:
+	cp -f $< $@
+.hin.h:
+	cp -f $< $@
 ctangleboot_DEPENDENCIES = $(default_dependencies)
 EXTRA_DIST += ctangleboot.cin cwebboot.cin cwebboot.hin
 DISTCLEANFILES += ctangleboot.c cwebboot.c cwebboot.h

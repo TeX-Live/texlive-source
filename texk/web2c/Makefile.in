@@ -2142,7 +2142,7 @@ all: c-auto.h ff-config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .cpp .cxx .lo .o .obj
+.SUFFIXES: .c .cc .cin .cpp .cxx .h .hin .lo .o .obj .p .pin
 am--refresh:
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/luatangle.am $(srcdir)/luatexdir/am/liblua51.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(am__configure_deps)
@@ -7716,8 +7716,8 @@ tangleboot.c tangleboot.h: tangleboot-web2c
 tangleboot-web2c: tangleboot.p $(web2c_depend)
 	@$(web2c) tangleboot
 # tangleboot.pin is in the distribution
-tangleboot.p:
-	cp -f $(srcdir)/$@in $@
+.pin.p:
+	cp -f $< $@
 $(ctangle_OBJECTS): cweb.h
 ctangle.c: ctangle-ctangle
 	@$(ctangleboot) ctangle ctang-w2c
@@ -7729,8 +7729,10 @@ common-ctangle: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch ctangl
 	@$(ctangleboot) common comm-w2c cweb.c
 $(ctangleboot_OBJECTS): cwebboot.h
 # ctangleboot.cin and cwebboot.[ch]in are in the distribution
-ctangleboot.c cwebboot.c cwebboot.h:
-	cp -f $(srcdir)/$@in $@
+.cin.c:
+	cp -f $< $@
+.hin.h:
+	cp -f $< $@
 bibtex.c bibtex.h: bibtex-web2c
 	@$(web2c) bibtex
 bibtex-web2c: bibtex.p $(web2c_depend) web2c/cvtbib.sed

@@ -1,3 +1,11 @@
+2010-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	am/bootstrap.am: Use suffix rules to create tangleboot.p,
+	ctangleboot.c, and cwebboot.[ch] from distributed `in' files.
+
+	* bibtex.ch: Check and correct module numbers.
+	Prepare for |max_strings=hash_size| settable at runtime.
+
 2010-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h (kpsesetprogname): Removed.
@@ -22,7 +30,7 @@
 	* bibtex.ch: Use BIB_XRETALLOC_NOSET when resizing several
 	arrays with the same size, to obtain accurate log entries.
 	(add_out_pool): Dynamic output buffer, don't call overflow().
-	(add_area): Remove unused procedure.
+	(file_nm_size_overflow, add_area): Remove unused procedures.
 
 2010-03-08  Karl Berry  <karl@tug.org>
 
