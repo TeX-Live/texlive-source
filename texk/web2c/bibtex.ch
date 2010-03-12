@@ -1444,23 +1444,23 @@ as the smallest prime number not less than 85\% of |hash_size| (and
 |>=128|).
 
 @d primes == hash_next {array holding the first |k| primes}
-@d mult == hash_text {array holding odd multiples of the first |ord| primes}
+@d mult == hash_text {array holding odd multiples of the first |o| primes}
 
 @<Procedures and functions for about everything@>=
 procedure compute_hash_prime;
 var hash_want: integer; {85\% of |hash_size|}
-@!k: integer; {number of primes}
-@!j: integer; {a number to be tested}
-@!order: integer; {number of odd multiples of primes}
-@!square: integer; {${\it prime}_{\it order}^2$}
+@!k: integer; {number of prime numbers $p_i$ in |primes|}
+@!j: integer; {a prime number candidate}
+@!o: integer; {number of odd multiples of primes in |mult|}
+@!square: integer; {$p_o^2$}
 @!n: integer; {loop index}
-@!jprime: boolean; {is |j| a prime?}
+@!j_prime: boolean; {is |j| a prime?}
 begin hash_want := (hash_size div 20) * 17;
 j := 1;
 k := 1;
 hash_prime := 2;
 primes[k] := hash_prime;
-order := 2;
+o := 2;
 square := 9;
 while hash_prime < hash_want do
   begin
@@ -1468,19 +1468,20 @@ while hash_prime < hash_want do
     j := j + 2;
     if j = square then
       begin
-      mult[order] := j;
-      incr (order);
-      square := primes[order] * primes[order];
+      mult[o] := j;
+      j := j + 2;
+      incr (o);
+      square := primes[o] * primes[o];
       end;
     n := 2;
-    jprime := true;
-    while (n < order) and jprime do
+    j_prime := true;
+    while (n < o) and j_prime do
       begin
       while mult[n] < j do mult[n] := mult[n] + 2 * primes[n];
-      if mult[n] = j then jprime := false;
+      if mult[n] = j then j_prime := false;
       incr (n);
       end;
-  until jprime;
+  until j_prime;
   incr (k);
   hash_prime := j;
   primes[k] := hash_prime;

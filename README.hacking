@@ -1,4 +1,4 @@
-Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	Modifying the TeX Live (TL) build system
@@ -22,7 +22,7 @@ flex 2.5.35
 
 When anything in the TL build system (configure.ac and Makefile.am files
 with their fragments or M4 macros in m4/) has been modified you have to
-rebuild the coresponding configure, Makefile.in, config.h or c-auto,h, or
+rebuild the coresponding configure, Makefile.in, config.h or c-auto.h, or
 other generated files.  You should use the versions mentioned above.  This
 is most easily done automatically using maintainer-mode.
 

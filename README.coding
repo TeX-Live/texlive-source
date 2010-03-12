@@ -1,4 +1,4 @@
-Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	TeX Live (TL) coding rules
@@ -18,7 +18,7 @@ independently.
 1.1. ANSI C function prototypes and definitions
 -----------------------------------------------
 The TL build system no longer supports pre-ANSI C compilers.  Thus all
-functions prototypes and definitions must conform to the ANSI C standard
+function prototypes and definitions must conform to the ANSI C standard
 (including `void' in the declaration of functions that take no parameters).
 
 1.2. Static

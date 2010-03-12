@@ -39,7 +39,7 @@ export PATH
 # hack around a bug in zsh:
 test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
-version='$Id$
+version='$Id$'
 progname=texlinks
 cnf=fmtutil.cnf   # name of the config file
 

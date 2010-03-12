@@ -1,3 +1,7 @@
+2010-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texlinks (version): Add missing quote in svn id.
+
 2010-03-11  Karl Berry  <karl@tug.org>
 
 	* updmap,
