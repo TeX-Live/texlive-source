@@ -1,23 +1,11 @@
 /************************************************************************
 
-    Generic script wrapper
-
-    Public Domain
-    Originally written 2009 by T.M.Trzeciak
-
-    For rationale and structure details see runscript.tlu script.
-
-    Compilation with gcc (size optimized):
-    gcc -Os -s -shared -o runscript.dll runscript_dll.c -L./ -lluatex
-    gcc -Os -s -o runscript.exe runscript_exe.c -L./ -lrunscript
-    gcc -mwindows -Os -s -o wrunscript.exe wrunscript_exe.c -L./ -lrunscript
-
-    Compilation with tcc (extra small size):
-    tiny_impdef luatex.dll
-    tcc -shared -o runscript.dll runscript_dll.c luatex.def
-    tcc -o runscript.exe runscript_exe.c runscript.def
-    tcc -o wrunscript.exe wrunscript_exe.c runscript.def
-
+  This file is a part of the wrapper program for launching scripts
+  and programs in TeX Live on Windows. See readme.txt for more details.
+  
+  This file was originally written in 2009 by Tomasz M. Trzeciak and
+  was placed in the Public Domain.
+ 
 ************************************************************************/
 
 #include <stdio.h>
@@ -42,14 +30,19 @@ __declspec(dllexport) int dllrunscript( int argc, char *argv[] )
   static char fpath[MAX_PATH];
   char *fname, *argline, **lua_argv;
   int k, quoted, lua_argc;
+  HMODULE WINAPI module_handle = NULL;
 
-  // file path of this executable
+  // file path of the executable
   k = (int) GetModuleFileName(NULL, own_path, MAX_PATH);
   if ( !k || (k == MAX_PATH) ) 
     DIE("cannot get own path (may be too long): %s\n", own_path);
 
-  // script path
-  strcpy(fpath, own_path);
+  // script path (the dir of this library)
+  module_handle = GetModuleHandle(module_name); 
+  // if ( module_handle == NULL ) exe path will be used, which is OK too
+  k = (int) GetModuleFileName(module_handle, fpath, MAX_PATH);
+  if ( !k || (k == MAX_PATH) ) 
+    DIE("cannot get module path (may be too long): %s\n", fpath);
   fname = strrchr(fpath, '\\');
   if ( fname == NULL ) DIE("no directory part in module path: %s\n", fpath);
   fname++;
@@ -68,15 +61,14 @@ __declspec(dllexport) int dllrunscript( int argc, char *argv[] )
   while ( IS_WHITESPACE(*argline) ) argline++; // remove leading whitespace if any
 
   // set up argument list for texlua script
-  lua_argc = argc ? argc + 4 : 5;
-  lua_argv = (char **)malloc( (lua_argc + 1) * sizeof(char *) );
-  lua_argv[0] = texlua_name;
-  lua_argv[1] = fpath; // script to execute
-  for ( k = 1; k < argc; k++ ) lua_argv[k+1] = argv[k]; // copy argument list
-  lua_argv[lua_argc - 3] = subsys_mode; // sentinel argument
-  lua_argv[lua_argc - 2] = argc ? argv[0] : own_path; // original argv[0]
-  lua_argv[lua_argc - 1] = argline; // unparsed arguments
-  lua_argv[lua_argc] = NULL;
+  lua_argv = (char **)malloc( (argc + 6) * sizeof(char *) );
+  lua_argv[lua_argc=0] = texlua_name;
+  lua_argv[++lua_argc] = fpath; // script to execute
+  for ( k = 1; k < argc; k++ ) lua_argv[++lua_argc] = argv[k]; // copy argument list
+  lua_argv[++lua_argc] = subsys_mode; // sentinel argument
+  lua_argv[++lua_argc] = argc ? argv[0] : own_path; // original argv[0]
+  lua_argv[++lua_argc] = argline; // unparsed arguments
+  lua_argv[++lua_argc] = NULL;
 
   // call texlua interpreter
   // dllluatexmain  never returns, but we pretend that it does
@@ -97,7 +89,7 @@ void finalize( void )
   // check for and display error message if any
   char *err_msg;
   if ( err_msg = (char *) getenv(err_env_var) )
-    MessageBox( NULL, err_msg, module_name, MB_ICONERROR | MB_SETFOREGROUND );
+    MessageBox( NULL, err_msg, script_name, MB_ICONERROR | MB_SETFOREGROUND );
 }
 
 __declspec(dllexport) int dllwrunscript( 
@@ -106,7 +98,7 @@ __declspec(dllexport) int dllwrunscript(
   char *argline,
   int winshow 
 ) {
-  // set sentinel argument
+  // set sentinel argument (G for GUI_MODE)
   *subsys_mode = 'G';
   // clear error var in case it exists already
   SetEnvironmentVariable(err_env_var, NULL);

@@ -1,14 +1,13 @@
 
 --[===================================================================[--
 
-
-  Script and program wrappers in TeX Live on Windows
+  Script and program wrappers in TeX Live for Windows
   
   License
   
     Public Domain
     
-    Originally written 2009 by Tomasz M. Trzeciak.
+    Originally written in 2009 by Tomasz M. Trzeciak.
     
     Prior work:
     'tl-w32-wrapper.texlua' by Reinhard Kotucha and Norbert Preining.
@@ -26,17 +25,42 @@
     don't suffer from these problems but they are harder to write, debug
     and maintain in comparison to scripts. For these reasons a hybrid 
     approach was adopted that offers the best of both worlds - a binary 
-    stub combined with a wrapper script.
+    stub combined with a launcher script.
   
+  Source files
+  
+    runscript.tlu     launcher script for locating and dispatching 
+                      target scripts/programs
+    runscript_dll.c   common DLL part of the binary stubs; locates and
+                      calls the launcher script
+    runscript_exe.c   EXE proxy to the common DLL for CLI mode stubs
+    wrunscript_exe.c  EXE proxy to the common DLL for GUI mode stubs
+  
+  Compilation of binaries (requires luatex.dll in the same directory)
+
+    with gcc (size optimized):
+    
+    gcc -Os -s -shared -o runscript.dll runscript_dll.c -L./ -lluatex
+    gcc -Os -s -o runscript.exe runscript_exe.c -L./ -lrunscript
+    gcc -mwindows -Os -s -o wrunscript.exe wrunscript_exe.c -L./ -lrunscript
+
+    with tcc (extra small size):
+    
+    tiny_impdef luatex.dll
+    tcc -shared -o runscript.dll runscript_dll.c luatex.def
+    tcc -o runscript.exe runscript_exe.c runscript.def
+    tcc -o wrunscript.exe wrunscript_exe.c runscript.def
+
   Structure of the wrapper
   
     Wrappers consist of small binary stubs and a common texlua script. 
     The binary stubs are all the same, just different names (but CLI 
-    and GUI stubs differ, see below, and GUI wrappers are actually all 
+    and GUI stubs differ, see below, and GUI stubs are actually all 
     different due to different embedded icons).
     
-    The job of the binary stub is twofold: (a) call the texlua wrapper
-    script 'runscript.tlu' from the same directory and (b) pass to it 
+    The job of the binary stub is twofold: (a) call the texlua launcher
+    script 'runscript.tlu' from the same directory (or more precisely 
+    from the directory containing 'runscript.dll') and (b) pass to it 
     argv[0] and the unparsed argument string as the last two arguments 
     (after adding a sentinel argument, which ends with a new line 
     character). Arbitrary C strings can be passed, because the script 
@@ -50,22 +74,88 @@
     in addition to outputting to stderr.
     
     The stubs are further split into a common DLL and EXE proxies 
-    to it. This is for maintenance reasons - upgrades can be done by 
+    to it. This is for maintenance reasons - updates can be done by 
     replacement of a single DLL rather than all binary stubs.
     
-    The wrapper script knows, which variant has been used to invoke it 
+    The launcher script knows, which variant has been used to invoke it 
     based on the sentinel argument. The lack of this argument means 
     that it was invoked in a standard way, i.e. through texlua.exe. 
     
     All the hard work of locating a script/program to execute happens 
-    in this wrapper script. Once located, the script or program is 
-    always executed directly by spawning its interpreter (or binary) in 
-    a new process. The system shell (cmd.exe) is never called (except 
-    for batch scripts, of course). If the located script happens to be 
+    in the launcher script. The located script/program is always 
+    executed directly by spawning its interpreter (or binary) in a new 
+    process. The system shell (cmd.exe) is never called (except for 
+    batch scripts, of course). If the located script happens to be 
     a (tex)lua script, it is loaded and called directly from within 
     this script, i.e. no new process is spawned.
- 
+    
+  Adding wrappers for user scripts
+  
+    The script wrapping machinery is not limited to scripts included in 
+    TeX Live. You can also use it for script programs from manually 
+    installed packages, which should minimize the problems when using 
+    them with TeX Live. 
+    
+    First, make sure that there is an interpreter program available on 
+    your system for the script you want to use. Interpreters for Perl 
+    and Lua are bundled with TeX Live, all others have to be installed 
+    independently. The following script types and their file extensions 
+    are currently supported and searched in that order:
+    
+      Lua      (.tlu;.texlua;.lua) --  included
+      Perl     (.pl)               --  included
+      Ruby     (.rb)               --  requires installation
+      Python   (.py)               --  requires installation
+      Java     (.jar)              --  requires installation
+      VBScript (.vbs)              --  part of Windows
+      Jscript  (.js)               --  part of Windows
+      Batch    (.bat;.cmd)         --  part of Windows
+      
+    For Unix-style extensionless scripts their first line starting with
+    she-bang (#!) is consulted for the interpreter program to run. This 
+    program must be present on the search path.
+    
+    Next, the script program needs to be installed somewhere below the 
+    'scripts' directory under one of the TEXMF trees (consult the 
+    documentation or texmf/web2c/texmf.cnf file for a list). You may 
+    need to update the file search database afterwards with:
+    
+      mktexlsr [TEXMFDIR]
+      
+    Test if the script can be located with:
+    
+      kpsewhich --format=texmfscripts <script-name>.<ext>
+    
+    Once installed the script can be called immediately with:
+    
+      runscript <script-name> [script arguments]
+    
+    If you prefer to call the script program simply by its name, copy 
+    and rename bin/win32/runscript.exe to <script-name>.exe and put it 
+    in bin/win32/ directory of your TeX Live installation or, if you 
+    don't have the write permissions there, somewhere else on the search 
+    path. 
+    
+  Changelog:
+  
+    2009/12/04 - initial version
+    2009/12/15 - minor fixes for path & extension list parsing
+    2010/01/09 - add support for GUI mode stubs
+    2010/02/28 - enable GUI mode stubs for dviout, psv and texworks;
+               - added generic handling of sys programs
+               - added restricted repstopdf to alias_table
+    2010/03/13 - added 'readme.txt' and changelog
+               - added support and docs for calling user added scripts; 
+                 (use path of 'runscript.dll' instead of .exe stub to 
+                 locate 'runscript.tlu' script)
+               - limit search for shell_escape_commands to system trees
+               - added function for creating directory hierarchy 
+               - fixed directory creation for dviout & texworks aliases
+               - fixed arg[0] of repstopdf & rpdfcrop
+
 --]===================================================================]--
+
+-- HELPER SUBROUTINES --
 
 -- quotes string with spaces
 local function _q(str)
@@ -134,7 +224,7 @@ local function shebang_to_argv(progfullname)
   return argv
 end
 
--- checks if command exist on the path and return it
+-- checks if command exist on the path and returns it
 local function check_command(cmd, PATH)
   local cmdext = cmd..(string.find(cmd, '%.[^\\/.]*$') and '' or '.exe')
   local fullcmd = is_abs_path(cmdext) and lfs.isfile(cmdext) and 
@@ -146,7 +236,22 @@ local function check_command(cmd, PATH)
   end
 end
 
---#####################################################################--
+-- creates directory or directory hierarchy
+local function mkdir_plus(dir)
+  if lfs.mkdir(dir) then
+    return true
+  end
+  -- try with system's mkdir in case we need to create intermediate dirs too
+  local ret = os.spawn({[0]=search_path("cmd.exe"), 
+                        string.format('cmd.exe /x /c mkdir "%s"', dir)})
+  if ret == 0 then
+    return true
+  else
+    return nil, "cannot create directory: " .. dir
+  end
+end
+
+-- MAIN CHUNK --
 
 -- localize the assert function (it will be replaced in gui mode)
 local assert = assert 
@@ -175,16 +280,25 @@ if arg[#arg-2] and ( string.sub(arg[#arg-2], -1) == '\n' ) then
       error(error_msg, 2)
     end
   end
-elseif (string.lower(string.match(arg[0], '[^\\/]+$')) == 'runscript.tlu') then
-  -- we are called directly as: texlua runscript.tlu progname ...
-  arg[0] = arg[1]
-  table.remove(arg, 1)
+else
+  -- we must be called as: texlua runscript.tlu progname ...
+  -- this is treated the same as: runscript[.exe] progname ...
+  -- we don't have the unparsed arument line in this case, so construct one
   for k = 1, #arg do argline = argline..' '.._q(arg[k]) end
 end
 
+-- ( lower arg[0] : get file name part : remove extension ) == 'runscript'
+if (string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', '') == 'runscript') then
+  -- we are called as: runscript progname ...
+  -- remove the first argument from the arg table and from the argline string
+  -- (this argument should have no embedded spaces!)
+  arg[0] = table.remove(arg, 1) 
+  assert(arg[0], "not enough arguments!\nusage: runscript program-name [arguments]")
+  argline = string.gsub(argline, '^%S+%s*', '')
+end
+
 -- program name
--- arg[0] : get file name part : remove extension : remove -sys suffix
-local progname, k = (arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', ''):gsub('%-sys$', '')
+local progname, k = string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', ''):gsub('%-sys$', '')
 local sysprog = (k > 0) -- sys type program/script (there was -sys suffix removed)
 if (progname == 'runscript') then -- prevent recursive calls to this script
   assert(nil, "oops! wrapping the wrapper?")
@@ -224,6 +338,13 @@ if sysprog then
   os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
   os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
 end
+-- restricted programs
+local shell_escape_commands = string.lower(kpse.var_value('shell_escape_commands'))
+if string.find(','..shell_escape_commands..',', ','..progname..',', 1, true) then
+  -- limit search path to the system trees (not really necessary for the names in 
+  -- the alias_table, see below, because they are not searched for with kpathsea)
+  os.setenv('TEXMFSCRIPTS', '{!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$engine,$progname,}//')
+end
 
 -- program alias table (programs with special needs)
 local alias_table = {--[[
@@ -248,7 +369,7 @@ local alias_table = {--[[
     function ()
       local fontsdir = kpse.var_value('TEXMFVAR') .. '/fonts'
       if lfs.attributes(fontsdir, 'mode') ~= 'directory' then 
-        assert(lfs.mkdir(fontsdir))
+        assert(mkdir_plus(fontsdir))
       end
       local tfmpath = kpse.show_path('tfm')
       tfmpath = string.gsub(tfmpath, '!!', '')
@@ -263,32 +384,29 @@ local alias_table = {--[[
       [["-TEXPK=^r\pk\\^s.^dpk;^r\tfm\\^s^tfm;^r\vf\\^s.vf;^r\ovf\\^s.ovf;^r\tfm\\^s.tfm" "-TEXROOT=']] ..
       table.concat(texrt, ';') .. [['"]]
       return {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', dvioutpar, argline}
-    end,---[[
+    end,
   psv = {[0]=TEXDIR..'/tlpkg/tlpsv/gswxlua.exe', 'gswxlua', 
     '-l', _q(TEXDIR..'/tlpkg/tlpsv/psv.wx.lua'),
-    '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'), '-sINPUT='..argline},--]]
+    '-p', _q(TEXDIR..'/tlpkg/tlpsv/psv_view.ps'), '-sINPUT='..argline},
   repstopdf = {[0]=PERLEXE, 'perl', 
     _q(TEXDIR..'/texmf-dist/scripts/epstopdf/epstopdf.pl'), 
     '--restricted', argline},
   rpdfcrop = {[0]=PERLEXE, 'perl', 
     _q(TEXDIR..'/texmf-dist/scripts/pdfcrop/pdfcrop.pl'), 
     '--restricted', argline},
-  sam2p = {[0]=TEXDIR..'/tlpkg/sam2p/sam2p.exe', 'sam2p', argline},---[[
+  sam2p = {[0]=TEXDIR..'/tlpkg/sam2p/sam2p.exe', 'sam2p', argline},
   texworks = 
     function ()
-      -- TODO: add to texmf/web2c/texmf.cnf
-      -- TW_LIBPATH = $TEXMFCONFIG/texworks
-      -- TW_INIPATH = $TW_LIBPATH
       local TW_LIBPATH = kpse.var_value('TW_LIBPATH') or 
                          kpse.var_value('TEXMFCONFIG')..'/texworks'
       local TW_INIPATH = kpse.var_value('TW_INIPATH') or TW_LIBPATH
       os.setenv('TW_LIBPATH', TW_LIBPATH)
       os.setenv('TW_INIPATH', TW_INIPATH)
       if (TW_INIPATH and lfs.attributes(TW_INIPATH, 'mode') ~= 'directory') then
-        assert(lfs.mkdir(TW_INIPATH))
+        assert(mkdir_plus(TW_INIPATH))
       end
       return {[0]=TEXDIR..'/tlpkg/texworks/texworks.exe', 'texworks', argline}
-    end,--]]
+    end,
 }
 
 local extension_map = { -- maps script extension to command
