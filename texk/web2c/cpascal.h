@@ -172,8 +172,8 @@ typedef unsigned char *pointertobyte;
   XRETALLOC (array_var, new_size + 1, type); \
   size_var = new_size; \
 } while (0)
-/* Same as above, but don't increase SIZE_VAR when more arrays when
-   additional arrays with the same size parameter will be resized.  */
+/* Same as above, but don't increase SIZE_VAR when additional arrays
+   with the same size parameter will be resized.  */
 #define BIBXRETALLOCNOSET(array_name, array_var, type, size_var, new_size) do { \
   fprintf (logfile, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
            array_name, (int) sizeof (type), new_size, size_var); \
