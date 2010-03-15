@@ -3,6 +3,11 @@ ChangeLog.TL: TeX Live (TL) changes for lcdf-typetools
 
 2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* include/efont/otfdata.hh [WIN32]: From lcdf-typetools-2.83pre.
+	* configure.ac: Fixed typo in generated AC_DEFINE descriptions.
+
+2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Various MinGW32 (cross) build fixes.
 	* configure.ac, include/efont/otfdata.hh:
 	MinGW32 has <sys/param.h> but also needs <winsock2.h>.

@@ -18,13 +18,13 @@
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 
-/* Define to run cfftot1from otftotfm. */
+/* Define to run cfftot1 from otftotfm. */
 #undef HAVE_AUTO_CFFTOT1
 
-/* Define to run t1dotlessjfrom otftotfm. */
+/* Define to run t1dotlessj from otftotfm. */
 #undef HAVE_AUTO_T1DOTLESSJ
 
-/* Define to run updmapfrom otftotfm. */
+/* Define to run updmap from otftotfm. */
 #undef HAVE_AUTO_UPDMAP
 
 /* Define to 1 if you have the `bcmp' function. */

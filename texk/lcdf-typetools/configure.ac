@@ -43,7 +43,7 @@ AC_SUBST(SELECTED_SUBDIRS)
 AC_FOREACH([Kpse_Opt], kpse_otftotfm_auto_opts,
            [AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
                   [AC_DEFINE([HAVE_AUTO_]AS_TR_CPP(Kpse_Opt), 1,
-                             [Define to run ]Kpse_Opt[from otftotfm.])])
+                             [Define to run ]Kpse_Opt[ from otftotfm.])])
 ])
 
 dnl
