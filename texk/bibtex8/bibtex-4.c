@@ -1994,6 +1994,7 @@ BEGIN
         sp_end = str_start[pop_lit3 + 1] - (pop_lit2 - 1);
         sp_ptr = sp_end - pop_lit1;
       END
+      STR_ROOM (sp_end - sp_ptr);
       while (sp_ptr < sp_end)
       BEGIN
         APPEND_CHAR (str_pool[sp_ptr]);

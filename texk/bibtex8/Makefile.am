@@ -59,9 +59,18 @@ dist_btdoc_DATA = \
 	csfile.txt \
 	file_id.diz
 
+## Tests.
+##
+TESTS = tests/bibtex.test
+EXTRA_DIST = $(TESTS)
+DISTCLEANFILES =
+
+## bibtex.test
+DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
+
 ## Not used
 ##
-EXTRA_DIST = \
+EXTRA_DIST += \
 	bt371csf.zip \
 	dos-dj.mak \
 	dos-emx.mak \

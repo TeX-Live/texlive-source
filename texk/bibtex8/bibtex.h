@@ -269,14 +269,14 @@
 
 #define BUF_SIZE                   10000
 #define MAX_CITES                  2000
-#define MAX_ENT_INTS               10000
-#define MAX_ENT_STRS               10000
-#define MAX_FIELDS                 17250L
+#define MAX_ENT_INTS               3000
+#define MAX_ENT_STRS               3000
+#define MAX_FIELDS                 5000
 #define MAX_STRINGS                12000
 #define POOL_SIZE                  65000L
 
 #define MIN_CROSSREFS               2
-#define WIZ_FN_SPACE                5000
+#define WIZ_FN_SPACE                3000
 #define SINGLE_FN_SPACE             100
 #define ENT_STR_SIZE                250
 #define GLOB_STR_SIZE               1000
@@ -980,7 +980,7 @@
  * sure it will fit; for use in |int_to_ASCII|.
  ***************************************************************************/
 #define APPEND_INT_CHAR(X)          {\
-            if (int_ptr == BUF_SIZE)\
+            if (int_ptr == Buf_Size)\
                 { buffer_overflow ();}\
             int_buf[int_ptr] = (X);\
             INCR (int_ptr); }
@@ -1125,7 +1125,7 @@
  * will fit; since it's so low level, it's implemented as a macro.
  ***************************************************************************/
 #define COPY_CHAR(X)                {\
-            if (FIELD_END == BUF_SIZE)\
+            if (FIELD_END == Buf_Size)\
                 { BIB_FIELD_TOO_LONG_ERR; }\
             else\
                 { FIELD_VL_STR[FIELD_END] = (X);\
@@ -1305,7 +1305,7 @@
             ex_buf[ex_buf_ptr] = (X);\
             INCR(ex_buf_ptr);}
 #define APPEND_EX_BUF_CHAR_AND_CHECK(X)    {\
-            if (ex_buf_ptr == BUF_SIZE) {buffer_overflow ();}; \
+            if (ex_buf_ptr == Buf_Size) {buffer_overflow ();}; \
             APPEND_EX_BUF_CHAR(X)}
 
 /***************************************************************************
@@ -1469,6 +1469,30 @@
  ***************************************************************************/
 #define ENTRY_STRS(_r,_c)       entry_strs[(_r * (ENT_STR_SIZE+1)) + _c]
 #define GLOBAL_STRS(_r,_c)      global_strs[(_r * (GLOB_STR_SIZE+1)) + _c]
+
+
+/***************************************************************************
+ * WEB section number:  N/A
+ * ~~~~~~~~~~~~~~~~~~~
+ * Macros adapted from Kpathsea (lib.h) and Web2C (cpascal.h) to dynamically
+ * resize arrays.
+ ***************************************************************************/
+/* Reallocate N items of type T for ARRAY using myrealloc.  */
+#define MYRETALLOC(array, addr, n, t) ((addr) = (t *) myrealloc(addr, (n) * sizeof(t), array))
+/* BibTeX needs this to dynamically reallocate arrays.  Too bad we can't
+   rely on stringification, or we could avoid the ARRAY_NAME arg.
+   Actually allocate one more than requests, so we can index the last
+   entry, as Pascal wants to do.  */
+#define BIB_XRETALLOC_NOSET(array_name, array_var, type, size_var, new_size) \
+  if (log_file != NULL)\
+    fprintf (log_file, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
+             array_name, (int) sizeof (type), new_size, size_var); \
+  MYRETALLOC (array_name, array_var, new_size + 1, type)
+/* Same as above, but also increase SIZE_VAR for the last (or only) array.  */
+#define BIB_XRETALLOC(array_name, array_var, type, size_var, new_size) do { \
+  BIB_XRETALLOC_NOSET(array_name, array_var, type, size_var, new_size); \
+  size_var = new_size; \
+} while (0)
 
 #endif                          /* __BIBTEX_H__ */
 

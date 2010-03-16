@@ -898,7 +898,7 @@ BEGIN
 			name_bf_ptr = name_tok[cur_token];
 			name_bf_xptr = name_tok[cur_token + 1];
 			if (ex_buf_length + (name_bf_xptr - name_bf_ptr)
-			      > BUF_SIZE)
+			      > Buf_Size)
 			BEGIN
 			  buffer_overflow ();
 			END
@@ -943,7 +943,7 @@ BEGIN
  * still by not having a matching |right_brace|).
  ***************************************************************************/
 			    BEGIN
-			      if ((ex_buf_ptr + 2) > BUF_SIZE)
+			      if ((ex_buf_ptr + 2) > Buf_Size)
 			      BEGIN
 				buffer_overflow ();
 			      END
@@ -1015,7 +1015,7 @@ Loop_Exit_Label:  DO_NOTHING;
 			else
 			BEGIN
 			  if ((ex_buf_length + (sp_xptr2 - sp_xptr1))
-				  > BUF_SIZE)
+				  > Buf_Size)
 			  BEGIN
 			    buffer_overflow ();
 			  END
@@ -1337,10 +1337,14 @@ BEGIN
  * value.
  ***************************************************************************/
 	  BEGIN
-	    if (preamble_ptr == MAX_BIB_FILES)
+	    if (preamble_ptr == Max_Bib_Files)
 	    BEGIN
-	      BIB_ERR2 ("You've exceeded %ld preamble commands",
-			(long) MAX_BIB_FILES);
+              BIB_XRETALLOC_NOSET ("bib_file", bib_file, AlphaFile_T,
+                                   Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
+              BIB_XRETALLOC_NOSET ("bib_list", bib_list, StrNumber_T,
+                                   Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
+              BIB_XRETALLOC ("s_preamble", s_preamble, StrNumber_T,
+                             Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
 	    END
 	    EAT_BIB_WHITE_AND_EOF_CHECK;
 	    if (SCAN_CHAR == LEFT_BRACE)
@@ -2165,7 +2169,7 @@ BEGIN
     if (MAX_PRINT_LINE <= MIN_PRINT_LINE)
         bad = 10 * bad + 2;
 
-    if (MAX_PRINT_LINE >= BUF_SIZE)
+    if (MAX_PRINT_LINE >= Buf_Size)
         bad = 10 * bad + 3;
 
     if (Hash_Prime < 128)
@@ -2196,10 +2200,10 @@ BEGIN
     if (Max_Cites > Max_Strings)
         bad = 10 * bad + 8;
 
-    if (ENT_STR_SIZE > BUF_SIZE)
+    if (ENT_STR_SIZE > Buf_Size)
         bad = 10 * bad + 9;
 
-    if (GLOB_STR_SIZE > BUF_SIZE)
+    if (GLOB_STR_SIZE > Buf_Size)
         bad = 100 * bad + 11;
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 17 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2762,7 +2766,7 @@ BEGIN
   BEGIN
     while ( ! eoln (f))
     BEGIN
-      if (last >= BUF_SIZE)
+      if (last >= Buf_Size)
       BEGIN
         buffer_overflow ();
       END
@@ -3306,7 +3310,8 @@ END
  ***************************************************************************/
 void          pool_overflow (void)
 BEGIN
-  BIBTEX_OVERFLOW ("pool size ", Pool_Size);
+  BIB_XRETALLOC ("str_pool", str_pool, ASCIICode_T,
+                 Pool_Size, Pool_Size + POOL_SIZE);
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  53 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 

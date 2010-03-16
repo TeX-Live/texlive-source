@@ -107,9 +107,6 @@
 /*
 ** Declaration of public functions defined in utils.c
 */
-void                    allocate_arrays (void);
-int                     checkdbg (char *str);
-long                    checklong (char *str);
 void                    close_file (const AlphaFile_T file_pointer);
 //void 	close_u_file (const UFILE * u_file_pointer);
 void CDECL            debug_msg (const int status, const char *printf_fmt, ...);
@@ -123,6 +120,8 @@ FILE                   *open_ip_file (Integer_T search_path);
 FILE                   *open_op_file (void);
 //UFILE	*open_op_u_file (void);
 void                   *mymalloc (const unsigned long bytes_required,
+				const char *var_name);
+void                   *myrealloc (void *old_ptr, const unsigned long bytes_required,
 				const char *var_name);
 void                    parse_cmd_line (int argc, char **argv);
 void                    report_bibtex_capacity (void);

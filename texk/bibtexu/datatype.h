@@ -147,7 +147,7 @@ typedef Integer16_T         AuxNumber_T;
 typedef Integer16_T         BibNumber_T;
 typedef Integer16_T         BltInRange_T;
 typedef Integer16_T         BufPointer_T;
-typedef ASCIICode_T         BufType_T[BUF_SIZE + 1];
+typedef ASCIICode_T        *BufType_T;
 typedef Integer16_T         CiteNumber_T;
 typedef Integer16_T         FieldLoc_T;
 typedef Integer8_T          FnClass_T;

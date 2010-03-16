@@ -24,15 +24,13 @@
 **      the program.  The functions are declared in alphabetical order.
 **      Functions defined in this module are:
 **
-**          allocate_arrays
-**          checkdbg
-**          checklong
 **          close_file
 **          debug_msg
 **          find_file
 **          open_ip_file
 **          open_op_file
 **          mymalloc
+**          myrealloc
 **          parse_cmd_line
 **          report_bibtex_capacity
 **          report_search_paths
@@ -196,12 +194,12 @@ static struct option long_options[] = {
     {"min_crossrefs",   VALUE_REQD, 0, 'M'},
 
     {"mcites",          VALUE_REQD, 0, '\x0A'},
-    {"mentints",        VALUE_REQD, 0, '\x0B'},
+    {"mentints",        VALUE_REQD, 0, '\x0B'}, /* obsolete */
     {"mentstrs",        VALUE_REQD, 0, '\x0C'},
-    {"mfields",         VALUE_REQD, 0, '\x0D'},
-    {"mpool",           VALUE_REQD, 0, '\x0E'},
+    {"mfields",         VALUE_REQD, 0, '\x0D'}, /* obsolete */
+    {"mpool",           VALUE_REQD, 0, '\x0E'}, /* obsolete */
     {"mstrings",        VALUE_REQD, 0, '\x0F'},
-    {"mwizfuns",        VALUE_REQD, 0, '\x10'},
+    {"mwizfuns",        VALUE_REQD, 0, '\x10'}, /* obsolete */
     {0, 0, 0, 0}
 };
 
@@ -240,31 +238,58 @@ static int              sort_weight;
 **  Allocate memory dynamically for the large arrays whose size is set
 **  dynamically, depending on the amount memory of memory available.
 **
+**	AlphaFile_T     bib_file[Max_Bib_Files + 1];
+**	StrNumber_T     bib_list[Max_Bib_Files + 1];
+**	ASCIICode_T     buffer[Buf_Size + 1];
 **	StrNumber_T     cite_info[Max_Cites + 1];
 **	StrNumber_T     cite_list[Max_Cites + 1];
 **	Boolean_T       entry_exists[Max_Cites + 1];
-**      Integer_T       entry_ints[Max_Ent_Ints + 1];
+**	Integer_T       entry_ints[Max_Ent_Ints + 1];
 **	ASCIICode_T	entry_strs[Max_Ent_Strs + 1][ENT_STR_SIZE + 1];
+**	ASCIICode_T     ex_buf[Buf_Size + 1];
 **	StrNumber_T     field_info[Max_Fields + 1];
-**      FnClass_T       fn_type[Hash_Size + 1];
-**      ASCIICode_T     global_strs[MAX_GLOB_STRS + 1];
-**      StrIlk_T        hash_ilk[Hash_Size + 1];
-**      HashPointer_T   hash_next[Hash_Size + 1];
-**      StrNumber_T     hash_text[Hash_Size + 1];
-**      Integer_T       ilk_info[Hash_Size + 1];
-**      ASCIICode_T     str_pool[Pool_Size + 1];
-**      PoolPointer_T   str_start[Max_Strings + 1];
+**	FnClass_T       fn_type[Hash_Size + 1];
+**	ASCIICode_T     global_strs[MAX_GLOB_STRS + 1];
+**	StrIlk_T        hash_ilk[Hash_Size + 1];
+**	HashPointer_T   hash_next[Hash_Size + 1];
+**	StrNumber_T     hash_text[Hash_Size + 1];
+**	Integer_T       ilk_info[Hash_Size + 1];
+**	ASCIICode_T     name_sep_char[Buf_Size + 1];
+**	BufPointer_T    name_tok[Buf_Size + 1];
+**	ASCIICode_T     out_buf[Buf_Size + 1];
+**	StrNumber_T     s_preamble[Max_Bib_Files + 1];
+**	ASCIICode_T     str_pool[Pool_Size + 1];
+**	PoolPointer_T   str_start[Max_Strings + 1];
+**	ASCIICode_T     sv_buffer[Buf_Size + 1];
 **	HashPtr2_T      type_list[Max_Cites + 1];
-**      HashPtr2_T      wiz_functions[Wiz_Fn_Space + 1];
+**	HashPtr2_T      wiz_functions[Wiz_Fn_Space + 1];
 **============================================================================
 */
-void allocate_arrays (void)
+static void allocate_arrays (void)
 {
     unsigned long           bytes_required;
     ASCIICode_T            *dummy_ptr;
     int                     row;
 
     debug_msg (DBG_MEM, "Starting to allocate memory for arrays ... ");
+
+    /*
+    ** AlphaFile_T bib_file[Max_Bib_Files + 1];
+    */
+    bytes_required = (Max_Bib_Files + 1) * (unsigned long) sizeof (AlphaFile_T);
+    bib_file = (AlphaFile_T *) mymalloc (bytes_required, "bib_file");
+
+    /*
+    ** StrNumber_T bib_list[Max_Bib_Files + 1];
+    */
+    bytes_required = (Max_Bib_Files + 1) * (unsigned long) sizeof (StrNumber_T);
+    bib_list = (StrNumber_T *) mymalloc (bytes_required, "bib_list");
+
+    /*
+    ** ASCIICode_T buffer[Buf_Size + 1];
+    */
+    bytes_required = (Buf_Size + 1) * (unsigned long) sizeof (ASCIICode_T);
+    buffer = (ASCIICode_T *) mymalloc (bytes_required, "buffer");
 
     /*
     ** StrNumber_T cite_info[Max_Cites + 1];
@@ -299,6 +324,11 @@ void allocate_arrays (void)
 
     entry_strs = (ASCIICode_T *) mymalloc (bytes_required, "entry_strs");
 
+    /*
+    ** ASCIICode_T ex_buf[Buf_Size + 1];
+    */
+    bytes_required = (Buf_Size + 1) * (unsigned long) sizeof (ASCIICode_T);
+    ex_buf = (ASCIICode_T *) mymalloc (bytes_required, "ex_buf");
 
     /*
     ** StrNumber_T field_info[Max_Fields + 1];
@@ -318,7 +348,6 @@ void allocate_arrays (void)
     bytes_required = (unsigned long) (MAX_GLOB_STRS)
         * (GLOB_STR_SIZE + 1)
         * (unsigned long) sizeof (ASCIICode_T);
-    dummy_ptr = (ASCIICode_T *) NULL;
     dummy_ptr = (ASCIICode_T *) mymalloc (bytes_required, "global_strs");
 
     for (row = 0; row < (MAX_GLOB_STRS + 1); row++) {
@@ -350,6 +379,30 @@ void allocate_arrays (void)
     ilk_info = (Integer_T *) mymalloc (bytes_required, "ilk_info");
 
     /*
+    ** ASCIICode_T name_sep_char[Buf_Size + 1];
+    */
+    bytes_required = (Buf_Size + 1) * (unsigned long) sizeof (ASCIICode_T);
+    name_sep_char = (ASCIICode_T *) mymalloc (bytes_required, "name_sep_char");
+
+    /*
+    ** BufPointer_T name_tok[Buf_Size + 1];
+    */
+    bytes_required = (Buf_Size + 1) * (unsigned long) sizeof (BufPointer_T);
+    name_tok = (BufPointer_T *) mymalloc (bytes_required, "name_tok");
+
+    /*
+    ** ASCIICode_T out_buf[Buf_Size + 1];
+    */
+    bytes_required = (Buf_Size + 1) * (unsigned long) sizeof (ASCIICode_T);
+    out_buf = (ASCIICode_T *) mymalloc (bytes_required, "out_buf");
+
+    /*
+    ** StrNumber_T s_preamble[Max_Bib_Files + 1];
+    */
+    bytes_required = (Max_Bib_Files + 1) * (unsigned long) sizeof (StrNumber_T);
+    s_preamble = (StrNumber_T *) mymalloc (bytes_required, "s_preamble");
+
+    /*
     ** ASCIICode_T str_pool[Pool_Size + 1];
     */
     bytes_required = (Pool_Size + 1) * (unsigned long) sizeof (ASCIICode_T);
@@ -360,6 +413,12 @@ void allocate_arrays (void)
     */
     bytes_required = (Max_Strings + 1) * (unsigned long) sizeof (PoolPointer_T);
     str_start = (PoolPointer_T *) mymalloc (bytes_required, "str_start");
+
+    /*
+    ** ASCIICode_T sv_buffer[Buf_Size + 1];
+    */
+    bytes_required = (Buf_Size + 1) * (unsigned long) sizeof (ASCIICode_T);
+    sv_buffer = (ASCIICode_T *) mymalloc (bytes_required, "sv_buffer");
 
     /*
     ** HashPtr2_T type_list[Max_Cites + 1];
@@ -386,7 +445,7 @@ void allocate_arrays (void)
 **  integer.  Return 0 (no debugging) if a valid option was not parsed.
 **============================================================================
 */
-int checkdbg (char *str)
+static int checkdbg (char *str)
 {
     int                 dbgval = 0;
     
@@ -420,7 +479,7 @@ int checkdbg (char *str)
 **  Return -1 if a valid integer was not parsed.
 **============================================================================
 */
-long checklong (char *str)
+static long checklong (char *str)
 {
     long                value;
     char               *endptr;
@@ -632,13 +691,14 @@ int find_file (const char *envvar_name, const char *fallback_path,
 **  Allocate memory for a specified array and check whether the allocation 
 **  was successful.  If not, issue an error message and cause the program
 **  to stop with a fatal exit status.
+**  Allocate at least 1 byte, otherwise malloc may return NULL.
 **============================================================================
 */
 void *mymalloc (const unsigned long bytes_required, const char *array_name)
 {
     void               *ptr;
 
-    ptr = malloc (bytes_required);
+    ptr = malloc (bytes_required ? bytes_required : 1);
 
     if (ptr == NULL) {
         printf ("\nFatal error: couldn't allocate %lu bytes for array `%s'",
@@ -653,6 +713,41 @@ void *mymalloc (const unsigned long bytes_required, const char *array_name)
 
     return (ptr);
 }                               /* mymalloc () */
+
+
+
+/*-
+**============================================================================
+** myrealloc()
+**
+**  Reallocate memory for a specified array and check whether the allocation 
+**  was successful.  If not, issue an error message and cause the program
+**  to stop with a fatal exit status.
+**  Allocate at least 1 byte, otherwise realloc may return NULL.
+**============================================================================
+*/
+void *myrealloc (void *old_ptr, const unsigned long bytes_required, const char *array_name)
+{
+    void               *ptr;
+
+    if (old_ptr == NULL)
+        return mymalloc (bytes_required, array_name);
+
+    ptr = realloc (old_ptr, bytes_required ? bytes_required : 1);
+
+    if (ptr == NULL) {
+        printf ("\nFatal error: couldn't reallocate %lu bytes for array `%s'",
+                bytes_required, array_name);
+        mark_fatal ();
+        debug_msg (DBG_MISC, "calling longjmp (Exit_Program_Flag) ... ");
+        longjmp (Exit_Program_Flag, 1);
+    } else {
+        debug_msg (DBG_MEM, "reallocated %7lu bytes for array `%s'",
+	           bytes_required, array_name);
+    }
+
+    return (ptr);
+}                               /* myrealloc () */
 
 
 
@@ -861,12 +956,12 @@ FILE *open_op_file (void)
 **                              referenced entry in the citation list
 **                              (default = 2)
 **          --mcites ##         allow ## \\cites in the .aux files
-**          --mentints ##       allow ## integer entries in the .bib databases
+**          --mentints ##       ignored
 **          --mentstrs ##       allow ## string entries in the .bib databases
-**          --mfields ##        allow ## fields in the .bib databases
-**          --mpool ##          set the string pool to ## bytes
+**          --mfields ##        ignored
+**          --mpool ##          ignored
 **          --mstrings ##       allow ## unique strings
-**          --mwizfuns ##       allow ## wizard functions
+**          --mwizfuns ##       ignored
 **============================================================================
 */
 void parse_cmd_line (int argc, char **argv)
@@ -975,12 +1070,7 @@ Get the option, and change the flag. 23/sep/2009
                 break;
 
             case '\x0B':    /**************** --mentints ***************/
-                M_entints = checklong (optarg);
-                if (M_entints < 0) {
-                    mark_fatal ();
-                    usage ("invalid max number of integer entries `%s'\n",
-                            optarg);
-                }
+                (void) checklong (optarg);   /******** ignored ********/
                 break;
 
             case '\x0C':    /**************** --mentstrs ***************/
@@ -993,19 +1083,8 @@ Get the option, and change the flag. 23/sep/2009
                 break;
 
             case '\x0D':    /**************** --mfields ****************/
-                M_fields = checklong (optarg);
-                if (M_fields < 0) {
-                    mark_fatal ();
-                    usage ("invalid max number of fields `%s'\n", optarg);
-                }
-                break;
-
             case '\x0E':    /**************** --mpool *****************/
-                M_pool = checklong (optarg);
-                if (M_pool < 0) {
-                    mark_fatal ();
-                    usage ("invalid pool size `%s'\n", optarg);
-                }
+                (void) checklong (optarg);   /******** ignored ********/
                 break;
 
             case '\x0F':    /**************** --mstrings ***************/
@@ -1017,11 +1096,7 @@ Get the option, and change the flag. 23/sep/2009
                 break;
 
             case '\x10':    /**************** --mwizfuns ***************/
-                M_wiz_fn_space = checklong (optarg);
-                if (M_wiz_fn_space < 0) {
-                    mark_fatal ();
-                    usage ("invalid max wizard functions `%s'\n", optarg);
-                }
+                (void) checklong (optarg);   /******** ignored ********/
                 break;
 
 	    default:        /**************** Unknown argument ********/
@@ -1122,14 +1197,14 @@ void report_bibtex_capacity (void)
     if (log_file != NULL) {
         FPRINTF (log_file, "BibTeX's capacity set as follows:\n\n");
         LOG_CAPACITY (AUX_STACK_SIZE);
-        LOG_CAPACITY (BUF_SIZE);
+        LOG_CAPACITY (Buf_Size);
         LOG_CAPACITY (ENT_STR_SIZE);
         LOG_CAPACITY (FILE_NAME_SIZE);
         LOG_CAPACITY (GLOB_STR_SIZE);
         LOG_CAPACITY (Hash_Prime);
         LOG_CAPACITY (Hash_Size);
         LOG_CAPACITY (LIT_STK_SIZE);
-        LOG_CAPACITY (MAX_BIB_FILES);
+        LOG_CAPACITY (Max_Bib_Files);
         LOG_CAPACITY (Max_Cites);
         LOG_CAPACITY (Max_Ent_Ints);
         LOG_CAPACITY (Max_Ent_Strs);
@@ -1197,6 +1272,55 @@ void report_search_paths (void)
 }                               /* report_search_paths() */
 
 
+/*-
+**============================================================================
+** compute_hash_prime()
+**
+**  We use the algorithm from Knuth's \.{primes.web} to compute
+**  |hash_prime| as the smallest prime number not less than 85\%
+**  of |hash_size| (and |>=128|).
+**
+**  This algorithm uses two arrays |primes| and |mult|.  We use the
+**  already allocated |hash_next| and |hash_text| for that purpose.
+**
+**============================================================================
+*/
+#define primes hash_next
+#define mult hash_text
+static void compute_hash_prime (void)
+{
+    Integer32_T Hash_Want = (Hash_Size / 20) * 17; /* 85\% of |hash_size| */
+    Integer32_T k = 1; /*number of prime numbers $p_i$ in |primes| */
+    Integer32_T j = 1; /* a prime number candidate */
+    Integer32_T o = 2; /* number of odd multiples of primes in |mult| */
+    Integer32_T square = 9; /* $p_o^2$ */
+    Integer32_T n; /* loop index */
+    Boolean_T j_prime; /* is |j| a prime? */
+
+    debug_msg (DBG_MEM, "Computing Hash_Prime ... ");
+
+    primes[k] = Hash_Prime = 2;
+    while (Hash_Prime < Hash_Want) {
+        do {
+            j += 2;
+            if (j == square) {
+                mult[o++] = j;
+                j += 2;
+                square = primes[o] * primes[o];
+            }
+            n = 2;
+            j_prime = TRUE;
+            while ((n < o) && j_prime) {
+                while (mult[n] < j)
+                    mult[n] += 2 * primes[n];
+                if (mult[n++] == j)
+                    j_prime = FALSE;
+            }
+        } while (!j_prime);
+        primes[++k] = Hash_Prime = j;
+    }
+}
+
 
 /*-
 **============================================================================
@@ -1211,15 +1335,17 @@ void report_search_paths (void)
 **
 **    Parameter       Cmd   Standard       --big      --huge  --wolfgang
 **    ------------------------------------------------------------------
-**    Hash_Prime      N        4,253       8,501      16,319      30,011
-**    Hash_Size       N        5,000      10,000      19,000      35,000
+**    Buf_Size        *** initialy 20000, increased as required ***
+**    Hash_Prime      *** computed from Hash_Size ***
+**    Hash_Size       *** determined from Max_Strings ***
+**    Max_Bib_Files   *** initialy 20, increased as required ***
 **    Max_Cites       Y          750       2,000       5,000       7,500
-**    Max_Ent_Ints    Y        3,000       4,000       5,000       7,500
+**    Max_Ent_Ints    *** initialy 3000, increased as required ***
 **    Max_Ent_Strs    Y        3,000       6,000      10,000      10,000
-**    Max_Fields      Y       17,250      30,000      85,000     125,000
+**    Max_Fields      *** initialy 5000, increased as required ***
 **    Max_Strings     Y        4,000      10,000      19,000      30,000
-**    Pool_Size       Y       65,530     130,000     500,000     750,000
-**    Wiz_Fn_Space    Y        3,000       6,000      10,000      10,000
+**    Pool_Size       *** initialy 65,000, increased as required ***
+**    Wiz_Fn_Space    *** initialy 3000, increased as required ***
 **    ------------------------------------------------------------------
 **
 **============================================================================
@@ -1228,80 +1354,67 @@ void set_array_sizes (void)
 {
     debug_msg (DBG_MEM, "Setting BibTeX's capacity ... ");
 
-    Hash_Prime = 4253;
-    Hash_Size = 5000;
     Max_Cites = 750;
-    Max_Ent_Ints = 3000;
     Max_Ent_Strs = 3000;
-    Max_Fields = 17250;
     Max_Strings = 4000;
     Min_Crossrefs = 2;
-    Pool_Size = 65530;
-    Wiz_Fn_Space = 3000;
 
     if (Flag_big) {
-        Hash_Prime = 8501;
-        Hash_Size = 10000;
         Max_Cites = 2000;
-        Max_Ent_Ints = 3000;
         Max_Ent_Strs = 5000;
-        Max_Fields = 30000;
         Max_Strings = 10000;
-        Pool_Size = 130000;
-        Wiz_Fn_Space = 6000;
     }
     
     if (Flag_huge) {
-        Hash_Prime = 16319;
-        Hash_Size = 19000;
         Max_Cites = 5000;
-        Max_Ent_Ints = 5000;
         Max_Ent_Strs = 10000;
-        Max_Fields = 85000L;
         Max_Strings = 19000;
-        Pool_Size = 500000L;
-        Wiz_Fn_Space = 10000;
     }
 
     if (Flag_wolfgang) {
-        Hash_Prime = 30011;
-        Hash_Size = 35000;
         Max_Cites = 7500;
-        Max_Ent_Ints = 7500;
         Max_Ent_Strs = 10000;
-        Max_Fields = 125000L;
         Max_Strings = 30000;
-        Pool_Size = 750000L;
-        Wiz_Fn_Space = 10000;
     }
+
+    Buf_Size = BUF_SIZE;
+
+    Max_Bib_Files = MAX_BIB_FILES;
 
     if (M_cites > 0)
         Max_Cites = M_cites;
 
-    if (M_entints > 0)
-        Max_Ent_Ints = M_entints;
+    Max_Ent_Ints = MAX_ENT_INTS;
 
     if (M_entstrs > 0)
         Max_Ent_Strs = M_entstrs;
 
-    if (M_fields > 0)
-        Max_Fields = M_fields;
+    Max_Fields = MAX_FIELDS;
 
     if (M_min_crossrefs > 0)
         Min_Crossrefs = M_min_crossrefs;
 
-    if (M_pool > 0)
-        Pool_Size = M_pool;
+    Pool_Size = POOL_SIZE;
 
     if (M_strings > 0)
-        Max_Strings = M_strings ;
+        Max_Strings = M_strings;
+    if (Max_Strings < 4000)
+        Max_Strings = 4000;
+    Hash_Size = Max_Strings;
+    if (Hash_Size < 5000)
+        Hash_Size = 5000;
 
-    if (M_wiz_fn_space > 0)
-        Wiz_Fn_Space = M_wiz_fn_space;
+    Wiz_Fn_Space = WIZ_FN_SPACE;
+
+
+    allocate_arrays ();
+    compute_hash_prime ();
 
 
     debug_msg (DBG_MEM, "Hash_Prime = %d, Hash_Size = %d", 
                Hash_Prime, Hash_Size);
+    debug_msg (DBG_MEM, "Buf_Size = %d, Max_Bib_Files = %d", 
+               Buf_Size, Max_Bib_Files);
     debug_msg (DBG_MEM, "Max_Cites = %d, Max_Ent_Ints = %d", 
                Max_Cites, Max_Ent_Ints);
     debug_msg (DBG_MEM, "Max_Ent_Strs = %d, Max_Fields = %d",
@@ -1401,12 +1514,8 @@ void usage (const char *printf_fmt, ...)
     FSO ("  -W  --wolfgang          set really huge BibTeX capacity for Wolfgang\n");
     FSO ("  -M  --min_crossrefs ##  set min_crossrefs to ##\n");
     FSO ("      --mcites ##         allow ## \\cites in the .aux files\n");
-    FSO ("      --mentints ##       allow ## integer entries in the .bib databases\n");
     FSO ("      --mentstrs ##       allow ## string entries in the .bib databases\n");
-    FSO ("      --mfields ##        allow ## fields in the .bib databases\n");
-    FSO ("      --mpool ##          set the string pool to ## bytes\n");
     FSO ("      --mstrings ##       allow ## unique strings\n");
-    FSO ("      --mwizfuns ##       allow ## wizard functions\n");
 
     debug_msg (DBG_MISC, "calling longjmp (Exit_Program_Flag) ... ");
     longjmp (Exit_Program_Flag, 1);
@@ -1610,7 +1719,9 @@ int c8read_csf (void)
 {
     int                 c, i;
     int                 in_comment;
-    char                sx[BUF_SIZE + 1];
+#define SX_BUF_SIZE 15
+    /* a section name: "order", "uppercase", "lowercase", or "lowupcase".  */
+    char                sx[SX_BUF_SIZE + 1];
 #ifndef KPATHSEA
     char               *value;
 #endif
@@ -1733,7 +1844,7 @@ int c8read_csf (void)
                 sx[i++] = c;
             else
                 break;
-        } while (!feof (c8_cs_file) && (i < BUF_SIZE));
+        } while (!feof (c8_cs_file) && (i < SX_BUF_SIZE));
         sx[i] = '\0';
 
         /*

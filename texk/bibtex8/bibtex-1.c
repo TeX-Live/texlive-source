@@ -203,7 +203,7 @@ void          add_buf_pool (StrNumber_T p_str)
 BEGIN
   p_ptr1 = str_start[p_str];
   p_ptr2 = str_start[p_str + 1];
-  if ((ex_buf_length + (p_ptr2 - p_ptr1)) > BUF_SIZE)
+  if ((ex_buf_length + (p_ptr2 - p_ptr1)) > Buf_Size)
   BEGIN
     buffer_overflow ();
   END
@@ -304,9 +304,9 @@ BEGIN
 
   p_ptr1 = str_start[p_str];
   p_ptr2 = str_start[p_str + 1];
-  if ((out_buf_length + (p_ptr2 - p_ptr1)) > BUF_SIZE)
+  if ((out_buf_length + (p_ptr2 - p_ptr1)) > Buf_Size)
   BEGIN
-    BIBTEX_OVERFLOW ("output buffer size ", BUF_SIZE);
+    buffer_overflow ();
   END
   out_buf_ptr = out_buf_length;
   while (p_ptr1 < p_ptr2)
@@ -502,9 +502,14 @@ BEGIN
  * the |s_bib_extension| string, the resulting file name can be opened.
  ***************************************************************************/
     BEGIN
-      if (bib_ptr == MAX_BIB_FILES)
+      if (bib_ptr == Max_Bib_Files)
       BEGIN
-        BIBTEX_OVERFLOW ("number of database files ", MAX_BIB_FILES);
+        BIB_XRETALLOC_NOSET ("bib_file", bib_file, AlphaFile_T,
+                             Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
+        BIB_XRETALLOC_NOSET ("bib_list", bib_list, StrNumber_T,
+                             Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
+        BIB_XRETALLOC ("s_preamble", s_preamble, StrNumber_T,
+                       Max_Bib_Files, Max_Bib_Files + MAX_BIB_FILES);
       END
       CUR_BIB_STR = hash_text[str_lookup (buffer, buf_ptr1, TOKEN_LEN,
   					  BIB_FILE_ILK, DO_INSERT)];
@@ -1121,7 +1126,7 @@ END
  ***************************************************************************/
 void          bib_field_too_long_print (void)
 BEGIN
-  BIB_ERR2 ("Your field is more than %ld characters",  (long) BUF_SIZE);
+  BIB_ERR2 ("Your field is more than %ld characters",  (long) Buf_Size);
 
 Exit_Label: DO_NOTHING;
 END
@@ -2346,8 +2351,8 @@ BEGIN
       BEGIN
 	if ((num_ent_ints * num_cites) > Max_Ent_Ints)
 	BEGIN
-	  PRINT2 ("%ld: ", (long) (num_ent_ints * num_cites));
-	  BIBTEX_OVERFLOW ("total number of integer entry-variables ", Max_Ent_Ints);
+	  BIB_XRETALLOC ("entry_ints", entry_ints, Integer_T,
+	                 Max_Ent_Ints, (long) (num_ent_ints + 1) * (num_cites + 1));
 	END
 	int_ent_ptr = 0;
 	while (int_ent_ptr < (num_ent_ints * num_cites))
@@ -2651,7 +2656,18 @@ END
  ***************************************************************************/
 void          buffer_overflow (void)
 BEGIN
-  BIBTEX_OVERFLOW ("buffer size ", BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("buffer", buffer, ASCIICode_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("ex_buf", ex_buf, ASCIICode_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("name_sep_char", name_sep_char, ASCIICode_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("name_tok", name_tok, BufPointer_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC_NOSET ("out_buf", out_buf, ASCIICode_T,
+                       Buf_Size, Buf_Size + BUF_SIZE);
+  BIB_XRETALLOC ("sv_buffer", sv_buffer, ASCIICode_T,
+                 Buf_Size, Buf_Size + BUF_SIZE);
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  46 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2784,8 +2800,8 @@ void          check_field_overflow (Integer_T total_fields)
 BEGIN
   if (total_fields > Max_Fields)
   BEGIN
-    PRINT_LN2 ("%ld fields:", (long) total_fields);
-    BIBTEX_OVERFLOW ("total number of fields ", Max_Fields);
+    BIB_XRETALLOC ("field_info", field_info, StrNumber_T,
+                   Max_Fields, Max_Fields + MAX_FIELDS);
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 226 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/

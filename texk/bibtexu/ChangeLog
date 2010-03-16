@@ -1,3 +1,61 @@
+2010-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/bibtex.test: New shell script to test 7-bit mode.
+	* Makefile.am (TESTS, EXTRA_DIST, DISTCLEANFILES): Adapted.
+
+	* bibtex-1.c, bibtex-2.c: Reallocate bib_file, bib_list, and
+	s_preamble as needed.
+
+	* datatype.h (BufType_T): Declare as pointer instead of array.
+	* gblvars.h, utils.c: Dynamically allocate buffer, ex_buf,
+	out_buf, and sv_buffer.
+	* bibtex-1.c (add_out_pool): Call buffer_overflow to reallocate.
+	(buffer_overflow): Reallocate buffer, ex_buf, name_sep_char,
+	name_tok, out_buf, and sv_buffer as needed.
+
+	* utils.c (c8read_csf): Drastically reduce sx array size.
+
+2010-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex-1.c: Reallocate entry_ints, field_info as needed.
+	* bibtex-3.c: Reallocate wiz_functions as needed.
+	* gblvars.h, utils.c: Dynamically allocate bib_file, bib_list,
+	name_sep_char, name_tok, and s_preamble.
+	* gblvars.h (M_entints, M_fields, M_wiz_fn_space): Removed.
+	* utils.c (parse_cmd_line, usage): Ignore/remove --mentints,
+	--mfields, and --mwizfuns.
+
+	* bibtex-4.c: Added check for str_pool overflow (from bibtex).
+
+	* gblvars.h (Buf_Size, Max_Bib_Files): New global vars.
+	* utils.c: Set Buf_Size=BUF_SIZE, Max_Bib_Files=MAX_BIB_FILES.
+	Allocate bib_file, bib_list, name_sep_char, name_tok, and
+	s_preamble.[A
+	* bibtex-1.c, bibtex-2.c: Use Buf_Size and Max_Bib_Files.
+
+2010-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Dynamic allocation of arrays.
+	* bibtex.h (MYRETALLOC, BIB_XRETALLOC, BIB_XRETALLOC_NOSET):
+	Preprocessor macros used to reallocate arrays.
+	* utils.[ch] (myrealloc): New function.
+	(mymalloc, myrealloc): Allocate at least 1 byte, to avoid NULL.
+	(checkdbg, checklong): Declare as static.
+
+	* bibtex-2.c (pool_overflow): Reallocate str_pool as needed.
+	* gblvars.h (M_pool): Removed.
+	* utils.c (parse_cmd_line, usage): Ignore/remove --mpool.
+
+2010-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Determine hash_size from max_strings and compute hash_prime.
+	* bibtex.c (main): Don't call allocate_arrays.
+	Print newline after fatal error message.
+	* utils.c (allocate_arrays): Declare as static.
+	(compute_hash_prime): New function, using allocated arrays.
+	(set_array_sizes): Call allocate_arrays and compute_hash_prime.
+	* utils.h (allocate_arrays): Remove.
+
 2010-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex.h: Adapt to bibtex.web final 0.99d from Oren.

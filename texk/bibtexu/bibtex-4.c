@@ -2267,6 +2267,7 @@ BEGIN
 
       END
 
+      STR_ROOM (sp_end - sp_ptr);
       while (sp_ptr < sp_end)
       BEGIN
         APPEND_CHAR (str_pool[sp_ptr]);

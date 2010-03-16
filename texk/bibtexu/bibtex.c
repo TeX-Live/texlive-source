@@ -281,7 +281,6 @@ BEGIN
     parse_cmd_line (argc, argv);
 
     set_array_sizes ();
-    allocate_arrays ();
     report_search_paths ();
 
     initialize ();
@@ -457,7 +456,7 @@ Close_Up_Shop_Label:
           END
           break;
         case FATAL_MESSAGE:
-          PRINT ("(That was a fatal error)");
+          PRINT_LN ("(That was a fatal error)");
           break;
         default:
           PRINT ("History is bunk");

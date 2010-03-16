@@ -2060,8 +2060,8 @@ Next_Token_Label:
       INSERT_FN_LOC (END_OF_DEF);
       if ((single_ptr + wiz_def_ptr) > Wiz_Fn_Space)
       BEGIN
-	PRINT2 ("%ld: ", (long) (single_ptr + wiz_def_ptr));
-	BIBTEX_OVERFLOW ("wizard-defined function space ", Wiz_Fn_Space);
+	BIB_XRETALLOC ("wiz_functions", wiz_functions, HashPtr2_T,
+                       Wiz_Fn_Space, Wiz_Fn_Space + WIZ_FN_SPACE);
       END
       FN_INFO[fn_hash_loc] = wiz_def_ptr;
       copy_ptr = 0;
