@@ -2349,16 +2349,13 @@ BEGIN
  * value to which all integers are initialized.
  ***************************************************************************/
       BEGIN
-	if ((num_ent_ints * num_cites) > Max_Ent_Ints)
+	int_ent_ptr = (num_ent_ints + 1) * (num_cites + 1);
+	entry_ints = (Integer_T *) mymalloc ((unsigned long) sizeof (Integer_T)
+	    * (unsigned long) int_ent_ptr, "entry_ints");
+	while (int_ent_ptr > 0)
 	BEGIN
-	  BIB_XRETALLOC ("entry_ints", entry_ints, Integer_T,
-	                 Max_Ent_Ints, (long) (num_ent_ints + 1) * (num_cites + 1));
-	END
-	int_ent_ptr = 0;
-	while (int_ent_ptr < (num_ent_ints * num_cites))
-	BEGIN
+	  DECR (int_ent_ptr);
 	  entry_ints[int_ent_ptr] = 0;
-	  INCR (int_ent_ptr);
 	END
       END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 287 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2370,16 +2367,14 @@ BEGIN
  * null string, the value to which all strings are initialized.
  ***************************************************************************/
       BEGIN
-	if ((num_ent_strs * num_cites) > Max_Ent_Strs)
+	str_ent_ptr = (num_ent_strs + 1) * (num_cites + 1);
+	entry_strs = (ASCIICode_T *) mymalloc ((unsigned long) sizeof (ASCIICode_T)
+	    * (unsigned long) (ENT_STR_SIZE + 1)
+	    * (unsigned long) str_ent_ptr, "entry_strs");
+	while (str_ent_ptr > 0)
 	BEGIN
-	  PRINT2 ("%ld: ", (long) (num_ent_strs * num_cites));
-	  BIBTEX_OVERFLOW ("total number of string entry-variables ", Max_Ent_Strs);
-	END
-	str_ent_ptr = 0;
-	while (str_ent_ptr < (num_ent_strs * num_cites))
-	BEGIN
+	  DECR (str_ent_ptr);
 	  ENTRY_STRS(str_ent_ptr,0) = END_OF_STRING;
-	  INCR (str_ent_ptr);
 	END
       END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 288 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2749,9 +2744,20 @@ void          check_cite_overflow (CiteNumber_T last_cite)
 BEGIN
   if (last_cite == Max_Cites)
   BEGIN
-    PRINT_POOL_STR (hash_text[cite_loc]);
-    PRINT_LN (" is the key:");
-    BIBTEX_OVERFLOW ("number of cite keys ", Max_Cites);
+    BIB_XRETALLOC_NOSET ("cite_info", cite_info, StrNumber_T,
+                         Max_Cites, Max_Cites + MAX_CITES);
+    BIB_XRETALLOC_NOSET ("cite_list", cite_list, StrNumber_T,
+                         Max_Cites, Max_Cites + MAX_CITES);
+    BIB_XRETALLOC_NOSET ("entry_exists", entry_exists, Boolean_T,
+                         Max_Cites, Max_Cites + MAX_CITES);
+    BIB_XRETALLOC ("type_list", type_list, HashPtr2_T,
+                   Max_Cites, Max_Cites + MAX_CITES);
+    while (last_cite < Max_Cites)
+    BEGIN
+      type_list[last_cite] = EMPTY;
+      cite_info[last_cite] = ANY_VALUE;
+      INCR (last_cite);
+    END
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 138 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/

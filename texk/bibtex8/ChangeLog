@@ -1,3 +1,23 @@
+2010-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex-1.c (check_cite_overflow): Reallocate cite_info,
+	cite_list, entry_exists, and type_list.
+	* bibtex.h (MAX_CITES): Initial allocation as in bibtex.web.
+	* gblvars.h (M_cites): Removed.
+	* utils.c (parse_cmd_line, usage): Ignore/remove --mcites.
+
+2010-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex-1.c, utils.c: Delay allocation of entry_ints and
+	entry_strs until the required size is known.
+	* bibtex.h (MAX_ENT_INTS, MAX_ENT_STRS): Removed.
+	* gblvars.h (M_entstrs, Max_Ent_Ints, Max_Ent_Strs): Removed.
+	* utils.c (parse_cmd_line, usage): Ignore/remove --mentstrs.
+
+	* tests/sort.test: New shell script to test csfiles.
+	* tests/sort[123].{bbl,csf}, tests/test{data.bib,style.bst}:
+	Test data from Philipp Lehman <lehman@gmx.net>.
+
 2010-03-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/bibtex.test: New shell script to test 7-bit mode.

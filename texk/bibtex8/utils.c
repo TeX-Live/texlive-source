@@ -185,9 +185,9 @@ static struct option long_options[] = {
     {"wolfgang",        VALUE_NONE, 0, 'W'},
     {"min_crossrefs",   VALUE_REQD, 0, 'M'},
 
-    {"mcites",          VALUE_REQD, 0, '\x0A'},
+    {"mcites",          VALUE_REQD, 0, '\x0A'}, /* obsolete */
     {"mentints",        VALUE_REQD, 0, '\x0B'}, /* obsolete */
-    {"mentstrs",        VALUE_REQD, 0, '\x0C'},
+    {"mentstrs",        VALUE_REQD, 0, '\x0C'}, /* obsolete */
     {"mfields",         VALUE_REQD, 0, '\x0D'}, /* obsolete */
     {"mpool",           VALUE_REQD, 0, '\x0E'}, /* obsolete */
     {"mstrings",        VALUE_REQD, 0, '\x0F'},
@@ -303,18 +303,15 @@ static void allocate_arrays (void)
 
     /*
     ** Boolean_T entry_ints[Max_Ent_Ints + 1];
+    ** allocated when num_ent_ints and num_cites are known
     */
-    bytes_required = (Max_Ent_Ints + 1) * (unsigned long) sizeof (Integer_T);
-    entry_ints = (Integer_T *) mymalloc (bytes_required, "entry_ints");
+    entry_ints = NULL;
 
     /*
     ** ASCIICode_T entry_strs[Max_Ent_Strs + 1][ENT_STR_SIZE + 1];
+    ** allocated when num_ent_strs and num_cites are known
     */
-    bytes_required = (unsigned long) (Max_Ent_Strs + 1)
-        * (unsigned long) (ENT_STR_SIZE + 1)
-        * (unsigned long) sizeof (ASCIICode_T);
-
-    entry_strs = (ASCIICode_T *) mymalloc (bytes_required, "entry_strs");
+    entry_strs = NULL;
 
     /*
     ** ASCIICode_T ex_buf[Buf_Size + 1];
@@ -939,9 +936,9 @@ FILE *open_op_file (void)
 **                              required for automatic inclusion of the cross
 **                              referenced entry in the citation list
 **                              (default = 2)
-**          --mcites ##         allow ## \\cites in the .aux files
+**          --mcites ##         ignored
 **          --mentints ##       ignored
-**          --mentstrs ##       allow ## string entries in the .bib databases
+**          --mentstrs ##       ignored
 **          --mfields ##        ignored
 **          --mpool ##          ignored
 **          --mstrings ##       allow ## unique strings
@@ -989,7 +986,7 @@ void parse_cmd_line (int argc, char **argv)
                 Flag_big = TRUE;
                 break;
 
-            case 'c':       /**************** -C, --csfile *************/
+            case 'c':       /**************** -c, --csfile *************/
                 Str_csfile = optarg;
                 break;
 
@@ -1034,28 +1031,11 @@ void parse_cmd_line (int argc, char **argv)
                 break;
 
             case '\x0A':    /**************** --mcites *****************/
-                M_cites = checklong (optarg);
-                if (M_cites < 0) {
-                    mark_fatal ();
-                    usage ("invalid max number of cites `%s'\n", optarg);
-                }
-                break;
-
             case '\x0B':    /**************** --mentints ***************/
-                (void) checklong (optarg);   /******** ignored ********/
-                break;
-
             case '\x0C':    /**************** --mentstrs ***************/
-                M_entstrs = checklong (optarg);
-                if (M_entstrs < 0) {
-                    mark_fatal ();
-                    usage ("invalid max number of string entries `%s'\n",
-                            optarg);
-                }
-                break;
-
             case '\x0D':    /**************** --mfields ****************/
             case '\x0E':    /**************** --mpool *****************/
+            case '\x10':    /**************** --mwizfuns ***************/
                 (void) checklong (optarg);   /******** ignored ********/
                 break;
 
@@ -1065,10 +1045,6 @@ void parse_cmd_line (int argc, char **argv)
                     mark_fatal ();
                     usage ("invalid max number of strings `%s'\n", optarg);
                 }
-                break;
-
-            case '\x10':    /**************** --mwizfuns ***************/
-                (void) checklong (optarg);   /******** ignored ********/
                 break;
 
 	    default:        /**************** Unknown argument ********/
@@ -1178,8 +1154,6 @@ void report_bibtex_capacity (void)
         LOG_CAPACITY (LIT_STK_SIZE);
         LOG_CAPACITY (Max_Bib_Files);
         LOG_CAPACITY (Max_Cites);
-        LOG_CAPACITY (Max_Ent_Ints);
-        LOG_CAPACITY (Max_Ent_Strs);
         LOG_CAPACITY (Max_Fields);
         LOG_CAPACITY (MAX_GLOB_STRS);
         LOG_CAPACITY (MAX_PRINT_LINE);
@@ -1311,9 +1285,9 @@ static void compute_hash_prime (void)
 **    Hash_Prime      *** computed from Hash_Size ***
 **    Hash_Size       *** determined from Max_Strings ***
 **    Max_Bib_Files   *** initialy 20, increased as required ***
-**    Max_Cites       Y          750       2,000       5,000       7,500
-**    Max_Ent_Ints    *** initialy 3000, increased as required ***
-**    Max_Ent_Strs    Y        3,000       6,000      10,000      10,000
+**    Max_Cites       *** initialy 750, increased as required ***
+**    Max_Ent_Ints    *** as required ***
+**    Max_Ent_Strs    *** as required ***
 **    Max_Fields      *** initialy 5000, increased as required ***
 **    Max_Strings     Y        4,000      10,000      19,000      30,000
 **    Pool_Size       *** initialy 65,000, increased as required ***
@@ -1326,26 +1300,18 @@ void set_array_sizes (void)
 {
     debug_msg (DBG_MEM, "Setting BibTeX's capacity ... ");
 
-    Max_Cites = 750;
-    Max_Ent_Strs = 3000;
     Max_Strings = 4000;
     Min_Crossrefs = 2;
 
     if (Flag_big) {
-        Max_Cites = 2000;
-        Max_Ent_Strs = 5000;
         Max_Strings = 10000;
     }
     
     if (Flag_huge) {
-        Max_Cites = 5000;
-        Max_Ent_Strs = 10000;
         Max_Strings = 19000;
     }
 
     if (Flag_wolfgang) {
-        Max_Cites = 7500;
-        Max_Ent_Strs = 10000;
         Max_Strings = 30000;
     }
 
@@ -1353,13 +1319,7 @@ void set_array_sizes (void)
 
     Max_Bib_Files = MAX_BIB_FILES;
 
-    if (M_cites > 0)
-        Max_Cites = M_cites;
-
-    Max_Ent_Ints = MAX_ENT_INTS;
-
-    if (M_entstrs > 0)
-        Max_Ent_Strs = M_entstrs;
+    Max_Cites = MAX_CITES;
 
     Max_Fields = MAX_FIELDS;
 
@@ -1387,10 +1347,8 @@ void set_array_sizes (void)
                Hash_Prime, Hash_Size);
     debug_msg (DBG_MEM, "Buf_Size = %d, Max_Bib_Files = %d", 
                Buf_Size, Max_Bib_Files);
-    debug_msg (DBG_MEM, "Max_Cites = %d, Max_Ent_Ints = %d", 
-               Max_Cites, Max_Ent_Ints);
-    debug_msg (DBG_MEM, "Max_Ent_Strs = %d, Max_Fields = %d",
-               Max_Ent_Strs, Max_Fields);
+    debug_msg (DBG_MEM, "Max_Cites = %d, Max_Fields = %d", 
+               Max_Cites, Max_Fields);
     debug_msg (DBG_MEM, "Max_Strings = %d, Pool_Size = %d",
                Max_Strings, Pool_Size);
     debug_msg (DBG_MEM, "Min_Crossrefs = %d, Wiz_Fn_Space = %d", 
@@ -1482,12 +1440,10 @@ void usage (const char *printf_fmt, ...)
 
     FSO ("  -v  --version           report BibTeX version\n\n");
 
-    FSO ("  -B  --big               set large BibTeX capacity\n");
-    FSO ("  -H  --huge              set huge BibTeX capacity\n");
-    FSO ("  -W  --wolfgang          set really huge BibTeX capacity for Wolfgang\n");
+    FSO ("  -B  --big               same as --mstrings 10000\n");
+    FSO ("  -H  --huge              same as --mstrings 19000\n");
+    FSO ("  -W  --wolfgang          same as --mstrings 30000\n");
     FSO ("  -M  --min_crossrefs ##  set min_crossrefs to ##\n");
-    FSO ("      --mcites ##         allow ## \\cites in the .aux files\n");
-    FSO ("      --mentstrs ##       allow ## string entries in the .bib databases\n");
     FSO ("      --mstrings ##       allow ## unique strings\n");
 
     debug_msg (DBG_MISC, "calling longjmp (Exit_Program_Flag) ... ");

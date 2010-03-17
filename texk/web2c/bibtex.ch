@@ -97,19 +97,18 @@ begin
 standard_input := stdin;
 standard_output := stdout;
 @#
-max_ent_ints := MAX_ENT_INTS;
-max_ent_strs := MAX_ENT_STRS;
 pool_size := POOL_SIZE;
 buf_size := BUF_SIZE;
 max_bib_files := MAX_BIB_FILES;
 max_fields := MAX_FIELDS;
+max_cites := MAX_CITES;
 wiz_fn_space := WIZ_FN_SPACE;
 @#
 {Add one to the sizes because that's what bibtex uses.}
 bib_file   := XTALLOC (max_bib_files + 1, alpha_file);
 bib_list   := XTALLOC (max_bib_files + 1, str_number);
-entry_ints := XTALLOC (max_ent_ints + 1, integer);
-entry_strs := XTALLOC ((max_ent_strs + 1) * (ent_str_size + 1), ASCII_code);
+entry_ints := nil;
+entry_strs := nil;
 wiz_functions := XTALLOC (wiz_fn_space + 1, hash_ptr2);
 field_info := XTALLOC (max_fields + 1, str_number);
 s_preamble := XTALLOC (max_bib_files + 1, str_number);
@@ -120,6 +119,11 @@ ex_buf     := XTALLOC (buf_size + 1, ASCII_code);
 out_buf    := XTALLOC (buf_size + 1, ASCII_code);
 name_tok   := XTALLOC (buf_size + 1, buf_pointer);
 name_sep_char := XTALLOC (buf_size + 1, ASCII_code);
+@#
+cite_list  := XTALLOC (max_cites + 1, str_number);
+type_list  := XTALLOC (max_cites + 1, hash_ptr2);
+entry_exists := XTALLOC (max_cites + 1, boolean);
+cite_info  := XTALLOC (max_cites + 1, str_number);
 @#
 set_max_strings;
 str_start  := XTALLOC (max_strings + 1, pool_pointer);
@@ -191,7 +195,7 @@ end.
 @y [still 14]
 @!MAX_BIB_FILES=20; {initial number of \.{.bib} files allowed}
 @!POOL_SIZE=65000; {initial number of characters in strings}
-@!max_cites=5000; {maximum number of distinct cite keys; must be
+@!MAX_CITES=750; {initial number of distinct cite keys; must be
                                                         |<=max_strings|}
 @!WIZ_FN_SPACE=3000; {initial amount of |wiz_defined|-function space}
 {|min_crossrefs| can be set at runtime now.}
@@ -207,10 +211,6 @@ end.
                                                         must be |<=buf_size|}
 @!max_fields=17250; {maximum number of fields (entries $\times$ fields,
 @y
-@!MAX_ENT_INTS=3000; {initial number of |int_entry_var|s
-                                        (entries $\times$ |int_entry_var|s)}
-@!MAX_ENT_STRS=3000; {initial number of |str_entry_var|s
-                                        (entries $\times$ |str_entry_var|s)}
 @!ent_str_size=250; {maximum size of a |str_entry_var|; must be |<=buf_size|}
 @!glob_str_size=5000; {maximum  size of a |str_global_var|;
                                                         must be |<=buf_size|}
@@ -240,10 +240,9 @@ end.
 @<Globals in the outer block@>=
 @y
 @<Globals in the outer block@>=
-@!max_ent_ints: integer;
-@!max_ent_strs: integer;
 @!pool_size: integer;
 @!max_bib_files: integer;
+@!max_cites: integer;
 @!wiz_fn_space: integer;
 @!max_fields: integer;
 @#
@@ -897,6 +896,43 @@ log_pr_newline;
 end;
 @z
 
+@x [130] cite_list is dynamically allocated.
+@!cite_list : packed array[cite_number] of str_number;  {the cite-key list}
+@y
+@!cite_list : ^str_number;  {the cite-key list}
+@z
+
+@x [131] max_cites is no longer const.
+@!cite_number = 0..max_cites;   {gives the |cite_list| range}
+@y
+@!cite_number = integer;   {gives the |cite_list| range}
+@z
+
+@x [139] Dynamic max_cites.
+if (last_cite = max_cites) then
+    begin
+    print_pool_str (hash_text[cite_loc]);
+    print_ln (' is the key:');
+    overflow('number of cite keys ',max_cites);
+@y
+if (last_cite = max_cites) then
+    begin
+    BIB_XRETALLOC_NOSET ('cite_list', cite_list, str_number,
+                         max_cites, max_cites + MAX_CITES);
+    BIB_XRETALLOC_NOSET ('type_list', type_list, hash_ptr2,
+                         max_cites, max_cites + MAX_CITES);
+    BIB_XRETALLOC_NOSET ('entry_exists', entry_exists, boolean,
+                         max_cites, max_cites + MAX_CITES);
+    BIB_XRETALLOC ('cite_info', cite_info, str_number,
+                   max_cites, max_cites + MAX_CITES);
+    while (last_cite < max_cites) do
+        begin
+        type_list[last_cite] := empty;@/
+        cite_info[last_cite] := any_value;  {to appeas \PASCAL's boolean evaluation}
+        incr(last_cite);
+        end;
+@z
+
 % [142] Don't pad with blanks.
 % Don't use a path to search for subsidiary aux files, either.
 @x
@@ -935,7 +971,7 @@ hack1;
 bst_done: a_close (bst_file);
 @z
 
-% max_ent_ints, max_ent_strs, max_fields are no longer const.
+% max_ent_ints and max_ent_strs are gone, max_fields is no longer const.
 @x [161] quote_next_fn and end_of_def are Pascal consts, instead of web macros.
 @d quote_next_fn = hash_base - 1  {special marker used in defining functions}
 @d end_of_def = hash_max + 1      {another such special marker}
@@ -1020,6 +1056,22 @@ if (single_ptr + wiz_def_ptr > wiz_fn_space) then
 @x [220] undefined is now a Pascal const, instead of a web macro
 @d undefined = hash_max + 1     {a special marker used for |type_list|}
 @y
+@z
+
+@x [220] type_list is dynamically allocated.
+@!type_list : packed array[cite_number] of hash_ptr2;
+@y
+@!type_list : ^hash_ptr2;
+@z
+@x [220] entry_exists also.
+@!entry_exists : packed array[cite_number] of boolean;
+@y
+@!entry_exists : ^boolean;
+@z
+@x [220] cite_info also.
+@!cite_info : packed array[cite_number] of str_number; {extra |cite_list| info}
+@y
+@!cite_info : ^str_number; {extra |cite_list| info}
 @z
 
 @x [225] Be silent unless verbose.
@@ -1117,36 +1169,24 @@ if ((cite_xptr + 1) * num_fields > max_fields) then
   confusion ('field_info index is out of range');
 @z
 
-@x [288] Reallocate on overflow.
+@x [288] Allocate entry_ints as needed.
 if (num_ent_ints*num_cites > max_ent_ints) then
     begin
     print (num_ent_ints*num_cites,': ');
     overflow('total number of integer entry-variables ',max_ent_ints);
     end;
 @y
-if (num_ent_ints*num_cites > max_ent_ints) then
-  BIB_XRETALLOC ('entry_ints', entry_ints, integer, max_ent_ints,
-                 (num_ent_ints + 1) * (num_cites + 1));
+entry_ints := XTALLOC ((num_ent_ints + 1) * (num_cites + 1), integer);
 @z
 
-@x [289] Reallocate entry_strs.
+@x [289] Allocate entry_strs as needed.
 if (num_ent_strs*num_cites > max_ent_strs) then
     begin
     print (num_ent_strs*num_cites,': ');
     overflow('total number of string entry-variables ',max_ent_strs);
     end;
 @y
-{Have to include the maximum size of each string in the reallocation,
- unfortunately, since we're faking a two-dimensional array. And then
- decrease |max_ent_strs| again, because it's the number of strings, not
- the number of characters (which is what we're allocating.)}
-if (num_ent_strs * num_cites > max_ent_strs) then begin
-  BIB_XRETALLOC ('entry_strs', entry_strs, ASCII_code, max_ent_strs,
-                 (num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1));
-  max_ent_strs := num_ent_strs * num_cites;
-  {The new values are initialized in the next few statements from
-  \.{bibtex.web}.}
-end;
+entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1), ASCII_code);
 @z
 
 @x [289] Macroize entry_strs[][].

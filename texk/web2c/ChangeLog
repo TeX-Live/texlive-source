@@ -1,6 +1,17 @@
+2010-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.ch (max_cites): Dynamically resize the cite_list,
+	type_list, entry_exists, and cite_info arrays.
+
+2010-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.ch (entry_ints, entry_strs): Delay allocation until
+	the required size is known.
+	(max_ent_ints, max_ent_strs): Removed.
+
 2010-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	am/bootstrap.am: Use suffix rules to create tangleboot.p,
+	* am/bootstrap.am: Use suffix rules to create tangleboot.p,
 	ctangleboot.c, and cwebboot.[ch] from distributed `in' files.
 
 	* bibtex.ch: Check and correct module numbers.  Parameter

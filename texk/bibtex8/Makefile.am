@@ -61,12 +61,17 @@ dist_btdoc_DATA = \
 
 ## Tests.
 ##
-TESTS = tests/bibtex.test
+TESTS = tests/bibtex.test tests/sort.test
 EXTRA_DIST = $(TESTS)
 DISTCLEANFILES =
-
-## bibtex.test
+## tests/bibtex.test
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
+## tests/sort.test
+EXTRA_DIST += tests/sort.aux \
+	tests/sort1.bbl tests/sort2.bbl tests/sort3.bbl \
+	tests/sort1.csf tests/sort2.csf tests/sort3.csf \
+	tests/testdata.bib tests/teststyle.bst
+DISTCLEANFILES += tests/xsort.aux tests/xsort.bbl tests/xsort.blg
 
 ## Not used
 ##
