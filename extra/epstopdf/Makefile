@@ -12,7 +12,7 @@ default: check
 check: check-help check-version \
        check-help-r \
        check-restricted-gscmd \
-       check-filter check-write-error check-gscmd \
+       check-filter check-filter-outfile check-write-error check-gscmd \
        check-simple check-atend check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
 
@@ -41,6 +41,15 @@ check-restricted-safe-out:
 
 check-filter:
 	cat test-simple.eps | $(e2p) --filter >test-filter.pdf
+	pdfinfo test-filter.pdf | grep "Page size:"
+
+check-filter-outfile:
+	rm -f test-filter.pdf
+	cat test-simple.eps | $(e2p) --filter --outfile=test-filter.pdf
+	pdfinfo test-filter.pdf | grep "Page size:"
+#
+	rm -f test-filter.pdf
+	cat test-simple.eps | $(e2p) --outfile=test-filter.pdf --filter
 	pdfinfo test-filter.pdf | grep "Page size:"
 
 check-write-error:

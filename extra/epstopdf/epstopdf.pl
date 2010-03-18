@@ -46,9 +46,11 @@ use strict;
 #
 # emacs-page
 # History
+#    * let --outfile override --filter again.
+#    * recognize MSWin64 as well as MSWin32, just in case.
 #  2010/03/08 v2.14 (Manuel P\'egouri\'e-Gonnard)
 #    * In restricted mode, forbid --gscmd (all platforms) and call GS with full
-#    path relative to self location (windows).
+#    path relative to self location (Windows).
 #  2010/02/26 v2.13 (Karl Berry)
 #    * New release.
 #  2010/02/23       (Manuel P\'egouri\'e-Gonnard)
@@ -154,9 +156,11 @@ There is NO WARRANTY, to the extent permitted by law.
 END_COPYRIGHT
 my $title = "$program $ident\n";
 
+my $on_windows = $^O =~ /^MSWin/;
+my $on_windows_or_cygwin = $on_windows || $^O eq "cygwin";
+
 ### ghostscript command name
-my $GS = "gs";
-$GS = "gswin32c" if $^O eq 'MSWin32';
+my $GS = $on_windows ? "gswin32c" : "gs";
 
 ### restricted mode
 my $restricted = 0;
@@ -247,9 +251,9 @@ sub errorUsage { die "Error: @_ (try --help for more information)\n"; }
 $restricted = 1 if $::opt_restricted;
 debug "Restricted mode activated" if $restricted;
 
-### safer external commands for windows in restricted mode
+### safer external commands for Windows in restricted mode
 my $kpsewhich = 'kpsewhich';
-if ($restricted and ($^O eq 'MSWin32')) {
+if ($restricted && $on_windows) {
   use File::Basename;
   my $mydirname = dirname $0;
   # $mydirname is the location of the Perl script
@@ -315,24 +319,24 @@ push @GS, qw(-q -dNOPAUSE -dSAFER -sDEVICE=pdfwrite);
 
 ### option outfile
 my $OutputFilename = $::opt_outfile;
-if ($OutputFilename eq "") {
+if (! $OutputFilename) {
   if ($::opt_gs) {
-    $OutputFilename = $InputFilename;
-    if (!$::opt_filter) {
-      my $ds = ($^O eq "MSWin32" || $^O eq "cygwin") ? '\\/' : '/';
+    if ($::opt_filter) {
+      debug "Filtering: will write standard output";
+      $OutputFilename = "-";
+    } else {
+      # Ghostscript, no filter: replace input extension with .pdf.
+      $OutputFilename = $InputFilename;
+      my $ds = $on_windows_or_cygwin ? '\\/' : '/';
       $OutputFilename =~ s/\.[^\.$ds]*$//;
       $OutputFilename .= ".pdf";
     }
   } else {
+    debug "No Ghostscript: will write standard output";
     $OutputFilename = "-"; # no ghostscript, write to standard output
   }
 }
-if ($::opt_filter) {
-  debug "Filtering: will write standard output";
-  $OutputFilename = "-";
-} else {
-  debug "Output filename:", $OutputFilename;
-}
+debug "Output filename:", $OutputFilename;
 push @GS, "-sOutputFile=$OutputFilename";
 
 ### options compress, embed, res, autorotate
@@ -392,7 +396,7 @@ my $tmp_filename; # temporary file for windows
 my $OUT; # filehandle for output (GS pipe or temporary file)
 use File::Temp 'tempfile';
 if ($::opt_gs) {
-  unless ($^O eq 'MSWin32' || $^O eq 'cygwin') { # list piped open works
+  if (! $on_windows_or_cygwin) { # list piped open works
     push @GS, qw(- -c quit);
     debug "Ghostscript pipe:", join(' ', @GS);
     open($OUT, '|-', @GS) or error "Cannot open Ghostscript for piped input";

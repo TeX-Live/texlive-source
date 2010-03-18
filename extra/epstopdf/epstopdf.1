@@ -1,6 +1,5 @@
-.TH EPSTOPDF 1 "9 March 2010"
+.TH EPSTOPDF 1 "18 March 2010"
 .\" $Id$
-.\" man page originally by Jim Van Zandt
 .SH NAME
 epstopdf, repstopdf \- convert an EPS file to PDF
 .SH SYNOPSIS
@@ -16,9 +15,10 @@ result is piped to Ghostscript and a PDF version written.
 If the bounding box is not right, of course, there are problems.
 .SH OPTIONS
 .IP "\fB--outfile\fP=\fIfile\fP"
-write result to \fIfile\fP; the default is to construct the output file
-name by replacing any extension in the input file with \fI.pdf\fP.  If
-\fB--nogs\fP or \fB--filter\fP is specified, write to standard output.
+write result to \fIfile\fP.  If this option is not given, and
+\fB--nogs\fP or \fB--filter\fP is specified, write to standard output;
+otherwise, the default is to construct the output file name by replacing
+any extension in the input file with \fI.pdf\fP.
 .IP "\fB--\fP[\fBno\fP]\fBcompress\fP"
 use compression (default: on).
 .IP "\fB--\fP[\fBno\fP]\fBdebug\fP"
@@ -28,9 +28,10 @@ embed fonts (default: on).
 .IP "\fB--\fP[\fBno\fP]\fBexact\fP"
 scan ExactBoundingBox (default: off).
 .IP "\fB--\fP[\fBno\fP]\fBfilter\fP"
-read standard input (default: off).
+read standard input and (unless \fB--outfile\fP is given) write standard
+output(default: off).
 .IP "\fB--\fP[\fBno\fP]\fBgs\fP"
-run ghostscript (default: on).
+run Ghostscript (default: on).
 .IP "\fB--\fP[\fBno\fP]\fBhires\fP"
 scan HiresBoundingBox (default: off).
 .IP "\fB--gscmd\fP=\fIval\fP"
@@ -55,15 +56,14 @@ Examples which produce "test.pdf":
 epstopdf test.eps
 produce postscript | epstopdf --filter >test.pdf
 produce postscript | epstopdf -f -d -o=test.pdf
-
 .fi
 Example: look for HiresBoundingBox and produce corrected PostScript:
 .nf
 epstopdf -d --nogs --hires test.ps >testcorr.ps 
 .fi
 .SH BUGS
-The case of "%%BoundingBox: (atend)"
-when input is not seekable (e.g., from a pipe) is not supported.
+The case of "%%BoundingBox: (atend)" when input is not seekable (e.g.,
+from a pipe) is not supported.
 .PP
 Report bugs in the program or this man page to tex-k@tug.org.  When
 reporting bugs, please include an input file and the command line
@@ -76,8 +76,8 @@ The epstopdf LaTeX package, part of the oberdiek bundle, which automates
 running this script on the fly under TeX: http://ctan.org/pkg/epstopdf-pkg.
 .SH AUTHOR
 The script was originally written by Sebastian Rahtz, for Elsevier
-Science, with subsequent contributions from Gerben Wierda and many
-others.  Currently maintained by Karl Berry.
+Science, with subsequent contributions from Thomas Esser, Gerben Wierda
+and many others.  Currently maintained by Karl Berry.
 .PP
 Man page originally written by Jim Van Zandt.
 .PP
