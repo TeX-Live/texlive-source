@@ -27,6 +27,7 @@ bibtex-web2c: bibtex.p $(web2c_depend) web2c/cvtbib.sed
 bibtex.p: tangle$(EXEEXT) bibtex.web bibtex.ch
 	$(tangle) bibtex bibtex
 web_tests += tests/bibtex-openout-test.pl tests/bibtex-longline-test.pl
+web_tests += tests/bibtex-mem.test
 
 nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
 dvicopy.c dvicopy.h: dvicopy-web2c
@@ -158,6 +159,9 @@ EXTRA_DIST += $(web_tests)
 
 ## bibtex.test
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
+## tests/bibtex-mem.test
+EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
+DISTCLEANFILES += tests/memtest*
 ## dvicopy.test
 DISTCLEANFILES += tests/xstory.dvi tests/xpplr.dvi
 ## dvitype.test

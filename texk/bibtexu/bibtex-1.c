@@ -236,7 +236,7 @@ END
 void          add_database_cite (CiteNumber_T *new_cite)
 BEGIN
   check_cite_overflow (*new_cite);
-  check_field_overflow (num_fields * (*new_cite));
+  check_field_overflow (num_fields * (*new_cite + 1));
   cite_list[*new_cite] = hash_text[cite_loc];
   ilk_info[cite_loc] = *new_cite;
   ilk_info[lc_cite_loc] = cite_loc;
@@ -2817,8 +2817,15 @@ void          check_field_overflow (Integer_T total_fields)
 BEGIN
   if (total_fields > Max_Fields)
   BEGIN
+    field_ptr = Max_Fields;
     BIB_XRETALLOC ("field_info", field_info, StrNumber_T,
                    Max_Fields, Max_Fields + MAX_FIELDS);
+    /* Initialize to |missing|.  */
+    while (field_ptr < Max_Fields)
+    BEGIN
+      field_info[field_ptr] = MISSING;
+      INCR (field_ptr);
+    END
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 226 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/

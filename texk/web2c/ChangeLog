@@ -3,6 +3,10 @@
 	* bibtex.ch (max_cites): Dynamically resize the cite_list,
 	type_list, entry_exists, and cite_info arrays.
 
+	* tests/bibtex-mem.test: New shell script for dynamic arrays.
+	* tests/memdata[123].bst: Test data from Philipp Lehman.
+	* am/web.am: Adapted.
+
 2010-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex.ch (entry_ints, entry_strs): Delay allocation until

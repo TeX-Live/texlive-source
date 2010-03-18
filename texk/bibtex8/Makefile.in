@@ -250,7 +250,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT -funsigned-char
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT
 AM_CFLAGS = $(WARNING_CFLAGS)
 bibtex8_SOURCES = \
 	bibtex-1.c \
@@ -286,14 +286,14 @@ dist_btdoc_DATA = \
 	csfile.txt \
 	file_id.diz
 
-TESTS = tests/bibtex.test tests/sort.test
+TESTS = tests/bibtex.test tests/sort.test tests/bibtex-mem.test
 EXTRA_DIST = $(TESTS) tests/sort.aux tests/sort1.bbl tests/sort2.bbl \
 	tests/sort3.bbl tests/sort1.csf tests/sort2.csf \
 	tests/sort3.csf tests/testdata.bib tests/teststyle.bst \
 	bt371csf.zip dos-dj.mak dos-emx.mak os2.mak unix.mak \
 	csf/00readme.txt csf/COPYING csf/HISTORY csf/file_id.diz
 DISTCLEANFILES = tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
-	tests/xsort.aux tests/xsort.bbl tests/xsort.blg
+	tests/xsort.aux tests/xsort.bbl tests/xsort.blg tests/memtest*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

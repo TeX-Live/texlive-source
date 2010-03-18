@@ -3,6 +3,8 @@
 # Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+# Using test data from Philipp Lehman <lehman@gmx.net>
+
 test -d tests || mkdir -p tests
 
 cp $srcdir/tests/sort.aux tests/xsort.aux

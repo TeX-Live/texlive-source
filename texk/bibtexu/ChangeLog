@@ -6,6 +6,10 @@
 	* gblvars.h (M_cites): Removed.
 	* utils.c (parse_cmd_line, usage): Ignore/remove --mcites.
 
+	* bibtex-1.c (add_database_cite): Fix bug, from bibtex.ch.
+
+	* Makefile.am (AM_CPPFLAGS): Remove obsolete -funsigned-char.
+
 2010-03-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex-1.c, utils.c: Delay allocation of entry_ints and

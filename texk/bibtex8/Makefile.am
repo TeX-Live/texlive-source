@@ -9,12 +9,6 @@ INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT
 AM_CFLAGS = $(WARNING_CFLAGS)
 
-## FIXME: (1) this should go away once the code has been carefully
-## FIXME: analyzed and uses 'unsigned char' where necessary.
-## FIXME: (2) this should go to AM_CFLAGS, but AIX xlc only
-## FIXME: accepts this flag when compiling, not when linking.
-AM_CPPFLAGS += -funsigned-char
-
 bin_PROGRAMS = bibtex8
 
 bibtex8_SOURCES = \
@@ -61,7 +55,7 @@ dist_btdoc_DATA = \
 
 ## Tests.
 ##
-TESTS = tests/bibtex.test tests/sort.test
+TESTS = tests/bibtex.test tests/sort.test tests/bibtex-mem.test
 EXTRA_DIST = $(TESTS)
 DISTCLEANFILES =
 ## tests/bibtex.test
@@ -72,6 +66,8 @@ EXTRA_DIST += tests/sort.aux \
 	tests/sort1.csf tests/sort2.csf tests/sort3.csf \
 	tests/testdata.bib tests/teststyle.bst
 DISTCLEANFILES += tests/xsort.aux tests/xsort.bbl tests/xsort.blg
+## tests/bibtex-mem.test
+DISTCLEANFILES += tests/memtest*
 
 ## Not used
 ##

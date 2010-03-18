@@ -271,7 +271,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
 INCLUDES = $(KPATHSEA_INCLUDES) $(ICU_INCLUDES)
-AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT -funsigned-char
+AM_CPPFLAGS = -DUNIX -DKPATHSEA -DSUPPORT_8BIT 
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 # Force Automake to use CXXLD for linking
