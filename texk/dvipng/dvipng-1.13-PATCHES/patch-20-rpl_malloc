@@ -1,0 +1,36 @@
+	Autoconf may define malloc to rpl_malloc.
+
+	Undefine this before including any system headers to avoid
+	implicit declaration of malloc(), e.g., for MinGW32.
+
+diff -ur dvipng-1.13.orig/dvipng.h dvipng-1.13/dvipng.h
+--- dvipng-1.13.orig/dvipng.h	2010-03-17 22:41:51.000000000 +0100
++++ dvipng-1.13/dvipng.h	2010-03-18 12:22:28.897998191 +0100
+@@ -26,6 +26,13 @@
+ #define DVIPNG_H
+ #include "config.h"
+ 
++/* Autoconf may define malloc to rpl_malloc, if the system does not
++ * have a GNU Libc-compatible malloc (for which malloc(0) gives a
++ * valid pointer). We don't need that (yet) */
++#ifdef malloc
++# undef malloc
++#endif
++
+ #define  STRSIZE         255     /* stringsize for file specifications  */
+ 
+ #define  FIRSTFNTCHAR  0
+@@ -105,13 +112,6 @@
+ # endif
+ #endif
+ 
+-/* Autoconf may define malloc to rpl_malloc, if the system does not
+- * have a GNU Libc-compatible malloc (for which malloc(0) gives a
+- * valid pointer). We don't need that (yet) */
+-#ifdef malloc
+-# undef malloc
+-#endif
+-
+ 
+ /*************************************************************/
+ /*************************  protos.h  ************************/

@@ -1,0 +1,23 @@
+	Avoid unnecessary cast from 'int *' to 'unsigned long*'.
+
+diff -ur dvipng-1.13.orig/special.c dvipng-1.13/special.c
+--- dvipng-1.13.orig/special.c	2010-03-17 22:38:35.000000000 +0100
++++ dvipng-1.13/special.c	2010-03-18 12:32:01.230697171 +0100
+@@ -147,7 +147,7 @@
+ #ifndef MIKTEX
+   int downpipe[2], uppipe[2];
+ #ifdef WIN32
+-  int nexitcode = STILL_ACTIVE;
++  unsigned long nexitcode = STILL_ACTIVE;
+   HANDLE hchild;
+   int savestdin, savestdout;
+ #else /* !WIN32 */
+@@ -307,7 +307,7 @@
+ #ifdef WIN32
+   }
+   while(nexitcode == STILL_ACTIVE)
+-    GetExitCodeProcess((HANDLE)hchild, (unsigned long*)&nexitcode);
++    GetExitCodeProcess((HANDLE)hchild, &nexitcode);
+ 
+   CloseHandle((HANDLE)hchild);
+   _dup2(savestdin, fileno(stdin));

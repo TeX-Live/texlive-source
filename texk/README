@@ -50,10 +50,10 @@ dvipdfmx - checked 17jul09
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20090708.tar.gz
   dvipdfmx@project.ktug.or.kr (ChoF, Hirata, Matthias)
 
-dvipng - checked 12apr09
+dvipng - checked 18mar10
   http://www.ctan.org/tex-archive/dviware/dvipng/ (but maybe stale)
   http://savannah.nongnu.org/files/?group=dvipng
-  http://mirror.cinquix.com/pub/savannah/dvipng/dvipng-1.12.tar.gz
+  http://mirror.cinquix.com/pub/savannah/dvipng/dvipng-1.13.tar.gz
 
 dvipos - ?
 

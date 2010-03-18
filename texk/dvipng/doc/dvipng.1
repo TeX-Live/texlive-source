@@ -132,7 +132,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DVIPNG 1"
-.TH DVIPNG 1 "2009-06-07" "dvipng 1.12" "User commands"
+.TH DVIPNG 1 "2010-03-18" "dvipng 1.13" "User commands"
 .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 .\" way too many mistakes in technical documents.
 .if n .ad l
@@ -471,6 +471,10 @@ truecolor output is automatic if you include an external image in your
 .IX Item "-v*"
 Enable verbose operation. This will currently indicate what fonts is
 used, in addition to the usual output.
+.IP "\fB\-\-width*\fR" 4
+.IX Item "--width*"
+Report the width of the image. See also \fB\-\-height\fR and
+\&\fB\-\-depth\fR.
 .IP "\fB\-x\fR \fInum\fR" 4
 .IX Item "-x num"
 Set the x magnification ratio to \fInum\fR/1000. Overrides
@@ -505,4 +509,4 @@ This program is released under the \s-1GNU\s0 Lesser General Public License
 version 3, see the \s-1COPYING\s0 file in the dvipng distribution or
 <\fBhttp://www.gnu.org/licenses/gpl.html\fR>.
 .PP
-Copyright (c) 2002\-2008 Jan-AAke Larsson
+Copyright (c) 2002\-2010 Jan-AAke Larsson

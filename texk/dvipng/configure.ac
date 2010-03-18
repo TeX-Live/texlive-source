@@ -13,7 +13,7 @@ dnl  Copyright (C) 2002-2008 Jan-Åke Larsson
 dnl
 dnl *********************************************************************
 dnl
-m4_define([dvipng_version], [1.12])[]dnl using unmodified dvipng source tree
+m4_define([dvipng_version], [1.13])[]dnl using unmodified dvipng source tree
 AC_INIT([dvipng], dvipng_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvipng-]dvipng_version[/dvipng.c])

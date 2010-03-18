@@ -9,8 +9,8 @@ dvipng [options] [filename] -
 @c man end
 @end ifset
 
-@set version 1.12
-@set month-year February 2009
+@set version 1.13
+@set month-year March 2010
 
 @c Put everything in one index (arbitrarily chosen to be the concept index).
 @syncodeindex fn cp
@@ -39,7 +39,7 @@ dvipng [options] [filename] -
 @author by Jan-@AA{}ke Larsson.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2002-2008 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2010 Jan-@AA{}ke Larsson
  
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -610,6 +610,11 @@ DVI, e.g., via a PostScript special (i.e., the @samp{graphics} or
 Enable verbose operation. This will currently indicate what fonts is
 used, in addition to the usual output.
 
+@item --width*
+@cindex width reporting
+Report the width of the image. See also @samp{--height} and
+@samp{--depth}.
+
 @item -x @var{num}
 @cindex magnification, overriding DVI
 Set the @math{x} magnification ratio to @math{@var{num}/1000}. Overrides
@@ -886,14 +891,15 @@ bugs and suggesting improvements as the thing has evolved. These
 include but is perhaps not limited to (in semi-random order): Thomas
 Esser (te@TeX{}), Christian Schenk (MIK@TeX{}), Brian R Furry (debian
 package), Angus Leeming (LyX), Thomas Boutell (libgd), John Jones
-(first user report), Uwe Kern (xcolor), Karl Berry (@TeX{} Live),
-David Harvey (hinting in Freetype), Neal Harmon, Alan Shutko, Reiner
-Stieb, Nick Alcock, Adam Buchbinder, Svend Tollak Munkejord, James
-Longstreet, Bernhard Simon, Bob McElrath, Georg Schwarz, Jason Farmer,
-Brian V. Smith, Samuel Hathaway, Thomas R. Shemanske, Stephen Gibson,
-Christian Ridderstr@"om, Ezra Peisach, William H Wheeler, Thomas
-Klausner, Harald Koenig, Adrian Bunk, Kevin Smith, Jason Riedy,
-Wolfram Krause, Reinhard Kotucha, and Takeshi Abe.
+(first user report), Uwe Kern (xcolor), Karl Berry and Peter
+Breitenlohner (@TeX{} Live), David Harvey (hinting in Freetype), Neal
+Harmon, Alan Shutko, Reiner Stieb, Nick Alcock, Adam Buchbinder, Svend
+Tollak Munkejord, James Longstreet, Bernhard Simon, Bob McElrath,
+Georg Schwarz, Jason Farmer, Brian V. Smith, Samuel Hathaway, Thomas
+R. Shemanske, Stephen Gibson, Christian Ridderstr@"om, Ezra Peisach,
+William H Wheeler, Thomas Klausner, Harald Koenig, Adrian Bunk, Kevin
+Smith, Jason Riedy, Wolfram Krause, Reinhard Kotucha, Takeshi Abe, and
+Waldeck Schutzer.
 
 @ifset man
 @c man begin NOTES
@@ -907,7 +913,7 @@ This program is released under the GNU Lesser General Public License
 version 3, see the COPYING file in the dvipng distribution or
 @url{http://www.gnu.org/licenses/gpl.html}.
 
-Copyright @copyright{} 2002-2008 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2010 Jan-@AA{}ke Larsson
 @c man end
 @end ifset
 
@@ -930,7 +936,7 @@ License along with this program. If not, see
 
 @sp 2
 @noindent
-Copyright @copyright{} 2002-2008 Jan-@AA{}ke Larsson
+Copyright @copyright{} 2002-2010 Jan-@AA{}ke Larsson
 
 @node Index
 @unnumbered Index

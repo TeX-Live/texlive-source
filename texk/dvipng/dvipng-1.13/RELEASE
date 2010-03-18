@@ -1,0 +1,13 @@
+Release notes for version 1.13 of the dvipng package:
+
+This program makes PNG graphics from DVI files as obtained from TeX
+and its relatives.
+
+
+This release adds the possibility to report the output image width.
+Other than that, a segfault occuring from faulty DVIs has been
+removed, and a number of build issues have been corrected.
+
+
+
+Report any bugs you find, see README for instructions.

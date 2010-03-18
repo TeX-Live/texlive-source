@@ -1,3 +1,8 @@
+2010-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.13 from savannah.nongnu.org.
+	* configure.ac: Adapted.
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check for kpse_set_program_name() as used in
