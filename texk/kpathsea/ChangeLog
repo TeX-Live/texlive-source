@@ -1,3 +1,8 @@
+2010-03-18  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXDOCS): remove .; better for texdoc not
+	to be confused by files randomly in the current directory.
+
 2010-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf: Append '.mf' to Metafont specific parameters.

@@ -261,13 +261,6 @@ TTF2TFMINPUTS =                 .;$TEXMF/ttf2pk//
 MFINPUTS = .;$TEXMF/metafont//;{$TEXMF/fonts,$VARTEXFONTS}/source//
 MPINPUTS = .;$TEXMF/metapost//
 
-% The following are not needed any more here. 
-% Moved to texdoc.cnf (and hard-coded default), see the texdoc manual.
-% See texdoc's source too if you need to allow compressed documentation.
-% TEXDOCSSUFFIX   = ;.pdf;.ps;.dvi;.html;.txt;.tex
-% TEXDOCSCOMPRESS = ;.gz;.bz2;.zip;.Z
-% TEXDOCEXT       = {$TEXDOCSSUFFIX}{$TEXDOCSCOMPRESS}
-
 % Dump files (fmt/base/mem) for vir{tex,mf,mp} to read.
 % We want to find the engine-specific file, e.g., cont-en.fmt can
 % exist under both pdftex/ and xetex/.  But just in case some formats
@@ -399,8 +392,8 @@ FONTCONFIG_FILE=fonts.conf
 FONTCONFIG_PATH=$TEXMFSYSVAR/fonts/conf
 FC_CACHEDIR=$TEXMFSYSVAR/fonts/cache
 
-% TeX documentation and source files, for use with kpsewhich (and texdoc).
-TEXDOCS = .;$TEXMF/doc//
+% TeX documentation and source files, for use with texdoc and kpsewhich.
+TEXDOCS = $TEXMF/doc//
 TEXSOURCES = .;$TEXMF/source//
 
 % Web and CWeb input paths.
