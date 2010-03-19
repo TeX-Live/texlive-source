@@ -10,7 +10,7 @@ Home page: http://tug.org/epstopdf/
 
 Mailing list for bugs and discussion: http://lists.tug.org/tex-k
 When reporting bugs, please include an input file and command line
-options so the problem can be reproduced.
+options, so the problem can be reproduced.
 
 -------------------------------------------------------------------------
 The test-binary and test-bin2 files were supplied by Akira Kakuto and

@@ -46,6 +46,7 @@ use strict;
 #
 # emacs-page
 # History
+#  2010/03/19 v2.15 (Karl Berry)
 #    * let --outfile override --filter again.
 #    * recognize MSWin64 as well as MSWin32, just in case.
 #  2010/03/08 v2.14 (Manuel P\'egouri\'e-Gonnard)
@@ -145,7 +146,7 @@ use strict;
 
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id$) 2.14';
+my $ident = '($Id$) 2.15';
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2010 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.

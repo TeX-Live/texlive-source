@@ -84,7 +84,7 @@ check1:
 	pdfinfo $(file).pdf | grep "Page size"
 
 dist: epstopdf.tar.gz epstopdf.html
-epstopdf.tar.gz: README epstopdf.pl epstopdf.1 epstopdf.pdf
+epstopdf.tar.gz: README epstopdf.pl epstopdf.1 epstopdf.man1.pdf
 	tar chzf epstopdf.tar.gz $^
 
 groff = groff
@@ -92,7 +92,7 @@ groff_opts = -man -t
 pdfopts = $(groff_opts)
 htmlopts = $(groff_opts) -Thtml
 pspdf = ps2pdf -sPAPERSIZE=a4
-epstopdf.pdf: epstopdf.1
+epstopdf.man1.pdf: epstopdf.1
 	$(groff) $(pdfopts) $< | $(pspdf) - $@
 epstopdf.html: epstopdf.1
 	$(groff) $(htmlopts) $< >$@
