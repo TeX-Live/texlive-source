@@ -56,9 +56,9 @@ for t in 1 2 3; do
   echo "Running memtest$t ..."
 
   TEXMFCNF=$srcdir/../kpathsea \
-    BSTINPUTS=$srcdir/../web2c/tests \
+    BSTINPUTS=$srcdir/../web2c/tests:$srcdir/csf \
     BIBINPUTS=./tests \
-    ./bibtex8 -c $srcdir/csf/88591lat.csf tests/memtest$t || exit 1
+    ./bibtex8 tests/memtest$t || exit 1so
 
 done
 

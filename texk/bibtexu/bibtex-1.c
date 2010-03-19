@@ -162,36 +162,9 @@ Include the ICU heads. 23/sep/2009
  * of the filename.  It also sets the global variable |name_length| to the
  * appropriate value.
  *
- * NOTE: because C arrays start at index 0, not 1, the subscripts of array
- *	 |name_of_file| are generally 1 less than those in the WEB source.
+ * REMOVED: |add_area|.
  ***************************************************************************/
-void          add_area (StrNumber_T area)
-BEGIN
-  PoolPointer_T       p_ptr;
 
-  if ((name_length + LENGTH (area)) > FILE_NAME_SIZE)
-  BEGIN
-    PRINT ("File=");
-    PRINT_POOL_STR (area);
-    PRINT2 ("%s,", name_of_file);
-    file_nm_size_overflow ();
-  END
-  name_ptr = name_length - 1;
-  while (name_ptr >= 0)
-  BEGIN
-    name_of_file[name_ptr + LENGTH (area)] = name_of_file[name_ptr];
-    DECR (name_ptr);
-  END
-  name_ptr = 0;
-  p_ptr = str_start[area];
-  while (p_ptr < str_start[area + 1])
-  BEGIN
-    name_of_file[name_ptr] = CHR (str_pool[p_ptr]);
-    INCR (name_ptr);
-    INCR (p_ptr);
-  END
-  name_length = name_length + LENGTH (area);
-END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  61 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
@@ -261,13 +234,6 @@ void          add_extension (StrNumber_T ext)
 BEGIN
   PoolPointer_T       p_ptr;
 
-  if ((name_length + LENGTH (ext)) > FILE_NAME_SIZE)
-  BEGIN
-    PRINT2 ("File=%s, extension=", name_of_file);
-    PRINT_POOL_STR (ext);
-    PRINT_LN (",");
-    file_nm_size_overflow ();
-  END
   name_ptr = name_length;
   p_ptr = str_start[ext];
   while (p_ptr < str_start[ext + 1])
@@ -277,12 +243,7 @@ BEGIN
     INCR (p_ptr);
   END
   name_length = name_length + LENGTH (ext);
-  name_ptr = name_length;
-  while (name_ptr < FILE_NAME_SIZE)
-  BEGIN
-    name_of_file[name_ptr] = ' ';
-    INCR (name_ptr);
-  END
+  name_of_file[name_length] = 0;
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  60 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -526,8 +487,6 @@ BEGIN
       add_extension (s_bib_extension);
       if ( ! a_open_in (&CUR_BIB_FILE, BIB_FILE_SEARCH_PATH))
       BEGIN
-        add_area (s_bib_area);
-	if ( ! a_open_in (&CUR_BIB_FILE, BIB_FILE_SEARCH_PATH))
         BEGIN
           OPEN_BIBDATA_AUX_ERR ("I couldn't open database file ");
           perror ("\nReason");
@@ -605,8 +564,6 @@ BEGIN
     add_extension (s_bst_extension);
     if ( ! a_open_in (&bst_file, BST_FILE_SEARCH_PATH))
     BEGIN
-      add_area (s_bst_area);
-      if ( ! a_open_in (&bst_file, BST_FILE_SEARCH_PATH))
       BEGIN
 	PRINT ("I couldn't open style file ");
 	print_bst_name ();
@@ -984,12 +941,7 @@ BEGIN
  ***************************************************************************/
     BEGIN
       start_name (CUR_AUX_STR);
-      name_ptr = name_length;
-      while (name_ptr < FILE_NAME_SIZE)
-      BEGIN
-	name_of_file[name_ptr] = ' ';
-	INCR (name_ptr);
-      END
+      name_of_file[name_length] = 0;
       if ( ! a_open_in (&CUR_AUX_FILE, AUX_FILE_SEARCH_PATH))
       BEGIN
 	PRINT ("I couldn't open auxiliary file ");

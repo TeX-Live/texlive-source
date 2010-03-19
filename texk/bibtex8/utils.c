@@ -768,7 +768,7 @@ void *myrealloc (void *old_ptr, const unsigned long bytes_required, const char *
 */
 FILE *open_ip_file (Integer_T search_path)
 {
-    char                filename[FILE_NAME_SIZE + 1];
+    const char          *filename = (const char *) name_of_file;
 #ifdef KPATHSEA
     string              full_filespec;
 #else
@@ -777,9 +777,6 @@ FILE *open_ip_file (Integer_T search_path)
     FILE               *fptr;
     int                 status;
       
-    (void) strncpy (filename, name_of_file, (size_t) name_length);
-    filename[name_length] = '\0';
-
     switch (search_path) {
         case AUX_FILE_SEARCH_PATH:
 #ifdef KPATHSEA
@@ -871,12 +868,9 @@ not_ok:
 */
 FILE *open_op_file (void)
 {
-    char                tmp_file_name[FILE_NAME_SIZE + 1];
+    const char         *tmp_file_name = (const char *) name_of_file;
     FILE               *fptr;
       
-    (void) strncpy (tmp_file_name, name_of_file, (size_t) name_length);
-    tmp_file_name[name_length] = '\0';
-
     debug_msg (DBG_IO, "open_op_file: trying to open `%s' ... ",
                tmp_file_name);
 
@@ -947,7 +941,7 @@ FILE *open_op_file (void)
 */
 void parse_cmd_line (int argc, char **argv)
 {
-    int                 c, l;
+    int                 c;
     int                 no_files;
 
     Flag_7bit = FALSE;
@@ -1070,21 +1064,6 @@ void parse_cmd_line (int argc, char **argv)
     }
 
     /*
-    ** If the auxilliary file was specified with the ".aux" part already
-    ** appended, we strip it off here.  (It's a bit of a bodge, but it
-    ** minimises the changes necessary to the original BibTeX code.)
-    */
-    l = strlen (Str_auxfile);
-
-    if (l > 4) {
-        if ((Str_auxfile[l-4] == '.')
-                && ((Str_auxfile[l-3] == 'a') || (Str_auxfile[l-3] == 'A'))
-                && ((Str_auxfile[l-2] == 'u') || (Str_auxfile[l-2] == 'U'))
-                && ((Str_auxfile[l-1] == 'x') || (Str_auxfile[l-1] == 'X')))
-            Str_auxfile[l-4] = '\0';
-    }
-    
-    /*
     ** Check for contradictory options
     */
     if (Flag_7bit && Flag_8bit) {
@@ -1147,7 +1126,6 @@ void report_bibtex_capacity (void)
         LOG_CAPACITY (AUX_STACK_SIZE);
         LOG_CAPACITY (Buf_Size);
         LOG_CAPACITY (ENT_STR_SIZE);
-        LOG_CAPACITY (FILE_NAME_SIZE);
         LOG_CAPACITY (GLOB_STR_SIZE);
         LOG_CAPACITY (Hash_Prime);
         LOG_CAPACITY (Hash_Size);
@@ -1710,6 +1688,8 @@ int c8read_csf (void)
     /*
     ** If the CS file name doesn't contain a '.', append ".csf".
     */
+    free (name_of_file);
+    name_of_file = (unsigned char *) mymalloc (strlen (Str_csfile) + 5, "name_of_file");
     strcpy (name_of_file, Str_csfile);
 
     if (strchr (name_of_file, '.') == NULL)

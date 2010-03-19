@@ -16,7 +16,7 @@ rm -f xsort.bbl
 TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/tests \
   BIBINPUTS=$srcdir/tests \
-  ./bibtex8 --csfile $srcdir/tests/sort$i.csf tests/xsort || exit 1
+  ./bibtex8 --csfile sort$i.csf tests/xsort || exit 1
 
 diff $srcdir/tests/sort$i.bbl tests/xsort.bbl || exit 1
 

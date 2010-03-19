@@ -1,3 +1,12 @@
+2010-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Dynamic allocation of name_of_file strings.  No padding.
+	* bibtex-1.c (add_area): Not used and removed.
+	* bibtex-2.c (file_nm_size_overflow): Not used and removed.
+	* bibtex-3.c (s_bst_area, s_bib_area): Removed.
+	* gblvars.h (bib_area_string, bst_area_string): Removed.
+	* utils.c (open_ip_file, open_op_file): Adapted.
+
 2010-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex-1.c (check_cite_overflow): Reallocate cite_info,

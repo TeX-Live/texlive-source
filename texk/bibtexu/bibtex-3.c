@@ -185,10 +185,6 @@ BEGIN
   s_bst_extension = hash_text[pre_def_loc];
   pre_define (".bib        ", 4, FILE_EXT_ILK);
   s_bib_extension = hash_text[pre_def_loc];
-  pre_define ("            ", 0, FILE_AREA_ILK);
-  s_bst_area = hash_text[pre_def_loc];
-  pre_define ("            ", 0, FILE_AREA_ILK);
-  s_bib_area = hash_text[pre_def_loc];
 
 /***************************************************************************
  * WEB section number:	79
@@ -2361,13 +2357,8 @@ void          start_name (StrNumber_T file_name)
 BEGIN
   PoolPointer_T       p_ptr;
 
-  if (LENGTH (file_name) > FILE_NAME_SIZE)
-  BEGIN
-    PRINT ("File=");
-    PRINT_POOL_STR (file_name);
-    PRINT_LN (",");
-    file_nm_size_overflow ();
-  END
+  free (name_of_file);
+  name_of_file = (unsigned char *) mymalloc (LENGTH (file_name) + 5, "name_of_file");
   name_ptr = 0;
   p_ptr = str_start[file_name];
   while (p_ptr < str_start[file_name + 1])
@@ -2377,6 +2368,7 @@ BEGIN
     INCR (p_ptr);
   END
   name_length = LENGTH (file_name);
+  name_of_file[name_length] = 0;
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  58 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 

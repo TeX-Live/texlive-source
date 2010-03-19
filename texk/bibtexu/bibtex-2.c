@@ -30,7 +30,6 @@
 **
 **	    execute_fn
 **	    figure_out_the_formatted_name
-**	    file_nm_size_overflow
 **	    find_cite_locs_for_this_cite_ke
 **	    get_aux_command_and_process
 **	    get_bib_command_or_entry_and_pr
@@ -1173,11 +1172,10 @@ END
  * WEB section number:	 59
  * ~~~~~~~~~~~~~~~~~~~
  * Yet another complaint-before-quiting.
+ *
+ * REMOVED: |file_nm_size_overflow|.
  ***************************************************************************/
-void          file_nm_size_overflow (void)
-BEGIN
-  BIBTEX_OVERFLOW ("file name size ", FILE_NAME_SIZE);
-END
+
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  59 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
@@ -2017,9 +2015,26 @@ BEGIN
  * already stopped after issuing a "Usage" error.
  ***************************************************************************/
     BEGIN
-      (void) strncpy (name_of_file, Str_auxfile, FILE_NAME_SIZE);
-      name_of_file[FILE_NAME_SIZE] = '\0';
-      aux_name_length = strlen (name_of_file);
+      /*
+      ** Leave room for the extension and the null byte at the end. 
+      */
+      aux_name_length = strlen (Str_auxfile);
+      name_of_file = (unsigned char *) mymalloc (aux_name_length + 5, "name_of_file");
+      strncpy ((char *) name_of_file, Str_auxfile, aux_name_length);
+
+      /*
+      ** If the auxilliary file was specified with the ".aux" part already
+      ** appended, we strip it off here.
+      */
+      if (aux_name_length > 4) {
+          if ((Str_auxfile[aux_name_length-4] == '.')
+                  && ((Str_auxfile[aux_name_length-3] == 'a') || (Str_auxfile[aux_name_length-3] == 'A'))
+                  && ((Str_auxfile[aux_name_length-2] == 'u') || (Str_auxfile[aux_name_length-2] == 'U'))
+                  && ((Str_auxfile[aux_name_length-1] == 'x') || (Str_auxfile[aux_name_length-1] == 'X')))
+              aux_name_length -= 4;
+      }
+
+      name_of_file[aux_name_length] = 0;
     END        
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 102 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2033,12 +2048,6 @@ BEGIN
  * store the name strings we'll need later.
  ***************************************************************************/
     BEGIN
-      if (((aux_name_length + LENGTH (s_aux_extension)) > FILE_NAME_SIZE)
-	  || ((aux_name_length + LENGTH (s_bib_extension)) > FILE_NAME_SIZE)
-	  || ((aux_name_length + LENGTH (s_bbl_extension)) > FILE_NAME_SIZE))
-      BEGIN
-	SAM_YOU_MADE_THE_FILE_NAME_TOO;
-      END
 
 /***************************************************************************
  * WEB section number:	106

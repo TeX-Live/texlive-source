@@ -97,7 +97,6 @@ void                    a_close (const AlphaFile_T file_pointer);
 Boolean_T               a_open_in (AlphaFile_T *file_pointer,
                                    Integer_T search_path);
 Boolean_T               a_open_out (AlphaFile_T *file_pointer);
-void                    add_area (StrNumber_T area);
 void                    add_buf_pool (StrNumber_T pstr);
 void                    add_database_cite (CiteNumber_T *newcite);
 void                    add_extension (StrNumber_T ext);
@@ -176,7 +175,6 @@ Boolean_T               eoln (const AlphaFile_T file_pointer);
 void                    execute_fn (HashLoc_T exfnloc);
 
 void                    figure_out_the_formatted_name (void);
-void                    file_nm_size_overflow (void);
 Boolean_T               find_cite_locs_for_this_cite_ke (StrNumber_T citestr);
 
 void                    get_aux_command_and_process (void);
