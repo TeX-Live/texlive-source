@@ -588,6 +588,10 @@ TEX = etex
 %MFEDIT = ${TEXEDIT}
 %MPEDIT = ${TEXEDIT}
 
+% The default `codepage and sort order' file for BibTeX8, when none is
+% given as command line option or environment variable.
+BIBTEX_CSFILE = 88591lat.csf
+
 %  Part 3: Array and other sizes for TeX (and Metafont).
 %
 % If you want to change some of these sizes only for a certain TeX

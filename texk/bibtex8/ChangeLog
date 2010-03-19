@@ -1,3 +1,8 @@
+2010-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.c: Call kpse_set_program_name with "bibtex8".
+	* utils.c: Default csfile from environment or config file.
+
 2010-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Dynamic allocation of name_of_file strings.  No padding.

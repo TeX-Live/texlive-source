@@ -132,6 +132,8 @@
 #include <kpathsea/config.h>
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/tex-file.h>
+#include <kpathsea/paths.h>
+#include <kpathsea/variable.h>
 #include <kpathsea/lib.h>
 #ifndef WIN32
 #include <kpathsea/getopt.h>
@@ -981,7 +983,7 @@ void parse_cmd_line (int argc, char **argv)
                 break;
 
             case 'c':       /**************** -c, --csfile *************/
-                Str_csfile = optarg;
+                Str_csfile = strdup (optarg);
                 break;
 
             case 'd':       /**************** -d, --debug **************/
@@ -1644,8 +1646,10 @@ int c8read_csf (void)
     */
     if (Str_csfile == NULL) {
 #ifdef KPATHSEA
-      /* FIXME: this default value should be stored in texmf.in */
-      Str_csfile = xstrdup("88591lat.csf");
+      /* Default value from environment or texmf.cnf */
+      Str_csfile = kpse_var_value (DEFAULT_BIBTEX_CSFILE);
+      if (Str_csfile == NULL)  /* Use fallback value */
+          Str_csfile = xstrdup ("88591lat.csf");
 #else
         if (strlen (CSF_FILE_ENVVAR) != 0) {
             debug_msg (DBG_CSF, "c8read_csf: --csfile not set, checking '%s'", 
@@ -1798,6 +1802,7 @@ int c8read_csf (void)
     ** Finished reading, close the CS file then return TRUE.
     */
     close_file (c8_cs_file);
+    free (Str_csfile);
     return TRUE;
 }				/* c8read_csf () */
 
