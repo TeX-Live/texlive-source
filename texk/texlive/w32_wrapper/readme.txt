@@ -15,7 +15,7 @@
   
   Rationale
   
-    Wrappers enable to use scripts on Windows as regular programs. 
+    Wrappers enable use of scripts on Windows as regular programs. 
     They are also required for some binary programs to set-up the 
     right environment for them. 
     
@@ -69,7 +69,7 @@
     
     There are two flavours of the binary stub: one for CLI programs 
     and another one for GUI programs. The GUI variant does not open 
-    a console window nor does it block the command promt if started 
+    a console window nor does it block the command prompt if started 
     from there. It also uses a dialog box to display an error message 
     in addition to outputting to stderr.
     
