@@ -24,7 +24,7 @@ setupboundvariable (integer *var, const_string var_name, integer dflt)
       fprintf (stderr,
                "%s: Bad value (%ld) in texmf.cnf for %s, keeping %ld.\n",
                program_invocation_name,
-               (long) conf_val, var_name + 1, (long) dflt);
+               (long) conf_val, var_name, (long) dflt);
     } else {
       *var = conf_val; /* We'll make further checks later.  */
     }

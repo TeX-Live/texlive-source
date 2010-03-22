@@ -201,6 +201,12 @@ end.
 {|min_crossrefs| can be set at runtime now.}
 @z
 
+@x [still 14]
+@!single_fn_space=100; {maximum amount for a single |wiz_defined|-function}
+@y
+@!single_fn_space=100; {maximum amount for a single |wiz_defined|-function}
+@z
+
 @x [still 14] handle long citation strings
 @!max_ent_ints=3000; {maximum number of |int_entry_var|s
                                         (entries $\times$ |int_entry_var|s)}
@@ -215,6 +221,12 @@ end.
 @!glob_str_size=5000; {maximum  size of a |str_global_var|;
                                                         must be |<=buf_size|}
 @!MAX_FIELDS=5000; {initial number of fields (entries $\times$ fields,
+@z
+
+@x [still 14]
+@!lit_stk_size=100; {maximum number of literal functions on the stack}
+@y
+@!lit_stk_size=100; {maximum number of literal functions on the stack}
 @z
 
 @x [15] Increase more constants in the web defines.
@@ -456,6 +468,11 @@ BIB_XRETALLOC ('name_sep_char', name_sep_char, ASCII_code,
 @d log_pr_pool_str(#) == trace_pr_pool_str(#)
 @z
 
+@x [54] Reallocate str_pool.  We may need more than POOL_SIZE.
+  if (pool_ptr+# > pool_size) then
+@y
+  while (pool_ptr+# > pool_size) do
+@z
 @x [54] Reallocate str_pool.
 overflow('pool size ',pool_size);
 @y
@@ -1046,7 +1063,7 @@ if (single_ptr + wiz_def_ptr > wiz_fn_space) then
     overflow('wizard-defined function space ',wiz_fn_space);
     end;
 @y
-if (single_ptr + wiz_def_ptr > wiz_fn_space) then
+while (single_ptr + wiz_def_ptr > wiz_fn_space) do
     begin
     BIB_XRETALLOC ('wiz_functions', wiz_functions, hash_ptr2,
                     wiz_fn_space, wiz_fn_space + WIZ_FN_SPACE);
@@ -1303,6 +1320,14 @@ while (sp_ptr < sp_end) do                      {shift the substring}
 @y
 str_room(sp_end - sp_ptr);
 while (sp_ptr < sp_end) do                      {shift the substring}
+@z
+
+% Forgot to check for pool overflow here.  Triggered by bibtex-mem.test (3).
+@x [445]
+if (pop_lit2 >= cmd_str_ptr) then       {no shifting---merely change pointers}
+@y
+str_room(sp_brace_level + sp_end - sp_ptr);
+if (pop_lit2 >= cmd_str_ptr) then       {no shifting---merely change pointers}
 @z
 
 % [460] Eliminate unreferenced statement label, because `undefined' is

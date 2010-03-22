@@ -2054,7 +2054,7 @@ Next_Token_Label:
  ***************************************************************************/
   BEGIN
       INSERT_FN_LOC (END_OF_DEF);
-      if ((single_ptr + wiz_def_ptr) > Wiz_Fn_Space)
+      while ((single_ptr + wiz_def_ptr) > Wiz_Fn_Space)
       BEGIN
 	BIB_XRETALLOC ("wiz_functions", wiz_functions, HashPtr2_T,
                        Wiz_Fn_Space, Wiz_Fn_Space + WIZ_FN_SPACE);

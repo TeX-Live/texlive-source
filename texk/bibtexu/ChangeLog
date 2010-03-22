@@ -1,7 +1,11 @@
 2010-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* utils.c: Default csfile and Max_Strings from env or config.
 	* bibtex.c: Call kpse_set_program_name with "bibtexu".
-	* utils.c: Default csfile from environment or config file.
+	* bibtex.h (STR_ROOM): Call pool_overflow() as often as needed.
+	* bibtex-3.c (scan_fn_def): Same for increase Wiz_Fn_Space.
+	* bibtex-4.c (BST_STRING_SIZE_EXCEEDED): Drop extra "%ld".
+	(x_text_prefix): Add missing STR_ROOM.
 
 2010-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -467,7 +467,7 @@
  ***************************************************************************/
 #define APPEND_CHAR(X)              {	str_pool[pool_ptr] = (X);\
                                      INCR(pool_ptr);}
-#define STR_ROOM(X)                 {if((pool_ptr+(X))>Pool_Size)\
+#define STR_ROOM(X)                 {while((pool_ptr+(X))>Pool_Size)\
                                         pool_overflow();}
 
 /***************************************************************************

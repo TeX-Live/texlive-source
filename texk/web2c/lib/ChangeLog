@@ -1,3 +1,7 @@
+2010-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* setupvar.c (setupboundvariable): Fix off by one error in msg.
+
 2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (setupboundvariable): Moved from here ...

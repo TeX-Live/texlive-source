@@ -1,7 +1,8 @@
-2010-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2010-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf (BIBTEX_CSFILE): Default codepage and sort order
 	file for BibTeX8.
+	(max_strings): Also for BibTeX8 and BibTeX8U.
 
 2010-03-18  Karl Berry  <karl@tug.org>
 

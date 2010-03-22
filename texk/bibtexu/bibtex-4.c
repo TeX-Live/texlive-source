@@ -1452,7 +1452,7 @@ BEGIN
 	    sp_xptr1 = str_start[pop_lit2 + 1];
 	    if ((sp_xptr1 - sp_ptr) > ENT_STR_SIZE)
 	    BEGIN
-	      BST_STRING_SIZE_EXCEEDED (ENT_STR_SIZE, "%ld, the entry");
+	      BST_STRING_SIZE_EXCEEDED (ENT_STR_SIZE, ", the entry");
 	      sp_xptr1 = sp_ptr + ENT_STR_SIZE;
 	    END
 	    while (sp_ptr < sp_xptr1)
@@ -1518,7 +1518,7 @@ BEGIN
 	      sp_end = str_start[pop_lit2 + 1];
 	      if ((sp_end - sp_ptr) > GLOB_STR_SIZE)
 	      BEGIN
-		BST_STRING_SIZE_EXCEEDED (GLOB_STR_SIZE, "%ld, the global");
+		BST_STRING_SIZE_EXCEEDED (GLOB_STR_SIZE, ", the global");
 		sp_end = sp_ptr + GLOB_STR_SIZE;
 	      END
 	      while (sp_ptr < sp_end)
@@ -2760,6 +2760,7 @@ The same for the length of character UTF-8. 23/sep/2009
     END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 445 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
+    STR_ROOM (sp_brace_level + sp_end - sp_ptr);
     if (pop_lit2 >= cmd_str_ptr)
     BEGIN
       pool_ptr = sp_end;

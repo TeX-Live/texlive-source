@@ -50,8 +50,14 @@ for t in 1 2 3; do
   case $t in
   1) mk_bib 0 >tests/memtest.bib;;
   2) mk_bib 1 >>tests/memtest.bib;;
-  3) exit 0;;	# requires larger constatnts
+  3) exit 0;;	# requires larger constants
   esac
+
+# memtest3 requires:
+#	SINGLE_FN_SPACE 200 (100)
+#	ENT_STR_SIZE 2000 (250)
+#	GLOB_STR_SIZE 2000 (1000)
+#	MAX_GLOB_STRS 50 (10)
 
   echo "Running memtest$t ..."
 

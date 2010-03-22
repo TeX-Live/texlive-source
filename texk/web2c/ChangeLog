@@ -1,3 +1,9 @@
+2010-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.ch (str_room): Call pool_overflow() as often as needed.
+	(scan_fn_def): Increase wiz_fn_space as often as needed.
+	(x_text_prefix): Add missing str_room.
+
 2010-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex.ch (max_cites): Dynamically resize the cite_list,

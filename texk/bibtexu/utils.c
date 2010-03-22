@@ -1311,6 +1311,20 @@ void set_array_sizes (void)
     Max_Strings = 4000;
     Min_Crossrefs = 2;
 
+    {
+        char *expansion = kpse_var_value ("max_strings");
+        if (expansion) {
+            int conf_val = atoi (expansion);
+            if (conf_val < Max_Strings)
+                fprintf (stderr,
+                "%s: Bad value (%ld) in texmf.cnf for max_strings, keeping %ld.\n",
+                program_invocation_name, (long) conf_val, (long) Max_Strings);
+            else
+                Max_Strings = conf_val;
+            free (expansion);
+        }
+    }
+
     if (Flag_big) {
         Max_Strings = 10000;
     }
