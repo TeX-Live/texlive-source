@@ -100,9 +100,13 @@ standard_output := stdout;
 pool_size := POOL_SIZE;
 buf_size := BUF_SIZE;
 max_bib_files := MAX_BIB_FILES;
+max_glob_strs := MAX_GLOB_STRS;
 max_fields := MAX_FIELDS;
 max_cites := MAX_CITES;
 wiz_fn_space := WIZ_FN_SPACE;
+lit_stk_size := LIT_STK_SIZE;
+@#
+setup_params;
 @#
 {Add one to the sizes because that's what bibtex uses.}
 bib_file   := XTALLOC (max_bib_files + 1, alpha_file);
@@ -120,12 +124,15 @@ out_buf    := XTALLOC (buf_size + 1, ASCII_code);
 name_tok   := XTALLOC (buf_size + 1, buf_pointer);
 name_sep_char := XTALLOC (buf_size + 1, ASCII_code);
 @#
+glb_str_ptr := XTALLOC (max_glob_strs, str_number);
+global_strs := XTALLOC (max_glob_strs * (glob_str_size + 1), ASCII_code);
+glb_str_end := XTALLOC (max_glob_strs, integer);
+@#
 cite_list  := XTALLOC (max_cites + 1, str_number);
 type_list  := XTALLOC (max_cites + 1, hash_ptr2);
 entry_exists := XTALLOC (max_cites + 1, boolean);
 cite_info  := XTALLOC (max_cites + 1, str_number);
 @#
-set_max_strings;
 str_start  := XTALLOC (max_strings + 1, pool_pointer);
 @#
 hash_next  := XTALLOC (hash_max + 1, hash_pointer);
@@ -133,6 +140,9 @@ hash_text  := XTALLOC (hash_max + 1, str_number);
 hash_ilk   := XTALLOC (hash_max + 1, str_ilk);
 ilk_info   := XTALLOC (hash_max + 1, integer);
 fn_type    := XTALLOC (hash_max + 1, fn_class);
+@#
+lit_stack  := XTALLOC (lit_stk_size + 1, integer);
+lit_stk_type := XTALLOC (lit_stk_size + 1, stk_type);
 @#
 compute_hash_prime;
 @#
@@ -195,6 +205,7 @@ end.
 @y [still 14]
 @!MAX_BIB_FILES=20; {initial number of \.{.bib} files allowed}
 @!POOL_SIZE=65000; {initial number of characters in strings}
+@!MAX_STRINGS=4000; {minimum initial value for |max_strings|}
 @!MAX_CITES=750; {initial number of distinct cite keys; must be
                                                         |<=max_strings|}
 @!WIZ_FN_SPACE=3000; {initial amount of |wiz_defined|-function space}
@@ -204,7 +215,7 @@ end.
 @x [still 14]
 @!single_fn_space=100; {maximum amount for a single |wiz_defined|-function}
 @y
-@!single_fn_space=100; {maximum amount for a single |wiz_defined|-function}
+@!SINGLE_FN_SPACE=50; {initial amount for a single |wiz_defined|-function}
 @z
 
 @x [still 14] handle long citation strings
@@ -217,16 +228,17 @@ end.
                                                         must be |<=buf_size|}
 @!max_fields=17250; {maximum number of fields (entries $\times$ fields,
 @y
-@!ent_str_size=250; {maximum size of a |str_entry_var|; must be |<=buf_size|}
-@!glob_str_size=5000; {maximum  size of a |str_global_var|;
+@!ENT_STR_SIZE=100; {maximum size of a |str_entry_var|; must be |<=buf_size|}
+@!GLOB_STR_SIZE=1000; {maximum  size of a |str_global_var|;
                                                         must be |<=buf_size|}
+@!MAX_GLOB_STRS=10;    {initial number of |str_global_var| names}
 @!MAX_FIELDS=5000; {initial number of fields (entries $\times$ fields,
 @z
 
 @x [still 14]
 @!lit_stk_size=100; {maximum number of literal functions on the stack}
 @y
-@!lit_stk_size=100; {maximum number of literal functions on the stack}
+@!LIT_STK_SIZE=50; {maximum number of literal functions on the stack}
 @z
 
 @x [15] Increase more constants in the web defines.
@@ -235,17 +247,18 @@ end.
                                                 and |< @t$2^{14}-2^6$@>|}
 @d file_name_size=40    {file names shouldn't be longer than this}
 @d max_glob_strs=10     {maximum number of |str_global_var| names}
+@d max_glb_str_minus_1 = max_glob_strs-1  {to avoid wasting a |str_global_var|}
 @y
-{|hash_size| and |hash_prime| are |const| constants now.}
-@d max_glob_strs=20     {maximum number of |str_global_var| names
-                         \.{James.Ashton@@keating.anu.edu.au} says his
-                         indxcite package needs at least 15 here.}
+{|hash_size| and |hash_prime| are now computed.}
+@d HASH_SIZE=5000       {minimum value for |hash_size|}
 @#
 @d file_name_size==maxint {file names have no arbitrary maximum length}
 @#
 {For dynamic allocation.}
 @d x_entry_strs_tail(#) == (#)]
 @d x_entry_strs(#) == entry_strs[(#) * (ent_str_size+1) + x_entry_strs_tail
+@d x_global_strs_tail(#) == (#)]
+@d x_global_strs(#) == global_strs[(#) * (glob_str_size+1) + x_global_strs_tail
 @z
 
 @x [16] Add new variables-that-used-to-be-constants for dynamic arrays.
@@ -256,7 +269,11 @@ end.
 @!max_bib_files: integer;
 @!max_cites: integer;
 @!wiz_fn_space: integer;
+@!ent_str_size: integer;
+@!glob_str_size: integer;
+@!max_glob_strs: integer;
 @!max_fields: integer;
+@!lit_stk_size: integer;
 @#
 @!max_strings: integer;
 @!hash_size: integer;
@@ -1006,7 +1023,7 @@ bst_done: a_close (bst_file);
 @!wiz_fn_loc = integer;         {|wiz_defined|-function storage locations}
 @!int_ent_loc = integer;        {|int_entry_var| storage locations}
 @!str_ent_loc = integer;        {|str_entry_var| storage locations}
-@!str_glob_loc = 0..max_glb_str_minus_1; {|str_global_var| storage locations}
+@!str_glob_loc = integer; {|str_global_var| storage locations}
 @!field_loc = integer;            {individual field storage locations}
 @z
 
@@ -1043,10 +1060,69 @@ bst_done: a_close (bst_file);
 @!entry_strs : ^ASCII_code; {dynamically-allocated array}
 @z
 
+@x [still 162] Dynamically allocate global strings
+@!str_glb_ptr : 0..max_glob_strs;       {general |str_global_var| location}
+@!glb_str_ptr : array[str_glob_loc] of str_number;
+@!global_strs : array[str_glob_loc] of array[0..glob_str_size] of ASCII_code;
+@!glb_str_end : array[str_glob_loc] of 0..glob_str_size;        {end markers}
+@!num_glb_strs : 0..max_glob_strs; {number of distinct |str_global_var| names}
+@y
+@!str_glb_ptr : integer;         {general |str_global_var| location}
+@!glb_str_ptr : ^str_number;
+@!global_strs : ^ASCII_code;
+@!glb_str_end : ^integer;        {end markers}
+@!num_glb_strs : integer;        {number of distinct |str_global_var| names}
+@z
+
 @x [still 162] Dynamically allocate field_info.
 @!field_info : packed array[field_loc] of str_number;
 @y
 @!field_info : ^str_number;
+@z
+
+@x [188] Dynamically allocate singl_function.
+type @!fn_def_loc = 0..single_fn_space; {for a single |wiz_defined|-function}
+var singl_function : packed array[fn_def_loc] of hash_ptr2;
+@y
+type @!fn_def_loc = integer; {for a single |wiz_defined|-function}
+var singl_function : ^hash_ptr2;
+@!single_fn_space : integer; {space allocated for this |singl_function| instance}
+@z
+
+@x [still 188] Dynamically allocate singl_function.
+begin
+eat_bst_white_and_eof_check ('function');
+@y
+begin
+single_fn_space := SINGLE_FN_SPACE;
+singl_function := XTALLOC (single_fn_space + 1, hash_ptr2);
+eat_bst_white_and_eof_check ('function');
+@z
+
+@x [still 188] Dynamically allocate singl_function.
+exit:
+end;
+@y
+exit:
+libc_free (singl_function);
+end;
+@z
+
+@x [189] Reallocate if out of single function space.
+                            singl_fn_overflow;
+@y
+                            begin
+                            BIB_XRETALLOC ('singl_function', singl_function, hash_ptr2,
+                                           single_fn_space, single_fn_space + SINGLE_FN_SPACE);
+                            end;
+@z
+
+@x [still 189] Procedure |singl_fn_overflow| replaced by inline code.
+procedure singl_fn_overflow;
+begin
+overflow('single function space ',single_fn_space);
+end;
+@y
 @z
 
 @x [199] A variable named `int' is no good in C.
@@ -1067,6 +1143,26 @@ while (single_ptr + wiz_def_ptr > wiz_fn_space) do
     begin
     BIB_XRETALLOC ('wiz_functions', wiz_functions, hash_ptr2,
                     wiz_fn_space, wiz_fn_space + WIZ_FN_SPACE);
+    end;
+@z
+
+@x [217] Reallocate if out of global strings.
+    overflow('number of string global-variables ',max_glob_strs);
+@y
+    begin
+    BIB_XRETALLOC_NOSET ('glb_str_ptr', glb_str_ptr, str_number,
+                         max_glob_strs, max_glob_strs + MAX_GLOB_STRS);
+    BIB_XRETALLOC_STRING ('global_strs', global_strs, glob_str_size,
+                          max_glob_strs, max_glob_strs + MAX_GLOB_STRS);
+    BIB_XRETALLOC ('glb_str_end', glb_str_end, integer,
+                   max_glob_strs, max_glob_strs + MAX_GLOB_STRS);
+    str_glb_ptr := num_glb_strs;
+    while (str_glb_ptr < max_glob_strs) do      {make new |str_global_var|s empty}
+        begin
+        glb_str_ptr[str_glb_ptr] := 0;
+        glb_str_end[str_glb_ptr] := 0;
+        incr(str_glb_ptr);
+        end;
     end;
 @z
 
@@ -1212,12 +1308,37 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
     x_entry_strs(str_ent_ptr)(0) := end_of_string;
 @z
 
+@x [291] Dynamic lit_stk_size.
+@!lit_stack : array[lit_stk_loc] of integer;    {the literal function stack}
+@!lit_stk_type : array[lit_stk_loc] of stk_type; {their corresponding types}
+@y
+@!lit_stack : ^integer;    {the literal function stack}
+@!lit_stk_type : ^stk_type; {their corresponding types}
+@z
+
+@x [292] Dynamic lit_stk_size.
+@!lit_stk_loc = 0..lit_stk_size;        {the stack range}
+@y
+@!lit_stk_loc = integer;        {the stack range}
+@z
+
 @x [302] Macroize entry_strs[][].
     char1 := entry_strs[ptr1][char_ptr];
     char2 := entry_strs[ptr2][char_ptr];
 @y
     char1 := x_entry_strs(ptr1)(char_ptr);
     char2 := x_entry_strs(ptr2)(char_ptr);
+@z
+
+@x [308] Reallocate literal stack.
+    overflow('literal-stack size ',lit_stk_size);
+@y
+    begin
+    BIB_XRETALLOC_NOSET ('lit_stack', lit_stack, integer,
+                         lit_stk_size, lit_stk_size + LIT_STK_SIZE);
+    BIB_XRETALLOC ('lit_stk_type', lit_stk_type, stk_type,
+                   lit_stk_size, lit_stk_size + LIT_STK_SIZE);
+    end;
 @z
 
 @x [321] Dynamic buf_size.
@@ -1268,6 +1389,12 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
         append_ex_buf_char (x_entry_strs(str_ent_ptr)(ex_buf_ptr));
 @z
 
+@x [331] Macroize global_strs[][]
+        append_char (global_strs[str_glb_ptr][glob_chr_ptr]);
+@y
+        append_char (x_global_strs(str_glb_ptr)(glob_chr_ptr));
+@z
+
 @x [338] s_preamble is dynamically allocated.
 @!s_preamble : array[bib_number] of str_number;
 @y
@@ -1298,6 +1425,12 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
         incr(sp_ptr);
         end;
     x_entry_strs(str_ent_ptr)(ent_chr_ptr) := end_of_string;
+@z
+
+@x [360] Macroize global_strs[][]
+            global_strs[str_glb_ptr][glob_chr_ptr] := str_pool[sp_ptr];
+@y
+            x_global_strs(str_glb_ptr)(glob_chr_ptr) := str_pool[sp_ptr];
 @z
 
 % [389] bibtex.web has mutually exclusive tests here; Oren said he
@@ -1485,20 +1618,28 @@ long_options[current_option].has_arg := 0;
 long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 
-@ Determine |max_strings| from the environment, configuration file, or
-default value.  Set |hash_size:=max_strings|, but not less than~5000.
+@ Determine |ent_str_size|, |glob_str_size|, and |max_strings| from the
+environment, configuration file, or default value.  Set
+|hash_size:=max_strings|, but not less than |HASH_SIZE|.
 
-@d min_strings = 4000 {lower bound for |max_strings|}
-@d min_hash = 5000    {lower bound for |hash_size|}
+{|setup_bound_var| stuff adapted from \.{tex.ch}.}
+@d setup_bound_var(#)==bound_default:=#; setup_bound_var_end
+@d setup_bound_var_end(#)==bound_name:=#; setup_bound_var_end_end
+@d setup_bound_var_end_end(#)==
+  setup_bound_variable(address_of(#), bound_name, bound_default);
+  if # < bound_default then # := bound_default
 
 @<Procedures and functions for about everything@>=
-procedure set_max_strings;
+procedure setup_params;
+var bound_default: integer; {for setup}
+@!bound_name: const_cstring; {for setup}
 begin kpse_set_program_name (argv[0], 'bibtex');
-setup_bound_variable (address_of (max_strings), 'max_strings', min_strings);
-if max_strings < min_strings then max_strings := min_strings;
+setup_bound_var (ENT_STR_SIZE)('ent_str_size')(ent_str_size);
+setup_bound_var (GLOB_STR_SIZE)('glob_str_size')(glob_str_size);
+setup_bound_var (MAX_STRINGS)('max_strings')(max_strings);
 @#
 hash_size := max_strings;
-if hash_size < min_hash then hash_size := min_hash;
+if hash_size < HASH_SIZE then hash_size := HASH_SIZE;
 hash_max := hash_size + hash_base - 1;
 end_of_def := hash_max + 1;
 undefined := hash_max + 1;

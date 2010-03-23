@@ -1,3 +1,8 @@
+2010-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf (ent_str_size, glob_str_size): New for size of
+	BibTeX (entry and global) strings.
+
 2010-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf (BIBTEX_CSFILE): Default codepage and sort order

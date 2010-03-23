@@ -4643,7 +4643,7 @@ print(" (format="); print(job_name); print_char(" ");
 @d setup_bound_var(#)==bound_default:=#; setup_bound_var_end
 @d setup_bound_var_end(#)==bound_name:=#; setup_bound_var_end_end
 @d setup_bound_var_end_end(#)==
-  setup_bound_variable(addressof(#), bound_name, bound_default);
+  setup_bound_variable(addressof(#), bound_name, bound_default)
 
 @p procedure main_body;
 begin @!{|start_here|}

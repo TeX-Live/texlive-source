@@ -1,3 +1,7 @@
+2010-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* common.defines (BIBXRETALLOCSTRING): New procedure.
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines (BIBXRETALLOCNOSET): New procedure.
