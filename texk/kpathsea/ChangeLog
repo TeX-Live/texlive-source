@@ -1,3 +1,12 @@
+2010-03-24  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFSCRIPTS): progname before engine, for consistency,
+	and because the former is more specific.
+	(TEXMF_RESTRICTED_SCRIPTS): new definition, for the w32 wrapper.
+
+	(TEXMFDBS): reorder in file to be next to TEXMF, to make the
+	relationship more apparent.  No change in definition.
+
 2010-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf (ent_str_size, glob_str_size): New for size of

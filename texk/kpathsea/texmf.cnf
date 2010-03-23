@@ -109,7 +109,7 @@ TEXMFCONFIG = ~/.texlive2009/texmf-config
 % For texconfig to work properly, TEXMFCONFIG and TEXMFVAR should be named
 % explicitly and before all other trees.
 % 
-% TEXMFLOCAL follows TEXMFMAIN (and precedes TEXMFDIST) because the only
+% TEXMFLOCAL follows TEXMFMAIN (and precedes TEXMFDIST) because the
 % files in TEXMFMAIN are tightly coupled with the particular version of
 % the distribution, such as format files.  Overriding them would be more
 % likely to cause trouble than help.  On the other hand, all the
@@ -118,6 +118,14 @@ TEXMFCONFIG = ~/.texlive2009/texmf-config
 % source of confusion to have different versions of a package installed,
 % whatever the trees, so try to avoid it).
 TEXMF = {$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
+
+% Where to look for ls-R files.  There need not be an ls-R in the
+% directories in this path, but if there is one, Kpathsea will use it.
+% By default, this is only the !! elements of TEXMF, so that mktexlsr
+% does not create ls-R files in the non-!! elements -- because if an
+% ls-R is present, it will be used, and the disk will not be searched.
+% This is arguably a bug in kpathsea.
+TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
 
 % The system trees.  These are the trees that are shared by all the users.
 % If a tree appears in this list, the mktex* scripts will use
@@ -129,15 +137,6 @@ SYSTEXMF = $TEXMFSYSVAR;$TEXMFMAIN;$TEXMFLOCAL;$TEXMFDIST
 % were found in a system tree and either that tree wasn't writable, or the
 % varfonts feature was enabled in MT_FEATURES in mktex.cnf.
 VARTEXFONTS = $TEXMFVAR/fonts
-
-% Where to look for ls-R files.  There need not be an ls-R in the
-% directories in this path, but if there is one, Kpathsea will use it.
-% By default, this is only the !! elements of TEXMF, so that mktexlsr
-% does not create ls-R files in the non-!! elements -- because if an
-% ls-R is present, it will be used, and the disk will not be searched.
-% This is arguably a bug in kpathsea.
-%
-TEXMFDBS = {!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}
 
 % On some systems, there will be a system tree which contains all the font
 % files that may be created as well as the formats.  For example
@@ -430,7 +429,7 @@ LUAINPUTS = .;$TEXMF/scripts/{$progname,$engine,}/lua//;$TEXINPUTS
 CLUAINPUTS = .;$SELFAUTOLOC/lib/{$progname,$engine,}/lua//
 
 % Architecture independent executables.
-TEXMFSCRIPTS = $TEXMF/scripts/{$engine,$progname,}//
+TEXMFSCRIPTS = $TEXMF/scripts/{$progname,$engine,}//
 
 % Other languages.
 JAVAINPUTS   = .;$TEXMF/scripts/{$progname,$engine,}/java//
@@ -507,21 +506,29 @@ false
 
 % we'd like to allow:
 % dvips - but external commands can be executed, need at least -R1.
+% epspdf, ps2pdf, pstopdf - need to respect openout_any,
+%   and we need to make sure -dSAFER is used and no injection is possible.
 % (img)convert (ImageMagick) - delegates.mgk possible misconfig, besides,
 %   without Unix convert it hardly seems worth it, and Windows convert
 %   is something completely different that destroys filesystems, so
 %   skip it.
-% epspdf, epstopdf, ps2pdf, pstopdf, rpdfcrop - need to respect openout_any,
-%   and we need to make sure -dSAFER is used and no injection is possible.
 % pygmentize - but is the filter feature insecure?
 % ps4pdf - but it calls an unrestricted latex.
 % texindy,xindy - but is the module feature insecure?
 % ulqda - but requires optional SHA1.pm, so why bother.
-% tex, latex, etc - but need to forbid --shell-escape, and inherit openout_any
-% bibtex,bibtex8,makeindex, - don't respect openout_any
+% tex, latex, etc. - but need to forbid --shell-escape, and inherit openout_any
+% 
+% repstopdf, rpdfcrop - maybe ok
+% bibtex,bibtex8,makeindex - maybe ok
 
 % plain TeX should remain unenhanced.
 shell_escape.tex = f
+
+% This is used by the Windows script wrapper for restricting searching
+% for the purportedly safe shell_escape_commands above to system
+% directories.
+TEXMF_RESTRICTED_SCRIPTS = \
+  {!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$progname,$engine,}//
 
 % Allow TeX \openin, \openout, or \input on filenames starting with `.'
 % (e.g., .rhosts) or outside the current tree (e.g., /etc/passwd)?
