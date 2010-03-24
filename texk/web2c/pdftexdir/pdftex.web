@@ -18276,17 +18276,21 @@ begin
     selector:=old_setting;
     str_room(7);
     str_pool[pool_ptr] := 0; { make C string for pdfsetmatrix }
-    pdfsetmatrix(str_start[str_ptr], cur_h, cur_page_height - cur_v);
-    str_room(7);
-    append_char(" ");
-    append_char("0");
-    append_char(" ");
-    append_char("0");
-    append_char(" ");
-    append_char("c");
-    append_char("m");
-    s := make_string;
-    literal(s, set_origin, false);
+    if pdfsetmatrix(str_start[str_ptr], cur_h, cur_page_height - cur_v) = 1 then begin
+        str_room(7);
+        append_char(" ");
+        append_char("0");
+        append_char(" ");
+        append_char("0");
+        append_char(" ");
+        append_char("c");
+        append_char("m");
+        s := make_string;
+        literal(s, set_origin, false);
+    end
+    else begin
+        pdf_error("\pdfsetmatrix", "Unrecognized format.");
+    end;
     flush_str(s);
 end;
 
@@ -35366,8 +35370,13 @@ special_node:special_out(p);
 language_node:do_nothing;
 pdf_save_pos_node:
   @<Save current position in DVI mode@>;
-othercases confusion("ext4")
-@:this can't happen ext4}{\quad ext4@>
+others: begin
+    if (pdftex_first_extension_code <= subtype(p)) and (subtype(p) <= pdftex_last_extension_code) then
+        pdf_error("ext4", "pdf node ended up in DVI mode")
+    else
+        confusion("ext4")
+        @:this can't happen ext4}{\quad ext4@>
+end;
 endcases;
 end;
 

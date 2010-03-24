@@ -81,7 +81,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 @define procedure checkpdfrestore();
 @define procedure pdfshipoutbegin();
 @define procedure pdfshipoutend();
-@define procedure pdfsetmatrix();
+@define function pdfsetmatrix();
 @define procedure matrixtransformpoint();
 @define procedure matrixtransformrect();
 @define function matrixused;

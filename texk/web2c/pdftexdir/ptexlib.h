@@ -261,7 +261,7 @@ extern void checkpdfsave(int cur_h, int cur_v);
 extern void checkpdfrestore(int cur_h, int cur_v);
 extern void pdfshipoutbegin(boolean shipping_page);
 extern void pdfshipoutend(boolean shipping_page);
-extern void pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v);
+extern integer pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v);
 extern void matrixtransformpoint(scaled x, scaled y);
 extern void matrixtransformrect(scaled llx, scaled lly, scaled urx, scaled ury);
 extern boolean matrixused(void);

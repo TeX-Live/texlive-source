@@ -1691,19 +1691,18 @@ void pdfshipoutend(boolean shipping_page)
 
 */
 
-void pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v)
+integer pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v)
 {
     /* Argument of \pdfsetmatrix starts with strpool[in] and ends
        before strpool[poolptr]. */
 
     matrix_entry x, *y, *z;
+    char dummy;
 
     if (page_mode) {
-        if (sscanf((const char *) &strpool[in], " %lf %lf %lf %lf ",
-                   &x.a, &x.b, &x.c, &x.d) != 4) {
-            pdftex_warn("Unrecognized format of \\pdfsetmatrix{%s}",
-                        &strpool[poolptr]);
-            return;
+        if (sscanf((const char *) &strpool[in], " %lf %lf %lf %lf %c",
+                   &x.a, &x.b, &x.c, &x.d, &dummy) != 4) {
+            return 0; /* failure */
         }
         /* calculate this transformation matrix */
         x.e = (double) cur_h *(1.0 - x.a) - (double) cur_v *x.c;
@@ -1728,6 +1727,7 @@ void pdfsetmatrix(poolpointer in, scaled cur_h, scaled cur_v)
         }
         matrix_stack_used++;
     }
+    return 1; /* success */
 }
 
 /* Apply matrix to point (x,y)
