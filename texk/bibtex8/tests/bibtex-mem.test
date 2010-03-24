@@ -47,21 +47,18 @@ for t in 1 2 3; do
 
   mk_aux memdata$t >tests/memtest$t.aux
 
+  env=
+
   case $t in
   1) mk_bib 0 >tests/memtest.bib;;
   2) mk_bib 1 >>tests/memtest.bib;;
-  3) exit 0;;	# requires larger constants
+  3) env='ent_str_size=2000 glob_str_size=2000';;
   esac
-
-# memtest3 requires:
-#	SINGLE_FN_SPACE 200 (100)
-#	ENT_STR_SIZE 2000 (250)
-#	GLOB_STR_SIZE 2000 (1000)
-#	MAX_GLOB_STRS 50 (10)
 
   echo "Running memtest$t ..."
 
-  TEXMFCNF=$srcdir/../kpathsea \
+  eval $env \
+    TEXMFCNF=$srcdir/../kpathsea \
     BSTINPUTS=$srcdir/../web2c/tests:$srcdir/csf \
     BIBINPUTS=./tests \
     ./bibtex8 tests/memtest$t || exit 1

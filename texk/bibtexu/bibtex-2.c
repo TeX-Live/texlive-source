@@ -624,8 +624,7 @@ End_While_Label: DO_NOTHING;
 	  glob_chr_ptr = 0;
 	  while (glob_chr_ptr < glb_str_end[str_glb_ptr])
 	  BEGIN
-	    APPEND_CHAR (global_strs[str_glb_ptr][glob_chr_ptr]); 
-					
+	    APPEND_CHAR (GLOBAL_STRS(str_glb_ptr, glob_chr_ptr));
 	    INCR (glob_chr_ptr);
 	  END
 
@@ -2255,10 +2254,10 @@ BEGIN
     if (Max_Cites > Max_Strings)
         bad = 10 * bad + 8;
 
-    if (ENT_STR_SIZE > Buf_Size)
+    if (Ent_Str_Size > Buf_Size)
         bad = 10 * bad + 9;
 
-    if (GLOB_STR_SIZE > Buf_Size)
+    if (Glob_Str_Size > Buf_Size)
         bad = 100 * bad + 11;
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 17 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2744,7 +2743,7 @@ BEGIN
     num_ent_strs = 0;            
     num_fields = 0;
     str_glb_ptr = 0;
-    while (str_glb_ptr < MAX_GLOB_STRS)
+    while (str_glb_ptr < Max_Glob_Strs)
     BEGIN
         glb_str_ptr[str_glb_ptr] = 0;
         glb_str_end[str_glb_ptr] = 0;

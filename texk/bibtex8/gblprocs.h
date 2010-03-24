@@ -274,7 +274,6 @@ void                    scan_identifier (ASCIICode_T char1,
 Boolean_T               scan_integer (void);
 Boolean_T               scan_nonneg_integer (void);
 Boolean_T               scan_white_space (void);
-void                    singl_fn_overflow (void);
 void                    skip_illegal_stuff_after_token (void);
 void                    skip_stuff_at_sp_brace_level_gr (void);
 void                    skip_token_print (void);

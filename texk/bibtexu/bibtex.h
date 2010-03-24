@@ -270,15 +270,15 @@
 #define BUF_SIZE                   10000
 #define MAX_CITES                  750
 #define MAX_FIELDS                 5000
-#define MAX_STRINGS                12000
+#define MAX_STRINGS                4000
 #define POOL_SIZE                  65000L
 
 #define MIN_CROSSREFS               2
 #define WIZ_FN_SPACE                3000
-#define SINGLE_FN_SPACE             100
-#define ENT_STR_SIZE                250
+#define SINGLE_FN_SPACE             50
+#define ENT_STR_SIZE                100
 #define GLOB_STR_SIZE               1000
-#define LIT_STK_SIZE                100
+#define LIT_STK_SIZE                50
 
 
 /***************************************************************************
@@ -289,7 +289,6 @@
  * themselves.
  ***************************************************************************/
 #define HASH_SIZE                  5000
-#define HASH_PRIME                 4253
 
 #ifdef MSDOS
 # define FILE_NAME_SIZE             64
@@ -298,7 +297,6 @@
 #endif                          /* MSDOS */
 
 #define MAX_GLOB_STRS               10
-#define MAX_GLOB_STR_MINUS_1        (MAX_GLOB_STRS - 1)
 
 /***************************************************************************
  * WEB section number:   18
@@ -946,20 +944,6 @@
             goto Next_Token_Label;}
 
 /***************************************************************************
- * WEB section number:  188
- * ~~~~~~~~~~~~~~~~~~~
- * This macro inserts a hash-table location (or one of the two
- * special markers |quote_next_fn| and |end_of_def|) into the
- * |singl_function| array, which will later be copied into the
- * |wiz_functions| array.
- ***************************************************************************/
-#define INSERT_FN_LOC(X)            {\
-    singl_function[single_ptr] = (X);\
-    if (single_ptr == SINGLE_FN_SPACE)\
-        {singl_fn_overflow();}\
-    INCR (single_ptr);}
-
-/***************************************************************************
  * WEB section number:  194
  * ~~~~~~~~~~~~~~~~~~~
  * This module marks the implicit function as being quoted, generates a
@@ -1465,8 +1449,8 @@
  * accessing a 2D array by converting the row/col into an offset from the
  * beginning of a 1D array.
  ***************************************************************************/
-#define ENTRY_STRS(_r,_c)       entry_strs[(_r * (ENT_STR_SIZE+1)) + _c]
-#define GLOBAL_STRS(_r,_c)      global_strs[(_r * (GLOB_STR_SIZE+1)) + _c]
+#define ENTRY_STRS(_r,_c)       entry_strs[(_r * (Ent_Str_Size+1)) + _c]
+#define GLOBAL_STRS(_r,_c)      global_strs[(_r * (Glob_Str_Size+1)) + _c]
 
 
 /***************************************************************************
@@ -1491,6 +1475,12 @@
   BIB_XRETALLOC_NOSET(array_name, array_var, type, size_var, new_size); \
   size_var = new_size; \
 } while (0)
+/* Same as above, but for the pseudo-TYPE ASCIICode_T[LENGTH+1].  */
+#define BIB_XRETALLOC_STRING(array_name, array_var, length, size_var, new_size) \
+  if (log_file != NULL)\
+    fprintf (log_file, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
+             array_name, (int) (length + 1), new_size, size_var); \
+  MYRETALLOC (array_name, array_var, new_size * (length + 1), ASCIICode_T)
 
 #endif                          /* __BIBTEX_H__ */
 

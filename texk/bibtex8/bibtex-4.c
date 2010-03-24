@@ -1314,10 +1314,10 @@ BEGIN
 	    ent_chr_ptr = 0;
 	    sp_ptr = str_start[pop_lit2];
 	    sp_xptr1 = str_start[pop_lit2 + 1];
-	    if ((sp_xptr1 - sp_ptr) > ENT_STR_SIZE)
+	    if ((sp_xptr1 - sp_ptr) > Ent_Str_Size)
 	    BEGIN
-	      BST_STRING_SIZE_EXCEEDED (ENT_STR_SIZE, ", the entry");
-	      sp_xptr1 = sp_ptr + ENT_STR_SIZE;
+	      BST_STRING_SIZE_EXCEEDED (Ent_Str_Size, ", the entry");
+	      sp_xptr1 = sp_ptr + Ent_Str_Size;
 	    END
 	    while (sp_ptr < sp_xptr1)
 	    BEGIN
@@ -1376,14 +1376,14 @@ BEGIN
 	      glob_chr_ptr = 0;
 	      sp_ptr = str_start[pop_lit2];
 	      sp_end = str_start[pop_lit2 + 1];
-	      if ((sp_end - sp_ptr) > GLOB_STR_SIZE)
+	      if ((sp_end - sp_ptr) > Glob_Str_Size)
 	      BEGIN
-		BST_STRING_SIZE_EXCEEDED (GLOB_STR_SIZE, ", the global");
-		sp_end = sp_ptr + GLOB_STR_SIZE;
+		BST_STRING_SIZE_EXCEEDED (Glob_Str_Size, ", the global");
+		sp_end = sp_ptr + Glob_Str_Size;
 	      END
 	      while (sp_ptr < sp_end)
 	      BEGIN
-		global_strs[str_glb_ptr][glob_chr_ptr] = str_pool[sp_ptr];
+		GLOBAL_STRS(str_glb_ptr, glob_chr_ptr) = str_pool[sp_ptr];
 		INCR (glob_chr_ptr);
 		INCR (sp_ptr);
 	      END

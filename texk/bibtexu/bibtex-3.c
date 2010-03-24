@@ -359,10 +359,10 @@ BEGIN
   INCR (num_ent_strs);
   pre_define ("entry.max$  ", 10, BST_FN_ILK);
   fn_type[pre_def_loc] = INT_GLOBAL_VAR;
-  FN_INFO[pre_def_loc] = ENT_STR_SIZE;
+  FN_INFO[pre_def_loc] = Ent_Str_Size;
   pre_define ("global.max$ ", 11, BST_FN_ILK);
   fn_type[pre_def_loc] = INT_GLOBAL_VAR;
-  FN_INFO[pre_def_loc] = GLOB_STR_SIZE;
+  FN_INFO[pre_def_loc] = Glob_Str_Size;
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 340 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 END
@@ -875,9 +875,12 @@ BEGIN
   }                             /* end if (Flag_trace) */
 #endif                      			/* TRACE */
 
-  if (lit_stk_ptr == LIT_STK_SIZE)
+  if (lit_stk_ptr == Lit_Stk_Size)
   BEGIN
-    BIBTEX_OVERFLOW ("literal-stack size ", LIT_STK_SIZE);
+    BIB_XRETALLOC_NOSET ("lit_stack", lit_stack, Integer_T,
+                         Lit_Stk_Size, Lit_Stk_Size + LIT_STK_SIZE);
+    BIB_XRETALLOC ("lit_stk_type", lit_stk_type, StkType_T,
+                   Lit_Stk_Size, Lit_Stk_Size + LIT_STK_SIZE);
   END
   INCR (lit_stk_ptr);
 END
@@ -1767,6 +1770,22 @@ END
 
 
 /***************************************************************************
+ * WEB section number:  188
+ * ~~~~~~~~~~~~~~~~~~~
+ * This macro inserts a hash-table location (or one of the two
+ * special markers |quote_next_fn| and |end_of_def|) into the
+ * |singl_function| array, which will later be copied into the
+ * |wiz_functions| array.
+ ***************************************************************************/
+#define INSERT_FN_LOC(X)            {\
+    singl_function[single_ptr] = (X);\
+    if (single_ptr == Single_Fn_Space)\
+        {BIB_XRETALLOC ("singl_function", singl_function, HashPtr2_T,\
+                        Single_Fn_Space, Single_Fn_Space + Single_Fn_Space);}\
+    INCR (single_ptr);}
+
+
+/***************************************************************************
  * WEB section number:	 187
  * ~~~~~~~~~~~~~~~~~~~
  * This recursive function reads and stores the list of functions
@@ -1776,12 +1795,16 @@ END
 void          scan_fn_def (HashLoc_T fn_hash_loc)
 BEGIN
   typedef Integer_T     FnDefLoc_T;
-  HashPtr2_T		singl_function[SINGLE_FN_SPACE + 1];
+  HashPtr2_T	*singl_function;
   FnDefLoc_T		single_ptr;
   FnDefLoc_T		copy_ptr;
   BufPointer_T		end_of_num;
   HashLoc_T		impl_fn_loc;
+  Integer_T             Single_Fn_Space;
 
+  Single_Fn_Space = SINGLE_FN_SPACE;
+  singl_function = (HashPtr2_T *) mymalloc ((Single_Fn_Space + 1)
+      * (unsigned long) sizeof (HashPtr2_T), "singl_function");
   EAT_BST_WHITE_AND_EOF_CHECK ("function");
   single_ptr = 0;
   while (SCAN_CHAR != RIGHT_BRACE)
@@ -2079,7 +2102,7 @@ Next_Token_Label:
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 200 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
   INCR (buf_ptr2);
-Exit_Label: DO_NOTHING;
+Exit_Label: free (singl_function);
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 187 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
@@ -2242,23 +2265,6 @@ BEGIN
   return (scan_white_space);
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION  94 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
-
-
-
-
-/***************************************************************************
- * WEB section number:	 188
- * ~~~~~~~~~~~~~~~~~~~
- * This macro inserts a hash-table location (or one of the two
- * special markers |quote_next_fn| and |end_of_def|) into the
- * |singl_function| array, which will later be copied into the
- * |wiz_functions| array.
- ***************************************************************************/
-void          singl_fn_overflow (void)
-BEGIN
-  BIBTEX_OVERFLOW ("single function space ", SINGLE_FN_SPACE);
-END
-/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 188 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 
 

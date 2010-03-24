@@ -239,15 +239,19 @@ static int              sort_weight;
 **	StrNumber_T     cite_list[Max_Cites + 1];
 **	Boolean_T       entry_exists[Max_Cites + 1];
 **	Integer_T       entry_ints[Max_Ent_Ints + 1];
-**	ASCIICode_T	entry_strs[Max_Ent_Strs + 1][ENT_STR_SIZE + 1];
+**	ASCIICode_T	entry_strs[Max_Ent_Strs + 1][Ent_Str_Size + 1];
 **	ASCIICode_T     ex_buf[Buf_Size + 1];
 **	StrNumber_T     field_info[Max_Fields + 1];
 **	FnClass_T       fn_type[Hash_Size + 1];
-**	ASCIICode_T     global_strs[MAX_GLOB_STRS + 1];
+**      Integer_T       glb_str_end[Max_Glob_Strs];
+**      StrNumber_T     glb_str_ptr[Max_Glob_Strs];
+**	ASCIICode_T     global_strs[Max_Glob_Strs][Glob_Str_Size + 1];;
 **	StrIlk_T        hash_ilk[Hash_Size + 1];
 **	HashPointer_T   hash_next[Hash_Size + 1];
 **	StrNumber_T     hash_text[Hash_Size + 1];
 **	Integer_T       ilk_info[Hash_Size + 1];
+**      Integer_T       lit_stack[Lit_Stk_Size + 1];
+**      StkType_T       lit_stk_type[Lit_Stk_Size + 1];
 **	ASCIICode_T     name_sep_char[Buf_Size + 1];
 **	BufPointer_T    name_tok[Buf_Size + 1];
 **	ASCIICode_T     out_buf[Buf_Size + 1];
@@ -262,8 +266,6 @@ static int              sort_weight;
 static void allocate_arrays (void)
 {
     unsigned long           bytes_required;
-    ASCIICode_T            *dummy_ptr;
-    int                     row;
 
     debug_msg (DBG_MEM, "Starting to allocate memory for arrays ... ");
 
@@ -310,7 +312,7 @@ static void allocate_arrays (void)
     entry_ints = NULL;
 
     /*
-    ** ASCIICode_T entry_strs[Max_Ent_Strs + 1][ENT_STR_SIZE + 1];
+    ** ASCIICode_T entry_strs[Max_Ent_Strs + 1][Ent_Str_Size + 1];
     ** allocated when num_ent_strs and num_cites are known
     */
     entry_strs = NULL;
@@ -334,16 +336,24 @@ static void allocate_arrays (void)
     fn_type = (FnClass_T *) mymalloc (bytes_required, "fn_type");
 
     /*
-    ** ASCIICode_T global_strs[MAX_GLOB_STRS][GLOB_STR_SIZE + 1];
+    ** Integer_T glb_str_end[Max_Glob_Strs];
     */
-    bytes_required = (unsigned long) (MAX_GLOB_STRS)
-        * (GLOB_STR_SIZE + 1)
-        * (unsigned long) sizeof (ASCIICode_T);
-    dummy_ptr = (ASCIICode_T *) mymalloc (bytes_required, "global_strs");
+    bytes_required = Max_Glob_Strs * (unsigned long) sizeof (Integer_T);
+    glb_str_end = (Integer_T *) mymalloc (bytes_required, "glb_str_end");
 
-    for (row = 0; row < (MAX_GLOB_STRS + 1); row++) {
-        global_strs[row] = dummy_ptr + (row * (GLOB_STR_SIZE + 1));
-    }
+    /*
+    ** StrNumber_T glb_str_ptr[Max_Glob_Strs];
+    */
+    bytes_required = Max_Glob_Strs * (unsigned long) sizeof (StrNumber_T);
+    glb_str_ptr = (StrNumber_T *) mymalloc (bytes_required, "glb_str_ptr");
+
+    /*
+    ** ASCIICode_T global_strs[Max_Glob_Strs][Glob_Str_Size + 1];
+    */
+    bytes_required = (unsigned long) (Max_Glob_Strs)
+        * (Glob_Str_Size + 1)
+        * (unsigned long) sizeof (ASCIICode_T);
+    global_strs = (ASCIICode_T *) mymalloc (bytes_required, "global_strs");
 
     /*
     ** StrIlk_T hash_ilk[Hash_Size + 1];
@@ -368,6 +378,18 @@ static void allocate_arrays (void)
     */
     bytes_required = (Hash_Size + 1) * (unsigned long) sizeof (Integer_T);
     ilk_info = (Integer_T *) mymalloc (bytes_required, "ilk_info");
+
+    /*
+    ** Integer_T lit_stack[Lit_Stk_Size + 1];
+    */
+    bytes_required = (Lit_Stk_Size + 1) * (unsigned long) sizeof (Integer_T);
+    lit_stack = (Integer_T *) mymalloc (bytes_required, "lit_stack");
+
+    /*
+    ** StkType_T lit_stk_type[Lit_Stk_Size + 1];
+    */
+    bytes_required = (Lit_Stk_Size + 1) * (unsigned long) sizeof (StkType_T);
+    lit_stk_type = (StkType_T *) mymalloc (bytes_required, "lit_stk_type");
 
     /*
     ** ASCIICode_T name_sep_char[Buf_Size + 1];
@@ -1127,15 +1149,15 @@ void report_bibtex_capacity (void)
         FPRINTF (log_file, "BibTeX's capacity set as follows:\n\n");
         LOG_CAPACITY (AUX_STACK_SIZE);
         LOG_CAPACITY (Buf_Size);
-        LOG_CAPACITY (ENT_STR_SIZE);
-        LOG_CAPACITY (GLOB_STR_SIZE);
+        LOG_CAPACITY (Ent_Str_Size);
+        LOG_CAPACITY (Glob_Str_Size);
         LOG_CAPACITY (Hash_Prime);
         LOG_CAPACITY (Hash_Size);
-        LOG_CAPACITY (LIT_STK_SIZE);
+        LOG_CAPACITY (Lit_Stk_Size);
         LOG_CAPACITY (Max_Bib_Files);
         LOG_CAPACITY (Max_Cites);
         LOG_CAPACITY (Max_Fields);
-        LOG_CAPACITY (MAX_GLOB_STRS);
+        LOG_CAPACITY (Max_Glob_Strs);
         LOG_CAPACITY (MAX_PRINT_LINE);
         LOG_CAPACITY (Max_Strings);
         LOG_CAPACITY (Min_Crossrefs);
@@ -1200,6 +1222,75 @@ void report_search_paths (void)
 
 /*-
 **============================================================================
+** setup_bound_variable()
+**
+**  Obtain parameters from environment or configuration file,
+**  or use the default value.
+**============================================================================
+*/
+static void setup_bound_variable (Integer_T *var, const char *name,
+                                  unsigned long def_value)
+{
+#ifdef KPATHSEA
+    char *expansion = kpse_var_value (name);
+    const char *me = program_invocation_name;
+    const char *src = " or texmf.cnf";
+#else
+    char *expansion = getenv (name);
+    const char *me = "bibtex8";
+    const char *src = "";
+#endif
+
+    *var = def_value;
+    if (expansion) {
+        int conf_val = atoi (expansion);
+        if (conf_val < def_value)
+            fprintf (stderr,
+            "%s: Bad value (%ld) in environment%s for %s, keeping %ld.\n",
+            me, (long) conf_val, src, name, def_value);
+        else
+            *var = conf_val;
+#ifdef KPATHSEA
+        free (expansion);
+#endif
+    }
+}                               /* setup_bound_variable() */
+
+/*-
+**============================================================================
+** setup_params()
+**
+**  Determine |ent_str_size|, |glob_str_size|, and |max_strings| from the
+**  environment, configuration file, or default value.  Set
+**  |hash_size:=max_strings|, but not less than |HASH_SIZE|.
+**============================================================================
+*/
+static void setup_params (void)
+{
+    setup_bound_variable (&Ent_Str_Size, "ent_str_size", ENT_STR_SIZE);
+    setup_bound_variable (&Glob_Str_Size, "glob_str_size", GLOB_STR_SIZE);
+    setup_bound_variable (&Max_Strings, "max_strings", MAX_STRINGS);
+
+    /* Obsolete: Max_Strings specified via command line.  */
+    if (Flag_big)
+        Max_Strings = 10000;
+    if (Flag_huge)
+        Max_Strings = 19000;
+    if (Flag_wolfgang)
+        Max_Strings = 30000;
+    if (M_strings > 0)
+        Max_Strings = M_strings;
+
+    if (Max_Strings < MAX_STRINGS)
+        Max_Strings = MAX_STRINGS;
+    Hash_Size = Max_Strings;
+    if (Hash_Size < HASH_SIZE)
+        Hash_Size = HASH_SIZE;
+}                               /* setup_params() */
+
+
+/*-
+**============================================================================
 ** compute_hash_prime()
 **
 **  We use the algorithm from Knuth's \.{primes.web} to compute
@@ -1208,7 +1299,6 @@ void report_search_paths (void)
 **
 **  This algorithm uses two arrays |primes| and |mult|.  We use the
 **  already allocated |hash_next| and |hash_text| for that purpose.
-**
 **============================================================================
 */
 #define primes hash_next
@@ -1245,7 +1335,7 @@ static void compute_hash_prime (void)
         } while (!j_prime);
         primes[++k] = Hash_Prime = j;
     }
-}
+}                               /* compute_hash_prime() */
 
 
 /*-
@@ -1283,33 +1373,10 @@ void set_array_sizes (void)
     Max_Strings = 4000;
     Min_Crossrefs = 2;
 
-    {
-        char *expansion = kpse_var_value ("max_strings");
-        if (expansion) {
-            int conf_val = atoi (expansion);
-            if (conf_val < Max_Strings)
-                fprintf (stderr,
-                "%s: Bad value (%ld) in texmf.cnf for max_strings, keeping %ld.\n",
-                program_invocation_name, (long) conf_val, (long) Max_Strings);
-            else
-                Max_Strings = conf_val;
-            free (expansion);
-        }
-    }
-
-    if (Flag_big) {
-        Max_Strings = 10000;
-    }
-    
-    if (Flag_huge) {
-        Max_Strings = 19000;
-    }
-
-    if (Flag_wolfgang) {
-        Max_Strings = 30000;
-    }
-
+    setup_params ();
     Buf_Size = BUF_SIZE;
+
+    Lit_Stk_Size = LIT_STK_SIZE;
 
     Max_Bib_Files = MAX_BIB_FILES;
 
@@ -1321,14 +1388,6 @@ void set_array_sizes (void)
         Min_Crossrefs = M_min_crossrefs;
 
     Pool_Size = POOL_SIZE;
-
-    if (M_strings > 0)
-        Max_Strings = M_strings;
-    if (Max_Strings < 4000)
-        Max_Strings = 4000;
-    Hash_Size = Max_Strings;
-    if (Hash_Size < 5000)
-        Hash_Size = 5000;
 
     Wiz_Fn_Space = WIZ_FN_SPACE;
 

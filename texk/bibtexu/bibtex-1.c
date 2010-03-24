@@ -2332,7 +2332,7 @@ BEGIN
       BEGIN
 	str_ent_ptr = (num_ent_strs + 1) * (num_cites + 1);
 	entry_strs = (ASCIICode_T *) mymalloc ((unsigned long) sizeof (ASCIICode_T)
-	    * (unsigned long) (ENT_STR_SIZE + 1)
+	    * (unsigned long) (Ent_Str_Size + 1)
 	    * (unsigned long) str_ent_ptr, "entry_strs");
 	while (str_ent_ptr > 0)
 	BEGIN
@@ -2572,9 +2572,21 @@ BEGIN
       CHECK_FOR_ALREADY_SEEN_FUNCTION (fn_loc);
       fn_type[fn_loc] = STR_GLOBAL_VAR;
       FN_INFO[fn_loc] = num_glb_strs;
-      if (num_glb_strs == MAX_GLOB_STRS)
+      if (num_glb_strs == Max_Glob_Strs)
       BEGIN
-	BIBTEX_OVERFLOW ("number of string global-variables ", MAX_GLOB_STRS);
+        BIB_XRETALLOC_NOSET ("glb_str_ptr", glb_str_ptr, StrNumber_T,
+                             Max_Glob_Strs, Max_Glob_Strs + MAX_GLOB_STRS);
+        BIB_XRETALLOC_STRING ("global_strs", global_strs, Glob_Str_Size,
+                              Max_Glob_Strs, Max_Glob_Strs + MAX_GLOB_STRS);
+        BIB_XRETALLOC ("glb_str_end", glb_str_end, Integer_T,
+                       Max_Glob_Strs, Max_Glob_Strs + MAX_GLOB_STRS);
+        str_glb_ptr = num_glb_strs;
+        while (str_glb_ptr < Max_Glob_Strs)
+        BEGIN
+          glb_str_ptr[str_glb_ptr] = 0;
+          glb_str_end[str_glb_ptr] = 0;
+          INCR (str_glb_ptr);
+        END
       END
       INCR (num_glb_strs);
     END
@@ -2771,7 +2783,7 @@ BEGIN
   BEGIN
     field_ptr = Max_Fields;
     BIB_XRETALLOC ("field_info", field_info, StrNumber_T,
-                   Max_Fields, Max_Fields + MAX_FIELDS);
+                   Max_Fields, total_fields + MAX_FIELDS);
     /* Initialize to |missing|.  */
     while (field_ptr < Max_Fields)
     BEGIN

@@ -404,7 +404,7 @@ Close_Up_Shop_Label:
                     (long) hash_used, (long) Hash_Size);
       TRACE_PR_LN3 (" Strings:          %6ld out of %ld",
                     (long) str_ptr, (long) Max_Strings);
-      TRACE_PR_LN3 (" String pool:      %6ld out of %ld",
+      TRACE_PR_LN3 (" Free string pool: %6ld out of %ld",
                     (long) pool_ptr, (long) Pool_Size);
       TRACE_PR_LN3 (" Wizard functions: %6ld out of %ld",
                     (long) wiz_def_ptr, (long) Wiz_Fn_Space);
