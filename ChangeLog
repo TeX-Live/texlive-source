@@ -1,3 +1,7 @@
+2010-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Build (TL_CONF_THREADS): Removed, now in libs/icu/configure.
+
 2010-03-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (triptrap): Run intermediate triptrap target in

@@ -33,8 +33,9 @@ icu_config="$icu_config --disable-extras --disable-samples --disable-tests"
 if test "x$cache_file" != x/dev/null; then
   icu_config="$icu_config -C"
 fi
-# Required for MinGW32, otherwise reduced warnings.
-icu_config="$icu_config --disable-strict"
+# Add '--disable-strict': required for MinGW32, otherwise reduce warnings.
+# Add '--disable-threads': required for FreeBSD, neither XeTeX nor BibTeXU use threads.
+icu_config="$icu_config --disable-strict --disable-threads"
 AC_SUBST([icu_config])
 
 if test "x$cross_compiling" = xyes; then

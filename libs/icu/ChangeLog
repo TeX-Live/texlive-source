@@ -1,3 +1,8 @@
+2010-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Pass '--disable-threads' to ICU configure:
+	required for FreeBSD, neither XeTeX nor BibTeXU use threads.
+
 2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Pass '--disable-strict' to ICU configure:

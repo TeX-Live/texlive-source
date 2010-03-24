@@ -205,7 +205,7 @@ end.
 @y [still 14]
 @!MAX_BIB_FILES=20; {initial number of \.{.bib} files allowed}
 @!POOL_SIZE=65000; {initial number of characters in strings}
-@!MAX_STRINGS=4000; {minimum initial value for |max_strings|}
+@!MAX_STRINGS=4000; {minimum value for |max_strings|}
 @!MAX_CITES=750; {initial number of distinct cite keys; must be
                                                         |<=max_strings|}
 @!WIZ_FN_SPACE=3000; {initial amount of |wiz_defined|-function space}
@@ -238,7 +238,7 @@ end.
 @x [still 14]
 @!lit_stk_size=100; {maximum number of literal functions on the stack}
 @y
-@!LIT_STK_SIZE=50; {maximum number of literal functions on the stack}
+@!LIT_STK_SIZE=50; {initial space for literal functions on the stack}
 @z
 
 @x [15] Increase more constants in the web defines.

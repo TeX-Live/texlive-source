@@ -78,9 +78,6 @@ cd $TL_WORKDIR || exit 1
 # default to terminate if requested programs or features must be disabled.
 : ${TL_CONF_MISSING=--disable-missing}
 
-# default to building ICU without thread support, since xetex doesn't need it.
-: ${TL_CONF_THREADS=--disable-threads}
-
 # allow override of xdvi toolkit, default to standard xaw.
 : ${TL_CONF_XDVI_TOOLKIT=--with-xdvi-x-toolkit=xaw}
 
@@ -110,7 +107,6 @@ cd $TL_WORKDIR || exit 1
         $TL_CONF_SHARED \
         $TL_CONF_MISSING \
         $TL_CONF_LARGEFILE \
-        $TL_CONF_THREADS \
         $TL_CONF_XDVI_TOOLKIT \
         $TL_CONFIGURE_ARGS \
         "$@" \
