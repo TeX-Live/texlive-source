@@ -1,3 +1,8 @@
+2010-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf (TEXMF_RESTRICTED_SCRIPTS): The make rules used to
+	create paths.h can't handle backslash-newline (FIXME?).
+
 2010-03-24  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFSCRIPTS): progname before engine, for consistency,

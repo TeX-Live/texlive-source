@@ -527,8 +527,7 @@ shell_escape.tex = f
 % This is used by the Windows script wrapper for restricting searching
 % for the purportedly safe shell_escape_commands above to system
 % directories.
-TEXMF_RESTRICTED_SCRIPTS = \
-  {!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$progname,$engine,}//
+TEXMF_RESTRICTED_SCRIPTS = {!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$progname,$engine,}//
 
 % Allow TeX \openin, \openout, or \input on filenames starting with `.'
 % (e.g., .rhosts) or outside the current tree (e.g., /etc/passwd)?
