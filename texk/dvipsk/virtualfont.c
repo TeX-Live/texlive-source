@@ -15,7 +15,7 @@
  *   Subroutine vfbyte returns the next byte.
  */
 static FILE *vffile ;
-static char name[50] ;
+static char name[500] ;
 void
 badvf(const char *s)
 {
@@ -72,6 +72,10 @@ vfopen(register fontdesctype *fd)
    if (*d==0)
       d = vfpath ;
 #endif
+   if (strlen(n) + 5 >= sizeof (name)) {
+     /* 5 for vf() + null */
+     error("! VF file name too long in vfopen") ; 
+   }
 #ifdef MVSXA   /* IBM: MVS/XA */
    (void)sprintf(name, "vf(%s)", n) ;
 #else

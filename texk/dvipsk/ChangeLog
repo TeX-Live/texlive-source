@@ -1,5 +1,8 @@
 2010-03-26  Karl Berry  <karl@tug.org>
 
+	* virtualfont.c (vfopen): do not sprintf too long of a name.
+	CVE-2010-0827, found by Dan Rosenberg.
+
 	* dospecial.c (predospecial): avoid seg fault from integer overflow.
 	CVE-2010-0739, found by Marc Schoenefeld, patch prepared
 	by Jindrich Novy.
