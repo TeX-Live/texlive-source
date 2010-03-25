@@ -1,3 +1,7 @@
+2010-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check if dlopen() requires `-ldl'.
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check for kpse_set_program_name() instead of

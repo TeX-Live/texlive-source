@@ -16081,6 +16081,53 @@ fi
 done
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
+$as_echo_n "checking for native WIN32 or MINGW32... " >&6; }
+if test "${kpse_cv_have_win32+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef WIN32
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef __MINGW32__
+  choke me
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_have_win32=mingw32
+else
+  kpse_cv_have_win32=native
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+else
+  kpse_cv_have_win32=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_win32" >&5
+$as_echo "$kpse_cv_have_win32" >&6; }
+
+
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
@@ -18033,30 +18080,93 @@ $as_echo "#define HAVE_LIBGS 1" >>confdefs.h
 else
   libgs_mode=load
   LIBGS_INCLUDES=
-  LIBGS_LIBS=-ldl
-  eval CPPFLAGS=\"$LIBGS_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$LIBGS_LIBS \$LIBS\"
+  LIBGS_LIBS=
+  # Windows (native or MinGW32) has neither <dlfcn.h> nor dlopen().
+  if test "x$kpse_cv_have_win32" = xno; then
+    # FreeBSD neither has nor requires libdl.
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing dlopen" >&5
+$as_echo_n "checking for library containing dlopen... " >&6; }
+if test "${ac_cv_search_dlopen+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
 
-  ac_fn_c_check_header_mongrel "$LINENO" "dlfcn.h" "ac_cv_header_dlfcn_h" "$ac_includes_default"
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char dlopen ();
+int
+main ()
+{
+return dlopen ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' dl; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_dlopen=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if test "${ac_cv_search_dlopen+set}" = set; then :
+  break
+fi
+done
+if test "${ac_cv_search_dlopen+set}" = set; then :
+
+else
+  ac_cv_search_dlopen=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_dlopen" >&5
+$as_echo "$ac_cv_search_dlopen" >&6; }
+ac_res=$ac_cv_search_dlopen
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
+
+    case $ac_cv_search_dlopen in #(
+  no | "none required") :
+     ;; #(
+  *) :
+    LIBGS_LIBS=$ac_cv_search_dlopen ;;
+esac
+    ac_fn_c_check_header_mongrel "$LINENO" "dlfcn.h" "ac_cv_header_dlfcn_h" "$ac_includes_default"
 if test "x$ac_cv_header_dlfcn_h" = x""yes; then :
 
 fi
 
 
-  ac_fn_c_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
+    ac_fn_c_check_func "$LINENO" "dlopen" "ac_cv_func_dlopen"
 if test "x$ac_cv_func_dlopen" = x""yes; then :
 
 fi
 
-  if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
-    libgs_mode=no
-    CPPFLAGS=$kpse_save_CPPFLAGS
+    if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
+      libgs_mode=no
+      CPPFLAGS=$kpse_save_CPPFLAGS
 LIBS=$kpse_save_LIBS
 
 
 $as_echo "#define DISABLE_GS 1" >>confdefs.h
 
-    LIBGS_LIBS=
+      LIBGS_LIBS=
+    fi
   fi
 fi
 

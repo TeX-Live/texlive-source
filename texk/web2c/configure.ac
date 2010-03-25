@@ -100,6 +100,8 @@ if test "x$kpse_cv_have_win32" = xno; then
   LIBS=$kpse_save_LIBS
   AC_SEARCH_LIBS([nanosleep], [rt])
   LIBS=$kpse_save_LIBS
+  AC_SEARCH_LIBS([dlopen], [dl])
+  LIBS=$kpse_save_LIBS
   AS_CASE([$ac_cv_search_inet_aton],
           ["none required"], [],
           [no], [WEB2C_DISABLE([luatex], [no inet_aton()])],

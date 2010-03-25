@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -40,6 +40,8 @@ AC_SEARCH_LIBS([sqrt], [m])
 AC_CHECK_FUNCS([ftime gettimeofday])
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h])
 
+KPSE_CHECK_WIN32
+
 KPSE_KPATHSEA_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_FREETYPE2_FLAGS
@@ -74,16 +76,23 @@ if test "x$with_system_libgs" = xyes; then
 else
   libgs_mode=load
   LIBGS_INCLUDES=
-  LIBGS_LIBS=-ldl
-  KPSE_ADD_FLAGS([libgs])
-  AC_CHECK_HEADER([dlfcn.h])
-  AC_CHECK_FUNC([dlopen])
-  if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
-    libgs_mode=no
-    KPSE_RESTORE_FLAGS
-    AC_DEFINE([DISABLE_GS], 1,
-              [Set to 1 if PostScript support should be disabled.])
-    LIBGS_LIBS=
+  LIBGS_LIBS=
+  # Windows (native or MinGW32) has neither <dlfcn.h> nor dlopen().
+  if test "x$kpse_cv_have_win32" = xno; then
+    # FreeBSD neither has nor requires libdl.
+    AC_SEARCH_LIBS([dlopen], [dl])
+    AS_CASE([$ac_cv_search_dlopen],
+            [no | "none required"], [],
+                [LIBGS_LIBS=$ac_cv_search_dlopen])
+    AC_CHECK_HEADER([dlfcn.h])
+    AC_CHECK_FUNC([dlopen])
+    if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
+      libgs_mode=no
+      KPSE_RESTORE_FLAGS
+      AC_DEFINE([DISABLE_GS], 1,
+                [Set to 1 if PostScript support should be disabled.])
+      LIBGS_LIBS=
+    fi
   fi
 fi
 AC_SUBST([LIBGS_INCLUDES])
