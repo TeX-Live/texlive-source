@@ -297,6 +297,12 @@ predospecial(integer numbytes, Boolean scanning)
    static int omega_specials = 0;
 
    if (nextstring + numbytes > maxstring) {
+      if (numbytes < 0
+          || (numbytes > 0 && 2 > INT_MAX / numbytes)
+          || 2 * numbytes > 1000 + 2 * numbytes) {
+         error("! Integer overflow in predospecial");
+         exit(1);
+      }
       p = nextstring = mymalloc(1000 + 2 * numbytes) ;
       maxstring = nextstring + 2 * numbytes + 700 ;
    }

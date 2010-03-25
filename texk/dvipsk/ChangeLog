@@ -1,3 +1,9 @@
+2010-03-26  Karl Berry  <karl@tug.org>
+
+	* dospecial.c (predospecial): avoid seg fault from integer overflow.
+	CVE-2010-0739, found by Marc Schoenefeld, patch prepared
+	by Jindrich Novy.
+
 2010-02-26  Karl Berry  <karl@tug.org>
 
 	* search.c (selfautoloc_prog, quote_name): remove kpse_ prefix for
