@@ -20,7 +20,7 @@ static char name[500] ;
 void
 badvf(const char *s)
 {
-  char *msg = concatn("! Bad VF file ", name, ":", s);
+  char *msg = concatn("! Bad VF file ", name, ": ", s);
   error(msg);
 }
 
