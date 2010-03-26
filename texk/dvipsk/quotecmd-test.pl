@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: bibtex-openout-test.pl 16507 2009-12-25 01:19:05Z karl $
+# $Id$
 # Public domain.  Originally written 2010, Karl Berry.
 # Check that dvips quotes external command arguments.
 

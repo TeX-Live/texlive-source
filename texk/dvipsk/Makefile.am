@@ -117,6 +117,8 @@ TESTS_ENVIRONMENT += TEXFONTS=$(srcdir)/testdata
 TESTS_ENVIRONMENT += TEXPSHEADERS=$(srcdir)/testdata
 
 EXTRA_DIST += \
+	NEWS \
+	TODO \
 	beginfontk1.test \
 	dvips.test \
 	pfbincl.test \
@@ -140,6 +142,7 @@ EXTRA_DIST += \
 	testdata/dvipstst.tex \
 	testdata/dvipstst.xdv \
 	testdata/dvipstst.xps \
+	testdata/intoverflow.dvi \
 	testdata/pfbincl.eps \
 	testdata/pfbincl.tex \
 	testdata/pfbincl.xdv \
@@ -154,7 +157,8 @@ EXTRA_DIST += \
 	testdata/quotecmd.tex \
 	testdata/special.pro \
 	testdata/texc.pro \
-	testdata/texps.pro
+	testdata/texps.pro \
+	testdata/vfnameoverflow.dvi
 
 CLEANFILES += dvipstst.ps missfont.log mtest.ps pfbincl.ps
 

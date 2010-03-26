@@ -1,0 +1,46 @@
+This file records noteworthy changes.  (Public domain.)
+
+   Require Kpathsea to build.
+   Additional robustness checks.
+
+dvips 5.86 notes:
+   Minor improvements to epsf style file.
+   Another patch to t1part.c to make it more liberal in accepting pfb/pfa
+      font files.
+   Added PS reencoding reimplementation by Rob Hutchings.
+   Added 'F' in config file to send controlD.
+   Added quick exit if -? or -v.
+   Improved tex.lpro to fix a bug that showed up in distiller.
+   Improved tex.lpro to work around a problem in certain Windows
+      environments.
+   Made dvips complain if it had to section a document.
+   Eliminated use-after-free bug in hps.c.
+   Fixed a problem in t1part for the Euro fonts with partial font downloading.
+   Fixed a big problem in t1part for some font downloading due to
+      uninitialized allocations.
+   Added `unknown' paper size back to config.ps.
+   Made t1part munge the UniqueID to prevent cache problems in Acrobat and
+      other programs.
+   Fixed parsing error when whitespace following '<' in psfonts.map.
+   Made '<<' work correctly (disable partial font downloading for that
+      particular font) in psfonts.map.
+
+dvips 5.74 notes:
+
+   The epsf.sty and epsf.tex files are now in the public domain.
+   The t1part.c has been updated to support binary files with
+       multiple binary sections.
+
+dvips 5.72 notes:
+
+   Bug fix in t1part.c???  I hope so!
+
+   Debugging now turned on by default.  No real reason to turn it off.
+   (Too many Linux versions of dvips without debugging have been
+   distributed, and it makes it very difficult to help the users with
+   their problems . . .)
+
+dvips 5.62 notes:
+
+   The makefile and config.ps and MakeTeXPK need to be modified to fit
+   your site!

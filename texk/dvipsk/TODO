@@ -1,0 +1,26 @@
+TODO notes from Tom.  (Public domain.)
+
+To document:
+   Landscape mfmode
+   HPS integration
+   Separate EPSF file generation
+   Better bbox support
+   Comment elision now turned *off*
+   Upleveling of font requirements
+   Bitmap font descriptions
+
+Questions:
+   Should I eliminate PStfms/PSvfs/afm-extra?
+   Should I eliminate PSlatex?  (my guess is yes)
+   Partial type 1 downloading (Sergey Lesenko)
+   HyperTeX support (Mark Doyle)
+   Lots of little bugs/changes/fixes
+
+Still todo:
+- Make a better copyfile that handles Level 2 data better
+- Add landscape mode def and code to select it.
+- Sanitize; test on various systems
+- Improve makefile!!!  Goal:  on a standard C installation (with stdlib
+  and all) and a Unix machine using TDS, make it be just a `make' away.
+- Improve diagnostics, especially when files not found.
+- Eliminate `extern' declarations; use header files properly
