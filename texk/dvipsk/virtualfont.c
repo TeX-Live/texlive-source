@@ -5,6 +5,7 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #ifdef KPATHSEA
 #include <kpathsea/c-pathmx.h>
+#include <kpathsea/concatn.h>
 #endif
 /*
  *   The external declarations:
@@ -19,8 +20,8 @@ static char name[500] ;
 void
 badvf(const char *s)
 {
-   (void)sprintf(errbuf,"! Bad VF file %s: %s",name,s) ;
-   error(errbuf);
+  char *msg = concatn("! Bad VF file ", name, ":", s);
+  error(msg);
 }
 
 shalfword
@@ -195,8 +196,8 @@ virtualfont(register fontdesctype *curfnt)
    check_checksum (k, curfnt->checksum, curfnt->name);
    k = (integer)(alpha * (real)vfquad()) ;
    if (k > curfnt->designsize + 2 || k < curfnt->designsize - 2) {
-      (void)sprintf(errbuf,"Design size mismatch in font %s", name) ;
-      error(errbuf) ;
+      char *msg = concat("Design size mismatch in font ", name);
+      error(msg);
    }
 /*
  * Now we look for font definitions.

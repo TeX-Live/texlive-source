@@ -1,5 +1,9 @@
 2010-03-26  Karl Berry  <karl@tug.org>
 
+	* virtualfont.c (badvf, virtualfont): use concat[n] instead of
+		sprintf for error messages.
+	(<kpathsea/concatn.h>): #include.
+
 	* virtualfont.c (vfopen): do not sprintf too long of a name.
 	CVE-2010-0827, found by Dan Rosenberg.
 
