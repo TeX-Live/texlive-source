@@ -1,32 +1,122 @@
 
---[===================================================================[--
+-- $Id$
 
-  Script and program wrappers in TeX Live for Windows
-  
-  License
-  
-    Public Domain
-    
-    Originally written in 2009 by Tomasz M. Trzeciak.
-    
-    Prior work:
-    'tl-w32-wrapper.texlua' by Reinhard Kotucha and Norbert Preining.
-    'tl-w32-wrapper.cmd' by Tomasz M. Trzeciak.
+local svnrevision = string.match("$Revision$ 0", "%d+")
+local svndate     = string.match("$Date$ 2009-12-04", "[-%d]+")
+local bannerstr   = "runscript wrapper utility (rev. " ..
+                    svnrevision .. ", " .. svndate .. ")\n" .. 
+                    "usage:   runscript script-name [arguments]\n" ..
+                    "try -help [-v] for more information"
+
+local helpstr = [[
+
+  Script wrappers in TeX Live on Windows
   
   Rationale
   
-    Wrappers enable to use scripts on Windows as regular programs. 
-    They are also required for some binary programs to set-up the 
+    Wrappers enable use of scripts on Windows as regular programs.  
+    They are also required for some binary programs to set up the 
     right environment for them. 
     
     Batch scripts can be used for wrapping but they are not as universal 
     as binaries (there are some odd cases where they don't work) and 
-    it is hard to make them robust and secure. Compiled binary wrappers 
+    it is hard to make them robust and secure.  Compiled binary wrappers 
     don't suffer from these problems but they are harder to write, debug
-    and maintain in comparison to scripts. For these reasons a hybrid 
-    approach was adopted that offers the best of both worlds - a binary 
-    stub combined with a launcher script.
+    and maintain in comparison to scripts.  For these reasons a hybrid 
+    approach is taken that combines a binary stub with a launcher script.
   
+  Adding wrappers for user scripts
+  
+    The script wrapping machinery is not limited to scripts shipped with 
+    TeX Live.  You can also use it for script programs from manually 
+    installed packages, which should minimize the problems when using 
+    them with TeX Live. 
+    
+    First, make sure that there is an interpreter program available on 
+    your system for the script you want to use.  Interpreters for Perl 
+    and Lua are bundled with TeX Live, all others have to be installed 
+    independently.  Lua scripts are the most efficient to run, so if you
+    consider writing a new script, that would be the recommended choice.
+    
+    The following script types and their file extensions are currently 
+    supported and searched in that order:
+    
+      Lua      (.tlu;.texlua;.lua) --  included
+      Perl     (.pl)               --  included
+      Ruby     (.rb)               --  requires installation
+      Python   (.py)               --  requires installation
+      Tcl      (.tcl)              --  requires installation
+      Java     (.jar)              --  requires installation
+      VBScript (.vbs)              --  part of Windows
+      Jscript  (.js)               --  part of Windows
+      Batch    (.bat;.cmd)         --  part of Windows
+    
+    For Unix-style extensionless scripts the first line of the script is 
+    consulted for a she-bang (#!) specification of the interpreter 
+    program.  This can be an arbitrary program but it must be present on 
+    the search path.
+    
+    Next, the script program needs to be installed somewhere below the 
+    'scripts' directory under one of the TEXMF trees (consult the 
+    documentation or texmf/web2c/texmf.cnf file for a list).  You may 
+    need to update the file search database afterwards with:
+    
+      mktexlsr [TEXMFDIR]
+      
+    Test if the script can be located with:
+    
+      kpsewhich --format=texmfscripts <script-name>.<ext>
+    
+    Once installed the script can be called immediately with:
+    
+      runscript <script-name> [script arguments]
+    
+    If you prefer to call the script program simply by its name, copy 
+    and rename bin/win32/runscript.exe to <script-name>.exe and put it 
+    in bin/win32/ directory of your TeX Live installation or, if you 
+    don't have the write permissions there, somewhere else on the search 
+    path.]]
+
+local docstr = [[
+
+  Wrapper structure
+  
+    Wrappers consist of small binary stubs and a common texlua script.  
+    The binary stubs are all the same, just different names (but CLI 
+    and GUI stubs differ, see below, and GUI stubs are actually all 
+    different due to different embedded icons).
+    
+    The job of the binary stub is twofold: (a) call the texlua launcher
+    script 'runscript.tlu' from the same directory (or more precisely 
+    from the directory containing 'runscript.dll') and (b) pass to it 
+    argv[0] and the unparsed argument string as the last two arguments 
+    (after adding a sentinel argument, which ends with a new line 
+    character).  Arbitrary C strings can be passed, because the script 
+    is executed by linking with luatex.dll and calling the lua 
+    interpreter internally rather than by spawning a new process.
+    
+    There are two flavours of the binary stub: one for CLI programs 
+    and another one for GUI programs.  The GUI variant does not open 
+    a console window nor does it block the command prompt if started 
+    from there.  It also uses a dialog box to display an error message 
+    in addition to outputting to stderr.
+    
+    The stubs are further split into a common DLL and EXE proxies 
+    to it.  This is for maintenance reasons - updates can be done by 
+    replacement of a single DLL rather than all binary stubs.
+    
+    The launcher script knows, which variant has been used to invoke it 
+    based on the sentinel argument.  The lack of this argument means 
+    that it was invoked in a standard way, i.e. through texlua.exe. 
+    
+    All the hard work of locating a script/program to execute happens 
+    in the launcher script.  The located script/program is always 
+    executed directly by spawning its interpreter (or binary) in a new 
+    process. The system shell (cmd.exe) is never called (except for 
+    batch scripts, of course).  If the located script happens to be 
+    a (tex)lua script, it is loaded and called internally from within 
+    this script, i.e. no new process is spawned.
+    
   Source files
   
     runscript.tlu     launcher script for locating and dispatching 
@@ -51,109 +141,44 @@
     tcc -o runscript.exe runscript_exe.c runscript.def
     tcc -o wrunscript.exe wrunscript_exe.c runscript.def
 
-  Structure of the wrapper
+  License
   
-    Wrappers consist of small binary stubs and a common texlua script. 
-    The binary stubs are all the same, just different names (but CLI 
-    and GUI stubs differ, see below, and GUI stubs are actually all 
-    different due to different embedded icons).
+    Originally written in 2009 by Tomasz M. Trzeciak, Public Domain.
     
-    The job of the binary stub is twofold: (a) call the texlua launcher
-    script 'runscript.tlu' from the same directory (or more precisely 
-    from the directory containing 'runscript.dll') and (b) pass to it 
-    argv[0] and the unparsed argument string as the last two arguments 
-    (after adding a sentinel argument, which ends with a new line 
-    character). Arbitrary C strings can be passed, because the script 
-    is executed by linking with luatex.dll and calling its lua 
-    interpreter directly rather than by spawning a new process.
-    
-    There are two flavours of the binary stub: one for CLI programs 
-    and another one for GUI programs. The GUI variant does not open 
-    a console window nor does it block the command promt if started 
-    from there. It also uses a dialog box to display an error message 
-    in addition to outputting to stderr.
-    
-    The stubs are further split into a common DLL and EXE proxies 
-    to it. This is for maintenance reasons - updates can be done by 
-    replacement of a single DLL rather than all binary stubs.
-    
-    The launcher script knows, which variant has been used to invoke it 
-    based on the sentinel argument. The lack of this argument means 
-    that it was invoked in a standard way, i.e. through texlua.exe. 
-    
-    All the hard work of locating a script/program to execute happens 
-    in the launcher script. The located script/program is always 
-    executed directly by spawning its interpreter (or binary) in a new 
-    process. The system shell (cmd.exe) is never called (except for 
-    batch scripts, of course). If the located script happens to be 
-    a (tex)lua script, it is loaded and called directly from within 
-    this script, i.e. no new process is spawned.
-    
-  Adding wrappers for user scripts
+    Prior work:
+    'tl-w32-wrapper.texlua' by Reinhard Kotucha and Norbert Preining.
+    'tl-w32-wrapper.cmd' by Tomasz M. Trzeciak.
   
-    The script wrapping machinery is not limited to scripts included in 
-    TeX Live. You can also use it for script programs from manually 
-    installed packages, which should minimize the problems when using 
-    them with TeX Live. 
-    
-    First, make sure that there is an interpreter program available on 
-    your system for the script you want to use. Interpreters for Perl 
-    and Lua are bundled with TeX Live, all others have to be installed 
-    independently. The following script types and their file extensions 
-    are currently supported and searched in that order:
-    
-      Lua      (.tlu;.texlua;.lua) --  included
-      Perl     (.pl)               --  included
-      Ruby     (.rb)               --  requires installation
-      Python   (.py)               --  requires installation
-      Java     (.jar)              --  requires installation
-      VBScript (.vbs)              --  part of Windows
-      Jscript  (.js)               --  part of Windows
-      Batch    (.bat;.cmd)         --  part of Windows
-      
-    For Unix-style extensionless scripts their first line starting with
-    she-bang (#!) is consulted for the interpreter program to run. This 
-    program must be present on the search path.
-    
-    Next, the script program needs to be installed somewhere below the 
-    'scripts' directory under one of the TEXMF trees (consult the 
-    documentation or texmf/web2c/texmf.cnf file for a list). You may 
-    need to update the file search database afterwards with:
-    
-      mktexlsr [TEXMFDIR]
-      
-    Test if the script can be located with:
-    
-      kpsewhich --format=texmfscripts <script-name>.<ext>
-    
-    Once installed the script can be called immediately with:
-    
-      runscript <script-name> [script arguments]
-    
-    If you prefer to call the script program simply by its name, copy 
-    and rename bin/win32/runscript.exe to <script-name>.exe and put it 
-    in bin/win32/ directory of your TeX Live installation or, if you 
-    don't have the write permissions there, somewhere else on the search 
-    path. 
-    
-  Changelog:
+  Changelog
   
-    2009/12/04 - initial version
-    2009/12/15 - minor fixes for path & extension list parsing
-    2010/01/09 - add support for GUI mode stubs
-    2010/02/28 - enable GUI mode stubs for dviout, psv and texworks;
-               - added generic handling of sys programs
-               - added restricted repstopdf to alias_table
-    2010/03/13 - added 'readme.txt' and changelog
-               - added support and docs for calling user added scripts; 
-                 (use path of 'runscript.dll' instead of .exe stub to 
-                 locate 'runscript.tlu' script)
-               - limit search for shell_escape_commands to system trees
-               - added function for creating directory hierarchy 
-               - fixed directory creation for dviout & texworks aliases
-               - fixed arg[0] of repstopdf & rpdfcrop
-
---]===================================================================]--
+    2009/12/04 
+        - initial version
+    2009/12/15 
+        - minor fixes for path & extension list parsing
+    2010/01/09 
+        - added support for GUI mode stubs
+    2010/02/28 
+        - enable GUI mode stubs for dviout, psv and texworks;
+        - added generic handling of sys programs
+        - added restricted repstopdf to alias_table
+    2010/03/13 
+        - added 'readme.txt' and changelog
+        - added support and docs for calling user added scripts; 
+          (use path of 'runscript.dll' instead of .exe stub to 
+          locate 'runscript.tlu' script)
+        - limit search for shell_escape_commands to system trees
+        - added function for creating directory hierarchy 
+        - fixed directory creation for dviout & texworks aliases
+        - fixed arg[0] of repstopdf & rpdfcrop
+    2010/03/28
+        - restructured docs, added --help and --version options 
+          (available only when invoked under 'runscript' name)
+        - use TEXMF_RESTRICTED_SCRIPTS kpse var for searching
+          shell_escape_commands
+        - changed command validation to handle a list of commands
+        - prepend GUI mode command(s) to the command list
+        - added support for .tcl scripts
+]]
 
 -- HELPER SUBROUTINES --
 
@@ -192,7 +217,7 @@ local function search_path(fname, PATH, PATHEXT)
       if lfs.isfile(f) then return f, ext end
     end
   end
-  return nil, "file not on PATH: "..fname
+  return nil, "file or program not on PATH: "..fname
 end
 
 -- locates texmfscript to execute
@@ -224,16 +249,17 @@ local function shebang_to_argv(progfullname)
   return argv
 end
 
--- checks if command exist on the path and returns it
-local function check_command(cmd, PATH)
-  local cmdext = cmd..(string.find(cmd, '%.[^\\/.]*$') and '' or '.exe')
-  local fullcmd = is_abs_path(cmdext) and lfs.isfile(cmdext) and 
-                  cmdext or search_path(cmdext, PATH)
-  if fullcmd then 
-    return fullcmd
-  else
-    return nil, 'program not found (not part of TeX Live): '..cmdext
+-- checks if command exists on the path and returns its full path
+local function check_command(cmdlist, PATH)
+  for cmd in string.gmatch(cmdlist, '%S+') do
+    local cmdext = cmd..(string.find(cmd, '%.[^\\/.]*$') and '' or '.exe')
+    local fullcmd = is_abs_path(cmdext) and lfs.isfile(cmdext) and 
+                    cmdext or search_path(cmdext, PATH)
+    if fullcmd then 
+      return fullcmd, cmd
+    end
   end
+  return nil, 'program not found (not part of TeX Live): '..cmdlist
 end
 
 -- creates directory or directory hierarchy
@@ -287,15 +313,45 @@ else
   for k = 1, #arg do argline = argline..' '.._q(arg[k]) end
 end
 
+-- special behaviour when called under 'runscript' name
+
 -- ( lower arg[0] : get file name part : remove extension ) == 'runscript'
 if (string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', '') == 'runscript') then
   -- we are called as: runscript progname ...
-  -- remove the first argument from the arg table and from the argline string
-  -- (this argument should have no embedded spaces!)
-  arg[0] = table.remove(arg, 1) 
-  assert(arg[0], "not enough arguments!\nusage: runscript program-name [arguments]")
-  argline = string.gsub(argline, '^%S+%s*', '')
+  -- or as: runscript --help|-h|--version ...
+  -- handle options first (only -help and -version)
+  local opt = { h = false, help = false, v = false, version = false }
+  local param, k
+  while true do
+    -- remove the first argument from the arg table and from the argline string
+    -- (this argument should have no embedded spaces!)
+    param = table.remove(arg, 1)
+    if not param then break end
+    argline = string.gsub(argline, '^%S+%s*', '')
+    param, k = string.lower(param):gsub('^%-%-?', '')
+    -- if an option was given
+    if (k > 0) then 
+      if opt[param] == nil then
+        assert(nil, "unknown option: "..param.."\n"..bannerstr)
+      end
+      opt[param] = true
+    else
+      break
+    end
+  end
+  if opt.help or opt.h then
+    print(helpstr)
+    if opt.v then print(docstr) end
+    os.exit(0)
+  elseif opt.version or opt.v then
+    print(bannerstr)
+    os.exit(0)
+  end
+  -- make sure we a new arg[0] is given and proceed
+  arg[0] = assert(param, "not enough arguments!\n"..bannerstr)
 end
+
+-- kpse and environment set-up
 
 -- program name
 local progname, k = string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', ''):gsub('%-sys$', '')
@@ -341,12 +397,14 @@ end
 -- restricted programs
 local shell_escape_commands = string.lower(kpse.var_value('shell_escape_commands'))
 if string.find(','..shell_escape_commands..',', ','..progname..',', 1, true) then
-  -- limit search path to the system trees (not really necessary for the names in 
-  -- the alias_table, see below, because they are not searched for with kpathsea)
-  os.setenv('TEXMFSCRIPTS', '{!!$TEXMFMAIN,!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$engine,$progname,}//')
+  -- limit search path to the restricted (system) trees 
+  -- (not really necessary for entries in the alias_table, 
+  -- because they are not searched for with kpathsea)
+  os.setenv('TEXMFSCRIPTS', kpse.var_value('TEXMF_RESTRICTED_SCRIPTS'))
 end
 
--- program alias table (programs with special needs)
+-- alias table (programs with special needs)
+
 local alias_table = {--[[
   ['fmtutil-sys'] = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil-sys', argline},
   ['updmap-sys'] = 
@@ -368,7 +426,7 @@ local alias_table = {--[[
   dviout = 
     function ()
       local fontsdir = kpse.var_value('TEXMFVAR') .. '/fonts'
-      if lfs.attributes(fontsdir, 'mode') ~= 'directory' then 
+      if (lfs.attributes(fontsdir, 'mode') ~= 'directory') then 
         assert(mkdir_plus(fontsdir))
       end
       local tfmpath = kpse.show_path('tfm')
@@ -376,7 +434,7 @@ local alias_table = {--[[
       tfmpath = string.gsub(tfmpath, '/', '\\')
       local texrt = {}
       for d in string.gmatch(tfmpath, '([^;]+\\fonts)\\tfm[^;]*') do
-        if lfs.attributes(d, 'mode') == 'directory' then 
+        if (lfs.attributes(d, 'mode') == 'directory') then 
           table.insert(texrt, d)
         end
       end
@@ -409,16 +467,34 @@ local alias_table = {--[[
     end,
 }
 
-local extension_map = { -- maps script extension to command
+-- extension to interpeter mapping
+
+-- the extension is mapped to argv table
+-- the command to execute is given as the first element of the table  
+-- (it can be a whitespace separated list of names to try)
+local extension_map = {
   ['.bat'] = {'cmd', '/c', 'call'},
-  ['.cmd'] = {'cmd', '/c', 'call'},
-  ['.jar'] = {guimode and 'javaw' or 'java', '-jar'},
-  ['.js']  = {guimode and 'wscript' or 'cscript', '-nologo'},
-  ['.pl']  = {guimode and 'wperl' or 'perl'},
-  ['.py']  = {guimode and 'pythonw' or 'python'},
-  ['.rb']  = {guimode and 'rubyw' or 'ruby'},
-  ['.vbs'] = {guimode and 'wscript' or 'cscript', '-nologo'},
+  ['.jar'] = {'java.exe', '-jar'},
+  ['.pl' ]  = {'perl.exe'},
+  ['.py' ]  = {'python.exe'},
+  ['.rb' ]  = {'ruby.exe'},
+  ['.tcl'] = {'tclsh.exe tclsh85.exe tclsh84.exe'},
+  ['.vbs'] = {'cscript.exe', '-nologo'},
 }
+if guimode then
+  -- for GUI mode wrappers we try GUI mode interpeters where possible
+  extension_map['.jar'][1] = 'javaw.exe '   .. extension_map['.jar'][1]
+  extension_map['.js' ][1] = 'wscript.exe ' .. extension_map['.js' ][1]
+  extension_map['.pl' ][1] = 'wperl.exe '   .. extension_map['.pl' ][1]
+  extension_map['.py' ][1] = 'pythonw.exe ' .. extension_map['.py' ][1]
+  extension_map['.py' ][1] = 'rubyw.exe '   .. extension_map['.py' ][1]
+  extension_map['.tcl'][1] = 'wish.exe wish85.exe wish84.exe ' .. extension_map['.tcl'][1]
+  extension_map['.vbs'][1] = 'wscript.exe ' .. extension_map['.vbs'][1]
+end
+extension_map['.cmd'] = extension_map['.bat']
+extension_map['.js']  = extension_map['.vbs']
+
+-- set up argv table
 
 local program = alias_table[progname]
 if program then -- special case (alias)
@@ -429,7 +505,7 @@ else -- general case (no alias)
   local progfullname, ext = search_path(progname, BINDIR, ".tlu;.bat;.cmd")
   if not progfullname then
     progfullname, ext = assert(find_texmfscript(progname, 
-      ".tlu;.texlua;.lua;.pl;.rb;.py;.jar;.vbs;.js;.bat;.cmd;\0"))
+      ".tlu;.texlua;.lua;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;\0"))
   end
   if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then
     -- lua script
@@ -439,16 +515,19 @@ else -- general case (no alias)
     program = extension_map[ext] or assert(shebang_to_argv(progfullname)) 
     table.insert(program, _q(progfullname))
     table.insert(program, argline)
-    program[0] = program[0] or assert(check_command(program[1], PATH))
+    if not program[0] then
+      program[0], program[1] = assert(check_command(program[1], PATH))
+    end
   end
 end
 
-local atype = type(program)
-if (atype == 'table') then
+-- run the program/script
+
+if (type(program) == 'table') then
   os.exit(assert(os.spawn(program)))
-elseif (atype == 'string') then
+elseif (type(program) == 'string') then
   program = assert(loadfile(program))
   program() 
 else
-  assert(nil, "unexpected argument type: "..atype)
+  assert(nil, "unexpected argument type: "..type(program))
 end
