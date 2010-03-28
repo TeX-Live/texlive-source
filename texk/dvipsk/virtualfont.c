@@ -198,6 +198,7 @@ virtualfont(register fontdesctype *curfnt)
    if (k > curfnt->designsize + 2 || k < curfnt->designsize - 2) {
       char *msg = concat("Design size mismatch in font ", name);
       error(msg);
+      free(msg);
    }
 /*
  * Now we look for font definitions.

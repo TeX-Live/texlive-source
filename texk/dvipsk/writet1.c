@@ -789,7 +789,8 @@ static void t1_builtin_enc(void)
     }
 }
 
-static void t1_check_end(void)
+static void
+t1_check_end(void)
 {
     if (t1_eof())
         return;
@@ -798,11 +799,12 @@ static void t1_check_end(void)
         t1_putline();
 }
 
-static boolean t1_open_fontfile(const char *open_name_prefix)
+static boolean
+t1_open_fontfile(const char *open_name_prefix)
 {
     if (!t1_open()) {
-        (void)sprintf(errbuf, "! Couldn't find font file %s", cur_file_name);
-        error(errbuf);
+       char *msg = concat ("! Couldn't find font file ", cur_file_name);
+       error(msg);
     }
     t1_init_params(open_name_prefix);
     return true;

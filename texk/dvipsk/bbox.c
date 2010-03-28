@@ -118,8 +118,9 @@ bbtfmload(register fontdesctype *curfnt)
       if (cd) chardat[i] = cd ;
    }
    if (font_level==1&&ncw!=0) {
-      sprintf(errbuf, "Table size mismatch in %s", curfnt->name) ;
-      error(errbuf) ;
+      char *msg = concat ("Table size mismatch in ", curfnt->name);
+      error(msg);
+      free(msg);
    }
    scaledsize = curfnt->scaledsize ;
    scaled = (integer *) xmalloc((nh + nd)*sizeof(integer)) ;

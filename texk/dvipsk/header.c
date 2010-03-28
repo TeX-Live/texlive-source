@@ -67,8 +67,13 @@ checkhmem(const char *s, char *pre, char *post)
 	 f = search(figpath, s, READBIN) ;
    }
    if (f==0) {
-      (void)sprintf(errbuf, "! Couldn't find header file %s.\nNote that an absolute path or a relative path with .. are denied in -R2 mode.", s) ;
-      error(errbuf) ;
+      char *msg = concat ("! Couldn't find header file: ", s);
+      
+      if (secure == 2) {
+        msg = concat (msg,
+                   "\nAbsolute and ../relative paths are denied in -R2 mode.");
+      }
+      error(msg) ;
    } else {
       int len, i, j ;
       long mem = -1 ;

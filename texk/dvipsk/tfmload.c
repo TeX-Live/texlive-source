@@ -4,6 +4,7 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #ifdef KPATHSEA
 #include <kpathsea/c-pathmx.h>
+#include <kpathsea/concatn.h>
 #endif
 /*
  *   The external declarations:
@@ -20,8 +21,8 @@ static char name[50] ;
 void
 badtfm(const char *s)
 {
-   (void)sprintf(errbuf,"! Bad TFM file %s: %s",name,s) ;
-   error(errbuf);
+   char *msg = concatn ("! Bad TFM file ", name, ": ", s);
+   error(msg);
 }
 
 /*
@@ -153,10 +154,10 @@ tfmload(register fontdesctype *curfnt)
    li = tfm32() ;
    check_checksum (li, curfnt->checksum, curfnt->name);
    li = (integer)(alpha * (real)tfm32()) ;
-   if (li > curfnt->designsize + fsizetol ||
-       li < curfnt->designsize - fsizetol) {
-      (void)sprintf(errbuf,"Design size mismatch in %s", name) ;
-      error(errbuf) ;
+   if (li > curfnt->designsize + fsizetol
+       || li < curfnt->designsize - fsizetol) {
+      char *msg = concat ("Design size mismatch in font ", curfnt->name);
+      error(msg);
    }
    pretend_no_chars=ec+1 ;
    if (pretend_no_chars<256) pretend_no_chars=256 ;
@@ -194,8 +195,8 @@ tfmload(register fontdesctype *curfnt)
       }
    }
    if (font_level==1&&ncw!=0) {
-      sprintf(errbuf, "Table size mismatch in %s", curfnt->name) ;
-      error(errbuf) ;
+      char *msg = ("Table size mismatch in ", curfnt->name);
+      error(errbuf);
    }
    scaledsize = curfnt->scaledsize ;
    scaled = (integer *) xmalloc(nw*sizeof(integer)) ;

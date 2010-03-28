@@ -8,6 +8,7 @@
 #endif
 #ifdef KPATHSEA
 #include <kpathsea/c-pathmx.h>
+#include <kpathsea/concatn.h>
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/tex-make.h>
 #include <kpathsea/lib.h>
@@ -26,7 +27,7 @@
  */
 #include "protos_add.h"
 
-char errbuf[512] ;
+char errbuf[1000];
 int lastresortsizes[40] ;
 /*
  *   Now we have some routines to get stuff from the PK file.
@@ -37,8 +38,8 @@ char name[MAXPATHLEN] ;
 void
 badpk(const char *s)
 {
-   (void)sprintf(errbuf,"! Bad PK file %s: %s",name,s) ;
-   error(errbuf);
+   char *msg = concatn ("! Bad PK file ", name, ": ", s);
+   error(msg);
 }
 
 shalfword
@@ -133,21 +134,19 @@ pkopen(register fontdesctype *fd)
 #ifdef KPATHSEA
      char *this_name = concat (d, n);
 
-     pkfile=pksearch(this_name, READBIN, fd->dpi, &name_ret, &dpi_ret);
+     pkfile = pksearch(this_name, READBIN, fd->dpi, &name_ret, &dpi_ret);
 
-     if (!pkfile || !FILESTRCASEEQ (this_name, name_ret))
-       {
-        if (!pkfile)
-         (void)sprintf(errbuf,
-            "Font %s%s not found, characters will be left blank.",
-            fd->area, n) ;
-        else
-          sprintf(errbuf, "Font %s%s not found,  using %s instead.",
-            fd->area, n, name_ret) ;
-         dontmakefont = 1;
-         error(errbuf) ;
-       }
-     else if (!kpse_bitmap_tolerance ((double) dpi_ret, (double) fd->dpi))
+     if (!pkfile || !FILESTRCASEEQ (this_name, name_ret)) {
+       char *msg = concatn ("Font ", fd->area, n, " not found; ");
+       /* wasting some memory */
+       if (!pkfile)
+         msg = concat (msg, "characters will be left blank.");
+       else
+         msg = concat3 (msg, "using ", name_ret);
+       dontmakefont = 1;
+       error (msg);
+
+     } else if (!kpse_bitmap_tolerance ((double) dpi_ret, (double) fd->dpi))
        {
            fd->loadeddpi = dpi_ret ;
            fd->alreadyscaled = 0 ;
@@ -358,16 +357,18 @@ loadfont(register fontdesctype *curfnt)
    for(i=pkbyte(); i>0; i--)
       (void)pkbyte() ;
    k = (integer)(alpha * (real)pkquad()) ;
-   if (k > curfnt->designsize + fsizetol ||
-       k < curfnt->designsize - fsizetol) {
-      (void)sprintf(errbuf,"Design size mismatch in font %s", curfnt->name) ;
-      error(errbuf) ;
+   if (k > curfnt->designsize + fsizetol
+       || k < curfnt->designsize - fsizetol) {
+      char *msg = concat ("Design size mismatch in font ", curfnt->name);
+      error (msg);
+      free (msg);
    }
    k = pkquad() ;
    if (k && curfnt->checksum)
       if (k!=curfnt->checksum) {
-         (void)sprintf(errbuf,"Checksum mismatch in font %s", curfnt->name) ;
-         error(errbuf) ;
+         char *msg = concat ("Checksum mismatch in font ", curfnt->name);
+         error (msg);
+         free (msg);
        }
    k = pkquad() ; /* assume that hppp is correct in the PK file */
    k = pkquad() ; /* assume that vppp is correct in the PK file */

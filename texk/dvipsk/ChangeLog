@@ -1,3 +1,14 @@
+2010-03-28  Karl Berry  <karl@tug.org>
+
+	* loadfont.c,
+	* tfmload.c,
+	* virtualfont.c,
+	* bbox.c,
+	* writet1.c,
+	* dvips.c,
+	* header.c: dynamically concatenate more error strings.
+	* protos.h (errbuf): increase.
+
 2010-03-26  Karl Berry  <karl@tug.org>
 
 	* virtualfont.c (badvf, virtualfont): use concat[n] instead of

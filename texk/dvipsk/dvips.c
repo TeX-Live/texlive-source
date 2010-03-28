@@ -388,8 +388,9 @@ check_checksum(unsigned c1, unsigned c2, const char *name)
       && !kpse_tex_hush ("checksum")
 #endif
       ) {
-     sprintf (errbuf, "Checksum mismatch in %s", name);
-     error (errbuf);
+     char *msg = concat ("Checksum mismatch in %s", name);
+     error (msg);
+     free (msg);
    }
 }
 
