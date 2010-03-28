@@ -374,178 +374,178 @@ extern boolean t1_subset_2(char *, unsigned char *, char *);
 
 /* global variables from dopage.c */
 #ifdef HPS
-extern integer hhmem, vvmem ;
-extern integer pushcount ;
-extern Boolean PAGEUS_INTERUPPTUS ;
-extern Boolean NEED_NEW_BOX ;
+extern integer hhmem, vvmem;
+extern integer pushcount;
+extern Boolean PAGEUS_INTERUPPTUS;
+extern Boolean NEED_NEW_BOX;
 #endif
 
 /* global variables from dosection.c */
 #ifdef HPS
-extern int pagecounter ;
+extern int pagecounter;
 #endif
 
 /* global variables from dvips.c */
-extern char *downloadedpsnames[] ;
-extern int unused_top_of_psnames ;
-extern fontdesctype *fonthead ;
-extern fontdesctype *curfnt ;
-extern sectiontype *sections ;
-extern Boolean partialdownload ;
-extern Boolean manualfeed ;
-extern Boolean compressed ;
-extern Boolean downloadpspk ;
-extern Boolean safetyenclose ;
-extern Boolean removecomments ;
-extern Boolean nosmallchars ;
-extern Boolean cropmarks ;
-extern Boolean abspage ;
-extern Boolean tryepsf ;
-extern int secure ;
-extern int secure_option ;
-extern int collatedcopies ;
-extern integer pagecopies ;
-extern shalfword linepos ;
-extern integer maxpages ;
-extern Boolean notfirst, notlast ;
-extern Boolean evenpages, oddpages, pagelist ;
-extern Boolean sendcontrolD ;
-extern Boolean shiftlowchars ;
-extern integer firstpage, lastpage ;
-extern integer firstseq, lastseq ;
-extern integer hpapersize, vpapersize ;
-extern integer hoff, voff ;
-extern integer maxsecsize ;
-extern integer firstboploc ;
-extern Boolean sepfiles ;
-extern int numcopies ; 
-extern const char *oname ;
-extern char *iname ;
-extern char *fulliname ;
-extern char *nextstring, *maxstring ;
-extern FILE *dvifile, *bitfile ;
-extern quarterword *curpos, *curlim ;
-extern fontmaptype *ffont ;
-extern real conv ;
-extern real vconv ;
-extern real alpha ;
-extern double mag ;
-extern integer num, den ;
-extern int overridemag ;
-extern int actualdpi, vactualdpi ;
-extern int maxdrift, vmaxdrift ;
-extern char *paperfmt ;
-extern int landscape ;
-extern integer fontmem ;
-extern integer pagecount ;
-extern integer pagenum ;
-extern long bytesleft ;
-extern quarterword *raster ;
-extern integer hh, vv ;
-extern Boolean noomega ;
-extern const char *infont ;
+extern char *downloadedpsnames[];
+extern int unused_top_of_psnames;
+extern fontdesctype *fonthead;
+extern fontdesctype *curfnt;
+extern sectiontype *sections;
+extern Boolean partialdownload;
+extern Boolean manualfeed;
+extern Boolean compressed;
+extern Boolean downloadpspk;
+extern Boolean safetyenclose;
+extern Boolean removecomments;
+extern Boolean nosmallchars;
+extern Boolean cropmarks;
+extern Boolean abspage;
+extern Boolean tryepsf;
+extern int secure;
+extern int secure_option;
+extern int collatedcopies;
+extern integer pagecopies;
+extern shalfword linepos;
+extern integer maxpages;
+extern Boolean notfirst, notlast;
+extern Boolean evenpages, oddpages, pagelist;
+extern Boolean sendcontrolD;
+extern Boolean shiftlowchars;
+extern integer firstpage, lastpage;
+extern integer firstseq, lastseq;
+extern integer hpapersize, vpapersize;
+extern integer hoff, voff;
+extern integer maxsecsize;
+extern integer firstboploc;
+extern Boolean sepfiles;
+extern int numcopies; 
+extern const char *oname;
+extern char *iname;
+extern char *fulliname;
+extern char *nextstring, *maxstring;
+extern FILE *dvifile, *bitfile;
+extern quarterword *curpos, *curlim;
+extern fontmaptype *ffont;
+extern real conv;
+extern real vconv;
+extern real alpha;
+extern double mag;
+extern integer num, den;
+extern int overridemag;
+extern int actualdpi, vactualdpi;
+extern int maxdrift, vmaxdrift;
+extern char *paperfmt;
+extern int landscape;
+extern integer fontmem;
+extern integer pagecount;
+extern integer pagenum;
+extern long bytesleft;
+extern quarterword *raster;
+extern integer hh, vv;
+extern Boolean noomega;
+extern const char *infont;
 #ifndef KPATHSEA
-extern char *tfmpath ;
-extern char *pkpath ;
-extern char *vfpath ;
-extern char *figpath ;
-extern char *headerpath ;
-extern char *configpath ;
-extern char *pictpath ;
+extern char *tfmpath;
+extern char *pkpath;
+extern char *vfpath;
+extern char *figpath;
+extern char *headerpath;
+extern char *configpath;
+extern char *pictpath;
 #ifdef SEARCH_SUBDIRECTORIES
-extern char *fontsubdirpath ;
+extern char *fontsubdirpath;
 #endif
 #endif /* ! KPATHSEA */
 #ifdef FONTLIB
-extern char *flipath ;
-extern char *fliname ;
+extern char *flipath;
+extern char *fliname;
 #endif
-extern integer swmem ;
-extern int quiet ;
-extern int filter ;
-extern int dvips_debug_flag ;
-extern int prettycolumn ;
-extern int gargc ;
-extern char **gargv ;
-extern int totalpages ;
-extern Boolean reverse ; 
-extern Boolean usesPSfonts ;
-extern Boolean usesspecial ;
-extern Boolean headers_off ;
-extern Boolean usescolor ;
-extern char *warningmsg ;
-extern Boolean multiplesects ;
-extern Boolean disablecomments ;
-extern char *printer ;
-extern char *mfmode ;
-extern char *mflandmode ;
+extern integer swmem;
+extern int quiet;
+extern int filter;
+extern int dvips_debug_flag;
+extern int prettycolumn;
+extern int gargc;
+extern char **gargv;
+extern int totalpages;
+extern Boolean reverse; 
+extern Boolean usesPSfonts;
+extern Boolean usesspecial;
+extern Boolean headers_off;
+extern Boolean usescolor;
+extern char *warningmsg;
+extern Boolean multiplesects;
+extern Boolean disablecomments;
+extern char *printer;
+extern char *mfmode;
+extern char *mflandmode;
 extern int mfmode_option;
 extern int oname_option;
-extern frametype frames[] ;
-extern integer pagecost ;
-extern integer fsizetol ;
-extern Boolean includesfonts ;
-extern fontdesctype *fonthd[MAXFONTHD] ;
-extern int nextfonthd ;
-extern char xdig[256] ;
-extern char banner[], banner2[] ;
-extern Boolean noenv ;
-extern Boolean dopprescan ;
-extern int dontmakefont ;
-extern struct papsiz *papsizes ;
-extern int headersready ;
+extern frametype frames[];
+extern integer pagecost;
+extern integer fsizetol;
+extern Boolean includesfonts;
+extern fontdesctype *fonthd[MAXFONTHD];
+extern int nextfonthd;
+extern char xdig[256];
+extern char banner[], banner2[];
+extern Boolean noenv;
+extern Boolean dopprescan;
+extern int dontmakefont;
+extern struct papsiz *papsizes;
+extern int headersready;
 #if defined(MSDOS) || defined(OS2) || defined(ATARIST)
-extern char *mfjobname ;
-extern FILE *mfjobfile ;
+extern char *mfjobname;
+extern FILE *mfjobfile;
 #endif
 #ifdef DEBUG
-extern integer debug_flag ;
+extern integer debug_flag;
 #endif
 #ifdef HPS
-extern Boolean HPS_FLAG ;
+extern Boolean HPS_FLAG;
 #endif
 
 /* global variables from flib.c */
 #ifdef FONTLIB
-extern Boolean flib ;
+extern Boolean flib;
 #endif
 
 /* global variables from hps.c */
 #ifdef HPS
-extern Boolean inHTMLregion ;
-extern integer HREF_COUNT ;
-extern int current_pushcount ;
-extern Boolean noprocset ;
+extern Boolean inHTMLregion;
+extern integer HREF_COUNT;
+extern int current_pushcount;
+extern Boolean noprocset;
 #endif
 
 /* global variables from loadfont.c */
-extern char errbuf[1000] ;
-extern int lastresortsizes[40] ;
-extern FILE *pkfile ;
+extern char errbuf[1000];
+extern int lastresortsizes[40];
+extern FILE *pkfile;
 
 /* global variables from output.c */
-extern char preamblecomment[256] ;
+extern char preamblecomment[256];
 
 /* global variables from pprescan.c */
-extern Boolean pprescan ;
+extern Boolean pprescan;
 
 /* global variables from repack.c */
-extern long mbytesleft ;
-extern quarterword *mraster ;
+extern long mbytesleft;
+extern quarterword *mraster;
 
 /* global variables from resident.c */
-extern struct header_list *ps_fonts_used ;
-extern const char *psmapfile ;
+extern struct header_list *ps_fonts_used;
+extern const char *psmapfile;
 
 /* global variables from search.c */
-extern int to_close ;
+extern int to_close;
 #ifdef KPATHSEA
-extern char *realnameoffile ;
+extern char *realnameoffile;
 #else
-extern char realnameoffile[] ;
+extern char realnameoffile[];
 #endif
 
 /* global variables from tfmload.c */
-extern FILE *tfmfile ;
+extern FILE *tfmfile;
 
 #endif

@@ -273,11 +273,11 @@ flushDashedPath(int dotted, double inchesPerDash)
   int nipd = (integer) convPS((int) inchesPerDash);
 
   if (nipd == 0)
-    nipd = 1 ;
+    nipd = 1;
   if (pathLen < 2)
     {
       error("Path less than 2 points - ignored");
-      pathLen = 0 ;
+      pathLen = 0;
       return;
     }
 
@@ -307,10 +307,10 @@ flushDashedPath(int dotted, double inchesPerDash)
 	else
 	    ndashes += 1;
       } else if (ndashes < 1)
-         ndashes = 1 ;
+         ndashes = 1;
       ipd = delta / ndashes;
       if (ipd <= 0.0)
-         ipd = 1.0 ;
+         ipd = 1.0;
       cmdout("[");
       if (dotted) {
 	doubleout(penSize);
@@ -341,7 +341,7 @@ flushPath(int invis)
   if (pathLen < 2)
     {
       error("Path less than 2 points - ignored");
-      pathLen = 0 ;
+      pathLen = 0;
       return;
     }
 
@@ -460,12 +460,12 @@ flushDashed(char *cp, int dotted)
 void
 flushSpline(char *cp)
 {                               /* as exact as psdit!!! */
-  register long i ;
+  register long i;
   register double dxi, dyi, dxi1, dyi1;
 
   if (*cp) {
       double inchesPerDash;
-      int ipd ;
+      int ipd;
 
       if (sscanf(cp, "%lg ", &inchesPerDash) != 1) {
 	  error ("Illegal format for dotted/dashed spline");
@@ -657,7 +657,7 @@ zPixRound(register double x, /* in DVI units */
 	  )      /* return rounded number of pixels */
 {
    return ((x * mag * (double)convDPI /
-                    (1000.0 * tpicRESOLUTION))) ;
+                    (1000.0 * tpicRESOLUTION)));
 }
 
 #endif /* TPIC */

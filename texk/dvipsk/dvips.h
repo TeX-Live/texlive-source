@@ -29,7 +29,7 @@
 #endif
 #endif
 #if defined(lint) && defined(sun)
-extern char *sprintf() ;
+extern char *sprintf();
 #endif
 #include "paths.h"
 #include "debug.h"
@@ -92,14 +92,14 @@ typedef int integer;
 typedef char boolean;
 #endif
 typedef double real;
-typedef short shalfword ;
-typedef unsigned short halfword ;
-typedef unsigned char quarterword ;
+typedef short shalfword;
+typedef unsigned short halfword;
+typedef unsigned char quarterword;
 #ifdef WIN32
 #define Boolean boolean
 #else
 #ifndef __THINK__
-typedef short Boolean ;
+typedef short Boolean;
 #endif
 #endif
 /*
@@ -125,12 +125,12 @@ typedef short Boolean ;
  */
 #define RESHASHPRIME (73)
 struct resfont {
-   struct resfont *next ;
+   struct resfont *next;
    char *Keyname, *PSname, *TeXname, *Fontfile, *Vectfile;
-   char *specialinstructions ;
-   char *downloadheader ; /* possibly multiple files */
-   quarterword sent ;
-} ;
+   char *specialinstructions;
+   char *downloadheader; /* possibly multiple files */
+   quarterword sent;
+};
 
 /*
  *   A chardesc describes an individual character.  Before the fonts are
@@ -138,11 +138,11 @@ struct resfont {
  *   with the following meanings:
  */
 typedef struct tcd {
-   integer TFMwidth ;
-   quarterword *packptr ;
-   shalfword pixelwidth ;
-   quarterword flags, flags2 ;
-} chardesctype ;
+   integer TFMwidth;
+   quarterword *packptr;
+   shalfword pixelwidth;
+   quarterword flags, flags2;
+} chardesctype;
 #define EXISTS (1)
 #define PREVPAGE (2)
 #define THISPAGE (4)
@@ -164,49 +164,49 @@ typedef struct tcd {
  *   psfile.  It can be 0, PREVPAGE, THISPAGE, or EXISTS.
  */
 typedef struct tfd {
-   integer checksum, scaledsize, designsize, thinspace ;
-   halfword dpi, loadeddpi ;
-   halfword alreadyscaled ;
-   halfword psname ;
-   halfword loaded ;
+   integer checksum, scaledsize, designsize, thinspace;
+   halfword dpi, loadeddpi;
+   halfword alreadyscaled;
+   halfword psname;
+   halfword loaded;
    quarterword psflag;
-   quarterword codewidth ;
-   integer maxchars ;
-   char *name, *area ;
-   struct resfont *resfont ;
-   struct tft *localfonts ;
-   struct tfd *next ;
+   quarterword codewidth;
+   integer maxchars;
+   char *name, *area;
+   struct resfont *resfont;
+   struct tft *localfonts;
+   struct tfd *next;
    struct tfd *nextsize;
    char *scalename;
-   chardesctype *chardesc ;
-} fontdesctype ;
+   chardesctype *chardesc;
+} fontdesctype;
 
 /*  A fontmap associates a fontdesc with a font number.
  */
 typedef struct tft {
-   integer fontnum ;
-   fontdesctype *desc ;
-   struct tft *next ;
-} fontmaptype ;
+   integer fontnum;
+   fontdesctype *desc;
+   struct tft *next;
+} fontmaptype;
 
 /*   Virtual fonts require a `macro' capability that is implemented by
  *   using a stack of `frames'.
  */
 typedef struct {
-   quarterword *curp, *curl ;
-   fontdesctype *curf ;
-   fontmaptype *ff ;
-} frametype ;
+   quarterword *curp, *curl;
+   fontdesctype *curf;
+   fontmaptype *ff;
+} frametype;
 
 /*
  *   The next type holds the font usage information in a 256-bit table;
  *   there's a 1 for each character that was used in a section.
  */
 typedef struct {
-   fontdesctype *fd ;
-   halfword psfused ;
-   halfword bitmap[16] ;
-} charusetype ;
+   fontdesctype *fd;
+   halfword psfused;
+   halfword bitmap[16];
+} charusetype;
 
 /*   Next we want to record the relevant data for a section.  A section is
  *   a largest portion of the document whose font usage does not overflow
@@ -219,17 +219,17 @@ typedef struct {
  *   the second phase.
  */
 typedef struct t {
-   integer bos ;
-   struct t *next ;
-   halfword numpages ;
-} sectiontype ;
+   integer bos;
+   struct t *next;
+   halfword numpages;
+} sectiontype;
 
 /*
  *   Sections are actually represented not by sectiontype but by a more
  *   complex data structure of variable size, having the following layout:
- *      sectiontype sect ;
- *      charusetype charuse[numfonts] ;
- *      fontdesctype *sentinel = NULL ;
+ *      sectiontype sect;
+ *      charusetype charuse[numfonts];
+ *      fontdesctype *sentinel = NULL;
  *   (Here numfonts is the number of bitmap fonts currently defined.)
  *    Since we can't declare this or take a sizeof it, we build it and
  *   manipulate it ourselves (see the end of the prescan routine).
@@ -238,12 +238,12 @@ typedef struct t {
  *   This is how we build up headers and other lists.
  */
 struct header_list {
-   struct header_list *next ;
-   const char *Hname ;
-   char *precode ;
-   char *postcode ;
-   char name[1] ;
-} ;
+   struct header_list *next;
+   const char *Hname;
+   char *precode;
+   char *postcode;
+   char name[1];
+};
 /*
  *   Some machines define putlong in their library.
  *   We get around this here.
@@ -253,11 +253,11 @@ struct header_list {
  *   Information on available paper sizes is stored here.
  */
 struct papsiz {
-   struct papsiz *next ;
-   integer xsize, ysize ;
-   const char *name ;
-   const char *specdat ;
-} ;
+   struct papsiz *next;
+   integer xsize, ysize;
+   const char *name;
+   const char *specdat;
+};
 #ifdef MVSXA /* IBM: MVS/XA */
 /* this is where we fix problems with conflicts for truncation
    of long names (we might only do this if LONGNAME not set but ...) */
@@ -265,7 +265,7 @@ struct papsiz {
 #   define flushDashedPath flshDshdPth  /* conflict with flushDash */
 #   define PageList PgList  /* re-definition conflict with pagelist  */
 /* adding ascii2ebcdic conversion table to extern */
-    extern char ascii2ebcdic[] ;
+    extern char ascii2ebcdic[];
 #endif  /* IBM: MVS/XA */
 #ifdef VMCMS /* IBM: VM/CMS */
 /* this is where we fix problems with conflicts for truncation
@@ -273,9 +273,9 @@ struct papsiz {
 #   define pprescanpages pprscnpgs  /* confict with pprescan */
 #   define flushDashedPath flshDshdPth  /* conflict with flushDash */
 /* adding ascii2ebcdic conversion table to extern */
-    extern char ascii2ebcdic[] ;
+    extern char ascii2ebcdic[];
 /* redefining fopen for VMCMS, see DVIPSCMS.C */
-    extern FILE *cmsfopen() ;
+    extern FILE *cmsfopen();
 #   ifdef fopen
 #      undef fopen
 #   endif

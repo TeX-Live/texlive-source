@@ -15,7 +15,7 @@
 #else
 #include <ctype.h>
 #if !defined(SYSV) && !defined(WIN32)
-extern char *strtok() ; /* some systems don't have this in strings.h */
+extern char *strtok(); /* some systems don't have this in strings.h */
 #endif
 #define ISXGIGIT isxdigit
 #endif
@@ -45,8 +45,8 @@ ifontdef(char *name, char *area,
 
    fp = newfontdesc((integer)0, scsize, dssize, name, area);
    fp->scalename = scname;
-   fp->next = fonthead ;
-   fonthead = fp ;
+   fp->next = fonthead;
+   fonthead = fp;
    return fp;
 }
 /*
@@ -56,7 +56,7 @@ ifontdef(char *name, char *area,
 void
 setfamily(fontdesctype *f)
 {
-   int i ;
+   int i;
 
    fontmem -= DICTITEMCOST;
    for (i=0; i<nextfonthd; i++)
@@ -67,10 +67,10 @@ setfamily(fontdesctype *f)
          return;
       }
    if (nextfonthd==MAXFONTHD)
-      error("! Too many fonts in included psfiles") ;
-   fontmem -= NAMECOST + strlen(f->name) + strlen(f->area) ;
-   fonthd[nextfonthd++] = f ;
-   f->nextsize = NULL ;
+      error("! Too many fonts in included psfiles");
+   fontmem -= NAMECOST + strlen(f->name) + strlen(f->area);
+   fonthd[nextfonthd++] = f;
+   f->nextsize = NULL;
 }
 /*
  * Convert file name s to a pair of new strings in the string pool.
@@ -85,13 +85,13 @@ getname(char *s)
    a = NULL;
    for (p=s; *p!=0; p++)
       if (*p=='/')
-         a = p+1 ;
-   if (a==NULL) *nextstring++ = 0 ;
-   else {   sav = *a ;
-      *a = 0 ;
-      (void) newstring(s) ;
-      *a = sav ;
-      s = a ;
+         a = p+1;
+   if (a==NULL) *nextstring++ = 0;
+   else {   sav = *a;
+      *a = 0;
+      (void) newstring(s);
+      *a = sav;
+      s = a;
    }
    return newstring(s);
 }
@@ -106,27 +106,27 @@ getname(char *s)
 void
 includechars(fontdesctype *f, char *s)
 {
-   int b, c, d ;
-   int l = strlen(s) ;
+   int b, c, d;
+   int l = strlen(s);
 
    while (l > 0 && (s[l-1] == '\n' || s[l-1] == '\r'))
-      s[--l] = 0 ;
+      s[--l] = 0;
    if (!ISXDIGIT(s[0]) || !ISXDIGIT(s[1]) || s[2]!=':'
          || strspn(s+3,"0123456789ABCDEFabcdef") < l-3) {
-      fprintf(stderr, "%s\n", s) ;
-      error("Bad syntax in included font usage table") ;
-      return ;
+      fprintf(stderr, "%s\n", s);
+      error("Bad syntax in included font usage table");
+      return;
    }
-   c = (xdig[(int)(s[0])] << 4) + xdig[(int)(s[1])] ;
-   s += 2 ;
+   c = (xdig[(int)(s[0])] << 4) + xdig[(int)(s[1])];
+   s += 2;
    while (*++s) {
-      d = xdig[(int)*s] ;
+      d = xdig[(int)*s];
       for (b=8; b!=0; b>>=1) {
          if ((d&b)!=0) {
-            pagecost ++ ;
-            (void) prescanchar(&f->chardesc[c]) ;
+            pagecost ++;
+            (void) prescanchar(&f->chardesc[c]);
          }
-         if (++c==256) return ;
+         if (++c==256) return;
       }
    }
 }
@@ -158,13 +158,13 @@ scan1fontcomment(char *p)
    DVIperBP = actualdpi/(72.0*conv) * (mag/1000.0);
    p = strtok(p, " ");
    if (p==NULL) return;
-   area = nextstring ;   /* tentatively in the string pool */
+   area = nextstring;   /* tentatively in the string pool */
    name = getname(p);
    q = strtok((char *)0, " ");
    if (p==NULL || (scsize=(integer)(atof(q)*DVIperBP))==0) {
       fprintf(stderr, "%s\n",p);
       error("No scaled size for included font");
-      nextstring = area ;   /* remove from string pool */
+      nextstring = area;   /* remove from string pool */
       return;
    }
    scname = q;
@@ -172,7 +172,7 @@ scan1fontcomment(char *p)
    if (p==NULL || (dssize=(integer)(atof(q)*DVIperBP))==0) {
       fprintf(stderr, "%s\n",p);
       error("No design size for included font");
-      nextstring = area ;
+      nextstring = area;
       return;
    }
    q = strtok((char *)0, " ");
@@ -262,31 +262,31 @@ scan_fontnames(char *str, const char *psfile)
        if(re != NULL) {
          if (re->sent != 2) {
             if (re->Fontfile) {
-               add_header(re->Fontfile) ;
+               add_header(re->Fontfile);
             } else if (re->downloadheader) {
 	/* this code borrowed from residentfont() in resident.c */
-	      char *cp = re->downloadheader ;
-	      char *q ;
+	      char *cp = re->downloadheader;
+	      char *q;
 	 
-	      infont = re->PSname ;
+	      infont = re->PSname;
 	      while (1) {
-	        q = cp ;
+	        q = cp;
 	        while (*cp && *cp != ' ')
-                  cp++ ;
+                  cp++;
   	        if (*cp) {
-                  *cp = 0 ;
-                  add_header(q) ;
-                  *cp++ = ' ' ;
+                  *cp = 0;
+                  add_header(q);
+                  *cp++ = ' ';
 	        } else {
-                  add_header(q) ;
-                  break ;
+                  add_header(q);
+                  break;
 	        }
-	        infont = 0 ;
+	        infont = 0;
 	      }
             }
-	    infont = 0 ;
+	    infont = 0;
           }
-          re->sent = 2 ;
+          re->sent = 2;
           if (unused_top_of_psnames < DOWNLOADEDPSSIZE) {
              downloadedpsnames[unused_top_of_psnames] = xstrdup (re->PSname);
              unused_top_of_psnames++;
@@ -324,9 +324,9 @@ void
 scanfontusage(char *p, const char *psfile)
 {
   if (strncmp(p, "%%DocumentFonts: ",17) == 0) {
-    p += 17 ;
+    p += 17;
     while (*p && *p <= ' ')
-       p++ ;
+       p++;
     if(!strncmp(p,"(atend)",7)) {
       check_atend = 1;
     } else {
@@ -334,9 +334,9 @@ scanfontusage(char *p, const char *psfile)
       fc_state = 1;
     }
   } else if (strncmp(p, "%%DocumentNeededFonts: ",23)==0) {
-    p += 23 ;
+    p += 23;
     while (*p && *p <= ' ')
-       p++ ;
+       p++;
     if(!strncmp(p,"(atend)",7)) {
       check_atend = 1;
     } else {
@@ -347,9 +347,9 @@ scanfontusage(char *p, const char *psfile)
     scan_fontnames(p+3,psfile);
     fc_state = 1;
   } else if (strncmp(p, "%%DocumentNeededResources: ",27) == 0) {
-    p += 27 ;
+    p += 27;
     while (*p && *p <= ' ')
-       p++ ;
+       p++;
     if(!strncmp(p,"(atend)",7)) {
       check_atend = 1;
     } else {
@@ -357,9 +357,9 @@ scanfontusage(char *p, const char *psfile)
       fc_state = 2;
     }
   } else if (fc_state == 2 && strncmp(p,"%%+",3) == 0) {
-    p += 3 ;
+    p += 3;
     while (*p && *p <= ' ')
-       p++ ;
+       p++;
     if(!strncmp(p,"font ",5)) scan_fontnames(p+5,psfile);
     fc_state = 2;
   } else {
@@ -378,8 +378,8 @@ scanfontcomments(const char *filename)
    char p[500];
    char *r;
    FILE *f;
-   integer truecost = pagecost ;
-   Boolean trueknown = 0 ;
+   integer truecost = pagecost;
+   Boolean trueknown = 0;
    fontdesctype *oldcf = curfnt;
 
 #ifdef DEBUG
@@ -392,13 +392,13 @@ scanfontcomments(const char *filename)
 /*
  *   Allow scanning of ` commands.  Better return same results both times.
  */
-      f = popen(filename+1, "r") ;
-      to_close = USE_PCLOSE ;
+      f = popen(filename+1, "r");
+      to_close = USE_PCLOSE;
    } else {
-      f = search(figpath, filename, READ) ;
+      f = search(figpath, filename, READ);
    }
    if (f) {
-     (void)SET_BINARY(fileno(f)) ;
+     (void)SET_BINARY(fileno(f));
      fc_state = 0;
      check_atend = 0;
      while (fgets(p,500,f) && p[0]=='%' &&
@@ -406,13 +406,13 @@ scanfontcomments(const char *filename)
        if (strncmp(p, "%*Font:", 7) == 0) {
 	 scan1fontcomment(p+7);
        } else if (strncmp(p, "%%VMusage:", 9) == 0) {
-	 truecost += scanvm(p+10) ;
-	 trueknown = 1 ;
+	 truecost += scanvm(p+10);
+	 trueknown = 1;
        }
        scanfontusage(p,filename);
      }
      if (trueknown)
-       pagecost = truecost ;
+       pagecost = truecost;
 
      if(check_atend) {
 #ifdef DEBUG
@@ -427,7 +427,7 @@ scanfontcomments(const char *filename)
        fgets(p,500,f); /* throw away a partial line. */
 
        /* find %%Trailer */
-       while((r=fgets(p,500,f)) && strncmp(p,"%%Trailer",9)) ;
+       while((r=fgets(p,500,f)) && strncmp(p,"%%Trailer",9));
 
        /* look for specs that were deferred to the trailer. */
        if(r != NULL) {
@@ -444,7 +444,7 @@ scanfontcomments(const char *filename)
        }
 #endif  /* DEBUG */
      }
-     close_file(f) ;
+     close_file(f);
    }
    curfnt = oldcf;
 }
@@ -455,13 +455,13 @@ scanfontcomments(const char *filename)
 Boolean
 okascmd(char *ss)
 {
-   register int c = 0 ;
-   register char *s = ss ;
+   register int c = 0;
+   register char *s = ss;
 
    while (*s)
       if (*s<' ' || *s>126 || ++c==30)
-         return(0) ;
-   return(strcspn(ss,"()<>[]{}%/") == c) ;
+         return(0);
+   return(strcspn(ss,"()<>[]{}%/") == c);
 }
 /*
  * Output font area and font name strings as a literal string
@@ -469,19 +469,19 @@ okascmd(char *ss)
 void
 nameout(char *area, char *name)
 {
-   char buf[30] ;
-   char *s ;
+   char buf[30];
+   char *s;
 
    if (*area==0 && okascmd(name)) {
-      (void)sprintf(buf, "/%s", name) ;
+      (void)sprintf(buf, "/%s", name);
       cmdout(name);
    } else {
       for (s=area; *s; s++)
-         scout(*s) ;
+         scout(*s);
       for (s=name; *s; s++)
-         scout(*s) ;
+         scout(*s);
       stringend();
-      cmdout("cvn") ;
+      cmdout("cvn");
    }
 }
 /*

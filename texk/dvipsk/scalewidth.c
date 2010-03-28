@@ -22,15 +22,15 @@
 integer
 scalewidth(register integer a, register integer b)
 {
-  register integer al, bl ;
+  register integer al, bl;
 
   if (a < 0)
-     return -scalewidth(-a, b) ;
+     return -scalewidth(-a, b);
   if (b < 0)
-     return -scalewidth(a, -b) ;
-  al = a & 32767 ;
-  bl = b & 32767 ;
-  a >>= 15 ;
-  b >>= 15 ;
-  return ( ((al*bl/32768) + a*bl+al*b)/32 + a*b*1024) ;
+     return -scalewidth(a, -b);
+  al = a & 32767;
+  bl = b & 32767;
+  a >>= 15;
+  b >>= 15;
+  return ( ((al*bl/32768) + a*bl+al*b)/32 + a*b*1024);
 }

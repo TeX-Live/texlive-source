@@ -67,7 +67,7 @@ along with this program.  If not, see  <http://www.gnu.org/licenses/>.  */
 #define make_subset_tag(a, b)
 #define update_subset_tag()
 
-static char *dvips_extra_charset ;
+static char *dvips_extra_charset;
 static char *cur_file_name;
 static char *cur_enc_name;
 static unsigned char *grid;
@@ -1524,7 +1524,7 @@ boolean t1_subset(char *fontfile, char *encfile, unsigned char *g)
     for (i = 0; i <= MAX_CHAR_CODE; i++)
         if (ext_glyph_names[i] != notdef)
             free(ext_glyph_names[i]);
-    return 1 ; /* note:  there *is* no unsuccessful return */
+    return 1; /* note:  there *is* no unsuccessful return */
 }
 
 boolean t1_subset_2(char *fontfile, unsigned char *g, char *extraGlyphs)
@@ -1535,10 +1535,10 @@ boolean t1_subset_2(char *fontfile, unsigned char *g, char *extraGlyphs)
     grid = g;
     cur_file_name = fontfile;
     hexline_length = 0;
-    dvips_extra_charset = extraGlyphs ;
+    dvips_extra_charset = extraGlyphs;
     writet1();
     for (i = 0; i <= MAX_CHAR_CODE; i++)
         if (ext_glyph_names[i] != notdef)
             free(ext_glyph_names[i]);
-    return 1 ; /* note:  there *is* no unsuccessful return */
+    return 1; /* note:  there *is* no unsuccessful return */
 }

@@ -24,8 +24,8 @@
 #define GUNZIP          "gzip -d"
 #endif
 
-int to_close ;  /* use fclose or pclose? */
-char *realnameoffile ;
+int to_close;  /* use fclose or pclose? */
+char *realnameoffile;
 
 /* Return safely quoted version of NAME.  That means using "..." on
    Windows and '...' on Unix, with any occurrences of the quote char
@@ -213,21 +213,21 @@ pksearch(const char *file, const char *mode, halfword dpi,
 FILE *
 my_real_fopen(register const char *n, register const char *t)
 {
-   FILE *tf ;
+   FILE *tf;
    if (dd(D_FILES)) {
-      fprintf(stderr, "<%s(%s)> ", n, t) ;
-      tf = fopen(n, t) ;
+      fprintf(stderr, "<%s(%s)> ", n, t);
+      tf = fopen(n, t);
       if (tf == 0)
-         fprintf(stderr, "failed\n") ;
+         fprintf(stderr, "failed\n");
       else
-         fprintf(stderr, "succeeded\n") ;
+         fprintf(stderr, "succeeded\n");
    } else
-      tf = fopen(n, t) ;
+      tf = fopen(n, t);
 #ifdef OS2
    if (tf == (FILE *)NULL)
      tf = fat_fopen(n, t); /* try again with filename truncated to 8.3 */
 #endif
-   return tf ;
+   return tf;
 }
 #endif
 
@@ -289,15 +289,15 @@ fat_fopen(char *fname, char *t)
       strcpy(np,nbuf);
       /* now code copied from my_real_fopen() */
       if (dd(D_FILES)) {
-         fprintf(stderr, "<%s(%s)> ", n, t) ;
-         tf = fopen(n, t) ;
+         fprintf(stderr, "<%s(%s)> ", n, t);
+         tf = fopen(n, t);
          if (tf == 0)
-            fprintf(stderr, "failed\n") ;
+            fprintf(stderr, "failed\n");
          else
-            fprintf(stderr, "succeeded\n") ;
+            fprintf(stderr, "succeeded\n");
       }
       else
-         tf = fopen(n, t) ;
+         tf = fopen(n, t);
       return tf;
    }
    return (FILE *)NULL;
@@ -308,8 +308,8 @@ int
 close_file(FILE *f)
 {
    switch(to_close) {
-case USE_PCLOSE:  return pclose(f) ;
-case USE_FCLOSE:  return fclose(f) ;
-default:          return -1 ;
+case USE_PCLOSE:  return pclose(f);
+case USE_FCLOSE:  return fclose(f);
+default:          return -1;
    }
 }

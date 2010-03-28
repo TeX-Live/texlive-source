@@ -37,7 +37,7 @@ extern int debug_flag;
 #ifdef DVIPS
 extern FILE *search();
 #ifndef KPATHSEA
-extern char *headerpath ;
+extern char *headerpath;
 #endif /* not KPATHSEA */
 #define psfopen(A,B) search(headerpath,A,B)
 #else
@@ -142,6 +142,6 @@ int WorkVect();
 #define FLG_LOAD_BASE   (1)
 
 extern unsigned char grid[];
-extern unsigned char *line, *tmpline ;
-extern int loadbase ;
+extern unsigned char *line, *tmpline;
+extern int loadbase;
 extern struct Char *FirstCharB;

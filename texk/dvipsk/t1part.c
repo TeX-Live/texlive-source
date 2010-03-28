@@ -16,7 +16,7 @@
 
 #ifdef BORLANDC
 void huge *UniGetMem(size)
-ub4 size ;
+ub4 size;
 {
     void huge *tmp;
     if ((tmp =(void huge*) farcalloc(1L, size)) == NULL)
@@ -65,8 +65,8 @@ int CharCount;
 int GridCount;
 int ind_ref;
 
-int LoadVector(int, CHAR *) ;
-int Afm(void) ;
+int LoadVector(int, CHAR *);
+int Afm(void);
 
 typedef struct
 {
@@ -359,7 +359,7 @@ GetWord(unsigned char *mem)
         }
         if(isalpha(*line))
         {
-            *tmp++ = *line++ ;
+            *tmp++ = *line++;
             while(!isspace(*line) && *line != '/')
                 *tmp++= *line++;
             *tmp = '\0';
@@ -695,14 +695,14 @@ ChooseChar(unsigned char *name, CHAR *TmpChar)
  *   O'Neill; bugs in application of fix due to me.
  */
         if (NextChar == 0) {
-           NextChar = (CHAR *) getmem(sizeof(CHAR)) ;
-           NextChar->name = (unsigned char *) getmem(length + 1) ;
-           strcpy((char *) NextChar->name, (char *) name) ;
-           NextChar->length = length ;
-           NextChar->num = -1 ;
-           NextChar->NextChar = 0 ;
-           NextChar->choose = 1 ;
-           ThisChar->NextChar = NextChar ;
+           NextChar = (CHAR *) getmem(sizeof(CHAR));
+           NextChar->name = (unsigned char *) getmem(length + 1);
+           strcpy((char *) NextChar->name, (char *) name);
+           NextChar->length = length;
+           NextChar->num = -1;
+           NextChar->NextChar = 0;
+           NextChar->choose = 1;
+           ThisChar->NextChar = NextChar;
         }
         ThisChar = NextChar;
     }
@@ -911,7 +911,7 @@ ScanSubrs(int i)
 
     len_dup = strlen(Dup);
 
-    for( ; number <  keyword[i].oldnum + keyword[i].offset;)
+    for(; number <  keyword[i].oldnum + keyword[i].offset;)
     {
         if((word_type=GetToken())>0)
         {
@@ -925,7 +925,7 @@ ScanSubrs(int i)
 
                     err_num=GetNum();
                     if(err_num<0)
-                        ;
+                      ;
                     else
                     {
                         if(err_num<4)
@@ -1038,7 +1038,7 @@ DeCodeStr(int num, int numseac)
 {
     unsigned int loccr;
     unsigned char byte;
-    static int j ;
+    static int j;
     int i;
     unsigned char jj,k;
     int tmpnum;
@@ -1546,7 +1546,7 @@ ScanBinary(void)
     label[number].select = FLG_BINARY;
     offset= ++number;
 
-    for (current=0, FirstKey=current ; ; current++)
+    for (current=0, FirstKey=current;; current++)
     {
         i=FindKeyWord(firstnum,lastnum);
         switch(i)
@@ -1769,7 +1769,7 @@ CharEncoding(void)
 {
     int err_token=0;
     int num=0;
-    int seen = 0 ;
+    int seen = 0;
 
     while (1) {
     err_token=GetWord(token);
@@ -1794,8 +1794,8 @@ CharEncoding(void)
                 FirstChar=AddChar(FirstChar,token, num);
                 keep_num=num;
                 keep_flg=1;
-                seen++ ;
-                err_token = GetWord(token) ;
+                seen++;
+                err_token = GetWord(token);
             }
         } else {
 
@@ -1810,7 +1810,7 @@ CharEncoding(void)
            }
         }
     } else
-       return seen ;
+       return seen;
     }
 }
 
@@ -1959,12 +1959,12 @@ CheckChoosing(void)
 static char *
 KillUnique(char *s)
 {
-   char *r = strstr(s, "/UniqueID") ;
+   char *r = strstr(s, "/UniqueID");
    if (r) {
-      r[7] = 'X' ;
-      r[8] = 'X' ;
+      r[7] = 'X';
+      r[8] = 'X';
    }
-   return s ;
+   return s;
 }
 
 void
@@ -2311,7 +2311,7 @@ OutHEX(FILE *fout)
 {
     int i=0;
     int num;
-    static const char *hexstr = "0123456789abcdef" ;
+    static const char *hexstr = "0123456789abcdef";
     int bin;
 
     line=tmpline;
@@ -2380,7 +2380,7 @@ Afm(void)
         ""
     };
 
-    for(i=0; psfontfile[i] ; i++)
+    for(i=0; psfontfile[i]; i++)
     {
         if(psfontfile[i] == '.')
             break;

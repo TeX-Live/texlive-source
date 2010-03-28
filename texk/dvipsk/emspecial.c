@@ -19,7 +19,7 @@
 #define FALSE 0
 #endif
 
-static long emmax = 161 ;
+static long emmax = 161;
 
 /*
  *   We define these seek constants if they don't have their
@@ -33,12 +33,12 @@ static long emmax = 161 ;
 #endif
 
 struct empt {
-   struct empt *next ;
+   struct empt *next;
    shalfword point;
    integer x, y;
 };
 
-static struct empt **empoints = NULL ;
+static struct empt **empoints = NULL;
 boolean emused = FALSE;  /* true if em points used on this page */
 integer emx, emy;
 
@@ -67,50 +67,50 @@ emclear(void)
    int i;
    if (emused && empoints)
       for (i=0; i<emmax; i++)
-         empoints[i] = 0 ;
-   emused = FALSE ;
+         empoints[i] = 0;
+   emused = FALSE;
 }
 
 /* put an empoint into the empoints array */
 struct empt *
 emptput(shalfword point, integer x, integer y)
 {
-   struct empt *p ;
-   int start ;
+   struct empt *p;
+   int start;
 
    emused = TRUE;
-   start = point % emmax ;
-   p = empoints[start] ;
+   start = point % emmax;
+   p = empoints[start];
    while ( p ) {
       if ( p->point == point )
          break;
-      p = p->next ;
+      p = p->next;
    }
    if (p == 0) {
-      p = (struct empt *)mymalloc(sizeof(struct empt)) ;
-      p->next = empoints[start] ;
-      empoints[start] = p ;
+      p = (struct empt *)mymalloc(sizeof(struct empt));
+      p->next = empoints[start];
+      empoints[start] = p;
    }
    p->point = point;
    p->x = x;
    p->y = y;
-   return(p) ;
+   return(p);
 }
 
 /* get an empoint from the empoints array */
 struct empt *
 emptget(shalfword point)
 {
-   struct empt *p ;
+   struct empt *p;
    int start;
 
    start = point % emmax;
    if (emused == TRUE) {
-      p = empoints[start] ;
+      p = empoints[start];
       while (p) {
 	 if (p->point == point)
-	    return p ;
-	 p = p->next ;
+	    return p;
+	 p = p->next;
       }
    }
    sprintf(errbuf,"!em: point %d not defined",point);
@@ -147,7 +147,7 @@ char *emp;
 void emgraph();
 #endif
 
-        hvpos() ;
+        hvpos();
 	for (emp = p+3; *emp && isspace(*emp); emp++); /* skip blanks */
 	if (strncmp(emp, "linewidth", 9) == 0) {
 	   /* code for linewidth */
@@ -160,7 +160,7 @@ void emgraph();
 #ifdef DEBUG
    if (dd(D_SPECIAL))
       (void)fprintf(stderr, "em special: Linewidth set to %.1f dots\n", 
-		emwidth) ;
+		emwidth);
 #endif
 	   } else {
 	      sprintf(errbuf,"Unknown em: special width");
@@ -202,7 +202,7 @@ void emgraph();
 	else if (strncmp(emp, "point", 5) == 0) {
            if (empoints == NULL) {
               empoints = 
-              (struct empt **)mymalloc((integer)emmax * sizeof(struct empt *)) ;
+              (struct empt **)mymalloc((integer)emmax * sizeof(struct empt *));
               emused = TRUE;
               emclear();
            }
@@ -216,7 +216,7 @@ void emgraph();
 #else
       (void)fprintf(stderr, "em special: Point %d is %d,%d\n",
 #endif
-		empoint->point, empoint->x, empoint->y) ;
+		empoint->point, empoint->x, empoint->y);
 #endif
 	}
 	else if (strncmp(emp, "line", 4) == 0) {
@@ -243,14 +243,14 @@ void emgraph();
 #ifdef DEBUG
    if (dd(D_SPECIAL))
       (void)fprintf(stderr, "em special: Line from point %d to point %d\n",
-		empoint1, empoint2) ;
+		empoint1, empoint2);
 #endif
 	   cmdout("np");
 	   if (emwidth!=-1.0) {
 #ifdef DEBUG
    if (dd(D_SPECIAL))
    (void)fprintf(stderr,"em special: Linewidth temporarily set to %.1f dots\n", 
-		emwidth) ;
+		emwidth);
 #endif
 	   	strcpy(emstr,"currentlinewidth");
 	   	cmdout(emstr);
@@ -272,14 +272,14 @@ void emgraph();
 	   }
 	}
 	else if (strncmp(emp, "message", 7) == 0) {
-           (void)fprintf(stderr, "em message: %s\n", emp+7) ;
+           (void)fprintf(stderr, "em message: %s\n", emp+7);
 	}
 	else if (strncmp(emp, "graph", 5) == 0) {
 	   int i;
 	   for (emp = emp+5; *emp && isspace(*emp); emp++); /* skip blanks */
-	   for (i=0; *emp && !isspace(*emp) && !(*emp==',') ; emp++) {
+	   for (i=0; *emp && !isspace(*emp) && !(*emp==','); emp++) {
 	      if (strlen(emstr) - 2 >= sizeof(emstr)) {
-                fprintf(stderr, "em:graph: special too long, truncating\n") ;
+                fprintf(stderr, "em:graph: special too long, truncating\n");
                 break;
 	      }
 	      emstr[i++] = *emp; /* copy filename */
@@ -288,14 +288,14 @@ void emgraph();
 	   /* now get optional width and height */
 	   emwidth = emheight = -1.0;	/* no dimension is <= 0 */
 	   for (; *emp && ( isspace(*emp) || (*emp==',') ); emp++)
-	      ;  /* skip blanks and comma */
+	    ;  /* skip blanks and comma */
 	   if (*emp) {
 	      sscanf(emp, "%f%2s", &emwidth, emunit); /* read width */
 	      emwidth = emunits(emwidth,emunit); /* convert to pixels */
 	      for (; *emp && (*emp=='.'||isdigit(*emp)||isalpha(*emp)); emp++)
-	         ; /* skip width dimension */
+	       ; /* skip width dimension */
 	      for (; *emp && ( isspace(*emp) || (*emp==',') ); emp++)
-	         ;  /* skip blanks and comma */
+	       ;  /* skip blanks and comma */
 	      if (*emp) {
 	         sscanf(emp, "%f%2s", &emheight, emunit); /* read height */
 	         emheight = emunits(emheight,emunit)*vactualdpi/actualdpi;
@@ -305,13 +305,13 @@ void emgraph();
 	      emgraph(emstr,emwidth,emheight);
 	   }
 	   else {
-              (void)fprintf(stderr, "em:graph: no file given\n") ;
+              (void)fprintf(stderr, "em:graph: no file given\n");
 	   }
 	}
 	else {
            sprintf(errbuf, 
 	      "Unknown em: command (%s) in \\special will be ignored", p);
-           specerror(errbuf) ;
+           specerror(errbuf);
 	}
 	return;
    }
@@ -657,15 +657,15 @@ void
 imagehead(char *filename, int wide, int high, 
 	  float emwidth, float emheight)
 {
-	char *fullname = NULL, *name ;
+	char *fullname = NULL, *name;
 	if (!quiet) {
 #ifdef KPATHSEA
-	    fullname = (char *)kpse_find_file (filename, pictpath, 0) ;
+	    fullname = (char *)kpse_find_file (filename, pictpath, 0);
 #endif
 	    if (!fullname)
-		name = filename ;
+		name = filename;
 	    else
-		name = fullname ;
+		name = fullname;
 	    if (strlen(name) + prettycolumn > STDOUTSIZE) {
 		fprintf(stderr,"\n");
 		prettycolumn = 0;
@@ -676,7 +676,7 @@ imagehead(char *filename, int wide, int high,
 	    if (fullname) free (fullname);
 	}
 	hvpos();
-	nlcmdout("@beginspecial @setspecial") ;
+	nlcmdout("@beginspecial @setspecial");
 	if (!disablecomments) {
 		cmdout("%%BeginDocument: em:graph");
 		cmdout(filename);
@@ -705,10 +705,10 @@ void
 imagetail(void)
 {
 	if (!disablecomments) {
-	    (void)fprintf(bitfile, "\n%%%%EndDocument\n") ;
+	    (void)fprintf(bitfile, "\n%%%%EndDocument\n");
 	    linepos = 0;
 	}
-	nlcmdout("@endspecial") ;
+	nlcmdout("@endspecial");
 	if (!quiet) {
 	    (void)fprintf(stderr,">");
 	    (void)fflush(stderr);
@@ -933,7 +933,7 @@ mspgraph(FILE *f, char *filename, float emwidth, float emheight)
 			sprintf(errbuf, "em:graph: Unknown MSP File Type");
 			specerror(errbuf);
 	}
-	imagetail() ;
+	imagetail();
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1026,7 +1026,7 @@ rle4read(FILE *f, int w, int b, char *s)
 	}
 
 	if (rle_dx) {
-	    for ( ; rle_dx>1; rle_dx-=2) {
+	    for (; rle_dx>1; rle_dx-=2) {
 		s++;
 		i++;
 	    }
@@ -1064,12 +1064,12 @@ rle4read(FILE *f, int w, int b, char *s)
 		    ch = ((ch>>4)&0x0f) | ((ch<<4)&0xf0); /* swap order */
 		    i++;
 		    *s = (*s & 0xf0) | (ch & 0x0f);
-                    s++ ;
+                    s++;
 		    hi = TRUE;
 		    cnt--;
 		}
 		/* we are about to place the high 4 bits */
-		for ( ; cnt>1 && i<=limit ; cnt-=2) { /* place the whole bytes */
+		for (; cnt>1 && i<=limit; cnt-=2) { /* place the whole bytes */
 		    i++;
 		    *s++ = ch;
 	        }
@@ -1101,7 +1101,7 @@ rle8read(FILE *f, int w, int b, char *s)
 	}
 
 	if (rle_dx) {
-	    for ( ; rle_dx > 0; rle_dx--) {
+	    for (; rle_dx > 0; rle_dx--) {
 		s++;
 		i++;
 	    }
@@ -1130,7 +1130,7 @@ rle8read(FILE *f, int w, int b, char *s)
 		}
 	    }
 	    else { /* cnt is repeat count */
-		for ( ; cnt>0 && i<=limit; cnt--) {
+		for (; cnt>0 && i<=limit; cnt--) {
 		    i++;
 		    *s++ = ch;
 		}
@@ -1318,10 +1318,10 @@ bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 
 		if (bmih.bitcount == 1) {
 		    if (isblack[0])
-			for (j = 0; j < ewidth ; j++)
+			for (j = 0; j < ewidth; j++)
 				pshexa[j] = line[j];
 		    else
-			for (j = 0; j < ewidth ; j++)
+			for (j = 0; j < ewidth; j++)
 				pshexa[j] = ~line[j];
 		    pshexa[ewidth-1] |= emask;
 		}
@@ -1359,7 +1359,7 @@ bmpgraph(FILE *f, char *filename, float emwidth, float emheight)
 		newline();
 		mhexout((unsigned char *) pshexa,(long)tobyte(bmih.width));
 	}
-	imagetail() ;
+	imagetail();
 	free(pshexa);
 	free(line);
 }

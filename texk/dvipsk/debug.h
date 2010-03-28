@@ -18,6 +18,6 @@
 
 #ifndef KPATHSEA
 #define fopen my_real_fopen
-extern FILE *my_real_fopen() ;
+extern FILE *my_real_fopen();
 #endif
 #endif /* DEBUG */

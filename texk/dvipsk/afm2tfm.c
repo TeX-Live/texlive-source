@@ -55,9 +55,9 @@
 #ifdef VMCMS
 #define interesting lookstr  /* for 8 character truncation conflicts */
 #include "dvipscms.h"
-extern FILE *cmsfopen() ;
-extern char ebcdic2ascii[] ;
-extern char ascii2ebcdic[] ;
+extern FILE *cmsfopen();
+extern char ebcdic2ascii[];
+extern char ascii2ebcdic[];
 #ifdef fopen
 #undef fopen
 #endif
@@ -72,9 +72,9 @@ extern FILE *fopen ();
 #endif
 
 struct encoding {
-   const char *name ;
-   const char *vec[256] ;
-} ;
+   const char *name;
+   const char *vec[256];
+};
 struct encoding staticencoding = {
   "TeX text",
   {"Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi", "Sigma",
@@ -98,202 +98,202 @@ struct encoding staticencoding = {
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
     "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-    "", "", "", "", "", "", "" } } ;
+    "", "", "", "", "", "", "" } };
 /*
  *   It's easier to put this in static storage and parse it as we go
  *   than to build the structures ourselves.
  */
 const char *staticligkern[] = {
-   "% LIGKERN space l =: lslash ; space L =: Lslash ;",
-   "% LIGKERN question quoteleft =: questiondown ;",
-   "% LIGKERN exclam quoteleft =: exclamdown ;",
-   "% LIGKERN hyphen hyphen =: endash ; endash hyphen =: emdash ;",
-   "% LIGKERN quoteleft quoteleft =: quotedblleft ;",
-   "% LIGKERN quoteright quoteright =: quotedblright ;",
-   "% LIGKERN space {} * ; * {} space ; zero {} * ; * {} zero ;",
-   "% LIGKERN one {} * ; * {} one ; two {} * ; * {} two ;",
-   "% LIGKERN three {} * ; * {} three ; four {} * ; * {} four ;",
-   "% LIGKERN five {} * ; * {} five ; six {} * ; * {} six ;",
-   "% LIGKERN seven {} * ; * {} seven ; eight {} * ; * {} eight ;",
-   "% LIGKERN nine {} * ; * {} nine ;",
+   "% LIGKERN space l =: lslash; space L =: Lslash;",
+   "% LIGKERN question quoteleft =: questiondown;",
+   "% LIGKERN exclam quoteleft =: exclamdown;",
+   "% LIGKERN hyphen hyphen =: endash; endash hyphen =: emdash;",
+   "% LIGKERN quoteleft quoteleft =: quotedblleft;",
+   "% LIGKERN quoteright quoteright =: quotedblright;",
+   "% LIGKERN space {} *; * {} space; zero {} *; * {} zero;",
+   "% LIGKERN one {} *; * {} one; two {} *; * {} two;",
+   "% LIGKERN three {} *; * {} three; four {} *; * {} four;",
+   "% LIGKERN five {} *; * {} five; six {} *; * {} six;",
+   "% LIGKERN seven {} *; * {} seven; eight {} *; * {} eight;",
+   "% LIGKERN nine {} *; * {} nine;",
 /* Kern accented characters the same way as their base. */
-  "% LIGKERN Aacute <> A ; aacute <> a ;",
-  "% LIGKERN Acircumflex <> A ; acircumflex <> a ;",
-  "% LIGKERN Adieresis <> A ; adieresis <> a ;",
-  "% LIGKERN Agrave <> A ; agrave <> a ;",
-  "% LIGKERN Aring <> A ; aring <> a ;",
-  "% LIGKERN Atilde <> A ; atilde <> a ;",
-  "% LIGKERN Ccedilla <> C ; ccedilla <> c ;",
-  "% LIGKERN Eacute <> E ; eacute <> e ;",
-  "% LIGKERN Ecircumflex <> E ; ecircumflex <> e ;",
-  "% LIGKERN Edieresis <> E ; edieresis <> e ;",
-  "% LIGKERN Egrave <> E ; egrave <> e ;",
-  "% LIGKERN Iacute <> I ; iacute <> i ;",
-  "% LIGKERN Icircumflex <> I ; icircumflex <> i ;",
-  "% LIGKERN Idieresis <> I ; idieresis <> i ;",
-  "% LIGKERN Igrave <> I ; igrave <> i ;",
-  "% LIGKERN Ntilde <> N ; ntilde <> n ;",
-  "% LIGKERN Oacute <> O ; oacute <> o ;",
-  "% LIGKERN Ocircumflex <> O ; ocircumflex <> o ;",
-  "% LIGKERN Odieresis <> O ; odieresis <> o ;",
-  "% LIGKERN Ograve <> O ; ograve <> o ;",
-  "% LIGKERN Oslash <> O ; oslash <> o ;",
-  "% LIGKERN Otilde <> O ; otilde <> o ;",
-  "% LIGKERN Scaron <> S ; scaron <> s ;",
-  "% LIGKERN Uacute <> U ; uacute <> u ;",
-  "% LIGKERN Ucircumflex <> U ; ucircumflex <> u ;",
-  "% LIGKERN Udieresis <> U ; udieresis <> u ;",
-  "% LIGKERN Ugrave <> U ; ugrave <> u ;",
-  "% LIGKERN Yacute <> Y ; yacute <> y ;",
-  "% LIGKERN Ydieresis <> Y ; ydieresis <> y ;",
-  "% LIGKERN Zcaron <> Z ; zcaron <> z ;",
+  "% LIGKERN Aacute <> A; aacute <> a;",
+  "% LIGKERN Acircumflex <> A; acircumflex <> a;",
+  "% LIGKERN Adieresis <> A; adieresis <> a;",
+  "% LIGKERN Agrave <> A; agrave <> a;",
+  "% LIGKERN Aring <> A; aring <> a;",
+  "% LIGKERN Atilde <> A; atilde <> a;",
+  "% LIGKERN Ccedilla <> C; ccedilla <> c;",
+  "% LIGKERN Eacute <> E; eacute <> e;",
+  "% LIGKERN Ecircumflex <> E; ecircumflex <> e;",
+  "% LIGKERN Edieresis <> E; edieresis <> e;",
+  "% LIGKERN Egrave <> E; egrave <> e;",
+  "% LIGKERN Iacute <> I; iacute <> i;",
+  "% LIGKERN Icircumflex <> I; icircumflex <> i;",
+  "% LIGKERN Idieresis <> I; idieresis <> i;",
+  "% LIGKERN Igrave <> I; igrave <> i;",
+  "% LIGKERN Ntilde <> N; ntilde <> n;",
+  "% LIGKERN Oacute <> O; oacute <> o;",
+  "% LIGKERN Ocircumflex <> O; ocircumflex <> o;",
+  "% LIGKERN Odieresis <> O; odieresis <> o;",
+  "% LIGKERN Ograve <> O; ograve <> o;",
+  "% LIGKERN Oslash <> O; oslash <> o;",
+  "% LIGKERN Otilde <> O; otilde <> o;",
+  "% LIGKERN Scaron <> S; scaron <> s;",
+  "% LIGKERN Uacute <> U; uacute <> u;",
+  "% LIGKERN Ucircumflex <> U; ucircumflex <> u;",
+  "% LIGKERN Udieresis <> U; udieresis <> u;",
+  "% LIGKERN Ugrave <> U; ugrave <> u;",
+  "% LIGKERN Yacute <> Y; yacute <> y;",
+  "% LIGKERN Ydieresis <> Y; ydieresis <> y;",
+  "% LIGKERN Zcaron <> Z; zcaron <> z;",
 /*
  *   These next are only included for deficient afm files that
  *   have the lig characters but not the lig commands.
  */
-   "% LIGKERN f i =: fi ; f l =: fl ; f f =: ff ; ff i =: ffi ;",
-   "% LIGKERN ff l =: ffl ;",
-   0 } ;
+   "% LIGKERN f i =: fi; f l =: fl; f f =: ff; ff i =: ffi;",
+   "% LIGKERN ff l =: ffl;",
+   0 };
 /*
  *   The above layout corresponds to TeX Typewriter Type and is compatible
  *   with TeX Text because the position of ligatures is immaterial.
  */
-struct encoding *outencoding = 0 ;
-struct encoding *inencoding = 0 ;
+struct encoding *outencoding = 0;
+struct encoding *inencoding = 0;
 char *outenname = NULL, 
   *inenname = NULL;/* the file names for input and output encodings */
-int boundarychar = -1 ;     /* the boundary character */
-int ignoreligkern ;         /* do we look at ligkern info in the encoding? */
+int boundarychar = -1;     /* the boundary character */
+int ignoreligkern;         /* do we look at ligkern info in the encoding? */
 /*
  *   This is what we store Adobe data in.
  */
 struct adobeinfo {
-   struct adobeinfo *next ;
-   int adobenum, texnum, width ;
-   const char *adobename ;
-   int llx, lly, urx, ury ;
-   struct lig *ligs ;
-   struct kern *kerns ;
-   struct adobeptr *kern_equivs ;
-   struct pcc *pccs ;
-   int wptr, hptr, dptr, iptr ;
+   struct adobeinfo *next;
+   int adobenum, texnum, width;
+   const char *adobename;
+   int llx, lly, urx, ury;
+   struct lig *ligs;
+   struct kern *kerns;
+   struct adobeptr *kern_equivs;
+   struct pcc *pccs;
+   int wptr, hptr, dptr, iptr;
 } *adobechars, *adobeptrs[256], *texptrs[256],
-  *uppercase[256], *lowercase[256] ;
-int nexttex[256] ; /* for characters encoded multiple times in output */
+  *uppercase[256], *lowercase[256];
+int nexttex[256]; /* for characters encoded multiple times in output */
 /*
  *   These are the eight ligature ops, in VPL terms and in METAFONT terms.
  */
 const char *vplligops[] = {
    "LIG", "/LIG", "/LIG>", "LIG/", "LIG/>", "/LIG/", "/LIG/>", "/LIG/>>", 0
-} ;
+};
 const char *encligops[] = {
    "=:", "|=:", "|=:>", "=:|", "=:|>", "|=:|", "|=:|>", "|=:|>>", 0
-} ;
+};
 struct lig {
-   struct lig *next ;
-   const char *succ, *sub ;
-   short op, boundleft ;
-} ;
+   struct lig *next;
+   const char *succ, *sub;
+   short op, boundleft;
+};
 struct kern {
-   struct kern *next ;
-   const char *succ ;
-   int delta ;
-} ;
+   struct kern *next;
+   const char *succ;
+   int delta;
+};
 struct adobeptr {
    struct adobeptr *next;
    struct adobeinfo *ch;
 };
 struct pcc {
-   struct pcc *next ;
-   const char * partname ;
-   int xoffset, yoffset ;
-} ;
+   struct pcc *next;
+   const char * partname;
+   int xoffset, yoffset;
+};
 
-FILE *afmin, *vplout, *tfmout ;
-char inname[200], outname[200] ; /* names of input and output files */
-char tmpstr[200] ; /* a buffer for one string */
+FILE *afmin, *vplout, *tfmout;
+char inname[200], outname[200]; /* names of input and output files */
+char tmpstr[200]; /* a buffer for one string */
 #define INBUFSIZE 1024
 char buffer[INBUFSIZE+10]; /* input buffer (modified while parsing) */
-char obuffer[INBUFSIZE+10] ; /* unmodified copy of input buffer */
-char *param ; /* current position in input buffer */
-const char *fontname = "Unknown" ;
-const char *codingscheme = "Unspecified" ;
+char obuffer[INBUFSIZE+10]; /* unmodified copy of input buffer */
+char *param; /* current position in input buffer */
+const char *fontname = "Unknown";
+const char *codingscheme = "Unspecified";
 #ifdef VMCMS
-char *ebfontname ;
-char *ebcodingscheme ;
+char *ebfontname;
+char *ebcodingscheme;
 #endif
-float italicangle = 0.0 ;
-char fixedpitch ;
-char makevpl ;
-char pedantic ;
-int xheight = 400 ;
-int fontspace ;
-int bc, ec ;
-long cksum ;
-float efactor = 1.0, slant = 0.0 ;
-float capheight = 0.8 ;
-char *efactorparam, *slantparam ;
-double newslant ;
-char titlebuf[500] ;
+float italicangle = 0.0;
+char fixedpitch;
+char makevpl;
+char pedantic;
+int xheight = 400;
+int fontspace;
+int bc, ec;
+long cksum;
+float efactor = 1.0, slant = 0.0;
+float capheight = 0.8;
+char *efactorparam, *slantparam;
+double newslant;
+char titlebuf[500];
 
 static void
 error(const char *s)
 {
-   (void)fprintf(stderr, "%s\n", s) ;
+   (void)fprintf(stderr, "%s\n", s);
    if (obuffer[0]) {
-      (void)fprintf(stderr, "%s\n", obuffer) ;
+      (void)fprintf(stderr, "%s\n", obuffer);
       while (param > buffer) {
-         (void)fprintf(stderr, " ") ;
-         param-- ;
+         (void)fprintf(stderr, " ");
+         param--;
       }
-      (void)fprintf(stderr, "^\n") ;
+      (void)fprintf(stderr, "^\n");
    }
    if (*s == '!')
-      exit(1) ;
+      exit(1);
 }
 
 static int
 transform(register int x, register int y)
 {
-   register double acc ;
-   acc = efactor * x + slant *y ;
-   return (int)(acc>=0? floor(acc+0.5) : ceil(acc-0.5) ) ;
+   register double acc;
+   acc = efactor * x + slant *y;
+   return (int)(acc>=0? floor(acc+0.5) : ceil(acc-0.5) );
 }
 
 static int
 texlive_getline(void) {
-   register char *p ;
-   register int c ;
+   register char *p;
+   register int c;
 
-   param = buffer ;
+   param = buffer;
    for (p=buffer; (c=getc(afmin)) != EOF;) {
       if (p - buffer >= INBUFSIZE)
-         error("! input line too long; perhaps input file is malformed?") ;
-      *p++ = c ;
+         error("! input line too long; perhaps input file is malformed?");
+      *p++ = c;
       if (c == '\r') {
-         c = getc(afmin) ;
+         c = getc(afmin);
          if (c != EOF) {
             if (c == '\n') {
-               *p++ = c ;
+               *p++ = c;
             } else {
-               ungetc(c, afmin) ;
+               ungetc(c, afmin);
             }
          }
-         break ;
+         break;
       } else if (c == '\n') {
-         break ;
+         break;
       }
    }
-   *p = 0 ;
-   (void)strcpy(obuffer, buffer) ;
+   *p = 0;
+   (void)strcpy(obuffer, buffer);
    if (p == buffer && c == EOF)
-      return(0) ;
+      return(0);
    else
-      return(1) ;
+      return(1);
 }
 
 const char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
-   "XHeight", "C", "KPX", "CC", "EncodingScheme", NULL} ;
+   "XHeight", "C", "KPX", "CC", "EncodingScheme", NULL};
 #define FontName (0)
 #define ItalicAngle (1)
 #define IsFixedPitch (2)
@@ -306,220 +306,220 @@ const char *interesting[] = { "FontName", "ItalicAngle", "IsFixedPitch",
 static int
 interest(const char *s)
 {
-   register const char **p ;
-   register int n ;
+   register const char **p;
+   register int n;
 
    for (p=interesting, n=0; *p; p++, n++)
       if (strcmp(s, *p)==0)
-         return(n) ;
-   return(NONE) ;
+         return(n);
+   return(NONE);
 }
 
 static char *
 mymalloc(unsigned long len)
 {
-   register char *p ;
-   int i ;
+   register char *p;
+   int i;
 
 #ifdef SMALLMALLOC
    if (len > 65500L)
-      error("! can't allocate more than 64K!") ;
+      error("! can't allocate more than 64K!");
 #endif
-   p = (char *) malloc((unsigned)len) ;
+   p = (char *) malloc((unsigned)len);
    if (p==NULL)
-      error("! out of memory") ;
+      error("! out of memory");
    for (i=0; i<len; i++)
-      p[i] = 0 ;
-   return(p) ;
+      p[i] = 0;
+   return(p);
 }
 
 static char *
 newstring(char *s)
 {
-   char *q = mymalloc((unsigned long)(strlen(s) + 1)) ;
-   (void)strcpy(q, s) ;
-   return q ;
+   char *q = mymalloc((unsigned long)(strlen(s) + 1));
+   (void)strcpy(q, s);
+   return q;
 }
 
 static char *
 paramnewstring(void) {
-   register char *p, *q ;
+   register char *p, *q;
 
-   p = param ;
+   p = param;
    while (*p > ' ')
-      p++ ;
+      p++;
    if (*p != 0)
-      *p++ = 0 ;
-   q = newstring(param) ;
+      *p++ = 0;
+   q = newstring(param);
    while (*p && *p <= ' ')
-      p++ ;
-   param = p ;
-   return(q) ;
+      p++;
+   param = p;
+   return(q);
 }
 
 static char *
 paramstring(void) {
-   register char *p, *q ;
+   register char *p, *q;
 
-   p = param ;
+   p = param;
    while (*p > ' ')
-      p++ ;
-   q = param ;
+      p++;
+   q = param;
    if (*p != 0)
-      *p++ = 0 ;
+      *p++ = 0;
    while (*p && *p <= ' ')
-      p++ ;
-   param = p ;
-   return(q) ;
+      p++;
+   param = p;
+   return(q);
 }
 
 static int
 paramnum(void) {
-   register char *p ;
-   int i ;
+   register char *p;
+   int i;
 
-   p = paramstring() ;
+   p = paramstring();
    if (sscanf(p, "%d", &i) != 1)
-      error("! integer expected") ;
-   return(i) ;
+      error("! integer expected");
+   return(i);
 }
 
 static float
 paramfloat(void) {
-   register char *p ;
-   float i ;
+   register char *p;
+   float i;
 
-   p = paramstring() ;
+   p = paramstring();
    if (sscanf(p, "%f", &i) != 1)
-      error("! number expected") ;
-   return(i) ;
+      error("! number expected");
+   return(i);
 }
 
 static struct adobeinfo *
 newchar(void) {
-   register struct adobeinfo *ai ;
+   register struct adobeinfo *ai;
 
-   ai = (struct adobeinfo *)mymalloc((unsigned long)sizeof(struct adobeinfo)) ;
-   ai->adobenum = -1 ;
-   ai->texnum = -1 ;
-   ai->width = -1 ;
-   ai->adobename = NULL ;
-   ai->llx = -1 ;
-   ai->lly = -1 ;
-   ai->urx = -1 ;
-   ai->ury = -1 ;
-   ai->ligs = NULL ;
-   ai->kerns = NULL ;
-   ai->kern_equivs = NULL ;
-   ai->pccs = NULL ;
-   ai->next = adobechars ;
-   adobechars = ai ;
-   return(ai) ;
+   ai = (struct adobeinfo *)mymalloc((unsigned long)sizeof(struct adobeinfo));
+   ai->adobenum = -1;
+   ai->texnum = -1;
+   ai->width = -1;
+   ai->adobename = NULL;
+   ai->llx = -1;
+   ai->lly = -1;
+   ai->urx = -1;
+   ai->ury = -1;
+   ai->ligs = NULL;
+   ai->kerns = NULL;
+   ai->kern_equivs = NULL;
+   ai->pccs = NULL;
+   ai->next = adobechars;
+   adobechars = ai;
+   return(ai);
 }
 
 static struct kern *
 newkern(void) {
-   register struct kern *nk ;
+   register struct kern *nk;
 
-   nk = (struct kern *)mymalloc((unsigned long)sizeof(struct kern)) ;
-   nk->next = NULL ;
-   nk->succ = NULL ;
-   nk->delta = 0 ;
-   return(nk) ;
+   nk = (struct kern *)mymalloc((unsigned long)sizeof(struct kern));
+   nk->next = NULL;
+   nk->succ = NULL;
+   nk->delta = 0;
+   return(nk);
 }
 
 static struct pcc *
 newpcc(void) {
-   register struct pcc *np ;
+   register struct pcc *np;
 
-   np = (struct pcc *)mymalloc((unsigned long)sizeof(struct pcc)) ;
-   np->next = NULL ;
-   np->partname = NULL ;
-   np->xoffset = 0 ;
-   np->yoffset = 0 ;
-   return(np) ;
+   np = (struct pcc *)mymalloc((unsigned long)sizeof(struct pcc));
+   np->next = NULL;
+   np->partname = NULL;
+   np->xoffset = 0;
+   np->yoffset = 0;
+   return(np);
 }
 
 static struct lig *
 newlig(void) {
-   register struct lig *nl ;
+   register struct lig *nl;
 
-   nl = (struct lig *)mymalloc((unsigned long)sizeof(struct lig)) ;
-   nl->next = NULL ;
-   nl->succ = NULL ;
-   nl->sub = NULL ;
-   nl->op = 0 ; /* the default =: op */
-   nl->boundleft = 0 ;
-   return(nl) ;
+   nl = (struct lig *)mymalloc((unsigned long)sizeof(struct lig));
+   nl->next = NULL;
+   nl->succ = NULL;
+   nl->sub = NULL;
+   nl->op = 0; /* the default =: op */
+   nl->boundleft = 0;
+   return(nl);
 }
 
 static void
 expect(const char *s)
 {
    if (strcmp(paramstring(), s) != 0) {
-      (void)fprintf(stderr, "%s expected: ", s) ;
-      error("! syntax error") ;
+      (void)fprintf(stderr, "%s expected: ", s);
+      error("! syntax error");
    }
 }
 
 static void
 handlechar(void) { /* an input line beginning with C */
-   register struct adobeinfo *ai ;
-   register struct lig *nl ;
+   register struct adobeinfo *ai;
+   register struct lig *nl;
 
-   ai = newchar() ;
-   ai->adobenum = paramnum() ;
-   expect(";") ;
-   expect("WX") ;
-   ai->width = transform(paramnum(),0) ;
+   ai = newchar();
+   ai->adobenum = paramnum();
+   expect(";");
+   expect("WX");
+   ai->width = transform(paramnum(),0);
    if (ai->adobenum >= 0 && ai->adobenum < 256) {
-      adobeptrs[ai->adobenum] = ai ;
+      adobeptrs[ai->adobenum] = ai;
    }
-   expect(";") ;
+   expect(";");
 /* Ignore vertical metrics information */
    if (*param == 'W' && *(param + 1) == 'Y') {
-      expect("WY") ;
-      (void)paramnum() ;
-      expect(";") ;
+      expect("WY");
+      (void)paramnum();
+      expect(";");
    }
-   expect("N") ;
-   ai->adobename = paramnewstring() ;
-   expect(";") ;
-   expect("B") ;
-   ai->llx = paramnum() ;
-   ai->lly = paramnum() ;
-   ai->llx = transform(ai->llx, ai->lly) ;
-   ai->urx = paramnum() ;
-   ai->ury = paramnum() ;
-   ai->urx = transform(ai->urx, ai->ury) ;
+   expect("N");
+   ai->adobename = paramnewstring();
+   expect(";");
+   expect("B");
+   ai->llx = paramnum();
+   ai->lly = paramnum();
+   ai->llx = transform(ai->llx, ai->lly);
+   ai->urx = paramnum();
+   ai->ury = paramnum();
+   ai->urx = transform(ai->urx, ai->ury);
 /* We need to avoid negative heights or depths. They break accents in
    math mode, among other things.  */
    if (ai->lly > 0)
-      ai->lly = 0 ;
+      ai->lly = 0;
    if (ai->ury < 0)
-      ai->ury = 0 ;
-   expect(";") ;
+      ai->ury = 0;
+   expect(";");
 /* Now look for ligatures (which aren't present in fixedpitch fonts) */
    while (*param == 'L' && !fixedpitch) {
-      expect("L") ;
-      nl = newlig() ;
-      nl->succ = paramnewstring() ;
-      nl->sub = paramnewstring() ;
-      nl->next = ai->ligs ;
-      ai->ligs = nl ;
-      expect(";") ;
+      expect("L");
+      nl = newlig();
+      nl->succ = paramnewstring();
+      nl->sub = paramnewstring();
+      nl->next = ai->ligs;
+      ai->ligs = nl;
+      expect(";");
    }
 }
 
 static struct adobeinfo *
 findadobe(const char *p)
 {
-   register struct adobeinfo *ai ;
+   register struct adobeinfo *ai;
 
    for (ai=adobechars; ai; ai = ai->next)
       if (strcmp(p, ai->adobename)==0)
-         return(ai) ;
-   return(NULL) ;
+         return(ai);
+   return(NULL);
 }
 
 
@@ -534,73 +534,73 @@ findadobe(const char *p)
  */
 static void
 handlekern(void) { /* an input line beginning with KPX */
-   register struct adobeinfo *ai ;
-   register char *p ;
-   register struct kern *nk ;
+   register struct adobeinfo *ai;
+   register char *p;
+   register struct kern *nk;
 
-   p = paramstring() ;
-   ai = findadobe(p) ;
+   p = paramstring();
+   ai = findadobe(p);
    if (ai == NULL)
-      error("kern char not found") ;
+      error("kern char not found");
    else {
-      nk = newkern() ;
-      nk->succ = paramnewstring() ;
-      nk->delta = transform(paramnum(),0) ;
-      nk->next = ai->kerns ;
-      ai->kerns = nk ;
+      nk = newkern();
+      nk->succ = paramnewstring();
+      nk->delta = transform(paramnum(),0);
+      nk->next = ai->kerns;
+      ai->kerns = nk;
     }
 }
 
 static void
 handleconstruct(void) { /* an input line beginning with CC */
-   register struct adobeinfo *ai ;
-   register char *p ;
-   register struct pcc *np ;
-   register int n ;
+   register struct adobeinfo *ai;
+   register char *p;
+   register struct pcc *np;
+   register int n;
    struct pcc *npp = NULL;
 
-   p = paramstring() ;
-   ai = findadobe(p) ;
+   p = paramstring();
+   ai = findadobe(p);
    if (ai == NULL)
-      error("! composite character name not found") ;
-   n = paramnum() ;
-   expect(";") ;
+      error("! composite character name not found");
+   n = paramnum();
+   expect(";");
    while (n--) {
-      if (strcmp(paramstring(),"PCC") != 0) return ;
+      if (strcmp(paramstring(),"PCC") != 0) return;
         /* maybe I should expect("PCC") instead, but I'm playing it safe */
-      np = newpcc() ;
-      np->partname = paramnewstring() ;
-      if (findadobe(np->partname)==NULL) return ;
-      np->xoffset = paramnum() ;
-      np->yoffset = paramnum() ;
-      np->xoffset = transform(np->xoffset, np->yoffset) ;
-      if (npp) npp->next = np ;
-      else ai->pccs = np ;
-      npp = np ;
-      expect(";") ;
+      np = newpcc();
+      np->partname = paramnewstring();
+      if (findadobe(np->partname)==NULL) return;
+      np->xoffset = paramnum();
+      np->yoffset = paramnum();
+      np->xoffset = transform(np->xoffset, np->yoffset);
+      if (npp) npp->next = np;
+      else ai->pccs = np;
+      npp = np;
+      expect(";");
    }
 }
 
-static struct encoding *readencoding(char *) ;
+static struct encoding *readencoding(char *);
 
 #if 0
 /* Not used */
 static void
 makeaccentligs(void) {
-   register struct adobeinfo *ai, *aci ;
-   register char *p ;
-   register struct lig *nl ;
+   register struct adobeinfo *ai, *aci;
+   register char *p;
+   register struct lig *nl;
    for (ai=adobechars; ai; ai=ai->next) {
-      p = ai->adobename ;
+      p = ai->adobename;
       if (strlen(p)>2)
          if ((aci=findadobe(p+1)) && (aci->adobenum > 127)) {
-            nl = newlig() ;
-            nl->succ = mymalloc((unsigned long)2) ;
-            *(nl->succ + 1) = 0 ;
-            *(nl->succ) = *p ;
-            nl->sub = ai->adobename ;
-            nl->next = aci->ligs ;
-            aci->ligs = nl ;
+            nl = newlig();
+            nl->succ = mymalloc((unsigned long)2);
+            *(nl->succ + 1) = 0;
+            *(nl->succ) = *p;
+            nl->sub = ai->adobename;
+            nl->next = aci->ligs;
+            aci->ligs = nl;
          }
    }
 }
@@ -608,7 +608,7 @@ makeaccentligs(void) {
 
 static void
 readadobe(void) {
-   struct adobeinfo *ai ;
+   struct adobeinfo *ai;
 #ifdef VMCMS
     int i;
 #endif
@@ -616,63 +616,63 @@ readadobe(void) {
 /*
  *   We allocate a placeholder boundary char.
  */
-   ai = newchar() ;
-   ai->adobenum = -1 ;
-   ai->adobename = "||" ; /* boundary character name */
+   ai = newchar();
+   ai->adobenum = -1;
+   ai->adobename = "||"; /* boundary character name */
    while (texlive_getline()) {
       switch(interest(paramstring())) {
 case FontName:
-         fontname = paramnewstring() ;
+         fontname = paramnewstring();
 #ifdef VMCMS
 /* fontname comes in as ebcdic but we need it asciified for tfm file
    so we save it in ebfontname and change it in fontname */
-   ebfontname = newstring(fontname) ;
+   ebfontname = newstring(fontname);
    i=0;
    while(fontname[i] != '\0') {
       fontname[i]=ebcdic2ascii[fontname[i]];
       i++;
    };
 #endif
-         break ;
+         break;
 case EncodingScheme:
-         codingscheme = paramnewstring() ;
+         codingscheme = paramnewstring();
 #ifdef VMCMS
 /* for codingscheme, we do the same as we did for fontname */
-   ebcodingscheme = newstring(codingscheme) ;
+   ebcodingscheme = newstring(codingscheme);
    i=0;
    while(codingscheme[i] != '\0') {
       codingscheme[i]=ebcdic2ascii[codingscheme[i]];
       i++;
    }
 #endif
-         break ;
+         break;
 case ItalicAngle:
-         italicangle = paramfloat() ;
-         break ;
+         italicangle = paramfloat();
+         break;
 case IsFixedPitch:
          if (*param == 't' || *param == 'T')
-            fixedpitch = 1 ;
+            fixedpitch = 1;
          else
-            fixedpitch = 0 ;
-         break ;
+            fixedpitch = 0;
+         break;
 case XHeight:
-         xheight = paramnum() ;
-         break ;
+         xheight = paramnum();
+         break;
 case C:
-         handlechar() ;
-         break ;
+         handlechar();
+         break;
 case KPX:
-         handlekern() ;
-         break ;
+         handlekern();
+         break;
 case CC:
-         handleconstruct() ;
-         break ;
+         handleconstruct();
+         break;
 default:
-         break ;
+         break;
       }
    }
-   fclose(afmin) ;
-   afmin = 0 ;
+   fclose(afmin);
+   afmin = 0;
 }
 /*
  *   Re-encode the adobe font.  Assumes that the header file will
@@ -681,31 +681,31 @@ default:
 static void
 handlereencoding(void) {
    if (inenname) {
-      int i ;
-      struct adobeinfo *ai ;
-      const char *p ;
+      int i;
+      struct adobeinfo *ai;
+      const char *p;
 
-      ignoreligkern = 1 ;
-      inencoding = readencoding(inenname) ;
+      ignoreligkern = 1;
+      inencoding = readencoding(inenname);
       for (i=0; i<256; i++)
          if (0 != (ai=adobeptrs[i])) {
-            ai->adobenum = -1 ;
-            adobeptrs[i] = NULL ;
+            ai->adobenum = -1;
+            adobeptrs[i] = NULL;
          }
       for (i=0; i<256; i++) {
-         p = inencoding->vec[i] ;
+         p = inencoding->vec[i];
          if (p && *p && strcmp(p, ".notdef") != 0 && 0 != (ai = findadobe(p))) {
-            ai->adobenum = i ;
-            adobeptrs[i] = ai ;
+            ai->adobenum = i;
+            adobeptrs[i] = ai;
          }
       }
-      codingscheme = inencoding->name ;
+      codingscheme = inencoding->name;
    }
-   ignoreligkern = 0 ;
+   ignoreligkern = 0;
    if (outenname) {
-      outencoding = readencoding(outenname) ;
+      outencoding = readencoding(outenname);
    } else {
-      outencoding = readencoding((char *)0) ;
+      outencoding = readencoding((char *)0);
    }
 }
 
@@ -718,24 +718,24 @@ handlereencoding(void) {
 static struct adobeinfo *
 revlist (struct adobeinfo *p)
 {
-   struct adobeinfo *q = 0, *t ;
+   struct adobeinfo *q = 0, *t;
 
    while (p) {
-      t = p->next ;
-      p->next = q ;
-      q = p ;
-      p = t ;
+      t = p->next;
+      p->next = q;
+      q = p;
+      p = t;
    }
-   return q ;
+   return q;
 }
 
 static void
 assignchars(void) {
-   register const char **p ;
-   register int i, j ;
-   register struct adobeinfo *ai, *pai ;
-   int nextfree = 128 ;
-   struct pcc *pcp ;
+   register const char **p;
+   register int i, j;
+   register struct adobeinfo *ai, *pai;
+   int nextfree = 128;
+   struct pcc *pcp;
 
 /*
  *   First, we assign all those that match perfectly.
@@ -744,12 +744,12 @@ assignchars(void) {
       if (*p && strcmp(*p, ".notdef") != 0 &&
           (ai=findadobe(*p)) && (ai->adobenum >= 0 || ai->pccs != NULL)) {
          if (ai->texnum >= 0)
-            nexttex[i] = ai->texnum ; /* linked list */
-         ai->texnum = i ;
-         texptrs[i] = ai ;
+            nexttex[i] = ai->texnum; /* linked list */
+         ai->texnum = i;
+         texptrs[i] = ai;
       }
    if (pedantic)
-      return ;
+      return;
 /*
  *   Next, we assign all the others, retaining the adobe positions, possibly
  *   multiply assigning characters. Unless the output encoding was
@@ -758,23 +758,23 @@ assignchars(void) {
    for (ai=adobechars; ai; ai=ai->next)
       if (ai->adobenum >= 0 && ai->adobenum <256
           && ai->texnum < 0 && texptrs[ai->adobenum] == 0) {
-         ai->texnum = ai->adobenum ;
-         texptrs[ai->adobenum] = ai ;
+         ai->texnum = ai->adobenum;
+         texptrs[ai->adobenum] = ai;
       }
 /*
  *   Finally, we map all remaining characters into free locations beginning
  *   with 128, if we know how to construct those characters.  We need to
  *   make sure the component pieces are mapped.
  */
-   adobechars = revlist(adobechars) ;
+   adobechars = revlist(adobechars);
    for (ai=adobechars; ai; ai=ai->next)
       if (ai->texnum<0 && (ai->adobenum>=0 || ai->pccs != NULL)) {
          while (texptrs[nextfree]) {
-            nextfree=(nextfree+1)&255 ;
-            if (nextfree==128) goto finishup ; /* all slots full */
+            nextfree=(nextfree+1)&255;
+            if (nextfree==128) goto finishup; /* all slots full */
          }
-         ai->texnum = nextfree ;
-         texptrs[nextfree] = ai ;
+         ai->texnum = nextfree;
+         texptrs[nextfree] = ai;
       }
 finishup:
 /*
@@ -782,14 +782,14 @@ finishup:
  *   components are not mapped, we unmap the composite character.
  */
    for (i=0; i<256; i++) {
-      ai = texptrs[i] ;
+      ai = texptrs[i];
       if (ai && ai->pccs != NULL && ai->texnum >= 0) {
          for (pcp = ai->pccs; pcp; pcp = pcp->next) {
-            pai = findadobe(pcp->partname) ;
+            pai = findadobe(pcp->partname);
             if (pai == NULL || pai->texnum < 0) {
-               texptrs[ai->texnum] = 0 ;
-               ai->texnum = -1 ;
-               break ;
+               texptrs[ai->texnum] = 0;
+               ai->texnum = -1;
+               break;
             }
          }
       }
@@ -801,42 +801,42 @@ finishup:
  */
    for (ai=adobechars; ai; ai=ai->next)
       if (ai->texnum >= 0 && ai->texnum < 256) {
-         j = -1 ;
+         j = -1;
          while (nexttex[ai->texnum] >= 0) {
-            i = nexttex[ai->texnum] ;
-            nexttex[ai->texnum] = j ;
-            j = ai->texnum ;
-            ai->texnum = i ;
+            i = nexttex[ai->texnum];
+            nexttex[ai->texnum] = j;
+            j = ai->texnum;
+            ai->texnum = i;
          }
-         nexttex[ai->texnum] = j ;
+         nexttex[ai->texnum] = j;
       }
 }
 
 static void
 upmap(void) { /* Compute uppercase mapping, when making a small caps font */
-   register struct adobeinfo *ai, *Ai ;
-   register const char *p ;
-   register char *q ;
-   register struct pcc *np, *nq ;
-   int i ;
-   char lwr[50] ;
+   register struct adobeinfo *ai, *Ai;
+   register const char *p;
+   register char *q;
+   register struct pcc *np, *nq;
+   int i;
+   char lwr[50];
 
 /* JLH: changed some lines below to be ascii<->ebcdic independent
    any reason we don't use 'isupper'?.
    Looks like we should use isupper to me --karl.  */
    for (Ai=adobechars; Ai; Ai=Ai->next) {
-      p = Ai->adobename ;
+      p = Ai->adobename;
       if (isupper (*p)) {
-         q = lwr ;
+         q = lwr;
          for (; *p; p++)
             *q++ = TOLOWER (*p);
          *q = '\0';   /* changed this too! */
 
          if (0 != (ai=findadobe(lwr))) {
             for (i = ai->texnum; i >= 0; i = nexttex[i])
-               uppercase[i] = Ai ;
+               uppercase[i] = Ai;
             for (i = Ai->texnum; i >= 0; i = nexttex[i])
-               lowercase[i] = ai ;
+               lowercase[i] = ai;
          }
       }
    }
@@ -847,28 +847,28 @@ upmap(void) { /* Compute uppercase mapping, when making a small caps font */
    if (0 != (ai=findadobe("germandbls")))
       if (0 != (Ai=findadobe("S"))) { /* we also construct SS */
          for (i=ai->texnum; i >= 0; i = nexttex[i])
-            uppercase[i] = ai ;
-         ai->adobenum = -1 ;
-         ai->width = Ai->width << 1 ;
-         ai->llx = Ai->llx ;
-         ai->lly = Ai->lly ;
-         ai->urx = Ai->width + Ai->urx ;
-         ai->ury = Ai->ury ;
-         ai->kerns = Ai->kerns ;
-         np = newpcc() ;
-         np->partname = "S" ;
-         nq = newpcc() ;
-         nq->partname = "S" ;
-         nq->xoffset = Ai->width ;
-         np->next = nq ;
-         ai->pccs = np ;
+            uppercase[i] = ai;
+         ai->adobenum = -1;
+         ai->width = Ai->width << 1;
+         ai->llx = Ai->llx;
+         ai->lly = Ai->lly;
+         ai->urx = Ai->width + Ai->urx;
+         ai->ury = Ai->ury;
+         ai->kerns = Ai->kerns;
+         np = newpcc();
+         np->partname = "S";
+         nq = newpcc();
+         nq->partname = "S";
+         nq->xoffset = Ai->width;
+         np->next = nq;
+         ai->pccs = np;
       }
    if ((ai=findadobe("dotlessi")))
       for (i=ai->texnum; i >= 0; i = nexttex[i])
-         uppercase[i] = findadobe("I") ;
+         uppercase[i] = findadobe("I");
    if ((ai=findadobe("dotlessj")))
       for (i=ai->texnum; i >= 0; i = nexttex[i])
-         uppercase[i] = findadobe("J") ;
+         uppercase[i] = findadobe("J");
 }
 /* The logic above seems to work well enough, but it leaves useless characters
  * like `fi' and `fl' in the font if they were present initially,
@@ -876,51 +876,51 @@ upmap(void) { /* Compute uppercase mapping, when making a small caps font */
 
 /* Now we turn to computing the TFM file */
 
-int lf, lh, nw, nh, nd, ni, nl, nk, ne, np ;
+int lf, lh, nw, nh, nd, ni, nl, nk, ne, np;
 
 static void
 write16(register short what)
 {
-   (void)fputc(what >> 8, tfmout) ;
-   (void)fputc(what & 255, tfmout) ;
+   (void)fputc(what >> 8, tfmout);
+   (void)fputc(what & 255, tfmout);
 }
 
 static void
 writearr(register long *p, register int n)
 {
    while (n) {
-      write16((short)(*p >> 16)) ;
-      write16((short)(*p & 65535)) ;
-      p++ ;
-      n-- ;
+      write16((short)(*p >> 16));
+      write16((short)(*p & 65535));
+      p++;
+      n--;
    }
 }
 
 static void
 makebcpl(register long *p, register const char *s, register int n)
 {
-   register long t ;
-   register long sc ;
+   register long t;
+   register long sc;
 
    if (strlen(s) < n)
-      n = strlen(s) ;
-   t = ((long)n) << 24 ;
-   sc = 16 ;
+      n = strlen(s);
+   t = ((long)n) << 24;
+   sc = 16;
    while (n > 0) {
-      t |= ((long)(*(unsigned const char *)s++)) << sc ;
-      sc -= 8 ;
+      t |= ((long)(*(unsigned const char *)s++)) << sc;
+      sc -= 8;
       if (sc < 0) {
-         *p++ = t ;
-         t = 0 ;
-         sc = 24 ;
+         *p++ = t;
+         t = 0;
+         sc = 24;
       }
-      n-- ;
+      n--;
    }
-   *p++ = t ;
+   *p++ = t;
 }
 
-int source[257] ;
-int unsort[257] ;
+int source[257];
+int unsort[257];
 
 /*
  *   Next we need a routine to reduce the number of distinct dimensions
@@ -933,83 +933,83 @@ int unsort[257] ;
  *   borrow a neat algorithm from METAFONT to find the true optimum.
  *   Memory location what[oldn] is set to 0x7fffffffL for convenience.
  */
-long nextd ; /* smallest value that will give a different mincover */
+long nextd; /* smallest value that will give a different mincover */
 static int
 mincover(long *what, 
          register long d) /* tells how many clusters result, given max difference d */
 {
-   register int m ;
-   register long l ;
-   register long *p ;
+   register int m;
+   register long l;
+   register long *p;
 
-   nextd = 0x7fffffffL ;
-   p = what+1 ;
-   m = 1 ;
+   nextd = 0x7fffffffL;
+   p = what+1;
+   m = 1;
    while (*p<0x7fffffffL) {
-      m++ ;
-      l = *p ;
-      while (*++p <= l+d) ;
-      if (*p-l < nextd) nextd = *p-l ;
+      m++;
+      l = *p;
+      while (*++p <= l+d);
+      if (*p-l < nextd) nextd = *p-l;
    }
-   return (m) ;
+   return (m);
 }
 
 static void
 remap(long * what, int oldn, int newn)
 {
-   register int i, j ;
-   register long d, l ;
+   register int i, j;
+   register long d, l;
 
-   what[oldn] = 0x7fffffffL ;
+   what[oldn] = 0x7fffffffL;
    for (i=oldn-1; i>0; i--) {
-      d = what[i] ;
+      d = what[i];
       for (j=i; what[j+1]<d; j++) {
-         what[j] = what[j+1] ;
-         source[j] = source[j+1] ;
+         what[j] = what[j+1];
+         source[j] = source[j+1];
       }
-      what[j] = d ;
-      source[j] = i ;
+      what[j] = d;
+      source[j] = i;
    } /* Tom, don't let me ever catch you using bubblesort again! -- Don */
 
-   i = mincover(what, 0L) ;
-   d = nextd ;
-   while (mincover(what,d+d)>newn) d += d ;
-   while (mincover(what,d)>newn) d = nextd ;
+   i = mincover(what, 0L);
+   d = nextd;
+   while (mincover(what,d+d)>newn) d += d;
+   while (mincover(what,d)>newn) d = nextd;
 
-   i = 1 ;
-   j = 0 ;
+   i = 1;
+   j = 0;
    while (i<oldn) {
-      j++ ;
-      l = what[i] ;
-      unsort[source[i]] = j ;
+      j++;
+      l = what[i];
+      unsort[source[i]] = j;
       while (what[++i] <= l+d) {
-         unsort[source[i]] = j ;
-         if (i-j == oldn-newn) d = 0 ;
+         unsort[source[i]] = j;
+         if (i-j == oldn-newn) d = 0;
       }
-      what[j] = (l+what[i-1])/2 ;
+      what[j] = (l+what[i-1])/2;
    }
 }
 
 static long
 checksum(void) {
-   int i ;
-   unsigned long s1 = 0, s2 = 0 ;
-   const char *p ;
-   struct adobeinfo *ai ;
+   int i;
+   unsigned long s1 = 0, s2 = 0;
+   const char *p;
+   struct adobeinfo *ai;
 
    for (i=0; i<256; i++)
       if (0 != (ai=adobeptrs[i])) {
-         s1 = ((s1 << 1) ^ (s1>>31)) ^ ai->width ; /* cyclic left shift */
+         s1 = ((s1 << 1) ^ (s1>>31)) ^ ai->width; /* cyclic left shift */
          s1 &= 0xffffffff; /* in case we're on a 64-bit machine */
          for (p=ai->adobename; *p; p++)
 #ifndef VMCMS
-            s2 = (s2 * 3) + *p ;
+            s2 = (s2 * 3) + *p;
 #else
-            s2 = (s2 * 3) + ebcdic2ascii[*p] ;
+            s2 = (s2 * 3) + ebcdic2ascii[*p];
 #endif
       }
-   s1 = (s1 << 1) ^ s2 ;
-   return s1 ;
+   s1 = (s1 << 1) ^ s2;
+   return s1;
 }
 
 /*
@@ -1021,102 +1021,102 @@ static long
 scale(long what)
 {
    return(((what / 1000) << 20) +
-          (((what % 1000) << 20) + 500) / 1000) ;
+          (((what % 1000) << 20) + 500) / 1000);
 }
 
 long *header, *charinfo, *width, *height, *depth, *ligkern, *kern, *tparam,
-     *italic ;
-long *tfmdata ;
+     *italic;
+long *tfmdata;
 
 static void
 buildtfm(void) {
-   register int i, j ;
-   register struct adobeinfo *ai ;
+   register int i, j;
+   register struct adobeinfo *ai;
 
-   header = tfmdata ;
-   cksum = checksum() ;
-   header[0] = cksum ;
-   header[1] = 0xa00000 ; /* 10pt design size */
-   makebcpl(header+2, codingscheme, 39) ;
-   makebcpl(header+12, fontname, 19) ;
-   lh = 17 ;
-   charinfo = header + lh ;
+   header = tfmdata;
+   cksum = checksum();
+   header[0] = cksum;
+   header[1] = 0xa00000; /* 10pt design size */
+   makebcpl(header+2, codingscheme, 39);
+   makebcpl(header+12, fontname, 19);
+   lh = 17;
+   charinfo = header + lh;
 
-   for (i=0; i<256 && adobeptrs[i]==NULL; i++) ;
-   bc = i ;
-   for (i=255; i>=0 && adobeptrs[i]==NULL; i--) ;
+   for (i=0; i<256 && adobeptrs[i]==NULL; i++);
+   bc = i;
+   for (i=255; i>=0 && adobeptrs[i]==NULL; i--);
    ec = i;
    if (ec < bc)
-      error("! no Adobe characters") ;
+      error("! no Adobe characters");
 
-   width = charinfo + (ec - bc + 1) ;
-   width[0] = 0 ;
-   nw++ ;
+   width = charinfo + (ec - bc + 1);
+   width[0] = 0;
+   nw++;
    for (i=bc; i<=ec; i++)
       if (0 != (ai=adobeptrs[i])) {
-         width[nw]=ai->width ;
-         for (j=1; width[j]!=ai->width; j++) ;
-         ai->wptr = j ;
+         width[nw]=ai->width;
+         for (j=1; width[j]!=ai->width; j++);
+         ai->wptr = j;
          if (j==nw)
-            nw++ ;
+            nw++;
       }
    if (nw>256)
-      error("! 256 chars with different widths") ;
-   depth = width + nw ;
-   depth[0] = 0 ;
-   nd = 1 ;
+      error("! 256 chars with different widths");
+   depth = width + nw;
+   depth[0] = 0;
+   nd = 1;
    for (i=bc; i<=ec; i++)
       if (0 != (ai=adobeptrs[i])) {
-         depth[nd] = -ai->lly ;
-         for (j=0; depth[j]!=-ai->lly; j++) ;
-         ai->dptr = j ;
+         depth[nd] = -ai->lly;
+         for (j=0; depth[j]!=-ai->lly; j++);
+         ai->dptr = j;
          if (j==nd)
-            nd++ ;
+            nd++;
       }
    if (nd > 16) {
-      remap(depth, nd, 16) ;
-      nd = 16 ;
+      remap(depth, nd, 16);
+      nd = 16;
       for (i=bc; i<=ec; i++)
          if (0 != (ai=adobeptrs[i]))
-            ai->dptr = unsort[ai->dptr] ;
+            ai->dptr = unsort[ai->dptr];
    }
-   height = depth + nd ;
-   height[0] = 0 ;
-   nh = 1 ;
+   height = depth + nd;
+   height[0] = 0;
+   nh = 1;
    for (i=bc; i<=ec; i++)
       if (0 != (ai=adobeptrs[i])) {
-         height[nh]=ai->ury ;
-         for (j=0; height[j]!=ai->ury; j++) ;
-         ai->hptr = j ;
+         height[nh]=ai->ury;
+         for (j=0; height[j]!=ai->ury; j++);
+         ai->hptr = j;
          if (j==nh)
-            nh++ ;
+            nh++;
       }
    if (nh > 16) {
-      remap(height, nh, 16) ;
-      nh = 16 ;
+      remap(height, nh, 16);
+      nh = 16;
       for (i=bc; i<=ec; i++)
          if (0 != (ai=adobeptrs[i]))
-            ai->hptr = unsort[ai->hptr] ;
+            ai->hptr = unsort[ai->hptr];
    }
-   italic  = height + nh ;
-   italic[0] = 0 ;
-   ni = 1 ;
+   italic  = height + nh;
+   italic[0] = 0;
+   ni = 1;
    for (i=bc; i<=ec; i++)
       if (0 != (ai=adobeptrs[i])) {
-         italic[ni] = ai->urx - ai->width ;
+         italic[ni] = ai->urx - ai->width;
          if (italic[ni]<0)
-            italic[ni] = 0 ;
-         for (j=0; italic[j]!=italic[ni]; j++) ;
-         ai->iptr = j ;
+            italic[ni] = 0;
+         for (j=0; italic[j]!=italic[ni]; j++);
+         ai->iptr = j;
          if (j==ni)
-            ni++ ;
+            ni++;
       }
    if (ni > 64) {
-      remap(italic, ni, 64) ;
-      ni = 64 ;
+      remap(italic, ni, 64);
+      ni = 64;
       for (i=bc; i<=ec; i++)
          if (0 != (ai=adobeptrs[i]))
-            ai->iptr = unsort[ai->iptr] ;
+            ai->iptr = unsort[ai->iptr];
    }
 
    for (i=bc; i<=ec; i++)
@@ -1124,65 +1124,65 @@ buildtfm(void) {
          charinfo[i-bc] = ((long)(ai->wptr)<<24) +
                            ((long)(ai->hptr)<<20) +
                             ((long)(ai->dptr)<<16) +
-                             ((long)(ai->iptr)<<10) ;
+                             ((long)(ai->iptr)<<10);
 
-   ligkern = italic + ni ;
-   nl = 0 ; /* ligatures and kerns omitted from raw Adobe font */
-   kern = ligkern + nl ;
-   nk = 0 ;
+   ligkern = italic + ni;
+   nl = 0; /* ligatures and kerns omitted from raw Adobe font */
+   kern = ligkern + nl;
+   nk = 0;
 
-   newslant = (double)slant - efactor * tan(italicangle*(3.1415926535/180.0)) ;
-   tparam = kern + nk ;
-   tparam[0] = (long)(FIXFACTOR * newslant + 0.5) ;
-   tparam[1] = scale((long)fontspace) ;
-   tparam[2] = (fixedpitch ? 0 : scale((long)(300*efactor+0.5))) ;
-   tparam[3] = (fixedpitch ? 0 : scale((long)(100*efactor+0.5))) ;
-   tparam[4] = scale((long)xheight) ;
-   tparam[5] = scale((long)(1000*efactor+0.5)) ;
-   np = 6 ;
+   newslant = (double)slant - efactor * tan(italicangle*(3.1415926535/180.0));
+   tparam = kern + nk;
+   tparam[0] = (long)(FIXFACTOR * newslant + 0.5);
+   tparam[1] = scale((long)fontspace);
+   tparam[2] = (fixedpitch ? 0 : scale((long)(300*efactor+0.5)));
+   tparam[3] = (fixedpitch ? 0 : scale((long)(100*efactor+0.5)));
+   tparam[4] = scale((long)xheight);
+   tparam[5] = scale((long)(1000*efactor+0.5));
+   np = 6;
 }
 
 static void
 writesarr(long *what, int len)
 {
-   register long *p ;
-   int i ;
+   register long *p;
+   int i;
 
-   p = what ;
-   i = len ;
+   p = what;
+   i = len;
    while (i) {
-      *p = scale(*p) ;
-      (void)scale(*p) ; /* need this kludge for some compilers */
-      p++ ;
-      i-- ;
+      *p = scale(*p);
+      (void)scale(*p); /* need this kludge for some compilers */
+      p++;
+      i--;
    }
-   writearr(what, len) ;
+   writearr(what, len);
 }
 
 static void
 writetfm(void) {
-   lf = 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl + nk + ne + np ;
-   write16(lf) ;
-   write16(lh) ;
-   write16(bc) ;
-   write16(ec) ;
-   write16(nw) ;
-   write16(nh) ;
-   write16(nd) ;
-   write16(ni) ;
-   write16(nl) ;
-   write16(nk) ;
-   write16(ne) ;
-   write16(np) ;
-   writearr(header, lh) ;
-   writearr(charinfo, ec-bc+1) ;
-   writesarr(width, nw) ;
-   writesarr(height, nh) ;
-   writesarr(depth, nd) ;
-   writesarr(italic, ni) ;
-   writearr(ligkern, nl) ;
-   writesarr(kern, nk) ;
-   writearr(tparam, np) ;
+   lf = 6 + lh + (ec - bc + 1) + nw + nh + nd + ni + nl + nk + ne + np;
+   write16(lf);
+   write16(lh);
+   write16(bc);
+   write16(ec);
+   write16(nw);
+   write16(nh);
+   write16(nd);
+   write16(ni);
+   write16(nl);
+   write16(nk);
+   write16(ne);
+   write16(np);
+   writearr(header, lh);
+   writearr(charinfo, ec-bc+1);
+   writesarr(width, nw);
+   writesarr(height, nh);
+   writesarr(depth, nd);
+   writesarr(italic, ni);
+   writearr(ligkern, nl);
+   writesarr(kern, nk);
+   writearr(tparam, np);
 }
 
 /* OK, the TFM file is done! Now for our next trick, the VPL file. */
@@ -1193,39 +1193,39 @@ writetfm(void) {
  *   We only do this if the xheight has a reasonable value.
  *   (>50)
  */
-const char *accents[] = { "acute", "tilde", "caron", "dieresis", NULL} ;
+const char *accents[] = { "acute", "tilde", "caron", "dieresis", NULL};
 static int
 texheight(register struct adobeinfo *ai)
 {
    register const char **p;
-   register struct adobeinfo *aci, *acci ;
-   if (xheight <= 50 || *(ai->adobename + 1)) return (ai->ury) ;
+   register struct adobeinfo *aci, *acci;
+   if (xheight <= 50 || *(ai->adobename + 1)) return (ai->ury);
                                            /* that was the simple case */
    for (p=accents; *p; p++)  /* otherwise we look for accented letters */
       if (0 != (aci=findadobe(*p))) {
-         strcpy(buffer,ai->adobename) ;
-         strcat(buffer,*p) ;
+         strcpy(buffer,ai->adobename);
+         strcat(buffer,*p);
          if (0 != (acci=findadobe(buffer)))
-            return (acci->ury - aci->ury + xheight) ;
+            return (acci->ury - aci->ury + xheight);
       }
-   return (ai->ury) ;
+   return (ai->ury);
 }
 
 /* modified tgr to eliminate varargs problems */
 
 #define vout(s)  fprintf(vplout, s)
-int level ; /* the depth of parenthesis nesting in VPL file being written */
+int level; /* the depth of parenthesis nesting in VPL file being written */
 static void
 vlevout(void)
 {
-   register int l = level ;
-   while (l--) vout("   ") ;
+   register int l = level;
+   while (l--) vout("   ");
 }
 static void
 vlevnlout(void)
 {
-   vout("\n") ;
-   vlevout() ;
+   vout("\n");
+   vlevout();
 }
 #define voutln(str) {fprintf(vplout,"%s\n",str);vlevout();}
 #define voutln2(f,s) {fprintf(vplout,f,s);vlevnlout();}
@@ -1234,32 +1234,32 @@ vlevnlout(void)
 static void
 vleft(void)
 {
-   level++ ;
-   vout("(") ;
+   level++;
+   vout("(");
 }
 
 static void
 vright(void)
 {
-   level-- ;
-   voutln(")") ;
+   level--;
+   voutln(")");
 }
 
-int forceoctal = 0 ;
+int forceoctal = 0;
 
-char vcharbuf[6] ;
+char vcharbuf[6];
 static char *
 vchar(int c)
 {
    if (forceoctal == 0 && ISALNUM (c))
       (void) sprintf(vcharbuf,"C %c",
 #ifndef VMCMS
-      c) ;
+      c);
 #else
-      ascii2ebcdic[c]) ;
+      ascii2ebcdic[c]);
 #endif
-   else (void) sprintf(vcharbuf,"O %o", (unsigned)c) ;
-   return (vcharbuf) ;
+   else (void) sprintf(vcharbuf,"O %o", (unsigned)c);
+   return (vcharbuf);
 }
 
 char vnamebuf[100];
@@ -1277,35 +1277,35 @@ vname(int c)
 static void
 writevpl(void)
 {
-   register int i, j, k ;
-   register struct adobeinfo *ai ;
-   register struct lig *nlig ;
-   register struct kern *nkern ;
-   register struct pcc *npcc ;
-   struct adobeinfo *asucc, *asub, *api ;
+   register int i, j, k;
+   register struct adobeinfo *ai;
+   register struct lig *nlig;
+   register struct kern *nkern;
+   register struct pcc *npcc;
+   struct adobeinfo *asucc, *asub, *api;
    struct adobeptr *kern_eq;
-   int xoff, yoff, ht ;
-   char unlabeled ;
+   int xoff, yoff, ht;
+   char unlabeled;
 
-   voutln2("(VTITLE Created by %s)", titlebuf) ;
-   voutln("(COMMENT Please edit that VTITLE if you edit this file)") ;
+   voutln2("(VTITLE Created by %s)", titlebuf);
+   voutln("(COMMENT Please edit that VTITLE if you edit this file)");
    (void)sprintf(obuffer, "TeX-%s%s%s%s", outname,
       (efactor==1.0? "" : "-E"), (slant==0.0? "" : "-S"),
-                 (makevpl==1? "" : "-CSC")) ;
+                 (makevpl==1? "" : "-CSC"));
    if (strlen(obuffer)>19) { /* too long, will retain first 9 and last 10 */
-      register char *p, *q ;
-      for (p = &obuffer[9], q = &obuffer[strlen(obuffer)-10] ; p<&obuffer[19];
-              p++, q++) *p = *q ;
-      obuffer[19] = '\0' ;
+      register char *p, *q;
+      for (p = &obuffer[9], q = &obuffer[strlen(obuffer)-10]; p<&obuffer[19];
+              p++, q++) *p = *q;
+      obuffer[19] = '\0';
    }
-   voutln2("(FAMILY %s)" , obuffer) ;
+   voutln2("(FAMILY %s)" , obuffer);
    {
-      char tbuf[300] ;
+      char tbuf[300];
       const char *base_encoding = 
 #ifndef VMCMS
-         codingscheme ;
+         codingscheme;
 #else
-         ebcodingscheme ;
+         ebcodingscheme;
 #endif
       
       if (strcmp (outencoding->name, base_encoding) == 0) {
@@ -1315,70 +1315,70 @@ writevpl(void)
       }
       
       if (strlen(tbuf) > 39) {
-         error("Coding scheme too long; shortening to 39 characters.") ;
-         tbuf[39] = 0 ;
+         error("Coding scheme too long; shortening to 39 characters.");
+         tbuf[39] = 0;
       }
-      voutln2("(CODINGSCHEME %s)", tbuf) ;
+      voutln2("(CODINGSCHEME %s)", tbuf);
    }
-   voutln("(DESIGNSIZE R 10.0)") ;
-   voutln("(DESIGNUNITS R 1000)") ;
-   voutln("(COMMENT DESIGNSIZE (1 em) IS IN POINTS)") ;
-   voutln("(COMMENT OTHER DIMENSIONS ARE MULTIPLES OF DESIGNSIZE/1000)") ;
+   voutln("(DESIGNSIZE R 10.0)");
+   voutln("(DESIGNUNITS R 1000)");
+   voutln("(COMMENT DESIGNSIZE (1 em) IS IN POINTS)");
+   voutln("(COMMENT OTHER DIMENSIONS ARE MULTIPLES OF DESIGNSIZE/1000)");
    /* Let vptovf compute the checksum. */
-   /* voutln2("(CHECKSUM O %lo)",cksum ^ 0xffffffff) ; */
+   /* voutln2("(CHECKSUM O %lo)",cksum ^ 0xffffffff); */
    if (boundarychar >= 0)
-      voutln2("(BOUNDARYCHAR O %lo)", (unsigned long)boundarychar) ;
-   vleft() ; voutln("FONTDIMEN") ;
+      voutln2("(BOUNDARYCHAR O %lo)", (unsigned long)boundarychar);
+   vleft(); voutln("FONTDIMEN");
    if (newslant)
-      voutln2("(SLANT R %f)", newslant) ;
-   voutln2("(SPACE D %d)", fontspace) ;
+      voutln2("(SLANT R %f)", newslant);
+   voutln2("(SPACE D %d)", fontspace);
    if (! fixedpitch) {
-      voutln2("(STRETCH D %d)", transform(200,0)) ;
-      voutln2("(SHRINK D %d)", transform(100,0)) ;
+      voutln2("(STRETCH D %d)", transform(200,0));
+      voutln2("(SHRINK D %d)", transform(100,0));
    }
-   voutln2("(XHEIGHT D %d)", xheight) ;
-   voutln2("(QUAD D %d)", transform(1000,0)) ;
-   voutln2("(EXTRASPACE D %d)", fixedpitch ? fontspace : transform(111, 0)) ;
-   vright() ;
-   vleft() ; voutln("MAPFONT D 0");
-   voutln2("(FONTNAME %s)", outname) ;
-   /* voutln2("(FONTCHECKSUM O %lo)", (unsigned long)cksum) ; */
-   vright() ;
+   voutln2("(XHEIGHT D %d)", xheight);
+   voutln2("(QUAD D %d)", transform(1000,0));
+   voutln2("(EXTRASPACE D %d)", fixedpitch ? fontspace : transform(111, 0));
+   vright();
+   vleft(); voutln("MAPFONT D 0");
+   voutln2("(FONTNAME %s)", outname);
+   /* voutln2("(FONTCHECKSUM O %lo)", (unsigned long)cksum); */
+   vright();
    if (makevpl>1) {
-      vleft() ; voutln("MAPFONT D 1");
-      voutln2("(FONTNAME %s)", outname) ;
-      voutln2("(FONTAT D %d)", (int)(1000.0*capheight+0.5)) ;
-      /* voutln2("(FONTCHECKSUM O %lo)", (unsigned long)cksum) ; */
-      vright() ;
+      vleft(); voutln("MAPFONT D 1");
+      voutln2("(FONTNAME %s)", outname);
+      voutln2("(FONTAT D %d)", (int)(1000.0*capheight+0.5));
+      /* voutln2("(FONTCHECKSUM O %lo)", (unsigned long)cksum); */
+      vright();
    }
 
-   for (i=0; i<256 && texptrs[i]==NULL; i++) ;
-   bc = i ;
-   for (i=255; i>=0 && texptrs[i]==NULL; i--) ;
+   for (i=0; i<256 && texptrs[i]==NULL; i++);
+   bc = i;
+   for (i=255; i>=0 && texptrs[i]==NULL; i--);
    ec = i;
 
-   vleft() ; voutln("LIGTABLE") ;
-   ai = findadobe("||") ;
-   unlabeled = 1 ;
+   vleft(); voutln("LIGTABLE");
+   ai = findadobe("||");
+   unlabeled = 1;
    for (nlig=ai->ligs; nlig; nlig=nlig->next)
       if (0 != (asucc=findadobe(nlig->succ))) {
          if (0 != (asub=findadobe(nlig->sub)))
             if (asucc->texnum>=0)
                if (asub->texnum>=0) {
                   if (unlabeled) {
-                     voutln("(LABEL BOUNDARYCHAR)") ;
-                     unlabeled = 0 ;
+                     voutln("(LABEL BOUNDARYCHAR)");
+                     unlabeled = 0;
                   }
                   for (j = asucc->texnum; j >= 0; j = nexttex[j]) {
                      voutln4("(%s %s O %o)", vplligops[nlig->op],
-                         vchar(j), (unsigned)asub->texnum) ;
+                         vchar(j), (unsigned)asub->texnum);
                   }
                }
        }
-   if (! unlabeled) voutln("(STOP)") ;
+   if (! unlabeled) voutln("(STOP)");
    for (i=bc; i<=ec; i++)
       if ((ai=texptrs[i]) && ai->texnum == i) {
-         unlabeled = 1 ;
+         unlabeled = 1;
          if (uppercase[i]==NULL) /* omit ligatures from smallcap lowercase */
             for (nlig=ai->ligs; nlig; nlig=nlig->next)
                if (0 != (asucc=findadobe(nlig->succ)))
@@ -1387,14 +1387,14 @@ writevpl(void)
                         if (asub->texnum>=0) {
                            if (unlabeled) {
                               for (j = ai->texnum; j >= 0; j = nexttex[j])
-                                 voutln3("(LABEL %s)%s", vchar(j), vname(j)) ;
-                              unlabeled = 0 ;
+                                 voutln3("(LABEL %s)%s", vchar(j), vname(j));
+                              unlabeled = 0;
                            }
                            for (j = asucc->texnum; j >= 0; j = nexttex[j]) {
                               voutln4("(%s %s O %o)", vplligops[nlig->op],
-                                   vchar(j), (unsigned)asub->texnum) ;
+                                   vchar(j), (unsigned)asub->texnum);
                               if (nlig->boundleft)
-                                 break ;
+                                 break;
                            }
                         }
          for (nkern = (uppercase[i] ? uppercase[i]->kerns : ai->kerns);
@@ -1404,8 +1404,8 @@ writevpl(void)
                   if (uppercase[j]==NULL) {
                      if (unlabeled) {
                         for (k = ai->texnum; k >= 0; k = nexttex[k])
-                           voutln3("(LABEL %s)%s", vchar(k), vname(k)) ;
-                        unlabeled = 0 ;
+                           voutln3("(LABEL %s)%s", vchar(k), vname(k));
+                        unlabeled = 0;
                      }
                      /* If other characters have the same kerns as this
                         one, output the label here.  This makes the TFM
@@ -1415,88 +1415,88 @@ writevpl(void)
                           kern_eq = kern_eq->next) {
                         k = kern_eq->ch->texnum;
                         if (k >= 0 && k < 256)
-                          voutln3("(LABEL %s)%s", vchar(k), vname(k)) ;
+                          voutln3("(LABEL %s)%s", vchar(k), vname(k));
                      }
                      ai->kern_equivs = 0; /* Only output those labels once. */
                      if (uppercase[i]) {
                         if (lowercase[j]) {
                            for (k=lowercase[j]->texnum; k >= 0; k = nexttex[k])
                               voutln4("(KRN %s R %.1f)%s", vchar(k),
-                                    capheight*nkern->delta, vname(k)) ;
+                                    capheight*nkern->delta, vname(k));
                         } else voutln4("(KRN %s R %.1f)%s",
-                                 vchar(j), capheight*nkern->delta, vname(j)) ;
+                                 vchar(j), capheight*nkern->delta, vname(j));
                      } else {
                         voutln4("(KRN %s R %d)%s", vchar(j),
-                                nkern->delta, vname(j)) ;
+                                nkern->delta, vname(j));
                         if (lowercase[j])
                            for (k=lowercase[j]->texnum; k >= 0; k = nexttex[k])
                               voutln4("(KRN %s R %.1f)%s", vchar(k),
-                                capheight*nkern->delta, vname(k)) ;
+                                capheight*nkern->delta, vname(k));
                      }
                   }
                }
-         if (! unlabeled) voutln("(STOP)") ;
+         if (! unlabeled) voutln("(STOP)");
       }
-   vright() ;
+   vright();
 
    for (i=bc; i<=ec; i++)
       if (0 != (ai=texptrs[i])) {
-         vleft() ; fprintf(vplout, "CHARACTER %s", vchar(i)) ;
+         vleft(); fprintf(vplout, "CHARACTER %s", vchar(i));
          if (*vcharbuf=='C') {
-            voutln("") ;
+            voutln("");
          } else
-            voutln2(" (comment %s)", ai->adobename) ;
+            voutln2(" (comment %s)", ai->adobename);
          if (uppercase[i]) {
-            ai=uppercase[i] ;
-            voutln2("(CHARWD R %.1f)", capheight * (ai->width)) ;
+            ai=uppercase[i];
+            voutln2("(CHARWD R %.1f)", capheight * (ai->width));
             if (0 != (ht=texheight(ai)))
-               voutln2("(CHARHT R %.1f)", capheight * ht) ;
+               voutln2("(CHARHT R %.1f)", capheight * ht);
             if (ai->lly)
-               voutln2("(CHARDP R %.1f)", -capheight * ai->lly) ;
+               voutln2("(CHARDP R %.1f)", -capheight * ai->lly);
             if (ai->urx > ai->width)
-               voutln2("(CHARIC R %.1f)", capheight * (ai->urx - ai->width)) ;
+               voutln2("(CHARIC R %.1f)", capheight * (ai->urx - ai->width));
          } else {
-            voutln2("(CHARWD R %d)", ai->width) ;
+            voutln2("(CHARWD R %d)", ai->width);
             if (0 != (ht=texheight(ai)))
-               voutln2("(CHARHT R %d)", ht) ;
+               voutln2("(CHARHT R %d)", ht);
             if (ai->lly)
-               voutln2("(CHARDP R %d)", -ai->lly) ;
+               voutln2("(CHARDP R %d)", -ai->lly);
             if (ai->urx > ai->width)
-               voutln2("(CHARIC R %d)", ai->urx - ai->width) ;
+               voutln2("(CHARIC R %d)", ai->urx - ai->width);
          }
          if (ai->adobenum != i || uppercase[i]) {
-            vleft() ; voutln("MAP") ;
-            if (uppercase[i]) voutln("(SELECTFONT D 1)") ;
+            vleft(); voutln("MAP");
+            if (uppercase[i]) voutln("(SELECTFONT D 1)");
             if (ai->pccs && ai->adobenum < 0) {
-               xoff = 0 ; yoff = 0 ;
+               xoff = 0; yoff = 0;
                for (npcc = ai->pccs; npcc; npcc=npcc->next)
                   if (0 != (api=findadobe(npcc->partname)))
                      if (api->texnum>=0) {
                         if (npcc->xoffset != xoff) {
                            if (uppercase[i]) {
                               voutln2("(MOVERIGHT R %.1f)",
-                                      capheight * (npcc->xoffset - xoff)) ;
+                                      capheight * (npcc->xoffset - xoff));
                            } else voutln2("(MOVERIGHT R %d)",
-                                      npcc->xoffset - xoff) ;
-                           xoff = npcc->xoffset ;
+                                      npcc->xoffset - xoff);
+                           xoff = npcc->xoffset;
                         }
                         if (npcc->yoffset != yoff) {
                            if (uppercase[i]) {
                               voutln2("(MOVEUP R %.1f)",
-                                      capheight * (npcc->yoffset - yoff)) ;
+                                      capheight * (npcc->yoffset - yoff));
                            } else voutln2("(MOVEUP R %d)",
-                                      npcc->yoffset - yoff) ;
-                           yoff = npcc->yoffset ;
+                                      npcc->yoffset - yoff);
+                           yoff = npcc->yoffset;
                         }
-                        voutln2("(SETCHAR O %o)", (unsigned)api->adobenum) ;
-                        xoff += texptrs[api->texnum]->width ;
+                        voutln2("(SETCHAR O %o)", (unsigned)api->adobenum);
+                        xoff += texptrs[api->texnum]->width;
                      }
-            } else voutln2("(SETCHAR O %o)", (unsigned)ai->adobenum) ;
-            vright() ;
+            } else voutln2("(SETCHAR O %o)", (unsigned)ai->adobenum);
+            vright();
          }
-         vright() ;
+         vright();
       }
-   if (level) error("! I forgot to match the parentheses") ;
+   if (level) error("! I forgot to match the parentheses");
 }
 
 #ifdef KPATHSEA
@@ -1544,13 +1544,13 @@ static void
 usage(FILE *f)
 {
    (void)fprintf(f,
- "afm2tfm 8.1, Copyright 1990-97 by Radical Eye Software\n") ;
+ "afm2tfm 8.1, Copyright 1990-97 by Radical Eye Software\n");
    (void)fprintf(f,
- "Usage: afm2tfm foo[.afm] [-O] [-u] [-v|-V bar[.vpl]]\n") ;
+ "Usage: afm2tfm foo[.afm] [-O] [-u] [-v|-V bar[.vpl]]\n");
    (void)fprintf(f,
- "                 [-e expansion] [-s slant] [-c capheight]\n") ;
+ "                 [-e expansion] [-s slant] [-c capheight]\n");
    (void)fprintf(f,
- "                 [-p|-t|-T encodingfile] [foo[.tfm]]\n") ;
+ "                 [-p|-t|-T encodingfile] [foo[.tfm]]\n");
 }
 #endif
 
@@ -1560,66 +1560,66 @@ static void
 openfiles(int argc, char **argv)
 {
 #ifndef KPATHSEA
-   register int lastext ;
+   register int lastext;
 #else
    const char *q;
 #endif
-   register int i ;
-   char *p ;
-   int arginc ;
+   register int i;
+   char *p;
+   int arginc;
 
-   tfmout = (FILE *)NULL ;
+   tfmout = (FILE *)NULL;
 
    if (argc == 1) {
-      usage(stdout) ;
-      exit(0) ;
+      usage(stdout);
+      exit(0);
    }
 
 #if defined(MSDOS) || defined(OS2) || defined(ATARIST)
    /* Make VPL file identical to that created under Unix */
-   (void)sprintf(titlebuf, "afm2tfm %s", argv[1]) ;
+   (void)sprintf(titlebuf, "afm2tfm %s", argv[1]);
 #else
 #ifdef VMCMS
    /* Make VPL file identical to that created under Unix */
-   (void)sprintf(titlebuf, "afm2tfm %s", argv[1]) ;
+   (void)sprintf(titlebuf, "afm2tfm %s", argv[1]);
 #else
-   (void)sprintf(titlebuf, "%s %s", argv[0], argv[1]) ;
+   (void)sprintf(titlebuf, "%s %s", argv[0], argv[1]);
 #endif
 #endif
-   (void)strcpy(inname, argv[1]) ;
+   (void)strcpy(inname, argv[1]);
 #ifdef KPATHSEA
    if (find_suffix(inname) == NULL)
-       (void)strcat(inname, ".afm") ;
+       (void)strcat(inname, ".afm");
 #else
-   lastext = -1 ;
+   lastext = -1;
    for (i=0; inname[i]; i++)
       if (inname[i] == '.')
-         lastext = i ;
+         lastext = i;
       else if (inname[i] == '/' || inname[i] == ':')
-         lastext = -1 ;
-   if (lastext == -1) (void)strcat(inname, ".afm") ;
+         lastext = -1;
+   if (lastext == -1) (void)strcat(inname, ".afm");
 #endif
    while (argc>2 && *argv[2]=='-') {
-      arginc = 2 ;
-      i = argv[2][1] ;
+      arginc = 2;
+      i = argv[2][1];
       if (i == '/')
-         i = argv[2][2] - 32 ; /* /a ==> A for VMS */
+         i = argv[2][2] - 32; /* /a ==> A for VMS */
       switch (i) {
-case 'V': makevpl++ ;
-case 'v': makevpl++ ;
+case 'V': makevpl++;
+case 'v': makevpl++;
          CHECKARG3
-         (void)strcpy(outname, argv[3]) ;
+         (void)strcpy(outname, argv[3]);
 #ifdef KPATHSEA
          if (find_suffix(outname) == NULL)
-            (void)strcat(outname, ".vpl") ;
+            (void)strcat(outname, ".vpl");
 #else
-         lastext = -1 ;
+         lastext = -1;
          for (i=0; outname[i]; i++)
             if (outname[i] == '.')
-               lastext = i ;
+               lastext = i;
             else if (outname[i] == '/' || outname[i] == ':')
-               lastext = -1 ;
-         if (lastext == -1) (void)strcat(outname, ".vpl") ;
+               lastext = -1;
+         if (lastext == -1) (void)strcat(outname, ".vpl");
 #endif
 #ifndef VMCMS
 #ifndef ATARIST
@@ -1630,52 +1630,52 @@ case 'v': makevpl++ ;
 #else
          if ((vplout=fopen(outname, "w"))==NULL)
 #endif
-            error("! can't open vpl output file") ;
-         break ;
+            error("! can't open vpl output file");
+         break;
 case 'e': CHECKARG3
           if (sscanf(argv[3], "%f", &efactor)==0 || efactor<0.01)
-            error("! Bad extension factor") ;
-         efactorparam = argv[3] ;
-         break ;
+            error("! Bad extension factor");
+         efactorparam = argv[3];
+         break;
 case 'c':
          CHECKARG3
          if (sscanf(argv[3], "%f", &capheight)==0 || capheight<0.01)
-            error("! Bad small caps height") ;
-         break ;
+            error("! Bad small caps height");
+         break;
 case 's':
          CHECKARG3
          if (sscanf(argv[3], "%f", &slant)==0)
-            error("! Bad slant parameter") ;
-         slantparam = argv[3] ;
-         break ;
+            error("! Bad slant parameter");
+         slantparam = argv[3];
+         break;
 case 'P':
 case 'p':
          CHECKARG3
-         inenname = argv[3] ;
-         break ;
+         inenname = argv[3];
+         break;
 case 'T':
          CHECKARG3
-         inenname = outenname = argv[3] ;
-         break ;
+         inenname = outenname = argv[3];
+         break;
 case 't':
          CHECKARG3
-         outenname = argv[3] ;
-         break ;
+         outenname = argv[3];
+         break;
 case 'O':
-         forceoctal = 1 ;
-         arginc = 1 ;
-         break ;
+         forceoctal = 1;
+         arginc = 1;
+         break;
 case 'u':
-         pedantic = 1 ;
-         arginc = 1 ;
-         break ;
+         pedantic = 1;
+         arginc = 1;
+         break;
 default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
-                         argv[2], argv[3]) ;
+                         argv[2], argv[3]);
       }
       for (i=0; i<arginc; i++) {
-         (void)sprintf(titlebuf + strlen(titlebuf), " %s", argv[2]) ;
-         argv++ ;
-         argc-- ;
+         (void)sprintf(titlebuf + strlen(titlebuf), " %s", argv[2]);
+         argv++;
+         argc--;
       }
    }
 
@@ -1683,24 +1683,24 @@ default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
    afmin = kpse_open_file (inname, kpse_afm_format);
 #else /* ! KPATHSEA */
    if ((afmin=fopen(inname, "r"))==NULL)
-      error("! can't open afm input file") ;
+      error("! can't open afm input file");
 #endif /* KPATHSEA */
-   (void)SET_BINARY(fileno(afmin)) ;
+   (void)SET_BINARY(fileno(afmin));
 
    if (argc>3 || (argc==3 && *argv[2]=='-')) {
-     error("! need at most two non-option arguments") ;
-     usage(stderr) ;
+     error("! need at most two non-option arguments");
+     usage(stderr);
    }
 
-   if (argc == 2) (void)strcpy(outname, inname) ;
-   else (void)strcpy(outname, argv[2]) ;
+   if (argc == 2) (void)strcpy(outname, inname);
+   else (void)strcpy(outname, argv[2]);
 
 #ifdef KPATHSEA
    if ((p = find_suffix(outname)) != NULL)
       *(p-1) = 0;
-   (void)strcat(outname, ".tfm") ;
+   (void)strcat(outname, ".tfm");
    if (tfmout == NULL && (tfmout=fopen(outname, WRITEBIN))==NULL)
-      error("! can't open tfm output file") ;
+      error("! can't open tfm output file");
 /*
  *   Now we strip off any directory information, so we only use the
  *   base name in the vf file.
@@ -1709,27 +1709,27 @@ default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
      p = find_suffix(outname);
    *(p-1) = 0;
 
-   q = xbasename(outname) ;
+   q = xbasename(outname);
    strcpy(tmpstr, q);        /* be careful, q and outname are overlapping */
    strcpy(outname, tmpstr);
 #else
-   lastext = -1 ;
+   lastext = -1;
    for (i=0; outname[i]; i++)
       if (outname[i] == '.')
-         lastext = i ;
+         lastext = i;
       else if (outname[i] == '/' || outname[i] == ':' || outname[i] == '\\')
-         lastext = -1 ;
+         lastext = -1;
    if (argc == 2) {
-      outname[lastext] = 0 ;
-      lastext = -1 ;
+      outname[lastext] = 0;
+      lastext = -1;
    }
    if (lastext == -1) {
-      lastext = strlen(outname) ;
-      (void)strcat(outname, ".tfm") ;
+      lastext = strlen(outname);
+      (void)strcat(outname, ".tfm");
    }
    if (tfmout == NULL && (tfmout=fopen(outname, WRITEBIN))==NULL)
-      error("! can't open tfm output file") ;
-   outname[lastext] = 0 ;
+      error("! can't open tfm output file");
+   outname[lastext] = 0;
 /*
  *   Now we strip off any directory information, so we only use the
  *   base name in the vf file.  We accept any of /, :, or \ as directory
@@ -1738,9 +1738,9 @@ default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
  */
    for (i=0, lastext=0; outname[i]; i++)
       if (outname[i] == '/' || outname[i] == ':' || outname[i] == '\\')
-         lastext = i + 1 ;
+         lastext = i + 1;
    if (lastext)
-      strcpy(outname, outname + lastext) ;
+      strcpy(outname, outname + lastext);
 #endif
 }
 /*
@@ -1749,16 +1749,16 @@ default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
 static struct kern *
 rmkernmatch(struct kern *k, char *s)
 {
-   struct kern *nkern ;
+   struct kern *nkern;
 
    while (k && strcmp(k->succ, s)==0)
-      k = k->next ;
+      k = k->next;
    if (k) {
       for (nkern = k; nkern; nkern = nkern->next)
          while (nkern->next && strcmp(nkern->next->succ, s)==0)
-            nkern->next = nkern->next->next ;
+            nkern->next = nkern->next->next;
    }
-   return k ;
+   return k;
 }
 /*
  *   Recursive to one level.
@@ -1769,18 +1769,18 @@ rmkern(char *s1, char *s2, struct adobeinfo *ai)
    if (ai == 0) {
       if (strcmp(s1, "*") == 0) {
          for (ai=adobechars; ai; ai = ai->next)
-            rmkern(s1, s2, ai) ;
-         return ;
+            rmkern(s1, s2, ai);
+         return;
       } else {
-         ai = findadobe(s1) ;
+         ai = findadobe(s1);
          if (ai == 0)
-            return ;
+            return;
       }
    }
    if (strcmp(s2, "*")==0)
-      ai->kerns = 0 ; /* drop them on the floor */
+      ai->kerns = 0; /* drop them on the floor */
    else
-      ai->kerns = rmkernmatch(ai->kerns, s2) ;
+      ai->kerns = rmkernmatch(ai->kerns, s2);
 }
 
 /* Make the kerning for character S1 equivalent to that for S2.
@@ -1800,7 +1800,7 @@ addkern(char *s1, char *s2)
     ai2->kern_equivs = ap;
   }
 }
-int sawligkern ;
+int sawligkern;
 /*
  *   Reads a ligkern line, if this is one.  Assumes the first character
  *   passed is `%'.
@@ -1808,152 +1808,152 @@ int sawligkern ;
 static void
 checkligkern(char *s)
 {
-   char *oparam = param ;
-   char *mlist[5] ;
-   int n ;
+   char *oparam = param;
+   char *mlist[5];
+   int n;
 
-   s++ ;
+   s++;
    while (*s && *s <= ' ')
-      s++ ;
+      s++;
    if (strncmp(s, "LIGKERN", 7)==0) {
-      sawligkern = 1 ;
-      s += 7 ;
+      sawligkern = 1;
+      s += 7;
       while (*s && *s <= ' ')
-         s++ ;
-      param = s ;
+         s++;
+      param = s;
       while (*param) {
          for (n=0; n<5;) {
             if (*param == 0)
-               break ;
-            mlist[n] = paramstring() ;
+               break;
+            mlist[n] = paramstring();
             if (strcmp(mlist[n], ";") == 0)
-               break ;
-            n++ ;
+               break;
+            n++;
          }
          if (n > 4)
-            error("! too many parameters in lig kern data") ;
+            error("! too many parameters in lig kern data");
          if (n < 3)
-            error("! too few parameters in lig kern data") ;
+            error("! too few parameters in lig kern data");
          if (n == 3 && strcmp(mlist[1], "{}") == 0) { /* rmkern command */
-            rmkern(mlist[0], mlist[2], (struct adobeinfo *)0) ;
+            rmkern(mlist[0], mlist[2], (struct adobeinfo *)0);
          } else if (n == 3 && strcmp(mlist[1], "<>") == 0) { /* addkern */
-            addkern(mlist[0], mlist[2]) ;
+            addkern(mlist[0], mlist[2]);
          } else if (n == 3 && strcmp(mlist[0], "||") == 0 &&
                               strcmp(mlist[1], "=") == 0) { /* bc command */
-            struct adobeinfo *ai = findadobe("||") ;
+            struct adobeinfo *ai = findadobe("||");
 
             if (boundarychar != -1)
-               error("! multiple boundary character commands?") ;
+               error("! multiple boundary character commands?");
             if (sscanf(mlist[2], "%d", &n) != 1)
-               error("! expected number assignment for boundary char") ;
+               error("! expected number assignment for boundary char");
             if (n < 0 || n > 255)
-               error("! boundary character number must be 0..255") ;
-            boundarychar = n ;
+               error("! boundary character number must be 0..255");
+            boundarychar = n;
             if (ai == 0)
-               error("! internal error: boundary char") ;
-            ai->texnum = n ; /* prime the pump, so to speak, for lig/kerns */
+               error("! internal error: boundary char");
+            ai->texnum = n; /* prime the pump, so to speak, for lig/kerns */
          } else if (n == 4) {
-            int op = -1 ;
-            struct adobeinfo *ai ;
+            int op = -1;
+            struct adobeinfo *ai;
 
             for (n=0; encligops[n]; n++)
                if (strcmp(mlist[2], encligops[n])==0) {
-                  op = n ;
-                  break ;
+                  op = n;
+                  break;
                }
             if (op < 0)
-               error("! bad ligature op specified") ;
+               error("! bad ligature op specified");
             if (0 != (ai = findadobe(mlist[0]))) {
-               struct lig *lig ;
+               struct lig *lig;
 
                if (findadobe(mlist[2]))     /* remove coincident kerns */
-                  rmkern(mlist[0], mlist[1], ai) ;
+                  rmkern(mlist[0], mlist[1], ai);
                if (strcmp(mlist[3], "||") == 0)
-                  error("! you can't lig to the boundary character!") ;
+                  error("! you can't lig to the boundary character!");
                if (! fixedpitch) { /* fixed pitch fonts get *0* ligs */
                   for (lig=ai->ligs; lig; lig = lig->next)
                      if (strcmp(lig->succ, mlist[1]) == 0)
-                        break ; /* we'll re-use this structure */
+                        break; /* we'll re-use this structure */
                   if (lig == 0) {
-                     lig = newlig() ;
-                     lig->succ = newstring(mlist[1]) ;
-                     lig->next = ai->ligs ;
-                     ai->ligs = lig ;
+                     lig = newlig();
+                     lig->succ = newstring(mlist[1]);
+                     lig->next = ai->ligs;
+                     ai->ligs = lig;
                   }
-                  lig->sub = newstring(mlist[3]) ;
-                  lig->op = op ;
+                  lig->sub = newstring(mlist[3]);
+                  lig->op = op;
                   if (strcmp(mlist[1], "||")==0) {
-                     lig->boundleft = 1 ;
+                     lig->boundleft = 1;
                      if (strcmp(mlist[0], "||")==0)
-                        error("! you can't lig boundarychar boundarychar!") ;
+                        error("! you can't lig boundarychar boundarychar!");
                   } else
-                     lig->boundleft = 0 ;
+                     lig->boundleft = 0;
                }
             }
          } else
-            error("! bad form in LIGKERN command") ;
+            error("! bad form in LIGKERN command");
       }
    }
-   param = oparam ;
+   param = oparam;
 }
 /*
  *   Here we get a token from the AFM file.  We parse just as much PostScript
  *   as we expect to find in an encoding file.  We allow commented lines and
  *   names like 0, .notdef, _foo_.  We do not allow //abc.
  */
-char smbuffer[100] ;    /* for tokens */
+char smbuffer[100];    /* for tokens */
 static char *
 gettoken(void) {
-   char *p, *q ;
+   char *p, *q;
 
    while (1) {
       while (param == 0 || *param == 0) {
          if (texlive_getline() == 0)
-            error("! premature end in encoding file") ;
+            error("! premature end in encoding file");
          for (p=buffer; *p; p++)
             if (*p == '%') {
                if (ignoreligkern == 0)
-                  checkligkern(p) ;
-               *p = 0 ;
-               break ;
+                  checkligkern(p);
+               *p = 0;
+               break;
             }
       }
       while (*param && *param <= ' ')
-         param++ ;
+         param++;
       if (*param) {
          if (*param == '[' || *param == ']' ||
              *param == '{' || *param == '}') {
-            smbuffer[0] = *param++ ;
-            smbuffer[1] = 0 ;
-            return smbuffer ;
+            smbuffer[0] = *param++;
+            smbuffer[1] = 0;
+            return smbuffer;
          } else if (*param == '/' || *param == '-' || *param == '_' ||
                     *param == '.' ||
                     ('0' <= *param && *param <= '9') ||
                     ('a' <= *param && *param <= 'z') ||
                     ('A' <= *param && *param <= 'Z')) {
-            smbuffer[0] = *param ;
+            smbuffer[0] = *param;
             for (p=param+1, q=smbuffer+1;
                         *p == '-' || *p == '_' || *p == '.' ||
                         ('0' <= *p && *p <= '9') ||
                         ('a' <= *p && *p <= 'z') ||
                         ('A' <= *p && *p <= 'Z'); p++, q++)
-               *q = *p ;
-            *q = 0 ;
-            param = p ;
-            return smbuffer ;
+               *q = *p;
+            *q = 0;
+            param = p;
+            return smbuffer;
          }
       }
    }
 }
 static void
 getligkerndefaults(void) {
-   int i ;
+   int i;
 
    for (i=0; staticligkern[i]; i++) {
-      strcpy(buffer, staticligkern[i]) ;
-      strcpy(obuffer, staticligkern[i]) ;
-      param = buffer ;
-      checkligkern(buffer) ;
+      strcpy(buffer, staticligkern[i]);
+      strcpy(obuffer, staticligkern[i]);
+      param = buffer;
+      checkligkern(buffer);
    }
 }
 /*
@@ -1963,63 +1963,63 @@ getligkerndefaults(void) {
 static struct encoding *
 readencoding(char *enc)
 {
-   char *p ;
-   int i ;
+   char *p;
+   int i;
    struct encoding *e =
-      (struct encoding *)mymalloc((unsigned long)sizeof(struct encoding)) ;
+      (struct encoding *)mymalloc((unsigned long)sizeof(struct encoding));
 
-   sawligkern = 0 ;
+   sawligkern = 0;
    if (afmin)
-      error("! oops; internal afmin error") ;
+      error("! oops; internal afmin error");
    if (enc) {
 #ifdef KPATHSEA
      afmin = kpse_open_file(enc, kpse_enc_format);
 #else
-      afmin = fopen(enc, "r") ;
+      afmin = fopen(enc, "r");
 #endif
-      (void)SET_BINARY(fileno(afmin)) ;
-      param = 0 ;
+      (void)SET_BINARY(fileno(afmin));
+      param = 0;
       if (afmin == 0)
 #ifdef KPATHSEA
-         FATAL1 ("couldn't open encoding file `%s'", enc) ;
+         FATAL1 ("couldn't open encoding file `%s'", enc);
 #else
-         error("! couldn't open that encoding file") ;
+         error("! couldn't open that encoding file");
 #endif
-      p = gettoken() ;
+      p = gettoken();
       if (*p != '/' || p[1] == 0)
-         error("! first token in encoding must be literal encoding name") ;
-      e->name = newstring(p+1) ;
-      p = gettoken() ;
+         error("! first token in encoding must be literal encoding name");
+      e->name = newstring(p+1);
+      p = gettoken();
       if (strcmp(p, "["))
-         error("! second token in encoding must be mark ([) token") ;
+         error("! second token in encoding must be mark ([) token");
       for (i=0; i<256; i++) {
-         p = gettoken() ;
+         p = gettoken();
          if (*p != '/' || p[1] == 0)
-            error("! tokens 3 to 257 in encoding must be literal names") ;
-         e->vec[i] = newstring(p+1) ;
+            error("! tokens 3 to 257 in encoding must be literal names");
+         e->vec[i] = newstring(p+1);
       }
-      p = gettoken() ;
+      p = gettoken();
       if (strcmp(p, "]"))
-         error("! token 258 in encoding must be make-array (])") ;
+         error("! token 258 in encoding must be make-array (])");
       while (texlive_getline()) {
          for (p=buffer; *p; p++)
             if (*p == '%') {
                if (ignoreligkern == 0)
-                  checkligkern(p) ;
-               *p = 0 ;
-               break ;
+                  checkligkern(p);
+               *p = 0;
+               break;
             }
       }
-      fclose(afmin) ;
-      afmin = 0 ;
+      fclose(afmin);
+      afmin = 0;
       if (ignoreligkern == 0 && sawligkern == 0)
-         getligkerndefaults() ;
+         getligkerndefaults();
    } else {
-      e = &staticencoding ;
-      getligkerndefaults() ;
+      e = &staticencoding;
+      getligkerndefaults();
    }
-   param = 0 ;
-   return e ;
+   param = 0;
+   return e;
 }
 /*
  *   This routine prints out the line that needs to be added to psfonts.map.
@@ -2028,31 +2028,31 @@ static void
 conspsfonts(void) {
 #ifndef VMCMS
    (void)printf("%s %s", outname,
-   fontname) ;
+   fontname);
 #else /* VM/CMS: fontname is ascii, so we use ebfontname */
    (void)printf("%s %s", outname,
-   ebfontname) ;
+   ebfontname);
 #endif
    if (slantparam || efactorparam || inenname) {
-      (void)printf(" \"") ;
+      (void)printf(" \"");
       if (slantparam)
-         (void)printf(" %s SlantFont", slantparam) ;
+         (void)printf(" %s SlantFont", slantparam);
       if (efactorparam)
-         (void)printf(" %s ExtendFont", efactorparam) ;
+         (void)printf(" %s ExtendFont", efactorparam);
       if (inenname)
-         (void)printf(" %s ReEncodeFont", inencoding->name) ;
-      (void)printf(" \"") ;
+         (void)printf(" %s ReEncodeFont", inencoding->name);
+      (void)printf(" \"");
       if (inenname)
-         (void)printf(" <%s", inenname) ;
+         (void)printf(" <%s", inenname);
    }
-   (void)printf("\n") ;
+   (void)printf("\n");
 }
 #ifndef VMS
 int
 #endif
 main(int argc, char **argv)
 {
-   int i ;
+   int i;
 
 #ifdef KPATHSEA
    kpse_set_program_name (argv[0], "afm2tfm");
@@ -2073,30 +2073,30 @@ main(int argc, char **argv)
    }
 #endif /* KPATHSEA */
    for (i=0; i<256; i++)
-      nexttex[i] = -1 ; /* encoding chains have length 0 */
-   tfmdata = (long *)mymalloc((unsigned long)40000L) ;
-   openfiles(argc, argv) ;
-   readadobe() ;
+      nexttex[i] = -1; /* encoding chains have length 0 */
+   tfmdata = (long *)mymalloc((unsigned long)40000L);
+   openfiles(argc, argv);
+   readadobe();
    if (fontspace == 0) {
-      struct adobeinfo *ai ;
+      struct adobeinfo *ai;
 
       if (0 != (ai = findadobe("space")))
-         fontspace = ai->width ;
+         fontspace = ai->width;
       else if (adobeptrs[32])
-         fontspace = adobeptrs[32]->width ;
+         fontspace = adobeptrs[32]->width;
       else
-         fontspace = transform(500, 0) ;
+         fontspace = transform(500, 0);
    }
-   handlereencoding() ;
-   buildtfm() ;
-   writetfm() ;
-   conspsfonts() ;
+   handlereencoding();
+   buildtfm();
+   writetfm();
+   conspsfonts();
    if (makevpl) {
-      assignchars() ;
-      if (makevpl>1) upmap() ;
-      writevpl() ;
+      assignchars();
+      if (makevpl>1) upmap();
+      writevpl();
    }
-   return 0 ;
+   return 0;
    /*NOTREACHED*/
 }
 

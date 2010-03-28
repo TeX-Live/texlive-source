@@ -11,11 +11,11 @@
 
 /* global variables from dopage.c */
 extern struct dvistack {
-  integer hh, vv ;
-  integer h, v, w, x, y, z ;
-} stack[] ;
+  integer hh, vv;
+  integer h, v, w, x, y, z;
+} stack[];
 
 /* global variables from loadfont.c */
-extern char name[] ;
+extern char name[];
 
 #endif

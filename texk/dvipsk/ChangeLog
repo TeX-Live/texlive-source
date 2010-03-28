@@ -1,5 +1,7 @@
 2010-03-28  Karl Berry  <karl@tug.org>
 
+	* all files: no spaces before semicolons.
+
 	* loadfont.c,
 	* tfmload.c,
 	* virtualfont.c,

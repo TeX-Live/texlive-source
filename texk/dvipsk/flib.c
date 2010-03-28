@@ -47,10 +47,10 @@ Boolean flib = 0;  /* non zero if reading a font library */
 halfword
 pkdouble(void)
 {
-   register halfword i ;
-   i = pkbyte() ;
-   i = i * 256 + pkbyte() ;
-   return(i) ;
+   register halfword i;
+   i = pkbyte();
+   i = i * 256 + pkbyte();
+   return(i);
 }
 /*
  *   fliload opens each font library, then reads in its
@@ -60,15 +60,15 @@ pkdouble(void)
 void
 fliload(void)
 {
-   int i ;
+   int i;
    halfword version1, version2;
    Boolean needext;
    char fontname[50]; 
-   char name[50] ;
+   char name[50];
    char *fli;
    unsigned long dpi;
    halfword len, numsizes, numfonts;
-   halfword numflib = 0 ;
+   halfword numflib = 0;
    struct fli_lib *lib=NULL, *next_lib=NULL;
    struct fli_size *size;
    struct fli_entry *entry;
@@ -136,7 +136,7 @@ fliload(void)
             lib->size = size;
             lib->next = (struct fli_lib *)NULL;
 
-            for ( ;numsizes>0; numsizes--, size++) { 
+            for (;numsizes>0; numsizes--, size++) { 
                /* for each font size in this library */
                (void)pkdouble();      /* length of size entry - ignore */
                numfonts = pkdouble(); /* number of fonts */
@@ -147,10 +147,10 @@ fliload(void)
       (void)fprintf(stderr,"Font library %s size %.5gdpi has %d font%s\n", 
                   name, dpi/65536.0, numfonts, numfonts!=1 ? "s" : "");
 #endif /* DEBUG */
-               size->size    = dpi ;
-               size->entries = numfonts ;
-               size->entry   = entry ;
-                  for ( ;numfonts > 0; numfonts--, entry++) {
+               size->size    = dpi;
+               size->entries = numfonts;
+               size->entry   = entry;
+                  for (;numfonts > 0; numfonts--, entry++) {
                      /* read each entry */
                      (void)pkquad();            /* ignore length of font */
                      entry->offset = pkquad();  /* offset to font */
@@ -204,23 +204,23 @@ flisearch(char *n, halfword dpi)
 #endif /* DEBUG */
    for (lib = firstlib; lib != (struct fli_lib *)NULL; lib = lib->next ) {
       /* for each font library */
-      numsizes = lib->sizes ;
-      size = lib->size ;
+      numsizes = lib->sizes;
+      size = lib->size;
 #ifdef DEBUG
       if (dd(D_FONTS))
          (void)fprintf(stderr,"  Searching %s\n", lib->name);
 #endif /* DEBUG */
       for (; numsizes>0; numsizes--, size++) { 
          /* for each font size in this library */
-         dpi1 = (halfword)((size->size+32768L)/65536) ;
+         dpi1 = (halfword)((size->size+32768L)/65536);
          if ( dpi1 == dpi ) {
             /* if correct size then search for font */
 #ifdef DEBUG
             if (dd(D_FONTS))
                (void)fprintf(stderr, "    Checking size %ddpi\n",dpi1);
 #endif /* DEBUG */
-            entry = size->entry ;
-            for (numfonts=size->entries ;numfonts > 0; numfonts--, entry++) {
+            entry = size->entry;
+            for (numfonts=size->entries;numfonts > 0; numfonts--, entry++) {
                if (strcmp(entry->name,n)==0) {
                   /* if correct font name then look for it in cache */
                      found = 0;
@@ -251,9 +251,9 @@ flisearch(char *n, halfword dpi)
                         fli_cache[0]->lib = lib;
                         fli_cache[0]->fp  = pkfile;
                      }
-                     flib = 1 ;  /* tell loadfont() not to close it */
+                     flib = 1;  /* tell loadfont() not to close it */
                      /* then seek font within library */
-                     (void)sprintf(name,"%s %s %ddpi",lib->name, n, dpi1) ;
+                     (void)sprintf(name,"%s %s %ddpi",lib->name, n, dpi1);
                      if ( fseek(pkfile,entry->offset,0) )
                            badpk("couldn't seek font");
                         /* make sure it is a PK font */
@@ -288,43 +288,43 @@ flisearch(char *n, halfword dpi)
 char *
 fliparse(char *path, char *name)
 {
-   char *p, *prevp ;           /* pointers to path */
-   char *n, *prevn ;           /* pointers to name */
-   char *s ;
+   char *p, *prevp;           /* pointers to path */
+   char *n, *prevn;           /* pointers to name */
+   char *s;
 
-   p = path ;
-   n = name ;
-   s = path ;
+   p = path;
+   n = name;
+   s = path;
 
    while (*s) {
-      prevp = p ;
-      prevn = n ;
+      prevp = p;
+      prevn = n;
       while (*s && *s != PATHSEP) {
          /* copy till PATHSEP */
          *p++ = *s; 
          *n++ = *s;
          s++;
       }  
-      *n = '\0' ;
+      *n = '\0';
       if (*s)
          s++;  /* skip PATHSEP */
 
       if ( *prevn=='\0' || prevn[strlen(prevn)-1] == DIRSEP ) {
-         n = prevn ; /* ignore name if it is dir */
+         n = prevn; /* ignore name if it is dir */
          if (*prevn)
             p--;     /* backup over DIRSEP */
          *p++ = PATHSEP;
-         prevp = p ;
+         prevp = p;
       }
       else {
-         p = prevp ; /* ignore path if it is library name */
+         p = prevp; /* ignore path if it is library name */
          *n++ = PATHSEP;
-         prevn = n ;
+         prevn = n;
       }
 
    }
-   *p = '\0' ;
-   *n = '\0' ;
+   *p = '\0';
+   *n = '\0';
    if (n!=name && *--n==PATHSEP)
       *n = '\0'; /* remove trailing PATHSEP from name */
    if (p!=path && *--p==PATHSEP)
