@@ -21,7 +21,7 @@ static char name[50];
 void
 badtfm(const char *s)
 {
-   char *msg = concatn ("! Bad TFM file ", name, ": ", s);
+   char *msg = concatn ("! Bad TFM file ", name, ": ", s, NULL);
    error(msg);
 }
 

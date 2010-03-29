@@ -1,3 +1,9 @@
+2010-03-29  Karl Berry  <karl@tug.org>
+
+	* loadfont.c,
+	* tfmload.c,
+	* virtualfont.c: concatn terminates with NULL.  From Akira.
+
 2010-03-28  Karl Berry  <karl@tug.org>
 
 	* all files: no spaces before semicolons.

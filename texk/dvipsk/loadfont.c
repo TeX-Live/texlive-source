@@ -38,7 +38,7 @@ char name[MAXPATHLEN];
 void
 badpk(const char *s)
 {
-   char *msg = concatn ("! Bad PK file ", name, ": ", s);
+   char *msg = concatn ("! Bad PK file ", name, ": ", s, NULL);
    error(msg);
 }
 
@@ -137,7 +137,7 @@ pkopen(register fontdesctype *fd)
      pkfile = pksearch(this_name, READBIN, fd->dpi, &name_ret, &dpi_ret);
 
      if (!pkfile || !FILESTRCASEEQ (this_name, name_ret)) {
-       char *msg = concatn ("Font ", fd->area, n, " not found; ");
+       char *msg = concatn ("Font ", fd->area, n, " not found; ", NULL);
        /* wasting some memory */
        if (!pkfile)
          msg = concat (msg, "characters will be left blank.");
