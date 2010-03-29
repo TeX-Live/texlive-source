@@ -64,7 +64,7 @@ public:
 	virtual ~Segment();
 
 	// Basic copy constructor:
-	Segment(Segment & seg);
+	Segment(const Segment & seg);
 
 	// For making modified copies of segments:
 	static Segment * LineContextSegment(Segment & seg, bool fStartLine, bool fEndLine);

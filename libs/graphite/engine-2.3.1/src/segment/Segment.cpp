@@ -433,7 +433,7 @@ void Segment::InitWhiteSpaceSegment(int nNewDepth)
 /*----------------------------------------------------------------------------------------------
 	Basic copy method.
 ----------------------------------------------------------------------------------------------*/
-Segment::Segment(Segment & seg)
+Segment::Segment(const Segment & seg)
 {
 	int islout;
 
