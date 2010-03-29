@@ -292,6 +292,9 @@
 #undef inline
 #endif
 
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+#undef size_t
+
 /* Allow compilation on Windows (thanks, Fabrice Popineau). */
 #ifdef WIN32
 # ifdef __MINGW32__

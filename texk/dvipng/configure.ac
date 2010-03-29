@@ -65,7 +65,6 @@ AC_HEADER_STDBOOL
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_PID_T
-AC_TYPE_SIZE_T
 AC_TYPE_INT64_T
 AC_TYPE_UINT64_T
 

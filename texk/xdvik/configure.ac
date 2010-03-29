@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -90,7 +90,6 @@ AC_HEADER_SYS_WAIT
 AC_TYPE_SIGNAL
 AC_C_BIGENDIAN
 AC_PATH_XTRA
-AC_TYPE_SIZE_T
 
 dnl XDVI checks by Paul Vojta
 XDVI_FUNC_SETSID_IN_VFORK

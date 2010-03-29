@@ -1,6 +1,6 @@
 /* xmalloc.c: malloc with error checking.
 
-   Copyright 1992, 1993, 2008 Karl Berry.
+   Copyright 1992, 1993, 2008, 2010 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -20,13 +20,13 @@
 
 
 void *
-xmalloc (unsigned size)
+xmalloc (size_t size)
 {
     void *new_mem = (void *)malloc(size ? size : 1);
 
     if (new_mem == NULL) {
-        fprintf(stderr, "fatal: memory exhausted (xmalloc of %u bytes).\n",
-                size);
+        fprintf(stderr, "fatal: memory exhausted (xmalloc of %lu bytes).\n",
+                (unsigned long)size);
         exit(EXIT_FAILURE);
     }
 

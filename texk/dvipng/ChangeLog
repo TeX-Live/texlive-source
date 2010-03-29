@@ -1,3 +1,7 @@
+2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.
+
 2010-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.13 from savannah.nongnu.org.

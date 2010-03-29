@@ -1,6 +1,10 @@
 ChangeLog.TL: TeX Live (TL) changes for dvipdfmx
 ================================================
 
+2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.
+
 2010-02-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/pngimage.c (check_for_png): Replace png_check_sig() by

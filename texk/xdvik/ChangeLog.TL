@@ -1,6 +1,10 @@
 ChangeLog.TL: Changes for xdvik (TeX Live)
 ==================================================
 
+2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.
+
 2009-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tests/test_string_utils.c (test_my_stristr): Make the test

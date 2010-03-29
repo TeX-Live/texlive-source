@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -26,7 +26,6 @@ AC_FUNC_MEMCMP
 AC_CHECK_FUNCS([open close system getenv mkstemp basename])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
-AC_TYPE_SIZE_T
 AC_STRUCT_TM
 AC_STRUCT_TIMEZONE
 AC_C_BIGENDIAN

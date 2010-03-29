@@ -195,8 +195,8 @@ tfmload(register fontdesctype *curfnt)
       }
    }
    if (font_level==1&&ncw!=0) {
-      char *msg = ("Table size mismatch in ", curfnt->name);
-      error(errbuf);
+      char *msg = concat ("Table size mismatch in ", curfnt->name);
+      error(msg);
    }
    scaledsize = curfnt->scaledsize;
    scaled = (integer *) xmalloc(nw*sizeof(integer));

@@ -60,8 +60,10 @@ AC_DEFUN([KPSE_ICU_SYSTEM_FLAGS],
 [AC_REQUIRE([_KPSE_CHECK_ICU_CONFIG])[]dnl
 if $ICU_CONFIG --version >/dev/null 2>&1; then
   ICU_INCLUDES=`$ICU_CONFIG --cppflags`
+  # Work around bug in icu-config version 4.4
   ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath m4_ifset([kpse_icu_config_args],
-                                                      [kpse_icu_config_args] )--ldflags-libsonly --ldflags-system`
+                                                      [kpse_icu_config_args])`
+  ICU_LIBS="$ICU_LIBS `$ICU_CONFIG --ldflags-libsonly --ldflags-system`"
 elif test "x$need_icu:$with_system_icu" = xyes:yes; then
   AC_MSG_ERROR([did not find icu-config required for system icu libraries])
 fi

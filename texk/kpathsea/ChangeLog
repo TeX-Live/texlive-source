@@ -1,3 +1,11 @@
+2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lib.h, xcalloc.c, xmalloc.c, xrealloc.c: Change type of size
+	arguments of xcalloc(), xmalloc, and xrealloc() from unsigned
+	to size_t (incompatible change of ABI).
+
+	Update version numbers to 6.0.0.
+
 2010-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmf.cnf (TEXMF_RESTRICTED_SCRIPTS): The make rules used to
@@ -21,7 +29,7 @@
 
 	* texmf.cnf (BIBTEX_CSFILE): Default codepage and sort order
 	file for BibTeX8.
-	(max_strings): Also for BibTeX8 and BibTeX8U.
+	(max_strings): Also for BibTeX8 and BibTeXU.
 
 2010-03-18  Karl Berry  <karl@tug.org>
 

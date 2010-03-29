@@ -18,10 +18,10 @@
 
 #include <kpathsea/config.h>
 
-extern void *xmalloc (unsigned);
+extern void *xmalloc (size_t);
 
 void *
-xrealloc (void *old_ptr, unsigned size)
+xrealloc (void *old_ptr, size_t size)
 {
     void *new_mem;
     
@@ -35,8 +35,8 @@ xrealloc (void *old_ptr, unsigned size)
                pointers and unsigned had different sizes.  Since the info
                is of little or no value anyway, just don't print it.  */
             fprintf(stderr,
-                    "fatal: memory exhausted (realloc of %u bytes).\n",
-                    size);
+                    "fatal: memory exhausted (realloc of %lu bytes).\n",
+                    (unsigned long)size);
             exit(EXIT_FAILURE);
         }
     }

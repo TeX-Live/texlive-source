@@ -1,6 +1,6 @@
 /* lib.h: declarations for common, low-level routines in kpathsea.
 
-   Copyright 1992, 1993, 1994, 1995, 1996, 2008, 2009 Karl Berry.
+   Copyright 1992, 1993, 1994, 1995, 1996, 2008, 2009, 2010 Karl Berry.
    Copyright 1999, 2000, 2003, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -211,9 +211,9 @@ extern KPSEDLL off_t xftello (FILE *, const_string filename);
 /* These call the corresponding function in the standard library, and
    abort if those routines fail.  Also, `xrealloc' calls `xmalloc' if
    OLD_ADDRESS is null.  */
-extern KPSEDLL address xmalloc (unsigned size);
-extern KPSEDLL address xrealloc (address old_address, unsigned new_size);
-extern KPSEDLL address xcalloc (unsigned nelem, unsigned elsize);
+extern KPSEDLL address xmalloc (size_t size);
+extern KPSEDLL address xrealloc (address old_address, size_t new_size);
+extern KPSEDLL address xcalloc (size_t nelem, size_t elsize);
 
 /* (Re)Allocate N items of type T using xmalloc/xrealloc.  */
 #define XTALLOC(n, t) ((t *) xmalloc ((n) * sizeof (t)))

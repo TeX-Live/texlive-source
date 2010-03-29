@@ -231,6 +231,7 @@ AC_CHECK_FUNCS([bcmp bcopy bzero getcwd getwd index memcmp memcpy mkstemp mktemp
 dnl
 AC_C_CONST
 AC_C_INLINE
+AC_TYPE_SIZE_T
 dnl
 dnl Check whether struct stat provides high-res time.
 AC_CHECK_MEMBERS([struct stat.st_mtim])
