@@ -47,7 +47,8 @@ recorder_start(void)
     char pid_str[MAX_INT_LENGTH];
     sprintf (pid_str, "%ld", (long) pid);
     
-    recorder_name = (string)xmalloc(strlen(kpse_program_name)+5);
+    recorder_name = (string)xmalloc(strlen(kpse_program_name)
+                                    + strlen (pid_str) + 5);
     strcpy(recorder_name, kpse_program_name);
     strcat(recorder_name, pid_str);
     strcat(recorder_name, ".fls");
