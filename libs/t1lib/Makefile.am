@@ -21,7 +21,7 @@ EXTRA_DIST = $(T1LIB_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST +=  $(T1LIB_TREE)-PATCHES
+EXTRA_DIST += $(T1LIB_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

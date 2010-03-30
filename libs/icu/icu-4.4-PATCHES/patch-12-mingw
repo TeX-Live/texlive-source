@@ -1,0 +1,27 @@
+	We don't want this for TeX Live cross compilation.
+
+diff -ur icu-4.4.orig/source/config/mh-mingw icu-4.4/source/config/mh-mingw
+--- icu-4.4.orig/source/config/mh-mingw	2010-03-26 20:15:09.000000000 +0100
++++ icu-4.4/source/config/mh-mingw	2010-03-26 23:13:20.000000000 +0100
+@@ -52,21 +52,10 @@
+ SO = dll
+ ## Non-shared intermediate object suffix
+ STATIC_O = ao
+-SO_TARGET_VERSION_SUFFIX = $(SO_TARGET_VERSION_MAJOR)
+-
+-# Static library prefix and file extension
+-LIBSICU = $(STATIC_PREFIX)$(ICUPREFIX)
+-A = lib
+ 
+ ## An import library is needed for z/OS and MSVC
+ #IMPORT_LIB_EXT = .lib
+ 
+-LIBPREFIX=
+-
+-# Change the stubnames so that poorly working FAT disks and installation programs can work.
+-# This is also for backwards compatibility.
+-DATA_STUBNAME = dt
+-I18N_STUBNAME = in
+ LIBICU = $(STATIC_PREFIX_WHEN_USED)$(ICUPREFIX)
+ 
+ # The #M# is used to delete lines for icu-config

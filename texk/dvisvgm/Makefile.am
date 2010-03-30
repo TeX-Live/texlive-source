@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvisvgm/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -21,7 +21,7 @@ EXTRA_DIST = $(DVISVGM_TREE)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST +=  $(DVISVGM_TREE)-PATCHES
+EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

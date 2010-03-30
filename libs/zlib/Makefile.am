@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build zlib for TeX Live.
 ##
-##   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -21,7 +21,7 @@ EXTRA_DIST = $(ZLIB_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST +=  $(ZLIB_TREE)-PATCHES
+EXTRA_DIST += $(ZLIB_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

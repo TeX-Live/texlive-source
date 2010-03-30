@@ -21,7 +21,7 @@ EXTRA_DIST = $(LIBPNG_TREE)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST +=  $(LIBPNG_TREE)-PATCHES
+EXTRA_DIST += $(LIBPNG_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

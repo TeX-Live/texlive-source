@@ -21,7 +21,7 @@ EXTRA_DIST = $(DVIPNG_TREE)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST +=  $(DVIPNG_TREE)-PATCHES
+EXTRA_DIST += $(DVIPNG_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

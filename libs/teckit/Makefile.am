@@ -18,7 +18,7 @@ EXTRA_DIST = $(TECKIT_TREE)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST +=  $(TECKIT_TREE)-PATCHES
+EXTRA_DIST += $(TECKIT_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:

@@ -22,7 +22,11 @@ EXTRA_DIST += license.html
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST +=  $(ICU_TREE)-PATCHES
+EXTRA_DIST += $(ICU_TREE)-PATCHES
+
+## Prepare for icu-4.4
+##
+EXTRA_DIST += icu-4.4 icu-4.4-PATCHES
 
 # in case of an SVN repository
 dist-hook:

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -13,7 +13,7 @@ SUBDIRS = . xindy
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST +=  xindy-$(VERSION)-PATCHES
+EXTRA_DIST += xindy-$(VERSION)-PATCHES
 
 ## We must explicitly distribute some top-level files.
 ##
