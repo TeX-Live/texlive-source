@@ -37,12 +37,19 @@ int texinputtype;
 static void
 recorder_start(void)
 {
-    /* Alas, while we might want to use mkstemp it is not portable.
-       So we have to be content with using a default name... */
+    /* Alas, while we'd like to use mkstemp it is not portable,
+       and doing the autoconfiscation (and providing fallbacks) is more
+       than we want to cope with.  So we have to be content with using a
+       default name.  Throw in the pid so at least parallel builds might
+       work (Debian bug 575731).  */
     string cwd;
+    pid_t pid = getpid();
+    char pid_str[MAX_INT_LENGTH];
+    sprintf (pid_str, "%ld", (long) pid);
     
     recorder_name = (string)xmalloc(strlen(kpse_program_name)+5);
     strcpy(recorder_name, kpse_program_name);
+    strcat(recorder_name, pid_str);
     strcat(recorder_name, ".fls");
     
     /* If an output directory was specified, use it instead of cwd.  */

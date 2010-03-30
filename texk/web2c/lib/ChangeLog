@@ -1,3 +1,9 @@
+2010-03-30  Karl Berry  <karl@tug.org>
+
+	* (recorder_start): throw in pid in recorder_name so parallel builds
+	have a chance of working.  Report from
+	Kirill Smelkov, Debian bug 575731, tex-k mail 29 Mar 2010 06:18:35.
+
 2010-03-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* setupvar.c (setupboundvariable): Fix off by one error in msg.
