@@ -1450,6 +1450,13 @@ spc_handler_pdfm_code (struct spc_env *spe, struct spc_arg *args)
   return  0;
 }
 
+static int
+spc_handler_pdfm_do_nothing (struct spc_env *spe, struct spc_arg *args)
+{
+  args->curptr = args->endptr;
+  return  0;
+}
+
 #define STRING_STREAM 0
 #define FILE_STREAM   1
 
@@ -2045,6 +2052,8 @@ static struct spc_handler pdfm_handlers[] = {
   {"bcontent",   spc_handler_pdfm_bcontent},
   {"econtent",   spc_handler_pdfm_econtent},
   {"code",       spc_handler_pdfm_code},
+
+  {"minorversion", spc_handler_pdfm_do_nothing},
 };
 
 int

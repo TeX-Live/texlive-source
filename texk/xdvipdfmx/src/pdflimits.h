@@ -26,6 +26,15 @@
 #define _PDFLIMITS_H_
 
 /*
+ *  * The minimal and maximal PDF version supported by DVIPDFMx.
+ *   * NOTE: Don't forget to update CIDFont_stdcc_def[] in cid.c
+ *    * if you increase PDF_VERSION_MAX!
+ *     */
+#define PDF_VERSION_MIN  3
+#define PDF_VERSION_MAX  7
+#define PDF_VERSION_DEFAULT 4
+
+/*
  * PDF_NAME_LEN_MAX: see, Appendix C of PDF Ref. v1.3, 2nd. ed.
  * This is Acrobat implementation limit.
  */

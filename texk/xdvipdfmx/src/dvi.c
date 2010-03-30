@@ -2490,7 +2490,7 @@ read_length (double *vp, double mag, const char **pp, const char *endptr)
 
 
 static int
-scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const char *buf, UNSIGNED_QUAD size)
+scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, unsigned *minorversion, const char *buf, UNSIGNED_QUAD size)
 {
   char  *q;
   const char *p =  buf, *endptr;
@@ -2588,6 +2588,15 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const ch
         paper_width  = *wd;
         paper_height = *ht;
       }
+    } else if (minorversion && ns_pdf && !strcmp(q, "minorversion")) {
+      char *kv;
+      if (*p == '=') p++;
+      skip_white(&p, endptr);
+      kv = parse_float_decimal(&p, endptr);
+      if (kv) {
+        *minorversion = (unsigned)strtol(kv, NULL, 10);
+        RELEASE(kv);
+      }
     }
     RELEASE(q);
   }
@@ -2597,9 +2606,10 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm, const ch
 
 
 void
-dvi_scan_paper_size (long page_no,
-                     double *page_width, double *page_height,
-                     double *x_offset, double *y_offset, char *landscape)
+dvi_scan_specials (long page_no,
+                   double *page_width, double *page_height,
+                   double *x_offset, double *y_offset, char *landscape,
+                   unsigned *minorversion)
 {
   FILE          *fp = dvi_file;
   long           offset;
@@ -2639,7 +2649,7 @@ dvi_scan_paper_size (long page_no,
       }
       if (fread(dvi_page_buffer + dvi_page_buf_index, sizeof(char), size, fp) != size)
         ERROR("Reading DVI file failed!");
-      scan_special(page_width, page_height, x_offset, y_offset, landscape,
+      scan_special(page_width, page_height, x_offset, y_offset, landscape, minorversion,
                    (char*)dvi_page_buffer + dvi_page_buf_index, size);
       dvi_page_buf_index += size;
       continue;

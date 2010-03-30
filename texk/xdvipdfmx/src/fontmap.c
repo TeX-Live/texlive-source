@@ -119,6 +119,10 @@ pdf_clear_fontmap_record (fontmap_rec *mrec)
     RELEASE(mrec->opt.otl_tags);
   if (mrec->opt.charcoll)
     RELEASE(mrec->opt.charcoll);
+#ifdef XETEX
+  if (mrec->opt.glyph_widths)
+    RELEASE(mrec->opt.glyph_widths);
+#endif
   pdf_init_fontmap_record(mrec);
 }
 
@@ -1071,7 +1075,7 @@ pdf_insert_native_fontmap_record (const char *name, const char *path, int index,
   mrec  = NEW(1, fontmap_rec);
   pdf_init_fontmap_record(mrec);
 
-  mrec->map_name  = mstrdup(fontmap_key);
+  mrec->map_name  = fontmap_key;
   mrec->enc_name  = mstrdup(layout_dir == 0 ? "Identity-H" : "Identity-V");
   mrec->font_name = (path != NULL) ? mstrdup(path) : NULL;
   mrec->opt.index = index;
@@ -1138,10 +1142,10 @@ pdf_load_native_font_from_path(const char *ps_name, int layout_dir, int extend, 
   }
 
   if (error == 0)
-    return pdf_insert_native_fontmap_record(ps_name, filename, index, face,
+    error = pdf_insert_native_fontmap_record(ps_name, filename, index, face,
                                            layout_dir, extend, slant, embolden);
-  else
-    return error;
+  RELEASE(filename);
+  return error;
 }
 
 FT_Int ft_major; /* global so that dvi.c can check the version */

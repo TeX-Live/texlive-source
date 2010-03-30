@@ -1162,6 +1162,10 @@ init_cff_font (cff_font *cff)
   cff->num_glyphs   = 0;
   cff->num_fds      = 1;
   cff->_string = cff_new_index(0);
+
+#ifdef XETEX
+  cff->ft_to_gid = NULL;
+#endif
 }
 
 cff_font *

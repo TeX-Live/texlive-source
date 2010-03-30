@@ -70,10 +70,10 @@ extern void dvi_dir   (UNSIGNED_BYTE dir);
 extern void  dvi_do_page  (long page_no,
 			   double paper_width, double paper_height,
 			   double x_offset,    double y_offset);
-extern void  dvi_scan_paper_size (long page_no,
-				  double *width, double *height,
-				  double *x_offset, double *y_offset,
-				  char *landscape);
+extern void  dvi_scan_specials (long page_no,
+				double *width, double *height,
+				double *x_offset, double *y_offset,
+				char *landscape, unsigned *minorversion);
 extern int   dvi_locate_font   (const char *name, spt_t ptsize);
 
 /* link or nolink:

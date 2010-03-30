@@ -240,13 +240,13 @@ pdf_set_compression (int level)
   return;
 }
 
-static unsigned pdf_version = 4;
+static unsigned pdf_version = PDF_VERSION_DEFAULT;
 
 void
 pdf_set_version (unsigned version)
 {
   /* Don't forget to update CIDFont_stdcc_def[] in cid.c too! */
-  if (version >= 3 && version <= 6) {
+  if (version >= PDF_VERSION_MIN && version <= PDF_VERSION_MAX) {
     pdf_version = version;
   }
 }

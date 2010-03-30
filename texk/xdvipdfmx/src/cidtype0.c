@@ -1537,6 +1537,7 @@ CIDFont_type0_t1open (CIDFont *font, const char *name,
 
 #ifdef XETEX
   font->ft_to_gid = cff_get_ft_to_gid(cffont);
+  cffont->ft_to_gid = NULL;
 #endif
 
   cff_close(cffont);
@@ -2065,5 +2066,8 @@ CIDFont_type0_t1dofont (CIDFont *font)
 void
 CIDFont_type0_release(CIDFont *font)
 {
+#ifdef XETEX
+  if (font->ft_to_gid) RELEASE(font->ft_to_gid);
+#endif
   return;
 }
