@@ -133,7 +133,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
        absolute.  This is because .aux and other such files will get
        written to the output directory, and we have to be able to read
        them from there.  We only look for the name as-is.  */
-    if (output_directory && kpse_absolute_p (nameoffile+1, false)) {
+    if (output_directory && !kpse_absolute_p (nameoffile+1, false)) {
         fname = concat3 (output_directory, DIR_SEP_STRING, nameoffile + 1);
         *f_ptr = fopen (fname, fopen_mode);
         if (*f_ptr) {

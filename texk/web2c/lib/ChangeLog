@@ -1,3 +1,8 @@
+2010-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* openclose.c (open_input): Fixed a typo.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp>, 30 Mar 2010 12:33:33.
+
 2010-03-30  Karl Berry  <karl@tug.org>
 
 	* (recorder_start): throw in pid in recorder_name so parallel builds
