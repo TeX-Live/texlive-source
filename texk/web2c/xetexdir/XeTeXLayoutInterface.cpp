@@ -30,6 +30,8 @@ use or other dealings in this Software without prior written
 authorization from the copyright holders.
 \****************************************************************************/
 
+#include "unicode/platform.h"	// We need this first
+
 #include "XeTeXLayoutInterface.h"
 
 #include "XeTeXOTLayoutEngine.h"

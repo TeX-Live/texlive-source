@@ -1,3 +1,9 @@
+2010-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapted to the ICU 4.4 distribution.
+	* configure.ac: Pass '--disable-dyload' to ICU configure:
+	neither XeTeX nor BibTeXU use plugins.
+
 2010-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Pass '--disable-threads' to ICU configure:
@@ -24,7 +30,7 @@
 
 	Slightly rearranged the icu-xetex/ source tree and built
 	an equivalent icu-3.8.1/ tree from the ICU 3.8.1 distribution
-	with some modifications and patches  for XeTeX as described in
+	with some modifications and patches for XeTeX as described in
 	icu-3.8.1-PATCHES/TL-Changes and icu-3.8.1-PATCHES/ChangeLog.
 
 2009-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>

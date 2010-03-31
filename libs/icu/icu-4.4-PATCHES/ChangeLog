@@ -1,4 +1,4 @@
-2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2010-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported icu-4.4 source tree (icu4c-4_4-src.tgz) from:
 	  http://download.icu-project.org/files/icu4c/4.4/
@@ -8,11 +8,10 @@
 	patch-22-fix-JK-adjust_for_marks, patch-23-fix-JK-GlyphPos:
 	All removed, included in icu-4.4.
 
-	* TL-Changes, patch-05-auxParam, patch-10-cross-TOOLEXEEXT,
-	patch-11-CURR_FULL_DIR, patch-12-mingw, patch-50-Vertical,
-	patch-60-KernPair, patch-70-Arabic, patch-80-Indic: Adapted.
-
-	* patch-08-avoid-rebuild: FIXME: to be decided.
+	* TL-Changes, patch-05-auxParam, patch-08-avoid-rebuild,
+	patch-10-cross-TOOLEXEEXT, patch-11-CURR_FULL_DIR,
+	patch-12-mingw, patch-50-Vertical, patch-60-KernPair,
+	patch-70-Arabic, patch-80-Indic: Adapted.
 
 	* patch-13-remove-extra-token (new): Avoid compiler warning.
 

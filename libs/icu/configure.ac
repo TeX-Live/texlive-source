@@ -6,7 +6,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([icu_version], [4.2.1])[]dnl using modified icu/source source tree
+m4_define([icu_version], [4.4])[]dnl using modified icu/source source tree
 AC_INIT([icu for TeX Live], icu_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([icu-]icu_version[/common/unicode/utypes.h])
@@ -35,7 +35,8 @@ if test "x$cache_file" != x/dev/null; then
 fi
 # Add '--disable-strict': required for MinGW32, otherwise reduce warnings.
 # Add '--disable-threads': required for FreeBSD, neither XeTeX nor BibTeXU use threads.
-icu_config="$icu_config --disable-strict --disable-threads"
+# Add '--disable-dyload': neither XeTeX nor BibTeXU use plugins, new in ICU 4.4.
+icu_config="$icu_config --disable-strict --disable-threads --disable-dyload"
 AC_SUBST([icu_config])
 
 if test "x$cross_compiling" = xyes; then

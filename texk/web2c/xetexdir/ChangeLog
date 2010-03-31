@@ -1,3 +1,8 @@
+2010-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeXLayoutInterface.cpp: #include "unicode/platform.h" first,
+	required with ICU 4.4 for MinGW32.
+
 2010-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeX_ext.c [MINGW32]: First #include <kpathsea/config.h> to
