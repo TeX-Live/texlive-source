@@ -63,6 +63,4 @@ extern void *mem_remove (void *ptr);
 #define kpse_find_file(x,y,z)     (char *) MEM_ADD(kpse_find_file(x,y,z))
 #define kpse_find_glyph(x,y,z,w)  (char *) MEM_ADD(kpse_find_glyph(x,y,z,w))
 
-#undef strdup
-#define strdup(s1)                (char *) MEM_ADD(strdup(s1))
 #endif /* _MEM_H_ */

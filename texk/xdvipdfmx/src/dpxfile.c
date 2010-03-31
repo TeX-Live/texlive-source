@@ -44,6 +44,8 @@ dpx_file_set_verbose (void)
 }
 
 
+#define mystrdup(s1)              (char *) MEM_ADD(strdup(s1))
+
 /* Kpathsea library does not check file type. */
 static int qcheck_filetype (const char *fqpn, int type);
 
@@ -538,7 +540,7 @@ dpx_find_type1_file (const char *filename)
   char  *fqpn = NULL;
 
   if (is_absolute_path(filename))
-    fqpn = strdup(filename);
+    fqpn = mystrdup(filename);
   else
     fqpn = kpse_find_file(filename, kpse_type1_format, 0);
   if (fqpn && !qcheck_filetype(fqpn, DPX_RES_TYPE_T1FONT)) {
@@ -556,7 +558,7 @@ dpx_find_truetype_file (const char *filename)
   char  *fqpn = NULL;
 
   if (is_absolute_path(filename))
-    fqpn = strdup(filename);
+    fqpn = mystrdup(filename);
   else
     fqpn = kpse_find_file(filename, kpse_truetype_format, 0);
   if (fqpn && !qcheck_filetype(fqpn, DPX_RES_TYPE_TTFONT)) {
@@ -577,7 +579,7 @@ dpx_find_opentype_file (const char *filename)
   q = ensuresuffix(filename, ".otf");
 #ifndef MIKTEX
   if (is_absolute_path(q))
-    fqpn = strdup(q);
+    fqpn = mystrdup(q);
   else
     fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
