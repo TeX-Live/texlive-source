@@ -165,4 +165,6 @@
         - changed command validation to handle a list of commands
         - prepend GUI mode command(s) to the command list
         - added support for .tcl scripts
+    2010/03/31
+        - fixed fatal bug in extention_map definition for GUI mode
 

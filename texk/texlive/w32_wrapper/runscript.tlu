@@ -1,8 +1,8 @@
 
 -- $Id$
 
-local svnrevision = string.match("$Revision$ 0", "%d+")
-local svndate     = string.match("$Date$ 2009-12-04", "[-%d]+")
+local svnrevision = string.match("$Revision$", "%d+") or "0"
+local svndate     = string.match("$Date$", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -178,6 +178,8 @@ local docstr = [[
         - changed command validation to handle a list of commands
         - prepend GUI mode command(s) to the command list
         - added support for .tcl scripts
+    2010/03/31
+        - fixed fatal bug in extention_map definition for GUI mode
 ]]
 
 -- HELPER SUBROUTINES --
@@ -484,7 +486,6 @@ local extension_map = {
 if guimode then
   -- for GUI mode wrappers we try GUI mode interpeters where possible
   extension_map['.jar'][1] = 'javaw.exe '   .. extension_map['.jar'][1]
-  extension_map['.js' ][1] = 'wscript.exe ' .. extension_map['.js' ][1]
   extension_map['.pl' ][1] = 'wperl.exe '   .. extension_map['.pl' ][1]
   extension_map['.py' ][1] = 'pythonw.exe ' .. extension_map['.py' ][1]
   extension_map['.py' ][1] = 'rubyw.exe '   .. extension_map['.py' ][1]
