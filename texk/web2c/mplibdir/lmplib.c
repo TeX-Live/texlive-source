@@ -32,7 +32,6 @@
 #  include <../lua51/lauxlib.h>
 #  include <../lua51/lualib.h>
 #endif
-#  include "../luatex-api.h"
 
 #include "mplib.h"
 #include "mplibps.h"
