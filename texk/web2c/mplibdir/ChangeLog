@@ -1,3 +1,7 @@
+2010-04-01  Taco Hoekwater <taco@elvenkind.com>
+	    
+	* Released version of MPLib 1.211
+	
 2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mplib.am (TRIPTRAP): Add mptrap.diffs.

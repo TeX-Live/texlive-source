@@ -1,4 +1,4 @@
-% $Id: mpost.w 1061 2009-05-27 13:01:37Z taco $
+% $Id: mpost.w 1219 2010-04-01 09:05:51Z taco $
 %
 % Copyright 2008-2009 Taco Hoekwater.
 %
@@ -55,6 +55,7 @@ have our customary command-line interface.
 #include <kpathsea/kpathsea.h>
 @= /*@@null@@*/ @> static char *mpost_tex_program = NULL;
 static int debug = 0; /* debugging for makempx */
+static int nokpse = 0;
 #ifdef WIN32
 #define GETCWD _getcwd
 #else
@@ -66,6 +67,8 @@ static FILE *recorder_file = NULL;
 static char *job_name = NULL;
 static char *job_area = NULL;
 static int dvitomp_only = 0;
+static int ini_version_test = false;
+@<getopt structures@>;
 
 @ Allocating a bit of memory, with error detection:
 
@@ -379,7 +382,8 @@ static int mpost_run_make_mpx (MP mp, char *mpname, char *mpxname) {
 }
 
 static int mpost_run_dvitomp (char *dviname, char *mpxname) {
-    int i, ret;
+    int ret;
+    size_t i;
     char *m, *d;
     mpx_options * mpxopt;
     char *mpversion = mp_metapost_version () ;
@@ -433,6 +437,7 @@ static int mpost_run_dvitomp (char *dviname, char *mpxname) {
     mpost_xfree(mpxopt->banner);
     mpost_xfree(mpxopt);
     mpost_xfree(mpversion);
+    puts(""); /* nicer in case of error */
     return ret;
 }
 
@@ -449,7 +454,7 @@ static int get_random_seed (void) {
 #if defined (HAVE_GETTIMEOFDAY)
   struct timeval tv;
   gettimeofday(&tv, NULL);
-  ret = (tv.tv_usec + 1000000 * tv.tv_usec);
+  ret = (int)(tv.tv_usec + 1000000 * tv.tv_usec);
 #elif defined (HAVE_FTIME)
   struct timeb tb;
   ftime(&tb);
@@ -591,7 +596,7 @@ static void internal_set_option(const char *opt) {
    s = mpost_xstrdup(opt) ;
    v = strstr(s,"=") ;
    if (v==NULL) {
-     v="1";
+     v = xstrdup("1");
    } else {
      *v='\0'; /* terminates |s| */
      v++;
@@ -669,149 +674,182 @@ static void *mpost_open_file(MP mp, const char *fname, const char *fmode, int ft
 if (!nokpse)
   options->open_file = mpost_open_file;
 
+@  
+@<getopt structures@>=
+#define ARGUMENT_IS(a) STREQ (mpost_options[optionid].name, a)
+
+/* SunOS cc can't initialize automatic structs, so make this static.  */
+static struct option mpost_options[]
+  = { { "mem",                       1, 0, 0 },
+      { "help",                      0, 0, 0 },
+      { "debug",                     0, &debug, 1 },
+      { "no-kpathsea",               0, &nokpse, 1 },
+      { "dvitomp",                   0, &dvitomp_only, 1 },
+      { "ini",                       0, &ini_version_test, 1 },
+      { "interaction",               1, 0, 0 },
+      { "halt-on-error",             0, 0, 0 },
+      { "kpathsea-debug",            1, 0, 0 },
+      { "progname",                  1, 0, 0 },
+      { "version",                   0, 0, 0 },
+      { "recorder",                  0, &recorder_enabled, 1 },
+      { "file-line-error-style",     0, 0, 0 },
+      { "no-file-line-error-style",  0, 0, 0 },
+      { "file-line-error",           0, 0, 0 },
+      { "no-file-line-error",        0, 0, 0 },
+      { "jobname",                   1, 0, 0 },
+      { "output-directory",          1, 0, 0 },
+      { "s",                         1, 0, 0 },
+      { "parse-first-line",          0, 0, 0 },
+      { "no-parse-first-line",       0, 0, 0 },
+      { "8bit",                      0, 0, 0 },
+      { "T",                         0, 0, 0 },
+      { "troff",                     0, 0, 0 },
+      { "tex",                       1, 0, 0 },
+      { 0, 0, 0, 0 } };
+
+
 
 @ Parsing the commandline options.
 
-@d option_is(A) ((strncmp(argv[a],"--" A, strlen(A)+2)==0) || 
-       (strncmp(argv[a],"-" A, strlen(A)+1)==0))
-@d option_arg(B) (mpost_optarg != NULL && strncmp(mpost_optarg,B, strlen(B))==0)
-
-
 @<Read and set command line options@>=
 {
-  char *mpost_optarg;
-  boolean ini_version_test = false;
-  while (++a<argc) {
-    mpost_optarg = strstr(argv[a],"=") ;
-    if (mpost_optarg!=NULL) {
-      mpost_optarg++;
-      if (*mpost_optarg == '\0')  mpost_optarg=NULL;
+  int g;   /* `getopt' return code.  */
+  int optionid;
+  for (;;) {
+    g = getopt_long_only (argc, argv, "+", mpost_options, &optionid);
+
+    if (g == -1) /* End of arguments, exit the loop.  */
+      break;
+
+    if (g == '?') { /* Unknown option.  */
+      fprintf(stdout,"fatal error: %s: unknown option %s\n", argv[0], argv[optind]);
+      exit(EXIT_FAILURE);
     }
-    if (option_is("ini")) {
-      ini_version_test = true;
-    } else if (option_is("s")) {
-	char *s_head = argv[a]; 
-        while (*s_head!='s') s_head++;
-        s_head++;
-        if (!*s_head) {
-	  if (((a+1)<argc) && (*(argv[(a+1)])!='-')) {
-            internal_set_option(argv[++a]);
-          } else {
-            fprintf(stdout,"fatal error: %s: missing -s argument\n", argv[0]);
-            exit(EXIT_FAILURE);
-          }
-        } else {
-          internal_set_option(s_head);
-        }
-    } else if (option_is("debug")) {
-      debug = 1;
-    } else if (option_is ("kpathsea-debug")) {
-      if (mpost_optarg!=NULL)
-        kpathsea_debug |= atoi (mpost_optarg);
-    } else if (option_is("mem")) {
-      if (mpost_optarg!=NULL) {
-        mpost_xfree(options->mem_name);
-        options->mem_name = mpost_xstrdup(mpost_optarg);
-        if (user_progname == NULL) 
-	    user_progname = mpost_optarg;
-      }
-    } else if (option_is("jobname")) {
-      if (mpost_optarg!=NULL) {
+
+    if (ARGUMENT_IS ("kpathsea-debug")) {
+      kpathsea_debug |= atoi (optarg);
+
+    } else if (ARGUMENT_IS("jobname")) {
+      if (optarg!=NULL) {
         mpost_xfree(options->job_name);
-        options->job_name = mpost_xstrdup(mpost_optarg);
+        options->job_name = mpost_xstrdup(optarg);
       }
-    } else if (option_is ("progname")) {
-      user_progname = mpost_optarg;
-    } else if (option_is("troff") || option_is("T")) {
-      options->troff_mode = (int)true;
-    } else if (option_is("recorder")) {
-      recorder_enabled = true;
-    } else if (option_is ("tex")) {
-      mpost_tex_program = mpost_optarg;
-    } else if (option_is("interaction")) {
-      if (option_arg("batchmode")) {
+
+    } else if (ARGUMENT_IS ("progname")) {
+      user_progname = optarg;
+
+    } else if (ARGUMENT_IS ("mem")) {
+      if (optarg!=NULL) {
+        mpost_xfree(options->mem_name);
+        options->mem_name = mpost_xstrdup(optarg);
+        if (user_progname == NULL) 
+	      user_progname = optarg;
+      }
+
+    } else if (ARGUMENT_IS ("interaction")) {
+      if (STREQ (optarg, "batchmode")) {
         options->interaction = mp_batch_mode;
-      } else if (option_arg("nonstopmode")) {
+      } else if (STREQ (optarg, "nonstopmode")) {
         options->interaction = mp_nonstop_mode;
-      } else if (option_arg("scrollmode")) {
+      } else if (STREQ (optarg, "scrollmode")) {
         options->interaction = mp_scroll_mode;
-      } else if (option_arg("errorstopmode")) {
+      } else if (STREQ (optarg, "errorstopmode")) {
         options->interaction = mp_error_stop_mode;
       } else {
-        fprintf(stdout,"warning: %s: unknown option argument %s\n", argv[0], argv[a]);
+        fprintf(stdout,"Ignoring unknown argument `%s' to --interaction", optarg);
       }
-    } else if (option_is("no-kpathsea")) {
-      nokpse=true;
-    } else if (option_is("file-line-error")) {
+    } else if (ARGUMENT_IS("troff") || 
+               ARGUMENT_IS("T")) {
+      options->troff_mode = (int)true;
+    } else if (ARGUMENT_IS ("tex")) {
+      mpost_tex_program = optarg;
+    } else if (ARGUMENT_IS("file-line-error") || 
+               ARGUMENT_IS("file-line-error-style")) {
       options->file_line_error_style=true;
-    } else if (option_is("no-file-line-error")) {
+    } else if (ARGUMENT_IS("no-file-line-error") || 
+               ARGUMENT_IS("no-file-line-error-style")) {
       options->file_line_error_style=false;
-    } else if (option_is("dvitomp")) {
-      dvitomp_only = 1;
-    } else if (option_is("help")) {
+    } else if (ARGUMENT_IS("help")) {
       if (dvitomp_only) {
         @<Show short help and exit@>;
       } else {
         @<Show help and exit@>;
       }
-    } else if (option_is("version")) {
+    } else if (ARGUMENT_IS("version")) {
       @<Show version and exit@>;
-    } else if (option_is("8bit") ||
-               option_is("parse-first-line")) {
+    } else if (ARGUMENT_IS("s")) {
+      if (strchr(optarg,'=')==NULL) {
+        fprintf(stdout,"fatal error: %s: missing -s argument\n", argv[0]);
+        exit (EXIT_FAILURE);
+      } else {
+        internal_set_option(optarg);
+      }   
+    } else if (ARGUMENT_IS("halt-on-error")) {
+      options->halt_on_error = true;
+    } else if (ARGUMENT_IS("8bit") ||
+               ARGUMENT_IS("parse-first-line")) {
       /* do nothing, these are always on */
-    } else if (option_is("halt-on-error")) {
-	options->halt_on_error = true;
-    } else if (option_is("translate-file") ||
-               option_is("output-directory") ||
-               option_is("no-parse-first-line")) {
-      fprintf(stdout,"warning: %s: unimplemented option %s\n", argv[0], argv[a]);
-    } else if (option_is("")) {
-      fprintf(stdout,"fatal error: %s: unknown option %s\n", argv[0], argv[a]);
-      exit(EXIT_FAILURE);
-    } else {
-      break;
-    }
-  }
+    } else if (ARGUMENT_IS("translate-file") ||
+               ARGUMENT_IS("output-directory") ||
+               ARGUMENT_IS("no-parse-first-line")) {
+      fprintf(stdout,"warning: %s: unimplemented option %s\n", argv[0], argv[optind]);
+    } 
+  } 
   options->ini_version = (int)ini_version_test;
 }
+
+@  
+@<getopt structures@>=
+#define option_is(a) STREQ (dvitomp_options[optionid].name, a)
+
+/* SunOS cc can't initialize automatic structs, so make this static.  */
+static struct option dvitomp_options[]
+  = { { "help",                      0, 0, 0 },
+      { "no-kpathsea",               0, &nokpse, 1 },
+      { "kpathsea-debug",            1, 0, 0 },
+      { "progname",                  1, 0, 0 },
+      { "version",                   0, 0, 0 },
+      { 0, 0, 0, 0 } };
+
+
 
 @ 
 @<Read and set dvitomp command line options@>=
 {
-  char *mpost_optarg;
-  boolean ini_version_test = false;
-  while (++a<argc) {
-    mpost_optarg = strstr(argv[a],"=") ;
-    if (mpost_optarg!=NULL) {
-      mpost_optarg++;
-      if (*mpost_optarg == '\0')  mpost_optarg=NULL;
+  int g;   /* `getopt' return code.  */
+  int optionid;
+  for (;;) {
+    g = getopt_long_only (argc, argv, "+", dvitomp_options, &optionid);
+
+    if (g == -1) /* End of arguments, exit the loop.  */
+      break;
+
+    if (g == '?') { /* Unknown option.  */
+      fprintf(stdout,"fatal error: %s: unknown option %s\n", argv[0], argv[optind]);
+      exit(EXIT_FAILURE);
     }
-    if (option_is("debug")) {
-      debug = 1;
-    } else if (option_is ("kpathsea-debug")) {
-      if (mpost_optarg!=NULL)
-        kpathsea_debug |= atoi (mpost_optarg);
+    if (option_is ("kpathsea-debug")) {
+      if (optarg!=NULL)
+        kpathsea_debug |= atoi (optarg);
     } else if (option_is ("progname")) {
-      user_progname = mpost_optarg;
-    } else if (option_is("no-kpathsea")) {
-      nokpse=true;
+      user_progname = optarg;
     } else if (option_is("help")) {
       @<Show short help and exit@>;
     } else if (option_is("version")) {
       @<Show version and exit@>;
-    } else if (option_is("")) {
-      fprintf(stdout,"fatal error: %s: unknown option %s\n", argv[0], argv[a]);
-      exit(EXIT_FAILURE);
-    } else {
-      break;
     }
   }
-  options->ini_version = (int)ini_version_test;
 }
 
 @ 
 @<Show help...@>=
 {
+char *s = mp_metapost_version();
+if (dvitomp_only)
+  fprintf(stdout, "\n" "This is dvitomp %s\n", s);
+else
+  fprintf(stdout, "\n" "This is MetaPost %s\n", s);
+mpost_xfree(s);
 fprintf(stdout,
 "\n"
 "Usage: mpost [OPTION] [&MEMNAME] [MPNAME[.mp]] [COMMANDS]\n"
@@ -833,13 +871,14 @@ fprintf(stdout,
 "  [-no]-file-line-error     disable/enable file:line:error style messages\n"
 );
 fprintf(stdout,
+"  -debug                    print debugging info and leave temporary files in place\n"
 "  -kpathsea-debug=NUMBER    set path searching debugging flags according to\n"
 "                            the bits of NUMBER\n"
 "  -mem=MEMNAME or &MEMNAME  use MEMNAME instead of program name or a %%& line\n"
 "  -recorder                 enable filename recorder\n"
 "  -troff                    set prologues:=1 and assume TEXPROGRAM is really troff\n"
-"  -sINTERNAL=\"STRING\"       set internal INTERNAL to the string value STRING\n"
-"  -sINTERNAL=NUMBER         set internal INTERNAL to the integer value NUMBER\n"
+"  -s INTERNAL=\"STRING\"      set internal INTERNAL to the string value STRING\n"
+"  -s INTERNAL=NUMBER        set internal INTERNAL to the integer value NUMBER\n"
 "  -help                     display this help and exit\n"
 "  -version                  output version information and exit\n"
 "\n"
@@ -851,6 +890,12 @@ fprintf(stdout,
 @ 
 @<Show short help...@>=
 {
+char *s = mp_metapost_version();
+if (dvitomp_only)
+  fprintf(stdout, "\n" "This is dvitomp %s\n", s);
+else
+  fprintf(stdout, "\n" "This is MetaPost %s\n", s);
+mpost_xfree(s);
 fprintf(stdout,
 "\n"
 "Usage: dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
@@ -902,10 +947,10 @@ input.
   mpost_xfree(options->command_line);
   options->command_line = mpost_xmalloc(command_line_size);
   strcpy(options->command_line,"");
-  if (a<argc) {
+  if (optind<argc) {
     k=0;
-    for(;a<argc;a++) {
-      char *c = argv[a];
+    for(;optind<argc;optind++) {
+      char *c = argv[optind];
       while (*c != '\0') {
 	    if (k<(command_line_size-1)) {
           options->command_line[k++] = *c;
@@ -1107,12 +1152,9 @@ if (options->job_name != NULL) {
   if (tmp_job == NULL) {
     tmp_job = mpost_xstrdup("mpout");
   } else {
-    size_t i = strlen(tmp_job);
-    if (i>3
-        && *(tmp_job+i-3)=='.' 
-        && *(tmp_job+i-2)=='m' 
-        && *(tmp_job+i-1)=='p')
-    *(tmp_job+i-3)='\0';
+    char *ext = strrchr(tmp_job,'.');
+    if (ext != NULL)
+	*ext = '\0';
   }
 }
 /* now split |tmp_job| into |job_area| and |job_name| */
@@ -1150,8 +1192,6 @@ int main (int argc, char **argv) { /* |start_here| */
   int history; /* the exit status */
   MP mp; /* a metapost instance */
   struct MP_options * options; /* instance options */
-  int a=0; /* argc counter */
-  boolean nokpse = false; /* switch to {\it not} enable kpse */
   char *user_progname = NULL; /* If the user overrides |argv[0]| with {\tt -progname}.  */
   options = mp_options();
   options->ini_version       = (int)false;
@@ -1164,12 +1204,12 @@ int main (int argc, char **argv) { /* |start_here| */
   }
   if (dvitomp_only) {
     char *mpx = NULL, *dvi = NULL;
-    if (a==argc) {
+    if (optind>=argc) {
       /* error ? */
     } else {
-      dvi = argv[a++];
-      if (a<argc) {
-        mpx = argv[a++];
+      dvi = argv[optind++];
+      if (optind<argc) {
+        mpx = argv[optind++];
       }
     }
     if (dvi == NULL) {
@@ -1188,7 +1228,7 @@ int main (int argc, char **argv) { /* |start_here| */
     kpse_set_program_name(argv[0], user_progname);  
   }
   @= /*@@=nullpass@@*/ @> 
-  if(putenv((char *)"engine=metapost"))
+  if(putenv(xstrdup("engine=metapost")))
     fprintf(stdout,"warning: could not set up $engine\n");
   options->main_memory       = setup_var (50000,"main_memory",nokpse);
   options->hash_size         = (unsigned)setup_var (16384,"hash_size",nokpse);

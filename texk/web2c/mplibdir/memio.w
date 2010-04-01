@@ -53,6 +53,26 @@
 #include <string.h>
 #include "mplib.h"
 #include "mpmp.h"
+static void swap_items (char *p,  int nitems,  size_t size);
+/* If we have these macros, use them, as they provide a better guide to
+   the endianess when cross-compiling. */
+#if defined (BYTE_ORDER) && defined (BIG_ENDIAN) && defined (LITTLE_ENDIAN)
+#ifdef WORDS_BIGENDIAN
+#undef WORDS_BIGENDIAN
+#endif
+#if BYTE_ORDER == BIG_ENDIAN
+#define WORDS_BIGENDIAN
+#endif
+#endif
+/* More of the same, but now NeXT-specific. */
+#ifdef NeXT
+#ifdef WORDS_BIGENDIAN
+#undef WORDS_BIGENDIAN
+#endif
+#ifdef __BIG_ENDIAN__
+#define WORDS_BIGENDIAN
+#endif
+#endif
 #include "mpmemio.h" /* internal header */
 
 @ @(mpmemio.h@>=
@@ -87,7 +107,7 @@ incompatible with the present \MP\ table sizes, etc.
 @(mpmemio.h@>=
 extern boolean mp_load_mem_file (MP mp);
 
-@ @c 
+@ @c
 boolean mp_load_mem_file (MP mp) {
   integer k; /* all-purpose index */
   pointer p,q; /* all-purpose pointers */
@@ -107,13 +127,88 @@ OFF_BASE:
    return false;
 }
 
+@ If we want mem files to be shareable between different endianness architectures,
+we have to swap some of the items so that everything turns out right.
+Code borrowed from |texmfmp.c|.
+
+Make the NITEMS items pointed at by P, each of size SIZE, be the
+   opposite-endianness of whatever they are now.  */
+
+@d SWAP(x, y) temp = (x); (x) = (y); (y) = temp
+
+@c
+static void
+swap_items (char *p,  int nitems,  size_t size)
+{
+  char temp;
+#if !defined (WORDS_BIGENDIAN)
+  /* Since `size' does not change, we can write a while loop for each
+     case, and avoid testing `size' for each time.  */
+  switch (size)
+    {
+    /* 16-byte items happen on the DEC Alpha machine when we are not
+       doing sharable memory dumps.  */
+    case 16:
+      while (nitems--)
+        {
+          SWAP (p[0], p[15]);
+          SWAP (p[1], p[14]);
+          SWAP (p[2], p[13]);
+          SWAP (p[3], p[12]);
+          SWAP (p[4], p[11]);
+          SWAP (p[5], p[10]);
+          SWAP (p[6], p[9]);
+          SWAP (p[7], p[8]);
+          p += size;
+        }
+      break;
+
+    case 8:
+      while (nitems--)
+        {
+          SWAP (p[0], p[7]);
+          SWAP (p[1], p[6]);
+          SWAP (p[2], p[5]);
+          SWAP (p[3], p[4]);
+          p += size;
+        }
+      break;
+
+    case 4:
+      while (nitems--)
+        {
+          SWAP (p[0], p[3]);
+          SWAP (p[1], p[2]);
+          p += size;
+        }
+      break;
+
+    case 2:
+      while (nitems--)
+        {
+          SWAP (p[0], p[1]);
+          p += size;
+        }
+      break;
+
+    case 1:
+      /* Nothing to do.  */
+      break;
+
+    default:
+      fprintf (stderr, "Can't swap a %d-byte item for (un)dumping", (int)size);
+      exit(1);
+  }
+#endif
+}
+
 @ Mem files consist of |memory_word| items, and we use the following
 macros to dump words of different types:
 
-@d dump_wd(A)   { WW=(A);       (mp->write_binary_file)(mp,mp->mem_file,&WW,sizeof(WW)); }
-@d dump_int(A)  { int cint=(A); (mp->write_binary_file)(mp,mp->mem_file,&cint,sizeof(cint)); }
-@d dump_hh(A)   { WW.hh=(A);    (mp->write_binary_file)(mp,mp->mem_file,&WW,sizeof(WW)); }
-@d dump_qqqq(A) { WW.qqqq=(A);  (mp->write_binary_file)(mp,mp->mem_file,&WW,sizeof(WW)); }
+@d dump_wd(A)   { WW=(A);       swap_items((char *)&WW,1,sizeof(WW)); (mp->write_binary_file)(mp,mp->mem_file,&WW,sizeof(WW)); }
+@d dump_int(A)  { int cint=(A); swap_items((char *)&cint,1,sizeof(cint)); (mp->write_binary_file)(mp,mp->mem_file,&cint,sizeof(cint)); }
+@d dump_hh(A)   { WW.hh=(A);    swap_items((char *)&WW,1,sizeof(WW)); (mp->write_binary_file)(mp,mp->mem_file,&WW,sizeof(WW)); }
+@d dump_qqqq(A) { WW.qqqq=(A);  swap_items((char *)&WW,1,sizeof(WW)); (mp->write_binary_file)(mp,mp->mem_file,&WW,sizeof(WW)); }
 @d dump_string(A) { dump_int((int)(strlen(A)+1));
                     (mp->write_binary_file)(mp,mp->mem_file,A,strlen(A)+1); }
 
@@ -126,6 +221,7 @@ read an integer value |x| that is supposed to be in the range |a<=x<=b|.
   void *A_ptr = &A;
   (mp->read_binary_file)(mp, mp->mem_file,&A_ptr,&wanted);
   if (wanted!=sizeof(A)) goto OFF_BASE;
+  swap_items(A_ptr,1,wanted); 
 } while (0)
 
 @d mgetw(A) do {
@@ -133,6 +229,7 @@ read an integer value |x| that is supposed to be in the range |a<=x<=b|.
   void *A_ptr = &A;
   (mp->read_binary_file)(mp, mp->mem_file,&A_ptr,&wanted);
   if (wanted!=sizeof(A)) goto OFF_BASE;
+  swap_items(A_ptr,1,wanted); 
 } while (0)
 
 @d undump_wd(A)   { mgetw(WW); A=WW; }

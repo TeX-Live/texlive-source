@@ -32,7 +32,7 @@
 #  include <../lua51/lauxlib.h>
 #  include <../lua51/lualib.h>
 #endif
-#include "../luatex-api.h"
+#  include "../luatex-api.h"
 
 #include "mplib.h"
 #include "mplibps.h"
@@ -237,7 +237,7 @@ static char *mplib_find_file(MP mp, const char *fname, const char *fmode, int ft
     lua_getfield(L, LUA_REGISTRYINDEX, "mplib_file_finder");
     if (lua_isfunction(L, -1)) {
         char *s = NULL;
-        const char *x = NULL;
+	const char *x = NULL;
         lua_pushstring(L, fname);
         lua_pushstring(L, fmode);
         if (ftype >= mp_filetype_text) {
@@ -421,12 +421,18 @@ static int mplib_wrapresults(lua_State * L, mp_run_data *res, int status)
 
 static int mplib_execute(lua_State * L)
 {
-    MP *mp_ptr = is_mp(L, 1);
+    MP *mp_ptr; 
+    if (lua_gettop(L)!=2) {
+        lua_pushnil(L);
+	return 1;
+    }
+    mp_ptr = is_mp(L, 1);
     if (*mp_ptr != NULL && lua_isstring(L, 2)) {
         size_t l;
-        const char *s = lua_tolstring(L, 2, &l);
+        char *s = xstrdup(lua_tolstring(L, 2, &l));
         int h = mp_execute(*mp_ptr, s, l);
         mp_run_data *res = mp_rundata(*mp_ptr);
+	xfree(s);
         return mplib_wrapresults(L, res, h);
     } else {
         lua_pushnil(L);
@@ -455,13 +461,14 @@ static int mplib_char_dimension(lua_State * L, int t)
 {
   MP *mp_ptr = is_mp(L, 1);
   if (*mp_ptr != NULL) {
-    const char *fname = luaL_checkstring(L,2);
+    char *fname = xstrdup(luaL_checkstring(L,2));
     int charnum = (int)luaL_checkinteger(L,3);
     if (charnum<0 || charnum>255) {
       lua_pushnumber(L, (lua_Number)0);
     } else {
       lua_pushnumber(L,(lua_Number)mp_get_char_dimension(*mp_ptr,fname,charnum,t));
     }
+    xfree(fname);
   } else {
     lua_pushnumber(L, (lua_Number)0);
   }
