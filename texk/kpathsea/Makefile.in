@@ -1650,13 +1650,11 @@ rebuild: all
 
 $(libkpathsea_la_OBJECTS): paths.h kpathsea.h
 
-#
-#
-#
 paths.h: stamp-paths
-stamp-paths: texmf.cnf
+stamp-paths: texmf.cnf bsnl.awk
 	echo "/* paths.h: Generated from texmf.cnf. */" >paths.tmp
-	sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' $< \
+	awk -f $(srcdir)/bsnl.awk $(srcdir)/texmf.cnf \
+	| sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' \
 	| grep '^[ 	]*[A-Z0-9_]*[ 	=]' \
 	| sed '/^$$/d' \
 	| sed 's/^\([^ 	=]*\)[ 	]*=*[ 	]*\(.*\)/#ifndef DEFAULT_\1%#define DEFAULT_\1 "\2"%#endif/' \

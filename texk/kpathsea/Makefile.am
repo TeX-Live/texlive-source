@@ -192,7 +192,7 @@ kpseinclude_HEADERS = \
 paths.h: stamp-paths
 stamp-paths: texmf.cnf bsnl.awk
 	echo "/* paths.h: Generated from texmf.cnf. */" >paths.tmp
-	awk -f $(srcdir)/bsnl.awk texmf.cnf \
+	awk -f $(srcdir)/bsnl.awk $(srcdir)/texmf.cnf \
 	| sed -e 's/%.*//' -e 's/^[ 	]*//' -e 's/[ 	]*$$//' \
 	| grep '^[ 	]*[A-Z0-9_]*[ 	=]' \
 	| sed '/^$$/d' \
