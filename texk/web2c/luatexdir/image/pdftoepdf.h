@@ -18,22 +18,20 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdftoepdf.h 2331 2009-04-18 16:39:50Z hhenkel $ */
+/* $Id: pdftoepdf.h 3319 2009-12-27 20:05:36Z hhenkel $ */
 
 #ifndef PDFTOEPDF_H
 #  define PDFTOEPDF_H
 
 #  include "image.h"
 
-void read_pdf_info(image_dict *, integer, integer);
+void read_pdf_info(image_dict *, int, int, img_readtype_e);
 void unrefPdfDocument(char *);
-void write_additional_epdf_objects(void);
-void write_epdf(image_dict *);
+void write_epdf(PDF, image_dict *);
 void epdf_check_mem(void);
 
 /* epdf.c --- this should go in an own header file */
-extern integer get_fontfile_num(int);
-extern integer get_fontname_num(int);
+
 extern void epdf_free(void);
 
 #endif                          /* PDFTOEPDF_H */

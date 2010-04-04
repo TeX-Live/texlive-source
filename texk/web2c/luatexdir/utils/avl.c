@@ -1,4 +1,5 @@
 /* Produced by texiweb from libavl.w. */
+/* *INDENT-OFF* */
 
 /* libavl - library for manipulation of binary trees.
    Copyright (C) 1998-2002, 2004 Free Software Foundation, Inc.
@@ -105,7 +106,8 @@ void **avl_probe(struct avl_table *tree, void *item)
 
         if (p->avl_balance != 0)
             z = q, y = p, k = 0;
-        da[k++] = dir = cmp > 0;
+	dir = cmp > 0;
+        da[k++] = (unsigned char)dir;
     }
 
     n = q->avl_link[dir] =
@@ -227,7 +229,7 @@ void *avl_delete(struct avl_table *tree, const void *item)
         int dir = cmp > 0;
 
         pa[k] = p;
-        da[k++] = dir;
+        da[k++] = (unsigned char)dir;
 
         p = p->avl_link[dir];
         if (p == NULL)
@@ -794,3 +796,4 @@ void *(avl_assert_delete) (struct avl_table * table, void *item) {
     assert(p != NULL);
     return p;
 }
+/* *INDENT-ON* */

@@ -17,17 +17,11 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "luatex-api.h"
-#include <ptexlib.h>
-#include "tokens.h"
+#include "lua/luatex-api.h"
+#include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: ltokenlib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/ltokenlib.c $";
-
-static int max_command = 0;
-static int null_cs = 0;
-
-#define  protected_token 0x1C00001
+    "$Id: ltokenlib.c 3404 2010-01-28 11:17:10Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/ltokenlib.c $";
 
 #define  is_valid_token(L,i)  (lua_istable(L,i) && lua_objlen(L,i)==3)
 #define  get_token_cmd(L,i)  lua_rawgeti(L,i,1)
@@ -36,17 +30,28 @@ static int null_cs = 0;
 #define  is_active_string(s) (strlen((char *)s)>3 && *s==0xEF && *(s+1)==0xBF && *(s+2)==0xBF)
 
 
+static unsigned char *get_cs_text(int cs)
+{
+    if (cs == null_cs)
+        return (unsigned char *) xstrdup("\\csname\\endcsname");
+    else if ((cs_text(cs) < 0) || (cs_text(cs) >= str_ptr))
+        return (unsigned char *) xstrdup("");
+    else
+        return (unsigned char *) makecstring(cs_text(cs));
+}
+
+
 static int test_expandable(lua_State * L)
 {
-    integer cmd = -1;
+    int cmd = -1;
     if (is_valid_token(L, -1)) {
         get_token_cmd(L, -1);
         if (lua_isnumber(L, -1)) {
-            cmd = lua_tointeger(L, -1);
+            cmd = (int) lua_tointeger(L, -1);
         } else if (lua_isstring(L, -1)) {
             cmd = get_command_id(lua_tostring(L, -1));
         }
-        if (cmd > max_command) {
+        if (cmd > max_command_cmd) {
             lua_pushboolean(L, 1);
         } else {
             lua_pushboolean(L, 0);
@@ -60,15 +65,15 @@ static int test_expandable(lua_State * L)
 
 static int test_protected(lua_State * L)
 {
-    integer chr = -1;
+    int chr = -1;
     if (is_valid_token(L, -1)) {
         get_token_chr(L, -1);
         if (lua_isnumber(L, -1)) {
-            chr = lua_tointeger(L, -1);
+            chr = (int) lua_tointeger(L, -1);
         } else if (lua_isstring(L, -1)) {
             chr = get_command_id(lua_tostring(L, -1));
         }
-        if (fixmem[fixmem[chr].hhrh].hhlh == protected_token) {
+        if (token_info(token_link(chr)) == protected_token) {
             lua_pushboolean(L, 1);
         } else {
             lua_pushboolean(L, 0);
@@ -82,15 +87,14 @@ static int test_protected(lua_State * L)
 static int test_activechar(lua_State * L)
 {
     if (is_valid_token(L, -1)) {
-        str_number n;
-        integer cs = 0;
+        unsigned char *s;
+        int cs = 0;
         get_token_cs(L, -1);
         if (lua_isnumber(L, -1)) {
-            cs = lua_tointeger(L, -1);
+            cs = (int) lua_tointeger(L, -1);
         }
         lua_pop(L, 1);
-        if (cs != 0 && (n = zget_cs_text(cs)) && n > 0) {
-            unsigned char *s = (unsigned char *) makecstring(n);
+        if (cs != 0 && ((s = get_cs_text(cs)) != (unsigned char *) NULL)) {
             if (is_active_string(s)) {
                 free(s);
                 lua_pushboolean(L, 1);
@@ -110,7 +114,7 @@ static int run_get_command_name(lua_State * L)
     if (is_valid_token(L, -1)) {
         get_token_cmd(L, -1);
         if (lua_isnumber(L, -1)) {
-            cs = lua_tointeger(L, -1);
+            cs = (int) lua_tointeger(L, -1);
             lua_pushstring(L, command_names[cs].cmd_name);
         } else {
             lua_pushstring(L, "");
@@ -124,23 +128,22 @@ static int run_get_command_name(lua_State * L)
 
 static int run_get_csname_name(lua_State * L)
 {
-    int cs, cmd, n;
-
+    int cs, cmd;
+    unsigned char *s;
     if (is_valid_token(L, -1)) {
         get_token_cmd(L, -1);
         if (lua_isnumber(L, -1)) {
-            cmd = lua_tointeger(L, -1);
+            cmd = (int) lua_tointeger(L, -1);
         }
         lua_pop(L, 1);
         cs = 0;
         get_token_cs(L, -1);
         if (lua_isnumber(L, -1)) {
-            cs = lua_tointeger(L, -1);
+            cs = (int) lua_tointeger(L, -1);
         }
         lua_pop(L, 1);
 
-        if (cs != 0 && (n = zget_cs_text(cs)) && n >= 0) {
-            unsigned char *s = (unsigned char *) makecstring(n);
+        if (cs != 0 && ((s = get_cs_text(cs)) != (unsigned char *) NULL)) {
             if (is_active_string(s))
                 lua_pushstring(L, (char *) (s + 3));
             else
@@ -171,9 +174,9 @@ static int run_get_csname_id(lua_State * L)
     size_t k, cs = 0;
     if (lua_isstring(L, -1)) {
         s = lua_tolstring(L, -1, &k);
-        cs = string_lookup(s, k);
+        cs = (size_t) string_lookup(s, k);
     }
-    lua_pushnumber(L, cs);
+    lua_pushnumber(L, (lua_Number) cs);
     return 1;
 }
 
@@ -212,17 +215,17 @@ static int run_lookup(lua_State * L)
 {
     const char *s;
     size_t l;
-    integer cs, cmd, chr;
+    int cs, cmd, chr;
     int save_nncs;
     if (lua_isstring(L, -1)) {
         s = lua_tolstring(L, -1, &l);
         if (l > 0) {
             save_nncs = no_new_control_sequence;
             no_new_control_sequence = true;
-            cs = id_lookup((last + 1), l);      /* cleans up the lookup buffer */
+            cs = id_lookup((last + 1), (int) l);        /* cleans up the lookup buffer */
             cs = string_lookup(s, l);
-            cmd = zget_eq_type(cs);
-            chr = zget_equiv(cs);
+            cmd = eq_type(cs);
+            chr = equiv(cs);
             make_token_table(L, cmd, chr, cs);
             no_new_control_sequence = save_nncs;
             return 1;
@@ -234,11 +237,11 @@ static int run_lookup(lua_State * L)
 
 static int run_build(lua_State * L)
 {
-    integer cmd, chr, cs;
+    int cmd, chr, cs;
     if (lua_isnumber(L, 1)) {
         cs = 0;
-        chr = lua_tointeger(L, 1);
-        cmd = luaL_optinteger(L, 2, get_char_cat_code(chr));
+        chr = (int) lua_tointeger(L, 1);
+        cmd = (int) luaL_optinteger(L, 2, get_char_cat_code(chr));
         if (cmd == 0 || cmd == 9 || cmd == 14 || cmd == 15) {
             fprintf(stdout,
                     "\n\nluatex error: not a good token.\nCatcode %i can not be returned, so I replaced it by 12 (other)",
@@ -248,8 +251,8 @@ static int run_build(lua_State * L)
         }
         if (cmd == 13) {
             cs = active_to_cs(chr, false);
-            cmd = zget_eq_type(cs);
-            chr = zget_equiv(cs);
+            cmd = eq_type(cs);
+            chr = equiv(cs);
         }
         make_token_table(L, cmd, chr, cs);
         return 1;
@@ -277,7 +280,5 @@ static const struct luaL_reg tokenlib[] = {
 int luaopen_token(lua_State * L)
 {
     luaL_register(L, "token", tokenlib);
-    max_command = get_max_command();
-    null_cs = get_nullcs();
     return 1;
 }

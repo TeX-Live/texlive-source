@@ -17,13 +17,13 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pagetree.h 2325 2009-04-18 11:24:38Z hhenkel $ */
+/* $Id: pagetree.h 3261 2009-12-18 11:38:21Z taco $ */
 
 #ifndef PAGETREE_H
 #  define PAGETREE_H
 
-integer output_pages_tree(void);
-integer pdf_do_page_divert(integer, integer);
-void pdf_do_page_undivert(integer, integer);
+int output_pages_tree(PDF);
+int pdf_do_page_divert(PDF, int, int);
+void pdf_do_page_undivert(int, int);
 
 #endif

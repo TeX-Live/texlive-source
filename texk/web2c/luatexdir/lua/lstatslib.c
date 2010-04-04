@@ -1,6 +1,6 @@
 /* lstatslib.c
    
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,13 +17,12 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "luatex-api.h"
-#include <ptexlib.h>
-#include "inc-extra.h"
-
-
 static const char _svn_version[] =
-    "$Id: lstatslib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/lstatslib.c $";
+    "$Id: lstatslib.c 3477 2010-03-12 13:59:34Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/lstatslib.c $";
+
+#include "lua/luatex-api.h"
+#include "ptexlib.h"
 
 typedef struct statistic {
     const char *name;
@@ -32,48 +31,147 @@ typedef struct statistic {
 } statistic;
 
 typedef const char *(*charfunc) (void);
-typedef integer(*intfunc) (void);
+typedef lua_Number(*numfunc) (void);
+typedef int (*intfunc) (void);
 
 static const char *getbanner(void)
 {
-    return ptexbanner;
+    return (const char *) ptexbanner;
 }
 
-/* hack, I really should implement the makecstring */
-static char *getfilename(void)
+static const char *getlogname(void)
 {
-    integer t;
-    t = get_current_name();
-    if (t > (1 << 21))
-        return makecstring(t);
-    else
-        return xstrdup("");
+    return (const char *) texmf_log_name;
 }
 
-static char *getlasterror(void)
+static const char *get_pdftex_banner(void)
 {
-    return makecstring(last_error);
+    return (const char *) pdftex_banner;
 }
 
-static char *luatexrevision(void)
+static const char *get_output_file_name(void)
 {
-    return makecstring(get_luatexrevision());
+    if (static_pdf != NULL)
+        return (const char *) static_pdf->file_name;
+    return NULL;
+}
+
+static const char *getfilename(void)
+{
+    int t = 0;
+    int level = in_open;
+    while ((level > 0)) {
+        t = input_stack[level--].name_field;
+        if (t >= STRING_OFFSET)
+            return (const char *) str_string(t);
+    }
+    return "";
+}
+
+static const char *getlasterror(void)
+{
+    return last_error;
+}
+
+static const char *luatexrevision(void)
+{
+    return (const char *) (strrchr(luatex_version_string, '.') + 1);
+}
+
+static lua_Number get_pdf_gone(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->gone;
+    return (lua_Number) 0;
+}
+
+static lua_Number get_pdf_ptr(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->ptr;
+    return (lua_Number) 0;
+}
+
+static lua_Number get_pdf_os_cntr(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->os_cntr;
+    return (lua_Number) 0;
+}
+
+static lua_Number get_pdf_os_objidx(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->os_idx;
+    return (lua_Number) 0;
+}
+
+static lua_Number get_pdf_mem_size(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->mem_size;
+    return (lua_Number) 0;
+}
+
+static lua_Number get_pdf_mem_ptr(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->mem_ptr;
+    return (lua_Number) 0;
+}
+
+
+static lua_Number get_obj_ptr(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->obj_ptr;
+    return (lua_Number) 0;
+}
+
+static lua_Number get_obj_tab_size(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->obj_tab_size;
+    return (lua_Number) 0;
+}
+
+static lua_Number get_dest_names_size(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->dest_names_size;
+    return (lua_Number) 0;
+}
+
+static lua_Number get_dest_names_ptr(void)
+{
+    if (static_pdf != NULL)
+        return (lua_Number) static_pdf->dest_names_ptr;
+    return (lua_Number) 0;
+}
+
+static int get_hash_size(void)
+{
+    return hash_size;           /* is a #define */
 }
 
 static int luastate_max = 1;    /* fixed value */
 
+/* temp, for backward compat */
+static int init_pool_ptr = 0;
+
 static struct statistic stats[] = {
-    {"pdf_gone", 'g', &pdf_gone},
-    {"pdf_ptr", 'g', &pdf_ptr},
+    {"pdf_gone", 'N', &get_pdf_gone},
+    {"pdf_ptr", 'N', &get_pdf_ptr},
     {"dvi_gone", 'g', &dvi_offset},
     {"dvi_ptr", 'g', &dvi_ptr},
     {"total_pages", 'g', &total_pages},
-    {"output_file_name", 's', &output_file_name},
-    {"log_name", 's', &texmf_log_name}, /* weird */
-    {"banner", 'S', &getbanner},
-    {"pdftex_banner", 's', &pdftex_banner},
+    {"output_file_name", 'S', (void *) &get_output_file_name},
+    {"log_name", 'S', (void *) &getlogname},
+    {"banner", 'S', (void *) &getbanner},
+    {"pdftex_banner", 'S', (void *) &get_pdftex_banner},
+    {"luatex_svn", 'G', &get_luatexsvn},
     {"luatex_version", 'G', &get_luatexversion},
-    {"luatex_revision", 'S', &luatexrevision},
+    {"luatex_revision", 'S', (void *) &luatexrevision},
     {"ini_version", 'b', &ini_version},
     /*
      * mem stat 
@@ -86,7 +184,7 @@ static struct statistic stats[] = {
     {"str_ptr", 'g', &str_ptr},
     {"init_str_ptr", 'g', &init_str_ptr},
     {"max_strings", 'g', &max_strings},
-    {"pool_ptr", 'g', &pool_ptr},
+    {"pool_ptr", 'g', &pool_size},
     {"init_pool_ptr", 'g', &init_pool_ptr},
     {"pool_size", 'g', &pool_size},
     {"var_mem_max", 'g', &var_mem_max},
@@ -109,21 +207,21 @@ static struct statistic stats[] = {
     {"buf_size", 'g', &buf_size},
     {"save_size", 'g', &save_size},
     /* pdf stats */
-    {"obj_ptr", 'g', &obj_ptr},
-    {"obj_tab_size", 'g', &obj_tab_size},
-    {"pdf_os_cntr", 'g', &pdf_os_cntr},
-    {"pdf_os_objidx", 'g', &pdf_os_objidx},
-    {"pdf_dest_names_ptr", 'g', &pdf_dest_names_ptr},
-    {"dest_names_size", 'g', &dest_names_size},
-    {"pdf_mem_ptr", 'g', &pdf_mem_ptr},
-    {"pdf_mem_size", 'g', &pdf_mem_size},
+    {"obj_ptr", 'N', &get_obj_ptr},
+    {"obj_tab_size", 'N', &get_obj_tab_size},
+    {"pdf_os_cntr", 'N', &get_pdf_os_cntr},
+    {"pdf_os_objidx", 'N', &get_pdf_os_objidx},
+    {"pdf_dest_names_ptr", 'N', &get_dest_names_ptr},
+    {"dest_names_size", 'N', &get_dest_names_size},
+    {"pdf_mem_ptr", 'N', &get_pdf_mem_ptr},
+    {"pdf_mem_size", 'N', &get_pdf_mem_size},
 
     {"largest_used_mark", 'g', &biggest_used_mark},
 
-    {"filename", 'S', &getfilename},
-    {"inputid", 'G', &get_current_name},
+    {"filename", 'S', (void *) &getfilename},
+    {"inputid", 'g', &(iname)},
     {"linenumber", 'g', &line},
-    {"lasterrorstring", 'S', &getlasterror},
+    {"lasterrorstring", 'S', (void *) &getlasterror},
 
     {"luabytecodes", 'g', &luabytecode_max},
     {"luabytecode_bytes", 'g', &luabytecode_bytes},
@@ -136,7 +234,6 @@ static struct statistic stats[] = {
     {"best_page_break", 'n', &best_page_break},
     {NULL, 0, 0}
 };
-
 
 static int stats_name_to_id(const char *name)
 {
@@ -154,6 +251,7 @@ static int do_getstat(lua_State * L, int i)
     const char *st;
     charfunc f;
     intfunc g;
+    numfunc n;
     int str;
     t = stats[i].type;
     switch (t) {
@@ -163,19 +261,25 @@ static int do_getstat(lua_State * L, int i)
         lua_pushstring(L, st);
         break;
     case 's':
-        str = *(integer *) (stats[i].value);
+        str = *(int *) (stats[i].value);
         if (str) {
-            lua_pushstring(L, makecstring(str));
+            char *ss = makecstring(str);
+            lua_pushstring(L, ss);
+            free(ss);
         } else {
             lua_pushnil(L);
         }
+        break;
+    case 'N':
+        n = stats[i].value;
+        lua_pushnumber(L, n());
         break;
     case 'G':
         g = stats[i].value;
         lua_pushnumber(L, g());
         break;
     case 'g':
-        lua_pushnumber(L, *(integer *) (stats[i].value));
+        lua_pushnumber(L, *(int *) (stats[i].value));
         break;
     case 'B':
         g = stats[i].value;
@@ -188,7 +292,7 @@ static int do_getstat(lua_State * L, int i)
             lua_pushnil(L);
         break;
     case 'b':
-        lua_pushboolean(L, *(integer *) (stats[i].value));
+        lua_pushboolean(L, *(int *) (stats[i].value));
         break;
     default:
         lua_pushnil(L);

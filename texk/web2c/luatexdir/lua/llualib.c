@@ -17,11 +17,11 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "luatex-api.h"
-#include <ptexlib.h>
+#include "lua/luatex-api.h"
+#include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: llualib.c 2271 2009-04-12 23:42:21Z oneiros $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/llualib.c $";
+    "$Id: llualib.c 3551 2010-03-26 14:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/llualib.c $";
 
 #define LOAD_BUF_SIZE 256
 #define UINT_MAX32 0xFFFFFFFF
@@ -38,7 +38,7 @@ static bytecode *lua_bytecode_registers = NULL;
 int luabytecode_max = -1;
 unsigned int luabytecode_bytes = 0;
 
-static char *luanames[65536] = { NULL };
+char *luanames[65536] = { NULL };
 
 char *get_lua_name(int i)
 {
@@ -49,8 +49,8 @@ char *get_lua_name(int i)
 
 void dump_luac_registers(void)
 {
-    integer x;
-    integer k, n;
+    int x;
+    int k, n;
     bytecode b;
     dump_int(luabytecode_max);
     if (lua_bytecode_registers != NULL) {
@@ -72,7 +72,7 @@ void dump_luac_registers(void)
     for (k = 0; k < 65536; k++) {
         char *a = luanames[k];
         if (a != NULL) {
-            x = strlen(a) + 1;
+            x = (int) strlen(a) + 1;
             dump_int(x);
             dump_things(*a, x);
         } else {
@@ -84,18 +84,18 @@ void dump_luac_registers(void)
 
 void undump_luac_registers(void)
 {
-    integer x;
-    integer k, n;
+    int x;
+    int k, n;
     unsigned int i;
     bytecode b;
     undump_int(luabytecode_max);
     if (luabytecode_max >= 0) {
-        i = (luabytecode_max + 1);
-        if ((int) (UINT_MAX32 / sizeof(bytecode) + 1) <= i) {
-            lua_fatal_error(maketexstring("Corrupt format file"));
+        i = (unsigned) (luabytecode_max + 1);
+        if ((int) (UINT_MAX32 / (int) sizeof(bytecode) + 1) <= i) {
+            lua_fatal_error("Corrupt format file");
         }
-        lua_bytecode_registers = xmalloc(i * sizeof(bytecode));
-        luabytecode_bytes = i * sizeof(bytecode);
+        lua_bytecode_registers = xmalloc((unsigned) (i * sizeof(bytecode)));
+        luabytecode_bytes = (unsigned) (i * sizeof(bytecode));
         for (i = 0; i <= (unsigned) luabytecode_max; i++) {
             lua_bytecode_registers[i].done = 0;
             lua_bytecode_registers[i].size = 0;
@@ -106,9 +106,9 @@ void undump_luac_registers(void)
             undump_int(k);
             undump_int(x);
             b.size = x;
-            b.buf = xmalloc(b.size);
-            luabytecode_bytes += b.size;
-            memset(b.buf, 0, b.size);
+            b.buf = xmalloc((unsigned) b.size);
+            luabytecode_bytes += (unsigned) b.size;
+            memset(b.buf, 0, (size_t) b.size);
             do_zundump((char *) b.buf, 1, b.size, DUMP_FILE);
             lua_bytecode_registers[k].size = b.size;
             lua_bytecode_registers[k].alloc = b.size;
@@ -118,7 +118,7 @@ void undump_luac_registers(void)
     for (k = 0; k < 65536; k++) {
         undump_int(x);
         if (x > 0) {
-            char *s = xmalloc(x);
+            char *s = xmalloc((unsigned) x);
             undump_things(*s, x);
             luanames[k] = s;
         }
@@ -157,21 +157,23 @@ static int bytecode_register_shadow_get(lua_State * L, int k)
 }
 
 
-static int writer(lua_State * L, const void *b, size_t size, void *B)
+int writer(lua_State * L, const void *b, size_t size, void *B)
 {
     bytecode *buf = (bytecode *) B;
     (void) L;                   /* for -Wunused */
-    if ((int) (buf->size + size) > buf->alloc) {
-        buf->buf = xrealloc(buf->buf, buf->alloc + size + LOAD_BUF_SIZE);
-        buf->alloc = buf->alloc + size + LOAD_BUF_SIZE;
+    if ((int) (buf->size + (int) size) > buf->alloc) {
+        buf->buf =
+            xrealloc(buf->buf,
+                     (unsigned) (buf->alloc + (int) size + LOAD_BUF_SIZE));
+        buf->alloc = buf->alloc + (int) size + LOAD_BUF_SIZE;
     }
     memcpy(buf->buf + buf->size, b, size);
-    buf->size += size;
-    luabytecode_bytes += size;
+    buf->size += (int) size;
+    luabytecode_bytes += (unsigned) size;
     return 0;
 }
 
-static const char *reader(lua_State * L, void *ud, size_t * size)
+const char *reader(lua_State * L, void *ud, size_t * size)
 {
     bytecode *buf = (bytecode *) ud;
     (void) L;                   /* for -Wunused */
@@ -180,12 +182,12 @@ static const char *reader(lua_State * L, void *ud, size_t * size)
         buf->done = 0;
         return NULL;
     }
-    *size = buf->size;
+    *size = (size_t) buf->size;
     buf->done = buf->size;
     return (const char *) buf->buf;
 }
 
-static int get_bytecode(lua_State * L)
+int get_bytecode(lua_State * L)
 {
     int k;
     k = (int) luaL_checkinteger(L, -1);
@@ -196,8 +198,7 @@ static int get_bytecode(lua_State * L)
             if (lua_load
                 (L, reader, (void *) (lua_bytecode_registers + k),
                  "bytecode")) {
-                lua_error(L);
-                lua_pushnil(L);
+		return luaL_error(L, "bad bytecode register");
             } else {
                 lua_pushvalue(L, -1);
                 bytecode_register_shadow_set(L, k);
@@ -209,34 +210,34 @@ static int get_bytecode(lua_State * L)
     return 1;
 }
 
-static int set_bytecode(lua_State * L)
+int set_bytecode(lua_State * L)
 {
     int k, ltype;
     unsigned int i;
     k = (int) luaL_checkinteger(L, -2);
-    i = k + 1;
+    i = (unsigned) k + 1;
     if ((int) (UINT_MAX32 / sizeof(bytecode) + 1) < i) {
-        lua_pushstring(L, "value too large");
-        lua_error(L);
+        luaL_error(L, "value too large");
     }
     if (k < 0) {
-        lua_pushstring(L, "negative values not allowed");
-        lua_error(L);
+        luaL_error(L, "negative values not allowed");
     }
     ltype = lua_type(L, -1);
     if (ltype != LUA_TFUNCTION && ltype != LUA_TNIL) {
-        lua_pushstring(L, "unsupported type");
-        lua_error(L);
+        luaL_error(L, "unsupported type");
     }
     if (k > luabytecode_max) {
-        i = sizeof(bytecode) * (k + 1);
+        i = (unsigned) (sizeof(bytecode) * ((unsigned) k + 1));
         lua_bytecode_registers = xrealloc(lua_bytecode_registers, i);
         if (luabytecode_max == -1) {
-            luabytecode_bytes += sizeof(bytecode) * (k + 1);
+            luabytecode_bytes +=
+                (unsigned) (sizeof(bytecode) * (unsigned) (k + 1));
         } else {
-            luabytecode_bytes += sizeof(bytecode) * (k + 1 - luabytecode_max);
+            luabytecode_bytes +=
+                (unsigned) (sizeof(bytecode) *
+                            (unsigned) (k + 1 - luabytecode_max));
         }
-        for (i = (luabytecode_max + 1); i <= (unsigned) k; i++) {
+        for (i = (unsigned) (luabytecode_max + 1); i <= (unsigned) k; i++) {
             lua_bytecode_registers[i].buf = NULL;
             lua_bytecode_registers[i].size = 0;
             lua_bytecode_registers[i].done = 0;
@@ -245,8 +246,7 @@ static int set_bytecode(lua_State * L)
     }
     if (lua_bytecode_registers[k].buf != NULL) {
         xfree(lua_bytecode_registers[k].buf);
-        luabytecode_bytes -= lua_bytecode_registers[k].size;
-        lua_bytecode_registers[k].buf = NULL;
+        luabytecode_bytes -= (unsigned) lua_bytecode_registers[k].size;
         lua_bytecode_registers[k].size = 0;
         lua_bytecode_registers[k].done = 0;
         lua_pushnil(L);
@@ -263,7 +263,7 @@ static int set_bytecode(lua_State * L)
 }
 
 
-static int set_luaname(lua_State * L)
+int set_luaname(lua_State * L)
 {
     int k;
     const char *s;
@@ -286,7 +286,7 @@ static int set_luaname(lua_State * L)
     return 0;
 }
 
-static int get_luaname(lua_State * L)
+int get_luaname(lua_State * L)
 {
     int k;
     k = (int) luaL_checkinteger(L, 2);
@@ -314,7 +314,7 @@ static const struct luaL_reg lualib[] = {
     {NULL, NULL}                /* sentinel */
 };
 
-int luaopen_lua(lua_State * L, const char *fname)
+int luaopen_lua(lua_State * L, char *fname)
 {
     luaL_register(L, "lua", lualib);
     make_table(L, "bytecode", "getbytecode", "setbytecode");

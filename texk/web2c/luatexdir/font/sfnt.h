@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: sfnt.h 2271 2009-04-12 23:42:21Z oneiros $ */
+/* $Id: sfnt.h 3404 2010-01-28 11:17:10Z taco $ */
 
 #ifndef _SFNT_H_
 #  define _SFNT_H_
@@ -157,7 +157,7 @@ extern int put_big_endian(void *s, LONG q, int n);
 #  ifdef XETEX
 extern sfnt *sfnt_open(FT_Face face, int accept_types);
 #  elif defined(pdfTeX)
-extern sfnt *sfnt_open(unsigned char *buffer, integer buflen);
+extern sfnt *sfnt_open(unsigned char *buffer, int buflen);
 #  else
 extern sfnt *sfnt_open(FILE * fp);
 #  endif
@@ -181,8 +181,8 @@ typedef struct {
 
 #    define ASSERT(a) assert(a)
 #    define RELEASE(a) free(a)
-#    define NEW(a,b) xmalloc((a)*sizeof(b))
-#    define RENEW(a,b,c) xrealloc(a, ((b)*sizeof(c)))
+#    define NEW(a,b) xmalloc((unsigned)((unsigned)(a)*sizeof(b)))
+#    define RENEW(a,b,c) xrealloc(a, (unsigned)((unsigned)(b)*sizeof(c)))
 #    define TT_ERROR pdftex_fail
 #    define WARN printf
 

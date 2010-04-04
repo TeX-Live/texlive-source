@@ -24,305 +24,254 @@
 #  define PTEXLIB_H
 
 /* WEB2C macros and prototypes */
-#  if !defined(LUATEXCOERCE)
-#    ifdef luatex
-#      undef luatex             /* to avoid warning about redefining luatex in luatexd.h */
-#    endif                      /* luatex */
-#    define EXTERN extern
-#    include "luatexd.h"
-#  endif
+#  define EXTERN extern
+#  include "luatex.h"
 
 #  ifdef MSVC
 extern double rint(double x);
 #  endif
 
-/* pdftexlib macros */
-#  include "ptexmac.h"
+extern string fullnameoffile;
+#  if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
+extern char **suffixlist;
+#  endif
+
+
+/* Replicate these here. They are hardcoded anyway */
+
+#  define eTeX_version_string "2.2"     /* current \eTeX\ version */
+#  define eTeX_version 2        /* \.{\\eTeXversion}  */
+#  define eTeX_minor_version 2  /* \.{\\eTeXminorversion}  */
+#  define eTeX_revision ".2"    /* \.{\\eTeXrevision} */
+
+#  define Omega_version_string "1.15"   /* \.{\\OmegaVersion}  */
+#  define Omega_version 1       /* \.{\\Omegaversion} */
+#  define Omega_minor_version 15        /* \.{\\Omegaminorversion} */
+#  define Omega_revision ".15"  /* \.{\\Omegarevision} */
+
+#  define Aleph_version_string "0.0"    /* \.{\\AlephVersion} */
+#  define Aleph_version 0       /* \.{\\Alephversion}  */
+#  define Aleph_minor_version 0 /* \.{\\Alephminorversion} */
+#  define Aleph_revision ".0"   /* \.{\\Alephrevision} */
+
+#  define pdftex_version_string "-2.00.0"
+                                        /* current \pdfTeX\ version */
+#  define pdftex_version 200    /* \.{\\pdftexversion} */
+#  define pdftex_revision "0"   /* \.{\\pdftexrevision} */
+
+#  include "lua51/lua.h"
+
+
+/* pdftexlib macros from ptexmac.h */
+
+/* Not all systems define it. */
+#  ifndef M_PI
+#    define M_PI           3.14159265358979323846       /* pi */
+#  endif
+
+#  ifdef WIN32
+#    define inline __inline
+#  endif
+
+/**********************************************************************/
+/* Pascal WEB macros */
+
+#  define max_integer      0x7FFFFFFF
+#  define max_dimen        0x3FFFFFFF
+
+/**********************************************************************/
+
+#  define PRINTF_BUF_SIZE     1024
+#  define MAX_CSTRING_LEN     1024 * 1024
+#  define MAX_PSTRING_LEN     1024
+#  define SMALL_BUF_SIZE      256
+#  define SMALL_ARRAY_SIZE    256
+
+#  define check_buf(size, buf_size)                                 \
+  if ((unsigned)(size) > (unsigned)(buf_size))                      \
+    pdftex_fail("buffer overflow: %d > %d at file %s, line %d",     \
+                (int)(size), (int)(buf_size), __FILE__,  __LINE__ )
+
+#  define append_char_to_buf(c, p, buf, buf_size) do { \
+    if (c == 9)                                        \
+        c = 32;                                        \
+    if (c == 13 || c == EOF)                           \
+        c = 10;                                        \
+    if (c != ' ' || (p > buf && p[-1] != 32)) {        \
+        check_buf(p - buf + 1, (buf_size));            \
+        *p++ = c;				       \
+    }                                                  \
+} while (0)
+
+#  define append_eol(p, buf, buf_size) do {            \
+    check_buf(p - buf + 2, (buf_size));                \
+    if (p - buf > 1 && p[-1] != 10)                    \
+        *p++ = 10;                                     \
+    if (p - buf > 2 && p[-2] == 32) {                  \
+        p[-2] = 10;                                    \
+        p--;                                           \
+    }                                                  \
+    *p = 0;                                            \
+} while (0)
+
+#  define remove_eol(p, buf) do {                      \
+    p = strend(buf) - 1;                               \
+    if (*p == 10)                                      \
+        *p = 0;                                        \
+} while (0)
+
+#  define skip(p, c)   if (*p == c)  p++
+
+#  define alloc_array(T, n, s) do {					\
+	if (T##_array == NULL) {					\
+	    T##_limit = (size_t)(s);					\
+	    if ((unsigned)(n) > (unsigned)T##_limit)			\
+		T##_limit = (size_t)(n);				\
+	    T##_array = xtalloc((unsigned)T##_limit, T##_entry);	\
+	    T##_ptr = T##_array;					\
+	}								\
+	else if ((unsigned)(T##_ptr - T##_array + (unsigned)(n)) > (unsigned)(T##_limit)) { \
+	    size_t last_ptr_index = (size_t)(T##_ptr - T##_array);	\
+	    T##_limit *= 2;						\
+	    if ((unsigned)(T##_ptr - T##_array + (unsigned)(n)) > (unsigned)(T##_limit)) \
+		T##_limit = (size_t)(T##_ptr - T##_array + (unsigned)(n));	\
+	    xretalloc(T##_array, (unsigned)T##_limit, T##_entry);	\
+	    T##_ptr = T##_array + last_ptr_index;			\
+	}								\
+    } while (0)
+
+#  define define_array(T)                   \
+T##_entry      *T##_ptr, *T##_array = NULL; \
+size_t          T##_limit
+
+#  define xfree(a)            do { free(a); a = NULL; } while (0)
+#  define dxfree(a,b)         do { free(a); a = b; } while (0)
+#  define strend(s)           strchr(s, 0)
+#  define xtalloc             XTALLOC
+#  define xretalloc           XRETALLOC
+
+#  define cmp_return(a, b) \
+    if ((a) > (b))         \
+        return 1;          \
+    if ((a) < (b))         \
+        return -1
+
+#  define str_prefix(s1, s2)  (strncmp((s1), (s2), strlen(s2)) == 0)
+
+/* that was ptexmac.h */
+
+#  include "tex/mainbody.h"
+#  include "tex/expand.h"
+#  include "tex/conditional.h"
+#  include "pdf/pdftypes.h"
 
 /* synctex */
 #  include "utils/synctex.h"
 
 #  include "utils/avlstuff.h"
+#  include "utils/managed-sa.h"
 #  include "image/writeimg.h"
 #  include "openbsd-compat.h"
+#  include "dvi/dvigen.h"
 #  include "pdf/pagetree.h"
+#  include "pdf/pdfgen.h"
 #  include "pdf/pdfpage.h"
+#  include "pdf/pdftables.h"
+
+#  include "pdf/pdfaction.h"
+#  include "pdf/pdfannot.h"
+#  include "pdf/pdfcolorstack.h"
+#  include "pdf/pdfdest.h"
+#  include "pdf/pdffont.h"
+#  include "pdf/pdfglyph.h"
+#  include "pdf/pdfimage.h"
+#  include "pdf/pdflink.h"
+#  include "pdf/pdflistout.h"
+#  include "pdf/pdfliteral.h"
+#  include "pdf/pdfobj.h"
+#  include "pdf/pdfoutline.h"
+#  include "pdf/pdfrule.h"
+#  include "pdf/pdfsaverestore.h"
+#  include "pdf/pdfsetmatrix.h"
+#  include "pdf/pdfshipout.h"
+#  include "pdf/pdfthread.h"
+#  include "pdf/pdfxform.h"
+
+#  include "lua/luagen.h"
+
 #  include "font/luatexfont.h"
 #  include "font/mapfile.h"
 #  include "utils/utils.h"
 #  include "image/writejbig2.h"
 #  include "image/pdftoepdf.h"
 
+#  include "ocp/ocp.h"
+#  include "ocp/ocplist.h"
+#  include "ocp/runocp.h"
+#  include "ocp/readocp.h"
+
+#  include "lang/texlang.h"
+
+#  include "tex/textcodes.h"
+#  include "tex/mathcodes.h"
+
+#  include "tex/align.h"
+#  include "tex/directions.h"
+#  include "tex/errors.h"
+#  include "tex/inputstack.h"
+#  include "tex/stringpool.h"
+#  include "tex/textoken.h"
+#  include "tex/printing.h"
+#  include "tex/texfileio.h"
+#  include "tex/arithmetic.h"
+#  include "tex/nesting.h"
+#  include "tex/packaging.h"
+#  include "tex/linebreak.h"
+#  include "tex/postlinebreak.h"
+#  include "tex/scanning.h"
+#  include "tex/buildpage.h"
+#  include "tex/maincontrol.h"
+#  include "tex/dumpdata.h"
+#  include "tex/mainbody.h"
+#  include "tex/extensions.h"
+#  include "tex/texnodes.h"
+
+#  include "tex/texmath.h"
+#  include "tex/mlist.h"
+#  include "tex/primitive.h"
+#  include "tex/commands.h"
+#  include "tex/equivalents.h"
+
 /**********************************************************************/
 
-typedef short shalfword;
-
-/* loadpool.c */
-int loadpoolstrings(integer spare_size);
-
-/* tex/filename.c */
-extern void scan_file_name(void);
-extern void pack_job_name(const char *s);
-extern void prompt_file_name(const char *s, const char *e);
-extern str_number make_name_string(void);
-extern void print_file_name(str_number, str_number, str_number);
+#  include "tex/filename.h"
 
 /* lua/luainit.c */
-extern void write_svnversion(const char *a);
-
-/* utils/writezip.c */
-extern void write_zip(boolean);
-extern void zip_free(void);
+extern void write_svnversion(char *a);
 
 /**********************************************************************/
-
-typedef enum {
-    no_print = 16,
-    term_only = 17,
-    log_only = 18,
-    term_and_log = 19,
-    pseudo = 20,
-    new_string = 21
-} selector_settings;
-
-/* language stuff */
-
-typedef struct _lang_variables {
-    int pre_hyphen_char;
-    int post_hyphen_char;
-    int pre_exhyphen_char;
-    int post_exhyphen_char;
-} lang_variables;
-
-#  include "hyphen.h"
-
-struct tex_language {
-    HyphenDict *patterns;
-    int exceptions;             /* lua registry pointer, should be replaced */
-    int id;
-    int pre_hyphen_char;
-    int post_hyphen_char;
-    int pre_exhyphen_char;
-    int post_exhyphen_char;
-};
-
-#  define MAX_WORD_LEN 256      /* in chars */
-
-extern struct tex_language *new_language(int n);
-extern struct tex_language *get_language(int n);
-extern void load_patterns(struct tex_language *lang, const unsigned char *buf);
-extern void load_hyphenation(struct tex_language *lang, const unsigned char *buf);
-extern int hyphenate_string(struct tex_language *lang, char *w, char **ret);
-
-extern void new_hyphenation(halfword h, halfword t);
-extern void clear_patterns(struct tex_language *lang);
-extern void clear_hyphenation(struct tex_language *lang);
-extern const char *clean_hyphenation(const char *buffer, char **cleaned);
-extern void hnj_hyphenation(halfword head, halfword tail);
-
-extern void set_pre_hyphen_char(integer lan, integer val);
-extern void set_post_hyphen_char(integer lan, integer val);
-extern integer get_pre_hyphen_char(integer lan);
-extern integer get_post_hyphen_char(integer lan);
-
-extern void set_pre_exhyphen_char(integer lan, integer val);
-extern void set_post_exhyphen_char(integer lan, integer val);
-extern integer get_pre_exhyphen_char(integer lan);
-extern integer get_post_exhyphen_char(integer lan);
-extern halfword compound_word_break(halfword t, int clang);
 
 extern halfword new_ligkern(halfword head, halfword tail);
 extern halfword handle_ligaturing(halfword head, halfword tail);
 extern halfword handle_kerning(halfword head, halfword tail);
 
-#  define push_dir(a)                           \
-  { dir_tmp=new_dir((a));                       \
-    vlink(dir_tmp)=dir_ptr; dir_ptr=dir_tmp;    \
-    dir_ptr=dir_tmp;                            \
-  }
-
-#  define push_dir_node(a)                      \
-  { dir_tmp=new_node(whatsit_node,dir_node);    \
-    dir_dir(dir_tmp)=dir_dir((a));              \
-    dir_level(dir_tmp)=dir_level((a));          \
-    dir_dvi_h(dir_tmp)=dir_dvi_h((a));          \
-    dir_dvi_ptr(dir_tmp)=dir_dvi_ptr((a));      \
-    vlink(dir_tmp)=dir_ptr; dir_ptr=dir_tmp;    \
-  }
-
-#  define pop_dir_node()                        \
-  { dir_tmp=dir_ptr;                            \
-    dir_ptr=vlink(dir_tmp);                     \
-    flush_node(dir_tmp);                        \
-  }
-
-#  define dir_parallel(a,b) (((a) % 2)==((b) % 2))
-#  define dir_orthogonal(a,b) (((a) % 2)!=((b) % 2))
-
-#  define is_rotated(a) dir_parallel(dir_secondary[(a)],dir_tertiary[(a)])
-
-void initialize_active(void);
-
-halfword find_protchar_left(halfword l, boolean d);
-halfword find_protchar_right(halfword l, halfword r);
-
-void ext_do_line_break(boolean d,
-                       int pretolerance,
-                       int tracing_paragraphs,
-                       int tolerance,
-                       scaled emergency_stretch,
-                       int looseness,
-                       int hyphen_penalty,
-                       int ex_hyphen_penalty,
-                       int pdf_adjust_spacing,
-                       halfword par_shape_ptr,
-                       int adj_demerits,
-                       int pdf_protrude_chars,
-                       int line_penalty,
-                       int last_line_fit,
-                       int double_hyphen_demerits,
-                       int final_hyphen_demerits,
-                       int hang_indent,
-                       int hsize,
-                       int hang_after,
-                       halfword left_skip,
-                       halfword right_skip,
-                       int pdf_each_line_height,
-                       int pdf_each_line_depth,
-                       int pdf_first_line_height,
-                       int pdf_last_line_depth,
-                       halfword inter_line_penalties_ptr,
-                       int inter_line_penalty,
-                       int club_penalty,
-                       halfword club_penalties_ptr,
-                       halfword display_widow_penalties_ptr,
-                       halfword widow_penalties_ptr,
-                       int display_widow_penalty,
-                       int widow_penalty,
-                       int broken_penalty, halfword final_par_glue,
-                       halfword pdf_ignored_dimen);
-
-void ext_post_line_break(boolean d,
-                         int right_skip,
-                         int left_skip,
-                         int pdf_protrude_chars,
-                         halfword par_shape_ptr,
-                         int pdf_adjust_spacing,
-                         int pdf_each_line_height,
-                         int pdf_each_line_depth,
-                         int pdf_first_line_height,
-                         int pdf_last_line_depth,
-                         halfword inter_line_penalties_ptr,
-                         int inter_line_penalty,
-                         int club_penalty,
-                         halfword club_penalties_ptr,
-                         halfword display_widow_penalties_ptr,
-                         halfword widow_penalties_ptr,
-                         int display_widow_penalty,
-                         int widow_penalty,
-                         int broken_penalty,
-                         halfword final_par_glue,
-                         halfword best_bet,
-                         halfword last_special_line,
-                         scaled second_width,
-                         scaled second_indent,
-                         scaled first_width,
-                         scaled first_indent, halfword best_line,
-                         halfword pdf_ignored_dimen);
-
 halfword lua_hpack_filter(halfword head_node, scaled size, int pack_type,
-                          int extrainfo);
+                          int extrainfo, int d);
 void lua_node_filter(int filterid, int extrainfo, halfword head_node,
                      halfword * tail_node);
 halfword lua_vpack_filter(halfword head_node, scaled size, int pack_type,
-                          scaled maxd, int extrainfo);
+                          scaled maxd, int extrainfo, int d);
 void lua_node_filter_s(int filterid, const char *extrainfo);
 int lua_linebreak_callback(int is_broken, halfword head_node,
                            halfword * new_head);
 
-void lua_pdf_literal(int i);
+void lua_pdf_literal(PDF pdf, int i);
 void copy_pdf_literal(pointer r, pointer p);
 void free_pdf_literal(pointer p);
 void show_pdf_literal(pointer p);
 
 void load_tex_patterns(int curlang, halfword head);
 void load_tex_hyphenation(int curlang, halfword head);
-
-/* textcodes.c */
-void set_lc_code(integer n, halfword v, quarterword gl);
-halfword get_lc_code(integer n);
-void set_uc_code(integer n, halfword v, quarterword gl);
-halfword get_uc_code(integer n);
-void set_sf_code(integer n, halfword v, quarterword gl);
-halfword get_sf_code(integer n);
-void set_cat_code(integer h, integer n, halfword v, quarterword gl);
-halfword get_cat_code(integer h, integer n);
-void unsave_cat_codes(integer h, quarterword gl);
-int valid_catcode_table(int h);
-void initex_cat_codes(int h);
-void unsave_text_codes(quarterword grouplevel);
-void initialize_text_codes(void);
-void dump_text_codes(void);
-void undump_text_codes(void);
-void copy_cat_codes(int from, int to);
-void free_math_codes(void);
-void free_text_codes(void);
-
-/* mathcodes.c */
-
-#  define no_mathcode 0         /* this is a flag for |scan_delimiter| */
-#  define tex_mathcode 8
-#  define aleph_mathcode 16
-#  define xetex_mathcode 21
-#  define xetexnum_mathcode 22
-
-typedef struct mathcodeval {
-    integer class_value;
-    integer origin_value;
-    integer family_value;
-    integer character_value;
-} mathcodeval;
-
-void set_math_code(integer n,
-                   integer commandorigin,
-                   integer mathclass,
-                   integer mathfamily, integer mathcharacter, quarterword gl);
-
-mathcodeval get_math_code(integer n);
-integer get_math_code_num(integer n);
-mathcodeval scan_mathchar(int extcode);
-mathcodeval scan_delimiter_as_mathchar(int extcode);
-
-mathcodeval mathchar_from_integer(integer value, int extcode);
-void show_mathcode_value(mathcodeval d);
-
-typedef struct delcodeval {
-    integer class_value;
-    integer origin_value;
-    integer small_family_value;
-    integer small_character_value;
-    integer large_family_value;
-    integer large_character_value;
-} delcodeval;
-
-void set_del_code(integer n,
-                  integer commandorigin,
-                  integer smathfamily,
-                  integer smathcharacter,
-                  integer lmathfamily, integer lmathcharacter, quarterword gl);
-
-delcodeval get_del_code(integer n);
-
-void unsave_math_codes(quarterword grouplevel);
-void initialize_math_codes(void);
-void dump_math_codes(void);
-void undump_math_codes(void);
-
-/* lang/texlang.c */
-
-void dump_language_data(void);
-void undump_language_data(void);
-char *exception_strings(struct tex_language *lang);
 
 /* lua/llualib.c */
 
@@ -332,70 +281,36 @@ void undump_luac_registers(void);
 /* lua/ltexlib.c */
 void luacstring_start(int n);
 void luacstring_close(int n);
-integer luacstring_cattable(void);
+int luacstring_cattable(void);
 int luacstring_input(void);
 int luacstring_partial(void);
 int luacstring_final_line(void);
 
 /* lua/luatoken.c */
-void do_get_token_lua(integer callback_id);
+void do_get_token_lua(int callback_id);
 
 /* lua/luanode.c */
 int visible_last_node_type(int n);
 void print_node_mem_stats(void);
 
 /* lua/limglib.c */
-void vf_out_image(unsigned i);
+void vf_out_image(PDF pdf, unsigned i);
 
 /* lua/ltexiolib.c */
 void flush_loggable_info(void);
 
 /* lua/luastuff.c */
-void luacall(int s, int nameptr);
 void luatokencall(int p, int nameptr);
+extern void late_lua(PDF pdf, halfword p);
 
 extern void check_texconfig_init(void);
 
-scaled divide_scaled(scaled s, scaled m, integer dd);
+scaled divide_scaled(scaled s, scaled m, int dd);
 scaled divide_scaled_n(double s, double m, double d);
 
-/* tex/mlist.c */
-void run_mlist_to_hlist(pointer p, integer m_style, boolean penalties);
-void fixup_math_parameters(integer fam_id, integer size_id, integer f,
-                           integer lvl);
+#  include "tex/texdeffont.h"
 
-/* tex/texpdf.c */
-void pdf_print_char(internal_font_number f, integer c);
-void pdf_print(str_number n);
-void pdf_print_str(str_number n);
-void pdf_print_int(longinteger n);
-void pdf_print_real(integer m, integer d);
-
-/* tex/textoken.c */
-
-#  define  NO_CAT_TABLE      -2
-#  define  DEFAULT_CAT_TABLE -1
-
-extern boolean str_eq_cstr(str_number, const char *, size_t);
-void get_next(void);
-extern void check_outer_validity(void);
-boolean scan_keyword(const char *);
-void scan_direction(void);
-halfword active_to_cs(int, int);
-void get_token_lua(void);
-int get_char_cat_code(int);
-
-/* tex/texdeffont.c */
-
-void tex_def_font(small_number a);
-
-/* lua/ltokenlib.c */
-
-extern int get_command_id(const char *);
-
-/* lua/lcallbacklib.c */
-
-#  include <../lua51/lua.h>
+/* lcallbacklib.c */
 
 typedef enum {
     find_write_file_callback = 1,
@@ -415,7 +330,7 @@ typedef enum {
     find_sfd_file_callback, read_sfd_file_callback,
     find_pk_file_callback, read_pk_file_callback,
     show_error_hook_callback,
-    process_input_buffer_callback,
+    process_input_buffer_callback, process_output_buffer_callback,
     start_page_number_callback, stop_page_number_callback,
     start_run_callback, stop_run_callback,
     define_font_callback,
@@ -446,16 +361,85 @@ extern void destroy_saved_callback(int i);
 extern boolean get_callback(lua_State * L, int i);
 
 extern void get_saved_lua_boolean(int i, const char *name, boolean * target);
-extern void get_saved_lua_number(int i, const char *name, integer * target);
-extern void get_saved_lua_string(int i, const char *name, const char **target);
+extern void get_saved_lua_number(int i, const char *name, int *target);
+extern void get_saved_lua_string(int i, const char *name, char **target);
 
-extern void get_lua_boolean(const char *table, const char *name, boolean * target);
-extern void get_lua_number(const char *table, const char *name, integer * target);
-extern void get_lua_string(const char *table, const char *name, const char **target);
+extern void get_lua_boolean(const char *table, const char *name,
+                            boolean * target);
+extern void get_lua_number(const char *table, const char *name, int *target);
+extern void get_lua_string(const char *table, const char *name, char **target);
 
 extern char *get_lua_name(int i);
 
-#  include "texmath.h"
-#  include "primitive.h"
+/* Additions to texmfmp.h for pdfTeX */
+
+/* mark a char in font */
+#  define pdf_mark_char(f,c) set_char_used(f,c,true)
+
+/* test whether a char in font is marked */
+#  define pdf_char_marked char_used
+
+#  define pdfassert assert
+#  define voidcast(a) (void *)(a)
+#  define fixmemcast(a) (smemory_word *)(a)
+
+extern void do_vf(internal_font_number tmp_f);
+
+/* This routine has to return four values.  */
+#  define	dateandtime(i,j,k,l) get_date_and_time (&(i), &(j), &(k), &(l))
+extern void get_date_and_time(int *, int *, int *, int *);
+
+/* Get high-res time info. */
+#  define seconds_and_micros(i,j) get_seconds_and_micros (&(i), &(j))
+extern void get_seconds_and_micros(int *, int *);
+
+/* This routine has to return a scaled value. */
+extern int getrandomseed(void);
+
+/* Copy command-line arguments into the buffer, despite the name.  */
+extern void topenin(void);
+
+/* Can't prototype this since it uses poolpointer and ASCIIcode, which
+   are defined later in mfd.h, and mfd.h uses stuff from here.  */
+/* Therefore the department of ugly hacks decided to move this declaration
+   to the *coerce.h files. */
+/* extern void calledit (); */
+
+/* Set an array size from texmf.cnf.  */
+extern void setupboundvariable(integer *, const_string, integer);
+
+/* here  are a few functions that used to be in coerce.h */
+
+extern str_number getjobname(str_number);
+extern str_number makefullnamestring(void);
+
+
+extern KPSEDLL string kpathsea_version_string;  /* from kpathsea/version.c */
+
+extern PDF static_pdf;
+
+extern string normalize_quotes(const_string name, const_string mesg);
+extern string dump_name;
+extern const_string c_job_name;
+
+extern halfword *check_isnode(lua_State * L, int ud);
+extern void lua_nodelib_push_fast(lua_State * L, halfword n);
+
+extern void lua_nodelib_push_fast(lua_State * L, halfword n);
+
+extern halfword list_node_mem_usage(void);
+
+extern halfword *check_isnode(lua_State * L, int ud);
+
+extern extinfo *get_charinfo_vert_variants(charinfo * ci);
+extern extinfo *get_charinfo_hor_variants(charinfo * ci);
+extern void set_charinfo_hor_variants(charinfo * ci, extinfo * ext);
+extern void set_charinfo_vert_variants(charinfo * ci, extinfo * ext);
+
+extern extinfo *copy_variants(extinfo * o);
+
+extern int program_name_set;    /* in lkpselib.c */
+
+
 
 #endif                          /* PTEXLIB_H */

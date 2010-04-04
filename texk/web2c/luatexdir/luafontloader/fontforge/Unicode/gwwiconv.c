@@ -114,16 +114,14 @@ static enum encoding name_to_enc(const char *encname) {
 	{ "mac", e_mac },
 	{ "Macintosh", e_mac },
 	{ "MS-ANSI", e_win },
+#ifdef FROM_CJK_ICONV
 	{ "EUC-KR", e_wansung },
 	{ "johab", e_johab },
-	{ "ISO-2022-KR", e_jiskorean },
-	{ "ISO-2022-CN", e_jisgb },
 	{ "EUC-CN", e_jisgbpk },
 	{ "big5", e_big5 },
 	{ "big5hkscs", e_big5hkscs },
-	{ "ISO-2022-JP", e_jis },
-	{ "ISO-2022-JP-2", e_jis2 },
 	{ "Sjis", e_sjis },
+#endif
 	{ "UTF-8", e_utf8 },
 	{ "UTF8", e_utf8 },
 	{ NULL }};
@@ -242,6 +240,7 @@ return( (size_t) -1 );			/* Incomplete multi-byte sequence */
 		} else
 return( (size_t) -1 );
 	    }
+#ifdef TO_CJK_ICONV
 	} else if ( cd->to==e_johab || cd->to==e_big5 || cd->to==e_big5hkscs ) {
 	    struct charmap2 *table = cd->to==e_johab ? &johab_from_unicode :
 				     cd->to==e_big5  ? &big5_from_unicode :
@@ -274,6 +273,8 @@ return( (size_t) -1 );
 		} else
 return( (size_t) -1 );
 	    }
+#endif
+#ifdef TO_CJK_ICONV
 	} else if ( cd->to==e_wansung || cd->to==e_jisgbpk ) {
 	    struct charmap2 *table = cd->to==e_wansung ? &ksc5601_from_unicode :
 			&gb2312_from_unicode;
@@ -305,6 +306,8 @@ return( (size_t) -1 );
 		} else
 return( (size_t) -1 );
 	    }
+#endif
+#ifdef TO_CJK_ICONV
 	} else if ( cd->to==e_sjis ) {
 	    unsigned char *plane1;
 	    unsigned short *plane;
@@ -341,39 +344,7 @@ return( (size_t) -1 );
 		} else
 return( (size_t) -1 );
 	    }
-	} else if ( cd->to==e_jis || cd->to==e_jis2 ||
-		cd->to==e_jiskorean || cd->to==e_jisgb ) {
-	    struct charmap2 *table = cd->to==e_jisgb     ? &gb2312_from_unicode :
-				     cd->to==e_jiskorean ? &ksc5601_from_unicode :
-					&jis_from_unicode;
-	    unsigned short *plane;
-	    while ( *inlen>1 && *outlen>1 ) {
-		int highch, lowch;
-		if ( endian == end_little ) {
-		    highch = ((unsigned char *) *inbuf)[1], lowch = *(unsigned char *) *inbuf;
-		} else {
-		    highch = *(unsigned char *) *inbuf, lowch = ((unsigned char *) *inbuf)[1];
-		}
-		if ( highch>=table->first && highch<=table->last &&
-			(plane = table->table[highch])!=NULL &&
-			(ch=plane[lowch])!=0 ) {
-		    if ( ch>=0x8000 ) {
-			if ( cd->to!=e_jis2 )
-return( (size_t) -1 );
-			ch -= 0x8000;
-		    } else {
-			if ( cd->to==e_jis2 )
-return( (size_t) -1 );
-		    }
-		    *((*outbuf)++) = (ch>>8);
-		    *((*outbuf)++) = (ch&0xff);
-		    *outlen -= 2;
-		    *inlen -= 2;
-		    *inbuf += 2;
-		    ++char_cnt;
-		} else
-return( (size_t) -1 );
-	    }
+#endif
 	} else if ( cd->to==e_utf8 ) {
 	    while ( *inlen>1 && *outlen>0 ) {
 		unichar_t uch;
@@ -450,6 +421,7 @@ return( (size_t) -1 );			/* Incomplete multi-byte sequence */
 		} else
 return( (size_t) -1 );
 	    }
+#ifdef TO_CJK_ICONV
 	} else if ( cd->to==e_johab || cd->to==e_big5 || cd->to==e_big5hkscs ) {
 	    struct charmap2 *table = cd->to==e_johab ? &johab_from_unicode :
 				     cd->to==e_big5  ? &big5_from_unicode :
@@ -482,6 +454,8 @@ return( (size_t) -1 );
 		} else
 return( (size_t) -1 );
 	    }
+#endif
+#ifdef TO_CJK_ICONV
 	} else if ( cd->to==e_wansung || cd->to==e_jisgbpk ) {
 	    struct charmap2 *table = cd->to==e_wansung ? &ksc5601_from_unicode :
 			&gb2312_from_unicode;
@@ -513,6 +487,8 @@ return( (size_t) -1 );
 		} else
 return( (size_t) -1 );
 	    }
+#endif
+#ifdef TO_CJK_ICONV
 	} else if ( cd->to==e_sjis ) {
 	    unsigned char *plane1;
 	    unsigned short *plane;
@@ -549,39 +525,7 @@ return( (size_t) -1 );
 		} else
 return( (size_t) -1 );
 	    }
-	} else if ( cd->to==e_jis || cd->to==e_jis2 ||
-		cd->to==e_jiskorean || cd->to==e_jisgb ) {
-	    struct charmap2 *table = cd->to==e_jisgb     ? &gb2312_from_unicode :
-				     cd->to==e_jiskorean ? &ksc5601_from_unicode :
-					&jis_from_unicode;
-	    unsigned short *plane;
-	    while ( *inlen>1 && *outlen>1 ) {
-		int highch, lowch;
-		if ( endian == end_little ) {
-		    highch = ((unsigned char *) *inbuf)[1], lowch = *(unsigned char *) *inbuf;
-		} else {
-		    highch = ((unsigned char *) *inbuf)[2], lowch = ((unsigned char *) *inbuf)[3];
-		}
-		if ( highch>=table->first && highch<=table->last &&
-			(plane = table->table[highch])!=NULL &&
-			(ch=plane[lowch])!=0 ) {
-		    if ( ch>=0x8000 ) {
-			if ( cd->to!=e_jis2 )
-return( (size_t) -1 );
-			ch -= 0x8000;
-		    } else {
-			if ( cd->to==e_jis2 )
-return( (size_t) -1 );
-		    }
-		    *((*outbuf)++) = (ch>>8);
-		    *((*outbuf)++) = (ch&0xff);
-		    *outlen -= 2;
-		    *inlen -= 4;
-		    *inbuf += 4;
-		    ++char_cnt;
-		} else
-return( (size_t) -1 );
-	    }
+#endif
 	} else if ( cd->to==e_utf8 ) {
 	    while ( *inlen>1 && *outlen>0 ) {
 		int uch;
@@ -648,62 +592,7 @@ return( (size_t) -1 );
 		*outlen -= sizeof(unichar_t);
 		++char_cnt;
 	    }
-	} else if ( cd->from==e_jis || cd->from==e_jis2 ||
-		cd->from==e_jiskorean || cd->from==e_jisgb ) {
-	    table  = cd->from==e_jisgb     ? unicode_from_gb2312 :
-		     cd->from==e_jiskorean ? unicode_from_ksc5601 :
-		     cd->from==e_jis       ? unicode_from_jis208 :
-		        unicode_from_jis212;
-	    while ( *inlen>1 && *outlen>1 ) {
-		unsigned char *ipt = (unsigned char *) *inbuf;
-		int ch;
-		if ( *ipt<0x21 || *ipt>0x7e || ipt[1]<0x21 || ipt[1]>0x7e )
-return( (size_t) -1 );
-		ch = (*ipt-0x21)*94 + (ipt[1]-0x21);
-		ch = table[ch];
-		*inlen -= 2;
-		*inbuf = (char *) ipt+2;
-		if ( endian==end_little ) {
-		    *((*outbuf)++) = ch&0xff;
-		    *((*outbuf)++) = ch>>8;
-		} else {
-		    *((*outbuf)++) = ch>>8;
-		    *((*outbuf)++) = ch&0xff;
-		}
-		*outlen -= sizeof(unichar_t);
-		++char_cnt;
-	    }
-	    if ( *inlen==1 && *outlen>0 )
-return( (size_t) -1 );			/* Incomplete multi-byte sequence */
-	} else if ( cd->from==e_wansung || cd->from==e_jisgbpk ) {
-	    table  = cd->from==e_jisgbpk   ? unicode_from_gb2312 :
-		      unicode_from_ksc5601 ;
-	    while ( *inlen>0 && *outlen>1 ) {
-		unsigned char *ipt = (unsigned char *) *inbuf;
-		int ch;
-		if ( *ipt<0x7f ) {
-		    ch = *ipt;
-		    --*inlen;
-		    *inbuf = (char *) ipt+1;
-		} else {
-		    if ( *ipt<0xa1 || *ipt>0xfe || ipt[1]<0xa1 || ipt[1]>0xfe ||
-			    *inlen==1 )
-return( (size_t) -1 );
-		    ch = (*ipt-0xa1)*94 + (ipt[1]-0xa1);
-		    ch = table[ch];
-		    *inlen -= 2;;
-		    *inbuf = (char *) ipt+2;
-		}
-		if ( endian==end_little ) {
-		    *((*outbuf)++) = ch&0xff;
-		    *((*outbuf)++) = ch>>8;
-		} else {
-		    *((*outbuf)++) = ch>>8;
-		    *((*outbuf)++) = ch&0xff;
-		}
-		*outlen -= sizeof(unichar_t);
-		++char_cnt;
-	    }
+#ifdef FROM_CJK_ICONV
 	} else if ( cd->from==e_johab || cd->from==e_big5 || cd->from==e_big5hkscs ) {
 	    int offset;
 	    if ( cd->from==e_big5 ) {
@@ -786,6 +675,7 @@ return( (size_t) -1 );
 		*outlen -= sizeof(unichar_t);
 		++char_cnt;
 	    }
+#endif
 	} else if ( cd->from==e_utf8 ) {
 	    while ( *inlen>0 && *outlen>sizeof(unichar_t) ) {
 		unsigned char *ipt = (unsigned char *) *inbuf;
@@ -856,37 +746,7 @@ return( (size_t) -1 );
 		*outlen -= sizeof(unichar_t);
 		++char_cnt;
 	    }
-	} else if ( cd->from==e_jis || cd->from==e_jis2 ||
-		cd->from==e_jiskorean || cd->from==e_jisgb ) {
-	    table  = cd->from==e_jisgb     ? unicode_from_gb2312 :
-		     cd->from==e_jiskorean ? unicode_from_ksc5601 :
-		     cd->from==e_jis       ? unicode_from_jis208 :
-		        unicode_from_jis212;
-	    while ( *inlen>1 && *outlen>1 ) {
-		unsigned char *ipt = (unsigned char *) *inbuf;
-		int ch;
-		if ( *ipt<0x21 || *ipt>0x7e || ipt[1]<0x21 || ipt[1]>0x7e )
-return( (size_t) -1 );
-		ch = (*ipt-0x21)*94 + (ipt[1]-0x21);
-		ch = table[ch];
-		*inlen -= 2;
-		*inbuf = (char *) ipt+2;
-		if ( endian==end_little ) {
-		    *((*outbuf)++) = 0;
-		    *((*outbuf)++) = 0;
-		    *((*outbuf)++) = ch&0xff;
-		    *((*outbuf)++) = ch>>8;
-		} else {
-		    *((*outbuf)++) = ch>>8;
-		    *((*outbuf)++) = ch&0xff;
-		    *((*outbuf)++) = 0;
-		    *((*outbuf)++) = 0;
-		}
-		*outlen -= sizeof(unichar_t);
-		++char_cnt;
-	    }
-	    if ( *inlen==1 && *outlen>0 )
-return( (size_t) -1 );			/* Incomplete multi-byte sequence */
+#ifdef FROM_CJK_ICONV
 	} else if ( cd->from==e_wansung || cd->from==e_jisgbpk ) {
 	    table  = cd->from==e_jisgbpk   ? unicode_from_gb2312 :
 		      unicode_from_ksc5601 ;
@@ -1010,6 +870,7 @@ return( (size_t) -1 );
 		*outlen -= sizeof(unichar_t);
 		++char_cnt;
 	    }
+#endif
 	} else if ( cd->from==e_utf8 ) {
 	    while ( *inlen>0 && *outlen>sizeof(unichar_t) ) {
 		unsigned char *ipt = (unsigned char *) *inbuf;

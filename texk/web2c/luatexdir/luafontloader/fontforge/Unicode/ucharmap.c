@@ -75,6 +75,7 @@ unichar_t *encoding2u_strncpy(unichar_t *uto, const char *_from, int n, enum enc
 		fprintf( stderr, "Unexpected encoding %d, I'll pretend it's latin1\n", cs );
 	    }
 return( encoding2u_strncpy(uto,_from,n,e_iso8859_1));
+#ifdef FROM_CJK_ICONV
 	  case e_johab: case e_big5: case e_big5hkscs:
 	    if ( cs==e_big5 ) {
 		offset = 0xa100;
@@ -141,6 +142,7 @@ return( encoding2u_strncpy(uto,_from,n,e_iso8859_1));
 		--n;
 	    }
 	  break;
+#endif
 	}
     } else if ( cs==e_unicode ) {
 	unichar_t *ufrom = (unichar_t *) from;
@@ -206,194 +208,6 @@ return( encoding2u_strncpy(uto,_from,n,e_iso8859_1));
 return( uto );
 }
 
-char *u2encoding_strncpy(char *to, const unichar_t *ufrom, int n, enum encoding cs) {
-    char *pt = to;
-
-    /* we just ignore anything that doesn't fit in the encoding we look at */
-    if ( cs<e_first2byte ) {
-	struct charmap *table = NULL;
-	unsigned char *plane;
-	table = alphabets_from_unicode[cs];
-	if ( table==NULL ) {	/* ASCII */
-	    while ( *ufrom && n>0 ) {
-		int ch = *ufrom;
-		if ( ch<127 ) {
-		    *pt++ = ch;
-		    --n;
-		}
-		++ufrom;
-	    }
-	} else {
-	    while ( *ufrom && n>0 ) {
-		int highch = *ufrom>>8, ch;
-		if ( highch>=table->first && highch<=table->last &&
-			    (plane = table->table[highch])!=NULL &&
-			    (ch=plane[*ufrom&0xff])!=0 ) {
-		    *pt++ = ch;
-		    --n;
-		}
-		++ufrom;
-	    }
-	}
-	if ( n>0 )
-	    *pt = '\0';
-    } else if ( cs<e_unicode ) {
-	struct charmap2 *table;
-	unsigned short *plane;
-	unsigned char *plane1;
-
-	*to = '\0';
-	switch ( cs ) {
-	  default:
-	    if ( !bad_enc_warn ) {
-		bad_enc_warn = true;
-		fprintf( stderr, "Unexpected encoding %d, I'll pretend it's latin1\n", cs );
-	    }
-return( u2encoding_strncpy(to,ufrom,n,e_iso8859_1));
-	  case e_johab: case e_big5: case e_big5hkscs:
-	    table = cs==e_big5 ? &big5_from_unicode :
-		    cs==e_big5hkscs ? &big5hkscs_from_unicode :
-			    &johab_from_unicode;
-	    while ( *ufrom && n>0 ) {
-		int highch = *ufrom>>8, ch;
-		if ( *ufrom<0x80 ) {
-		    *pt++ = *ufrom;
-		    --n;
-		} else if ( highch>=table->first && highch<=table->last &&
-			(plane = table->table[highch-table->first])!=NULL &&
-			(ch=plane[*ufrom&0xff])!=0 ) {
-		    *pt++ = ch>>8;
-		    *pt++ = ch&0xff;
-		    n -= 2;
-		}
-		ufrom ++;
-	    }
-	  break;
-	  case e_wansung:
-	    while ( *ufrom && n>0 ) {
-		int highch = *ufrom>>8, ch;
-		if ( *ufrom<0x80 ) {
-		    *pt++ = *ufrom;
-		    --n;
-		} else if ( highch>=ksc5601_from_unicode.first && highch<=ksc5601_from_unicode.last &&
-			(plane = ksc5601_from_unicode.table[highch-ksc5601_from_unicode.first])!=NULL &&
-			(ch=plane[*ufrom&0xff])!=0 ) {
-		    *pt++ = (ch>>8) + 0x80;
-		    *pt++ = (ch&0xff) + 0x80;
-		    n -= 2;
-		}
-		ufrom ++;
-	    }
-	  break;
-	  case e_jisgb:
-	    while ( *ufrom && n>0 ) {
-		int highch = *ufrom>>8, ch;
-		if ( *ufrom<0x80 ) {
-		    *pt++ = *ufrom;
-		    --n;
-		} else if ( highch>=gb2312_from_unicode.first && highch<=gb2312_from_unicode.last &&
-			(plane = gb2312_from_unicode.table[highch-gb2312_from_unicode.first])!=NULL &&
-			(ch=plane[*ufrom&0xff])!=0 ) {
-		    *pt++ = (ch>>8) + 0x80;
-		    *pt++ = (ch&0xff) + 0x80;
-		    n -= 2;
-		}
-		ufrom ++;
-	    }
-	  break;
-	  case e_sjis:
-	    while ( *ufrom && n>0 ) {
-		int highch = *ufrom>>8, ch;
-		if ( highch>=jis201_from_unicode.first && highch<=jis201_from_unicode.last &&
-			(plane1 = jis201_from_unicode.table[highch-jis201_from_unicode.first])!=NULL &&
-			(ch=plane1[*ufrom&0xff])!=0 ) {
-		    *pt++ = ch;
-		    --n;
-		} else if ( *ufrom<' ' ) {	/* control chars */
-		    *pt++ = *ufrom;
-		    --n;
-		} else if ( highch>=jis_from_unicode.first && highch<=jis_from_unicode.last &&
-			(plane = jis_from_unicode.table[highch-jis_from_unicode.first])!=NULL &&
-			(ch=plane[*ufrom&0xff])!=0 && ch<0x8000 ) {	/* no jis212 */
-		    int j1 = ch>>8, j2 = ch&0xff;
-		    int ro = j1<95 ? 112 : 176;
-		    int co = (j1&1) ? (j2>95?32:31) : 126;
-		    *pt++ = ((j1+1)>>1)+ro;
-		    *pt++ = j2+co;
-		    n -= 2;
-		}
-		++ufrom;
-	    }
-	  break;
-	}
-	if ( n>0 )
-	    *pt = '\0';
-    } else if ( cs==e_unicode ) {
-	unichar_t *uto = (unichar_t *) to;
-	while ( *ufrom && n>1 ) {
-	    *uto++ = *ufrom++;
-	    n-=sizeof(unichar_t);
-	}
-	if ( n>1 )
-	    *uto = '\0';
-    } else if ( cs==e_unicode_backwards ) {
-	unichar_t *uto = (unichar_t *) to;
-	while ( *ufrom && n>sizeof(unichar_t)-1 ) {
-#ifdef UNICHAR_16
-	    unichar_t ch = (*ufrom>>8)|((*ufrom&0xff)<<8);
-#else
-	    unichar_t ch = (*ufrom>>24)|((*ufrom>>8)&0xff00)|
-		    ((*ufrom<<8)&0xff0000)|(*ufrom<<24);
-#endif
-	    *uto++ = ch;
-	    ++ufrom;
-	    n-=sizeof(unichar_t);
-	}
-	if ( n>1 )
-	    *uto = '\0';
-    } else if ( cs==e_utf8 ) {
-	while ( *ufrom ) {
-	    if ( *ufrom<0x80 ) {
-		if ( n<=1 )
-	break;
-		*pt++ = *ufrom;
-		--n;
-	    } else if ( *ufrom<0x800 ) {
-		if ( n<=2 )
-	break;
-		*pt++ = 0xc0 | (*ufrom>>6);
-		*pt++ = 0x80 | (*ufrom&0x3f);
-		n -= 2;
-	    } else if ( *ufrom>=0xd800 && *ufrom<0xdc00 && ufrom[1]>=0xdc00 && ufrom[1]<0xe000 ) {
-		int u = ((*ufrom>>6)&0xf)+1, y = ((*ufrom&3)<<4) | ((ufrom[1]>>6)&0xf);
-		if ( n<=4 )
-	    break;
-		*pt++ = 0xf0 | (u>>2);
-		*pt++ = 0x80 | ((u&3)<<4) | ((*ufrom>>2)&0xf);
-		*pt++ = 0x80 | y;
-		*pt++ = 0x80 | (ufrom[1]&0x3f);
-		n -= 4;
-	    } else {
-		if ( n<=3 )
-	    break;
-		*pt++ = 0xe0 | (*ufrom>>12);
-		*pt++ = 0x80 | ((*ufrom>>6)&0x3f);
-		*pt++ = 0x80 | (*ufrom&0x3f);
-	    }
-	    ++ufrom;
-	}
-	if ( n>1 )
-	    *pt = '\0';
-    } else {
-	if ( !bad_enc_warn ) {
-	    bad_enc_warn = true;
-	    fprintf( stderr, "Unexpected encoding %d, I'll pretend it's latin1\n", cs );
-	}
-return( u2encoding_strncpy(to,ufrom,n,e_iso8859_1));
-    }
-
-return( to );
-}
 
 #if HAVE_ICONV_H
 static char *old_local_name=NULL;
@@ -522,23 +336,6 @@ return( uto );
 return( encoding2u_strncpy(uto,from,n,local_encoding));
 }
 
-char *u2def_strncpy(char *to, const unichar_t *ufrom, int n) {
-#if HAVE_ICONV_H
-    if ( my_iconv_setup() ) {
-	size_t in_left = sizeof(unichar_t)*n, out_left = n;
-	char *cfrom = (char *) ufrom, *cto=to;
-	iconv(from_unicode, (iconv_arg2_t) &cfrom, &in_left, &cto, &out_left);
-	if ( cto<to+n ) *cto++ = '\0';
-	if ( cto<to+n ) *cto++ = '\0';
-#ifndef UNICHAR_16
-	if ( cto<to+n ) *cto++ = '\0';
-	if ( cto<to+n ) *cto++ = '\0';
-#endif
-return( to );
-    }
-#endif
-return( u2encoding_strncpy(to,ufrom,n,local_encoding));
-}
 
 unichar_t *def2u_copy(const char *from) {
     int len;
@@ -567,45 +364,6 @@ return( uto );
 	free( uto );
     else
 	uto[len] = '\0';
-return( ret );
-}
-
-char *u2def_copy(const unichar_t *ufrom) {
-    int len;
-    char *to, *ret;
-
-    if ( ufrom==NULL )
-return( NULL );
-    len = u_strlen(ufrom);
-#if HAVE_ICONV_H
-    if ( my_iconv_setup() ) {
-	size_t in_left = sizeof(unichar_t)*len, out_left = 3*len;
-	char *cfrom = (char *) ufrom, *cto;
-	cto = to = galloc(3*len+2);
-	iconv(from_unicode, (iconv_arg2_t) &cfrom, &in_left, &cto, &out_left);
-	*cto++ = '\0';
-	*cto++ = '\0';
-#ifndef UNICHAR_16
-	*cto++ = '\0';
-	*cto++ = '\0';
-#endif
-return( to );
-    }
-#endif
-    if ( local_encoding==e_utf8 )
-	len *= 3;
-    if ( local_encoding>=e_first2byte )
-	len *= 2;
-    to = galloc(len+sizeof(unichar_t));
-    ret = u2encoding_strncpy(to,ufrom,len,local_encoding);
-    if ( ret==NULL )
-	free( to );
-    else if ( local_encoding<e_first2byte )
-	to[len] = '\0';
-    else {
-	to[len] = '\0';
-	to[len+1] = '\0';
-    }
 return( ret );
 }
 
@@ -643,33 +401,3 @@ return( NULL );
 return( ret );
 }
 
-char *utf82def_copy(const char *ufrom) {
-    int len;
-    char *ret;
-    unichar_t *u2from;
-
-    if ( ufrom==NULL )
-return( NULL );
-    len = strlen(ufrom);
-#if HAVE_ICONV_H
-    if ( my_iconv_setup() ) {
-	size_t in_left = len, out_left = 3*len;
-	char *cfrom = (char *) ufrom, *cto, *to;
-	cto = to = galloc(3*len+2);
-	iconv(from_utf8, (iconv_arg2_t) &cfrom, &in_left, &cto, &out_left);
-	*cto++ = '\0';
-	*cto++ = '\0';
-#ifndef UNICHAR_16
-	*cto++ = '\0';
-	*cto++ = '\0';
-#endif
-return( to );
-    }
-#endif
-    if ( local_encoding==e_utf8 )
-return( copy( ufrom ));		/* Well that's easy */
-    u2from = utf82u_copy(ufrom);
-    ret = u2def_copy(u2from);
-    free(u2from);
-return( ret );
-}

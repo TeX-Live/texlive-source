@@ -1377,7 +1377,7 @@ Spline *SplineAddExtrema(Spline *s,int always,real lenbound, real offsetbound,
     uint8 rmfrom[4], rmto[4];
     int p, i,j, p_s, mini;
     SplinePoint *sp;
-    real len;
+    real len = 0; /* Init variable to silence compiler warnings */
 
     if ( !always ) {
 	real xlen, ylen;

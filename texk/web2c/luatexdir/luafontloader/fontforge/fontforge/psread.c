@@ -36,6 +36,10 @@
 # include <ieeefp.h>		/* Solaris defines isnan in ieeefp rather than math.h */
 #endif
 
+int THdo_hint_guessing = 0;
+int THdo_set_reversing = 0;
+int THdo_catagorize = 0;
+
 typedef struct _io {
     char *macro, *start;
     FILE *ps, *fog;
@@ -2673,7 +2677,7 @@ static void EntityDefaultStrokeFill(Entity *ent) {
 
 static SplinePointList *SplinesFromEntityChar(EntityChar *ec,int *flags,int is_stroked) {
     Entity *ent, *next;
-    SplinePointList *head=NULL, *last, *new, *nlast, *temp, *each, *transed;
+    SplinePointList *head=NULL, *last=NULL, *new, *nlast=NULL, *temp, *each, *transed;
     StrokeInfo si;
     real inversetrans[6];
     /*SplineSet *spl;*/
@@ -4072,7 +4076,8 @@ SplineChar *PSCharStringToSplines(uint8 *type1, int len, struct pscontext *conte
   done:
     if ( pcsp!=0 )
 	LogError( _("end of subroutine reached with no return in %s\n"), name );
-    SCCatagorizePoints(ret);
+    if (THdo_catagorize) 
+      SCCatagorizePoints(ret);
 
     ret->hstem = HintsAppend(ret->hstem,activeh); activeh=NULL;
     ret->vstem = HintsAppend(ret->vstem,activev); activev=NULL;
@@ -4097,27 +4102,699 @@ SplineChar *PSCharStringToSplines(uint8 *type1, int len, struct pscontext *conte
 	    SplineMake3(cur->last,cur->first);
 	    cur->last = cur->first;
 	}
-
     /* Oh, I see. PS and TT disagree on which direction to use, so Fontographer*/
     /*  chose the TT direction and we must reverse postscript */
-    for ( cur = ret->layers[ly_fore].splines; cur!=NULL; cur = cur->next )
+    if (THdo_set_reversing) {
+      for ( cur = ret->layers[ly_fore].splines; cur!=NULL; cur = cur->next )
 	SplineSetReverse(cur);
+    }
     if ( ret->hstem==NULL && ret->vstem==NULL )
 	ret->manualhints = false;
     if ( !is_type2 && context->instance_count!=0 ) {
 	UnblendFree(ret->hstem);
 	UnblendFree(ret->vstem);
     }
-    ret->hstem = HintCleanup(ret->hstem,true,context->instance_count);
-    ret->vstem = HintCleanup(ret->vstem,true,context->instance_count);
-    SCGuessHHintInstancesList(ret,ly_fore);
-    SCGuessVHintInstancesList(ret,ly_fore);
-    ret->hconflicts = StemListAnyConflicts(ret->hstem);
-    ret->vconflicts = StemListAnyConflicts(ret->vstem);
-    if ( context->instance_count==1 && !ret->hconflicts && !ret->vconflicts )
+    if (THdo_hint_guessing) {
+      ret->hstem = HintCleanup(ret->hstem,true,context->instance_count);
+      ret->vstem = HintCleanup(ret->vstem,true,context->instance_count);
+      SCGuessHHintInstancesList(ret,ly_fore);
+      SCGuessVHintInstancesList(ret,ly_fore);
+      ret->hconflicts = StemListAnyConflicts(ret->hstem);
+      ret->vconflicts = StemListAnyConflicts(ret->vstem);
+      if ( context->instance_count==1 && !ret->hconflicts && !ret->vconflicts )
 	SCClearHintMasks(ret,ly_fore,false);
-    HintsRenumber(ret);
+      HintsRenumber(ret);
+    }
     if ( name!=NULL && strcmp(name,".notdef")!=0 )
 	ret->widthset = true;
 return( ret );
+}
+
+
+/* This finds the 'connect-the-dots' boundingbox of a Type2 charstring */
+/* It is a simplified version of PSCharStringToSplines, above */
+
+SplineChar *PSCharStringToBB(uint8 *type1, int len, struct pscontext *context,
+			     struct pschars *subrs, struct pschars *gsubrs, const char *name) {
+    real stack[50]; int sp=0, v;		/* Type1 stack is about 25 long, Type2 stack is 48 */
+    real transient[32];
+    SplineChar *ret = SplineCharCreate(2);
+
+    DBasePoint current, ll, ur;
+    real dx, dy, dx2, dy2, dx3, dy3, dx4, dy4, dx5, dy5, dx6=0, dy6;
+
+    int first = 1; /* to flag extra set width */
+    /* subroutines may be nested to a depth of 10 */
+    struct substate { unsigned char *type1; int len; int subnum; } pcstack[11];
+    int pcsp=0;
+
+    real pops[30];
+    int popsp=0;
+    int base, polarity;
+
+    struct pschars *s;
+    int hint_cnt = 0;
+
+    int last_was_b1=false, old_last_was_b1;
+
+    ret->name = copy( name );
+    ret->unicodeenc = -1;
+    ret->width = (int16) 0x8000;
+    if ( name==NULL ) name = "unnamed";
+    ret->manualhints = true;
+    if ( !context->is_type2 ) {
+	LogError( _("Quick boundingbox mode only does CFF charstrings, not Type1 (font %s)\n"), name );
+	return (ret);
+    }
+	
+    current.x = current.y = 0;
+    ll.x = ll.y = (int16) 0x7FFF;
+    ur.x = ur.y = (int16) -0x7FFF;
+
+    while ( len>0 ) {
+	if ( sp>48 ) {
+	    LogError( _("Stack got too big in %s\n"), name );
+	    sp = 48;
+	}
+	base = 0;
+	--len;
+	if ( (v = *type1++)>=32 ) {
+	    if ( v<=246) {
+		stack[sp++] = v - 139;
+	    } else if ( v<=250 ) {
+		stack[sp++] = (v-247)*256 + *type1++ + 108;
+		--len;
+	    } else if ( v<=254 ) {
+		stack[sp++] = -(v-251)*256 - *type1++ - 108;
+		--len;
+	    } else {
+		int val = (*type1<<24) | (type1[1]<<16) | (type1[2]<<8) | type1[3];
+		stack[sp++] = val;
+		type1 += 4;
+		len -= 4;
+		stack[sp-1] /= 65536.;
+	    }
+	} else if ( v==28 ) {
+	    stack[sp++] = (short) ((type1[0]<<8) | type1[1]);
+	    type1 += 2;
+	    len -= 2;
+	    /* In the Dict tables of CFF, a 5byte fixed value is prefixed by a */
+	    /*  29 code. In Type2 strings the prefix is 255. */
+	} else if ( v==12 ) {
+	    old_last_was_b1 = last_was_b1; last_was_b1 = false;
+	    v = *type1++;
+	    --len;
+	    switch ( v ) {
+	    case 0: /* dotsection */
+		sp = 0;
+		break;
+	    case 1: /* vstem3 */	/* specifies three v hints zones at once */
+		if ( sp<6 ) LogError( _("Stack underflow on vstem3 in %s\n"), name );
+		/* according to the standard, if there is a vstem3 there can't */
+		/*  be any vstems, so there can't be any confusion about hint order */
+		/*  so we don't need to worry about unblended stuff */
+		hint_cnt+=3;
+		sp = 0;
+		break;
+	    case 2: /* hstem3 */	/* specifies three h hints zones at once */
+		if ( sp<6 ) LogError( _("Stack underflow on hstem3 in %s\n"), name );
+		hint_cnt+=3;
+		sp = 0;
+		break;
+	    case 6: /* seac */	/* build accented characters */
+	    seac:
+		if ( sp<5 ) LogError( _("Stack underflow on seac in %s\n"), name );
+		/* stack[0] must be the lsidebearing of the accent. I'm not sure why */
+		sp = 0;
+		break;
+	    case 7: /* sbw */		/* generalized width/sidebearing command */
+		if ( sp<4 ) LogError( _("Stack underflow on sbw in %s\n"), name );
+		ret->lsidebearing = stack[0];
+		/* stack[1] is lsidebearing y (only for vertical writing styles, CJK) */
+		ret->width = stack[2];
+		/* stack[3] is height (for vertical writing styles, CJK) */
+		sp = 0;
+		break;
+	    case 5: case 9: case 14: case 26:
+		if ( sp<1 ) LogError( _("Stack underflow on unary operator in %s\n"), name );
+		switch ( v ) {
+		case 5: stack[sp-1] = (stack[sp-1]==0); break;	/* not */
+		case 9: if ( stack[sp-1]<0 ) stack[sp-1]= -stack[sp-1]; break;	/* abs */
+		case 14: stack[sp-1] = -stack[sp-1]; break;		/* neg */
+		case 26: stack[sp-1] = sqrt(stack[sp-1]); break;	/* sqrt */
+		}
+		break;
+	    case 3: case 4: case 10: case 11: case 12: case 15: case 24:
+		if ( sp<2 ) LogError( _("Stack underflow on binary operator in %s\n"), name );
+		else switch ( v ) {
+		case 3: /* and */
+		    stack[sp-2] = (stack[sp-1]!=0 && stack[sp-2]!=0);
+		    break;
+		case 4: /* and */
+		    stack[sp-2] = (stack[sp-1]!=0 || stack[sp-2]!=0);
+		    break;
+		case 10: /* add */
+		    stack[sp-2] += stack[sp-1];
+		    break;
+		case 11: /* sub */
+		    stack[sp-2] -= stack[sp-1];
+		    break;
+		case 12: /* div */
+		    stack[sp-2] /= stack[sp-1];
+		    break;
+		case 24: /* mul */
+		    stack[sp-2] *= stack[sp-1];
+		    break;
+		case 15: /* eq */
+		    stack[sp-2] = (stack[sp-1]==stack[sp-2]);
+		    break;
+		}
+		--sp;
+		break;
+	    case 22: /* ifelse */
+		if ( sp<4 ) LogError( _("Stack underflow on ifelse in %s\n"), name );
+		else {
+		    if ( stack[sp-2]>stack[sp-1] )
+			stack[sp-4] = stack[sp-3];
+		    sp -= 3;
+		}
+		break;
+	    case 23: /* random */
+		/* This function returns something (0,1]. It's not clear to me*/
+		/*  if rand includes 0 and RAND_MAX or not, but this approach */
+		/*  should work no matter what */
+		do {
+		    stack[sp] = (rand()/(RAND_MAX-1));
+		} while ( stack[sp]==0 || stack[sp]>1 );
+		++sp;
+		break;
+	    case 20: /* put */
+		if ( sp<2 ) LogError( _("Too few items on stack for put in %s\n"), name );
+		else if ( stack[sp-1]<0 || stack[sp-1]>=32 ) LogError( _("Reference to transient memory out of bounds in put in %s\n"), name );
+		else {
+		    transient[(int)stack[sp-1]] = stack[sp-2];
+		    sp -= 2;
+		}
+		break;
+	    case 21: /* get */
+		if ( sp<1 ) LogError( _("Too few items on stack for get in %s\n"), name );
+		else if ( stack[sp-1]<0 || stack[sp-1]>=32 ) LogError( _("Reference to transient memory out of bounds in put in %s\n"), name );
+		else
+		    stack[sp-1] = transient[(int)stack[sp-1]];
+		break;
+	    case 17: /* pop */
+		/* pops something from the postscript stack and pushes it on ours */
+		/* used to get a return value from an othersubr call */
+		/* Bleah. Adobe wants the pops to return the arguments if we */
+		/*  don't understand the call. What use is the subroutine then?*/
+		if ( popsp<=0 )
+		    LogError( _("Pop stack underflow on pop in %s\n"), name );
+		else
+		    stack[sp++] = pops[--popsp];
+		break;
+	    case 18: /* drop */
+		if ( sp>0 ) --sp;
+		break;
+	    case 27: /* dup */
+		if ( sp>=1 ) {
+		    stack[sp] = stack[sp-1];
+		    ++sp;
+		}
+		break;
+	    case 28: /* exch */
+		if ( sp>=2 ) {
+		    real temp = stack[sp-1];
+		    stack[sp-1] = stack[sp-2]; stack[sp-2] = temp;
+		}
+		break;
+	    case 29: /* index */
+		if ( sp>=1 ) {
+		    int index = stack[--sp];
+		    if ( index<0 || sp<index+1 )
+			LogError( _("Index out of range in %s\n"), name );
+		    else {
+			stack[sp] = stack[sp-index-1];
+			++sp;
+		    }
+		}
+		break;
+	    case 30: /* roll */
+		if ( sp>=2 ) {
+		    int j = stack[sp-1], N=stack[sp-2];
+		    if ( N>sp || j>=N || j<0 || N<0 )
+			LogError( _("roll out of range in %s\n"), name );
+		    else if ( j==0 || N==0 )
+			/* No op */;
+		    else {
+			real *temp = galloc(N*sizeof(real));
+			int i;
+			for ( i=0; i<N; ++i )
+			    temp[i] = stack[sp-N+i];
+			for ( i=0; i<N; ++i )
+			    stack[sp-N+i] = temp[(i+j)%N];
+			free(temp);
+		    }
+		}
+		break;
+	    case 33: /* setcurrentpoint */
+		if ( sp<2 ) LogError( _("Stack underflow on setcurrentpoint in %s\n"), name );
+		else {
+		    current.x = stack[0];
+		    current.y = stack[1];
+		    if (ll.y>current.y) ll.y = current.y;
+		    if (ur.y<current.y) ur.y = current.y;
+		    if (ll.x>current.x) ll.x = current.x;
+		    if (ur.x<current.x) ur.x = current.x;
+		}
+		sp = 0;
+		break;
+	    case 34:	/* hflex */
+	    case 35:	/* flex */
+	    case 36:	/* hflex1 */
+	    case 37:	/* flex1 */
+		dy = dy3 = dy4 = dy5 = dy6 = 0;
+		dx = stack[base++];
+		if ( v!=34 )
+		    dy = stack[base++];
+		dx2 = stack[base++];
+		dy2 = stack[base++];
+		dx3 = stack[base++];
+		if ( v!=34 && v!=36 )
+		    dy3 = stack[base++];
+		dx4 = stack[base++];
+		if ( v!=34 && v!=36 )
+		    dy4 = stack[base++];
+		dx5 = stack[base++];
+		if ( v==34 )
+		    dy5 = -dy2;
+		else
+		    dy5 = stack[base++];
+		switch ( v ) {
+		    real xt, yt;
+		case 35:    /* flex */
+		    dx6 = stack[base++];
+		    dy6 = stack[base++];
+		    break;
+		case 34:    /* hflex */
+		    dx6 = stack[base++];
+		    break;
+		case 36:    /* hflex1 */
+		    dx6 = stack[base++];
+		    dy6 = -dy-dy2-dy5;
+		    break;
+		case 37:    /* flex1 */
+		    xt = dx+dx2+dx3+dx4+dx5;
+		    yt = dy+dy2+dy3+dy4+dy5;
+		    if ( xt<0 ) xt= -xt;
+		    if ( yt<0 ) yt= -yt;
+		    if ( xt>yt ) {
+			dx6 = stack[base++];
+			dy6 = -dy-dy2-dy3-dy4-dy5;
+		    } else {
+			dy6 = stack[base++];
+			dx6 = -dx-dx2-dx3-dx4-dx5;
+		    }
+		    break;
+		}
+		current.x = current.x+dx; current.y = current.y+dy;
+		if (ll.y>current.y) ll.y = current.y;
+		if (ur.y<current.y) ur.y = current.y;
+		if (ll.x>current.x) ll.x = current.x;
+		if (ur.x<current.x) ur.x = current.x;
+		current.x = current.x+dx2; current.y = current.y+dy2;
+		if (ll.y>current.y) ll.y = current.y;
+		if (ur.y<current.y) ur.y = current.y;
+		if (ll.x>current.x) ll.x = current.x;
+		if (ur.x<current.x) ur.x = current.x;
+		current.x = current.x+dx3; current.y = current.y+dy3;
+		if (ll.y>current.y) ll.y = current.y;
+		if (ur.y<current.y) ur.y = current.y;
+		if (ll.x>current.x) ll.x = current.x;
+		if (ur.x<current.x) ur.x = current.x;
+
+		current.x = current.x+dx4; current.y = current.y+dy4;
+		if (ll.y>current.y) ll.y = current.y;
+		if (ur.y<current.y) ur.y = current.y;
+		if (ll.x>current.x) ll.x = current.x;
+		if (ur.x<current.x) ur.x = current.x;
+		current.x = current.x+dx5; current.y = current.y+dy5;
+		if (ll.y>current.y) ll.y = current.y;
+		if (ur.y<current.y) ur.y = current.y;
+		if (ll.x>current.x) ll.x = current.x;
+		if (ur.x<current.x) ur.x = current.x;
+		current.x = current.x+dx6; current.y = current.y+dy6;
+		if (ll.y>current.y) ll.y = current.y;
+		if (ur.y<current.y) ur.y = current.y;
+		if (ll.x>current.x) ll.x = current.x;
+		if (ur.x<current.x) ur.x = current.x;
+		sp = 0;
+		break;
+	    default:
+		LogError( _("Uninterpreted opcode 12,%d in %s\n"), v, name );
+		break;
+	    }
+	} else { last_was_b1 = false; switch ( v ) {
+		 case 1: /* hstem */
+		 case 18: /* hstemhm */
+		     base = 0;
+		     if ( (sp&1) && ret->width == (int16) 0x8000 )
+			 ret->width = stack[0];
+		     if ( sp&1 )
+			 base=1;
+		     if ( sp-base<2 )
+			 LogError( _("Stack underflow on hstem in %s\n"), name );
+		     /* stack[0] is absolute y for start of horizontal hint */
+		     /*	(actually relative to the y specified as lsidebearing y in sbw*/
+		     /* stack[1] is relative y for height of hint zone */
+
+
+		     while ( sp-base>=2 ) {
+			 hint_cnt++;
+			 base+=2;
+		     }
+		     sp = 0;
+		     break;
+		 case 19: /* hintmask */
+		 case 20: /* cntrmask */
+		     /* If there's anything on the stack treat it as a vstem hint */
+		 case 3: /* vstem */
+		 case 23: /* vstemhm */
+		     base = 0;
+		     if ( first || v==3 || v==23 ) {
+			 if ( (sp&1) && ret->width == (int16) 0x8000 ) {
+			     ret->width = stack[0];
+			 }
+			 if ( sp&1 )
+			     base=1;
+			 if ( sp-base<2 && v!=19 && v!=20 )
+			     LogError( _("Stack underflow on vstem in %s\n"), name );
+			 /* stack[0] is absolute x for start of vertical hint */
+			 /*	(actually relative to the x specified as lsidebearing in h/sbw*/
+			 /* stack[1] is relative x for height of hint zone */
+
+
+			 while ( sp-base>=2 ) {
+			     hint_cnt++;
+			     base+=2;
+			 }
+			 sp = 0;
+		     }
+		     if ( v==19 || v==20 ) {		/* hintmask, cntrmask */
+			 unsigned bytes = (hint_cnt+7)/8;
+			 if ( bytes>sizeof(HintMask) ) bytes = sizeof(HintMask);
+			 if ( bytes!=(unsigned)hint_cnt/8 ) {
+			     int mask = 0xff>>(hint_cnt&7);
+			     if ( type1[bytes-1]&mask )
+				 LogError( _("Hint mask (or counter mask) with too many hints in %s\n"), name );
+			 }
+			 type1 += bytes;
+			 len -= bytes;
+		     }
+		     break;
+		 case 14: /* endchar */
+		     /* endchar is allowed to terminate processing even within a subroutine */
+		     if ( (sp&1) && ret->width == (int16) 0x8000 )
+			 ret->width = stack[0];
+		     pcsp = 0;
+		     if ( sp==4 ) {
+			 /* In Type2 strings endchar has a depreciated function of doing */
+			 /*  a seac (which doesn't exist at all). Except enchar takes */
+			 /*  4 args and seac takes 5. Bleah */
+			 stack[4] = stack[3]; stack[3] = stack[2]; stack[2] = stack[1]; stack[1] = stack[0];
+			 stack[0] = 0;
+			 sp = 5;
+			 goto seac;
+		     } else if ( sp==5 ) {
+			 /* same as above except also specified a width */
+			 stack[0] = 0;
+			 goto seac;
+		     }
+		     /* the docs say that endchar must be the last command in a char */
+		     goto done;
+		     break;
+		 case 13: /* hsbw (set left sidebearing and width) */
+		     if ( sp<2 ) LogError( _("Stack underflow on hsbw in %s\n"), name );
+		     ret->lsidebearing = stack[0];
+		     current.x = stack[0];		/* sets the current point too */
+		     if (ll.x>current.x) ll.x = current.x;
+		     if (ur.x<current.x) ur.x = current.x;
+		     ret->width = stack[1];
+		     sp = 0;
+		     break;
+		 case 9: /* closepath */
+		     sp = 0;
+		     break;
+		 case 21: /* rmoveto */
+		 case 22: /* hmoveto */
+		 case 4: /* vmoveto */
+			 if (( (v==21 && sp==3) || (v!=21 && sp==2))  && ret->width == (int16) 0x8000 )
+			     /* Character's width may be specified on the first moveto */
+			     ret->width = stack[0];
+			 if ( v==21 && sp>2 ) {
+			     stack[0] = stack[sp-2]; stack[1] = stack[sp-1];
+			     sp = 2;
+			 } else if ( v!=21 && sp>1 ) {
+			     stack[0] = stack[sp-1];
+			     sp = 1;
+			 }
+			 /* fall through */
+		 case 5: /* rlineto */
+		 case 6: /* hlineto */
+		 case 7: /* vlineto */
+		     polarity = 0;
+		     base = 0;
+		     while ( base<sp ) {
+			 dx = dy = 0;
+			 if ( v==5 || v==21 ) {
+			     if ( sp<base+2 ) {
+				 LogError( _("Stack underflow on rlineto/rmoveto in %s\n"), name );
+				 break;
+			     }
+			     dx = stack[base++];
+			     dy = stack[base++];
+			 } else if ( (v==6 && !(polarity&1)) || (v==7 && (polarity&1)) || v==22 ) {
+			     if ( sp<=base ) {
+				 LogError( _("Stack underflow on hlineto/hmoveto in %s\n"), name );
+				 break;
+			     }
+			     dx = stack[base++];
+			 } else /*if ( (v==7 && !(parity&1)) || (v==6 && (parity&1) || v==4 )*/ {
+			     if ( sp<=base ) {
+				 LogError( _("Stack underflow on vlineto/vmoveto in %s\n"), name );
+				 break;
+			     }
+			     dy = stack[base++];
+			 }
+			 ++polarity;
+			 current.x = current.x+dx; current.y = current.y+dy;
+			 if (ll.y>current.y) ll.y = current.y;
+			 if (ur.y<current.y) ur.y = current.y;
+			 if (ll.x>current.x) ll.x = current.x;
+			 if (ur.x<current.x) ur.x = current.x;
+			 if ( v==4 || v==21 || v==22 ) {
+			     first = 0;
+			     break;
+			 } else {
+			     first = 0;
+			 }
+		     }
+		     sp = 0;
+		     break;
+		 case 25: /* rlinecurve */
+		     base = 0;
+		     while ( sp>base+6 ) {
+			 current.x = current.x+stack[base++]; current.y = current.y+stack[base++];
+			 if (ll.y>current.y) ll.y = current.y;
+			 if (ur.y<current.y) ur.y = current.y;
+			 if (ll.x>current.x) ll.x = current.x;
+			 if (ur.x<current.x) ur.x = current.x;
+			 first = 0;
+		     }
+		 case 24: /* rcurveline */
+		 case 8:  /* rrcurveto */
+		 case 31: /* hvcurveto */
+		 case 30: /* vhcurveto */
+		 case 27: /* hhcurveto */
+		 case 26: /* vvcurveto */
+		     polarity = 0;
+		     while ( sp>base+2 ) {
+			 dx = dy = dx2 = dy2 = dx3 = dy3 = 0;
+			 if ( v==8 || v==25 || v==24 ) {
+			     if ( sp<6+base ) {
+				 LogError( _("Stack underflow on rrcurveto in %s\n"), name );
+				 base = sp;
+			     } else {
+				 dx = stack[base++];
+				 dy = stack[base++];
+				 dx2 = stack[base++];
+				 dy2 = stack[base++];
+				 dx3 = stack[base++];
+				 dy3 = stack[base++];
+			     }
+			 } else if ( v==27 ) {		/* hhcurveto */
+			     if ( sp<4+base ) {
+				 LogError( _("Stack underflow on hhcurveto in %s\n"), name );
+				 base = sp;
+			     } else {
+				 if ( (sp-base)&1 ) dy = stack[base++];
+				 dx = stack[base++];
+				 dx2 = stack[base++];
+				 dy2 = stack[base++];
+				 dx3 = stack[base++];
+			     }
+			 } else if ( v==26 ) {		/* vvcurveto */
+			     if ( sp<4+base ) {
+				 LogError( _("Stack underflow on hhcurveto in %s\n"), name );
+				 base = sp;
+			     } else {
+				 if ( (sp-base)&1 ) dx = stack[base++];
+				 dy = stack[base++];
+				 dx2 = stack[base++];
+				 dy2 = stack[base++];
+				 dy3 = stack[base++];
+			     }
+			 } else if ( (v==31 && !(polarity&1)) || (v==30 && (polarity&1)) ) {
+			     if ( sp<4+base ) {
+				 LogError( _("Stack underflow on hvcurveto in %s\n"), name );
+				 base = sp;
+			     } else {
+				 dx = stack[base++];
+				 dx2 = stack[base++];
+				 dy2 = stack[base++];
+				 dy3 = stack[base++];
+				 if ( sp==base+1 )
+				     dx3 = stack[base++];
+			     }
+			 } else /*if ( (v==30 && !(polarity&1)) || (v==31 && (polarity&1)) )*/ {
+			     if ( sp<4+base ) {
+				 LogError( _("Stack underflow on vhcurveto in %s\n"), name );
+				 base = sp;
+			     } else {
+				 dy = stack[base++];
+				 dx2 = stack[base++];
+				 dy2 = stack[base++];
+				 dx3 = stack[base++];
+				 if ( sp==base+1 )
+				     dy3 = stack[base++];
+			     }
+			 }
+			 ++polarity;
+			 current.x = current.x+dx; current.y = current.y+dy;
+			 if (ll.y>current.y) ll.y = current.y;
+			 if (ur.y<current.y) ur.y = current.y;
+			 if (ll.x>current.x) ll.x = current.x;
+			 if (ur.x<current.x) ur.x = current.x;
+			 current.x = current.x+dx2; current.y = current.y+dy2;
+			 if (ll.y>current.y) ll.y = current.y;
+			 if (ur.y<current.y) ur.y = current.y;
+			 if (ll.x>current.x) ll.x = current.x;
+			 if (ur.x<current.x) ur.x = current.x;
+			 current.x = current.x+dx3; current.y = current.y+dy3;
+			 if (ll.y>current.y) ll.y = current.y;
+			 if (ur.y<current.y) ur.y = current.y;
+			 if (ll.x>current.x) ll.x = current.x;
+			 if (ur.x<current.x) ur.x = current.x;
+		     }
+		     if ( v==24 ) {
+			 current.x = current.x+stack[base++]; current.y = current.y+stack[base++];
+			 if (ll.y>current.y) ll.y = current.y;
+			 if (ur.y<current.y) ur.y = current.y;
+			 if (ll.x>current.x) ll.x = current.x;
+			 if (ur.x<current.x) ur.x = current.x;
+		     }
+		     sp = 0;
+		     break;
+		 case 29: /* callgsubr */
+		 case 10: /* callsubr */
+		     /* stack[sp-1] contains the number of the subroutine to call */
+		     if ( sp<1 ) {
+			 LogError( _("Stack underflow on callsubr in %s\n"), name );
+			 break;
+		     } else if ( pcsp>10 ) {
+			 LogError( _("Too many subroutine calls in %s\n"), name );
+			 break;
+		     }
+		     s=subrs; if ( v==29 ) s = gsubrs;
+		     if ( s!=NULL ) stack[sp-1] += s->bias;
+		     /* Type2 subrs have a bias that must be added to the subr-number */
+		     /* Type1 subrs do not. We set the bias on them to 0 */
+		     if ( s==NULL || stack[sp-1]>=s->cnt || stack[sp-1]<0 ||
+			  s->values[(int) stack[sp-1]]==NULL )
+			 LogError( _("Subroutine number out of bounds in %s\n"), name );
+		     else {
+			 pcstack[pcsp].type1 = type1;
+			 pcstack[pcsp].len = len;
+			 pcstack[pcsp].subnum = stack[sp-1];
+			 ++pcsp;
+			 type1 = s->values[(int) stack[sp-1]];
+			 len = s->lens[(int) stack[sp-1]];
+		     }
+		     if ( --sp<0 ) sp = 0;
+		     break;
+		 case 11: /* return */
+		     /* return from a subr outine */
+		     if ( pcsp<1 ) LogError( _("return when not in subroutine in %s\n"), name );
+		     else {
+			 --pcsp;
+			 type1 = pcstack[pcsp].type1;
+			 len = pcstack[pcsp].len;
+		     }
+		     break;
+		 case 16: { /* blend -- obsolete type 2 multiple master operator */
+		     int cnt,i,j;
+		     if ( context->instance_count==0 )
+			 LogError( _("Attempt to use a multiple master subroutine in a non-mm font.\n") );
+		     else if ( sp<1 || sp<context->instance_count*stack[sp-1]+1 )
+			 LogError( _("Too few items on stack for blend in %s\n"), name );
+		     else {
+			 if ( !context->blend_warn ) {
+			     LogError( _("Use of obsolete blend operator.\n") );
+			     context->blend_warn = true;
+			 }
+			 cnt = stack[sp-1];
+			 sp -= context->instance_count*stack[sp-1]+1;
+			 for ( i=0; i<cnt; ++i ) {
+			     for ( j=1; j<context->instance_count; ++j )
+				 stack[sp+i] += context->blend_values[j]*stack[sp+
+									       cnt+ i*(context->instance_count-1)+ j-1];
+			 }
+			 /* there will always be fewer pushes than there were pops */
+			 /*  so I don't bother to check the stack */
+			 sp += cnt;
+		     }
+		 }
+		     break;
+		 default:
+		     LogError( _("Uninterpreted opcode %d in %s\n"), v, name );
+		     break;
+		 }}
+    }
+done:
+    if ( pcsp!=0 )
+	LogError( _("end of subroutine reached with no return in %s\n"), name );
+
+    if ( name!=NULL && strcmp(name,".notdef")!=0 )
+	ret->widthset = true;
+    if (ur.x == -0x7FFF) ur.x = 0;
+    if (ur.y == -0x7FFF) ur.y = 0;
+    if (ll.x == 0x7FFF) ll.x = 0;
+    if (ll.y == 0x7FFF) ll.y = 0;
+    if (ll.x>ur.x) ll.x = ur.x;
+    if (ll.y>ur.y) ll.y = ur.y;
+    
+    
+    ret->xmin = rint(ll.x);
+    ret->ymin = rint(ll.y);
+    ret->xmax = rint(ur.x);
+    ret->ymax = rint(ur.y);
+    /* free the curves */
+    if (ret->layers!=NULL && ret->layers[ly_fore].splines != NULL) {
+	SplinePointListsFree(ret->layers[ly_fore].splines);
+	ret->layers[ly_fore].splines=NULL;
+    }
+    if (ret->layers[ly_fore].refs!=NULL) {
+	RefCharsFree(ret->layers[ly_fore].refs);
+	ret->layers[ly_fore].refs = NULL;
+    }
+    return( ret );
 }

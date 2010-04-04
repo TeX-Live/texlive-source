@@ -11,6 +11,7 @@
 #include <limits.h>
 #include <stddef.h>
 
+#include <web2c/c-auto.h>
 
 /*
 ** ==================================================================
@@ -44,6 +45,11 @@
 #define LUA_DL_DYLD		/* does not need extra library */
 #endif
 
+#if !defined(_WIN32)
+#if defined(HAVE_DLFCN_H)
+#define LUA_USE_DLOPEN /* needs an extra library: -ldl */
+#endif
+#endif
 
 
 /*
@@ -521,15 +527,23 @@
 #define LUA_NUMBER_SCAN		"%lf"
 #define LUA_NUMBER_FMT		"%.14g"
 
-#define lua_number2str(s,n)	  if (((n)<0.000001) && ((n)>-0.000001))  \
-	sprintf((s), "0"); else if (((n)<0.0001) && ((n)>-0.0001)) {      \
-	  sprintf((s), "%.6f", (n));                                      \
-	  if (n>0) { if (s[7] == '0') { s[7] = 0; } }                     \
-	  else     { if (s[8] == '0') { s[8] = 0; } }                     \
-	} else  sprintf((s), LUA_NUMBER_FMT, (n)); 
+#define lua_number2str(s,n) do {					\
+	if (n<0.0001 && n>=-0.0001) {				\
+	    sprintf((s), "%.14f", (n));					\
+	    if (strchr(s,'.')) {					\
+		size_t s_l ;						\
+		s_l = strlen(s);					\
+		while (s_l>0 && s_l--) {				\
+		    if (s[s_l] == '0') s[s_l] = '\0';			\
+		    else break;						\
+		}							\
+		if (s[s_l] == '.') s[s_l] = '\0';			\
+	    }								\
+	} else sprintf((s), LUA_NUMBER_FMT, (n));			\
+    } while (0)
 
 
-#define LUAI_MAXNUMBER2STR	32 /* 16 digits, sign, point, and \0 */
+#define LUAI_MAXNUMBER2STR	64 /* 16 digits, sign, point, and \0 */
 #define lua_str2number(s,p)	strtod((s), (p))
 
 
@@ -568,7 +582,8 @@
 /* On a Microsoft compiler, use assembler */
 #if defined(_MSC_VER)
 
-#define lua_number2int(i,d)   __asm fld d   __asm fistp i
+#define lua_number2int(i,d) \
+{int N__; double D__=d; {__asm fld D__ __asm fistp N__} i = N__;}
 #define lua_number2integer(i,n)		lua_number2int(i, n)
 
 /* the next trick should work on any Pentium, but sometimes clashes

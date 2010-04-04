@@ -1,4 +1,5 @@
 /* Produced by texiweb from libavl.w. */
+/* *INDENT-OFF* */
 
 /* libavl - library for manipulation of binary trees.
    Copyright (C) 1998-2002, 2004 Free Software Foundation, Inc.
@@ -113,3 +114,4 @@ void *avl_t_cur (struct avl_traverser *);
 void *avl_t_replace (struct avl_traverser *, void *);
 
 #endif /* avl.h */
+/* *INDENT-ON* */

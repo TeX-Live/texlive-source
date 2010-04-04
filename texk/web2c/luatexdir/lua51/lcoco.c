@@ -468,7 +468,7 @@ typedef void (*coco_MainFunc)(void);
 
 /* Don't use multiples of 64K to avoid D-cache aliasing conflicts. */
 #ifndef COCO_DEFAULT_CSTACKSIZE
-#define COCO_DEFAULT_CSTACKSIZE		(65536-4096)
+#define COCO_DEFAULT_CSTACKSIZE		((16*65536)-4096)
 #endif
 
 static int defaultcstacksize = COCO_DEFAULT_CSTACKSIZE;

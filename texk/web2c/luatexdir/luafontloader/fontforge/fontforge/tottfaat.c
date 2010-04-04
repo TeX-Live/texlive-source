@@ -95,6 +95,8 @@ return( false );
 	    if ( features->ismac || OTTagToMacFeature(features->featuretag,&ft,&fs))
 return( true );
 	}
+      default: /* handle this to silence compiler warnings */
+        break;
     }
 return( false );
 }

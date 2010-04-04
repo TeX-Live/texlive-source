@@ -498,7 +498,7 @@ return( _ReadSplineFont(NULL,filename,openflags));
 SplineFont *ReadSplineFontInfo(char *filename,enum openflags openflags) {
   SplineFont *sf, *sf_ptr;
 	char **fontlist;
-    char *pt =NULL, *strippedname=filename, *paren=NULL, *fullname=filename;
+    char *pt =NULL, *strippedname=filename, *paren=NULL, *rparen=NULL, *fullname=filename;
     FILE *foo = NULL;
     int checked = 0;
 	char s[512] = {0};
@@ -508,9 +508,14 @@ return( NULL );
 
     pt = strrchr(filename,'/');
     if ( pt==NULL ) pt = filename;
-    if ( (paren=strchr(pt,'('))!=NULL && strchr(paren,')')!=NULL ) {
-	    strippedname = copy(filename);
-        strippedname[paren-filename] = '\0';
+    /* Someone gave me a font "Nafees Nastaleeq(Updated).ttf" and complained */
+    /*  that ff wouldn't open it */
+    /* Now someone will complain about "Nafees(Updated).ttc(fo(ob)ar)" */
+    if ( (paren = strrchr(pt,'('))!=NULL &&
+	    (rparen = strrchr(paren,')'))!=NULL &&
+	    rparen[1]=='\0' ) {
+	strippedname = copy(filename);
+	strippedname[paren-filename] = '\0';
     }
 
     sf = NULL;

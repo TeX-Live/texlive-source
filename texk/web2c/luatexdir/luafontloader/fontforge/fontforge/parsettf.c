@@ -33,10 +33,18 @@
 #include <gwidget.h>
 #include "ttf.h"
 
+extern char *AdobeStandardEncoding[], *AdobeExpertEncoding[];
+extern const char *ttfstandardnames[];
+extern int ask_user_for_cmap;
+extern char *SaveTablesPref;
+
 #ifdef LUA_FF_LIB
 SplineFont *_SFReadTTFInfo(FILE *ttf, int flags,enum openflags openflags, char *filename,struct fontdict *fd);
 void THPatchSplineChar(SplineChar *sc);
 #endif
+
+int THtest_duplicate_glyph_names = 0;
+int THread_ttf_glyph_data  = 0;
 
 char *SaveTablesPref;
 int ask_user_for_cmap = false;
@@ -579,6 +587,57 @@ return( NULL );
 return( _readencstring(ttf,stringoffset+fullstr,fulllen,fullplat,fullspec,fulllang));
 }
 
+
+char *TTFGetPSFontName(FILE *ttf,int32 offset,int32 off2) {
+    int i,num;
+    int32 tag, length, stringoffset;
+    int name, len, off;
+    int32 nameoffset = 0;
+
+    fseek(ttf,offset,SEEK_SET);
+    /* version = */ getlong(ttf);
+    num = getushort(ttf);
+    /* srange = */ getushort(ttf);
+    /* esel = */ getushort(ttf);
+    /* rshift = */ getushort(ttf);
+    for ( i=0; i<num; ++i ) {
+	tag = getlong(ttf);
+	/* checksum = */ getlong(ttf);
+	nameoffset = off2+getlong(ttf);
+	length = getlong(ttf);
+	if ( tag==CHR('n','a','m','e'))
+	    break;
+    }
+    if ( i==num )
+	return( NULL );
+
+    fseek(ttf,nameoffset,SEEK_SET);
+    /* format = */ getushort(ttf);
+    num = getushort(ttf);
+    stringoffset = nameoffset+getushort(ttf);
+
+    for ( i=0; i<num; ++i ) {
+	/* plat */ getushort(ttf);
+	/* spec */ getushort(ttf);
+	/* lang */ getushort(ttf);
+	name = getushort(ttf);
+	len = getushort(ttf);
+	off = getushort(ttf);
+	if (name == 6) {
+	    char *str = malloc(len+1);
+	    if (str) {
+		fseek (ttf, stringoffset+off, SEEK_SET);
+		if(fread(str,1,len,ttf)==(size_t)len) {
+		    str[len] = '\0';
+		    return str;
+		}
+		free(str);
+	    }
+	}
+    }
+    return NULL;
+}
+
 static int PickTTFFont(FILE *ttf,char *filename,char **chosenname) {
     int32 *offsets, cnt, i, choice, j;
     char **names;
@@ -660,7 +719,6 @@ return( choice );
 }
 
 static void ParseSaveTablesPref(struct ttfinfo *info) {
-    extern char *SaveTablesPref;
     char *pt, *spt;
     int cnt;
 
@@ -2185,26 +2243,23 @@ return( sc );
     sc->xmax = getushort(ttf);
     sc->ymax = getushort(ttf);
     sc->lsidebearing = sc->xmin;
-#else
-    /* xmin = */ sc->lsidebearing = getushort(ttf);
-    /* ymin = */ getushort(ttf);
-    /* xmax = */ getushort(ttf);
-    /* ymax = */ /* sc->lsidebearing = */ getushort(ttf);	/* what was this for? */
 #endif
-    if ( path_cnt>=0 )
+    if (THread_ttf_glyph_data) {
+      if ( path_cnt>=0 )
 	readttfsimpleglyph(ttf,info,sc,path_cnt);
-    else
+      else
 	readttfcompositglyph(ttf,info,sc,info->glyph_start+end);
-    if ( start>end ) {
+      if ( start>end ) {
 	LogError(_("Bad glyph (%d), disordered 'loca' table (start comes after end)\n"), gid );
 	info->bad_glyph_data = true;
-    } else if ( ftell(ttf)>info->glyph_start+end ) {
+      } else if ( ftell(ttf)>(long)(info->glyph_start+end) ) {
 	LogError(_("Bad glyph (%d), its definition extends beyond the space allowed for it\n"), gid );
 	info->bad_glyph_data = true;
+      }
+      
+      /* find the bb */
+      THPatchSplineChar(sc);
     }
-
-    /* find the bb */
-    THPatchSplineChar(sc);
     
 return( sc );
 }
@@ -3284,7 +3339,6 @@ return( strings[sid-nStdStrings]);
 static void readcffenc(FILE *ttf,struct topdicts *dict,struct ttfinfo *info,
 	char **strings, int scnt) {
     int format, cnt, i, j, pos, first, last, dupenc, sid;
-    extern char *AdobeStandardEncoding[], *AdobeExpertEncoding[];
     const char *name;
     EncMap *map;
 
@@ -3722,7 +3776,7 @@ static void cfffigure(struct ttfinfo *info, struct topdicts *dict,
 
     info->chars = gcalloc(info->glyph_cnt,sizeof(SplineChar *));
     for ( i=0; i<info->glyph_cnt; ++i ) {
-	info->chars[i] = PSCharStringToSplines(
+	info->chars[i] = PSCharStringToBB(
 		dict->glyphs.values[i], dict->glyphs.lens[i],&pscontext,
 		subrs,gsubrs,FFgetsid(dict->charset[i],strings,scnt,info));
 	info->chars[i]->vwidth = info->emsize;
@@ -3805,7 +3859,7 @@ static void cidfigure(struct ttfinfo *info, struct topdicts *dict,
 	cid = dict->charset[i];
 	/*encmap->map[cid] = cid;*/
 	uni = CID2NameUni(map,cid,buffer,sizeof(buffer));
-	info->chars[i] = PSCharStringToSplines(
+	info->chars[i] = PSCharStringToBB(
 		dict->glyphs.values[i], dict->glyphs.lens[i],&pscontext,
 		subrs,gsubrs,buffer);
 	info->chars[i]->vwidth = sf->ascent+sf->descent;
@@ -4129,6 +4183,7 @@ static int umodenc(int enc,int modtype, struct ttfinfo *info) {
 return( -1 );
     if ( modtype<=1 /* Unicode */ ) {
 	/* No conversion needed, already unicode */;
+#ifdef FROM_CJK_ICONV
     } else if ( modtype==2 /* SJIS */ ) {
 	if ( enc<=127 ) {
 	    /* Latin */
@@ -4186,6 +4241,10 @@ return( -1 );
 	    enc = unicode_from_johab[enc-0x8400];
 	else if ( enc>0x100 )
 	    enc = badencoding(info);
+#else
+    } else {
+	    enc = badencoding(info);
+#endif
     }
     if ( enc==0 )
 	enc = -1;
@@ -4464,7 +4523,6 @@ static void readttfencodings(FILE *ttf,struct ttfinfo *info, int justinuse) {
     Encoding *temp;
     EncMap *map;
     struct cmap_encs *cmap_encs, desired_cmaps[2], *dcmap;
-    extern int ask_user_for_cmap;
 
     fseek(ttf,info->encoding_start,SEEK_SET);
     version = getushort(ttf);
@@ -5093,7 +5151,6 @@ static void readttfpostnames(FILE *ttf,struct ttfinfo *info) {
     const char *name;
     char buffer[30];
     uint16 *indexes;
-    extern const char *ttfstandardnames[];
     int notdefwarned = false;
     int anynames = false;
 
@@ -5211,7 +5268,7 @@ static void readttfpostnames(FILE *ttf,struct ttfinfo *info) {
 	    name = NULL;
 	} else {
 	    name = StdGlyphName(buffer,info->chars[i]->unicodeenc,info->uni_interp,NULL);
-	    if ( anynames ) {
+	    if (THtest_duplicate_glyph_names && anynames ) {
 		for ( j=0; j<info->glyph_cnt; ++j ) {
 		    if ( info->chars[j]!=NULL && j!=i && info->chars[j]->name!=NULL ) {
 			if ( strcmp(info->chars[j]->name,name)==0 ) {
@@ -5942,56 +5999,6 @@ return;
 		map->backmap[map->map[i]] = i;
 }
 
-void TTF_PSDupsDefault(SplineFont *sf) {
-    struct ttflangname *english;
-    char versionbuf[40];
-
-    /* Ok, if we've just loaded a ttf file then we've got a bunch of langnames*/
-    /*  we copied some of them (copyright, family, fullname, etc) into equiv */
-    /*  postscript entries in the sf. If we then use FontInfo and change the */
-    /*  obvious postscript entries we are left with the old ttf entries. If */
-    /*  we generate a ttf file and then load it the old values pop up. */
-    /* Solution: Anything we can generate by default should be set to NULL */
-    for ( english=sf->names; english!=NULL && english->lang!=0x409; english=english->next );
-    if ( english==NULL )
-return;
-    if ( english->names[ttf_family]!=NULL &&
-	    strcmp(english->names[ttf_family],sf->familyname)==0 ) {
-	free(english->names[ttf_family]);
-	english->names[ttf_family]=NULL;
-    }
-    if ( english->names[ttf_copyright]!=NULL &&
-	    strcmp(english->names[ttf_copyright],sf->copyright)==0 ) {
-	free(english->names[ttf_copyright]);
-	english->names[ttf_copyright]=NULL;
-    }
-    if ( english->names[ttf_fullname]!=NULL &&
-	    strcmp(english->names[ttf_fullname],sf->fullname)==0 ) {
-	free(english->names[ttf_fullname]);
-	english->names[ttf_fullname]=NULL;
-    }
-    if ( sf->subfontcnt!=0 || sf->version!=NULL ) {
-	if ( sf->subfontcnt!=0 )
-	    sprintf( versionbuf, "Version %f", sf->cidversion );
-	else
-	    sprintf(versionbuf,"Version %.20s ", sf->version);
-	if ( english->names[ttf_version]!=NULL &&
-		strcmp(english->names[ttf_version],versionbuf)==0 ) {
-	    free(english->names[ttf_version]);
-	    english->names[ttf_version]=NULL;
-	}
-    }
-    if ( english->names[ttf_subfamily]!=NULL &&
-	    strcmp(english->names[ttf_subfamily],SFGetModifiers(sf))==0 ) {
-	free(english->names[ttf_subfamily]);
-	english->names[ttf_subfamily]=NULL;
-    }
-
-    /* User should not be allowed any access to this one, not ever */
-    free(english->names[ttf_postscriptname]);
-    english->names[ttf_postscriptname]=NULL;
-}
-
 static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
     SplineFont *sf, *_sf;
     int i,k;
@@ -6175,21 +6182,6 @@ static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
 	    sf->subfonts[i]->hasvmetrics = sf->hasvmetrics;
 	}
     }
-    TTF_PSDupsDefault(sf);
-#if 0
-    if ( info->gsub_start==0 && info->mort_start==0 && info->morx_start==0 ) {
-	/* Get default ligature values, etc. */
-	k=0;
-	do {
-	    _sf = k<sf->subfontcnt?sf->subfonts[k]:sf;
-	    for ( i=0; i<sf->glyphcnt; ++i ) {
-		if ( _sf->glyphs[i]!=NULL )		/* Might be null in ttc files */
-		    SCLigDefault(_sf->glyphs[i]);
-	    }
-	    ++k;
-	} while ( k<sf->subfontcnt );
-    }
-#endif
 
     /* I thought the languages were supposed to be ordered, but it seems */
     /*  that is not always the case. Order everything, just in case */
@@ -6382,11 +6374,13 @@ return( SFFillFromTTFInfo(&info));
 SplineFont *SFReadTTFInfo(char *filename, int flags, enum openflags openflags) {
     FILE *ttf;
     SplineFont *sf;
-    char *temp=filename, *pt, *lparen;
+    char *temp=filename, *pt, *lparen, *rparen;
 
     pt = strrchr(filename,'/');
     if ( pt==NULL ) pt = filename;
-    if ( (lparen=strchr(pt,'('))!=NULL && strchr(lparen,')')!=NULL ) {
+    if ( (lparen = strrchr(pt,'('))!=NULL &&
+	    (rparen = strrchr(lparen,')'))!=NULL &&
+	    rparen[1]=='\0' ) {
 	temp = copy(filename);
 	pt = temp + (lparen-filename);
 	*pt = '\0';

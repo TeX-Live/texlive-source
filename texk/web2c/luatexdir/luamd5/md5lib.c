@@ -13,7 +13,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-#include "md5.h"
+#include "luamd5.h"
 
 
 /**

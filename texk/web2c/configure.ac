@@ -375,4 +375,8 @@ AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
  CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
  CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
 
+dnl for luatex dynamic loading
+
+LT_LIB_DLLOAD
+
 AC_OUTPUT

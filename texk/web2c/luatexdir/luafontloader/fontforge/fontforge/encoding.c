@@ -289,16 +289,8 @@ return( &unicodefull );
     /* Mac seems to work ok */
     if ( strcasecmp(name,"win")==0 || strcasecmp(name,"ansi")==0 )
 	iconv_name = "MS-ANSI";		/* "WINDOWS-1252";*/
-    else if ( strncasecmp(name,"jis208",6)==0 || strncasecmp(name,"jisx0208",8)==0 )
-	iconv_name = "ISO-2022-JP";
-    else if ( strncasecmp(name,"jis212",6)==0 || strncasecmp(name,"jisx0212",8)==0 )
-	iconv_name = "ISO-2022-JP-2";
-    else if ( strncasecmp(name,"ksc5601",7)==0 )
-	iconv_name = "ISO-2022-KR";
     else if ( strcasecmp(name,"gb2312pk")==0 || strcasecmp(name,"gb2312packed")==0 )
-	iconv_name = "EUC-CN";
-    else if ( strncasecmp(name,"gb2312",6)==0 )
-	iconv_name = "ISO-2022-CN";
+    iconv_name = "EUC-CN";
     else if ( strcasecmp(name,"wansung")==0 )
 	iconv_name = "EUC-KR";
     else if ( strcasecmp(name,"EUC-CN")==0 ) {
@@ -720,8 +712,7 @@ return( maybe );
 		maybefile = NULL;
 	    }
 	} else {
-	    file = utf82def_copy(uret);
-	    free(uret);
+	    file = uret; /* no utf82def() call for luatex */
 	}
     }
 

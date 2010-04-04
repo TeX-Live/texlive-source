@@ -410,6 +410,14 @@ static int loader_C (lua_State *L) {
   return 1;  /* library loaded successfully */
 }
 
+int loader_C_luatex (lua_State *L, const char *name, const char *filename) {
+  const char *funcname;
+  funcname = mkfuncname(L, name);
+  if (ll_loadfunc(L, filename, funcname) != 0)
+    loaderror(L, filename);
+  return 1;  /* library loaded successfully */
+}
+
 
 static int loader_Croot (lua_State *L) {
   const char *funcname;
@@ -430,6 +438,21 @@ static int loader_Croot (lua_State *L) {
   }
   return 1;
 }
+
+int loader_Call_luatex (lua_State *L, const char *name, const char *filename) {
+  const char *funcname;
+  int stat;
+  if (filename == NULL) return 1;  /* root not found */
+  funcname = mkfuncname(L, name);
+  if ((stat = ll_loadfunc(L, filename, funcname)) != 0) {
+    if (stat != ERRFUNC) loaderror(L, filename);  /* real error */
+    lua_pushfstring(L, "\n\tno module " LUA_QS " in file " LUA_QS,
+                       name, filename);
+    return 1;  /* function not found */
+  }
+  return 1;  /* library loaded successfully */
+}
+
 
 
 static int loader_preload (lua_State *L) {

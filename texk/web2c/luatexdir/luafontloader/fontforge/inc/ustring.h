@@ -105,7 +105,6 @@ extern char *utf8_2_latin1_copy(const char *utf8buf);
 extern int utf8_strlen(const char *utf8_str); /* how many characters in the string */
 extern int utf82u_strlen(const char *utf8_str); /* how many long would this be in shorts (UCS2) */
 extern char *def2utf8_copy(const char *from);
-extern char *utf82def_copy(const char *ufrom);
 extern char *utf8_strchr(const char *utf8_str, int search_char);
 
 extern unichar_t *utf82u_strncpy(unichar_t *ubuf,const char *utf8buf,int len);
@@ -117,11 +116,8 @@ extern char *u2utf8_strcpy(char *utf8buf,const unichar_t *ubuf);
 extern char *u2utf8_copy(const unichar_t *ubuf);
 extern char *u2utf8_copyn(const unichar_t *ubuf,int len);
 extern unichar_t *encoding2u_strncpy(unichar_t *uto, const char *from, int n, enum encoding cs);
-extern char *u2encoding_strncpy(char *to, const unichar_t *ufrom, int n, enum encoding cs);
 extern unichar_t *def2u_strncpy(unichar_t *uto, const char *from, int n);
-extern char *u2def_strncpy(char *to, const unichar_t *ufrom, int n);
 extern unichar_t *def2u_copy(const char *from);
-extern char *u2def_copy(const unichar_t *ufrom);
 
 extern int u_sprintf(unichar_t *str, const unichar_t *format, ... );
 extern int u_snprintf(unichar_t *str, int len, const unichar_t *format, ... );

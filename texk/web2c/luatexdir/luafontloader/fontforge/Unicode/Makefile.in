@@ -14,7 +14,7 @@ GU_AGE=0
 LIBTOOL = @LIBTOOL@
 CC = @CC@
 
-libgunicode_OBJECTS =  ArabicForms.lo alphabet.lo backtrns.lo char.lo \
+libgunicode_OBJECTS =  ArabicForms.lo alphabet.lo char.lo \
  cjk.lo memory.lo ucharmap.lo unialt.lo ustring.lo utype.lo \
  gwwiconv.lo
 

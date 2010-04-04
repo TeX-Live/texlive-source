@@ -34,6 +34,7 @@
 #include <sys/locking.h>
 #include <sys/utime.h>
 #include <fcntl.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #include <dirent.h>
@@ -566,7 +567,7 @@ static void push_st_size (lua_State *L, STAT_STRUCT *info) {
 	lua_pushnumber (L, (lua_Number)info->st_size);
 }
 /* permssions string */
-static void push_st_perm (lua_State *L, struct stat *info) {
+static void push_st_perm (lua_State *L, STAT_STRUCT *info) {
 	lua_pushstring (L, perm2string (info->st_mode));
 }
 #ifndef _WIN32
@@ -653,6 +654,28 @@ static int _file_info_ (lua_State *L, int (*st)(const char*, STAT_STRUCT*)) {
 	return 1;
 }
 
+#ifndef WIN32
+static int pusherror(lua_State *L, const char *info)
+{
+	lua_pushnil(L);
+	if (info==NULL)
+		lua_pushstring(L, strerror(errno));
+	else
+		lua_pushfstring(L, "%s: %s", info, strerror(errno));
+	lua_pushinteger(L, errno);
+	return 3;
+}
+
+static int Preadlink(lua_State *L)		/** readlink(path) */
+{
+	char b[PATH_MAX];
+	const char *path = luaL_checkstring(L, 1);
+	int n = readlink(path, b, sizeof(b));
+	if (n==-1) return pusherror(L, path);
+	lua_pushlstring(L, b, n);
+	return 1;
+}
+#endif
 
 /*
 ** Get file information using stat.
@@ -661,7 +684,6 @@ static int file_info (lua_State *L) {
 	return _file_info_ (L, STAT_FUNC);
 }
 
-
 /*
 ** Get symbolic link information using lstat.
 */
@@ -669,11 +691,43 @@ static int file_info (lua_State *L) {
 static int link_info (lua_State *L) {
 	return _file_info_ (L, LSTAT_FUNC);
 }
+static int read_link (lua_State *L) {
+	return Preadlink (L);
+}
+static int get_short_name (lua_State *L) {
+    /* simply do nothing */
+  return 1;
+}
 #else
 static int link_info (lua_State *L) {
   lua_pushboolean(L, 0);
   lua_pushliteral(L, "symlinkattributes not supported on this platform");
   return 2;
+}
+static int read_link (lua_State *L) {
+  lua_pushboolean(L, 0);
+  lua_pushliteral(L, "readlink not supported on this platform");
+  return 2;
+}
+static int get_short_name (lua_State *L) {
+    long     length = 0;
+    TCHAR*   buffer = NULL;
+    const char *lpszPath = luaL_checkstring (L, 1);
+    length = GetShortPathName(lpszPath, NULL, 0);
+    if (length == 0) {
+	lua_pushnil(L);
+	lua_pushfstring(L, "operating system error: %d", (int)GetLastError());
+	return 2;
+    }
+    buffer = (TCHAR *)xmalloc(length * sizeof(TCHAR));
+    length = GetShortPathName(lpszPath, buffer, length);
+    if (length == 0) {
+	lua_pushnil(L);
+	lua_pushfstring(L, "operating system error: %d", (int)GetLastError());
+	return 2;
+    }
+    lua_pushlstring(L, (const char *)buffer, (size_t)length);
+    return 1;
 }
 #endif
 
@@ -744,6 +798,8 @@ static const struct luaL_reg fslib[] = {
 	{"mkdir", make_dir},
 	{"rmdir", remove_dir},
 	{"symlinkattributes", link_info},
+	{"readlink", read_link},
+	{"shortname", get_short_name},
 	{"setmode", lfs_f_setmode},
 	{"touch", file_utime},
 	{"unlock", file_unlock},

@@ -316,7 +316,10 @@ static uint16 *getClassDefTable(FILE *ttf, int classdef_offset, struct ttfinfo *
 	} else if ( ftell(ttf)+2*glyphcnt > g_bounds ) {
 	    LogError( _("Class definition sub-table extends beyond end of table\n") );
 	    info->bad_ot = true;
-	    glyphcnt = (g_bounds-ftell(ttf))/2;
+        if (g_bounds<ftell(ttf))
+            glyphcnt = 0;
+	    else
+            glyphcnt = (g_bounds-ftell(ttf))/2;
 	}
 	for ( i=0; i<glyphcnt; ++i )
 	    glist[start+i] = getushort(ttf);

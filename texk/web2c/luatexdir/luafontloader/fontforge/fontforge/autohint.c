@@ -94,17 +94,21 @@ void FindBlues( SplineFont *sf, int layer, real blues[14], real otherblues[10]) 
     for ( i=0; i<sf->glyphcnt; ++i ) {
 	if ( sf->glyphs[i]!=NULL && sf->glyphs[i]->layers[layer].splines!=NULL ) {
 	    int enc = sf->glyphs[i]->unicodeenc;
+#ifndef LUA_FF_LIB
 	    const unichar_t *upt;
+#endif
 	    if ( enc<0x10000 && isalnum(enc) &&
 		    ((enc>=32 && enc<128 ) || enc == 0xfe || enc==0xf0 || enc==0xdf ||
 		      enc==0x131 ||
 		     (enc>=0x391 && enc<=0x3f3 ) ||
 		     (enc>=0x400 && enc<=0x4e9 ) )) {
 		/* no accented characters (or ligatures) */
+#ifndef LUA_FF_LIB
 		if ( unicode_alternates[enc>>8]!=NULL &&
 			(upt =unicode_alternates[enc>>8][enc&0xff])!=NULL &&
 			upt[1]!='\0' )
     continue;
+#endif
 		SplineCharFindBounds(sf->glyphs[i],&b);
 		if ( b.miny==0 && b.maxy==0 )
     continue;
@@ -256,16 +260,20 @@ void FindBlues( SplineFont *sf, int layer, real blues[14], real otherblues[10]) 
     base[3] = base[4] = 0;
     for ( i=0; i<sf->glyphcnt; ++i ) if ( sf->glyphs[i]!=NULL ) {
 	int enc = sf->glyphs[i]->unicodeenc;
+#ifndef LUA_FF_LIB
 	const unichar_t *upt;
+#endif
 	if ( enc<0x10000 && isalnum(enc) &&
 		((enc>=32 && enc<128 ) || enc == 0xfe || enc==0xf0 || enc==0xdf ||
 		 (enc>=0x391 && enc<=0x3f3 ) ||
 		 (enc>=0x400 && enc<=0x4e9 ) )) {
 	    /* no accented characters (or ligatures) */
+#ifndef LUA_FF_LIB
 	    if ( unicode_alternates[enc>>8]!=NULL &&
 		    (upt =unicode_alternates[enc>>8][enc&0xff])!=NULL &&
 		    upt[1]!='\0' )
     continue;
+#endif
 	    SplineCharFindBounds(sf->glyphs[i],&b);
 	    if ( b.miny==0 && b.maxy==0 )
     continue;

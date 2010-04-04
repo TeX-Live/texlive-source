@@ -1866,8 +1866,11 @@ struct findsel;
 struct charprocs;
 struct enc;
 
-extern void *chunkalloc(int size);
-extern void chunkfree(void *, int size);
+/* extern void *chunkalloc(int size); */
+/* extern void chunkfree(void *, int size); */
+
+#define chunkalloc(size)	gcalloc(1,size)
+#define chunkfree(item,size)	free(item)
 
 extern char *strconcat(const char *str, const char *str2);
 extern char *strconcat3(const char *str, const char *str2, const char *str3);
@@ -1946,7 +1949,6 @@ extern long mactime(void);
 extern int WriteSVGFont(char *fontname,SplineFont *sf,enum fontformat format,int flags,EncMap *enc,int layer);
 extern int WriteUFOFont(char *fontname,SplineFont *sf,enum fontformat format,int flags,EncMap *enc,int layer);
 extern void SfListFree(struct sflist *sfs);
-extern void TTF_PSDupsDefault(SplineFont *sf);
 extern void DefaultTTFEnglishNames(struct ttflangname *dummy, SplineFont *sf);
 extern void TeXDefaultParams(SplineFont *sf);
 extern int AlreadyMSSymbolArea(SplineFont *sf,EncMap *map);
@@ -2506,6 +2508,7 @@ extern SplineFont *_SFDRead(char *filename,FILE *sfd);
 extern SplineFont *SFDirRead(char *filename);
 extern SplineChar *SFDReadOneChar(SplineFont *sf,const char *name);
 extern char *TTFGetFontName(FILE *ttf,int32 offset,int32 off2);
+extern char *TTFGetPSFontName(FILE *ttf,int32 offset,int32 off2);
 extern void TTFLoadBitmaps(FILE *ttf,struct ttfinfo *info, int onlyone);
 enum ttfflags { ttf_onlystrikes=1, ttf_onlyonestrike=2, ttf_onlykerns=4, ttf_onlynames=8 };
 extern SplineFont *_SFReadTTF(FILE *ttf,int flags,enum openflags openflags,
@@ -2600,6 +2603,8 @@ struct pscontext {
 };
 extern int UnblendedCompare(real u1[MmMax], real u2[MmMax], int cnt);
 extern SplineChar *PSCharStringToSplines(uint8 *type1, int len, struct pscontext *context,
+	struct pschars *subrs, struct pschars *gsubrs, const char *name);
+extern SplineChar *PSCharStringToBB(uint8 *type1, int len, struct pscontext *context,
 	struct pschars *subrs, struct pschars *gsubrs, const char *name);
 extern void MatMultiply(real m1[6], real m2[6], real to[6]);
 

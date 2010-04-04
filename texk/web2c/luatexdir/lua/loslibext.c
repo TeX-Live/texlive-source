@@ -17,17 +17,17 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "luatex-api.h"
-#include <ptexlib.h>
+#include "lua/luatex-api.h"
+#include "ptexlib.h"
 
-#include <sys/stat.h>
-#include <sys/types.h>
+#include <kpathsea/c-stat.h>
+#include <kpathsea/c-dir.h>
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: loslibext.c 2376 2009-05-08 08:40:13Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/loslibext.c $";
+    "$Id: loslibext.c 3518 2010-03-17 09:57:13Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/loslibext.c $";
 
-#if defined(_WIN32) || defined(WIN32) || defined(__NT__)
+#if defined(_WIN32) || defined(__NT__)
 #  define MKDIR(a,b) mkdir(a)
 #else
 #  define MKDIR(a,b) mkdir(a,b)
@@ -39,7 +39,7 @@ static const char _svn_version[] =
   successfully compile without major prorting effort 
   (amiga|mac|os2|vms) */
 
-#if defined(_WIN32) || defined(WIN32) || defined(__NT__)
+#if defined(_WIN32) || defined(__NT__)
 #  define OS_PLATTYPE "windows"
 #  define OS_PLATNAME "windows"
 #elif defined(__GO32__) || defined(__DJGPP__) || defined(__DOS__)
@@ -51,6 +51,8 @@ static const char _svn_version[] =
 /* this is just a first guess */
 #  if defined(__BSD__)
 #    define OS_PLATNAME "bsd"
+#  elif defined(__CYGWIN__)
+#    define OS_PLATNAME "cygwin"
 #  elif defined(__SYSV__)
 #    define OS_PLATNAME "sysv"
 #  else
@@ -63,6 +65,9 @@ static const char _svn_version[] =
 #  elif defined(__FREEBSD__) || defined(__FreeBSD__) || defined(__FreeBSD)
 #    undef OS_PLATNAME
 #    define OS_PLATNAME "freebsd"
+#  elif defined(__FreeBSD_kernel__)
+#    undef OS_PLATNAME
+#    define OS_PLATNAME "kfreebsd"
 #  elif defined(__OPENBSD__)  || defined(__OpenBSD)
 #    undef OS_PLATNAME
 #    define OS_PLATNAME "openbsd"
@@ -81,6 +86,9 @@ static const char _svn_version[] =
 #  elif defined(__MACH__) && defined(__APPLE__)
 #    undef OS_PLATNAME
 #    define OS_PLATNAME "macosx"
+#  elif defined(__GNU__)
+#    undef OS_PLATNAME
+#    define OS_PLATNAME "gnu"
 #  endif
 #endif
 
@@ -93,7 +101,7 @@ static const char _svn_version[] =
  * gettimeofday() for win32 is using an alternative definition
  */
 
-#if (! defined(WIN32)) && (! defined(__SUNOS__))
+#if (! defined(_WIN32)) && (! defined(__SUNOS__))
 #  include <sys/time.h>         /* gettimeofday() */
 #  include <sys/times.h>        /* times() */
 #  include <sys/wait.h>
@@ -103,7 +111,7 @@ static const char _svn_version[] =
 
 #define DONT_REALLY_EXIT 1
 
-#ifdef WIN32
+#ifdef _WIN32
 #  include <process.h>
 #  define spawn_command(a,b,c) _spawnvpe(_P_WAIT,(const char *)a,(const char* const*)b,(const char* const*)c)
 #  if DONT_REALLY_EXIT
@@ -117,7 +125,7 @@ static const char _svn_version[] =
 
 static int exec_command(const char *file, char *const *argv, char *const *envp)
 {
-    char path[PATH_MAX];
+    char *path;
     const char *searchpath, *esp;
     size_t prefixlen, filelen, totallen;
 
@@ -125,6 +133,7 @@ static int exec_command(const char *file, char *const *argv, char *const *envp)
         return execve(file, argv, envp);
 
     filelen = strlen(file);
+    path = NULL;
 
     searchpath = getenv("PATH");
     if (!searchpath)
@@ -135,20 +144,26 @@ static int exec_command(const char *file, char *const *argv, char *const *envp)
     do {
         esp = strchr(searchpath, ':');
         if (esp)
-            prefixlen = esp - searchpath;
+            prefixlen = (size_t) (esp - searchpath);
         else
             prefixlen = strlen(searchpath);
 
         if (prefixlen == 0 || searchpath[prefixlen - 1] == '/') {
             totallen = prefixlen + filelen;
+#  ifdef PATH_MAX
             if (totallen >= PATH_MAX)
                 continue;
+#  endif
+            path = malloc(totallen + 1);
             memcpy(path, searchpath, prefixlen);
             memcpy(path + prefixlen, file, filelen);
         } else {
             totallen = prefixlen + filelen + 1;
+#  ifdef PATH_MAX
             if (totallen >= PATH_MAX)
                 continue;
+#  endif
+            path = malloc(totallen + 1);
             memcpy(path, searchpath, prefixlen);
             path[prefixlen] = '/';
             memcpy(path + prefixlen + 1, file, filelen);
@@ -156,6 +171,8 @@ static int exec_command(const char *file, char *const *argv, char *const *envp)
         path[totallen] = '\0';
 
         execve(path, argv, envp);
+        free(path);
+        path = NULL;
         if (errno == E2BIG || errno == ENOEXEC ||
             errno == ENOMEM || errno == ETXTBSY)
             break;              /* Report this as an error, no more search */
@@ -242,13 +259,44 @@ static int spawn_command(const char *file, char *const *argv, char *const *envp)
 
 #endif
 
-extern char **environ;
-
-static char **do_split_command(const char *maincmd)
+#ifdef _WIN32
+static char *get_command_name(char *maincmd)
 {
+    /* retrieve argv[0] part from the command string, 
+       it will be truncated to MAX_PATH if it's too long */
+    char *cmdname = (char *) malloc(sizeof(char) * MAX_PATH);
+    int i, k, quoted;
+    quoted = k = 0;
+    for (i = 0; (i < MAX_PATH) && maincmd[i] &&
+         (maincmd[i] != ' ' && maincmd[i] != '\t' || quoted); i++) {
+        if (maincmd[i] == '"') {
+            quoted = !quoted;
+        } else {
+            cmdname[k] = maincmd[i];
+            k++;
+        }
+    }
+    cmdname[k] = '\0';
+    return cmdname;
+}
+#endif
+
+static char **do_split_command(const char *maincmd, char **runcmd)
+{
+    char **cmdline = NULL;
+#ifdef _WIN32
+    /* On WIN32 don't split anything, because 
+       _spawnvpe can't put it back together properly 
+       if there are quoted arguments with spaces. 
+       Instead, dump everything into one argument 
+       and it will be passed through as is */
+    cmdline = malloc(sizeof(char *) * 2);
+    cmdline[0] = xstrdup(maincmd);
+    cmdline[1] = NULL;
+    *runcmd = get_command_name(cmdline[0]);
+#else
     char *piece, *start_piece;
     const char *cmd;
-    char **cmdline = NULL;
     unsigned int i, j;
     int ret = 0;
     int in_string = 0;
@@ -298,12 +346,15 @@ static char **do_split_command(const char *maincmd)
         quoted = 0;
     }
     xfree(start_piece);
+    *runcmd = cmdline[0];
+#endif
     return cmdline;
 }
 
 static char **do_flatten_command(lua_State * L, char **runcmd)
 {
-    unsigned int i, j;
+    unsigned int i;
+    int j;
     const char *s;
     char **cmdline = NULL;
     *runcmd = NULL;
@@ -318,10 +369,10 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
     }
     if (j == 1)
         return NULL;
-    cmdline = malloc(sizeof(char *) * (j + 1));
-    for (i = 1; i <= j; i++) {
+    cmdline = malloc(sizeof(char *) * (unsigned) (j + 1));
+    for (i = 1; i <= (unsigned) j; i++) {
         cmdline[i] = NULL;
-        lua_rawgeti(L, -1, i);
+        lua_rawgeti(L, -1, (int) i);
         if (lua_isnil(L, -1) || (s = lua_tostring(L, -1)) == NULL) {
             lua_pop(L, 1);
             if (i == 1) {
@@ -339,7 +390,11 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
 
     lua_rawgeti(L, -1, 0);
     if (lua_isnil(L, -1) || (s = lua_tostring(L, -1)) == NULL) {
+#ifdef _WIN32
+        *runcmd = get_command_name(cmdline[0]);
+#else
         *runcmd = cmdline[0];
+#endif
     } else {
         *runcmd = xstrdup(s);
     }
@@ -369,8 +424,7 @@ static int os_exec(lua_State * L)
     }
     if (lua_type(L, 1) == LUA_TSTRING) {
         maincmd = lua_tostring(L, 1);
-        cmdline = do_split_command(maincmd);
-        runcmd = cmdline[0];
+        cmdline = do_split_command(maincmd, &runcmd);
     } else if (lua_type(L, 1) == LUA_TTABLE) {
         cmdline = do_flatten_command(L, &runcmd);
     }
@@ -380,13 +434,15 @@ static int os_exec(lua_State * L)
      * but I am not so eager to attempt to fix that. Just document
      * that os.exec() checks only the command name.
      */
-    if (restrictedshell == 0)
+    if (restrictedshell == 0) {
         allow = 1;
-    else
-        allow = shell_cmd_is_allowed(runcmd, &safecmd, &cmdname);
+    } else {
+        const char *theruncmd = runcmd;
+        allow = shell_cmd_is_allowed(&theruncmd, &safecmd, &cmdname);
+    }
 
     if (allow > 0 && cmdline != NULL && runcmd != NULL) {
-#if defined(WIN32) && DONT_REALLY_EXIT
+#if defined(_WIN32) && DONT_REALLY_EXIT
         if (allow == 2)
             exec_command(safecmd, cmdline, environ);
         else
@@ -449,8 +505,7 @@ static int os_spawn(lua_State * L)
     }
     if (lua_type(L, 1) == LUA_TSTRING) {
         maincmd = lua_tostring(L, 1);
-        cmdline = do_split_command(maincmd);
-        runcmd = cmdline[0];
+        cmdline = do_split_command(maincmd, &runcmd);
     } else if (lua_type(L, 1) == LUA_TTABLE) {
         cmdline = do_flatten_command(L, &runcmd);
     }
@@ -460,10 +515,12 @@ static int os_spawn(lua_State * L)
      * but I am not so eager to attempt to fix that. Just document
      * that os.exec() checks only the command name.
      */
-    if (restrictedshell == 0)
+    if (restrictedshell == 0) {
         allow = 1;
-    else
-        allow = shell_cmd_is_allowed(runcmd, &safecmd, &cmdname);
+    } else {
+        const char *theruncmd = runcmd;
+        allow = shell_cmd_is_allowed(&theruncmd, &safecmd, &cmdname);
+    }
     if (allow > 0 && cmdline != NULL && runcmd != NULL) {
         if (allow == 2)
             i = spawn_command(safecmd, cmdline, environ);
@@ -479,7 +536,7 @@ static int os_spawn(lua_State * L)
         } else if (i == -1) {
             /* this branch covers WIN32 as well as fork() and waitpid() errors */
             do_error_return(strerror(errno), errno);
-#ifndef WIN32
+#ifndef _WIN32
         } else if (i == INVALID_RET_E2BIG) {
             do_error_return(strerror(E2BIG), i);
         } else if (i == INVALID_RET_ENOENT) {
@@ -518,19 +575,19 @@ static int os_spawn(lua_State * L)
 
 static int os_setenv(lua_State * L)
 {
-    char *value;
     const char *key, *val;
+    char *value;
     key = luaL_optstring(L, 1, NULL);
     val = luaL_optstring(L, 2, NULL);
     if (key) {
         if (val) {
-            value = xmalloc(strlen(key) + strlen(val) + 2);
+            value = xmalloc((unsigned) (strlen(key) + strlen(val) + 2));
             sprintf(value, "%s=%s", key, val);
             if (putenv(value)) {
                 return luaL_error(L, "unable to change environment");
             }
         } else {
-#if defined(WIN32) || defined(__sun__) || defined(__sun) || defined(_AIX)
+#if defined(_WIN32) || defined(__sun__) || defined(__sun) || defined(_AIX)
             value = xmalloc(strlen(key) + 2);
             sprintf(value, "%s=", key);
             if (putenv(value)) {
@@ -546,7 +603,7 @@ static int os_setenv(lua_State * L)
 }
 
 
-static void find_env(lua_State * L)
+void find_env(lua_State * L)
 {
     char *envitem, *envitem_orig;
     char *envkey;
@@ -583,17 +640,17 @@ static int ex_sleep(lua_State * L)
 {
     lua_Number interval = luaL_checknumber(L, 1);
     lua_Number units = luaL_optnumber(L, 2, 1);
-#ifdef WIN32
-    Sleep(1e3 * interval / units);
+#ifdef _WIN32
+    Sleep((DWORD) (1e3 * interval / units));
 #else                           /* assumes posix or bsd */
-    usleep(1e6 * interval / units);
+    usleep((unsigned) (1e6 * interval / units));
 #endif
     return 0;
 }
 
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #  define _UTSNAME_LENGTH 65
 
 /* Structure describing the system and machine.  */
@@ -754,7 +811,7 @@ static int ex_uname(lua_State * L)
 }
 
 
-#if (! defined (WIN32))  && (! defined (__SUNOS__))
+#if (! defined (_WIN32))  && (! defined (__SUNOS__))
 static int os_times(lua_State * L)
 {
     struct tms r;
@@ -791,7 +848,7 @@ static int os_times(lua_State * L)
 static int os_gettimeofday(lua_State * L)
 {
     double v;
-#  ifndef WIN32
+#  ifndef _WIN32
     struct timeval tv;
     gettimeofday(&tv, NULL);
     v = (double) tv.tv_sec + (double) tv.tv_usec / 1000000.0;
@@ -813,21 +870,20 @@ static int os_gettimeofday(lua_State * L)
 }
 #endif
 
-#ifndef HAVE_MKDTEMP
 static const char repl[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
 static int dirs_made = 0;
 
 #define MAXTRIES 36*36*36
 
-static char *do_mkdtemp(char *tmpl)
+char *do_mkdtemp(char *tmpl)
 {
     int count;
     int value;
     char *xes = &tmpl[strlen(tmpl) - 6];
     /* this is not really all that random, but it will do */
     if (dirs_made == 0) {
-        srand(time(NULL));
+        srand((unsigned) time(NULL));
     }
     value = rand();
     for (count = 0; count < MAXTRIES; value += 8413, ++count) {
@@ -852,7 +908,6 @@ static char *do_mkdtemp(char *tmpl)
     }
     return NULL;
 }
-#endif
 
 static int os_tmpdir(lua_State * L)
 {
@@ -900,7 +955,7 @@ static int os_execute(lua_State * L)
     if (restrictedshell == 0)
         allow = 1;
     else
-        allow = shell_cmd_is_allowed(cmd, &safecmd, &cmdname);
+        allow = shell_cmd_is_allowed(&cmd, &safecmd, &cmdname);
 
     if (allow == 1) {
         lua_pushinteger(L, system(cmd));
@@ -937,7 +992,7 @@ void open_oslibext(lua_State * L, int safer_option)
     lua_setfield(L, -2, "name");
     lua_pushcfunction(L, ex_uname);
     lua_setfield(L, -2, "uname");
-#if (! defined (WIN32))  && (! defined (__SUNOS__))
+#if (! defined (_WIN32))  && (! defined (__SUNOS__))
     lua_pushcfunction(L, os_times);
     lua_setfield(L, -2, "times");
 #endif

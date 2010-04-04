@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writecff.h 2271 2009-04-12 23:42:21Z oneiros $ */
+/* $Id: writecff.h 3400 2010-01-27 16:10:42Z taco $ */
 
 #ifndef _CFF_LIMITS_H_
 #  define _CFF_LIMITS_H_
@@ -340,5 +340,5 @@ extern long cs_copy_charstring(card8 * dest, long destlen,
 
 extern cff_font *read_cff(unsigned char *buf, long buflength, int subf);
 
-extern void write_cff(cff_font * cff, fd_entry * fd);
-extern void write_cid_cff(cff_font * cffont, fd_entry * fd);
+extern void write_cff(PDF pdf, cff_font * cff, fd_entry * fd);
+extern void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd);

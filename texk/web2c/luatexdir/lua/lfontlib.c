@@ -1,6 +1,6 @@
 /* lfontlib.c
    
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2010 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,12 +17,12 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "luatex-api.h"
-#include <ptexlib.h>
-#include "nodes.h"
+#include "lua/luatex-api.h"
+#include "ptexlib.h"
+
 
 static const char _svn_version[] =
-    "$Id: lfontlib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/lfontlib.c $";
+    "$Id: lfontlib.c 3551 2010-03-26 14:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/lfontlib.c $";
 
 #define TIMERS 0
 
@@ -30,7 +30,6 @@ static const char _svn_version[] =
 #  include <sys/time.h>
 #endif
 
-#include "inc-vfovf.h"
 
 static int get_fontid(void)
 {
@@ -42,14 +41,14 @@ static int get_fontid(void)
 
 static int font_read_tfm(lua_State * L)
 {
-    internalfontnumber f;
+    internal_font_number f;
     scaled s;
     int k;
     const char *cnom;
     if (lua_isstring(L, 1)) {
         cnom = lua_tostring(L, 1);
         if (lua_isnumber(L, 2)) {
-            s = (integer) lua_tonumber(L, 2);
+            lua_number2int(s, lua_tonumber(L, 2));
             if (strlen(cnom)) {
                 f = get_fontid();
                 if (read_tfm_info(f, cnom, s)) {
@@ -58,20 +57,16 @@ static int font_read_tfm(lua_State * L)
                     return k;
                 } else {
                     delete_font(f);
-                    lua_pushstring(L, "font loading failed");
-                    lua_error(L);
+                    luaL_error(L, "font loading failed");
                 }
             } else {
-                lua_pushstring(L, "expected tfm name as first argument");
-                lua_error(L);
+                luaL_error(L, "expected tfm name as first argument");
             }
         } else {
-            lua_pushstring(L, "expected an integer size as second argument");
-            lua_error(L);
+            luaL_error(L, "expected an integer size as second argument");
         }
     } else {
-        lua_pushstring(L, "expected tfm name as first argument");
-        lua_error(L);
+        luaL_error(L, "expected tfm name as first argument");
     }
     return 2;                   /* not reached */
 }
@@ -79,24 +74,22 @@ static int font_read_tfm(lua_State * L)
 
 static int font_read_vf(lua_State * L)
 {
-    scaled s;
+    int i;
     const char *cnom;
     if (lua_isstring(L, 1)) {
         cnom = lua_tostring(L, 1);
         if (strlen(cnom)) {
             if (lua_isnumber(L, 2)) {
-                s = lua_tonumber(L, 2);
-                return make_vf_table(L, cnom, s);
+                lua_number2int(i, lua_tonumber(L, 2));
+                return make_vf_table(L, cnom, (scaled) i);
             } else {
-                lua_pushstring(L,
+                luaL_error(L,
                                "expected an integer size as second argument");
-                lua_error(L);
                 return 2;
             }
         }
     }
-    lua_pushstring(L, "expected vf name as first argument");
-    lua_error(L);
+    luaL_error(L, "expected vf name as first argument");
     return 2;                   /* not reached */
 }
 
@@ -109,8 +102,7 @@ static int tex_current_font(lua_State * L)
             zset_cur_font(i);
             return 0;
         } else {
-            lua_pushstring(L, "expected a valid font id");
-            lua_error(L);
+            luaL_error(L, "expected a valid font id");
             return 2;           /* not reached */
         }
     } else {
@@ -129,8 +121,8 @@ static int tex_max_font(lua_State * L)
 static int tex_each_font_next(lua_State * L)
 {
     int i, m;                   /* id */
-    m = lua_tonumber(L, 1);
-    i = lua_tonumber(L, 2);
+    lua_number2int(m, lua_tonumber(L, 1));
+    lua_number2int(i, lua_tonumber(L, 2));
     i++;
     while (i <= m && !is_valid_font(i))
         i++;
@@ -139,7 +131,8 @@ static int tex_each_font_next(lua_State * L)
         return 1;
     } else {
         lua_pushnumber(L, i);
-        font_to_lua(L, i);
+        if (!font_to_lua(L, i))
+            lua_pushnil(L);
         return 2;
     }
 }
@@ -168,8 +161,7 @@ static int frozenfont(lua_State * L)
         }
         return 1;
     } else {
-        lua_pushstring(L, "expected an integer argument");
-        lua_error(L);
+        luaL_error(L, "expected an integer argument");
     }
     return 0;                   /* not reached */
 }
@@ -185,13 +177,11 @@ static int setfont(lua_State * L)
             if (!(font_touched(i) || font_used(i))) {
                 font_from_lua(L, i);
             } else {
-                lua_pushstring(L,
+                luaL_error(L,
                                "that font has been accessed already, changing it is forbidden");
-                lua_error(L);
             }
         } else {
-            lua_pushstring(L, "that integer id is not a valid font");
-            lua_error(L);
+            luaL_error(L, "that integer id is not a valid font");
         }
     }
     return 0;
@@ -227,8 +217,7 @@ static int deffont(lua_State * L)
     } else {
         lua_pop(L, 1);          /* pop the broken table */
         delete_font(i);
-        lua_pushstring(L, "font creation failed");
-        lua_error(L);
+        luaL_error(L, "font creation failed");
     }
     return 0;                   /* not reached */
 }
@@ -254,6 +243,30 @@ static int getfont(lua_State * L)
 }
 
 
+static int getfontid(lua_State * L)
+{
+    const char *s;
+    size_t ff;
+    int cur_cs;
+    int f;
+    if (lua_type(L, 1) == LUA_TSTRING) {
+        s = lua_tolstring(L, 1, &ff);
+        cur_cs = string_lookup(s, ff);
+        if (cur_cs == undefined_control_sequence || cur_cs == undefined_cs_cmd
+            || eq_type(cur_cs) != set_font_cmd) {
+            lua_pushstring(L, "not a valid font csname");
+            f = -1;
+        } else {
+            f = equiv(cur_cs);
+        }
+        lua_pushnumber(L, f);
+    } else {
+        luaL_error(L, "expected font csname string as argument");
+    }
+    return 1;
+}
+
+
 static const struct luaL_reg fontlib[] = {
     {"read_tfm", font_read_tfm},
     {"read_vf", font_read_vf},
@@ -264,6 +277,7 @@ static const struct luaL_reg fontlib[] = {
     {"setfont", setfont},
     {"define", deffont},
     {"nextid", nextfontid},
+    {"id", getfontid},
     {"frozen", frozenfont},
     {NULL, NULL}                /* sentinel */
 };

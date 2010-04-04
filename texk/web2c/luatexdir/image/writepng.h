@@ -18,15 +18,15 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writepng.h 2327 2009-04-18 12:47:21Z hhenkel $ */
+/* $Id: writepng.h 2580 2009-06-23 15:55:52Z taco $ */
 
 #ifndef WRITEPNG_H
 #  define WRITEPNG_H
 
 #  include "image.h"
 
-void read_png_info(image_dict *, img_readtype_e);
-void write_additional_png_objects(void);
-void write_png(image_dict *);
+void read_png_info(PDF, image_dict *, img_readtype_e);
+void write_additional_png_objects(PDF);
+void write_png(PDF, image_dict *);
 
 #endif                          /* WRITEPNG_H */

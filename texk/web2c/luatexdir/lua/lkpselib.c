@@ -17,17 +17,20 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "luatex-api.h"
-#include <ptexlib.h>
+#include "lua/luatex-api.h"
+#include "ptexlib.h"
 #include <kpathsea/expand.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/tex-glyph.h>
 #include <kpathsea/readable.h>
+#include <kpathsea/pathsearch.h>
+#include <kpathsea/str-list.h>
+#include <kpathsea/tex-file.h>
 
 static const char _svn_version[] =
-    "$Id: lkpselib.c 2414 2009-06-03 12:57:01Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/lkpselib.c $";
+    "$Id: lkpselib.c 3551 2010-03-26 14:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/lkpselib.c $";
 
-static const int filetypes[] = {
+static const unsigned filetypes[] = {
     kpse_gf_format,
     kpse_pk_format,
     kpse_any_glyph_format,
@@ -83,7 +86,8 @@ static const int filetypes[] = {
     kpse_fea_format,
     kpse_cid_format,
     kpse_mlbib_format,
-    kpse_mlbst_format
+    kpse_mlbst_format,
+    kpse_clua_format
 };
 
 static const char *const filetypenames[] = {
@@ -143,6 +147,7 @@ static const char *const filetypenames[] = {
     "cid maps",
     "mlbib",
     "mlbst",
+    "clua",
     NULL
 };
 
@@ -155,8 +160,7 @@ int program_name_set = 0;
 
 #define TEST_PROGRAM_NAME_SET do {                                      \
     if (! program_name_set) {                                           \
-      lua_pushstring(L, "Please call kpse.set_program_name() before using the library"); \
-      return lua_error(L);                                              \
+      return luaL_error(L, "Please call kpse.set_program_name() before using the library"); \
     }                                                                   \
   } while (0)
 
@@ -164,12 +168,11 @@ static int find_file(lua_State * L)
 {
     int i;
     const char *st;
-    int ftype = kpse_tex_format;
+    unsigned ftype = kpse_tex_format;
     int mexist = 0;
     TEST_PROGRAM_NAME_SET;
     if (!lua_isstring(L, 1)) {
-        lua_pushstring(L, "not a file name");
-        lua_error(L);
+        luaL_error(L, "not a file name");
     }
     st = lua_tostring(L, 1);
     i = lua_gettop(L);
@@ -177,7 +180,7 @@ static int find_file(lua_State * L)
         if (lua_isboolean(L, i)) {
             mexist = lua_toboolean(L, i);
         } else if (lua_isnumber(L, i)) {
-            mexist = lua_tonumber(L, i);
+            lua_number2int(mexist, lua_tonumber(L, i));
         } else if (lua_isstring(L, i)) {
             int op = luaL_checkoption(L, i, NULL, filetypenames);
             ftype = filetypes[op];
@@ -188,7 +191,7 @@ static int find_file(lua_State * L)
         ftype == kpse_gf_format || ftype == kpse_any_glyph_format) {
         /* ret.format, ret.name, ret.dpi */
         kpse_glyph_file_type ret;
-        lua_pushstring(L, kpse_find_glyph(st, mexist, ftype, &ret));
+        lua_pushstring(L, kpse_find_glyph(st, (unsigned) mexist, ftype, &ret));
     } else {
         if (mexist > 0)
             mexist = 1;
@@ -203,16 +206,16 @@ static int find_file(lua_State * L)
 static int lua_kpathsea_find_file(lua_State * L)
 {
     int i;
-    int ftype = kpse_tex_format;
+    unsigned ftype = kpse_tex_format;
     int mexist = 0;
     kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *st = luaL_checkstring(L, 2);
     i = lua_gettop(L);
     while (i > 2) {
         if (lua_isboolean(L, i)) {
-            mexist = lua_toboolean(L, i);
+            mexist = (boolean) lua_toboolean(L, i);
         } else if (lua_isnumber(L, i)) {
-            mexist = lua_tonumber(L, i);
+            lua_number2int(mexist, lua_tonumber(L, i));
         } else if (lua_isstring(L, i)) {
             int op = luaL_checkoption(L, i, NULL, filetypenames);
             ftype = filetypes[op];
@@ -223,7 +226,9 @@ static int lua_kpathsea_find_file(lua_State * L)
         ftype == kpse_gf_format || ftype == kpse_any_glyph_format) {
         /* ret.format, ret.name, ret.dpi */
         kpse_glyph_file_type ret;
-        lua_pushstring(L, kpathsea_find_glyph(*kp, st, mexist, ftype, &ret));
+        lua_pushstring(L,
+                       kpathsea_find_glyph(*kp, st, (unsigned) mexist, ftype,
+                                           &ret));
     } else {
         if (mexist > 0)
             mexist = 1;
@@ -238,7 +243,7 @@ static int lua_kpathsea_find_file(lua_State * L)
 static int show_path(lua_State * L)
 {
     int op = luaL_checkoption(L, -1, "tex", filetypenames);
-    int user_format = filetypes[op];
+    unsigned user_format = filetypes[op];
     TEST_PROGRAM_NAME_SET;
     if (!kpse_format_info[user_format].type)    /* needed if arg was numeric */
         kpse_init_format(user_format);
@@ -250,7 +255,7 @@ static int lua_kpathsea_show_path(lua_State * L)
 {
     kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     int op = luaL_checkoption(L, -1, "tex", filetypenames);
-    int user_format = filetypes[op];
+    unsigned user_format = filetypes[op];
     if (!(*kp)->format_info[user_format].type)  /* needed if arg was numeric */
         kpathsea_init_format(*kp, user_format);
     lua_pushstring(L, (*kp)->format_info[user_format].path);
@@ -323,6 +328,374 @@ static int lua_kpathsea_var_value(lua_State * L)
     return 1;
 }
 
+static unsigned find_dpi(const_string s)
+{
+    unsigned dpi_number = 0;
+    string extension = find_suffix(s);
+
+    if (extension != NULL)
+        sscanf(extension, "%u", &dpi_number);
+
+    return dpi_number;
+}
+
+/* Return newly-allocated NULL-terminated list of strings from MATCHES
+   that are prefixed with any of the subdirectories in SUBDIRS.  That
+   is, for a string S in MATCHES, its dirname must end with one of the
+   elements in SUBDIRS.  For instance, if subdir=foo/bar, that will
+   match a string foo/bar/baz or /some/texmf/foo/bar/baz.
+   
+   We don't reallocate the actual strings, just the list elements.
+   Perhaps later we will implement wildcards or // or something.  */
+
+static string *subdir_match(str_list_type subdirs, string * matches)
+{
+    string *ret = XTALLOC1(string);
+    unsigned len = 1;
+    unsigned m;
+
+    for (m = 0; matches[m]; m++) {
+        size_t loc;
+        unsigned e;
+        string s = xstrdup(matches[m]);
+        for (loc = strlen(s); loc > 0 && !IS_DIR_SEP(s[loc - 1]); loc--);
+        while (loc > 0 && IS_DIR_SEP(s[loc - 1])) {
+            loc--;
+        }
+        s[loc] = 0;             /* wipe out basename */
+
+        for (e = 0; e < STR_LIST_LENGTH(subdirs); e++) {
+            string subdir = STR_LIST_ELT(subdirs, e);
+            size_t subdir_len = strlen(subdir);
+            while (subdir_len > 0 && IS_DIR_SEP(subdir[subdir_len - 1])) {
+                subdir_len--;
+                subdir[subdir_len] = 0; /* remove trailing slashes from subdir spec */
+            }
+            if (FILESTRCASEEQ(subdir, s + loc - subdir_len)) {
+                /* matched, save this one.  */
+                XRETALLOC(ret, len + 1, string);
+                ret[len - 1] = matches[m];
+                len++;
+            }
+        }
+        free(s);
+    }
+    ret[len - 1] = NULL;
+    return ret;
+}
+
+/* Use the file type from -format if that was specified (i.e., the
+   user_format global variable), else guess dynamically from NAME.
+   Return kpse_last_format if undeterminable.  This function is also
+   used to parse the -format string, a case which we distinguish by
+   setting is_filename to false.
+
+   A few filenames have been hard-coded for format types that
+   differ from what would be inferred from their extensions. */
+
+static kpse_file_format_type
+find_format(kpathsea kpse, const_string name, boolean is_filename)
+{
+    kpse_file_format_type ret;
+
+    if (FILESTRCASEEQ(name, "config.ps")) {
+        ret = kpse_dvips_config_format;
+    } else if (FILESTRCASEEQ(name, "dvipdfmx.cfg")) {
+        ret = kpse_program_text_format;
+    } else if (FILESTRCASEEQ(name, "fmtutil.cnf")) {
+        ret = kpse_web2c_format;
+    } else if (FILESTRCASEEQ(name, "glyphlist.txt")) {
+        ret = kpse_fontmap_format;
+    } else if (FILESTRCASEEQ(name, "mktex.cnf")) {
+        ret = kpse_web2c_format;
+    } else if (FILESTRCASEEQ(name, "pdfglyphlist.txt")) {
+        ret = kpse_fontmap_format;
+    } else if (FILESTRCASEEQ(name, "pdftex.cfg")) {
+        ret = kpse_pdftex_config_format;
+    } else if (FILESTRCASEEQ(name, "texmf.cnf")) {
+        ret = kpse_cnf_format;
+    } else if (FILESTRCASEEQ(name, "updmap.cfg")) {
+        ret = kpse_web2c_format;
+    } else if (FILESTRCASEEQ(name, "XDvi")) {
+        ret = kpse_program_text_format;
+    } else {
+        int f = 0;              /* kpse_file_format_type */
+        size_t name_len = strlen(name);
+
+/* Have to rely on `try_len' being declared here, since we can't assume
+   GNU C and statement expressions.  */
+#define TRY_SUFFIX(ftry) (\
+  try_len = (ftry) ? strlen (ftry) : 0, \
+  (ftry) && try_len <= name_len \
+     && FILESTRCASEEQ (ftry, name + name_len - try_len))
+
+        while (f != kpse_last_format) {
+            size_t try_len;
+            const_string *ext;
+            const_string ftry;
+            boolean found = false;
+
+            if (!kpse->format_info[f].type)
+                kpathsea_init_format(kpse, (kpse_file_format_type) f);
+
+            if (!is_filename) {
+                /* Allow the long name, but only in the -format option.  We don't
+                   want a filename confused with a format name.  */
+                ftry = kpse->format_info[f].type;
+                found = TRY_SUFFIX(ftry);
+            }
+            for (ext = kpse->format_info[f].suffix; !found && ext && *ext;
+                 ext++) {
+                found = TRY_SUFFIX(*ext);
+            }
+            for (ext = kpse->format_info[f].alt_suffix; !found && ext && *ext;
+                 ext++) {
+                found = TRY_SUFFIX(*ext);
+            }
+
+            if (found)
+                break;
+
+            /* Some trickery here: the extensions for kpse_fmt_format can
+             * clash with other extensions in use, and we prefer for those
+             * others to be preferred.  And we don't want to change the
+             * integer value of kpse_fmt_format.  So skip it when first
+             * enountered, then use it when we've done everything else,
+             * and use it as the end-guard.
+             */
+            if (f == kpse_fmt_format) {
+                f = kpse_last_format;
+            } else if (++f == kpse_fmt_format) {
+                f++;
+            } else if (f == kpse_last_format) {
+                f = kpse_fmt_format;
+            }
+        }
+
+        /* If there was a match, f will be one past the correct value.  */
+        ret = f;
+    }
+
+    return ret;
+}
+
+/* kpse:lookup("plain.tex", {}) */
+static int do_lua_kpathsea_lookup(lua_State * L, kpathsea kpse, int idx)
+{
+    int i;
+    string ret = NULL;
+    string *ret_list = NULL;
+    const_string name = NULL;
+    string user_path = NULL;
+    boolean show_all = false;
+    boolean must_exist = false;
+    kpse_file_format_type user_format = kpse_last_format;
+    int dpi = 600;
+    str_list_type subdir_paths = { 0, NULL };
+    unsigned saved_debug = kpse->debug;
+    int saved_mktexpk = kpse->format_info[kpse_pk_format].program_enabled_p;
+    int saved_mktexmf = kpse->format_info[kpse_mf_format].program_enabled_p;
+    int saved_mktextex = kpse->format_info[kpse_tex_format].program_enabled_p;
+    int saved_mktextfm = kpse->format_info[kpse_tfm_format].program_enabled_p;
+    name = luaL_checkstring(L, idx);
+    /* todo: fetch parameter values */
+
+    if (lua_type(L, idx + 1) == LUA_TTABLE) {
+        lua_pushstring(L, "format");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TSTRING) {
+            int op = luaL_checkoption(L, -1, NULL, filetypenames);
+            user_format = filetypes[op];
+        }
+        lua_pop(L, 1);
+        lua_pushstring(L, "dpi");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TNUMBER) {
+            lua_number2int(dpi, lua_tonumber(L, -1));
+        }
+        lua_pop(L, 1);
+        lua_pushstring(L, "debug");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TNUMBER) {
+            int d = 0;
+            lua_number2int(d, lua_tonumber(L, -1));
+            kpse->debug |= d;
+        }
+        lua_pop(L, 1);
+        lua_pushstring(L, "path");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TSTRING) {
+            user_path = xstrdup(lua_tostring(L, -1));
+        }
+        lua_pop(L, 1);
+        lua_pushstring(L, "all");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TBOOLEAN) {
+            show_all = lua_toboolean(L, -1);
+        }
+        lua_pop(L, 1);
+
+        lua_pushstring(L, "mktexpk");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TBOOLEAN) {
+            kpathsea_maketex_option(kpse, "pk", lua_toboolean(L, -1));
+        }
+        lua_pop(L, 1);
+
+        lua_pushstring(L, "mktextex");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TBOOLEAN) {
+            kpathsea_maketex_option(kpse, "tex", lua_toboolean(L, -1));
+        }
+        lua_pop(L, 1);
+
+        lua_pushstring(L, "mktexmf");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TBOOLEAN) {
+            kpathsea_maketex_option(kpse, "mf", lua_toboolean(L, -1));
+        }
+        lua_pop(L, 1);
+
+        lua_pushstring(L, "mktextfm");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TBOOLEAN) {
+            kpathsea_maketex_option(kpse, "tfm", lua_toboolean(L, -1));
+        }
+        lua_pop(L, 1);
+
+
+        lua_pushstring(L, "must-exist");
+        lua_gettable(L, idx + 1);
+        if (lua_type(L, -1) == LUA_TBOOLEAN) {
+            must_exist = lua_toboolean(L, -1);
+        }
+        lua_pop(L, 1);
+        lua_pushstring(L, "subdir");
+        lua_gettable(L, idx + 1);
+        if (lua_istable(L, -1)) {
+            lua_pushnil(L);
+            while (lua_next(L, -2) != 0) {      /* numeric value */
+                if (lua_isstring(L, -1)) {
+		    char *s = xstrdup(lua_tostring(L, -1));
+                    str_list_add(&subdir_paths, s);
+		    xfree(s);
+                }
+                lua_pop(L, 1);
+            }
+        } else if (lua_isstring(L, -1)) {
+	    char *s = xstrdup(lua_tostring(L, -1));
+            str_list_add(&subdir_paths, s);
+	    xfree(s);
+        }
+        lua_pop(L, 1);
+        if (STR_LIST_LENGTH(subdir_paths) > 0) {
+            show_all = 1;
+        }
+    }
+    if (user_path) {
+        /* Translate ; to : if that's our ENV_SEP.  See cnf.c.  */
+        if (IS_ENV_SEP(':')) {
+            string loc;
+            for (loc = user_path; *loc; loc++) {
+                if (*loc == ';')
+                    *loc = ':';
+            }
+        }
+        user_path = kpathsea_path_expand(kpse, user_path);
+        if (show_all) {
+            ret_list = kpathsea_all_path_search(kpse, user_path, name);
+        } else {
+            ret = kpathsea_path_search(kpse, user_path, name, must_exist);
+        }
+        free(user_path);
+    } else {
+        /* No user-specified search path, check user format or guess from NAME.  */
+        kpse_file_format_type fmt;
+        if (user_format != kpse_last_format)
+            fmt = user_format;
+        else
+            fmt = find_format(kpse, name, true);
+
+        switch (fmt) {
+        case kpse_pk_format:
+        case kpse_gf_format:
+        case kpse_any_glyph_format:
+            {
+                kpse_glyph_file_type glyph_ret;
+                /* Try to extract the resolution from the name.  */
+                unsigned local_dpi = find_dpi(name);
+                if (!local_dpi)
+                    local_dpi = (unsigned) dpi;
+                ret =
+                    kpathsea_find_glyph(kpse, remove_suffix(name), local_dpi,
+                                        fmt, &glyph_ret);
+            }
+            break;
+
+        case kpse_last_format:
+            /* If the suffix isn't recognized, assume it's a tex file. */
+            fmt = kpse_tex_format;
+            /* fall through */
+
+        default:
+            if (show_all) {
+                ret_list =
+                    kpathsea_find_file_generic(kpse, name, fmt, must_exist,
+                                               true);
+            } else {
+                ret = kpathsea_find_file(kpse, name, fmt, must_exist);
+            }
+        }
+    }
+
+    /* Turn single return into a null-terminated list for uniform treatment.  */
+    if (ret) {
+        ret_list = XTALLOC(2, string);
+        ret_list[0] = ret;
+        ret_list[1] = NULL;
+    }
+
+    /* Filter by subdirectories, if specified.  */
+    if (STR_LIST_LENGTH(subdir_paths) > 0) {
+        string *new_list = subdir_match(subdir_paths, ret_list);
+        free(ret_list);
+        ret_list = new_list;
+    }
+    kpse->debug = saved_debug;
+    kpse->format_info[kpse_pk_format].program_enabled_p = saved_mktexpk;
+    kpse->format_info[kpse_mf_format].program_enabled_p = saved_mktexmf;
+    kpse->format_info[kpse_tex_format].program_enabled_p = saved_mktextex;
+    kpse->format_info[kpse_tfm_format].program_enabled_p = saved_mktextfm;
+
+    /* Print output.  */
+    i = 0;
+    if (ret_list) {
+        for (; ret_list[i]; i++) {
+            lua_pushstring(L, ret_list[i]);
+        }
+        free(ret_list);
+    }
+    if (i == 0) {
+        i++;
+        lua_pushnil(L);
+    }
+    return i;
+}
+
+
+static int lua_kpathsea_lookup(lua_State * L)
+{
+    kpathsea *kpsep = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
+    kpathsea kpse = *kpsep;
+    return do_lua_kpathsea_lookup(L, kpse, 2);
+}
+
+static int lua_kpse_lookup(lua_State * L)
+{
+    TEST_PROGRAM_NAME_SET;
+    return do_lua_kpathsea_lookup(L, kpse_def, 1);
+}
+
 
 /* Engine support is a bit of a problem, because we do not want
  * to interfere with the normal format discovery of |luatex|.
@@ -354,7 +727,7 @@ static int set_program_name(lua_State * L)
 static int init_prog(lua_State * L)
 {
     const char *prefix = luaL_checkstring(L, 1);
-    unsigned dpi = luaL_checkinteger(L, 2);
+    unsigned dpi = (unsigned) luaL_checkinteger(L, 2);
     const char *mode = luaL_checkstring(L, 3);
     const char *fallback = luaL_optstring(L, 4, NULL);
     TEST_PROGRAM_NAME_SET;
@@ -366,18 +739,24 @@ static int lua_kpathsea_init_prog(lua_State * L)
 {
     kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *prefix = luaL_checkstring(L, 2);
-    unsigned dpi = luaL_checkinteger(L, 3);
+    unsigned dpi = (unsigned) luaL_checkinteger(L, 3);
     const char *mode = luaL_checkstring(L, 4);
     const char *fallback = luaL_optstring(L, 5, NULL);
     kpathsea_init_prog(*kp, prefix, dpi, mode, fallback);
     return 0;
 }
 
+static int lua_kpse_version(lua_State * L)
+{
+    lua_pushstring(L, kpathsea_version_string);
+    return 1;
+}
+
 static int readable_file(lua_State * L)
 {
     const char *name = luaL_checkstring(L, 1);
     TEST_PROGRAM_NAME_SET;
-    lua_pushstring(L, kpse_readable_file(name));
+    lua_pushstring(L, (char *) kpse_readable_file(name));
     return 1;
 }
 
@@ -385,7 +764,7 @@ static int lua_kpathsea_readable_file(lua_State * L)
 {
     kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *name = luaL_checkstring(L, 2);
-    lua_pushstring(L, kpathsea_readable_file(*kp, name));
+    lua_pushstring(L, (char *) kpathsea_readable_file(*kp, name));
     return 1;
 }
 
@@ -422,6 +801,8 @@ static const struct luaL_reg kpselib_m[] = {
     {"expand_braces", lua_kpathsea_expand_braces},
     {"var_value", lua_kpathsea_var_value},
     {"show_path", lua_kpathsea_show_path},
+    {"lookup", lua_kpathsea_lookup},
+    {"version", lua_kpse_version},
     {NULL, NULL}                /* sentinel */
 };
 
@@ -436,6 +817,8 @@ static const struct luaL_reg kpselib_l[] = {
     {"expand_braces", expand_braces},
     {"var_value", var_value},
     {"show_path", show_path},
+    {"lookup", lua_kpse_lookup},
+    {"version", lua_kpse_version},
     {NULL, NULL}                /* sentinel */
 };
 

@@ -1,3 +1,10 @@
+2010-04-04  Taco Hoekwater  <taco@luatex.org>
+
+	* configure.ac: Append LT_LIB_DLLOAD to the end,
+	needed for the current 0.60.0 luatex build system.
+	* Makefile.am: Comment out the luatexdir/am/luatangle.am line
+	* autoreconf
+	
 2010-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check if dlopen() requires `-ldl'.

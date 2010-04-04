@@ -18,50 +18,35 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writeimg.h 2448 2009-06-08 07:43:50Z taco $ */
+/* $Id: writeimg.h 3388 2010-01-26 10:59:04Z taco $ */
 
 #ifndef WRITEIMG_H
 #  define WRITEIMG_H
 
+#  include "dvi/dvigen.h"       /* for scaled_whd only */
 #  include "image.h"
+#  include "pdf/pdfpage.h"
 
-boolean check_image_b(integer);
-boolean check_image_c(integer);
-boolean check_image_i(integer);
-boolean is_pdf_image(integer);
-boolean is_png_image(integer);
-image_dict *new_image_dict(void);
-image *new_image(void);
-integer epdf_orig_x(integer i);
-integer epdf_orig_y(integer i);
-integer epdf_xsize(integer i);
-integer epdf_ysize(integer i);
-integer image_colordepth(integer img);
-integer image_depth(integer);
-integer image_height(integer);
-integer image_index(integer);
-integer image_objnum(integer);
-integer image_pages(integer);
-integer image_width(integer);
-integer img_to_array(image *);
-integer read_image(integer, integer, str_number, integer, str_number,
-                   str_number, integer, integer, integer, integer);
-void check_pdfstream_dict(image_dict *);
-void dumpimagemeta(void);
-void free_image_dict(image_dict * p);
-void init_image_dict(image_dict *);
-void init_image(image *);
+typedef image_dict *idict_entry;
+idict_entry *idict_array;
+
 void new_img_pdfstream_struct(image_dict *);
-void out_image(integer, scaled, scaled);
-void pdf_print_resname_prefix(void);
-void read_img(image_dict *, integer, integer);
-void scale_image(integer);
-void scale_img(image *);
-void set_image_dimensions(integer, integer, integer, integer);
-void undumpimagemeta(integer, integer);
-void update_image_procset(integer);
-void write_image(integer);
-void write_img(image_dict *);
-void write_pdfstream(image_dict *);
+image *new_image(void);
+/*void init_image_dict(image_dict *);*/
+image_dict *new_image_dict(void);
+void free_image_dict(image_dict * p);
+void read_img(PDF, image_dict *, int, int);
+void scan_pdfximage(PDF pdf);
+void scan_pdfrefximage(PDF pdf);
+scaled_whd tex_scale(scaled_whd nat, scaled_whd tex);
+scaled_whd scale_img(image_dict *, scaled_whd, int);
+void write_img(PDF, image_dict *);
+void pdf_write_image(PDF pdf, int n);
+void check_pdfstream_dict(image_dict *);
+void write_pdfstream(PDF, image_dict *);
+void idict_to_array(image_dict *);
+void dumpimagemeta(void);
+void undumpimagemeta(PDF, int, int);
+scaled_whd scan_alt_rule(void);
 
 #endif                          /* WRITEIMG_H */

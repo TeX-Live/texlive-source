@@ -20,61 +20,106 @@
 
 /* $Id$ */
 
+#ifndef LUATEX_H
+#  define LUATEX_H
 
-extern void do_vf(internal_font_number tmp_f);
+/* texmf.h: Main include file for TeX and Metafont in C. This file is
+   included by {tex,mf}d.h, which is the first include in the C files
+   output by web2c.  */
 
-extern int readbinfile(FILE * f, unsigned char **b, integer * s);
+#  include "cpascal.h"
 
-#define read_tfm_file  readbinfile
-#define read_vf_file   readbinfile
-#define read_ocp_file  readbinfile
-#define read_data_file readbinfile
+#  include <kpathsea/c-pathch.h>        /* for IS_DIR_SEP, used in the change files */
+#  include <kpathsea/tex-make.h>        /* for kpse_make_tex_discard_errors */
 
-extern int **ocp_tables;
+/* If we have these macros, use them, as they provide a better guide to
+   the endianess when cross-compiling. */
+#  if defined (BYTE_ORDER) && defined (BIG_ENDIAN) && defined (LITTLE_ENDIAN)
+#    ifdef WORDS_BIGENDIAN
+#      undef WORDS_BIGENDIAN
+#    endif
+#    if BYTE_ORDER == BIG_ENDIAN
+#      define WORDS_BIGENDIAN
+#    endif
+#  endif
+/* More of the same, but now NeXT-specific. */
+#  ifdef NeXT
+#    ifdef WORDS_BIGENDIAN
+#      undef WORDS_BIGENDIAN
+#    endif
+#    ifdef __BIG_ENDIAN__
+#      define WORDS_BIGENDIAN
+#    endif
+#  endif
 
-extern void allocate_ocp_table(int ocp_number, int ocp_size);
-extern void dump_ocp_table(int ocp_number);
-extern void undump_ocp_table(int ocp_number);
 
-extern void run_external_ocp(string external_ocp_name);
-extern void b_test_in(void);
+/* Some things are the same except for the name.  */
 
-/* Additions to texmfmp.h for pdfTeX */
+#  define TEXMFPOOLNAME "luatex.pool"
+#  define TEXMFENGINENAME "luatex"
 
-/* mark a char in font */
-#define pdf_mark_char(f,c) set_char_used(f,c,true)
+#  define DUMP_FILE fmt_file
+#  define DUMP_FORMAT kpse_fmt_format
+#  define write_dvi WRITE_OUT
+#  define flush_dvi flush_out
+#  define OUT_FILE dvi_file
+#  define OUT_BUF dvi_buf
 
-/* test whether a char in font is marked */
-#define pdf_char_marked char_used
+/* Restore underscores.  */
+#  define kpsetexformat kpse_tex_format
+#  define mainbody main_body
+#  define t_open_in topenin
 
-/* writepdf() always writes by fwrite() */
-#define       write_pdf(a, b) \
-  (void) fwrite ((char *) &pdf_buf[a], sizeof (pdf_buf[a]), \
-                 (int) ((b) - (a) + 1), pdf_file)
+/* Executing shell commands.  */
+extern void mk_shellcmdlist(char *);
+extern void init_shell_escape(void);
+extern int shell_cmd_is_allowed(const char **cmd, char **safecmd,
+                                char **cmdname);
+extern int runsystem(char *cmd);
 
-#define tex_b_open_in(f) \
-    open_input (&(f), kpse_tex_format, FOPEN_RBIN_MODE)
-#define ovf_b_open_in(f) \
-    open_input (&(f), kpse_ovf_format, FOPEN_RBIN_MODE)
-#define vf_b_open_in(f) \
-    open_input (&(f), kpse_vf_format, FOPEN_RBIN_MODE)
+#  ifndef GLUERATIO_TYPE
+#    define GLUERATIO_TYPE double
+#  endif
+typedef GLUERATIO_TYPE glueratio;
 
-extern int open_outfile(FILE ** f, const char *name, const char *mode);
+#  if defined(__DJGPP__) && defined (IPC)
+#    undef IPC
+#  endif
 
-#define do_a_open_out(f) open_outfile(&(f),(const char *)(nameoffile+1),FOPEN_W_MODE)
-#define do_b_open_out(f) open_outfile(&(f),(const char *)(nameoffile+1),FOPEN_WBIN_MODE)
+#  ifdef IPC
+extern void ipcpage(int);
+#  endif                        /* IPC */
+
 
-#define pdfassert assert
-#define voidcast(a) (void *)(a)
-#define varmemcast(a) (memory_word *)(a)
-#define fixmemcast(a) (smemory_word *)(a)
-extern volatile memory_word *varmem;
-extern halfword var_mem_min;
-extern halfword var_mem_max;
-extern halfword get_node(integer s);
-extern void free_node(halfword p, integer s);
-extern void init_node_mem(integer s);
-extern void dump_node_mem(void);
-extern void undump_node_mem(void);
+/* How to output to the GF or DVI file.  */
+#  define	WRITE_OUT(a, b)							\
+  if (fwrite ((char *) &OUT_BUF[a], sizeof (OUT_BUF[a]),		\
+                 (int) ((b) - (a) + 1), OUT_FILE) 			\
+      != (int) ((b) - (a) + 1))						\
+    FATAL_PERROR ("fwrite");
 
-#include <luatexdir/ptexlib.h>
+#  define flush_out() fflush (OUT_FILE)
+
+/* Read a line of input as quickly as possible.  */
+#  define	input_ln(stream, flag) input_line (stream)
+
+extern boolean input_line(FILE *);
+
+#  include <luatexdir/ptexlib.h>
+
+#  define COPYRIGHT_HOLDER "Taco Hoekwater"
+#  define AUTHOR NULL
+#  define PROGRAM_HELP LUATEXHELP
+#  define BUG_ADDRESS "dev-luatex@ntg.nl"
+#  define DUMP_OPTION "fmt"
+#  define DUMP_EXT ".fmt"
+#  define INPUT_FORMAT kpse_tex_format
+#  define INI_PROGRAM "luainitex"
+#  define VIR_PROGRAM "luavirtex"
+#  define TEXMFENGINENAME "luatex"
+
+/* this counteracts the macro definition in cpascal.h */
+#  undef Xchr
+#  define Xchr(a) a
+
+#endif

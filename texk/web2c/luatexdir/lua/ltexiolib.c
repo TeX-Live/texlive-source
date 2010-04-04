@@ -1,6 +1,6 @@
 /* ltexiolib.c
    
-   Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
+   Copyright 2006-2010 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
 
@@ -17,17 +17,17 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "luatex-api.h"
-#include <ptexlib.h>
+#include "lua/luatex-api.h"
+#include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: ltexiolib.c 2321 2009-04-18 09:17:13Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/ltexiolib.c $";
+    "$Id: ltexiolib.c 3550 2010-03-26 14:37:09Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/ltexiolib.c $";
 
-typedef void (*texio_printer) (str_number s);
+typedef void (*texio_printer) (const char *);
 
 static char *loggable_info = NULL;
 
-static boolean get_selector_value(lua_State * L, int i, char *l)
+static boolean get_selector_value(lua_State * L, int i, int *l)
 {
     boolean r = false;
     if (lua_isstring(L, i)) {
@@ -43,24 +43,19 @@ static boolean get_selector_value(lua_State * L, int i, char *l)
             r = true;
         }
     } else {
-        lua_pushstring(L, "first argument is not a string");
-        lua_error(L);
+        luaL_error(L, "first argument is not a string");
     }
     return r;
 }
 
 static int do_texio_print(lua_State * L, texio_printer printfunction)
 {
-    str_number texs;
     const char *s;
-    size_t k;
     int i = 1;
-    str_number u = 0;
-    char save_selector = selector;
+    int save_selector = selector;
     int n = lua_gettop(L);
     if (n == 0 || !lua_isstring(L, -1)) {
-        lua_pushstring(L, "no string to print");
-        lua_error(L);
+	luaL_error(L, "no string to print");
     }
     if (n > 1) {
         if (get_selector_value(L, i, &selector))
@@ -70,23 +65,15 @@ static int do_texio_print(lua_State * L, texio_printer printfunction)
         && selector != term_and_log) {
         normalize_selector();   /* sets selector */
     }
-    /* just in case there is a string in progress */
-    if (str_start[str_ptr - 0x200000] < pool_ptr)
-        u = make_string();
     for (; i <= n; i++) {
         if (lua_isstring(L, i)) {
-            s = lua_tolstring(L, i, &k);
-            texs = maketexlstring(s, k);
-            printfunction(texs);
-            flush_str(texs);
+            s = lua_tostring(L, i);
+            printfunction(s);
         } else {
-            lua_pushstring(L, "argument is not a string");
-            lua_error(L);
+            luaL_error(L, "argument is not a string");
         }
     }
     selector = save_selector;
-    if (u != 0)
-        str_ptr--;
     return 0;
 }
 
@@ -94,7 +81,7 @@ static void do_texio_ini_print(lua_State * L, const char *extra)
 {
     const char *s;
     int i = 1;
-    char l = term_and_log;
+    int l = term_and_log;
     int n = lua_gettop(L);
     if (n > 1) {
         if (get_selector_value(L, i, &l))
@@ -120,20 +107,20 @@ static void do_texio_ini_print(lua_State * L, const char *extra)
 
 static int texio_print(lua_State * L)
 {
-    if (ready_already != 314159 || pool_ptr == 0 || job_name == 0) {
+    if (ready_already != 314159 || job_name == 0) {
         do_texio_ini_print(L, "");
         return 0;
     }
-    return do_texio_print(L, zprint);
+    return do_texio_print(L, tprint);
 }
 
 static int texio_printnl(lua_State * L)
 {
-    if (ready_already != 314159 || pool_ptr == 0 || job_name == 0) {
+    if (ready_already != 314159 || job_name == 0) {
         do_texio_ini_print(L, "\n");
         return 0;
     }
-    return do_texio_print(L, zprint_nl);
+    return do_texio_print(L, tprint_nl);
 }
 
 /* at the point this function is called, the selector is log_only */

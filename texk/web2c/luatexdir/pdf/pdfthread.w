@@ -1,0 +1,290 @@
+% pdfthread.w
+
+% Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
+
+% This file is part of LuaTeX.
+
+% LuaTeX is free software; you can redistribute it and/or modify it under
+% the terms of the GNU General Public License as published by the Free
+% Software Foundation; either version 2 of the License, or (at your
+% option) any later version.
+
+% LuaTeX is distributed in the hope that it will be useful, but WITHOUT
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+% License for more details.
+
+% You should have received a copy of the GNU General Public License along
+% with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+
+@ @c
+static const char _svn_version[] =
+    "$Id: pdfthread.w 3571 2010-04-02 13:50:45Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/pdf/pdfthread.w $";
+
+#include "ptexlib.h"
+
+@ @c
+#define pdf_thread_margin        dimen_par(pdf_thread_margin_code)
+#define page_width dimen_par(page_width_code)
+#define page_height dimen_par(page_height_code)
+
+@ Threads are handled in similar way as link annotations 
+@c
+void append_bead(PDF pdf, halfword p)
+{
+    int a, b, c, t;
+    if (!is_shipping_page)
+        pdf_error("ext4", "threads cannot be inside an XForm");
+    t = get_obj(pdf, obj_type_thread, pdf_thread_id(p), pdf_thread_named_id(p));
+    b = pdf_new_objnum(pdf);
+    obj_bead_ptr(pdf, b) = pdf_get_mem(pdf, pdfmem_bead_size);
+    set_obj_bead_page(pdf, b, pdf->last_page);
+    set_obj_bead_data(pdf, b, p);
+    if (pdf_thread_attr(p) != null)
+        set_obj_bead_attr(pdf, b, tokens_to_string(pdf_thread_attr(p)));
+    else
+        set_obj_bead_attr(pdf, b, 0);
+    if (obj_thread_first(pdf, t) == 0) {
+        obj_thread_first(pdf, t) = b;
+        set_obj_bead_next(pdf, b, b);
+        set_obj_bead_prev(pdf, b, b);
+    } else {
+        a = obj_thread_first(pdf, t);
+        c = obj_bead_prev(pdf, a);
+        set_obj_bead_prev(pdf, b, c);
+        set_obj_bead_next(pdf, b, a);
+        set_obj_bead_prev(pdf, a, b);
+        set_obj_bead_next(pdf, c, b);
+    }
+    addto_page_resources(pdf, obj_type_bead, b);
+}
+
+@ @c
+void do_thread(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
+{
+    scaled_whd alt_rule;
+    if ((type(p) == hlist_node) && (subtype(p) == pdf_start_thread_node))
+        pdf_error("ext4", "\\pdfstartthread ended up in hlist");
+    if (doing_leaders)
+        return;
+    if (subtype(p) == pdf_start_thread_node) {
+        pdf->thread.wd = width(p);
+        pdf->thread.ht = height(p);
+        pdf->thread.dp = depth(p);
+        pdf->last_thread_id = pdf_thread_id(p);
+        pdf->last_thread_named_id = (pdf_thread_named_id(p) > 0);
+        if (pdf->last_thread_named_id)
+            add_token_ref(pdf_thread_id(p));
+        pdf->thread_level = cur_s;
+    }
+    alt_rule.wd = width(p);
+    alt_rule.ht = height(p);
+    alt_rule.dp = depth(p);
+    set_rect_dimens(pdf, p, parent_box, cur, alt_rule, pdf_thread_margin);
+    append_bead(pdf, p);
+    pdf->last_thread = p;
+}
+
+@ @c
+void append_thread(PDF pdf, halfword parent_box, scaledpos cur)
+{
+    halfword p;
+    scaled_whd alt_rule;
+    p = new_node(whatsit_node, pdf_thread_data_node);
+    width(p) = pdf->thread.wd;
+    height(p) = pdf->thread.ht;
+    depth(p) = pdf->thread.dp;
+    pdf_thread_attr(p) = null;
+    pdf_thread_id(p) = pdf->last_thread_id;
+    if (pdf->last_thread_named_id) {
+        add_token_ref(pdf_thread_id(p));
+        pdf_thread_named_id(p) = 1;
+    } else {
+        pdf_thread_named_id(p) = 0;
+    }
+    alt_rule.wd = width(p);
+    alt_rule.ht = height(p);
+    alt_rule.dp = depth(p);
+    set_rect_dimens(pdf, p, parent_box, cur, alt_rule, pdf_thread_margin);
+    append_bead(pdf, p);
+    pdf->last_thread = p;
+}
+
+@ @c
+void end_thread(PDF pdf, halfword p)
+{
+    scaledpos pos = pdf->posstruct->pos;
+    if (type(p) == hlist_node)
+        pdf_error("ext4", "\\pdfendthread ended up in hlist");
+    if (pdf->thread_level != cur_s)
+        pdf_error("ext4",
+                  "\\pdfendthread ended up in different nesting level than \\pdfstartthread");
+    if (is_running(pdf->thread.dp) && (pdf->last_thread != null)) {
+        switch (pdf->posstruct->dir) {
+        case dir_TLT:
+        case dir_TRT:
+            pdf_ann_bottom(pdf->last_thread) = pos.v - pdf_thread_margin;
+            break;
+        case dir_LTL:
+            pdf_ann_right(pdf->last_thread) = pos.h + pdf_thread_margin;
+            break;
+        case dir_RTT:
+            pdf_ann_left(pdf->last_thread) = pos.h - pdf_thread_margin;
+            break;
+        }
+    }
+    if (pdf->last_thread_named_id)
+        delete_token_ref(pdf->last_thread_id);
+    pdf->last_thread = null;
+}
+
+@ The following function are needed for outputing article thread. 
+@c
+void thread_title(PDF pdf, int t)
+{
+    pdf_printf(pdf, "/Title (");
+    if (obj_info(pdf, t) < 0)
+        pdf_print(pdf, -obj_info(pdf, t));
+    else
+        pdf_print_int(pdf, obj_info(pdf, t));
+    pdf_printf(pdf, ")\n");
+}
+
+void pdf_fix_thread(PDF pdf, int t)
+{
+    halfword a;
+    pdf_warning("thread", "destination", false, false);
+    if (obj_info(pdf, t) < 0) {
+        tprint("name{");
+        print(-obj_info(pdf, t));
+        tprint("}");
+    } else {
+        tprint("num");
+        print_int(obj_info(pdf, t));
+    }
+    tprint(" has been referenced but does not exist, replaced by a fixed one");
+    print_ln();
+    print_ln();
+    pdf_new_dict(pdf, obj_type_others, 0, 0);
+    a = pdf->obj_ptr;
+    pdf_indirect_ln(pdf, "T", t);
+    pdf_indirect_ln(pdf, "V", a);
+    pdf_indirect_ln(pdf, "N", a);
+    pdf_indirect_ln(pdf, "P", pdf->last_page);
+    pdf_printf(pdf, "/R [0 0 ");
+    pdf_print_bp(pdf, page_width);
+    pdf_out(pdf, ' ');
+    pdf_print_bp(pdf, page_height);
+    pdf_printf(pdf, "]\n");
+    pdf_end_dict(pdf);
+    pdf_begin_dict(pdf, t, 1);
+    pdf_printf(pdf, "/I << \n");
+    thread_title(pdf, t);
+    pdf_printf(pdf, ">>\n");
+    pdf_indirect_ln(pdf, "F", a);
+    pdf_end_dict(pdf);
+}
+
+void out_thread(PDF pdf, int t)
+{
+    halfword a, b;
+    int last_attr;
+    if (obj_thread_first(pdf, t) == 0) {
+        pdf_fix_thread(pdf, t);
+        return;
+    }
+    pdf_begin_dict(pdf, t, 1);
+    a = obj_thread_first(pdf, t);
+    b = a;
+    last_attr = 0;
+    do {
+        if (obj_bead_attr(pdf, a) != 0)
+            last_attr = obj_bead_attr(pdf, a);
+        a = obj_bead_next(pdf, a);
+    } while (a != b);
+    if (last_attr != 0) {
+        pdf_print_ln(pdf, last_attr);
+    } else {
+        pdf_printf(pdf, "/I << \n");
+        thread_title(pdf, t);
+        pdf_printf(pdf, ">>\n");
+    }
+    pdf_indirect_ln(pdf, "F", a);
+    pdf_end_dict(pdf);
+    do {
+        pdf_begin_dict(pdf, a, 1);
+        if (a == b)
+            pdf_indirect_ln(pdf, "T", t);
+        pdf_indirect_ln(pdf, "V", obj_bead_prev(pdf, a));
+        pdf_indirect_ln(pdf, "N", obj_bead_next(pdf, a));
+        pdf_indirect_ln(pdf, "P", obj_bead_page(pdf, a));
+        pdf_indirect_ln(pdf, "R", obj_bead_rect(pdf, a));
+        pdf_end_dict(pdf);
+        a = obj_bead_next(pdf, a);
+    } while (a != b);
+}
+
+
+@ @c
+void scan_thread_id(void)
+{
+    if (scan_keyword("num")) {
+        scan_int();
+        if (cur_val <= 0)
+            pdf_error("ext1", "num identifier must be positive");
+        if (cur_val > max_halfword)
+            pdf_error("ext1", "number too big");
+        set_pdf_thread_id(cur_list.tail_field, cur_val);
+        set_pdf_thread_named_id(cur_list.tail_field, 0);
+    } else if (scan_keyword("name")) {
+        scan_pdf_ext_toks();
+        set_pdf_thread_id(cur_list.tail_field, def_ref);
+        set_pdf_thread_named_id(cur_list.tail_field, 1);
+    } else {
+        pdf_error("ext1", "identifier type missing");
+    }
+}
+
+void check_running_thread(PDF pdf, halfword this_box, scaledpos cur)
+{
+    if ((pdf->last_thread != null) && is_running(pdf->thread.dp)
+        && (pdf->thread_level == cur_s))
+        append_thread(pdf, this_box, cur);
+}
+
+@ @c
+void print_beads_list(PDF pdf)
+{
+    pdf_object_list *k;
+    if ((k = get_page_resources_list(pdf, obj_type_bead)) != NULL) {
+        pdf_printf(pdf, "/B [ ");
+        while (k != NULL) {
+            pdf_print_int(pdf, k->info);
+            pdf_printf(pdf, " 0 R ");
+            k = k->link;
+        }
+        pdf_printf(pdf, "]\n");
+    }
+}
+
+@ @c
+void print_bead_rectangles(PDF pdf)
+{
+    halfword i;
+    pdf_object_list *k;
+    if ((k = get_page_resources_list(pdf, obj_type_bead)) != NULL) {
+        while (k != NULL) {
+            pdf_new_obj(pdf, obj_type_others, 0, 1);
+            pdf_out(pdf, '[');
+            i = obj_bead_data(pdf, k->info);    /* pointer to a whatsit or whatsit-like node */
+            pdf_print_rect_spec(pdf, i);
+            if (subtype(i) == pdf_thread_data_node)     /* thanh says it mis be destroyed here */
+                flush_node(i);
+            pdf_printf(pdf, "]\n");
+            set_obj_bead_rect(pdf, k->info, pdf->obj_ptr);      /* rewrite |obj_bead_data| */
+            pdf_end_obj(pdf);
+            k = k->link;
+        }
+    }
+}

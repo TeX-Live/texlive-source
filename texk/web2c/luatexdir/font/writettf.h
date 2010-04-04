@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writettf.h 2271 2009-04-12 23:42:21Z oneiros $ */
+/* $Id: writettf.h 3400 2010-01-27 16:10:42Z taco $ */
 
 #ifndef WRITETTF_H
 #  define WRITETTF_H 1
@@ -74,7 +74,7 @@ typedef unsigned short TTF_F2DOT14;
 #  define get_ufword()    get_type(TTF_UFWORD)
 #  define get_f2dot14()   get_type(TTF_F2DOT14)
 
-#  define put_num(t,n)    ((t)ttf_putnum(t##_SIZE, n))
+#  define put_num(t,n)    ((t)ttf_putnum(pdf,t##_SIZE, n))
 
 #  define put_char(n)     (void)put_num(TTF_CHAR, n)
 #  define put_byte(n)     (void)put_num(TTF_BYTE, n)
@@ -146,8 +146,8 @@ typedef struct {
 
 extern fd_entry *fd_cur;        /* pointer to the current font descriptor */
 extern unsigned char *ttf_buffer;
-extern integer ttf_size;
-extern integer ttf_curbyte;
+extern int ttf_size;
+extern int ttf_curbyte;
 extern glyph_entry *glyph_tab;
 extern dirtab_entry *dir_tab;
 extern dirtab_entry *ttf_name_lookup(const char *s, boolean required);
@@ -161,16 +161,16 @@ extern void ttf_read_post(void);
 
 extern FILE *ttf_file;
 
-#  define ttf_open()      \
-    (ttf_file = fopen((char *) nameoffile + 1, FOPEN_RBIN_MODE))
-#  define otf_open()      \
-    (ttf_file = fopen((char *) nameoffile + 1, FOPEN_RBIN_MODE))
+#  define ttf_open(a)      \
+    (ttf_file = fopen((char *) (a), FOPEN_RBIN_MODE))
+#  define otf_open(a)      \
+    (ttf_file = fopen((char *) (a), FOPEN_RBIN_MODE))
 #  define ttf_read_file()  \
     readbinfile(ttf_file,&ttf_buffer,&ttf_size)
 #  define ttf_close()      xfclose(ttf_file,cur_file_name)
 #  define ttf_getchar()    ttf_buffer[ttf_curbyte++]
 #  define ttf_eof()        (ttf_curbyte>ttf_size)
 
-extern long ttf_putnum(int s, long n);
+extern long ttf_putnum(PDF pdf, int s, long n);
 extern long ttf_getnum(int s);
 #endif

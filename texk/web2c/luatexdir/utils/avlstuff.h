@@ -18,7 +18,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: avlstuff.h 2328 2009-04-18 12:50:26Z hhenkel $ */
+/* $Id: avlstuff.h 2684 2009-06-29 13:01:53Z taco $ */
 
 #ifndef AVLSTUFF_H
 #  define AVLSTUFF_H
@@ -29,8 +29,5 @@ extern struct libavl_allocator avl_xallocator;
 
 int comp_int_entry(const void *, const void *, void *);
 int comp_string_entry(const void *, const void *, void *);
-integer avl_find_obj(integer, integer, integer);
-void avl_put_obj(integer, integer);
-void PdfObjTree_free(void);
 
 #endif                          /* AVLSTUFF_H */

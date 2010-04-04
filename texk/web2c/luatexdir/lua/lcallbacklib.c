@@ -17,13 +17,11 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-#include "luatex-api.h"
-#include <ptexlib.h>
+#include "lua/luatex-api.h"
+#include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: lcallbacklib.c 2448 2009-06-08 07:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.40.6/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
-
-static int do_run_callback(int special, const char *values, va_list vl);
+    "$Id: lcallbacklib.c 3404 2010-01-28 11:17:10Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
 int callback_count = 0;
 int saved_callback_count = 0;
@@ -49,7 +47,7 @@ static const char *const callbacknames[] = {
     "find_sfd_file", "read_sfd_file",
     "find_pk_file", "read_pk_file",
     "show_error_hook",
-    "process_input_buffer",
+    "process_input_buffer", "process_output_buffer",
     "start_page_number", "stop_page_number",
     "start_run", "stop_run",
     "define_font",
@@ -79,9 +77,9 @@ void get_lua_boolean(const char *table, const char *name, boolean * target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isboolean(Luas, -1)) {
-            *target = (lua_toboolean(Luas, -1));
+            *target = (boolean) (lua_toboolean(Luas, -1));
         } else if (lua_isnumber(Luas, -1)) {
-            *target = (lua_tonumber(Luas, -1) == 0 ? 0 : 1);
+            *target = (boolean) (lua_tonumber(Luas, -1) == 0 ? 0 : 1);
         }
     }
     lua_settop(Luas, stacktop);
@@ -97,16 +95,16 @@ void get_saved_lua_boolean(int r, const char *name, boolean * target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isboolean(Luas, -1)) {
-            *target = lua_toboolean(Luas, -1);
+            *target = (boolean) lua_toboolean(Luas, -1);
         } else if (lua_isnumber(Luas, -1)) {
-            *target = (lua_tonumber(Luas, -1) == 0 ? 0 : 1);
+            *target = (boolean) (lua_tonumber(Luas, -1) == 0 ? 0 : 1);
         }
     }
     lua_settop(Luas, stacktop);
     return;
 }
 
-void get_lua_number(const char *table, const char *name, integer * target)
+void get_lua_number(const char *table, const char *name, int *target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -115,14 +113,14 @@ void get_lua_number(const char *table, const char *name, integer * target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isnumber(Luas, -1)) {
-            *target = lua_tonumber(Luas, -1);
+            lua_number2int(*target, lua_tonumber(Luas, -1));
         }
     }
     lua_settop(Luas, stacktop);
     return;
 }
 
-void get_saved_lua_number(int r, const char *name, integer * target)
+void get_saved_lua_number(int r, const char *name, int *target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -131,7 +129,7 @@ void get_saved_lua_number(int r, const char *name, integer * target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isnumber(Luas, -1)) {
-            *target = lua_tonumber(Luas, -1);
+            lua_number2int(*target, lua_tonumber(Luas, -1));
         }
     }
     lua_settop(Luas, stacktop);
@@ -139,7 +137,7 @@ void get_saved_lua_number(int r, const char *name, integer * target)
 }
 
 
-void get_lua_string(const char *table, const char *name, const char **target)
+void get_lua_string(const char *table, const char *name, char **target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -148,14 +146,14 @@ void get_lua_string(const char *table, const char *name, const char **target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isstring(Luas, -1)) {
-            *target = lua_tostring(Luas, -1);
+            *target = xstrdup(lua_tostring(Luas, -1));
         }
     }
     lua_settop(Luas, stacktop);
     return;
 }
 
-void get_saved_lua_string(int r, const char *name, const char **target)
+void get_saved_lua_string(int r, const char *name, char **target)
 {
     int stacktop;
     stacktop = lua_gettop(Luas);
@@ -164,7 +162,7 @@ void get_saved_lua_string(int r, const char *name, const char **target)
     if (lua_istable(Luas, -1)) {
         lua_getfield(Luas, -1, name);
         if (lua_isstring(Luas, -1)) {
-            *target = lua_tostring(Luas, -1);
+            *target = xstrdup(lua_tostring(Luas, -1));
         }
     }
     lua_settop(Luas, stacktop);
@@ -266,7 +264,7 @@ int do_run_callback(int special, const char *values, va_list vl)
     }
     ss = index(values, '>');
     assert(ss);
-    luaL_checkstack(L, (ss - values + 1), "out of stack space");
+    luaL_checkstack(L, (int) (ss - values + 1), "out of stack space");
     ss = NULL;
     for (narg = 0; *values; narg++) {
         switch (*values++) {
@@ -289,7 +287,8 @@ int do_run_callback(int special, const char *values, va_list vl)
             lua_pushboolean(L, va_arg(vl, int));
             break;
         case CALLBACK_LINE:    /* a buffer section, with implied start */
-            lua_pushlstring(L, (char *) (buffer + first), va_arg(vl, int));
+            lua_pushlstring(L, (char *) (buffer + first),
+                            (size_t) va_arg(vl, int));
             break;
         case '-':
             narg--;
@@ -301,7 +300,7 @@ int do_run_callback(int special, const char *values, va_list vl)
         }
     }
   ENDARGS:
-    nres = strlen(values);
+    nres = (int) strlen(values);
     if (special == 1) {
         nres++;
     }
@@ -350,7 +349,7 @@ int do_run_callback(int special, const char *values, va_list vl)
                         lua_typename(L, lua_type(L, nres)));
                 goto EXIT;
             }
-            b = lua_tonumber(L, nres);
+            lua_number2int(b, lua_tonumber(L, nres));
             *va_arg(vl, int *) = b;
             break;
         case CALLBACK_LINE:    /* TeX line */
@@ -365,9 +364,9 @@ int do_run_callback(int special, const char *values, va_list vl)
                 bufloc = va_arg(vl, int *);
                 if (len != 0) {
                     ret = *bufloc;
-                    check_buffer_overflow(ret + len);
+                    check_buffer_overflow(ret + (int) len);
                     strncpy((char *) (buffer + ret), s, len);
-                    *bufloc += len;
+                    *bufloc += (int) len;
                     /* while (len--) {  buffer[(*bufloc)++] = *s++; } */
                     while ((*bufloc) - 1 > ret && buffer[(*bufloc) - 1] == ' ')
                         (*bufloc)--;
@@ -404,7 +403,7 @@ int do_run_callback(int special, const char *values, va_list vl)
             if (s == NULL)      /* |len| can be zero */
                 *va_arg(vl, int *) = 0;
             else {
-                ss = xmalloc(len + 1);
+                ss = xmalloc((unsigned) (len + 1));
                 (void) memcpy(ss, s, (len + 1));
                 *va_arg(vl, char **) = ss;
             }

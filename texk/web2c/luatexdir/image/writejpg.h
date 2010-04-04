@@ -18,14 +18,14 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writejpg.h 2327 2009-04-18 12:47:21Z hhenkel $ */
+/* $Id: writejpg.h 2653 2009-06-27 14:30:05Z taco $ */
 
 #ifndef WRITEJPG_H
 #  define WRITEJPG_H
 
 #  include "image.h"
 
-void read_jpg_info(image_dict *, img_readtype_e);
-void write_jpg(image_dict *);
+void read_jpg_info(PDF, image_dict *, img_readtype_e);
+void write_jpg(PDF, image_dict *);
 
 #endif                          /* WRITEJPG_H */
