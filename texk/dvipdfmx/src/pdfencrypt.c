@@ -37,7 +37,6 @@
 #endif /* WIN32 */
 
 #include "system.h"
-#include "system.h"
 #include "mem.h"
 #include "error.h"
 #include "pdfobj.h"
