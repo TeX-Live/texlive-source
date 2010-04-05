@@ -1,3 +1,7 @@
+2010-04-05  Karl Berry  <karl@tug.org>
+
+	* mptrap.test: use --mem, not --memname (which does not exist).
+
 2010-04-01  Taco Hoekwater <taco@elvenkind.com>
 	    
 	* lmplib.c: revert #include "../luatex-api.h".
