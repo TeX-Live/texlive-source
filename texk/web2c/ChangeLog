@@ -1,3 +1,8 @@
+2010-04-05  Taco Hoekwater  <taco@luatex.org>
+	    
+	* texmfmp.h: Removed #ifdef luaTeX code, now that luatex
+	no longer includes this file at all.
+	
 2010-04-04  Taco Hoekwater  <taco@luatex.org>
 
 	* configure.ac: Append LT_LIB_DLLOAD to the end,
