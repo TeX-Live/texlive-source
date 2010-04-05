@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mem.h,v 1.5 2007/11/17 18:08:58 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mem.h,v 1.6 2009/11/29 01:18:20 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -32,8 +32,6 @@ extern void *renew (void *p, size_t size);
 
 extern void mem_debug_init(void);
 extern void mem_debug_check(void);
-
-#undef MEM_DEBUG
 
 #ifdef MEM_DEBUG
 

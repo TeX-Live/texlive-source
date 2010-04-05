@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006, 2007, 2008, 2009 TeX Users Group.
+Copyright 2006, 2007, 2008, 2009, 2010 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -45,10 +45,10 @@ dvidvi - ?
 
 dviljk - maintained here, by Joachim Schrod
 
-dvipdfmx - checked 17jul09
+dvipdfmx - checked 5apr10
   http://project.ktug.or.kr/dvipdfmx/snapshot/latest/
-  http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20090708.tar.gz
-  dvipdfmx@project.ktug.or.kr (ChoF, Hirata, Matthias)
+  http://project.ktug.or.kr/dvipdfmx/snapshot/latest/dvipdfmx-20100328.tar.gz
+  dvipdfmx@project.ktug.or.kr (ChoF, Matthias, Hirata)
 
 dvipng - checked 18mar10
   http://www.ctan.org/tex-archive/dviware/dvipng/ (but maybe stale)

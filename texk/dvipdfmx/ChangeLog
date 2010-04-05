@@ -1,7 +1,117 @@
-$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.263 2009/07/08 09:33:22 chofchof Exp $
+$Header: /home/cvsroot/dvipdfmx/ChangeLog,v 1.281 2010/03/28 06:03:57 chofchof Exp $
 
 ChangeLog: Changes for DVIPDFMx
 ===============================
+
+2010-03-28 Jin-Hwan Cho
+
+	* dvi.c, dvi.h, dvipdfmx.c, spc_pdfm.c:
+          Implemented a new special \special{pdf: minorversion num} which
+          will override the value given either by the configuration file
+          or by the command line option; requested by Karl Berry.
+
+2010-03-21 Jin-Hwan Cho
+
+	* cidtype2.c:
+          Assume that the output encoding of CMap files is UTF-16, not UCS2
+          as the recent Adobe-Japan1-UCS2 shows; reported by Haruhiko Okumura
+          and the patch were prepared by Akira Kakuto.
+
+2010-02-22 Matthias Franz
+
+	* pngimage.c:
+          Made PNG code work with libpng14, as suggested by Karl Berry.
+
+2010-02-07 Matthias Franz
+
+	* type1.c:
+          Fixed bug caused by fonts without data for private dictionary.
+          (The private dictionary was omitted instead of inserting an
+          empty dictionary.) This caused problems with Acrobat Reader, for
+          example with the dsrom10 font. Bug reported by Vladimir Vlasov.
+
+2010-02-07 Jin-Hwan Cho
+
+	* dvipdfmx.c, pdfdoc.c, pdfobj.h, pdfobj.c, pdfencrypt.h, pdfenctypr.c:
+          Now the trailer always contains ID array to work Screen annotations
+          under Adobe Reader 9.
+
+2009-12-14 Matthias Franz
+
+	* dvipdfmx.c:
+          Turn on quiet mode earlier if "-q" option is given.
+
+2009-11-28 Matthias Franz
+
+	* spc_dvips.c:
+          Fixed bug in "ps: plotfile" special, found by Alexander Bostroem.
+
+2009-11-18 Matthias Franz
+
+	* man/extractbb.1, man/Makefile.am, Makefile.am, configure.in:
+          Added man page for extractbb in new directory man. This
+          addresses Debian bug #512357 and a request by Karl Berry.
+
+2009-10-10  Jin-Hwan Cho
+
+	* dvipdfmx.c, xbb.c:
+          Change usage() as suggested by Matthias Franz and Karl Berry.
+
+2009-10-09  Jin-Hwan Cho
+
+	* dvipdfmx.c:
+          Implemented the usual options --version and --help
+          (suggested by Karl Berry.)
+
+2009-09-19  Matthias Franz
+
+	* epdf.c, pdfdoc.c, pdfdoc.h, xbb.c:
+          Bug fix: The number of pages in a PDF document as reported by
+          extractbb was always 0. (The code for reporting the number of
+          pages of a PDF file was accidentally removed during a previous
+          modification.)
+
+2009-09-18  Matthias Franz
+
+	* dpxutil.c, dpxutil.h and all calls to the changed functions:
+          Polished code for hash tables. Now the function for freeing
+          values is defined with ht_init_table. ht_append_table now
+          produces an error if the key is already in use (but this
+          could be changed easily). A new insert mode where a value
+          does _not_ replace an existing value for the same key has
+          been introduced, but there is no short name for it yet.
+
+2009-08-30  Matthias Franz
+
+	* dvipdfmx.cfg:
+          Turned on optimization of PDF destinations by default.
+
+2009-08-27  Matthias Franz
+
+	* truetype.c, type1.c, type1c.c:
+          Changed precision in font widths arrays from 1.0 to 0.1.
+          (Applies only to Type 1, Type 1C and TrueType, not PK fonts.)
+
+2009-08-23  Matthias Franz
+
+	* epdf.c, pdfdoc.c, pdfdoc.h, pdfximage.c, pdfximage.h, xbb.c:
+          Removed the feature of negative page numbers for PDF inclusion.
+          It was never used and made the code more complicated.
+
+	* dvipdfmx.c, pdfximage.c:
+          Changed the code for PS and PDF page inclusion:
+          The function mkstemp on NetBSD may return the same name twice
+          if the file has been deleted after the first call. (Reported
+          by Jukka Salmi.) This interfered with our file name caching.
+          Now we don't delete the temporary file after PS->PDF conversion,
+          but cache the temporary file name instead. An advantage is that
+          we don't have to convert the same file multiple times if several
+          pages are imported.
+
+2009-08-17  Jin-Hwan Cho
+
+	* tt_post.c:
+          Fixed the crashing bug with Mona font found by Alexis Ballier.
 
 2009-07-08  Jin-Hwan Cho
 

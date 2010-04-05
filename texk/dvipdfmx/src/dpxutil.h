@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.h,v 1.9 2009/04/26 21:23:29 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.h,v 1.11 2009/09/20 14:24:51 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -68,20 +68,31 @@ struct ht_entry {
 
 struct ht_table {
   long   count;
+  void (*hval_free_fn) (void *);
   struct ht_entry *table[HASH_TABLE_SIZE];
 };
 
-extern void  ht_init_table   (struct ht_table *ht);
-extern void  ht_clear_table  (struct ht_table *ht, void (*hval_free_fn) (void *));
+typedef struct ht_table ht_table;
+
+#define HT_NEW      0
+#define HT_REPLACE  1
+#define HT_KEEP     2
+
+extern void  ht_init_table   (struct ht_table *ht,
+                              void (*hval_free_fn) (void *));
+extern void  ht_clear_table  (struct ht_table *ht);
 extern long  ht_table_size   (struct ht_table *ht);
-extern void *ht_lookup_table (struct ht_table *ht, const void *key, int keylen);
-extern void  ht_append_table (struct ht_table *ht,
-			      const void *key, int keylen, void *value) ;
+extern void *ht_lookup_table (struct ht_table *ht,
+                              const void *key, int keylen);
+extern void  ht_modify_table (struct ht_table *ht,
+			      const void *key, int keylen,
+                              void *value, int mode);
+#define ht_append_table(ht, key, keylen, value) \
+          ht_modify_table(ht, key, keylen, value, HT_NEW)
+#define ht_insert_table(ht, key, keylen, value) \
+          ht_modify_table(ht, key, keylen, value, HT_REPLACE)
 extern int   ht_remove_table (struct ht_table *ht,
-			      const void *key, int keylen, void (*hval_free_fn) (void*));
-extern void  ht_insert_table (struct ht_table *ht,
-			      const void *key, int keylen, void *value,
-			      void (*hval_free_fn) (void *));
+			      const void *key, int keylen);
 
 struct ht_iter {
   int    index;

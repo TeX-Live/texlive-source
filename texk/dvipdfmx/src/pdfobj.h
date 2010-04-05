@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.34 2009/05/03 00:13:04 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.h,v 1.35 2010/02/07 12:53:44 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -185,8 +185,9 @@ extern int         pdf_compare_reference (pdf_obj *ref1, pdf_obj *ref2);
 extern void      pdf_set_compression (int level);
 
 extern void      pdf_set_info     (pdf_obj *obj);
+extern void      pdf_set_id       (pdf_obj *id);
 extern void      pdf_set_root     (pdf_obj *obj);
-extern void      pdf_set_encrypt  (pdf_obj *encrypt, pdf_obj *id);
+extern void      pdf_set_encrypt  (pdf_obj *encrypt);
 
 extern void      pdf_files_init    (void);
 extern void      pdf_files_close   (void);

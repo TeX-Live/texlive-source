@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.19 2009/03/16 22:26:40 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdraw.c,v 1.20 2009/11/28 17:17:30 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -992,7 +992,7 @@ m_stack_top (m_stack *stack)
   return data;
 }
 
-#define m_stack_depth(s)    ((s) ? (s)->size : 0)
+#define m_stack_depth(s)    (((s) != NULL) ? (s)->size : 0)
 
 static m_stack gs_stack;
 

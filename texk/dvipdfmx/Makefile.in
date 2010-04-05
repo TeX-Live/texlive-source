@@ -46,7 +46,7 @@ DIST_COMMON = README $(am__configure_deps) \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
 	../../build-aux/ylwrap AUTHORS COPYING ChangeLog INSTALL NEWS \
-	TODO
+	TODO compile depcomp install-sh missing mkinstalldirs
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/cho-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \

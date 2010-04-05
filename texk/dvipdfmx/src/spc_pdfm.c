@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.50 2009/07/07 11:48:34 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/spc_pdfm.c,v 1.52 2010/03/28 06:03:57 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -150,7 +150,7 @@ spc_handler_pdfm__init (struct spc_env *spe, struct spc_arg *ap, void *dp)
   sd->annot_dict   = NULL;
   sd->lowest_level = 255;
   sd->resourcemap  = NEW(1, struct ht_table);
-  ht_init_table(sd->resourcemap);
+  ht_init_table(sd->resourcemap, hval_free);
 
 #ifdef  ENABLE_TOUNICODE
   sd->cd.taintkeys = pdf_new_array();
@@ -175,7 +175,7 @@ spc_handler_pdfm__clean (struct spc_env *spe, struct spc_arg *ap, void *dp)
   sd->lowest_level = 255;
   sd->annot_dict   = NULL;
   if (sd->resourcemap) {
-    ht_clear_table(sd->resourcemap, hval_free);
+    ht_clear_table(sd->resourcemap);
     RELEASE(sd->resourcemap);
   }
   sd->resourcemap = NULL;
@@ -1349,6 +1349,13 @@ spc_handler_pdfm_code (struct spc_env *spe, struct spc_arg *args)
   return  0;
 }
 
+static int
+spc_handler_pdfm_do_nothing (struct spc_env *spe, struct spc_arg *args)
+{
+  args->curptr = args->endptr;
+  return 0;
+}
+
 #define STRING_STREAM 0
 #define FILE_STREAM   1
 
@@ -1944,6 +1951,8 @@ static struct spc_handler pdfm_handlers[] = {
   {"bcontent",   spc_handler_pdfm_bcontent},
   {"econtent",   spc_handler_pdfm_econtent},
   {"code",       spc_handler_pdfm_code},
+
+  {"minorversion", spc_handler_pdfm_do_nothing},
 };
 
 int

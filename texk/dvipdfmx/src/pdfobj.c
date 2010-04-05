@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.70 2009/05/06 06:07:09 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfobj.c,v 1.72 2010/02/07 12:53:44 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -505,14 +505,20 @@ pdf_set_info (pdf_obj *object)
 }
 
 void
-pdf_set_encrypt (pdf_obj *encrypt, pdf_obj *id)
+pdf_set_id (pdf_obj *id)
+{
+  if (pdf_add_dict(trailer_dict, pdf_new_name("ID"), id)) {
+    ERROR ("ID already set!");
+  }
+}
+
+void
+pdf_set_encrypt (pdf_obj *encrypt)
 {
   if (pdf_add_dict(trailer_dict, pdf_new_name("Encrypt"), pdf_ref_obj(encrypt))) {
     ERROR("Encrypt object already set!");
   }
   encrypt->flags |= OBJ_NO_ENCRYPT;
-
-  pdf_add_dict(trailer_dict, pdf_new_name("ID"), id);
 }
 
 static
@@ -2888,7 +2894,7 @@ void
 pdf_files_init (void)
 {
   pdf_files = NEW(1, struct ht_table);
-  ht_init_table(pdf_files);
+  ht_init_table(pdf_files, (void (*)(void *)) pdf_file_free);
 }
 
 int
@@ -2990,7 +2996,7 @@ void
 pdf_files_close (void)
 {
   ASSERT(pdf_files);
-  ht_clear_table(pdf_files, (void (*)(void *)) pdf_file_free);
+  ht_clear_table(pdf_files);
   RELEASE(pdf_files);
 }
 

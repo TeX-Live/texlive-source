@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/mem.c,v 1.7 2009/03/24 07:55:52 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/mem.c,v 1.8 2009/09/18 23:56:02 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -45,7 +45,7 @@ void mem_debug_init(void)
   mem_event = 0;
   mem_internal = 0;
   mem_ht = malloc(sizeof(struct ht_table));
-  ht_init_table(mem_ht);
+  ht_init_table(mem_ht, NULL);
   fprintf(stderr, "*** Memory debugging started ***\n");
 }
 
@@ -69,18 +69,6 @@ void mem_debug_check(void)
   fprintf(stderr, "*** End of used memory ***\n");
 }
 
-static void
-mem_noop (void *vp)
-{
-}
-
-static void
-mem_error (void *vp)
-{
-  ERROR("Internal memory debugging error\n1: %s\n2: %s\n",
-	vp, (char *) vp, mem_str);
-}
-
 void *mem_add(void *ptr, const char *file, const char *function, int line) {
   if (ptr && !mem_internal) {
     mem_internal = 1;
@@ -96,7 +84,7 @@ void *mem_add(void *ptr, const char *file, const char *function, int line) {
 	     , __builtin_return_address(1) //, __builtin_return_address(2)
 #endif
             );
-    ht_insert_table(mem_ht, p, sizeof(ptr), mem_str, mem_error);
+    ht_append_table(mem_ht, p, sizeof(ptr), mem_str);
     mem_internal = 0;
   }
 
@@ -106,7 +94,7 @@ void *mem_add(void *ptr, const char *file, const char *function, int line) {
 void *mem_remove(void *ptr, const char *file, const char *function, int line) {
   if (ptr && !mem_internal) {
     mem_internal = 1;
-    if (!(mem_ht && ht_remove_table(mem_ht, &ptr, sizeof(ptr), mem_noop))) {
+    if (!(mem_ht && ht_remove_table(mem_ht, &ptr, sizeof(ptr)))) {
       WARN("Trying to free non-allocated memory\n"
 	   "%p %s (%s, %d)"
 #ifdef __GNUC__

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.h,v 1.3 2007/04/03 05:25:50 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfencrypt.h,v 1.4 2010/02/07 12:53:44 chofchof Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -27,6 +27,7 @@
 
 extern void pdf_enc_set_verbose (void);
 extern pdf_obj *pdf_enc_id_array (void);
+extern void pdf_enc_compute_id_string (char *dviname, char *pdfname);
 extern void pdf_enc_set_label (unsigned long label);
 extern void pdf_enc_set_generation (unsigned generation);
 extern void pdf_enc_set_passwd (unsigned size, unsigned perm, char *dviname, char *pdfname);

@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.29 2008/10/13 19:42:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1c.c,v 1.30 2009/08/28 00:26:17 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -203,7 +203,7 @@ add_SimpleMetrics (pdf_font *font, cff_font *cffont,
         else
           width = 1000. * tfm_get_width(tfm_id, code);
 	pdf_add_array(tmp_array,
-		      pdf_new_number(ROUND(width, 1.0)));
+		      pdf_new_number(ROUND(width, 0.1)));
       } else {
 	pdf_add_array(tmp_array, pdf_new_number(0.0));
       }

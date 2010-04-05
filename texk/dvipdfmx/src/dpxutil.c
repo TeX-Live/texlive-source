@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.11 2009/04/26 21:23:29 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/dpxutil.c,v 1.13 2009/09/20 14:52:41 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -161,7 +161,7 @@ skip_white_spaces (unsigned char **s, unsigned char *endptr)
 }
 
 void
-ht_init_table (struct ht_table *ht)
+ht_init_table (struct ht_table *ht, void (*hval_free_fn) (void *))
 {
   int  i;
 
@@ -171,10 +171,11 @@ ht_init_table (struct ht_table *ht)
     ht->table[i] = NULL;
   }
   ht->count = 0;
+  ht->hval_free_fn = hval_free_fn;
 }
 
 void
-ht_clear_table (struct ht_table *ht, void (*hval_free_fn) (void *))
+ht_clear_table (struct ht_table *ht)
 {
   int   i;
 
@@ -185,8 +186,8 @@ ht_clear_table (struct ht_table *ht, void (*hval_free_fn) (void *))
 
     hent = ht->table[i];
     while (hent) {
-      if (hent->value && hval_free_fn) {
-	hval_free_fn(hent->value);
+      if (hent->value && ht->hval_free_fn) {
+	ht->hval_free_fn(hent->value);
       }
       hent->value  = NULL;
       if (hent->key) {
@@ -200,6 +201,7 @@ ht_clear_table (struct ht_table *ht, void (*hval_free_fn) (void *))
     ht->table[i] = NULL;
   }
   ht->count = 0;
+  ht->hval_free_fn = NULL;
 }
 
 long ht_table_size (struct ht_table *ht)
@@ -245,7 +247,7 @@ ht_lookup_table (struct ht_table *ht, const void *key, int keylen)
 
 int
 ht_remove_table (struct ht_table *ht,
-		 const void *key, int keylen, void (*hval_free_fn) (void *))
+		 const void *key, int keylen)
 /* returns 1 if the element was found and removed and 0 otherwise */
 {
   struct ht_entry *hent, *prev;
@@ -269,8 +271,8 @@ ht_remove_table (struct ht_table *ht,
       RELEASE(hent->key);
     hent->key    = NULL;
     hent->keylen = 0;
-    if (hent->value && hval_free_fn) {
-      hval_free_fn(hent->value);
+    if (hent->value && ht->hval_free_fn) {
+      ht->hval_free_fn(hent->value);
     }
     hent->value  = NULL;
     if (prev) {
@@ -285,11 +287,9 @@ ht_remove_table (struct ht_table *ht,
     return 0;
 }
 
-/* replace... */
 void
-ht_insert_table (struct ht_table *ht,
-		 const void *key, int keylen, void *value,
-		 void (*hval_free_fn) (void *)) 
+ht_modify_table (struct ht_table *ht,
+		 const void *key, int keylen, void *value, int mode)
 {
   struct ht_entry *hent, *prev;
   unsigned int     hkey;
@@ -308,9 +308,20 @@ ht_insert_table (struct ht_table *ht,
     hent = hent->next;
   }
   if (hent) {
-    if (hent->value && hval_free_fn)
-      hval_free_fn(hent->value);
-    hent->value  = value;
+    switch (mode) {
+    case HT_NEW:
+      ASSERT(0); /* duplicates not allowed in this mode */
+      break;
+    case HT_REPLACE: {
+      if (hent->value && ht->hval_free_fn)
+	ht->hval_free_fn(hent->value);
+      hent->value  = value;
+      break;
+    }
+    case HT_KEEP:
+      ht->hval_free_fn(value);
+      break;
+    }
   } else {
     hent = NEW(1, struct ht_entry);
     hent->key = NEW(keylen, char);
@@ -325,35 +336,6 @@ ht_insert_table (struct ht_table *ht,
     }
     ht->count++;
   }
-}
-
-void
-ht_append_table (struct ht_table *ht,
-		 const void *key, int keylen, void *value) 
-{
-  struct ht_entry *hent, *last;
-  unsigned int hkey;
-
-  hkey = get_hash(key, keylen);
-  hent = ht->table[hkey];
-  if (!hent) {
-    hent = NEW(1, struct ht_entry);
-    ht->table[hkey] = hent;
-  } else {
-    while (hent) {
-      last = hent;
-      hent = hent->next;
-    }
-    hent = NEW(1, struct ht_entry);
-    last->next = hent;
-  }
-  hent->key = NEW(keylen, char);
-  memcpy(hent->key, key, keylen);
-  hent->keylen = keylen;
-  hent->value  = value;
-  hent->next   = NULL;
-
-  ht->count++;
 }
 
 int

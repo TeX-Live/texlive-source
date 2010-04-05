@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.41 2008/11/30 21:12:27 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/fontmap.c,v 1.42 2009/09/18 23:56:02 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -743,7 +743,7 @@ pdf_append_fontmap_record (const char *kp, const fontmap_rec *vp)
         mrec->map_name = mstrdup(kp); /* link */
         mrec->charmap.sfd_name   = mstrdup(sfd_name);
         mrec->charmap.subfont_id = mstrdup(subfont_ids[n]);
-        ht_insert_table(fontmap, tfm_name, strlen(tfm_name), mrec, hval_free);
+        ht_insert_table(fontmap, tfm_name, strlen(tfm_name), mrec);
       }
       RELEASE(tfm_name);
     }
@@ -759,7 +759,7 @@ pdf_append_fontmap_record (const char *kp, const fontmap_rec *vp)
       RELEASE(mrec->map_name);
       mrec->map_name = NULL;
     }
-    ht_insert_table(fontmap, kp, strlen(kp), mrec, hval_free);
+    ht_insert_table(fontmap, kp, strlen(kp), mrec);
   }
   if (verbose > 3)
     MESG("\n");
@@ -794,14 +794,14 @@ pdf_remove_fontmap_record (const char *kp)
         continue;
       if (verbose > 3)
         MESG(" %s", tfm_name);
-      ht_remove_table(fontmap, tfm_name, strlen(tfm_name), hval_free);
+      ht_remove_table(fontmap, tfm_name, strlen(tfm_name));
       RELEASE(tfm_name);
     }
     RELEASE(fnt_name);
     RELEASE(sfd_name);
   }
 
-  ht_remove_table(fontmap, kp, strlen(kp), hval_free);
+  ht_remove_table(fontmap, kp, strlen(kp));
 
   if (verbose > 3)
     MESG("\n");
@@ -847,7 +847,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
       mrec->map_name = mstrdup(kp); /* link to this entry */
       mrec->charmap.sfd_name   = mstrdup(sfd_name);
       mrec->charmap.subfont_id = mstrdup(subfont_ids[n]);
-      ht_insert_table(fontmap, tfm_name, strlen(tfm_name), mrec, hval_free);
+      ht_insert_table(fontmap, tfm_name, strlen(tfm_name), mrec);
       RELEASE(tfm_name);
     }
     RELEASE(fnt_name);
@@ -860,7 +860,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
     RELEASE(mrec->map_name);
     mrec->map_name = NULL;
   }
-  ht_insert_table(fontmap, kp, strlen(kp), mrec, hval_free);
+  ht_insert_table(fontmap, kp, strlen(kp), mrec);
 
   if (verbose > 3)
     MESG("\n");
@@ -1101,14 +1101,14 @@ void
 pdf_init_fontmaps (void)
 {
   fontmap = NEW(1, struct ht_table);
-  ht_init_table(fontmap);
+  ht_init_table(fontmap, hval_free);
 }
 
 void
 pdf_close_fontmaps (void)
 {
   if (fontmap) {
-    ht_clear_table(fontmap, hval_free);
+    ht_clear_table(fontmap);
     RELEASE(fontmap);
   }
   fontmap = NULL;

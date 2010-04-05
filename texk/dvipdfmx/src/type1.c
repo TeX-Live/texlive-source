@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.45 2008/10/13 19:42:48 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/type1.c,v 1.47 2010/02/08 02:51:37 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -335,7 +335,7 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
         else
           width = 1000. * tfm_get_width(tfm_id, code);
 	pdf_add_array(tmp_array,
-		      pdf_new_number(ROUND(width, 1.0)));
+		      pdf_new_number(ROUND(width, 0.1)));
       } else {
 	pdf_add_array(tmp_array, pdf_new_number(0.0));
       }
@@ -381,7 +381,8 @@ write_fontfile (pdf_font *font, cff_font *cffont, long num_glyphs)
   if (!cff_dict_known(cffont->topdict, "Encoding"))
     cff_dict_add(cffont->topdict, "Encoding", 1);
   private_size = cff_dict_pack((cffont->private)[0], wbuf, WBUF_SIZE);
-  if (private_size > 0 && !cff_dict_known(cffont->topdict, "Private"))
+  /* Private dict is required (but may have size 0) */
+  if (!cff_dict_known(cffont->topdict, "Private"))
     cff_dict_add(cffont->topdict, "Private", 2);
   topdict->offset[1] = cff_dict_pack(cffont->topdict, wbuf, WBUF_SIZE) + 1;
 

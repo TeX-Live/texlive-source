@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.25 2009/07/07 11:48:34 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfximage.c,v 1.26 2009/08/24 01:38:26 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -48,7 +48,7 @@
 
 /* From psimage.h */
 static int  check_for_ps    (FILE *fp);
-static int  ps_include_page (pdf_ximage *ximage, const char *file_name);
+static int  ps_include_page (pdf_ximage *ximage);
 
 
 #define IMAGE_TYPE_UNKNOWN -1
@@ -71,7 +71,7 @@ struct pdf_ximage_
 {
   char        *ident;
   char         res_name[16];
-  long         page_no, page_count;
+  long         page_no;
 
   int          subtype;
 
@@ -81,6 +81,8 @@ struct pdf_ximage_
   pdf_obj     *reference;
   pdf_obj     *resource;
   pdf_obj     *attr_dict;
+
+  char         tempfile;
 };
 
 
@@ -109,14 +111,16 @@ static struct ic_  _ic = {
 };
 
 static void
-pdf_init_ximage_struct (pdf_ximage *I, const char *ident, const char *filename, pdf_obj *dict)
+pdf_init_ximage_struct (pdf_ximage *I,
+			const char *ident, const char *filename,
+			long page_no, pdf_obj *dict)
 {
   if (ident) {
     I->ident = NEW(strlen(ident)+1, char);
     strcpy(I->ident, ident);
   } else
     I ->ident = NULL;
-  I->page_no  = I->page_count = 0;
+  I->page_no  = page_no;
   if (filename) {
     I->filename = NEW(strlen(filename)+1, char);
     strcpy(I->filename, filename);
@@ -132,6 +136,18 @@ pdf_init_ximage_struct (pdf_ximage *I, const char *ident, const char *filename, 
   I->attr.xdensity = I->attr.ydensity = 1.0;
   I->attr.bbox.llx = I->attr.bbox.lly = 0;
   I->attr.bbox.urx = I->attr.bbox.ury = 0;
+
+  I->tempfile = 0;
+}
+
+static void
+pdf_set_ximage_tempfile (pdf_ximage *I, const char *filename)
+{
+  if (I->filename)
+    RELEASE(I->filename);
+  I->filename = NEW(strlen(filename)+1, char);
+  strcpy(I->filename, filename);
+  I->tempfile = 1;
 }
 
 static void
@@ -147,7 +163,7 @@ pdf_clean_ximage_struct (pdf_ximage *I)
     pdf_release_obj(I->resource);
   if (I->attr_dict)
     pdf_release_obj(I->attr_dict);
-  pdf_init_ximage_struct(I, NULL, NULL, NULL);
+  pdf_init_ximage_struct(I, NULL, NULL, 0, NULL);
 }
 
 
@@ -166,12 +182,28 @@ pdf_close_images (void)
   struct ic_ *ic = &_ic;
   if (ic->ximages) {
     int  i;
-    for (i = 0; i < ic->count; i++)
-      pdf_clean_ximage_struct(&ic->ximages[i]);
+    for (i = 0; i < ic->count; i++) {
+      pdf_ximage *I = ic->ximages+i;
+      if (I->tempfile) {
+	/*
+	 * It is important to remove temporary files at the end because
+	 * we cache file names. Since we use mkstemp to create them, we
+	 * might get the same file name again if delete the first file.
+	 * (This happens on NetBSD, reported by Jukka Salmi.)
+	 * We also use this to convert a PS file only once if multiple
+	 * pages are imported from that file.
+	 */
+	if (_opts.verbose > 1)
+	  MESG("pdf_image>> deleting temporary file \"%s\"\n", I->filename);
+	dpx_delete_temp_file(I->filename); /* temporary filename freed here */
+	I->filename = NULL;
+      }
+      pdf_clean_ximage_struct(I);
+    }
     RELEASE(ic->ximages);
+    ic->ximages = NULL;
+    ic->count = ic->capacity = 0;
   }
-  ic->ximages = NULL;
-  ic->count = ic->capacity = 0;
 
   if (_opts.cmdtmpl)
     RELEASE(_opts.cmdtmpl);
@@ -231,8 +263,7 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   }
 
   I  = &ic->ximages[id];
-  pdf_init_ximage_struct(I, ident, ident, dict);
-  pdf_ximage_set_page(I, page_no, 0);
+  pdf_init_ximage_struct(I, ident, fullname, page_no, dict);
 
   switch (format) {
   case  IMAGE_TYPE_JPEG:
@@ -262,10 +293,10 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
     if (_opts.verbose)
       MESG("[PDF]");
     {
-      int result = pdf_include_page(I, fp, ident);
+      int result = pdf_include_page(I, fp, fullname);
       if (result > 0)
 	/* PDF version too recent */
-	result = ps_include_page(I, fullname);
+	result = ps_include_page(I);
       if (result < 0)
 	goto error;
     }
@@ -277,7 +308,7 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   default:
     if (_opts.verbose)
       MESG(format == IMAGE_TYPE_EPS ? "[PS]" : "[UNKNOWN]");
-    if (ps_include_page(I, fullname) < 0)
+    if (ps_include_page(I) < 0)
       goto error;
     if (_opts.verbose)
       MESG(",Page:%ld", I->page_no);
@@ -316,24 +347,31 @@ pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
   struct ic_ *ic = &_ic;
   int         id = -1;
   pdf_ximage *I;
-  char       *fullname;
+  char       *fullname, *f = NULL;
   int         format;
   FILE       *fp;
 
   for (id = 0; id < ic->count; id++) {
     I = &ic->ximages[id];
-    if (I->ident && !strcmp(ident, I->ident) &&
-	I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
-        I->attr_dict == dict) {
-      return  id;
+    if (I->ident && !strcmp(ident, I->ident)) {
+      f = I->filename;
+      if (I->page_no == page_no && I->attr_dict == dict) {
+	return  id;
+      }
     }
   }
 
-  /* try loading image */
-  fullname = dpx_find_file(ident, "_pic_", "");
-  if (!fullname) {
-    WARN("Error locating image file \"%s\"", ident);
-    return  -1;
+  if (f) {
+    /* we already have converted this file; f is the temporary file name */
+    fullname = NEW(strlen(f)+1, char);
+    strcpy(fullname, f);
+  } else {
+    /* try loading image */
+    fullname = dpx_find_file(ident, "_pic_", "");
+    if (!fullname) {
+      WARN("Error locating image file \"%s\"", ident);
+      return  -1;
+    }
   }
 
   fp = dpx_fopen(fullname, FOPEN_RBIN_MODE);
@@ -505,14 +543,6 @@ pdf_ximage_get_page (pdf_ximage *I)
   return I->page_no;
 }
 
-void
-pdf_ximage_set_page (pdf_ximage *I, long page_no, long page_count)
-{
-  I->page_no    = page_no;
-  I->page_count = page_count;
-}
-
-
 #define CHECK_ID(c,n) do {\
   if ((n) < 0 || (n) >= (c)->count) {\
     ERROR("Invalid XObject ID: %d", (n));\
@@ -552,7 +582,7 @@ pdf_ximage_defineresource (const char *ident,
 
   I = &ic->ximages[id];
 
-  pdf_init_ximage_struct(I, ident, NULL, NULL);
+  pdf_init_ximage_struct(I, ident, NULL, 0, NULL);
 
   switch (subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:
@@ -832,9 +862,10 @@ void set_distiller_template (char *s)
 }
 
 static int
-ps_include_page (pdf_ximage *ximage, const char *filename)
+ps_include_page (pdf_ximage *ximage)
 {
   char  *distiller_template = _opts.cmdtmpl;
+  char  *filename = ximage->filename;
   char  *temp;
   FILE  *fp;
   int    error = 0;
@@ -872,13 +903,13 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     dpx_delete_temp_file(temp);
     return  -1;
   }
+  pdf_set_ximage_tempfile(ximage, temp);
   error = pdf_include_page(ximage, fp, temp);
   MFCLOSE(fp);
 
-  if (_opts.verbose > 1) {
-    MESG("pdf_image>> deleting file \"%s\"", temp);
-  }
-  dpx_delete_temp_file(temp); /* temp freed here */
+  /* See pdf_close_images for why we cannot delete temporary files here. */
+
+  RELEASE(temp);
 
   if (error) {
     WARN("Failed to include image file \"%s\"", filename);

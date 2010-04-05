@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.70 2009/05/04 00:41:42 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.c,v 1.75 2010/03/28 06:42:59 chofchof Exp $
  
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -929,12 +929,11 @@ pdf_doc_close_page_tree (pdf_doc *p)
  */
 
 pdf_obj *
-pdf_doc_get_page (pdf_file *pf, long *page_p, long *count_p,
+pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
 		  pdf_rect *bbox, pdf_obj **resources_p) {
   pdf_obj *page_tree = NULL;
   pdf_obj *resources = NULL, *box = NULL, *rotate = NULL;
   pdf_obj *catalog;
-  long page_no = *page_p, page_idx;
 
   catalog = pdf_file_get_catalog(pf);
 
@@ -943,12 +942,9 @@ pdf_doc_get_page (pdf_file *pf, long *page_p, long *count_p,
   if (!PDF_OBJ_DICTTYPE(page_tree))
     goto error;
 
-  /*
-   * Negative page numbers are counted from the back.
-   */
   {
-    pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
     long count;
+    pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
     if (!PDF_OBJ_NUMBERTYPE(tmp)) {
       if (tmp)
 	pdf_release_obj(tmp);
@@ -956,14 +952,12 @@ pdf_doc_get_page (pdf_file *pf, long *page_p, long *count_p,
     }
     count = pdf_number_value(tmp);
     pdf_release_obj(tmp);
-    page_idx = page_no + (page_no >= 0 ? -1 : count);
-    if (page_idx < 0 || page_idx >= count) {
+    if (count_p)
+      *count_p = count;
+    if (page_no <= 0 || page_no > count) {
 	WARN("Page %ld does not exist.", page_no);
 	goto error_silent;
       }
-    page_no = page_idx+1;
-    *page_p = page_no;
-    *count_p = count;
   }
 
   /*
@@ -973,7 +967,7 @@ pdf_doc_get_page (pdf_file *pf, long *page_p, long *count_p,
   {
     pdf_obj *media_box = NULL, *crop_box = NULL, *kids, *tmp;
     int depth = PDF_OBJ_MAX_DEPTH;
-    long kids_length = 1, i = 0;
+    long page_idx = page_no-1, kids_length = 1, i = 0;
 
     while (--depth && i != kids_length) {
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "MediaBox")))) {
@@ -1429,7 +1423,7 @@ pdf_doc_init_names (pdf_doc *p, int check_gotos)
   p->names[NUM_NAME_CATEGORY].data     = NULL;
 
   p->check_gotos   = check_gotos;
-  ht_init_table(&p->gotos);
+  ht_init_table(&p->gotos, (void (*) (void *)) pdf_release_obj);
 
   return;
 }
@@ -1531,8 +1525,7 @@ pdf_doc_add_goto (pdf_obj *annot_dict)
      */
     sprintf(buf, "%lx", ht_table_size(&pdoc.gotos));
     D_new = pdf_new_string(buf, strlen(buf));
-    ht_insert_table(&pdoc.gotos, dest, strlen(dest),
-		    D_new, (void (*) (void *)) pdf_release_obj);
+    ht_append_table(&pdoc.gotos, dest, strlen(dest), D_new);
   }
 
   {
@@ -1644,7 +1637,7 @@ pdf_doc_close_names (pdf_doc *p)
   RELEASE(p->names);
   p->names = NULL;
 
-  ht_clear_table(&p->gotos, (void (*) (void *)) pdf_release_obj);
+  ht_clear_table(&p->gotos);
 
   return;
 }
@@ -2413,9 +2406,10 @@ pdf_open_document (const char *filename,
 
   if (do_encryption) {
     pdf_obj *encrypt = pdf_encrypt_obj();
-    pdf_set_encrypt(encrypt, pdf_enc_id_array());
+    pdf_set_encrypt(encrypt);
     pdf_release_obj(encrypt);
   }
+  pdf_set_id(pdf_enc_id_array());
 
   /* Create a default name for thumbnail image files */
   if (manual_thumb_enabled) {

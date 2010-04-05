@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.26 2008/05/08 18:51:59 chofchof Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/tt_cmap.c,v 1.27 2009/09/18 23:56:02 matthias Exp $
     
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -1801,7 +1801,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
       load_gsub(opt_conf, gsub_list, sfont);
     }
 
-    ht_init_table(&unencoded);
+    ht_init_table(&unencoded, hval_free);
 
     handle_gsub(conf, ttcmap, gsub_list, &unencoded);
     if (opt_tag) {
@@ -1831,7 +1831,7 @@ otf_load_Unicode_CMap (const char *map_name, int ttc_index, /* 0 for non-TTC fon
     }
     create_cmaps(cmap, tounicode, &unencoded, GIDToCIDMap);
 
-    ht_clear_table(&unencoded, hval_free);
+    ht_clear_table(&unencoded);
     RELEASE(conf_name);
   }
 

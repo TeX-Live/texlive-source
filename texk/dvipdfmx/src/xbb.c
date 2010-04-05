@@ -1,8 +1,8 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.26 2009/05/10 17:04:54 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/xbb.c,v 1.29 2009/10/10 09:58:48 chofchof Exp $
 
     This is extractbb, a bounding box extraction program.
 
-    Copyright (C) 2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
+    Copyright (C) 2009 by Jin-Hwan Cho and Matthias Franz
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
+
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
@@ -45,24 +46,35 @@
 
 static int  really_quiet = 0;
 
+static void show_version(void)
+{
+  if (really_quiet) return;
+
+  fprintf(stdout, "%s, version %s, Copyright (C) 2009 by Jin-Hwan Cho and Matthias Franz\n", XBB_PROGRAM, XBB_VERSION);
+  fprintf(stdout, "A bounding box extraction utility from PDF, PNG, and JPEG.\n");
+  fprintf(stdout, "\nThis is free software; you can redistribute it and/or modify\n");
+  fprintf(stdout, "it under the terms of the GNU General Public License as published by\n");
+  fprintf(stdout, "the Free Software Foundation; either version 2 of the License, or\n");
+  fprintf(stdout, "(at your option) any later version.\n");
+}
+
+static void show_usage(void)
+{
+  if (really_quiet) return;
+
+  fprintf(stdout, "\nUsage: %s [-v|-q] [-O] [-m|-x] [files]\n", XBB_PROGRAM);
+  fprintf(stdout, "\t-v\tBe verbose\n");
+  fprintf(stdout, "\t-q\tBe quiet\n");
+  fprintf(stdout, "\t-O\tWrite output to stdout\n");
+  fprintf(stdout, "\t-m\tOutput .bb  file used in DVIPDFM\n");
+  fprintf(stdout, "\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+}
+
 static void usage(void)
 {
-  if (really_quiet)
-    return;
+  if (really_quiet) return;
 
-  printf("%s, version %s, Copyright (C) 2008 by Jin-Hwan Cho\n",
-	   XBB_PROGRAM, XBB_VERSION);
-  printf("A bounding box extraction utility from PDF, PNG, and JPEG.\n");
-  printf("\nThis is free software; you can redistribute it and/or modify\n");
-  printf("it under the terms of the GNU General Public License as published by\n");
-  printf("the Free Software Foundation; either version 2 of the License, or\n");
-  printf("(at your option) any later version.\n");
-  printf("\nUsage: %s [-v|-q] [-O] [-m|-x] [files]\n", XBB_PROGRAM);
-  printf("\t-v\tBe verbose\n");
-  printf("\t-q\tBe quiet\n");
-  printf("\t-O\tWrite output to stdout\n");
-  printf("\t-m\tOutput .bb  file used in DVIPDFM\n");
-  printf("\t-x\tOutput .xbb file used in DVIPDFMx (default)\n");
+  fprintf(stdout, "\nTry \"%s --help\" for more information.\n", XBB_PROGRAM);
   exit(1);
 }
 
@@ -206,7 +218,7 @@ static void do_pdf (FILE *fp, char *filename)
     return;
   }
 
-  page = pdf_doc_get_page(pf, &page_no, &count, &bbox, NULL);
+  page = pdf_doc_get_page(pf, page_no, &count, &bbox, NULL);
 
   pdf_close(pf);
 
@@ -233,7 +245,23 @@ int extractbb (int argc, char *argv[])
     usage();
 
   while (argc > 0 && *argv[0] == '-') {
-    switch (*(argv[0]+1)) {
+    char *flag = argv[0] + 1;
+    switch (*flag) {
+    case '-':
+      if (++flag) {
+        if (!strcmp(flag, "help")) {
+          show_version();
+          show_usage();
+          exit(0);
+        } else if (!strcmp(flag, "version")) {
+          show_version();
+          exit(0);
+        }
+      }
+      if (!really_quiet)
+        fprintf(stderr, "Unknown option in \"--%s\"", flag);
+      usage();
+      break;
     case 'O':
       xbb_to_file = 0;
       argc -= 1; argv += 1;
@@ -267,6 +295,8 @@ int extractbb (int argc, char *argv[])
       }
       /* else fall through */
     default:
+      if (!really_quiet)
+        fprintf(stderr, "Unknown option in \"-%s\"", flag);
       usage();
     }
   }

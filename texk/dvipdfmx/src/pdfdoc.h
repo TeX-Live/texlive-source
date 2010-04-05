@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.31 2009/05/04 00:41:43 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/pdfdoc.h,v 1.33 2009/09/19 18:48:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -56,8 +56,7 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_names()     pdf_doc_get_dictionary("Names")
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
 
-extern pdf_obj *pdf_doc_get_page (pdf_file *pf,
-				  long *page_p, long *count_p,
+extern pdf_obj *pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
 				  pdf_rect *bbox, pdf_obj **resources_p);
 
 extern long     pdf_doc_current_page_number    (void);

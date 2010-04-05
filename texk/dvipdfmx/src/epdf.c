@@ -1,4 +1,4 @@
-/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.28 2009/05/10 21:35:12 matthias Exp $
+/*  $Header: /home/cvsroot/dvipdfmx/src/epdf.c,v 1.30 2009/09/19 18:48:27 matthias Exp $
 
     This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
@@ -57,7 +57,6 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
   xform_info info;
   pdf_obj *contents = NULL, *catalog;
   pdf_obj *page = NULL, *resources = NULL, *markinfo = NULL;
-  long page_no, count;
 
   pf = pdf_open(filename, image_file);
   if (!pf)
@@ -68,9 +67,8 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 
   pdf_ximage_init_form_info(&info);  
 
-  page_no = pdf_ximage_get_page(ximage);
-
-  page = pdf_doc_get_page(pf, &page_no, &count, &info.bbox, &resources);
+  page = pdf_doc_get_page(pf, pdf_ximage_get_page(ximage), NULL,
+			  &info.bbox, &resources);
 
   if(!page)
     goto error_silent;
@@ -88,12 +86,6 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
       WARN("File contains tagged PDF. Ignoring tags.");
     pdf_release_obj(tmp);
   }
-
-  /*
-   * We must update ximage because page_no might have been changed
-   * by pdf_doc_get_page from negative to positive.
-   */
-  pdf_ximage_set_page(ximage, page_no, count);
 
   contents = pdf_deref_obj(pdf_lookup_dict(page, "Contents"));
   pdf_release_obj(page);
