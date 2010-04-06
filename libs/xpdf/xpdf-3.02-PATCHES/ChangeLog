@@ -1,3 +1,7 @@
+2010-04-06  Hartmut Henkel  <hartmut_henkel@gmx.de>
+
+	* patch-45-getmetadatanf needed by pdftoepdf.cc
+
 2009-09-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-pl4 (new): Official 3.02pl4 patch plus change of

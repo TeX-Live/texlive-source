@@ -20,7 +20,7 @@
 
 static const char _svn_version[] =
     "$Id: pdftoepdf.cc 3431 2010-02-17 20:35:50Z oneiros $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
 
 #include "epdf.h"
 
@@ -656,15 +656,12 @@ static void write_epdf1(PDF pdf, image_dict * idict)
         pdftex_warn
             ("PDF inclusion: /Resources missing. 'This practice is not recommended' (PDF Ref.)");
     } else {
-#if 0 // TEMP, waiting for XPDF patch
         resourcesNF = page->getResourcesNF();
         pdf_puts(pdf, "/Resources ");
         copyObject(pdf, pdf_doc, resourcesNF);
-#endif
     }
     // write the page /Metadata if it's there (as a stream it must be indirect)
     if (page->getMetadata() != NULL) {
-#if 0  // TEMP, waiting for XPDF patch
         metadataNF = page->getMetadataNF();     // *NF = "don't resolve indirects"
         if (!metadataNF->isRef())
             pdftex_warn("PDF inclusion: /Metadata must be indirect object");
@@ -672,7 +669,6 @@ static void write_epdf1(PDF pdf, image_dict * idict)
             pdf_printf(pdf, "/Metadata %d 0 R",
                        addInObj(pdf, pdf_doc, metadataNF->getRef()));
         }
-#endif
     }
     // write the page /Group if it's there
     if (page->getGroup() != NULL) {
