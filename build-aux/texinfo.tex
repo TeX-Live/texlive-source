@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-03-07.08}
+\def\texinfoversion{2010-03-25.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1491,6 +1491,7 @@ output) for that.)}
       \edef\myrbrace{\iffalse{\else\string}\fi}\let\}=\myrbrace
       %
       % Read toc silently, to get counts of subentries for \pdfoutline.
+      \def\partentry##1##2##3##4{}% ignore parts in the outlines
       \def\numchapentry##1##2##3##4{%
 	\def\thischapnum{##2}%
 	\def\thissecnum{0}%
@@ -2104,8 +2105,8 @@ end
 \font\reducedsy=cmsy10
 \def\reducedecsize{1000}
 
-% reset the current fonts
-\textfonts
+\textleading = 13.2pt % line spacing for 11pt CM
+\textfonts            % reset the current fonts
 \rm
 } % end of 11pt text font size definitions
 
@@ -2235,11 +2236,9 @@ end
 \font\reducedsy=cmsy9
 \def\reducedecsize{0900}
 
-% reduce space between paragraphs
-\divide\parskip by 2
-
-% reset the current fonts
-\textfonts
+\divide\parskip by 2  % reduce space between paragraphs
+\textleading = 12pt   % line spacing for 10pt CM
+\textfonts            % reset the current fonts
 \rm
 } % end of 10pt text font size definitions
 
@@ -3219,10 +3218,14 @@ end
 
 \def\headings #1 {\csname HEADINGS#1\endcsname}
 
-\def\HEADINGSoff{%
-\global\evenheadline={\hfil} \global\evenfootline={\hfil}
-\global\oddheadline={\hfil} \global\oddfootline={\hfil}}
-\HEADINGSoff
+\def\headingsoff{% non-global headings elimination
+  \evenheadline={\hfil}\evenfootline={\hfil}%
+   \oddheadline={\hfil}\oddfootline={\hfil}%
+}
+
+\def\HEADINGSoff{{\globaldefs=1 \headingsoff}} % global setting
+\HEADINGSoff  % it's the default
+
 % When we turn headings on, set the page number to 1.
 % For double-sided printing, put current file name in lower left corner,
 % chapter name on inside top of right hand pages, document
@@ -3334,7 +3337,7 @@ end
     \begingroup
       \advance\leftskip by-\tableindent
       \advance\hsize by\tableindent
-      \advance\rightskip by0pt plus1fil
+      \advance\rightskip by0pt plus1fil\relax
       \leavevmode\unhbox0\par
     \endgroup
     %
@@ -4743,6 +4746,11 @@ end
     % columns.
     \vskip 0pt plus1pt
     %
+    % When reading the text of entry, convert explicit line breaks
+    % from @* into spaces.  The user might give these in long section
+    % titles, for instance.
+    \def\*{\unskip\space\ignorespaces}%
+    %
     % Swallow the left brace of the text (first parameter):
     \afterassignment\doentry
     \let\temp =
@@ -4979,7 +4987,22 @@ end
 \message{sectioning,}
 % Chapters, sections, etc.
 
-% \unnumberedno is an oxymoron, of course.  But we count the unnumbered
+% Let's start with @part.
+\outer\parseargdef\part{\partzzz{#1}}
+\def\partzzz#1{%
+  \chapoddpage
+  \null
+  \vskip.3\vsize  % move it down on the page a bit
+  \begingroup
+    \noindent \titlefonts\rmisbold #1\par % the text
+    \let\lastnode=\empty      % no node to associate with
+    \writetocentry{part}{#1}{}% but put it in the toc
+    \headingsoff              % no headline or footline on the part page
+    \chapoddpage
+  \endgroup
+}
+
+% \unnumberedno is an oxymoron.  But we count the unnumbered
 % sections so that we can refer to them unambiguously in the pdf
 % outlines by their "section number".  We avoid collisions with chapter
 % numbers by starting them at 10000.  (If a document ever has 10000
@@ -5058,8 +5081,8 @@ end
 \chardef\maxseclevel = 3
 %
 % A numbered section within an unnumbered changes to unnumbered too.
-% To achive this, remember the "biggest" unnum. sec. we are currently in:
-\chardef\unmlevel = \maxseclevel
+% To achieve this, remember the "biggest" unnum. sec. we are currently in:
+\chardef\unnlevel = \maxseclevel
 %
 % Trace whether the current chapter is an appendix or not:
 % \chapheadtype is "N" or "A", unnumbered chapters are ignored.
@@ -5084,8 +5107,8 @@ end
   % The heading type:
   \def\headtype{#1}%
   \if \headtype U%
-    \ifnum \absseclevel < \unmlevel
-      \chardef\unmlevel = \absseclevel
+    \ifnum \absseclevel < \unnlevel
+      \chardef\unnlevel = \absseclevel
     \fi
   \else
     % Check for appendix sections:
@@ -5097,10 +5120,10 @@ end
       \fi\fi
     \fi
     % Check for numbered within unnumbered:
-    \ifnum \absseclevel > \unmlevel
+    \ifnum \absseclevel > \unnlevel
       \def\headtype{U}%
     \else
-      \chardef\unmlevel = 3
+      \chardef\unnlevel = 3
     \fi
   \fi
   % Now print the heading:
@@ -5352,9 +5375,8 @@ end
   \chappager
   \ifodd\pageno \else
     \begingroup
-      \evenheadline={\hfil}\evenfootline={\hfil}%
-      \oddheadline={\hfil}\oddfootline={\hfil}%
-      \hbox to 0pt{}%
+      \headingsoff
+      \null
       \chappager
     \endgroup
   \fi
@@ -5797,6 +5819,7 @@ end
 \def\summarycontents{%
   \startcontents{\putwordShortTOC}%
     %
+    \let\partentry = \shortpartentry
     \let\numchapentry = \shortchapentry
     \let\appentry = \shortchapentry
     \let\unnchapentry = \shortunnchapentry
@@ -5851,6 +5874,19 @@ end
 % The first argument is the chapter or section name.
 % The last argument is the page number.
 % The arguments in between are the chapter number, section number, ...
+
+% Parts, in the main contents.  Replace the part number, which doesn't
+% exist, with an empty box.  Let's hope all the numbers have the same width.
+% Also ignore the page number, which is conventionally not printed.
+\def\numeralbox{\setbox0=\hbox{8}\hbox to \wd0{\hfil}}
+\def\partentry#1#2#3#4{\dochapentry{\numeralbox\labelspace#1}{}}
+%
+% Parts, in the short toc.
+\def\shortpartentry#1#2#3#4{%
+  \penalty-300
+  \vskip.5\baselineskip plus.15\baselineskip minus.1\baselineskip
+  \shortchapentry{#1}{\numeralbox}{}{}%
+}
 
 % Chapters, in the main contents.
 \def\numchapentry#1#2#3#4{\dochapentry{#2\labelspace#1}{#4}}
@@ -6219,7 +6255,7 @@ end
 \envdef\flushright{%
   \let\nonarrowing = t%
   \nonfillstart
-  \advance\leftskip by 0pt plus 1fill
+  \advance\leftskip by 0pt plus 1fill\relax
   \gobble
 }
 \let\Eflushright = \afterenvbreak
@@ -6521,7 +6557,7 @@ end
     #1#2 \endheader
     % common ending:
     \interlinepenalty = 10000
-    \advance\rightskip by 0pt plus 1fil
+    \advance\rightskip by 0pt plus 1fil\relax
     \endgraf
     \nobreak\vskip -\parskip
     \penalty\defunpenalty  % signal to \startdefun and \dodefunx
@@ -7703,7 +7739,7 @@ end
 % #2 is (optional) width, #3 is (optional) height.
 % #4 is (ignored optional) html alt text.
 % #5 is (ignored optional) extension.
-% #6 is just the usual extra ignored arg for parsing this stuff.
+% #6 is just the usual extra ignored arg for parsing stuff.
 \newif\ifimagevmode
 \def\imagexxx#1,#2,#3,#4,#5,#6\finish{\begingroup
   \catcode`\^^M = 5     % in case we're inside an example
