@@ -37,6 +37,11 @@ fi
 # Add '--disable-threads': required for FreeBSD, neither XeTeX nor BibTeXU use threads.
 # Add '--disable-dyload': neither XeTeX nor BibTeXU use plugins, new in ICU 4.4.
 icu_config="$icu_config --disable-strict --disable-threads --disable-dyload"
+
+# Add '--disable-utf16-string-check': gcc 4.4+ supports this, but
+# XeTeX/BibTeXU don't need it, and propagating the necessary compiler
+# flags as computed by ICU is not easy.
+icu_config="$icu_config --disable-utf16-string-check"
 AC_SUBST([icu_config])
 
 if test "x$cross_compiling" = xyes; then

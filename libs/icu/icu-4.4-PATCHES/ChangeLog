@@ -1,3 +1,9 @@
+2010-04-08  Karl Berry  <karl@tug.org>
+
+	* patch-07-configure-utf16-string: new patch so we can disable the
+	check for UTF16 string literals.  See comments in our
+	libs/icu/configure.ac.
+
 2010-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported icu-4.4 source tree (icu4c-4_4-src.tgz) from:
@@ -155,4 +161,3 @@
 
 	* layout/OpenTypeLayoutEngine.cpp: Removed some obsolete code,
 	surrounded by #if 0...#endif.
-	
