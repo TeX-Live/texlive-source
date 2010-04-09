@@ -37,10 +37,12 @@ EOF
 
 # Create aux data
 mk_aux () {
-  echo '\relax'
-  echo '\citation{*}'
-  echo '\bibstyle{'$1'}'
-  echo '\bibdata{memtest}'
+  cat <<EOF
+\relax
+\citation{*}
+\bibstyle{$1}
+\bibdata{memtest}
+EOF
 }
 
 for t in 1 2 3; do
