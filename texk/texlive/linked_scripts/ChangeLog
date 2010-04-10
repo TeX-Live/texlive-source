@@ -1,3 +1,7 @@
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (nobase_dist_scriptx_SCRIPTS): add bundledoc.
+
 2010-03-09  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): add de-macro.
