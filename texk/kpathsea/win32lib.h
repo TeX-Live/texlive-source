@@ -3,6 +3,10 @@
 #ifndef _WIN32LIB_H_
 #define _WIN32LIB_H_
 
+#include <io.h>
+#include <fcntl.h>
+#include <direct.h>
+
 #if !__STDC__
 #if _MSC_VER>=1200
    #pragma warning(push)

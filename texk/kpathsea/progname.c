@@ -19,14 +19,12 @@
 #include <kpathsea/config.h>
 #include <kpathsea/absolute.h>
 #include <kpathsea/c-pathch.h>
+#include <kpathsea/c-pathmx.h>
 #include <kpathsea/c-stat.h>
 #include <kpathsea/pathsearch.h>
 /* For kpse_reset_progname */
 #include <kpathsea/tex-file.h>
 
-#if defined (WIN32) || defined (__DJGPP__)
-#include <kpathsea/c-pathmx.h>
-#endif
 
 #if defined(__i386_pc_gnu__)
 #ifndef _S_ISUID
