@@ -104,55 +104,55 @@ struct encoding staticencoding = {
  *   than to build the structures ourselves.
  */
 const char *staticligkern[] = {
-   "% LIGKERN space l =: lslash; space L =: Lslash;",
-   "% LIGKERN question quoteleft =: questiondown;",
-   "% LIGKERN exclam quoteleft =: exclamdown;",
-   "% LIGKERN hyphen hyphen =: endash; endash hyphen =: emdash;",
-   "% LIGKERN quoteleft quoteleft =: quotedblleft;",
-   "% LIGKERN quoteright quoteright =: quotedblright;",
-   "% LIGKERN space {} *; * {} space; zero {} *; * {} zero;",
-   "% LIGKERN one {} *; * {} one; two {} *; * {} two;",
-   "% LIGKERN three {} *; * {} three; four {} *; * {} four;",
-   "% LIGKERN five {} *; * {} five; six {} *; * {} six;",
-   "% LIGKERN seven {} *; * {} seven; eight {} *; * {} eight;",
-   "% LIGKERN nine {} *; * {} nine;",
+   "% LIGKERN space l =: lslash ; space L =: Lslash ;",
+   "% LIGKERN question quoteleft =: questiondown ;",
+   "% LIGKERN exclam quoteleft =: exclamdown ;",
+   "% LIGKERN hyphen hyphen =: endash ; endash hyphen =: emdash ;",
+   "% LIGKERN quoteleft quoteleft =: quotedblleft ;",
+   "% LIGKERN quoteright quoteright =: quotedblright ;",
+   "% LIGKERN space {} * ; * {} space ; zero {} * ; * {} zero ;",
+   "% LIGKERN one {} * ; * {} one ; two {} * ; * {} two ;",
+   "% LIGKERN three {} * ; * {} three ; four {} * ; * {} four ;",
+   "% LIGKERN five {} * ; * {} five ; six {} * ; * {} six ;",
+   "% LIGKERN seven {} * ; * {} seven ; eight {} * ; * {} eight ;",
+   "% LIGKERN nine {} * ; * {} nine ;",
 /* Kern accented characters the same way as their base. */
-  "% LIGKERN Aacute <> A; aacute <> a;",
-  "% LIGKERN Acircumflex <> A; acircumflex <> a;",
-  "% LIGKERN Adieresis <> A; adieresis <> a;",
-  "% LIGKERN Agrave <> A; agrave <> a;",
-  "% LIGKERN Aring <> A; aring <> a;",
-  "% LIGKERN Atilde <> A; atilde <> a;",
-  "% LIGKERN Ccedilla <> C; ccedilla <> c;",
-  "% LIGKERN Eacute <> E; eacute <> e;",
-  "% LIGKERN Ecircumflex <> E; ecircumflex <> e;",
-  "% LIGKERN Edieresis <> E; edieresis <> e;",
-  "% LIGKERN Egrave <> E; egrave <> e;",
-  "% LIGKERN Iacute <> I; iacute <> i;",
-  "% LIGKERN Icircumflex <> I; icircumflex <> i;",
-  "% LIGKERN Idieresis <> I; idieresis <> i;",
-  "% LIGKERN Igrave <> I; igrave <> i;",
-  "% LIGKERN Ntilde <> N; ntilde <> n;",
-  "% LIGKERN Oacute <> O; oacute <> o;",
-  "% LIGKERN Ocircumflex <> O; ocircumflex <> o;",
-  "% LIGKERN Odieresis <> O; odieresis <> o;",
-  "% LIGKERN Ograve <> O; ograve <> o;",
-  "% LIGKERN Oslash <> O; oslash <> o;",
-  "% LIGKERN Otilde <> O; otilde <> o;",
-  "% LIGKERN Scaron <> S; scaron <> s;",
-  "% LIGKERN Uacute <> U; uacute <> u;",
-  "% LIGKERN Ucircumflex <> U; ucircumflex <> u;",
-  "% LIGKERN Udieresis <> U; udieresis <> u;",
-  "% LIGKERN Ugrave <> U; ugrave <> u;",
-  "% LIGKERN Yacute <> Y; yacute <> y;",
-  "% LIGKERN Ydieresis <> Y; ydieresis <> y;",
-  "% LIGKERN Zcaron <> Z; zcaron <> z;",
+   "% LIGKERN Aacute <> A ; aacute <> a ;",
+   "% LIGKERN Acircumflex <> A ; acircumflex <> a ;",
+   "% LIGKERN Adieresis <> A ; adieresis <> a ;",
+   "% LIGKERN Agrave <> A ; agrave <> a ;",
+   "% LIGKERN Aring <> A ; aring <> a ;",
+   "% LIGKERN Atilde <> A ; atilde <> a ;",
+   "% LIGKERN Ccedilla <> C ; ccedilla <> c ;",
+   "% LIGKERN Eacute <> E ; eacute <> e ;",
+   "% LIGKERN Ecircumflex <> E ; ecircumflex <> e ;",
+   "% LIGKERN Edieresis <> E ; edieresis <> e ;",
+   "% LIGKERN Egrave <> E ; egrave <> e ;",
+   "% LIGKERN Iacute <> I ; iacute <> i ;",
+   "% LIGKERN Icircumflex <> I ; icircumflex <> i ;",
+   "% LIGKERN Idieresis <> I ; idieresis <> i ;",
+   "% LIGKERN Igrave <> I ; igrave <> i ;",
+   "% LIGKERN Ntilde <> N ; ntilde <> n ;",
+   "% LIGKERN Oacute <> O ; oacute <> o ;",
+   "% LIGKERN Ocircumflex <> O ; ocircumflex <> o ;",
+   "% LIGKERN Odieresis <> O ; odieresis <> o ;",
+   "% LIGKERN Ograve <> O ; ograve <> o ;",
+   "% LIGKERN Oslash <> O ; oslash <> o ;",
+   "% LIGKERN Otilde <> O ; otilde <> o ;",
+   "% LIGKERN Scaron <> S ; scaron <> s ;",
+   "% LIGKERN Uacute <> U ; uacute <> u ;",
+   "% LIGKERN Ucircumflex <> U ; ucircumflex <> u ;",
+   "% LIGKERN Udieresis <> U ; udieresis <> u ;",
+   "% LIGKERN Ugrave <> U ; ugrave <> u ;",
+   "% LIGKERN Yacute <> Y ; yacute <> y ;",
+   "% LIGKERN Ydieresis <> Y ; ydieresis <> y ;",
+   "% LIGKERN Zcaron <> Z ; zcaron <> z ;",
 /*
  *   These next are only included for deficient afm files that
  *   have the lig characters but not the lig commands.
  */
-   "% LIGKERN f i =: fi; f l =: fl; f f =: ff; ff i =: ffi;",
-   "% LIGKERN ff l =: ffl;",
+   "% LIGKERN f i =: fi ; f l =: fl ; f f =: ff ; ff i =: ffi ;",
+   "% LIGKERN ff l =: ffl ;",
    0 };
 /*
  *   The above layout corresponds to TeX Typewriter Type and is compatible
@@ -1262,14 +1262,15 @@ vchar(int c)
    return (vcharbuf);
 }
 
-char vnamebuf[100];
+char vnamebuf[1000];
 static char *
 vname(int c)
 {
   if (!forceoctal && ISALNUM (c)) {
     vnamebuf[0] = 0;
   } else if (c >= 0 && c < 256) {
-    sprintf (vnamebuf, " (comment %s)", texptrs[c]->adobename);
+    snprintf (vnamebuf, sizeof (vnamebuf),
+              " (comment %s)", texptrs[c]->adobename);
   }
   return vnamebuf;
 }
@@ -1289,7 +1290,7 @@ writevpl(void)
 
    voutln2("(VTITLE Created by %s)", titlebuf);
    voutln("(COMMENT Please edit that VTITLE if you edit this file)");
-   (void)sprintf(obuffer, "TeX-%s%s%s%s", outname,
+   snprintf(obuffer, sizeof(obuffer), "TeX-%s%s%s%s", outname,
       (efactor==1.0? "" : "-E"), (slant==0.0? "" : "-S"),
                  (makevpl==1? "" : "-CSC"));
    if (strlen(obuffer)>19) { /* too long, will retain first 9 and last 10 */
@@ -1309,9 +1310,10 @@ writevpl(void)
 #endif
       
       if (strcmp (outencoding->name, base_encoding) == 0) {
-        sprintf(tbuf, "%s", outencoding->name);
+        snprintf(tbuf, sizeof(tbuf), "%s", outencoding->name);
       } else {
-        sprintf(tbuf, "%s + %s", base_encoding, outencoding->name);
+        snprintf(tbuf, sizeof(tbuf), "%s + %s", base_encoding,
+                 outencoding->name);
       }
       
       if (strlen(tbuf) > 39) {
@@ -1577,13 +1579,13 @@ openfiles(int argc, char **argv)
 
 #if defined(MSDOS) || defined(OS2) || defined(ATARIST)
    /* Make VPL file identical to that created under Unix */
-   (void)sprintf(titlebuf, "afm2tfm %s", argv[1]);
+   snprintf(titlebuf, sizeof(titlebuf), "afm2tfm %s", argv[1]);
 #else
 #ifdef VMCMS
    /* Make VPL file identical to that created under Unix */
-   (void)sprintf(titlebuf, "afm2tfm %s", argv[1]);
+   snprintf(titlebuf, sizeof(titlebuf), "afm2tfm %s", argv[1]);
 #else
-   (void)sprintf(titlebuf, "%s %s", argv[0], argv[1]);
+   snprintf(titlebuf, sizeof(titlebuf), "%s %s", argv[0], argv[1]);
 #endif
 #endif
    (void)strcpy(inname, argv[1]);
@@ -1669,11 +1671,11 @@ case 'u':
          pedantic = 1;
          arginc = 1;
          break;
-default: (void)fprintf(stderr, "Unknown option %s %s will be ignored.\n",
-                         argv[2], argv[3]);
+default: fprintf(stderr, "Unknown option %s %s ignored.\n", argv[2], argv[3]);
       }
       for (i=0; i<arginc; i++) {
-         (void)sprintf(titlebuf + strlen(titlebuf), " %s", argv[2]);
+         snprintf(titlebuf + strlen(titlebuf),
+                  sizeof(titlebuf) - strlen(titlebuf), " %s", argv[2]);
          argv++;
          argc--;
       }

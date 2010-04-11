@@ -405,7 +405,8 @@ EXTRA_DIST = $(dist_prologues) texc.script NEWS TODO beginfontk1.test \
 	mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro dvipstst.ps missfont.log mtest.ps \
 	pfbincl.ps
-TESTS = beginfontk1.test dvips.test pfbincl.test quotecmd-test.pl
+TESTS = afm2tfm-test.pl beginfontk1.test dvips.test pfbincl.test \
+	quotecmd-test.pl
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
 	TEXCONFIG=$(srcdir)/testdata TEXFONTS=$(srcdir)/testdata \
 	TEXPSHEADERS=$(srcdir)/testdata

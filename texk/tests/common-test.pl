@@ -5,7 +5,8 @@
 
 # srcdir must be a sibling dir to kpathsea, e.g., web2c.
 $ENV{"TEXMFCNF"} = "$srcdir/../kpathsea";
-$ENV{"BIBINPUTS"}
+$ENV{"AFMFONTS"}
+  = $ENV{"BIBINPUTS"}
   = $ENV{"BSTINPUTS"}
   = $ENV{"TEXINPUTS"}
   = ".:$srcdir/tests:$srcdir/../tests/texmf//";

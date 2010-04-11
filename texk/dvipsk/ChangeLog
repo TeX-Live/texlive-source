@@ -1,3 +1,10 @@
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* afm2tfm.c (staticligkern): restore spaces around semicolons,
+	accidentally removed in source cleanup.
+	
+        * afm2tfm.c (throughout): use snprintf where needed.
+
 2010-03-29  Karl Berry  <karl@tug.org>
 
 	* loadfont.c,

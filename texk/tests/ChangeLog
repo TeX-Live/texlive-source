@@ -1,3 +1,7 @@
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* common-test.pl (AFMFONTS): set also.
+
 2010-03-08  Karl Berry  <karl@tug.org>
 
 	* texmf/: new subdir.
