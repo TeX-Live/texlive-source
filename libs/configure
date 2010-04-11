@@ -722,6 +722,7 @@ enable_t1testpage
 enable_ttftotype42
 enable_updmap
 enable_makeindexk
+enable_makejvf
 enable_mendexk
 enable_musixflx
 enable_ps2pkm
@@ -1489,6 +1490,7 @@ Optional Features:
   --disable-auto-t1dotlessj disable running t1dotlessj from otftotfm
   --disable-auto-updmap     disable running updmap from otftotfm
   --disable-makeindexk    do not build the makeindexk package
+  --disable-makejvf       do not build the makejvf package
   --disable-mendexk       do not build the mendexk package
   --disable-musixflx      do not build the musixflx package
   --disable-ps2pkm        do not build the ps2pkm package
@@ -3241,6 +3243,26 @@ test "x$enable_makeindexk" = xno || {
   need_kpathsea=yes
 }
 
+
+# Check whether --enable-makejvf was given.
+if test "${enable_makejvf+set}" = set; then :
+  enableval=$enable_makejvf;
+fi
+case $enable_makejvf in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_makejvf=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-makejvf=$enable_makejvf'" >&5
+$as_echo "$as_me: Assuming \`--enable-makejvf=$enable_makejvf'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-makejvf=$enable_makejvf'"
+    ;;
+esac
+
+test "x$enable_makejvf" = xno || {
+  need_kpathsea=yes
+}
 
 
 ## texk/mendexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/mendexk/

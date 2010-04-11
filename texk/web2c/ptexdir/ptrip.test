@@ -1,0 +1,61 @@
+#! /bin/sh
+
+# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+testdir=$srcdir/triptrap
+# ptestdir=$srcdir/ptexdir/ptrip
+
+TEXMFCNF=$testdir; export TEXMFCNF
+
+dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
+
+echo ">>> Running TRIP test for pTeX." >&2
+#echo ">>> See $etestdir/etrip.diffs for example of acceptable diffs." >&2
+
+rm -f trip.tfm trip.pl trip.tex trip.fmt trip.dvi \
+  ctripin.fot ctripin.log ctrip.fot ctrip.log ctrip.typ  \
+  xtripin.fot xtripin.log xtrip.fot xtrip.log xtrip.typ \
+  etrip.tfm etrip.pl etrip.tex etrip.fmt etrip.dvi \
+  etripin.fot etripin.log etrip.fot etrip.log etrip.out etrip.typ \
+  tripos.tex 8terminal.tex
+rm -rf tfm
+
+is_OK=:
+
+set -x
+
+echo "*** TRIP test for pTeX ***."
+
+./pltotf $testdir/trip.pl trip.tfm || exit 1
+
+./tftopl ./trip.tfm trip.pl || exit 1
+
+diff $testdir/trip.pl trip.pl || is_OK=false
+
+# get same filename in log
+$LN_S $testdir/trip.tex .
+
+./ptex --progname=einitex --ini <$testdir/trip1.in >ctripin.fot
+mv trip.log ctripin.log || exit 1
+diff $testdir/tripin.log ctripin.log
+
+# May as well test non-ini second time through.
+./ptex --progname=etex <$testdir/trip2.in >ctrip.fot
+# pTeX outputs direction of boxes.
+cat  trip.log | sed "s/, yoko direction//" | sed  "s/yoko direction, //" > ctrip.log
+diff $testdir/trip.fot ctrip.fot
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $testdir/trip.log ctrip.log 
+
+eval ./dvitype $dvitype_args trip.dvi >ctrip.typ || exit 1
+$DIFF $DIFFFLAGS $testdir/trip.typ ctrip.typ
+
+$is_OK || {
+  echo ">>> There were some errors." >&2
+  exit 1
+}
+
+# pTeX doesn't support extended mode.

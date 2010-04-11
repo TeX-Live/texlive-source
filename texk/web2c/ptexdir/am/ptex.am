@@ -88,8 +88,7 @@ pbibtex-web2c: $(web2c_depend) web2c/cvtbib.sed pbibtex.p
 pbibtex.p: tangle$(EXEEXT) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
 	$(tangle) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
 pbibtex.web: $(srcdir)/bibtex.web
-	#cat  $(srcdir)/bibtex.web > $@
-	cat  $(srcdir)/pbibtex.web > $@
+	cat  $(srcdir)/bibtex.web > $@
 
 ### pDVItype
 nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
