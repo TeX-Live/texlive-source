@@ -1,3 +1,9 @@
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* m4/kpse-pkgs.m4 (KPSE_TEXK_PKGS): add ptexenc, makejvf, mendexk.
+	From Akira and Norbert.
+	* m4/kpse-ptexenc-flags.m4: new file.
+
 2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* m4/kpse-icu-flags.m4 (KPSE_ICU_SYSTEM_FLAGS): Work around bug

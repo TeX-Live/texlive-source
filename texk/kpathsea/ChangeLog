@@ -1,3 +1,7 @@
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf ({TEXINPUTS,BIBINPUTS}.{ptex,platex,pbibtex}): new defns.
+
 2010-04-11  Javier Mugica  <javier@digi21.eu>
 
 	* getopt.c, getopt1.c: ANSIfy all fns.

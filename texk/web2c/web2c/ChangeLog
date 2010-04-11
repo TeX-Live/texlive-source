@@ -1,3 +1,8 @@
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* convert: handle pbibtex, ptex, ptftopl, ppltotf, pdvitype.
+	* splitup.c: handle ptex.
+
 2010-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines (BIBXRETALLOCSTRING): New procedure.

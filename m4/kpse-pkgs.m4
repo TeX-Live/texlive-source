@@ -76,6 +76,7 @@ xindy
 # excluding 'texk/kpathsea'.
 AC_DEFUN([KPSE_TEXK_PKGS],
 [m4_define([kpse_texk_pkgs], [
+ptexenc
 web2c
 afm2pl
 bibtex8
@@ -96,6 +97,8 @@ gsftopk
 lacheck
 lcdf-typetools
 makeindexk
+makejvf
+mendexk
 musixflx
 ps2pkm
 seetexk

@@ -1,0 +1,1 @@
+KPSE_ENABLE_PROG([makejvf], [kpathsea])

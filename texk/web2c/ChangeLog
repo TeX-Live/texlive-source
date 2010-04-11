@@ -1,3 +1,13 @@
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* ac/web2c.ac (kpse_tex_progs): add ptex.
+	* aclocal.m4: m4_include ../../m4/kpse-ptexenc-flags.m4.
+	* configure.ac (KPSE_PTEXENC_FLAGS): invoke new macro.
+	(AC_CONFIG_FILES): generate ptexdir/lib/Makefile
+	* Makefile.am: include $(srcdir)/ptexdir/am/ptex.am.
+	* lib/texmfmp.c [pTeX]: various pTeX conditionals.
+	* texmfmp-help.h [pTeX]: pTeX options.
+
 2010-04-05  Taco Hoekwater  <taco@luatex.org>
 	    
 	* texmfmp.h: Removed #ifdef luaTeX code, now that luatex

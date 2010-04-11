@@ -1,0 +1,4 @@
+@define function inputline3();
+@define const PBIBTEXHELP;
+@define function getencstring;
+@define function setencstring ();

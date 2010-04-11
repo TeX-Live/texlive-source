@@ -234,6 +234,7 @@ dnl FIXME: obsolete
 AC_TYPE_SIGNAL
 
 KPSE_KPATHSEA_FLAGS
+KPSE_PTEXENC_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_XPDF_FLAGS
@@ -362,6 +363,7 @@ fi
 AC_CONFIG_SUBDIRS([web2c])
 
 AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile
+                 ptexdir/lib/Makefile
                  omegafonts/Makefile otps/Makefile window/Makefile])
 AC_CONFIG_FILES([web2c-sh], [chmod +x web2c-sh])
 AC_CONFIG_FILES([tangle-sh], [chmod +x tangle-sh])

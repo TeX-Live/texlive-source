@@ -1,0 +1,33 @@
+{ defined at kanji.c, kanji.h, ptexenc/ptexenc.h }
+@define function Hi ();
+@define function Lo ();
+
+@define function getencstring;
+@define function setencstring ();
+
+@define function iskanji1 ();
+@define function multistrlen ();
+@define function fromBUFF ();
+@define function toBUFF ();
+
+@define function fromDVI ();
+@define function toDVI ();
+@define function putc2 ();
+@define function inputline2 ();
+
+@define function fromJIS ();
+@define function fromEUC ();
+@define function fromSJIS ();
+@define function fromKUTEN ();
+
+@define function checkkanji ();
+@define function iskanji ();
+@define function ischarascii ();
+@define function iswcharascii ();
+@define function ismultiprn ();
+@define function calcpos ();
+@define function kcatcodekey ();
+
+@define const PTEXTFTOPLHELP;
+@define const PTEXPLTOTFHELP;
+@define const PDVITYPEHELP;

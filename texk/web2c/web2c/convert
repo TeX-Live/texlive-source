@@ -53,6 +53,12 @@ case $basefile in
     midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
     ;;
 
+  pbibtex)
+    midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
+    more_defines="$srcdir/ptexdir/pbibtex.defines"
+    hfile=ptexdir/kanji.h
+    ;;
+
   mf)
     more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
     precmd="| sed -f $srcdir/web2c/cvtmf1.sed"
@@ -66,7 +72,7 @@ case $basefile in
 ${basefile}coerce.h"
     ;;
 
-  tex|etex|pdftex|aleph|xetex)
+  tex|etex|pdftex|aleph|xetex|ptex)
     more_defines="$srcdir/web2c/texmf.defines $srcdir/synctexdir/synctex.defines"
     prog_defines="$srcdir/${basefile}dir/$basefile.defines"
     if test -f $prog_defines; then
@@ -97,6 +103,11 @@ ${basefile}coerce.h"
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
                  ${basefile}coerce.h"
     ;;
+
+  ptftopl|ppltotf|pdvitype)
+    more_defines="$srcdir/ptexdir/ptex.defines"
+    hfile=ptexdir/kanji.h
+    ;;
 esac
 
 # Do it.
@@ -124,11 +135,11 @@ if test ! -s $cfile || grep @error@ $output_files >/dev/null; then
 fi
 
 case $basefile in
-  bibtex)
-    sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <bibtex.h >xbibtex.h
-    mv xbibtex.h bibtex.h
+  bibtex|pbibtex)
+    sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <${basefile}.h >x${basefile}.h
+    mv x${basefile}.h ${basefile}.h
     ;;
-  tex|etex|luatex|pdftex|aleph|mf|xetex)
+  tex|etex|luatex|pdftex|aleph|mf|xetex|ptex)
     sleep 2 # so timestamps are definitely later, to avoid make weirdness
     cat $srcdir/web2c/coerce.h >>${basefile}coerce.h
     touch ${basefile}d.h

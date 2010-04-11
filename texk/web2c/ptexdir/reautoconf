@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -x
+LANG=C
+rm -rf ../autom4te.cache/
+
+(cd ../../../; ./reautoconf texk/web2c)

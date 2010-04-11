@@ -159,6 +159,9 @@ include $(srcdir)/mplibdir/am/libmplib.am
 ## e-TeX
 include $(srcdir)/etexdir/am/etex.am
 
+## pTeX
+include $(srcdir)/ptexdir/am/ptex.am
+
 ## pdfTeX
 include $(srcdir)/pdftexdir/am/pdftex.am
 include $(srcdir)/pdftexdir/am/libpdftex.am

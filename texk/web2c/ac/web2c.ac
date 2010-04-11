@@ -28,9 +28,11 @@ AC_ARG_ENABLE([omfonts],
               AS_HELP_STRING([--disable-omfonts],
                              [do not compile and install omfonts (use Web2C versions)],
                              kpse_indent_26))[]dnl
+dnl [PROG, BUILD-OR-NO, SYNC-OR-NO, TEXT, REQUIRED-LIBS]
 m4_define([kpse_tex_progs], [dnl
 [[tex],    [yes], [no],  [TeX],    []],
 [[etex],   [no],  [yes], [e-TeX],  []],
+[[ptex],   [yes], [no],  [pTeX],   [ptexenc]],
 [[aleph],  [yes], [no],  [Aleph],  []],
 [[pdftex], [yes], [yes], [pdfTeX], [xpdf libpng obsdcompat]],
 [[luatex], [yes], [no],  [luaTeX], [xpdf libpng obsdcompat zziplib]],

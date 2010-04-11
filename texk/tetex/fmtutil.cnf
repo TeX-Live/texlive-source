@@ -104,6 +104,10 @@ physe pdftex - physe.ini
 # from phyzzx:
 phyzzx pdftex - physe.ini
 #
+# For pTeX:
+ptex   ptex    -               --kanji=default ptex.ini
+platex ptex    language.dat    --kanji=default platex.ini
+#
 # from t2:
 #! cyramstex pdftex language.dat -translate-file=cp227.tcx *cyramstx.ini
 #! cyrtex pdftex language.dat -translate-file=cp227.tcx *cyrtex.ini

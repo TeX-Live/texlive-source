@@ -50,6 +50,8 @@
 #include <luatexdir/luatexextra.h>
 #elif defined (Aleph)
 #include <alephdir/alephextra.h>
+#elif defined (pTeX)
+#include <ptexdir/ptexextra.h>
 #else
 #define BANNER "This is TeX, Version 3.1415926"
 #define COPYRIGHT_HOLDER "D.E. Knuth"
@@ -600,6 +602,9 @@ maininit (int ac, string *av)
 
   /* Must be initialized before options are parsed.  */
   interactionoption = 4;
+#ifdef pTeX
+  set_enc_string (NULL, "default");
+#endif /* pTeX */
 
   /* Have things to record as we go along.  */
   kpse_record_input = recorder_record_input;
@@ -702,7 +707,7 @@ maininit (int ac, string *av)
     if (mltexp) {
       fprintf(stderr, "-mltex only works with -ini\n");
     }
-#if !defined(XeTeX)
+#if !defined(XeTeX) && !defined(pTeX)
     if (enctexp) {
       fprintf(stderr, "-enc only works with -ini\n");
     }
@@ -1326,9 +1331,9 @@ static struct option long_options[]
 #endif /* IPC */
 #if !defined(Aleph) && !defined(luaTeX)
       { "mltex",                     0, &mltexp, 1 },
-#if !defined(XeTeX)
+#if !defined(XeTeX) && !defined(pTeX)
       { "enc",                       0, &enctexp, 1 },
-#endif /* !XeTeX */
+#endif /* !XeTeX && !pTeX */
 #endif /* !Aleph && !luaTeX */
 #if defined (eTeX) || defined(pdfTeX) || defined(Aleph) || defined(XeTeX) || defined(luaTeX)
       { "etex",                      0, &etexp, 1 },
@@ -1375,6 +1380,9 @@ static struct option long_options[]
       { "mktex",                     1, 0, 0 },
       { "no-mktex",                  1, 0, 0 },
 #endif /* TeX or MF */
+#ifdef pTeX
+      { "kanji",                     1, 0, 0 },
+#endif /* pTeX */
       { 0, 0, 0, 0 } };
 
 
@@ -1526,7 +1534,13 @@ parse_options (int argc, string *argv)
       } else {
         WARNING1 ("Ignoring unknown argument `%s' to --interaction", optarg);
       }
-      
+#ifdef pTeX
+    } else if (ARGUMENT_IS ("kanji")) {
+      if (!set_enc_string (optarg, NULL)) {
+        WARNING1 ("Ignoring unknown argument `%s' to --kanji", optarg);
+      }
+#endif /* pTeX */
+
     } else if (ARGUMENT_IS ("help")) {
         usagehelp (PROGRAM_HELP, BUG_ADDRESS);
 
@@ -1936,9 +1950,13 @@ input_line (FILE *f)
   int i = EOF;
 
   /* Recognize either LF or CR as a line terminator.  */
+#ifdef pTeX
+  last = input_line2(f, buffer, first, bufsize, &i);
+#else /* pTeX */
   last = first;
   while (last < bufsize && (i = getc (f)) != EOF && i != '\n' && i != '\r')
     buffer[last++] = i;
+#endif /* pTeX */
 
   if (i == EOF && errno != EINTR && last == first)
     return false;
@@ -1972,6 +1990,11 @@ input_line (FILE *f)
   for (i = first; i <= last; i++)
      buffer[i] = xord[buffer[i]];
 #endif
+
+#ifdef pTeX
+  for (i = last+1; (i < last + 5 && i < bufsize) ; i++)
+    buffer[i] = '\0';
+#endif /* pTeX */
 
     return true;
 }

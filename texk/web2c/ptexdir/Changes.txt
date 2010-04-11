@@ -1,0 +1,317 @@
+2009/08/17: (p3.1.11)
+    ptex: 2バイト文字間のグルーがおかしくなるバグを修正
+          \{y|t}baselineshift が数式にも反映されるように修正
+	    (ありがとうございます 角藤さん、土村さん)
+
+2006/07/18: (p3.1.10)
+	ptex, tftopl, pltotf, jbibtex: -kanji オプションが -version オプションの
+		漢字コード情報に反映されるよう修正。
+	Makefile.in: texmf.cnf 中のパス記述が teTeX-3.0 の記法に近くなるように修正
+	    (ありがとうございます 土村さん)
+	ptex: 変数の初期化忘れのため、環境によって組版結果が異なる症状を修正
+	    (ありがとうございます 土村さん、角藤さん)
+	pltotf, tftopl: 16区の漢字の扱いに失敗する不具合を修正
+	    (ありがとうございます TANAKA Takujiさん)
+
+2005/10/17: (p3.1.9)
+	mkconf: platex の検索パスに tex/platex を入れないように修正
+	ptex: 単語の先頭で LIG/ を行うようなTFMを使用するとベースラインシフトが
+		0でない場合に異常終了するバグを修正
+
+2005/03/07: (p3.1.8)
+	Makefile.in: make install の最後に mktexlsr の実行を追加
+	Makefile.in, INSTALL.txt: teTeX-3.0のTEXMFディレクトリの変更に伴い修正
+	    (ありがとうございます、角藤さん)。
+
+2004/12/14: (p3.1.8)
+	ptex: コントロールシーケンス名の処理誤りを修正。
+		(例：\Te^^5e^58 ⇒ \Te^^58 となり、\TeX として評価されない)
+	ptex: コントロールシーケンス直後の ^^形式が漢字として認識されて
+		しまう場合があるのを修正 (例：\TeX^^83A ⇒ \TeXア)
+		(以上、ありがとうございます、井上さん)。
+	ptex: 端末やログファイルでの改行位置のタイミングの修正
+	    (ありがとうございます、角藤さん)。
+
+2004/12/09: (p3.1.7)
+	ptex: ^^形式を含むコントロールシーケンス名の処理誤りを修正。
+	ptex: 表示不可能文字の範囲を3.1.4と同じにした。
+        (Missing character では ^^ 形式で出力)。
+	mkconf: sjis,jis,eucの各エンコード名のTEXINPUTSを作成するようにした。
+	    また、TEXINPUTS.xetex の次に作成するようにした。
+
+2004/12/02: (p3.1.6)
+	ptex: tetex-2.99.4.20041128-beta に対応(ありがとうございます、角藤さん)。
+	INSTALL.txt: ファイル名とTDSに関するコメントを追加
+	    (ありがとうございます、角藤さん)。
+
+2004/11/29: (p3.1.5)
+	ptex: コントロールシーケンス名の、^^形式の文字と次の文字を漢字と
+	   してみなす場合があるのを修正(ありがとうございます、井上さん)。
+	ptex: Missing character などのメッセージでの表示不可能文字を
+	   ^^ 形式で出力するように修正。
+	
+2004/11/08: (p3.1.5)
+	ptex: JISエンコーディングファイルを読み込んだ後、`漢字イン' の状態が
+	  ファイルの終わりを越えて有効になってしまう場合があるのを修正
+	  (ありがとうございます、井上さん)。
+
+2004/10/12:
+	pltotf: SJISコードのPLファイルから、TFMファイルを正しく作れない
+	  のを修正(ありがとうございます、角藤さん、青木さん)。
+
+2004/09/02: (p3.1.4)
+	ptex: 行末記号を漢字の第1バイトに当たる文字にした場合、行の次の文字
+	  と共に漢字にしようとしてしまうのを修正。
+	ptex: 1バイト文字のうち、漢字の第1バイトに当たる文字のカテゴリー
+	  コードが無効な文字となってしまうのを修正。
+	ptex: ^^形式で入力された文字コードが漢字の第1バイトに当たる場合、
+	  次の文字と共に漢字にしようとしてしまうのを修正。
+	ptex: \string で扱う文字の漢字判定を厳密化。
+	jbibtex: 改行コードCRに対応。
+      (以上、ありがとうございます、井上さん)
+	ptex: 数式内で \char を使用した場合に1バイト文字が漢字と誤認識される
+		バグを修正。
+      (ありがとうございます、角藤さん)
+	契約条文和訳を修正。
+
+2003/10/07: (p3.1.3)
+	ptex: -kanji=sjis のとき、\kansujichar で、期待した文字が設定され
+	  ないのを修正(ありがとう、角藤さん)。
+
+2003/09/30:
+	ptex: 端末/ログへのメッセージで、印字できない文字が出力されることが
+	  あるのに対処。
+
+2003/08/05:
+	pconvert: usage メッセージの変更。pltotf, tftopl, pdvitype のとき、
+	  fixwrites にオプション($target)を指定するようにした。
+
+2003/06/23: (p3.1.2)
+	configure: mktempを使わないように修正
+
+2003/06/17: (p3.1.2)
+	Makefile.in: BSD版 make で texmf.cnf の作成に失敗しているのを修正
+
+2003/02/18: (p3.1.2)
+    ptex: \kansuji プリミティブを復活させた。
+	ptex: \kansujichar プリミティブにより、\kansuji で出力される文字を設定
+	  可能にした。
+
+2003/02/14: (p3.1.1)
+    ptex: 漢字が ^^ 形式でコンソールに表示されるのを修正。
+	ptex: \uppercase, \lowercase で core を出す場合があるのを修正。
+
+2003/02/13: (p3.1)
+	ptex: main_memory、hash_extra を大きくし、膨大なマクロ定義をすると、
+	  「!Missing control sequence inserted.」のエラーになるのを修正。
+
+2003/02/03: (p3.0.6)
+	ptex: tetex-2.0 への対応
+	ptex: sjis 動作以外のとき、\char\sjis が正しく動かないのを修正
+	ptex: 実験的に入れてあったプリミティブ（\kansuji、\tozen）を取り除いた
+	ptexextra.h: BANNER 文字列の更新
+	ptexextra.c: tetex-2.0 への対応
+
+2002/11/22:
+	Makefile.in: euc(jis), sjis 用フォーマットを作成するよう修正
+		platex 用のリンクを作成するようにした
+	mkconf: iniptex の記述を削除
+
+2002/11/15: (p3.0.5)
+	ptexextra.c: web2c-7.3.11 (teTeX-beta-20021114) への対応
+
+2002/10/29: (p3.0.4)
+    --version の１行目のフォーマットを変更
+	jbibtex: 認識できないオプションで core を出すのを修正
+
+2002/10/28: (p3.0.3)
+    ptex: バナーのフォーマットを変更
+	tftopl.ch: pTeX用のHELPを使っていないのを修正
+	pltotf.ch: pTeX用のHELPを使っていないのを修正
+
+2002/10/24: (p3.0.2)
+	web2c-7.3.9 に対応。
+
+2002/01/18: (p3.0.1)
+	以下のソースを用いたたときでもコンパイルできるようにした。
+		* tetex-supp.tar.gz
+		* web2c-7.3.3.tar.gz
+		* teTeX-src-beta-20011202.tar.gz
+
+2002/01/15: (p3.0)
+	ptex-base.ch: fix hyphenation.
+
+2001/10/03:
+    README.txt: rewrite
+    INSTALL.txt: rewrite
+    ptex-base.ch: version 3.0
+	ptexextra-plain.c: removed local_maintainer and this_bug_address
+	ptexextra-src-special.c: removed local_maintainer and this_bug_address
+	jbibextra.c: removed local_maintainer and this_bug_address
+	maintain.h: removed local_maintainer and this_bug_address
+	version.c: modified message
+
+2001/07/26:
+	Change Licence to modified BSD license
+	COPYRIGHT: new file
+	COPYRIGHT.jis: new file
+	INSTALL.txt: new file
+	README.txt: cut short and move to INSTALL.txt
+	version.c: change licence filename (l.87,91, COPYING -> COPYRIGHT)
+
+2001/02/13:
+	version.c: typo (l.89, build -> build)
+	ptexhelp.h: typo (l.56, versobe -> verbose)
+	Changes.txt: typo (20001/02/09 -> 2001/02/09)
+
+2001/02/09:
+	REAMDE.txt: rewrite for 2.1.10
+	version.c: rewrite the copyright message.  enable usage() function.
+	ptexhelp.h: newfile
+	help.h: removed
+	kanji.h.in: include "ptexhelp.h"
+	ptexextra-plain.c: rename TEXHELP to PTEXHELP.
+	ptexextra-src-special.c rename TEXHELP to PTEXHELP.
+	Makefile.in: depend on ptexhelp.h
+
+2000/11/13: (p2.1.10)
+2000/11/10:
+	ptex.ch: can't load JFM which the number of char_type less than
+			the glue types.
+	pltotf.ch: can't convert property list which has fullwidth space
+			'0x2121(JIS)' in charsintype.
+
+2000/08/17
+	mkconf: modify path separator to semicolon(;)
+
+2000/03/18
+    README.txt: fixed web2c-7.2 -> teTeX-1.0 (l.77)
+
+2000/03/01 (p2.1.9)
+	ptexextra-plain.c, ptexextra-src-special.c: version number 2.1.8 -> 2.1.9
+
+2000/02/29 (p2.1.9)
+	README.txt: rewrite.
+
+2000/02/28 (p2.1.9)
+	correspond to TeX 3.14159 with Web2c 7.3.1 and tex-src-special.
+	Makefile.in: distclean cleans tftopl.ch and pltotf.ch
+	ptexextra-plain.c, ptexextra-src-special.c: newfile
+	COPYING: newfile
+
+1998/04/09 (p2.1.8)
+1998/03/26 (p2.1.8.beta1)
+	correspond to TeX 3.14159 with Web2c 7.2.
+
+1998/03/19 (p2.1.7)
+    fix bug: \leaders
+
+1998/02/26 (p2.1.6)
+    fix bug: \inhibitxspcode
+
+1997/08/27 (p2.1.5)
+    official release.
+
+1997/08/27 (TFtoPL v1.3)
+    fix bug: occers core dump when loading a JFM.
+
+1997/08/14 (p2.1.5, beta12)
+    fix bug: kinsoku process doesn't work for ligatured character.
+
+1997/08/07 (p2.1.5, beta11)
+    changed specification: How to insert \xkanjiskip at surrounding a \hbox
+      (back to the p2.1.4 specification).
+
+1997/08/01 (p2.1.5, beta10)
+    fix bug: caused line breaking after a kinsoku penalty by
+      the \jcharwidowpenalty.
+
+1997/07/29 (p2.1.5, beta9)
+    fix bug: A penalty of kinsoku doesn't work well.
+    fix bug: italic correction is not inserted.
+
+1997/07/11 (p2.1.5, beta8)
+    fix bug: A penalty of kinsoku doesn't work well.
+    fix bug: Inserted \kanjiskip before widow KANJI character when the line
+      holds only it (embeded 2.1.5.beta6).
+    fix bug: Inserted \kanjiskip between kern of head of the line and
+      the next widow KANJI character (since from jTeX 1.7 p1.0.9G).
+    changed specification: How to insert \xkanjiskip at surrounding text-math.
+
+1997/06/29 (p2.1.5, beta7)
+    fix bug: pTeX occers coredump, when \{y,t}baselineskip is not equal zero,
+      and where explicit kern after ligature like `diff\/'.
+    changed specification: How to insert \xkanjiskip at surrounding text-math.
+
+1997/06/16 (p2.1.5, beta6)
+    fix bug: The \{y,t}baselineskip isn't work except the first place in
+      a paragraph.
+    fix bug: Doesn't hyphenation when the value of \{y,t}baselineskip is
+      not equals zero.
+    fix buf: Printed `(EUC)' in banner instead of making as JIS-version.
+    fix bug: `make install' increase the TEXINPUTS.{ptex,platex,platex209} at
+      texmf.cnf.
+
+1997/05/13 (p2.1.5, beta5)
+    fix bug: Fail to read euex10.tfm.
+
+1997/05/01 (p2.1.5, beta4)
+    fix bug: \char{\jis,\euc,\sjis,\kuten} after a 1byte character that have
+    a possibility of ligature like the "`" causes coredump or worng result.
+
+1997/03/17 (p2.1.5, beta3)
+    change banner strings.
+
+1997/03/14 (p2.1.5, beta3)
+    fix bug: can't run as iniptex/virptex.
+
+1997/03/12 (p2.1.5, beta2)
+    fix bug: \calcpos return wrong number.
+
+1997/02/27 (p2.1.5, beta1)
+	correspond to TeX 3.14159 with Web2c 7.0.
+
+1995/11/21 (p2.1.4)
+	new feature: accept kanji filename.
+
+1995/11/17 (p2.1.3)
+	fix bug : try_break routine doesn't corect action when the list
+	has disp_node or dir_node (Error `disc4').
+
+1995/11/07 (p2.1.2)
+	fix bug : \kanjiskip doesn't inserted after JFM glue/kern.
+
+1995/10/11
+	include jbibtex (Shouichi Matsui<matsui@denken.or.jp>) and
+	pdvitype (Thanks, Kazunori Asayama)
+
+1995/09/20 (p2.1.1)
+	fix bug : \xkanjiskip doesn't inserted after italic correction.
+	fix bug : italic correction doesn't inserted when \{y,t}baselineshift 
+			  is used.
+
+1995/09/08 (p2.1)
+	fix bug : \xkanjiskip doesn't inserted after math mode which correct
+              italic kern spacing.
+
+1995/08/29
+	rename `find_first' to `find_first_char' for djgpp 1.12.
+	(Thanks, Kazunori Asayama)
+
+1995/03/25
+	fix bug : Three minuses sequence (---) doesn't become em-hyphen.
+
+1995/03/11
+	imprement \kanji primitive.
+
+1995/01/17
+	translate/modify pTeX 2.0 change file for TeX 3.1415.
+
+1994/12/17
+	translate/modify pTeX 2.0 change file for TeX 3.141.
+
+1994/10/17
+	translate/modify pTeX 1.0.9F change file which based on TeX 2.99 to
+	pTeX 2.0 which based on TeX 3.14.
+
+== EOF ===

@@ -657,6 +657,7 @@ enable_xindy_docs
 with_clisp_runtime
 with_xindy_recode
 enable_xindy
+enable_ptexenc
 enable_web2c
 with_tex_banner
 with_editor
@@ -666,6 +667,7 @@ enable_ipc
 enable_omfonts
 enable_tex
 enable_etex
+enable_ptex
 enable_aleph
 enable_pdftex
 enable_luatex
@@ -720,6 +722,7 @@ enable_t1testpage
 enable_ttftotype42
 enable_updmap
 enable_makeindexk
+enable_mendexk
 enable_musixflx
 enable_ps2pkm
 enable_seetexk
@@ -1421,6 +1424,7 @@ Optional Features:
   --enable-xindy-rules      build and install make-rules package
   --enable-xindy-docs       build and install documentation
   --enable-xindy          build the xindy package
+  --disable-ptexenc       do not build the ptexenc package
   --disable-web2c         do not build the web2c (TeX & Co.) package
   --enable-auto-core        cause TeX&MF to dump core, given a certain
                             filename
@@ -1431,6 +1435,7 @@ Optional Features:
                             versions)
   --disable-tex             do not compile and install TeX
   --enable-etex             compile and install e-TeX
+  --disable-ptex            do not compile and install pTeX
   --disable-aleph           do not compile and install Aleph
   --disable-pdftex          do not compile and install pdfTeX
   --disable-luatex          do not compile and install luaTeX
@@ -1484,6 +1489,7 @@ Optional Features:
   --disable-auto-t1dotlessj disable running t1dotlessj from otftotfm
   --disable-auto-updmap     disable running updmap from otftotfm
   --disable-makeindexk    do not build the makeindexk package
+  --disable-mendexk       do not build the mendexk package
   --disable-musixflx      do not build the musixflx package
   --disable-ps2pkm        do not build the ps2pkm package
   --disable-seetexk       do not build the seetexk package
@@ -2466,6 +2472,27 @@ fi
 
 
 
+# Check whether --enable-ptexenc was given.
+if test "${enable_ptexenc+set}" = set; then :
+  enableval=$enable_ptexenc;
+fi
+case $enable_ptexenc in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_ptexenc=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ptexenc=$enable_ptexenc'" >&5
+$as_echo "$as_me: Assuming \`--enable-ptexenc=$enable_ptexenc'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-ptexenc=$enable_ptexenc'"
+    ;;
+esac
+
+test "x$enable_ptexenc" = xno || {
+  need_kpathsea=yes
+}
+
+
 ## texk/web2c/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options and TL libraries required for web2c
 # Check whether --enable-web2c was given.
@@ -2538,6 +2565,20 @@ case $enable_etex in #(
   *) :
     enable_etex=no ;;
 esac
+# Check whether --enable-ptex was given.
+if test "${enable_ptex+set}" = set; then :
+  enableval=$enable_ptex;
+fi
+case $enable_ptex in #(
+  yes|no) :
+     ;; #(
+  *) :
+    enable_ptex=yes ;;
+esac
+
+test "x$enable_web2c:$enable_ptex" = xyes:yes && {
+  need_ptexenc=yes
+}
 # Check whether --enable-aleph was given.
 if test "${enable_aleph+set}" = set; then :
   enableval=$enable_aleph;
@@ -3198,6 +3239,31 @@ esac
 
 test "x$enable_makeindexk" = xno || {
   need_kpathsea=yes
+}
+
+
+
+## texk/mendexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/mendexk/
+## configure options and TL libraries required for makeindexk
+# Check whether --enable-mendexk was given.
+if test "${enable_mendexk+set}" = set; then :
+  enableval=$enable_mendexk;
+fi
+case $enable_mendexk in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_mendexk=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-mendexk=$enable_mendexk'" >&5
+$as_echo "$as_me: Assuming \`--enable-mendexk=$enable_mendexk'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-mendexk=$enable_mendexk'"
+    ;;
+esac
+
+test "x$enable_mendexk" = xno || {
+  need_kpathsea=yes
+  need_ptexenc=yes
 }
 
 

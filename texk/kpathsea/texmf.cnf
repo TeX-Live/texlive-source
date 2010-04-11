@@ -233,6 +233,14 @@ TEXINPUTS.lambda        = .;$TEXMF/tex/{lambda,latex,generic,}//
 TEXINPUTS.lamed         = .;$TEXMF/tex/{lamed,lambda,latex,generic,}//
 TEXINPUTS.omega         = .;$TEXMF/tex/{plain,generic,}//
 
+% pTeX
+TEXINPUTS.ptex    = .;$TEXMF/{ptex/{plain,generic},tex/{plain,generic,}}//
+TEXINPUTS.platex  = .;$TEXMF/{ptex/platex,{p,}tex/latex,{p,}tex/generic,{p,}tex}//
+
+% pBibTeX bibliographies and style files
+BIBINPUTS.pbibtex = .;$TEXMF/{pbibtex,bibtex}/bib//
+BSTINPUTS.pbibtex = .;$TEXMF/{pbibtex,bibtex}/bst//
+
 % ConTeXt.
 TEXINPUTS.context       = .;$TEXMF/tex/{context,plain,generic,}//
 

@@ -1,0 +1,2621 @@
+Index: ptexhelp.h
+===================================================================
+--- ptex-src-3.1.11.orig/ptexhelp.h
++++ ptex-src-3.1.11/ptexhelp.h
+@@ -2,53 +2,50 @@
+ */
+ #ifndef PTEXHELP_H
+ #define PTEXHELP_H
++/* block texk/web2c/help.h */
+ #define HELP_H
+ 
+-#ifdef TeX
+-/*  ptexextra.h */
+-#undef TEXPOOLNAME
+-#define TEXPOOLNAME "ptex.pool"
+-#endif /* TeX */
+-
+-#ifdef TFTOPL
++#ifdef PTFTOPL
+ string based_prog_name = "TFtoPL";
+ const_string PTEXTFTOPLHELP[] = {
+-"Usage: tftopl [option] tfmfile [plfile]",
++"Usage: ptftopl [option] tfmfile [plfile]",
+ "",
+ "  -verbose               output progress reports.",
+ "  -version               print version information and exit.",
+ "  -help                  print this message and exit.",
+-"  -kanji={jis|euc|sjis}  plfile kanji code.",
++"  -kanji={jis|euc|sjis|utf8}",
++"                         plfile kanji code.",
+ NULL };
+-#endif /* TFTOPL */
++#endif /* PTFTOPL */
+ 
+-#ifdef PLTOTF
++#ifdef PPLTOTF
+ string based_prog_name = "PLtoTF";
+ const_string PTEXPLTOTFHELP[] = {
+-"Usage: pltotf [option] plfile [tfmfile]",
++"Usage: ppltotf [option] plfile [tfmfile]",
+ "",
+ "  -verbose               output progress reports.",
+ "  -version               print version information and exit.",
+ "  -help                  print this message and exit.",
+-"  -kanji={jis|euc|sjis}  plfile kanji code.",
++"  -kanji={jis|euc|sjis|utf8}",
++"                         plfile kanji code.",
+ NULL };
+-#endif /* PLTOTF */
++#endif /* PPLTOTF */
+ 
+-#ifdef BIBTEX
++#ifdef PBIBTEX
+ string based_prog_name = "BibTeX";
+-const_string JBIBTEXHELP[] = {
+-"Usage: jbibtex [option] auxfile",
++const_string PBIBTEXHELP[] = {
++"Usage: pbibtex [option] auxfile",
+ "",
+ "  -min-crossrefs=INTEGER     minimum number of cross-refs required",
+ "                             for automatic cite_list inclusion (default 2).",
+ "  -terse                     do silently.",
+ "  -version                   print version information and exit.",
+ "  -help                      print this message and exit.",
+-"  -kanji={jis|euc|sjis}      kanji code for output-file.",
++"  -kanji={jis|euc|sjis|utf8} kanji code for output-file.",
+ NULL };
+-#endif /* BIBTEX */
++#endif /* PBIBTEX */
+ 
+-#ifdef DVITYPE
++#ifdef PDVITYPE
+ string based_prog_name = "DVItype";
+ const_string PDVITYPEHELP[] = {
+ "Usage: pdvitype [option] dvifile",
+@@ -64,8 +61,9 @@
+ "                             with \\count0=1, \\count2=4.",
+ "                             (see the TeX book chapter 15).",
+ "  -show-opcodes              show opcodes in dicimal.",
++"  -kanji={jis|euc|sjis|utf8} kanji code for output-file.",
+ "  -version                   print version information and exit.",
+ "  -help                      print this message and exit.",
+ NULL };
+-#endif /* DVITYPE */
++#endif /* PDVITYPE */
+ #endif /* PTEXHELP_H */
+Index: ptex-base.ch
+===================================================================
+--- ptex-src-3.1.11.orig/ptex-base.ch
++++ ptex-src-3.1.11/ptex-base.ch
+@@ -44,11 +44,11 @@
+ % (08/17/2009) ST  pTeX p3.1.11
+ %
+ @x [1.2] l.195 - pTeX:
+-@d TeX_banner_k=='This is TeXk, Version 3.141592' {printed when \TeX\ starts}
+-@d TeX_banner=='This is TeX, Version 3.141592' {printed when \TeX\ starts}
++@d TeX_banner_k=='This is TeXk, Version 3.1415926' {printed when \TeX\ starts}
++@d TeX_banner=='This is TeX, Version 3.1415926' {printed when \TeX\ starts}
+ @y
+-@d TeX_banner_k=='This is pTeXk, Version 3.141592-p3.1.11' {printed when p\TeX\ starts}
+-@d TeX_banner=='This is pTeX, Version 3.141592-p3.1.11' {printed when p\TeX\ starts}
++@d TeX_banner_k=='This is pTeXk, Version 3.1415926-p3.1.11' {printed when p\TeX\ starts}
++@d TeX_banner=='This is pTeX, Version 3.1415926-p3.1.11' {printed when p\TeX\ starts}
+ @z
+ 
+ @x [2.??] l.586 - pTeX:
+@@ -114,13 +114,6 @@
+ @ All of the file opening functions are defined in C.
+ 
+ @ Kanji code handling.
+-
+-@d jis_enc=0 {denotes JIS X 2022 kanji encoding}
+-@d euc_enc=1 {denotes EUC kanji encoding}
+-@d sjis_enc=2 {denotes Shift JIS kanji encoding}
+-
+-@<Glob...@>=
+-@!proc_kanji_code:jis_enc..sjis_enc;
+ @z
+ 
+ @x [4.47] l.1325 - pTeX:
+@@ -140,7 +133,7 @@
+   (k<" ")or(k>"~")
+ @y
+ @<Character |k| cannot be printed@>=
+-   not (iskanji1(k) or iskanji2(k) or xprn[k])
++   not (ismultiprn(k) or xprn[k])
+ @z
+ 
+ @x [5.54] l.1514 - pTeX: Global variables
+@@ -343,14 +336,9 @@
+   wterm(banner_k)
+ else
+   wterm(banner);
+-wterm(' (');
+-case proc_kanji_code of
+-  jis_enc: wterm('jis');
+-  euc_enc: wterm('euc');
+-  sjis_enc: wterm('sjis');
+-  othercases wterm('?');
+-endcases;
+-wterm(')');
++  wterm(' (');
++  wterm(stringcast(get_enc_string));
++  wterm(')');
+ @z
+ 
+ @x l.1820 - pTeX
+@@ -1183,16 +1171,16 @@
+   begin math_code(k):=hi(k+var_code);
+   auto_xsp_code(k):=3;
+   end;
+-kansuji_char(0):=@"213B;
+-kansuji_char(1):=@"306C;
+-kansuji_char(2):=@"4673;
+-kansuji_char(3):=@"3B30;
+-kansuji_char(4):=@"3B4D;
+-kansuji_char(5):=@"385E;
+-kansuji_char(6):=@"4F3B;
+-kansuji_char(7):=@"3C37;
+-kansuji_char(8):=@"482C;
+-kansuji_char(9):=@"3665;
++kansuji_char(0):=toDVI(fromJIS(@"213B));
++kansuji_char(1):=toDVI(fromJIS(@"306C));
++kansuji_char(2):=toDVI(fromJIS(@"4673));
++kansuji_char(3):=toDVI(fromJIS(@"3B30));
++kansuji_char(4):=toDVI(fromJIS(@"3B4D));
++kansuji_char(5):=toDVI(fromJIS(@"385E));
++kansuji_char(6):=toDVI(fromJIS(@"4F3B));
++kansuji_char(7):=toDVI(fromJIS(@"3C37));
++kansuji_char(8):=toDVI(fromJIS(@"482C));
++kansuji_char(9):=toDVI(fromJIS(@"3665));
+ for k:="A" to "Z" do
+   begin cat_code(k):=letter; cat_code(k+"a"-"A"):=letter;@/
+   math_code(k):=hi(k+var_code+@"100);
+@@ -1202,24 +1190,12 @@
+   auto_xsp_code(k):=3; auto_xsp_code(k+"a"-"A"):=3;@/
+   sf_code(k):=999;
+   end;
+-if (proc_kanji_code=sjis_enc) then begin
+-  @t\hskip10pt@>kcat_code(129):=other_kchar;
+-  @t\hskip10pt@>kcat_code(130):=kana;
+-  @t\hskip10pt@>kcat_code(131):=kana;
+-  @t\hskip10pt@>kcat_code(132):=other_kchar;
+-  @+@t\1@>for k:=136 to 159 do kcat_code(k):=kanji;
+-  @+@t\1@>for k:=224 to 234 do kcat_code(k):=kanji;
+-end else begin
+-  @t\hskip10pt@>kcat_code(161):=other_kchar; {1 ku}
+-  @t\hskip10pt@>kcat_code(162):=other_kchar; {2 ku}
+-  @t\hskip10pt@>kcat_code(163):=kana; {3 ku}
+-  @t\hskip10pt@>kcat_code(164):=kana; {4 ku}
+-  @t\hskip10pt@>kcat_code(165):=kana; {5 ku}
+-  @t\hskip10pt@>kcat_code(166):=kana; {6 ku}
+-  @t\hskip10pt@>kcat_code(167):=other_kchar; {7 ku}
+-  @t\hskip10pt@>kcat_code(168):=other_kchar; {8 ku}
+-  @+@t\1@>for k:=176 to 244 do kcat_code(k):=kanji; {16 ku ... 84 ku}
+-end;
++@t\hskip10pt@>kcat_code(@"20+1):=other_kchar; {1 ku}
++@t\hskip10pt@>kcat_code(@"20+2):=other_kchar; {2 ku}
++@+@t\1@>for k:=3 to 6 do kcat_code(@"20+k):=kana; {3 ku ... 6 ku}
++@+@t\1@>for k:=7 to 8 do kcat_code(@"20+k):=other_kchar; {7 ku ... 8 ku}
++@+@t\1@>for k:=16 to 84 do kcat_code(@"20+k):=kanji; {16 ku ... 84 ku}
++{ @"20+k = kcatcodekey(fromKUTEN(HILO(k,1)) }
+ @z
+ 
+ @x [17.236] l.5092 - pTeX: cur_jfam_code, jchr_widow_penalty
+@@ -1532,9 +1508,9 @@
+ if info(p)>=cs_token_flag then print_cs(info(p)-cs_token_flag) {wchar_token}
+ else  begin
+   if check_kanji(info(p)) then {wchar_token}
+-    begin m:=kcat_code(Hi(info(p))); c:=info(p);
++    begin m:=kcat_code(kcatcodekey(info(p))); c:=info(p);
+     end
+-  else  begin m:=info(p) div @'400; c:=info(p) mod @'400;
++  else  begin m:=Hi(info(p)); c:=Lo(info(p));
+     end;
+   if (m<kanji)and(c>256) then print_esc("BAD.")
+ @.BAD@>
+@@ -1676,7 +1652,7 @@
+   begin  if (token_type=backed_up)and(loc<>null) then
+     begin  if (link(start)=null)and(check_kanji(info(start))) then {wchar_token}
+       begin cur_input:=input_stack[base_ptr-1];
+-      s:=get_avail; info(s):=(buffer[loc] mod @'400);
++      s:=get_avail; info(s):=Lo(buffer[loc]);
+       cur_input:=input_stack[base_ptr];
+       link(start):=s;
+       show_token_list(start,loc,100000);
+@@ -1707,7 +1683,7 @@
+ @z
+ 
+ @x [24.341] l.7479 - pTeX: set last_chr
+-@!cat:0..15; {|cat_code(cur_chr)|, usually}
++@!cat:0..max_char_code; {|cat_code(cur_chr)|, usually}
+ @y
+ @!cat:escape..max_char_code; {|cat_code(cur_chr)|, usually}
+ @!l:0..buf_size; {temporary index into |buffer|}
+@@ -1734,8 +1710,9 @@
+ @^inner loop@>
+ begin switch: if loc<=limit then {current line not yet finished}
+   begin cur_chr:=buffer[loc]; incr(loc);
+-    if (iskanji1(cur_chr))and(loc<=limit)and(iskanji2(buffer[loc])) then
+-      begin cur_cmd:=kcat_code(cur_chr); cur_chr:=cur_chr*@'400+buffer[loc];
++    if (multistrlen(buffer, limit+1, loc-1)=2) then
++      begin cur_chr:=fromBUFF(buffer, limit+1, loc-1);
++      cur_cmd:=kcat_code(kcatcodekey(cur_chr));
+       incr(loc);
+       end
+     else reswitch: cur_cmd:=cat_code(cur_chr);
+@@ -1843,8 +1820,8 @@
+ @<Scan a control...@>=
+ begin if loc>limit then cur_cs:=null_cs {|state| is irrelevant in this case}
+ else  begin k:=loc; cur_chr:=buffer[k]; incr(k);
+-  if (iskanji1(cur_chr))and(k<=limit)and(iskanji2(buffer[k])) then
+-    begin cat:=kcat_code(cur_chr); incr(k);
++  if (multistrlen(buffer, limit+1, k-1)=2) then
++    begin cat:=kcat_code(kcatcodekey(fromBUFF(buffer, limit+1, k-1))); incr(k);
+     end
+   else cat:=cat_code(cur_chr);
+ start_cs:
+@@ -1958,8 +1935,8 @@
+ @y
+ @ @<Scan ahead in the buffer...@>=
+ begin repeat cur_chr:=buffer[k]; incr(k);
+-  if (iskanji1(cur_chr))and(k<=limit)and(iskanji2(buffer[k])) then
+-    begin cat:=kcat_code(cur_chr); incr(k);
++  if (multistrlen(buffer, limit+1, k-1)=2) then
++    begin cat:=kcat_code(kcatcodekey(fromBUFF(buffer, limit+1, k-1))); incr(k);
+     end
+   else cat:=cat_code(cur_chr);
+   while (buffer[k]=cur_chr)and(cat=sup_mark)and(k<limit) do
+@@ -2044,10 +2021,10 @@
+       else check_outer_validity;
+     end
+   else if check_kanji(t) then {wchar_token}
+-    begin cur_chr:=t; cur_cmd:=kcat_code(Hi(t));
++    begin cur_chr:=t; cur_cmd:=kcat_code(kcatcodekey(t));
+     end
+   else
+-    begin cur_cmd:=t div @'400; cur_chr:=t mod @'400;
++    begin cur_cmd:=Hi(t); cur_chr:=Lo(t);
+     case cur_cmd of
+     left_brace: incr(align_state);
+     right_brace: decr(align_state);
+@@ -2133,11 +2110,8 @@
+     end;
+   if check_kanji(info(p)) then {wchar_token}
+     begin buffer[j]:=Hi(info(p)); incr(j);
+-    buffer[j]:=Lo(info(p)); incr(j); p:=link(p);
+-    end
+-  else
+-    begin buffer[j]:=info(p) mod @'400; incr(j); p:=link(p);
+     end;
++  buffer[j]:=Lo(info(p)); incr(j); p:=link(p);
+   end;
+ @z
+ 
+@@ -2236,9 +2210,9 @@
+ else scanned_result(eqtb[m+cur_val].int)(int_val);
+ @y
+ if m=math_code_base then scanned_result(ho(math_code(cur_val)))(int_val)
+-else if m=kcat_code_base then scanned_result(equiv(m+Hi(cur_val)))(int_val)
++else if m=kcat_code_base then scanned_result(equiv(m+kcatcodekey(cur_val)))(int_val)
+ else if m<math_code_base then
+-  begin if check_kanji(cur_val)>0 then
++  begin if is_kanji(cur_val) then
+   scanned_result(equiv(m+Hi(cur_val)))(int_val)
+   else scanned_result(equiv(m+cur_val))(int_val)
+   end
+@@ -2275,7 +2249,7 @@
+ @y
+ procedure scan_char_num;
+ begin scan_int;
+-if ((cur_val<0)or(cur_val>255))and(not check_kanji(cur_val)) then {wchar_token}
++if (not is_char_ascii(cur_val))and(not check_kanji(cur_val)) then {wchar_token}
+   begin print_err("Bad character code");
+ @.Bad character code@>
+   help2("A character number must be between 0 and 255, or KANJI code.")@/
+@@ -2366,8 +2340,8 @@
+   if t=" " then t:=space_token
+   else t:=other_token+t;
+ @y
+-  if (iskanji1(t))and(k+1<pool_ptr)and(iskanji2(str_pool[k+1])) then
+-    begin t:=t*@'400+str_pool[k+1]; incr(k);
++  if (multistrlen(str_pool, pool_ptr, k)=2) then
++    begin t:=fromBUFF(str_pool, pool_ptr, k); incr(k);
+     end
+   else if t=" " then t:=space_token
+   else t:=other_token+t;
+@@ -2465,22 +2439,10 @@
+ case c of
+ number_code: print_int(cur_val);
+ roman_numeral_code: print_roman_int(cur_val);
+-jis_code: begin
+-  if (proc_kanji_code=sjis_enc) then cur_val:=JIStoSJIS(cur_val)
+-  else cur_val:=JIStoEUC(cur_val);
+-  print_int(cur_val); end;
+-euc_code: begin
+-  if (proc_kanji_code=sjis_enc) then cur_val:=EUCtoSJIS(cur_val)
+-  else do_nothing;
+-  print_int(cur_val); end;
+-sjis_code: begin
+-  if (proc_kanji_code=sjis_enc) then do_nothing 
+-  else cur_val:=SJIStoEUC(cur_val);
+-  print_int(cur_val); end;
+-kuten_code: begin
+-  if (proc_kanji_code=sjis_enc) then cur_val:=KUTENtoSJIS(cur_val)
+-  else cur_val:=KUTENtoEUC(cur_val);
+-  print_int(cur_val); end;
++jis_code:   print_int(fromJIS(cur_val));
++euc_code:   print_int(fromEUC(cur_val));
++sjis_code:  print_int(fromSJIS(cur_val));
++kuten_code: print_int(fromKUTEN(cur_val));
+ kansuji_code: print_kansuji(cur_val);
+ string_code:if cur_cs<>0 then sprint_cs(cur_cs)
+   else if KANJI(cx)=0 then print_char(cur_chr)
+@@ -2613,8 +2575,8 @@
+ loop@+begin
+   if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {is kanji}
+     begin str_room(2);
+-    append_char(cur_chr div 256); {kanji upper byte}
+-    append_char(cur_chr mod 256); {kanji lower byte}
++    append_char(Hi(cur_chr)); {kanji upper byte}
++    append_char(Lo(cur_chr)); {kanji lower byte}
+     end
+   else if (cur_cmd>other_char)or(cur_chr>255) then {not a alphabet}
+     begin back_input; goto done;
+@@ -2654,14 +2616,9 @@
+   wlog(banner_k)
+ else
+   wlog(banner);
+-wlog(' (');
+-case proc_kanji_code of
+-  jis_enc: wlog('jis');
+-  euc_enc: wlog('euc');
+-  sjis_enc: wlog('sjis');
+-  othercases wterm('?');
+-endcases;
+-wlog(')');
++  wlog(' (');
++  wlog(stringcast(get_enc_string));
++  wlog(')');
+ @z
+ 
+ @x [30.560] l.10968 - pTeX:
+@@ -2778,6 +2735,7 @@
+ fget; read_sixteen(ne);
+ fget; read_sixteen(np);
+ if lf<>6+lh+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np then abort;
++if (nw=0)or(nh=0)or(nd=0)or(ni=0) then abort;
+ end
+ @y
+ @ @<Read the {\.{TFM}} size fields@>=
+@@ -2814,7 +2772,8 @@
+   end
+ else
+   begin if lf<>6+lh+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np then abort
+-  end
++  end;
++if (nw=0)or(nh=0)or(nd=0)or(ni=0) then abort;
+ end
+ @z
+ 
+@@ -3110,8 +3069,7 @@
+       synch_h;
+       end;
+     p:=link(p);
+-	if (proc_kanji_code=sjis_enc) then jc:=SJIStoJIS(KANJI(info(p)))
+-	else jc:=EUCtoJIS(KANJI(info(p)));
++	jc:=toDVI(KANJI(info(p)));
+     dvi_out(set2); dvi_out(Hi(jc)); dvi_out(Lo(jc));
+     cur_h:=cur_h+char_width(f)(orig_char_info(f)(c)); {not |jc|}
+     end;
+@@ -4630,9 +4588,9 @@
+ hmode+letter,hmode+other_char: goto main_loop;
+ hmode+kanji,hmode+kana,hmode+other_kchar: goto main_loop_j;
+ hmode+char_given:
+-  if (cur_chr>=0)and(cur_chr<256) then goto main_loop else goto main_loop_j;
++  if is_char_ascii(cur_chr) then goto main_loop else goto main_loop_j;
+ hmode+char_num: begin scan_char_num; cur_chr:=cur_val;
+-  if (cur_chr>=0)and(cur_chr<256) then goto main_loop else goto main_loop_j;
++  if is_char_ascii(cur_chr) then goto main_loop else goto main_loop_j;
+   end;
+ hmode+no_boundary: begin get_x_token;
+   if (cur_cmd=letter)or(cur_cmd=other_char)or
+@@ -4719,7 +4677,7 @@
+   @<goto |main_lig_loop|@>;
+ if cur_cmd=other_char then goto main_loop_lookahead+1;
+ if cur_cmd=char_given then
+-  begin if (cur_chr>=0)and(cur_chr<256) then goto main_loop_lookahead+1
++  begin if is_char_ascii(cur_chr) then goto main_loop_lookahead+1
+   else @<goto |main_lig_loop|@>;
+   end;
+ x_token; {now expand and set |cur_cmd|, |cur_chr|, |cur_tok|}
+@@ -4728,12 +4686,12 @@
+   @<goto |main_lig_loop|@>;
+ if cur_cmd=other_char then goto main_loop_lookahead+1;
+ if cur_cmd=char_given then
+-  begin if (cur_chr>=0)and(cur_chr<256) then goto main_loop_lookahead+1
++  begin if is_char_ascii(cur_chr) then goto main_loop_lookahead+1
+   else @<goto |main_lig_loop|@>;
+   end;
+ if cur_cmd=char_num then
+   begin scan_char_num; cur_chr:=cur_val;
+-  if (cur_chr>=0)and(cur_chr<256) then goto main_loop_lookahead+1
++  if is_char_ascii(cur_chr) then goto main_loop_lookahead+1
+   else @<goto |main_lig_loop|@>;
+   end;
+ if cur_cmd=inhibit_glue then
+@@ -5437,7 +5395,7 @@
+ begin scan_char_num; f:=cur_font; p:=new_character(f,cur_val);
+ @y
+ begin scan_char_num;
+-if (cur_val<0)or(cur_val>255) then
++if (not is_char_ascii(cur_val)) then
+   begin KANJI(cx):=cur_val;
+   if direction=dir_tate then f:=cur_tfont else f:=cur_jfont;
+   p:=new_character(f,get_jfm_pos(KANJI(cx),f));
+@@ -5474,14 +5432,14 @@
+   cx:=cur_chr;
+   end
+ else if cur_cmd=char_given then
+-  if (cur_chr>=0)and(cur_chr<256)then q:=new_character(f,cur_chr)
++  if is_char_ascii(cur_chr) then q:=new_character(f,cur_chr)
+   else begin
+     if direction=dir_tate then f:=cur_tfont else f:=cur_jfont;
+     KANJI(cx):=cur_chr
+     end
+   else if cur_cmd=char_num then
+     begin scan_char_num;
+-    if (cur_chr>=0)and(cur_chr<256)then q:=new_character(f,cur_val)
++    if is_char_ascii(cur_chr) then q:=new_character(f,cur_val)
+     else  begin
+       if direction=dir_tate then f:=cur_tfont else f:=cur_jfont;
+       KANJI(cx):=cur_chr
+@@ -5604,7 +5562,7 @@
+ restart: @<Get the next non-blank non-relax...@>;
+ reswitch:case cur_cmd of
+ letter,other_char,char_given:
+-  if (cur_chr>=0)and(cur_chr<=256) then begin
++  if (is_char_ascii(cur_chr) or (cur_chr=256)) then begin
+     c:=ho(math_code(cur_chr));
+     if c=@'100000 then
+       begin @<Treat |cur_chr| as an active character@>;
+@@ -5654,7 +5612,7 @@
+   end;
+ @y
+ mmode+letter,mmode+other_char,mmode+char_given:
+-  if (cur_chr>=0)and(cur_chr<256) then
++  if is_char_ascii(cur_chr) then
+     if cur_chr<128 then set_math_char(ho(math_code(cur_chr)))
+     else set_math_char(cur_chr)
+   else set_math_kchar(cur_chr);
+@@ -5662,7 +5620,7 @@
+     cx:=cur_chr; set_math_kchar(KANJI(cx));
+   end;
+ mmode+char_num: begin scan_char_num; cur_chr:=cur_val;
+-  if (cur_chr>=0)and(cur_chr<256) then
++  if is_char_ascii(cur_chr) then
+     if cur_chr<128 then set_math_char(ho(math_code(cur_chr)))
+     else set_math_char(cur_chr)
+   else set_math_kchar(cur_chr);
+@@ -6048,7 +6006,7 @@
+   @<Let |m| be the minimal legal code value, based on |cur_chr|@>;
+   @<Let |n| be the largest legal code value, based on |cur_chr|@>;
+   p:=cur_chr; scan_char_num;
+-  if p=kcat_code_base then p:=p+Hi(cur_val) else p:=p+cur_val;
++  if p=kcat_code_base then p:=p+kcatcodekey(cur_val) else p:=p+cur_val;
+   scan_optional_equals; scan_int;
+   if ((cur_val<m)and(p<del_code_base))or(cur_val>n) then
+   begin print_err("Invalid code ("); print_int(cur_val);
+@@ -6739,8 +6697,7 @@
+ var @!jc:KANJI_code; {temporary register for KANJI}
+ @!sp,@!mp,@!ep:pointer;
+ begin@/
+-if (proc_kanji_code=sjis_enc) then jc:=SJIStoJIS(kcode)
+-else jc:=EUCtoJIS(kcode);
++jc:=toDVI(kcode);
+ sp:=1; { start position }
+ ep:=font_num_ext[f]-1; { end position }
+ if (kchar_code(f)(sp)<=jc)and(jc<=kchar_code(f)(ep)) then
+@@ -6802,14 +6759,7 @@
+   error; return;
+   end
+ else
+-  begin
+-   if (proc_kanji_code=sjis_enc) then
+-      define(kansuji_base+n,n,tokanji(SJIStoJIS(cur_val)))
+-   else if (proc_kanji_code=euc_enc) then
+-      define(kansuji_base+n,n,tokanji(EUCtoJIS(cur_val)))
+-   else if (proc_kanji_code=jis_enc) then
+-      define(kansuji_base+n,n,tokanji(cur_val));
+-  end;
++  define(kansuji_base+n,n,tokanji(toDVI(cur_val)));
+ end;
+ 
+ @ |print_kansuji| procedure converts a number to KANJI number.
+@@ -6825,9 +6775,7 @@
+   begin while k>0 do
+     begin decr(k);
+ 	cx:=kansuji_char(dig[k]);
+-	if (proc_kanji_code=sjis_enc) then cx:=JIStoSJIS(cx)
+-	else if (proc_kanji_code=euc_enc) then cx:=JIStoEUC(cx);
+-    print_kanji(cx);
++	print_kanji(fromDVI(cx));
+     end;
+   end;
+ end;
+@@ -7007,7 +6955,7 @@
+ @ @<Assignments@>=
+ assign_kinsoku:
+ begin p:=cur_chr; scan_int; n:=cur_val; scan_optional_equals; scan_int;
+-if check_kanji(n) then
++if (is_char_ascii(n) or check_kanji(n)) then
+   begin j:=get_kinsoku_pos(tokanji(n),new_pos);
+   if j=no_entry then
+     begin print_err("KINSOKU table is full!!");
+@@ -7429,7 +7377,7 @@
+ while(p<>null) do
+ begin if is_char_node(p) then
+   begin if font_dir[font(p)]<>dir_default then
+-    begin KANJI(cx):=info(link(p)); i:=kcat_code(Hi(cx)); k:=0;
++    begin KANJI(cx):=info(link(p)); i:=kcat_code(kcatcodekey(cx)); k:=0;
+     if (i=kanji)or(i=kana) then begin t:=q; s:=p; end;
+     p:=link(p); q:=p;
+     end
+@@ -7573,13 +7521,13 @@
+     kanji,kana,other_kchar: cur_l:=qi(get_jfm_pos(KANJI(cur_chr),main_f));
+     letter,other_char: begin ins_kp:=true; cur_l:=qi(0); end;
+     char_given: begin
+-      if (cur_chr>=0)and(cur_chr<256) then
++      if is_char_ascii(cur_chr) then
+         begin ins_kp:=true; cur_l:=qi(0);
+         end
+       else cur_l:=qi(get_jfm_pos(KANJI(cur_chr),main_f));
+       end;
+     char_num: begin scan_char_num; cur_chr:=cur_val;
+-      if (cur_chr>=0)and(cur_chr<256) then
++      if is_char_ascii(cur_chr) then
+         begin ins_kp:=true; cur_l:=qi(0);
+         end
+       else cur_l:=qi(get_jfm_pos(KANJI(cur_chr),main_f));
+Index: ppltotf.ch
+===================================================================
+--- ptex-src-3.1.11.orig/ppltotf.ch
++++ ptex-src-3.1.11/ppltotf.ch
+@@ -15,9 +15,6 @@
+ @y
+ @d banner=='This is Nihongo PLtoTF, Version 3.5-p1.8'
+   {printed when the program starts}
+-@d jis_enc==0
+-@d euc_enc==1
+-@d sjis_enc==2
+ @z
+ 
+ @x [6] l.140 - pTeX:
+@@ -25,11 +22,7 @@
+ @y
+   print_ln (version_string);
+   print ('process kanji code is ');
+-  case proc_kanji_code of
+-    jis_enc: print('jis');
+-    euc_enc: print('euc');
+-    sjis_enc: print('sjis');
+-  end;
++  fputs(get_enc_string, stdout);
+   print_ln ('.');
+ @z
+ 
+@@ -62,38 +55,12 @@
+   {print the characters yet unseen}
+ @z
+ 
+-@x [28] l.610 - pTeX: Read JIS kanji code.
+-@p procedure fill_buffer;
+-begin left_ln:=right_ln; limit:=0; loc:=0;
+-@y
+-@p procedure fill_buffer;
+-var @!c_a,@!c_b:byte;
+-@!cx:integer;
+-@!kmode:0..1; {|1| denotes in JIS kanji strings}
+-begin left_ln:=right_ln; limit:=0; loc:=0; kmode:=0;
+-@z
+-
+ @x [28] l.619 - pTeX:
+ else  begin while (limit<buf_size-1)and(not eoln(pl_file)) do
+     begin incr(limit); read(pl_file,buffer[limit]);
+     end;
+ @y
+-else  begin kmode:=0;
+-  while (limit<buf_size-3)and(not eoln(pl_file)) do
+-    begin read(pl_file,c_a);
+-    if c_a=@'33 then @<Store JIS code characters to buffer@>
+-    else
+-      begin if kmode=0 then
+-        begin incr(limit); buffer[limit]:=c_a;
+-        end
+-      else  begin read(pl_file,c_b);
+-	    if (proc_kanji_code=sjis_enc) then cx:=JIStoSJIS(c_a*@'400+c_b)
+-		else cx:=JIStoEUC(c_a*@'400+c_b);
+-        incr(limit); buffer[limit]:=cx div @'400;
+-        incr(limit); buffer[limit]:=cx mod @'400;
+-        end;
+-      end;
+-    end;
++else  begin limit:=input_line2(pl_file,buffer,limit+1,buf_size)-1;
+ @z
+ 
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@@ -118,28 +85,6 @@
+     the buffer, and check the indentation@>;
+   end;
+ end;
+-
+-@ @<Store JIS code characters...@>=
+-begin read(pl_file,c_a);
+-if c_a='$' then  begin read(pl_file,c_a);
+-  if (c_a='@@')or(c_a='B') then kmode:=1 { Kanji in }
+-  else begin incr(limit); buffer[limit]:=@'33;
+-    incr(limit); buffer[limit]:='$';
+-    incr(limit); buffer[limit]:=c_a;
+-    end;
+-  end
+-else  if c_a='(' then  begin read(pl_file,c_a);
+-  if (c_a='J')or(c_a='B')or(c_a='H') then kmode:=0 { Kanji out }
+-  else  begin incr(limit); buffer[limit]:=@'33;
+-    incr(limit); buffer[limit]:='(';
+-    incr(limit); buffer[limit]:=c_a;
+-    end;
+-  end
+-else  begin
+-  incr(limit); buffer[limit]:=@'33;
+-  incr(limit); buffer[limit]:=c_a;
+-  end;
+-end
+ @z
+ 
+ @x [36] l.754 - pTeX: May have to increase some numbers to fit new commands
+@@ -427,7 +372,7 @@
+ @z
+ @x
+     end else if argument_is ('version') then begin
+-      print_version_and_exit (banner, nil, 'D.E. Knuth');
++      print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
+ 
+     end; {Else it was a flag; |getopt| has already done the assignment.}
+   until getopt_return_val = -1;
+@@ -441,7 +386,7 @@
+     end; {Else it was a flag; |getopt| has already done the assignment.}
+   until getopt_return_val = -1;
+   if (version_switch) then
+-    print_version_and_exit (banner, nil, 'D.E. Knuth');
++    print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
+ @z
+ 
+ @x
+@@ -702,7 +647,7 @@
+ function get_next_raw:byte; {get next rawdata in buffer}
+ begin while loc=limit do fill_buffer;
+ incr(loc); get_next_raw:=buffer[loc];
+-if iskanji1(buffer[loc]) then cur_char:=" "
++if multistrlen(buffer,loc+2,loc)=2 then cur_char:=" "
+ else cur_char:=xord[buffer[loc]];
+ end;
+ @#
+@@ -767,14 +712,13 @@
+   incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch)*@"100;
+   incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch)*@"10;
+   incr(loc); ch:=xord[buffer[loc]]; cx:=cx+todig(ch);
+-  jis_code:=cx; cur_char:=ch;
++  jis_code:=toDVI(fromJIS(cx)); cur_char:=ch;
+   if not valid_jis_code(jis_code) then
+     err_print('jis code ', jis_code:1, ' is invalid');
+   end
+-else if iskanji1(ch) then
+-  begin incr(loc); cx:=Lo(ch)*@'400+Lo(buffer[loc]); cur_char:=" ";
+-  if (proc_kanji_code=sjis_enc) then jis_code:=SJIStoJIS(cx)
+-  else jis_code:=EUCtoJIS(cx);
++else if multistrlen(buffer, loc+2, loc)=2 then
++  begin jis_code:=toDVI(fromBUFF(buffer, loc+2, loc));
++  incr(loc); cur_char:=" ";
+   if not valid_jis_code(jis_code) then
+     err_print('jis code ', jis_code:1, ' is invalid');
+   end
+@@ -782,25 +726,9 @@
+ get_kanji:=jis_code;
+ end;
+ 
+-@ input kanji code.
+-
+-@<Global...@> =
+-@!proc_kanji_code:jis_enc..sjis_enc;
+-
+-@ @<Initialize the option...@> =
+-ifdef('OUTJIS')  proc_kanji_code:=jis_enc; endif('OUTJIS');
+-ifdef('OUTEUC')  proc_kanji_code:=euc_enc; endif('OUTEUC');
+-ifdef('OUTSJIS') proc_kanji_code:=sjis_enc; endif('OUTSJIS');
+-
+ @ @<Set process kanji code@>=
+-  if strcmp(optarg, 'jis') = 0 then
+-    proc_kanji_code:=jis_enc
+-  else if strcmp(optarg, 'euc') = 0 then
+-    proc_kanji_code:=euc_enc
+-  else if strcmp(optarg, 'sjis') = 0 then
+-    proc_kanji_code:=sjis_enc
+-  else
+-    print_ln('Bad kanjicode encoding', optarg, '.');
++  if (not set_enc_string(optarg,optarg)) then
++    print_ln('Bad kanjicode encoding "', stringcast(optarg), '".');
+ 
+ @* Index.
+ @z
+Index: ptftopl.ch
+===================================================================
+--- ptex-src-3.1.11.orig/ptftopl.ch
++++ ptex-src-3.1.11/ptftopl.ch
+@@ -10,13 +10,10 @@
+ @z
+ 
+ @x [2] l.64 - pTeX:
+-@d banner=='This is TFtoPL, Version 3.1' {printed when the program starts}
++@d banner=='This is TFtoPL, Version 3.2' {printed when the program starts}
+ @y
+ @d banner=='This is Nihongo TFtoPL, Version 3.2-p1.7'
+   {printed when the program starts}
+-@d jis_enc==0
+-@d euc_enc==1
+-@d sjis_enc==2
+ @z
+ 
+ @x [2] l.91 - pTeX:
+@@ -37,11 +34,7 @@
+ @y
+   print_ln (version_string);
+   print ('process kanji code is ');
+-  case proc_kanji_code of
+-    jis_enc: print('jis');
+-    euc_enc: print('euc');
+-    sjis_enc: print('sjis');
+-  end;
++  print (stringcast(get_enc_string));
+   print_ln('.');
+ @z
+ 
+@@ -374,7 +367,7 @@
+ @z
+ @x
+     end else if argument_is ('version') then begin
+-      print_version_and_exit (banner, nil, 'D.E. Knuth');
++      print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
+ @y
+     end else if argument_is ('version') then begin
+       version_switch := true;
+@@ -389,7 +382,7 @@
+     end; {Else it was a flag; |getopt| has already done the assignment.}
+   until getopt_return_val = -1;
+   if (version_switch) then
+-    print_version_and_exit (banner, nil, 'D.E. Knuth');
++    print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
+ @z
+ 
+ @x
+@@ -509,8 +502,7 @@
+     end;
+   end
+ else begin
+-  if (proc_kanji_code=sjis_enc) then cx:=JIStoSJIS(jis_code)
+-  else cx:=JIStoEUC(jis_code);
++  cx:=toBUFF(fromDVI(jis_code));
+   out(xchr[Hi(cx)]); out(xchr[Lo(cx)]);
+   end;
+ end;
+@@ -549,23 +541,9 @@
+ 
+ @ output kanji code.
+ 
+-@<Global...@> =
+-@!proc_kanji_code:jis_enc..sjis_enc;
+-
+-@ @<Initialize the option...@> =
+-ifdef('OUTJIS')  proc_kanji_code:=jis_enc; endif('OUTJIS')@/
+-ifdef('OUTEUC')  proc_kanji_code:=euc_enc; endif('OUTEUC')@/
+-ifdef('OUTSJIS') proc_kanji_code:=sjis_enc; endif('OUTSJIS')@/
+-
+ @ @<Set process kanji code@>=
+-  if strcmp(optarg, 'jis') = 0 then
+-    proc_kanji_code:=jis_enc
+-  else if strcmp(optarg, 'euc') = 0 then
+-    proc_kanji_code:=euc_enc
+-  else if strcmp(optarg, 'sjis') = 0 then
+-    proc_kanji_code:=sjis_enc
+-  else
+-    print_ln('Bad kanjicode encoding', optarg, '.');
++  if (not set_enc_string(optarg,optarg)) then
++    print_ln('Bad kanjicode encoding "', stringcast(optarg), '".');
+ 
+ @* Index.
+ @z
+Index: kanji.h
+===================================================================
+--- ptex-src-3.1.11.orig/kanji.h
++++ ptex-src-3.1.11/kanji.h
+@@ -5,50 +5,31 @@
+ #define KANJI_H
+ #include "cpascal.h"
+ #include "ptexhelp.h"
++#include <ptexenc/ptexenc.h>
+ 
+ #define KANJI
+-#define JIS   0
+-#define EUC   1
+-#define SJIS  2
+ 
+-/* 端末に出力する漢字コードを EUC, JIS, SJIS のいずれかで指定する。*/
+-#define TERM_CODE @TERMCODE@
+-
+-/* OUTJIS, OUTSJIS, OUTEUC は端末とログファイルへの出力コードを示す。*/
+-#if TERM_CODE == JIS
+-#define OUTJIS
+-#elif TERM_CODE == SJIS
+-#define OUTSJIS
+-#else
+-#define OUTEUC
+-#endif
+-
+ /* functions */
+-#define Hi(X) ((X >> 8) & 0xff)
+-#define Lo(X) (X & 0xff)
+-#define PutHi(X,Y) X &= 0xff; (X |= (Y << 8))
+-#define PutLo(X,Y) X &= 0xff00; (X |= (Y & 0xff))
++#define Hi(x) (((x) >> 8) & 0xff)
++#define Lo(x) ((x) & 0xff)
+ 
+-extern char prockanjicode;
+-extern boolean iskanji1(unsigned char);
+-extern boolean iskanji2(unsigned char);
+-extern boolean checkkanji(integer);
+-extern integer calcpos(integer);
++extern boolean check_kanji(integer c);
++#define checkkanji check_kanji
++extern boolean is_kanji(integer c);
++#define iskanji is_kanji
++extern boolean is_char_ascii(integer c);
++#define ischarascii is_char_ascii
++extern boolean is_wchar_ascii(integer c);
++#define iswcharascii is_wchar_ascii
++extern boolean ismultiprn(integer c);
++extern integer calc_pos(integer c);
++#define calcpos calc_pos
++extern integer kcatcodekey(integer c);
+ 
+-extern integer EUCtoJIS(integer);
+-extern integer JIStoEUC(integer);
+-extern integer SJIStoJIS(integer);
+-extern integer JIStoSJIS(integer);
+-extern integer SJIStoEUC(integer);
+-extern integer EUCtoSJIS(integer);
+-extern integer KUTENtoEUC(integer);
+-extern integer KUTENtoSJIS(integer);
+-
+-/* kanji.c *以外* をコンパイルするとき、putc の定義を変える */
+-#if !defined(KANJI_C)
++#ifndef PRESERVE_PUTC
+ #undef putc
+ #define putc(c,fp) putc2(c,fp)
+-#endif /* *not* KANJI_C */
++#endif /* !PRESERVE_PUTC */
+ 
+ #ifdef TeX
+ #undef TEXMFPOOLNAME
+@@ -64,13 +45,4 @@
+ #define TEXMFENGINENAME "jmpost"
+ #endif /* MP */
+ 
+-#ifdef HAVE_SYS_PARAM_H
+-#  include <sys/param.h>
+-#else
+-#  include <limits.h>
+-#endif
+-#ifndef NOFILE
+-#  define NOFILE OPEN_MAX
+-#endif
+-
+ #endif /* not KANJI_H */
+Index: pbibtex.ch
+===================================================================
+--- ptex-src-3.1.11.orig/pbibtex.ch
++++ ptex-src-3.1.11/pbibtex.ch
+@@ -53,7 +53,7 @@
+ @x
+ @d banner=='This is BibTeX, Version 0.99c' {printed when the program starts}
+ @y
+-@d banner=='This is JBibTeX, Version 0.99c-j0.33'
++@d banner=='This is pBibTeX, Version 0.99c-j0.33'
+   {printed when the program starts}
+ @z
+ 
+@@ -135,6 +135,9 @@
+ initialize;
+ if verbose then begin
+   print (banner);
++  print (' (');
++  print (stringcast(get_enc_string));
++  print (')');
+   print_ln (version_string);
+ end;
+ @z
+@@ -480,8 +483,8 @@
+     end;
+   get(f);
+ @y
+-  if (not input_line(f)) then
+-    buffer_overflow;
++  last := input_line3(f,buffer,last,buf_size);
++  if (last < 0) then buffer_overflow;
+ @z
+ 
+ @x [48] Dynamically allocate str_pool.
+@@ -629,10 +632,10 @@
+ procedure get_the_top_level_aux_file_name;
+ label aux_found,@!aux_not_found;
+ begin
++  if (not set_enc_string (0,'EUC')) then uexit(1);
+   @<Process a possible command line@>
+   {Leave room for the \.., the extension, the junk byte at the
+    beginning, and the null byte at the end.}
+-  init_kanji;
+   name_of_file := xmalloc (strlen (cmdline (optind)) + 4 + 2);
+   strcpy (name_of_file + 1, cmdline (optind));
+   aux_name_length := strlen (name_of_file + 1);
+@@ -1487,13 +1490,13 @@
+       {End of arguments; we exit the loop below.} ;
+ 
+     end else if getopt_return_val = "?" then begin
+-      usage ('jbibtex');
++      usage ('pbibtex');
+ 
+     end else if argument_is ('min-crossrefs') then begin
+       min_crossrefs := atoi (optarg);
+       
+     end else if argument_is ('help') then begin
+-      usage_help (JBIBTEX_HELP, nil);
++      usage_help (PBIBTEX_HELP, nil);
+ 
+     end else if argument_is ('version') then begin
+       version_switch := true;
+@@ -1504,13 +1507,13 @@
+     end; {Else it was a flag; |getopt| has already done the assignment.}
+   until getopt_return_val = -1;
+   if (version_switch) then
+-    print_version_and_exit (banner, 'Oren Patashnik', nil);
++    print_version_and_exit (banner, 'Oren Patashnik', nil, nil);
+ 
+   {Now |optind| is the index of first non-option on the command line.
+    We must have one remaining argument.}
+   if (optind + 1 <> argc) then begin
+-    write_ln (stderr, 'jbibtex: Need exactly one file argument.');
+-    usage ('jbibtex');
++    write_ln (stderr, 'pbibtex: Need exactly one file argument.');
++    usage ('pbibtex');
+   end;
+ end;
+ 
+@@ -1627,27 +1630,8 @@
+     end;
+ exit:end;  
+ 
+-@ kanji code.
+-
+-@d jis_enc==0
+-@d euc_enc==1
+-@d sjis_enc==2
+-
+-@ @<Glob...@>=
+-@!proc_kanji_code:jis_enc..sjis_enc;
+-
+-@ @<Initialize the option...@> =
+-ifdef('OUTJIS')  proc_kanji_code:=jis_enc; endif('OUTJIS')@/
+-ifdef('OUTEUC')  proc_kanji_code:=euc_enc; endif('OUTEUC')@/
+-ifdef('OUTSJIS') proc_kanji_code:=sjis_enc; endif('OUTSJIS')@/
+-
+ @ @<Set process kanji code@>=
+-  if strcmp(optarg, 'jis') = 0 then
+-    proc_kanji_code:=jis_enc
+-  else if strcmp(optarg, 'euc') = 0 then
+-    proc_kanji_code:=euc_enc
+-  else if strcmp(optarg, 'sjis') = 0 then
+-    proc_kanji_code:=sjis_enc
+-  else
+-    print_ln('Bad kanjicode encoding', optarg, '.');
++  if (not set_enc_string(optarg,0)) then begin
++    write_ln('Bad kanjicode encoding "', stringcast(optarg), '".');
++  end;
+ @z
+Index: ptex.mk
+===================================================================
+--- ptex-src-3.1.11.orig/ptex.mk
++++ ptex-src-3.1.11/ptex.mk
+@@ -1,24 +1,27 @@
+-# Makefile fragment for e-TeX and web2c. --infovore@xs4all.nl. Public domain.
++# *ATTENTION* : This file is not used in TeX Live 2009. See am/ptex.am.
++# Makefile fragment for pTeX and web2c. -- tutimura(a)nn.iij4u.or.jp. Public domain.
+ # This fragment contains the parts of the makefile that are most likely to
+-# differ between releases of e-TeX.
++# differ between releases of pTeX and derived from e-TeX.
+ 
+-Makefile: ptexdir/ptex.mk
++Makefile: $(srcdir)/ptexdir/ptex.mk
+ 
+ # We build ptex.
+-ptex = @JPTEX@ ptex
++ptex = @JPTEX@ ptex pbibtex ptftopl ppltotf pdvitype
+ 
+ # Extract ptex version
+-ptexdir/ptex.version: ptexdir/ptex.ch
+-	grep '^@d eTeX_version_string==' $(srcdir)/ptexdir/ptex.ch \
+-	  | sed "s/^.*'-//;s/'.*$$//" >ptexdir/ptex.version
++ptexdir/ptex.version: ptexdir/ptex-base.ch
++	grep "^@d TeX_banner=='This is pTeX" $(srcdir)/ptexdir/ptex-base.ch \
++	  | sed "s/^.*-//;s/'.*$$//" >ptexdir/ptex.version
+ 
+ # The C sources.
+ ptex_c = ptexini.c ptex0.c ptex1.c ptex2.c
+-ptex_o = ptexini.o ptex0.o ptex1.o ptex2.o ptex-pool.o ptexextra.o
++ptex_o = ptexini.o ptex0.o ptex1.o ptex2.o ptex-pool.o ptexextra.o ptexdir/kanji.o
++plib_o = ptexdir/printversion.o ptexdir/usage.o ptexdir/openclose.o
++plib   = ptexdir/plib.a
+ 
+ # Making ptex.
+-ptex: $(ptex_o)
+-	$(kpathsea_link) $(ptex_o) $(socketlibs) $(LOADLIBES)
++ptex: $(ptex_o) $(plib) $(ptexenc)
++	$(kpathsea_link) $(ptex_o) $(plib) $(ptexenc) $(socketlibs) $(LOADLIBES)
+ 
+ # C file dependencies
+ $(ptex_c) ptexcoerce.h ptexd.h: ptex.p $(web2c_texmf)
+@@ -27,8 +30,8 @@
+ 	sed s/TEX-OR-MF-OR-MP/ptex/ $(srcdir)/lib/texmfmp.c >$@
+ ptexdir/ptexextra.h: ptexdir/ptexextra.in ptexdir/ptex.version
+ 	test -d ptexdir || mkdir ptexdir
+-	sed s/ETEX-VERSION/`cat ptexdir/ptex.version`/ \
+-	  $(srcdir)/ptexdir/ptexextra.in >$@
++	sed s/PTEX-VERSION/`cat ptexdir/ptex.version`/ \
++          $(srcdir)/ptexdir/ptexextra.in >$@
+ 
+ # Tangling
+ ptex.p ptex.pool: tangle ptex.web ptex.ch
+@@ -37,17 +40,14 @@
+ # Generation of the web and ch file.
+ #   Sources for ptex.web:
+ ptex_web_srcs = $(srcdir)/tex.web \
+-  $(srcdir)/ptexdir/ptex.ch \
+-  $(srcdir)/ptexdir/ptex.fix
++  $(srcdir)/tex.ch
+ #   Sources for ptex.ch:
+ ptex_ch_srcs = ptex.web \
+-  $(srcdir)/ptexdir/tex.ch0 \
+-  $(srcdir)/tex.ch \
+-  $(srcdir)/ptexdir/tex.ch1 \
+-  $(srcdir)/ptexdir/tex.ech \
+-  $(srcdir)/ptexdir/ptex-binpool.ch
++  $(srcdir)/ptexdir/ptex-base.ch \
++  $(srcdir)/ptexdir/ptex-include.ch \
++  $(srcdir)/tex-binpool.ch
+ #   Rules:
+-ptex.web: tie ptexdir/ptex.mk $(ptex_web_srcs)
++ptex.web: tie $(srcdir)/ptexdir/ptex.mk $(ptex_web_srcs)
+ 	$(TIE) -m ptex.web $(ptex_web_srcs)
+ ptex.ch: $(ptex_ch_srcs)
+ 	$(TIE) -c ptex.ch $(ptex_ch_srcs)
+@@ -55,6 +55,71 @@
+ ptex-pool.c: ptex.pool $(makecpool) tmf-pool.h
+ 	$(makecpool) ptex.pool $(srcdir)/tmf-pool.h >$@ || rm -f $@
+ 
++$(plib): $(plib_o)
++	rm -f $@
++	$(AR) $(ARFLAGS) $@ $(plib_o)
++	$(RANLIB) $@
++
++### pTFtoPL
++ptftopl: ptftopl.o $(plib) $(kpathsea) $(ptexenc) $(proglib)
++	$(kpathsea_link) ptftopl.o $(plib) $(ptexenc) $(LOADLIBES)
++ptftopl.o: ptftopl.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
++ptftopl.c: ptftopl.p $(web2c_aux)
++	$(web2c) ptftopl
++ptftopl.p:        ptftopl.web $(srcdir)/ptexdir/ptftopl.ch
++	$(tangle) ptftopl.web $(srcdir)/ptexdir/ptftopl.ch
++ptftopl.web:                  $(srcdir)/tftopl.web $(srcdir)/tftopl.ch
++	$(TIE) -m ptftopl.web $(srcdir)/tftopl.web $(srcdir)/tftopl.ch
++
++
++### pPLtoTF
++ppltotf: ppltotf.o $(plib) $(kpathsea) $(ptexenc) $(proglib)
++	$(kpathsea_link) ppltotf.o $(plib) $(ptexenc) $(LOADLIBES)
++ppltotf.o: ppltotf.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
++	$(compile) -DPRESERVE_PUTC -c ppltotf.c
++ppltotf.c: ppltotf.p $(web2c_aux)
++	$(web2c) ppltotf
++ppltotf.p: tangle ppltotf.web $(srcdir)/ptexdir/ppltotf.ch
++	$(tangle) ppltotf.web $(srcdir)/ptexdir/ppltotf.ch
++ppltotf.web:                  $(srcdir)/pltotf.web $(srcdir)/pltotf.ch
++	$(TIE) -m ppltotf.web $(srcdir)/pltotf.web $(srcdir)/pltotf.ch
++
++### pDVItype
++pdvitype: pdvitype.o $(plib) $(kpathsea) $(ptexenc) $(proglib)
++	$(kpathsea_link) pdvitype.o $(plib) $(ptexenc) $(LOADLIBES)
++pdvitype.o: pdvitype.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
++	$(compile) -DHEX_CHAR_CODE -c pdvitype.c
++pdvitype.c: pdvitype.p $(web2c_aux)
++	$(web2c) pdvitype
++pdvitype.p: tangle pdvitype.web $(srcdir)/ptexdir/pdvitype.ch
++	$(tangle)  pdvitype.web $(srcdir)/ptexdir/pdvitype.ch
++pdvitype.web: $(srcdir)/dvitype.web
++	cat   $(srcdir)/dvitype.web > $@
++
++### pBibTeX
++pbibtex: pbibtex.o $(plib_o) $(kpathsea) $(ptexenc) $(proglib)
++	$(kpathsea_link) pbibtex.o $(plib_o) $(ptexenc) $(LOADLIBES)
++pbibtex.o: pbibtex.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
++
++pbibd.h:       $(srcdir)/ptexdir/pbibd.sed pbibtex.c
++	sed -f $(srcdir)/ptexdir/pbibd.sed pbibtex.c > $@
++
++pbibtex.c pbibtex.h: $(web2c_common) $(web2c_programs) web2c/cvtbib.sed pbibtex.p
++	$(web2c) pbibtex
++pbibtex.p: tangle pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
++	$(tangle) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
++pbibtex.web: $(srcdir)/bibtex.web
++	cat  $(srcdir)/bibtex.web > $@
++clean:: pbibtex-clean
++pbibtex-clean:
++	$(LIBTOOL) --mode=clean rm -f pbibtex
++	rm -f pbibtex.o pbibtex.c pbibtex.h pbibtex.p pbibd.h pbibtex.web
++
++
++# Additional dependencies for relinking.
++$(ptexenc):
++	cd $(ptexenc_dir) && $(MAKE) libptexenc.la
++
+ # Tests...
+ check: @JPTEX@ ptex-check
+ ptex-check: etrip ptex.fmt
+@@ -84,10 +149,14 @@
+ # Cleaning up.
+ clean:: ptex-clean
+ ptex-clean: etrip-clean
+-	$(LIBTOOL) --mode=clean $(RM) ptex
++	$(LIBTOOL) --mode=clean $(RM) $(ptex)
+ 	rm -f $(ptex_o) $(ptex_c) ptexextra.c ptexcoerce.h ptexd.h
+ 	rm -f ptexdir/ptexextra.h ptexdir/ptex.version
+-	rm -f ptex.p ptex.pool ptex.web ptex.ch
++	rm -f ptexdir/kanji.o $(plib_o) $(plib)
++	rm -f ptex.p ptex.pool ptex.web ptex.ch ptex-pool.c
++	rm -f ptftopl.h  ptftopl.c  ptftopl.o  ptftopl.web  ptftopl.p
++	rm -f ppltotf.h  ppltotf.c  ppltotf.o  ppltotf.web  ppltotf.p
++	rm -f pdvitype.h pdvitype.c pdvitype.o pdvitype.web pdvitype.p
+ 	rm -f ptex.fmt ptex.log
+ 	rm -f hello.dvi hello.log xfoo.out openout.log one.two.log uno.log
+ 	rm -f just.log batch.log write18.log mltextst.log texput.log
+@@ -95,11 +164,11 @@
+ 	rm -rf tfm
+ 
+ # etrip
+-etestdir = $(srcdir)/ptexdir/etrip
+-etestenv = TEXMFCNF=$(etestdir)
++ptestdir = $(srcdir)/ptexdir/etrip
++ptestenv = TEXMFCNF=$(etestdir)
+ 
+ triptrap: @JPTEX@ etrip
+-etrip: pltotf tftopl ptex dvitype etrip-clean
++ptrip: pltotf tftopl ptex dvitype etrip-clean
+ 	@echo ">>> See $(etestdir)/etrip.diffs for example of acceptable diffs." >&2
+ 	@echo "*** TRIP test for e-TeX in compatibility mode ***."
+ 	./pltotf $(testdir)/trip.pl trip.tfm
+@@ -141,7 +210,7 @@
+ 	-$(DIFF) $(DIFFFLAGS) $(etestdir)/etrip.typ etrip.typ
+ 
+ # Cleaning up for the etrip.
+-etrip-clean:
++ptrip-clean:
+ 	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
+ 	rm -f ctrip.fot ctrip.log trip.dvi ctrip.typ
+ 	rm -f xtripin.fot xtripin.log
+@@ -154,30 +223,30 @@
+ # Distfiles ...
+ @MAINT@triptrapdiffs: ptexdir/etrip/etrip.diffs
+ @MAINT@ptexdir/etrip/etrip.diffs: ptex
+-@MAINT@	$(MAKE) etrip | tail +1 >ptexdir/etrip/etrip.diffs
++@MAINT@	$(MAKE) ptrip | tail +1 >ptexdir/etrip/etrip.diffs
+ 
+ 
+ # Dumps
+-all_efmts = ptex.fmt $(efmts)
++all_pfmts = ptex.fmt platex.fmt $(pfmts)
+ 
+-dumps: @JPTEX@ efmts
+-efmts: $(all_efmts)
++dumps: @JPTEX@ pfmts
++pfmts: $(all_pfmts)
+ 
+-efmtdir = $(web2cdir)/ptex
+-$(efmtdir)::
+-	$(SHELL) $(top_srcdir)/../mkinstalldirs $(efmtdir)
++pfmtdir = $(web2cdir)/ptex
++$(pfmtdir)::
++	$(SHELL) $(top_srcdir)/../mkinstalldirs $(pfmtdir)
+ 
+ ptex.fmt: ptex
+ 	$(dumpenv) $(MAKE) progname=ptex files="ptex.src plain.tex cmr10.tfm" prereq-check
+ 	$(dumpenv) ./ptex --progname=ptex --jobname=ptex --ini \*\\input ptex.src \\dump </dev/null
+ 
+-elatex.fmt: ptex
+-	$(dumpenv) $(MAKE) progname=elatex files="latex.ltx" prereq-check
+-	$(dumpenv) ./ptex --progname=elatex --jobname=elatex --ini \*\\input latex.ltx </dev/null
++#pelatex.fmt: ptex
++#	$(dumpenv) $(MAKE) progname=elatex files="latex.ltx" prereq-check
++#	$(dumpenv) ./ptex --progname=elatex --jobname=elatex --ini \*\\input latex.ltx </dev/null
+ 
+-latex.fmt: ptex
+-	$(dumpenv) $(MAKE) progname=latex files="latex.ltx" prereq-check
+-	$(dumpenv) ./ptex --progname=latex --jobname=latex --ini \*\\input latex.ltx </dev/null
++platex.fmt: ptex
++	$(dumpenv) $(MAKE) progname=platex files="platex.ltx" prereq-check
++	$(dumpenv) ./ptex --progname=platex --jobname=platex --ini \*\\input latex.ltx </dev/null
+ 
+ #ctex.fmt: ptex
+ #	$(dumpenv) $(MAKE) progname=ctex files="plain.tex cmr10.tfm" prereq-check
+@@ -188,13 +257,18 @@
+ #	$(dumpenv) ./ptex --progname=olatex --progname=olatex --ini \\input latex.ltx </dev/null
+ 
+ # 
+-# Installation -- nothing by default, that is, we omit the
+-# install-programs target.  We want to make ptex a symlink to pdftex,
+-# via texlinks.  Leave this unused install-ptex* targets just to show
+-# that the real binary does get built and can be used if desired.
+-
++# Installation.
+ install-ptex: install-ptex-exec
+-install-ptex-exec: ptex $(bindir)
+-	for p in ptex; do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
++install-programs: @JPTEX@ install-ptex-exec
++install-ptex-exec: $(ptex) $(bindir)
++	for p in $(ptex); do $(INSTALL_LIBTOOL_PROG) $$p $(bindir); done
+ 
++install-fmts: @JPTEX@ install-ptex-fmts
++install-ptex-fmts: pfmts $(pfmtdir)
++	pfmts="$(all_pfmts)"; \
++	  for f in $$pfmts; do $(INSTALL_DATA) $$f $(pfmtdir)/$$f; done
++	pfmts="$(pfmts)"; \
++	  for f in $$pfmts; do base=`basename $$f .fmt`; \
++	    (cd $(bindir) && (rm -f $$base; $(LN) ptex $$base)); done
++
+ # end of ptex.mk
+Index: ptexextra.in
+===================================================================
+--- ptex-src-3.1.11.orig/ptexextra.in
++++ ptex-src-3.1.11/ptexextra.in
+@@ -1,4 +1,4 @@
+-/* ptexextra.h: banner etc. for pTeX.
++/* ptexextra.in: banner etc. for pTeX.
+ 
+    This is included by pTeX, from ptexextra.c
+ */
+@@ -20,7 +20,7 @@
+   "-ipc-start              as -ipc, and also start the server at the other end",
+ #endif /* IPC */
+   "-jobname=STRING         set the job name to STRING",
+-  "-kanji=STRING           set Japanese encoding (STRING=euc|jis|sjis)",
++  "-kanji=STRING           set Japanese encoding (STRING=euc|jis|sjis|utf8)",
+   "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
+   "                          the bits of NUMBER",
+   "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=tex/tfm)",
+@@ -42,7 +42,7 @@
+   NULL
+ };
+ 
+-#define BANNER "This is pTeX, Version 3.141592-p3.1.11"
++#define BANNER "This is pTeX, Version 3.1415926-PTEX-VERSION"
+ #define COPYRIGHT_HOLDER "D.E. Knuth"
+ #define AUTHOR NULL
+ #define PROGRAM_HELP PTEXHELP
+Index: ptex-include.ch
+===================================================================
+--- ptex-src-3.1.11.orig/ptex-include.ch
++++ ptex-src-3.1.11/ptex-include.ch
+@@ -0,0 +1,6 @@
++@x [???] l.2600 - pTeX:
++@=#include "texmfmem.h";@>
++@y
++@=#include "texmfmem.h";@>
++@=#include "ptexdir/kanji.h";@>
++@z
+Index: ptex.defines
+===================================================================
+--- ptex-src-3.1.11.orig/ptex.defines
++++ ptex-src-3.1.11/ptex.defines
+@@ -1,22 +1,32 @@
+-{ defined at kanji.c, kanji.h }
++{ defined at kanji.c, kanji.h, ptexenc/ptexenc.h }
+ @define function Hi ();
+ @define function Lo ();
+-@define procedure PutHi ();
+-@define procedure PutLo ();
+ 
++@define function getencstring;
++@define function setencstring ();
++
+ @define function iskanji1 ();
+-@define function iskanji2 ();
++@define function multistrlen ();
++@define function fromBUFF ();
++@define function toBUFF ();
++
++@define function fromDVI ();
++@define function toDVI ();
++@define function putc2 ();
++@define function inputline2 ();
++
++@define function fromJIS ();
++@define function fromEUC ();
++@define function fromSJIS ();
++@define function fromKUTEN ();
++
+ @define function checkkanji ();
++@define function iskanji ();
++@define function ischarascii ();
++@define function iswcharascii ();
++@define function ismultiprn ();
+ @define function calcpos ();
+-@define function EUCtoJIS ();
+-@define function JIStoEUC ();
+-@define function SJIStoEUC ();
+-@define function KUTENtoEUC ();
+-@define function SJIStoJIS ();
+-@define function JIStoSJIS ();
+-@define function EUCtoSJIS ();
+-@define function KUTENtoSJIS ();
+-@define function putc2 ();
++@define function kcatcodekey ();
+ 
+ @define const PTEXTFTOPLHELP;
+ @define const PTEXPLTOTFHELP;
+Index: pdvitype.ch
+===================================================================
+--- ptex-src-3.1.11.orig/pdvitype.ch
++++ ptex-src-3.1.11/pdvitype.ch
+@@ -613,31 +613,12 @@
+ if c>=177 then text_buf[text_ptr]:=@'77 else text_buf[text_ptr]:=c;
+ end;
+ 
+-@ declare kanji conversion function
+-
+-@d jis_enc==0
+-@d euc_enc==1
+-@d sjis_enc==2
+-
+-@ @<Global...@> =
+-@!proc_kanji_code:jis_enc..sjis_enc;
+-
+-@ @<Set init...@> =
+-ifdef('OUTJIS')  proc_kanji_code:=jis_enc; endif('OUTJIS');
+-ifdef('OUTEUC')  proc_kanji_code:=euc_enc; endif('OUTEUC');
+-ifdef('OUTSJIS') proc_kanji_code:=sjis_enc; endif('OUTSJIS');
+-
+ @ @p procedure out_kanji(c:integer);
+ begin
+   if text_ptr>=line_length-3 then flush_text;
+-  if (proc_kanji_code=sjis_enc) then begin
+-    c := JIStoSJIS(c);
+-    incr(text_ptr); text_buf[text_ptr]:= c div 256;
+-    incr(text_ptr); text_buf[text_ptr]:= c mod 256;
+-  end else begin
+-    incr(text_ptr); text_buf[text_ptr]:= c div 256 + 128;
+-    incr(text_ptr); text_buf[text_ptr]:= c mod 256 + 128;
+-  end;
++  c:=toBUFF(fromDVI(c));
++  incr(text_ptr); text_buf[text_ptr]:= Hi(c);
++  incr(text_ptr); text_buf[text_ptr]:= Lo(c);
+ end;
+ 
+ @ output hexdecimal / octal character code.
+@@ -1021,7 +1002,7 @@
+       usage_help (PDVITYPE_HELP, nil);
+ 
+     end else if argument_is ('version') then begin
+-      print_version_and_exit (banner, nil, 'D.E. Knuth');
++      print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
+     
+     end else if argument_is ('output-level') then begin
+       out_mode := atou (optarg);
+@@ -1042,6 +1023,11 @@
+     end else if argument_is ('magnification') then begin
+       new_mag := atou (optarg);
+     
++    end else if argument_is ('kanji') then begin
++      if (not set_enc_string(optarg,optarg)) then begin
++        write_ln('Bad kanjicode encoding "', stringcast(optarg), '".');
++      end;
++    
+     end; {Else it was a flag; |getopt| has already done the assignment.}
+   until getopt_return_val = -1;
+ 
+@@ -1168,6 +1154,16 @@
+ incr (current_option);
+ new_mag := 0; {default is to keep the old one}
+ 
++@ Decide kanji encode
++@.-kanji@>
++
++@<Define the option...@> =
++long_options[current_option].name := 'kanji';
++long_options[current_option].has_arg := 1;
++long_options[current_option].flag := 0;
++long_options[current_option].val := 0;
++incr (current_option);
++
+ @ @<Glob...@> =
+ @!show_opcodes: c_int_type;
+ 
+Index: am/ptex.am
+===================================================================
+--- ptex-src-3.1.11.orig/am/ptex.am
++++ ptex-src-3.1.11/am/ptex.am
+@@ -5,24 +5,34 @@
+ 
+ ## pTeX
+ ##
+-if ETEX
+-bin_PROGRAMS += ptex
+-endif ETEX
++if PTEX
++bin_PROGRAMS += ptex pbibtex pdvitype ptftopl ppltotf
++endif PTEX
+ EXTRA_PROGRAMS += ptex
+ 
+-ptex_CPPFLAGS =
++ptex_CPPFLAGS = $(PTEXENC_INCLUDES)
+ 
+ # With --enable-ipc, pTeX may need to link with -lsocket.
+-ptex_LDADD = $(LDADD) $(ipc_socketlibs)
++ptex_LDADD     = $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs)
++pbibtex_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
++ptftopl_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
++ppltotf_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
++pdvitype_LDADD = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+ 
++SUBDIRS += ptexdir/lib
++pproglib = ptexdir/lib/lib.a
++# Rebuild $(pproglib)
++$(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/ptexdir/lib/*.c
++	cd ptexdir/lib && $(MAKE) $(AM_MAKEFLAGS)
++
+ # pTeX C sources
+ ptex_c_h = ptexini.c ptex0.c ptex1.c ptex2.c ptexcoerce.h ptexd.h
+-nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h
++nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h ptexdir/kanji.c ptexdir/kanji.h
+ 
+ $(ptex_c_h): ptex-web2c
+ ptex-web2c: ptex.p $(web2c_texmf)
+ 	$(web2c) ptex
+-	: $(synctex_convert_ptex)
++#	: $(synctex_convert_ptex)
+ 	echo timestamp >$@
+ 	touch $(ptex_c_h)
+ 
+@@ -33,7 +43,7 @@
+ 	sed s/TEX-OR-MF-OR-MP/ptex/ $(srcdir)/lib/texmfmp.c >$@
+ 
+ ptexdir/ptexextra.h: ptexdir/ptexextra.in ptexdir/ptex.version
+-	sed s/ETEX-VERSION/`cat ptexdir/ptex.version`/ \
++	sed s/PTEX-VERSION/`cat ptexdir/ptex.version`/ \
+ 	  $(srcdir)/ptexdir/ptexextra.in >$@
+ 
+ # Tangling pTeX
+@@ -44,30 +54,81 @@
+ 	touch ptex.p ptex.pool
+ 
+ # Extract ptex version
+-ptexdir/ptex.version: ptexdir/ptex.ch
+-	$(mkdir_p) ptexdir
+-	grep '^@d pTeX_version_string==' $(srcdir)/ptexdir/ptex.ch \
+-	  | sed "s/^.*'-//;s/'.*$$//" >ptexdir/ptex.version
++ptexdir/ptex.version: ptexdir/ptex-base.ch
++	$(mkdir_p) ptexdir/lib
++	grep "^@d TeX_banner=='This is pTeX" $(srcdir)/ptexdir/ptex-base.ch \
++	  | sed "s/^.*-//;s/'.*$$//" >ptexdir/ptex.version
+ 
+ # Generate ptex.web
+ ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
+ 	$(tie) -m ptex.web $(ptex_web_srcs)
+ ptex_web_srcs = \
+ 	tex.web \
+-	ptexdir/ptex.ch \
+-	ptexdir/ptex.fix
++	tex.ch
+ 
+ # Generate ptex.ch
+ ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
+ 	$(tie) -c ptex.ch ptex.web $(ptex_ch_srcs)
+ ptex_ch_srcs = \
+-	ptexdir/tex.ch0 \
+-	tex.ch \
+ 	$(ptex_ch_synctex) \
+-	ptexdir/tex.ch1 \
+-	ptexdir/tex.ech \
+-	ptexdir/ptex-binpool.ch
+-##
++	ptexdir/ptex-base.ch \
++	ptexdir/ptex-include.ch \
++	tex-binpool.ch
++
++### pBibTeX
++nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
++pbibtex.c pbibtex.h: pbibtex-web2c
++pbibtex.o: pbibtex.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
++pbibtex-web2c: $(web2c_depend) web2c/cvtbib.sed pbibtex.p
++	$(web2c) pbibtex
++	echo timestamp >$@
++	touch pbibtex.c pbibtex.h
++pbibtex.p: tangle$(EXEEXT) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
++	$(tangle) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
++pbibtex.web: $(srcdir)/bibtex.web
++	cat  $(srcdir)/bibtex.web > $@
++
++### pDVItype
++nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
++pdvitype_CPPFLAGS = -DDHEX_CHAR_CODE
++pdvitype.c pdvitype.h: pdvitype-web2c
++pdvitype.o: pdvitype.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
++pdvitype-web2c: $(web2c_depend) pdvitype.p
++	$(web2c) pdvitype
++	echo timestamp >$@
++	touch pdvitype.c pdvitype.h
++pdvitype.p: tangle$(EXEEXT) pdvitype.web $(srcdir)/ptexdir/pdvitype.ch
++	$(tangle) pdvitype $(srcdir)/ptexdir/pdvitype
++pdvitype.web: $(srcdir)/dvitype.web
++	cat   $(srcdir)/dvitype.web > $@
++
++### pTFtoPL
++nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
++ptftopl.c ptftopl.h: ptftopl-web2c
++ptftopl.o: ptftopl.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
++ptftopl-web2c: $(web2c_depend) ptftopl.p
++	$(web2c) ptftopl
++	echo timestamp >$@
++	touch ptftopl.c ptftopl.h
++ptftopl.p: tangle$(EXEEXT) ptftopl.web $(srcdir)/ptexdir/ptftopl.ch
++	$(tangle) ptftopl.web $(srcdir)/ptexdir/ptftopl.ch
++ptftopl.web: tie$(EXEEXT)     $(srcdir)/tftopl.web $(srcdir)/tftopl.ch
++	$(tie) -m ptftopl.web $(srcdir)/tftopl.web $(srcdir)/tftopl.ch
++
++### pPLtoTF
++nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
++ppltotf_CPPFLAGS = -DPRESERVE_PUTC
++ppltotf.c ppltotf.h: ppltotf-web2c
++pppltotf.o: pppltotf.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
++ppltotf-web2c: $(web2c_depend) ppltotf.p
++	$(web2c) ppltotf
++	echo timestamp >$@
++	touch ppltotf.c ppltotf.h
++ppltotf.p: tangle$(EXEEXT) ppltotf.web $(srcdir)/ptexdir/ppltotf.ch
++	$(tangle) ppltotf.web $(srcdir)/ptexdir/ppltotf
++ppltotf.web: tie$(EXEEXT)     $(srcdir)/pltotf.web $(srcdir)/pltotf.ch
++	$(tie) -m ppltotf.web $(srcdir)/pltotf.web $(srcdir)/pltotf.ch
++
+ EXTRA_DIST += $(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptexextra.in \
+ 	lib/texmfmp.c tmf-pool.h
+ 
+@@ -86,10 +147,10 @@
+ 
+ EXTRA_DIST += $(ptex_tests)
+ 
+-if ETEX
++if PTEX
+ TESTS += $(ptex_tests)
+-check_PROGRAMS += dvitype pltotf tftopl
+-endif ETEX
++check_PROGRAMS += pdvitype ppltotf ptftopl
++endif PTEX
+ 
+ .PHONY: ptrip-clean
+ clean-local:: ptrip-clean
+Index: reautoconf
+===================================================================
+--- ptex-src-3.1.11.orig/reautoconf
++++ ptex-src-3.1.11/reautoconf
+@@ -0,0 +1,7 @@
++#!/bin/sh
++
++set -x
++LANG=C
++rm -rf ../autom4te.cache/
++
++(cd ../../../; ./reautoconf texk/web2c)
+
+Property changes on: reautoconf
+___________________________________________________________________
+Added: svn:executable
+   + *
+
+Index: lib/Makefile.in
+===================================================================
+--- ptex-src-3.1.11.orig/lib/Makefile.in
++++ ptex-src-3.1.11/lib/Makefile.in
+@@ -0,0 +1,568 @@
++# Makefile.in generated by automake 1.11 from Makefile.am.
++# @configure_input@
++
++# Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
++# 2003, 2004, 2005, 2006, 2007, 2008, 2009  Free Software Foundation,
++# Inc.
++# This Makefile.in is free software; the Free Software Foundation
++# gives unlimited permission to copy and/or distribute it,
++# with or without modifications, as long as this notice is preserved.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
++# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
++# PARTICULAR PURPOSE.
++
++@SET_MAKE@
++
++VPATH = @srcdir@
++pkgdatadir = $(datadir)/@PACKAGE@
++pkgincludedir = $(includedir)/@PACKAGE@
++pkglibdir = $(libdir)/@PACKAGE@
++pkglibexecdir = $(libexecdir)/@PACKAGE@
++am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
++install_sh_DATA = $(install_sh) -c -m 644
++install_sh_PROGRAM = $(install_sh) -c
++install_sh_SCRIPT = $(install_sh) -c
++INSTALL_HEADER = $(INSTALL_DATA)
++transform = $(program_transform_name)
++NORMAL_INSTALL = :
++PRE_INSTALL = :
++POST_INSTALL = :
++NORMAL_UNINSTALL = :
++PRE_UNINSTALL = :
++POST_UNINSTALL = :
++build_triplet = @build@
++host_triplet = @host@
++subdir = ptexdir/lib
++DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
++ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
++am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-asm.m4 \
++	$(top_srcdir)/../../m4/kpse-common.m4 \
++	$(top_srcdir)/../../m4/kpse-cross.m4 \
++	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
++	$(top_srcdir)/../../m4/kpse-fontconfig-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-graphite-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-lex.m4 \
++	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
++	$(top_srcdir)/../../m4/kpse-obsdcompat-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-ptexenc-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
++	$(top_srcdir)/../../m4/kpse-teckit-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-warnings.m4 \
++	$(top_srcdir)/../../m4/kpse-web2c.m4 \
++	$(top_srcdir)/../../m4/kpse-win32.m4 \
++	$(top_srcdir)/../../m4/kpse-xpdf-flags.m4 \
++	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
++	$(top_srcdir)/../../m4/libtool.m4 \
++	$(top_srcdir)/../../m4/ltoptions.m4 \
++	$(top_srcdir)/../../m4/ltsugar.m4 \
++	$(top_srcdir)/../../m4/ltversion.m4 \
++	$(top_srcdir)/../../m4/lt~obsolete.m4 \
++	$(top_srcdir)/ac/web2c.ac $(top_srcdir)/configure.ac
++am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
++	$(ACLOCAL_M4)
++mkinstalldirs = $(SHELL) $(top_srcdir)/../../build-aux/mkinstalldirs
++CONFIG_HEADER = $(top_builddir)/c-auto.h $(top_builddir)/ff-config.h
++CONFIG_CLEAN_FILES =
++CONFIG_CLEAN_VPATH_FILES =
++LIBRARIES = $(noinst_LIBRARIES)
++ARFLAGS = cru
++lib_a_AR = $(AR) $(ARFLAGS)
++lib_a_LIBADD =
++am_lib_a_OBJECTS = openclose.$(OBJEXT) printversion.$(OBJEXT) \
++	usage.$(OBJEXT)
++lib_a_OBJECTS = $(am_lib_a_OBJECTS)
++DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
++depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
++am__depfiles_maybe = depfiles
++am__mv = mv -f
++COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
++	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
++LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
++	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
++	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
++CCLD = $(CC)
++LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
++	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
++	$(LDFLAGS) -o $@
++SOURCES = $(lib_a_SOURCES)
++DIST_SOURCES = $(lib_a_SOURCES)
++ETAGS = etags
++CTAGS = ctags
++DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
++ACLOCAL = @ACLOCAL@
++AMTAR = @AMTAR@
++AR = @AR@
++AUTOCONF = @AUTOCONF@
++AUTOHEADER = @AUTOHEADER@
++AUTOMAKE = @AUTOMAKE@
++AWK = @AWK@
++CC = @CC@
++CCDEPMODE = @CCDEPMODE@
++CFLAGS = @CFLAGS@
++CPP = @CPP@
++CPPFLAGS = @CPPFLAGS@
++CTANGLE = @CTANGLE@
++CTANGLEBOOT = @CTANGLEBOOT@
++CXX = @CXX@
++CXXCPP = @CXXCPP@
++CXXDEPMODE = @CXXDEPMODE@
++CXXFLAGS = @CXXFLAGS@
++CXXLD = @CXXLD@
++CXX_HACK_DEPS = @CXX_HACK_DEPS@
++CXX_HACK_LIBS = @CXX_HACK_LIBS@
++CYGPATH_W = @CYGPATH_W@
++DEFS = @DEFS@
++DEPDIR = @DEPDIR@
++DSYMUTIL = @DSYMUTIL@
++DUMPBIN = @DUMPBIN@
++ECHO_C = @ECHO_C@
++ECHO_N = @ECHO_N@
++ECHO_T = @ECHO_T@
++EGREP = @EGREP@
++EXEEXT = @EXEEXT@
++FGREP = @FGREP@
++FONTCONFIG_INCLUDES = @FONTCONFIG_INCLUDES@
++FONTCONFIG_LIBS = @FONTCONFIG_LIBS@
++FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
++FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
++FREETYPE2_LIBS = @FREETYPE2_LIBS@
++FT2_CONFIG = @FT2_CONFIG@
++GRAPHITE_DEPEND = @GRAPHITE_DEPEND@
++GRAPHITE_INCLUDES = @GRAPHITE_INCLUDES@
++GRAPHITE_LIBS = @GRAPHITE_LIBS@
++GREP = @GREP@
++ICU_DEPEND = @ICU_DEPEND@
++ICU_INCLUDES = @ICU_INCLUDES@
++ICU_LIBS = @ICU_LIBS@
++INSTALL = @INSTALL@
++INSTALL_DATA = @INSTALL_DATA@
++INSTALL_PROGRAM = @INSTALL_PROGRAM@
++INSTALL_SCRIPT = @INSTALL_SCRIPT@
++INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
++KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
++KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
++KPATHSEA_LIBS = @KPATHSEA_LIBS@
++KPATHSEA_PATHS_H = @KPATHSEA_PATHS_H@
++KPSEWHICH = @KPSEWHICH@
++LD = @LD@
++LDFLAGS = @LDFLAGS@
++LEX = @LEX@
++LEXLIB = @LEXLIB@
++LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
++LIBOBJS = @LIBOBJS@
++LIBPNG_DEPEND = @LIBPNG_DEPEND@
++LIBPNG_INCLUDES = @LIBPNG_INCLUDES@
++LIBPNG_LIBS = @LIBPNG_LIBS@
++LIBS = @LIBS@
++LIBTOOL = @LIBTOOL@
++LIPO = @LIPO@
++LN_S = @LN_S@
++LTLIBOBJS = @LTLIBOBJS@
++LUATANGLE = @LUATANGLE@
++MAINT = @MAINT@
++MAKEINFO = @MAKEINFO@
++MKDIR_P = @MKDIR_P@
++NM = @NM@
++NMEDIT = @NMEDIT@
++OBJDUMP = @OBJDUMP@
++OBJEXT = @OBJEXT@
++OBSDCOMPAT_DEPEND = @OBSDCOMPAT_DEPEND@
++OBSDCOMPAT_INCLUDES = @OBSDCOMPAT_INCLUDES@
++OBSDCOMPAT_LIBS = @OBSDCOMPAT_LIBS@
++OTANGLE = @OTANGLE@
++OTOOL = @OTOOL@
++OTOOL64 = @OTOOL64@
++PACKAGE = @PACKAGE@
++PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
++PACKAGE_NAME = @PACKAGE_NAME@
++PACKAGE_STRING = @PACKAGE_STRING@
++PACKAGE_TARNAME = @PACKAGE_TARNAME@
++PACKAGE_VERSION = @PACKAGE_VERSION@
++PATH_SEPARATOR = @PATH_SEPARATOR@
++PKG_CONFIG = @PKG_CONFIG@
++PTEXENC_DEPEND = @PTEXENC_DEPEND@
++PTEXENC_INCLUDES = @PTEXENC_INCLUDES@
++PTEXENC_LIBS = @PTEXENC_LIBS@
++RANLIB = @RANLIB@
++SED = @SED@
++SET_MAKE = @SET_MAKE@
++SHELL = @SHELL@
++STRIP = @STRIP@
++TANGLE = @TANGLE@
++TANGLEBOOT = @TANGLEBOOT@
++TECKIT_DEPEND = @TECKIT_DEPEND@
++TECKIT_INCLUDES = @TECKIT_INCLUDES@
++TECKIT_LIBS = @TECKIT_LIBS@
++TIE = @TIE@
++VERSION = @VERSION@
++WARNING_CFLAGS = @WARNING_CFLAGS@
++WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
++WEB2CVERSION = @WEB2CVERSION@
++XMKMF = @XMKMF@
++XPDF_DEPEND = @XPDF_DEPEND@
++XPDF_INCLUDES = @XPDF_INCLUDES@
++XPDF_LIBS = @XPDF_LIBS@
++X_CFLAGS = @X_CFLAGS@
++X_EXTRA_LIBS = @X_EXTRA_LIBS@
++X_LIBS = @X_LIBS@
++X_PRE_LIBS = @X_PRE_LIBS@
++YACC = @YACC@
++YFLAGS = @YFLAGS@
++ZLIB_DEPEND = @ZLIB_DEPEND@
++ZLIB_INCLUDES = @ZLIB_INCLUDES@
++ZLIB_LIBS = @ZLIB_LIBS@
++abs_builddir = @abs_builddir@
++abs_srcdir = @abs_srcdir@
++abs_top_builddir = @abs_top_builddir@
++abs_top_srcdir = @abs_top_srcdir@
++ac_ct_CC = @ac_ct_CC@
++ac_ct_CXX = @ac_ct_CXX@
++ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
++am__include = @am__include@
++am__leading_dot = @am__leading_dot@
++am__quote = @am__quote@
++am__tar = @am__tar@
++am__untar = @am__untar@
++bindir = @bindir@
++build = @build@
++build_alias = @build_alias@
++build_cpu = @build_cpu@
++build_os = @build_os@
++build_vendor = @build_vendor@
++builddir = @builddir@
++datadir = @datadir@
++datarootdir = @datarootdir@
++docdir = @docdir@
++dvidir = @dvidir@
++exec_prefix = @exec_prefix@
++host = @host@
++host_alias = @host_alias@
++host_cpu = @host_cpu@
++host_os = @host_os@
++host_vendor = @host_vendor@
++htmldir = @htmldir@
++includedir = @includedir@
++infodir = @infodir@
++install_sh = @install_sh@
++ipc_socketlibs = @ipc_socketlibs@
++libdir = @libdir@
++libexecdir = @libexecdir@
++localedir = @localedir@
++localstatedir = @localstatedir@
++lt_ECHO = @lt_ECHO@
++lua_socketlibs = @lua_socketlibs@
++mandir = @mandir@
++mkdir_p = @mkdir_p@
++oldincludedir = @oldincludedir@
++pdfdir = @pdfdir@
++prefix = @prefix@
++program_transform_name = @program_transform_name@
++psdir = @psdir@
++sbindir = @sbindir@
++sharedstatedir = @sharedstatedir@
++srcdir = @srcdir@
++subdirs = @subdirs@
++sysconfdir = @sysconfdir@
++target_alias = @target_alias@
++top_build_prefix = @top_build_prefix@
++top_builddir = @top_builddir@
++top_srcdir = @top_srcdir@
++wlibs = @wlibs@
++x_ext_lib = @x_ext_lib@
++x_tool_libs = @x_tool_libs@
++INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
++AM_CFLAGS = $(WARNING_CFLAGS)
++noinst_LIBRARIES = lib.a
++lib_a_SOURCES = \
++	openclose.c \
++	printversion.c \
++	usage.c
++
++all: all-am
++
++.SUFFIXES:
++.SUFFIXES: .c .lo .o .obj
++$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
++	@for dep in $?; do \
++	  case '$(am__configure_deps)' in \
++	    *$$dep*) \
++	      ( cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh ) \
++	        && { if test -f $@; then exit 0; else break; fi; }; \
++	      exit 1;; \
++	  esac; \
++	done; \
++	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign ptexdir/lib/Makefile'; \
++	$(am__cd) $(top_srcdir) && \
++	  $(AUTOMAKE) --foreign ptexdir/lib/Makefile
++.PRECIOUS: Makefile
++Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
++	@case '$?' in \
++	  *config.status*) \
++	    cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh;; \
++	  *) \
++	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
++	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
++	esac;
++
++$(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
++	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++
++$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
++	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
++	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++$(am__aclocal_m4_deps):
++
++clean-noinstLIBRARIES:
++	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
++lib.a: $(lib_a_OBJECTS) $(lib_a_DEPENDENCIES) 
++	-rm -f lib.a
++	$(lib_a_AR) lib.a $(lib_a_OBJECTS) $(lib_a_LIBADD)
++	$(RANLIB) lib.a
++
++mostlyclean-compile:
++	-rm -f *.$(OBJEXT)
++
++distclean-compile:
++	-rm -f *.tab.c
++
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openclose.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/printversion.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usage.Po@am__quote@
++
++.c.o:
++@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
++@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(COMPILE) -c $<
++
++.c.obj:
++@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
++@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
++
++.c.lo:
++@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
++@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
++
++mostlyclean-libtool:
++	-rm -f *.lo
++
++clean-libtool:
++	-rm -rf .libs _libs
++
++ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
++	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
++	unique=`for i in $$list; do \
++	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
++	  done | \
++	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	      END { if (nonempty) { for (i in files) print i; }; }'`; \
++	mkid -fID $$unique
++tags: TAGS
++
++TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
++		$(TAGS_FILES) $(LISP)
++	set x; \
++	here=`pwd`; \
++	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
++	unique=`for i in $$list; do \
++	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
++	  done | \
++	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	      END { if (nonempty) { for (i in files) print i; }; }'`; \
++	shift; \
++	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
++	  test -n "$$unique" || unique=$$empty_fix; \
++	  if test $$# -gt 0; then \
++	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
++	      "$$@" $$unique; \
++	  else \
++	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
++	      $$unique; \
++	  fi; \
++	fi
++ctags: CTAGS
++CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
++		$(TAGS_FILES) $(LISP)
++	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
++	unique=`for i in $$list; do \
++	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
++	  done | \
++	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
++	      END { if (nonempty) { for (i in files) print i; }; }'`; \
++	test -z "$(CTAGS_ARGS)$$unique" \
++	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
++	     $$unique
++
++GTAGS:
++	here=`$(am__cd) $(top_builddir) && pwd` \
++	  && $(am__cd) $(top_srcdir) \
++	  && gtags -i $(GTAGS_ARGS) "$$here"
++
++distclean-tags:
++	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
++
++distdir: $(DISTFILES)
++	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
++	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
++	list='$(DISTFILES)'; \
++	  dist_files=`for file in $$list; do echo $$file; done | \
++	  sed -e "s|^$$srcdirstrip/||;t" \
++	      -e "s|^$$topsrcdirstrip/|$(top_builddir)/|;t"`; \
++	case $$dist_files in \
++	  */*) $(MKDIR_P) `echo "$$dist_files" | \
++			   sed '/\//!d;s|^|$(distdir)/|;s,/[^/]*$$,,' | \
++			   sort -u` ;; \
++	esac; \
++	for file in $$dist_files; do \
++	  if test -f $$file || test -d $$file; then d=.; else d=$(srcdir); fi; \
++	  if test -d $$d/$$file; then \
++	    dir=`echo "/$$file" | sed -e 's,/[^/]*$$,,'`; \
++	    if test -d "$(distdir)/$$file"; then \
++	      find "$(distdir)/$$file" -type d ! -perm -700 -exec chmod u+rwx {} \;; \
++	    fi; \
++	    if test -d $(srcdir)/$$file && test $$d != $(srcdir); then \
++	      cp -fpR $(srcdir)/$$file "$(distdir)$$dir" || exit 1; \
++	      find "$(distdir)/$$file" -type d ! -perm -700 -exec chmod u+rwx {} \;; \
++	    fi; \
++	    cp -fpR $$d/$$file "$(distdir)$$dir" || exit 1; \
++	  else \
++	    test -f "$(distdir)/$$file" \
++	    || cp -p $$d/$$file "$(distdir)/$$file" \
++	    || exit 1; \
++	  fi; \
++	done
++check-am: all-am
++check: check-am
++all-am: Makefile $(LIBRARIES)
++installdirs:
++install: install-am
++install-exec: install-exec-am
++install-data: install-data-am
++uninstall: uninstall-am
++
++install-am: all-am
++	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
++
++installcheck: installcheck-am
++install-strip:
++	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
++	  install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	  `test -z '$(STRIP)' || \
++	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
++mostlyclean-generic:
++
++clean-generic:
++
++distclean-generic:
++	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
++	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
++
++maintainer-clean-generic:
++	@echo "This command is intended for maintainers to use"
++	@echo "it deletes files that may require special tools to rebuild."
++clean: clean-am
++
++clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
++	mostlyclean-am
++
++distclean: distclean-am
++	-rm -rf ./$(DEPDIR)
++	-rm -f Makefile
++distclean-am: clean-am distclean-compile distclean-generic \
++	distclean-tags
++
++dvi: dvi-am
++
++dvi-am:
++
++html: html-am
++
++html-am:
++
++info: info-am
++
++info-am:
++
++install-data-am:
++
++install-dvi: install-dvi-am
++
++install-dvi-am:
++
++install-exec-am:
++
++install-html: install-html-am
++
++install-html-am:
++
++install-info: install-info-am
++
++install-info-am:
++
++install-man:
++
++install-pdf: install-pdf-am
++
++install-pdf-am:
++
++install-ps: install-ps-am
++
++install-ps-am:
++
++installcheck-am:
++
++maintainer-clean: maintainer-clean-am
++	-rm -rf ./$(DEPDIR)
++	-rm -f Makefile
++maintainer-clean-am: distclean-am maintainer-clean-generic
++
++mostlyclean: mostlyclean-am
++
++mostlyclean-am: mostlyclean-compile mostlyclean-generic \
++	mostlyclean-libtool
++
++pdf: pdf-am
++
++pdf-am:
++
++ps: ps-am
++
++ps-am:
++
++uninstall-am:
++
++.MAKE: install-am install-strip
++
++.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
++	clean-libtool clean-noinstLIBRARIES ctags distclean \
++	distclean-compile distclean-generic distclean-libtool \
++	distclean-tags distdir dvi dvi-am html html-am info info-am \
++	install install-am install-data install-data-am install-dvi \
++	install-dvi-am install-exec install-exec-am install-html \
++	install-html-am install-info install-info-am install-man \
++	install-pdf install-pdf-am install-ps install-ps-am \
++	install-strip installcheck installcheck-am installdirs \
++	maintainer-clean maintainer-clean-generic mostlyclean \
++	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
++	pdf pdf-am ps ps-am tags uninstall uninstall-am
++
++
++@KPATHSEA_RULE@
++
++# Tell versions [3.59,3.63) of GNU make to not export all variables.
++# Otherwise a system limit (for SysV at least) may be exceeded.
++.NOEXPORT:
+Index: lib/printversion.c
+===================================================================
+--- ptex-src-3.1.11.orig/lib/printversion.c
++++ ptex-src-3.1.11/lib/printversion.c
+@@ -1,9 +1,11 @@
+ /* printversion.c: Output for the standard GNU option --version.
++   Derived from ../../lib/printversion.c.
+ 
+    Written in 1996 by Karl Berry.  Public domain.  */
+ 
+ #include "config.h"
+-#include "lib.h"
++#include "../../lib/lib.h"
++#include "../kanji.h"
+ 
+ /* We're passed in the original WEB banner string, which has the form
+ This is PROGRAM, Version VERSION-NUMBER
+@@ -32,14 +34,17 @@
+   assert (prog_name_end && prog_version);
+   prog_version++;
+   
++  /* attention: strlen(s)+1 = sizeof(s) */
+   len = prog_name_end - banner - sizeof ("This is");
+   prog_name = (string)xmalloc (len + 1);
+   strncpy (prog_name, banner + sizeof ("This is"), len);
+   prog_name[len] = 0;
+ 
+   /* The Web2c version string starts with a space.  */
+-  printf ("%s %s%s\n", prog_name, prog_version, versionstring);
++  printf ("%s %s (%s)%s\n", prog_name, prog_version, get_enc_string(),
++          versionstring);
+   puts (kpathsea_version_string);
++  puts (ptexenc_version_string);
+ 
+   if (copyright_holder) {
+     printf ("Copyright 2009 %s.\n", copyright_holder);
+@@ -59,5 +64,6 @@
+     puts (extra_info);
+   }
+ 
++  free (prog_name); /* lost in lib/printversion.c */
+   uexit (0);
+ }
+Index: lib/usage.c
+===================================================================
+--- ptex-src-3.1.11.orig/lib/usage.c
++++ ptex-src-3.1.11/lib/usage.c
+@@ -1,4 +1,5 @@
+ /* usage.c: Output a help message (from help.h).
++   Derived from ../../lib/usage.c.
+ 
+    Modified in 2001 by O. Weber.
+    Written in 1995 by K. Berry.  Public domain.  */
+@@ -25,7 +26,7 @@
+ usagehelp (const_string *message, const_string bug_email)
+ {
+     if (!bug_email)
+-        bug_email = "tex-k@mail.tug.org";
++        bug_email = "ptex-staff@ml.asciimw.jp";
+     while (*message) {
+         printf("%s\n", *message);
+         ++message;
+Index: lib/openclose.c
+===================================================================
+--- ptex-src-3.1.11.orig/lib/openclose.c
++++ ptex-src-3.1.11/lib/openclose.c
+@@ -1,18 +1,20 @@
+ /* openclose.c: open and close files for TeX, Metafont, and BibTeX.
++   Derived from ../../lib/openclose.c.
+ 
+    Written 1995, 96 Karl Berry.  Public domain.  */
+ 
+ #include "config.h"
+-#include "lib.h"
++#include "../../lib/lib.h"
+ #include <kpathsea/c-pathch.h>
+ #include <kpathsea/tex-file.h>
+ #include <kpathsea/variable.h>
+ #include <kpathsea/absolute.h>
++#include <ptexenc/ptexenc.h>
+ 
+ /* The globals we use to communicate.  */
+ extern string nameoffile;
+ extern unsigned namelength;
+-/* For "file:line:error style error messages. */
++/* For "file:line:error" style error messages. */
+ extern string fullnameoffile;
+ /* For the filename recorder. */
+ extern boolean recorder_enabled;
+@@ -186,7 +188,12 @@
+                 free (fname);
+ 
+                 /* This fopen is not allowed to fail. */
++                if (filefmt == kpse_tex_format ||
++                    filefmt == kpse_bib_format) {
++                    *f_ptr = nkf_open (nameoffile + 1, fopen_mode);
++                } else {
+                 *f_ptr = xfopen (nameoffile + 1, fopen_mode);
++                }
+             }
+         }
+     }
+@@ -270,7 +277,7 @@
+   if (!f)
+     return;
+     
+-  if (fclose (f) == EOF) {
++  if (nkf_close (f) == EOF) {
+     /* It's not always nameoffile, we might have opened something else
+        in the meantime.  And it's not easy to extract the filenames out
+        of the pool array.  So just punt on the filename.  Sigh.  This
+Index: lib/Makefile.am
+===================================================================
+--- ptex-src-3.1.11.orig/lib/Makefile.am
++++ ptex-src-3.1.11/lib/Makefile.am
+@@ -0,0 +1,19 @@
++## Makefile.am for the TeX Live subdirectory texk/web2c/ptexdir/lib/
++##
++## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
++## You may freely use, modify and/or distribute this file.
++##
++INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
++AM_CFLAGS = $(WARNING_CFLAGS)
++
++## Rebuild libkpathsea
++@KPATHSEA_RULE@
++
++noinst_LIBRARIES = lib.a
++
++## We don't compile `texmfmp.c'; this file is converted into 'texextra.c'
++## for TeX, 'mfextra.c' for Metafont, 'mfextra.c' for MetaPost, ...
++lib_a_SOURCES = \
++	openclose.c \
++	printversion.c \
++	usage.c
+Index: pbibtex.defines
+===================================================================
+--- ptex-src-3.1.11.orig/pbibtex.defines
++++ ptex-src-3.1.11/pbibtex.defines
+@@ -1,3 +1,4 @@
+-@define function inputline();
+-@define procedure initkanji;
+-@define const JBIBTEXHELP;
++@define function inputline3();
++@define const PBIBTEXHELP;
++@define function getencstring;
++@define function setencstring ();
+Index: kanji.c
+===================================================================
+--- ptex-src-3.1.11.orig/kanji.c
++++ ptex-src-3.1.11/kanji.c
+@@ -1,48 +1,50 @@
+ /*
+  *  KANJI Code conversion routines.
++ *  (for ptex only)
+  */
+ 
+-#define KANJI_C
+ #include "kanji.h"
+ 
+-boolean iskanji1(c)
+-  unsigned char c;
++/* FIXME:  why not boolean value */
++boolean check_kanji(integer c)
+ {
+-    c &= 0xff;
+-	if (prockanjicode == SJIS)
+-      return((c>=0x81 && c<=0x9f) || (c>=0xe0 && c<=0xfc));
+-	else
+-      return(c>=0xa1 && c<=0xfe);
++    /* FIXME:  why not 255 (0xff) */
++    if (0 <= c && c <= 256) return -1;  /* ascii without catcode */
++    if (iskanji1(Hi(c)) && iskanji2(Lo(c))) return 1;
++    return 0;  /* ascii with catcode */
+ }
+ 
+-boolean iskanji2(c)
+-  unsigned char c;
++boolean is_kanji(integer c)
+ {
+-    c &= 0xff;
+-	if (prockanjicode == SJIS)
+-      return(c>=0x40 && c<=0xfc && c!=0x7f);
+-	else
+-      return(c>=0xa1 && c<=0xfe);
++    return (iskanji1(Hi(c)) && iskanji2(Lo(c)));
+ }
+ 
+-boolean checkkanji(c)
+-  integer c;
++boolean is_char_ascii(integer c)
+ {
+-    if(c<0 || c>256)
+-        return(iskanji1(c>>8) && iskanji2(c & 0xff));
+-    return(-1);
++    return (0 <= c && c < 0x100);
+ }
+ 
++boolean is_wchar_ascii(integer c)
++{
++    return (!is_char_ascii(c) && !is_kanji(c));
++}
++
++boolean ismultiprn(integer c)
++{
++    if (iskanji1(c) || iskanji2(c)) return true;
++    return false;
++}
++
+ #ifdef OLDSTYLE
+-integer calcpos(c)
++integer calc_pos(integer c)
+ {
+-    register int c1, c2;
++    int c1, c2;
+ 
+     if(c<256) return(c<<1);
+     c1 = c>>8;
+     c2 = c & 0xff;
+     if(c1) {
+-		if (prockanjicode == SJIS)
++		if (is_internalSJIS()) 
+ 			return((c2+(c2<<(c1-0x81)) & 0xff)<<1);
+ 		else
+ 			return((c2+(c2<<(c1-0xa1)) & 0xff)<<1);
+@@ -50,17 +52,15 @@
+         return(((c2+c2+1) & 0xff)<<1);
+ }
+ #else /* OLDSTYLE */
+-integer calcpos(c)
+-    integer c;
++integer calc_pos(integer c)
+ {
+-    register unsigned char c1, c2;
+-	integer ret;
++    unsigned char c1, c2;
+ 
+     if(c>=0 && c<=255) return(c);
+     c1 = (c >> 8) & 0xff;
+     c2 = c & 0xff;
+     if(iskanji1(c1)) {
+-		if (prockanjicode == SJIS) {
++		if (is_internalSJIS()) {
+ 			c1 = ((c1 - 0x81) % 4) * 64;  /* c1 = 0, 64, 128, 192 */
+ 			c2 = c2 % 64;                 /* c2 = 0..63 */
+ 		} else {
+@@ -73,161 +73,7 @@
+ }
+ #endif /* OLDSTYLE */
+ 
+-/*
+- *  EUC to JIS X0208 code conversion
+- */
+-integer EUCtoJIS(kcode)
+-  integer kcode;
++integer kcatcodekey(integer c)
+ {
+-    return(kcode & 0x7f7f);
++    return Hi(toDVI(c));
+ }
+-
+-/*
+- *  JIS X0208 to EUC code conversion
+- */
+-integer JIStoEUC(kcode)
+-  integer kcode;
+-{
+-    return(kcode | 0x8080);
+-}
+-
+-/*
+- *  SJIStoJIS : Shift JIS to JIS Kanji code conversion
+- */
+-integer SJIStoJIS(kcode)
+-  integer kcode;
+-{
+-    register short  byte1, byte2;
+-
+-    byte1 = (kcode>>8) & 0xff;
+-    byte2 = kcode & 0xff;
+-    byte1 -= ( byte1>=0xa0 ) ? 0xc1 : 0x81;
+-    kcode = ((byte1<<1) + 0x21)<<8;
+-    if( byte2>=0x9f ) {
+-        kcode += 0x0100;
+-        kcode |= (byte2 - 0x7e) & 0xff;
+-    } else {
+-        kcode |= (byte2 - ((byte2<=0x7e) ? 0x1f : 0x20 )) & 0xff;
+-    }
+-    return(kcode);
+-}
+-
+-/*
+- *  JIS X0208 to Shift JIS code conversion
+- */
+-integer JIStoSJIS(kcode)
+-  integer kcode;
+-{
+-    register integer high, low;
+-    register integer   nh,  nl;
+-
+-    high = (kcode>>8) & 0xff;
+-    low = kcode & 0xff;
+-    nh = ((high-0x21)>>1) + 0x81;
+-    if (nh>0x9f) nh += 0x40;
+-    if (high & 1) {
+-        nl = low + 0x1f;
+-        if (low>0x5f) nl++;
+-    } else
+-        nl = low + 0x7e;
+-    if(iskanji1(nh) && iskanji2(nl))
+-        return((nh<<8) | nl);
+-    else
+-        return(0x813f);
+-}
+-
+-/*
+- *  Shift JIS to EUC Kanji code conversion
+- */
+-integer SJIStoEUC(kcode)
+-  integer kcode;
+-{
+-    return(SJIStoJIS(kcode) | 0x8080 );
+-}
+-
+-/*
+- * EUC to SJIS Kanji code conversion
+- */
+-integer EUCtoSJIS(kcode)
+-  integer kcode;
+-{
+-    return(JIStoSJIS(kcode & 0x7f7f));
+-}
+-
+-/*
+- *  KUTEN to JIS kanji code conversion
+- */
+-integer kuten2jis(kcode)
+-  integer kcode;
+-{
+-    register short  byte1, byte2;
+-
+-    byte1 = (kcode>>8) & 0xff;
+-    byte2 = kcode & 0xff;
+-
+-    /* in case of undefined in kuten code table */
+-    if (byte1 == 0 || byte1 > 95 || byte2 == 0 || byte2 > 95)
+-        return(-1);
+-
+-    byte1 += 0x20;
+-    byte2 += 0x20;
+-
+-    return (byte1<<8 | byte2);
+-}
+-
+-/*
+- *  KUTEN to EUC Kanji code conversion
+- */
+-integer KUTENtoEUC(kcode)
+-  integer kcode;
+-{
+-    return(JIStoEUC(kuten2jis(kcode)));
+-}
+-
+-/*
+- *  KUTENtoSJIS Kanji code conversion
+- */
+-integer KUTENtoSJIS(kcode)
+-  integer kcode;
+-{
+-    return(JIStoSJIS(kuten2jis(kcode)));
+-}
+-
+-void putc2(c, fp)
+-  unsigned char c;
+-  FILE *fp;
+-{
+-	static integer kanji[NOFILE];
+-	static unsigned char c1[NOFILE];
+-	integer jc;
+-	register fd;
+-
+-	fd = fileno(fp);
+-	if (kanji[fd] == 1) {
+-		jc = (c1[fd] << 8) | c;
+-		if (prockanjicode == JIS) jc = EUCtoJIS(jc);
+-		(void) putc(jc >> 8, fp);
+-		(void) putc(jc & 0xff, fp);
+-		kanji[fd] = 2;
+-	} else if (iskanji1(c)) {
+-		if (kanji[fd] == 0) {
+-			if (prockanjicode == JIS) {
+-				(void) putc('\033', fp);
+-				(void) putc('$', fp);
+-				(void) putc('B', fp);
+-			}
+-		}
+-		c1[fd] = c;
+-		kanji[fd] = 1;
+-	} else {
+-		if (kanji[fd] == 2) {
+-			if (prockanjicode == JIS) {
+-				(void) putc('\033', fp);
+-				(void) putc('(', fp);
+-				(void) putc('B', fp);
+-			}
+-			kanji[fd] = 0;
+-		}
+-		(void) putc(c, fp);
+-	}
+-}

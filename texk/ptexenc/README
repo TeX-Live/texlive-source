@@ -1,0 +1,100 @@
+ //=========\\
+||  ptexenc  ||
+ \\=========//
+
+1. What is `ptexenc'?
+
+  `ptexenc' is a useful library for Japanese pTeX
+(which stands for publishing TeX, and is an extension of
+TeX by ASCII Co.) and its surrounding tools.
+`ptexenc' provides a better way of handling character encodings.
+
+  `ptexenc' is not an official product of ASCII Co.,
+so pTeX and other tools need some patches to make use of it.
+Some patches are included within this archive.
+
+  `ptexenc' was derived from pTeX first,
+and then added some extensions by N. Tsuchimura
+with help of T. Tanaka.
+Its license is modified BSD (same as pTeX).
+
+------------------------------------------------------------
+
+2. Outline
+
+  Typically, we need TeX Live 2008 to install `ptexenc.'
+`ptexenc' depends on kpathsea and the directory structure
+of TeX Live 2008.
+
+  As `ptexenc' is a mere library,
+application users will not be conscious of it,
+but software developers will be blessed with it.  
+It's because they can simplify the sources
+with separating the character coding operation.
+However, many applications do not have `ptexenc' support now,
+we supply patches to the following software as examples:
+-- ftp://ftp.ascii.co.jp/pub/TeX/ascii-ptex/tetex/ptex-src-3.1.11.tar.gz
+-- ftp://ftp.ascii.co.jp/pub/TeX/ascii-ptex/mendex/mendexk2.6f.tar.gz
+-- ftp://ftp.ascii.co.jp/pub/TeX/ascii-ptex/jvf/makejvf-1.1a.tar.gz
+  (Note: Some of them are distributed via CTAN,
+   but the CTAN version tends to be old.) 
+
+  The patches included in this archive provide `autoconf'
+support, too.  This means that installation processes
+of those applications are unified, though the installation
+processes will differ from the originally documented ones.
+
+  Note: Officially, pTeX stands on the basis of teTeX-3.0,
+but not on the basis of TeX Live 2008.  We solve this problem,
+i.e., this archive includes a patch on pTeX which adapts
+pTeX to TeX Live 2008.
+
+------------------------------------------------------------
+
+3. How to install
+
+(1) Extract `texlive-20080816-source.tar.lzma' of TeX Live 2008.
+
+(2) Extract ptexenc-*.tar.lzma and ptex-src-*.tar.gz, etc.
+    Rename their directory names exactly as bellow.
+
+  texk/ptexenc         <= ptexenc-*
+  texk/web2c/ptexdir   <= ptex-src-*
+  texk/mendexk         <= mendexk*  (optional)
+  texk/makejvf         <= makejvf-* (optional)
+
+(3) Excute "./ptexenc/patches/texlive2008.sh" in "texk"
+    to apply patches under 'texk/ptexenc/patches' directory.
+    The following patches will be applied.
+ -- texlive2008-ptexenc.patch
+ -- ptex-src-3.1.11-ptexenc.patch
+ -- mendexk2.6f-ptexenc.patch
+ -- makejvf-1.1a-ptexenc.patch
+    (Note: jmpost-0.04b-ptexenc.patch doesn't work now.)
+
+(4) Excute "./Build" script as normal TeX Live 2008.
+
+(5) (optional) Specify your "nkf" command in the last line of
+    "$TEXMF/web2c/texmf.cnf" to enable automatic encoding detection.
+
+(6) Extract ptex-texmf-*.tar.gz under $TEXMF.
+ -- ftp://ftp.ascii.co.jp/pub/TeX/ascii-ptex/tetex/ptex-texmf-2.5.tar.gz
+    (Note: The current version of ptex-texmf-2.5.tar.gz contains
+     an extra directory "ptex-texmf". This should be removed.)
+
+------------------------------------------------------------
+
+4. Web sites
+
+'ptexenc'
+http://tutimura.ath.cx/~nob/tex/ptexlive/
+http://tutimura.ath.cx/ptexlive/?ptexenc%2FDetails
+
+Japanese pTeX (ASCII MEDIA WORKS)
+http://ascii.asciimw.jp/pb/ptex/
+ftp://ftp.ascii.co.jp/pub/TeX/ascii-ptex/
+
+pTeX and Japanese typesetting (by Prof. Okumura)
+http://oku.edu.mie-u.ac.jp/~okumura/texfaq/japanese/ptex.html
+
+------------------------------------------------------------

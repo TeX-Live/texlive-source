@@ -1,0 +1,200 @@
+## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
+##
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## pTeX
+##
+if PTEX
+bin_PROGRAMS += ptex pbibtex pdvitype ptftopl ppltotf
+endif PTEX
+EXTRA_PROGRAMS += ptex
+
+ptex_CPPFLAGS = $(PTEXENC_INCLUDES)
+ptex_CFLAGS = $(WARNING_CFLAGS)
+
+# With --enable-ipc, pTeX may need to link with -lsocket.
+ptex_LDADD     = $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs)
+pbibtex_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+ptftopl_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+ppltotf_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+pdvitype_LDADD = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+
+SUBDIRS += ptexdir/lib
+pproglib = ptexdir/lib/lib.a
+# Rebuild $(pproglib)
+$(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/ptexdir/lib/*.c
+	cd ptexdir/lib && $(MAKE) $(AM_MAKEFLAGS)
+
+# pTeX C sources
+ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
+nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h ptexdir/kanji.c ptexdir/kanji.h
+
+# We must create ptexd.h before building the ptex_OBJECTS.
+ptex_prereq = ptexd.h
+$(ptex_OBJECTS): $(ptex_prereq)
+
+$(ptex_c_h): ptex-web2c
+	@$(web2c) ptex
+ptex-web2c: ptex.p $(web2c_texmf)
+	@$(web2c) ptex
+
+ptex-pool.c: ptex.pool ptexd.h $(makecpool_stamp)
+	$(makecpool) ptex >$@ || rm -f $@
+
+ptexextra.c: ptexdir/ptexextra.h lib/texmfmp.c ptexd.h
+	sed s/TEX-OR-MF-OR-MP/ptex/ $(srcdir)/lib/texmfmp.c >$@
+
+ptexdir/ptexextra.h: ptexdir/ptexextra.in ptexdir/ptex.version
+	sed s/PTEX-VERSION/`cat ptexdir/ptex.version`/ \
+	  $(srcdir)/ptexdir/ptexextra.in >$@
+
+# Tangling pTeX
+ptex.p ptex.pool: ptex-tangle
+	@$(texmf_tangle) ptex ptex
+ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
+	@$(texmf_tangle) ptex ptex
+
+# Extract ptex version
+ptexdir/ptex.version: ptexdir/ptex-base.ch
+	$(MKDIR_P) ptexdir/lib
+	grep "^@d TeX_banner=='This is pTeX" $(srcdir)/ptexdir/ptex-base.ch \
+	  | sed "s/^.*-//;s/'.*$$//" >ptexdir/ptex.version
+
+# Generate ptex.web
+ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
+	$(tie) -m ptex.web $(ptex_web_srcs)
+ptex_web_srcs = \
+	tex.web \
+	tex.ch
+
+# Generate ptex.ch
+ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
+	$(tie) -c ptex.ch ptex.web $(ptex_ch_srcs)
+ptex_ch_srcs = \
+	$(ptex_ch_synctex) \
+	ptexdir/ptex-base.ch \
+	ptexdir/ptex-include.ch \
+	tex-binpool.ch
+
+### pBibTeX
+nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
+pbibtex.c pbibtex.h: pbibtex-web2c
+pbibtex.o: pbibtex.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
+pbibtex-web2c: $(web2c_depend) web2c/cvtbib.sed pbibtex.p
+	$(web2c) pbibtex
+	echo timestamp >$@
+	touch pbibtex.c pbibtex.h
+pbibtex.p: tangle$(EXEEXT) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
+	$(tangle) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
+pbibtex.web: $(srcdir)/bibtex.web
+	#cat  $(srcdir)/bibtex.web > $@
+	cat  $(srcdir)/pbibtex.web > $@
+
+### pDVItype
+nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
+pdvitype_CPPFLAGS = -DDHEX_CHAR_CODE
+pdvitype.c pdvitype.h: pdvitype-web2c
+pdvitype.o: pdvitype.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
+pdvitype-web2c: $(web2c_depend) pdvitype.p
+	$(web2c) pdvitype
+	echo timestamp >$@
+	touch pdvitype.c pdvitype.h
+pdvitype.p: tangle$(EXEEXT) pdvitype.web $(srcdir)/ptexdir/pdvitype.ch
+	$(tangle) pdvitype $(srcdir)/ptexdir/pdvitype
+pdvitype.web: $(srcdir)/dvitype.web
+	cat   $(srcdir)/dvitype.web > $@
+
+### pTFtoPL
+nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
+ptftopl.c ptftopl.h: ptftopl-web2c
+ptftopl.o: ptftopl.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
+ptftopl-web2c: $(web2c_depend) ptftopl.p
+	$(web2c) ptftopl
+	echo timestamp >$@
+	touch ptftopl.c ptftopl.h
+ptftopl.p: tangle$(EXEEXT) ptftopl.web $(srcdir)/ptexdir/ptftopl.ch
+	$(tangle) ptftopl.web $(srcdir)/ptexdir/ptftopl.ch
+ptftopl.web: tie$(EXEEXT)     $(srcdir)/tftopl.web $(srcdir)/tftopl.ch
+	$(tie) -m ptftopl.web $(srcdir)/tftopl.web $(srcdir)/tftopl.ch
+
+### pPLtoTF
+nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
+ppltotf_CPPFLAGS = -DPRESERVE_PUTC
+ppltotf.c ppltotf.h: ppltotf-web2c
+pppltotf.o: pppltotf.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
+ppltotf-web2c: $(web2c_depend) ppltotf.p
+	$(web2c) ppltotf
+	echo timestamp >$@
+	touch ppltotf.c ppltotf.h
+ppltotf.p: tangle$(EXEEXT) ppltotf.web $(srcdir)/ptexdir/ppltotf.ch
+	$(tangle) ppltotf.web $(srcdir)/ptexdir/ppltotf
+ppltotf.web: tie$(EXEEXT)     $(srcdir)/pltotf.web $(srcdir)/pltotf.ch
+	$(tie) -m ppltotf.web $(srcdir)/pltotf.web $(srcdir)/pltotf.ch
+
+
+##
+EXTRA_DIST += $(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptexextra.in \
+	lib/texmfmp.c tmf-pool.h
+
+DISTCLEANFILES += $(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c \
+	ptex.p ptex.pool ptex-tangle ptexdir/ptex.version
+
+EXTRA_DIST += \
+	ptexdir/ChangeLog \
+	ptexdir/INSTALL \
+	ptexdir/README \
+	ptexdir/ptex_gen.tex
+
+# pTeX Tests
+#
+ptex_tests = ptexdir/ptrip.test
+
+EXTRA_DIST += $(ptex_tests)
+
+if PTEX
+TESTS += $(ptex_tests)
+check_PROGRAMS += pdvitype ppltotf ptftopl
+TRIPTRAP += ptrip.diffs
+endif PTEX
+DISTCLEANFILES += ptrip.diffs
+
+.PHONY: ptrip-clean
+clean-local:: ptrip-clean
+# ptrip.test
+ptrip-clean:
+	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
+	rm -f ctrip.fot ctrip.log trip.dvi ctrip.typ
+	rm -f xtripin.fot xtripin.log
+	rm -f xtrip.fot xtrip.log xtrip.typ
+	rm -f ptrip.tfm ptrip.pl ptrip.tex ptrip.fmt ptripin.fot ptripin.log
+	rm -f ptrip.fot ptrip.log ptrip.dvi ptrip.out ptrip.typ
+	rm -f tripos.tex 8terminal.tex
+	rm -rf tfm
+
+## Test data
+##
+EXTRA_DIST += \
+	ptexdir/ptrip/ptrip.diffs \
+	ptexdir/ptrip/ptrip.fot \
+	ptexdir/ptrip/ptrip.log \
+	ptexdir/ptrip/ptrip.out \
+	ptexdir/ptrip/ptrip.pl \
+	ptexdir/ptrip/ptrip.tex \
+	ptexdir/ptrip/ptrip.typ \
+	ptexdir/ptrip/ptrip1.in \
+	ptexdir/ptrip/ptrip2.in \
+	ptexdir/ptrip/ptrip3.in \
+	ptexdir/ptrip/ptripin.log \
+	ptexdir/ptrip/ptripman.tex \
+	ptexdir/ptrip/texmf.cnf \
+	ptexdir/ptrip/trip2.in
+
+## Not used
+##
+EXTRA_DIST += ptexdir/ptex.mak
+
+## Eventually delete these files
+##
+EXTRA_DIST += ptexdir/ptex.mk
+
