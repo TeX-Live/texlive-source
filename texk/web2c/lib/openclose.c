@@ -1,6 +1,6 @@
 /* openclose.c: open and close files for TeX, Metafont, and BibTeX.
 
-   Written 1995, 96 Karl Berry.  Public domain.  */
+   Written 1995 Karl Berry.  Public domain.  */
 
 #include "config.h"
 #include "lib.h"
@@ -47,7 +47,7 @@ recorder_start(void)
     char pid_str[MAX_INT_LENGTH];
     sprintf (pid_str, "%ld", (long) pid);
     
-    recorder_name = (string)xmalloc(strlen(kpse_program_name)
+    recorder_name = xmalloc(strlen(kpse_program_name)
                                     + strlen (pid_str) + 5);
     strcpy(recorder_name, kpse_program_name);
     strcat(recorder_name, pid_str);
@@ -139,7 +139,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
         if (*f_ptr) {
             free (nameoffile);
             namelength = strlen (fname);
-            nameoffile = (string) xmalloc (namelength + 2);
+            nameoffile = xmalloc (namelength + 2);
             strcpy (nameoffile + 1, fname);
             fullnameoffile = fname;
         } else {
@@ -186,7 +186,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
                 /* kpse_find_file always returns a new string. */
                 free (nameoffile);
                 namelength = strlen (fname);
-                nameoffile = (string)xmalloc (namelength + 2);
+                nameoffile = xmalloc (namelength + 2);
                 strcpy (nameoffile + 1, fname);
                 free (fname);
 
@@ -257,7 +257,7 @@ open_output (FILE **f_ptr, const_string fopen_mode)
         if (fname != nameoffile + 1) {
             free (nameoffile);
             namelength = strlen (fname);
-            nameoffile = (string)xmalloc (namelength + 2);
+            nameoffile = xmalloc (namelength + 2);
             strcpy (nameoffile + 1, fname);
         }
         recorder_record_output (fname);

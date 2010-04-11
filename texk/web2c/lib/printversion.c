@@ -31,7 +31,7 @@ printversionandexit (const_string banner,
   prog_version++;
   
   len = prog_name_end - banner - sizeof ("This is");
-  prog_name = (string)xmalloc (len + 1);
+  prog_name = xmalloc (len + 1);
   strncpy (prog_name, banner + sizeof ("This is"), len);
   prog_name[len] = 0;
 

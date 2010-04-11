@@ -158,12 +158,12 @@ mk_shellcmdlist (const char *v)
   }
   if (*q)
     n++;
-  cmdlist = (char **) xmalloc ((n + 1) * sizeof (char *));
+  cmdlist = xmalloc ((n + 1) * sizeof (char *));
   p = cmdlist;
   q = v;
   while ((r = strchr (q, ',')) != 0) {
     *r = '\0';
-    *p = (char *) xmalloc (strlen (q) + 1);
+    *p = xmalloc (strlen (q) + 1);
     strcpy (*p, q);
     *r = ',';
     r++;
@@ -171,7 +171,7 @@ mk_shellcmdlist (const char *v)
     p++;
   }
   if (*q) {
-    *p = (char *) xmalloc (strlen (q) + 1);
+    *p = xmalloc (strlen (q) + 1);
     strcpy (*p, q);
     p++;
     *p = NULL;
@@ -277,7 +277,7 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
 
   /* pre == 1 means that the previous character is a white space
      pre == 0 means that the previous character is not a white space */
-  buf = (char *) xmalloc (strlen (cmd) + 1);
+  buf = xmalloc (strlen (cmd) + 1);
   strcpy (buf, cmd);
   c = buf;
   while (Isspace (*c))
@@ -317,9 +317,9 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
 
     /* allocate enough memory (too much?) */
 #ifdef WIN32
-    *safecmd = (char *) xmalloc (2 * strlen (cmd) + 3 + 2 * spaces);
+    *safecmd = xmalloc (2 * strlen (cmd) + 3 + 2 * spaces);
 #else
-    *safecmd = (char *) xmalloc (strlen (cmd) + 3 + 2 * spaces);
+    *safecmd = xmalloc (strlen (cmd) + 3 + 2 * spaces);
 #endif
 
     /* make a safe command line *safecmd */
@@ -1059,7 +1059,7 @@ ipcpage (int is_eof)
     len = strstartar[outputfilename + 1 - 65536L] -
             strstartar[outputfilename - 65536L];
 #endif
-    name = (string)xmalloc (len + 1);
+    name = xmalloc (len + 1);
 #if !defined(Aleph)
     strncpy (name, (string)&strpool[strstart[outputfilename]], len);
 #else
@@ -1218,7 +1218,7 @@ normalize_quotes (const_string name, const_string mesg)
             len += 2; /* this could sometimes add length we don't need */
         }
     }
-    ret = (string)xmalloc(len + 1);
+    ret = xmalloc(len + 1);
     p = ret;
     if (must_quote) {
         if (quote_char == 0)
@@ -1247,7 +1247,7 @@ normalize_quotes (const_string name, const_string mesg)
     boolean quoted = false;
     boolean must_quote = (strchr(name, ' ') != NULL);
     /* Leave room for quotes and NUL. */
-    string ret = (string)xmalloc(strlen(name)+3);
+    string ret = xmalloc(strlen(name)+3);
     string p;
     const_string q;
     p = ret;
@@ -1449,7 +1449,7 @@ parse_options (int argc, string *argv)
       } else {
         WARNING2 ("Comment truncated to 255 characters from %d. (%s)",
                   len, optarg);
-        outputcomment = (string) xmalloc (256);
+        outputcomment = xmalloc (256);
         strncpy (outputcomment, optarg, 255);
         outputcomment[255] = 0;
       }
@@ -1723,7 +1723,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
     if (shellenabledp && *(nameoffile+1) == '|') {
       /* the user requested a pipe */
       *f_ptr = NULL;
-      fname = (string)xmalloc(strlen((const_string)(nameoffile+1))+1);
+      fname = xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
 #if !defined(pdfTeX)
       if (fullnameoffile)
@@ -1740,7 +1740,7 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
         }
       }
       if (*f_ptr)
-        setvbuf (*f_ptr,(char *)NULL,_IOLBF,0);
+        setvbuf (*f_ptr,NULL,_IOLBF,0);
 
       return *f_ptr != NULL;
     }
@@ -1763,7 +1763,7 @@ open_out_or_pipe (FILE **f_ptr, const_string fopen_mode)
 	
     if (shellenabledp && *(nameoffile+1) == '|') {
       /* the user requested a pipe */
-      fname = (string)xmalloc(strlen((const_string)(nameoffile+1))+1);
+      fname = xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
       if (strchr (fname,' ')==NULL && strchr(fname,'>')==NULL) {
         /* mp and mf currently do not use this code, but it 
@@ -1786,7 +1786,7 @@ open_out_or_pipe (FILE **f_ptr, const_string fopen_mode)
       }
 
       if (*f_ptr)
-        setvbuf(*f_ptr,(char *)NULL,_IOLBF,0);
+        setvbuf(*f_ptr,NULL,_IOLBF,0);
 
       return *f_ptr != NULL;
     }
@@ -2038,7 +2038,7 @@ calledit (packedASCIIcode *filename,
 
   /* Construct the command string.  The `11' is the maximum length an
      integer might be.  */
-  command = (string) xmalloc (strlen (edit_value) + fnlength + 11);
+  command = xmalloc (strlen (edit_value) + fnlength + 11);
 
   /* So we can construct it as we go.  */
   temp = command;
@@ -2339,7 +2339,8 @@ gettexstring (strnumber s)
   poolpointer len, i, j;
   string name;
   len = strstart[s + 1 - 65536L] - strstart[s - 65536L];
-  name = (string)xmalloc(len * 3 + 1); /* max UTF16->UTF8 expansion (code units, not bytes) */
+  name = xmalloc(len * 3 + 1); /* max UTF16->UTF8 expansion
+                                  (code units, not bytes) */
   for (i = 0, j = 0; i < len; i++) {
     unsigned c = strpool[i + strstart[s - 65536L]];
     if (c >= 0xD800 && c <= 0xDBFF) {

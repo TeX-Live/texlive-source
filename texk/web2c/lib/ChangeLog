@@ -1,3 +1,12 @@
+2010-04-11  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c,
+	* printversion.c,
+	* openclose.c,
+	* chartostring.c,
+	* basechsuffix.c: remove useless casts to (string) or (char *),
+	etc. of xmalloc.
+
 2010-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* openclose.c (open_input): Fixed a typo.

@@ -34,7 +34,7 @@ basenamechangesuffix (const_string name,  const_string old_suffix,
     }
   }
   
-  answer = (string)xmalloc (copy_limit + strlen (new_suffix) + 1);
+  answer = xmalloc (copy_limit + strlen (new_suffix) + 1);
   strncpy (answer, base, copy_limit);
   answer[copy_limit] = 0;
   strcat (answer, new_suffix);
