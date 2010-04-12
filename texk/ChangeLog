@@ -945,7 +945,7 @@ Thu Feb 24 13:54:36 1994  Karl Berry  (karl@cs.umb.edu)
 
 Mon Feb 21 13:32:30 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * Makefile.in (triptrap ...): Defpend on do-kpathsea, to help
+        * Makefile.in (triptrap ...): Depend on do-kpathsea, to help
         propagate the paths. From Martyn.
 
         * configure.in: Merge srcdir ==/!= . cases.

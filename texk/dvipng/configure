@@ -2183,11 +2183,11 @@ else
        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 $ac_includes_default
-	     enum { N = $2 / 2 - 1 };
 int
 main ()
 {
-static int test_array [1 - 2 * !(0 < ($ac_type) ((((($ac_type) 1 << N) << N) - 1) * 2 + 1))];
+static int test_array [1 - 2 * !(enum { N = $2 / 2 - 1 };
+	     0 < ($ac_type) ((((($ac_type) 1 << N) << N) - 1) * 2 + 1))];
 test_array [0] = 0
 
   ;
@@ -2198,11 +2198,11 @@ if ac_fn_c_try_compile "$LINENO"; then :
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 $ac_includes_default
-	        enum { N = $2 / 2 - 1 };
 int
 main ()
 {
-static int test_array [1 - 2 * !(($ac_type) ((((($ac_type) 1 << N) << N) - 1) * 2 + 1)
+static int test_array [1 - 2 * !(enum { N = $2 / 2 - 1 };
+		($ac_type) ((((($ac_type) 1 << N) << N) - 1) * 2 + 1)
 		 < ($ac_type) ((((($ac_type) 1 << N) << N) - 1) * 2 + 2))];
 test_array [0] = 0
 
@@ -13260,7 +13260,6 @@ int
 main ()
 {
   char *data, *data2, *data3;
-  const char *cdata2;
   int i, pagesize;
   int fd, fd2;
 
@@ -13285,10 +13284,10 @@ main ()
   fd2 = open ("conftest.txt", O_RDWR | O_CREAT | O_TRUNC, 0600);
   if (fd2 < 0)
     return 4;
-  cdata2 = "";
-  if (write (fd2, cdata2, 1) != 1)
+  data2 = "";
+  if (write (fd2, data2, 1) != 1)
     return 5;
-  data2 = (char *) mmap (0, pagesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0L);
+  data2 = mmap (0, pagesize, PROT_READ | PROT_WRITE, MAP_SHARED, fd2, 0L);
   if (data2 == MAP_FAILED)
     return 6;
   for (i = 0; i < pagesize; ++i)

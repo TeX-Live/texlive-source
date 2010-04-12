@@ -667,7 +667,6 @@ enable_ipc
 enable_omfonts
 enable_tex
 enable_etex
-enable_ptex
 enable_aleph
 enable_pdftex
 enable_luatex
@@ -1458,7 +1457,6 @@ Optional Features:
                             versions)
   --disable-tex             do not compile and install TeX
   --enable-etex             compile and install e-TeX
-  --disable-ptex            do not compile and install pTeX
   --disable-aleph           do not compile and install Aleph
   --disable-pdftex          do not compile and install pdfTeX
   --disable-luatex          do not compile and install luaTeX
@@ -2589,20 +2587,6 @@ case $enable_etex in #(
   *) :
     enable_etex=no ;;
 esac
-# Check whether --enable-ptex was given.
-if test "${enable_ptex+set}" = set; then :
-  enableval=$enable_ptex;
-fi
-case $enable_ptex in #(
-  yes|no) :
-     ;; #(
-  *) :
-    enable_ptex=yes ;;
-esac
-
-test "x$enable_web2c:$enable_ptex" = xyes:yes && {
-  need_ptexenc=yes
-}
 # Check whether --enable-aleph was given.
 if test "${enable_aleph+set}" = set; then :
   enableval=$enable_aleph;
