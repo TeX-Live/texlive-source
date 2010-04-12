@@ -4,18 +4,19 @@
 dvitomp \- convert a TeX DVI file to a MetaPost MPXFILE
 .SH SYNOPSIS
 .B dvitomp
-.RI [ options ]
-.IR dvifile [.dvi]
-.RI [ mpxfile [.mpx]]
+.RI [ OPTIONS ]
+.IR dvifile [ \fB.dvi\fP ]
+.RI [ mpxfile [ \fB.mpx\fP ]]
 .PP
 .B mpost 
 .B --dvitomp
-.IR dvifile [.dvi]
-.RI [ mpxfile [.mpx]]
+.IR dvifile [ \fB.dvi\fP ]
+.RI [ mpxfile [ \fB.mpx\fP ]]
 .SH DESCRIPTION
 \fBdvitomp\fP translates the given \fIdvifile\fP to a MetaPost
 MPXFILE.  The default \fImpxfile\fP is the basename of \fIdvifile\fP
-extended with ".mpx".
+extended with
+.BR .mpx .
 .SH OPTIONS
 .IP \fB-help\fP
 write usage summary and exit.

@@ -1,10 +1,16 @@
 .TH DVICOPY 1 TeX "24 January 1999" "Web2C @VERSION@"
+.\"=====================================================================
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.\"=====================================================================
 .SH NAME
-dvicopy \- produce modified copy of DVI file
+dvicopy, odvicopy \- produce modified copy of DVI file
 .SH SYNOPSIS
 .B dvicopy
 .RI [ options ]
-.RI [ infile\  [ outfile ]]
+.RI [ infile [ \fB.dvi\fP ]
+.RI [ outfile [ \fB.dvi\fP ]]]
+.\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
 documentation for this version of \*(TX can be found in the info file
@@ -18,5 +24,29 @@ fonts even if your DVI processor does not support them, by passing the
 documents through
 .B dvicopy
 first.
+.\"=====================================================================
+.SH OPTIONS
+.TP
+.BI \-magnification= NUMBER
+Override existing magnification with
+.IR NUMBER .
+.PP
+.TP
+.BI \-max-pages= NUMBER
+Process
+.I NUMBER
+pages; default one million.
+.PP
+.TP
+.BI \-page-start= PAGE-SPEC
+Start at
+.IR PAGE-SPEC ,
+for example `2' or `5.*.-2'.
+.\"=====================================================================
 .SH "SEE ALSO"
-dviselect(1)
+.BR dviselect (1),
+.BR dvitype (1).
+.\"=====================================================================
+.SH AUTHORS
+Peter Breitenlohner wrote the program.  Klaus Guntermann originally ported
+it to Unix.

@@ -1,6 +1,6 @@
 ## texk/web2c/am/cweb.am: Makefile fragment for cweb programs (except ctangle).
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 bin_PROGRAMS += ctie cweave tie
@@ -8,7 +8,8 @@ EXTRA_DIST += ctiedir tiedir
 
 nodist_ctie_SOURCES = ctie.c
 ctie_CFLAGS = $(WARNING_CFLAGS)
-nodist_man_MANS += ctiedir/ctie.1
+## We install man/ctie.man, not ctiedir/ctie.1
+## nodist_man_MANS += ctiedir/ctie.1
 ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
 DISTCLEANFILES += ctie.c
@@ -16,14 +17,15 @@ DISTCLEANFILES += ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
 $(cweave_OBJECTS): cweb.h
 cweave_CFLAGS = $(WARNING_CFLAGS)
-cweave.c: ctangle$(EXEEXT) cwebdir/common.h cwebdir/cweave.w cwebdir/cweav-w2c.ch
+cweave.c: ctangle$(EXEEXT) cwebdir/common.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
 DISTCLEANFILES += cweave.c
 
 nodist_tie_SOURCES = tie.c
 tie_CPPFLAGS = -DNOT_WEB2C
 tie_CFLAGS = $(WARNING_CFLAGS)
-nodist_man_MANS += tiedir/tie.1
+## We install man/tie.man, not tiedir/tie.1
+## nodist_man_MANS += tiedir/tie.1
 tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 	CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
 DISTCLEANFILES += tie.c

@@ -19,9 +19,7 @@ pktype \- verify and translate a packed font bitmap file to plain text
 .SH SYNOPSIS
 .B pktype
 .I pk_file
-[
-.I output_file
-]
+.RI [ output_file ]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete

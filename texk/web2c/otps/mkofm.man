@@ -2,11 +2,9 @@
 .PP 
 .SH "NAME" 
 mkofm \- front end to \fBmktextfm\fP(1)
-.PP 
 .SH "SYNOPSIS" 
-.PP 
-\fBmkofm\fP \fIARGS\fP
-.PP 
+.B mkofm
+.I ARGS
 .SH "DESCRIPTION" 
 .PP 
 \fBmkofm\fP takes all \fIARGS\fP and passes them to

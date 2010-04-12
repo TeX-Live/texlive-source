@@ -18,13 +18,9 @@
 gftopk \- convert generic font files to packed font files
 .SH SYNOPSIS
 .B gftopk
-[
-.B \-v
-]
+.RB [ \-v ]
 .I gf_file_name
-[
-.I pk_file_name
-]
+.RI [ pk_file_name ]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
@@ -56,9 +52,9 @@ defaults to the same (stripped) name as
 .IR gf_file_name ,
 and it is placed in the current
 working directory with the
-.I pk
+.B pk
 suffix replacing
-.IR gf .
+.BR gf .
 For example, the input file
 .I cmr10.300gf
 would become

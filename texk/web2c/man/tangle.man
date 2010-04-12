@@ -1,4 +1,4 @@
-.TH TANGLE 1 "20 October 2002" "Web2C @VERSION@"
+.TH TANGLE 1 "7 April 2010" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -20,13 +20,9 @@
 tangle \- translate WEB to Pascal
 .SH SYNOPSIS
 .B tangle
-[
-.RI options
-]
-.I webfile[.web]
-[
-.I changefile[.ch]
-]
+.RI [ options ]
+.IR webfile [ \fB.web\fP ]
+.RI [ changefile [ \fB.ch\fP ]]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
@@ -54,20 +50,20 @@ to be written in small easily-understood modules.
 .PP
 The command line should have either one or two names on it.
 The first is taken as the \*(WB file (and
-.I .web
+.B .web
 is added if there is no
 extension).
 If there is another name, it is a change file (and
-.I .ch
+.B .ch
 is added if there is
 no extension).  The change file overrides parts of the \*(WB file,
 as described in the \*(WB system documentation.
 .PP
 The output files are a Pascal file and a string pool file,
 whose names are formed by adding
-.I .p
+.B .p
 and
-.I .pool
+.B .pool
 respectively to the root of the \*(WB file name.
 .\"=====================================================================
 .SH "OPTIONS"
@@ -126,6 +122,12 @@ original
 .B --version
 .rb
 Print version information and exit.
+.\"=====================================================================
+.SH ENVIRONMENT
+The environment variable WEBINPUTS is used to search for the input files,
+or the system default if WEBINPUTS is not set.  See
+.BR tex (1)
+for the details of the searching.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR pc (1),

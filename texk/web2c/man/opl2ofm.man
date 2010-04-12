@@ -1,13 +1,14 @@
 .TH "opl2ofm" "1" "September 2000" "Omega" "Omega" 
 .PP 
 .SH "NAME" 
-opl2ofm \- convert Omega and TeX property-list files to
-font-metric files
+opl2ofm \- convert Omega and TeX property-list files to font-metric files
 .PP 
 .SH "SYNOPSIS" 
 .PP 
-\fBopl2ofm\fP [ \fIOPTION\fP\&.\&.\&. ] \fIOPLFILE\fP[\&.opl] [
-\fIOFMFILE\fP[\&.ofm] ]
+.B opl2ofm
+.RI [ OPTIONS ]
+.IR OPLFILE [ \fB.opl\fP ]
+.RI [ OFMFILE [ \fB.ofm\fP ]]
 .PP 
 .SH "DESCRIPTION" 
 .PP 

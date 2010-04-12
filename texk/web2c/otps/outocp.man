@@ -2,11 +2,9 @@
 .PP 
 .SH "NAME" 
 outocp \- debug an OCP file
-.PP 
 .SH "SYNOPSIS" 
-.PP 
-\fBoutocp\fP \fIOCPFILE\fP[\&.ocp]
-.PP 
+.B outocp
+.IR OCPFILE [ \fB.ocp\fP ]
 .SH "DESCRIPTION" 
 .PP 
 \fBoutocp\fP is used for debugging Omega Compiled Translation Process

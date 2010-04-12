@@ -13,10 +13,10 @@
 .if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
-dvitype \- translate a dvi file for humans
+dvitype, odvitype \- translate a dvi file for humans
 .SH SYNOPSIS
 .B dvitype
-.I dvi_name[.dvi]
+.IR dvi_name [ \fB.dvi\fP ]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
@@ -43,11 +43,43 @@ magnification and resolution of the ``output device'' may be
 changed; and so on. All options are specified with an on-line dialog.
 .PP
 The
-.I .dvi
+.B .dvi
 extension is supplied if omitted from 
 .IR dvi_name .
 The output goes to
 .IR stdout .
+.\"=====================================================================
+.SH OPTIONS
+.TP
+.BI \-dpi= REAL
+Set resolution to
+.I REAL
+pixels per inch; default 300.0.
+.PP
+.TP
+.BI \-magnification= NUMBER
+Override existing magnification with
+.IR NUMBER .
+.PP
+.TP
+.BI \-max-pages= NUMBER
+Process
+.I NUMBER
+pages; default one million.
+.PP
+.TP
+.BI \-output-level= NUMBER
+Verbosity level, from 0 to 4; default 4.
+.PP
+.TP
+.BI \-page-start= PAGE-SPEC
+Start at
+.IR PAGE-SPEC ,
+for example `2' or `5.*.-2'.
+.PP
+.TP
+.B \-show-opcodes
+Show numeric opcodes (in decimal).
 .\"=====================================================================
 .SH ENVIRONMENT
 The environment variable TEXFONTS is used to search for the TFM files
@@ -61,12 +93,8 @@ If TEXFONTS is not set, it uses the system default.
 .BR pktype (1).
 .br
 Donald E. Knuth,
-.IR \*(OXware .
+.IR "\*(OXware" .
 .\"=====================================================================
-.SH BUGS
-The interactive dialog should be replaced by command-line options, as
-with 
-.BR gftype .
 .SH AUTHORS
 Donald E. Knuth wrote the program.  It was published as part of the
 .I \*(OXware

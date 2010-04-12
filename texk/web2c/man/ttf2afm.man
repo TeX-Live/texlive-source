@@ -4,8 +4,9 @@
 ttf2afm \- utility to generate AFM files for TrueType fonts
 .PP 
 .SH "SYNOPSIS" 
-.PP 
-\fBttf2afm\fP [ \fIOPTION\fP\&.\&.\&. ]  \fIFONTFILE\fP
+.B ttf2afm
+.RI [ OPTIONS ]
+.I FONTFILE
 .PP 
 .SH "DESCRIPTION" 
 .PP 

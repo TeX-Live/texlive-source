@@ -1,4 +1,4 @@
-.TH PATGEN 1 "25 November 2007" "Web2C @VERSION@"
+.TH PATGEN 1 "7 April 2010" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -102,10 +102,10 @@ control sequences.  For instance, this is not a valid pattern file:
 
 % this is a pattern file read by TeX.
 \\patterns{%
- ...
+ .\|.\|.
 }
 .fi
-It can only contain the actual patterns, i.e., the `...'.
+It can only contain the actual patterns, i.e., the `.\|.\|.'.
 .TP
 .B Translate file
 A translate file starts with a line containing the values of
@@ -125,16 +125,16 @@ another delimiter.
 If the translate file is empty, the values
 .IR left_hyphen_min "=2, " right_hyphen_min "=3,"
 and the 26 lower case letters
-.IR a ... z
+.BR a .\|.\|. z
 with their upper case representations
-.IR A ... Z
+.BR A .\|.\|. Z
 are assumed.
 .TP
 .B Terminal input
 After reading the
 .I translate_file
 and any previously-generated patterns from
-.IR pattern_file,
+.IR pattern_file ,
 .I patgen
 requests input from the user's terminal.
 

@@ -1,3 +1,19 @@
+2010-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ctie.man (new): Instead of ../ctiedir/ctie.1.
+	* tie.man (new): Instead of ../tiedir/tie.1.
+	* Makefile.am (bootstrap_man_sources): Add the new files.
+
+2010-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.man, cweb.man, dvicopy.man, dvitomp.man, dvitype.man,
+	gftodvi.man, gftopk.man, gftype.man, mft.man, ofm2opl.man,
+	opl2ofm.man, ovf2ovp.man, ovp2ovf.man, patgen.man, pdftosrc.man,
+	pktogf.man, pktype.man, pltotf.man, tangle.man, tftopl.man,
+	ttf2afm.man, vftovp.man, vptovf.man, weave.man:
+	Uniform manpage formatting: bold for literals, italic for
+	variable items, roman for meta items.  Adapt to facts.
+
 2010-03-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex.man: Version 0.99d.

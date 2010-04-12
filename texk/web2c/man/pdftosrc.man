@@ -9,9 +9,7 @@ pdftosrc \- extract source file or stream from PDF file
 .SH SYNOPSIS
 .B pdftosrc
 .I PDF-file
-.R [
-.I stream-object-number
-.R ]
+.RI [ stream-object-number ]
 .SH DESCRIPTION
 If only
 .I PDF-file
@@ -41,9 +39,9 @@ from the
 and writes it to a file named
 .IR PDF-file . stream-object-number
 with the ending
-.I .pdf
+.B .pdf
 or
-.I .PDF
+.B .PDF
 stripped from the original
 .I PDF-file
 name.
@@ -57,7 +55,7 @@ then
 .B pdftosrc
 decompresses the XRef stream from the PDF file and writes it
 in human-readable PDF cross-reference table format to a file named
-.IR PDF-file .xref
+.IB PDF-file .xref
 (these XRef streams can not be extracted just by giving their object number).
 
 In any case

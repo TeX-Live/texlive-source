@@ -16,17 +16,10 @@
 vftovp \- convert virtual font (vf) files to virtual property lists (vpl)
 .SH SYNOPSIS
 .B vftovp
-[
-.BI \-charcode-format =format
-]
-[
-.B \-verbose
-]
-.I vf_name[.vf]
-.I tfm_name[.tfm]
-[
-.I vpl_name[.vpl]
-]
+.RI [ OPTIONS ]
+.IR vf_name [ \fB.vf\fP ]
+.RI [ tfm_name [ \fB.tfm\fP ]
+.RI [ vpl_name [ \fB.vpl\fP ]]]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
@@ -45,10 +38,10 @@ if no error messages are given, the input files are correct.
 The filenames are extended with the appropriate extension if necessary.
 .\"=====================================================================
 .SH OPTIONS
+.TP
+.BI \-charcode-format= format
 The argument
 .I format
-to
-.B \-charcode-format
 specifies how character codes are output in the VPL file.  By
 default, only letters and digits are output using the
 .B C
@@ -68,9 +61,9 @@ is
 .BR octal ,
 all character codes are output in octal.
 .PP
-Without the
+.TP
 .B \-verbose
-option,
+Without this option,
 .B vftovp
 operates silently.  With it, a banner and progress report are printed on
 .IR stdout .

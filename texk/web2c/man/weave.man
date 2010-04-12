@@ -1,4 +1,4 @@
-.TH WEAVE 1 "4 May 1993" "Web2C @VERSION@"
+.TH WEAVE 1 "7 April 2010" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -20,13 +20,9 @@
 weave \- translate WEB to TeX
 .SH SYNOPSIS
 .B weave
-[
-.B \-x
-]
-.I webfile[.web]
-[
-.I changefile[.ch]
-]
+.RB [ \-x ]
+.IR webfile [ \fB.web\fP ]
+.RI [ changefile [ \fB.ch\fP ]]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
@@ -53,7 +49,7 @@ however, unless some macros in
 are redefined.)
 .PP
 The output \*(TX file name is formed by adding
-.I .tex
+.B .tex
 to the root of the \*(WB file name.
 .PP
 There are several macros
@@ -64,6 +60,12 @@ to the name of the program.
 And, to cause output of only changed modules, one can say
 \\let\\maybe=\\iffalse (usually as the first change in the
 change file).
+.\"=====================================================================
+.SH ENVIRONMENT
+The environment variable WEBINPUTS is used to search for the input files,
+or the system default if WEBINPUTS is not set.  See
+.BR tex (1)
+for the details of the searching.
 .\"=====================================================================
 .SH FILES
 .TP \w'@@'u+2n

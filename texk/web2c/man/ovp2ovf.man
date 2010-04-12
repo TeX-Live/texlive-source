@@ -1,13 +1,14 @@
 .TH "ovp2ovf" "1" "September 2000" "Omega" "Omega" 
 .PP 
 .SH "NAME" 
-ovp2ovf \- convert a virtual property-list file into a
-virtual font file and its associated font metric file
+ovp2ovf \- convert a virtual property-list file into a virtual font file and its associated font metric file
 .PP 
 .SH "SYNOPSIS" 
-.PP 
-\fBovp2ovf\fP [ \fIOPTION\fP\&.\&.\&. ] \fIOVPFILE\fP[\&.ovp] [ [
-\fIOVFFILE\fP[\&.ovf] ] [ \fIOFMFILE\fP[\&.ofm] ] ]
+.B ovp2ovf
+.RI [ OPTIONS ]
+.IR OVPFILE [ \fB.ovp\fP ]
+.RI [ OVFFILE [ \fB.ovf\fP ]
+.RI [ OFMFILE [ \fB.ofm\fP ]]]
 .PP 
 .SH "DESCRIPTION" 
 .PP 

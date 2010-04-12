@@ -18,15 +18,9 @@
 gftodvi \- make proof sheets from generic font files
 .SH SYNOPSIS
 .B gftodvi
-[
-.BI \-overflow-label-offset =real
-]
-[
-.B \-verbose
-]
-[
+.RB [ \-overflow-label-offset=\fIreal\fP ]
+.RB [ \-verbose ]
 .I gf_file_name
-]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
@@ -98,15 +92,14 @@ a font for lines with slope 1/6 at the resolution of an Imagen printer).
 .PP
 The
 .I gf_file_name
-on the command line must be complete. (The program prompts
-you for it if you don't give it.)  Because
+on the command line must be complete.  Because
 the resolution is part of the extension, it would not make
 sense to append a default extension as is done with \*(TX or
 DVI-reading software. The output file name uses the same
 root as the
 .I gf
 file, with the
-.I dvi
+.B .dvi
 extension added. For example, the input file
 .I cmr10.2602gf
 would become

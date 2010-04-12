@@ -1,11 +1,11 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/man/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 man_sources = $(bootstrap_man_sources)
 EXTRA_DIST = $(bootstrap_man_sources)
-bootstrap_man_sources = cweb.man tangle.man
+bootstrap_man_sources = ctie.man cweb.man tangle.man tie.man
 
 # Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
 man1_links = cweb:ctangle cweb:cweave

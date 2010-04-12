@@ -2,11 +2,9 @@
 .PP 
 .SH "NAME" 
 mkocp \- frontend to \fBotp2ocp\fP(1)
-.PP 
 .SH "SYNOPSIS" 
-.PP 
-\fBmkocp\fP \fIOTPFILE\fP
-.PP 
+.B mkocp
+.I OTPFILE
 .SH "DESCRIPTION" 
 .PP 
 \fBmkocp\fP is used to create or recreate Omega Compiled Process files

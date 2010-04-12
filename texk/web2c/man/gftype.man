@@ -18,16 +18,10 @@
 gftype \- translate a generic font file for humans to read
 .SH SYNOPSIS
 .B gftype
-[
-.B \-i
-]
-[
-.B \-m
-]
+.RB [ \-i ]
+.RB [ \-m ]
 .I gf_file_name
-[
-.I output_file_name
-]
+.RI [ output_file_name ]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete

@@ -16,12 +16,10 @@
 vptovf \- convert virtual property lists to virtual font metrics
 .SH SYNOPSIS
 .B vptovf
-[
-.B \-verbose
-]
-.I vpl_name[.vpl]
-.I vfm_name[.vf]
-.I tfm_name[.tfm]
+.RB [ \-verbose ]
+.IR vpl_name [ \fB.vpl\fP ]
+.RI [ vfm_name [ \fB.vf\fP ]
+.RI [ tfm_name [ \fB.tfm\fP ]]]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
@@ -41,10 +39,10 @@ sequence of low-level typesetting operations,
 can also be created in this way.
 .PP
 All three filenames,
-.I vpl_name,
-.I vf_name,
+.IR vpl_name ,
+.IR vf_name ,
 and
-.I tfm_name,
+.IR tfm_name ,
 are extended with the appropriate suffix, if they lack one.
 .\"=====================================================================
 .SH OPTIONS

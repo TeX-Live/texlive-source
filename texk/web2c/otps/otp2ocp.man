@@ -3,11 +3,10 @@
 .SH "NAME" 
 otp2ocp \- convert Omega Translation Process files to Omega
 Compiled Process files
-.PP 
 .SH "SYNOPSIS" 
-.PP 
-\fBotp2ocp\fP \fIOTPFILE\fP[\&.otp] [ \fIOCPFILE\fP[\&.ocp] ]
-.PP 
+.B otp2ocp
+.IR OTPFILE [ \fB.otp\fP ]
+.RI [ OCPFILE [ \fB.ocp\fP ]]
 .SH "DESCRIPTION" 
 .PP 
 \fBotp2ocp\fP is used to create or recreate Omega Compiled Process
