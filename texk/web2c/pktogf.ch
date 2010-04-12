@@ -6,7 +6,7 @@
 % (more recent changes in the ChangeLog)
 %
 % One major change in output format is incorporated by this change
-% file.  The local pktogf preamble comment is ignored and the 
+% file.  The local pktogf preamble comment is ignored and the
 % dated METAFONT comment is passed through unaltered.  This
 % provides a continuous check on the origin of fonts in both
 % gf and pk formats.  PKtoGF runs silently unless it is given the
@@ -20,7 +20,7 @@
 \def\title{PK$\,$\lowercase{to}$\,$GF changes for C}
 @z
 
-@x [3] No global labels.
+@x [4] No global labels.
 @ Both the input and output come from binary files.  On line interaction
 is handled through \PASCAL's standard |input| and |output| files.
 
@@ -29,13 +29,7 @@ is handled through \PASCAL's standard |input| and |output| files.
 
 @p program PKtoGF(input, output);
 label @<Labels in the outer block@>@/
-const @<Constants in the outer block@>@/
-type @<Types in the outer block@>@/
-var @<Globals in the outer block@>@/
-procedure initialize; {this procedure gets things started properly}
-  var i:integer; {loop index for initializations}
-  begin print_ln(banner);@/
-@y 
+@y
 @ Both the input and output come from binary files.  On line
 interaction is handled through \PASCAL's standard |input| and |output|
 files.  For C compilation terminal input and output is directed to
@@ -47,9 +41,13 @@ produced only when the \.{-v} command line flag is presented.
 @d print(#)==if verbose then write(output, #)
 
 @p program PKtoGF(input, output);
-const @<Constants in the outer block@>@/
-type @<Types in the outer block@>@/
-var @<Globals in the outer block@>@/
+@z
+
+@x [still 4] Parse command line and initialize path searching.
+procedure initialize; {this procedure gets things started properly}
+  var i:integer; {loop index for initializations}
+  begin print_ln(banner);@/
+@y
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
@@ -82,7 +80,13 @@ a non-local goto, which we don't use in C.
 @<Constants...@>=
 @z
 
-@x [7] Just exit, instead of doing a nonlocal goto.
+@x [still 6] Dynamic allocation of |row_counts| array.
+@!max_counts=400; {maximum number of run counts in a raster line}
+@y
+@!MAX_COUNTS=400; {initial number of run counts in a raster line}
+@z
+
+@x [8] Just exit, instead of doing a nonlocal goto.
 @d abort(#)==begin print_ln(' ',#); jump_out; end
 
 @p procedure jump_out;
@@ -108,7 +112,7 @@ function pk_packed_num : integer ;
 var i, j : integer ;
 @z
 
-@x [35] Use path searching to open |pk_file|.
+@x [40] Use path searching to open |pk_file|.
 @p procedure open_gf_file; {prepares to write packed bytes in a |gf_file|}
 begin rewrite(gf_file,gf_name);
 gf_loc := 0 ;
@@ -145,9 +149,9 @@ begin
 end;
 @z
 
-@x [36] No arbitrary limit on filename length.
+@x [41] No arbitrary limit on filename length.
 @ We need a place to store the names of the input and output files, as well
-as a byte counter for the output file.  
+as a byte counter for the output file.
 
 @<Glob...@>=
 @!gf_name,@!pk_name:packed array[1..name_length] of char; {names of input
@@ -196,7 +200,7 @@ subroutine calls.
 @^system dependencies@>
 
 @d pk_byte==get_byte
-@d pk_loc==cur_loc 
+@d pk_loc==cur_loc
 
 @p function get_byte:integer; {returns the next byte, unsigned}
 var b:eight_bits;
@@ -267,7 +271,7 @@ function get_16 : integer ;
 var a : integer ;
 begin
    a := pk_byte ;
-   get_16 := a * 256 + pk_byte ; 
+   get_16 := a * 256 + pk_byte ;
 end ;
 @#
 function signed_16 : integer ;
@@ -279,10 +283,10 @@ end ;
 @#
 function get_32 : integer ;
 var a : integer ;
-begin 
-   a := get_16 ; 
+begin
+   a := get_16 ;
    if a > 32767 then a := a - 65536 ;
-   get_32 := a * 65536 + get_16 ; 
+   get_32 := a * 65536 + get_16 ;
 end ;
 @y
 @ We put definitions here to access the \.{DVItype} functions supplied
@@ -334,7 +338,15 @@ for i := 1 to j do begin
 print_ln('}') ;
 @z
 
-@x [51] Since we preserve the METAFONT comment, this is unneeded.
+@x [51] Dynamic allocation of |row_counts| array.
+@ @<Set init...@>=
+@y
+@ @<Set init...@>=
+ row_counts := xmalloc_array (integer, MAX_COUNTS);
+ max_counts := MAX_COUNTS;
+@z
+
+@x [still 51] Since we preserve the METAFONT comment, this is unneeded.
 comment := preamble_comment ;
 @y
 @z
@@ -344,13 +356,21 @@ comment := preamble_comment ;
 @y
 @z
 
-@x [65] Change jumpout to abort.
-         if rcp > max_counts then begin
+@x [still 63] Dynamic allocation of |row_counts| array.
+@!row_counts : array [0..max_counts] of integer ;
+@y
+@!max_counts : integer ;
+@!row_counts : ^integer ;
+@z
+
+@x [65] Dynamic allocation of |row_counts| array.
             print_ln('A character had too many run counts') ;
             jump_out ;
-         end ;
 @y
-         if rcp > max_counts then abort('A character had too many run counts');
+            print_ln('Reallocated row_counts array to ', (max_counts+MAX_COUNTS):1,
+                     ' items from ', max_counts:1, '.');
+            max_counts := max_counts + MAX_COUNTS;
+            row_counts := xrealloc_array (row_counts, integer, max_counts);
 @z
 
 @x [71] There is no terminal communication.
@@ -483,7 +503,7 @@ long_options[current_option].flag := address_of (verbose);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@ 
+@
 @<Glob...@> =
 @!verbose: c_int_type;
 

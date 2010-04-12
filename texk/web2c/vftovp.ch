@@ -127,7 +127,7 @@ end;
 % [25] Both nl and lig_size are in words, so the multiplication is not
 % needed.  Found by "C.M. Connelly" <c@eskimo.com> and
 % Melissa O'Neill <oneill@cs.sfu.ca>
-@x 
+@x
 if nl>4*lig_size then
 @y
 if nl>lig_size then
@@ -392,8 +392,8 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 @p function f(@!h,@!x,@!y:index):index; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
-@p 
-ifdef('notdef') 
+@p
+ifdef('notdef')
 function lig_f(@!h,@!x,@!y:index):index; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
@@ -569,7 +569,7 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.
    We must have one two three remaining arguments.}
-  if (optind + 1 <> argc) and (optind + 2 <> argc) 
+  if (optind + 1 <> argc) and (optind + 2 <> argc)
      and (optind + 3 <> argc) then begin
     print_ln ('vftovp: Need one to three file arguments.');
     usage ('vftovp');

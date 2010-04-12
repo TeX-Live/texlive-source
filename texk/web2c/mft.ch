@@ -1,5 +1,5 @@
 % mft.ch for C compilation with web2c.
-% 
+%
 % From Pierre Mackay's version for pc, which was in turn based on Howard
 % Trickey's and Pavel Curtis's change file for weave.
 % Support for MP included from a changefile by Wlodek Bzyl.
@@ -23,8 +23,8 @@
 @x [1]
 This program converts a \MF\ source file to a \TeX\ file. It was written
 @y
-This program converts a \MF\ or \MP\ source file to a \TeX\ file. 
-It was written 
+This program converts a \MF\ or \MP\ source file to a \TeX\ file.
+It was written
 @z
 @x [1]
 @^Knuth, Donald Ervin@>
@@ -82,7 +82,7 @@ begin
 % [13] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d text_char == char {the data type of characters in text files}
 @y
@@ -105,7 +105,7 @@ for i:=@'177 to @'377 do xchr[i]:=chr(i);
 @z
 
 % [20] Remove term_out.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @<Globals...@>=
 @!term_out:text_file; {the terminal as an output file}
@@ -251,7 +251,7 @@ end
 
 % MFT incorrectly handles TeX code contained in groups:
 %
-%   btex <TeX material> etex 
+%   btex <TeX material> etex
 %   verbatimtex <TeX material> etex
 %
 % Ulrik Vieth (using ideas of Andreas Scherer) developed a Unix
@@ -259,8 +259,8 @@ end
 % prettyprinting TeX material.
 % His script converts TeX material to a `TeXnical MFT comment',
 % which means that it is extracted and prettyprinted as string.
-% Unfortunately, his script assumes that these groups may not 
-% extend across line breaks and there may be only one such 
+% Unfortunately, his script assumes that these groups may not
+% extend across line breaks and there may be only one such
 % group per line, which is sometimes hard to obey and
 % makes prettyprinted code harder to read.
 % Moreover, any synonym for btex/verbatimtex/etex would not be
@@ -962,7 +962,7 @@ or `\.{\\input mptmac}' if a \MP\ file is converted.
 @.\\input mptmac@>
 @.mptmac@>
 @<Set init...@>=
-out_ptr:=1; out_buf[1]:=" "; out_line:=1; 
+out_ptr:=1; out_buf[1]:=" "; out_line:=1;
 if metapost then begin write(tex_file,'\input mptmac'); end
 else write(tex_file,'\input mftmac');
 @z
@@ -990,11 +990,11 @@ else write(tex_file,'\input mftmac');
       scanner_status:=verbatimtex_flushing;
     end else if cur_type=btex_code then begin
       out("B");
-      scanner_status:=btex_flushing;  
+      scanner_status:=btex_flushing;
     end;
     out("{"); out_name(cur_tok); out("}");
     get_next;
-    while cur_type<>etex_marker do begin 
+    while cur_type<>etex_marker do begin
       if cur_type=indentation then begin out(" "); end
       else if cur_type=end_of_line then begin
         flush_buffer(out_ptr,false);
@@ -1003,7 +1003,7 @@ else write(tex_file,'\input mftmac');
       else copy(id_first);
       get_next;
     end;
-    out4("\")("m")("f")("t"); out3("e")("n")("d");  
+    out4("\")("m")("f")("t"); out3("e")("n")("d");
     out("{"); out_name(cur_tok); out("}");
     if scanner_status=verbatimtex_flushing then out("$");
     scanner_status:=normal;
@@ -1088,7 +1088,7 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
-    
+
     end else if getopt_return_val = "?" then begin
       usage ('mft');
 
@@ -1096,13 +1096,13 @@ begin
       usage_help (MFT_HELP, nil);
 
     end else if argument_is ('version') then begin
-      print_version_and_exit (banner, nil, 
-      			      'D.E. Knuth  (MP changes by W. Bzyl)', 
+      print_version_and_exit (banner, nil,
+      			      'D.E. Knuth  (MP changes by W. Bzyl)',
 			      nil);
 
     end else if argument_is ('change') then begin
       change_name := extend_filename (optarg, 'ch');
-    
+
     end else if argument_is ('style') then begin
       if (n_style_name = max_style_name) then begin
 	fatal_error ('Too many style files specified.');
@@ -1193,7 +1193,7 @@ incr (current_option);
 @<Initialize the option...@> =
 metapost:=false;
 
-@ An element with all zeros always ends the list of options. 
+@ An element with all zeros always ends the list of options.
 
 @<Define the option...@> =
 long_options[current_option].name := 0;

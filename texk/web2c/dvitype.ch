@@ -114,7 +114,7 @@ end;
 @y
 @p procedure open_dvi_file; {prepares to read packed bytes in |dvi_file|}
 begin
-  resetbin (dvi_file, extend_filename (cmdline (optind), 'dvi'));
+  resetbin (dvi_file, dvi_name);
   cur_loc := 0;
 end;
 @#
@@ -173,14 +173,14 @@ end;
 @y
 @p function dvi_length:integer;
 begin
-  xfseek (dvi_file, 0, 2, 'dvitype');
-  cur_loc := xftell(dvi_file, 'dvitype');
+  xfseek (dvi_file, 0, 2, dvi_name);
+  cur_loc := xftell(dvi_file, dvi_name);
   dvi_length := cur_loc;
 end;
 @#
 procedure move_to_byte(n:integer);
 begin
-  xfseek (dvi_file, n, 0, 'dvitype');
+  xfseek (dvi_file, n, 0, dvi_name);
   cur_loc:=n;
 end;
 @z
@@ -544,26 +544,26 @@ begin
 
     end else if argument_is ('version') then begin
       print_version_and_exit (banner, nil, 'D.E. Knuth', nil);
-    
+
     end else if argument_is ('output-level') then begin
       if (optarg[0] < '0') or (optarg[0] > '4') or (optarg[1] <> 0) then begin
         write_ln (stderr, 'Value for --output-level must be >= 0 and <= 4.');
         uexit (1);
       end;
       out_mode := optarg[0] - '0';
-    
+
     end else if argument_is ('page-start') then begin
       @<Determine the desired |start_count| values from |optarg|@>;
-    
+
     end else if argument_is ('max-pages') then begin
       max_pages := atou (optarg);
-      
+
     end else if argument_is ('dpi') then begin
       resolution := atof (optarg);
-    
+
     end else if argument_is ('magnification') then begin
       new_mag := atou (optarg);
-    
+
     end; {Else it was a flag; |getopt| has already done the assignment.}
   until getopt_return_val = -1;
 
@@ -572,6 +572,7 @@ begin
     write_ln (stderr, 'dvitype: Need exactly one file argument.');
     usage ('dvitype');
   end;
+  dvi_name := extend_filename (cmdline (optind), 'dvi');
 end;
 
 @ Here are the options we allow.  The first is one of the standard GNU options.
@@ -616,7 +617,7 @@ long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 incr (current_option);
 
-@ Parsing the starting page specification is a bit complicated. 
+@ Parsing the starting page specification is a bit complicated.
 
 @<Determine the desired |start_count|...@> =
 k := 0; {which \.{\\count} register we're on}
@@ -625,7 +626,7 @@ while optarg[m] do begin
   if optarg[m] = "*" then begin
     start_there[k] := false;
     incr (m);
-  
+
   end else if optarg[m] = "." then begin
     incr (k);
     if k >= 10 then begin
@@ -633,7 +634,7 @@ while optarg[m] do begin
       uexit (1);
     end;
     incr (m);
-  
+
   end else begin
     start_count[k] := strtol (optarg + m, address_of (end_num), 10);
     if end_num = optarg + m then begin
@@ -700,4 +701,9 @@ long_options[current_option].name := 0;
 long_options[current_option].has_arg := 0;
 long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
+
+@ Global filenames.
+
+@<Global...@> =
+@!dvi_name:const_c_string;
 @z

@@ -598,7 +598,7 @@ AC_CACHE_CHECK([whether deplibs are loaded by dlopen],
   freebsd* | dragonfly*)
     lt_cv_sys_dlopen_deplibs=yes
     ;;
-  gnu* | linux* | k*bsd*-gnu | kopensolaris*-gnu)
+  gnu* | linux* | k*bsd*-gnu)
     # GNU and its variants, using gnu ld.so (Glibc)
     lt_cv_sys_dlopen_deplibs=yes
     ;;
@@ -618,7 +618,7 @@ AC_CACHE_CHECK([whether deplibs are loaded by dlopen],
     # at 6.2 and later dlopen does load deplibs.
     lt_cv_sys_dlopen_deplibs=yes
     ;;
-  netbsd* | netbsdelf*-gnu)
+  netbsd*)
     lt_cv_sys_dlopen_deplibs=yes
     ;;
   openbsd*)

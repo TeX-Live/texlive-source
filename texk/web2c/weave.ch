@@ -115,7 +115,7 @@ procedure initialize;
 % [??] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d text_char == char {the data type of characters in text files}
 @y
@@ -358,7 +358,7 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
-    
+
     end else if getopt_return_val = "?" then begin
       usage ('weave');
 
@@ -376,13 +376,13 @@ begin
     write_ln (stderr, 'weave: Need one or two file arguments.');
     usage ('weave');
   end;
-  
+
   {Supply |".web"| and |".ch"| extensions if necessary.}
   web_name := extend_filename (cmdline (optind), 'web');
   if optind + 2 = argc then begin
     chg_name := extend_filename (cmdline (optind + 1), 'ch');
   end;
-  
+
   {Change |".web"| to |".tex"| and use the current directory.}
   tex_name := basename_change_suffix (web_name, '.web', '.tex');
 end;

@@ -5,7 +5,7 @@
 % 02/04/90 Karl			new file-searching routines.
 % (more recent changes in the ChangeLog)
 %
-% There is no terminal input to this program.  
+% There is no terminal input to this program.
 % Output is to stdout, and may, of course, be redirected.
 
 @x [0] WEAVE: print changes only.
@@ -137,7 +137,7 @@ end;
 @x [??] Use modified routines to access pk_file.
 @p function pk_byte : eight_bits ;
 var temp : eight_bits ;
-begin 
+begin
    temp := pk_file^ ;
    get(pk_file) ;
    incr(pk_loc) ;
@@ -151,7 +151,7 @@ subroutine calls.  We comment out the ones we don't need
 @^system dependencies@>
 
 @d pk_byte==get_byte
-@d pk_loc==cur_loc 
+@d pk_loc==cur_loc
 
 @p function get_byte:integer; {returns the next byte, unsigned}
 var b:eight_bits;
@@ -322,10 +322,10 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       do_nothing;
-    
+
     end else if getopt_return_val = '?' then begin
       usage ('pktype');
-    
+
     end else if argument_is ('help') then begin
       usage_help (PKTYPE_HELP, nil);
 

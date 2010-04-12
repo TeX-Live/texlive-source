@@ -1,3 +1,13 @@
+2010-04-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvicopy.ch (dvi_name): New global variable.
+	(dvi_length, dvi_move): Use dvi_name instead of 'odvicopy' as
+	last arg of xfseek() and xftell().
+	No random reading on stdin, may be not seekable.
+	* odvitype.ch (dvi_name): New global variable.
+	(dvi_length, move_to_byte): Use dvi_name instead of 'odvitype'
+	as last arg of xfseek() and xftell().
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* odvicopy.ch, odvitype.ch, ofm2opl.ch, opl2ofm.ch, otangle.ch,

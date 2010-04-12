@@ -115,7 +115,7 @@ if verbose then @<Print |c| in octal notation@>;
 
 % [118] Change the name of the variable `class', since AIX 3.1's <math.h>
 % defines a function by that name.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d pending=4 {$f(x,y)$ is being evaluated}
 @y
@@ -126,24 +126,24 @@ if verbose then @<Print |c| in octal notation@>;
 % [123] web2c can't handle these mutually recursive procedures.
 % But let's do a fake definition of f here, so that it gets into web2c's
 % symbol table...
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @p function f(@!h,@!x,@!y:indx):indx; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
-@p 
-ifdef('notdef') 
+@p
+ifdef('notdef')
 function f(@!h,@!x,@!y:indx):indx; begin end;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 endif('notdef')
 @z
 
 % [124] ... and then really define it now.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @p function f;
 @y
-@p function f(@!h,@!x,@!y:indx):indx; 
+@p function f(@!h,@!x,@!y:indx):indx;
 @z
 
 @x [127] Fix up output of bytes.
@@ -188,7 +188,7 @@ begin if fabs(x/design_units)>=16.0 then
   while label_table[sort_ptr].rr>intcast(char_remainder[c]) do
 @z
 
-@x [147] Be quiet unless verbose. 
+@x [147] Be quiet unless verbose.
 read_input; print_ln('.');@/
 @y
 read_input;
@@ -243,7 +243,7 @@ begin
     write_ln (stderr, 'pltotf: Need one or two file arguments.');
     usage ('pltotf');
   end;
-  
+
   pl_name := extend_filename (cmdline (optind), 'pl');
 
   {If an explicit output filename isn't given, construct it from |pl_name|.}
@@ -284,7 +284,7 @@ long_options[current_option].flag := address_of (verbose);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@ 
+@
 @<Glob...@> =
 @!verbose: c_int_type;
 

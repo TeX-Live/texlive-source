@@ -4,7 +4,7 @@
 % 12/02/89 Karl Berry		2.1.
 % 01/20/90 Karl			2.2.
 % (more recent changes in the ChangeLog)
-% 
+%
 % One major change in output format is made by this change file.  The
 % local gftopk preamble comment is ignored and the dated METAFONT
 % comment is passed through unaltered.  This provides a continuous check
@@ -54,7 +54,7 @@ var @<Globals in the outer block@>@/
 @<Define |parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
-begin 
+begin
   kpse_set_program_name (argv[0], nil);
   kpse_init_prog ('GFTOPK', 0, nil, nil);
   parse_arguments;
@@ -73,10 +73,10 @@ begin
 a non-local goto, which we can't use in C.
 @z
 
-@x [7] Allow for bigger fonts.  Too bad it's not dynamically allocated.
+@x [6] Dynamic allocation of |row| array.
 @!max_row=16000; {largest index in the main |row| array}
 @y
-@!max_row=100000; {largest index in the main |row| array}
+@!MAX_ROW=16000; {largest index in the initial main |row| array}
 @z
 
 @x [8] Make `abort' end with a newline, and remove the nonlocal goto.
@@ -102,7 +102,7 @@ end;
 @d text_char == char {the data type of characters in text files}
 @z
 
-@x [40] Use paths in open_gf_file.
+@x [39] Use paths in open_gf_file.
 @ To prepare the |gf_file| for input, we |reset| it.
 
 @p procedure open_gf_file; {prepares to read packed bytes in |gf_file|}
@@ -120,7 +120,7 @@ begin
 end;
 @z
 
-% [41] If the PK filename isn't given on the command line, we construct
+% [40] If the PK filename isn't given on the command line, we construct
 % it from the GF filename.
 @x
 @p procedure open_pk_file; {prepares to write packed bytes in |pk_file|}
@@ -136,7 +136,7 @@ begin
 end;
 @z
 
-@x [46] Redefine pk_byte, pk_halfword, pk_three_bytes, and pk_word.
+@x [45] Redefine pk_byte, pk_halfword, pk_three_bytes, and pk_word.
 @p procedure pk_byte(a:integer) ;
 begin
    if pk_open then begin
@@ -215,7 +215,7 @@ begin
 end ;
 @z
 
-@x [48] Redefine find_gf_length and move_to_byte.
+@x [47] Redefine find_gf_length and move_to_byte.
 @p procedure find_gf_length ;
 begin
    set_pos(gf_file, -1) ; gf_len := cur_pos(gf_file) ;
@@ -230,18 +230,46 @@ end ;
 
 @p function gf_length:integer;
 begin
-  xfseek (gf_file, 0, 2, 'gftopk');
-  gf_length := xftell (gf_file, 'gftopk');
+  xfseek (gf_file, 0, 2, gf_name);
+  gf_length := xftell (gf_file, gf_name);
 end;
 @#
 procedure move_to_byte (n:integer);
-begin xfseek (gf_file, n, 0, 'gftopk');
+begin xfseek (gf_file, n, 0, gf_name);
 end;
 @z
 
-% [53] Make sure that |gf_byte| gets past the comment when not
-% |verbose|; add do_the_rows to break up huge run of cases.
-@x
+@x [49] Dynamic allocation of |row| array.
+@!row: array[0..max_row] of integer; {the row counts for working}
+@y
+@!row: ^integer; {the row counts for working}
+@!max_row: integer; {largest index in the main |row| array}
+@z
+
+@x [50] Dynamic allocation of |row| array.
+@<Set init...@>=
+@y
+@<Set init...@>=
+row := xmalloc_array (integer, MAX_ROW);
+max_row := MAX_ROW;
+@z
+
+@x [52] Dynamic allocation of |row| array.
+procedure convert_gf_file;
+@y
+procedure row_overflow;
+var @!new_row: integer;
+begin
+  new_row := max_row + MAX_ROW;
+  print_ln('Reallocated row array to ', new_row:1, ' items from ', max_row:1, '.');
+  row := xrealloc_array (row, integer, new_row);
+  max_row := new_row;
+end;
+@#
+procedure convert_gf_file;
+@z
+
+@x [still 52] Add do_the_rows to break up huge run of cases.
    repeat
      gf_com := gf_byte ;
      case gf_com of
@@ -252,7 +280,7 @@ end;
      case gf_com of
 @z
 
-@x [54] Declare |thirty_seven_cases| to help avoid breaking yacc.
+@x [53] Declare |thirty_seven_cases| to help avoid breaking yacc.
 @d one_sixty_five_cases(#)==sixty_four_cases(#),sixty_four_cases(#+64),
          sixteen_cases(#+128),sixteen_cases(#+144),four_cases(#+160),#+164
 @y
@@ -262,48 +290,40 @@ end;
 @d new_row_128=new_row_64 + 64
 @z
 
-@x [59] Break up an oversized sequence of cases for yacc.
+@x [57] Dynamic allocation of |row| array.
+@d put_in_rows(#)==begin if row_ptr > max_row then bad := true else begin
+row[row_ptr]:=#; incr(row_ptr); end ; end
+@y
+@d put_in_rows(#)==begin if row_ptr > max_row then row_overflow;
+row[row_ptr]:=#; incr(row_ptr); end
+@z
+
+@x [58] Dynamic allocation of |row| array.
+  bad := false ;
+@y
+@z
+
+@x [still 58] Break up an oversized sequence of cases for yacc.
 one_sixty_five_cases(new_row_0) : begin
   if on = state then put_in_rows(extra) ;
   put_in_rows(end_of_row) ;
   on := true ; extra := gf_com - new_row_0 ; state := false ;
 end ;
-@t\4@>@<Specials and |no_op| cases@> ;
-eoc : begin
-  if on = state then put_in_rows(extra) ;
-  if ( row_ptr > 2 ) and ( row[row_ptr - 1] <> end_of_row) then
-    put_in_rows(end_of_row) ;
-  put_in_rows(end_of_char) ;
-  if bad then abort('Ran out of internal memory for row counts!') ;
-@.Ran out of memory@>
-  pack_and_send_character ;
-  status[gf_ch_mod_256] := sent ;
-  if pk_loc <> pred_pk_loc then
-    abort('Internal error while writing character!') ;
-@.Internal error@>
-end ;
-othercases bad_gf('Unexpected ',gf_com:1,' command in character definition')
-@.Unexpected command@>
-    endcases ;
 @y
 sixty_four_cases(new_row_0) : do_the_rows:=true;
 sixty_four_cases(new_row_64) : do_the_rows:=true;
 thirty_seven_cases(new_row_128) : do_the_rows:=true;
-@<Specials and |no_op| cases@> ;
-eoc : begin
-  if on = state then put_in_rows(extra) ;
-  if ( row_ptr > 2 ) and ( row[row_ptr - 1] <> end_of_row) then
-    put_in_rows(end_of_row) ;
-  put_in_rows(end_of_char) ;
+@z
+
+@x [still 58] Dynamic allocation of |row| array.
   if bad then abort('Ran out of internal memory for row counts!') ;
 @.Ran out of memory@>
-  pack_and_send_character ;
-  status[gf_ch_mod_256] := sent ;
-  if pk_loc <> pred_pk_loc then
-    abort('Internal error while writing character!') ;
-@.Internal error@>
-end ;
-othercases bad_gf('Unexpected ',gf_com:1,' character in character definition');
+@y
+@z
+
+@x [still 58] Break up an oversized sequence of cases for yacc.
+    endcases ;
+@y
     endcases ;
 if do_the_rows then begin
   do_the_rows:=false;
@@ -313,7 +333,7 @@ if do_the_rows then begin
 end ;
 @z
 
-@x [60] Add do_the_rows to break up huge run of cases.
+@x [59] Add do_the_rows to break up huge run of cases.
 @ A few more locals used above and below:
 
 @<Locals to |convert_gf_file|@>=
@@ -324,7 +344,28 @@ end ;
 @!do_the_rows:boolean;
 @z
 
-@x [81] Don't add `GFtoPK 2.3 output from ' to the font comment.
+@x [still 59] Dynamic allocation of |row| array.
+@!bad : boolean ; {did we run out of space?}
+@y
+@z
+
+@x [61] bug fix: GF file too short.
+find_gf_length ;
+@y
+find_gf_length ;
+if gf_len<8 then bad_gf('only ',gf_len:1,' bytes long');
+@.only n bytes long@>
+@z
+
+@x [61] bug fix: GF file too short.
+move_to_byte(post_loc - 3);
+@y
+if post_loc<5 then bad_gf('post location is ',post_loc:1) ;
+@.post location is@>
+move_to_byte(post_loc - 3);
+@z
+
+@x [82] Don't add `GFtoPK 2.3 output from ' to the font comment.
 @d comm_length = 23 {length of |preamble_comment|}
 @d from_length = 6 {length of its |' from '| part}
 @y
@@ -392,7 +433,7 @@ begin
     write_ln (stderr, 'gftopk: Need one or two file arguments.');
     usage ('gftopk');
   end;
-  
+
   gf_name := cmdline (optind);
 
   {If an explicit output filename isn't given, construct it from |gf_name|.}
@@ -433,7 +474,7 @@ long_options[current_option].flag := address_of (verbose);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@ 
+@
 @<Glob...@> =
 @!verbose: c_int_type;
 
@@ -452,5 +493,5 @@ long_options[current_option].val := 0;
 @ Global filenames.
 
 @<Global...@> =
-@!gf_name, @!pk_name, @!vpl_name:c_string;
+@!gf_name, @!pk_name:const_c_string;
 @z

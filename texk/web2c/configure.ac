@@ -306,8 +306,6 @@ KPSE_CROSS_PATH_PROG([CTANGLE],     [ctangle],   [./ctangle])
 KPSE_CROSS_PATH_PROG([TIE],         [tie],       [./tie])
 dnl Required for Aleph and XeTeX
 KPSE_CROSS_PATH_PROG([OTANGLE],     [otangle],   [./otangle])
-dnl Required for luaTeX
-KPSE_CROSS_PATH_PROG([LUATANGLE],   [luatangle], [./luatangle])
 
 if test "x$cross_compiling" = xyes; then
   AC_MSG_CHECKING([if your tie supports WEBINPUTS])
@@ -342,29 +340,13 @@ if test "x$cross_compiling" = xyes; then
     fi
     rm -f cftest.p
   fi
-  if test "x$enable_luatex" = xyes; then
-    AC_MSG_CHECKING([if your luatangle supports WEBINPUTS])
-    ( WEBINPUTS=$srcdir/cftests
-      export WEBINPUTS
-      $LUATANGLE cftest cftest ) >/dev/null 2>&1
-    if diff cftest.p $srcdir/cftests/lcftest.p >/dev/null 2>&1; then
-      tool_ok=yes
-    else
-      tool_ok=no
-    fi
-    AC_MSG_RESULT([$tool_ok])
-    if test "x$tool_ok" != xyes; then
-      AC_MSG_ERROR([Sorry, your $LUATANGLE is too old and does not support WEBINPUTS])
-    fi
-    rm -f cftest.p
-  fi
 fi
 
 AC_CONFIG_SUBDIRS([web2c])
 
 AC_CONFIG_FILES([Makefile doc/Makefile lib/Makefile man/Makefile
-                 ptexdir/lib/Makefile
-                 omegafonts/Makefile otps/Makefile window/Makefile])
+                 omegafonts/Makefile otps/Makefile
+                 ptexdir/lib/Makefile window/Makefile])
 AC_CONFIG_FILES([web2c-sh], [chmod +x web2c-sh])
 AC_CONFIG_FILES([tangle-sh], [chmod +x tangle-sh])
 AC_CONFIG_FILES([ctangleboot-sh], [chmod +x ctangleboot-sh])
@@ -377,8 +359,7 @@ AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
  CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
  CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
 
-dnl for luatex dynamic loading
-
+dnl for luaTeX dynamic loading
 LT_LIB_DLLOAD
 
 AC_OUTPUT

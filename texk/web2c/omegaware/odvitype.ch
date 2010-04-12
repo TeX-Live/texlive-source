@@ -122,7 +122,7 @@ end;
 @y
 @p procedure open_dvi_file; {prepares to read packed bytes in |dvi_file|}
 begin
-  resetbin (dvi_file, extend_filename (cmdline (optind), 'dvi'));
+  resetbin (dvi_file, dvi_name);
   cur_loc := 0;
 end;
 @#
@@ -186,14 +186,14 @@ end;
 @y
 @p function dvi_length:integer;
 begin
-  xfseek (dvi_file, 0, 2, 'odvitype');
-  cur_loc := xftell(dvi_file, 'odvitype');
+  xfseek (dvi_file, 0, 2, dvi_name);
+  cur_loc := xftell(dvi_file, dvi_name);
   dvi_length := cur_loc;
 end;
 @#
 procedure move_to_byte(n:integer);
 begin
-  xfseek (dvi_file, n, 0, 'odvitype');
+  xfseek (dvi_file, n, 0, dvi_name);
   cur_loc:=n;
 end;
 @z
@@ -652,6 +652,7 @@ begin
     write_ln (stderr, 'odvitype: Need exactly one file argument.');
     usage ('odvitype');
   end;
+  dvi_name := extend_filename (cmdline (optind), 'dvi');
 end;
 
 @ Here are the options we allow.  The first is one of the standard GNU options.
@@ -780,4 +781,9 @@ long_options[current_option].name := 0;
 long_options[current_option].has_arg := 0;
 long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
+
+@ Global filenames.
+
+@<Global...@> =
+@!dvi_name:const_c_string;
 @z

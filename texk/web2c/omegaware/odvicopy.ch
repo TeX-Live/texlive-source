@@ -24,6 +24,13 @@
 \let\maybe=\iffalse
 @z
 
+@x [1] No random reading on stdin, may be not seekable.
+@d random_reading==true {should we skip around in the file?}
+@y
+@<Globals in the outer block@>=
+@!random_reading:boolean; {should we skip around in the file?}
+@z
+
 @x [3] Set up kpathsea.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -403,13 +410,13 @@ begin set_pos(dvi_file,n); dvi_loc:=n;
 end;
 @y
 @p function dvi_length:int_32;
-begin xfseek(dvi_file, 0, 2, 'odvicopy');
-dvi_loc:=xftell(dvi_file, 'odvicopy');
+begin xfseek(dvi_file, 0, 2, dvi_name);
+dvi_loc:=xftell(dvi_file, dvi_name);
 dvi_length:=dvi_loc;
 end;
 @#
 procedure dvi_move(n:int_32);
-begin xfseek(dvi_file, n, 0, 'odvicopy');
+begin xfseek(dvi_file, n, 0, dvi_name);
 dvi_loc:=n;
 end;
 @z
@@ -645,24 +652,27 @@ begin
 
   {Now |optind| is the index of first non-option on the command line.
    We can have zero, one, or two remaining arguments.}
-  if optind = argc then begin
-    dvi_file := make_binary_file (stdin);
-    out_file := make_binary_file (stdout);
-    term_out := stderr;
-
-  end else if optind + 1 = argc then begin
-    resetbin (dvi_file, extend_filename (cmdline (optind), 'dvi'));
-    out_file := make_binary_file (stdout);
-    term_out := stderr;
-
-  end else if optind + 2 = argc then begin
-    resetbin (dvi_file, extend_filename (cmdline (optind), 'dvi'));
-    rewritebin (out_file, extend_filename (cmdline (optind + 1), 'dvi'));
-    term_out := stdout;
-
-  end else begin
+  if (optind > argc) or (optind + 2 < argc) then begin
     write_ln (stderr, 'odvicopy: Need at most two file arguments.');
     usage ('odvicopy');
+  end;
+
+  if optind = argc then begin
+    dvi_name := '<stdin>';
+    dvi_file := make_binary_file (stdin);
+    random_reading := false;
+  end else begin
+    dvi_name := extend_filename (cmdline (optind), 'dvi');
+    resetbin (dvi_file, dvi_name);
+    random_reading := true;
+  end;
+
+  if optind + 2 = argc then begin
+    rewritebin (out_file, extend_filename (cmdline (optind + 1), 'dvi'));
+    term_out := stdout;
+  end else begin
+    out_file := make_binary_file (stdout);
+    term_out := stderr;
   end;
 end;
 
@@ -758,4 +768,5 @@ long_options[current_option].val := 0;
 
 @ @<Glob...@> =
 @!term_out:text;
+@!dvi_name:const_c_string;
 @z

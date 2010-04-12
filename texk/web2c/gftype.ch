@@ -6,13 +6,13 @@
 %          info printout to make trap look better.
 % 12/02/89 Karl Berry		version 3.
 % (more recent changes in the ChangeLog)
-% 
-% The C version of GFtype uses command line switches to 
+%
+% The C version of GFtype uses command line switches to
 % request mnemonic ouput or pixel image output.
 % The default is a restrained output which merely assures you
 % that all characters are there and reports their position, tfm_width
 % and escapement.  The -m switch turns on mnemonics, the -i switch
-% turns on images.  There is no terminal input to this program.  
+% turns on images.  There is no terminal input to this program.
 % Output is to stdout, and may, of course, be redirected.
 
 @x [0] WEAVE: print changes only.
@@ -274,7 +274,7 @@ can see what \.{GFtype} thought was specified.
 
 @ So is its second part. (module 33)
 
-@ After the command-line switches have been processed, 
+@ After the command-line switches have been processed,
 we print the options so that the user
 can see what \.{GFtype} thought was specified.
 @z
@@ -381,7 +381,7 @@ othercases error('undefined command ',o:1,'!')
 endcases
 @z
 
-@x [65] No label and no dialog; finish last line written. 
+@x [65] No label and no dialog; finish last line written.
 @p begin initialize; {get all variables initialized}
 dialog; {set up all the options}
 @<Process the preamble@>;
@@ -434,7 +434,7 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
-    
+
     end else if getopt_return_val = "?" then begin
       usage ('gftype');
 

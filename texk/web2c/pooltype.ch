@@ -12,11 +12,11 @@
 \def\title{POOL\lowercase{type} changes for C}
 @z
 
-@x [2] main program changes: no global labels, read command line. 
+@x [2] main program changes: no global labels, read command line.
 label 9999; {this labels the end of the program}
 @y
 @z
-@x 
+@x
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@;
   begin @<Set initial values of key variables@>@/
@@ -33,7 +33,7 @@ procedure initialize; {this procedure gets things started properly}
 % [??] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d text_char == char {the data type of characters in text files}
 @y
@@ -113,10 +113,10 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       do_nothing;
-    
+
     end else if getopt_return_val = '?' then begin
       usage ('pooltype');
-    
+
     end else if argument_is ('help') then begin
       usage_help (POOLTYPE_HELP, nil);
 
@@ -137,7 +137,7 @@ begin
   pool_name := extend_filename (cmdline (optind), 'pool');
   {Try opening the file here, to avoid printing the first 256 strings if
    they give a bad filename.}
-  resetbin (pool_file, pool_name); 
+  resetbin (pool_file, pool_name);
 end;
 
 @ Here are the options we allow.  The first is one of the standard GNU options.

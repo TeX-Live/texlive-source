@@ -170,7 +170,6 @@ include $(srcdir)/pdftexdir/am/pdftosrc.am
 
 ## luaTeX
 include $(srcdir)/luatexdir/am/luatex.am
-## include $(srcdir)/luatexdir/am/luatangle.am
 include $(srcdir)/luatexdir/am/liblua51.am
 include $(srcdir)/luatexdir/am/luasocket.am
 include $(srcdir)/luatexdir/am/luamisc.am

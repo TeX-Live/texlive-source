@@ -79,7 +79,7 @@ procedure initialize; {this procedure gets things started properly}
 @z
 
 % [4] Remove the final_end label.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @ If the program has to stop prematurely, it goes to the
 `|final_end|'.
@@ -98,7 +98,7 @@ procedure initialize; {this procedure gets things started properly}
 @z
 
 % [8] Remove nonlocal goto.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @p procedure jump_out;
 begin goto final_end;
@@ -112,7 +112,7 @@ end;
 % [11] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d text_char == char {the data type of characters in text files}
 @y
@@ -243,7 +243,7 @@ else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
 % field and as a regular variable.  web2c puts field names in the global
 % symbol table, so this loses.  Rather than fix web2c (hard), we change
 % the name of the field (ugly, but easy).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @!four_quarters = packed record@;@/
   @!b0:quarterword;
@@ -268,7 +268,7 @@ else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
 @z
 
 % [55] fix references to .b0
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d char_width_end(#)==#.b0].sc
 @d char_width(#)==font_info[width_base[#]+char_width_end
@@ -304,7 +304,7 @@ else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
 @z
 
 % [60] Fix 16-bit arithmetic bugs in TFM calculations.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @ @d read_two_halves_end(#)==#:=b2*256+b3
 @d read_two_halves(#)==read_tfm_word; #:=b0*256+b1; read_two_halves_end
@@ -314,7 +314,7 @@ else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
 @z
 
 % [62] More .b?'s.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
   qw.b0:=qi(b0); qw.b1:=qi(b1); qw.b2:=qi(b2); qw.b3:=qi(b3);
 @y
@@ -322,7 +322,7 @@ else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
 @z
 
 % [62] More arithmetic fixes.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 z:=((b0*256+b1)*256+b2)*16+(b3 div 16);
 @y
@@ -470,13 +470,13 @@ end;
 @y
 In C, we can write out the entire array with one call.
 @p procedure write_dvi(@!a,@!b:dvi_index);
-begin 
+begin
   write_chunk (dvi_file, dvi_buf, a, b);
 end;
 @z
 
 % [111] More .b?'s.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 dvi_out(qo(font_check[f].b0));
 dvi_out(qo(font_check[f].b1));
@@ -499,7 +499,7 @@ uexit (0);
 @z
 
 % [118] And still more .b?'s.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 dummy_info.b0:=qi(0); dummy_info.b1:=qi(0); dummy_info.b2:=qi(0);
 dummy_info.b3:=qi(0);
@@ -509,7 +509,7 @@ dummy_info.B3:=qi(0);
 @z
 
 % [138] write_ln formatting.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 begin if abs(r-slant_reported)>0.001 then
   begin print_nl('Sorry, I can''t make diagonal rules of slant ',r:10:5,'!');
@@ -520,7 +520,7 @@ begin if fabs(r-slant_reported)>0.001 then
 @z
 
 % [164] No progress report unless verbose.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 print('[',total_pages:1); update_terminal; {print a progress report}
 @y
@@ -632,10 +632,10 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
-    
+
     end else if getopt_return_val = "?" then begin
       usage ('gftodvi');
-    
+
     end else if argument_is ('help') then begin
       usage_help (GFTODVI_HELP, nil);
 
@@ -687,7 +687,7 @@ long_options[current_option].flag := address_of (verbose);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@ 
+@
 @<Glob...@> =
 @!verbose: c_int_type;
 

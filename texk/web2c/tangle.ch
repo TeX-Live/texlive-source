@@ -104,10 +104,10 @@ procedure initialize;
 @!def_unambig_length=32; {identifiers must be unique if chopped to this length}
 @z
 
-% [??] The text_char type is used as an array index into xord.  The
-% default type `char' produces signed integers, which are bad array
+% [12] The text_char type is used as an array index into xord.  The
+% default type `char' may produce signed integers, which are bad array
 % indices in C.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d text_char == char {the data type of characters in text files}
 @y
@@ -185,7 +185,7 @@ rewrite (Pascal_file, pascal_name);
       begin while not eoln(f) do vgetc(f);
 @z
 
-@x [35] Fix `jump_out'.
+@x [34] Fix `jump_out'.
 @d fatal_error(#)==begin new_line; print(#); error; mark_fatal; jump_out;
   end
 
@@ -195,7 +195,7 @@ begin goto end_of_TANGLE;
 end;
 @y
 @d jump_out==uexit(1)
-@d fatal_error(#)==begin new_line; write(stderr, #); 
+@d fatal_error(#)==begin new_line; write(stderr, #);
      error; mark_fatal; uexit(1);
   end
 @z
@@ -672,7 +672,7 @@ begin
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
       {End of arguments; we exit the loop below.} ;
-    
+
     end else if getopt_return_val = "?" then begin
       usage ('tangle');
 
@@ -716,13 +716,13 @@ begin
     write_ln (stderr, 'tangle: Need one or two file arguments.');
     usage ('tangle');
   end;
-  
+
   {Supply |".web"| and |".ch"| extensions if necessary.}
   web_name := extend_filename (cmdline (optind), 'web');
   if optind + 2 = argc then begin
     chg_name := extend_filename (cmdline (optind + 1), 'ch');
   end;
-  
+
   {Change |".web"| to |".p"| and use the current directory.}
   pascal_name := basename_change_suffix (web_name, '.web', '.p');
 end;

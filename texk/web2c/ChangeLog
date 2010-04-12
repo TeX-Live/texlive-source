@@ -8,6 +8,43 @@
 	* lib/texmfmp.c [pTeX]: various pTeX conditionals.
 	* texmfmp-help.h [pTeX]: pTeX options.
 
+2010-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tangle.ch: Check and correct module numbers.
+
+	* dvitype.ch, gftodvi.ch, gftopk.ch, gftype.ch, mf.ch, mft.ch,
+	pktogf.ch, pktype.ch, pltotf.ch, pooltype.ch, tangle.ch, tex.ch,
+	tftopl.ch, vftovp.ch, vptovf.ch, weave.ch: Remove trailing
+	whitespace.
+
+2010-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/cweb.am (cweave.c): Add dependency on cwebdir/prod.w.
+
+2010-04-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvicopy.ch (dvi_name): New global variable.
+	(dvi_length, dvi_move): Use dvi_name instead of 'dvicopy' as
+	last arg of xfseek() and xftell().
+	No random reading on stdin, may be not seekable.
+	* dvitype.ch (dvi_name): New global variable.
+	(dvi_length, move_to_byte): Use dvi_name instead of 'dvitype'
+	as last arg of xfseek() and xftell().
+	* gftopk.ch (gf_length, move_to_byte): Use gf_name instead of
+	'gftopk' as last arg of xfseek() and xftell().
+
+2010-04-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pktogf.ch: Check and correct module numbers.
+	Dynamically allocate and resize the row_counts array.
+
+2010-04-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* gftopk.ch: Check and correct module numbers.
+	Dynamically allocate and resize the row array.
+	Remove superfluous variable vpl_name.
+	Bug fix for GF file too short.
+
 2010-04-05  Taco Hoekwater  <taco@luatex.org>
 	    
 	* texmfmp.h: Removed #ifdef luaTeX code, now that luatex

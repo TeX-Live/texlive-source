@@ -401,7 +401,7 @@ in \ph. The `\.{/I}' switch suppresses the first |get|.
 @ Here is how to open the terminal files.  |t_open_out| does nothing.
 |t_open_in|, on the other hand, does the work of ``rescanning,'' or getting
 any command line arguments the user has provided.  It's defined in C.
-  
+
 @d t_open_out == {output already open for text output}
 @z
 
@@ -591,12 +591,12 @@ end;
   print_nl("! "); print(#);
 @y
   if (file_line_error_style_p and not terminal_input) then
-  begin 
+  begin
     print_nl ("");
     print (full_source_filename_stack[in_open]);
     print (":"); print_int (line); print (": ");
-    print (#); 
-  end  
+    print (#);
+  end
   else begin print_nl("! "); print(#) end;
 @z
 
@@ -1671,7 +1671,7 @@ name_of_file[name_length + 1] := 0;
   while (k<=name_length)and(more_name(name_of_file[k])) do
     incr(k);
   stop_at_space:=true;
-  end_name;  
+  end_name;
 @z
 
 @x [38.781] Make scan_file_name ignore leading tabs as well as spaces.
@@ -2120,7 +2120,7 @@ print(" (base="); print(job_name); print_char(" ");
   if error_line > ssup_error_line then error_line := ssup_error_line;
   if screen_width > ssup_screen_width then screen_width := ssup_screen_width;
   if screen_depth > ssup_screen_depth then screen_depth := ssup_screen_depth;
-  
+
   const_chk (main_memory);
   {|mem_top| is an index, |main_memory| is a size}
   mem_top := mem_min + main_memory - 1;

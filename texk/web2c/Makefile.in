@@ -1093,7 +1093,6 @@ LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 LT_DLLOADERS = @LT_DLLOADERS@
 LT_DLPREOPEN = @LT_DLPREOPEN@
-LUATANGLE = @LUATANGLE@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
@@ -1226,7 +1225,7 @@ version = $(WEB2CVERSION)
 SUBDIRS = doc lib man web2c . window omegafonts otps ptexdir/lib
 proglib = lib/lib.a
 dist_man_MANS = synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
-nodist_man_MANS = ctiedir/ctie.1 tiedir/tie.1
+nodist_man_MANS = 
 EXTRA_LIBRARIES = libmf.a libmplib.a libpdftex.a liblua51.a \
 	libluasocket.a libluamisc.a libff.a libluatex.a libxetex.a \
 	libxetexmm.a libmd5.a
@@ -8829,7 +8828,7 @@ weave.p: tangle$(EXEEXT) weave.web weave.ch
 ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
 $(cweave_OBJECTS): cweb.h
-cweave.c: ctangle$(EXEEXT) cwebdir/common.h cwebdir/cweave.w cwebdir/cweav-w2c.ch
+cweave.c: ctangle$(EXEEXT) cwebdir/common.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
 	CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
 tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 	CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
@@ -9129,7 +9128,7 @@ $(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND) $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND) $(OBSDCOMPAT_DEPEND)
 
-$(luatex_OBJECTS): libluatex.a libmplib.a
+$(luatex_OBJECTS): libluatex.a
 
 # Double-colon rules since we do something similar in mplibdir (maybe others).
 @LUATEX_TRUE@install-exec-hook::
@@ -9407,7 +9406,7 @@ managed-sa.c: ctangle$(EXEEXT) luatexdir/utils/managed-sa.w
 avlstuff.c: ctangle$(EXEEXT) luatexdir/utils/avlstuff.w
 	$(luatex_utils_ctangle) avlstuff.w
 
-$(libluatex_a_OBJECTS): libff.a
+$(libluatex_a_OBJECTS): libff.a libmplib.a
 $(xetex_OBJECTS): $(xetex_prereq)
 
 $(xetex_c_h): xetex-web2c
