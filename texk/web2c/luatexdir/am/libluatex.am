@@ -621,7 +621,7 @@ libluatex_a_SOURCES = \
 	$(nodist_libluatex_a_SOURCES) \
 	mplibdir/lmplib.c
 
-$(libluatex_a_OBJECTS): libff.a
+$(libluatex_a_OBJECTS): libff.a libmplib.a
 
 EXTRA_DIST += $(libluatex_web) 
 

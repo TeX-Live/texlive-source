@@ -1,3 +1,10 @@
+2010-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/luatex.am: Remove libmplib.a from $($(luatex_OBJECTS)'s
+	dependencies ...
+	* am/libluatex.am: and add to $(libluatex_a_OBJECTS)'s
+	dependencies; otherwise parallel builds may fail.
+
 2010-04-04  Taco Hoekwater  <taco@luatex>
 
 	* import of luatex 0.60.0, with a few local changes:

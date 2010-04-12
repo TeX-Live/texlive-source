@@ -1,5 +1,3 @@
-/* @configure_input@ */
-
 /* Guard against double inclusion. */
 #ifndef FF_CONFIG_H
 #define FF_CONFIG_H

@@ -32,7 +32,7 @@ luatex_DEPENDENCIES = $(proglib) $(KPATHSEA_DEPEND) libluatex.a
 luatex_DEPENDENCIES += $(LIBPNG_DEPEND) $(ZLIB_DEPEND) $(XPDF_DEPEND)
 luatex_DEPENDENCIES += $(OBSDCOMPAT_DEPEND) libmd5.a libmplib.a
 
-$(luatex_OBJECTS): libluatex.a libmplib.a
+$(luatex_OBJECTS): libluatex.a
 
 luatex_SOURCES = luatexdir/luatex_svnversion.h luatexdir/luatex.c luatexdir/luatex.h
 
