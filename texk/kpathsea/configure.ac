@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -23,7 +23,7 @@ dnl   binaries built between releases.
 m4_define([kpse_lib_major], [6])[]dnl
 m4_define([kpse_lib_minor], [0])[]dnl
 m4_define([kpse_lib_micro], [0])[]dnl
-m4_define([kpse_lib_devel], [dev])[]dnl or "dev"
+m4_define([kpse_lib_devel], [dev])[]dnl empty or "dev"
 m4_define([kpse_version], [kpse_lib_major.kpse_lib_minor.kpse_lib_micro[]kpse_lib_devel])[]dnl
 
 AC_INIT([Kpathsea], [kpse_version], [tex-k@tug.org])

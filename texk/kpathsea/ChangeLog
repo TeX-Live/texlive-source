@@ -1,3 +1,7 @@
+2010-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): Add bsnl.awk.
+
 2010-04-11  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf ({TEXINPUTS,BIBINPUTS}.{ptex,platex,pbibtex}): new defns.
@@ -17,6 +21,12 @@
 2010-04-09  Karl Berry  <karl@tug.org>
 
 	* types.h: doc fixes.
+
+2010-04-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* man/kpseaccess.man, man/kpsestat.man, man/mktexpk.man,
+	man/mktextfm.man: Uniform manpage formatting: bold for literals,
+	italic for variable items, roman for meta items.
 
 2010-04-05  Karl Berry  <karl@tug.org>
 

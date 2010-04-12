@@ -1,4 +1,4 @@
-.TH MKTEXTFM 1 "4 January 1998" "Kpathsea @VERSION@"
+.TH MKTEXTFM 1 "7 April 2010" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -20,7 +20,7 @@
 mktextfm \- create a TFM file for a font
 .SH SYNOPSIS
 .B mktextfm
-.RI [options]
+.RI [ options ]
 .I font
 .\"=====================================================================
 .SH DESCRIPTION

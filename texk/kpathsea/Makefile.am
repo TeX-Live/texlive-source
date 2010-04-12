@@ -234,6 +234,8 @@ kpathsea.h: Makefile paths.h
 	      -e '/^win32lib\.h/d' \
 	      -e 's,^,#include <kpathsea/,' -e s',$$,>,' >>$@
 
+EXTRA_DIST += bsnl.awk
+
 DISTCLEANFILES = paths.h stamp-paths kpathsea.h
 
 ## The programs

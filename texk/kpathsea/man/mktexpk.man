@@ -1,4 +1,4 @@
-.TH MKTEXPK 1 "4 January 1998" "Kpathsea @VERSION@"
+.TH MKTEXPK 1 "7 April 2010" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -40,7 +40,7 @@ if possible.
 If
 .I redirect
 is given, it must be string of the form
-.I >&n
+.BI >& n
 where
 .I n
 is the number of the file descriptor which is to receive, instead of

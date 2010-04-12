@@ -1,4 +1,4 @@
-.TH KPSESTAT 1 "4 January 1998" "Kpathsea @VERSION@"
+.TH KPSESTAT 1 "7 April 2010" "Kpathsea @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
@@ -34,7 +34,7 @@ on standard output.  The
 parameter accepts a subset of the symbolic permissions accepted by
 .BR chmod (1).
 Use
-.I =
+.B =
 as the mode to obtain the unchanged permissions.
 .\"=====================================================================
 .SH OPTIONS
