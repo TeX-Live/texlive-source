@@ -192,7 +192,7 @@ that \Kpathsea/ library provides.
 We set |kpse_program_name| to a |"cweb"|.  This means if the
 variable |CWEBINPUTS.cweb| is present in \.{texmf.cnf} (or |CWEBINPUTS_cweb|
 in the environment) its value will be used as the search path for
-filenames.  This allows different flawors of \.{CWEB} to have
+filenames.  This allows different flavors of \.{CWEB} to have
 different search paths.
 
 FIXME: Not sure this is the best way to go about this.

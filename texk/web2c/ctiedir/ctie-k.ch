@@ -78,7 +78,7 @@ mechanism that the \Kpathsea/ library provides.
 We set |kpse_program_name| to |"ctie"|.  This means if the variable
 |CWEBINPUTS.ctie| is present in \.{texmf.cnf} (or |CWEBINPUTS_ctie| in
 the environment) its value will be used as the search path for
-filenames.  This allows different flawors of \.{CTIE} to have
+filenames.  This allows different flavors of \.{CTIE} to have
 different search paths.
 
 @<Set up |PROGNAME| feature and initialize the search path mechanism@>=
@@ -378,9 +378,15 @@ e_of_ch_preamble (file_index i)
 
 @x l.1106
 void usage_error()
+{
+    @<Print the banners@>;
+    fprintf(stderr, "Usage: ctie -[mc] outfile master changefile(s)\n");
 @y
 static void
 usage_error (void)
+{
+    @<Print the banners@>;
+    fprintf(stderr, "Usage: ctie -m|-c outfile master changefile(s)\n");
 @z
 
 @x l.1119 Add Web2C version to banner string
@@ -393,8 +399,10 @@ printf("%s\n", banner); /* print a ``banner line'' */
 
 @x l.1218
 string CTIEHELP[] = {
+    "Usage: ctie -[mc] outfile master changefile(s)",
 @y
 const_string CTIEHELP[] = {
+    "Usage: ctie -m|-c outfile master changefile(s)",
 @z
 
 @x l.1233

@@ -1,3 +1,7 @@
+2010-04-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ctie-k.ch: Replace "-[m|c]" in usage message by "-m|-c".
+
 2009-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid maximal compiler warnings.

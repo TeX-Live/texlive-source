@@ -108,9 +108,13 @@ e_of_ch_preamble (file_index i)
 
 @x
 void usage()
+{
+   print("Usage: tie -[mc] outfile master changefile(s)");
 @y
 static
 void usage (void)
+{
+   print("Usage: tie -m|-c outfile master changefile(s)");
 @z
 
 @x
