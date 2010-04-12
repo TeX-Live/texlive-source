@@ -1,3 +1,9 @@
+2010-04-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Prepare for zlib-1.2.4
+	* configure.ac, Makefile.am: Use AC_CONFIG_COMMANDS to create
+	zconf.h.
+
 2009-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.

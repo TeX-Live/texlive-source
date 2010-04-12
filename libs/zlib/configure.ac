@@ -1,18 +1,15 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([zlib_major], [1])[]dnl
-m4_define([zlib_minor], [2])[]dnl
-m4_define([zlib_micro], [3])[]dnl using unmodified zlib-1.2.3 source tree
-m4_define([zlib_version], zlib_major.zlib_minor.zlib_micro)[]dnl
+m4_define([zlib_version], [1.2.3])[]dnl using unmodified zlib source tree
 AC_INIT([zlib for TeX Live], zlib_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([zlib-]zlib_version[/zconf.in.h])
+AC_CONFIG_SRCDIR([zlib-]zlib_version[/zlib.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -36,8 +33,29 @@ if test "x$ac_cv_header_stdc" != xyes; then
   AC_MSG_ERROR([Sorry, can't do anything for you])
 fi
 
-AC_CHECK_HEADER([unistd.h], [WITH_UNISTD=1], [WITH_UNISTD=0])
-AC_SUBST([WITH_UNISTD])
+AC_CHECK_HEADERS([unistd.h])
+dnl zlib-1.2.3 has zconf.in.h, whereas zlib-1.2.4 has zconf.h.in
+m4_if(zlib_version, [1.2.3],
+      [
+ZCONF_SRC=zlib-[]zlib_version/zconf.in.h
+if test x"$ac_cv_header_unistd_h" = xyes; then
+  zconf_sh='sed <$srcdir/'"$ZCONF_SRC"' "/HAVE_UNISTD_H/s%0%1%" >'
+else
+  zconf_sh='cp $srcdir/'"$ZCONF_SRC"
+fi
+AC_SUBST([OTHER_TREE], [zlib-1.2.4])],
+      [
+ZCONF_SRC=zlib-[]zlib_version/zconf.h.in
+if test x"$ac_cv_header_unistd_h" = xyes; then
+  zconf_sh='sed <$srcdir/'"$ZCONF_SRC"' "/^#ifdef HAVE_UNISTD_H.* may be/s/def HAVE_UNISTD_H\\(.*\\) may be/ 1\\1 was/" >'
+else
+  zconf_sh='cp $srcdir/'"$ZCONF_SRC"
+fi
+AC_SUBST([OTHER_TREE], [zlib-1.2.3])])
+AM_CONDITIONAL([ZLIB123], [test "x]zlib_version[" = x1.2.3])
+AC_CONFIG_COMMANDS([zconf.h],
+                   [eval "$zconf_sh" zconf.h],
+                   [zconf_sh='$zconf_sh'])
 
 AC_CHECK_HEADER([errno.h],
                 [ZLIB_DEFINES=],

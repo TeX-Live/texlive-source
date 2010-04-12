@@ -1,5 +1,6 @@
---- xpdf-orig/xpdf/Page.cc	2007-02-27 23:05:52.000000000 +0100
-+++ xpdf-3.02/xpdf/Page.cc	2010-04-06 21:22:17.000000000 +0200
+diff -ur -N xpdf-3.02.orig/xpdf/Page.cc xpdf-3.02/xpdf/Page.cc
+--- xpdf-3.02.orig/xpdf/Page.cc	2009-05-07 00:22:58.000000000 +0200
++++ xpdf-3.02/xpdf/Page.cc	2010-04-06 23:04:12.000000000 +0200
 @@ -5,6 +5,9 @@
  // Copyright 1996-2007 Glyph & Cog, LLC
  //
@@ -41,8 +42,9 @@
  }
  
  GBool PageAttrs::readBox(Dict *dict, char *key, PDFRectangle *box) {
---- xpdf-orig/xpdf/Page.h	2007-02-27 23:05:52.000000000 +0100
-+++ xpdf-3.02/xpdf/Page.h	2010-04-06 21:21:51.000000000 +0200
+diff -ur -N xpdf-3.02.orig/xpdf/Page.h xpdf-3.02/xpdf/Page.h
+--- xpdf-3.02.orig/xpdf/Page.h	2007-02-27 23:05:52.000000000 +0100
++++ xpdf-3.02/xpdf/Page.h	2010-04-06 23:04:12.000000000 +0200
 @@ -5,6 +5,10 @@
  // Copyright 1996-2003 Glyph & Cog, LLC
  //

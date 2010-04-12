@@ -557,7 +557,7 @@ PACKAGE_STRING='zlib for TeX Live 1.2.3'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="zlib-1.2.3/zconf.in.h"
+ac_unique_file="zlib-1.2.3/zlib.h"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -600,7 +600,9 @@ LTLIBOBJS
 LIBOBJS
 ZLIB_TREE
 ZLIB_DEFINES
-WITH_UNISTD
+ZLIB123_FALSE
+ZLIB123_TRUE
+OTHER_TREE
 EGREP
 GREP
 CPP
@@ -4036,14 +4038,36 @@ fi
 done
 
 
-ac_fn_c_check_header_mongrel "$LINENO" "unistd.h" "ac_cv_header_unistd_h" "$ac_includes_default"
+for ac_header in unistd.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "unistd.h" "ac_cv_header_unistd_h" "$ac_includes_default"
 if test "x$ac_cv_header_unistd_h" = x""yes; then :
-  WITH_UNISTD=1
-else
-  WITH_UNISTD=0
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_UNISTD_H 1
+_ACEOF
+
 fi
 
+done
 
+
+ZCONF_SRC=zlib-1.2.3/zconf.in.h
+if test x"$ac_cv_header_unistd_h" = xyes; then
+  zconf_sh='sed <$srcdir/'"$ZCONF_SRC"' "/HAVE_UNISTD_H/s%0%1%" >'
+else
+  zconf_sh='cp $srcdir/'"$ZCONF_SRC"
+fi
+OTHER_TREE=zlib-1.2.4
+
+ if test "x1.2.3" = x1.2.3; then
+  ZLIB123_TRUE=
+  ZLIB123_FALSE='#'
+else
+  ZLIB123_TRUE='#'
+  ZLIB123_FALSE=
+fi
+
+ac_config_commands="$ac_config_commands zconf.h"
 
 
 ac_fn_c_check_header_mongrel "$LINENO" "errno.h" "ac_cv_header_errno_h" "$ac_includes_default"
@@ -4213,6 +4237,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then
   as_fn_error "conditional \"build\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${ZLIB123_TRUE}" && test -z "${ZLIB123_FALSE}"; then
+  as_fn_error "conditional \"ZLIB123\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
@@ -4803,6 +4831,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
 # INIT-COMMANDS
 #
 AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
+zconf_sh='$zconf_sh'
 
 _ACEOF
 
@@ -4814,6 +4843,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
+    "zconf.h") CONFIG_COMMANDS="$CONFIG_COMMANDS zconf.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "include/Makefile") CONFIG_FILES="$CONFIG_FILES include/Makefile" ;;
 
@@ -5495,6 +5525,7 @@ $as_echo X"$file" |
   done
 }
  ;;
+    "zconf.h":C) eval "$zconf_sh" zconf.h ;;
 
   esac
 done # for ac_tag
