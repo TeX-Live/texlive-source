@@ -120,6 +120,7 @@ TESTS_ENVIRONMENT += TEXPSHEADERS=$(srcdir)/testdata
 EXTRA_DIST += \
 	NEWS \
 	TODO \
+	afm2tfm-test.pl \
 	beginfontk1.test \
 	dvips.test \
 	pfbincl.test \

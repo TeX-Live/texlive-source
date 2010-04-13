@@ -50,3 +50,5 @@ endif LUATEX
 
 EXTRA_DIST += luatexdir/ptexlib.h
 
+EXTRA_DIST += luatexdir/getluatexsvnversion.sh
+

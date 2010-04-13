@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## pTeX
@@ -8,7 +8,7 @@
 if PTEX
 bin_PROGRAMS += ptex pbibtex pdvitype ptftopl ppltotf
 endif PTEX
-EXTRA_PROGRAMS += ptex
+EXTRA_PROGRAMS += ptex pbibtex pdvitype ptftopl ppltotf
 
 ptex_CPPFLAGS = $(PTEXENC_INCLUDES)
 ptex_CFLAGS = $(WARNING_CFLAGS)
@@ -28,7 +28,8 @@ $(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/ptexdir/lib/*.c
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
-nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h ptexdir/kanji.c ptexdir/kanji.h
+nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h
+ptex_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
 
 # We must create ptexd.h before building the ptex_OBJECTS.
 ptex_prereq = ptexd.h
@@ -140,10 +141,18 @@ DISTCLEANFILES += $(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c \
 	ptex.p ptex.pool ptex-tangle ptexdir/ptex.version
 
 EXTRA_DIST += \
-	ptexdir/ChangeLog \
-	ptexdir/INSTALL \
-	ptexdir/README \
-	ptexdir/ptex_gen.tex
+	ptexdir/COPYRIGHT \
+	ptexdir/COPYRIGHT.jis \
+	ptexdir/Changes.txt \
+	ptexdir/INSTALL.txt \
+	ptexdir/README.txt \
+	ptexdir/pbibtex.ch \
+	ptexdir/pbibtex.defines \
+	ptexdir/pdvitype.ch \
+	ptexdir/ppltotf.ch \
+	ptexdir/ptex.defines \
+	ptexdir/ptexhelp.h \
+	ptexdir/ptftopl.ch
 
 # pTeX Tests
 #
@@ -171,9 +180,9 @@ ptrip-clean:
 	rm -f tripos.tex 8terminal.tex
 	rm -rf tfm
 
-## Test data
+## Test data -- not yet present
 ##
-EXTRA_DIST += \
+not_yet_EXTRA_DIST = \
 	ptexdir/ptrip/ptrip.diffs \
 	ptexdir/ptrip/ptrip.fot \
 	ptexdir/ptrip/ptrip.log \
@@ -189,11 +198,14 @@ EXTRA_DIST += \
 	ptexdir/ptrip/texmf.cnf \
 	ptexdir/ptrip/trip2.in
 
-## Not used
-##
-EXTRA_DIST += ptexdir/ptex.mak
-
 ## Eventually delete these files
 ##
-EXTRA_DIST += ptexdir/ptex.mk
+EXTRA_DIST += \
+	ptexdir/Files \
+	ptexdir/lib/openclose.c.orig \
+	ptexdir/lib/printversion.c.orig \
+	ptexdir/lib/usage.c.orig \
+	ptexdir/ptex.mk \
+	ptexdir/ptex-base.ch.orig \
+	ptexdir/reautoconf
 

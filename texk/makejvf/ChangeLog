@@ -1,0 +1,4 @@
+2010-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile: Renamed => Makefile.orig.
+	* Makefile.am (EXTRA_DIST): Add Makefile.orig.

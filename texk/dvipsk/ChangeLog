@@ -1,9 +1,17 @@
+2010-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (EXTRA_DIST): Add afm2tfm-test.pl.
+
 2010-04-11  Karl Berry  <karl@tug.org>
 
 	* afm2tfm.c (staticligkern): restore spaces around semicolons,
 	accidentally removed in source cleanup.
 	
         * afm2tfm.c (throughout): use snprintf where needed.
+
+	* afm2tfm-test.pl: New test script for afm2tfm.
+
+	* Makefile.am (TESTS): Add the new test.
 
 2010-03-29  Karl Berry  <karl@tug.org>
 

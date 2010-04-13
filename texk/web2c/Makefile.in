@@ -36,8 +36,10 @@ build_triplet = @build@
 host_triplet = @host@
 EXTRA_PROGRAMS = $(am__EXEEXT_1) tex$(EXEEXT) mf$(EXEEXT) \
 	mf-nowin$(EXEEXT) mpost$(EXEEXT) etex$(EXEEXT) ptex$(EXEEXT) \
-	pdftex$(EXEEXT) ttf2afm$(EXEEXT) pdftosrc$(EXEEXT) \
-	luatex$(EXEEXT) xetex$(EXEEXT) $(am__EXEEXT_4) aleph$(EXEEXT)
+	pbibtex$(EXEEXT) pdvitype$(EXEEXT) ptftopl$(EXEEXT) \
+	ppltotf$(EXEEXT) pdftex$(EXEEXT) ttf2afm$(EXEEXT) \
+	pdftosrc$(EXEEXT) luatex$(EXEEXT) xetex$(EXEEXT) \
+	$(am__EXEEXT_4) aleph$(EXEEXT)
 bin_PROGRAMS = tangle$(EXEEXT) ctangle$(EXEEXT) $(am__EXEEXT_5) \
 	ctie$(EXEEXT) cweave$(EXEEXT) tie$(EXEEXT) $(am__EXEEXT_6) \
 	$(am__EXEEXT_7) $(am__EXEEXT_8) $(am__EXEEXT_9) \
@@ -226,25 +228,27 @@ ARFLAGS = cru
 libff_a_AR = $(AR) $(ARFLAGS)
 libff_a_LIBADD =
 am_libff_a_OBJECTS = libff_a-ArabicForms.$(OBJEXT) \
-	libff_a-alphabet.$(OBJEXT) libff_a-char.$(OBJEXT) \
-	libff_a-cjk.$(OBJEXT) libff_a-gwwiconv.$(OBJEXT) \
+	libff_a-alphabet.$(OBJEXT) libff_a-backtrns.$(OBJEXT) \
+	libff_a-char.$(OBJEXT) libff_a-cjk.$(OBJEXT) \
+	libff_a-dump.$(OBJEXT) libff_a-gwwiconv.$(OBJEXT) \
 	libff_a-memory.$(OBJEXT) libff_a-ucharmap.$(OBJEXT) \
-	libff_a-ustring.$(OBJEXT) libff_a-utype.$(OBJEXT) \
-	libff_a-autohint.$(OBJEXT) libff_a-clipnoui.$(OBJEXT) \
-	libff_a-cvundoes.$(OBJEXT) libff_a-dumppfa.$(OBJEXT) \
-	libff_a-encoding.$(OBJEXT) libff_a-featurefile.$(OBJEXT) \
-	libff_a-fontviewbase.$(OBJEXT) libff_a-fvcomposit.$(OBJEXT) \
-	libff_a-fvfonts.$(OBJEXT) libff_a-lookups.$(OBJEXT) \
-	libff_a-macbinary.$(OBJEXT) libff_a-macenc.$(OBJEXT) \
-	libff_a-mathconstants.$(OBJEXT) libff_a-mm.$(OBJEXT) \
-	libff_a-namelist.$(OBJEXT) libff_a-noprefs.$(OBJEXT) \
-	libff_a-nouiutil.$(OBJEXT) libff_a-parsepfa.$(OBJEXT) \
-	libff_a-parsettf.$(OBJEXT) libff_a-parsettfatt.$(OBJEXT) \
-	libff_a-parsettfvar.$(OBJEXT) libff_a-psread.$(OBJEXT) \
-	libff_a-pua.$(OBJEXT) libff_a-python.$(OBJEXT) \
-	libff_a-sfd1.$(OBJEXT) libff_a-splinechar.$(OBJEXT) \
-	libff_a-splinefill.$(OBJEXT) libff_a-splinefont.$(OBJEXT) \
-	libff_a-splineorder2.$(OBJEXT) libff_a-splineoverlap.$(OBJEXT) \
+	libff_a-unialt.$(OBJEXT) libff_a-ustring.$(OBJEXT) \
+	libff_a-utype.$(OBJEXT) libff_a-autohint.$(OBJEXT) \
+	libff_a-clipnoui.$(OBJEXT) libff_a-cvundoes.$(OBJEXT) \
+	libff_a-dumppfa.$(OBJEXT) libff_a-encoding.$(OBJEXT) \
+	libff_a-featurefile.$(OBJEXT) libff_a-fontviewbase.$(OBJEXT) \
+	libff_a-fvcomposit.$(OBJEXT) libff_a-fvfonts.$(OBJEXT) \
+	libff_a-lookups.$(OBJEXT) libff_a-macbinary.$(OBJEXT) \
+	libff_a-macenc.$(OBJEXT) libff_a-mathconstants.$(OBJEXT) \
+	libff_a-mm.$(OBJEXT) libff_a-namelist.$(OBJEXT) \
+	libff_a-noprefs.$(OBJEXT) libff_a-nouiutil.$(OBJEXT) \
+	libff_a-parsepfa.$(OBJEXT) libff_a-parsettf.$(OBJEXT) \
+	libff_a-parsettfatt.$(OBJEXT) libff_a-parsettfvar.$(OBJEXT) \
+	libff_a-psread.$(OBJEXT) libff_a-pua.$(OBJEXT) \
+	libff_a-python.$(OBJEXT) libff_a-sfd1.$(OBJEXT) \
+	libff_a-splinechar.$(OBJEXT) libff_a-splinefill.$(OBJEXT) \
+	libff_a-splinefont.$(OBJEXT) libff_a-splineorder2.$(OBJEXT) \
+	libff_a-splineoverlap.$(OBJEXT) \
 	libff_a-splinerefigure.$(OBJEXT) libff_a-splinesave.$(OBJEXT) \
 	libff_a-splinesaveafm.$(OBJEXT) libff_a-splinestroke.$(OBJEXT) \
 	libff_a-splineutil.$(OBJEXT) libff_a-splineutil2.$(OBJEXT) \
@@ -300,68 +304,6 @@ am_libluasocket_a_OBJECTS = libluasocket_a-auxiliar.$(OBJEXT) \
 libluasocket_a_OBJECTS = $(am_libluasocket_a_OBJECTS)
 libluatex_a_AR = $(AR) $(ARFLAGS)
 libluatex_a_LIBADD =
-am__objects_1 = libluatex_a-dvigen.$(OBJEXT) \
-	libluatex_a-dofont.$(OBJEXT) libluatex_a-luafont.$(OBJEXT) \
-	libluatex_a-mapfile.$(OBJEXT) libluatex_a-pkin.$(OBJEXT) \
-	libluatex_a-sfnt.$(OBJEXT) libluatex_a-subfont.$(OBJEXT) \
-	libluatex_a-texfont.$(OBJEXT) libluatex_a-tfmofm.$(OBJEXT) \
-	libluatex_a-tounicode.$(OBJEXT) libluatex_a-tt_glyf.$(OBJEXT) \
-	libluatex_a-tt_table.$(OBJEXT) libluatex_a-vfovf.$(OBJEXT) \
-	libluatex_a-vfpacket.$(OBJEXT) libluatex_a-writecff.$(OBJEXT) \
-	libluatex_a-writeenc.$(OBJEXT) libluatex_a-writefont.$(OBJEXT) \
-	libluatex_a-writet1.$(OBJEXT) libluatex_a-writet3.$(OBJEXT) \
-	libluatex_a-writettf.$(OBJEXT) \
-	libluatex_a-writetype0.$(OBJEXT) \
-	libluatex_a-writetype2.$(OBJEXT) libluatex_a-epdf.$(OBJEXT) \
-	libluatex_a-writeimg.$(OBJEXT) \
-	libluatex_a-writejbig2.$(OBJEXT) \
-	libluatex_a-writejpg.$(OBJEXT) libluatex_a-writepng.$(OBJEXT) \
-	libluatex_a-luagen.$(OBJEXT) libluatex_a-luainit.$(OBJEXT) \
-	libluatex_a-luanode.$(OBJEXT) libluatex_a-luastuff.$(OBJEXT) \
-	libluatex_a-luatoken.$(OBJEXT) libluatex_a-texluac.$(OBJEXT) \
-	libluatex_a-ocp.$(OBJEXT) libluatex_a-ocplist.$(OBJEXT) \
-	libluatex_a-readocp.$(OBJEXT) libluatex_a-runocp.$(OBJEXT) \
-	libluatex_a-texlang.$(OBJEXT) libluatex_a-hyphen.$(OBJEXT) \
-	libluatex_a-hnjalloc.$(OBJEXT) libluatex_a-pagetree.$(OBJEXT) \
-	libluatex_a-pdfaction.$(OBJEXT) libluatex_a-pdfannot.$(OBJEXT) \
-	libluatex_a-pdfcolorstack.$(OBJEXT) \
-	libluatex_a-pdfdest.$(OBJEXT) libluatex_a-pdffont.$(OBJEXT) \
-	libluatex_a-pdfgen.$(OBJEXT) libluatex_a-pdfglyph.$(OBJEXT) \
-	libluatex_a-pdfimage.$(OBJEXT) libluatex_a-pdflink.$(OBJEXT) \
-	libluatex_a-pdflistout.$(OBJEXT) \
-	libluatex_a-pdfliteral.$(OBJEXT) libluatex_a-pdfobj.$(OBJEXT) \
-	libluatex_a-pdfoutline.$(OBJEXT) libluatex_a-pdfpage.$(OBJEXT) \
-	libluatex_a-pdfrule.$(OBJEXT) \
-	libluatex_a-pdfsaverestore.$(OBJEXT) \
-	libluatex_a-pdfsetmatrix.$(OBJEXT) \
-	libluatex_a-pdfshipout.$(OBJEXT) \
-	libluatex_a-pdftables.$(OBJEXT) \
-	libluatex_a-pdfthread.$(OBJEXT) libluatex_a-pdfxform.$(OBJEXT) \
-	libluatex_a-align.$(OBJEXT) libluatex_a-dumpdata.$(OBJEXT) \
-	libluatex_a-expand.$(OBJEXT) libluatex_a-inputstack.$(OBJEXT) \
-	libluatex_a-maincontrol.$(OBJEXT) libluatex_a-mlist.$(OBJEXT) \
-	libluatex_a-postlinebreak.$(OBJEXT) \
-	libluatex_a-scanning.$(OBJEXT) \
-	libluatex_a-texdeffont.$(OBJEXT) \
-	libluatex_a-texnodes.$(OBJEXT) \
-	libluatex_a-arithmetic.$(OBJEXT) \
-	libluatex_a-conditional.$(OBJEXT) \
-	libluatex_a-equivalents.$(OBJEXT) \
-	libluatex_a-extensions.$(OBJEXT) \
-	libluatex_a-commands.$(OBJEXT) libluatex_a-linebreak.$(OBJEXT) \
-	libluatex_a-mathcodes.$(OBJEXT) libluatex_a-nesting.$(OBJEXT) \
-	libluatex_a-primitive.$(OBJEXT) \
-	libluatex_a-texfileio.$(OBJEXT) \
-	libluatex_a-textcodes.$(OBJEXT) \
-	libluatex_a-buildpage.$(OBJEXT) \
-	libluatex_a-directions.$(OBJEXT) libluatex_a-errors.$(OBJEXT) \
-	libluatex_a-filename.$(OBJEXT) libluatex_a-mainbody.$(OBJEXT) \
-	libluatex_a-memoryword.$(OBJEXT) \
-	libluatex_a-packaging.$(OBJEXT) libluatex_a-printing.$(OBJEXT) \
-	libluatex_a-stringpool.$(OBJEXT) libluatex_a-texmath.$(OBJEXT) \
-	libluatex_a-textoken.$(OBJEXT) libluatex_a-utils.$(OBJEXT) \
-	libluatex_a-avlstuff.$(OBJEXT) \
-	libluatex_a-managed-sa.$(OBJEXT)
 am_libluatex_a_OBJECTS = libluatex_a-pdftoepdf.$(OBJEXT) \
 	libluatex_a-lcallbacklib.$(OBJEXT) \
 	libluatex_a-lfontlib.$(OBJEXT) libluatex_a-limglib.$(OBJEXT) \
@@ -372,8 +314,7 @@ am_libluatex_a_OBJECTS = libluatex_a-pdftoepdf.$(OBJEXT) \
 	libluatex_a-lstatslib.$(OBJEXT) \
 	libluatex_a-ltexiolib.$(OBJEXT) libluatex_a-ltexlib.$(OBJEXT) \
 	libluatex_a-ltokenlib.$(OBJEXT) libluatex_a-avl.$(OBJEXT) \
-	libluatex_a-synctex.$(OBJEXT) $(am__objects_1) \
-	libluatex_a-lmplib.$(OBJEXT)
+	libluatex_a-synctex.$(OBJEXT)
 nodist_libluatex_a_OBJECTS = libluatex_a-dvigen.$(OBJEXT) \
 	libluatex_a-dofont.$(OBJEXT) libluatex_a-luafont.$(OBJEXT) \
 	libluatex_a-mapfile.$(OBJEXT) libluatex_a-pkin.$(OBJEXT) \
@@ -435,7 +376,7 @@ nodist_libluatex_a_OBJECTS = libluatex_a-dvigen.$(OBJEXT) \
 	libluatex_a-stringpool.$(OBJEXT) libluatex_a-texmath.$(OBJEXT) \
 	libluatex_a-textoken.$(OBJEXT) libluatex_a-utils.$(OBJEXT) \
 	libluatex_a-avlstuff.$(OBJEXT) \
-	libluatex_a-managed-sa.$(OBJEXT)
+	libluatex_a-managed-sa.$(OBJEXT) libluatex_a-lmplib.$(OBJEXT)
 libluatex_a_OBJECTS = $(am_libluatex_a_OBJECTS) \
 	$(nodist_libluatex_a_OBJECTS)
 libmd5_a_AR = $(AR) $(ARFLAGS)
@@ -444,19 +385,19 @@ am_libmd5_a_OBJECTS = libmd5_a-md5.$(OBJEXT)
 libmd5_a_OBJECTS = $(am_libmd5_a_OBJECTS)
 libmf_a_AR = $(AR) $(ARFLAGS)
 libmf_a_LIBADD =
-am__objects_2 = libmf_a-mfini.$(OBJEXT) libmf_a-mf0.$(OBJEXT)
-nodist_libmf_a_OBJECTS = $(am__objects_2) libmf_a-mf-pool.$(OBJEXT)
+am__objects_1 = libmf_a-mfini.$(OBJEXT) libmf_a-mf0.$(OBJEXT)
+nodist_libmf_a_OBJECTS = $(am__objects_1) libmf_a-mf-pool.$(OBJEXT)
 libmf_a_OBJECTS = $(nodist_libmf_a_OBJECTS)
 libmplib_a_AR = $(AR) $(ARFLAGS)
 libmplib_a_LIBADD =
 am_libmplib_a_OBJECTS = libmplib_a-avl.$(OBJEXT)
-am__objects_3 = libmplib_a-memio.$(OBJEXT)
-am__objects_4 = libmplib_a-mp.$(OBJEXT)
-am__objects_5 = libmplib_a-psout.$(OBJEXT)
-am__objects_6 = libmplib_a-svgout.$(OBJEXT)
-am__objects_7 = libmplib_a-tfmin.$(OBJEXT)
-nodist_libmplib_a_OBJECTS = $(am__objects_3) $(am__objects_4) \
-	$(am__objects_5) $(am__objects_6) $(am__objects_7)
+am__objects_2 = libmplib_a-memio.$(OBJEXT)
+am__objects_3 = libmplib_a-mp.$(OBJEXT)
+am__objects_4 = libmplib_a-psout.$(OBJEXT)
+am__objects_5 = libmplib_a-svgout.$(OBJEXT)
+am__objects_6 = libmplib_a-tfmin.$(OBJEXT)
+nodist_libmplib_a_OBJECTS = $(am__objects_2) $(am__objects_3) \
+	$(am__objects_4) $(am__objects_5) $(am__objects_6)
 libmplib_a_OBJECTS = $(am_libmplib_a_OBJECTS) \
 	$(nodist_libmplib_a_OBJECTS)
 libpdftex_a_AR = $(AR) $(ARFLAGS)
@@ -474,7 +415,7 @@ am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
 	pdftexdir/regex/regex.c pdftexdir/regex/regex.h \
 	pdftexdir/inc-epdf.h pdftexdir/inc-extra.h
-@MINGW32_TRUE@am__objects_8 = libpdftex_a-regex.$(OBJEXT)
+@MINGW32_TRUE@am__objects_7 = libpdftex_a-regex.$(OBJEXT)
 am_libpdftex_a_OBJECTS = libpdftex_a-avl.$(OBJEXT) \
 	libpdftex_a-avlstuff.$(OBJEXT) libpdftex_a-epdf.$(OBJEXT) \
 	libpdftex_a-mapfile.$(OBJEXT) libpdftex_a-pdftoepdf.$(OBJEXT) \
@@ -486,7 +427,7 @@ am_libpdftex_a_OBJECTS = libpdftex_a-avl.$(OBJEXT) \
 	libpdftex_a-writejpg.$(OBJEXT) libpdftex_a-writepng.$(OBJEXT) \
 	libpdftex_a-writet1.$(OBJEXT) libpdftex_a-writet3.$(OBJEXT) \
 	libpdftex_a-writettf.$(OBJEXT) libpdftex_a-writezip.$(OBJEXT) \
-	$(am__objects_8)
+	$(am__objects_7)
 libpdftex_a_OBJECTS = $(am_libpdftex_a_OBJECTS)
 libxetex_a_AR = $(AR) $(ARFLAGS)
 libxetex_a_LIBADD =
@@ -511,10 +452,10 @@ am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
 	xetexdir/numbers.c xetexdir/numbers.h xetexdir/pdfimage.cpp \
 	xetexdir/pdfimage.h xetexdir/pngimage.c xetexdir/pngimage.h \
 	xetexdir/XeTeXGrLayout.cpp xetexdir/XeTeXGrLayout.h
-@XETEX_MACOSX_TRUE@am__objects_9 =  \
+@XETEX_MACOSX_TRUE@am__objects_8 =  \
 @XETEX_MACOSX_TRUE@	libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	libxetex_a-XeTeX_mac.$(OBJEXT)
-@XETEX_MACOSX_FALSE@am__objects_10 =  \
+@XETEX_MACOSX_FALSE@am__objects_9 =  \
 @XETEX_MACOSX_FALSE@	libxetex_a-XeTeXFontMgr_FC.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	libxetex_a-XeTeX_pic.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	libxetex_a-bmpimage.$(OBJEXT) \
@@ -523,7 +464,7 @@ am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
 @XETEX_MACOSX_FALSE@	libxetex_a-numbers.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	libxetex_a-pdfimage.$(OBJEXT) \
 @XETEX_MACOSX_FALSE@	libxetex_a-pngimage.$(OBJEXT)
-@XETEX_GRAPHITE_TRUE@am__objects_11 =  \
+@XETEX_GRAPHITE_TRUE@am__objects_10 =  \
 @XETEX_GRAPHITE_TRUE@	libxetex_a-XeTeXGrLayout.$(OBJEXT)
 am_libxetex_a_OBJECTS = libxetex_a-FontTableCache.$(OBJEXT) \
 	libxetex_a-XeTeXFontInst.$(OBJEXT) \
@@ -533,8 +474,8 @@ am_libxetex_a_OBJECTS = libxetex_a-FontTableCache.$(OBJEXT) \
 	libxetex_a-XeTeXOTLayoutEngine.$(OBJEXT) \
 	libxetex_a-XeTeXOTMath.$(OBJEXT) \
 	libxetex_a-XeTeX_ext.$(OBJEXT) libxetex_a-cmaps.$(OBJEXT) \
-	libxetex_a-trans.$(OBJEXT) $(am__objects_9) $(am__objects_10) \
-	$(am__objects_11)
+	libxetex_a-trans.$(OBJEXT) $(am__objects_8) $(am__objects_9) \
+	$(am__objects_10)
 libxetex_a_OBJECTS = $(am_libxetex_a_OBJECTS)
 libxetexmm_a_AR = $(AR) $(ARFLAGS)
 libxetexmm_a_LIBADD =
@@ -577,8 +518,8 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 @OTANGLE_TRUE@am__EXEEXT_23 = pltotf$(EXEEXT) tftopl$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am_aleph_OBJECTS = aleph-aleph.$(OBJEXT) aleph-alephbis.$(OBJEXT)
-am__objects_12 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
-nodist_aleph_OBJECTS = $(am__objects_12) aleph-aleph-pool.$(OBJEXT) \
+am__objects_11 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
+nodist_aleph_OBJECTS = $(am__objects_11) aleph-aleph-pool.$(OBJEXT) \
 	aleph-alephextra.$(OBJEXT)
 aleph_OBJECTS = $(am_aleph_OBJECTS) $(nodist_aleph_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -627,10 +568,10 @@ dvitype_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am__dist_etex_SOURCES_DIST = synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-etex.h
 dist_etex_OBJECTS =
-am__objects_13 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
-@ETEX_SYNCTEX_TRUE@am__objects_14 = etex-synctex-e.$(OBJEXT)
-nodist_etex_OBJECTS = $(am__objects_13) etex-etex-pool.$(OBJEXT) \
-	etex-etexextra.$(OBJEXT) $(am__objects_14)
+am__objects_12 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
+@ETEX_SYNCTEX_TRUE@am__objects_13 = etex-synctex-e.$(OBJEXT)
+nodist_etex_OBJECTS = $(am__objects_12) etex-etex-pool.$(OBJEXT) \
+	etex-etexextra.$(OBJEXT) $(am__objects_13)
 etex_OBJECTS = $(dist_etex_OBJECTS) $(nodist_etex_OBJECTS)
 @ETEX_SYNCTEX_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
 etex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -687,8 +628,8 @@ nodist_mft_OBJECTS = mft.$(OBJEXT)
 mft_OBJECTS = $(nodist_mft_OBJECTS)
 mft_LDADD = $(LDADD)
 mft_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_15 = mpost-mpxout.$(OBJEXT)
-nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_15)
+am__objects_14 = mpost-mpxout.$(OBJEXT)
+nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_14)
 mpost_OBJECTS = $(nodist_mpost_OBJECTS)
 mpost_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(mpost_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -732,10 +673,10 @@ pbibtex_DEPENDENCIES = $(pproglib) $(am__DEPENDENCIES_1) \
 am__dist_pdftex_SOURCES_DIST = synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-pdftex.h
 dist_pdftex_OBJECTS =
-am__objects_16 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
-@PDFTEX_SYNCTEX_TRUE@am__objects_17 = pdftex-synctex-pdf.$(OBJEXT)
-nodist_pdftex_OBJECTS = $(am__objects_16) pdftex-pdftex-pool.$(OBJEXT) \
-	pdftex-pdftexextra.$(OBJEXT) $(am__objects_17)
+am__objects_15 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
+@PDFTEX_SYNCTEX_TRUE@am__objects_16 = pdftex-synctex-pdf.$(OBJEXT)
+nodist_pdftex_OBJECTS = $(am__objects_15) pdftex-pdftex-pool.$(OBJEXT) \
+	pdftex-pdftexextra.$(OBJEXT) $(am__objects_16)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
 am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libmd5.a
@@ -771,10 +712,11 @@ nodist_ppltotf_OBJECTS = ppltotf-ppltotf.$(OBJEXT)
 ppltotf_OBJECTS = $(nodist_ppltotf_OBJECTS)
 ppltotf_DEPENDENCIES = $(pproglib) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
-am__objects_18 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
-nodist_ptex_OBJECTS = $(am__objects_18) ptex-ptex-pool.$(OBJEXT) \
-	ptex-ptexextra.$(OBJEXT) ptex-kanji.$(OBJEXT)
-ptex_OBJECTS = $(nodist_ptex_OBJECTS)
+am_ptex_OBJECTS = ptex-kanji.$(OBJEXT)
+am__objects_17 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
+nodist_ptex_OBJECTS = $(am__objects_17) ptex-ptex-pool.$(OBJEXT) \
+	ptex-ptexextra.$(OBJEXT)
+ptex_OBJECTS = $(am_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
 ptex_DEPENDENCIES = $(pproglib) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
 ptex_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -802,10 +744,10 @@ tangleboot_LDADD = $(LDADD)
 am__dist_tex_SOURCES_DIST = synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-tex.h
 dist_tex_OBJECTS =
-am__objects_19 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
-@TEX_SYNCTEX_TRUE@am__objects_20 = tex-synctex.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_19) tex-tex-pool.$(OBJEXT) \
-	tex-texextra.$(OBJEXT) $(am__objects_20)
+am__objects_18 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
+@TEX_SYNCTEX_TRUE@am__objects_19 = tex-synctex.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_18) tex-tex-pool.$(OBJEXT) \
+	tex-texextra.$(OBJEXT) $(am__objects_19)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_7 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -845,10 +787,10 @@ weave_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am__dist_xetex_SOURCES_DIST = synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-xetex.h
 dist_xetex_OBJECTS =
-am__objects_21 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-@XETEX_SYNCTEX_TRUE@am__objects_22 = xetex-synctex-xe.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_21) xetex-xetex_pool.$(OBJEXT) \
-	xetex-xetexextra.$(OBJEXT) $(am__objects_22)
+am__objects_20 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
+@XETEX_SYNCTEX_TRUE@am__objects_21 = xetex-synctex-xe.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_20) xetex-xetex_pool.$(OBJEXT) \
+	xetex-xetexextra.$(OBJEXT) $(am__objects_21)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_8 = $(am__DEPENDENCIES_1) \
 @XETEX_MACOSX_FALSE@	$(am__DEPENDENCIES_1) \
@@ -912,15 +854,15 @@ SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(nodist_pdvitype_SOURCES) $(nodist_pktogf_SOURCES) \
 	$(nodist_pktype_SOURCES) $(nodist_pltotf_SOURCES) \
 	$(nodist_pooltype_SOURCES) $(nodist_ppltotf_SOURCES) \
-	$(nodist_ptex_SOURCES) $(nodist_ptftopl_SOURCES) \
-	$(synctex_SOURCES) $(nodist_tangle_SOURCES) \
-	$(nodist_tangleboot_SOURCES) $(dist_tex_SOURCES) \
-	$(nodist_tex_SOURCES) $(nodist_tftopl_SOURCES) \
-	$(nodist_tie_SOURCES) $(ttf2afm_SOURCES) \
-	$(EXTRA_ttf2afm_SOURCES) $(nodist_vftovp_SOURCES) \
-	$(nodist_vptovf_SOURCES) $(nodist_weave_SOURCES) \
-	$(dist_xetex_SOURCES) $(nodist_xetex_SOURCES) \
-	$(nodist_EXTRA_xetex_SOURCES)
+	$(ptex_SOURCES) $(nodist_ptex_SOURCES) \
+	$(nodist_ptftopl_SOURCES) $(synctex_SOURCES) \
+	$(nodist_tangle_SOURCES) $(nodist_tangleboot_SOURCES) \
+	$(dist_tex_SOURCES) $(nodist_tex_SOURCES) \
+	$(nodist_tftopl_SOURCES) $(nodist_tie_SOURCES) \
+	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
+	$(nodist_vftovp_SOURCES) $(nodist_vptovf_SOURCES) \
+	$(nodist_weave_SOURCES) $(dist_xetex_SOURCES) \
+	$(nodist_xetex_SOURCES) $(nodist_EXTRA_xetex_SOURCES)
 DIST_SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(libluamisc_a_SOURCES) $(EXTRA_libluamisc_a_SOURCES) \
 	$(libluasocket_a_SOURCES) $(libluatex_a_SOURCES) \
@@ -930,9 +872,9 @@ DIST_SOURCES = $(libff_a_SOURCES) $(liblua51_a_SOURCES) \
 	$(aleph_SOURCES) $(am__dist_etex_SOURCES_DIST) \
 	$(gftodvi_SOURCES) $(luatex_SOURCES) $(md5main_SOURCES) \
 	$(am__dist_pdftex_SOURCES_DIST) $(pdftosrc_SOURCES) \
-	$(synctex_SOURCES) $(am__dist_tex_SOURCES_DIST) \
-	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
-	$(am__dist_xetex_SOURCES_DIST)
+	$(ptex_SOURCES) $(synctex_SOURCES) \
+	$(am__dist_tex_SOURCES_DIST) $(ttf2afm_SOURCES) \
+	$(EXTRA_ttf2afm_SOURCES) $(am__dist_xetex_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -1285,25 +1227,23 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	etexdir/etrip/etripman.tex etexdir/etrip/texmf.cnf \
 	etexdir/etrip/trip2.in etexdir/etex.mak etexdir/etex.mk \
 	$(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptexextra.in \
-	lib/texmfmp.c tmf-pool.h ptexdir/ChangeLog ptexdir/INSTALL \
-	ptexdir/README ptexdir/ptex_gen.tex $(ptex_tests) \
-	ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/ptrip.fot \
-	ptexdir/ptrip/ptrip.log ptexdir/ptrip/ptrip.out \
-	ptexdir/ptrip/ptrip.pl ptexdir/ptrip/ptrip.tex \
-	ptexdir/ptrip/ptrip.typ ptexdir/ptrip/ptrip1.in \
-	ptexdir/ptrip/ptrip2.in ptexdir/ptrip/ptrip3.in \
-	ptexdir/ptrip/ptripin.log ptexdir/ptrip/ptripman.tex \
-	ptexdir/ptrip/texmf.cnf ptexdir/ptrip/trip2.in \
-	ptexdir/ptex.mak ptexdir/ptex.mk $(pdftex_ch_srcs) \
-	pdftexdir/pdftex.defines pdftexdir/pdftex.h \
+	lib/texmfmp.c tmf-pool.h ptexdir/COPYRIGHT \
+	ptexdir/COPYRIGHT.jis ptexdir/Changes.txt ptexdir/INSTALL.txt \
+	ptexdir/README.txt ptexdir/pbibtex.ch ptexdir/pbibtex.defines \
+	ptexdir/pdvitype.ch ptexdir/ppltotf.ch ptexdir/ptex.defines \
+	ptexdir/ptexhelp.h ptexdir/ptftopl.ch $(ptex_tests) \
+	ptexdir/Files ptexdir/lib/openclose.c.orig \
+	ptexdir/lib/printversion.c.orig ptexdir/lib/usage.c.orig \
+	ptexdir/ptex.mk ptexdir/ptex-base.ch.orig ptexdir/reautoconf \
+	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/pdftex.h \
 	pdftexdir/pdftexextra.in pdftexdir/ChangeLog pdftexdir/NEWS \
 	pdftexdir/README pdftexdir/change-files.txt \
 	pdftexdir/pdftex.mak pdftexdir/pdftex.mk \
 	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
-	luatexdir/ptexlib.h luatexdir/lua51/Makefile \
-	luatexdir/lua51/liolib.c luatexdir/lua51/lua.c \
-	luatexdir/lua51/luac.c luatexdir/lua51/print.c \
-	luatexdir/luasocket/src/socket_lua.c \
+	luatexdir/ptexlib.h luatexdir/getluatexsvnversion.sh \
+	luatexdir/lua51/Makefile luatexdir/lua51/liolib.c \
+	luatexdir/lua51/lua.c luatexdir/lua51/luac.c \
+	luatexdir/lua51/print.c luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/smtp_lua.c \
@@ -1396,7 +1336,7 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	luatexdir/luafontloader/fontforge/inc/config.h.in \
 	luatexdir/luafontloader/fontforge/plugins/Makefile.in \
 	$(libluatex_web) luatexdir/ChangeLog luatexdir/NEWS \
-	luatexdir/README luatexdir/font/subfont.txt $(xetex_web_srcs) \
+	luatexdir/font/subfont.txt $(xetex_web_srcs) \
 	xetexdir/xetex.defines xetexdir/xetexextra.in \
 	xetexdir/pool2c.pl xetexdir/unicode-char-prep.pl \
 	xetexdir/appleGlyphNames.c xetexdir/XeTeXFontMgr_Mac.mm \
@@ -1687,7 +1627,8 @@ pproglib = ptexdir/lib/lib.a
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
-nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h ptexdir/kanji.c ptexdir/kanji.h
+nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c ptexextra.c ptexdir/ptexextra.h
+ptex_SOURCES = ptexdir/kanji.c ptexdir/kanji.h
 
 # We must create ptexd.h before building the ptex_OBJECTS.
 ptex_prereq = ptexd.h
@@ -1719,6 +1660,22 @@ ppltotf_CPPFLAGS = -DPRESERVE_PUTC
 # pTeX Tests
 #
 ptex_tests = ptexdir/ptrip.test
+not_yet_EXTRA_DIST = \
+	ptexdir/ptrip/ptrip.diffs \
+	ptexdir/ptrip/ptrip.fot \
+	ptexdir/ptrip/ptrip.log \
+	ptexdir/ptrip/ptrip.out \
+	ptexdir/ptrip/ptrip.pl \
+	ptexdir/ptrip/ptrip.tex \
+	ptexdir/ptrip/ptrip.typ \
+	ptexdir/ptrip/ptrip1.in \
+	ptexdir/ptrip/ptrip2.in \
+	ptexdir/ptrip/ptrip3.in \
+	ptexdir/ptrip/ptripin.log \
+	ptexdir/ptrip/ptripman.tex \
+	ptexdir/ptrip/texmf.cnf \
+	ptexdir/ptrip/trip2.in
+
 pdftex_cppflags = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES) \
 	$(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5 \
 	-I$(srcdir)/pdftexdir
@@ -1935,12 +1892,15 @@ libff_a_CFLAGS = # $(WARNING_CFLAGS)
 libff_a_SOURCES = \
 	luatexdir/luafontloader/fontforge/Unicode/ArabicForms.c \
 	luatexdir/luafontloader/fontforge/Unicode/alphabet.c \
+	luatexdir/luafontloader/fontforge/Unicode/backtrns.c \
 	luatexdir/luafontloader/fontforge/Unicode/char.c \
 	luatexdir/luafontloader/fontforge/Unicode/cjk.c \
 	luatexdir/luafontloader/fontforge/Unicode/combiners.h \
+	luatexdir/luafontloader/fontforge/Unicode/dump.c \
 	luatexdir/luafontloader/fontforge/Unicode/gwwiconv.c \
 	luatexdir/luafontloader/fontforge/Unicode/memory.c \
 	luatexdir/luafontloader/fontforge/Unicode/ucharmap.c \
+	luatexdir/luafontloader/fontforge/Unicode/unialt.c \
 	luatexdir/luafontloader/fontforge/Unicode/ustring.c \
 	luatexdir/luafontloader/fontforge/Unicode/utype.c \
 	luatexdir/luafontloader/fontforge/fontforge/PfEd.h \
@@ -2108,7 +2068,7 @@ nodist_libluatex_a_SOURCES = dvigen.c dofont.c luafont.c mapfile.c \
 	texfileio.c textcodes.c buildpage.c directions.c errors.c \
 	filename.c mainbody.c memoryword.c packaging.c printing.c \
 	stringpool.c texmath.c textoken.c utils.c avlstuff.c \
-	managed-sa.c
+	managed-sa.c mplibdir/lmplib.c
 luatex_font_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/font $(ctangle)
 luatex_image_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/image $(ctangle)
 luatex_lua_ctangle = CWEBINPUTS=$(srcdir)/luatexdir/lua $(ctangle)
@@ -2219,11 +2179,11 @@ libluatex_a_SOURCES = \
 	luatexdir/utils/avl.h \
 	luatexdir/utils/avlstuff.h \
 	luatexdir/utils/managed-sa.h \
+	luatexdir/utils/synctex-common.h \
+	luatexdir/utils/synctex-luatex.h \
 	luatexdir/utils/synctex.h \
 	luatexdir/utils/synctex.c \
-	luatexdir/utils/utils.h \
-	$(nodist_libluatex_a_SOURCES) \
-	mplibdir/lmplib.c
+	luatexdir/utils/utils.h
 
 
 # Force Automake to use CXXLD for linking
@@ -2800,10 +2760,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-ArabicForms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-alphabet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-autohint.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-backtrns.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-char.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-cjk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-clipnoui.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-cvundoes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-dump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-dumppfa.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-encoding.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-featurefile.Po@am__quote@
@@ -2850,6 +2812,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-tottfgpos.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-ttfspecial.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-ucharmap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-unialt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-ustring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libff_a-utype.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/liblua51_a-lapi.Po@am__quote@
@@ -3193,6 +3156,20 @@ libff_a-alphabet.obj: luatexdir/luafontloader/fontforge/Unicode/alphabet.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-alphabet.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/alphabet.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/alphabet.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/alphabet.c'; fi`
 
+libff_a-backtrns.o: luatexdir/luafontloader/fontforge/Unicode/backtrns.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-backtrns.o -MD -MP -MF $(DEPDIR)/libff_a-backtrns.Tpo -c -o libff_a-backtrns.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/backtrns.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/backtrns.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libff_a-backtrns.Tpo $(DEPDIR)/libff_a-backtrns.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/luafontloader/fontforge/Unicode/backtrns.c' object='libff_a-backtrns.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-backtrns.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/backtrns.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/backtrns.c
+
+libff_a-backtrns.obj: luatexdir/luafontloader/fontforge/Unicode/backtrns.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-backtrns.obj -MD -MP -MF $(DEPDIR)/libff_a-backtrns.Tpo -c -o libff_a-backtrns.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/backtrns.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/backtrns.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/backtrns.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libff_a-backtrns.Tpo $(DEPDIR)/libff_a-backtrns.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/luafontloader/fontforge/Unicode/backtrns.c' object='libff_a-backtrns.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-backtrns.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/backtrns.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/backtrns.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/backtrns.c'; fi`
+
 libff_a-char.o: luatexdir/luafontloader/fontforge/Unicode/char.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-char.o -MD -MP -MF $(DEPDIR)/libff_a-char.Tpo -c -o libff_a-char.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/char.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/char.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libff_a-char.Tpo $(DEPDIR)/libff_a-char.Po
@@ -3220,6 +3197,20 @@ libff_a-cjk.obj: luatexdir/luafontloader/fontforge/Unicode/cjk.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/luafontloader/fontforge/Unicode/cjk.c' object='libff_a-cjk.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-cjk.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/cjk.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/cjk.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/cjk.c'; fi`
+
+libff_a-dump.o: luatexdir/luafontloader/fontforge/Unicode/dump.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-dump.o -MD -MP -MF $(DEPDIR)/libff_a-dump.Tpo -c -o libff_a-dump.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/dump.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/dump.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libff_a-dump.Tpo $(DEPDIR)/libff_a-dump.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/luafontloader/fontforge/Unicode/dump.c' object='libff_a-dump.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-dump.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/dump.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/dump.c
+
+libff_a-dump.obj: luatexdir/luafontloader/fontforge/Unicode/dump.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-dump.obj -MD -MP -MF $(DEPDIR)/libff_a-dump.Tpo -c -o libff_a-dump.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/dump.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/dump.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/dump.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libff_a-dump.Tpo $(DEPDIR)/libff_a-dump.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/luafontloader/fontforge/Unicode/dump.c' object='libff_a-dump.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-dump.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/dump.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/dump.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/dump.c'; fi`
 
 libff_a-gwwiconv.o: luatexdir/luafontloader/fontforge/Unicode/gwwiconv.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-gwwiconv.o -MD -MP -MF $(DEPDIR)/libff_a-gwwiconv.Tpo -c -o libff_a-gwwiconv.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/gwwiconv.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/gwwiconv.c
@@ -3262,6 +3253,20 @@ libff_a-ucharmap.obj: luatexdir/luafontloader/fontforge/Unicode/ucharmap.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/luafontloader/fontforge/Unicode/ucharmap.c' object='libff_a-ucharmap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-ucharmap.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/ucharmap.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/ucharmap.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/ucharmap.c'; fi`
+
+libff_a-unialt.o: luatexdir/luafontloader/fontforge/Unicode/unialt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-unialt.o -MD -MP -MF $(DEPDIR)/libff_a-unialt.Tpo -c -o libff_a-unialt.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/unialt.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/unialt.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libff_a-unialt.Tpo $(DEPDIR)/libff_a-unialt.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/luafontloader/fontforge/Unicode/unialt.c' object='libff_a-unialt.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-unialt.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/unialt.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/unialt.c
+
+libff_a-unialt.obj: luatexdir/luafontloader/fontforge/Unicode/unialt.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-unialt.obj -MD -MP -MF $(DEPDIR)/libff_a-unialt.Tpo -c -o libff_a-unialt.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/unialt.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/unialt.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/unialt.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libff_a-unialt.Tpo $(DEPDIR)/libff_a-unialt.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='luatexdir/luafontloader/fontforge/Unicode/unialt.c' object='libff_a-unialt.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -c -o libff_a-unialt.obj `if test -f 'luatexdir/luafontloader/fontforge/Unicode/unialt.c'; then $(CYGPATH_W) 'luatexdir/luafontloader/fontforge/Unicode/unialt.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luafontloader/fontforge/Unicode/unialt.c'; fi`
 
 libff_a-ustring.o: luatexdir/luafontloader/fontforge/Unicode/ustring.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libff_a_CPPFLAGS) $(CPPFLAGS) $(libff_a_CFLAGS) $(CFLAGS) -MT libff_a-ustring.o -MD -MP -MF $(DEPDIR)/libff_a-ustring.Tpo -c -o libff_a-ustring.o `test -f 'luatexdir/luafontloader/fontforge/Unicode/ustring.c' || echo '$(srcdir)/'`luatexdir/luafontloader/fontforge/Unicode/ustring.c
@@ -7351,6 +7356,20 @@ ppltotf-ppltotf.obj: ppltotf.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ppltotf_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ppltotf-ppltotf.obj `if test -f 'ppltotf.c'; then $(CYGPATH_W) 'ppltotf.c'; else $(CYGPATH_W) '$(srcdir)/ppltotf.c'; fi`
 
+ptex-kanji.o: ptexdir/kanji.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-kanji.o -MD -MP -MF $(DEPDIR)/ptex-kanji.Tpo -c -o ptex-kanji.o `test -f 'ptexdir/kanji.c' || echo '$(srcdir)/'`ptexdir/kanji.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-kanji.Tpo $(DEPDIR)/ptex-kanji.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexdir/kanji.c' object='ptex-kanji.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-kanji.o `test -f 'ptexdir/kanji.c' || echo '$(srcdir)/'`ptexdir/kanji.c
+
+ptex-kanji.obj: ptexdir/kanji.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-kanji.obj -MD -MP -MF $(DEPDIR)/ptex-kanji.Tpo -c -o ptex-kanji.obj `if test -f 'ptexdir/kanji.c'; then $(CYGPATH_W) 'ptexdir/kanji.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/kanji.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-kanji.Tpo $(DEPDIR)/ptex-kanji.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexdir/kanji.c' object='ptex-kanji.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-kanji.obj `if test -f 'ptexdir/kanji.c'; then $(CYGPATH_W) 'ptexdir/kanji.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/kanji.c'; fi`
+
 ptex-ptexini.o: ptexini.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-ptexini.o -MD -MP -MF $(DEPDIR)/ptex-ptexini.Tpo -c -o ptex-ptexini.o `test -f 'ptexini.c' || echo '$(srcdir)/'`ptexini.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-ptexini.Tpo $(DEPDIR)/ptex-ptexini.Po
@@ -7406,20 +7425,6 @@ ptex-ptexextra.obj: ptexextra.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexextra.c' object='ptex-ptexextra.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-ptexextra.obj `if test -f 'ptexextra.c'; then $(CYGPATH_W) 'ptexextra.c'; else $(CYGPATH_W) '$(srcdir)/ptexextra.c'; fi`
-
-ptex-kanji.o: ptexdir/kanji.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-kanji.o -MD -MP -MF $(DEPDIR)/ptex-kanji.Tpo -c -o ptex-kanji.o `test -f 'ptexdir/kanji.c' || echo '$(srcdir)/'`ptexdir/kanji.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-kanji.Tpo $(DEPDIR)/ptex-kanji.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexdir/kanji.c' object='ptex-kanji.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-kanji.o `test -f 'ptexdir/kanji.c' || echo '$(srcdir)/'`ptexdir/kanji.c
-
-ptex-kanji.obj: ptexdir/kanji.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -MT ptex-kanji.obj -MD -MP -MF $(DEPDIR)/ptex-kanji.Tpo -c -o ptex-kanji.obj `if test -f 'ptexdir/kanji.c'; then $(CYGPATH_W) 'ptexdir/kanji.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/kanji.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/ptex-kanji.Tpo $(DEPDIR)/ptex-kanji.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ptexdir/kanji.c' object='ptex-kanji.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ptex_CPPFLAGS) $(CPPFLAGS) $(ptex_CFLAGS) $(CFLAGS) -c -o ptex-kanji.obj `if test -f 'ptexdir/kanji.c'; then $(CYGPATH_W) 'ptexdir/kanji.c'; else $(CYGPATH_W) '$(srcdir)/ptexdir/kanji.c'; fi`
 
 synctex-synctex_main.o: synctexdir/synctex_main.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(synctex_CPPFLAGS) $(CPPFLAGS) $(synctex_CFLAGS) $(CFLAGS) -MT synctex-synctex_main.o -MD -MP -MF $(DEPDIR)/synctex-synctex_main.Tpo -c -o synctex-synctex_main.o `test -f 'synctexdir/synctex_main.c' || echo '$(srcdir)/'`synctexdir/synctex_main.c

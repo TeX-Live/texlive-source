@@ -48,7 +48,7 @@ DIST_COMMON = $(am__configure_deps) \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap
+	../../build-aux/ylwrap ChangeLog
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
@@ -232,7 +232,8 @@ makejvf_SOURCES = \
 	main.c  makejvf.h  tfmread.c  tool.c  write.c
 
 LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)
-EXTRA_DIST = COPYRIGHT COPYRIGHT.jis Changes.txt README.txt
+EXTRA_DIST = COPYRIGHT COPYRIGHT.jis Changes.txt README.txt \
+	Makefile.orig
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -703,6 +704,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 $(makejvf_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 
+@KPATHSEA_RULE@
 @PTEXENC_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

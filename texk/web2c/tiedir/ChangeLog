@@ -5,7 +5,7 @@
 2009-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid maximal compiler warnings.
-	* tie-w2c.ch (Print the job history): Constify local sting.
+	* tie-w2c.ch (Print the job history): Constify local string.
 
 2009-08-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

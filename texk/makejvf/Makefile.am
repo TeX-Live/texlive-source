@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/makejvfk/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -18,7 +18,13 @@ $(makejvf_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)
 
 ## Rebuild libkpathsea & libptexenc
+@KPATHSEA_RULE@
 @PTEXENC_RULE@
 
 EXTRA_DIST = COPYRIGHT COPYRIGHT.jis Changes.txt README.txt
+
+## Eventually delete this file
+##
+EXTRA_DIST += \
+	Makefile.orig
 

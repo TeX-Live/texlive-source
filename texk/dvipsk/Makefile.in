@@ -381,9 +381,9 @@ dist_prologues = \
 prologdir = ${prefix}/texmf/dvips/base
 prologues = $(dist_prologues:.lpro=.pro) texc.pro
 SUFFIXES = .pro .lpro
-EXTRA_DIST = $(dist_prologues) texc.script NEWS TODO beginfontk1.test \
-	dvips.test pfbincl.test quotecmd-test.pl testdata/8r.enc \
-	testdata/ad.enc testdata/beginfontk1.dvi \
+EXTRA_DIST = $(dist_prologues) texc.script NEWS TODO afm2tfm-test.pl \
+	beginfontk1.test dvips.test pfbincl.test quotecmd-test.pl \
+	testdata/8r.enc testdata/ad.enc testdata/beginfontk1.dvi \
 	testdata/beginfontk1.eps testdata/beginfontk1.tex \
 	testdata/cmex10.pfb testdata/cmex10.tfm testdata/cmmi10.pfb \
 	testdata/cmmi10.tfm testdata/cmr10.pfb testdata/cmr10.tfm \
