@@ -1,6 +1,10 @@
+2010-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-45-getmetadatanf (removed): unnecessary.
+
 2010-04-06  Hartmut Henkel  <hartmut_henkel@gmx.de>
 
-	* patch-45-getmetadatanf(new): needed by luaTeX's pdftoepdf.cc.
+	* patch-45-getmetadatanf (new): needed by luaTeX's pdftoepdf.cc.
 
 2009-09-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -5,10 +5,6 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
-//
-// Copyright 2009 Hartmut Henkel <hartmut_henkel@gmx.de>
-// for added metadataNF, resourcesNF, getMetadataNF, and getResourcesNF
-// needed by luatex
 
 #ifndef PAGE_H
 #define PAGE_H
@@ -72,10 +68,6 @@ public:
     { return group.isDict() ? group.getDict() : (Dict *)NULL; }
   Stream *getMetadata()
     { return metadata.isStream() ? metadata.getStream() : (Stream *)NULL; }
-
-  // much better would be to get direct access to the page dictionary, but how?
-  Object * getMetadataNF() { return &metadataNF; }
-
   Dict *getPieceInfo()
     { return pieceInfo.isDict() ? pieceInfo.getDict() : (Dict *)NULL; }
   Dict *getSeparationInfo()
@@ -83,9 +75,6 @@ public:
 	? separationInfo.getDict() : (Dict *)NULL; }
   Dict *getResourceDict()
     { return resources.isDict() ? resources.getDict() : (Dict *)NULL; }
-
-  // much better would be to get direct access to the page dictionary, but how?
-  Object *getResourcesNF() { return &resourcesNF; }
 
 private:
 
@@ -102,11 +91,9 @@ private:
   Object boxColorInfo;
   Object group;
   Object metadata;
-  Object metadataNF;
   Object pieceInfo;
   Object separationInfo;
   Object resources;
-  Object resourcesNF;
 };
 
 //------------------------------------------------------------------------
@@ -146,13 +133,11 @@ public:
   Dict *getBoxColorInfo() { return attrs->getBoxColorInfo(); }
   Dict *getGroup() { return attrs->getGroup(); }
   Stream *getMetadata() { return attrs->getMetadata(); }
-  Object *getMetadataNF() { return attrs->getMetadataNF(); }
   Dict *getPieceInfo() { return attrs->getPieceInfo(); }
   Dict *getSeparationInfo() { return attrs->getSeparationInfo(); }
 
   // Get resource dictionary.
   Dict *getResourceDict() { return attrs->getResourceDict(); }
-  Object *getResourcesNF() { return attrs->getResourcesNF(); }
 
   // Get annotations array.
   Object *getAnnots(Object *obj) { return annots.fetch(xref, obj); }

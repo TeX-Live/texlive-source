@@ -5,9 +5,6 @@
 // Copyright 1996-2007 Glyph & Cog, LLC
 //
 //========================================================================
-//
-// Copyright 2009 Hartmut Henkel <hartmut_henkel@gmx.de>
-// for added metadataNF and resourcesNF needed by luatex
 
 #include <aconf.h>
 
@@ -129,10 +126,6 @@ PageAttrs::PageAttrs(PageAttrs *attrs, Dict *dict) {
   dict->lookup("BoxColorInfo", &boxColorInfo);
   dict->lookup("Group", &group);
   dict->lookup("Metadata", &metadata);
-
-  // much better would be to get direct access to the page dictionary, but how?
-  dict->lookupNF("Metadata", &metadataNF);
-
   dict->lookup("PieceInfo", &pieceInfo);
   dict->lookup("SeparationInfo", &separationInfo);
 
@@ -143,7 +136,6 @@ PageAttrs::PageAttrs(PageAttrs *attrs, Dict *dict) {
     obj1.copy(&resources);
   }
   obj1.free();
-  dict->lookupNF("Resources", &resourcesNF);
 }
 
 PageAttrs::~PageAttrs() {
@@ -151,11 +143,9 @@ PageAttrs::~PageAttrs() {
   boxColorInfo.free();
   group.free();
   metadata.free();
-  metadataNF.free();
   pieceInfo.free();
   separationInfo.free();
   resources.free();
-  resourcesNF.free();
 }
 
 GBool PageAttrs::readBox(Dict *dict, char *key, PDFRectangle *box) {
