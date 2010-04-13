@@ -1,3 +1,11 @@
+2010-04-13  Taco Hoekwater  <taco@luatex>
+
+	* am/luafontforge.am: delete three lines.
+	* luafontloader/fontforge/Unicode/dump.c: deleted
+	* luafontloader/fontforge/Unicode/backtrns.c: deleted
+	* luafontloader/fontforge/Unicode/unialt.c: deleted
+
+
 2010-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/pdftoepdf.cc: Fix building with libpoppler.
