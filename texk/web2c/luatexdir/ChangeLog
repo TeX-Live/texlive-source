@@ -1,6 +1,7 @@
 2010-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/pdftoepdf.cc: Fix building with libpoppler.
+	* luatex.c: Fix building for MinGW32.
 
 2010-04-13  Taco Hoekwater  <taco@luatex>
 

@@ -1,11 +1,9 @@
 ## Makefile.am for the TeX Live subdirectory texk/ptexenc/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
-
-EXTRA_DIST = COPYRIGHT ChangeLog README
 
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -16,21 +14,15 @@ libptexenc_la_CPPFLAGS = -DMAKE_KPSE_DLL
 
 libptexenc_la_LDFLAGS = -version-number $(PTEXENC_LT_VERSNUM)
 
-libptexenc_la_LIBADD = $(LTLIBOBJS)
-
-## Put tex-file.c first, because it's what depends on the paths, and may
-## reduce frustration if the paths are wrong by doing it first.
-libptexenc_la_SOURCES = \
-	ptexenc.c kanjicnv.c unicode.c unicode-jp.c
-
-$(libptexenc_la_OBJECTS): kanjicnv.h  ptexenc.h  unicode-jp.h  unicode.h
+libptexenc_la_SOURCES = kanjicnv.c ptexenc.c unicode-jp.c unicode.c
 
 ptexencincludedir = ${includedir}/ptexenc
 
-nodist_ptexencinclude_HEADERS = \
-	c-auto.h
+nodist_ptexencinclude_HEADERS = c-auto.h
 
-ptexencinclude_HEADERS = kanjicnv.h  ptexenc.h  unicode-jp.h  unicode.h
+ptexencinclude_HEADERS = kanjicnv.h ptexenc.h unicode-jp.h unicode.h
+
+EXTRA_DIST = COPYRIGHT ChangeLog.TL
 
 ## Eventually delete these files
 ##

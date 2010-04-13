@@ -6,6 +6,7 @@
 #include <kpathsea/c-memstr.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/readable.h>
+#include <kpathsea/c-limits.h>
 
 #include <ptexenc/c-auto.h>
 #include <ptexenc/ptexenc.h>
@@ -23,13 +24,11 @@
 
 #define ESC '\033'
 
-#ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#else
-#include <limits.h>
-#endif /* HAVE_SYS_PARAM_H */
 #ifndef NOFILE
-#define NOFILE OPEN_MAX
+# ifndef OPEN_MAX
+#  define OPEN_MAX 24 /* The POSIX minimum. */
+# endif
+# define NOFILE OPEN_MAX
 #endif
 
 char *ptexenc_version_string = "ptetex " PTEXENC_VERSION;
