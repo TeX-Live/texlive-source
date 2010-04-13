@@ -21,7 +21,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: utils.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/utils/utils.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/utils/utils.w $";
 
 @ @c
 #include "openbsd-compat.h"

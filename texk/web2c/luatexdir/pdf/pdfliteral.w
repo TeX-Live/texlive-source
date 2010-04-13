@@ -22,7 +22,7 @@
 
 static const char _svn_version[] =
     "$Id: pdfliteral.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/pdf/pdfliteral.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfliteral.w $";
 
 @ @c
 void pdf_special(PDF pdf, halfword p)

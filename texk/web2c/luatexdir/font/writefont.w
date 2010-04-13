@@ -20,8 +20,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writefont.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/font/writefont.w $";
+    "$Id: writefont.w 3612 2010-04-13 09:29:42Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writefont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -66,7 +66,7 @@ static int comp_fd_entry(const void *pa, const void *pb, void *p)
 
 @ initialize data structure for /Type /Font 
 @c
-fo_entry *new_fo_entry(void)
+static fo_entry *new_fo_entry(void)
 {
     fo_entry *fo;
     fo = xtalloc(1, fo_entry);
@@ -227,7 +227,7 @@ fd_entry *lookup_fd_entry(char *s)
     return (fd_entry *) avl_find(fd_tree, &fd);
 }
 
-fd_entry *lookup_fontdescriptor(fo_entry * fo)
+static fd_entry *lookup_fontdescriptor(fo_entry * fo)
 {
     assert(fo != NULL);
     assert(fo->fm != NULL);
@@ -248,7 +248,7 @@ void register_fd_entry(fd_entry * fd)
     assert(aa != NULL);
 }
 
-void create_fontdescriptor(fo_entry * fo, internal_font_number f)
+static void create_fontdescriptor(fo_entry * fo, internal_font_number f)
 {
     assert(fo != NULL);
     assert(fo->fm != NULL);
@@ -268,7 +268,7 @@ from external reencoding (.enc) file and collect these in the glyph
 tree |gl_tree| of font descriptor |fd| referenced by font dictionary |fo|.
 
 @c
-void mark_reenc_glyphs(fo_entry * fo, internal_font_number f)
+static void mark_reenc_glyphs(fo_entry * fo, internal_font_number f)
 {
     int i;
     char **g;
@@ -294,7 +294,7 @@ Function |mark_chars| has 2 uses:
 \item 2. Mark encoding pairs used by \TeX\ to optimize encoding vector.
 
 @c
-struct avl_table *mark_chars(fo_entry * fo, struct avl_table *tx_tree,
+static struct avl_table *mark_chars(fo_entry * fo, struct avl_table *tx_tree,
                              internal_font_number f)
 {
     int i, *j;
@@ -316,7 +316,7 @@ struct avl_table *mark_chars(fo_entry * fo, struct avl_table *tx_tree,
 
 @
 @c
-void get_char_range(fo_entry * fo, internal_font_number f)
+static void get_char_range(fo_entry * fo, internal_font_number f)
 {
     int i;
     assert(fo != NULL);
@@ -384,7 +384,7 @@ static void write_charwidth_array(PDF pdf, fo_entry * fo,
 @ Remark: Font objects from embedded PDF files are never registered
 into |fo_tree|; they are individually written out.
 @c
-fo_entry *lookup_fo_entry(char *s)
+static fo_entry *lookup_fo_entry(char *s)
 {
     fo_entry fo;
     fm_entry fm;
@@ -398,7 +398,7 @@ fo_entry *lookup_fo_entry(char *s)
     return (fo_entry *) avl_find(fo_tree, &fo);
 }
 
-void register_fo_entry(fo_entry * fo)
+static void register_fo_entry(fo_entry * fo)
 {
     void **aa;
     if (fo_tree == NULL) {
@@ -561,7 +561,7 @@ static void write_fontdescriptor(PDF pdf, fd_entry * fd)
     pdf_end_dict(pdf);
 }
 
-void write_fontdescriptors(PDF pdf)
+static void write_fontdescriptors(PDF pdf)
 {
     fd_entry *fd;
     struct avl_traverser t;
@@ -575,7 +575,7 @@ void write_fontdescriptors(PDF pdf)
 
 @
 @c
-void write_fontdictionary(PDF pdf, fo_entry * fo)
+static void write_fontdictionary(PDF pdf, fo_entry * fo)
 {
     assert(fo != NULL);
     assert(fo->fm != NULL);
@@ -623,7 +623,7 @@ void write_fontdictionary(PDF pdf, fo_entry * fo)
     pdf_end_dict(pdf);
 }
 
-void write_fontdictionaries(PDF pdf)
+static void write_fontdictionaries(PDF pdf)
 {
     fo_entry *fo;
     struct avl_traverser t;
@@ -827,7 +827,7 @@ void do_pdf_font(PDF pdf, internal_font_number f)
    at this point in the program.
 
 @c
-int comp_glw_entry(const void *pa, const void *pb, void *p
+static int comp_glw_entry(const void *pa, const void *pb, void *p
                    __attribute__ ((unused)))
 {
     unsigned short i, j;
@@ -838,7 +838,7 @@ int comp_glw_entry(const void *pa, const void *pb, void *p
     return 0;
 }
 
-void create_cid_fontdescriptor(fo_entry * fo, internal_font_number f)
+static void create_cid_fontdescriptor(fo_entry * fo, internal_font_number f)
 {
     assert(fo != NULL);
     assert(fo->fm != NULL);

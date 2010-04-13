@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lpdflib.c 3582 2010-04-02 16:37:08Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/lpdflib.c $";
+    "$Id: lpdflib.c 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/lpdflib.c $";
 
 #include "lua/luatex-api.h"
 #include "ptexlib.h"
@@ -31,7 +31,7 @@ for (i = 0; i < (l); i++) {                       \
     pdf_quick_out(p, ((const unsigned char *) (s))[i]); \
 }
 
-int luapdfprint(lua_State * L)
+static int luapdfprint(lua_State * L)
 {
     int n;
     unsigned i;
@@ -83,7 +83,7 @@ int luapdfprint(lua_State * L)
     return 0;
 }
 
-unsigned char *fread_to_buf(lua_State * L, const char *filename, size_t * len)
+static unsigned char *fread_to_buf(lua_State * L, const char *filename, size_t * len)
 {
     int i = 0;
     int ilen = 0;

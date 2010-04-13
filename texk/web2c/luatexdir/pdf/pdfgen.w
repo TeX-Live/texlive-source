@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 3573 2010-04-02 14:10:54Z hhenkel $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
+    "$Id: pdfgen.w 3612 2010-04-13 09:29:42Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
 
@@ -2110,7 +2110,7 @@ static boolean substr_of_str(const char *s, const char *t)
     return true;
 }
 
-void pdf_print_info(PDF pdf, int luatex_version, str_number luatex_revision)
+static void pdf_print_info(PDF pdf, int luatex_version, str_number luatex_revision)
 {                               /* print info object */
     boolean creator_given, producer_given, creationdate_given, moddate_given,
         trapped_given;
@@ -2165,7 +2165,7 @@ void pdf_print_info(PDF pdf, int luatex_version, str_number luatex_revision)
     pdf_end_dict(pdf);
 }
 
-void build_free_object_list(PDF pdf)
+static void build_free_object_list(PDF pdf)
 {
     int k, l;
     l = 0;

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: mainbody.h 3436 2010-02-21 15:34:00Z taco $ */
+/* $Id: mainbody.h 3612 2010-04-13 09:29:42Z taco $ */
 
 #ifndef MAINBODY_H
 #  define MAINBODY_H
@@ -243,6 +243,8 @@ extern void close_files_and_terminate(void);
 
 extern void final_cleanup(void);
 extern void debug_help(void);   /* routine to display various things */
+
+extern int main_initialize(void);
 
 /* lazy me */
 #  define get_cur_font() equiv(cur_font_loc)

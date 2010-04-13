@@ -21,7 +21,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: llualib.c 3551 2010-03-26 14:43:50Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/llualib.c $";
+    "$Id: llualib.c 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/llualib.c $";
 
 #define LOAD_BUF_SIZE 256
 #define UINT_MAX32 0xFFFFFFFF
@@ -157,7 +157,7 @@ static int bytecode_register_shadow_get(lua_State * L, int k)
 }
 
 
-int writer(lua_State * L, const void *b, size_t size, void *B)
+static int writer(lua_State * L, const void *b, size_t size, void *B)
 {
     bytecode *buf = (bytecode *) B;
     (void) L;                   /* for -Wunused */
@@ -173,7 +173,7 @@ int writer(lua_State * L, const void *b, size_t size, void *B)
     return 0;
 }
 
-const char *reader(lua_State * L, void *ud, size_t * size)
+static const char *reader(lua_State * L, void *ud, size_t * size)
 {
     bytecode *buf = (bytecode *) ud;
     (void) L;                   /* for -Wunused */
@@ -187,7 +187,7 @@ const char *reader(lua_State * L, void *ud, size_t * size)
     return (const char *) buf->buf;
 }
 
-int get_bytecode(lua_State * L)
+static int get_bytecode(lua_State * L)
 {
     int k;
     k = (int) luaL_checkinteger(L, -1);
@@ -210,7 +210,7 @@ int get_bytecode(lua_State * L)
     return 1;
 }
 
-int set_bytecode(lua_State * L)
+static int set_bytecode(lua_State * L)
 {
     int k, ltype;
     unsigned int i;
@@ -263,7 +263,7 @@ int set_bytecode(lua_State * L)
 }
 
 
-int set_luaname(lua_State * L)
+static int set_luaname(lua_State * L)
 {
     int k;
     const char *s;
@@ -286,7 +286,7 @@ int set_luaname(lua_State * L)
     return 0;
 }
 
-int get_luaname(lua_State * L)
+static int get_luaname(lua_State * L)
 {
     int k;
     k = (int) luaL_checkinteger(L, 2);

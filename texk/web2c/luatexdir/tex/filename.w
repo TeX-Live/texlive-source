@@ -22,7 +22,7 @@
 
 static const char _svn_version[] =
     "$Id: filename.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/filename.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/filename.w $";
 
 
 @  In order to isolate the system-dependent aspects of file names, the

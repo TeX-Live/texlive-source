@@ -11,10 +11,10 @@
 #define AVL_SHOW_ERROR(fmt,arg) (void) (fmt), (void) (arg)
 #endif
 
-void *
+const void *
 avl_default_item_copy (const void *item)
 {
-  return (void *) item;
+  return item;
 }
 
 void *
@@ -767,7 +767,7 @@ rebalance_del (avl_node * p, avl_tree t, void **backup)
 {
   avl_node **r, *a, *c;
   int dir, bal;
-
+  dir = 0; /* for -W */
   a = p->up;
   if (a == NULL)
 	r = &t->root;
@@ -1256,7 +1256,7 @@ avl_ins (void *item, avl_tree t, avl_bool_t allow_duplicates)
 	avl_compare_func cmp = t->compare;
 	avl_node **r, *a;
 	int dir;
-
+	dir = 0; /* for -W */
 	for (r = &t->root, a = NULL; *r != NULL; r = &a->sub[dir = dir > 0])
 	  {
 		a = *r;

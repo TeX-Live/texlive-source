@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luastuff.w 3583 2010-04-02 17:40:44Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/luastuff.w $";
+    "$Id: luastuff.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luastuff.w $";
 
 #include "lua/luatex-api.h"
 #include "ptexlib.h"
@@ -71,7 +71,7 @@ const char *getS(lua_State * L, void *ud, size_t * size)
 }
 
 @ @c
-void *my_luaalloc(void *ud, void *ptr, size_t osize, size_t nsize)
+static void *my_luaalloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
     void *ret = NULL;
     (void) ud;                  /* for -Wunused */

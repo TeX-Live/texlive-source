@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfsetmatrix.w 3571 2010-04-02 13:50:45Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/pdf/pdfsetmatrix.w $";
+    "$Id: pdfsetmatrix.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfsetmatrix.w $";
 
 #include "ptexlib.h"
 
@@ -37,7 +37,7 @@ boolean matrixused(void)
     return matrix_stack_used > 0;
 }
 
-void matrix_stack_room(void)
+static void matrix_stack_room(void)
 {
     matrix_entry *new_stack;
 
@@ -169,7 +169,7 @@ static int last_ury;
 #define DO_MIN(a, b) ((a < b) ? a : b)
 #define DO_MAX(a, b) ((a > b) ? a : b)
 
-void do_matrixtransform(scaled x, scaled y, scaled * retx, scaled * rety)
+static void do_matrixtransform(scaled x, scaled y, scaled * retx, scaled * rety)
 {
     matrix_entry *m = &matrix_stack[matrix_stack_used - 1];
     double x_old = x;

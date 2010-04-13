@@ -1291,9 +1291,11 @@ static char *createtmpfile(char *filename)
     strcpy(tempname+strlen(tempname)-5,"XXXXXX"); /* dfont -> XXXXXX */
 
 #ifdef HAVE_MKSTEMP
-    int i = mkstemp(tempname);
-    if (i) {
+    {
+      int i = mkstemp(tempname);
+      if (i) {
         close(i);
+      }
     }
 #else
     mktemp(tempname);

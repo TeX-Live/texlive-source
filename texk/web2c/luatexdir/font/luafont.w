@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luafont.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/font/luafont.w $";
+    "$Id: luafont.w 3612 2010-04-13 09:29:42Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/luafont.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -111,7 +111,7 @@ static void dump_intfield(lua_State * L, const char *n, int c)
 }
 
 
-void dump_math_kerns(lua_State * L, charinfo * co, int l, int id)
+static void dump_math_kerns(lua_State * L, charinfo * co, int l, int id)
 {
     int i;
     for (i = 0; i < l; i++) {
@@ -136,7 +136,7 @@ void dump_math_kerns(lua_State * L, charinfo * co, int l, int id)
 }
 
 
-void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * co)
+static void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * co)
 {
     int i, j;
     liginfo *l;
@@ -739,7 +739,7 @@ make_luaS_index(vert_variants);
 make_luaS_index(mathkern);
 make_luaS_index(commands);
 
-void init_font_string_pointers(lua_State * L)
+static void init_font_string_pointers(lua_State * L)
 {
     init_luaS_index(width);
     init_luaS_index(height);
@@ -856,7 +856,7 @@ static int count_char_packet_bytes(lua_State * L)
 
 
 
-scaled sp_to_dvi(halfword sp, halfword atsize)
+static scaled sp_to_dvi(halfword sp, halfword atsize)
 {
     double result, mult;
     mult = (double) (atsize / 65536.0);
@@ -1174,7 +1174,7 @@ static void store_math_kerns(lua_State * L, charinfo * co, int id)
 }
 
 @ @c
-void
+static void
 font_char_from_lua(lua_State * L, internal_font_number f, int i,
                    int *l_fonts, boolean has_math)
 {

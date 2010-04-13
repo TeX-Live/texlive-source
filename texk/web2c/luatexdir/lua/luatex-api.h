@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex-api.h 3558 2010-03-29 07:21:45Z taco $ */
+/* $Id: luatex-api.h 3612 2010-04-13 09:29:42Z taco $ */
 
 #ifndef LUATEX_API_H
 #  define LUATEX_API_H 1
@@ -198,5 +198,6 @@ extern char charsetstr[];       /* from mpdir/psout.w */
 
 extern char **environ;
 
+extern int luac_main(int argc, char *argv[]); /* texluac.w */
 
 #endif

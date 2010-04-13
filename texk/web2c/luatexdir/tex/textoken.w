@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: textoken.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/textoken.w $";
+    "$Id: textoken.w 3612 2010-04-13 09:29:42Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/textoken.w $";
 
 #include "ptexlib.h"
 
@@ -554,7 +554,7 @@ halfword active_to_cs(int curchr, int force)
 @ TODO this function should listen to \.{\\escapechar} 
 
 @c
-char *cs_to_string(halfword p)
+static char *cs_to_string(halfword p)
 {                               /* prints a control sequence */
     const char *s;
     char *sh;
@@ -598,7 +598,7 @@ char *cs_to_string(halfword p)
 @ TODO this is a quick hack, will be solved differently soon 
 
 @c
-char *cmd_chr_to_string(int cmd, int chr)
+static char *cmd_chr_to_string(int cmd, int chr)
 {
     char *s;
     str_number str;

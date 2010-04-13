@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: inputstack.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/inputstack.w $";
+    "$Id: inputstack.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/inputstack.w $";
 
 @ @c
 #define end_line_char int_par(end_line_char_code)
@@ -129,7 +129,7 @@ at most |error_line|. Non-current input levels whose |token_type| is
 `|backed_up|' are shown only if they have not been fully read.
 
 @c
-void print_token_list_type(int t)
+static void print_token_list_type(int t)
 {
     switch (t) {
     case parameter:

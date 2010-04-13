@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: texmath.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/texmath.w $";
+    "$Id: texmath.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/texmath.w $";
 
 @ @c
 #define mode          cur_list.mode_field
@@ -143,7 +143,7 @@ and `\.{\$P\$}' produce different results (the former will not have the
 will be added).
 
 @c
-void unsave_math(void)
+static void unsave_math(void)
 {
     unsave();
     decr(save_ptr);
@@ -200,7 +200,7 @@ void def_fam_fnt(int fam_id, int size_id, int f, int lvl)
 }
 
 @ @c
-void unsave_math_fam_data(int gl)
+static void unsave_math_fam_data(int gl)
 {
     sa_stack_item st;
     if (math_fam_head->stack == NULL)
@@ -266,7 +266,7 @@ scaled get_math_param(int param_id, int style_id)
 
 
 @ @c
-void unsave_math_param_data(int gl)
+static void unsave_math_param_data(int gl)
 {
     sa_stack_item st;
     if (math_param_head->stack == NULL)
@@ -503,7 +503,7 @@ has special subfields |display_mlist|, |text_mlist|, |script_mlist|,
 and |script_script_mlist| pointing to the mlists for each style.
 
 @c
-pointer new_choice(void)
+static pointer new_choice(void)
 {                               /* create a choice node */
     return new_node(choice_node, 0);    /* the |subtype| is not used */
 }
@@ -571,7 +571,7 @@ void show_math_node(pointer p)
 @ Here are some simple routines used in the display of noads. 
 
 @c
-void print_fam_and_char(pointer p)
+static void print_fam_and_char(pointer p)
 {                               /* prints family and character */
     tprint_esc("fam");
     print_int(math_fam(p));
@@ -580,7 +580,7 @@ void print_fam_and_char(pointer p)
 }
 
 @ @c
-void print_delimiter(pointer p)
+static void print_delimiter(pointer p)
 {
     int a;
     if (small_fam(p) < 0) {
@@ -614,7 +614,7 @@ distinguished from a missing field, because these are not equivalent
 @^recursion@>
 
 @c
-void print_subsidiary_data(pointer p, ASCII_code c)
+static void print_subsidiary_data(pointer p, ASCII_code c)
 {                               /* display a noad field */
     if ((int) cur_length >= depth_threshold) {
         if (p != null)
@@ -786,7 +786,7 @@ Here is a little routine that needs to be done whenever a subformula
 is about to be processed. The parameter is a code like |math_group|.
 
 @c
-void new_save_level_math(group_code c)
+static void new_save_level_math(group_code c)
 {
     set_saved_record(0, saved_textdir, 0, text_dir_ptr);
     text_dir_ptr = new_dir(math_direction);
@@ -798,7 +798,7 @@ void new_save_level_math(group_code c)
 }
 
 @ @c
-void push_math(group_code c, int mstyle)
+static void push_math(group_code c, int mstyle)
 {
     if (math_direction != text_direction)
         dir_math_save = true;
@@ -810,7 +810,7 @@ void push_math(group_code c, int mstyle)
 }
 
 @ @c
-void enter_ordinary_math(void)
+static void enter_ordinary_math(void)
 {
     push_math(math_shift_group, text_style);
     eq_word_define(int_base + cur_fam_code, -1);
@@ -889,6 +889,37 @@ void math_left_brace(void)
     (void) scan_math(nucleus(tail), m_style);
 }
 
+@ If the inline directions of \.{\\pardir} and \.{\\mathdir} are
+opposite, then this function will return true. Discovering that fact
+is somewhat odd because it needs traversal of the |save_stack|.
+The occurance of displayed equations is weird enough that this is
+probably still better than having yet another field in the |input_stack| 
+structures.
+
+None of this makes much sense if the inline direction of either one of 
+\.{\\pardir} or \.{\\mathdir} is vertical, but in that case the current 
+math machinery is ill suited anyway so I do not bother to test that.
+
+@c
+static boolean math_and_text_reversed_p(void)
+{
+    int i = save_ptr - 1;
+    while (save_type(i) != level_boundary)
+        i--;
+    while (i < save_ptr) {
+        if (save_type(i) == restore_old_value &&
+            save_value(i) == int_base + par_direction_code) {
+            if (textdir_opposite(math_direction, save_value(i - 1)))
+                return true;
+        }
+        i++;
+    }
+    return false;
+}
+
+
+
+
 
 @ When we enter display math mode, we need to call |line_break| to
 process the partial paragraph that has just been interrupted by the
@@ -951,6 +982,7 @@ void enter_display_math(void)
     eq_word_define(dimen_base + pre_display_size_code, w);
     eq_word_define(dimen_base + display_width_code, l);
     eq_word_define(dimen_base + display_indent_code, s);
+    eq_word_define(int_base + pre_display_direction_code, (math_and_text_reversed_p() ? -1 : 0));
     if (every_display != null)
         begin_token_list(every_display, every_display_text);
     if (nest_ptr == 1) {
@@ -968,7 +1000,7 @@ void enter_display_math(void)
 @c
 #define fam_in_range ((cur_fam>=0)&&(cur_fam<256))
 
-delcodeval do_scan_extdef_del_code(int extcode, boolean doclass)
+static delcodeval do_scan_extdef_del_code(int extcode, boolean doclass)
 {
     const char *hlp[] = {
         "I'm going to use 0 instead of that illegal code value.",
@@ -1399,7 +1431,7 @@ delimiter is to be placed; the second tells if this delimiter follows
 \.{\\radical} or not.
 
 @c
-void scan_delimiter(pointer p, int r)
+static void scan_delimiter(pointer p, int r)
 {
     delcodeval dval = { 0, 0, 0, 0, 0, 0 };
     if (r == tex_mathcode) {    /* \.{\\radical} */
@@ -1923,7 +1955,7 @@ static void check_inline_math_end(void)
 }
 
 @ @c
-void resume_after_display(void)
+static void resume_after_display(void)
 {
     if (cur_group != math_shift_group)
         confusion("display");
@@ -1942,36 +1974,6 @@ void resume_after_display(void)
         build_page();
     }
 }
-
-
-@ If the inline directions of \.{\\pardir} and \.{\\mathdir} are
-opposite, then this function will return true. Discovering that fact
-is somewhat odd because it needs traversal of the |save_stack|.
-The occurance of displayed equations is weird enough that this is
-probably still better than having yet another field in the |input_stack| 
-structures.
-
-None of this makes much sense if the inline direction of either one of 
-\.{\\pardir} or \.{\\mathdir} is vertical, but in that case the current 
-math machinery is ill suited anyway so I do not bother to test that.
-
-@c
-static boolean math_and_text_reversed_p(void)
-{
-    int i = save_ptr - 1;
-    while (save_type(i) != level_boundary)
-        i--;
-    while (i < save_ptr) {
-        if (save_type(i) == restore_old_value &&
-            save_value(i) == int_base + par_direction_code) {
-            if (textdir_opposite(math_direction, save_value(i - 1)))
-                return true;
-        }
-        i++;
-    }
-    return false;
-}
-
 
 
 @  The fussiest part of math mode processing occurs when a displayed formula is 
@@ -2000,7 +2002,9 @@ static void finish_displayed_math(boolean l, pointer a, pointer p)
     pointer t;                  /* tail of adjustment list */
     pointer pre_t;              /* tail of pre-adjustment list */
     boolean swap_dir;           /* true if the math and surrounding text dirs are opposed */
-    swap_dir = math_and_text_reversed_p();
+    swap_dir = (int_par(pre_display_direction_code) < 0 ? true : false );
+    if (a != null && swap_dir) 
+        l = !l;
 
     adjust_tail = adjust_head;
     pre_adjust_tail = pre_adjust_head;
@@ -2058,12 +2062,6 @@ static void finish_displayed_math(boolean l, pointer a, pointer p)
                     d = 0;
     }
 
-    /* If the equation number is set on a line by itself, either before or
-       after the formula, we append an infinite penalty so that no page break will
-       separate the display from its number; and we use the same size and
-       displacement for all three potential lines of the display, even though
-       `\.{\\parshape}' may specify them differently.
-     */
     tail_append(new_penalty(int_par(pre_display_penalty_code)));
     if ((d + line_s <= pre_display_size) || l) {        /* not enough clearance */
         g1 = above_display_skip_code;
@@ -2073,13 +2071,15 @@ static void finish_displayed_math(boolean l, pointer a, pointer p)
         g2 = below_display_short_skip_code;
     }
 
-    if (l && (eqno_w == 0)) {   /* \.{\\leqno} on a forced single line due to |width=0| */
+    /* If the equation number is set on a line by itself, either before or
+       after the formula, we append an infinite penalty so that no page break will
+       separate the display from its number; and we use the same size and
+       displacement for all three potential lines of the display, even though
+       `\.{\\parshape}' may specify them differently.
+     */
+    if (a && l && (eqno_w == 0)) {   /* \.{\\leqno} on a forced single line due to |width=0| */
         /* it follows that |type(a)=hlist_node| */
-        if (swap_dir) {
-            shift_amount(a) = line_w + line_s;
-        } else {
-            shift_amount(a) = line_s;
-        }
+        shift_amount(a) = line_s;
         append_to_vlist(a);
         tail_append(new_penalty(inf_penalty));
     } else {
@@ -2099,27 +2099,21 @@ static void finish_displayed_math(boolean l, pointer a, pointer p)
         }
         eq_box = hpack(eq_box, 0, additional, -1);
     }
-    if (swap_dir) {
-        /*    |d = line_w - d;| */
-        if (eqno_w != 0) {
-            if (l)
-                d = line_w - width(eq_box);
-            else
-                d = 0;
-        } else {
-            d = line_w - eq_w - eqno_w - d;
-        }
-    }
-    shift_amount(eq_box) = line_s + d;
+    if (a && math_direction == dir_TRT) 
+        if (l) {
+           r = new_kern(line_w - width(eq_box)); 
+           vlink(eq_box) = r;
+           eq_box = hpack(eq_box, 0, additional, -1);
+           shift_amount(eq_box) = 0;
+        } else
+           shift_amount(eq_box) = 0;
+    else
+        shift_amount(eq_box) = line_s + d;
     append_to_vlist(eq_box);
 
     if ((a != null) && (eqno_w == 0) && !l) {
         tail_append(new_penalty(inf_penalty));
-        if (!swap_dir) {
-            shift_amount(a) = line_s + line_w - width(a);
-        } else {
-            shift_amount(a) = line_s;
-        }
+        shift_amount(a) = line_s;
         append_to_vlist(a);
         g2 = 0;
     }

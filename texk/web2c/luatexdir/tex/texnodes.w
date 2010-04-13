@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texnodes.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/texnodes.w $";
+    "$Id: texnodes.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/texnodes.w $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -828,7 +828,7 @@ static void do_free_error(halfword p)
 #endif
 }
 
-int free_error(halfword p)
+static int free_error(halfword p)
 {
     assert(p > my_prealloc);
     assert(p < var_mem_max);
@@ -1332,7 +1332,7 @@ void check_node(halfword p)
 }
 
 @ @c
-void check_static_node_mem(void)
+static void check_static_node_mem(void)
 {
     dotest(zero_glue, width(zero_glue), 0);
     dotest(zero_glue, type(zero_glue), glue_spec_node);
@@ -1437,7 +1437,8 @@ halfword get_node(int s)
 }
 
 @ @c
-void print_free_chain(int c)
+#ifdef DEBUG
+static void print_free_chain(int c)
 {
     halfword p = free_chain[c];
     fprintf(stdout, "\nfree chain[%d] =\n  ", c);
@@ -1447,6 +1448,7 @@ void print_free_chain(int c)
     }
     fprintf(stdout, "null;\n");
 }
+#endif
 
 @ @c
 void free_node(halfword p, int s)
@@ -1476,7 +1478,7 @@ void free_node(halfword p, int s)
 }
 
 @ @c
-void free_node_chain(halfword q, int s)
+static void free_node_chain(halfword q, int s)
 {
     register halfword p = q;
     while (vlink(p) != null) {
@@ -2196,7 +2198,7 @@ void print_short_node_contents(halfword p)
 
 
 @ @c
-void show_pdftex_whatsit_rule_spec(int p)
+static void show_pdftex_whatsit_rule_spec(int p)
 {
     tprint("(");
     print_rule_dimen(height(p));
@@ -2227,7 +2229,7 @@ static void print_write_whatsit(const char *s, pointer p)
 
 
 @ @c
-void show_whatsit_node(int p)
+static void show_whatsit_node(int p)
 {
     switch (subtype(p)) {
     case open_node:

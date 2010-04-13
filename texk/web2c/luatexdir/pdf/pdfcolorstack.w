@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: pdfcolorstack.w 3571 2010-04-02 13:50:45Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/pdf/pdfcolorstack.w $";
+    "$Id: pdfcolorstack.w 3612 2010-04-13 09:29:42Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfcolorstack.w $";
 
 
 @* Color Stack and Matrix Transformation Support.
@@ -81,7 +81,7 @@ static int colstacks_used = 0;
 @c
 #define init_colorstacks() if (colstacks_size == 0) colstacks_first_init();
 
-void colstacks_first_init(void)
+static void colstacks_first_init(void)
 {
     colstacks_size = STACK_INCREMENT;
     colstacks = xtalloc((unsigned) colstacks_size, colstack_type);
@@ -172,7 +172,7 @@ static void put_cstring_on_str_pool(char *str)
 }
 
 @ @c
-int colorstackset(int colstack_no, str_number s)
+static int colorstackset(int colstack_no, str_number s)
 {
     colstack_type *colstack = get_colstack(colstack_no);
 

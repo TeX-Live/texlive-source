@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: limglib.c 3404 2010-01-28 11:17:10Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/limglib.c $";
+    "$Id: limglib.c 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/limglib.c $";
 
 #include <stdio.h>
 #include <string.h>
@@ -424,7 +424,7 @@ static void lua_to_image(lua_State * L, image * a)
 
 /**********************************************************************/
 
-void copy_image(lua_State * L, lua_Number scale)
+static void copy_image(lua_State * L, lua_Number scale)
 {
     image *a, **aa, *b, **bb;
     if (lua_gettop(L) != 1)

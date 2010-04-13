@@ -22,8 +22,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: writeenc.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/font/writeenc.w $";
+    "$Id: writeenc.w 3612 2010-04-13 09:29:42Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writeenc.w $";
 
 @ All encoding entries go into AVL tree for fast search by name. 
 @c
@@ -37,7 +37,7 @@ static int comp_fe_entry(const void *pa, const void *pb, void *p)
     return strcmp(((const fe_entry *) pa)->name, ((const fe_entry *) pb)->name);
 }
 
-fe_entry *new_fe_entry(void)
+static fe_entry *new_fe_entry(void)
 {
     fe_entry *fe;
     fe = xtalloc(1, fe_entry);
@@ -48,7 +48,7 @@ fe_entry *new_fe_entry(void)
     return fe;
 }
 
-fe_entry *lookup_fe_entry(char *s)
+static fe_entry *lookup_fe_entry(char *s)
 {
     fe_entry fe;
     assert(s != NULL);
@@ -60,7 +60,7 @@ fe_entry *lookup_fe_entry(char *s)
     return (fe_entry *) avl_find(fe_tree, &fe);
 }
 
-void register_fe_entry(fe_entry * fe)
+static void register_fe_entry(fe_entry * fe)
 {
     void **aa;
     if (fe_tree == NULL) {
@@ -88,7 +88,7 @@ fe_entry *get_fe_entry(char *s)
 }
 
 @ @c
-void write_enc(PDF pdf, char **glyph_names, struct avl_table *tx_tree,
+static void write_enc(PDF pdf, char **glyph_names, struct avl_table *tx_tree,
                int fe_objnum)
 {
     int i_old, *p;
@@ -116,7 +116,7 @@ void write_enc(PDF pdf, char **glyph_names, struct avl_table *tx_tree,
     pdf_end_dict(pdf);
 }
 
-void write_fontencoding(PDF pdf, fe_entry * fe)
+static void write_fontencoding(PDF pdf, fe_entry * fe)
 {
     assert(fe != NULL);
     write_enc(pdf, fe->glyph_names, fe->tx_tree, fe->fe_objnum);

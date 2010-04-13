@@ -22,7 +22,7 @@
 
 static const char _svn_version[] =
     "$Id: pagetree.w 3573 2010-04-02 14:10:54Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/pdf/pagetree.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pagetree.w $";
 
 @* Page diversions.
 

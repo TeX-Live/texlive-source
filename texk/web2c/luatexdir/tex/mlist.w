@@ -25,8 +25,8 @@
 #include "lua/luatex-api.h"
 
 static const char _svn_version[] =
-    "$Id: mlist.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/mlist.w $";
+    "$Id: mlist.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/mlist.w $";
 
 @ @c
 #define delimiter_factor     int_par(delimiter_factor_code)
@@ -831,7 +831,7 @@ void fixup_math_parameters(int fam_id, int size_id, int f, int lvl)
 backward compatibility with \.{\\scriptspace}.
 
 @c
-void finalize_math_parameters(void)
+static void finalize_math_parameters(void)
 {
     int saved_trace = int_par(tracing_assigns_code);
     int_par(tracing_assigns_code) = 0;
@@ -869,7 +869,7 @@ for each combination of family and size.  (Be alert: Size codes get
 larger as the type gets smaller.)
 
 @c
-const char *math_size_string(int s)
+static const char *math_size_string(int s)
 {
     if (s == text_size)
         return "textfont";
@@ -896,7 +896,7 @@ information:
 
 @ a simple routine that creates a flat copy of a nucleus
 @c
-pointer math_clone(pointer q)
+static pointer math_clone(pointer q)
 {
     pointer x;
     if (q == null)
@@ -920,7 +920,7 @@ pointer math_clone(pointer q)
   that eventually contains it.
 
 @c
-pointer do_fraction_rule(scaled t, pointer att)
+static pointer do_fraction_rule(scaled t, pointer att)
 {
     pointer p;                  /* the new node */
     p = new_rule();
@@ -937,7 +937,7 @@ pointer do_fraction_rule(scaled t, pointer att)
   fraction rule of thickness |t| under additional space of height |ht|.
 
 @c
-pointer overbar(pointer b, scaled k, scaled t, scaled ht, pointer att)
+static pointer overbar(pointer b, scaled k, scaled t, scaled ht, pointer att)
 {
     pointer p, q;               /* nodes being constructed */
     p = new_kern(k);
@@ -978,7 +978,7 @@ static pointer char_box(internal_font_number f, int c, pointer bb)
  a given character:
 
 @c
-scaled height_plus_depth(internal_font_number f, int c)
+static scaled height_plus_depth(internal_font_number f, int c)
 {
     return (char_height(f, c) + char_depth(f, c));
 }
@@ -989,7 +989,7 @@ scaled height_plus_depth(internal_font_number f, int c)
   of the characters already in box |b|:
 
 @c
-scaled stack_into_box(pointer b, internal_font_number f, int c)
+static scaled stack_into_box(pointer b, internal_font_number f, int c)
 {
     pointer p;                  /* new node placed into |b| */
     p = char_box(f, c, node_attr(b));
@@ -1000,7 +1000,7 @@ scaled stack_into_box(pointer b, internal_font_number f, int c)
 }
 
 
-scaled stack_into_hbox(pointer b, internal_font_number f, int c)
+static scaled stack_into_hbox(pointer b, internal_font_number f, int c)
 {
     pointer p, q;               /* new node placed into |b| */
     p = char_box(f, c, node_attr(b));
@@ -1021,7 +1021,7 @@ scaled stack_into_hbox(pointer b, internal_font_number f, int c)
 
 
 @ @c
-void add_delim_kern(pointer b, scaled s)
+static void add_delim_kern(pointer b, scaled s)
 {
     pointer p;                  /* new node placed into |b| */
     p = new_kern(s);
@@ -1030,7 +1030,7 @@ void add_delim_kern(pointer b, scaled s)
     list_ptr(b) = p;
 }
 
-void add_delim_hkern(pointer b, scaled s)
+static void add_delim_hkern(pointer b, scaled s)
 {
     pointer p, q;               /* new node placed into |b| */
     p = new_kern(s);

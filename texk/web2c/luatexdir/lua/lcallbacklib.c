@@ -21,7 +21,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: lcallbacklib.c 3404 2010-01-28 11:17:10Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
+    "$Id: lcallbacklib.c 3404 2010-01-28 11:17:10Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
 int callback_count = 0;
 int saved_callback_count = 0;

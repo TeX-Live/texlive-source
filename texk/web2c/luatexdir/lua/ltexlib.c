@@ -23,7 +23,7 @@
 
 
 static const char _svn_version[] =
-    "$Id: ltexlib.c 3550 2010-03-26 14:37:09Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/ltexlib.c $";
+    "$Id: ltexlib.c 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/ltexlib.c $";
 
 #define attribute(A) eqtb[attribute_base+(A)].hh.rh
 #define dimen(A) eqtb[scaled_base+(A)].hh.rh
@@ -120,22 +120,22 @@ static int do_luacprint(lua_State * L, int partial, int deftable)
     return 0;
 }
 
-int luacwrite(lua_State * L)
+static int luacwrite(lua_State * L)
 {
     return do_luacprint(L, FULL_LINE, NO_CAT_TABLE);
 }
 
-int luacprint(lua_State * L)
+static int luacprint(lua_State * L)
 {
     return do_luacprint(L, FULL_LINE, DEFAULT_CAT_TABLE);
 }
 
-int luacsprint(lua_State * L)
+static int luacsprint(lua_State * L)
 {
     return do_luacprint(L, PARTIAL_LINE, DEFAULT_CAT_TABLE);
 }
 
-int luactprint(lua_State * L)
+static int luactprint(lua_State * L)
 {
     int i, j, n;
     int cattable, startstrings;
@@ -575,7 +575,7 @@ static int tex_scaledimen(lua_State * L)
 }
 
 
-int get_item_index(lua_State * L, int i, int base)
+static int get_item_index(lua_State * L, int i, int base)
 {
     size_t kk;
     int k;
@@ -680,7 +680,7 @@ static int setskip(lua_State * L)
     return vsetskip(L, isglobal);
 }
 
-int getskip(lua_State * L)
+static int getskip(lua_State * L)
 {
     halfword j;
     int k;
@@ -778,7 +778,7 @@ static int getattribute(lua_State * L)
     return 1;
 }
 
-int vsettoks(lua_State * L, int is_global)
+static int vsettoks(lua_State * L, int is_global)
 {
     int i, err;
     int k;
@@ -925,17 +925,17 @@ static int getboxdim(lua_State * L, int whichdim)
     return 1;
 }
 
-int getboxwd(lua_State * L)
+static int getboxwd(lua_State * L)
 {
     return getboxdim(L, width_offset);
 }
 
-int getboxht(lua_State * L)
+static int getboxht(lua_State * L)
 {
     return getboxdim(L, height_offset);
 }
 
-int getboxdp(lua_State * L)
+static int getboxdp(lua_State * L)
 {
     return getboxdim(L, depth_offset);
 }
@@ -1011,7 +1011,7 @@ static int setboxdp(lua_State * L)
     return vsetboxdim(L, depth_offset, isglobal);
 }
 
-int settex(lua_State * L)
+static int settex(lua_State * L)
 {
     const char *st;
     int i, j, texstr;
@@ -1075,7 +1075,7 @@ int settex(lua_State * L)
     return 0;
 }
 
-int do_convert(lua_State * L, int cur_code)
+static int do_convert(lua_State * L, int cur_code)
 {
     int texstr;
     int i = -1;
@@ -1126,7 +1126,7 @@ int do_convert(lua_State * L, int cur_code)
 }
 
 
-int do_scan_internal(lua_State * L, int cur_cmd, int cur_code)
+static int do_scan_internal(lua_State * L, int cur_cmd, int cur_code)
 {
     int texstr;
     char *str = NULL;
@@ -1156,7 +1156,7 @@ int do_scan_internal(lua_State * L, int cur_cmd, int cur_code)
     return 1;
 }
 
-int do_lastitem(lua_State * L, int cur_code)
+static int do_lastitem(lua_State * L, int cur_code)
 {
     int retval = 1;
     switch (cur_code) {
@@ -1319,7 +1319,7 @@ static int getpdfxformname(lua_State * L)
 }
 
 
-int get_parshape(lua_State * L)
+static int get_parshape(lua_State * L)
 {
     int n;
     halfword par_shape_ptr = equiv(par_shape_loc);
@@ -1343,7 +1343,7 @@ int get_parshape(lua_State * L)
 }
 
 
-int gettex(lua_State * L)
+static int gettex(lua_State * L)
 {
     int cur_cs = -1;
     int retval = 1;             /* default is to return nil  */
@@ -1397,7 +1397,7 @@ int gettex(lua_State * L)
 }
 
 
-int getlist(lua_State * L)
+static int getlist(lua_State * L)
 {
     const char *str;
     if (lua_isstring(L, 2)) {
@@ -1445,7 +1445,7 @@ int getlist(lua_State * L)
     return 1;
 }
 
-int setlist(lua_State * L)
+static int setlist(lua_State * L)
 {
     halfword *n_ptr;
     const char *str;

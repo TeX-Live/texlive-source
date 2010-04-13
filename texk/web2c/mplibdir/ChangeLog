@@ -1,3 +1,7 @@
+2010-04-13  Taco Hoekwater  <taco@luatex>
+
+	* new import from luatex repository (HEAD of 0.60.x branch)
+
 2010-04-05  Karl Berry  <karl@tug.org>
 
 	* mptrap.test: use --mem, not --memname (which does not exist).

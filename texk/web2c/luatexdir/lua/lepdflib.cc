@@ -19,7 +19,7 @@
 
 static const char _svn_version[] =
     "$Id: lepdflib.cc 3366 2010-01-20 14:49:31Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
 
 #include "image/epdf.h"
 

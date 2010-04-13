@@ -25,7 +25,7 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: loslibext.c 3518 2010-03-17 09:57:13Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/loslibext.c $";
+    "$Id: loslibext.c 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/loslibext.c $";
 
 #if defined(_WIN32) || defined(__NT__)
 #  define MKDIR(a,b) mkdir(a)
@@ -603,7 +603,7 @@ static int os_setenv(lua_State * L)
 }
 
 
-void find_env(lua_State * L)
+static void find_env(lua_State * L)
 {
     char *envitem, *envitem_orig;
     char *envkey;
@@ -872,11 +872,12 @@ static int os_gettimeofday(lua_State * L)
 
 static const char repl[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-static int dirs_made = 0;
-
 #define MAXTRIES 36*36*36
 
-char *do_mkdtemp(char *tmpl)
+#ifndef HAVE_MKDTEMP
+static int dirs_made = 0;
+
+static char *do_mkdtemp(char *tmpl)
 {
     int count;
     int value;
@@ -908,6 +909,7 @@ char *do_mkdtemp(char *tmpl)
     }
     return NULL;
 }
+#endif
 
 static int os_tmpdir(lua_State * L)
 {

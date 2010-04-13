@@ -14,8 +14,8 @@
 #include "luatex_svnversion.h"
 
 static const char _svn_version[] =
-    "$Id: luatex.c 3588 2010-04-04 06:41:44Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/luatex.c $";
+    "$Id: luatex.c 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/luatex.c $";
 
 #define TeX
 
@@ -25,8 +25,6 @@ int luatex_revision = '0';      /* \.{\\luatexrevision}  */
 int luatex_date_info = -extra_version_info;     /* the compile date is negated */
 const char *luatex_version_string = "beta-0.60.0";
 const char *engine_name = "luatex";     /* the name of this engine */
-
-
 
 #include <kpathsea/c-ctype.h>
 #include <kpathsea/line.h>
@@ -782,7 +780,7 @@ void get_seconds_and_micros(int *seconds, int *micros)
 /*
   Generating a better seed numbers
   */
-int getrandomseed()
+int getrandomseed(void)
 {
 #if defined (HAVE_GETTIMEOFDAY)
     struct timeval tv;
@@ -847,13 +845,16 @@ boolean input_line(FILE * f)
 
 /* This string specifies what the `e' option does in response to an
    error message.  */
+#if 0
 static const_string edit_value = EDITOR;
+#endif
 
 /* This procedure originally due to sjc@s1-c.  TeX & Metafont call it when
    the user types `e' in response to an error, invoking a text editor on
    the erroneous source file.  FNSTART is how far into FILENAME the
    actual filename starts; FNLENGTH is how long the filename is.  */
 
+#if 0
 void
 calledit(packedASCIIcode * filename,
          poolpointer fnstart, int fnlength, int linenumber)
@@ -934,6 +935,7 @@ calledit(packedASCIIcode * filename,
     /* Quit, since we found an error.  */
     uexit(1);
 }
+#endif
 
 /* Read and write dump files.  As distributed, these files are
    architecture dependent; specifically, BigEndian and LittleEndian
@@ -954,10 +956,12 @@ calledit(packedASCIIcode * filename,
 /* Make the NITEMS items pointed at by P, each of size SIZE, be the
    opposite-endianness of whatever they are now.  */
 
-static void swap_items(char *p, int nitems, int size)
+void swap_items(char *pp, int nitems, int size)
 {
     char temp;
-
+    char *q = xmalloc(nitems*size);
+    char *p = q;
+    memcpy(p,pp,nitems*size);
     /* Since `size' does not change, we can write a while loop for each
        case, and avoid testing `size' for each time.  */
     switch (size) {
@@ -973,6 +977,18 @@ static void swap_items(char *p, int nitems, int size)
             SWAP(p[5], p[10]);
             SWAP(p[6], p[9]);
             SWAP(p[7], p[8]);
+            p += size;
+        }
+        break;
+
+    case 12:
+        while (nitems--) {
+            SWAP(p[0], p[11]);
+            SWAP(p[1], p[10]);
+            SWAP(p[2], p[9]);
+            SWAP(p[3], p[8]);
+            SWAP(p[4], p[7]);
+            SWAP(p[5], p[6]);
             p += size;
         }
         break;
@@ -1009,10 +1025,12 @@ static void swap_items(char *p, int nitems, int size)
     default:
         FATAL1("Can't swap a %d-byte item for (un)dumping", size);
     }
+    xfree(q);
 }
 #endif                          /* not WORDS_BIGENDIAN and not NO_DUMP_SHARE */
 
 
+#if 0
 /* Here we write NITEMS items, each item being ITEM_SIZE bytes long.
    The pointer to the stuff to write is P, and we write to the file
    OUT_FILE.  */
@@ -1036,10 +1054,12 @@ void do_dump(char *p, int item_size, int nitems, FILE * out_file)
     swap_items(p, nitems, item_size);
 #endif
 }
+#endif
+
 
 
 /* Here is the dual of the writing routine.  */
-
+#if 0
 void do_undump(char *p, int item_size, int nitems, FILE * in_file)
 {
     if (fread(p, (size_t) item_size, (size_t) nitems, in_file) !=
@@ -1050,6 +1070,7 @@ void do_undump(char *p, int item_size, int nitems, FILE * in_file)
     swap_items(p, nitems, item_size);
 #endif
 }
+#endif
 
 
 /* Get the job name to be used, which may have been set from the

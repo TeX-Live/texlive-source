@@ -22,7 +22,7 @@
 
 static const char _svn_version[] =
     "$Id: linebreak.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/linebreak.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/linebreak.w $";
 
 @ We come now to what is probably the most interesting algorithm of \TeX:
 the mechanism for choosing the ``best possible'' breakpoints that yield

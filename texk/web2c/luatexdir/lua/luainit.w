@@ -28,7 +28,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: luainit.w 3583 2010-04-02 17:40:44Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/luainit.w $";
+    "$Id: luainit.w 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luainit.w $";
 
 @ 
 TH: TODO
@@ -110,20 +110,20 @@ const_string LUATEX_IHELP[] = {
     NULL
 };
 
-@ @c
-char *ex_selfdir(char *argv0)
+@ The return value will be the directory of the executable, e.g.: \.{c:/TeX/bin}
+@c
+static char *ex_selfdir(char *argv0)
 {
 #if defined(WIN32)
-    char short_path[PATH_MAX], path[PATH_MAX], *fp;
+    char path[PATH_MAX], *fp;
 
     /* SearchPath() always gives back an absolute directory */
-    if (SearchPath(NULL, argv0, ".exe", PATH_MAX, short_path, &fp) == 0)
+    if (SearchPath(NULL, argv0, ".exe", PATH_MAX, path, NULL) == 0)
         FATAL1("Can't determine where the executable %s is.\n", argv0);
     /* slashify the dirname */
     for (fp = path; fp && *fp; fp++)
         if (IS_DIR_SEP(*fp))
             *fp = DIR_SEP;
-    /* sdir will be the directory of the executable, ie: c:/TeX/bin */
     return xdirname(path);
 #else
     return kpse_selfdir(argv0);
@@ -437,7 +437,7 @@ static char *find_filename(char *name, const char *envkey)
 
 
 @ @c
-char *cleaned_invocation_name(char *arg)
+static char *cleaned_invocation_name(char *arg)
 {
     char *ret, *dot;
     const char *start = xbasename(arg);
@@ -450,7 +450,7 @@ char *cleaned_invocation_name(char *arg)
 }
 
 @ @c
-void init_kpse(void)
+static void init_kpse(void)
 {
 
     if (!user_progname) {
@@ -480,7 +480,7 @@ void init_kpse(void)
 }
 
 @ @c
-void fix_dumpname(void)
+static void fix_dumpname(void)
 {
     int dist;
     if (dump_name) {

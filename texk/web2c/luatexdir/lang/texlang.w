@@ -26,8 +26,8 @@
 
 
 static const char _svn_version[] =
-    "$Id: texlang.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lang/texlang.w $";
+    "$Id: texlang.w 3612 2010-04-13 09:29:42Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lang/texlang.w $";
 
 
 @ Low-level helpers 
@@ -514,7 +514,7 @@ void set_disc_field(halfword f, halfword t)
 
 
 @ @c
-char *hyphenation_exception(int exceptions, char *w)
+static char *hyphenation_exception(int exceptions, char *w)
 {
     char *ret = NULL;
     lua_State *L = Luas;
@@ -572,7 +572,7 @@ char *exception_strings(struct tex_language *lang)
 it could be faster to modify a halfword pointer and return an integer 
 
 @c
-halfword find_exception_part(unsigned int *j, unsigned int *uword, int len)
+static halfword find_exception_part(unsigned int *j, unsigned int *uword, int len)
 {
     halfword g = null, gg = null;
     register unsigned i = *j;
@@ -592,7 +592,7 @@ halfword find_exception_part(unsigned int *j, unsigned int *uword, int len)
     return gg;
 }
 
-int count_exception_part(unsigned int *j, unsigned int *uword, int len)
+static int count_exception_part(unsigned int *j, unsigned int *uword, int len)
 {
     int ret = 0;
     register unsigned i = *j;
@@ -613,7 +613,7 @@ static const char *PAT_ERROR[] = {
     NULL
 };
 
-void do_exception(halfword wordstart, halfword r, char *replacement)
+static void do_exception(halfword wordstart, halfword r, char *replacement)
 {
     unsigned i;
     halfword t;
@@ -749,7 +749,7 @@ can be hyphenated, but most european users seem to agree that
 prohibiting hyphenation there was not the best idea ever.
 
 @c
-halfword find_next_wordstart(halfword r)
+static halfword find_next_wordstart(halfword r)
 {
     register int l;
     register int start_ok = 1;
@@ -790,7 +790,7 @@ halfword find_next_wordstart(halfword r)
 }
 
 @ @c
-int valid_wordend(halfword s)
+static int valid_wordend(halfword s)
 {
     register halfword r = s;
     register int clang = char_lang(s);
@@ -959,7 +959,7 @@ void new_hyphenation(halfword head, halfword tail)
   }
 
 
-void dump_one_language(int i)
+static void dump_one_language(int i)
 {
     char *s = NULL;
     int x = 0;
@@ -1002,7 +1002,7 @@ void dump_language_data(void)
 }
 
 
-void undump_one_language(int i)
+static void undump_one_language(int i)
 {
     char *s = NULL;
     int x = 0;

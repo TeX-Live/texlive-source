@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: textcodes.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/textcodes.w $";
+    "$Id: textcodes.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/textcodes.w $";
 
 @ @c
 #define LCCODESTACK  8
@@ -175,10 +175,12 @@ void unsave_cat_codes(int h, quarterword gl)
     }
 }
 
-void clearcatcodestack(int h)
+#if 0
+static void clearcatcodestack(int h)
 {
     clear_sa_stack(catcode_heads[h]);
 }
+#endif
 
 static void initializecatcodes(void)
 {

@@ -62,7 +62,7 @@ extern avl_code_t avl_errcmp_occurred(void *);
 
 /* At minimum, shallow copy */
 
-void *avl_default_item_copy(const void *);
+const void *avl_default_item_copy(const void *);
 void *avl_default_item_dispose(void *);
 
 #define AVL_STACK_CAPACITY  32	/* for avl_split() function */

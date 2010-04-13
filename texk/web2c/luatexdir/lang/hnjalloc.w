@@ -37,6 +37,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "lang/hnjalloc.h"
 
 void *hnj_malloc(int size)
 {

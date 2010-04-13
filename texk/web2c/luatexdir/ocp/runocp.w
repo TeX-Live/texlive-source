@@ -22,8 +22,8 @@
 
 
 static const char _svn_version[] =
-    "$Id: runocp.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/ocp/runocp.w $";
+    "$Id: runocp.w 3612 2010-04-13 09:29:42Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/ocp/runocp.w $";
 
 memory_word active_info[(active_mem_size + 1)];
 active_index active_min_ptr = 0;        /* first unused word of |active_info| */
@@ -182,12 +182,12 @@ int otp_ext_i;
 
 
 @ @c
-void overflow_ocp_buf_size(void)
+static void overflow_ocp_buf_size(void)
 {
     overflow("ocp_buf_size", (unsigned) ocp_buf_size);
 }
 
-void overflow_ocp_stack_size(void)
+static void overflow_ocp_stack_size(void)
 {
     overflow("ocp_stack_size", (unsigned) ocp_stack_size);
 }
@@ -567,7 +567,7 @@ void run_otp(void)
 @ @c
 #define FPUTC(a,b) fputc((int)(a),b)
 
-void run_external_ocp(char *external_ocp_name)
+static void run_external_ocp(char *external_ocp_name)
 {
     char *in_file_name;
     char *out_file_name;

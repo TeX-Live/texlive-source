@@ -30,8 +30,8 @@
 @ Initial identification of this file, and the needed headers.
 @c
 static const char _svn_version[] =
-    "$Id: dvigen.w 3535 2010-03-21 17:02:05Z oneiros $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/dvi/dvigen.w $";
+    "$Id: dvigen.w 3612 2010-04-13 09:29:42Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/dvi/dvigen.w $";
 
 #include "ptexlib.h"
 
@@ -653,7 +653,7 @@ output an array of words with one system call.
 @^defecation@>
 
 @c
-void write_dvi(dvi_index a, dvi_index b)
+static void write_dvi(dvi_index a, dvi_index b)
 {
     dvi_index k;
     for (k = a; k <= b; k++)

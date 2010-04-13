@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: scanning.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/scanning.w $";
+    "$Id: scanning.w 3596 2010-04-05 10:12:46Z taco $"
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/scanning.w $";
 
 
 @ @c
@@ -1788,7 +1788,7 @@ void set_font_dimen(void)
         font_param_error(f);
     } else {
         if (n > font_params(f)) {
-            if (font_touched(f)) {
+            if (font_used(f)) {
                 font_param_error(f);
             } else {
                 /* Increase the number of parameters in the font */
@@ -1817,7 +1817,7 @@ void get_font_dimen(void)
         goto EXIT;
     } else {
         if (n > font_params(f)) {
-            if (font_touched(f)) {
+            if (font_used(f)) {
                 font_param_error(f);
                 goto EXIT;
             } else {

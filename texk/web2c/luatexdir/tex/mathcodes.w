@@ -21,8 +21,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: mathcodes.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/mathcodes.w $";
+    "$Id: mathcodes.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/mathcodes.w $";
 
 @ math codes 
 @c
@@ -104,7 +104,7 @@ void show_mathcode_value(mathcodeval c)
 }
 
 @ @c
-void show_mathcode(int n)
+static void show_mathcode(int n)
 {
     mathcodeval c = get_math_code(n);
     if (c.origin_value == aleph_mathcode) {
@@ -122,7 +122,7 @@ void show_mathcode(int n)
 }
 
 @ @c
-void unsavemathcode(quarterword gl)
+static void unsavemathcode(quarterword gl)
 {
     sa_stack_item st;
     if (mathcode_head->stack == NULL)
@@ -217,14 +217,14 @@ int get_math_code_num(int n)
 }
 
 @ @c
-void initializemathcode(void)
+static void initializemathcode(void)
 {
     mathcode_head = new_sa_tree(MATHCODESTACK, MATHCODEDEFAULT);
     mathcode_heap = Mxmalloc_array(mathcodeval, MATHCODEHEAP);
 }
 
 @ @c
-void dumpmathcode(void)
+static void dumpmathcode(void)
 {
     int k;
     mathcodeval d;
@@ -240,7 +240,7 @@ void dumpmathcode(void)
     }
 }
 
-void undumpmathcode(void)
+static void undumpmathcode(void)
 {
     int k, x;
     mathcodeval d;
@@ -269,7 +269,7 @@ void undumpmathcode(void)
 }
 
 @ @c
-void show_delcode(int n)
+static void show_delcode(int n)
 {
     delcodeval c;
     c = get_del_code(n);
@@ -317,7 +317,7 @@ void show_delcode(int n)
 
 @ TODO: clean up the heap
 @c
-void unsavedelcode(quarterword gl)
+static void unsavedelcode(quarterword gl)
 {
     sa_stack_item st;
     if (delcode_head->stack == NULL)
@@ -418,14 +418,14 @@ int get_del_code_num(int n)
 }
 
 @ @c
-void initializedelcode(void)
+static void initializedelcode(void)
 {
     delcode_head = new_sa_tree(DELCODESTACK, DELCODEDEFAULT);
     delcode_heap = Mxmalloc_array(delcodeval, DELCODEHEAP);
 }
 
 @ @c
-void dumpdelcode(void)
+static void dumpdelcode(void)
 {
     int k;
     delcodeval d;
@@ -443,7 +443,7 @@ void dumpdelcode(void)
     }
 }
 
-void undumpdelcode(void)
+static void undumpdelcode(void)
 {
     int k;
     delcodeval d;

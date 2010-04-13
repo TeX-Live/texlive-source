@@ -56,8 +56,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: hyphen.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lang/hyphen.w $";
+    "$Id: hyphen.w 3612 2010-04-13 09:29:42Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lang/hyphen.w $";
 
 @ TODO: should be moved to separate library
 
@@ -173,7 +173,7 @@ static char *combine(char *expr, const char *subexpr)
 
 @ ORIGINAL CODE
 @c
-HashIter *new_HashIter(HashTab * h)
+static HashIter *new_HashIter(HashTab * h)
 {
     HashIter *i = hnj_malloc(sizeof(HashIter));
     i->e = h->entries;
@@ -183,7 +183,7 @@ HashIter *new_HashIter(HashTab * h)
 }
 
 
-int nextHashStealPattern(HashIter * i, unsigned char **word, char **pattern)
+static int nextHashStealPattern(HashIter * i, unsigned char **word, char **pattern)
 {
     while (i->cur == NULL) {
         if (i->ndx >= HASH_SIZE - 1)
@@ -198,7 +198,7 @@ int nextHashStealPattern(HashIter * i, unsigned char **word, char **pattern)
 }
 
 
-int nextHash(HashIter * i, unsigned char **word)
+static int nextHash(HashIter * i, unsigned char **word)
 {
     while (i->cur == NULL) {
         if (i->ndx >= HASH_SIZE - 1)
@@ -211,7 +211,7 @@ int nextHash(HashIter * i, unsigned char **word)
 }
 
 
-int eachHash(HashIter * i, unsigned char **word, char **pattern)
+static int eachHash(HashIter * i, unsigned char **word, char **pattern)
 {
     while (i->cur == NULL) {
         if (i->ndx >= HASH_SIZE - 1)
@@ -225,7 +225,7 @@ int eachHash(HashIter * i, unsigned char **word, char **pattern)
 }
 
 
-void delete_HashIter(HashIter * i)
+static void delete_HashIter(HashIter * i)
 {
     hnj_free(i);
 }

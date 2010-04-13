@@ -20,12 +20,13 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writejpg.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/image/writejpg.w $";
+    "$Id: writejpg.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/image/writejpg.w $";
 
 #include <assert.h>
 #include "ptexlib.h"
 #include "image/image.h"
+#include "image/writejpg.h"
 
 @ @c
 #define JPG_GRAY  1             /* Gray color space, use /DeviceGray    */

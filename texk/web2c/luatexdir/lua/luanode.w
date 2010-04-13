@@ -24,7 +24,7 @@
 
 static const char _svn_version[] =
     "$Id: luanode.w 3583 2010-04-02 17:40:44Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/luanode.w $";
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luanode.w $";
 
 @ @c
 static const char *group_code_names[] = {

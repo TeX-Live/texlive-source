@@ -20,7 +20,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: maincontrol.w 3587 2010-04-03 14:32:25Z taco $"
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/maincontrol.w $";
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/maincontrol.w $";
 
 #include "ptexlib.h"
 

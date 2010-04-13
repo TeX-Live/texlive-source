@@ -24,8 +24,8 @@
 #include <string.h>
 
 static const char _svn_version[] =
-    "$Id: writettf.w 3584 2010-04-02 17:45:55Z hhenkel $ "
-"$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/font/writettf.w $";
+    "$Id: writettf.w 3612 2010-04-13 09:29:42Z taco $ "
+"$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writettf.w $";
 
 #define DEFAULT_NTABS       14
 #define NEW_CMAP_SIZE       2
@@ -410,7 +410,7 @@ static const char *newtabnames[] = {
 @ Back to code. Low-level helpers first.
 
 @c
-ttf_cmap_entry *new_ttf_cmap_entry(void)
+static ttf_cmap_entry *new_ttf_cmap_entry(void)
 {
     ttf_cmap_entry *e;
     e = xtalloc(1, ttf_cmap_entry);
@@ -1763,7 +1763,7 @@ void writettf(PDF pdf, fd_entry * fd)
     cur_file_name = NULL;
 }
 
-void do_writeotf(PDF pdf, fd_entry * fd)
+static void do_writeotf(PDF pdf, fd_entry * fd)
 {
     long i;
     dirtab_entry *tab;

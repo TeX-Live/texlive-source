@@ -21,7 +21,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: texdeffont.w 3587 2010-04-03 14:32:25Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/texdeffont.w $";
+    "$Id: texdeffont.w 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/texdeffont.w $";
 
 
 
@@ -40,7 +40,7 @@ void set_cur_font(internal_font_number f)
 }
 
 @ @c
-char *scaled_to_string(scaled s)
+static char *scaled_to_string(scaled s)
 {                               /* prints scaled real, rounded to five digits */
     static char result[16];
     int n, k;

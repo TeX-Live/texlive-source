@@ -18,8 +18,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lnodelib.c 3560 2010-03-29 09:27:08Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/lua/lnodelib.c $";
+    "$Id: lnodelib.c 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
 #include "lua/luatex-api.h"
 #include "ptexlib.h"
@@ -685,7 +685,7 @@ make_luaS_index(depth);
 make_luaS_index(expansion_factor);
 
 
-void initialize_luaS_indexes(lua_State * L)
+static void initialize_luaS_indexes(lua_State * L)
 {
     init_luaS_index(id);
     init_luaS_index(next);
@@ -3308,7 +3308,7 @@ static int lua_nodelib_first_character(lua_State * L)
 
 /* this is too simplistic, but it helps Hans to get going */
 
-halfword do_ligature_n(halfword prev, halfword stop, halfword lig)
+static halfword do_ligature_n(halfword prev, halfword stop, halfword lig)
 {
     vlink(lig) = vlink(stop);
     vlink(stop) = null;
@@ -3395,6 +3395,7 @@ static const struct luaL_reg nodelib_f[] = {
     {"protect_glyphs", lua_nodelib_protect_glyphs},
     {"unprotect_glyphs", lua_nodelib_unprotect_glyphs},
     {"protrusion_skipable", lua_nodelib_cp_skipable},
+    {"protrusion_skippable", lua_nodelib_cp_skipable},
    {NULL, NULL}                /* sentinel */
 };
 

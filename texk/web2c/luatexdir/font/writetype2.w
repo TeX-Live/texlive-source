@@ -27,7 +27,7 @@
 #include "font/tt_glyf.h"
 
 static const char _svn_version[] =
-    "$Id: writetype2.w 3584 2010-04-02 17:45:55Z hhenkel $ $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/font/writetype2.w $";
+    "$Id: writetype2.w 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/writetype2.w $";
 
 @ forward declaration
 @c
@@ -237,7 +237,7 @@ static struct {
 };
 
 
-unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
+static unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
 {
     ULONG version;
     unsigned long offset = 0;

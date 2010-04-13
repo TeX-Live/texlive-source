@@ -17,7 +17,7 @@ then
   DEFREV=`cat $FILE`
   SVNREV=`svnversion -c . | sed -ne 's/^[0-9]*:*\([0-9]*\).*/#define luatex_svn_revision \1/p'`
   test "$DEFREV" != "$SVNREV" && echo "$SVNREV" > $FILE
-elif ( [ -f ../.git/refs/remotes/git-svn ] && git svn --version > /dev/null )
+elif ( [ -f ../.git/refs/remotes/git-svn ] || [ -d ../.git/svn ] && git svn --version > /dev/null )
 then
   DEFREV=`cat $FILE`
   SVNREV=`git svn info | sed -ne 's/^Revision: \([0-9]*\).*$/#define luatex_svn_revision \1/p'`

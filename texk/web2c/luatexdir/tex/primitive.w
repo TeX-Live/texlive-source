@@ -22,8 +22,8 @@
 
 
 static const char _svn_version[] =
-    "$Id: primitive.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/primitive.w $";
+    "$Id: primitive.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/primitive.w $";
 
 
 @ Control sequences are stored and retrieved by means of a fairly standard hash
@@ -301,7 +301,7 @@ void primitive_def(const char *s, size_t l, quarterword c, halfword o)
    needed, but it helps catch errors of this kind.
 
 @c
-void
+static void
 store_primitive_name(str_number s, quarterword c, halfword o, halfword offset)
 {
     int idx;
@@ -485,7 +485,7 @@ pointer string_lookup(const char *s, size_t l)
 @c
 #define chr_cmd(A) do { tprint(A); print(chr_code); } while (0)
 
-void prim_cmd_chr(quarterword cmd, halfword chr_code)
+static void prim_cmd_chr(quarterword cmd, halfword chr_code)
 {
     int idx = chr_code - prim_data[cmd].offset;
     if (cmd <= last_cmd &&

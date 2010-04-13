@@ -23,8 +23,8 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: align.w 3587 2010-04-03 14:32:25Z taco $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.0/source/texk/web2c/luatexdir/tex/align.w $";
+    "$Id: align.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/align.w $";
 
 @ @c
 void fin_align(void);
@@ -223,7 +223,7 @@ pointer cur_pre_head = null, cur_pre_tail = null;       /* pre-adjustment list p
 called |push_alignment| and |pop_alignment|.
 
 @c
-void push_alignment(void)
+static void push_alignment(void)
 {
     pointer p;                  /* the new alignment stack node */
     p = new_node(align_stack_node, 0);
@@ -241,7 +241,7 @@ void push_alignment(void)
     cur_head = new_node(temp_node, 0);
 }
 
-void pop_alignment(void)
+static void pop_alignment(void)
 {
     pointer p;                  /* the top alignment stack node */
     flush_node(cur_head);
@@ -282,7 +282,7 @@ token survives in the preamble and the `\.{\\tabskip}' defines new
 tabskip glue (locally).
 
 @c
-void get_preamble_token(void)
+static void get_preamble_token(void)
 {
   RESTART:
     get_token();
@@ -488,7 +488,7 @@ next column or group of columns will begin. A new semantic level is
 entered, so that the columns will generate a list for subsequent packaging.
 
 @c
-void init_span(pointer p)
+static void init_span(pointer p)
 {
     push_nest();
     if (cur_list.mode_field == -hmode) {
