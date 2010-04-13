@@ -1,4 +1,4 @@
-# generated automatically by aclocal 1.11.1 -*- Autoconf -*-
+# generated automatically by aclocal 1.11 -*- Autoconf -*-
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
 # 2005, 2006, 2007, 2008, 2009  Free Software Foundation, Inc.
@@ -18,116 +18,6 @@ m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.65],,
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
-
-# longlong.m4 serial 13
-dnl Copyright (C) 1999-2007 Free Software Foundation, Inc.
-dnl This file is free software; the Free Software Foundation
-dnl gives unlimited permission to copy and/or distribute it,
-dnl with or without modifications, as long as this notice is preserved.
-
-dnl From Paul Eggert.
-
-# Define HAVE_LONG_LONG_INT if 'long long int' works.
-# This fixes a bug in Autoconf 2.61, but can be removed once we
-# assume 2.62 everywhere.
-
-# Note: If the type 'long long int' exists but is only 32 bits large
-# (as on some very old compilers), HAVE_LONG_LONG_INT will not be
-# defined. In this case you can treat 'long long int' like 'long int'.
-
-AC_DEFUN([AC_TYPE_LONG_LONG_INT],
-[
-  AC_CACHE_CHECK([for long long int], [ac_cv_type_long_long_int],
-    [AC_LINK_IFELSE(
-       [_AC_TYPE_LONG_LONG_SNIPPET],
-       [dnl This catches a bug in Tandem NonStop Kernel (OSS) cc -O circa 2004.
-	dnl If cross compiling, assume the bug isn't important, since
-	dnl nobody cross compiles for this platform as far as we know.
-	AC_RUN_IFELSE(
-	  [AC_LANG_PROGRAM(
-	     [[@%:@include <limits.h>
-	       @%:@ifndef LLONG_MAX
-	       @%:@ define HALF \
-			(1LL << (sizeof (long long int) * CHAR_BIT - 2))
-	       @%:@ define LLONG_MAX (HALF - 1 + HALF)
-	       @%:@endif]],
-	     [[long long int n = 1;
-	       int i;
-	       for (i = 0; ; i++)
-		 {
-		   long long int m = n << i;
-		   if (m >> i != n)
-		     return 1;
-		   if (LLONG_MAX / 2 < m)
-		     break;
-		 }
-	       return 0;]])],
-	  [ac_cv_type_long_long_int=yes],
-	  [ac_cv_type_long_long_int=no],
-	  [ac_cv_type_long_long_int=yes])],
-       [ac_cv_type_long_long_int=no])])
-  if test $ac_cv_type_long_long_int = yes; then
-    AC_DEFINE([HAVE_LONG_LONG_INT], 1,
-      [Define to 1 if the system has the type `long long int'.])
-  fi
-])
-
-# Define HAVE_UNSIGNED_LONG_LONG_INT if 'unsigned long long int' works.
-# This fixes a bug in Autoconf 2.61, but can be removed once we
-# assume 2.62 everywhere.
-
-# Note: If the type 'unsigned long long int' exists but is only 32 bits
-# large (as on some very old compilers), AC_TYPE_UNSIGNED_LONG_LONG_INT
-# will not be defined. In this case you can treat 'unsigned long long int'
-# like 'unsigned long int'.
-
-AC_DEFUN([AC_TYPE_UNSIGNED_LONG_LONG_INT],
-[
-  AC_CACHE_CHECK([for unsigned long long int],
-    [ac_cv_type_unsigned_long_long_int],
-    [AC_LINK_IFELSE(
-       [_AC_TYPE_LONG_LONG_SNIPPET],
-       [ac_cv_type_unsigned_long_long_int=yes],
-       [ac_cv_type_unsigned_long_long_int=no])])
-  if test $ac_cv_type_unsigned_long_long_int = yes; then
-    AC_DEFINE([HAVE_UNSIGNED_LONG_LONG_INT], 1,
-      [Define to 1 if the system has the type `unsigned long long int'.])
-  fi
-])
-
-# Expands to a C program that can be used to test for simultaneous support
-# of 'long long' and 'unsigned long long'. We don't want to say that
-# 'long long' is available if 'unsigned long long' is not, or vice versa,
-# because too many programs rely on the symmetry between signed and unsigned
-# integer types (excluding 'bool').
-AC_DEFUN([_AC_TYPE_LONG_LONG_SNIPPET],
-[
-  AC_LANG_PROGRAM(
-    [[/* Test preprocessor.  */
-      #if ! (-9223372036854775807LL < 0 && 0 < 9223372036854775807ll)
-        error in preprocessor;
-      #endif
-      #if ! (18446744073709551615ULL <= -1ull)
-        error in preprocessor;
-      #endif
-      /* Test literals.  */
-      long long int ll = 9223372036854775807ll;
-      long long int nll = -9223372036854775807LL;
-      unsigned long long int ull = 18446744073709551615ULL;
-      /* Test constant expressions.   */
-      typedef int a[((-9223372036854775807LL < 0 && 0 < 9223372036854775807ll)
-		     ? 1 : -1)];
-      typedef int b[(18446744073709551615ULL <= (unsigned long long int) -1
-		     ? 1 : -1)];
-      int i = 63;]],
-    [[/* Test availability of runtime routines for shift and division.  */
-      long long int llmax = 9223372036854775807ll;
-      unsigned long long int ullmax = 18446744073709551615ull;
-      return ((ll << 63) | (ll >> 63) | (ll < i) | (ll > i)
-	      | (llmax / ll) | (llmax % ll)
-	      | (ull << 63) | (ull >> 63) | (ull << i) | (ull >> i)
-	      | (ullmax / ull) | (ullmax % ull));]])
-])
 
 # ltdl.m4 - Configure ltdl for the target system. -*-Autoconf-*-
 #
@@ -277,21 +167,15 @@ dnl AC_DEFUN([AC_LIBLTDL_INSTALLABLE], [])
 # -----------------
 # Code shared by LTDL_INSTALLABLE and LTDL_INIT([installable]).
 m4_defun([_LTDL_INSTALLABLE],
-[if test -f $prefix/lib/libltdl.la; then
-  lt_save_LDFLAGS="$LDFLAGS"
-  LDFLAGS="-L$prefix/lib $LDFLAGS"
-  AC_CHECK_LIB([ltdl], [lt_dlinit], [lt_lib_ltdl=yes])
-  LDFLAGS="$lt_save_LDFLAGS"
+[AC_CHECK_LIB([ltdl], [lt_dlinit], [lt_lib_ltdl=yes])
   if test x"${lt_lib_ltdl-no}" = xyes; then
     if test x"$enable_ltdl_install" != xyes; then
-      # Don't overwrite $prefix/lib/libltdl.la without --enable-ltdl-install
-      AC_MSG_WARN([not overwriting libltdl at $prefix, force with `--enable-ltdl-install'])
+      AC_MSG_WARN([not overwriting installed libltdl, force with `--enable-ltdl-install'])
       enable_ltdl_install=no
     fi
   elif test x"$enable_ltdl_install" = xno; then
     AC_MSG_WARN([libltdl not installed, but installation disabled])
   fi
-fi
 
 # If configure.ac declared an installable ltdl, and the user didn't override
 # with --disable-ltdl-install, we will install the shipped libltdl.
@@ -949,7 +833,7 @@ AC_DEFUN([AM_AUTOMAKE_VERSION],
 [am__api_version='1.11'
 dnl Some users find AM_AUTOMAKE_VERSION and mistake it for a way to
 dnl require some minimum version.  Point them to the right macro.
-m4_if([$1], [1.11.1], [],
+m4_if([$1], [1.11], [],
       [AC_FATAL([Do not call $0, use AM_INIT_AUTOMAKE([$1]).])])dnl
 ])
 
@@ -965,7 +849,7 @@ m4_define([_AM_AUTOCONF_VERSION], [])
 # Call AM_AUTOMAKE_VERSION and AM_AUTOMAKE_VERSION so they can be traced.
 # This function is AC_REQUIREd by AM_INIT_AUTOMAKE.
 AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION],
-[AM_AUTOMAKE_VERSION([1.11.1])dnl
+[AM_AUTOMAKE_VERSION([1.11])dnl
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
 _AM_AUTOCONF_VERSION(m4_defn([AC_AUTOCONF_VERSION]))])
@@ -1919,7 +1803,6 @@ m4_include([../../m4/kpse-libpng-flags.m4])
 m4_include([../../m4/kpse-lt-hack.m4])
 m4_include([../../m4/kpse-macos-framework.m4])
 m4_include([../../m4/kpse-obsdcompat-flags.m4])
-m4_include([../../m4/kpse-ptexenc-flags.m4])
 m4_include([../../m4/kpse-socket-libs.m4])
 m4_include([../../m4/kpse-teckit-flags.m4])
 m4_include([../../m4/kpse-warnings.m4])
