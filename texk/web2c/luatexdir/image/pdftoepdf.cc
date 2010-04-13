@@ -471,7 +471,12 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
     int rotate;
     char *checksum;
     PDFRectangle *pagebox;
-    float pdf_version_found, pdf_version_wanted, xsize, ysize, xorig, yorig;
+#ifdef HAVE_GETPDFMAJORVERSION
+    int pdf_major_version_found, pdf_minor_version_found;
+#else
+    float pdf_version_found, pdf_version_wanted;
+#endif
+    float xsize, ysize, xorig, yorig;
     assert(idict != NULL);
     assert(img_type(idict) == IMG_TYPE_PDF);
     assert(readtype == IMG_CLOSEINBETWEEN);     // only this is implemented
@@ -494,6 +499,20 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
     // this works only for PDF 1.x -- but since any versions of PDF newer
     // than 1.x will not be backwards compatible to PDF 1.x, pdfTeX will
     // then have to changed drastically anyway.
+#ifdef HAVE_GETPDFMAJORVERSION
+    pdf_major_version_found = pdf_doc->doc->getPDFMajorVersion();
+    pdf_minor_version_found = pdf_doc->doc->getPDFMinorVersion();
+    if ((pdf_major_version_found > 1)
+     || (pdf_minor_version_found > minor_pdf_version_wanted)) {
+        const char *msg =
+            "PDF inclusion: found PDF version <%d.%d>, but at most version <1.%d> allowed";
+        if (pdf_inclusion_errorlevel > 0) {
+            pdftex_fail(msg, pdf_major_version_found, pdf_minor_version_found, minor_pdf_version_wanted);
+        } else {
+            pdftex_warn(msg, pdf_major_version_found, pdf_minor_version_found, minor_pdf_version_wanted);
+        }
+    }
+#else
     pdf_version_found = pdf_doc->doc->getPDFVersion();
     pdf_version_wanted = 1 + (minor_pdf_version_wanted * 0.1);
     if (pdf_version_found > pdf_version_wanted + 0.01) {
@@ -505,6 +524,7 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
             pdftex_warn(msg, pdf_version_found, pdf_version_wanted);
         }
     }
+#endif
     img_totalpages(idict) = pdf_doc->doc->getCatalog()->getNumPages();
     if (img_pagename(idict)) {
         // get page by name
