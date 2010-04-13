@@ -19,8 +19,8 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: pdftoepdf.cc 3431 2010-02-17 20:35:50Z oneiros $ "
-    "$URL: http://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
+    "$Id: pdftoepdf.cc 3606 2010-04-10 12:58:25Z taco $ "
+    "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/image/pdftoepdf.cc $";
 
 #include "epdf.h"
 
@@ -591,11 +591,19 @@ static void write_epdf1(PDF pdf, image_dict * idict)
 {
     PdfDocument *pdf_doc;
     Page *page;
-    PdfObject info, contents, metadata, obj1;
-    Object *metadataNF, *resourcesNF;
+    Ref *pageref;
+    Dict *pageDict;
+    PdfObject info, contents, obj1, pageObj, dictObj;
+    PDFRectangle *pagebox;
+    int i, l;
+    float bbox[4];
     char *checksum;
     char s[256];
-    int i, l;
+    char *pagedictkeys[] =
+        { "Group", "LastModified", "Metadata", "PieceInfo", "Resources",
+        "SeparationInfo", NULL
+    };
+
     assert(idict != NULL);
     // calculate a checksum string
     checksum = get_file_checksum(img_filepath(idict));
@@ -606,10 +614,12 @@ static void write_epdf1(PDF pdf, image_dict * idict)
                     img_filename(idict));
     }
     free(checksum);
-    (void) pdf_doc->doc->getCatalog()->getPage(img_pagenum(idict));
     page = pdf_doc->doc->getCatalog()->getPage(img_pagenum(idict));
-    PDFRectangle *pagebox;
-    float bbox[4];
+    pageref = pdf_doc->doc->getCatalog()->getPageRef(img_pagenum(idict));
+    assert(pageref != NULL);    // was checked already in read_pdf_info()
+    pdf_doc->doc->getXRef()->fetch(pageref->num, pageref->gen, &pageObj);
+    pageDict = pageObj->getDict();
+
     // write the Page header
     pdf_puts(pdf, "/Type /XObject\n/Subtype /Form\n");
     if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
@@ -646,51 +656,33 @@ static void write_epdf1(PDF pdf, image_dict * idict)
     pdf_puts(pdf, stripzeros(s));
     // The /Matrix calculation is replaced by transforms in out_img().
 
-    // Now all relevant parts of the /Page dictionary are copied:
+    // Now all relevant parts of the Page dictionary are copied:
 
-    // write the /Resources dictionary
-    if (page->getResourceDict() == NULL) {
+    // Resources validity check
+    pageDict->lookupNF("Resources", &dictObj);
+    if (dictObj->isNull()) {
         // Resources can be missing (files without them have been spotted
         // in the wild); in which case the /Resouces of the /Page will be used.
         // "This practice is not recommended".
         pdftex_warn
             ("PDF inclusion: /Resources missing. 'This practice is not recommended' (PDF Ref.)");
-    } else {
-        resourcesNF = page->getResourcesNF();
-        pdf_puts(pdf, "/Resources ");
-        copyObject(pdf, pdf_doc, resourcesNF);
     }
-    // write the page /Metadata if it's there (as a stream it must be indirect)
-    if (page->getMetadata() != NULL) {
-        metadataNF = page->getMetadataNF();     // *NF = "don't resolve indirects"
-        if (!metadataNF->isRef())
-            pdftex_warn("PDF inclusion: /Metadata must be indirect object");
-        else {
-            pdf_printf(pdf, "/Metadata %d 0 R",
-                       addInObj(pdf, pdf_doc, metadataNF->getRef()));
+
+    // Metadata validity check (as a stream it must be indirect)
+    pageDict->lookupNF("Metadata", &dictObj);
+    if (!dictObj->isNull() && !dictObj->isRef())
+        pdftex_warn("PDF inclusion: /Metadata must be indirect object");
+
+    // copy selected items in Page dictionary
+    for (i = 0; pagedictkeys[i] != NULL; i++) {
+        pageDict->lookupNF(pagedictkeys[i], &dictObj);
+        if (!dictObj->isNull()) {
+            pdf_printf(pdf, "/%s ", pagedictkeys[i]);
+            copyObject(pdf, pdf_doc, &dictObj); // preserves indirection
         }
     }
-    // write the page /Group if it's there
-    if (page->getGroup() != NULL) {
-        pdf_puts(pdf, "/Group ");
-        copyDict(pdf, pdf_doc, page->getGroup());
-    }
-    // write the page /PieceInfo if it's there
-    if (page->getPieceInfo() != NULL) {
-        pdf_puts(pdf, "/PieceInfo ");
-        copyDict(pdf, pdf_doc, page->getPieceInfo());
-    }
-    // write the page /SeparationInfo if it's there
-    if (page->getSeparationInfo() != NULL) {
-        pdf_puts(pdf, "/SeparationInfo ");
-        copyDict(pdf, pdf_doc, page->getSeparationInfo());
-    }
-    // copy LastModified (needed when PieceInfo is there)
-    if (page->getLastModified() != NULL) {
-        pdf_printf(pdf, "/LastModified (%s)\n",
-                   page->getLastModified()->getCString());
-    }
-    // write the page contents
+
+    // write the Page contents
     page->getContents(&contents);
     if (contents->isStream()) {
         // Variant A: get stream and recompress under control
@@ -731,8 +723,8 @@ static void write_epdf1(PDF pdf, image_dict * idict)
         for (i = 0, l = contents->arrayGetLength(); i < l; ++i) {
             PdfObject contentsobj;
             copyStreamStream(pdf,
-                             (contents->arrayGet(i, &contentsobj))->
-                             getStream());
+                             (contents->
+                              arrayGet(i, &contentsobj))->getStream());
             if (i < (l - 1)) {
                 // put a space between streams to be on the safe side (streams
                 // should have a trailing space here, but one never knows)
