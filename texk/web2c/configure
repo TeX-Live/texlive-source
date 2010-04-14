@@ -21227,12 +21227,12 @@ fi
     -e "s,BLD/,$kpse_BLD/,g"`
 
   PTEXENC_DEPEND=`echo 'BLD/texk/ptexenc/libptexenc.la' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`
+    -e 's,BLD/texk/,${top_builddir}/../,g'`
    PTEXENC_RULE='# Rebuild libptexenc
 $(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.[ch] ${top_builddir}/../ptexenc/ptexenc.h
-	cd ${top_builddir}/../../libs/ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild
+	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../ptexenc/ptexenc.h:
-	cd ${top_builddir}/../../libs/ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
 ## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
 

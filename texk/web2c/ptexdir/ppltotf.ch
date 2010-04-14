@@ -1,4 +1,4 @@
-% This is a change file for TFtoPL
+% This is a change file for PLtoTF
 %
 % (07/18/2006) ST PLtoTF p1.8 (3.5, Web2c 7.2)
 % (11/13/2000) KN PLtoTF p1.4 (3.5, Web2c 7.2)

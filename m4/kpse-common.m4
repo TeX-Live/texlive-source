@@ -110,15 +110,7 @@ else
   AS_TR_CPP($1)[_LIBS=`echo '$5' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
   $6]
-  m4_if([$1], [kpathsea],
-  [AS_TR_CPP($1)[_DEPEND=`echo '$5' | sed \
-    -e 's,BLD/texk/,${top_builddir}/../,g'`]
-   AS_TR_CPP($1)[_RULE='# Rebuild lib$2
-$(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
-                                    [[ $7]])m4_ifval([$8], [[ $8
-	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild
-$8:]])[
-	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']],
+  m4_if(m4_index([ kpathsea ptexenc ], [ $1 ]), [-1],
   [AS_TR_CPP($1)[_DEPEND=`echo '$5' | sed \
     -e 's,BLD/,${top_builddir}/../../,g'`]
    AS_TR_CPP($1)[_RULE='# Rebuild lib$2
@@ -126,7 +118,15 @@ $(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
                                     [[ $7]])m4_ifval([$8], [[ $8
 	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild
 $8:]])[
-	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']])
+	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']],
+  [AS_TR_CPP($1)[_DEPEND=`echo '$5' | sed \
+    -e 's,BLD/texk/,${top_builddir}/../,g'`]
+   AS_TR_CPP($1)[_RULE='# Rebuild lib$2
+$(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
+                                    [[ $7]])m4_ifval([$8], [[ $8
+	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild
+$8:]])[
+	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']])
 m4_if(m4_index([ $3 ], [ tree ]), [-1],
       [fi
 ])[]dnl m4_if

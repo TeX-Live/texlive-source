@@ -5,7 +5,11 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
 
-INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
+INCLUDES = $(KPATHSEA_INCLUDES) -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 lib_LTLIBRARIES = libptexenc.la
@@ -15,6 +19,9 @@ libptexenc_la_CPPFLAGS = -DMAKE_KPSE_DLL
 libptexenc_la_LDFLAGS = -version-number $(PTEXENC_LT_VERSNUM)
 
 libptexenc_la_SOURCES = kanjicnv.c ptexenc.c unicode-jp.c unicode.c
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
 
 ptexencincludedir = ${includedir}/ptexenc
 

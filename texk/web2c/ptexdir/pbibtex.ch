@@ -44,7 +44,7 @@
 @y
  \def\titlepage{F}
  \centerline{\:\titlefont The {\:\ttitlefont J\BibTeX} preprocessor}
- \vskip 15pt \centerline{(Version 0.32 base on C Version \BibTeX 0.99c---\today)} \vfill}
+ \vskip 15pt \centerline{(Version 0.32 base on C Version \BibTeX 0.99d---\today)} \vfill}
 @z
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

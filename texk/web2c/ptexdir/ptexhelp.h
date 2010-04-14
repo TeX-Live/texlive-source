@@ -6,7 +6,7 @@
 #define HELP_H
 
 #ifdef PTFTOPL
-string based_prog_name = "TFtoPL";
+const_string based_prog_name = "TFtoPL";
 const_string PTEXTFTOPLHELP[] = {
 "Usage: ptftopl [option] tfmfile [plfile]",
 "",
@@ -19,7 +19,7 @@ NULL };
 #endif /* PTFTOPL */
 
 #ifdef PPLTOTF
-string based_prog_name = "PLtoTF";
+const_string based_prog_name = "PLtoTF";
 const_string PTEXPLTOTFHELP[] = {
 "Usage: ppltotf [option] plfile [tfmfile]",
 "",
@@ -32,7 +32,7 @@ NULL };
 #endif /* PPLTOTF */
 
 #ifdef PBIBTEX
-string based_prog_name = "BibTeX";
+const_string based_prog_name = "BibTeX";
 const_string PBIBTEXHELP[] = {
 "Usage: pbibtex [option] auxfile",
 "",
@@ -46,7 +46,7 @@ NULL };
 #endif /* PBIBTEX */
 
 #ifdef PDVITYPE
-string based_prog_name = "DVItype";
+const_string based_prog_name = "DVItype";
 const_string PDVITYPEHELP[] = {
 "Usage: pdvitype [option] dvifile",
 "",

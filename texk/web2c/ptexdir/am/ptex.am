@@ -3,28 +3,43 @@
 ## Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-## pTeX
+## pTeX library
 ##
-if PTEX
-bin_PROGRAMS += ptex pbibtex pdvitype ptftopl ppltotf
-endif PTEX
-EXTRA_PROGRAMS += ptex pbibtex pdvitype ptftopl ppltotf
 
-ptex_CPPFLAGS = $(PTEXENC_INCLUDES)
-ptex_CFLAGS = $(WARNING_CFLAGS)
-
-# With --enable-ipc, pTeX may need to link with -lsocket.
-ptex_LDADD     = $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ipc_socketlibs)
-pbibtex_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-ptftopl_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-ppltotf_LDADD  = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-pdvitype_LDADD = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-
-SUBDIRS += ptexdir/lib
+sub_dirs += ptexdir/lib
 pproglib = ptexdir/lib/lib.a
+
 # Rebuild $(pproglib)
 $(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/ptexdir/lib/*.c
 	cd ptexdir/lib && $(MAKE) $(AM_MAKEFLAGS)
+## Rebuild libptexenc
+@PTEXENC_RULE@
+
+ptex_cppflags = $(PTEXENC_INCLUDES)
+ptex_ldadd = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
+
+pweb_programs = pbibtex pdvitype ptftopl ppltotf
+
+p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
+
+DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
+	$(pweb_programs:=.p) $(pweb_programs:=-web2c) $(pweb_programs:=.web)
+
+## pTeX
+##
+if PTEX
+bin_PROGRAMS += ptex
+if WEB
+bin_PROGRAMS += $(pweb_programs)
+endif WEB
+endif PTEX
+EXTRA_PROGRAMS += ptex $(pweb_programs)
+
+ptex_CPPFLAGS = $(ptex_cppflags)
+ptex_CFLAGS = $(WARNING_CFLAGS)
+
+# With --enable-ipc, pTeX may need to link with -lsocket.
+ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs)
 
 # pTeX C sources
 ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
@@ -37,7 +52,7 @@ $(ptex_OBJECTS): $(ptex_prereq)
 
 $(ptex_c_h): ptex-web2c
 	@$(web2c) ptex
-ptex-web2c: ptex.p $(web2c_texmf)
+ptex-web2c: ptex.p $(web2c_texmf) ptexdir/ptex.defines
 	@$(web2c) ptex
 
 ptex-pool.c: ptex.pool ptexd.h $(makecpool_stamp)
@@ -78,82 +93,84 @@ ptex_ch_srcs = \
 	ptexdir/ptex-include.ch \
 	tex-binpool.ch
 
-### pBibTeX
-nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
-pbibtex.c pbibtex.h: pbibtex-web2c
-pbibtex.o: pbibtex.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
-pbibtex-web2c: $(web2c_depend) web2c/cvtbib.sed pbibtex.p
-	$(web2c) pbibtex
-	echo timestamp >$@
-	touch pbibtex.c pbibtex.h
-pbibtex.p: tangle$(EXEEXT) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
-	$(tangle) pbibtex.web $(srcdir)/ptexdir/pbibtex.ch
-pbibtex.web: $(srcdir)/bibtex.web
-	cat  $(srcdir)/bibtex.web > $@
-
-### pDVItype
-nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
-pdvitype_CPPFLAGS = -DDHEX_CHAR_CODE
-pdvitype.c pdvitype.h: pdvitype-web2c
-pdvitype.o: pdvitype.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
-pdvitype-web2c: $(web2c_depend) pdvitype.p
-	$(web2c) pdvitype
-	echo timestamp >$@
-	touch pdvitype.c pdvitype.h
-pdvitype.p: tangle$(EXEEXT) pdvitype.web $(srcdir)/ptexdir/pdvitype.ch
-	$(tangle) pdvitype $(srcdir)/ptexdir/pdvitype
-pdvitype.web: $(srcdir)/dvitype.web
-	cat   $(srcdir)/dvitype.web > $@
-
-### pTFtoPL
-nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
-ptftopl.c ptftopl.h: ptftopl-web2c
-ptftopl.o: ptftopl.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
-ptftopl-web2c: $(web2c_depend) ptftopl.p
-	$(web2c) ptftopl
-	echo timestamp >$@
-	touch ptftopl.c ptftopl.h
-ptftopl.p: tangle$(EXEEXT) ptftopl.web $(srcdir)/ptexdir/ptftopl.ch
-	$(tangle) ptftopl.web $(srcdir)/ptexdir/ptftopl.ch
-ptftopl.web: tie$(EXEEXT)     $(srcdir)/tftopl.web $(srcdir)/tftopl.ch
-	$(tie) -m ptftopl.web $(srcdir)/tftopl.web $(srcdir)/tftopl.ch
-
-### pPLtoTF
-nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
-ppltotf_CPPFLAGS = -DPRESERVE_PUTC
-ppltotf.c ppltotf.h: ppltotf-web2c
-pppltotf.o: pppltotf.c $(srcdir)/ptexdir/kanji.h $(srcdir)/ptexdir/ptexhelp.h
-ppltotf-web2c: $(web2c_depend) ppltotf.p
-	$(web2c) ppltotf
-	echo timestamp >$@
-	touch ppltotf.c ppltotf.h
-ppltotf.p: tangle$(EXEEXT) ppltotf.web $(srcdir)/ptexdir/ppltotf.ch
-	$(tangle) ppltotf.web $(srcdir)/ptexdir/ppltotf
-ppltotf.web: tie$(EXEEXT)     $(srcdir)/pltotf.web $(srcdir)/pltotf.ch
-	$(tie) -m ppltotf.web $(srcdir)/pltotf.web $(srcdir)/pltotf.ch
-
-
-##
 EXTRA_DIST += $(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptexextra.in \
-	lib/texmfmp.c tmf-pool.h
+	ptexdir/ptex.defines lib/texmfmp.c tmf-pool.h
 
 DISTCLEANFILES += $(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c \
 	ptex.p ptex.pool ptex-tangle ptexdir/ptex.version
 
+## pBibTeX
+## 
+nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
+pbibtex_SOURCES = ptexdir/kanji.h ptexdir/ptexhelp.h
+pbibtex_CPPFLAGS = $(ptex_cppflags)
+pbibtex_LDADD  = $(ptex_ldadd)
+pbibtex.c pbibtex.h: pbibtex-web2c
+	$(web2c) pbibtex
+pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/pbibtex.defines web2c/cvtbib.sed
+	$(web2c) pbibtex
+pbibtex.p: tangle$(EXEEXT) pbibtex.web ptexdir/pbibtex.ch
+	$(p_tangle) pbibtex pbibtex
+pbibtex.web: $(srcdir)/bibtex.web
+	$(LN_S) $(srcdir)/bibtex.web $@
+EXTRA_DIST += ptexdir/pbibtex.ch ptexdir/pbibtex.defines web2c/cvtbib.sed
+
+## pDVItype
+## 
+nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
+pdvitype_SOURCES = ptexdir/kanji.h ptexdir/ptexhelp.h
+pdvitype_CPPFLAGS = $(ptex_cppflags) -DDHEX_CHAR_CODE
+pdvitype_LDADD = $(ptex_ldadd)
+pdvitype.c pdvitype.h: pdvitype-web2c
+	$(web2c) pdvitype
+pdvitype-web2c: pdvitype.p $(web2c_depend)
+	$(web2c) pdvitype
+pdvitype.p: tangle$(EXEEXT) pdvitype.web ptexdir/pdvitype.ch
+	$(p_tangle) pdvitype pdvitype
+pdvitype.web: $(srcdir)/dvitype.web
+	$(LN_S) $(srcdir)/dvitype.web $@
+EXTRA_DIST += ptexdir/pdvitype.ch
+
+## pPLtoTF
+## 
+nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
+ppltotf_SOURCES = ptexdir/kanji.h ptexdir/ptexhelp.h
+ppltotf_CPPFLAGS = $(ptex_cppflags) -DPRESERVE_PUTC
+ppltotf_LDADD  = $(ptex_ldadd)
+ppltotf.c ppltotf.h: ppltotf-web2c
+	$(web2c) ppltotf
+ppltotf-web2c: ppltotf.p $(web2c_depend)
+	$(web2c) ppltotf
+ppltotf.p: tangle$(EXEEXT) ppltotf.web ptexdir/ppltotf.ch
+	$(p_tangle) ppltotf ppltotf
+ppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
+	$(tie) -m ppltotf.web pltotf.web pltotf.ch
+EXTRA_DIST += ptexdir/ppltotf.ch
+
+## pTFtoPL
+## 
+nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
+ptftopl_SOURCES = ptexdir/kanji.h ptexdir/ptexhelp.h
+ptftopl_CPPFLAGS = $(ptex_cppflags)
+ptftopl_LDADD  = $(ptex_ldadd)
+ptftopl.c ptftopl.h: ptftopl-web2c
+	$(web2c) ptftopl
+ptftopl-web2c: ptftopl.p $(web2c_depend)
+	$(web2c) ptftopl
+ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
+	$(p_tangle) ptftopl ptftopl
+ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
+	$(tie) -m ptftopl.web tftopl.web tftopl.ch
+EXTRA_DIST += ptexdir/ptftopl.ch
+
+## 
 EXTRA_DIST += \
 	ptexdir/COPYRIGHT \
 	ptexdir/COPYRIGHT.jis \
 	ptexdir/ChangeLog \
 	ptexdir/Changes.txt \
 	ptexdir/INSTALL.txt \
-	ptexdir/README.txt \
-	ptexdir/pbibtex.ch \
-	ptexdir/pbibtex.defines \
-	ptexdir/pdvitype.ch \
-	ptexdir/ppltotf.ch \
-	ptexdir/ptex.defines \
-	ptexdir/ptexhelp.h \
-	ptexdir/ptftopl.ch
+	ptexdir/README.txt
 
 # pTeX Tests
 #
@@ -163,7 +180,7 @@ EXTRA_DIST += $(ptex_tests)
 
 if PTEX
 TESTS += $(ptex_tests)
-check_PROGRAMS += pdvitype ppltotf ptftopl
+check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += ptrip.diffs
 endif PTEX
 DISTCLEANFILES += ptrip.diffs

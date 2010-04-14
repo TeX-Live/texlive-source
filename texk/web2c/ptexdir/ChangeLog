@@ -1,3 +1,10 @@
+2010-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/ptex.am: Reworked.
+	* ptexextra.in, ptexhelp.h: Declare based_prog_name as const.
+	* pbibtex.ch: BibTeX 0.99d, not 0.99c.
+	* ppltotf.ch: Fixed a typo.
+
 2010-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/ptex.am: Fix for 'make dist' and 'make distcheck'.

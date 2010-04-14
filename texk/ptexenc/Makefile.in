@@ -250,7 +250,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ../../m4
-INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir)/..
+INCLUDES = $(KPATHSEA_INCLUDES) -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libptexenc.la
 libptexenc_la_CPPFLAGS = -DMAKE_KPSE_DLL
@@ -793,6 +793,12 @@ uninstall-am: uninstall-libLTLIBRARIES \
 	uninstall-nodist_ptexencincludeHEADERS \
 	uninstall-ptexencincludeHEADERS
 
+
+# Rebuild
+.PHONY: rebuild
+rebuild: all
+
+@KPATHSEA_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -3,7 +3,7 @@
    This is included by pTeX, from ptexextra.c
 */
 
-string based_prog_name = "TeX";
+const_string based_prog_name = "TeX";
 const_string PTEXHELP[] = {
   "Usage: ptex [option] texfile",
   "     : ptex [option] &format texfile",
