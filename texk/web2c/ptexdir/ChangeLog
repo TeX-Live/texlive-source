@@ -1,8 +1,9 @@
 2010-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* pbibtex.ch: New version from Akira, used on top of bibtex.ch.
+	Keep hack0 -- initialization of jump buffer.
 	* am/ptex.am: Reworked.
 	* ptexextra.in, ptexhelp.h: Declare based_prog_name as const.
-	* pbibtex.ch: BibTeX 0.99d, not 0.99c.
 	* ppltotf.ch: Fixed a typo.
 
 2010-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>

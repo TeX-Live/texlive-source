@@ -9030,8 +9030,8 @@ pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/pbibtex.defines web2c/cvtbib.se
 	$(web2c) pbibtex
 pbibtex.p: tangle$(EXEEXT) pbibtex.web ptexdir/pbibtex.ch
 	$(p_tangle) pbibtex pbibtex
-pbibtex.web: $(srcdir)/bibtex.web
-	$(LN_S) $(srcdir)/bibtex.web $@
+pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
+	$(tie) -m pbibtex.web bibtex.web bibtex.ch
 pdvitype.c pdvitype.h: pdvitype-web2c
 	$(web2c) pdvitype
 pdvitype-web2c: pdvitype.p $(web2c_depend)
