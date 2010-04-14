@@ -52,6 +52,10 @@
     
       mktexlsr [TEXMFDIR]
       
+    It is also possible to use scripts that are outside of TEXMF hierarchy 
+    by adjusting TEXMFSCRIPTS environment or kpathsea variable, see 
+    kpathsea documentation for more information on setting its variables.
+    
     Test if the script can be located with:
     
       kpsewhich --format=texmfscripts <script-name>.<ext>
@@ -167,4 +171,11 @@
         - added support for .tcl scripts
     2010/03/31
         - fixed fatal bug in extention_map definition for GUI mode
+    2010/04/15
+        - encapsulated main chunk in a function to execute with 
+          pcall for more robustness and better error catching
+        - added texdoctk to scripts4tlperl table
+        - added tlgs and tlperl to alias_table; callable as e.g.: 
+          runscript tlperl ...
+        - doc tweaks
 

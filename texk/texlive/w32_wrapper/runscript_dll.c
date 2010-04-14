@@ -30,7 +30,7 @@ __declspec(dllexport) int dllrunscript( int argc, char *argv[] )
   static char fpath[MAX_PATH];
   char *fname, *argline, **lua_argv;
   int k, quoted, lua_argc;
-  HMODULE WINAPI module_handle = NULL;
+  HMODULE module_handle = NULL;
 
   // file path of the executable
   k = (int) GetModuleFileName(NULL, own_path, MAX_PATH);

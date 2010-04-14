@@ -63,6 +63,10 @@ local helpstr = [[
     
       mktexlsr [TEXMFDIR]
       
+    It is also possible to use scripts that are outside of TEXMF hierarchy 
+    by adjusting TEXMFSCRIPTS environment or kpathsea variable, see 
+    kpathsea documentation for more information on setting its variables.
+    
     Test if the script can be located with:
     
       kpsewhich --format=texmfscripts <script-name>.<ext>
@@ -180,6 +184,13 @@ local docstr = [[
         - added support for .tcl scripts
     2010/03/31
         - fixed fatal bug in extention_map definition for GUI mode
+    2010/04/15
+        - encapsulated main chunk in a function to execute with 
+          pcall for more robustness and better error catching
+        - added texdoctk to scripts4tlperl table
+        - added tlgs and tlperl to alias_table; callable as e.g.: 
+          runscript tlperl ...
+        - doc tweaks
 ]]
 
 -- HELPER SUBROUTINES --
@@ -279,10 +290,10 @@ local function mkdir_plus(dir)
   end
 end
 
--- MAIN CHUNK --
+-- MAIN_CHUNK -- encapsulated in a function for more robust execution with pcall
 
--- localize the assert function (it will be replaced in gui mode)
-local assert = assert 
+local function MAIN_CHUNK()
+
 local guimode = false
 local argline = ''
 -- check for the sentinel argment coming from the .exe stub 
@@ -293,21 +304,6 @@ if arg[#arg-2] and ( string.sub(arg[#arg-2], -1) == '\n' ) then
   argline = table.remove(arg) -- pop unparsed arguments
   arg[0] = table.remove(arg) -- pop C stub's argv[0]
   guimode = (table.remove(arg) == 'GUI_MODE\n') -- pop sentinel argument
-  if guimode then
-    -- replace the assert function, if we are running w/o console window
-    function assert(...)
-      if select(1, ...) then return ... end
-      local error_msg = select(2, ...)
-      if type(error_msg) ~= 'string' then 
-        error_msg = "assertion failed!" 
-      end
-      -- store the error message in an env var and throw an error 
-      -- it will be catched on the C side at exit and displayed 
-      -- in a message box
-      os.setenv('RUNSCRIPT_ERROR_MESSAGE', error_msg)
-      error(error_msg, 2)
-    end
-  end
 else
   -- we must be called as: texlua runscript.tlu progname ...
   -- this is treated the same as: runscript[.exe] progname ...
@@ -321,7 +317,7 @@ end
 if (string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', '') == 'runscript') then
   -- we are called as: runscript progname ...
   -- or as: runscript --help|-h|--version ...
-  -- handle options first (only -help and -version)
+  -- handle options first (only --help and --version)
   local opt = { h = false, help = false, v = false, version = false }
   local param, k
   while true do
@@ -334,7 +330,7 @@ if (string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', '') == 'runscript') 
     -- if an option was given
     if (k > 0) then 
       if opt[param] == nil then
-        assert(nil, "unknown option: "..param.."\n"..bannerstr)
+        error("unknown option: "..param.."\n"..bannerstr)
       end
       opt[param] = true
     else
@@ -359,7 +355,7 @@ end
 local progname, k = string.lower(arg[0]):match('[^\\/]+$'):gsub('%.[^.]*$', ''):gsub('%-sys$', '')
 local sysprog = (k > 0) -- sys type program/script (there was -sys suffix removed)
 if (progname == 'runscript') then -- prevent recursive calls to this script
-  assert(nil, "oops! wrapping the wrapper?")
+  error("oops! wrapping the wrapper?")
 end
 -- init kpathsea 
 local k = -1 
@@ -372,8 +368,9 @@ local BINDIR = kpse.var_value('SELFAUTOLOC')
 local PATH = os.getenv('PATH') or ''
 -- perl stuff
 local scripts4tlperl = {
-  ['updmap-sys'] = true, 
+  texdoctk = true, 
   updmap = true, 
+  ['updmap-sys'] = true, 
 }
 local PERLEXE = search_path('perl.exe', PATH)
 if not PERLEXE or guimode or scripts4tlperl[progname] then 
@@ -409,13 +406,8 @@ end
 
 local alias_table = {--[[
   ['fmtutil-sys'] = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil-sys', argline},
-  ['updmap-sys'] = 
-    function ()
-      os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
-      os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
-      return {[0]=PERLEXE, 'perl', 
-      _q(TEXDIR..'/texmf/scripts/tetex/updmap.pl'), argline}
-    end,--]]
+  ['updmap-sys'] = {[0]=PERLEXE, 'perl', 
+    _q(TEXDIR..'/texmf/scripts/tetex/updmap.pl'), argline},--]]
   asy = 
     function ()
       -- TODO: check if ASYMPTOTE_GS requires quoting of names with spaces
@@ -467,6 +459,8 @@ local alias_table = {--[[
       end
       return {[0]=TEXDIR..'/tlpkg/texworks/texworks.exe', 'texworks', argline}
     end,
+  tlgs = {[0]=TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe', 'gswin32c', argline},
+  tlperl = {[0]=PERLEXE, 'perl', argline},
 }
 
 -- extension to interpeter mapping
@@ -477,9 +471,9 @@ local alias_table = {--[[
 local extension_map = {
   ['.bat'] = {'cmd', '/c', 'call'},
   ['.jar'] = {'java.exe', '-jar'},
-  ['.pl' ]  = {'perl.exe'},
-  ['.py' ]  = {'python.exe'},
-  ['.rb' ]  = {'ruby.exe'},
+  ['.pl' ] = {'perl.exe'},
+  ['.py' ] = {'python.exe'},
+  ['.rb' ] = {'ruby.exe'},
   ['.tcl'] = {'tclsh.exe tclsh85.exe tclsh84.exe'},
   ['.vbs'] = {'cscript.exe', '-nologo'},
 }
@@ -525,10 +519,32 @@ end
 -- run the program/script
 
 if (type(program) == 'table') then
-  os.exit(assert(os.spawn(program)))
+  local ret = assert(os.spawn(program))
+  if ret ~= 0 then
+    local dbginfo = debug.getinfo(1)
+    local errormsg = string.format("%s:%d: command failed with exit code %d:\n%s",  
+      dbginfo.short_src, dbginfo.currentline - 2, ret, table.concat(program, ' ') )
+    os.setenv('RUNSCRIPT_ERROR_MESSAGE', errormsg)
+    io.stderr:write(errormsg, '\n')
+  end
+  os.exit(ret)
 elseif (type(program) == 'string') then
-  program = assert(loadfile(program))
-  program() 
+  dofile(program)
 else
-  assert(nil, "unexpected argument type: "..type(program))
+  error("unexpected argument type: " .. type(program))
 end
+
+end -- MAIN_CHUNK
+
+-- execute main_proc with pcall to catch any runtime errors
+
+local success, errormsg = pcall(MAIN_CHUNK)
+if not success then
+  os.setenv('RUNSCRIPT_ERROR_MESSAGE', errormsg)
+  error(errormsg)
+end
+
+-- about RUNSCRIPT_ERROR_MESSAGE environment variable:
+-- it stores an error message that is catched and displayed 
+-- in a message box on the C side at process exit 
+-- (currently used only by gui mode stubs)
