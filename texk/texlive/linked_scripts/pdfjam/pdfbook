@@ -1,0 +1,19 @@
+#!/bin/sh
+##
+##  pdfbook: Rearrange pages of one or more PDF files into 2-up signatures
+##
+##  Author David Firth (http://go.warwick.ac.uk/dfirth)
+##
+##  This is a simple wrapper for pdfjam, version 2.01
+##
+case "${1}" in
+    --right-edge-binding)
+	shift ;
+	pdfjam --suffix book --signature* 4 --landscape "$@" ;;
+    *)
+	pdfjam --suffix book --signature 4 --landscape "$@" ;;
+esac
+
+
+
+

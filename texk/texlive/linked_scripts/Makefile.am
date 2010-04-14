@@ -16,8 +16,6 @@ bin_SCRIPTS =
 scriptxdir = ${prefix}/texmf/scripts
 nobase_dist_scriptx_SCRIPTS = \
 	a2ping/a2ping.pl \
-	bundledoc/arlatex \
-	bundledoc/bundledoc \
 	simpdftex/simpdftex \
 	tetex/e2pall.pl \
 	tetex/texdoctk.pl \
@@ -32,6 +30,8 @@ nobase_dist_script_SCRIPTS = \
 	accfonts/vpl2vpl \
 	bengali/ebong.py \
 	bibexport/bibexport.sh \
+	bundledoc/arlatex \
+	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	context/lua/luatools.lua \
 	context/lua/mtxrun.lua \
@@ -79,6 +79,18 @@ nobase_dist_script_SCRIPTS = \
 	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
+	pdfjam/pdf180 \
+	pdfjam/pdf270 \
+	pdfjam/pdf90 \
+	pdfjam/pdfbook \
+	pdfjam/pdfflip \
+	pdfjam/pdfjam \
+	pdfjam/pdfjam-pocketmod \
+	pdfjam/pdfjam-slides3up \
+	pdfjam/pdfjam-slides6up \
+	pdfjam/pdfjoin \
+	pdfjam/pdfnup \
+	pdfjam/pdfpun \
 	perltex/perltex.pl \
 	pkfix/pkfix.pl \
 	pkfix-helper/pkfix-helper \
