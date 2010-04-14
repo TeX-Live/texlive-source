@@ -1,25 +1,25 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 testdir=$srcdir/triptrap
-# ptestdir=$srcdir/ptexdir/ptrip
 
 TEXMFCNF=$testdir; export TEXMFCNF
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running TRIP test for pTeX." >&2
-#echo ">>> See $etestdir/etrip.diffs for example of acceptable diffs." >&2
+echo ">>> See $srcdir/ptexdir/ptrip.diffs for example of acceptable diffs." >&2
 
 rm -f trip.tfm trip.pl trip.tex trip.fmt trip.dvi \
-  ctripin.fot ctripin.log ctrip.fot ctrip.log ctrip.typ  \
-  xtripin.fot xtripin.log xtrip.fot xtrip.log xtrip.typ \
-  etrip.tfm etrip.pl etrip.tex etrip.fmt etrip.dvi \
-  etripin.fot etripin.log etrip.fot etrip.log etrip.out etrip.typ \
+  ptripin.fot ptripin.log ptrip.fot ptrip.log ptrip.typ  \
   tripos.tex 8terminal.tex
 rm -rf tfm
+
+# pTeX outputs direction of boxes.
+P_SED1='s/, yoko direction//;s/yoko direction, //'
+P_SED2='s/yoko(math) direction, //'
 
 is_OK=:
 
@@ -36,26 +36,26 @@ diff $testdir/trip.pl trip.pl || is_OK=false
 # get same filename in log
 $LN_S $testdir/trip.tex .
 
-./ptex --progname=einitex --ini <$testdir/trip1.in >ctripin.fot
-mv trip.log ctripin.log || exit 1
-diff $testdir/tripin.log ctripin.log
+rm -f trip.log
+./ptex --progname=pinitex --ini <$testdir/trip1.in >ptripin.fot
+sed "$P_SED1" trip.log >  ptripin.log || exit 1
+diff $testdir/tripin.log ptripin.log
 
 # May as well test non-ini second time through.
-./ptex --progname=etex <$testdir/trip2.in >ctrip.fot
-# pTeX outputs direction of boxes.
-cat  trip.log | sed "s/, yoko direction//" | sed  "s/yoko direction, //" > ctrip.log
-diff $testdir/trip.fot ctrip.fot
+rm -f trip.log
+./ptex --progname=ptex <$testdir/trip2.in >ptrip.fot
+sed "$P_SED1;$P_SED2" trip.log > ptrip.log
+diff $testdir/trip.fot ptrip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
-$DIFF $DIFFFLAGS $testdir/trip.log ctrip.log 
+$DIFF $DIFFFLAGS $testdir/trip.log ptrip.log 
 
-eval ./dvitype $dvitype_args trip.dvi >ctrip.typ || exit 1
-$DIFF $DIFFFLAGS $testdir/trip.typ ctrip.typ
+eval ./dvitype $dvitype_args trip.dvi >ptrip.typ || exit 1
+$DIFF $DIFFFLAGS $testdir/trip.typ ptrip.typ
 
 $is_OK || {
   echo ">>> There were some errors." >&2
   exit 1
 }
 
-# pTeX doesn't support extended mode.

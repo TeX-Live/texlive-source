@@ -53,14 +53,14 @@ static void missing_backend_function(PDF pdf, halfword p)
 }
 
 @ @c
-static void init_none_backend_functions()
+static void init_none_backend_functions(void)
 {
     backend_struct *p = &backend[OMODE_NONE];
     p->name = strdup("(None)");
 }
 
 @ @c
-static void init_pdf_backend_functions()
+static void init_pdf_backend_functions(void)
 {
     backend_struct *p = &backend[OMODE_PDF];
     p->name = strdup("PDF");
@@ -85,7 +85,7 @@ static void init_pdf_backend_functions()
 }
 
 @ @c
-static void init_dvi_backend_functions()
+static void init_dvi_backend_functions(void)
 {
     backend_struct *p = &backend[OMODE_DVI];
     p->name = strdup("DVI");
@@ -96,7 +96,7 @@ static void init_dvi_backend_functions()
 }
 
 @ @c
-static void init_lua_backend_functions()
+static void init_lua_backend_functions(void)
 {
     backend_struct *p = &backend[OMODE_LUA];
     p->name = strdup("Lua");

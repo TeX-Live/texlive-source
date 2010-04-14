@@ -635,10 +635,10 @@ void ipcpage(int is_eof)
 {
     static boolean begun = false;
     unsigned len = 0;
-    string p = (string) "";
+    string p = NULL;
 
     if (!begun) {
-        const_string name;            /* Just the filename.  */
+        string name;            /* Just the filename.  */
         string cwd = xgetcwd();
 
         ipc_open_out();
@@ -646,7 +646,7 @@ void ipcpage(int is_eof)
         /* Have to pass whole filename to the other end, since it may have
            been started up and running as a daemon, e.g., as with the NeXT
            preview program.  */
-	name = (const_string) static_pdf->file_name;
+	name = static_pdf->file_name;
         p = concat3(cwd, DIR_SEP_STRING, name);
         /* free(name); */
         len = strlen(p);
@@ -654,7 +654,7 @@ void ipcpage(int is_eof)
     }
     ipc_snd(len, is_eof, p);
 
-    if (len > 0) {
+    if (p) {
         free(p);
     }
 }
@@ -694,7 +694,7 @@ string normalize_quotes(const_string name, const_string mesg)
    variable `interrupt'; then they will do everything needed.  */
 #ifdef WIN32
 /* Win32 doesn't set SIGINT ... */
-BOOL WINAPI catch_interrupt(DWORD arg)
+static BOOL WINAPI catch_interrupt(DWORD arg)
 {
     switch (arg) {
     case CTRL_C_EVENT:

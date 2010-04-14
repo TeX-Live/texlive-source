@@ -23,6 +23,7 @@ do
   mftrap.diffs) tst=trap; msg='TRAP test for Metafont';;
   mptrap.diffs) tst=mplibdir/mptrap; msg='MPTRAP test for MetaPost';;
   etrip.diffs) tst=etexdir/etrip; msg='e-TRIP test for e-TeX';;
+  ptrip.diffs) tst=ptexdir/ptrip; msg='TRIP test for pTeX';;
   *) echo "$me: Bad argument \`$file'"; exit 1;;
   esac
   echo ">>> Running $msg."
@@ -34,6 +35,7 @@ do
       -e "/^PASS: /,\$d" \
       -e "s%$srcdir/triptrap%SRCDIR/triptrap%" \
       -e "s%$srcdir/etexdir%SRCDIR/etexdir%" \
+      -e "s%$srcdir/ptexdir%SRCDIR/ptexdir%" \
       $tmp >>$file
   echo "PASS: $tst.test" >>$file
   rm -f $tmp

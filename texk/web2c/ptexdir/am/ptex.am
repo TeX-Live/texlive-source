@@ -143,6 +143,7 @@ DISTCLEANFILES += $(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c \
 EXTRA_DIST += \
 	ptexdir/COPYRIGHT \
 	ptexdir/COPYRIGHT.jis \
+	ptexdir/ChangeLog \
 	ptexdir/Changes.txt \
 	ptexdir/INSTALL.txt \
 	ptexdir/README.txt \
@@ -171,32 +172,15 @@ DISTCLEANFILES += ptrip.diffs
 clean-local:: ptrip-clean
 # ptrip.test
 ptrip-clean:
-	rm -f trip.tfm trip.pl trip.tex trip.fmt ctripin.fot ctripin.log
-	rm -f ctrip.fot ctrip.log trip.dvi ctrip.typ
-	rm -f xtripin.fot xtripin.log
-	rm -f xtrip.fot xtrip.log xtrip.typ
-	rm -f ptrip.tfm ptrip.pl ptrip.tex ptrip.fmt ptripin.fot ptripin.log
-	rm -f ptrip.fot ptrip.log ptrip.dvi ptrip.out ptrip.typ
+	rm -f trip.tfm trip.pl trip.tex trip.fmt ptripin.fot ptripin.log
+	rm -f ptrip.fot ptrip.log trip.log trip.dvi trip.typ
+	rm -f ptrip.fot ptrip.log ptrip.dvi ptrip.typ
 	rm -f tripos.tex 8terminal.tex
 	rm -rf tfm
 
-## Test data -- not yet present
+## Test data
 ##
-not_yet_EXTRA_DIST = \
-	ptexdir/ptrip/ptrip.diffs \
-	ptexdir/ptrip/ptrip.fot \
-	ptexdir/ptrip/ptrip.log \
-	ptexdir/ptrip/ptrip.out \
-	ptexdir/ptrip/ptrip.pl \
-	ptexdir/ptrip/ptrip.tex \
-	ptexdir/ptrip/ptrip.typ \
-	ptexdir/ptrip/ptrip1.in \
-	ptexdir/ptrip/ptrip2.in \
-	ptexdir/ptrip/ptrip3.in \
-	ptexdir/ptrip/ptripin.log \
-	ptexdir/ptrip/ptripman.tex \
-	ptexdir/ptrip/texmf.cnf \
-	ptexdir/ptrip/trip2.in
+EXTRA_DIST += ptexdir/ptrip.diffs
 
 ## Eventually delete these files
 ##

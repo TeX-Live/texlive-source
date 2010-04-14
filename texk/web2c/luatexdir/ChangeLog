@@ -11,6 +11,10 @@
 	* image/pdftoepdf.cc: Fix building with libpoppler.
 	* luatex.c: Fix building for MinGW32.
 
+	* luatex.c (ipcpage): Avoid compiler warning.
+	(catch_interrupt): Declare as static.
+	* pdf/pdflistout.w (init_*_backend_functions): ANSI C func defs.
+
 2010-04-13  Taco Hoekwater  <taco@luatex>
 
 	* new import from luatex repository (HEAD of 0.60.x branch)
