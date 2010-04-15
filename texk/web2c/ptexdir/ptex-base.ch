@@ -337,7 +337,7 @@ if src_specials_p or file_line_error_style_p or parse_first_line_p then
 else
   wterm(banner);
   wterm(' (');
-  wterm(stringcast(get_enc_string));
+  wterm(conststringcast(get_enc_string));
   wterm(')');
 @z
 
@@ -2617,7 +2617,7 @@ then
 else
   wlog(banner);
   wlog(' (');
-  wlog(stringcast(get_enc_string));
+  wlog(conststringcast(get_enc_string));
   wlog(')');
 @z
 

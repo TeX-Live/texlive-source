@@ -7,13 +7,13 @@
 
 #include <kpathsea/types.h>
 
-extern KPSEDLL char *ptexenc_version_string;
+extern KPSEDLL const char *ptexenc_version_string;
 
 #define KANJI_OPTS "{jis|euc|sjis|utf8}"
 
 /* get/set Kanji encoding by string */
-extern KPSEDLL string get_enc_string(void);
-extern KPSEDLL int    set_enc_string(string file, string inter);
+extern KPSEDLL const_string get_enc_string(void);
+extern KPSEDLL int    set_enc_string(const_string file, const_string inter);
 #define getencstring  get_enc_string
 #define setencstring  set_enc_string
 

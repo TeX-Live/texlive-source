@@ -27,5 +27,5 @@ int fputstr(char *str, int byte, FILE *fp);
 /* write.c */
 FILE *vfopen(char *name);
 void writevf(int code, FILE *fp);
-int vfclose(FILE *fp);
-int maketfm(char *name);
+void vfclose(FILE *fp);
+void maketfm(char *name);

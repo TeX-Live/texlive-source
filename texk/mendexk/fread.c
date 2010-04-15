@@ -11,8 +11,8 @@
 
 #define BUFSIZE 65535
 
-int getestr(unsigned char *buff, unsigned char *estr);
-void chkpageattr(struct page *p);
+static int getestr(unsigned char *buff, unsigned char *estr);
+static void chkpageattr(struct page *p);
 
 /*   read idx file   */
 int idxread(char *filename, int start)
@@ -453,7 +453,7 @@ LOOP:
 }
 
 /*   pic up encap string   */
-int getestr(unsigned char *buff, unsigned char *estr)
+static int getestr(unsigned char *buff, unsigned char *estr)
 {
 	int i,nest=0;
 
@@ -486,7 +486,7 @@ int getestr(unsigned char *buff, unsigned char *estr)
 	return -1;
 }
 
-void chkpageattr(struct page *p)
+static void chkpageattr(struct page *p)
 {
 	int i,j,cc=0;
 

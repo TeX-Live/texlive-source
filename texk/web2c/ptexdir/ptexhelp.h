@@ -60,7 +60,7 @@ const_string PDVITYPEHELP[] = {
 "  -page-start=PAGE           type, e.g., `1.*.-5' to specify the first page",
 "                             with \\count0=1, \\count2=4.",
 "                             (see the TeX book chapter 15).",
-"  -show-opcodes              show opcodes in dicimal.",
+"  -show-opcodes              show opcodes in decimal.",
 "  -kanji={jis|euc|sjis|utf8} kanji code for output-file.",
 "  -version                   print version information and exit.",
 "  -help                      print this message and exit.",

@@ -31,7 +31,7 @@ KpathseaSupportInfo kp_ist,kp_dict;
 int main(int argc, char **argv)
 {
 	int i,j,cc=0,startpagenum=-1,ecount=0;
-	char *envbuff;
+	const char *envbuff;
 
         set_enc_string(NULL, "EUC");
 #ifdef KPATHSEA

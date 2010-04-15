@@ -53,7 +53,7 @@
 @y
   print (banner);
   print (' (');
-  print (stringcast(get_enc_string));
+  print (conststringcast(get_enc_string));
   print (')');
 @z
 

@@ -15,16 +15,16 @@ extern KpathseaSupportInfo kp_ist;
 
 FILE *fp;
 
-void convline(char *buff1, int start, char *buff2);
-int scompare(char *buff1, char *buff2);
-int getparam(char *buff, char *paraname, char *param);
-int getparachar(char *buff, char *paraname, char *param);
-size_t sstrlen(const char *buff);
-int sstrcmp(const char *s1, const char *s2);
-int sstrncmp(const char *s1, const char *s2, size_t len);
+static void convline(char *buff1, int start, char *buff2);
+static int scompare(char *buff1, const char *buff2);
+static int getparam(char *buff, const char *paraname, char *param);
+static int getparachar(char *buff, const char *paraname, char *param);
+static size_t sstrlen(const char *buff);
+static int sstrcmp(const char *s1, const char *s2);
+static int sstrncmp(const char *s1, const char *s2, size_t len);
 
 /*   read style file   */
-void styread(char *filename)
+void styread(const char *filename)
 {
 	int i,cc;
 	char buff[4096];
@@ -127,7 +127,7 @@ void styread(char *filename)
 }
 
 /*   analize string parameter of style file   */
-void convline(char *buff1, int start, char *buff2)
+static void convline(char *buff1, int start, char *buff2)
 {
 	int i,j,cc;
 
@@ -172,7 +172,7 @@ void convline(char *buff1, int start, char *buff2)
 }
 
 /*   compare strings   */
-int scompare(char *buff1, char *buff2)
+static int scompare(char *buff1, const char *buff2)
 {
 	int i;
 
@@ -197,7 +197,7 @@ int scompare(char *buff1, char *buff2)
 }
 
 /*   get string of style patameter   */
-int getparam(char *buff, char *paraname, char *param)
+static int getparam(char *buff, const char *paraname, char *param)
 {
 	int cc;
 
@@ -210,7 +210,7 @@ int getparam(char *buff, char *paraname, char *param)
 }
 
 /*   get character of style parameter   */
-int getparachar(char *buff, char *paraname, char *param)
+static int getparachar(char *buff, const char *paraname, char *param)
 {
 	int j,cc;
 
@@ -233,20 +233,20 @@ int getparachar(char *buff, char *paraname, char *param)
 	return 0;
 }
 
-size_t sstrlen(const char *s)
+static size_t sstrlen(const char *s)
 {
 	if (s == NULL) return 0;
 	return strlen(s);
 }
 
-int sstrcmp(const char *s1, const char *s2)
+static int sstrcmp(const char *s1, const char *s2)
 {
 	if (s1 == NULL) return -1;
 	if (s2 == NULL) return 1;
 	return strcmp(s1, s2);
 }
 
-int sstrncmp(const char *s1, const char *s2, size_t len)
+static int sstrncmp(const char *s1, const char *s2, size_t len)
 {
 	if (s1 == NULL) return -1;
 	if (s2 == NULL) return 1;

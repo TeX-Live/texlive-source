@@ -1,3 +1,9 @@
+2010-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pbibtex.ch, ptex-base.ch, ptftopl.ch: Use conststringcast, not
+	stringcast to cast the get_enc_string() value which is now const.
+	* ptexhelp.h (PDVITYPEHELP): Fixed a typo in help message.
+
 2010-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pbibtex.ch: New version from Akira, used on top of bibtex.ch.

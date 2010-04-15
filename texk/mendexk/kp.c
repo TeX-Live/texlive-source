@@ -6,10 +6,9 @@
 #include "kp.h"
 
 int
-KP_init(prog)
-  char *prog;
+KP_init(char *prog)
 {
-  kpse_set_progname(prog);
+  kpse_set_program_name(prog, "mendexk");
   return 0;
 }
 
@@ -19,10 +18,9 @@ KP_init(prog)
        char *var:     name of variable.
        char *def_val: default value.
  */
-char *KP_get_value(var,def_val)
-  char *var,*def_val;
+const char *KP_get_value(const char *var, const char *def_val)
 {
-  char *p = kpse_var_value(var);
+  const char *p = kpse_var_value(var);
   return p ? p : def_val;
 }
 
@@ -36,10 +34,9 @@ char *KP_get_value(var,def_val)
        char *cnf:     name of variable in `texmf.cnf'.
        char *def_val: default value.
  */
-char *KP_get_value(env,cnf,def_val)
-  char *env,*cnf,*def_val;
+const char *KP_get_value(const char *env, const char *cnf, const char *def_val)
 {
-  char *val;
+  const char *val;
   char *cnf_val,*env_val;
 
   val = def_val ? def_val : "";
@@ -49,36 +46,36 @@ char *KP_get_value(env,cnf,def_val)
   if (cnf_val) val = kpse_expand_default(cnf_val,val);
   if (env_val) val = kpse_expand_default(env_val,val);
 
-  return val[0] ? val : ((cnf_val || env_val) ? val : (char *)0);
+  return val[0] ? val : ((cnf_val || env_val) ? val : NULL);
 }
 #endif
 
+#ifdef KPATHSEA3
 /* KP_get_path(char *var, char *def_val)
      ARGUMENTS:
        char *var:     name of variable.
        char *def_val: default value.
  */
-char *KP_get_path(var,def_val)
-  char *var,*def_val;
+static const char *KP_get_path(const char *var, const char *def_val)
 {
   char avar[50];
-  char *p;
+  const char *p;
   strcpy(avar, "${");
   strcat(avar, var);
   strcat(avar, "}");
   p = kpse_path_expand(avar);
   return (p && *p) ? p : def_val;
 }
+#endif
 
 /*
  */
-int KP_entry_filetype(info)
-  KpathseaSupportInfo *info;
+int KP_entry_filetype(KpathseaSupportInfo *info)
 {
 #ifdef KPATHSEA3
   info->path = KP_get_path(info->var_name,info->path);
 #else
-  char *path;
+  const char *path;
   path = KP_get_value(info->var_name,info->var_name,info->path);
   info->path = kpse_path_expand(path);
 #endif
@@ -90,9 +87,7 @@ int KP_entry_filetype(info)
        KpathseaSupportInfo *info: Informations about the type of files.
        char *name:                Name of file.
  */
-char *KP_find_file(info,name)
-  KpathseaSupportInfo *info;
-  char *name;
+const char *KP_find_file(KpathseaSupportInfo *info, const char *name)
 {
   char *ret;
   ret = kpse_path_search(info->path,name,1);

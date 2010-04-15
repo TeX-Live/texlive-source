@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include <kpathsea/config.h>
+#include "makejvf.h"
 
 int mquad(unsigned char *p)
 {
@@ -16,6 +17,7 @@ int mquad(unsigned char *p)
 	return(cc);
 }
 
+#if 0 /* unused */
 unsigned int utri(unsigned char *p)
 {
 	unsigned int i,cc;
@@ -29,7 +31,9 @@ unsigned int utri(unsigned char *p)
 
 	return cc;
 }
+#endif /* 0 */
 
+#if 0 /* unused */
 int tri(unsigned char *p)
 {
 	int i,cc;
@@ -44,6 +48,7 @@ int tri(unsigned char *p)
 	if (cc > 8388607) cc -= 16777216;
 	return cc;
 }
+#endif /* 0 */
 
 unsigned int upair(unsigned char *p)
 {
@@ -59,6 +64,7 @@ unsigned int upair(unsigned char *p)
 	return cc;
 }
 
+#if 0 /* unused */
 int pair(unsigned char *p)
 {
 	int i,cc;
@@ -73,7 +79,9 @@ int pair(unsigned char *p)
 	if (cc > 32767) cc -= 65536;
 	return cc;
 }
+#endif /* 0 */
 
+#if 0 /* unused */
 int mget(char *p, int num)
 {
 	switch (num) {
@@ -91,6 +99,7 @@ int mget(char *p, int num)
 		break;
 	}
 }
+#endif /* 0 */
 
 int fquad(FILE *fp)
 {
@@ -104,6 +113,7 @@ int fquad(FILE *fp)
 	return cc;
 }
 
+#if 0 /* unused */
 unsigned int uftri(FILE *fp)
 {
 	unsigned int i,cc;
@@ -117,7 +127,9 @@ unsigned int uftri(FILE *fp)
 
 	return cc;
 }
+#endif /* 0 */
 
+#if 0 /* unused */
 int ftri(FILE *fp)
 {
 	int i,cc;
@@ -133,6 +145,7 @@ int ftri(FILE *fp)
 
 	return cc;
 }
+#endif /* 0 */
 
 unsigned int ufpair(FILE *fp)
 {
@@ -164,14 +177,16 @@ int fpair(FILE *fp)
 	return cc;
 }
 
+#if 0 /* unused */
 int fskip(FILE *fp, int num)
 {
 	fseek(fp,num,1);
 }
+#endif /* 0 */
 
 int fputnum(int num, int byte, FILE *fp)
 {
-	int i,cc;
+	int i;
 	unsigned char buf[16];
 
 	if (num<0) {
@@ -246,6 +261,8 @@ int fputstr(char *str, int byte, FILE *fp)
 
 	return 0;
 }
+
+#if 0 /* unused */
 int cutspace(FILE *fp)
 {
 	int cc;
@@ -265,7 +282,9 @@ int cutspace(FILE *fp)
 		}
 	}
 }
+#endif /* 0 */
 
+#if 0 /* unused */
 int gethex(FILE *fp)
 {
 	int cc,i;
@@ -289,7 +308,9 @@ int gethex(FILE *fp)
 		}
 	}
 }
+#endif /* 0 */
 
+#if 0 /* unused */
 int getdec(FILE *fp)
 {
 	int cc,i;
@@ -308,3 +329,4 @@ int getdec(FILE *fp)
 		else return -1;
 	}
 }
+#endif /* 0 */

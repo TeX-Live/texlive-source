@@ -29,7 +29,6 @@ int jfmread(int kcode)
 
 int tfmget(char *name)
 {
-	int i,j,cc,tsize;
 	char nbuff[1024];
 	FILE *fp;
 

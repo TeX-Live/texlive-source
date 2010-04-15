@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "mendex.h"
+
 /*   checking last page   */
-int lastpage(char *filename)
+int lastpage(const char *filename)
 {
 	int i,cc,num= -1;
 	char logfile[32],numbuff[16];

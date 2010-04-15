@@ -31,14 +31,14 @@
 # define NOFILE OPEN_MAX
 #endif
 
-char *ptexenc_version_string = "ptetex " PTEXENC_VERSION;
+const char *ptexenc_version_string = "ptetex " PTEXENC_VERSION;
 
 static int     file_enc = ENC_UNKNOWN;
 static int internal_enc = ENC_UNKNOWN;
 static int terminal_enc = ENC_UNKNOWN;
 
 
-static string enc_to_string(int enc)
+static const_string enc_to_string(int enc)
 {
     switch (enc) {
     case ENC_JIS:  return "jis";
@@ -49,7 +49,7 @@ static string enc_to_string(int enc)
     }
 }
 
-static int string_to_enc(string str)
+static int string_to_enc(const_string str)
 {
     if (str == NULL)                    return ENC_UNKNOWN;
     if (strcasecmp(str, "default")== 0) return DEFAULT_KANJI_ENC;
@@ -99,11 +99,11 @@ static int get_internal_enc(void)
     return internal_enc;
 }
 
-int get_terminal_enc(void)
+static int get_terminal_enc(void)
 {
     if (terminal_enc == ENC_UNKNOWN) {
         char lang[16];  /* enough large space */
-        char *s          = getenv("LC_ALL");
+        const char *s    = getenv("LC_ALL");
         if (s == NULL) s = getenv("LC_MESSAGES");
         if (s == NULL) s = getenv("LANG");
         if (s == NULL) s = getenv("LANGUAGE");
@@ -124,7 +124,7 @@ int get_terminal_enc(void)
     return terminal_enc;
 }
 
-string get_enc_string(void)
+const_string get_enc_string(void)
 {
     static char buffer[20]; /* enough large space */
 
@@ -138,7 +138,7 @@ string get_enc_string(void)
     }
 }
 
-boolean set_enc_string(string file_str, string internal_str)
+boolean set_enc_string(const_string file_str, const_string internal_str)
 {
     int file     = string_to_enc(file_str);
     int internal = string_to_enc(internal_str);
@@ -344,7 +344,7 @@ static struct unget_st {
     int buff[4];
 } ungetbuff[NOFILE];
 
-int getc4(FILE *fp)
+static int getc4(FILE *fp)
 {
     struct unget_st *p = &ungetbuff[fileno(fp)];
 
@@ -352,7 +352,7 @@ int getc4(FILE *fp)
     return p->buff[--p->size];
 }
 
-int ungetc4(int c, FILE *fp)
+static int ungetc4(int c, FILE *fp)
 {
     struct unget_st *p = &ungetbuff[fileno(fp)];
 
@@ -592,7 +592,7 @@ long input_line3(FILE *fp, string buff, long pos, const long buffsize)
 }
 
 
-static string in_filter = NULL;
+static const_string in_filter = NULL;
 static FILE *piped_fp[NOFILE];
 static int piped_num = 0;
 

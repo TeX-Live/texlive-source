@@ -23,7 +23,7 @@ unsigned char dic[2][50];
 struct dictionary *dictable,*envdic;
 int dlines=0,elines=0;
 
-int dicvalread(char *filename, struct dictionary *dicval, int line);
+static int dicvalread(const char *filename, struct dictionary *dicval, int line);
 
 /*   initialize kana table   */
 void initkanatable(void)
@@ -60,10 +60,11 @@ void initkanatable(void)
 }
 
 /*   get dictionary   */
-int dicread(char *filename)
+int dicread(const char *filename)
 {
 	int i,ecount=0;
-	char *envfile,buff[4096];
+	const char *envfile;
+	char buff[4096];
 	FILE *fp;
 
 	if (filename!=NULL) {
@@ -123,16 +124,18 @@ ENV:
 
 		verb_printf(efp,"...done.\n");
 	}
+
+	return 0; /* FIXME: is this right? */	
 }
 
+static int dcomp(const void *bf1, const void *bf2);
+
 /*   read dictionary file   */
-int dicvalread(char *filename, struct dictionary *dicval, int line)
+static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 {
 	int i,j,k;
 	unsigned char buff[256];
 	FILE *fp;
-
-	int dcomp();
 
 	fp=nkf_open(filename,"r");
 	for (i=0;i<line;i++) {
@@ -171,8 +174,10 @@ int dicvalread(char *filename, struct dictionary *dicval, int line)
 }
 
 /*   comp-function of dictionary sorting   */
-int dcomp(struct dictionary *buff1, struct dictionary *buff2)
+static int dcomp(const void *bf1, const void *bf2)
 {
+	const struct dictionary *buff1 = (const struct dictionary *) bf1;
+	const struct dictionary *buff2 = (const struct dictionary *) bf2;
 	int i;
 
 	for (i=0;i<50;i++) {
@@ -511,7 +516,9 @@ int pnumconv(char *page, int attr)
 	return cc;
 }
 
+#if 0 /* unused */
 int nbyte(unsigned char *str, int n)
 {
 	return (unsigned int)str[n];
 }
+#endif /* 0 */

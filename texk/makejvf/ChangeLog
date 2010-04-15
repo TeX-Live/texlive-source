@@ -1,3 +1,16 @@
+2010-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tool.c: #include "makejvf.h" for prototypes.
+	(utri, tri, pair, mget, uftri, ftri, fskip, cutspace, gethex,
+	getdec): Don't compile unused functions.
+	(fputnum): Drop unused local variable.
+	* tfmread.c (tfmget): Drop unused local variables.
+	* makejvf.h, write.c: Change return type of vfclose() and
+	maketfm() from int to void.
+
+	*** FIXME ***
+	* write.c (writevf): height might be used uninitialized.
+
 2010-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile: Renamed => Makefile.orig.

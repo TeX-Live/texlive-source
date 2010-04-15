@@ -18,10 +18,10 @@ struct index {
 void initkanatable(void);
 int convert(unsigned char *buff1, unsigned char *buff2);
 int pnumconv(char *page, int attr);
-int dicread(char *filename);
+int dicread(const char *filename);
 
 /* pageread.c */
-int lastpage(char *filename);
+int lastpage(const char *filename);
 
 /* sort.c */
 void wsort(struct index *ind, int num);
@@ -33,7 +33,7 @@ int japanese(unsigned char *buff);
 int chkcontinue(struct page *p, int num);
 
 /* styfile.c */
-void styread(char *filename);
+void styread(const char *filename);
 
 /* fread.c */
 char *mfgets(char *buf, int byte, FILE *fp);

@@ -336,7 +336,7 @@ void writevf(int code, FILE *fp)
 	fputnum(code,2,fp); /* char code */
 }
 
-int vfclose(FILE *fp)
+void vfclose(FILE *fp)
 {
 	int i,cc;
 
@@ -347,7 +347,7 @@ int vfclose(FILE *fp)
 	fclose(fp);
 }
 
-int maketfm(char *name)
+void maketfm(char *name)
 {
 	char nbuf[256];
 	FILE *fp;

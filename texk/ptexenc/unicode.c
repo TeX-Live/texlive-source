@@ -69,6 +69,7 @@ long UTF8StoUCS(string s)
     }
 }
 
+#if 0 /* not used */
 int UCStoUTF8S(long ucs, string s)
 {
     if (ucs < 0x80) {
@@ -92,6 +93,7 @@ int UCStoUTF8S(long ucs, string s)
     }
     return 0; /* unsupported */
 }
+#endif /* 0 */
 
 
 long UCStoUTF8(long ucs)

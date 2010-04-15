@@ -62,7 +62,7 @@ BREAK:
 /*   compare for sorting index   */
 static int wcomp(const void *p, const void *q)
 {
-	int i,j,prechar;
+	int i, j, prechar = 0;
 	const struct index *index1 = p, *index2 = q;
 
 	scount++;

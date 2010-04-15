@@ -1,3 +1,5 @@
+#include "exvar.h"
+
 FILE *efp;
 
 int lines,idxcount,acc=0,reject=0;

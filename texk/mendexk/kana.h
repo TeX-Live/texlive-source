@@ -1,3 +1,5 @@
+#include "exkana.h"
+
 unsigned char AKASATANA[]={
 	0xa4,0xa2, /* дв */
 	0xa4,0xab, /* дл */

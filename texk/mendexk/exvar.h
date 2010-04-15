@@ -29,6 +29,6 @@ extern char symhead_positive[2048],symhead_negative[2048];
 extern char numhead_positive[2048],numhead_negative[2048];
 extern int symbol_flag;
 extern int letter_head;
-extern unsigned char atama[2048];
-extern unsigned char page_compositor[2048],page_precedence[2048];
+extern char atama[2048];
+extern char page_compositor[2048],page_precedence[2048];
 extern char character_order[2048];

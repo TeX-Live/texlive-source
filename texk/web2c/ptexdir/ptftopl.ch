@@ -34,7 +34,7 @@ var @!k:integer; {all-purpose initiallization index}
 @y
   print_ln (version_string);
   print ('process kanji code is ');
-  print (stringcast(get_enc_string));
+  print (conststringcast(get_enc_string));
   print_ln('.');
 @z
 
