@@ -101,6 +101,14 @@ if test "x$kpse_cv_have_win32" = xno; then
   AC_SEARCH_LIBS([nanosleep], [rt])
   LIBS=$kpse_save_LIBS
   AC_SEARCH_LIBS([dlopen], [dl])
+  if test "x$ac_cv_search_dlopen" != xno; then
+    AC_CHECK_HEADERS([dlfcn.h])
+    if test "x$ac_cv_header_dlfcn_h" = xyes; then
+      if test "x$ac_cv_search_dlopen" != "xnone required"; then
+        lua_socketlibs="$lua_socketlibs $ac_cv_search_dlopen"
+      fi
+    fi
+  fi
   LIBS=$kpse_save_LIBS
   AS_CASE([$ac_cv_search_inet_aton],
           ["none required"], [],
@@ -358,8 +366,5 @@ AC_CONFIG_COMMANDS_POST([AS_IF([test "x$cross_compiling" = xyes],
  ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
  CC='$BUILDCC' CPPFLAGS='$BUILDCPPFLAGS'\
  CFLAGS='$BUILDCFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
-
-dnl for luaTeX dynamic loading
-LT_LIB_DLLOAD
 
 AC_OUTPUT

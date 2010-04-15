@@ -64,25 +64,12 @@
 /* Define to 1 if you have the Mac OS X Carbon framework. */
 #undef HAVE_CARBON
 
-/* Define to 1 if you have the declaration of `cygwin_conv_path', and to 0 if
-   you don't. */
-#undef HAVE_DECL_CYGWIN_CONV_PATH
-
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H
 
-/* Define if you have the GNU dld library. */
-#undef HAVE_DLD
-
-/* Define to 1 if you have the `dlerror' function. */
-#undef HAVE_DLERROR
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
-
-/* Define if you have the _dyld_func_lookup function. */
-#undef HAVE_DYLD
 
 /* Define to 1 if you have the <errno.h> header file. */
 #undef HAVE_ERRNO_H
@@ -122,12 +109,6 @@
 
 /* Define to 1 if you have the <langinfo.h> header file. */
 #undef HAVE_LANGINFO_H
-
-/* Define if you have the libdl library or equivalent. */
-#undef HAVE_LIBDL
-
-/* Define if libdlloader will be built on this platform */
-#undef HAVE_LIBDLLOADER
 
 /* Define if you have libfontconfig. */
 #undef HAVE_LIBFONTCONFIG
@@ -183,9 +164,6 @@
 
 /* Define to 1 if you have the `setlocale' function. */
 #undef HAVE_SETLOCALE
-
-/* Define if you have the shl_load function. */
-#undef HAVE_SHL_LOAD
 
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
