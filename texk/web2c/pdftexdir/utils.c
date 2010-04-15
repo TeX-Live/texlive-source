@@ -248,6 +248,8 @@ void pdftex_fail(const char *fmt, ...)
     safe_print(" ==> Fatal error occurred, no output PDF file produced!");
     println();
     if (kpathsea_debug) {
+        safe_print("kpathsea_debug enabled, calling abort()...");
+        println();
         abort();
     } else {
         exit(EX_SOFTWARE);

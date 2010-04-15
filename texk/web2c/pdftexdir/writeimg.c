@@ -40,7 +40,6 @@ integer epdf_selected_page;
 integer epdf_num_pages;
 integer epdf_page_box;
 void *epdf_doc;
-integer epdf_lastGroupObjectNum;
 
 static integer new_image_entry(void)
 {
@@ -315,7 +314,6 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
         pdf_ptr(img)->orig_y = bp2int(epdf_orig_y);
         pdf_ptr(img)->selected_page = page_num;
         pdf_ptr(img)->doc = epdf_doc;
-        img_group_ref(img) = epdf_lastGroupObjectNum;
         break;
     case IMAGE_TYPE_PNG:
         img_pages(img) = 1;
@@ -352,6 +350,7 @@ void writeimage(integer img)
     switch (img_type(img)) {
     case IMAGE_TYPE_PNG:
         write_png(img);
+        write_additional_png_objects();
         break;
     case IMAGE_TYPE_JPG:
         write_jpg(img);
@@ -363,20 +362,13 @@ void writeimage(integer img)
         epdf_doc = pdf_ptr(img)->doc;
         epdf_selected_page = pdf_ptr(img)->selected_page;
         epdf_page_box = pdf_ptr(img)->page_box;
-        epdf_lastGroupObjectNum = img_group_ref(img);
         write_epdf();
         break;
     default:
         pdftex_fail("unknown type of image");
     }
+
     tex_printf(">");
-    if (img_type(img) == IMAGE_TYPE_PDF) {
-        write_additional_epdf_objects();
-    } else {
-        if (img_type(img) == IMAGE_TYPE_PNG) {
-            write_additional_png_objects();
-        }
-    }
     cur_file_name = NULL;
 }
 

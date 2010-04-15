@@ -78,7 +78,6 @@ object exists, reference it. Else create fresh one.
 ***********************************************************************/
 
 #include "writejbig2.h"
-#undef DEBUG
 
 /**********************************************************************/
 
@@ -311,19 +310,10 @@ boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
     sip->hdrstart = xftell(fip->file, fip->filename);
     if (fip->sequentialaccess && sip->hdrstart == fip->filesize)
         return false;           /* no endoffileflag is ok for sequentialaccess */
-#ifdef DEBUG
-    printf("\nhdrstart %d\n", sip->hdrstart);
-#endif
     /* 7.2.2 Segment number */
     sip->segnum = read4bytes(fip->file);
-#ifdef DEBUG
-    printf("  segnum %d\n", sip->segnum);
-#endif
     /* 7.2.3 Segment header flags */
     sip->seghdrflags = ygetc(fip->file);
-#ifdef DEBUG
-    printf("  hdrflags %d\n", sip->seghdrflags & 0x3f);
-#endif
     checkseghdrflags(sip);
     if (fip->sequentialaccess && sip->endoffileflag)    /* accept shorter segment, */
         return true;            /* makes it compliant with Example 3.4 of PDFRef. 5th ed. */

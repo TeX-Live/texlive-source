@@ -106,7 +106,6 @@ extern integer image_max;
 extern integer read_pdf_info(char *, char *, integer, integer, integer,
                              integer);
 extern void write_epdf(void);
-extern void write_additional_epdf_objects(void);
 extern void epdf_delete(void);
 extern void read_png_info(integer);
 extern void write_png(integer);
