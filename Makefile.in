@@ -74,7 +74,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/utils/xindy-new/ac/clisp.ac \
 	$(top_srcdir)/utils/xindy/ac/withenable.ac \
 	$(top_srcdir)/utils/xindy/ac/xindy.ac \
-	$(top_srcdir)/texk/ptexenc/ac/withenable.ac \
 	$(top_srcdir)/texk/web2c/ac/withenable.ac \
 	$(top_srcdir)/texk/web2c/ac/web2c.ac \
 	$(top_srcdir)/texk/afm2pl/ac/withenable.ac \
@@ -114,8 +113,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/texk/xdvipdfmx/ac/withenable.ac \
 	$(top_srcdir)/texk/tetex/ac/withenable.ac \
 	$(top_srcdir)/texk/texlive/ac/withenable.ac \
-	$(top_srcdir)/texk/kpathsea/ac/withenable.ac \
-	$(top_srcdir)/texk/kpathsea/ac/web2c.ac \
 	$(top_srcdir)/libs/icu/ac/withenable.ac \
 	$(top_srcdir)/libs/teckit/ac/withenable.ac \
 	$(top_srcdir)/libs/graphite/ac/withenable.ac \
@@ -128,6 +125,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/libs/obsdcompat/ac/withenable.ac \
 	$(top_srcdir)/libs/libpng/ac/withenable.ac \
 	$(top_srcdir)/libs/zlib/ac/withenable.ac \
+	$(top_srcdir)/texk/ptexenc/ac/withenable.ac \
+	$(top_srcdir)/texk/kpathsea/ac/withenable.ac \
+	$(top_srcdir)/texk/kpathsea/ac/web2c.ac \
+	$(top_srcdir)/texk/kpathsea/ac/kpathsea.ac \
 	$(top_srcdir)/libs/zlib/ac/zlib.ac \
 	$(top_srcdir)/libs/libpng/ac/libpng.ac \
 	$(top_srcdir)/libs/t1lib/ac/t1lib.ac \
@@ -138,9 +139,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-common.m4 \
 	$(top_srcdir)/libs/zziplib/ac/zziplib.ac \
 	$(top_srcdir)/libs/graphite/ac/graphite.ac \
 	$(top_srcdir)/libs/teckit/ac/teckit.ac \
-	$(top_srcdir)/libs/icu/ac/icu.ac \
-	$(top_srcdir)/texk/kpathsea/ac/kpathsea.ac \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/libs/icu/ac/icu.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -218,6 +217,7 @@ CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DIST_TEXLIBS = @DIST_TEXLIBS@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
@@ -266,6 +266,7 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TEXLIBS = @TEXLIBS@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
@@ -343,9 +344,9 @@ EXTRA_DIST = \
 	m4/README \
 	reautoconf
 
-@build_kpathsea_FALSE@SUBDIRS = libs utils texk
-@build_kpathsea_TRUE@SUBDIRS = texk/kpathsea libs utils texk
-DIST_SUBDIRS = auxdir/auxsub texk/kpathsea libs utils texk
+CONFIG_AUX = subsubdir-conf.cmd
+SUBDIRS = . $(TEXLIBS) libs utils texk
+DIST_SUBDIRS = auxdir/auxsub $(DIST_TEXLIBS) libs utils texk
 @cross_compiling_FALSE@check_target = check
 
 # Allow for skipping make check if needed.
@@ -712,7 +713,7 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile
+all-am: Makefile all-local
 installdirs: installdirs-recursive
 installdirs-am:
 install: install-recursive
@@ -814,25 +815,68 @@ uninstall-am:
 	install-am install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am am--refresh check check-am clean clean-generic \
-	clean-libtool ctags ctags-recursive dist dist-all dist-bzip2 \
-	dist-gzip dist-hook dist-lzma dist-shar dist-tarZ dist-xz \
-	dist-zip distcheck distclean distclean-generic \
-	distclean-libtool distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags tags-recursive uninstall uninstall-am
+	all all-am all-local am--refresh check check-am clean \
+	clean-generic clean-libtool ctags ctags-recursive dist \
+	dist-all dist-bzip2 dist-gzip dist-hook dist-lzma dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-generic distclean-libtool distclean-tags \
+	distcleancheck distdir distuninstallcheck dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
+	uninstall uninstall-am
 
 
 # just in case a subdirectory has added directories
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
+
+all-local: texlibs
+
+.PHONY: texlibs
+# We must configure all texk subdirs since 'make dist' needs the Makefile.
+# For those not required for the current set of configure options
+# we append '--disable-build' so they can skip tests that would
+# fail because other libraries were not built.
+#
+# Sequentially configure and optionally build all texk subdirs;
+# code inspired by automake's way to handle recursive targets.
+texlibs: $(CONFIG_AUX)
+	@fail= failcom='exit 1'; \
+	for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=* | --[!k]*);; \
+	    *k*) failcom='fail=yes';; \
+	  esac; \
+	done; \
+	list='$(DIST_TEXLIBS)'; for texlibs in $$list; do \
+	  if test ! -f $$texlibs/Makefile; then \
+	    test -d $$texlibs || $(MKDIR_P) $$texlibs; \
+	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,$$texlibs,g"`; \
+	    case " $(TEXLIBS) " in \
+	      *" $$texlibs "*) skip=;; \
+	      *) skip=' --disable-build';; \
+	    esac; \
+	    (cd $$texlibs && echo "=== configuring in $$texlibs (`pwd`)" && \
+	      echo "make: running $(SHELL) $$cmd$$skip" && \
+	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
+	      eval $(SHELL) $$cmd$$skip || \
+	        { echo "=== configuring in $$texlibs failed"; exit 1; }) && \
+	    if test "x$$skip" = x; then \
+	      echo "Making all in $$texlibs" && \
+	      (cd $$texlibs && $(MAKE) $(AM_MAKEFLAGS) all); \
+	    fi || eval $$failcom; \
+	  fi; \
+	done; test -z "$$fail"
+
+subsubdir-conf.cmd:
+	@echo "configure in auxdir/auxsub failed to create the file $@"
+	exit 1
 
 # This is the default target for the Build script in TeX Live.
 .PHONY: world

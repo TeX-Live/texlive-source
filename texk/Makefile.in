@@ -76,7 +76,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../utils/xindy-new/ac/clisp.ac \
 	$(top_srcdir)/../utils/xindy/ac/withenable.ac \
 	$(top_srcdir)/../utils/xindy/ac/xindy.ac \
-	$(top_srcdir)/../texk/ptexenc/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/withenable.ac \
 	$(top_srcdir)/../texk/web2c/ac/web2c.ac \
 	$(top_srcdir)/../texk/afm2pl/ac/withenable.ac \
@@ -116,8 +115,6 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../texk/xdvipdfmx/ac/withenable.ac \
 	$(top_srcdir)/../texk/tetex/ac/withenable.ac \
 	$(top_srcdir)/../texk/texlive/ac/withenable.ac \
-	$(top_srcdir)/../texk/kpathsea/ac/withenable.ac \
-	$(top_srcdir)/../texk/kpathsea/ac/web2c.ac \
 	$(top_srcdir)/../libs/icu/ac/withenable.ac \
 	$(top_srcdir)/../libs/teckit/ac/withenable.ac \
 	$(top_srcdir)/../libs/graphite/ac/withenable.ac \
@@ -130,6 +127,9 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-common.m4 \
 	$(top_srcdir)/../libs/obsdcompat/ac/withenable.ac \
 	$(top_srcdir)/../libs/libpng/ac/withenable.ac \
 	$(top_srcdir)/../libs/zlib/ac/withenable.ac \
+	$(top_srcdir)/../texk/ptexenc/ac/withenable.ac \
+	$(top_srcdir)/../texk/kpathsea/ac/withenable.ac \
+	$(top_srcdir)/../texk/kpathsea/ac/web2c.ac \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)

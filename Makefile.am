@@ -28,12 +28,53 @@ EXTRA_DIST = \
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
-if build_kpathsea
-SUBDIRS = texk/kpathsea libs utils texk
-else !build_kpathsea
-SUBDIRS = libs utils texk
-endif !build_kpathsea
-DIST_SUBDIRS = auxdir/auxsub texk/kpathsea libs utils texk
+CONFIG_AUX = subsubdir-conf.cmd
+
+SUBDIRS = . $(TEXLIBS) libs utils texk
+DIST_SUBDIRS = auxdir/auxsub $(DIST_TEXLIBS) libs utils texk
+
+all-local: texlibs
+
+.PHONY: texlibs
+# We must configure all texk subdirs since 'make dist' needs the Makefile.
+# For those not required for the current set of configure options
+# we append '--disable-build' so they can skip tests that would
+# fail because other libraries were not built.
+#
+# Sequentially configure and optionally build all texk subdirs;
+# code inspired by automake's way to handle recursive targets.
+texlibs: $(CONFIG_AUX)
+	@fail= failcom='exit 1'; \
+	for f in x $$MAKEFLAGS; do \
+	  case $$f in \
+	    *=* | --[!k]*);; \
+	    *k*) failcom='fail=yes';; \
+	  esac; \
+	done; \
+	list='$(DIST_TEXLIBS)'; for texlibs in $$list; do \
+	  if test ! -f $$texlibs/Makefile; then \
+	    test -d $$texlibs || $(MKDIR_P) $$texlibs; \
+	    cmd=`cat $(CONFIG_AUX) | sed "s,auxdir/auxsub,$$texlibs,g"`; \
+	    case " $(TEXLIBS) " in \
+	      *" $$texlibs "*) skip=;; \
+	      *) skip=' --disable-build';; \
+	    esac; \
+	    (cd $$texlibs && echo "=== configuring in $$texlibs (`pwd`)" && \
+	      echo "make: running $(SHELL) $$cmd$$skip" && \
+	      CONFIG_SHELL=$(SHELL) && export CONFIG_SHELL && \
+	      eval $(SHELL) $$cmd$$skip || \
+	        { echo "=== configuring in $$texlibs failed"; exit 1; }) && \
+	    if test "x$$skip" = x; then \
+	      echo "Making all in $$texlibs" && \
+	      (cd $$texlibs && $(MAKE) $(AM_MAKEFLAGS) all); \
+	    fi || eval $$failcom; \
+	  fi; \
+	done; test -z "$$fail"
+
+subsubdir-conf.cmd:
+	@echo "configure in auxdir/auxsub failed to create the file $@"
+	exit 1
+
 
 # This is the default target for the Build script in TeX Live.
 .PHONY: world

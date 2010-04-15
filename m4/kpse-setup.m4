@@ -72,8 +72,8 @@ AS_CASE([$with_x],
          ac_configure_args="$ac_configure_args '--with-x'"])
 KPSE_FOR_PKGS([utils], [m4_sinclude(kpse_TL[utils/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([texk], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])])
-m4_sinclude(kpse_TL[texk/kpathsea/ac/withenable.ac])
 KPSE_FOR_PKGS([libs], [m4_sinclude(kpse_TL[libs/]Kpse_Pkg[/ac/withenable.ac])])
+KPSE_FOR_PKGS([texlibs], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])])
 ]) # KPSE_SETUP
 
 # KPSE_ENABLE_PROG(PROG, REQUIRED-LIBS, OPTIONS, [COMMENT])

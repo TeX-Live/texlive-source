@@ -16,10 +16,16 @@
 
 # KPSE_LIBS_PKGS()
 # ----------------
-# Define the list of library sub-packages, i.e., subdirs 'libs/*'.
+# Define two lists of library sub-packages:
+#   generic libraries, i.e., subdirs 'libs/*', that can be used by
+#   utility and TeXk sub-packages
+# and
+#   TeX specific libraries, i.e., subdirs 'texk/*', that can only
+#   be used by TeXk sub-packages and can't use generic libraries
 # Each library must precede required other libraries (if any).
 AC_DEFUN([KPSE_LIBS_PKGS],
-[m4_define([kpse_libs_pkgs], [
+[dnl generic libraries 'libs/*'
+m4_define([kpse_libs_pkgs], [
 icu
 teckit
 graphite
@@ -32,6 +38,11 @@ t1lib
 obsdcompat
 libpng
 zlib
+])[]dnl
+dnl TeX specific libraries
+m4_define([kpse_texlibs_pkgs], [
+ptexenc
+kpathsea
 ])]) # KPSE_LIBS_PKGS
 
 # KPSE_ALL_SYSTEM_FLAGS()
@@ -76,7 +87,6 @@ xindy
 # excluding 'texk/kpathsea'.
 AC_DEFUN([KPSE_TEXK_PKGS],
 [m4_define([kpse_texk_pkgs], [
-ptexenc
 web2c
 afm2pl
 bibtex8

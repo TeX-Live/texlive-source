@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([TeX Live], [2010-02-01], [tex-k@tug.org])
+AC_INIT([TeX Live], [2010-04-15], [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([m4/kpse-pkgs.m4])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -17,28 +17,28 @@ dnl ## Setup of the TeX Live (TL) infrastructure   ##
 dnl ##    done in ./, libs/, utils/, and texk/     ##
 dnl ## ------------------------------------------- ##
 dnl
-dnl 1. Define three lists of TeXk programs, utility programs,
-dnl    and TL libraries.  These list occur nowhere else.
+dnl 1. Define four lists of TeXk programs, utility programs,
+dnl    and (generic or TeX specific) libraries in the TL tree.
+dnl    These list are defined in m4/kpse-pkgs.m4.
 dnl
-dnl 2. For each program Prog in the list of utility programs:
-dnl    sinclude utils/Prog/ac/withenable.ac
-dnl      providing the configure option --disable-Prog or --enable-Prog
-dnl    if Prog is to be built:
-dnl      set need_Lib=yes for each required TL library Lib (if any)
+dnl 2. For each program Prog in the list of
+dnl      utility programs:
+dnl        sinclude utils/Prog/ac/withenable.ac
+dnl      TeXk programs:
+dnl        sinclude texk/Prog/ac/withenable.ac
+dnl    These fragments usually provide the configure options
+dnl      --disable-Prog or --enable-Prog
+dnl    If Prog is to be built, then set need_SubLib=yes
+dnl      for each TL library SubLib required by Prog (if any)
 dnl
-dnl 3. For each program Prog in the list of TeXk programs:
-dnl    sinclude texk/Prog/ac/withenable.ac
-dnl      providing the configure option --disable-Prog or --enable-Prog
-dnl    if Prog is to be built:
-dnl      set need_Lib=yes for each required TL library Lib (if any)
-dnl
-dnl 4. Sinclude texk/kpathsea/ac/withenable.ac
-dnl
-dnl 5. For each library Lib in the list of TL libraries:
-dnl    sinclude libs/Lib/ac/withenable.ac
-dnl      usually providing the configure options --with-system-Lib,
-dnl        --with-Lib-includes=DIR, and --with-Lib-libdir=DIR
-dnl    for each required TL library SubLib (if any):
+dnl 3. For each library Lib in the list of
+dnl      generic TL libraries:
+dnl        sinclude libs/Lib/ac/withenable.ac
+dnl      TeX specific TL libraries:
+dnl        sinclude texk/Lib/ac/withenable.ac
+dnl    These fragments usually provide the configure options
+dnl      --with-system-Lib, --with-Lib-includes=DIR, and --with-Lib-libdir=DIR
+dnl    For each TL library SubLib required by Lib (if any):
 dnl      disallow with_system_Lib=yes and with_system_SubLib=no
 dnl      if $need_Lib=yes then set need_SubLib=yes 
 dnl
@@ -47,6 +47,8 @@ KPSE_SETUP([])
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([TeX Live top-level], [dist-xz])
 KPSE_CANONICAL_HOST
+
+AC_PROG_MKDIR_P
 
 AC_PATH_XTRA
 
@@ -93,6 +95,27 @@ if test "x$enable_web2c" = xyes && test "x$with_system_kpathsea" = xyes; then
   fi
 fi
 
+AC_MSG_CHECKING([for TeX specific libraries to build])
+TEXLIBS=
+DIST_TEXLIBS=
+KPSE_FOR_PKGS([texlibs], [
+if test -x $srcdir/texk/Kpse_Pkg/configure; then
+  if test "x$with_system_[]Kpse_pkg" != xyes && \
+     test "x$need_[]Kpse_pkg" = xyes; then
+    TEXLIBS="texk/Kpse_Pkg $TEXLIBS"    
+  fi
+dnl Cause 'make dist' to recurse into all texlibs dirs
+  DIST_TEXLIBS="texk/Kpse_Pkg $DIST_TEXLIBS"
+dnl Cause 'configure -hr' and 'autoreconf' to recurse into all texlibs dirs
+  if false; then
+    AC_CONFIG_SUBDIRS([texk/]Kpse_Pkg)
+  fi
+fi
+])
+AC_SUBST([TEXLIBS])
+AC_SUBST([DIST_TEXLIBS])
+AC_MSG_RESULT([$TEXLIBS])
+
 dnl We check that all required system libraries are usable, and may
 dnl reduce frustration if anything is wrong by doing this first.
 dnl A native TeX Live build must not use any system libraries.
@@ -111,12 +134,12 @@ if test "x$syslib_used:$enable_native_texlive_build" = xyes:yes; then
 fi
 KPSE_RESTORE_FLAGS
 
-AM_CONDITIONAL([build_kpathsea],
-               [test "x$need_kpathsea" = xyes && test "x$with_system_kpathsea" != xyes])
+dnl AM_CONDITIONAL([build_kpathsea],
+dnl                [test "x$need_kpathsea" = xyes && test "x$with_system_kpathsea" != xyes])
 
 AM_CONDITIONAL([cross_compiling], [test "x$cross_compiling" = xyes])
 
-AC_CONFIG_SUBDIRS([auxdir/auxsub texk/kpathsea libs utils texk])
+AC_CONFIG_SUBDIRS([auxdir/auxsub libs utils texk])
 
 AC_CONFIG_FILES([Makefile])
 

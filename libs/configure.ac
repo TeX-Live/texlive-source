@@ -1,12 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([TeX Live libs], [2009], [tex-k@tug.org])
+AC_INIT([TeX Live libs], [2010], [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([../build-aux/missing])
 AC_CONFIG_AUX_DIR([../build-aux])
@@ -20,7 +20,7 @@ AM_MAINTAINER_MODE
 
 AC_PROG_MKDIR_P
 
-AC_MSG_CHECKING([for libraries to build])
+AC_MSG_CHECKING([for generic libraries to build])
 SUBLIBS=
 DIST_SUBLIBS=
 dnl XeTeX needs the ICU headers and libraries from the TL tree,
