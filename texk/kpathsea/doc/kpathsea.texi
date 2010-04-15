@@ -2,14 +2,14 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 5.1.0
-@set month-year June 2009
+@set version 6.0.0
+@set month-year April 2010
 
 @copying
 This file documents the Kpathsea library for path searching.
 
 Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007, 2008, 2009 Karl Berry & Olaf Weber.
+2004, 2005, 2007, 2008, 2009, 2010 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -1038,6 +1038,7 @@ perhaps in administrative scripts.  It is used heavily in the
 distributed @samp{mktex@dots{}} scripts.
 
 Synopsis:
+
 @example
 kpsewhich @var{option}@dots{} @var{filename}@dots{}
 @end example
@@ -1113,10 +1114,15 @@ sake of the shell.)
 Here's the current list of recognized names and the associated suffixes.
 @xref{Supported file formats}, for more information on each of these.
 
+The strings in parentheses are abbreviations recognized only by
+@code{kpsewhich} (not the underlying library calls).  They are
+provided when it would otherwise require an argument containing a
+space to specify the format, to simplify quoting of calls from shells.
+
 @example
 gf: gf
 pk: pk
-bitmap font:
+bitmap font (bitmapfont):
 tfm: .tfm
 afm: .afm
 base: .base
@@ -1132,42 +1138,45 @@ mfpool: .pool
 mft: .mft
 mp: .mp
 mppool: .pool
-MetaPost support:
+MetaPost support (mpsupport):
 ocp: .ocp
 ofm: .ofm .tfm
-opl: .opl
+opl: .opl  .pl
 otp: .otp
-ovf: .ovf
-ovp: .ovp
+ovf: .ovf .vf
+ovp: .ovp  .vpl
 graphic/figure:  .eps .epsi
 tex: .tex  .sty .cls .fd .aux .bbl .def .clo .ldf
-TeX system documentation:
+TeX system documentation (doc):
 texpool: .pool
-TeX system sources:  .dtx .ins
+TeX system sources (source):  .dtx .ins
 PostScript header:  .pro
-Troff fonts:
+Troff fonts (trofffont):
 type1 fonts: .pfa .pfb
 vf: .vf
-dvips config:
+dvips config (dvipsconfig):
 ist: .ist
 truetype fonts: .ttf .ttc .TTF .TTC
 type42 fonts: .t42 .T42
-web2c files:
-other text files:
-other binary files:
-misc fonts:
+web2c files (web2c):
+other text files (othertext):
+other binary files (otherbin):
+misc fonts (miscfont):
 web: .web  .ch
 cweb: .w .web  .ch
 enc files: .enc
-cmap files:
+cmap files (cmap):
 subfont definition files: .sfd
 opentype fonts: .otf
-pdftex config:
+pdftex config (pdftexconfig):
 lig files: .lig
 texmfscripts:
 lua: .luc .luctex .texluc .lua .luatex .texlua
 font feature files: .fea
 cid maps: .cid .cidmap
+mlbib: .mlbib .bib
+mlbst: .mlbst .bst
+clua: .dll .so
 @end example
 
 This option and @samp{--path} are mutually exclusive.
@@ -1447,11 +1456,12 @@ Kpsewhich accepts the standard GNU options:
 @itemize @bullet
 @item
 @opindex --help
-@samp{--help} prints a help message on standard output and exits.
+@samp{--help} prints a help message on standard output and exits
+successfully.
 
 @item
 @opindex --version
-@samp{--version} prints the Kpathsea version number and exits.
+@samp{--version} prints the Kpathsea version number and exits successfully.
 @end itemize
 
 

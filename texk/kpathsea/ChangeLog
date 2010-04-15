@@ -1,3 +1,12 @@
+2010-04-15  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (format_abbr_type): new type.
+	(format_abbrs): new array.
+	(format_abbr): new fn to use them.
+	(find_format): call it.
+
+	(help_message): new fn, including the abbreviations.
+
 2010-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): Add bsnl.awk.
@@ -1337,7 +1346,7 @@
 	has been rewritten not to need this.
 
 	* tex-file.c (kpse_init_format): Add uppercase versions of the
-	.ttf and .ttc suffixes for truetype fonts.  Dont require a
+	.ttf and .ttc suffixes for truetype fonts.  Don't require a
 	recognized suffix.
 
 	* types.h: Don't #define true if it is already defined.  From Karl

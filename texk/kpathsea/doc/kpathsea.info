@@ -4,7 +4,7 @@ makeinfo version 4.13 from ../../../../texk/kpathsea/doc/kpathsea.texi.
 This file documents the Kpathsea library for path searching.
 
    Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
-2005, 2007, 2008, 2009 Karl Berry & Olaf Weber.
+2005, 2007, 2008, 2009, 2010 Karl Berry & Olaf Weber.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -39,8 +39,8 @@ Kpathsea library
 ****************
 
 This manual documents how to install and use the Kpathsea library for
-filename lookup.  It corresponds to version 5.1.0, released in
-June 2009.
+filename lookup.  It corresponds to version 6.0.0, released in
+April 2010.
 
 * Menu:
 
@@ -60,8 +60,8 @@ File: kpathsea.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: 
 1 Introduction
 **************
 
-This manual corresponds to version 5.1.0 of the Kpathsea library,
-released in June 2009.
+This manual corresponds to version 6.0.0 of the Kpathsea library,
+released in April 2010.
 
    The library's fundamental purpose is to return a filename from a
 list of directories specified by the user, similar to what shells do
@@ -2613,6 +2613,7 @@ in administrative scripts.  It is used heavily in the distributed
 `mktex...' scripts.
 
    Synopsis:
+
      kpsewhich OPTION... FILENAME...
 
    The options and filename(s) to look up can be intermixed.  Options
@@ -2678,9 +2679,14 @@ filename, and returns the first file found.
      suffixes.  *Note Supported file formats::, for more information on
      each of these.
 
+     The strings in parentheses are abbreviations recognized only by
+     `kpsewhich' (not the underlying library calls).  They are provided
+     when it would otherwise require an argument containing a space to
+     specify the format, to simplify quoting of calls from shells.
+
           gf: gf
           pk: pk
-          bitmap font:
+          bitmap font (bitmapfont):
           tfm: .tfm
           afm: .afm
           base: .base
@@ -2696,42 +2702,45 @@ filename, and returns the first file found.
           mft: .mft
           mp: .mp
           mppool: .pool
-          MetaPost support:
+          MetaPost support (mpsupport):
           ocp: .ocp
           ofm: .ofm .tfm
-          opl: .opl
+          opl: .opl  .pl
           otp: .otp
-          ovf: .ovf
-          ovp: .ovp
+          ovf: .ovf .vf
+          ovp: .ovp  .vpl
           graphic/figure:  .eps .epsi
           tex: .tex  .sty .cls .fd .aux .bbl .def .clo .ldf
-          TeX system documentation:
+          TeX system documentation (doc):
           texpool: .pool
-          TeX system sources:  .dtx .ins
+          TeX system sources (source):  .dtx .ins
           PostScript header:  .pro
-          Troff fonts:
+          Troff fonts (trofffont):
           type1 fonts: .pfa .pfb
           vf: .vf
-          dvips config:
+          dvips config (dvipsconfig):
           ist: .ist
           truetype fonts: .ttf .ttc .TTF .TTC
           type42 fonts: .t42 .T42
-          web2c files:
-          other text files:
-          other binary files:
-          misc fonts:
+          web2c files (web2c):
+          other text files (othertext):
+          other binary files (otherbin):
+          misc fonts (miscfont):
           web: .web  .ch
           cweb: .w .web  .ch
           enc files: .enc
-          cmap files:
+          cmap files (cmap):
           subfont definition files: .sfd
           opentype fonts: .otf
-          pdftex config:
+          pdftex config (pdftexconfig):
           lig files: .lig
           texmfscripts:
           lua: .luc .luctex .texluc .lua .luatex .texlua
           font feature files: .fea
           cid maps: .cid .cidmap
+          mlbib: .mlbib .bib
+          mlbst: .mlbst .bst
+          clua: .dll .so
 
      This option and `--path' are mutually exclusive.
 
@@ -2946,9 +2955,11 @@ File: kpathsea.info,  Node: Standard options,  Prev: Auxiliary tasks,  Up: Invok
 
 Kpsewhich accepts the standard GNU options:
 
-   * `--help' prints a help message on standard output and exits.
+   * `--help' prints a help message on standard output and exits
+     successfully.
 
-   * `--version' prints the Kpathsea version number and exits.
+   * `--version' prints the Kpathsea version number and exits
+     successfully.
 
 
 File: kpathsea.info,  Node: TeX support,  Next: Programming,  Prev: Path searching,  Up: Top
@@ -3729,30 +3740,30 @@ Index
                                                               (line  38)
 * --help:                                Standard options.    (line   8)
 * --interactive:                         Path searching options.
-                                                              (line 110)
+                                                              (line 118)
 * --mktex=FILETYPE:                      Path searching options.
-                                                              (line 115)
+                                                              (line 123)
 * --mode=STRING:                         Path searching options.
-                                                              (line 121)
+                                                              (line 129)
 * --must-exist:                          Path searching options.
-                                                              (line 126)
+                                                              (line 134)
 * --no-mktex=FILETYPE:                   Path searching options.
-                                                              (line 115)
+                                                              (line 123)
 * --path=STRING:                         Path searching options.
-                                                              (line 131)
+                                                              (line 139)
 * --progname=NAME:                       Path searching options.
-                                                              (line 140)
+                                                              (line 148)
 * --safe-in-name=NAME:                   Path searching options.
-                                                              (line 146)
+                                                              (line 154)
 * --safe-out-name=NAME:                  Path searching options.
-                                                              (line 146)
+                                                              (line 154)
 * --show-path=NAME:                      Auxiliary tasks.     (line  41)
 * --srcdir, for building multiple architectures: configure scenarios.
                                                               (line  18)
 * --subdir=STRING:                       Path searching options.
-                                                              (line 152)
+                                                              (line 160)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
-* --version:                             Standard options.    (line  10)
+* --version:                             Standard options.    (line  11)
 * --with options:                        configure options.   (line  16)
 * --with-mktextex-default:               mktex configuration. (line  12)
 * --without-mktexfmt-default:            mktex configuration. (line  12)
@@ -4243,7 +4254,7 @@ Index
 * installation, simple:                  Simple installation. (line   6)
 * installing files:                      Installing files.    (line   6)
 * interactive query:                     Path searching options.
-                                                              (line 110)
+                                                              (line 118)
 * interface, not frozen:                 Introduction.        (line  27)
 * introduction:                          Introduction.        (line   6)
 * kdebug::                               Debugging.           (line 105)
@@ -4845,86 +4856,86 @@ Index
 
 
 Tag Table:
-Node: Top1609
-Node: Introduction2252
-Node: History4074
-Node: Installation8166
-Node: Simple installation8956
-Node: Custom installation12539
-Node: Disk space13713
-Node: Kpathsea application distributions14597
-Node: Changing search paths15712
-Node: Default path features16894
-Node: Default path generation18977
-Node: Running configure20420
-Node: configure shells21471
-Node: configure options22523
-Node: configure environment24030
-Node: configure scenarios25832
-Node: Shared library27418
-Node: Running make28432
-Node: Installing files30479
-Node: Cleaning up32426
-Node: Filename database generation33474
-Node: mktex scripts34041
-Node: mktex configuration35318
-Node: mktex script names41137
-Node: mktex script arguments42528
-Node: Installation testing43418
-Node: Security43782
-Node: TeX directory structure46349
-Node: unixtex.ftp50771
-Node: Electronic distribution52781
-Node: CD-ROM distribution55546
-Node: Other TeX packages56361
-Node: Reporting bugs57657
-Node: Bug checklist58392
-Node: Mailing lists62089
-Node: Debugging63298
-Node: Logging68376
-Node: Common problems70246
-Node: Unable to find files71077
-Node: Slow path searching73488
-Node: Unable to generate fonts74865
-Node: TeX or Metafont failing77374
-Node: Empty Makefiles79253
-Node: XtStrings80483
-Node: dlopen81319
-Node: ShellWidgetClass82137
-Node: Pointer combination warnings83769
-Node: Path searching84158
-Node: Searching overview84805
-Node: Path sources88201
-Node: Config files89272
-Node: Path expansion92917
-Node: Default expansion93866
-Node: Variable expansion95936
-Node: Tilde expansion97339
-Node: Brace expansion98319
-Node: KPSE_DOT expansion99424
-Node: Subdirectory expansion99937
-Node: Filename database102288
-Node: ls-R103342
-Node: Filename aliases106236
-Node: Database format107414
-Node: Invoking kpsewhich108427
-Node: Path searching options109372
-Node: Specially-recognized files117033
-Node: Auxiliary tasks118389
-Node: Standard options120214
-Node: TeX support120534
-Node: Supported file formats121825
-Node: File lookup129341
-Node: Glyph lookup131073
-Node: Basic glyph lookup132197
-Node: Fontmap133076
-Node: Fallback font135693
-Node: Suppressing warnings136606
-Node: Programming137711
-Node: Programming overview138224
-Node: Calling sequence140918
-Node: Program-specific files147441
-Node: Programming with config files148483
-Node: Index149795
+Node: Top1615
+Node: Introduction2259
+Node: History4082
+Node: Installation8174
+Node: Simple installation8964
+Node: Custom installation12547
+Node: Disk space13721
+Node: Kpathsea application distributions14605
+Node: Changing search paths15720
+Node: Default path features16902
+Node: Default path generation18985
+Node: Running configure20428
+Node: configure shells21479
+Node: configure options22531
+Node: configure environment24038
+Node: configure scenarios25840
+Node: Shared library27426
+Node: Running make28440
+Node: Installing files30487
+Node: Cleaning up32434
+Node: Filename database generation33482
+Node: mktex scripts34049
+Node: mktex configuration35326
+Node: mktex script names41145
+Node: mktex script arguments42536
+Node: Installation testing43426
+Node: Security43790
+Node: TeX directory structure46357
+Node: unixtex.ftp50779
+Node: Electronic distribution52789
+Node: CD-ROM distribution55554
+Node: Other TeX packages56369
+Node: Reporting bugs57665
+Node: Bug checklist58400
+Node: Mailing lists62097
+Node: Debugging63306
+Node: Logging68384
+Node: Common problems70254
+Node: Unable to find files71085
+Node: Slow path searching73496
+Node: Unable to generate fonts74873
+Node: TeX or Metafont failing77382
+Node: Empty Makefiles79261
+Node: XtStrings80491
+Node: dlopen81327
+Node: ShellWidgetClass82145
+Node: Pointer combination warnings83777
+Node: Path searching84166
+Node: Searching overview84813
+Node: Path sources88209
+Node: Config files89280
+Node: Path expansion92925
+Node: Default expansion93874
+Node: Variable expansion95944
+Node: Tilde expansion97347
+Node: Brace expansion98327
+Node: KPSE_DOT expansion99432
+Node: Subdirectory expansion99945
+Node: Filename database102296
+Node: ls-R103350
+Node: Filename aliases106244
+Node: Database format107422
+Node: Invoking kpsewhich108435
+Node: Path searching options109381
+Node: Specially-recognized files117550
+Node: Auxiliary tasks118906
+Node: Standard options120731
+Node: TeX support121087
+Node: Supported file formats122378
+Node: File lookup129894
+Node: Glyph lookup131626
+Node: Basic glyph lookup132750
+Node: Fontmap133629
+Node: Fallback font136246
+Node: Suppressing warnings137159
+Node: Programming138264
+Node: Programming overview138777
+Node: Calling sequence141471
+Node: Program-specific files147994
+Node: Programming with config files149036
+Node: Index150348
 
 End Tag Table

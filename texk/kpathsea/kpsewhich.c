@@ -72,6 +72,55 @@ str_list_type subdir_paths;
 kpse_file_format_type user_format = kpse_last_format;
 string user_format_string;
 string user_path;
+
+
+
+/* Define one-word abbreviations for those format types which
+   can otherwise only be specified by strings containing spaces.  */
+
+typedef struct
+{
+  const_string abbr;
+  kpse_file_format_type format;
+} format_abbr_type;
+
+static format_abbr_type format_abbrs[]
+  = { { "bitmapfont", kpse_any_glyph_format },
+      { "mpsupport", kpse_mpsupport_format },
+      { "doc", kpse_texdoc_format },
+      { "source", kpse_texsource_format },
+      { "trofffont", kpse_troff_font_format },
+      { "dvipsconfig", kpse_dvips_config_format },
+      { "web2c", kpse_web2c_format },
+      { "othertext", kpse_program_text_format },
+      { "otherbin", kpse_program_binary_format },
+      { "miscfont", kpse_miscfonts_format },
+      { "cmap", kpse_cmap_format },
+      { "pdftexconfig", kpse_pdftex_config_format },
+      { NULL, kpse_last_format } };
+
+/* The function to look up STR in the abbr table above.
+   This is called only on a user-specified format string.
+   Return `kpse_last_format' if no match.  */
+
+static kpse_file_format_type
+format_abbr (const_string str)
+{
+  kpse_file_format_type ret = kpse_last_format;
+  unsigned a = 0;
+  
+  while (format_abbrs[a].abbr != NULL) {
+    if (STREQ (str, format_abbrs[a].abbr)) {
+      ret = format_abbrs[a].format;
+      break;
+    }
+    a++;
+  }
+  
+  return ret;
+}
+
+
 
 /* Return the <number> substring in `<name>.<number><stuff>', if S has
    that form.  If it doesn't, return 0.  */
@@ -87,11 +136,13 @@ find_dpi (string s)
 
   return dpi_number;
 }
+
+
 
-/* Use the file type from -format if that was specified (i.e., the
-   user_format global variable), else guess dynamically from NAME.
-   Return kpse_last_format if undeterminable.  This function is also
-   used to parse the -format string, a case which we distinguish by
+/* Use the file type from -format if that was previously determined
+   (i.e., the user_format global variable), else guess dynamically from
+   NAME.  Return kpse_last_format if undeterminable.  This function is
+   also used to parse the -format string, a case which we distinguish by
    setting is_filename to false.
 
    A few filenames have been hard-coded for format types that
@@ -100,10 +151,11 @@ find_dpi (string s)
 static kpse_file_format_type
 find_format (kpathsea kpse, string name, boolean is_filename)
 {
-  kpse_file_format_type ret;
+  kpse_file_format_type ret = kpse_last_format;
   
   if (is_filename && user_format != kpse_last_format) {
-    ret = user_format;
+    ret = user_format; /* just return what we already computed */
+    
   } else if (FILESTRCASEEQ (name, "config.ps")) {
     ret = kpse_dvips_config_format;
   } else if (FILESTRCASEEQ (name, "fmtutil.cnf")) {
@@ -125,8 +177,14 @@ find_format (kpathsea kpse, string name, boolean is_filename)
   } else if (FILESTRCASEEQ (name, "XDvi")) {
     ret = kpse_program_text_format;
   } else {
-    int f = 0;  /* kpse_file_format_type */
-    unsigned name_len = strlen (name);
+    if (!is_filename) {
+      /* Look for kpsewhich-specific format abbreviations.  */
+      ret = format_abbr (name);
+    }
+    
+    if (ret == kpse_last_format) {
+      int f = 0;  /* kpse_file_format_type */
+      unsigned name_len = strlen (name);
 
 /* Have to rely on `try_len' being declared here, since we can't assume
    GNU C and statement expressions.  */
@@ -135,36 +193,35 @@ find_format (kpathsea kpse, string name, boolean is_filename)
   (ftry) && try_len <= name_len \
      && FILESTRCASEEQ (ftry, name + name_len - try_len))
 
-    while (f != kpse_last_format) {
-      unsigned try_len;
-      const_string *ext;
-      const_string ftry;
-      boolean found = false;
-      
-      if (!kpse->format_info[f].type)
-        kpathsea_init_format (kpse, (kpse_file_format_type) f);
+      while (f != kpse_last_format) {
+        unsigned try_len;
+        const_string *ext;
+        const_string ftry;
+        boolean found = false;
 
-      if (!is_filename) {
-        /* Allow the long name, but only in the -format option.  We don't
-           want a filename confused with a format name.  */
-        ftry = kpse->format_info[f].type;
-        found = TRY_SUFFIX (ftry);
-      }
-      for (ext = kpse->format_info[f].suffix; !found && ext && *ext; ext++) {
-        found = TRY_SUFFIX (*ext);
-      }      
-      for (ext=kpse->format_info[f].alt_suffix; !found && ext && *ext; ext++) {
-        found = TRY_SUFFIX (*ext);
-      }
+        if (!kpse->format_info[f].type)
+          kpathsea_init_format (kpse, (kpse_file_format_type) f);
 
-      if (found)
-        break;
-      f++;
+        if (!is_filename) {
+          /* Allow the long name, but only in the -format option.  We don't
+             want a filename confused with a format name.  */
+          ftry = kpse->format_info[f].type;
+          found = TRY_SUFFIX (ftry);
+        }
+        for (ext = kpse->format_info[f].suffix; !found && ext && *ext; ext++) {
+          found = TRY_SUFFIX (*ext);
+        }      
+        for (ext=kpse->format_info[f].alt_suffix; !found && ext && *ext;ext++){
+          found = TRY_SUFFIX (*ext);
+        }
+
+        if (found)
+          break;
+        f++;
+      }
+      ret = f;
     }
-
-    ret = f;
   }
-  
   return ret;
 }
 
@@ -304,7 +361,7 @@ lookup (kpathsea kpse, string name)
   return ret == NULL;
 }
 
-/* Reading the options.  */
+/* Help message.  */
 
 #define USAGE "\n\
 Standalone path lookup and expansion for Kpathsea.\n\
@@ -312,8 +369,8 @@ The default is to look up each FILENAME in turn and report its\n\
 first match (if any) to standard output.\n\
 \n\
 When looking up format (.fmt/.base/.mem) files, it is usually necessary\n\
-to also use -engine, or nothing will be returned; in particular, -engine=/\n\
-will return matching format files for any engine.\n\
+to also use -engine, or nothing will be returned; in particular,\n\
+-engine=/ will return matching format files for any engine.\n\
 \n\
 -all                   output all matches, one per line.\n\
 -debug=NUM             set debugging flags.\n\
@@ -338,7 +395,64 @@ will return matching format files for any engine.\n\
 -version               print version number and exit.\n \
 "
 
-/* Test whether getopt found an option ``A''.
+static void
+help_message (kpathsea kpse, string *argv)
+{
+  int f; /* kpse_file_format_type */
+
+  printf ("Usage: %s [OPTION]... [FILENAME]...\n", argv[0]);
+  fputs (USAGE, stdout);
+  putchar ('\n');
+  fputs (kpathsea_bug_address, stdout);
+
+  /* Have to set this for init_format to work.  */
+  kpathsea_set_program_name (kpse, argv[0], progname);
+
+  puts ("\nRecognized format names and their (abbreviations) and suffixes:");
+  for (f = 0; f < kpse_last_format; f++) {
+    const_string *ext;
+    kpathsea_init_format (kpse, (kpse_file_format_type)f);
+    printf ("%s", kpse->format_info[f].type);
+    
+    /* Show abbreviation if we accept one.  We repeatedly go through the
+       abbr list here, but it's so short, it doesn't matter.  */
+    {
+       unsigned a = 0;      
+       while (format_abbrs[a].abbr != NULL) {
+         if (f == format_abbrs[a].format) {
+           printf (" (%s)", format_abbrs[a].abbr);
+           break;
+         }
+         a++;
+       }
+    }
+    
+    /* Regular suffixes.  */
+    putchar (':');
+    for (ext = kpse->format_info[f].suffix; ext && *ext; ext++) {
+      putchar (' ');
+      fputs (*ext, stdout);
+    }
+    
+    if (kpse->format_info[f].alt_suffix) {
+      /* leave extra space between default and alt suffixes */
+      putchar (' ');
+    }
+    for (ext = kpse->format_info[f].alt_suffix; ext && *ext; ext++) {
+      putchar (' ');
+      fputs (*ext, stdout);
+    }
+    
+    putchar ('\n');
+  }
+  
+  exit (0);
+}
+
+
+/* Reading the options.  */
+
+/* This macro tests whether getopt found an option ``A''.
    Assumes the option index is in the variable `option_index', and the
    option table in a variable `long_options'.  */
 #define ARGUMENT_IS(a) STREQ (long_options[option_index].name, a)
@@ -371,7 +485,7 @@ static struct option long_options[]
       { 0, 0, 0, 0 } };
 
 static void
-read_command_line (kpathsea kpse, int argc,  string *argv)
+read_command_line (kpathsea kpse, int argc, string *argv)
 {
   int g;   /* `getopt' return code.  */
   int option_index;
@@ -409,36 +523,7 @@ read_command_line (kpathsea kpse, int argc,  string *argv)
       user_format_string = optarg;
 
     } else if (ARGUMENT_IS ("help")) {
-      int f; /* kpse_file_format_type */
-      
-      printf ("Usage: %s [OPTION]... [FILENAME]...\n", argv[0]);
-      fputs (USAGE, stdout);
-      putchar ('\n');
-      fputs (kpathsea_bug_address, stdout);
-
-      /* Have to set this for init_format to work.  */
-      kpathsea_set_program_name (kpse, argv[0], progname);
-
-      puts ("\nRecognized format names and their suffixes:");
-      for (f = 0; f < kpse_last_format; f++) {
-        const_string *ext;
-        kpathsea_init_format (kpse, (kpse_file_format_type)f);
-        printf ("%s:", kpse->format_info[f].type);
-        for (ext = kpse->format_info[f].suffix; ext && *ext; ext++) {
-          putchar (' ');
-          fputs (*ext, stdout);
-        }
-        if (kpse->format_info[f].alt_suffix) {
-          /* leave extra space between default and alt suffixes */
-          putchar (' ');
-        }
-        for (ext = kpse->format_info[f].alt_suffix; ext && *ext; ext++) {
-          putchar (' ');
-          fputs (*ext, stdout);
-        }
-        putchar ('\n');
-      }
-      exit (0);
+      help_message (kpse, argv);
 
     } else if (ARGUMENT_IS ("mktex")) {
       kpathsea_maketex_option (kpse, optarg, true);

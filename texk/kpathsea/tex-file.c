@@ -86,11 +86,11 @@
 #define LIG_ENVS "LIGFONTS", "TEXFONTS"
 #define TEXMFSCRIPTS_ENVS "TEXMFSCRIPTS"
 #define LUA_ENVS "LUAINPUTS"
-#define CLUA_ENVS "CLUAINPUTS"
 #define FONTFEATURES_ENVS "FONTFEATURES"
 #define FONTCIDMAPS_ENVS "FONTCIDMAPS"
 #define MLBIB_ENVS "MLBIBINPUTS", BIB_ENVS
 #define MLBST_ENVS "MLBSTINPUTS", BST_ENVS
+#define CLUA_ENVS "CLUAINPUTS"
 
 /* The compiled-in default list, DEFAULT_FONT_SIZES, is intended to be
    set from the command line (presumably via the Makefile).  */
