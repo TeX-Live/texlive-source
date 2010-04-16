@@ -55,6 +55,7 @@ AC_LANG(_AC_LANG)[]dnl
 #                 [REBUILD-SRC-DEPENDENCIES],
 #                 [REBUILD-BLD-DEPENDENCIES])
 # -----------------------------------------------
+# For generic libraries in libs/LIBDIR.
 # Provide the configure options '--with-system-LIBDIR' (if in the TL tree),
 # '--with-LIBDIR-includes', and '--with-LIBDIR-libdir'.
 # Options:
@@ -89,6 +90,15 @@ AC_SUBST(AS_TR_CPP($1)[_RULE])[]dnl
 m4_provide_if([AM_INIT_AUTOMAKE], [_AM_SUBST_NOTMAKE(AS_TR_CPP($1)[_RULE])])[]dnl
 ]) # _KPSE_LIB_FLAGS
 
+# _KPSE_TEXLIB_FLAGS(LIBDIR, LIBNAME, OPTIONS,
+#                    TL-INCLUDES, TL-LIBS, TL-EXTRA,
+#                    [REBUILD-SRC-DEPENDENCIES],
+#                    [REBUILD-BLD-DEPENDENCIES])
+# -----------------------------------------------
+# As above, but for TeX specific libraries in texk/LIBDIR.
+AC_DEFUN([_KPSE_TEXLIB_FLAGS],
+[m4_pushdef([Kpse_TeX_Lib], [])_KPSE_LIB_FLAGS($@)m4_popdef([Kpse_TeX_Lib])])
+
 # _KPSE_LIB_FLAGS_TL(LIBDIR, LIBNAME, OPTIONS,
 #                    TL-INCLUDES, TL-LIBS, TL-EXTRA,
 #                    [REBUILD-SRC-DEPENDENCIES],
@@ -110,15 +120,7 @@ else
   AS_TR_CPP($1)[_LIBS=`echo '$5' | sed \
     -e "s,BLD/,$kpse_BLD/,g"`
   $6]
-  m4_if(m4_index([ kpathsea ptexenc ], [ $1 ]), [-1],
-  [AS_TR_CPP($1)[_DEPEND=`echo '$5' | sed \
-    -e 's,BLD/,${top_builddir}/../../,g'`]
-   AS_TR_CPP($1)[_RULE='# Rebuild lib$2
-$(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
-                                    [[ $7]])m4_ifval([$8], [[ $8
-	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild
-$8:]])[
-	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']],
+  m4_ifdef([Kpse_TeX_Lib],
   [AS_TR_CPP($1)[_DEPEND=`echo '$5' | sed \
     -e 's,BLD/texk/,${top_builddir}/../,g'`]
    AS_TR_CPP($1)[_RULE='# Rebuild lib$2
@@ -126,7 +128,15 @@ $(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
                                     [[ $7]])m4_ifval([$8], [[ $8
 	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild
 $8:]])[
-	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']])
+	cd ${top_builddir}/../$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']],
+  [AS_TR_CPP($1)[_DEPEND=`echo '$5' | sed \
+    -e 's,BLD/,${top_builddir}/../../,g'`]
+   AS_TR_CPP($1)[_RULE='# Rebuild lib$2
+$(]AS_TR_CPP($1)[_DEPEND):]m4_ifval([$7],
+                                    [[ $7]])m4_ifval([$8], [[ $8
+	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild
+$8:]])[
+	cd ${top_builddir}/../../libs/$1 && $(MAKE) $(AM_MAKEFLAGS) rebuild']])
 m4_if(m4_index([ $3 ], [ tree ]), [-1],
       [fi
 ])[]dnl m4_if

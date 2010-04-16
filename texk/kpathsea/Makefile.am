@@ -20,7 +20,7 @@ lib_LTLIBRARIES = libkpathsea.la
 
 libkpathsea_la_CPPFLAGS = -DMAKE_KPSE_DLL
 
-libkpathsea_la_LDFLAGS = -version-number $(KPSE_LT_VERSNUM)
+libkpathsea_la_LDFLAGS = -version-info $(KPSE_LT_VERSINFO)
 
 libkpathsea_la_LIBADD = $(LTLIBOBJS)
 

@@ -759,6 +759,9 @@ with_libpng_libdir
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
+with_system_ptexenc
+with_ptexenc_includes
+with_ptexenc_libdir
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
@@ -1592,6 +1595,11 @@ Optional Packages:
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
   --with-zlib-libdir=DIR  zlib library installed in DIR
+  --with-system-ptexenc   use installed ptexenc headers and library
+  --with-ptexenc-includes=DIR
+                          ptexenc headers installed in DIR
+  --with-ptexenc-libdir=DIR
+                          ptexenc library installed in DIR
   --with-system-kpathsea  use installed kpathsea headers and library
   --with-kpathsea-includes=DIR
                           kpathsea headers installed in DIR
@@ -3937,6 +3945,43 @@ fi
 
 ## texk/ptexenc/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ptexenc/
 ## configure options and TL libraries required for ptexenc
+
+# Check whether --with-system-ptexenc was given.
+if test "${with_system_ptexenc+set}" = set; then :
+  withval=$with_system_ptexenc;
+fi
+
+# Check whether --with-ptexenc-includes was given.
+if test "${with_ptexenc_includes+set}" = set; then :
+  withval=$with_ptexenc_includes;
+fi
+
+# Check whether --with-ptexenc-libdir was given.
+if test "${with_ptexenc_libdir+set}" = set; then :
+  withval=$with_ptexenc_libdir;
+fi
+if test "x$with_system_ptexenc" = x; then
+  if test -f $srcdir/../texk/ptexenc/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`ptexenc' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`ptexenc' headers and library from TL tree" >&6;}
+    with_system_ptexenc=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`ptexenc' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`ptexenc' headers and library" >&6;}
+    with_system_ptexenc=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-ptexenc=$with_system_ptexenc'"
+fi
+if test "x$with_system_ptexenc" = xyes; then
+  if test "x$with_system_kpathsea" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`kpathsea' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`kpathsea' headers and library" >&6;}
+    with_system_kpathsea=yes
+    ac_configure_args="$ac_configure_args '--with-system-kpathsea'"
+  elif test "x$with_system_kpathsea" != xyes; then
+    as_fn_error "Sorry, \`--with-system-ptexenc' requires \`--with-system-kpathsea'" "$LINENO" 5
+  fi
+fi
 
 test "x$need_ptexenc" = xyes && {
   need_kpathsea=yes

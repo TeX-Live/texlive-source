@@ -18,10 +18,10 @@
 # LIBS required for the `-lkpathsea' library in texk/kpathsea/ of the TL tree.
 AC_DEFUN([KPSE_KPATHSEA_FLAGS],
 [AC_REQUIRE([KPSE_SAVE_FLAGS])[]dnl
-_KPSE_LIB_FLAGS([kpathsea], [kpathsea], [lt],
-                [-IBLD/texk -ISRC/texk], [BLD/texk/kpathsea/libkpathsea.la], [],
-                [${top_srcdir}/../kpathsea/*.[ch]],
-                [${top_builddir}/../kpathsea/paths.h])
+_KPSE_TEXLIB_FLAGS([kpathsea], [kpathsea], [lt],
+                   [-IBLD/texk -ISRC/texk], [BLD/texk/kpathsea/libkpathsea.la], [],
+                   [${top_srcdir}/../kpathsea/*.[ch]],
+                   [${top_builddir}/../kpathsea/paths.h])
 m4_if(m4_index([ $1 ], [ no-debug ]), [-1],
       [_KPSE_CHECK_KPSE_DEBUG],
       [KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"])

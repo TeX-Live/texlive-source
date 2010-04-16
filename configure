@@ -1004,6 +1004,9 @@ with_libpng_libdir
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
+with_system_ptexenc
+with_ptexenc_includes
+with_ptexenc_libdir
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
@@ -1844,6 +1847,11 @@ Optional Packages:
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
   --with-zlib-libdir=DIR  zlib library installed in DIR
+  --with-system-ptexenc   use installed ptexenc headers and library
+  --with-ptexenc-includes=DIR
+                          ptexenc headers installed in DIR
+  --with-ptexenc-libdir=DIR
+                          ptexenc library installed in DIR
   --with-system-kpathsea  use installed kpathsea headers and library
   --with-kpathsea-includes=DIR
                           kpathsea headers installed in DIR
@@ -4908,6 +4916,53 @@ fi
 ## texk/ptexenc/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ptexenc/
 ## configure options and TL libraries required for ptexenc
 
+# Check whether --with-system-ptexenc was given.
+if test "${with_system_ptexenc+set}" = set; then :
+  withval=$with_system_ptexenc;
+fi
+
+# Check whether --with-ptexenc-includes was given.
+if test "${with_ptexenc_includes+set}" = set; then :
+  withval=$with_ptexenc_includes;
+fi
+
+# Check whether --with-ptexenc-libdir was given.
+if test "${with_ptexenc_libdir+set}" = set; then :
+  withval=$with_ptexenc_libdir;
+fi
+if test "x$with_system_ptexenc" = x; then
+  if test -f $srcdir/texk/ptexenc/configure; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`ptexenc' headers and library from TL tree" >&5
+$as_echo "$as_me: Assuming \`ptexenc' headers and library from TL tree" >&6;}
+    with_system_ptexenc=no
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`ptexenc' headers and library" >&5
+$as_echo "$as_me: Assuming installed \`ptexenc' headers and library" >&6;}
+    with_system_ptexenc=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-ptexenc=$with_system_ptexenc'"
+elif test "x$with_system_ptexenc" = xyes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`ptexenc' headers and library" >&5
+$as_echo "$as_me: Using installed \`ptexenc' headers and library" >&6;}
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`ptexenc' headers and library from TL tree" >&5
+$as_echo "$as_me: Using \`ptexenc' headers and library from TL tree" >&6;}
+  if test "x$with_system_ptexenc" != xno; then
+    with_system_ptexenc=no
+    ac_configure_args="$ac_configure_args '--without-system-ptexenc'"
+  fi
+fi
+if test "x$with_system_ptexenc" = xyes; then
+  if test "x$with_system_kpathsea" = x; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`kpathsea' headers and library" >&5
+$as_echo "$as_me:   ->  installed \`kpathsea' headers and library" >&6;}
+    with_system_kpathsea=yes
+    ac_configure_args="$ac_configure_args '--with-system-kpathsea'"
+  elif test "x$with_system_kpathsea" != xyes; then
+    as_fn_error "Sorry, \`--with-system-ptexenc' requires \`--with-system-kpathsea'" "$LINENO" 5
+  fi
+fi
+
 test "x$need_ptexenc" = xyes && {
   need_kpathsea=yes
 }
@@ -7036,13 +7091,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:7039: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:7094: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:7042: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:7097: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:7045: output\"" >&5)
+  (eval echo "\"\$as_me:7100: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -8245,7 +8300,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 8248 "configure"' > conftest.$ac_ext
+  echo '#line 8303 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -10175,11 +10230,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10178: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10233: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10182: \$? = $ac_status" >&5
+   echo "$as_me:10237: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -10514,11 +10569,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10517: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10572: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:10521: \$? = $ac_status" >&5
+   echo "$as_me:10576: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -10619,11 +10674,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10622: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10677: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10626: \$? = $ac_status" >&5
+   echo "$as_me:10681: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10674,11 +10729,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:10677: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:10732: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:10681: \$? = $ac_status" >&5
+   echo "$as_me:10736: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -13041,7 +13096,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 13044 "configure"
+#line 13099 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13137,7 +13192,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 13140 "configure"
+#line 13195 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -17624,11 +17679,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17627: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17682: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:17631: \$? = $ac_status" >&5
+   echo "$as_me:17686: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -17723,11 +17778,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17726: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17781: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17730: \$? = $ac_status" >&5
+   echo "$as_me:17785: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -17775,11 +17830,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:17778: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:17833: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:17782: \$? = $ac_status" >&5
+   echo "$as_me:17837: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -18804,6 +18859,22 @@ kpse_save_LIBS=$LIBS
 
 syslib_status=yes
 syslib_used=no
+if test "x$with_kpathsea_includes" != x && test "x$with_kpathsea_includes" != xyes; then
+  KPATHSEA_INCLUDES="-I$with_kpathsea_includes"
+fi
+KPATHSEA_LIBS="-lkpathsea"
+if test "x$with_kpathsea_libdir" != x && test "x$with_kpathsea_libdir" != xyes; then
+  KPATHSEA_LIBS="-L$with_kpathsea_libdir $KPATHSEA_LIBS"
+fi
+
+if test "x$with_ptexenc_includes" != x && test "x$with_ptexenc_includes" != xyes; then
+  PTEXENC_INCLUDES="-I$with_ptexenc_includes"
+fi
+PTEXENC_LIBS="-lptexenc"
+if test "x$with_ptexenc_libdir" != x && test "x$with_ptexenc_libdir" != xyes; then
+  PTEXENC_LIBS="-L$with_ptexenc_libdir $PTEXENC_LIBS"
+fi
+
 if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
   ZLIB_INCLUDES="-I$with_zlib_includes"
 fi
@@ -19043,6 +19114,13 @@ elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
   as_fn_error "did not find poppler-0.10 or better" "$LINENO" 5
 fi
 
+if $PKG_CONFIG zziplib --atleast-version=0.12; then
+  ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
+  ZZIPLIB_LIBS=`$PKG_CONFIG zziplib --libs`
+elif test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
+  as_fn_error "did not find zziplib-0.12 or better" "$LINENO" 5
+fi
+
 if $PKG_CONFIG silgraphite --atleast-version=2.3; then
   GRAPHITE_INCLUDES="`$PKG_CONFIG silgraphite --cflags`"
   GRAPHITE_LIBS=`$PKG_CONFIG silgraphite --libs`
@@ -19159,21 +19237,6 @@ elif test "x$need_icu:$with_system_icu" = xyes:yes; then
   as_fn_error "did not find icu-config required for system icu libraries" "$LINENO" 5
 fi
 
-if test "x$with_kpathsea_includes" != x && test "x$with_kpathsea_includes" != xyes; then
-  KPATHSEA_INCLUDES="-I$with_kpathsea_includes"
-fi
-KPATHSEA_LIBS="-lkpathsea"
-if test "x$with_kpathsea_libdir" != x && test "x$with_kpathsea_libdir" != xyes; then
-  KPATHSEA_LIBS="-L$with_kpathsea_libdir $KPATHSEA_LIBS"
-fi
-
-if $PKG_CONFIG zziplib --atleast-version=0.12; then
-  ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
-  ZZIPLIB_LIBS=`$PKG_CONFIG zziplib --libs`
-elif test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
-  as_fn_error "did not find zziplib-0.12 or better" "$LINENO" 5
-fi
-
 
 ## texk/kpathsea/ac/kpathsea.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
 ## basic check of system kpathsea
@@ -19191,6 +19254,37 @@ main ()
 {
 const char *version = kpathsea_version_string;
 kpse_set_program_name("prog", "name");
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  syslib_used=yes kpse_res=ok
+else
+  syslib_status=no kpse_res=failed
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
+$as_echo "$kpse_res" >&6; }
+fi
+
+
+## texk/ptexenc/ac/ptexenc.ac: configure.ac fragment for the TeX Live subdirectory texk/ptexenc/
+## basic check of system ptexenc
+if test "x$need_ptexenc:$with_system_ptexenc" = xyes:yes; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`ptexenc' library" >&5
+$as_echo_n "checking requested system \`ptexenc' library... " >&6; }
+  CPPFLAGS="$PTEXENC_INCLUDES $CPPFLAGS"
+  LIBS="$PTEXENC_LIBS $LIBS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <ptexenc/ptexenc.h>
+int
+main ()
+{
+const char *version = ptexenc_version_string;
+set_enc_string("prog", "name");
   ;
   return 0;
 }

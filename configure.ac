@@ -123,9 +123,8 @@ KPSE_SAVE_FLAGS
 syslib_status=yes
 syslib_used=no
 KPSE_ALL_SYSTEM_FLAGS
-KPSE_FOR_PKGS([syslib],
-[m4_sinclude(m4_if(Kpse_Pkg, [kpathsea], [texk/],
-                                         [libs/])Kpse_Pkg[/ac/]Kpse_Pkg[.ac])])[]dnl
+KPSE_FOR_PKGS([sys_texk], [m4_sinclude([texk/]Kpse_Pkg[/ac/]Kpse_Pkg[.ac])])[]dnl
+KPSE_FOR_PKGS([sys_libs], [m4_sinclude([libs/]Kpse_Pkg[/ac/]Kpse_Pkg[.ac])])[]dnl
 if test "x$syslib_status" = xno; then
   AC_MSG_ERROR([some requested system libraries failed])
 fi

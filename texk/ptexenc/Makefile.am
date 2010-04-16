@@ -16,7 +16,7 @@ lib_LTLIBRARIES = libptexenc.la
 
 libptexenc_la_CPPFLAGS = -DMAKE_KPSE_DLL
 
-libptexenc_la_LDFLAGS = -version-number $(PTEXENC_LT_VERSNUM)
+libptexenc_la_LDFLAGS = -version-info $(PTEXENC_LT_VERSINFO)
 
 libptexenc_la_SOURCES = kanjicnv.c ptexenc.c unicode-jp.c unicode.c
 
