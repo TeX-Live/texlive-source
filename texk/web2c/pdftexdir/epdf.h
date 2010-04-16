@@ -49,6 +49,7 @@ extern "C" {
     extern float epdf_height;
     extern float epdf_orig_x;
     extern float epdf_orig_y;
+    extern float epdf_rotate;
     extern integer epdf_selected_page;
     extern integer epdf_num_pages;
     extern integer epdf_page_box;

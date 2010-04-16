@@ -36,6 +36,7 @@ float epdf_width;
 float epdf_height;
 float epdf_orig_x;
 float epdf_orig_y;
+float epdf_rotate;
 integer epdf_selected_page;
 integer epdf_num_pages;
 integer epdf_page_box;
@@ -51,6 +52,7 @@ static integer new_image_entry(void)
     image_ptr->y_res = 0;
     image_ptr->width = 0;
     image_ptr->height = 0;
+    image_ptr->rotate = 0;
     image_ptr->colorspace_ref = 0;
     image_ptr->group_ref = 0;
     return image_ptr++ - image_array;
@@ -69,6 +71,11 @@ integer imagewidth(integer img)
 integer imageheight(integer img)
 {
     return img_height(img);
+}
+
+integer imagerotate(integer img)
+{
+    return img_rotate(img);
 }
 
 integer imagexres(integer img)
@@ -309,6 +316,7 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
                                  pdfversion, pdfinclusionerrorlevel);
         img_width(img) = bp2int(epdf_width);
         img_height(img) = bp2int(epdf_height);
+        img_rotate(img) = epdf_rotate;
         img_pages(img) = epdf_num_pages;
         pdf_ptr(img)->orig_x = bp2int(epdf_orig_x);
         pdf_ptr(img)->orig_y = bp2int(epdf_orig_y);

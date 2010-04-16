@@ -109,6 +109,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 @define function epdforigx();
 @define function epdforigy();
 @define function imageheight();
+@define function imagerotate();
 @define function imagepages();
 @define function imagecolordepth();
 @define function imagegroupref();

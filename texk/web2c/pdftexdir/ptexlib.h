@@ -303,6 +303,7 @@ extern integer epdforigx(integer);
 extern integer epdforigy(integer);
 extern integer imagecolor(integer);
 extern integer imageheight(integer);
+extern integer imagerotate(integer);
 extern integer imagepages(integer);
 extern integer imagewidth(integer);
 extern integer imagexres(integer);

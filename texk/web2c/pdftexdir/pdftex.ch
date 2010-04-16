@@ -325,6 +325,7 @@ vf_default_font:=xmalloc_array(internal_font_number, font_max);
 vf_local_font_num:=xmalloc_array(internal_font_number, font_max);
 vf_e_fnts:=xmalloc_array(integer, font_max);
 vf_i_fnts:=xmalloc_array(internal_font_number, font_max);
+pdf_font_nobuiltin_tounicode:=xmalloc_array(boolean, font_max);
 
 for font_k := font_base to font_max do begin
     for k := 0 to 31 do
@@ -349,6 +350,7 @@ for font_k := font_base to font_max do begin
     pdf_font_sh_bs_base[font_k] := 0;
     pdf_font_kn_bc_base[font_k] := 0;
     pdf_font_kn_ac_base[font_k] := 0;
+    pdf_font_nobuiltin_tounicode[font_k] := false;
 end;
 
 make_pdftex_banner;
@@ -440,6 +442,7 @@ vf_default_font:=xmalloc_array(internal_font_number,font_max);
 vf_local_font_num:=xmalloc_array(internal_font_number,font_max);
 vf_e_fnts:=xmalloc_array(integer,font_max);
 vf_i_fnts:=xmalloc_array(internal_font_number,font_max);
+pdf_font_nobuiltin_tounicode:=xmalloc_array(boolean,font_max);
 
 for font_k := font_base to font_max do begin
     for k := 0 to 31 do
@@ -464,6 +467,7 @@ for font_k := font_base to font_max do begin
     pdf_font_sh_bs_base[font_k] := 0;
     pdf_font_kn_bc_base[font_k] := 0;
     pdf_font_kn_ac_base[font_k] := 0;
+    pdf_font_nobuiltin_tounicode[font_k] := false;
 end;
 
 font_ptr:=null_font; fmem_ptr:=7;

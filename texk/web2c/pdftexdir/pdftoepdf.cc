@@ -697,7 +697,6 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
 {
     PdfDocument *pdf_doc;
     Page *page;
-    int rotate;
     PDFRectangle *pagebox;
 #ifdef HAVE_GETPDFMAJORVERSION
     int pdf_major_version_found, pdf_minor_version_found;
@@ -783,29 +782,10 @@ read_pdf_info(char *image_name, char *page_name, integer page_num,
         epdf_height = pagebox->y1 - pagebox->y2;
     }
 
-    // handle page rotation and adjust dimens as needed
-    rotate = page->getRotate();
-    if (rotate != 0) {
-        if (rotate % 90 == 0) {
-            // handle only the simple case: multiple of 90s.
-            // these are the only values allowed according to the
-            // reference (v1.3, p. 78).
-            // 180 needs no special treatment here
-            register float f;
-            switch (rotate) {
-            case 90:
-                f = epdf_height;
-                epdf_height = epdf_width;
-                epdf_width = f;
-                break;
-            case 270:
-                f = epdf_height;
-                epdf_height = epdf_width;
-                epdf_width = f;
-                break;
-            }
-        }
-    }
+    // get page rotation
+    epdf_rotate = page->getRotate() % 360;
+    if (epdf_rotate < 0)
+        epdf_rotate += 360;
 
     pdf_doc->xref = pdf_doc->doc->getXRef();
     return page_num;

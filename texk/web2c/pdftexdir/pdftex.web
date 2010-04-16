@@ -11180,8 +11180,10 @@ end;
 pdf_page_ref_code: print_int(get_obj(obj_type_page, cur_val, false));
 left_margin_kern_code: begin
     p := list_ptr(box(cur_val));
-    if (p <> null) and (not is_char_node(p)) and
-       (type(p) = glue_node) and (subtype(p) = left_skip_code + 1) then
+    while (p <> null) and 
+          (cp_skipable(p) or 
+           ((not is_char_node(p)) and (type(p) = glue_node) and (subtype(p) = left_skip_code + 1))) 
+    do
        p := link(p);
     if (p <> null) and (not is_char_node(p)) and
        (type(p) = margin_kern_node) and (subtype(p) = left_side) then
@@ -11192,13 +11194,12 @@ left_margin_kern_code: begin
 end;
 right_margin_kern_code: begin
     q := list_ptr(box(cur_val));
-    p := null;
-    if q <> null then begin
-        p := prev_rightmost(q, null);
-        if (p <> null) and (not is_char_node(p)) and
-           (type(p) = glue_node) and (subtype(p) = right_skip_code + 1) then
-           p := prev_rightmost(q, p);
-    end;
+    p := prev_rightmost(q, null);
+    while (p <> null) and 
+          (cp_skipable(p) or 
+           ((not is_char_node(p)) and (type(p) = glue_node) and (subtype(p) = right_skip_code + 1)))
+    do
+        p := prev_rightmost(q, p);
     if (p <> null) and (not is_char_node(p)) and
        (type(p) = margin_kern_node) and (subtype(p) = right_side) then
         print_scaled(width(p))
@@ -16837,6 +16838,7 @@ procedure scan_pdf_ext_toks; forward;
 @ @<Glob...@>=
 @!pdf_font_type: ^eight_bits; {the type of font}
 @!pdf_font_attr: ^str_number; {pointer to additional attributes}
+@!pdf_font_nobuiltin_tounicode: ^boolean; {disable generating ToUnicode for this font?}
 
 @ Here come some subroutines to deal with expanded fonts for HZ-algorithm.
 
@@ -33244,7 +33246,8 @@ stays the same.
 @d pdf_setmatrix_node          == pdftex_first_extension_code + 32
 @d pdf_save_node               == pdftex_first_extension_code + 33
 @d pdf_restore_node            == pdftex_first_extension_code + 34
-@d pdftex_last_extension_code  == pdftex_first_extension_code + 34
+@d pdf_nobuiltin_tounicode_code== pdftex_first_extension_code + 35
+@d pdftex_last_extension_code  == pdftex_first_extension_code + 35
 
 @<Put each...@>=
 primitive("openout",extension,open_node);@/
@@ -33329,6 +33332,8 @@ primitive("pdffontexpand",extension,pdf_font_expand_code);@/
 @!@:pdf_font_expand_}{\.{\\pdffontexpand} primitive@>
 primitive("pdfglyphtounicode",extension,pdf_glyph_to_unicode_code);@/
 @!@:pdf_glyph_to_unicode_}{\.{\\pdfglyphtounicode} primitive@>
+primitive("pdfnobuiltintounicode",extension,pdf_nobuiltin_tounicode_code);@/
+@!@:pdf_nobuiltin_tounicode_}{\.{\\pdfnobuiltintounicode} primitive@>
 
 @ The variable |write_loc| just introduced is used to provide an
 appropriate error message in case of ``runaway'' write texts.
@@ -33378,6 +33383,7 @@ extension: case chr_code of
   pdf_ximage_code: print_esc("pdfximage");
   reset_timer_code: print_esc("pdfresettimer");
   set_random_seed_code: print_esc("pdfsetrandomseed");
+  pdf_nobuiltin_tounicode_code: print_esc("pdfnobuiltintounicode");
   pdf_glyph_to_unicode_code: print_esc("pdfglyphtounicode");
   othercases print("[unknown extension!]")
   endcases;
@@ -33435,6 +33441,7 @@ begin case cur_chr of
   reset_timer_code: @<Implement \.{\\pdfresettimer}@>;
   set_random_seed_code: @<Implement \.{\\pdfsetrandomseed}@>;
   pdf_glyph_to_unicode_code: @<Implement \.{\\pdfglyphtounicode}@>;
+  pdf_nobuiltin_tounicode_code: @<Implement \.{\\pdfnobuiltintounicode}@>;
 othercases confusion("ext1")
 @:this can't happen ext1}{\quad ext1@>
 endcases;
@@ -33840,11 +33847,21 @@ procedure scale_image(n: integer);
 var x, y, xr, yr: integer; {size and resolution of image}
     w, h: scaled; {indeed size corresponds to image resolution}
     default_res: integer;
+    image: integer;
 begin
-    x := image_width(obj_ximage_data(n));
-    y := image_height(obj_ximage_data(n));
-    xr := image_x_res(obj_ximage_data(n));
-    yr := image_y_res(obj_ximage_data(n));
+    image := obj_ximage_data(n);
+    if (image_rotate(image) = 90) or (image_rotate(image) = 270) then begin
+        y := image_width(image);
+        x := image_height(image);
+        yr := image_x_res(image);
+        xr := image_y_res(image);
+    end else begin
+        x := image_width(image);
+        y := image_height(image);
+        xr := image_x_res(image);
+        yr := image_y_res(image);
+    end;
+
     if (xr > 65535) or (yr > 65535) then begin
         xr := 0;
         yr := 0;
@@ -33852,7 +33869,7 @@ begin
     end;
     if (x <= 0) or (y <= 0) or (xr < 0) or (yr < 0) then
         pdf_error("ext1", "invalid image dimensions");
-    if is_pdf_image(obj_ximage_data(n)) then begin
+    if is_pdf_image(image) then begin
         w := x;
         h := y;
     end
@@ -34708,6 +34725,16 @@ end
 @ @<Implement \.{\\pdfglyphtounicode}@>=
 begin
     glyph_to_unicode;
+end
+
+@ @<Implement \.{\\pdfnobuiltintounicode}@>=
+begin
+    check_pdfoutput("\pdfnobuiltintounicode", true);
+    scan_font_ident;
+    k := cur_val;
+    if k = null_font then
+        pdf_error("font", "invalid font identifier");
+    pdf_font_nobuiltin_tounicode[k] := true;
 end
 
 @ The following function are needed for outputing article thread.
@@ -35962,8 +35989,17 @@ end;
 
 procedure out_image(p: pointer);
 var image, groupref: integer;
+    img_w, img_h: integer;
 begin
     image := obj_ximage_data(pdf_ximage_objnum(p));
+    if (image_rotate(image) = 90) or (image_rotate(image) = 270) then begin
+        img_h := image_width(image);
+        img_w := image_height(image);
+    end else begin
+        img_w := image_width(image);
+        img_h := image_height(image);
+    end;
+
     pdf_end_text;
     pdf_print_ln("q");
     if pdf_lookup_list(pdf_ximage_list, pdf_ximage_objnum(p)) = null then 
@@ -35986,18 +36022,18 @@ begin
     else begin
         if pdf_page_group_val<1 then pdf_page_group_val := image_group_ref (image);
         pdf_print_real(ext_xn_over_d(pdf_width(p),
-                       ten_pow[6], image_width(image)), 6);
+                       ten_pow[6], img_w), 6);
         pdf_print(" 0 0 ");
         pdf_print_real(ext_xn_over_d(pdf_height(p) + pdf_depth(p),
-                       ten_pow[6], image_height(image)), 6);
+                       ten_pow[6], img_h), 6);
         pdf_out(" ");
         pdf_print_bp(pdf_x(cur_h) -
                      ext_xn_over_d(pdf_width(p), epdf_orig_x(image),
-                                   image_width(image)));
+                                   img_w));
         pdf_out(" ");
         pdf_print_bp(pdf_y(cur_v) -
                      ext_xn_over_d(pdf_height(p) + pdf_depth(p), epdf_orig_y(image),
-                                   image_height(image)));
+                                   img_h));
     end;
     pdf_print_ln(" cm");
     pdf_print("/Im");

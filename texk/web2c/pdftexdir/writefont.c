@@ -528,7 +528,8 @@ static void write_fontdictionary(fo_entry * fo)
     assert(fo->fo_objnum != 0); /* reserved as pdf_font_num[f] in pdftex.web */
 
     /* write ToUnicode entry if needed */
-    if (fixedgentounicode > 0 && fo->fd != NULL) {
+    if (fixedgentounicode > 0 && fo->fd != NULL
+         && !pdffontnobuiltintounicode[fo->tex_font]) {
         if (fo->fe != NULL) {
             fo->tounicode_objnum =
                 write_tounicode(fo->fe->glyph_names, fo->fm->tfm_name, fo->fe->name);
