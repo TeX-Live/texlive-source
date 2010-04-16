@@ -350,7 +350,6 @@ void writeimage(integer img)
     switch (img_type(img)) {
     case IMAGE_TYPE_PNG:
         write_png(img);
-        write_additional_png_objects();
         break;
     case IMAGE_TYPE_JPG:
         write_jpg(img);

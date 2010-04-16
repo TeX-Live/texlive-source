@@ -447,13 +447,22 @@ static void copyFontResources(Object * obj)
 static void copyOtherResources(Object * obj, char *key)
 {
     // copies all other resources (write_epdf handles Fonts and ProcSets),
-    // but gives a warning if an object is not a dictionary.
 
-    if (!obj->isDict())
+    // if Subtype is present, it must be a name
+    if (strcmp("Subtype", key) == 0) {
+        if (!obj->isName()) {
+            pdftex_warn("PDF inclusion: Subtype in Resources dict is not a name"
+                        " (key '%s', type <%s>); ignored.",
+                        key, obj->getTypeName());
+            return;
+        }
+    } else if (!obj->isDict()) {
         //FIXME: Write the message only to the log file
         pdftex_warn("PDF inclusion: invalid other resource which is no dict"
-                    " (key '%s', type <%s>); copying it anyway.",
+                    " (key '%s', type <%s>); ignored.",
                     key, obj->getTypeName());
+        return;
+    }
     copyName(key);
     pdf_puts(" ");
     copyObject(obj);

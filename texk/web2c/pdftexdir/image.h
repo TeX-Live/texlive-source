@@ -109,7 +109,6 @@ extern void write_epdf(void);
 extern void epdf_delete(void);
 extern void read_png_info(integer);
 extern void write_png(integer);
-extern void write_additional_png_objects(void);
 extern void read_jpg_info(integer);
 extern void write_jpg(integer);
 extern void read_jbig2_info(integer);
