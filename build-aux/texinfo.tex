@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-03-25.16}
+\def\texinfoversion{2010-04-13.15}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2505,7 +2505,7 @@ end
 
 % Font commands.
 
-% #1 is the font command (\sl vs. \it), #2 is the text to slant.
+% #1 is the font command (\sl or \it), #2 is the text to slant.
 % If we are in a monospaced environment, however, 1) always use \ttsl,
 % and 2) do not add an italic correction.
 \def\dosmartslant#1#2{%
@@ -8951,8 +8951,8 @@ directory should work if nowhere else does.}
 % Prevent underfull vbox error messages.
 \vbadness = 10000
 
-% Don't be so finicky about underfull hboxes, either.
-\hbadness = 2000
+% Don't be very finicky about underfull hboxes, either.
+\hbadness = 6666
 
 % Following George Bush, get rid of widows and orphans.
 \widowpenalty=10000
