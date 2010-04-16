@@ -51,7 +51,7 @@ FILE *vfopen(char *name)
 
 void writevf(int code, FILE *fp)
 {
-	int cc,cc2,cc3,cc4,w,skip=0,skip2=0,height;
+	int cc,cc2,cc3,cc4,w,skip=0,skip2=0,height=1000;
 	char buf[256],buf2[256];
 
 	w = jfmread(code);

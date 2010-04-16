@@ -1,6 +1,13 @@
 ChangeLog.TL: TeX Live (TL) changes for mendexk
 ===============================================
 
+2010-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* exvar.h, var.h (atama, page_compositor, page_precedence):
+	Change types from 'char' back to 'unsigned char' as they
+	originally were in exvar.h.  From Sadayuki Tanaka
+	<s-tanaka@asciimw.jp>, 16 Apr 2010 16:30:22.
+
 2010-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pageread.c: #include "mendex.h" for prototype.
@@ -15,7 +22,6 @@ ChangeLog.TL: TeX Live (TL) changes for mendexk
 	* exvar.h (atama, page_compositor, page_precedence): Change type
 	from 'unsigned char' to 'char' as defined in var.h.
 
-	FIXME: Is this correct?
 	* convert.c (dicread): Add 'return 0' at end.
 
 	Avoid compiler warnings.

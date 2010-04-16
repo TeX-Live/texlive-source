@@ -1,3 +1,8 @@
+2010-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* write.c (writevf): Initialize height.  From Sadayuki Tanaka
+	<s-tanaka@asciimw.jp>, 16 Apr 2010 16:30:22.
+
 2010-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tool.c: #include "makejvf.h" for prototypes.
@@ -7,9 +12,6 @@
 	* tfmread.c (tfmget): Drop unused local variables.
 	* makejvf.h, write.c: Change return type of vfclose() and
 	maketfm() from int to void.
-
-	*** FIXME ***
-	* write.c (writevf): height might be used uninitialized.
 
 2010-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

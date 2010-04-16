@@ -879,6 +879,9 @@ enable_compiler_warnings
 with_system_kpathsea
 with_kpathsea_includes
 with_kpathsea_libdir
+with_system_ptexenc
+with_ptexenc_includes
+with_ptexenc_libdir
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1534,6 +1537,11 @@ Optional Packages:
                           kpathsea headers installed in DIR
   --with-kpathsea-libdir=DIR
                           kpathsea library installed in DIR
+  --with-system-ptexenc   use installed ptexenc headers and library
+  --with-ptexenc-includes=DIR
+                          ptexenc headers installed in DIR
+  --with-ptexenc-libdir=DIR
+                          ptexenc library installed in DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -4537,13 +4545,13 @@ if test "${lt_cv_nm_interface+set}" = set; then :
 else
   lt_cv_nm_interface="BSD nm"
   echo "int some_variable = 0;" > conftest.$ac_ext
-  (eval echo "\"\$as_me:4540: $ac_compile\"" >&5)
+  (eval echo "\"\$as_me:4548: $ac_compile\"" >&5)
   (eval "$ac_compile" 2>conftest.err)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4543: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
+  (eval echo "\"\$as_me:4551: $NM \\\"conftest.$ac_objext\\\"\"" >&5)
   (eval "$NM \"conftest.$ac_objext\"" 2>conftest.err > conftest.out)
   cat conftest.err >&5
-  (eval echo "\"\$as_me:4546: output\"" >&5)
+  (eval echo "\"\$as_me:4554: output\"" >&5)
   cat conftest.out >&5
   if $GREP 'External.*some_variable' conftest.out > /dev/null; then
     lt_cv_nm_interface="MS dumpbin"
@@ -5746,7 +5754,7 @@ ia64-*-hpux*)
   ;;
 *-*-irix6*)
   # Find out which ABI we are using.
-  echo '#line 5749 "configure"' > conftest.$ac_ext
+  echo '#line 5757 "configure"' > conftest.$ac_ext
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
   (eval $ac_compile) 2>&5
   ac_status=$?
@@ -7667,11 +7675,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:7670: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:7678: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:7674: \$? = $ac_status" >&5
+   echo "$as_me:7682: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8006,11 +8014,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8009: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8017: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>conftest.err)
    ac_status=$?
    cat conftest.err >&5
-   echo "$as_me:8013: \$? = $ac_status" >&5
+   echo "$as_me:8021: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s "$ac_outfile"; then
      # The compiler can only warn and ignore the option if not recognized
      # So say no if there are warnings other than the usual output.
@@ -8111,11 +8119,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8114: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8122: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8118: \$? = $ac_status" >&5
+   echo "$as_me:8126: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -8166,11 +8174,11 @@ else
    -e 's:.*FLAGS}\{0,1\} :&$lt_compiler_flag :; t' \
    -e 's: [^ ]*conftest\.: $lt_compiler_flag&:; t' \
    -e 's:$: $lt_compiler_flag:'`
-   (eval echo "\"\$as_me:8169: $lt_compile\"" >&5)
+   (eval echo "\"\$as_me:8177: $lt_compile\"" >&5)
    (eval "$lt_compile" 2>out/conftest.err)
    ac_status=$?
    cat out/conftest.err >&5
-   echo "$as_me:8173: \$? = $ac_status" >&5
+   echo "$as_me:8181: \$? = $ac_status" >&5
    if (exit $ac_status) && test -s out/conftest2.$ac_objext
    then
      # The compiler can only warn and ignore the option if not recognized
@@ -10533,7 +10541,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10536 "configure"
+#line 10544 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -10629,7 +10637,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 10632 "configure"
+#line 10640 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -13220,6 +13228,30 @@ if test "x$kpse_cv_kpse_debug" != xyes; then :
 fi
 
 ## _KPSE_LIB_FLAGS: Setup ptexenc (-lptexenc) flags
+
+# Check whether --with-system-ptexenc was given.
+if test "${with_system_ptexenc+set}" = set; then :
+  withval=$with_system_ptexenc;
+fi
+
+# Check whether --with-ptexenc-includes was given.
+if test "${with_ptexenc_includes+set}" = set; then :
+  withval=$with_ptexenc_includes;
+fi
+
+# Check whether --with-ptexenc-libdir was given.
+if test "${with_ptexenc_libdir+set}" = set; then :
+  withval=$with_ptexenc_libdir;
+fi
+if test "x$with_system_ptexenc" = xyes; then
+  if test "x$with_ptexenc_includes" != x && test "x$with_ptexenc_includes" != xyes; then
+  PTEXENC_INCLUDES="-I$with_ptexenc_includes"
+fi
+PTEXENC_LIBS="-lptexenc"
+if test "x$with_ptexenc_libdir" != x && test "x$with_ptexenc_libdir" != xyes; then
+  PTEXENC_LIBS="-L$with_ptexenc_libdir $PTEXENC_LIBS"
+fi
+else
   PTEXENC_INCLUDES=`echo '-IBLD/texk -ISRC/texk' | sed \
     -e "s,SRC/,$kpse_SRC/,g" \
     -e "s,BLD/,$kpse_BLD/,g"`
@@ -13233,6 +13265,7 @@ $(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.[ch] ${top_builddir}/../ptexenc/pt
 	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../ptexenc/ptexenc.h:
 	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
 
 
 ac_config_files="$ac_config_files Makefile"
