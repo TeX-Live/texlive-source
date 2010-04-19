@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <kpathsea/config.h>
+#include <kpathsea/tex-file.h>
 #include <ptexenc/ptexenc.h>
 #include "mendex.h"
 
@@ -233,24 +234,22 @@ int main(int argc, char **argv)
 		if (i==-1) sprintf(indfile,"%s.ind",idxfile[0]);
 	}
 
-	if (logfile[0]=='\0') {
-		if (idxcount-fsti>0) {
-			for (i=strlen(idxfile[0]);i>=0;i--) {
-				if (idxfile[0][i]=='.') {
-					strncpy(logfile,idxfile[0],i);
-					sprintf(&logfile[i],".ilg");
-					break;
-				}
+	if ((logfile[0] == '\0') && (idxcount-fsti > 0)) {
+		for (i=strlen(idxfile[0]);i>=0;i--) {
+			if (idxfile[0][i]=='.') {
+				strncpy(logfile,idxfile[0],i);
+				sprintf(&logfile[i],".ilg");
+				break;
 			}
-			if (i==-1) sprintf(logfile,"%s.ilg",idxfile[0]);
-			efp=fopen(logfile,"w");
 		}
-		else {
-			efp=stderr;
-			strcpy(logfile,"stderr");
+		if (i==-1) sprintf(logfile,"%s.ilg",idxfile[0]);
 		}
+	if ((logfile[0] != '\0') && kpse_out_name_ok(logfile))
+		efp=fopen(logfile,"w");
+	if(efp == NULL) {
+		efp=stderr;
+		strcpy(logfile,"stderr");
 	}
-	else efp=fopen(logfile,"w");
 
 	if (strcmp(argv[0],"makeindex")==0) {
 		verb_printf(efp,"This is Not `MAKEINDEX\', But `MENDEX\' %s (%s).\n",

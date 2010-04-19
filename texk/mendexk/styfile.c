@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <kpathsea/config.h>
+#include <kpathsea/tex-file.h>
 #include <ptexenc/ptexenc.h>
 #include "mendex.h"
 
@@ -10,7 +11,6 @@
 
 #ifdef KPATHSEA
 #include "kp.h"
-extern KpathseaSupportInfo kp_ist;
 #endif
 
 FILE *fp;
@@ -32,7 +32,10 @@ void styread(const char *filename)
 #ifdef KPATHSEA
 	filename = KP_find_file(&kp_ist,filename);
 #endif
-	fp=nkf_open(filename,"r");
+	if(kpse_in_name_ok(filename))
+		fp=nkf_open(filename,"r");
+	else
+		fp=NULL;
 	if (fp==NULL) {
 		fprintf(stderr,"%s does not exist.\n",filename);
 		exit(0);

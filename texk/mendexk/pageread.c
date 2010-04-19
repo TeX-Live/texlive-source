@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <kpathsea/tex-file.h>
 #include "mendex.h"
 
 /*   checking last page   */
@@ -20,7 +21,10 @@ int lastpage(const char *filename)
 	}
 	if (i==-1) sprintf(logfile,"%s.log",filename);
 
-	fp=fopen(logfile,"r");
+	if(kpse_in_name_ok(logfile))
+		fp=fopen(logfile,"r");
+	else
+		fp=NULL;
 	if (fp==NULL) {
 		fprintf(stderr,"No log file, %s.\n",logfile);
 		exit(0);

@@ -8,6 +8,8 @@ typedef struct {
   const char *suffix;
 } KpathseaSupportInfo;
 
+extern KpathseaSupportInfo kp_ist, kp_dict;
+
 extern int KP_init(char *);
 extern int KP_entry_filetype(KpathseaSupportInfo *);
 extern const char *KP_find_file(KpathseaSupportInfo *, const char *);

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <kpathsea/config.h>
+#include <kpathsea/tex-file.h>
 #include <ptexenc/ptexenc.h>
 #include "mendex.h"
 
@@ -29,10 +30,16 @@ int idxread(char *filename, int start)
 		verb_printf(efp, "Scanning input file stdin.");
 	}
 	else {
-		fp=nkf_open(filename,"r");
+		if(kpse_in_name_ok(filename))
+			fp=nkf_open(filename,"r");
+		else
+			fp=NULL;
 		if (fp==NULL) {
 			sprintf(buff,"%s.idx",filename);
-			fp=nkf_open(buff,"r");
+			if(kpse_in_name_ok(buff))
+				fp=nkf_open(buff,"r");
+			else
+				fp=NULL;
 			if (fp==NULL) {
 				warn_printf(efp,"Warning: Couldn't find input file %s.\n",filename);
 				return 1;

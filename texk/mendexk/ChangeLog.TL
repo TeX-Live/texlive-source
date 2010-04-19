@@ -1,6 +1,18 @@
 ChangeLog.TL: TeX Live (TL) changes for mendexk
 ===============================================
 
+2010-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* convert.c (dicread, dicvalread), fread.c (idxread),
+	pageread.c (lastpage), styfile.c (styread): Use kpse_in_name_ok.
+	* fwrite.c (indwrite), main.c (main): Use kpse_out_name_ok.
+	From Akira Kakuto <kakuto@fuk.kindai.ac.jp>, 17 Apr 2010 23:30:15.
+	Added #include <kpathsea/tex-file.h> for prototypes.
+
+	* convert.c (kp_dict): Move extern declaration from here ...
+	* styfile.c (kp_ist): ... and here ...
+	* kp.h (kp_ist, kp_dict): ... to here.
+
 2010-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* exvar.h, var.h (atama, page_compositor, page_precedence):

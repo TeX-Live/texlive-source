@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 #include <kpathsea/config.h>
+#include <kpathsea/tex-file.h>
 #include <ptexenc/ptexenc.h>
 #include "mendex.h"
 
@@ -76,7 +77,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 	unsigned char datama[256],lbuff[4096];
 	FILE *fp;
 
-	if (filename[0]!='\0') fp=fopen(filename,"w");
+	if (filename[0]!='\0' && kpse_out_name_ok(filename)) fp=fopen(filename,"w");
 	else fp=stdout;
 
 	convert(atama,datama);

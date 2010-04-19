@@ -4,6 +4,7 @@
 
 #include <kpathsea/config.h>
 #include <kpathsea/lib.h>
+#include <kpathsea/tex-file.h>
 #include <ptexenc/ptexenc.h>
 #include "mendex.h"
 
@@ -13,7 +14,6 @@
 
 #ifdef KPATHSEA
 #include "kp.h"
-extern KpathseaSupportInfo kp_dict;
 #endif
 
 struct dictionary{
@@ -71,7 +71,10 @@ int dicread(const char *filename)
 #ifdef KPATHSEA
 		filename = KP_find_file(&kp_dict,filename);
 #endif
-		fp=nkf_open(filename,"r");
+		if(kpse_in_name_ok(filename))
+			fp=nkf_open(filename,"r");
+		else
+			fp = NULL;
 		if (fp==NULL) {
 			warn_printf(efp,"Warning: Couldn't find dictionary file %s.\n",filename);
 			goto ENV;
@@ -105,7 +108,10 @@ ENV:
 #ifdef KPATHSEA
 		envfile = KP_find_file(&kp_dict,envfile);
 #endif
-		fp=nkf_open(envfile,"r");
+		if(kpse_in_name_ok(envfile))
+			fp=nkf_open(envfile,"r");
+		else
+			fp = NULL;
 		if (fp==NULL) {
 			warn_printf(efp,"Warning: Couldn't find environment dictionary file %s.\n",envfile);
 			return ecount;
@@ -137,7 +143,12 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 	unsigned char buff[256];
 	FILE *fp;
 
-	fp=nkf_open(filename,"r");
+	if(kpse_in_name_ok(filename))
+		fp=nkf_open(filename,"r");
+	else {
+		fprintf(stderr, "mendex: %s is forbidden to open for reading.\n",filename);
+		exit(-1);
+	}
 	for (i=0;i<line;i++) {
 		if (mfgets(buff,255,fp)==NULL) break;
 		if ((buff[0]=='\n')||(buff[0]=='\0')) {
