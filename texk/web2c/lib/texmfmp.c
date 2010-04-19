@@ -516,9 +516,6 @@ MAYBE_STATIC const_string dump_name;
 /* The C version of the jobname, if given. */
 MAYBE_STATIC const_string c_job_name;
 
-/* Full source file name. */
-extern string fullnameoffile;
-
 /* The filename for dynamic character translation, or NULL.  */
 string translate_filename;
 string default_translate_filename;
@@ -532,9 +529,6 @@ static boolean srcspecialsoption = false;
 static void parse_src_specials_option (const_string);
 #endif
 #endif
-
-/* The main body of the WEB is transformed into this procedure.  */
-extern TEXDLL void mainbody (void);
 
 /* Parsing a first %&-line in the input file. */
 static void parse_first_line (const_string);

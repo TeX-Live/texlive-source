@@ -14,18 +14,15 @@
 /* The globals we use to communicate.  */
 extern string nameoffile;
 extern unsigned namelength;
-/* For "file:line:error" style error messages. */
-extern string fullnameoffile;
-/* For the filename recorder. */
-extern boolean recorder_enabled;
-/* For the output-dir option. */
-extern string output_directory;
 
 /* Define some variables. */
+/* For "file:line:error" style error messages. */
 string fullnameoffile;       /* Defaults to NULL.  */
 static string recorder_name; /* Defaults to NULL.  */
 static FILE *recorder_file;  /* Defaults to NULL.  */
+/* For the filename recorder. */
 boolean recorder_enabled;    /* Defaults to false. */
+/* For the output-dir option. */
 string output_directory;     /* Defaults to NULL.  */
 
 /* For TeX and MetaPost.  See below.  Always defined so we don't have to
@@ -39,12 +36,20 @@ int texinputtype;
 static void
 recorder_start(void)
 {
-    /* Alas, while we might want to use mkstemp it is not portable.
-       So we have to be content with using a default name... */
+    /* Alas, while we'd like to use mkstemp it is not portable,
+       and doing the autoconfiscation (and providing fallbacks) is more
+       than we want to cope with.  So we have to be content with using a
+       default name.  Throw in the pid so at least parallel builds might
+       work (Debian bug 575731).  */
     string cwd;
+    pid_t pid = getpid();
+    char pid_str[MAX_INT_LENGTH];
+    sprintf (pid_str, "%ld", (long) pid);
     
-    recorder_name = (string)xmalloc(strlen(kpse_program_name)+5);
+    recorder_name = xmalloc(strlen(kpse_program_name)
+                                    + strlen (pid_str) + 5);
     strcpy(recorder_name, kpse_program_name);
+    strcat(recorder_name, pid_str);
     strcat(recorder_name, ".fls");
     
     /* If an output directory was specified, use it instead of cwd.  */
@@ -127,13 +132,13 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
        absolute.  This is because .aux and other such files will get
        written to the output directory, and we have to be able to read
        them from there.  We only look for the name as-is.  */
-    if (output_directory && kpse_absolute_p (nameoffile+1, false)) {
+    if (output_directory && !kpse_absolute_p (nameoffile+1, false)) {
         fname = concat3 (output_directory, DIR_SEP_STRING, nameoffile + 1);
         *f_ptr = fopen (fname, fopen_mode);
         if (*f_ptr) {
             free (nameoffile);
             namelength = strlen (fname);
-            nameoffile = (string) xmalloc (namelength + 2);
+            nameoffile = xmalloc (namelength + 2);
             strcpy (nameoffile + 1, fname);
             fullnameoffile = fname;
         } else {
@@ -180,7 +185,7 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
                 /* kpse_find_file always returns a new string. */
                 free (nameoffile);
                 namelength = strlen (fname);
-                nameoffile = (string)xmalloc (namelength + 2);
+                nameoffile = xmalloc (namelength + 2);
                 strcpy (nameoffile + 1, fname);
                 free (fname);
 
@@ -256,7 +261,7 @@ open_output (FILE **f_ptr, const_string fopen_mode)
         if (fname != nameoffile + 1) {
             free (nameoffile);
             namelength = strlen (fname);
-            nameoffile = (string)xmalloc (namelength + 2);
+            nameoffile = xmalloc (namelength + 2);
             strcpy (nameoffile + 1, fname);
         }
         recorder_record_output (fname);

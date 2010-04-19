@@ -1,3 +1,13 @@
+2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* main.c, texmfmp.c: Remove extern declaration of mainbody,
+	is in lib.h.
+	* openclose.c (recorder_enabled, output_directory): Remove
+	extern declarations, are in lib.h.
+	* lib.h: Move extern declaration of fullnameoffile to here ...
+	* texmfmp.c: ... from here ...
+	* openclose.c: ... and from here.
+
 2010-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c (maininit) [__SyncTeX__]: omit warning about no

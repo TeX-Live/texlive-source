@@ -12,18 +12,15 @@
 /* The globals we use to communicate.  */
 extern string nameoffile;
 extern unsigned namelength;
-/* For "file:line:error style error messages. */
-extern string fullnameoffile;
-/* For the filename recorder. */
-extern boolean recorder_enabled;
-/* For the output-dir option. */
-extern string output_directory;
 
 /* Define some variables. */
+/* For "file:line:error" style error messages. */
 string fullnameoffile;       /* Defaults to NULL.  */
 static string recorder_name; /* Defaults to NULL.  */
 static FILE *recorder_file;  /* Defaults to NULL.  */
+/* For the filename recorder. */
 boolean recorder_enabled;    /* Defaults to false. */
+/* For the output-dir option. */
 string output_directory;     /* Defaults to NULL.  */
 
 /* For TeX and MetaPost.  See below.  Always defined so we don't have to

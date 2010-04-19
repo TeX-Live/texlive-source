@@ -8,8 +8,6 @@
 char **argv;
 int argc;
 
-extern void mainbody (void);
-
 /* The entry point for all the programs except TeX and Metafont, which
    have more to do.  We just have to set up the command line.  web2c
    transforms Pascal's main block into a procedure `main_body'.  */
