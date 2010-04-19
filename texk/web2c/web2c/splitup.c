@@ -123,9 +123,6 @@ main (int argc, string *argv)
   } else if (STREQ (output_name, "pdftex")) {
     fputs ("#define INITEX\n#define TeX\n#define pdfTeX\n", out);
     coerce = "pdftexcoerce.h";
-  } else if (STREQ (output_name, "luatex")) {
-    fputs ("#define INITEX\n#define TeX\n#define luaTeX\n", out);
-    coerce = "luatexcoerce.h";
   } else if (STREQ (output_name, "xetex")) {
     fputs ("#define INITEX\n#define TeX\n#define XeTeX\n", out);
     coerce = "xetexcoerce.h";
@@ -133,7 +130,7 @@ main (int argc, string *argv)
     fputs ("#define INITEX\n#define TeX\n#define pTeX\n", out);
     coerce = "ptexcoerce.h";
   } else
-    FATAL1 ("Can only split mf, tex, etex, aleph, luatex, pdftex, or xetex,\n not %s", output_name);
+    FATAL1 ("Can only split mf, tex, etex, aleph, pdftex, or xetex,\n not %s", output_name);
   
   coerce_len = strlen (coerce);
   

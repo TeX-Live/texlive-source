@@ -69,7 +69,6 @@
 @define const GFTODVIHELP;
 @define const GFTOPKHELP;
 @define const GFTYPEHELP;
-@define const LUATANGLEHELP;
 @define const LUATEXHELP;
 @define const MFTHELP;
 @define const ODVICOPYHELP;
@@ -80,11 +79,15 @@
 @define const OVP2OVFHELP;
 @define const OVF2OVPHELP;
 @define const PATGENHELP;
+@define const PBIBTEXHELP;
+@define const PDVITYPEHELP;
 @define const PDFTEXHELP;
 @define const PKTOGFHELP;
 @define const PKTYPEHELP;
 @define const PLTOTFHELP;
 @define const POOLTYPEHELP;
+@define const PPLTOTFHELP;
+@define const PTFTOPLHELP;
 @define const TANGLEHELP;
 @define const TFTOPLHELP;
 @define const VFTOVPHELP;

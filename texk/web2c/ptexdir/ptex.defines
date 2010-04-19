@@ -2,6 +2,7 @@
 @define function Hi ();
 @define function Lo ();
 
+@define function inputline3 ();
 @define function getencstring;
 @define function setencstring ();
 
@@ -27,7 +28,3 @@
 @define function ismultiprn ();
 @define function calcpos ();
 @define function kcatcodekey ();
-
-@define const PTEXTFTOPLHELP;
-@define const PTEXPLTOTFHELP;
-@define const PDVITYPEHELP;

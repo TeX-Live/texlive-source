@@ -621,8 +621,8 @@ maininit (int ac, string *av)
 # define SYNCTEX_NO_OPTION INT_MAX
   synctexoption = SYNCTEX_NO_OPTION;
 #else
-# /* Omit warning for Aleph and non-TeX.  */
-# if defined(TeX) && !defined(Aleph) && !defined(luaTeX)
+# /* Omit warning for Aleph, pTeX, and non-TeX.  */
+# if defined(TeX) && !defined(Aleph) && !defined(pTeX)
 #  warning SyncTeX: -synctex command line option NOT available
 # endif
 #endif

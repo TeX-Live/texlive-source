@@ -310,6 +310,40 @@ const_string PATGENHELP[] = {
 };
 #endif /* PATGEN */
 
+#ifdef PBIBTEX
+const_string PBIBTEXHELP[] = {
+"Usage: pbibtex [option] auxfile",
+"",
+"  -min-crossrefs=INTEGER     minimum number of cross-refs required",
+"                             for automatic cite_list inclusion (default 2).",
+"  -terse                     do silently.",
+"  -version                   print version information and exit.",
+"  -help                      print this message and exit.",
+"  -kanji={jis|euc|sjis|utf8} kanji code for output-file.",
+NULL };
+#endif /* PBIBTEX */
+
+#ifdef PDVITYPE
+const_string PDVITYPEHELP[] = {
+"Usage: pdvitype [option] dvifile",
+"",
+"  -dpi=REAL                  assumed device resolution in pixels per inch",
+"                             (default 300.0).",
+"  -magnification=INTEGER     overrride the postamble's magnification.",
+"  -max-pages=INTEGER         maximum number of pages (default 1000000).",
+"  -output-level=1..4         verbosity level.",
+"                                 1: terse, 2: medium-level, 3: verbose,",
+"                                 4: plus check for postamble(default).",
+"  -page-start=PAGE           type, e.g., `1.*.-5' to specify the first page",
+"                             with \\count0=1, \\count2=4.",
+"                             (see the TeX book chapter 15).",
+"  -show-opcodes              show opcodes in decimal.",
+"  -kanji={jis|euc|sjis|utf8} kanji code for output-file.",
+"  -version                   print version information and exit.",
+"  -help                      print this message and exit.",
+NULL };
+#endif /* PDVITYPE */
+
 #ifdef PKTOGF
 const_string PKTOGFHELP[] = {
     "Usage: pktogf [OPTION]... PKNAME [GFFILE]",
@@ -358,6 +392,30 @@ const_string POOLTYPEHELP[] = {
     NULL
 };
 #endif /* POOLTYPE */
+
+#ifdef PPLTOTF
+const_string PPLTOTFHELP[] = {
+"Usage: ppltotf [option] plfile [tfmfile]",
+"",
+"  -verbose               output progress reports.",
+"  -version               print version information and exit.",
+"  -help                  print this message and exit.",
+"  -kanji={jis|euc|sjis|utf8}",
+"                         plfile kanji code.",
+NULL };
+#endif /* PPLTOTF */
+
+#ifdef PTFTOPL
+const_string PTFTOPLHELP[] = {
+"Usage: ptftopl [option] tfmfile [plfile]",
+"",
+"  -verbose               output progress reports.",
+"  -version               print version information and exit.",
+"  -help                  print this message and exit.",
+"  -kanji={jis|euc|sjis|utf8}",
+"                         plfile kanji code.",
+NULL };
+#endif /* PTFTOPL */
 
 #if defined (TANGLE) || defined (TANGLEBOOT)
 const_string TANGLEHELP[] = {

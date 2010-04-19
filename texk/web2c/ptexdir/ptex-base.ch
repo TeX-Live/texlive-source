@@ -255,7 +255,7 @@ pseudo: if tally<trick_count then
   end;
 @z
 
-@x l.1603 - pTeX 
+@x l.1603 - pTeX
 procedure print(@!s:integer); {prints string |s|}
 label exit;
 var j:pool_pointer; {current character code position}

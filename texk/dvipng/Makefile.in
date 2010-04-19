@@ -319,7 +319,8 @@ top_srcdir = @top_srcdir@
 #
 #************************************************************************
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
-EXTRA_DIST = $(DVIPNG_TREE) $(DVIPNG_TREE)-PATCHES dvipng.test
+EXTRA_DIST = $(DVIPNG_TREE) $(DVIPNG_TREE)-PATCHES dvipng.test \
+	dvipng-test.dvi
 INCLUDES = -I$(top_srcdir)/$(DVIPNG_TREE) $(KPATHSEA_INCLUDES) \
 	$(FREETYPE2_INCLUDES) $(GD_INCLUDES) $(T1LIB_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)

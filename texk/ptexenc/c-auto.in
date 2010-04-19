@@ -11,7 +11,7 @@
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
 
-/* Default kanji encode */
+/* Default kanji encoding. */
 #undef DEFAULT_KANJI_ENC
 
 /* Define to 1 if you have the <assert.h> header file. */
@@ -150,7 +150,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define 1 if you use iconv for kanji <=> unicode conversion */
+/* Define to 1 if you use iconv for kanji <=> unicode conversion. */
 #undef KANJI_ICONV
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.

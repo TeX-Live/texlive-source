@@ -59,6 +59,10 @@ typedef void* voidpointer;
 #elif defined (Aleph)
 #define TEXMFPOOLNAME "aleph.pool"
 #define TEXMFENGINENAME "aleph"
+#elif defined (pTeX)
+#define TEXMFPOOLNAME "ptex.pool"
+#define TEXMFENGINENAME "ptex"
+#include "ptexdir/kanji.h"
 #else
 #define TEXMFPOOLNAME "tex.pool"
 #define TEXMFENGINENAME "tex"

@@ -21094,7 +21094,10 @@ _LT_EOF
 
 ## KPSE_LT_HACK: Prevent libtool from linking dependency_libs
 if test "x$enable_libtool_hack" = xyes; then
-  sed '/for search_ext in/s/ \.la / /' "$ofile" >"$cfgfile"
+  sed '/# Convert "-framework/i \
+	## KPSE_LT_HACK: ignore dependency_libs\
+	test "X$installed" = Xyes && dependency_libs=\
+' "$ofile" >"$cfgfile"
   mv "$cfgfile" "$ofile" ||
     (rm -f "$ofile" && cp "$cfgfile" "$ofile" && rm -f "$cfgfile")
   chmod +x "$ofile"
@@ -24700,7 +24703,10 @@ _LT_EOF
 
 ## KPSE_LT_HACK: Prevent libtool from linking dependency_libs
 if test "x$enable_libtool_hack" = xyes; then
-  sed '/for search_ext in/s/ \.la / /' "$ofile" >"$cfgfile"
+  sed '/# Convert "-framework/i \
+	## KPSE_LT_HACK: ignore dependency_libs\
+	test "X$installed" = Xyes && dependency_libs=\
+' "$ofile" >"$cfgfile"
   mv "$cfgfile" "$ofile" ||
     (rm -f "$ofile" && cp "$cfgfile" "$ofile" && rm -f "$cfgfile")
   chmod +x "$ofile"

@@ -4,7 +4,6 @@
 #ifndef KANJI_H
 #define KANJI_H
 #include "cpascal.h"
-#include "ptexhelp.h"
 #include <ptexenc/ptexenc.h>
 
 #define KANJI
@@ -30,13 +29,6 @@ extern integer kcatcodekey(integer c);
 #undef putc
 #define putc(c,fp) putc2(c,fp)
 #endif /* !PRESERVE_PUTC */
-
-#ifdef TeX
-#undef TEXMFPOOLNAME
-#undef TEXMFENGINENAME
-#define TEXMFPOOLNAME   "ptex.pool"
-#define TEXMFENGINENAME "ptex"
-#endif /* TeX */
 
 #ifdef MP
 #undef TEXMFPOOLNAME

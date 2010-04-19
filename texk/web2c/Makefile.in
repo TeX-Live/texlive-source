@@ -1228,15 +1228,14 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	etexdir/etrip/trip2.in etexdir/etex.mak etexdir/etex.mk \
 	$(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptexextra.in \
 	ptexdir/ptex.defines lib/texmfmp.c tmf-pool.h \
-	ptexdir/pbibtex.ch ptexdir/pbibtex.defines web2c/cvtbib.sed \
-	ptexdir/pdvitype.ch ptexdir/ppltotf.ch ptexdir/ptftopl.ch \
-	ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis ptexdir/ChangeLog \
-	ptexdir/Changes.txt ptexdir/INSTALL.txt ptexdir/README.txt \
-	$(ptex_tests) ptexdir/ptrip.diffs ptexdir/Files \
-	ptexdir/lib/openclose.c.orig ptexdir/lib/printversion.c.orig \
-	ptexdir/lib/usage.c.orig ptexdir/ptex.mk \
-	ptexdir/ptex-base.ch.orig ptexdir/reautoconf $(pdftex_ch_srcs) \
-	pdftexdir/pdftex.defines pdftexdir/pdftex.h \
+	ptexdir/pbibtex.ch web2c/cvtbib.sed ptexdir/pdvitype.ch \
+	ptexdir/ppltotf.ch ptexdir/ptftopl.ch ptexdir/COPYRIGHT \
+	ptexdir/COPYRIGHT.jis ptexdir/ChangeLog ptexdir/Changes.txt \
+	ptexdir/INSTALL.txt ptexdir/README.txt $(ptex_tests) \
+	ptexdir/ptrip.diffs ptexdir/Files ptexdir/pbibtex.defines \
+	ptexdir/ptex.mk ptexdir/ptex-base.ch.orig \
+	ptexdir/ptex-include.ch ptexdir/ptexhelp.h ptexdir/reautoconf \
+	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/pdftex.h \
 	pdftexdir/pdftexextra.in pdftexdir/ChangeLog pdftexdir/NEWS \
 	pdftexdir/README pdftexdir/change-files.txt \
 	pdftexdir/pdftex.mak pdftexdir/pdftex.mk \
@@ -1642,23 +1641,22 @@ ptex_web_srcs = \
 ptex_ch_srcs = \
 	$(ptex_ch_synctex) \
 	ptexdir/ptex-base.ch \
-	ptexdir/ptex-include.ch \
 	tex-binpool.ch
 
 nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
-pbibtex_SOURCES = ptexdir/kanji.h ptexdir/ptexhelp.h
+pbibtex_SOURCES = ptexdir/kanji.h
 pbibtex_CPPFLAGS = $(ptex_cppflags)
 pbibtex_LDADD = $(ptex_ldadd)
 nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
-pdvitype_SOURCES = ptexdir/kanji.h ptexdir/ptexhelp.h
+pdvitype_SOURCES = ptexdir/kanji.h
 pdvitype_CPPFLAGS = $(ptex_cppflags) -DDHEX_CHAR_CODE
 pdvitype_LDADD = $(ptex_ldadd)
 nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
-ppltotf_SOURCES = ptexdir/kanji.h ptexdir/ptexhelp.h
+ppltotf_SOURCES = ptexdir/kanji.h
 ppltotf_CPPFLAGS = $(ptex_cppflags) -DPRESERVE_PUTC
 ppltotf_LDADD = $(ptex_ldadd)
 nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
-ptftopl_SOURCES = ptexdir/kanji.h ptexdir/ptexhelp.h
+ptftopl_SOURCES = ptexdir/kanji.h
 ptftopl_CPPFLAGS = $(ptex_cppflags)
 ptftopl_LDADD = $(ptex_ldadd)
 
@@ -9020,7 +9018,7 @@ ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
 	$(tie) -c ptex.ch ptex.web $(ptex_ch_srcs)
 pbibtex.c pbibtex.h: pbibtex-web2c
 	$(web2c) pbibtex
-pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/pbibtex.defines web2c/cvtbib.sed
+pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/ptex.defines web2c/cvtbib.sed
 	$(web2c) pbibtex
 pbibtex.p: tangle$(EXEEXT) pbibtex.web ptexdir/pbibtex.ch
 	$(p_tangle) pbibtex pbibtex
@@ -9028,15 +9026,15 @@ pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
 	$(tie) -m pbibtex.web bibtex.web bibtex.ch
 pdvitype.c pdvitype.h: pdvitype-web2c
 	$(web2c) pdvitype
-pdvitype-web2c: pdvitype.p $(web2c_depend)
+pdvitype-web2c: pdvitype.p $(web2c_depend) ptexdir/ptex.defines
 	$(web2c) pdvitype
 pdvitype.p: tangle$(EXEEXT) pdvitype.web ptexdir/pdvitype.ch
 	$(p_tangle) pdvitype pdvitype
-pdvitype.web: $(srcdir)/dvitype.web
-	$(LN_S) $(srcdir)/dvitype.web $@
+pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
+	$(tie) -m pdvitype.web dvitype.web dvitype.ch
 ppltotf.c ppltotf.h: ppltotf-web2c
 	$(web2c) ppltotf
-ppltotf-web2c: ppltotf.p $(web2c_depend)
+ppltotf-web2c: ppltotf.p $(web2c_depend) ptexdir/ptex.defines
 	$(web2c) ppltotf
 ppltotf.p: tangle$(EXEEXT) ppltotf.web ptexdir/ppltotf.ch
 	$(p_tangle) ppltotf ppltotf
@@ -9044,7 +9042,7 @@ ppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
 	$(tie) -m ppltotf.web pltotf.web pltotf.ch
 ptftopl.c ptftopl.h: ptftopl-web2c
 	$(web2c) ptftopl
-ptftopl-web2c: ptftopl.p $(web2c_depend)
+ptftopl-web2c: ptftopl.p $(web2c_depend) ptexdir/ptex.defines
 	$(web2c) ptftopl
 ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
 	$(p_tangle) ptftopl ptftopl

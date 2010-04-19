@@ -91,7 +91,7 @@ static int UCS2toJISnative(int ucs2)
 
 #else /* KANJI_ICONV && HAVE_ICONV_H */
 
-#include "../../libs/gd/gd-2.0.35/jisx0208.h"
+#include "jisx0208.h"
 #define MAXJIS 84
 
 /* convert a JIS X 0208 char to UCS-2 */

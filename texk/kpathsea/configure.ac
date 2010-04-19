@@ -34,7 +34,6 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 AC_SUBST([KPSEVERSION], [kpse_version])
 AC_DEFINE([KPSEVERSION], ["kpathsea version kpse_version"])
-AC_SUBST([KPSE_LT_VERSNUM], [kpse_lib_major:kpse_lib_minor:kpse_lib_micro])
 AC_SUBST([KPSE_LT_VERSINFO], [m4_eval(kpse_lib_major+kpse_lib_minor):kpse_lib_micro:kpse_lib_minor])
 
 dnl Common code for all programs using libkpathsea.

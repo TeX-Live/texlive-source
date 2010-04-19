@@ -115,7 +115,7 @@ endif have_gif
 TESTS = dvipng.test
 TESTS_ENVIRONMENT = DVIPNG_TREE='$(DVIPNG_TREE)'
 
-EXTRA_DIST += dvipng.test
+EXTRA_DIST += dvipng.test dvipng-test.dvi
 
 CLEANFILES = missfont.log test_dvipng.aux test_dvipng.dvi test_dvipng.log test_dvipng*.png
 

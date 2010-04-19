@@ -1,6 +1,15 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* jisx0208.h (new): Copy of ../../libs/gd/gd-2.0.35/jisx0208.h.
+	* Makefile.am, unicode-jp.c: Adjusted.
+
+2010-04-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Version 1.1.1 (dev).
+
 2010-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid compiler warnings.

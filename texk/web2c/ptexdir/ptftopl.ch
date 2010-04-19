@@ -73,9 +73,11 @@ else if lf=tate_id_byte then
   write_ln(pl_file,'(COMMENT THIS IS A KANJI FORMAT FILE)');
   write_ln(pl_file,'(DIRECTION TATE)');
   end
-else  begin file_format:=tfm_format; nt:=0; tmp_ptr:=2;
-  end;
-if file_format<>tfm_format then
+else file_format:=tfm_format;
+if file_format=tfm_format then
+  begin nt:=0; tmp_ptr:=2;
+  end
+else
   begin if eof(tfm_file) then abort('The input file is only two bytes long!');
   read(tfm_file,tfm[2]);
   if eof(tfm_file) then abort('The input file is only three bytes long!');
@@ -281,7 +283,7 @@ else if width_index(c)>0 then
   if file_format<>tfm_format then
     begin out('TYPE'); tfm[0]:=c; out_octal(0,1);
     end
-  else 
+  else
     begin out('CHARACTER'); out_char(c);
     end;
   out_ln;
@@ -363,7 +365,7 @@ begin
 @x
       usage_help (TFTOPL_HELP, nil);
 @y
-      usage_help (PTEX_TFTOPL_HELP, nil);
+      usage_help (PTFTOPL_HELP, nil);
 @z
 @x
     end else if argument_is ('version') then begin

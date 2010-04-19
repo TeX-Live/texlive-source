@@ -49,16 +49,19 @@ output="> $cfile"
 output_files="$cfile $basefile.h"
 
 case $basefile in
-  bibtex)
+  bibtex|pbibtex)
     midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
     ;;
+esac
 
-  pbibtex)
-    midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
-    more_defines="$srcdir/ptexdir/pbibtex.defines"
+case $basefile in
+  pbibtex|pdvitype|ppltotf|ptftopl)
+    more_defines="$srcdir/ptexdir/ptex.defines"
     hfile=ptexdir/kanji.h
     ;;
+esac
 
+case $basefile in
   mf)
     more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
     precmd="| sed -f $srcdir/web2c/cvtmf1.sed"
@@ -69,7 +72,7 @@ case $basefile in
     cfile=${basefile}0.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
-${basefile}coerce.h"
+                  ${basefile}coerce.h"
     ;;
 
   tex|etex|pdftex|aleph|xetex|ptex)
@@ -86,27 +89,6 @@ ${basefile}coerce.h"
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
                   ${basefile}coerce.h"
-    ;;
-
-  luatex)
-    more_defines="$srcdir/web2c/texmf.defines"
-    prog_defines="$srcdir/${basefile}dir/$basefile.defines"
-    if test -f $prog_defines; then
-      more_defines="$more_defines $prog_defines"
-    fi
-    web2c_options="-t -c${basefile}coerce"
-    hfile=texmfmp.h
-    fixwrites_options=-t
-    postcmd="| ./web2c/splitup $splitup_options ${basefile}"
-    cfile=${basefile}0.c # last output file, or thereabouts
-    output=
-    output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
-                 ${basefile}coerce.h"
-    ;;
-
-  ptftopl|ppltotf|pdvitype)
-    more_defines="$srcdir/ptexdir/ptex.defines"
-    hfile=ptexdir/kanji.h
     ;;
 esac
 

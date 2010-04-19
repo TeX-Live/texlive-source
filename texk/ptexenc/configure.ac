@@ -37,41 +37,41 @@ AC_DEFINE([PTEXENCVERSION], ["ptexenc version ptexenc_version"])
 AC_SUBST([PTEXENC_LT_VERSINFO],
          [m4_eval(ptexenc_lib_major+ptexenc_lib_minor):ptexenc_lib_micro:ptexenc_lib_minor])
 
-dnl Common code for all programs using libptexenc.
+dnl Common code for all programs (or libraries) using libkpathsea.
 KPSE_COMMON([ptexenc])
 
 KPSE_KPATHSEA_FLAGS
 
-dnl withenable.ac: --with and --enable options.
-AC_MSG_CHECKING([default pTeX character encoding])
+dnl Default pTeX character encoding.
 AC_ARG_WITH([ptexenc-enc],
-[  --with-ptexenc-enc=ENC       Default pTeX character encoding
-                           (ENC=JIS/EUC/SJIS/UTF8, default UTF8)],
-[case $withval in
-      jis|JIS) PTEXENC=ENC_JIS;;
-      euc|EUC) PTEXENC=ENC_EUC;;
-    sjis|SJIS) PTEXENC=ENC_SJIS;;
-    utf8|UTF8) PTEXENC=ENC_UTF8;;
-            *) PTEXENC=ENC_UTF8;
-	       AC_MSG_WARN([Unknown --with-ptexenc-enc argument \`$withval';]);;
- esac; AC_MSG_RESULT([$PTEXENC])
- AC_DEFINE_UNQUOTED([DEFAULT_KANJI_ENC],[$PTEXENC],[Default kanji encode])],
- [AC_MSG_RESULT([ENC_UTF8])
- AC_DEFINE_UNQUOTED([DEFAULT_KANJI_ENC],[ENC_UTF8],[Default kanji encode])])
+            AS_HELP_STRING([--with-ptexenc-enc=ENC],
+                           [Default pTeX character encoding
+                            (ENC=JIS/EUC/SJIS/UTF8, default UTF8)]))
+AC_MSG_CHECKING([default pTeX character encoding])
+AS_CASE([$with_ptexenc_enc],
+        [jis|JIS], [DEFAULT_KANJI_ENC=ENC_JIS],
+        [euc|EUC], [DEFAULT_KANJI_ENC=ENC_EUC],
+        [sjis|SJIS], [DEFAULT_KANJI_ENC=ENC_SJIS],
+        [''|utf8|UTF8], [DEFAULT_KANJI_ENC=ENC_UTF8],
+            [DEFAULT_KANJI_ENC=ENC_UTF8
+             AC_MSG_WARN([Unknown character encoding \`$with_ptexenc_enc'])])
+AC_MSG_RESULT([$DEFAULT_KANJI_ENC])
+AC_DEFINE_UNQUOTED([DEFAULT_KANJI_ENC], [$DEFAULT_KANJI_ENC],
+                   [Default kanji encoding.])
 
+dnl Using iconv for kanji <=> unicode conversion
 AC_ARG_ENABLE([kanji-iconv],
-[  --enable-kanji-iconv     use iconv for kanji <=> unicode conversion],
-   , [enable_kanji_iconv=no])
+              AS_HELP_STRING([--enable-kanji-iconv],
+                             [Use iconv for kanji <=> unicode conversion]))
 
 if test "x$enable_kanji_iconv" = "xyes"; then
 AC_DEFINE([KANJI_ICONV], 1,
- [Define 1 if you use iconv for kanji <=> unicode conversion])
+          [Define to 1 if you use iconv for kanji <=> unicode conversion.])
 AC_CHECK_LIB([iconv], [iconv_open], ,[AC_CHECK_LIB([iconv], [libiconv_open])])
 AC_CHECK_HEADERS([iconv.h])
 AC_CHECK_FUNCS([iconv])
 AC_CHECK_FUNCS([atexit on_exit], [break])
 fi
-
 
 dnl Write output here, instead of putting a zillion -D's on the command line.
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in],

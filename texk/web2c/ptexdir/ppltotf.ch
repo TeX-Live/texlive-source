@@ -26,19 +26,11 @@
   print_ln ('.');
 @z
 
-@x
-@d char == 0..255
-@d first_ord=0 {ordinal number of the smallest element of |char|}
-@y
-@d uchar == 0..255
-@d first_ord=0 {ordinal number of the smallest element of |char|}
-@z
-
 @x [18] l.495 - pTeX:
 @!xord:array[char] of ASCII_code; {conversion table}
 @y
-@!xord:array[uchar] of ASCII_code; {conversion table}
-@!xchr:array[uchar] of byte; {specifiles conversion of output character}
+@!xord:array[char] of ASCII_code; {conversion table}
+@!xchr:array[char] of byte; {specifiles conversion of output character}
 @z
 
 @x [19] l.506 - pTeX:
@@ -376,7 +368,7 @@ begin
 @x
       usage_help (PLTOTF_HELP, nil);
 @y
-      usage_help (PTEX_PLTOTF_HELP, nil);
+      usage_help (PPLTOTF_HELP, nil);
 @z
 @x
     end else if argument_is ('version') then begin
@@ -659,10 +651,12 @@ if multistrlen(buffer,loc+2,loc)=2 then cur_char:=" "
 else cur_char:=xord[buffer[loc]];
 end;
 @#
-function todig(@!ch:char):byte; {convert character to number}
+function todig(@!ch:byte):byte; {convert character to number}
 begin if (ch>="A")and(ch<="F") then todig:=ch-"A"+10
 else if (ch>="0")and(ch<="9") then todig:=ch-"0"
-else skip_error('This expression is out of JIS-code encoding.');
+else  begin skip_error('This expression is out of JIS-code encoding.');
+  todig:=0;
+  end;
 end;
 @#
 procedure print_jis_hex(jis_code:integer); {prints jiscode as four digits}

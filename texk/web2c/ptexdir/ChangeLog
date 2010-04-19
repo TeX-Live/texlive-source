@@ -1,3 +1,30 @@
+2010-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ppltotf.ch: Rename PTEX_PLTOTF_HELP => PPLTOTF_HELP.
+	* ptftopl.ch: Rename PTEX_TFTOPL_HELP => PTFTOPL_HELP.
+	* ptexhelp.h (removed): Help text now in ../help.h.
+	* kanji.h: Remove #include "ptexhelp.h" and redefinition of
+	TEXMFPOOLNAME and TEXMFENGINENAME.
+
+	* ptexextra.in (PTEXHELP): Moved to ../texmfmp-help.h from here.
+
+	* ptex.defines (inputline3): Moved from pbibtex.defines to here.
+	(PTEXTFTOPLHELP, PTEXPLTOTFHELP, PDVITYPEHELP): Removed.
+	* pbibtex.defines (removed): Using ptex.defines.
+	* ptex-include.ch (removed): Now done in ../texmfmp.h.
+
+	* am/ptex.am: Adjusted.
+
+2010-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdvitype.ch: New version, used on top of dvitype.ch.
+	* ptftopl.ch, ptex-base.ch: Remove trailing whitespace.
+
+	Avoid compiler warnings.
+	* ptftopl.ch (organize): Slightly reformulate (uninitialized).
+	* ppltotf.ch: Handle Pascal Web's char as in ../pltotf.ch.
+	(todig): Change param type to byte. Don't return uninitialized.
+
 2010-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pbibtex.ch, ptex-base.ch, ptftopl.ch: Use conststringcast, not

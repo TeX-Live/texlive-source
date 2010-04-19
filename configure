@@ -19238,6 +19238,10 @@ elif test "x$need_icu:$with_system_icu" = xyes:yes; then
 fi
 
 
+
+
+
+
 ## texk/kpathsea/ac/kpathsea.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
 ## basic check of system kpathsea
 if test "x$need_kpathsea:$with_system_kpathsea" = xyes:yes; then
@@ -20786,6 +20790,7 @@ fi
 
 
 
+enable_libtool_hack='$enable_libtool_hack'
 
 
 
@@ -22120,6 +22125,16 @@ compiler_lib_search_path=$lt_compiler_lib_search_path_CXX
 # ### END LIBTOOL TAG CONFIG: CXX
 _LT_EOF
 
+## KPSE_LT_HACK: Prevent libtool from linking dependency_libs
+if test "x$enable_libtool_hack" = xyes; then
+  sed '/# Convert "-framework/i \
+	## KPSE_LT_HACK: ignore dependency_libs\
+	test "X$installed" = Xyes && dependency_libs=\
+' "$ofile" >"$cfgfile"
+  mv "$cfgfile" "$ofile" ||
+    (rm -f "$ofile" && cp "$cfgfile" "$ofile" && rm -f "$cfgfile")
+  chmod +x "$ofile"
+fi
  ;;
 
   esac

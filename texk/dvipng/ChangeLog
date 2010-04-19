@@ -1,3 +1,7 @@
+2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Add dvipng-test.dvi.
+
 2010-04-18  Karl Berry  <karl@tug.org>
 
 	* dvipng.test: do not run latex.

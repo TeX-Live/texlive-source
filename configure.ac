@@ -123,6 +123,7 @@ KPSE_SAVE_FLAGS
 syslib_status=yes
 syslib_used=no
 KPSE_ALL_SYSTEM_FLAGS
+KPSE_LT_HACK
 KPSE_FOR_PKGS([sys_texk], [m4_sinclude([texk/]Kpse_Pkg[/ac/]Kpse_Pkg[.ac])])[]dnl
 KPSE_FOR_PKGS([sys_libs], [m4_sinclude([libs/]Kpse_Pkg[/ac/]Kpse_Pkg[.ac])])[]dnl
 if test "x$syslib_status" = xno; then

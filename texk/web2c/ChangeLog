@@ -1,3 +1,11 @@
+2010-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* help.h (PBIBTEXHELP, PDVITYPEHELP, PPLTOTFHELP, PTFTOPLHELP):
+	Moved from from ptexdir/ptexhelp.h.
+	* texmfmp-help.h (PTEXHELP): Moved from ptexdir/ptexextra.in.
+	* texmfmp.h [PTEX]: Define TEXMFPOOLNAME and TEXMFENGINENAME, and
+	#include "ptexdir/kanji.h".
+
 2010-04-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Removed LT_LIB_DLLOAD, added check for dlfcn.h.

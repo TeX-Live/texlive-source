@@ -1,3 +1,7 @@
+2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmf.cnf (max_strings.pbibtex): New defn.
+
 2010-04-15  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (format_abbr_type): new type.

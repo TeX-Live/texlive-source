@@ -18,7 +18,9 @@ libptexenc_la_CPPFLAGS = -DMAKE_KPSE_DLL
 
 libptexenc_la_LDFLAGS = -version-info $(PTEXENC_LT_VERSINFO)
 
-libptexenc_la_SOURCES = kanjicnv.c ptexenc.c unicode-jp.c unicode.c
+# Note: jisx0208.h is a copy of ../../libs/gd/gd-2.0.35/jisx0208.h.
+#
+libptexenc_la_SOURCES = jisx0208.h kanjicnv.c ptexenc.c unicode-jp.c unicode.c
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@

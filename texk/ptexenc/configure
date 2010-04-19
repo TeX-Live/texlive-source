@@ -1524,7 +1524,7 @@ Optional Features:
   --enable-compiler-warnings=[no|min|yes|max|all]
                           Turn on compiler warnings [default: yes if
                           maintainer-mode, min otherwise]
-  --enable-kanji-iconv     use iconv for kanji <=> unicode conversion
+  --enable-kanji-iconv    Use iconv for kanji <=> unicode conversion
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -1537,8 +1537,8 @@ Optional Packages:
                           kpathsea headers installed in DIR
   --with-kpathsea-libdir=DIR
                           kpathsea library installed in DIR
-  --with-ptexenc-enc=ENC       Default pTeX character encoding
-                           (ENC=JIS/EUC/SJIS/UTF8, default UTF8)
+  --with-ptexenc-enc=ENC  Default pTeX character encoding
+                          (ENC=JIS/EUC/SJIS/UTF8, default UTF8)
 
 Some influential environment variables:
   CC          C compiler command
@@ -13218,42 +13218,39 @@ if test "x$kpse_cv_kpse_debug" != xyes; then :
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking default pTeX character encoding" >&5
-$as_echo_n "checking default pTeX character encoding... " >&6; }
 
 # Check whether --with-ptexenc-enc was given.
 if test "${with_ptexenc_enc+set}" = set; then :
-  withval=$with_ptexenc_enc; case $withval in
-      jis|JIS) PTEXENC=ENC_JIS;;
-      euc|EUC) PTEXENC=ENC_EUC;;
-    sjis|SJIS) PTEXENC=ENC_SJIS;;
-    utf8|UTF8) PTEXENC=ENC_UTF8;;
-            *) PTEXENC=ENC_UTF8;
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Unknown --with-ptexenc-enc argument \`$withval';" >&5
-$as_echo "$as_me: WARNING: Unknown --with-ptexenc-enc argument \`$withval';" >&2;};;
- esac; { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PTEXENC" >&5
-$as_echo "$PTEXENC" >&6; }
-
-cat >>confdefs.h <<_ACEOF
-#define DEFAULT_KANJI_ENC $PTEXENC
-_ACEOF
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: ENC_UTF8" >&5
-$as_echo "ENC_UTF8" >&6; }
-
-cat >>confdefs.h <<_ACEOF
-#define DEFAULT_KANJI_ENC ENC_UTF8
-_ACEOF
-
+  withval=$with_ptexenc_enc;
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking default pTeX character encoding" >&5
+$as_echo_n "checking default pTeX character encoding... " >&6; }
+case $with_ptexenc_enc in #(
+  jis|JIS) :
+    DEFAULT_KANJI_ENC=ENC_JIS ;; #(
+  euc|EUC) :
+    DEFAULT_KANJI_ENC=ENC_EUC ;; #(
+  sjis|SJIS) :
+    DEFAULT_KANJI_ENC=ENC_SJIS ;; #(
+  ''|utf8|UTF8) :
+    DEFAULT_KANJI_ENC=ENC_UTF8 ;; #(
+  *) :
+    DEFAULT_KANJI_ENC=ENC_UTF8
+             { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Unknown character encoding \`$with_ptexenc_enc'" >&5
+$as_echo "$as_me: WARNING: Unknown character encoding \`$with_ptexenc_enc'" >&2;} ;;
+esac
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $DEFAULT_KANJI_ENC" >&5
+$as_echo "$DEFAULT_KANJI_ENC" >&6; }
+
+cat >>confdefs.h <<_ACEOF
+#define DEFAULT_KANJI_ENC $DEFAULT_KANJI_ENC
+_ACEOF
 
 
 # Check whether --enable-kanji-iconv was given.
 if test "${enable_kanji_iconv+set}" = set; then :
   enableval=$enable_kanji_iconv;
-else
-  enable_kanji_iconv=no
 fi
 
 
@@ -13389,7 +13386,6 @@ fi
 done
 
 fi
-
 
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
