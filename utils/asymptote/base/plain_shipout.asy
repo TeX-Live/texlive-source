@@ -2,9 +2,7 @@
 string defaultfilename;
 
 string outprefix(string prefix=defaultfilename) {
-  string s=prefix != "" ? prefix :
-    (settings.outname == "" && interactive()) ? "out" : settings.outname;
-  return stripextension(s);
+  return stripextension(prefix != "" ? prefix : outname());
 }
 
 string outformat(string format="") 
@@ -13,7 +11,6 @@ string outformat(string format="")
   if(format == "") format=nativeformat();
   return format;
 }
-
 
 bool shipped; // Was a picture or frame already shipped out?
 

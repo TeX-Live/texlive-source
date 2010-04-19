@@ -49,12 +49,14 @@ array *copyArray(array *a);
 array *copyArray2(array *a);
 array *copyArray3(array *a);
 
-double *copyArrayC(const array *a, size_t dim=0);
-double *copyArray2C(const array *a, bool square=true, size_t dim2=0);
+double *copyArrayC(const array *a, size_t dim=0, GCPlacement placement=NoGC);
+double *copyArray2C(const array *a, bool square=true, size_t dim2=0,
+                    GCPlacement placement=NoGC);
 
 triple *copyTripleArrayC(const array *a, size_t dim=0);
 triple *copyTripleArray2C(const array *a, bool square=true, size_t dim2=0);
-double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0);
+double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0,
+                                   GCPlacement placement=NoGC);
 }
 
 function *realRealFunction();
@@ -560,31 +562,31 @@ void readSet(stack *Stack)
 
 // Delete file named s.
 #line 330 "runfile.in"
-// Int delete(string *s);
+// Int delete(string s);
 void gen_runfile45(stack *Stack)
 {
-  string * s=vm::pop<string *>(Stack);
+  string s=vm::pop<string>(Stack);
 #line 331 "runfile.in"
-  checkLocal(*s);
-  Int rc=unlink(s->c_str());
+  s=outpath(s);
+  Int rc=unlink(s.c_str());
   if(rc == 0 && verbose > 0) 
-    cout << "Deleted " << *s << endl;
+    cout << "Deleted " << s << endl;
   {Stack->push<Int>(rc); return;}
 }
 
 // Rename file "from" to file "to".
 #line 340 "runfile.in"
-// Int rename(string *from, string *to);
+// Int rename(string from, string to);
 void gen_runfile46(stack *Stack)
 {
-  string * to=vm::pop<string *>(Stack);
-  string * from=vm::pop<string *>(Stack);
+  string to=vm::pop<string>(Stack);
+  string from=vm::pop<string>(Stack);
 #line 341 "runfile.in"
-  checkLocal(*from);
-  checkLocal(*to);
-  Int rc=rename(from->c_str(),to->c_str());
+  from=outpath(from);
+  to=outpath(to);
+  Int rc=rename(from.c_str(),to.c_str());
   if(rc == 0 && verbose > 0) 
-    cout << "Renamed " << *from << " to " << *to << endl;
+    cout << "Renamed " << from << " to " << to << endl;
   {Stack->push<Int>(rc); return;}
 }
 
@@ -685,9 +687,9 @@ void gen_runfile_venv(venv &ve)
 #line 324 "runfile.in"
   REGISTER_BLTIN(run::readSet,"readSet");
 #line 329 "runfile.in"
-  addFunc(ve, run::gen_runfile45, primInt(), "delete", formal(primString(), "s", false, false));
+  addFunc(ve, run::gen_runfile45, primInt(), "delete", formal(primString() , "s", false, false));
 #line 339 "runfile.in"
-  addFunc(ve, run::gen_runfile46, primInt(), "rename", formal(primString(), "from", false, false), formal(primString(), "to", false, false));
+  addFunc(ve, run::gen_runfile46, primInt(), "rename", formal(primString() , "from", false, false), formal(primString() , "to", false, false));
 }
 
 } // namespace trans

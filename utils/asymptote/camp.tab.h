@@ -1,24 +1,23 @@
-/* A Bison parser, made by GNU Bison 2.3.  */
+
+/* A Bison parser, made by GNU Bison 2.4.1.  */
 
 /* Skeleton interface for Bison's Yacc-like parsers in C
-
-   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+   
+      Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
    Free Software Foundation, Inc.
-
-   This program is free software; you can redistribute it and/or modify
+   
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-
+   
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -29,9 +28,10 @@
    special exception, which will cause the skeleton and the resulting
    Bison output files to be licensed under the GNU General Public
    License without this special exception.
-
+   
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
+
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -102,76 +102,16 @@
      EXP_IN_PARENS_RULE = 318
    };
 #endif
-/* Tokens.  */
-#define ID 258
-#define ADD 259
-#define SUBTRACT 260
-#define TIMES 261
-#define DIVIDE 262
-#define MOD 263
-#define EXPONENT 264
-#define DOTS 265
-#define COLONS 266
-#define DASHES 267
-#define INCR 268
-#define LONGDASH 269
-#define CONTROLS 270
-#define TENSION 271
-#define ATLEAST 272
-#define CURL 273
-#define COR 274
-#define CAND 275
-#define BAR 276
-#define AMPERSAND 277
-#define EQ 278
-#define NEQ 279
-#define LT 280
-#define LE 281
-#define GT 282
-#define GE 283
-#define CARETS 284
-#define LOGNOT 285
-#define OPERATOR 286
-#define STRING 287
-#define LOOSE 288
-#define ASSIGN 289
-#define DIRTAG 290
-#define JOIN_PREC 291
-#define AND 292
-#define ELLIPSIS 293
-#define ACCESS 294
-#define UNRAVEL 295
-#define IMPORT 296
-#define INCLUDE 297
-#define FROM 298
-#define QUOTE 299
-#define STRUCT 300
-#define TYPEDEF 301
-#define NEW 302
-#define IF 303
-#define ELSE 304
-#define WHILE 305
-#define DO 306
-#define FOR 307
-#define BREAK 308
-#define CONTINUE 309
-#define RETURN_ 310
-#define THIS 311
-#define EXPLICIT 312
-#define GARBAGE 313
-#define LIT 314
-#define PERM 315
-#define MODIFIER 316
-#define UNARY 317
-#define EXP_IN_PARENS_RULE 318
-
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 46 "camp.y"
 {
+
+/* Line 1676 of yacc.c  */
+#line 46 "camp.y"
+
   position pos;
   bool boo;
   struct {
@@ -215,14 +155,17 @@ typedef union YYSTYPE
   //absyntax::funheader *fh;
   absyntax::formal *fl;
   absyntax::formals *fls;
-}
-/* Line 1489 of yacc.c.  */
-#line 221 "camp.tab.h"
-	YYSTYPE;
+
+
+
+/* Line 1676 of yacc.c  */
+#line 163 "camp.tab.h"
+} YYSTYPE;
+# define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
-# define YYSTYPE_IS_TRIVIAL 1
 #endif
 
 extern YYSTYPE yylval;
+
 

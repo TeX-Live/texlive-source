@@ -1,3 +1,72 @@
+Release Notes for Version 1.93
+
+Portability issues were addressed. Latticeshading bounds and behaviour
+under svgemulation were fixed. The initial SVG pen was fixed.
+A parallelogram block was added to the flowchart module.
+Temporary files are cleaned up even after TeX errors. The GUI export
+function was fixed; an SVG export option was added. The XeLaTex bounding
+box was fixed. Spaces in output directory names are now allowed for
+supporting drivers. One can cd to other directories, preserving the output
+directory. All output files are written to the directory part of
+settings.outname; if this is empty, the current directory is used.
+
+Release Notes for Version 1.92
+
+Labels work correctly with oblique projections. Transformed Label
+alignment and pt scalings were fixed. Latticeshading is now properly clipped.
+The normal and true Circle calculations were fixed. The interface to the
+simpson integrator and an array index in contour.asy were fixed. In the
+flowchart module, the implicit cast from a pair to a virtual node was
+removed in favour of a block constructor. The ode integrationg routines now
+return a structure that includes the sampled time values; dynamic
+timestepping was implemented for solveBVP. New predefined tick modifiers
+were added. The CLZ and CTZ bit functions were implemented. PRC part names
+were fixed. The GL library is now explicitly linked. Memory usage was
+improved by configuring the garbage collector with --enable-large-config.
+Null 3D paths are ignored. Non-pdf output is supported for PDF tex engines.
+Portability changes for CYGWIN 1.7 were made.
+
+Release Notes for Version 1.91
+
+The precision of the 3D perspective sizing routines were improved.  The
+offset in transformed 3D labels with render=0 was fixed. 3D planar
+arrowhead gaps were fixed; a duplicate 3D arrow angle factor was removed.
+Pen width contributions to the box and ellipse envelopes were fixed. A more
+robust contour algorithm based on paraboloid approximation was implemented.
+A polargraph routine for arrays was implemented. Default font problems were
+fixed. The pdfborder={0 0 0} option was added to settings.hyperrefOptions;
+the hypersetup command is now used to avoid hyperref option clashes.  The
+size of pngalpha images was fixed; the pngalpha driver is used only if
+antialias=2. The -alpha Off default convert option was removed in favour of
+convertOptions="-alpha Off". Inlinetex support for xelatex was updated.
+Picture transformations are now respected by latticeshade. The Bessel
+functions J and Y were renamed to Jn and Yn. An operator --(block, block)
+was implemented to simplify the flowchart syntax. The expression % expands
+to the last result returned at the interactive prompt. The GLU-1.3 library
+included in the MSWindows distribution was fixed.
+
+Release Notes for Version 1.90
+
+SVG axial, radial, and emulated tensor-patch shading were fixed; the
+dependency on dvisvgm-0.8.7 was documented.
+
+Release Notes for Version 1.89
+
+The draw, fill, and clip commands now pass raw SVG code directly to dvisvgm
+(version 0.8.6 required); zero-length paths are output as circles.
+Unsupported SVG elements are converted to PNG images; unimplemented SVG
+features such as Gouraud and tensor-patch shading can be (partially)
+emulated as vector elements using the -svgemulation option.
+The control point normalization of rational NURBS surfaces was fixed;
+3D NURBS curves are now implemented. A problem with inlinemovie3 was fixed.
+The linetype pattern is now a real array: for backwards compatibility, a
+string is still accepted, but the return type of linetype(pen) is now
+real[] instead of string (backwards incompatible). The split routine was
+changed so that an empty delimiter splits on spaces, discarding duplicates.
+The palette routines are now guaranteed to generate at least the
+specified number of colours. PNG output produces a transparent background.
+Surface and path3 garbage collection was fixed.
+
 Release Notes for Version 1.88
 
 Compilation without OpenGL was fixed. PRC billboard labels were

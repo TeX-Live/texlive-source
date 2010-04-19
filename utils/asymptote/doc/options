@@ -30,7 +30,6 @@ Options (negate by replacing - with -no):
 -gray                 Convert all colors to grayscale [false]
 -h,-help              Show summary of options; command-line only
 -historylines n       Retain n lines of history [1000]
--hyperrefOptions str  LaTeX hyperref package options [setpagesize=false,unicode]
 -iconify              Iconify rendering window [false]
 -inlineimage          Generate inline embedded image [false]
 -inlinetex            Generate inline TeX code [false]
@@ -67,6 +66,7 @@ Options (negate by replacing - with -no):
 -safe                 Disable system call [true]
 -scroll n             Scroll standard output n lines at a time [0]
 -spinstep deg/sec     Spin speed [60]
+-svgemulation         Emulate unimplemented SVG shading [false]
 -tabcompletion        Interactive prompt auto-completion [true]
 -tex engine           latex|pdflatex|xelatex|tex|pdftex|context|none [latex]
 -thick                Render thick 3D lines [true]

@@ -127,10 +127,11 @@ inline size_t checkdimension(const array *a, size_t dim)
   return size;
 }
 
-double *copyArrayC(const array *a, size_t dim)
+double *copyArrayC(const array *a, size_t dim, GCPlacement placement)
 {
   size_t size=checkdimension(a,dim);
-  double *c=new double[size];
+  double *c=(placement == NoGC) ? new double [size] : 
+    new(placement) double[size];
   for(size_t i=0; i < size; i++) 
     c[i]=read<double>(a,i);
   return c;
@@ -181,7 +182,8 @@ array *copyArray3(array *a)
   return c;
 }
 
-double *copyArray2C(const array *a, bool square, size_t dim2)
+double *copyArray2C(const array *a, bool square, size_t dim2,
+                    GCPlacement placement)
 {
   size_t n=checkArray(a);
   size_t m=(square || n == 0) ? n : checkArray(read<array*>(a,0));
@@ -191,7 +193,7 @@ double *copyArray2C(const array *a, bool square, size_t dim2)
     error(buf);
   }
   
-  double *c=new double[n*m];
+  double *c=(placement == NoGC) ? new double [n*m] : new(placement) double[n*m];
   for(size_t i=0; i < n; i++) {
     array *ai=read<array*>(a,i);
     size_t aisize=checkArray(ai);
@@ -229,7 +231,8 @@ triple *copyTripleArray2C(const array *a, bool square, size_t dim2)
   return c;
 }
 
-double *copyTripleArray2Components(array *a, bool square, size_t dim2)
+double *copyTripleArray2Components(array *a, bool square, size_t dim2,
+                                   GCPlacement placement)
 {
   size_t n=checkArray(a);
   size_t m=(square || n == 0) ? n : checkArray(read<array*>(a,0));
@@ -240,7 +243,8 @@ double *copyTripleArray2Components(array *a, bool square, size_t dim2)
   }
   
   size_t nm=n*m;
-  double *cx=new double[3*nm];
+  double *cx=(placement == NoGC) ? new double [3*nm] :
+    new(placement) double[3*nm];
   double *cy=cx+nm;
   double *cz=cx+2*nm;
   for(size_t i=0; i < n; i++) {
@@ -1658,7 +1662,7 @@ real simpson(callableReal *f, real a, real b, real acc=DBL_EPSILON,
              real dxmax=0)
 {
   real integral;
-  if(dxmax == 0) dxmax=b-a;
+  if(dxmax <= 0) dxmax=fabs(b-a);
   Func=f;
   FuncStack=Stack;
   if(!simpson(integral,wrapFunction,a,b,acc,dxmax))
@@ -1667,13 +1671,13 @@ real simpson(callableReal *f, real a, real b, real acc=DBL_EPSILON,
 }
 
 // Compute the fast Fourier transform of a pair array
-pairarray* :pairArrayFFT(pairarray *a, Int sign=1)
+pairarray* fft(pairarray *a, Int sign=1)
 {
   unsigned n=(unsigned) checkArray(a);
 #ifdef HAVE_LIBFFTW3
   array *c=new array(n);
   if(n) {
-    Complex *f=FFTWComplex(n);
+    Complex *f=ComplexAlign(n);
     fft1d Forward(n,intcast(sign),f);
   
     for(size_t i=0; i < n; i++) {
@@ -1686,12 +1690,13 @@ pairarray* :pairArrayFFT(pairarray *a, Int sign=1)
       Complex z=f[i];
       (*c)[i]=pair(z.real(),z.imag());
     }
-    FFTWdelete(f);
+    deleteAlign(f);
   }
 #else
   unused(&n);
   unused(&sign);
   array *c=new array(0);
+  error("Please install fftw3, run ./configure, and recompile");
 #endif //  HAVE_LIBFFTW3
   return c;
 }
@@ -1836,7 +1841,7 @@ pair maxratio(triplearray2 *P, pair b)
 
 realarray *_projection()
 {
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
   array *a=new array(14);
   gl::projection P=gl::camera();
   size_t k=0;

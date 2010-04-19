@@ -5,10 +5,10 @@ You may freely use, modify and/or distribute this file.
 Extra utilities we (optionally) compile for TeX Live.
 See comments in ../texk/README.
 
-asymptote 1.88 - checked 2oct09
+asymptote 1.93 - checked 20apr10
   update to TL from CTAN, to include prebuilt doc.
   see http://tug.org/texlive/build.html#asymptote
-  and tlpkg/bin/tl-update/asy
+  and tlpkg/bin/tl-update-asy
 
 dialog 1.1-20100119 - checked 21jan10
   ftp://invisible-island.net/dialog/dialog.tar.gz

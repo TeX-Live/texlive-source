@@ -38,6 +38,15 @@ bool polygon(path p)
   return cyclic(p) && piecewisestraight(p);
 }
 
+// Return the intersection time of the point on the line through p and q
+// that is closest to z.
+real intersect(pair p, pair q, pair z)
+{
+  pair u=q-p;
+  real denom=dot(u,u);
+  return denom == 0 ? infinity : dot(z-p,u)/denom;
+}
+
 // Return the intersection time of the extension of the line segment PQ
 // with the plane perpendicular to n and passing through Z.
 real intersect(triple P, triple Q, triple n, triple Z)
@@ -183,6 +192,30 @@ real[][] operator *(real b, real[][] a)
 real[][] operator /(real[][] a, real b)
 {
   return a*(1/b);
+}
+
+private string incommensurate=
+  "Multiplication of incommensurate matrices is undefined";
+
+pair[][] operator * (pair[][] a, pair[][] b)
+{
+  int n=a.length;
+  int nb=b.length;
+  int nb0=b[0].length;
+  pair[][] m=new pair[n][nb0];
+  for(int i=0; i < n; ++i) {
+    pair[] ai=a[i];
+    pair[] mi=m[i];
+    if(ai.length != nb) 
+      abort(incommensurate);
+    for(int j=0; j < nb0; ++j) {
+      pair sum;
+      for(int k=0; k < nb; ++k)
+	sum += ai[k]*b[k][j];
+      mi[j]=sum;
+    }
+  }
+  return m;
 }
 
 bool square(real[][] m)
@@ -370,4 +403,21 @@ pair[] quarticroots(real a, real b, real c, real d, real e)
     roots.append(quadraticroots((1,0),-sum[i],product[i]));
 
   return roots;
+}
+
+pair[][] fft(pair[][] a, int sign=1)
+{
+  pair[][] A=new pair[a.length][];
+  int k=0;
+  for(pair[] v : a) {
+    A[k]=fft(v,sign);
+    ++k;
+  }
+  a=transpose(A);
+  k=0;
+  for(pair[] v : a) {
+    A[k]=fft(v,sign);
+    ++k;
+  }
+  return transpose(A);
 }

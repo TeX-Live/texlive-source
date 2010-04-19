@@ -49,12 +49,14 @@ array *copyArray(array *a);
 array *copyArray2(array *a);
 array *copyArray3(array *a);
 
-double *copyArrayC(const array *a, size_t dim=0);
-double *copyArray2C(const array *a, bool square=true, size_t dim2=0);
+double *copyArrayC(const array *a, size_t dim=0, GCPlacement placement=NoGC);
+double *copyArray2C(const array *a, bool square=true, size_t dim2=0,
+                    GCPlacement placement=NoGC);
 
 triple *copyTripleArrayC(const array *a, size_t dim=0);
 triple *copyTripleArray2C(const array *a, bool square=true, size_t dim2=0);
-double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0);
+double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0,
+                                   GCPlacement placement=NoGC);
 }
 
 function *realRealFunction();
@@ -124,12 +126,12 @@ void breakpoint(stack *Stack, runnable *r)
 }
 }
 
-string convertname(string name, const string& format, bool check=true)
+string convertname(string name, const string& format)
 {
   if(name.empty())
     return buildname(outname(),format,"");
   else
-    if(check) checkLocal(name);
+    name=outpath(name);
   return format.empty() ? name : format+":"+name;
 }
 
@@ -162,134 +164,142 @@ void exitFunction(stack *Stack)
 
 namespace run {
 #line 109 "runsystem.in"
-// void atupdate(callable *f);
+// string outname();
 void gen_runsystem0(stack *Stack)
 {
-  callable * f=vm::pop<callable *>(Stack);
 #line 110 "runsystem.in"
-  processData().atUpdateFunction=f;
+  {Stack->push<string>(outname()); return;}
 }
 
 #line 114 "runsystem.in"
-// callable* atupdate();
+// void atupdate(callable *f);
 void gen_runsystem1(stack *Stack)
 {
+  callable * f=vm::pop<callable *>(Stack);
 #line 115 "runsystem.in"
-  {Stack->push<callable*>(processData().atUpdateFunction); return;}
+  processData().atUpdateFunction=f;
 }
 
 #line 119 "runsystem.in"
-// void atexit(callable *f);
+// callable* atupdate();
 void gen_runsystem2(stack *Stack)
 {
-  callable * f=vm::pop<callable *>(Stack);
 #line 120 "runsystem.in"
-  processData().atExitFunction=f;
+  {Stack->push<callable*>(processData().atUpdateFunction); return;}
 }
 
 #line 124 "runsystem.in"
-// callable* atexit();
+// void atexit(callable *f);
 void gen_runsystem3(stack *Stack)
 {
+  callable * f=vm::pop<callable *>(Stack);
 #line 125 "runsystem.in"
-  {Stack->push<callable*>(processData().atExitFunction); return;}
+  processData().atExitFunction=f;
 }
 
 #line 129 "runsystem.in"
-// void atbreakpoint(callableBp *f);
+// callable* atexit();
 void gen_runsystem4(stack *Stack)
 {
-  callableBp * f=vm::pop<callableBp *>(Stack);
 #line 130 "runsystem.in"
-  processData().atBreakpointFunction=f;
+  {Stack->push<callable*>(processData().atExitFunction); return;}
 }
 
 #line 134 "runsystem.in"
-// void breakpoint(runnable *s=NULL);
+// void atbreakpoint(callableBp *f);
 void gen_runsystem5(stack *Stack)
 {
-  runnable * s=vm::pop<runnable *>(Stack,NULL);
+  callableBp * f=vm::pop<callableBp *>(Stack);
 #line 135 "runsystem.in"
-  breakpoint(Stack,s);
+  processData().atBreakpointFunction=f;
 }
 
 #line 139 "runsystem.in"
-// string locatefile(string file);
+// void breakpoint(runnable *s=NULL);
 void gen_runsystem6(stack *Stack)
 {
-  string file=vm::pop<string>(Stack);
+  runnable * s=vm::pop<runnable *>(Stack,NULL);
 #line 140 "runsystem.in"
-  {Stack->push<string>(locateFile(file)); return;}
+  breakpoint(Stack,s);
 }
 
 #line 144 "runsystem.in"
-// void stop(string file, Int line, runnable *s=NULL);
+// string locatefile(string file);
 void gen_runsystem7(stack *Stack)
+{
+  string file=vm::pop<string>(Stack);
+#line 145 "runsystem.in"
+  {Stack->push<string>(locateFile(file)); return;}
+}
+
+#line 149 "runsystem.in"
+// void stop(string file, Int line, runnable *s=NULL);
+void gen_runsystem8(stack *Stack)
 {
   runnable * s=vm::pop<runnable *>(Stack,NULL);
   Int line=vm::pop<Int>(Stack);
   string file=vm::pop<string>(Stack);
-#line 145 "runsystem.in"
+#line 150 "runsystem.in"
   file=locateFile(file);
   clear(file,line);
   cout << "setting breakpoint at " << file << ": " << line << endl;
   bplist.push_back(bpinfo(file,line,s));
 }
 
-#line 152 "runsystem.in"
+#line 157 "runsystem.in"
 // void breakpoints();
-void gen_runsystem8(stack *)
+void gen_runsystem9(stack *)
 {
-#line 153 "runsystem.in"
+#line 158 "runsystem.in"
   for(mem::list<bpinfo>::iterator p=bplist.begin(); p != bplist.end(); ++p)
     cout << p->f.name() << ": " << p->f.line() << endl;
 }
 
-#line 158 "runsystem.in"
+#line 163 "runsystem.in"
 // void clear(string file, Int line);
-void gen_runsystem9(stack *Stack)
+void gen_runsystem10(stack *Stack)
 {
   Int line=vm::pop<Int>(Stack);
   string file=vm::pop<string>(Stack);
-#line 159 "runsystem.in"
+#line 164 "runsystem.in"
   file=locateFile(file);
   clear(file,line,true);
 }
 
-#line 164 "runsystem.in"
+#line 169 "runsystem.in"
 // void clear();
-void gen_runsystem10(stack *)
+void gen_runsystem11(stack *)
 {
-#line 165 "runsystem.in"
+#line 170 "runsystem.in"
   bplist.clear();
 }
 
-#line 169 "runsystem.in"
-// void warn(string s);
-void gen_runsystem11(stack *Stack)
-{
-  string s=vm::pop<string>(Stack);
-#line 170 "runsystem.in"
-  Warn(s);
-}
-
 #line 174 "runsystem.in"
-// void nowarn(string s);
+// void warn(string s);
 void gen_runsystem12(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
 #line 175 "runsystem.in"
-  noWarn(s);
+  Warn(s);
 }
 
 #line 179 "runsystem.in"
-// void warning(string s, string t, bool position=false);
+// void nowarn(string s);
 void gen_runsystem13(stack *Stack)
+{
+  string s=vm::pop<string>(Stack);
+#line 180 "runsystem.in"
+  noWarn(s);
+}
+
+#line 184 "runsystem.in"
+// void warning(string s, string t, bool position=false);
+void gen_runsystem14(stack *Stack)
 {
   bool position=vm::pop<bool>(Stack,false);
   string t=vm::pop<string>(Stack);
   string s=vm::pop<string>(Stack);
-#line 180 "runsystem.in"
+#line 185 "runsystem.in"
   if(settings::warn(s)) {
     em.warning(position ? getPos() : nullPos,s);
     em << t;
@@ -297,52 +307,61 @@ void gen_runsystem13(stack *Stack)
 }
 
 // Strip directory from string
-#line 188 "runsystem.in"
+#line 193 "runsystem.in"
 // string stripdirectory(string *s);
-void gen_runsystem14(stack *Stack)
+void gen_runsystem15(stack *Stack)
 {
   string * s=vm::pop<string *>(Stack);
-#line 189 "runsystem.in"
+#line 194 "runsystem.in"
   {Stack->push<string>(stripDir(*s)); return;}
 }
 
 // Strip directory from string
-#line 194 "runsystem.in"
+#line 199 "runsystem.in"
 // string stripfile(string *s);
-void gen_runsystem15(stack *Stack)
+void gen_runsystem16(stack *Stack)
 {
   string * s=vm::pop<string *>(Stack);
-#line 195 "runsystem.in"
+#line 200 "runsystem.in"
   {Stack->push<string>(stripFile(*s)); return;}
 }
 
 // Strip file extension from string
-#line 200 "runsystem.in"
+#line 205 "runsystem.in"
 // string stripextension(string *s);
-void gen_runsystem16(stack *Stack)
+void gen_runsystem17(stack *Stack)
 {
   string * s=vm::pop<string *>(Stack);
-#line 201 "runsystem.in"
+#line 206 "runsystem.in"
   {Stack->push<string>(stripExt(*s)); return;}
 }
 
 // Call ImageMagick convert.
-#line 206 "runsystem.in"
+#line 211 "runsystem.in"
 // Int convert(string args=emptystring, string file=emptystring,            string format=emptystring);
-void gen_runsystem17(stack *Stack)
+void gen_runsystem18(stack *Stack)
 {
   string format=vm::pop<string>(Stack,emptystring);
   string file=vm::pop<string>(Stack,emptystring);
   string args=vm::pop<string>(Stack,emptystring);
-#line 208 "runsystem.in"
+#line 213 "runsystem.in"
   string name=convertname(file,format);
   mem::vector<string> cmd;
   cmd.push_back(getSetting<string>("convert"));
   push_split(cmd,args);
   cmd.push_back(name);
   bool quiet=verbose <= 1;
+
+  char *oldPath=NULL;
+  string dir=stripFile(outname());
+  if(!dir.empty()) {
+    oldPath=getPath();
+    setPath(dir.c_str());
+  }
   Int ret=System(cmd,quiet ? 1 : 0,true,"convert",
                  "your ImageMagick convert utility");
+  if(oldPath != NULL)
+    setPath(oldPath);
   
   if(ret == 0 && verbose > 0)
     cout << "Wrote " << ((file.empty()) ? name : file) << endl;
@@ -351,16 +370,16 @@ void gen_runsystem17(stack *Stack)
 }
 
 // Call ImageMagick animate.
-#line 225 "runsystem.in"
+#line 239 "runsystem.in"
 // Int animate(string args=emptystring, string file=emptystring,            string format=emptystring);
-void gen_runsystem18(stack *Stack)
+void gen_runsystem19(stack *Stack)
 {
   string format=vm::pop<string>(Stack,emptystring);
   string file=vm::pop<string>(Stack,emptystring);
   string args=vm::pop<string>(Stack,emptystring);
-#line 227 "runsystem.in"
+#line 241 "runsystem.in"
 #ifndef __CYGWIN__
-  string name=convertname(file,format,false);
+  string name=convertname(file,format);
   if(view()) {
     mem::vector<string> cmd;
     cmd.push_back(getSetting<string>("animate"));
@@ -372,12 +391,12 @@ void gen_runsystem18(stack *Stack)
   {Stack->push<Int>(0); return;}
 }
 
-#line 241 "runsystem.in"
+#line 255 "runsystem.in"
 // void purge(Int divisor=0);
-void gen_runsystem19(stack *Stack)
+void gen_runsystem20(stack *Stack)
 {
   Int divisor=vm::pop<Int>(Stack,0);
-#line 242 "runsystem.in"
+#line 256 "runsystem.in"
   purge(divisor);
 }
 
@@ -388,45 +407,47 @@ namespace trans {
 void gen_runsystem_venv(venv &ve)
 {
 #line 109 "runsystem.in"
-  addFunc(ve, run::gen_runsystem0, primVoid(), "atupdate", formal(voidFunction(), "f", false, false));
+  addFunc(ve, run::gen_runsystem0, primString() , "outname");
 #line 114 "runsystem.in"
-  addFunc(ve, run::gen_runsystem1, voidFunction(), "atupdate");
+  addFunc(ve, run::gen_runsystem1, primVoid(), "atupdate", formal(voidFunction(), "f", false, false));
 #line 119 "runsystem.in"
-  addFunc(ve, run::gen_runsystem2, primVoid(), "atexit", formal(voidFunction(), "f", false, false));
+  addFunc(ve, run::gen_runsystem2, voidFunction(), "atupdate");
 #line 124 "runsystem.in"
-  addFunc(ve, run::gen_runsystem3, voidFunction(), "atexit");
+  addFunc(ve, run::gen_runsystem3, primVoid(), "atexit", formal(voidFunction(), "f", false, false));
 #line 129 "runsystem.in"
-  addFunc(ve, run::gen_runsystem4, primVoid(), "atbreakpoint", formal(breakpointFunction(), "f", false, false));
+  addFunc(ve, run::gen_runsystem4, voidFunction(), "atexit");
 #line 134 "runsystem.in"
-  addFunc(ve, run::gen_runsystem5, primVoid(), "breakpoint", formal(primCode(), "s", true, false));
+  addFunc(ve, run::gen_runsystem5, primVoid(), "atbreakpoint", formal(breakpointFunction(), "f", false, false));
 #line 139 "runsystem.in"
-  addFunc(ve, run::gen_runsystem6, primString() , "locatefile", formal(primString() , "file", false, false));
+  addFunc(ve, run::gen_runsystem6, primVoid(), "breakpoint", formal(primCode(), "s", true, false));
 #line 144 "runsystem.in"
-  addFunc(ve, run::gen_runsystem7, primVoid(), "stop", formal(primString() , "file", false, false), formal(primInt(), "line", false, false), formal(primCode(), "s", true, false));
-#line 152 "runsystem.in"
-  addFunc(ve, run::gen_runsystem8, primVoid(), "breakpoints");
-#line 158 "runsystem.in"
-  addFunc(ve, run::gen_runsystem9, primVoid(), "clear", formal(primString() , "file", false, false), formal(primInt(), "line", false, false));
-#line 164 "runsystem.in"
-  addFunc(ve, run::gen_runsystem10, primVoid(), "clear");
+  addFunc(ve, run::gen_runsystem7, primString() , "locatefile", formal(primString() , "file", false, false));
+#line 149 "runsystem.in"
+  addFunc(ve, run::gen_runsystem8, primVoid(), "stop", formal(primString() , "file", false, false), formal(primInt(), "line", false, false), formal(primCode(), "s", true, false));
+#line 157 "runsystem.in"
+  addFunc(ve, run::gen_runsystem9, primVoid(), "breakpoints");
+#line 163 "runsystem.in"
+  addFunc(ve, run::gen_runsystem10, primVoid(), "clear", formal(primString() , "file", false, false), formal(primInt(), "line", false, false));
 #line 169 "runsystem.in"
-  addFunc(ve, run::gen_runsystem11, primVoid(), "warn", formal(primString() , "s", false, false));
+  addFunc(ve, run::gen_runsystem11, primVoid(), "clear");
 #line 174 "runsystem.in"
-  addFunc(ve, run::gen_runsystem12, primVoid(), "nowarn", formal(primString() , "s", false, false));
+  addFunc(ve, run::gen_runsystem12, primVoid(), "warn", formal(primString() , "s", false, false));
 #line 179 "runsystem.in"
-  addFunc(ve, run::gen_runsystem13, primVoid(), "warning", formal(primString() , "s", false, false), formal(primString() , "t", false, false), formal(primBoolean(), "position", true, false));
-#line 187 "runsystem.in"
-  addFunc(ve, run::gen_runsystem14, primString() , "stripdirectory", formal(primString(), "s", false, false));
-#line 193 "runsystem.in"
-  addFunc(ve, run::gen_runsystem15, primString() , "stripfile", formal(primString(), "s", false, false));
-#line 199 "runsystem.in"
-  addFunc(ve, run::gen_runsystem16, primString() , "stripextension", formal(primString(), "s", false, false));
-#line 205 "runsystem.in"
-  addFunc(ve, run::gen_runsystem17, primInt(), "convert", formal(primString() , "args", true, false), formal(primString() , "file", true, false), formal(primString() , "format", true, false));
-#line 224 "runsystem.in"
-  addFunc(ve, run::gen_runsystem18, primInt(), "animate", formal(primString() , "args", true, false), formal(primString() , "file", true, false), formal(primString() , "format", true, false));
-#line 241 "runsystem.in"
-  addFunc(ve, run::gen_runsystem19, primVoid(), "purge", formal(primInt(), "divisor", true, false));
+  addFunc(ve, run::gen_runsystem13, primVoid(), "nowarn", formal(primString() , "s", false, false));
+#line 184 "runsystem.in"
+  addFunc(ve, run::gen_runsystem14, primVoid(), "warning", formal(primString() , "s", false, false), formal(primString() , "t", false, false), formal(primBoolean(), "position", true, false));
+#line 192 "runsystem.in"
+  addFunc(ve, run::gen_runsystem15, primString() , "stripdirectory", formal(primString(), "s", false, false));
+#line 198 "runsystem.in"
+  addFunc(ve, run::gen_runsystem16, primString() , "stripfile", formal(primString(), "s", false, false));
+#line 204 "runsystem.in"
+  addFunc(ve, run::gen_runsystem17, primString() , "stripextension", formal(primString(), "s", false, false));
+#line 210 "runsystem.in"
+  addFunc(ve, run::gen_runsystem18, primInt(), "convert", formal(primString() , "args", true, false), formal(primString() , "file", true, false), formal(primString() , "format", true, false));
+#line 238 "runsystem.in"
+  addFunc(ve, run::gen_runsystem19, primInt(), "animate", formal(primString() , "args", true, false), formal(primString() , "file", true, false), formal(primString() , "format", true, false));
+#line 255 "runsystem.in"
+  addFunc(ve, run::gen_runsystem20, primVoid(), "purge", formal(primInt(), "divisor", true, false));
 }
 
 } // namespace trans

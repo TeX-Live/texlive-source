@@ -1,5 +1,5 @@
 /* Fast Fourier transform C++ header class for the FFTW3 Library
-   Copyright (C) 2004 John C. Bowman, University of Alberta
+   Copyright (C) 2004-10 John C. Bowman, University of Alberta
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -18,16 +18,35 @@
 #ifndef __fftwpp_h__
 #define __fftwpp_h__ 1
 
-#define __FFTWPP_H_VERSION__ 1.04
+#define __FFTWPP_H_VERSION__ 1.05
 
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <fftw3.h>
+#include <cerrno>
 
 #ifndef __Complex_h__
 #include <complex>
 typedef std::complex<double> Complex;
+#endif
+
+#ifndef M_PI
+#define M_PI acos(-1.0)
+#endif
+
+#ifndef HAVE_POSIX_MEMALIGN
+
+#ifdef __GLIBC_PREREQ
+#if __GLIBC_PREREQ(2,3)
+#define HAVE_POSIX_MEMALIGN
+#endif
+#else
+#ifdef _POSIX_SOURCE
+#define HAVE_POSIX_MEMALIGN
+#endif
+#endif
+
 #endif
 
 #ifdef __Array_h__
@@ -38,48 +57,96 @@ using Array::array3;
 static array1<Complex> NULL1;  
 static array2<Complex> NULL2;  
 static array3<Complex> NULL3;
-#endif
 
-inline Complex *FFTWComplex(size_t size)
+#else
+
+#ifdef HAVE_POSIX_MEMALIGN
+#ifdef _AIX
+extern "C" int posix_memalign(void **memptr, size_t alignment, size_t size);
+#endif
+#else
+// Adapted from FFTW aligned malloc/free.  Assumes that malloc is at least
+// sizeof(void*)-aligned. Allocated memory must be freed with free0.
+inline int posix_memalign0(void **memptr, size_t alignment, size_t size)
 {
-  static const size_t offset = sizeof(size_t)/sizeof(Complex)+
-    (sizeof(size_t) % sizeof(Complex) > 0);
-  void *alloc=fftw_malloc((size+offset)*sizeof(Complex));
-  if(size && !alloc) std::cerr << std::endl << "Memory limits exceeded" 
-                               << std::endl;
-  *(size_t *) alloc=size;
-  Complex*p=(Complex *)alloc+offset;
-  for(size_t i=0; i < size; i++) new(p+i) Complex;
-  return p;
+  if(alignment % sizeof (void *) != 0 || (alignment & (alignment - 1)) != 0)
+    return EINVAL;
+  void *p0=malloc(size+alignment);
+  if(!p0) return ENOMEM;
+  void *p=(void *)(((size_t) p0+alignment)&~(alignment-1));
+  *((void **) p-1)=p0;
+  *memptr=p;
+  return 0;
 }
 
-inline double *FFTWdouble(size_t size)
+inline void free0(void *p)
 {
-  static const size_t offset = sizeof(size_t)/sizeof(Complex)+
-    (sizeof(size_t) % sizeof(Complex) > 0);
-  void *alloc=fftw_malloc(size*sizeof(double)+offset*sizeof(Complex));
-  if(size && !alloc) std::cerr << std::endl << "Memory limits exceeded"
-                               << std::endl;
-  *(size_t *) alloc=size;
-  double*p=(double*)((Complex *)alloc+offset);
-  for(size_t i=0; i < size; i++) new(p+i) double;
-  return p;
+  if(p) free(*((void **) p-1));
+}
+#endif
+
+template<class T>
+inline void newAlign(T *&v, size_t len, size_t align)
+{
+  void *mem=NULL;
+  const char *invalid="Invalid alignment requested";
+  const char *nomem="Memory limits exceeded";
+#ifdef HAVE_POSIX_MEMALIGN
+  int rc=posix_memalign(&mem,align,len*sizeof(T));
+#else  
+  int rc=posix_memalign0(&mem,align,len*sizeof(T));
+#endif  
+  if(rc == EINVAL) std::cerr << invalid << std::endl;
+  if(rc == ENOMEM) std::cerr << nomem << std::endl;
+  v=(T *) mem;
+  for(size_t i=0; i < len; i++) new(v+i) T;
 }
 
 template<class T>
-inline void FFTWdelete(T *p)
+inline void deleteAlign(T *v, size_t len)
 {
-  static const size_t offset = sizeof(size_t)/sizeof(Complex)+
-    (sizeof(size_t) % sizeof(Complex) > 0);
-  void *alloc=(Complex *)p-offset;
-  size_t size=*(size_t *) alloc;
-  for(size_t i=size-1; i > 0; i--) ((T *) p)[i].~T();
-  ((T *) p)[0].~T();
-  fftw_free(alloc);
+  for(size_t i=len-1; i > 0; i--) v[i].~T();
+  v[0].~T();
+#ifdef HAVE_POSIX_MEMALIGN
+  free(v);
+#else
+  free0(v);
+#endif  
 }
 
+#endif
+
+inline Complex *ComplexAlign(size_t size)
+{
+  Complex *v;
+  newAlign(v,size,sizeof(Complex));
+  return v;
+}
+
+inline double *doubleAlign(size_t size)
+{
+  double *v;
+  newAlign(v,size,sizeof(Complex));
+  return v;
+}
+
+template<class T>
+inline void deleteAlign(T *p)
+{
+#ifdef HAVE_POSIX_MEMALIGN
+  free(p);
+#else
+  free0(p);
+#endif  
+}
+
+// Obsolete names:
+#define FFTWComplex ComplexAlign
+#define FFTWdouble doubleAlign
+#define FFTWdelete deleteAlign
+
 inline void fftwpp_export_wisdom(void (*emitter)(char c, std::ofstream& s),
-                               std::ofstream& s)
+                                 std::ofstream& s)
 {
   fftw_export_wisdom((void (*) (char, void *)) emitter,(void *) &s);
 }
@@ -104,12 +171,6 @@ protected:
   fftw_plan plan;
   bool inplace;
   
-  static unsigned int effort;
-  static bool Wise;
-  static const char *WisdomName;
-  static std::ifstream ifWisdom;
-  static std::ofstream ofWisdom;
-  
   unsigned int Dist(unsigned int n, unsigned int stride, unsigned int dist) {
     return dist ? dist : ((stride == 1) ? n : 1);
   }
@@ -122,37 +183,91 @@ protected:
     return realsize(n,in,(Complex *) out);
   }
   
-  // Shift the Fourier origin to (nx/2,0)
-  void Shift(Complex *data, unsigned int nx, unsigned int ny) {
+  static std::ifstream ifWisdom;
+  static std::ofstream ofWisdom;
+  static bool Wise;
+  
+public:
+  // Shift the Fourier origin to (nx/2,0) for even nx.
+  static void Shift(Complex *data, unsigned int nx, unsigned int ny,
+                    int sign=0) {
     const unsigned int nyp=ny/2+1;
     Complex *pstop=data+nx*nyp;
-    int pinc=2*nyp;
-    for(Complex *p=data+nyp; p < pstop; p += pinc) {
-      //#pragma ivdep
-      for(unsigned int j=0; j < nyp; j++) p[j]=-p[j];
-    }
-  }
-
-  // Shift the Fourier origin to (nx/2,ny/2,0)
-  void Shift(Complex *data, unsigned int nx, unsigned int ny,
-             unsigned int nz) {
-    const unsigned int nzp=nz/2+1;
-    const unsigned int nyzp=ny*nzp;
-    const unsigned int pinc=2*nzp;
-    Complex *p,*pstop;
-    p=pstop=data;
-    for(unsigned i=0; i < nx; i++) {
-      if(i % 2) p -= nzp;
-      else p += nzp;
-      pstop += nyzp;
-      for(; p < pstop; p += pinc) {
+    if(nx % 2 == 0) {
+      int pinc=2*nyp;
+      for(Complex *p=data+nyp; p < pstop; p += pinc) {
         //#pragma ivdep
-        for(unsigned int k=0; k < nzp; k++) p[k]=-p[k];
+        for(unsigned int j=0; j < nyp; j++) p[j]=-p[j];
+      }
+    } else {
+      if(sign) {
+        unsigned int c=nx/2;
+        int pinc=nyp;
+        double arg=2.0*M_PI*c/nx;
+        Complex zeta(cos(arg),sign*sin(arg));
+        Complex zetak=zeta;
+        for(Complex *p=data+nyp; p < pstop; p += pinc) {
+          //#pragma ivdep
+          for(unsigned int j=0; j < nyp; j++) p[j] *= zetak;
+          zetak *= zeta;
+        }
+      } else {
+        std::cerr << "Shift for odd nx must be signed and interleaved" 
+                  << std::endl;
+        exit(1);
       }
     }
   }
 
-public:
+  // Shift the Fourier origin to (nx/2,ny/2,0).
+  static void Shift(Complex *data, unsigned int nx, unsigned int ny,
+                    unsigned int nz, int sign=0) {
+    const unsigned int nzp=nz/2+1;
+    const unsigned int nyzp=ny*nzp;
+    if(nx % 2 == 0 && ny % 2 == 0) {
+      const unsigned int pinc=2*nzp;
+      Complex *p,*pstop;
+      p=pstop=data;
+      for(unsigned i=0; i < nx; i++) {
+        if(i % 2) p -= nzp;
+        else p += nzp;
+        pstop += nyzp;
+        for(; p < pstop; p += pinc) {
+          //#pragma ivdep
+          for(unsigned int k=0; k < nzp; k++) p[k]=-p[k];
+        }
+      }
+    } else {
+      if(sign) {
+        unsigned int cx=nx/2;
+        unsigned int cy=ny/2;
+        double twopi=2.0*M_PI;
+        double argx=twopi*cx/nx;
+        Complex zetax(cos(argx),sign*sin(argx));
+        double argy=twopi*cy/ny;
+        Complex zetay(cos(argy),sign*sin(argy));
+        Complex zetak(1.0,0.0);
+        for(unsigned i=0; i < nx; i++) {
+          Complex *datai=data+nyzp*i;
+          for(unsigned j=0; j < ny; j++) {
+            //#pragma ivdep
+            Complex *dataij=datai+nzp*j;
+            for(unsigned int k=0; k < nzp; k++) dataij[k] *= zetak;
+            zetak *= zetay;
+          }
+          zetak *= zetax;
+        }
+      } else {
+        std::cerr << "Shift for odd nx or ny must be signed and interleaved" 
+                  << std::endl;
+        exit(1);
+      }
+    }
+  }
+
+  static unsigned int effort;
+  static const char *WisdomName;
+  
   fftw(unsigned int size, int sign, unsigned int n=0) : 
     size(size), sign(sign), norm(1.0/(n ? n : size)), shift(false), plan(NULL)
   {}
@@ -170,7 +285,7 @@ public:
   void Setup(Complex *in, Complex *out=NULL) {
     if(!Wise) LoadWisdom();
     bool alloc=!in;
-    if(alloc) in=FFTWComplex(size);
+    if(alloc) in=ComplexAlign(size);
 #ifndef NO_CHECK_ALIGN    
     CheckAlign(in,"constructor input");
     if(out) CheckAlign(out,"constructor output");
@@ -185,7 +300,7 @@ public:
       exit(1);
     }
     
-    if(alloc) FFTWdelete(in);
+    if(alloc) deleteAlign(in,size);
     SaveWisdom();
   }
   
@@ -218,7 +333,7 @@ public:
     if(!out) out=in;
 #endif    
     if(inplace ^ (out == in)) {
-      std::cerr << "ERROR: fft constructor and call must be either both in place or out of place" << std::endl; 
+      std::cerr << "ERROR: fft constructor and call must be both in place or both out of place" << std::endl; 
       exit(1);
     }
   }
@@ -391,7 +506,7 @@ public:
 // Compute the complex Fourier transform of n real values, using phase sign -1.
 // Before calling fft(), the array in must be allocated as double[n] and
 // the array out must be allocated as Complex[n/2+1]. The arrays in and out
-// may coincide, in which case they must both be allocated as Complex[n/2+1].
+// may coincide, allocated as Complex[n/2+1].
 //
 // Out-of-place usage: 
 //
@@ -438,9 +553,9 @@ public:
 // phase sign +1.
 // Before calling fft(), the array in must be allocated as Complex[n/2+1]
 // and the array out must be allocated as double[n]. The arrays in and out
-// may coincide, in which case they must both be allocated as Complex[n/2+1]. 
+// may coincide, allocated as Complex[n/2+1]. 
 //
-// Out-of-place usage: 
+// Out-of-place usage (input destroyed):
 //
 //   crfft1d Backward(n,in,out);
 //   Backward.fft(in,out);
@@ -483,8 +598,8 @@ public:
 // Compute the real Fourier transform of m real vectors, each of length n,
 // using phase sign -1. Before calling fft(), the array in must be
 // allocated as double[m*n] and the array out must be allocated as
-// Complex[m*(n/2+1)]. The arrays in and out may coincide, in which case
-// they must both be allocated as Complex[m*(n/2+1)].
+// Complex[m*(n/2+1)]. The arrays in and out may coincide,
+// allocated as Complex[m*(n/2+1)].
 //
 // Out-of-place usage: 
 //
@@ -539,10 +654,10 @@ public:
 // length n/2+1, corresponding to the non-negative parts of the frequency
 // spectra, using phase sign +1. Before calling fft(), the array in must be
 // allocated as Complex[m*(n/2+1)] and the array out must be allocated as
-// double[m*n]. The arrays in and out may coincide, in which case they
-// must both be allocated as Complex[m*(n/2+1)].  
+// double[m*n]. The arrays in and out may coincide,
+// allocated as Complex[m*(n/2+1)].  
 //
-// Out-of-place usage: 
+// Out-of-place usage (input destroyed):
 //
 //   mcrfft1d Backward(n,m,stride,dist,in,out);
 //   Backward.fft(in,out);
@@ -564,11 +679,6 @@ class mcrfft1d : public fftw {
   unsigned int stride;
   unsigned int dist;
 public:
-  mcrfft1d(unsigned int nx, unsigned int m=1, unsigned int stride=1,
-           unsigned int dist=0, Complex *in=NULL)
-    : fftw(nx/2*stride+(m-1)*Dist(nx,stride,dist)+1,1,nx),
-      nx(nx), m(m), stride(stride), dist(Dist(nx,stride,dist)) {Setup(in);}
-  
   mcrfft1d(unsigned int nx, unsigned int m=1, unsigned int stride=1,
            unsigned int dist=0, Complex *in=NULL, double *out=NULL) 
     : fftw((realsize(nx,in,out)-1)*stride+(m-1)*Dist(nx,stride,dist)+1,1,nx),
@@ -640,8 +750,7 @@ public:
 // values, using phase sign -1.
 // Before calling fft(), the array in must be allocated as double[nx*ny] and
 // the array out must be allocated as Complex[nx*(ny/2+1)]. The arrays in
-// and out may coincide, in which case they must both be allocated as
-// Complex[nx*(ny/2+1)]. 
+// and out may coincide, allocated as Complex[nx*(ny/2+1)]. 
 //
 // Out-of-place usage: 
 //
@@ -695,10 +804,10 @@ public:
 // half-plane ky >= 0, using phase sign +1.
 // Before calling fft(), the array in must be allocated as
 // Complex[nx*(ny+1)/2] and the array out must be allocated as
-// double[nx*ny]. The arrays in and out may coincide, in which case they
-// must both be allocated as Complex[nx*(ny/2+1)]. 
+// double[nx*ny]. The arrays in and out may coincide,
+// allocated as Complex[nx*(ny/2+1)]. 
 //
-// Out-of-place usage: 
+// Out-of-place usage (input destroyed):
 //
 //   crfft2d Backward(nx,ny,in,out);
 //   Backward.fft(in,out);      // Origin of Fourier domain at (0,0)
@@ -798,8 +907,7 @@ public:
 // nx times ny times nz real values, using phase sign -1.
 // Before calling fft(), the array in must be allocated as double[nx*ny*nz]
 // and the array out must be allocated as Complex[nx*ny*(nz/2+1)]. The
-// arrays in and out may coincide, in which case they must both be allocated as
-// Complex[nx*ny*(nz/2+1)]. 
+// arrays in and out may coincide, allocated as Complex[nx*ny*(nz/2+1)]. 
 //
 // Out-of-place usage: 
 //
@@ -856,10 +964,10 @@ public:
 // half-plane kz >= 0, using phase sign +1.
 // Before calling fft(), the array in must be allocated as
 // Complex[nx*ny*(nz+1)/2] and the array out must be allocated as
-// double[nx*ny*nz]. The arrays in and out may coincide, in which case they
-// must both be allocated as Complex[nx*ny*(nz/2+1)]. 
+// double[nx*ny*nz]. The arrays in and out may coincide,
+// allocated as Complex[nx*ny*(nz/2+1)]. 
 //
-// Out-of-place usage: 
+// Out-of-place usage (input destroyed):
 //
 //   crfft3d Backward(nx,ny,nz,in,out);
 //   Backward.fft(in,out);      // Origin of Fourier domain at (0,0)

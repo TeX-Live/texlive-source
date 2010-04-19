@@ -17,6 +17,7 @@ real linegranularity=0.005;
 int linesectors=8;        // Number of angular sectors.
 real dotgranularity=0.0001;
 real angleprecision=1e-5; // Precision for centering perspective projections.
+int maxangleiterations=25;
 real rendermargin=0.02;
 
 string defaultembed3Doptions;
@@ -190,7 +191,9 @@ projection operator * (transform3 t, projection P)
   projection P=P.copy();
   if(!P.absolute) {
     P.camera=t*P.camera;
+    P.normal=t*(P.target+P.normal);
     P.target=t*P.target;
+    P.normal -= P.target;
     P.calculate();
   }
   return P;
@@ -268,9 +271,10 @@ projection oblique(real angle=45)
   t[0][2]=-c2;
   t[1][2]=-s2;
   t[2][2]=1;
-  return projection((c2,s2,1),up=Y,
+  t[2][3]=-1;
+  return projection((c2,s2,1),up=Y,normal=(0,0,1),
                     new transformation(triple,triple,triple) {
-                      return transformation(t,oblique=true);});
+                      return transformation(t);});
 }
 
 projection obliqueZ(real angle=45) {return oblique(angle);}
@@ -287,9 +291,10 @@ projection obliqueX(real angle=45)
   t[1][2]=1;
   t[2][2]=0;
   t[2][0]=1;
-  return projection((1,c2,s2),
+  t[2][3]=-1;
+  return projection((1,c2,s2),normal=(1,0,0),
                     new transformation(triple,triple,triple) {
-                      return transformation(t,oblique=true);});
+                      return transformation(t);});
 }
 
 projection obliqueY(real angle=45)
@@ -302,9 +307,10 @@ projection obliqueY(real angle=45)
   t[1][2]=1;
   t[2][1]=-1;
   t[2][2]=0;
-  return projection((c2,-1,s2),
+  t[2][3]=-1;
+  return projection((c2,-1,s2),normal=(0,-1,0),
                     new transformation(triple,triple,triple) {
-                      return transformation(t,oblique=true);});
+                      return transformation(t);});
 }
 
 projection oblique=oblique();
@@ -349,13 +355,13 @@ triple invert(pair z, triple normal, triple point,
 // Map pair to a triple on the projection plane.
 triple invert(pair z, projection P=currentprojection)
 {
-  return invert(z,P.vector(),P.target,P);
+  return invert(z,P.normal,P.target,P);
 }
 
 // Map pair dir to a triple direction at point v on the projection plane.
 triple invert(pair dir, triple v, projection P=currentprojection)
 {
-  return invert(project(v,P)+dir,P.vector(),v,P)-v;
+  return invert(project(v,P)+dir,P.normal,v,P)-v;
 }
 
 pair xypart(triple v)
@@ -675,23 +681,21 @@ guide3 operator .. (... guide3[] g)
   };
 }
 
-guide3 operator ::(... guide3[] a)
+typedef guide3 interpolate3(... guide3[]);
+
+interpolate3 join3(tensionSpecifier t)
 {
-  if(a.length == 0) return nullpath3;
-  guide3 g=a[0];
-  for(int i=1; i < a.length; ++i)
-    g=g.. tension atleast 1 ..a[i];
-  return g;
+  return new guide3(... guide3[] a) {
+    if(a.length == 0) return nullpath3;
+    guide3 g=a[0];
+    for(int i=1; i < a.length; ++i)
+      g=g..t..a[i];
+    return g;
+  };
 }
 
-guide3 operator ---(... guide3[] a)
-{
-  if(a.length == 0) return nullpath3;
-  guide3 g=a[0];
-  for(int i=1; i < a.length; ++i)
-    g=g.. tension atleast infinity ..a[i];
-  return g;
-}
+interpolate3 operator ::=join3(operator tension(1,true));
+interpolate3 operator ---=join3(operator tension(infinity,true));
 
 flatguide3 operator cast(guide3 g)
 {
@@ -1056,12 +1060,12 @@ path3 invert(path p, triple normal, triple point,
 
 path3 invert(path p, triple point, projection P=currentprojection)
 {
-  return path3(p,new triple(pair z) {return invert(z,P.vector(),point,P);});
+  return path3(p,new triple(pair z) {return invert(z,P.normal,point,P);});
 }
 
 path3 invert(path p, projection P=currentprojection)
 {
-  return path3(p,new triple(pair z) {return invert(z,P.vector(),P.target,P);});
+  return path3(p,new triple(pair z) {return invert(z,P.normal,P.target,P);});
 }
 
 // Construct a path from a path3 by applying P to each control point.
@@ -1250,7 +1254,7 @@ path3 solve(flatguide3 g)
 path nurb(path3 p, projection P, int ninterpolate=P.ninterpolate)
 {
   triple f=P.camera;
-  triple u=unit(P.vector());
+  triple u=unit(P.normal);
   transform3 t=P.t;
 
   path nurb(triple v0, triple v1, triple v2, triple v3) {
@@ -1360,8 +1364,9 @@ triple normal(path3 p)
     if(abs(a) >= fuzz && abs(b) >= fuzz) {
       triple n=cross(unit(a),unit(b));
       real absn=abs(n);
+      if(absn < sqrtEpsilon) return false;
       n=unit(n);
-      if(absnormal > 0 && absn > sqrtEpsilon &&
+      if(absnormal > 0 &&
          abs(normal-n) > sqrtEpsilon && abs(normal+n) > sqrtEpsilon)
         return true;
       else {
@@ -1455,7 +1460,7 @@ private transform3 flip(transform3 t, triple X, triple Y, triple Z,
     return scale(s(v.x),s(v.y),s(v.z));
   }
 
-  triple u=unit(P.vector());
+  triple u=unit(P.normal);
   triple up=unit(perp(P.up,u));
   bool upright=dot(Z,u) >= 0;
   if(dot(Y,up) < 0) {
@@ -1782,7 +1787,7 @@ transform3 align(triple u)
 // return a rotation that maps X,Y to the projection plane.
 transform3 transform3(projection P=currentprojection)
 {
-  triple w=unit(P.oblique ? P.camera : P.vector());
+  triple w=unit(P.normal);
   triple v=unit(perp(P.up,w));
   if(v == O) v=cross(perp(w),w);
   triple u=cross(v,w);
@@ -1863,8 +1868,6 @@ triple max(explicit path3[] p)
     maxp=maxbound(maxp,max(p[i]));
   return maxp;
 }
-
-typedef guide3 interpolate3(... guide3[]);
 
 path3 randompath3(int n, bool cumulate=true, interpolate3 join=operator ..)
 {
@@ -1948,8 +1951,9 @@ path3 arc(triple c, triple v1, triple v2, triple normal=O, bool direction=CCW)
   real t1=t1[0];
   real t2=t2[0];
   int n=length(unitcircle3);
-  if(t1 >= t2 && direction) t1 -= n;
-  if(t2 >= t1 && !direction) t2 -= n;
+  if(direction) {
+    if (t1 >= t2) t1 -= n;
+  } else if(t2 >= t1) t2 -= n;
 
   path3 p=subpath(unitcircle3,t1,t2);
   if(align) p=T*p;
@@ -1984,11 +1988,6 @@ private real epsilon=1000*realEpsilon;
 path3 plane(triple u, triple v, triple O=O)
 {
   return O--O+u--O+u+v--O+v--cycle;
-}
-
-triple size3(frame f)
-{
-  return max3(f)-min3(f);
 }
 
 // PRC/OpenGL support
@@ -2125,10 +2124,9 @@ draw=new void(frame f, path3 g, material p=currentpen,
         } else _draw(f,g,q,name);
       } else _draw(f,g,q,name);
     }
-    string type=linetype(adjust(q,arclength(g),cyclic(g)));
-    if(length(type) == 0) drawthick(g);
+    real[] dash=linetype(adjust(q,arclength(g),cyclic(g)));
+    if(dash.length == 0) drawthick(g);
     else {
-      real[] dash=(real[]) split(type," ");
       if(sum(dash) > 0) {
         dash.cyclic=true;
         real offset=offset(q);
@@ -2418,7 +2416,7 @@ for(i=0; i < count; i++) {
 var center=new Array(
 ";
   for(int i=0; i < center.length; ++i)
-    s += "Vector3("+format(center[i],",")+"),
+    s += "Vector3("+format(center[i]/cm,",")+"),
 ";
   s += ");
 
@@ -2457,7 +2455,7 @@ runtime.addEventHandler(billboardHandler);
 
 runtime.refresh(); 
 ";
-return s;
+  return s;
 }
 
 string lightscript(light light) {
@@ -2674,7 +2672,6 @@ struct scene
   // Choose the angle to be just large enough to view the entire image.
   real angle(projection P) {
     T=identity4;
-    int maxiterations=100;
     real h=-0.5*P.target.z;
     pair r,R;
     real diff=realMax;
@@ -2695,7 +2692,7 @@ struct scene
       }
       diff=abs(s-lasts);
       ++i;
-    } while (diff > angleprecision && i < maxiterations);
+    } while (diff > angleprecision && i < maxangleiterations);
     real aspect=width > 0 ? height/width : 1;
     real rx=-r.x*aspect;
     real Rx=R.x*aspect;
@@ -2767,7 +2764,9 @@ object embed(string label="", string text=label, string prefix=defaultfilename,
   bool preview=settings.render > 0;
   if(prc) {
     // The movie15.sty package cannot handle spaces or dots in filenames.
-    prefix=replace(prefix,new string[][]{{" ","_"},{".","_"}});
+    string dir=stripfile(prefix);
+    prefix=dir+replace(stripdirectory(prefix),
+                       new string[][]{{" ","_"},{".","_"}});
     if(settings.embed || nativeformat() == "pdf")
       prefix += "+"+(string) file3.length;
   } else
@@ -3063,7 +3062,8 @@ frame[] fit3(string prefix="", picture[] pictures, picture all,
     for(int i=settings.reverse ? pictures.length-1 : 0;
         i >= 0 && i < pictures.length && !settings.interrupt;
         settings.reverse ? --i : ++i) {
-      embedder(prefix,out[i],format,view,options,script,light,S.P);
+      frame f=embedder(prefix,out[i],format,view,options,script,light,S.P);
+      if(!settings.loop) out[i]=f;
     }   
     if(!settings.loop) break;
   }

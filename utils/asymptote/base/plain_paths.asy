@@ -15,6 +15,7 @@ tensionSpecifier operator tension(real t, bool atLeast)
 {
   return operator tension(t,t,atLeast);
 }
+
 guide operator controls(pair z)
 {
   return operator controls(z,z);
@@ -92,19 +93,26 @@ void write(file file, string s="", explicit path[] x, suffix suffix=none)
   write(file,suffix);
 }
 
-void write(file file, string s="", explicit guide[] x, suffix suffix=none)
-{
-  write(file,s,(path[]) x,suffix);
-}
-
 void write(string s="", explicit path[] x, suffix suffix=endl) 
 {
   write(stdout,s,x,suffix);
 }
 
+void write(file file, string s="", explicit guide[] x, suffix suffix=none)
+{
+  write(file,s);
+  if(x.length > 0) write(file,x[0]);
+  for(int i=1; i < x.length; ++i) {
+    write(file,endl);
+    write(file," ^^");
+    write(file,x[i]);
+  }
+  write(file,suffix);
+}
+
 void write(string s="", explicit guide[] x, suffix suffix=endl) 
 {
-  write(stdout,s,(path[]) x,suffix);
+  write(stdout,s,x,suffix);
 }
 
 private string nopoints="nullpath has no points";
@@ -127,23 +135,19 @@ pair max(explicit path[] p)
   return maxp;
 }
 
-guide operator ::(... guide[] a)
+interpolate operator ..(tensionSpecifier t)
 {
-  if(a.length == 0) return nullpath;
-  guide g=a[0];
-  for(int i=1; i < a.length; ++i)
-    g=g..operator tension(1,true)..a[i];
-  return g;
+  return new guide(... guide[] a) {
+    if(a.length == 0) return nullpath;
+    guide g=a[0];
+    for(int i=1; i < a.length; ++i)
+      g=g..t..a[i];
+    return g;
+  };
 }
 
-guide operator ---(... guide[] a)
-{
-  if(a.length == 0) return nullpath;
-  guide g=a[0];
-  for(int i=1; i < a.length; ++i)
-    g=g..operator tension(infinity,true)..a[i];
-  return g;
-}
+interpolate operator ::=operator ..(operator tension(1,true));
+interpolate operator ---=operator ..(operator tension(infinity,true));
 
 // return an arbitrary intersection point of paths p and q
 pair intersectionpoint(path p, path q, real fuzz=-1)
@@ -283,7 +287,7 @@ path buildcycle(... path[] p)
     for(int i=0; i < n; ++i) {
       real[][] t=intersections(p[i],p[j]);
       if(t.length == 0)
-	return nullpath;
+        return nullpath;
       ta[i]=t[0][0]; tb[j]=t[0][1];
       j=i;
     }
@@ -302,7 +306,7 @@ path buildcycle(... path[] p)
       int L=length(p[i]);
       real t=Tb-L;
       if(abs(c-point(p[i],0.5(Ta+t))) <
-	 abs(c-point(p[i],0.5(Ta+Tb)))) Tb=t;
+         abs(c-point(p[i],0.5(Ta+Tb)))) Tb=t;
       while(Tb < Ta) Tb += L;
     }
     G=G&subpath(p[i],Ta,Tb);

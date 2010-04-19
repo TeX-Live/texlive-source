@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[1.88],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[1.93],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 
@@ -51,7 +51,7 @@ fi
 ])
 
 AC_CHECK_PROGS(TEXI2DVI,[texi2dvi texi2dvi4a2ps],
-[echo texi2dvi is missing! Please put http://asymptote.sourceforge.net/asymptote.pdf in the doc directory; exit -1;])
+[echo texi2dvi is missing! Please put http://asymptote.sourceforge.net/asymptote.pdf in the doc directory and touch doc/asymptote.pdf; exit 1;])
 
 AC_SUBST(TEXI2DVI)
 
@@ -162,7 +162,7 @@ if test "x$ac_cv_use_gc" != "xno" ; then
       ;;
    *)
       GCDIR=$ac_cv_use_gc
-      GCOPTIONS="--disable-shared "
+      GCOPTIONS="--disable-shared --enable-large-config"
       AC_MSG_NOTICE([enabling local $GCNAME $GCDIR])
       GCLIB="\$(GC)/.libs/libgc.a"
       INCL="-I\$(GC)/include"
@@ -252,7 +252,7 @@ AC_ARG_ENABLE(gsl,
 if test "x$enable_gsl" != "xno"; then
   AC_CHECK_HEADER(gsl/gsl_sf.h,
    AC_CHECK_LIB([gsl], gsl_sf_debye_6, [AC_DEFINE(HAVE_LIBGSL, 1,
-   [Define to 1 if you have the `gsl' library (-lgsl). ]) LIBS=$LIBS"-lgsl -lgslcblas "],
+   [Define to 1 if you have the `gsl' library (-lgsl).]) LIBS=$LIBS"-lgsl -lgslcblas "],
            AC_MSG_NOTICE([*** Could not find libgsl: will compile without optional special functions. ***]),[-lgslcblas]),
      AC_MSG_NOTICE([*** Header file gsl_sf.h not found: will compile without optional special functions. ***]))
 fi
@@ -275,17 +275,26 @@ case "$OSTYPE" in
      cygwin) AC_CHECK_HEADER(GL/glut.h,
                                 [AC_DEFINE(HAVE_LIBGLUT, 1,
 		   [Define if you have the `freeglut' library (-lfreeglut).])
-			   LIBS=$LIBS"-lfreeglut -lopengl32 "],
-				 AC_MSG_NOTICE([*** Could not find freeglut: will compile without OpenGL support ***]))
+			   LIBS=$LIBS"-lfreeglut "],
+				 AC_MSG_NOTICE([*** Could not find libfreeglut: will compile without OpenGL support ***]))
+             AC_CHECK_HEADER(GL/gl.h,
+                                [AC_DEFINE(HAVE_LIBGL, 1,
+		   [Define if you have the `opengl32' library (-lopengl32).])
+			   LIBS=$LIBS"-lopengl32 "],
+				 AC_MSG_NOTICE([*** Could not find libopengl32: will compile without OpenGL support ***]))
              AC_CHECK_LIB([GLU], [gluNewNurbsRenderer],[AC_DEFINE(HAVE_LIBGLU, 1,
-                   [Define to 1 if you have the `glu32' library (-lglu32). ]) LIBS=$LIBS"-lglu32 "],
+                   [Define to 1 if you have the `glu32' library (-lglu32).]) LIBS=$LIBS"-lglu32 "],
              AC_MSG_NOTICE([*** Could not find libglu32: will compile without OpenGL support ***]))
         ;;                                 
-     darwin*) AC_CHECK_HEADER(GLUT/glut.h,
+     darwin*) AC_CHECK_HEADER(OpenGL/gl.h,
+                                [AC_DEFINE(HAVE_LIBGL, 1,
+		   [Define if you have the `OpenGL' library.])])
+              AC_CHECK_HEADER(OpenGL/glu.h,
+                                [AC_DEFINE(HAVE_LIBGLU, 1,
+		   [Define if you have the `GLU' library.])])
+              AC_CHECK_HEADER(GLUT/glut.h,
                                 [AC_DEFINE(HAVE_LIBGLUT, 1,
-		   [Define if you have the `glut' library (-lglut).])
-              AC_DEFINE(HAVE_LIBGLU, 1,
-                   [Define to 1 if you have the 'GLU' library. ])
+		   [Define if you have the `GLUT' library.])
 AC_COMPILE_IFELSE(AC_LANG_PROGRAM([
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
@@ -303,6 +312,7 @@ void f(void) {
 				 AC_MSG_NOTICE([*** Could not find libglut: will compile without OpenGL support ***]))
         AC_CHECK_LIB([GLU], [gluNewNurbsRenderer],,
  				 AC_MSG_NOTICE([*** Could not find libGLU: will compile without OpenGL support ***]))
+        AC_CHECK_LIB([GL], [glDepthMask])
 esac
 fi
 

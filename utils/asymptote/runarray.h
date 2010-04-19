@@ -45,7 +45,6 @@ void array2Transpose(vm::stack *);
 void array3Transpose(vm::stack *);
 void arrayConditional(vm::stack *);
 void diagonal(vm::stack *);
-void pairArrayFFT(vm::stack *);
 }
 
 #endif // runarray_H

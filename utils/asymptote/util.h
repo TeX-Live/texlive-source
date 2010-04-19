@@ -36,8 +36,11 @@ string stripExt(string name, const string& suffix="");
 
 void writeDisabled();
   
-// Check if global writes are disabled and name contains a directory.
-void checkLocal(string name);
+// Replace spaces in file part of name with underscores.
+string cleanpath(string name);
+
+// Construct the full output path.
+string outpath(string name);
   
 // Construct a filename from the original, adding aux at the end, and
 // changing the suffix.
@@ -109,8 +112,6 @@ extern bool False;
 // Strip blank lines (which would break the bidirectional TeX pipe)
 string stripblanklines(const string& s);
 
-extern char *currentpath;
-
 const char *startPath();
 const char* setPath(const char *s, bool quiet=false);
 const char *changeDirectory(const char *s);
@@ -126,6 +127,10 @@ void execError(const char *command, const char *hint, const char *application);
 // This invokes a viewer to display the manual.  Subsequent calls will only
 // pop-up a new viewer if the old one has been closed.
 void popupHelp();
+
+#ifdef __CYGWIN__
+inline long long llabs(long long x) {return x >= 0 ? x : -x;}
+#endif  
 
 inline Int Abs(Int x) {
 #ifdef HAVE_LONG_LONG

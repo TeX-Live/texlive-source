@@ -70,6 +70,7 @@ struct arrowhead3
   real size(pen p)=arrowsize;
   real arcsize(pen p)=arcarrowsize;
   real gap=1;
+  real size;
   bool splitpath=true;
 
   surface head(path3 g, position position=EndPoint,
@@ -88,7 +89,7 @@ struct arrowhead3
     if(filltype == null) filltype=FillDraw(p);
     bool draw=filltype.type != filltype.Fill;
     triple v=point(s,length(s));
-    triple N=normal == O ? P.vector() : normal;
+    triple N=normal == O ? P.normal : normal;
     triple w=unit(v-point(s,0));
     transform3 t=transform3(w,unit(cross(w,N)));
     path3[] H=t*path3(h);
@@ -180,8 +181,7 @@ arrowhead3 HookHead3(real dir=arrowdir, real barb=arrowbarb)
                      filltype filltype=null, bool forwards=true,
                      projection P=currentprojection) {
     if(size == 0) size=a.size(p);
-
-    angle=min(angle*arrowhookfactor,45);
+    
     bool relative=position.relative;
     real position=position.position.x;
     if(relative) position=reltime(g,position);
@@ -265,11 +265,12 @@ arrowhead3 DefaultHead2(triple normal=O) {
                      projection P=currentprojection) {
   if(size == 0) size=a.size(p);
   path h=a.project(g,forwards,P);
+  a.size=min(size,arclength(h));
   path[] H=a.align(DefaultHead.head(h,p,size,angle),h);
   H=forwards ? yscale(-1)*H : H;
   return a.surface(g,position,size,H,p,filltype,normal,P);
   };
-  a.gap=1.01;
+  a.gap=1.005;
   return a;
 }
 arrowhead3 DefaultHead2=DefaultHead2();
@@ -282,14 +283,14 @@ arrowhead3 HookHead2(real dir=arrowdir, real barb=arrowbarb, triple normal=O)
                      filltype filltype=null, bool forwards=true,
                      projection P=currentprojection) {
     if(size == 0) size=a.size(p);
-    angle=min(angle*arrowhookfactor,45);
     path h=a.project(g,forwards,P);
+    a.size=min(size,arclength(h));
     path[] H=a.align(HookHead.head(h,p,size,angle),h);
     H=forwards ? yscale(-1)*H : H;
     return a.surface(g,position,size,H,p,filltype,normal,P);
   };
   a.arrowhead2=HookHead;
-  a.gap=1.01;
+  a.gap=1.005;
   return a;
 }
 arrowhead3 HookHead2=HookHead2();
@@ -302,6 +303,7 @@ arrowhead3 TeXHead2(triple normal=O) {
                      bool forwards=true, projection P=currentprojection) {
   if(size == 0) size=a.size(p);
   path h=a.project(g,forwards,P);
+  a.size=min(size,arclength(h));
   h=rotate(-degrees(dir(h,length(h)),warn=false))*h;
   path[] H=TeXHead.head(h,p,size,angle);
   H=forwards ? yscale(-1)*H : H;
@@ -311,8 +313,8 @@ arrowhead3 TeXHead2(triple normal=O) {
   };
   a.arrowhead2=TeXHead;
   a.size=TeXHead.size;
-  a.gap=0.83;
   a.splitpath=false;
+  a.gap=1.005;
   return a;
 }
 arrowhead3 TeXHead2=TeXHead2();
@@ -359,6 +361,7 @@ void drawarrow(picture pic, arrowhead3 arrowhead=DefaultHead3,
   path3 r=subpath(g,position,0);
   size=min(arrowsizelimit*arclength(r),size);
   surface head=arrowhead.head(g,position,q,size,angle,filltype,forwards,P);
+  if(arrowhead.size > 0) size=arrowhead.size;
   bool endpoint=position > L-sqrtEpsilon;
   if(arrowhead.splitpath || endpoint) {
     if(position > 0) {
@@ -526,11 +529,11 @@ void bar(picture pic, triple a, triple d, triple perp=O,
   pic.add(new void(frame f, transform3 t, picture pic2, projection P) {
       picture opic;
       triple A=t*a;
-      triple v=d == O ? abs(perp)*unit(cross(P.vector(),perp)) : d;
+      triple v=d == O ? abs(perp)*unit(cross(P.normal,perp)) : d;
       draw(opic,A-v--A+v,p,light);
       add(f,opic.fit3(identity4,pic2,P));
     });
-  triple v=d == O ? cross(currentprojection.vector(),perp) : d;
+  triple v=d == O ? cross(currentprojection.normal,perp) : d;
   pen q=(pen) p;
   triple m=min3(q);
   triple M=max3(q);

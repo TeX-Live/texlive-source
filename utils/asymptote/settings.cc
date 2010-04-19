@@ -55,6 +55,10 @@ extern "C" {
 #ifdef clear
 #undef clear
 #endif
+// Workaround broken header file on i386-solaris with g++ 3.4.3.
+#ifdef erase
+#undef erase
+#endif
 
 using vm::item;
 
@@ -69,7 +73,7 @@ namespace settings {
   
 using camp::pair;
   
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
 const bool haveglut=true;  
 #else
 const bool haveglut=false;
@@ -77,6 +81,8 @@ const bool haveglut=false;
   
 mode_t mask;
   
+string systemDir=ASYMPTOTE_SYSDIR;
+
 #ifndef __CYGWIN__
   
 bool msdos=false;
@@ -91,7 +97,6 @@ string defaultPDFViewer="acroread";
 string defaultGhostscript="gs";
 string defaultDisplay="display";
 string defaultAnimate="animate";
-string systemDir=ASYMPTOTE_SYSDIR;
 string docdir=ASYMPTOTE_DOCDIR;
 void queryRegistry() {}
 const string dirsep="/";
@@ -110,7 +115,6 @@ string defaultGhostscript="gswin32c.exe";
 string defaultDisplay="cmd";
 //string defaultAnimate="animate";
 string defaultAnimate="cmd";
-string systemDir=ASYMPTOTE_SYSDIR;
 string docdir;
 const string dirsep="\\";
   
@@ -184,7 +188,8 @@ void queryRegistry()
   if(defaultPSViewer != "cmd")
     defaultPSViewer=getEntry("Ghostgum/GSview/*")+"\\gsview\\"+defaultPSViewer;
   docdir=getEntry("Microsoft/Windows/CurrentVersion/App Paths/Asymptote/Path");
-  if(!systemDir.empty()) // An empty systemDir indicates a TeXLive build
+  // An empty systemDir indicates a TeXLive build
+  if(!systemDir.empty() && !docdir.empty())
     systemDir=docdir;
 }
   
@@ -215,6 +220,7 @@ bool globalwrite() {return globaloption || !safe;}
   
 const string suffix="asy";
 const string guisuffix="gui";
+const string standardprefix="out";
   
 string initdir;
 string historyname;
@@ -1067,6 +1073,8 @@ void initSettings() {
   addOption(new stringSetting("outformat", 'f', "format",
                               "Convert each output file to specified format",
                               ""));
+  addOption(new boolSetting("svgemulation", 0,
+                            "Emulate unimplemented SVG shading", false));
   addOption(new boolSetting("prc", 0,
                             "Embed 3D PRC graphics in PDF output", true));
   addOption(new boolSetting("toolbar", 0,
@@ -1249,8 +1257,7 @@ void initSettings() {
   addOption(new stringSetting("pdfreloadOptions", 0, "string", ""));
   addOption(new stringSetting("glOptions", 0, "string", ""));
   addOption(new stringSetting("hyperrefOptions", 0, "str",
-                              "LaTeX hyperref package options",
-                              "setpagesize=false,unicode"));
+                              "","setpagesize=false,unicode,pdfborder=0 0 0"));
   
   addOption(new envSetting("config","config."+suffix));
   addOption(new envSetting("pdfviewer", defaultPDFViewer));
@@ -1285,8 +1292,8 @@ void setInteractive() {
      (isatty(STDIN_FILENO) || getSetting<bool>("interactive")))
     interact::interactive=true;
   
-  historyname=getSetting<bool>("localhistory") ? "."+suffix+"_history" 
-    : (initdir+"/history");
+  historyname=getSetting<bool>("localhistory") ? 
+    (string(getPath())+dirsep+"."+suffix+"_history") : (initdir+"/history");
 }
 
 bool view() {
@@ -1307,7 +1314,9 @@ bool trap() {
 string outname() 
 {
   string name=getSetting<string>("outname");
-  return name.empty() ? "out" : name;
+  if(name.empty() && interact::interactive) return standardprefix;
+  if(msdos) backslashToSlash(name);
+  return name;
 }
 
 string lookup(const string& symbol) 
@@ -1318,10 +1327,6 @@ string lookup(const string& symbol)
   cmd.push_back("--var-value="+symbol);
   iopipestream pipe(cmd);
   pipe >> s;
-// Workaround broken header file on i386-solaris with g++ 3.4.3.
-#ifdef erase
-#undef erase
-#endif
   size_t n=s.find('\r');
   if(n != string::npos)
     s.erase(n,1);
@@ -1534,11 +1539,19 @@ Int getScroll()
   Int scroll=settings::getSetting<Int>("scroll");
 #ifdef HAVE_LIBCURSES  
   if(scroll < 0) {
-    char *terminal=getenv("TERM");
+    static char *terminal=NULL;
+    if(!terminal)
+      terminal=getenv("TERM");
     if(terminal) {
-      setupterm(terminal,1,NULL);
-      scroll=lines > 2 ? lines-1 : 1;
-    }
+      int error;
+      error=setupterm(terminal,1,&error);
+#ifndef __CYGWIN__      
+      if(error == 0) scroll=lines > 2 ? lines-1 : 1;
+      else
+#endif
+	scroll=0;
+    } else scroll=0;
+
   }
 #endif
   return scroll;

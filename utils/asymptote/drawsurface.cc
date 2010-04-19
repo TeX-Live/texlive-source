@@ -14,7 +14,7 @@ const triple drawSurface::zero;
 
 using vm::array;
 
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
 void storecolor(GLfloat *colors, int i, const vm::array &pens, int j)
 {
   pen p=vm::read<camp::pen>(pens,j);
@@ -104,7 +104,8 @@ void drawSurface::bounds(bbox3& b)
   b.add(Max);
 }
 
-void drawSurface::ratio(pair &b, double (*m)(double, double), bool &first)
+void drawSurface::ratio(pair &b, double (*m)(double, double), double fuzz,
+                        bool &first)
 {
   if(straight) {
     if(first) {
@@ -136,7 +137,6 @@ void drawSurface::ratio(pair &b, double (*m)(double, double), bool &first)
       first=false;
     }
   
-    double fuzz=sqrtFuzz*run::norm(c3,16);
     b=pair(bound(c3,m,xratio,b.getx(),fuzz),bound(c3,m,yratio,b.gety(),fuzz));
   }
 }
@@ -154,11 +154,10 @@ bool drawSurface::write(prcfile *out, unsigned int *count, array *index,
     buf << name;
   
   if(interaction == BILLBOARD) {
-    triple Center=center*scale3D;
     size_t n=origin->size();
     
-    if(n == 0 || Center != vm::read<triple>(origin,n-1)) {
-      origin->push(Center);
+    if(n == 0 || center != vm::read<triple>(origin,n-1)) {
+      origin->push(center);
       ++n;
     }
     
@@ -205,7 +204,7 @@ inline triple displacement(const Triple& z0, const Triple& c0,
 
 void drawSurface::displacement()
 {
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
   if(normal != zero) {
     d=zero;
     
@@ -239,7 +238,7 @@ inline double fraction(const triple& d, const triple& size)
              fraction(d.getz(),size.getz()));
 }
 
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
 struct billboard 
 {
   triple u,v,w;
@@ -272,7 +271,7 @@ void drawSurface::render(GLUnurbs *nurb, double size2,
                          const triple& Min, const triple& Max,
                          double perspective, bool transparent)
 {
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
   if(invisible || ((colors ? colors[3]+colors[7]+colors[11]+colors[15] < 4.0
                     : diffuse.A < 1.0) ^ transparent)) return;
   double s;
@@ -456,9 +455,9 @@ bool drawNurbs::write(prcfile *out, unsigned int *count, array *index,
     return true;
 
   PRCMaterial m(ambient,diffuse,emissive,specular,opacity,PRCshininess);
-  out->add(new PRCsurface(out,udegree,vdegree,nu,nv,controls,uknots,vknots,
-                          m,scale3D,weights != NULL,weights,granularity,
-                          name.c_str()));
+  out->add(new PRCsurface(out,udegree,vdegree,nu,nv,controls,
+                          uknots,vknots,m,scale3D,weights != NULL,
+                          weights,granularity,buf.str().c_str()));
   
   return true;
 }
@@ -466,51 +465,27 @@ bool drawNurbs::write(prcfile *out, unsigned int *count, array *index,
 // Approximate bounds by bounding box of control polyhedron.
 void drawNurbs::bounds(bbox3& b)
 {
-  double x,y,z;
-  double X,Y,Z;
   size_t n=nu*nv;
   double *v=controls[0];
-  if(weights == NULL) {
-    x=v[0];
-    y=v[1];
-    z=v[2];
-    X=x;
-    Y=y;
-    Z=z;
-    for(size_t i=1; i < n; ++i) {
-      double *v=controls[i];
-      double vx=v[0];
-      x=min(x,vx);
-      X=max(X,vx);
-      double vy=v[1];
-      y=min(y,vy);
-      Y=max(Y,vy);
-      double vz=v[2];
-      z=min(z,vz);
-      Z=max(Z,vz);
-    }
-  } else {
-    double w=weights[0];
-    x=v[0]/w;
-    y=v[1]/w;
-    z=v[2]/w;
-    X=x;
-    Y=y;
-    Z=z;
-    for(size_t i=1; i < n; ++i) {
-      double *v=controls[i];
-      double w=weights[i];
-      double vx=v[0]/w;
-      x=min(x,vx);
-      X=max(X,vx);
-      double vy=v[1]/w;
-      y=min(y,vy);
-      Y=max(Y,vy);
-      double vz=v[2]/w;
-      z=min(z,vz);
-      Z=max(Z,vz);
-    }
+  double x=v[0];
+  double y=v[1];
+  double z=v[2];
+  double X=x;
+  double Y=y;
+  double Z=z;
+  for(size_t i=1; i < n; ++i) {
+    double *v=controls[i];
+    double vx=v[0];
+    x=min(x,vx);
+    X=max(X,vx);
+    double vy=v[1];
+    y=min(y,vy);
+    Y=max(Y,vy);
+    double vz=v[2];
+    z=min(z,vz);
+    Z=max(Z,vz);
   }
+
   Min=triple(x,y,z);
   Max=triple(X,Y,Z);
   b.add(Min);
@@ -522,7 +497,7 @@ drawElement *drawNurbs::transformed(const array& t)
   return new drawNurbs(t,this);
 }
 
-void drawNurbs::ratio(pair &b, double (*m)(double, double), bool &first)
+void drawNurbs::ratio(pair &b, double (*m)(double, double), double, bool &first)
 {
   size_t n=nu*nv;
   if(first) {
@@ -545,21 +520,27 @@ void drawNurbs::ratio(pair &b, double (*m)(double, double), bool &first)
 
 void drawNurbs::displacement()
 {
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
   size_t n=nu*nv;
-  size_t stride=weights == NULL ? 3 : 4;
-  for(size_t i=0; i < n; ++i)
-    store(Controls+stride*i,controls[i]);
+  size_t nuknots=udegree+nu+1;
+  size_t nvknots=vdegree+nv+1;
+    
+  if(Controls == NULL) {
+    Controls=new(UseGC)  GLfloat[(weights ? 4 : 3)*n];
+    uKnots=new(UseGC) GLfloat[nuknots];
+    vKnots=new(UseGC) GLfloat[nvknots];
+  }
   
-  if(weights != NULL)
+  if(weights)
     for(size_t i=0; i < n; ++i)
-      Controls[4*i+3]=weights[i];
-
-  size_t nuknotsm1=udegree+nu;
-  size_t nvknotsm1=vdegree+nv;
-  for(size_t i=0; i <= nuknotsm1; ++i)
+      store(Controls+4*i,controls[i],weights[i]);
+  else
+    for(size_t i=0; i < n; ++i)
+      store(Controls+3*i,controls[i]);
+  
+  for(size_t i=0; i < nuknots; ++i)
     uKnots[i]=uknots[i];
-  for(size_t i=0; i <= nvknotsm1; ++i)
+  for(size_t i=0; i < nvknots; ++i)
     vKnots[i]=vknots[i];
 #endif  
 }
@@ -568,7 +549,7 @@ void drawNurbs::render(GLUnurbs *nurb, double size2,
                        const triple& Min, const triple& Max,
                        double perspective, bool transparent)
 {
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
   if(invisible || ((colors ? colors[3]+colors[7]+colors[11]+colors[15] < 4.0
                     : diffuse.A < 1.0) ^ transparent)) return;
   
@@ -656,10 +637,10 @@ void drawNurbs::render(GLUnurbs *nurb, double size2,
   gluBeginSurface(nurb);
   int uorder=udegree+1;
   int vorder=vdegree+1;
-  size_t stride=weights == NULL ? 3 : 4;
+  size_t stride=weights ? 4 : 3;
   gluNurbsSurface(nurb,uorder+nu,uKnots,vorder+nv,vKnots,stride*nv,stride,
                   Controls,uorder,vorder,
-                  weights == NULL ? GL_MAP2_VERTEX_3 : GL_MAP2_VERTEX_4);
+                  weights ? GL_MAP2_VERTEX_4 : GL_MAP2_VERTEX_3);
   if(colors) {
     static GLfloat linear[]={0.0,0.0,1.0,1.0};
     gluNurbsSurface(nurb,4,linear,4,linear,8,4,colors,2,2,GL_MAP2_COLOR_4);

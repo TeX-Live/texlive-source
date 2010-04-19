@@ -19,6 +19,11 @@
 #include "prcfile.h"
 #include "glrender.h"
 
+namespace run {
+extern double *copyArrayC(const vm::array *a, size_t dim,
+                          GCPlacement placement);
+}
+
 namespace camp {
 
 enum Entity {LINE=0,CURVE,SURFACE,BILLBOARD_SURFACE,nENTITY};
@@ -107,14 +112,22 @@ public:
   virtual void bounds(bbox3&) {}
 
   // Compute bounds on ratio (x,y)/z for 3d picture (not cached).
-  virtual void ratio(pair &b, double (*m)(double, double), bool &first){}
+  virtual void ratio(pair &b, double (*m)(double, double), double fuzz,
+                     bool &first){}
 
   virtual bool islabel() {return false;}
-  
+
   virtual bool islayer() {return false;}
 
   virtual bool is3D() {return false;}
+
+// Implement element as raw SVG code?
+  virtual bool svg() {return false;}
   
+// Implement SVG element as png image?
+  virtual bool svgpng() {return false;}
+  
+  virtual bool beginclip() {return false;}
   virtual bool endclip() {return false;}
   
   virtual bool begingroup() {return false;}
@@ -181,6 +194,10 @@ public:
     out->write(p);
   }
   
+  virtual void writeclippath(psfile *out, bool newpath=true) {
+    out->writeclip(p,newpath);
+  }
+  
   virtual void writeshiftedpath(texfile *out) {
     out->writeshifted(p);
   }
@@ -221,16 +238,12 @@ public:
   
   virtual void penTranslate(psfile *out)
   {
-    transform t=pentype.getTransform();
-    if (!t.isIdentity())
-      out->translate(shiftpair(t));
+    out->translate(shiftpair(pentype.getTransform()));
   }
 
   virtual void penConcat(psfile *out)
   {
-    transform t=pentype.getTransform();
-    if (!t.isIdentity())
-      out->concat(shiftless(t));
+    out->concat(shiftless(pentype.getTransform()));
   }
 
   virtual void penRestore(psfile *out)
@@ -292,9 +305,16 @@ public:
     b += bpath;
   }
   
-  void writepath(psfile *out) {
-    for(size_t i=0; i < size; i++) 
-      out->write(vm::read<path>(P,i),i == 0);
+  void writepath(psfile *out, bool newpath=true) {
+    if(size > 0) out->write(vm::read<path>(P,0),newpath);
+    for(size_t i=1; i < size; i++)
+      out->write(vm::read<path>(P,i),false);
+  }
+  
+  void writeclippath(psfile *out, bool newpath=true) {
+    if(size > 0) out->writeclip(vm::read<path>(P,0),newpath);
+    for(size_t i=1; i < size; i++)
+      out->writeclip(vm::read<path>(P,i),false);
   }
   
   void writeshiftedpath(texfile *out) {

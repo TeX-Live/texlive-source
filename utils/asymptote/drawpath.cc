@@ -13,27 +13,30 @@
 #include "psfile.h"
 #include "util.h"
 
+using vm::array;
+using vm::read;
+
 namespace camp {
 
-
-double PatternLength(double arclength, const std::vector<double>& pat,
+double PatternLength(double arclength, const array& pat,
                      bool cyclic, double penwidth)
 {
   double sum=0.0;
       
   size_t n=pat.size();
   for(unsigned i=0; i < n; i ++)
-    sum += pat[i]*penwidth;
+    sum += read<double>(pat,i)*penwidth;
   
   if(sum == 0.0) return 0.0;
   
   if(n % 2 == 1) sum *= 2.0; // On/off pattern repeats after 2 cycles.
       
+  double pat0=read<double>(pat,0);
   // Fix bounding box resolution problem. Example:
   // asy -f pdf testlinetype; gv -scale -2 testlinetype.pdf
-  if(!cyclic && pat[0] == 0) sum += 1.0e-3*penwidth;
+  if(!cyclic && pat0 == 0) sum += 1.0e-3*penwidth;
       
-  double terminator=(cyclic && arclength >= 0.5*sum) ? 0.0 : pat[0]*penwidth;
+  double terminator=(cyclic && arclength >= 0.5*sum) ? 0.0 : pat0*penwidth;
   int ncycle=(int)((arclength-terminator)/sum+0.5);
 
   return (ncycle >= 1 || terminator >= 0.75*arclength) ? 
@@ -44,43 +47,20 @@ pen adjustdash(pen& p, double arclength, bool cyclic)
 {
   pen q=p;
   // Adjust dash sizes to fit arclength; also compensate for linewidth.
-  string stroke=q.stroke();
-  
-  if(!stroke.empty()) {
-    double penwidth=q.linetype().scale ? q.width() : 1.0;
+  const LineType *linetype=q.linetype();
+  size_t n=linetype->pattern.size();
+    
+  if(n > 0) {
+    double penwidth=linetype->scale ? q.width() : 1.0;
     double factor=penwidth;
     
-    std::vector<double> pat;
-    
-    istringstream ibuf(stroke);
-    double l;
-    while(ibuf >> l) {
-      if(l < 0) l=0;
-      pat.push_back(l);
-    }
-      
-    size_t n=pat.size();
-    
-    if(q.linetype().adjust) {
-      if(arclength) {
-        if(n == 0) return q;
-      
-        double denom=PatternLength(arclength,pat,cyclic,penwidth);
-        if(denom != 0.0) factor *= arclength/denom;
-      }
+    if(linetype->adjust && arclength) {
+      double denom=PatternLength(arclength,linetype->pattern,cyclic,penwidth);
+      if(denom != 0.0) factor *= arclength/denom;
     }
     
-    factor=max(factor,0.1);
-    
-    ostringstream buf;
-    buf.setf(std::ios::fixed);
-    if(n > 0) {
-      for(size_t i=0; i < n-1; i++)
-        buf << pat[i]*factor << " ";
-      buf << pat[n-1]*factor;
-    }
-    q.setstroke(buf.str());
-    q.setoffset(q.linetype().offset*factor);
+    if(factor != 1.0)
+      q.adjust(max(factor,0.1));
   }
   return q;
 }
@@ -147,19 +127,22 @@ bool drawPath::draw(psfile *out)
   if (n == 0 || pentype.invisible())
     return true;
 
-  pen pen0=adjustdash(pentype,p.arclength(),p.cyclic());
+  pen q=adjustdash(pentype,p.arclength(),p.cyclic());
 
   penSave(out);
   penTranslate(out);
 
-  out->write(p);
+  if(n > 1)
+    out->write(p);
+  else
+    out->dot(p,q);
 
   penConcat(out);
-
-  out->setpen(pen0);
   
-  out->stroke();
-
+  out->setpen(q);
+  
+  out->stroke(q,n == 1);
+  
   penRestore(out);
 
   return true;

@@ -7,11 +7,14 @@
 #ifndef PEN_H
 #define PEN_H
 
+#include <iomanip>
+
 #include "transform.h"
 #include "settings.h"
 #include "bbox.h"
 #include "common.h"
 #include "path.h"
+#include "array.h"
 
 namespace camp {
 
@@ -39,6 +42,7 @@ static const struct setoverwrite_t {} setoverwrite={};
 static const struct initialpen_t {} initialpen={};
 static const struct resolvepen_t {} resolvepen={};
   
+static const string PSCap[]={"butt","round","square"};
 static const string Cap[]={"square","round","extended"};
 static const string Join[]={"miter","round","bevel"};
 const Int nCap=sizeof(Cap)/sizeof(string);
@@ -68,22 +72,57 @@ const unsigned nColorSpace=sizeof(ColorDeviceSuffix)/sizeof(string);
 class LineType
 {
 public:  
-  string pattern;       // The string for the PostScript style line pattern.
+  vm::array pattern;    // Array of PostScript style line pattern entries.
   double offset;        // The offset in the pattern at which to start drawing.
   bool scale;           // Scale the line type values by the pen width?
   bool adjust;          // Adjust the line type values to fit the arclength?
+  bool isdefault;   
   
-  LineType(string pattern, double offset, bool scale, bool adjust) : 
-    pattern(pattern), offset(offset), scale(scale), adjust(adjust) {}
+  LineType(vm::array pattern, double offset, bool scale, bool adjust) : 
+    pattern(pattern), offset(offset), scale(scale), adjust(adjust),
+    isdefault(false) {}
+  
+  LineType() : offset(0.0), scale(true), adjust(true), isdefault(true) {}
+  
+  void Scale(double factor) {
+    size_t n=pattern.size();
+    for(size_t i=0; i < n; i++)
+      pattern[i]=vm::read<double>(pattern,i)*factor;
+    offset *= factor;
+  }
 };
   
-static const LineType DEFLINE("default",0,true,true);
+static const LineType DEFLINE;
   
-inline bool operator == (LineType a, LineType b) {
-  return a.pattern == b.pattern && a.offset == b.offset && 
-    a.scale == b.scale && a.adjust == b.adjust;
+inline bool operator == (const vm::array& a, const vm::array& b)
+{
+  size_t asize=a.size();
+  size_t bsize=b.size();
+  if(asize != bsize) return false;
+  for(size_t i=0; i < asize; ++i)
+    if(vm::read<double>(a,i) != vm::read<double>(b,i)) return false;
+  return true;
 }
   
+inline bool operator == (const LineType& a, const LineType& b)
+{
+  return a.pattern == b.pattern && a.offset == b.offset && a.scale == b.scale
+    && a.adjust == b.adjust;
+}
+  
+inline ostream& operator << (ostream& out, const vm::array& a)
+{
+  out << "[";
+  size_t n=a.size();
+  if(n > 0) {
+    out << vm::read<double>(a,0);
+      for(size_t i=1; i < n; ++i)
+        out << " " << vm::read<double>(a,i);
+  }
+  out << "]";
+  return out;
+}
+
 class Transparency
 {
 public:  
@@ -108,6 +147,16 @@ const Int nBlendMode=sizeof(BlendMode)/sizeof(string);
 
 static const transform nullTransform=transform(0.0,0.0,0.0,0.0,0.0,0.0);  
   
+// Map [0,1] to [0,255]
+inline unsigned int byte(double r) 
+{
+  if(r < 0.0) r=0.0;
+  else if(r > 1.0) r=1.0;
+  int a=(int)(256.0*r);
+  if(a == 256) a=255;
+  return a;
+}
+
 class pen;
 pen& defaultpen();
 
@@ -352,7 +401,7 @@ public:
   
   // Construct one pen from another, resolving defaults
   pen(resolvepen_t, const pen& p) : 
-    line(LineType(p.stroke(),p.line.offset,p.line.scale,p.line.adjust)),
+    line(LineType(p.line.pattern,p.line.offset,p.line.scale,p.line.adjust)),
     linewidth(p.width()), P(p.Path()),
     font(p.Font()), fontsize(p.size()), lineskip(p.Lineskip()),
     color(p.colorspace()),
@@ -363,8 +412,8 @@ public:
     overwrite(p.Overwrite()), t(p.getTransform()) {}
   
   static pen initialpen() {
-    return pen(LineType("",0,true,true),0.5,nullpath,"",12.0*tex2ps,
-               12.0*1.2*tex2ps,GRAYSCALE,
+    return pen(LineType(vm::array(0),0.0,true,true),0.5,nullpath,"",
+               12.0*tex2ps,12.0*1.2*tex2ps,GRAYSCALE,
                0.0,0.0,0.0,0.0,"",ZEROWINDING,NOBASEALIGN,
                DEFTRANSP,1,1,10.0,ALLOW,identity);
   }
@@ -419,15 +468,17 @@ public:
     return lineskip == 0.0 ? defaultpen().lineskip : lineskip;
   }
   
-  string stroke() const {
-    return line == DEFLINE ? defaultpen().line.pattern : line.pattern;
+  const LineType *linetype() const {
+    return line.isdefault ? &defaultpen().line : &line;
   }
   
-  LineType linetype() const {
-    return line == DEFLINE ? defaultpen().line : line;
+  void adjust(double factor) {
+    if(line.isdefault) 
+      line=defaultpen().line;
+    line.Scale(factor);
   }
   
-  void setstroke(const string& s) {line.pattern=s;}
+  void setstroke(const vm::array& s) {line.pattern=s;}
   void setoffset(const double& offset) {line.offset=offset;}
   
   string fillpattern() const {
@@ -482,6 +533,35 @@ public:
   
   ColorSpace colorspace() const {
     return color == DEFCOLOR ? defaultpen().color : color;
+  }
+  
+  string hex() const {
+    int n=ColorComponents[colorspace()];
+    ostringstream buf;
+    buf.setf(std::ios::hex,std::ios::basefield);
+    buf.fill('0');
+    
+    switch(n) {
+      case 0:
+        break;
+      case 1: 
+        buf << std::setw(2) << byte(gray());
+        break;
+      case 3:
+        buf << std::setw(2) << byte(red())
+            << std::setw(2) << byte(green())
+            << std::setw(2) << byte(blue());
+        break;
+      case 4:
+        buf << std::setw(2) << byte(cyan())
+            << std::setw(2) << byte(magenta())
+            << std::setw(2) << byte(yellow())
+            << std::setw(2) << byte(black());
+        break;
+      default:
+        break;
+    }
+    return buf.str();
   }
   
   bool invisible() const {return colorspace() == INVISIBLE;}
@@ -574,6 +654,14 @@ public:
     transparency=p.transparency;
   }
                                                                
+  void setfont(const pen& p) {
+    font=p.font;
+  }
+  
+  void setfillrule(const pen& p) {
+    fillrule=p.fillrule;
+  }
+  
   void convert() {
     if(settings::gray || settings::bw) {
       if(rgb()) rgbtogrey();
@@ -703,7 +791,7 @@ public:
       }
     }
     
-    return pen(q.line == DEFLINE ? p.line : q.line,
+    return pen(q.line.isdefault ? p.line : q.line,
                q.linewidth == DEFWIDTH ? p.linewidth : q.linewidth,
                q.P.empty() ? p.P : q.P,
                q.font.empty() ? p.font : q.font,
@@ -756,7 +844,7 @@ public:
   }
 
   friend bool operator == (const pen& p, const pen& q) {
-    return  p.linetype() == q.linetype() 
+    return  *(p.linetype()) == *(q.linetype()) 
       && p.width() == q.width() 
       && p.Path() == q.Path()
       && p.Font() == q.Font()
@@ -784,10 +872,10 @@ public:
   
   friend ostream& operator << (ostream& out, const pen& p) {
     out << "(";
-    if(p.line == DEFLINE)
-      out << p.line.pattern;
+    if(p.line.isdefault)
+      out << "default";
     else
-      out << "[" << p.line.pattern << "]";
+      out << p.line.pattern;
     if(p.line.offset)
       out << p.line.offset;
     if(!p.line.scale)

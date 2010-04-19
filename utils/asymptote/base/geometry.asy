@@ -1163,7 +1163,7 @@ private void Drawline(picture pic=currentpicture, Label L="",pair P, bool dirP=t
       // Calculate the points and direction vector in the transformed space.
       pair z=t*P;
       pair q=t*Q;
-      pair v=t*Q-z;
+      pair v=q-z;
       // path g;
       pair ptp,ptq;
       real cp = dirP ? 1:0;
@@ -1171,7 +1171,7 @@ private void Drawline(picture pic=currentpicture, Label L="",pair P, bool dirP=t
       // Handle horizontal and vertical lines.
       if(v.x == 0) {
         if(m.x <= z.x && z.x <= M.x)
-          if (dot(v,(z.x,m.y)) < 0) {
+          if (dot(v,m-z) < 0) {
             ptp=(z.x,z.y+cp*(m.y-z.y));
             ptq=(z.x,q.y+cq*(M.y-q.y));
           } else {
@@ -1179,7 +1179,7 @@ private void Drawline(picture pic=currentpicture, Label L="",pair P, bool dirP=t
             ptq=(z.x,z.y+cp*(M.y-z.y));
           }
       } else if(v.y == 0) {
-        if (dot(v,(m.x,z.y)) < 0) {
+        if (dot(v,m-z) < 0) {
           ptp=(z.x+cp*(m.x-z.x),z.y);
           ptq=(q.x+cq*(M.x-q.x),z.y);
         } else {
@@ -1210,7 +1210,7 @@ private void Drawline(picture pic=currentpicture, Label L="",pair P, bool dirP=t
             lL.out(opic,g);
           }
           g=pathModifier(g);
-          if(linetype(p) == ""){
+          if(linetype(p).length == 0){
             pair m=midpoint(g);
             pen tp;
             tp=dirP ? p : addpenline(p);
@@ -7016,7 +7016,7 @@ arc arc(ellipse el, explicit abscissa x1, explicit abscissa x2, bool direction=C
 {/*<asyxml></code><documentation>Return the arc from 'point(c,x1)' to 'point(c,x2)' in the direction 'direction'.</documentation></function></asyxml>*/
   real a=degrees(point(el,x1)-el.C);
   real b=degrees(point(el,x2)-el.C);
-  arc oa=arc(el,a,b,fromCenter,direction);
+  arc oa=arc(el,a-el.angle,b-el.angle,fromCenter,direction);
   return oa;
 }
 
@@ -7135,8 +7135,7 @@ void perpendicular(picture pic=currentpicture, pair z, pair align, path g,
 
 // Return an interior arc BAC of triangle ABC, given a radius r > 0.
 // If r < 0, return the corresponding exterior arc of radius |r|.
-path arc(explicit pair B, explicit pair A, explicit pair C,
-         real r=arrowfactor)
+path arc(explicit pair B, explicit pair A, explicit pair C, real r)
 {
   return arc(A,r,degrees(B-A),degrees(C-A));
 }

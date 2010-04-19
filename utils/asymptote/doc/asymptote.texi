@@ -484,7 +484,7 @@ configuration variables @code{paperwidth} and @code{paperheight}.
 @cindex @code{texpath}
 @cindex @code{texcommand}
 @cindex @code{dvips}
-@cindex @code{dvisvg}
+@cindex @code{dvisvgm}
 @cindex @code{convert}
 @cindex @code{display}
 @cindex @code{animate}
@@ -494,7 +494,7 @@ The following configuration variables normally do not require adjustment:
 texpath
 texcommand
 dvips
-dvisvg
+dvisvgm
 convert
 display
 animate
@@ -592,12 +592,12 @@ If your graphics card supports multisampling, we recommend using version
 (@code{MacOS X} users can skip this step since @code{Asymptote} is configured
 to use the native glut library on that platform). Download
 @quotation
-@url{http://prdownloads.sourceforge.net/freeglut/freeglut-2.6.0-rc1.tar.gz}
+@url{http://prdownloads.sourceforge.net/freeglut/freeglut-2.6.0.tar.gz}
 @end quotation
 @noindent
 and type (as the root user):
 @verbatim
-tar -zxf freeglut-2.6.0-rc1.tar.gz
+tar -zxf freeglut-2.6.0.tar.gz
 cd freeglut-2.6.0
 ./configure --prefix=/usr
 make install
@@ -1335,7 +1335,8 @@ void tensorshade(picture pic=currentpicture, path g, bool stroke=false,
 One can also smoothly shade the regions between consecutive paths of a
 sequence using a given array of pens:
 @verbatim
-void draw(picture pic=currentpicture, path[] g, pen[] p);
+void draw(picture pic=currentpicture, pen fillrule=currentpen, path[] g,
+          pen[] p);
 @end verbatim
 @noindent
 Illustrations of tensor product and Coons shading are provided in the
@@ -2058,9 +2059,10 @@ string pairs @{@code{before},@code{after}@} to the corresponding
 string @code{after};
 
 @cindex @code{split}
-@item string[] split(string s, string delimiter=" ")
+@item string[] split(string s, string delimiter="")
 returns an array of strings obtained by splitting @code{s} into substrings
-delimited by @code{delimiter};
+delimited by @code{delimiter} (an empty delimiter signifies a space,
+but with duplicate delimiters discarded);
 
 @anchor{format}
 @item string format(string s, int n)
@@ -2138,14 +2140,19 @@ time(seconds()-24*60*60);
 @end verbatim
 
 @cindex @code{abort}
-@item void abort(string s)
+@item void abort(string s="")
 aborts execution (with a non-zero return code in batch mode); if string
 @code{s} is nonempty, a diagnostic message constructed from the source
 file, line number, and @code{s} is printed;
 
+@cindex @code{assert}
+@item void assert(bool b, string s="")
+aborts execution with an error message constructed from @code{s} if
+@code{b=false}; 
+
 @cindex @code{exit}
 @item void exit()
-exits with a zero error return code in batch mode;
+exits (with a zero error return code in batch mode);
 
 @cindex @code{sleep}
 @item void sleep(int seconds)
@@ -2394,8 +2401,7 @@ paths @code{p} and @code{q} as a sorted array of real arrays of length 2
 specified by @code{fuzz}, or if @code{fuzz < 0}, to machine precision.
 
 @cindex @code{intersections}
-@item real[] intersections(path p, explicit pair a, explicit pair b,
-                           real fuzz=-1);
+@item real[] intersections(path p, explicit pair a, explicit pair b, real fuzz=-1);
 Return all (unless there are infinitely many) intersection times of path
 @code{p} with the (infinite) line through points @code{a} and @code{b}
 as a sorted array. The intersections returned are guaranteed to be
@@ -2712,6 +2718,10 @@ the routine
 @verbatim
 pen rgb(string s);
 @end verbatim
+@noindent
+A pen can be converted to a hexidecimal string with
+@cindex @code{hex}
+@item string hex(pen p);
 
 Various shades and mixtures of the grayscale primary colors
 @code{black} and @code{white}, @acronym{RGB} primary colors
@@ -2761,14 +2771,14 @@ write(q.h,q.s,q.v); // 180     0.5     0.75
 @end verbatim
 
 @item Line types are specified with the function 
-@code{pen linetype(string s, real offset=0, bool scale=true, bool adjust=true)},
+@code{pen linetype(real[] a, real offset=0, bool scale=true, bool adjust=true)},
 @cindex @code{solid}
 @cindex @code{dashed}
 @cindex @code{dotted}
 @cindex @code{longdashed}
 @cindex @code{dashdotted}
 @cindex @code{longdashdotted}
-where @code{s} is a string of integer or real numbers separated by spaces.
+where @code{a} is an array of real array numbers.
 The optional parameter @code{offset} specifies where in the pattern
 to begin. The first number specifies how far (if @code{scale} is
 @code{true}, in units of the pen line width; otherwise in
@@ -2778,12 +2788,12 @@ specifies how far to draw with the pen off, and so on. If
 adjusted by @code{Asymptote} to fit the arclength of the path. Here
 are the predefined line types:
 @verbatim
-pen solid=linetype("");
-pen dotted=linetype("0 4");
-pen dashed=linetype("8 8");
-pen longdashed=linetype("24 8");
-pen dashdotted=linetype("8 8 0 8");
-pen longdashdotted=linetype("24 8 0 8");
+pen solid=linetype(new real[]);
+pen dotted=linetype(new real[] {0,4});
+pen dashed=linetype(new real[] {8,8});
+pen longdashed=linetype(new real[] {24,8});
+pen dashdotted=linetype(new real[] {8,8,0,8});
+pen longdashdotted=linetype(new real[] {24,8,0,8});
 pen Dotted=dotted+1.0;
 pen Dotted(pen p=currentpen) {return dotted+2*linewidth(p);}
 @end verbatim
@@ -2798,7 +2808,7 @@ The default line type is @code{solid}; this may be changed with
 @cindex @code{scale}
 @cindex @code{adjust}
 The line type of a pen can be determined with the functions
-@code{string linetype(pen p=currentpen)}, 
+@code{real[] linetype(pen p=currentpen)}, 
 @code{real offset(pen p)}, @code{bool scale(pen p)}, and
 @code{bool adjust(pen p)}.
 
@@ -3492,7 +3502,7 @@ void add(picture dest=currentpicture, frame src, pair position,
          bool above=true);
 @end verbatim
 
-The optional @code{align} argument in the last three forms specifies a
+The optional @code{align} argument in the last form specifies a
 direction to use for aligning the frame, in a manner analogous to the
 @code{align} argument of @code{label} (@pxref{label}). However, one key
 difference is that when @code{align} is not specified, labels are
@@ -3619,11 +3629,11 @@ as a single literal comment character.
 @anchor{cd}
 @cindex @code{cd}
 @cindex directory
-If the @code{-globalwrite} (or @code{-nosafe}) option is enabled, one can
-change the current working directory to the contents of the string
-@code{s} with the function @code{string cd(string s)}, which returns the
-new working directory. If @code{string s} is empty, the path is reset to
-the value it had at program startup.
+One can change the current working directory for read operations to
+the contents of the string @code{s} with the function @code{string
+cd(string s)}, which returns the new working directory. If
+@code{string s} is empty, the path is reset to the value it had at
+program startup.
 
 @cindex @code{getc}
 When reading pairs, the enclosing parenthesis are optional.
@@ -3710,7 +3720,7 @@ Alternatively, a file may also be opened with @code{binput} or
 @code{boutput} to read or write double precision reals and single
 precision integers in the native (nonportable) machine binary format.
 The virtual member functions
-@code{file singlereal(bool b=false)} and @code{file singleint(bool b=true)}
+@code{file singlereal(bool b=true)} and @code{file singleint(bool b=true)}
 be used to change the precision of real and integer I/O
 operations, respectively, for an @acronym{XDR} or binary file @code{f}.  
 Similarly, the function @code{file signedint(bool b=true)}
@@ -4277,8 +4287,12 @@ for nonintegral built-in arithmetic types @code{T}. If @code{a} and
 @cindex @code{OR}
 @cindex @code{XOR}
 @cindex @code{NOT}
+@cindex @code{CLZ}
+@cindex @code{CTZ}
 @code{Asymptote} also defines bitwise functions @code{int AND(int,int)},
-@code{int OR(int,int)}, @code{int XOR(int,int)}, and @code{int NOT(int)}.
+@code{int OR(int,int)}, @code{int XOR(int,int)}, @code{int NOT(int)},
+@code{int CLZ(int)} (count leading zeros), and @code{int CTZ(int)}
+(count trailing zeros).
 
 @node Self & prefix operators
 @subsection Self & prefix operators
@@ -4752,8 +4766,8 @@ real(real) functions @code{sin}, @code{cos}, @code{tan}, @code{asin},
 @code{acosh}, @code{atanh}, @code{sqrt}, @code{cbrt}, @code{fabs}, @code{expm1},
 @code{log1p}, as well as the identity function @code{identity}. 
 @code{Asymptote} also defines the order @code{n} Bessel functions of
-the first kind @code{J(int n, real)} and second kind
-@code{Y(int n, real)}, as well as the gamma function @code{gamma},
+the first kind @code{Jn(int n, real)} and second kind
+@code{Yn(int n, real)}, as well as the gamma function @code{gamma},
 the error function @code{erf}, and the complementary error function
 @code{erfc}. The standard real(real, real) functions @code{atan2},
 @code{hypot}, @code{fmod}, @code{remainder} are also included.
@@ -5099,15 +5113,15 @@ element, and otherwise the index corresponding to the left-hand
 
 @cindex @code{copy}
 @item T[] copy(T[] a)
-returns a deep copy of the array @code{a};
+returns a copy of the array @code{a};
 
 @cindex @code{copy}
 @item T[][] copy(T[][] a)
-returns a deep copy of the array @code{a};
+returns a copy of the array @code{a};
 
 @cindex @code{copy}
 @item T[][][] copy(T[][][] a)
-returns a deep copy of the array @code{a};
+returns a copy of the array @code{a};
 
 @cindex @code{concat}
 @item T[] concat(... T[][] a)
@@ -5278,7 +5292,7 @@ roots are listed separately.
 
 @cindex @code{quadraticroots}
 @item @code{pair[] quadraticroots(explicit pair a, explicit pair b, explicit pair c);}
-This numerically robust solver returns the two complex roots of the
+This numerically robust solver returns the complex roots of the
 quadratic equation @math{ax^2+bx+c=0}.
 
 @cindex @code{cubicroots}
@@ -5526,7 +5540,7 @@ int[] b=(int []) a;
 write(stdout,b);     // Outputs 2,-3
 @end verbatim
 
-@cindex operator cast
+@cindex @code{operator cast}
 Casting to user-defined types is also possible using @code{operator cast}:
 @verbatim
 struct rpair {
@@ -5560,7 +5574,7 @@ real convert(int x) {return x*100;}
 real operator cast(int x)=convert;
 @end verbatim
 
-@cindex operator ecast
+@cindex @code{operator ecast}
 Explicit casts are implemented similarly, with @code{operator ecast}.
 
 @node Import
@@ -5932,7 +5946,7 @@ need to remove the files @code{latexusage-*}, @code{latexusage_.pre}, and
 One can specify @code{width}, @code{height},
 @code{viewportwidth}, @code{viewportheight}, and @code{attach}
 @code{keyval}-style options to the @code{asy} environment.
-The current version (1.10) of @code{asymptote.sty} supports the
+The current version of @code{asymptote.sty} supports the
 embedding of 3D @acronym{PRC} files, either inline or, using the
 @code{attach} option with the @code{attachfile2} (or older
 @code{attachfile}) @code{LaTeX} package,
@@ -6572,6 +6586,15 @@ picture @code{pic} of the function @code{f} on the interval
 [@code{a},@code{b}], sampling at @code{n} evenly spaced points, with
 the given interpolation type.
 
+@item
+@verbatim
+guide polargraph(picture pic=currentpicture, real[] r, real[] theta,
+                 interpolate join=operator--);
+@end verbatim
+Returns a polar-coordinate graph using the scaling information for
+picture @code{pic} of the elements of the arrays (@code{r},@code{theta}),
+using the given interpolation type.
+
 @end itemize
 
 @verbatim
@@ -6721,8 +6744,13 @@ an optional pen used to draw the minor ticks.
 
 @end table
 
-For convenience, the predefined tickmodifier @code{OmitTick(... real[] x)}
-tickmodifier can be used to remove specific auto-generated ticks and
+@cindex @code{OmitTick}
+@cindex @code{OmitTickInterval}
+@cindex @code{OmitTickIntervals}
+For convenience, the predefined tickmodifiers @code{OmitTick(... real[] x)},
+@code{OmitTickInterval(real a, real b)}, and
+@code{OmitTickIntervals(real[] a, real[] b)}
+can be used to remove specific auto-generated ticks and
 their labels. The @code{OmitFormat(string s=defaultformat ... real[] x)}
 ticklabel can be used to remove specific tick labels but not the
 corresponding ticks. The tickmodifier @code{NoZero} is an abbreviation for
@@ -6749,12 +6777,14 @@ ticks LeftTicks(Label format="", ticklabel ticklabel=null,
 @verbatim
 void yaxis(picture pic=currentpicture, Label L="", axis axis=XZero,
            real ymin=-infinity, real ymax=infinity, pen p=currentpen,
-           ticks ticks=NoTicks, arrowbar arrow=None, bool above=false);
+           ticks ticks=NoTicks, arrowbar arrow=None, bool above=false,
+           bool autorotate=true);
 @end verbatim
 
 Draw a @math{y} axis on picture @code{pic} from @math{y}=@code{ymin} to
 @math{y}=@code{ymax} using pen @code{p}, optionally labelling it with
-Label @code{L}. The relative location of the label (a real number from
+a Label @code{L} that is autorotated unless @code{autorotate=false}.
+The relative location of the label (a real number from
 [0,1]) defaults to 1 (@pxref{Label}). An infinite value of @code{ymin}
 or @code{ymax} specifies that the corresponding axis limit will be
 automatically determined from the picture limits. 
@@ -7503,9 +7533,9 @@ draw(surface((0,0)--E+2N--2E--E+N..0.2E..cycle),red);
 @cindex @code{bezulate}
 Planar Bezier surfaces patches are constructed using Orest Shardt's
 @code{bezulate} routine, which decomposes (possibly nonsimply
-connected) regions bounded by nonselfintersecting cyclic paths
-(according to the @code{zerowinding} fill rule) into subregions
-bounded by cyclic paths of length @code{4} or less.
+connected) regions bounded (according to the @code{zerowinding} fill rule)
+by simple cyclic paths (intersecting only at the endpoints)
+into subregions bounded by cyclic paths of length @code{4} or less.
 
 @cindex @code{thin}
 @cindex @code{thick}
@@ -7604,6 +7634,7 @@ The keyboard shortcuts are:
 @cindex @code{maxtile}
 @cindex @code{glOptions}
 @cindex @code{iconic}
+@cindex @code{black stripes}
 @item Render the scene to a specified rasterized format @code{outformat}
 at the resolution of @code{n} pixels per @code{bp}, as specified by the
 setting @code{render=n}. A negative value of @code{n} is interpreted
@@ -7614,9 +7645,12 @@ resolution; this can be disabled by setting @code{antialias=1}.
 High resolution rendering is done by tiling the image. If your
 graphics card allows it, the rendering can be made more efficient by
 increasing the maximum tile size @code{maxtile} beyond the screen
-dimensions (indicated by @code{maxtile=(0,0)}. The tile size is also
-limited by the setting @code{maxviewport}, which restricts the maximum
-width and height of the viewport. On @code{UNIX} systems some graphics
+dimensions (indicated by @code{maxtile=(0,0)}. If your video card
+generates unwanted black stripes in the output, try setting the
+horizontal and vertical components of @code{maxtiles} to something
+less than your screen dimensions. The tile size is also limited by the
+setting @code{maxviewport}, which restricts the maximum width and
+height of the viewport. On @code{UNIX} systems some graphics
 drivers support batch mode (@code{-noV}) rendering in an
 iconified window; this can be enabled with the setting @code{iconify=true}.
 Some (broken) @code{UNIX} graphics drivers may require the command line setting
@@ -7880,8 +7914,9 @@ triple invert(pair dir, triple v, projection P=currentprojection).
 @end verbatim
 
 @cindex @code{transform3}
+@cindex @code{identity4}
 Three-dimensional objects may be transformed with one of the following
-built-in transform3 types:
+built-in transform3 types (the identity transformation is @code{identity4}):
 
 @table @code
 @item shift(triple v)
@@ -7904,23 +7939,49 @@ scales by @code{s} in the @math{x}, @math{y}, and @math{z} directions;
 scales by @code{x} in the @math{x} direction, 
 by @code{y} in the @math{y} direction, and by @code{z} in the @math{z}
 direction;
+@cindex @code{rotate}
 @item rotate(real angle, triple v)
 rotates by @code{angle} in degrees about an axis @code{v} through the origin;
 @item rotate(real angle, triple u, triple v)
 rotates by @code{angle} in degrees about the axis @code{u--v};
 @item reflect(triple u, triple v, triple w)
 reflects about the plane through @code{u}, @code{v}, and @code{w}.
+@cindex @code{XY}
 @end table
 
+When not multiplied on the left by a transform3, three-dimensional
+@TeX{} Labels are drawn as Bezier surfaces directly on the projection plane:
+@cindex @code{label}
+@verbatim
+void label(picture pic=currentpicture, Label L, triple position,
+           align align=NoAlign, pen p=currentpen,
+           light light=nolight, string name=L.s,
+           interaction interaction=
+           settings.autobillboard ? Billboard : Embedded)
+@end verbatim
+@noindent
+@cindex @code{Billboard}
+@cindex @code{Embedded}
+The optional @code{name} parameter is used as a prefix for naming the label
+patches in the @acronym{PRC} model tree.
+The default interaction is @code{Billboard}, which means that labels
+are rotated interactively so that they always lie on the projection plane.
+The interaction @code{Embedded} means that the label interacts as a
+normal @code{3D} surface, as illustrated in the example @code{billboard.asy}.
 @cindex @code{transform}
-Three-dimensional @TeX{} Labels, which are by default drawn as
-Bezier surfaces directly on the projection plane, can be transformed
-from the @code{XY} plane by any of the above transforms or mapped to a
-specified two-dimensional plane with the transform3 types @code{XY},
-@code{YZ}, @code{ZX}, @code{YX}, @code{ZY}, @code{ZX}. There are also
-modified versions of these transforms that take an optional argument
-@code{projection P=currentprojection} that rotate and/or flip the
-label so that it is more readable from the initial viewpoint.
+@cindex @code{XY}
+@cindex @code{YZ}
+@cindex @code{ZX}
+@cindex @code{YX}
+@cindex @code{ZY}
+@cindex @code{ZX}
+Alternatively, a label can be transformed from the @code{XY} plane by an
+explicit transform3 or mapped to a specified two-dimensional plane with
+the predefined transform3 types @code{XY}, @code{YZ}, @code{ZX}, @code{YX},
+@code{ZY}, @code{ZX}. There are also modified versions of these
+transforms that take an optional argument @code{projection
+P=currentprojection} that rotate and/or flip the label so that it is
+more readable from the initial viewpoint.
 
 @cindex @code{planeproject}
 A transform3 that projects in the direction @code{dir} onto the plane
@@ -8427,7 +8488,17 @@ block rectangle(object body, pair center=(0,0),
                 real minheight=minblockheight);
 @end verbatim
 
-@item diamond-shaped flowchart block:
+@item parallelogram block:
+@cindex @code{parallelogram}
+@verbatim
+block parallelogram(object body, pair center=(0,0),
+                    pen fillpen=invisible, pen drawpen=currentpen,
+                    real dx=3, real slope=2,
+                    real minwidth=minblockwidth,
+                    real minheight=minblockheight);
+@end verbatim
+
+@item diamond-shaped block:
 @cindex @code{diamond}
 @verbatim
 block diamond(object body, pair center=(0,0),
@@ -8437,7 +8508,7 @@ block diamond(object body, pair center=(0,0),
               real minheight=minblockheight);
 @end verbatim
 
-@item circular flowchart block:
+@item circular block:
 @cindex @code{circle}
 @verbatim
 block circle(object body, pair center=(0,0), pen fillpen=invisible,
@@ -8445,7 +8516,7 @@ block circle(object body, pair center=(0,0), pen fillpen=invisible,
              real mindiameter=mincirclediameter);
 @end verbatim
 
-@item rectangular flowchart block with rounded corners:
+@item rectangular block with rounded corners:
 @cindex @code{roundrectangle}
 @verbatim
 block roundrectangle(object body, pair center=(0,0),
@@ -8454,7 +8525,7 @@ block roundrectangle(object body, pair center=(0,0),
                      real minheight=minblockheight);
 @end verbatim
 
-@item rectangular flowchart block with beveled edges:
+@item rectangular block with beveled edges:
 @cindex @code{bevel}
 @verbatim
 block bevel(object body, pair center=(0,0), pen fillpen=invisible,
@@ -8477,7 +8548,8 @@ The entries in @code{dir} identify whether successive
 segments between the pairs specified by @code{point} should be drawn
 in the @code{Horizontal} or @code{Vertical} direction.
 
-Here is a simple flowchart example:
+Here is a simple flowchart example (see also the example
+@code{controlsystem.asy}):
 
 @verbatiminclude flowchartdemo.asy
 @sp 1
@@ -8487,36 +8559,36 @@ Here is a simple flowchart example:
 @section @code{contour}
 @cindex @code{contour}
 This package draws contour lines.
-To construct contours corresponding to the values in an array @code{c}
-for a function @code{f} on @code{box(a,b)}, use
+To construct contours corresponding to the values in a real array @code{c}
+for a function @code{f} on @code{box(a,b)}, use the routine
 @verbatim
 guide[][] contour(real f(real, real), pair a, pair b,
                   real[] c, int nx=ngraph, int ny=nx,
-                  interpolate join=operator --);
+                  interpolate join=operator --, int subsample=1);
 @end verbatim
 @noindent
 The integers @code{nx} and @code{ny} define the resolution.
 The default resolution, @code{ngraph x ngraph} (here @code{ngraph}
-defaults to @code{100}), can be increased for greater accuracy. The
-default interpolation operator is @code{operator --} (linear). Spline
+defaults to @code{100}) can be increased for greater accuracy.
+The default interpolation operator is @code{operator --} (linear). Spline
 interpolation (@code{operator ..}) may produce smoother
 contours but it can also lead to overshooting.
+The @code{subsample} parameter indicates the number of interior points
+that should be used to sample contours within each @code{1 x 1} box;
+the default value of @code{1} is usually sufficient.
 
 To construct contours for an array of data values on a uniform
 two-dimensional lattice on @code{box(a,b)}, use
 @verbatim
-guide[][] contour(real[][] f, real[][] midpoint=new real[][],
-                  pair a, pair b, real[] c,
-                  interpolate join=operator --);
+guide[][] contour(real[][] f, pair a, pair b, real[] c,
+                  interpolate join=operator --, int subsample=1);
 @end verbatim
 
 To construct contours for an array of data values on a nonoverlapping
-regular mesh specified by the two-dimensional array @code{z}, optionally
-specifying the values of @code{f} at the mesh midpoints, use
+regular mesh specified by the two-dimensional array @code{z},
 @verbatim
-guide[][] contour(pair[][] z, real[][] f,
-                  real[][] midpoint=new real[][], real[] c,
-                  interpolate join=operator --);
+guide[][] contour(pair[][] z, real[][] f, real[] c,
+                  interpolate join=operator --, int subsample=1);
 
 @end verbatim
 @noindent
@@ -8524,16 +8596,16 @@ To construct contours for an array of values @code{f} specified at
 irregularly positioned points @code{z}, use the routine
 @verbatim
 guide[][] contour(pair[] z, real[] f, real[] c,
-                  interpolate join=operator --);
+                  interpolate join=operator --, int subsample=1);
 @end verbatim 
 @noindent
 The contours themselves can be drawn with one of the routines
 @verbatim
 void draw(picture pic=currentpicture, Label[] L=new Label[],
-          guide[][] g, pen p=currentpen)
+          guide[][] g, pen p=currentpen);
 
 void draw(picture pic=currentpicture, Label[] L=new Label[],
-          guide[][] g, pen[] p)
+          guide[][] g, pen[] p);
 @end verbatim
 
 The following simple example draws the contour at value @code{1}
@@ -8682,15 +8754,18 @@ interactiveMask=true;
 Command-line options override these defaults. Most configuration
 variables may also be changed at runtime. 
 @cindex @code{dvipsOptions}
+@cindex @code{hyperrefOptions}
 @cindex @code{convertOptions}
 @cindex @code{gsOptions}
 @cindex @code{psviewerOptions}
 @cindex @code{pdfviewerOptions}
 @cindex @code{glOptions}
-The advanced configuration variables @code{dvipsOptions}, @code{convertOptions},
-@code{gsOptions}, @code{psviewerOptions}, @code{pdfviewerOptions}, and 
-@code{glOptions} allow specialized options to be passed as a string to
-the respective applications or libraries.
+The advanced configuration variables @code{dvipsOptions},
+@code{hyperrefOptions}, @code{convertOptions}, @code{gsOptions},
+@code{psviewerOptions}, @code{pdfviewerOptions}, and @code{glOptions}
+allow specialized options to be passed as a string to the respective
+applications or libraries. The default value of @code{hyperrefOptions}
+is @code{setpagesize=false,unicode,pdfborder=0 0 0}.
 
 If you insert
 @verbatim
@@ -8713,21 +8788,29 @@ at the beginning of the configuration file, it can contain arbitrary
 @cindex @code{pdflatex}
 @cindex @code{xelatex}
 @cindex @code{context}
+@cindex @code{EPS}
+@cindex @code{PDF}
+@cindex @code{SVG}
 @anchor{convert}
 The default output format is @acronym{EPS} for the (default)
 @code{latex} and @code{tex} tex engine and @acronym{PDF} for the
 @code{pdflatex}, @code{xelatex}, and @code{context} tex engines.
 Alternative output formats may be produced using the @code{-f} option 
-(or @code{outformat} setting). The optional setting @code{-render n} requests
-an output resolution of @code{n} pixels per @code{bp}. Antialiasing is
-controlled by the parameter @code{antialias}, which by default
-specifies a sampling width of 2 pixels.
-@code{Asymptote} can produce any output format supported
+(or @code{outformat} setting). To produce @acronym{SVG} output,
+first install @code{dvisvgm} (version 0.8.7 or later) from
+@url{http://dvisvgm.sourceforge.net/down.html} and be sure to use the
+@code{latex} or @code{tex} tex engine.
+
+@code{Asymptote} can also produce any output format supported
 by the @code{ImageMagick} @code{convert} program (version 6.3.5 or
 later recommended; an @code{Invalid Parameter} error message indicates
 that the @code{MSDOS} utility @code{convert} is being used instead of
 the one that comes with @code{ImageMagick}).
-To give specific options to @code{convert}, use the
+The optional setting @code{-render n} requests
+an output resolution of @code{n} pixels per @code{bp}. Antialiasing is
+controlled by the parameter @code{antialias}, which by default
+specifies a sampling width of 2 pixels.
+To give other options to @code{convert}, use the
 @code{convertOptions} setting or call convert manually. This example
 emulates how @code{Asymptote} produces antialiased @code{tiff} output at
 one pixel per @code{bp}:
@@ -8818,9 +8901,33 @@ interactive input lines by a semicolon is inhibited. Multiline mode is useful
 for cutting and pasting @code{Asymptote} code directly into the
 interactive input buffer.
 
+@cindex @code{%}
 Interactive mode can be conveniently used as a calculator: expressions
 entered at the interactive prompt (for which a corresponding @code{write}
 function exists) are automatically evaluated and written to @code{stdout}.
+If the expression is non-writable, its type signature will be printed out
+instead. In either case, the expression can be referred to using the symbol
+@code{%} in the next line input at the prompt.  For example:
+@verbatim
+> 2+3
+5
+> %*4
+20
+> 1/%
+0.05
+> sin(%)
+0.0499791692706783
+> currentpicture
+<picture currentpicture>
+> %.size(200,0)
+> 
+@end verbatim
+
+@cindex @code{operator answer}
+The @code{%} symbol, when used as a variable, is shorthand for the identifier
+@code{operator answer}, which is set by the prompt after each written
+expression evaluation.
+
 
 The following special commands are supported only in interactive mode
 and must be entered immediately after the prompt:
@@ -8931,15 +9038,15 @@ this requires @code{Python 2.6.2} and the @code{Python Imaging Library}:
 @url{http://www.python.org/ftp/python/2.6.2/python-2.6.2.msi}
 @end quotation
 @quotation
-@url{http://effbot.org/downloads/PIL-1.1.7b1.win32-py2.6.exe}.
+@url{http://effbot.org/media/downloads/PIL-1.1.7.win32-py2.6.exe}.
 @end quotation
 @noindent
 On @code{UNIX} systems, place
-@url{http://effbot.org/downloads/Imaging-1.1.7b1.tar.gz} in the
+@url{http://effbot.org/media/downloads/Imaging-1.1.7.tar.gz} in the
 @code{Asymptote} source directory, and type (as the root user):
 @verbatim
-tar -zxf Imaging-1.1.7b1.tar.gz
-cd Imaging-1.1.7b1
+tar -zxf Imaging-1.1.7.tar.gz
+cd Imaging-1.1.7
 python setup.py install
 @end verbatim
 
@@ -9292,9 +9399,9 @@ Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  usleep currentpatterns trailingzero Orest Shardt DefaultHead
 @c  LocalWords:  SimpleHead HookHead TeXHead multipage NURBS inlinemovie dxmax
 @c  LocalWords:  simpson NoBox truesize autoscale shadestroke recurses mintimes
-@c  LocalWords:  nonoverlapping texengine maxtimes maxheight pdb TEXMFCONFIG
+@c  LocalWords:  nonoverlapping texengine maxtimes maxheight pdb TEXMFCONFIG Jn
 @c  LocalWords:  piecewisestraight unitrand graphmarkers antialias nolight newl
-@c  LocalWords:  Delaunay Shewchuk convertOptions APPDATA pdfreload tempFile
+@c  LocalWords:  Delaunay Shewchuk convertOptions APPDATA pdfreload tempFile Yn
 @c  LocalWords:  pdfreloadOptions deferred OpenGL Phong Blinn renderer unitbox
 @c  LocalWords:  bezulate Shardt's rasterized viewport unitdisk unitplane devel
 @c  LocalWords:  unitcylinder unitcone solidcone unitfrustum unitsphere nslices
@@ -9306,17 +9413,19 @@ Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  hstretch vstretch roundbox nonconvex miterlimit basealigin cmd
 @c  LocalWords:  maxviewport maxtile antialiased sphericalharmonic attachfile
 @c  LocalWords:  vertexshading smoothelevation glOptions iconified iconify kate
-@c  LocalWords:  psviewerOptions pdfviewerOptions viewportmargin asyattach
+@c  LocalWords:  psviewerOptions pdfviewerOptions viewportmargin asyattach SVG
 @c  LocalWords:  multisampling autogen multisample coloredpath relstep flowdir
 @c  LocalWords:  colortype coloredSegments coloredNodes trefoilknot scaledgraph
 @c  LocalWords:  minblockwidth minblockheight mincirclediameter nonassociative
 @c  LocalWords:  nonintegral gettriple enablerepo hexidecimal XeLaTeX xelatex
 @c  LocalWords:  dvipdfmx autoadjust viewportsize viewportwidth viewportheight
 @c  LocalWords:  subregions nonsimply functionshade shader floatingdisk TopView
-@c  LocalWords:  functionshading nonselfintersecting maxlength LeftView odetest
+@c  LocalWords:  functionshading maxlength LeftView odetest
 @c  LocalWords:  vectorfieldsphere RightView FrontView BackView BottomView
 @c  LocalWords:  addViews outprefix addAllViews xsplinetype ysplinetype rotateX
 @c  LocalWords:  usplinetype vsplinetype leftbutton middlebutton rightbutton
 @c  LocalWords:  rotateY rotateZ wheelup zoomin wheeldown zoomout TeXLive
 @c  LocalWords:  viewportshift signedint signedness psview multiplatform nowarn
 @c  LocalWords:  singlereal singleint writeoverloaded tubegranularity dvisvg
+@c  LocalWords:  bigdiagonal autobillboard dvisvgm maxtiles hyperrefOptions
+@c  LocalWords:  setpagesize pdfborder controlsystem

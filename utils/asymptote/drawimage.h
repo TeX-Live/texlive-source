@@ -10,7 +10,6 @@
 
 #include "drawelement.h"
 #include "array.h"
-#include "pen.h"
 
 namespace camp {
 
@@ -61,6 +60,9 @@ public:
     
     return true;
   }
+
+  bool svg() {return true;}
+  bool svgpng() {return true;}
 
   drawElement *transformed(const transform& T) {
     return new drawImage(image,palette,T*t,antialias,type);

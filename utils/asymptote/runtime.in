@@ -408,6 +408,16 @@ realarray *colors(pen p)
   return a;
 }
 
+string hex(pen p)
+{  
+  return p.hex();
+}
+
+Int byte(real x)
+{
+  return byte(x);
+}
+
 string colorspace(pen p)
 {
   string s=ColorDeviceSuffix[p.colorspace()];
@@ -455,29 +465,36 @@ string blend(pen p)
   return p.blend();
 }
 
-pen linetype(string *s, real offset=0, bool scale=true, bool adjust=true)
+pen linetype(realarray *pattern, real offset=0, bool scale=true,
+             bool adjust=true)
 {
-  return pen(LineType(*s,offset,scale,adjust)); 
+  size_t size=checkArray(pattern);
+  array *a=new array(size);
+  for(size_t i=0; i < size; ++i) 
+    (*a)[i]=::max(vm::read<double>(pattern,i),0.0);
+
+  return pen(LineType(*a,offset,scale,adjust)); 
 }
 
-string linetype(pen p=CURRENTPEN)
+realarray *linetype(pen p=CURRENTPEN)
 {
-  return p.stroke();  
+  array a=p.linetype()->pattern;
+  return copyArray(&a);
 }
 
 real offset(pen p)
 {
-  return p.linetype().offset;
+  return p.linetype()->offset;
 }
 
 bool scale(pen p)
 {
-  return p.linetype().scale;
+  return p.linetype()->scale;
 }
 
 bool adjust(pen p)
 {
-  return p.linetype().adjust;
+  return p.linetype()->adjust;
 }
 
 pen adjust(pen p, real arclength, bool cyclic)
@@ -712,7 +729,11 @@ void :loadModule(string *index)
 
 string cd(string s=emptystring)
 {
-  if(!s.empty() && !globalwrite()) writeDisabled();
+  if(!s.empty() && !globalwrite()) {
+    string outname=getSetting<string>("outname");
+    string dir=stripDir(outname);
+    if(dir.empty()) Setting("outname")=getPath()+dirsep+outname;
+  }
   return setPath(s.c_str());
 }
 
@@ -1133,7 +1154,7 @@ transform scale(real x)
 
 transform scale(real x, real y)
 {
-  return xscale(x)*yscale(y);
+  return scale(x,y);
 }
 
 transform slant(real s)

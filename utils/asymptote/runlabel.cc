@@ -49,12 +49,14 @@ array *copyArray(array *a);
 array *copyArray2(array *a);
 array *copyArray3(array *a);
 
-double *copyArrayC(const array *a, size_t dim=0);
-double *copyArray2C(const array *a, bool square=true, size_t dim2=0);
+double *copyArrayC(const array *a, size_t dim=0, GCPlacement placement=NoGC);
+double *copyArray2C(const array *a, bool square=true, size_t dim2=0,
+                    GCPlacement placement=NoGC);
 
 triple *copyTripleArrayC(const array *a, size_t dim=0);
 triple *copyTripleArray2C(const array *a, bool square=true, size_t dim2=0);
-double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0);
+double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0,
+                                   GCPlacement placement=NoGC);
 }
 
 function *realRealFunction();
@@ -283,8 +285,7 @@ void gen_runlabel3(stack *Stack)
   array *P=new array(0);
   if(s->empty()) {Stack->push<patharray*>(P); return;}
   
-  string prefix=outname();
-  spaceToUnderscore(prefix);
+  string prefix=cleanpath(outname());
   string psname=auxname(prefix,"ps");
   string texname=auxname(prefix,"tex");
   string dviname=auxname(prefix,"dvi");
@@ -376,18 +377,17 @@ void gen_runlabel3(stack *Stack)
   {Stack->push<patharray*>(pdf ? readpath(psname,keep,0.1) : readpath(psname,keep,0.12,-1.0)); return;}
 }
 
-#line 305 "runlabel.in"
+#line 304 "runlabel.in"
 // patharray* textpath(string *s, pen p=CURRENTPEN);
 void gen_runlabel4(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   string * s=vm::pop<string *>(Stack);
-#line 306 "runlabel.in"
+#line 305 "runlabel.in"
   array *P=new array(0);
   if(s->empty()) {Stack->push<patharray*>(P); return;}
   
-  string prefix=outname();
-  spaceToUnderscore(prefix);
+  string prefix=cleanpath(outname());
   string outputname=auxname(prefix,getSetting<string>("textoutformat"));
 
   string textname=auxname(prefix,getSetting<string>("textextension"));
@@ -452,18 +452,17 @@ void gen_runlabel4(stack *Stack)
   {Stack->push<patharray*>(readpath(psname,keep,0.1)); return;}
 }
 
-#line 376 "runlabel.in"
+#line 374 "runlabel.in"
 // patharray* _strokepath(path g, pen p=CURRENTPEN);
 void gen_runlabel5(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   path g=vm::pop<path>(Stack);
-#line 377 "runlabel.in"
+#line 375 "runlabel.in"
   array *P=new array(0);
   if(g.size() == 0) {Stack->push<patharray*>(P); return;}
   
-  string prefix=outname();
-  spaceToUnderscore(prefix);
+  string prefix=cleanpath(outname());
   string psname=auxname(prefix,"ps");
   bbox b;
   psfile ps(psname,false);
@@ -475,7 +474,7 @@ void gen_runlabel5(stack *Stack)
   ps.setpen(p);
   ps.write(g);
   ps.strokepath();
-  ps.stroke();
+  ps.stroke(p);
   ps.verbatimline("(M) "+currentpoint);
   ps.epilogue();
   ps.close();
@@ -496,9 +495,9 @@ void gen_runlabel_venv(venv &ve)
   addFunc(ve, run::gen_runlabel2, realArray(), "texsize", formal(primString(), "s", false, false), formal(primPen(), "p", true, false));
 #line 207 "runlabel.in"
   addFunc(ve, run::gen_runlabel3, pathArray()  , "_texpath", formal(primString(), "s", false, false), formal(primPen(), "p", true, false));
-#line 305 "runlabel.in"
+#line 304 "runlabel.in"
   addFunc(ve, run::gen_runlabel4, pathArray()  , "textpath", formal(primString(), "s", false, false), formal(primPen(), "p", true, false));
-#line 376 "runlabel.in"
+#line 374 "runlabel.in"
   addFunc(ve, run::gen_runlabel5, pathArray()  , "_strokepath", formal(primPath(), "g", false, false), formal(primPen(), "p", true, false));
 }
 

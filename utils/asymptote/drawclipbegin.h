@@ -29,6 +29,8 @@ public:
 
   virtual ~drawClipBegin() {}
 
+  bool beginclip() {return true;}
+  
   void bounds(bbox& b, iopipestream& iopipe, boxvector& vbox,
               bboxlist& bboxstack) {
     bboxstack.push_back(b);
@@ -40,6 +42,8 @@ public:
 
   bool begingroup() {return true;}
   
+  bool svg() {return true;}
+  
   void save(bool b) {
     gsave=b;
   }
@@ -47,10 +51,10 @@ public:
   bool draw(psfile *out) {
     if(gsave) out->gsave();
     if(empty()) return true;
-    
-    writepath(out);
+    out->beginclip();
+    writepath(out,false);
     if(stroke) strokepath(out);
-    out->clip(pentype);
+    out->endclip(pentype);
     return true;
   }
 
@@ -58,26 +62,16 @@ public:
     if(gsave) out->gsave();
     if(empty()) return true;
     
-    if(out->toplevel()) {
-      out->verbatim(settings::beginpicture(out->texengine));
-      if(!settings::context(out->texengine)) {
-        out->verbatim("(");
-        double width=bpath.right-bpath.left;
-        double height=bpath.top-bpath.bottom;
-        out->write(width*ps2tex);
-        out->verbatim(",");
-        out->write(height*ps2tex);
-        out->verbatim(")");
-      }
-      out->verbatimline("%");
-    }
+    if(out->toplevel()) 
+      out->beginpicture(bpath);
+      
     out->begingroup();
 
     out->beginspecial();
     out->beginraw();
     writeshiftedpath(out);
     if(stroke) strokepath(out);
-    out->clip(pentype);
+    out->endclip(pentype);
     out->endraw();
     out->endspecial();
     

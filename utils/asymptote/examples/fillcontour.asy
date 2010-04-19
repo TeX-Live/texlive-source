@@ -5,7 +5,7 @@ import contour;
 size(12cm,IgnoreAspect);
 
 pair a=(pi/2,0);
-pair b=(1.5*pi+epsilon,2pi);
+pair b=(3pi/2,2pi);
 
 real f(real x, real y) {return cos(x)*sin(y);}
 

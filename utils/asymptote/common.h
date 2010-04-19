@@ -10,12 +10,19 @@
 #include <iostream>
 #include <climits>
 
+#ifdef __CYGWIN__
+#undef LONG_LONG_MAX
+#define LONG_LONG_MAX __LONG_LONG_MAX__
+#undef LONG_LONG_MIN
+#define LONG_LONG_MIN (-LONG_LONG_MAX-1)
+#endif
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#if defined(HAVE_LIBGLU) && defined(HAVE_LIBGLUT)
-#define HAVE_LIBGL
+#if defined(HAVE_LIBGL) && defined(HAVE_LIBGLU) && defined(HAVE_LIBGLUT)
+#define HAVE_GL
 #endif
 
 #ifdef HAVE_LIBPTHREAD

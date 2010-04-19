@@ -11,7 +11,7 @@
 
 #include "common.h"
 
-#ifdef HAVE_LIBGL
+#ifdef HAVE_GL
 
 // For CYGWIN
 #ifndef FGAPI
@@ -323,18 +323,15 @@ void drawscene(double Width, double Height)
   
   double size2=hypot(Width,Height);
   
-  glEnable(GL_BLEND);
   // Render opaque objects
   Picture->render(nurb,size2,m,M,perspective,false);
   
   // Enable transparency
-  glEnable(GL_BLEND);
   glDepthMask(GL_FALSE);
   
   // Render transparent objects
   Picture->render(nurb,size2,m,M,perspective,true);
   glDepthMask(GL_TRUE);
-  glDisable(GL_BLEND);
 }
 
 // Return x divided by y rounded up to the nearest integer.
@@ -397,6 +394,7 @@ void Export()
     outOfMemory();
   }
   setProjection();
+  glutPostRedisplay();
 
 #ifdef HAVE_LIBPTHREAD
   if(glthread && readyAfterExport) {
@@ -628,7 +626,7 @@ void display()
     lastframetime=tv;
     double milliseconds=1000.0*(delay-seconds);
     if(milliseconds > 0)
-      glutTimerFunc(milliseconds,nextframe,0);
+      glutTimerFunc((int) (milliseconds+0.5),nextframe,0);
     else nextframe(0);
   }
 #endif
@@ -1326,7 +1324,9 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     if(maxWidth <= 0) maxWidth=max(maxHeight,2);
     if(maxHeight <= 0) maxHeight=max(maxWidth,2);
     if(screenWidth <= 0) screenWidth=maxWidth;
+    else screenWidth=min(screenWidth,maxWidth);
     if(screenHeight <= 0) screenHeight=maxHeight;
+    else screenHeight=min(screenHeight,maxHeight);
   
     oWidth=width;
     oHeight=height;
@@ -1354,8 +1354,8 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     setosize();
   
     if(View && settings::verbose > 1) 
-      cout << "Rendering " << prefix << " as " << Width << "x" << Height
-           << " image" << endl;
+      cout << "Rendering " << stripDir(prefix) << " as "
+           << Width << "x" << Height << " image" << endl;
   }
   
 #ifdef HAVE_LIBPTHREAD
@@ -1462,9 +1462,12 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     setosize();
   }
   
+  glEnable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_MAP1_VERTEX_3);
+  glEnable(GL_MAP1_VERTEX_4);
   glEnable(GL_MAP2_VERTEX_3);
+  glEnable(GL_MAP2_VERTEX_4);
   glEnable(GL_MAP2_COLOR_4);
   
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);

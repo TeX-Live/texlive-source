@@ -57,7 +57,7 @@ drawElement *drawFill::transformed(const transform& t)
   
 drawElement *drawLatticeShade::transformed(const transform& t)
 {
-  return new drawLatticeShade(transpath(t),stroke,pentype,pens);
+  return new drawLatticeShade(transpath(t),stroke,pentype,pens,t*T);
 }
 
 drawElement *drawAxialShade::transformed(const transform& t)
@@ -136,7 +136,7 @@ bool drawFunctionShade::write(texfile *out, const bbox& box)
   out->beginraw();
   writeshiftedpath(out);
   if(stroke) strokepath(out);
-  out->clip(pentype);
+  out->endclip(pentype);
   out->verbatimline("/Sh sh");
   out->endraw();
   out->endspecial();

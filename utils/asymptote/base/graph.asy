@@ -1,5 +1,4 @@
 private import math;
-
 import graph_splinetype;
 import graph_settings;
 
@@ -826,14 +825,19 @@ ticks Ticks(int sign, Label F="", ticklabel ticklabel=null,
 typedef tickvalues tickmodifier(tickvalues);
 tickvalues None(tickvalues v) {return v;}
 
-tickmodifier OmitTick(... real[] x) {
+// Tickmodifier that removes all ticks in the intervals [a[i],b[i]].
+tickmodifier OmitTickIntervals(real[] a, real[] b) {
   return new tickvalues(tickvalues v) { 
-    void omit(real[] a) {
-      if(a.length != 0) {
-        real norm=max(abs(a));
-        for(int i=0; i < x.length; ++i) {
-          int j=find(abs(a-x[i]) < zerotickfuzz*norm);
-          if(j >= 0) a.delete(j);
+    if(a.length != b.length) abort(differentlengths);
+    void omit(real[] A) {
+      if(A.length != 0) {
+        real norm=max(abs(A));
+        for(int i=0; i < a.length; ++i) {
+          int j;
+          while((j=find(A > a[i]-zerotickfuzz*norm
+                        & A < b[i]+zerotickfuzz*norm)) >= 0) {
+            A.delete(j);
+          }
         }
       }
     }
@@ -843,19 +847,19 @@ tickmodifier OmitTick(... real[] x) {
   };
 }
 
+// Tickmodifier that removes all ticks in the interval [a,b].
+tickmodifier OmitTickInterval(real a, real b) {
+  return OmitTickIntervals(new real[] {a}, new real[] {b});
+}
+
+// Tickmodifier that removes the specified ticks.
+tickmodifier OmitTick(... real[] x) {
+  return OmitTickIntervals(x,x);
+}
+
 tickmodifier NoZero=OmitTick(0);
 
-// Tickmodifier that removes all major ticks in the interval [a,b].
-tickmodifier Break(real a, real b) {
-  return new tickvalues(tickvalues v) {
-    real[] V=v.major;
-    real[] major;
-    for(int i=0; i < V.length; ++i)
-      if(V[i] < a-epsilon || V[i] > b+epsilon) major.push(V[i]);
-    v.major=major;
-    return v;
-  };
-}
+tickmodifier Break(real, real)=OmitTickInterval;
 
 // Automatic tick construction routine.
 ticks Ticks(int sign, Label F="", ticklabel ticklabel=null,
@@ -1536,7 +1540,7 @@ void xaxis(picture pic=currentpicture, Label L="", axis axis=YZero,
 void yaxis(picture pic=currentpicture, Label L="", axis axis=XZero,
            real ymin=-infinity, real ymax=infinity, pen p=currentpen,
            ticks ticks=NoTicks, arrowbar arrow=None, margin margin=NoMargin,
-           bool above=false)
+           bool above=false, bool autorotate=true)
 {
   if(ymin > ymax) return;
 
@@ -1590,7 +1594,7 @@ void yaxis(picture pic=currentpicture, Label L="", axis axis=XZero,
   if(L.defaultposition) L.position(axis.position);
   L.align(L.align,axis.align);
   
-  if(L.defaulttransform) {
+  if(autorotate && L.defaulttransform) {
     frame f;
     add(f,Label(L.s,(0,0),L.p));
     if(length(max(f)-min(f)) > ylabelwidth*fontsize(L.p)) 
@@ -1977,14 +1981,7 @@ guide[] graph(picture pic=currentpicture, pair z(real), real a, real b,
       },a,b,n);
 }
 
-string differentlengths="attempt to graph arrays of different lengths";
 string conditionlength="condition array has different length than data";
-
-void checklengths(int x, int y, string text=differentlengths)
-{
-  if(x != y)
-    abort(text+": "+string(x)+" != "+string(y));
-}
 
 void checkconditionlength(int x, int y)
 {
@@ -2068,6 +2065,19 @@ guide polargraph(picture pic=currentpicture, real r(real), real a, real b,
   return graph(join)(new pair(real theta) {
       return Scale(pic,polar(r(theta),theta));
     },a,b,n);
+}
+
+guide polargraph(picture pic=currentpicture, real[] r, real[] theta,
+                 interpolate join=operator--)
+{
+  int n=r.length;
+  checklengths(n,theta.length);
+  int i=0;
+  return graph(join)(new pair(real) {
+      pair w=Scale(pic,polar(r[i],theta[i]));
+      ++i;
+      return w;
+    },0,0,n-1);
 }
 
 void errorbar(picture pic, pair z, pair dp, pair dm, pen p=currentpen,
@@ -2166,7 +2176,7 @@ picture vectorfield(path vector(pair), pair a, pair b,
       path g=vector(z);
       return abs(point(g,size(g)-1)-point(g,0));
     }
-    real max=size((0,0));
+    real max=size(a);
     for(int i=0; i <= nx; ++i) {
       real x=interp(a.x,b.x,i*dx);
       for(int j=0; j <= ny; ++j)
@@ -2198,8 +2208,9 @@ path Arc(pair c, real r, real angle1, real angle2, bool direction,
 {
   angle1=radians(angle1);
   angle2=radians(angle2);
-  if(angle1 >= angle2 && direction) angle1 -= 2pi;
-  if(angle2 >= angle1 && !direction) angle2 -= 2pi;
+  if(direction) {
+    if(angle1 >= angle2) angle1 -= 2pi;
+  } else if(angle2 >= angle1) angle2 -= 2pi;
   return shift(c)*polargraph(new real(real t){return r;},angle1,angle2,n,
                              operator ..);
 }

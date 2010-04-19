@@ -49,12 +49,14 @@ array *copyArray(array *a);
 array *copyArray2(array *a);
 array *copyArray3(array *a);
 
-double *copyArrayC(const array *a, size_t dim=0);
-double *copyArray2C(const array *a, bool square=true, size_t dim2=0);
+double *copyArrayC(const array *a, size_t dim=0, GCPlacement placement=NoGC);
+double *copyArray2C(const array *a, bool square=true, size_t dim2=0,
+                    GCPlacement placement=NoGC);
 
 triple *copyTripleArrayC(const array *a, size_t dim=0);
 triple *copyTripleArray2C(const array *a, bool square=true, size_t dim2=0);
-double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0);
+double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0,
+                                   GCPlacement placement=NoGC);
 }
 
 function *realRealFunction();
@@ -288,7 +290,7 @@ void gen_runmath17(stack *Stack)
 }
 
 #line 158 "runmath.in"
-// real J(Int n, real x);
+// real Jn(Int n, real x);
 void gen_runmath18(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
@@ -298,7 +300,7 @@ void gen_runmath18(stack *Stack)
 }
 
 #line 163 "runmath.in"
-// real Y(Int n, real x);
+// real Yn(Int n, real x);
 void gen_runmath19(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
@@ -501,6 +503,52 @@ void gen_runmath36(stack *Stack)
   {Stack->push<Int>(~a); return;}
 }
 
+#line 283 "runmath.in"
+// Int CLZ(Int a);
+void gen_runmath37(stack *Stack)
+{
+  Int a=vm::pop<Int>(Stack);
+#line 284 "runmath.in"
+  if((unsignedInt) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
+#ifdef __GNUC__
+  {Stack->push<Int>(__builtin_clz(a)); return;}
+#else
+// find the log base 2 of a 32-bit integer
+  static const int MultiplyDeBruijnBitPosition[32] = {
+    0, 9, 1, 10, 13, 21, 2, 29, 11, 14, 16, 18, 22, 25, 3, 30,
+    8, 12, 20, 28, 15, 17, 24, 7, 19, 27, 23, 6, 26, 5, 4, 31
+  };
+
+  a |= a >> 1; // first round down to one less than a power of 2 
+  a |= a >> 2;
+  a |= a >> 4;
+  a |= a >> 8;
+  a |= a >> 16;
+
+  {Stack->push<Int>(31-MultiplyDeBruijnBitPosition[(unsignedInt)(a * 0x07C4ACDDU) >> 27]); return;}
+#endif
+}
+
+#line 305 "runmath.in"
+// Int CTZ(Int a);
+void gen_runmath38(stack *Stack)
+{
+  Int a=vm::pop<Int>(Stack);
+#line 306 "runmath.in"
+  if((unsignedInt) a > 0xFFFFFFFF) {Stack->push<Int>(-1); return;}
+#ifdef __GNUC__
+  {Stack->push<Int>(__builtin_ctz(a)); return;}
+#else
+  // find the number of trailing zeros in a 32-bit number
+  static const int MultiplyDeBruijnBitPosition[32] = {
+    0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 
+    31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9
+  };
+  {Stack->push<Int>(MultiplyDeBruijnBitPosition[((unsignedInt)((a & -a) * 0x077CB531U))
+                                     >> 27]); return;}
+#endif
+}
+
 } // namespace run
 
 namespace trans {
@@ -544,9 +592,9 @@ void gen_runmath_venv(venv &ve)
 #line 153 "runmath.in"
   addFunc(ve, run::gen_runmath17, primReal(), "remainder", formal(primReal(), "x", false, false), formal(primReal(), "y", false, false));
 #line 158 "runmath.in"
-  addFunc(ve, run::gen_runmath18, primReal(), "J", formal(primInt(), "n", false, false), formal(primReal(), "x", false, false));
+  addFunc(ve, run::gen_runmath18, primReal(), "Jn", formal(primInt(), "n", false, false), formal(primReal(), "x", false, false));
 #line 163 "runmath.in"
-  addFunc(ve, run::gen_runmath19, primReal(), "Y", formal(primInt(), "n", false, false), formal(primReal(), "x", false, false));
+  addFunc(ve, run::gen_runmath19, primReal(), "Yn", formal(primInt(), "n", false, false), formal(primReal(), "x", false, false));
 #line 168 "runmath.in"
   addFunc(ve, run::gen_runmath20, primReal(), "erf", formal(primReal(), "x", false, false));
 #line 173 "runmath.in"
@@ -581,6 +629,10 @@ void gen_runmath_venv(venv &ve)
   addFunc(ve, run::gen_runmath35, primInt(), "XOR", formal(primInt(), "a", false, false), formal(primInt(), "b", false, false));
 #line 278 "runmath.in"
   addFunc(ve, run::gen_runmath36, primInt(), "NOT", formal(primInt(), "a", false, false));
+#line 283 "runmath.in"
+  addFunc(ve, run::gen_runmath37, primInt(), "CLZ", formal(primInt(), "a", false, false));
+#line 305 "runmath.in"
+  addFunc(ve, run::gen_runmath38, primInt(), "CTZ", formal(primInt(), "a", false, false));
 }
 
 } // namespace trans
