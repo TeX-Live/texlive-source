@@ -1,3 +1,7 @@
+2010-04-19  Karl Berry  <karl@tug.org>
+
+	* Makefile.am: forget the tests.
+
 2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Add dvipng-test.dvi.

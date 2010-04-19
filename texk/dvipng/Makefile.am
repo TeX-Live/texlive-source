@@ -112,8 +112,8 @@ uninstall-hook:
 	rm -f $(DESTDIR)$(bindir)/dvigif$(EXEEXT)
 endif have_gif
 
-TESTS = dvipng.test
-TESTS_ENVIRONMENT = DVIPNG_TREE='$(DVIPNG_TREE)'
+#TESTS = dvipng.test
+#TESTS_ENVIRONMENT = DVIPNG_TREE='$(DVIPNG_TREE)'
 
 EXTRA_DIST += dvipng.test dvipng-test.dvi
 
