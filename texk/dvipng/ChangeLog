@@ -1,3 +1,8 @@
+2010-04-18  Karl Berry  <karl@tug.org>
+
+	* dvipng.test: do not run latex.
+	* dvipng-test.dvi: new file.
+
 2010-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Remove AC_TYPE_SIZE_T, now part of KPSE_COMMON.

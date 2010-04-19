@@ -1,4 +1,6 @@
 #! /bin/sh
+# $Id$
+# Public domain.  Originally written by Peter Breitenlohner, 2009.
 
 TEXMFCNF=$(dirname $(kpsewhich texmf.cnf))
 TEXFONTMAPS=$(dirname $(dirname $(kpsewhich psfonts.map)))//
@@ -9,9 +11,10 @@ TEXMFLOCAL=$(kpsewhich --expand-var='$TEXMFLOCAL')
 
 export TEXMFCNF TEXFONTMAPS ENCFONTS TEXMFMAIN TEXMFDIST TEXMFLOCAL
 
-latex $srcdir/$DVIPNG_TREE/test_dvipng.tex || exit 77
+# running latex in the build tree has many too many prerequisites.
+# we just check in the dvi.
+#latex $srcdir/$DVIPNG_TREE/test_dvipng.tex || exit 77
 
-./dvipng -T tight -strict test_dvipng || exit 1
+./dvipng -T tight -strict $srcdir/dvipng-test.dvi || exit 1
 
-echo View the result e.g. with xv test_dvipng\*.png
-
+echo View the result e.g. with  display dvipng-test\*.png
