@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -28,7 +28,10 @@ AC_PROVIDE_IFELSE([LT_OUTPUT],
                   [m4_fatal([$0: too late])])[]dnl
 _LT_CONFIG_SAVE_COMMANDS([## $0: Prevent libtool from linking dependency_libs
 if test "x$enable_libtool_hack" = xyes; then
-  sed '/for search_ext in/s/ \.la / /' "$ofile" >"$cfgfile"
+  sed '/# Convert "-framework/i \
+	## $0: ignore dependency_libs\
+	test "X$installed" = Xyes && dependency_libs=\
+' "$ofile" >"$cfgfile"
   mv "$cfgfile" "$ofile" ||
     (rm -f "$ofile" && cp "$cfgfile" "$ofile" && rm -f "$cfgfile")
   chmod +x "$ofile"
