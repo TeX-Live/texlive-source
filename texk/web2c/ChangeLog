@@ -1,3 +1,9 @@
+2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (sub_dirs): Removed, former ptexdir/lib/ is now
+	integrated into lib/.
+	* configure.ac (ptexdir/lib/Makefile.am): Removed.
+
 2010-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* help.h (PBIBTEXHELP, PDVITYPEHELP, PPLTOTFHELP, PTFTOPLHELP):

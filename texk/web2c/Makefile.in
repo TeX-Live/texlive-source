@@ -1163,8 +1163,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = ## $(WARNING_CXXFLAGS)
 AM_OBJCXXFLAGS = ## $(WARNING_OBJCXXFLAGS)
 version = $(WEB2CVERSION)
-sub_dirs = lib ptexdir/lib
-SUBDIRS = doc $(sub_dirs) man web2c . window omegafonts otps
+SUBDIRS = doc lib man web2c . window omegafonts otps
 proglib = lib/lib.a
 dist_man_MANS = synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 nodist_man_MANS = 
@@ -1616,11 +1615,11 @@ etex_ch_srcs = \
 # e-TeX Tests
 #
 etex_tests = etexdir/etrip.test
-pproglib = ptexdir/lib/lib.a
 ptex_cppflags = $(PTEXENC_INCLUDES)
 ptex_ldadd = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 pweb_programs = pbibtex pdvitype ptftopl ppltotf
 p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
+pproglib = lib/libp.a
 ptex_CPPFLAGS = $(ptex_cppflags)
 ptex_CFLAGS = $(WARNING_CFLAGS)
 
@@ -8975,10 +8974,9 @@ etrip-clean:
 	rm -f etrip.fot etrip.log etrip.dvi etrip.out etrip.typ
 	rm -f tripos.tex 8terminal.tex
 	rm -rf tfm
-
 # Rebuild $(pproglib)
-$(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/ptexdir/lib/*.c
-	cd ptexdir/lib && $(MAKE) $(AM_MAKEFLAGS)
+$(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
+	cd lib && $(MAKE) $(AM_MAKEFLAGS)
 @PTEXENC_RULE@
 $(ptex_OBJECTS): $(ptex_prereq)
 

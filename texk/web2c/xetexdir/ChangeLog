@@ -1,3 +1,10 @@
+2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* XeTeX_ext.h: Move extern declarations of papersize and
+	outputdriver from ../lib/texmfmp.c to here; use 'const char *',
+	'const_string' is not defined in this file.
+	* XeTeX_ext.c (papersize, outputdriver): Use 'const char *'.
+
 2010-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeXLayoutInterface.cpp: #include "unicode/platform.h" first,

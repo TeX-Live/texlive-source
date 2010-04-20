@@ -3,18 +3,6 @@
 ## Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-## pTeX library
-##
-
-sub_dirs += ptexdir/lib
-pproglib = ptexdir/lib/lib.a
-
-# Rebuild $(pproglib)
-$(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/ptexdir/lib/*.c
-	cd ptexdir/lib && $(MAKE) $(AM_MAKEFLAGS)
-## Rebuild libptexenc
-@PTEXENC_RULE@
-
 ptex_cppflags = $(PTEXENC_INCLUDES)
 ptex_ldadd = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
 
@@ -24,6 +12,15 @@ p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
 	$(pweb_programs:=.p) $(pweb_programs:=-web2c) $(pweb_programs:=.web)
+
+## pTeX library
+##
+pproglib = lib/libp.a
+# Rebuild $(pproglib)
+$(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
+	cd lib && $(MAKE) $(AM_MAKEFLAGS)
+## Rebuild libptexenc
+@PTEXENC_RULE@
 
 ## pTeX
 ##

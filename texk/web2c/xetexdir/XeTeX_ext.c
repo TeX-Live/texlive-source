@@ -182,8 +182,8 @@ const UInt32 byteMark				= 0x00000080UL;
 
 
 /* if the user specifies a paper size or output driver program */
-const_string papersize;
-const_string outputdriver = "xdvipdfmx -q -E"; /* default to portable xdvipdfmx driver */
+const char *papersize;
+const char *outputdriver = "xdvipdfmx -q -E"; /* default to portable xdvipdfmx driver */
 
 
 void initversionstring(char **versions)

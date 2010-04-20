@@ -13,7 +13,7 @@
 	* pbibtex.defines (removed): Using ptex.defines.
 	* ptex-include.ch (removed): Now done in ../texmfmp.h.
 
-	* am/ptex.am: Adjusted.
+	* am/ptex.am: Adjust and replace lib/lib.a by ../lib/libp.a.
 
 2010-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

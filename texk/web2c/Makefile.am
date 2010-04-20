@@ -17,8 +17,7 @@ AM_OBJCXXFLAGS = ## $(WARNING_OBJCXXFLAGS)
 
 version = $(WEB2CVERSION)
 
-sub_dirs = lib
-SUBDIRS = doc $(sub_dirs) man web2c . window omegafonts otps
+SUBDIRS = doc lib man web2c . window omegafonts otps
 
 proglib = lib/lib.a
 

@@ -8,6 +8,9 @@
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/absolute.h>
+#ifdef PTEX
+#include <ptexenc/ptexenc.h>
+#endif
 
 /* The globals we use to communicate.  */
 extern string nameoffile;
@@ -188,6 +191,12 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
                 free (fname);
 
                 /* This fopen is not allowed to fail. */
+#ifdef PTEX
+                if (filefmt == kpse_tex_format ||
+                    filefmt == kpse_bib_format) {
+                    *f_ptr = nkf_open (nameoffile + 1, fopen_mode);
+                } else
+#endif
                 *f_ptr = xfopen (nameoffile + 1, fopen_mode);
             }
         }
@@ -274,7 +283,11 @@ close_file (FILE *f)
   if (!f)
     return;
     
+#ifdef PTEX
+  if (nkf_close (f) == EOF) {
+#else
   if (fclose (f) == EOF) {
+#endif
     /* It's not always nameoffile, we might have opened something else
        in the meantime.  And it's not easy to extract the filenames out
        of the pool array.  So just punt on the filename.  Sigh.  This

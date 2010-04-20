@@ -7,6 +7,11 @@
 	* lib.h: Move extern declaration of fullnameoffile to here ...
 	* texmfmp.c: ... from here ...
 	* openclose.c: ... and from here.
+	* texmfmp.c [XeTeX]: Move extern declarations of papersize and
+	outputdriver from here to ../xetexdir/XeTeX_ext.h.
+
+	* Makefile.am, openclose.c, printversion.c:
+	Integrate libp.a for pTeX.
 
 2010-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

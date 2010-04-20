@@ -34,6 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@PTEX_TRUE@am__append_1 = libp.a
 subdir = lib
 DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	ChangeLog
@@ -85,6 +86,11 @@ am_lib_a_OBJECTS = basechsuffix.$(OBJEXT) chartostring.$(OBJEXT) \
 	uexit.$(OBJEXT) usage.$(OBJEXT) version.$(OBJEXT) \
 	zround.$(OBJEXT)
 lib_a_OBJECTS = $(am_lib_a_OBJECTS)
+libp_a_AR = $(AR) $(ARFLAGS)
+libp_a_LIBADD =
+am_libp_a_OBJECTS = libp_a-openclose.$(OBJEXT) \
+	libp_a-printversion.$(OBJEXT)
+libp_a_OBJECTS = $(am_libp_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -98,8 +104,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(lib_a_SOURCES)
-DIST_SOURCES = $(lib_a_SOURCES)
+SOURCES = $(lib_a_SOURCES) $(libp_a_SOURCES)
+DIST_SOURCES = $(lib_a_SOURCES) $(libp_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -293,7 +299,8 @@ x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
 INCLUDES = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
-noinst_LIBRARIES = lib.a
+noinst_LIBRARIES = lib.a $(am__append_1)
+EXTRA_LIBRARIES = libp.a
 lib_a_SOURCES = \
 	basechsuffix.c \
 	chartostring.c \
@@ -311,6 +318,11 @@ lib_a_SOURCES = \
 	usage.c \
 	version.c \
 	zround.c
+
+libp_a_CPPFLAGS = -DPTEX $(ENCTEX_INCLUDES)
+libp_a_SOURCES = \
+	openclose.c \
+	printversion.c
 
 EXTRA_DIST = alloca.c win32main.c
 all: all-am
@@ -354,6 +366,10 @@ lib.a: $(lib_a_OBJECTS) $(lib_a_DEPENDENCIES)
 	-rm -f lib.a
 	$(lib_a_AR) lib.a $(lib_a_OBJECTS) $(lib_a_LIBADD)
 	$(RANLIB) lib.a
+libp.a: $(libp_a_OBJECTS) $(libp_a_DEPENDENCIES) 
+	-rm -f libp.a
+	$(libp_a_AR) libp.a $(libp_a_OBJECTS) $(libp_a_LIBADD)
+	$(RANLIB) libp.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -368,6 +384,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fprintreal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/input2int.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inputint.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libp_a-openclose.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libp_a-printversion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/openclose.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/printversion.Po@am__quote@
@@ -397,6 +415,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+libp_a-openclose.o: openclose.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libp_a-openclose.o -MD -MP -MF $(DEPDIR)/libp_a-openclose.Tpo -c -o libp_a-openclose.o `test -f 'openclose.c' || echo '$(srcdir)/'`openclose.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libp_a-openclose.Tpo $(DEPDIR)/libp_a-openclose.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='openclose.c' object='libp_a-openclose.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libp_a-openclose.o `test -f 'openclose.c' || echo '$(srcdir)/'`openclose.c
+
+libp_a-openclose.obj: openclose.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libp_a-openclose.obj -MD -MP -MF $(DEPDIR)/libp_a-openclose.Tpo -c -o libp_a-openclose.obj `if test -f 'openclose.c'; then $(CYGPATH_W) 'openclose.c'; else $(CYGPATH_W) '$(srcdir)/openclose.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libp_a-openclose.Tpo $(DEPDIR)/libp_a-openclose.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='openclose.c' object='libp_a-openclose.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libp_a-openclose.obj `if test -f 'openclose.c'; then $(CYGPATH_W) 'openclose.c'; else $(CYGPATH_W) '$(srcdir)/openclose.c'; fi`
+
+libp_a-printversion.o: printversion.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libp_a-printversion.o -MD -MP -MF $(DEPDIR)/libp_a-printversion.Tpo -c -o libp_a-printversion.o `test -f 'printversion.c' || echo '$(srcdir)/'`printversion.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libp_a-printversion.Tpo $(DEPDIR)/libp_a-printversion.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='printversion.c' object='libp_a-printversion.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libp_a-printversion.o `test -f 'printversion.c' || echo '$(srcdir)/'`printversion.c
+
+libp_a-printversion.obj: printversion.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libp_a-printversion.obj -MD -MP -MF $(DEPDIR)/libp_a-printversion.Tpo -c -o libp_a-printversion.obj `if test -f 'printversion.c'; then $(CYGPATH_W) 'printversion.c'; else $(CYGPATH_W) '$(srcdir)/printversion.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libp_a-printversion.Tpo $(DEPDIR)/libp_a-printversion.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='printversion.c' object='libp_a-printversion.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libp_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libp_a-printversion.obj `if test -f 'printversion.c'; then $(CYGPATH_W) 'printversion.c'; else $(CYGPATH_W) '$(srcdir)/printversion.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

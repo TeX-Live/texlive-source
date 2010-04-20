@@ -208,6 +208,9 @@ extern const UInt32 kSurrogateLowEnd;
 extern const UInt32 byteMask;
 extern const UInt32 byteMark;
 
+extern const char *papersize;
+extern const char *outputdriver;
+
 #include <stdio.h> /* for FILE */
 
 #include "trans.h"

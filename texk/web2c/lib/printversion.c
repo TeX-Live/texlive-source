@@ -5,6 +5,9 @@
 #include "config.h"
 #include "lib.h"
 #include <kpathsea/version.h>
+#ifdef PTEX
+#include <ptexenc/ptexenc.h>
+#endif
 
 /* We're passed in the original WEB banner string, which has the form
 This is PROGRAM, Version VERSION-NUMBER
@@ -36,8 +39,16 @@ printversionandexit (const_string banner,
   prog_name[len] = 0;
 
   /* The Web2c version string starts with a space.  */
+#ifdef PTEX
+  printf ("%s %s (%s)%s\n", prog_name, prog_version, get_enc_string(),
+          versionstring);
+#else
   printf ("%s %s%s\n", prog_name, prog_version, versionstring);
+#endif
   puts (kpathsea_version_string);
+#ifdef PTEX
+  puts (ptexenc_version_string);
+#endif
 
   if (copyright_holder) {
     printf ("Copyright 2009 %s.\n", copyright_holder);
