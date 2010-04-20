@@ -1,3 +1,8 @@
+2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipng.test: Check results from running kpsewhich.
+	* Makefile.am: Reactivate the test.
+
 2010-04-19  Karl Berry  <karl@tug.org>
 
 	* Makefile.am: forget the tests.

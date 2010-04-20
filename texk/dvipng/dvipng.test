@@ -2,18 +2,23 @@
 # $Id$
 # Public domain.  Originally written by Peter Breitenlohner, 2009.
 
-TEXMFCNF=$(dirname $(kpsewhich texmf.cnf))
-TEXFONTMAPS=$(dirname $(dirname $(kpsewhich psfonts.map)))//
-ENCFONTS=$(dirname $(dirname $(kpsewhich 8r.enc)))//
-TEXMFMAIN=$(kpsewhich --expand-var='$TEXMFMAIN')
-TEXMFDIST=$(kpsewhich --expand-var='$TEXMFDIST')
+get_val () {
+  res=$(kpsewhich "$@") || { echo "\"kpsewhich $@\" failed"; exit 77; }
+}
+
+get_val mktex.cnf
+TEXMFCNF=$(dirname $res)
+get_val psfonts.map
+TEXFONTMAPS=$(dirname $(dirname $res))//
+get_val 8r.enc
+ENCFONTS=$(dirname $(dirname $res))//
+get_val --expand-var='$TEXMFMAIN'
+TEXMFMAIN=$res
+get_val --expand-var='$TEXMFDIST'
+TEXMFDIST=$res
 TEXMFLOCAL=$(kpsewhich --expand-var='$TEXMFLOCAL')
 
 export TEXMFCNF TEXFONTMAPS ENCFONTS TEXMFMAIN TEXMFDIST TEXMFLOCAL
-
-# running latex in the build tree has many too many prerequisites.
-# we just check in the dvi.
-#latex $srcdir/$DVIPNG_TREE/test_dvipng.tex || exit 77
 
 ./dvipng -T tight -strict $srcdir/dvipng-test.dvi || exit 1
 
