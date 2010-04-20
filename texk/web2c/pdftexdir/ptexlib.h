@@ -164,6 +164,7 @@ extern strnumber last_tex_string;
 extern size_t last_ptr_index;
 extern char *fb_array;
 extern FILE *t3_file;
+extern const char *ptexbanner;
 
 /* pdftexlib function prototypes */
 

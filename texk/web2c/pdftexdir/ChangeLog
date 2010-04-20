@@ -1,3 +1,8 @@
+2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptexlib.h: Move extern declaration of ptexbanner to here
+	from ../lib/lib.h (instatiated in ../lib/texmfmp.c).
+
 2010-03-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ttf2afm.c: Use kpse_set_program_name(argv[0], NULL) instead of

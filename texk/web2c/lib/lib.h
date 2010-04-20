@@ -49,11 +49,6 @@ extern string output_directory;
 /* printversion.c */
 extern void printversionandexit (const_string, const_string, const_string, char*);
 
-/* texmfmp.c (actually ../pdftexextra.c or ../luatexextra) */
-#if defined(pdfTeX) || defined(luaTeX)
-extern const char *ptexbanner;
-#endif
-
 /* setupvar.c */
 /* Set an array size from texmf.cnf.  */
 extern void setupboundvariable (integer *, const_string, integer);

@@ -63,7 +63,7 @@
 */
 
 /* Aleph is sufficiently different to separate the definition. */
-#if !defined(Aleph) && !defined(luaTeX)
+#if !defined(Aleph)
 
 typedef union
 {
@@ -181,7 +181,7 @@ typedef union
 #define qqqq v.QQQQ
 #endif
 
-#else /* Aleph || luaTeX */
+#else /* Aleph */
 
 typedef union
 {
@@ -257,15 +257,4 @@ typedef union
 
 #define gr gg.GLUE
 
-#endif /* Aleph || luaTeX */
-
-#if defined(luaTeX)
-#define memory_word memoryword
-#define two_halves twohalves
-#define four_quarters fourquarters
-
-#define strnumber str_number
-#define poolpointer pool_pointer
-#define packedASCIIcode packed_ASCII_code
-#define internalfontnumber internal_font_number
-#endif /* luaTeX */
+#endif /* Aleph */

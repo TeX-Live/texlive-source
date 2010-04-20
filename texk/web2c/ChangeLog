@@ -1,3 +1,7 @@
+2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmem.h, texmfmp-help.h: Remove luaTeX specific code.
+
 2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (sub_dirs): Removed, former ptexdir/lib/ is now

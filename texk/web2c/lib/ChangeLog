@@ -1,3 +1,10 @@
+2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c, lib.h: Remove luaTeX specific code.
+
+	* lib.h: Move extern declaration of ptexbanner from here
+	to ../pdftexdir/ptexlib.h (instatiated in texmfmp.c).
+
 2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* main.c, texmfmp.c: Remove extern declaration of mainbody,
