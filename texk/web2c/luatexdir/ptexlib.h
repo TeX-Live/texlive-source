@@ -27,13 +27,14 @@
 #  define EXTERN extern
 #  include "luatex.h"
 
+#   include "lib/lib.h"
+
 #  ifdef MSVC
 extern double rint(double x);
 #  endif
 
-extern string fullnameoffile;
 #  if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
-extern char **suffixlist;
+extern char **suffixlist; /* in luainit.w */
 #  endif
 
 
@@ -406,7 +407,7 @@ extern void topenin(void);
 /* extern void calledit (); */
 
 /* Set an array size from texmf.cnf.  */
-extern void setupboundvariable(integer *, const_string, integer);
+/*extern void setupboundvariable(integer *, const_string, integer);*/
 
 /* here  are a few functions that used to be in coerce.h */
 

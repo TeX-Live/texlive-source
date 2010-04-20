@@ -2,6 +2,42 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.60.1 was released ...
+==============================================================
+
+New features:
+
+* renamed node.skipable() to node.skippable().
+
+* More git discovery patches in getluatexsvnversion.sh.
+
+* Added --warnings=[no|min|yes|max|all] option to build.sh.
+
+* While cross-compiling, build.sh now adds an extra linker switch 
+  to allow win32 exes to use 3G instead of 2G of virtual memory.
+
+
+Bugfixes:
+
+* Builds with --enable-ipc were broken.
+
+* Assigning and acquiring \fontdimen s from TeX code was broken.
+
+* An initial attempt at fixing bug #372 (\predisplaydirection).
+
+* An attempt to fix \eqno/\leqno placements in mixed direction 
+  \mathdir/\textdir.
+
+* Our local xpdf patch is reverted, it is not needed any more.
+
+* The os.selfdir variable was not documented, as well as broken 
+  on WIN32.
+
+* Fix "\input tikz hello \bye" bug, plus fix one sign error.
+
+* Fix handling of lua script files with UNC names.
+
+==============================================================
 Luatex beta-0.60.0 was released 20100404
 ==============================================================
 

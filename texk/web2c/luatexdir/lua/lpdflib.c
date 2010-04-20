@@ -18,7 +18,7 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lpdflib.c 3612 2010-04-13 09:29:42Z taco $ "
+    "$Id: lpdflib.c 3618 2010-04-15 05:54:45Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/lpdflib.c $";
 
 #include "lua/luatex-api.h"
@@ -577,7 +577,7 @@ static int l_registerannot(lua_State * L)
         if (i <= 0)
             luaL_error(L,
                        "pdf.registerannot() can only register positive object numbers");
-        addto_page_resources(static_pdf, obj_type_annot, -i);
+        addto_page_resources(static_pdf, obj_type_annot, i);
         break;
     default:
         luaL_error(L, "pdf.registerannot() needs exactly 1 argument");

@@ -10,20 +10,21 @@
    #defines TeX or MF, which avoids the need for a special
    Makefile rule.  */
 #include "luatex.h"
-
+#include "ptexlib.h"
+#include "lua/luatex-api.h"
 #include "luatex_svnversion.h"
 
 static const char _svn_version[] =
-    "$Id: luatex.c 3612 2010-04-13 09:29:42Z taco $ "
+    "$Id: luatex.c 3637 2010-04-20 13:44:56Z taco $ "
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/luatex.c $";
 
 #define TeX
 
 int luatex_svn = luatex_svn_revision;
 int luatex_version = 60;        /* \.{\\luatexversion}  */
-int luatex_revision = '0';      /* \.{\\luatexrevision}  */
+int luatex_revision = '1';      /* \.{\\luatexrevision}  */
 int luatex_date_info = -extra_version_info;     /* the compile date is negated */
-const char *luatex_version_string = "beta-0.60.0";
+const char *luatex_version_string = "beta-0.60.1";
 const char *engine_name = "luatex";     /* the name of this engine */
 
 #include <kpathsea/c-ctype.h>
@@ -46,7 +47,6 @@ const char *engine_name = "luatex";     /* the name of this engine */
 
 #include <signal.h>             /* Catch interrupts.  */
 
-#include <texmfmp-help.h>
 
 /* {tex,mf}d.h defines TeX, MF, INI, and other such symbols.
    Unfortunately there's no way to get the banner into this code, so
@@ -393,9 +393,6 @@ int runsystem(char *cmd)
 
 #endif
 
-/* The main program, etc.  */
-
-extern void lua_initialize(int ac, char **av);
 
 /* What we were invoked as and with.  */
 char **argv;
@@ -407,13 +404,7 @@ string dump_name;
 /* The C version of the jobname, if given. */
 const_string c_job_name;
 
-/* Full source file name. */
-extern string fullnameoffile;
-
-/* The main body of the WEB is transformed into this procedure.  */
-extern TEXDLL void mainbody(void);
-
-char *ptexbanner;
+const char *ptexbanner;
 
 #if !defined(WIN32) || defined(__MINGW32__)
 /* The entry point: set up for reading the command line, which will
@@ -433,7 +424,7 @@ int main(int ac, string * av)
     lua_initialize(ac, av);
 
     /* Call the real main program.  */
-    mainbody();
+    main_body();
 
     return EXIT_SUCCESS;
 }

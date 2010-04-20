@@ -21,7 +21,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: tfmofm.w 3584 2010-04-02 17:45:55Z hhenkel $ "
+    "$Id: tfmofm.w 3634 2010-04-19 19:52:48Z taco $ "
 "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/tfmofm.w $";
 
 @ Here are some macros that help process ligatures and kerns 
@@ -575,7 +575,7 @@ int read_tfm_info(internal_font_number f, const char *cnom, scaled s)
     halfword lf, lh, bc, ec, nw, nh, nd, ni, nl, nk, ne, np, slh;       /* sizes of subfiles */
     scaled *widths, *heights, *depths, *italics, *kerns;
     halfword font_dir;
-    int a, b, c, d;             /* byte variables */
+    int a, b, c=0, d=0;             /* byte variables */
     int i;                      /* counter */
     int font_level, header_length;
     int nco, ncw, npc, nlw, neew;

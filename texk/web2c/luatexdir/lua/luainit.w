@@ -28,7 +28,7 @@
 #include "ptexlib.h"
 
 static const char _svn_version[] =
-    "$Id: luainit.w 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luainit.w $";
+    "$Id: luainit.w 3621 2010-04-15 16:08:22Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/luainit.w $";
 
 @ 
 TH: TODO
@@ -224,6 +224,11 @@ static void parse_options(int argc, char **argv)
     int option_index;
     char *firstfile = NULL;
     opterr = 0;                 /* dont whine */
+    if ((strstr(argv[0], "luatexlua") != NULL) ||
+        (strstr(argv[0], "texlua") != NULL)) {
+        lua_only = 1;
+        luainit = 1;
+    }
     for (;;) {
         g = getopt_long_only(argc, argv, "+", long_options, &option_index);
 
@@ -356,41 +361,36 @@ static void parse_options(int argc, char **argv)
             uexit(0);
         }
     }
-    /* attempt to find |dump_name| */
-    if (argv[optind] && argv[optind][0] == '&') {
+    /* attempt to find |input_name| / |dump_name| */
+    if (lua_only) {
+	if (argv[optind]) {
+ 	   startup_filename = strdup(argv[optind]);
+           lua_offset = optind;
+        }
+    } else if (argv[optind] && argv[optind][0] == '&') {
         dump_name = strdup(argv[optind] + 1);
     } else if (argv[optind] && argv[optind][0] != '\\') {
         if (argv[optind][0] == '*') {
             input_name = strdup(argv[optind] + 1);
         } else {
             firstfile = strdup(argv[optind]);
-            if (lua_only) {
-                startup_filename = firstfile;
-            } else {
-                if ((strstr(firstfile, ".lua") ==
-                     firstfile + strlen(firstfile) - 4)
-                    || (strstr(firstfile, ".luc") ==
-                        firstfile + strlen(firstfile) - 4)
-                    || (strstr(firstfile, ".LUA") ==
-                        firstfile + strlen(firstfile) - 4)
-                    || (strstr(firstfile, ".LUC") ==
-                        firstfile + strlen(firstfile) - 4)
-                    || (strstr(argv[0], "luatexlua") != NULL)
-                    || (strstr(argv[0], "texlua") != NULL)) {
-                    startup_filename = firstfile;
-                    lua_only = 1;
-                    lua_offset = optind;
-                    luainit = 1;
-                } else {
-                    input_name = firstfile;
+            if ((strstr(firstfile, ".lua") ==
+                 firstfile + strlen(firstfile) - 4)
+                || (strstr(firstfile, ".luc") ==
+                    firstfile + strlen(firstfile) - 4)
+                || (strstr(firstfile, ".LUA") ==
+                    firstfile + strlen(firstfile) - 4)
+                || (strstr(firstfile, ".LUC") ==
+                    firstfile + strlen(firstfile) - 4)) {
+	        if (startup_filename == NULL) {
+                   startup_filename = firstfile;
+  	           lua_offset = optind;
+                   lua_only = 1;
+                   luainit = 1;
                 }
+            } else {
+                input_name = firstfile;
             }
-        }
-    } else {
-        if ((strstr(argv[0], "luatexlua") != NULL) ||
-            (strstr(argv[0], "texlua") != NULL)) {
-            lua_only = 1;
-            luainit = 1;
         }
     }
     if (safer_option)           /* --safer implies --nosocket */

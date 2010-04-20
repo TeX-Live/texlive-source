@@ -25,7 +25,7 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: loslibext.c 3612 2010-04-13 09:29:42Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/loslibext.c $";
+    "$Id: loslibext.c 3634 2010-04-19 19:52:48Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/loslibext.c $";
 
 #if defined(_WIN32) || defined(__NT__)
 #  define MKDIR(a,b) mkdir(a)
@@ -268,7 +268,7 @@ static char *get_command_name(char *maincmd)
     int i, k, quoted;
     quoted = k = 0;
     for (i = 0; (i < MAX_PATH) && maincmd[i] &&
-         (maincmd[i] != ' ' && maincmd[i] != '\t' || quoted); i++) {
+	     ((maincmd[i] != ' ' && maincmd[i] != '\t') || quoted); i++) {
         if (maincmd[i] == '"') {
             quoted = !quoted;
         } else {

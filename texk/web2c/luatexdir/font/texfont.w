@@ -33,7 +33,7 @@ problematic |if 0 != null|.
 
 @c
 static const char _svn_version[] =
-    "$Id: texfont.w 3612 2010-04-13 09:29:42Z taco $ "
+    "$Id: texfont.w 3634 2010-04-19 19:52:48Z taco $ "
 "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/font/texfont.w $";
 
 #include "ptexlib.h"
@@ -516,7 +516,7 @@ static void dump_charinfo_variants(extinfo * o)
 @ @c
 static extinfo *undump_charinfo_variants(void)
 {
-    extinfo *c, *t, *h = NULL;
+    extinfo *c, *t = NULL, *h = NULL;
     c = undump_variant();
     while (c != NULL) {
         if (h == null)

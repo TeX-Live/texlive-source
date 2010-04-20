@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 3612 2010-04-13 09:29:42Z taco $"
+    "$Id: pdfgen.w 3638 2010-04-20 14:00:47Z taco $"
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
@@ -703,6 +703,7 @@ void addto_page_resources(PDF pdf, pdf_obj_type t, int k)
     void **pp;
     pdf_object_list *p, *item = NULL;
     assert(pdf != NULL);
+    /* assert(obj_type(pdf, k) == t); *//* TODO, not yet strictly true */
     re = pdf->page_resources;
     assert(re != NULL);
     assert(t <= PDF_OBJ_TYPE_MAX);
@@ -729,7 +730,7 @@ void addto_page_resources(PDF pdf, pdf_obj_type t, int k)
         item->link = NULL;
         item->info = k;
         pr->list = item;
-        set_obj_scheduled(pdf, k);
+        set_obj_scheduled(pdf, k);      /* k is an object number */
     } else {
         for (p = pr->list; p->info != k && p->link != NULL; p = p->link);
         if (p->info != k) {
@@ -1985,12 +1986,12 @@ void pdf_end_page(PDF pdf, boolean shipping_page)
     if ((ol = get_page_resources_list(pdf, obj_type_font)) != NULL) {
         pdf_puts(pdf, "/Font << ");
         while (ol != NULL) {
-            assert(pdf_font_num(ol->info) > 0); /* always base font: an object number */
+            assert(ol->info > 0);       /* always base font: an object number */
             pdf_puts(pdf, "/F");
-            pdf_print_int(pdf, ol->info);
+            pdf_print_int(pdf, obj_info(pdf, ol->info));
             pdf_print_resname_prefix(pdf);
             pdf_out(pdf, ' ');
-            pdf_print_int(pdf, pdf_font_num(ol->info));
+            pdf_print_int(pdf, ol->info);
             pdf_puts(pdf, " 0 R ");
             ol = ol->link;
         }
