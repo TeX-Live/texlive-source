@@ -1,3 +1,9 @@
+2010-04-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdvitype.test, ppltotf.test, ptftopl.test (new): Shell scripts
+	for basic 'make check' tests.
+	* am/ptex.am: Add these tests.
+
 2010-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ppltotf.ch: Rename PTEX_PLTOTF_HELP => PPLTOTF_HELP.

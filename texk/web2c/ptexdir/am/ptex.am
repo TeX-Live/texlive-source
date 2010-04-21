@@ -5,11 +5,19 @@
 
 ptex_cppflags = $(PTEXENC_INCLUDES)
 ptex_ldadd = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-
-pweb_programs = pbibtex pdvitype ptftopl ppltotf
-
 p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
+pweb_programs = pbibtex pdvitype ppltotf ptftopl
+
+# pTeX Tests
+#
+ptex_tests = \
+	ptexdir/pdvitype.test \
+	ptexdir/ppltotf.test \
+	ptexdir/ptftopl.test \
+	ptexdir/ptrip.test
+
+EXTRA_DIST += $(ptex_tests)
 DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
 	$(pweb_programs:=.p) $(pweb_programs:=-web2c) $(pweb_programs:=.web)
 
@@ -168,32 +176,31 @@ EXTRA_DIST += \
 	ptexdir/INSTALL.txt \
 	ptexdir/README.txt
 
-# pTeX Tests
-#
-ptex_tests = ptexdir/ptrip.test
-
-EXTRA_DIST += $(ptex_tests)
-
 if PTEX
 TESTS += $(ptex_tests)
 check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += ptrip.diffs
 endif PTEX
-DISTCLEANFILES += ptrip.diffs
 
+## Test data and results
+##
+## ptexdir/pdvitype.test
+DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
+## ptexdir/ppltotf.test
+DISTCLEANFILES += tests/xcmr10.tfm
+## ptexdir/ptftopl.test
+DISTCLEANFILES += tests/xcmr10.pl
+## ptexdir/ptrip.test
+EXTRA_DIST += ptexdir/ptrip.diffs
 .PHONY: ptrip-clean
 clean-local:: ptrip-clean
-# ptrip.test
 ptrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt ptripin.fot ptripin.log
 	rm -f ptrip.fot ptrip.log trip.log trip.dvi trip.typ
 	rm -f ptrip.fot ptrip.log ptrip.dvi ptrip.typ
 	rm -f tripos.tex 8terminal.tex
 	rm -rf tfm
-
-## Test data
-##
-EXTRA_DIST += ptexdir/ptrip.diffs
+DISTCLEANFILES += ptrip.diffs
 
 ## Eventually delete these files
 ##

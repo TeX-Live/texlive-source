@@ -485,8 +485,8 @@ am__EXEEXT_1 = bibtex$(EXEEXT) dvicopy$(EXEEXT) dvitype$(EXEEXT) \
 	patgen$(EXEEXT) pktogf$(EXEEXT) pktype$(EXEEXT) \
 	pltotf$(EXEEXT) pooltype$(EXEEXT) tftopl$(EXEEXT) \
 	vftovp$(EXEEXT) vptovf$(EXEEXT) weave$(EXEEXT)
-am__EXEEXT_2 = pbibtex$(EXEEXT) pdvitype$(EXEEXT) ptftopl$(EXEEXT) \
-	ppltotf$(EXEEXT)
+am__EXEEXT_2 = pbibtex$(EXEEXT) pdvitype$(EXEEXT) ppltotf$(EXEEXT) \
+	ptftopl$(EXEEXT)
 am__EXEEXT_3 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT)
 am__EXEEXT_4 = ofm2opl$(EXEEXT) opl2ofm$(EXEEXT) ovf2ovp$(EXEEXT) \
 	ovp2ovf$(EXEEXT)
@@ -1225,12 +1225,12 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	etexdir/etrip/etrip3.in etexdir/etrip/etripin.log \
 	etexdir/etrip/etripman.tex etexdir/etrip/texmf.cnf \
 	etexdir/etrip/trip2.in etexdir/etex.mak etexdir/etex.mk \
-	$(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptexextra.in \
-	ptexdir/ptex.defines lib/texmfmp.c tmf-pool.h \
-	ptexdir/pbibtex.ch web2c/cvtbib.sed ptexdir/pdvitype.ch \
-	ptexdir/ppltotf.ch ptexdir/ptftopl.ch ptexdir/COPYRIGHT \
-	ptexdir/COPYRIGHT.jis ptexdir/ChangeLog ptexdir/Changes.txt \
-	ptexdir/INSTALL.txt ptexdir/README.txt $(ptex_tests) \
+	$(ptex_tests) $(ptex_web_srcs) $(ptex_ch_srcs) \
+	ptexdir/ptexextra.in ptexdir/ptex.defines lib/texmfmp.c \
+	tmf-pool.h ptexdir/pbibtex.ch web2c/cvtbib.sed \
+	ptexdir/pdvitype.ch ptexdir/ppltotf.ch ptexdir/ptftopl.ch \
+	ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis ptexdir/ChangeLog \
+	ptexdir/Changes.txt ptexdir/INSTALL.txt ptexdir/README.txt \
 	ptexdir/ptrip.diffs ptexdir/Files ptexdir/pbibtex.defines \
 	ptexdir/ptex.mk ptexdir/ptex-base.ch.orig \
 	ptexdir/ptex-include.ch ptexdir/ptexhelp.h ptexdir/reautoconf \
@@ -1408,9 +1408,10 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
-	ptex.pool ptex-tangle ptexdir/ptex.version ptrip.diffs \
-	$(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c pdftex.p \
-	pdftex.pool pdftex-tangle pdftexdir/pdftex.version \
+	ptex.pool ptex-tangle ptexdir/ptex.version tests/xstory.dvityp \
+	tests/xpagenum.typ tests/xcmr10.tfm tests/xcmr10.pl \
+	ptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c \
+	pdftex.p pdftex.pool pdftex-tangle pdftexdir/pdftex.version \
 	$(nodist_libluatex_a_SOURCES) $(nodist_xetex_SOURCES) \
 	xetex.web xetex-web2c xetex.p xetex.pool xetex-tangle \
 	xetexdir/etex.version xetexdir/xetex.version \
@@ -1617,8 +1618,17 @@ etex_ch_srcs = \
 etex_tests = etexdir/etrip.test
 ptex_cppflags = $(PTEXENC_INCLUDES)
 ptex_ldadd = $(pproglib) $(PTEXENC_LIBS) $(LDADD)
-pweb_programs = pbibtex pdvitype ptftopl ppltotf
 p_tangle = WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
+pweb_programs = pbibtex pdvitype ppltotf ptftopl
+
+# pTeX Tests
+#
+ptex_tests = \
+	ptexdir/pdvitype.test \
+	ptexdir/ppltotf.test \
+	ptexdir/ptftopl.test \
+	ptexdir/ptrip.test
+
 pproglib = lib/libp.a
 ptex_CPPFLAGS = $(ptex_cppflags)
 ptex_CFLAGS = $(WARNING_CFLAGS)
@@ -1658,10 +1668,6 @@ nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
 ptftopl_SOURCES = ptexdir/kanji.h
 ptftopl_CPPFLAGS = $(ptex_cppflags)
 ptftopl_LDADD = $(ptex_ldadd)
-
-# pTeX Tests
-#
-ptex_tests = ptexdir/ptrip.test
 pdftex_cppflags = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES) \
 	$(OBSDCOMPAT_INCLUDES) -I$(srcdir)/libmd5 \
 	-I$(srcdir)/pdftexdir
@@ -9046,10 +9052,8 @@ ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
 	$(p_tangle) ptftopl ptftopl
 ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie) -m ptftopl.web tftopl.web tftopl.ch
-
 .PHONY: ptrip-clean
 clean-local:: ptrip-clean
-# ptrip.test
 ptrip-clean:
 	rm -f trip.tfm trip.pl trip.tex trip.fmt ptripin.fot ptripin.log
 	rm -f ptrip.fot ptrip.log trip.log trip.dvi trip.typ

@@ -1,0 +1,13 @@
+#! /bin/sh
+
+# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+TEXMFCNF=$srcdir/../kpathsea \
+  ./pdvitype -show-opcodes $srcdir/tests/story >tests/xstory.dvityp || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea \
+  ./pdvitype --p=\*.\*.2 $srcdir/tests/pagenum.dvi >tests/xpagenum.typ || exit 1
+
