@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-04-13.15}
+\def\texinfoversion{2010-04-18.09}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -64,7 +64,6 @@
 % they might have appeared in the input file name.
 \everyjob{\message{[Texinfo version \texinfoversion]}%
   \catcode`+=\active \catcode`\_=\active}
-
 
 \chardef\other=12
 
@@ -198,36 +197,7 @@
 % that mark overfull boxes (in case you have decided
 % that the text looks ok even though it passes the margin).
 %
-\def\finalout{\overfullrule=0pt}
-
-% @| inserts a changebar to the left of the current line.  It should
-% surround any changed text.  This approach does *not* work if the
-% change spans more than two lines of output.  To handle that, we would
-% have adopt a much more difficult approach (putting marks into the main
-% vertical list for the beginning and end of each change).
-%
-\def\|{%
-  % \vadjust can only be used in horizontal mode.
-  \leavevmode
-  %
-  % Append this vertical mode material after the current line in the output.
-  \vadjust{%
-    % We want to insert a rule with the height and depth of the current
-    % leading; that is exactly what \strutbox is supposed to record.
-    \vskip-\baselineskip
-    %
-    % \vadjust-items are inserted at the left edge of the type.  So
-    % the \llap here moves out into the left-hand margin.
-    \llap{%
-      %
-      % For a thicker or thinner bar, change the `1pt'.
-      \vrule height\baselineskip width1pt
-      %
-      % This is the space between the bar and the text.
-      \hskip 12pt
-    }%
-  }%
-}
+\def\finalout{\overfullrule=0pt }
 
 % Sometimes it is convenient to have everything in the transcript file
 % and nothing on the terminal.  We don't just call \tracingall here,
@@ -266,7 +236,6 @@
 \def\bigbreak{\ifnum\lastpenalty<10000\par\ifdim\lastskip<\bigskipamount
   \removelastskip\penalty-200\bigskip\fi\fi}
 
-% For @cropmarks command.
 % Do @cropmarks to get crop marks.
 %
 \newif\ifcropmarks
@@ -598,85 +567,6 @@
 \newhelp\EMsimple{Press RETURN to continue.}
 
 
-%% Simple single-character @ commands
-
-% @@ prints an @
-% Kludge this until the fonts are right (grr).
-\def\@{{\tt\char64}}
-
-% This is turned off because it was never documented
-% and you can use @w{...} around a quote to suppress ligatures.
-%% Define @` and @' to be the same as ` and '
-%% but suppressing ligatures.
-%\def\`{{`}}
-%\def\'{{'}}
-
-% Used to generate quoted braces.
-\def\mylbrace {{\tt\char123}}
-\def\myrbrace {{\tt\char125}}
-\let\{=\mylbrace
-\let\}=\myrbrace
-\begingroup
-  % Definitions to produce \{ and \} commands for indices,
-  % and @{ and @} for the aux/toc files.
-  \catcode`\{ = \other \catcode`\} = \other
-  \catcode`\[ = 1 \catcode`\] = 2
-  \catcode`\! = 0 \catcode`\\ = \other
-  !gdef!lbracecmd[\{]%
-  !gdef!rbracecmd[\}]%
-  !gdef!lbraceatcmd[@{]%
-  !gdef!rbraceatcmd[@}]%
-!endgroup
-
-% @comma{} to avoid , parsing problems.
-\let\comma = ,
-
-% Accents: @, @dotaccent @ringaccent @ubaraccent @udotaccent
-% Others are defined by plain TeX: @` @' @" @^ @~ @= @u @v @H.
-\let\, = \c
-\let\dotaccent = \.
-\def\ringaccent#1{{\accent23 #1}}
-\let\tieaccent = \t
-\let\ubaraccent = \b
-\let\udotaccent = \d
-
-% Other special characters: @questiondown @exclamdown @ordf @ordm
-% Plain TeX defines: @AA @AE @O @OE @L (plus lowercase versions) @ss.
-\def\questiondown{?`}
-\def\exclamdown{!`}
-\def\ordf{\leavevmode\raise1ex\hbox{\selectfonts\lllsize \underbar{a}}}
-\def\ordm{\leavevmode\raise1ex\hbox{\selectfonts\lllsize \underbar{o}}}
-
-% Dotless i and dotless j, used for accents.
-\def\imacro{i}
-\def\jmacro{j}
-\def\dotless#1{%
-  \def\temp{#1}%
-  \ifx\temp\imacro \ifmmode\imath \else\ptexi \fi
-  \else\ifx\temp\jmacro \ifmmode\jmath \else\j \fi
-  \else \errmessage{@dotless can be used only with i or j}%
-  \fi\fi
-}
-
-% The \TeX{} logo, as in plain, but resetting the spacing so that a
-% period following counts as ending a sentence.  (Idea found in latex.)
-%
-\edef\TeX{\TeX \spacefactor=1000 }
-
-% @LaTeX{} logo.  Not quite the same results as the definition in
-% latex.ltx, since we use a different font for the raised A; it's most
-% convenient for us to use an explicitly smaller font, rather than using
-% the \scriptstyle font (since we don't reset \scriptstyle and
-% \scriptscriptstyle).
-%
-\def\LaTeX{%
-  L\kern-.36em
-  {\setbox0=\hbox{T}%
-   \vbox to \ht0{\hbox{\selectfonts\lllsize A}\vss}}%
-  \kern-.15em
-  \TeX
-}
-
 % Be sure we're in horizontal mode when doing a tie, since we make space
 % equivalent to this in @example-like environments. Otherwise, a space
 % at the beginning of a line will start with \penalty -- and
@@ -872,7 +762,7 @@ where each line of input produces a line of output.}
 
 % @inmargin{WHICH}{TEXT} puts TEXT in the WHICH margin next to the current
 % paragraph.  For more general purposes, use the \margin insertion
-% class.  WHICH is `l' or `r'.
+% class.  WHICH is `l' or `r'.  Not documented, written for gawk manual.
 %
 \newskip\inmarginspacing \inmarginspacing=1cm
 \def\strutdepth{\dp\strutbox}
@@ -917,6 +807,36 @@ where each line of input produces a line of output.}
     \def\temp{\inleftmargin\lefttext}%
   \fi
   \temp
+}
+
+% @| inserts a changebar to the left of the current line.  It should
+% surround any changed text.  This approach does *not* work if the
+% change spans more than two lines of output.  To handle that, we would
+% have adopt a much more difficult approach (putting marks into the main
+% vertical list for the beginning and end of each change).  This command
+% is not documented, not supported, and doesn't work.
+%
+\def\|{%
+  % \vadjust can only be used in horizontal mode.
+  \leavevmode
+  %
+  % Append this vertical mode material after the current line in the output.
+  \vadjust{%
+    % We want to insert a rule with the height and depth of the current
+    % leading; that is exactly what \strutbox is supposed to record.
+    \vskip-\baselineskip
+    %
+    % \vadjust-items are inserted at the left edge of the type.  So
+    % the \llap here moves out into the left-hand margin.
+    \llap{%
+      %
+      % For a thicker or thinner bar, change the `1pt'.
+      \vrule height\baselineskip width1pt
+      %
+      % This is the space between the bar and the text.
+      \hskip 12pt
+    }%
+  }%
 }
 
 % @include FILE -- \input text of FILE.
@@ -1093,109 +1013,6 @@ where each line of input produces a line of output.}
   \global \everypar = {}%
 }
 
-
-% @asis just yields its argument.  Used with @table, for example.
-%
-\def\asis#1{#1}
-
-% @math outputs its argument in math mode.
-%
-% One complication: _ usually means subscripts, but it could also mean
-% an actual _ character, as in @math{@var{some_variable} + 1}.  So make
-% _ active, and distinguish by seeing if the current family is \slfam,
-% which is what @var uses.
-{
-  \catcode`\_ = \active
-  \gdef\mathunderscore{%
-    \catcode`\_=\active
-    \def_{\ifnum\fam=\slfam \_\else\sb\fi}%
-  }
-}
-% Another complication: we want \\ (and @\) to output a \ character.
-% FYI, plain.tex uses \\ as a temporary control sequence (why?), but
-% this is not advertised and we don't care.  Texinfo does not
-% otherwise define @\.
-%
-% The \mathchar is class=0=ordinary, family=7=ttfam, position=5C=\.
-\def\mathbackslash{\ifnum\fam=\ttfam \mathchar"075C \else\backslash \fi}
-%
-\def\math{%
-  \tex
-  \mathunderscore
-  \let\\ = \mathbackslash
-  \mathactive
-  % make the texinfo accent commands work in math mode
-  \let\"=\ddot
-  \let\'=\acute
-  \let\==\bar
-  \let\^=\hat
-  \let\`=\grave
-  \let\u=\breve
-  \let\v=\check
-  \let\~=\tilde
-  \let\dotaccent=\dot
-  $\finishmath
-}
-\def\finishmath#1{#1$\endgroup}  % Close the group opened by \tex.
-
-% Some active characters (such as <) are spaced differently in math.
-% We have to reset their definitions in case the @math was an argument
-% to a command which sets the catcodes (such as @item or @section).
-%
-{
-  \catcode`^ = \active
-  \catcode`< = \active
-  \catcode`> = \active
-  \catcode`+ = \active
-  \catcode`' = \active
-  \gdef\mathactive{%
-    \let^ = \ptexhat
-    \let< = \ptexless
-    \let> = \ptexgtr
-    \let+ = \ptexplus
-    \let' = \ptexquoteright
-  }
-}
-
-% Some math mode symbols.
-\def\bullet{$\ptexbullet$}
-\def\geq{\ifmmode \ge\else $\ge$\fi}
-\def\leq{\ifmmode \le\else $\le$\fi}
-\def\minus{\ifmmode -\else $-$\fi}
-
-% @dots{} outputs an ellipsis using the current font.
-% We do .5em per period so that it has the same spacing in the cm
-% typewriter fonts as three actual period characters; on the other hand,
-% in other typewriter fonts three periods are wider than 1.5em.  So do
-% whichever is larger.
-%
-\def\dots{%
-  \leavevmode
-  \setbox0=\hbox{...}% get width of three periods
-  \ifdim\wd0 > 1.5em
-    \dimen0 = \wd0
-  \else
-    \dimen0 = 1.5em
-  \fi
-  \hbox to \dimen0{%
-    \hskip 0pt plus.25fil
-    .\hskip 0pt plus1fil
-    .\hskip 0pt plus1fil
-    .\hskip 0pt plus.5fil
-  }%
-}
-
-% @enddots{} is an end-of-sentence ellipsis.
-%
-\def\enddots{%
-  \dots
-  \spacefactor=\endofsentencespacefactor
-}
-
-% @comma{} is so commas can be inserted into text without messing up
-% Texinfo's parsing.
-%
-\let\comma = ,
 
 % @refill is a no-op.
 \let\refill=\relax
@@ -2830,8 +2647,178 @@ end
   \fi
 }
 
+% @asis just yields its argument.  Used with @table, for example.
+%
+\def\asis#1{#1}
+
+% @math outputs its argument in math mode.
+%
+% One complication: _ usually means subscripts, but it could also mean
+% an actual _ character, as in @math{@var{some_variable} + 1}.  So make
+% _ active, and distinguish by seeing if the current family is \slfam,
+% which is what @var uses.
+{
+  \catcode`\_ = \active
+  \gdef\mathunderscore{%
+    \catcode`\_=\active
+    \def_{\ifnum\fam=\slfam \_\else\sb\fi}%
+  }
+}
+% Another complication: we want \\ (and @\) to output a \ character.
+% FYI, plain.tex uses \\ as a temporary control sequence (why?), but
+% this is not advertised and we don't care.  Texinfo does not
+% otherwise define @\.
+%
+% The \mathchar is class=0=ordinary, family=7=ttfam, position=5C=\.
+\def\mathbackslash{\ifnum\fam=\ttfam \mathchar"075C \else\backslash \fi}
+%
+\def\math{%
+  \tex
+  \mathunderscore
+  \let\\ = \mathbackslash
+  \mathactive
+  % make the texinfo accent commands work in math mode
+  \let\"=\ddot
+  \let\'=\acute
+  \let\==\bar
+  \let\^=\hat
+  \let\`=\grave
+  \let\u=\breve
+  \let\v=\check
+  \let\~=\tilde
+  \let\dotaccent=\dot
+  $\finishmath
+}
+\def\finishmath#1{#1$\endgroup}  % Close the group opened by \tex.
+
+% Some active characters (such as <) are spaced differently in math.
+% We have to reset their definitions in case the @math was an argument
+% to a command which sets the catcodes (such as @item or @section).
+%
+{
+  \catcode`^ = \active
+  \catcode`< = \active
+  \catcode`> = \active
+  \catcode`+ = \active
+  \catcode`' = \active
+  \gdef\mathactive{%
+    \let^ = \ptexhat
+    \let< = \ptexless
+    \let> = \ptexgtr
+    \let+ = \ptexplus
+    \let' = \ptexquoteright
+  }
+}
+
 
 \message{glyphs,}
+% and logos.
+
+% @@ prints an @.
+\def\@{\char64 }
+
+% Used to generate quoted braces.  Unless we're in typewriter, use
+% \ecfont because the CM text fonts do not have braces, and we don't
+% want to switch into math.
+\def\mylbrace {{\ifmonospace\else\ecfont\fi \char123}}
+\def\myrbrace {{\ifmonospace\else\ecfont\fi \char125}}
+\let\{=\mylbrace
+\let\}=\myrbrace
+\begingroup
+  % Definitions to produce \{ and \} commands for indices,
+  % and @{ and @} for the aux/toc files.
+  \catcode`\{ = \other \catcode`\} = \other
+  \catcode`\[ = 1 \catcode`\] = 2
+  \catcode`\! = 0 \catcode`\\ = \other
+  !gdef!lbracecmd[\{]%
+  !gdef!rbracecmd[\}]%
+  !gdef!lbraceatcmd[@{]%
+  !gdef!rbraceatcmd[@}]%
+!endgroup
+
+% @comma{} to avoid , parsing problems.
+\let\comma = ,
+
+% Accents: @, @dotaccent @ringaccent @ubaraccent @udotaccent
+% Others are defined by plain TeX: @` @' @" @^ @~ @= @u @v @H.
+\let\, = \c
+\let\dotaccent = \.
+\def\ringaccent#1{{\accent23 #1}}
+\let\tieaccent = \t
+\let\ubaraccent = \b
+\let\udotaccent = \d
+
+% Other special characters: @questiondown @exclamdown @ordf @ordm
+% Plain TeX defines: @AA @AE @O @OE @L (plus lowercase versions) @ss.
+\def\questiondown{?`}
+\def\exclamdown{!`}
+\def\ordf{\leavevmode\raise1ex\hbox{\selectfonts\lllsize \underbar{a}}}
+\def\ordm{\leavevmode\raise1ex\hbox{\selectfonts\lllsize \underbar{o}}}
+
+% Dotless i and dotless j, used for accents.
+\def\imacro{i}
+\def\jmacro{j}
+\def\dotless#1{%
+  \def\temp{#1}%
+  \ifx\temp\imacro \ifmmode\imath \else\ptexi \fi
+  \else\ifx\temp\jmacro \ifmmode\jmath \else\j \fi
+  \else \errmessage{@dotless can be used only with i or j}%
+  \fi\fi
+}
+
+% The \TeX{} logo, as in plain, but resetting the spacing so that a
+% period following counts as ending a sentence.  (Idea found in latex.)
+%
+\edef\TeX{\TeX \spacefactor=1000 }
+
+% @LaTeX{} logo.  Not quite the same results as the definition in
+% latex.ltx, since we use a different font for the raised A; it's most
+% convenient for us to use an explicitly smaller font, rather than using
+% the \scriptstyle font (since we don't reset \scriptstyle and
+% \scriptscriptstyle).
+%
+\def\LaTeX{%
+  L\kern-.36em
+  {\setbox0=\hbox{T}%
+   \vbox to \ht0{\hbox{\selectfonts\lllsize A}\vss}}%
+  \kern-.15em
+  \TeX
+}
+
+% Some math mode symbols.
+\def\bullet{$\ptexbullet$}
+\def\geq{\ifmmode \ge\else $\ge$\fi}
+\def\leq{\ifmmode \le\else $\le$\fi}
+\def\minus{\ifmmode -\else $-$\fi}
+
+% @dots{} outputs an ellipsis using the current font.
+% We do .5em per period so that it has the same spacing in the cm
+% typewriter fonts as three actual period characters; on the other hand,
+% in other typewriter fonts three periods are wider than 1.5em.  So do
+% whichever is larger.
+%
+\def\dots{%
+  \leavevmode
+  \setbox0=\hbox{...}% get width of three periods
+  \ifdim\wd0 > 1.5em
+    \dimen0 = \wd0
+  \else
+    \dimen0 = 1.5em
+  \fi
+  \hbox to \dimen0{%
+    \hskip 0pt plus.25fil
+    .\hskip 0pt plus1fil
+    .\hskip 0pt plus1fil
+    .\hskip 0pt plus.5fil
+  }%
+}
+
+% @enddots{} is an end-of-sentence ellipsis.
+%
+\def\enddots{%
+  \dots
+  \spacefactor=\endofsentencespacefactor
+}
 
 % @point{}, @result{}, @expansion{}, @print{}, @equiv{}.
 %
