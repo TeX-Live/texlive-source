@@ -1,6 +1,7 @@
 2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* coerce.h: Remove luaTeX specific code.
+	* convert: Reorganize (common code for TeX and MF).
 
 2010-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -49,12 +49,6 @@ output="> $cfile"
 output_files="$cfile $basefile.h"
 
 case $basefile in
-  bibtex|pbibtex)
-    midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
-    ;;
-esac
-
-case $basefile in
   pbibtex|pdvitype|ppltotf|ptftopl)
     more_defines="$srcdir/ptexdir/ptex.defines"
     hfile=ptexdir/kanji.h
@@ -62,29 +56,31 @@ case $basefile in
 esac
 
 case $basefile in
-  mf)
-    more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
-    precmd="| sed -f $srcdir/web2c/cvtmf1.sed"
-    web2c_options="-m -c${basefile}coerce"
-    hfile=texmfmp.h
-    midcmd="| sed -f $srcdir/web2c/cvtmf2.sed"
-    postcmd="| ./web2c/splitup $splitup_options $basefile"
-    cfile=${basefile}0.c # last output file, or thereabouts
-    output=
-    output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
-                  ${basefile}coerce.h"
+  bibtex|pbibtex)
+    midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
     ;;
 
-  tex|etex|pdftex|aleph|xetex|ptex)
-    more_defines="$srcdir/web2c/texmf.defines $srcdir/synctexdir/synctex.defines"
-    prog_defines="$srcdir/${basefile}dir/$basefile.defines"
-    if test -f $prog_defines; then
-      more_defines="$more_defines $prog_defines"
-    fi
-    web2c_options="-t -c${basefile}coerce"
+  mf|tex|aleph|etex|pdftex|ptex|xetex)
+    case $basefile in
+      mf)
+        more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
+        precmd="| sed -f $srcdir/web2c/cvtmf1.sed"
+        web2c_options="-m -c${basefile}coerce"
+        midcmd="| sed -f $srcdir/web2c/cvtmf2.sed"
+        ;;
+
+      *)
+        more_defines="$srcdir/web2c/texmf.defines $srcdir/synctexdir/synctex.defines"
+        prog_defines="$srcdir/${basefile}dir/$basefile.defines"
+        if test -f $prog_defines; then
+          more_defines="$more_defines $prog_defines"
+        fi
+        web2c_options="-t -c${basefile}coerce"
+        fixwrites_options=-t
+        ;;
+    esac
     hfile=texmfmp.h
-    fixwrites_options=-t
-    postcmd="| ./web2c/splitup $splitup_options ${basefile}"
+    postcmd="| ./web2c/splitup $splitup_options $basefile"
     cfile=${basefile}0.c # last output file, or thereabouts
     output=
     output_files="$basefile[0-9].c ${basefile}ini.c ${basefile}d.h \
@@ -118,10 +114,10 @@ fi
 
 case $basefile in
   bibtex|pbibtex)
-    sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <${basefile}.h >x${basefile}.h
-    mv x${basefile}.h ${basefile}.h
+    sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <$basefile.h >x$basefile.h
+    mv x$basefile.h $basefile.h
     ;;
-  tex|etex|luatex|pdftex|aleph|mf|xetex|ptex)
+  mf|tex|aleph|etex|pdftex|ptex|xetex)
     sleep 2 # so timestamps are definitely later, to avoid make weirdness
     cat $srcdir/web2c/coerce.h >>${basefile}coerce.h
     touch ${basefile}d.h

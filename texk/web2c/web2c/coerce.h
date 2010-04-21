@@ -46,10 +46,7 @@ extern string gettexstring (strnumber);
 extern boolean isnewsource (strnumber, int);
 extern poolpointer makesrcspecial (strnumber, int);
 extern void remembersourceinfo (strnumber, int);
-#endif
 
-/* When compiling the lib in luatexdir, we -DpdfTeX so code can be more
-   easily shared.  But we can't have both pdftexd.h and luatexd.h, etc.  */
 #ifdef pdfTeX
 #include <pdftexdir/pdftex.h>
 #endif /* pdfTeX */
@@ -58,6 +55,7 @@ extern void remembersourceinfo (strnumber, int);
 #include <xetexdir/xetex.h>
 #endif /* XeTeX */
 
-#if defined(TeX) && defined(__SyncTeX__)
+#ifdef __SyncTeX__
 #include <synctexdir/synctex.h>
 #endif
+#endif /* TeX */
