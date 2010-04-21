@@ -85,6 +85,7 @@ extern "C" {
     __attribute__ ((format(printf, 1, 2)))
     extern void pdf_printf(const char *fmt, ...);
     extern void pdf_puts(const char *);
+    extern void pdf_newline(void);
     extern void pdfbeginstream(void);
     extern void pdfendobj(void);
     extern void pdfendstream(void);

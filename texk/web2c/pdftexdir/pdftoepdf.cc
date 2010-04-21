@@ -589,8 +589,7 @@ static void copyObject(Object * obj)
         pdf_puts(">>\n");
         pdf_puts("stream\n");
         copyStream(obj->getStream()->getUndecodedStream());
-        if (pdflastbyte != '\n')
-            pdf_puts("\n");
+        pdf_newline();
         pdf_puts("endstream");  // can't simply write pdfendstream()
     } else if (obj->isRef()) {
         ref = obj->getRef();
@@ -902,6 +901,7 @@ void write_epdf(void)
     for (i = 0; pageDictKeys[i] != NULL; i++) {
         pageDict->lookupNF(pageDictKeys[i], &dictObj);
         if (!dictObj->isNull()) {
+            pdf_newline();
             pdf_printf("/%s ", pageDictKeys[i]);
             copyObject(&dictObj); // preserves indirection
         }
@@ -919,6 +919,7 @@ void write_epdf(void)
         if (!obj1->isDict())
             pdftex_fail("PDF inclusion: invalid resources dict type <%s>",
                         obj1->getTypeName());
+        pdf_newline();
         pdf_puts("/Resources <<\n");
         for (i = 0, l = obj1->dictGetLength(); i < l; ++i) {
             obj1->dictGetVal(i, &obj2);
@@ -977,7 +978,7 @@ void write_epdf(void)
             copyStream((contents->arrayGet(i, &contentsobj))->getStream());
             contentsobj.free();
             if (i < l - 1)
-                pdf_puts("\n"); // add a newline after each stream except the last
+                pdf_newline();  // add a newline after each stream except the last
         }
         pdfendstream();
     } else {                    // the contents are optional, but we need to include an empty stream
