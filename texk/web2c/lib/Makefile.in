@@ -324,7 +324,7 @@ libp_a_SOURCES = \
 	openclose.c \
 	printversion.c
 
-EXTRA_DIST = alloca.c win32main.c
+EXTRA_DIST = alloca.c
 all: all-am
 
 .SUFFIXES:

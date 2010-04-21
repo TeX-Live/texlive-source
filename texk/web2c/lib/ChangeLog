@@ -1,3 +1,8 @@
+2010-04-21  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (EXTRA_DIST),
+	* win32main.c: rm per Akira.
+
 2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c, lib.h: Remove luaTeX specific code.

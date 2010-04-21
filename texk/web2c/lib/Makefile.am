@@ -44,5 +44,5 @@ libp_a_SOURCES = \
 
 ## Not yet used
 ##
-EXTRA_DIST = alloca.c win32main.c
+EXTRA_DIST = alloca.c
 
