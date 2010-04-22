@@ -93,6 +93,29 @@ rewritebin (tfm_file, tfm_name);
 @d first_ord=0 {ordinal number of the smallest element of |char|}
 @z
 
+@x [28] (fill_buffer) end-of-line counts as a delimiter. Possibly a bug.
+  while (limit<buf_size-1)and(not eoln(pl_file)) do begin
+    incr(limit); read(pl_file,buffer[limit]);
+    end;
+  buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
+@y
+  while (limit<buf_size-2)and(not eoln(pl_file)) do begin
+    incr(limit); read(pl_file,buffer[limit]);
+    end;
+  buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
+  if right_ln then begin incr(limit); buffer[limit+1]:=' ';
+    end;
+@z
+
+@x [31] (get_keyword_char) Unnecessary due to previous change.
+begin while (loc=limit)and(not right_ln) do fill_buffer;
+if loc=limit then cur_char:=" " {end-of-line counts as a delimiter}
+else begin
+@y
+begin while loc=limit do fill_buffer;
+begin
+@z
+
 @x [79] `index' might be a library routine.
 |k|th element of its list.
 @y

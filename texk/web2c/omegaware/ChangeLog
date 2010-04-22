@@ -1,3 +1,8 @@
+2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* opl2ofm.ch, ovp2ovf.ch: Bug fix, from ../ptexdir/ppltotf.ch by
+	Ken Nakano <nakano@nextsolution.co.jp>.
+
 2010-04-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* odvicopy.ch (dvi_name): New global variable.
