@@ -4,6 +4,10 @@
 	for basic 'make check' tests.
 	* am/ptex.am: Add these tests.
 
+	* pbibtex.ch: Adapt to change (bug fix) in ../bibtex.ch.
+	Remove kanji fix of workaround from ../bibtex.ch for breaking
+	long lines in module 324; all that is gone with bibtex-0.99d.
+
 2010-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ppltotf.ch: Rename PTEX_PLTOTF_HELP => PPLTOTF_HELP.

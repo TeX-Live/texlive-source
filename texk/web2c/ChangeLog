@@ -1,3 +1,8 @@
+2010-04-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bibtex.ch: Fix a small bug (duplicate entry) in bibtex.web.
+	(add_out_pool): Call buffer_overflow as often as needed.	
+
 2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmem.h, texmfmp-help.h: Remove luaTeX specific code.

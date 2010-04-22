@@ -1342,34 +1342,12 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
 @z
 
 @x [321] Dynamic buf_size.
+if (out_buf_length+(p_ptr2-p_ptr1) > buf_size) then
     overflow('output buffer size ',buf_size);
 @y
+while (out_buf_length+(p_ptr2-p_ptr1) > buf_size) do
     buffer_overflow;
 @z
-
-% We shouldn't try to split a \% combo, as the result is an escaped % at
-% end-of-line, and a line beginning with a %, which leads to rest being
-% ignored.  This is a special case of the general problem that we shouldn't
-% split macro invocations either -- however, the best way to avoid that is
-% not to split lines at all.
-% @x [324] Check whether we're trying to break a \% combo.
-% out_buf[end_ptr] := out_buf[max_print_line-1];  {save this character}
-% out_buf[max_print_line-1] := comment;           {so \TeX\ does the thing right}
-% out_buf_length := max_print_line;
-% break_ptr := out_buf_length - 1;        {the `|-1|' allows for the restoration}
-% output_bbl_line;                                {output what we can,}
-% out_buf[max_print_line-1] := out_buf[end_ptr];  {restore this character}
-% @y
-% if out_buf[max_print_line-1] = comment then {assume \% combo here}
-%   out_buf_length := max_print_line - 1
-% else
-%   out_buf_length := max_print_line;
-% break_ptr := out_buf_length - 1;        {the `|-1|' allows for the restoration}
-% out_buf[end_ptr] := out_buf[break_ptr];  {save this character}
-% out_buf[break_ptr] := comment;           {so \TeX\ does the thing right}
-% output_bbl_line;                                {output what we can,}
-% out_buf[break_ptr] := out_buf[end_ptr];  {restore this character}
-% @z
 
 @x [328] Add check for fieldinfo[] overflow.
     field_ptr := cite_ptr*num_fields + fn_info[ex_fn_loc];
@@ -1393,6 +1371,15 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
         append_char (global_strs[str_glb_ptr][glob_chr_ptr]);
 @y
         append_char (x_global_strs(str_glb_ptr)(glob_chr_ptr));
+@z
+
+@x [335] Bug fix: remove duplicate entry.
+build_in('width$      ',6,b_width,n_width);
+build_in('while$      ',6,b_while,n_while);
+build_in('width$      ',6,b_width,n_width);
+@y
+build_in('while$      ',6,b_while,n_while);
+build_in('width$      ',6,b_width,n_width);
 @z
 
 @x [338] s_preamble is dynamically allocated.

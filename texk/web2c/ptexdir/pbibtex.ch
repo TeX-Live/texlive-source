@@ -216,95 +216,21 @@ begin
   @<Process a possible command line@>
 @z
 
-@x Changes for JBibTeX by Shouichi Matsui [321]
-procedure add_out_pool (@!p_str : str_number);
-label loop1_exit,loop2_exit;
-var break_ptr : buf_pointer;    {the first character following the line break}
-@!end_ptr : buf_pointer;        {temporary end-of-buffer pointer}
-break_pt_found : boolean;       {a suitable |white_space| character}
-unbreakable_tail : boolean;     {as it contains no |white_space| character}
-@y
-procedure add_out_pool (@!p_str : str_number);
-label loop1_exit,loop2_exit;
-var break_ptr : buf_pointer;    {the first character following the line break}
-@!end_ptr : buf_pointer;        {temporary end-of-buffer pointer}
-break_pt_found : boolean;       {a suitable |white_space| character}
-unbreakable_tail : boolean;     {because it contains no |white_space| character}
-@!in_mid_kanji:boolean; {flag if |max_print_line|-1 is in mid kanji}
-@!last_char_ptr : buf_pointer;
-@!t : buf_pointer;
-@z
-
-@x Changes for JBibTeX by Shouichi Matsui [324]
-@<Break that unbreakably long line@>=
-begin
-out_buf_ptr := max_print_line + 1;      {|break_pt_found| is still |false|}
-while (out_buf_ptr < end_ptr) do
-    if (lex_class[out_buf[out_buf_ptr]] <> white_space) then
-        incr(out_buf_ptr)
-    else
-        goto loop1_exit;
-loop1_exit:
-if (out_buf_ptr = end_ptr) then
-    unbreakable_tail := true            {because no |white_space| character}
-else                            {at |white_space|, and |out_buf_ptr < end_ptr|}
-    begin
-    break_pt_found := true;
-    while (out_buf_ptr+1 < end_ptr) do  {look for more |white_space|}
-        if (lex_class[out_buf[out_buf_ptr+1]] = white_space) then
-            incr(out_buf_ptr)           {which then points to |white_space|}
-        else
-            goto loop2_exit;
-loop2_exit:
-    end;
-end
-@y
-@<Break that unbreakably long line@>=
-begin
-@<Check if |max_print_line|-1 is in mid kanji@>;
-if in_mid_kanji then last_char_ptr:=max_print_line-1
-                else last_char_ptr:=max_print_line;
-out_buf[end_ptr] := out_buf[last_char_ptr-1];   {save this character}
-out_buf[last_char_ptr-1] := comment;            {so \TeX\ does the thing right}
-out_buf_length := last_char_ptr;
-break_ptr := out_buf_length - 1;        {the `|-1|' allows for the restoration}
-output_bbl_line;                                {output what we can,}
-out_buf[last_char_ptr-1] := out_buf[end_ptr];   {restore this character}
-out_buf_ptr := 0;
-tmp_ptr := break_ptr;
-while (tmp_ptr < end_ptr) do                    {and slide the rest down}
-    begin
-    out_buf[out_buf_ptr] := out_buf[tmp_ptr];
-    incr(out_buf_ptr);
-    incr(tmp_ptr);
-    end;
-out_buf_length := end_ptr - break_ptr;
-end
-@z
-
 @x Changes for JBibTeX by Shouichi Matsui [332]
-@!b_while : hash_loc;           {\.{while\$}}
-@!b_width : hash_loc;           {\.{width\$}}
 @!b_write : hash_loc;           {\.{write\$}}
 @!b_default : hash_loc;         {either \.{skip\$} or \.{default.type}}
 @y
-@!b_while : hash_loc;           {\.{while\$}}
-@!b_width : hash_loc;           {\.{width\$}}
 @!b_write : hash_loc;           {\.{write\$}}
-@!b_default : hash_loc;         {either \.{skip\$} or \.{default.type}}
 @!b_is_kanji_str : hash_loc;    {\.{is.kanji.str\$}}
+@!b_default : hash_loc;         {either \.{skip\$} or \.{default.type}}
 @z
 
 @x Changes for JBibTeX by Shouichi Matsui [334]
-@d n_while = 34         {\.{while\$}}
-@d n_width = 35         {\.{width\$}}
 @d n_write = 36         {\.{write\$}}
 
 @<Constants in the outer block@>=
 @!num_blt_in_fns = 37;  {one more than the previous number}
 @y
-@d n_while = 34         {\.{while\$}}
-@d n_width = 35         {\.{width\$}}
 @d n_write = 36         {\.{write\$}}
 @d n_is_kanji_str = 37  {\.{is.kanji.str\$}}
 
@@ -313,25 +239,18 @@ end
 @z
 
 @x Changes for JBibTeX by Shouichi Matsui [335]
-build_in('width$      ',6,b_width,n_width);
-build_in('while$      ',6,b_while,n_while);
-build_in('width$      ',6,b_width,n_width);
 build_in('write$      ',6,b_write,n_write);
 @y
-build_in('while$      ',6,b_while,n_while);
-build_in('width$      ',6,b_width,n_width);
 build_in('write$      ',6,b_write,n_write);
 build_in('is.kanji.str$',13,b_is_kanji_str,n_is_kanji_str);
 @z
 
 @x Changes for JBibTeX by Shouichi Matsui [342]
-    n_width :           x_width;
     n_write :           x_write;
     othercases confusion ('Unknown built-in function')
 endcases;
 end
 @y
-    n_width :           x_width;
     n_write :           x_write;
     n_is_kanji_str:     x_is_kanji_str;
     othercases confusion ('Unknown built-in function')
@@ -340,11 +259,9 @@ end
 @z
 
 @x Changes for JBibTeX by Shouichi Matsui [343]
-@<|execute_fn|({\.{width\$}})@>@;
 @<|execute_fn|({\.{write\$}})@>@;
 @<|execute_fn| itself@>
 @y
-@<|execute_fn|({\.{width\$}})@>@;
 @<|execute_fn|({\.{write\$}})@>@;
 @<|execute_fn|({\.{is.kanji.str\$}})@>@;
 @<|execute_fn| itself@>
