@@ -617,7 +617,8 @@ which looks something like this:
 prompt$ ./configure
 @dots{}
 creating Makefile
-sed: 1: "\\@@^ac_include make/pat ...": \ can not be used as a string delimiter
+sed: 1: "\\@@^ac_include make/pat ...": \ can not
+  be used as a string delimiter
 @end example
 
 So far as I know, the bug here is in @code{/bin/sh} on these systems. I

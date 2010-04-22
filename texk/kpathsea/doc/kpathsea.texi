@@ -1313,9 +1313,8 @@ By specifying, say, @samp{--subdir=/pkg1}, you can be sure of getting
 the one you are interested in.
 
 We only match at the end because a site might happen to install @TeX{}
-in @file{/some/coincidental/pkg1/path/}, and we wouldn't want
-@file{texmf-dist/scripts/pkg2/} to match that when searching for
-@samp{/pkg1}.
+in @file{/some/coincidental/pkg1/path/}, and we wouldn't want to match
+@file{texmf-dist/scripts/pkg2/} that when searching for @samp{/pkg1}.
 
 @end table
 
@@ -1829,7 +1828,7 @@ dynamic creation program: @code{mktextex}.
 
 @item texmfscripts
 @vindex TEXMFSCRIPTS
-(Architecture-independent executables distributed in the texmf tree)
+(Architecture-independent executables distributed in the texmf trees)
 @code{TEXMFSCRIPTS}.
 
 @item texpool
@@ -1990,7 +1989,8 @@ which *already* have an extension.  A name without an extension (e.g.,
 
 @flindex tex-file.c
 @findex kpathsea_find_file
-This algorithm is implemented in the routine @code{kpathsea_find_file} in
+This algorithm is implemented in the function
+@code{kpathsea_find_file} in the source file
 @file{kpathsea/tex-file.c}.  You can watch it in action with the
 debugging options (@pxref{Debugging}).
 
@@ -2481,13 +2481,13 @@ Introduction, tds, A Directory Structure for @TeX{} files}), specifies
 that such files should go into a subdirectory named after the program,
 like @samp{texmf/ttf2pk}.
 
-Two special formats, @samp{kpse_program_text_format} and
-@samp{kpse_program_binary_format} exist, which use
-@code{.:$TEXMF/@var{program}//} as their compiled-in search path.  To
-override this default, you can use the variable
-@code{@var{PROGRAM}INPUTS} in the environment and/or @samp{texmf.cnf}.
-That is to say, the name of the variable is constructed by converting
-the name of the program to upper case, and appending @code{INPUTS}.
+Two formats, @samp{kpse_program_text_format} and
+@samp{kpse_program_binary_format}, use @code{.:$TEXMF/@var{program}//}
+as their compiled-in search path.  To override this default, you can
+use the variable @code{@var{PROGRAM}INPUTS} in the environment and/or
+@samp{texmf.cnf}.  That is to say, the name of the variable is
+constructed by converting the name of the program to upper case, and
+appending @code{INPUTS}.
 
 The only difference between these two formats is whether
 @code{kpathsea_open_file} will open the files it finds in text or binary

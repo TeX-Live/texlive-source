@@ -1890,7 +1890,8 @@ looks something like this:
      prompt$ ./configure
      ...
      creating Makefile
-     sed: 1: "\\@^ac_include make/pat ...": \ can not be used as a string delimiter
+     sed: 1: "\\@^ac_include make/pat ...": \ can not
+       be used as a string delimiter
 
    So far as I know, the bug here is in `/bin/sh' on these systems. I
 don't have access to a machine running any of them, so if someone can
@@ -2844,9 +2845,8 @@ filename, and returns the first file found.
      one you are interested in.
 
      We only match at the end because a site might happen to install TeX
-     in `/some/coincidental/pkg1/path/', and we wouldn't want
-     `texmf-dist/scripts/pkg2/' to match that when searching for
-     `/pkg1'.
+     in `/some/coincidental/pkg1/path/', and we wouldn't want to match
+     `texmf-dist/scripts/pkg2/' that when searching for `/pkg1'.
 
 
 
@@ -3171,7 +3171,7 @@ environment variables with an underscore, e.g., `TEXINPUTS_latex'
 
 `texmfscripts'
      (Architecture-independent executables distributed in the texmf
-     tree) `TEXMFSCRIPTS'.
+     trees) `TEXMFSCRIPTS'.
 
 `texpool'
      (TeX program strings, *note pooltype invocation: (web2c)pooltype
@@ -3274,9 +3274,9 @@ tried; the difference is the order in which they are tried.
 *already* have an extension.  A name without an extension (e.g., `tex
 story') will always have an extension added first.
 
-   This algorithm is implemented in the routine `kpathsea_find_file' in
-`kpathsea/tex-file.c'.  You can watch it in action with the debugging
-options (*note Debugging::).
+   This algorithm is implemented in the function `kpathsea_find_file'
+in the source file `kpathsea/tex-file.c'.  You can watch it in action
+with the debugging options (*note Debugging::).
 
 
 File: kpathsea.info,  Node: Glyph lookup,  Next: Suppressing warnings,  Prev: File lookup,  Up: TeX support
@@ -3668,12 +3668,12 @@ directories.  The Standard TeX directory structure (*note Introduction:
 (tds)Top.), specifies that such files should go into a subdirectory
 named after the program, like `texmf/ttf2pk'.
 
-   Two special formats, `kpse_program_text_format' and
-`kpse_program_binary_format' exist, which use `.:$TEXMF/PROGRAM//' as
-their compiled-in search path.  To override this default, you can use
-the variable `PROGRAMINPUTS' in the environment and/or `texmf.cnf'.
-That is to say, the name of the variable is constructed by converting
-the name of the program to upper case, and appending `INPUTS'.
+   Two formats, `kpse_program_text_format' and
+`kpse_program_binary_format', use `.:$TEXMF/PROGRAM//' as their
+compiled-in search path.  To override this default, you can use the
+variable `PROGRAMINPUTS' in the environment and/or `texmf.cnf'.  That
+is to say, the name of the variable is constructed by converting the
+name of the program to upper case, and appending `INPUTS'.
 
    The only difference between these two formats is whether
 `kpathsea_open_file' will open the files it finds in text or binary
@@ -4899,43 +4899,43 @@ Node: Slow path searching73496
 Node: Unable to generate fonts74873
 Node: TeX or Metafont failing77382
 Node: Empty Makefiles79261
-Node: XtStrings80491
-Node: dlopen81327
-Node: ShellWidgetClass82145
-Node: Pointer combination warnings83777
-Node: Path searching84166
-Node: Searching overview84813
-Node: Path sources88209
-Node: Config files89280
-Node: Path expansion92925
-Node: Default expansion93874
-Node: Variable expansion95944
-Node: Tilde expansion97347
-Node: Brace expansion98327
-Node: KPSE_DOT expansion99432
-Node: Subdirectory expansion99945
-Node: Filename database102296
-Node: ls-R103350
-Node: Filename aliases106244
-Node: Database format107422
-Node: Invoking kpsewhich108435
-Node: Path searching options109381
-Node: Specially-recognized files117550
-Node: Auxiliary tasks118906
-Node: Standard options120731
-Node: TeX support121087
-Node: Supported file formats122378
-Node: File lookup129894
-Node: Glyph lookup131626
-Node: Basic glyph lookup132750
-Node: Fontmap133629
-Node: Fallback font136246
-Node: Suppressing warnings137159
-Node: Programming138264
-Node: Programming overview138777
-Node: Calling sequence141471
-Node: Program-specific files147994
-Node: Programming with config files149036
-Node: Index150348
+Node: XtStrings80498
+Node: dlopen81334
+Node: ShellWidgetClass82152
+Node: Pointer combination warnings83784
+Node: Path searching84173
+Node: Searching overview84820
+Node: Path sources88216
+Node: Config files89287
+Node: Path expansion92932
+Node: Default expansion93881
+Node: Variable expansion95951
+Node: Tilde expansion97354
+Node: Brace expansion98334
+Node: KPSE_DOT expansion99439
+Node: Subdirectory expansion99952
+Node: Filename database102303
+Node: ls-R103357
+Node: Filename aliases106251
+Node: Database format107429
+Node: Invoking kpsewhich108442
+Node: Path searching options109388
+Node: Specially-recognized files117552
+Node: Auxiliary tasks118908
+Node: Standard options120733
+Node: TeX support121089
+Node: Supported file formats122380
+Node: File lookup129897
+Node: Glyph lookup131646
+Node: Basic glyph lookup132770
+Node: Fontmap133649
+Node: Fallback font136266
+Node: Suppressing warnings137179
+Node: Programming138284
+Node: Programming overview138797
+Node: Calling sequence141491
+Node: Program-specific files148014
+Node: Programming with config files149037
+Node: Index150349
 
 End Tag Table
