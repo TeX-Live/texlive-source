@@ -37,13 +37,13 @@
       Tcl      (.tcl)              --  requires installation
       Java     (.jar)              --  requires installation
       VBScript (.vbs)              --  part of Windows
-      Jscript  (.js)               --  part of Windows
+      JScript  (.js)               --  part of Windows
       Batch    (.bat;.cmd)         --  part of Windows
     
-    For Unix-style extensionless scripts the first line of the script is 
-    consulted for a she-bang (#!) specification of the interpreter 
-    program.  This can be an arbitrary program but it must be present on 
-    the search path.
+    Finally, Unix-style extensionless scripts are searched as last and 
+    the interpreter program is established based on the she-bang (#!) 
+    specification on the very first line of the script.  This can be 
+    an arbitrary program but it must be present on the search path.
     
     Next, the script program needs to be installed somewhere below the 
     'scripts' directory under one of the TEXMF trees (consult the 
@@ -60,7 +60,9 @@
     
       kpsewhich --format=texmfscripts <script-name>.<ext>
     
-    Once installed the script can be called immediately with:
+    This should output the full path to the script if everything is 
+    properly installed and configured.  If this test is successful, 
+    the script can be run immediately with:
     
       runscript <script-name> [script arguments]
     
@@ -106,7 +108,8 @@
     process. The system shell (cmd.exe) is never called (except for 
     batch scripts, of course).  If the located script happens to be 
     a (tex)lua script, it is loaded and called internally from within 
-    this script, i.e. no new process is spawned.
+    this script, i.e. no new process is spawned.  Execution is done 
+    using a protected call, so any compile or runtime errors are catched.
     
   Source files
   
@@ -178,4 +181,9 @@
         - added tlgs and tlperl to alias_table; callable as e.g.: 
           runscript tlperl ...
         - doc tweaks
+    2010/04/22
+        - ensure only backslash is used in USERPROFILE variable 
+          (Adobe Reader crash case)
+        - fixed argument processing for direct execution under texlua
+        - more doc tweaks
 
