@@ -2,7 +2,6 @@
 @define function Hi ();
 @define function Lo ();
 
-@define function inputline3 ();
 @define function getencstring;
 @define function setencstring ();
 

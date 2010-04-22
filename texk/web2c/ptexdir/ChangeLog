@@ -1,3 +1,13 @@
+2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdvitype.ch: Remove unnecessary change.
+	* ppltotf.ch: Adapt to bug fix now done in ../pltotf.ch,
+	originally by Ken Nakano <nakano@nextsolution.co.jp>.
+	* kanji.h (inputline2): Moved from ../../ptexenc/ptexenc.h to here.
+
+	* pbibtex.ch: Correct handling of buffer_overflow.  From Akira.
+	* ptex.defines (inputline3): Removed.
+
 2010-04-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdvitype.test, ppltotf.test, ptftopl.test (new): Shell scripts

@@ -579,19 +579,6 @@ long input_line2(FILE *fp, string buff, long pos,
 }
 
 
-/* only for pbibtex */
-long input_line3(FILE *fp, string buff, long pos, const long buffsize)
-{
-    int i;
-    long last;
-
-    last = input_line2(fp, buff, pos, buffsize, &i);
-    if (i == EOF && pos == last) return -1;
-    if (i != EOF && i != '\n' && i != '\r') return -1;
-    return last;
-}
-
-
 static const_string in_filter = NULL;
 static FILE *piped_fp[NOFILE];
 static int piped_num = 0;

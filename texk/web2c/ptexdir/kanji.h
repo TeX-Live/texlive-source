@@ -30,6 +30,8 @@ extern integer kcatcodekey(integer c);
 #define putc(c,fp) putc2(c,fp)
 #endif /* !PRESERVE_PUTC */
 
+#define inputline2(fp,buff,pos,size) input_line2(fp,buff,pos,size,NULL)
+
 #ifdef MP
 #undef TEXMFPOOLNAME
 #undef TEXMFENGINENAME

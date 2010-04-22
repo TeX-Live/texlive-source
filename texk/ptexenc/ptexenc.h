@@ -49,10 +49,6 @@ extern KPSEDLL int fputs2(const char *s, FILE *fp);
 /* input line with encoding conversion */
 extern KPSEDLL long input_line2(FILE *fp, string buff, long pos,
 				const long buffsize, int *lastchar);
-#define inputline2(fp,buff,pos,size) input_line2(fp,buff,pos,size,NULL)
-extern KPSEDLL long input_line3(FILE *fp, string buff, long pos,
-				const long buffsize);
-#define inputline3(fp,buff,pos,size) input_line3(fp,buff,pos,size)
 
 /* open/close through nkf */
 extern KPSEDLL void nkf_disable(void);

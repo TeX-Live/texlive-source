@@ -1,6 +1,12 @@
 ChangeLog.TL: TeX Live (TL) changes for ptexenc
 ===============================================
 
+2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptexenc.[ch] (input_line3): Removed.
+	* ptexenc.h (inputline3): Removed.
+	(inputline2): Moved from here to ../web2c/ptexdir/kanji.h.
+
 2010-04-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* jisx0208.h (new): Copy of ../../libs/gd/gd-2.0.35/jisx0208.h.

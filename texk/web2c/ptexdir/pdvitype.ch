@@ -136,17 +136,6 @@ for k:=1 to nt do
   end;
 @z
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% JFM
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x Not use fprintf() for JIS
-    for k:=1 to text_ptr do print(xchr[text_buf[k]]);
-    print_ln(']');
-@y
-    for k:=1 to text_ptr do print(xchr[text_buf[k]]);
-    print(']'); print_ln('');
-@z
-
 @x
 @p procedure out_text(c:ASCII_code);
 begin if text_ptr=line_length-2 then flush_text;

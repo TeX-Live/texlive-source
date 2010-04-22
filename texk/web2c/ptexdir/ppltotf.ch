@@ -56,11 +56,11 @@ for k:=loc+1 to limit do print(xchr[buffer[k]]);
 @z
 
 @x [28] l.619 - pTeX:
-else  begin while (limit<buf_size-1)and(not eoln(pl_file)) do
+else  begin while (limit<buf_size-2)and(not eoln(pl_file)) do
     begin incr(limit); read(pl_file,buffer[limit]);
     end;
 @y
-else  begin limit:=input_line2(pl_file,buffer,limit+1,buf_size)-1;
+else  begin limit:=input_line2(pl_file,buffer,limit+1,buf_size-1)-1;
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,21 +71,21 @@ else  begin limit:=input_line2(pl_file,buffer,limit+1,buf_size)-1;
 %      This bug may be found in other routines so...
 %      Fix: add some (more?) space at the end of each line, in fill_buffer.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x [28] l.622 - pTeX:
-  buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
-  if left_ln then @<Set |loc| to the number of leading blanks in
-    the buffer, and check the indentation@>;
-  end;
-end;
-@y
-  buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
-  if right_ln then begin incr(limit); buffer[limit+1]:=' ';
-    end;
-  if left_ln then @<Set |loc| to the number of leading blanks in
-    the buffer, and check the indentation@>;
-  end;
-end;
-@z
+% @x [28] l.622 - pTeX:
+%   buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
+%   if left_ln then @<Set |loc| to the number of leading blanks in
+%     the buffer, and check the indentation@>;
+%   end;
+% end;
+% @y
+%   buffer[limit+1]:=' '; right_ln:=eoln(pl_file);
+%   if right_ln then begin incr(limit); buffer[limit+1]:=' ';
+%     end;
+%   if left_ln then @<Set |loc| to the number of leading blanks in
+%     the buffer, and check the indentation@>;
+%   end;
+% end;
+% @z
 
 @x [36] l.754 - pTeX: May have to increase some numbers to fit new commands
 @d max_name_index=88 {upper bound on the number of keywords}

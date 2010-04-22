@@ -187,7 +187,7 @@ char_width[@'176] := 500;
 for i:=@'240 to 254 do char_width[i]:=514;
 @z
 
-@x [48] web2c doesn't understand f^. JBibTeX
+@x [48] JBibTeX and dynamic buf_size.
   while (not eoln(f)) do
     begin
     if (last >= buf_size) then
@@ -197,8 +197,13 @@ for i:=@'240 to 254 do char_width[i]:=514;
     end;
   vgetc (f); {skip the eol}
 @y
-  last := input_line3(f,buffer,last,buf_size);
-  if (last < 0) then buffer_overflow;
+  last := input_line2(f,buffer,last,buf_size);
+  while (not eof(f)) and (last > 0) and (buffer[last-1] <> xord[10])
+        and (buffer[last-1] <> xord[13]) do
+  begin
+    buffer_overflow;
+    last := input_line2(f,buffer,last,buf_size);
+  end;
 @z
 
 @x
