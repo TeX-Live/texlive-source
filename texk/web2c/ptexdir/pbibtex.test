@@ -1,0 +1,14 @@
+#! /bin/sh
+
+# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+cp $srcdir/tests/exampl.aux tests/xexampl.aux
+
+TEXMFCNF=$srcdir/../kpathsea \
+  BSTINPUTS=$srcdir/tests \
+  BIBINPUTS=$srcdir/tests \
+  ./pbibtex tests/xexampl || exit 1
+

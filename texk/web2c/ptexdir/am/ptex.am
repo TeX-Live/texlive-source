@@ -12,6 +12,7 @@ pweb_programs = pbibtex pdvitype ppltotf ptftopl
 # pTeX Tests
 #
 ptex_tests = \
+	ptexdir/pbibtex.test \
 	ptexdir/pdvitype.test \
 	ptexdir/ppltotf.test \
 	ptexdir/ptftopl.test \
@@ -118,6 +119,9 @@ pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
 	$(tie) -m pbibtex.web bibtex.web bibtex.ch
 EXTRA_DIST += ptexdir/pbibtex.ch web2c/cvtbib.sed
 
+ptex_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
+ptex_tests += ptexdir/pbibtex-mem.test
+
 ## pDVItype
 ## 
 nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
@@ -183,6 +187,11 @@ endif PTEX
 
 ## Test data and results
 ##
+## ptexdir/pbibtex.test
+DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
+## ptexdir/pbibtex-mem.test
+EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
+DISTCLEANFILES += tests/memtest*
 ## ptexdir/pdvitype.test
 DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
 ## ptexdir/ppltotf.test

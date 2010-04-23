@@ -188,6 +188,12 @@ for i:=@'240 to 254 do char_width[i]:=514;
 @z
 
 @x [48] JBibTeX and dynamic buf_size.
+label loop_exit;
+@y
+label loop_exit;
+var i:c_int_type;
+@z
+@x [still 48] JBibTeX and dynamic buf_size.
   while (not eoln(f)) do
     begin
     if (last >= buf_size) then
@@ -197,12 +203,11 @@ for i:=@'240 to 254 do char_width[i]:=514;
     end;
   vgetc (f); {skip the eol}
 @y
-  last := input_line2(f,buffer,last,buf_size);
-  while (not eof(f)) and (last > 0) and (buffer[last-1] <> xord[10])
-        and (buffer[last-1] <> xord[13]) do
+  last := input_line2(f,buffer,last,buf_size,address_of(i));
+  while (not eof(f)) and (last > 0) and (i <> 10) and (i <> 13) do
   begin
     buffer_overflow;
-    last := input_line2(f,buffer,last,buf_size);
+    last := input_line2(f,buffer,last,buf_size,address_of(i));
   end;
 @z
 

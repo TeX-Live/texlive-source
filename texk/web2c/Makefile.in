@@ -1231,6 +1231,7 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	ptexdir/pdvitype.ch ptexdir/ppltotf.ch ptexdir/ptftopl.ch \
 	ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis ptexdir/ChangeLog \
 	ptexdir/Changes.txt ptexdir/INSTALL.txt ptexdir/README.txt \
+	tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst \
 	ptexdir/ptrip.diffs ptexdir/Files ptexdir/pbibtex.defines \
 	ptexdir/ptex.mk ptexdir/ptex-base.ch.orig \
 	ptexdir/ptex-include.ch ptexdir/ptexhelp.h ptexdir/reautoconf \
@@ -1409,25 +1410,26 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
-	ptex.pool ptex-tangle ptexdir/ptex.version tests/xstory.dvityp \
-	tests/xpagenum.typ tests/xcmr10.tfm tests/xcmr10.pl \
-	ptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c \
-	pdftex.p pdftex.pool pdftex-tangle pdftexdir/pdftex.version \
-	pdftexdir/etex.version $(nodist_libluatex_a_SOURCES) \
-	$(nodist_xetex_SOURCES) xetex.web xetex-web2c xetex.p \
-	xetex.pool xetex-tangle xetexdir/etex.version \
-	xetexdir/xetex.version $(omegaware_programs:=.c) \
-	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
-	$(omegaware_programs:=-web2c) omegaware/tests/xlevel1.ofm \
-	omegaware/tests/xlevel1.opl ofont*vf omegaware/tests/xofont* \
-	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
-	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
-	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
-	cftest.p omegaware/tests/xrepeated.* \
-	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
-	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
-	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
-	aleph.pool aleph-tangle
+	ptex.pool ptex-tangle ptexdir/ptex.version tests/xexampl.aux \
+	tests/xexampl.bbl tests/xexampl.blg tests/memtest* \
+	tests/xstory.dvityp tests/xpagenum.typ tests/xcmr10.tfm \
+	tests/xcmr10.pl ptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch \
+	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle \
+	pdftexdir/pdftex.version pdftexdir/etex.version \
+	$(nodist_libluatex_a_SOURCES) $(nodist_xetex_SOURCES) \
+	xetex.web xetex-web2c xetex.p xetex.pool xetex-tangle \
+	xetexdir/etex.version xetexdir/xetex.version \
+	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
+	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
+	omegaware/tests/xlevel1.ofm omegaware/tests/xlevel1.opl \
+	ofont*vf omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
+	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
+	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
+	omegaware/tests/xOCherokee.* cftest.p \
+	omegaware/tests/xrepeated.* omegaware/tests/specialhex.ofm \
+	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
+	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
+	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP = $(am__append_6) $(am__append_9) $(am__append_15) \
 	$(am__append_19) $(am__append_24)
@@ -1625,12 +1627,10 @@ pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
 # pTeX Tests
 #
-ptex_tests = \
-	ptexdir/pdvitype.test \
-	ptexdir/ppltotf.test \
-	ptexdir/ptftopl.test \
-	ptexdir/ptrip.test
-
+ptex_tests = ptexdir/pbibtex.test ptexdir/pdvitype.test \
+	ptexdir/ppltotf.test ptexdir/ptftopl.test ptexdir/ptrip.test \
+	ptexdir/pbibtex-openout-test.pl \
+	ptexdir/pbibtex-longline-test.pl ptexdir/pbibtex-mem.test
 pproglib = lib/libp.a
 ptex_CPPFLAGS = $(ptex_cppflags)
 ptex_CFLAGS = $(WARNING_CFLAGS)

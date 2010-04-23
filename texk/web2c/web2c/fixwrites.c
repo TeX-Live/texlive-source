@@ -402,7 +402,8 @@ main (int argc,  string *argv)
             }
 
 	  /* And yet another kludge, to handle stringcast (<whatever>) */
-          else if (strncmp (cp, "stringcast", 10) == 0)
+          else if (strncmp (cp, "stringcast", 10) == 0
+                   || strncmp (cp, "conststringcast", 10) == 0)
 	    {
 	      *as++ = '%';
 	      *as++ = 's';
