@@ -67,7 +67,6 @@
 
 /* Restore underscores.  */
 #  define kpsetexformat kpse_tex_format
-#  define mainbody main_body
 #  define t_open_in topenin
 
 /* Executing shell commands.  */
