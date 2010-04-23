@@ -25,7 +25,7 @@
 #include <time.h>
 
 static const char _svn_version[] =
-    "$Id: loslibext.c 3634 2010-04-19 19:52:48Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/loslibext.c $";
+    "$Id: loslibext.c 3644 2010-04-23 16:35:00Z taco $ $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/lua/loslibext.c $";
 
 #if defined(_WIN32) || defined(__NT__)
 #  define MKDIR(a,b) mkdir(a)
@@ -111,13 +111,33 @@ static const char _svn_version[] =
 
 #define DONT_REALLY_EXIT 1
 
+/* Note: under WIN32, |environ| is nothing but a copy of the actual
+   environment as it was during program startup. That variable
+   can then be changed (which is a little odd), but such changes 
+   do not survive in the actual environment *unless* they are
+   passed on down in e.g. |_execvpe|, when they would be inherited
+   by the child process.  
+
+   This gives trouble because some parts of the texk code actually 
+   change the contents of the |environ| variable as a side-effect 
+   of other processing, and that explains why the current code does 
+   not use |environ| at all for the moment.
+
+   The API is kept in place for now, just in case. Thanks to Tomek
+   for the patch and the persistence in tracking this down.
+*/
+
 #ifdef _WIN32
 #  include <process.h>
-#  define spawn_command(a,b,c) _spawnvpe(_P_WAIT,(const char *)a,(const char* const*)b,(const char* const*)c)
+#  define spawn_command(a,b,c) c ? \
+  _spawnvpe(_P_WAIT,(const char *)a,(const char* const*)b,(const char* const*)c) : \
+  _spawnvp(_P_WAIT,(const char *)a,(const char* const*)b)
 #  if DONT_REALLY_EXIT
 #    define exec_command(a,b,c) exit(spawn_command((a),(b),(c)))
 #  else
-#    define exec_command(a,b,c) _execvpe((const char *)a,(const char* const*)b,(const char* const*)c)
+#    define exec_command(a,b,c) c ? \
+       _execvpe((const char *)a,(const char* const*)b,(const char* const*)c) : \
+       _execvp((const char *)a,(const char* const*)b)
 #  endif
 #else
 #  include <unistd.h>
@@ -130,7 +150,7 @@ static int exec_command(const char *file, char *const *argv, char *const *envp)
     size_t prefixlen, filelen, totallen;
 
     if (strchr(file, '/'))      /* Specific path */
-        return execve(file, argv, envp);
+        return envp ? execv(file, argv) : execve(file, argv, envp);
 
     filelen = strlen(file);
     path = NULL;
@@ -170,7 +190,11 @@ static int exec_command(const char *file, char *const *argv, char *const *envp)
         }
         path[totallen] = '\0';
 
-        execve(path, argv, envp);
+        if (envp) {
+          execve(path, argv, envp);
+        } else {
+          execv(path, argv);
+        }
         free(path);
         path = NULL;
         if (errno == E2BIG || errno == ENOEXEC ||
@@ -411,7 +435,8 @@ static int os_exec(lua_State * L)
     char *runcmd = NULL;
     char *safecmd = NULL, *cmdname = NULL;
     char **cmdline = NULL;
-
+    char **envblock = NULL;
+    
     if (lua_gettop(L) != 1) {
         lua_pushnil(L);
         lua_pushliteral(L, "invalid arguments passed");
@@ -444,16 +469,16 @@ static int os_exec(lua_State * L)
     if (allow > 0 && cmdline != NULL && runcmd != NULL) {
 #if defined(_WIN32) && DONT_REALLY_EXIT
         if (allow == 2)
-            exec_command(safecmd, cmdline, environ);
+            exec_command(safecmd, cmdline, envblock);
         else
-            exec_command(runcmd, cmdline, environ);
+            exec_command(runcmd, cmdline, envblock);
 #else
         {
             int r;
             if (allow == 2)
-                r = exec_command(safecmd, cmdline, environ);
+                r = exec_command(safecmd, cmdline, envblock);
             else
-                r = exec_command(runcmd, cmdline, environ);
+                r = exec_command(runcmd, cmdline, envblock);
             if (r == -1) {
                 lua_pushnil(L);
                 lua_pushfstring(L, "%s: %s", runcmd, strerror(errno));
@@ -491,6 +516,7 @@ static int os_spawn(lua_State * L)
     char *runcmd = NULL;
     char *safecmd = NULL, *cmdname = NULL;
     char **cmdline = NULL;
+    char **envblock = NULL;
     int i;
 
     if (lua_gettop(L) != 1) {
@@ -523,9 +549,9 @@ static int os_spawn(lua_State * L)
     }
     if (allow > 0 && cmdline != NULL && runcmd != NULL) {
         if (allow == 2)
-            i = spawn_command(safecmd, cmdline, environ);
+            i = spawn_command(safecmd, cmdline, envblock);
         else
-            i = spawn_command(runcmd, cmdline, environ);
+            i = spawn_command(runcmd, cmdline, envblock);
         if (safecmd)
             free(safecmd);
         if (cmdname)

@@ -1,5 +1,10 @@
 2010-04-23  Taco Hoekwater  <taco@luatex>
 
+	* lua/loslibext.c: fix os.exec() and os.spawn()
+	* luatex_svnversion.h: updated to reflect the version of 0.60.x branch
+
+2010-04-23  Taco Hoekwater  <taco@luatex>
+
 	* new import from luatex repository (HEAD of 0.60.x branch)
 
 2010-04-20  Taco Hoekwater  <taco@luatex>
