@@ -45,17 +45,17 @@ similar places that might need updating (not done automatically by the
 ----------------------------------
 
 To add a new program directory utils/Util/ (not using Kpathsea) or
-texk/Prog/ (possibly using Kpathsea) you must add the directory Util to the
-M4 list kpse_utils_pkgs or Prog to the M4 list kpse_texk_pkgs defined in
-m4/kpse-pkgs.m4.  In addition you must create a configure.ac fragment
-utils/Util/ac/witheanble.ac or texk/Prog/ac/witheanble.ac defining any
-required libraries from the TL tree and whether this new program is to be
-built by default (in the absence of the corresponding '--enable-Util/Prog'
-or '--disable-Util/Prog' configure options).  If a program in texk/Prog/ or
-utils/Util/ requires specific configure options to be seen at the top-level,
-they should be defined in an additional configure.ac fragment
-texk/Prog/ac/Prog.ac or utils/Util/ac/Util.ac (included from
-texk/Prog/ac/withenable.ac and texk/Prog/configure.ac or
+texk/Prog/ (possibly using Kpathsea and Ptexenc) you must add the directory
+Util to the M4 list kpse_utils_pkgs or Prog to the M4 list kpse_texk_pkgs
+defined in m4/kpse-pkgs.m4.  In addition you must create a configure.ac
+fragment utils/Util/ac/witheanble.ac or texk/Prog/ac/witheanble.ac defining
+any required libraries from the TL tree and whether this new program is to
+be built by default (in the absence of the corresponding
+'--enable-Util/Prog' or '--disable-Util/Prog' configure options).  If a
+program in texk/Prog/ or utils/Util/ requires specific configure options to
+be seen at the top-level, they should be defined in an additional
+configure.ac fragment texk/Prog/ac/Prog.ac or utils/Util/ac/Util.ac
+(included from texk/Prog/ac/withenable.ac and texk/Prog/configure.ac or
 utils/Util/ac/withenable.ac and utils/Util/configure.ac) as, e.g., for
 texk/web2c/, texk/xdvik/, and utils/xindy/.
 
@@ -69,13 +69,13 @@ by default, 'native' if cross compilation is not possible), and a comment
 added to the help text for the disable or enable configure option for this
 program.
 
-3.2 Adding a new library directory
-----------------------------------
+3.2 Adding a new generic library directory
+------------------------------------------
 
-To add a new library directory libs/Lib/ you must add the directory Lib to
-the M4 list kpse_libs_pkgs defined in m4/kpse-pkgs.m4.  In addition you must
-create a configure.ac fragment libs/Lib/ac/witheanble.ac defining any
-required libraries from the TL tree and whether an installed (system)
+To add a new generic library directory libs/Lib/ you must add the directory
+Lib to the M4 list kpse_libs_pkgs defined in m4/kpse-pkgs.m4.  In addition
+you must create a configure.ac fragment libs/Lib/ac/witheanble.ac defining
+any required libraries from the TL tree and whether an installed (system)
 version of this library can be used.  If that is the case, another
 configure.ac fragment libs/Lib/ac/Lib.ac should specify a small program as
 test for a system version to be acceptable.  Finally you must create a file
@@ -114,6 +114,20 @@ This causes the configure script to compile and link the C program
 	  return 0; }
 as sanity check for using an installed PNG library.  The analogous macro
 KPSE_TRY_LIBXX uses the C++ compiler.
+
+3.3 Adding a new TeX specific library directory
+-----------------------------------------------
+
+To add a new TeX specific library directory texk/Lib/ proceed as for a
+generic library (described above) with these exceptions:
+
+(*) Add the directory Lib to the M4 list kpse_texlibs_pkgs (also defined in
+m4/kpse-pkgs.m4) instead of kpse_libs_pkgs.
+
+(*) The configure.ac fragment libs/Lib/ac/witheanble.ac must use
+KPSE_WITH_TEXLIB instead of KPSE_WITH_LIB.
+
+(*) The new library must not depend on any generic libraries.
 
 4. Using libraries from the TL tree
 ===================================

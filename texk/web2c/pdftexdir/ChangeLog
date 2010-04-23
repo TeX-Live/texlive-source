@@ -1,3 +1,8 @@
+2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pdftex.am (EXTRA_DIST): Add etexdir/etex.ch.
+	Use pdftexdir/etex.version instead of etexdir/etex.version.
+
 2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexlib.h: Move extern declaration of ptexbanner to here

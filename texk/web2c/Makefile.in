@@ -1234,15 +1234,16 @@ EXTRA_DIST = PROJECTS cftests config.h cpascal.h help.h triptrap-sh \
 	ptexdir/ptrip.diffs ptexdir/Files ptexdir/pbibtex.defines \
 	ptexdir/ptex.mk ptexdir/ptex-base.ch.orig \
 	ptexdir/ptex-include.ch ptexdir/ptexhelp.h ptexdir/reautoconf \
-	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/pdftex.h \
-	pdftexdir/pdftexextra.in pdftexdir/ChangeLog pdftexdir/NEWS \
-	pdftexdir/README pdftexdir/change-files.txt \
-	pdftexdir/pdftex.mak pdftexdir/pdftex.mk \
-	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
-	luatexdir/ptexlib.h luatexdir/getluatexsvnversion.sh \
-	luatexdir/lua51/Makefile luatexdir/lua51/liolib.c \
-	luatexdir/lua51/lua.c luatexdir/lua51/luac.c \
-	luatexdir/lua51/print.c luatexdir/luasocket/src/socket_lua.c \
+	$(pdftex_ch_srcs) etexdir/etex.ch pdftexdir/pdftex.defines \
+	pdftexdir/pdftex.h pdftexdir/pdftexextra.in \
+	pdftexdir/ChangeLog pdftexdir/NEWS pdftexdir/README \
+	pdftexdir/change-files.txt pdftexdir/pdftex.mak \
+	pdftexdir/pdftex.mk pdftexdir/regex/COPYING.LIB \
+	pdftexdir/regex/README luatexdir/ptexlib.h \
+	luatexdir/getluatexsvnversion.sh luatexdir/lua51/Makefile \
+	luatexdir/lua51/liolib.c luatexdir/lua51/lua.c \
+	luatexdir/lua51/luac.c luatexdir/lua51/print.c \
+	luatexdir/luasocket/src/socket_lua.c \
 	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/smtp_lua.c \
@@ -1412,20 +1413,21 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) tangle.c tangle.h tangle.p \
 	tests/xpagenum.typ tests/xcmr10.tfm tests/xcmr10.pl \
 	ptrip.diffs $(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c \
 	pdftex.p pdftex.pool pdftex-tangle pdftexdir/pdftex.version \
-	$(nodist_libluatex_a_SOURCES) $(nodist_xetex_SOURCES) \
-	xetex.web xetex-web2c xetex.p xetex.pool xetex-tangle \
-	xetexdir/etex.version xetexdir/xetex.version \
-	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
-	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
-	omegaware/tests/xlevel1.ofm omegaware/tests/xlevel1.opl \
-	ofont*vf omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
-	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
-	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
-	omegaware/tests/xOCherokee.* cftest.p \
-	omegaware/tests/xrepeated.* omegaware/tests/specialhex.ofm \
-	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
-	omegaware/tests/xspecialhex.* $(nodist_aleph_SOURCES) \
-	aleph.web aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
+	pdftexdir/etex.version $(nodist_libluatex_a_SOURCES) \
+	$(nodist_xetex_SOURCES) xetex.web xetex-web2c xetex.p \
+	xetex.pool xetex-tangle xetexdir/etex.version \
+	xetexdir/xetex.version $(omegaware_programs:=.c) \
+	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
+	$(omegaware_programs:=-web2c) omegaware/tests/xlevel1.ofm \
+	omegaware/tests/xlevel1.opl ofont*vf omegaware/tests/xofont* \
+	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
+	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
+	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
+	cftest.p omegaware/tests/xrepeated.* \
+	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
+	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
+	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
+	aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP = $(am__append_6) $(am__append_9) $(am__append_15) \
 	$(am__append_19) $(am__append_24)
@@ -1610,7 +1612,7 @@ etex_ch_srcs = \
 	$(etex_ch_synctex) \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
-	etexdir/etex-binpool.ch
+	tex-binpool.ch
 
 
 # e-TeX Tests
@@ -1648,7 +1650,6 @@ ptex_web_srcs = \
 	tex.ch
 
 ptex_ch_srcs = \
-	$(ptex_ch_synctex) \
 	ptexdir/ptex-base.ch \
 	tex-binpool.ch
 
@@ -9009,7 +9010,7 @@ ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
 
 # Extract ptex version
 ptexdir/ptex.version: ptexdir/ptex-base.ch
-	$(MKDIR_P) ptexdir/lib
+	$(MKDIR_P) ptexdir
 	grep "^@d TeX_banner=='This is pTeX" $(srcdir)/ptexdir/ptex-base.ch \
 	  | sed "s/^.*-//;s/'.*$$//" >ptexdir/ptex.version
 
@@ -9075,12 +9076,17 @@ pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
 	@$(pdf_tangle) pdftex pdftex
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
+# Extract etex version
+pdftexdir/etex.version: etexdir/etex.ch
+	$(MKDIR_P) pdftexdir
+	grep '^@d eTeX_version_string==' $(srcdir)/etexdir/etex.ch \
+	  | sed "s/^.*'-//;s/'.*$$//" >$@
 # Extract pdftex version
 pdftexdir/pdftex.version: pdftexdir/pdftex.web
 	$(MKDIR_P) pdftexdir
 	grep '^@d pdftex_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-//;s/'.*$$//" >pdftexdir/pdftex.version
-pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version etexdir/etex.version
+pdftexdir/pdftexextra.h: pdftexdir/pdftexextra.in pdftexdir/pdftex.version pdftexdir/etex.version
 	sed -e s/PDFTEX-VERSION/`cat pdftexdir/pdftex.version`/ \
 	    -e s/ETEX-VERSION/`cat etexdir/etex.version`/ \
 	  $(srcdir)/pdftexdir/pdftexextra.in >$@

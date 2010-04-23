@@ -1,3 +1,7 @@
+2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/etex.am (etex_ch_srcs): Use tex-binpool.ch as for TeX.
+
 2010-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am (TRIPTRAP): Add etrip.diffs.

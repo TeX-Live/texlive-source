@@ -8,6 +8,8 @@
 	* pbibtex.ch: Correct handling of buffer_overflow.  From Akira.
 	* ptex.defines (inputline3): Removed.
 
+	* am/ptex.am: No synctex.  No reason to create ptexdir/lib/.
+
 2010-04-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdvitype.test, ppltotf.test, ptftopl.test (new): Shell scripts

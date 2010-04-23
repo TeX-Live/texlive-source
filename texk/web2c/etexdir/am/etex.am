@@ -68,7 +68,7 @@ etex_ch_srcs = \
 	$(etex_ch_synctex) \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \
-	etexdir/etex-binpool.ch
+	tex-binpool.ch
 ##
 EXTRA_DIST += $(etex_web_srcs) $(etex_ch_srcs) etexdir/etexextra.in \
 	lib/texmfmp.c tmf-pool.h

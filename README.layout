@@ -1,12 +1,13 @@
-Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 	Design of the TeX Live (TL) build system
 	========================================
 
 The TL 2009 build system has been completely redesigned, using Autoconf,
-Automake, and Libtool.  The main components are program modules (directories
-texk/*/ and utils/*/) and library modules (directories tex/kpathsea/ and
+Automake, and Libtool.  The main components are TeX specific or utility
+program modules (directories texk/*/ and utils/*/), and TeX specific or
+generic library modules (directories texk/kpathsea/, texk/ptexenc/, and
 libs/*/) providing libraries required by the program modules.
 
 The primary design goal was modularity.  Each module specifies its own
@@ -20,9 +21,9 @@ configuring any (program or other library) module depending on that library.
 This allows to check for properties and features of a library built as part
 of the TL tree in much the same way as for a system version of that library.
 
-Most libraries and several programs that are mintained independently use the
-distributed source tree, any modifications of that source tree are kept as
-patches.
+Most generic libraries and several programs that are mintained independently
+use the distributed source tree, any modifications of that source tree are
+kept as patches.
 
 All this should simplify upgrading of modules maintained independently
 and/or integrating new modules into the TL build system.
@@ -36,19 +37,11 @@ and/or integrating new modules into the TL build system.
 1.1. Overall layout
 -------------------
 
-texk/kpathsea/*/	the Kpathsea library
-libs/*/			various other libraries
-
-texk/*/			programs (mostly using Kpathsea)
-utils/*/		utility programs (not using Kpathsea)
-
-texk/am/*.am		Makefile.am fragments
-texk/web2c/am/*.am	  for the Kpathsea library
-texk/web2c/*/am/*.am	  and the Web2C programs
-
-libs/Lib/		library Lib (zlib, libpng, t1lib, etc.)
-texk/Prog/		program package Prog (web2c, afm2pl, bibtex8, etc.)
-utils/Util/		utility program package Util (dialog, pdfopen, ps2eps, etc.)
+texk/kpathsea/		the two TeX specific Kpathsea
+texk/ptexenc/		  and Ptexenc libraries
+libs/Lib/		generic library Lib (zlib, libpng, t1lib, etc.)
+texk/Prog/		TeX specific program package Prog (web2c, afm2pl, etc.)
+utils/Util/		utility program package Util (dialog, ps2eps, etc.)
 
 auxdir/auxsub/		dummy module used to configure the real modules
 
@@ -56,12 +49,16 @@ auxdir/auxsub/		dummy module used to configure the real modules
 
 build-aux/		auxiliary build scripts (config.guess etc.)
 
-m4/kpse-pkgs.m4		Autoconf macros defining the lists of Lib, Prog, and Util
+m4/kpse-pkgs.m4		Autoconf macros defining lists of library and program
 			  modules and handling loops over these lists
 m4/*.m4			other Autoconf macros
 
-1.2. A library `Lib'
---------------------
+texk/am/*.am		Makefile.am fragments
+texk/web2c/am/*.am	  for the Kpathsea library
+texk/web2c/*/am/*.am	  and the Web2C programs
+
+1.2. A generic library `Lib'
+----------------------------
 
 libs/Lib/ac/withenable.ac	defines libraries required by Lib
 libs/Lib/ac/Lib.ac		defines basic tests for a system version of Lib
@@ -80,8 +77,10 @@ The header files for many libraries are `installed' (as symlinks) under
 libs/Lib/include/ in the build tree exactly as they are for a system version
 under, e.g., /usr/include/.
 
-1.3. A program `Prog'
----------------------
+The same structure is used for the TeX specific libraries.
+
+1.3. A TeX specific program `Prog'
+----------------------------------
 
 texk/Prog/ac/withenable.ac	defines libraries required by Prog, provides the
 				  configure option --disable-Prog
@@ -98,16 +97,19 @@ utils/Util/ac/withenable.ac	defines libraries required by Util, provides the
 ======================
 
 Running 'configure' for the top-level directory will in addition configure
-the directories auxdir/auxsub/, texk/kpathsea/, libs/, utils/, and texk/. 
-This will determine the programs (utils/Util/ and texk/Prog/) to be built
-and libraries from the TL tree (texk/kpathsea/ and libs/Lib/) required by
-these programs.
+the directories auxdir/auxsub/, libs/, utils/, and texk/.  This will
+determine the programs (utils/Util/ and texk/Prog/) to be built and
+libraries from the TL tree (texk/kpathsea/, texk/ptexenc/.  and libs/Lib/)
+required by these programs.
 
-3. Running `make'
-=================
+3. Running `make' at the top-level
+==================================
 
-Running 'make' in the top-level directory will recurse into the directories
-texk/kpathsea/, libs/, utils/, and texk/.
+First, if texk/kpathsea/ and texk/ptexenc/ are not yet configured, this runs
+`configure' and if required `make all' in that directory.  Then this
+recurses into all required subdirectories texk/kpathsea/, texk/ptexenc/,
+libs/, utils/, and texk/ for the selected Make target: `default' or `all' to
+(re-)build, `check' to run tests, `install' etc.
 
 3.1. Running `make' in libs/
 ----------------------------
@@ -132,14 +134,13 @@ The TL build system allows for parallel builds ('make -j n' with n>1),
 carefully formulating Make rules when a tool (such as 'tangle' or 'convert')
 creates several output files.  This can considerably speed up a TL build on
 multi core systems.  I usually use 'make -j 4 -l 8.0' or even 'make -j' with
-up to 50 compilations in parallel; please report any failures.
+up to 50 compilations in parallel.
 
 3.4 Using a Configure Cache File
 --------------------------------
 
 Further speed up of a TL build can be achieved by using a configure cache
-file, e.g., running 'configure -C' at the top-level.  This should work after
-some initial problem have been fixed; please report any failures.
+file, e.g., running 'configure -C' at the top-level.
 
 3.5 Comments
 ------------
