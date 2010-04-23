@@ -150,7 +150,7 @@ static int exec_command(const char *file, char *const *argv, char *const *envp)
     size_t prefixlen, filelen, totallen;
 
     if (strchr(file, '/'))      /* Specific path */
-        return envp ? execv(file, argv) : execve(file, argv, envp);
+        return envp ? execv(file, argv, envp) : execve(file, argv);
 
     filelen = strlen(file);
     path = NULL;
