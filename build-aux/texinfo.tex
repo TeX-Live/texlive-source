@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2010-04-18.09}
+\def\texinfoversion{2010-04-22.18}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2720,8 +2720,8 @@ end
 % Used to generate quoted braces.  Unless we're in typewriter, use
 % \ecfont because the CM text fonts do not have braces, and we don't
 % want to switch into math.
-\def\mylbrace {{\ifmonospace\else\ecfont\fi \char123}}
-\def\myrbrace {{\ifmonospace\else\ecfont\fi \char125}}
+\def\mylbrace{{\ifmonospace\else\ecfont\fi \char123}}
+\def\myrbrace{{\ifmonospace\else\ecfont\fi \char125}}
 \let\{=\mylbrace
 \let\}=\myrbrace
 \begingroup
@@ -4136,11 +4136,14 @@ end
   \def\@{@}% change to @@ when we switch to @ as escape char in index files.
   \def\ {\realbackslash\space }%
   %
-  % Need these in case \tex is in effect and \{ is a \delimiter again.
-  % But can't use \lbracecmd and \rbracecmd because texindex assumes
-  % braces and backslashes are used only as delimiters.
-  \let\{ = \mylbrace
-  \let\} = \myrbrace
+  % Need these unexpandable (because we define \tt as a dummy)
+  % definitions when @{ or @} appear in index entry text.  Also, more
+  % complicated, when \tex is in effect and \{ is a \delimiter again.
+  % We can't use \lbracecmd and \rbracecmd because texindex assumes
+  % braces and backslashes are used only as delimiters.  Perhaps we
+  % should define @lbrace and @rbrace commands a la @comma.
+  \def\{{{\tt\char123}}%
+  \def\}{{\tt\char125}}%
   %
   % I don't entirely understand this, but when an index entry is
   % generated from a macro call, the \endinput which \scanmacro inserts
