@@ -1,3 +1,7 @@
+2010-04-24  Taco Hoekwater  <taco@luatex>
+
+	* lua/loslibext.c: fix os.exec() and os.spawn(), twice
+
 2010-04-23  Taco Hoekwater  <taco@luatex>
 
 	* lua/loslibext.c: fix os.exec() and os.spawn() once more
