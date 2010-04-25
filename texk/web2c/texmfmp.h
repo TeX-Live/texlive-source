@@ -116,7 +116,7 @@ extern int shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname
 extern int runsystem (const char *cmd);
 
 /* The entry point.  */
-extern void TEXDLL maininit (int ac, string *av);
+extern void maininit (int ac, string *av);
 
 /* All but the Omega family use this. */
 #if !defined(Aleph)
