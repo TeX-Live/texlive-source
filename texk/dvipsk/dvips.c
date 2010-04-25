@@ -79,7 +79,7 @@ int secure = 1;              /* make safe for suid */
 int secure_option = 0;        /* set by -R */
 int collatedcopies = 1;      /* how many collated copies? */
 int sectioncopies = 1;       /* how many times to repeat each section? */
-integer pagecopies = 1;          /* how many times to repeat each page? */
+integer pagecopies = 1;      /* how many times to repeat each page? */
 shalfword linepos = 0;       /* where are we on the line being output? */
 integer maxpages;            /* the maximum number of pages */
 Boolean notfirst, notlast;   /* true if a first page was specified */
@@ -514,12 +514,8 @@ newoutname(void) {
          for (p = q; *p; p++)    /* find last dot after last slash */
             if (*p == '.')
                seqptr = p + 1;
-            else if (*p == '/')
+            else if (IS_DIR_SEP (*p))
                seqptr = 0;
-#ifdef DOSISH
-            else if (*p == '\\')
-               seqptr = 0;
-#endif
          if (seqptr == 0)
             seqptr = p;
          nextstring += 5; /* make room for the number, up to five digits */
@@ -562,7 +558,7 @@ queryargs(void)
    }
    qargv[qargc] = (char *)NULL;
 }
- 
+
 /*
  *   Finally, our main routine.
  */

@@ -1,6 +1,7 @@
 2010-04-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* writet1.c (edecrypt()): cast argument to byte to avoid warning.
+	* dvips.c: Use IS_DIR_SEP for the test of a directory separator.
 
 2010-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
