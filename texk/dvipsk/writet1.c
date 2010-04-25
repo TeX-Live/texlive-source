@@ -491,7 +491,7 @@ restart:
         goto exit;
     while (!t1_eof()) {
         if (t1_in_eexec == 1) 
-            c = edecrypt(c);
+            c = edecrypt((byte)c);
         alloc_array(t1_line, 1, T1_BUF_SIZE);
         append_char_to_buf(c, t1_line_ptr, t1_line_array, t1_line_limit);
         if (t1_in_eexec == 0 && eexec_scan >= 0 && eexec_scan < eexec_len) {
@@ -511,7 +511,7 @@ restart:
             cs_start = t1_line_ptr - t1_line_array; /* cs_start is an index now */
             alloc_array(t1_line, l, T1_BUF_SIZE);
             while (l-- > 0)
-                *t1_line_ptr++ = edecrypt(t1_getbyte());
+                *t1_line_ptr++ = edecrypt((byte)t1_getbyte());
         }
         c = t1_getbyte();
     }
@@ -588,7 +588,7 @@ static void t1_check_block_len(boolean decrypt)
        return;
     c = t1_getbyte();
     if (decrypt) 
-        c = edecrypt(c);
+        c = edecrypt((byte)c);
     l = t1_block_length;
     if (!(l == 0 && (c == 10 || c == 13))) {
         pdftex_warn("%i bytes more than expected were ignored", l + 1);
@@ -607,7 +607,7 @@ static void t1_start_eexec(void)
     if (!t1_pfa)
         t1_check_block_len(false);
     for (t1_line_ptr = t1_line_array, i = 0; i < 4; i++) {
-        edecrypt(t1_getbyte());
+        edecrypt((byte)t1_getbyte());
         *t1_line_ptr++ = 0;
     }
     t1_eexec_encrypt = true;
@@ -626,7 +626,7 @@ static void t1_stop_eexec(void)
     if (!t1_pfa)
         t1_check_block_len(true);
     else {
-        c = edecrypt(t1_getbyte());
+        c = edecrypt((byte)t1_getbyte());
         if (!(c == 10 || c == 13)) {
             if (last_hexbyte == 0)
                 t1_puts("00");
