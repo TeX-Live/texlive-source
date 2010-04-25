@@ -549,7 +549,7 @@ const char *ptexbanner = BANNER;
 /* The entry point: set up for reading the command line, which will
    happen in `topenin', then call the main body.  */
 
-void TEXDLL
+void
 maininit (int ac, string *av)
 {
   string main_input_file;
