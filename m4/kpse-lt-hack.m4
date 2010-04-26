@@ -28,7 +28,7 @@ AC_PROVIDE_IFELSE([LT_OUTPUT],
                   [m4_fatal([$0: too late])])[]dnl
 _LT_CONFIG_SAVE_COMMANDS([## $0: Prevent libtool from linking dependency_libs
 if test "x$enable_libtool_hack" = xyes; then
-  sed '/# Convert "-framework/i \
+  $SED '/# Convert "-framework/i\
 	## $0: ignore dependency_libs\
 	test "X$installed" = Xyes && dependency_libs=\
 ' "$ofile" >"$cfgfile"

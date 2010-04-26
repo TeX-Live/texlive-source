@@ -22127,7 +22127,7 @@ _LT_EOF
 
 ## KPSE_LT_HACK: Prevent libtool from linking dependency_libs
 if test "x$enable_libtool_hack" = xyes; then
-  sed '/# Convert "-framework/i \
+  $SED '/# Convert "-framework/i\
 	## KPSE_LT_HACK: ignore dependency_libs\
 	test "X$installed" = Xyes && dependency_libs=\
 ' "$ofile" >"$cfgfile"
