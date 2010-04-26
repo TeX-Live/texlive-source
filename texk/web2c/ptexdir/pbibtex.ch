@@ -614,13 +614,6 @@ end;
 
 @ modules for JBibTeX
 
-@<Check if |max_print_line|-1 is in mid kanji@>=
-t:=0;
-while(t<max_print_line-1) do
-   if out_buf[t]>127 then t:=t+2 else t:=t+1;
-in_mid_kanji:= t>=max_print_line;
-
-@
 @<|execute_fn|({\.{is.kanji.str\$}})@>=
 procedure x_is_kanji_str;
 label exit;

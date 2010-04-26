@@ -2,6 +2,9 @@
 
 	* fixwrites.c (main): Recognize 'conststringcast...' as string.
 
+	* Makefile.am (INCLUDES): Remove '-I$(srcdir)/..'.
+	(native/config.h): Adapted.
+
 2010-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* coerce.h: Remove luaTeX specific code.

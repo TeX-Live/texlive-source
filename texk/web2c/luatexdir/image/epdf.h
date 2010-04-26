@@ -75,7 +75,7 @@ extern "C" {
 #    undef CONFIG_H             /* header file */
 #  endif
 
-#  include <web2c/c-auto.h>     /* define SIZEOF_LONG */
+#  include <c-auto.h>     /* define SIZEOF_LONG */
 
 #  include "openbsd-compat.h"
 #  include "image.h"

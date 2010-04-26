@@ -1,3 +1,7 @@
+2010-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* epdf.h: #include <c-auto.h> instead of <web2c/c-auto.h> etc.
+
 2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/pdftex.am (EXTRA_DIST): Add etexdir/etex.ch.

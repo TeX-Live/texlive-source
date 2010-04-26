@@ -3,6 +3,11 @@
 	* texmfmp.h: remove TEXDLL.
 	* config.h: still there is TEXDLL for safety.
 
+2010-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (INCLUDES): Remove '-I$(top_builddir)/..' and
+	'-I$(top_srcdir)/..'.
+
 2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pltotf.ch, vptovf.ch: Bug fix, from ptexdir/ppltotf.ch by

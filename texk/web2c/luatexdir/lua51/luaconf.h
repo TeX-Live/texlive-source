@@ -11,7 +11,7 @@
 #include <limits.h>
 #include <stddef.h>
 
-#include <web2c/c-auto.h>
+#include <c-auto.h>
 
 /*
 ** ==================================================================

@@ -1,3 +1,8 @@
+2010-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex_main.c, synctex_parser_local.h: #include "c-auto.h"
+	instead of "web2c/c-auto.h".
+
 2010-01-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/synctex.am (synctex_CFLAGS): Enable compiler warnings.

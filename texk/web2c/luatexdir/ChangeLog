@@ -1,3 +1,8 @@
+2010-04-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/epdf.h, lua51/luaconf.h: #include <c-auto.h> instead of
+	<web2c/c-auto.h>.
+
 2010-04-24  Taco Hoekwater  <taco@luatex>
 
 	* lua/loslibext.c: fix os.exec() and os.spawn(), twice
@@ -25,7 +30,6 @@
 	* luafontloader/fontforge/Unicode/dump.c: deleted
 	* luafontloader/fontforge/Unicode/backtrns.c: deleted
 	* luafontloader/fontforge/Unicode/unialt.c: deleted
-
 
 2010-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

@@ -5,9 +5,7 @@
 ##
 ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
-# First $(KPATHSEA_INCLUDES), then -I$(top_srcdir)/..
-# for the case of installed (system) kpathsea headers.
-INCLUDES = -I$(top_builddir)/.. $(KPATHSEA_INCLUDES) -I$(top_srcdir)/..
+INCLUDES = $(KPATHSEA_INCLUDES)
 AM_CPPFLAGS =
 ## Not yet for C, C++, and ObjC++ (too many warnings or not yet implemented)
 AM_CFLAGS = $(WARNING_CFLAGS)

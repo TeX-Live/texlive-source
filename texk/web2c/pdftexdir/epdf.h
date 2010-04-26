@@ -36,10 +36,10 @@ extern "C" {
 #  undef CONFIG_H               /* header file */
 #endif
 
-#include <web2c/c-auto.h>       /* define SIZEOF_LONG */
-#include <web2c/config.h>       /* define type integer */
+#include <c-auto.h>       /* define SIZEOF_LONG */
+#include <config.h>       /* define type integer */
 
-#include <web2c/pdftexdir/ptexmac.h>
+#include <pdftexdir/ptexmac.h>
 
 #include "openbsd-compat.h"
 

@@ -1,11 +1,11 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/web2c/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../../m4
 
-INCLUDES =  -Inative -I$(srcdir)/native -I$(srcdir)/.. -I$(srcdir)/../..
+INCLUDES =  -Inative -I$(srcdir)/native -I$(srcdir)/../..
 AM_YFLAGS = -d -v
 AM_CFLAGS = $(WARNING_CFLAGS)
 
@@ -15,9 +15,9 @@ BUILT_SOURCES = native/config.h
 
 DISTCLEANFILES = native/config.h
 
-# Include <kpathsea/c-auto.h> instead of <web2c/c-auto.h>
+# Don't include our <c-auto.h>.
 native/config.h: ../config.h
-	sed -e 's,web2c/c-auto,kpathsea/c-auto,' $(srcdir)/../config.h >$@
+	sed -e '/<c-auto\.h>/d' $(srcdir)/../config.h >$@
 
 noinst_HEADERS = coerce.h
 
