@@ -1,3 +1,7 @@
+2010-04-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* afm2tfm.c: (write16()): cast argument to short to avoid warning.
+
 2010-04-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* writet1.c (edecrypt()): cast argument to byte to avoid warning.
