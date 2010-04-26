@@ -1,3 +1,8 @@
+2010-04-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Make sure native/config.h exists before
+	compiling web2c, fixwrites, or splitup.
+
 2010-04-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fixwrites.c (main): Recognize 'conststringcast...' as string.

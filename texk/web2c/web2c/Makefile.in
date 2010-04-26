@@ -752,7 +752,11 @@ uninstall-am:
 native/config.h: ../config.h
 	sed -e '/<c-auto\.h>/d' $(srcdir)/../config.h >$@
 
-$(web2c_OBJECTS): web2c-parser.h
+$(web2c_OBJECTS): web2c-parser.h native/config.h
+
+$(fixwrites_OBJECTS): native/config.h
+
+$(splitup_OBJECTS): native/config.h
 
 stamp-web2c: web2c$(EXEEXT)
 	echo timestamp >$@

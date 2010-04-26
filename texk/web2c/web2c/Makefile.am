@@ -38,7 +38,7 @@ web2c_SOURCES = \
 	main.c \
 	web2c.h
 
-$(web2c_OBJECTS): web2c-parser.h
+$(web2c_OBJECTS): web2c-parser.h native/config.h
 
 DISTCLEANFILES += web2c-parser.output
 
@@ -46,9 +46,13 @@ fixwrites_SOURCES = \
 	fixwrites.c \
 	kps.c
 
+$(fixwrites_OBJECTS): native/config.h
+
 splitup_SOURCES = \
 	kps.c \
 	splitup.c
+
+$(splitup_OBJECTS): native/config.h
 
 makecpool_SOURCES = \
 	makecpool.c
