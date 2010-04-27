@@ -24,6 +24,9 @@
 /* Define to run t1dotlessj from otftotfm. */
 #undef HAVE_AUTO_T1DOTLESSJ
 
+/* Define to run ttftotype42 from otftotfm. */
+#undef HAVE_AUTO_TTFTOTYPE42
+
 /* Define to run updmap from otftotfm. */
 #undef HAVE_AUTO_UPDMAP
 
@@ -150,9 +153,6 @@
 /* Define to 1 if you have the `strchr' function. */
 #undef HAVE_STRCHR
 
-/* Define to 1 if you have the `strdup' function. */
-#undef HAVE_STRDUP
-
 /* Define to 1 if you have the `strerror' function. */
 #undef HAVE_STRERROR
 
@@ -211,9 +211,6 @@
 
 /* Define to 1 if you have the `waitpid' function. */
 #undef HAVE_WAITPID
-
-/* Define to 1 if you have the <winsock2.h> header file. */
-#undef HAVE_WINSOCK2_H
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
@@ -322,6 +319,8 @@ double good_strtod(const char *nptr, char **endptr);
 
 #ifdef __cplusplus
 }
+/* Get rid of a possible inline macro under C++. */
+# define inline inline
 #endif
 
 #endif /* LCDF_TYPETOOLS_CONFIG_H */

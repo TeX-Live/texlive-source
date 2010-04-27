@@ -1,6 +1,6 @@
 /* metrics.{cc,hh} -- an encoding during and after OpenType features
  *
- * Copyright (c) 2003-2008 Eddie Kohler
+ * Copyright (c) 2003-2010 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -121,15 +121,15 @@ Metrics::unicode_encoding(uint32_t uni) const
 }
 
 Metrics::Code
-Metrics::hard_encoding(Glyph g) const
+Metrics::hard_encoding(Glyph g, Code after) const
 {
     if (g < 0)
 	return -1;
     int answer = -1, n = 0;
-    for (int i = _encoding.size() - 1; i >= 0; i--)
+    for (int i = _encoding.size() - 1; i >= after; i--)
 	if (_encoding[i].glyph == g)
 	    answer = i, n++;
-    if (n < 2) {
+    if (n < 2 && after == 0) {
 	if (g >= _emap.size())
 	    _emap.resize(g + 1, -2);
 	_emap[g] = answer;
@@ -141,7 +141,7 @@ Metrics::Code
 Metrics::force_encoding(Glyph g, int lookup_source)
 {
     assert(g >= 0);
-    int e = encoding(g);
+    int e = encoding(g, 0);
     if (e >= 0)
 	return e;
     else {
@@ -469,8 +469,7 @@ Metrics::add_single_positioning(Code c, int pdx, int pdy, int adx)
 /*****************************************************************************/
 /* changed_context structure						     */
 
-namespace {
-class ChangedContext { public:
+class Metrics::ChangedContext { public:
     ChangedContext(int ncodes);
     ~ChangedContext();
     typedef Metrics::Code Code;
@@ -491,12 +490,12 @@ class ChangedContext { public:
     inline void ensure_all(Code) const;
 };
 
-ChangedContext::ChangedContext(int ncodes)
+Metrics::ChangedContext::ChangedContext(int ncodes)
     : _v(ncodes, 0), _initial_ncodes(ncodes), _all_sentinel(((ncodes - 1) >> 5) + 1, 0xFFFFFFFFU)
 {
 }
 
-ChangedContext::~ChangedContext()
+Metrics::ChangedContext::~ChangedContext()
 {
     for (Vector<uint32_t> **v = _v.begin(); v != _v.end(); v++)
 	if (*v != &_all_sentinel)
@@ -504,14 +503,14 @@ ChangedContext::~ChangedContext()
 }
 
 inline void
-ChangedContext::ensure_all(Code c) const
+Metrics::ChangedContext::ensure_all(Code c) const
 {
     if (c >= 0 && (c >> 5) >= _all_sentinel.size())
 	_all_sentinel.resize((c >> 5) + 1, 0xFFFFFFFFU);
 }
 
 inline bool
-ChangedContext::bit(const Vector<uint32_t> &v, Code c)
+Metrics::ChangedContext::bit(const Vector<uint32_t> &v, Code c)
 {
     if (c < 0 || (c >> 5) >= v.size())
 	return false;
@@ -520,7 +519,7 @@ ChangedContext::bit(const Vector<uint32_t> &v, Code c)
 }
 
 bool
-ChangedContext::allowed(Code c, bool left_context) const
+Metrics::ChangedContext::allowed(Code c, bool left_context) const
 {
     if (c < 0)
 	return false;
@@ -531,7 +530,7 @@ ChangedContext::allowed(Code c, bool left_context) const
 }
 
 bool
-ChangedContext::pair_allowed(Code c1, Code c2) const
+Metrics::ChangedContext::pair_allowed(Code c1, Code c2) const
 {
     ensure_all(c2);
     if (c1 < 0 || c2 < 0)
@@ -543,13 +542,13 @@ ChangedContext::pair_allowed(Code c1, Code c2) const
 }
 
 bool
-ChangedContext::virgin(Code c) const
+Metrics::ChangedContext::virgin(Code c) const
 {
     return (c >= 0 && (c >= _v.size() || _v[c] == 0));
 }
 
 void
-ChangedContext::disallow(Code c)
+Metrics::ChangedContext::disallow(Code c)
 {
     assert(c >= 0);
     if (c >= _v.size())
@@ -561,7 +560,7 @@ ChangedContext::disallow(Code c)
 }
 
 void
-ChangedContext::disallow_pair(Code c1, Code c2)
+Metrics::ChangedContext::disallow_pair(Code c1, Code c2)
 {
     assert(c1 >= 0 && c2 >= 0);
     if (c1 >= _v.size())
@@ -575,11 +574,55 @@ ChangedContext::disallow_pair(Code c1, Code c2)
     }
 }
 
-}
-
 
 /*****************************************************************************/
 /* applying GSUB substitutions						     */
+
+void
+Metrics::apply_single(Code cin, const Substitution *s, int lookup,
+		ChangedContext &ctx, const GlyphFilter &glyph_filter,
+		const Vector<PermString> &glyph_names)
+{
+    // check if encoded
+    if (!ctx.allowed(cin, false))
+	/* not encoded before this substitution began, or completely changed;
+	   ingore */
+	return;
+
+    // check if substitution of this code allowed
+    if (!glyph_filter.allow_substitution(s->in_glyph(), glyph_names, unicode(cin)))
+	return;
+
+    // look for an allowed alternate
+    Glyph out = -1;
+    for (int i = 0; out < 0 && i < s->out_nglyphs(); i++)
+	if (glyph_filter.allow_alternate(s->out_glyph(i), glyph_names, unicode(cin)))
+	    out = s->out_glyph(i);
+    if (out < 0)		// no allowed alternate
+	return;
+
+    // apply substitution
+    if (ctx.virgin(cin)) {
+	// no one has changed this glyph yet, change it unilaterally
+	assign_emap(s->in_glyph(), -2);
+	assign_emap(out, cin);
+	assert(!_encoding[cin].virtual_char);
+	_encoding[cin].glyph = out;
+    } else {
+	// some contextual substitutions have changed this glyph, add
+	// contextual substitutions for the remaining possibilities
+	Code cout = force_encoding(out, lookup);
+	for (Code right = 0; right < _encoding.size(); right++)
+	    if (_encoding[right].visible() && !_encoding[right].flag(Char::BUILT) && ctx.pair_allowed(cin, right)) {
+		Code pair = pair_code(cout, right, lookup);
+		_encoding[cout].flags &= ~Char::INTERMEDIATE;
+		add_ligature(cin, right, pair);
+	    }
+    }
+
+    // no more substitutions for cin
+    ctx.disallow(cin);
+}
 
 void
 Metrics::apply_ligature(const Vector<Code> &in, const Substitution *s, int lookup)
@@ -622,91 +665,77 @@ Metrics::apply_ligature(const Vector<Code> &in, const Substitution *s, int looku
 		    repoint_ligature(ch - _encoding.begin(), l, cout);
 }
 
+void
+Metrics::apply_simple_context_ligature(const Vector<Code> &codes,
+			const Substitution *s, int lookup, ChangedContext &ctx)
+{
+    int nleft = s->left_nglyphs(), nin = s->in_nglyphs();
+    assert(codes.size() >= 2);
+
+    // check if context allows substitutions
+    for (const Code *inp = codes.begin(); inp < codes.end(); ++inp)
+	if (!ctx.allowed(*inp, inp - codes.begin() < nleft))
+	    return;
+
+    // check if any part of the combination has already changed
+    int ncheck = nleft + (nin > 2 ? 2 : nin);
+    if (ncheck == codes.size())
+	--ncheck;
+    for (const Code *inp = codes.begin(); inp < codes.begin() + ncheck; ++inp)
+	if (!ctx.pair_allowed(inp[0], inp[1]))
+	    return;
+
+    // mark this combination as changed if appropriate
+    if (codes.size() == 2 && nin == 1)
+	ctx.disallow_pair(codes[0], codes[1]);
+
+    // actually apply ligature
+    apply_ligature(codes, s, lookup);
+}
+
+bool
+Metrics::next_encoding(Vector<Code> &codes, const Vector<Glyph> &glyphs) const
+{
+    if (!codes.size()) {
+	codes.assign(glyphs.size(), 0);
+	for (int i = 0; i < glyphs.size(); ++i)
+	    if ((codes[i] = encoding(glyphs[i], 0)) < 0)
+		return false;
+	return true;
+    } else {
+	for (int i = 0; i < glyphs.size(); ++i)
+	    if ((codes[i] = encoding(glyphs[i], codes[i] + 1)) >= 0)
+		return true;
+	    else
+		codes[i] = encoding(glyphs[i], 0);
+	return false;
+    }
+}
+
 int
 Metrics::apply(const Vector<Substitution>& sv, bool allow_single, int lookup, const GlyphFilter& glyph_filter, const Vector<PermString>& glyph_names)
 {
+    Vector<Glyph> glyphs;
+    Vector<Code> codes;
+
     // keep track of what substitutions we have performed
     ChangedContext ctx(_encoding.size());
-
-    // XXX does not handle multiply-encoded glyphs
 
     // loop over substitutions
     int failures = 0;
     for (const Substitution *s = sv.begin(); s != sv.end(); s++) {
 	bool is_single = s->is_single() || s->is_alternate();
-	if (is_single && allow_single) {
-	    // check if encoded
-	    Code cin = encoding(s->in_glyph());
-	    if (!ctx.allowed(cin, false))
-		/* not encoded before this substitution began, or completely
-		   changed; ingore */
-		continue;
+	bool is_apply_single = is_single && allow_single;
+	bool is_apply_simple_context_ligature = !is_single && !s->is_multiple() && s->is_simple_context();
 
-	    // check if substitution of this code allowed
-	    if (!glyph_filter.allow_substitution(s->in_glyph(), glyph_names, unicode(cin)))
-		continue;
-
-	    // look for an allowed alternate
-	    Glyph out = -1;
-	    for (int i = 0; out < 0 && i < s->out_nglyphs(); i++)
-		if (glyph_filter.allow_alternate(s->out_glyph(i), glyph_names, unicode(cin)))
-		    out = s->out_glyph(i);
-	    if (out < 0)	// no allowed alternate
-		continue;
-
-	    // apply substitution
-	    if (ctx.virgin(cin)) {
-		// no one has changed this glyph yet, change it unilaterally
-		assign_emap(s->in_glyph(), -2);
-		assign_emap(out, cin);
-		assert(!_encoding[cin].virtual_char);
-		_encoding[cin].glyph = out;
-		ctx.disallow(cin);
-	    } else {
-		// some contextual substitutions have changed this glyph, add
-		// contextual substitutions for the remaining possibilities
-		Code cout = force_encoding(out, lookup);
-		for (Code right = 0; right < _encoding.size(); right++)
-		    if (_encoding[right].visible() && !_encoding[right].flag(Char::BUILT) && ctx.pair_allowed(cin, right)) {
-			Code pair = pair_code(cout, right, lookup);
-			_encoding[cout].flags &= ~Char::INTERMEDIATE;
-			add_ligature(cin, right, pair);
-		    }
-		ctx.disallow(cin);
+	if (is_apply_single || is_apply_simple_context_ligature) {
+	    s->all_in_glyphs(glyphs);
+	    for (codes.clear(); next_encoding(codes, glyphs); ) {
+		if (is_apply_single)
+		    apply_single(codes[0], s, lookup, ctx, glyph_filter, glyph_names);
+		else
+		    apply_simple_context_ligature(codes, s, lookup, ctx);
 	    }
-
-	} else if (!is_single && !s->is_multiple() && s->is_simple_context()) {
-	    // find a list of 'in' codes
-	    Vector<Code> in;
-	    s->all_in_glyphs(in);
-	    int nleft = s->left_nglyphs(), nin = s->in_nglyphs();
-	    assert(in.size() >= 2);
-	    bool ok = true;
-	    for (Glyph *inp = in.begin(); inp < in.end(); inp++) {
-		*inp = encoding(*inp);
-		if (!ctx.allowed(*inp, inp - in.begin() < nleft))
-		    ok = false;
-	    }
-
-	    // check if any part of the combination has already changed
-	    int ncheck = nleft + (nin > 2 ? 2 : nin);
-	    if (ncheck == in.size())
-		ncheck--;
-	    for (Code *inp = in.begin(); inp < in.begin() + ncheck; inp++)
-		if (!ctx.pair_allowed(inp[0], inp[1]))
-		    ok = false;
-
-	    // if not ok, continue
-	    if (!ok)
-		continue;
-
-	    // mark this combination as changed if appropriate
-	    if (in.size() == 2 && nin == 1)
-		ctx.disallow_pair(in[0], in[1]);
-
-	    // actually apply ligature
-	    apply_ligature(in, s, lookup);
-
 	} else
 	    failures++;
     }
@@ -715,50 +744,63 @@ Metrics::apply(const Vector<Substitution>& sv, bool allow_single, int lookup, co
 }
 
 void
+Metrics::apply_alternates_single(Code cin, const Substitution *s, int lookup,
+		const GlyphFilter &glyph_filter,
+		const Vector<PermString> &glyph_names)
+{
+    for (const Kern *as = _altselectors.begin(); as != _altselectors.end(); as++)
+	if (as->kern == 0) {
+	    Code last = cin;
+	    uint32_t u = unicode(cin);
+	    for (int i = 0; i < s->out_nglyphs(); i++)
+		if (glyph_filter.allow_alternate(s->out_glyph(i), glyph_names, u)) {
+		    Code out = force_encoding(s->out_glyph(i), lookup);
+		    add_ligature(last, as->in2, out);
+		    last = out;
+		}
+	} else if (as->kern <= s->out_nglyphs()) {
+	    Code out = force_encoding(s->out_glyph(as->kern - 1), lookup);
+	    add_ligature(cin, as->in2, out);
+	}
+}
+
+void
+Metrics::apply_alternates_ligature(const Vector<Code> &codes,
+		const Substitution *s, int lookup,
+		const GlyphFilter &glyph_filter,
+		const Vector<PermString> &glyph_names)
+{
+    // check whether the output character is allowed
+    if (!glyph_filter.allow_alternate(s->out_glyph(), glyph_names, 0))
+	return;
+
+    // find alternate selector and apply ligature if appropriate
+    for (const Kern *as = _altselectors.begin(); as != _altselectors.end(); as++)
+	if (as->kern == 0) {
+	    Vector<Code> lig(codes);
+	    lig.insert(lig.begin() + 1, as->in2);
+	    apply_ligature(lig, s, lookup);
+	}
+}
+
+void
 Metrics::apply_alternates(const Vector<Substitution>& sv, int lookup, const GlyphFilter& glyph_filter, const Vector<PermString>& glyph_names)
 {
-    for (const Substitution *s = sv.begin(); s != sv.end(); s++)
-	if (s->is_single() || s->is_alternate()) {
-	    Code e = encoding(s->in_glyph());
-	    if (e < 0)
-		continue;
-	    for (const Kern *as = _altselectors.begin(); as != _altselectors.end(); as++)
-		if (as->kern == 0) {
-		    Code last = e;
-		    for (int i = 0; i < s->out_nglyphs(); i++)
-			if (glyph_filter.allow_alternate(s->out_glyph(i), glyph_names, unicode(e))) {
-			    Code out = force_encoding(s->out_glyph(i), lookup);
-			    add_ligature(last, as->in2, out);
-			    last = out;
-			}
-		} else if (as->kern <= s->out_nglyphs()) {
-		    Code out = force_encoding(s->out_glyph(as->kern - 1), lookup);
-		    add_ligature(e, as->in2, out);
-		}
-	} else if (s->is_ligature()) {
-	    // check whether the output character is allowed
-	    bool ok = true;
-	    if (!glyph_filter.allow_alternate(s->out_glyph(), glyph_names, 0))
-		ok = false;
+    Vector<Glyph> glyphs;
+    Vector<Code> codes;
 
-	    // check whether the input characters are encoded
-	    Vector<Code> in(s->in_nglyphs() + 1, 0);
-	    if (ok && (in[0] = encoding(s->in_glyph(0))) < 0)
-		ok = false;
-	    for (int i = 1; ok && i < s->in_nglyphs(); i++)
-		if ((in[i+1] = encoding(s->in_glyph(i))) < 0)
-		    ok = false;
-
-	    if (!ok)
-		continue;
-
-	    // find alternate selector and apply ligature if appropriate
-	    for (const Kern *as = _altselectors.begin(); as != _altselectors.end(); as++)
-		if (as->kern == 0) {
-		    in[1] = as->in2;
-		    apply_ligature(in, s, lookup);
-		}
+    for (const Substitution *s = sv.begin(); s != sv.end(); s++) {
+	bool is_single = s->is_single() || s->is_alternate();
+	if (is_single || s->is_ligature()) {
+	    s->all_in_glyphs(glyphs);
+	    for (codes.clear(); next_encoding(codes, glyphs); ) {
+		if (is_single)
+		    apply_alternates_single(codes[0], s, lookup, glyph_filter, glyph_names);
+		else
+		    apply_alternates_ligature(codes, s, lookup, glyph_filter, glyph_names);
+	    }
 	}
+    }
 }
 
 
@@ -786,28 +828,29 @@ Metrics::apply(const Vector<Positioning>& pv)
     // keep track of what substitutions we have performed
     int *single_changed = 0;
     Vector<int *> pair_changed(_encoding.size(), 0);
-
-    // XXX does not handle multiply-encoded glyphs
+    Vector<Glyph> glyphs;
+    Vector<Code> codes;
 
     // loop over substitutions
     int success = 0;
-    for (const Positioning *p = pv.begin(); p != pv.end(); p++)
-	if (p->is_pairkern()) {
-	    int code1 = encoding(p->left_glyph());
-	    int code2 = encoding(p->right_glyph());
-	    if (code1 >= 0 && code2 >= 0
-		&& !assign_bitvec(pair_changed[code1], code2, _encoding.size()))
-		add_kern(code1, code2, p->left().adx);
-	    success++;
-	} else if (p->is_single()) {
-	    int code = encoding(p->left_glyph());
-	    if (code >= 0 && !assign_bitvec(single_changed, code, _encoding.size())) {
-		_encoding[code].pdx += p->left().pdx;
-		_encoding[code].pdy += p->left().pdy;
-		_encoding[code].adx += p->left().adx;
-	    }
+    for (const Positioning *p = pv.begin(); p != pv.end(); p++) {
+	bool is_single = p->is_single();
+	if (is_single || p->is_pairkern()) {
+	    p->all_in_glyphs(glyphs);
+	    for (codes.clear(); next_encoding(codes, glyphs); )
+		if (is_single) {
+		    if (!assign_bitvec(single_changed, codes[0], _encoding.size())) {
+			_encoding[codes[0]].pdx += p->left().pdx;
+			_encoding[codes[0]].pdy += p->left().pdy;
+			_encoding[codes[0]].adx += p->left().adx;
+		    }
+		} else {
+		    if (!assign_bitvec(pair_changed[codes[0]], codes[1], _encoding.size()))
+			add_kern(codes[0], codes[1], p->left().adx);
+		}
 	    success++;
 	}
+    }
 
     delete[] single_changed;
     for (int i = 0; i < pair_changed.size(); i++)

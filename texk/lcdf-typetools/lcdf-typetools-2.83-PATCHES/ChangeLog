@@ -1,5 +1,8 @@
-ChangeLog.TL: TeX Live (TL) changes for lcdf-typetools
-======================================================
+2010-04-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.83.
+	* configure.ac, Makefile.am: Adapt.
+	* patch-01-otftotfm-Makefile (new): Adapt otftotfm/Makefile.am.
 
 2010-02-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

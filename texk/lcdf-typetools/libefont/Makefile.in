@@ -127,6 +127,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
 KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
+LCDF_TYPETOOLS_VERSION = @LCDF_TYPETOOLS_VERSION@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -215,6 +216,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+AUTOMAKE_OPTIONS = foreign
 noinst_LIBRARIES = libefont.a
 libefont_a_SOURCES = \
 	afm.cc \
@@ -559,15 +561,6 @@ uninstall-am:
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
-
-srclinks:
-	test -d $(top_srcdir)/include || mkdir $(top_srcdir)/include
-	test -d $(top_srcdir)/include/efont || mkdir $(top_srcdir)/include/efont
-	I=../../libefont/include/efont S=../../libefont/libefont; \
-	cd $(srcdir); for i in $(libefont_a_SOURCES); do \
-	j=`echo $$i | sed 's/.cc$$//'`; \
-	test -f $$I/$$j.hh && ln -sf ../$$I/$$j.hh ../include/efont/$$j.hh; \
-	test -f $$S/$$i && ln -sf $$S/$$i $$i; done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

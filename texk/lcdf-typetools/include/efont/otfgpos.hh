@@ -128,6 +128,7 @@ class Positioning { public:
     Glyph left_glyph() const		{ return _left.g; }
     const Position &right() const	{ return _right; }
     Glyph right_glyph() const		{ return _right.g; }
+    inline void all_in_glyphs(Vector<Glyph> &gs) const;
 
     void unparse(StringAccum &, const Vector<PermString> * = 0) const;
     String unparse(const Vector<PermString> * = 0) const;
@@ -233,6 +234,15 @@ inline bool Positioning::is_pair() const
 inline bool Positioning::is_pairkern() const
 {
     return _left.g != 0 && !_left.placed() && _right.g != 0 && _right.h_empty();
+}
+
+inline void Positioning::all_in_glyphs(Vector<Glyph> &gs) const
+{
+    gs.clear();
+    if (_left.g != 0)
+	gs.push_back(_left.g);
+    if (_right.g != 0)
+	gs.push_back(_right.g);
 }
 
 }}

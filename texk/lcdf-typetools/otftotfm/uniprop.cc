@@ -1,6 +1,6 @@
 /* uniprop.{cc,hh} -- code for Unicode character properties
  *
- * Copyright (c) 2004-2007 Eddie Kohler
+ * Copyright (c) 2004-2010 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

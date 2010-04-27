@@ -164,6 +164,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
 KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
+LCDF_TYPETOOLS_VERSION = @LCDF_TYPETOOLS_VERSION@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -252,6 +253,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+AUTOMAKE_OPTIONS = foreign
 man_MANS = otftotfm.1
 otftotfm_SOURCES = automatic.cc automatic.hh dvipsencoding.cc \
 	dvipsencoding.hh glyphfilter.cc glyphfilter.hh metrics.cc \

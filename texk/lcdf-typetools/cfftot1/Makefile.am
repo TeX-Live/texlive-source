@@ -1,4 +1,6 @@
 ## Process this file with automake to produce Makefile.in
+AUTOMAKE_OPTIONS = foreign
+
 bin_PROGRAMS = cfftot1
 man_MANS = cfftot1.1
 

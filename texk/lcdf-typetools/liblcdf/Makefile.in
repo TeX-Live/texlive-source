@@ -34,6 +34,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@FIXLIBC_TRUE@am__append_1 = fixlibc.c
 subdir = liblcdf
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -59,12 +60,17 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 liblcdf_a_AR = $(AR) $(ARFLAGS)
 liblcdf_a_DEPENDENCIES =
+am__liblcdf_a_SOURCES_DIST = bezier.cc clp.c error.cc filename.cc \
+	globmatch.cc landmark.cc md5.c permstr.cc point.cc slurper.cc \
+	straccum.cc string.cc strtonum.c transform.cc vectorv.cc \
+	fixlibc.c
+@FIXLIBC_TRUE@am__objects_1 = fixlibc.$(OBJEXT)
 am_liblcdf_a_OBJECTS = bezier.$(OBJEXT) clp.$(OBJEXT) error.$(OBJEXT) \
-	filename.$(OBJEXT) fixlibc.$(OBJEXT) globmatch.$(OBJEXT) \
-	landmark.$(OBJEXT) md5.$(OBJEXT) permstr.$(OBJEXT) \
-	point.$(OBJEXT) slurper.$(OBJEXT) straccum.$(OBJEXT) \
-	string.$(OBJEXT) strtonum.$(OBJEXT) transform.$(OBJEXT) \
-	vectorv.$(OBJEXT)
+	filename.$(OBJEXT) globmatch.$(OBJEXT) landmark.$(OBJEXT) \
+	md5.$(OBJEXT) permstr.$(OBJEXT) point.$(OBJEXT) \
+	slurper.$(OBJEXT) straccum.$(OBJEXT) string.$(OBJEXT) \
+	strtonum.$(OBJEXT) transform.$(OBJEXT) vectorv.$(OBJEXT) \
+	$(am__objects_1)
 liblcdf_a_OBJECTS = $(am_liblcdf_a_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
@@ -88,7 +94,7 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(liblcdf_a_SOURCES)
-DIST_SOURCES = $(liblcdf_a_SOURCES)
+DIST_SOURCES = $(am__liblcdf_a_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -131,6 +137,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
 KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
+LCDF_TYPETOOLS_VERSION = @LCDF_TYPETOOLS_VERSION@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -219,27 +226,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+AUTOMAKE_OPTIONS = foreign
 noinst_LIBRARIES = liblcdf.a
-liblcdf_a_SOURCES = bezier.cc \
-	clp.c \
-	error.cc \
-	filename.cc \
-	fixlibc.c \
-	globmatch.cc \
-	landmark.cc \
-	md5.c \
-	permstr.cc \
-	point.cc \
-	slurper.cc \
-	straccum.cc \
-	string.cc \
-	strtonum.c \
-	transform.cc \
-	vectorv.cc
-
+liblcdf_a_SOURCES = bezier.cc clp.c error.cc filename.cc globmatch.cc \
+	landmark.cc md5.c permstr.cc point.cc slurper.cc straccum.cc \
+	string.cc strtonum.c transform.cc vectorv.cc $(am__append_1)
 liblcdf_a_LIBADD = @TEMPLATE_OBJS@
 CLEANFILES = @TEMPLATE_OBJS@
 INCLUDES = -I$(top_srcdir)/include
+EXTRA_DIST = fixlibc.c
 all: all-am
 
 .SUFFIXES:
@@ -551,25 +546,6 @@ uninstall-am:
 	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
 	pdf pdf-am ps ps-am tags uninstall uninstall-am
 
-
-srclinks:
-	test -d $(top_srcdir)/include || mkdir $(top_srcdir)/include
-	test -d $(top_srcdir)/include/lcdf || mkdir $(top_srcdir)/include/lcdf
-	cd $(top_srcdir); for i in bezier error filename globmatch landmark permstr point slurper straccum string transform; do \
-	ln -sf ../../liblcdf/liblcdf/$$i.cc liblcdf/$$i.cc ; \
-	ln -sf ../../../liblcdf/include/lcdf/$$i.hh include/lcdf/$$i.hh ; done
-	cd $(top_srcdir); for i in clp strtonum md5; do \
-	ln -sf ../../liblcdf/liblcdf/$$i.c liblcdf/$$i.c ; \
-	ln -sf ../../../liblcdf/include/lcdf/$$i.h include/lcdf/$$i.h ; done
-	cd $(top_srcdir); for i in fixlibc.c vectorv.cc; do \
-	ln -sf ../../liblcdf/liblcdf/$$i liblcdf/$$i ; done
-	cd $(top_srcdir); for i in hashmap vector; do \
-	ln -sf ../../../liblcdf/include/lcdf/$$i.cc include/lcdf/$$i.cc ; \
-	ln -sf ../../../liblcdf/include/lcdf/$$i.hh include/lcdf/$$i.hh ; done
-	cd $(top_srcdir); for i in inttypes; do \
-	ln -sf ../../../liblcdf/include/lcdf/$$i.h include/lcdf/$$i.h ; done
-	cd $(top_srcdir); for i in hashcode; do \
-	ln -sf ../../../liblcdf/include/lcdf/$$i.hh include/lcdf/$$i.hh ; done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

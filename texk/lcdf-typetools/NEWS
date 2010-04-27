@@ -1,8 +1,33 @@
 LCDF Typetools NEWS
 
-Version 2.76-rc1   2.Mar.2009
+Version 2.83   23.Apr.2010
 
-* Adapt to new TeX Live build scheme.
+* otftotfm: If -fkern loads no GPOS lookups, apply the TTF kern table (if
+  it exists).  This should use the TTF kern table strictly more often than
+  the previous version.  Based on draft changes to the OpenType spec.
+
+* Update with changes from TeX Live.  Thanks to Peter Breitenlohner.
+
+
+Version 2.82   19.Jan.2010
+
+* otftotfm: Correctly handle multiply-encoded glyphs (for example, if "j"
+  ends up encoded in more than one slot, apply the j => j.smcp feature to
+  both occurrences).  Reported by Michael Ummels.
+
+
+Version 2.81   7.Jan.2010
+
+* otftotfm: Fix "em" and "ex" measurements (QUAD and XHEIGHT font
+  dimensions) for TrueType fonts.  Problem reported by Nico Schlömer.
+
+* otftotfm: Add --type42 option.
+
+
+Version 2.80   10.Nov.2009
+
+* otftotfm: Add --fixed-width, --proportional-width, and --italic-angle
+  options.  Requested by Karl Berry.
 
 
 Version 2.79   12.Jun.2009

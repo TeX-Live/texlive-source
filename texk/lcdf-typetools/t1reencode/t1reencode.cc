@@ -1,6 +1,6 @@
 /* t1reencode.cc -- driver for reencoding Type 1 fonts
  *
- * Copyright (c) 2005-2009 Eddie Kohler
+ * Copyright (c) 2005-2010 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -30,10 +30,6 @@
 #if defined(_MSDOS) || defined(_WIN32)
 # include <fcntl.h>
 # include <io.h>
-#endif
-#ifdef WIN32
-/* According to Fabrice Popineau MSVCC doesn't handle std::min correctly. */
-# define std /* */
 #endif
 
 using namespace Efont;
@@ -982,7 +978,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("t1reencode (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 1999-2009 Eddie Kohler\n\
+	    printf("Copyright (C) 1999-2010 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

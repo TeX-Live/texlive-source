@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS = -I ../../m4 -I m4
 
 DISTCHECK_CONFIGURE_FLAGS = --without-kpathsea
 
-SUBDIRS = . $(SELECTED_SUBDIRS)
+SUBDIRS = . liblcdf libefont @SELECTED_SUBDIRS@
 DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 
 all-local: config.force
@@ -89,22 +89,17 @@ libefont: liblcdf
 cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42: liblcdf libefont
 	cd $@ && $(MAKE)
 
-srclinks:
-	cd liblcdf && $(MAKE) srclinks
-	cd libefont && $(MAKE) srclinks
-
 versionize:
 	perl -pi -e 's/^\.ds V.*/.ds V $(VERSION)/;' $(top_srcdir)/cfftot1/cfftot1.1 $(top_srcdir)/mmafm/mmafm.1 $(top_srcdir)/mmpfb/mmpfb.1 $(top_srcdir)/otfinfo/otfinfo.1 $(top_srcdir)/otftotfm/otftotfm.1 $(top_srcdir)/t1dotlessj/t1dotlessj.1 $(top_srcdir)/t1lint/t1lint.1 $(top_srcdir)/t1reencode/t1reencode.1 $(top_srcdir)/t1testpage/t1testpage.1 $(top_srcdir)/ttftotype42/ttftotype42.1
 	perl -pi -e 's/^(\U$(PACKAGE)\E) [\d.ab]+$$/$$1 $(VERSION)/;' $(top_srcdir)/README
 	perl -pi -e 's/^Version: [\d.ab]+$$/Version: $(VERSION)/;' $(top_srcdir)/lcdf-typetools.spec
 
-.PHONY: srclinks rpm liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
+.PHONY: rpm liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 
 ## Changes for TeX Live
 ##
-EXTRA_DIST += ChangeLog.TL
+EXTRA_DIST += lcdf-typetools-$(LCDF_TYPETOOLS_VERSION)-PATCHES
 
 ## Original files from lcdf-typetools distribution
 ##
 EXTRA_DIST += Makefile.am.orig configure.ac.orig
-

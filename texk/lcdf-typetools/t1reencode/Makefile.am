@@ -1,4 +1,6 @@
 ## Process this file with automake to produce Makefile.in
+AUTOMAKE_OPTIONS = foreign
+
 bin_PROGRAMS = t1reencode
 man_MANS = t1reencode.1
 

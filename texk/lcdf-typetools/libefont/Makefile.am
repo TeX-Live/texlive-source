@@ -1,4 +1,6 @@
 ## Process this file with automake to produce Makefile.in
+AUTOMAKE_OPTIONS = foreign
+
 noinst_LIBRARIES = libefont.a
 
 libefont_a_SOURCES = \
@@ -39,12 +41,3 @@ libefont_a_LIBADD = @TEMPLATE_OBJS@
 CLEANFILES = @TEMPLATE_OBJS@
 
 INCLUDES = -I$(top_srcdir)/include
-
-srclinks:
-	test -d $(top_srcdir)/include || mkdir $(top_srcdir)/include
-	test -d $(top_srcdir)/include/efont || mkdir $(top_srcdir)/include/efont
-	I=../../libefont/include/efont S=../../libefont/libefont; \
-	cd $(srcdir); for i in $(libefont_a_SOURCES); do \
-	j=`echo $$i | sed 's/.cc$$//'`; \
-	test -f $$I/$$j.hh && ln -sf ../$$I/$$j.hh ../include/efont/$$j.hh; \
-	test -f $$S/$$i && ln -sf $$S/$$i $$i; done

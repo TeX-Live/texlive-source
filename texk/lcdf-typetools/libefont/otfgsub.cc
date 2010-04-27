@@ -2,7 +2,7 @@
 
 /* otfgsub.{cc,hh} -- OpenType GSUB table
  *
- * Copyright (c) 2003-2007 Eddie Kohler
+ * Copyright (c) 2003-2010 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -354,14 +354,15 @@ Substitution::is_noop() const
 }
 
 bool
-Substitution::all_in_glyphs(Vector<Glyph> &v) const
+Substitution::all_in_glyphs(Vector<Glyph> &gs) const
 {
     bool ok = true;
+    gs.clear();
     if (_left_is != T_NONE)
-	ok &= extract_glyphs(_left, _left_is, v, false);
-    ok &= extract_glyphs(_in, _in_is, v, false);
+	ok &= extract_glyphs(_left, _left_is, gs, false);
+    ok &= extract_glyphs(_in, _in_is, gs, false);
     if (_right_is != T_NONE)
-	ok &= extract_glyphs(_right, _right_is, v, false);
+	ok &= extract_glyphs(_right, _right_is, gs, false);
     return ok;
 }
 

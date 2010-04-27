@@ -175,8 +175,8 @@ class Substitution { public:
     inline Glyph *right_glyphptr();
     inline const Glyph *right_glyphptr() const;
 
-    bool all_in_glyphs(Vector<Glyph> &) const;
-    bool all_out_glyphs(Vector<Glyph> &) const;
+    bool all_in_glyphs(Vector<Glyph> &gs) const;
+    bool all_out_glyphs(Vector<Glyph> &gs) const;
 
     // alter
     void add_outer_left(Glyph);

@@ -1,4 +1,6 @@
 ## Process this file with automake to produce Makefile.in
+AUTOMAKE_OPTIONS = foreign
+
 bin_PROGRAMS = otftotfm
 man_MANS = otftotfm.1
 
@@ -18,6 +20,8 @@ otftotfm_DEPENDENCIES = ../libefont/libefont.a ../liblcdf/liblcdf.a
 INCLUDES = -I$(top_srcdir)/include
 CLEANFILES = @TEMPLATE_OBJS@
 
+EXTRA_DIST = otftotfm.1
+
 if have_kpathsea
 otftotfm_SOURCES += kpseinterface.c kpseinterface.h
 INCLUDES += $(KPATHSEA_INCLUDES)
@@ -25,7 +29,5 @@ otftotfm_LDADD += $(KPATHSEA_LIBS)
 otftotfm_DEPENDENCIES += $(KPATHSEA_DEPEND)
 endif have_kpathsea
 
-EXTRA_DIST = otftotfm.1
-
-## Rebuild libkpathsea
+## Rebuild libkpathsea in a TeX Live build
 @KPATHSEA_RULE@

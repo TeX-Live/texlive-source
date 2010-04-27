@@ -1,4 +1,6 @@
 ## Process this file with automake to produce Makefile.in
+AUTOMAKE_OPTIONS = foreign
+
 bin_PROGRAMS = t1rawafm
 man_MANS = t1rawafm.1
 

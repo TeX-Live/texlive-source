@@ -2,7 +2,7 @@
 
 /* amfm.{cc,hh} -- Adobe Multiple-Master Font Metrics
  *
- * Copyright (c) 1998-2006 Eddie Kohler
+ * Copyright (c) 1998-2010 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

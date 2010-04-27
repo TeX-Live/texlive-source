@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl Adapted for TeX Live.
-AC_INIT([LCDF typetools], [2.79], [tex-k@tug.org])
+m4_define([lcdf_typetools_version], [2.83])[]dnl using unmodified lcdf-typetools source tree
+AC_INIT([LCDF typetools for TeX Live], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([NEWS])
 AC_CONFIG_AUX_DIR([../../build-aux])
@@ -8,6 +9,9 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([lcdf-typetools], [check-news])
+
+LCDF_TYPETOOLS_VERSION=lcdf_typetools_version
+AC_SUBST([LCDF_TYPETOOLS_VERSION])
 
 AM_CONFIG_HEADER(config.h)
 
@@ -30,11 +34,12 @@ AC_HEADER_DIRENT
 
 
 dnl
-dnl select programs to be compiled, otftotfm auto-options
+dnl select programs to be compiled and automatically run
 dnl
 
 m4_include([ac/lcdf-typetools.ac])
-SELECTED_SUBDIRS='liblcdf libefont'
+
+SELECTED_SUBDIRS=
 AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
            [test "x$enable_[]Kpse_Prog" = xno || SELECTED_SUBDIRS="$SELECTED_SUBDIRS Kpse_Prog"
 ])
@@ -46,15 +51,13 @@ AC_FOREACH([Kpse_Opt], kpse_otftotfm_auto_opts,
                              [Define to run ]Kpse_Opt[ from otftotfm.])])
 ])
 
+
 dnl
 dnl kpathsea
 dnl
 
-AC_ARG_ENABLE([texlive-build], 
-              AS_HELP_STRING([--enable-texlive-build],
-                             [build as part of a TeX Live installation]),
-              [:],
-              [enable_texlive_build=no])
+dnl The configure option '--enable-texlive-build' is inherited
+dnl and automatically enabled, when built as part of TeX Live.
 
 AM_CONDITIONAL([texlive_build], [test "x$enable_texlive_build" = xyes])
 
@@ -137,7 +140,7 @@ AC_CACHE_CHECK([whether <new> works], ac_cv_good_new_hdr,
 if test "$ac_cv_good_new_hdr" = yes; then
    AC_DEFINE(HAVE_NEW_HDR, 1, [Define if <new> exists and works.])
 fi
-AC_CHECK_HEADERS([new.h unistd.h])
+AC_CHECK_HEADERS(new.h unistd.h)
 
 
 dnl
@@ -146,7 +149,8 @@ dnl headers such as unistd.h
 dnl
 
 AC_LANG_C
-AC_CHECK_FUNCS([strdup strerror])
+need_fixlibc=0
+AC_CHECK_FUNCS(strerror, :, [need_fixlibc=1])
 
 AC_CACHE_CHECK(whether strtod works, ac_cv_working_strtod,
 [AC_TRY_RUN([#include <stdio.h>
@@ -156,9 +160,10 @@ int main(int c, char **v) {
   char *endp;
   double d = strtod(s, &endp);
   exit(*endp == 0 ? 1 : 0);
-}], ac_cv_working_strtod=yes, ac_cv_working_strtod=no,
-ac_cv_working_strtod=yes)])
-if test $ac_cv_working_strtod = no; then 
+}], [ac_cv_working_strtod=yes], [ac_cv_working_strtod=no],
+[ac_cv_working_strtod=yes])])
+if test "x$ac_cv_working_strtod" = xno; then 
+    need_fixlibc=1
     AC_DEFINE(BROKEN_STRTOD, 1, [Define if strtod is broken.])
 fi
 
@@ -166,6 +171,7 @@ AC_CHECK_FUNCS(strtoul ctime mkstemp ftruncate sigaction waitpid)
 AC_CHECK_FUNC(floor, :, [AC_CHECK_LIB(m, floor)])
 AC_CHECK_FUNC(fabs, :, [AC_CHECK_LIB(m, fabs)])
 AC_CHECK_HEADERS(unistd.h fcntl.h sys/time.h sys/wait.h)
+AM_CONDITIONAL([FIXLIBC], [test x$need_fixlibc = x1])
 
 
 dnl
@@ -221,8 +227,7 @@ dnl ntohs, ntohl (need them in C++ code)
 dnl
 
 AC_LANG_CPLUSPLUS
-dnl MinGW32 has <sys/param.h> but also needs <winsock2.h>
-AC_CHECK_HEADERS(byteorder.h netinet/in.h sys/param.h winsock2.h)
+AC_CHECK_HEADERS(byteorder.h netinet/in.h sys/param.h)
 AC_MSG_CHECKING([whether ntohs and ntohl are defined])
 ac_ntoh_defined=no
 AC_COMPILE_IFELSE(
@@ -233,16 +238,14 @@ AC_COMPILE_IFELSE(
 # include <byteorder.h>
 #elif HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#elif defined(HAVE_SYS_PARAM_H) || defined(WIN32)
-# if defined(HAVE_SYS_PARAM_H)
-#  include <sys/param.h>
+#elif HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
+#ifdef WIN32
+# ifdef __MSC_VER
+#  pragma warning (disable: 4290)
 # endif
-# if defined(WIN32)
-#  ifdef __MSC_VER
-#   pragma warning (disable: 4290)
-#  endif
-#  include <winsock2.h>
-# endif
+# include <winsock2.h>
 #endif
 ]], [[(void) ntohs(0x0020), (void) ntohl(0x03040020);]])],
 	[AC_MSG_RESULT(yes)
@@ -344,6 +347,8 @@ double good_strtod(const char *nptr, char **endptr);
 
 #ifdef __cplusplus
 }
+/* Get rid of a possible inline macro under C++. */
+# define inline inline
 #endif
 
 #endif /* LCDF_TYPETOOLS_CONFIG_H */])

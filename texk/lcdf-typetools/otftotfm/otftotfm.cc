@@ -1,6 +1,6 @@
 /* otftotfm.cc -- driver for translating OpenType fonts to TeX metrics
  *
- * Copyright (c) 2003-2009 Eddie Kohler
+ * Copyright (c) 2003-2010 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -99,38 +99,45 @@ using namespace Efont;
 #define POSITION_OPT		339
 #define WARN_MISSING_OPT	340
 #define BASE_ENCODINGS_OPT	341
+#define FIXED_PITCH_OPT		342
+#define ITALIC_ANGLE_OPT	343
+#define PROPORTIONAL_WIDTH_OPT	344
 
-#define AUTOMATIC_OPT		342
-#define FONT_NAME_OPT		343
-#define QUIET_OPT		344
-#define GLYPHLIST_OPT		345
-#define VENDOR_OPT		346
-#define TYPEFACE_OPT		347
-#define NOCREATE_OPT		348
-#define VERBOSE_OPT		349
-#define FORCE_OPT		350
+#define AUTOMATIC_OPT		350
+#define FONT_NAME_OPT		351
+#define QUIET_OPT		352
+#define GLYPHLIST_OPT		353
+#define VENDOR_OPT		354
+#define TYPEFACE_OPT		355
+#define NOCREATE_OPT		356
+#define VERBOSE_OPT		357
+#define FORCE_OPT		358
 
-#define VIRTUAL_OPT		351
-#define PL_OPT			352
-#define TFM_OPT			353
-#define MAP_FILE_OPT		354
-#define OUTPUT_ENCODING_OPT	355
+#define VIRTUAL_OPT		360
+#define PL_OPT			361
+#define TFM_OPT			362
+#define MAP_FILE_OPT		363
+#define OUTPUT_ENCODING_OPT	364
 
-#define DIR_OPTS		360
+#define DIR_OPTS		380
 #define ENCODING_DIR_OPT	(DIR_OPTS + O_ENCODING)
 #define TFM_DIR_OPT		(DIR_OPTS + O_TFM)
 #define PL_DIR_OPT		(DIR_OPTS + O_PL)
 #define VF_DIR_OPT		(DIR_OPTS + O_VF)
 #define VPL_DIR_OPT		(DIR_OPTS + O_VPL)
 #define TYPE1_DIR_OPT		(DIR_OPTS + O_TYPE1)
+#define TYPE42_DIR_OPT		(DIR_OPTS + O_TYPE42)
 #define TRUETYPE_DIR_OPT	(DIR_OPTS + O_TRUETYPE)
 
-#define NO_OUTPUT_OPTS		380
+#define NO_OUTPUT_OPTS		400
 #define NO_ENCODING_OPT		(NO_OUTPUT_OPTS + G_ENCODING)
 #define NO_TYPE1_OPT		(NO_OUTPUT_OPTS + G_TYPE1)
 #define NO_DOTLESSJ_OPT		(NO_OUTPUT_OPTS + G_DOTLESSJ)
 #define NO_UPDMAP_OPT		(NO_OUTPUT_OPTS + G_UPDMAP)
-#define NO_TRUETYPE_OPT		(NO_OUTPUT_OPTS + G_TRUETYPE)
+
+#define YES_OUTPUT_OPTS		2000
+#define TRUETYPE_OPT		(YES_OUTPUT_OPTS + G_TRUETYPE)
+#define TYPE42_OPT		(YES_OUTPUT_OPTS + G_TYPE42)
 
 #define CHAR_OPTTYPE		(Clp_ValFirstUser)
 
@@ -173,14 +180,19 @@ static Clp_Option options[] = {
     { "alternates-filter", 0, ALTERNATES_FILTER_OPT, Clp_ValString, 0 },
     { "space-factor", 0, SPACE_FACTOR_OPT, Clp_ValDouble, 0 },
     { "math-spacing", 0, MATH_SPACING_OPT, CHAR_OPTTYPE, Clp_Negate | Clp_Optional },
+    { "fixed-pitch", 0, FIXED_PITCH_OPT, 0, Clp_Negate },
+    { "fixed-width", 0, FIXED_PITCH_OPT, 0, Clp_Negate },
+    { "proportional-width", 0, PROPORTIONAL_WIDTH_OPT, 0, Clp_Negate },
+    { "italic-angle", 0, ITALIC_ANGLE_OPT, Clp_ValDouble, 0 },
 
     { "pl", 'p', PL_OPT, 0, 0 },
     { "virtual", 0, VIRTUAL_OPT, 0, Clp_Negate },
     { "no-encoding", 0, NO_ENCODING_OPT, 0, 0 },
     { "no-type1", 0, NO_TYPE1_OPT, 0, 0 },
-    { "no-truetype", 0, NO_TRUETYPE_OPT, 0, 0 },
     { "no-dotlessj", 0, NO_DOTLESSJ_OPT, 0, 0 },
     { "no-updmap", 0, NO_UPDMAP_OPT, 0, 0 },
+    { "truetype", 0, TRUETYPE_OPT, 0, Clp_Negate },
+    { "type42", 0, TYPE42_OPT, 0, Clp_Negate },
     { "map-file", 0, MAP_FILE_OPT, Clp_ValString, Clp_Negate },
     { "output-encoding", 0, OUTPUT_ENCODING_OPT, Clp_ValString, Clp_Optional },
 
@@ -195,6 +207,7 @@ static Clp_Option options[] = {
     { "vpl-directory", 0, VPL_DIR_OPT, Clp_ValString, 0 },
     { "vf-directory", 0, VF_DIR_OPT, Clp_ValString, 0 },
     { "type1-directory", 0, TYPE1_DIR_OPT, Clp_ValString, 0 },
+    { "type42-directory", 0, TYPE42_DIR_OPT, Clp_ValString, 0 },
     { "truetype-directory", 0, TRUETYPE_DIR_OPT, Clp_ValString, 0 },
 
     { "quiet", 'q', QUIET_OPT, 0, Clp_Negate },
@@ -254,6 +267,10 @@ static double minimum_kern = 2.0;
 static double space_factor = 1.0;
 static bool math_spacing = false;
 static int skew_char = -1;
+static bool override_is_fixed_pitch = false;
+static bool is_fixed_pitch;
+static bool override_italic_angle = false;
+static double italic_angle;
 
 static String out_encoding_file;
 static String out_encoding_name;
@@ -312,6 +329,8 @@ Font feature and transformation options:\n\
   -k, --min-kern=N             Omit kerns with absolute value < N [2.0].\n\
       --space-factor=F         Scale wordspace by a factor of F.\n\
       --design-size=SIZE       Set font design size to SIZE.\n\
+      --fixed-width            Set fixed width (no space stretch).\n\
+      --italic-angle=ANGLE     Set font italic angle (for positioning accents).\n\
 \n");
     uerrh.message("\
 Encoding options:\n\
@@ -592,10 +611,10 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
     }
 
     int xheight = font_x_height(finfo, font_xform);
-    if (xheight < 1000)
+    if (xheight * du < 1000)
 	fprint_real(f, "   (XHEIGHT", xheight, du);
 
-    fprint_real(f, "   (QUAD", 1000, du);
+    fprint_real(f, "   (QUAD", finfo.units_per_em(), du);
     fprintf(f, "   )\n");
 
     if (boundary_char >= 0)
@@ -1271,9 +1290,15 @@ main_dvips_map(const String &ps_name, const FontInfo &finfo, ErrorHandler *errh)
 {
     if (String fn = installed_type1(otf_filename, ps_name, (output_flags & G_TYPE1) != 0, errh))
 	return "<" + pathname_filename(fn);
-    if (!finfo.cff)
-	if (String fn = installed_truetype(otf_filename, (output_flags & G_TRUETYPE) != 0, errh))
-	    return "<" + pathname_filename(fn);
+    if (!finfo.cff) {
+	String ttf_fn, t42_fn;
+	ttf_fn = installed_truetype(otf_filename, (output_flags & G_TRUETYPE) != 0, errh);
+	t42_fn = installed_type42(otf_filename, ps_name, (output_flags & G_TYPE42) != 0, errh);
+	if (t42_fn && (!ttf_fn || (output_flags & G_TYPE42) != 0))
+	    return "<" + pathname_filename(t42_fn);
+	else if (ttf_fn)
+	    return "<" + pathname_filename(ttf_fn);
+    }
     return "<" + pathname_filename(otf_filename);
 }
 
@@ -1339,12 +1364,53 @@ do_gsub(Metrics& metrics, const OpenType::Font& otf, DvipsEncoding& dvipsenc, bo
     }
 }
 
+static bool
+kern_feature_requested()
+{
+    return std::find(interesting_features.begin(), interesting_features.end(),
+		     OpenType::Tag("kern")) != interesting_features.end();
+}
+
+static void
+do_try_ttf_kern(Metrics& metrics, const OpenType::Font& otf, HashMap<uint32_t, int>& feature_usage, ErrorHandler* errh)
+{
+    // if no GPOS "kern" lookups and "kern" requested, try "kern" table
+    if (!kern_feature_requested())
+	return;
+    try {
+	OpenType::KernTable kern(otf.table("kern"), errh);
+	Vector<OpenType::Positioning> poss;
+	bool understood = kern.unparse_automatics(poss, errh);
+	int nunderstood = metrics.apply(poss);
+
+	// mark as used
+	int d = (understood && nunderstood == poss.size() ? F_GPOS_ALL : (nunderstood ? F_GPOS_PART : 0)) + F_GPOS_TRY;
+	feature_usage.find_force(OpenType::Tag("kern").value()) |= d;
+    } catch (OpenType::BlankTable) {
+	// nada
+    } catch (OpenType::Error e) {
+	errh->warning("kern %<%s%> error, continuing", e.description.c_str());
+    }
+}
+
 static void
 do_gpos(Metrics& metrics, const OpenType::Font& otf, HashMap<uint32_t, int>& feature_usage, ErrorHandler* errh)
 {
     OpenType::Gpos gpos(otf.table("GPOS"), errh);
     Vector<Lookup> lookups(gpos.nlookups(), Lookup());
     find_lookups(gpos.script_list(), gpos.feature_list(), lookups, errh);
+
+    // OpenType recommends that if GPOS exists, but the "kern" feature loads
+    // no lookups, we use the TrueType "kern" table, if any.
+    if (kern_feature_requested()) {
+	OpenType::Tag kern_tag("kern");
+	for (Lookup *l = lookups.begin(); l != lookups.end(); ++l)
+	    if (std::find(l->features.begin(), l->features.end(), kern_tag) != l->features.end())
+		goto skip_ttf_kern;
+	do_try_ttf_kern(metrics, otf, feature_usage, errh);
+    skip_ttf_kern: ;
+    }
+
     Vector<OpenType::Positioning> poss;
     for (int i = 0; i < lookups.size(); i++)
 	if (lookups[i].used) {
@@ -1358,19 +1424,6 @@ do_gpos(Metrics& metrics, const OpenType::Font& otf, HashMap<uint32_t, int>& fea
 	    for (int j = 0; j < lookups[i].features.size(); j++)
 		feature_usage.find_force(lookups[i].features[j].value()) |= d;
 	}
-}
-
-static void
-do_kern(Metrics& metrics, const OpenType::Font& otf, HashMap<uint32_t, int>& feature_usage, ErrorHandler* errh)
-{
-    OpenType::KernTable kern(otf.table("kern"), errh);
-    Vector<OpenType::Positioning> poss;
-    bool understood = kern.unparse_automatics(poss, errh);
-    int nunderstood = metrics.apply(poss);
-
-    // mark as used
-    int d = (understood && nunderstood == poss.size() ? F_GPOS_ALL : (nunderstood ? F_GPOS_PART : 0)) + F_GPOS_TRY;
-    feature_usage.find_force(OpenType::Tag("kern").value()) |= d;
 }
 
 static void
@@ -1415,6 +1468,10 @@ do_file(const String &otf_filename, const OpenType::Font &otf,
 	return;
     if (!finfo.cff)
 	errh->warning("TrueType-flavored font support is experimental");
+    if (override_is_fixed_pitch)
+	finfo.set_is_fixed_pitch(is_fixed_pitch);
+    if (override_italic_angle)
+	finfo.set_italic_angle(italic_angle);
 
     // save glyph names
     Vector<PermString> glyph_names;
@@ -1472,17 +1529,7 @@ do_file(const String &otf_filename, const OpenType::Font &otf,
     try {
 	do_gpos(metrics, otf, feature_usage, errh);
     } catch (OpenType::BlankTable) {
-	// special case: if no GPOS and "kern" requested, look in "kern" table
-	if (std::find(interesting_features.begin(), interesting_features.end(),
-		      OpenType::Tag("kern")) != interesting_features.end()) {
-	    try {
-		do_kern(metrics, otf, feature_usage, errh);
-	    } catch (OpenType::BlankTable) {
-		// nada
-	    } catch (OpenType::Error e) {
-		errh->warning("kern %<%s%> error, continuing", e.description.c_str());
-	    }
-	}
+	do_try_ttf_kern(metrics, otf, feature_usage, errh);
     } catch (OpenType::Error e) {
 	errh->warning("GPOS %<%s%> error, continuing", e.description.c_str());
     }
@@ -1926,8 +1973,15 @@ main(int argc, char *argv[])
 	case NO_TYPE1_OPT:
 	case NO_DOTLESSJ_OPT:
 	case NO_UPDMAP_OPT:
-	case NO_TRUETYPE_OPT:
 	    output_flags &= ~(opt - NO_OUTPUT_OPTS);
+	    break;
+
+	case TRUETYPE_OPT:
+	case TYPE42_OPT:
+	    if (!clp->negated)
+		output_flags |= (opt - YES_OUTPUT_OPTS);
+	    else
+		output_flags &= ~(opt - YES_OUTPUT_OPTS);
 	    break;
 
 	  case OUTPUT_ENCODING_OPT:
@@ -1959,13 +2013,14 @@ main(int argc, char *argv[])
 	    output_flags = (output_flags & ~G_ASCII) | G_BINARY;
 	    break;
 
-	  case ENCODING_DIR_OPT:
-	  case TFM_DIR_OPT:
-	  case PL_DIR_OPT:
-	  case VF_DIR_OPT:
-	  case VPL_DIR_OPT:
-	  case TYPE1_DIR_OPT:
-	  case TRUETYPE_DIR_OPT:
+	case ENCODING_DIR_OPT:
+	case TFM_DIR_OPT:
+	case PL_DIR_OPT:
+	case VF_DIR_OPT:
+	case VPL_DIR_OPT:
+	case TYPE1_DIR_OPT:
+	case TRUETYPE_DIR_OPT:
+	case TYPE42_DIR_OPT:
 	    if (!setodir(opt - DIR_OPTS, clp->vstr))
 		usage_error(errh, "%s directory specified twice", odirname(opt - DIR_OPTS));
 	    break;
@@ -1975,6 +2030,21 @@ main(int argc, char *argv[])
 	    if (font_name)
 		usage_error(errh, "font name specified twice");
 	    font_name = clp->vstr;
+	    break;
+
+	case FIXED_PITCH_OPT:
+	    override_is_fixed_pitch = true;
+	    is_fixed_pitch = !clp->negated;
+	    break;
+
+	case PROPORTIONAL_WIDTH_OPT:
+	    override_is_fixed_pitch = true;
+	    is_fixed_pitch = !!clp->negated;
+	    break;
+
+	case ITALIC_ANGLE_OPT:
+	    override_italic_angle = true;
+	    italic_angle = clp->val.d;
 	    break;
 
 	  case GLYPHLIST_OPT:
@@ -2020,7 +2090,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otftotfm (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2002-2009 Eddie Kohler\n\
+	    printf("Copyright (C) 2002-2010 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
@@ -2056,7 +2126,7 @@ particular purpose.\n");
 
   done:
     // check for odd option combinations
-    if (warn_missing && !(output_flags & G_VMETRICS))
+    if (warn_missing > 0 && !(output_flags & G_VMETRICS))
 	errh->warning("%<--warn-missing%> has no effect with %<--no-virtual%>");
 
     // set up file names

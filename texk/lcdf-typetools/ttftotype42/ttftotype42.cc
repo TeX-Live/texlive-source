@@ -1,6 +1,6 @@
 /* ttftotype42.cc -- driver for translating TrueType fonts to Type 42 fonts
  *
- * Copyright (c) 2006-2009 Eddie Kohler
+ * Copyright (c) 2006-2010 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -79,7 +79,7 @@ usage()
     uerrh.message("\
 %<Ttftotype42%> translates a TrueType or TrueType-flavored OpenType font into\n\
 PostScript Type 42 format, which is suitable for inclusion in PostScript\n\
-files. The result, is usually written to the standard output.\n\
+files. The result is usually written to the standard output.\n\
 \n\
 Usage: %s [OPTIONS] [FONTFILE [OUTPUTFILE]]\n\
 \n\
@@ -213,12 +213,11 @@ do_file(const char *infn, const char *outfn, ErrorHandler *errh)
     if (!outfn || strcmp(outfn, "-") == 0) {
 	f = stdout;
 	outfn = "<stdout>";
-    } else if (!(f = fopen(outfn, "wb")))
-	errh->fatal("%s: %s", outfn, strerror(errno));
-
 #if defined(_MSDOS) || defined(_WIN32)
 	_setmode(_fileno(f), _O_BINARY);
 #endif
+    } else if (!(f = fopen(outfn, "wb")))
+	errh->fatal("%s: %s", outfn, strerror(errno));
 
     // fprintf(f, "%%!\n");
 
@@ -339,7 +338,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("ttftotype42 (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2006-2009 Eddie Kohler\n\
+	    printf("Copyright (C) 2006-2010 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

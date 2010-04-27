@@ -7,6 +7,7 @@
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
  * Copyright (c) 2001-2003 International Computer Science Institute
+ * Copyright (c) 1999-2010 Eddie Kohler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,16 +23,16 @@
 /* #include <lcdf/vector.hh> */
 
 template <class T>
-Vector<T>::Vector(const Vector<T> &o)
+Vector<T>::Vector(const Vector<T> &x)
     : _l(0), _n(0), _capacity(0)
 {
-    *this = o;
+    *this = x;
 }
 
 template <class T>
 Vector<T>::~Vector()
 {
-    for (int i = 0; i < _n; i++)
+    for (size_type i = 0; i < _n; i++)
 	_l[i].~T();
     delete[] (unsigned char *)_l;
 }
@@ -40,12 +41,20 @@ template <class T> Vector<T> &
 Vector<T>::operator=(const Vector<T> &o)
 {
     if (&o != this) {
-	for (int i = 0; i < _n; i++)
+	for (size_type i = 0; i < _n; i++)
 	    _l[i].~T();
+#ifdef VALGRIND_MAKE_MEM_NOACCESS
+	if (_l && _n)
+	    VALGRIND_MAKE_MEM_NOACCESS(_l, _n * sizeof(T));
+#endif
 	_n = 0;
 	if (reserve(o._n)) {
 	    _n = o._n;
-	    for (int i = 0; i < _n; i++)
+#ifdef VALGRIND_MAKE_MEM_UNDEFINED
+	    if (_l && _n)
+		VALGRIND_MAKE_MEM_UNDEFINED(_l, _n * sizeof(T));
+#endif
+	    for (size_type i = 0; i < _n; i++)
 		new(velt(i)) T(o._l[i]);
 	}
     }
@@ -53,78 +62,141 @@ Vector<T>::operator=(const Vector<T> &o)
 }
 
 template <class T> Vector<T> &
-Vector<T>::assign(int n, const T &e)
+Vector<T>::assign(size_type n, const T &x)
 {
-    resize(0, e);
-    resize(n, e);
-    return *this;
+    if (&x >= begin() && &x < end()) {
+	T x_copy(x);
+	return assign(n, x_copy);
+    } else {
+	resize(0, x);
+	resize(n, x);
+	return *this;
+    }
+}
+
+template <class T> typename Vector<T>::iterator
+Vector<T>::insert(iterator it, const T &x)
+{
+    assert(it >= begin() && it <= end());
+    if (&x >= begin() && &x < end()) {
+	T x_copy(x);
+	return insert(it, x_copy);
+    }
+    if (_n == _capacity) {
+	size_type pos = it - begin();
+	if (!reserve(RESERVE_GROW))
+	    return end();
+	it = begin() + pos;
+    }
+#ifdef VALGRIND_MAKE_MEM_UNDEFINED
+    VALGRIND_MAKE_MEM_UNDEFINED(velt(_n), sizeof(T));
+#endif
+    for (iterator j = end(); j > it; ) {
+	--j;
+	new((void*) (j + 1)) T(*j);
+	j->~T();
+#ifdef VALGRIND_MAKE_MEM_UNDEFINED
+	VALGRIND_MAKE_MEM_UNDEFINED(j, sizeof(T));
+#endif
+    }
+    new((void*) it) T(x);
+    _n++;
+    return it;
 }
 
 template <class T> typename Vector<T>::iterator
 Vector<T>::erase(iterator a, iterator b)
 {
-  if (b > a) {
-    assert(a >= begin() && b <= end());
-    iterator i = a, j = b;
-    for (; j < end(); i++, j++) {
-      i->~T();
-      new((void*) i) T(*j);
-    }
-    for (; i < end(); i++)
-      i->~T();
-    _n -= b - a;
-    return a;
-  } else
-    return b;
+    if (b > a) {
+	assert(a >= begin() && b <= end());
+	iterator i = a, j = b;
+	for (; j < end(); i++, j++) {
+	    i->~T();
+#ifdef VALGRIND_MAKE_MEM_UNDEFINED
+	    VALGRIND_MAKE_MEM_UNDEFINED(i, sizeof(T));
+#endif
+	    new((void*) i) T(*j);
+	}
+	for (; i < end(); i++)
+	    i->~T();
+	_n -= b - a;
+#ifdef VALGRIND_MAKE_MEM_NOACCESS
+	VALGRIND_MAKE_MEM_NOACCESS(_l + _n, (b - a) * sizeof(T));
+#endif
+	return a;
+    } else
+	return b;
 }
 
 template <class T> bool
-Vector<T>::reserve(int want)
+Vector<T>::reserve_and_push_back(size_type want, const T *push_x)
 {
-    if (want < 0)
-	want = _capacity > 0 ? _capacity * 2 : 4;
-    if (want <= _capacity)
-	return true;
-
-    T *new_l = (T *)new unsigned char[sizeof(T) * want];
-    if (!new_l)
-	return false;
-
-    for (int i = 0; i < _n; i++) {
-	new(velt(new_l, i)) T(_l[i]);
-	_l[i].~T();
+    if (push_x && push_x >= begin() && push_x < end()) {
+	T x_copy(*push_x);
+	return reserve_and_push_back(want, &x_copy);
     }
-    delete[] (unsigned char *)_l;
 
-    _l = new_l;
-    _capacity = want;
+    if (want < 0)
+	want = (_capacity > 0 ? _capacity * 2 : 4);
+
+    if (want > _capacity) {
+	T *new_l = (T *)new unsigned char[sizeof(T) * want];
+	if (!new_l)
+	    return false;
+#ifdef VALGRIND_MAKE_MEM_NOACCESS
+	VALGRIND_MAKE_MEM_NOACCESS(new_l + _n, (want - _n) * sizeof(T));
+#endif
+
+	for (size_type i = 0; i < _n; i++) {
+	    new(velt(new_l, i)) T(_l[i]);
+	    _l[i].~T();
+	}
+	delete[] (unsigned char *)_l;
+
+	_l = new_l;
+	_capacity = want;
+    }
+
+    if (push_x)
+	push_back(*push_x);
     return true;
 }
 
 template <class T> void
-Vector<T>::resize(int nn, const T &e)
+Vector<T>::resize(size_type n, const T &x)
 {
-    if (nn <= _capacity || reserve(nn)) {
-	for (int i = nn; i < _n; i++)
+    if (&x >= begin() && &x < end()) {
+	T x_copy(x);
+	resize(n, x_copy);
+    } else if (n <= _capacity || reserve(n)) {
+	for (size_type i = n; i < _n; i++)
 	    _l[i].~T();
-	for (int i = _n; i < nn; i++)
-	    new(velt(i)) T(e);
-	_n = nn;
+#ifdef VALGRIND_MAKE_MEM_NOACCESS
+	if (n < _n)
+	    VALGRIND_MAKE_MEM_NOACCESS(_l + n, (_n - n) * sizeof(T));
+	if (_n < n)
+	    VALGRIND_MAKE_MEM_UNDEFINED(_l + _n, (n - _n) * sizeof(T));
+#endif
+	for (size_type i = _n; i < n; i++)
+	    new(velt(i)) T(x);
+	_n = n;
     }
 }
 
 template <class T> void
-Vector<T>::swap(Vector<T> &o)
+Vector<T>::swap(Vector<T> &x)
 {
     T *l = _l;
-    int n = _n;
-    int cap = _capacity;
-    _l = o._l;
-    _n = o._n;
-    _capacity = o._capacity;
-    o._l = l;
-    o._n = n;
-    o._capacity = cap;
+    _l = x._l;
+    x._l = l;
+
+    size_type n = _n;
+    _n = x._n;
+    x._n = n;
+
+    size_type cap = _capacity;
+    _capacity = x._capacity;
+    x._capacity = cap;
 }
 
 #endif

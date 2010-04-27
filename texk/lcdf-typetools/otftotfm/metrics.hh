@@ -54,12 +54,12 @@ class Metrics { public:
     PermString code_name(Code) const;
     inline const char *code_str(Code) const;
 
-    inline Glyph glyph(Code) const;
-    inline uint32_t unicode(Code) const;
-    inline Code encoding(Glyph) const;
-    Code unicode_encoding(uint32_t) const;
-    Code force_encoding(Glyph, int lookup_source = -1);
-    void encode(Code, uint32_t uni, Glyph);
+    inline Glyph glyph(Code code) const;
+    inline uint32_t unicode(Code code) const;
+    inline Code encoding(Glyph g, Code after) const;
+    Code unicode_encoding(uint32_t uni) const;
+    Code force_encoding(Glyph g, int lookup_source = -1);
+    void encode(Code code, uint32_t uni, Glyph g);
     void encode_virtual(Code, PermString, uint32_t uni, const Vector<Setting> &, bool base_char);
 
     void add_altselector_code(Code, int altselector_type);
@@ -174,7 +174,8 @@ class Metrics { public:
     Metrics &operator=(const Metrics &); // does not exist
 
     inline void assign_emap(Glyph, Code);
-    Code hard_encoding(Glyph) const;
+    Code hard_encoding(Glyph, Code) const;
+    bool next_encoding(Vector<Code> &codes, const Vector<Glyph> &glyphs) const;
 
     Ligature *ligature_obj(Code, Code);
     Kern *kern_obj(Code, Code);
@@ -186,7 +187,20 @@ class Metrics { public:
     void mark_liveness(int size, const Vector<Ligature3> * = 0);
     void reencode(const Vector<Code> &);
 
+    class ChangedContext;
     void apply_ligature(const Vector<Code> &, const Substitution *, int lookup);
+    void apply_single(Code cin, const Substitution *s, int lookup,
+		ChangedContext &ctx, const GlyphFilter &glyph_filter,
+		const Vector<PermString> &glyph_names);
+    void apply_simple_context_ligature(const Vector<Code> &codes,
+		const Substitution *s, int lookup, ChangedContext &ctx);
+    void apply_alternates_single(Code cin, const Substitution *s, int lookup,
+		const GlyphFilter &glyph_filter,
+		const Vector<PermString> &glyph_names);
+    void apply_alternates_ligature(const Vector<Code> &codes,
+		const Substitution *s, int lookup,
+		const GlyphFilter &glyph_filter,
+		const Vector<PermString> &glyph_names);
 
     void unparse(const Char *) const;
 
@@ -242,12 +256,13 @@ Metrics::base_code(Code code) const
 }
 
 inline Metrics::Code
-Metrics::encoding(Glyph g) const
+Metrics::encoding(Glyph g, Code after) const
 {
-    if (g >= 0 && g < _emap.size() && _emap.at_u(g) >= -1)
-	return _emap.at_u(g);
+    Code c;
+    if (g >= 0 && g < _emap.size() && (c = _emap.at_u(g)) >= -1)
+	return c < 0 || c >= after ? c : -1;
     else
-	return hard_encoding(g);
+	return hard_encoding(g, after);
 }
 
 inline void
