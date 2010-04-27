@@ -1,3 +1,9 @@
+2010-04-27  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+
+	* texmf.cnf: - s/pdf(lua(la)?tex)/dvi\1/
+	- add luatex before generic (for generic package specific to luatex) and
+	similarly for xetex.
+
 2010-04-22  Karl Berry  <karl@tug.org>
 
 	* doc/kpathsea.texi,

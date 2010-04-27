@@ -215,14 +215,14 @@ TEXINPUTS.pdfxmex       = .;$TEXMF/tex/{mex,plain,generic,}//
 TEXINPUTS.pdfxtex       = .;$TEXMF/tex/{plain,generic,}//
 
 % LuaTeX.
-TEXINPUTS.lualatex      = .;$TEXMF/tex/{lualatex,latex,generic,}//
+TEXINPUTS.lualatex      = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 TEXINPUTS.luatex        = .;$TEXMF/tex/{luatex,plain,generic,}//
-TEXINPUTS.pdflualatex   = .;$TEXMF/tex/{lualatex,latex,generic,}//
-TEXINPUTS.pdfluatex     = .;$TEXMF/tex/{luatex,plain,generic,}//
+TEXINPUTS.dvilualatex   = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
+TEXINPUTS.dviluatex     = .;$TEXMF/tex/{luatex,plain,generic,}//
 
 % XeTeX.
-TEXINPUTS.xelatex       = .;$TEXMF/tex/{xelatex,latex,generic,}//
-TEXINPUTS.xeplain       = .;$TEXMF/tex/{xeplain,eplain,plain,generic,}//
+TEXINPUTS.xelatex       = .;$TEXMF/tex/{xelatex,latex,xetex,generic,}//
+TEXINPUTS.xeplain       = .;$TEXMF/tex/{xeplain,eplain,plain,xetex,generic,}//
 TEXINPUTS.xetex         = .;$TEXMF/tex/{xetex,plain,generic,}//
 
 % Omega / Aleph.
