@@ -310,7 +310,7 @@ main()
       main_args_while="$@"
 
       test "x$fmt" = "x$engine" && continue
-      if test -f "$d/$engine"; then
+      if test -f "$d/$engine$exeext"; then
         case $unlink in
         true)
           rm_link "$d/$fmt";;

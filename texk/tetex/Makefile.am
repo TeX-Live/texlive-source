@@ -155,7 +155,8 @@ EXTRA_DIST += \
 ## fmtutil.cnf file to use for the sake of distro builds.
 ## We pass along the executable extension for the sake of cygwin, so we
 ## don't create dangling symlinks there (even though they work).
-run_texlinks = $(bindir)/texlinks -v -f $(web2cdir)/fmtutil.cnf -e "$(EXEEXT)"
+run_texlinks = $(bindir)/texlinks -v -f $(web2cdir)/fmtutil.cnf \
+	       -e "$(EXEEXT)" $(bindir)
 run-texlinks:
 	PATH="$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
