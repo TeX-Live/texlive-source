@@ -2,7 +2,7 @@
 This file is in the public domain.
 
 ==============================================================
-Luatex beta-0.60.1 was released ...
+Luatex beta-0.60.1 was released 20100428
 ==============================================================
 
 New features:
@@ -16,8 +16,10 @@ New features:
 * While cross-compiling, build.sh now adds an extra linker switch 
   to allow win32 exes to use 3G instead of 2G of virtual memory.
 
-
 Bugfixes:
+
+* os.exec() & os.spawn() handled the environment differently from 
+  os.execute() on Win32 (patch from Tomek)
 
 * Builds with --enable-ipc were broken.
 
@@ -1519,7 +1521,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id$ and  $URL: http://foundry.supelec.fr/svn/luatex/tags/beta-0.60.1/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
