@@ -1,3 +1,9 @@
+2010-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etex.ch: Checked and adjusted tex.web line numbers.
+	Fixed the error message for improper use of \protected,
+	reported by Heiko Oberdiek <heiko.oberdiek@googlemail.com>.
+
 2010-04-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am (etex_ch_srcs): Use tex-binpool.ch as for TeX.

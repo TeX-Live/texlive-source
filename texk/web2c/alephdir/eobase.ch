@@ -2728,12 +2728,23 @@ or `\.{\\outer}', and it might or might not be expanded. The prefixes
 %---------------------------------------
 @x [49] m.1213 l.22686 - e-TeX protected
 if (cur_cmd<>def)and(a mod 4<>0) then
+  begin print_err("You can't use `"); print_esc("long"); print("' or `");
+  print_esc("outer"); print("' with `");
 @y
 if a>=8 then
   begin j:=protected_token; a:=a-8;
   end
 else j:=0;
 if (cur_cmd<>def)and((a mod 4<>0)or(j<>0)) then
+  begin print_err("You can't use `"); print_esc("long"); print("', `");
+  print_esc("outer"); print("', or `");
+  print_esc("protected"); print("' with `");
+@z
+%---------------------------------------
+@x [49] m.1213 l.22691 - e-TeX protected
+  help1("I'll pretend you didn't say \long or \outer here.");
+@y
+  help1("I'll pretend you didn't say \long, \outer, or \protected here.");
 @z
 %---------------------------------------
 @x [49] m.1218 l.22749 - e-TeX protected

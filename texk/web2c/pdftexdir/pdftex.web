@@ -31113,11 +31113,12 @@ if a>=8 then
   end
 else j:=0;
 if (cur_cmd<>def)and((a mod 4<>0)or(j<>0)) then
-  begin print_err("You can't use `"); print_esc("long"); print("' or `");
-  print_esc("outer"); print("' with `");
+  begin print_err("You can't use `"); print_esc("long"); print("', `");
+  print_esc("outer"); print("', or `");
+  print_esc("protected"); print("' with `");
 @.You can't use \\long...@>
   print_cmd_chr(cur_cmd,cur_chr); print_char("'");
-  help1("I'll pretend you didn't say \long or \outer here.");
+  help1("I'll pretend you didn't say \long, \outer, or \protected here.");
   error;
   end
 
