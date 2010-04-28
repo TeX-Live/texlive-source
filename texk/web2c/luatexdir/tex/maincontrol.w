@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: maincontrol.w 3587 2010-04-03 14:32:25Z taco $"
+    "$Id: maincontrol.w 3659 2010-04-28 15:10:32Z taco $"
     "$URL: http://foundry.supelec.fr/svn/luatex/branches/0.60.x/source/texk/web2c/luatexdir/tex/maincontrol.w $";
 
 #include "ptexlib.h"
@@ -2119,10 +2119,10 @@ void prefixed_command(void)
         j = 0;
     }
     if ((cur_cmd != def_cmd) && ((a % 4 != 0) || (j != 0))) {
-        print_err("You can't use `\\long' or `\\outer' with `");
+        print_err("You can't use `\\long' or `\\outer' or `\\protected' with `");
         print_cmd_chr((quarterword) cur_cmd, cur_chr);
         print_char('\'');
-        help1("I'll pretend you didn't say \\long or \\outer here.");
+        help1("I'll pretend you didn't say \\long or \\outer or \\protected here.");
         error();
     }
 
