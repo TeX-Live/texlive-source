@@ -1,3 +1,7 @@
+2010-04-28  Taco Hoekwater  <taco@luatex>
+
+	* import of luatex 0.60.1, released version
+
 2010-04-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/epdf.h, lua51/luaconf.h: #include <c-auto.h> instead of
