@@ -21,6 +21,7 @@ libpdftex_a_SOURCES = \
 	pdftexdir/image.h \
 	pdftexdir/mapfile.c \
 	pdftexdir/pdftex.h \
+	pdftexdir/pdftex-common.h \
 	pdftexdir/pdftoepdf.cc \
 	pdftexdir/pkin.c \
 	pdftexdir/ptexlib.h \
@@ -47,11 +48,6 @@ libpdftex_a_SOURCES += \
 	pdftexdir/regex/regex.c \
 	pdftexdir/regex/regex.h
 endif MINGW32
-
-## FIXME: temporary additional headers:
-libpdftex_a_SOURCES += \
-	pdftexdir/inc-epdf.h \
-	pdftexdir/inc-extra.h
 
 # We must create pdftexd.h (and xpdf...) before building the libpdftex_a_OBJECTS.
 $(libpdftex_a_OBJECTS): pdftexd.h $(XPDF_DEPEND) $(ZLIB_DEPEND) $(LIBPNG_DEPEND)

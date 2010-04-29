@@ -19,7 +19,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "ptexlib.h"
-#include "inc-epdf.h"
 #include <string.h>
 
 
@@ -49,13 +48,13 @@ fd_entry *epdf_create_fontdescriptor(fm_entry * fm, int stemV)
     return fd;
 }
 
-integer get_fd_objnum(fd_entry * fd)
+int get_fd_objnum(fd_entry * fd)
 {
     assert(fd->fd_objnum != 0);
     return fd->fd_objnum;
 }
 
-integer get_fn_objnum(fd_entry * fd)
+int get_fn_objnum(fd_entry * fd)
 {
     if (fd->fn_objnum == 0)
         fd->fn_objnum = pdfnewobjnum();

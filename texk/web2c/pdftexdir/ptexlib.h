@@ -168,10 +168,12 @@ extern const char *ptexbanner;
 
 /* pdftexlib function prototypes */
 
+/* prototypes used in C code as well as pdftoepdf.cc */
+#include "pdftex-common.h"
+
 /* epdf.c */
 extern integer get_fontfile_num(int);
 extern integer get_fontname_num(int);
-extern void epdf_free(void);
 
 /* mapfile.c */
 extern fm_entry *lookup_fontmap(char *);
@@ -220,18 +222,8 @@ extern void fb_seek(integer);
 extern void libpdffinish(void);
 extern char *makecfilename(strnumber s);
 extern void make_subset_tag(fd_entry *);
-__attribute__ ((format(printf, 1, 2)))
-extern void pdf_printf(const char *, ...);
-extern void pdf_puts(const char *);
-__attribute__ ((noreturn, format(printf, 1, 2)))
-extern void pdftex_fail(const char *, ...);
-__attribute__ ((format(printf, 1, 2)))
-extern void pdftex_warn(const char *, ...);
 extern void setjobid(int, int, int, int);
-__attribute__ ((format(printf, 1, 2)))
-extern void tex_printf(const char *, ...);
 extern void writestreamlength(integer, longinteger);
-extern char *convertStringToPDFString(const char *in, int len);
 extern void printID(strnumber);
 extern void printcreationdate(void);
 extern void printmoddate(void);

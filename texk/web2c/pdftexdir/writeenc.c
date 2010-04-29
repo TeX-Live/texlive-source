@@ -19,7 +19,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 #include "ptexlib.h"
-#include "inc-extra.h"
 
 /**********************************************************************/
 /* All encoding entries go into AVL tree for fast search by name. */
@@ -85,7 +84,7 @@ fe_entry *get_fe_entry(char *s)
 
 /**********************************************************************/
 
-void epdf_write_enc(char **glyph_names, integer fe_objnum)
+void epdf_write_enc(char **glyph_names, int fe_objnum)
 {
     int i, i_old;
     assert(glyph_names != NULL);
@@ -109,7 +108,7 @@ void epdf_write_enc(char **glyph_names, integer fe_objnum)
     pdfenddict();
 }
 
-static void write_enc(char **glyph_names, struct avl_table *tx_tree, integer fe_objnum)
+static void write_enc(char **glyph_names, struct avl_table *tx_tree, int fe_objnum)
 {
     int i_old, *p;
     struct avl_traverser t;

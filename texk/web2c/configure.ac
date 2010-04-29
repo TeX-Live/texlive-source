@@ -228,6 +228,9 @@ if test `(uname) 2>/dev/null` = aux; then
 fi
 
 AC_CHECK_SIZEOF([int])
+if test $ac_cv_sizeof_int -lt 4; then
+  AC_MSG_ERROR([Sorry, need `int' with at least 4 bytes.])
+fi
 AC_CHECK_SIZEOF([long])
 AC_SEARCH_LIBS([pow], [m])
 AC_CHECK_FUNCS([access atoi fmax ftime gettimeofday mkdtemp setlocale snprintf stat64 strerror strlcat strlcpy])

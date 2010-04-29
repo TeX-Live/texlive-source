@@ -18961,6 +18961,9 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+if test $ac_cv_sizeof_int -lt 4; then
+  as_fn_error "Sorry, need \`int' with at least 4 bytes." "$LINENO" 5
+fi
 # The cast to long int works around a bug in the HP C Compiler
 # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
 # declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.

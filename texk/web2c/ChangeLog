@@ -1,3 +1,8 @@
+2010-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Require that 'int' has at least 4 bytes,
+	allowing to reduce the use of 'integer' in C and C++ code.
+
 2010-04-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.h: remove TEXDLL.

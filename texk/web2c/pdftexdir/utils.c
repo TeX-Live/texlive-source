@@ -41,7 +41,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "md5.h"
 #include "zlib.h"
 #include "ptexlib.h"
-#include "inc-extra.h"
 #include "png.h"
 #ifdef POPPLER_VERSION
 #include "poppler-config.h"

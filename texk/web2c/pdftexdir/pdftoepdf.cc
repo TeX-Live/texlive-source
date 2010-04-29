@@ -103,14 +103,14 @@ struct InObj {
     Ref ref;                    // ref in original PDF
     InObjType type;             // object type
     InObj *next;                // next entry in list of indirect objects
-    integer num;                // new object number in output PDF
+    int num;                    // new object number in output PDF
     fd_entry *fd;               // pointer to /FontDescriptor object structure
-    integer enc_objnum;         // Encoding for objFont
+    int enc_objnum;             // Encoding for objFont
     int written;                // has it been written to output PDF?
 };
 
 struct UsedEncoding {
-    integer enc_objnum;
+    int enc_objnum;
     GfxFont *font;
     UsedEncoding *next;
 };
@@ -229,7 +229,7 @@ static int addEncoding(GfxFont * gfont)
 #define addOther(ref) \
         addInObj(objOther, ref, 0, 0)
 
-static int addInObj(InObjType type, Ref ref, fd_entry * fd, integer e)
+static int addInObj(InObjType type, Ref ref, fd_entry * fd, int e)
 {
     InObj *p, *q, *n = new InObj;
     if (ref.num == 0)
@@ -329,9 +329,9 @@ static void copyFontDict(Object * obj, InObj * r)
         copyDictEntry(obj, i);
     }
     // write new FontDescriptor, BaseFont, and Encoding
-    pdf_printf("/FontDescriptor %d 0 R\n", (int) get_fd_objnum(r->fd));
-    pdf_printf("/BaseFont %d 0 R\n", (int) get_fn_objnum(r->fd));
-    pdf_printf("/Encoding %d 0 R\n", (int) r->enc_objnum);
+    pdf_printf("/FontDescriptor %d 0 R\n", get_fd_objnum(r->fd));
+    pdf_printf("/BaseFont %d 0 R\n", get_fn_objnum(r->fd));
+    pdf_printf("/Encoding %d 0 R\n", r->enc_objnum);
     pdf_puts(">>");
 }
 
@@ -380,7 +380,7 @@ static void copyFont(char *tag, Object * fontRef)
     for (p = inObjList; p; p = p->next) {
         if (p->ref.num == ref.num && p->ref.gen == ref.gen) {
             copyName(tag);
-            pdf_printf(" %d 0 R ", (int) p->num);
+            pdf_printf(" %d 0 R ", p->num);
             return;
         }
     }
@@ -664,7 +664,7 @@ static void writeEncodings()
 }
 
 // get the pagebox according to the pagebox_spec
-static PDFRectangle *get_pagebox(Page * page, integer pagebox_spec)
+static PDFRectangle *get_pagebox(Page * page, int pagebox_spec)
 {
     if (pagebox_spec == pdfboxspecmedia)
         return page->getMediaBox();
@@ -689,10 +689,10 @@ static PDFRectangle *get_pagebox(Page * page, integer pagebox_spec)
 // It makes no sense to give page_name _and_ page_num.
 // Returns the page number.
 
-integer
-read_pdf_info(char *image_name, char *page_name, integer page_num,
-              integer pagebox_spec, integer minor_pdf_version_wanted,
-              integer pdf_inclusion_errorlevel)
+int
+read_pdf_info(char *image_name, char *page_name, int page_num,
+              int pagebox_spec, int minor_pdf_version_wanted,
+              int pdf_inclusion_errorlevel)
 {
     PdfDocument *pdf_doc;
     Page *page;

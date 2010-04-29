@@ -1,3 +1,18 @@
+2010-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* epdf.c, pdftoepdf.cc, writeenc.c: Change various function
+	params, return values, and struct members from integer to int.
+
+	Avoid duplicate function prototypes in different headers.
+	* epdf.c: Drop #include "inc-epdf.h".
+	* inc-extra.h (deleted): Move prototypes ...
+	* ptexlib.h: #include "pdftex-common.h", move some prototypes ...
+	* epdf.h: #include "pdftex-common.h" instead of "inc-epdf.h" and
+	"inc-extra.h", 	move some prototypes ...
+	* image.h: Move some prototypes ...
+	* pdftex-common.h (new): ... to here.
+	* am/libpdftex.am: Adjusted.
+
 2010-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.web: Adapt to ../etexdir/etex.ch:

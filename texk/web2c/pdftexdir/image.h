@@ -105,10 +105,6 @@ extern integer image_max;
 #define jbig2_ptr(N)    (img_ptr(N)->image_struct.jbig2)
 #define tif_ptr(N)      (img_ptr(N)->image_struct.tif)
 
-extern integer read_pdf_info(char *, char *, integer, integer, integer,
-                             integer);
-extern void write_epdf(void);
-extern void epdf_delete(void);
 extern void read_png_info(integer);
 extern void write_png(integer);
 extern void read_jpg_info(integer);

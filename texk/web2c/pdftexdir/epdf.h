@@ -78,41 +78,15 @@ extern "C" {
     extern integer get_fontfile(struct fm_entry *);
     extern integer get_fontname(struct fm_entry *);
     extern integer pdfnewobjnum(void);
-    extern integer read_pdf_info(char *, char *, integer, integer, integer,
-                                 integer);
-    extern void epdf_delete(void);
-    extern void epdf_free(void);
-    __attribute__ ((format(printf, 1, 2)))
-    extern void pdf_printf(const char *fmt, ...);
-    extern void pdf_puts(const char *);
-    extern void pdf_newline(void);
     extern void pdfbeginstream(void);
     extern void pdfendobj(void);
     extern void pdfendstream(void);
     extern void pdfflush(void);
-    __attribute__ ((noreturn, format(printf, 1, 2)))
-    extern void pdftex_fail(const char *fmt, ...);
-    __attribute__ ((format(printf, 1, 2)))
-    extern void pdftex_warn(const char *fmt, ...);
-    __attribute__ ((format(printf, 1, 2)))
-    extern void tex_printf(const char *, ...);
-    extern void write_epdf(void);
     extern void zpdfbegindict(integer, bool);
     extern void zpdfbeginobj(integer, bool);
     extern void zpdfcreateobj(integer, integer);
     extern void zpdfnewdict(integer, integer, bool);
     extern void zpdfosgetosbuf(integer);
 
-/* utils.c */
-    extern char *convertStringToPDFString(char *in, int len);
-
-/* config.c */
-    extern integer cfgpar(integer);
-
-/* avlstuff.c */
-    extern void avl_put_obj(integer, integer);
-    extern integer avl_find_obj(integer, integer, integer);
-
-#include "inc-epdf.h"
-#include "inc-extra.h"
+#include "pdftex-common.h"
 }
