@@ -282,8 +282,9 @@ man1_links = $(bin_links) \
 EXTRA_DIST = README.a2ping README.texdoctk doc/Makefile \
 	doc/TETEXDOC.bib doc/TETEXDOC.tex fontinst.bat pdfetex-pl.pool \
 	updmap.pl
-run_texlinks = $(bindir)/texlinks -v -f $(web2cdir)/fmtutil.cnf \
-	       -e "$(EXEEXT)" $(bindir)
+run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
+	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
+	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 
 all: all-am
 
@@ -875,7 +876,7 @@ uninstall-hook:
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
 	done
 run-texlinks:
-	PATH="$(bindir):$(PATH)"; export PATH; $(run_texlinks)
+	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

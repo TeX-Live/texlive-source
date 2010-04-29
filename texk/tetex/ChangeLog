@@ -1,3 +1,12 @@
+2010-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (run_texlinks, run_texlinks): Respect DESTDIR.
+
+2010-04-28  Manuel Pégourié-Gonnard  <mpg@elzevir.fr>
+
+	* texlinks: Append exeext to engine names.
+	* Makefile.am (run_texlinks): Invoke texlinks with explicit dir.
+
 2010-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texlinks (version): Add missing quote in svn id.

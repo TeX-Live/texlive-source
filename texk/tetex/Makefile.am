@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/tetex/
 ##
-## Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ACLOCAL_AMFLAGS = -I ../../m4
@@ -155,8 +155,9 @@ EXTRA_DIST += \
 ## fmtutil.cnf file to use for the sake of distro builds.
 ## We pass along the executable extension for the sake of cygwin, so we
 ## don't create dangling symlinks there (even though they work).
-run_texlinks = $(bindir)/texlinks -v -f $(web2cdir)/fmtutil.cnf \
-	       -e "$(EXEEXT)" $(bindir)
+run_texlinks = $(DESTDIR)$(bindir)/texlinks -v \
+	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
+	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 run-texlinks:
-	PATH="$(bindir):$(PATH)"; export PATH; $(run_texlinks)
+	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
 
