@@ -52,7 +52,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include "GlobalParams.h"
 #include "Error.h"
 
-#include "epdf.h"
+#include "pdftoepdf.h"
 
 // This file is mostly C and not very much C++; it's just used to interface
 // the functions of xpdf, which happens to be written in C++.
@@ -615,15 +615,15 @@ static void writeRefs()
             xref->fetch(r->ref.num, r->ref.gen, &obj1);
             if (r->type == objFont) {
                 assert(!obj1.isStream());
-                zpdfbeginobj(r->num, 2);        // \pdfobjcompresslevel = 2 is for this
+                pdfbeginobj(r->num, 2);         // \pdfobjcompresslevel = 2 is for this
                 copyFontDict(&obj1, r);
                 pdf_puts("\n");
                 pdfendobj();
             } else if (r->type != objFontDesc) {        // /FontDescriptor is written via write_fontdescriptor()
                 if (obj1.isStream())
-                    zpdfbeginobj(r->num, 0);
+                    pdfbeginobj(r->num, 0);
                 else
-                    zpdfbeginobj(r->num, 2);    // \pdfobjcompresslevel = 2 is for this
+                    pdfbeginobj(r->num, 2);     // \pdfobjcompresslevel = 2 is for this
                 copyObject(&obj1);
                 pdf_puts("\n");
                 pdfendobj();
@@ -648,7 +648,7 @@ static void writeEncodings()
             if ((s = ((Gfx8BitFont *) r->font)->getCharName(i)) != 0)
                 glyphNames[i] = s;
             else
-                glyphNames[i] = notdef;
+                glyphNames[i] = (char *) notdef;
         }
         epdf_write_enc(glyphNames, r->enc_objnum);
     }

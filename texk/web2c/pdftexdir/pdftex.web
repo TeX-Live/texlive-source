@@ -16373,7 +16373,7 @@ so we can use this field for both}
 @!pdf_stream_length: longinteger; {length of most recently generated stream}
 @!pdf_stream_length_offset: longinteger; {file offset of the last stream length}
 @!pdf_seek_write_length: boolean; {flag whether to seek back and write \.{/Length}}
-@!pdf_last_byte: integer; {byte most recently written to PDF file; for \.{endstream} in new line}
+@!pdf_last_byte: eight_bits; {byte most recently written to PDF file; for \.{endstream} in new line}
 @!pdf_append_list_arg: integer; {for use with |pdf_append_list|}
 @!ff: integer; {for use with |set_ff|}
 @!pdf_box_spec_media: integer;

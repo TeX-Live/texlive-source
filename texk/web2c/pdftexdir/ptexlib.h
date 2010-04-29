@@ -157,7 +157,6 @@ typedef struct {
 extern boolean true_dimen;
 extern char **t1_glyph_names, *t1_builtin_glyph_names[];
 extern char *cur_file_name;
-extern const char notdef[];
 extern integer t1_length1, t1_length2, t1_length3;
 extern integer ttf_length;
 extern strnumber last_tex_string;
@@ -171,12 +170,7 @@ extern const char *ptexbanner;
 /* prototypes used in C code as well as pdftoepdf.cc */
 #include "pdftex-common.h"
 
-/* epdf.c */
-extern integer get_fontfile_num(int);
-extern integer get_fontname_num(int);
-
 /* mapfile.c */
-extern fm_entry *lookup_fontmap(char *);
 extern boolean hasfmentry(internalfontnumber);
 extern void fm_free(void);
 extern void fm_read_info(void);

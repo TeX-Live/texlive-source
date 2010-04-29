@@ -20,11 +20,53 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
 /* Whereas the C code uses:     #include "ptexlib.h"
-   pdftoepdf.cc uses:           #include "epdf.h"
+   pdftoepdf.cc uses:           #include "pdftoepdf.h"
 
    Unfortunately these to headers are incompatible; thus they
   include this file with prototypes required in both cases.
 */
+
+#ifndef PDFTEX_COMMON_H
+#  define PDFTEX_COMMON_H
+
+/* FIXME: from ../../kpathsea/lib.h */
+extern KPSEDLL char *xstrdup (const char *);
+
+/* Generated from pdftex.web:
+   these declarations are included in ptexlib.h via pdftexd.h,
+   we repeat them here for pdftoepdf.h and as consistency check.
+*/
+
+/* pdftexd.h */
+#ifdef __cplusplus
+typedef unsigned char eightbits;
+#endif
+
+extern integer pdfboxspecmedia;
+extern integer pdfboxspeccrop;
+extern integer pdfboxspecbleed;
+extern integer pdfboxspectrim;
+extern integer pdfboxspecart;
+
+extern longinteger pdfstreamlength;
+extern longinteger pdfptr;
+extern integer poolptr;
+extern eightbits *pdfbuf;
+extern integer pdfbufsize;
+extern int pdfosmode; /* Web's boolean */
+extern eightbits pdflastbyte;
+extern integer fixedinclusioncopyfont;
+
+/* pdftexcoerce.h */
+extern integer pdfnewobjnum(void);
+extern void pdfbeginstream(void);
+extern void pdfendobj(void);
+extern void pdfendstream(void);
+extern void pdfflush(void);
+extern void zpdfosgetosbuf(integer);
+#define pdfosgetosbuf(s) zpdfosgetosbuf((integer) (s))
+extern void zpdfbeginobj(integer, integer);
+#define pdfbeginobj(i, pdfoslevel) zpdfbeginobj((integer) (i), (integer) (pdfoslevel))
 
 /* epdf.c */
 #ifdef __cplusplus
@@ -38,6 +80,12 @@ extern void epdf_mark_glyphs(fd_entry *, char *);
 extern int get_fd_objnum(fd_entry *);
 extern int get_fn_objnum(fd_entry *);
 extern int is_subsetable(fm_entry *);
+
+/* macnames.c */
+extern const char notdef[];
+
+/* mapfile.c */
+extern fm_entry *lookup_fontmap(char *);
 #undef fd_entry
 #undef fm_entry
 
@@ -63,3 +111,16 @@ extern void write_epdf(void);
 
 /* writeenc.c */
 extern void epdf_write_enc(char **, int);
+
+/* writeimg.c */
+    extern float epdf_width;
+    extern float epdf_height;
+    extern float epdf_orig_x;
+    extern float epdf_orig_y;
+    extern float epdf_rotate;
+    extern integer epdf_selected_page;
+    extern integer epdf_num_pages;
+    extern integer epdf_page_box;
+    extern void *epdf_doc;
+
+#endif /* PDFTEX_COMMON_H */

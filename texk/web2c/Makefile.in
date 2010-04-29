@@ -403,9 +403,9 @@ libpdftex_a_AR = $(AR) $(ARFLAGS)
 libpdftex_a_LIBADD =
 am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/avlstuff.c pdftexdir/avlstuff.h pdftexdir/epdf.c \
-	pdftexdir/epdf.h pdftexdir/image.h pdftexdir/mapfile.c \
-	pdftexdir/pdftex.h pdftexdir/pdftex-common.h \
-	pdftexdir/pdftoepdf.cc pdftexdir/pkin.c pdftexdir/ptexlib.h \
+	pdftexdir/image.h pdftexdir/mapfile.c pdftexdir/pdftex.h \
+	pdftexdir/pdftex-common.h pdftexdir/pdftoepdf.cc \
+	pdftexdir/pdftoepdf.h pdftexdir/pkin.c pdftexdir/ptexlib.h \
 	pdftexdir/ptexmac.h pdftexdir/subfont.c pdftexdir/tounicode.c \
 	pdftexdir/utils.c pdftexdir/vfpacket.c pdftexdir/writeenc.c \
 	pdftexdir/writefont.c pdftexdir/writeimg.c \
@@ -1701,9 +1701,9 @@ libpdftex_a_CFLAGS = $(WARNING_CFLAGS)
 libpdftex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/avlstuff.c pdftexdir/avlstuff.h pdftexdir/epdf.c \
-	pdftexdir/epdf.h pdftexdir/image.h pdftexdir/mapfile.c \
-	pdftexdir/pdftex.h pdftexdir/pdftex-common.h \
-	pdftexdir/pdftoepdf.cc pdftexdir/pkin.c pdftexdir/ptexlib.h \
+	pdftexdir/image.h pdftexdir/mapfile.c pdftexdir/pdftex.h \
+	pdftexdir/pdftex-common.h pdftexdir/pdftoepdf.cc \
+	pdftexdir/pdftoepdf.h pdftexdir/pkin.c pdftexdir/ptexlib.h \
 	pdftexdir/ptexmac.h pdftexdir/subfont.c pdftexdir/tounicode.c \
 	pdftexdir/utils.c pdftexdir/vfpacket.c pdftexdir/writeenc.c \
 	pdftexdir/writefont.c pdftexdir/writeimg.c \

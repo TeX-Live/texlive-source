@@ -50,7 +50,7 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #  define pdfroom(n) do {                                    \
     if ((unsigned)(n + pdfptr) > (unsigned)pdfbufsize) {     \
         if (pdfosmode)                                       \
-            zpdfosgetosbuf(n);                               \
+            pdfosgetosbuf(n);                                \
         else {                                               \
             if ((unsigned)(n) > (unsigned)pdfbufsize)        \
                 pdftex_fail("PDF output buffer overflowed"); \
