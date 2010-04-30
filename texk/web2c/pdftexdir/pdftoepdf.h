@@ -24,15 +24,14 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 extern "C" {
 
+#include "openbsd-compat.h"
+
 #include <kpathsea/c-auto.h>
 #include <kpathsea/c-proto.h>
-
-/* the following code is extremly ugly but needed for including web2c/config.h */
-
-    typedef const char *const_string;   /* including kpathsea/types.h doesn't work on some systems */
+#include <kpathsea/lib.h>
 
 #define KPATHSEA_CONFIG_H       /* avoid including other kpathsea header files */
-    /* from web2c/config.h */
+                                /* from web2c/config.h */
 
 #ifdef CONFIG_H                 /* CONFIG_H has been defined by some xpdf */
 #  undef CONFIG_H               /* header file */
@@ -42,8 +41,6 @@ extern "C" {
 #include <config.h>       /* define type integer */
 
 #include <pdftexdir/ptexmac.h>
-
-#include "openbsd-compat.h"
 
 #include "pdftex-common.h"
 }

@@ -18,6 +18,12 @@ with pdfTeX; if not, write to the Free Software Foundation, Inc., 51
 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+/* For MINGW32 <rpcndr.h> defines 'boolean' as 'unsigned char',
+   conflicting with the definition for Pascal's boolean as 'int'
+   in <kpathsea/types.h>.
+*/
+#define boolean MINGW32_boolean
+
 #include <stdlib.h>
 #include <math.h>
 #include <stddef.h>
@@ -39,6 +45,9 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #include <gfile.h>
 #include <assert.h>
 #endif
+
+#undef boolean
+
 #include "Object.h"
 #include "Stream.h"
 #include "Array.h"

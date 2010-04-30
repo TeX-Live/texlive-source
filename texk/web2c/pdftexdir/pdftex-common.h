@@ -29,9 +29,6 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #ifndef PDFTEX_COMMON_H
 #  define PDFTEX_COMMON_H
 
-/* FIXME: from ../../kpathsea/lib.h */
-extern KPSEDLL char *xstrdup (const char *);
-
 /* Generated from pdftex.web:
    these declarations are included in ptexlib.h via pdftexd.h,
    we repeat them here for pdftoepdf.h and as consistency check.
@@ -53,7 +50,7 @@ extern longinteger pdfptr;
 extern integer poolptr;
 extern eightbits *pdfbuf;
 extern integer pdfbufsize;
-extern int pdfosmode; /* Web's boolean */
+extern boolean pdfosmode;
 extern eightbits pdflastbyte;
 extern integer fixedinclusioncopyfont;
 
