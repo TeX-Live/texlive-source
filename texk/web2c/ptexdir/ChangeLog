@@ -1,3 +1,12 @@
+2010-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdvitype.test: Use installed cm fonts.
+	* sample.test, yokotate.test (new): Shell scripts to test
+	pDVItype and pPLtoTF/pTFtoPL with yoko and tate fonts.
+	* tests/goth10.tfm tests/sample.dvi (new): Data for sample.test.
+	* tests/{min10,tmin10}.{pl,tfm} (new): Data for yokotate.test.
+	* am/ptex.am: Add the new tests.
+
 2010-04-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pbibtex.ch: Remove unused code 'Check if |max_print_line|...'.

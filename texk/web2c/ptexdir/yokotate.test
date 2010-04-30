@@ -1,0 +1,28 @@
+#! /bin/sh
+
+# Copyright (C) 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+# Test inputs
+testdir=$srcdir/ptexdir/tests
+
+# Testing pPLtoTF/pTFtoPL for min10 (yoko=horiz) and tmin10 (tate=vert).
+for font in min10 tmin10; do
+
+  ./ppltotf -verbose $testdir/$font.pl tests/x$font.tfm && \
+    cmp $testdir/$font.tfm tests/x$font.tfm || exit 1
+
+  TEXMFCNF=$srcdir/../kpathsea \
+    ./ptftopl -verbose $testdir/$font.tfm tests/x$font.pl || exit 1
+
+  ./ppltotf tests/x$font tests/xx$font && \
+    cmp $testdir/$font.tfm tests/xx$font.tfm || exit 1
+
+  TEXMFCNF=$srcdir/../kpathsea TFMFONTS=tests \
+    ./ptftopl xx$font tests/xx$font && \
+    diff tests/x$font.pl tests/xx$font.pl || exit 1
+
+done
+

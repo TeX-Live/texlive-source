@@ -138,6 +138,8 @@ pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
 	$(tie) -m pdvitype.web dvitype.web dvitype.ch
 EXTRA_DIST += ptexdir/pdvitype.ch
 
+ptex_tests += ptexdir/sample.test
+
 ## pPLtoTF
 ## 
 nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
@@ -170,6 +172,8 @@ ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie) -m ptftopl.web tftopl.web tftopl.ch
 EXTRA_DIST += ptexdir/ptftopl.ch
 
+ptex_tests += ptexdir/yokotate.test
+
 ## 
 EXTRA_DIST += \
 	ptexdir/COPYRIGHT \
@@ -198,6 +202,13 @@ DISTCLEANFILES += tests/xstory.dvityp tests/xpagenum.typ
 DISTCLEANFILES += tests/xcmr10.tfm
 ## ptexdir/ptftopl.test
 DISTCLEANFILES += tests/xcmr10.pl
+## ptexdir/sample.test
+EXTRA_DIST += ptexdir/tests/goth10.tfm ptexdir/tests/sample.dvi
+DISTCLEANFILES += tests/xsample.typ
+## ptexdir/yokotate.test
+EXTRA_DIST += ptexdir/tests/min10.pl ptexdir/tests/min10.tfm
+EXTRA_DIST += ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm
+DISTCLEANFILES += tests/x*min10.*
 ## ptexdir/ptrip.test
 EXTRA_DIST += ptexdir/ptrip.diffs
 .PHONY: ptrip-clean

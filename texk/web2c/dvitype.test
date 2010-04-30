@@ -1,13 +1,19 @@
 #! /bin/sh
 
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
 
-TEXMFCNF=$srcdir/../kpathsea \
-  ./dvitype -show-opcodes $srcdir/tests/story >tests/xstory.dvityp || exit 1
+if tfmpath=`$KPSEWHICH cmbx10.tfm`; then
+
+  TEXMFCNF=$srcdir/../kpathsea \
+    TFMFONTS=`dirname $tfmpath` \
+    ./dvitype -show-opcodes $srcdir/tests/story >tests/xstory.dvityp || exit 1
+
+fi
 
 TEXMFCNF=$srcdir/../kpathsea \
+  TFMFONTS=$srcdir/tests \
   ./dvitype --p=\*.\*.2 $srcdir/tests/pagenum.dvi >tests/xpagenum.typ || exit 1
 

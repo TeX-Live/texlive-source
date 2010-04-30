@@ -1,3 +1,7 @@
+2010-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvitype.test: Use installed cm fonts.
+
 2010-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Require that 'int' has at least 4 bytes,
