@@ -231,7 +231,7 @@ end.
 @!ENT_STR_SIZE=100; {maximum size of a |str_entry_var|; must be |<=buf_size|}
 @!GLOB_STR_SIZE=1000; {maximum  size of a |str_global_var|;
                                                         must be |<=buf_size|}
-@!MAX_GLOB_STRS=10;    {initial number of |str_global_var| names}
+@!MAX_GLOB_STRS=20;    {initial number of |str_global_var| names}
 @!MAX_FIELDS=5000; {initial number of fields (entries $\times$ fields,
 @z
 

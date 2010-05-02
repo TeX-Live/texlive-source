@@ -1,3 +1,10 @@
+2010-05-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* bibtex.ch: increase MAX_GLOB_STRS from 10 to 20, because pbibtex on
+	windows crashes for some bst. it should be ok without increasing because
+	of BIBXRETALLOCSTRING etc. don't know why, but MAX_GLOB_STRS = 20
+	solves the problem.
+
 2010-05-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* config.h: remove TEXDLL.
