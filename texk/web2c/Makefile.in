@@ -405,9 +405,9 @@ am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/avlstuff.c pdftexdir/avlstuff.h pdftexdir/epdf.c \
 	pdftexdir/image.h pdftexdir/mapfile.c pdftexdir/pdftex.h \
 	pdftexdir/pdftex-common.h pdftexdir/pdftoepdf.cc \
-	pdftexdir/pdftoepdf.h pdftexdir/pkin.c pdftexdir/ptexlib.h \
-	pdftexdir/ptexmac.h pdftexdir/subfont.c pdftexdir/tounicode.c \
-	pdftexdir/utils.c pdftexdir/vfpacket.c pdftexdir/writeenc.c \
+	pdftexdir/pkin.c pdftexdir/ptexlib.h pdftexdir/ptexmac.h \
+	pdftexdir/subfont.c pdftexdir/tounicode.c pdftexdir/utils.c \
+	pdftexdir/vfpacket.c pdftexdir/writeenc.c \
 	pdftexdir/writefont.c pdftexdir/writeimg.c \
 	pdftexdir/writejbig2.c pdftexdir/writejbig2.h \
 	pdftexdir/writejpg.c pdftexdir/writepng.c pdftexdir/writet1.c \
@@ -1708,9 +1708,9 @@ libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/avlstuff.c pdftexdir/avlstuff.h pdftexdir/epdf.c \
 	pdftexdir/image.h pdftexdir/mapfile.c pdftexdir/pdftex.h \
 	pdftexdir/pdftex-common.h pdftexdir/pdftoepdf.cc \
-	pdftexdir/pdftoepdf.h pdftexdir/pkin.c pdftexdir/ptexlib.h \
-	pdftexdir/ptexmac.h pdftexdir/subfont.c pdftexdir/tounicode.c \
-	pdftexdir/utils.c pdftexdir/vfpacket.c pdftexdir/writeenc.c \
+	pdftexdir/pkin.c pdftexdir/ptexlib.h pdftexdir/ptexmac.h \
+	pdftexdir/subfont.c pdftexdir/tounicode.c pdftexdir/utils.c \
+	pdftexdir/vfpacket.c pdftexdir/writeenc.c \
 	pdftexdir/writefont.c pdftexdir/writeimg.c \
 	pdftexdir/writejbig2.c pdftexdir/writejbig2.h \
 	pdftexdir/writejpg.c pdftexdir/writepng.c pdftexdir/writet1.c \

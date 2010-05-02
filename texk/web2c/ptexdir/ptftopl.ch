@@ -425,7 +425,7 @@ begin  if nonexistent(tfm[k+1]) then
 @.Glue step for nonexistent...@>
 else
   begin left; out('GLUE'); out_char(tfm[k+1]);
-    if tfm[k+3]>=ng then
+    if 3*tfm[k+3]>=ng then
       begin bad('Glue index too large.');
 @.Glue index too large@>
       out(' R 0.0 R 0.0 R 0.0');
@@ -440,19 +440,21 @@ end;
 
 @ list the |char_type| table in a similar way to the type table
 
+@d char_type(#)==4*(type_base+#) {here \#\ is an index, not a character}
+@d JIS_code(#)==tfm[char_type(#)+0]*@'400+tfm[char_type(#)+1] {JIS code from |char_type| table}
+@d JIS_type(#)==tfm[char_type(#)+2]*@'400+tfm[char_type(#)+3] {JIS type from |char_type| table}
+
 @<list |char_type| table@>=
-this_code:=tfm[4*type_base+0]*@'400+tfm[4*type_base+1];
-this_type:=tfm[4*type_base+2]*@'400+tfm[4*type_base+3];
+this_code:=JIS_code(0);
+this_type:=JIS_type(0);
 if (this_code<>0)or(this_type<>0) then
   begin bad('the first entry in char_type is not zero. I''ll zero it.');
   print_ln('JIS code is ', this_code:1, '. Type is ', this_type:1, '.');
   end;
 for kanji_index:=0 to max_kanji do kanji_type[kanji_index]:=-1;
 for type_index:=1 to nt-1 do
-  begin this_code:=tfm[4*type_base + type_index * 4 + 0] * 256 +
-	             tfm[4*type_base + type_index * 4 + 1];
-  this_type:=tfm[4*type_base + type_index * 4 + 2] * 256 +
-                 tfm[4*type_base + type_index * 4 + 3];
+  begin this_code:=JIS_code(type_index);
+  this_type:=JIS_type(type_index);
   if not valid_jis_code(this_code) then
     bad('jis code ', this_code:1,
 	    ' in char_type table entry ', type_index:1,
@@ -466,13 +468,13 @@ for type_index:=1 to nt-1 do
 @#
 for type_num:=1 to ec do
   begin left; out('CHARSINTYPE');
-  tfm[0]:=type_num; out_octal(0,1); out_ln;
+  tfm[0]:=type_num; out_octal(0,1);
   type_count:=0;
   for kanji_index:=0 to max_kanji do
     if kanji_type[kanji_index]=type_num then
-      begin incr(type_count);
-      if (type_count mod 14)=0 then out_ln;
-      out_kanji(index_to_jis(kanji_index)); out(' ');
+      begin if (type_count mod 10)=0 then out_ln else out(' ');
+      incr(type_count);
+      out_kanji(index_to_jis(kanji_index));
       end;
   if type_count=0 then bad('type ', type_num:1, 'has no characters in it!');
   out_ln; right;
@@ -493,7 +495,7 @@ var @!cx:integer; {KANJI code}
 i:0..4; {index of array}
 begin@/
 if charcode_format=charcode_octal then
-  begin cx:=jis_code; out(' J '); {specify jiscode format}
+  begin cx:=jis_code; out('J '); {specify jiscode format}
   dig[0]:=Hi(cx) div 16; dig[1]:=Hi(cx) mod 16;
   dig[2]:=Lo(cx) div 16; dig[3]:=Lo(cx) mod 16;
   for i:=0 to 3 do

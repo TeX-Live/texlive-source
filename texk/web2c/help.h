@@ -409,10 +409,12 @@ NULL };
 const_string PTFTOPLHELP[] = {
 "Usage: ptftopl [option] tfmfile [plfile]",
 "",
-"  -verbose               output progress reports.",
-"  -version               print version information and exit.",
-"  -help                  print this message and exit.",
-"  -kanji={jis|euc|sjis|utf8}",
+"-charcode-format=TYPE  output character codes according to TYPE,",
+"                        either `octal' or `ascii'; default is ascii.",
+"-verbose               output progress reports.",
+"-version               print version information and exit.",
+"-help                  print this message and exit.",
+"-kanji={jis|euc|sjis|utf8}",
 "                         plfile kanji code.",
 NULL };
 #endif /* PTFTOPL */

@@ -15,13 +15,13 @@ for font in min10 tmin10; do
     cmp $testdir/$font.tfm tests/x$font.tfm || exit 1
 
   TEXMFCNF=$srcdir/../kpathsea \
-    ./ptftopl -verbose $testdir/$font.tfm tests/x$font.pl || exit 1
+    ./ptftopl -charcode-format octal -verbose $testdir/$font.tfm tests/x$font.pl || exit 1
 
   ./ppltotf tests/x$font tests/xx$font && \
     cmp $testdir/$font.tfm tests/xx$font.tfm || exit 1
 
   TEXMFCNF=$srcdir/../kpathsea TFMFONTS=tests \
-    ./ptftopl xx$font tests/xx$font && \
+    ./ptftopl -charcode-format=octal xx$font tests/xx$font && \
     diff tests/x$font.pl tests/xx$font.pl || exit 1
 
 done

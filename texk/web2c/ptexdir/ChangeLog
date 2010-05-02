@@ -1,3 +1,10 @@
+2010-05-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* yokotate.test: Use ptftopl with '-charcode-format octal'.
+	* ptftopl.ch: Correctly check glue indices.
+	Use Web macros to access |char_type| table entries.
+	Reformat CHARSINTYPE lists with shorter lines.
+
 2010-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdvitype.test: Use installed cm fonts.
