@@ -22,7 +22,6 @@ libpdftex_a_SOURCES = \
 	pdftexdir/pdftex.h \
 	pdftexdir/pdftex-common.h \
 	pdftexdir/pdftoepdf.cc \
-	pdftexdir/pdftoepdf.h \
 	pdftexdir/pkin.c \
 	pdftexdir/ptexlib.h \
 	pdftexdir/ptexmac.h \

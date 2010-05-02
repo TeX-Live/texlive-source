@@ -37,9 +37,9 @@ float epdf_height;
 float epdf_orig_x;
 float epdf_orig_y;
 float epdf_rotate;
-integer epdf_selected_page;
-integer epdf_num_pages;
-integer epdf_page_box;
+int epdf_selected_page;
+int epdf_num_pages;
+int epdf_page_box;
 void *epdf_doc;
 
 static integer new_image_entry(void)

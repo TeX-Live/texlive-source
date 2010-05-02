@@ -19,22 +19,17 @@ Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
 
-/* Whereas the C code uses:     #include "ptexlib.h"
-   pdftoepdf.cc uses:           #include "pdftoepdf.h"
-
-   Unfortunately these to headers are incompatible; thus they
-  include this file with prototypes required in both cases.
+/* This file contains declarations used in C code (via ptexlib.h) as
+   well as in pdftoepdf.cc (where we can not #include "ptexlib.h").
 */
 
 #ifndef PDFTEX_COMMON_H
 #  define PDFTEX_COMMON_H
 
-/* Generated from pdftex.web:
-   these declarations are included in ptexlib.h via pdftexd.h,
-   we repeat them here for pdftoepdf.h and as consistency check.
-*/
+/* Declarations generated from pdftex.web are included in ptexlib.h via pdftexd.h,
+   we repeat them here for pdftoepdf.cc and as consistency check.
 
-/* pdftexd.h */
+   pdftexd.h - generated from pdftex.web */
 #ifdef __cplusplus
 typedef unsigned char eightbits;
 #endif
@@ -54,7 +49,7 @@ extern boolean pdfosmode;
 extern eightbits pdflastbyte;
 extern integer fixedinclusioncopyfont;
 
-/* pdftexcoerce.h */
+/* pdftexcoerce.h - generated from pdftex.web */
 extern integer pdfnewobjnum(void);
 extern void pdfbeginstream(void);
 extern void pdfendobj(void);
@@ -110,14 +105,14 @@ extern void write_epdf(void);
 extern void epdf_write_enc(char **, int);
 
 /* writeimg.c */
-    extern float epdf_width;
-    extern float epdf_height;
-    extern float epdf_orig_x;
-    extern float epdf_orig_y;
-    extern float epdf_rotate;
-    extern integer epdf_selected_page;
-    extern integer epdf_num_pages;
-    extern integer epdf_page_box;
-    extern void *epdf_doc;
+extern float epdf_width;
+extern float epdf_height;
+extern float epdf_orig_x;
+extern float epdf_orig_y;
+extern float epdf_rotate;
+extern int epdf_selected_page;
+extern int epdf_num_pages;
+extern int epdf_page_box;
+extern void *epdf_doc;
 
 #endif /* PDFTEX_COMMON_H */

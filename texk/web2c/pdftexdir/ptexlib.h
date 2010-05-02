@@ -168,7 +168,7 @@ extern const char *ptexbanner;
 /* pdftexlib function prototypes */
 
 /* prototypes used in C code as well as pdftoepdf.cc */
-#include "pdftex-common.h"
+#include <pdftexdir/pdftex-common.h>
 
 /* mapfile.c */
 extern boolean hasfmentry(internalfontnumber);
