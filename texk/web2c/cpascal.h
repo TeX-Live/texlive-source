@@ -180,7 +180,7 @@ typedef unsigned char *pointertobyte;
 #define BIBXRETALLOCSTRING(array_name, array_var, length, size_var, new_size) \
   fprintf (logfile, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
            array_name, (int) (length + 1), new_size, size_var); \
-  XRETALLOC (array_var, new_size * (length + 1), ASCIIcode)
+  XRETALLOC (array_var, (new_size) * (length + 1), ASCIIcode)
   
 /* Need precisely int for getopt, etc. */
 #define cinttype int

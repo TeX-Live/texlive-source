@@ -1,3 +1,10 @@
+2010-05-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h (BIBXRETALLOCSTRING): Need parens around new_size.
+	From Akira, 02 May 2010 21:49:27.
+
+	* bibtex.ch (MAX_GLOB_STRS): Changed from 20 back to 10. 
+
 2010-05-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* bibtex.ch: increase MAX_GLOB_STRS from 10 to 20, because pbibtex on
@@ -8,6 +15,10 @@
 2010-05-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* config.h: remove TEXDLL.
+
+2010-05-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* help.h (PTFTOPLHELP): Document '-charcode-format'.
 
 2010-04-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
