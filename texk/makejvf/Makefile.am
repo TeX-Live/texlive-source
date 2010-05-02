@@ -23,6 +23,20 @@ LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)
 
 EXTRA_DIST = COPYRIGHT COPYRIGHT.jis Changes.txt README.txt
 
+dist_check_SCRIPTS = makejvf.test
+
+TESTS = makejvf.test
+
+EXTRA_DIST += \
+	tests/min10.tfm \
+	tests/min10.vf \
+	tests/rml.tfm \
+	tests/rmlv.tfm \
+	tests/tmin10.tfm \
+	tests/tmin10.vf
+
+DISTCLEANFILES = min10.vf rml.tfm rmlv.tfm tmin10.vf
+
 ## Eventually delete this file
 ##
 EXTRA_DIST += \
