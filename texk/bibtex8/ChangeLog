@@ -1,3 +1,7 @@
+2010-05-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* bibtex.h: fixed a bug in the macro BIB_XRETALLOC_STRING.
+
 2010-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bibtex*.[ch], gblvars.h, utils.c: Obtain Ent_Str_Size and

@@ -1480,7 +1480,7 @@
   if (log_file != NULL)\
     fprintf (log_file, "Reallocated %s (elt_size=%d) to %ld items from %ld.\n", \
              array_name, (int) (length + 1), new_size, size_var); \
-  MYRETALLOC (array_name, array_var, new_size * (length + 1), ASCIICode_T)
+  MYRETALLOC (array_name, array_var, (new_size) * (length + 1), ASCIICode_T)
 
 #endif                          /* __BIBTEX_H__ */
 
