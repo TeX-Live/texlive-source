@@ -213,14 +213,22 @@ s:=0; h:=0; v:=0; w:=0; x:=0; y:=0; z:=0; hh:=0; vv:=0; dd:=0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
   four_cases(set1): begin major('set',o-set1+1:1,' ',p:1); goto fin_set;
+    end;
+  four_cases(put1): begin major('put',o-put1+1:1,' ',p:1); goto fin_set;
 @y
-  four_cases(set1):
+  four_cases(set1),four_cases(put1):
     begin
       if fnt_jfm_p[cur_font]=true then
         begin
           cur_jfm_char_type:=get_jfm_char_type(cur_font,p);
           out_kanji(p);
-          minor('set',o-set1+1:1,' ',p:1);
+          if o<put1 then
+            begin
+              minor('set',o-set1+1:1,' ',p:1);
+            end
+          else begin
+            minor('put',o-put1+1:1,' ',p:1);
+          end;
 ifdef('HEX_CHAR_CODE')
           print('(');
           print_hex_number(p);
@@ -230,7 +238,13 @@ endif('HEX_CHAR_CODE')
           p:=cur_jfm_char_type
         end
       else begin
-        major('set',o-set1+1:1,' ',p:1);
+        if o<put1 then
+          begin
+            major('set',o-set1+1:1,' ',p:1);
+          end
+        else begin
+          major('put',o-put1+1:1,' ',p:1);
+        end;
 ifdef('HEX_CHAR_CODE')
         print('(');
         print_hex_number(p);
@@ -241,13 +255,11 @@ endif('HEX_CHAR_CODE')
 @z
 
 @x
-  put_rule: begin major('putrule'); goto fin_rule;
-    end;
+  @t\4@>@<Cases for commands |nop|, |bop|, \dots, |pop|@>@;
 @y
-  put_rule: begin major('putrule'); goto fin_rule;
-    end;
   dir: begin major('dir ',p:1); dd:=p; goto done;
     end;
+  @t\4@>@<Cases for commands |nop|, |bop|, \dots, |pop|@>@;
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

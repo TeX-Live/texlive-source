@@ -1,3 +1,7 @@
+2010-05-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdvitype.ch: Treat kanji chars for put[1-4] as for set[1-4].
+
 2010-05-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* yokotate.test: Use ptftopl with '-charcode-format octal'.
