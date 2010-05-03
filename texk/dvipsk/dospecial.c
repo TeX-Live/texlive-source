@@ -296,10 +296,8 @@ predospecial(integer numbytes, Boolean scanning)
    int j;
    static int omega_specials = 0;
 
-   if (nextstring + numbytes > maxstring) {
-      if (numbytes < 0
-          || (numbytes > 0 && 2 > INT_MAX / numbytes)
-          || 2 * numbytes > 1000 + 2 * numbytes) {
+   if (numbytes < 0 || numbytes > maxstring - nextstring) {
+      if (numbytes < 0 || numbytes > (INT_MAX - 1000) / 2 ) {
          error("! Integer overflow in predospecial");
          exit(1);
       }
@@ -850,7 +848,11 @@ bbdospecial(int nbytes)
    char seen[NKEYS];
    float valseen[NKEYS];
 
-   if (nextstring + nbytes > maxstring) {
+   if (nbytes < 0 || nbytes > maxstring - nextstring) {
+      if (nbytes < 0 || nbytes > (INT_MAX - 1000) / 2 ) {
+         error("! Integer overflow in bbdospecial");
+         exit(1);
+      }
       p = nextstring = mymalloc(1000 + 2 * nbytes);
       maxstring = nextstring + 2 * nbytes + 700;
    }

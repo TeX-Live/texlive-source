@@ -1,3 +1,10 @@
+2010-05-03  Jan Lieskovsky  <jlieskov@redhat.com>
+
+	* dospecial.c (predospecial, bbdospecial): avoid numeric overflow.
+	tetex-3.0-CVE-2010-0739,1440-integer-overflows.patch,
+	from Ludwig Nussel, Karel Srot.
+	tlsecurity mail 30 Apr 2010 16:59:37.	
+
 2010-04-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* afm2tfm.c: (write16()): cast argument to short to avoid warning.
