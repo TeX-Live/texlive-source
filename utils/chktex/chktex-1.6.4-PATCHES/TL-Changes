@@ -1,0 +1,10 @@
+Changes applied to the chktex-1.6.4 tree as obtained from:
+	http://
+
+Removed:
+	autom4te.cache/
+	configure
+	install-sh
+	missing
+	stamp-h.in
+

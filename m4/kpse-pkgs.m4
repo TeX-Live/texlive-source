@@ -71,6 +71,7 @@ AC_REQUIRE([KPSE_ICU_SYSTEM_FLAGS])[]dnl
 # Define the list of utility sub-packages, i.e., subdirs 'utils/*'.
 AC_DEFUN([KPSE_UTILS_PKGS],
 [m4_define([kpse_utils_pkgs], [
+chktex
 dialog
 pdfopen
 ps2eps
