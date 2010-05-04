@@ -1417,7 +1417,7 @@ Optional Features:
                           lib/PLATFORM
   --enable-cxx-runtime-hack  link C++ runtime statically
   --enable-libtool-hack   ignore libtool dependency_libs
-  --disable-chktex        do not build the chktex package
+  --enable-chktex         build the chktex package
   --disable-dialog        do not build the dialog package
   --disable-pdfopen       do not build the pdfopen package
   --disable-ps2eps        do not build the ps2eps package
@@ -2233,7 +2233,7 @@ case $enable_chktex in #(
      ;; #(
   *) :
 
-   enable_chktex=$enable_all_pkgs
+   enable_chktex=no
      { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-chktex=$enable_chktex'" >&5
 $as_echo "$as_me: Assuming \`--enable-chktex=$enable_chktex'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-chktex=$enable_chktex'"
